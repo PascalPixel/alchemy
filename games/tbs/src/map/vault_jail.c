@@ -14,10 +14,10 @@
 ///   VAULT_JAIL_FROM_VAULT_REVISIT and finds a lone prisoner instead.
 /// - Lunpa (VAULT_JAIL_FROM_LUNPA), the map's other room, which Lunpa's hidden
 ///   passage reaches (lunpa.c). Its six chests are each opened once
-///   (FLAG_VAULT_JAIL_CHEST_*), TRIGGER_LUNPA_DOOR leads back up into Lunpa,
-///   and arriving this way clears FLAG_SHOW_LOCATION_NAME, so no area name is
-///   shown. The room uses the thieves' tables, so its chests and warp sit in
-///   the same map event table as the thieves' talk and the Vault door.
+///   (FLAG_VAULT_JAIL_CHEST_*), MB_VAULT_JAIL_LUNPA_DOOR leads back up into
+///   Lunpa, and arriving this way clears FLAG_SHOW_LOCATION_NAME, so no area
+///   name is shown. The room uses the thieves' tables, so its chests and warp
+///   sit in the same map event table as the thieves' talk and the Vault door.
 ///
 /// Open questions:
 /// - XXX (no evidence): why arriving from Lunpa hides the area name, which
@@ -46,15 +46,22 @@
 #include "songs.h"
 #include "text/msg_ids.h"
 
-enum JailTrigger {
-  TRIGGER_VAULT_DOOR = 1,
-  TRIGGER_LUNPA_DOOR = 2,
-  TRIGGER_CHEST_WATER_OF_LIFE = 100,
-  TRIGGER_CHEST_SMOKE_BOMB,
-  TRIGGER_CHEST_LUCKY_MEDAL,
-  TRIGGER_CHEST_ANTIDOTE,
-  TRIGGER_CHEST_COINS,
-  TRIGGER_CHEST_ELIXIR
+/// The metatile behaviors the jail's map events answer.
+enum VaultJailMetatileBehavior {
+  MB_VAULT_JAIL_VAULT_DOOR = 1,
+  MB_VAULT_JAIL_LUNPA_DOOR = 2,
+  /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
+  MB_VAULT_JAIL_CHEST_WATER_OF_LIFE = 100,
+  /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
+  MB_VAULT_JAIL_CHEST_SMOKE_BOMB,
+  /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
+  MB_VAULT_JAIL_CHEST_LUCKY_MEDAL,
+  /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
+  MB_VAULT_JAIL_CHEST_ANTIDOTE,
+  /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
+  MB_VAULT_JAIL_CHEST_COINS,
+  /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
+  MB_VAULT_JAIL_CHEST_ELIXIR
 };
 
 /// The placed object events, numbering the rows of the table
@@ -215,7 +222,7 @@ static void EventScript_ReadRightThiefMind(void) {
 
 /// The party steps out of Vault's jail into Vault, with the warp sound.
 ///
-/// Reached by stepping on the door's cell (TRIGGER_VAULT_DOOR) under the
+/// Reached by stepping on the door's cell (MB_VAULT_JAIL_VAULT_DOOR) under the
 /// thieves' table, that is, entered from Vault or Lunpa; takes
 /// VAULT_JAIL_TO_VAULT to VAULT_FROM_VAULT_JAIL. The prisoner's table leaves by
 /// a plain warp instead, VAULT_JAIL_TO_VAULT_REVISIT.
@@ -289,8 +296,8 @@ const struct ObjectEventTemplate gVaultJail_PrisonerObjectEventTemplates[] = {
 };
 
 const struct MapEvent gVaultJail_ThiefEvents[] = {
-    { MAP_EVENT_COORD, TRIGGER_VAULT_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveForVault) },
-    { MAP_EVENT_WARP, TRIGGER_LUNPA_DOOR, CONDITION_ALWAYS, VAULT_JAIL_TO_LUNPA },
+    { MAP_EVENT_COORD, MB_VAULT_JAIL_VAULT_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveForVault) },
+    { MAP_EVENT_WARP, MB_VAULT_JAIL_LUNPA_DOOR, CONDITION_ALWAYS, VAULT_JAIL_TO_LUNPA },
     { MAP_EVENT_TALK, LOCALID_THIEF_LEADER, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED),
       EVENT_SCRIPT(EventScript_LeaderSilencesThieves) },
     { MAP_EVENT_TALK, LOCALID_LEFT_THIEF, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED),
@@ -303,23 +310,23 @@ const struct MapEvent gVaultJail_ThiefEvents[] = {
       IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), EVENT_SCRIPT(EventScript_ReadLeftThiefMind) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_RIGHT_THIEF,
       IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), EVENT_SCRIPT(EventScript_ReadRightThiefMind) },
-    { BG_EVENT(BG_EVENT_CHEST), TRIGGER_CHEST_WATER_OF_LIFE, FLAG_VAULT_JAIL_CHEST_WATER_OF_LIFE,
+    { BG_EVENT(BG_EVENT_CHEST), MB_VAULT_JAIL_CHEST_WATER_OF_LIFE, FLAG_VAULT_JAIL_CHEST_WATER_OF_LIFE,
       FIND_ITEM(ITEM_WATER_OF_LIFE) },
-    { BG_EVENT(BG_EVENT_CHEST), TRIGGER_CHEST_SMOKE_BOMB, FLAG_VAULT_JAIL_CHEST_SMOKE_BOMB,
+    { BG_EVENT(BG_EVENT_CHEST), MB_VAULT_JAIL_CHEST_SMOKE_BOMB, FLAG_VAULT_JAIL_CHEST_SMOKE_BOMB,
       FIND_ITEM(ITEM_SMOKE_BOMB) },
-    { BG_EVENT(BG_EVENT_CHEST), TRIGGER_CHEST_LUCKY_MEDAL, FLAG_VAULT_JAIL_CHEST_LUCKY_MEDAL,
+    { BG_EVENT(BG_EVENT_CHEST), MB_VAULT_JAIL_CHEST_LUCKY_MEDAL, FLAG_VAULT_JAIL_CHEST_LUCKY_MEDAL,
       FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { BG_EVENT(BG_EVENT_CHEST), TRIGGER_CHEST_ANTIDOTE, FLAG_VAULT_JAIL_CHEST_ANTIDOTE,
+    { BG_EVENT(BG_EVENT_CHEST), MB_VAULT_JAIL_CHEST_ANTIDOTE, FLAG_VAULT_JAIL_CHEST_ANTIDOTE,
       FIND_ITEM(ITEM_ANTIDOTE) },
-    { BG_EVENT(BG_EVENT_CHEST), TRIGGER_CHEST_COINS, FLAG_VAULT_JAIL_CHEST_COINS, FIND_COINS(44) },
-    { BG_EVENT(BG_EVENT_CHEST), TRIGGER_CHEST_ELIXIR, FLAG_VAULT_JAIL_CHEST_ELIXIR,
+    { BG_EVENT(BG_EVENT_CHEST), MB_VAULT_JAIL_CHEST_COINS, FLAG_VAULT_JAIL_CHEST_COINS, FIND_COINS(44) },
+    { BG_EVENT(BG_EVENT_CHEST), MB_VAULT_JAIL_CHEST_ELIXIR, FLAG_VAULT_JAIL_CHEST_ELIXIR,
       FIND_ITEM(ITEM_ELIXIR) },
     { MAP_EVENTS_END },
 };
 // clang-format on
 
 const struct MapEvent gVaultJail_PrisonerEvents[] = {
-    {MAP_EVENT_WARP, TRIGGER_VAULT_DOOR, CONDITION_ALWAYS,
+    {MAP_EVENT_WARP, MB_VAULT_JAIL_VAULT_DOOR, CONDITION_ALWAYS,
      VAULT_JAIL_TO_VAULT_REVISIT},
     {MAP_EVENT_TALK, LOCALID_PRISONER, CONDITION_ALWAYS,
      MsgVaultPrisonerRegretsFight},

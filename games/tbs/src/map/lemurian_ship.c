@@ -215,7 +215,7 @@ static void Ship_UpdateSwell(void) {
    * the register write; as a plain u16, 5 of 225 instructions differ in
    * tbs-en. */
   volatile u16 blend;
-  struct FixedPointPosition place;
+  struct FixedPointPosition sprayPosition;
   struct FixedPointPosition *position;
   struct MapGridScrollWork *grid;
   struct ObjectEvent *objectEvent;
@@ -263,7 +263,7 @@ static void Ship_UpdateSwell(void) {
     x = grid->viewX & -0x10000;
     z = grid->viewY & -0x10000;
     x += Random_Next() * 240;
-    position = &place;
+    position = &sprayPosition;
     position->x = x;
     position->y = 0;
     z += Random_Next() * 160;

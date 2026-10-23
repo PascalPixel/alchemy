@@ -52,8 +52,8 @@ static s32 MercuryLighthouse_AdvanceAnchoredRiseFrame(
 }
 
 /// Grows the moving light over the first sixteen script frames.
-static s32 ObjectEvent_RampWords24And28Over16Frames(
-    struct ObjectScriptContext *interpreter) {
+static s32
+MercuryLighthouse_GrowLight(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   s16 frame;
 
@@ -313,8 +313,8 @@ void MercuryLighthouse_HopAcrossPool(void) {
       &MAPGRID_CELLS[(pos[2].fixed / 0x100000 << 7) + pos[0].fixed / 0x100000];
   Vector_AddPolarOffset(0x200000, angle, &pos[0].fixed);
   to = &MAPGRID_CELLS[(pos[2].fixed / 0x100000 << 7) + pos[0].fixed / 0x100000];
-  if (from->behavior != state->terrainCode &&
-      to->behavior == state->terrainCode && state->levels == 0)
+  if (from->behavior != state->poolBehavior &&
+      to->behavior == state->poolBehavior && state->levels == 0)
     return;
 
   FieldScript_Start();
@@ -328,7 +328,7 @@ void MercuryLighthouse_HopAcrossPool(void) {
     ObjectDispatch_SelectAnimation(obj, 7);
     state->stepEffect = NULL;
   }
-  if (to->behavior == state->terrainCode && state->levels != 0) {
+  if (to->behavior == state->poolBehavior && state->levels != 0) {
     source = state->pillar;
     obj = ObjectEvent_Create(26, source->x.fixed, source->y.fixed,
                              source->z.fixed);
@@ -371,13 +371,13 @@ void MercuryLighthouse_HopAcrossPool(void) {
   ObjectMotion_SetPositionAndCommit(0, pos[0].part.pixel, pos[2].part.pixel);
   ObjectDispatch_SelectAnimation(objectEvent, 6);
   WaitFrames(2);
-  if (to->behavior != state->terrainCode)
+  if (to->behavior != state->poolBehavior)
     ObjectEvent_SetSpriteFlags(objectEvent, SPRITE_FLAG_SHADOW);
   else
     Sound_PlaySong(SE_215);
   WaitFrames(1);
   *flags = saved;
-  if (to->behavior == state->terrainCode && state->stepEffect == NULL) {
+  if (to->behavior == state->poolBehavior && state->stepEffect == NULL) {
     ObjectDispatch_SelectAnimation(objectEvent, 18);
     Sound_PlaySong(SE_WATER_MOVE);
     for (i = 0;; i++) {

@@ -31,7 +31,7 @@ static inline void Vault_DrawDoorwayFrame(s32 sourceColumn) {
                       VAULT_DOOR_HALF_SIZE);
 }
 
-/// Walking north into VAULT_CELL_SANCTUM_DOORWAY opens the doorway to the
+/// Walking north into MB_VAULT_SANCTUM_DOORWAY opens the doorway to the
 /// Sanctum.
 /// The leader passes behind the doorframe through the warp.
 static void Vault_OpenDoorwayAndEnter(void) {

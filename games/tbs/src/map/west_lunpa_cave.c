@@ -4,10 +4,10 @@
 /// party meets Bunza on the way out of Lunpa with Hammet.
 ///
 /// The party comes in from the world map (WEST_LUNPA_CAVE_FROM_WORLD_MAP) and
-/// from Lunpa (WEST_LUNPA_CAVE_FROM_LUNPA); TRIGGER_WORLD_MAP_PASSAGE and
-/// TRIGGER_LUNPA_PASSAGE lead back out. WEST_LUNPA_CAVE_FROM_LUNPA_UNUSED,
-/// which no warp names, repeats WEST_LUNPA_CAVE_FROM_LUNPA with a shorter
-/// camera.
+/// from Lunpa (WEST_LUNPA_CAVE_FROM_LUNPA);
+/// MB_WEST_LUNPA_CAVE_WORLD_MAP_PASSAGE and MB_WEST_LUNPA_CAVE_LUNPA_PASSAGE
+/// lead back out. WEST_LUNPA_CAVE_FROM_LUNPA_UNUSED, which no warp names,
+/// repeats WEST_LUNPA_CAVE_FROM_LUNPA with a shorter camera.
 ///
 /// The gate puzzle runs on map flags, which Map_Initialize redraws: the
 /// lowering switch brings the gate down and the raising switch lifts it, each
@@ -25,14 +25,15 @@
 ///   changes one cell's metatile behavior.
 ///
 /// Once Donpa has let the party leave Lunpa Fortress with Hammet
-/// (FLAG_DODONPA_LOCKED_UP), stepping onto TRIGGER_BUNZA_HIDING_PLACE the
-/// first time (FLAG_LUNPA_CAVE_REUNION_SEEN) plays the reunion: Bunza, a Kalay
-/// merchant, comes out from behind a rock (EventScript_HammetFindsBunza), they
-/// talk (Reunion_Converse), and the party's answers decide whether it rides
-/// home in Bunza's wagon (WagonChoice_Run). Riding leaves by
-/// WEST_LUNPA_CAVE_BY_WAGON to WORLD_MAP_FROM_WEST_LUNPA_CAVE, where
-/// world_map.c plays the departure; staying, Hammet and Bunza leave alone.
-/// Either way FLAG_BUNZAS_WAGON_LEFT is set, on the world map or here.
+/// (FLAG_DODONPA_LOCKED_UP), stepping onto
+/// MB_WEST_LUNPA_CAVE_BUNZA_HIDING_PLACE the first time
+/// (FLAG_LUNPA_CAVE_REUNION_SEEN) plays the reunion: Bunza, a Kalay merchant,
+/// comes out from behind a rock (EventScript_HammetFindsBunza), they talk
+/// (Reunion_Converse), and the party's answers decide whether it rides home in
+/// Bunza's wagon (WagonChoice_Run). Riding leaves by WEST_LUNPA_CAVE_BY_WAGON
+/// to WORLD_MAP_FROM_WEST_LUNPA_CAVE, where world_map.c plays the departure;
+/// staying, Hammet and Bunza leave alone. Either way FLAG_BUNZAS_WAGON_LEFT is
+/// set, on the world map or here.
 ///
 /// Unused: a fourth puddle stands at the map's origin, outside the cave's
 /// camera bounds, so Frost can never reach it (EventScript_UnusedFreezePuddle).
@@ -373,7 +374,7 @@ static void EventScript_HammetFindsBunza(void) {
 /// area, and offers his wagon as a way out of Lunpa.
 static void Reunion_Converse(void) {
   s32 reunion;
-  s32 plan;
+  s32 messageBase;
 
   // Arrange the reunion while the screen is closed, then reveal the group.
   FieldScript_Start();
@@ -619,39 +620,39 @@ static void Reunion_Converse(void) {
   ObjectEvent_FaceObjectEvent(IVAN, LOCALID_BUNZA, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_HAMMET, LOCALID_BUNZA, 0);
   ObjectEvent_ShowEmote(LOCALID_HAMMET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  plan = MsgLunpaBunza;
-  FieldScript_SetMessageId(plan + PLAN_HAMMET_ASKS_PLAN);
+  messageBase = MsgLunpaBunza;
+  FieldScript_SetMessageId(messageBase + PLAN_HAMMET_ASKS_PLAN);
   Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_HAMMET, 0);
   FieldScript_WaitFrames(20);
   ObjectEvent_ShowEmote(LOCALID_BUNZA, EMOTE_IN_FRONT | EMOTE_SMILE, 60);
-  FieldScript_SetMessageId(plan + PLAN_BUNZA_HAS_WAGON);
+  FieldScript_SetMessageId(messageBase + PLAN_BUNZA_HAS_WAGON);
   Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_BUNZA, 0);
   ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  FieldScript_SetMessageId(plan + PLAN_MIA_ASKS_ABOUT_WAGON);
+  FieldScript_SetMessageId(messageBase + PLAN_MIA_ASKS_ABOUT_WAGON);
   Script_ShowMessage(SPEAKER_WINDOW_ABOVE | MIA, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_BUNZA, MIA, 0);
   FieldScript_WaitFrames(10);
   ObjectMotion_SetAnimationAndWait(LOCALID_BUNZA, ANIM_NOD);
   ObjectEvent_FaceDirection(LOCALID_BUNZA, FACING_SOUTH - FACING_STEP, 0);
-  FieldScript_SetMessageId(plan + PLAN_BUNZA_OFFERS_RIDE);
+  FieldScript_SetMessageId(messageBase + PLAN_BUNZA_OFFERS_RIDE);
   Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_BUNZA, 0);
   ObjectEvent_FaceObjectEvent(IVAN, LOCALID_BUNZA, 0);
-  FieldScript_SetMessageId(plan + PLAN_IVAN_DOUBTS_WAGON);
+  FieldScript_SetMessageId(messageBase + PLAN_IVAN_DOUBTS_WAGON);
   Script_ShowMessage(SPEAKER_WINDOW_ABOVE | IVAN, 0);
   FieldScript_WaitFrames(10);
   ObjectMotion_SetAnimationAndWait(LOCALID_BUNZA, ANIM_SHAKE_HEAD);
-  FieldScript_SetMessageId(plan + PLAN_BUNZA_REASSURES);
+  FieldScript_SetMessageId(messageBase + PLAN_BUNZA_REASSURES);
   Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_BUNZA, 0);
   ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, GARET, 0);
   FieldScript_WaitFrames(60);
   ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_BUNZA, 0);
   ObjectEvent_FaceObjectEvent(GARET, LOCALID_BUNZA, 0);
-  FieldScript_SetMessageId(plan + PLAN_GARET_AGREES);
+  FieldScript_SetMessageId(messageBase + PLAN_GARET_AGREES);
   Script_ShowMessage(SPEAKER_WINDOW_ABOVE | GARET, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_BUNZA, GARET, 0);
   ObjectMotion_SetAnimationAndWait(LOCALID_BUNZA, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  FieldScript_SetMessageId(plan + PLAN_BUNZA_IS_UNSUSPECTED);
+  FieldScript_SetMessageId(messageBase + PLAN_BUNZA_IS_UNSUSPECTED);
   Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_BUNZA, 0);
   ObjectEvent_LinkPair(LOCALID_HAMMET, IVAN, 0);
   FieldScript_WaitFrames(60);
@@ -1098,13 +1099,13 @@ const struct MapEvent gCaveNoEvents[] = {
 };
 
 const struct MapEvent gCaveEvents[] = {
-    { MAP_EVENT_WARP, TRIGGER_WORLD_MAP_PASSAGE, CONDITION_ALWAYS, WEST_LUNPA_CAVE_TO_WORLD_MAP },
-    { MAP_EVENT_WARP, TRIGGER_LUNPA_PASSAGE, CONDITION_ALWAYS, WEST_LUNPA_CAVE_TO_LUNPA },
-    { MAP_EVENT_COORD, TRIGGER_BUNZA_HIDING_PLACE, FLAG_LUNPA_CAVE_REUNION_SEEN,
+    { MAP_EVENT_WARP, MB_WEST_LUNPA_CAVE_WORLD_MAP_PASSAGE, CONDITION_ALWAYS, WEST_LUNPA_CAVE_TO_WORLD_MAP },
+    { MAP_EVENT_WARP, MB_WEST_LUNPA_CAVE_LUNPA_PASSAGE, CONDITION_ALWAYS, WEST_LUNPA_CAVE_TO_LUNPA },
+    { MAP_EVENT_COORD, MB_WEST_LUNPA_CAVE_BUNZA_HIDING_PLACE, FLAG_LUNPA_CAVE_REUNION_SEEN,
       EVENT_SCRIPT(EventScript_HammetFindsBunza) },
-    { BG_EVENT(BG_EVENT_SILENT), TRIGGER_LOWERING_SWITCH, CONDITION_ALWAYS,
+    { BG_EVENT(BG_EVENT_SILENT), MB_WEST_LUNPA_CAVE_LOWERING_SWITCH, CONDITION_ALWAYS,
       EVENT_SCRIPT(EventScript_FlipLoweringSwitch) },
-    { BG_EVENT(BG_EVENT_SILENT), TRIGGER_RAISING_SWITCH, CONDITION_ALWAYS,
+    { BG_EVENT(BG_EVENT_SILENT), MB_WEST_LUNPA_CAVE_RAISING_SWITCH, CONDITION_ALWAYS,
       EVENT_SCRIPT(EventScript_FlipRaisingSwitch) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_UNUSED_PUDDLE, CONDITION_ALWAYS,
       EVENT_SCRIPT(EventScript_UnusedFreezePuddle) },

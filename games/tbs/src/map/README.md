@@ -1,12 +1,20 @@
-# Maps
+#Maps
 
-Everything that makes a [map](../../glossary.md#map) itself is in its own code here: who stands
-where, what each person says, what happens when the [party](../../glossary.md#the-party) steps on a
-doorstep, searches a jar, or uses an item or [Psynergy](../../glossary.md#psynergy-and-pp), and the cutscenes the
-map plays. That code is a map [overlay](../../glossary.md#overlay): a piece of code unpacked into
-one 32 KB area of RAM when the party arrives, and replaced when it leaves.
-[Running a map](../overworld/README.md) (the `overworld` folder) runs the map and
-asks the overlay what to do; the overlay drives the engine back through its
+Everything that makes a[map](../../
+                             glossary.md #map) itself is in its own code here
+    : who stands where,
+      what each person says,
+      what happens when the[party](../../ glossary.md #the -
+                                   party) steps on a doorstep,
+      searches a jar,
+      or uses an item or [Psynergy](../../ glossary.md #psynergy - and-pp),
+      and the cutscenes the map plays
+              .That code is a map[overlay](../../ glossary.md #overlay)
+    : a piece of code unpacked into one 32 KB area of RAM when the party arrives
+      ,
+      and replaced when it leaves.[Running a map](../ overworld / README.md)(
+          the `overworld` folder) runs the map
+          and asks the overlay what to do; the overlay drives the engine back through its
 [import table](../../glossary.md#entry-table-and-import-table), the list of main-program functions it may call. Each overlay has a generated page of its own, listed in
 [Maps](../field/map_headers.s) in [story order](../../glossary.md#the-places-in-story-order), with its [layout](../../glossary.md#layout) and its [map events](../../glossary.md#map-event).
 
@@ -298,11 +306,12 @@ walker arrives.
 static void EventScript_PatrolPairThrowsPartyOut(void) {
   SCRIPT_START();
   ObjectMotion_EnableActionAndResetMotion(LOCALID_UPPER_FLOOR_FIRST_PATROL);
-  ObjectMotion_OffsetPositionAndResetMotion(LOCALID_UPPER_FLOOR_FIRST_PATROL, 0, 0);
+  ObjectMotion_OffsetPositionAndResetMotion(LOCALID_UPPER_FLOOR_FIRST_PATROL, 0,
+                                            0);
   OBJECT_ANIMATION(LOCALID_UPPER_FLOOR_FIRST_PATROL, 0);
   OBJECT_FACE(LOCALID_UPPER_FLOOR_FIRST_PATROL, LOCALID_PARTY_LEADER, 0);
   FieldEffect_SpawnLinked(LOCALID_UPPER_FLOOR_FIRST_PATROL,
-                        EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+                          EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   LunpaFortress_GuardThrowsPartyOut(LOCALID_UPPER_FLOOR_SECOND_PATROL);
   SCRIPT_END();
 }
@@ -457,8 +466,7 @@ A map's functions take its name (`Vault_`, `VaultRevisit_`,
 map event table names are `EventScript_` instead. Shared helpers take their family's
 prefix (`Colosso_`, `MercuryLighthouse_`, `KolimaPalette_`, `PushedObject_`, and
 `FieldEffect_` for the field effects). Some keep older descriptive names
-(`ObjectEvent_RampWords24And28Over16Frames`, `Map_`) until the maps that call
-them are humanized. The spellings some sites keep to match (fields reached
+(`Map_`) until the maps that call them are humanized. The spellings some sites keep to match (fields reached
 through `offsetof`, another struct's view of an object event, update hooks returning
 `s32`) are in [Matching](../MATCHING.md).
 

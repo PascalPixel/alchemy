@@ -1005,27 +1005,27 @@ static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
 /// objective, and a place for a friend to cheer. With a friend alone on the
 /// stages (COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) he asks whether they are
 /// done cheering instead.
-static void EventScript_TalkToRockAttendant(s32 scene) {
+static void EventScript_TalkToRockAttendant(s32 localId) {
   s32 path;
 
   if (gGameState.warpDest == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
-    Colosso_AskDoneCheering(scene);
+    Colosso_AskDoneCheering(localId);
   } else {
     FieldScript_Start();
-    path = Colosso_GreetAtStage(scene, 1);
+    path = Colosso_GreetAtStage(localId, 1);
     if (path == COLOSSO_GUIDE_DESCRIBE) {
       FieldScript_SetMessageId(MsgColossoCallRockChallenge);
       FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
       FieldCamera_MoveTo(PIXELS(328), -1, PIXELS(168), 1);
       FieldCamera_WaitForArrival();
-      FieldScript_ShowMessageAndWait(scene, 0);
+      FieldScript_ShowMessageAndWait(localId, 0);
       Colosso_FadeInWarrior(LOCALID_PARTY_LEADER, 280, 200);
       ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
       ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 360, 200);
       FieldScript_WaitFrames(30);
       ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE,
                             60);
-      FieldScript_ShowMessageAndWait(scene, 0);
+      FieldScript_ShowMessageAndWait(localId, 0);
       ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 312, 200);
       FieldScript_WaitFrames(30);
       ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 10);
@@ -1050,16 +1050,16 @@ static void EventScript_TalkToRockAttendant(s32 scene) {
       ColosseumAzartMatch_PushObjectAhead();
       ObjectEvent_ResetMotionFields(LOCALID_PARTY_LEADER);
       Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
-      FieldScript_ShowMessageAndWait(scene, 0);
+      FieldScript_ShowMessageAndWait(localId, 0);
       Colosso_RestoreWarrior(LOCALID_PARTY_LEADER);
       FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 0);
       ObjectEvent_SetPosition(LOCALID_ROCK_A, PIXELS(312), PIXELS(168));
-      Colosso_RepeatStageNumber(scene, 1);
+      Colosso_RepeatStageNumber(localId, 1);
     } else if (path == COLOSSO_GUIDE_OFFER_CHEERING) {
       FieldScript_SetMessageId(MsgColossoObjectiveStageClear);
-      FieldScript_ShowMessageAndWait(scene, 0);
+      FieldScript_ShowMessageAndWait(localId, 0);
     }
-    Colosso_OfferCheeringSpot(path, scene, 1);
+    Colosso_OfferCheeringSpot(path, localId, 1);
     FieldScript_End();
   }
 }
@@ -1141,24 +1141,24 @@ static void EventScript_TalkToPipeworksAttendant(s32 attendant) {
 /// The Broken Bridge's attendant, stage 3 of Colosseum Final 1: the first time,
 /// Isaac appears and times his crossing; then that the bridge's operator will
 /// cheer for him, and a place for a friend to cheer.
-static void EventScript_TalkToBridgeAttendant(s32 scene) {
+static void EventScript_TalkToBridgeAttendant(s32 localId) {
   s32 path;
 
   if (gGameState.warpDest == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
-    Colosso_AskDoneCheering(scene);
+    Colosso_AskDoneCheering(localId);
   } else {
     FieldScript_Start();
-    path = Colosso_GreetAtStage(scene, 3);
+    path = Colosso_GreetAtStage(localId, 3);
     if (path == COLOSSO_GUIDE_DESCRIBE) {
       FieldScript_SetMessageId(MsgColossoTheyCallBrokenBridge);
       ColosseumAzartMatch_ResetBrokenBridge();
       FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
       FieldCamera_MoveTo(PIXELS(840), -1, PIXELS(216), 1);
       FieldCamera_WaitForArrival();
-      Script_ShowMessage(scene, 0);
+      Script_ShowMessage(localId, 0);
       ColosseumAzartMatch_StartBrokenBridge();
       FieldScript_WaitFrames(60);
-      Script_ShowMessage(scene, 0);
+      Script_ShowMessage(localId, 0);
       Colosso_FadeInWarrior(LOCALID_PARTY_LEADER, 736, 200);
       /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
        * show, which sets r0 last; as a direct call, 1 of 99 instructions
@@ -1170,15 +1170,15 @@ static void EventScript_TalkToBridgeAttendant(s32 scene) {
       FieldScript_WaitFrames(30);
       ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER,
                             EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-      Script_ShowMessage(scene, 0);
+      Script_ShowMessage(localId, 0);
       Colosso_RestoreWarrior(LOCALID_PARTY_LEADER);
       FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 0);
-      Colosso_RepeatStageNumber(scene, 3);
+      Colosso_RepeatStageNumber(localId, 3);
     } else if (path == COLOSSO_GUIDE_OFFER_CHEERING) {
       FieldScript_SetMessageId(MsgColossoOperatorBridgeWillAlsoCheer);
-      Script_ShowMessage(scene, 0);
+      Script_ShowMessage(localId, 0);
     }
-    Colosso_OfferCheeringSpot(path, scene, 3);
+    Colosso_OfferCheeringSpot(path, localId, 3);
     FieldScript_End();
   }
 }
@@ -1186,28 +1186,28 @@ static void EventScript_TalkToBridgeAttendant(s32 scene) {
 /// The Lumber Water Crossing Area's attendant, stage 4 of Colosseum Final 1:
 /// the first time, a pointer shows the water tank and Isaac appears and rolls a
 /// log across; then the objective, and a place for a friend to cheer.
-static void EventScript_TalkToLumberAttendant(s32 scene) {
+static void EventScript_TalkToLumberAttendant(s32 localId) {
   s32 path;
 
   if (gGameState.warpDest == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
-    Colosso_AskDoneCheering(scene);
+    Colosso_AskDoneCheering(localId);
     return;
   }
   FieldScript_Start();
-  path = Colosso_GreetAtStage(scene, 4);
+  path = Colosso_GreetAtStage(localId, 4);
   if (path == COLOSSO_GUIDE_DESCRIBE) {
     FieldScript_SetMessageId(MsgColossoPlaceNormallyCalledLumberWater);
     FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
     FieldCamera_MoveTo(PIXELS(1088), -1, PIXELS(168), 1);
     FieldCamera_WaitForArrival();
-    Script_ShowMessage(scene, 0);
+    Script_ShowMessage(localId, 0);
     Colosso_ShowPointer(120, 72, 0);
-    Script_ShowMessage(scene, 0);
+    Script_ShowMessage(localId, 0);
     Colosso_HidePointer();
     FieldScript_WaitFrames(15);
     Colosso_FadeInWarrior(LOCALID_PARTY_LEADER, 984, 200);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 10);
-    Script_ShowMessage(scene, 0);
+    Script_ShowMessage(localId, 0);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 30);
     ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER,
                           EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
@@ -1229,16 +1229,16 @@ static void EventScript_TalkToLumberAttendant(s32 scene) {
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 30);
     ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE,
                           60);
-    Script_ShowMessage(scene, 0);
+    Script_ShowMessage(localId, 0);
     Colosso_RestoreWarrior(LOCALID_PARTY_LEADER);
     FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 0);
     ObjectEvent_SetPosition(LOCALID_LOG_EAST_WEST, PIXELS(1016), PIXELS(168));
-    Colosso_RepeatStageNumber(scene, 4);
+    Colosso_RepeatStageNumber(localId, 4);
   } else if (path == COLOSSO_GUIDE_OFFER_CHEERING) {
     FieldScript_SetMessageId(MsgColossoLogsKeyClearingStage);
-    Script_ShowMessage(scene, 0);
+    Script_ShowMessage(localId, 0);
   }
-  Colosso_OfferCheeringSpot(path, scene, 4);
+  Colosso_OfferCheeringSpot(path, localId, 4);
   FieldScript_End();
 }
 

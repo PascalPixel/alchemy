@@ -96,6 +96,7 @@
 #include "system.h"
 #include "mem.h"
 #include "field_service.h"
+#include "map_grid.h"
 #include "flags.h"
 #include "text/msg_ids.h"
 #include "battle_unit.h"
@@ -627,17 +628,17 @@ static void ColosseumNavampaMatch_UpdateEastEndCollision(void) {
   struct ObjectEvent *objectEvent;
   s32 x;
   s32 z;
-  s32 collisionKind;
+  s32 behavior;
 
   objectEvent = ObjectEvent_GetById(gGameState.leaderLocalId);
   x = objectEvent->x.fixed >> 20;
-  collisionKind = 23;
+  behavior = 23;
   z = objectEvent->z.fixed >> 20;
   if (x == 81 && z == 12) {
     if ((objectEvent->facing & 0xE000) == 0x4000) {
-      collisionKind = 253;
+      behavior = MB_CLIMB;
     }
-    MapGrid_SetMetatileBehaviorAt(0, x << 20, z << 20, collisionKind);
+    MapGrid_SetMetatileBehaviorAt(0, x << 20, z << 20, behavior);
   }
 }
 
@@ -646,7 +647,7 @@ static void ColosseumNavampaMatch_UpdateEastEndCollision(void) {
 static s32 ColosseumNavampaMatch_CheckLongLogCell(s32 x, s32 z) {
   struct ObjectEvent *objectEvent;
 
-  if (MapGrid_GetMetatileBehaviorAt(0, x, z) == 255) {
+  if (MapGrid_GetMetatileBehaviorAt(0, x, z) == MB_WALL) {
     return -2;
   }
   objectEvent = ObjectEvent_GetById(LOCALID_LOG_AREA_STONE_A);

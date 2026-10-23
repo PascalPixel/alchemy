@@ -123,6 +123,7 @@
 #include "songs.h"
 #include "audio_engine_symbols.h"
 #include "item_ids.h"
+#include "map_grid.h"
 
 /// The placed object events, numbering each map's template rows from
 /// LOCALID_FIRST_PLACED: Fever in Imil Falls Cave, the floating logs of Fuchin
@@ -1802,8 +1803,8 @@ static void Imil_SlideObjectEventAcrossIce(void) {
   struct ObjectEvent *objectEvent;
   struct FieldPosition probe;
   s32 heading;
-  s32 startCollision;
-  s32 nextCollision;
+  s32 startBehavior;
+  s32 nextBehavior;
   s32 z;
   s32 x;
 
@@ -1823,12 +1824,12 @@ static void Imil_SlideObjectEventAcrossIce(void) {
     probe.z = (objectEvent->z.fixed & 0xfff00000) + PIXELS(8);
     z = probe.z;
     x = probe.x;
-    startCollision = MapGrid_GetMetatileBehaviorAt(objectEvent->layer, x, z);
+    startBehavior = MapGrid_GetMetatileBehaviorAt(objectEvent->layer, x, z);
     FieldVector_AddPolarOffset(PIXELS(16), heading, &probe);
 
-    nextCollision =
+    nextBehavior =
         MapGrid_GetMetatileBehaviorAt(objectEvent->layer, probe.x, probe.z);
-    if (nextCollision == 255 ||
+    if (nextBehavior == MB_WALL ||
         MapGrid_GetTerrainHeight(objectEvent->layer, probe.x, probe.z) -
                 objectEvent->y.fixed >
             PIXELS(8)) {
@@ -1852,9 +1853,9 @@ static void Imil_SlideObjectEventAcrossIce(void) {
     // Keep sliding through cells with the same metatile behavior.
     for (;;) {
       FieldVector_AddPolarOffset(PIXELS(16), heading, &probe);
-      nextCollision =
+      nextBehavior =
           MapGrid_GetMetatileBehaviorAt(objectEvent->layer, probe.x, probe.z);
-      if (nextCollision == 255) {
+      if (nextBehavior == MB_WALL) {
         break;
       }
       if (MapGrid_GetTerrainHeight(objectEvent->layer, probe.x, probe.z) -
@@ -1868,7 +1869,7 @@ static void Imil_SlideObjectEventAcrossIce(void) {
       objectEvent->acceleration = PIXELS(1) / 10;
       Object_SetPosition(objectEvent, probe.x, probe.y, probe.z);
       Object_WaitForMove(objectEvent);
-      if (nextCollision != startCollision) {
+      if (nextBehavior != startBehavior) {
         goto blocked;
       }
     }

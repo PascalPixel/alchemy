@@ -9,7 +9,7 @@
 ///
 /// - The festival (neither story flag set). The trials have begun at the
 ///   colosseum, but Babi is not there, and his soldiers are searching the
-///   town. The first time the party steps on TOLBI_CELL_SOLDIERS, two of them
+///   town. The first time the party steps on MB_TOLBI_SOLDIERS, two of them
 ///   stop it to show his picture, `Have you seen anyone who looks like
 ///   this?`, and go their way whatever it answers
 ///   (Tolbi_MeetSearchingSoldiers, FLAG_TOLBI_SOLDIERS_ASKED_ABOUT_BABI).
@@ -31,7 +31,7 @@
 /// (https://alchemy.pascalpixel.com/places/tolbi/events/Tolbi_TalkToOlderBrother.gif).
 /// A visitor testing his luck stands at the gate of Tolbi Spring; once the
 /// party agrees to go first he steps aside for good (Tolbi_TalkToSpringVisitor,
-/// FLAG_TOLBI_SPRING_OPENED), and the gate (TOLBI_CELL_SPRING_GATE) leads into
+/// FLAG_TOLBI_SPRING_OPENED), and the gate (MB_TOLBI_GATE_TO_SPRING) leads into
 /// Tolbi Spring (TOLBI_TO_TOLBI_SPRING). Ember, a Mars Djinni, joins the party
 /// when spoken to. Growth raises a sprout and Frost freezes a puddle, each a
 /// map flag kept only through a return that keeps the party's position;
@@ -75,6 +75,7 @@
 #include "objcmd.h"
 #include "songs.h"
 #include "fixed_math.h"
+#include "map_grid.h"
 
 #if TBS_PATCH_1
 #define TOLBI_JAR_SEARCH_KIND                                                  \
@@ -209,7 +210,7 @@ static void Tolbi_GrowSprout(void) {
   }
   sprout = ObjectEvent_GetById(LOCALID_TOLBI_SPROUT);
   ObjectEvent_SetSpriteFlags(sprout, 0);
-  Field_SetMetatileBehaviorAt(0, PIXELS(544), PIXELS(288), 253);
+  Field_SetMetatileBehaviorAt(0, PIXELS(544), PIXELS(288), MB_CLIMB);
   Engine_GameFlagSet(FLAG_MAP_TEMP_00);
 }
 
@@ -217,14 +218,14 @@ static void Tolbi_GrowSprout(void) {
 /// moves into place.
 static void Tolbi_RevealHiddenChest(void) {
   MapGrid_CopyCellAttributes(3, 32, 1, 1, 3, 26);
-  TreasureSpot_SetPosition(TOLBI_HIDDEN_CHEST, PIXELS(56), PIXELS(424));
+  TreasureSpot_SetPosition(MB_TOLBI_HIDDEN_CHEST, PIXELS(56), PIXELS(424));
 }
 
 /// When Reveal wears off, the chest's cell is covered again and the chest
 /// moves out of sight.
 static void Tolbi_HideRevealedChest(void) {
   MapGrid_CopyCellAttributes(2, 25, 1, 1, 3, 26);
-  TreasureSpot_SetPosition(TOLBI_HIDDEN_CHEST, -1, -1);
+  TreasureSpot_SetPosition(MB_TOLBI_HIDDEN_CHEST, -1, -1);
 }
 
 /// The first sign at Tolbi Spring: face away and toss a coin in.
@@ -550,7 +551,7 @@ static void Tolbi_TalkToSpringVisitor(void) {
   FieldScript_End();
 }
 
-/// The gate to Tolbi Spring (TOLBI_CELL_SPRING_GATE), once the visitor at the
+/// The gate to Tolbi Spring (MB_TOLBI_GATE_TO_SPRING), once the visitor at the
 /// gate has stepped aside.
 static void Tolbi_EnterSpring(void) {
   Engine_ScriptRequestWarp(TOLBI_TO_TOLBI_SPRING);
@@ -566,7 +567,7 @@ static void Tolbi_RequestTouchedWarp(void) {
 
 /// Two soldiers searching for the missing Babi stop the party and show his
 /// picture. They do so during the festival, the first time the party steps on
-/// TOLBI_CELL_SOLDIERS. "Have you seen anyone who looks like this?" They leave
+/// MB_TOLBI_SOLDIERS. "Have you seen anyone who looks like this?" They leave
 /// either way the party answers. Sets FLAG_TOLBI_SOLDIERS_ASKED_ABOUT_BABI.
 static void Tolbi_MeetSearchingSoldiers(void) {
   s32 firstMsg;
@@ -888,8 +889,8 @@ struct MapEvent gTolbiEventsFestival[] = {
     { MAP_EVENT_WARP, 12, CONDITION_ALWAYS, TOLBI_TO_WORLD_MAP },
     { COORD_EVENT_WALKING_INTO(FACING_SOUTH), TOLBI_TO_WORLD_MAP, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedWarp) },
     { MAP_EVENT_COORD | MAP_EVENT_FLAG_FACING | FACING_NORTH, TOLBI_TO_LUCKY_DICE, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedWarp) },
-    { MAP_EVENT_COORD, TOLBI_CELL_SOLDIERS, FLAG_TOLBI_SOLDIERS_ASKED_ABOUT_BABI, EVENT_SCRIPT(Tolbi_MeetSearchingSoldiers) },
-    { MAP_EVENT_COORD | MAP_EVENT_FLAG_FACING | FACING_NORTH, TOLBI_CELL_SPRING_GATE, IF_FLAG_SET(FLAG_TOLBI_SPRING_OPENED), EVENT_SCRIPT(Tolbi_EnterSpring) },
+    { MAP_EVENT_COORD, MB_TOLBI_SOLDIERS, FLAG_TOLBI_SOLDIERS_ASKED_ABOUT_BABI, EVENT_SCRIPT(Tolbi_MeetSearchingSoldiers) },
+    { MAP_EVENT_COORD | MAP_EVENT_FLAG_FACING | FACING_NORTH, MB_TOLBI_GATE_TO_SPRING, IF_FLAG_SET(FLAG_TOLBI_SPRING_OPENED), EVENT_SCRIPT(Tolbi_EnterSpring) },
     { MAP_EVENT_TALK, LOCALID_TOLBI_EXCITED_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiTolbisAlwaysReallyBustlingDuringColosso) },
     { MAP_EVENT_TALK, LOCALID_TOLBI_HURRYING_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiColossoIsHeldInTheColosseum) },
     { MAP_EVENT_TALK, LOCALID_TOLBI_FINALS_FAN, CONDITION_ALWAYS, MSGNO(MsgTolbiTryoutsStartedAtTheColosseumToday) },
@@ -928,12 +929,12 @@ struct MapEvent gTolbiEventsFestival[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_SCALPER, CONDITION_ALWAYS, MSGNO(MsgTolbiIveBeenGuardingOurSpotBut) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_SPRING_VISITOR, CONDITION_ALWAYS, MSGNO(MsgTolbiIKeepLosingCoinsButI) },
     { MAP_EVENT_TALK, LOCALID_TOLBI_EMBER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_JoinEmber) },
-    { BG_EVENT(BG_EVENT_SILENT), TOLBI_SPRING_SIGN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_ReadSpringSign) },
-    { BG_EVENT(BG_EVENT_SILENT), TOLBI_LUCKY_MEDAL_SIGN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_ReadLuckyMedalSign) },
-    { BG_EVENT(BG_EVENT_BARREL), TOLBI_BARREL, FLAG_TOLBI_BARREL_COINS, FIND_COINS(9) },
+    { BG_EVENT(BG_EVENT_SILENT), MB_TOLBI_SPRING_SIGN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_ReadSpringSign) },
+    { BG_EVENT(BG_EVENT_SILENT), MB_TOLBI_LUCKY_MEDAL_SIGN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_ReadLuckyMedalSign) },
+    { BG_EVENT(BG_EVENT_BARREL), MB_TOLBI_BARREL, FLAG_TOLBI_BARREL_COINS, FIND_COINS(9) },
 // The international editions find the jar only when the party faces north.
-    { TOLBI_JAR_SEARCH_KIND, TOLBI_JAR, FLAG_TOLBI_JAR_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { BG_EVENT(BG_EVENT_CHEST), TOLBI_HIDDEN_CHEST, FLAG_TOLBI_CHEST_POWER_BREAD, FIND_ITEM(ITEM_POWER_BREAD) },
+    { TOLBI_JAR_SEARCH_KIND, MB_TOLBI_JAR, FLAG_TOLBI_JAR_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { BG_EVENT(BG_EVENT_CHEST), MB_TOLBI_HIDDEN_CHEST, FLAG_TOLBI_CHEST_POWER_BREAD, FIND_ITEM(ITEM_POWER_BREAD) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_TOLBI_PUDDLE, FLAG_MAP_TEMP_01, EVENT_SCRIPT(Tolbi_FreezePuddle) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RevealHiddenChest) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_HideRevealedChest) },
@@ -957,7 +958,7 @@ struct MapEvent gTolbiEventsFinalsDay[] = {
     { MAP_EVENT_WARP, 12, CONDITION_ALWAYS, TOLBI_TO_WORLD_MAP },
     { COORD_EVENT_WALKING_INTO(FACING_SOUTH), TOLBI_TO_WORLD_MAP, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedWarp) },
     { MAP_EVENT_COORD | MAP_EVENT_FLAG_FACING | FACING_NORTH, TOLBI_TO_LUCKY_DICE, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedWarp) },
-    { MAP_EVENT_COORD | MAP_EVENT_FLAG_FACING | FACING_NORTH, TOLBI_CELL_SPRING_GATE, IF_FLAG_SET(FLAG_TOLBI_SPRING_OPENED), EVENT_SCRIPT(Tolbi_EnterSpring) },
+    { MAP_EVENT_COORD | MAP_EVENT_FLAG_FACING | FACING_NORTH, MB_TOLBI_GATE_TO_SPRING, IF_FLAG_SET(FLAG_TOLBI_SPRING_OPENED), EVENT_SCRIPT(Tolbi_EnterSpring) },
     { MAP_EVENT_TALK, LOCALID_TOLBI_EXCITED_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiColossoWillReachItsApexAny) },
     { MAP_EVENT_TALK, LOCALID_TOLBI_HURRYING_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiAreYouPlanningToWatchThe) },
     { MAP_EVENT_TALK, LOCALID_TOLBI_FINALS_FAN, CONDITION_ALWAYS, MSGNO(MsgTolbiMyFamilySavedMeASeat) },
@@ -998,11 +999,11 @@ struct MapEvent gTolbiEventsFinalsDay[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_SCALPER, CONDITION_ALWAYS, MSGNO(MsgTolbiTodayIsABigDayFor) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_SPRING_VISITOR, CONDITION_ALWAYS, MSGNO(MsgTolbiIKeepLosingCoinsButI) },
     { MAP_EVENT_TALK, LOCALID_TOLBI_EMBER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_JoinEmber) },
-    { BG_EVENT(BG_EVENT_SILENT), TOLBI_SPRING_SIGN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_ReadSpringSign) },
-    { BG_EVENT(BG_EVENT_SILENT), TOLBI_LUCKY_MEDAL_SIGN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_ReadLuckyMedalSign) },
-    { BG_EVENT(BG_EVENT_BARREL), TOLBI_BARREL, FLAG_TOLBI_BARREL_COINS, FIND_COINS(9) },
-    { BG_EVENT(BG_EVENT_JAR), TOLBI_JAR, FLAG_TOLBI_JAR_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { BG_EVENT(BG_EVENT_CHEST), TOLBI_HIDDEN_CHEST, FLAG_TOLBI_CHEST_POWER_BREAD, FIND_ITEM(ITEM_POWER_BREAD) },
+    { BG_EVENT(BG_EVENT_SILENT), MB_TOLBI_SPRING_SIGN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_ReadSpringSign) },
+    { BG_EVENT(BG_EVENT_SILENT), MB_TOLBI_LUCKY_MEDAL_SIGN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_ReadLuckyMedalSign) },
+    { BG_EVENT(BG_EVENT_BARREL), MB_TOLBI_BARREL, FLAG_TOLBI_BARREL_COINS, FIND_COINS(9) },
+    { BG_EVENT(BG_EVENT_JAR), MB_TOLBI_JAR, FLAG_TOLBI_JAR_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { BG_EVENT(BG_EVENT_CHEST), MB_TOLBI_HIDDEN_CHEST, FLAG_TOLBI_CHEST_POWER_BREAD, FIND_ITEM(ITEM_POWER_BREAD) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_TOLBI_PUDDLE, FLAG_MAP_TEMP_01, EVENT_SCRIPT(Tolbi_FreezePuddle) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RevealHiddenChest) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_HideRevealedChest) },
@@ -1026,7 +1027,7 @@ struct MapEvent gTolbiEventsAfterColosso[] = {
     { MAP_EVENT_WARP, 12, CONDITION_ALWAYS, TOLBI_TO_WORLD_MAP },
     { COORD_EVENT_WALKING_INTO(FACING_SOUTH), TOLBI_TO_WORLD_MAP, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedWarp) },
     { MAP_EVENT_COORD | MAP_EVENT_FLAG_FACING | FACING_NORTH, TOLBI_TO_LUCKY_DICE, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedWarp) },
-    { MAP_EVENT_COORD | MAP_EVENT_FLAG_FACING | FACING_NORTH, TOLBI_CELL_SPRING_GATE, IF_FLAG_SET(FLAG_TOLBI_SPRING_OPENED), EVENT_SCRIPT(Tolbi_EnterSpring) },
+    { MAP_EVENT_COORD | MAP_EVENT_FLAG_FACING | FACING_NORTH, MB_TOLBI_GATE_TO_SPRING, IF_FLAG_SET(FLAG_TOLBI_SPRING_OPENED), EVENT_SCRIPT(Tolbi_EnterSpring) },
     { MAP_EVENT_TALK, LOCALID_TOLBI_EXCITED_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiWellThisYearsColossoHasEnded) },
     { MAP_EVENT_TALK, LOCALID_TOLBI_HURRYING_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiItsBackToOurNormalQuiet) },
     { MAP_EVENT_TALK, LOCALID_TOLBI_FINALS_FAN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_AskWhetherPartyWasInFinals) },
@@ -1051,11 +1052,11 @@ struct MapEvent gTolbiEventsAfterColosso[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_SNACK_VENDOR, CONDITION_ALWAYS, MSGNO(MsgTolbiHowCanWeGetHomeIf) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_SPRING_VISITOR, CONDITION_ALWAYS, MSGNO(MsgTolbiIKeepLosingCoinsButI) },
     { MAP_EVENT_TALK, LOCALID_TOLBI_EMBER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_JoinEmber) },
-    { BG_EVENT(BG_EVENT_SILENT), TOLBI_SPRING_SIGN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_ReadSpringSign) },
-    { BG_EVENT(BG_EVENT_SILENT), TOLBI_LUCKY_MEDAL_SIGN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_ReadLuckyMedalSign) },
-    { BG_EVENT(BG_EVENT_BARREL), TOLBI_BARREL, FLAG_TOLBI_BARREL_COINS, FIND_COINS(9) },
-    { BG_EVENT(BG_EVENT_JAR), TOLBI_JAR, FLAG_TOLBI_JAR_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { BG_EVENT(BG_EVENT_CHEST), TOLBI_HIDDEN_CHEST, FLAG_TOLBI_CHEST_POWER_BREAD, FIND_ITEM(ITEM_POWER_BREAD) },
+    { BG_EVENT(BG_EVENT_SILENT), MB_TOLBI_SPRING_SIGN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_ReadSpringSign) },
+    { BG_EVENT(BG_EVENT_SILENT), MB_TOLBI_LUCKY_MEDAL_SIGN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_ReadLuckyMedalSign) },
+    { BG_EVENT(BG_EVENT_BARREL), MB_TOLBI_BARREL, FLAG_TOLBI_BARREL_COINS, FIND_COINS(9) },
+    { BG_EVENT(BG_EVENT_JAR), MB_TOLBI_JAR, FLAG_TOLBI_JAR_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { BG_EVENT(BG_EVENT_CHEST), MB_TOLBI_HIDDEN_CHEST, FLAG_TOLBI_CHEST_POWER_BREAD, FIND_ITEM(ITEM_POWER_BREAD) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_TOLBI_PUDDLE, FLAG_MAP_TEMP_01, EVENT_SCRIPT(Tolbi_FreezePuddle) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RevealHiddenChest) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_HideRevealedChest) },

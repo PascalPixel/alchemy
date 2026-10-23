@@ -250,14 +250,19 @@ enum { SHOP_ALTIN_WEAPONS = 19, SHOP_ALTIN_ARMOR = 20, SHOP_ALTIN_ITEMS = 21 };
 /// Altin's inn, as Inn_CheckIn numbers the inns.
 enum { ALTIN_INN = 6 };
 
-/// The doors of the village, by their index in gAltin_Doors.
-enum {
+/// The metatile behaviors Altin's map events answer.
+enum AltinMetatileBehavior {
   /// The doors' coord events are numbered from 2 in the village's map events,
   /// and each takes the warp of its own number.
-  FIRST_DOOR_TRIGGER = 2,
+  MB_ALTIN_FIRST_DOOR = 2,
+  MB_ALTIN_NEAR_BEAST = 20
+};
+
+/// The doors of the village, by their index in gAltin_Doors.
+enum {
   /// The Sanctum's door, which leads to SANCTUM_FROM_ALTIN.
-  DOOR_SANCTUM = ALTIN_TO_SANCTUM - FIRST_DOOR_TRIGGER,
-  DOOR_STRAIGHT_IN = ALTIN_TO_ALTIN_INTERIORS_EAST - FIRST_DOOR_TRIGGER
+  DOOR_SANCTUM = ALTIN_TO_SANCTUM - MB_ALTIN_FIRST_DOOR,
+  DOOR_STRAIGHT_IN = ALTIN_TO_ALTIN_INTERIORS_EAST - MB_ALTIN_FIRST_DOOR
 };
 
 #define WATER_BEAST_HOP_PERIOD 60
@@ -281,8 +286,6 @@ enum {
 #define WATER_SPRAY_LATERAL_STEP(timer, wobble)                                \
   (((timer) << 12) + ((wobble) << 15))
 #endif
-
-enum { TRIGGER_NEAR_BEAST = 20 };
 
 static void Altin_ApplyWaterLevel(void);
 static void AltinInteriors_PlaceSheltering(void);
@@ -617,7 +620,7 @@ static void Altin_EnterDoor(void) {
   // The bytes read the entry through byte offsets and sign-extend the door
   // number by shifts; indexing the structs loads the fields differently.
   doorBytes = (u8 *)gAltin_Doors;
-  doorIndex = ((*(u16 *)&work->coordEvent - FIRST_DOOR_TRIGGER) << 16) >> 16;
+  doorIndex = ((*(u16 *)&work->coordEvent - MB_ALTIN_FIRST_DOOR) << 16) >> 16;
   doorByteOffset = doorIndex << 3;
   coordinatesByteOffset = doorByteOffset + 4;
   column = *(s16 *)(doorBytes + coordinatesByteOffset);
@@ -639,7 +642,7 @@ static void Altin_EnterDoor(void) {
     // (8, 17), above where the party comes back out
     // (ALTIN_FROM_ALTIN_INTERIORS_NORTH), so that doorway is drawn open here
     // (a render with this copy made on entry shows the open doorway).
-    if (doorIndex == ALTIN_TO_ALTIN_INTERIORS_NORTH - FIRST_DOOR_TRIGGER) {
+    if (doorIndex == ALTIN_TO_ALTIN_INTERIORS_NORTH - MB_ALTIN_FIRST_DOOR) {
       MapGrid_CopyCellsTo(33, 42, 8, 17, 1, 2);
     }
     MapGrid_AnimateCells(gAltin_Doors[doorIndex].steps, column, row);
@@ -1307,7 +1310,7 @@ struct MapEvent gAltin_Events[] = {
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_FLOODED_ITEM_MERCHANT, CONDITION_ALWAYS,
         MSGNO(MsgAltinIfMyGoodsAreWetIll)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_STONE_STATUE, CONDITION_ALWAYS, EVENT_SCRIPT(Altin_CheckPillarMoved)},
-    {MAP_EVENT_COORD, TRIGGER_NEAR_BEAST, FLAG_ALTIN_WATER_BEAST_LEFT, EVENT_SCRIPT(Altin_ScareOffBeast)},
+    {MAP_EVENT_COORD, MB_ALTIN_NEAR_BEAST, FLAG_ALTIN_WATER_BEAST_LEFT, EVENT_SCRIPT(Altin_ScareOffBeast)},
     {MAP_EVENTS_END},
 };
 

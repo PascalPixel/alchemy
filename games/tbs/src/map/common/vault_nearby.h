@@ -24,7 +24,7 @@ static s32 Vault_UpdateWalkingVillager(union FieldObject *fieldObject) {
 #endif
   struct ObjectEvent *self = (struct ObjectEvent *)fieldObject;
   u8 **globals = gWindowWork;
-  u8 *scene = globals[0];
+  u8 *windowWork = globals[0];
   u8 *workspace = globals[12];
   s16 *flags = &self->timer;
   s32 force = 0;
@@ -48,7 +48,7 @@ static s32 Vault_UpdateWalkingVillager(union FieldObject *fieldObject) {
   player = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
 
   if (*(s16 *)(workspace + 376) != 0 ||
-      scene[WINDOW_WORK_MIND_READ_OFFSET] != 0) {
+      windowWork[WINDOW_WORK_MIND_READ_OFFSET] != 0) {
     range = 26;
     if ((*flags & 2) != 0) {
       force = 1;

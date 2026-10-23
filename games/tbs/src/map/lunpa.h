@@ -13,10 +13,10 @@
 
 // Lunpa's and the gates' entrances and exits are in scene_links.h.
 
-/// The exit the gates' third road (TRIGGER_THIRD_ROAD) requests, which
-/// gGateWarps has no row for. Map_TakeWarp, reaching the end of the gates'
-/// exits, falls back to the scene of their first exit at entrance 0, so the
-/// road leads to LunpaFortressGroundFloor's default entrance.
+/// The exit the gates' third road (MB_LUNPA_FORTRESS_GATES_THIRD_ROAD)
+/// requests, which gGateWarps has no row for. Map_TakeWarp, reaching the end of
+/// the gates' exits, falls back to the scene of their first exit at entrance 0,
+/// so the road leads to LunpaFortressGroundFloor's default entrance.
 enum { GATE_WARP_THIRD = 3 };
 
 /// The first of the rooms in LunpaInteriors that Lunpa's doors lead into.
@@ -25,38 +25,47 @@ enum { ROOM_WARP_DEST_FIRST = 1 };
 #define ROOM_WARP_DEST(warp)                                                   \
   ((warp) - LUNPA_TO_FIRST_HOME + ROOM_WARP_DEST_FIRST)
 
-enum LunpaTrigger {
-  TRIGGER_WORLD_MAP_ROAD = 1,
-  TRIGGER_GATE_ROAD,
-  TRIGGER_CAVE_ROAD,
-  TRIGGER_FIRST_HOME_DOOR,
-  TRIGGER_SECOND_HOME_DOOR,
-  TRIGGER_THIRD_HOME_DOOR,
-  TRIGGER_ARMS_SHOP_DOOR,
-  TRIGGER_ITEM_SHOP_DOOR,
-  TRIGGER_INN_DOOR,
-  TRIGGER_TEMPLE_DOOR,
-  TRIGGER_EIGHTH_ROOM_DOOR,
-  TRIGGER_HIDDEN_PASSAGE,
-  TRIGGER_HIDDEN_SWITCH = 20,
-  TRIGGER_WELL = 90,
-  TRIGGER_GRAVE_SLEEP_BOMB = 100,
-  TRIGGER_BARREL_NUT,
-  TRIGGER_PSYNERGY_STONE
+/// The metatile behaviors Lunpa's map events answer.
+enum LunpaMetatileBehavior {
+  MB_LUNPA_WORLD_MAP_ROAD = 1,
+  MB_LUNPA_GATE_ROAD,
+  MB_LUNPA_CAVE_ROAD,
+  MB_LUNPA_FIRST_HOME_DOOR,
+  MB_LUNPA_SECOND_HOME_DOOR,
+  MB_LUNPA_THIRD_HOME_DOOR,
+  MB_LUNPA_ARMS_SHOP_DOOR,
+  MB_LUNPA_ITEM_SHOP_DOOR,
+  MB_LUNPA_INN_DOOR,
+  MB_LUNPA_TEMPLE_DOOR,
+  MB_LUNPA_EIGHTH_ROOM_DOOR,
+  MB_LUNPA_HIDDEN_PASSAGE,
+  MB_LUNPA_HIDDEN_SWITCH = 20,
+  /// ★ Named from the game: "peered into the well" (MsgFieldPeeredWell)
+  MB_LUNPA_WELL = 90,
+  MB_LUNPA_GRAVE_SLEEP_BOMB = 100,
+  /// ★ Named from the game: "checked the barrel" (MsgVaultIsaacCheckedBarrel)
+  MB_LUNPA_BARREL_NUT,
+  /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
+  MB_LUNPA_PSYNERGY_STONE
 };
 
-enum GateTrigger {
-  TRIGGER_FORTRESS_DOOR = 1,
-  TRIGGER_LUNPA_ROAD,
-  TRIGGER_THIRD_ROAD,
-  TRIGGER_GUARDED_GROUND = 10,
-  TRIGGER_FORTRESS_APPROACH = 20,
-  TRIGGER_PARTY_SPOTTED = 91
+/// The metatile behaviors the Lunpa Fortress Gates' map events answer.
+enum LunpaFortressGatesMetatileBehavior {
+  MB_LUNPA_FORTRESS_GATES_FORTRESS_DOOR = 1,
+  MB_LUNPA_FORTRESS_GATES_LUNPA_ROAD,
+  MB_LUNPA_FORTRESS_GATES_THIRD_ROAD,
+  MB_LUNPA_FORTRESS_GATES_GUARDED_GROUND = 10,
+  MB_LUNPA_FORTRESS_GATES_FORTRESS_APPROACH = 20,
+  /// ★ Named from the game: "peered into the well" (MsgFieldPeeredWell)
+  MB_LUNPA_FORTRESS_GATES_WELL = 90
 };
+
+/// The event the gates' guards raise on spotting the uncloaked party.
+enum LunpaFortressGatesRaisedEvent { RAISED_PARTY_SPOTTED = 91 };
 
 enum {
   DOOR_COUNT = 8,
-  DOOR_TEMPLE = TRIGGER_TEMPLE_DOOR - TRIGGER_FIRST_HOME_DOOR
+  DOOR_TEMPLE = MB_LUNPA_TEMPLE_DOOR - MB_LUNPA_FIRST_HOME_DOOR
 };
 
 /// Lunpa's placed actors, numbered in the order of gLunpaObjectEventTemplates

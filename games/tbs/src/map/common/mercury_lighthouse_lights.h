@@ -39,7 +39,7 @@ void MercuryLighthouse_RestoreLights(s32 region,
   flag = GameFlag_Test(FLAG_KEEP_PARTY_POSITION);
   if (flag == 0) {
     Dma_Fill32(flag, st, sizeof(*st));
-    st->terrainCode = region;
+    st->poolBehavior = region;
     return;
   }
   objectEvent = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);

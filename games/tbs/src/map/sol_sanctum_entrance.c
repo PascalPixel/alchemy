@@ -39,8 +39,8 @@
 ///
 /// Once Isaac and Garet are back in Vale (FLAG_VALE_RETURNED_FROM_MT_ALEPH)
 /// the door no longer opens: Sol Entrance's setup makes the three wall cells
-/// across the door SOL_ENTRANCE_CELL_LOCKED_DOOR, copied from the other door,
-/// and the three SOL_ENTRANCE_CELL_DOOR cells before it plain ground, so the
+/// across the door MB_SOL_ENTRANCE_LOCKED_DOOR, copied from the other door,
+/// and the three MB_SOL_ENTRANCE_DOOR cells before it plain ground, so the
 /// leader walks up to the door and stops, and searching it finds it "tightly
 /// locked" (render probe sol-entrance).
 ///
@@ -144,30 +144,37 @@
 // flag 0xfff, which nothing sets, so the warp is always taken.
 #define WARP_FLAG_NONE 0xffffffff
 
-/// The metatile behaviors of the cells the two maps' coord, bg and item events
-/// answer; behaviors 1 to 16 are the warps, in the warp table's order.
-enum SolSanctumEntranceCell {
+/// The metatile behaviors of the cells the Sol Sanctum entrance's coord, bg
+/// and item events answer; behaviors 1 to 16 in both maps are the warps, in
+/// the warp table's order.
+enum SolEntranceMetatileBehavior {
   /// ★ Named from what the player sees: the door that slides open as the
   /// leader walks into it (EventScript_OpenDoorAndEnter)
-  SOL_ENTRANCE_CELL_DOOR = 2,
+  MB_SOL_ENTRANCE_DOOR = 2,
   /// ★ Named from the game: "The door is tightly locked."
   /// (MsgFieldDoorTightlyLocked)
-  SOL_ENTRANCE_CELL_LOCKED_DOOR = 10,
+  MB_SOL_ENTRANCE_LOCKED_DOOR = 10
+};
+
+/// The metatile behaviors of the cells the relief rooms' coord, bg and item
+/// events answer.
+enum SolSanctumReliefsMetatileBehavior {
   /// ★ Named from the game: "It's a relief of a minotaur."
   /// (MsgSolSanctumMinotaurReliefOneEye)
-  SOL_SANCTUM_CELL_FIRST_RELIEF = 20,
+  MB_SOL_SANCTUM_RELIEFS_FIRST_RELIEF = 20,
   /// ★ Named from the game: "It's a relief of a minotaur."
   /// (MsgSolSanctumMinotaurReliefOneEye)
-  SOL_SANCTUM_CELL_SECOND_RELIEF = 21,
+  MB_SOL_SANCTUM_RELIEFS_SECOND_RELIEF = 21,
   /// The first relief room's statues, pushed from any side.
-  SOL_SANCTUM_CELL_FIRST_ROOM_STATUE = 22,
+  MB_SOL_SANCTUM_RELIEFS_FIRST_ROOM_STATUE = 22,
   /// The first relief room's statues, pushed east only.
-  SOL_SANCTUM_CELL_FIRST_ROOM_STATUE_EAST = 23,
+  MB_SOL_SANCTUM_RELIEFS_FIRST_ROOM_STATUE_EAST = 23,
   /// The second relief room's row of statues.
-  SOL_SANCTUM_CELL_ROW_STATUE = 24,
+  MB_SOL_SANCTUM_RELIEFS_ROW_STATUE = 24,
   /// The first relief room's statues, pushed west only.
-  SOL_SANCTUM_CELL_FIRST_ROOM_STATUE_WEST = 25,
-  SOL_SANCTUM_CELL_CHEST = 100
+  MB_SOL_SANCTUM_RELIEFS_FIRST_ROOM_STATUE_WEST = 25,
+  /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
+  MB_SOL_SANCTUM_RELIEFS_CHEST = 100
 };
 
 /// An item event's trigger bit that skips the `<actor> uses <item>.` message,
@@ -662,7 +669,7 @@ s32 SolSanctumEntrance_Initialize(void) {
 /// (FLAG_RETREAT_BLOCKED), and after the eruption
 /// SolSanctumEntrance_UpdateEruptionRumbles shakes the ground now and then.
 /// Once Isaac and Garet are back in Vale (FLAG_VALE_RETURNED_FROM_MT_ALEPH),
-/// the door is locked: its row becomes SOL_ENTRANCE_CELL_LOCKED_DOOR and the
+/// the door is locked: its row becomes MB_SOL_ENTRANCE_LOCKED_DOOR and the
 /// cells before it plain ground; once the party has left Vale
 /// (FLAG_VALE_PARTY_LEFT), the
 /// man who warns everyone away, placed off the map until then, stands in the
@@ -1515,8 +1522,8 @@ struct MapEvent gSolSanctumEntrance_FallbackEvents[] = {
 
 struct MapEvent gSolEntrance_Events[] = {
     { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, SOL_ENTRANCE_TO_VALE },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), SOL_ENTRANCE_CELL_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_OpenDoorAndEnter) },
-    { BG_EVENT(BG_EVENT_SILENT), SOL_ENTRANCE_CELL_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_DoorTightlyLocked) },
+    { COORD_EVENT_WALKING_INTO(FACING_NORTH), MB_SOL_ENTRANCE_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_OpenDoorAndEnter) },
+    { BG_EVENT(BG_EVENT_SILENT), MB_SOL_ENTRANCE_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_DoorTightlyLocked) },
     { MAP_EVENT_TALK, LOCALID_WARNING_MAN, CONDITION_ALWAYS, MSGNO(MsgValeItIsVeryDangerousToGo) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WARNING_MAN, CONDITION_ALWAYS, MSGNO(MsgValeIAmAllAloneInThis) },
     { MAP_EVENTS_END },
@@ -1539,9 +1546,9 @@ struct MapEvent gSolSanctumReliefs_Events[] = {
     { MAP_EVENT_WARP, 14, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_EAST },
     { MAP_EVENT_WARP, 15, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_SECOND_RELIEF_ROOM_TO_ROUND_PASSAGE },
     { MAP_EVENT_WARP, 16, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_LUNA_SOL_ROOMS },
-    { BG_EVENT(BG_EVENT_CHEST), SOL_SANCTUM_CELL_CHEST, FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND, FIND_ITEM(ITEM_SMALL_JEWEL) },
-    { USE_ITEM(ITEM_SMALL_JEWEL), SOL_SANCTUM_ITEM_OWN_MESSAGE | SOL_SANCTUM_CELL_FIRST_RELIEF, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SetFirstSmallJewel) },
-    { BG_EVENT(BG_EVENT_SILENT), SOL_SANCTUM_CELL_FIRST_RELIEF, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_InspectFirstMinotaurRelief) },
+    { BG_EVENT(BG_EVENT_CHEST), MB_SOL_SANCTUM_RELIEFS_CHEST, FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND, FIND_ITEM(ITEM_SMALL_JEWEL) },
+    { USE_ITEM(ITEM_SMALL_JEWEL), SOL_SANCTUM_ITEM_OWN_MESSAGE | MB_SOL_SANCTUM_RELIEFS_FIRST_RELIEF, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SetFirstSmallJewel) },
+    { BG_EVENT(BG_EVENT_SILENT), MB_SOL_SANCTUM_RELIEFS_FIRST_RELIEF, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_InspectFirstMinotaurRelief) },
     { MAP_EVENTS_END },
 };
 
@@ -1564,9 +1571,9 @@ struct MapEvent gSolSanctumReliefs_FirstReliefRoomEvents[] = {
     { MAP_EVENT_WARP, 16, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_LUNA_SOL_ROOMS },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_WEST_STATUE, FLAG_MAP_TEMP_34, EVENT_SCRIPT(EventScript_WestStatueMoved) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_EAST_STATUE, FLAG_MAP_TEMP_34, EVENT_SCRIPT(EventScript_EastStatueMoved) },
-    { COORD_EVENT_WALKING, SOL_SANCTUM_CELL_FIRST_ROOM_STATUE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushStatue) },
-    { COORD_EVENT_WALKING_INTO(FACING_EAST), SOL_SANCTUM_CELL_FIRST_ROOM_STATUE_EAST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushStatue) },
-    { COORD_EVENT_WALKING_INTO(FACING_WEST), SOL_SANCTUM_CELL_FIRST_ROOM_STATUE_WEST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushStatue) },
+    { COORD_EVENT_WALKING, MB_SOL_SANCTUM_RELIEFS_FIRST_ROOM_STATUE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushStatue) },
+    { COORD_EVENT_WALKING_INTO(FACING_EAST), MB_SOL_SANCTUM_RELIEFS_FIRST_ROOM_STATUE_EAST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushStatue) },
+    { COORD_EVENT_WALKING_INTO(FACING_WEST), MB_SOL_SANCTUM_RELIEFS_FIRST_ROOM_STATUE_WEST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushStatue) },
     { MAP_EVENTS_END },
 };
 
@@ -1593,9 +1600,9 @@ struct MapEvent gSolSanctumReliefs_SecondReliefRoomEvents[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_ROW_STATUE_4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RowStatue4Moved) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_ROW_STATUE_5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RowStatue5Moved) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_ROW_STATUE_6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RowStatue6Moved) },
-    { COORD_EVENT_WALKING, SOL_SANCTUM_CELL_ROW_STATUE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushStatue) },
-    { USE_ITEM(ITEM_SMALL_JEWEL), SOL_SANCTUM_ITEM_OWN_MESSAGE | SOL_SANCTUM_CELL_SECOND_RELIEF, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SetSecondSmallJewel) },
-    { BG_EVENT(BG_EVENT_SILENT), SOL_SANCTUM_CELL_SECOND_RELIEF, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_InspectSecondMinotaurRelief) },
+    { COORD_EVENT_WALKING, MB_SOL_SANCTUM_RELIEFS_ROW_STATUE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushStatue) },
+    { USE_ITEM(ITEM_SMALL_JEWEL), SOL_SANCTUM_ITEM_OWN_MESSAGE | MB_SOL_SANCTUM_RELIEFS_SECOND_RELIEF, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SetSecondSmallJewel) },
+    { BG_EVENT(BG_EVENT_SILENT), MB_SOL_SANCTUM_RELIEFS_SECOND_RELIEF, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_InspectSecondMinotaurRelief) },
     { MAP_EVENTS_END },
 };
 // clang-format on

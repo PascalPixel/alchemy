@@ -112,14 +112,14 @@
 /// The metatile behaviors the coord events answer: the jump spots,
 /// the four seal statues' and the centre statue's cells. The beam statues'
 /// rows answer the behaviors of the cells each can stand in, 20 to 29.
-enum SolSanctumStatueCell {
-  SOL_SANCTUM_STATUE_CELL_NORTHWEST_STATUE = 5,
-  SOL_SANCTUM_STATUE_CELL_NORTHEAST_STATUE = 6,
-  SOL_SANCTUM_STATUE_CELL_SOUTHWEST_STATUE = 7,
-  SOL_SANCTUM_STATUE_CELL_SOUTHEAST_STATUE = 8,
-  SOL_SANCTUM_STATUE_CELL_JUMP_NORTH = 10, ///< a jump spot, crossed northward
-  SOL_SANCTUM_STATUE_CELL_JUMP_SOUTH = 11, ///< a jump spot, crossed southward
-  SOL_SANCTUM_STATUE_CELL_CENTER_STATUE = 32
+enum SolSanctumStatueMetatileBehavior {
+  MB_SOL_SANCTUM_STATUE_NORTHWEST_STATUE = 5,
+  MB_SOL_SANCTUM_STATUE_NORTHEAST_STATUE = 6,
+  MB_SOL_SANCTUM_STATUE_SOUTHWEST_STATUE = 7,
+  MB_SOL_SANCTUM_STATUE_SOUTHEAST_STATUE = 8,
+  MB_SOL_SANCTUM_STATUE_JUMP_NORTH = 10, ///< a jump spot, crossed northward
+  MB_SOL_SANCTUM_STATUE_JUMP_SOUTH = 11, ///< a jump spot, crossed southward
+  MB_SOL_SANCTUM_STATUE_CENTER_STATUE = 32
 };
 
 // Map flags, cleared on every ordinary arrival:
@@ -156,7 +156,7 @@ struct CellCopy {
 
 /// The seal being opened: its cell animations, its flag, where the leader
 /// jumps back to and where its statue returns if the story does not go on.
-struct SealScene {
+struct SealOpening {
   struct CellCopy open;
   struct CellCopy pulseA;
   struct CellCopy pulseB;
@@ -172,7 +172,7 @@ struct SealScene {
   s32 unused[3];    ///< never read or written; the bss keeps its 12 bytes
 };
 
-STATIC_ASSERT(offsetof(struct SealScene, unused) == 0xc4);
+STATIC_ASSERT(offsetof(struct SealOpening, unused) == 0xc4);
 
 /// The placed object events, numbered in the order of
 /// gSolSanctumStatue_ObjectEventTemplates: Kraden, who stays out of sight until
@@ -220,7 +220,7 @@ enum SolSanctumStatueLocalId {
 
 /// The map's bss, in this order; as commons of one object the linker would
 /// sort them itself.
-static struct SealScene sSealScene;
+static struct SealOpening sSealOpening;
 /// Initialization writes each three-word OAM packet; drawing updates its
 /// fields.
 static union {
@@ -1093,8 +1093,8 @@ static void EventScript_BlockCenterTriggerCells(void) {
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if ((leader->z.fixed >> 20) == 8) {
     if ((u32)(column - 17) <= 1) {
-      Field_SetMetatileBehaviorAt(2, PIXELS(272), PIXELS(128), 255);
-      Field_SetMetatileBehaviorAt(2, PIXELS(288), PIXELS(128), 255);
+      Field_SetMetatileBehaviorAt(2, PIXELS(272), PIXELS(128), MB_WALL);
+      Field_SetMetatileBehaviorAt(2, PIXELS(288), PIXELS(128), MB_WALL);
     }
   }
 }
@@ -1107,7 +1107,7 @@ static void EventScript_BlockLeftTriggerCell(void) {
   s32 row = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->z.fixed >> 20;
 
   if (row == 7 && (u32)(column - 13) <= 1) {
-    Field_SetMetatileBehaviorAt(2, PIXELS(208), PIXELS(112), 255);
+    Field_SetMetatileBehaviorAt(2, PIXELS(208), PIXELS(112), MB_WALL);
   }
 }
 
@@ -1118,7 +1118,7 @@ static void EventScript_BlockRightTriggerCell(void) {
   s32 row = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->z.fixed >> 20;
 
   if (row == 7 && (u32)(column - 21) <= 1) {
-    Field_SetMetatileBehaviorAt(2, PIXELS(352), PIXELS(112), 255);
+    Field_SetMetatileBehaviorAt(2, PIXELS(352), PIXELS(112), MB_WALL);
   }
 }
 
@@ -1373,221 +1373,221 @@ static s32 SolSanctumStatue_IsObjectEventAtCell(s32 localId, s32 column,
 
 /// Configures the northwest seal animation and statue return position.
 static void SolSanctumStatue_OpenNorthwestSeal(void) {
-  struct SealScene *scene = &sSealScene;
-  scene->open.sourceX = 0;
-  scene->open.sourceY = 55;
-  scene->open.destinationX = 32;
-  scene->open.destinationY = 40;
-  scene->open.width = 4;
-  scene->open.height = 3;
-  scene->pulseA.sourceX = 2;
-  scene->pulseA.sourceY = 30;
-  scene->pulseA.destinationX = 34;
-  scene->pulseA.destinationY = 10;
-  scene->pulseA.width = 2;
-  scene->pulseA.height = 1;
-  scene->pulseB.sourceX = 2;
-  scene->pulseB.sourceY = 28;
-  scene->pulseB.destinationX = 34;
-  scene->pulseB.destinationY = 10;
-  scene->pulseB.width = 2;
-  scene->pulseB.height = 1;
-  scene->opened.sourceX = 2;
-  scene->opened.sourceY = 30;
-  scene->opened.destinationX = 16;
-  scene->opened.destinationY = 10;
-  scene->opened.width = 2;
-  scene->opened.height = 1;
-  scene->flag = FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN;
-  scene->facing = FACING_SOUTH;
-  scene->destinationX = 500;
-  scene->destinationZ = 132;
-  scene->stairs[0].sourceX = 8;
-  scene->stairs[0].sourceY = 55;
-  scene->stairs[0].destinationX = 32;
-  scene->stairs[0].destinationY = 40;
-  scene->stairs[0].width = 4;
-  scene->stairs[0].height = 3;
-  scene->stairs[1].sourceX = 2;
-  scene->stairs[1].sourceY = 30;
-  scene->stairs[1].destinationX = 34;
-  scene->stairs[1].destinationY = 10;
-  scene->stairs[1].width = 2;
-  scene->stairs[1].height = 1;
-  scene->stairs[2].sourceX = 2;
-  scene->stairs[2].sourceY = 28;
-  scene->stairs[2].destinationX = 16;
-  scene->stairs[2].destinationY = 10;
-  scene->stairs[2].width = 2;
-  scene->stairs[2].height = 1;
-  scene->localId = LOCALID_NORTHWEST_STATUE;
-  scene->objectEventX = 488;
-  scene->objectEventZ = 152;
+  struct SealOpening *seal = &sSealOpening;
+  seal->open.sourceX = 0;
+  seal->open.sourceY = 55;
+  seal->open.destinationX = 32;
+  seal->open.destinationY = 40;
+  seal->open.width = 4;
+  seal->open.height = 3;
+  seal->pulseA.sourceX = 2;
+  seal->pulseA.sourceY = 30;
+  seal->pulseA.destinationX = 34;
+  seal->pulseA.destinationY = 10;
+  seal->pulseA.width = 2;
+  seal->pulseA.height = 1;
+  seal->pulseB.sourceX = 2;
+  seal->pulseB.sourceY = 28;
+  seal->pulseB.destinationX = 34;
+  seal->pulseB.destinationY = 10;
+  seal->pulseB.width = 2;
+  seal->pulseB.height = 1;
+  seal->opened.sourceX = 2;
+  seal->opened.sourceY = 30;
+  seal->opened.destinationX = 16;
+  seal->opened.destinationY = 10;
+  seal->opened.width = 2;
+  seal->opened.height = 1;
+  seal->flag = FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN;
+  seal->facing = FACING_SOUTH;
+  seal->destinationX = 500;
+  seal->destinationZ = 132;
+  seal->stairs[0].sourceX = 8;
+  seal->stairs[0].sourceY = 55;
+  seal->stairs[0].destinationX = 32;
+  seal->stairs[0].destinationY = 40;
+  seal->stairs[0].width = 4;
+  seal->stairs[0].height = 3;
+  seal->stairs[1].sourceX = 2;
+  seal->stairs[1].sourceY = 30;
+  seal->stairs[1].destinationX = 34;
+  seal->stairs[1].destinationY = 10;
+  seal->stairs[1].width = 2;
+  seal->stairs[1].height = 1;
+  seal->stairs[2].sourceX = 2;
+  seal->stairs[2].sourceY = 28;
+  seal->stairs[2].destinationX = 16;
+  seal->stairs[2].destinationY = 10;
+  seal->stairs[2].width = 2;
+  seal->stairs[2].height = 1;
+  seal->localId = LOCALID_NORTHWEST_STATUE;
+  seal->objectEventX = 488;
+  seal->objectEventZ = 152;
   SolSanctumStatue_OpenSeal();
 }
 
 /// Configures the northeast seal animation and statue return position.
 static void SolSanctumStatue_OpenNortheastSeal(void) {
-  struct SealScene *scene = &sSealScene;
-  scene->open.sourceX = 4;
-  scene->open.sourceY = 55;
-  scene->open.destinationX = 36;
-  scene->open.destinationY = 40;
-  scene->open.width = 4;
-  scene->open.height = 3;
-  scene->pulseA.sourceX = 4;
-  scene->pulseA.sourceY = 30;
-  scene->pulseA.destinationX = 36;
-  scene->pulseA.destinationY = 10;
-  scene->pulseA.width = 2;
-  scene->pulseA.height = 1;
-  scene->pulseB.sourceX = 4;
-  scene->pulseB.sourceY = 28;
-  scene->pulseB.destinationX = 36;
-  scene->pulseB.destinationY = 10;
-  scene->pulseB.width = 2;
-  scene->pulseB.height = 1;
-  scene->opened.sourceX = 4;
-  scene->opened.sourceY = 30;
-  scene->opened.destinationX = 18;
-  scene->opened.destinationY = 10;
-  scene->opened.width = 2;
-  scene->opened.height = 1;
-  scene->flag = FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN;
-  scene->facing = FACING_SOUTH;
-  scene->destinationX = 654;
-  scene->destinationZ = 132;
-  scene->stairs[0].sourceX = 12;
-  scene->stairs[0].sourceY = 55;
-  scene->stairs[0].destinationX = 36;
-  scene->stairs[0].destinationY = 40;
-  scene->stairs[0].width = 4;
-  scene->stairs[0].height = 3;
-  scene->stairs[1].sourceX = 4;
-  scene->stairs[1].sourceY = 30;
-  scene->stairs[1].destinationX = 36;
-  scene->stairs[1].destinationY = 10;
-  scene->stairs[1].width = 2;
-  scene->stairs[1].height = 1;
-  scene->stairs[2].sourceX = 4;
-  scene->stairs[2].sourceY = 28;
-  scene->stairs[2].destinationX = 18;
-  scene->stairs[2].destinationY = 10;
-  scene->stairs[2].width = 2;
-  scene->stairs[2].height = 1;
-  scene->localId = LOCALID_NORTHEAST_STATUE;
-  scene->objectEventX = 664;
-  scene->objectEventZ = 152;
+  struct SealOpening *seal = &sSealOpening;
+  seal->open.sourceX = 4;
+  seal->open.sourceY = 55;
+  seal->open.destinationX = 36;
+  seal->open.destinationY = 40;
+  seal->open.width = 4;
+  seal->open.height = 3;
+  seal->pulseA.sourceX = 4;
+  seal->pulseA.sourceY = 30;
+  seal->pulseA.destinationX = 36;
+  seal->pulseA.destinationY = 10;
+  seal->pulseA.width = 2;
+  seal->pulseA.height = 1;
+  seal->pulseB.sourceX = 4;
+  seal->pulseB.sourceY = 28;
+  seal->pulseB.destinationX = 36;
+  seal->pulseB.destinationY = 10;
+  seal->pulseB.width = 2;
+  seal->pulseB.height = 1;
+  seal->opened.sourceX = 4;
+  seal->opened.sourceY = 30;
+  seal->opened.destinationX = 18;
+  seal->opened.destinationY = 10;
+  seal->opened.width = 2;
+  seal->opened.height = 1;
+  seal->flag = FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN;
+  seal->facing = FACING_SOUTH;
+  seal->destinationX = 654;
+  seal->destinationZ = 132;
+  seal->stairs[0].sourceX = 12;
+  seal->stairs[0].sourceY = 55;
+  seal->stairs[0].destinationX = 36;
+  seal->stairs[0].destinationY = 40;
+  seal->stairs[0].width = 4;
+  seal->stairs[0].height = 3;
+  seal->stairs[1].sourceX = 4;
+  seal->stairs[1].sourceY = 30;
+  seal->stairs[1].destinationX = 36;
+  seal->stairs[1].destinationY = 10;
+  seal->stairs[1].width = 2;
+  seal->stairs[1].height = 1;
+  seal->stairs[2].sourceX = 4;
+  seal->stairs[2].sourceY = 28;
+  seal->stairs[2].destinationX = 18;
+  seal->stairs[2].destinationY = 10;
+  seal->stairs[2].width = 2;
+  seal->stairs[2].height = 1;
+  seal->localId = LOCALID_NORTHEAST_STATUE;
+  seal->objectEventX = 664;
+  seal->objectEventZ = 152;
   SolSanctumStatue_OpenSeal();
 }
 
 /// Configures the southwest seal animation and statue return position.
 static void SolSanctumStatue_OpenSouthwestSeal(void) {
-  struct SealScene *scene = &sSealScene;
-  scene->open.sourceX = 0;
-  scene->open.sourceY = 58;
-  scene->open.destinationX = 32;
-  scene->open.destinationY = 43;
-  scene->open.width = 4;
-  scene->open.height = 1;
-  scene->pulseA.sourceX = 2;
-  scene->pulseA.sourceY = 31;
-  scene->pulseA.destinationX = 34;
-  scene->pulseA.destinationY = 11;
-  scene->pulseA.width = 2;
-  scene->pulseA.height = 1;
-  scene->pulseB.sourceX = 2;
-  scene->pulseB.sourceY = 29;
-  scene->pulseB.destinationX = 34;
-  scene->pulseB.destinationY = 11;
-  scene->pulseB.width = 2;
-  scene->pulseB.height = 1;
-  scene->opened.sourceX = 2;
-  scene->opened.sourceY = 31;
-  scene->opened.destinationX = 16;
-  scene->opened.destinationY = 11;
-  scene->opened.width = 2;
-  scene->opened.height = 1;
-  scene->flag = FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN;
-  scene->facing = FACING_NORTH;
-  scene->destinationX = 500;
-  scene->destinationZ = 216;
-  scene->stairs[0].sourceX = 8;
-  scene->stairs[0].sourceY = 58;
-  scene->stairs[0].destinationX = 32;
-  scene->stairs[0].destinationY = 43;
-  scene->stairs[0].width = 4;
-  scene->stairs[0].height = 1;
-  scene->stairs[1].sourceX = 2;
-  scene->stairs[1].sourceY = 31;
-  scene->stairs[1].destinationX = 34;
-  scene->stairs[1].destinationY = 11;
-  scene->stairs[1].width = 2;
-  scene->stairs[1].height = 1;
-  scene->stairs[2].sourceX = 2;
-  scene->stairs[2].sourceY = 29;
-  scene->stairs[2].destinationX = 16;
-  scene->stairs[2].destinationY = 11;
-  scene->stairs[2].width = 2;
-  scene->stairs[2].height = 1;
-  scene->localId = LOCALID_SOUTHWEST_STATUE;
-  scene->objectEventX = 488;
-  scene->objectEventZ = 200;
+  struct SealOpening *seal = &sSealOpening;
+  seal->open.sourceX = 0;
+  seal->open.sourceY = 58;
+  seal->open.destinationX = 32;
+  seal->open.destinationY = 43;
+  seal->open.width = 4;
+  seal->open.height = 1;
+  seal->pulseA.sourceX = 2;
+  seal->pulseA.sourceY = 31;
+  seal->pulseA.destinationX = 34;
+  seal->pulseA.destinationY = 11;
+  seal->pulseA.width = 2;
+  seal->pulseA.height = 1;
+  seal->pulseB.sourceX = 2;
+  seal->pulseB.sourceY = 29;
+  seal->pulseB.destinationX = 34;
+  seal->pulseB.destinationY = 11;
+  seal->pulseB.width = 2;
+  seal->pulseB.height = 1;
+  seal->opened.sourceX = 2;
+  seal->opened.sourceY = 31;
+  seal->opened.destinationX = 16;
+  seal->opened.destinationY = 11;
+  seal->opened.width = 2;
+  seal->opened.height = 1;
+  seal->flag = FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN;
+  seal->facing = FACING_NORTH;
+  seal->destinationX = 500;
+  seal->destinationZ = 216;
+  seal->stairs[0].sourceX = 8;
+  seal->stairs[0].sourceY = 58;
+  seal->stairs[0].destinationX = 32;
+  seal->stairs[0].destinationY = 43;
+  seal->stairs[0].width = 4;
+  seal->stairs[0].height = 1;
+  seal->stairs[1].sourceX = 2;
+  seal->stairs[1].sourceY = 31;
+  seal->stairs[1].destinationX = 34;
+  seal->stairs[1].destinationY = 11;
+  seal->stairs[1].width = 2;
+  seal->stairs[1].height = 1;
+  seal->stairs[2].sourceX = 2;
+  seal->stairs[2].sourceY = 29;
+  seal->stairs[2].destinationX = 16;
+  seal->stairs[2].destinationY = 11;
+  seal->stairs[2].width = 2;
+  seal->stairs[2].height = 1;
+  seal->localId = LOCALID_SOUTHWEST_STATUE;
+  seal->objectEventX = 488;
+  seal->objectEventZ = 200;
   SolSanctumStatue_OpenSeal();
 }
 
 /// Configures the southeast seal animation and statue return position.
 static void SolSanctumStatue_OpenSoutheastSeal(void) {
-  struct SealScene *scene = &sSealScene;
-  scene->open.sourceX = 4;
-  scene->open.sourceY = 58;
-  scene->open.destinationX = 36;
-  scene->open.destinationY = 43;
-  scene->open.width = 4;
-  scene->open.height = 1;
-  scene->pulseA.sourceX = 4;
-  scene->pulseA.sourceY = 31;
-  scene->pulseA.destinationX = 36;
-  scene->pulseA.destinationY = 11;
-  scene->pulseA.width = 2;
-  scene->pulseA.height = 1;
-  scene->pulseB.sourceX = 4;
-  scene->pulseB.sourceY = 29;
-  scene->pulseB.destinationX = 36;
-  scene->pulseB.destinationY = 11;
-  scene->pulseB.width = 2;
-  scene->pulseB.height = 1;
-  scene->opened.sourceX = 4;
-  scene->opened.sourceY = 31;
-  scene->opened.destinationX = 18;
-  scene->opened.destinationY = 11;
-  scene->opened.width = 2;
-  scene->opened.height = 1;
-  scene->flag = FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN;
-  scene->facing = FACING_NORTH;
-  scene->destinationX = 654;
-  scene->destinationZ = 216;
-  scene->stairs[0].sourceX = 12;
-  scene->stairs[0].sourceY = 58;
-  scene->stairs[0].destinationX = 36;
-  scene->stairs[0].destinationY = 43;
-  scene->stairs[0].width = 4;
-  scene->stairs[0].height = 1;
-  scene->stairs[1].sourceX = 4;
-  scene->stairs[1].sourceY = 31;
-  scene->stairs[1].destinationX = 36;
-  scene->stairs[1].destinationY = 11;
-  scene->stairs[1].width = 2;
-  scene->stairs[1].height = 1;
-  scene->stairs[2].sourceX = 4;
-  scene->stairs[2].sourceY = 29;
-  scene->stairs[2].destinationX = 18;
-  scene->stairs[2].destinationY = 11;
-  scene->stairs[2].width = 2;
-  scene->stairs[2].height = 1;
-  scene->localId = LOCALID_SOUTHEAST_STATUE;
-  scene->objectEventX = 664;
-  scene->objectEventZ = 200;
+  struct SealOpening *seal = &sSealOpening;
+  seal->open.sourceX = 4;
+  seal->open.sourceY = 58;
+  seal->open.destinationX = 36;
+  seal->open.destinationY = 43;
+  seal->open.width = 4;
+  seal->open.height = 1;
+  seal->pulseA.sourceX = 4;
+  seal->pulseA.sourceY = 31;
+  seal->pulseA.destinationX = 36;
+  seal->pulseA.destinationY = 11;
+  seal->pulseA.width = 2;
+  seal->pulseA.height = 1;
+  seal->pulseB.sourceX = 4;
+  seal->pulseB.sourceY = 29;
+  seal->pulseB.destinationX = 36;
+  seal->pulseB.destinationY = 11;
+  seal->pulseB.width = 2;
+  seal->pulseB.height = 1;
+  seal->opened.sourceX = 4;
+  seal->opened.sourceY = 31;
+  seal->opened.destinationX = 18;
+  seal->opened.destinationY = 11;
+  seal->opened.width = 2;
+  seal->opened.height = 1;
+  seal->flag = FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN;
+  seal->facing = FACING_NORTH;
+  seal->destinationX = 654;
+  seal->destinationZ = 216;
+  seal->stairs[0].sourceX = 12;
+  seal->stairs[0].sourceY = 58;
+  seal->stairs[0].destinationX = 36;
+  seal->stairs[0].destinationY = 43;
+  seal->stairs[0].width = 4;
+  seal->stairs[0].height = 1;
+  seal->stairs[1].sourceX = 4;
+  seal->stairs[1].sourceY = 31;
+  seal->stairs[1].destinationX = 36;
+  seal->stairs[1].destinationY = 11;
+  seal->stairs[1].width = 2;
+  seal->stairs[1].height = 1;
+  seal->stairs[2].sourceX = 4;
+  seal->stairs[2].sourceY = 29;
+  seal->stairs[2].destinationX = 18;
+  seal->stairs[2].destinationY = 11;
+  seal->stairs[2].width = 2;
+  seal->stairs[2].height = 1;
+  seal->localId = LOCALID_SOUTHEAST_STATUE;
+  seal->objectEventX = 664;
+  seal->objectEventZ = 200;
   SolSanctumStatue_OpenSeal();
 }
 
@@ -1596,12 +1596,12 @@ static void SolSanctumStatue_OpenSoutheastSeal(void) {
                       (copy).destinationY, (copy).width, (copy).height)
 
 /// Animates the seal and either advances the story or resets its statue.
-/// Called by the four OpenXSeal functions with sSealScene filled in. Sets the
+/// Called by the four OpenXSeal functions with sSealOpening filled in. Sets the
 /// seal's flag; when no scripted scene follows and the centre statue has not
 /// moved, the statue slides back, the leader jumps clear and the flag is
 /// cleared again.
 static void SolSanctumStatue_OpenSeal(void) {
-  struct SealScene *scene;
+  struct SealOpening *seal;
   s32 warpResult;
   s32 pulse;
 
@@ -1613,40 +1613,40 @@ static void SolSanctumStatue_OpenSeal(void) {
     FieldCamera_MoveWithinMapBounds(PIXELS(576), -1, PIXELS(172), 1);
     FieldCamera_WaitForArrival();
     Sound_PlaySong(SE_SOL_SANCTUM_LIGHT_UP);
-    COPY_CELLS(sSealScene.open);
+    COPY_CELLS(sSealOpening.open);
     for (pulse = 0; pulse != 20; pulse++) {
       Sound_PlaySong(SE_246);
-      COPY_CELLS(sSealScene.pulseA);
+      COPY_CELLS(sSealOpening.pulseA);
       FieldScript_WaitFrames(4);
       Sound_PlaySong(SE_246);
-      COPY_CELLS(sSealScene.pulseB);
+      COPY_CELLS(sSealOpening.pulseB);
       FieldScript_WaitFrames(4);
     }
-    scene = &sSealScene;
-    COPY_CELLS(scene->opened);
-    Engine_GameFlagSet(scene->flag);
+    seal = &sSealOpening;
+    COPY_CELLS(seal->opened);
+    Engine_GameFlagSet(seal->flag);
     warpResult = SolSanctumStatue_SelectStoryWarp();
     // Keep the statue reusable until the central statue has moved.
     if (warpResult == -1) {
       if (!GameFlag_Test(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED)) {
         FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 1);
-        ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing = scene->facing;
+        ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing = seal->facing;
         ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(2), PIXELS(2));
         ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags &=
             ~OBJ_EVENT_FACES_MOTION;
         ObjectMotion_Launch(LOCALID_PARTY_LEADER, 4, 0);
         ObjectMotion_ResetAndSetPosition(
-            LOCALID_PARTY_LEADER, scene->destinationX, scene->destinationZ);
-        COPY_CELLS(scene->stairs[0]);
-        COPY_CELLS(scene->stairs[1]);
-        COPY_CELLS(scene->stairs[2]);
-        ObjectEvent_GetById(scene->localId)->steeringFlags &=
+            LOCALID_PARTY_LEADER, seal->destinationX, seal->destinationZ);
+        COPY_CELLS(seal->stairs[0]);
+        COPY_CELLS(seal->stairs[1]);
+        COPY_CELLS(seal->stairs[2]);
+        ObjectEvent_GetById(seal->localId)->steeringFlags &=
             ~OBJ_EVENT_FACES_MOTION;
-        ObjectMotion_SetPositionAndCommit(scene->localId, scene->objectEventX,
-                                          scene->objectEventZ);
+        ObjectMotion_SetPositionAndCommit(seal->localId, seal->objectEventX,
+                                          seal->objectEventZ);
         ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags |=
             OBJ_EVENT_FACES_MOTION;
-        GameFlag_ClearBit(scene->flag);
+        GameFlag_ClearBit(seal->flag);
       }
     } else if (warpResult == 0 &&
                GameFlag_Test(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED)) {
@@ -1809,9 +1809,9 @@ struct MapEvent gSolSanctumStatue_Events[] = {
      SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS},
     {MAP_EVENT_WARP, 2, CONDITION_ALWAYS,
      SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_PSYNERGY_STONE},
-    {COORD_EVENT_WALKING, SOL_SANCTUM_STATUE_CELL_JUMP_NORTH, CONDITION_ALWAYS,
+    {COORD_EVENT_WALKING, MB_SOL_SANCTUM_STATUE_JUMP_NORTH, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_JumpNorth)},
-    {COORD_EVENT_WALKING, SOL_SANCTUM_STATUE_CELL_JUMP_SOUTH, CONDITION_ALWAYS,
+    {COORD_EVENT_WALKING, MB_SOL_SANCTUM_STATUE_JUMP_SOUTH, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_JumpSouth)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_NORTHWEST_STATUE,
      FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN,
@@ -1826,19 +1826,19 @@ struct MapEvent gSolSanctumStatue_Events[] = {
      FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN,
      EVENT_SCRIPT(EventScript_SoutheastStatueMoved)},
     {COORD_EVENT_WALKING_INTO(FACING_EAST),
-     SOL_SANCTUM_STATUE_CELL_NORTHWEST_STATUE,
+     MB_SOL_SANCTUM_STATUE_NORTHWEST_STATUE,
      FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN,
      EVENT_SCRIPT(EventScript_PushNorthwestStatue)},
     {COORD_EVENT_WALKING_INTO(FACING_WEST),
-     SOL_SANCTUM_STATUE_CELL_NORTHEAST_STATUE,
+     MB_SOL_SANCTUM_STATUE_NORTHEAST_STATUE,
      FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN,
      EVENT_SCRIPT(EventScript_PushNortheastStatue)},
     {COORD_EVENT_WALKING_INTO(FACING_EAST),
-     SOL_SANCTUM_STATUE_CELL_SOUTHWEST_STATUE,
+     MB_SOL_SANCTUM_STATUE_SOUTHWEST_STATUE,
      FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN,
      EVENT_SCRIPT(EventScript_PushSouthwestStatue)},
     {COORD_EVENT_WALKING_INTO(FACING_WEST),
-     SOL_SANCTUM_STATUE_CELL_SOUTHEAST_STATUE,
+     MB_SOL_SANCTUM_STATUE_SOUTHEAST_STATUE,
      FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN,
      EVENT_SCRIPT(EventScript_PushSoutheastStatue)},
     {PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
@@ -1890,8 +1890,7 @@ struct MapEvent gSolSanctumStatue_Events[] = {
      FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED,
      EVENT_SCRIPT(EventScript_CenterStatueMoved)},
     {COORD_EVENT_WALKING_INTO(FACING_NORTH),
-     SOL_SANCTUM_STATUE_CELL_CENTER_STATUE,
-     FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED,
+     MB_SOL_SANCTUM_STATUE_CENTER_STATUE, FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED,
      EVENT_SCRIPT(EventScript_PushCenterStatueNorth)},
     {MAP_EVENTS_END},
 };

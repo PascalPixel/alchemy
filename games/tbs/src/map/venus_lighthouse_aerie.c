@@ -11,10 +11,11 @@
 ///   leader up and a conversation plays, with one yes-or-no question that
 ///   changes only the reply.
 /// - Six floating platforms lie between the party and the beacon
-///   (TRIGGER_PLATFORM, TRIGGER_FLOOR_BY_PLATFORMS): the leader jumps from one
+///   (MB_VENUS_LIGHTHOUSE_AERIE_PLATFORM,
+///   MB_VENUS_LIGHTHOUSE_AERIE_FLOOR_BY_PLATFORMS): the leader jumps from one
 ///   to the next, and each stops bobbing and dips under him as he lands
 ///   (FLAG_MAP_TEMP_50 while he stands on one).
-/// - The confrontation (TRIGGER_BEFORE_BEACON,
+/// - The confrontation (MB_VENUS_LIGHTHOUSE_AERIE_BEFORE_BEACON,
 ///   EventScript_ConfrontSaturosAndMenardi): the Shaman's Rod is handed over,
 ///   remembered in FLAG_SHAMANS_ROD_OWNER plus the member who carried it, and
 ///   the first battle follows (ENCOUNTER_ZONE_SCRIPTED, slot 1,
@@ -167,12 +168,13 @@ static void
 VenusLighthouseAerie_UpdateOrbitingEffect(union FieldObject *fieldObject);
 
 /// The metatile behaviors the aerie's coord events answer.
-enum VenusLighthouseAerieTrigger {
-  TRIGGER_BEFORE_BEACON = 5, ///< where the party confronts Saturos and Menardi
-  TRIGGER_PLATFORM = 10,     ///< a floating platform's cells
+enum VenusLighthouseAerieMetatileBehavior {
+  MB_VENUS_LIGHTHOUSE_AERIE_BEFORE_BEACON =
+      5, ///< where the party confronts Saturos and Menardi
+  MB_VENUS_LIGHTHOUSE_AERIE_PLATFORM = 10, ///< a floating platform's cells
   /// The floor beside the platforms, from which the leader jumps
   /// onto them.
-  TRIGGER_FLOOR_BY_PLATFORMS = 11
+  MB_VENUS_LIGHTHOUSE_AERIE_FLOOR_BY_PLATFORMS = 11
 };
 
 /// A child value that makes an object event blink rather than set its colour
@@ -828,15 +830,15 @@ static void VenusLighthouseAerie_ShowPartyMember(s32 localId, s32 shown) {
   }
 }
 
-/// Walking up to Saturos and Menardi (TRIGGER_BEFORE_BEACON): Felix refuses to
-/// be rescued, Sheba reads the party's minds for the rod that reaches Jupiter
-/// Lighthouse, they promise not to harm her for the Shaman's Rod, Felix
-/// carries it over, they will not let her go, and the first battle begins. It
-/// sets FLAG_SHAMANS_ROD_OWNER plus the member who carried the rod, and
-/// FLAG_AERIE_FIRST_BATTLE_BEGUN as the battle starts, which changes the
+/// Walking up to Saturos and Menardi (MB_VENUS_LIGHTHOUSE_AERIE_BEFORE_BEACON):
+/// Felix refuses to be rescued, Sheba reads the party's minds for the rod that
+/// reaches Jupiter Lighthouse, they promise not to harm her for the Shaman's
+/// Rod, Felix carries it over, they will not let her go, and the first battle
+/// begins. It sets FLAG_SHAMANS_ROD_OWNER plus the member who carried the rod,
+/// and FLAG_AERIE_FIRST_BATTLE_BEGUN as the battle starts, which changes the
 /// aerie's music.
 static void EventScript_ConfrontSaturosAndMenardi(void) {
-  s32 rodOwner;
+  s32 rodHolder;
   struct ObjectEvent *objectEvent;
   s32 answerAccepted;
   s32 frame;
@@ -1227,8 +1229,8 @@ static void EventScript_ConfrontSaturosAndMenardi(void) {
   ObjectMotion_SetVarCbAndRefresh(LOCALID_MENARDI, 1);
   VenusLighthouseAerie_ShowMessage(LOCALID_MENARDI);
   // Save the rod owner for the defeat return path, then enter battle.
-  rodOwner = PartyInventory_FindMember(ITEM_SHAMANS_ROD);
-  GameFlag_Set(rodOwner + FLAG_SHAMANS_ROD_OWNER);
+  rodHolder = PartyInventory_FindMember(ITEM_SHAMANS_ROD);
+  GameFlag_Set(rodHolder + FLAG_SHAMANS_ROD_OWNER);
   PartyInventory_Remove(ITEM_SHAMANS_ROD);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags &=
       ~OBJ_EVENT_FACES_MOTION;
@@ -1399,7 +1401,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   struct Sprite *sprite;
   u8 *iconPixels;
   // Reuse the dialogue answer word for the later radial burst directions.
-  u32 sceneStep;
+  u32 answeredYes;
 
   Script_Start();
   MapGrid_CopyCellAttributes(17, 10, 4, 2, 17, 8);
@@ -1481,10 +1483,10 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   ObjectEvent_FaceDirection(IVAN, FACING_NORTHEAST, 0);
   ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST, 0);
   if (Script_ChooseYesNo(0, 0) == 0) {
-    sceneStep = TRUE;
+    answeredYes = TRUE;
   } else {
     gFieldWork->message++;
-    sceneStep = FALSE;
+    answeredYes = FALSE;
   }
   Task_Wait(20);
   ObjectEvent_FaceDirection(GARET, FACING_WEST, 0);
@@ -1494,7 +1496,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   Script_ShowMessage(LOCALID_FELIX, 0);
   Script_PlaySong(SONG_FADE_OUT_BGM);
   Script_Wait(40);
-  if (sceneStep) {
+  if (answeredYes) {
     gFieldWork->message++;
   }
 
@@ -1665,14 +1667,14 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   Script_OpenMessage(GARET, 0);
   if (Script_ChooseYesNo(0, 0) == 0) {
     ObjectEvent_SetAnimation(GARET, ANIM_NOD);
-    sceneStep = TRUE;
+    answeredYes = TRUE;
   } else {
     gFieldWork->message++;
     ObjectEvent_SetAnimation(GARET, ANIM_SHAKE_HEAD);
-    sceneStep = FALSE;
+    answeredYes = FALSE;
   }
   VenusLighthouseAerie_ShowMessage(GARET);
-  if (sceneStep) {
+  if (answeredYes) {
     gFieldWork->message++;
   }
   Script_Wait(20);
@@ -1891,8 +1893,8 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   menardiBurst.update = VenusLighthouseAerie_UpdateDriftingParticle;
   menardiBurst.startScaleX = Q16_ONE;
   menardiBurst.startScaleY = Q16_ONE;
-  for (sceneStep = 0; sceneStep <= 16; sceneStep++) {
-    VenusLighthouseAerie_AimBurst(velocity, sceneStep << 12);
+  for (answeredYes = 0; answeredYes <= 16; answeredYes++) {
+    VenusLighthouseAerie_AimBurst(velocity, answeredYes << 12);
     FieldEffect_Spawn(menardi->x.fixed, menardi->y.fixed, menardi->z.fixed,
                       velocity[0], velocity[1], velocity[2],
                       EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
@@ -1907,8 +1909,8 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   saturosBurst.update = VenusLighthouseAerie_UpdateDriftingParticle;
   saturosBurst.startScaleX = Q16_ONE;
   saturosBurst.startScaleY = Q16_ONE;
-  for (sceneStep = 0; sceneStep <= 16; sceneStep++) {
-    VenusLighthouseAerie_AimBurst(velocity, sceneStep << 12);
+  for (answeredYes = 0; answeredYes <= 16; answeredYes++) {
+    VenusLighthouseAerie_AimBurst(velocity, answeredYes << 12);
     FieldEffect_Spawn(saturos->x.fixed, saturos->y.fixed, saturos->z.fixed,
                       velocity[0], velocity[1], velocity[2],
                       EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
@@ -3561,15 +3563,17 @@ struct ObjectEventTemplate gVenusLighthouseAerieObjectEventTemplates[] = {
 s32 gVenusLighthouseAerie_LandedPlatform = 0;
 
 struct MapEvent gVenusLighthouseAerieEvents[] = {
-    {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, TRIGGER_FLOOR_BY_PLATFORMS,
-     CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpToNextPlatform)},
-    {MAP_EVENT_COORD, TRIGGER_FLOOR_BY_PLATFORMS, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_FloatPlatforms)},
-    {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, TRIGGER_PLATFORM,
-     CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpToNextPlatform)},
-    {MAP_EVENT_COORD, TRIGGER_PLATFORM, FLAG_MAP_TEMP_50,
+    {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING,
+     MB_VENUS_LIGHTHOUSE_AERIE_FLOOR_BY_PLATFORMS, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_JumpToNextPlatform)},
+    {MAP_EVENT_COORD, MB_VENUS_LIGHTHOUSE_AERIE_FLOOR_BY_PLATFORMS,
+     CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_FloatPlatforms)},
+    {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING,
+     MB_VENUS_LIGHTHOUSE_AERIE_PLATFORM, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_JumpToNextPlatform)},
+    {MAP_EVENT_COORD, MB_VENUS_LIGHTHOUSE_AERIE_PLATFORM, FLAG_MAP_TEMP_50,
      EVENT_SCRIPT(EventScript_LandOnPlatform)},
-    {MAP_EVENT_COORD, TRIGGER_BEFORE_BEACON, CONDITION_ALWAYS,
+    {MAP_EVENT_COORD, MB_VENUS_LIGHTHOUSE_AERIE_BEFORE_BEACON, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_ConfrontSaturosAndMenardi)},
     {MAP_EVENTS_END},
 };

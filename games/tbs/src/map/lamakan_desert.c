@@ -8,13 +8,13 @@
 /// party loses a quarter of its HP, and on all but LamakanDesertCave starts the
 /// heat gauge, a thermometer down the screen's left edge (HeatGauge_Draw). Each
 /// moving frame on the sand adds a step (HeatGauge_CountStep,
-/// LAMAKAN_DESERT_CELL_SAND and the bg events' metatile behaviors 100 to 107).
+/// MB_LAMAKAN_DESERT_SAND and the bg events' metatile behaviors 100 to 107).
 /// As the gauge passes a quarter, a half and three quarters,
 /// HeatGauge_RaiseQuarterTriggers sets FLAG_HEAT_QUARTER to
 /// FLAG_HEAT_THREE_QUARTERS and raises LAMAKAN_DESERT_RAISED_HEAT_QUARTER to
 /// LAMAKAN_DESERT_RAISED_HEAT_THREE_QUARTERS, and Garet, Ivan or Mia complains
 /// of the heat (LamakanDesert_ComplainAboutHeat). Stepping into an oasis
-/// (LAMAKAN_DESERT_CELL_OASIS), the leader hops into the middle of the nearest
+/// (MB_LAMAKAN_DESERT_OASIS), the leader hops into the middle of the nearest
 /// one and bathes until the heat has drained (LamakanDesert_BatheInOasis), and
 /// a running Reveal ends.
 ///
@@ -26,9 +26,9 @@
 /// only while Reveal shines, as the monks of Lama Temple warn: `Reveal will
 /// help you find oases to cool you against the heat.`
 ///
-/// Stepping by a pit (LAMAKAN_DESERT_CELL_PIT) pulls the leader into it for a
+/// Stepping by a pit (MB_LAMAKAN_DESERT_PIT) pulls the leader into it for a
 /// battle with an Ant Lion (LamakanDesert_FallIntoPit), and slopes of sand
-/// (LAMAKAN_DESERT_CELL_SLOPE) carry the leader south
+/// (MB_LAMAKAN_DESERT_SLOPE) carry the leader south
 /// (LamakanDesert_SlideDownDune).
 ///
 /// In LamakanDesertManticore, until it is beaten
@@ -102,17 +102,21 @@
 static void HeatGauge_SetHeld(u16 held);
 
 /// The values HeatGauge_RaiseQuarterTriggers raises as the heat gauge passes
-/// each mark, and the metatile behaviors of the desert's ground.
-enum LamakanDesertTrigger {
+/// each mark.
+enum LamakanDesertRaisedEvent {
   LAMAKAN_DESERT_RAISED_HEAT_QUARTER = 1,
   LAMAKAN_DESERT_RAISED_HEAT_HALF = 2,
-  LAMAKAN_DESERT_RAISED_HEAT_THREE_QUARTERS = 3,
+  LAMAKAN_DESERT_RAISED_HEAT_THREE_QUARTERS = 3
+};
+
+/// The metatile behaviors of the desert's ground.
+enum LamakanDesertMetatileBehavior {
   /// An oasis's water, in the patches Reveal shows (renders of the maps with
   /// the patches shown: the pool at (384, 128) in LamakanDesertEast).
-  LAMAKAN_DESERT_CELL_OASIS = 20,
-  LAMAKAN_DESERT_CELL_SAND = 21, ///< sand, where each moving frame adds heat
-  LAMAKAN_DESERT_CELL_PIT = 22,  ///< by an Ant Lion's pit, under Reveal too
-  LAMAKAN_DESERT_CELL_SLOPE = 30 ///< sand that carries the leader south
+  MB_LAMAKAN_DESERT_OASIS = 20,
+  MB_LAMAKAN_DESERT_SAND = 21, ///< sand, where each moving frame adds heat
+  MB_LAMAKAN_DESERT_PIT = 22,  ///< by an Ant Lion's pit, under Reveal too
+  MB_LAMAKAN_DESERT_SLOPE = 30 ///< sand that carries the leader south
 };
 
 enum {
@@ -553,7 +557,7 @@ struct LamakanDesertOasis {
   s32 z;
 };
 
-/// Lamakan Desert, stepping into an oasis (LAMAKAN_DESERT_CELL_OASIS), which
+/// Lamakan Desert, stepping into an oasis (MB_LAMAKAN_DESERT_OASIS), which
 /// only Reveal shows: the leader hops into the middle of the nearest of the
 /// map's oases, bathes with a heart over his head while the gauge drains 5
 /// steps a frame, for at least a second, then hops out.
@@ -702,7 +706,7 @@ static void HeatGauge_CountStep(void) {
     return;
   }
   gGameState.hazardSteps++;
-  if (work->coordEvent == LAMAKAN_DESERT_CELL_SLOPE) {
+  if (work->coordEvent == MB_LAMAKAN_DESERT_SLOPE) {
     return;
   }
   if (objectEvent->speed <= 0x10000) {
@@ -824,7 +828,7 @@ static void LamakanDesert_FallIntoPit(void) {
       ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 4);
 }
 
-/// Lamakan Desert, on a slope of sand (LAMAKAN_DESERT_CELL_SLOPE): the sand
+/// Lamakan Desert, on a slope of sand (MB_LAMAKAN_DESERT_SLOPE): the sand
 /// carries the leader south 1.5 pixels a frame, and at a ledge the leader hops
 /// down 8 pixels.
 static void LamakanDesert_SlideDownDune(void) {
@@ -1350,10 +1354,10 @@ struct MapEvent gLamakanDesertEvents[] = {
     { MAP_EVENT_WARP, 7, CONDITION_ALWAYS, 3 },
     { MAP_EVENT_WARP, 8, CONDITION_ALWAYS, 4 },
     { MAP_EVENT_COORD, 9, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_LeaveForTheWorldMap) },
-    { MAP_EVENT_COORD, LAMAKAN_DESERT_CELL_OASIS, FLAG_DESERT_EVENT_RUNNING, EVENT_SCRIPT(LamakanDesert_BatheInOasis) },
-    { MAP_EVENT_COORD, LAMAKAN_DESERT_CELL_SAND, CONDITION_ALWAYS, EVENT_SCRIPT(HeatGauge_CountStep) },
-    { MAP_EVENT_COORD, LAMAKAN_DESERT_CELL_PIT, FLAG_DESERT_EVENT_RUNNING, EVENT_SCRIPT(LamakanDesert_FallIntoPit) },
-    { MAP_EVENT_COORD, LAMAKAN_DESERT_CELL_SLOPE, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_SlideDownDune) },
+    { MAP_EVENT_COORD, MB_LAMAKAN_DESERT_OASIS, FLAG_DESERT_EVENT_RUNNING, EVENT_SCRIPT(LamakanDesert_BatheInOasis) },
+    { MAP_EVENT_COORD, MB_LAMAKAN_DESERT_SAND, CONDITION_ALWAYS, EVENT_SCRIPT(HeatGauge_CountStep) },
+    { MAP_EVENT_COORD, MB_LAMAKAN_DESERT_PIT, FLAG_DESERT_EVENT_RUNNING, EVENT_SCRIPT(LamakanDesert_FallIntoPit) },
+    { MAP_EVENT_COORD, MB_LAMAKAN_DESERT_SLOPE, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_SlideDownDune) },
     { MAP_EVENT_COORD, 40, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_MeetManticore) },
     { MAP_EVENT_TALK, LOCALID_MANTICORE, FLAG_LAMAKAN_MANTICORE_BEATEN, EVENT_SCRIPT(LamakanDesert_FightManticore) },
     { MAP_EVENT_TALK, LOCALID_SMOG, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_TalkToSmog) },

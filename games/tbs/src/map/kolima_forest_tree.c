@@ -179,12 +179,12 @@ KolimaForestTree_GetObjectEventTemplates(void) {
 /// Unused: takes the touched warp after the leader's current movement; no
 /// map event row names it.
 UNUSED static void KolimaForestTree_ExitTouchedRegion(void) {
-  struct EventWork *scene;
+  struct EventWork *work;
 
-  scene = gFieldWork;
+  work = gFieldWork;
   FieldScript_Start();
   ObjectMotion_CommitPositionAndActivate(LOCALID_PARTY_LEADER, 0, 0);
-  Engine_ScriptRequestWarp(scene->coordEvent);
+  Engine_ScriptRequestWarp(work->coordEvent);
   FieldScript_End();
 }
 
@@ -237,7 +237,7 @@ static void KolimaForestTree_TalkToLaurel(void) {
 /// after it he is silent, and if anyone carries Hermes' Water the main menu
 /// opens. Once the curse is lifted, no axe shall touch him again.
 static void KolimaForestTree_TalkToTret(void) {
-  s32 waterOwner;
+  s32 waterHolder;
 
   FieldScript_Start();
   if (GameFlag_IsSet(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
@@ -251,8 +251,8 @@ static void KolimaForestTree_TalkToTret(void) {
       FieldScript_SetMessageId(MsgKolimaSilence2);
       Script_ShowMessage(LOCALID_TRET, 0);
       KolimaForestTree_PlayGesture(LOCALID_TRET_BLANK, FACE_GESTURE_CLOSE_EYES);
-      waterOwner = PartyInventory_FindMember(ITEM_HERMES_WATER);
-      if (waterOwner != -1) {
+      waterHolder = PartyInventory_FindMember(ITEM_HERMES_WATER);
+      if (waterHolder != -1) {
         u16 *menuRequest = &gFieldWork->menu;
         u16 open = 1;
 
@@ -1061,13 +1061,13 @@ static void KolimaForestTree_SpawnOrbitSparks(void) {
 /// Replaces the used water with its empty bottle in the same inventory slot.
 static void KolimaForestTree_ReplaceInventoryItem(s32 oldItemId,
                                                   s32 newItemId) {
-  s32 owner = PartyInventory_FindMember(oldItemId);
+  s32 member = PartyInventory_FindMember(oldItemId);
 
-  if (owner != -1) {
-    s32 inventorySlot = Inventory_Find(owner, oldItemId);
+  if (member != -1) {
+    s32 inventorySlot = Inventory_Find(member, oldItemId);
 
     if (inventorySlot != -1) {
-      Unit_Get(owner)->inventory[inventorySlot] = newItemId;
+      Unit_Get(member)->inventory[inventorySlot] = newItemId;
     }
   }
 }

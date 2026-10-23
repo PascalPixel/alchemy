@@ -162,24 +162,31 @@ enum TolbiInteriorsLocalId {
       LOCALID_TOLBI_INTERIORS_CROWD_SICK_GUEST
 };
 
-/// The things the party can search, which its bg events answer.
-enum TolbiInteriorsMarker {
+/// The metatile behaviors the rooms' coord and bg events answer: the doors,
+/// counted from MB_TOLBI_INTERIORS_FIRST_DOOR, and the things the party can
+/// search.
+enum TolbiInteriorsMetatileBehavior {
+  MB_TOLBI_INTERIORS_FIRST_DOOR = 14,
   /// The inn's sign.
   /// ★ Named from the game: "checked the sign."
   /// (MsgTolbiInteriorsIsaacCheckedTheSignInnFull)
-  TOLBI_INTERIORS_INN_SIGN = 40,
-  TOLBI_INTERIORS_VIAL_BARREL = 100,
-  TOLBI_INTERIORS_MEDAL_BARREL = 101,
-  TOLBI_INTERIORS_HIDDEN_MEDAL_BARREL = 102, ///< where the woman hid her find
+  MB_TOLBI_INTERIORS_INN_SIGN = 40,
+  /// ★ Named from the game: "checked the barrel" (MsgVaultIsaacCheckedBarrel)
+  MB_TOLBI_INTERIORS_VIAL_BARREL = 100,
+  /// ★ Named from the game: "checked the barrel" (MsgVaultIsaacCheckedBarrel)
+  MB_TOLBI_INTERIORS_MEDAL_BARREL = 101,
+  /// ★ Named from the game: "checked the barrel" (MsgVaultIsaacCheckedBarrel)
+  MB_TOLBI_INTERIORS_HIDDEN_MEDAL_BARREL =
+      102, ///< where the woman hid her find
   /// ★ Named from the game: "Tolbi pizza."
   /// (MsgTolbiInteriorsShesMakingTheWorldRenownedTolbi)
-  TOLBI_INTERIORS_PIZZA_OVEN = 200,
+  MB_TOLBI_INTERIORS_PIZZA_OVEN = 200,
   /// ★ Named from the game: "boiling the pasta"
   /// (MsgTolbiInteriorsHeIsBoilingThePastaIt)
-  TOLBI_INTERIORS_PASTA_OVEN = 201,
+  MB_TOLBI_INTERIORS_PASTA_OVEN = 201,
   /// ★ Named from the game: "It's Tolbi seafood pasta!"
   /// (MsgTolbiInteriorsItsTolbiSeafoodPastaWithLots)
-  TOLBI_INTERIORS_SEAFOOD_PASTA_OVEN = 202,
+  MB_TOLBI_INTERIORS_SEAFOOD_PASTA_OVEN = 202,
 };
 
 /// A facing rounded to the nearest of east, south, west and north.

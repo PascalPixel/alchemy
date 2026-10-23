@@ -39,9 +39,9 @@
 ///
 /// The rooms' colours follow the party: cells on the floor between them fade
 /// the palette to a tint or back to plain colours (enum
-/// SolSanctumLunaSolRoomsCell), and one of three map flags remembers which
-/// colours show, so a return after a battle keeps them. On entry
-/// SolSanctumLunaSolRooms_Initialize copies each lit quarter into its
+/// SolSanctumLunaSolRoomsMetatileBehavior), and one of three map flags
+/// remembers which colours show, so a return after a battle keeps them. On
+/// entry SolSanctumLunaSolRooms_Initialize copies each lit quarter into its
 /// FLAG_SOL_SANCTUM_*_LIGHT_SHOWN and redraws the pictures, the floor and the
 /// open way up from the story flags, unless the warp destination's own scene
 /// draws them. The falling lights are four callbacks, each with a random timer
@@ -98,26 +98,28 @@
 
 /// The metatile behaviors of the floor cells the events answer; behaviors 1
 /// and 2 are the warps.
-enum SolSanctumLunaSolRoomsCell {
+enum SolSanctumLunaSolRoomsMetatileBehavior {
   /// Before Kraden in the Luna room.
-  SOL_SANCTUM_CELL_BEFORE_KRADEN = 8,
+  MB_SOL_SANCTUM_LUNA_SOL_ROOMS_BEFORE_KRADEN = 8,
   /// The way back out to MapId_SolSanctumReliefs.
-  SOL_SANCTUM_CELL_WAY_OUT = 9,
+  MB_SOL_SANCTUM_LUNA_SOL_ROOMS_WAY_OUT = 9,
   /// The symbol of the sun on the floor, first stepped on.
-  SOL_SANCTUM_CELL_HEART_OF_SANCTUM = 11,
+  MB_SOL_SANCTUM_LUNA_SOL_ROOMS_HEART_OF_SANCTUM = 11,
   /// Fades to SOL_SANCTUM_WARM_TINT.
-  SOL_SANCTUM_CELL_WARM_TINT = 12,
+  MB_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINT = 12,
   /// Fades to plain colours, or to SOL_SANCTUM_BLUE_TINT once all four
   /// quarters are lit.
-  SOL_SANCTUM_CELL_TINT = 13,
+  MB_SOL_SANCTUM_LUNA_SOL_ROOMS_TINT = 13,
   /// Fades to SOL_SANCTUM_BLUE_TINT, or to plain colours once all four
   /// quarters are lit.
-  SOL_SANCTUM_CELL_TINT_INVERSE = 14,
-  SOL_SANCTUM_CELL_PLAIN = 15,          ///< fades to plain colours
-  SOL_SANCTUM_CELL_BLACK_BACKDROP = 19, ///< turns the backdrop black
+  MB_SOL_SANCTUM_LUNA_SOL_ROOMS_TINT_INVERSE = 14,
+  MB_SOL_SANCTUM_LUNA_SOL_ROOMS_PLAIN = 15, ///< fades to plain colours
+  MB_SOL_SANCTUM_LUNA_SOL_ROOMS_BLACK_BACKDROP =
+      19, ///< turns the backdrop black
   /// The symbol on the floor, searched to open the way up.
-  SOL_SANCTUM_CELL_FLOOR_SYMBOL = 20,
-  SOL_SANCTUM_CELL_CHEST = 100
+  MB_SOL_SANCTUM_LUNA_SOL_ROOMS_FLOOR_SYMBOL = 20,
+  /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
+  MB_SOL_SANCTUM_LUNA_SOL_ROOMS_CHEST = 100
 };
 
 // Map flags, cleared at every ordinary warp destination; one of the three is
@@ -161,12 +163,13 @@ const struct MapEvent *SolSanctumLunaSolRooms_GetEvents(void) {
   return gSolSanctumLunaSolRoomsEvents;
 }
 
-/// Sol Sanctum: crossing SOL_SANCTUM_CELL_TINT. Until all four quarters are lit
-/// the rooms fade back to plain colours; afterwards to SOL_SANCTUM_BLUE_TINT,
-/// and Kraden sees the floor symbol changed the first time (and the Luna room,
-/// had he not yet). Also called by EventScript_KradenFindsHeartOfSanctum after
-/// the eruption. Sets one of FLAG_MAP_TEMP_00 and _01 and clears the other two
-/// tint flags; Kraden's scenes set FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN and
+/// Sol Sanctum: crossing MB_SOL_SANCTUM_LUNA_SOL_ROOMS_TINT. Until all four
+/// quarters are lit the rooms fade back to plain colours; afterwards to
+/// SOL_SANCTUM_BLUE_TINT, and Kraden sees the floor symbol changed the first
+/// time (and the Luna room, had he not yet). Also called by
+/// EventScript_KradenFindsHeartOfSanctum after the eruption. Sets one of
+/// FLAG_MAP_TEMP_00 and _01 and clears the other two tint flags; Kraden's
+/// scenes set FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN and
 /// FLAG_SOL_SANCTUM_FLOOR_SYMBOL_SEEN.
 static void EventScript_UpdateRoomTint(void) {
   s32 paletteActive;
@@ -204,9 +207,9 @@ static void EventScript_UpdateRoomTint(void) {
   }
 }
 
-/// Sol Sanctum: crossing SOL_SANCTUM_CELL_PLAIN fades the rooms back to plain
-/// colours. Also called by EventScript_KradenStopsPartyLeaving after the
-/// eruption. Sets FLAG_MAP_TEMP_00 and clears _01 and _02.
+/// Sol Sanctum: crossing MB_SOL_SANCTUM_LUNA_SOL_ROOMS_PLAIN fades the rooms
+/// back to plain colours. Also called by EventScript_KradenStopsPartyLeaving
+/// after the eruption. Sets FLAG_MAP_TEMP_00 and clears _01 and _02.
 static void EventScript_RestorePlainTint(void) {
   if (GameFlag_IsSet(FLAG_MAP_TEMP_00) == 0) {
     FieldScript_Start();
@@ -219,11 +222,11 @@ static void EventScript_RestorePlainTint(void) {
   }
 }
 
-/// Sol Sanctum: crossing SOL_SANCTUM_CELL_TINT_INVERSE, as
-/// SOL_SANCTUM_CELL_TINT the other way round. Until all four quarters are lit
-/// the rooms fade to SOL_SANCTUM_BLUE_TINT, and the first time Kraden sees the
-/// Luna room; afterwards back to plain colours. Sets one of FLAG_MAP_TEMP_00
-/// and _01 and clears the other two.
+/// Sol Sanctum: crossing MB_SOL_SANCTUM_LUNA_SOL_ROOMS_TINT_INVERSE, as
+/// MB_SOL_SANCTUM_LUNA_SOL_ROOMS_TINT the other way round. Until all four
+/// quarters are lit the rooms fade to SOL_SANCTUM_BLUE_TINT, and the first time
+/// Kraden sees the Luna room; afterwards back to plain colours. Sets one of
+/// FLAG_MAP_TEMP_00 and _01 and clears the other two.
 static void EventScript_UpdateRoomTintInverse(void) {
   s32 paletteActive;
 
@@ -254,8 +257,9 @@ static void EventScript_UpdateRoomTintInverse(void) {
   }
 }
 
-/// Sol Sanctum: crossing SOL_SANCTUM_CELL_WARM_TINT fades the rooms to
-/// SOL_SANCTUM_WARM_TINT. Sets FLAG_MAP_TEMP_02 and clears _00 and _01.
+/// Sol Sanctum: crossing MB_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINT fades the
+/// rooms to SOL_SANCTUM_WARM_TINT. Sets FLAG_MAP_TEMP_02 and clears _00 and
+/// _01.
 static void EventScript_ApplySecondRoomTint(void) {
   if (GameFlag_IsSet(FLAG_MAP_TEMP_02) == 0) {
     PaletteFade_ApplyTarget(SOL_SANCTUM_WARM_TINT, 1);
@@ -266,8 +270,8 @@ static void EventScript_ApplySecondRoomTint(void) {
   }
 }
 
-/// Sol Sanctum: crossing SOL_SANCTUM_CELL_BLACK_BACKDROP turns the backdrop
-/// black.
+/// Sol Sanctum: crossing MB_SOL_SANCTUM_LUNA_SOL_ROOMS_BLACK_BACKDROP turns the
+/// backdrop black.
 static void EventScript_ClearBackdropColor(void) {
   s32 black = 0;
   u16 *backdropColor = (u16 *)&PLTT_BACKDROP;
@@ -337,7 +341,7 @@ static inline void SolSanctumLunaSolRooms_FlashSavedStatueLights(s32 frames) {
 /// it!" The strangers told the truth and must be thieves, but Kraden talks the
 /// others into going a little farther. Plays until FLAG_SOL_SANCTUM_FOUND is
 /// set, which it sets with FLAG_RETREAT_BLOCKED; after the eruption the
-/// crossing tints the rooms as SOL_SANCTUM_CELL_TINT does.
+/// crossing tints the rooms as MB_SOL_SANCTUM_LUNA_SOL_ROOMS_TINT does.
 static void EventScript_KradenFindsHeartOfSanctum(void) {
   struct ObjectEvent *leader;
 
@@ -1753,29 +1757,29 @@ struct ObjectEventTemplate gSolSanctumLunaSolRoomsObjectEventTemplates[] = {
 struct MapEvent gSolSanctumLunaSolRoomsEvents[] = {
     {MAP_EVENT_TALK, LOCALID_KRADEN, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_TalkToKraden)},
-    {MAP_EVENT_COORD, SOL_SANCTUM_CELL_TINT_INVERSE, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_UpdateRoomTintInverse)},
-    {MAP_EVENT_COORD, SOL_SANCTUM_CELL_TINT, CONDITION_ALWAYS,
+    {MAP_EVENT_COORD, MB_SOL_SANCTUM_LUNA_SOL_ROOMS_TINT_INVERSE,
+     CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_UpdateRoomTintInverse)},
+    {MAP_EVENT_COORD, MB_SOL_SANCTUM_LUNA_SOL_ROOMS_TINT, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_UpdateRoomTint)},
-    {MAP_EVENT_COORD, SOL_SANCTUM_CELL_PLAIN, CONDITION_ALWAYS,
+    {MAP_EVENT_COORD, MB_SOL_SANCTUM_LUNA_SOL_ROOMS_PLAIN, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_RestorePlainTint)},
-    {MAP_EVENT_COORD, SOL_SANCTUM_CELL_WARM_TINT, CONDITION_ALWAYS,
+    {MAP_EVENT_COORD, MB_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINT, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_ApplySecondRoomTint)},
-    {MAP_EVENT_COORD, SOL_SANCTUM_CELL_BLACK_BACKDROP, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_ClearBackdropColor)},
-    {BG_EVENT(BG_EVENT_SILENT), SOL_SANCTUM_CELL_FLOOR_SYMBOL, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_RiseToElementalStarRoom)},
-    {MAP_EVENT_COORD, SOL_SANCTUM_CELL_BEFORE_KRADEN, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_KradenSeesLunaPictureChange)},
+    {MAP_EVENT_COORD, MB_SOL_SANCTUM_LUNA_SOL_ROOMS_BLACK_BACKDROP,
+     CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ClearBackdropColor)},
+    {BG_EVENT(BG_EVENT_SILENT), MB_SOL_SANCTUM_LUNA_SOL_ROOMS_FLOOR_SYMBOL,
+     CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RiseToElementalStarRoom)},
+    {MAP_EVENT_COORD, MB_SOL_SANCTUM_LUNA_SOL_ROOMS_BEFORE_KRADEN,
+     CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_KradenSeesLunaPictureChange)},
     {MAP_EVENT_WARP, 1, CONDITION_ALWAYS,
      SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_RELIEFS},
     {MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS,
      SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE},
-    {MAP_EVENT_COORD, SOL_SANCTUM_CELL_HEART_OF_SANCTUM, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_KradenFindsHeartOfSanctum)},
-    {MAP_EVENT_COORD, SOL_SANCTUM_CELL_WAY_OUT, CONDITION_ALWAYS,
+    {MAP_EVENT_COORD, MB_SOL_SANCTUM_LUNA_SOL_ROOMS_HEART_OF_SANCTUM,
+     CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_KradenFindsHeartOfSanctum)},
+    {MAP_EVENT_COORD, MB_SOL_SANCTUM_LUNA_SOL_ROOMS_WAY_OUT, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_KradenStopsPartyLeaving)},
-    {BG_EVENT(BG_EVENT_CHEST), SOL_SANCTUM_CELL_CHEST,
+    {BG_EVENT(BG_EVENT_CHEST), MB_SOL_SANCTUM_LUNA_SOL_ROOMS_CHEST,
      FLAG_SOL_SANCTUM_HERB_FOUND, FIND_ITEM(ITEM_HERB)},
     {MAP_EVENTS_END},
 };

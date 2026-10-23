@@ -11,7 +11,7 @@ struct MercuryLighthouseLights {
   /// The leader's lights, 0 to 3: the heart gives three and each hop into the
   /// pool spends one.
   s32 levels;
-  s32 terrainCode; ///< the pool's metatile behavior, the floor's region
+  s32 poolBehavior; ///< the pool's metatile behavior, the floor's region
   /// Frames to the next ripple at trigger 21, 10 to 39; a hop zeroes it.
   s32 rippleTimer;
   /// 16.16 fixed-point pixels: the centre of the column's cell, where a

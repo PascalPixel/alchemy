@@ -31,17 +31,18 @@
 /// - FLAG_MAP_TEMP_02: the switch has opened the passage.
 ///
 /// At the gates, stepping uncloaked on the ground before the guards
-/// (TRIGGER_GUARDED_GROUND) brings them in front of the door, and an
-/// uncloaked leader among them, or one still among them as Cloak fades, is
-/// marched back down the steps (EventScript_GuardsCatchParty, raised as
-/// TRIGGER_PARTY_SPOTTED by Lunpa_WatchForUncloakedParty). A party caught in
+/// (MB_LUNPA_FORTRESS_GATES_GUARDED_GROUND) brings them in front of the door,
+/// and an uncloaked leader among them, or one still among them as Cloak fades,
+/// is marched back down the steps (EventScript_GuardsCatchParty, raised as
+/// RAISED_PARTY_SPOTTED by Lunpa_WatchForUncloakedParty). A party caught in
 /// the fortress arrives by LUNPA_FORTRESS_GATES_AFTER_CAUGHT and is thrown
 /// down the steps; after the rescue it leaves the fortress by
 /// LUNPA_FORTRESS_GATES_FROM_LUNPA_FORTRESS_TOADONPA and sneaks past under
 /// Cloak. Every entry clears the fortress's puzzle and beaten-guard flags, so
 /// the fortress starts over. Between Donpa's judgment and the reunion in West
 /// Lunpa Cave (FLAG_LUNPA_CAVE_REUNION_SEEN), Garet stops the leader from
-/// going back up (TRIGGER_FORTRESS_APPROACH). Its map temp flags:
+/// going back up (MB_LUNPA_FORTRESS_GATES_FORTRESS_APPROACH). Its map temp
+/// flags:
 ///
 /// - FLAG_MAP_TEMP_40: the guards stand before the door.
 /// - FLAG_MAP_TEMP_41: Cloak has been cast at the gates.
@@ -269,8 +270,8 @@ static void EventScript_HideSecrets(void) {
   GameFlag_Set(FLAG_MAP_TEMP_01);
 }
 
-/// Searching the well (TRIGGER_WELL), in Lunpa or at the Lunpa Fortress Gates:
-/// frogs croak in it.
+/// Searching the well (MB_LUNPA_WELL, MB_LUNPA_FORTRESS_GATES_WELL), in Lunpa
+/// or at the Lunpa Fortress Gates: frogs croak in it.
 static void EventScript_SearchWell(void) {
   FieldScript_Start();
   FieldMessage_Show(MsgFieldPeeredWell, 1);
@@ -477,19 +478,21 @@ static void EventScript_ReadRightGuardsThoughts(void) {
 }
 
 /// Every frame at the Lunpa Fortress Gates after Donpa's judgment: stepping up
-/// to row 10 raises Garet's warning (TRIGGER_FORTRESS_APPROACH).
+/// to row 10 raises Garet's warning
+/// (MB_LUNPA_FORTRESS_GATES_FORTRESS_APPROACH).
 static void Lunpa_WatchForFortressApproach(void) {
   s32 leaderRow = ObjectEvent_Get(LOCALID_PARTY_LEADER)->z.fixed / CELL_SIZE;
 
   if (GameFlag_IsSet(FLAG_MAP_TEMP_43) == 0 && leaderRow == 10) {
     GameFlag_Set(FLAG_MAP_TEMP_43);
-    ((struct FieldWork *)gFieldWork)->coordEvent = TRIGGER_FORTRESS_APPROACH;
+    ((struct FieldWork *)gFieldWork)->coordEvent =
+        MB_LUNPA_FORTRESS_GATES_FORTRESS_APPROACH;
   }
 }
 
-/// Lunpa Fortress Gates, TRIGGER_FORTRESS_APPROACH after Donpa's judgment:
-/// Garet reminds the leader they cannot go into the fortress, and the leader
-/// steps back.
+/// Lunpa Fortress Gates, MB_LUNPA_FORTRESS_GATES_FORTRESS_APPROACH after
+/// Donpa's judgment: Garet reminds the leader they cannot go into the fortress,
+/// and the leader steps back.
 static void EventScript_GaretTurnsLeaderBack(void) {
   FieldScript_Start();
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
@@ -525,7 +528,7 @@ static void EventScript_EnterDoor(void) {
     }
   }
   Script_PlaySong(SE_DOOR_OPEN);
-  doorIndex = work->coordEvent - TRIGGER_FIRST_HOME_DOOR;
+  doorIndex = work->coordEvent - MB_LUNPA_FIRST_HOME_DOOR;
   MapGrid_AnimateCells(gLunpaDoors[doorIndex].steps, gLunpaDoors[doorIndex].x,
                        gLunpaDoors[doorIndex].y);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
@@ -541,7 +544,7 @@ static void EventScript_EnterDoor(void) {
   FieldScript_End();
 }
 
-/// Lunpa, TRIGGER_HIDDEN_PASSAGE: the hidden passage leads to the jail once
+/// Lunpa, MB_LUNPA_HIDDEN_PASSAGE: the hidden passage leads to the jail once
 /// opened, while Reveal shows it.
 static void EventScript_EnterHiddenPassage(void) {
   if (GameFlag_IsSet(FLAG_MAP_TEMP_02) != 0) {
@@ -556,8 +559,8 @@ static void EventScript_EnterHiddenPassage(void) {
   }
 }
 
-/// Lunpa Fortress Gates, TRIGGER_FORTRESS_DOOR: through the fortress door at
-/// the top of the steps, into Lunpa Fortress.
+/// Lunpa Fortress Gates, MB_LUNPA_FORTRESS_GATES_FORTRESS_DOOR: through the
+/// fortress door at the top of the steps, into Lunpa Fortress.
 static void EventScript_EnterFortress(void) {
   GameFlag_Set(FLAG_MAP_TEMP_42);
   FieldScript_Start();
@@ -619,8 +622,9 @@ static inline void Lunpa_CopyGatewayCollision(s32 sourceColumn, s32 sourceRow) {
   MapGrid_CopyCellAttributes(sourceColumn, sourceRow, 1, 1, 9, 11);
 }
 
-/// Lunpa Fortress Gates, TRIGGER_GUARDED_GROUND: coming close uncloaked, the
-/// guards step in front of the fortress door and the gateway closes.
+/// Lunpa Fortress Gates, MB_LUNPA_FORTRESS_GATES_GUARDED_GROUND: coming close
+/// uncloaked, the guards step in front of the fortress door and the gateway
+/// closes.
 static void EventScript_GuardsBlockGate(void) {
   if (gGameState.cloaked == 0) {
     FieldScript_Start();
@@ -739,7 +743,7 @@ static void EventScript_CloakFades(void) {
       leader->z.fixed > PIXELS(160) && leader->z.fixed < PIXELS(248)) {
     Task_Remove(Lunpa_WatchForUncloakedParty);
 #if TBS_PATCH_1
-    work->raisedEvent = TRIGGER_PARTY_SPOTTED;
+    work->raisedEvent = RAISED_PARTY_SPOTTED;
 #else
     EventScript_GuardsCatchParty();
 #endif
@@ -760,7 +764,7 @@ static void Lunpa_WatchForUncloakedParty(void) {
       (u32)(leader->x.fixed - PIXELS(144)) <= PIXELS(32) &&
       leader->z.fixed >= PIXELS(168) && leader->z.fixed < PIXELS(176)) {
     Task_Remove(Lunpa_WatchForUncloakedParty);
-    work->raisedEvent = TRIGGER_PARTY_SPOTTED;
+    work->raisedEvent = RAISED_PARTY_SPOTTED;
   }
 }
 
@@ -1082,17 +1086,17 @@ struct ObjectEventTemplate gGateObjectEventTemplates[] = {
    EVENT_SCRIPT(EventScript_EnterDoor)}
 
 #define LUNPA_ROADS_AND_DOORS                                                  \
-  {MAP_EVENT_WARP, TRIGGER_WORLD_MAP_ROAD, CONDITION_ALWAYS,                   \
+  {MAP_EVENT_WARP, MB_LUNPA_WORLD_MAP_ROAD, CONDITION_ALWAYS,                  \
    LUNPA_TO_WORLD_MAP},                                                        \
-      {MAP_EVENT_WARP, TRIGGER_GATE_ROAD, CONDITION_ALWAYS,                    \
+      {MAP_EVENT_WARP, MB_LUNPA_GATE_ROAD, CONDITION_ALWAYS,                   \
        LUNPA_TO_LUNPA_FORTRESS_GATES},                                         \
-      {MAP_EVENT_WARP, TRIGGER_CAVE_ROAD, CONDITION_ALWAYS,                    \
+      {MAP_EVENT_WARP, MB_LUNPA_CAVE_ROAD, CONDITION_ALWAYS,                   \
        LUNPA_TO_WEST_LUNPA_CAVE},                                              \
-      DOOR(TRIGGER_FIRST_HOME_DOOR), DOOR(TRIGGER_SECOND_HOME_DOOR),           \
-      DOOR(TRIGGER_THIRD_HOME_DOOR), DOOR(TRIGGER_ARMS_SHOP_DOOR),             \
-      DOOR(TRIGGER_ITEM_SHOP_DOOR), DOOR(TRIGGER_INN_DOOR),                    \
-      DOOR(TRIGGER_TEMPLE_DOOR), DOOR(TRIGGER_EIGHTH_ROOM_DOOR), {             \
-    COORD_EVENT_WALKING_INTO(FACING_NORTH), TRIGGER_HIDDEN_PASSAGE,            \
+      DOOR(MB_LUNPA_FIRST_HOME_DOOR), DOOR(MB_LUNPA_SECOND_HOME_DOOR),         \
+      DOOR(MB_LUNPA_THIRD_HOME_DOOR), DOOR(MB_LUNPA_ARMS_SHOP_DOOR),           \
+      DOOR(MB_LUNPA_ITEM_SHOP_DOOR), DOOR(MB_LUNPA_INN_DOOR),                  \
+      DOOR(MB_LUNPA_TEMPLE_DOOR), DOOR(MB_LUNPA_EIGHTH_ROOM_DOOR), {           \
+    COORD_EVENT_WALKING_INTO(FACING_NORTH), MB_LUNPA_HIDDEN_PASSAGE,           \
         CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterHiddenPassage)         \
   }
 
@@ -1103,17 +1107,17 @@ struct ObjectEventTemplate gGateObjectEventTemplates[] = {
        CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RevealSecrets)},             \
       {PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0,        \
        CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HideSecrets)},               \
-      {BG_EVENT(BG_EVENT_SILENT), TRIGGER_HIDDEN_SWITCH, FLAG_MAP_TEMP_01,     \
+      {BG_EVENT(BG_EVENT_SILENT), MB_LUNPA_HIDDEN_SWITCH, FLAG_MAP_TEMP_01,    \
        EVENT_SCRIPT(EventScript_PressHiddenSwitch)},                           \
-      {BG_EVENT(BG_EVENT_SILENT), TRIGGER_PSYNERGY_STONE,                      \
+      {BG_EVENT(BG_EVENT_SILENT), MB_LUNPA_PSYNERGY_STONE,                     \
        FLAG_LUNPA_PSYNERGY_STONE, FIND_PSYNERGY_STONE},                        \
-      {BG_EVENT(BG_EVENT_GRAVE), TRIGGER_GRAVE_SLEEP_BOMB,                     \
+      {BG_EVENT(BG_EVENT_GRAVE), MB_LUNPA_GRAVE_SLEEP_BOMB,                    \
        FLAG_LUNPA_GRAVE_SLEEP_BOMB, FIND_ITEM(ITEM_SLEEP_BOMB)},               \
-      {BG_EVENT(BG_EVENT_BARREL), TRIGGER_BARREL_NUT, FLAG_LUNPA_BARREL_NUT,   \
+      {BG_EVENT(BG_EVENT_BARREL), MB_LUNPA_BARREL_NUT, FLAG_LUNPA_BARREL_NUT,  \
        FIND_ITEM(ITEM_NUT)},                                                   \
       {PSYNERGY_ON_OBJ_EVENT(ABILITY_CATCH), LOCALID_FLOATING_NUT,             \
        FLAG_LUNPA_NUT_CAUGHT, EVENT_SCRIPT(EventScript_CatchFloatingNut)},     \
-      {BG_EVENT(BG_EVENT_SILENT), TRIGGER_WELL, CONDITION_ALWAYS,              \
+      {BG_EVENT(BG_EVENT_SILENT), MB_LUNPA_WELL, CONDITION_ALWAYS,             \
        EVENT_SCRIPT(EventScript_SearchWell)},                                  \
   {                                                                            \
     MAP_EVENTS_END                                                             \
@@ -1204,22 +1208,22 @@ struct MapEvent gLunpaReopenedEvents[] = {
 
 // clang-format off
 struct MapEvent gGateEvents[] = {
-    { MAP_EVENT_WARP, TRIGGER_LUNPA_ROAD, CONDITION_ALWAYS, LUNPA_FORTRESS_GATES_TO_LUNPA },
-    { MAP_EVENT_WARP, TRIGGER_THIRD_ROAD, CONDITION_ALWAYS, GATE_WARP_THIRD },
+    { MAP_EVENT_WARP, MB_LUNPA_FORTRESS_GATES_LUNPA_ROAD, CONDITION_ALWAYS, LUNPA_FORTRESS_GATES_TO_LUNPA },
+    { MAP_EVENT_WARP, MB_LUNPA_FORTRESS_GATES_THIRD_ROAD, CONDITION_ALWAYS, GATE_WARP_THIRD },
     { PSYNERGY_IN_AREA(ABILITY_CLOAK, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_CastCloak) },
     { PSYNERGY_IN_AREA(ABILITY_CLOAK, PSYNERGY_PHASE_AFTER_END), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_CloakFades) },
-    { MAP_EVENT_COORD, TRIGGER_FORTRESS_DOOR, FLAG_MAP_TEMP_42,
+    { MAP_EVENT_COORD, MB_LUNPA_FORTRESS_GATES_FORTRESS_DOOR, FLAG_MAP_TEMP_42,
       EVENT_SCRIPT(EventScript_EnterFortress) },
-    { MAP_EVENT_COORD, TRIGGER_GUARDED_GROUND, FLAG_MAP_TEMP_40,
+    { MAP_EVENT_COORD, MB_LUNPA_FORTRESS_GATES_GUARDED_GROUND, FLAG_MAP_TEMP_40,
       EVENT_SCRIPT(EventScript_GuardsBlockGate) },
-    { MAP_EVENT_COORD, TRIGGER_FORTRESS_APPROACH, CONDITION_ALWAYS,
+    { MAP_EVENT_COORD, MB_LUNPA_FORTRESS_GATES_FORTRESS_APPROACH, CONDITION_ALWAYS,
       EVENT_SCRIPT(EventScript_GaretTurnsLeaderBack) },
-    { MAP_EVENT_RAISED, TRIGGER_PARTY_SPOTTED, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_GuardsCatchParty) },
+    { MAP_EVENT_RAISED, RAISED_PARTY_SPOTTED, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_GuardsCatchParty) },
     TALK(LOCALID_LEFT_GUARD, EVENT_SCRIPT(EventScript_TalkToLeftGuard)),
     TALK(LOCALID_RIGHT_GUARD, EVENT_SCRIPT(EventScript_TalkToRightGuard)),
     MIND_READ(LOCALID_LEFT_GUARD, EVENT_SCRIPT(EventScript_ReadLeftGuardsThoughts)),
     MIND_READ(LOCALID_RIGHT_GUARD, EVENT_SCRIPT(EventScript_ReadRightGuardsThoughts)),
-    { BG_EVENT(BG_EVENT_SILENT), TRIGGER_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchWell) },
+    { BG_EVENT(BG_EVENT_SILENT), MB_LUNPA_FORTRESS_GATES_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchWell) },
     { MAP_EVENTS_END },
 };
 // clang-format on
@@ -1244,7 +1248,7 @@ u16 gLunpaDoorSteps[DOOR_COUNT][11] = {
 };
 
 /// Each door's opening animation and the map grid cell it plays at, by its
-/// coord event from TRIGGER_FIRST_HOME_DOOR.
+/// coord event from MB_LUNPA_FIRST_HOME_DOOR.
 struct MapGridCellAnimation gLunpaDoors[] = {
     {gLunpaDoorSteps[0], 46, 9},  {gLunpaDoorSteps[1], 52, 12},
     {gLunpaDoorSteps[2], 52, 18}, {gLunpaDoorSteps[3], 45, 20},

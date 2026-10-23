@@ -1621,7 +1621,7 @@ static void Kolima_SpawnCurseSparkle(void) {
   sparkle->motionFlags = framePhase;
   ObjectDispatch_SelectAnimation(sparkle, 2);
   Object_SetPosition(sparkle, targetX, 0, targetZ);
-  ObjectEvent_SetScript(sparkle, gKolima_Object26Script);
+  ObjectEvent_SetScript(sparkle, gKolima_GoldenRingsScript);
 }
 
 #include "common/kolima_blink.h"
@@ -2010,7 +2010,7 @@ struct MapEvent gKolimaBridgeEvents[] = {
 };
 // clang-format on
 
-s32 gKolima_Object26Script[] = {
+s32 gKolima_GoldenRingsScript[] = {
     SC_CALL(FieldEffect_StretchUntilArrived),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };

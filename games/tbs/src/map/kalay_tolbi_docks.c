@@ -442,7 +442,7 @@ static void KalayTolbiDocks_RemindBoardShip(void) {
 /// Once aboard, he offers to let the party go ashore again
 /// (FLAG_KALAY_DOCKS_WENT_ASHORE).
 static void KalayTolbiDocks_TalkToTicketTaker(void) {
-  s32 ticketOwner;
+  s32 ticketHolder;
   s32 ticketSlot;
   struct ObjectEvent *leader;
   s16 cardinalFacing;
@@ -478,14 +478,14 @@ static void KalayTolbiDocks_TalkToTicketTaker(void) {
     Script_ShowMessage(LOCALID_CHECKING_TICKETS, 0);
     // Hand over the actual inventory ticket before walking past the gate.
     if (GameFlag_IsSet(FLAG_KALAY_DOCKS_TICKET_BOUGHT) != 0) {
-      ticketOwner = PartyInventory_FindMember(ITEM_BOAT_TICKET);
-      ticketSlot = Inventory_Find(ticketOwner, ITEM_BOAT_TICKET);
+      ticketHolder = PartyInventory_FindMember(ITEM_BOAT_TICKET);
+      ticketSlot = Inventory_Find(ticketHolder, ITEM_BOAT_TICKET);
       ObjectMotion_SetAnimationAndWait(LOCALID_CHECKING_TICKETS, ANIM_NOD);
       ObjectEvent_WalkToAndWait(LOCALID_CHECKING_TICKETS, 88, 1288);
       ObjectEvent_FaceDirection(LOCALID_CHECKING_TICKETS, FACING_SOUTH, 0);
       gFieldWork->message++;
       Script_ShowMessage(LOCALID_CHECKING_TICKETS, 0);
-      Inventory_Discard(ticketOwner, ticketSlot);
+      Inventory_Discard(ticketHolder, ticketSlot);
       GameFlag_Set(FLAG_KALAY_DOCKS_TICKET_HANDED_OVER);
       leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
       ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, leader->x.part.pixel,

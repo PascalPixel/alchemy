@@ -292,7 +292,7 @@ void ObjectGroup_UpdateMembers(s32 actorId, s32 palette, s32 animation,
                 part != (struct SpriteAnim *)slot->effectEntry &&
                 part != (struct SpriteAnim *)slot->animationEntry) {
               if (palette == 0)
-                part->colorMode = BattleMotion_GetSlotPaletteFar(actorId);
+                part->colorMode = BattleObject_GetPaletteFar(actorId);
               else
                 part->colorMode = palette;
               part->frame = 0xff;

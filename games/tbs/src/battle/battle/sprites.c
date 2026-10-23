@@ -30,9 +30,7 @@ void BattleUnit_ListAllAndSubmit(void) {
 /// Returns the palette of unit id's battle object. Called by
 /// BattlePlayback_Run and BattleMotion_FlashHit, and through its far stub
 /// by the battle animation dispatcher (battle_anim/parts/dispatch.c).
-s32 BattleMotion_GetSlotPalette(s32 id) {
-  return BattleObject_Get(id)->palette;
-}
+s32 BattleObject_GetPalette(s32 id) { return BattleObject_Get(id)->palette; }
 
 /// The battle has six enemy sprite slots; a large enemy takes two side by
 /// side, a small one (BattleSprite_IsSmall) one.

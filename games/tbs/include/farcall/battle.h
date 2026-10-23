@@ -76,7 +76,7 @@ s32 Graphics_ScaleRgb555ClampedFar(u16 *source, u16 *destination, s32 scale,
 /// again, and returns 1 when any was; walking in the field ticks it too.
 s32 DjinnRecovery_TickFar(void);
 /// Returns the palette of a unit's battle object.
-s32 BattleMotion_GetSlotPaletteFar(s32 id);
+s32 BattleObject_GetPaletteFar(s32 id);
 /// Sets every recovering Djinni of a member with HP at once, as the Battle
 /// Arena and Vault's map do; returns 0.
 s32 DjinnRecovery_TickTwentyFar(void);

@@ -20,7 +20,7 @@ FarCall_BattleTable:
 	overlay_veneer BattleSprite_IsSmall
 	export BattleUnit_GetEffectHeightFar, BattleUnit_GetEffectHeight
 	export BattleMotion_ApproachTargetFar, BattleMotion_ApproachTarget
-	overlay_veneer BattleMotion_InitializeObject
+	overlay_veneer BattleMotion_LeapBack
 	export BattleMotion_ApplyKnockbackFar, BattleMotion_ApplyKnockback
 	export BattleUnit_ListIdsFar, BattleUnit_ListIds
 	export GetBattleObjectSlotFar, BattleObject_Get
@@ -36,7 +36,7 @@ FarCall_BattleTable:
 	export BattlePlayback_StartFar, BattlePlayback_Start
 	export Graphics_ScaleRgb555ClampedFar, Graphics_ScaleRgb555Clamped
 	export DjinnRecovery_TickFar, DjinnRecovery_Tick
-	export BattleMotion_GetSlotPaletteFar, BattleMotion_GetSlotPalette
+	export BattleObject_GetPaletteFar, BattleObject_GetPalette
 	export DjinnRecovery_TickTwentyFar, DjinnRecovery_TickTwenty
 	export DebugParty_LoadPresetFar, DebugParty_LoadPreset
 	export BattleObject_PutFar, BattleObject_Put

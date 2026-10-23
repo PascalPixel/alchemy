@@ -228,9 +228,9 @@ void BattlePlayback_Run(void) {
                 events->queue.operands[eventIndex],
                 BattleObject_Get(events->queue.operands[eventIndex]));
             slot = BattleObject_Get(events->queue.operands[eventIndex]);
-            BattleMotion_SetRecordChildValues(
-                slot->object, BattleMotion_GetSlotPalette(
-                                  events->queue.operands[eventIndex]));
+            BattleObject_SetColorMode(
+                slot->object,
+                BattleObject_GetPalette(events->queue.operands[eventIndex]));
             BattleObject_UpdatePose(events->queue.operands[eventIndex]);
             break;
           }
@@ -303,13 +303,13 @@ void BattlePlayback_Run(void) {
 
           selection[0] = BATTLE_UNIT_LIST_END;
           slot = BattleObject_Get(events->actorId);
-          BattleMotion_SetRecordChildValues(
-              slot->object, BattleMotion_GetSlotPalette(events->actorId));
+          BattleObject_SetColorMode(slot->object,
+                                    BattleObject_GetPalette(events->actorId));
         } else {
           selection[0] = events->actorId;
           selection[1] = BATTLE_UNIT_LIST_END;
-          BattleMotion_SetRecordChildValues(
-              BattleObject_Get(events->actorId)->object, SPRITE_COLOR_WHITE);
+          BattleObject_SetColorMode(BattleObject_Get(events->actorId)->object,
+                                    SPRITE_COLOR_WHITE);
         }
         PartyStatus_HighlightMembersFar(selection);
       }

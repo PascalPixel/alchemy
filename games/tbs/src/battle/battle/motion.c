@@ -67,9 +67,8 @@ void BattleMotion_SetupEscapeObject(s32 unitId) {
 /// Sends the unit of startSlot leaping progress percent of the way toward
 /// the unit of endSlot, in POSE_LEAP. Also clears REG_BLDCNT. Nothing in the
 /// source calls it.
-void BattleMotion_InterpolatePosition(struct BattleObject *startSlot,
-                                      struct BattleObject *endSlot,
-                                      s32 progress) {
+void BattleMotion_LeapToward(struct BattleObject *startSlot,
+                             struct BattleObject *endSlot, s32 progress) {
   s32 zStep;
   s32 startX;
   s32 x;
@@ -97,7 +96,7 @@ void BattleMotion_InterpolatePosition(struct BattleObject *startSlot,
 }
 
 /// Sends a unit's object back to its spot. Nothing in the source calls it.
-void BattleMotion_SetObjectPosition(struct BattleObject *battleObject) {
+void BattleMotion_ReturnObjectToSpot(struct BattleObject *battleObject) {
   struct MotionObject *object = battleObject->object;
 
   object->acceleration = 0x20000;
@@ -112,7 +111,7 @@ void BattleMotion_SetObjectPosition(struct BattleObject *battleObject) {
 /// Sends unitId hopping out to one and a half times its spot's
 /// distance from the centre. Called by BattleStaging_RunAttack and
 /// BattleStaging_RunPlainAttack.
-void BattleMotion_ResetObjectAtScaledAnchor(s32 unitId) {
+void BattleMotion_HopBack(s32 unitId) {
   u32 scaledX;
   struct BattleObject *battleObject;
   struct MotionObject *object;
@@ -136,7 +135,7 @@ void BattleMotion_ResetObjectAtScaledAnchor(s32 unitId) {
 /// Sends unit id leaping back to 1.3 times its spot's distance from the
 /// centre, in POSE_DAMAGE. Only an unnamed overlay veneer in
 /// BATTLE.S reaches it, and nothing in the source calls that.
-void BattleMotion_InitializeObject(s32 unitId) {
+void BattleMotion_LeapBack(s32 unitId) {
   struct BattleObject *battleObject = BattleObject_Get(unitId);
   struct MotionObject *object = battleObject->object;
 
@@ -230,7 +229,7 @@ void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelDivisor,
 }
 
 /// Restarts unit id's motion in POSE_LEAP. Nothing in the source calls it.
-void BattleMotion_ResetSlotObjectMode2(s32 unitId) {
+void BattleMotion_RestartLeap(s32 unitId) {
   struct MotionObject *object;
 
   object = BattleObject_Get(unitId)->object;
@@ -289,7 +288,7 @@ void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId) {
 
 /// Plays the hit flash on unit id's sprite and waits ten frames. Only a
 /// single-sprite object takes it. Nothing in the source calls it.
-void BattleMotion_SpawnSlotEffectAndWait(s32 unitId) {
+void BattleMotion_PlayHitFlash(s32 unitId) {
   struct MotionObject *object;
   struct SpriteAnim *effect;
   s32 effectHandle;

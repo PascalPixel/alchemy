@@ -513,7 +513,7 @@ void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
     MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
   }
 
-  BattleMotion_SetMode5AndActivateSlot(unitId);
+  BattleMotion_PlayFall(unitId);
   if (unitId <= ALLY_MAX) {
     if (unit->hp <= 0) {
       MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
@@ -531,7 +531,7 @@ void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
 /// For a unit whose HP has run out: plays its falling animation to the last
 /// frame and marks its object for release (BattleObject_MarkForRelease).
 /// Called by AutoBattle_ApplyDamage.
-void BattleMotion_SetMode5AndActivateSlot(s32 unitId) {
+void BattleMotion_PlayFall(s32 unitId) {
   struct SpriteAnim *actorData;
   struct Sprite *animation;
   if (Unit_GetFar(unitId)->hp <= 0) {

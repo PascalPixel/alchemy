@@ -548,7 +548,7 @@ s32 BattleStaging_RunAttack(struct BattleTurn *plan, s32 mode) {
   // is shown at once.
   if (missed != 0) {
     WaitFrames(10);
-    BattleMotion_ResetObjectAtScaledAnchor(work.effect.targets[0]);
+    BattleMotion_HopBack(work.effect.targets[0]);
     WaitFrames(2);
     WaitFrames(4);
     WaitFrames(10);
@@ -676,7 +676,7 @@ UNUSED s32 BattleStaging_RunPlainAttack(struct BattleTurn *input, s32 flags) {
     work.effect.side = ANIM_SIDE_ENEMIES;
   if (missed != 0) {
     WaitFrames(10);
-    BattleMotion_ResetObjectAtScaledAnchor(savedInput->targetIds[0]);
+    BattleMotion_HopBack(savedInput->targetIds[0]);
     WaitFrames(2);
     WaitFrames(4);
     WaitFrames(10);
@@ -826,13 +826,11 @@ s32 BattleStaging_RunItem(struct BattleTurn *plan, s32 unused,
 /// and every layer's frame set to 255 (none) so that it is drawn again.
 /// Called by BattleMotion_FlashHit and BattlePlayback_Run (a hit's flashes
 /// and a unit's redraw), with the flash's colour or the unit's own
-/// (BattleMotion_GetSlotPalette).
+/// (BattleObject_GetPalette).
 #ifdef UBFIX
-void BattleMotion_SetRecordChildValues(struct MotionObject *object,
-                                       s32 colorMode) {
+void BattleObject_SetColorMode(struct MotionObject *object, s32 colorMode) {
 #else
-s32 BattleMotion_SetRecordChildValues(struct MotionObject *object,
-                                      s32 colorMode) {
+s32 BattleObject_SetColorMode(struct MotionObject *object, s32 colorMode) {
 #endif
   s32 recordIndex = 0;
   s32 childIndex;
@@ -998,14 +996,14 @@ void BattleMotion_FlashHit(s32 unitId, s32 unused0, s32 unused1) {
     selected[1] = listTerminator;
     selected[0] = unitId;
     PartyStatus_HighlightMembersFar(selected);
-    BattleMotion_SetRecordChildValues(BattleObject_Get(unitId)->object,
-                                      SPRITE_COLOR_WHITE);
+    BattleObject_SetColorMode(BattleObject_Get(unitId)->object,
+                              SPRITE_COLOR_WHITE);
     WaitFrames(2);
 
     selected[0] = unitId;
     PartyStatus_HighlightMembersFar(selected);
-    BattleMotion_SetRecordChildValues(BattleObject_Get(unitId)->object,
-                                      BattleMotion_GetSlotPalette(unitId));
+    BattleObject_SetColorMode(BattleObject_Get(unitId)->object,
+                              BattleObject_GetPalette(unitId));
     WaitFrames(2);
     flashesRemaining--;
   } while (flashesRemaining >= 0);

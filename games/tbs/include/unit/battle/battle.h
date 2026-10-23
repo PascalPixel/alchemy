@@ -87,7 +87,7 @@ s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds);
 s32 BattleUnit_ListIds(s32 sideMask, u16 *unitIds);
 void BattleObject_Put(void);
 void BattleUnit_ListAllAndSubmit(void);
-s32 BattleMotion_GetSlotPalette(s32 unitId);
+s32 BattleObject_GetPalette(s32 unitId);
 s32 Enemy_HasSpriteRoom(s32 classId);
 s32 EnemySprite_LoadIntoSlots(s32 unitId);
 #ifdef UBFIX
@@ -147,19 +147,18 @@ void *GetMotionRecord(struct MotionObject *object, s32 recordIndex);
 void BattleCamera_SetDefaultView(void);
 void BattleMotion_ReturnToSpot(s32 unitId);
 void BattleMotion_SetupEscapeObject(s32 unitId);
-void BattleMotion_InterpolatePosition(struct BattleObject *startSlot,
-                                      struct BattleObject *endSlot,
-                                      s32 progress);
-void BattleMotion_SetObjectPosition(struct BattleObject *battleObject);
-void BattleMotion_ResetObjectAtScaledAnchor(s32 unitId);
-void BattleMotion_InitializeObject(s32 unitId);
+void BattleMotion_LeapToward(struct BattleObject *startSlot,
+                             struct BattleObject *endSlot, s32 progress);
+void BattleMotion_ReturnObjectToSpot(struct BattleObject *battleObject);
+void BattleMotion_HopBack(s32 unitId);
+void BattleMotion_LeapBack(s32 unitId);
 void BattleMotion_ApplyKnockback(s32 unitId, s32 variant);
 void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelDivisor,
                                  s32 initialVelocityY);
-void BattleMotion_ResetSlotObjectMode2(s32 unitId);
+void BattleMotion_RestartLeap(s32 unitId);
 void BattleMotion_ReservedNoOp83B0();
 void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId);
-void BattleMotion_SpawnSlotEffectAndWait(s32 unitId);
+void BattleMotion_PlayHitFlash(s32 unitId);
 s32 BattleMotion_ProjectScaledPosition(s32 unitId, s32 *projected);
 s32 BattleMotion_ProjectConditionalPosition(s32 unitId, s32 *projected);
 s32 BattleUnit_GetEffectHeight(s32 unitId);
@@ -174,7 +173,7 @@ s32 AutoBattle_RunApproachAttack(struct BattleAction *input);
 s32 AutoBattle_RunAttackOrItem(struct BattleAction *action);
 void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
                             u8 *context);
-void BattleMotion_SetMode5AndActivateSlot(s32 unitId);
+void BattleMotion_PlayFall(s32 unitId);
 s32 BattleAbility_ReplaceDefeated(const struct BattleAction *action);
 
 void Palette_UpdatePulseBrightness(void);
@@ -211,10 +210,9 @@ s32 BattleStaging_RunPlainAttack(struct BattleTurn *input, s32 flags);
 s32 BattleStaging_RunItem(struct BattleTurn *plan, s32 unused,
                           struct BattleAction *selection);
 #ifdef UBFIX
-void BattleMotion_SetRecordChildValues(struct MotionObject *object,
-                                       s32 palette);
+void BattleObject_SetColorMode(struct MotionObject *object, s32 palette);
 #else
-s32 BattleMotion_SetRecordChildValues(struct MotionObject *object, s32 palette);
+s32 BattleObject_SetColorMode(struct MotionObject *object, s32 palette);
 #endif
 s32 BattleStaging_RunPsynergyCast(struct BattleTurn *plan, s32 mode);
 

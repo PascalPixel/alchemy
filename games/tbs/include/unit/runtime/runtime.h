@@ -36,7 +36,7 @@ void WaitFrames(s32 frames);
 void Input_ResetKeyRepeat(void);
 void Input_UpdateKeyRepeatAndDirection(void);
 void System_VBlankHandler(void);
-s32 Sound_LoadPresetParameters(s32 preset);
+s32 Sound_LoadReverbCode(s32 code);
 void Sound_ReservedNoOpA(void);
 void Sound_ReservedNoOpB(void);
 void Input_HandleKeyInterrupt(void);

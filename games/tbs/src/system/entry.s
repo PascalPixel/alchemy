@@ -1,6 +1,6 @@
 @ C2: System_Entry:
 @ msr CPSR_fc selects IRQ and system modes before their stack setup.
-@ C2: IwramCodeRecords:
+@ C2: IwramSoundReverbCodes:
 @ fp is a packed sample operand in arithmetic and rotates, not a frame
 @ pointer.
 @ C2: IwramCodeRecord1:
@@ -9,13 +9,13 @@
 @ C2: IwramCodeRecord2:
 @ fp is a packed sample operand in arithmetic and rotates, not a frame
 @ pointer.
-@ C2: IwramCodeRecordsEnd:
+@ C2: IwramSoundReverbCodesEnd:
 @ this unused packed-sample arithmetic suffix uses fp (r11) as an
 @ arithmetic and rotate operand, not a frame pointer.
-@ The final 152-byte preset begins in the preceding object with
+@ The final 152-byte reverb code begins in the preceding object with
 @ four zeroing moves and a branch over this 132-byte suffix. The DMA loader
-@ copies the whole preset; its known entry skips to the mixer continuation
-@ immediately after the copied preset.
+@ copies the whole reverb code; its known entry skips to the mixer continuation
+@ immediately after the copied reverb code.
 .syntax unified
 .text
 	.arm
@@ -41,8 +41,8 @@ System_Entry:
 .syntax unified
 .text
 	.arm
-	.global IwramCodeRecords
-IwramCodeRecords:
+	.global IwramSoundReverbCodes
+IwramSoundReverbCodes:
 	asrs	r1, fp, #20
 	bicpl	r1, r1, #31
 	adds	r1, r1, ip, asr #20
@@ -217,7 +217,7 @@ IwramCodeRecord2:
 	mov	r2, #0
 	mov	r3, #0
 	mov	r4, #0
-	b	IwramCodeRecordsEnd
+	b	IwramSoundReverbCodesEnd
 .syntax unified
 	.section .text.resampler_kernels_2,"ax",%progbits
 	.arm
@@ -254,5 +254,5 @@ IwramCodeRecord2:
 	adds	r7, r7, fp, asr #18
 	addmi	r7, r7, #64
 	adds	r1, r7, r6, lsl #16
-	.global IwramCodeRecordsEnd
-IwramCodeRecordsEnd:
+	.global IwramSoundReverbCodesEnd
+IwramSoundReverbCodesEnd:

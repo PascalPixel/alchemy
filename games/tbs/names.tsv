@@ -252,6 +252,7 @@ MPT_FLG_*, MUSICPLAYER_STATUS_*, SOUND_CHANNEL_SF_*, CGB_CHANNEL_MO_*, FADE_IN, 
 MPLAY_JUMP_*	constant	pret	gMPlayJumpTable's rows, named after the MPlayDef.s commands they run (FINE, GOTO, MEMACC, XCMD, EOT) and the helpers pret's MPlayExtender installs
 MemAccOp, MEMACC_*	enum	pret	the memacc command's operations as MPlayDef.s spells them (mem_set to mem_mem_blo)
 Mixer_	prefix	common	Camelot's own way from the VBlank into the game's IWRAM mixer (Mixer_Enter), beside pret's SoundMainRAM
+reverb code (Sound_LoadReverbCode, SoundReverbCode, SOUND_REVERB_*, IwramSoundReverbCode)	word	pret	the IWRAM mixer's last step, one of five copied in per song; MusicPlayer2000 calls the echo reverb (SoundInfo.reverb); never 'preset'
 PaletteCycle, PaletteCycle_	struct	pret	a run of BG colours rotated every few frames (pret palette cycling)
 PaletteFade, PaletteFade_	struct	pret	the field's palette fade (; pret palette.c BeginNormalPaletteFade)
 TitlePaletteFade, TitlePaletteFade_	struct	pret	the title intro's 512-colour copy of the palette fade (graphics/title/intro.c)

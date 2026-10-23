@@ -97,16 +97,18 @@ void Sound_PlaySong(s32 id) {
   } else {
     // Music: the keep control, or the music last chosen (gCurrentBgm),
     // changes nothing, so a map may name its music on every entry; a song
-    // that has ended is not started again. The three songs below take mixer
-    // preset 3, the rest preset 2 (the README's "The mixer's code is chosen per
-    // song").
+    // that has ended is not started again. The three songs below take the long
+    // reverb code, the rest the normal one (the README's "The mixer's code is
+    // chosen per song").
     if (id == SONG_KEEP_BGM)
       return;
     if (id == gCurrentBgm)
       return;
     gCurrentBgm = id;
-    Sound_LoadPresetParameters(
-        (id == MUS_TITLE || id == MUS_ENDING_LOGO || id == MUS_ENDING) ? 3 : 2);
+    Sound_LoadReverbCode(
+        (id == MUS_TITLE || id == MUS_ENDING_LOGO || id == MUS_ENDING)
+            ? SOUND_REVERB_LONG
+            : SOUND_REVERB_NORMAL);
     m4aSongNumStart(id);
     // A silent start fades the new music in over 64 frames.
     if (flags & SONG_FLAG_FADE_IN)
@@ -175,25 +177,25 @@ void Sound_UpdateBgmRamps(void) {
   m4aSoundVSync();
 }
 
-/// Runs the audio test's three song selectors and five mixer presets forever.
+/// Runs the audio test's three song selectors and five reverb codes forever.
 /// Up and Down choose a row, Right and Left change its song by 1, R and L by
 /// 10, and A plays it; B plays MUS_SILENCE, Start fades the music,
-/// and Select both steps the mixer preset (0 to 4, 2 at first) and fades player
-/// 3. Never returns. Reached only through the sound far-call table's veneer;
-/// nothing in ☀️ names it.
+/// and Select both steps the reverb code (SOUND_REVERB_NORMAL at first) and
+/// fades MUSIC_PLAYER_ACTION_SE. Never returns. Reached only through the sound
+/// far-call table's veneer; nothing in ☀️ names it.
 void SoundTest_Run(void) {
   // One row each for music, fanfares (from SONG_FANFARE_FIRST) and sound
   // effects (from SONG_SE_FIRST).
   s32 cues[3] = {0, 80, 100};
-  s32 preset;
+  s32 reverbCode;
   s32 row;
   s32 timer;
 
   row = 0;
-  preset = 2;
-  /* FAKEMATCH(one-pass): the block keeps the state-address load after preset
-   * setup and the state store before timer setup. Plain store: differ 8 or more
-   * in nine statement orders. */
+  reverbCode = SOUND_REVERB_NORMAL;
+  /* FAKEMATCH(one-pass): the block keeps the state-address load after
+   * reverbCode setup and the state store before timer setup. Plain store:
+   * differ 8 or more in nine statement orders. */
   // XXX: this overwrites the first four digits of the build stamp copy; why
   // the audio test clears them is not known.
   do {
@@ -216,8 +218,8 @@ void SoundTest_Run(void) {
     }
 
     if (gKeysRepeat & KEY_SELECT) {
-      preset = (preset + 1) % 5;
-      Sound_LoadPresetParameters(preset);
+      reverbCode = (reverbCode + 1) % 5;
+      Sound_LoadReverbCode(reverbCode);
     }
     if (gKeysRepeat & KEY_R)
       cues[row] += 10;
@@ -369,12 +371,12 @@ void Sound_WaitForSong(void) {
   } while (framesWaited < BGM_WAIT_TIMEOUT_FRAMES);
 }
 
-/// Unused: returns the mixer preset Sound_PlaySong gives music
-/// `command`: 3 for MUS_ENDING, MUS_TITLE and MUS_ENDING_LOGO, 2 for the rest.
-/// Nothing in ☀️ calls it.
+/// Unused: returns the reverb code Sound_PlaySong gives music `command`:
+/// SOUND_REVERB_LONG for MUS_ENDING, MUS_TITLE and MUS_ENDING_LOGO,
+/// SOUND_REVERB_NORMAL for the rest. Nothing in ☀️ calls it.
 UNUSED s32 Sound_GetReverbCode(s32 command) {
   if (command == MUS_TITLE || command == MUS_ENDING_LOGO ||
       command == MUS_ENDING)
-    return 3;
-  return 2;
+    return SOUND_REVERB_LONG;
+  return SOUND_REVERB_NORMAL;
 }

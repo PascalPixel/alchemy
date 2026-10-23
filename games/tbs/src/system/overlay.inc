@@ -78,7 +78,7 @@
 	import IoWriteQueue_Store16, IoWriteQueue_Store16Far
 	import IoWriteQueue_Store32, IoWriteQueue_Store32Far
 	import SerialRuntime_RemoveIrqHandlers, SerialRuntime_RemoveIrqHandlersFar
-	import Sound_LoadPresetParameters, Sound_LoadPresetParametersFar
+	import Sound_LoadReverbCode, Sound_LoadReverbCodeFar
 	import SerialRuntime_StartSend, SerialRuntime_StartSendFar
 	import SerialRuntime_StartReceive, SerialRuntime_StartReceiveFar
 	import SerialRuntime_GetActiveTransfers, SerialRuntime_GetActiveTransfersFar

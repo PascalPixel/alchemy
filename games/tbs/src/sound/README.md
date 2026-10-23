@@ -203,26 +203,27 @@ Each VBlank, `Mixer_Enter` jumps into the resident sound code at
 fast memory inside the processor, with the rest of the resident runtime
 ([System](../system/README.md)).
 
-`Sound_LoadPresetParameters` copies one of `SOUND_PRESET_COUNT` presets of
-`SOUND_PRESET_SIZE` bytes of mixer code (`IwramCodeRecords`, in
-`system/entry.s`) over `IwramSoundPresetCode`, in the middle of the code
-that renders the mix. Music loads preset 3 for `MUS_ENDING`, `MUS_TITLE` and
-`MUS_ENDING_LOGO` and preset 2 for the rest. A link battle loads preset 4 with its
-music (`Battle_Run`), the Battle Arena preset 2, and the audio test
-steps through all five with Select. What each preset does is under
+`Sound_LoadReverbCode` copies one of `SOUND_REVERB_CODE_COUNT` reverb codes
+of `SOUND_REVERB_CODE_SIZE` bytes of mixer code (`IwramSoundReverbCodes`, in
+`system/entry.s`) over `IwramSoundReverbCode`, in the middle of the code that
+renders the mix. Music loads `SOUND_REVERB_LONG` for `MUS_ENDING`, `MUS_TITLE`
+and `MUS_ENDING_LOGO` and `SOUND_REVERB_NORMAL` for the rest. A link battle
+loads `SOUND_REVERB_NONE` with its music (`Battle_Run`), the Battle Arena
+`SOUND_REVERB_NORMAL`, and the audio test steps through all five with Select.
+What each does is under
 [Evidence and open questions](#evidence-and-open-questions).
 
 The driver's own mixer, `SoundMainRAM` (`mixer.s`), is separate code at
-`Ram_SoundMixer`, which `m4aSoundInit` copies there; the presets never
+`Ram_SoundMixer`, which `m4aSoundInit` copies there; the reverb codes never
 touch it.
 
-| Preset | Loaded by | What it carries into the next frame |
-| --- | --- | --- |
-| 0 | the audio test | one value for both channels, from the two buffers together |
-| 1 | the audio test | each channel's old samples crossed with the other's |
-| 2 | most music, the Battle Arena | a quarter of the mix and an eighth of each buffer's old samples |
-| 3 | `MUS_ENDING`, `MUS_TITLE`, `MUS_ENDING_LOGO` | an eighth of the mix and a quarter of the old samples |
-| 4 | a link battle | nothing: the mix buffer is cleared |
+| Name | Value | Loaded by | What it carries into the next frame |
+| --- | --- | --- | --- |
+| `SOUND_REVERB_MONO` | 0 | the audio test | one value for both channels, from the two buffers together |
+| `SOUND_REVERB_CROSSED` | 1 | the audio test | each channel's old samples crossed with the other's |
+| `SOUND_REVERB_NORMAL` | 2 | most music, the Battle Arena | a quarter of the mix and an eighth of each buffer's old samples |
+| `SOUND_REVERB_LONG` | 3 | `MUS_ENDING`, `MUS_TITLE`, `MUS_ENDING_LOGO` | an eighth of the mix and a quarter of the old samples |
+| `SOUND_REVERB_NONE` | 4 | a link battle | nothing: the mix buffer is cleared |
 
 ## Design
 
@@ -296,6 +297,8 @@ driver's structures in `games/tbs/include/sound`.
   towards a target once a VBlank.
 - **ident**: `SoundInfo.ident` and `MusicPlayerInfo.ident`, the driver's and
   each music player's signature and lock word (`ID_NUMBER`).
+- **reverb code**: one of the five versions of the IWRAM mixer's last step
+  (`enum SoundReverbCode`), copied in when music starts.
 
 ## Function prefixes
 
@@ -317,23 +320,24 @@ of `SoundMainRAM`), `SoundMainRAM_Rom` (the mixer's ROM copy), the
 range of numbers, and the songs' from `songs.h`, where a song without a
 proven name keeps its number (`MUS_009`, `SE_188`).
 
-The mixer presets are the last step of `IwramSoundRenderFrame`'s loop. Each
+The reverb codes are the last step of `IwramSoundRenderFrame`'s loop. Each
 pass loads four words of the mix buffer, two 16-bit samples to a word, and
 writes them out to the two hardware buffers, reading back first what those
 buffers held from the previous time round (`fp` from the first, `ip` from the
-second, `0x630` bytes on). The preset then works out what the mix buffer
+second, `0x630` bytes on). The reverb code then works out what the mix buffer
 starts the next frame with, from this frame's mix and those older samples,
-and stores it. Preset 2, which most music uses, keeps a quarter of the mix
-plus an eighth of each buffer's old samples, each channel from its own buffer.
-Preset 3
-swaps the weights, an eighth of the mix and a quarter of the old samples, so
-more of what has already played carries into the next frame. Preset 0 makes
-both channels one value from the two buffers together, preset 1 crosses each
-channel's old samples with the other's, and preset 4 clears the mix buffer, so
-nothing carries over. Preset 3 is the title's music and the ending's: `MUS_TITLE`
+and stores it. `SOUND_REVERB_NORMAL`, which most music uses, keeps a quarter
+of the mix plus an eighth of each buffer's old samples, each channel from its
+own buffer. `SOUND_REVERB_LONG` swaps the weights, an eighth of the mix and a
+quarter of the old samples, so more of what has already played carries into
+the next frame. `SOUND_REVERB_MONO` makes both channels one value from the
+two buffers together, `SOUND_REVERB_CROSSED` crosses each channel's old
+samples with the other's, and `SOUND_REVERB_NONE` clears the mix buffer, so
+nothing carries over. `SOUND_REVERB_LONG` is the title's music and the ending's: `MUS_TITLE`
 over the title intro, `MUS_ENDING_LOGO` over the Golden Sun logo shown after the ending, and
 `MUS_ENDING` through the credits and as the Lemurian ship sails off
-(`menu/title.c`, `map/lemurian_ship.c`). Preset 4 is the link battle's.
+(`menu/title.c`, `map/lemurian_ship.c`). `SOUND_REVERB_NONE` is the link
+battle's.
 
 A library call is dropped only when it meets another that holds the lock, and
 library calls all run on the main thread, one after another, except from a

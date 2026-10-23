@@ -374,7 +374,7 @@ the flash library in `save/`.
 
 | File | What it holds |
 | --- | --- |
-| `rom_head.s`, `entry.s` | the cartridge header; the entry that sets the CPU modes and stacks, and the sound presets (`IwramCodeRecords`) |
+| `rom_head.s`, `entry.s` | the cartridge header; the entry that sets the CPU modes and stacks, and the sound reverb codes (`IwramSoundReverbCodes`) |
 | `ewram.s`, `iwram.s`, `iwram_hi.s` | the main image's RAM variables, in their order in EWRAM and IWRAM |
 | `runtime.s`, `runtime_irq_table.s`, `sound_mixer*.s`, `runtime_mul_q16_ip.s` | the code copied to IWRAM: the interrupt dispatcher and its handler table, the resident sound mixing code, and the multiplies, divides, square root, word fills, transform and decoder the rest of the game calls |
 | `iwram_entry.s` | the stubs that call the IWRAM code from the ROM |

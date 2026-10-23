@@ -53,7 +53,21 @@ enum MusicPlayerId {
   MUSIC_PLAYER_SE_LAST = 7
 };
 
-s32 Sound_LoadPresetParameters(s32 preset);
+/// The five versions of the IWRAM mixer's last step Sound_LoadReverbCode
+/// copies into place, each carrying a different share of a frame's sound into
+/// the next: the song's reverb, as MusicPlayer2000 calls it. The sound
+/// README's "The mixer's code is chosen per song" says what each keeps.
+enum SoundReverbCode {
+  SOUND_REVERB_MONO,    ///< one value for both channels; the audio test only
+  SOUND_REVERB_CROSSED, ///< each channel's old samples crossed with the other's
+  SOUND_REVERB_NORMAL,  ///< most music and the Battle Arena
+  /// More of what has played carries over: MUS_TITLE, MUS_ENDING_LOGO and
+  /// MUS_ENDING.
+  SOUND_REVERB_LONG,
+  SOUND_REVERB_NONE ///< nothing carries over: a link battle
+};
+
+s32 Sound_LoadReverbCode(s32 code);
 
 void Bios_CpuSet(const void *source, void *destination, u32 control);
 

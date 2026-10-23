@@ -154,7 +154,7 @@ s32 Battle_Run(s32 enemyGroup) {
     Sound_PlaySongFar(cue);
     if (GameFlag_TestFar(FLAG_LINK_BATTLE) != 0) {
       Sound_PlaySongFar(MUS_055);
-      Sound_LoadPresetParameters(4);
+      Sound_LoadReverbCode(SOUND_REVERB_NONE);
     }
   } else {
     Sound_PlaySongFar(MUS_051);

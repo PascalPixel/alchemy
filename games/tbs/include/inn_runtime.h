@@ -12,13 +12,13 @@
 /// portrait.
 struct InnWork {
   u8 padding000[0x0c];
-  struct UiWindow *window; ///< the coins window: ShopWork's moneyWindow
+  struct Window *window; ///< the coins window: ShopWork's moneyWindow
   u8 padding010[0x380];
   /// ShopWork's six cursor icon slots; not named by TBS code.
   u16 resourceEntries[6];
   u8 padding39c[8];
   /// The innkeeper's animation, which picks the portrait: ShopWork's
-  /// keeperResource.
+  /// keeperGraphics.
   u16 resourceId;
   u8 padding3a6[3];
   u8 active; ///< ShopWork's shopType; the inn sets 1 when checking in

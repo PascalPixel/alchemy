@@ -180,7 +180,7 @@ Vault_UpdateRoofComplainerProximity(union FieldObject *fieldObject) {
 static s32 Vault_UpdateRoofComplainerProximity(union FieldObject *fieldObject) {
 #endif
   struct ObjectEvent *entity = (struct ObjectEvent *)fieldObject;
-  struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
+  struct WindowWork *work = (struct WindowWork *)gWindowWork[0];
   u8 *workspace = gWindowWork[12];
   s32 flag = 0;
   s32 selector = 18;
@@ -194,7 +194,7 @@ static s32 Vault_UpdateRoofComplainerProximity(union FieldObject *fieldObject) {
 #endif
 
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  if (*(s16 *)(workspace + 376) != 0 || work->mode != 0) {
+  if (*(s16 *)(workspace + 376) != 0 || work->mindRead != 0) {
     selector = 26;
     flag = 1;
   }

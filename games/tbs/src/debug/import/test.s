@@ -5,21 +5,21 @@
 	.set import.Engine_DebugCreateWindow, 1
 	.set import.Engine_DebugFinalizeWindow, 1
 	.ifndef TBS_EDITION_JA
-	.set import.UiText_OpenMessageWindow, 1
+	.set import.Message_OpenWindow, 1
 	.endif
-	.set import.UiText_ShowPositionedMessageAndWait, 1
+	.set import.FieldMessage_Show, 1
 	.ifndef TBS_EDITION_JA
 	.set import.UiWork_IsComplete, 1
 	.endif
-	.set import.UiText_DrawResource, 1
-	.set import.UiText_DrawCharacterAtOffset, 1
-	.set import.UiText_DrawStringInWindow, 1
-	.set import.UiText_DrawNumberAtOffset, 1
+	.set import.Text_DrawMessage, 1
+	.set import.Text_DrawMessageAsTiles, 1
+	.set import.Text_DrawStringInWindow, 1
+	.set import.Text_DrawNumberAtOffset, 1
 	.ifndef TBS_EDITION_JA
-	.set import.UiWindow_CreateWithSideObject, 1
+	.set import.Portrait_OpenWindow, 1
 	.endif
 	.ifndef TBS_EDITION_JA
-	.set import.UiWork_PushValueSlot, 1
+	.set import.MessageArgument_Push, 1
 	.endif
 	.ifndef TBS_EDITION_JA
 	.set import.UiWork_FinalizePendingCore, 1
@@ -76,19 +76,19 @@
 	.set import.FieldScript_ShowMessageAndWait, 1
 	.endif
 	.ifdef TBS_EDITION_JA
-	.set import.Menu_OpenCharacterSelector, 1
+	.set import.MemberChooser_Open, 1
 	.endif
 	.set import.Engine_DebugDrawItemDetails, 1
 	.set import.Shop_OpenDebugShop, 1
 	.ifdef TBS_EDITION_JA
-	.set import.Shop_ConfirmAct, 1
+	.set import.Sanctum_Run, 1
 	.endif
 	.ifdef TBS_EDITION_EN
-	.set import.Shop_ConfirmAct, 1
+	.set import.Sanctum_Run, 1
 	.endif
 	.ifdef TBS_EDITION_DE
-	.set import.Shop_ConfirmAct, 1
+	.set import.Sanctum_Run, 1
 	.endif
-	.set import.Shop_PickUnitItem, 1
+	.set import.ItemPicker_Run, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

@@ -1339,7 +1339,7 @@ static void ColosseumAzartMatch_ShowMatchResult(s32 result) {
 
 /// Unused: writes eight hexadecimal digits and a terminating null; nothing
 /// calls it.
-UNUSED static void Text_WriteU32AsHex(u8 *buf, u32 value) {
+UNUSED static void String_WriteU32AsHex(u8 *buf, u32 value) {
   s32 i;
 
   buf += 8;
@@ -1473,15 +1473,15 @@ static s32 ColosseumAzartMatch_CollectFinishItem(s32 firstItem,
      * show, which sets r1 before r0; as a direct call, 1 of 110 instructions
      * differ in tbs-en. */
     COLOSSEUM_AZART_MATCH_APPLY_MATCHING_SLOT_VALUES(ISAAC, firstItem);
-    UiWork_PushValueSlot(firstItem, 2);
+    MessageArgument_Push(firstItem, 2);
   } else {
     /* FAKEMATCH(wrapper): the same cast as the first arm, which sets r1 before
      * r0; as a direct call, 1 of 110 instructions differ in tbs-en. */
     COLOSSEUM_AZART_MATCH_APPLY_MATCHING_SLOT_VALUES(ISAAC, secondItem);
-    UiWork_PushValueSlot(secondItem, 2);
+    MessageArgument_Push(secondItem, 2);
   }
 
-  UiWork_PushValueSlot(gGameState.leaderLocalId, 1);
+  MessageArgument_Push(gGameState.leaderLocalId, 1);
   Engine_MessageShowCentered(MsgColossoIsaacGotItem, 3);
   ObjectDispatch_WaitForValue16(objectEvent);
 

@@ -1,7 +1,7 @@
 	.section .rodata
 	.balign 4
-	.global gUiIcon_ResourceTiles
-gUiIcon_ResourceTiles:
+	.global gIcon_ResourceTiles
+gIcon_ResourceTiles:
 	.incbin "games/tbs/src/graphics/ui/menuspr/hand.4bpp16x16"
 	.incbin "games/tbs/src/graphics/ui/menuspr/gem.4bpp16x16"
 	.global gMenu_SmallDownArrowTiles

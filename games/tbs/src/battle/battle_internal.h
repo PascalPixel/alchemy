@@ -119,7 +119,7 @@
   (BGCNT_PRIORITY(3) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31))
 
 // The kinds of argument a message's placeholders take, for
-// UiWork_PushValueSlotFar: a unit's name, an item's, a class's, an
+// MessageArgument_PushFar: a unit's name, an item's, a class's, an
 // ability's, and a number.
 #define VALUE_UNIT_NAME 1
 #define VALUE_ITEM_NAME 2

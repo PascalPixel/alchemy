@@ -37,13 +37,13 @@ struct OptionMenuWork {
   s8 option[5];
   s8 optionCount[5]; ///< each setting's values: 24, 15, 3, 2 and 2; it wraps
   u8 unusedAfterOptions[6]; ///< no code names it
-  union MenuCursor cursor;
-  union MenuCursor marker[2];
+  union MenuCursorRef cursor;
+  union MenuCursorRef marker[2];
   u8 unusedAfterMarkers[0x18]; ///< no code names it
   /// Each choice's icon for message speed, voice sounds and auto-sleep
   /// (options 2 to 4); the chosen one pulses.
-  struct RenderOutput *frame[3][3];
-  struct RenderOutput *icon[6];
+  struct WindowSprite *frame[3][3];
+  struct WindowSprite *icon[6];
 };
 
 /// The option screen's work, HEAP_SLOT_OPTION_MENU under its own name.

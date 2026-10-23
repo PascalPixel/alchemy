@@ -32,7 +32,7 @@
 /// others), sets FLAG_IN_BATTLE, and on its way out resets the party's
 /// battle state, sets gGameState.battleType back to BATTLE_TYPE_NORMAL and
 /// releases heap block 10. A broken link also sets flag FLAG_MAPSEC_TEMP_E8,
-/// which the link lobby reads (LinkLobby_RunRoundResult).
+/// which the link lobby reads (BattleArena_RunRoundResult).
 s32 Battle_Run(s32 enemyGroup) {
   struct BattleCamera *camera;
   s32 *focus;
@@ -45,7 +45,7 @@ s32 Battle_Run(s32 enemyGroup) {
   s32 actionCount;
   s32 i;
   s32 result;
-  struct UiWindow *tutorialWindow;
+  struct Window *tutorialWindow;
   s32 linkWaitFrames;
   u32 copyIndex;
   u32 actingUnit;
@@ -173,7 +173,7 @@ s32 Battle_Run(s32 enemyGroup) {
     battle->partyStatus = PARTY_STATUS_NO_SUMMONS;
   // The party status window, opened PARTY_STATUS_CLOSED: laid out, but erased
   // until it is drawn (window/battle_command/party_status.c).
-  UiWindow_CreateWithLayoutBoundsFar(PARTY_STATUS_CLOSED);
+  PartyStatus_CreateWindowFar(PARTY_STATUS_CLOSED);
   Camera_InitializeDefaultTransform();
   BattleObject_Put();
   BattlePresentation_InitializeWorkAndResetState();
@@ -289,14 +289,14 @@ s32 Battle_Run(s32 enemyGroup) {
     // The Djinn tutorial explains unleashing and standby: two windows that
     // zoom open at tiles (0, 4) and (10, 4), the second closed by a key at
     // the cursor, at pixel (92, 24).
-    tutorialWindow = UiText_OpenMessageWindowFar(MsgTutorialUnleashed, 0, 4, 1);
+    tutorialWindow = Message_OpenWindowFar(MsgTutorialUnleashed, 0, 4, 1);
     while (UiWork_IsCompleteFar() == 0)
       WaitFrames(1);
-    UiWork_FinalizeFar(tutorialWindow, 1);
+    Window_CloseFar(tutorialWindow, 1);
     WaitFrames(1);
-    tutorialWindow = UiText_OpenMessageWindowFar(MsgTutorialStandby, 10, 4, 1);
+    tutorialWindow = Message_OpenWindowFar(MsgTutorialStandby, 10, 4, 1);
     BattleMessage_WaitForAdvanceAt(92, 24);
-    UiWork_FinalizeFar(tutorialWindow, 1);
+    Window_CloseFar(tutorialWindow, 1);
     WaitFrames(1);
   }
 
@@ -314,8 +314,8 @@ won:
       if (battle->defeatState <= DEFEAT_SEVERAL) {
         BattleUnit_SetFar(FIRST_ENEMY_UNIT,
                           battle->enemyKinds[battle->firstDefeated], 26);
-        UiWork_ClearValueNameTablesFar();
-        UiWork_PushValueSlotFar(FIRST_ENEMY_UNIT, VALUE_UNIT_NAME);
+        MessageArgument_ClearAllFar();
+        MessageArgument_PushFar(FIRST_ENEMY_UNIT, VALUE_UNIT_NAME);
         BattleMessage_ShowAndWaitFar(battle->defeatState + MsgDowned);
         BattleMessage_WaitForAdvance();
       }
@@ -330,7 +330,8 @@ won:
 
 aborted:
   // The link broke, or no actions could be gathered. Flag FLAG_MAPSEC_TEMP_E8
-  // tells the link lobby (LinkLobby_RunRoundResult) the battle did not finish.
+  // tells the link lobby (BattleArena_RunRoundResult) the battle did not
+  // finish.
   Battle_ClearSerialTransferPayload();
   Task_SuspendAll(0);
   REG_DISPCNT = DISPCNT_MODE_1;
@@ -343,8 +344,8 @@ party_lost:
   // defeated!".
   Battle_ClearSerialTransferPayload();
   Sound_PlaySongFar(MUS_DEFEAT);
-  UiWork_ClearValueNameTablesFar();
-  UiWork_PushValueSlotFar(gGameState.party[0], VALUE_UNIT_NAME);
+  MessageArgument_ClearAllFar();
+  MessageArgument_PushFar(gGameState.party[0], VALUE_UNIT_NAME);
   if (BattleParty_PrepareMembers(0) == 1)
     BattleMessage_ShowAndWaitFar(MsgGoesDownInDefeat);
   else

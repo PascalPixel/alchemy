@@ -26,7 +26,7 @@ static const u16 sSelectorTileOffsets[30] = {
 /// colour number, not a palette). Called by the shop's quantity choice and,
 /// through SHOP.S, by the item menu's quantity bar, which draws its bar in
 /// four colours this way.
-void Shop_FillSelector(s32 itemCount, s32 paletteSelector, u8 *tileBuffer) {
+void QuantityBar_Fill(s32 itemCount, s32 paletteSelector, u8 *tileBuffer) {
   const u16 *tileOffset;
 
   // One byte holds two 4-bit pixels, the left one in the low nibble
@@ -85,11 +85,11 @@ void Shop_CopyGlyphs(s32 digit, u8 *tileBuffer, u32 digitPosition) {
 /// NULL with no free slot. Called by Shop_DrawStock for each item on sale. A
 /// price of 100000 or more shows its last five digits. The scratch block is
 /// released before returning; the cache entry is not freed here.
-struct RenderOutput *Shop_CreatePriceSprite(s32 value, struct UiWindow *window,
+struct WindowSprite *Shop_CreatePriceSprite(s32 value, struct Window *window,
                                             s32 x, s32 y) {
   u8 *tileBuffer;
   s32 resourceSlot;
-  struct RenderOutput *priceSprite;
+  struct WindowSprite *priceSprite;
 
   tileBuffer = AllocHeapSlotEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
   priceSprite = 0;
@@ -118,7 +118,7 @@ struct RenderOutput *Shop_CreatePriceSprite(s32 value, struct UiWindow *window,
   if (resourceSlot != VRAM_CACHE_ENTRY_COUNT) {
     VramCache_Load(resourceSlot, 0x100, tileBuffer);
     priceSprite =
-        RenderOutput_CreateFar(resourceSlot, 0x80008000, window, x, y);
+        WindowSprite_CreateFar(resourceSlot, 0x80008000, window, x, y);
   }
   FreeHeapSlot(HEAP_SLOT_TILE_SCRATCH);
   return priceSprite;
@@ -159,10 +159,10 @@ void Shop_RestoreFieldPalette(void) {
 
 /// Moves the cursor from its saved position toward its target, in a straight
 /// line over `kind` frames, one frame a call; `active` counts the frames and
-/// both go back to 0 on arrival. Runs every frame from Shop_StepCursor, and
+/// both go back to 0 on arrival. Runs every frame from MenuCursor_Step, and
 /// from the option, name entry and save menus' cursor tasks.
-void ShopCursor_Advance(struct ShopCursor *cursor) {
-  struct RenderOutput *sprite;
+void MenuCursor_Advance(struct MenuCursor *cursor) {
+  struct WindowSprite *sprite;
   s32 durationFrames;
   s32 frame;
   s32 cursorX;
@@ -191,8 +191,8 @@ void ShopCursor_Advance(struct ShopCursor *cursor) {
 
 /// Moves each cursor axis one quarter of the remaining distance, with a minimum
 /// one-pixel step. Called each frame by the option menu and name entry.
-void ShopCursor_MoveTowardTarget(struct ShopCursor *cursor) {
-  struct RenderOutput *sprite;
+void MenuCursor_MoveTowardTarget(struct MenuCursor *cursor) {
+  struct WindowSprite *sprite;
   s32 delta;
   s32 step;
 
@@ -237,11 +237,11 @@ void ShopCursor_MoveTowardTarget(struct ShopCursor *cursor) {
 }
 
 /// Starts a glide of the cursor from where it is to (targetX, targetY) over
-/// `kind` frames, for ShopCursor_Advance to run. Called by Shop_PlaceCursor
+/// `kind` frames, for MenuCursor_Advance to run. Called by MenuCursor_Place
 /// and, through SHOP.S, by name entry and the Colosso choice.
-void Shop_SetCursor(struct ShopCursor *cursor, s32 targetX, s32 targetY,
+void MenuCursor_Set(struct MenuCursor *cursor, s32 targetX, s32 targetY,
                     s32 kind) {
-  struct RenderOutput *anchor = cursor->anchor;
+  struct WindowSprite *anchor = cursor->anchor;
 
   cursor->x = anchor->x;
   cursor->y = anchor->y;
@@ -254,10 +254,10 @@ void Shop_SetCursor(struct ShopCursor *cursor, s32 targetX, s32 targetY,
 /// Places the cursor and its sprite at (x, y) at once, with a one-frame glide
 /// that has already arrived. Called when a counter, the option and system
 /// menus or name entry opens.
-void ShopCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 x, s32 y) {
+void MenuCursor_SetPositionImmediate(struct MenuCursor *cursor, s32 x, s32 y) {
 
   {
-    struct RenderOutput *sprite = cursor->anchor;
+    struct WindowSprite *sprite = cursor->anchor;
 
     cursor->targetX = x;
     cursor->kind = 1;
@@ -266,7 +266,7 @@ void ShopCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 x, s32 y) {
     sprite->oam.x = sprite->x = x;
   }
   {
-    struct RenderOutput *sprite;
+    struct WindowSprite *sprite;
 
     cursor->targetY = y;
     cursor->y = y;
@@ -278,7 +278,7 @@ void ShopCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 x, s32 y) {
 /// Starts the hand cursor's glide to (x, y) pixels inside `window` (the
 /// screen when it is NULL), over the frames shop->mode holds. Called by every
 /// counter's lists.
-void Shop_PlaceCursor(struct UiWindow *window, s32 x, s32 y) {
+void MenuCursor_Place(struct Window *window, s32 x, s32 y) {
   s32 cursorX;
   s32 cursorY;
   struct ShopWork *shop;
@@ -292,5 +292,5 @@ void Shop_PlaceCursor(struct UiWindow *window, s32 x, s32 y) {
     cursorX = cursorX + (window->x * 8) + 8;
     cursorY = cursorY + (window->y * 8) + 8;
   }
-  Shop_SetCursor(&shop->cursor, cursorX, cursorY, (s8)shop->mode);
+  MenuCursor_Set(&shop->cursor, cursorX, cursorY, (s8)shop->mode);
 }

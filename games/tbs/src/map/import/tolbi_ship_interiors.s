@@ -14,7 +14,7 @@
 	.set import.Object_CheckMovementCollision, 1
 	.set import.Engine_ObjectEventSetSpriteFlags, 1
 	.set import.Engine_WorkSetValuesIfNonNegative, 1
-	.set import.UiText_ShowCenteredMessage, 1
+	.set import.FieldMessage_ShowCentered, 1
 	.set import.Engine_ItemLoadIcon, 1
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1
@@ -55,7 +55,7 @@
 	.set import.Engine_ScriptShowMessageAndWait, 1
 	.set import.Engine_ScriptAskYesNo, 1
 	.set import.Engine_ObjectEventFaceDirection, 1
-	.set import.Ui_SetMessageVoiceFromObjectEvent, 1
+	.set import.Message_SetVoiceFromObjectEvent, 1
 	.set import.Engine_ObjectEventSetSpritePriority, 1
 	.set import.Engine_ObjectEventShowEmote, 1
 	.set import.Engine_ObjectEventSetAttachedEffect, 1

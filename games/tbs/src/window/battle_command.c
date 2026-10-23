@@ -14,15 +14,15 @@
 /// folder gives the words, prefixes and spellings the parts use. Where to
 /// start:
 ///
-///   Party status    party_status.c: UiWindow_CreateWithLayoutBounds,
+///   Party status    party_status.c: PartyStatus_CreateWindow,
 ///                   PartyStatus_Draw
-///   Saving          save.c: SaveMenu_SelectSlot, SaveMenu_WriteSelectedSlot
+///   Saving          save.c: FileMenu_SelectFile, Save_ToChosenFile
 ///   Battle menus    party_commands.c: Battle_CollectPartyCommands, which
-///                   runs command_row.c: Menu_RunCommandRow and the menus
+///                   runs command_row.c: BattleCommandRow_Run and the menus
 ///                   of djinn_menu.c, summon_menu.c, item_menu.c,
 ///                   psynergy_menu.c and targets.c
-///   Icon menus      icon_menu.c: Menu_SelectTopEntry,
-///                   Menu_SelectSaveSlotAction
+///   Icon menus      icon_menu.c: FieldMenu_SelectCommand,
+///                   FileMenu_SelectAction
 
 #include "battle_command_internal.h"
 

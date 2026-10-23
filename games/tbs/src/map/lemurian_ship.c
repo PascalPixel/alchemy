@@ -378,7 +378,7 @@ static void LemurianShip_SetSail(void) {
   Engine_ScriptWait(30);
   Engine_ObjectEventFaceDirection(GARET, FACING_NORTHEAST, 0);
   Engine_ScriptWait(20);
-  UiText_OpenMessageAtObject(1, 0);
+  FieldMessage_ShowAtObject(1, 0);
   if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
     Engine_ScriptWait(30);
     ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
@@ -419,7 +419,7 @@ static void LemurianShip_SetSail(void) {
   Engine_ScriptWait(20);
   // The second question, Mia's: must they find Jenna before going to
   // Lemuria? Garet answers either way.
-  UiText_OpenMessageAtObject(3, 0);
+  FieldMessage_ShowAtObject(3, 0);
   if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
     Engine_ScriptWait(20);
     Engine_ObjectEventRunRepeatedMotion(GARET, 2);
@@ -457,7 +457,7 @@ static void LemurianShip_SetSail(void) {
   Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
   Engine_ScriptWait(20);
   // The third question, Mia's: the seas are rough; will they be all right?
-  UiText_OpenMessageAtObject(3, 0);
+  FieldMessage_ShowAtObject(3, 0);
   ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST, 0);
   ObjectEvent_FaceDirection(MIA, FACING_NORTH, 0);
   Engine_ObjectEventFaceDirection(IVAN, FACING_NORTHWEST, 0);

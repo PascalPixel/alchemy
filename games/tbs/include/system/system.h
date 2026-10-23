@@ -50,12 +50,12 @@ extern u8 gFlashTimeoutFlag;
 #endif
 /// The timer, 0 to 3, the flash library times its operations with.
 extern u8 gFlashTimerNum;
-/// gNumberTextBuffer + 10, the decimal form's units digit (the form ends at
+/// gNumberBuffer + 10, the decimal form's units digit (the form ends at
 /// + 11); DebugText_PrintDecimal starts n characters before it, so it prints
 /// n + 1.
-extern u8 gNumberTextDecimalEnd[];
-/// The end of the hexadecimal form in gNumberTextBuffer.
-extern u8 gNumberTextHexEnd[];
+extern u8 gNumberBufferDecimalEnd[];
+/// The end of the hexadecimal form in gNumberBuffer.
+extern u8 gNumberBufferHexEnd[];
 /// The link battle timer's heading: `TIME`; `TMPO.` in Spanish, `TEMPS` in
 /// French.
 extern u8 gLink_TimeLabelString[];
@@ -66,8 +66,8 @@ extern u8 Resource_PatchThumbBranchCodeSize[];
 /// The first five 256-byte colour tables of SpriteColorMode, indexed by pixel.
 extern u8 gResourceSlot_ConversionTables[][256];
 /// The window font's 16 colours, loaded as BG palette 15
-/// (Ui_LoadWindowGraphics).
-extern const u16 gUi_WindowPalette[];
+/// (Window_LoadGraphics).
+extern const u16 gWindow_Palette[];
 #ifndef OWN_CountRemainingErasedFlashBytes
 s32 CountRemainingErasedFlashBytes(u8 *ptr);
 #endif

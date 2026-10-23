@@ -509,7 +509,7 @@ static void EventScript_TalkToTravelingHealer(void) {
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (FACING_IS_NORTH(leader->facing)) {
     // BUG: the temple's Healer, not the traveling one. The Sanctum only takes
-    // its keeper's portrait from the object event (Shop_ConfirmAct), and both
+    // its keeper's portrait from the object event (Sanctum_Run), and both
     // Healers are placed in this map in the same sprite, so the player sees no
     // difference.
 #ifdef BUGFIX

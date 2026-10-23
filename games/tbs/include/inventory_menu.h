@@ -14,7 +14,7 @@
 
 struct AnimationObject;
 
-struct UiWindow;
+struct Window;
 
 /// The item menu's work, in the HEAP_SLOT_MENU work slot: its windows, the
 /// party figures, the items listed and the two choices a command makes. The
@@ -22,29 +22,29 @@ struct UiWindow;
 struct ItemMenuWork {
   u8 unused[8];      ///< no view of the menu work names it (see menu/README.md)
   s32 selectedOwner; ///< the party member chosen
-  struct UiWindow *moneyWindow; ///< ShopWork's; not named here
-  struct UiWindow *mainWindow;
+  struct Window *moneyWindow; ///< ShopWork's; not named here
+  struct Window *mainWindow;
   /// The two panes: the member whose items are shown, and the one an item is
   /// given to.
   ///@{
-  struct RenderOutput *paneIcons[2];
-  s8 paneIndex[2]; ///< the member chosen, in ownerIds; -1 for none at first
-  s8 paneCount[2]; ///< members to choose from; 1 at first
+  struct WindowSprite *sideIcons[2];
+  s8 sideIndex[2]; ///< the member chosen, in ownerIds; -1 for none at first
+  s8 sideCount[2]; ///< members to choose from; 1 at first
   ///@}
-  struct UiWindow *itemWindow;
-  struct UiWindow *statusWindow;
-  struct UiWindow *helpWindow;
-  struct UiWindow *infoWindow;
-  struct UiWindow *equipWindow;
-  struct UiWindow *listWindow;
-  struct UiWindow *unopenedWindow; ///< never given a window; only closed
-  struct UiWindow *modalWindow;
-  struct UiWindow *secondUnopenedWindow; ///< never given a window; only closed
-  struct RenderOutput *gridCursor;       ///< only prepared by name in TBS
-  struct RenderOutput *entryIcons[32];
-  struct RenderOutput *categoryIcons[8];
+  struct Window *itemWindow;
+  struct Window *statusWindow;
+  struct Window *buttonHelpWindow;
+  struct Window *descriptionWindow;
+  struct Window *equipWindow;
+  struct Window *listWindow;
+  struct Window *unopenedWindow; ///< never given a window; only closed
+  struct Window *modalWindow;
+  struct Window *secondUnopenedWindow; ///< never given a window; only closed
+  struct WindowSprite *gridCursor;     ///< only prepared by name in TBS
+  struct WindowSprite *entryIcons[32];
+  struct WindowSprite *categoryIcons[8];
   u8 unusedAfterIcons[0x24]; ///< no view of the menu work names it
-  struct UiWindow *messageWindow;
+  struct Window *questionWindow;
   /// The cursor grid: its place and its size, 1 by 1 at first.
   ///@{
   u8 selectedColumn;
@@ -58,18 +58,18 @@ struct ItemMenuWork {
   s32 ownerScale[8];    ///< 16.16 fixed point, 0x10000 full size
   u16 selectedSlots[2]; ///< each pane's inventory slot chosen
   u16 selectedItems[2]; ///< each pane's inventory entry chosen
-  struct RenderOutput *cursor;
+  struct WindowSprite *cursor;
   /// DjinnMenuWork's backdrop pointer at 0x184; no view names the rest.
   u8 aroundBackdrop[0x48];
   u16 items[32];   ///< the inventory entries listed
   u16 ownerIds[8]; ///< the party in order (Party_ListMembers)
   u8 itemCount;
   u8 partyCount;
-  u8 paneOwner[2]; ///< each pane's member
-  struct RenderOutput *selectedItemIcon;
+  u8 sideMember[2]; ///< each pane's member
+  struct WindowSprite *selectedItemIcon;
   u16 flags;          ///< 1 while the item's name and command grid are drawn
   s16 completionFlag; ///< set to 1 as item commands end; not read by name
-  /// FourObjectMotionState's row of four figures and DjinnMenuWork's pair;
+  /// DjinnFiguresWork's row of four figures and DjinnMenuWork's pair;
   /// not named here.
   u8 figureRow[0x36];
   s16 messageOffset; ///< the item use's result, after MsgItemUseResult
@@ -83,15 +83,15 @@ struct ItemMenuWork {
   s16 resourceSlots[2]; ///< VRAM cache slots of two arrow pictures
 };
 
-STATIC_ASSERT(offsetof(struct ItemMenuWork, paneIcons) == 0x14);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, paneIndex) == 0x1c);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, paneCount) == 0x1e);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, sideIcons) == 0x14);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, sideIndex) == 0x1c);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, sideCount) == 0x1e);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, itemWindow) == 0x20);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, infoWindow) == 0x2c);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, descriptionWindow) == 0x2c);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, gridCursor) == 0x44);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, entryIcons) == 0x48);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, categoryIcons) == 0xc8);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, messageWindow) == 0x10c);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, questionWindow) == 0x10c);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, selectedColumn) == 0x110);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, selectedRow) == 0x111);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, columnCount) == 0x112);
@@ -106,7 +106,7 @@ STATIC_ASSERT(offsetof(struct ItemMenuWork, cursor) == 0x17c);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, items) == 0x1c8);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, ownerIds) == 0x208);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, itemCount) == 0x218);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, paneOwner) == 0x21a);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, sideMember) == 0x21a);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, selectedItemIcon) == 0x21c);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, messageOffset) == 0x25a);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, equipPreview) == 0x25c);

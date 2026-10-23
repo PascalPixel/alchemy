@@ -22,14 +22,14 @@
 	.set import.TilesetAnim_Pause, 1
 	.set import.Engine_MapGridCopyCellAttributes, 1
 	.set import.Engine_DebugCreateWindow, 1
-	.set import.UiWork_Finalize, 1
-	.set import.Ui_AdjustValueWithoutLimit, 1
-	.set import.UiText_OpenMessageWindow, 1
+	.set import.Window_Close, 1
+	.set import.Message_DecodeRawUnbounded, 1
+	.set import.Message_OpenWindow, 1
 	.set import.UiWork_IsComplete, 1
-	.set import.RenderOutput_PrepareForRedraw, 1
-	.set import.UiText_DrawNumber, 1
-	.set import.UiWork_ClearValueNameTables, 1
-	.set import.UiText_DrawQuantity, 1
+	.set import.WindowSprite_PrepareForRedraw, 1
+	.set import.Text_DrawNumber, 1
+	.set import.MessageArgument_ClearAll, 1
+	.set import.Text_DrawQuantity, 1
 	.set import.Save_ProcessSelectedFile, 1
 	.set import.Djinn_GetRecoveryTable, 1
 	.set import.Unit_Get, 1

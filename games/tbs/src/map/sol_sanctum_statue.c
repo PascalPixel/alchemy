@@ -605,7 +605,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Engine_ScriptWait(40);
   // Kraden: "Should I tell you more?" Either answer, he thinks they would not
   // understand yet.
-  UiText_OpenMessageAtObject(LOCALID_KRADEN, 0);
+  FieldMessage_ShowAtObject(LOCALID_KRADEN, 0);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(JENNA, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 0);

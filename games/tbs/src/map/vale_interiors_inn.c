@@ -630,13 +630,13 @@ static void EventScript_DoraWakesIsaac(void) {
   Engine_ObjectEventSetPosition(LOCALID_DORA, PIXELS(534), PIXELS(688));
   ObjectSystem_SuspendProjectionAndShowSprites();
   // On a dark screen, Dora's voice: "Isaac, wake up!" "Please, dear, wake up!"
-  Ui_SetMessageVoiceFromObjectEvent(LOCALID_DORA);
+  Message_SetVoiceFromObjectEvent(LOCALID_DORA);
   firstMessage = MsgValeWake;
-  UiText_ShowCenteredMessage(firstMessage, 1, 0);
+  FieldMessage_ShowCentered(firstMessage, 1, 0);
   Engine_ScriptWait(40);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
-  Ui_SetMessageVoiceFromObjectEvent(LOCALID_DORA);
-  UiText_ShowCenteredMessage(firstMessage + 1, 1, 0);
+  Message_SetVoiceFromObjectEvent(LOCALID_DORA);
+  FieldMessage_ShowCentered(firstMessage + 1, 1, 0);
   ObjectSystem_ResumeProjectionAndHideLayers();
   Engine_ScriptWait(40);
   // Widen the camera bounds and reveal the lightning outside.

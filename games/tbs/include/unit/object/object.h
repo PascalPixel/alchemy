@@ -22,7 +22,7 @@ struct OrbitEffect;
 struct ObjectEventTemplate;
 struct ObjectScriptContext;
 struct SparkObject;
-struct UiWindow;
+struct Window;
 union FieldObject;
 
 /// gGameState.movementMode: how the map loop hands the party leader back to

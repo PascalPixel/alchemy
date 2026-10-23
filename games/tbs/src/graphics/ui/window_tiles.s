@@ -1,7 +1,7 @@
 	.include "games/tbs/include/game/ed_asm.h"
 	.section .rodata
-	.global Ui_WindowTiles
-Ui_WindowTiles:
+	.global Window_Tiles
+Window_Tiles:
 	.ifeq EDITION_INTERNATIONAL
 	.ifdef TLA_EDITION_JA
 	.incbin "games/tbs/src/graphics/ui/window_tiles_tla_ja.4bpp"

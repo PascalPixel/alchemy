@@ -128,8 +128,8 @@ void UpdateLinkSessionCountdown(void) {
       Sound_PlaySongFar(SE_TRIPLE_TONE_LOW);
 
     if (state->timerWindow != 0)
-      UiText_DrawNumberInWindow(seconds, 2,
-                                (struct UiWindow *)state->timerWindow, 16, 8);
+      Text_DrawNumberInWindow(seconds, 2, (struct Window *)state->timerWindow,
+                              16, 8);
   }
 }
 
@@ -140,9 +140,9 @@ void UpdateLinkSessionCountdown(void) {
 /// time to be running away!" until A or B is pressed or the link battle's
 /// time runs out, and returns 1; else returns 0. The Flee command asks it
 /// (Battle_CollectPartyCommands).
-s32 UiText_ShowLocalizedMessageAndWait(void) {
+s32 Message_ShowLocalizedAndWait(void) {
   s16 buffer[64];
-  struct UiWindow *work;
+  struct Window *work;
   s32 result;
   struct BattleWork *battle;
   s32 mode;
@@ -158,16 +158,16 @@ s32 UiText_ShowLocalizedMessageAndWait(void) {
     }
   }
   if (result != 0) {
-    work = UiWindow_Create(0, 7, 30, 4, 42);
+    work = Window_Create(0, 7, 30, 4, 42);
     Ui_FillVramBlockPattern();
     BATTLE_MENU_MESSAGE_COPY(MsgNoTimeToRun, buffer,
                              BATTLE_MENU_MESSAGE_CAPACITY);
-    UiText_RenderWideStringAtOffset(buffer, work, 0, 4);
+    Text_DrawWideStringAtOffset(buffer, work, 0, 4);
     do {
       WaitFrames(1);
     } while ((gKeysPressed & (KEY_A | KEY_B)) == 0 &&
              gBattleMenuWork->timer != 0);
-    UiWork_Finalize(work, 1);
+    Window_Close(work, 1);
   }
   return result;
 }

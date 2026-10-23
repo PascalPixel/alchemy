@@ -5,51 +5,48 @@
 #include "edition.h"
 #include "glyph.h"
 
-struct UiWindow;
-struct RenderOutput;
+struct Window;
+struct WindowSprite;
 
-struct RenderOutput *RenderOutput_Create(s32 slot, s32 oamFlags,
-                                         struct UiWindow *window, s32 offsetX,
+struct WindowSprite *WindowSprite_Create(s32 slot, s32 oamFlags,
+                                         struct Window *window, s32 offsetX,
                                          s32 offsetY);
-struct RenderOutput *RenderOutput_CreateFromResource(s32 mode, s32 resource,
-                                                     struct UiWindow *input,
+struct WindowSprite *WindowSprite_CreateFromResource(s32 mode, s32 resource,
+                                                     struct Window *input,
                                                      s32 x, s32 y);
-struct RenderOutput *RenderOutput_CreateLoaded(s32 code, s32 layers,
-                                               struct UiWindow *input, s32 x,
+struct WindowSprite *WindowSprite_CreateLoaded(s32 code, s32 layers,
+                                               struct Window *input, s32 x,
                                                s32 y);
-struct RenderOutput *RenderOutput_CreateWithTransform(s32 icon,
-                                                      struct UiWindow *input,
-                                                      s32 x, s32 y);
-struct RenderOutput *RenderOutput_CreateFromTable(s32 table_entry,
-                                                  struct UiWindow *input, s32 x,
+struct WindowSprite *
+WindowSprite_CreateWithTransform(s32 icon, struct Window *input, s32 x, s32 y);
+struct WindowSprite *WindowSprite_CreateFromTable(s32 table_entry,
+                                                  struct Window *input, s32 x,
                                                   s32 y);
-struct RenderOutput *CreateSideObject(s32 character, s32 unused, s32 side,
-                                      struct UiWindow *window, s32 x, s32 y);
+struct WindowSprite *CreateSideObject(s32 character, s32 unused, s32 side,
+                                      struct Window *window, s32 x, s32 y);
 void Ui_LoadCharacterEntryForSlot(u32 side, s32 character, s32 unused);
-void RenderOutput_SetAnimation(struct RenderOutput *out, s32 mode);
-void RenderOutput_SetInvertedSentinel(void *output, s32 priority);
-void UiWindow_FillScanlineSpans(void *spans);
-void UiWindow_FillScreenBlockRect(s32 unused0, s32 unused1, u32 width,
-                                  u32 height, s32 value);
+void WindowSprite_SetMotion(struct WindowSprite *out, s32 mode);
+void WindowSprite_SetInvertedSentinel(void *output, s32 priority);
+void Win_FillScanlineSpans(void *spans);
+void Win_FillScreenBlockRect(s32 unused0, s32 unused1, u32 width, u32 height,
+                             s32 value);
 
-void UiWindow_BuildLayoutBounds(s32 flags);
-void UiWindow_CreateWithLayoutBounds(s32 flags);
-void UiWindow_DrawColumnBorders(struct UiWindow *window, u32 flags);
+void PartyStatus_BuildLayoutBounds(s32 flags);
+void PartyStatus_CreateWindow(s32 flags);
+void Window_DrawColumnBorders(struct Window *window, u32 flags);
 #ifdef UBFIX
-void UiWindow_DrawStatusBarTiles(struct UiWindow *window, s32 x, s32 y,
-                                 s32 length);
+void PartyStatus_DrawBars(struct Window *window, s32 x, s32 y, s32 length);
 #else
-s32 UiWindow_DrawStatusBarTiles(struct UiWindow *window, s32 x, s32 y,
-                                s32 length);
+s32 PartyStatus_DrawBars(struct Window *window, s32 x, s32 y, s32 length);
 #endif
 void PartyStatus_Draw(s32 flags);
 void PartyStatus_Close(void);
-void UiWindow_SetTileAttributeBitRect(const struct UiWindow *window, s32 x,
-                                      s32 y, s32 width, s32 height, u32 set);
+void Window_SetTextTileBitRect(const struct Window *window, s32 x, s32 y,
+                               s32 width, s32 height, u32 set);
 
 struct SaveFileSummary;
 
-void *Text_FormatPlayTime(s32 value, u8 *out);
+void *String_FormatPlayTime(s32 value, u8 *out);
 u32 Save_FindFreeFile(void);
 s32 Save_CountRecordsExcludingFlagged(s32 flag);
 s32 Save_ScanRecordFlags(void);
@@ -60,51 +57,47 @@ s32 Save_ProcessSelectedFile(void);
 s32 Save_ConfirmAndProcessSelectedFile(void);
 s32 Save_CopyFile(void);
 s32 Save_EraseSelectedFile(void);
-void PaletteGlow_UpdateSine(void);
-void PaletteGlow_Start(void);
-void PaletteGlow_Stop(void);
-void UiWindow_FillTilemapRect(struct UiWindow *window, s32 x, s32 y, s32 width,
-                              s32 height);
-void SaveMenu_ShowPartySprites(struct UiWindow *origin, s32 x, s32 y,
+void FileMenu_UpdatePulse(void);
+void FileMenu_StartPulse(void);
+void FileMenu_StopPulse(void);
+void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
+                            s32 height);
+void FileMenu_ShowPartySprites(struct Window *origin, s32 x, s32 y,
                                struct SaveFileSummary *descriptor);
-void SaveMenu_HidePartySprites(void);
-void SaveMenu_PlacePartySprites(void);
-void SaveMenu_ShowDjinnSprites(struct UiWindow *origin, s32 x, s32 y);
-void SaveMenu_HideDjinnSprites(void);
-void SaveMenu_PlaceDjinnSprites(void);
-void SaveMenu_DrawDjinnCounts(struct UiWindow *win,
-                              struct SaveFileSummary *row);
-void SaveMenu_DrawFileSummary(struct UiWindow *win,
-                              struct SaveFileSummary *rec);
-s32 SaveMenu_SelectSlot(s32 file, s32 mode);
-s32 SaveMenu_WriteSelectedSlot(void);
+void FileMenu_HidePartySprites(void);
+void FileMenu_PlacePartySprites(void);
+void FileMenu_ShowDjinnSprites(struct Window *origin, s32 x, s32 y);
+void FileMenu_HideDjinnSprites(void);
+void FileMenu_PlaceDjinnSprites(void);
+void FileMenu_DrawDjinnCounts(struct Window *win, struct SaveFileSummary *row);
+void FileMenu_DrawSummary(struct Window *win, struct SaveFileSummary *rec);
+s32 FileMenu_SelectFile(s32 file, s32 mode);
+s32 Save_ToChosenFile(void);
 s32 Save_LoadRecordIntoWork(s32 mode);
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
-s32 NameEntry_AcceptsMark(s32 mark, s32 letter);
-s32 NameEntry_CountLetters(const u8 *name);
-void UiWindow_CopyTilemapRegion(const struct UiWindow *window,
-                                const void *source);
-void UiWindow_SetTileAttributeRect(const struct UiWindow *window, s32 x, s32 y,
-                                   s32 width, s32 height, u32 palette);
+s32 NamingScreen_AcceptsMark(s32 mark, s32 letter);
+s32 NamingScreen_CountLetters(const u8 *name);
+void Window_CopyTilemapRegion(const struct Window *window, const void *source);
+void Window_SetTextTileRect(const struct Window *window, s32 x, s32 y,
+                            s32 width, s32 height, u32 palette);
 void Resource_CopyFixedBlockB(s32 slot);
 void Resource_CopyFixedBlockA(s32 slot);
-s32 UiText_SetRenderString(const u8 *str);
-void UiText_DrawPaddedLabel(struct UiWindow *window, u8 *name);
+s32 Text_SetString(const u8 *str);
+void Text_DrawPaddedLabel(struct Window *window, u8 *name);
 s32 NamingScreen_EditMemberName(s32 member);
-s32 PartyTalkMenu_Choose(s32 unused);
+s32 ColossoMenu_Choose(s32 unused);
 void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn);
 s32 Party_LookupCharacterValueByFlag32(u32 index);
 void Party_ShowJoinedMessage(s32 member);
 void Party_ShowPairJoinedMessage(s32 first, s32 second);
-void RenderResource_LoadPair(s32 picture, s32 slot);
-struct RenderOutput *
-RenderResource_CreatePair(s32 picture, struct UiWindow *window, s32 x, s32 y);
-void RenderOutput_BobPair(struct RenderOutput *obj);
-void RenderResource_LoadFrame(s32 icon, s32 slot, s32 remap);
-struct RenderOutput *RenderResource_CreateFrame(s32 icon, s32 remap,
-                                                struct UiWindow *window, s32 x,
-                                                s32 y);
-void Ui_ApplyTableScaleToObject(struct RenderOutput *obj);
+void Heading_Load(s32 picture, s32 slot);
+struct WindowSprite *Heading_Create(s32 picture, struct Window *window, s32 x,
+                                    s32 y);
+void Heading_Bob(struct WindowSprite *obj);
+void CommandIcon_Load(s32 icon, s32 slot, s32 remap);
+struct WindowSprite *CommandIcon_Create(s32 icon, s32 remap,
+                                        struct Window *window, s32 x, s32 y);
+void Ui_ApplyTableScaleToObject(struct WindowSprite *obj);
 
 struct BattleAction;
 struct AbilityDefinition;
@@ -114,12 +107,12 @@ struct SelectionWork;
 
 #ifdef UBFIX
 void Menu_BuildLocalizedPatternTiles(void);
-void UiWindow_DrawThreeTileColumn(struct UiWindow *window, s32 arg1, s32 arg2,
-                                  s32 arg3, s32 unused);
+void Window_DrawThreeTileColumn(struct Window *window, s32 arg1, s32 arg2,
+                                s32 arg3, s32 unused);
 #else
 s32 Menu_BuildLocalizedPatternTiles(void);
-int UiWindow_DrawThreeTileColumn(struct UiWindow *window, s32 arg1, s32 arg2,
-                                 s32 arg3, s32 unused);
+int Window_DrawThreeTileColumn(struct Window *window, s32 arg1, s32 arg2,
+                               s32 arg3, s32 unused);
 #endif
 void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output,
                                    s32 shift);
@@ -128,63 +121,62 @@ void Graphics_ExpandVramTilesByColorTable(u16 *dst);
 s32 Resource_LoadTableEntryToBuffer(s32 resource, s32 index);
 s32 ItemIcon_LoadIntoSlot(s32 resource, s32 index);
 s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index);
-s32 UiGlyph_LoadPortrait(u32 member, s32 cacheSlot);
+s32 Portrait_Load(u32 member, s32 cacheSlot);
 s32 Ui_GetTableWordZero(s32 no);
-void UiIcon_Decompress(GlyphTransfer *work);
-struct UiWindow *Link_CreateCountdownLabelWindow(void);
+void Icon_Decompress(GlyphTransfer *work);
+struct Window *Link_CreateCountdownLabelWindow(void);
 s32 Resource_LoadIndexedIntoBuffer(s32 arg0, s32 arg1);
-void UiText_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph,
-                              s32 tile);
-void UiText_DrawCharacter(struct SelectionWork *work, s32 index, u32 kind);
+void Text_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph, s32 tile);
+void Text_DrawCharacter(struct SelectionWork *work, s32 index, u32 kind);
 void Graphics_SetBg1Priority3(void);
 void Graphics_SetBg1Priority0(void);
 void Graphics_InstallBg1VCountHandler(void);
-struct UiWindow *UiText_ShowMessageAndWaitComplete(s32 message, s32 x, s32 y);
-s32 Menu_RunCommandRow(s32 mode);
+struct Window *Message_ShowAndWait(s32 message, s32 x, s32 y);
+s32 BattleCommandRow_Run(s32 mode);
 void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 alt);
-s32 BattleLayout_HighlightPartyPanels(u16 *ids);
+s32 PartyStatus_HighlightMembers(u16 *ids);
 #ifdef UBFIX
-void UiText_FormatNumberToHalfwords(s16 *out, s32 value);
+void String_FormatNumberToHalfwords(s16 *out, s32 value);
 #else
-s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value);
+s32 String_FormatNumberToHalfwords(s16 *out, s32 value);
 #endif
-s32 DjinnMenu_ListChangedDjinn(const struct PsynergyEntry *oldGrid,
-                               const struct PsynergyEntry *newGrid, u16 *out,
-                               s32 *gained, s32 *lost);
+s32 BattleDjinnMenu_ListChangedDjinn(const struct PsynergyEntry *oldGrid,
+                                     const struct PsynergyEntry *newGrid,
+                                     u16 *out, s32 *gained, s32 *lost);
 #ifdef UBFIX
-void Ui_CreateOutputFromResourceSlot(struct UiWindow *input, s32 x, s32 y,
+void Ui_CreateOutputFromResourceSlot(struct Window *input, s32 x, s32 y,
                                      s32 ability);
 #else
-s32 Ui_CreateOutputFromResourceSlot(struct UiWindow *input, s32 x, s32 y,
+s32 Ui_CreateOutputFromResourceSlot(struct Window *input, s32 x, s32 y,
                                     s32 ability);
 #endif
-struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
-                                             s32 code, s32 page,
-                                             s32 *pageCount);
-s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner);
-s32 Battle_SelectAbility(s32 owner, s32 unused);
-s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby);
+struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 owner,
+                                                 s32 code, s32 page,
+                                                 s32 *pageCount);
+s32 BattleSummaryScreen_Run(u16 *list, s32 listCount, s32 owner);
+s32 BattleDjinnMenu_Run(s32 owner, s32 unused);
+s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby);
 s32 Item_ClassifyUseAbility(s32 unit, s32 item);
 void Vram_CopyTile(u32 source_tile, u32 destination_tile);
-s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count);
-s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count);
+s32 BattleItemMenu_Run(s32 owner, u16 *entries, s32 count);
+s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count);
 s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind);
 void UpdateLinkSessionCountdown(void);
-s32 UiText_ShowLocalizedMessageAndWait(void);
+s32 Message_ShowLocalizedAndWait(void);
 s32 Battle_ClassifyEntryKind(const struct AbilityDefinition *act);
 s32 Battle_CollectPartyCommands(struct BattleAction *out, u16 *in, s32 count);
 
-void AffineEffect_UpdateFrame(void);
-void *AffineEffect_InitializeWork(void);
-void Menu_EndResourceSelection(void);
-s32 Menu_RunResourceSelectionLoop(s32 initial);
-s32 Menu_SelectResource(s32 start, s32 goal);
-void Menu_LoadResourceSlot(s32 slot, s32 index);
-void Menu_AppendResourceEntry(s32 no);
-void Menu_CenterResourceEntries(s32 row, s32 width, s32 resourceBase);
-void Menu_LayoutResourceEntries(s32 x, s32 y, s32 width, s32 resourceBase);
-/// The field menu's commands, as Menu_SelectTopEntry takes and returns them
-/// (gMenu_TopEntryCommandByPosition).
+void IconMenu_DrawIcons(void);
+void *IconMenu_Open(void);
+void IconMenu_Close(void);
+s32 IconMenu_Run(s32 initial);
+s32 IconMenu_AnimateTo(s32 start, s32 goal);
+void CommandIcon_LoadIntoSlot(s32 slot, s32 index);
+void IconMenu_AddIcon(s32 no);
+void IconMenu_Center(s32 row, s32 width, s32 resourceBase);
+void IconMenu_LayoutIcons(s32 x, s32 y, s32 width, s32 resourceBase);
+/// The field menu's commands, as FieldMenu_SelectCommand takes and returns them
+/// (gFieldMenu_CommandByPosition).
 enum FieldMenuCommand {
   FIELD_MENU_PSYNERGY = 1,
   FIELD_MENU_DJINN = 2,
@@ -192,9 +184,9 @@ enum FieldMenuCommand {
   FIELD_MENU_STATUS = 4
 };
 
-/// The title menu's choices, as Menu_SelectSaveSlotAction returns them
-/// (gMenu_SaveSlotActionByPosition).
-enum SaveSlotAction {
+/// The title menu's choices, as FileMenu_SelectAction returns them
+/// (gFileMenu_ActionByPosition).
+enum FileAction {
   SAVE_ACTION_NEW_GAME = 0,
   SAVE_ACTION_CONTINUE = 1,
   SAVE_ACTION_COPY = 2,
@@ -203,7 +195,7 @@ enum SaveSlotAction {
   SAVE_ACTION_SEND = 5
 };
 
-/// What Menu_SelectResourceLayout offers.
+/// What IconMenu_ChooseSendOption offers.
 enum ResourceLayoutMode {
   RESOURCE_LAYOUT_TRANSFER_METHOD = 0, ///< Password or Cable
   RESOURCE_LAYOUT_PASSWORD_LEVEL = 1   ///< Gold, Silver or Bronze
@@ -219,37 +211,37 @@ enum PasswordLevel {
   PASSWORD_LEVEL_BRONZE = 2
 };
 
-/// What Menu_RunConfirmSelection and Menu_RunConfirmSelectionAt return.
-enum ConfirmChoice { CONFIRM_YES = 0, CONFIRM_NO = 1 };
+/// What YesNoMenu_Run and YesNoMenu_RunAt return.
+enum YesNo { YES = 0, NO = 1 };
 
-s32 Menu_SelectTopEntry(s32 selection);
+s32 FieldMenu_SelectCommand(s32 selection);
 s32 Menu_AnimateSelectionToEntry(s32 arg0, s32 arg1);
-s32 Menu_SelectSaveSlotAction(void);
+s32 FileMenu_SelectAction(void);
 void Menu_DrawModeLabel(void);
 void Menu_DrawModeIndicator(void);
-s32 Menu_SelectResourceLayout(s32 mode);
+s32 IconMenu_ChooseSendOption(s32 mode);
 s32 Menu_SelectShopCommand(s32 selection);
 s32 Menu_SelectSanctumService(s32 selection);
-s32 Menu_RunConfirmSelection(s32 low, s32 message, s32 w, s32 selection);
-s32 Menu_RunConfirmSelectionAt(s32 x, s32 y, s32 selection);
+s32 YesNoMenu_Run(s32 low, s32 message, s32 w, s32 selection);
+s32 YesNoMenu_RunAt(s32 x, s32 y, s32 selection);
 s32 Menu_SelectCoinsOrMedals(s32 selection);
 
-void DebugMenu_ScheduleMapSelector(void);
-void Menu_DrawSelectionRow(struct UiWindow *work, s32 first, const s16 *second);
+void DebugMapSelect_Schedule(void);
+void DebugMapSelect_DrawRow(struct Window *work, s32 first, const s16 *second);
 #ifdef UBFIX
-void Menu_RunSelection(void);
+void DebugMapSelect_Run(void);
 #else
-s16 Menu_RunSelection(void);
+s16 DebugMapSelect_Run(void);
 #endif
-s32 Menu_HandleSelectionRowInput(struct UiWindow *arg, s16 value, s16 *sub,
-                                 s16 *mode);
-s32 Menu_RunSelectionWithCursorObject(void);
-void Text_FormatHex(u32 value, u32 count, u8 *out);
-void Menu_DrawFlagBitTable(struct UiWindow *window, s32 start_flag);
-s32 Menu_HandleFlagGridInput(struct UiWindow *window, s32 *page, s32 *cursor);
+s32 DebugMapSelect_HandleRowInput(struct Window *arg, s16 value, s16 *sub,
+                                  s16 *mode);
+s32 DebugFlagEditor_Run(void);
+void String_FormatHexDigits(u32 value, u32 count, u8 *out);
+void DebugFlagEditor_DrawTable(struct Window *window, s32 start_flag);
+s32 DebugFlagEditor_HandleInput(struct Window *window, s32 *page, s32 *cursor);
 void Menu_ReservedNoOp(void);
 void Djinn_SetFoundFlagAndAdd(s32 owner, s32 element, s32 index);
-s32 Menu_RunWorkspaceResultLoop(void);
+s32 PauseMenu_Run(void);
 s32 DebugMenu_BrowseIcons(void);
 s32 DebugMenu_BrowsePortraits(void);
 

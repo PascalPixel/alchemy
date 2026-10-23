@@ -465,8 +465,8 @@ s32 Field_SearchCell(s32 tile) {
   if (messageOffset <= MB_WELL - MB_JAR) {
     Leader_StopMoving();
     tile = gField_BgEventMessageOffsets[messageOffset];
-    UiText_ShowPositionedMessageAndWaitFar(MsgTileChecked + tile, 1);
-    UiText_ShowPositionedMessageAndWaitFar(MsgTileResult + tile, 1);
+    FieldMessage_ShowFar(MsgTileChecked + tile, 1);
+    FieldMessage_ShowFar(MsgTileResult + tile, 1);
   } else {
     event = (const struct MapEvent *)Map_FindEvent(MAP_EVENT_BG, tile);
     if (event != NULL) {
@@ -482,8 +482,7 @@ s32 Field_SearchCell(s32 tile) {
       if ((event->trigger & MAP_EVENT_TRIGGER_OWN_EFFECT) == 0 &&
           messageOffset != 0) {
         Leader_StopMoving();
-        UiText_ShowPositionedMessageAndWaitFar(MsgTileChecked + messageOffset,
-                                               1);
+        FieldMessage_ShowFar(MsgTileChecked + messageOffset, 1);
         GameFlag_SetBitFar(FLAG_NOTHING_HAPPENS);
       } else {
         GameFlag_ClearBitFar(FLAG_NOTHING_HAPPENS);
@@ -499,14 +498,13 @@ s32 Field_SearchCell(s32 tile) {
           if (GameFlag_IsConditionActive(condition) != 0)
             ((void (*)(s32))event->value)(gGameState.leaderLocalId);
           if (GameFlag_TestFar(FLAG_NOTHING_HAPPENS) != 0)
-            UiText_ShowPositionedMessageAndWaitFar(
-                MsgTileResult + messageOffset, 1);
+            FieldMessage_ShowFar(MsgTileResult + messageOffset, 1);
         } else {
           // A message.
           if (GameFlag_IsConditionActive(condition) != 0)
-            UiText_ShowPositionedMessageAndWaitFar((u16)event->value, 1);
+            FieldMessage_ShowFar((u16)event->value, 1);
           else
-            UiText_ShowPositionedMessageAndWaitFar(MsgButFoundNothing, 1);
+            FieldMessage_ShowFar(MsgButFoundNothing, 1);
         }
       } else {
         // A chest; its condition flag is set once it has been opened.
@@ -533,19 +531,17 @@ s32 Field_SearchCell(s32 tile) {
               object = TreasureSpot_GetObjectEvent(tile);
               ItemDisplay_RaiseAboveLeader(object);
               Sound_PlaySongFar(MUS_TREASURE_FOUND);
-              UiWork_PushValueSlotFar((u16)event->value, 5);
-              UiText_ShowPositionedMessageAndWaitFar(MsgGotPsynergyStone, 3);
+              MessageArgument_PushFar((u16)event->value, 5);
+              FieldMessage_ShowFar(MsgGotPsynergyStone, 3);
               Party_AddPp(999, 0);
-              UiWindow_CreateWithLayoutBoundsFar(PARTY_STATUS_SHOW_PP);
+              PartyStatus_CreateWindowFar(PARTY_STATUS_SHOW_PP);
               Sound_PlaySongFar(SE_RECOVERY);
-              UiText_ShowPositionedMessageAndWaitFar(MsgGotPsynergyStone + 1,
-                                                     1);
+              FieldMessage_ShowFar(MsgGotPsynergyStone + 1, 1);
               PartyStatus_CloseFar();
               ObjectDispatch_SelectAnimationFar(object, 2);
               Sound_PlaySongFar(SE_246);
               FieldScript_WaitFrames(30);
-              UiText_ShowPositionedMessageAndWaitFar(MsgGotPsynergyStone + 2,
-                                                     1);
+              FieldMessage_ShowFar(MsgGotPsynergyStone + 2, 1);
               TreasureSpot_Hide(tile);
               if (condition != -1)
                 GameFlag_SetBitFar(condition);
@@ -571,7 +567,7 @@ s32 Field_SearchCell(s32 tile) {
               Encounter_SelectBattleMusic(ENCOUNTER_ZONE_MIMIC,
                                           (u16)event->value);
               Sound_PlaySongFar(gGameState.battleMusic);
-              UiText_ShowPositionedMessageAndWaitFar(MsgChestWasMimic, 1);
+              FieldMessage_ShowFar(MsgChestWasMimic, 1);
             } else if (rewardType == FIND_COINS(0)) {
               // Coins.
               void *object;
@@ -583,8 +579,8 @@ s32 Field_SearchCell(s32 tile) {
                 TreasureSpot_ShowOpened(tile);
               ItemDisplay_RaiseAboveLeader(object);
               Sound_PlaySongFar(MUS_TREASURE_FOUND);
-              UiWork_PushValueSlotFar((u16)event->value, 5);
-              UiText_ShowPositionedMessageAndWaitFar(MsgGotCoins, 3);
+              MessageArgument_PushFar((u16)event->value, 5);
+              FieldMessage_ShowFar(MsgGotCoins, 3);
               Party_AdjustCoinsFar((u16)event->value);
               if (condition != -1)
                 GameFlag_SetBitFar(condition);
@@ -601,9 +597,9 @@ s32 Field_SearchCell(s32 tile) {
               // messageOffset is reused here as the item id's 0xffff mask.
               messageOffset = 0xffff;
               if (recipient == -1) {
-                UiWork_PushValueSlotFar(event->value & 0xfff, 2);
-                UiText_ShowPositionedMessageAndWaitFar(MsgFoundItem, 1);
-                UiText_ShowPositionedMessageAndWaitFar(MsgFoundItem + 4, 1);
+                MessageArgument_PushFar(event->value & 0xfff, 2);
+                FieldMessage_ShowFar(MsgFoundItem, 1);
+                FieldMessage_ShowFar(MsgFoundItem + 4, 1);
                 Object_DestroyIfPresent(object);
                 if ((event->kind & 0x1ff) == BG_EVENT(BG_EVENT_CHEST))
                   TreasureSpot_CloseChest(tile);
@@ -612,14 +608,12 @@ s32 Field_SearchCell(s32 tile) {
                   TreasureSpot_ShowOpened(tile);
                 ItemDisplay_RaiseAboveLeader(object);
                 Sound_PlaySongFar(MUS_TREASURE_FOUND);
-                UiWork_PushValueSlotFar(event->value & messageOffset, 2);
+                MessageArgument_PushFar(event->value & messageOffset, 2);
                 if (recipient == gGameState.leaderLocalId) {
-                  UiText_ShowPositionedMessageAndWaitFar(MsgColossoIsaacGotItem,
-                                                         3);
+                  FieldMessage_ShowFar(MsgColossoIsaacGotItem, 3);
                 } else {
-                  UiWork_PushValueSlotFar(recipient, 1);
-                  UiText_ShowPositionedMessageAndWaitFar(MsgGaveItemToMember,
-                                                         3);
+                  MessageArgument_PushFar(recipient, 1);
+                  FieldMessage_ShowFar(MsgGaveItemToMember, 3);
                 }
                 if (condition != -1)
                   GameFlag_SetBitFar(condition);
@@ -627,19 +621,18 @@ s32 Field_SearchCell(s32 tile) {
               }
             }
           } else {
-            UiText_ShowPositionedMessageAndWaitFar(MsgCantOpenIt, 1);
+            FieldMessage_ShowFar(MsgCantOpenIt, 1);
           }
         } else {
           // Already opened: the result line for the check message.
-          UiText_ShowPositionedMessageAndWaitFar(MsgTileResult + messageOffset,
-                                                 1);
+          FieldMessage_ShowFar(MsgTileResult + messageOffset, 1);
         }
         FieldScript_End();
         Map_PlayQueuedMusic();
       }
     } else {
-      UiText_ShowPositionedMessageAndWaitFar(MsgCheckedGround, 1);
-      UiText_ShowPositionedMessageAndWaitFar(MsgGroundDidntFindAnything, 1);
+      FieldMessage_ShowFar(MsgCheckedGround, 1);
+      FieldMessage_ShowFar(MsgGroundDidntFindAnything, 1);
     }
     GameFlag_ClearBitFar(FLAG_NOTHING_HAPPENS);
   }

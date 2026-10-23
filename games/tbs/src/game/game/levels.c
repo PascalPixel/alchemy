@@ -259,7 +259,7 @@ void Party_InitializeCharacters(void) {
 
   for (owner = 0; owner <= 7; owner++) {
     unit = Unit_Get(owner);
-    Ui_AdjustValueWithoutLimitFar(owner + MsgCharacterName, nameBuf);
+    Message_DecodeRawUnboundedFar(owner + MsgCharacterName, nameBuf);
     name = unit->name;
     name[0] = nameBuf[0];
     i = 0;

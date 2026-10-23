@@ -25,7 +25,7 @@
 /// cannot be paid for (Battle_CollectPartyCommands then plays the error
 /// sound and goes on), or -1 when cancelled or when the link battle's time
 /// runs out. The Djinn tutorial presses A every 120 frames.
-s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
+s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
   struct CursorSprite cursorStorage;
   struct MenuSprite sprites[4];
   u8 learnedSummons[33]; // The callable summons, in menu order
@@ -35,11 +35,11 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
   u8 visibleSummons[4];
   s32 glyph;
   s32 count;
-  struct UiWindow *window;
-  struct UiRenderWork *work;
+  struct Window *window;
+  struct WindowWork *work;
   s32 drawnRow, drawnFirstEntry, selectedRow, firstEntry;
   s32 cursorHandle;
-  struct UiWindow *description, *counts;
+  struct Window *description, *counts;
   s32 mask, preferredRow;
   struct MenuPoint cursorPosition;
   const struct SummonDefinition *summon;
@@ -51,17 +51,17 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
   s32 pressed, repeated, result;
   s32 index;
 
-  work = UI_WORK;
+  work = WINDOW_WORK;
   drawnRow = -1;
   drawnFirstEntry = -1;
   // One 16x16 sprite.
   cursorHandle = (s16)VramCache_AllocEntry(128);
-  description = UiWindow_Create(0, 4, 30, 4, 42);
-  counts = UiWindow_Create(20, 8, 10, 3, 6);
+  description = Window_Create(0, 4, 30, 4, 42);
+  counts = Window_Create(20, 8, 10, 3, 6);
   mask = 0;
   BATTLE_MENU_GET_CURSOR(firstEntry, selectedRow, preferredRow);
   window =
-      UiWindow_Create(SUMMON_MENU_WINDOW_X, 11, SUMMON_MENU_WINDOW_WIDTH, 9, 6);
+      Window_Create(SUMMON_MENU_WINDOW_X, 11, SUMMON_MENU_WINDOW_WIDTH, 9, 6);
 
   // Icon sprites for each row.
   for (index = 0; index < 4; index++) {
@@ -123,7 +123,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
     // Redraw when the page or row changes.
     //------------------------------------------------------------------
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
-      work->menuBusy = 1;
+      work->holdTilemapUpload = 1;
       Ui_SetRectHighlight(window->x + 1, window->y + drawnRow * 2 + 1,
                           window->width - 2, 1, 15);
       Ui_FillVramBlockPattern();
@@ -138,8 +138,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
             SummonDefinition_Get(orderedSummons[firstEntry + selectedRow]);
         BATTLE_MENU_MESSAGE_COPY(definition->abilityId + MsgAbilityDescription,
                                  text, BATTLE_MENU_MESSAGE_CAPACITY);
-        UiText_RenderWideStringAtOffset(text, (struct UiWindow *)description, 0,
-                                        4);
+        Text_DrawWideStringAtOffset(text, (struct Window *)description, 0, 4);
         drawnRow = selectedRow;
         mask = 0;
         for (element = 0; element <= 3; element++) {
@@ -150,15 +149,15 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
 
       // Standby counts and the four summons on this page.
       if (firstEntry != drawnFirstEntry) {
-        RenderOutput_RedrawSavedRect(window);
+        WindowSprite_RedrawSavedRect(window);
         {
           s32 element;
 
           for (element = 0; element <= 3; element++) {
-            UiWindow_SetTilemapEntry(counts, element + LIST_TILE_SUMMON_ELEMENT,
-                                     element * 2, 0, 0);
-            UiWindow_PutGlyph(counts, standby[element] + '0', element * 2 + 1,
-                              0, GLYPH_DRAW_CHARACTER);
+            Window_SetTilemapEntry(counts, element + LIST_TILE_SUMMON_ELEMENT,
+                                   element * 2, 0, 0);
+            Window_PutGlyph(counts, standby[element] + '0', element * 2 + 1, 0,
+                            GLYPH_DRAW_CHARACTER);
           }
         }
         {
@@ -184,17 +183,17 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
             // A summon the party cannot afford is drawn in colour 2.
             if (!affordable)
               UiWork_SetParameterNibble(2);
-            UiText_DrawCharacterAtOffset(SummonDefinition_Get(id)->abilityId +
-                                             MsgAbilityName,
-                                         window, 16, index * 16);
+            Text_DrawMessageAsTiles(SummonDefinition_Get(id)->abilityId +
+                                        MsgAbilityName,
+                                    window, 16, index * 16);
             for (element = 0; element <= 3; element++) {
               if (summon->djinnRequired[element] != 0) {
-                UiWindow_SetTilemapEntry(window,
-                                         element + LIST_TILE_SUMMON_ELEMENT,
-                                         col * 2 + SUMMON_COST_X, y, 0);
-                UiWindow_PutGlyph(window, summon->djinnRequired[element] + '0',
-                                  col * 2 + SUMMON_COST_X + 1, y,
-                                  GLYPH_DRAW_CHARACTER);
+                Window_SetTilemapEntry(window,
+                                       element + LIST_TILE_SUMMON_ELEMENT,
+                                       col * 2 + SUMMON_COST_X, y, 0);
+                Window_PutGlyph(window, summon->djinnRequired[element] + '0',
+                                col * 2 + SUMMON_COST_X + 1, y,
+                                GLYPH_DRAW_CHARACTER);
                 col++;
               }
             }
@@ -216,14 +215,14 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
           tile = index + LIST_TILE_PAGE_NUMBER;
           if (index == firstEntry / 4)
             tile = index + LIST_TILE_PAGE_NUMBER_LIT;
-          UiWindow_SetTilemapEntry(
+          Window_SetTilemapEntry(
               window, tile, window->width - (count + 3) / 4 + index - 2, -1, 0);
         }
       }
       Ui_SetRectHighlight(window->x + 1, window->y + selectedRow * 2 + 1,
                           window->width - 2, 1, 14);
       work->dirty = 1;
-      work->menuBusy = 0;
+      work->holdTilemapUpload = 0;
     }
 
     //------------------------------------------------------------------
@@ -269,14 +268,14 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
         tile = index + LIST_TILE_PAGE_NUMBER;
         if ((gFrameCount & 15) <= 11 && index == firstEntry / 4)
           tile = index + LIST_TILE_PAGE_NUMBER_LIT;
-        UiWindow_SetTilemapEntry(
+        Window_SetTilemapEntry(
             window, tile, window->width - (count + 3) / 4 + index - 2, -1, 0);
       }
-      UiWindow_SetTilemapEntry(window, LIST_TILE_PAGES_LEFT,
-                               window->width - (count + 3) / 4 - 3, -1, 0);
-      UiWindow_SetTilemapEntry(window, LIST_TILE_PAGES_RIGHT, window->width - 2,
-                               -1, 0);
-      UiRender_MarkRow(work, window->y - 1);
+      Window_SetTilemapEntry(window, LIST_TILE_PAGES_LEFT,
+                             window->width - (count + 3) / 4 - 3, -1, 0);
+      Window_SetTilemapEntry(window, LIST_TILE_PAGES_RIGHT, window->width - 2,
+                             -1, 0);
+      Window_MarkTilemapRow(work, window->y - 1);
     }
 
     //------------------------------------------------------------------
@@ -370,9 +369,9 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
   for (index = 0; index < 4; index++)
     Resource_ResetEntry(iconSlots[index]);
   Resource_ResetEntry((u16)cursorHandle);
-  UiWork_Finalize(counts, 1);
-  UiWork_Finalize(description, 1);
-  UiWork_Finalize(window, 1);
+  Window_Close(counts, 1);
+  Window_Close(description, 1);
+  Window_Close(window, 1);
   WaitFrames(1);
   return result;
 }

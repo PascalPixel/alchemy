@@ -393,12 +393,12 @@ s32 TolbiSpring_Initialize(void) {
         }
         Engine_ScriptWait(20);
         Engine_ScriptSetMessage(MsgTolbiYaWonNumber);
-        UiWork_PushValueSlot(coinChange, 5);
+        MessageArgument_Push(coinChange, 5);
         Engine_ScriptShowMessage(TOLBI_SPRING_DICE_ATTENDANT, 0);
         AudioCommand_WaitForStateByteClear();
       } else if (coinChange < 0) {
         Engine_ScriptSetMessage(MsgTolbiYaLostNumber);
-        UiWork_PushValueSlot(-coinChange, 5);
+        MessageArgument_Push(-coinChange, 5);
         Engine_ScriptShowMessage(TOLBI_SPRING_DICE_ATTENDANT, 0);
       }
       Engine_ScriptEnd();
@@ -424,7 +424,7 @@ s32 TolbiSpring_Initialize(void) {
               Engine_ScriptSetMessage(MsgTolbiWonItemGo2);
             }
             item = TolbiSpring_SelectLuckyWheelsPrize(wonPrizes[prizeIndex]);
-            UiWork_PushValueSlot(item, 2);
+            MessageArgument_Push(item, 2);
             Engine_ScriptShowMessage(TOLBI_SPRING_WHEELS_ATTENDANT, 0);
             Engine_ItemShowFound(item, 3);
             Engine_PartyGiveItem(item, 0);
@@ -542,7 +542,7 @@ static void TolbiSpring_OfferLuckyWheels(s32 spoken) {
       return;
     }
     Engine_ScriptSetMessage(message + 2);
-    UiWork_PushValueSlot(tickets, 5);
+    MessageArgument_Push(tickets, 5);
     Engine_ScriptOpenMessage(TOLBI_SPRING_WHEELS_ATTENDANT, 0);
     if (Engine_ScriptChooseYesNo(0, 0) != 0) {
       Engine_ScriptShowMessage(TOLBI_SPRING_WHEELS_ATTENDANT, 0);
@@ -600,7 +600,7 @@ static void TolbiSpring_OfferLuckyDice(void) {
   *(u32 *)gMapLocalState = coins;
   ObjectEvent_Snapshot();
   Engine_ScriptSetMessage(MsgTolbiBuddyWannaTry);
-  UiWork_PushValueSlot(cost, 5);
+  MessageArgument_Push(cost, 5);
   Engine_ScriptOpenMessage(TOLBI_SPRING_DICE_ATTENDANT, 0);
   if (Engine_ScriptChooseYesNo(0, 0) == 0) {
     Engine_ScriptShowMessage(TOLBI_SPRING_DICE_ATTENDANT, 0);
@@ -625,7 +625,7 @@ static s32 TolbiSpring_RunSpringGame(void) {
   s32 cancel = -1;
   s32 coins;
   s32 medals;
-  struct UiWindow *window;
+  struct Window *window;
   s32 result;
   s32 totalWeight;
   s32 prizeIndex;
@@ -643,17 +643,16 @@ prompt:
   medals = PartyInventory_CountItem(ITEM_LUCKY_MEDAL);
   Script_SetMessage(message);
   Script_OpenMessage(-1, 0);
-  window = UiWindow_Create(0, 0, TOLBI_SPRING_COUNT_WIDTH, 4, 2);
+  window = Window_Create(0, 0, TOLBI_SPRING_COUNT_WIDTH, 4, 2);
   {
     text = MsgTolbiCoins;
-    UiText_DrawCharacterAtOffset(text, window, 0, 0);
-    UiText_DrawNumberInWindow(coins, 6, window, TOLBI_SPRING_COUNT_NUMBER_X, 0);
-    UiText_DrawCharacterAtOffset(text + 1, window, 0, 8);
-    UiText_DrawNumberInWindow(medals, 6, window, TOLBI_SPRING_COUNT_NUMBER_X,
-                              8);
+    Text_DrawMessageAsTiles(text, window, 0, 0);
+    Text_DrawNumberInWindow(coins, 6, window, TOLBI_SPRING_COUNT_NUMBER_X, 0);
+    Text_DrawMessageAsTiles(text + 1, window, 0, 8);
+    Text_DrawNumberInWindow(medals, 6, window, TOLBI_SPRING_COUNT_NUMBER_X, 8);
   }
   choice = Menu_SelectCoinsOrMedals(choice);
-  UiWork_Finalize(window, 2);
+  Window_Close(window, 2);
   UiWork_FinalizePendingCore();
   if (choice == cancel) {
     Script_End();
@@ -681,12 +680,12 @@ prompt:
       }
     }
   }
-  window = UiWindow_Create(TOLBI_SPRING_TOSS_MENU_X, 15,
-                           TOLBI_SPRING_TOSS_MENU_WIDTH, 4, 2);
+  window = Window_Create(TOLBI_SPRING_TOSS_MENU_X, 15,
+                         TOLBI_SPRING_TOSS_MENU_WIDTH, 4, 2);
   {
     text = MsgTolbiToss;
-    UiText_DrawCharacterAtOffset(text, window, 0, 0);
-    UiText_DrawCharacterAtOffset(text + 1, window, 0, 8);
+    Text_DrawMessageAsTiles(text, window, 0, 0);
+    Text_DrawMessageAsTiles(text + 1, window, 0, 8);
   }
   Task_Wait(5);
   Script_PlaySong(SE_TOLBI_SPRING_TOSS_PROMPT);
@@ -703,7 +702,7 @@ prompt:
     }
     Task_Wait(1);
   }
-  UiWork_Finalize(window, 2);
+  Window_Close(window, 2);
 #else
   /* FAKEMATCH(barrier): message kept in r10 and the coin label in r9; as a
    * plain local, the two swap and 8 of 290 instructions differ in tbs-ja. */
@@ -719,16 +718,15 @@ prompt:
     medals = PartyInventory_CountItem(ITEM_LUCKY_MEDAL);
     Script_SetMessage(message);
     Script_OpenMessage(-1, 0);
-    window = UiWindow_Create(0, 0, TOLBI_SPRING_COUNT_WIDTH, 4, 2);
-    UiText_DrawCharacterAtOffset(text, window, 0, 0);
-    UiText_DrawNumberInWindow(coins, 6, window, TOLBI_SPRING_COUNT_NUMBER_X, 0);
-    UiText_DrawCharacterAtOffset(MsgTolbiCounterMarker, window, 104, 0);
-    UiText_DrawCharacterAtOffset(text + 1, window, 0, 8);
-    UiText_DrawNumberInWindow(medals, 6, window, TOLBI_SPRING_COUNT_NUMBER_X,
-                              8);
-    UiText_DrawCharacterAtOffset(MsgTolbiCounterMarker, window, 104, 8);
+    window = Window_Create(0, 0, TOLBI_SPRING_COUNT_WIDTH, 4, 2);
+    Text_DrawMessageAsTiles(text, window, 0, 0);
+    Text_DrawNumberInWindow(coins, 6, window, TOLBI_SPRING_COUNT_NUMBER_X, 0);
+    Text_DrawMessageAsTiles(MsgTolbiCounterMarker, window, 104, 0);
+    Text_DrawMessageAsTiles(text + 1, window, 0, 8);
+    Text_DrawNumberInWindow(medals, 6, window, TOLBI_SPRING_COUNT_NUMBER_X, 8);
+    Text_DrawMessageAsTiles(MsgTolbiCounterMarker, window, 104, 8);
     choice = Menu_SelectCoinsOrMedals(choice);
-    UiWork_Finalize(window, 2);
+    Window_Close(window, 2);
     UiWork_FinalizePendingCore();
     if (choice == cancel) {
       Script_End();
@@ -757,11 +755,11 @@ prompt:
         }
       }
     }
-    window = UiWindow_Create(TOLBI_SPRING_TOSS_MENU_X, 15,
-                             TOLBI_SPRING_TOSS_MENU_WIDTH, 4, 2);
+    window = Window_Create(TOLBI_SPRING_TOSS_MENU_X, 15,
+                           TOLBI_SPRING_TOSS_MENU_WIDTH, 4, 2);
     result = MsgTolbiToss;
-    UiText_DrawCharacterAtOffset(result, window, 0, 0);
-    UiText_DrawCharacterAtOffset(result + 1, window, 0, 8);
+    Text_DrawMessageAsTiles(result, window, 0, 0);
+    Text_DrawMessageAsTiles(result + 1, window, 0, 8);
     Task_Wait(5);
     Script_PlaySong(SE_TOLBI_SPRING_TOSS_PROMPT);
     for (;;) {
@@ -777,7 +775,7 @@ prompt:
       }
       Task_Wait(1);
     }
-    UiWork_Finalize(window, 2);
+    Window_Close(window, 2);
     break;
   }
 #endif
@@ -801,10 +799,10 @@ prompt:
 #endif
         Script_PlaySong(MUS_FANFARE_SMALL);
 #ifdef UBFIX
-        UiWork_PushValueSlot(gTolbiSpring_CoinPrizes[result], 5);
+        MessageArgument_Push(gTolbiSpring_CoinPrizes[result], 5);
 #else
         // UB: retain the same native one-element view for this second read.
-        UiWork_PushValueSlot(
+        MessageArgument_Push(
             ((struct { u16 coins[1]; } *)gTolbiSpring_CoinPrizes)
                 ->coins[result],
             5);

@@ -57,9 +57,9 @@ s32 Field_UsePsynergy(u32 code) {
       PSYNERGY_MESSAGE(userId, ABILITY_RETREAT, MsgDoesNotWorkHere);
       return 0;
     }
-    UiWork_PushValueSlotFar(ABILITY_RETREAT, 4);
-    UiText_ShowPositionedMessageAndWaitFar(MsgUseAbilityConfirm, 13);
-    declined = Menu_AskYesNo(1); // 0 is yes
+    MessageArgument_PushFar(ABILITY_RETREAT, 4);
+    FieldMessage_ShowFar(MsgUseAbilityConfirm, 13);
+    declined = FieldYesNo_Ask(1); // 0 is yes
     UiWork_FinalizePendingCoreFar();
     if (declined != 0)
       return 0;

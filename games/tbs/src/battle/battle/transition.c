@@ -370,7 +370,7 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
       Runtime_SetIrqHandler(IRQ_VCOUNT, 32, Graphics_ClearBg0Vofs);
       gBgScroll[0].y = 32;
       WaitFrames(1);
-      UiWindow_CreateWithLayoutBoundsFar(gBattleWork->partyStatus);
+      PartyStatus_CreateWindowFar(gBattleWork->partyStatus);
       WaitFrames(20);
       // BG0's priority bit 1 cleared again at the next VBlank, undoing
       // BGCNT_PRIORITY(2) above; setting no bits queues a write that changes
@@ -423,7 +423,7 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
     Runtime_SetIrqHandler(IRQ_VCOUNT, 32, Graphics_ClearBg0Vofs);
     WaitFrames(1);
     WaitFrames(20);
-    UiWindow_CreateWithLayoutBoundsFar(gBattleWork->partyStatus);
+    PartyStatus_CreateWindowFar(gBattleWork->partyStatus);
     IoWriteQueue_ClearBits16((u32)&REG_BG0CNT, 2);
     IoWriteQueue_SetBits16((u32)&REG_BG0CNT, 0);
     // Every unit's sprites appear; the party's fade in over 16 frames as

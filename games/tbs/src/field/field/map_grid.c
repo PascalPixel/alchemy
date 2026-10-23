@@ -5,7 +5,7 @@
 #include "../field_internal.h"
 
 /// Remaps byteCount bytes in place through gRuntime_ByteRemapTable. Called
-/// through Runtime_RemapBytesByTableFar by RenderResource_LoadFrame, which
+/// through Runtime_RemapBytesByTableFar by CommandIcon_Load, which
 /// remaps the colours of a command icon's first 768 bytes.
 void Runtime_RemapBytesByTable(u8 *bytes, s32 byteCount) {
   s32 remaining;

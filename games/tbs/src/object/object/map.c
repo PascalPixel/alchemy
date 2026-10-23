@@ -160,7 +160,7 @@ s32 Map_GetMapSec(s32 mapId) { return gMapHeaders[mapId].mapSec; }
 
 /// The last two 16-colour background palettes, which the minigame runners save
 /// and restore around a minigame; palette 15 holds the window colours
-/// (PaletteGlow_Update).
+/// (WindowColor_Apply).
 enum {
   MINIGAME_PALETTE_FIRST = 14, ///< BG palette 14
   MINIGAME_PALETTE_BYTES = 64  ///< palettes 14 and 15: 2 x 16 colours x 2 bytes
@@ -228,7 +228,7 @@ void Game_Run(s32 mode) {
     gGameState.warpDest = TITLE_AFTER_RUN;
   }
   // The window colours from the options: hue, then brightness.
-  PaletteGlow_UpdateFar(gGameState.paletteGlow[0], gGameState.paletteGlow[1]);
+  WindowColor_ApplyFar(gGameState.windowColor[0], gGameState.windowColor[1]);
   VramCache_Reset();
   Task_ResetAll();
   Task_ResetAll();

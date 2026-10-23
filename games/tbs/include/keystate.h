@@ -13,7 +13,7 @@
 
 /// Keys down now.
 /* FAKEMATCH(volatile): as plain u32, 18 functions differ in tbs-en, most
- * UiWork_StepChannelScript (249), MainMenu_CheckButtonCodes (134). */
+ * TextPrinter_Step (249), MainMenu_CheckButtonCodes (134). */
 extern volatile u32 gKeysHeld;
 /// Keys that went down this frame.
 /* FAKEMATCH(volatile): as plain u32, 41 functions differ in tbs-en, most
@@ -21,7 +21,7 @@ extern volatile u32 gKeysHeld;
 extern volatile u32 gKeysPressed;
 /// Pressed keys, repeating while held: after 19 frames, then every 6.
 /* FAKEMATCH(volatile): as plain u32, 54 functions differ in tbs-en, most
- * CharacterSelector_RunRearrange (288), PsynergyMenu_SelectAction (236). */
+ * MemberChooser_RunRearrange (288), PsynergyMenu_SelectAction (236). */
 extern volatile u32 gKeysRepeat;
 /// gKeysRepeat with at most one D-pad direction.
 /* FAKEMATCH(volatile): as plain u32, 70 of 121 instructions differ in tbs-en

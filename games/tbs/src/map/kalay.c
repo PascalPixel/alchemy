@@ -693,8 +693,8 @@ static void Kalay_WatchTourGroupDeparture(void) {
     ObjectEvent_SetPosition(LOCALID_OURANOS, PIXELS(332), PIXELS(280));
     ObjectEvent_SetPosition(LOCALID_SECOND_GUIDE, PIXELS(364), PIXELS(272));
     Script_PlaySong(AUDIO_CUE_FADE_BGM);
-    Ui_SetMessageVoiceFromObjectEvent(LOCALID_HEAD_GUIDE);
-    UiText_ShowCenteredMessage(MsgKalayOkListeningLets, 1, 0);
+    Message_SetVoiceFromObjectEvent(LOCALID_HEAD_GUIDE);
+    FieldMessage_ShowCentered(MsgKalayOkListeningLets, 1, 0);
     Script_PlaySong(MUS_009);
     Engine_ScriptWait(10);
     Engine_ObjectEventRunRepeatedMotion(LOCALID_PARTY_LEADER, 2);

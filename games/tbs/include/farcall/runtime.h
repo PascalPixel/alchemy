@@ -62,7 +62,7 @@ s32 AffineMatrix_BuildForEffectFar(struct AffineTransform *source);
 void Runtime_PushSlotEntryFar(void *slot_entry, s32 slot);
 /// Loads the window font, frame tiles and palette, and the basic sprite
 /// palettes, as modes that replace them must put them back.
-void Ui_LoadWindowGraphicsFar(void);
+void Window_LoadGraphicsFar(void);
 /// Returns the ROM address of resource `index` from the resource directory.
 void *Resource_GetTableEntryFar(s32 index);
 /// Does nothing. The title screen, Lucky Dice and the slot machine pass it a

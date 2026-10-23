@@ -190,7 +190,7 @@ These turn up all over the game.
   red, green and blue levels in turn, keeps a `volatile u16 *` from
   `&BG_PLTT_COLOR(0, 1)`, because with a plain pointer the mask that picks out
   red is hoisted out of the loop (24 of 2455 instructions differ in tbs-en).
-  `Menu_RunCommandRow` writes the command icons' tiles through
+  `BattleCommandRow_Run` writes the command icons' tiles through
   `volatile u16 *vram`, because a plain pointer moves the address adds (18 of
   1037 instructions differ in a member's row, `COMMAND_ROW_MEMBER`, and 19 in
   the party's, `COMMAND_ROW_PARTY`).
@@ -206,7 +206,7 @@ These turn up all over the game.
   - `*(s8 *)&output->index`, which keeps the index store ahead of the
     attribute word (`DjinnMenu_DrawStatArrow`);
   - `*(u16 *)&output->x`, which loads the -8 before x
-    (`RenderOutput_UpdateScaleAnimation`);
+    (`WindowSprite_UpdateScaleAnimation`);
   - `*(s32 *)&actor->y` for the union's `actor->y.fixed`, because the member
     form schedules the step to the next log after the store
     (`KolimaForestFloodgate_CreateLogs`, 1 of 82 instructions in tbs-en);
@@ -237,13 +237,13 @@ These turn up all over the game.
     turns clear as integers (otherwise the pointer store swaps with the
     [sprite](../glossary.md#sprite-and-oam)-pointer load);
   - a member stored as a pointer of another type:
-    `*(struct UiWindow **)&entry->attributes` and `*(void **)&entry->tile`
+    `*(struct Window **)&entry->attributes` and `*(void **)&entry->tile`
     for the unions' `.word` and `.value`, which keep the stores around them in
     order (`DjinnMenu_DrawStatArrow`), and
-    `*(struct RenderOutput **)&list->tailLink = node` for
-    `list->tailLink = &node->next` (`RenderOutput_AppendToList`);
+    `*(struct WindowSprite **)&list->tailLink = node` for
+    `list->tailLink = &node->next` (`WindowSprite_AppendToList`);
   - a member through its neighbour's pointer: `((s16 *)nativeAttributes)[7]`
-    for `entry->y` (`AffineEffect_UpdateFrame`).
+    for `entry->y` (`IconMenu_DrawIcons`).
 - A loop can be written with `goto`. A C loop's notes let GCC's loop pass
   (`loop.c` in its source) move
   constants and addresses out of the loop, strength-reduce its counters and
@@ -437,7 +437,7 @@ The window code keeps its state in a heap block of its own and writes
 straight into tilemaps, so most of these are about reaching that block and
 its cells.
 
-- The work block is `UI_WORK` or `gWindowWork[0]`, and a neighbouring heap
+- The work block is `WINDOW_WORK` or `gWindowWork[0]`, and a neighbouring heap
   block is `gWindowWork[n]`.
 - A tilemap cell is `work->tilemap + y * 32 + x`, or a byte offset added to
   `(u32)work->tilemap`.
@@ -449,26 +449,26 @@ its cells.
   the literal `0x1070` and the offsets 1 and 2.
 - A selection record's kind is cleared through a view from its base field,
   `((struct GlyphCursor *)&work->records[n].base)->cursor = 0`, for
-  `work->records[n].kind = 0` (`UiGlyph_ResetWorkState`, records 7 and 8).
+  `work->records[n].kind = 0` (`SelectionScreen_Create`, records 7 and 8).
 - A render output is read as `struct SpriteOutput`, whose sprite cell is the
-  member `attr`, rather than as `struct RenderOutput` with a cast of `unk10`
-  (`UiWindow_PutGlyph`, `UiWork_AnimateSpriteSlots`).
+  member `attr`, rather than as `struct WindowSprite` with a cast of `unk10`
+  (`Window_PutGlyph`, `UiWork_AnimateSpriteSlots`).
 - A menu cursor whose screens write only the output pointer is a
-  `union MenuCursor` rather than a struct of the same size, which keeps the
+  `union MenuCursorRef` rather than a struct of the same size, which keeps the
   store order (`OptionMenu_Open`).
-- `gRenderResource_PairSourceTable` goes by three more extern names, given as
+- `gHeadingPictures` goes by three more extern names, given as
   `__asm__` labels, one per switch case, because the ROM keeps a literal for
   each case (`RenderResource_LoadTableEntry`).
 - The Spanish and Italian possessive copy counts its letters in the
   function's `s32` value, compared as `(u32)value < 16`, rather than in `i` or
-  `j` (`UiText_BuildRenderEntries`).
+  `j` (`Message_Decode`).
 - In the Japanese small font, `nextRow = row + 1` is in both arms of
-  `if (bits == 0)` rather than once ahead of the test (`UiText_DrawGlyphArm`
+  `if (bits == 0)` rather than once ahead of the test (`Glyph_DrawArm`
   in [`window/glyph_arm.c`](window/glyph_arm.c)).
-- `gUiText_MarkGlyphCodes`, the Japanese kana marks, is declared without
+- `gFont_MarkGlyphCodes`, the Japanese kana marks, is declared without
   `const` and put in read-only data with `__attribute__((section(".rodata")))`
   ([`window/articles.c`](window/articles.c)), as Lunpa's staged-actor tables
-  are. Through a `const` extern, its load in `UiText_RenderGlyphPair` is
+  are. Through a `const` extern, its load in `Text_DrawGlyphPair` is
   scheduled ahead of the spill of `out` (2 of 185 instructions in tbs-ja).
 
 ### Menus
@@ -483,7 +483,7 @@ one for reaching a heap block.
   `cache[HEAP_SLOT_FIELD - HEAP_SLOT_OBJECT_SYSTEM]`.
 - The menu work is read through one struct per screen
   (`ItemMenuWork`, `PsynergyMenuWork`, `SummaryScreenWork`,
-  `DjinnMenuWork`, `FourObjectMotionState`), as the field object's views
+  `DjinnMenuWork`, `DjinnFiguresWork`), as the field object's views
   are, because each is what its own screen's code matches with.
 
 ### Battles

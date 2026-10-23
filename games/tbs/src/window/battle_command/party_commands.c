@@ -63,7 +63,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   u16 *transferWords;
   struct BattleAction *command;
   struct Unit *unit;
-  struct UiWindow *commandWindow;
+  struct Window *commandWindow;
   struct MenuSprite *iconSprite;
   u16 signatureHeader[2];
   s32 target;
@@ -80,10 +80,10 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
 
   // An empty ID list clears every party panel's highlight and marks no unit
   // before the next actor is chosen.
-  void BattleMenu_ClearPartyHighlights(void) {
+  void PartyStatus_ClearHighlights(void) {
     u16 data[2];
     data[0] = 0xff;
-    BattleLayout_HighlightPartyPanels(data);
+    PartyStatus_HighlightMembers(data);
     BattleHighlight_SetModesFar(data, 1);
   }
 
@@ -165,7 +165,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   Task_Add(UpdateLinkSessionCountdown, 3200);
 
   while (1) {
-    BattleMenu_ClearPartyHighlights();
+    PartyStatus_ClearHighlights();
     state->iconShown[2] = 0;
     state->commandActor = -1;
     state->tutorialStep = 0;
@@ -175,7 +175,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
     }
     // The party's row; with no member to choose, as if Fight were taken.
     if (commandCount > 0) {
-      mode = Menu_RunCommandRow(COMMAND_ROW_PARTY);
+      mode = BattleCommandRow_Run(COMMAND_ROW_PARTY);
     } else {
       mode = COMMAND_ICON_FIGHT;
     }
@@ -194,14 +194,14 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       }
       handle = BattleUnits_ListIdsFar(selection, block);
       WaitFrames(1);
-      Ui_RunOwnerStatusScreen(block, handle, *(u16 *)block);
+      BattleSummaryScreen_Run(block, handle, *(u16 *)block);
       Free(block);
       continue;
     }
     // Flee, unless the battle forbids it: one COMMAND_FLEE for the party,
     // first in the round (priority 0x7ffe).
     if (mode == COMMAND_ICON_FLEE) {
-      if (UiText_ShowLocalizedMessageAndWait() != 0) {
+      if (Message_ShowLocalizedAndWait() != 0) {
         continue;
       }
       commandCount = 1;
@@ -253,14 +253,14 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       iconSprite = &gBattleMenuWork->icons[2];
       iconSprite->oam.word.attr01 = 0x80000400;
       iconSprite->oam.word.attr23 = 0;
-      iconSprite->oam.f.tile = UiGlyph_LoadPortrait(unit->id, smallIconSlot);
+      iconSprite->oam.f.tile = Portrait_Load(unit->id, smallIconSlot);
       iconSprite->oam.f.x = BATTLE_CLASS_ICON_X;
       iconSprite->oam.f.y = 0x80;
       iconSprite->oam.f.palette = 14;
       state->iconShown[2] = 1;
 
     mark_visible:
-      UiWindow_MarkVisibleTileAttributes();
+      Window_MarkVisibleTextTiles();
       gBattleMenuWork->iconShown[0] = 0;
       gBattleMenuWork->chosenDjinn[commandIndex] = 0x80000000;
       /* FAKEMATCH(dead): twelve dead stores restore the native frame's spill
@@ -283,9 +283,9 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       signatureHeader[0] = (u16)actorId;
       signatureHeader[1] = 255;
       BattleHighlight_SetModesFar(signatureHeader, 1);
-      BattleLayout_HighlightPartyPanels(signatureHeader);
+      PartyStatus_HighlightMembers(signatureHeader);
       WaitFrames(1);
-      mode = Menu_RunCommandRow(COMMAND_ROW_MEMBER);
+      mode = BattleCommandRow_Run(COMMAND_ROW_MEMBER);
       WaitFrames(1);
       if (mode == -2) {
         void *block;
@@ -295,7 +295,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         handle = BattleUnits_ListIdsFar(1, block);
         state->iconShown[2] = 0;
         WaitFrames(1);
-        Ui_RunOwnerStatusScreen(block, handle, actorId);
+        BattleSummaryScreen_Run(block, handle, actorId);
         state->iconShown[2] = 1;
         Free(block);
         continue;
@@ -332,13 +332,13 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       switch (mode) {
       case COMMAND_ICON_ATTACK:
         // Attack: one enemy, range 1; COMMAND_ATTACK.
-        commandWindow = UiWindow_Create(11, 17, 11, 3, 6);
-        UiText_DrawCharacterAtOffset(MsgCommandName, commandWindow,
-                                     BATTLE_COMMAND_NAME_X, 0);
+        commandWindow = Window_Create(11, 17, 11, 3, 6);
+        Text_DrawMessageAsTiles(MsgCommandName, commandWindow,
+                                BATTLE_COMMAND_NAME_X, 0);
         state->icons[0].oam.f.x = 64;
         Sound_PlaySongFar(SE_MENU_CONFIRM);
         mode = BattleTarget_RunSelection(actorId, 1, 1, TARGET_HINT_NONE);
-        UiWork_Finalize(commandWindow, 1);
+        Window_Close(commandWindow, 1);
         if (mode == -1) {
           goto mark_visible;
         }
@@ -350,7 +350,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       case COMMAND_ICON_PSYNERGY: {
         struct MenuSprite *iconSprite;
         struct AbilityDefinition *ability;
-        struct UiRenderWork *work;
+        struct WindowWork *work;
         u16 *list;
         u8 *pick;
         s32 cost;
@@ -389,7 +389,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         }
         pick[cnt] = 0;
         list[cnt] = 0;
-        mode = BattleMenu_RunActionSelection(actorId, list, cnt);
+        mode = BattlePsynergyMenu_Run(actorId, list, cnt);
         if (mode == -1) {
           goto mark_visible;
         }
@@ -399,8 +399,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         cost = ability->range;
         iconSprite = &state->icons[1];
         handle = VramCache_AllocEntry(128);
-        work = UI_WORK;
-        commandWindow = UiWindow_Create(8, 17, 18, 3, 6);
+        work = WINDOW_WORK;
+        commandWindow = Window_Create(8, 17, 18, 3, 6);
         state->icons[0].oam.f.x = 40;
         iconSprite->oam.word.attr01 = 0x40000400;
         iconSprite->oam.word.attr23 = 0;
@@ -413,25 +413,25 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         iconSprite->oam.f.tile =
             Resource_LoadIndexedEntryToBuffer(parameter, handle);
         state->iconShown[1] = 1;
-        work->level = 5;
+        work->textPalette = 5;
         if ((s32)ability->ppCost > (s32)unit->pp) {
           UiWork_SetParameterNibble(2);
         } else if (unit->psySeal != 0) {
           UiWork_SetParameterNibble(9);
         }
-        UiText_DrawCharacterAtOffset(parameter + MsgAbilityName, commandWindow,
-                                     16, 0);
-        UiText_DrawNumberAtOffset(ability->ppCost, 2, commandWindow, 104, 0);
-        work->level = 15;
+        Text_DrawMessageAsTiles(parameter + MsgAbilityName, commandWindow, 16,
+                                0);
+        Text_DrawNumberAtOffset(ability->ppCost, 2, commandWindow, 104, 0);
+        work->textPalette = 15;
         UiWork_SetParameterNibble(15);
         // 61471 is 0xf01f, the PP label's first tile; 20481 below is 0x5001,
         // LIST_TILE_SUMMON_ELEMENT.
-        UiWindow_SetTilemapEntry(commandWindow, 61471, 11, 0, 0);
-        UiWindow_SetTilemapEntry(commandWindow, PSYNERGY_COST_SECOND_TILE, 12,
-                                 0, 0);
+        Window_SetTilemapEntry(commandWindow, 61471, 11, 0, 0);
+        Window_SetTilemapEntry(commandWindow, PSYNERGY_COST_SECOND_TILE, 12, 0,
+                               0);
         if (ability->element != ELEMENT_NONE) {
-          UiWindow_SetTilemapEntry(commandWindow, ability->element + 20481, 15,
-                                   0, 0);
+          Window_SetTilemapEntry(commandWindow, ability->element + 20481, 15, 0,
+                                 0);
         }
         command->range = cost;
         Sound_PlaySongFar(SE_MENU_CONFIRM);
@@ -441,7 +441,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
                 (const struct AbilityDefinition *)ability));
         state->iconShown[1] = 0;
         Resource_ResetEntry(handle);
-        UiWork_Finalize(commandWindow, 1);
+        Window_Close(commandWindow, 1);
         if (mode == -1) {
           goto psynergy_menu;
         }
@@ -468,9 +468,9 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         BATTLE_MENU_SET_CURSOR(0, 0, 0);
       djinn_menu:
         state->icons[0].oam.f.x = BATTLE_SUMMON_ICON_X;
-        BattleLayout_HighlightPartyPanels(signatureHeader);
-        mode = SummonMenu_SelectSummon(0, 0, state->standbyDjinn[commandIndex]);
-        BattleLayout_HighlightPartyPanels(signatureHeader);
+        PartyStatus_HighlightMembers(signatureHeader);
+        mode = BattleSummonMenu_Run(0, 0, state->standbyDjinn[commandIndex]);
+        PartyStatus_HighlightMembers(signatureHeader);
         if (mode == -1) {
           goto mark_visible;
         }
@@ -481,8 +481,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         summon = SummonDefinition_Get(mode);
         ability = Ability_Get(summon->abilityId);
         handle = VramCache_AllocEntry(128);
-        commandWindow =
-            UiWindow_Create(10, 17, BATTLE_SUMMON_WINDOW_WIDTH, 3, 6);
+        commandWindow = Window_Create(10, 17, BATTLE_SUMMON_WINDOW_WIDTH, 3, 6);
         n = 0;
         for (j = 0; j <= 3; j++) {
           if (summon->djinnRequired[j] > state->standbyDjinn[commandIndex][j]) {
@@ -505,17 +504,16 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         if (ok == 0) {
           UiWork_SetParameterNibble(2);
         }
-        UiText_DrawCharacterAtOffset(SummonDefinition_Get(mode)->abilityId +
-                                         MsgAbilityName,
-                                     commandWindow, 16, 0);
+        Text_DrawMessageAsTiles(SummonDefinition_Get(mode)->abilityId +
+                                    MsgAbilityName,
+                                commandWindow, 16, 0);
         for (j = 0; j <= 3; j++) {
           if (summon->djinnRequired[j] != 0) {
-            UiWindow_SetTilemapEntry(commandWindow, j + 20481,
-                                     n * 2 + BATTLE_SUMMON_ELEMENT_COLUMN, 0,
-                                     0);
-            UiWindow_PutGlyph(commandWindow, summon->djinnRequired[j] + '0',
-                              n * 2 + BATTLE_SUMMON_COST_COLUMN, 0,
-                              GLYPH_DRAW_CHARACTER);
+            Window_SetTilemapEntry(commandWindow, j + 20481,
+                                   n * 2 + BATTLE_SUMMON_ELEMENT_COLUMN, 0, 0);
+            Window_PutGlyph(commandWindow, summon->djinnRequired[j] + '0',
+                            n * 2 + BATTLE_SUMMON_COST_COLUMN, 0,
+                            GLYPH_DRAW_CHARACTER);
             n++;
           }
         }
@@ -531,7 +529,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         command->range = ability->range;
         state->iconShown[1] = 0;
         Resource_ResetEntry(handle);
-        UiWork_Finalize(commandWindow, 1);
+        Window_Close(commandWindow, 1);
         if (mode == -1) {
           goto djinn_menu;
         }
@@ -550,7 +548,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
 
       case COMMAND_ICON_DJINN: {
         struct AbilityDefinition *ability;
-        struct UiWindow *hint;
+        struct Window *hint;
         s32 cost;
         s32 element;
         s32 index;
@@ -565,7 +563,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       summon_menu:
         state->icons[0].oam.f.x = 144;
         gBattleMenuWork->chosenDjinn[commandIndex] = 0x80000000;
-        mode = Battle_SelectAbility(actorId, 1);
+        mode = BattleDjinnMenu_Run(actorId, 1);
         command->range = 0;
         if (mode == -1) {
           goto mark_visible;
@@ -578,11 +576,11 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         if (Djinn_IsSetFar(actorId, element, index) != 0) {
           ability = Ability_Get(Djinn_GetAbilityIdFar(element, index));
           cost = ability->range;
-          commandWindow = UiWindow_Create(11, 17, 10, 3, 6);
+          commandWindow = Window_Create(11, 17, 10, 3, 6);
           state->icons[0].oam.f.x = 64;
-          UiWindow_SetTilemapEntry(commandWindow, element + 20481, 0, 0, 0);
-          UiText_DrawCharacterAtOffset(element * 20 + index + MsgDjinnName,
-                                       commandWindow, 16, 0);
+          Window_SetTilemapEntry(commandWindow, element + 20481, 0, 0, 0);
+          Text_DrawMessageAsTiles(element * 20 + index + MsgDjinnName,
+                                  commandWindow, 16, 0);
           command->range = cost;
           WaitFrames(1);
           Sound_PlaySongFar(SE_MENU_CONFIRM);
@@ -591,34 +589,33 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
               Battle_ClassifyEntryKind(
                   (const struct AbilityDefinition *)ability));
           if (state->tutorialStep != 0) {
-            hint =
-                UiText_ShowMessageAndWaitComplete(MsgDjinnUnleashHint, 15, 8);
+            hint = Message_ShowAndWait(MsgDjinnUnleashHint, 15, 8);
             while (UiWork_IsComplete() == 0) {
               WaitFrames(1);
             }
-            UiWork_Finalize(hint, 1);
+            Window_Close(hint, 1);
             state->tutorialStep++;
             state->tutorialDelay = 45;
           }
-          UiWork_Finalize(commandWindow, 1);
+          Window_Close(commandWindow, 1);
           if (mode == -1) {
             goto summon_menu;
           }
           target = mode;
           break;
         }
-        commandWindow = UiWindow_Create(11, 17, 10, 3, 6);
+        commandWindow = Window_Create(11, 17, 10, 3, 6);
         state->icons[0].oam.f.x = 64;
         UiWork_SetParameterNibble(2);
-        UiWindow_SetTilemapEntry(commandWindow, element + 20481, 0, 0, 0);
-        UiText_DrawCharacterAtOffset(element * 20 + index + MsgDjinnName,
-                                     commandWindow, 16, 0);
+        Window_SetTilemapEntry(commandWindow, element + 20481, 0, 0, 0);
+        Text_DrawMessageAsTiles(element * 20 + index + MsgDjinnName,
+                                commandWindow, 16, 0);
         UiWork_SetParameterNibble(15);
         command->range = 1;
         WaitFrames(1);
         Sound_PlaySongFar(SE_MENU_CONFIRM);
         mode = BattleTarget_RunSelection(actorId, 4, 0, TARGET_HINT_SET_DJINNI);
-        UiWork_Finalize(commandWindow, 1);
+        Window_Close(commandWindow, 1);
         if (mode == -1) {
           goto summon_menu;
         }
@@ -683,7 +680,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
           } while (entryValue != 0);
         }
         list[cnt] = 0;
-        mode = ItemList_SelectEntry(actorId, list, cnt);
+        mode = BattleItemMenu_Run(actorId, list, cnt);
         if (mode == -1) {
           goto mark_visible;
         }
@@ -694,7 +691,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         cost = ability->range;
         iconSprite = &state->icons[1];
         handle = VramCache_AllocEntry(128);
-        commandWindow = UiWindow_Create(9, 17, BATTLE_ITEM_WINDOW_WIDTH, 3, 6);
+        commandWindow = Window_Create(9, 17, BATTLE_ITEM_WINDOW_WIDTH, 3, 6);
         state->icons[0].oam.f.x = 48;
         iconSprite->oam.word.attr01 = 0x40000400;
         iconSprite->oam.word.attr23 = 0;
@@ -707,9 +704,9 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         iconSprite->oam.f.tile =
             ItemIcon_LoadIntoSlot(unit->inventory[selection], handle);
         state->iconShown[1] = 1;
-        UiText_DrawCharacterAtOffset((unit->inventory[selection] & 0x1ff) +
-                                         MsgItemName,
-                                     commandWindow, 24, 0);
+        Text_DrawMessageAsTiles((unit->inventory[selection] & 0x1ff) +
+                                    MsgItemName,
+                                commandWindow, 24, 0);
         command->range = cost;
         Sound_PlaySongFar(SE_MENU_CONFIRM);
         mode = BattleTarget_RunSelection(
@@ -718,7 +715,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
                 (const struct AbilityDefinition *)ability));
         state->iconShown[1] = 0;
         Resource_ResetEntry(handle);
-        UiWork_Finalize(commandWindow, 1);
+        Window_Close(commandWindow, 1);
         if (mode == -1) {
           goto item_menu;
         }
@@ -774,7 +771,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
     transferWords[7] = 'S';
   }
   if (state->timerWindow != 0) {
-    UiWork_Finalize((struct UiWindow *)state->timerWindow, 1);
+    Window_Close((struct Window *)state->timerWindow, 1);
   }
   Resource_ResetEntry(smallIconSlot);
   Resource_ResetEntry(largeIconSlot);
@@ -785,8 +782,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       u16 data[64];
       BATTLE_MENU_MESSAGE_COPY(MsgWaitingForOpponent, data,
                                BATTLE_MENU_MESSAGE_CAPACITY);
-      UiText_RenderWideStringAtOffset(
-          data, (struct UiWindow *)state->timerWindow, 0, 4);
+      Text_DrawWideStringAtOffset(data, (struct Window *)state->timerWindow, 0,
+                                  4);
 #ifdef UBFIX
       return 0;
 #endif
@@ -799,7 +796,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
     linkBattle = gBattleWork;
     mode = 0;
     if (state->timerWindow == 0 && linkBattle->linkPaused == 0) {
-      state->timerWindow = (s32)UiWindow_Create(0, 16, 30, 4, 42);
+      state->timerWindow = (s32)Window_Create(0, 16, 30, 4, 42);
       Ui_FillVramBlockPattern();
       Link_DrawWaitingForOpponent();
     } else {
@@ -831,7 +828,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       WaitFrames(1);
     }
     if (state->timerWindow != 0) {
-      UiWork_Finalize((struct UiWindow *)state->timerWindow, 1);
+      Window_Close((struct Window *)state->timerWindow, 1);
     }
   }
   Camera_ConfigureViewFar(0);

@@ -8,10 +8,10 @@
 /// A sprite's pulse, as a scale where 256 is its normal size: it swells to
 /// 1.5 times and back over 32 steps. The swelling sprites loop over it, the
 /// shrinking ones take every other step of its second half
-/// (RenderOutput_UpdateScaleAnimation), and the command rows' chosen icon
+/// (WindowSprite_UpdateScaleAnimation), and the command rows' chosen icon
 /// pulses by it (battle_command/command_row.c, icon_menu.c).
 // clang-format off
-const u16 gUi_BounceScales[32] = {
+const u16 gWindowSprite_BounceScales[32] = {
     256, 256, 260, 266, 274, 284, 294, 306,
     320, 332, 344, 354, 364, 372, 378, 382,
     384, 382, 378, 372, 364, 354, 344, 332,
@@ -19,20 +19,20 @@ const u16 gUi_BounceScales[32] = {
 };
 
 /// Nothing in the game reads these eight offsets.
-const s8 gUi_BounceScalesTail[8] = {
+const s8 gWindowSprite_BounceScalesTail[8] = {
     -15, -28, -36, -40, -36, -28, -15, 0,
 };
 
 /// The selection cursor's bob: a 16-step wave of up to 3 pixels each way. The
 /// selection screen's hand takes a step every 4 frames, its large icon half
 /// the offset a step every 2.
-const s8 gMenu_CursorBobOffsets[16] = {
+const s8 gMenuCursor_BobOffsets[16] = {
     0, 1, 2, 3, 2, 1, 0, 0, 0, -1, -2, -3, -2, -1, 0, 0,
 };
 
 /// The window colour wheel: one colour channel's level (0 to 31) over 96 hue
 /// steps. Red reads it at the hue, green 32 steps later and blue 64 steps
-/// later (PaletteGlow_Update); a channel falls from 31 over 32 steps, stays
+/// later (WindowColor_Apply); a channel falls from 31 over 32 steps, stays
 /// 0 for 34 and climbs back. Nothing reads the 25 entries after the first 96.
 const u8 gPaletteGlow_WaveTable[121] = {
     31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16,
@@ -47,7 +47,7 @@ const u8 gPaletteGlow_WaveTable[121] = {
 
 /// The option screen's sprite frames for each setting's choices: message
 /// speed Slow, Normal and Fast; Speech Off and On; Auto-Sleep Off and On.
-/// Each is a frame number for RenderResource_CreateFrame, in the order of the
+/// Each is a frame number for CommandIcon_Create, in the order of the
 /// setting's values.
 const s8 gOptionMenu_SpeedFrames[3] = {
     0x22, 0x23, 0x24,
@@ -74,12 +74,12 @@ const u8 gOptionMenu_BrightnessPresets[6] = {
 /// The sprite frame of each entry's icon in the system menu (Save your quest,
 /// Sleep, Change settings, and the debug entries after them). The menu shows
 /// at most six; nothing reads the last two.
-const s8 gMenu_WorkspaceIconFrames[8] = {
+const s8 gPauseMenu_IconFrames[8] = {
     0x29, 0x2a, 0x2b, 0x0b, 0x0b, 0x0b, 0x00, 0x00,
 };
 
 /// {character, portrait} pairs of the playable characters, ending in -1, which
-/// UiText_GetSpeakerPortrait searches for speakers below 20.
+/// Portrait_GetForSpeaker searches for speakers below 20.
 const s16 gPortrait_CharacterMap[20] = {
     ISAAC, ISAAC,
     ISAAC_CHILD, FACE_ISAAC_CHILD,

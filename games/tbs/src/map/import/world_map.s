@@ -31,9 +31,9 @@
 	.set import.WorldMap_LoadAreaGraphics, 1
 	.set import.Engine_ObjectSetPartPalettes, 1
 	.set import.Engine_MessageShowCentered, 1
-	.set import.UiWork_PushValueSlot, 1
+	.set import.MessageArgument_Push, 1
 	.set import.Engine_ItemLoadIcon, 1
-	.set import.PaletteGlow_Update, 1
+	.set import.WindowColor_Apply, 1
 	.set import.Menu_AnimateSelectionToEntry, 1
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1

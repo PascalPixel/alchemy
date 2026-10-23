@@ -21,7 +21,7 @@
 
 /// The status screen's labels, in their message order from
 /// MsgOwnerStatusAttack (OWNER_STATUS_LABEL).
-enum OwnerStatusLabel {
+enum BattleSummaryLabel {
   OWNER_STATUS_LABEL_ATTACK = 0,
   OWNER_STATUS_LABEL_DEFENSE = 1,
   OWNER_STATUS_LABEL_AGILITY = 2,
@@ -37,7 +37,7 @@ enum OwnerStatusLabel {
 
 /// The status screen's help lines, from MsgOwnerStatusEntryHelp, which the
 /// cursor stops in windata.s name; the condition icons' places follow.
-enum OwnerStatusHelp {
+enum BattleSummaryHelp {
   /// The name, whose help says how to switch members with L and R.
   OWNER_STATUS_HELP_NAME = 0,
   OWNER_STATUS_HELP_LEVEL = 1, ///< no cursor stop shows it
@@ -90,9 +90,9 @@ enum BattleSummaryStatus {
 
 // The status screen's cursor groups, each with its table of cursor stops.
 /// The name, experience, HP, PP, class, Djinn and element rows
-/// (gOwnerStatus_StatCursors).
+/// (gBattleSummaryScreen_StatCursors).
 #define STATUS_CURSOR_GENERAL 0
-/// Attack, Defense, Agility and Luck (gOwnerStatus_EquipmentCursors).
+/// Attack, Defense, Agility and Luck (gBattleSummaryScreen_EquipmentCursors).
 #define STATUS_CURSOR_COMBAT_STATS 1
 #define STATUS_CURSOR_CONDITIONS 2 ///< the condition icons
 
@@ -103,7 +103,7 @@ struct StatusCursor {
   /// Left, Right or A in STATUS_CURSOR_COMBAT_STATS leaves the group at a
   /// value no branch reads; [4] is cleared at the start and never read.
   s8 groupPositions[5];
-  /// The help shown (enum OwnerStatusHelp). It decides the group.
+  /// The help shown (enum BattleSummaryHelp). It decides the group.
   s32 helpEntry;
   s32 drawnHelpEntry; ///< the help drawn last; a change redraws the help
   s32 group;          ///< STATUS_CURSOR_ group
@@ -121,7 +121,7 @@ struct StatusCursor {
 /// (BattleMenuWork.timerHidden), and the party status window is redrawn on the
 /// way out. Returns 0. Battle_CollectPartyCommands opens it from the Status
 /// command and from L or R in a member's command row.
-s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
+s32 BattleSummaryScreen_Run(u16 *list, s32 listCount, s32 owner) {
   struct MenuSprite portraitSprite;
   struct MenuSprite cursorSprite;
   s32 statusSlots[11];
@@ -129,9 +129,9 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
   struct MenuSprite statusSprites[11];
   struct MenuSprite nameSprite;
   struct StatusCursor cursor;
-  struct UiRenderWork *work;
-  struct UiWindow *statusWindow;
-  struct UiWindow *helpWindow;
+  struct WindowWork *work;
+  struct Window *statusWindow;
+  struct Window *helpWindow;
   s32 ownerIndex;
   s32 cursorSlot;
   struct MenuPoint cursorPosition;
@@ -149,7 +149,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
   s32 redraw;
   struct Unit *unit;
   struct Unit *savedUnit;
-  const struct OwnerStatusStatCursor *cursorStop;
+  const struct BattleSummaryStatCursor *cursorStop;
   struct MenuSprite *statusSprite;
   s32 agilityDelta;
   s32 helpValue;
@@ -157,7 +157,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
   struct BattleMenuWork *navigation;
   s32 iconX;
 
-  work = UI_WORK;
+  work = WINDOW_WORK;
   redraw = OWNER_STATUS_REDRAW_ALL;
   ownerIndex = -1;
   portraitSlot = VramCache_AllocEntry(0x200);
@@ -168,7 +168,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
                     gWindowWork[HEAP_SLOT_BATTLE_MENU - HEAP_SLOT_WINDOW]);
   navigation->timerHidden = 1;
   if (navigation->timerWindow != 0) {
-    UiWork_Finalize((struct UiWindow *)navigation->timerWindow, 1);
+    Window_Close((struct Window *)navigation->timerWindow, 1);
     navigation->timerWindow = 0;
   }
   Sound_PlaySongFar(SE_MENU_CONFIRM);
@@ -206,9 +206,9 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
   cursorPosition.x = 0;
   cursorPosition.y = 0;
   // The stat grid and its explanation have separate lifetimes and redraws.
-  statusWindow = UiWindow_Create(0, 0, 30, 20, 6);
-  helpWindow = UiWindow_Create(0, 14, 30, 6, 10);
-  UiWindow_MarkVisibleTileAttributes();
+  statusWindow = Window_Create(0, 0, 30, 20, 6);
+  helpWindow = Window_Create(0, 14, 30, 6, 10);
+  Window_MarkVisibleTextTiles();
 
   for (;;) {
     keys = gKeysRepeat;
@@ -216,7 +216,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
     // The member's 32x32 portrait at the top left.
     nameSprite.oam.word.attr01 = 0x80000400;
     nameSprite.oam.word.attr23 = 0;
-    nameSprite.oam.f.tile = UiGlyph_LoadPortrait(owner, portraitSlot);
+    nameSprite.oam.f.tile = Portrait_Load(owner, portraitSlot);
     nameSprite.oam.f.x = 8;
     nameSprite.oam.f.y = 24;
     nameSprite.oam.f.palette = 14;
@@ -332,7 +332,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
       if (hasDjinn == 0) {
         k += 9;
       }
-      cursorStop = &gOwnerStatus_StatCursors[k];
+      cursorStop = &gBattleSummaryScreen_StatCursors[k];
       cursor.helpEntry = cursorStop->entry;
       cursor.column = cursorStop->column;
       cursor.row = cursorStop->row;
@@ -340,25 +340,25 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
                           statusWindow->y + cursorStop->highlightRow + 1,
                           cursorStop->highlightWidth, 1, 14);
     } else if (cursor.group == STATUS_CURSOR_COMBAT_STATS) {
-      cursor.helpEntry =
-          gOwnerStatus_EquipmentCursors[cursor.groupPositions[cursor.group]]
-              .entry;
-      cursor.column =
-          gOwnerStatus_EquipmentCursors[cursor.groupPositions[cursor.group]]
-              .column;
-      cursor.row =
-          gOwnerStatus_EquipmentCursors[cursor.groupPositions[cursor.group]]
-              .row;
+      cursor.helpEntry = gBattleSummaryScreen_EquipmentCursors
+                             [cursor.groupPositions[cursor.group]]
+                                 .entry;
+      cursor.column = gBattleSummaryScreen_EquipmentCursors
+                          [cursor.groupPositions[cursor.group]]
+                              .column;
+      cursor.row = gBattleSummaryScreen_EquipmentCursors
+                       [cursor.groupPositions[cursor.group]]
+                           .row;
     } else if (cursor.group == STATUS_CURSOR_CONDITIONS) {
-      cursor.helpEntry =
-          gOwnerStatus_ConditionCursors[cursor.groupPositions[cursor.group]]
-              .entry;
-      cursor.column =
-          gOwnerStatus_ConditionCursors[cursor.groupPositions[cursor.group]]
-              .column;
-      cursor.row =
-          gOwnerStatus_ConditionCursors[cursor.groupPositions[cursor.group]]
-              .row;
+      cursor.helpEntry = gBattleSummaryScreen_ConditionCursors
+                             [cursor.groupPositions[cursor.group]]
+                                 .entry;
+      cursor.column = gBattleSummaryScreen_ConditionCursors
+                          [cursor.groupPositions[cursor.group]]
+                              .column;
+      cursor.row = gBattleSummaryScreen_ConditionCursors
+                       [cursor.groupPositions[cursor.group]]
+                           .row;
     }
 
     if (cursor.drawnHelpEntry != cursor.helpEntry) {
@@ -409,114 +409,110 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
     if (redraw != 0) {
       unit = Unit_GetFar(owner);
 #if TBS_PATCH_1
-      UiWindow_MarkVisibleTileAttributes();
+      Window_MarkVisibleTextTiles();
 #endif
       Ui_FillVramBlockPattern();
 
       if ((redraw & OWNER_STATUS_REDRAW_ALL) != 0) {
-        RenderOutput_RedrawSavedRect(statusWindow);
-        UiWindow_MapTextCanvasTiles(helpWindow->x, helpWindow->y,
-                                    helpWindow->width, helpWindow->height, 0);
-        UiWindow_DrawDividerLine(statusWindow, 0, 14, 29, 14);
+        WindowSprite_RedrawSavedRect(statusWindow);
+        Window_MapTextCanvasTiles(helpWindow->x, helpWindow->y,
+                                  helpWindow->width, helpWindow->height, 0);
+        Window_DrawDividerLine(statusWindow, 0, 14, 29, 14);
 
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
         switch (System_GetLanguage()) {
         case CARTRIDGE_LANGUAGE_FRENCH:
-          UiText_DrawStringAtOffset((u8 *)unit->name, statusWindow, 0, 0);
-          UiText_DrawStringAtOffset((u8 *)gOwnerStatus_NivString, statusWindow,
-                                    51, 0);
-          UiText_DrawNumberInWindow(unit->level, 2, statusWindow, 72, 0);
+          Text_DrawStringAtOffset((u8 *)unit->name, statusWindow, 0, 0);
+          Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_NivString,
+                                  statusWindow, 51, 0);
+          Text_DrawNumberInWindow(unit->level, 2, statusWindow, 72, 0);
           break;
         case CARTRIDGE_LANGUAGE_SPANISH:
-          UiText_DrawStringAtOffset((u8 *)unit->name, statusWindow, 0, 0);
-          UiText_DrawStringAtOffset((u8 *)gOwnerStatus_NvString, statusWindow,
-                                    56, 0);
-          UiText_DrawNumberInWindow(unit->level, 2, statusWindow, 72, 0);
+          Text_DrawStringAtOffset((u8 *)unit->name, statusWindow, 0, 0);
+          Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_NvString,
+                                  statusWindow, 56, 0);
+          Text_DrawNumberInWindow(unit->level, 2, statusWindow, 72, 0);
           break;
         default:
-          UiText_DrawStringAtOffset((u8 *)unit->name, statusWindow, 0, 0);
-          UiText_DrawStringAtOffset((u8 *)gOwnerStatus_LevelString,
-                                    statusWindow, 56, 0);
-          UiText_DrawNumberInWindow(unit->level, 2, statusWindow, 72, 0);
+          Text_DrawStringAtOffset((u8 *)unit->name, statusWindow, 0, 0);
+          Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_LevelString,
+                                  statusWindow, 56, 0);
+          Text_DrawNumberInWindow(unit->level, 2, statusWindow, 72, 0);
           break;
         }
 #else
-        UiText_DrawStringAtOffset((u8 *)unit->name, statusWindow, 0, 0);
-        UiText_DrawStringAtOffset((u8 *)gOwnerStatus_LevelString, statusWindow,
-                                  OWNER_STATUS_LEVEL_X, 0);
-        UiText_DrawNumberInWindow(unit->level, 2, statusWindow, 72, 0);
+        Text_DrawStringAtOffset((u8 *)unit->name, statusWindow, 0, 0);
+        Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_LevelString,
+                                statusWindow, OWNER_STATUS_LEVEL_X, 0);
+        Text_DrawNumberInWindow(unit->level, 2, statusWindow, 72, 0);
 #endif
-        UiText_DrawCharacterAtOffset(MsgOwnerStatusExp, statusWindow, 0, 8);
-        UiText_DrawNumberInWindow(unit->experience, 8, statusWindow, 40, 8);
+        Text_DrawMessageAsTiles(MsgOwnerStatusExp, statusWindow, 0, 8);
+        Text_DrawNumberInWindow(unit->experience, 8, statusWindow, 40, 8);
 
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
         switch (System_GetLanguage()) {
         case CARTRIDGE_LANGUAGE_GERMAN:
-          UiText_DrawStringAtOffset((u8 *)gOwnerStatus_KpString, statusWindow,
-                                    40, 24);
+          Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_KpString,
+                                  statusWindow, 40, 24);
           break;
         case CARTRIDGE_LANGUAGE_FRENCH:
-          UiText_DrawStringAtOffset((u8 *)gOwnerStatus_PvString, statusWindow,
-                                    40, 24);
+          Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_PvString,
+                                  statusWindow, 40, 24);
           break;
         case CARTRIDGE_LANGUAGE_SPANISH:
-          UiText_DrawStringAtOffset((u8 *)gOwnerStatus_PvString, statusWindow,
-                                    40, 24);
+          Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_PvString,
+                                  statusWindow, 40, 24);
           break;
         case CARTRIDGE_LANGUAGE_ITALIAN:
-          UiText_DrawStringAtOffset((u8 *)gOwnerStatus_HpString, statusWindow,
-                                    40, 24);
+          Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_HpString,
+                                  statusWindow, 40, 24);
           break;
         }
 #else
-        UiText_DrawStringAtOffset((u8 *)gOwnerStatus_HpString, statusWindow, 40,
-                                  24);
+        Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_HpString,
+                                statusWindow, 40, 24);
 #endif
-        UiText_DrawNumberInWindow(unit->hp, 4, statusWindow, 56, 24);
-        UiText_DrawStringAtOffset((u8 *)gOwnerStatus_SlashString, statusWindow,
-                                  88, 24);
-        UiText_DrawNumberInWindow(unit->hpMax, 4, statusWindow, 96, 24);
-        UiText_DrawStringAtOffset((u8 *)gOwnerStatus_PpString, statusWindow, 40,
-                                  32);
-        UiText_DrawNumberInWindow(unit->pp, 4, statusWindow, 56, 32);
-        UiText_DrawStringAtOffset((u8 *)gOwnerStatus_SlashString, statusWindow,
-                                  88, 32);
-        UiText_DrawNumberInWindow(unit->ppMax, 4, statusWindow, 96, 32);
+        Text_DrawNumberInWindow(unit->hp, 4, statusWindow, 56, 24);
+        Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_SlashString,
+                                statusWindow, 88, 24);
+        Text_DrawNumberInWindow(unit->hpMax, 4, statusWindow, 96, 24);
+        Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_PpString,
+                                statusWindow, 40, 32);
+        Text_DrawNumberInWindow(unit->pp, 4, statusWindow, 56, 32);
+        Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_SlashString,
+                                statusWindow, 88, 32);
+        Text_DrawNumberInWindow(unit->ppMax, 4, statusWindow, 96, 32);
 
-        UiText_DrawCharacterAtOffset(
-            OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_ATTACK), statusWindow, 136,
-            16);
-        UiText_DrawNumberInWindow(unit->atk, 3, statusWindow,
-                                  OWNER_STATUS_VALUE_X, 16);
-        UiText_DrawCharacterAtOffset(
-            OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_DEFENSE), statusWindow, 136,
-            24);
-        UiText_DrawNumberInWindow(unit->def, 3, statusWindow,
-                                  OWNER_STATUS_VALUE_X, 24);
-        UiText_DrawCharacterAtOffset(
-            OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_AGILITY), statusWindow, 136,
-            32);
-        UiText_DrawNumberInWindow(unit->agi, 3, statusWindow,
-                                  OWNER_STATUS_VALUE_X, 32);
-        UiText_DrawCharacterAtOffset(
-            OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_LUCK), statusWindow, 136, 40);
-        UiText_DrawNumberInWindow(unit->luck, 3, statusWindow,
-                                  OWNER_STATUS_VALUE_X, 40);
+        Text_DrawMessageAsTiles(OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_ATTACK),
+                                statusWindow, 136, 16);
+        Text_DrawNumberInWindow(unit->atk, 3, statusWindow,
+                                OWNER_STATUS_VALUE_X, 16);
+        Text_DrawMessageAsTiles(OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_DEFENSE),
+                                statusWindow, 136, 24);
+        Text_DrawNumberInWindow(unit->def, 3, statusWindow,
+                                OWNER_STATUS_VALUE_X, 24);
+        Text_DrawMessageAsTiles(OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_AGILITY),
+                                statusWindow, 136, 32);
+        Text_DrawNumberInWindow(unit->agi, 3, statusWindow,
+                                OWNER_STATUS_VALUE_X, 32);
+        Text_DrawMessageAsTiles(OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_LUCK),
+                                statusWindow, 136, 40);
+        Text_DrawNumberInWindow(unit->luck, 3, statusWindow,
+                                OWNER_STATUS_VALUE_X, 40);
 
-        UiText_DrawCharacterAtOffset(MsgClassName + unit->classId, statusWindow,
-                                     0, 48);
+        Text_DrawMessageAsTiles(MsgClassName + unit->classId, statusWindow, 0,
+                                48);
         if (hasDjinn != 0) {
-          UiText_DrawCharacterAtOffset(
-              OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_DJINN), statusWindow, 0,
-              72);
+          Text_DrawMessageAsTiles(OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_DJINN),
+                                  statusWindow, 0, 72);
         }
-        UiText_DrawCharacterAtOffset(
+        Text_DrawMessageAsTiles(
             OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_ELEMENT_LEVEL), statusWindow,
             0, 80);
-        UiText_DrawCharacterAtOffset(
-            OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_POWER), statusWindow, 0, 88);
-        UiText_DrawCharacterAtOffset(
-            OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_RESIST), statusWindow, 0, 96);
+        Text_DrawMessageAsTiles(OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_POWER),
+                                statusWindow, 0, 88);
+        Text_DrawMessageAsTiles(OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_RESIST),
+                                statusWindow, 0, 96);
 
         for (j = 0; j <= 3; j++) {
           s32 pal;
@@ -525,22 +521,22 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
           if (hasDjinn != 0) {
             pal = 0;
           }
-          UiWindow_SetTilemapEntry(statusWindow, 0x5001 + j, 7 + j * 4, pal + 8,
-                                   0);
+          Window_SetTilemapEntry(statusWindow, 0x5001 + j, 7 + j * 4, pal + 8,
+                                 0);
           if (hasDjinn != 0) {
-            UiText_DrawNumberInWindow(unit->djinnSetCounts[j], 1, statusWindow,
-                                      40 + j * 32, 72);
-            UiText_DrawStringAtOffset((u8 *)gOwnerStatus_SlashString,
-                                      statusWindow, 48 + j * 32, 72);
-            UiText_DrawNumberInWindow(unit->djinnHeldCounts[j], 1, statusWindow,
-                                      48 + j * 32 + 8, 72);
+            Text_DrawNumberInWindow(unit->djinnSetCounts[j], 1, statusWindow,
+                                    40 + j * 32, 72);
+            Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_SlashString,
+                                    statusWindow, 48 + j * 32, 72);
+            Text_DrawNumberInWindow(unit->djinnHeldCounts[j], 1, statusWindow,
+                                    48 + j * 32 + 8, 72);
           }
-          UiText_DrawNumberInWindow(Unit_GetElementLevelFar(owner, j), 2,
-                                    statusWindow, 48 + j * 32, 80);
-          UiText_DrawNumberInWindow(unit->element[j].power, 3, statusWindow,
-                                    40 + j * 32, 88);
-          UiText_DrawNumberInWindow(unit->element[j].resistance, 3,
-                                    statusWindow, 40 + j * 32, 96);
+          Text_DrawNumberInWindow(Unit_GetElementLevelFar(owner, j), 2,
+                                  statusWindow, 48 + j * 32, 80);
+          Text_DrawNumberInWindow(unit->element[j].power, 3, statusWindow,
+                                  40 + j * 32, 88);
+          Text_DrawNumberInWindow(unit->element[j].resistance, 3, statusWindow,
+                                  40 + j * 32, 96);
         }
 
         // The condition icons, at most eight, in this order: downed, cursed
@@ -662,9 +658,9 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
         }
         statusCount = i;
         if (statusKinds[0] == OWNER_CONDITION_NORMAL) {
-          UiText_DrawCharacterAtOffset(unit->hp != 0 ? MsgOwnerStatusNormal
-                                                     : MsgOwnerStatusDowned,
-                                       statusWindow, 112, 0);
+          Text_DrawMessageAsTiles(unit->hp != 0 ? MsgOwnerStatusNormal
+                                                : MsgOwnerStatusDowned,
+                                  statusWindow, 112, 0);
         }
       }
 
@@ -731,25 +727,24 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
         default:
           break;
         }
-        UiWork_PushValueSlot(helpValue, MESSAGE_ARGUMENT_NUMBER);
-        UiText_CopyMessageString(statusKind + MsgOwnerStatusConditionHelp,
-                                 helpText, OWNER_STATUS_TEXT_MAX);
+        MessageArgument_Push(helpValue, MESSAGE_ARGUMENT_NUMBER);
+        Message_CopyExpanded(statusKind + MsgOwnerStatusConditionHelp, helpText,
+                             OWNER_STATUS_TEXT_MAX);
       } else if (cursor.helpEntry == OWNER_STATUS_HELP_EXPERIENCE &&
                  unit->level <= 98) {
         // Experience below level 99: the points still needed for the next.
-        UiWork_PushValueSlot(
+        MessageArgument_Push(
             Unit_GetExperienceForLevelFar(owner, unit->level + 1) -
                 unit->experience,
             MESSAGE_ARGUMENT_NUMBER);
-        UiText_CopyMessageString(MsgOwnerStatusNextLevel, helpText,
-                                 OWNER_STATUS_TEXT_MAX);
+        Message_CopyExpanded(MsgOwnerStatusNextLevel, helpText,
+                             OWNER_STATUS_TEXT_MAX);
       } else {
-        UiText_CopyMessageString(cursor.helpEntry + MsgOwnerStatusEntryHelp,
-                                 helpText, OWNER_STATUS_TEXT_MAX);
+        Message_CopyExpanded(cursor.helpEntry + MsgOwnerStatusEntryHelp,
+                             helpText, OWNER_STATUS_TEXT_MAX);
       }
 
-      UiText_RenderWideStringAtOffset(helpText, (struct UiWindow *)helpWindow,
-                                      0, 4);
+      Text_DrawWideStringAtOffset(helpText, (struct Window *)helpWindow, 0, 4);
       Free(helpText);
       redraw = 0;
       work->dirty = 1;
@@ -816,10 +811,10 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
   Resource_ResetEntry(cursorSlot);
   WaitFrames(1);
 #if TBS_PATCH_1
-  UiWindow_MarkVisibleTileAttributes();
+  Window_MarkVisibleTextTiles();
 #endif
-  UiWork_Finalize(statusWindow, 1);
-  UiWork_Finalize(helpWindow, 1);
+  Window_Close(statusWindow, 1);
+  Window_Close(helpWindow, 1);
   PartyStatus_Draw(gBattleWork->partyStatus);
   // UB: the indexed scalar pointer steps outside gBattleWork to
   // HEAP_SLOT_BATTLE_MENU.

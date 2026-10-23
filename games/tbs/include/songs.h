@@ -636,7 +636,7 @@
 #define SE_COLOSSO_WARRIOR_APPEAR 252
 /// The first voice blip of a message: an object event's voice is 0x100 plus its
 /// sprite's value (Speaker_GetVoice), and every few letters typed play
-/// it plus the letter code's low two bits (UiWork_StepChannelScript).
+/// it plus the letter code's low two bits (TextPrinter_Step).
 #define SE_256 256
 #define SE_257 257 ///< voice blip
 #define SE_258 258 ///< voice blip

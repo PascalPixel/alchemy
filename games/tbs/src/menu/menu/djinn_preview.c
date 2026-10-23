@@ -19,8 +19,8 @@
 s32 PsynergyList_RunCompareLoop(u32 mode) {
   struct DjinnMenuWork *menu;
   struct DjinnMenuBackdrop *backdrop;
-  struct UiRenderWork *work;
-  struct UiWindow *list;
+  struct WindowWork *work;
+  struct Window *list;
   s32 pageCounts[2];
   s32 selectedPages[2];
   s32 confirmationChoice;
@@ -37,13 +37,13 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   s32 ownerIndex;
 
   menu = gMenuWork;
-  confirmationChoice = CONFIRM_YES;
+  confirmationChoice = YES;
   result = 0;
   redraw = 1;
   frame = 0;
   selectedPages[0] = 0;
   page = DJINN_COMPARE_PAGE_BOTH;
-  menu->cursor->active = ICON_HIDDEN;
+  menu->cursor->motion = ICON_HIDDEN;
   selectedPages[1] = 0;
 
   // The party figures go below the screen (y 200), except the two members
@@ -56,10 +56,10 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   menu->ownerX[menu->selectedColumn[0]] = 0x10;
   menu->ownerY[menu->selectedColumn[0]] = 0x20;
 
-  RenderOutput_ClearListFar(menu->listWindow);
+  WindowSprite_ClearListFar(menu->listWindow);
   WaitFrames(1);
-  UiWindow_CloseIfOpen(&menu->helpWindow, 1);
-  UiWindow_UpdateOrCreate(&menu->helpWindow, 0, 0, 30, 5, 2);
+  Window_CloseIfOpen(&menu->helpWindow, 1);
+  Window_UpdateOrCreate(&menu->helpWindow, 0, 0, 30, 5, 2);
 
   pageCounts[0] = 1;
   pageCounts[1] = 1;
@@ -168,30 +168,26 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   }
 
   // Open the paired panes only after both unit records have been restored.
-  UiWindow_UpdateOrCreate(&menu->window, 0, 5, 15, 15, 2);
-  UiWindow_UpdateOrCreate(&menu->secondWindow, 15, 5, 15, 15, 2);
-  RenderOutput_RedrawSavedRectFar(menu->helpWindow);
+  Window_UpdateOrCreate(&menu->window, 0, 5, 15, 15, 2);
+  Window_UpdateOrCreate(&menu->secondWindow, 15, 5, 15, 15, 2);
+  WindowSprite_RedrawSavedRectFar(menu->helpWindow);
 
   if (mode == DJINN_COMPARE_STANDBY) {
-    UiText_DrawCharacterAtOffsetFar(MsgDjinnCompareStandby, menu->helpWindow,
-                                    96, 0);
-    UiText_DrawCharacterAtOffsetFar(MsgDjinnCompareConfirm, menu->helpWindow,
-                                    96, 16);
+    Text_DrawMessageAsTilesFar(MsgDjinnCompareStandby, menu->helpWindow, 96, 0);
+    Text_DrawMessageAsTilesFar(MsgDjinnCompareConfirm, menu->helpWindow, 96,
+                               16);
   } else if (mode == DJINN_COMPARE_SET) {
-    UiText_DrawCharacterAtOffsetFar(MsgDjinnCompareSet, menu->helpWindow, 96,
-                                    0);
-    UiText_DrawCharacterAtOffsetFar(MsgDjinnCompareConfirm, menu->helpWindow,
-                                    96, 16);
+    Text_DrawMessageAsTilesFar(MsgDjinnCompareSet, menu->helpWindow, 96, 0);
+    Text_DrawMessageAsTilesFar(MsgDjinnCompareConfirm, menu->helpWindow, 96,
+                               16);
   } else if (mode == DJINN_COMPARE_TRADE) {
-    UiText_DrawCharacterAtOffsetFar(MsgDjinnCompareTrade, menu->helpWindow, 128,
-                                    0);
-    UiText_DrawCharacterAtOffsetFar(MsgDjinnCompareConfirm, menu->helpWindow,
-                                    128, 8);
+    Text_DrawMessageAsTilesFar(MsgDjinnCompareTrade, menu->helpWindow, 128, 0);
+    Text_DrawMessageAsTilesFar(MsgDjinnCompareConfirm, menu->helpWindow, 128,
+                               8);
   } else {
-    UiText_DrawCharacterAtOffsetFar(MsgDjinnCompareGive, menu->helpWindow, 128,
-                                    0);
-    UiText_DrawCharacterAtOffsetFar(MsgDjinnCompareConfirm, menu->helpWindow,
-                                    128, 8);
+    Text_DrawMessageAsTilesFar(MsgDjinnCompareGive, menu->helpWindow, 128, 0);
+    Text_DrawMessageAsTilesFar(MsgDjinnCompareConfirm, menu->helpWindow, 128,
+                               8);
   }
 
   // The Djinni concerned, after its element icon (palette 5): in colour 2
@@ -202,25 +198,25 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   if ((menu->pairEntries[0] & DJINN_ENTRY_IS_SET) == 0) {
     UiWork_SetParameterNibbleFar(2);
   }
-  UiText_DrawCharacterAtOffsetFar(
+  Text_DrawMessageAsTilesFar(
       DJINN_ELEMENT(menu->pairEntries[0]) * DJINN_PER_ELEMENT +
           DJINN_NUMBER(menu->pairEntries[0]) + MsgDjinnName,
       menu->helpWindow, 48, row * 8);
-  UiWindow_SetTilemapEntryFar(menu->helpWindow,
-                              DJINN_ELEMENT(menu->pairEntries[0]) +
-                                  DJINN_ELEMENT_TILE,
-                              5, row, zero = 0);
+  Window_SetTilemapEntryFar(menu->helpWindow,
+                            DJINN_ELEMENT(menu->pairEntries[0]) +
+                                DJINN_ELEMENT_TILE,
+                            5, row, zero = 0);
   UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
 
   if (mode == DJINN_COMPARE_TRADE) {
     if ((menu->pairEntries[1] & DJINN_ENTRY_IS_SET) == 0) {
       UiWork_SetParameterNibbleFar(2);
     }
-    UiText_DrawCharacterAtOffsetFar(
+    Text_DrawMessageAsTilesFar(
         DJINN_ELEMENT(menu->pairEntries[1]) * DJINN_PER_ELEMENT +
             DJINN_NUMBER(menu->pairEntries[1]) + MsgDjinnName,
         menu->helpWindow, 48, 16);
-    UiWindow_SetTilemapEntryFar(
+    Window_SetTilemapEntryFar(
         menu->helpWindow,
         DJINN_ELEMENT(menu->pairEntries[1]) + DJINN_ELEMENT_TILE, 5, 2, mode);
     UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
@@ -228,22 +224,22 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     if ((menu->pairEntries[0] & DJINN_ENTRY_IS_SET) != 0) {
       UiWork_SetParameterNibbleFar(2);
     }
-    UiText_DrawCharacterAtOffsetFar(
+    Text_DrawMessageAsTilesFar(
         DJINN_ELEMENT(menu->pairEntries[0]) * DJINN_PER_ELEMENT +
             DJINN_NUMBER(menu->pairEntries[0]) + MsgDjinnName,
         menu->helpWindow, 48, 16);
-    UiWindow_SetTilemapEntryFar(
+    Window_SetTilemapEntryFar(
         menu->helpWindow,
         DJINN_ELEMENT(menu->pairEntries[0]) + DJINN_ELEMENT_TILE, 5, 2, zero);
     UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
-    UiWindow_SetTilemapEntryFar(menu->helpWindow, 0xf296, 7, 1, zero);
+    Window_SetTilemapEntryFar(menu->helpWindow, 0xf296, 7, 1, zero);
   }
 
   for (;;) {
     s32 pressedKeys;
     s32 repeatedKeys;
 
-    work = (struct UiRenderWork *)gWindowWork[0];
+    work = (struct WindowWork *)gWindowWork[0];
     backdrop = menu->backdrop;
     pressedKeys = gKeysPressed;
     repeatedKeys = gKeysRepeat;
@@ -274,25 +270,24 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
         break;
       case 10:
         if (backdrop->tutorialTimer == 60) {
-          struct UiWindow *window;
+          struct Window *window;
 
           Iwram_CopyWords(saved, work, size);
-          window =
-              UiText_OpenMessageWindowFar(MsgDjinnTutorialSetChanges, 8, 0, 1);
+          window = Message_OpenWindowFar(MsgDjinnTutorialSetChanges, 8, 0, 1);
           /* FAKEMATCH(one-pass): the cursor's store in a one-pass block, which
            * keeps the window copy before it as the ROM does; as a plain
            * statement, 11 of 1045 instructions differ in tbs-en. */
           do {
-            menu->cursor->active = ICON_SHOWN;
+            menu->cursor->motion = ICON_SHOWN;
           } while (0);
-          UiMenu_SlideCursor(2, 96);
+          MenuCursor_Slide(2, 96);
           gGameState.messageSpeed = MESSAGE_SPEED_NORMAL;
           while (UiWork_IsCompleteFar() == 0) {
             WaitFrames(1);
           }
-          UiWork_FinalizeFar(window, 1);
+          Window_CloseFar(window, 1);
           Iwram_CopyWords(work, saved, size);
-          UiWindow_MarkVisibleTileAttributesFar();
+          Window_MarkVisibleTextTilesFar();
           work->dirty = 1;
           redraw = 1;
           backdrop->tutorialTimer = 0;
@@ -301,31 +296,31 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
            * keeps the step's store before it as the ROM does; as a plain
            * statement, 6 of 1045 instructions differ in tbs-en. */
           do {
-            menu->cursor->active = ICON_HIDDEN;
+            menu->cursor->motion = ICON_HIDDEN;
           } while (0);
         }
         break;
       case 11:
         if (backdrop->tutorialTimer == 60) {
-          struct UiWindow *window;
+          struct Window *window;
 
           Iwram_CopyWords(saved, work, size);
-          window = UiText_OpenMessageWindowFar(MsgDjinnTutorialClassPsynergy, 8,
-                                               0, 1);
+          window =
+              Message_OpenWindowFar(MsgDjinnTutorialClassPsynergy, 8, 0, 1);
           /* FAKEMATCH(one-pass): the cursor's store in a one-pass block, which
            * keeps the window copy before it as the ROM does; as a plain
            * statement, 13 of 1045 instructions differ in tbs-en. */
           do {
-            menu->cursor->active = ICON_SHOWN;
+            menu->cursor->motion = ICON_SHOWN;
           } while (0);
-          UiMenu_SlideCursor(106, 56);
+          MenuCursor_Slide(106, 56);
           gGameState.messageSpeed = MESSAGE_SPEED_NORMAL;
           while (UiWork_IsCompleteFar() == 0) {
             WaitFrames(1);
           }
-          UiWork_FinalizeFar(window, 1);
+          Window_CloseFar(window, 1);
           Iwram_CopyWords(work, saved, size);
-          UiWindow_MarkVisibleTileAttributesFar();
+          Window_MarkVisibleTextTilesFar();
           work->dirty = 1;
           WaitFrames(1);
           redraw = 1;
@@ -335,7 +330,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
            * keeps the step's store before it as the ROM does; as a plain
            * statement, 5 of 1045 instructions differ in tbs-en. */
           do {
-            menu->cursor->active = ICON_HIDDEN;
+            menu->cursor->motion = ICON_HIDDEN;
           } while (0);
         }
         break;
@@ -351,21 +346,21 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     if (redraw != 0) {
       addPairSlot = 1;
       if (mode <= DJINN_COMPARE_GIVE) {
-        UiWindow_ClearInteriorTilesFar(menu->helpWindow, 128, 16, 224, 24);
+        Window_ClearInteriorTilesFar(menu->helpWindow, 128, 16, 224, 24);
         if (page == DJINN_COMPARE_PAGE_RECEIVER) {
-          UiText_DrawCharacterAtOffsetFar(MsgDjinnStatusHelp, menu->helpWindow,
-                                          128, 16);
+          Text_DrawMessageAsTilesFar(MsgDjinnStatusHelp, menu->helpWindow, 128,
+                                     16);
         } else {
-          UiWork_PushValueSlotFar(
+          MessageArgument_PushFar(
               menu->shownOwner[page != DJINN_COMPARE_PAGE_BOTH],
               MESSAGE_ARGUMENT_ACTOR);
-          UiText_DrawCharacterAtOffsetFar(MsgDjinnPsyHelp, menu->helpWindow,
-                                          128, 16);
+          Text_DrawMessageAsTilesFar(MsgDjinnPsyHelp, menu->helpWindow, 128,
+                                     16);
         }
       }
-      work->menuBusy = 1;
-      RenderOutput_PrepareForRedrawFar(menu->window);
-      RenderOutput_PrepareForRedrawFar(menu->secondWindow);
+      work->holdTilemapUpload = 1;
+      WindowSprite_PrepareForRedrawFar(menu->window);
+      WindowSprite_PrepareForRedrawFar(menu->secondWindow);
       if ((redraw >> 1) != 0) {
         WaitFrames(1);
       }
@@ -406,7 +401,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
                                   selectedPages[0] + 1, 1);
         break;
       }
-      work->menuBusy = 0;
+      work->holdTilemapUpload = 0;
     }
 
     // The Psynergy list's page numbers on the right window's top border:
@@ -427,15 +422,15 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           if (index == selectedPages[page]) {
             tile -= 0x1000;
           }
-          UiWindow_SetTilemapEntryFar(
+          Window_SetTilemapEntryFar(
               list, tile, list->width - pageCounts[page] + index - 2, -1, 0);
         }
         top = -1;
-        UiWindow_SetTilemapEntryFar(list, UI_PAGE_ARROW_LEFT,
-                                    list->width - pageCounts[page] - 3, top, 0);
-        UiWindow_SetTilemapEntryFar(list, UI_PAGE_ARROW_RIGHT, list->width - 2,
-                                    top, 0);
-        UiRender_MarkRow(work, list->y);
+        Window_SetTilemapEntryFar(list, PAGE_ARROW_LEFT,
+                                  list->width - pageCounts[page] - 3, top, 0);
+        Window_SetTilemapEntryFar(list, PAGE_ARROW_RIGHT, list->width - 2, top,
+                                  0);
+        Window_MarkTilemapRow(work, list->y);
       }
     }
 
@@ -452,8 +447,8 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     if (step > 29) {
       step = 29;
     }
-    FourObjectMotion_SetSlotPhase(0, 0xffff4000);
-    FourObjectMotion_SetSlotPhase(1, 0xffff4000);
+    DjinnFigures_SetSlotPhase(0, 0xffff4000);
+    DjinnFigures_SetSlotPhase(1, 0xffff4000);
 
     if (mode <= DJINN_COMPARE_GIVE) {
       s32 rise;
@@ -467,12 +462,12 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
         rise = 12;
       }
       slide = (step % 35) * 2;
-      FourObjectMotion_SetSlotPosition(0, slide + 34, rise + 20, 0);
+      DjinnFigures_SetSlotPosition(0, slide + 34, rise + 20, 0);
       if (mode == DJINN_COMPARE_TRADE) {
-        FourObjectMotion_SetSlotPosition(1, 99 - slide, 36 - rise, 0);
+        DjinnFigures_SetSlotPosition(1, 99 - slide, 36 - rise, 0);
       }
     } else {
-      FourObjectMotion_SetSlotPosition(0, 32, 30, 0);
+      DjinnFigures_SetSlotPosition(0, 32, 30, 0);
     }
 
     // No key moves confirmationChoice: the cursor stays on the first answer,
@@ -481,7 +476,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
       redraw = 0;
       confirmationChoice = Menu_WrapIndex(confirmationChoice, 2);
     }
-    UiMenu_PositionCursor(confirmationChoice * 56 + 80, 16);
+    MenuCursor_Position(confirmationChoice * 56 + 80, 16);
 
     // Blink the backdrop's frame tile: 0x060052c0 is tile 150 of BG character
     // block 1 (DJINN_BACKDROP_FRAME_TILE), drawn and filled with colour 4 in
@@ -500,7 +495,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     }
 
     if ((pressedKeys & KEY_A) != 0) {
-      if (confirmationChoice == CONFIRM_YES) {
+      if (confirmationChoice == YES) {
         result = DJINN_RESULT_CONFIRMED;
         break;
       }
@@ -546,24 +541,24 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
 
   // Restore the ordinary list drawing tasks and close the preview panes; the
   // figures grow in again from phase 0.
-  FourObjectMotion_SetSlotPhase(0, 0);
-  FourObjectMotion_SetSlotPhase(1, 0);
+  DjinnFigures_SetSlotPhase(0, 0);
+  DjinnFigures_SetSlotPhase(1, 0);
   Task_Add(Menu_UpdateEntryObjectTransforms, 0xc80);
 
-  ((struct UiRenderWork *)gWindowWork[0])->menuBusy = 1;
-  UiWindow_CloseIfOpen(&menu->helpWindow, 1);
+  ((struct WindowWork *)gWindowWork[0])->holdTilemapUpload = 1;
+  Window_CloseIfOpen(&menu->helpWindow, 1);
   WaitFrames(1);
-  UiWindow_UpdateOrCreate(&menu->helpWindow, 13, 0, 17, 5, 2);
-  UiWindow_CloseIfOpen((struct UiWindow **)&menu->window, 1);
-  UiWindow_CloseIfOpen(&menu->secondWindow, 1);
-  RenderOutput_RedrawSavedRectFar(menu->listWindow);
+  Window_UpdateOrCreate(&menu->helpWindow, 13, 0, 17, 5, 2);
+  Window_CloseIfOpen((struct Window **)&menu->window, 1);
+  Window_CloseIfOpen(&menu->secondWindow, 1);
+  WindowSprite_RedrawSavedRectFar(menu->listWindow);
   // BUG: no window is ever made in unopenedWindow (DjinnMenuWork), so this
   // redraws through NULL; see the field. BUGFIX skips it.
 #ifndef BUGFIX
-  RenderOutput_RedrawSavedRectFar((struct UiWindow *)menu->unopenedWindow);
+  WindowSprite_RedrawSavedRectFar((struct Window *)menu->unopenedWindow);
 #endif
-  RenderOutput_RedrawSavedRectFar(menu->statusWindow);
-  ((struct UiRenderWork *)gWindowWork[0])->menuBusy = 0;
+  WindowSprite_RedrawSavedRectFar(menu->statusWindow);
+  ((struct WindowWork *)gWindowWork[0])->holdTilemapUpload = 0;
   WaitFrames(1);
   return result;
 }
@@ -573,7 +568,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
 /// left, their Psynergy six to a page on the right, which Left and Right turn.
 /// Returns DJINN_RESULT_BACK for A, B, L or R, and DJINN_RESULT_START for
 /// Start, which closes the Djinn menu.
-s32 DjinnMenu_ShowOwnerStatus(void) {
+s32 DjinnMenu_ShowMemberStatus(void) {
   s32 selectedPages[2];
   s32 pageCounts[2];
   s32 gained;
@@ -581,14 +576,14 @@ s32 DjinnMenu_ShowOwnerStatus(void) {
   s32 phase;
   s32 redraw;
   s32 frame;
-  struct UiWindow **leftWindowSlot;
-  struct UiWindow **rightWindowSlot;
-  struct UiRenderWork *work;
+  struct Window **leftWindowSlot;
+  struct Window **rightWindowSlot;
+  struct WindowWork *work;
   u32 pressedKeys;
   u32 repeatedKeys;
   struct DjinnMenuWork *menu;
   struct Unit *unit;
-  struct UiWindow *window;
+  struct Window *window;
   u16 *listedActions;
   void *saved;
   s32 result;
@@ -603,11 +598,11 @@ s32 DjinnMenu_ShowOwnerStatus(void) {
   redraw = 1;
   result = 0;
   frame = 0;
-  menu->cursor->active = ICON_HIDDEN;
+  menu->cursor->motion = ICON_HIDDEN;
   selectedPages[1] = selectedPages[0] = result;
   for (side = 3; side >= 0; side--)
     menu->ownerY[side] = 200;
-  RenderOutput_ClearListFar(menu->listWindow);
+  WindowSprite_ClearListFar(menu->listWindow);
   WaitFrames(1);
   // Count the member's Psynergy by diffing their list with itself; saved is
   // taken and given back unused.
@@ -626,30 +621,29 @@ s32 DjinnMenu_ShowOwnerStatus(void) {
   counts[1] = (counts[1] - 1) / 6 + 1;
   if (counts[1] == 0)
     counts[1] = 1;
-  leftWindowSlot = (struct UiWindow **)&menu->window;
-  UiWindow_UpdateOrCreate(leftWindowSlot, 0, 5, 15, 15, 2);
+  leftWindowSlot = (struct Window **)&menu->window;
+  Window_UpdateOrCreate(leftWindowSlot, 0, 5, 15, 15, 2);
   rightWindowSlot = &menu->secondWindow;
-  UiWindow_UpdateOrCreate(rightWindowSlot, 15, 5, 15, 15, 2);
-  RenderOutput_RedrawSavedRectFar(menu->helpWindow);
-  RenderOutput_RedrawSavedRectFar(menu->statusWindow);
-  UiText_DrawCharacterAtOffsetFar(MsgCurrentStatus, menu->statusWindow, 0, 0);
-  UiText_DrawCharacterAtOffsetFar(MsgCurrentStatus + 2, menu->statusWindow, 0,
-                                  16);
+  Window_UpdateOrCreate(rightWindowSlot, 15, 5, 15, 15, 2);
+  WindowSprite_RedrawSavedRectFar(menu->helpWindow);
+  WindowSprite_RedrawSavedRectFar(menu->statusWindow);
+  Text_DrawMessageAsTilesFar(MsgCurrentStatus, menu->statusWindow, 0, 0);
+  Text_DrawMessageAsTilesFar(MsgCurrentStatus + 2, menu->statusWindow, 0, 16);
   side = 0;
   while (1) {
-    work = (struct UiRenderWork *)gWindowWork[0];
+    work = (struct WindowWork *)gWindowWork[0];
     pressedKeys = gKeysPressed;
     repeatedKeys = gKeysRepeat;
     if (redraw) {
-      work->menuBusy = 1;
-      RenderOutput_PrepareForRedrawFar(menu->window);
-      RenderOutput_PrepareForRedrawFar(menu->secondWindow);
+      work->holdTilemapUpload = 1;
+      WindowSprite_PrepareForRedrawFar(menu->window);
+      WindowSprite_PrepareForRedrawFar(menu->secondWindow);
       DjinnMenu_DrawStatPreview(menu->window, 0, 0, menu->pairOwner[0], 0, 0,
                                 DJINN_PREVIEW_NO_CHANGE, 0, 1);
       DjinnMenu_DrawStatPreview(menu->secondWindow, 0, 0, menu->pairOwner[0], 0,
                                 0, DJINN_PREVIEW_NO_CHANGE,
                                 selectedPages[0] + 1, 1);
-      work->menuBusy = 0;
+      work->holdTilemapUpload = 0;
     }
     if (counts[side] > 1) {
       window = menu->secondWindow;
@@ -659,21 +653,21 @@ s32 DjinnMenu_ShowOwnerStatus(void) {
           tile = 0xf030;
         if (pageIndex == selectedPages[side])
           tile -= 0x1000;
-        UiWindow_SetTilemapEntryFar(
+        Window_SetTilemapEntryFar(
             window, tile, window->width - counts[side] + pageIndex - 2, -1, 0);
       }
-      UiWindow_SetTilemapEntryFar(window, UI_PAGE_ARROW_LEFT,
-                                  window->width - counts[side] - 3, -1, 0);
-      UiWindow_SetTilemapEntryFar(window, UI_PAGE_ARROW_RIGHT,
-                                  window->width - 2, -1, 0);
-      UiRender_MarkRow(work, window->y);
+      Window_SetTilemapEntryFar(window, PAGE_ARROW_LEFT,
+                                window->width - counts[side] - 3, -1, 0);
+      Window_SetTilemapEntryFar(window, PAGE_ARROW_RIGHT, window->width - 2, -1,
+                                0);
+      Window_MarkTilemapRow(work, window->y);
     }
     // blink is worked out as the preview's step is, and not used; the Djinni
     // figure stays below the screen.
     frame++;
     blink = frame % 60 - 5;
     CLAMP(blink, 0, 29);
-    FourObjectMotion_SetSlotPosition(0, 32, 200, 0);
+    DjinnFigures_SetSlotPosition(0, 32, 200, 0);
     if (redraw) {
       redraw = 0;
       phase = Menu_WrapIndex(phase, 2);
@@ -710,20 +704,20 @@ s32 DjinnMenu_ShowOwnerStatus(void) {
     WaitFrames(1);
   }
   Task_Add(Menu_UpdateEntryObjectTransforms, 0xc80);
-  ((struct UiRenderWork *)gWindowWork[0])->menuBusy = 1;
-  UiWindow_CloseIfOpen(&menu->helpWindow, 1);
+  ((struct WindowWork *)gWindowWork[0])->holdTilemapUpload = 1;
+  Window_CloseIfOpen(&menu->helpWindow, 1);
   WaitFrames(1);
-  UiWindow_UpdateOrCreate(&menu->helpWindow, 13, 0, 17, 5, 2);
-  UiWindow_CloseIfOpen(leftWindowSlot, 1);
-  UiWindow_CloseIfOpen(rightWindowSlot, 1);
-  RenderOutput_RedrawSavedRectFar(menu->listWindow);
+  Window_UpdateOrCreate(&menu->helpWindow, 13, 0, 17, 5, 2);
+  Window_CloseIfOpen(leftWindowSlot, 1);
+  Window_CloseIfOpen(rightWindowSlot, 1);
+  WindowSprite_RedrawSavedRectFar(menu->listWindow);
   // BUG: no window is ever made in unopenedWindow (DjinnMenuWork), so this
   // redraws through NULL; see the field. BUGFIX skips it.
 #ifndef BUGFIX
-  RenderOutput_RedrawSavedRectFar((struct UiWindow *)menu->unopenedWindow);
+  WindowSprite_RedrawSavedRectFar((struct Window *)menu->unopenedWindow);
 #endif
-  RenderOutput_RedrawSavedRectFar(menu->statusWindow);
-  ((struct UiRenderWork *)gWindowWork[0])->menuBusy = 0;
+  WindowSprite_RedrawSavedRectFar(menu->statusWindow);
+  ((struct WindowWork *)gWindowWork[0])->holdTilemapUpload = 0;
   WaitFrames(1);
   return result;
 }

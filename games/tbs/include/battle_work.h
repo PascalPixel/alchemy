@@ -32,20 +32,20 @@ struct AdvanceArrowSprite {
   u16 affineParam;
 };
 
-struct UiWindow;
+struct Window;
 
 /// The battle message's text channel, as far as its offset in the window:
 /// the advance arrow is drawn at the window's corner plus this offset.
 struct BattleMessageOffset {
-  struct UiWindow *window; ///< UiChannelSlot.work; not named here
-  u16 x;                   ///< 1/256 pixels
-  u16 y;                   ///< 1/256 pixels
+  struct Window *window; ///< TextPrinter.window; not named here
+  u16 x;                 ///< 1/256 pixels
+  u16 y;                 ///< 1/256 pixels
 };
 
 /// The battle message display: its window, its text channel and whether the
 /// next message is marked.
 struct BattleMessageWork {
-  struct UiWindow *window;            ///< the message window
+  struct Window *window;              ///< the message window
   struct BattleMessageOffset *offset; ///< its text channel
   s32 marked; ///< set by PLAYBACK_MARK; passed to the next message
 };

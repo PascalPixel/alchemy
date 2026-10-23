@@ -327,14 +327,14 @@ void FieldEffect_StartEffectObject22(s32 item, s32 flags) {
 #endif
 
 #if defined(REVEAL_SPARKLES_PAUSE_FOR_MENU)
-/// In gFieldWork, the byte after queuedSound: Menu_RunTopSelection sets it
-/// once Menu_SelectTopEntry first returns, a cancel included, and clears it as
-/// it returns.
+/// In gFieldWork, the byte after queuedSound: FieldMenu_Run sets it
+/// once FieldMenu_SelectCommand first returns, a cancel included, and clears it
+/// as it returns.
 #define MENU_OPEN_OFFSET 0xcca
 
 /// While Reveal is active, destroys all its sparkles, leaving its marks. Called
-/// by the field menu (Menu_RunTopSelection, window/selection.c) each time
-/// Menu_SelectTopEntry returns, a cancel included, while Reveal is active.
+/// by the field menu (FieldMenu_Run, window/selection.c) each time
+/// FieldMenu_SelectCommand returns, a cancel included, while Reveal is active.
 void FieldEffect_ClearRandomParticles(void) {
   if (((struct FieldWork *)gFieldWork)->revealActive != 0) {
     struct EffectObject *effect = EFFECT_OBJECT_POOL;

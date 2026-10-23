@@ -29,8 +29,8 @@
 	.set import.Engine_WorkSetValuesIfNonNegative, 1
 	.set import.Engine_MapGridRenderWaitForValues, 1
 	.set import.Engine_MessageShowCentered, 1
-	.set import.UiWork_PushValueSlot, 1
-	.set import.UiText_ShowCenteredMessage, 1
+	.set import.MessageArgument_Push, 1
+	.set import.FieldMessage_ShowCentered, 1
 	.set import.Unit_Get, 1
 	.set import.Unit_Calculate, 1
 	.set import.Inventory_Find, 1

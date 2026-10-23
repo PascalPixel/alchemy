@@ -2,7 +2,7 @@
 #define ALCHEMY_FOUR_OBJECT_MOTION_H
 
 /// @file
-/// FourObjectMotion, the row of four figures the Status and Djinn menus show.
+/// DjinnFigures, the row of four figures the Status and Djinn menus show.
 
 #include "types.h"
 #include "global_cells.h"
@@ -12,7 +12,7 @@ struct AnimationObject;
 
 /// The menu work (HEAP_SLOT_MENU) as the row of four figures reads it: each
 /// figure's object, screen position and scale.
-struct FourObjectMotionState {
+struct DjinnFiguresWork {
   /// ItemMenuWork's fields before ownerY; not named here.
   u8 beforeOwnerY[0x144];
   /// Screen pixels: the party figures' ownerY, which moves only the depth
@@ -30,10 +30,10 @@ struct FourObjectMotionState {
   s32 phases[4];
 };
 
-STATIC_ASSERT(offsetof(struct FourObjectMotionState, verticalOrigins) == 0x144);
-STATIC_ASSERT(offsetof(struct FourObjectMotionState, animations) == 0x224);
-STATIC_ASSERT(offsetof(struct FourObjectMotionState, positionsX) == 0x234);
-STATIC_ASSERT(offsetof(struct FourObjectMotionState, positionsY) == 0x23c);
-STATIC_ASSERT(offsetof(struct FourObjectMotionState, phases) == 0x244);
+STATIC_ASSERT(offsetof(struct DjinnFiguresWork, verticalOrigins) == 0x144);
+STATIC_ASSERT(offsetof(struct DjinnFiguresWork, animations) == 0x224);
+STATIC_ASSERT(offsetof(struct DjinnFiguresWork, positionsX) == 0x234);
+STATIC_ASSERT(offsetof(struct DjinnFiguresWork, positionsY) == 0x23c);
+STATIC_ASSERT(offsetof(struct DjinnFiguresWork, phases) == 0x244);
 
 #endif

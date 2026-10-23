@@ -73,8 +73,8 @@ Resource_DirectoryTable:
 	resource , FarCall_SoundTable
 	resource ResourceFarCalls, FarCall_ResourceTable
 	resource ResourceFarCallsAlternate, FarCall_ResourceTable
-	group Ui, WindowTiles
-	group UiText, SmallFont
+	resource WindowTiles, Window_Tiles
+	resource SmallFont, Text_SmallFont
 	group Title, IntroGraphicsA, IntroGraphicsB, IntroGraphicsC, NintendoLogo, CamelotLogo
 	group Title, GoldenSunLogo
 	group Field, WorldMapPicture
@@ -134,14 +134,14 @@ Resource_DirectoryTable:
 	resource WorldMapTilesI, WorldMap_TilesI
 	resource WorldMapTilesJ, WorldMap_TilesJ
 	group Colosso, OpponentPathA, OpponentPathB, OpponentPathC, Lettering
-	resource ShopCursorFrames, Shop_CursorFrameA
-	resource , Shop_CursorFrameB
-	resource , Shop_CursorFrameC
-	resource , Shop_CursorFrameD
-	resource , Shop_CursorFrameE
-	resource , Shop_CursorFrameF
-	resource , Shop_CursorFrameG
-	resource , Shop_CursorFrameH
+	resource MenuCursorFrames, MenuCursor_FrameA
+	resource , MenuCursor_FrameB
+	resource , MenuCursor_FrameC
+	resource , MenuCursor_FrameD
+	resource , MenuCursor_FrameE
+	resource , MenuCursor_FrameF
+	resource , MenuCursor_FrameG
+	resource , MenuCursor_FrameH
 	group Ui, Icons, CommandIcons
 	group Monster, AxeGoblinSprites, GhoulSprites, HarpySprites, TrollSprites, WitchSprites
 	group Monster, GriffinSprites, ShieldKnightSprites, OrcSprites, ChimeraSprites, LivingArmorSprites

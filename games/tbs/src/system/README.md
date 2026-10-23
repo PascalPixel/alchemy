@@ -92,9 +92,9 @@ The hardware addresses video memory in fixed blocks (`games/tbs/include/system/i
 
 - Background tiles go in four 16 KB character blocks (`BG_CHAR_BLOCK(n)`) and
   background maps in 2 KB screen blocks (`BG_SCREEN_BLOCK(n)`), sharing the
-  same 64 KB. `Ui_LoadWindowGraphics` copies the window tiles to the start of
+  same 64 KB. `Window_LoadGraphics` copies the window tiles to the start of
   character block 0. The window system's tilemap is screen block 4
-  (`UI_TILEMAP_VRAM`) and its text canvas tiles follow it (`UI_CANVAS_VRAM`,
+  (`WINDOW_TILEMAP_VRAM`) and its text canvas tiles follow it (`TEXT_CANVAS_VRAM`,
   [`unit/window/window.h`](../../include/unit/window/window.h)).
   `MapGrid_LoadLayout` puts the ground, middle and overhead layers' maps in
   screen blocks 5, 6 and 7 and the layout's three tile sheets in character
@@ -266,7 +266,7 @@ gives each map its overlay as a resource number, and the first column of
 (`games/tbs/src/field/layouts.tsv`) holds numbers counted from
 `ResourceId_Layout001` (`MapGrid_LoadLayout`), so the rows after that one keep
 their order. Code also adds to an id to reach the rows after it: the option
-menu's marker steps through eight [frames](../../glossary.md#frame) from `ResourceId_ShopCursorFrames`
+menu's marker steps through eight [frames](../../glossary.md#frame) from `ResourceId_MenuCursorFrames`
 (`window/window/options.c`), so a run like that stays together. The directory
 ends with 25 unused rows (`unused 25`), where a row fits without renumbering
 any other.
@@ -276,7 +276,7 @@ any other.
 | the map table, `field/maps.s` | each map names its overlay as a resource number |
 | `objects.tsv`'s first column | each overlay's rows are numbered by resource |
 | `field/layouts.tsv` | numbers counted from `ResourceId_Layout001` |
-| `window/window/options.c` | eight frames counted from `ResourceId_ShopCursorFrames` |
+| `window/window/options.c` | eight frames counted from `ResourceId_MenuCursorFrames` |
 
 ## The addresses that never move
 

@@ -131,7 +131,7 @@ s32 Map_Run(s32 warpDest) {
       }
       if (GameFlag_TestFar(FLAG_SHOW_LOCATION_NAME) != 0) {
         GameFlag_ClearBitFar(FLAG_SHOW_LOCATION_NAME);
-        UiTimedNotice_CreateFar(gGameState.mapId);
+        MapNamePopup_ShowFar(gGameState.mapId);
       }
       if (gGameState.pendingDjinnEvent != 0) {
         Djinn_ResolvePendingEvent(gGameState.pendingDjinnEvent, 1);
@@ -176,9 +176,8 @@ s32 Map_Run(s32 warpDest) {
             WorldMap_StartScript();
             for (i = 0; i < work->fallenCount; i++) {
               ObjectDispatch_SelectAnimationFar(objectEvent, 22);
-              UiWork_PushValueSlotFar(work->fallenOwners[i], 1);
-              UiText_ShowPositionedMessageAndWaitFar(MsgFieldStrengthExhausted,
-                                                     1);
+              MessageArgument_PushFar(work->fallenOwners[i], 1);
+              FieldMessage_ShowFar(MsgFieldStrengthExhausted, 1);
             }
             if (work->survivorCount == 0) {
               // The whole party fell: back to the last sanctum with 1 HP.
@@ -193,8 +192,7 @@ s32 Map_Run(s32 warpDest) {
                 ObjectDispatch_SelectAnimationFar(objectEvent, 19);
               }
               Sound_PlaySongFar(MUS_DEFEAT);
-              UiText_ShowPositionedMessageAndWaitFar(MsgFieldPartyAnnihilated,
-                                                     1);
+              FieldMessage_ShowFar(MsgFieldPartyAnnihilated, 1);
               vitals = Unit_GetFar(gGameState.leaderLocalId);
               vitals->hp = 1;
               Unit_UpdateGauges(vitals);
@@ -243,7 +241,7 @@ s32 Map_Run(s32 warpDest) {
           // has an event.
           s32 object;
 
-          UiTimedNotice_CloseIfActiveFar();
+          MapNamePopup_HideFar();
           object = Field_FindNearbyTalkTarget(gGameState.leaderLocalId);
           mode = 0;
           if (object != -1) {
@@ -266,19 +264,19 @@ s32 Map_Run(s32 warpDest) {
           work->examine = 0;
         } else if (work->menu != 0) {
           // The main menu (B + Select in debug mode opens the debug menu).
-          UiTimedNotice_CloseIfActiveFar();
+          MapNamePopup_HideFar();
           Leader_StopMoving();
           Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
           WorldMap_StartScript();
           GameFlag_SetBitFar(FLAG_MENU_OPEN);
           if (gDebugMode != 0 && (gKeysHeld & KEY_B) != 0 &&
               (gKeysHeld & KEY_SELECT) != 0) {
-            Menu_RunSelectionWithCursorObjectFar();
+            DebugFlagEditor_RunFar();
           } else if (GameFlag_TestFar(FLAG_MENUS_RAISE_EVENT) != 0) {
             work->raisedEvent = FIELD_RAISED_EVENT_MENUS;
           } else {
             work->effectTimerRunning = 0;
-            Menu_RunTopSelectionFar();
+            FieldMenu_RunFar();
             work->effectTimerRunning = 1;
           }
           WorldMap_EndScript();
@@ -296,7 +294,7 @@ s32 Map_Run(s32 warpDest) {
           WorldMap_EndScript();
           work->searchCell = 0;
         } else if (work->psynergy != 0) {
-          UiTimedNotice_CloseIfActiveFar();
+          MapNamePopup_HideFar();
           WorldMap_StartScript();
           Field_UsePsynergy(work->psynergy);
           WorldMap_EndScript();
@@ -314,7 +312,7 @@ s32 Map_Run(s32 warpDest) {
           WorldMap_StartScript();
           GameFlag_SetBitFar(FLAG_MENU_OPEN);
           if (gDebugMode != 0 && (gKeysHeld & KEY_B) != 0) {
-            Menu_RunSelectionFar();
+            DebugMapSelect_RunFar();
           }
           /* FAKEMATCH(volatile): gDebugMode read through a volatile pointer,
              so this second test loads it again; as gDebugMode, 48 of 965
@@ -327,7 +325,7 @@ s32 Map_Run(s32 warpDest) {
             work->raisedEvent = FIELD_RAISED_EVENT_MENUS;
           } else {
             Field_EndBusyAndReveal();
-            UiTimedNotice_CloseIfActiveFar();
+            MapNamePopup_HideFar();
             gGameState.returnMusic = AudioCommand_GetMusicCueFar();
             if (GameFlag_TestFar(FLAG_IN_BATTLE_ARENA) == 0) {
               // With fewer than 136 of the 512 sprite VRAM blocks (64 bytes
@@ -347,11 +345,10 @@ s32 Map_Run(s32 warpDest) {
                 ctrl->wait = 1;
                 WaitFrames(1);
               }
-              Menu_RunWorkspaceResultLoopFar(0);
+              PauseMenu_RunFar(0);
               ctrl->wait = 0;
             } else {
-              UiText_ShowPositionedMessageAndWaitFar(MsgFieldPauseUnavailable,
-                                                     1);
+              FieldMessage_ShowFar(MsgFieldPauseUnavailable, 1);
             }
           }
           WorldMap_EndScript();
@@ -416,7 +413,7 @@ struct ObjectVectorView {
 /// otherwise.
 ///
 /// Called by Map_Run for the A button (a non-zero result becomes
-/// work->tile, for Field_SearchCell), and by Menu_RunTopSelection's search
+/// work->tile, for Field_SearchCell), and by FieldMenu_Run's search
 /// entry through ObjectEvent_GetTriggerTileAheadOfCurrentFar. Changes nothing.
 s32 ObjectEvent_GetTriggerTileAheadOfCurrent(void) {
   u8 *workBytes;

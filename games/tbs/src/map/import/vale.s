@@ -32,9 +32,9 @@
 	.set import.ObjectSystem_ResumeProjectionAndHideLayers, 1
 	.set import.Engine_ObjectSetPartPalettes, 1
 	.set import.Engine_MessageShowCentered, 1
-	.set import.UiText_ShowCenteredMessage, 1
+	.set import.FieldMessage_ShowCentered, 1
 	.set import.Engine_ItemLoadIcon, 1
-	.set import.PaletteGlow_Update, 1
+	.set import.WindowColor_Apply, 1
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1
 	.set import.Engine_GameFlagClear, 1

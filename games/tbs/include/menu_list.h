@@ -68,8 +68,8 @@ struct CursorSprite {
 
 /// Sets sprite shape (attr0/attr1) and clears the remaining fields.
 /* FAKEMATCH(one-pass): the two stores in a once-only block; as the plain stores
- * Battle_CollectPartyCommands and Ui_RunOwnerStatusScreen match with, 4 of 49
- * instructions differ in tbs-en (UiText_DrawCharacter). */
+ * Battle_CollectPartyCommands and BattleSummaryScreen_Run match with, 4 of 49
+ * instructions differ in tbs-en (Text_DrawCharacter). */
 #define MenuSprite_Initialize(sprite, shape)                                   \
   do {                                                                         \
     (sprite).oam.word.attr01 = (shape);                                        \
@@ -79,7 +79,7 @@ struct CursorSprite {
 /// The party status window's layout: its window, its place and size, and what
 /// it shows (PARTY_STATUS_ flags).
 struct PartyStatusWindow {
-  struct UiWindow *window;
+  struct Window *window;
   u16 x;      ///< tiles
   u16 y;      ///< tiles
   u16 width;  ///< tiles
@@ -117,7 +117,7 @@ struct BattleMenuWork {
   /// The command row's choice: [0] for the party's row (fight, flee,
   /// status), [1] for a member's commands.
   s32 commandSelection[2];
-  /// The window that shows the link battle's seconds left, a struct UiWindow
+  /// The window that shows the link battle's seconds left, a struct Window
   /// pointer kept as a word (as a pointer, two of the round's first stores
   /// swap), or 0.
   s32 timerWindow;
@@ -166,8 +166,8 @@ STATIC_ASSERT(offsetof(struct BattleMenuWork, chosenDjinn) == 0xe4);
 
 /// Saves the selection: page, row and return row.
 /* FAKEMATCH(one-pass): the three stores in a once-only block; as the plain
- * stores Battle_SelectAbility matches with, 46 of 770 instructions differ in
- * tbs-en (ItemList_SelectEntry). */
+ * stores BattleDjinnMenu_Run matches with, 46 of 770 instructions differ in
+ * tbs-en (BattleItemMenu_Run). */
 #define BATTLE_MENU_SET_CURSOR(page_, row_, preferred_)                        \
   do {                                                                         \
     gBattleMenuWork->page = (page_);                                           \

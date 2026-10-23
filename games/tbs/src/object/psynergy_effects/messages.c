@@ -24,8 +24,8 @@ struct WorkPointers {
 /// for it to be read. Records the speaker and both windows in the field work
 /// (speaker, messageWindow, sideWindow). With the debug fastForward set
 /// nothing opens and it returns NULL, but the message still advances.
-struct UiWindow *UiText_OpenMessageAtObject(s32 localId, s32 unused) {
-  struct UiRenderWork *win;
+struct Window *FieldMessage_ShowAtObject(s32 localId, s32 unused) {
+  struct WindowWork *win;
   struct FieldWork *work;
   s32 sprite;
   s32 extra;
@@ -36,7 +36,7 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 localId, s32 unused) {
   s32 top;
   s32 left;
   s32 pos[3];
-  struct UiWindow *handle;
+  struct Window *handle;
   s32 portrait;
   s32 flags;
   s32 message;
@@ -49,7 +49,7 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 localId, s32 unused) {
   s32 none;
 #endif
 
-  win = (struct UiRenderWork *)gWindowWork[0];
+  win = (struct WindowWork *)gWindowWork[0];
   // UB: the fabricated WorkPointers aggregate reaches from the window slot
   // into HEAP_SLOT_FIELD. Its named load adds eight bytes in native EN
   // (0x344 to 0x34c).
@@ -115,8 +115,8 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 localId, s32 unused) {
     } else {
       left = 0;
       top = 0;
-      UiText_GetResourceDimensionsAltFar(message, &left, &top, (u32 *)&width,
-                                         (u32 *)&height);
+      Text_GetMessageSizeAltFar(message, &left, &top, (u32 *)&width,
+                                (u32 *)&height);
       left = x - width / 2;
       if (flags & SPEAKER_WINDOW_ABOVE)
         top = y - height - 1;
@@ -130,7 +130,7 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 localId, s32 unused) {
     // screen is 30 tiles wide (columns 0 to 29) and margin is the room the
     // portrait takes, in tiles: 5 while Mind Read shows thoughts (the window
     // mode), else 4.
-    if (win->mode != 0)
+    if (win->mindRead != 0)
       margin = 5;
     column = x;
     if (flags & SPEAKER_PORTRAIT_LEFT) {
@@ -157,8 +157,8 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 localId, s32 unused) {
 #if TBS_PATCH_1
     found = Localization_LookupEntryIdFar(sprite);
     if (found != -1) {
-      UiText_GetResourceDimensionsAltFar(message, &left, &top, (u32 *)&width,
-                                         (u32 *)&height);
+      Text_GetMessageSizeAltFar(message, &left, &top, (u32 *)&width,
+                                (u32 *)&height);
       message = -1;
       if (top > y)
         portraitTop = top - 5;
@@ -171,16 +171,16 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 localId, s32 unused) {
       if (top < portraitTop) {
         s32 lines = height;
 
-        UiText_GetResourceDimensionsFar(message, &left, &top, (u32 *)&width,
-                                        (u32 *)&height);
+        Text_GetMessageSizeFar(message, &left, &top, (u32 *)&width,
+                               (u32 *)&height);
         message = -1;
         extra = lines - height + 1;
       }
     } else if (top < y) {
       s32 lines = height;
 
-      UiText_GetResourceDimensionsFar(message, &left, &top, (u32 *)&width,
-                                      (u32 *)&height);
+      Text_GetMessageSizeFar(message, &left, &top, (u32 *)&width,
+                             (u32 *)&height);
       extra = lines - height + 1;
       message = found;
     }
@@ -188,8 +188,8 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 localId, s32 unused) {
     none = Localization_LookupEntryIdFar(sprite);
     found = -1;
     if (none != found) {
-      UiText_GetResourceDimensionsAltFar(message, &left, &top, (u32 *)&width,
-                                         (u32 *)&height);
+      Text_GetMessageSizeAltFar(message, &left, &top, (u32 *)&width,
+                                (u32 *)&height);
       message = found;
       if (top > y)
         portraitTop = top - 5;
@@ -203,8 +203,8 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 localId, s32 unused) {
     if (top < y) {
       s32 lines = height;
 
-      UiText_GetResourceDimensionsFar(message, &left, &top, (u32 *)&width,
-                                      (u32 *)&height);
+      Text_GetMessageSizeFar(message, &left, &top, (u32 *)&width,
+                             (u32 *)&height);
       message = -1;
       extra = lines - height + 1;
     }
@@ -219,29 +219,25 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 localId, s32 unused) {
     // Mind Read's thoughts (window mode set) open after 8 frames with no
     // voice; spoken messages zoom open (option bit 0) with the speaker's
     // voice in bits 16 and up.
-    if (win->mode != 0) {
+    if (win->mindRead != 0) {
       WaitFrames(8);
       if (extra != 0)
-        handle =
-            UiText_OpenMessageWindowFar(message, left, top + extra - 1, 18);
+        handle = Message_OpenWindowFar(message, left, top + extra - 1, 18);
       else
-        handle = UiText_OpenMessageWindowFar(message, left, top, 2);
+        handle = Message_OpenWindowFar(message, left, top, 2);
     } else {
       s32 voice = Speaker_GetVoice(sprite);
 
       if (extra != 0)
-        handle = UiText_OpenMessageWindowFar(message, left, top + extra - 1,
-                                             (voice << 16) | 17);
+        handle = Message_OpenWindowFar(message, left, top + extra - 1,
+                                       (voice << 16) | 17);
       else
-        handle =
-            UiText_OpenMessageWindowFar(message, left, top, (voice << 16) | 1);
+        handle = Message_OpenWindowFar(message, left, top, (voice << 16) | 1);
     }
-    if (win->mode != 0)
-      portrait =
-          (s32)UiWindow_CreateWithSideObjectFar(sprite, 0, column, portraitTop);
+    if (win->mindRead != 0)
+      portrait = (s32)Portrait_OpenWindowFar(sprite, 0, column, portraitTop);
     else
-      portrait =
-          (s32)UiWindow_CreateWithSideObjectFar(sprite, 0, column, portraitTop);
+      portrait = (s32)Portrait_OpenWindowFar(sprite, 0, column, portraitTop);
     while (!UiWork_IsCompleteFar())
       WaitFrames(1);
   }
@@ -252,7 +248,7 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 localId, s32 unused) {
 }
 
 /// The script command "show message": opens the current message at localId
-/// (UiText_OpenMessageAtObject) and waits until it has been read and its
+/// (FieldMessage_ShowAtObject) and waits until it has been read and its
 /// window has closed; the speaker's portrait is closed once the text is typed
 /// out. The message closes by itself after 600 frames, or at once while
 /// Select, L, R and A are all held. About 70 maps reach it as
@@ -263,14 +259,14 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 localId, s32 unused) {
 void FieldScript_ShowMessageAndWait(s32 localId, s32 flags) {
   s32 member;
   struct FieldWork *runtime = (struct FieldWork *)gFieldWork;
-  struct UiWindow *window = UiText_OpenMessageAtObject(localId, flags);
+  struct Window *window = FieldMessage_ShowAtObject(localId, flags);
   s32 sprite;
   u32 frames;
 
   frames = 0;
   WaitFrames(1);
   // A party member the map does not place has its portrait under its
-  // character id, as UiText_OpenMessageAtObject opened it.
+  // character id, as FieldMessage_ShowAtObject opened it.
   sprite = ObjectEvent_ReadActiveValue(localId);
   if (localId <= 7) {
     member = localId & 0x0fff;
@@ -279,7 +275,7 @@ void FieldScript_ShowMessageAndWait(s32 localId, s32 flags) {
       sprite = member;
     }
   }
-  UiWork_FinalizeEntityMatchingLocalizedIdFar(sprite);
+  Portrait_CloseWindowFar(sprite);
 
   if (runtime->fastForward == 0) {
     while (UiWork_IsIdleFar(window) == 0) {
@@ -312,7 +308,7 @@ s32 FieldScript_AskYesNoAndShowResponse(s32 localId, s32 flags) {
   struct FieldWork *runtime;
   struct GameState *save;
 
-  UiText_OpenMessageAtObject(localId, flags);
+  FieldMessage_ShowAtObject(localId, flags);
   save = &gGameState;
   answer = FieldScript_AskYesNoWithObjectEventAnimation(save->leaderLocalId, 0);
   if (answer == 0) {
@@ -366,7 +362,7 @@ void FieldScript_ShowSpeakerMessage(s32 speaker) {
 #ifdef UBFIX
     s32 positionFound = 0;
 
-    // Supply the actual speaker position as UiText_OpenMessageAtObject does.
+    // Supply the actual speaker position as FieldMessage_ShowAtObject does.
     // A missing object event or failed projection has no position to open
     // around; still consume the message, as the fast-forward path does.
     if (object != NULL) {
@@ -397,9 +393,9 @@ void FieldScript_ShowSpeakerMessage(s32 speaker) {
       py = py < 20 ? 20 : py;
       if (py > 220)
         py = 220;
-      win = (s32)UiText_OpenMessageWindowFar(state->message, px, py, 1);
+      win = (s32)Message_OpenWindowFar(state->message, px, py, 1);
       state->messageWindow = win;
-      while (UiWork_IsIdleFar((struct UiWindow *)win) == 0)
+      while (UiWork_IsIdleFar((struct Window *)win) == 0)
         WaitFrames(1);
 #ifdef UBFIX
     }
@@ -437,8 +433,8 @@ void FieldScript_ShowMessageAtPosition(s32 unused0, s32 unused1, s32 x, s32 y) {
     px = 312;
   CLAMP(py, minY, 220);
 
-  window = (s32)UiText_OpenMessageWindowFar(state->message, px, py, 1);
-  while (UiWork_IsIdleFar((struct UiWindow *)window) == 0)
+  window = (s32)Message_OpenWindowFar(state->message, px, py, 1);
+  while (UiWork_IsIdleFar((struct Window *)window) == 0)
     WaitFrames(1);
   state->message++;
 }
@@ -449,7 +445,7 @@ void ObjectEvent_RunIfActive(s32 localId) {
 
   sprite = ObjectEvent_ReadActiveValue(localId);
   if (sprite != -1)
-    UiWork_FinalizeEntityMatchingLocalizedIdFar(sprite);
+    Portrait_CloseWindowFar(sprite);
 }
 
 /// The script command "show two messages and wait": two object events speak at
@@ -466,15 +462,13 @@ void FieldScript_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
   s32 firstWindow;
   s32 secondWindow;
 
-  firstWindow = (s32)UiText_OpenMessageWindowFar(
-      work->message++, firstX, firstY, Speaker_GetVoice(firstSprite) << 16);
-  UiWindow_CreateWithSideObjectFar(firstSprite, 0, firstPortraitX,
-                                   firstPortraitY);
+  firstWindow = (s32)Message_OpenWindowFar(work->message++, firstX, firstY,
+                                           Speaker_GetVoice(firstSprite) << 16);
+  Portrait_OpenWindowFar(firstSprite, 0, firstPortraitX, firstPortraitY);
 
-  secondWindow = (s32)UiText_OpenMessageWindowFar(
+  secondWindow = (s32)Message_OpenWindowFar(
       work->message++, secondX, secondY, Speaker_GetVoice(secondSprite) << 16);
-  UiWindow_CreateWithSideObjectFar(secondSprite, 0, secondPortraitX,
-                                   secondPortraitY);
+  Portrait_OpenWindowFar(secondSprite, 0, secondPortraitX, secondPortraitY);
 
   while (UiWork_IsCompleteFar() == 0)
     WaitFrames(1);
@@ -484,14 +478,14 @@ void FieldScript_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
     WaitFrames(1);
 
   WaitFrames(1);
-  UiWork_FinalizeEntityMatchingLocalizedIdFar(firstSprite);
-  UiWork_FinalizeEntityMatchingLocalizedIdFar(secondSprite);
+  Portrait_CloseWindowFar(firstSprite);
+  Portrait_CloseWindowFar(secondSprite);
   UiWork_FinalizePendingCoreFar();
   WaitFrames(1);
 
-  while (UiWork_IsIdleFar((struct UiWindow *)firstWindow) == 0)
+  while (UiWork_IsIdleFar((struct Window *)firstWindow) == 0)
     WaitFrames(1);
-  while (UiWork_IsIdleFar((struct UiWindow *)secondWindow) == 0)
+  while (UiWork_IsIdleFar((struct Window *)secondWindow) == 0)
     WaitFrames(1);
 
   WaitFrames(1);
@@ -500,20 +494,20 @@ void FieldScript_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
 /// Sets the voice of the messages that follow to that of localId's sprite,
 /// at the rate the message speed option picks (gUi_RenderResultValues). With
 /// 0x80000000 the messages are silent.
-void Ui_SetMessageVoiceFromObjectEvent(s32 localId) {
-  struct UiRenderWork *state = (struct UiRenderWork *)gWindowWork[0];
+void Message_SetVoiceFromObjectEvent(s32 localId) {
+  struct WindowWork *state = (struct WindowWork *)gWindowWork[0];
   u8 rate;
   s32 voice;
 
   // Direct u16 stores shrink the English function from 0x58 to 0x54 bytes.
   // Keep the original signed stores; the corresponding u16 alias is legal.
   if (localId == 0x80000000) {
-    *(s16 *)&state->speakerVoiceSound = (rate = 0);
-    *(s16 *)&state->speakerVoiceCountdown = rate;
+    *(s16 *)&state->voiceSound = (rate = 0);
+    *(s16 *)&state->voiceCountdown = rate;
   } else {
     voice = Speaker_GetVoice(ObjectEvent_ReadActiveValue(localId));
     rate = gUi_RenderResultValues[gGameState.messageSpeed];
-    *(s16 *)&state->speakerVoiceSound = voice;
-    *(s16 *)&state->speakerVoiceCountdown = rate;
+    *(s16 *)&state->voiceSound = voice;
+    *(s16 *)&state->voiceCountdown = rate;
   }
 }

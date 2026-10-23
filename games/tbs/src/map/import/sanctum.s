@@ -13,13 +13,13 @@
 	.set import.Engine_ObjectCreate, 1
 	.set import.Engine_MapGridCopyCellsTo, 1
 	.set import.Engine_MapGridCopyCellAttributes, 1
-	.set import.UiWindow_Create, 1
-	.set import.UiWork_Finalize, 1
-	.set import.UiText_DrawResource, 1
-	.set import.UiText_ShowCenteredMessage, 1
-	.set import.UiTextResource_Initialize, 1
-	.set import.UiTextResource_SetPosition, 1
-	.set import.UiTextResource_Release, 1
+	.set import.Window_Create, 1
+	.set import.Window_Close, 1
+	.set import.Text_DrawMessage, 1
+	.set import.FieldMessage_ShowCentered, 1
+	.set import.MenuArrow_Create, 1
+	.set import.MenuArrow_SetPosition, 1
+	.set import.MenuArrow_Release, 1
 	.set import.Ui_PrepareTransferForItem, 1
 	.set import.Save_CountRecordsExcludingFlagged, 1
 	.set import.Engine_GameFlagIsSet, 1

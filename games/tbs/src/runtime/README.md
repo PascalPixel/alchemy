@@ -636,9 +636,9 @@ hook and each `SC_CALL` callback, finds nine tasks with a path of calls to
 `WaitFrames`, and none takes it: the map tasks turn [object events](../../glossary.md#object-event) with a wait of 0
 (`Engine_ObjectEventFaceDirection`), the world map's lighthouse jitter moves the
 camera with a glide, the slot machine and the link countdown open instant
-windows (`UI_WINDOW_INSTANT`), and battle playback's sprite respawn tests
+windows (`WINDOW_FLAG_INSTANT`), and battle playback's sprite respawn tests
 `gTaskStatus`. The tenth path is the debug map selector, which only
-the unused `DebugMenu_ScheduleMapSelector` would schedule as a task.
+the unused `DebugMapSelect_Schedule` would schedule as a task.
 
 - XXX (no evidence): what the five empty exports after the fades
   (`RuntimeDispatch_ReservedNoOpA` to `E`) were for; they are empty in both

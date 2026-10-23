@@ -23,23 +23,23 @@
 /// Shows the message for an item the party has just received. The message is
 /// `Isaac got <item>.`; the German release has its own sentence for the Black
 /// Orb. flags are the message window flags of
-/// UiText_ShowPositionedMessageAndWait.
+/// FieldMessage_Show.
 static inline void ItemGift_ShowGotItem(s32 item, s32 flags) {
 #if (LANGUAGE == LANGUAGE_GERMAN)
   if (item == ITEM_BLACK_ORB) {
-    UiText_ShowPositionedMessageAndWaitFar(MsgGotBlackOrb, flags);
+    FieldMessage_ShowFar(MsgGotBlackOrb, flags);
     return;
   }
 #endif
-  UiWork_PushValueSlotFar(item, 2);
-  UiText_ShowPositionedMessageAndWaitFar(MsgColossoIsaacGotItem, flags);
+  MessageArgument_PushFar(item, 2);
+  FieldMessage_ShowFar(MsgColossoIsaacGotItem, flags);
 }
 
 /// Debug only: while debug mode is on, R makes every script wait
 /// (FieldScript_WaitFrames) end at once and L restores normal waits. Runs as a
 /// scheduler callback for the length of a script (FieldScript_Start). R also
 /// skips the object events' messages, which open nothing while fastForward is
-/// set (UiText_OpenMessageAtObject).
+/// set (FieldMessage_ShowAtObject).
 void FieldScript_UpdateDebugSkip(void) {
   struct FieldWork *runtime = (struct FieldWork *)gFieldWork;
 
@@ -96,7 +96,7 @@ void Leader_StopMoving(void) {
 void FieldScript_Start(void) {
   struct FieldWork *runtime = (struct FieldWork *)gFieldWork;
 
-  UiTimedNotice_CloseIfActiveFar();
+  MapNamePopup_HideFar();
   Leader_StopMoving();
   // Keep the script reset's signed halfword read.
   if ((s16)runtime->busy != 0) {
@@ -261,10 +261,10 @@ s32 Party_CheckItemLimit(s32 item) {
     heldQuantity += Inventory_CountItemFar(gGameState.party[partyIndex], item);
 
   if (heldQuantity >= partyCount * 30) {
-    UiWork_PushValueSlotFar(item, 2);
-    UiText_ShowPositionedMessageAndWaitFar(MsgCannotCarryMore, 1);
-    UiWork_PushValueSlotFar(item, 2);
-    UiText_ShowPositionedMessageAndWaitFar(MsgCannotCarryMore + 1, 1);
+    MessageArgument_PushFar(item, 2);
+    FieldMessage_ShowFar(MsgCannotCarryMore, 1);
+    MessageArgument_PushFar(item, 2);
+    FieldMessage_ShowFar(MsgCannotCarryMore + 1, 1);
     return -1;
   }
   return 0;
@@ -297,29 +297,29 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
   if (owner == -1) {
     // Every bag is full: "But you can't carry any more items."
     ItemGift_ShowGotItem(item, 1);
-    UiText_ShowPositionedMessageAndWaitFar(MsgCannotCarryAnyMore, 1);
+    FieldMessage_ShowFar(MsgCannotCarryAnyMore, 1);
   retry:
-    UiText_ShowPositionedMessageAndWaitFar(MsgWhatWillYouDrop, 1);
-    result = Shop_PickUnitItemFar(&member, &slot);
+    FieldMessage_ShowFar(MsgWhatWillYouDrop, 1);
+    result = ItemPicker_RunFar(&member, &slot);
     if (result == -1) {
       // Cancelled: drop the new item instead, unless it is indispensable
       // ("That <item>'s valuable! You must get it!").
       if (Item_GetDirectFar(item)->flags & ITEM_INDISPENSABLE) {
-        UiWork_PushValueSlotFar(item, 2);
-        UiText_ShowPositionedMessageAndWaitFar(MsgWhatWillYouDrop + 4, 1);
+        MessageArgument_PushFar(item, 2);
+        FieldMessage_ShowFar(MsgWhatWillYouDrop + 4, 1);
         goto retry;
       }
       // "Drop the <item>?"
-      UiWork_PushValueSlotFar(item, 2);
-      UiText_ShowPositionedMessageAndWaitFar(MsgWhatWillYouDrop + 1, 5);
-      result = Menu_AskYesNo(1);
+      MessageArgument_PushFar(item, 2);
+      FieldMessage_ShowFar(MsgWhatWillYouDrop + 1, 5);
+      result = FieldYesNo_Ask(1);
       UiWork_FinalizePendingCoreFar();
       if (result != 0)
         goto retry;
       // "Isaac drops the <item>."
       Item_AdjustCounterFar(item, 1);
-      UiWork_PushValueSlotFar(item, 2);
-      UiText_ShowPositionedMessageAndWaitFar(MsgWhatWillYouDrop + 2, 1);
+      MessageArgument_PushFar(item, 2);
+      FieldMessage_ShowFar(MsgWhatWillYouDrop + 2, 1);
       work->message = savedMessage;
       return owner;
     } else {
@@ -339,9 +339,9 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
       // Editions at TBS_PATCH_1 alone skip the check.
 #if !(TBS_PATCH_1 && !TBS_PATCH_2)
       if (Inventory_CountItemFar(member, item) > 29) {
-        UiWork_PushValueSlotFar(member, 1);
-        UiWork_PushValueSlotFar(item, 2);
-        UiText_ShowPositionedMessageAndWaitFar(MsgWhatWillYouDrop + 7, 1);
+        MessageArgument_PushFar(member, 1);
+        MessageArgument_PushFar(item, 2);
+        FieldMessage_ShowFar(MsgWhatWillYouDrop + 7, 1);
         goto retry;
       }
 #endif
@@ -352,9 +352,9 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
       if (owner == gGameState.leaderLocalId) {
         ItemGift_ShowGotItem(item, 3);
       } else {
-        UiWork_PushValueSlotFar(item, 2);
-        UiWork_PushValueSlotFar(owner, 1);
-        UiText_ShowPositionedMessageAndWaitFar(MsgGaveItemToMember, 3);
+        MessageArgument_PushFar(item, 2);
+        MessageArgument_PushFar(owner, 1);
+        FieldMessage_ShowFar(MsgGaveItemToMember, 3);
       }
       work->message = savedMessage;
       return owner;
@@ -365,10 +365,9 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
     Sound_PlaySongFar(MUS_TREASURE_FOUND);
     ItemGift_ShowGotItem(item, 3);
     if (owner != gGameState.leaderLocalId) {
-      UiWork_PushValueSlotFar(item, 2);
-      UiWork_PushValueSlotFar(owner, 1);
-      UiText_ShowPositionedMessageAndWaitFar(GIFT_RECEIVED_MESSAGE,
-                                             GIFT_RECEIVED_MESSAGE_MODE);
+      MessageArgument_PushFar(item, 2);
+      MessageArgument_PushFar(owner, 1);
+      FieldMessage_ShowFar(GIFT_RECEIVED_MESSAGE, GIFT_RECEIVED_MESSAGE_MODE);
     }
     work->message = savedMessage;
   }
@@ -422,8 +421,8 @@ void ObjectEvent_WaitForAnimationEnd(s32 localId, s32 animation) {
 s32 FieldScript_AskYesNoWithObjectEventAnimation(s32 localId, s32 forceBottom) {
   struct FieldWork *work = (struct FieldWork *)gFieldWork;
   s32 sprite = Map_FindObjectEventTemplate(work->speaker)->sprite;
-  struct UiWindow *window = (struct UiWindow *)work->messageWindow;
-  struct UiWindow *side = (struct UiWindow *)work->sideWindow;
+  struct Window *window = (struct Window *)work->messageWindow;
+  struct Window *side = (struct Window *)work->sideWindow;
   s32 useBottom = 1;
   s32 answer;
 
@@ -451,16 +450,15 @@ s32 FieldScript_AskYesNoWithObjectEventAnimation(s32 localId, s32 forceBottom) {
       useBottom = 0;
   }
 
-  answer = Menu_RunConfirmSelectionFar(useBottom, work->nameMessage,
-                                       work->nameWidth, 0);
+  answer = YesNoMenu_RunFar(useBottom, work->nameMessage, work->nameWidth, 0);
   if (answer != 0) {
     ObjectEvent_SetModeById(localId, 4);
-    UiWork_FinalizeEntityMatchingLocalizedIdFar(sprite);
+    Portrait_CloseWindowFar(sprite);
     UiWork_FinalizePendingCoreFar();
     ObjectEvent_WaitForAnimationEnd(localId, 4);
   } else {
     ObjectEvent_SetModeById(localId, 3);
-    UiWork_FinalizeEntityMatchingLocalizedIdFar(sprite);
+    Portrait_CloseWindowFar(sprite);
     UiWork_FinalizePendingCoreFar();
     ObjectEvent_WaitForAnimationEnd(localId, 3);
   }
@@ -471,9 +469,7 @@ s32 FieldScript_AskYesNoWithObjectEventAnimation(s32 localId, s32 forceBottom) {
 /// Asks yes or no at the top of the screen, or at the bottom with atBottom
 /// set. Returns 0 for yes, 1 for no. Called by PartyInventory_GiveItem,
 /// Field_UseItem, Field_UsePsynergy and the cleared game's menu.
-s32 Menu_AskYesNo(s32 atBottom) {
-  return Menu_RunConfirmSelectionFar(atBottom, 0, 0, 0);
-}
+s32 FieldYesNo_Ask(s32 atBottom) { return YesNoMenu_RunFar(atBottom, 0, 0, 0); }
 
 /// Teaches unit the Psynergy ability and says so with its jingle, waiting for
 /// the player to read it. The message is `<unit> learned <ability>.` Fuchin
@@ -482,9 +478,9 @@ void Party_LearnAbility(s32 unit, s32 ability) {
   // Declared without parameters: unit and ability pass through in r0 and r1.
   Unit_LearnPsynergyFar();
   Sound_PlaySongFar(MUS_TREASURE_FOUND);
-  UiWork_PushValueSlotFar(unit, 1);
-  UiWork_PushValueSlotFar(ability, 4);
-  UiText_ShowPositionedMessageAndWaitFar(MsgAbilityLearned, 3);
+  MessageArgument_PushFar(unit, 1);
+  MessageArgument_PushFar(ability, 4);
+  FieldMessage_ShowFar(MsgAbilityLearned, 3);
 }
 
 /// The script command "open screen": starts the script's screen transition and

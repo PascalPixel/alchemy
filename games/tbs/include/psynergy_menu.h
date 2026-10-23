@@ -21,25 +21,25 @@ struct Unit;
 struct PsynergyMenuWork {
   u8 unused[8];      ///< no view of the menu work names it (see menu/README.md)
   s32 selectedOwner; ///< the party member chosen
-  struct UiWindow *moneyWindow; ///< ShopWork's; not named here
-  struct UiWindow *auxiliaryWindow;
-  struct RenderOutput *paneIcon[2]; ///< each pane's cursor
+  struct Window *moneyWindow; ///< ShopWork's; not named here
+  struct Window *auxiliaryWindow;
+  struct WindowSprite *paneIcon[2]; ///< each pane's cursor
   s8 tabIndex[2];                   ///< each pane's member, in ownerTable
   s8 tabCounts[2];                  ///< members each pane chooses from
-  struct UiWindow *psynergyWindow;
-  struct UiWindow *statusWindow;
-  struct UiWindow *shortcutWindow; ///< the L and R shortcuts
-  struct UiWindow *infoWindow;
-  struct UiWindow *equipWindow; ///< ItemMenuWork's; not named here
-  struct UiWindow *listWindow;
+  struct Window *psynergyWindow;
+  struct Window *statusWindow;
+  struct Window *shortcutWindow; ///< the L and R shortcuts
+  struct Window *infoWindow;
+  struct Window *equipWindow; ///< ItemMenuWork's; not named here
+  struct Window *listWindow;
   /// ItemMenuWork's modalWindow and the two windows it never opens;
   /// not named here.
   u8 itemWindows[0x0c];
-  struct RenderOutput *entryGridCursor;
-  struct RenderOutput *entryIcons[32];
-  struct RenderOutput *categoryIcons[8]; ///< ItemMenuWork's; not named here
+  struct WindowSprite *entryGridCursor;
+  struct WindowSprite *entryIcons[32];
+  struct WindowSprite *categoryIcons[8]; ///< ItemMenuWork's; not named here
   u8 unusedAfterIcons[0x24];             ///< no view of the menu work names it
-  struct UiWindow *messageWindow;
+  struct Window *messageWindow;
   /// The cursor grid: its place and its size.
   ///@{
   u8 selectedColumn;
@@ -53,7 +53,7 @@ struct PsynergyMenuWork {
   s32 ownerScale[8]; ///< 16.16 fixed point, 0x10000 full size
   u16 paneRow[2];    ///< each pane's Psynergy row chosen
   u16 paneAction[2]; ///< each pane's Psynergy chosen, as an owner action entry
-  struct RenderOutput *cursor; ///< ItemMenuWork's; not named here
+  struct WindowSprite *cursor; ///< ItemMenuWork's; not named here
   /// DjinnMenuWork's backdrop pointer at 0x184; no view names the rest.
   u8 aroundBackdrop[0x48];
   u16 psynergies[32]; ///< the chosen member's Psynergy listed
@@ -63,15 +63,15 @@ struct PsynergyMenuWork {
   /// The user and the target: [1] is MENU_TARGET_WHOLE_PARTY for Psynergy
   /// on the whole party.
   u8 ownerIds[2];
-  struct RenderOutput *cursorIcon;
+  struct WindowSprite *cursorIcon;
   /// bits: 1 the list shows the shortcut help | 0 set after a use or a
   /// cancelled target
   u16 flags;
   u16 skipSlide; ///< 1 skips the cursor's next slide once
-  /// FourObjectMotionState's figures and their x; not named here.
+  /// DjinnFiguresWork's figures and their x; not named here.
   u8 figureRow[0x18];
   s16 slotY[4]; ///< screen pixels
-  /// FourObjectMotionState's phases and DjinnMenuWork's pair; not named here.
+  /// DjinnFiguresWork's phases and DjinnMenuWork's pair; not named here.
   u8 figurePhases[0x16];
   s16 useResult;   ///< the use's result message, after MsgItemUseResult
   s8 equipPreview; ///< ItemMenuWork's; not named here

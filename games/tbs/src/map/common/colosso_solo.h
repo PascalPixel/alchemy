@@ -323,7 +323,7 @@ s32 Colosso_GreetAtStage(s32 speaker, s32 warrior) {
   s32 choice;
 
   Field_EndBusyAndReveal();
-  UiWork_PushValueSlot(warrior, MESSAGE_ARGUMENT_NUMBER);
+  MessageArgument_Push(warrior, MESSAGE_ARGUMENT_NUMBER);
   mapId = gGameState.mapId;
   if (mapId == (s32)&MapId_ColosseumAzartMatch) {
     message = MsgColossoStageFirstFinalsMatch;
@@ -338,7 +338,7 @@ s32 Colosso_GreetAtStage(s32 speaker, s32 warrior) {
     return COLOSSO_GUIDE_CHEER;
   }
   if (Engine_GameFlagIsSet(warrior + COLOSSO_STAGE_DESCRIBED) != 0) {
-    choice = PartyTalkMenu_Choose(0);
+    choice = ColossoMenu_Choose(0);
     if (choice == 1) {
       return COLOSSO_GUIDE_CHEER;
     }
@@ -360,7 +360,7 @@ void Colosso_RepeatStageNumber(s32 speaker, s32 warrior) {
   s32 mapId;
   s32 message;
 
-  UiWork_PushValueSlot(warrior, MESSAGE_ARGUMENT_NUMBER);
+  MessageArgument_Push(warrior, MESSAGE_ARGUMENT_NUMBER);
   mapId = gGameState.mapId;
   if (mapId == (s32)&MapId_ColosseumAzartMatch) {
     message = MsgColossoStageFirstFinalsMatch;
@@ -435,7 +435,7 @@ void Colosso_OfferCheeringSpot(s32 mode, s32 guide, s32 stage) {
           Party_AddMember((s8)members[i]);
         }
       }
-      friendId = Menu_OpenCharacterSelector();
+      friendId = MemberChooser_Open();
       for (i = 0; i < memberCount; i++) {
         Party_RemoveMember((s8)members[i]);
       }
@@ -451,7 +451,7 @@ void Colosso_OfferCheeringSpot(s32 mode, s32 guide, s32 stage) {
   Script_ShowMessage(guide, 0);
   return;
 L_main:
-  UiWork_PushValueSlot(friendId, MESSAGE_ARGUMENT_ACTOR);
+  MessageArgument_Push(friendId, MESSAGE_ARGUMENT_ACTOR);
   Engine_ScriptSetMessage(MsgColossoIsaacWillCheerForWay);
   Script_ShowMessage(guide, 0);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);

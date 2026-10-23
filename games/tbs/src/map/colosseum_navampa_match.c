@@ -2198,14 +2198,14 @@ static s32 ColosseumNavampaMatch_CollectFinishEquipment(s32 firstItem,
      * show, which sets r1 before r0; as a direct call, 1 of 110 instructions
      * differ in tbs-en. */
     COLOSSEUM_NAVAMPA_MATCH_APPLY_MATCHING_SLOT_VALUES(ISAAC, firstItem);
-    UiWork_PushValueSlot(firstItem, 2);
+    MessageArgument_Push(firstItem, 2);
   } else {
     /* FAKEMATCH(wrapper): the same cast as the first arm, which sets r1 before
      * r0; as a direct call, 1 of 110 instructions differ in tbs-en. */
     COLOSSEUM_NAVAMPA_MATCH_APPLY_MATCHING_SLOT_VALUES(ISAAC, secondItem);
-    UiWork_PushValueSlot(secondItem, 2);
+    MessageArgument_Push(secondItem, 2);
   }
-  UiWork_PushValueSlot(gGameState.leaderLocalId, 1);
+  MessageArgument_Push(gGameState.leaderLocalId, 1);
   Engine_MessageShowCentered(MsgColossoIsaacGotItem, 3);
   ObjectDispatch_WaitForValue16(objectEvent);
   return opponentFinishedFirst;

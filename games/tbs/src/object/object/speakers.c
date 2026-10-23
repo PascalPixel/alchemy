@@ -39,9 +39,9 @@ s32 FieldEffect_GetAnimationValue(s32 id) {
 
 /// Returns the voice of sprite id's messages: the first of its four blip
 /// sounds, 0x100 plus its definition's value, or 0 for none (value 0xff) or
-/// with the Speech option off (gGameState.speech). UiText_OpenMessageWindowFar
+/// with the Speech option off (gGameState.speech). Message_OpenWindowFar
 /// takes it in the high half of its last argument and
-/// Ui_SetMessageVoiceFromObjectEvent as the window's speakerVoiceSound
+/// Message_SetVoiceFromObjectEvent as the window's voiceSound
 /// (psynergy_effects/messages.c); the shops ask it for their keepers.
 s32 Speaker_GetVoice(u32 id) {
   u8 portraitId;

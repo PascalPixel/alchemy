@@ -20,7 +20,7 @@ it, how Start closes a screen from any depth and how Psynergy and items meant
 for the field reach it; this page goes through each screen's steps. The
 windows, messages and icons the screens are drawn with are in
 [Windows](../window/README.md), which also draws the row of command icons
-(`Menu_RunTopSelection` in `window/window/selection.c`). The shop counters,
+(`FieldMenu_Run` in `window/window/selection.c`). The shop counters,
 which borrow the same memory, are in [Shops](../shop/README.md).
 
 ## The menu work
@@ -40,7 +40,7 @@ The block is borrowed from the [heap](../../glossary.md#heap-and-pools) under th
 `MENU_WORK_SIZE` bytes, reached as `gMenuWork`. Each screen reads it through
 its own struct, naming the fields that screen uses: `ItemMenuWork` (the
 Item screen, and the pieces the screens share), `PsynergyMenuWork`,
-`SummaryScreenWork`, `DjinnMenuWork` and `FourObjectMotionState`. Why they
+`SummaryScreenWork`, `DjinnMenuWork` and `DjinnFiguresWork`. Why they
 stay separate structs rather than one is a question of [matching](../../glossary.md#matching-decompilation): the code
 has to compile to [the original](../../glossary.md#the-original)'s instructions, and
 [Matching](../MATCHING.md) covers how. The work has room for eight party members
@@ -73,14 +73,14 @@ menu's icons come up again. When the player has chosen Psynergy or an item
 to use on the field, the screen returns with that choice and the menu closes.
 The Djinn screen always returns to the icons.
 
-`Menu_RunTopSelection`, in the window code, runs the row of icons and calls
+`FieldMenu_Run`, in the window code, runs the row of icons and calls
 the screen the player picks by its `FIELD_MENU_` id. The screens are in the
 menu [bank](../../glossary.md#bank), so it calls each through the bank's [far-call](../../glossary.md#far-call) table,
 `system/far_call/MENU.S` (`PsynergyMenu_RunFar` and so on).
-`Menu_SelectTopEntry` leaves out the Djinn icon while
+`FieldMenu_SelectCommand` leaves out the Djinn icon while
 `Party_SumDjinnCountsFar` finds no Djinni.
 
-`Menu_RunTopSelection` reads each screen's result in that screen's own case,
+`FieldMenu_Run` reads each screen's result in that screen's own case,
 so the same value can mean different things:
 
 | Icon | Value | Function | Part | Returns | Then |
@@ -88,7 +88,7 @@ so the same value can mean different things:
 | `FIELD_MENU_PSYNERGY` | 1 | `PsynergyMenu_Run` | [`menu/psynergy.c`](menu/psynergy.c) | -1 backed out or Start; 1 Psynergy to use on the field | -1 shows the icons again; 1 closes the menu |
 | `FIELD_MENU_DJINN` | 2 | `DjinnMenu_Run` | [`menu/djinn.c`](menu/djinn.c) | always 1 | any nonzero result shows the icons again |
 | `FIELD_MENU_ITEM` | 3 | `ItemMenu_Run` | [`menu/item.c`](menu/item.c) | -1 backed out or Start; 1 an item to use on the field | -1 shows the icons again; 1 closes the menu |
-| `FIELD_MENU_STATUS` | 4 | `StatusMenu_Run` | [`menu/status.c`](menu/status.c) | -1 | shows the icons again |
+| `FIELD_MENU_STATUS` | 4 | `SummaryScreen_Run` | [`menu/status.c`](menu/status.c) | -1 | shows the icons again |
 
 ### The Psynergy screen
 
@@ -107,7 +107,7 @@ the PP, and the list comes back for another choice.
 
 The steps are `PSYNERGY_STEP_MEMBER`, `_LIST`, `_CLASSIFY`
 (`PsynergyMenu_ClassifySelectedPsynergy`), `_TARGET` and `_APPLY`, run by
-`Menu_ResolveSelectedAction`. `_CLASSIFY` asks its questions in this order:
+`PsynergyMenu_RunSteps`. `_CLASSIFY` asks its questions in this order:
 
 | The Psynergy | Returns | Next |
 | --- | --- | --- |
@@ -150,13 +150,13 @@ The screen is built from six windows: the party along the top left, the
 question it is asking at the top right, the chosen member's panel below the
 party, their items on the right with the button help under them, and a
 window along the bottom that shows the party's coins while a member is being
-chosen (`UiText_DrawWorkValueWithLabel`), then the description of the item
+chosen (`Text_DrawWorkValueWithLabel`), then the description of the item
 under the hand. Once an item is chosen, a taller list takes the right side and
 offers the commands. Giving
 an item asks who receives it and, when that member's bag is full, what they
 give back.
 
-The steps are an enum in `menu/item.c`: a member (`ITEM_STEP_OWNER`), one of
+The steps are an enum in `menu/item.c`: a member (`ITEM_STEP_MEMBER`), one of
 their items (`ITEM_STEP_ITEM`) and a command (`ITEM_STEP_COMMAND`): Use,
 Equip, Give, Drop, Remove or Details (`ITEM_STEP_INSPECT`). Giving chooses the
 receiver (`ITEM_STEP_TARGET`) and, when the receiver's bag is full, what they
@@ -165,18 +165,18 @@ give back (`ITEM_STEP_TRADE`). Nothing sets `ITEM_STEP_IDLE` or
 outside the menu, with its owner, target and item id in its out parameters,
 and writes the field's item request (`struct ItemPickerResult`).
 
-Each window is a `struct UiWindow` that `struct ItemMenuWork` keeps a
+Each window is a `struct Window` that `struct ItemMenuWork` keeps a
 pointer to. `ItemMenu_Initialize`, which the Psynergy and Djinn screens open
-with too, makes the party window (`UiMenu_CreateCursor`, tile (0, 0), 13 by
+with too, makes the party window (`MenuCursor_Create`, tile (0, 0), 13 by
 5) and `infoWindow` (0, 17, 30 by 3); the screen adds `messageWindow` (13, 0,
-17 by 3); `Menu_DrawOwnerStatusPanel` makes `statusWindow` (0, 5, 13 by 12);
-`ItemMenu_RunOwnerSelection` makes `itemWindow` (13, 3, 17 by 10) and
+17 by 3); `StatusPanel_Draw` makes `statusWindow` (0, 5, 13 by 12);
+`ItemMenu_RunMemberSelection` makes `itemWindow` (13, 3, 17 by 10) and
 `helpWindow` (13, 13, 17 by 4); and `ItemMenu_RunList` makes `listWindow`
 (13, 3, 17 by 14), which holds the command grid once an item is chosen.
 
 | Step | Value | What the screen is doing |
 | --- | --- | --- |
-| `ITEM_STEP_OWNER` | 0 | choosing a member |
+| `ITEM_STEP_MEMBER` | 0 | choosing a member |
 | `ITEM_STEP_ITEM` | 1 | choosing one of their items |
 | `ITEM_STEP_USE` | 2 | Use |
 | `ITEM_STEP_EQUIP` | 3 | Equip |
@@ -247,7 +247,7 @@ screen's row eases in.
 
 The figures are placed by `FourObjectMotion_`
 ([`menu/djinn_figures.c`](menu/djinn_figures.c)).
-`Menu_OpenCharacterSelector` ([`menu/status.c`](menu/status.c)) lets the
+`MemberChooser_Open` ([`menu/status.c`](menu/status.c)) lets the
 player choose one party member over the field and returns the member's id, or
 -1. The Colosso maps open it through `MENU.S`, and so do the debug tests in `debug/test.c`.
 
@@ -263,7 +263,7 @@ Force would teach.
 To show what equipment would change, the panel puts the item on the member
 for a moment, reads the stats and puts the member back from a copy.
 
-`Menu_DrawOwnerStatusPanel` fills a window at tile (0, 5), 13 by 12 tiles. It
+`StatusPanel_Draw` fills a window at tile (0, 5), 13 by 12 tiles. It
 shows the member's name, up to two ailments or else the level, and the
 portrait, and below them what the low byte of its mode, an
 `enum StatusPanelKind`, asks for. With `STATUS_PANEL_LOWER_ONLY` it keeps the
@@ -295,7 +295,7 @@ Each order is a list of item types, a byte each, in `menudata.c`, named by
 `enum ListSort` in [`menu.h`](../../include/unit/menu/menu.h). A type plus
 `LIST_ORDER_EQUIPPED` takes only the equipped items of that type, and
 `LIST_ORDER_END` ends the order. `Menu_CopyListOrder` copies an order out of
-`menudata.c` and `InventoryMenu_SortByListOrder` sorts by it.
+`menudata.c` and `ItemMenu_Sort` sorts by it.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -367,15 +367,15 @@ name entry keyboard tilemap, the same as the Japanese one, that nothing reads.
   reached as `gMenuWork`. Each screen reads it through its own struct:
   `ItemMenuWork` (the Item screen, and the pieces the screens share),
   `PsynergyMenuWork`, `SummaryScreenWork`, `DjinnMenuWork` and
-  `FourObjectMotionState`.
+  `DjinnFiguresWork`.
 - **owner**: a party member whose items, Psynergy or Djinn a screen shows, by
   character id; `ownerIds` lists the active party.
 - **pane** `[0]` and `[1]`: the two sides of a command, the member and item it
-  starts from and the member or item it goes to (`paneOwner`,
+  starts from and the member or item it goes to (`sideMember`,
   `selectedItems`, `selectedSlots`). Giving an item uses both.
 - **step**: where a screen's command loop has got to (`enum ItemMenuStep`,
   `PsynergyMenuStep`, `DjinnMenuStep`).
-- **status panel**: the window `Menu_DrawOwnerStatusPanel` fills on the Item
+- **status panel**: the window `StatusPanel_Draw` fills on the Item
   and Psynergy screens.
 - **info window**: the help line at the top of a screen. While
   `FLAG_MENU_INFO_KEPT` is set it holds the message last shown there.
@@ -397,7 +397,7 @@ name entry keyboard tilemap, the same as the Japanese one, that nothing reads.
 | `DjinnMenu_`, `Djinn_`, `OwnerAction_` | the Djinn screen, its lists and its preview loop |
 | `FourObjectMotion_` | the row of four figures the Status and Djinn screens show |
 | `Item_`, `Ability_` | using an item or Psynergy from the menu |
-| `Title_`, `Clear_`, `SaveMenu_`, `LinkLobby_`, `MapData_` | the three overlays and their map entry functions |
+| `Title_`, `Clear_`, `SaveMenu_`, `BattleArena_`, `MapData_` | the three overlays and their map entry functions |
 | `Owner_`, `State_` | copying a unit's record, and the lobby's unused empty callback |
 | `UiWindow_`, `UiText_`, `UiIcon_`, `UiWork_`, `UiPalette_`, `Palette_`, `Resource_`, `Render_`, `Scheduler_` | windows, text, icons, palettes, VRAM entries and [tasks](../../glossary.md#task), whose main code is in other folders |
 
@@ -423,7 +423,7 @@ Every view of the menu work names what its own screen reads and writes, and
 keeps the bytes other screens' views use under those views' names with
 "not named here" (`moneyWindow`, ShopWork's) or as one run named for what
 it holds (`itemWindows`, `figureRow`), with the view that names its fields.
-`UiWindow_InitializeWork` clears the whole work as each screen opens. Bytes
+`Window_InitializeWork` clears the whole work as each screen opens. Bytes
 no view names are `unused` runs: the first eight, the 36 after the category
 icons and a few more. Three window handles have no window behind them: the
 Status screen's `unopenedWindow` (`struct SummaryScreenWork`), which it
@@ -435,7 +435,7 @@ they stay NULL and closing them does nothing. The Djinn screen's
 redraws it as it closes (a [`// BUG:`](../../glossary.md#bug-bugfix-and-ubfix) in `djinn_preview.c`). That reads the
 window's place through `NULL`, which on this console is the BIOS. Code
 outside the BIOS reading it gets the last BIOS instruction fetched instead;
-read as a width, that value is over 30 tiles, so `UiWindow_DrawFrame` draws
+read as a width, that value is over 30 tiles, so `Window_DrawFrame` draws
 nothing.
 
 - XXX (no evidence): why the [Start](../../menus.md#start) watcher's flag is a game flag

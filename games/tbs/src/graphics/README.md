@@ -271,11 +271,11 @@ the code that loads them: effects, maps, layouts, windows and menus.
 | `text/decode_symbol.s`, [`render/decode.s`](render/decode.s), `tile/*.s` | handwritten ARM and Thumb decoders, copiers and a dot product, each proven in its header |
 | `battle_fx/` | the battle effects' sheets and masks, loaded by resource id |
 | `ui/` | window tiles, the small font, icons and menu sprites |
-| `font/` | the main text font in each language's version (`gUiText_Glyphs`) |
+| `font/` | the main text font in each language's version (`gFont_Glyphs`) |
 | `world_map/` | the world map's tiles and palettes and the story frames |
 | `tileset/` | the maps' tile sets and their palettes |
 | `window/` | the name entry keyboards, the cursor frame and the main font's glyph widths |
-| `shop/` | the eight frames of the shop cursor, `Shop_CursorFrameA` to `Shop_CursorFrameH` (`ResourceId_ShopCursorFrames`) |
+| `shop/` | the eight frames of the shop cursor, `MenuCursor_FrameA` to `MenuCursor_FrameH` (`ResourceId_MenuCursorFrames`) |
 | `title/` | the title picture, the logos, the "Press Start" prompt and the "To be continued" lettering |
 | `render/labels.s` | the 64-by-16 text headings, each two 32-by-16 sprites |
 | `display/credits.s` | the credits font, with its glyph widths in `display/glyph_widths.h` |
@@ -311,7 +311,7 @@ are, as `games/tbs/objects.tsv` lists.
 | `Tile_`, `TileMap_`, `BitDecoder_`, `Render_`, `Text_` | the handwritten decoders, among them `Tile_ExpandSlide`, which unpacks the credits' backdrops |
 | `Vector_` | `Vector_DotProduct`, a 16.16 dot product in `tile/dot_product.s` that nothing calls |
 
-`UiText_LookupMessageArm` carries the text window's prefix, though it sits
+`Message_FindArm` carries the text window's prefix, though it sits
 beside `Text_DecodeSymbol` in `text/decode_symbol.s`.
 
 ## Evidence and open questions

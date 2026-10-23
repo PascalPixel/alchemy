@@ -160,7 +160,7 @@ extern s32 gSerialSendSource;
 extern volatile u16 gSerialSendSize;
 extern s32 gSerialReceiveDestination;
 /// volatile: tagged where it steers, in LinkBattle_ReceiveActions (tbs
-/// battle.c) and LinkLobby_ReceivePartyRecords (tbs lobby.c)
+/// battle.c) and BattleArena_ReceivePartyRecords (tbs lobby.c)
 extern volatile u16 gSerialReceivedSize;
 extern u8 gSerialPeerPayloads[4][24];
 /// volatile: tagged where it steers, in SerialRuntime_StepBlockTransfer (tbs
@@ -191,11 +191,11 @@ static __inline__ void SerialRuntime_ResetTransferState(void) {
   IME_DISABLE(ime);
   /* FAKEMATCH(one-pass): zero and state set in a once-only block; as plain
    * statements, 27 of 62 instructions differ in tbs-en
-   * (LinkLobby_ExchangePartyRecords). */
+   * (BattleArena_ExchangePartyRecords). */
   do {
     zero = 0;
     /* FAKEMATCH(dead): state set again; as the one assignment above, 16 of 62
-     * instructions differ in tbs-en (LinkLobby_ExchangePartyRecords). */
+     * instructions differ in tbs-en (BattleArena_ExchangePartyRecords). */
     state = &gSerialTransfer;
   } while (0);
   state->status = 0x80;

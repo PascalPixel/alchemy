@@ -155,7 +155,7 @@ redraw:
     gFrameCount; // a read whose value is not used
     WaitFrames(1);
   }
-  Ui_LoadWindowGraphics();
+  Window_LoadGraphics();
   DebugText_Clear();
 }
 

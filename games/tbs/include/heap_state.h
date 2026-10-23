@@ -75,13 +75,13 @@ enum HeapSlot {
   /// A scratch buffer, usually 1 KB, that a picture is decoded into and
   /// released as soon as its tiles are in VRAM.
   HEAP_SLOT_TILE_SCRATCH = 14,
-  /// The window renderer's work (struct UiRenderWork, gWindowWork).
+  /// The window renderer's work (struct WindowWork, gWindowWork).
   HEAP_SLOT_WINDOW = 15,
   /// The party status window's layout (struct PartyStatusWindow).
   HEAP_SLOT_PARTY_STATUS = 16,
   /// The buffers an icon or portrait is decoded through (GlyphTransfer).
   HEAP_SLOT_GLYPH_TRANSFER = 17,
-  /// The selection screen's work (struct SelectionScreen).
+  /// The selection screen's work (struct SelectionScreenWork).
   HEAP_SLOT_SELECTION_SCREEN = 18,
   /// The work of Menu_AllocateSelectionWorkspace, which nothing calls.
   HEAP_SLOT_SELECTION_WORKSPACE = 19,
@@ -171,7 +171,7 @@ enum HeapSlot {
   HEAP_SLOT_FIELD_EFFECT = 56,
   /// The battle command menus' work (struct BattleMenuWork).
   HEAP_SLOT_BATTLE_MENU = 57,
-  /// A command icon menu's work (struct ResourceMenuWork).
+  /// A command icon menu's work (struct IconMenuWork).
   HEAP_SLOT_ICON_MENU = 58,
   /// The Colosso finals' race work (struct ColossoRaceWork), which
   /// gColossoWork reads by its own name.

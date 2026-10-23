@@ -65,7 +65,7 @@ struct RegionMapWork {
   s16 namedMarker; ///< object event whose name is drawn; -1 clears the name
   u8 padding14[4]; ///< not read by this screen
   s32 cursorSpeed; ///< 16.16 screen pixels per frame
-  struct UiWindow *nameWindow; ///< owned until this screen closes
+  struct Window *nameWindow; ///< owned until this screen closes
   // Packed visible map sections, then a nearest-section frame; the last is the
   // cursor.
 #ifdef UBFIX
@@ -154,7 +154,7 @@ void FieldEffect_SetupResourcesAndWindow(void) {
   }
   work->cursorVramBlock = Resource_LoadFixedBlockBIntoFreeSlotFar();
   tile = gVramBlockCache[work->cursorVramBlock].offset;
-  work->nameWindow = UiWindow_CreateFar(0, 0, 0, 0, 2);
+  work->nameWindow = Window_CreateFar(0, 0, 0, 0, 2);
   work->namedMarker = -1;
   work->cursorSpeed = WORLD_MAP_CURSOR_MIN_SPEED;
 #ifdef UBFIX
@@ -192,7 +192,7 @@ void FieldEffect_CleanupResourcesAndWindow(void) {
 
   Resource_ResetEntry(work->markerVramBlock);
   Resource_ResetEntry(work->cursorVramBlock);
-  UiWork_FinalizeFar(work->nameWindow, 2);
+  Window_CloseFar(work->nameWindow, 2);
 }
 
 /// Scheduler callback of the world map screen: shows a marker at each map
@@ -405,13 +405,13 @@ void RegionMap_UpdateMarkers(void) {
   // Redraw only when the selected marker changes, including to no marker.
   if (work->namedMarker != nearestMarker) {
     work->namedMarker = nearestMarker;
-    RenderOutput_PrepareForRedrawFar(work->nameWindow);
+    WindowSprite_PrepareForRedrawFar(work->nameWindow);
     if (nearestMarker != -1) {
       if (nearestMarker == 0)
         nearestName = MsgPresentLocation;
       else
         nearestName = MapSec_GetNameIndex(nearestName, 1) + MsgDebugEntryName;
-      UiText_MeasureResourceEntriesFar(nearestName, &width, &height);
+      Text_MeasureMessageFar(nearestName, &width, &height);
       cursorX = nearestX;
       cursorY = nearestY;
       cursorX -= WORLD_MAP_NAME_LEFT;
@@ -423,7 +423,7 @@ void RegionMap_UpdateMarkers(void) {
       }
       if (cursorY < 0)
         cursorY = 0;
-      UiText_DrawResourceFar(nearestName, work->nameWindow, cursorX, cursorY);
+      Text_DrawMessageFar(nearestName, work->nameWindow, cursorX, cursorY);
     }
   }
 
@@ -487,7 +487,7 @@ void RegionMap_Show(s32 picture) {
   FieldEffect_SetupResourcesAndWindow();
   Task_Add(RegionMap_UpdateMarkers, TASK_PRIORITY_MAIN_LOOP);
   if (GameFlag_TestFar(FLAG_WORLD_MAP_LEFT))
-    UiText_ShowPositionedMessageAndWaitFar(MsgNotOnMap, 1);
+    FieldMessage_ShowFar(MsgNotOnMap, 1);
   do {
     WaitFrames(1);
   } while ((gKeysRepeat & (KEY_A | KEY_B)) == 0);

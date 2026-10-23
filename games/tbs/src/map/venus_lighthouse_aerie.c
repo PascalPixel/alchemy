@@ -3100,11 +3100,9 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   Engine_ScriptWaitForScreen();
   Engine_ScriptWait(80);
   ObjectSystem_SuspendProjectionAndShowSprites();
-  ((struct UiRenderWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_WINDOW))
-      ->speakerVoiceSound = 0;
-  ((struct UiRenderWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_WINDOW))
-      ->speakerVoiceCountdown = 0;
-  UiText_ShowCenteredMessage(MsgVenusDespiteLongTiring, 0, 0);
+  ((struct WindowWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_WINDOW))->voiceSound = 0;
+  ((struct WindowWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_WINDOW))->voiceCountdown = 0;
+  FieldMessage_ShowCentered(MsgVenusDespiteLongTiring, 0, 0);
   ObjectSystem_ResumeProjectionAndHideLayers();
   Engine_ScriptWait(80);
 }

@@ -17,15 +17,15 @@
 /// and its icons, and the particle effects.
 ///
 /// It is the HEAP_SLOT_MENU block, the same 0xa70 bytes as the field menu's
-/// work: Shop_InitializeCursorWork takes and clears it as a shop, the inn,
-/// the sanctum or the item picker opens, and Shop_ReleaseCursorWork frees it.
+/// work: Shop_InitializeWork takes and clears it as a shop, the inn,
+/// the sanctum or the item picker opens, and Shop_ReleaseWork frees it.
 struct ShopWork {
   u8 unused[8];      ///< no view of the menu work names it (see menu/README.md)
   s32 selectedOwner; ///< the menu screens' chosen member; not named here
-  struct UiWindow *moneyWindow; ///< the coins window
+  struct Window *moneyWindow; ///< the coins window
   /// The menu screens' first window and their two panes; not named here.
-  u8 menuPanes[0x10];
-  struct UiWindow *itemWindow;
+  u8 menuSides[0x10];
+  struct Window *itemWindow;
   /// The menu screens' windows, icons and cursor grid; not named here.
   u8 menuWindows[0xf0];
   struct AnimationObject *partyMemberIcons[8]; ///< the party row's sprites
@@ -37,7 +37,7 @@ struct ShopWork {
   u8 menuLists[0xf8];
   s16 stockItemIds[129];    ///< the items on sale, ended by 0
   s16 partyMemberIds[9];    ///< the party in order (Party_ListMembers)
-  struct ShopCursor cursor; ///< the hand cursor
+  struct MenuCursor cursor; ///< the hand cursor
   /// VRAM cache slots of the six cursor icons, loaded when the work is set
   /// up and freed with it.
   ///@{
@@ -51,12 +51,12 @@ struct ShopWork {
   u16 unusedBeforeSelection;  ///< no view of the menu work names it
   u16 selectedItem;           ///< the item being bought, sold or repaired
   u8 unusedAfterSelection[4]; ///< no view of the menu work names it
-  u16 keeperResource; ///< the shopkeeper's animation; picks the portrait
+  u16 keeperGraphics; ///< the shopkeeper's animation; picks the portrait
   s8 stockCount;
   s8 partyMemberCount;
   u8 mode;        ///< passed on as the hand cursor's kind; set to 12 at first
   u8 shopType;    ///< the stock row's type: 0 items, 2 armor, else weapons
-  s8 partyAction; ///< the counter chosen (enum ShopAction)
+  s8 action;      ///< the counter chosen (enum ShopAction)
   s8 burstMember; ///< the sanctum's member whose pose is randomized; -1 none
   u8 warriorShop; ///< 1 for stock rows 16 to 18, which greet as warriors'
   u8 padding[3];  ///< up to the word effects starts on
@@ -73,14 +73,14 @@ STATIC_ASSERT(offsetof(struct ShopWork, partyMemberIds) == 0x36e);
 STATIC_ASSERT(offsetof(struct ShopWork, cursor) == 0x380);
 STATIC_ASSERT(offsetof(struct ShopWork, stockCount) == 0x3a6);
 STATIC_ASSERT(offsetof(struct ShopWork, partyMemberCount) == 0x3a7);
-STATIC_ASSERT(offsetof(struct ShopWork, partyAction) == 0x3aa);
+STATIC_ASSERT(offsetof(struct ShopWork, action) == 0x3aa);
 STATIC_ASSERT(offsetof(struct ShopWork, partyMemberX) == 0x134);
 STATIC_ASSERT(offsetof(struct ShopWork, partyMemberY) == 0x144);
 STATIC_ASSERT(offsetof(struct ShopWork, burstMember) == 0x3ab);
 STATIC_ASSERT(offsetof(struct ShopWork, warriorShop) == 0x3ac);
 STATIC_ASSERT(offsetof(struct ShopWork, effects) == 0x3b0);
 
-extern const u8 gShop_HandTiles[];
+extern const u8 gMenuCursor_HandTiles[];
 extern const u8 gShop_GemTiles[];
 extern const u8 gShop_SmallDownArrowTiles[];
 extern const u8 gShop_SmallUpArrowTiles[];

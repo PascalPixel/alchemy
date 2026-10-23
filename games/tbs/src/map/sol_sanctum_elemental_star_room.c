@@ -260,7 +260,7 @@ static void EventScript_BagVenusStar(void) {
   itemOwner = SolSanctumElementalStarRoom_PresentStar(220, PIXELS(712),
                                                       PIXELS(16), PIXELS(464));
   Engine_ScriptWait(40);
-  UiWork_PushValueSlot(itemOwner, 1);
+  MessageArgument_Push(itemOwner, 1);
   message = MsgSolSanctumVenusStarBagged;
   Engine_MessageShowCentered(message, 1);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTHEAST, 0);
@@ -363,7 +363,7 @@ static void EventScript_BagMercuryStar(void) {
   itemOwner = SolSanctumElementalStarRoom_PresentStar(221, PIXELS(712),
                                                       PIXELS(16), PIXELS(144));
   Engine_ScriptWait(40);
-  UiWork_PushValueSlot(itemOwner, 1);
+  MessageArgument_Push(itemOwner, 1);
   message = MsgSolSanctumPutMercuryStar;
   Engine_MessageShowCentered(message, 1);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_NORTHEAST, 0);
@@ -478,7 +478,7 @@ static void SolSanctumElementalStarRoom_BagJupiterStar(void) {
   itemOwner = SolSanctumElementalStarRoom_PresentStar(223, PIXELS(232),
                                                       PIXELS(16), PIXELS(464));
   Engine_ScriptWait(40);
-  UiWork_PushValueSlot(itemOwner, 1);
+  MessageArgument_Push(itemOwner, 1);
   Engine_MessageShowCentered(MsgSolSanctumJupiterStarBagged, 1);
 }
 
@@ -942,7 +942,7 @@ static void SolSanctumElementalStarRoom_UnmaskFelix(void) {
       ObjectEvent_WalkToAndWait(GARET, 252, 486);
       Engine_ObjectEventRunRepeatedMotion(GARET, 2);
       Engine_ScriptWait(10);
-      UiText_ShowCenteredMessage((messageA + 1), 1, 0);
+      FieldMessage_ShowCentered((messageA + 1), 1, 0);
     } else {
       Engine_ScriptSetMessage(MsgSolSanctumRightTake);
       SolSanctumElementalStarRoom_ShowMessageAndWait(GARET, 30);
@@ -964,7 +964,7 @@ static void SolSanctumElementalStarRoom_UnmaskFelix(void) {
       Engine_ObjectEventJump(LOCALID_PARTY_LEADER, 6, 0);
       ObjectEvent_SetDestination(LOCALID_PARTY_LEADER, 218, 471);
       Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
-      UiText_ShowCenteredMessage((messageB + 1), 1, 0);
+      FieldMessage_ShowCentered((messageB + 1), 1, 0);
       Engine_ObjectEventRunRepeatedMotion(LOCALID_PARTY_LEADER, 2);
       ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 30);
       objectEvent->steeringFlags |= OBJ_EVENT_FACES_MOTION;
@@ -1048,7 +1048,7 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   ObjectEvent_WalkToAndWait(GARET, 389, 468);
   ObjectEvent_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 60);
   SolSanctumElementalStarRoom_ShowMessageAndWait(GARET, 20);
-  UiText_ShowCenteredMessage(MsgSolSanctumPermitRelieveElemental + 4, 1, 10);
+  FieldMessage_ShowCentered(MsgSolSanctumPermitRelieveElemental + 4, 1, 10);
   ObjectEvent_SetSpeed(GARET, PIXELS(1) / 2, PIXELS(1) / 4);
   objectEvent = ObjectEvent_GetById(GARET);
   objectEvent->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
@@ -1276,7 +1276,7 @@ static void EventScript_TakeMarsStar(void) {
   itemOwner = SolSanctumElementalStarRoom_PresentStar(222, PIXELS(232),
                                                       PIXELS(16), PIXELS(144));
   Engine_ScriptWait(40);
-  UiWork_PushValueSlot(itemOwner, 1);
+  MessageArgument_Push(itemOwner, 1);
   Engine_MessageShowCentered(MsgSolSanctumMarsStarBagged, 1);
   ObjectEvent_SetPosition(JENNA, PIXELS(307), PIXELS(277));
   ObjectEvent_SetPosition(LOCALID_KRADEN, PIXELS(307), PIXELS(277));
@@ -2239,7 +2239,7 @@ static void SolSanctumElementalStarRoom_GiveMythrilBags(void) {
 
     if (freeSlots <= 3) {
       Engine_MessageShowCentered(MsgSolSanctumTooManyItems, 1);
-      if (Shop_PickUnitItem(&itemOwner, &itemSlot) != -1)
+      if (ItemPicker_Run(&itemOwner, &itemSlot) != -1)
         Inventory_Discard(itemOwner, itemSlot);
     }
   } while (freeSlots <= 3);

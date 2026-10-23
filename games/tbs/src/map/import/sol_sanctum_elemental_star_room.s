@@ -26,8 +26,8 @@
 	.set import.Engine_WorkSetValuesIfNonNegative, 1
 	.set import.Engine_MapGridRenderWaitForValues, 1
 	.set import.Engine_MessageShowCentered, 1
-	.set import.UiWork_PushValueSlot, 1
-	.set import.UiText_ShowCenteredMessage, 1
+	.set import.MessageArgument_Push, 1
+	.set import.FieldMessage_ShowCentered, 1
 	.set import.Engine_ItemLoadIcon, 1
 	.set import.Unit_Get, 1
 	.set import.Inventory_AddItem, 1
@@ -87,6 +87,6 @@
 	.set import.Engine_ScriptWaitForScreen, 1
 	.set import.Engine_ItemShowPicture, 1
 	.set import.Engine_ItemShowFound, 1
-	.set import.Shop_PickUnitItem, 1
+	.set import.ItemPicker_Run, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

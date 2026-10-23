@@ -510,7 +510,7 @@ static void EventScript_MoveStump(void) {
 }
 
 /// Ivan casts Whirlwind on the stump's ivy, and the cutscene waits for it. The
-/// announcement is lowered to a fixed place (POSITIONED_MESSAGE_LOWER), since
+/// announcement is lowered to a fixed place (FIELD_MESSAGE_LOWER), since
 /// it would otherwise be placed by where the leader, not Ivan, stands.
 static void GomaCaveEntrance_WhirlwindOnStumpIvy(void) {
   struct FieldEffectWork *effectWork;
@@ -519,7 +519,7 @@ static void GomaCaveEntrance_WhirlwindOnStumpIvy(void) {
   effectWork = gFieldEffectWork;
   FieldEffect_LoadActionEffectResources(ABILITY_WHIRLWIND, 1);
   FieldEffect_SetupObjectPair(IVAN, LOCALID_STUMP_IVY);
-  flags = (u8)effectWork->messageMode | POSITIONED_MESSAGE_LOWER;
+  flags = (u8)effectWork->messageMode | FIELD_MESSAGE_LOWER;
   effectWork->messageMode = flags;
   FieldEffect_StartCast();
   Field_DispatchTypeHandler(PSYNERGY_STEP_ON_TARGET);

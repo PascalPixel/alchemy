@@ -41,18 +41,17 @@ static inline s32 FieldScheduler_AddCallback(TaskFunc callback, s32 priority) {
   return Task_Add(callback, priority);
 }
 
-static inline void FieldUiTextResource_Initialize(struct MenuSprite *cursor,
-                                                  s32 *slot) {
-  UiTextResource_Initialize(cursor, slot);
+static inline void FieldMenuArrow_Create(struct MenuSprite *cursor, s32 *slot) {
+  MenuArrow_Create(cursor, slot);
 }
 
-static inline void FieldUiTextResource_SetPosition(struct MenuSprite *cursor,
-                                                   s32 x, s32 y) {
-  UiTextResource_SetPosition(cursor, x, y);
+static inline void FieldMenuArrow_SetPosition(struct MenuSprite *cursor, s32 x,
+                                              s32 y) {
+  MenuArrow_SetPosition(cursor, x, y);
 }
 
-static inline void FieldUi_AdjustValueWithoutLimit(s32 message, u16 *buffer) {
-  Ui_AdjustValueWithoutLimit(message, buffer);
+static inline void FieldMessage_DecodeRawUnbounded(s32 message, u16 *buffer) {
+  Message_DecodeRawUnbounded(message, buffer);
 }
 
 static inline void Field_SetViewBounds(s32 minX, s32 minY, s32 maxX, s32 maxY) {

@@ -6094,9 +6094,9 @@ enum {
   TOLBI_SPRING_TO_TOLBI = 1,
 };
 
-/// MapId_LinkLobby's warp destinations and warps.
+/// MapId_BattleArena's warp destinations and warps.
 enum {
-  LINK_LOBBY_FROM_MAIN_MENU = 1,
+  BATTLE_ARENA_FROM_MAIN_MENU = 1,
 };
 
 #endif

@@ -1693,8 +1693,8 @@ static void TolbiShipDeck_MonstersBoard(void) {
   Engine_ScriptWaitForScreen();
   Engine_ScriptWait(10);
   ObjectSystem_SuspendProjectionAndShowSprites();
-  Ui_SetMessageVoiceFromObjectEvent(SEA_OURANOS);
-  UiText_ShowCenteredMessage(MsgTolbiShipArrgh, 1, 0);
+  Message_SetVoiceFromObjectEvent(SEA_OURANOS);
+  FieldMessage_ShowCentered(MsgTolbiShipArrgh, 1, 0);
   ObjectSystem_ResumeProjectionAndHideLayers();
   Engine_ScriptRequestWarp(
       TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_FIRST_ATTACK);
@@ -1811,8 +1811,8 @@ static void TolbiShipDeck_MonstersAttackCrew(void) {
   Engine_ObjectEventStop(SEA_FIRST_HOVERING_MONSTER + 3);
   Engine_ScriptWait(10);
   ObjectSystem_SuspendProjectionAndShowSprites();
-  Ui_SetMessageVoiceFromObjectEvent(SEA_OURANOS);
-  UiText_ShowCenteredMessage(MsgTolbiShipArrgh, 1, 0);
+  Message_SetVoiceFromObjectEvent(SEA_OURANOS);
+  FieldMessage_ShowCentered(MsgTolbiShipArrgh, 1, 0);
   ObjectSystem_ResumeProjectionAndHideLayers();
   Engine_ScriptRequestWarp(
       TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_SECOND_ATTACK);
@@ -1942,8 +1942,8 @@ static void TolbiShipDeck_MonsterLandsOnDeck(void) {
   Engine_ObjectEventStop(SEA_THIRD_ATTACK_MONSTER + 1);
   Engine_ScriptWait(10);
   ObjectSystem_SuspendProjectionAndShowSprites();
-  Ui_SetMessageVoiceFromObjectEvent(SEA_OURANOS);
-  UiText_ShowCenteredMessage(MsgTolbiShipArrgh, 1, 0);
+  Message_SetVoiceFromObjectEvent(SEA_OURANOS);
+  FieldMessage_ShowCentered(MsgTolbiShipArrgh, 1, 0);
   ObjectSystem_ResumeProjectionAndHideLayers();
   Engine_ScriptRequestWarp(
       TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_THIRD_ATTACK);

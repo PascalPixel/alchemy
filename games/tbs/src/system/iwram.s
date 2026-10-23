@@ -299,14 +299,14 @@ gScanlineAngle:
 	.global gLinkStatus
 gLinkStatus:
 	.space 0x0000000c
-	.global gNumberTextBuffer
-gNumberTextBuffer:
+	.global gNumberBuffer
+gNumberBuffer:
 	.space 0x00000008
-	.global gNumberTextHexEnd
-gNumberTextHexEnd:
+	.global gNumberBufferHexEnd
+gNumberBufferHexEnd:
 	.space 0x00000002
-	.global gNumberTextDecimalEnd
-gNumberTextDecimalEnd:
+	.global gNumberBufferDecimalEnd
+gNumberBufferDecimalEnd:
 	.ifdef TBS_EDITION_DE
 	.space 0x00000076
 	.else

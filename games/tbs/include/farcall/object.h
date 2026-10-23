@@ -139,7 +139,7 @@ void FieldScript_SetMessageIdFar(s32 value);
 /// Opens the script's current message in a speech window beside the speaker,
 /// with its portrait, and moves on to the next message. Returns the window
 /// once its text is typed out; the caller waits for it to be read.
-struct UiWindow *UiText_OpenMessageAtObjectFar(s32 arg, s32 unused);
+struct Window *FieldMessage_ShowAtObjectFar(s32 arg, s32 unused);
 /// Shows the current message at an object event and waits until it has been
 /// read and its window has closed.
 void FieldScript_ShowMessageAndWaitFar(s32 action, s32 flag);
@@ -160,7 +160,7 @@ void FieldScript_ShowTwoMessagesAndWaitFar(s32 first, s32 first_x, s32 first_y,
                                            s32 second_extra);
 /// Gives the messages that follow the voice of an object event's sprite, at the
 /// rate the message speed option picks; the top bit alone silences them.
-void Ui_SetMessageVoiceFromObjectEventFar(s32 arg0);
+void Message_SetVoiceFromObjectEventFar(s32 arg0);
 /// Fixes the priority of an object event's sprite so it no longer follows its
 /// depth.
 void ObjectMotion_SetActionVariantFar(s32 objectId, s32 priority);
@@ -346,7 +346,7 @@ s16 FieldScript_GetSpecialValueFar(void);
 void Party_AddPpFar(s32 amount, s32 unused);
 /// Asks yes or no at the top of the screen, or the bottom when value is set.
 /// Returns 0 for yes, 1 for no.
-s32 Menu_AskYesNoFar(s32 value);
+s32 FieldYesNo_AskFar(s32 value);
 /// Starts the current map's field music.
 void Map_PlayMusicFar(void);
 /// A Djinni joins the member with the fewest Djinn, after its object event in

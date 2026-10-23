@@ -1,6 +1,6 @@
 	.section .rodata
-	.global gUi_WindowPalette
-gUi_WindowPalette:
+	.global gWindow_Palette
+gWindow_Palette:
 	.incbin "games/tbs/src/system/memory/window.gbapal"
 	.global gSystem_BasicColorPalette
 gSystem_BasicColorPalette:

@@ -18,7 +18,7 @@
 #include "edition.h"
 #include "farcall.h"
 
-struct UiWindow;
+struct Window;
 
 /// Which way the screen fade goes: 0 towards black, 1 towards white.
 extern u8 gBlendBrighten;
@@ -64,17 +64,17 @@ extern const u8 gUi_PpString[];
 /// outside Japan.
 extern const u8 gUi_SlashString[];
 /// The compressed item icons, indexed by an item's icon field.
-extern u8 *gUiIcon_ItemIconPointers[];
-/// The end of gUiIcon_ItemIconPointers, so UiIcon_CountItemIcons can count
+extern u8 *gItemIcons[];
+/// The end of gItemIcons, so Icon_CountItemIcons can count
 /// them.
-extern u8 *gUiIcon_ItemIconPointersEnd[];
+extern u8 *gItemIconsEnd[];
 /// The other compressed icons, among them the status screen's condition
 /// icons.
-extern u8 *gUiIcon_MiscIconPointers[];
+extern u8 *gIcon_MiscIconPointers[];
 /// The compressed Psynergy icons, drawn over the shared icon frame.
-extern u8 *gUiIcon_PsynergyIconPointers[];
-/// The end of gUiIcon_PsynergyIconPointers, for UiIcon_CountPsynergyIcons.
-extern u8 *gUiIcon_PsynergyIconPointersEnd[];
+extern u8 *gPsynergyIcons[];
+/// The end of gPsynergyIcons, for Icon_CountPsynergyIcons.
+extern u8 *gPsynergyIconsEnd[];
 
 struct AnimationObject;
 struct ArticleTable;
@@ -84,14 +84,14 @@ struct GlyphPalette;
 struct NumberRow;
 struct PaletteSnapshotWork;
 struct RenderInput;
-struct RenderOutput;
-struct ShopCursor;
+struct WindowSprite;
+struct MenuCursor;
 struct TileMask;
 struct TransitionShape;
 struct UiBobPairOutput;
-struct UiChannelSlot;
+struct TextPrinter;
 struct UiScaleSprite;
-struct UiWindow;
+struct Window;
 struct Vec2;
 struct OptionMenuWork;
 
@@ -149,7 +149,7 @@ extern u8 gPartyStatusWork[];
 /// HEAP_SLOT_SELECTION_WORKSPACE: struct SelectionWorkspace, which only two
 /// unused functions touch.
 extern u8 gSelectionWorkspace[];
-extern const struct ArticleTable gUiText_ArticleTable;
+extern const struct ArticleTable gArticle_Table;
 /// One row's masks for a pair of bar-pattern tiles: a word XORed into each
 /// tile's row.
 struct TileMask {
@@ -185,23 +185,23 @@ extern struct AnimationObject *gSpriteObjects;
 extern const u8 gMenu_CursorObjectTiles[];
 #endif
 /// The Japanese name entry's second keyboard, which Select switches to.
-extern const u8 gNameEntry_AlternateKeyboardTilemap[];
+extern const u8 gNamingScreen_AlternateKeyboardTilemap[];
 /// Eight offsets, 0 to 3 and back, that make the name entry caret circle:
 /// the x offset leads the y offset by five steps.
-extern s8 gNameEntry_CaretWave[];
+extern s8 gNamingScreen_CaretWave[];
 /// The kana that take the voiced mark, as first and last pairs ended by 0.
-extern const u8 gNameEntry_VoicedMarkRanges[];
+extern const u8 gNamingScreen_VoicedMarkRanges[];
 /// The Delete key's label on the German, Spanish and French name entry
 /// keyboards ("ENT", "SUP", "EFF").
-extern u8 gNameEntry_DeleteKeyLabel[];
+extern u8 gNamingScreen_DeleteKeyLabel[];
 /// The End key's label on the German, Spanish and French keyboards ("ENDE",
 /// "FIN", "FIN").
-extern u8 gNameEntry_EndKeyLabel[];
+extern u8 gNamingScreen_EndKeyLabel[];
 /// The kana that take the semi-voiced mark, in the same pairs.
-extern const u8 gNameEntry_SemivoicedMarkRanges[];
+extern const u8 gNamingScreen_SemivoicedMarkRanges[];
 /// The name entry keyboard's compressed tilemap, the Spanish edition's with
 /// its own letters.
-extern const u8 gNameEntry_KeyboardTilemap[];
+extern const u8 gNamingScreen_KeyboardTilemap[];
 /// 224 zeroed bytes right after Render_DecodeFrame's code and tables; its
 /// address ends the stretch the field sprites' draw copies to RAM.
 extern const u8 gRender_DecodeFrameBuffer[];
@@ -234,12 +234,12 @@ extern const u8 Tile_ExpandSlide[];
 /// Tile_ExpandSlide with its command table, copied into
 /// HEAP_SLOT_RAM_CODE_TEMP for each slide.
 extern u8 Tile_ExpandSlideCodeSize[];
-/// Decodes one Huffman-coded symbol of a message for a struct TextReader.
+/// Decodes one Huffman-coded symbol of a message for a struct MessageReader.
 extern const u8 Text_DecodeSymbol[];
 /// Text_DecodeSymbol, which the message decoders copy into heap slot
 /// TEXT_WORK_BLOCK.
 extern u8 Text_DecodeSymbolCodeSize[];
-/// Tile_BuildMetatiles, copied to the heap by UiWindow_FillScanlineSpans for
+/// Tile_BuildMetatiles, copied to the heap by Win_FillScanlineSpans for
 /// each frame of a window transition.
 extern u8 Tile_BuildMetatilesCodeSize[];
 /// Interleaves a layout's three decoded cell planes into cell words, for
@@ -249,60 +249,60 @@ extern const u8 Tile_ConvertMapGrid[];
 extern u8 Tile_ConvertMapGridCodeSize[];
 /// Unpacks a compressed icon into a glyph transfer's input buffer.
 extern const u8 Tile_Decompress4bpp[];
-/// Tile_Decompress4bpp, which UiIcon_Decode copies into
+/// Tile_Decompress4bpp, which Icon_Decode copies into
 /// HEAP_SLOT_RAM_CODE_TEMP.
 extern u8 Tile_Decompress4bppCodeSize[];
 /// Packs an unpacked icon into 4bpp tiles over the layers already drawn
 /// there.
 extern const u8 Tile_ExpandMasked[];
-/// Tile_ExpandMasked, which UiIcon_Decode loads for an icon's upper layers.
+/// Tile_ExpandMasked, which Icon_Decode loads for an icon's upper layers.
 extern u8 Tile_ExpandMaskedCodeSize[];
 /// Packs an unpacked icon into 4bpp tiles, overwriting every pixel.
 extern const u8 Tile_ExpandOpaque[];
-/// Tile_ExpandOpaque, which UiIcon_Decode loads for an icon's first layer.
+/// Tile_ExpandOpaque, which Icon_Decode loads for an icon's first layer.
 extern u8 Tile_ExpandOpaqueCodeSize[];
 /// The title screen's "Press Start" prompt, byte-LZ compressed, in each
 /// language.
 extern const u8 gTitle_PromptTiles[];
 /// The eight scales, in 1/65536, that Ui_ApplyTableScaleToObject pulses the
 /// options menu's selected icon through.
-extern s32 gUi_ObjectPulseScales[];
-/// The pixel offsets RenderOutput_BobPair moves a sprite pair up and down
+extern s32 gWindowSprite_PulseScales[];
+/// The pixel offsets Heading_Bob moves a sprite pair up and down
 /// by.
-extern const u8 gUi_PairBobOffsets[];
+extern const u8 gHeadingBobOffsets[];
 /// The icon count's digits: 0 to 9, then the tens 1 to 3.
-extern u8 *gUiIcon_DigitPointers[];
+extern u8 *gIcon_DigitPointers[];
 /// The three icon frames; frame 2 is the one item and Psynergy icons share.
-extern u8 *gUiIcon_FramePointerTable[];
+extern u8 *gIcon_FramePointerTable[];
 /// The three marks ItemIcon_Compose draws over an item icon: 0 on a broken
 /// item, 1 on an equipped one and 2 on a cursed one.
-extern u8 *gUiIcon_MarkPointers[];
+extern u8 *gIcon_MarkPointers[];
 /// The command icons' overlays, all 43 entries the same picture.
-extern u8 *gUiIcon_OverlayPointerTable[];
+extern u8 *gIcon_OverlayPointerTable[];
 /// The menus' hand cursor and gem, 16x16 4bpp sprites; the hand is loaded
-/// by UiIcon_CreateWithResourceVariant.
-extern u8 gUiIcon_ResourceTiles[];
-extern const s8 gUiSprite_BounceOffsets[];
+/// by Icon_CreateWithResourceVariant.
+extern u8 gIcon_ResourceTiles[];
+extern const s8 gWindowSprite_BounceOffsets[];
 /// The animated page arrow's frames, 8x16 sprites of 256 colours, 128 bytes
 /// each.
-extern const u8 gUiSprite_CursorFrameTiles[];
-extern const s8 gUiSprite_WobbleOffsets[][2];
+extern const u8 gWindowSprite_CursorFrameTiles[];
+extern const s8 gWindowSprite_WobbleOffsets[][2];
 /// For each of the 16 text colours, the pen the font's light shade takes in
 /// the UI palette.
-extern const u8 gUiText_ColourPens[];
-/// UiText_DrawGlyphArm, copied to the heap for each character drawn.
-extern u8 UiText_DrawGlyphCodeSize[];
+extern const u8 gText_ColorPens[];
+/// Glyph_DrawArm, copied to the heap for each character drawn.
+extern u8 Glyph_DrawCodeSize[];
 /// Each main font glyph's width in pixels, from the space (0x20) on.
-extern const u8 gUiText_GlyphWidths[];
-extern const struct ArticleTable gUiText_IndefiniteArticles;
-/// Points a struct TextReader at a message's compressed bits and first
+extern const u8 gFont_GlyphWidths[];
+extern const struct ArticleTable gArticle_Indefinite;
+/// Points a struct MessageReader at a message's compressed bits and first
 /// context.
-extern const u8 UiText_LookupMessageArm[];
-/// UiText_LookupMessageArm; UiText_LookupMessage frees its copy on return.
-extern u8 UiText_LookupMessageCodeSize[];
+extern const u8 Message_FindArm[];
+/// Message_FindArm; Message_Find frees its copy on return.
+extern u8 Message_FindCodeSize[];
 /// The party status window's column lines, ended by -1: the Djinn column's
 /// first, then one between members.
-extern const s8 gUiWindow_PartyColumnOffsets[];
+extern const s8 gWindow_PartyColumnOffsets[];
 #ifndef OWN_FarCall_EffectTable
 /// The battle effect bank's far-call table, declared as a function so that a
 /// call reaches its first stub, BattleAnim_BuildBlitterFar; nothing in this

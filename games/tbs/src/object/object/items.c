@@ -114,7 +114,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     }
 
     if (mostMatchingSlots == 0) {
-      UiText_ShowPositionedMessageAndWaitFar(MsgNothingHappens, 1);
+      FieldMessage_ShowFar(MsgNothingHappens, 1);
       return -1;
     }
   }
@@ -127,9 +127,9 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     GameFlag_ClearBitFar(FLAG_ITEM_USED_UP);
     GameFlag_ClearBitFar(FLAG_NOTHING_HAPPENS);
     if (!(event->trigger & 0x400)) {
-      UiWork_PushValueSlotFar(localId, 1);
-      UiWork_PushValueSlotFar(itemId, 2);
-      UiText_ShowPositionedMessageAndWaitFar(MsgActorUsesItem, 1);
+      MessageArgument_PushFar(localId, 1);
+      MessageArgument_PushFar(itemId, 2);
+      FieldMessage_ShowFar(MsgActorUsesItem, 1);
     }
     if ((s32)event->value < 0x10000) {
       s32 nearbyLocalId = Field_FindNearbyTalkTarget(gGameState.leaderLocalId);
@@ -157,12 +157,12 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 
       if (actionId == ABILITY_RETREAT &&
           !GameFlag_TestFar(FLAG_RETREAT_BLOCKED)) {
-        UiWork_PushValueSlotFar(itemId, 2);
-        UiText_ShowPositionedMessageAndWaitFar(MsgUseItemQuestion, 13);
+        MessageArgument_PushFar(itemId, 2);
+        FieldMessage_ShowFar(MsgUseItemQuestion, 13);
         /* FAKEMATCH(temporary): the answer kept in partyIndex, which ranks it
          * higher in global allocation (r6, as the bytes have it); as a local
          * of its own, 109 of 253 instructions differ in tbs-en. */
-        partyIndex = Menu_AskYesNo(1);
+        partyIndex = FieldYesNo_Ask(1);
         UiWork_FinalizePendingCoreFar();
         if (partyIndex != 0)
           return 0;
@@ -172,9 +172,9 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
         work->warp = WARP_RETREAT;
       }
 
-      UiWork_PushValueSlotFar(localId, 1);
-      UiWork_PushValueSlotFar(itemId, 2);
-      UiText_ShowPositionedMessageAndWaitFar(MsgActorUsesItem, 1);
+      MessageArgument_PushFar(localId, 1);
+      MessageArgument_PushFar(itemId, 2);
+      FieldMessage_ShowFar(MsgActorUsesItem, 1);
       // UB: this routine returns void; call it through its declared type.
 #ifdef UBFIX
       FieldEffect_LoadActionEffectResources(actionId, 0);
@@ -195,7 +195,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
   }
 
   if (GameFlag_TestFar(FLAG_NOTHING_HAPPENS))
-    UiText_ShowPositionedMessageAndWaitFar(MsgNothingHappens, 1);
+    FieldMessage_ShowFar(MsgNothingHappens, 1);
   if (GameFlag_TestFar(FLAG_ITEM_USED_UP))
     Inventory_RemoveFar(localId, slot);
   return result;

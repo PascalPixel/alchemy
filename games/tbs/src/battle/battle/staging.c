@@ -1001,13 +1001,13 @@ void BattleMotion_FlashHit(s32 unitId, s32 unused0, s32 unused1) {
     listTerminator = BATTLE_UNIT_LIST_END;
     selected[1] = listTerminator;
     selected[0] = unitId;
-    BattleLayout_HighlightPartyPanelsFar(selected);
+    PartyStatus_HighlightMembersFar(selected);
     BattleMotion_SetRecordChildValues(BattleObject_Get(unitId)->object,
                                       SPRITE_COLOR_WHITE);
     WaitFrames(2);
 
     selected[0] = unitId;
-    BattleLayout_HighlightPartyPanelsFar(selected);
+    PartyStatus_HighlightMembersFar(selected);
     BattleMotion_SetRecordChildValues(BattleObject_Get(unitId)->object,
                                       BattleMotion_GetSlotPalette(unitId));
     WaitFrames(2);

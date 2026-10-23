@@ -21,21 +21,21 @@ struct PsynergyEntry;
 struct SummaryScreenWork {
   u8 unused[8];      ///< no view of the menu work names it (see menu/README.md)
   s32 selectedOwner; ///< the party member chosen
-  struct UiWindow *moneyWindow; ///< ShopWork's; not named here
-  struct UiWindow *ownerWindow;
-  struct RenderOutput *ownerCursors[2];
+  struct Window *moneyWindow; ///< ShopWork's; not named here
+  struct Window *ownerWindow;
+  struct WindowSprite *ownerCursors[2];
   s8 ownerIndex[2]; ///< each pane's member, in ownerIds
   s8 ownerCount[2]; ///< members each pane chooses from
-  struct UiWindow *actionWindow;
-  struct UiWindow *statusWindow;
-  struct UiWindow *unopenedWindow; ///< never given a window; only cleared
-  struct UiWindow *helpWindow;
+  struct Window *actionWindow;
+  struct Window *statusWindow;
+  struct Window *unopenedWindow; ///< never given a window; only cleared
+  struct Window *helpWindow;
   /// ItemMenuWork's equipWindow to gridCursor; not named here.
   u8 itemWindows[0x18];
-  struct RenderOutput *entryIcons[32];
-  struct RenderOutput *categoryIcons[8];
+  struct WindowSprite *entryIcons[32];
+  struct WindowSprite *categoryIcons[8];
   u8 unusedAfterIcons[0x24]; ///< no view of the menu work names it
-  struct UiWindow *selectorWindow;
+  struct Window *selectorWindow;
   u8 selectedColumn;
   u8 selectedRow;
   u8 columnCount;
@@ -46,7 +46,7 @@ struct SummaryScreenWork {
   s32 ownerScale[8]; ///< 16.16 fixed point, 0x10000 full size
   u16 selectedSlots[2];
   u16 selectedActions[2];
-  struct RenderOutput *statusCursor;
+  struct WindowSprite *statusCursor;
   /// DjinnMenuWork's backdrop pointer at 0x184; no view names the rest.
   u8 aroundBackdrop[0x48];
   u16 entries[32];
@@ -54,7 +54,7 @@ struct SummaryScreenWork {
   u8 entryCount;
   u8 partyCount;
   u8 selectedIds[2]; ///< each pane's member
-  struct RenderOutput *selectedIcon;
+  struct WindowSprite *selectedIcon;
   u16 page;           ///< 3 for the member chooser, 0 for the Status menu
   s16 completionFlag; ///< ItemMenuWork's; not named here
   struct AnimationObject *rowObjects[4];
@@ -79,7 +79,7 @@ STATIC_ASSERT(offsetof(struct SummaryScreenWork, rowObjects) == 0x224);
 STATIC_ASSERT(offsetof(struct SummaryScreenWork, rowX) == 0x234);
 STATIC_ASSERT(sizeof(struct SummaryScreenWork) == 0x244);
 
-/// The ailments the character menus show, as CharacterMenu_BuildAvailability
+/// The ailments the character menus show, as SummaryScreen_BuildAvailability
 /// fills them: one byte each, nonzero while the member has it.
 enum UnitStatus {
   CHARACTER_DOWN,   ///< HP 0; listed only when the caller asks for it

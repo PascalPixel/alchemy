@@ -416,7 +416,7 @@ s32 __divsi3(s32, s32);
 s32 MainMenu_Run(void) {
   s32 pageCount;
   s32 encodedSize;
-  struct UiWindow *pageWindow;
+  struct Window *pageWindow;
   // Keep encoded integer handles: the earlier typed-window split changes
   // four native bytes. Integer windowHandle/passwordColumn and peerIndex/
   // requiredLinkMask split plainly without changing the output.
@@ -438,8 +438,8 @@ s32 MainMenu_Run(void) {
   s32 passwordHeadingMessage;
   s32 pageIndex;
   s32 blendStarted;
-  struct UiWindow *helpWindow;
-  struct UiWindow *headingWindow;
+  struct Window *helpWindow;
+  struct Window *headingWindow;
   u8 saveData[200];
   u8 password[MAIN_MENU_PASSWORD_BUFFER_SIZE];
   u8 glyph[4];
@@ -455,15 +455,15 @@ s32 MainMenu_Run(void) {
   // again.
   if (gGameState.warpDest == 2) {
   L_ask:
-    UiText_ShowPositionedMessageAndWait(MsgSaveAdventureQuestion, 5);
-    v7 = Menu_AskYesNo(1);
+    FieldMessage_Show(MsgSaveAdventureQuestion, 5);
+    v7 = FieldYesNo_Ask(1);
     UiWork_FinalizePendingCore();
     if (v7 == 0) {
-      UiText_ShowPositionedMessageAndWait(MsgSaveAdventureQuestion + 1, 1);
+      FieldMessage_Show(MsgSaveAdventureQuestion + 1, 1);
       // Marks the file cleared (SaveFileSummary's sendFlag): its data can be
       // sent, and the message says it cannot be continued.
       gGameState.sendFlag = 1;
-      v7 = SaveMenu_WriteSelectedSlot();
+      v7 = Save_ToChosenFile();
       if (v7 == -1) {
         goto L_ask;
       }
@@ -488,7 +488,7 @@ menu_top:;
     if (gDebugMode != 0) {
       gGameState.idleSleepEnabled = 1;
       gIdleSleepEnabled = 1;
-      UiText_ShowCenteredMessage(MsgNoBackupMemory, CENTERED_MESSAGE_WINDOW, 8);
+      FieldMessage_ShowCentered(MsgNoBackupMemory, CENTERED_MESSAGE_WINDOW, 8);
     }
   }
   // No save file: fade the menu layers in, once, and start a new game.
@@ -500,11 +500,11 @@ menu_top:;
       blendStarted = 1;
     }
   }
-  // The start menu's choices (gMenu_SaveSlotActionByPosition): 0 New Game,
+  // The start menu's choices (gFileMenu_ActionByPosition): 0 New Game,
   // 1 Continue, 2 Copy, 3 Erase, 4 Battle and 5 Send; any other shows the
   // menu again.
   if (v6 > 0) {
-    v6 = Menu_SelectSaveSlotAction();
+    v6 = FileMenu_SelectAction();
   } else {
     v6 = 0;
   }
@@ -513,7 +513,7 @@ menu_top:;
     // Isaac alone, with the first code to Mia, with the second to Sheba. B on
     // the first name goes back to the menu.
     GameState_InitializeDefaults();
-    PaletteGlow_Update(gGameState.paletteGlow[0], gGameState.paletteGlow[1]);
+    WindowColor_Apply(gGameState.windowColor[0], gGameState.windowColor[1]);
     v5 = 1;
     v7 = 0;
     for (;;) {
@@ -556,14 +556,14 @@ menu_top:;
     }
     GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
     state = &gGameState;
-    PaletteGlow_Update(state->paletteGlow[0], state->paletteGlow[1]);
+    WindowColor_Apply(state->windowColor[0], state->windowColor[1]);
     if (state->buildStamp != Runtime_GetBuildStampTime()) {
       state->mapId = state->savedMap;
       state->warpDest = state->savedWarpDest;
       GameFlag_ClearBit(FLAG_KEEP_PARTY_POSITION);
     } else if ((gKeysHeld & (KEY_L | KEY_START)) == (KEY_L | KEY_START)) {
       if (MainMenu_GetSaveRecoveryBlockMask() != 0) {
-        UiText_ShowPositionedMessageAndWait(MsgSaveRecoveryFailed, 9);
+        FieldMessage_Show(MsgSaveRecoveryFailed, 9);
         goto menu_top;
       }
       state->mapId = state->savedMap;
@@ -572,9 +572,9 @@ menu_top:;
       Engine_GameFlagSet(0x13e);
     } else if (state->playTime !=
                ((struct SaveMenuMapLocalState *)gMapLocalState)->word100) {
-      UiText_ShowPositionedMessageAndWait(MsgSaveDataCorrupted, 9);
-      UiText_ShowPositionedMessageAndWait(MsgSaveDataCorrupted + 1, 13);
-      if (Menu_RunConfirmSelection(1, 0, 0, CONFIRM_YES) != CONFIRM_YES) {
+      FieldMessage_Show(MsgSaveDataCorrupted, 9);
+      FieldMessage_Show(MsgSaveDataCorrupted + 1, 13);
+      if (YesNoMenu_Run(1, 0, 0, YES) != YES) {
         UiWork_FinalizePendingCore();
         goto menu_top;
       }
@@ -583,7 +583,7 @@ menu_top:;
         // MsgSaveRecoveryFailed, spelled as MsgSaveDataCorrupted + 2: the ROM
         // adds 2 to the register holding the earlier message's number, and by
         // name 108 of 921 instructions differ in tbs-en.
-        UiText_ShowPositionedMessageAndWait(MsgSaveDataCorrupted + 2, 9);
+        FieldMessage_Show(MsgSaveDataCorrupted + 2, 9);
         goto menu_top;
       }
       state->mapId = state->savedMap;
@@ -622,13 +622,13 @@ menu_top:;
       Party_AddMember(2);
       Party_AddMember(3);
     }
-    PaletteGlow_Update(gGameState.paletteGlow[0], gGameState.paletteGlow[1]);
+    WindowColor_Apply(gGameState.windowColor[0], gGameState.windowColor[1]);
     GameFlag_ClearBit(FLAG_KEEP_PARTY_POSITION);
     GameFlag_ClearBit(FLAG_MENU_OPEN);
     Engine_GameFlagSet(FLAG_IN_BATTLE_ARENA);
     gSleepDisabled = 1;
-    FieldScript_SetDestination((s32)&MapId_LinkLobby,
-                               LINK_LOBBY_FROM_MAIN_MENU);
+    FieldScript_SetDestination((s32)&MapId_BattleArena,
+                               BATTLE_ARENA_FROM_MAIN_MENU);
     goto leave;
   } else {
     if (v6 != 5) {
@@ -640,22 +640,22 @@ menu_top:;
     if (v6 == -1) {
       goto menu_top;
     }
-    PaletteGlow_Update(gGameState.paletteGlow[0], gGameState.paletteGlow[1]);
+    WindowColor_Apply(gGameState.windowColor[0], gGameState.windowColor[1]);
   link_select:;
-    v6 = Menu_SelectResourceLayout(RESOURCE_LAYOUT_TRANSFER_METHOD);
+    v6 = IconMenu_ChooseSendOption(RESOURCE_LAYOUT_TRANSFER_METHOD);
     if (v6 == -1) {
       goto link_load;
     }
     // Link transfer waits for the other game's edition-specific greeting in
     // the partner's payload (struct SaveLinkGreeting); B gives up.
     if (v6 == TRANSFER_METHOD_CABLE) {
-      v6 = (s32)UiWindow_Create(MAIN_MENU_LINK_WINDOW_X, 5,
-                                MAIN_MENU_LINK_WINDOW_WIDTH, 8, 2);
+      v6 = (s32)Window_Create(MAIN_MENU_LINK_WINDOW_X, 5,
+                              MAIN_MENU_LINK_WINDOW_WIDTH, 8, 2);
       linkMessage = MsgClearSaveLabel;
 
-      UiText_DrawResource(linkMessage, (struct UiWindow *)v6, 0, 4);
-      UiText_DrawResource((linkMessage + 1), (struct UiWindow *)v6, 0, 16);
-      UiText_DrawResource((linkMessage + 3), (struct UiWindow *)v6, 0, 36);
+      Text_DrawMessage(linkMessage, (struct Window *)v6, 0, 4);
+      Text_DrawMessage((linkMessage + 1), (struct Window *)v6, 0, 16);
+      Text_DrawMessage((linkMessage + 3), (struct Window *)v6, 0, 36);
       SerialRuntime_Initialize();
       Engine_TaskWait(10);
       {
@@ -701,14 +701,14 @@ menu_top:;
         }
         Engine_TaskWait(1);
       }
-      UiWork_Finalize((struct UiWindow *)v6, 2);
+      Window_Close((struct Window *)v6, 2);
       if (v7 == 0) {
         goto link_select;
       }
-      v6 = (s32)UiWindow_Create(MAIN_MENU_LINK_ERROR_WINDOW_X, 10,
-                                MAIN_MENU_LINK_ERROR_WINDOW_WIDTH, 4, 2);
+      v6 = (s32)Window_Create(MAIN_MENU_LINK_ERROR_WINDOW_X, 10,
+                              MAIN_MENU_LINK_ERROR_WINDOW_WIDTH, 4, 2);
 
-      UiText_DrawResource(MsgClearSendingData, (struct UiWindow *)v6, 0, 4);
+      Text_DrawMessage(MsgClearSendingData, (struct Window *)v6, 0, 4);
       Engine_TaskWait(10);
       SerialRuntime_StartSend(gSaveBuffer, 0x1004);
       Engine_TaskWait(10);
@@ -732,9 +732,8 @@ menu_top:;
         Engine_TaskWait(1);
       }
       if (linkConnectionOk == 0) {
-        RenderOutput_PrepareForRedraw((struct UiWindow *)v6);
-        UiText_DrawResource(MsgClearCommunicationError, (struct UiWindow *)v6,
-                            0, 4);
+        WindowSprite_PrepareForRedraw((struct Window *)v6);
+        Text_DrawMessage(MsgClearCommunicationError, (struct Window *)v6, 0, 4);
         // Wait for A: v5 is KEY_A here.
         v5 = 1;
         do {
@@ -745,11 +744,11 @@ menu_top:;
       SerialRuntime_RemoveIrqHandlers();
       Engine_TaskWait(10);
 #if TBS_PATCH_4
-      UiWork_Finalize((struct UiWindow *)v6, 2);
+      Window_Close((struct Window *)v6, 2);
       Engine_TaskWait(1);
 #else
-      RenderOutput_PrepareForRedraw((struct UiWindow *)v6);
-      UiWork_Finalize((struct UiWindow *)v6, 2);
+      WindowSprite_PrepareForRedraw((struct Window *)v6);
+      Window_Close((struct Window *)v6, 2);
 #endif
       goto menu_top;
     }
@@ -758,7 +757,7 @@ menu_top:;
     // The level is Gold, Silver or Bronze (enum PasswordLevel): 260, 61 or 16
     // symbols, shown 50 to a page.
     page_select:;
-      v6 = Menu_SelectResourceLayout(RESOURCE_LAYOUT_PASSWORD_LEVEL);
+      v6 = IconMenu_ChooseSendOption(RESOURCE_LAYOUT_PASSWORD_LEVEL);
 
       if (v6 == -1) {
         goto link_select;
@@ -775,46 +774,45 @@ menu_top:;
         encodedSize = MainMenu_EncodePassword(data, encodedSize, password);
       }
       v6 = 2;
-      Ui_LoadWindowGraphics();
-      pageWindow = UiWindow_Create(5, 4, 20, 12, v6);
+      Window_LoadGraphics();
+      pageWindow = Window_Create(5, 4, 20, 12, v6);
       pageIndex = 0;
       pageCount = ((encodedSize / PASSWORD_SYMBOLS_PER_PAGE) + 1);
-      windowHandle = (s32)UiWindow_Create(MAIN_MENU_HELP_WINDOW_X, 0,
-                                          MAIN_MENU_HELP_WINDOW_WIDTH, 4, v6);
+      windowHandle = (s32)Window_Create(MAIN_MENU_HELP_WINDOW_X, 0,
+                                        MAIN_MENU_HELP_WINDOW_WIDTH, 4, v6);
       passwordHeadingMessage = MsgClearPasswordLabel;
-      headingWindow = (struct UiWindow *)windowHandle;
-      UiText_DrawResource(passwordHeadingMessage, headingWindow, 6, 4);
+      headingWindow = (struct Window *)windowHandle;
+      Text_DrawMessage(passwordHeadingMessage, headingWindow, 6, 4);
       v7 = 1;
       // The help line below: B alone for one page, with Left and Right for
       // more (the two messages before MsgClearPasswordLabel).
       if (pageCount == 1) {
-        windowHandle = (s32)UiWindow_Create(5, 16, 20, 3, v6);
-        helpWindow = (struct UiWindow *)windowHandle;
-        UiText_DrawCharacterAtOffset(passwordHeadingMessage - 2, helpWindow,
-                                     MAIN_MENU_PAGE_LABEL_X, 0);
+        windowHandle = (s32)Window_Create(5, 16, 20, 3, v6);
+        helpWindow = (struct Window *)windowHandle;
+        Text_DrawMessageAsTiles(passwordHeadingMessage - 2, helpWindow,
+                                MAIN_MENU_PAGE_LABEL_X, 0);
       } else {
         windowHandle =
-            (s32)UiWindow_Create(MAIN_MENU_MESSAGE_WINDOW_X, 16,
-                                 MAIN_MENU_MESSAGE_WINDOW_WIDTH, 3, v6);
-        helpWindow = (struct UiWindow *)windowHandle;
-        UiText_DrawCharacterAtOffset(passwordHeadingMessage - 1, helpWindow, 0,
-                                     0);
+            (s32)Window_Create(MAIN_MENU_MESSAGE_WINDOW_X, 16,
+                               MAIN_MENU_MESSAGE_WINDOW_WIDTH, 3, v6);
+        helpWindow = (struct Window *)windowHandle;
+        Text_DrawMessageAsTiles(passwordHeadingMessage - 1, helpWindow, 0, 0);
       }
       // Copy the font's ten digit tiles to tiles 0x300 to 0x313 in two
       // colourings, for the page numbers.
       Graphics_ExpandVramTilesByColorTable((u16 *)0x06006000);
-      RenderOutput_PrepareForRedraw(pageWindow);
+      WindowSprite_PrepareForRedraw(pageWindow);
       // A turns the page, and on the last returns to the menu; Left and Right
       // turn back and forth, wrapping round; B goes back to the level choice.
       // v7 is 1 when the page must be drawn again.
       for (;;) {
-        Link_DrawShiftedTilePair(UI_PAGE_ARROW_VRAM);
+        Link_DrawShiftedTilePair(PAGE_ARROW_VRAM);
         if ((gKeysPressed & KEY_B) != 0) {
           Engine_AudioPlayCue(SE_MENU_CANCEL);
-          RenderOutput_PrepareForRedraw(pageWindow);
-          UiWork_Finalize(pageWindow, 2);
-          UiWork_Finalize(helpWindow, 2);
-          UiWork_Finalize(headingWindow, 2);
+          WindowSprite_PrepareForRedraw(pageWindow);
+          Window_Close(pageWindow, 2);
+          Window_Close(helpWindow, 2);
+          Window_Close(headingWindow, 2);
           goto page_select;
         }
         if ((gKeysPressed & KEY_A) != 0) {
@@ -822,10 +820,10 @@ menu_top:;
           v7 = 1;
           if (pageIndex == pageCount) {
             Engine_AudioPlayCue(SE_MENU_CONFIRM);
-            RenderOutput_PrepareForRedraw(pageWindow);
-            UiWork_Finalize(pageWindow, 2);
-            UiWork_Finalize(helpWindow, 2);
-            UiWork_Finalize(headingWindow, 2);
+            WindowSprite_PrepareForRedraw(pageWindow);
+            Window_Close(pageWindow, 2);
+            Window_Close(helpWindow, 2);
+            Window_Close(headingWindow, 2);
             Engine_TaskWait(1);
             goto menu_top;
           }
@@ -853,11 +851,11 @@ menu_top:;
         if (v7 != 1) {
           v5 = passwordHeadingMessage;
         } else {
-          RenderOutput_PrepareForRedraw(pageWindow);
+          WindowSprite_PrepareForRedraw(pageWindow);
           v7 = 0;
           v5 = 2;
           do {
-            UiWindow_DrawDividerLine(pageWindow, 0, v5, 18, v5);
+            Window_DrawDividerLine(pageWindow, 0, v5, 18, v5);
             v5 = (v5 + 2);
             v7 = (v7 + 1);
           } while (v7 != 4);
@@ -873,18 +871,17 @@ menu_top:;
                 if (v7 == pageIndex) {
                   tileValue = v7 + 0xf30b;
                 }
-                UiWindow_SetTilemapEntry(pageWindow, tileValue,
-                                         v7 + 18 - pageCount, -1, v6);
+                Window_SetTilemapEntry(pageWindow, tileValue,
+                                       v7 + 18 - pageCount, -1, v6);
                 v7 = (v7 + 1);
               } while (v7 != pageCount);
             }
             v5 = 0;
-            UiWindow_SetTilemapEntry(pageWindow, UI_PAGE_ARROW_LEFT,
-                                     (17 - (s32)pageCount), -1, 0);
-            UiWindow_SetTilemapEntry(pageWindow, UI_PAGE_ARROW_RIGHT, 18, -1,
-                                     0);
-            UiRender_MarkRow((struct UiRenderWork *)gWindowWork[0],
-                             ((struct UiWindow *)pageWindow)->y);
+            Window_SetTilemapEntry(pageWindow, PAGE_ARROW_LEFT,
+                                   (17 - (s32)pageCount), -1, 0);
+            Window_SetTilemapEntry(pageWindow, PAGE_ARROW_RIGHT, 18, -1, 0);
+            Window_MarkTilemapRow((struct WindowWork *)gWindowWork[0],
+                                  ((struct Window *)pageWindow)->y);
           }
           // Each page holds 50 symbols in five rows, split into two groups.
           // Rows are 16 pixels apart; the second five of a row sit 10 pixels
@@ -909,8 +906,8 @@ menu_top:;
 
               glyphColumn = (pageGlyphIndex % 10);
               row = (pageGlyphIndex / 10);
-              UiText_DrawString(glyph, pageWindow, glyphColumn * 12 + 18,
-                                (row << 4) + 2);
+              Text_DrawString(glyph, pageWindow, glyphColumn * 12 + 18,
+                              (row << 4) + 2);
             } else {
               s32 row;
 
@@ -919,8 +916,8 @@ menu_top:;
                * __divsi3; as pageGlyphIndex / 10, 45 of 921 instructions
                * differ in tbs-en. */
               row = __divsi3(pageGlyphIndex, 10);
-              UiText_DrawString(glyph, pageWindow, glyphColumn * 12 + 8,
-                                (row << 4) + 2);
+              Text_DrawString(glyph, pageWindow, glyphColumn * 12 + 8,
+                              (row << 4) + 2);
             }
           }
           v7 = 0;
@@ -943,7 +940,7 @@ leave:;
 
 /// UNUSED: decodes tiles and maps a 16-by-eight window region in VRAM and
 /// shadow.
-UNUSED static void SaveMenu_FillTileGrid(struct UiWindow *window,
+UNUSED static void FileMenu_FillTileGrid(struct Window *window,
                                          const void *compressedTiles) {
   u16 *shadow;
   u16 *vram;
@@ -952,7 +949,7 @@ UNUSED static void SaveMenu_FillTileGrid(struct UiWindow *window,
   s32 col;
   s32 offset;
 
-  shadow = ((struct UiRenderWork *)gWindowWork[0])->tilemap;
+  shadow = ((struct WindowWork *)gWindowWork[0])->tilemap;
   decodedTiles = AllocEwram(0x300);
   FieldResource_DecodeType01(compressedTiles, decodedTiles);
   offset = (window->y * 32 + window->x) * 2;
@@ -973,8 +970,8 @@ UNUSED static void SaveMenu_FillTileGrid(struct UiWindow *window,
 
 /// UNUSED: fills a 16-by-eight region with palette 15 tiles beginning at
 /// tile 32.
-UNUSED static void SaveMenu_FillTileBlock(const struct UiWindow *window) {
-  s16 *mirror = ((struct UiRenderWork *)gWindowWork[0])->tilemap;
+UNUSED static void FileMenu_FillTileBlock(const struct Window *window) {
+  s16 *mirror = ((struct WindowWork *)gWindowWork[0])->tilemap;
   s16 *buffer = AllocEwram(0x300);
   s16 *vram;
   s32 cell;

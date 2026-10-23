@@ -61,20 +61,20 @@ struct RenderOam {
   u16 high;        ///< not named by TBS code
 };
 
-/// RenderOutput.kind: what a render output owns besides itself, which
-/// RenderOutput_Release frees.
-enum RenderOutputKind {
-  RENDER_OUTPUT_GLYPH = 0,   ///< a glyph of the window's glyph sheet
-  RENDER_OUTPUT_SPRITE = 1,  ///< its own VRAM cache entry
-  RENDER_OUTPUT_PORTRAIT = 2 ///< a VRAM cache entry and a palette slot
+/// WindowSprite.kind: what a render output owns besides itself, which
+/// WindowSprite_Release frees.
+enum WindowSpriteKind {
+  WINDOW_SPRITE_GLYPH = 0,   ///< a glyph of the window's glyph sheet
+  WINDOW_SPRITE_ICON = 1,    ///< its own VRAM cache entry
+  WINDOW_SPRITE_PORTRAIT = 2 ///< a VRAM cache entry and a palette slot
 };
 
 /// A render output: a sprite in a window's output list (a character, an icon
 /// or a portrait), with its VRAM cache slot and OAM attributes.
-struct RenderOutput {
-  struct RenderOutput *next; ///< the next output in its list
-  s8 kind;                   ///< an enum RenderOutputKind
-  s8 active;                 ///< its UI_SPRITE_ motion; 0 while free
+struct WindowSprite {
+  struct WindowSprite *next; ///< the next output in its list
+  s8 kind;                   ///< an enum WindowSpriteKind
+  s8 motion;                 ///< its UI_SPRITE_ motion; 0 while free
   u16 x;                     ///< screen pixels
   u16 y;                     ///< screen pixels
   u16 unused;                ///< no code names it
@@ -88,18 +88,18 @@ struct RenderOutput {
 };
 
 /// A list of render outputs: its first output and the link to append after.
-struct RenderOutputList {
-  struct RenderOutput *head;
-  struct RenderOutput **tailLink;
+struct WindowSpriteList {
+  struct WindowSprite *head;
+  struct WindowSprite **tailLink;
 };
 
-STATIC_ASSERT(sizeof(struct RenderOutputList) == 8);
-STATIC_ASSERT(offsetof(struct RenderOutputList, tailLink) == 4);
+STATIC_ASSERT(sizeof(struct WindowSpriteList) == 8);
+STATIC_ASSERT(offsetof(struct WindowSpriteList, tailLink) == 4);
 
-STATIC_ASSERT(offsetof(struct RenderOutput, animationStep) == 0x0c);
+STATIC_ASSERT(offsetof(struct WindowSprite, animationStep) == 0x0c);
 
-STATIC_ASSERT(offsetof(struct RenderOutput, sentinel) == 0x0f);
-STATIC_ASSERT(offsetof(struct RenderOutput, oam) == 0x14);
-STATIC_ASSERT(sizeof(struct RenderOutput) == 0x1c);
+STATIC_ASSERT(offsetof(struct WindowSprite, sentinel) == 0x0f);
+STATIC_ASSERT(offsetof(struct WindowSprite, oam) == 0x14);
+STATIC_ASSERT(sizeof(struct WindowSprite) == 0x1c);
 
 #endif

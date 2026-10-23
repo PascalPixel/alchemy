@@ -489,7 +489,7 @@ void GameFlag_RefreshLureCap(void) {
 /// Encodes the build-stamp time as ((hours * 16 + minutes) * 64 + seconds)
 /// with bit 12 set. Debug mode also sets bits 15..31 before the halfword cast.
 /// GameState_InitializeDefaults stores it as a new game's start stamp, and the
-/// save menu (SaveMenu_SelectSlot, Save_BuildFileSummary) and the file
+/// save menu (FileMenu_SelectFile, Save_BuildFileSummary) and the file
 /// select screen compare saves with it.
 u32 Runtime_GetBuildStampTime(void) {
   u8 *digits;
@@ -594,8 +594,8 @@ void GameState_InitializeDefaults(void) {
   gGameState.messageSpeed = 1;
   gGameState.speech = 1;
   gGameState.unk20b = 1;
-  gGameState.paletteGlow[0] = 0;
-  gGameState.paletteGlow[1] = 8;
+  gGameState.windowColor[0] = 0;
+  gGameState.windowColor[1] = 8;
   gGameState.buildStamp = 0;
   gGameState.startStamp = Runtime_GetBuildStampTime();
   gPlayTimeFrames = 0;

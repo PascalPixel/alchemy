@@ -106,7 +106,7 @@ enum ObjectEventAnimation {
 };
 
 // Speaker bits, above the local id in the low 12 bits of a message command's
-// speaker, as UiText_OpenMessageAtObject reads them.
+// speaker, as FieldMessage_ShowAtObject reads them.
 #define SPEAKER_PORTRAIT_LEFT 0x1000  ///< the portrait left of the speaker
 #define SPEAKER_PORTRAIT_RIGHT 0x2000 ///< the portrait right of the speaker
 #define SPEAKER_WINDOW_ABOVE 0x4000   ///< the message window above the speaker
@@ -152,7 +152,7 @@ void Engine_ScriptSetMessage(s32 message);
 /// carry SPEAKER_ bits.
 void Engine_ScriptShowMessage(s32 speaker, s32 flags);
 /// Opens the current message beside speaker, with its portrait, and moves the
-/// script on to the next (UiText_OpenMessageAtObject). Returns the message
+/// script on to the next (FieldMessage_ShowAtObject). Returns the message
 /// window once its text is typed out, without waiting for it to be read.
 s32 Engine_ScriptOpenMessage(s32 speaker, s32 flags);
 /// Asks the current message at speaker, then shows the message after it for
@@ -165,7 +165,7 @@ s32 Engine_ScriptAskYesNo(s32 speaker, s32 flags);
 /// flags puts the choice below the message.
 s32 Engine_ScriptChooseYesNo(s32 localId, s32 flags);
 /// Shows message in a window centred on the screen, waits until it is typed out
-/// and closes it (UiText_ShowPositionedMessageAndWait). The bits of flags zoom
+/// and closes it (FieldMessage_Show). The bits of flags zoom
 /// the window, lower it or leave it open.
 void Engine_MessageShowCentered(s32 message, s32 flags);
 /// Sets the field's warp request (FieldScript_SetWarpRequest); 999 leaves for
@@ -291,7 +291,7 @@ void Engine_ShopOpen(s32 shop, s32 keeper);
 /// Runs an inn's counter (Inn_CheckIn): inn is the row of the price table and
 /// keeper the innkeeper's object.
 void Engine_InnOpen(s32 inn, s32 keeper);
-/// Runs a sanctum's welcome, services and farewell (Shop_ConfirmAct); priest
+/// Runs a sanctum's welcome, services and farewell (Sanctum_Run); priest
 /// is the keeper's object.
 void Engine_SanctumOpen(s32 priest);
 /// Unschedules the task running callback (Task_Remove). Returns

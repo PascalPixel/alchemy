@@ -35,14 +35,14 @@
 
 // Edition-specific text and window layout values: outside Japanese the item
 // browser's details window is 28 tiles wide rather than 13, and its
-// MsgItemPlainName line is drawn as tiles (UiText_DrawCharacterAtOffset)
-// rather than into the window's canvas (UiText_DrawResource).
+// MsgItemPlainName line is drawn as tiles (Text_DrawMessageAsTiles)
+// rather than into the window's canvas (Text_DrawMessage).
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define ITEM_DEBUG_DETAILS_WIDTH 28
-#define ITEM_DEBUG_DRAW_ITEM_NAME UiText_DrawCharacterAtOffset
+#define ITEM_DEBUG_DRAW_ITEM_NAME Text_DrawMessageAsTiles
 #else
 #define ITEM_DEBUG_DETAILS_WIDTH 13
-#define ITEM_DEBUG_DRAW_ITEM_NAME UiText_DrawResource
+#define ITEM_DEBUG_DRAW_ITEM_NAME Text_DrawMessage
 #endif
 
 #define ITEM_COUNT 270      ///< The browser's item numbers, 0 to 269, wrapping.
@@ -154,27 +154,27 @@ static void ItemLevel_AdjustPartyLevels(s32 amount) {
 /// fanfare MUS_FANFARE_LARGE, A one level with MUS_FANFARE_SMALL.
 static void ItemLevel_RunLevelEditor(void) {
   struct Unit *unit;
-  struct UiWindow *window;
+  struct Window *window;
   s32 redraw;
   s32 messageId;
 
   unit = Unit_Get(gGameState.leaderLocalId);
-  window = UiWindow_Create(0, 0, 30, 9, 2);
+  window = Window_Create(0, 0, 30, 9, 2);
 
   messageId = MsgDebugRaiseEveryonesLevel;
-  UiText_DrawResource(messageId, window, 0, 0);
-  UiText_DrawResource(messageId + 1, window, 0, 16);
+  Text_DrawMessage(messageId, window, 0, 0);
+  Text_DrawMessage(messageId + 1, window, 0, 16);
   messageId += 2;
   redraw = 1;
-  UiText_DrawResource(messageId, window, 0, 32);
+  Text_DrawMessage(messageId, window, 0, 32);
 
   for (;;) {
     if (redraw != 0) {
-      RenderOutput_RedrawSavedRect(window);
-      UiText_DrawStringAtOffset(unit->name, window, 0, 48);
-      UiText_DrawStringInWindow(gItemLevelLvLabel, window, 48, 48);
+      WindowSprite_RedrawSavedRect(window);
+      Text_DrawStringAtOffset(unit->name, window, 0, 48);
+      Text_DrawStringInWindow(gItemLevelLvLabel, window, 48, 48);
       redraw = 0;
-      UiText_DrawNumberInWindow(unit->level, 0, window, 72, 48);
+      Text_DrawNumberInWindow(unit->level, 0, window, 72, 48);
     }
 
     // Start/Select add five levels; A adds one. Tests remain independent.
@@ -192,9 +192,9 @@ static void ItemLevel_RunLevelEditor(void) {
 
     if ((gKeysPressed & KEY_B) != 0) {
       Engine_AudioPlayCue(SE_MENU_CANCEL);
-      RenderOutput_RedrawSavedRect(window);
+      WindowSprite_RedrawSavedRect(window);
       Engine_TaskWait(1);
-      UiWork_Finalize(window, 1);
+      Window_Close(window, 1);
 
       Unit_Calculate(ISAAC);
       Unit_Calculate(GARET);
@@ -216,8 +216,8 @@ static void ItemLevel_SelectItem(void) {
   // Preserve independent key tests and the direction-specific empty-icon scans.
   // Ordinary while scans grow the native function from 0x29c to 0x2a0; retain
   // its current polling edges.
-  struct UiWindow *window;
-  struct UiWindow *details;
+  struct Window *window;
+  struct Window *details;
   s32 selectedItemId;
   s32 redraw;
   s32 messageOrDefinitionId;
@@ -229,8 +229,8 @@ static void ItemLevel_SelectItem(void) {
   selectedItemId = 1;
   Engine_AudioPlayCue(SE_MENU_CONFIRM);
   redraw = 1;
-  window = UiWindow_Create(0, 0, 30, 7, 2);
-  details = UiWindow_Create(0, 8, ITEM_DEBUG_DETAILS_WIDTH, 10, 2);
+  window = Window_Create(0, 0, 30, 7, 2);
+  details = Window_Create(0, 8, ITEM_DEBUG_DETAILS_WIDTH, 10, 2);
   // Copy the existing sprite palette into the debug window palettes: sprite
   // palette 0 into BG palette 14, then BG palette 15's colour 4 over BG
   // palette 14's colour 14, as the battle background does for BG palette 5.
@@ -245,22 +245,22 @@ static void ItemLevel_SelectItem(void) {
       redraw = 0;
       // Wrap the number into 0 to 269 (a step back from 0 is 269).
       selectedItemId = (selectedItemId + ITEM_COUNT) % entryCount;
-      RenderOutput_RedrawSavedRect(window);
+      WindowSprite_RedrawSavedRect(window);
       Engine_DebugClearWindow(window);
-      UiText_DrawStringInWindow(gItemLevelItemPrompt, window, 0, 0);
-      UiText_DrawNumberAtOffset(selectedItemId, 0, window, 80, 0);
+      Text_DrawStringInWindow(gItemLevelItemPrompt, window, 0, 0);
+      Text_DrawNumberAtOffset(selectedItemId, 0, window, 80, 0);
       if (PartyInventory_HasSpace()) {
-        UiText_DrawStringInWindow(gItemLevelItemHelp, window, 0, 32);
+        Text_DrawStringInWindow(gItemLevelItemHelp, window, 0, 32);
         messageOrDefinitionId = selectedItemId & 0x1ff;
         Engine_DebugGetItem(messageOrDefinitionId);
-        UiText_DrawCharacterAtOffset(messageOrDefinitionId + MsgItemName,
-                                     window, 120, 0);
+        Text_DrawMessageAsTiles(messageOrDefinitionId + MsgItemName, window,
+                                120, 0);
         ITEM_DEBUG_DRAW_ITEM_NAME(messageOrDefinitionId + MsgItemPlainName,
                                   window, 0, 16);
-        RenderOutput_RedrawSavedRect(details);
+        WindowSprite_RedrawSavedRect(details);
         Engine_DebugDrawItemDetails(details, selectedItemId);
       } else {
-        UiText_DrawStringInWindow(gItemLevelItemFull, window, 0, 32);
+        Text_DrawStringInWindow(gItemLevelItemFull, window, 0, 32);
       }
     }
     if (gKeysPressed & KEY_A) {
@@ -333,10 +333,10 @@ static void ItemLevel_SelectItem(void) {
     seekDirection = 0;
     Engine_TaskWait(1);
   }
-  RenderOutput_RedrawSavedRect(window);
+  WindowSprite_RedrawSavedRect(window);
   Engine_TaskWait(1);
-  UiWork_Finalize(window, 1);
-  UiWork_Finalize(details, 1);
+  Window_Close(window, 1);
+  Window_Close(details, 1);
 }
 
 #if TBS_PATCH_1
@@ -348,9 +348,9 @@ static void ItemLevel_SelectItem(void) {
 UNUSED static void ItemLevel_SelectAbility(void) {
   // Ordinary while scans grow the native function from 0x248 to 0x260; retain
   // the original polling edges.
-  struct UiWindow *window;
+  struct Window *window;
 #ifndef UBFIX
-  struct UiWindow *details;
+  struct Window *details;
 #endif
   s32 selectedAbilityId;
   s32 redraw;
@@ -363,7 +363,7 @@ UNUSED static void ItemLevel_SelectAbility(void) {
   selectedAbilityId = 1;
   Engine_AudioPlayCue(SE_MENU_CONFIRM);
   redraw = 1;
-  window = UiWindow_Create(0, 0, 30, 12, 2);
+  window = Window_Create(0, 0, 30, 12, 2);
   // Copy the existing sprite palette into the debug window palettes.
   Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(14, 0),
           DMA_ENABLE << 16 | 0x10, REG_DMA3);
@@ -374,17 +374,17 @@ UNUSED static void ItemLevel_SelectAbility(void) {
     if (redraw) {
       redraw = 0;
       selectedAbilityId = (selectedAbilityId + ABILITY_COUNT) % entryCount;
-      RenderOutput_RedrawSavedRect(window);
+      WindowSprite_RedrawSavedRect(window);
       Engine_DebugClearWindow(window);
-      UiText_DrawStringInWindow(gItemLevelPsyPrompt, window, 0, 0);
-      UiText_DrawNumberAtOffset(selectedAbilityId, 0, window, 80, 0);
-      UiText_DrawStringInWindow(gItemLevelPsyHelp, window, 0, 72);
+      Text_DrawStringInWindow(gItemLevelPsyPrompt, window, 0, 0);
+      Text_DrawNumberAtOffset(selectedAbilityId, 0, window, 80, 0);
+      Text_DrawStringInWindow(gItemLevelPsyHelp, window, 0, 72);
       messageOrDefinitionId = selectedAbilityId & 0x3fff;
-      UiText_DrawCharacterAtOffset(messageOrDefinitionId + MsgAbilityName,
-                                   window, 120, 0);
+      Text_DrawMessageAsTiles(messageOrDefinitionId + MsgAbilityName, window,
+                              120, 0);
       messageOrDefinitionId += MsgAbilityDescription;
-      UiText_DrawCharacterAtOffset(messageOrDefinitionId, window, 0, 24);
-      UiText_DrawResource(messageOrDefinitionId, window, 0, 48);
+      Text_DrawMessageAsTiles(messageOrDefinitionId, window, 0, 24);
+      Text_DrawMessage(messageOrDefinitionId, window, 0, 48);
     }
     if (gKeysPressed & KEY_B) {
       Engine_AudioPlayCue(SE_MENU_CANCEL);
@@ -449,13 +449,13 @@ UNUSED static void ItemLevel_SelectAbility(void) {
     seekDirection = 0;
     Engine_TaskWait(1);
   }
-  RenderOutput_RedrawSavedRect(window);
+  WindowSprite_RedrawSavedRect(window);
   Engine_TaskWait(1);
-  UiWork_Finalize(window, 1);
+  Window_Close(window, 1);
 #ifndef UBFIX
   // The original never initializes details or creates a second window.
   // Reading this indeterminate pointer is UB; modern builds omit that call.
-  UiWork_Finalize(details, 1);
+  Window_Close(details, 1);
 #endif
 }
 #endif
@@ -509,15 +509,15 @@ static void ItemLevel_RunMotionTest(void) {
 /// Displays the three character-set caption rows in a debug window. Force cast
 /// at LOCALID_PORTRAIT_BROWSER, outside Japanese. The window is left open.
 static void ItemLevel_ShowGlyphCaptions(void) {
-  struct UiWindow *window;
+  struct Window *window;
   /* FAKEMATCH(dead): an unread text buffer for the frame's 32 bytes; as no
    * buffer, 2 of 29 instructions differ in tbs-en. */
   UNUSED u8 text[32];
 
-  window = UiWindow_Create(0, 13, 30, 6, 2);
-  UiText_DrawStringInWindow(gItemLevelGlyphsUpper, window, 0, 0);
-  UiText_DrawStringInWindow(gItemLevelGlyphsLower, window, 0, 8);
-  UiText_DrawStringInWindow(gItemLevelGlyphsMarks, window, 0, 16);
+  window = Window_Create(0, 13, 30, 6, 2);
+  Text_DrawStringInWindow(gItemLevelGlyphsUpper, window, 0, 0);
+  Text_DrawStringInWindow(gItemLevelGlyphsLower, window, 0, 8);
+  Text_DrawStringInWindow(gItemLevelGlyphsMarks, window, 0, 16);
 }
 #endif
 

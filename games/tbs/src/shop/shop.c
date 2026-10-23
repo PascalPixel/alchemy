@@ -17,7 +17,7 @@
 ///                   Shop_BuySpecialItem
 ///   Sanctum         sanctum.c: Sanctum_RunPartyService
 ///   Inn             inn.c: Inn_CheckIn
-///   Item picker     item_picker.c: Shop_PickUnitItem
+///   Item picker     item_picker.c: ItemPicker_Run
 
 #include "shop_internal.h"
 

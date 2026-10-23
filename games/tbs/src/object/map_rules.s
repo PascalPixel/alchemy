@@ -285,7 +285,7 @@ gMapSec_NameRules:
 	group_name 57, -1, 94
 	group_name 58, -1, 95
 	group_name 59, -1, 96
-	map_name LinkLobby, 1, 97
+	map_name BattleArena, 1, 97
 	group_name 61, -1, 98
 	group_name 62, -1, 99
 	group_name 63, -1, 100
@@ -320,7 +320,7 @@ gParty_PairResolveRules:
 	return_to Tolbi, -1, TolbiInteriors, 30
 	return_to Suhalla, -1, SuhallaInteriors, 6
 	return_to Lalivero, -1, LaliveroShops, 12
-	return_to LinkLobby, -1, LinkLobby, 1
+	return_to BattleArena, -1, BattleArena, 1
 	.2byte -1, -1, -1, -1	@ end
 
 @ A map not listed takes the last backdrop.
@@ -343,7 +343,7 @@ gBattleBackground_Maps:
 	backdrop LamakanDesertBackdrop, LamakanDesertEast, LamakanDesertSmog, LamakanDesertManticore
 	backdrop TolbiShipDeckBackdrop, TolbiShipDeck, TolbiShipMast
 	backdrop TolbiShipInteriorsBackdrop, TolbiShipInteriors
-	backdrop ColossoBackdrop, ColosseumAzartMatch, ColosseumSatrageMatch, ColosseumNavampaMatch, LinkLobby
+	backdrop ColossoBackdrop, ColosseumAzartMatch, ColosseumSatrageMatch, ColosseumNavampaMatch, BattleArena
 	backdrop AltmillerCaveBackdrop, AltmillerCaveEntrance, AltmillerCaveBabi, AltmillerCaveVialChest, AltmillerCaveSquall, AltmillerCaveCookieChest, AltmillerCaveDraught
 	backdrop AltmillerCaveBackdrop, LunpaFortressGroundFloor, LunpaFortressUpperFloor, LunpaFortressCave, LunpaFortressToadonpa
 	backdrop SuhallaDesertBackdrop, SuhallaDesertNorth, SuhallaDesertSouth

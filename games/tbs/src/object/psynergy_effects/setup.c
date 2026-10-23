@@ -225,15 +225,13 @@ void FieldEffect_StartCast(void) {
   }
   if (effectWork->active != 0) {
     ObjectGroup_SetActionForOthers((struct Object *)caster, 1, 0);
-    UiWork_PushValueSlotFar(announcedAbility, 4);
+    MessageArgument_PushFar(announcedAbility, 4);
     // The mode branches currently show the same message. Merging them shrinks
     // the native English function by 32 bytes, so keep this existing form.
     if ((s8)effectWork->mode != 0) {
-      UiText_ShowPositionedMessageAndWaitFar(MsgAbilityAnnounce,
-                                             effectWork->messageMode);
+      FieldMessage_ShowFar(MsgAbilityAnnounce, effectWork->messageMode);
     } else {
-      UiText_ShowPositionedMessageAndWaitFar(MsgAbilityAnnounce,
-                                             effectWork->messageMode);
+      FieldMessage_ShowFar(MsgAbilityAnnounce, effectWork->messageMode);
     }
     ObjectGroup_SetActionForOthers((struct Object *)caster, 0, 0x10);
   }

@@ -1638,7 +1638,7 @@ static void ColosseumSatrageMatch_ShowBattleResultLettering(s32 result) {
 
 /// Unused: writes eight uppercase hexadecimal digits followed by a terminator;
 /// nothing calls it.
-static UNUSED void Text_WriteU32AsHex(u8 *destination, u32 value) {
+static UNUSED void String_WriteU32AsHex(u8 *destination, u32 value) {
   s32 digit;
 
   destination += 8;
@@ -1770,16 +1770,16 @@ static s32 ColosseumSatrageMatch_ApproachFinishAndTakeItem(s32 firstItem,
      * show, which sets r1 before r0; as a direct call, 1 of 110 instructions
      * differ in tbs-en. */
     COLOSSEUM_SATRAGE_MATCH_APPLY_MATCHING_SLOT_VALUE(0, firstItem);
-    UiWork_PushValueSlot(firstItem, 2);
+    MessageArgument_Push(firstItem, 2);
   } else {
     /* FAKEMATCH(wrapper): the same cast as the first arm, which sets r1 before
      * r0; as a direct call, 1 of 110 instructions differ in tbs-en. */
     COLOSSEUM_SATRAGE_MATCH_APPLY_MATCHING_SLOT_VALUE(0, secondItem);
-    UiWork_PushValueSlot(secondItem, 2);
+    MessageArgument_Push(secondItem, 2);
   }
 
   gameState = (u8 *)&gGameState;
-  UiWork_PushValueSlot(((struct GameState *)gameState)->leaderLocalId, 1);
+  MessageArgument_Push(((struct GameState *)gameState)->leaderLocalId, 1);
   Engine_MessageShowCentered(MsgColossoIsaacGotItem, 3);
   ObjectDispatch_WaitForValue16(warrior);
 

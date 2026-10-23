@@ -5,10 +5,10 @@
 #include "../battle_command_internal.h"
 
 #if LANGUAGE == LANGUAGE_JAPANESE
-#define TARGET_MYSTERY_NAME_COPY UiText_DecodeMessage
+#define TARGET_MYSTERY_NAME_COPY Message_DecodeRaw
 #define TARGET_MYSTERY_NAME_CAPACITY 10
 #else
-#define TARGET_MYSTERY_NAME_COPY UiText_CopyMessageString
+#define TARGET_MYSTERY_NAME_COPY Message_CopyExpanded
 #define TARGET_MYSTERY_NAME_CAPACITY 14
 #endif
 
@@ -57,14 +57,14 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   struct AffineTransform effect;
   struct Unit *unit;
   struct BattleWork *battle;
-  struct UiWindow *window;
+  struct Window *window;
 #if TBS_PATCH_4
-  struct UiWindow *conditionWindow;
+  struct Window *conditionWindow;
 #else
   /* FAKEMATCH(pin): the condition window in r9, where the native keeps it; as
    * an ordinary local it is spilled, the frame shrinks to 320 bytes and 969
    * of 1585 instructions differ in tbs-en. */
-  register struct UiWindow *conditionWindow asm("r9");
+  register struct Window *conditionWindow asm("r9");
 #endif
   s32 targetIndex;
   s32 targetCount;
@@ -99,7 +99,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
 #if TBS_PATCH_4
   /* FAKEMATCH(dead): a null derived from selection keeps conditionWindow in
    * sl; as conditionWindow = 0, 47 of 1684 instructions differ in tbs-es. */
-  conditionWindow = (struct UiWindow *)((u32)(u16)selection >> 16);
+  conditionWindow = (struct Window *)((u32)(u16)selection >> 16);
 #else
   conditionWindow = 0;
 #endif
@@ -208,7 +208,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     cursorTracks[0].x = (u8)actorPosition.x;
     cursorTracks[0].y = 0x80;
   }
-  window = UiWindow_Create(0, 12, 30, 4, 74);
+  window = Window_Create(0, 12, 30, 4, 74);
   while (1) {
     firstSprite = cursorSprites;
     drawCursors = 0;
@@ -347,7 +347,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
               candidateIds[targetIndex],
               ScreenPoint_Coordinates(&selectedPosition));
           if (conditionWindow != 0)
-            UiWork_Finalize(conditionWindow, 1);
+            Window_Close(conditionWindow, 1);
           switch (kind) {
           case TARGET_HINT_SET_DJINNI: {
             s32 anchor;
@@ -358,33 +358,32 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             if (System_GetLanguage() == 4) {
               if (anchor + 6 > 29)
                 helpColumn = 20;
-              conditionWindow = UiWindow_Create(helpColumn, 8, 10, 3, 6);
+              conditionWindow = Window_Create(helpColumn, 8, 10, 3, 6);
             } else if (System_GetLanguage() == 3) {
               if (anchor + 7 > 29)
                 helpColumn = 19;
-              conditionWindow = UiWindow_Create(helpColumn, 8, 11, 3, 6);
+              conditionWindow = Window_Create(helpColumn, 8, 11, 3, 6);
             } else {
               if (anchor + 5 > 29)
                 helpColumn = 21;
-              conditionWindow = UiWindow_Create(helpColumn, 8, 9, 3, 6);
+              conditionWindow = Window_Create(helpColumn, 8, 9, 3, 6);
             }
 #elif (LANGUAGE == LANGUAGE_FRENCH)
             if (anchor + 5 > 29)
               helpColumn = 21;
-            conditionWindow = UiWindow_Create(helpColumn, 8, 9, 3, 6);
+            conditionWindow = Window_Create(helpColumn, 8, 9, 3, 6);
 #elif (LANGUAGE == LANGUAGE_JAPANESE)
             if (anchor + 4 > 29)
               helpColumn = 22;
-            conditionWindow = UiWindow_Create(helpColumn, 8, 8, 3, 6);
+            conditionWindow = Window_Create(helpColumn, 8, 8, 3, 6);
 #else
             if (anchor + 4 > 29)
               helpColumn = 22;
-            conditionWindow = UiWindow_Create(helpColumn, 8, 9, 3, 6);
+            conditionWindow = Window_Create(helpColumn, 8, 9, 3, 6);
 #endif
           }
             UiWork_SetParameterNibble(2);
-            UiText_DrawCharacterAtOffset(MsgTargetSetDjinni, conditionWindow, 0,
-                                         0);
+            Text_DrawMessageAsTiles(MsgTargetSetDjinni, conditionWindow, 0, 0);
             UiWork_SetParameterNibble(15);
             break;
           case TARGET_HINT_HP: {
@@ -394,35 +393,35 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             helpColumn = anchor - 7;
             if (anchor + 6 > 29)
               helpColumn = 17;
-            conditionWindow = UiWindow_Create(helpColumn, 8, 13, 3, 6);
+            conditionWindow = Window_Create(helpColumn, 8, 13, 3, 6);
           }
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
             switch (System_GetLanguage()) {
             case CARTRIDGE_LANGUAGE_GERMAN:
-              UiText_DrawStringAtOffset((u8 *)gOwnerStatus_KpString,
-                                        conditionWindow, 0, 0);
+              Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_KpString,
+                                      conditionWindow, 0, 0);
               break;
             case CARTRIDGE_LANGUAGE_FRENCH:
-              UiText_DrawStringAtOffset((u8 *)gOwnerStatus_PvString,
-                                        conditionWindow, 0, 0);
+              Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_PvString,
+                                      conditionWindow, 0, 0);
               break;
             case CARTRIDGE_LANGUAGE_SPANISH:
-              UiText_DrawStringAtOffset((u8 *)gOwnerStatus_PvString,
-                                        conditionWindow, 0, 0);
+              Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_PvString,
+                                      conditionWindow, 0, 0);
               break;
             case CARTRIDGE_LANGUAGE_ITALIAN:
-              UiText_DrawStringAtOffset((u8 *)gOwnerStatus_HpString,
-                                        conditionWindow, 0, 0);
+              Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_HpString,
+                                      conditionWindow, 0, 0);
               break;
             }
 #else
-            UiText_DrawStringAtOffset((u8 *)gOwnerStatus_HpString,
-                                      conditionWindow, 0, 0);
+            Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_HpString,
+                                    conditionWindow, 0, 0);
 #endif
-            UiText_DrawNumberInWindow(unit->hp, 4, conditionWindow, 16, 0);
-            UiText_DrawStringAtOffset((u8 *)gOwnerStatus_SlashString,
-                                      conditionWindow, 48, 0);
-            UiText_DrawNumberInWindow(unit->hpMax, 4, conditionWindow, 56, 0);
+            Text_DrawNumberInWindow(unit->hp, 4, conditionWindow, 16, 0);
+            Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_SlashString,
+                                    conditionWindow, 48, 0);
+            Text_DrawNumberInWindow(unit->hpMax, 4, conditionWindow, 56, 0);
             break;
           case TARGET_HINT_PP: {
             s32 anchor;
@@ -431,14 +430,14 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             helpColumn = anchor - 7;
             if (anchor + 6 > 29)
               helpColumn = 17;
-            conditionWindow = UiWindow_Create(helpColumn, 8, 13, 3, 6);
+            conditionWindow = Window_Create(helpColumn, 8, 13, 3, 6);
           }
-            UiText_DrawStringAtOffset((u8 *)gOwnerStatus_PpString,
-                                      conditionWindow, 0, 0);
-            UiText_DrawNumberInWindow(unit->pp, 4, conditionWindow, 16, 0);
-            UiText_DrawStringAtOffset((u8 *)gOwnerStatus_SlashString,
-                                      conditionWindow, 48, 0);
-            UiText_DrawNumberInWindow(unit->ppMax, 4, conditionWindow, 56, 0);
+            Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_PpString,
+                                    conditionWindow, 0, 0);
+            Text_DrawNumberInWindow(unit->pp, 4, conditionWindow, 16, 0);
+            Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_SlashString,
+                                    conditionWindow, 48, 0);
+            Text_DrawNumberInWindow(unit->ppMax, 4, conditionWindow, 56, 0);
             break;
           case TARGET_HINT_REVIVE: {
             s32 anchor;
@@ -447,12 +446,11 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             helpColumn = anchor - 7;
             if (anchor + 5 > 29)
               helpColumn = 18;
-            conditionWindow = UiWindow_Create(helpColumn, 8, 12, 3, 6);
+            conditionWindow = Window_Create(helpColumn, 8, 12, 3, 6);
           }
             if (unit->hp != 0)
               goto no_condition;
-            UiText_DrawCharacterAtOffset(MsgTargetDowned, conditionWindow, 0,
-                                         0);
+            Text_DrawMessageAsTiles(MsgTargetDowned, conditionWindow, 0, 0);
             break;
           case TARGET_HINT_CURE_POISON: {
             s32 anchor;
@@ -461,12 +459,11 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             helpColumn = anchor - 7;
             if (anchor + 5 > 29)
               helpColumn = 18;
-            conditionWindow = UiWindow_Create(helpColumn, 8, 12, 3, 6);
+            conditionWindow = Window_Create(helpColumn, 8, 12, 3, 6);
           }
             if (unit->poison == 0)
               goto no_condition;
-            UiText_DrawCharacterAtOffset(MsgTargetCurePoison, conditionWindow,
-                                         0, 0);
+            Text_DrawMessageAsTiles(MsgTargetCurePoison, conditionWindow, 0, 0);
             break;
           case TARGET_HINT_RESTORE:
             count = 0;
@@ -495,49 +492,49 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
                 if (anchor + 10 > 29)
                   helpColumn = 13;
                 conditionWindow =
-                    UiWindow_Create(helpColumn, helpRow, 17, count + 2, 6);
+                    Window_Create(helpColumn, helpRow, 17, count + 2, 6);
               } else {
                 if (anchor + 9 > 29)
                   helpColumn = 14;
                 conditionWindow =
-                    UiWindow_Create(helpColumn, helpRow, 16, count + 2, 6);
+                    Window_Create(helpColumn, helpRow, 16, count + 2, 6);
               }
 #elif (LANGUAGE == LANGUAGE_JAPANESE)
               if (anchor + 7 > 29)
                 helpColumn = 16;
               conditionWindow =
-                  UiWindow_Create(helpColumn, helpRow, 14, count + 2, 6);
+                  Window_Create(helpColumn, helpRow, 14, count + 2, 6);
 #else
               if (anchor + 9 > 29)
                 helpColumn = 14;
               conditionWindow =
-                  UiWindow_Create(helpColumn, helpRow, 16, count + 2, 6);
+                  Window_Create(helpColumn, helpRow, 16, count + 2, 6);
 #endif
             }
             count = 0;
             if (unit->delusion != 0) {
-              UiText_DrawCharacterAtOffset(MsgTargetCureDelusion,
-                                           conditionWindow, 0, 0);
+              Text_DrawMessageAsTiles(MsgTargetCureDelusion, conditionWindow, 0,
+                                      0);
               count = 1;
             }
             if (unit->stun != 0) {
-              UiText_DrawCharacterAtOffset(MsgTargetCureStun, conditionWindow,
-                                           0, count * 8);
+              Text_DrawMessageAsTiles(MsgTargetCureStun, conditionWindow, 0,
+                                      count * 8);
               count++;
             }
             if (unit->sleep != 0) {
-              UiText_DrawCharacterAtOffset(MsgTargetCureSleep, conditionWindow,
-                                           0, count * 8);
+              Text_DrawMessageAsTiles(MsgTargetCureSleep, conditionWindow, 0,
+                                      count * 8);
               count++;
             }
             if (unit->psySeal != 0) {
-              UiText_DrawCharacterAtOffset(MsgTargetCureSeal, conditionWindow,
-                                           0, count * 8);
+              Text_DrawMessageAsTiles(MsgTargetCureSeal, conditionWindow, 0,
+                                      count * 8);
               ++count;
             }
             if (unit->grimReaper != 0) {
-              UiText_DrawCharacterAtOffset(MsgTargetCureCurse, conditionWindow,
-                                           0, count * 8);
+              Text_DrawMessageAsTiles(MsgTargetCureCurse, conditionWindow, 0,
+                                      count * 8);
               count++;
             }
             if (count == 0)
@@ -576,67 +573,66 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
                 if (anchor + 10 > 29)
                   helpColumn = 13;
                 conditionWindow =
-                    UiWindow_Create(helpColumn, helpRow, 17, count + 2, 6);
+                    Window_Create(helpColumn, helpRow, 17, count + 2, 6);
               } else {
                 if (anchor + 9 > 29)
                   helpColumn = 14;
                 conditionWindow =
-                    UiWindow_Create(helpColumn, helpRow, 16, count + 2, 6);
+                    Window_Create(helpColumn, helpRow, 16, count + 2, 6);
               }
 #elif (LANGUAGE == LANGUAGE_JAPANESE)
               if (anchor + 7 > 29)
                 helpColumn = 16;
               conditionWindow =
-                  UiWindow_Create(helpColumn, helpRow, 14, count + 2, 6);
+                  Window_Create(helpColumn, helpRow, 14, count + 2, 6);
 #else
               if (anchor + 9 > 29)
                 helpColumn = 14;
               conditionWindow =
-                  UiWindow_Create(helpColumn, helpRow, 16, count + 2, 6);
+                  Window_Create(helpColumn, helpRow, 16, count + 2, 6);
 #endif
             }
             count = 0;
             if (unit->poison != 0) {
-              UiText_DrawCharacterAtOffset(MsgTargetCurePoison, conditionWindow,
-                                           0, 0);
+              Text_DrawMessageAsTiles(MsgTargetCurePoison, conditionWindow, 0,
+                                      0);
               count = 1;
             }
             if (unit->delusion != 0) {
-              UiText_DrawCharacterAtOffset(MsgTargetCureDelusion,
-                                           conditionWindow, 0, count * 8);
+              Text_DrawMessageAsTiles(MsgTargetCureDelusion, conditionWindow, 0,
+                                      count * 8);
               count++;
             }
             if (unit->stun != 0) {
-              UiText_DrawCharacterAtOffset(MsgTargetCureStun, conditionWindow,
-                                           0, count * 8);
+              Text_DrawMessageAsTiles(MsgTargetCureStun, conditionWindow, 0,
+                                      count * 8);
               count++;
             }
             if (unit->sleep != 0) {
-              UiText_DrawCharacterAtOffset(MsgTargetCureSleep, conditionWindow,
-                                           0, count * 8);
+              Text_DrawMessageAsTiles(MsgTargetCureSleep, conditionWindow, 0,
+                                      count * 8);
               count++;
             }
             if (unit->psySeal != 0) {
-              UiText_DrawCharacterAtOffset(MsgTargetCureSeal, conditionWindow,
-                                           0, count * 8);
+              Text_DrawMessageAsTiles(MsgTargetCureSeal, conditionWindow, 0,
+                                      count * 8);
               count++;
             }
             if (unit->grimReaper != 0) {
-              UiText_DrawCharacterAtOffset(MsgTargetCureCurse, conditionWindow,
-                                           0, count * 8);
+              Text_DrawMessageAsTiles(MsgTargetCureCurse, conditionWindow, 0,
+                                      count * 8);
               count++;
             }
             if (unit->haunt != 0) {
-              UiText_DrawCharacterAtOffset(MsgTargetCureHaunt, conditionWindow,
-                                           0, 8 * count);
+              Text_DrawMessageAsTiles(MsgTargetCureHaunt, conditionWindow, 0,
+                                      8 * count);
               count++;
             }
             if (count != 0)
               break;
           no_condition:
             UiWork_SetParameterNibble(2);
-            UiText_DrawCharacterAtOffset(MsgTargetNoEffect, conditionWindow, 0,
-                                         0);
+            Text_DrawMessageAsTiles(MsgTargetNoEffect, conditionWindow, 0, 0);
             UiWork_SetParameterNibble(15);
             break;
           }
@@ -663,7 +659,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
           }
           targetName[i] = 0;
         }
-        width = UiText_GetWideStringWidth(targetName);
+        width = Text_GetWideStringWidth(targetName);
         namePosition.x -= width / 2;
         namePosition.x -= 8;
         if (namePosition.x + width > 224)
@@ -671,7 +667,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         if (namePosition.x < 0)
           namePosition.x = 0;
         Ui_ClearVramBlock();
-        UiText_RenderWideStringAtOffset(targetName, window, namePosition.x, 4);
+        Text_DrawWideStringAtOffset(targetName, window, namePosition.x, 4);
       }
       redraw &= ~1;
     }
@@ -781,8 +777,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   WaitFrames(1);
   Resource_ResetEntry(cursorSlot);
   if (conditionWindow != 0)
-    UiWork_Finalize(conditionWindow, 1);
-  UiWork_Finalize(window, 1);
+    Window_Close(conditionWindow, 1);
+  Window_Close(window, 1);
   BattleHighlight_SetModesFar(candidateIds, 0);
   gBattleMenuWork->targetViewOffset = 0;
   WaitFrames(1);

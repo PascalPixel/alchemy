@@ -48,11 +48,11 @@ s32 Inn_RoomPrice(s32 innId) {
 s32 Inn_CheckIn(s32 innId, s32 objectId) {
   struct InnWork *state;
   struct ObjectEvent *innkeeper;
-  struct UiWindow *innkeeperWindow;
+  struct Window *innkeeperWindow;
   s32 roomPrice;
   s32 messageBase;
 
-  Shop_InitializeCursorWork();
+  Shop_InitializeWork();
   state = gMenuWork;
   state->active = 1;
   // Xian's inn has lines of its own, as far past the other inns' as the
@@ -63,43 +63,41 @@ s32 Inn_CheckIn(s32 innId, s32 objectId) {
   innkeeper = ObjectEvent_GetByIdFar(objectId);
   state->resourceId =
       ((struct AnimationObject *)innkeeper->sprite)->entries[0]->animationId;
-  innkeeperWindow =
-      UiWindow_CreateWithSideObjectFar(state->resourceId, 0, 0, 0);
+  innkeeperWindow = Portrait_OpenWindowFar(state->resourceId, 0, 0, 0);
 
   roomPrice = Inn_RoomPrice(innId);
-  UiWork_PushValueSlotFar(roomPrice, MESSAGE_ARGUMENT_NUMBER);
+  MessageArgument_PushFar(roomPrice, MESSAGE_ARGUMENT_NUMBER);
   messageBase = MsgInnWelcome;
-  UiMessage_ShowAndWait(messageBase);
+  Shop_ShowKeeperMessage(messageBase);
   state->window =
-      UiWindow_CreateFar(0, 16, SHOP_MONEY_WINDOW_WIDTH, 4, UI_WINDOW_INSTANT);
+      Window_CreateFar(0, 16, SHOP_MONEY_WINDOW_WIDTH, 4, WINDOW_FLAG_INSTANT);
   Shop_DrawMoney();
 
-  if (UiMessage_ShowChoice(0) != 0) {
-    UiMessage_ShowAndWait(messageBase +
-                          (INN_MESSAGE_GOODBYE - INN_MESSAGE_WELCOME));
-    UiWork_FinalizeFar(state->window, 2);
+  if (Shop_AskYesNo(0) != 0) {
+    Shop_ShowKeeperMessage(messageBase +
+                           (INN_MESSAGE_GOODBYE - INN_MESSAGE_WELCOME));
+    Window_CloseFar(state->window, 2);
   } else if (roomPrice > (u32)gGameState.coins) {
-    UiMessage_ShowAndWait(messageBase +
-                          (INN_MESSAGE_NOT_ENOUGH_COINS - INN_MESSAGE_WELCOME));
-    UiWork_FinalizeFar(state->window, 2);
+    Shop_ShowKeeperMessage(
+        messageBase + (INN_MESSAGE_NOT_ENOUGH_COINS - INN_MESSAGE_WELCOME));
+    Window_CloseFar(state->window, 2);
   } else {
-    UiWork_FinalizeFar(state->window, 2);
-    UiMessage_ShowAndWait(messageBase +
-                          (INN_MESSAGE_STAY_COMPLETE - INN_MESSAGE_WELCOME));
-    UiWork_FinalizeFar(innkeeperWindow, 2);
+    Window_CloseFar(state->window, 2);
+    Shop_ShowKeeperMessage(messageBase +
+                           (INN_MESSAGE_STAY_COMPLETE - INN_MESSAGE_WELCOME));
+    Window_CloseFar(innkeeperWindow, 2);
     Inn_PlaySleep(roomPrice);
 
     innkeeper = ObjectEvent_GetByIdFar(objectId);
     state->resourceId =
         ((struct AnimationObject *)innkeeper->sprite)->entries[0]->animationId;
-    innkeeperWindow =
-        UiWindow_CreateWithSideObjectFar(state->resourceId, 0, 0, 0);
-    UiMessage_ShowAndWait(messageBase +
-                          (INN_MESSAGE_REST_COMPLETE - INN_MESSAGE_WELCOME));
+    innkeeperWindow = Portrait_OpenWindowFar(state->resourceId, 0, 0, 0);
+    Shop_ShowKeeperMessage(messageBase +
+                           (INN_MESSAGE_REST_COMPLETE - INN_MESSAGE_WELCOME));
   }
 
-  UiWork_FinalizeFar(innkeeperWindow, 2);
-  Shop_ReleaseCursorWork();
+  Window_CloseFar(innkeeperWindow, 2);
+  Shop_ReleaseWork();
   return 0;
 }
 

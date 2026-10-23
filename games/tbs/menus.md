@@ -44,24 +44,24 @@ arrow, is one of its render outputs. It moves with the window and goes when
 the window closes.
 
 All of the window system's state is one block of memory, `struct
-UiRenderWork`, borrowed from the [heap](glossary.md#heap-and-pools) under the [heap slot](glossary.md#heap-slot) `HEAP_SLOT_WINDOW`. It holds
-the tilemap (`work->tilemap`, copied to `UI_TILEMAP_VRAM` in video memory by a
+WindowWork`, borrowed from the [heap](glossary.md#heap-and-pools) under the [heap slot](glossary.md#heap-slot) `HEAP_SLOT_WINDOW`. It holds
+the tilemap (`work->tilemap`, copied to `WINDOW_TILEMAP_VRAM` in video memory by a
 VBlank [task](glossary.md#task)), the window slots, the message channels (the
 typists below), the render outputs and the decoded text. A window is a
-`struct UiWindow` slot, opened by `UiWindow_Create(x, y, width, height,
+`struct Window` slot, opened by `Window_Create(x, y, width, height,
 flags)` in the first free slot, with its place and size in tiles; it returns
-`NULL` when every slot is taken. Unless it has `UI_WINDOW_INSTANT`, it zooms open
-over `UI_WINDOW_OPEN_FRAMES` and closed over `UI_WINDOW_CLOSE_FRAMES`, and its
+`NULL` when every slot is taken. Unless it has `WINDOW_FLAG_INSTANT`, it zooms open
+over `WINDOW_OPEN_FRAMES` and closed over `WINDOW_CLOSE_FRAMES`, and its
 slot stays taken until it has closed. The zoom is stepped by
 `UiWork_ProcessDirectWork`, the first step of `UiWork_ProcessAll`, the window
 system's task, which runs once a frame.
 
-The text canvas (`UI_WINDOW_TEXT_CANVAS`, at `UI_CANVAS_VRAM`) is drawn by the
+The text canvas (`WINDOW_FLAG_TEXT_CANVAS`, at `TEXT_CANVAS_VRAM`) is drawn by the
 renderer in `glyph_arm.c`, written in the processor's fast 32-bit ARM
 instructions; its 120 tiles are exactly the battle message window's text
 area. Tilemap text takes tiles from a run of 128, and the work block's `alt`
 adds a second run of 128 while a screen that needs more is open. Each render
-output (`struct RenderOutput`) is moved every frame by its `UI_SPRITE_` motion
+output (`struct WindowSprite`) is moved every frame by its `UI_SPRITE_` motion
 (`UiWork_AnimateSpriteSlots`), and its picture holds an entry of the VRAM
 cache, the video memory kept for sprite pictures, until the window code frees
 it with `Resource_ResetEntry`.
@@ -70,9 +70,9 @@ it with `Resource_ResetEntry`.
 | --- | --- | --- |
 | `HEAP_SLOT_WINDOW` | 15 | the heap slot of the window system's work block |
 | `WINDOW_COUNT` | 12, or 8 | window slots: 12 in the Japanese [edition](glossary.md#editions), 8 in the international editions |
-| `UI_WINDOW_OPEN_FRAMES` | 8 | frames a window takes to zoom open |
-| `UI_WINDOW_CLOSE_FRAMES` | 4 | frames a window takes to zoom closed |
-| `UI_OUTPUT_COUNT` | 64 | render outputs at a time |
+| `WINDOW_OPEN_FRAMES` | 8 | frames a window takes to zoom open |
+| `WINDOW_CLOSE_FRAMES` | 4 | frames a window takes to zoom closed |
+| `WINDOW_SPRITE_COUNT` | 64 | render outputs at a time |
 
 [Windows](src/window/README.md#windows) has the work block's layout and the
 screens built directly from windows: the save file menu, name entry and the
@@ -96,22 +96,22 @@ message takes three steps, each done by different code:
    frame at the normal speed, acting on the marks for a new line, a new page,
    a pause or a colour, with the speaker's voice blip as it goes.
 
-`UiText_OpenMessageWindow` does all of it for one message, and the shop's
-`UiMessage_ShowAndWait` then waits until the typing is done (simplified):
+`Message_OpenWindow` does all of it for one message, and the shop's
+`Shop_ShowKeeperMessage` then waits until the typing is done (simplified):
 
 ```c
-// UiText_OpenMessageWindow (window/frames.c)
-entry = UiText_BuildRenderEntries(message, 1);   // 1. unpack into the ring
-UiWindow_FitOnScreen(entry, &x, &y, &width, &height, bounds, 0);
-window = UiWindow_Create(x, y, width, height, flags);
-UiText_QueueRenderEntries(window, entry, 0, 0, bounds, 0);  // 3. a typist
+// Message_OpenWindow (window/frames.c)
+entry = Message_Decode(message, 1);   // 1. unpack into the ring
+Window_FitOnScreen(entry, &x, &y, &width, &height, bounds, 0);
+window = Window_Create(x, y, width, height, flags);
+TextPrinter_Add(window, entry, 0, 0, bounds, 0);  // 3. a typist
 
-// UiMessage_ShowAndWait (shop/run.c)
+// Shop_ShowKeeperMessage (shop/run.c)
 while (UiWork_IsCompleteFar() == 0)
   WaitFrames(1);
 ```
 
-`UiText_BuildRenderEntries` decodes the whole message. Messages are stored as
+`Message_Decode` decodes the whole message. Messages are stored as
 Huffman codes, which give common letters short codes and rare ones long
 codes, read one bit at a time down a tree of choices. There is a separate
 tree for each previous letter (`Text_MessageContexts`), so the letter just
@@ -120,23 +120,23 @@ the processor's fast 32-bit ARM instructions, is copied into the heap block
 `TEXT_WORK_BLOCK`, which the heap takes from IWRAM when it has room, for the
 decode and released after it. The decoder writes out names, numbers, and item
 and ability names from the argument table (`MESSAGE_ARGUMENT_`,
-`UiWork_PushValueSlot`), and each language's articles and possessives
+`MessageArgument_Push`), and each language's articles and possessives
 (`articles.c`). The marks for colours, pauses and pages are copied into the
 ring unchanged, with their operands, for the typist to act on.
 
 The decoded text goes into `work->entries`, a ring of 16-bit codes whose
-index wraps through `RENDER_ENTRY_MASK`, the ring's size less one. Each
+index wraps through `TEXT_BUFFER_MASK`, the ring's size less one. Each
 message is written after the previous one, ends with 0, and is known only by
 the index it starts at. The ring is 512 codes, or 256 in the Japanese edition,
 and a longer message is cut off at the ring's length.
 
-A channel (`struct UiChannelSlot`) runs the control codes (`TEXT_`).
-`UiText_QueueRenderEntries` takes a free channel and returns `NULL` when all
+A channel (`struct TextPrinter`) runs the control codes (`TEXT_`).
+`TextPrinter_Add` takes a free channel and returns `NULL` when all
 three are busy. Each frame, `UiWork_ProcessAll` steps the windows, then the
 channels, then the render outputs. Outside battle a channel types as many
 cells a frame as the player's message speed allows (`text_speed.c`); in
 battle, eight. A message window sizes and places itself to fit its text on
-the screen (`UiWindow_FitOnScreen`).
+the screen (`Window_FitOnScreen`).
 
 The text itself is in the PO catalogs under `games/tbs/text`, one per
 language. The build's `ags-text` turns each catalog into the packed messages
@@ -147,7 +147,7 @@ symbol (`MsgGameSaved`). Why there are three channels is an open question
 | Name | Value | Meaning |
 | --- | --- | --- |
 | `TEXT_WORK_BLOCK` | 50 | the heap slot the tree walker is copied into while a message decodes |
-| `UI_ARGUMENT_SLOT_COUNT` | 8 | message arguments at a time |
+| `MESSAGE_ARGUMENT_COUNT` | 8 | message arguments at a time |
 
 [Windows](src/window/README.md#decoding-a-message) goes through decoding,
 [the ring](src/window/README.md#the-decoded-text-ring) and
@@ -167,11 +167,11 @@ the player backs out, the screen returns and the icons come up again.
 
 ![Isaac opens the field menu in Vale: the party's HP and PP window comes up with a row of command icons, the selection steps from Psynergy to Item to Status, the Status screen opens on Isaac's stats with `Your status is normal.` above them, turns to a page of his elemental levels, Power and Resist, and closes back to the icons.](https://alchemy.pascalpixel.com/guides/menu/menus.gif)
 
-The row of icons is drawn by `Menu_RunTopSelection` in the window code;
-`Menu_SelectTopEntry` leaves out the Djinn icon while the party owns no
-Djinni. `Menu_RunTopSelection` calls the chosen screen through the menu
+The row of icons is drawn by `FieldMenu_Run` in the window code;
+`FieldMenu_SelectCommand` leaves out the Djinn icon while the party owns no
+Djinni. `FieldMenu_Run` calls the chosen screen through the menu
 [bank](glossary.md#bank)'s [far-call](glossary.md#far-call) table, `system/far_call/MENU.S`: `PsynergyMenu_Run`, `DjinnMenu_Run`, `ItemMenu_Run`
-or `StatusMenu_Run`. Each screen's result is read in that screen's own case:
+or `SummaryScreen_Run`. Each screen's result is read in that screen's own case:
 the Psynergy and Item screens return 1 to close the menu and -1 to show the
 icons again, while the Djinn screen always returns 1, which for it means
 "show the icons again" ([Menus](src/menu/README.md#the-screens) has the table).
@@ -296,7 +296,7 @@ of range opens `SHOP_STOCK_ROW_EMPTY`.
 
 The keepers' lines are written once for each type of shop, in the same order
 in each set, and the code names only the weapon shop's. A shop of another
-type adds the distance between the two sets' welcomes (`UiMessage_ShowAndWait`):
+type adds the distance between the two sets' welcomes (`Shop_ShowKeeperMessage`):
 
 ```
 line shown = weapon shop's line + (this type's welcome − MsgWeaponShopWelcome)
@@ -316,13 +316,13 @@ purchase, once the credit reaches the next Game Ticket's cost
 (`sGameTicketCreditCosts`), the keeper gives a Game Ticket and the cost
 comes off the credit, never off the party's coins (`Shop_BuySpecialItem`).
 A sanctum's fee depends on the service and, for reviving and removing a
-curse, on the member's level (`Shop_ServicePrice`); an inn charges a price
+curse, on the member's level (`Sanctum_ServicePrice`); an inn charges a price
 per guest for each member still standing (`sInnPricesPerGuest`).
 
 Every counter, and the item picker that asks which item to drop when the
 party finds one with every bag full, keeps its work in `HEAP_SLOT_MENU` as
-`struct ShopWork`, taken by `Shop_InitializeCursorWork` and released by
-`Shop_ReleaseCursorWork`. Maps reach the counters through their [import
+`struct ShopWork`, taken by `Shop_InitializeWork` and released by
+`Shop_ReleaseWork`. Maps reach the counters through their [import
 tables](glossary.md#entry-table-and-import-table), and other banks through the far-call table
 `system/far_call/SHOP.S`.
 
@@ -355,9 +355,9 @@ something and the map's events, none of which exist while the menu runs.
   or wider or taller than 30, draws no frame, and nothing checks that a
   window stays within the tilemap's 20 rows.
 - Twelve window slots in the Japanese edition and eight in the international
-  editions; `UiWindow_Create` returns `NULL` when none is free.
+  editions; `Window_Create` returns `NULL` when none is free.
 - Three message channels, 64 render outputs and eight message arguments at a
-  time; a ninth argument is dropped (`UiWork_PushValueSlot`).
+  time; a ninth argument is dropped (`MessageArgument_Push`).
 - The decoded-text ring holds 512 codes, or 256 in Japanese.
 - The menu work is 2,672 bytes, with room for eight party members and 32
   listed entries; a member's inventory has `INVENTORY_SLOTS` (15) slots.

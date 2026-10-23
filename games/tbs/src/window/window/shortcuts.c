@@ -7,42 +7,42 @@
 /// The area name notice's fields, which live in the event work block
 /// (gFieldWork, a map's work), for as long as the map runs.
 struct TimedNoticeWork {
-  u8 eventWork[0x230];     ///< the event work's other fields
-  struct UiWindow *window; ///< the notice's window; it may since have closed
-  u16 countdown;           ///< frames left to show it, from 90
+  u8 eventWork[0x230];   ///< the event work's other fields
+  struct Window *window; ///< the notice's window; it may since have closed
+  u16 countdown;         ///< frames left to show it, from 90
 };
 
 /// Shows the area's name in a window near the top of the screen for 90 frames.
 /// The event work owns the window and countdown until the scheduler closes it.
 /// The window is centred across the screen and in its top 10 rows, and opens
-/// at once; UiTimedNotice_Tick counts it down each frame in the main loop's
+/// at once; MapNamePopup_Update counts it down each frame in the main loop's
 /// pass.
-void UiTimedNotice_Create(void) {
+void MapNamePopup_Show(void) {
   struct TimedNoticeWork *notice;
   s32 height;
   s32 width;
   s32 y;
   s32 x;
   s32 areaMessage;
-  struct UiWindow *nameWindow;
+  struct Window *nameWindow;
 
   notice = (struct TimedNoticeWork *)gFieldWork;
   x = 8;
   y = 8;
   areaMessage = MapSec_GetNameIndexFar(gGameState.mapId, gGameState.warpDest) +
                 RENDER_RESOURCE_BASE;
-  UiText_GetResourceDimensions(areaMessage, &x, &y, &width, &height);
+  Text_GetMessageSize(areaMessage, &x, &y, &width, &height);
   x = (30 - width) >> 1;
   y = (10 - height) >> 1;
-  nameWindow = UiWindow_Create(x, y, width, height, 2);
+  nameWindow = Window_Create(x, y, width, height, 2);
   notice->window = nameWindow;
-  UiText_DrawResource(areaMessage, nameWindow, 0, 0);
-  notice->countdown = UI_AREA_NOTICE_FRAMES;
-  Task_Add(UiTimedNotice_Tick, 0xc80);
+  Text_DrawMessage(areaMessage, nameWindow, 0, 0);
+  notice->countdown = MAP_NAME_POPUP_FRAMES;
+  Task_Add(MapNamePopup_Update, 0xc80);
 }
 
 /// Counts the area name down, and closes it at 0.
-void UiTimedNotice_Tick(void) {
+void MapNamePopup_Update(void) {
   struct TimedNoticeWork *notice;
   u16 framesLeft;
 
@@ -50,19 +50,19 @@ void UiTimedNotice_Tick(void) {
   // Adding 0xffff takes one off in 16 bits.
   notice->countdown = (framesLeft = notice->countdown + 0xffff);
   if ((framesLeft << 16) == 0) {
-    UiWork_Finalize(notice->window, 2);
-    Task_Remove(UiTimedNotice_Tick);
+    Window_Close(notice->window, 2);
+    Task_Remove(MapNamePopup_Update);
   }
 }
 
 /// Closes the area name at once, if it is shown.
-void UiTimedNotice_CloseIfActive(void) {
-  struct UiWindow *window;
+void MapNamePopup_Hide(void) {
+  struct Window *window;
 
   window = ((struct TimedNoticeWork *)gFieldWork)->window;
   if (window != NULL && window->flags != 0) {
-    UiWork_Finalize(window, 2);
-    Task_Remove(UiTimedNotice_Tick);
+    Window_Close(window, 2);
+    Task_Remove(MapNamePopup_Update);
   }
 }
 
@@ -82,12 +82,12 @@ s32 Item_ReturnTrue(void) { return 1; }
 /// screen's 24 hues.
 /// Nothing calls it.
 UNUSED void OptionMenu_StepWindowHue(s32 keys) {
-  u8 hue = gGameState.paletteGlow[0];
+  u8 hue = gGameState.windowColor[0];
   if (keys & KEY_LEFT)
     hue += 0xff;
   else
     hue += 1;
-  gGameState.paletteGlow[0] = hue;
+  gGameState.windowColor[0] = hue;
 }
 
 /// A Psynergy the debug shortcut picker lists: its owner and the Psynergy.
@@ -104,10 +104,10 @@ struct AbilityListEntry {
 /// shortcuts.
 void Debug_SelectAbilityPair(void) {
   struct AbilityListEntry *list;
-  struct UiWindow *win;
-  struct UiWindow *title;
-  struct UiWindow *info;
-  struct RenderOutput *cursor;
+  struct Window *win;
+  struct Window *title;
+  struct Window *info;
+  struct WindowSprite *cursor;
   u32 first;
   u32 second;
   u32 count;
@@ -138,21 +138,21 @@ void Debug_SelectAbilityPair(void) {
   count = Party_ListPsynergy(list);
   if (count != 0) {
     Menu_FindShortcutEntries(&first, &second, list);
-    win = UiWindow_Create(4, 6, 20, 7, 2);
-    title = UiWindow_Create(4, 3, 20, 3, 2);
-    info = UiWindow_Create(4, 14, 20, 5, 2);
+    win = Window_Create(4, 6, 20, 7, 2);
+    title = Window_Create(4, 3, 20, 3, 2);
+    info = Window_Create(4, 14, 20, 5, 2);
     // Resource_FindFreeEntry reports no free entry as VRAM_CACHE_ENTRY_COUNT,
     // not 0: this test lets that through, and with entry 0 it leaves cursor
     // NULL for the writes below. 0x40000000 is a 16x16 sprite.
     slot = Resource_FindFreeEntry();
     if (slot != 0) {
       VramCache_Load(slot, 128, gResource_FixedBlockBTiles);
-      cursor = RenderOutput_Create(slot, 0x40000000, win, 0, 0);
+      cursor = WindowSprite_Create(slot, 0x40000000, win, 0, 0);
     }
     /* FAKEMATCH(temporary): the title message passed through slot; as the
      * message passed directly, 2 of 362 instructions differ in tbs-en. */
     slot = MsgPanelHpMaxLabel;
-    UiText_DrawCharacterAtOffset(slot, title, 16, 0);
+    Text_DrawMessageAsTiles(slot, title, 16, 0);
     // Redraw both shortcut rows and the selected ability's detail pane.
     for (;;) {
       if (redraw != 0) {
@@ -166,21 +166,21 @@ void Debug_SelectAbilityPair(void) {
         y = (row << 4) + (win->y << 3) + 28;
         cursor->y = y;
         cursor->oam.y = y;
-        RenderOutput_RedrawSavedRect(win);
-        UiWindow_DrawDividerLine(win, 1, 2, 17, 2);
-        UiText_DrawCharacterAtOffset(MsgPanelStatusLabel, win, 48, 0);
-        UiText_DrawCharacterAtOffset(list[first].ability + MsgAbilityName, win,
-                                     56, 16);
-        UiText_DrawCharacterAtOffset(list[second].ability + MsgAbilityName, win,
-                                     56, 32);
-        UiText_DrawCharacterAtOffset(MsgPanelStatusLabel - 2, win, 16, 16);
-        UiText_DrawCharacterAtOffset(MsgPanelStatusLabel - 1, win, 16, 32);
-        UiText_DrawCharacterAtOffset(list[first].owner + MsgCharacterName, win,
-                                     104, 16);
-        UiText_DrawCharacterAtOffset(list[second].owner + MsgCharacterName, win,
-                                     104, 32);
-        RenderOutput_RedrawSavedRect(info);
-        UiText_DrawCharacterAtOffset(MsgPsynergyNeedMorePp, info, 0, 16);
+        WindowSprite_RedrawSavedRect(win);
+        Window_DrawDividerLine(win, 1, 2, 17, 2);
+        Text_DrawMessageAsTiles(MsgPanelStatusLabel, win, 48, 0);
+        Text_DrawMessageAsTiles(list[first].ability + MsgAbilityName, win, 56,
+                                16);
+        Text_DrawMessageAsTiles(list[second].ability + MsgAbilityName, win, 56,
+                                32);
+        Text_DrawMessageAsTiles(MsgPanelStatusLabel - 2, win, 16, 16);
+        Text_DrawMessageAsTiles(MsgPanelStatusLabel - 1, win, 16, 32);
+        Text_DrawMessageAsTiles(list[first].owner + MsgCharacterName, win, 104,
+                                16);
+        Text_DrawMessageAsTiles(list[second].owner + MsgCharacterName, win, 104,
+                                32);
+        WindowSprite_RedrawSavedRect(info);
+        Text_DrawMessageAsTiles(MsgPsynergyNeedMorePp, info, 0, 16);
         if (row != 0) {
           cost = Ability_Get(list[second].ability)->ppCost;
           ability = list[second].ability;
@@ -188,9 +188,8 @@ void Debug_SelectAbilityPair(void) {
           cost = Ability_Get(list[first].ability)->ppCost;
           ability = list[first].ability;
         }
-        UiText_DrawNumberAtOffset(cost, 2, info, 64, 16);
-        UiText_DrawCharacterAtOffset(ability + MsgAbilityDescription, info, 0,
-                                     0);
+        Text_DrawNumberAtOffset(cost, 2, info, 64, 16);
+        Text_DrawMessageAsTiles(ability + MsgAbilityDescription, info, 0, 0);
       }
       WaitFrames(1);
       if (gKeysRepeat & KEY_LEFT) {
@@ -239,9 +238,9 @@ void Debug_SelectAbilityPair(void) {
     gGameState.firstShortcut = (list[first].owner << 10) | list[first].ability;
     gGameState.secondShortcut =
         (list[second].owner << 10) | list[second].ability;
-    UiWork_Finalize(win, 1);
-    UiWork_Finalize(title, 1);
-    UiWork_Finalize(info, 1);
+    Window_Close(win, 1);
+    Window_Close(title, 1);
+    Window_Close(info, 1);
     WaitFrames(1);
   }
   Free(list);
@@ -327,7 +326,7 @@ struct SelectionWorkspace {
   u16 secondActive;
   u16 secondResource;                   ///< a VRAM cache entry
   u8 unusedBeforeWindow[0xff4 - 0x356]; ///< no code names it
-  struct UiWindow *window;              ///< closed, and waited for, on release
+  struct Window *window;                ///< closed, and waited for, on release
   u8 unusedAfterWindow[12];             ///< no code names it
 };
 
@@ -349,7 +348,7 @@ UNUSED void Menu_ReleaseSelectionWorkspace(void) {
   struct SelectionWorkspace *state;
 
   state = *(struct SelectionWorkspace **)gSelectionWorkspace;
-  UiWork_Finalize(state->window, 0);
+  Window_Close(state->window, 0);
   while (UiWork_IsIdle(state->window) == 0) {
     WaitFrames(1);
   }

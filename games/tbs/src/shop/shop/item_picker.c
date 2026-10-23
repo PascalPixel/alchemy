@@ -11,25 +11,25 @@
 /// SHOP.S when an item is found with every bag full ("What will you drop?",
 /// PartyInventory_GiveItem), by the Elemental Star room's Mythril Bags and by
 /// the debug menu.
-s32 Shop_PickUnitItem(s32 *selectedUnit, s32 *selectedSlot) {
+s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot) {
   struct ShopWork *shop;
-  struct RenderOutput *cursorAnchor;
-  struct UiWindow *partyWindow;
+  struct WindowSprite *cursorAnchor;
+  struct Window *partyWindow;
   s32 memberIndex = 0;
   s32 redraw = 1;
   s32 unitId = 0;
   s32 itemSlot;
   s32 result = 0;
 
-  Shop_InitializeCursorWork();
+  Shop_InitializeWork();
   shop = gMenuWork;
-  shop->itemWindow = UiWindow_CreateFar(16, 12, 14, 8, UI_WINDOW_INSTANT);
-  partyWindow = UiWindow_CreateFar(0, 14, 13, 3, UI_WINDOW_INSTANT);
-  cursorAnchor = RenderOutput_CreateFar(shop->cursorIcon, 0x40000000,
+  shop->itemWindow = Window_CreateFar(16, 12, 14, 8, WINDOW_FLAG_INSTANT);
+  partyWindow = Window_CreateFar(0, 14, 13, 3, WINDOW_FLAG_INSTANT);
+  cursorAnchor = WindowSprite_CreateFar(shop->cursorIcon, 0x40000000,
                                         partyWindow, 0, result);
-  cursorAnchor->active = UI_SPRITE_WOBBLE;
+  cursorAnchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
   cursorAnchor->kind = result;
-  ShopCursor_SetPositionImmediate(&shop->cursor, -32, 112);
+  MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
   shop->cursor.anchor = cursorAnchor;
   shop->mode = 12;
   PsynergyMenu_InitializeEntryObjectsFar(partyWindow, 2, 0, 8, result);
@@ -40,10 +40,10 @@ s32 Shop_PickUnitItem(s32 *selectedUnit, s32 *selectedSlot) {
       memberIndex =
           (memberIndex + shop->partyMemberCount) % shop->partyMemberCount;
       unitId = shop->partyMemberIds[memberIndex];
-      Shop_PlaceCursor(partyWindow, memberIndex * 24 - 12, 0);
+      MenuCursor_Place(partyWindow, memberIndex * 24 - 12, 0);
       shop->mode = 3;
       Shop_DrawParty(partyWindow, memberIndex, 0);
-      Shop_DrawUnitGrid(shop->itemWindow, unitId);
+      Shop_DrawMemberItems(shop->itemWindow, unitId);
     }
 
     WaitFrames(1);
@@ -56,7 +56,7 @@ s32 Shop_PickUnitItem(s32 *selectedUnit, s32 *selectedSlot) {
       Sound_PlaySongFar(SE_MENU_CONFIRM);
       itemSlot = Shop_SelectUse(unitId);
       if (itemSlot == -1) {
-        shop->cursor.anchor->active = UI_SPRITE_WOBBLE;
+        shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
         shop->mode = 12;
         redraw = 1;
         continue;
@@ -88,10 +88,10 @@ s32 Shop_PickUnitItem(s32 *selectedUnit, s32 *selectedSlot) {
   }
 
   Menu_ReleaseEntryObjectsFar();
-  UiWork_FinalizeFar(partyWindow, 2);
-  UiWork_FinalizeFar(shop->itemWindow, 2);
+  Window_CloseFar(partyWindow, 2);
+  Window_CloseFar(shop->itemWindow, 2);
   WaitFrames(1);
-  Shop_ReleaseCursorWork();
+  Shop_ReleaseWork();
   return result;
 }
 
@@ -128,12 +128,12 @@ s32 Shop_PickUnitItem(s32 *selectedUnit, s32 *selectedSlot) {
 /// indispensable one with a message and an equipped cursed one with only the
 /// cancel sound (the game's bug; BUGFIX shows its message, see
 /// SHOP_CANNOT_REMOVE_STATUS). Returns the slot, or -1 when cancelled. Called
-/// by Shop_PickUnitItem.
+/// by ItemPicker_Run.
 s32 Shop_SelectUse(s32 unitId) {
   struct ShopWork *shop = gMenuWork;
 
-  struct UiWindow *descriptionWindow;
-  struct UiWindow *priceWindow;
+  struct Window *descriptionWindow;
+  struct Window *priceWindow;
   struct Unit *unit;
   s32 slot;
   s32 redraw;
@@ -141,7 +141,7 @@ s32 Shop_SelectUse(s32 unitId) {
   s32 selectionResult;
   s32 discardStatus;
   s32 itemId;
-  struct UiWindow *window;
+  struct Window *window;
   s32 x;
   s32 y;
 
@@ -149,10 +149,11 @@ s32 Shop_SelectUse(s32 unitId) {
   inventoryCount = 1;
   selectionResult = 0;
   redraw = 1;
-  priceWindow = UiWindow_CreateFar(SHOP_USE_WINDOW_X, 8, SHOP_USE_WINDOW_WIDTH,
-                                   4, UI_WINDOW_INSTANT);
-  descriptionWindow = UiWindow_CreateFar(0, 5, 30, 3, UI_WINDOW_INSTANT);
-  shop->cursor.anchor->active = UI_SPRITE_HOP_DOWN_LEFT;
+  priceWindow =
+      Window_CreateFar(ITEM_PICKER_WINDOW_X, 8, ITEM_PICKER_WINDOW_WIDTH, 4,
+                       WINDOW_FLAG_INSTANT);
+  descriptionWindow = Window_CreateFar(0, 5, 30, 3, WINDOW_FLAG_INSTANT);
+  shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_LEFT;
   shop->mode = 12;
   slot = 0;
 
@@ -167,7 +168,7 @@ s32 Shop_SelectUse(s32 unitId) {
       window = shop->itemWindow;
       x = slot % SHOP_INVENTORY_COLUMNS << 4;
       y = (slot / SHOP_INVENTORY_COLUMNS << 4) + 8;
-      Shop_PlaceCursor(window, x, y);
+      MenuCursor_Place(window, x, y);
       shop->mode = 3;
       Shop_DrawUseItem(priceWindow, unitId, slot);
       Shop_DrawMessage(descriptionWindow, itemId + MsgItemPlainName);
@@ -184,10 +185,10 @@ s32 Shop_SelectUse(s32 unitId) {
       }
       // BUG: default code selects the error using selectionResult, still zero.
       if (discardStatus == -4) {
-        UiText_OpenMessageWindowFar(MsgCannotDropIt, 8, 1, 2);
+        Message_OpenWindowFar(MsgCannotDropIt, 8, 1, 2);
       } else if (SHOP_CANNOT_REMOVE_STATUS(discardStatus, selectionResult) ==
                  -3) {
-        UiText_OpenMessageWindowFar(MsgCannotRemoveIt, 8, 1, 2);
+        Message_OpenWindowFar(MsgCannotRemoveIt, 8, 1, 2);
       }
       Sound_PlaySongFar(SE_MENU_CANCEL);
       while (UiWork_IsCompleteFar() == 0)
@@ -234,8 +235,8 @@ s32 Shop_SelectUse(s32 unitId) {
     }
   }
 
-  UiWork_FinalizeFar(descriptionWindow, 2);
-  UiWork_FinalizeFar(priceWindow, 2);
+  Window_CloseFar(descriptionWindow, 2);
+  Window_CloseFar(priceWindow, 2);
   WaitFrames(1);
   return selectionResult;
 }
@@ -243,7 +244,7 @@ s32 Shop_SelectUse(s32 unitId) {
 /// Draws the slot's item name and, below it, why it cannot be dropped or what
 /// the whole stack would sell for. Called by Shop_SelectUse each time the
 /// cursor moves.
-void Shop_DrawUseItem(struct UiWindow *window, s32 unitId, s32 slot) {
+void Shop_DrawUseItem(struct Window *window, s32 unitId, s32 slot) {
   struct Unit *unit = Unit_GetFar(unitId);
   s32 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
   u32 inventoryEntry = unit->inventory[slot];
@@ -252,16 +253,14 @@ void Shop_DrawUseItem(struct UiWindow *window, s32 unitId, s32 slot) {
   if (window != 0) {
     s32 discardStatus;
 
-    RenderOutput_RedrawSavedRectFar(window);
-    UiText_DrawCharacterAtOffsetFar(itemId + MsgItemName, window, 0, 0);
+    WindowSprite_RedrawSavedRectFar(window);
+    Text_DrawMessageAsTilesFar(itemId + MsgItemName, window, 0, 0);
 
     discardStatus = Inventory_CheckDiscardFar(unitId, slot);
     if (discardStatus == -4) {
-      UiText_DrawCharacterAtOffsetFar(MsgCannotDrop, window, SHOP_ITEM_NOTE_X,
-                                      8);
+      Text_DrawMessageAsTilesFar(MsgCannotDrop, window, SHOP_ITEM_NOTE_X, 8);
     } else if (discardStatus == -3) {
-      UiText_DrawCharacterAtOffsetFar(MsgCannotRemove, window, SHOP_ITEM_NOTE_X,
-                                      8);
+      Text_DrawMessageAsTilesFar(MsgCannotRemove, window, SHOP_ITEM_NOTE_X, 8);
     } else {
       s32 unitSalePrice;
       s32 stackSalePrice;
@@ -269,13 +268,12 @@ void Shop_DrawUseItem(struct UiWindow *window, s32 unitId, s32 slot) {
       unitSalePrice = Shop_SalePrice(unit->inventory[slot]);
       stackSalePrice = quantity * unitSalePrice;
 
-      UiText_DrawCharacterAtOffsetFar(MsgPriceHeading, window,
-                                      SHOP_USE_PRICE_LABEL_X, 8);
-      UiText_DrawNumberInWindowFar(stackSalePrice, 5, window,
-                                   SHOP_USE_PRICE_NUMBER_X, 8);
-      UiText_DrawCharacterAtOffsetFar(MsgPriceHeading -
-                                          SHOP_USE_COIN_MESSAGE_OFFSET,
-                                      window, SHOP_USE_COIN_LABEL_X, 8);
+      Text_DrawMessageAsTilesFar(MsgPriceHeading, window,
+                                 SHOP_USE_PRICE_LABEL_X, 8);
+      Text_DrawNumberInWindowFar(stackSalePrice, 5, window,
+                                 SHOP_USE_PRICE_NUMBER_X, 8);
+      Text_DrawMessageAsTilesFar(MsgPriceHeading - SHOP_USE_COIN_MESSAGE_OFFSET,
+                                 window, SHOP_USE_COIN_LABEL_X, 8);
     }
   }
 }

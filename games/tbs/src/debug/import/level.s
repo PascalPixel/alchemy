@@ -2,15 +2,15 @@
 	.set overlay_imports, 1
 	.set import.__modsi3, 1
 	.set import.Engine_TaskWait, 1
-	.set import.UiWindow_Create, 1
-	.set import.UiWork_Finalize, 1
-	.set import.UiText_DrawResource, 1
-	.set import.UiText_DrawCharacterAtOffset, 1
-	.set import.UiText_DrawStringAtOffset, 1
-	.set import.UiText_DrawStringInWindow, 1
-	.set import.UiText_DrawNumberAtOffset, 1
-	.set import.UiText_DrawNumberInWindow, 1
-	.set import.RenderOutput_RedrawSavedRect, 1
+	.set import.Window_Create, 1
+	.set import.Window_Close, 1
+	.set import.Text_DrawMessage, 1
+	.set import.Text_DrawMessageAsTiles, 1
+	.set import.Text_DrawStringAtOffset, 1
+	.set import.Text_DrawStringInWindow, 1
+	.set import.Text_DrawNumberAtOffset, 1
+	.set import.Text_DrawNumberInWindow, 1
+	.set import.WindowSprite_RedrawSavedRect, 1
 	.set import.Engine_DebugClearWindow, 1
 	.set import.DebugMenu_BrowseIcons, 1
 	.set import.DebugMenu_BrowsePortraits, 1

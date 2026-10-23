@@ -42,7 +42,7 @@ void System_Initialize(void) {
   gDebugMode = 0;
   gCpuLoadDisplayEnabled = 0;
   System_CopyBuildStamp();
-  Ui_LoadWindowGraphics();
+  Window_LoadGraphics();
   DebugText_Clear();
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON;
   Runtime_SetIrqHandler(IRQ_VBLANK, 1, (void (*)(void))System_VBlankHandler);

@@ -6,8 +6,8 @@
 
 /// Loads each menu icon resource whose cache slot was acquired: the Djinn
 /// menu's up and down arrows (djinn/arrowup and arrowdn) into the work's
-/// resourceSlots[0] and [1], for UiIcon_DrawVariantWithTileOffset.
-/// DjinnMenu_Run calls it and Menu_ResetTwoResourceEntries frees them.
+/// resourceSlots[0] and [1], for Icon_DrawVariantWithTileOffset.
+/// DjinnMenu_Run calls it and IconMenu_ReleaseArrows frees them.
 void Resource_LoadPairedBlocksIfAvailable(void) {
   s32 firstSlot;
   s32 secondSlot;
@@ -32,7 +32,7 @@ void Resource_LoadPairedBlocksIfAvailable(void) {
 /// Releases both cached icon resources used by the menu: the two arrows in the
 /// work's resourceSlots, which ItemMenu_Run and DjinnMenu_Run free as they
 /// close.
-void Menu_ResetTwoResourceEntries(void) {
+void IconMenu_ReleaseArrows(void) {
   struct ItemMenuWork *menu;
 
   menu = gMenuWork;
@@ -44,7 +44,7 @@ void Menu_ResetTwoResourceEntries(void) {
 /// Psynergy icon of ability resourceId (Ability_LoadGlyphFar), built in 0x608
 /// bytes of HEAP_SLOT_GLYPH_TRANSFER, which is released again. Returns the
 /// slot's first sprite tile (VramCache_Reload).
-s32 UiIcon_LoadResourceIntoSlot(s32 resourceId, s32 slot) {
+s32 Icon_LoadResourceIntoSlot(s32 resourceId, s32 slot) {
   s32 decodedResource;
   s32 selectedSlot;
   s32 firstTile;
@@ -61,15 +61,15 @@ s32 UiIcon_LoadResourceIntoSlot(s32 resourceId, s32 slot) {
 /// Loads an icon into a free cache slot and creates its sprite when possible:
 /// ability resourceId's Psynergy icon at (x, y) of window, for the Djinn
 /// preview's Psynergy lists. Returns no value; callers ignore it.
-s32 UiIcon_CreateWithLoadedResource(struct UiWindow *window, s32 x, s32 y,
-                                    s32 resourceId) {
+s32 Icon_CreateWithLoadedResource(struct Window *window, s32 x, s32 y,
+                                  s32 resourceId) {
   s32 slot;
 
   slot = Resource_FindFreeEntry();
   // 0x60 is VRAM_CACHE_ENTRY_COUNT: no slot free.
   if (slot != 0x60) {
-    UiIcon_LoadResourceIntoSlot(resourceId, slot);
-    RenderOutput_CreateFar(slot, ICON_SPRITE_16X16, window, x, y);
+    Icon_LoadResourceIntoSlot(resourceId, slot);
+    WindowSprite_CreateFar(slot, ICON_SPRITE_16X16, window, x, y);
   }
 #ifdef UBFIX
   return 0;
@@ -78,15 +78,15 @@ s32 UiIcon_CreateWithLoadedResource(struct UiWindow *window, s32 x, s32 y,
 
 /// Creates a stat-change arrow from one of the two loaded resources: the up
 /// arrow (variant 0, STAT_ARROW_UP) or the down arrow at (x, y) of window, for
-/// the equipment preview (UiText_DrawStatComparison). The sprite belongs to
+/// the equipment preview (Text_DrawStatComparison). The sprite belongs to
 /// the window. Returns 1, or -1 when no render output is free, in which case
-/// RenderOutput_Create has also released the arrow's shared VRAM slot.
-s32 UiIcon_CreateStatChangeArrow(struct UiWindow *window, s32 x, s32 y,
-                                 s32 variant) {
-  struct RenderOutput *object;
+/// WindowSprite_Create has also released the arrow's shared VRAM slot.
+s32 Icon_CreateStatChangeArrow(struct Window *window, s32 x, s32 y,
+                               s32 variant) {
+  struct WindowSprite *object;
   u32 resource;
   s32 selectedVariant = variant;
-  struct UiWindow *targetWindow = window;
+  struct Window *targetWindow = window;
   s32 targetX = x;
   struct ItemMenuWork *menu = gMenuWork;
 
@@ -94,7 +94,7 @@ s32 UiIcon_CreateStatChangeArrow(struct UiWindow *window, s32 x, s32 y,
     resource = (u16)menu->resourceSlots[0];
   else
     resource = (u16)menu->resourceSlots[1];
-  object = RenderOutput_CreateFar(resource, ICON_SPRITE_16X16, targetWindow,
+  object = WindowSprite_CreateFar(resource, ICON_SPRITE_16X16, targetWindow,
                                   targetX, y);
   if (object == 0) {
     /* FAKEMATCH(dead): a test whose two arms both return -1, which emits
@@ -107,21 +107,21 @@ s32 UiIcon_CreateStatChangeArrow(struct UiWindow *window, s32 x, s32 y,
   }
   object->kind = 0;
   object->animationStep = 0;
-  object->active = ICON_SHOWN;
+  object->motion = ICON_SHOWN;
   return 1;
 }
 
 /// Creates an arrow with the vertical adjustment for its resource variant:
-/// as UiIcon_CreateStatChangeArrow, raised 3 pixels for the up arrow (variant
+/// as Icon_CreateStatChangeArrow, raised 3 pixels for the up arrow (variant
 /// 0) and 4 for the down arrow. The Djinn preview draws one beside each stat
 /// that would change. Returns 1, or -1 when no render output is free (and the
 /// arrow's VRAM slot released, as there).
-s32 UiIcon_DrawVariantWithTileOffset(struct UiWindow *window, s32 x, s32 y,
-                                     s32 variant) {
-  struct RenderOutput *object;
+s32 Icon_DrawVariantWithTileOffset(struct Window *window, s32 x, s32 y,
+                                   s32 variant) {
+  struct WindowSprite *object;
   u32 resource;
   s32 selectedVariant = variant;
-  struct UiWindow *targetWindow = window;
+  struct Window *targetWindow = window;
   s32 targetX = x;
   struct ItemMenuWork *menu = gMenuWork;
 
@@ -132,7 +132,7 @@ s32 UiIcon_DrawVariantWithTileOffset(struct UiWindow *window, s32 x, s32 y,
     resource = (u16)menu->resourceSlots[1];
     y -= 4;
   }
-  object = RenderOutput_CreateFar(resource, ICON_SPRITE_16X16, targetWindow,
+  object = WindowSprite_CreateFar(resource, ICON_SPRITE_16X16, targetWindow,
                                   targetX, y);
   if (object == 0) {
     /* FAKEMATCH(dead): a test whose two arms both return -1, which emits
@@ -145,6 +145,6 @@ s32 UiIcon_DrawVariantWithTileOffset(struct UiWindow *window, s32 x, s32 y,
   }
   object->kind = 0;
   object->animationStep = 0;
-  object->active = ICON_SHOWN;
+  object->motion = ICON_SHOWN;
   return 1;
 }

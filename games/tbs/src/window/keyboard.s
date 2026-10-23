@@ -6,15 +6,15 @@
 gMenu_PartySpriteResourceIds:
 	.4byte 90, 91, 92, 93
 @ The name entry screen's keyboard tilemaps
-	.global gNameEntry_KeyboardTilemap
-gNameEntry_KeyboardTilemap:
+	.global gNamingScreen_KeyboardTilemap
+gNamingScreen_KeyboardTilemap:
 	.ifdef TBS_EDITION_JA
 	.incbin "games/tbs/src/graphics/window/keyboard_ja.table.lz"
-	.global gNameEntry_AlternateKeyboardTilemap
-gNameEntry_AlternateKeyboardTilemap:
+	.global gNamingScreen_AlternateKeyboardTilemap
+gNamingScreen_AlternateKeyboardTilemap:
 	.incbin "games/tbs/src/graphics/window/keyboard_j2.table.lz"
-	.global NameEntry_KeyboardTilemap3
-NameEntry_KeyboardTilemap3:
+	.global NamingScreen_KeyboardTilemap3
+NamingScreen_KeyboardTilemap3:
 	.incbin "games/tbs/src/graphics/window/keyboard_j3.table.lz"
 	.else
 	.ifdef TBS_EDITION_ES

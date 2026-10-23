@@ -42,7 +42,7 @@ enum BattleType {
   /// The battles a script starts. Here and in a link battle the command menu
   /// itself refuses to run, with MsgNoTimeToRun ("This is no time to be
   /// running away!"), as it does once the party is challenged
-  /// (UiText_ShowLocalizedMessageAndWait, window/battle_command/link_timer.c).
+  /// (Message_ShowLocalizedAndWait, window/battle_command/link_timer.c).
   BATTLE_TYPE_SCRIPTED = 3,
   BATTLE_TYPE_LINK = 4, ///< a link battle (Battle_Run, menu/lobby.c)
   /// The debug battle menu's mark (DebugBattle_RunMenu), which no code tests
@@ -112,7 +112,7 @@ struct GameState {
   s32 leaderLocalId;       ///< the leader: its unit and its object event
   u8 party[8];             ///< the party in order
   u8 unusedAfterOwners[5]; ///< no code names it
-  u8 paletteGlow[2];       ///< window hue (0 to 23), brightness (0 to 14)
+  u8 windowColor[2];       ///< window hue (0 to 23), brightness (0 to 14)
   u8 unusedAfterGlow[3];   ///< no code names it
   /// The voice sound option: 1, as on a new game, plays each speaker's voice
   /// sound as their message types (Speaker_GetVoice).

@@ -148,7 +148,7 @@ static s32 Tolbi_UpdateKid(union FieldObject *fieldObject) {
 #endif
   struct ObjectEvent *self = &fieldObject->objectEvent;
   u8 **workAreas = gWindowWork;
-  struct UiRenderWork *ui = (struct UiRenderWork *)workAreas[0];
+  struct WindowWork *ui = (struct WindowWork *)workAreas[0];
   struct FieldWork *work =
       (struct FieldWork *)workAreas[HEAP_SLOT_FIELD - HEAP_SLOT_WINDOW];
   u16 *kidFlags = (u16 *)&self->timer;
@@ -172,7 +172,7 @@ static s32 Tolbi_UpdateKid(union FieldObject *fieldObject) {
 
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
 
-  if ((s16)work->talk != 0 || ui->mode != 0) {
+  if ((s16)work->talk != 0 || ui->mindRead != 0) {
     range = 26;
     if ((*kidFlags & KID_TALKING) != 0) {
       force = 1;
@@ -599,8 +599,8 @@ static void Tolbi_MeetSearchingSoldiers(void) {
   // becomes the speaker so that answering closes that portrait window.
   Script_OpenMessage(TOLBI_SOLDIER_A, 0);
   Engine_ScriptWait(25);
-  UiWindow_CreateWithSideObject(SPRITE_BABI, 0, 12, 7);
-  UiText_OpenMessageWindow((firstMsg + 3), 11, 12, 2);
+  Portrait_OpenWindow(SPRITE_BABI, 0, 12, 7);
+  Message_OpenWindow((firstMsg + 3), 11, 12, 2);
   gFieldWork->speaker = TOLBI_MISSING_PERSON_POSTER;
   if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
     // Yes: "Babi must be nearby!!!" They nod and run east.

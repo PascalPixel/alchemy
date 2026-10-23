@@ -296,7 +296,7 @@ struct Reel {
   s8 stop; ///< frames
 };
 
-struct UiWindow;
+struct Window;
 
 /// The slot machine's states (LuckyWheelsWork.state).
 enum LuckyWheelsState {
@@ -327,8 +327,8 @@ struct LuckyWheelsWork {
   s32 timer;
   s32 winningLines[7];
   struct OamShadow oam[128];
-  struct UiWindow *window;
-  struct UiWindow *subWindow;
+  struct Window *window;
+  struct Window *subWindow;
   u8 unusedAfterWindows[8]; ///< no code names it
   u16 scanlineOffsets[160];
 #if TBS_PATCH_1
@@ -410,16 +410,15 @@ void LuckyWheels_RunFrame(void) {
   if (gDebugPaused == 0) {
     if (work->state == LUCKY_WHEELS_BETTING) {
       tickets = PartyInventory_CountItemFar(ITEM_GAME_TICKET);
-      UiText_DrawNumberInWindowFar(tickets - work->bet,
-                                   LUCKY_WHEELS_COIN_DIGITS, work->subWindow,
-                                   LUCKY_WHEELS_COIN_X, 0);
-      UiText_DrawNumberInWindowFar(work->bet, 2, work->subWindow, 64, 8);
+      Text_DrawNumberInWindowFar(tickets - work->bet, LUCKY_WHEELS_COIN_DIGITS,
+                                 work->subWindow, LUCKY_WHEELS_COIN_X, 0);
+      Text_DrawNumberInWindowFar(work->bet, 2, work->subWindow, 64, 8);
       if (work->pressed & KEY_B) {
         struct ReelSave *save = (struct ReelSave *)((u8 *)&gGameState + 12);
 
         work->state = LUCKY_WHEELS_DONE;
         save->wonPrizes[0] = -2;
-        UiWork_FinalizeFar(work->window, 1);
+        Window_CloseFar(work->window, 1);
       } else {
         if (work->pressed & KEY_UP) {
           if (work->bet <= 3 && tickets > work->bet) {
@@ -442,10 +441,10 @@ void LuckyWheels_RunFrame(void) {
         if (work->pressed & KEY_A) {
           work->state = LUCKY_WHEELS_SPINNING;
           fx->frame = 0;
-          UiWork_FinalizeFar(work->window, 1);
+          Window_CloseFar(work->window, 1);
           for (k = 0; k != work->bet; k++)
             PartyInventory_RemoveFar(ITEM_GAME_TICKET);
-          UiWork_FinalizeFar(work->subWindow, 1);
+          Window_CloseFar(work->subWindow, 1);
           Sound_PlaySongFar(SE_LUCKY_WHEELS_SPIN);
         }
       }
@@ -496,68 +495,63 @@ void LuckyWheels_RunFrame(void) {
         if (work->cursor == 5) {
           if (allHeld != 0) {
             if (work->phase != 1 && work->phase != 2) {
-              UiWork_FinalizeFar(work->window, 1);
+              Window_CloseFar(work->window, 1);
               work->window =
-                  UiWindow_CreateFar(LUCKY_WHEELS_ALL_HELD_X, 0,
-                                     LUCKY_WHEELS_ALL_HELD_WIDTH, 4, 6);
-              UiText_DrawCharacterAtOffsetFar(MsgSlotsAllHeld, work->window, 0,
-                                              0);
+                  Window_CreateFar(LUCKY_WHEELS_ALL_HELD_X, 0,
+                                   LUCKY_WHEELS_ALL_HELD_WIDTH, 4, 6);
+              Text_DrawMessageAsTilesFar(MsgSlotsAllHeld, work->window, 0, 0);
               work->phase = 1;
             } else if (work->phase == 1) {
-              UiText_DrawCharacterAtOffsetFar(MsgSlotsCannotPull, work->window,
-                                              0, 8);
+              Text_DrawMessageAsTilesFar(MsgSlotsCannotPull, work->window, 0,
+                                         8);
               work->phase = 2;
             }
           } else {
             if (work->phase != 3) {
-              UiWork_FinalizeFar(work->window, 1);
-              work->window = UiWindow_CreateFar(LUCKY_WHEELS_START_X, 0,
-                                                LUCKY_WHEELS_START_WIDTH, 3, 6);
-              UiText_DrawCharacterAtOffsetFar(MsgSlotsStart, work->window, 0,
-                                              0);
+              Window_CloseFar(work->window, 1);
+              work->window = Window_CreateFar(LUCKY_WHEELS_START_X, 0,
+                                              LUCKY_WHEELS_START_WIDTH, 3, 6);
+              Text_DrawMessageAsTilesFar(MsgSlotsStart, work->window, 0, 0);
             }
             work->phase = 3;
           }
         } else if (work->reels[work->cursor].held == 0) {
           if (work->phase != 4) {
-            UiWork_FinalizeFar(work->window, 1);
-            work->window = UiWindow_CreateFar(LUCKY_WHEELS_HOLD_X, 0,
-                                              LUCKY_WHEELS_HOLD_WIDTH, 3, 6);
-            UiText_DrawCharacterAtOffsetFar(MsgSlotsHold, work->window, 0, 0);
+            Window_CloseFar(work->window, 1);
+            work->window = Window_CreateFar(LUCKY_WHEELS_HOLD_X, 0,
+                                            LUCKY_WHEELS_HOLD_WIDTH, 3, 6);
+            Text_DrawMessageAsTilesFar(MsgSlotsHold, work->window, 0, 0);
           }
           work->phase = 4;
         } else {
           if (work->phase != 5) {
-            UiWork_FinalizeFar(work->window, 1);
-            work->window = UiWindow_CreateFar(LUCKY_WHEELS_RELEASE_X, 0,
-                                              LUCKY_WHEELS_RELEASE_WIDTH, 3, 6);
-            UiText_DrawCharacterAtOffsetFar(MsgSlotsRelease, work->window, 0,
-                                            0);
+            Window_CloseFar(work->window, 1);
+            work->window = Window_CreateFar(LUCKY_WHEELS_RELEASE_X, 0,
+                                            LUCKY_WHEELS_RELEASE_WIDTH, 3, 6);
+            Text_DrawMessageAsTilesFar(MsgSlotsRelease, work->window, 0, 0);
           }
           work->phase = 5;
         }
 #else
-        UiWork_FinalizeFar(work->window, 1);
+        Window_CloseFar(work->window, 1);
         if (work->cursor == 5) {
           if (allHeld != 0) {
-            work->window = UiWindow_CreateFar(12, 0, 18, 3, 6);
-            UiText_DrawCharacterAtOffsetFar(MsgSlotsAllHeld, work->window, 0,
-                                            0);
+            work->window = Window_CreateFar(12, 0, 18, 3, 6);
+            Text_DrawMessageAsTilesFar(MsgSlotsAllHeld, work->window, 0, 0);
           } else {
-            work->window = UiWindow_CreateFar(18, 0, 12, 3, 6);
-            UiText_DrawCharacterAtOffsetFar(MsgSlotsStart, work->window, 0, 0);
+            work->window = Window_CreateFar(18, 0, 12, 3, 6);
+            Text_DrawMessageAsTilesFar(MsgSlotsStart, work->window, 0, 0);
           }
         } else {
-          work->window = UiWindow_CreateFar(18, 0, 12, 3, 6);
+          work->window = Window_CreateFar(18, 0, 12, 3, 6);
           if (work->reels[work->cursor].held == 0)
-            UiText_DrawCharacterAtOffsetFar(MsgSlotsHold, work->window, 0, 0);
+            Text_DrawMessageAsTilesFar(MsgSlotsHold, work->window, 0, 0);
           else
-            UiText_DrawCharacterAtOffsetFar(MsgSlotsRelease, work->window, 0,
-                                            0);
+            Text_DrawMessageAsTilesFar(MsgSlotsRelease, work->window, 0, 0);
         }
 #endif
       } else {
-        UiWork_FinalizeFar(work->window, 1);
+        Window_CloseFar(work->window, 1);
       }
     } else if (work->state == LUCKY_WHEELS_WON) {
       work->timer++;
@@ -582,7 +576,7 @@ void LuckyWheels_RunFrame(void) {
 #if TBS_PATCH_1
       if (work->phase == 0) {
         work->phase = 1;
-        UiText_DrawCharacterAtOffsetFar(MsgSlotsPullLever, work->window, 0, 8);
+        Text_DrawMessageAsTilesFar(MsgSlotsPullLever, work->window, 0, 8);
       }
 #endif
       if (work->pressed & KEY_A) {
@@ -591,7 +585,7 @@ void LuckyWheels_RunFrame(void) {
         work->phase = 0;
 #endif
         Sound_PlaySongFar(SE_MENU_CONFIRM);
-        UiWork_FinalizeFar(work->window, 1);
+        Window_CloseFar(work->window, 1);
       }
     } else if (work->state == LUCKY_WHEELS_OUT_OF_SPINS) {
       work->timer++;
@@ -599,9 +593,9 @@ void LuckyWheels_RunFrame(void) {
         work->state = LUCKY_WHEELS_DONE;
     } else if (work->state != LUCKY_WHEELS_DONE) {
       if (work->timer == 4) {
-        work->window = UiWindow_CreateFar(LUCKY_WHEELS_STOP_X, 17,
-                                          LUCKY_WHEELS_STOP_WIDTH, 3, 6);
-        UiText_DrawCharacterAtOffsetFar(MsgSlotsStopReels, work->window, 0, 0);
+        work->window = Window_CreateFar(LUCKY_WHEELS_STOP_X, 17,
+                                        LUCKY_WHEELS_STOP_WIDTH, 3, 6);
+        Text_DrawMessageAsTilesFar(MsgSlotsStopReels, work->window, 0, 0);
       }
       if (work->timer == 16)
         Sound_PlaySongFar(SE_306);
@@ -681,34 +675,33 @@ void LuckyWheels_RunFrame(void) {
           fx->transferMode = CANVAS_COPY_AND_CLEAR;
           fx->transferValue = 0;
           REG_BLDCNT = 0;
-          UiWork_FinalizeFar(work->window, 1);
+          Window_CloseFar(work->window, 1);
         } else {
           work->state = LUCKY_WHEELS_NO_WIN;
 #if TBS_PATCH_1
           work->phase = 0;
-          UiWork_FinalizeFar(work->window, 1);
+          Window_CloseFar(work->window, 1);
 #if LUCKY_WHEELS_HINT_BEFORE_LAST_SPIN
           if (work->spins <= 3)
 #endif
           {
-            work->window = UiWindow_CreateFar(3, 16, 24, 4, 6);
-            UiText_DrawCharacterAtOffsetFar(MsgSlotsChooseHeld, work->window, 0,
-                                            0);
+            work->window = Window_CreateFar(3, 16, 24, 4, 6);
+            Text_DrawMessageAsTilesFar(MsgSlotsChooseHeld, work->window, 0, 0);
           }
 #else
-          UiWork_FinalizeFar(work->window, 1);
+          Window_CloseFar(work->window, 1);
           {
             s32 message;
 
-            work->window = UiWindow_CreateFar(7, 16, 16, 4, 6);
+            work->window = Window_CreateFar(7, 16, 16, 4, 6);
             message = MsgSlotsChooseHeld;
-            UiText_DrawCharacterAtOffsetFar(message, work->window, 0, 0);
-            UiText_DrawCharacterAtOffsetFar(message + 1, work->window, 0, 8);
+            Text_DrawMessageAsTilesFar(message, work->window, 0, 0);
+            Text_DrawMessageAsTilesFar(message + 1, work->window, 0, 8);
           }
 #endif
           if (work->spins == 4) {
             s32 left = PartyInventory_CountItemFar(ITEM_GAME_TICKET);
-            struct UiWindow *window;
+            struct Window *window;
             s32 message;
 
             if (left > 0)
@@ -726,11 +719,11 @@ void LuckyWheels_RunFrame(void) {
             fx->transferMode = CANVAS_COPY_AND_CLEAR;
             fx->transferValue = 0;
             REG_BLDCNT = 0;
-            window = UiWindow_CreateFar(18, 0, 12, 4, 6);
+            window = Window_CreateFar(18, 0, 12, 4, 6);
             work->subWindow = window;
             message = MsgSlotsBet;
-            UiText_DrawCharacterAtOffsetFar(message, window, 0, 8);
-            UiText_DrawCharacterAtOffsetFar(message - 1, work->subWindow, 0, 0);
+            Text_DrawMessageAsTilesFar(message, window, 0, 8);
+            Text_DrawMessageAsTilesFar(message - 1, work->subWindow, 0, 0);
           }
         }
       }
@@ -910,7 +903,7 @@ void LuckyWheels_InitializeTitle(void) {
   s32 y;
   s32 i;
   s32 angle;
-  struct UiWindow *window;
+  struct Window *window;
   s32 message;
 
   state = ((struct LuckyWheelsWork **)
@@ -949,11 +942,11 @@ void LuckyWheels_InitializeTitle(void) {
   work->transferMode = CANVAS_COPY_AND_CLEAR;
   work->transferValue = 0;
   REG_BLDCNT = 0;
-  window = UiWindow_CreateFar(18, 0, 12, 4, 6);
+  window = Window_CreateFar(18, 0, 12, 4, 6);
   state->subWindow = window;
   message = MsgSlotsBet;
-  UiText_DrawCharacterAtOffsetFar(message, window, 0, 8);
-  UiText_DrawCharacterAtOffsetFar(message - 1, state->subWindow, 0, 0);
+  Text_DrawMessageAsTilesFar(message, window, 0, 8);
+  Text_DrawMessageAsTilesFar(message - 1, state->subWindow, 0, 0);
 }
 
 /// The slot machine: loads its backgrounds, sprites and palettes, fills each of
@@ -1140,19 +1133,19 @@ void LuckyWheels_Run(void) {
     REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON |
                   DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON;
     if (PartyInventory_CountItemFar(ITEM_GAME_TICKET) == 1) {
-      struct UiWindow *window = UiWindow_CreateFar(6, 16, 18, 3, 6);
+      struct Window *window = Window_CreateFar(6, 16, 18, 3, 6);
 
       state->window = window;
-      UiText_DrawCharacterAtOffsetFar(MsgSlotsControls, window, 0, 0);
+      Text_DrawMessageAsTilesFar(MsgSlotsControls, window, 0, 0);
     } else {
-      struct UiWindow *window = UiWindow_CreateFar(
+      struct Window *window = Window_CreateFar(
           LUCKY_WHEELS_HELP_WINDOW_X, 16, LUCKY_WHEELS_HELP_WINDOW_WIDTH, 4, 6);
       s32 message;
 
       state->window = window;
       message = MsgSlotsChangeBet;
-      UiText_DrawCharacterAtOffsetFar(message, window, 0, 0);
-      UiText_DrawCharacterAtOffsetFar(message + 1, state->window, 0, 8);
+      Text_DrawMessageAsTilesFar(message, window, 0, 0);
+      Text_DrawMessageAsTilesFar(message + 1, state->window, 0, 8);
     }
     work->transferPending = 0;
     Task_Add(LuckyWheels_RunFrame, 0x480);

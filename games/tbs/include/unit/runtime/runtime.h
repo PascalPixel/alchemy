@@ -94,15 +94,15 @@ s32 Math_IntegerSqrt(s32 value);
 s32 FixedSqrt(s32 value);
 
 s32 Palette_GetBasicSpriteColors(void);
-void NumberText_FormatHex(u32 value);
-void NumberText_FormatDecimal(s32 number);
+void String_FormatHex(u32 value);
+void String_FormatDecimal(s32 number);
 void DebugText_PrintBlanks(u32 count);
 void *memcpy(void *destination, const void *source, unsigned long size);
 void DebugText_Print(const u8 *src);
 void DebugText_PrintHex(u32 value, s32 digits);
 void DebugText_PrintDecimal(s32 value, s32 digits);
 void DebugText_Clear(void);
-void Ui_LoadWindowGraphics(void);
+void Window_LoadGraphics(void);
 void Palette_LoadBasicSpriteColors(void);
 
 void InitHeap(void);

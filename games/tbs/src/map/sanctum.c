@@ -541,7 +541,7 @@ static void EventScript_LeaveAfterRefusing(void) {
   // Nothing reads this byte, so the store changes nothing.
   paletteWork->padding2a03 = 1;
   Engine_ScriptWait(1);
-  UiText_ShowCenteredMessage(MsgSanctumWorldBeganDrifting, 1, 0);
+  FieldMessage_ShowCentered(MsgSanctumWorldBeganDrifting, 1, 0);
   Engine_ColorBufferApplyTarget(RGB(0, 0, 0), PALETTE_HALVES_BOTH);
   Engine_ColorBufferInterpolate(120);
   Engine_ScriptWait(120);
@@ -1737,7 +1737,7 @@ static void Sanctum_SpawnOrbitingEffect(s32 ownerId, s32 angleStep) {
 static s32 Sanctum_ChooseRestartOption(void) {
   s32 slot;
   struct MenuSprite cursor;
-  struct UiWindow *window;
+  struct Window *window;
   s32 text;
   s32 choice;
 
@@ -1751,16 +1751,16 @@ static s32 Sanctum_ChooseRestartOption(void) {
   Engine_ColorBufferApplyTarget(PALETTE_TRANSFORM_PLAIN, PALETTE_HALF_OBJ);
   Engine_ColorBufferInterpolate(1);
   Engine_ScriptWait(1);
-  window = UiWindow_Create(QUESTION_X, 7, QUESTION_WIDTH, 5, 1);
+  window = Window_Create(QUESTION_X, 7, QUESTION_WIDTH, 5, 1);
   text = MsgSanctumGreatHealer;
-  UiText_DrawResource(text, window, 16, 0);
+  Text_DrawMessage(text, window, 16, 0);
   if (Save_CountRecordsExcludingFlagged(1) == 0) {
-    UiText_DrawResource(text + 2, window, 16, 16);
+    Text_DrawMessage(text + 2, window, 16, 16);
   } else {
-    UiText_DrawResource(text + 1, window, 16, 16);
+    Text_DrawMessage(text + 1, window, 16, 16);
   }
-  FieldUiTextResource_Initialize(&cursor, &slot);
-  FieldUiTextResource_SetPosition(&cursor, 72, 60);
+  FieldMenuArrow_Create(&cursor, &slot);
+  FieldMenuArrow_SetPosition(&cursor, 72, 60);
   choice = 0;
   while ((gKeysPressed & KEY_A) == 0) {
     s32 x;
@@ -1769,11 +1769,11 @@ static s32 Sanctum_ChooseRestartOption(void) {
       choice ^= 1;
     }
     x = gSanctum_CursorBob[(gFrameTick >> 1) & 15] + CURSOR_X;
-    FieldUiTextResource_SetPosition(&cursor, x, (choice << 4) + 60);
+    FieldMenuArrow_SetPosition(&cursor, x, (choice << 4) + 60);
     Engine_ScriptWait(1);
   }
-  UiTextResource_Release(slot);
-  UiWork_Finalize(window, 1);
+  MenuArrow_Release(slot);
+  Window_Close(window, 1);
   return choice;
 }
 

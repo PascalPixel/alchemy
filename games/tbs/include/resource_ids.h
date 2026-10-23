@@ -25,7 +25,7 @@ extern char ResourceId_ResourceFarCalls;
 /// passes it when Select is pressed without B.
 extern char ResourceId_ResourceFarCallsAlternate;
 /// The window font and frame tiles, 256 tiles of 4 bits a pixel.
-/// Ui_LoadWindowGraphics copies them into BG character block 0, and the
+/// Window_LoadGraphics copies them into BG character block 0, and the
 /// window text routines draw their glyphs from here.
 extern char ResourceId_WindowTiles;
 /// The narrow glyphs the Japanese edition draws in the battle display's
@@ -289,7 +289,7 @@ extern char ResourceId_OpponentPathC; ///< The Navampa match's opponent path.
 extern char ResourceId_Lettering;
 /// The first of eight 256-byte cursor frames in consecutive rows; the option
 /// screen's slider marker adds the frame to it (OptionMenu_AnimateCursors).
-extern char ResourceId_ShopCursorFrames;
+extern char ResourceId_MenuCursorFrames;
 /// The 32x32 icons and portraits, each with 16 colours before its tiles
 /// (UiGlyph_LoadEntryWithPalette).
 extern char ResourceId_Icons;

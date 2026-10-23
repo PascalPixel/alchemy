@@ -45,32 +45,32 @@ struct DjinnMenuBackdrop {
 struct DjinnMenuWork {
   u8 unused[8]; ///< no view of the menu work names it (see menu/README.md)
   s32 owner;
-  struct UiWindow *moneyWindow; ///< ShopWork's; not named here
-  struct UiWindow *statusWindow;
-  struct RenderOutput *cursor;
-  /// The second of ItemMenuWork's paneIcons; not named here.
-  struct RenderOutput *secondPaneIcon;
+  struct Window *moneyWindow; ///< ShopWork's; not named here
+  struct Window *statusWindow;
+  struct WindowSprite *cursor;
+  /// The second of ItemMenuWork's sideIcons; not named here.
+  struct WindowSprite *secondPaneIcon;
   s8 selectedColumn[2]; ///< each pane's member, in owners
-  s8 paneCount[2];      ///< ItemMenuWork's; not named here
+  s8 sideCount[2];      ///< ItemMenuWork's; not named here
   /// ItemMenuWork's and ShopWork's itemWindow; not named here.
-  struct UiWindow *itemWindow;
-  struct UiWindow *window;
-  /// Never given a window, so NULL from UiWindow_InitializeWork on; the preview
+  struct Window *itemWindow;
+  struct Window *window;
+  /// Never given a window, so NULL from Window_InitializeWork on; the preview
   /// still redraws it, which reads the window's place from the BIOS. Outside
   /// the BIOS that returns the last BIOS instruction fetched, whose low half
-  /// as a width is over 30, so UiWindow_DrawFrame draws nothing.
-  struct UiWindow *unopenedWindow;
-  struct UiWindow *infoWindow; ///< ItemMenuWork's; not named here
-  struct UiWindow *listWindow;
-  struct UiWindow *secondWindow;
+  /// as a width is over 30, so Window_DrawFrame draws nothing.
+  struct Window *unopenedWindow;
+  struct Window *infoWindow; ///< ItemMenuWork's; not named here
+  struct Window *listWindow;
+  struct Window *secondWindow;
   /// ItemMenuWork's last windows and its icons; not named here.
   ///@{
   u8 itemWindows[0x10];
-  struct RenderOutput *entryIcons[32];
-  struct RenderOutput *categoryIcons[8];
+  struct WindowSprite *entryIcons[32];
+  struct WindowSprite *categoryIcons[8];
   ///@}
   u8 unusedAfterIcons[0x24]; ///< no view of the menu work names it
-  struct UiWindow *helpWindow;
+  struct Window *helpWindow;
   /// ItemMenuWork's cursor grid, selectedColumn to rowCount; not named
   /// here.
   u8 cursorGrid[4];
@@ -81,7 +81,7 @@ struct DjinnMenuWork {
   s32 ownerScale[8];  ///< ItemMenuWork's; not named here
   u16 selection[2];   ///< each pane's Djinni row chosen
   u16 pairEntries[2]; ///< 255 at first
-  struct RenderOutput *secondCursor;
+  struct WindowSprite *secondCursor;
   u8 unusedBeforeBackdrop[4]; ///< no view of the menu work names it
   struct DjinnMenuBackdrop *backdrop;
   u8 unusedAfterBackdrop[0x40];   ///< no view of the menu work names it
@@ -91,17 +91,17 @@ struct DjinnMenuWork {
   u8 ownerCount;
   u8 shownOwner[2]; ///< the member giving and the one receiving
   /// ItemMenuWork's selectedItemIcon; not named here.
-  struct RenderOutput *selectedIcon;
+  struct WindowSprite *selectedIcon;
   /// bits: 1 a give or trade awaits its confirmation | 0 a second Djinni is
   /// to be chosen
   u16 pending;
   s16 completionFlag; ///< ItemMenuWork's; not named here
-  /// FourObjectMotionState's animations, the figures the Djinn screen
+  /// DjinnFiguresWork's animations, the figures the Djinn screen
   /// moves through that view.
   struct AnimationObject *figures[4];
   u16 slotX[4];
   u16 slotY[4];
-  s32 figurePhases[4]; ///< FourObjectMotionState's phases; not named here
+  s32 figurePhases[4]; ///< DjinnFiguresWork's phases; not named here
   /// The Djinn chosen in each pane: index in their element, element, owner.
   ///@{
   u8 pairIndex[2];

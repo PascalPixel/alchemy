@@ -201,7 +201,7 @@ extern s32 gBattleBackground_Maps[];
 /// (battle_effect_composite.s); none of it runs where it is.
 extern const u32 gBlitterTemplate[];
 /// The message voice's rate by message speed option: 1, 3, then 10
-/// (Ui_SetMessageVoiceFromObjectEvent).
+/// (Message_SetVoiceFromObjectEvent).
 extern u8 gUi_RenderResultValues[];
 extern const u16 gWorldMap_CursorDirectionAngles[];
 extern const u8 gWorldMap_MarkerBlendCycle[];

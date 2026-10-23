@@ -10,15 +10,15 @@ struct FieldPosition;
 struct Object;
 struct MapEvent;
 struct ObjectEventTemplate;
-struct UiWindow;
+struct Window;
 
 s32 Engine_FieldEffectPlayCueAndStartEmitterOnTarget(s32 effect, s32 target,
                                                      s32 mode);
 void Engine_DjinnJoinParty(s32 slot, s32 element, s32 djinn);
 void Engine_EncounterRequestBattle(s32 zone_no, s32 slot_no);
-struct UiWindow *Engine_DebugCreateWindow(s32 x, s32 y, s32 width, s32 height,
-                                          s32 attrs);
-void Engine_DebugFinalizeWindow(struct UiWindow *work, s32 release);
+struct Window *Engine_DebugCreateWindow(s32 x, s32 y, s32 width, s32 height,
+                                        s32 attrs);
+void Engine_DebugFinalizeWindow(struct Window *work, s32 release);
 void Engine_DisplayScrollStartHBlankDma(s32 mode, s32 freqX, s32 stepX,
                                         s32 ampX, s32 freqY, s32 stepY,
                                         s32 ampY);
@@ -38,6 +38,6 @@ s32 DjinnMenu_Open(void);
 s32 Object_CheckMovementCollision(struct Object *object,
                                   struct FieldPosition *position);
 void MapEvents_UpdateInView(struct ObjectEventTemplate *entry);
-void UiText_DrawQuantity(u32 value, u32 kind);
+void Text_DrawQuantity(u32 value, u32 kind);
 
 #endif

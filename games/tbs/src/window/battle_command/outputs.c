@@ -10,14 +10,14 @@
 /// shape and size bits. The sprite draws on layer 255 until the caller changes
 /// it. Returns the output, or NULL with the VRAM slot released when all
 /// outputs are in use.
-struct RenderOutput *RenderOutput_Create(s32 slot, s32 oamFlags,
-                                         struct UiWindow *window, s32 offsetX,
+struct WindowSprite *WindowSprite_Create(s32 slot, s32 oamFlags,
+                                         struct Window *window, s32 offsetX,
                                          s32 offsetY) {
   s32 x;
-  struct RenderOutput *output;
+  struct WindowSprite *output;
   s32 y;
 
-  output = RenderOutput_AcquireFree();
+  output = WindowSprite_AcquireFree();
   if (output == NULL) {
     Resource_ResetEntry(slot);
     return NULL;
@@ -52,10 +52,10 @@ struct RenderOutput *RenderOutput_Create(s32 slot, s32 oamFlags,
   output->y = y;
   output->index = slot;
   // Kind 1: the output owns the slot, which is freed with it. Its motion is
-  // UI_SPRITE_STILL.
-  output->kind = RENDER_OUTPUT_SPRITE;
-  output->active = 1;
-  RenderOutput_AppendToList(&window->output, output);
+  // WINDOW_SPRITE_MOTION_STILL.
+  output->kind = WINDOW_SPRITE_ICON;
+  output->motion = 1;
+  WindowSprite_AppendToList(&window->sprites, output);
   return output;
 }
 
@@ -63,8 +63,8 @@ struct RenderOutput *RenderOutput_Create(s32 slot, s32 oamFlags,
 /// it as a 16x16 sprite at (x, y) in `window`. Returns NULL when it cannot be
 /// loaded. The field menus' item and Psynergy icons come through here, by far
 /// call (menu/menu).
-struct RenderOutput *RenderOutput_CreateFromResource(s32 mode, s32 resource,
-                                                     struct UiWindow *window,
+struct WindowSprite *WindowSprite_CreateFromResource(s32 mode, s32 resource,
+                                                     struct Window *window,
                                                      s32 x, s32 y) {
   s32 slot;
 
@@ -72,24 +72,24 @@ struct RenderOutput *RenderOutput_CreateFromResource(s32 mode, s32 resource,
   if (slot < 0) {
     return NULL;
   }
-  return RenderOutput_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
+  return WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
 }
 
 /// Copies icon `icon` (with `layers` passed on to the copier) into a free VRAM
 /// slot and shows it as a 16x16 sprite at (x, y) in `window`. Returns NULL
 /// when no slot is free. The shops' item icons come through here, by far
 /// call.
-struct RenderOutput *RenderOutput_CreateLoaded(s32 icon, s32 layers,
-                                               struct UiWindow *window, s32 x,
+struct WindowSprite *WindowSprite_CreateLoaded(s32 icon, s32 layers,
+                                               struct Window *window, s32 x,
                                                s32 y) {
   s32 slot;
-  struct RenderOutput *output;
+  struct WindowSprite *output;
 
   slot = Resource_FindFreeEntry();
   output = NULL;
   if (slot != VRAM_CACHE_ENTRY_COUNT) {
-    UiIcon_CopyResourceToSlot(icon, layers, slot);
-    output = RenderOutput_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
+    Icon_CopyResourceToSlot(icon, layers, slot);
+    output = WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
   }
   return output;
 }
@@ -97,39 +97,39 @@ struct RenderOutput *RenderOutput_CreateLoaded(s32 icon, s32 layers,
 /// Builds a 16x16 icon from frame pattern 1 with overlay pattern `icon` drawn
 /// over it, and shows it at (x, y) in `window` on draw layer 251. Returns NULL
 /// when no VRAM slot is free. Nothing calls it.
-struct RenderOutput *RenderOutput_CreateWithTransform(s32 icon,
-                                                      struct UiWindow *window,
+struct WindowSprite *WindowSprite_CreateWithTransform(s32 icon,
+                                                      struct Window *window,
                                                       s32 x, s32 y) {
   s32 slot;
   s32 unusedTile;
-  struct RenderOutput *output;
+  struct WindowSprite *output;
 
   slot = Resource_FindFreeEntry();
   if (slot == VRAM_CACHE_ENTRY_COUNT) {
     return NULL;
   }
   Ui_BuildPairedPatternsToSlot(icon, 1, &slot, &unusedTile, 1);
-  output = RenderOutput_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
+  output = WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
   // Not checked: with every output in use, this stores through NULL.
   output->sentinel = 251;
   return output;
 }
 
-/// Loads the pattern at the start of gRenderResource_PairSourceTable into a
+/// Loads the pattern at the start of gHeadingPictures into a
 /// free VRAM slot and shows it as a 16x16 sprite at (x, y) in `window`.
 /// `tableEntry` is passed on to the loader, which loads that same pattern for
 /// every value. Returns NULL when no slot is free.
-struct RenderOutput *RenderOutput_CreateFromTable(s32 tableEntry,
-                                                  struct UiWindow *window,
-                                                  s32 x, s32 y) {
+struct WindowSprite *WindowSprite_CreateFromTable(s32 tableEntry,
+                                                  struct Window *window, s32 x,
+                                                  s32 y) {
   s32 slot;
-  struct RenderOutput *output;
+  struct WindowSprite *output;
 
   slot = Resource_FindFreeEntry();
   output = NULL;
   if (slot != VRAM_CACHE_ENTRY_COUNT) {
     RenderResource_LoadTableEntry(tableEntry, 0, slot);
-    output = RenderOutput_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
+    output = WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
   }
   return output;
 }
@@ -140,13 +140,13 @@ struct RenderOutput *RenderOutput_CreateFromTable(s32 tableEntry,
 /// characters 0 and 1 show portraits 18 and 19 instead. `unused` is
 /// passed on to the loader, which ignores it. Returns the sprite, or NULL when
 /// the character has no portrait or both slots are taken. The slot records
-/// the portrait and its VRAM slot (UiRenderWork.resourceIds and outputIds);
-/// the message windows' speaker portraits come through here
+/// the portrait and its VRAM slot (WindowWork.portraitPictures and
+/// portraitSprites); the message windows' speaker portraits come through here
 /// (window/messages.c).
-struct RenderOutput *CreateSideObject(s32 character, s32 unused, s32 side,
-                                      struct UiWindow *window, s32 x, s32 y) {
-  struct UiRenderWork *work = UI_WORK;
-  struct RenderOutput *portrait = NULL;
+struct WindowSprite *CreateSideObject(s32 character, s32 unused, s32 side,
+                                      struct Window *window, s32 x, s32 y) {
+  struct WindowWork *work = WINDOW_WORK;
+  struct WindowSprite *portrait = NULL;
   s32 slot;
   s32 tile;
   s32 icon;
@@ -159,32 +159,32 @@ struct RenderOutput *CreateSideObject(s32 character, s32 unused, s32 side,
       character = 19;
   }
 
-  icon = UiText_GetSpeakerPortrait(character);
+  icon = Portrait_GetForSpeaker(character);
   if (icon == -1)
     return portrait;
 
   // No side given: the second slot if it is free, else the first.
   if ((u32)side > 1) {
     side = 1;
-    if (work->resourceIds[1] != PORTRAIT_SLOT_EMPTY) {
+    if (work->portraitPictures[1] != PORTRAIT_SLOT_EMPTY) {
       side = 0;
-      if (work->resourceIds[0] != PORTRAIT_SLOT_EMPTY)
+      if (work->portraitPictures[0] != PORTRAIT_SLOT_EMPTY)
         return portrait;
     }
   }
 
   palette = PORTRAIT_PALETTE + side;
   UiGlyph_LoadEntryWithPalette(icon, unused, &slot, &tile, palette, 0);
-  portrait = RenderOutput_Create(slot, OUTPUT_SIZE_32X32, window, x, y);
+  portrait = WindowSprite_Create(slot, OUTPUT_SIZE_32X32, window, x, y);
   if (portrait != NULL) {
     portrait->oam.palette = palette;
-    portrait->kind = RENDER_OUTPUT_PORTRAIT;
+    portrait->kind = WINDOW_SPRITE_PORTRAIT;
   }
 
-  // Recorded even when no output was free and RenderOutput_Create released
+  // Recorded even when no output was free and WindowSprite_Create released
   // the VRAM slot.
-  work->resourceIds[side] = icon;
-  work->outputIds[side] = slot;
+  work->portraitPictures[side] = icon;
+  work->portraitSprites[side] = slot;
   return portrait;
 }
 
@@ -198,9 +198,9 @@ void Ui_LoadCharacterEntryForSlot(u32 side, s32 character, s32 unused) {
   s32 tile;
   s32 slot;
   u32 icon;
-  struct UiRenderWork *work;
+  struct WindowWork *work;
 
-  work = UI_WORK;
+  work = WINDOW_WORK;
 
   if (GameFlag_TestFar(FLAG_CHILDHOOD) != 0) {
     if (character == 0)
@@ -209,18 +209,18 @@ void Ui_LoadCharacterEntryForSlot(u32 side, s32 character, s32 unused) {
       character = 19;
   }
 
-  icon = UiText_GetSpeakerPortrait(character);
+  icon = Portrait_GetForSpeaker(character);
   if (icon != -1U) {
     if (side > 1U) {
-      if (work->resourceIds[1] == icon) {
+      if (work->portraitPictures[1] == icon) {
         side = 1;
-      } else if (work->resourceIds[0] == icon) {
+      } else if (work->portraitPictures[0] == icon) {
         side = 0;
       } else {
         return;
       }
     }
-    slot = work->outputIds[side];
+    slot = work->portraitSprites[side];
     UiGlyph_LoadEntryWithPalette(icon, unused, &slot, &tile,
                                  PORTRAIT_PALETTE + side, 1);
   }
@@ -228,18 +228,18 @@ void Ui_LoadCharacterEntryForSlot(u32 side, s32 character, s32 unused) {
 
 /// Switches the sprite output `out` to animation `mode` from its first step.
 /// Does nothing when `out` is NULL.
-void RenderOutput_SetAnimation(struct RenderOutput *out, s32 mode) {
+void WindowSprite_SetMotion(struct WindowSprite *out, s32 mode) {
   if (out != NULL) {
-    out->active = mode;
+    out->motion = mode;
     out->animationStep = 0;
   }
 }
 
 /// Sets the draw layer of the sprite output `output` to 255 - `priority`, so a
 /// higher priority draws on a lower layer. Does nothing when `output` is NULL.
-void RenderOutput_SetInvertedSentinel(void *output, s32 priority) {
+void WindowSprite_SetInvertedSentinel(void *output, s32 priority) {
   if (output != NULL)
-    ((struct RenderOutput *)output)->sentinel = ~priority;
+    ((struct WindowSprite *)output)->sentinel = ~priority;
 }
 
 typedef void (*WindowSpanRoutine)(u16 *spans, u16 *tilemap);
@@ -254,7 +254,7 @@ typedef void (*WindowSpanRoutine)(u16 *spans, u16 *tilemap);
 /// of the first 80 lines only.
 /// XXX: likely meant to cover all 160 lines, because each line takes 4 bytes;
 /// what the lower half then shows is not established.
-void UiWindow_FillScanlineSpans(void *spans) {
+void Win_FillScanlineSpans(void *spans) {
   void *tilemap = gWindowWork[0];
 
   if (tilemap == NULL) {
@@ -271,10 +271,10 @@ void UiWindow_FillScanlineSpans(void *spans) {
 /// Fills the top-left `width` x `height` tiles of the 32-tile-wide BG screen
 /// block at 0x06002000 with the tilemap entry `value`. The first two
 /// parameters are ignored.
-void UiWindow_FillScreenBlockRect(s32 unused0, s32 unused1, u32 width,
-                                  u32 height, s32 value) {
+void Win_FillScreenBlockRect(s32 unused0, s32 unused1, u32 width, u32 height,
+                             s32 value) {
   u32 row = 0;
-  s16 *dst = (s16 *)UI_TILEMAP_VRAM;
+  s16 *dst = (s16 *)WINDOW_TILEMAP_VRAM;
 
   if (row < height) {
     do {

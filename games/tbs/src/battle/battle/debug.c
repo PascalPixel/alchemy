@@ -48,7 +48,7 @@ extern struct DebugPartyEntry gDebug_PartyPresets[];
 /// order of their numbers across the party), the row's abilities, and an
 /// emptied inventory holding the row's items, each equipped. Called by
 /// DebugBattle_RunMenu and, through its far stub, by the link lobby's
-/// LinkLobby_ChooseDebugPartyPreset. Changes the active party and each
+/// BattleArena_ChooseDebugPartyPreset. Changes the active party and each
 /// member's level, Djinn, abilities and inventory.
 /// Returns 1 when the table ends before that preset, 0 otherwise.
 s32 DebugParty_LoadPreset(s32 preset) {
@@ -157,11 +157,11 @@ void DebugBattle_ViewMessages(void) {
   struct Unit *unit = Unit_GetFar(0);
   s32 i;
   s32 index;
-  struct UiWindow *messageWindow;
+  struct Window *messageWindow;
   s32 message;
 
   // Party member 0's name is the sample a `<unit>` blank shows.
-  Ui_AdjustValueWithoutLimitFar(MsgDebugSampleName, text);
+  Message_DecodeRawUnboundedFar(MsgDebugSampleName, text);
   for (i = 0; i < UNIT_NAME_LENGTH; i++) {
     unit->name[i] = text[i];
     if (text[i] == 0)
@@ -182,20 +182,20 @@ void DebugBattle_ViewMessages(void) {
     gGameState.messageSpeed = 2;
     for (;;) {
       // Sample arguments for the message's placeholders.
-      UiWork_ClearValueNameTablesFar();
-      UiWork_PushValueSlotFar(999, VALUE_NUMBER);
-      UiWork_PushValueSlotFar(0, VALUE_CLASS_NAME);
-      UiWork_PushValueSlotFar(1, VALUE_UNIT_NAME);
-      UiWork_PushValueSlotFar(1, VALUE_ITEM_NAME);
-      UiWork_PushValueSlotFar(2, VALUE_ABILITY_NAME);
+      MessageArgument_ClearAllFar();
+      MessageArgument_PushFar(999, VALUE_NUMBER);
+      MessageArgument_PushFar(0, VALUE_CLASS_NAME);
+      MessageArgument_PushFar(1, VALUE_UNIT_NAME);
+      MessageArgument_PushFar(1, VALUE_ITEM_NAME);
+      MessageArgument_PushFar(2, VALUE_ABILITY_NAME);
       // The window at tile (2, 10) for the first range, (2, 2) for the
       // second.
       if (secondRange == 0) {
         message = MsgBabiLighthouseTheyWereTerribleWeWereAbsolutely;
-        messageWindow = UiText_OpenMessageWindowFar(index + message, 2, 10, 4);
+        messageWindow = Message_OpenWindowFar(index + message, 2, 10, 4);
       } else {
         message = DEBUG_SECOND_FORM;
-        messageWindow = UiText_OpenMessageWindowFar(index + message, 2, 2, 4);
+        messageWindow = Message_OpenWindowFar(index + message, 2, 2, 4);
       }
       WaitFrames(10);
 
@@ -234,7 +234,7 @@ void DebugBattle_ViewMessages(void) {
       }
       UiWork_DrainPendingFar(1);
       // Close the window and free the message system for the next one.
-      UiWork_FinalizeFar(messageWindow, 1);
+      Window_CloseFar(messageWindow, 1);
       (*(u8 **)&gWindowWork)[WINDOW_WORK_MESSAGE_BUSY] = 0;
     }
   }
@@ -263,7 +263,7 @@ void DebugBattle_RunMenu(void) {
 
   GameState_InitializeDefaultsFar();
 restart:
-  Ui_LoadWindowGraphics();
+  Window_LoadGraphics();
   DebugText_Clear();
   Task_ResetAll();
   InitHeap();
@@ -319,7 +319,7 @@ restart:
       GameFlag_SetBitFar(FLAG_DEBUG_BATTLE);
       Battle_Run(encounter);
       // Rebuild what the battle replaced, then return to the chooser.
-      Ui_LoadWindowGraphics();
+      Window_LoadGraphics();
       DebugText_Clear();
       Task_ResetAll();
       InitHeap();

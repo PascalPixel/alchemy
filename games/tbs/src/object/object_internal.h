@@ -141,7 +141,7 @@ STATIC_ASSERT(sizeof(union PolarOffsetPosition) == 12);
 
 /// Shows message m with the user's and the Psynergy's names, and waits.
 #define PSYNERGY_MESSAGE(who, act, m)                                          \
-  (UiWork_PushValueSlotFar((who), 1), UiWork_PushValueSlotFar((act), 4),       \
-   UiText_ShowPositionedMessageAndWaitFar((m), 1))
+  (MessageArgument_PushFar((who), 1), MessageArgument_PushFar((act), 4),       \
+   FieldMessage_ShowFar((m), 1))
 
 #endif

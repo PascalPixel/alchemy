@@ -43,7 +43,7 @@ s32 LinkBattle_ReceiveParty(void) {
 
   // The block is only freed: each member is received straight into its
   // enemy unit, as in the link lobby's twin of this function
-  // (LinkLobby_ReceivePartyRecords, menu/lobby.c). XXX: likely left from a
+  // (BattleArena_ReceivePartyRecords, menu/lobby.c). XXX: likely left from a
   // receive into a buffer, because LinkBattle_SendParty does send from one.
   buffer = AllocEwram(LINK_PARTY_UNIT_BYTES);
   memberCount = 0;
@@ -61,7 +61,7 @@ s32 LinkBattle_ReceiveParty(void) {
 
     // Measure the label (at most NAME_LIMIT + 1 characters), shift the name
     // right to make room for it, then write it in; the name's end is cut.
-    Ui_AdjustValueWithoutLimitFar(MsgEnemyLabel, label);
+    Message_DecodeRawUnboundedFar(MsgEnemyLabel, label);
     i = 0;
     if (label[i] != 0) {
       do {

@@ -50,7 +50,7 @@ UNUSED void OptionMenu_ResetEntries(struct OptionMenuWork *work) {
 /// colour settings: the hue picks a point on the colour wheel and the
 /// brightness shifts all three channels.
 /// The three wave samples are one third of the 96-step colour cycle apart.
-/// The arithmetic is PaletteGlow_Update's.
+/// The arithmetic is WindowColor_Apply's.
 /// Nothing calls it.
 UNUSED void WindowColor_CalculateTint(struct OptionMenuWork *work) {
   s16 phase;
@@ -59,8 +59,8 @@ UNUSED void WindowColor_CalculateTint(struct OptionMenuWork *work) {
   s32 red;
   s32 green;
 
-  phase = (gGameState.paletteGlow[0] + 12) % 24 * 4;
-  bias = gGameState.paletteGlow[1] - 7;
+  phase = (gGameState.windowColor[0] + 12) % 24 * 4;
+  bias = gGameState.windowColor[1] - 7;
   red = gPaletteGlow_WaveTable[(phase % 96)];
   green = gPaletteGlow_WaveTable[(phase + 32) % 96];
   blue = gPaletteGlow_WaveTable[(phase + 64) % 96];
@@ -153,12 +153,12 @@ u16 Color_ScaleComponents(s16 *rgb, s32 redScale, s32 greenScale,
 /// The live palette path leaves the saved colour settings untouched. The
 /// option screen calls it as the player changes the settings, and with the
 /// saved ones when the screen is cancelled. The save file menu
-/// (SaveMenu_SelectSlot) shows the colours of the file under the cursor, and
+/// (FileMenu_SelectFile) shows the colours of the file under the cursor, and
 /// the saved ones for an empty file and on leaving. The file select
 /// (menu/clear.c), the main loop's start (Game_Run), the end of the
 /// Mind Read wave (Ui_SetBank15PaletteAndClearRenderMode) and Vale and the
 /// world map call it with the saved settings.
-void PaletteGlow_Update(s32 phase, s32 brightness) {
+void WindowColor_Apply(s32 phase, s32 brightness) {
   s16 rgb[3];
   s16 step;
   s16 red;
@@ -229,12 +229,12 @@ UNUSED void OptionMenu_LowerSetting(struct OptionMenuWork *work) {
       gGameState.messageSpeed--;
     break;
   case OPTION_ROW_WINDOW_HUE:
-    if (gGameState.paletteGlow[0] != 0)
-      gGameState.paletteGlow[0]--;
+    if (gGameState.windowColor[0] != 0)
+      gGameState.windowColor[0]--;
     break;
   case OPTION_ROW_WINDOW_BRIGHTNESS:
-    if (gGameState.paletteGlow[1] != 0)
-      gGameState.paletteGlow[1]--;
+    if (gGameState.windowColor[1] != 0)
+      gGameState.windowColor[1]--;
     break;
   }
 }
@@ -249,12 +249,12 @@ UNUSED void OptionMenu_RaiseSetting(struct OptionMenuWork *work) {
       gGameState.messageSpeed++;
     break;
   case OPTION_ROW_WINDOW_HUE:
-    if (gGameState.paletteGlow[0] <= 23)
-      gGameState.paletteGlow[0]++;
+    if (gGameState.windowColor[0] <= 23)
+      gGameState.windowColor[0]++;
     break;
   case OPTION_ROW_WINDOW_BRIGHTNESS:
-    if (gGameState.paletteGlow[1] <= 14)
-      gGameState.paletteGlow[1]++;
+    if (gGameState.windowColor[1] <= 14)
+      gGameState.windowColor[1]++;
     break;
   }
 }
@@ -267,7 +267,7 @@ void GraphicsPalette_SelectionNoOp(void) {}
 /// markers, animates the marker of the slider in use, and pulses the chosen
 /// setting's icon. The markers' pictures, 256 bytes each, are loaded every
 /// frame: the marker of the row in use steps through 8 frames of
-/// ResourceId_ShopCursorFrames, the other shows the first. Rows 2 to 4
+/// ResourceId_MenuCursorFrames, the other shows the first. Rows 2 to 4
 /// (speed, speech, sleep) pulse their chosen icon.
 void OptionMenu_AnimateCursors(void) {
   s32 cursorResource;
@@ -277,24 +277,24 @@ void OptionMenu_AnimateCursors(void) {
 
   work = gOptionMenuWork;
   selectedOption = work->page;
-  ShopCursor_AdvanceFar(&work->cursor.cursor);
-  ShopCursor_MoveTowardTargetFar(&work->marker[0].cursor);
-  ShopCursor_MoveTowardTargetFar(&work->marker[1].cursor);
+  MenuCursor_AdvanceFar(&work->cursor.cursor);
+  MenuCursor_MoveTowardTargetFar(&work->marker[0].cursor);
+  MenuCursor_MoveTowardTargetFar(&work->marker[1].cursor);
 
   if (selectedOption == 0) {
     cursorResource =
-        (work->cursorFrame & 7) + (s32)&ResourceId_ShopCursorFrames;
+        (work->cursorFrame & 7) + (s32)&ResourceId_MenuCursorFrames;
   } else {
-    cursorResource = (s32)&ResourceId_ShopCursorFrames;
+    cursorResource = (s32)&ResourceId_MenuCursorFrames;
   }
   VramCache_Load((u8)work->marker[0].output->index, 0x100,
                  Resource_GetTableEntry(cursorResource));
 
   if (selectedOption == 1) {
     markerResource =
-        (work->cursorFrame & 7) + (s32)&ResourceId_ShopCursorFrames;
+        (work->cursorFrame & 7) + (s32)&ResourceId_MenuCursorFrames;
   } else {
-    markerResource = (s32)&ResourceId_ShopCursorFrames;
+    markerResource = (s32)&ResourceId_MenuCursorFrames;
   }
   VramCache_Load((u8)work->marker[1].output->index, 0x100,
                  Resource_GetTableEntry(markerResource));
@@ -316,9 +316,9 @@ void OptionMenu_InitializeWork(void) {
 
   work = AllocHeapSlotEwram(HEAP_SLOT_OPTION_MENU, 0x628);
   Dma_Fill32(0, work, 0x628);
-  work->option[0] = gGameState.paletteGlow[0];
+  work->option[0] = gGameState.windowColor[0];
   work->optionCount[0] = 24;
-  work->option[1] = gGameState.paletteGlow[1];
+  work->option[1] = gGameState.windowColor[1];
   work->optionCount[1] = 15;
   work->option[2] = gGameState.messageSpeed;
   work->optionCount[2] = 3;
@@ -346,43 +346,43 @@ void OptionMenu_Release(void) {
 /// window. Its sprites belong to the window and go when it closes. A
 /// slider's marker stands option * 60 / count pixels right of
 /// OPTION_SLIDER_X.
-struct UiWindow *OptionMenu_Open(void) {
+struct Window *OptionMenu_Open(void) {
   struct OptionMenuWork *work;
-  struct UiWindow *window;
-  struct RenderOutput *marker;
+  struct Window *window;
+  struct WindowSprite *marker;
   s32 x;
   s32 y;
   s32 labelMessage;
 
   work = gOptionMenuWork;
-  window = UiWindow_Create(OPTION_WINDOW_X, 5, OPTION_WINDOW_WIDTH, 14, 2);
-  UiWindow_DrawDividerLine(window, 0, 2, OPTION_WINDOW_WIDTH - 1, 2);
-  UiWindow_DrawDividerLine(window, 0, 4, OPTION_WINDOW_WIDTH - 1, 4);
-  UiWindow_DrawDividerLine(window, 0, 7, OPTION_WINDOW_WIDTH - 1, 7);
-  UiWindow_DrawDividerLine(window, 0, 10, OPTION_WINDOW_WIDTH - 1, 10);
+  window = Window_Create(OPTION_WINDOW_X, 5, OPTION_WINDOW_WIDTH, 14, 2);
+  Window_DrawDividerLine(window, 0, 2, OPTION_WINDOW_WIDTH - 1, 2);
+  Window_DrawDividerLine(window, 0, 4, OPTION_WINDOW_WIDTH - 1, 4);
+  Window_DrawDividerLine(window, 0, 7, OPTION_WINDOW_WIDTH - 1, 7);
+  Window_DrawDividerLine(window, 0, 10, OPTION_WINDOW_WIDTH - 1, 10);
   labelMessage = MsgWindowColorLabel;
-  UiText_DrawCharacterAtOffset(labelMessage, window, 8, 0);
+  Text_DrawMessageAsTiles(labelMessage, window, 8, 0);
   labelMessage++;
-  UiText_DrawCharacterAtOffset(labelMessage, window, 8, 16);
+  Text_DrawMessageAsTiles(labelMessage, window, 8, 16);
 #if (LANGUAGE != LANGUAGE_JAPANESE)
   labelMessage = MsgMessageSpeedLabel;
-  UiText_DrawCharacterAtOffset(labelMessage, window, 8, 32);
+  Text_DrawMessageAsTiles(labelMessage, window, 8, 32);
   labelMessage++;
-  UiText_DrawCharacterAtOffset(labelMessage, window, 32, 40);
+  Text_DrawMessageAsTiles(labelMessage, window, 32, 40);
 #else
-  UiText_DrawCharacterAtOffset(MsgMessageSpeedLabel, window, 8, 40);
+  Text_DrawMessageAsTiles(MsgMessageSpeedLabel, window, 8, 40);
 #endif
-  UiText_DrawCharacterAtOffset(MsgSpeechLabel, window, 8, 64);
-  UiText_DrawCharacterAtOffset(MsgAutoSleepLabel, window, 8, 88);
+  Text_DrawMessageAsTiles(MsgSpeechLabel, window, 8, 64);
+  Text_DrawMessageAsTiles(MsgAutoSleepLabel, window, 8, 88);
 
   x = Resource_FindFreeEntry();
   if (x < RESOURCE_SLOTS) {
     VramCache_Load(x, 128, gResource_FixedBlockBTiles);
-    marker = RenderOutput_Create(x, 0x40000000, window, 0, 0);
+    marker = WindowSprite_Create(x, 0x40000000, window, 0, 0);
     work->cursor.output = marker;
     x = window->x * 8;
     y = window->y * 8 + 12;
-    ShopCursor_SetPositionImmediateFar(&work->cursor.cursor, x, y);
+    MenuCursor_SetPositionImmediateFar(&work->cursor.cursor, x, y);
   }
 
   // The ends of both sliders: 32x16 sprites (0x40004000, the wide shape at
@@ -395,17 +395,17 @@ struct UiWindow *OptionMenu_Open(void) {
             REG_DMA3);
     VramCache_Load(x, 256, gOptionMenu_SliderTiles);
     y = 0;
-    marker = RenderOutput_Create(x, 0x40004000, window, OPTION_SLIDER_X - 6, y);
+    marker = WindowSprite_Create(x, 0x40004000, window, OPTION_SLIDER_X - 6, y);
     marker->oam.palette = SLIDER_PALETTE;
     marker =
-        RenderOutput_Create(x, 0x40004000, window, OPTION_SLIDER_X + 26, y);
+        WindowSprite_Create(x, 0x40004000, window, OPTION_SLIDER_X + 26, y);
     marker->oam.index += 4;
     marker->oam.palette = SLIDER_PALETTE;
     y = 16;
-    marker = RenderOutput_Create(x, 0x40004000, window, OPTION_SLIDER_X - 6, y);
+    marker = WindowSprite_Create(x, 0x40004000, window, OPTION_SLIDER_X - 6, y);
     marker->oam.palette = 15;
     marker =
-        RenderOutput_Create(x, 0x40004000, window, OPTION_SLIDER_X + 26, y);
+        WindowSprite_Create(x, 0x40004000, window, OPTION_SLIDER_X + 26, y);
     marker->oam.index += 4;
     marker->oam.palette = 15;
   }
@@ -415,44 +415,44 @@ struct UiWindow *OptionMenu_Open(void) {
   x = Resource_FindFreeEntry();
   if (x < RESOURCE_SLOTS) {
     VramCache_Load(x, 256, 0);
-    marker = RenderOutput_Create(x, 0x40000000, window, 0, 0);
+    marker = WindowSprite_Create(x, 0x40000000, window, 0, 0);
     marker->oam.palette256 = 1;
     work->marker[0].output = marker;
     x = window->x * 8 + OPTION_SLIDER_X;
     x += work->option[0] * 60 / work->optionCount[0];
     y = window->y * 8 + 4;
-    ShopCursor_SetPositionImmediateFar(&work->marker[0].cursor, x, y);
+    MenuCursor_SetPositionImmediateFar(&work->marker[0].cursor, x, y);
   }
 
   x = Resource_FindFreeEntry();
   if (x < RESOURCE_SLOTS) {
     VramCache_Load(x, 256, 0);
-    marker = RenderOutput_Create(x, 0x40000000, window, 0, 0);
+    marker = WindowSprite_Create(x, 0x40000000, window, 0, 0);
     marker->oam.palette256 = 1;
     work->marker[1].output = marker;
     x = window->x * 8 + OPTION_SLIDER_X;
     x += work->option[1] * 60 / work->optionCount[1];
     y = window->y * 8 + 20;
-    ShopCursor_SetPositionImmediateFar(&work->marker[1].cursor, x, y);
+    MenuCursor_SetPositionImmediateFar(&work->marker[1].cursor, x, y);
   }
 
   y = 28;
-  work->frame[0][0] = RenderResource_CreateFrame(gOptionMenu_SpeedFrames[0], 0,
-                                                 window, OPTION_FRAME_X, y);
-  work->frame[0][1] = RenderResource_CreateFrame(
-      gOptionMenu_SpeedFrames[1], 0, window, OPTION_FRAME_X + 24, y);
-  work->frame[0][2] = RenderResource_CreateFrame(
-      gOptionMenu_SpeedFrames[2], 0, window, OPTION_FRAME_X + 48, y);
+  work->frame[0][0] = CommandIcon_Create(gOptionMenu_SpeedFrames[0], 0, window,
+                                         OPTION_FRAME_X, y);
+  work->frame[0][1] = CommandIcon_Create(gOptionMenu_SpeedFrames[1], 0, window,
+                                         OPTION_FRAME_X + 24, y);
+  work->frame[0][2] = CommandIcon_Create(gOptionMenu_SpeedFrames[2], 0, window,
+                                         OPTION_FRAME_X + 48, y);
   y = 52;
-  work->frame[1][0] = RenderResource_CreateFrame(gOptionMenu_SpeechFrames[0], 0,
-                                                 window, 100, y);
-  work->frame[1][1] = RenderResource_CreateFrame(gOptionMenu_SpeechFrames[1], 0,
-                                                 window, 124, y);
+  work->frame[1][0] =
+      CommandIcon_Create(gOptionMenu_SpeechFrames[0], 0, window, 100, y);
+  work->frame[1][1] =
+      CommandIcon_Create(gOptionMenu_SpeechFrames[1], 0, window, 124, y);
   y = 76;
   work->frame[2][0] =
-      RenderResource_CreateFrame(gOptionMenu_SleepFrames[0], 0, window, 100, y);
+      CommandIcon_Create(gOptionMenu_SleepFrames[0], 0, window, 100, y);
   work->frame[2][1] =
-      RenderResource_CreateFrame(gOptionMenu_SleepFrames[1], 0, window, 124, y);
+      CommandIcon_Create(gOptionMenu_SleepFrames[1], 0, window, 124, y);
   return window;
 }
 
@@ -462,13 +462,13 @@ struct UiWindow *OptionMenu_Open(void) {
 /// Preview edits affect the live palette; only confirmation saves the settings.
 /// Every setting wraps at its ends. While sleep is held off (gSleepDisabled,
 /// as in the link lobby) auto-sleep shows as off and is saved so. The system
-/// menu's Change settings runs it (Menu_RunWorkspaceResultLoop,
+/// menu's Change settings runs it (PauseMenu_Run,
 /// battle_command/debug.c), and reopens the menu when it is cancelled.
 s32 OptionMenu_Run(void) {
   struct OptionMenuWork *work;
-  struct UiWindow *settingsWindow;
-  struct UiWindow *helpWindow;
-  struct RenderOutput *pair;
+  struct Window *settingsWindow;
+  struct Window *helpWindow;
+  struct WindowSprite *pair;
   s8 *hue;
   s8 *brightness;
   s32 redraw;
@@ -479,16 +479,16 @@ s32 OptionMenu_Run(void) {
   s32 x;
   s32 y;
   s32 result;
-  struct RenderOutput *frame;
+  struct WindowSprite *frame;
 
   redraw = 1;
   selectedOption = 0;
   OptionMenu_InitializeWork();
   work = gOptionMenuWork;
-  helpWindow = UiWindow_Create(OPTION_WINDOW_X, 2, OPTION_WINDOW_WIDTH, 3, 2);
+  helpWindow = Window_Create(OPTION_WINDOW_X, 2, OPTION_WINDOW_WIDTH, 3, 2);
   settingsWindow = OptionMenu_Open();
-  // Picture 7 of gRenderResource_PairSourceTable, the Setup heading.
-  pair = RenderResource_CreatePair(7, settingsWindow, 64, -48);
+  // Picture 7 of gHeadingPictures, the Setup heading.
+  pair = Heading_Create(7, settingsWindow, 64, -48);
   WaitFrames(1);
   hue = &work->option[0];
   brightness = &work->option[1];
@@ -511,60 +511,57 @@ s32 OptionMenu_Run(void) {
       for (i = 0; i <= 2; i++) {
         frame = work->frame[0][i];
         frame->sentinel = 0xfb;
-        UiIcon_PrepareObjectFar(frame);
+        Icon_PrepareObjectFar(frame);
         resourceIndex = (u8)work->frame[0][i]->index;
         dimmed = 0;
         if (i != work->option[2])
           dimmed = 1;
-        RenderResource_LoadFrame(gOptionMenu_SpeedFrames[i], resourceIndex,
-                                 dimmed);
+        CommandIcon_Load(gOptionMenu_SpeedFrames[i], resourceIndex, dimmed);
       }
       for (i = 0; i <= 1; i++) {
         frame = work->frame[1][i];
         frame->sentinel = 0xfb;
-        UiIcon_PrepareObjectFar(frame);
+        Icon_PrepareObjectFar(frame);
         resourceIndex = (u8)work->frame[1][i]->index;
         dimmed = 0;
         if (i != work->option[3])
           dimmed = 1;
-        RenderResource_LoadFrame(gOptionMenu_SpeechFrames[i], resourceIndex,
-                                 dimmed);
+        CommandIcon_Load(gOptionMenu_SpeechFrames[i], resourceIndex, dimmed);
       }
       for (i = 0; i <= 1; i++) {
         frame = work->frame[2][i];
         frame->sentinel = 0xfb;
-        UiIcon_PrepareObjectFar(frame);
+        Icon_PrepareObjectFar(frame);
         resourceIndex = (u8)work->frame[2][i]->index;
         dimmed = 0;
         if (i != work->option[4])
           dimmed = 1;
-        RenderResource_LoadFrame(gOptionMenu_SleepFrames[i], resourceIndex,
-                                 dimmed);
+        CommandIcon_Load(gOptionMenu_SleepFrames[i], resourceIndex, dimmed);
       }
 
       x = settingsWindow->x * 8 + OPTION_SLIDER_X;
       x += (*hue * 60) / work->optionCount[0];
       y = settingsWindow->y * 8 + 4;
-      Shop_SetCursorFar(&work->marker[0].cursor, x, y, 1);
+      MenuCursor_SetFar(&work->marker[0].cursor, x, y, 1);
       x = settingsWindow->x * 8 + OPTION_SLIDER_X;
       x += (*brightness * 60) / work->optionCount[1];
       y = settingsWindow->y * 8 + 20;
-      Shop_SetCursorFar(&work->marker[1].cursor, x, y, 1);
+      MenuCursor_SetFar(&work->marker[1].cursor, x, y, 1);
 
       x = work->option[2] + MsgMessageSpeedSetting;
-      UiWindow_ClearInteriorTiles(settingsWindow, OPTION_SETTING_X, 40,
-                                  OPTION_SPEED_END, 48);
-      UiText_DrawCharacterAtOffset(x, settingsWindow, OPTION_SETTING_X, 40);
+      Window_ClearInteriorTiles(settingsWindow, OPTION_SETTING_X, 40,
+                                OPTION_SPEED_END, 48);
+      Text_DrawMessageAsTiles(x, settingsWindow, OPTION_SETTING_X, 40);
       x = work->option[3] + MsgSpeechSetting;
-      UiWindow_ClearInteriorTiles(settingsWindow, OPTION_SETTING_X, 64,
-                                  OPTION_SETTING_END, 72);
-      UiText_DrawCharacterAtOffset(x, settingsWindow, OPTION_SETTING_X, 64);
+      Window_ClearInteriorTiles(settingsWindow, OPTION_SETTING_X, 64,
+                                OPTION_SETTING_END, 72);
+      Text_DrawMessageAsTiles(x, settingsWindow, OPTION_SETTING_X, 64);
       x = work->option[4] + MsgAutoSleepSetting;
-      UiWindow_ClearInteriorTiles(settingsWindow, OPTION_SETTING_X, 88,
-                                  OPTION_SETTING_END, 96);
-      UiText_DrawCharacterAtOffset(x, settingsWindow, OPTION_SETTING_X, 88);
+      Window_ClearInteriorTiles(settingsWindow, OPTION_SETTING_X, 88,
+                                OPTION_SETTING_END, 96);
+      Text_DrawMessageAsTiles(x, settingsWindow, OPTION_SETTING_X, 88);
       // The windows show the edited colours at once.
-      PaletteGlow_Update(*hue, *brightness);
+      WindowColor_Apply(*hue, *brightness);
 
       // The cursor goes 3 tiles a row down the window's left edge, the first
       // row's a tile lower; the help window says what the row sets
@@ -573,11 +570,11 @@ s32 OptionMenu_Run(void) {
       y = (selectedOption * 3 + settingsWindow->y) * 8 + 4;
       if (selectedOption == 0)
         y += 8;
-      Shop_SetCursorFar(&work->cursor.cursor, x, y, 3);
-      RenderOutput_ClearList(helpWindow);
-      UiText_DrawResource(selectedOption + MsgOptionHelp, helpWindow, 0, 0);
+      MenuCursor_SetFar(&work->cursor.cursor, x, y, 3);
+      WindowSprite_ClearList(helpWindow);
+      Text_DrawMessage(selectedOption + MsgOptionHelp, helpWindow, 0, 0);
     }
-    RenderOutput_BobPair(pair);
+    Heading_Bob(pair);
     WaitFrames(1);
 
     // SELECT steps through the six colour presets (window/scales.c).
@@ -623,57 +620,57 @@ s32 OptionMenu_Run(void) {
     }
   }
 
-  UiWork_Finalize(helpWindow, 2);
-  UiWork_Finalize(settingsWindow, 2);
+  Window_Close(helpWindow, 2);
+  Window_Close(settingsWindow, 2);
   // Keep the edits, auto-sleep also taking effect at once
   // (gIdleSleepEnabled); or put the saved window colours back.
   if (result == 0) {
-    gGameState.paletteGlow[0] = work->option[0];
-    gGameState.paletteGlow[1] = work->option[1];
+    gGameState.windowColor[0] = work->option[0];
+    gGameState.windowColor[1] = work->option[1];
     gGameState.messageSpeed = work->option[2];
     gGameState.speech = work->option[3];
     gGameState.idleSleepEnabled = work->option[4];
     gIdleSleepEnabled = gGameState.idleSleepEnabled;
   } else {
-    PaletteGlow_Update(gGameState.paletteGlow[0], gGameState.paletteGlow[1]);
+    WindowColor_Apply(gGameState.windowColor[0], gGameState.windowColor[1]);
   }
   OptionMenu_Release();
   WaitFrames(1);
   return result;
 }
 
-#define WORKSPACE_ROWS 3        ///< Save your quest, Sleep and Change settings
-#define WORKSPACE_DEBUG_ROWS 3  ///< the entries added in debug mode
-#define WORKSPACE_ROW_HEIGHT 24 ///< pixels, 3 tiles
-#define WORKSPACE_TEXT_X 48     ///< pixels into the window, after the icons
+#define PAUSE_MENU_ROWS 3        ///< Save your quest, Sleep and Change settings
+#define PAUSE_MENU_DEBUG_ROWS 3  ///< the entries added in debug mode
+#define PAUSE_MENU_ROW_HEIGHT 24 ///< pixels, 3 tiles
+#define PAUSE_MENU_TEXT_X 48     ///< pixels into the window, after the icons
 
 /// The system menu's per-frame callback: moves the cursor and pulses the
 /// chosen entry's icon.
-void SystemMenu_AnimateCursor(void) {
+void PauseMenu_AnimateCursor(void) {
   struct OptionMenuWork *work = gOptionMenuWork;
   u32 index;
 
-  ShopCursor_AdvanceFar(&work->cursor.cursor);
+  MenuCursor_AdvanceFar(&work->cursor.cursor);
   index = work->page;
   Ui_ApplyTableScaleToObject(work->icon[index]);
 }
 
 /// Allocates the system menu's work block and starts its per-frame callback.
 /// The system menu shares the option workspace slot and cannot run
-/// concurrently: Menu_RunWorkspaceSelectionLoop frees it before
-/// Menu_RunWorkspaceResultLoop opens the option screen. 3200 is 0xc80, the
+/// concurrently: PauseMenu_Choose frees it before
+/// PauseMenu_Run opens the option screen. 3200 is 0xc80, the
 /// main loop's pass.
-void SystemMenu_Initialize(void) {
+void PauseMenu_Initialize(void) {
   void *work;
   work = AllocHeapSlotEwram(HEAP_SLOT_OPTION_MENU, 0x628);
   Dma_Fill32(0, work, 0x628);
-  Task_Add(SystemMenu_AnimateCursor, 3200);
+  Task_Add(PauseMenu_AnimateCursor, 3200);
 }
 
 /// Stops the system menu's per-frame callback and frees its work block.
 /// The callback goes first, since it reads the work block.
-void SystemMenu_Release(void) {
-  Task_Remove(&SystemMenu_AnimateCursor);
+void PauseMenu_Release(void) {
+  Task_Remove(&PauseMenu_AnimateCursor);
   FreeHeapSlot(HEAP_SLOT_OPTION_MENU);
 }
 
@@ -681,30 +678,30 @@ void SystemMenu_Release(void) {
 /// Change settings, and the debug entries in debug mode; only Change settings
 /// while FLAG_IN_BATTLE_ARENA is set), their icons and the cursor. Returns the
 /// window.
-struct UiWindow *SystemMenu_Open(void) {
+struct Window *PauseMenu_Open(void) {
   struct OptionMenuWork *work;
   s32 rows;
   s32 first;
   s32 settingsOnly;
   s32 top;
   s32 height;
-  struct UiWindow *window;
+  struct Window *window;
   s32 y;
   s32 cacheSlot;
   s32 labelMessage;
   s32 i;
   s32 x;
 
-  rows = WORKSPACE_ROWS;
+  rows = PAUSE_MENU_ROWS;
   work = gOptionMenuWork;
   settingsOnly = GameFlag_TestFar(FLAG_IN_BATTLE_ARENA);
   first = 0;
   if (settingsOnly != 0) {
     rows = 1;
-    first = SYSTEM_MENU_CHANGE_SETTINGS;
+    first = PAUSE_MENU_CHANGE_SETTINGS;
   }
   if (gDebugMode != 0)
-    rows += WORKSPACE_DEBUG_ROWS;
+    rows += PAUSE_MENU_DEBUG_ROWS;
   // Three tiles a row and a tile more. The window starts higher by a row for
   // each entry, and at row 1, 19 tall, when it would reach row 19.
   top = 8 - rows;
@@ -713,56 +710,56 @@ struct UiWindow *SystemMenu_Open(void) {
     top = 1;
     height = 19;
   }
-  window = UiWindow_Create(5, top, 20, height, 2);
+  window = Window_Create(5, top, 20, height, 2);
   for (i = 1; i < rows; i++)
-    UiWindow_DrawDividerLine(window, 0, i * 3, 19, i * 3);
+    Window_DrawDividerLine(window, 0, i * 3, 19, i * 3);
   y = 4;
   if (settingsOnly == 0) {
     labelMessage = MsgWorkspaceSaveQuest;
-    UiText_DrawResource(labelMessage, window, WORKSPACE_TEXT_X, 4);
+    Text_DrawMessage(labelMessage, window, PAUSE_MENU_TEXT_X, 4);
     labelMessage++;
-    UiText_DrawResource(labelMessage, window, WORKSPACE_TEXT_X,
-                        4 + WORKSPACE_ROW_HEIGHT);
-    y = 4 + 2 * WORKSPACE_ROW_HEIGHT;
+    Text_DrawMessage(labelMessage, window, PAUSE_MENU_TEXT_X,
+                     4 + PAUSE_MENU_ROW_HEIGHT);
+    y = 4 + 2 * PAUSE_MENU_ROW_HEIGHT;
   }
-  UiText_DrawResource(MsgWorkspaceChangeSettings, window, WORKSPACE_TEXT_X, y);
-  y += WORKSPACE_ROW_HEIGHT;
+  Text_DrawMessage(MsgWorkspaceChangeSettings, window, PAUSE_MENU_TEXT_X, y);
+  y += PAUSE_MENU_ROW_HEIGHT;
   if (gDebugMode != 0) {
     labelMessage = MsgWorkspaceRoughMenu;
-    UiText_DrawResource(labelMessage, window, WORKSPACE_TEXT_X, y);
-    y += WORKSPACE_ROW_HEIGHT;
-    UiText_DrawResource(labelMessage + 1, window, WORKSPACE_TEXT_X, y);
-    y += WORKSPACE_ROW_HEIGHT;
+    Text_DrawMessage(labelMessage, window, PAUSE_MENU_TEXT_X, y);
+    y += PAUSE_MENU_ROW_HEIGHT;
+    Text_DrawMessage(labelMessage + 1, window, PAUSE_MENU_TEXT_X, y);
+    y += PAUSE_MENU_ROW_HEIGHT;
     labelMessage += 2;
-    UiText_DrawResource(labelMessage, window, WORKSPACE_TEXT_X, y);
+    Text_DrawMessage(labelMessage, window, PAUSE_MENU_TEXT_X, y);
   }
   cacheSlot = Resource_FindFreeEntry();
   if (cacheSlot < RESOURCE_SLOTS) {
     VramCache_Load(cacheSlot, 128, gResource_FixedBlockBTiles);
     work->cursor.output =
-        RenderOutput_Create(cacheSlot, 0x40000000, window, 0, 0);
+        WindowSprite_Create(cacheSlot, 0x40000000, window, 0, 0);
     x = window->x * 8;
     y = window->y * 8 + 16;
-    ShopCursor_SetPositionImmediateFar(&work->cursor.cursor, x, y);
+    MenuCursor_SetPositionImmediateFar(&work->cursor.cursor, x, y);
   }
   y = -4;
   for (i = 0; i < rows; i++) {
-    work->icon[i] = RenderResource_CreateFrame(
-        gMenu_WorkspaceIconFrames[first + i], 0, window, 12, y);
-    y += WORKSPACE_ROW_HEIGHT;
+    work->icon[i] =
+        CommandIcon_Create(gPauseMenu_IconFrames[first + i], 0, window, 12, y);
+    y += PAUSE_MENU_ROW_HEIGHT;
   }
   return window;
 }
 
 /// Runs the system menu until the player picks an entry (enum
-/// SystemMenuEntry) or cancels with B or START (-1).
+/// PauseMenuEntry) or cancels with B or START (-1).
 /// The result counts in the full entry table even when only Change settings is
 /// shown. The menu's window and work block are freed before it returns;
-/// Menu_RunWorkspaceResultLoop (battle_command/debug.c) acts on the result.
-s32 Menu_RunWorkspaceSelectionLoop(void) {
-  struct UiWindow *window;
+/// PauseMenu_Run (battle_command/debug.c) acts on the result.
+s32 PauseMenu_Choose(void) {
+  struct Window *window;
   s32 redraw;
-  struct RenderOutput *pair;
+  struct WindowSprite *pair;
   s32 first;
   s32 i;
   s32 j;
@@ -776,17 +773,17 @@ s32 Menu_RunWorkspaceSelectionLoop(void) {
   s32 x;
   s32 top;
   const s8 *iconFrames;
-  struct RenderOutput *icon;
+  struct WindowSprite *icon;
   struct OptionMenuWork *work;
 
   redraw = 1;
-  rows = WORKSPACE_ROWS;
+  rows = PAUSE_MENU_ROWS;
   settingsOnly = GameFlag_TestFar(FLAG_IN_BATTLE_ARENA);
   first = 0;
-  SystemMenu_Initialize();
+  PauseMenu_Initialize();
   work = gOptionMenuWork;
-  window = SystemMenu_Open();
-  // Picture 6 of gRenderResource_PairSourceTable, the Pause heading, above
+  window = PauseMenu_Open();
+  // Picture 6 of gHeadingPictures, the Pause heading, above
   // the window. Outside Japanese it sits 8 pixels lower in debug mode, over
   // the debug menu's taller window.
 #if TBS_PATCH_1
@@ -794,19 +791,19 @@ s32 Menu_RunWorkspaceSelectionLoop(void) {
   if (gDebugMode != 0) {
     y = -0x10;
   }
-  pair = RenderResource_CreatePair(6, window, 0x28, y);
+  pair = Heading_Create(6, window, 0x28, y);
 #else
-  pair = RenderResource_CreatePair(6, window, 0x28, -0x18);
+  pair = Heading_Create(6, window, 0x28, -0x18);
 #endif
   WaitFrames(1);
   // The cursor starts where the block's page is, 0 after the fill.
   selectedEntry = work->page;
   if (settingsOnly != 0) {
     rows = 1;
-    first = SYSTEM_MENU_CHANGE_SETTINGS;
+    first = PAUSE_MENU_CHANGE_SETTINGS;
   }
   if (gDebugMode != 0) {
-    rows += WORKSPACE_DEBUG_ROWS;
+    rows += PAUSE_MENU_DEBUG_ROWS;
   }
   for (;;) {
     if (redraw != 0) {
@@ -816,18 +813,17 @@ s32 Menu_RunWorkspaceSelectionLoop(void) {
       i = 0;
       if (i < rows) {
         j = first;
-        iconFrames = gMenu_WorkspaceIconFrames;
+        iconFrames = gPauseMenu_IconFrames;
         do {
           icon = work->icon[i];
           icon->sentinel = 0xFB;
-          UiIcon_PrepareObjectFar(icon);
+          Icon_PrepareObjectFar(icon);
           resourceIndex = (u8)icon->index;
           dimmed = 0;
           if (i != work->page) {
             dimmed = 1;
           }
-          RenderResource_LoadFrame(*(s8 *)(j + (s32)iconFrames), resourceIndex,
-                                   dimmed);
+          CommandIcon_Load(*(s8 *)(j + (s32)iconFrames), resourceIndex, dimmed);
           i++;
           j++;
         } while (i < rows);
@@ -835,9 +831,9 @@ s32 Menu_RunWorkspaceSelectionLoop(void) {
       top = window->y;
       x = window->x * 8;
       y = (((selectedEntry * 3) + top) * 8) + 0x10;
-      Shop_SetCursorFar(&work->cursor.cursor, x, y, 3);
+      MenuCursor_SetFar(&work->cursor.cursor, x, y, 3);
     }
-    RenderOutput_BobPair(pair);
+    Heading_Bob(pair);
     WaitFrames(1);
     if (gKeysPressed & KEY_A) {
       result = selectedEntry;
@@ -859,8 +855,8 @@ s32 Menu_RunWorkspaceSelectionLoop(void) {
     }
     break;
   }
-  UiWork_Finalize(window, 2);
-  SystemMenu_Release();
+  Window_Close(window, 2);
+  PauseMenu_Release();
   WaitFrames(1);
   // In the link lobby only Change settings shows: count from Save your quest.
   if (result >= 0) {

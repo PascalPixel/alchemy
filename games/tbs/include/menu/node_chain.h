@@ -18,14 +18,14 @@ struct NodeChainNode {
 
 /// A chain's first node and how many links to follow from it, which the
 /// unused NodeChain_GetNodeAtIndex reads.
-/// XXX: likely a SelectionScreen (its row's first icon and the entry under the
-/// hand), because head and cursorIndex sit at these offsets (0x348 and
+/// XXX: likely a SelectionScreenWork (its row's first icon and the entry under
+/// the hand), because head and cursorIndex sit at these offsets (0x348 and
 /// 0x39e); a caller of NodeChain_GetNodeAtIndex would settle it.
 struct NodeChainState {
   u8 padding000[840];
-  struct NodeChainNode *node; ///< SelectionScreen.head, if it is one
+  struct NodeChainNode *node; ///< SelectionScreenWork.head, if it is one
   u8 padding34c[82];
-  u16 count; ///< SelectionScreen.cursorIndex, if it is one
+  u16 count; ///< SelectionScreenWork.cursorIndex, if it is one
 };
 
 STATIC_ASSERT(sizeof(struct NodeChainNode) == 8);

@@ -95,11 +95,11 @@
 #include "flags.h"
 
 // Edition-specific text and window layout values. The possessives
-// (gUiText_ItemPossessives) are by number in Spanish, singular and plural, and
-// by item gender in German and Italian; MESSAGE_EM_DASH starts with
+// (gLocalizedWord_ItemPossessives) are by number in Spanish, singular and
+// plural, and by item gender in German and Italian; MESSAGE_EM_DASH starts with
 // TEXT_ARGUMENT_SPACE, which only the international decoder writes; a
-// space in a window of sprite glyphs advances UI_SPRITE_SPACE_WIDTH pixels,
-// as UiText_MeasureEntryDimensions counts it.
+// space in a window of sprite glyphs advances WINDOW_SPRITE_SPACE_WIDTH pixels,
+// as Text_MeasureDecoded counts it.
 #if (LANGUAGE == LANGUAGE_SPANISH)
 #define ITEM_POSSESSIVE_TEXT_COUNT 2
 #else
@@ -114,50 +114,50 @@
 #endif
 
 #if (LANGUAGE == LANGUAGE_JAPANESE)
-#define UI_SPRITE_SPACE_WIDTH 7
+#define WINDOW_SPRITE_SPACE_WIDTH 7
 #else
-#define UI_SPRITE_SPACE_WIDTH 5
+#define WINDOW_SPRITE_SPACE_WIDTH 5
 #endif
 
 #ifdef MODERN
 // In the matching build these calls precede their declarations. Prototypes
 // reorder three argument moves for ClearTileAttributesInRect and two for
 // PutGlyph in the English image.
-void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode);
-void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
+void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode);
+void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height);
 #endif
 
 /// A glyph resource id meaning no glyph resource is loaded.
 #define NO_GLYPH_RESOURCE 99
 
-// UiRenderWork owns three message channels, each with four line gaps.
-#define UI_MESSAGE_CHANNEL_COUNT 3
-#define UI_MESSAGE_LINE_COUNT 4   ///< lines a page; spacing has one gap each
-#define UI_TEXT_DEFAULT_COLOUR 15 ///< a channel's text colour at start
-#define UI_TEXT_DEFAULT_LINE_SPACING 10 ///< a channel's line spacing at start
-/// The palette of the text tiles (UiRenderWork.level), the UI palette.
-#define UI_TILEMAP_PALETTE 15
+// WindowWork owns three message channels, each with four line gaps.
+#define TEXT_PRINTER_COUNT 3
+#define UI_MESSAGE_LINE_COUNT 4      ///< lines a page; spacing has one gap each
+#define TEXT_DEFAULT_COLOR 15        ///< a channel's text colour at start
+#define TEXT_DEFAULT_LINE_SPACING 10 ///< a channel's line spacing at start
+/// The palette of the text tiles (WindowWork.textPalette), the UI palette.
+#define WINDOW_PALETTE 15
 
 // Window animation lengths and the palette slot's unused marker.
-#define UI_WINDOW_OPEN_FRAMES 8
-#define UI_WINDOW_CLOSE_FRAMES 4
+#define WINDOW_OPEN_FRAMES 8
+#define WINDOW_CLOSE_FRAMES 4
 #define UI_PALETTE_SLOT_FREE 999 ///< a portrait palette slot no one holds
 /// Eight 4bpp pixels of colour 4, the window background, for filling the
 /// text canvas a word at a time.
-#define UI_CANVAS_BACKGROUND_WORD 0x44444444
+#define TEXT_CANVAS_BACKGROUND_WORD 0x44444444
 
 // Scratch capacities are in bytes unless the name says halfwords.
-#define UI_NUMBER_BUFFER_SIZE 16 ///< UiText_FormatNumber writes 14 of them
+#define UI_NUMBER_BUFFER_SIZE 16 ///< String_FormatNumber writes 14 of them
 /// A byte string widened to codes: 255 bytes and the terminator.
 #define UI_BYTE_STRING_BUFFER_SIZE 0x200
 /// A name the decoder writes out into a message, decoded first into a buffer
 /// of this many halfwords.
 #define UI_MESSAGE_NAME_HALFWORDS 24
-#define UI_ARGUMENT_SLOT_COUNT 8    ///< the message argument table's places
+#define MESSAGE_ARGUMENT_COUNT 8    ///< the message argument table's places
 #define UI_SELECTION_ENTRY_LIMIT 16 ///< entries a selection row can list
-#define UI_AREA_NOTICE_FRAMES 90    ///< how long the area's name shows
+#define MAP_NAME_POPUP_FRAMES 90    ///< how long the area's name shows
 
-/// The control codes of decoded message text (UiRenderWork.entries). Codes
+/// The control codes of decoded message text (WindowWork.textBuffer). Codes
 /// from TEXT_SPACE up are characters.
 enum {
   TEXT_END = 0,  ///< the text ends; the window stays open
@@ -167,8 +167,8 @@ enum {
   TEXT_PAUSE_LONG = 4,    ///< a 60-frame pause
   TEXT_PAUSE_SHORT = 5,   ///< a 20-frame pause a button can cut short
   TEXT_PAUSE_LONGEST = 6, ///< a 120-frame pause a button can cut short
-  TEXT_COLOURS_RESET = 7, ///< colour 15, style 0 and line spacing 10 again
-  TEXT_COLOUR = 8,        ///< the next entry is the text colour
+  TEXT_COLORS_RESET = 7,  ///< colour 15, style 0 and line spacing 10 again
+  TEXT_COLOR = 8,         ///< the next entry is the text colour
   /// The next entry is the text style (enum TextStyle).
   TEXT_OUTLINE = 9,
   /// The next entry is the line spacing; a glyph sprite sits half of it below
@@ -184,7 +184,7 @@ enum {
 };
 
 // The kana mark drawn with a character, in the top two bits of its code (the
-// index into gUiText_MarkGlyphCodes).
+// index into gFont_MarkGlyphCodes).
 #define TEXT_CODE_MARK_SHIFT 14
 #define TEXT_CODE_VOICED (1 << TEXT_CODE_MARK_SHIFT)
 #define TEXT_CODE_SEMIVOICED (2 << TEXT_CODE_MARK_SHIFT)
@@ -195,25 +195,25 @@ enum SelectionIconGroup {
   SELECTION_ICON_CHOSEN = 1 ///< the five icons already chosen; any nonzero
 };
 
-/// The style of sprite text (UiRenderWork.outline, set by TEXT_OUTLINE): its
-/// glyphs outlined, or a motion of the glyph sprites (UiText_DrawGlyph).
+/// The style of sprite text (WindowWork.outline, set by TEXT_OUTLINE): its
+/// glyphs outlined, or a motion of the glyph sprites (Glyph_Draw).
 enum TextStyle {
   TEXT_STYLE_PLAIN = 0,
-  TEXT_STYLE_OUTLINED = 1, ///< drawn a pixel wider (UiText_RenderGlyphPair)
-  TEXT_STYLE_WOBBLE = 2,   ///< UI_SPRITE_WOBBLE
-  TEXT_STYLE_SHAKE = 3,    ///< UI_SPRITE_SHAKE
-  TEXT_STYLE_POP = 4,      ///< UI_SPRITE_POP
-  TEXT_STYLE_SPIN = 5      ///< UI_SPRITE_SPIN, a pixel wider too
+  TEXT_STYLE_OUTLINED = 1, ///< drawn a pixel wider (Text_DrawGlyphPair)
+  TEXT_STYLE_WOBBLE = 2,   ///< WINDOW_SPRITE_MOTION_WOBBLE
+  TEXT_STYLE_SHAKE = 3,    ///< WINDOW_SPRITE_MOTION_SHAKE
+  TEXT_STYLE_POP = 4,      ///< WINDOW_SPRITE_MOTION_POP
+  TEXT_STYLE_SPIN = 5      ///< WINDOW_SPRITE_MOTION_SPIN, a pixel wider too
 };
 
 /// The window effect a message can start (TEXT_WINDOW_STATE): the window's
 /// frame grows by a tile and its text sprites pulse, for the channel's
 /// countdown.
-#define UI_WINDOW_EFFECT_SWELL 4
+#define WINDOW_EFFECT_SWELL 4
 
 /// The heap block the message decoder routine is copied into to run, for the
-/// length of one message's decoding (UiText_BuildRenderEntries), or of one
-/// UiText_DecodeMessage call when the block is empty.
+/// length of one message's decoding (Message_Decode), or of one
+/// Message_DecodeRaw call when the block is empty.
 #define TEXT_WORK_BLOCK 50
 
 /// HEAP_SLOT_GLYPH_TRANSFER's pointer, kept in IWRAM (system/iwram.s, after

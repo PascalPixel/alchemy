@@ -72,7 +72,7 @@ void Inventory_NoOpCallback(void);
 void Inventory_ReservedNoOp(void);
 void ObjectEvent_WaitForAnimationEnd(s32 localId, s32 animation);
 s32 FieldScript_AskYesNoWithObjectEventAnimation(s32 localId, s32 forceBottom);
-s32 Menu_AskYesNo(s32 atBottom);
+s32 FieldYesNo_Ask(s32 atBottom);
 void Party_LearnAbility(s32 unit, s32 ability);
 void FieldScript_StartScreenTransition(void);
 void FieldScript_FinishScreenTransition(void);
@@ -156,12 +156,12 @@ void ObjectMotion_SetActionVariant(s32 objectId, s32 priority);
 void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId);
 void ObjectVisual_ReservedNoOp(void);
 
-struct UiWindow;
+struct Window;
 
 void FieldScript_SetMessageId(s32 message);
 s32 ObjectEvent_ReadActiveValue(s32 localId);
 s32 ObjectEvent_FindActiveByValue(s32 sprite);
-struct UiWindow *UiText_OpenMessageAtObject(s32 localId, s32 unused);
+struct Window *FieldMessage_ShowAtObject(s32 localId, s32 unused);
 void FieldScript_ShowMessageAndWait(s32 localId, s32 flags);
 void FieldScript_ShowMessageThenWait(s32 localId, s32 flags, s32 wait);
 s32 FieldScript_AskYesNoAndShowResponse(s32 localId, s32 flags);
@@ -176,7 +176,7 @@ void FieldScript_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
                                         s32 second, s32 secondX, s32 secondY,
                                         s32 secondPortraitX,
                                         s32 secondPortraitY);
-void Ui_SetMessageVoiceFromObjectEvent(s32 localId);
+void Message_SetVoiceFromObjectEvent(s32 localId);
 
 void FieldCamera_FollowObjectEvent(s32 localId, s32 keepPosition);
 void FieldCamera_SetSpeedParameters(s32 speedLimit, s32 acceleration);

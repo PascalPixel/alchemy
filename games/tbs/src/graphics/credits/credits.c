@@ -274,7 +274,7 @@ s32 DisplayScroll_RunSlideshow(void) {
   }
   Io_Write16(0, &REG_BLDCNT);
   Io_Write16(DISPCNT_OBJ_1D_MAP | DISPCNT_OBJ_ON, &REG_DISPCNT);
-  Ui_LoadWindowGraphics();
+  Window_LoadGraphics();
   DebugText_Clear();
   gOamCopyEnabled = 1;
   return 0;

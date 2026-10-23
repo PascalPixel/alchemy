@@ -4,29 +4,29 @@
 
 #include "../battle_command_internal.h"
 
-/// How many bytes of gNumberTextBuffer are widened: the eleven characters
-/// NumberText_FormatDecimal writes, its terminator and the two bytes after.
+/// How many bytes of gNumberBuffer are widened: the eleven characters
+/// String_FormatDecimal writes, its terminator and the two bytes after.
 #define NUMBER_TEXT_WIDE_LENGTH 14
 
-// Writes `value` into `out` as NumberText_FormatDecimal's eleven-character,
+// Writes `value` into `out` as String_FormatDecimal's eleven-character,
 // right-aligned decimal text, widened to halfwords for
-// UiText_RenderWideStringInWindow: out + 7 is its last four characters,
+// Text_DrawWideStringInWindow: out + 7 is its last four characters,
 // out + 8 its last three. `out` needs room for 14 halfwords.
 // It is declared to return s32 but returns no value, and no caller reads one;
 // UBFIX makes it void, which changes its epilogue and the argument setup of
-// three calls in DjinnMenu_ShowChangePreview.
+// three calls in BattleDjinnMenu_ShowChangePreview.
 #ifdef UBFIX
-void UiText_FormatNumberToHalfwords(s16 *out, s32 value) {
+void String_FormatNumberToHalfwords(s16 *out, s32 value) {
 #else
-s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value) {
+s32 String_FormatNumberToHalfwords(s16 *out, s32 value) {
 #endif
   s16 *destination;
   s32 remaining;
   u8 *source;
 
   destination = out;
-  NumberText_FormatDecimal(value);
-  source = gNumberTextBuffer;
+  String_FormatDecimal(value);
+  source = gNumberBuffer;
   for (remaining = 0; remaining < NUMBER_TEXT_WIDE_LENGTH; remaining++) {
     *destination++ = *source++;
   }
@@ -44,9 +44,9 @@ s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value) {
 /// lacks, marked DJINN_PREVIEW_ABILITY_LOST. Both lists are 32 slots, ended
 /// early by a 0 action. Returns the entries written, and the gained and lost
 /// counts through `gained` and `lost`.
-s32 DjinnMenu_ListChangedDjinn(const struct PsynergyEntry *oldGrid,
-                               const struct PsynergyEntry *newGrid, u16 *out,
-                               s32 *gained, s32 *lost) {
+s32 BattleDjinnMenu_ListChangedDjinn(const struct PsynergyEntry *oldGrid,
+                                     const struct PsynergyEntry *newGrid,
+                                     u16 *out, s32 *gained, s32 *lost) {
   s32 i;
   s32 j;
   s32 count;
@@ -98,10 +98,10 @@ s32 DjinnMenu_ListChangedDjinn(const struct PsynergyEntry *oldGrid,
 // UBFIX makes it void, which changes the register its epilogue returns
 // through.
 #ifdef UBFIX
-void Ui_CreateOutputFromResourceSlot(struct UiWindow *window, s32 x, s32 y,
+void Ui_CreateOutputFromResourceSlot(struct Window *window, s32 x, s32 y,
                                      s32 abilityId) {
 #else
-s32 Ui_CreateOutputFromResourceSlot(struct UiWindow *window, s32 x, s32 y,
+s32 Ui_CreateOutputFromResourceSlot(struct Window *window, s32 x, s32 y,
                                     s32 abilityId) {
 #endif
   s32 iconSlot;
@@ -110,7 +110,7 @@ s32 Ui_CreateOutputFromResourceSlot(struct UiWindow *window, s32 x, s32 y,
   if (iconSlot != VRAM_CACHE_ENTRY_COUNT) {
     Resource_LoadIndexedEntryToBuffer(abilityId, iconSlot);
     // If the output pool is full, the creator releases iconSlot itself.
-    RenderOutput_Create(iconSlot, OUTPUT_SIZE_16X16, window, x, y);
+    WindowSprite_Create(iconSlot, OUTPUT_SIZE_16X16, window, x, y);
   }
 }
 
@@ -124,10 +124,10 @@ s32 Ui_CreateOutputFromResourceSlot(struct UiWindow *window, s32 x, s32 y,
 /// to their number (at least 1).
 /// The Djinni is toggled and the unit recalculated (Unit_CalculateFar) only to
 /// measure: the unit is restored from a copy before it returns.
-/// Battle_SelectAbility calls it as the cursor moves.
-struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
-                                             s32 encodedDjinn, s32 page,
-                                             s32 *pageCount) {
+/// BattleDjinnMenu_Run calls it as the cursor moves.
+struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 owner,
+                                                 s32 encodedDjinn, s32 page,
+                                                 s32 *pageCount) {
   struct Unit *unit;
   struct Unit *savedUnit;
   struct AbilityDefinition *ability;
@@ -155,12 +155,12 @@ struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
   // a 16x16 sprite on layer 240 at pixel (x, y) of the window, in a VRAM
   // cache entry of its own that the window's output list frees (kind 1).
   void DjinnMenu_DrawStatArrow(s32 x, s32 y, s32 rising) {
-    struct RenderOutput *output = RenderOutput_AcquireFree();
+    struct WindowSprite *output = WindowSprite_AcquireFree();
     struct PreviewSprite *entry;
     u32 zero;
     if (output) {
-      output->active = 1;
-      output->kind = RENDER_OUTPUT_SPRITE;
+      output->motion = 1;
+      output->kind = WINDOW_SPRITE_ICON;
       // Stored through a cast, the index stays ahead of the attribute word.
       *(s8 *)&output->index = VramCache_AllocEntry(128);
       entry = (struct PreviewSprite *)((u8 *)output + 16);
@@ -175,7 +175,7 @@ struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
       zero = 0;
       entry->tile.value = zero;
 #else
-      *(struct UiWindow **)&entry->attributes = (struct UiWindow *)0x40000400;
+      *(struct Window **)&entry->attributes = (struct Window *)0x40000400;
       zero = 0;
       *(void **)&entry->tile = (void *)zero;
 #endif
@@ -189,18 +189,18 @@ struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
       entry->tile.bits.index = VramCache_Reload(
           (u8)output->index,
           (s32)(rising ? gDjinnMenu_ArrowUpTiles : gDjinnMenu_ArrowDownTiles));
-      RenderOutput_AppendToList((struct RenderOutputList *)win, output);
+      WindowSprite_AppendToList((struct WindowSpriteList *)win, output);
     }
   }
 
   unit = Unit_GetFar(owner);
   if (win != 0)
-    UiWork_Finalize(win, 1);
+    Window_Close(win, 1);
 
   if (page == 0)
-    win = UiWindow_Create(0, 8, 21, 11, 6);
+    win = Window_Create(0, 8, 21, 11, 6);
   else
-    win = UiWindow_Create(0, 5, 21, 14, 6);
+    win = Window_Create(0, 5, 21, 14, 6);
   if (win == 0)
     return 0;
 
@@ -223,8 +223,8 @@ struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
     Djinn_SetFar(owner, element, djinnIndex);
   Unit_CalculateFar(owner);
 
-  abilityCount = DjinnMenu_ListChangedDjinn(savedUnit->psynergy, unit->psynergy,
-                                            changedAbilities, &gained, &lost);
+  abilityCount = BattleDjinnMenu_ListChangedDjinn(
+      savedUnit->psynergy, unit->psynergy, changedAbilities, &gained, &lost);
   // Five abilities a page; a page past the list shows the last.
   pages = ((abilityCount - 1) / 5) + 1;
   *pageCount = pages;
@@ -235,46 +235,41 @@ struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
   if (page == 0) {
     s32 label = MsgPreviewStatLabel;
 
-    UiText_DrawCharacterAtOffset(label, win, 0, 8);
-    UiText_DrawCharacterAtOffset(label + 1, win, 0, 16);
-    UiText_DrawCharacterAtOffset(label + 2, win, 0, 24);
-    UiText_DrawCharacterAtOffset(label + 3, win, 0, 32);
-    UiText_DrawCharacterAtOffset(label + 4, win, 0, 40);
-    UiText_DrawCharacterAtOffset(label + 5, win, 0, 48);
+    Text_DrawMessageAsTiles(label, win, 0, 8);
+    Text_DrawMessageAsTiles(label + 1, win, 0, 16);
+    Text_DrawMessageAsTiles(label + 2, win, 0, 24);
+    Text_DrawMessageAsTiles(label + 3, win, 0, 32);
+    Text_DrawMessageAsTiles(label + 4, win, 0, 40);
+    Text_DrawMessageAsTiles(label + 5, win, 0, 48);
 
     // The old values, by the labels; the new ones go at column 11 below.
     oldHp = savedUnit->hp;
-    UiText_FormatNumberToHalfwords(numberText, oldHp);
-    UiText_RenderWideStringInWindow(numberText + 7, win, DJINN_PREVIEW_VITALS_X,
-                                    1);
+    String_FormatNumberToHalfwords(numberText, oldHp);
+    Text_DrawWideStringInWindow(numberText + 7, win, DJINN_PREVIEW_VITALS_X, 1);
     oldPp = savedUnit->pp;
-    UiText_FormatNumberToHalfwords(numberText, oldPp);
-    UiText_RenderWideStringInWindow(numberText + 7, win, DJINN_PREVIEW_VITALS_X,
-                                    2);
+    String_FormatNumberToHalfwords(numberText, oldPp);
+    Text_DrawWideStringInWindow(numberText + 7, win, DJINN_PREVIEW_VITALS_X, 2);
     oldAtk = savedUnit->atk;
-    UiText_FormatNumberToHalfwords(numberText, oldAtk);
-    UiText_RenderWideStringInWindow(numberText +
-                                        DJINN_PREVIEW_STAT_DIGIT_OFFSET,
-                                    win, DJINN_PREVIEW_STAT_X, 3);
+    String_FormatNumberToHalfwords(numberText, oldAtk);
+    Text_DrawWideStringInWindow(numberText + DJINN_PREVIEW_STAT_DIGIT_OFFSET,
+                                win, DJINN_PREVIEW_STAT_X, 3);
     oldDef = savedUnit->def;
-    UiText_FormatNumberToHalfwords(numberText, oldDef);
-    UiText_RenderWideStringInWindow(numberText +
-                                        DJINN_PREVIEW_STAT_DIGIT_OFFSET,
-                                    win, DJINN_PREVIEW_STAT_X, 4);
+    String_FormatNumberToHalfwords(numberText, oldDef);
+    Text_DrawWideStringInWindow(numberText + DJINN_PREVIEW_STAT_DIGIT_OFFSET,
+                                win, DJINN_PREVIEW_STAT_X, 4);
     oldAgi = savedUnit->agi;
-    UiText_FormatNumberToHalfwords(numberText, oldAgi);
-    UiText_RenderWideStringInWindow(numberText +
-                                        DJINN_PREVIEW_STAT_DIGIT_OFFSET,
-                                    win, DJINN_PREVIEW_STAT_X, 5);
-    UiText_FormatNumberToHalfwords(numberText, savedUnit->luck);
-    UiText_RenderWideStringInWindow(numberText + 8, win, 5, 6);
+    String_FormatNumberToHalfwords(numberText, oldAgi);
+    Text_DrawWideStringInWindow(numberText + DJINN_PREVIEW_STAT_DIGIT_OFFSET,
+                                win, DJINN_PREVIEW_STAT_X, 5);
+    String_FormatNumberToHalfwords(numberText, savedUnit->luck);
+    Text_DrawWideStringInWindow(numberText + 8, win, 5, 6);
 
-    UiWindow_DrawDividerLine(win, 0, 8, 19, 8);
+    Window_DrawDividerLine(win, 0, 8, 19, 8);
     // "R: Psynergy Gained" stands out in colour 2 when the Psynergy changes.
     if (gained != 0 || lost != 0)
       UiWork_SetParameterNibble(2);
-    UiText_DrawCharacterAtOffset(MsgBattleAdditionalPsynergyHelp, win,
-                                 DJINN_PREVIEW_HELP_X, 64);
+    Text_DrawMessageAsTiles(MsgBattleAdditionalPsynergyHelp, win,
+                            DJINN_PREVIEW_HELP_X, 64);
     UiWork_SetParameterNibble(15);
   }
 
@@ -288,8 +283,8 @@ struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
          visibleRow++, i++) {
       ability = Ability_Get(changedAbilities[i]);
       if (ability->element != ELEMENT_NONE)
-        UiWindow_SetTilemapEntry(win, 0x5001 + ability->element, 15,
-                                 visibleRow * 2, 0);
+        Window_SetTilemapEntry(win, 0x5001 + ability->element, 15,
+                               visibleRow * 2, 0);
 
       // Its element icon, range icon, icon, name and PP cost.
       rangePattern = ability->range;
@@ -297,7 +292,7 @@ struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
         rangePattern = 11;
       else
         rangePattern--;
-      UiWindow_DrawThreeTileColumn(win, 16, visibleRow * 2, rangePattern, 0);
+      Window_DrawThreeTileColumn(win, 16, visibleRow * 2, rangePattern, 0);
 
       Ui_CreateOutputFromResourceSlot(win, 0, visibleRow * 16 - 4,
                                       changedAbilities[i] & ACTION_ID_MASK);
@@ -308,46 +303,45 @@ struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
       else
         UiWork_SetParameterNibble(15);
 
-      UiText_DrawCharacterAtOffset((changedAbilities[i] & ACTION_ID_MASK) +
-                                       MsgAbilityName,
-                                   win, 16, visibleRow * 16);
-      UiWindow_SetTilemapEntry(win, 0xf01f, 11, visibleRow * 2, 0);
-      UiWindow_SetTilemapEntry(win, PSYNERGY_COST_SECOND_TILE, 12,
-                               visibleRow * 2, 0);
-      UiText_DrawNumberInWindow(Ability_Get(changedAbilities[i])->ppCost, 2,
-                                win, 104, visibleRow * 16);
+      Text_DrawMessageAsTiles((changedAbilities[i] & ACTION_ID_MASK) +
+                                  MsgAbilityName,
+                              win, 16, visibleRow * 16);
+      Window_SetTilemapEntry(win, 0xf01f, 11, visibleRow * 2, 0);
+      Window_SetTilemapEntry(win, PSYNERGY_COST_SECOND_TILE, 12, visibleRow * 2,
+                             0);
+      Text_DrawNumberInWindow(Ability_Get(changedAbilities[i])->ppCost, 2, win,
+                              104, visibleRow * 16);
     }
 
     if (gained != 0) {
       UiWork_SetParameterNibble(4);
-      UiText_DrawCharacterAtOffset(MsgPsynergyGained, win, 32, 80);
+      Text_DrawMessageAsTiles(MsgPsynergyGained, win, 32, 80);
       summaryRows = 1;
     }
     if (lost != 0) {
       UiWork_SetParameterNibble(2);
-      UiText_DrawCharacterAtOffset(MsgPsynergyLost, win, 32,
-                                   summaryRows * 8 + 80);
+      Text_DrawMessageAsTiles(MsgPsynergyLost, win, 32, summaryRows * 8 + 80);
       summaryRows++;
     }
     if (summaryRows == 0)
-      UiText_DrawCharacterAtOffset(MsgPsynergyUnchanged, win, 32, 80);
+      Text_DrawMessageAsTiles(MsgPsynergyUnchanged, win, 32, 80);
     UiWork_SetParameterNibble(15);
     UiWork_SetParameterNibble(15);
-    UiWindow_DrawDividerLine(win, 0, 10, 19, 10);
+    Window_DrawDividerLine(win, 0, 10, 19, 10);
   }
 
   if (page == 0) {
-    UiText_DrawCharacterAtOffset(MsgClassName + savedUnit->classId, win, 0, 0);
-    UiText_DrawCharacterAtOffset(MsgClassName + unit->classId, win, 80, 0);
+    Text_DrawMessageAsTiles(MsgClassName + savedUnit->classId, win, 0, 0);
+    Text_DrawMessageAsTiles(MsgClassName + unit->classId, win, 80, 0);
     // The arrow between the classes, flipped (0x400): tile 0x328 blinks
     // when the class changes, 0x329 stays (gDjinnMenu_BlinkTile).
     if (savedUnit->classId != unit->classId)
-      UiWindow_SetTilemapEntry(win, 0xf728, 9, 0, page);
+      Window_SetTilemapEntry(win, 0xf728, 9, 0, page);
     else
-      UiWindow_SetTilemapEntry(win, 0xf729, 9, 0, page);
+      Window_SetTilemapEntry(win, 0xf729, 9, 0, page);
 
-    UiText_FormatNumberToHalfwords(numberText, unit->hp);
-    UiText_RenderWideStringInWindow(numberText + 7, win, 11, 1);
+    String_FormatNumberToHalfwords(numberText, unit->hp);
+    Text_DrawWideStringInWindow(numberText + 7, win, 11, 1);
     if (unit->hp != oldHp) {
       rising = 0;
       if (unit->hp > oldHp)
@@ -355,8 +349,8 @@ struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
       DjinnMenu_DrawStatArrow(80, 14, rising);
     }
 
-    UiText_FormatNumberToHalfwords(numberText, unit->pp);
-    UiText_RenderWideStringInWindow(numberText + 7, win, 11, 2);
+    String_FormatNumberToHalfwords(numberText, unit->pp);
+    Text_DrawWideStringInWindow(numberText + 7, win, 11, 2);
     if (unit->pp != oldPp) {
       rising = 0;
       if (unit->pp > oldPp)
@@ -364,8 +358,8 @@ struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
       DjinnMenu_DrawStatArrow(80, 22, rising);
     }
 
-    UiText_FormatNumberToHalfwords(numberText, unit->atk);
-    UiText_RenderWideStringInWindow(numberText + 7, win, 11, 3);
+    String_FormatNumberToHalfwords(numberText, unit->atk);
+    Text_DrawWideStringInWindow(numberText + 7, win, 11, 3);
     if (unit->atk != oldAtk) {
       rising = 0;
       if (unit->atk > oldAtk)
@@ -373,8 +367,8 @@ struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
       DjinnMenu_DrawStatArrow(80, 30, rising);
     }
 
-    UiText_FormatNumberToHalfwords(numberText, unit->def);
-    UiText_RenderWideStringInWindow(numberText + 7, win, 11, 4);
+    String_FormatNumberToHalfwords(numberText, unit->def);
+    Text_DrawWideStringInWindow(numberText + 7, win, 11, 4);
     if (unit->def != oldDef) {
       rising = 0;
       if (unit->def > oldDef)
@@ -382,8 +376,8 @@ struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
       DjinnMenu_DrawStatArrow(80, 38, rising);
     }
 
-    UiText_FormatNumberToHalfwords(numberText, unit->agi);
-    UiText_RenderWideStringInWindow(numberText + 7, win, 11, 5);
+    String_FormatNumberToHalfwords(numberText, unit->agi);
+    Text_DrawWideStringInWindow(numberText + 7, win, 11, 5);
     if (unit->agi != oldAgi) {
       rising = 0;
       if (unit->agi > oldAgi)
@@ -391,8 +385,8 @@ struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
       DjinnMenu_DrawStatArrow(80, 46, rising);
     }
 
-    UiText_FormatNumberToHalfwords(numberText, unit->luck);
-    UiText_RenderWideStringInWindow(numberText + 8, win, 12, 6);
+    String_FormatNumberToHalfwords(numberText, unit->luck);
+    Text_DrawWideStringInWindow(numberText + 8, win, 12, 6);
     if (unit->luck != savedUnit->luck) {
       rising = 0;
       if (unit->luck > savedUnit->luck)

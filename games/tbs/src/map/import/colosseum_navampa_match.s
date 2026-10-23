@@ -41,9 +41,9 @@
 	.set import.ObjectSystem_SuspendProjectionAndShowSprites, 1
 	.set import.MapGrid_SetMetatileBehaviorAt, 1
 	.set import.Engine_MessageShowCentered, 1
-	.set import.UiWork_PushValueSlot, 1
+	.set import.MessageArgument_Push, 1
 	.set import.ItemIcon_LoadTilesFar, 1
-	.set import.PartyTalkMenu_Choose, 1
+	.set import.ColossoMenu_Choose, 1
 	.set import.Resource_LoadFixedBlockBIntoFreeSlot, 1
 	.set import.Unit_Get, 1
 	.set import.Inventory_AddItem, 1
@@ -109,7 +109,7 @@
 	.set import.Engine_ScriptClearInvalidPackedValues, 1
 	.set import.ObjectEvent_LinkObjectAndSetCallback, 1
 	.set import.FieldEffect_PauseObject, 1
-	.set import.Menu_OpenCharacterSelector, 1
+	.set import.MemberChooser_Open, 1
 	.set import.Engine_AudioPlayCue, 1
 	.set import.AudioCommand_GetStateByte, 1
 	.include "games/tbs/src/system/overlay.inc"

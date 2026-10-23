@@ -1544,7 +1544,7 @@ s32 Vale_Initialize(void) {
   s32 set;
 
   if (gGameState.warpDest == VALE_FROM_TITLE) {
-    PaletteGlow_Update(((u8 *)&gGameState)[517], ((u8 *)&gGameState)[518]);
+    WindowColor_Apply(((u8 *)&gGameState)[517], ((u8 *)&gGameState)[518]);
     EventScript_MendingTheRoof();
   } else {
     if (!Engine_GameFlagIsSet(FLAG_VALE_NUT_CAUGHT)) {
@@ -2056,7 +2056,7 @@ static void EventScript_MendingTheRoof(void) {
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER, gVale_LeaderHammers);
   ObjectSystem_SuspendProjectionAndShowSprites();
   message = MsgValeRepairCaption;
-  UiText_ShowCenteredMessage(message, 0, 0);
+  FieldMessage_ShowCentered(message, 0, 0);
   ObjectSystem_ResumeProjectionAndHideLayers();
 
   // Follow Jenna through the village until she notices the repair work.

@@ -527,7 +527,7 @@ static void KalayTolbiDocks_TalkToDockWorker(void) {
 /// enough coins the seller refuses; otherwise the party gets its ticket and
 /// pays (sets FLAG_KALAY_DOCKS_TICKET_BOUGHT).
 static void KalayTolbiDocks_TalkToTicketSeller(void) {
-  struct UiWindow *coinsWindow;
+  struct Window *coinsWindow;
   struct GameState *state;
   s32 ticketPrice;
 
@@ -550,34 +550,34 @@ static void KalayTolbiDocks_TalkToTicketSeller(void) {
       Script_ShowMessageAndWait(LOCALID_SELLING_TICKETS, 0, 10);
     } else {
       gFieldWork->message++;
-      UiWork_PushValueSlot(ticketPrice, 5);
+      MessageArgument_Push(ticketPrice, 5);
       Script_OpenMessage(LOCALID_SELLING_TICKETS, 0);
       // Keep the balance visible while the player confirms the purchase.
-      coinsWindow = UiWindow_Create(TICKET_COUNTER_WINDOW_X, 8,
-                                    TICKET_COUNTER_WIDTH, 4, 2);
+      coinsWindow =
+          Window_Create(TICKET_COUNTER_WINDOW_X, 8, TICKET_COUNTER_WIDTH, 4, 2);
 #if TBS_PATCH_1
-      UiText_DrawCharacterAtOffset(MSGNO(MsgYourCoins), coinsWindow, 0, 0);
+      Text_DrawMessageAsTiles(MSGNO(MsgYourCoins), coinsWindow, 0, 0);
 #else
       coinLabel = MSGNO(MsgYourCoins);
-      UiText_DrawCharacterAtOffset(coinLabel, coinsWindow, 0, 0);
+      Text_DrawMessageAsTiles(coinLabel, coinsWindow, 0, 0);
 #endif
       state = &gGameState;
 #if LANGUAGE == LANGUAGE_JAPANESE
       coinLabel += MSGNO(MsgCoins) - MSGNO(MsgYourCoins);
 #endif
-      UiText_DrawNumberInWindow(state->coins, 6, coinsWindow, TICKET_COUNTER_X,
-                                8);
+      Text_DrawNumberInWindow(state->coins, 6, coinsWindow, TICKET_COUNTER_X,
+                              8);
 #if LANGUAGE == LANGUAGE_JAPANESE
-      UiText_DrawCharacterAtOffset(coinLabel, coinsWindow, 48, 8);
+      Text_DrawMessageAsTiles(coinLabel, coinsWindow, 48, 8);
 #endif
       if (Engine_ScriptChooseYesNo(-1, 0) == 1) {
-        UiWork_Finalize(coinsWindow, 2);
+        Window_Close(coinsWindow, 2);
         Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER,
                                               ANIMATION_SHAKE_HEAD);
         Engine_ScriptWait(10);
         Script_ShowMessage(LOCALID_SELLING_TICKETS, 0);
       } else if ((u32)ticketPrice > (u32)state->coins) {
-        UiWork_Finalize(coinsWindow, 2);
+        Window_Close(coinsWindow, 2);
         Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER,
                                               ANIMATION_NOD);
         Engine_ScriptWait(10);
@@ -585,7 +585,7 @@ static void KalayTolbiDocks_TalkToTicketSeller(void) {
         Script_PlaySong(SE_MENU_CANCEL);
         Script_ShowMessage(LOCALID_SELLING_TICKETS, 0);
       } else {
-        UiWork_Finalize(coinsWindow, 2);
+        Window_Close(coinsWindow, 2);
         Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER,
                                               ANIMATION_NOD);
         Engine_ScriptWait(10);

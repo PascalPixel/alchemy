@@ -299,7 +299,7 @@ static void EventScript_TalkToItemMerchant(s32 keeper) {
 /// counter; otherwise small talk of Babi's lighthouse.
 static void EventScript_TalkToHealer(s32 healer) {
   if (Leader_GetSide() == FACING_NORTH) {
-    Shop_ConfirmAct(healer);
+    Sanctum_Run(healer);
   } else if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
     Engine_ScriptSetMessage(MsgLaliveroBabiLighthouseStruck);
     Engine_ScriptShowMessage(healer, 0);

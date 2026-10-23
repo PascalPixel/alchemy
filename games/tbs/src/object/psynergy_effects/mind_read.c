@@ -263,7 +263,7 @@ void Ui_FillBank15PaletteGrey(void) {
 
   // Window mode 1: messages show as thoughts until
   // Ui_SetBank15PaletteAndClearRenderMode clears it.
-  ((struct UiRenderWork *)gWindowWork[0])->mode = 1;
+  ((struct WindowWork *)gWindowWork[0])->mindRead = 1;
   p = &BG_PLTT_COLOR(15, 1);
   *p = MIND_READ_GREY;
   p += 2;
@@ -301,8 +301,8 @@ void Ui_SetBank15PaletteAndClearRenderMode(void) {
   BG_PLTT_COLOR(15, 3) = 0;
   BG_PLTT_COLOR(15, 11) = RGB(10, 10, 10);
   BG_PLTT_COLOR(15, 12) = RGB(20, 20, 20);
-  PaletteGlow_UpdateFar(gGameState.paletteGlow[0], gGameState.paletteGlow[1]);
-  ((struct UiRenderWork *)work)->mode = 0;
+  WindowColor_ApplyFar(gGameState.windowColor[0], gGameState.windowColor[1]);
+  ((struct WindowWork *)work)->mindRead = 0;
 }
 
 #undef MIND_READ_GREY

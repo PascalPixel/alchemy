@@ -51,7 +51,7 @@ FarCall_ObjectTable:
 	export ObjectGroup_SetChildValueFar, ObjectGroup_SetChildValue
 	export ObjectEvent_SetTargetAndCallbackFar, ObjectEvent_SetTargetAndCallback
 	export FieldScript_SetMessageIdFar, FieldScript_SetMessageId
-	export UiText_OpenMessageAtObjectFar, UiText_OpenMessageAtObject
+	export FieldMessage_ShowAtObjectFar, FieldMessage_ShowAtObject
 	export FieldScript_ShowMessageAndWaitFar, FieldScript_ShowMessageAndWait
 	export FieldScript_ShowMessageThenWaitFar, FieldScript_ShowMessageThenWait
 	export FieldScript_AskYesNoAndShowResponseFar, FieldScript_AskYesNoAndShowResponse
@@ -63,7 +63,7 @@ FarCall_ObjectTable:
 	overlay_veneer ObjectEvent_ResetTargetAndSetMode1
 	overlay_veneer ObjectEvent_RunIfActive
 	export FieldScript_ShowTwoMessagesAndWaitFar, FieldScript_ShowTwoMessagesAndWait
-	export Ui_SetMessageVoiceFromObjectEventFar, Ui_SetMessageVoiceFromObjectEvent
+	export Message_SetVoiceFromObjectEventFar, Message_SetVoiceFromObjectEvent
 	export ObjectMotion_SetActionVariantFar, ObjectMotion_SetActionVariant
 	export FieldEffect_SpawnLinkedFar, FieldEffect_SpawnLinked
 	export FieldEffect_ConfigureLinkedObjectFar, FieldEffect_ConfigureLinkedObject
@@ -159,7 +159,7 @@ FarCall_ObjectTable:
 	export Party_AddPpFar, Party_AddPp
 	overlay_veneer Party_AddHp
 	overlay_veneer VramCache_CountFreeBlocks
-	export Menu_AskYesNoFar, Menu_AskYesNo
+	export FieldYesNo_AskFar, FieldYesNo_Ask
 	overlay_veneer Encounter_GetFormationAtSlot
 	overlay_veneer Encounter_GetDjinnFormation
 	export Map_PlayMusicFar, Map_PlayMusic

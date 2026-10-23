@@ -117,7 +117,7 @@ element 4, `ELEMENT_NONE`; every other column is 0.
 | `type` | `enum ItemType`: `ITEM_TYPE_NONE` for anything that isn't equipment, then weapons, armor, shields, helms, boots, `ITEM_TYPE_PSYNERGY`, rings and shirts; a unit equips one of each type except [Psynergy](../../glossary.md#psynergy-and-pp) items |
 | `flags` | `enum ItemFlags`: `ITEM_CURSED`, `ITEM_CANNOT_UNEQUIP`, `ITEM_RARE`, `ITEM_INDISPENSABLE` and `ITEM_STACKABLE` |
 | `equip_mask` | one bit per character who can equip it, bit 0 for Isaac: the Long Sword's `0x13` is Isaac, Garet and Felix |
-| `icon` | its menu icon (`gUiIcon_ItemIconPointers`) |
+| `icon` | its menu icon (`gItemIcons`) |
 | `primary_bonus`, `secondary_bonus` | Attack and Defense added while equipped |
 | `unleash_action`, `unleash_chance` | the ability a weapon unleashes, at `unleash_chance` steps of 5 percent (`RollWeaponUnleash`) |
 | `use_type` | what using it costs: `ITEM_USE_CONSUMED`, `ITEM_USE_MAY_BREAK` (one time in eight), `ITEM_USE_EMPTIES` (leaves an Empty Bottle), or `ITEM_USE_FREE` |
@@ -212,7 +212,7 @@ fraction of their maximums. It runs after anything that changes an input:
 equipping, setting a Djinni, levelling up, a class change.
 
 A menu that previews a change uses the same path. To show Attack without the
-Machete, `Menu_DrawOwnerStatusPanel`
+Machete, `StatusPanel_Draw`
 ([menu/menu/common.c](../menu/menu/common.c))
 copies the unit to the [heap](../../glossary.md#heap-and-pools), changes the real unit's equipment, lets
 `Unit_Calculate` run, draws the new numbers against the copy and restores the

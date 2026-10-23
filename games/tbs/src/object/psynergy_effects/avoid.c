@@ -62,12 +62,12 @@ void FieldEffect_UpdatePairedArcSpawner(union FieldObject *fieldObject) {
 void FieldScript_ShowStatusMessage(void) {
   gGameState.avoidDistance = 0;
   if (gGameState.avoidByItem == 0) {
-    UiWork_PushValueSlotFar(ABILITY_AVOID, 4);
-    UiText_ShowPositionedMessageAndWaitFar(MsgAbilityWoreOff, 1);
+    MessageArgument_PushFar(ABILITY_AVOID, 4);
+    FieldMessage_ShowFar(MsgAbilityWoreOff, 1);
     return;
   }
-  UiWork_PushValueSlotFar(ITEM_SACRED_FEATHER, 2);
-  UiText_ShowPositionedMessageAndWaitFar(MsgItemWoreOff, 1);
+  MessageArgument_PushFar(ITEM_SACRED_FEATHER, 2);
+  FieldMessage_ShowFar(MsgItemWoreOff, 1);
 }
 
 /// The caster spins and flashes, then blinks, and encounters are kept away
@@ -148,5 +148,5 @@ void FieldEffect_RunAvoid(void) {
   Animation_ApplyChildValuesFar((struct DispatchObject *)object,
                                 SPRITE_COLOR_NORMAL);
   Resource_ResetEntry(effectWork->arcTileSlot);
-  UiText_ShowPositionedMessageAndWaitFar(MsgMonstersAttackLess, 1);
+  FieldMessage_ShowFar(MsgMonstersAttackLess, 1);
 }

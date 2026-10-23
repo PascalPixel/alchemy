@@ -141,20 +141,20 @@ void BattlePlayback_Run(void) {
                                            events->queue.operands[eventIndex]);
             break;
           case PLAYBACK_UNIT_NAME:
-            UiWork_PushValueSlotFar(events->queue.operands[eventIndex],
+            MessageArgument_PushFar(events->queue.operands[eventIndex],
                                     VALUE_UNIT_NAME);
             break;
           case PLAYBACK_NUMBER:
-            UiWork_PushValueSlotFar(events->queue.operands[eventIndex],
+            MessageArgument_PushFar(events->queue.operands[eventIndex],
                                     VALUE_NUMBER);
             break;
           case PLAYBACK_ITEM_NAME:
-            UiWork_PushValueSlotFar(events->queue.operands[eventIndex] &
+            MessageArgument_PushFar(events->queue.operands[eventIndex] &
                                         INVENTORY_ITEM_ID_MASK,
                                     VALUE_ITEM_NAME);
             break;
           case PLAYBACK_ABILITY_NAME:
-            UiWork_PushValueSlotFar(events->queue.operands[eventIndex] &
+            MessageArgument_PushFar(events->queue.operands[eventIndex] &
                                         PSYNERGY_ABILITY_MASK,
                                     VALUE_ABILITY_NAME);
             break;
@@ -176,7 +176,7 @@ void BattlePlayback_Run(void) {
             events->phase = PLAY_MESSAGE_ADD;
             break;
           case PLAYBACK_CLEAR_ARGUMENTS:
-            UiWork_ClearValueNameTablesFar();
+            MessageArgument_ClearAllFar();
             break;
           case PLAYBACK_REMOVE_UNIT:
             BattleObject_DestroyTemporaryObject(
@@ -269,13 +269,13 @@ void BattlePlayback_Run(void) {
       u8 *arrowTiles = gBattleMessage_AdvanceArrowTiles;
       s32 frameTiles = (s32)arrowTiles + ((gFrameCount >> 2) & 7) * 128;
       struct BattleMessageWork *display = gBattleMessageWork;
-      struct UiWindow *window = display->window;
+      struct Window *window = display->window;
       struct BattleMessageOffset *offset = display->offset;
       s32 x = 0;
 
       if (events->arrowResource == -1)
         events->arrowResource = battle->arrowTiles;
-      UiWork_ClearValueNameTablesFar();
+      MessageArgument_ClearAllFar();
       IoWriteQueue_ClearBits16((u32)&REG_WINOUT, 4);
       IoWriteQueue_SetBits16((u32)&REG_WINOUT, 16);
       ((u32 *)prompt)[1] = 0xa000;
@@ -313,7 +313,7 @@ void BattlePlayback_Run(void) {
           BattleMotion_SetRecordChildValues(
               BattleObject_Get(events->actorId)->object, SPRITE_COLOR_WHITE);
         }
-        BattleLayout_HighlightPartyPanelsFar(selection);
+        PartyStatus_HighlightMembersFar(selection);
       }
       events->timer++;
       if (events->timer <= 8)

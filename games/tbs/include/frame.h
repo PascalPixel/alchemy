@@ -29,7 +29,7 @@ extern u16 gLagFrameCount;
 /// gLagFrameCount as the last frame left it; the text typing paces itself by
 /// it.
 /* FAKEMATCH(volatile): as plain u16, 33 of 628 instructions differ in tbs-en
- * (UiWork_StepChannelScript). */
+ * (TextPrinter_Step). */
 extern volatile u16 gLagFramesShown;
 /// Bit 0 is set by the VBlank handler; WaitFrames clears it and halts until
 /// it is set again.

@@ -37,7 +37,7 @@
 	.set import.Engine_ObjectEventFaceObjectEvent, 1
 	.set import.Engine_ObjectEventFaceEachOther, 1
 	.set import.Engine_ScriptSetMessage, 1
-	.set import.UiText_OpenMessageAtObject, 1
+	.set import.FieldMessage_ShowAtObject, 1
 	.set import.Engine_ScriptShowMessage, 1
 	.set import.Engine_ObjectEventFaceDirection, 1
 	.set import.Engine_ObjectEventSetSpritePriority, 1

@@ -102,7 +102,7 @@ s32 BattleMessage_WaitForAdvance(void) {
   s32 frame;
   s32 tileSlot;
   s32 frameTiles;
-  struct UiWindow *window;
+  struct Window *window;
   struct BattleMessageOffset *offset;
   s32 attr2;
   s32 attr1;
@@ -152,7 +152,7 @@ s32 BattleMessage_WaitForAdvance(void) {
 
 /// Shows the cursor bobbing at (x, y), in screen pixels, and waits for one of
 /// KEY_ADVANCE. Called by Battle_Run under the Djinn tutorial's
-/// standby message, and by Menu_RunCommandRow through
+/// standby message, and by BattleCommandRow_Run through
 /// BattleMessage_WaitForAdvanceAtFar. Waits for the message window
 /// first; takes a 128-byte VRAM cache entry for the cursor's tiles and frees
 /// it, and each frame queues the WINOUT writes, sets REG_BLDALPHA and pushes
@@ -270,18 +270,18 @@ u32 BattlePlayback_RunAll(void) {
         BattleObject_DestroyTemporaryObject(queue->operands[eventIndex]);
         break;
       case PLAYBACK_UNIT_NAME:
-        UiWork_PushValueSlotFar(queue->operands[eventIndex], VALUE_UNIT_NAME);
+        MessageArgument_PushFar(queue->operands[eventIndex], VALUE_UNIT_NAME);
         break;
       case PLAYBACK_NUMBER:
-        UiWork_PushValueSlotFar(queue->operands[eventIndex], VALUE_NUMBER);
+        MessageArgument_PushFar(queue->operands[eventIndex], VALUE_NUMBER);
         break;
       case PLAYBACK_ITEM_NAME:
-        UiWork_PushValueSlotFar(queue->operands[eventIndex] &
+        MessageArgument_PushFar(queue->operands[eventIndex] &
                                     INVENTORY_ITEM_ID_MASK,
                                 VALUE_ITEM_NAME);
         break;
       case PLAYBACK_ABILITY_NAME:
-        UiWork_PushValueSlotFar(queue->operands[eventIndex] &
+        MessageArgument_PushFar(queue->operands[eventIndex] &
                                     PSYNERGY_ABILITY_MASK,
                                 VALUE_ABILITY_NAME);
         break;
@@ -289,7 +289,7 @@ u32 BattlePlayback_RunAll(void) {
         gBattleMessageWork->marked = 1;
         break;
       case PLAYBACK_CLEAR_ARGUMENTS:
-        UiWork_ClearValueNameTablesFar();
+        MessageArgument_ClearAllFar();
         break;
       // A negative message (MESSAGE_NONE in target_exec.c) shows nothing:
       // the event only waits for the player.
@@ -297,12 +297,12 @@ u32 BattlePlayback_RunAll(void) {
         if ((s32)queue->operands[eventIndex] >= 0)
           BattleMessage_ShowAndWaitFar(queue->operands[eventIndex]);
         BattleMessage_WaitForAdvance();
-        UiWork_ClearValueNameTablesFar();
+        MessageArgument_ClearAllFar();
         break;
       case PLAYBACK_MESSAGE_NO_WAIT:
         if ((s32)queue->operands[eventIndex] >= 0)
           BattleMessage_ShowAndWaitFar(queue->operands[eventIndex]);
-        UiWork_ClearValueNameTablesFar();
+        MessageArgument_ClearAllFar();
         break;
       case PLAYBACK_HIT:
         if (runtime->pendingSong > 0)

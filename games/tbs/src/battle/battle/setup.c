@@ -98,14 +98,14 @@ void BattleIntro_AnnounceEncounter(s32 enemyCount) {
   s32 announced;
 
   battle = gBattleWork;
-  UiWork_ClearValueNameTablesFar();
+  MessageArgument_ClearAllFar();
   BattleEnemy_List(enemies);
 
   announced = 0;
   if (enemyCount != 0) {
     enemy = enemies;
     do {
-      UiWork_PushValueSlotFar((u16)*enemy++, VALUE_UNIT_NAME);
+      MessageArgument_PushFar((u16)*enemy++, VALUE_UNIT_NAME);
       if (announced == enemyCount - 1)
         BattleMessage_ShowAndWaitFar(MsgLastEnemyAppeared);
       else
@@ -118,13 +118,13 @@ void BattleIntro_AnnounceEncounter(s32 enemyCount) {
   BattleMessage_CloseFar();
   // Unit 0's name stands for the party in either message.
   if (battle->firstStrike == FIRST_STRIKE_PARTY) {
-    UiWork_ClearValueNameTablesFar();
-    UiWork_PushValueSlotFar(0, VALUE_UNIT_NAME);
+    MessageArgument_ClearAllFar();
+    MessageArgument_PushFar(0, VALUE_UNIT_NAME);
     BattleMessage_ShowAndWaitFar(MsgPartyStrikesFirst);
     BattleMessage_WaitForAdvance();
   } else if (battle->firstStrike == FIRST_STRIKE_ENEMIES) {
-    UiWork_ClearValueNameTablesFar();
-    UiWork_PushValueSlotFar(0, VALUE_UNIT_NAME);
+    MessageArgument_ClearAllFar();
+    MessageArgument_PushFar(0, VALUE_UNIT_NAME);
     BattleMessage_ShowAndWaitFar(MsgPartySurprised);
     BattleMessage_WaitForAdvance();
   }
@@ -337,7 +337,7 @@ s32 DjinnRecovery_Reconcile(void) {
 /// of every element is met by the Djinn the party holds of that element
 /// (djinnHeldCounts, set or not), all members together. Whether enough of
 /// them are on standby is checked as the summon is chosen
-/// (SummonMenu_SelectSummon, Battle_CollectPartyCommands) and again when it
+/// (BattleSummonMenu_Run, Battle_CollectPartyCommands) and again when it
 /// is planned (BattleTurn_Build). Stores the mask of them (bit n for
 /// summon n) and returns the state that holds it. Called by
 /// Battle_Run as the battle is set up and at the start of each

@@ -37,27 +37,27 @@ setting up its windows and the hand, it is one loop over the counter's four
 actions (`shop/run.c`, simplified):
 
 ```c
-UiMessage_ShowAndWait(MsgWeaponShopWelcome);
+Shop_ShowKeeperMessage(MsgWeaponShopWelcome);
 while (1) {
   action = Menu_SelectShopCommandFar(action);
   if (action == SHOP_ACTION_BUY) {
     shop->stockCount = ShopStock_CopyItems(stockRow, shop->stockItemIds);
-    UiMessage_ShowAndWait(MsgWhatWouldYouLike);
+    Shop_ShowKeeperMessage(MsgWhatWouldYouLike);
     Shop_SelectBuy();
   } else if (action == SHOP_ACTION_SELL) {
-    UiMessage_ShowAndWait(MsgWhatToSell);
+    Shop_ShowKeeperMessage(MsgWhatToSell);
     Shop_ChooseMember();
   } else if (action == SHOP_ACTION_ARTIFACTS) {
     /* Shop_ListAvailableArtifacts, then Shop_SelectBuy */
   } else if (action == SHOP_ACTION_REPAIR) {
-    UiMessage_ShowAndWait(MsgFixDamaged);
-    Shop_SelectUnit();
+    Shop_ShowKeeperMessage(MsgFixDamaged);
+    Shop_RunRepairMemberChoice();
   } else {
     break;   /* the player leaves */
   }
-  UiMessage_ShowAndWait(MsgAnythingElse);
+  Shop_ShowKeeperMessage(MsgAnythingElse);
 }
-UiMessage_ShowAndWait(MsgShopFarewell);
+Shop_ShowKeeperMessage(MsgShopFarewell);
 ```
 
 A stock row
@@ -70,7 +70,7 @@ shop, in the picture, is row 7.
 
 The keepers' lines are written once for each shop type, each set in the
 same order, and the code names only the weapon shop's (`MsgWeaponShopWelcome`
-and the lines after it). `UiMessage_ShowAndWait` moves the line into the
+and the lines after it). `Shop_ShowKeeperMessage` moves the line into the
 shop's own set by the distance between the two sets' welcomes:
 
 ```c
@@ -198,7 +198,7 @@ but a member who doesn't need the service is refused with a line, and the
 choice comes round again while anyone is left who does. Reviving and
 removing a curse cost more for a higher-level member.
 
-`Shop_CanServe` tests the member and `Shop_ServicePrice` sets the fee. A
+`Sanctum_NeedsService` tests the member and `Sanctum_ServicePrice` sets the fee. A
 curse is the member's curse bits (`Unit.curse`, `enum
 CurseFlag`): bound, which costs a member one action in four in battle,
 and a cursed item worn. `BattleUnit_ResetStateByMode` applies the service:
@@ -212,11 +212,11 @@ the same order from `MsgReviveService`, `MsgCurePoisonService`,
 `MsgExorcismService` and `MsgRemoveCurseService`. The services are
 `enum SanctumService` in `shop_internal.h`.
 
-| Service | Value | For a member who | Fee (`Shop_ServicePrice`) |
+| Service | Value | For a member who | Fee (`Sanctum_ServicePrice`) |
 | --- | --- | --- | --- |
 | `SANCTUM_SERVICE_REVIVE` | 0 | is down (HP 0) | 20 coins a level |
 | `SANCTUM_SERVICE_CURE_POISON` | 1 | is poisoned or deadly poisoned | 10 coins |
-| `SANCTUM_SERVICE_EXORCISE` | 2 | is haunted | 50 coins |
+| `SANCTUM_SERVICE_REPEL_EVIL` | 2 | is haunted | 50 coins |
 | `SANCTUM_SERVICE_REMOVE_CURSE` | 3 | wears a cursed item (any curse bit set) | 10 coins a level |
 
 ## Inns
@@ -267,7 +267,7 @@ the bag, the items after it move up, and the new item takes the last place.
 An item the story needs can't be dropped, and nor can a cursed item being
 worn.
 
-`Shop_PickUnitItem` runs the picker. `PartyInventory_GiveItem`, the script
+`ItemPicker_Run` runs the picker. `PartyInventory_GiveItem`, the script
 command that gives an item, opens it when every bag is full, as do the
 Elemental Star room when it gives the four Mythril Bags and the debug test.
 `Shop_SelectUse` refuses an indispensable item with a message and an
@@ -285,7 +285,7 @@ while walking, so a counter and the field menu are never open together.
 
 Every counter and the item picker take the menu's [heap](../../glossary.md#heap-and-pools) block, under the
 [heap slot](../../glossary.md#heap-slot) `HEAP_SLOT_MENU`, as `struct ShopWork` with
-`Shop_InitializeCursorWork` and give it back with `Shop_ReleaseCursorWork`;
+`Shop_InitializeWork` and give it back with `Shop_ReleaseWork`;
 the struct is in [`include/shop.h`](../../include/shop.h).
 [Menus](../menu/README.md#the-menu-work) describes the block.
 
@@ -314,7 +314,7 @@ tiles, text positions in pixels.
 | `SHOP_PRICE_NUMBER_X` | `0x20` | `0x20` | `0x20` | `0x18` | `0x20` | `0x20` |
 | `SHOP_PRICE_LABEL_X` | `0x48` | `0x48` | `0x48` | `0x40` | `0x50` | `0x48` |
 | `SHOP_MONEY_WINDOW_WIDTH` | 11 | 12 | 12 | 12 | 12 | 12 |
-| `SHOP_USE_WINDOW_X`, `_WIDTH` | 16, 14 | 14, 16 | 14, 16 | 14, 16 | 14, 16 | 14, 16 |
+| `ITEM_PICKER_WINDOW_X`, `_WIDTH` | 16, 14 | 14, 16 | 14, 16 | 14, 16 | 14, 16 | 14, 16 |
 | `SANCTUM_PRICE_WINDOW_X`, `_WIDTH` | 1, 23 | 1, 23 | 0, 30 | 1, 25 | 1, 23 | 1, 23 |
 | `SHOP_QUANTITY_CURSOR_X` | 128 | 128 | 120 | 120 | 128 | 128 |
 | `SHOP_ITEM_NOTE_X` | 8 | 0 | 0 | 0 | 0 | 0 |
@@ -326,9 +326,9 @@ Maps open the counters through their [import tables](../../glossary.md#entry-tab
 program through the shop [bank](../../glossary.md#bank)'s [far-call](../../glossary.md#far-call) table. Some of the shop's
 pieces serve other screens:
 
-- `ShopCursor_Advance` also moves the cursors of the option, name entry and
+- `MenuCursor_Advance` also moves the cursors of the option, name entry and
   save menus and the choice of who joins the party.
-- The Item screen draws its quantity bar with `Shop_FillSelector`.
+- The Item screen draws its quantity bar with `QuantityBar_Fill`.
 - `Shop_SaveAndTintFieldPalette`, which saves the field's colours and fades
   them over 16 [frames](../../glossary.md#frame), also runs before a [Djinni](../../glossary.md#djinn) joins the party and before
   the wall in Altmiller Cave bursts.
@@ -378,7 +378,7 @@ work block's layout, `struct ShopWork`, is in
   Buy, Sell, Artifacts or Repair.
 - **service**: what a sanctum does for one member (`enum SanctumService`).
 - **cursor duration**: `shop->mode`, the frames the hand cursor's next glide
-  takes (`Shop_PlaceCursor`, `Shop_SetCursor`, `ShopCursor_Advance`).
+  takes (`MenuCursor_Place`, `MenuCursor_Set`, `MenuCursor_Advance`).
 - **party row**: the members' icons across a window, which the counters
   select and animate (`partyMemberIcons`, `Shop_ChooseMember`).
 - `unk` plus an offset: a field whose meaning is not known.

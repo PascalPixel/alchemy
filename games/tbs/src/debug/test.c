@@ -118,7 +118,7 @@ u8 *MenuTest_GetObjectEventTemplates(void) {
 /// Finishes pending UI work, displays a message, and waits one final frame.
 static void MenuTest_ShowMessageAndWait(s32 messageId) {
   UiWork_FinalizePendingCore();
-  UiText_OpenMessageWindow(messageId, 5, 0, 0x22);
+  Message_OpenWindow(messageId, 5, 0, 0x22);
   while (UiWork_IsComplete() == 0) {
     Engine_TaskWait(1);
   }
@@ -131,17 +131,17 @@ static void MenuTest_ShowMessageAndWait(s32 messageId) {
 /// messageCount have been shown, whichever way the player went. The message
 /// speed is left at 2.
 static void DebugMenu_BrowseMessageRange(s32 messageId, s32 messageCount) {
-  struct UiWindow *window;
+  struct Window *window;
   s32 messageIndex;
 
   gGameState.messageSpeed = 2;
-  window = UiWindow_CreateWithSideObject(125, 0, 0, 0);
+  window = Portrait_OpenWindow(125, 0, 0, 0);
   for (messageIndex = 0; messageIndex < messageCount; messageIndex++) {
     // Supply sample name, item and number substitutions before each message:
     // Garet, the Virtuous Armlet and 123456.
-    UiWork_PushValueSlot(GARET, 1);
-    UiWork_PushValueSlot(ITEM_VIRTUOUS_ARMLET, 2);
-    UiWork_PushValueSlot(0x1e240, 5);
+    MessageArgument_Push(GARET, 1);
+    MessageArgument_Push(ITEM_VIRTUOUS_ARMLET, 2);
+    MessageArgument_Push(0x1e240, 5);
     MenuTest_ShowMessageAndWait(messageId);
     for (;;) {
       if ((gKeysHeld & KEY_B) != 0) {
@@ -232,7 +232,7 @@ UNUSED static void DebugMenu_NoOp(void) {}
 static void DebugMenu_TestItemSelection(void) {
   s32 selectedOwner;
   s32 selectedSlot;
-  Shop_PickUnitItem(&selectedOwner, &selectedSlot);
+  ItemPicker_Run(&selectedOwner, &selectedSlot);
 }
 
 /// Talking to Mia: the name entry screen for Isaac.
@@ -270,7 +270,7 @@ s32 MenuTest_GetEvents(void) { return (s32)gMenuTest_Events; }
 static void DebugMenu_RaisePartyLevels(void) {
   s32 *targetLevel;
 
-  UiText_ShowPositionedMessageAndWait(MsgDebugWentLevel, 1);
+  FieldMessage_Show(MsgDebugWentLevel, 1);
   targetLevel = &gMenuTest_SlotOffsets;
   Unit_LevelUpTo(ISAAC, *targetLevel);
   Unit_LevelUpTo(GARET, *targetLevel);
@@ -287,7 +287,7 @@ static void DebugMenu_RaisePartyLevels(void) {
 static void DebugMenu_GiveConsumableTestStock(void) {
   // A repeated-grant loop shrinks this native function from 0x626 to 0x12c;
   // retain the individual calls and their original insertion order.
-  UiText_ShowPositionedMessageAndWait(MsgDebugGotItem, 1);
+  FieldMessage_Show(MsgDebugGotItem, 1);
   Inventory_AddItem(ISAAC, ITEM_ANTIDOTE);
   Inventory_AddItem(ISAAC, ITEM_ANTIDOTE);
   Inventory_AddItem(ISAAC, ITEM_ANTIDOTE);
@@ -512,7 +512,7 @@ static void DebugMenu_GivePartyDjinn(void) {
   }
 #endif
   // Add and set each element in separate passes, preserving recovery updates.
-  UiText_ShowPositionedMessageAndWait(MsgDebugGotDjinni, 1);
+  FieldMessage_Show(MsgDebugGotDjinni, 1);
   Djinn_Give(ISAAC, ELEMENT_VENUS, 0);
   Djinn_Give(ISAAC, ELEMENT_VENUS, 1);
   Djinn_Give(ISAAC, ELEMENT_VENUS, 2);
@@ -581,7 +581,7 @@ static void DebugMenu_DamageAndAfflictParty(void) {
   // curse (0x130).
   u8 *record;
 
-  UiText_ShowPositionedMessageAndWait(MsgDebugBodyTornApart, 1);
+  FieldMessage_Show(MsgDebugBodyTornApart, 1);
   FieldUnit_AddHp(ISAAC, -100);
   FieldUnit_AddHp(GARET, -100);
   FieldUnit_AddHp(IVAN, -33);
@@ -604,7 +604,7 @@ static void DebugMenu_DamageAndAfflictParty(void) {
 /// to Jenna: `You got sturdy equipment!`, then weapons and armor for each of
 /// the four, from the Gaia Blade to the Glittering Tiara.
 static void DebugMenu_GiveEquipmentTestStock(void) {
-  UiText_ShowPositionedMessageAndWait(MsgDebugGotSturdyEquipment, 1);
+  FieldMessage_Show(MsgDebugGotSturdyEquipment, 1);
   Inventory_AddItem(ISAAC, ITEM_SPIKED_ARMOR);
   Inventory_AddItem(ISAAC, ITEM_ASURAS_ARMOR);
   Inventory_AddItem(ISAAC, ITEM_EARTH_SHIELD);
@@ -646,8 +646,8 @@ static void DebugMenu_GiveEquipmentTestStock(void) {
 /// it. Talking to LOCALID_SECOND_FELIX in Japanese (DebugMenu_OpenItemBrowser).
 /// Unlike the level room's browser it stops on every number, iconless ones too.
 static void DebugMenu_SelectItem(void) {
-  struct UiWindow *window;
-  struct UiWindow *details;
+  struct Window *window;
+  struct Window *details;
   s32 selectedItemId;
   s32 redraw;
   s32 definitionId;
@@ -673,19 +673,18 @@ static void DebugMenu_SelectItem(void) {
       selectedItemId = (selectedItemId + DEBUG_ITEM_COUNT) % itemCount;
       Engine_DebugRedrawWindow(window);
       Engine_DebugClearWindow(window);
-      UiText_DrawStringInWindow(gDebugItemPrompt, window, 0, 0);
-      UiText_DrawNumberAtOffset(selectedItemId, 0, window, 80, 0);
+      Text_DrawStringInWindow(gDebugItemPrompt, window, 0, 0);
+      Text_DrawNumberAtOffset(selectedItemId, 0, window, 80, 0);
       if (PartyInventory_HasSpace()) {
-        UiText_DrawStringInWindow(gDebugItemCapacityLabel, window, 0, 32);
+        Text_DrawStringInWindow(gDebugItemCapacityLabel, window, 0, 32);
         definitionId = selectedItemId & 0x1ff;
         Engine_DebugGetItem(definitionId);
-        UiText_DrawCharacterAtOffset(definitionId + MsgItemName, window, 120,
-                                     0);
-        UiText_DrawResource(definitionId + MsgItemPlainName, window, 0, 16);
+        Text_DrawMessageAsTiles(definitionId + MsgItemName, window, 120, 0);
+        Text_DrawMessage(definitionId + MsgItemPlainName, window, 0, 16);
         Engine_DebugRedrawWindow(details);
         Engine_DebugDrawItemDetails(details, selectedItemId);
       } else {
-        UiText_DrawStringInWindow(gDebugItemFullLabel, window, 0, 32);
+        Text_DrawStringInWindow(gDebugItemFullLabel, window, 0, 32);
       }
     }
     // These are independent tests: a single frame can add and move the cursor.
@@ -747,7 +746,7 @@ UNUSED static void DebugMenu_OpenItemBrowser(void) { DebugMenu_SelectItem(); }
 static void DebugMenu_GiveTreasureTestStock(void) {
   // Sharing the duplicate grants through a counted loop shrinks this function
   // from 0x194 to 0x120; retain the original calls.
-  UiText_ShowPositionedMessageAndWait(MsgDebugGotTreasure, 1);
+  FieldMessage_Show(MsgDebugGotTreasure, 1);
   Inventory_AddItem(ISAAC, ITEM_HERMES_WATER);
   Inventory_AddItem(ISAAC, ITEM_HALT_GEM);
   Inventory_AddItem(ISAAC, ITEM_VENUS_STAR);
@@ -846,9 +845,7 @@ static s32 DebugMenu_OpenIconBrowser(void) { return DebugMenu_BrowseIcons(); }
 #if !TBS_PATCH_1
 /// Returns the Japanese character selector's status. Talking to LOCALID_FELIX
 /// in Japanese: the party member chooser, whose choice nothing uses.
-static s32 DebugMenu_SelectCharacter(void) {
-  return Menu_OpenCharacterSelector();
-}
+static s32 DebugMenu_SelectCharacter(void) { return MemberChooser_Open(); }
 #endif
 
 #if !TBS_PATCH_3
@@ -857,7 +854,7 @@ static s32 DebugMenu_SelectCharacter(void) {
 /// menu, with LOCALID_SECOND_DORA as its keeper, since Map_TalkToObjectEvent
 /// passes the object event's id.
 static s32 DebugMenu_ConfirmShopAction(s32 unitId) {
-  return Shop_ConfirmAct(unitId);
+  return Sanctum_Run(unitId);
 }
 #endif
 

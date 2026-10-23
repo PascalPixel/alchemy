@@ -2098,8 +2098,8 @@ static void MercuryLighthouse_FillHermesWaterBottle(void) {
   Engine_AudioPlayCue(MUS_TREASURE_FOUND);
   Engine_ItemShowFound(ITEM_HERMES_WATER, 3);
   MercuryLighthouse_ReplaceInventoryItem(ITEM_EMPTY_BOTTLE, ITEM_HERMES_WATER);
-  UiWork_PushValueSlot(PartyInventory_FindMember(ITEM_HERMES_WATER), 1);
-  UiWork_PushValueSlot(ITEM_HERMES_WATER, 2);
+  MessageArgument_Push(PartyInventory_FindMember(ITEM_HERMES_WATER), 1);
+  MessageArgument_Push(ITEM_HERMES_WATER, 2);
   Engine_MessageShowCentered(MSGNO(MsgMercuryLighthouseIsaacGot), 1);
   Engine_GameFlagSet(FLAG_HERMES_WATER_TAKEN);
   Engine_ScriptEnd();
@@ -2654,7 +2654,7 @@ s32 MercuryLighthouse_Initialize(void) {
       Engine_ScriptWaitForScreen();
       Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
       Engine_ScriptWait(30);
-      UiText_ShowCenteredMessage(MsgMercuryHonorsGoddessRainbows, 0, 0);
+      FieldMessage_ShowCentered(MsgMercuryHonorsGoddessRainbows, 0, 0);
       Engine_ColorBufferApplyTarget(128 << 9, 0);
       Engine_ColorBufferInterpolate(30);
       break;
@@ -2952,7 +2952,7 @@ static void MercuryLighthouse_MiaCastsPlyOnEntrance(void) {
   ObjectEvent_SetPosition(LOCALID_PLY_TARGET, PIXELS(840), PIXELS(600));
   Engine_PsynergyStart(ABILITY_PLY, 1);
   Engine_PsynergySetTarget(MIA, LOCALID_PLY_TARGET);
-  flags = (u8)effectWork->messageMode | POSITIONED_MESSAGE_LOWER;
+  flags = (u8)effectWork->messageMode | FIELD_MESSAGE_LOWER;
   effectWork->messageMode = flags;
   Engine_PsynergyRaiseHands();
   Engine_PsynergyPlayEffect(1);

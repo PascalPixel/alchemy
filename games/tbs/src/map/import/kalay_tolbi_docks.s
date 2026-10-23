@@ -3,11 +3,11 @@
 	.set import.Engine_MapGridAnimateCells, 1
 	.set import.Engine_MapGridCopyCellAttributes, 1
 	.set import.Engine_ObjectEventSetSpriteFlags, 1
-	.set import.UiWindow_Create, 1
-	.set import.UiWork_Finalize, 1
-	.set import.UiText_DrawCharacterAtOffset, 1
-	.set import.UiText_DrawNumberInWindow, 1
-	.set import.UiWork_PushValueSlot, 1
+	.set import.Window_Create, 1
+	.set import.Window_Close, 1
+	.set import.Text_DrawMessageAsTiles, 1
+	.set import.Text_DrawNumberInWindow, 1
+	.set import.MessageArgument_Push, 1
 	.set import.Inventory_Find, 1
 	.set import.PartyInventory_FindMember, 1
 	.set import.Engine_GameFlagIsSet, 1

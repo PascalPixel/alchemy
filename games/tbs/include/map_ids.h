@@ -493,7 +493,7 @@ extern char MapId_LemurianShip;
 /// ★ Named from its area name: Tolbi Spring
 extern char MapId_TolbiSpring;
 /// ★ Named from the game: "Lobby" (MsgDebugEntryName)
-extern char MapId_LinkLobby;
+extern char MapId_BattleArena;
 /// ★ Named from the game: "Test 0" (MsgDebugEntryName)
 extern char MapId_TestRoom0;
 /// ★ Named from the game: "Test 1" (MsgDebugEntryName)

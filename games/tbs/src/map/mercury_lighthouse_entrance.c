@@ -548,7 +548,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
       Engine_ScriptWaitForScreen();
       Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
       Engine_ScriptWait(30);
-      UiText_ShowCenteredMessage(MsgMercuryWhoHonorsHeart, 0, 0);
+      FieldMessage_ShowCentered(MsgMercuryWhoHonorsHeart, 0, 0);
       ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 0);
       Engine_ColorBufferInterpolate(30);
     }

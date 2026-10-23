@@ -2,10 +2,10 @@
 /// The text canvas renderer, compiled as ARM code and copied to RAM to run.
 ///
 /// A text window draws its text into a canvas of 4bpp tiles in VRAM
-/// (UI_CANVAS_VRAM, mapped by UiWindow_MapTextCanvasTiles). The canvas tiles
+/// (TEXT_CANVAS_VRAM, mapped by Window_MapTextCanvasTiles). The canvas tiles
 /// run down columns: each column of tiles is as tall as the window's interior,
-/// which is the window height less its two frame rows. UiText_DrawGlyph and
-/// UiWindow_FillScanlineSpans copy these routines into RAM for each call.
+/// which is the window height less its two frame rows. Glyph_Draw and
+/// Win_FillScanlineSpans copy these routines into RAM for each call.
 
 #include "unit/window/glyph_arm.h"
 #include "types.h"
@@ -25,9 +25,9 @@
 /// Sets one pixel in the column-major text canvas. windowHeight includes the
 /// two frame rows; doubledPixelRow is twice the row within a tile.
 /// repeatedColor holds the colour index in all four nibbles.
-static __inline__ void UiText_SetCanvasPixel(u32 windowHeight, u32 x, u32 tileY,
-                                             u32 doubledPixelRow, u8 *canvas,
-                                             u32 repeatedColor) {
+static __inline__ void Text_SetCanvasPixel(u32 windowHeight, u32 x, u32 tileY,
+                                           u32 doubledPixelRow, u8 *canvas,
+                                           u32 repeatedColor) {
   u16 *pixelHalfword;
   u32 pixelMask;
 
@@ -46,14 +46,14 @@ static __inline__ void UiText_SetCanvasPixel(u32 windowHeight, u32 x, u32 tileY,
 ///
 /// With font set, the character comes from that small font: the 10-row, 1bpp
 /// kana and numeral font in Japanese, or an 8x8 two-colour font elsewhere. With
-/// no font, it comes from the main font (gUiText_Glyphs, and in Japanese
-/// gUiText_KanjiGlyphs for codes from 256), drawn in four passes: the first
+/// no font, it comes from the main font (gFont_Glyphs, and in Japanese
+/// gFont_KanjiGlyphs for codes from 256), drawn in four passes: the first
 /// three draw an outline in colour 5 (offset left, right and down when the
-/// window has UI_WINDOW_OUTLINED_TEXT) and the last draws the glyph itself in
+/// window has WINDOW_FLAG_OUTLINED_TEXT) and the last draws the glyph itself in
 /// colour 1. In Japanese, kana marks (codes 222 and 223) sit over the previous
 /// character and advance by 0.
-s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character, u32 x, u32 y,
-                        const u8 *font) {
+s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
+                  const u8 *font) {
   const u16 *glyphRows;
   u32 glyphWidth;
   u32 outlinePass;
@@ -133,12 +133,12 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character, u32 x, u32 y,
         else {
           nextRow = row + 1;
           tileY = (y + row) >> 3;
-          vram = UI_CANVAS_VRAM;
+          vram = TEXT_CANVAS_VRAM;
           rowLine = ((y + row) & 7) << 1;
           do {
             if (bits & 1)
-              UiText_SetCanvasPixel(windowHeight, x + column, tileY, rowLine,
-                                    vram, color);
+              Text_SetCanvasPixel(windowHeight, x + column, tileY, rowLine,
+                                  vram, color);
             column++;
             bits >>= 1;
           } while (bits != 0);
@@ -162,14 +162,14 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character, u32 x, u32 y,
       secondaryColor = 0x3333;
       row = 0;
 #if (LANGUAGE == LANGUAGE_ENGLISH)
-      fontWidth = gUiText_GlyphWidths[glyphIndex];
+      fontWidth = gFont_GlyphWidths[glyphIndex];
 #else
-      fontWidth = gUiText_GlyphWidths[character - 32];
+      fontWidth = gFont_GlyphWidths[character - 32];
 #endif
       if (y < TEXT_CANVAS_PIXEL_HEIGHT) {
         u8 *vram;
 
-        vram = UI_CANVAS_VRAM;
+        vram = TEXT_CANVAS_VRAM;
         while (1) {
           u32 tileY;
           u32 rowLine;
@@ -188,8 +188,8 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character, u32 x, u32 y,
               if ((bits & 15) == 1)
                 color = foregroundColor;
               if (((x + column) >> 3) < SCREEN_TILE_COLUMNS)
-                UiText_SetCanvasPixel(windowHeight, x + column, tileY, rowLine,
-                                      vram, color);
+                Text_SetCanvasPixel(windowHeight, x + column, tileY, rowLine,
+                                    vram, color);
             }
             column++;
             if (column > 7)
@@ -207,17 +207,15 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character, u32 x, u32 y,
     // and 12 rows of 16 pixels, the leftmost in the top bit. Codes from 256
     // are kanji in Japanese, 12 rows and 10 pixels wide; elsewhere they read
     // the font as 32-byte entries whose rows start 8 bytes in, though
-    // UiText_DrawGlyph passes a font, which avoids both, outside Japanese.
-    glyphRows =
-        (const u16 *)((const u8 *)gUiText_Glyphs + (character - 32) * 26);
+    // Glyph_Draw passes a font, which avoids both, outside Japanese.
+    glyphRows = (const u16 *)((const u8 *)gFont_Glyphs + (character - 32) * 26);
     glyphWidth = *glyphRows++;
   } else {
 #if (LANGUAGE == LANGUAGE_JAPANESE)
     glyphWidth = 10;
-    glyphRows = (const u16 *)(gUiText_KanjiGlyphs + (character - 256) * 24);
+    glyphRows = (const u16 *)(gFont_KanjiGlyphs + (character - 256) * 24);
 #else
-    glyphRows =
-        (const u16 *)((const u8 *)gUiText_Glyphs + (character - 32) * 32);
+    glyphRows = (const u16 *)((const u8 *)gFont_Glyphs + (character - 32) * 32);
     glyphWidth = *glyphRows;
     glyphRows += 4;
 #endif
@@ -232,7 +230,7 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character, u32 x, u32 y,
 #endif
 
   // Draw the three outline offsets first, then the foreground pixels. With
-  // UI_WINDOW_OUTLINED_TEXT the passes move the pen 1 left, then 2 right,
+  // WINDOW_FLAG_OUTLINED_TEXT the passes move the pen 1 left, then 2 right,
   // then 1 left and 1 down, then 1 up: the outline falls left, right and
   // below, and the glyph lands where it started. At most 14 columns and 12
   // rows are drawn.
@@ -246,7 +244,7 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character, u32 x, u32 y,
       color = 0x1111;
     else
       color = 0x5555;
-    if (window->flags & UI_WINDOW_OUTLINED_TEXT) {
+    if (window->flags & WINDOW_FLAG_OUTLINED_TEXT) {
       if (outlinePass <= 1) {
         if (outlinePass == 1)
           x += 2;
@@ -263,7 +261,7 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character, u32 x, u32 y,
     bits <<= 16;
     nextGlyphRow = glyphRows + 1;
     if (y < TEXT_CANVAS_PIXEL_HEIGHT) {
-      vram = UI_CANVAS_VRAM;
+      vram = TEXT_CANVAS_VRAM;
       while (1) {
         u32 tileY;
         u32 rowLine;
@@ -274,8 +272,8 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character, u32 x, u32 y,
         rowLine = ((y + row) & 7) << 1;
         while (1) {
           if ((s32)bits < 0)
-            UiText_SetCanvasPixel(windowHeight, x + column, tileY, rowLine,
-                                  vram, color);
+            Text_SetCanvasPixel(windowHeight, x + column, tileY, rowLine, vram,
+                                color);
           bits <<= 1;
           if (bits == 0)
             break;
@@ -307,7 +305,7 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character, u32 x, u32 y,
 /// gets 0. The rounded corner tiles trim the first or last scanline of a row by
 /// one pixel on that side, so the window follows the frame's rounded corners.
 /// Each frame of a window transition calls it, through
-/// UiWindow_FillScanlineSpans (battle_command/outputs.c).
+/// Win_FillScanlineSpans (battle_command/outputs.c).
 void Tile_BuildMetatiles(u16 *scanlineBounds, u16 *frameTiles) {
   u32 tileRow;
   u32 tileColumn;
@@ -339,7 +337,7 @@ void Tile_BuildMetatiles(u16 *scanlineBounds, u16 *frameTiles) {
       // A later right frame tile extends that span.
       if (foundLeftEdge == 0) {
         switch (tile) {
-        case UI_TILE_FRAME_TOP_LEFT:
+        case WINDOW_TILE_FRAME_TOP_LEFT:
           left = tileColumn * 8;
           right = left + 8;
           topLeft = left + 1;
@@ -348,7 +346,7 @@ void Tile_BuildMetatiles(u16 *scanlineBounds, u16 *frameTiles) {
           bottomRight = right;
           foundLeftEdge++;
           break;
-        case UI_TILE_FRAME_BOTTOM_LEFT:
+        case WINDOW_TILE_FRAME_BOTTOM_LEFT:
           left = tileColumn * 8;
           right = left + 8;
           topLeft = left;
@@ -361,9 +359,9 @@ void Tile_BuildMetatiles(u16 *scanlineBounds, u16 *frameTiles) {
         // too. XXX: what window tile 7 (taken as either side) is, is not
         // known; the window tiles' picture would show it.
         case 0xf007:
-        case UI_TILE_FRAME_LEFT:
+        case WINDOW_TILE_FRAME_LEFT:
 #if LANGUAGE != LANGUAGE_JAPANESE
-        case UI_TILE_FRAME_LEFT_TEE:
+        case WINDOW_TILE_FRAME_LEFT_TEE:
 #endif
           left = tileColumn * 8;
           right = left + 8;
@@ -375,20 +373,20 @@ void Tile_BuildMetatiles(u16 *scanlineBounds, u16 *frameTiles) {
         }
       } else {
         switch (tile) {
-        case UI_TILE_FRAME_TOP_RIGHT:
+        case WINDOW_TILE_FRAME_TOP_RIGHT:
           right = tileColumn * 8 + 8;
           topRight = tileColumn * 8 + 7;
           bottomRight = right;
           break;
-        case UI_TILE_FRAME_BOTTOM_RIGHT:
+        case WINDOW_TILE_FRAME_BOTTOM_RIGHT:
           right = tileColumn * 8 + 8;
           topRight = right;
           bottomRight = tileColumn * 8 + 7;
           break;
         case 0xf007:
-        case UI_TILE_FRAME_RIGHT:
+        case WINDOW_TILE_FRAME_RIGHT:
 #if LANGUAGE != LANGUAGE_JAPANESE
-        case UI_TILE_FRAME_RIGHT_TEE:
+        case WINDOW_TILE_FRAME_RIGHT_TEE:
 #endif
           bottomRight = tileColumn * 8 + 8;
           right = bottomRight;

@@ -1485,8 +1485,8 @@ static void TolbiShipInteriors_FightRowingDeckMonsters(void) {
 static void TolbiShipInteriors_TurnBackFromStairs(void) {
   if (GameFlag_IsSet(FLAG_TOLBI_SHIP_MONSTERS_BELOWDECKS) != 0) {
     Engine_ScriptStart();
-    Ui_SetMessageVoiceFromObjectEvent(ROWING_CREWMAN);
-    UiText_ShowCenteredMessage(MsgTolbiShipWhereGoingSlay, 1, 8);
+    Message_SetVoiceFromObjectEvent(ROWING_CREWMAN);
+    FieldMessage_ShowCentered(MsgTolbiShipWhereGoingSlay, 1, 8);
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(8) / 5, PIXELS(4) / 5);
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 408, 134);
     TolbiShipInteriors_Turn(LOCALID_PARTY_LEADER, FACING_SOUTH);
@@ -3610,9 +3610,9 @@ static void TolbiShipInteriors_ReportMonstersBelowdecks(void) {
   ObjectEvent_FaceDirection(IVAN, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(MIA, FACING_SOUTH, 40);
-  Ui_SetMessageVoiceFromObjectEvent(ROWING_FIRST_OARSMAN);
+  Message_SetVoiceFromObjectEvent(ROWING_FIRST_OARSMAN);
   message = MsgTolbiShipMonstersBelowdecks;
-  UiText_ShowCenteredMessage(message, 1, 10);
+  FieldMessage_ShowCentered(message, 1, 10);
   Engine_ScriptWait(10);
   TolbiShipInteriors_RunSceneCommand(SHIP_FACE_PARTY_EAST_AND_WEST, 0, 40);
   TolbiShipInteriors_RunSceneCommand(SHIP_FACE_PARTY, 0x4000, 20);

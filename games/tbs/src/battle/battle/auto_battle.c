@@ -109,7 +109,7 @@ s32 BattlePresentation_RunAction(struct BattleAction *action) {
     yaw = YAW_PARTY_TURN;
   transition->targetYaw = yaw;
   transition->frames = 60;
-  UiWork_ClearValueNameTablesFar();
+  MessageArgument_ClearAllFar();
 
   switch (action->command) {
   case COMMAND_FLEE:
@@ -138,7 +138,7 @@ s32 BattlePresentation_RunAction(struct BattleAction *action) {
     break;
   }
 
-  UiWork_ResetFreeChannelFar();
+  TextPrinter_ResetFreeFar();
   return 0;
 }
 
@@ -201,8 +201,8 @@ s32 BattlePresentation_ShowDefendMessage(const struct BattleAction *action) {
   if (unit->hp <= 0) {
     return result;
   }
-  UiWork_ClearValueNameTablesFar();
-  UiWork_PushValueSlotFar(unitId, VALUE_UNIT_NAME);
+  MessageArgument_ClearAllFar();
+  MessageArgument_PushFar(unitId, VALUE_UNIT_NAME);
   BattleMessage_ShowAndWaitFar(MsgActorDefends);
   return 0;
 }
@@ -360,7 +360,7 @@ s32 BattlePresentation_RunApproachAction(struct BattleAction *input) {
   Unit_GetFar(work.effect.user);
   Unit_GetFar(work.effect.targets[0]);
   Random16();
-  UiWork_PushValueSlotFar(work.effect.user, VALUE_UNIT_NAME);
+  MessageArgument_PushFar(work.effect.user, VALUE_UNIT_NAME);
   BattleMessage_ShowAndWaitFar(MsgActorAttacks);
   BattleMotion_ApproachTarget(work.effect.user, work.effect.targets[0], 13, 0);
   ObjectDispatch_SetAnimationSpeedFar(
@@ -497,31 +497,31 @@ void BattlePresentation_ApplyUnitDamage(u32 unitId, s32 damage, s32 showMessage,
   battleObject = BattleObject_Get(unitId);
   ObjectDispatch_SelectAnimationFar(battleObject->object, POSE_DAMAGE);
   PartyStatus_DrawFar(PARTY_STATUS_HP_ONLY);
-  UiWork_ClearValueNameTablesFar();
+  MessageArgument_ClearAllFar();
 
   if (unitId <= ALLY_MAX) {
     if (showMessage != 0)
       BattleMessage_ShowAndWaitFar(MsgBitterBlow);
-    UiWork_PushValueSlotFar(damage, VALUE_NUMBER);
-    UiWork_PushValueSlotFar(unitId, VALUE_UNIT_NAME);
+    MessageArgument_PushFar(damage, VALUE_NUMBER);
+    MessageArgument_PushFar(unitId, VALUE_UNIT_NAME);
     BattleMessage_ShowAndWaitFar(MsgDmgP);
   } else {
     if (showMessage != 0)
       BattleMessage_ShowAndWaitFar(MsgCritical);
-    UiWork_PushValueSlotFar(damage, VALUE_NUMBER);
-    UiWork_PushValueSlotFar(unitId, VALUE_UNIT_NAME);
+    MessageArgument_PushFar(damage, VALUE_NUMBER);
+    MessageArgument_PushFar(unitId, VALUE_UNIT_NAME);
     BattleMessage_ShowAndWaitFar(MsgDmgE);
-    UiWork_PushValueSlotFar(unitId, VALUE_UNIT_NAME);
+    MessageArgument_PushFar(unitId, VALUE_UNIT_NAME);
   }
 
   BattleMotion_SetMode5AndActivateSlot(unitId);
   if (unitId <= ALLY_MAX) {
     if (unit->hp <= 0) {
-      UiWork_PushValueSlotFar(unitId, VALUE_UNIT_NAME);
+      MessageArgument_PushFar(unitId, VALUE_UNIT_NAME);
       BattleMessage_ShowAndWaitFar(MsgGoesDown);
     }
   } else if (unit->hp <= 0) {
-    UiWork_PushValueSlotFar(unitId, VALUE_UNIT_NAME);
+    MessageArgument_PushFar(unitId, VALUE_UNIT_NAME);
     BattleMessage_ShowAndWaitFar(MsgDowned);
   }
 

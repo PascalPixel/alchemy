@@ -440,7 +440,7 @@ s32 Title_ShowIntro(s32 prompt) {
     *tilemap++ = blankTile;
   }
 
-  Ui_LoadWindowGraphics();
+  Window_LoadGraphics();
   DebugText_Clear();
   if (prompt != 0) {
     u8 *buffer = AllocHeapSlotEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
@@ -566,7 +566,7 @@ s32 Title_ShowSplashScreen(s32 mode) {
     gBgScroll[rowOrHoldFrame].x = 0;
   }
   Dma_Set(gBgScroll, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
-  Ui_LoadWindowGraphics();
+  Window_LoadGraphics();
   DebugText_Clear();
   REG_DISPCNT =
       DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
@@ -653,7 +653,7 @@ s32 Title_ShowAnimatedSplash(void) {
     gBgScroll[workIndex].x = 0;
   }
   Dma_Set(gBgScroll, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
-  Ui_LoadWindowGraphics();
+  Window_LoadGraphics();
   DebugText_Clear();
   Fade_FromWhite(1);
   Fade_Wait();

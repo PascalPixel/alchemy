@@ -1698,7 +1698,7 @@ static void EventScript_MeetFlint(void) {
     ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
                           40);
     ObjectEvent_Jump(LOCALID_VENUS_DJINNI, 4, 30);
-    UiWork_PushValueSlot(300, 4);
+    MessageArgument_Push(300, 4);
     Script_ShowMessage(LOCALID_VENUS_DJINNI, 0);
     ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER,
                           EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
@@ -1754,7 +1754,7 @@ static void EventScript_MeetFlint(void) {
     Script_SetMessage(MsgWorldMapSeeWontRegret);
     Script_ShowMessage(LOCALID_VENUS_DJINNI, 0);
   listened:
-    UiWork_PushValueSlot(300, 4);
+    MessageArgument_Push(300, 4);
     Script_PlaySong(MUS_JOINED);
     count = MsgWorldMapAbilityVenusDjinni;
     Message_ShowCentered(count++, 3);
@@ -2246,7 +2246,7 @@ u16 gWorldMapBlend;
 /// Felix and Sheba, and the title screen returns (TITLE_FROM_WORLD_MAP).
 /// Called by WorldMap_Initialize at WORLD_MAP_JENNA_AND_KRADEN_ADRIFT.
 static void WorldMap_ShowEndingScene(void) {
-  PaletteGlow_Update(gGameState.paletteGlow[0], gGameState.paletteGlow[1]);
+  WindowColor_Apply(gGameState.windowColor[0], gGameState.windowColor[1]);
   Engine_ScriptStart();
   FieldEffect_ScheduleRatioTransition(Q16_ONE, 300);
   FieldCamera_MoveTo(-1, -1, -1, 0);

@@ -61,7 +61,7 @@ s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
   unit->baseActionCount = enemy->turns;
   unit->baseHpRegen = enemy->hpRegen;
   unit->basePpRegen = enemy->ppRegen;
-  UiText_DecodeMessageFar(index + MsgEnemyName, name, 15);
+  Message_DecodeRawFar(index + MsgEnemyName, name, 15);
   for (i = 0; i < 14 && name[i] != 0; i++)
     unit->name[i] = name[i];
   // Enemies of one kind are told apart by a letter after the name; past the
@@ -245,7 +245,7 @@ PARTY_DEFINE_ADJUST(Party_AdjustShopGifts, shopGifts, 28)
 
 /// Writes the summons whose bit is set in the first word of the party's Djinn
 /// table to `output`, in menu order, ending with SUMMON_END. Returns how many.
-/// Called by SummonMenu_SelectSummon to list the battle's Summon command.
+/// Called by BattleSummonMenu_Run to list the battle's Summon command.
 /// The bits are those BattleSummon_UpdateAvailability sets at the battle's
 /// start and each round. `output` needs room for 17 bytes: up to 16 summons
 /// and SUMMON_END.

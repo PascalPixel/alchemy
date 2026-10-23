@@ -137,7 +137,7 @@ struct ItemDefinition {
   u8 type;            ///< enum ItemType; 0 for an item that is not equipment
   u8 flags;           ///< enum ItemFlags
   u16 equipMask;      ///< one bit per character that can equip it, bit 0 Isaac
-  u16 icon;           ///< indexes gUiIcon_ItemIconPointers
+  u16 icon;           ///< indexes gItemIcons
   s16 primaryBonus;   ///< Attack added while equipped
   s8 secondaryBonus;  ///< Defense added while equipped
   u8 unleashChance;   ///< in steps of 5 percent

@@ -7,8 +7,8 @@
 	.set import.Engine_MapGridCopyCellAttributes, 1
 	.set import.Engine_ObjectEventSetSpriteFlags, 1
 	.set import.MapGrid_SetMetatileBehaviorAt, 1
-	.set import.UiText_OpenMessageWindow, 1
-	.set import.UiWindow_CreateWithSideObject, 1
+	.set import.Message_OpenWindow, 1
+	.set import.Portrait_OpenWindow, 1
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1
 	.set import.Engine_ScriptWait, 1

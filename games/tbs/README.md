@@ -63,7 +63,7 @@ Then it does one of two things:
      keeps what is playing.
   3. `Map_LoadOverlay` unpacks its code, its [overlay](glossary.md#overlay).
   4. `Map_Run` runs it until the party takes a warp, and returns that
-     warp (`VALE_GATE_TO_WORLD_MAP`, say).
+     warp (`VALE_PLAZA_TO_WORLD_MAP`, say).
   5. `Map_TakeWarp` looks the warp up in the map's warp table to find the
      next map and warp destination ([Warps](#warps-and-warp-destinations)).
 - A battle or a minigame runs in place of a map, under a map number from
@@ -90,7 +90,7 @@ hexadecimal form the source writes it in beside it.
 | Name | Value | Meaning |
 | --- | --- | --- |
 | `GAME_RUN_TITLE` | 0 | start at the title, with a fresh save block |
-| `GAME_RUN_DEBUG_VALE` | 1 | in debug mode, start at `MapId_ValeGate` |
+| `GAME_RUN_DEBUG_VALE` | 1 | in debug mode, start at `MapId_ValePlaza` |
 | `GAME_RUN_DEBUG_MAIN_MENU` | 2 | in debug mode, start at the main menu (`MapId_MainMenu`) |
 | `RUN_NONE` | 507 (`0x1fb`) | the first map number with no row in the map table, whose rows are 0 to 200 |
 | `RUN_LUCKY_WHEELS` | 508 (`0x1fc`) | Lucky Wheels at Tolbi's spring |
@@ -166,8 +166,8 @@ to different maps at different points in the story.
 
 [map_warps.h](include/map_warps.h) names every way between maps. Each
 map's warp destinations are named by where the party arrives from
-(`VALE_GATE_FROM_SANCTUM`) and its warps by where they lead
-(`VALE_GATE_TO_WORLD_MAP`), and a door is named the same from both sides.
+(`VALE_PLAZA_FROM_SANCTUM`) and its warps by where they lead
+(`VALE_PLAZA_TO_WORLD_MAP`), and a door is named the same from both sides.
 
 A warp row, `MAP_WARP(warp, map, warpDest)`, sends one warp to a map and a
 warp destination. `Map_TakeWarp` looks up the current map's rows in the
@@ -255,36 +255,36 @@ The story is the order the flags are set in, and these maps show the forms
 that dependence takes, in [story order](glossary.md#the-places-in-story-order).
 
 - **One map per point in the story.** The prologue's stormy night in Vale
-  is a map of its own, [vale_storm.c](src/map/vale_storm.c), on its own
+  is a map of its own, [vale_stormy_night.c](src/map/vale_stormy_night.c), on its own
   layout, and it sets `FLAG_VALE_STORM` when it starts. A place that changes
   completely gets a map; a place whose people change reads the flags.
 - **One map that reads the flags.** Vale's town gate,
-  [vale_gate.c](src/map/vale_gate.c), is one map for the whole game.
-  `ValeGate_GetEvents` asks five questions in order:
+  [vale_plaza.c](src/map/vale_plaza.c), is one map for the whole game.
+  `ValePlaza_GetEvents` asks five questions in order:
 
   ```c
-  const struct MapEvent *ValeGate_GetEvents(void) {
+  const struct MapEvent *ValePlaza_GetEvents(void) {
     if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
-      return gValeGate_EventsAfterKalay;
+      return gValePlaza_EventsAfterKalay;
     }
     if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
-      return gValeGate_EventsAfterLeaving;
+      return gValePlaza_EventsAfterLeaving;
     }
-    if (gSaveBlock.warpDest == VALE_GATE_FROM_SANCTUM) {
-      return gValeGate_DepartureEvents;
+    if (gSaveBlock.warpDest == VALE_PLAZA_FROM_SANCTUM) {
+      return gValePlaza_DepartureEvents;
     }
     if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
-      return gValeGate_StormEvents;
+      return gValePlaza_StormEvents;
     }
-    return gValeGate_Events;
+    return gValePlaza_Events;
   }
   ```
 
   Its warps
   and object event templates are chosen the same way. The storm ends here:
   the battle against the two strangers returns to
-  `VALE_GATE_AFTER_TRAVELERS_BATTLE`, which clears `FLAG_VALE_STORM` and
-  leaves by `VALE_GATE_TO_TITLE`.
+  `VALE_PLAZA_AFTER_TRAVELERS_BATTLE`, which clears `FLAG_VALE_STORM` and
+  leaves by `VALE_PLAZA_TO_TITLE`.
 - **A map with no map events.** [vale_eruption.c](src/map/vale_eruption.c),
   the ground before the sanctum while Mt. Aleph erupts, plays its whole
   sequence from its initialization on arrival and leaves by its one warp.
@@ -294,7 +294,7 @@ that dependence takes, in [story order](glossary.md#the-places-in-story-order).
   star is taken once.
 - **A flag set by a warp destination.** The World Map's initialization sets
   `FLAG_VALE_PARTY_LEFT` the first time the party arrives by
-  `WORLD_MAP_FROM_VALE_GATE`, and the gate's tables change from then on.
+  `WORLD_MAP_FROM_VALE_PLAZA`, and the gate's tables change from then on.
 - **One sequence cut into parts by warp destinations.**
   [venus_lighthouse_aerie.c](src/map/venus_lighthouse_aerie.c), the
   Lighthouse Aerie, is one scripted sequence interrupted by two battles and

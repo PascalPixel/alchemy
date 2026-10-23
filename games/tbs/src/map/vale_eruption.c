@@ -71,7 +71,7 @@ enum ValeEruptionLocalId {
   /// (MsgValeDoraHasBeenCrying)
   LOCALID_DORA = LOCALID_FIRST_PLACED + 2,
   /// Garet's sister, a young woman with an orange ponytail, whom Garet calls
-  /// Sis at the farewell (vale_gate.c). She calls the mayor Grandpa, and
+  /// Sis at the farewell (vale_plaza.c). She calls the mayor Grandpa, and
   /// LOCALID_GARETS_BROTHER calls her Sis. "Grandpa, we don't even know if he's
   /// up there!"
   /// ★ Named from the game: "we don't even know if he's up there"

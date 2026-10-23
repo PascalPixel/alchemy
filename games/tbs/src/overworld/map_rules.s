@@ -56,7 +56,7 @@ gMap_MusicRules:
 	map_music Sanctum, -1, 0x9f0, 74
 	map_music Sanctum, -1, 0x814, 2
 	map_music Sanctum, -1, -1, 74
-	map_music ValeInteriorsInn, 19, -1, 3
+	map_music ValeInn, 19, -1, 3
 	mapsec_music 3, -1, 0x9f0, 0
 	mapsec_music 3, -1, 0x814, 2
 	mapsec_music 3, -1, 0x901, 0
@@ -182,7 +182,7 @@ gMapSec_NameRules:
 	map_name Sanctum, 32, 6
 	map_name Sanctum, 29, 7
 	map_name Sanctum, -1, 8
-	map_name ValeInteriorsInn, 19, 9
+	map_name ValeInn, 19, 9
 	group_name 3, -1, 10
 	map_name SolEntrance, -1, 11
 	map_name SolSanctumElementalStarRoom, -1, 12
@@ -303,7 +303,7 @@ gMapSec_NameRules:
 
 	.global gDefeatReturnPoints
 gDefeatReturnPoints:
-	return_to ValeStorm, 15, ValeInteriorsInn, 16
+	return_to ValeStormyNight, 15, ValeInn, 16
 	return_to Vale, 16, Sanctum, 2
 	return_to Vault, 1, Sanctum, 12
 	return_to Vault, 3, Sanctum, 12
@@ -326,7 +326,7 @@ gDefeatReturnPoints:
 @ A map not listed takes the last battle background.
 	.global gBattleBackground_Maps
 gBattleBackground_Maps:
-	backdrop ValeStormBackdrop, ValeStorm, Vale, ValeGate, ValeKraden
+	backdrop ValeStormBackdrop, ValeStormyNight, Vale, ValePlaza, ValeKradensCottage
 	backdrop SolSanctumBackdrop, SolSanctumCorridor, SolSanctumReliefs, SolSanctumMaze, SolSanctumLunaSolRooms, AltinPeakHydrosStatue, CrossboneIsleSteppingStones
 	backdrop InteriorBackdrop, VaultInteriors
 	backdrop GomaCaveBackdrop, GomaCaveEntrance

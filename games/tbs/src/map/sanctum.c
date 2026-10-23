@@ -27,8 +27,8 @@
 ///   (https://alchemy.pascalpixel.com/places/sanctum/healer-afterimages.gif:
 ///   the screen, the healer boxed, beside the sprites and the sprites without
 ///   the afterimage). Accepting plays Sanctum_ReceiveWiseOnesMission and sets
-///   FLAG_SANCTUM_QUEST_ACCEPTED, and SANCTUM_TO_VALE_GATE takes the two to
-///   MapId_ValeGate (vale_gate.c). Refusing leaves the room to
+///   FLAG_SANCTUM_QUEST_ACCEPTED, and SANCTUM_TO_VALE_PLAZA takes the two to
+///   MapId_ValePlaza (vale_plaza.c). Refusing leaves the room to
 ///   gSanctum_QuestEvents: the Great Healer asks again when spoken to
 ///   (EventScript_ReconsiderQuest), the door draws a warning
 ///   (FLAG_SANCTUM_WARNED_BEFORE_LEAVING), and leaving anyway ends the game
@@ -132,7 +132,7 @@ enum SanctumLocalId {
   // quest).
   /// The western of Vale Sanctum's two other healers, men with long brown hair
   /// and beards in long robes, as Mind Read hears a villager in
-  /// vale_interiors_shops.c call the Sanctum's people: "The healers
+  /// vale_shops.c call the Sanctum's people: "The healers
   /// are supposed to guard Sol Sanctum." Before the quest: "Our Psynergy was
   /// given to us by the sacred power of Mt. Aleph."
   /// ★ Named from the game: "The healers are supposed to guard"
@@ -398,7 +398,7 @@ static void EventScript_ReconsiderQuest(void) {
         Sound_PlaySong(MUS_086);
         Sound_WaitForSong();
         GameFlag_Set(FLAG_SANCTUM_QUEST_ACCEPTED);
-        Import_ScriptRequestWarp(SANCTUM_TO_VALE_GATE);
+        Import_ScriptRequestWarp(SANCTUM_TO_VALE_PLAZA);
       }
     }
   }
@@ -621,7 +621,7 @@ static inline void Sanctum_ShowAllEmotes(void) {
 /// Great Healer explains the Wise One's warning, and asks Isaac to accept
 /// responsibility for the fate of the land. Accepting plays
 /// Sanctum_ReceiveWiseOnesMission, sets FLAG_SANCTUM_QUEST_ACCEPTED and takes
-/// SANCTUM_TO_VALE_GATE; refusing leaves the room to gSanctum_QuestEvents.
+/// SANCTUM_TO_VALE_PLAZA; refusing leaves the room to gSanctum_QuestEvents.
 static void Sanctum_RequestQuestAcceptance(void) {
   u32 effectIndex;
 
@@ -1180,7 +1180,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Script_PlaySong(MUS_086);
     Sound_WaitForSong();
     GameFlag_Set(FLAG_SANCTUM_QUEST_ACCEPTED);
-    Import_ScriptRequestWarp(SANCTUM_TO_VALE_GATE);
+    Import_ScriptRequestWarp(SANCTUM_TO_VALE_PLAZA);
   } else {
     FieldScript_WaitFrames(30);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_GARETS_GRANDFATHER, 1);
@@ -2379,7 +2379,7 @@ u32 gSanctum_Warps[] = {
     MAP_WARP(SANCTUM_TO_VAULT, Vault, VAULT_FROM_SANCTUM),
     MAP_WARP(SANCTUM_TO_VAULT_REVISIT, VaultRevisit, VAULT_REVISIT_FROM_SANCTUM),
     MAP_WARP(SANCTUM_TO_QUEST_RESTART, Sanctum, SANCTUM_FROM_QUEST_RESTART),
-    MAP_WARP(SANCTUM_TO_VALE_GATE, ValeGate, VALE_GATE_FROM_SANCTUM),
+    MAP_WARP(SANCTUM_TO_VALE_PLAZA, ValePlaza, VALE_PLAZA_FROM_SANCTUM),
     MAP_WARP(SANCTUM_TO_ALTIN, Altin, ALTIN_FROM_SANCTUM),
     MAP_WARP(SANCTUM_TO_BILIBIN, Bilibin, BILIBIN_FROM_SANCTUM),
     MAP_WARP(SANCTUM_TO_XIAN, Xian, XIAN_FROM_SANCTUM_WEST),

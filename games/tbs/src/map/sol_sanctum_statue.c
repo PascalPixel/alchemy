@@ -1734,7 +1734,7 @@ static void EventScript_SayThenWait(s32 speaker, s32 frames) {
 }
 
 struct MapWarpDest gSolSanctumStatue_WarpDests[] = {
-    {SOL_SANCTUM_STATUE_FROM_VALE_GATE, CONDITION_ALWAYS, 287, 0, 176,
+    {SOL_SANCTUM_STATUE_FROM_VALE_PLAZA, CONDITION_ALWAYS, 287, 0, 176,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS, CONDITION_ALWAYS, 646,
      0, 329, FACING_SOUTH, 0, -1, -1, -1, -1, 0},

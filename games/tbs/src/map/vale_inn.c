@@ -1,34 +1,35 @@
 /// @file
-/// Vale (MapId_ValeInteriorsInn): Isaac's house and the ground outside it, the
+/// Vale (MapId_ValeInn): Isaac's house and the ground outside it, the
 /// inn and the inside of Kraden's cottage, and at
-/// VALE_INTERIORS_INN_FROM_BABI_PALACE a room of Babi's Palace: one overlay
+/// VALE_INN_FROM_BABI_PALACE a room of Babi's Palace: one overlay
 /// whose tables and setup choose by the warp destination and the story flags.
 /// In story order:
 ///
 /// - The stormy night, three years before the journey, when a new game begins
-///   at VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST (from menu/main_menu.c, or
-///   ValeGate's VALE_GATE_TO_VALE_INTERIORS_INN_SOUTHEAST). The setup sets
+///   at VALE_INN_FROM_VALE_PLAZA_SOUTHEAST (from menu/main_menu.c, or
+///   ValePlaza's VALE_PLAZA_TO_VALE_INN_SOUTHEAST). The setup sets
 ///   FLAG_VALE_STORM and plays EventScript_DoraWakesIsaac: Dora, Isaac's
 ///   mother, wakes him because the Mt. Aleph Boulder is going to fall, makes
 ///   him take his tunic (FLAG_ISAAC_WEARS_TUNIC) and leads him downstairs
-///   (VALE_INTERIORS_INN_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA, to
-///   VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA), where
+///   (VALE_INN_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA, to
+///   VALE_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA), where
 ///   EventScript_HurryToThePlaza plays: Kyle, Isaac's father, calls them to
 ///   hurry, LOCALID_FLAME shakes outside the house, then turns to smoke and
 ///   rises away, and they run for the plaza, where the village takes refuge, by
-///   VALE_INTERIORS_INN_TO_VALE_STORM_WITH_DORA into ValeStorm
-///   (VALE_STORM_FROM_VALE_INTERIORS_INN_WITH_DORA). While FLAG_VALE_STORM is
+///   VALE_INN_TO_VALE_STORMY_NIGHT_WITH_DORA into ValeStormyNight
+///   (VALE_STORMY_NIGHT_FROM_VALE_INN_WITH_DORA). While FLAG_VALE_STORM is
 ///   set the villagers are put out of sight, lightning flashes, and
-///   VALE_INTERIORS_INN_TO_VALE leads into the storm (ValeStorm) instead of
-///   Vale (gValeInteriorsInn_StormWarps). Kyle dies that night, as the village
+///   VALE_INN_TO_VALE leads into the storm (ValeStormyNight) instead of
+///   Vale (gValeInn_StormWarps). Kyle dies that night, as the village
 ///   says later.
 /// - Vale before the party leaves (FLAG_VALE_PARTY_LEFT clear): from Kraden's
-///   cottage (ValeKraden's VALE_KRADEN_TO_VALE_INTERIORS_INN_MYTHRIL_BAG) the
-///   party arrives at VALE_INTERIORS_INN_FROM_VALE_KRADEN_MYTHRIL_BAG, inside
-///   it, where the Mythril Bag rises and wobbles before Kraden as he prepares
-///   for the visit to Sol Sanctum (vale_kraden.c);
-///   VALE_INTERIORS_INN_TO_VALE_KRADEN_SOUTH leads back out
-///   (VALE_KRADEN_FROM_VALE_INTERIORS_INN_SOUTH). In a room of the inn the
+///   cottage (ValeKradensCottage's
+///   VALE_KRADENS_COTTAGE_TO_VALE_INN_MYTHRIL_BAG) the party arrives at
+///   VALE_INN_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG, inside it, where the
+///   Mythril Bag rises and wobbles before Kraden as he prepares for the visit
+///   to Sol Sanctum (vale_kradens_cottage.c);
+///   VALE_INN_TO_VALE_KRADENS_COTTAGE_SOUTH leads back out
+///   (VALE_KRADENS_COTTAGE_FROM_VALE_INN_SOUTH). In a room of the inn the
 ///   masked man (LOCALID_MASKED_MAN) asks "Hey... Boy... Do you have business
 ///   with me?" and sends Isaac off whatever he answers; at the inn the talk is
 ///   of three strange travellers staying there, one of them masked, and the
@@ -47,18 +48,19 @@
 ///   back until his quest was done, and gets up to show she is well; she stays
 ///   up for that visit (FLAG_VALE_DORA_OUT_OF_BED), and the setup otherwise
 ///   puts her back in bed, where she dreams of Kyle.
-/// - Babi's Palace (VALE_INTERIORS_INN_FROM_BABI_PALACE, from Babi's Palace's
-///   BABI_PALACE_TO_VALE_INTERIORS_INN, MapId_BabiPalace), in Tolbi, whose lord
+/// - Babi's Palace (VALE_INN_FROM_BABI_PALACE, from Babi's Palace's
+///   BABI_PALACE_TO_VALE_INN, MapId_BabiPalace), in Tolbi, whose lord
 ///   is Babi: a room of his scholars, who speak of Alchemy, of Kraden, Babi's
 ///   favourite scholar, and of the Venus Ruins under Babi Lighthouse with a
 ///   long tunnel beneath them. They talk differently once the Colosso finals
 ///   are over (FLAG_COLOSSO_OVER), when one asks whether the party knows
 ///   Kraden. The setup does not show the map section's name there.
 ///
-/// The warps VALE_INTERIORS_INN_TO_VALE_GATE_NORTHWEST to
-/// VALE_INTERIORS_INN_TO_VALE_STORM_EAST are taken by the metatile behaviors of
-/// the same numbers, leading to the rest of Vale (ValeGate, ValeKraden, Vale
-/// and ValeStorm) or between this map's own parts.
+/// The warps VALE_INN_TO_VALE_PLAZA_NORTHWEST to
+/// VALE_INN_TO_VALE_STORMY_NIGHT_EAST are taken by the metatile behaviors of
+/// the same numbers, leading to the rest of Vale (ValePlaza,
+/// ValeKradensCottage, Vale and ValeStormyNight) or between this map's own
+/// parts.
 ///
 /// Open questions:
 /// - XXX (no evidence): what LOCALID_BLANK_AFTER_KALAY, the blank object event
@@ -75,7 +77,7 @@
 
 #include "save_block.h"
 #include "vram_cache.h"
-#include "unit/map/vale_interiors_inn.h"
+#include "unit/map/vale_inn.h"
 #include "unit/map/common/effect_psynergy.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/field_services.h"
@@ -119,11 +121,10 @@
 // The arrival scenes are defined after the scripts.
 static void EventScript_DoraWakesIsaac(void);
 static void EventScript_HurryToThePlaza(void);
-static void ValeInteriorsInn_RestoreRoomPatch(void);
+static void ValeInn_RestoreRoomPatch(void);
 static void EventScript_ShowMythrilBag(void);
-static void
-ValeInteriorsInn_SpawnEffectPair(union ObjectEventOrEffect *fieldObject);
-static void ValeInteriorsInn_DemonstrateCatch(void);
+static void ValeInn_SpawnEffectPair(union ObjectEventOrEffect *fieldObject);
+static void ValeInn_DemonstrateCatch(void);
 
 // Shared facing code retains its position before the overlay entry points.
 #include "common/object_facing.h"
@@ -133,15 +134,16 @@ static void ValeInteriorsInn_DemonstrateCatch(void);
 #define FLAG_VALE_DORA_OUT_OF_BED FLAG_MAP_TEMP_03
 
 /// Vale's placed object events, numbered by the rows of
-/// gValeInteriorsInn_ObjectEventTemplates. The tables after the party leaves
+/// gValeInn_ObjectEventTemplates. The tables after the party leaves
 /// and after Kalay keep the rows up to the inn's, and differ after them
-/// (ValeInteriorsInnAfterKalayLocalId).
-enum ValeInteriorsInnLocalId {
+/// (ValeInnAfterKalayLocalId).
+enum ValeInnLocalId {
   /// Isaac's mother, a woman with fair hair tied up. "Isaac, wake up!"
   /// ★ Named from the game: "your mother, Dora, has been crying"
   /// (MsgValeDoraHasBeenCrying)
   LOCALID_DORA = LOCALID_FIRST_PLACED,
-  /// Isaac's father, a man with fair hair (SPRITE_KYLE, Kyle in vale_storm.c).
+  /// Isaac's father, a man with fair hair (SPRITE_KYLE, Kyle in
+  /// vale_stormy_night.c).
   /// "Isaac, Dora, hurry! The Boulder could fall at any second!"
   /// ★ Named from the game: "Kyle, watch out!"
   /// (MsgValeKyleWatchOutTheBoulderThe)
@@ -191,14 +193,14 @@ enum ValeInteriorsInnLocalId {
   /// (MsgValeComeOnHurry)
   LOCALID_TUNIC,
   /// Kraden's sprite (0x1e, as in Sol Sanctum's scenes), seen only from
-  /// VALE_INTERIORS_INN_FROM_VALE_KRADEN_MYTHRIL_BAG.
+  /// VALE_INN_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG.
   /// ★ Named from the game: "from you, Kraden?" (MsgValeKradenOhIsaac)
   LOCALID_KRADEN
 };
 
-/// The rows of gValeInteriorsInn_ObjectEventTemplatesAfterKalay that differ
+/// The rows of gValeInn_ObjectEventTemplatesAfterKalay that differ
 /// from the first table's.
-enum ValeInteriorsInnAfterKalayLocalId {
+enum ValeInnAfterKalayLocalId {
   /// A burly grey-haired man at the inn. "Well if it isn't Isaac! You've grown
   /// so much, I almost didn't recognize you!"; Mind Read hears of Dora's
   /// illness.
@@ -212,9 +214,9 @@ enum ValeInteriorsInnAfterKalayLocalId {
 };
 
 /// Babi's scholars, numbered by the rows of
-/// gValeInteriorsInn_ScholarsObjectEventTemplates and named by what they say
+/// gValeInn_ScholarsObjectEventTemplates and named by what they say
 /// before the Colosso finals.
-enum ValeInteriorsInnScholarLocalId {
+enum ValeInnScholarLocalId {
   /// An old scholar with a white beard in a blue cap, who tells of the ruins
   /// where Babi Lighthouse stands. "Originally, there were ancient ruins at the
   /// site of Babi Lighthouse."
@@ -247,7 +249,7 @@ enum ValeInteriorsInnScholarLocalId {
 };
 
 /// Vale's map section flags this map keeps while the party is in Vale.
-enum ValeInteriorsInnMapSecFlag {
+enum ValeInnMapSecFlag {
   /// Back from Kalay, the innkeeper welcomed Isaac home.
   /// ★ Named from the game: "You came back, huh?" (MsgValeCameBack2)
   FLAG_VALE_INNKEEPER_WELCOMED_ISAAC = 0x300,
@@ -260,7 +262,7 @@ enum ValeInteriorsInnMapSecFlag {
 /// Animations of Dora's and young Isaac's sprites beyond enum
 /// ObjectEventAnimation, as their animation tables and frames under
 /// graphics/sprite draw them.
-enum ValeInteriorsInnAnimation {
+enum ValeInnAnimation {
   ANIM_DORA_IN_BED = 10, ///< lying down, ill (spr_031.png)
   /// Dora seen from behind, her head bowed and turned aside (spr_031.png).
   ANIM_DORA_HEAD_TURNED = 11,
@@ -277,49 +279,48 @@ enum ValeInteriorsInnAnimation {
 // FLAG_VALE_DORA_OUT_OF_BED: Dora got out of her sickbed on this visit.
 
 /// Returns the warp destinations, among them the scenes played on arrival:
-/// VALE_INTERIORS_INN_FROM_BABI_PALACE from Babi's palace
-/// (BABI_PALACE_TO_VALE_INTERIORS_INN),
-/// VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST where a new game begins
-/// (menu/main_menu.c, and ValeGate's
-/// VALE_GATE_TO_VALE_INTERIORS_INN_SOUTHEAST),
-/// VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA from this map's
-/// own VALE_INTERIORS_INN_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA, and
-/// VALE_INTERIORS_INN_FROM_VALE_KRADEN_MYTHRIL_BAG from Kraden's cottage
-/// (VALE_KRADEN_TO_VALE_INTERIORS_INN_MYTHRIL_BAG).
-const struct MapWarpDest *ValeInteriorsInn_GetWarpDests(void) {
-  return gValeInteriorsInn_WarpDests;
+/// VALE_INN_FROM_BABI_PALACE from Babi's palace
+/// (BABI_PALACE_TO_VALE_INN),
+/// VALE_INN_FROM_VALE_PLAZA_SOUTHEAST where a new game begins
+/// (menu/main_menu.c, and ValePlaza's
+/// VALE_PLAZA_TO_VALE_INN_SOUTHEAST),
+/// VALE_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA from this map's
+/// own VALE_INN_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA, and
+/// VALE_INN_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG from Kraden's cottage
+/// (VALE_KRADENS_COTTAGE_TO_VALE_INN_MYTHRIL_BAG).
+const struct MapWarpDest *ValeInn_GetWarpDests(void) {
+  return gValeInn_WarpDests;
 }
 
-const struct MapWarpRegion *ValeInteriorsInn_GetRegions(void) { return NULL; }
+const struct MapWarpRegion *ValeInn_GetRegions(void) { return NULL; }
 
 /// On the stormy night the warps lead into the storm.
-const u32 *ValeInteriorsInn_GetWarps(void) {
+const u32 *ValeInn_GetWarps(void) {
   if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
-    return gValeInteriorsInn_StormWarps;
+    return gValeInn_StormWarps;
   }
-  return gValeInteriorsInn_Warps;
+  return gValeInn_Warps;
 }
 
 /// Places Babi's scholars, or Vale's villagers as the story has left them.
-const struct ObjectEventTemplate *
-ValeInteriorsInn_GetObjectEventTemplates(void) {
+const struct ObjectEventTemplate *ValeInn_GetObjectEventTemplates(void) {
   struct ObjectEventTemplate *table;
 
-  if (gSaveBlock.warpDest == VALE_INTERIORS_INN_FROM_BABI_PALACE)
-    return gValeInteriorsInn_ScholarsObjectEventTemplates;
+  if (gSaveBlock.warpDest == VALE_INN_FROM_BABI_PALACE)
+    return gValeInn_ScholarsObjectEventTemplates;
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0)
-    table = gValeInteriorsInn_ObjectEventTemplatesAfterKalay;
+    table = gValeInn_ObjectEventTemplatesAfterKalay;
   else if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0)
-    table = gValeInteriorsInn_ObjectEventTemplatesAfterLeaving;
+    table = gValeInn_ObjectEventTemplatesAfterLeaving;
   else
-    table = gValeInteriorsInn_ObjectEventTemplates;
+    table = gValeInn_ObjectEventTemplates;
   Map_AssignViewFlags(table);
   return table;
 }
 
 /// In Babi's Palace, one of Babi's scholars asks whether the party knows
 /// Kraden. Reached by talking to LOCALID_SCHOLAR_EXPERIMENT in their room
-/// (VALE_INTERIORS_INN_FROM_BABI_PALACE) once FLAG_COLOSSO_OVER is set;
+/// (VALE_INN_FROM_BABI_PALACE) once FLAG_COLOSSO_OVER is set;
 /// speakerId is the object event spoken to.
 static void EventScript_ScholarAsksAboutKraden(s32 speakerId) {
   s32 firstMessage = MsgValeFolksSeemKnow;
@@ -337,30 +338,30 @@ static void EventScript_ScholarAsksAboutKraden(s32 speakerId) {
 
 /// Chooses the events: Babi's scholars talk differently once the Colosso
 /// finals are over; Vale's villagers follow the storm and the story.
-const struct MapEvent *ValeInteriorsInn_GetEvents(void) {
-  if (gSaveBlock.warpDest == VALE_INTERIORS_INN_FROM_BABI_PALACE) {
+const struct MapEvent *ValeInn_GetEvents(void) {
+  if (gSaveBlock.warpDest == VALE_INN_FROM_BABI_PALACE) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
-      return gValeInteriorsInn_ScholarsLaterEvents;
+      return gValeInn_ScholarsLaterEvents;
     }
-    return gValeInteriorsInn_ScholarsEvents;
+    return gValeInn_ScholarsEvents;
   }
 
   if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
-    return gValeInteriorsInn_StormEvents;
+    return gValeInn_StormEvents;
   }
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
-    return gValeInteriorsInn_EventsAfterKalay;
+    return gValeInn_EventsAfterKalay;
   }
   if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
-    return gValeInteriorsInn_EventsAfterLeaving;
+    return gValeInn_EventsAfterLeaving;
   }
-  return gValeInteriorsInn_Events;
+  return gValeInn_Events;
 }
 
 /// The masked man at the inn asks Isaac his business. In a room of Vale's inn,
 /// the masked man asks whether Isaac has business with him, and sends him off
 /// whatever he answers. "Hey... Boy..." Reached by talking to
-/// LOCALID_MASKED_MAN before the party leaves Vale (gValeInteriorsInn_Events).
+/// LOCALID_MASKED_MAN before the party leaves Vale (gValeInn_Events).
 static void EventScript_AskIsaacHisBusiness(void) {
   FieldScript_Start();
   ObjectMotion_SetVariantCallback(LOCALID_MASKED_MAN, 2);
@@ -386,7 +387,7 @@ static void EventScript_AskIsaacHisBusiness(void) {
 /// A young man asks whether the masked man was Felix. In Vale, the young man
 /// with brown hair also wonders whether Jenna can be trusted. Reached by
 /// talking to LOCALID_YOUNG_MAN_SAW_MASK once the party has left Vale and until
-/// it reaches Kalay (gValeInteriorsInn_EventsAfterLeaving).
+/// it reaches Kalay (gValeInn_EventsAfterLeaving).
 static void EventScript_AskWhetherMaskedManWasFelix(void) {
   struct FieldWork *work;
 
@@ -407,7 +408,7 @@ static void EventScript_AskWhetherMaskedManWasFelix(void) {
 
 /// Stops storm lightning before fading through the requested warp.
 /// Called by the warps below.
-static void ValeInteriorsInn_CloseScreenAndExit(s32 warpNumber) {
+static void ValeInn_CloseScreenAndExit(s32 warpNumber) {
   if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
     Weather_StopLightning();
   }
@@ -420,102 +421,98 @@ static void ValeInteriorsInn_CloseScreenAndExit(s32 warpNumber) {
 
 // The warps in Vale: stepping on the metatile behavior of the same number in
 // any of the Vale tables plays a step sound and takes that warp
-// (gValeInteriorsInn_Warps, or gValeInteriorsInn_StormWarps on the stormy
+// (gValeInn_Warps, or gValeInn_StormWarps on the stormy
 // night).
 
-/// Reached by metatile behavior 1; leads to ValeGate
-/// (VALE_GATE_FROM_VALE_INTERIORS_INN_WEST).
-static void EventScript_WarpToValeGateNorthwest(void) {
+/// Reached by metatile behavior 1; leads to ValePlaza
+/// (VALE_PLAZA_FROM_VALE_INN_WEST).
+static void EventScript_WarpToValePlazaNorthwest(void) {
   Sound_PlaySong(SE_MAP_EXIT);
-  ValeInteriorsInn_CloseScreenAndExit(
-      VALE_INTERIORS_INN_TO_VALE_GATE_NORTHWEST);
+  ValeInn_CloseScreenAndExit(VALE_INN_TO_VALE_PLAZA_NORTHWEST);
 }
 
 /// Reached by metatile behavior 2; leads to Kraden's cottage
-/// (VALE_KRADEN_FROM_VALE_INTERIORS_INN_NORTH).
-static void EventScript_WarpToValeKradenNorth(void) {
+/// (VALE_KRADENS_COTTAGE_FROM_VALE_INN_NORTH).
+static void EventScript_WarpToValeKradensCottageNorth(void) {
   Sound_PlaySong(SE_MAP_EXIT);
-  ValeInteriorsInn_CloseScreenAndExit(VALE_INTERIORS_INN_TO_VALE_KRADEN_NORTH);
+  ValeInn_CloseScreenAndExit(VALE_INN_TO_VALE_KRADENS_COTTAGE_NORTH);
 }
 
-/// Reached by metatile behavior 3; leads to ValeGate
-/// (VALE_GATE_FROM_VALE_INTERIORS_INN_NORTH).
-static void EventScript_WarpToValeGateNortheast(void) {
+/// Reached by metatile behavior 3; leads to ValePlaza
+/// (VALE_PLAZA_FROM_VALE_INN_NORTH).
+static void EventScript_WarpToValePlazaNortheast(void) {
   Sound_PlaySong(SE_MAP_EXIT);
-  ValeInteriorsInn_CloseScreenAndExit(
-      VALE_INTERIORS_INN_TO_VALE_GATE_NORTHEAST);
+  ValeInn_CloseScreenAndExit(VALE_INN_TO_VALE_PLAZA_NORTHEAST);
 }
 
-/// Reached by metatile behavior 4; leads to ValeGate
-/// (VALE_GATE_FROM_VALE_INTERIORS_INN_SOUTH).
-static void EventScript_WarpToValeGateWest(void) {
+/// Reached by metatile behavior 4; leads to ValePlaza
+/// (VALE_PLAZA_FROM_VALE_INN_SOUTH).
+static void EventScript_WarpToValePlazaWest(void) {
   Sound_PlaySong(SE_MAP_EXIT);
-  ValeInteriorsInn_CloseScreenAndExit(VALE_INTERIORS_INN_TO_VALE_GATE_WEST);
+  ValeInn_CloseScreenAndExit(VALE_INN_TO_VALE_PLAZA_WEST);
 }
 
 /// Reached by metatile behavior 5, the inn's stairs; climbs to its guest room
-/// at VALE_INTERIORS_INN_INN_FROM_GROUND_FLOOR.
+/// at VALE_INN_INN_FROM_GROUND_FLOOR.
 static void EventScript_WarpToInnUpstairs(void) {
   Sound_PlaySong(SE_STAIRS_UP);
-  ValeInteriorsInn_CloseScreenAndExit(VALE_INTERIORS_INN_INN_TO_UPSTAIRS);
+  ValeInn_CloseScreenAndExit(VALE_INN_INN_TO_UPSTAIRS);
 }
 
 /// Reached by metatile behavior 6; leads to Vale
-/// (VALE_FROM_VALE_INTERIORS_INN), or on the stormy night to ValeStorm
-/// (VALE_STORM_FROM_VALE_INTERIORS_INN_ISAACS_HOUSE).
+/// (VALE_FROM_VALE_INN), or on the stormy night to ValeStormyNight
+/// (VALE_STORMY_NIGHT_FROM_VALE_INN_ISAACS_HOUSE).
 static void EventScript_WarpToVale(void) {
   Sound_PlaySong(SE_MAP_EXIT);
-  ValeInteriorsInn_CloseScreenAndExit(VALE_INTERIORS_INN_TO_VALE);
+  ValeInn_CloseScreenAndExit(VALE_INN_TO_VALE);
 }
 
 /// Reached by metatile behavior 7, the stairs of Isaac's house; climbs to its
 /// upper floor.
 static void EventScript_WarpToIsaacsHouseUpstairs(void) {
   Sound_PlaySong(SE_STAIRS_UP);
-  ValeInteriorsInn_CloseScreenAndExit(
-      VALE_INTERIORS_INN_ISAACS_HOUSE_TO_UPSTAIRS);
+  ValeInn_CloseScreenAndExit(VALE_INN_ISAACS_HOUSE_TO_UPSTAIRS);
 }
 
 /// Reached by metatile behavior 8, the stairs of the inn's guest room; goes
 /// back down.
 static void EventScript_WarpToInnDownstairs(void) {
   Sound_PlaySong(SE_STAIRS_DOWN);
-  ValeInteriorsInn_CloseScreenAndExit(VALE_INTERIORS_INN_INN_TO_GROUND_FLOOR);
+  ValeInn_CloseScreenAndExit(VALE_INN_INN_TO_GROUND_FLOOR);
 }
 
 /// Reached by metatile behavior 9, the stairs on the upper floor of Isaac's
 /// house; goes back down.
 static void EventScript_WarpToIsaacsHouseDownstairs(void) {
   Sound_PlaySong(SE_STAIRS_DOWN);
-  ValeInteriorsInn_CloseScreenAndExit(
-      VALE_INTERIORS_INN_ISAACS_HOUSE_TO_GROUND_FLOOR);
+  ValeInn_CloseScreenAndExit(VALE_INN_ISAACS_HOUSE_TO_GROUND_FLOOR);
 }
 
-/// Reached by metatile behavior 10; leads to ValeStorm
-/// (VALE_STORM_FROM_VALE_INTERIORS_INN_WEST).
-static void EventScript_WarpToValeStormWest(void) {
+/// Reached by metatile behavior 10; leads to ValeStormyNight
+/// (VALE_STORMY_NIGHT_FROM_VALE_INN_WEST).
+static void EventScript_WarpToValeStormyNightWest(void) {
   Sound_PlaySong(SE_MAP_EXIT);
-  ValeInteriorsInn_CloseScreenAndExit(VALE_INTERIORS_INN_TO_VALE_STORM_WEST);
+  ValeInn_CloseScreenAndExit(VALE_INN_TO_VALE_STORMY_NIGHT_WEST);
 }
 
-/// Reached by metatile behavior 11; leads to ValeStorm
-/// (VALE_STORM_FROM_VALE_INTERIORS_INN_EAST).
-static void EventScript_WarpToValeStormEast(void) {
+/// Reached by metatile behavior 11; leads to ValeStormyNight
+/// (VALE_STORMY_NIGHT_FROM_VALE_INN_EAST).
+static void EventScript_WarpToValeStormyNightEast(void) {
   Sound_PlaySong(SE_MAP_EXIT);
-  ValeInteriorsInn_CloseScreenAndExit(VALE_INTERIORS_INN_TO_VALE_STORM_EAST);
+  ValeInn_CloseScreenAndExit(VALE_INN_TO_VALE_STORMY_NIGHT_EAST);
 }
 
 /// Sets up these rooms for the stormy night or the story's villagers. It also
-/// plays the scenes of VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST,
-/// VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA and
-/// VALE_INTERIORS_INN_FROM_VALE_KRADEN_MYTHRIL_BAG. Called by Map_Run once the
-/// object events are placed. VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST sets
+/// plays the scenes of VALE_INN_FROM_VALE_PLAZA_SOUTHEAST,
+/// VALE_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA and
+/// VALE_INN_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG. Called by Map_Run once the
+/// object events are placed. VALE_INN_FROM_VALE_PLAZA_SOUTHEAST sets
 /// FLAG_VALE_STORM before EventScript_DoraWakesIsaac; back from Kalay, Dora is
 /// put back in her sickbed unless FLAG_VALE_DORA_OUT_OF_BED says she got up.
-s32 ValeInteriorsInn_Initialize(void) {
+s32 ValeInn_Initialize(void) {
   struct ObjectEvent *objectEvent;
 
-  if (gSaveBlock.warpDest == VALE_INTERIORS_INN_FROM_BABI_PALACE) {
+  if (gSaveBlock.warpDest == VALE_INN_FROM_BABI_PALACE) {
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
     ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
@@ -528,15 +525,14 @@ s32 ValeInteriorsInn_Initialize(void) {
       Import_ObjectEventSetPosition(LOCALID_INN_WORKER, 0, 0);
       Import_ObjectEventSetPosition(LOCALID_MASKED_MAN, 0, 0);
     } else {
-      ValeInteriorsInn_RestoreRoomPatch();
+      ValeInn_RestoreRoomPatch();
     }
     ObjectMotion_SetActionVariant(LOCALID_INNKEEPER, 1);
     if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
       objectEvent = ObjectEvent_GetById(LOCALID_BLANK_AFTER_KALAY);
       ObjectEvent_SetSpriteFlags(objectEvent, 0);
-      if (gSaveBlock.warpDest == VALE_INTERIORS_INN_FROM_VALE ||
-          gSaveBlock.warpDest ==
-              VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS) {
+      if (gSaveBlock.warpDest == VALE_INN_FROM_VALE ||
+          gSaveBlock.warpDest == VALE_INN_ISAACS_HOUSE_FROM_UPSTAIRS) {
         if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
           if (GameFlag_Get(FLAG_VALE_DORA_OUT_OF_BED) != 0) {
             TilesetAnim_Resume(12);
@@ -550,16 +546,15 @@ s32 ValeInteriorsInn_Initialize(void) {
       }
     } else {
       if (gSaveBlock.warpDest ==
-          VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA) {
+          VALE_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA) {
         EventScript_HurryToThePlaza();
       } else {
-        if (gSaveBlock.warpDest ==
-            VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST) {
+        if (gSaveBlock.warpDest == VALE_INN_FROM_VALE_PLAZA_SOUTHEAST) {
           GameFlag_Set(FLAG_VALE_STORM);
           EventScript_DoraWakesIsaac();
         } else {
           if (gSaveBlock.warpDest ==
-              VALE_INTERIORS_INN_FROM_VALE_KRADEN_MYTHRIL_BAG) {
+              VALE_INN_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG) {
             EventScript_ShowMythrilBag();
           } else {
             ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
@@ -589,11 +584,11 @@ s32 ValeInteriorsInn_Initialize(void) {
 
 /// In their house in Vale on the stormy night, Dora wakes Isaac, makes him take
 /// his tunic, and leads him out into the storm. "The Mt. Aleph Boulder is going
-/// to fall!" Called by ValeInteriorsInn_Initialize on arrival by
-/// VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST, where a new game begins. Sets
+/// to fall!" Called by ValeInn_Initialize on arrival by
+/// VALE_INN_FROM_VALE_PLAZA_SOUTHEAST, where a new game begins. Sets
 /// FLAG_ISAAC_WEARS_TUNIC and takes
-/// VALE_INTERIORS_INN_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA, back into this
-/// map by VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA, where
+/// VALE_INN_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA, back into this
+/// map by VALE_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA, where
 /// EventScript_HurryToThePlaza follows.
 static void EventScript_DoraWakesIsaac(void) {
   s32 firstMessage;
@@ -697,7 +692,7 @@ static void EventScript_DoraWakesIsaac(void) {
   FieldScript_WaitFrames(20);
   Script_ShowMessage(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | LOCALID_DORA, 0);
-  ValeInteriorsInn_DemonstrateCatch();
+  ValeInn_DemonstrateCatch();
   // Resolve the Psynergy demonstration before the pair walks away together.
   // "It's pouring outside! Don't go out without your tunic!" She steps up to
   // him and he puts it on, with a flash and SE_RECOVERY.
@@ -727,10 +722,9 @@ static void EventScript_DoraWakesIsaac(void) {
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
   FieldCamera_FollowObjectEvent(LOCALID_DORA, 1);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->priorityFlags |= 0x1;
-  ObjectEvent_SetActionScript(LOCALID_DORA, gValeInteriorsInn_LeaveHouseScript);
+  ObjectEvent_SetActionScript(LOCALID_DORA, gValeInn_LeaveHouseScript);
   FieldScript_WaitFrames(20);
-  ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER,
-                              gValeInteriorsInn_LeaveHouseScript);
+  ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER, gValeInn_LeaveHouseScript);
   ObjectEvent_RefreshSelectorById(LOCALID_DORA);
   ObjectEvent_WalkToAndWait(LOCALID_DORA, 419, 661);
   ObjectEvent_WalkToAndWait(LOCALID_DORA, 408, 661);
@@ -748,16 +742,14 @@ static void EventScript_DoraWakesIsaac(void) {
   Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_DORA, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  ObjectEvent_SetActionScript(LOCALID_DORA, gValeInteriorsInn_DoraLeavesScript);
-  ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER,
-                              gValeInteriorsInn_IsaacLeavesScript);
+  ObjectEvent_SetActionScript(LOCALID_DORA, gValeInn_DoraLeavesScript);
+  ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER, gValeInn_IsaacLeavesScript);
   FieldScript_WaitFrames(20);
   (*eventSlot)->transition = MAP_TRANSITION(TRANSITION_WINDOW, 1);
   (*eventSlot)->transitionFrames = 16;
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Import_ScriptRequestWarp(
-      VALE_INTERIORS_INN_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA);
+  Import_ScriptRequestWarp(VALE_INN_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA);
 }
 
 /// Selects the hardware blend targets for the storm sequence.
@@ -767,11 +759,11 @@ static __inline__ void SetBlendAlpha(u32 value) { REG_BLDALPHA = value; }
 
 /// Outside the house in Vale on the stormy night, Kyle calls to Isaac and Dora
 /// to hurry; LOCALID_FLAME shakes, then turns to smoke and rises away, as they
-/// run to the plaza. Called by ValeInteriorsInn_Initialize on arrival by
-/// VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA, after
+/// run to the plaza. Called by ValeInn_Initialize on arrival by
+/// VALE_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA, after
 /// EventScript_DoraWakesIsaac. Takes
-/// VALE_INTERIORS_INN_TO_VALE_STORM_WITH_DORA, to ValeStorm
-/// (VALE_STORM_FROM_VALE_INTERIORS_INN_WITH_DORA), where
+/// VALE_INN_TO_VALE_STORMY_NIGHT_WITH_DORA, to ValeStormyNight
+/// (VALE_STORMY_NIGHT_FROM_VALE_INN_WITH_DORA), where
 /// EventScript_DoraSendsIsaacToThePlaza follows.
 static void EventScript_HurryToThePlaza(void) {
   struct ObjectEvent *objectEvent;
@@ -795,8 +787,7 @@ static void EventScript_HurryToThePlaza(void) {
   objectEvent->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   objectEvent->motionFlags = 0;
   sprite->image.priority = 1;
-  ObjectEvent_SetActionScript(LOCALID_FLAME,
-                              gValeInteriorsInn_FlameShakesScript);
+  ObjectEvent_SetActionScript(LOCALID_FLAME, gValeInn_FlameShakesScript);
   ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, 1);
   MapGrid_CopyCellsTo(83, 15, 83, 19, 5, 4);
@@ -821,9 +812,8 @@ static void EventScript_HurryToThePlaza(void) {
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
   ObjectEvent_SetSpeed(LOCALID_KYLE, PIXELS(3) / 2, PIXELS(3) / 4);
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER,
-                              gValeInteriorsInn_IsaacRunsAheadScript);
-  ObjectEvent_SetActionScript(LOCALID_DORA,
-                              gValeInteriorsInn_DoraRunsAheadScript);
+                              gValeInn_IsaacRunsAheadScript);
+  ObjectEvent_SetActionScript(LOCALID_DORA, gValeInn_DoraRunsAheadScript);
   FieldScript_StartScreenTransition();
   ObjectEvent_RefreshSelectorById(LOCALID_DORA);
   Sound_PlaySong(SE_DOOR_OPEN);
@@ -850,16 +840,14 @@ static void EventScript_HurryToThePlaza(void) {
   ObjectMotion_SetAnimationAndWait(LOCALID_KYLE, ANIM_NOD);
   ObjectMotion_ResetAndSetPositionInMode2(LOCALID_KYLE, 415, 589);
   FieldScript_WaitFrames(10);
-  ObjectEvent_SetActionScript(LOCALID_DORA,
-                              gValeInteriorsInn_DoraRunsBackScript);
+  ObjectEvent_SetActionScript(LOCALID_DORA, gValeInn_DoraRunsBackScript);
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER,
-                              gValeInteriorsInn_IsaacRunsBackScript);
+                              gValeInn_IsaacRunsBackScript);
   Sound_PlaySong(SE_234);
   FieldScript_WaitFrames(20);
   // LOCALID_FLAME flares up, turns to smoke and rises away
-  // (gValeInteriorsInn_FlameRisesScript) as SE_202 plays.
-  ObjectEvent_SetActionScript(LOCALID_FLAME,
-                              gValeInteriorsInn_FlameRisesScript);
+  // (gValeInn_FlameRisesScript) as SE_202 plays.
+  ObjectEvent_SetActionScript(LOCALID_FLAME, gValeInn_FlameRisesScript);
   alpha = &REG_BLDALPHA;
 
   // The flame brightens over four frames, then fades away over sixteen.
@@ -895,15 +883,15 @@ ramp:
   FieldScript_WaitFrames(40);
   FieldCamera_SetSpeedParameters(PIXELS(4) / 5, PIXELS(1) / 10);
   FieldCamera_FollowObjectEvent(LOCALID_DORA, 1);
-  ObjectEvent_SetActionScript(LOCALID_DORA, gValeInteriorsInn_RunToPlazaScript);
+  ObjectEvent_SetActionScript(LOCALID_DORA, gValeInn_RunToPlazaScript);
   ObjectEvent_RunActionScriptAndWait(LOCALID_PARTY_LEADER,
-                                     gValeInteriorsInn_RunToPlazaScript);
+                                     gValeInn_RunToPlazaScript);
   ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
       MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transitionFrames = 32;
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Import_ScriptRequestWarp(VALE_INTERIORS_INN_TO_VALE_STORM_WITH_DORA);
+  Import_ScriptRequestWarp(VALE_INN_TO_VALE_STORMY_NIGHT_WITH_DORA);
 }
 
 /// Vale's innkeeper offers a room from behind the counter; elsewhere talks of
@@ -1120,7 +1108,7 @@ static void EventScript_TalkToDora(void) {
   if (GameFlag_Get(FLAG_VALE_DORA_OUT_OF_BED) != 0) {
     ObjectEvent_SetTargetAndCallback(
         LOCALID_DORA, OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_PARTY_LEADER,
-        gValeInteriorsInn_DoraFacesIsaacScript);
+        gValeInn_DoraFacesIsaacScript);
     FieldScript_WaitFrames(20);
     FieldScript_SetMessageId(MsgValeDontWorryBest);
     FieldScript_ShowMessageAndWait(LOCALID_DORA, 0);
@@ -1136,18 +1124,18 @@ static void EventScript_TalkToDora(void) {
 }
 
 /// Restores the room's tiles and metatile behaviors outside the storm sequence.
-/// Called by ValeInteriorsInn_Initialize when FLAG_VALE_STORM is clear.
-static void ValeInteriorsInn_RestoreRoomPatch(void) {
+/// Called by ValeInn_Initialize when FLAG_VALE_STORM is clear.
+static void ValeInn_RestoreRoomPatch(void) {
   MapGrid_CopyCellsTo(22, 85, 25, 85, 2, 2);
   MapGrid_CopyCellAttributes(25, 15, 2, 2, 25, 25);
 }
 
 /// In Vale, the Mythril Bag rises and wobbles before Kraden, with no text.
-/// Called by ValeInteriorsInn_Initialize on arrival by
-/// VALE_INTERIORS_INN_FROM_VALE_KRADEN_MYTHRIL_BAG, from Kraden's cottage,
+/// Called by ValeInn_Initialize on arrival by
+/// VALE_INN_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG, from Kraden's cottage,
 /// while he prepares for the first Sol Sanctum visit
-/// (EventScript_TalkToKraden). Takes VALE_INTERIORS_INN_TO_VALE_KRADEN_SOUTH
-/// back outside (VALE_KRADEN_FROM_VALE_INTERIORS_INN_SOUTH), where
+/// (EventScript_TalkToKraden). Takes VALE_INN_TO_VALE_KRADENS_COTTAGE_SOUTH
+/// back outside (VALE_KRADENS_COTTAGE_FROM_VALE_INN_SOUTH), where
 /// EventScript_KradenSetsOff gathers the party.
 static void EventScript_ShowMythrilBag(void) {
   struct ObjectEvent *objectEvent;
@@ -1185,9 +1173,9 @@ static void EventScript_ShowMythrilBag(void) {
   ObjectEvent_WalkToAndWait(LOCALID_KRADEN, 420, 164);
   ObjectEvent_WalkToAndWait(LOCALID_KRADEN, 326, 185);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTH, 10);
-  ObjectEvent_SetScript(objectEvent, gValeInteriorsInn_MythrilBagRisesScript);
+  ObjectEvent_SetScript(objectEvent, gValeInn_MythrilBagRisesScript);
   Object_WaitForValue16(objectEvent);
-  ObjectEvent_SetScript(objectEvent, gValeInteriorsInn_MythrilBagWobblesScript);
+  ObjectEvent_SetScript(objectEvent, gValeInn_MythrilBagWobblesScript);
   Object_WaitForValue16(objectEvent);
   FieldScript_WaitFrames(20);
   ObjectEvent_Release(objectEvent);
@@ -1195,37 +1183,37 @@ static void EventScript_ShowMythrilBag(void) {
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_EAST, 40);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Import_ScriptRequestWarp(VALE_INTERIORS_INN_TO_VALE_KRADEN_SOUTH);
+  Import_ScriptRequestWarp(VALE_INN_TO_VALE_KRADENS_COTTAGE_SOUTH);
 }
 
 /// Unused: an update hook that flashes between two palettes and gives off a
 /// pair of effects every sixteen frames; no object event is given it.
-UNUSED static void ValeInteriorsInn_FlashPaletteAndSpawnPair(
-    union ObjectEventOrEffect *fieldObject) {
+UNUSED static void
+ValeInn_FlashPaletteAndSpawnPair(union ObjectEventOrEffect *fieldObject) {
   if ((gFrameCount & 2) != 0) {
     ObjectEvent_SetColorMode(&fieldObject->objectEvent, 7);
   } else {
     ObjectEvent_SetColorMode(&fieldObject->objectEvent, 0);
   }
   if ((gFrameCount & 15) == 0) {
-    ValeInteriorsInn_SpawnEffectPair(fieldObject);
+    ValeInn_SpawnEffectPair(fieldObject);
   }
 }
 
 /// Cycles six palettes on odd frames and periodically emit paired effects.
-static void ValeInteriorsInn_CyclePaletteAndSpawnPair(
-    union ObjectEventOrEffect *fieldObject) {
+static void
+ValeInn_CyclePaletteAndSpawnPair(union ObjectEventOrEffect *fieldObject) {
   if ((gFrameCount & 1) != 0) {
     ObjectEvent_SetColorMode(&fieldObject->objectEvent, (gFrameCount >> 1) % 6);
   }
   if ((gFrameCount & 15) == 0) {
-    ValeInteriorsInn_SpawnEffectPair(fieldObject);
+    ValeInn_SpawnEffectPair(fieldObject);
   }
 }
 
 /// Advances deterministically through six palettes on odd frames.
-static void ValeInteriorsInn_CyclePaletteOnOddFrames(
-    union ObjectEventOrEffect *fieldObject) {
+static void
+ValeInn_CyclePaletteOnOddFrames(union ObjectEventOrEffect *fieldObject) {
   if ((gFrameCount & 1) != 0) {
     s32 slot = (gFrameCount >> 1) % 6;
 
@@ -1238,8 +1226,7 @@ static void ValeInteriorsInn_CyclePaletteOnOddFrames(
 
 /// Copies the parent's ground height into two oppositely moving vertical
 /// effects.
-static void
-ValeInteriorsInn_SpawnEffectPair(union ObjectEventOrEffect *fieldObject) {
+static void ValeInn_SpawnEffectPair(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *parent = &fieldObject->objectEvent;
   struct ObjectEvent *pair[2];
   struct ObjectEvent *child;
@@ -1295,20 +1282,20 @@ ValeInteriorsInn_SpawnEffectPair(union ObjectEventOrEffect *fieldObject) {
 #include "common/effect_psynergy.h"
 
 /// Unused: cycles Dora's palette with particles; nothing calls it.
-UNUSED static void ValeInteriorsInn_CyclePaletteWithParticles(void) {
-  ValeInteriorsInn_CyclePaletteAndSpawnPair(
+UNUSED static void ValeInn_CyclePaletteWithParticles(void) {
+  ValeInn_CyclePaletteAndSpawnPair(
       (union ObjectEventOrEffect *)ObjectEvent_GetById(LOCALID_DORA));
 }
 
 /// Unused: cycles Dora's palette without particles; nothing calls it.
-UNUSED static void ValeInteriorsInn_CyclePaletteWithoutParticles(void) {
-  ValeInteriorsInn_CyclePaletteOnOddFrames(
+UNUSED static void ValeInn_CyclePaletteWithoutParticles(void) {
+  ValeInn_CyclePaletteOnOddFrames(
       (union ObjectEventOrEffect *)ObjectEvent_GetById(LOCALID_TUNIC));
 }
 
 /// Catch plays from Dora on the tunic, then its objects are released.
 /// Called by EventScript_DoraWakesIsaac as Dora hands Isaac his tunic.
-static void ValeInteriorsInn_DemonstrateCatch(void) {
+static void ValeInn_DemonstrateCatch(void) {
   FieldEffect_LoadActionEffectResources(ABILITY_CATCH, 1);
   FieldEffect_SetupObjectPair(LOCALID_DORA, LOCALID_TUNIC);
   FieldEffect_StartCast();
@@ -1317,7 +1304,7 @@ static void ValeInteriorsInn_DemonstrateCatch(void) {
   FieldEffect_End();
 }
 
-s32 gValeInteriorsInn_LeaveHouseScript[] = {
+s32 gValeInn_LeaveHouseScript[] = {
     SC_ANIMATION(2), SC_MOVE(PIXELS(522), 0, PIXELS(748)),
     SC_SYNC,         SC_MOVE(PIXELS(419), 0, PIXELS(748)),
     SC_SYNC,         SC_MOVE(PIXELS(419), 0, PIXELS(691)),
@@ -1325,27 +1312,27 @@ s32 gValeInteriorsInn_LeaveHouseScript[] = {
     SC_END,
 };
 
-s32 gValeInteriorsInn_DoraLeavesScript[] = {
+s32 gValeInn_DoraLeavesScript[] = {
     SC_ANIMATION(2), SC_MOVE(PIXELS(387), 0, PIXELS(661)),
     SC_SYNC,         SC_POSITION(0, 0, 0),
     SC_END,
 };
 
-s32 gValeInteriorsInn_IsaacLeavesScript[] = {
+s32 gValeInn_IsaacLeavesScript[] = {
     SC_ANIMATION(2), SC_MOVE(PIXELS(408), 0, PIXELS(661)),
     SC_SYNC,         SC_MOVE(PIXELS(387), 0, PIXELS(661)),
     SC_SYNC,         SC_POSITION(0, 0, 0),
     SC_END,
 };
 
-s32 gValeInteriorsInn_DoraRunsAheadScript[] = {
+s32 gValeInn_DoraRunsAheadScript[] = {
     SC_ANIMATION(2), SC_MOVE(PIXELS(468), 0, PIXELS(390)),
     SC_SYNC,         SC_MOVE(PIXELS(508), 0, PIXELS(402)),
     SC_SYNC,         SC_ANIMATION(1),
     SC_END,
 };
 
-s32 gValeInteriorsInn_IsaacRunsAheadScript[] = {
+s32 gValeInn_IsaacRunsAheadScript[] = {
     SC_ANIMATION(2), SC_MOVE(PIXELS(431), 0, PIXELS(391)),
     SC_SYNC,         SC_MOVE(PIXELS(468), 0, PIXELS(390)),
     SC_SYNC,         SC_MOVE(PIXELS(486), 0, PIXELS(393)),
@@ -1353,7 +1340,7 @@ s32 gValeInteriorsInn_IsaacRunsAheadScript[] = {
     SC_END,
 };
 
-s32 gValeInteriorsInn_DoraRunsBackScript[] = {
+s32 gValeInn_DoraRunsBackScript[] = {
     SC_ANIMATION(2), SC_MOVE(PIXELS(525), 0, PIXELS(414)),
     SC_SYNC,         SC_MOVE(PIXELS(509), 0, PIXELS(442)),
     SC_SYNC,         SC_MOVE(PIXELS(455), 0, PIXELS(450)),
@@ -1361,7 +1348,7 @@ s32 gValeInteriorsInn_DoraRunsBackScript[] = {
     SC_END,
 };
 
-s32 gValeInteriorsInn_IsaacRunsBackScript[] = {
+s32 gValeInn_IsaacRunsBackScript[] = {
     SC_ANIMATION(2), SC_MOVE(PIXELS(525), 0, PIXELS(414)),
     SC_SYNC,         SC_MOVE(PIXELS(509), 0, PIXELS(442)),
     SC_SYNC,         SC_MOVE(PIXELS(481), 0, PIXELS(443)),
@@ -1369,20 +1356,20 @@ s32 gValeInteriorsInn_IsaacRunsBackScript[] = {
     SC_END,
 };
 
-s32 gValeInteriorsInn_RunToPlazaScript[] = {
+s32 gValeInn_RunToPlazaScript[] = {
     SC_ANIMATION(2), SC_MOVE(PIXELS(428), 0, PIXELS(460)),
     SC_SYNC,         SC_MOVE(PIXELS(415), 0, PIXELS(513)),
     SC_SYNC,         SC_MOVE(PIXELS(415), 0, PIXELS(589)),
     SC_SYNC,         SC_END,
 };
 
-s32 gValeInteriorsInn_FlameShakesScript[] = {
+s32 gValeInn_FlameShakesScript[] = {
     SC_SET(SW_SCALE_X, 0xe666),  SC_SET(SW_SCALE_Y, 0x10000), SC_WAIT(4),
     SC_SET(SW_SCALE_X, 0xcccc),  SC_SET(SW_SCALE_Y, 0xcccc),  SC_WAIT(4),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 gValeInteriorsInn_FlameRisesScript[] = {
+s32 gValeInn_FlameRisesScript[] = {
     SC_ANIMATION(2),
     SC_SET(SW_SCALE_X, 0x10000),
     SC_SET(SW_SCALE_Y, 0x13333),
@@ -1415,7 +1402,7 @@ s32 gValeInteriorsInn_FlameRisesScript[] = {
     SC_END,
 };
 
-s32 gValeInteriorsInn_DoraFacesIsaacScript[] = {
+s32 gValeInn_DoraFacesIsaacScript[] = {
     SC_CALL(Map_TurnTowardTarget),
     SC_LOOP(SC_FOREVER, SC_TOP),
     SC_MOVE(PIXELS(567), 0, PIXELS(690)),
@@ -1425,13 +1412,13 @@ s32 gValeInteriorsInn_DoraFacesIsaacScript[] = {
     SC_END,
 };
 
-s32 gValeInteriorsInn_MythrilBagRisesScript[] = {
+s32 gValeInn_MythrilBagRisesScript[] = {
     SC_ADD(SW_Y, 0x8000),
     SC_WAIT(1),
     SC_LOOP(16, SC_TOP),
 };
 
-s32 gValeInteriorsInn_MythrilBagWobblesScript[] = {
+s32 gValeInn_MythrilBagWobblesScript[] = {
     SC_ADD(SW_SCALE_X, -0x4000),
     SC_ADD(SW_SCALE_Y, 0x2000),
     SC_WAIT(2),
@@ -1459,112 +1446,105 @@ s32 gValeInteriorsInn_MythrilBagWobblesScript[] = {
     SC_END,
 };
 
-struct MapWarpDest gValeInteriorsInn_WarpDests[] = {
+struct MapWarpDest gValeInn_WarpDests[] = {
     {0, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {VALE_INTERIORS_INN_FROM_VALE_GATE_NORTHWEST, CONDITION_ALWAYS, 160, 0, 228,
+    {VALE_INN_FROM_VALE_PLAZA_NORTHWEST, CONDITION_ALWAYS, 160, 0, 228,
      FACING_NORTH, 0, 24, 0, 248, 256, 0},
-    {VALE_INTERIORS_INN_FROM_VALE_KRADEN_NORTH, CONDITION_ALWAYS, 480, 0, 176,
+    {VALE_INN_FROM_VALE_KRADENS_COTTAGE_NORTH, CONDITION_ALWAYS, 480, 0, 176,
      FACING_NORTH, 0, 264, 8, 560, 240, 0},
-    {VALE_INTERIORS_INN_FROM_VALE_GATE_NORTHEAST, CONDITION_ALWAYS, 721, 0, 192,
+    {VALE_INN_FROM_VALE_PLAZA_NORTHEAST, CONDITION_ALWAYS, 721, 0, 192,
      FACING_NORTH, 0, 584, 0, 848, 224, 0},
-    {VALE_INTERIORS_INN_FROM_VALE_GATE_WEST, CONDITION_ALWAYS, 144, 0, 494,
-     FACING_NORTH, 0, 8, 256, 320, 528, 0},
-    {VALE_INTERIORS_INN_INN_FROM_UPSTAIRS, CONDITION_ALWAYS, 119, 0, 340,
-     FACING_SOUTH, 0, 8, 256, 320, 528, 0},
-    {VALE_INTERIORS_INN_FROM_VALE, CONDITION_ALWAYS, 416, 0, 528, FACING_NORTH,
-     0, 344, 272, 640, 560, 0},
-    {VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS, CONDITION_ALWAYS, 408, 0,
-     371, FACING_SOUTH, 0, 344, 272, 640, 560, 0},
-    {VALE_INTERIORS_INN_INN_FROM_GROUND_FLOOR, CONDITION_ALWAYS, 184, 0, 633,
-     FACING_EAST, 0, 8, 576, 320, 736, 0},
-    {VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_GROUND_FLOOR, CONDITION_ALWAYS, 408,
-     0, 665, FACING_EAST, 0, 328, 600, 624, 816, 0},
+    {VALE_INN_FROM_VALE_PLAZA_WEST, CONDITION_ALWAYS, 144, 0, 494, FACING_NORTH,
+     0, 8, 256, 320, 528, 0},
+    {VALE_INN_INN_FROM_UPSTAIRS, CONDITION_ALWAYS, 119, 0, 340, FACING_SOUTH, 0,
+     8, 256, 320, 528, 0},
+    {VALE_INN_FROM_VALE, CONDITION_ALWAYS, 416, 0, 528, FACING_NORTH, 0, 344,
+     272, 640, 560, 0},
+    {VALE_INN_ISAACS_HOUSE_FROM_UPSTAIRS, CONDITION_ALWAYS, 408, 0, 371,
+     FACING_SOUTH, 0, 344, 272, 640, 560, 0},
+    {VALE_INN_INN_FROM_GROUND_FLOOR, CONDITION_ALWAYS, 184, 0, 633, FACING_EAST,
+     0, 8, 576, 320, 736, 0},
+    {VALE_INN_ISAACS_HOUSE_FROM_GROUND_FLOOR, CONDITION_ALWAYS, 408, 0, 665,
+     FACING_EAST, 0, 328, 600, 624, 816, 0},
     {10, CONDITION_ALWAYS, 528, 0, 683, FACING_SOUTH, 0, 328, 600, 624, 816, 0},
-    {VALE_INTERIORS_INN_FROM_VALE_STORM_WEST, CONDITION_ALWAYS, 705, 0, 817,
+    {VALE_INN_FROM_VALE_STORMY_NIGHT_WEST, CONDITION_ALWAYS, 705, 0, 817,
      FACING_NORTH, 0, 640, 552, 952, 864, 0},
-    {VALE_INTERIORS_INN_FROM_VALE_STORM_EAST, CONDITION_ALWAYS, 879, 0, 765,
+    {VALE_INN_FROM_VALE_STORMY_NIGHT_EAST, CONDITION_ALWAYS, 879, 0, 765,
      FACING_NORTH, 0, 640, 552, 952, 864, 0},
     {16, CONDITION_ALWAYS, 538, 0, 683, FACING_SOUTH, 0, 328, 600, 624, 816, 0},
-    {VALE_INTERIORS_INN_FROM_BABI_PALACE, CONDITION_ALWAYS, 760, 0, 328,
-     FACING_SOUTH, 0, 672, 272, 960, 488, 0},
-    {VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST, CONDITION_ALWAYS, 567, 0, 676,
+    {VALE_INN_FROM_BABI_PALACE, CONDITION_ALWAYS, 760, 0, 328, FACING_SOUTH, 0,
+     672, 272, 960, 488, 0},
+    {VALE_INN_FROM_VALE_PLAZA_SOUTHEAST, CONDITION_ALWAYS, 567, 0, 676,
      FACING_EAST, 0, 1024, 576, 1024, 576, 0},
-    {VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA, CONDITION_ALWAYS,
-     408, 0, 371, FACING_SOUTH, 0, 344, 272, 640, 560, 0},
-    {VALE_INTERIORS_INN_FROM_VALE_KRADEN_MYTHRIL_BAG, CONDITION_ALWAYS, 480, 0,
+    {VALE_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA, CONDITION_ALWAYS, 408, 0,
+     371, FACING_SOUTH, 0, 344, 272, 640, 560, 0},
+    {VALE_INN_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG, CONDITION_ALWAYS, 480, 0,
      176, FACING_NORTH, 0, 264, 8, 560, 240, 0},
     {MAP_TABLE_END},
 };
 
-u32 gValeInteriorsInn_Warps[] = {
-    MAP_WARPS(ValeInteriorsInn),
-    MAP_WARP(VALE_INTERIORS_INN_TO_VALE_GATE_NORTHWEST, ValeGate,
-             VALE_GATE_FROM_VALE_INTERIORS_INN_WEST),
-    MAP_WARP(VALE_INTERIORS_INN_TO_VALE_KRADEN_NORTH, ValeKraden,
-             VALE_KRADEN_FROM_VALE_INTERIORS_INN_NORTH),
-    MAP_WARP(VALE_INTERIORS_INN_TO_VALE_GATE_NORTHEAST, ValeGate,
-             VALE_GATE_FROM_VALE_INTERIORS_INN_NORTH),
-    MAP_WARP(VALE_INTERIORS_INN_TO_VALE_GATE_WEST, ValeGate,
-             VALE_GATE_FROM_VALE_INTERIORS_INN_SOUTH),
-    MAP_WARP(VALE_INTERIORS_INN_INN_TO_UPSTAIRS, ValeInteriorsInn,
-             VALE_INTERIORS_INN_INN_FROM_GROUND_FLOOR),
-    MAP_WARP(VALE_INTERIORS_INN_TO_VALE, Vale, VALE_FROM_VALE_INTERIORS_INN),
-    MAP_WARP(VALE_INTERIORS_INN_ISAACS_HOUSE_TO_UPSTAIRS, ValeInteriorsInn,
-             VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_GROUND_FLOOR),
-    MAP_WARP(VALE_INTERIORS_INN_INN_TO_GROUND_FLOOR, ValeInteriorsInn,
-             VALE_INTERIORS_INN_INN_FROM_UPSTAIRS),
-    MAP_WARP(VALE_INTERIORS_INN_ISAACS_HOUSE_TO_GROUND_FLOOR, ValeInteriorsInn,
-             VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS),
-    MAP_WARP(VALE_INTERIORS_INN_TO_VALE_STORM_WEST, ValeStorm,
-             VALE_STORM_FROM_VALE_INTERIORS_INN_WEST),
-    MAP_WARP(VALE_INTERIORS_INN_TO_VALE_STORM_EAST, ValeStorm,
-             VALE_STORM_FROM_VALE_INTERIORS_INN_EAST),
-    MAP_WARP(VALE_INTERIORS_INN_TO_BABI_PALACE, BabiPalace,
-             BABI_PALACE_FROM_VALE_INTERIORS_INN),
-    MAP_WARP(VALE_INTERIORS_INN_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA,
-             ValeInteriorsInn,
-             VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA),
-    MAP_WARP(VALE_INTERIORS_INN_TO_VALE_STORM_WITH_DORA, ValeStorm,
-             VALE_STORM_FROM_VALE_INTERIORS_INN_WITH_DORA),
-    MAP_WARP(VALE_INTERIORS_INN_TO_VALE_KRADEN_SOUTH, ValeKraden,
-             VALE_KRADEN_FROM_VALE_INTERIORS_INN_SOUTH),
+u32 gValeInn_Warps[] = {
+    MAP_WARPS(ValeInn),
+    MAP_WARP(VALE_INN_TO_VALE_PLAZA_NORTHWEST, ValePlaza,
+             VALE_PLAZA_FROM_VALE_INN_WEST),
+    MAP_WARP(VALE_INN_TO_VALE_KRADENS_COTTAGE_NORTH, ValeKradensCottage,
+             VALE_KRADENS_COTTAGE_FROM_VALE_INN_NORTH),
+    MAP_WARP(VALE_INN_TO_VALE_PLAZA_NORTHEAST, ValePlaza,
+             VALE_PLAZA_FROM_VALE_INN_NORTH),
+    MAP_WARP(VALE_INN_TO_VALE_PLAZA_WEST, ValePlaza,
+             VALE_PLAZA_FROM_VALE_INN_SOUTH),
+    MAP_WARP(VALE_INN_INN_TO_UPSTAIRS, ValeInn, VALE_INN_INN_FROM_GROUND_FLOOR),
+    MAP_WARP(VALE_INN_TO_VALE, Vale, VALE_FROM_VALE_INN),
+    MAP_WARP(VALE_INN_ISAACS_HOUSE_TO_UPSTAIRS, ValeInn,
+             VALE_INN_ISAACS_HOUSE_FROM_GROUND_FLOOR),
+    MAP_WARP(VALE_INN_INN_TO_GROUND_FLOOR, ValeInn, VALE_INN_INN_FROM_UPSTAIRS),
+    MAP_WARP(VALE_INN_ISAACS_HOUSE_TO_GROUND_FLOOR, ValeInn,
+             VALE_INN_ISAACS_HOUSE_FROM_UPSTAIRS),
+    MAP_WARP(VALE_INN_TO_VALE_STORMY_NIGHT_WEST, ValeStormyNight,
+             VALE_STORMY_NIGHT_FROM_VALE_INN_WEST),
+    MAP_WARP(VALE_INN_TO_VALE_STORMY_NIGHT_EAST, ValeStormyNight,
+             VALE_STORMY_NIGHT_FROM_VALE_INN_EAST),
+    MAP_WARP(VALE_INN_TO_BABI_PALACE, BabiPalace, BABI_PALACE_FROM_VALE_INN),
+    MAP_WARP(VALE_INN_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA, ValeInn,
+             VALE_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA),
+    MAP_WARP(VALE_INN_TO_VALE_STORMY_NIGHT_WITH_DORA, ValeStormyNight,
+             VALE_STORMY_NIGHT_FROM_VALE_INN_WITH_DORA),
+    MAP_WARP(VALE_INN_TO_VALE_KRADENS_COTTAGE_SOUTH, ValeKradensCottage,
+             VALE_KRADENS_COTTAGE_FROM_VALE_INN_SOUTH),
     MAP_WARPS_END,
 };
 
-u32 gValeInteriorsInn_StormWarps[] = {
-    MAP_WARPS(ValeInteriorsInn),
-    MAP_WARP(VALE_INTERIORS_INN_TO_VALE_GATE_NORTHWEST, ValeGate,
-             VALE_GATE_FROM_VALE_INTERIORS_INN_WEST),
-    MAP_WARP(VALE_INTERIORS_INN_TO_VALE_KRADEN_NORTH, ValeKraden,
-             VALE_KRADEN_FROM_VALE_INTERIORS_INN_NORTH),
-    MAP_WARP(VALE_INTERIORS_INN_TO_VALE_GATE_NORTHEAST, ValeGate,
-             VALE_GATE_FROM_VALE_INTERIORS_INN_NORTH),
-    MAP_WARP(VALE_INTERIORS_INN_TO_VALE_GATE_WEST, ValeGate,
-             VALE_GATE_FROM_VALE_INTERIORS_INN_SOUTH),
-    MAP_WARP(VALE_INTERIORS_INN_INN_TO_UPSTAIRS, ValeInteriorsInn,
-             VALE_INTERIORS_INN_INN_FROM_GROUND_FLOOR),
-    MAP_WARP(VALE_INTERIORS_INN_TO_VALE, ValeStorm,
-             VALE_STORM_FROM_VALE_INTERIORS_INN_ISAACS_HOUSE),
-    MAP_WARP(VALE_INTERIORS_INN_ISAACS_HOUSE_TO_UPSTAIRS, ValeInteriorsInn,
-             VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_GROUND_FLOOR),
-    MAP_WARP(VALE_INTERIORS_INN_INN_TO_GROUND_FLOOR, ValeInteriorsInn,
-             VALE_INTERIORS_INN_INN_FROM_UPSTAIRS),
-    MAP_WARP(VALE_INTERIORS_INN_ISAACS_HOUSE_TO_GROUND_FLOOR, ValeInteriorsInn,
-             VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS),
-    MAP_WARP(VALE_INTERIORS_INN_TO_VALE_STORM_WEST, ValeStorm,
-             VALE_STORM_FROM_VALE_INTERIORS_INN_WEST),
-    MAP_WARP(VALE_INTERIORS_INN_TO_VALE_STORM_EAST, ValeStorm,
-             VALE_STORM_FROM_VALE_INTERIORS_INN_EAST),
-    MAP_WARP(VALE_INTERIORS_INN_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA,
-             ValeInteriorsInn,
-             VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA),
-    MAP_WARP(VALE_INTERIORS_INN_TO_VALE_STORM_WITH_DORA, ValeStorm,
-             VALE_STORM_FROM_VALE_INTERIORS_INN_WITH_DORA),
+u32 gValeInn_StormWarps[] = {
+    MAP_WARPS(ValeInn),
+    MAP_WARP(VALE_INN_TO_VALE_PLAZA_NORTHWEST, ValePlaza,
+             VALE_PLAZA_FROM_VALE_INN_WEST),
+    MAP_WARP(VALE_INN_TO_VALE_KRADENS_COTTAGE_NORTH, ValeKradensCottage,
+             VALE_KRADENS_COTTAGE_FROM_VALE_INN_NORTH),
+    MAP_WARP(VALE_INN_TO_VALE_PLAZA_NORTHEAST, ValePlaza,
+             VALE_PLAZA_FROM_VALE_INN_NORTH),
+    MAP_WARP(VALE_INN_TO_VALE_PLAZA_WEST, ValePlaza,
+             VALE_PLAZA_FROM_VALE_INN_SOUTH),
+    MAP_WARP(VALE_INN_INN_TO_UPSTAIRS, ValeInn, VALE_INN_INN_FROM_GROUND_FLOOR),
+    MAP_WARP(VALE_INN_TO_VALE, ValeStormyNight,
+             VALE_STORMY_NIGHT_FROM_VALE_INN_ISAACS_HOUSE),
+    MAP_WARP(VALE_INN_ISAACS_HOUSE_TO_UPSTAIRS, ValeInn,
+             VALE_INN_ISAACS_HOUSE_FROM_GROUND_FLOOR),
+    MAP_WARP(VALE_INN_INN_TO_GROUND_FLOOR, ValeInn, VALE_INN_INN_FROM_UPSTAIRS),
+    MAP_WARP(VALE_INN_ISAACS_HOUSE_TO_GROUND_FLOOR, ValeInn,
+             VALE_INN_ISAACS_HOUSE_FROM_UPSTAIRS),
+    MAP_WARP(VALE_INN_TO_VALE_STORMY_NIGHT_WEST, ValeStormyNight,
+             VALE_STORMY_NIGHT_FROM_VALE_INN_WEST),
+    MAP_WARP(VALE_INN_TO_VALE_STORMY_NIGHT_EAST, ValeStormyNight,
+             VALE_STORMY_NIGHT_FROM_VALE_INN_EAST),
+    MAP_WARP(VALE_INN_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA, ValeInn,
+             VALE_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA),
+    MAP_WARP(VALE_INN_TO_VALE_STORMY_NIGHT_WITH_DORA, ValeStormyNight,
+             VALE_STORMY_NIGHT_FROM_VALE_INN_WITH_DORA),
     MAP_WARPS_END,
 };
 
 // clang-format off
-struct ObjectEventTemplate gValeInteriorsInn_ObjectEventTemplates[] = {
+struct ObjectEventTemplate gValeInn_ObjectEventTemplates[] = {
     { SPRITE_DORA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_KYLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1590,7 +1570,7 @@ struct ObjectEventTemplate gValeInteriorsInn_ObjectEventTemplates[] = {
     { MAP_TABLE_END },
 };
 
-struct ObjectEventTemplate gValeInteriorsInn_ObjectEventTemplatesAfterLeaving[] = {
+struct ObjectEventTemplate gValeInn_ObjectEventTemplatesAfterLeaving[] = {
     { SPRITE_DORA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_KYLE, 0x0, MOVEMENT_TYPE_STAND,
@@ -1610,7 +1590,7 @@ struct ObjectEventTemplate gValeInteriorsInn_ObjectEventTemplatesAfterLeaving[] 
     { MAP_TABLE_END },
 };
 
-struct ObjectEventTemplate gValeInteriorsInn_ObjectEventTemplatesAfterKalay[] = {
+struct ObjectEventTemplate gValeInn_ObjectEventTemplatesAfterKalay[] = {
     { SPRITE_DORA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(586), 0, PIXELS(406), FACING_EAST, TALK_FACING_KEEP, 0 },
     { SPRITE_KYLE, 0x0, MOVEMENT_TYPE_STAND,
@@ -1634,7 +1614,7 @@ struct ObjectEventTemplate gValeInteriorsInn_ObjectEventTemplatesAfterKalay[] = 
     { MAP_TABLE_END },
 };
 
-struct ObjectEventTemplate gValeInteriorsInn_ScholarsObjectEventTemplates[] = {
+struct ObjectEventTemplate gValeInn_ScholarsObjectEventTemplates[] = {
     { SPRITE_OLD_MAN_IN_BLUE_CAP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(792), 0, PIXELS(336), FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_WITH_GLASSES, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1648,18 +1628,18 @@ struct ObjectEventTemplate gValeInteriorsInn_ScholarsObjectEventTemplates[] = {
     { MAP_TABLE_END },
 };
 
-struct MapEvent gValeInteriorsInn_StormEvents[] = {
-    { MAP_EVENT_COORD, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeGateNorthwest) },
-    { MAP_EVENT_COORD, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeKradenNorth) },
-    { MAP_EVENT_COORD, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeGateNortheast) },
-    { MAP_EVENT_COORD, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeGateWest) },
+struct MapEvent gValeInn_StormEvents[] = {
+    { MAP_EVENT_COORD, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValePlazaNorthwest) },
+    { MAP_EVENT_COORD, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeKradensCottageNorth) },
+    { MAP_EVENT_COORD, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValePlazaNortheast) },
+    { MAP_EVENT_COORD, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValePlazaWest) },
     { MAP_EVENT_COORD, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToInnUpstairs) },
     { MAP_EVENT_COORD, 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToVale) },
     { MAP_EVENT_COORD, 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToIsaacsHouseUpstairs) },
     { MAP_EVENT_COORD, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToInnDownstairs) },
     { MAP_EVENT_COORD, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToIsaacsHouseDownstairs) },
-    { MAP_EVENT_COORD, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeStormWest) },
-    { MAP_EVENT_COORD, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeStormEast) },
+    { MAP_EVENT_COORD, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeStormyNightWest) },
+    { MAP_EVENT_COORD, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeStormyNightEast) },
     { BG_EVENT(BG_EVENT_WOODEN_BOX), 100, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeWoodenBoxEmpty)) },
     { BG_EVENT(BG_EVENT_JAR), 101, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeJarEmpty)) },
     { BG_EVENT(BG_EVENT_BARREL), 102, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultButDidntFindAnything)) },
@@ -1673,24 +1653,24 @@ struct MapEvent gValeInteriorsInn_StormEvents[] = {
     { MAP_EVENTS_END },
 };
 
-struct MapEvent gValeInteriorsInn_Events[] = {
+struct MapEvent gValeInn_Events[] = {
     { MAP_EVENT_TALK, LOCALID_YOUNG_SMITH, CONDITION_ALWAYS, MSGNO(MsgValeMyFatherAlsoDiedInThat) },
     { MAP_EVENT_TALK, LOCALID_YOUNG_SMITHS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgValeMySonIsStillYoungSo) },
     { MAP_EVENT_TALK, LOCALID_YOUNG_MAN_SAW_MASK, CONDITION_ALWAYS, MSGNO(MsgValeOneOfTheMenFromThat) },
     { MAP_EVENT_TALK, LOCALID_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgValeTwoOfThoseThreeGuestsStaying) },
     { MAP_EVENT_TALK, LOCALID_MASKED_MAN, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskIsaacHisBusiness) },
     { MAP_EVENT_TALK, LOCALID_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToInnkeeper) },
-    { MAP_EVENT_COORD, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeGateNorthwest) },
-    { MAP_EVENT_COORD, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeKradenNorth) },
-    { MAP_EVENT_COORD, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeGateNortheast) },
-    { MAP_EVENT_COORD, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeGateWest) },
+    { MAP_EVENT_COORD, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValePlazaNorthwest) },
+    { MAP_EVENT_COORD, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeKradensCottageNorth) },
+    { MAP_EVENT_COORD, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValePlazaNortheast) },
+    { MAP_EVENT_COORD, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValePlazaWest) },
     { MAP_EVENT_COORD, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToInnUpstairs) },
     { MAP_EVENT_COORD, 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToVale) },
     { MAP_EVENT_COORD, 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToIsaacsHouseUpstairs) },
     { MAP_EVENT_COORD, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToInnDownstairs) },
     { MAP_EVENT_COORD, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToIsaacsHouseDownstairs) },
-    { MAP_EVENT_COORD, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeStormWest) },
-    { MAP_EVENT_COORD, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeStormEast) },
+    { MAP_EVENT_COORD, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeStormyNightWest) },
+    { MAP_EVENT_COORD, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeStormyNightEast) },
     { BG_EVENT(BG_EVENT_WOODEN_BOX), 100, FLAG_VALE_WOODEN_BOX_HERB, FIND_ITEM(ITEM_HERB) },
     { BG_EVENT(BG_EVENT_JAR), 101, FLAG_VALE_JAR_COINS, FIND_COINS(5) },
     { BG_EVENT(BG_EVENT_BARREL), 102, FLAG_VALE_BARREL_COIN, FIND_COINS(1) },
@@ -1704,7 +1684,7 @@ struct MapEvent gValeInteriorsInn_Events[] = {
     { MAP_EVENTS_END },
 };
 
-struct MapEvent gValeInteriorsInn_EventsAfterLeaving[] = {
+struct MapEvent gValeInn_EventsAfterLeaving[] = {
     { MAP_EVENT_TALK, LOCALID_YOUNG_SMITH, CONDITION_ALWAYS, MSGNO(MsgValeComeBackAsAStrongWarrior) },
     { MAP_EVENT_TALK, LOCALID_YOUNG_SMITHS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgValeIWantedJennaToBeMy) },
     { MAP_EVENT_TALK, LOCALID_YOUNG_MAN_SAW_MASK, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskWhetherMaskedManWasFelix) },
@@ -1715,17 +1695,17 @@ struct MapEvent gValeInteriorsInn_EventsAfterLeaving[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_YOUNG_MAN_SAW_MASK, CONDITION_ALWAYS, MSGNO(MsgValeIWonderIfFelixChangedMuch) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgValeFelixAndHisGangMustHave) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgValeWhoCouldHaveKnownThatMasked) },
-    { MAP_EVENT_COORD, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeGateNorthwest) },
-    { MAP_EVENT_COORD, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeKradenNorth) },
-    { MAP_EVENT_COORD, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeGateNortheast) },
-    { MAP_EVENT_COORD, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeGateWest) },
+    { MAP_EVENT_COORD, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValePlazaNorthwest) },
+    { MAP_EVENT_COORD, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeKradensCottageNorth) },
+    { MAP_EVENT_COORD, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValePlazaNortheast) },
+    { MAP_EVENT_COORD, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValePlazaWest) },
     { MAP_EVENT_COORD, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToInnUpstairs) },
     { MAP_EVENT_COORD, 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToVale) },
     { MAP_EVENT_COORD, 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToIsaacsHouseUpstairs) },
     { MAP_EVENT_COORD, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToInnDownstairs) },
     { MAP_EVENT_COORD, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToIsaacsHouseDownstairs) },
-    { MAP_EVENT_COORD, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeStormWest) },
-    { MAP_EVENT_COORD, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeStormEast) },
+    { MAP_EVENT_COORD, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeStormyNightWest) },
+    { MAP_EVENT_COORD, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeStormyNightEast) },
     { BG_EVENT(BG_EVENT_WOODEN_BOX), 100, FLAG_VALE_WOODEN_BOX_HERB, FIND_ITEM(ITEM_HERB) },
     { BG_EVENT(BG_EVENT_JAR), 101, FLAG_VALE_JAR_COINS, FIND_COINS(5) },
     { BG_EVENT(BG_EVENT_BARREL), 102, FLAG_VALE_BARREL_COIN, FIND_COINS(1) },
@@ -1739,7 +1719,7 @@ struct MapEvent gValeInteriorsInn_EventsAfterLeaving[] = {
     { MAP_EVENTS_END },
 };
 
-struct MapEvent gValeInteriorsInn_EventsAfterKalay[] = {
+struct MapEvent gValeInn_EventsAfterKalay[] = {
     { MAP_EVENT_TALK, LOCALID_YOUNG_SMITH, CONDITION_ALWAYS, MSGNO(MsgValeOwItsGonnaBeYearsBefore) },
     { MAP_EVENT_TALK, LOCALID_YOUNG_SMITHS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgValeWelcomeHomeIsaacOhWhatHappened) },
     { MAP_EVENT_TALK, LOCALID_YOUNG_MAN_SAW_MASK, CONDITION_ALWAYS, MSGNO(MsgValeYouTraveledAroundTheEasternEdge) },
@@ -1760,17 +1740,17 @@ struct MapEvent gValeInteriorsInn_EventsAfterKalay[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | LOCALID_DORA, FLAG_VISITED_SICK_DORA, EVENT_SCRIPT(EventScript_VisitSickDora) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_DORA, FLAG_VALE_DORA_OUT_OF_BED, MSGNO(MsgValeKyleWatchOutTheBoulderThe) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_DORA, CONDITION_ALWAYS, MSGNO(MsgValeImSorryISeemedSoHarsh) },
-    { MAP_EVENT_COORD, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeGateNorthwest) },
-    { MAP_EVENT_COORD, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeKradenNorth) },
-    { MAP_EVENT_COORD, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeGateNortheast) },
-    { MAP_EVENT_COORD, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeGateWest) },
+    { MAP_EVENT_COORD, 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValePlazaNorthwest) },
+    { MAP_EVENT_COORD, 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeKradensCottageNorth) },
+    { MAP_EVENT_COORD, 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValePlazaNortheast) },
+    { MAP_EVENT_COORD, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValePlazaWest) },
     { MAP_EVENT_COORD, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToInnUpstairs) },
     { MAP_EVENT_COORD, 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToVale) },
     { MAP_EVENT_COORD, 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToIsaacsHouseUpstairs) },
     { MAP_EVENT_COORD, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToInnDownstairs) },
     { MAP_EVENT_COORD, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToIsaacsHouseDownstairs) },
-    { MAP_EVENT_COORD, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeStormWest) },
-    { MAP_EVENT_COORD, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeStormEast) },
+    { MAP_EVENT_COORD, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeStormyNightWest) },
+    { MAP_EVENT_COORD, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarpToValeStormyNightEast) },
     { BG_EVENT(BG_EVENT_WOODEN_BOX), 100, FLAG_VALE_WOODEN_BOX_HERB, FIND_ITEM(ITEM_HERB) },
     { BG_EVENT(BG_EVENT_JAR), 101, FLAG_VALE_JAR_COINS, FIND_COINS(5) },
     { BG_EVENT(BG_EVENT_BARREL), 102, FLAG_VALE_BARREL_COIN, FIND_COINS(1) },
@@ -1787,7 +1767,7 @@ struct MapEvent gValeInteriorsInn_EventsAfterKalay[] = {
     { MAP_EVENTS_END },
 };
 
-struct MapEvent gValeInteriorsInn_ScholarsEvents[] = {
+struct MapEvent gValeInn_ScholarsEvents[] = {
     { MAP_EVENT_TALK, LOCALID_SCHOLAR_ANCIENT_RUINS, CONDITION_ALWAYS, MSGNO(MsgBabiOriginallyThereWereAncientRuinsAt) },
     { MAP_EVENT_TALK, LOCALID_SCHOLAR_EXPERIMENT, CONDITION_ALWAYS, MSGNO(MsgBabiNoMatterHowManyTimesI) },
     { MAP_EVENT_TALK, LOCALID_SCHOLAR_SEALED_ALCHEMY, CONDITION_ALWAYS, MSGNO(MsgBabiItIsSaidThatLongAgo) },
@@ -1798,7 +1778,7 @@ struct MapEvent gValeInteriorsInn_ScholarsEvents[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SCHOLAR_SEALED_ALCHEMY, CONDITION_ALWAYS, MSGNO(MsgBabiKradensJourneyWasMeantToRevive) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SCHOLAR_VENUS_RUINS, CONDITION_ALWAYS, MSGNO(MsgBabiTheVenusRuinsAreTheRemnants) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_OLD_MAN_ON_BABIS_RESEARCH, CONDITION_ALWAYS, MSGNO(MsgBabiLordBabiExpectedGreatResultsFrom) },
-    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 20, CONDITION_ALWAYS, VALE_INTERIORS_INN_TO_BABI_PALACE },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 20, CONDITION_ALWAYS, VALE_INN_TO_BABI_PALACE },
     { BG_EVENT(BG_EVENT_JAR), 103, FLAG_BABI_PALACE_HARD_NUT, FIND_ITEM(ITEM_HARD_NUT) },
     { BG_EVENT(BG_EVENT_BOOKCASE), 207, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeTheresABookEntitledEncyclopediaOf)) },
     { BG_EVENT(BG_EVENT_BOOKCASE), 208, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeTheresANotebookEntitledExperimentsIn)) },
@@ -1806,7 +1786,7 @@ struct MapEvent gValeInteriorsInn_ScholarsEvents[] = {
     { MAP_EVENTS_END },
 };
 
-struct MapEvent gValeInteriorsInn_ScholarsLaterEvents[] = {
+struct MapEvent gValeInn_ScholarsLaterEvents[] = {
     { MAP_EVENT_TALK, LOCALID_SCHOLAR_ANCIENT_RUINS, CONDITION_ALWAYS, MSGNO(MsgBabiOnceBabiLighthouseIsCompleteId) },
     { MAP_EVENT_TALK, LOCALID_SCHOLAR_EXPERIMENT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ScholarAsksAboutKraden) },
     { MAP_EVENT_TALK, LOCALID_SCHOLAR_SEALED_ALCHEMY, CONDITION_ALWAYS, MSGNO(MsgBabiAlchemyTeachesThatTheFourElements) },
@@ -1817,7 +1797,7 @@ struct MapEvent gValeInteriorsInn_ScholarsLaterEvents[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SCHOLAR_SEALED_ALCHEMY, CONDITION_ALWAYS, MSGNO(MsgBabiTheresGotToBeAGood) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SCHOLAR_VENUS_RUINS, CONDITION_ALWAYS, MSGNO(MsgBabiWhatSortOfUnfathomableRiddlesAre) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_OLD_MAN_ON_BABIS_RESEARCH, CONDITION_ALWAYS, MSGNO(MsgBabiThereMustBeAReasonWhy) },
-    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 20, CONDITION_ALWAYS, VALE_INTERIORS_INN_TO_BABI_PALACE },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 20, CONDITION_ALWAYS, VALE_INN_TO_BABI_PALACE },
     { BG_EVENT(BG_EVENT_JAR), 103, FLAG_BABI_PALACE_HARD_NUT, FIND_ITEM(ITEM_HARD_NUT) },
     { BG_EVENT(BG_EVENT_BOOKCASE), 207, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeTheresABookEntitledEncyclopediaOf)) },
     { BG_EVENT(BG_EVENT_BOOKCASE), 208, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeTheresANotebookEntitledExperimentsIn)) },

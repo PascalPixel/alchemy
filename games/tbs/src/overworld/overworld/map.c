@@ -217,7 +217,7 @@ void Game_Run(s32 mode) {
   table = gMapHeaders;
   // Choose the first map before initializing the per-map runtime.
   if (gDebugMode && mode == GAME_RUN_DEBUG_VALE) {
-    gSaveBlock.mapId = (s32)&MapId_ValeGate;
+    gSaveBlock.mapId = (s32)&MapId_ValePlaza;
     gSaveBlock.warpDest = mode;
   } else if (gDebugMode && mode == GAME_RUN_DEBUG_MAIN_MENU) {
     gSaveBlock.mapId = (s32)&MapId_MainMenu;

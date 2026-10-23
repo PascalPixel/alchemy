@@ -37,7 +37,7 @@ enum BattleType {
   BATTLE_TYPE_NORMAL = 0,
   /// A battle the party cannot run from: a Mimic's
   /// (overworld/overworld/events.c) and the travelers' fight in Vale
-  /// (ValeGate_FightTravelers, map/vale_gate.c).
+  /// (ValePlaza_FightTravelers, map/vale_plaza.c).
   BATTLE_TYPE_NO_ESCAPE = 2,
   /// The battles a script starts. Here and in a link battle the command menu
   /// itself refuses to run, with MsgNoTimeToRun ("This is no time to be

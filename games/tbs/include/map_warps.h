@@ -15,7 +15,7 @@ enum DefaultWarpDest { WARP_DEST_DEFAULT = 0 };
 
 /// MapId_Title's warp destinations and warps.
 enum {
-  TITLE_FROM_VALE_GATE = 1,
+  TITLE_FROM_VALE_PLAZA = 1,
   TITLE_AFTER_RUN = 2, ///< Title_Run
   TITLE_FROM_LEMURIAN_SHIP = 9,
   TITLE_FROM_WORLD_MAP = 10,
@@ -29,7 +29,7 @@ enum {
 
 /// MapId_WorldMap's warp destinations.
 enum {
-  WORLD_MAP_FROM_VALE_GATE = 1,
+  WORLD_MAP_FROM_VALE_PLAZA = 1,
   WORLD_MAP_FROM_TITLE = 2,
   WORLD_MAP_FROM_VAULT_SOUTH = 3,
   WORLD_MAP_FROM_GOMA_CAVE_ENTRANCE = 4,
@@ -125,7 +125,7 @@ enum {
 };
 /// MapId_WorldMap's warps.
 enum {
-  WORLD_MAP_TO_VALE_GATE = 1,
+  WORLD_MAP_TO_VALE_PLAZA = 1,
   WORLD_MAP_TO_WORLD_MAP_FROM_TITLE = 2,
   WORLD_MAP_TO_VAULT_SOUTH = 3,
   WORLD_MAP_TO_GOMA_CAVE_ENTRANCE = 4,
@@ -184,7 +184,7 @@ enum {
       74, ///< ★ Named from its area name: Crossbone Isle
   WORLD_MAP_TO_CROSSBONE_ISLE =
       75, ///< ★ Named from its area name: Crossbone Isle
-  WORLD_MAP_TO_WORLD_MAP_FROM_VALE_GATE = 100,
+  WORLD_MAP_TO_WORLD_MAP_FROM_VALE_PLAZA = 100,
   WORLD_MAP_TO_HAMMETS_CARAVAN_LEAVES =
       101, ///< ★ Named from what the player sees: Hammet's caravan leaving
            ///< Vault for Kalay (its render)
@@ -204,43 +204,43 @@ enum {
   WORLD_MAP_TO_LUNPA_INTERIORS = 112,
 };
 
-/// MapId_ValeStorm's warp destinations.
+/// MapId_ValeStormyNight's warp destinations.
 enum {
-  VALE_STORM_FROM_VALE_KRADEN_NORTH = 3,
-  VALE_STORM_FROM_VALE_KRADEN_SOUTH = 4,
-  VALE_STORM_FROM_VALE_GATE = 5,
-  VALE_STORM_FROM_VALE_INTERIORS_SHOPS_EAST = 6,
-  VALE_STORM_FROM_VALE_INTERIORS_SHOPS_SOUTH = 7,
-  VALE_STORM_FROM_VALE_INTERIORS_INN_ISAACS_HOUSE = 8,
-  VALE_STORM_FROM_VALE_INTERIORS_SHOPS_NORTH = 9,
-  VALE_STORM_FROM_VALE_INTERIORS_SHOPS_WEST = 10,
-  VALE_STORM_FROM_VALE_INTERIORS_INN_WEST = 12,
-  VALE_STORM_FROM_VALE_INTERIORS_INN_EAST = 13,
-  VALE_STORM_FROM_VALE_INTERIORS_INN_WITH_DORA = 15,
-  VALE_STORM_FROM_BOULDER_PASSED = 16,
+  VALE_STORMY_NIGHT_FROM_VALE_KRADENS_COTTAGE_NORTH = 3,
+  VALE_STORMY_NIGHT_FROM_VALE_KRADENS_COTTAGE_SOUTH = 4,
+  VALE_STORMY_NIGHT_FROM_VALE_PLAZA = 5,
+  VALE_STORMY_NIGHT_FROM_VALE_SHOPS_EAST = 6,
+  VALE_STORMY_NIGHT_FROM_VALE_SHOPS_SOUTH = 7,
+  VALE_STORMY_NIGHT_FROM_VALE_INN_ISAACS_HOUSE = 8,
+  VALE_STORMY_NIGHT_FROM_VALE_SHOPS_NORTH = 9,
+  VALE_STORMY_NIGHT_FROM_VALE_SHOPS_WEST = 10,
+  VALE_STORMY_NIGHT_FROM_VALE_INN_WEST = 12,
+  VALE_STORMY_NIGHT_FROM_VALE_INN_EAST = 13,
+  VALE_STORMY_NIGHT_FROM_VALE_INN_WITH_DORA = 15,
+  VALE_STORMY_NIGHT_FROM_BOULDER_PASSED = 16,
 };
-/// MapId_ValeStorm's warps.
+/// MapId_ValeStormyNight's warps.
 enum {
-  VALE_STORM_TO_VALE_GATE = 2,
-  VALE_STORM_TO_VALE_KRADEN_NORTH = 3,
-  VALE_STORM_TO_VALE_KRADEN_SOUTH = 4,
-  VALE_STORM_TO_VALE_INTERIORS_SHOPS_EAST = 5,
-  VALE_STORM_TO_VALE_INTERIORS_SHOPS_SOUTH = 6,
-  VALE_STORM_TO_VALE_INTERIORS_INN_ISAACS_HOUSE =
+  VALE_STORMY_NIGHT_TO_VALE_PLAZA = 2,
+  VALE_STORMY_NIGHT_TO_VALE_KRADENS_COTTAGE_NORTH = 3,
+  VALE_STORMY_NIGHT_TO_VALE_KRADENS_COTTAGE_SOUTH = 4,
+  VALE_STORMY_NIGHT_TO_VALE_SHOPS_EAST = 5,
+  VALE_STORMY_NIGHT_TO_VALE_SHOPS_SOUTH = 6,
+  VALE_STORMY_NIGHT_TO_VALE_INN_ISAACS_HOUSE =
       7, ///< ★ Named from what the player sees: the door of Isaac's house on
          ///< the stormy night (its render)
-  VALE_STORM_TO_VALE_INTERIORS_SHOPS_NORTH = 8,
-  VALE_STORM_TO_VALE_INTERIORS_SHOPS_WEST = 9,
-  VALE_STORM_TO_VALE_INTERIORS_SHOPS_WEST_SECOND_DOOR =
+  VALE_STORMY_NIGHT_TO_VALE_SHOPS_NORTH = 8,
+  VALE_STORMY_NIGHT_TO_VALE_SHOPS_WEST = 9,
+  VALE_STORMY_NIGHT_TO_VALE_SHOPS_WEST_SECOND_DOOR =
       10, ///< ★ Named from what the player sees: the second door of the house
           ///< by the river, leading where the first house door does (its
           ///< render)
-  VALE_STORM_TO_VALE_INTERIORS_SHOPS_WEST_SANCTUM_DOOR =
+  VALE_STORMY_NIGHT_TO_VALE_SHOPS_WEST_SANCTUM_DOOR =
       11, ///< ★ Named from what the player sees: the door where the Sanctum
           ///< stands by day (its render)
-  VALE_STORM_TO_VALE_INTERIORS_INN_WEST = 12,
-  VALE_STORM_TO_VALE_INTERIORS_INN_EAST = 13,
-  VALE_STORM_TO_BOULDER_PASSED =
+  VALE_STORMY_NIGHT_TO_VALE_INN_WEST = 12,
+  VALE_STORMY_NIGHT_TO_VALE_INN_EAST = 13,
+  VALE_STORMY_NIGHT_TO_BOULDER_PASSED =
       20, ///< ★ Named from what the player sees: the riverbank where Isaac
           ///< stands once the Boulder has swept down the river (its render)
 };
@@ -249,33 +249,33 @@ enum {
 enum {
   VALE_FROM_SANCTUM = 1,
   VALE_FROM_SOL_ENTRANCE = 2,
-  VALE_FROM_VALE_KRADEN_NORTH = 3,
-  VALE_FROM_VALE_KRADEN_SOUTH = 4,
-  VALE_FROM_VALE_GATE = 5,
-  VALE_FROM_VALE_INTERIORS_SHOPS_EAST = 6,
-  VALE_FROM_VALE_INTERIORS_SHOPS_SOUTH = 7,
-  VALE_FROM_VALE_INTERIORS_INN = 8,
-  VALE_FROM_VALE_INTERIORS_SHOPS_NORTH = 9,
-  VALE_FROM_VALE_INTERIORS_SHOPS_WEST = 10,
+  VALE_FROM_VALE_KRADENS_COTTAGE_NORTH = 3,
+  VALE_FROM_VALE_KRADENS_COTTAGE_SOUTH = 4,
+  VALE_FROM_VALE_PLAZA = 5,
+  VALE_FROM_VALE_SHOPS_EAST = 6,
+  VALE_FROM_VALE_SHOPS_SOUTH = 7,
+  VALE_FROM_VALE_INN = 8,
+  VALE_FROM_VALE_SHOPS_NORTH = 9,
+  VALE_FROM_VALE_SHOPS_WEST = 10,
   /// Beside the second door into the house of Jenna's grandparents, which
-  /// VALE_TO_VALE_INTERIORS_SHOPS_NORTH_SECOND_DOOR leaves by; no warp leads
+  /// VALE_TO_VALE_SHOPS_NORTH_SECOND_DOOR leaves by; no warp leads
   /// here.
-  VALE_FROM_VALE_INTERIORS_SHOPS_NORTH_SECOND_DOOR = 11,
+  VALE_FROM_VALE_SHOPS_NORTH_SECOND_DOOR = 11,
   VALE_FROM_TITLE = 16,
   VALE_FROM_ROOF_MENDED = 17,
 };
 /// MapId_Vale's warps.
 enum {
   VALE_TO_SOL_ENTRANCE = 1,
-  VALE_TO_VALE_GATE = 2,
-  VALE_TO_VALE_KRADEN_NORTH = 3,
-  VALE_TO_VALE_KRADEN_SOUTH = 4,
-  VALE_TO_VALE_INTERIORS_SHOPS_EAST = 5,
-  VALE_TO_VALE_INTERIORS_SHOPS_SOUTH = 6,
-  VALE_TO_VALE_INTERIORS_INN = 7,
-  VALE_TO_VALE_INTERIORS_SHOPS_NORTH = 8,
-  VALE_TO_VALE_INTERIORS_SHOPS_WEST = 9,
-  VALE_TO_VALE_INTERIORS_SHOPS_NORTH_SECOND_DOOR =
+  VALE_TO_VALE_PLAZA = 2,
+  VALE_TO_VALE_KRADENS_COTTAGE_NORTH = 3,
+  VALE_TO_VALE_KRADENS_COTTAGE_SOUTH = 4,
+  VALE_TO_VALE_SHOPS_EAST = 5,
+  VALE_TO_VALE_SHOPS_SOUTH = 6,
+  VALE_TO_VALE_INN = 7,
+  VALE_TO_VALE_SHOPS_NORTH = 8,
+  VALE_TO_VALE_SHOPS_WEST = 9,
+  VALE_TO_VALE_SHOPS_NORTH_SECOND_DOOR =
       10, ///< ★ Named from what the player sees: the door of the house by the
           ///< river that leads into Jenna's grandparents' house (its render)
   VALE_TO_SANCTUM = 11,
@@ -283,159 +283,158 @@ enum {
       12, ///< ★ Named from the game: "You patched it nicely." (MsgValeGoodJob)
 };
 
-/// MapId_ValeGate's warp destinations.
+/// MapId_ValePlaza's warp destinations.
 enum {
-  VALE_GATE_FROM_VALE_INTERIORS_SHOPS_NORTH = 1,
-  VALE_GATE_FROM_VALE_INTERIORS_INN_NORTH = 2,
-  VALE_GATE_FROM_VALE_INTERIORS_SHOPS_WEST = 3,
-  VALE_GATE_FROM_VALE_INTERIORS_SHOPS_EAST = 4,
-  VALE_GATE_FROM_VALE_INTERIORS_SHOPS_SOUTH = 5,
-  VALE_GATE_FROM_VALE_INTERIORS_INN_WEST = 6,
-  VALE_GATE_FROM_VALE_INTERIORS_INN_SOUTH = 7,
-  VALE_GATE_FROM_VALE = 8,
-  VALE_GATE_FROM_WORLD_MAP = 10,
-  VALE_GATE_FROM_GOMA_CAVE_STREAM = 11,
-  VALE_GATE_FROM_SANCTUM = 12,
-  /// Beside VALE_GATE_FROM_GOMA_CAVE_STREAM, facing north; no warp leads here.
-  VALE_GATE_GOMA_CAVE_STREAM_UNUSED = 15,
+  VALE_PLAZA_FROM_VALE_SHOPS_NORTH = 1,
+  VALE_PLAZA_FROM_VALE_INN_NORTH = 2,
+  VALE_PLAZA_FROM_VALE_SHOPS_WEST = 3,
+  VALE_PLAZA_FROM_VALE_SHOPS_EAST = 4,
+  VALE_PLAZA_FROM_VALE_SHOPS_SOUTH = 5,
+  VALE_PLAZA_FROM_VALE_INN_WEST = 6,
+  VALE_PLAZA_FROM_VALE_INN_SOUTH = 7,
+  VALE_PLAZA_FROM_VALE = 8,
+  VALE_PLAZA_FROM_WORLD_MAP = 10,
+  VALE_PLAZA_FROM_GOMA_CAVE_STREAM = 11,
+  VALE_PLAZA_FROM_SANCTUM = 12,
+  /// Beside VALE_PLAZA_FROM_GOMA_CAVE_STREAM, facing north; no warp leads here.
+  VALE_PLAZA_GOMA_CAVE_STREAM_UNUSED = 15,
   /// Where the battle with the travelers on the stormy night returns, won or
-  /// lost (ValeGate_FightTravelers).
-  VALE_GATE_AFTER_TRAVELERS_BATTLE = 19,
+  /// lost (ValePlaza_FightTravelers).
+  VALE_PLAZA_AFTER_TRAVELERS_BATTLE = 19,
   /// Warp destinations only the debug menu's map select reaches: no table
   /// places them and no warp leads to them. The first replays the travelers
   /// leaving, the second sets FLAG_CHILDHOOD, the third a preset of story flags
-  /// (ValeGate_SetProgressFlagsAndExit).
-  VALE_GATE_DEBUG_BEFORE_TRAVELERS_LEAVE = 97,
+  /// (ValePlaza_SetProgressFlagsAndExit).
+  VALE_PLAZA_DEBUG_BEFORE_TRAVELERS_LEAVE = 97,
   /// ★ Named from its area name: Vale
-  VALE_GATE_DEBUG_CHILDHOOD = 98,
+  VALE_PLAZA_DEBUG_CHILDHOOD = 98,
   /// ★ Named from its area name: Vale
-  VALE_GATE_DEBUG_STORY_FLAGS = 99,
+  VALE_PLAZA_DEBUG_STORY_FLAGS = 99,
 };
-/// MapId_ValeGate's warps.
+/// MapId_ValePlaza's warps.
 enum {
-  VALE_GATE_TO_VALE_INTERIORS_SHOPS_EAST = 1,
-  VALE_GATE_TO_VALE_INTERIORS_INN_NORTH = 2,
-  VALE_GATE_TO_VALE_INTERIORS_SHOPS_NORTH = 3,
-  VALE_GATE_TO_VALE_INTERIORS_SHOPS_SOUTH = 4,
-  VALE_GATE_TO_VALE_INTERIORS_SHOPS_WEST = 5,
-  VALE_GATE_TO_VALE_INTERIORS_INN_NORTHWEST = 6,
-  VALE_GATE_TO_VALE_INTERIORS_INN_SOUTH = 7,
-  VALE_GATE_TO_VALE = 8,
-  VALE_GATE_TO_TITLE = 9,
-  VALE_GATE_TO_WORLD_MAP = 10,
-  VALE_GATE_TO_GOMA_CAVE_STREAM = 11,
-  VALE_GATE_TO_BILIBIN = 40,
-  VALE_GATE_TO_VALE_INTERIORS_INN_SOUTHEAST = 50,
+  VALE_PLAZA_TO_VALE_SHOPS_EAST = 1,
+  VALE_PLAZA_TO_VALE_INN_NORTH = 2,
+  VALE_PLAZA_TO_VALE_SHOPS_NORTH = 3,
+  VALE_PLAZA_TO_VALE_SHOPS_SOUTH = 4,
+  VALE_PLAZA_TO_VALE_SHOPS_WEST = 5,
+  VALE_PLAZA_TO_VALE_INN_NORTHWEST = 6,
+  VALE_PLAZA_TO_VALE_INN_SOUTH = 7,
+  VALE_PLAZA_TO_VALE = 8,
+  VALE_PLAZA_TO_TITLE = 9,
+  VALE_PLAZA_TO_WORLD_MAP = 10,
+  VALE_PLAZA_TO_GOMA_CAVE_STREAM = 11,
+  VALE_PLAZA_TO_BILIBIN = 40,
+  VALE_PLAZA_TO_VALE_INN_SOUTHEAST = 50,
 };
 
-/// MapId_ValeKraden's warp destinations.
+/// MapId_ValeKradensCottage's warp destinations.
 enum {
-  VALE_KRADEN_FROM_VALE_NORTH = 1,
-  VALE_KRADEN_FROM_VALE_SOUTH = 2,
-  VALE_KRADEN_FROM_VALE_INTERIORS_INN_NORTH = 3,
-  VALE_KRADEN_FROM_VALE_CAVE_MOUTH_WEST = 4,
+  VALE_KRADENS_COTTAGE_FROM_VALE_NORTH = 1,
+  VALE_KRADENS_COTTAGE_FROM_VALE_SOUTH = 2,
+  VALE_KRADENS_COTTAGE_FROM_VALE_INN_NORTH = 3,
+  VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_WEST = 4,
   /// Cleared of the map section name with
-  /// VALE_KRADEN_FROM_VALE_CAVE_MOUTH_EAST, but no warp leads here and the warp
-  /// destination table has no row for it.
-  VALE_KRADEN_FROM_VALE_CAVE_MOUTH_UNUSED = 5,
-  VALE_KRADEN_FROM_VALE_CAVE_MOUTH_EAST = 6,
-  VALE_KRADEN_FROM_VALE_INTERIORS_INN_SOUTH = 10,
+  /// VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_EAST, but no warp leads here and
+  /// the warp destination table has no row for it.
+  VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_UNUSED = 5,
+  VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_EAST = 6,
+  VALE_KRADENS_COTTAGE_FROM_VALE_INN_SOUTH = 10,
 };
-/// MapId_ValeKraden's warps.
+/// MapId_ValeKradensCottage's warps.
 enum {
-  VALE_KRADEN_TO_VALE_NORTH = 1,
-  VALE_KRADEN_TO_VALE_SOUTH = 2,
-  VALE_KRADEN_TO_VALE_INTERIORS_INN_NORTH = 3,
-  VALE_KRADEN_TO_VALE_CAVE_MOUTH_WEST = 4,
-  VALE_KRADEN_TO_VALE_CAVE_MOUTH_EAST = 6,
-  VALE_KRADEN_TO_VALE_STORM_NORTH = 11,
-  VALE_KRADEN_TO_VALE_STORM_SOUTH = 12,
-  VALE_KRADEN_TO_VALE_INTERIORS_INN_MYTHRIL_BAG =
+  VALE_KRADENS_COTTAGE_TO_VALE_NORTH = 1,
+  VALE_KRADENS_COTTAGE_TO_VALE_SOUTH = 2,
+  VALE_KRADENS_COTTAGE_TO_VALE_INN_NORTH = 3,
+  VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_WEST = 4,
+  VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_EAST = 6,
+  VALE_KRADENS_COTTAGE_TO_VALE_STORMY_NIGHT_NORTH = 11,
+  VALE_KRADENS_COTTAGE_TO_VALE_STORMY_NIGHT_SOUTH = 12,
+  VALE_KRADENS_COTTAGE_TO_VALE_INN_MYTHRIL_BAG =
       13, ///< ★ Named from the game: "Mythril Bag" (MsgItemName)
 };
 
-/// MapId_ValeInteriorsShops's warp destinations.
+/// MapId_ValeShops's warp destinations.
 enum {
-  VALE_INTERIORS_SHOPS_FROM_VALE_WEST = 1,
-  VALE_INTERIORS_SHOPS_FROM_VALE_NORTH = 2,
-  VALE_INTERIORS_SHOPS_FROM_VALE_GATE_NORTH = 3,
-  VALE_INTERIORS_SHOPS_FROM_VALE_GATE_WEST = 4,
-  VALE_INTERIORS_SHOPS_FROM_VALE_SOUTH = 5,
-  VALE_INTERIORS_SHOPS_FROM_VALE_EAST = 6,
-  VALE_INTERIORS_SHOPS_FROM_VALE_GATE_SOUTH = 7,
-  VALE_INTERIORS_SHOPS_FROM_VALE_GATE_EAST = 8,
+  VALE_SHOPS_FROM_VALE_WEST = 1,
+  VALE_SHOPS_FROM_VALE_NORTH = 2,
+  VALE_SHOPS_FROM_VALE_PLAZA_NORTH = 3,
+  VALE_SHOPS_FROM_VALE_PLAZA_WEST = 4,
+  VALE_SHOPS_FROM_VALE_SOUTH = 5,
+  VALE_SHOPS_FROM_VALE_EAST = 6,
+  VALE_SHOPS_FROM_VALE_PLAZA_SOUTH = 7,
+  VALE_SHOPS_FROM_VALE_PLAZA_EAST = 8,
 };
-/// MapId_ValeInteriorsShops's warps.
+/// MapId_ValeShops's warps.
 enum {
-  VALE_INTERIORS_SHOPS_TO_VALE_WEST = 1,
-  VALE_INTERIORS_SHOPS_TO_VALE_NORTH = 2,
-  VALE_INTERIORS_SHOPS_TO_VALE_GATE_WEST = 3,
-  VALE_INTERIORS_SHOPS_TO_VALE_GATE_SOUTH = 4,
-  VALE_INTERIORS_SHOPS_TO_VALE_SOUTH = 5,
-  VALE_INTERIORS_SHOPS_TO_VALE_EAST = 6,
-  VALE_INTERIORS_SHOPS_TO_VALE_GATE_EAST = 7,
-  VALE_INTERIORS_SHOPS_TO_VALE_GATE_NORTH = 8,
+  VALE_SHOPS_TO_VALE_WEST = 1,
+  VALE_SHOPS_TO_VALE_NORTH = 2,
+  VALE_SHOPS_TO_VALE_PLAZA_WEST = 3,
+  VALE_SHOPS_TO_VALE_PLAZA_SOUTH = 4,
+  VALE_SHOPS_TO_VALE_SOUTH = 5,
+  VALE_SHOPS_TO_VALE_EAST = 6,
+  VALE_SHOPS_TO_VALE_PLAZA_EAST = 7,
+  VALE_SHOPS_TO_VALE_PLAZA_NORTH = 8,
 };
 
-/// MapId_ValeInteriorsInn's warp destinations.
+/// MapId_ValeInn's warp destinations.
 enum {
-  VALE_INTERIORS_INN_FROM_VALE_GATE_NORTHWEST = 1,
-  VALE_INTERIORS_INN_FROM_VALE_KRADEN_NORTH = 2,
-  VALE_INTERIORS_INN_FROM_VALE_GATE_NORTHEAST = 3,
-  VALE_INTERIORS_INN_FROM_VALE_GATE_WEST = 4,
-  VALE_INTERIORS_INN_INN_FROM_UPSTAIRS =
-      5, ///< ★ Named from what the player sees: Vale's inn, with its
-         ///< innkeeper's counter and the stairs up to the guest room (its
-         ///< render)
-  VALE_INTERIORS_INN_FROM_VALE = 6,
-  VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS =
+  VALE_INN_FROM_VALE_PLAZA_NORTHWEST = 1,
+  VALE_INN_FROM_VALE_KRADENS_COTTAGE_NORTH = 2,
+  VALE_INN_FROM_VALE_PLAZA_NORTHEAST = 3,
+  VALE_INN_FROM_VALE_PLAZA_WEST = 4,
+  VALE_INN_INN_FROM_UPSTAIRS = 5, ///< ★ Named from what the player sees: Vale's
+                                  ///< inn, with its innkeeper's counter and the
+                                  ///< stairs up to the guest room (its render)
+  VALE_INN_FROM_VALE = 6,
+  VALE_INN_ISAACS_HOUSE_FROM_UPSTAIRS =
       7, ///< ★ Named from what the player sees: Isaac's house, where Dora wakes
          ///< him on the stormy night (its render)
-  VALE_INTERIORS_INN_INN_FROM_GROUND_FLOOR =
+  VALE_INN_INN_FROM_GROUND_FLOOR =
       8, ///< ★ Named from what the player sees: Vale's inn, with its
          ///< innkeeper's counter and the stairs up to the guest room (its
          ///< render)
-  VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_GROUND_FLOOR =
+  VALE_INN_ISAACS_HOUSE_FROM_GROUND_FLOOR =
       9, ///< ★ Named from what the player sees: Isaac's house, where Dora wakes
          ///< him on the stormy night (its render)
-  VALE_INTERIORS_INN_FROM_VALE_STORM_WEST = 11,
-  VALE_INTERIORS_INN_FROM_VALE_STORM_EAST = 12,
-  VALE_INTERIORS_INN_FROM_BABI_PALACE = 19,
-  VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST = 20,
-  VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA =
+  VALE_INN_FROM_VALE_STORMY_NIGHT_WEST = 11,
+  VALE_INN_FROM_VALE_STORMY_NIGHT_EAST = 12,
+  VALE_INN_FROM_BABI_PALACE = 19,
+  VALE_INN_FROM_VALE_PLAZA_SOUTHEAST = 20,
+  VALE_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA =
       21, ///< ★ Named from what the player sees: Isaac's house, where Dora
           ///< wakes him on the stormy night (its render)
-  VALE_INTERIORS_INN_FROM_VALE_KRADEN_MYTHRIL_BAG = 22,
+  VALE_INN_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG = 22,
 };
-/// MapId_ValeInteriorsInn's warps.
+/// MapId_ValeInn's warps.
 enum {
-  VALE_INTERIORS_INN_TO_VALE_GATE_NORTHWEST = 1,
-  VALE_INTERIORS_INN_TO_VALE_KRADEN_NORTH = 2,
-  VALE_INTERIORS_INN_TO_VALE_GATE_NORTHEAST = 3,
-  VALE_INTERIORS_INN_TO_VALE_GATE_WEST = 4,
-  VALE_INTERIORS_INN_INN_TO_UPSTAIRS =
+  VALE_INN_TO_VALE_PLAZA_NORTHWEST = 1,
+  VALE_INN_TO_VALE_KRADENS_COTTAGE_NORTH = 2,
+  VALE_INN_TO_VALE_PLAZA_NORTHEAST = 3,
+  VALE_INN_TO_VALE_PLAZA_WEST = 4,
+  VALE_INN_INN_TO_UPSTAIRS =
       5, ///< ★ Named from what the player sees: the upper floor the stairs
          ///< climb to, the inn's guest room or Isaac's bedroom (its render)
-  VALE_INTERIORS_INN_TO_VALE = 6,
-  VALE_INTERIORS_INN_ISAACS_HOUSE_TO_UPSTAIRS =
+  VALE_INN_TO_VALE = 6,
+  VALE_INN_ISAACS_HOUSE_TO_UPSTAIRS =
       7, ///< ★ Named from what the player sees: the upper floor the stairs
          ///< climb to, the inn's guest room or Isaac's bedroom (its render)
-  VALE_INTERIORS_INN_INN_TO_GROUND_FLOOR =
+  VALE_INN_INN_TO_GROUND_FLOOR =
       8, ///< ★ Named from what the player sees: the ground floor at the foot of
          ///< the stairs (its render)
-  VALE_INTERIORS_INN_ISAACS_HOUSE_TO_GROUND_FLOOR =
+  VALE_INN_ISAACS_HOUSE_TO_GROUND_FLOOR =
       9, ///< ★ Named from what the player sees: the ground floor at the foot of
          ///< the stairs (its render)
-  VALE_INTERIORS_INN_TO_VALE_STORM_WEST = 10,
-  VALE_INTERIORS_INN_TO_VALE_STORM_EAST = 11,
-  VALE_INTERIORS_INN_TO_BABI_PALACE = 19,
-  VALE_INTERIORS_INN_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA =
+  VALE_INN_TO_VALE_STORMY_NIGHT_WEST = 10,
+  VALE_INN_TO_VALE_STORMY_NIGHT_EAST = 11,
+  VALE_INN_TO_BABI_PALACE = 19,
+  VALE_INN_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA =
       20, ///< ★ Named from what the player sees: the ground floor at the foot
           ///< of the stairs (its render)
-  VALE_INTERIORS_INN_TO_VALE_STORM_WITH_DORA =
+  VALE_INN_TO_VALE_STORMY_NIGHT_WITH_DORA =
       21, ///< ★ Named from what the player sees: Dora leading Isaac down and
           ///< out of the house on the stormy night (its render)
-  VALE_INTERIORS_INN_TO_VALE_KRADEN_SOUTH = 22,
+  VALE_INN_TO_VALE_KRADENS_COTTAGE_SOUTH = 22,
 };
 
 /// MapId_Sanctum's warp destinations.
@@ -465,7 +464,7 @@ enum {
   SANCTUM_TO_QUEST_RESTART =
       20, ///< ★ Named from what the player sees: starting again before the
           ///< Great Healer after refusing the quest and leaving (its render)
-  SANCTUM_TO_VALE_GATE = 30,
+  SANCTUM_TO_VALE_PLAZA = 30,
   SANCTUM_TO_ALTIN = 40,
   SANCTUM_TO_BILIBIN = 41,
   SANCTUM_TO_XIAN = 42,
@@ -512,7 +511,7 @@ enum {
 
 /// MapId_SolSanctumStatue's warp destinations.
 enum {
-  SOL_SANCTUM_STATUE_FROM_VALE_GATE = 0,
+  SOL_SANCTUM_STATUE_FROM_VALE_PLAZA = 0,
   SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS = 1,
   SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_PSYNERGY_STONE = 2,
   SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED = 3,
@@ -887,7 +886,7 @@ enum {
   GOMA_CAVE_STREAM_FROM_GOMA_CAVE_PILLAR_WEST = 2,
   GOMA_CAVE_STREAM_FROM_GOMA_CAVE_PILLAR_EAST = 3,
   GOMA_CAVE_STREAM_FROM_GOMA_CAVE_BRIDGE = 4,
-  GOMA_CAVE_STREAM_FROM_VALE_GATE = 5,
+  GOMA_CAVE_STREAM_FROM_VALE_PLAZA = 5,
 };
 /// MapId_GomaCaveStream's warps.
 enum {
@@ -895,7 +894,7 @@ enum {
   GOMA_CAVE_STREAM_TO_GOMA_CAVE_PILLAR_WEST = 2,
   GOMA_CAVE_STREAM_TO_GOMA_CAVE_PILLAR_EAST = 3,
   GOMA_CAVE_STREAM_TO_GOMA_CAVE_BRIDGE = 4,
-  GOMA_CAVE_STREAM_TO_VALE_GATE = 5,
+  GOMA_CAVE_STREAM_TO_VALE_PLAZA = 5,
 };
 
 /// MapId_GomaCaveBridge's warp destinations.
@@ -2786,15 +2785,15 @@ enum {
 
 /// MapId_ValeCaveMouth's warp destinations.
 enum {
-  VALE_CAVE_MOUTH_FROM_VALE_KRADEN_WEST = 1,
+  VALE_CAVE_MOUTH_FROM_VALE_KRADENS_COTTAGE_WEST = 1,
   VALE_CAVE_MOUTH_FROM_VALE_CAVE_KITE = 2,
-  VALE_CAVE_MOUTH_FROM_VALE_KRADEN_EAST = 3,
+  VALE_CAVE_MOUTH_FROM_VALE_KRADENS_COTTAGE_EAST = 3,
 };
 /// MapId_ValeCaveMouth's warps.
 enum {
-  VALE_CAVE_MOUTH_TO_VALE_KRADEN_WEST = 1,
+  VALE_CAVE_MOUTH_TO_VALE_KRADENS_COTTAGE_WEST = 1,
   VALE_CAVE_MOUTH_TO_VALE_CAVE_KITE = 2,
-  VALE_CAVE_MOUTH_TO_VALE_KRADEN_EAST = 3,
+  VALE_CAVE_MOUTH_TO_VALE_KRADENS_COTTAGE_EAST = 3,
 };
 
 /// MapId_ValeCaveKite's warp destinations.
@@ -3964,7 +3963,7 @@ enum {
   BABI_PALACE_SCHOLARS_LANDING_FROM_CARPET_ROOM =
       10, ///< ★ Named from what the player sees: the stair landing whose dark
           ///< doorway leads to the scholars' room (its render)
-  BABI_PALACE_FROM_VALE_INTERIORS_INN = 11,
+  BABI_PALACE_FROM_VALE_INN = 11,
   BABI_PALACE_TUNNEL_LANDING_FROM_CARPET_ROOM =
       12, ///< ★ Named from what the player sees: the stair landing whose dark
           ///< doorway leads into the Colosseum Tunnel (its render)
@@ -4086,7 +4085,7 @@ enum {
   BABI_PALACE_SCHOLARS_LANDING_TO_CARPET_ROOM =
       10, ///< ★ Named from what the player sees: the T-shaped red-carpeted hall
           ///< that joins the palace's stairs and doors (its render)
-  BABI_PALACE_TO_VALE_INTERIORS_INN = 11,
+  BABI_PALACE_TO_VALE_INN = 11,
   BABI_PALACE_TUNNEL_LANDING_TO_CARPET_ROOM =
       12, ///< ★ Named from what the player sees: the T-shaped red-carpeted hall
           ///< that joins the palace's stairs and doors (its render)

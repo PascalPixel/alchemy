@@ -535,7 +535,7 @@ menu_top:;
       }
     }
     Party_StartChildhood();
-    gSaveBlock.mapId = (s32)&MapId_ValeInteriorsInn;
+    gSaveBlock.mapId = (s32)&MapId_ValeInn;
     gSaveBlock.warpDest = 20;
     goto leave;
   }

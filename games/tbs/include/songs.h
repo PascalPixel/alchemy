@@ -110,7 +110,7 @@
 /// The music of every battle gEncounter_BattleMusic lists no other song for.
 #define MUS_BATTLE 50
 /// Battle music gEncounter_BattleMusic gives the Mystery Man and Mystery Woman
-/// who catch Isaac at Vale Gate (ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, slot 4)
+/// who catch Isaac in Vale's plaza (ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, slot 4)
 /// and Saturos at Mercury Lighthouse's aerie
 /// (ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY, slot 2); Battle_Run plays
 /// it, then MUS_COLOSSO_BATTLE, for a battle with no music of its own.

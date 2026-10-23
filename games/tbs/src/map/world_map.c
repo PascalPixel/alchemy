@@ -32,7 +32,7 @@
 ///
 /// And it plays the story's moments on the map, each run by WorldMap_Initialize
 /// for the warp destination another map sends the party to. In story order:
-/// - Leaving Vale (WORLD_MAP_FROM_VALE_GATE) sets FLAG_VALE_PARTY_LEFT the
+/// - Leaving Vale (WORLD_MAP_FROM_VALE_PLAZA) sets FLAG_VALE_PARTY_LEFT the
 ///   first time.
 /// - Flint, the first Djinni, circles his spot until the party walks up to him
 ///   (EventScript_MeetFlint); he joins, teaches how Djinn are set and put on
@@ -206,10 +206,10 @@ enum WorldMapLocalId {
   /// The Mercury Djinni Hail.
   /// ★ Named from the game: "Hail" (MsgDjinnName)
   LOCALID_HAIL,
-  /// Vale, whose warp leads to the town gate (MapId_ValeGate).
+  /// Vale, whose warp leads to the town gate (MapId_ValePlaza).
   /// ★ Named from the game: "Why's everyone hanging around the town gate?"
   /// (MsgValeWhysEveryoneHanging)
-  LOCALID_MAPSEC_VALE_GATE,
+  LOCALID_MAPSEC_VALE_PLAZA,
   /// ★ Named from its area name: Vault
   LOCALID_MAPSEC_VAULT,
   /// ★ Named from its area name: Altin
@@ -905,7 +905,7 @@ s32 WorldMap_Initialize(void) {
     }
     // Each special warp destination resumes its travel or story sequence.
     switch (*warpDest) {
-    case WORLD_MAP_FROM_VALE_GATE:
+    case WORLD_MAP_FROM_VALE_PLAZA:
       if (Script_GetFlag(FLAG_VALE_PARTY_LEFT) == 0) {
         GameFlag_Set(FLAG_VALE_PARTY_LEFT);
         GameFlag_Set(0x85c);
@@ -3217,8 +3217,8 @@ s32 gWorldMapFlintScript[] = {
 struct MapWarpDest gWorldMapWarpDests[] = {
     {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 5656, 0, 1256, FACING_SOUTH, 0, -1,
      -1, -1, -1, 0},
-    {WORLD_MAP_FROM_VALE_GATE, CONDITION_ALWAYS, 5680, 0, 1226, FACING_SOUTH, 0,
-     -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_VALE_PLAZA, CONDITION_ALWAYS, 5680, 0, 1226, FACING_SOUTH,
+     0, -1, -1, -1, -1, 0},
     {WORLD_MAP_FROM_TITLE, CONDITION_ALWAYS, 5688, 0, 1224, FACING_SOUTH, 0, -1,
      -1, -1, -1, 0},
     {WORLD_MAP_FROM_VAULT_SOUTH, CONDITION_ALWAYS, 5848, 0, 1608, FACING_SOUTH,
@@ -3382,7 +3382,7 @@ struct MapWarpDest gWorldMapWarpDests[] = {
 
 u32 gWorldMapWarps[] = {
     MAP_WARPS(WorldMap),
-    MAP_WARP(WORLD_MAP_TO_VALE_GATE, ValeGate, VALE_GATE_FROM_WORLD_MAP),
+    MAP_WARP(WORLD_MAP_TO_VALE_PLAZA, ValePlaza, VALE_PLAZA_FROM_WORLD_MAP),
     MAP_WARP(WORLD_MAP_TO_WORLD_MAP_FROM_TITLE, WorldMap, WORLD_MAP_FROM_TITLE),
     MAP_WARP(WORLD_MAP_TO_VAULT_SOUTH, Vault, VAULT_FROM_WORLD_MAP_SOUTH),
     MAP_WARP(WORLD_MAP_TO_GOMA_CAVE_ENTRANCE, GomaCaveEntrance,
@@ -3482,8 +3482,8 @@ u32 gWorldMapWarps[] = {
              TOLBI_SHIP_DECK_FROM_TOLBI_DOCKS),
     MAP_WARP(WORLD_MAP_TO_CROSSBONE_ISLE, CrossboneIsle,
              CROSSBONE_ISLE_FROM_WORLD_MAP),
-    MAP_WARP(WORLD_MAP_TO_WORLD_MAP_FROM_VALE_GATE, WorldMap,
-             WORLD_MAP_FROM_VALE_GATE),
+    MAP_WARP(WORLD_MAP_TO_WORLD_MAP_FROM_VALE_PLAZA, WorldMap,
+             WORLD_MAP_FROM_VALE_PLAZA),
     MAP_WARP(WORLD_MAP_TO_HAMMETS_CARAVAN_LEAVES, WorldMap,
              WORLD_MAP_HAMMETS_CARAVAN_LEAVES),
     MAP_WARP(WORLD_MAP_TO_TOLBI_SHIP_MAST_FIRST_ATTACK, TolbiShipMast,
@@ -3757,7 +3757,7 @@ struct MapEvent gWorldMapEvents[] = {
     { MAP_EVENT_WARP, WORLD_MAP_TO_VENUS_LIGHTHOUSE_ENTRY_WEST, CONDITION_ALWAYS, WORLD_MAP_TO_VENUS_LIGHTHOUSE_ENTRY_WEST },
     { MAP_EVENT_WARP, WORLD_MAP_TO_VENUS_LIGHTHOUSE_ENTRY_EAST, CONDITION_ALWAYS, WORLD_MAP_TO_VENUS_LIGHTHOUSE_ENTRY_EAST },
     { MAP_EVENT_WARP, WORLD_MAP_TO_BILIBIN_BARRICADE_EAST, CONDITION_ALWAYS, WORLD_MAP_TO_BILIBIN_BARRICADE_EAST },
-    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_MAPSEC_VALE_GATE), CONDITION_ALWAYS, WORLD_MAP_TO_VALE_GATE },
+    { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_MAPSEC_VALE_PLAZA), CONDITION_ALWAYS, WORLD_MAP_TO_VALE_PLAZA },
     { MAP_EVENT_COORD, COORD_EVENT_MAPSEC(LOCALID_MAPSEC_VAULT), CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterVault) },
     { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_MAPSEC_GOMA_CAVE_ENTRANCE), CONDITION_ALWAYS, WORLD_MAP_TO_GOMA_CAVE_ENTRANCE },
     { MAP_EVENT_WARP, COORD_EVENT_MAPSEC(LOCALID_MAPSEC_GOMA_CAVE_BRIDGE), CONDITION_ALWAYS, WORLD_MAP_TO_GOMA_CAVE_BRIDGE },

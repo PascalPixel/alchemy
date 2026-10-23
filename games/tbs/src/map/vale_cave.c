@@ -7,10 +7,11 @@
 /// map section flags.
 ///
 /// - Vale (MapId_ValeCaveMouth), the way in, a map section of its own (29).
-///   VALE_CAVE_MOUTH_TO_VALE_KRADEN_WEST and
-///   VALE_CAVE_MOUTH_TO_VALE_KRADEN_EAST lead back to Kraden's part of Vale
-///   (MapId_ValeKraden), whose VALE_KRADEN_TO_VALE_CAVE_MOUTH_WEST and
-///   VALE_KRADEN_TO_VALE_CAVE_MOUTH_EAST lead here;
+///   VALE_CAVE_MOUTH_TO_VALE_KRADENS_COTTAGE_WEST and
+///   VALE_CAVE_MOUTH_TO_VALE_KRADENS_COTTAGE_EAST lead back to Kraden's part of
+///   Vale (MapId_ValeKradensCottage), whose
+///   VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_WEST and
+///   VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_EAST lead here;
 ///   VALE_CAVE_MOUTH_TO_VALE_CAVE_KITE goes on into the cave. Each warp plays
 ///   the warp sound first (EventScript_LeaveRoom). On arrival
 ///   ValeCave_Initialize fades the room in from the backdrop and clears
@@ -815,8 +816,9 @@ s32 ValeCave_Initialize(void) {
 /// sound before leaving.
 ///
 /// Reached by stepping on metatile behaviors 1 to 3 in the first room; takes
-/// the warp of the same number (VALE_CAVE_MOUTH_TO_VALE_KRADEN_WEST,
-/// VALE_CAVE_MOUTH_TO_VALE_CAVE_KITE or VALE_CAVE_MOUTH_TO_VALE_KRADEN_EAST).
+/// the warp of the same number (VALE_CAVE_MOUTH_TO_VALE_KRADENS_COTTAGE_WEST,
+/// VALE_CAVE_MOUTH_TO_VALE_CAVE_KITE or
+/// VALE_CAVE_MOUTH_TO_VALE_KRADENS_COTTAGE_EAST).
 static void EventScript_LeaveRoom(void) {
   s32 warpNumber = gFieldWork->coordEvent;
 
@@ -1075,9 +1077,9 @@ struct MapWarpDest gValeCave_WarpDestsOther[] = {
 
 struct MapWarpDest gValeCave_MouthWarpDests[] = {
     { WARP_DEST_DEFAULT, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, 16, 0, 336, 368, 0 },
-    { VALE_CAVE_MOUTH_FROM_VALE_KRADEN_WEST, CONDITION_ALWAYS, 104, 0, 344, FACING_NORTH, 0, 16, 0, 336, 368, 0 },
+    { VALE_CAVE_MOUTH_FROM_VALE_KRADENS_COTTAGE_WEST, CONDITION_ALWAYS, 104, 0, 344, FACING_NORTH, 0, 16, 0, 336, 368, 0 },
     { VALE_CAVE_MOUTH_FROM_VALE_CAVE_KITE, CONDITION_ALWAYS, 136, 0, 184, FACING_SOUTH, 0, 16, 0, 336, 368, 0 },
-    { VALE_CAVE_MOUTH_FROM_VALE_KRADEN_EAST, CONDITION_ALWAYS, 136, 0, 376, FACING_NORTH, 0, 16, 0, 336, 368, 0 },
+    { VALE_CAVE_MOUTH_FROM_VALE_KRADENS_COTTAGE_EAST, CONDITION_ALWAYS, 136, 0, 376, FACING_NORTH, 0, 16, 0, 336, 368, 0 },
     { MAP_TABLE_END },
 };
 
@@ -1108,9 +1110,9 @@ struct MapWarpDest gValeCave_LogsWarpDests[] = {
 
 u32 gValeCave_Warps[] = {
     MAP_WARPS(ValeCaveMouth),
-    MAP_WARP(VALE_CAVE_MOUTH_TO_VALE_KRADEN_WEST, ValeKraden, VALE_KRADEN_FROM_VALE_CAVE_MOUTH_WEST),
+    MAP_WARP(VALE_CAVE_MOUTH_TO_VALE_KRADENS_COTTAGE_WEST, ValeKradensCottage, VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_WEST),
     MAP_WARP(VALE_CAVE_MOUTH_TO_VALE_CAVE_KITE, ValeCaveKite, VALE_CAVE_KITE_FROM_VALE_CAVE_MOUTH),
-    MAP_WARP(VALE_CAVE_MOUTH_TO_VALE_KRADEN_EAST, ValeKraden, VALE_KRADEN_FROM_VALE_CAVE_MOUTH_EAST),
+    MAP_WARP(VALE_CAVE_MOUTH_TO_VALE_KRADENS_COTTAGE_EAST, ValeKradensCottage, VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_EAST),
     MAP_WARPS(ValeCaveKite),
     MAP_WARP(VALE_CAVE_KITE_TO_VALE_CAVE_MOUTH, ValeCaveMouth, VALE_CAVE_MOUTH_FROM_VALE_CAVE_KITE),
     MAP_WARP(VALE_CAVE_KITE_WEST_TO_EAST, ValeCaveKite, VALE_CAVE_KITE_EAST_FROM_WEST),

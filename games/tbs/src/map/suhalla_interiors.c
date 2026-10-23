@@ -78,7 +78,7 @@ enum SuhallaInteriorsLocalId {
   /// ★ Named from the game: "Tolbi probably ignores small villages like
   /// Suhalla" (MsgSuhallaInteriorsTolbiProbablyIgnoresSmallVillagesLike)
   LOCALID_OLD_MAN_IGNORED_BY_TOLBI,
-  /// In the old woman's sprite (SPRITE_OLD_WOMAN, as in vale_gate.c). "If you
+  /// In the old woman's sprite (SPRITE_OLD_WOMAN, as in vale_plaza.c). "If you
   /// head east across
   /// Suhalla, Lalivero is so close you can see it across the Nol River..."
   /// After the audience she half remembers a saying about the death storms.

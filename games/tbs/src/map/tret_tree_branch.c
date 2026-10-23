@@ -388,7 +388,7 @@ struct MapEvent gTretTreeBranch_Events[] = {
 };
 
 /// Unused: the two steps of a door opening, as Vale's doors have them
-/// (gValeStorm_SanctumDoorOpens); nothing on the branch plays them.
+/// (gValeStormyNight_SanctumDoorOpens); nothing on the branch plays them.
 u16 gTretTreeBranch_UnusedCellSteps[] = {
     MAPGRID_ANIMATION_STEP(0, 96, 2, 2, 2),
     MAPGRID_ANIMATION_STEP(2, 96, 2, 2, 2),

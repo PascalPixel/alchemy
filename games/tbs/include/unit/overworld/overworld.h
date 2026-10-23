@@ -31,7 +31,7 @@ enum LeaderMovementMode {
 /// Game_Run's mode: where the game starts.
 enum GameRunMode {
   GAME_RUN_TITLE = 0,          ///< the title screen, with a fresh save block
-  GAME_RUN_DEBUG_VALE = 1,     ///< in debug mode, MapId_ValeGate
+  GAME_RUN_DEBUG_VALE = 1,     ///< in debug mode, MapId_ValePlaza
   GAME_RUN_DEBUG_MAIN_MENU = 2 ///< in debug mode, the main menu
 };
 
@@ -62,7 +62,7 @@ enum WindowTransitionMode {
 enum EncounterZoneId {
   ENCOUNTER_ZONE_NONE = 0, ///< no battles
   /// The scripted battles of Vale's stormy night (its monsters, and the
-  /// travelers who catch Isaac at Vale Gate), Vault's thieves and the world
+  /// travelers who catch Isaac in Vale's plaza), Vault's thieves and the world
   /// map's Djinn tutorial battle.
   ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT = 12,
   /// The scripted battles of Tret Tree (Tret) and Mercury Lighthouse (the

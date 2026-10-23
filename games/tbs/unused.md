@@ -142,7 +142,7 @@ On the stormy night in Vale, the only way to one cell runs past two others,
 and by the time the leader gets there, the event waiting on it has nothing
 left to do.
 
-`EventScript_UnusedGaretJoinsIsaac` in [vale_storm.c](src/map/vale_storm.c) is an
+`EventScript_UnusedGaretJoinsIsaac` in [vale_stormy_night.c](src/map/vale_stormy_night.c) is an
 earlier version of Garet joining Isaac on the stormy night. In the order the
 leader reaches them, the three are the cells of metatile behaviors 30, 31 and
 32: a strip of ground just west of Garet at his chest, a strip west of that,
@@ -154,8 +154,8 @@ and a spot two places further north:
 3. 32 runs `EventScript_UnusedGaretJoinsIsaac`, whose first test is that
    flag, so it ends at once.
 
-Run, it would have Garet run up (`gValeStorm_UnusedGaretRunsUpScript`), pant
-`*Hah* *Hah*` while `gValeStorm_UnusedGaretPantingScript` scales his [sprite](glossary.md#sprite-and-oam),
+Run, it would have Garet run up (`gValeStormyNight_UnusedGaretRunsUpScript`), pant
+`*Hah* *Hah*` while `gValeStormyNight_UnusedGaretPantingScript` scales his [sprite](glossary.md#sprite-and-oam),
 and ask `Are you trapped, too?` before the two go on together. Those lines
 appear in no other event.
 
@@ -164,12 +164,12 @@ appear in no other event.
 These are declared `UNUSED`. Each holds something the player would have seen,
 so its name carries `Unused`. In [story order](glossary.md#the-places-in-story-order):
 
-- `ValeStorm_UnusedOpenSanctumDoor` ([vale_storm.c](src/map/vale_storm.c))
+- `ValeStormyNight_UnusedOpenSanctumDoor` ([vale_stormy_night.c](src/map/vale_stormy_night.c))
   plays the door sound, animates the door's cells and walks the leader into a
-  house of Vale through `VALE_STORM_TO_VALE_INTERIORS_SHOPS_WEST_SANCTUM_DOOR`.
+  house of Vale through `VALE_STORMY_NIGHT_TO_VALE_SHOPS_WEST_SANCTUM_DOOR`.
   The storm's warp table has a row for that warp, but no event row names the
   function and nothing else takes the warp. It leads to
-  `VALE_INTERIORS_SHOPS_FROM_VALE_WEST`, the same [warp
+  `VALE_SHOPS_FROM_VALE_WEST`, the same [warp
   destination](glossary.md#warp-destination) as the house's two doors that
   are used.
 - `EventScript_UnusedRoofMended` ([vale.c](src/map/vale.c)) is another version of

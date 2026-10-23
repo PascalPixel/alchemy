@@ -1,6 +1,6 @@
 #include "resource.h"
-#ifndef ALCHEMY_VALE_GATE_H
-#define ALCHEMY_VALE_GATE_H
+#ifndef ALCHEMY_VALE_PLAZA_H
+#define ALCHEMY_VALE_PLAZA_H
 
 #include "types.h"
 #include "animspr.h"

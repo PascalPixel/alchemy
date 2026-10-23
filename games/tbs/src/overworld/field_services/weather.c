@@ -11,7 +11,7 @@
 /// rows play from the last: each comes down slantwise onto its spot and stays
 /// there for its last seven frames. They freeze while FLAG_WEATHER_HELD is set.
 /// Vale runs them with the lightning while FLAG_VALE_STORM is set
-/// (vale_gate.c).
+/// (vale_plaza.c).
 void Weather_UpdateRain(void) {
   struct MapGridScrollWork *view = gMapGridWork[0];
   struct WeatherWork *work = gMapGridWork[21];

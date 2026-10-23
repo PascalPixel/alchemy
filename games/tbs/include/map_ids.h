@@ -20,21 +20,21 @@ extern char MapId_MainMenu;
 extern char MapId_WorldMap;
 /// ★ Named from the game: "I just knew a storm like this would knock it loose!"
 /// (MsgValeSureHelp)
-extern char MapId_ValeStorm;
+extern char MapId_ValeStormyNight;
 /// ★ Named from its area name: Vale
 extern char MapId_Vale;
 /// ★ Named from the game: "Why's everyone hanging around the town gate?"
 /// (MsgValeWhysEveryoneHanging)
-extern char MapId_ValeGate;
+extern char MapId_ValePlaza;
 /// ★ Named from the game: "You mustn't go beyond Kraden's cottage."
 /// (MsgValeDontGoBeyondKradensCottage)
-extern char MapId_ValeKraden;
+extern char MapId_ValeKradensCottage;
 /// ★ Named from what the player sees: Vale's item shop and its weapon and armor
 /// shop, with Garet's house and Jenna's grandparents' house (its render)
-extern char MapId_ValeInteriorsShops;
+extern char MapId_ValeShops;
 /// ★ Named from what the player sees: Vale's inn and its upstairs guest room,
 /// with Isaac's house and Kraden's cottage (its render)
-extern char MapId_ValeInteriorsInn;
+extern char MapId_ValeInn;
 /// ★ Named from its area name: Sanctum
 extern char MapId_Sanctum;
 /// ★ Named from the game: "in this eruption?!?" (MsgValeMtAlephWasInactive)

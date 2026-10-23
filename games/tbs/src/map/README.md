@@ -5,7 +5,7 @@ where, what each person says, what happens when the [party](../../glossary.md#th
 doorstep, searches a jar, or uses an item or [Psynergy](../../glossary.md#psynergy-and-pp), and the cutscenes the
 map plays. That code is a map [overlay](../../glossary.md#overlay): a piece of code unpacked into
 one 32 KB area of RAM when the party arrives, and replaced when it leaves.
-[Running a map](../object/README.md) (the `object` folder) runs the map and
+[Running a map](../overworld/README.md) (the `overworld` folder) runs the map and
 asks the overlay what to do; the overlay drives the engine back through its
 [import table](../../glossary.md#entry-table-and-import-table), the list of main-program functions it may call. Each overlay has a generated page of its own, listed in
 [Maps](../field/maps.s) in [story order](../../glossary.md#the-places-in-story-order), with its [layout](../../glossary.md#layout) and its [map events](../../glossary.md#map-event).
@@ -169,7 +169,7 @@ the effect, as Force strikes, Frost freezes or Reveal shows what is hidden.
 Reveal's maps pair that row with a `PSYNERGY_PHASE_EFFECT_ENDS` one that
 hides it all again as the colours come back, and `PSYNERGY_PHASE_AFTER_END`
 runs when a Psynergy that runs out by itself, such as Cloak, has ended.
-[Running a map](../object/README.md#how-field-psynergy-reaches-its-effect)
+[Running a map](../overworld/README.md#how-field-psynergy-reaches-its-effect)
 follows a cast through these and lists the phases' values.
 
 The kind decides how the value is read: a warp's is its warp kind, and a bg

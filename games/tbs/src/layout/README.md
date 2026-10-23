@@ -331,7 +331,7 @@ east wall.
 
 The treasure spot list is (column, row, id) triples, a cell and the trigger of a
 map event, ended by 255, 255. When a map loads, `Field_PlaceTreasureSpots`
-([`object/object/markers.c`](../object/object/markers.c)) places an
+([`overworld/overworld/markers.c`](../overworld/overworld/markers.c)) places an
 object at each treasure spot whose id (100 to 239) the map has an event for, up to
 `TREASURE_SPOT_MAX` (10): a chest for a chest event, shown open once its flag is set
 and gone once its mimic has been beaten, and a Psynergy Stone for a search
@@ -343,7 +343,7 @@ row.
 | --- | --- | --- |
 | a treasure spot's id | 100 to 239 | the trigger of the map event that places it |
 | the end row | column 255, row 255 | ends the list |
-| `TREASURE_SPOT_MAX` | 10 | treasure spots placed on a map (`include/unit/object/object.h`) |
+| `TREASURE_SPOT_MAX` | 10 | treasure spots placed on a map (`unit/overworld/overworld.h`) |
 
 ### Tileset animation and blend scripts
 

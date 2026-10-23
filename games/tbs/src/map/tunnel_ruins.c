@@ -66,8 +66,8 @@
 #include "unit/import.h"
 #include "unit/map/tunnel_ruins.h"
 #include "unit/map/common/effect_spawn.h"
-#include "unit/object/object.h"
-#include "unit/object/psynergy_effects.h"
+#include "unit/overworld/overworld.h"
+#include "unit/overworld/psynergy_effects.h"
 #include "unit/runtime/runtime.h"
 #include "object_effect.h"
 

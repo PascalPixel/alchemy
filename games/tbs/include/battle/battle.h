@@ -199,7 +199,7 @@ extern u16 gBattleFormation_LevelMatchedEnemies[];
 /// (BattleBackground_SelectForMap).
 extern s32 gBattleBackground_Maps[];
 /// The template BattleAnim_BuildBlitter walks word by word to write a blitter
-/// (battle_effect_composite.s); none of it runs where it is.
+/// (battle_anim_composite.s); none of it runs where it is.
 extern const u32 gBlitterTemplate[];
 /// The message voice's rate by message speed option: 1, 3, then 10
 /// (Message_SetVoiceFromObjectEvent).

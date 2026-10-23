@@ -142,7 +142,7 @@ extern const u8 Resource_PatchThumbBranch[];
 /// `D`, `F`, `S` or `I` (System_GetLanguage).
 extern const u8 gRom_LanguageCode;
 // The pixel fragments BattleAnim_BuildBlitter copies into its blitters, from
-// battle_effect_composite.s: Forward reads the picture left to right and
+// battle_anim_composite.s: Forward reads the picture left to right and
 // Reverse right to left. None of them runs where it is.
 /// Max, four pixels (one canvas word), right to left; a full cell's row takes
 /// it twice.

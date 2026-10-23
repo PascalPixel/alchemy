@@ -52,8 +52,8 @@
 
 #include "game_state.h"
 #include "unit/map/tolbi_interiors.h"
-#include "unit/object/object.h"
-#include "unit/object/psynergy_effects.h"
+#include "unit/overworld/overworld.h"
+#include "unit/overworld/psynergy_effects.h"
 #include "tolbi_interiors.h"
 #include "script_layer.h"
 #include "text/msg_ids.h"

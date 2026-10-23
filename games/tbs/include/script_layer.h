@@ -12,8 +12,8 @@
 /// `SCRIPT_START(); Engine_ObjectEventStop(9); OBJECT_FACE(9,
 /// LOCALID_PARTY_LEADER, 0); SCRIPT_END();`.
 
-#include "unit/object/object.h"
-#include "unit/object/psynergy_effects.h"
+#include "unit/overworld/overworld.h"
+#include "unit/overworld/psynergy_effects.h"
 #include "map_grid_copy.h"
 
 #include "static_assert.h"

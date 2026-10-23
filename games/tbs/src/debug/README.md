@@ -216,7 +216,7 @@ the real maps call, through the same import tables
 ([System](../system/README.md#how-an-overlay-reaches-the-rest-of-the-game)).
 The selector that reaches them is in [Windows](../window/README.md), and the
 palette editor that the same debug mode opens is in
-[Running a map](../object/README.md), the `object` folder.
+[Running a map](../overworld/README.md), the `overworld` folder.
 
 ## Limits
 
@@ -233,9 +233,9 @@ palette editor that the same debug mode opens is in
 | | `entry/<room>.s`, `import/<room>.s` | each room's entry and import tables |
 | | `swatch.png` | the debug palette editor's colour swatches and letters |
 
-`swatch.png` is not part of a room: `object/swatch.s` places it in the [main
+`swatch.png` is not part of a room: `overworld/swatch.s` places it in the [main
 image](../../glossary.md#main-image) as `gDebug_PaletteSwatchTiles` for `PaletteEditor_Run`
-(`object/object/palette_editor.c`), which opens with L on the Start menu in
+(`overworld/overworld/palette_editor.c`), which opens with L on the Start menu in
 debug mode. Link order is in `games/tbs/objects.tsv`; prototypes are in
 `games/tbs/include/unit/debug/`.
 

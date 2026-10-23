@@ -63,8 +63,8 @@
 #include "unit/map/common/effect_spawn.h"
 #include "unit/map/common/object_nearest.h"
 #include "unit/map/common/effect_psynergy.h"
-#include "unit/object/object.h"
-#include "unit/object/psynergy_effects.h"
+#include "unit/overworld/overworld.h"
+#include "unit/overworld/psynergy_effects.h"
 #include "unit/field/field.h"
 #include "unit/game/game.h"
 #include "unit/window/window.h"
@@ -127,7 +127,7 @@
 
 /// Map section flags that choose the aerie's field music after each battle, by
 /// the map's field music rules (gMap_MusicRules,
-/// object/map_rules.s): MUS_019 before the first battle, MUS_030 once the
+/// overworld/map_rules.s): MUS_019 before the first battle, MUS_030 once the
 /// first has begun and MUS_022 once the second has. VenusLighthouseFirstFloor
 /// and VenusLighthouseFourthFloor, in the same map section, keep their Psynergy
 /// Stones in the same two flags, which no one goes back down to see.

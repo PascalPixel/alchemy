@@ -56,8 +56,8 @@
 
 #include "unit/map/tolbi.h"
 #include "djinn_ids.h"
-#include "unit/object/object.h"
-#include "unit/object/psynergy_effects.h"
+#include "unit/overworld/overworld.h"
+#include "unit/overworld/psynergy_effects.h"
 #include "unit/window/window.h"
 #include "unit/window/battle_command.h"
 #include "unit/runtime/runtime.h"

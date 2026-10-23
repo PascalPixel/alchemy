@@ -10,7 +10,7 @@ rolls, and each one shows up on screen as a message such as
 The code runs a fight from its opening transition to the spoils: it builds
 the units, gathers each round's actions and sorts them into turns, builds
 each turn, stages it, and applies the ability to every target. Three other
-folders share the work. [Battle animations](../effect/README.md) draws the
+folders share the work. [Battle animations](../battle_anim/README.md) draws the
 animations, [Windows](../window/README.md) holds the command menu and the
 [party](../../glossary.md#the-party)'s status window, and [Game rules](../game/README.md) holds the ability, item and enemy
 tables and the arithmetic in `game/battle_calc.c`. [Battle](../../battle.md)
@@ -333,7 +333,7 @@ words name the parts of how it looks:
 `actflags.tsv` gives the turn's animation word: the animation id in the
 low twelve bits (`ANIM_ID_MASK`), the variant above them, and the bits
 that choose the animation's entry point (`ANIM_BY_ID_RANGE`,
-`ANIM_SUMMON`). [Battle animations](../effect/README.md#how-a-move-picks-its-animation)
+`ANIM_SUMMON`). [Battle animations](../battle_anim/README.md#how-a-move-picks-its-animation)
 gives the whole bit layout.
 
 The outcome comes from `actstat.tsv` where its row is not 0. Otherwise an
@@ -717,7 +717,7 @@ depends on naming the fields only one view names so far.
 - `formatn.tsv` has 380 formations, each of up to five kinds of enemy with
   the least and most of each (`member0` to `member4`, `minimum0` to
   `minimum4`, `maximum0` to `maximum4`). The encounter zones in
-  `../object/encounter.tsv` choose among them.
+  `../overworld/encounter.tsv` choose among them.
 - The playback queue holds `BATTLE_PLAYBACK_CAPACITY` events.
 
 ## Files
@@ -736,7 +736,7 @@ depends on naming the fields only one view names so far.
 | `presets.tsv` | the debug party presets |
 | `advarrow.s` | the arrow beside a battle message that waits for the player, built from `advarrow.png`: sixteen 8 by 16 frames, of which the code cycles through the first eight, one every four frames |
 | `presentation/` | the opening curtain's tiles and their variants, and the brightness steps of a unit's highlight (`highlight_ramp.s`) |
-| `effect/` | two 32 by 16 sparks that `../object/arcspark.s` places for the field Psynergy effects |
+| `effect/` | two 32 by 16 sparks that `../overworld/arcspark.s` places for the field Psynergy effects |
 
 The ROM holds the battle as one object, and it is built as one. The split
 into parts is ours, made where one family of functions ends and the next

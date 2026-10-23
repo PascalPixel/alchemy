@@ -255,7 +255,7 @@ These turn up all over the game.
   `and`, so 3 instructions differ at each site. `BattleAnim_RunNeptune`,
   `BattleAnim_RunPlanetDiver`, `BattleAnim_RunRamses`, `BattleAnim_RunMoteFountain`,
   `BattleAnim_RunTitanBlade` (`0x1FF`), `BattleAnim_RunThor` (`THOR_LAUNCH_SPARKS`
-  too) and `LuckyWheels_Run` ([`object/colorfx.c`](object/colorfx.c)) keep it.
+  too) and `LuckyWheels_Run` ([`overworld/colorfx.c`](overworld/colorfx.c)) keep it.
 - A message that follows a named one is written as `MsgName + n`, such as
   `MsgSaveDataCorrupted + 2` for `MsgSaveRecoveryFailed`, where the ROM adds to
   the register already holding the first.
@@ -349,7 +349,7 @@ each keeps its spelling until it is.
 
 One more spelling in the objects has been measured:
 `((16 - blend) << 8) | blend` in
-[`object/psynergy_effects/world_map.c`](object/psynergy_effects/world_map.c)
+[`overworld/psynergy_effects/world_map.c`](overworld/psynergy_effects/world_map.c)
 is `BLEND_ALPHA(blend, 16 - blend)` with its operands swapped, and the macro
 changes the registers.
 
@@ -518,7 +518,7 @@ macros whose exact shape decides the code.
   instructions differ; as `x /= 2`, 6.
 - A statement macro takes the shape that all its uses match with. In
   `BattleAnim_BuildBlitter`'s second walk
-  ([`effect/parts/blitter.c`](effect/parts/blitter.c)), `PUT`, `COPY` and
+  ([`battle_anim/parts/blitter.c`](battle_anim/parts/blitter.c)), `PUT`, `COPY` and
   `PATCH` are `do { } while (0)` blocks, `COPY_FROM` and `PUT_BRANCH` plain
   statements and `COPY_TWICE` a plain `{ }` block. As plain statements, `PUT`,
   `COPY` and `PATCH` change 18, 6 and 1 of 737 instructions in tbs-en.

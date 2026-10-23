@@ -165,7 +165,7 @@ s32 MapGrid_GetScreenRelativePosition(struct Object *object,
 /// map change.
 ///
 /// Called through ObjectSystem_InitializeFar by the field map runner
-/// (object/object/run_map.c) and the battle's encounter, and directly by
+/// (overworld/overworld/run_map.c) and the battle's encounter, and directly by
 /// the sprite viewer, each with its enum ObjectSystemMode. Allocates
 /// HEAP_SLOT_OBJECT_SYSTEM for the ObjectSystemWork and HEAP_SLOT_OBJECTS
 /// for the objects, and sets the sprite outline colours.
@@ -467,7 +467,7 @@ void ObjectDispatch_StartApproachLink(struct DispatchObject *object,
 }
 
 /// Starts an object on the script that runs SC_KEY_COUNT every frame.
-/// The field map runner (object/object/run_map.c) gives it to the leader
+/// The field map runner (overworld/overworld/run_map.c) gives it to the leader
 /// when gGameState.movementMode is 2.
 void ObjectDispatch_StartKeyCheck(struct DispatchObject *object) {
   ObjectDispatch_Initialize(object, gObjectDispatch_KeyCheckScript);

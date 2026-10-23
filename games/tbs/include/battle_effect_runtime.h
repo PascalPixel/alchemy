@@ -5,7 +5,7 @@
 /// The speaker lookup's views of an object event and its sprite, the speaker
 /// definitions, and the palette fade's heap slot.
 
-#include "unit/object/object.h"
+#include "unit/overworld/overworld.h"
 #include "object_lookup.h"
 #include "types.h"
 #include "static_assert.h"

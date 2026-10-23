@@ -19,8 +19,8 @@
 ///
 /// Open questions: none.
 #include "unit/map/goma_cave_pond.h"
-#include "unit/object/object.h"
-#include "unit/object/psynergy_effects.h"
+#include "unit/overworld/overworld.h"
+#include "unit/overworld/psynergy_effects.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

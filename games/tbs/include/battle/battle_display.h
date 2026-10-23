@@ -6,7 +6,7 @@
 /// work.
 
 #include "battle_session.h"
-#include "battle_effect_argument.h"
+#include "battle_anim_args.h"
 
 #include "types.h"
 #include "static_assert.h"

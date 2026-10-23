@@ -25,7 +25,7 @@
 
 /// Starts the Lucky Dice minigame: leaves only the backdrop on screen, starts
 /// song MUS_009 and plays until the player quits. Returns 0. Reached through
-/// LuckyDice_StartFar from RunLuckyDice (object/object/map.c),
+/// LuckyDice_StartFar from RunLuckyDice (overworld/overworld/map.c),
 /// which saves background palettes 14 and 15 around it and passes a
 /// warp destination this function does not take.
 s32 LuckyDice_Start(void) {
@@ -119,7 +119,7 @@ UNUSED s16 FixedPoint_Reciprocal(s16 value) { return 0x10000 / value; }
 #include "ui.h"
 #include "game_state.h"
 #include "map_grid_scroll.h"
-#include "battle_effect_work.h"
+#include "battle_anim_work.h"
 #include "transform.h"
 #include "resource_ids.h"
 #include "text/msg_ids.h"

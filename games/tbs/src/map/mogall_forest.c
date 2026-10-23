@@ -72,8 +72,8 @@
 #include "unit/map/mogall_forest.h"
 #include "unit/map/common/object_orbit.h"
 #include "unit/map/common/effect_spawn.h"
-#include "unit/object/object.h"
-#include "unit/object/psynergy_effects.h"
+#include "unit/overworld/overworld.h"
+#include "unit/overworld/psynergy_effects.h"
 
 #define FIELD_STAGED_OBJ_EVENT_IMPORTS
 #include "object_event.h"

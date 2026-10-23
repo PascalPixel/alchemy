@@ -16,7 +16,7 @@ scene. They are kept apart so cleanly that a later target's damage is worked
 out while the animation is still on screen. This page explains the battle as
 a whole; [Battles](src/battle/README.md) goes through the rules in detail,
 [Game rules](src/game/README.md) holds the tables and the arithmetic they
-use, and [Battle animations](src/effect/README.md) draws them.
+use, and [Battle animations](src/battle_anim/README.md) draws them.
 
 ## Starting a battle
 
@@ -26,7 +26,7 @@ afterwards.
 
 In the code, a random encounter raises a field [warp](glossary.md#warp) like any other, with
 `RUN_BATTLE` as the next map and the formation in
-`gGameState.warpDest`. `Game_Run` (`src/object/object/map.c`) clears what
+`gGameState.warpDest`. `Game_Run` (`src/overworld/overworld/map.c`) clears what
 the last map left running, as it does between any two maps: the [task](glossary.md#task)
 table, the list of small jobs the game runs once a [frame](glossary.md#frame), and the [heap](glossary.md#heap-and-pools), the
 pool of memory a map borrows from. Then, instead of loading a map's
@@ -40,7 +40,7 @@ field calls `Battle_RunFar(warpDest)`, the entry that leads to
 `Battle_Run`. Afterwards `Map_ReturnFromRun` reloads the field
 map the battle started from, with the party where it was, or after a defeat
 goes to the defeat point, the map the defeat rules in
-`src/object/map_rules.s` give for the place the party fell.
+`src/overworld/map_rules.s` give for the place the party fell.
 The debug battle menu (`DebugBattle_RunMenu`) is the only other way in.
 
 `Battle_Run` (`src/battle/battle/encounter.c`) allocates the
@@ -49,7 +49,7 @@ while it runs. Its result is the number of enemies defeated,
 `BATTLE_OUTCOME_FLED` or `BATTLE_OUTCOME_LOST`. The formation is a row of
 `src/battle/formatn.tsv`, the enemy formations, which
 `src/battle/battle/formation.c` turns into enemy units; the encounter zones
-in `src/object/encounter.tsv` choose the row.
+in `src/overworld/encounter.tsv` choose the row.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -58,7 +58,7 @@ in `src/object/encounter.tsv` choose the row.
 | `BATTLE_OUTCOME_FLED` | 999 | `Battle_Run`'s result when the party got away |
 | `BATTLE_OUTCOME_LOST` | -1 | its result when the party was defeated |
 
-[Running a map](src/object/README.md#random-battles) covers how the field
+[Running a map](src/overworld/README.md#random-battles) covers how the field
 rolls the encounter, and [Battles](src/battle/README.md#rounds) what
 `Battle_Run` does from the opening to the spoils.
 
@@ -265,7 +265,7 @@ is shown, and the two pages swap each frame.
 its canvas switches the background to it (`BATTLE_BACKGROUND_FIXED`), and its
 horizontal scroll still follows the camera.
 
-[Battle animations](src/effect/README.md#the-canvas) describes how an animation
+[Battle animations](src/battle_anim/README.md#the-canvas) describes how an animation
 takes `BG2` for its canvas.
 
 ## Animations
@@ -309,7 +309,7 @@ makes trails die away without keeping track of each particle.
 ![Isaac unleashes Flint at Ivan, and sparks close in on a point above Isaac while he hangs in mid-leap, a streak of light shoots down at Ivan, and a ring of light and a spray of sparks burst over him.](https://alchemy.pascalpixel.com/abilities/flint.gif)
 
 Flint is a casting impact, reached through `BattleAnim_DispatchByIdRange`
-(`src/effect/parts/casting_impact.c`): 64 sparks gather on the caster, `BG2`
+(`src/battle_anim/parts/casting_impact.c`): 64 sparks gather on the caster, `BG2`
 is moved so the impact sits over the target, and 32 scattering sparks follow
 the impact.
 
@@ -325,19 +325,19 @@ kinds.
 
 ![Isaac summons Judgment: the screen goes dark, Judgment rises out of the clouds and strikes, and the scene clears to a wide landscape](https://alchemy.pascalpixel.com/abilities/judgment.gif)
 
-`BattleAnim_RunJudgment` (`src/effect/parts/judgment.c`) replaces the battle's
+`BattleAnim_RunJudgment` (`src/battle_anim/parts/judgment.c`) replaces the battle's
 picture with backgrounds of its own and runs in two parts, each with its own
 frame clock (`JUDGMENT_GATHER_FRAMES`, `JUDGMENT_SWEEP_FRAMES`). The battle
 comes back near the end of the second part, and the damage is shown after
 it has.
 
-[Battle animations](src/effect/README.md#how-a-move-picks-its-animation) describes
-how the entry point is chosen, then [the canvas](src/effect/README.md#the-canvas),
-[the blitters](src/effect/README.md#blitters),
-[the particle pools](src/effect/README.md#particles),
-[casting impacts](src/effect/README.md#casting-impacts),
-[Judgment](src/effect/README.md#judgment) and every
-[animation family](src/effect/README.md#animation-families).
+[Battle animations](src/battle_anim/README.md#how-a-move-picks-its-animation) describes
+how the entry point is chosen, then [the canvas](src/battle_anim/README.md#the-canvas),
+[the blitters](src/battle_anim/README.md#blitters),
+[the particle pools](src/battle_anim/README.md#particles),
+[casting impacts](src/battle_anim/README.md#casting-impacts),
+[Judgment](src/battle_anim/README.md#judgment) and every
+[animation family](src/battle_anim/README.md#animation-families).
 
 ## Rules and animations run together
 

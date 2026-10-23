@@ -67,8 +67,8 @@
 ///   (FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ORB_OF_FORCE_EAST
 ///   and _WEST) or up by
 ///   FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_FROM_SOUTH_HALF_MIDDLE starts
-///   the fade overlay (object/object/fade_overlay.c), which follows the leader
-///   except from
+///   the fade overlay (overworld/overworld/fade_overlay.c), which follows the
+///   leader except from
 ///   FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_FROM_SOUTH_HALF_MIDDLE, and
 ///   coord events 15 and 16 start and stop its following. When Reveal ends, the
 ///   room goes dark again. The statue is `an eyeless dragon`; using the
@@ -85,8 +85,8 @@
 #include "map_ids.h"
 #include "unit/import.h"
 #include "unit/map/imil_fuchin_falls.h"
-#include "unit/object/object.h"
-#include "unit/object/psynergy_effects.h"
+#include "unit/overworld/overworld.h"
+#include "unit/overworld/psynergy_effects.h"
 #include "unit/field/field.h"
 #include "unit/game/game.h"
 #include "battle.h"

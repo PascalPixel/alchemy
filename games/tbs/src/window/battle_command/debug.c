@@ -36,7 +36,7 @@ void DebugMapSelect_DrawRow(struct Window *work, s32 mapId,
 // the map being run (DebugMapSelect_HandleRowInput has the keys). A warps
 // there (FieldScript_SetDestinationFar), B closes it. The field opens it in
 // debug mode when the Start button's menu (Save your quest, Sleep, Change
-// settings) is opened with B held (object/object/run_map.c).
+// settings) is opened with B held (overworld/overworld/run_map.c).
 // The task runner and the debug menu's far call ignore this selection result.
 // Plain void removes two result moves (252 to 248 bytes in tbs-en) and
 // reorders FieldScript_SetDestinationFar's argument setup.
@@ -167,7 +167,7 @@ s32 DebugMapSelect_HandleRowInput(struct Window *window, s16 mapId,
 /// Starts on page 8 and always returns 0. A page is 256 game flags, page 8
 /// flags 0x800 to 0x8ff (DebugFlagEditor_HandleInput has the keys). The field
 /// opens it in debug mode when the main menu (Psynergy, Djinn, Item, Status)
-/// is opened with B and Select held (object/object/run_map.c).
+/// is opened with B and Select held (overworld/overworld/run_map.c).
 s32 DebugFlagEditor_Run(void) {
   struct MenuSprite cursorSprite; // Cursor object
   s32 cursor[2];                  // Cursor column and row
@@ -323,7 +323,7 @@ void Djinn_SetFoundFlagAndAdd(s32 owner, s32 element, s32 index) {
 /// Handles Save, Sleep and Options from the pause menu. A cancelled save
 /// or option menu reopens the pause menu; cancelling the pause menu returns
 /// -1. Sleep shows its message and sets gSleepRequested. Otherwise returns
-/// 0. The field reaches it by far call (object/object/run_map.c).
+/// 0. The field reaches it by far call (overworld/overworld/run_map.c).
 s32 PauseMenu_Run(void) {
   s32 result;
 

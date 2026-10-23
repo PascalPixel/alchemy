@@ -1,7 +1,7 @@
 # World
 
 Everywhere the [party](glossary.md#the-party) walks, a town, a dungeon or the world map, is run by
-the same four parts. The loop in `src/object` lets the party walk and deals
+the same four parts. The loop in `src/overworld` lets the party walk and deals
 with whatever interrupts it. The engine in `src/field` moves everything that
 moves and draws the [map](glossary.md#map). The two folders take the names
 of the [banks](glossary.md#bank) they fill, not of what they do. The [layout](glossary.md#layout), in `src/layout`, says what the ground is like.
@@ -47,7 +47,7 @@ loads the field map again with `FLAG_KEEP_PARTY_POSITION` set, and
 | `FLAG_KEEP_PARTY_POSITION` | 265 (`0x109`) | the next field map starts where the party was |
 
 [Field](src/field/README.md#the-walk-and-what-interrupts-it) explains the
-walk, and [Running a map](src/object/README.md#the-map-loop-handles-requests-not-scripts)
+walk, and [Running a map](src/overworld/README.md#the-map-loop-handles-requests-not-scripts)
 lists all twelve requests in the order they are handled and goes through
 each one.
 
@@ -338,7 +338,7 @@ it. The world map's own code, its places and map events, is described on
 
 [Field](src/field/README.md#the-world-map-in-perspective) works through the
 scanline table, [Layouts](src/layout/README.md#the-world-maps-data) the world map's
-data, and [Running a map](src/object/README.md#the-world-map-screen) the world
+data, and [Running a map](src/overworld/README.md#the-world-map-screen) the world
 map screen the R button brings up.
 
 ## Random encounters
@@ -372,9 +372,9 @@ weight. A field map's zones come from the
 first matching rule in `gBattle_LocationRules`, which assigns zones to the
 encounter grounds its cells mark; the world map's come from
 `gWorldMap_EncounterRules`, by the encounter region under the leader. Each zone is a
-row of `src/object/encounter.tsv`.
+row of `src/overworld/encounter.tsv`.
 
-[Running a map](src/object/README.md#random-battles) has the roll step by
+[Running a map](src/overworld/README.md#random-battles) has the roll step by
 step, and [Battle](battle.md#starting-a-battle) what happens once it starts.
 
 ## Field Psynergy
@@ -406,7 +406,7 @@ and `Field_UsePsynergy` handles it:
 | `PSYNERGY_PHASE_BEFORE_CAST` | 1 | once the PP is paid, before the effect |
 | `PSYNERGY_PHASE_EFFECT_ACTS` | 5 | from inside the effect, where it acts on the map |
 
-[Running a map](src/object/README.md#how-field-psynergy-reaches-its-effect)
+[Running a map](src/overworld/README.md#how-field-psynergy-reaches-its-effect)
 covers the dispatch, every phase and each field kind's effect.
 
 ## Limits

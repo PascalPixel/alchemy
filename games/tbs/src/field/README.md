@@ -16,8 +16,8 @@ map.
 
 Three other folders hold the rest:
 
-- The loop that drives the engine is in `src/object`, whose page is
-  [Running a map](../object/README.md). The folder is named after the
+- The loop that drives the engine is in `overworld`, whose page is
+  [Running a map](../overworld/README.md). The folder is named after the
   [bank](../../glossary.md#bank) of the program it fills, not after the
   objects described here.
 - Each map's own code, its [scripts](../../glossary.md#script) included, is
@@ -71,14 +71,14 @@ walking across the screen, the camera) moves on its own, as an object script
 
 A random battle is handled as a way out of the map, and the map is loaded
 again afterwards with everyone put back ([Running a
-map](../object/README.md#the-map-loop-handles-requests-not-scripts)).
+map](../overworld/README.md#the-map-loop-handles-requests-not-scripts)).
 
-In the code, `Map_Run` ([`object/run_map.c`](../object/object/run_map.c))
+In the code, `Map_Run` ([`overworld/run_map.c`](../overworld/overworld/run_map.c))
 runs one map. Its inner loop is the walk: it waits a frame and calls
 `Field_ProcessStep`, which checks the ground under the leader, until
 `Field_CountRequests` finds a request. The leader's control script reads the
 buttons through `Field_CheckConfiguredKeys`. The requests are fields of
-`struct FieldWork`; [Running a map](../object/README.md#the-map-loop-handles-requests-not-scripts)
+`struct FieldWork`; [Running a map](../overworld/README.md#the-map-loop-handles-requests-not-scripts)
 gives each field and how it is handled. A
 [warp](../../glossary.md#warp) is `Map_Run`'s result, which `Game_Run` passes to `Map_TakeWarp`
 to load the next map.
@@ -300,7 +300,7 @@ camera places them.
 
 | Mode | Started by | Object update | Camera |
 | --- | --- | --- | --- |
-| `OBJECT_SYSTEM_LAYOUT` (2) | the field map runner (`object/object/run_map.c`), the debug sprite viewer | `Object_UpdateAllThumb` | `ObjectSystem_PlaceSprites`, which scrolls with the map |
+| `OBJECT_SYSTEM_LAYOUT` (2) | the field map runner (`overworld/overworld/run_map.c`), the debug sprite viewer | `Object_UpdateAllThumb` | `ObjectSystem_PlaceSprites`, which scrolls with the map |
 | `OBJECT_SYSTEM_WORLD_MAP` (3) | the field map runner | `Object_UpdateAllThumb` | `ObjectSystem_ProjectSprites`, which projects 3D points onto the screen |
 | `OBJECT_SYSTEM_BATTLE` (4) | the encounter (`battle/battle/encounter.c`) | `Object_UpdateAllMotion` | `ObjectSystem_ProjectSprites` |
 
@@ -358,7 +358,7 @@ edition and [the international editions](../../glossary.md#editions)
 | R and L on the world map | raise their events while held | raise them once a press |
 
 R raises `FIELD_RAISED_EVENT_REGION_MAP`, which opens [the world map
-screen](../object/README.md#the-world-map-screen), and L
+screen](../overworld/README.md#the-world-map-screen), and L
 `FIELD_RAISED_EVENT_WORLD_MAP_ZOOM`, which zooms the view out.
 
 Speeds are 16.16 fixed-point pixels a frame: the top 16 bits are whole
@@ -581,7 +581,7 @@ so it could not stand in for the Thumb update.
 
 ## How the field fits with the rest of the game
 
-[Running a map](../object/README.md) owns the map loop: it starts the
+[Running a map](../overworld/README.md) owns the map loop: it starts the
 object system, loads the map and the overlay, places the object events and
 handles requests; the engine supplies the objects, scripts and ground checks it
 uses. Overlays reach the engine through their [import tables](../../glossary.md#entry-table-and-import-table)
@@ -617,7 +617,7 @@ guide](../../../tla/src/field/README.md), as differences from this one.
 | `layouts.tsv` | `gLayouts`: each layout's header, palette, three tilesets and layer data, as resource numbers counted from `ResourceId_Layout001` |
 | `remap0.tsv` to `remap3.tsv` | `gRuntime_ByteRemapTable`, four 256-byte colour remap tables |
 | `maps.s` | `gMapHeaders`: each map's overlay, [map section](../../glossary.md#map-section), map type (town or field) and layout; each row also defines the map's `MapId_` |
-| `common/effect/` | the ground particle and sparkle pictures of the field's weather, which [`scripts.s`](../object/scripts.s) places |
+| `common/effect/` | the ground particle and sparkle pictures of the field's weather, which [`scripts.s`](../overworld/scripts.s) places |
 
 The headers are in `games/tbs/include/unit/field/`, one for each C file but
 `world_map_resources.c`, whose table `field.h` declares. Link order is in

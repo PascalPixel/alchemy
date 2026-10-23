@@ -29,7 +29,7 @@ void BattleUnits_ListAllAndSubmit(void) {
 
 /// Returns the palette of unit id's battle object. Called by
 /// BattlePlayback_Run and BattleMotion_FlashHit, and through its far stub
-/// by the battle animation dispatcher (effect/parts/dispatch.c).
+/// by the battle animation dispatcher (battle_anim/parts/dispatch.c).
 s32 BattleMotion_GetSlotPalette(s32 id) {
   return BattleObject_Get(id)->palette;
 }

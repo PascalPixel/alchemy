@@ -68,8 +68,8 @@
 ///   Sleep Bomb, a Lucky Medal, 200 coins and a Potion. Once
 ///   FLAG_KALAY_TUNNEL_OPEN is set a man (LOCALID_WAITING_MAN) waits here,
 ///   thinking `The things beyond these doors belong to you all.` The fade
-///   overlay (object/object/fade_overlay.c) follows the leader through the
-///   treasure room unless he comes down from the town
+///   overlay (overworld/overworld/fade_overlay.c) follows the leader through
+///   the treasure room unless he comes down from the town
 ///   (KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY); coord events 10 and 11 stop and
 ///   restart it, and 18 and 19 fix and free his depth priority.
 ///   KALAY_TUNNEL_TREASURE_ROOM_TO_HAMMET_PALACE leads into Hammet Palace
@@ -101,8 +101,8 @@
 #include "unit/import.h"
 #include "unit/map/kalay.h"
 #include "unit/map/common/object_orbit.h"
-#include "unit/object/object.h"
-#include "unit/object/psynergy_effects.h"
+#include "unit/overworld/overworld.h"
+#include "unit/overworld/psynergy_effects.h"
 #include "unit/window/window.h"
 #include "unit/window/battle_command.h"
 #include "unit/runtime/runtime.h"

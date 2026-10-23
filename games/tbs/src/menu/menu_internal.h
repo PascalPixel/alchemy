@@ -64,7 +64,7 @@
 #include "event_work.h"
 #include "djinn_menu.h"
 #include "a9_motion.h"
-#include "battle_effect.h"
+#include "blitter.h"
 #include "four_object_motion.h"
 #include "item_ids.h"
 #include "macros.h"

@@ -3,7 +3,7 @@ Work (struct FooWork, gFooWork)	word	pret	a running system's block, as pret's sW
 Alloc, Free, InitHeap	prefix	pret	pokeemerald include/malloc.h; runtime/runtime/heap.c
 AllocHeapSlot, AllocHeapSlotEwram, FreeHeapSlot, AllocEwram	prefix	common	heap.c: blocks kept in a heap slot; AllocEwram takes the EWRAM pool first
 heap slot (gHeapSlots, HEAP_SLOT_*, HEAP_SLOT_BLOCK)	word	common	include/heap_state.h enum HeapSlot; one global per slot, g<Slot>Work
-gFieldWork, HEAP_SLOT_FIELD	global	common	the running map's block Map_Run allocates (object/object/run_map.c)
+gFieldWork, HEAP_SLOT_FIELD	global	common	the running map's block Map_Run allocates (overworld/overworld/run_map.c)
 gObjectSystemWork, HEAP_SLOT_OBJECT_SYSTEM	global	common	ObjectSystem_Initialize allocates the slot (field/field/objects.c)
 gBattleEntryTimer	global	common	the battle's entry transition timer in frames (battle/battle/transition.c)
 task (struct Task, TaskFunc, gTasks, Task_, TASK_PRIORITY_*)	word	pret	pokeemerald include/task.h (gTasks, TaskFunc, priority); runtime/runtime/scheduler.c
@@ -13,10 +13,10 @@ MapHeader, gMapHeaders, MAP_HEADER, map_header	struct	pret	pokeemerald include/g
 main menu (MapId_MainMenu, MainMenu_)	word	pret	pokeemerald src/main_menu.c (New Game, Continue); the debug map list calls it "Clear data" (MsgDebugEntryName)
 GAME_RUN_DEBUG_MAIN_MENU	constant	pret	Game_Run's debug start at the main menu
 RUN_NONE, RUN_LUCKY_WHEELS, RUN_LUCKY_DICE, RUN_BATTLE	constant	game	runs instead of a map; RUN_NONE runs nothing (Map_Run)
-Map_ReturnFromRun	prefix	common	picks the map after a battle or a minigame (object/object/map.c)
+Map_ReturnFromRun	prefix	common	picks the map after a battle or a minigame (overworld/overworld/map.c)
 Lucky Wheels (LuckyWheels_, LUCKY_WHEELS_, RunLuckyWheels)	word	game	"Lucky Wheels Rules" (MsgTolbiLuckyWheelsRules*), "try your hand at lucky wheels!"; a reel is a wheel ("match other wheels")
 song (Sound_PlaySong, gCurrentBgm, mapMusic, pendingSong, returnMusic, battleMusic)	word	pret	pret's songNum and songs.h; BGM for the BGM player's state, music for what a map chooses
-Map_ChooseMusic, MapMusicRule, gMap_MusicRules, Map_PlayMusic	prefix	pret	pret's map music; object/map_rules.s
+Map_ChooseMusic, MapMusicRule, gMap_MusicRules, Map_PlayMusic	prefix	pret	pret's map music; overworld/map_rules.s
 Decompress_	prefix	pret	pokeemerald src/decompress.c; system/resource/decode_*.s
 Overlay_Load	prefix	common	loads only overlays (system/resource)
 CreditsFar_, TitleFar_	prefix	common	the banks hold the credits and the title intro
@@ -25,7 +25,7 @@ Save_, SaveWork, SaveSectorHeader, SaveFileSummary	prefix	pret	pokeemerald src/s
 OBJECT_SPRITES_NONE, _ONE, _GROUP	constant	common	how many sprites an object has (Object.animationKind)
 gVBlankCallback	global	pret	pokeemerald gMain.vblankCallback
 Irq_RemoveVCountHandler	prefix	common	removes the VCount interrupt's handler (runtime/runtime/irq.c)
-Map_Run	prefix	common	runs one map until it is left (object/object/run_map.c)
+Map_Run	prefix	common	runs one map until it is left (overworld/overworld/run_map.c)
 runResult	field	common	what the last run returned (GameState)
 slot	word	common	only a place in a fixed array
 record	word	common	only a save record

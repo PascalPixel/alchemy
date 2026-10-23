@@ -91,7 +91,7 @@ explains both.
 The picture an ability plays over a battle, drawn by code: Quake's shaking
 ground, a summon's arrival. It decides when a hit shows, never what it
 does; pret uses the same word (`battle_anim.c`), and this game's are
-`BattleAnim_` functions. [Battle animations](src/effect/README.md) explains
+`BattleAnim_` functions. [Battle animations](src/battle_anim/README.md) explains
 them.
 
 ## The project

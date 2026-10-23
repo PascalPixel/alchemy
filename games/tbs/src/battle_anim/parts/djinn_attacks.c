@@ -1,0 +1,681 @@
+/// @file
+/// The Mercury, Jupiter, Venus and Mars Djinn attacks.
+// Part of battle_anim.c.
+
+#include "../battle_anim_internal.h"
+
+/// Copies a w x h byte picture into an h x w one turned 90 degrees
+/// clockwise: the top row of src becomes the right column of dst.
+///
+/// Called twice by BattleAnim_RunMercury, to lay its blue flames on their
+/// side. Writes only dst.
+void BattleAnim_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
+  s32 y;
+  s32 x;
+  s32 column;
+  s32 offset;
+  u8 *to;
+  const u8 *from;
+
+  y = 0;
+  if (h != 0) {
+    offset = 0;
+    column = h;
+    do {
+      x = 0;
+      if (w != 0) {
+        to = (u8 *)(column + (u32)dst - 1);
+        from = (const u8 *)(offset + (u32)src);
+        do {
+          x++;
+          *to = *from;
+          from++;
+          to += h;
+        } while (x != w);
+      }
+      y++;
+      offset += w;
+      column--;
+    } while (y != h);
+  }
+}
+
+// The Djinn attacks. The folder README describes them under "Animation
+// families".
+
+#define MERCURY_FRAMES 96
+/// The blue flame sheet holds a 17x104 flame, then a 34x65 one; Mercury
+/// turns both on their side after its Djinni, Venus draws the second.
+#define DJINN_ATTACKS_FLAME2_CELLS (17 * 104)
+/// The first flame turned, 104x17, after the 20x34 Djinni; never drawn.
+#define MERCURY_TALL_FLAME_CELLS 0x2a8
+#define MERCURY_FLAME_CELLS 0x990 ///< 65x34
+#define MERCURY_FLAMES 5          ///< flames thrown
+/// The mote slots Mercury walks: room for more than MERCURY_FLAMES *
+/// DJINN_ATTACKS_MOTES_PER_FLAME.
+#define MERCURY_MOTE_SLOTS 256
+// The Djinn attacks share these: each flame, ball or column that lands
+// throws its motes into its own DJINN_ATTACKS_MOTES_PER_FLAME slots of
+// PARTICLES (Venus's columns fill 16 of them), and the motes move through all
+// DJINN_ATTACKS_MOTE_SLOTS. A mote's variant is its life left, -1 when free;
+// at life 0 it still draws once before its slot is freed. Each frame a mote
+// falls under a gravity of 1/8 pixel a frame per frame (0x2000), its speed
+// damped to 62/64, and it shrinks a size every 16 frames of life it loses.
+#define DJINN_ATTACKS_MOTES_PER_FLAME 32 ///< slots for each flame's motes
+#define DJINN_ATTACKS_MOTE_SLOTS 512
+
+/// The small Mercury Djinni spirals around (96, 60) and fires five blue flames
+/// to the left; each flame shatters into 32 motes after 5 frames, hitting
+/// every target.
+///
+/// Abilities: Mercury (BATTLE_ANIM_MERCURY).
+///
+/// work->particles 0 to 4 hold the flames, variant -1 until launched and then
+/// counting the frames since; Ram_MapGridCellBuffer takes the blue flame sheet
+/// before it is turned. Sets work->shakeFrames as each flame shatters.
+///
+/// effect: the targets.
+void BattleAnim_RunMercury(struct BattleAnimArgs *effect) {
+  void **slots;
+  void **cursor;
+  struct BattleAnimWork *work;
+  void *canvas;
+  s32 frame;
+  u8 *sheet;
+  BlitterPair blit;
+  DrawRectangle *draw;
+  struct Particle *flame;
+  struct Particle *mote;
+  u8 *cells;
+  s32 i;
+  s32 j;
+
+  ANIM_GET_SLOTS(slots, cursor, work, canvas);
+  sheet = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  work->effect = effect;
+  BattleAnim_StartCanvasLayer(0);
+  draw = blit;
+  BattleAnim_FetchRectangleBlitters(0, draw);
+
+  // The flame pictures are the blue flame sheet turned on its side.
+  cells = Ram_MapGridCellBuffer;
+  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
+                             work->sheet, 1, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, cells, 1, 1);
+  BattleAnim_TransposeCopy(cells, work->sheet + MERCURY_TALL_FLAME_CELLS, 17,
+                           104);
+  BattleAnim_TransposeCopy(cells + DJINN_ATTACKS_FLAME2_CELLS,
+                           work->sheet + MERCURY_FLAME_CELLS, 34, 65);
+  // Each transfer keeps three quarters of every level, for trails.
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_FREE_PARTICLES(i, work->particles, 8);
+  ANIM_FREE_PARTICLES(i, PARTICLES, DJINN_ATTACKS_MOTE_SLOTS);
+  Sound_PlaySongFar(SE_162);
+  frame = 0;
+  do {
+    if (frame == 56)
+      ANIM_SHOW_DAMAGE(SE_IMPACT);
+
+    // Flames move 12 pixels left a frame and shatter on their 5th frame;
+    // a shattered flame is still drawn, flying on off the canvas.
+    for (i = 0; i != MERCURY_FLAMES; i++) {
+      flame = &work->particles[i];
+      if (flame->variant != -1) {
+        blit[0](canvas, work->sheet + MERCURY_FLAME_CELLS, flame->x - 16,
+                flame->y - 17, 65, 34);
+        flame->x -= 12;
+        flame->variant++;
+        if (flame->variant == 5) {
+          Sound_PlaySongFar(SE_IMPACT);
+          work->shakeFrames = 4;
+          // Each mote flies off in a random direction at 1 to 3 pixels a
+          // frame, the vertical part doubled, so the burst is twice as tall
+          // as it is wide.
+          for (j = 0; j != DJINN_ATTACKS_MOTES_PER_FLAME; j++) {
+            s32 angle;
+            s32 speed;
+
+            mote = &PARTICLES[i * DJINN_ATTACKS_MOTES_PER_FLAME + j];
+            angle = Random16() & 0xffff;
+            speed = (Random16() & 0x1ff) + 256;
+            mote->x = flame->x << 16;
+            mote->y = flame->y << 16;
+            mote->velocityX = (Trig_Sin(angle) * speed) >> 8;
+            mote->velocityY = (Trig_Cos(angle) * speed) >> 7;
+            mote->variant = (Random16() & 15) + 32; // lives 32 to 47 frames
+          }
+        }
+      }
+    }
+
+    // The Djinni turns once every 32 frames. Its radius, 64 - 2 * frame
+    // (half that across), reaches 0 at frame 32, passing through the
+    // centre, and then grows on the other side.
+    if (frame <= 95) {
+      s32 x = ((Trig_Sin(frame << 11) * (64 - frame * 2)) >> 17) + 96;
+      s32 y = ((Trig_Cos(frame << 11) * (64 - frame * 2)) >> 16) + 60;
+
+      draw[1](canvas, work->sheet, x - 10, y - 17, 20, 34);
+      for (i = 0; i != MERCURY_FLAMES; i++) {
+        // Fire a flame from the Djinni on each launch frame; 6 frames later,
+        // a frame after it shatters, the targets flash white in their damage
+        // pose for 6 frames and take KNOCKBACK_BOUNCE. velocityX keeps the
+        // launch x, which nothing reads.
+        if (frame == gDjinnAttacks_LaunchFrames[i]) {
+          struct Particle *shot = &work->particles[i];
+
+          if (shot->variant == -1) {
+            shot->x = x - 8;
+            shot->velocityX = x;
+            shot->y = y;
+            shot->variant = 0;
+            break;
+          }
+        }
+        if (frame == gDjinnAttacks_LaunchFrames[i] + 6) {
+          ANIM_FOR_EACH_TARGET(j, work->effect) {
+            ANIM_STRIKE_TARGET(work->effect, j, 6, KNOCKBACK_BOUNCE);
+          }
+        }
+      }
+    }
+
+    // The motes, sizes 2 to 4 (see DJINN_ATTACKS_MOTE_SLOTS).
+    for (i = 0; i != MERCURY_MOTE_SLOTS; i++) {
+      mote = &PARTICLES[i];
+      if (mote->variant != -1) {
+        s32 size = mote->variant / 16 + 2;
+
+        ANIM_DRAW_MOTE(draw[1], canvas, sheet, Q_16_16_TO_INT(mote->x),
+                       Q_16_16_TO_INT(mote->y), size);
+        Particle_AdvanceWithGravity2D(mote, 62, 0x2000);
+        mote->variant--;
+      }
+    }
+    Camera_ApplyShake(4, 4);
+    ANIM_END_FRAME(work);
+    frame++;
+  } while (frame != MERCURY_FRAMES);
+  ANIM_FINISH_CANVAS();
+}
+
+#define JUPITER_FRAMES 96
+#define JUPITER_FLAMEBALLS 8          ///< flameballs that fall
+#define JUPITER_GROUND_Y 95           ///< where the flameballs land
+#define JUPITER_FLAMEBALL_CELLS 0x320 ///< after the 20x40 Djinni
+
+/// The small Jupiter Djinni spirals while eight flameballs fall from the top
+/// right to the bottom left, 4 frames apart; each shatters into 32 motes below
+/// line 95, hitting every target.
+///
+/// Abilities: Jupiter (BATTLE_ANIM_JUPITER).
+///
+/// work->particles holds the flameballs. Copies the Djinni's palette over the
+/// first 128 bytes of BG palette RAM, writes REG_BLDALPHA, sets
+/// work->shakeFrames as each ball lands.
+///
+/// effect: the targets.
+void BattleAnim_RunJupiter(struct BattleAnimArgs *effect) {
+  void **slots;
+  void **cursor;
+  struct BattleAnimWork *work;
+  void *canvas;
+  u8 *sheet;
+  BlitterPair blit;
+  DrawRectangle *draw;
+  struct Particle *ball;
+  struct Particle *mote;
+  s32 frame;
+  s32 i;
+  s32 j;
+  s32 angle;
+
+  ANIM_GET_SLOTS(slots, cursor, work, canvas);
+  sheet = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  work->effect = effect;
+  BattleAnim_StartCanvasLayer(0);
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  draw = blit;
+  BattleAnim_FetchRectangleBlitters(0, draw);
+  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSmallSheet,
+                             work->sheet, 1, 1);
+  Resource_LoadAndDecompress((s32)&ResourceId_FlameballSheet,
+                             work->sheet + JUPITER_FLAMEBALL_CELLS, 1, 0);
+  // Each transfer fades the canvas to 3/4.
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+
+  // The flameballs start at x 64 to 127, y -80 to -17; 32 are placed, the
+  // first 8 fall. A ball is done once it is below the ground line.
+  for (i = 0; i != 32; i++) {
+    ball = &work->particles[i];
+    ball->x = (Random16() & 63) + 64;
+    ball->y = (Random16() & 63) - 80;
+  }
+  ANIM_FREE_PARTICLES(i, PARTICLES, DJINN_ATTACKS_MOTE_SLOTS);
+  Sound_PlaySongFar(SE_THUNDER);
+  frame = 0;
+  angle = 0x8000; // 180 degrees
+  do {
+    if (frame == 56)
+      ANIM_SHOW_DAMAGE(SE_IMPACT);
+
+    // The Djinni turns 11.25 degrees a frame. Its radius, 64 - 2 * frame
+    // (half that across), reaches 0 at frame 32, passing through the
+    // centre, and then grows on the other side.
+    if (frame <= 95) {
+      s32 x = (Trig_Sin(angle) * (64 - frame * 2)) >> 17;
+      s32 y = (Trig_Cos(angle) * (64 - frame * 2)) >> 16;
+
+      blit[0](canvas, work->sheet, x + 86, y + 28, 20, 40);
+    }
+
+    // Flameballs: one every 4 frames from frame 8, moving 6 pixels left and
+    // 12 down a frame. Landing throws its motes in random directions at 2 to
+    // 6 pixels a frame, the vertical part doubled, and hits every target.
+    for (i = 0; i != JUPITER_FLAMEBALLS; i++) {
+      ball = &work->particles[i];
+      if (frame >= i * 4 + 8 && ball->y <= JUPITER_GROUND_Y) {
+        blit[0](canvas, work->sheet + JUPITER_FLAMEBALL_CELLS, ball->x - 20,
+                ball->y - 32, 40, 64);
+        ball->x -= 6;
+        ball->y += 12;
+        if (ball->y > JUPITER_GROUND_Y) {
+          for (j = 0; j != DJINN_ATTACKS_MOTES_PER_FLAME; j++) {
+            s32 direction;
+            s32 speed;
+
+            mote = &PARTICLES[i * DJINN_ATTACKS_MOTES_PER_FLAME + j];
+            direction = Random16() & 0xffff;
+            speed = (Random16() & 0x1ff) + 256;
+            mote->x = ball->x << 16;
+            mote->y = ball->y << 16;
+            mote->velocityX = (Trig_Sin(direction) * speed) >> 7;
+            mote->velocityY = (Trig_Cos(direction) * speed) >> 6;
+            mote->variant = (Random16() & 15) + 32; // lives 32 to 47 frames
+          }
+          Sound_PlaySongFar(SE_IMPACT);
+          work->shakeFrames = 4;
+          ANIM_FOR_EACH_TARGET(j, work->effect) {
+            ANIM_STRIKE_TARGET(work->effect, j, 6, KNOCKBACK_BOUNCE);
+          }
+        }
+      }
+    }
+
+    // The motes, sizes 1 to 3 (see DJINN_ATTACKS_MOTE_SLOTS).
+    for (i = 0; i != DJINN_ATTACKS_MOTE_SLOTS; i++) {
+      mote = &PARTICLES[i];
+      if (mote->variant != -1) {
+        s32 size = mote->variant / 16 + 1;
+
+        ANIM_DRAW_MOTE(draw[1], canvas, sheet, Q_16_16_TO_INT(mote->x),
+                       Q_16_16_TO_INT(mote->y), size);
+        Particle_AdvanceWithGravity2D(mote, 62, 0x2000);
+        mote->variant--;
+      }
+    }
+    Camera_ApplyShake(4, 4);
+    ANIM_END_FRAME(work);
+    angle -= 0x800; // 11.25 degrees
+    frame++;
+  } while (frame != JUPITER_FRAMES);
+  ANIM_FINISH_CANVAS();
+}
+
+/// Decompresses a resource whose first 128 bytes may be a palette.
+///
+/// Called by nearly every animation to load its pictures. Writes dst and, with
+/// copyPalette, the first 128 bytes of BG palette RAM.
+///
+/// id: the resource.
+/// dst: receives the decompressed data.
+/// skipPalette: the resource starts with a palette to skip.
+/// copyPalette: copy that palette to the start of background palette RAM.
+void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
+                                s32 copyPalette) {
+  u8 *data = Resource_GetTableEntry(id);
+
+  if (copyPalette != 0)
+    Iwram_CopyWords((void *)BG_PLTT, data, 128);
+  if (skipPalette != 0)
+    data += 128;
+  Decompress_Type01(data, dst);
+}
+
+#define VENUS_FRAMES 96
+#define VENUS_COLUMNS 10 ///< columns of flame that rise
+/// The blue flame sheet, after the 20x38 Djinni, and its second flame.
+#define VENUS_FLAME_SHEET 0x2f8
+#define VENUS_COLUMN_CELLS (VENUS_FLAME_SHEET + DJINN_ATTACKS_FLAME2_CELLS)
+
+/// The small Venus Djinni sways while ten columns of flame in its colours rise
+/// from the ground one after another, each bursting into motes and hitting
+/// every target.
+///
+/// Abilities: Venus (BATTLE_ANIM_VENUS).
+///
+/// work->particles holds the columns. Copies the Djinni's palette over the
+/// first 128 bytes of BG palette RAM, writes REG_BLDALPHA, sets
+/// work->shakeFrames as each column appears.
+///
+/// effect: the targets.
+void BattleAnim_RunVenus(struct BattleAnimArgs *effect) {
+  void **slots;
+  void **cursor;
+  struct BattleAnimWork *work;
+  void *canvas;
+  s32 frame;
+  BlitterPair draw;
+  u8 *sheet;
+  struct Particle *column;
+  struct Particle *mote;
+  s32 i;
+  s32 j;
+  s32 angle;
+
+  ANIM_GET_SLOTS(slots, cursor, work, canvas);
+  sheet = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  work->effect = effect;
+  BattleAnim_StartCanvasLayer(0);
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
+                    BLITTER_MAX);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS, COMPOSITE_ADDITIVE);
+  draw[0] = ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE);
+  draw[1] = ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
+  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet, work->sheet,
+                             1, 1);
+  Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet,
+                             work->sheet + VENUS_FLAME_SHEET, 1, 0);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  // The flame columns start at the bottom, at random x from 0 to 63; 32
+  // are placed, the first 10 rise. The columns draw flipped upside down.
+  for (i = 0; i != 32; i++) {
+    column = &work->particles[i];
+    column->x = Random16() & 63;
+    column->y = 104;
+  }
+  ANIM_FREE_PARTICLES(i, PARTICLES, DJINN_ATTACKS_MOTE_SLOTS);
+  Sound_PlaySongFar(SE_RUMBLE);
+  frame = 0;
+  angle = 0x8000;
+  do {
+    // Until frame 79 the Djinni sways 24 pixels from side to side, a turn
+    // every 32 frames, while its height swings on a radius that shrinks
+    // through 0 at frame 32.
+    if (frame <= 79) {
+      s32 x = (Trig_Sin(angle) * 24) >> 16;
+      s32 y = (Trig_Cos(angle) * (64 - frame * 2)) >> 16;
+
+      draw[1](canvas, work->sheet, x + 22, y + 29, 20, 38);
+    }
+    if (frame == 56)
+      ANIM_SHOW_DAMAGE(SE_IMPACT);
+    // Ten flame columns rise 12 pixels a frame, one every 4 frames from
+    // frame 16; each throws 16 motes upwards (in the upper half turn of
+    // directions at 2 to 6 pixels a frame, the vertical part doubled) and
+    // hits every target as it appears, with a sound for odd ones.
+    for (i = 0; i != VENUS_COLUMNS; i++) {
+      column = &work->particles[i];
+      if (frame >= i * 4 + 16) {
+        draw[0](canvas, work->sheet + VENUS_COLUMN_CELLS, column->x - 17,
+                column->y - 32, 34, 65);
+        if (frame == i * 4 + 16) {
+          for (j = 0; j != 16; j++) {
+            s32 direction;
+            s32 speed;
+
+            mote = &PARTICLES[i * DJINN_ATTACKS_MOTES_PER_FLAME + j];
+            direction = (Random16() & 0x7fff) + 0x4000;
+            speed = (Random16() & 0x1ff) + 256;
+            mote->x = column->x << 16;
+            mote->y = (column->y + 16) << 16;
+            mote->velocityX = (Trig_Sin(direction) * speed) >> 7;
+            mote->velocityY = (Trig_Cos(direction) * speed) >> 6;
+            mote->variant = (Random16() & 15) + 32;
+          }
+          if (i & 1)
+            Sound_PlaySongFar(SE_IMPACT);
+          work->shakeFrames = 4;
+          ANIM_FOR_EACH_TARGET(j, work->effect) {
+            ANIM_STRIKE_TARGET(work->effect, j, 6, KNOCKBACK_BOUNCE);
+          }
+        }
+        column->y -= 12;
+      }
+    }
+    // The motes, sizes 2 to 4 (see DJINN_ATTACKS_MOTE_SLOTS).
+    for (i = 0; i != DJINN_ATTACKS_MOTE_SLOTS; i++) {
+      mote = &PARTICLES[i];
+      if (mote->variant != -1) {
+        s32 size = mote->variant / 16 + 2;
+
+        ANIM_DRAW_MOTE(draw[1], canvas, sheet, Q_16_16_TO_INT(mote->x),
+                       Q_16_16_TO_INT(mote->y), size);
+        Particle_AdvanceWithGravity2D(mote, 62, 0x2000);
+        mote->variant--;
+      }
+    }
+    Camera_ApplyShake(4, 4);
+    ANIM_END_FRAME(work);
+    angle -= 0x800;
+    frame++;
+  } while (frame != VENUS_FRAMES);
+  ANIM_FINISH_CANVAS();
+}
+
+#define MARS_FRAMES 112
+#define MARS_STRIKE_FRAME 32     ///< the Djinni strikes the ground
+#define MARS_FLAMES 9            ///< flames along the arc
+#define MARS_EMBERS_PER_FLAME 16 ///< embers in each flame
+#define MARS_ORB_CELLS 0x320     ///< six 40x40 orb pictures, after the Djinni
+
+/// A glowing orb flares, the small Mars Djinni dives to the ground, and nine
+/// flames erupt in a row while embers rise.
+///
+/// Abilities: Mars (BATTLE_ANIM_MARS).
+///
+/// The scene runs for 112 frames:
+///
+///   0 to 23    the orb flares
+///   20 to 31   the Djinni appears, then dives from frame 24
+///   32         it strikes: the screen shakes and the flames start erupting
+///   38         every target is hit
+///   40 on      the embers rise, 16 more every 2 frames
+///
+/// work->particles holds the nine flames, PARTICLES their 144 embers. The BG
+/// palette's first 128 bytes change three times: the glow orb's at the
+/// start, the Djinni's on frame 20 and the ember streak's on frame 32, when
+/// the streak sheet replaces the Djinni in work->sheet. Sets
+/// work->shakeFrames on the strike.
+///
+/// effect: the targets.
+void BattleAnim_RunMars(struct BattleAnimArgs *effect) {
+  void **slots;
+  void **cursor;
+  struct BattleAnimWork *work;
+  void *canvas;
+  u8 *sheet;
+  BlitterPair blitters;
+  DrawRectangle *draw;
+  struct Particle *step;
+  struct Particle *mote;
+  s32 index;
+  s32 frame;
+  s32 i;
+  s32 diveY;
+
+  ANIM_GET_SLOTS(slots, cursor, work, canvas);
+  sheet = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  work->effect = effect;
+  BattleAnim_StartCanvasLayer(0);
+  draw = blitters;
+  BattleAnim_FetchRectangleBlitters(0, draw);
+  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSmallSheet, work->sheet,
+                             1, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet,
+                             work->sheet + MARS_ORB_CELLS, 1, 1);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+
+  // Nine flames spread out from x 32 alternately left and right (odd flames
+  // left), 2 frames apart: flame i stands sin(i * 11.25 degrees) * 24 pixels
+  // out (0, 4, 9, 13, 16, 19, 22, 23, 24), on a flattened arc from y 56 at the
+  // middle to 52 at the ends. Each has 16 embers that rise wobbling from rows
+  // 96 to 103 beneath it, at up to 2 pixels a frame across and 1 up or down;
+  // their z is a sway phase, and nothing here reads velocityZ.
+  index = 0;
+  step = work->particles;
+  do {
+    s32 angle = index << 11;
+
+    step->x = (Trig_Sin(angle) * 24) >> 16;
+    step->y = ((Trig_Cos(angle) * 4) >> 16) + 52;
+    if (index & 1)
+      step->x = 32 - step->x;
+    else
+      step->x += 32;
+    step->variant = -(index * 2);
+    for (i = 0; i != MARS_EMBERS_PER_FLAME; i++) {
+      mote = &PARTICLES[index * MARS_EMBERS_PER_FLAME + i];
+      mote->x = (((Random16() & 15) + step->x) - 8) << 16;
+      mote->y = ((Random16() & 7) + 96) << 16;
+      mote->velocityX = ((Random16() & 127) - 64) << 11;
+      mote->velocityY = ((Random16() & 127) - 64) << 10;
+      mote->z = Random16() & 0xffff;
+      mote->velocityZ = Random16() & 0xffff;
+    }
+    step++;
+    index++;
+  } while (index != MARS_FLAMES);
+
+  Sound_PlaySongFar(SE_136);
+  frame = 0;
+  diveY = -172;
+  do {
+    if (frame == 56)
+      ANIM_SHOW_DAMAGE(SE_IMPACT);
+    // A glowing orb flares, six pictures of 4 frames, then the Djinni shows
+    // beside it and from frame 24 dives down to the left, 4 pixels across
+    // and 8 down a frame. diveY is -172 + 8 * frame, so the dive starts where
+    // the Djinni stood, (50, 20).
+    if (frame <= 23)
+      blitters[0](canvas,
+                  work->sheet + MARS_ORB_CELLS + (frame / 4) * (40 * 40), 40,
+                  20, 40, 40);
+    // On frame 20 the small Djinni's palette replaces the start of the
+    // background palette.
+    if (frame == 20)
+      Iwram_CopyWords(
+          (void *)BG_PLTT,
+          Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet), 128);
+    if (frame >= 20 && frame <= 31) {
+      if (frame > 23)
+        draw[1](canvas, work->sheet, 146 - frame * 4, diveY, 20, 40);
+      else
+        blitters[0](canvas, work->sheet, 50, 20, 20, 40);
+    }
+    // At frame 32 it strikes: the screen shakes and the flames erupt. The
+    // Djinni is no longer drawn, so the ember streaks take its place in the
+    // sheet, with their palette.
+    if (frame == MARS_STRIKE_FRAME) {
+      Sound_PlaySongFar(SE_145);
+      work->shakeFrames = 8;
+      Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet,
+                                 1, 1);
+    }
+    if (frame > 31) {
+      index = 0;
+      step = work->particles;
+      do {
+        // A flame plays the six puff cells, 8 frames each; its variant counts
+        // its frames, starting below 0 so the flames erupt 2 frames apart.
+        if (step->variant >= 0 && step->variant <= 47) {
+          s32 cell = step->variant / 8;
+          u32 width;
+
+          // UB: width is assigned in one argument and read in another.
+#ifdef UBFIX
+          width = gBattleAnim_PuffArcCellWidths[cell];
+          blitters[0](canvas, work->sheet + gBattleAnim_PuffArcCells[cell],
+                      step->x - (width >> 1),
+                      step->y + gBattleAnim_PuffArcCellBiasY[cell], width,
+                      gBattleAnim_PuffArcCellHeights[cell]);
+#else
+          blitters[0](canvas, work->sheet + gBattleAnim_PuffArcCells[cell],
+                      step->x -
+                          ((width = gBattleAnim_PuffArcCellWidths[cell]) >> 1),
+                      step->y + gBattleAnim_PuffArcCellBiasY[cell], width,
+                      gBattleAnim_PuffArcCellHeights[cell]);
+#endif
+        }
+        index++;
+        step->variant++;
+        step++;
+      } while (index != MARS_FLAMES);
+    }
+    // The embers rise from frame 40, each flame's 16 two frames after the
+    // last's, swaying 4 pixels either way; an ember's z is its sway phase,
+    // stepped 1/32 of a turn a frame. Embers never die; they rise off the
+    // canvas, pulled up at 1/8 pixel a frame per frame.
+    step = PARTICLES;
+    index = 0;
+    do {
+      if (frame >= (index / MARS_EMBERS_PER_FLAME) * 2 + 40) {
+        s32 size;
+        s32 x;
+        s32 angle;
+
+        size = (index & 1) + 3;
+        x = Q_16_16_TO_INT(step->x) + ((Trig_Sin(step->z) * 4) >> 16);
+        draw[1](canvas, sheet + gBattleAnim_MoteCells[size - 1],
+                x - ((u32)size >> 1), Q_16_16_TO_INT(step->y) - size, size,
+                size * 2);
+        Particle_AdvanceWithGravity2D(step, 64, -0x2000);
+        angle = step->z;
+        step->z = angle + 0x800;
+        if (step->z > 0xffff)
+          step->z = angle + 0x800 - 0xffff;
+      }
+      index++;
+      step++;
+    } while (index != MARS_FLAMES * MARS_EMBERS_PER_FLAME);
+
+    // Every target is hit on frame 38, flashing for 16 frames.
+    if (frame == 38) {
+      ANIM_FOR_EACH_TARGET(index, work->effect) {
+        ANIM_STRIKE_TARGET(work->effect, index, 16, KNOCKBACK_BOUNCE);
+      }
+    }
+    Camera_ApplyShake(8, 8);
+    ANIM_END_FRAME(work);
+    diveY += 8;
+    frame++;
+  } while (frame != MARS_FRAMES);
+  ANIM_FINISH_CANVAS();
+}
+
+#undef MERCURY_FRAMES
+#undef MERCURY_FLAMES
+#undef DJINN_ATTACKS_MOTES_PER_FLAME
+#undef DJINN_ATTACKS_MOTE_SLOTS
+#undef JUPITER_FRAMES
+#undef JUPITER_FLAMEBALLS
+#undef JUPITER_GROUND_Y
+#undef VENUS_FRAMES
+#undef VENUS_COLUMNS
+#undef MARS_FRAMES
+#undef MARS_STRIKE_FRAME
+#undef MARS_FLAMES
+#undef MARS_EMBERS_PER_FLAME
+#undef DJINN_ATTACKS_FLAME2_CELLS
+#undef MERCURY_TALL_FLAME_CELLS
+#undef MERCURY_FLAME_CELLS
+#undef JUPITER_FLAMEBALL_CELLS
+#undef VENUS_FLAME_SHEET
+#undef VENUS_COLUMN_CELLS
+#undef MARS_ORB_CELLS
+#undef MERCURY_MOTE_SLOTS

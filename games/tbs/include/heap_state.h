@@ -7,7 +7,7 @@
 /// The heap is two stacks of blocks, one in IWRAM and one in EWRAM; the
 /// runtime README's "The heap" gives the allocators and
 /// the lifetime rule. Every map change resets both pools and clears every
-/// slot (InitHeap, from the map loop in object/map.c), so
+/// slot (InitHeap, from the map loop in overworld/map.c), so
 /// no block outlives the map, battle or minigame that took it.
 
 #include "types.h"

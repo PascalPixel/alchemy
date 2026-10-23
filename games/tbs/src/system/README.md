@@ -350,7 +350,7 @@ can build from the names while the matching build keeps the numbers.
 The system folder is the ground the rest stands on. [Runtime](../runtime/README.md)
 copies the resident code into IWRAM at power-on and allocates from the two
 heaps laid out here. The field code loads each map's overlay by the number
-the map table gives it ([Running a map](../object/README.md)), and every
+the map table gives it ([Running a map](../overworld/README.md)), and every
 overlay in [Maps](../map/README.md), [Menus](../menu/README.md) and
 [Debug rooms](../debug/README.md) is built from the entry and import tables
 described here. Code everywhere loads its pictures and layouts through the

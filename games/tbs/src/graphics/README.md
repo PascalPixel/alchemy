@@ -9,7 +9,7 @@ pictures, the title intro and the credits, the handwritten decoders that
 unpack tiles and animation [frames](../../glossary.md#frame) for the rest of the game, and a few
 helpers of the German and Italian message text that sit beside them in the
 cartridge. The
-[Battle animations](../effect/README.md) load their sheets from `battle_fx/`, and
+[Battle animations](../battle_anim/README.md) load their sheets from `battle_anims/`, and
 each [layout](../../glossary.md#layout)'s `layout.s` in [Layouts](../layout/README.md) places its tileset from
 `tileset/`.
 
@@ -262,7 +262,7 @@ the code that loads them: battle animations, maps, layouts, windows and menus.
 | `text/numwords.c` | the counted nouns the German message decoder writes after a number |
 | `text/genders.s` | the grammatical gender of each item name, for the German and Italian [editions](../../glossary.md#editions) |
 | `text/decode_symbol.s`, [`render/decode.s`](render/decode.s), `tile/*.s` | handwritten ARM and Thumb decoders, copiers and a dot product, each proven in its header |
-| `battle_fx/` | the battle animations' sheets and masks, loaded by resource id |
+| `battle_anims/` | the battle animations' sheets and masks, loaded by resource id |
 | `ui/` | window tiles, the small font, icons and menu sprites |
 | `font/` | the main text font in each language's version (`gFont_Glyphs`) |
 | `world_map/` | the world map's tiles and palettes and the story frames |

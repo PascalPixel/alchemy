@@ -64,8 +64,8 @@
 #include "map_ids.h"
 #include "unit/map/tret_tree_interiors.h"
 #include "unit/map/common/effect_spawn.h"
-#include "unit/object/object.h"
-#include "unit/object/psynergy_effects.h"
+#include "unit/overworld/overworld.h"
+#include "unit/overworld/psynergy_effects.h"
 #include "unit/game/game.h"
 #include "unit/runtime/runtime.h"
 

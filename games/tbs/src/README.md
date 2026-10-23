@@ -17,8 +17,8 @@ their banks out.
 
 The field is split four ways. [Field](field/README.md) is the engine under
 every town, dungeon and the world map: the [objects](../glossary.md#object), movement, and
-loading, scrolling and drawing the map grid. [Running a map](object/README.md),
-the `object` folder (named after the bank it fills, not after objects), runs
+loading, scrolling and drawing the map grid. [Running a map](overworld/README.md),
+the `overworld` folder, runs
 one map on that engine, from its set-up to the [warp](../glossary.md#warp) the party leaves
 by, with random encounters, field [Psynergy](../glossary.md#psynergy-and-pp) and the commands map scripts
 use; `Game_Run`, the loop that runs one map after another, is there too.
@@ -28,7 +28,7 @@ holds the [layouts](../glossary.md#layout) as data.
 
 [Battles](battle/README.md) runs a fight: turn order, the enemies' choices,
 what each ability does to its targets and the spoils.
-[Battle animations](effect/README.md) draws what each ability shows on screen,
+[Battle animations](battle_anim/README.md) draws what each ability shows on screen,
 one function for each animation.
 
 [Windows](window/README.md) draws the framed boxes text appears in, decodes
@@ -75,15 +75,15 @@ and its table serves only the overlays
 | `rom_main_01` | field | the field engine | `field` |
 | `rom_main_02` | window | windows and text | `window` |
 | `rom_main_03` | game | the game's rules and state | `game` |
-| `rom_main_04` | object | running a map | `object` |
+| `rom_main_04` | object | running a map | `overworld` |
 | `rom_main_05` | menu | the field menu | `menu` |
 | `rom_main_06` | shop | shops and inns | `shop` |
 | `rom_main_07` | battle | battles | `battle` |
-| `rom_main_08` | effect | battle animations | `effect` |
+| `rom_main_08` | effect | battle animations | `battle_anim` |
 | `rom_main_09` | scroll | the credits | `graphics/credits` |
 | `rom_main_10` | palette | the title intro, the logos and the palette fade | `graphics/title` |
 | `rom_main_11` | blank run | Lucky Dice | `field` |
-| `rom_main_12` | blank load | Lucky Wheels | `object` |
+| `rom_main_12` | blank load | Lucky Wheels | `overworld` |
 | `rom_main_13` | sound | the song layer | `sound` |
 
 The place is the bank's name in `objects.tsv` and the linker scripts,
@@ -102,7 +102,7 @@ three overlays beside its bank.
 Every file the build compiles or assembles is one object, and an object too
 long to read as one file is written as parts that only its `.c` compiles.
 Object here means the linker's object file; it has nothing to do with the
-`object` folder or the object events on a map.
+field's objects or the object events on a map.
 
 [The original](../glossary.md#the-original) program was built from pieces, objects, laid one after another in
 a fixed order, and within an object the code lies in the order it was
@@ -145,7 +145,7 @@ packed on the cartridge and unpacked into one 32 KB area of EWRAM when the
 party arrives ([Engine](../engine.md#overlays)). The map table,
 `gMapHeaders` in [field/maps.s](field/maps.s), has 201 maps, and the
 rooms of one dungeon often share one overlay. `Map_LoadOverlay`
-([object/object/map.c](object/object/map.c)) unpacks the overlay a map's row
+([overworld/overworld/map.c](overworld/overworld/map.c)) unpacks the overlay a map's row
 names before `Map_Run` runs it; a battle or a minigame is main-image
 code and loads none.
 
@@ -252,7 +252,7 @@ to read whole. [Runtime](runtime/README.md) follows the same path.
 
 To find the code behind something in the game, search for its English name.
 Each animation's comment names the abilities that play it, so searching
-`effect/` for Quake finds [effect/parts/quake.c](effect/parts/quake.c). Each
+`battle_anim/` for Quake finds [battle_anim/parts/quake.c](battle_anim/parts/quake.c). Each
 place's code is the map named for it. The game's text is in
 [`games/tbs/text`](../text), a PO catalog for each language, where each message
 carries its linker name: "(No saved data)" is `MsgSaveNoData`, which leads to

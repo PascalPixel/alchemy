@@ -48,7 +48,7 @@ Three habits of the game account for nearly every unused row on this page:
 - A cell the [party](glossary.md#the-party) can reach only by crossing other cells finds their
   events already run.
 
-`Map_FindEvent` ([events.c](src/object/object/events.c)) walks the table from
+`Map_FindEvent` ([events.c](src/overworld/overworld/events.c)) walks the table from
 the top and returns the first row whose kind, [trigger](glossary.md#trigger) and condition fit, so
 a row behind one for the same person or cell whose condition always holds
 is never returned. The walk stops

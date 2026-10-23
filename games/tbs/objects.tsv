@@ -97,17 +97,17 @@ main	rom_main_03	games/tbs/src/game/classes
 main	rom_main_03	games/tbs/src/game/element_table
 main	rom_main_03	games/tbs/src/game/djinn_table
 main	rom_main_04	games/tbs/src/system/far_call/OBJECT
-main	rom_main_04	games/tbs/src/object/object
-main	rom_main_04	games/tbs/src/object/psynergy_effects
-main	rom_main_04	games/tbs/src/object/arcspark
-main	rom_main_04	games/tbs/src/object/location_rules
-main	rom_main_04	games/tbs/src/object/zonedata
-main	rom_main_04	games/tbs/src/object/map_rules
-main	rom_main_04	games/tbs/src/object/battle_cue
-main	rom_main_04	games/tbs/src/object/swatch
-main	rom_main_04	games/tbs/src/object/fxdata
+main	rom_main_04	games/tbs/src/overworld/overworld
+main	rom_main_04	games/tbs/src/overworld/psynergy_effects
+main	rom_main_04	games/tbs/src/overworld/arcspark
+main	rom_main_04	games/tbs/src/overworld/location_rules
+main	rom_main_04	games/tbs/src/overworld/zonedata
+main	rom_main_04	games/tbs/src/overworld/map_rules
+main	rom_main_04	games/tbs/src/overworld/battle_cue
+main	rom_main_04	games/tbs/src/overworld/swatch
+main	rom_main_04	games/tbs/src/overworld/fxdata
 main	rom_main_04	games/tbs/src/field/maps
-main	rom_main_04	games/tbs/src/object/scripts
+main	rom_main_04	games/tbs/src/overworld/scripts
 main	rom_main_05	games/tbs/src/system/far_call/MENU
 main	rom_main_05	games/tbs/src/menu/menu
 main	rom_main_05	games/tbs/src/graphics/ui/menuspr
@@ -124,11 +124,11 @@ main	rom_main_07	games/tbs/src/battle/battle_data
 main	rom_main_07	games/tbs/src/battle/advarrow
 main	rom_main_07	games/tbs/src/battle/battle_vars
 main	rom_main_08	games/tbs/src/system/far_call/EFFECT
-main	rom_main_08	games/tbs/src/effect/effect	.text .data
-main	rom_main_08	games/tbs/src/effect/battle_effect_composite
-main	rom_main_08	games/tbs/src/effect/effect_table	.data
-main	rom_main_08	games/tbs/src/effect/battle_effect_composite_color
-main	rom_main_08	games/tbs/src/effect/effect_bits	.data
+main	rom_main_08	games/tbs/src/battle_anim/battle_anim	.text .data
+main	rom_main_08	games/tbs/src/battle_anim/battle_anim_composite
+main	rom_main_08	games/tbs/src/battle_anim/battle_anim_table	.data
+main	rom_main_08	games/tbs/src/battle_anim/battle_anim_composite_color
+main	rom_main_08	games/tbs/src/battle_anim/battle_anim_bits	.data
 main	rom_main_09	games/tbs/src/system/far_call/SCROLL
 main	rom_main_09	games/tbs/src/graphics/tile/dot_product
 main	rom_main_09	games/tbs/src/graphics/tile/expand	.rodata
@@ -143,7 +143,7 @@ main	rom_main_10	games/tbs/src/graphics/title/intro
 main	rom_main_11	games/tbs/src/system/far_call/BLANK_RUN
 main	rom_main_11	games/tbs/src/field/lucky_dice
 main	rom_main_12	games/tbs/src/system/far_call/BLANK_LOAD
-main	rom_main_12	games/tbs/src/object/colorfx
+main	rom_main_12	games/tbs/src/overworld/colorfx
 main	rom_main_13	games/tbs/src/system/far_call/SOUND
 main	rom_main_13	games/tbs/src/sound/sound	.text
 main	rom_main_13	games/tbs/src/sound/umul_high	.text .padding
@@ -439,7 +439,7 @@ main	rom_tail_02	games/tbs/src/graphics/title/title
 main	rom_tail_02	games/tbs/src/graphics/backdrop/backdrop
 main	rom_tail_02	games/tbs/src/graphics/slots/slots
 main	rom_tail_02	games/tbs/src/graphics/lucky_dice/lucky_dice
-main	rom_tail_02	games/tbs/src/graphics/battle_fx/battlefx
+main	rom_tail_02	games/tbs/src/graphics/battle_anims/battle_anims
 main	rom_tail_02	games/tbs/src/layout/world_map
 main	rom_tail_02	games/tbs/src/graphics/world_map/worldmap
 main	rom_tail_02	games/tbs/src/layout/colosso/colosso

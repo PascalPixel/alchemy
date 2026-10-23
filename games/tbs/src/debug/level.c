@@ -1,7 +1,7 @@
 #include "game_state.h"
 #include "unit/debug/level.h"
-#include "unit/object/object.h"
-#include "unit/object/psynergy_effects.h"
+#include "unit/overworld/overworld.h"
+#include "unit/overworld/psynergy_effects.h"
 #include "unit/game/game.h"
 #include "unit/window/window.h"
 #include "unit/window/battle_command.h"
@@ -531,7 +531,7 @@ static void IncreaseItemAndLevel_ShowGlyphCaptions(void) {
 
 /// Keeps Force from moving LOCALID_PORTRAIT_BROWSER: run at phase 1 of Force
 /// cast at it, this sets the effect's childMode, and Force's shot then leaves
-/// its target where it is (object/psynergy_effects/force.c).
+/// its target where it is (overworld/psynergy_effects/force.c).
 static void IncreaseItemAndLevel_EnableEffectChildMode(void) {
   struct FieldEffectWork *effectWork =
       (struct FieldEffectWork *)gFieldEffectWork;

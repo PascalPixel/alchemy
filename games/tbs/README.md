@@ -27,7 +27,7 @@ end of the map table: it runs, and then the game picks the map to go back
 to, most often the map the battle started from, with everyone where they
 stood.
 
-`Game_Run`, in [object/map.c](src/object/object/map.c), is this loop of
+`Game_Run`, in [overworld/map.c](src/overworld/overworld/map.c), is this loop of
 maps, and it never returns. `System_Initialize` calls it at power-on
 with `GAME_RUN_TITLE`, which makes the title screen (`MapId_Title`) the
 first map. The current map and the warp destination the party arrives by
@@ -79,8 +79,8 @@ Then it does one of two things:
 
 A random battle is therefore a warp like any other: the field map sets
 the next map to `RUN_BATTLE` and leaves, and the loop loads it again
-afterwards. [Running a map](src/object/README.md), the guide to the
-`object` folder, follows a field map
+afterwards. [Running a map](src/overworld/README.md), the guide to the
+`overworld` folder, follows a field map
 from `Map_Run` to its warp, including how a battle is chosen from the
 encounter zones in `encounter.tsv`.
 
@@ -350,10 +350,9 @@ program is cut into banks.
 The source's folders follow the cartridge:
 
 - The nine large banks each have a folder, in the order the cartridge holds
-  them: `runtime`, `field`, `window`, `game`, `object`, `menu`, `shop`,
-  `battle` and `effect`. A folder takes its bank's name, which is not always
-  what it holds: `object` runs a map from arrival to warp, while `field`
-  moves and draws the objects.
+  them: `runtime`, `field`, `window`, `game`, `overworld`, `menu`, `shop`,
+  `battle` and `battle_anim`. A folder takes its bank's name: `overworld`
+  runs a map from arrival to warp, while `field` moves and draws the objects.
 - The five small banks' code sits in the folder it belongs with.
 - `graphics`, `layout`, `sound` and `system` are grouped by topic, and their
   files are linked into whichever bank or image needs them.

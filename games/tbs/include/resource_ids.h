@@ -49,7 +49,7 @@ extern char ResourceId_WorldMapPicture;
 extern char ResourceId_IntroTilesB;
 
 // Battle backgrounds. BattleBackground_SelectForMap picks one for the current
-// map from gBattleBackground_Maps (object/map_rules.s), and on the world
+// map from gBattleBackground_Maps (overworld/map_rules.s), and on the world
 // map BattleBackground_SelectForEnvironment picks one by battle environment;
 // either leaves it in gGameState.special for the battle. The credits
 // (gCredits_Backgrounds) shows every one but DesertBackdrop and
@@ -137,7 +137,7 @@ extern char ResourceId_LuckyDiceBoard;
 /// The Lucky Dice sprites and their colours.
 extern char ResourceId_LuckyDiceSprites;
 
-// The flashing strikes' pictures (effect/parts/thrash.c). Each holds two
+// The flashing strikes' pictures (battle_anim/parts/thrash.c). Each holds two
 // pictures; the first of a pair fills work->imageStorage, the second the start
 // of Ram_MapGridCellBuffer.
 

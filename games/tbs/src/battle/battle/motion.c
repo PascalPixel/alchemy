@@ -156,8 +156,8 @@ void BattleMotion_InitializeObject(s32 unitId) {
 /// Knocks unit id back by the speed, hop and distance of the knockback
 /// variant (enum BattleKnockback), and puts it in POSE_DAMAGE.
 /// The Fusion Dragon only takes the pose. Reached through its far stub from
-/// the battle animations, by the ANIM_STRIKE_TARGET macro of effect_internal.h
-/// and directly.
+/// the battle animations, by the ANIM_STRIKE_TARGET macro of
+/// battle_anim_internal.h and directly.
 void BattleMotion_ApplyKnockback(s32 unitId, s32 variant) {
   struct BattleObject *battleObject;
   struct MotionObject *object;

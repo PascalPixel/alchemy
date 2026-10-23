@@ -297,7 +297,7 @@ void Object_Destroy(struct DispatchObject *work);
 void ObjectEventTemplate_ClipToView(struct ObjectEventTemplate *templates);
 void ObjectEventTemplate_Prepare(struct ObjectEventTemplate *templates);
 
-// The field effects' scripts and tables (object/fxdata.c, scripts.s and
+// The field effects' scripts and tables (overworld/fxdata.c, scripts.s and
 // arcspark.s).
 extern u16 gFieldEffect_CyclePatternWords[];
 extern s8 gFieldEffect_RandomChildValues[];

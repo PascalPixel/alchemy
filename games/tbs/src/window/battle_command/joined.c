@@ -102,7 +102,7 @@ s32 ColossoMenu_Choose(s32 unused) {
 /// plays, until it ends or A, B, L or R is pressed. The message is
 /// `The <element> Djinni <name> joined <member>.`, with the element's Djinni
 /// portrait. `djinn` is the Djinni's number in its element. The field's
-/// Djinni events reach it by far call (object/psynergy_effects/djinni.c). It
+/// Djinni events reach it by far call (overworld/psynergy_effects/djinni.c). It
 /// closes the window at once (Window_Close with instant set), waits a
 /// frame and frees the portrait's VRAM slot.
 void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
@@ -185,7 +185,7 @@ s32 Party_LookupCharacterValueByFlag32(u32 index) {
 /// Shows that a member joined the party while the join fanfare (sound 81)
 /// plays, until it ends or A, B, L or R is pressed. The message is
 /// `<member> joined your party.`, with the member's portrait. The field's
-/// party events reach it by far call (object/psynergy_effects/script.c).
+/// party events reach it by far call (overworld/psynergy_effects/script.c).
 void Party_ShowJoinedMessage(s32 member) {
   struct WindowWork *work = (struct WindowWork *)*gWindowWork;
   struct Window *window = NULL;

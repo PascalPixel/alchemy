@@ -14,9 +14,15 @@ function only matches in an odd shape until someone finds the plain one. When
 you're reading the source and a line looks stranger than it needs to be, the
 reason is usually written down here.
 
+The build makes twelve [editions](../glossary.md#editions): two games, [The Broken Seal](../glossary.md#the-two-games) (`tbs`) and The
+Lost Age (`tla`), each in Japanese, English, German, Spanish, French and
+Italian (`tbs-ja` to `tbs-it`). The Broken Seal's six are rebuilt entirely
+from source; The Lost Age is still being matched. Measurements on this page
+are taken in `tbs-en`, the English edition, unless they say otherwise.
+
 ## How a build is judged
 
-Each built [edition](../glossary.md#editions) is compared with the original cartridge by its
+Each built edition is compared with the original cartridge by its
 fingerprint, and twelve matching fingerprints are a pass.
 
 ![The build never sees the original cartridge, only its fingerprint: a SHA-1 hash, 40 characters long, recorded in rom.sha1. Each built edition is hashed the same way. When the English build of The Broken Seal comes out byte for byte the same as the cartridge, its fingerprint is identical, starting 5c4695205413, and the edition prints OK. Changing a single bit anywhere in its 8 MB, as a test, gives a completely different fingerprint, starting c214a5f65e8b. The fingerprint says whether the build is exact, never where it differs.](https://alchemy.pascalpixel.com/illustrations/matching/fingerprint.svg)
@@ -32,13 +38,18 @@ The judgement is a hash of the whole image because the hash is the only thing
 from the original cartridge the build is allowed to see: the reference ROM
 judges the build and never feeds it. That makes the check all or nothing. One
 wrong byte anywhere fails its edition, and a hash can't say where that byte
-is. To find it, compile the one object you changed to assembly with the
-`Makefile`'s own command and diff it against a baseline with the `.L` label
-numbers ignored, or run the optional `alchemy-devtools diff` on the function.
+is. To find it, compare the compiler's output before and after your change.
+The build keeps each C file's assembly beside its object
+(`out/tbs-en/obj/games/tbs/src/runtime/runtime.s` for `runtime.c`): copy it
+from a build that compared OK, rebuild, and diff the two with the `.L` label
+numbers ignored. The optional `alchemy-devtools diff` instead compares one
+function with the original's instructions read from your own ROM; it is a
+tool for people and never part of the build.
 
-[The Broken Seal](../glossary.md#the-two-games)'s editions need no ROM at all. The Lost Age's need your own ROMs under
-`roms/`, because the parts of The Lost Age that aren't C yet still come from
-`.incbin "baserom.gba"` scaffolds under `recon/tla`, which never count.
+The Broken Seal's editions need no ROM at all. The Lost Age's need your own
+ROMs under `roms/`, because the parts of The Lost Age that aren't C yet still
+come from `.incbin "baserom.gba"` scaffolds under `recon/tla`: bytes copied
+from the ROM, which don't count as decompiled.
 
 A change made on purpose, such as a mod or a fix for one of [the original](../glossary.md#the-original)'s
 bugs, changes the bytes, so it fails the comparison. That's expected: the
@@ -63,13 +74,22 @@ device carries a tag inside the function it steers:
 
 The tag names the plain form and says how far it is from matching: N of the
 function's M instructions differ, measured over the whole function against the
-edition named. The kind says which device it is:
+edition named. A real one, from `WaitFrames`:
+
+```c
+/* FAKEMATCH(volatile): the size reread through a volatile pointer, a
+ * load apart from the test's; as *size, 2 of 403 instructions differ in
+ * tbs-en. */
+base -= *(volatile u32 *)size;
+```
+
+The kind says which device it is:
 
 - `wrapper` is a call made through a helper, a cast or a library routine in
-  place of the plain call or operator. A call through a cast to another
-  function type is one wherever the callee has a declared type, and the
-  declared call is behind `UBFIX`. A call to code that has no function type at
-  all is not (see Runtime below).
+  place of the plain call or operator. Calling a declared function through a
+  cast to another function type is a `wrapper`, with the declared call behind
+  `UBFIX`. Calling code that has no declared function type at all, such as
+  code copied into RAM, is not (see Runtime below).
 - `volatile` is a qualifier that forces a load or store to stay where it's
   written. One that is part of a macro's own form, such as the fill word of
   `Dma_Fill32` ([pret](../glossary.md#pret)'s `DmaFill32`), is no device. Nor is one on memory an
@@ -78,10 +98,10 @@ edition named. The kind says which device it is:
 - `temporary` is a variable holding a value the plain form wouldn't name.
 - `dead` is code that emits nothing and only changes which registers the
   compiler picks or the order of the instructions.
-- `one-pass` is a block or loop that runs once (`do { } while (0)`). Its loop
-  notes end a CSE block, the stretch in which the compiler's common
-  subexpression pass reuses values it has already computed, and they act as a
-  scheduling barrier that no instruction is moved across.
+- `one-pass` is a block or loop that runs once (`do { } while (0)`). GCC
+  marks every C loop with internal loop notes, and those notes end the
+  stretch in which its common subexpression pass (CSE) reuses values it has
+  already computed, and stop its scheduler moving instructions across them.
 - `barrier` is an empty `asm`. It emits nothing, but counts as four bytes when
   the compiler places literal pools, the blocks of constants it puts among a
   function's code for the function to load.
@@ -89,9 +109,10 @@ edition named. The kind says which device it is:
 - `signature` is a function declared with a return or parameter type it
   doesn't have, such as a `void` function typed `int`.
 
-A device is the last resort, used only after reshaping the code has failed,
-and taking one out again is part of humanizing, the passes that make matched C
-read like ordinary C. Some older tags in The Lost Age's code have no kind yet
+A device is the last resort, used only after reshaping the code has failed.
+Taking one out again is part of humanizing, the project's second stage after
+matching, which renames, types and explains the matched C until it reads
+like ordinary C. Some older tags in The Lost Age's code have no kind yet
 (`/* FAKEMATCH: ... */`); they mean the same thing.
 
 ### The other markers
@@ -108,10 +129,11 @@ which is off. `// UB:` marks undefined behaviour kept in the form that
 matches; the defined form is behind `UBFIX`, which `make modern` and `BUGFIX`
 both turn on.
 
-`CAMELOT_ASM("proof")` marks the few proven handwritten helpers inside C:
+`CAMELOT_ASM("proof")` marks the few handwritten instructions inside C, each
+an `asm` statement right after it whose instruction no C compiles to:
 `Dma_Set`, `Transform_SetIdentity`, `Iwram_Call2`, `WaitFrames`' stack switch,
-`MulQ16`, and the `swi 2` and `swi 3` BIOS calls. It expands to nothing. It's
-there to be read, and its proof says what no C compiles to.
+`MulQ16`, and the `swi 2` and `swi 3` BIOS calls. The macro expands to
+nothing; it is there to be read, and its proof says why the `asm` is needed.
 
 [`UNUSED`](../glossary.md#unused) marks a function nothing calls, kept because its bytes are in the
 ROM. It's GCC's `unused` attribute, so a current GCC doesn't warn about it.
@@ -119,8 +141,9 @@ ROM. It's GCC's `unused` attribute, so a current GCC doesn't warn about it.
 An assembly file in `games/` has to show why it is assembly at all: that no
 C compiler of the project's set could produce it. Each one opens with that
 proof, written as comment lines (`@` starts a comment in assembly) that begin
-`@ C2:`, after the project's counting rule, under which assembly counts as
-done only with such a proof. In a handwritten file the
+`@ C2:`. C2 is the project's counting rule, which measures how much of each
+game is rebuilt from source; under it, assembly counts only with such a
+proof. In a handwritten file the
 proof names the instruction, frame or pattern alchemy-gcc can't emit. The
 [far-call](../glossary.md#far-call) tables, such as the `entry/` and `import/` files of the debug rooms,
 the menus and the [maps](../glossary.md#map), carry one too. Each of their entries is a [veneer](../glossary.md#veneer),
@@ -144,6 +167,12 @@ equivalent (an index or a pointer form, a macro or its expansion, a cast), that
 site keeps the equivalent, untagged, and it's listed here. Each pair means the
 same thing in C, and each can still compile differently.
 
+The lists below are reference, grouped by the folders of the source: search
+them for a strange line you meet in the code rather than reading them
+through. They use the engine's words: a work slot is a [heap slot](../glossary.md#heap-slot), one of
+the numbered words of `gWorkSlot` that hold a system's working block, and an
+`ObjectEvent` is the struct an [object event](../glossary.md#object-event) is read through.
+
 ### Everywhere
 
 These turn up all over the game.
@@ -157,13 +186,15 @@ These turn up all over the game.
 - Palette RAM and VRAM are written through either a volatile pointer or a
   plain one. Palette RAM is either `BG_PLTT_COLOR`, which is volatile, or a
   plain pointer to it such as `(u16 *)&BG_PLTT_COLOR(14, 0)`.
-  `BattleEffect_RunJudgment`'s brightening ramp keeps a `volatile u16 *` from
-  `&BG_PLTT_COLOR(0, 1)`, because with a plain pointer red's mask is hoisted
-  out of the loop (24 of 2455 instructions differ in tbs-en).
+  `BattleEffect_RunJudgment`'s brightening ramp, which raises each colour's
+  red, green and blue levels in turn, keeps a `volatile u16 *` from
+  `&BG_PLTT_COLOR(0, 1)`, because with a plain pointer the mask that picks out
+  red is hoisted out of the loop (24 of 2455 instructions differ in tbs-en).
   `Menu_RunCommandRow` writes the command icons' tiles through
   `volatile u16 *vram`, because a plain pointer moves the address adds (18 of
-  1037 instructions differ in mode 1, 19 in mode 0).
-- A [work slot](../glossary.md#heap-slot) is written `WORK_SLOT(n)`, `gWorkSlot[n]`, or through a named
+  1037 instructions differ in a member's row, `COMMAND_ROW_MEMBER`, and 19 in
+  the party's, `COMMAND_ROW_PARTY`).
+- A work slot is written `WORK_SLOT(n)`, `gWorkSlot[n]`, or through a named
   pointer indexed past it (`(void **)&gCameraWork`). The last is undefined
   behaviour, with its defined form behind `UBFIX`.
 - A member can be reached through a pointer to its own type, or to its own
@@ -188,10 +219,12 @@ These turn up all over the game.
     test written as `unit->field` merges with a neighbour's into one halfword
     or word load (sleep and psySeal; delusion, confusion and charm; haunt and
     grimReaper), and 30 of 204 instructions differ in tbs-en;
-  - Altin's hop countdowns, which read and decrement `ObjectEvent.work` as a
-    signed halfword and reset it through the declared unsigned member;
-  - the Goma stump turns, which read `AnimationObject.rotation` as a signed
-    halfword, keeping the negative literal.
+  - the hop countdowns of Altin, a town (`map/altin.c`), which read and
+    decrement `ObjectEvent.work` as a signed halfword and reset it through
+    the declared unsigned member;
+  - the turns of the stump that leaps out of the way at Goma Cave's entrance
+    (`map/goma_cave_entrance.c`), which read `AnimationObject.rotation` as a
+    signed halfword, keeping the negative literal.
 - A value can be reached through a view of another type. That is undefined
   behaviour, marked `// UB:`, with the declared access behind `UBFIX`:
   - a pointer read or stored as an integer: `*(s32 *)&metadata->frames`,
@@ -200,7 +233,7 @@ These turn up all over the game.
     `gEventWork` (`TolbiShipDeck_SightLand`, where the word may alias the
     halfword facing stores before it and so stays after them); the update
     hooks `AltmillerCave_Initialize` stores as `s32` (as `->update`, one store
-    moves: 1 of 403 instructions in tbs-en); and the hooks the Goma stump
+    moves: 1 of 403 instructions in tbs-en); and the hooks the Goma Cave stump's
     turns clear as integers (otherwise the pointer store swaps with the
     [sprite](../glossary.md#sprite-and-oam)-pointer load);
   - a member stored as a pointer of another type:
@@ -211,9 +244,10 @@ These turn up all over the game.
     `list->tailLink = &node->next` (`RenderOutput_AppendToList`);
   - a member through its neighbour's pointer: `((s16 *)nativeAttributes)[7]`
     for `entry->y` (`AffineEffect_UpdateFrame`).
-- A loop can be written with `goto`. A C loop's notes let `loop.c` move
+- A loop can be written with `goto`. A C loop's notes let GCC's loop pass
+  (`loop.c` in its source) move
   constants and addresses out of the loop, strength-reduce its counters and
-  delete it when it is empty, and they let `jump.c` copy its exit test to its
+  delete it when it is empty, and they let its jump pass (`jump.c`) copy its exit test to its
   top; register allocation also counts the references inside a C loop as
   more frequent. A loop built from labels and `goto` gets none of this, so
   where the ROM shows none of it the loop stays a `goto`, and the comment
@@ -282,10 +316,10 @@ The field engine's spellings are about its map state and a few of its loops.
   stay apart because the compiler addresses a field differently by its
   declared type and by whether it is reached through a union (the
   `ObjectEvent` union moves a load), so one merged struct would change the
-  bytes at sites each view now matches. [XXX](../glossary.md#xxx): likely one struct in Camelot's
-  source, because every view describes the same 112 bytes; merging them
-  waits until every field has one name and type that every site matches
-  with.
+  bytes at sites each view now matches. They were likely one struct in
+  Camelot's source, because every view describes the same 112 bytes, but
+  that isn't known ([XXX](../glossary.md#xxx)); merging them waits until every field has one
+  name and type that every site matches with.
 
 ### Running a map
 
@@ -382,7 +416,8 @@ come down to how a struct's member is addressed.
   `WORK_SLOT(HEAP_SLOT_COLOSSO_RACE)`, whose literal pool entry is
   `gWorkSlot+236` (`Colosso_SetGaugeHold`,
   `ColosseumSatrageMatch_ApproachFinishAndTakeItem`, `ColosseumSatrageMatch_StartOpponentPath`). It's
-  the same address through another relocation, so no instruction differs.
+  the same address through another relocation, so no instruction or byte
+  differs; it is listed so a reader knows the two are one block.
   Where only the gauge is read, a `struct ColossoGaugeWork *` (the race work's
   first member) compiles the same as the race work's `->gauge`.
 - A table of three scripts is either a local `const s32 *scripts[3] = {A, B,

@@ -207,28 +207,28 @@ void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
     for (i = 0; i != 9; i++) {
       pos.x = (i % 3 << 21) + x;
       pos.y = (i / 3 << 21) + z;
-      Object_ApplyProjectedPlacementFar(work->objects[i], &pos, &normal, 0);
+      Object_ApplyProjectedPlacementFar(work->animations[i], &pos, &normal, 0);
     }
     break;
   case SUMMON_FORMATION_NEREID:
     for (i = 0; i != 12; i++) {
       pos.x = (gHelmSplitter_TwelveX[i] << 16) + x - (16 << 16);
       pos.y = (gHelmSplitter_TwelveZ[i] << 16) + z - (32 << 16);
-      Object_ApplyProjectedPlacementFar(work->objects[i], &pos, &normal, 0);
+      Object_ApplyProjectedPlacementFar(work->animations[i], &pos, &normal, 0);
     }
     break;
   case SUMMON_FORMATION_CYBELE:
     for (i = 0; i != 8; i++) {
       pos.x = (gHelmSplitter_RightEightX[i] << 16) + x + (16 << 16);
       pos.y = (gHelmSplitter_RightEightZ[i] << 16) + z;
-      Object_ApplyProjectedPlacementFar(work->objects[i], &pos, &normal, 0);
+      Object_ApplyProjectedPlacementFar(work->animations[i], &pos, &normal, 0);
     }
     break;
   case SUMMON_FORMATION_TIAMAT:
     for (i = 0; i != 8; i++) {
       pos.x = (gHelmSplitter_SmallEightX[i] << 16) + x;
       pos.y = (gHelmSplitter_SmallEightZ[i] << 16) + z;
-      Object_ApplyProjectedPlacementFar(work->objects[i], &pos, &big, 0);
+      Object_ApplyProjectedPlacementFar(work->animations[i], &pos, &big, 0);
     }
     break;
   }

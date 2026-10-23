@@ -147,15 +147,15 @@ typedef void (*SceneTaskEntry)(void);
 /// Garet, Ivan and Mia take their own actors. By the guide's and attendants'
 /// explanations, the Scales of Justice, the Stepping-Stone Stage, the Wall
 /// Wedge, the Free-Climb Area, the Moving Sidewalk Stage and another
-/// log-rolling area lead to the arena. SCALE_WEIGHT to LOG_AREA_STONE_C are
+/// log-rolling area lead to the arena. SCALES_WEIGHT to LOG_AREA_STONE_C are
 /// all drawn as the rocks of Colosseum Final 1's Rock Challenge; the
 /// attendant of this match's log-rolling area calls the ones there stones.
 enum {
-  OPPONENT = 8,        ///< Navampa, racing Isaac to the arena
-  FROST_TARGET = 9,    ///< on the eastern pan
-  SCALE_PAN_WEST = 10, ///< the Scales of Justice
-  SCALE_PAN_EAST = 11,
-  SCALE_WEIGHT = 12, ///< pushed onto the western pan
+  OPPONENT = 8,         ///< Navampa, racing Isaac to the arena
+  FROST_TARGET = 9,     ///< on the eastern pan
+  SCALES_WEST_PAN = 10, ///< the Scales of Justice
+  SCALES_EAST_PAN = 11,
+  SCALES_WEIGHT = 12, ///< pushed onto the western pan
   STONE = 13,
   /// East of the Wall Wedge's pistons, by the operator; Move on it needs
   /// nothing more (Event_IgnoreMove).
@@ -215,7 +215,7 @@ enum {
   /// ★ Named from the game: "This stage is called the Scales of Justice."
   /// (MsgColossoStageCalledScales)
   FLAG_WEIGHT_ON_SCALES =
-      FLAG_PLACE_TEMP_68, ///< SCALE_WEIGHT is on the western pan
+      FLAG_PLACE_TEMP_68, ///< SCALES_WEIGHT is on the western pan
   /// ★ Named from the game: "To get across the tank, you'll need to roll the
   /// logs." (MsgColossoAnotherLogRollingArea)
   FLAG_LONG_LOG_IN_PLACE =
@@ -389,10 +389,10 @@ static void Event_FreezeOnScales(void) {
   object->scaleX = Q16_ONE;
   object->scaleY = Q16_ONE;
 
-  object = Object_GetById(SCALE_PAN_EAST);
+  object = Object_GetById(SCALES_EAST_PAN);
   ColosseumNavampaMatch_MoveOnScales(object, PIXELS(32));
 
-  object = Object_GetById(SCALE_PAN_WEST);
+  object = Object_GetById(SCALES_WEST_PAN);
   ColosseumNavampaMatch_MoveOnScales(object, PIXELS(4));
 
   Engine_GameFlagSet(FLAG_SCALES_FROZEN);
@@ -413,15 +413,15 @@ static void Event_StepOnScales(void) {
   actor = gGameState.selectedActor;
   lowered = GameFlag_IsSet(FLAG_SCALES_FROZEN);
   if (lowered == 0) {
-    log = Object_GetById(SCALE_PAN_WEST);
+    log = Object_GetById(SCALES_WEST_PAN);
     if (log != NULL) {
       Actor_SetDestination(actor, log->x.part.pixel, log->z.part.pixel);
     }
     Engine_ActorWaitForMove(actor);
-    log = Object_GetById(SCALE_PAN_EAST);
+    log = Object_GetById(SCALES_EAST_PAN);
     log->motionFlags = lowered;
     ColosseumNavampaMatch_MoveOnScales(log, PIXELS(32));
-    log = Object_GetById(SCALE_PAN_WEST);
+    log = Object_GetById(SCALES_WEST_PAN);
     log->motionFlags = lowered;
     ColosseumNavampaMatch_MoveOnScales(log, PIXELS(4));
     rider = Object_GetById(actor);
@@ -445,15 +445,15 @@ static void Event_StepOffScales(void) {
 
   Engine_ActorSetAnimation(gGameState.selectedActor, 1);
 
-  object = Object_GetById(SCALE_PAN_EAST);
+  object = Object_GetById(SCALES_EAST_PAN);
   object->motionFlags = 0;
   ColosseumNavampaMatch_MoveOnScales(object, PIXELS(4));
 
-  object = Object_GetById(SCALE_PAN_WEST);
+  object = Object_GetById(SCALES_WEST_PAN);
   object->motionFlags = 0;
   ColosseumNavampaMatch_MoveOnScales(object, PIXELS(32));
 
-  Engine_ActorWaitForMove(SCALE_PAN_WEST);
+  Engine_ActorWaitForMove(SCALES_WEST_PAN);
   {
     Map_CopyCellAttributes(0, 25, 1, 1, 9, 12);
   }
@@ -471,20 +471,20 @@ static void Event_SetWeightOnScales(void) {
   s32 x;
   s32 z;
 
-  probe = Object_GetById(SCALE_WEIGHT);
+  probe = Object_GetById(SCALES_WEIGHT);
   x = probe->x.fixed >> 20;
   if (x == 9) {
     z = probe->z.fixed >> 20;
     if (z == 12) {
-      log = Object_GetById(SCALE_WEIGHT);
+      log = Object_GetById(SCALES_WEIGHT);
       Engine_ActorSetSpriteFlags(log, 0);
       log->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       log->motionFlags = 0;
       ColosseumNavampaMatch_MoveOnScales(log, PIXELS(4));
-      upper = Object_GetById(SCALE_PAN_EAST);
+      upper = Object_GetById(SCALES_EAST_PAN);
       upper->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       ColosseumNavampaMatch_MoveOnScales(upper, PIXELS(32));
-      lower = Object_GetById(SCALE_PAN_WEST);
+      lower = Object_GetById(SCALES_WEST_PAN);
       ColosseumNavampaMatch_MoveOnScales(lower, PIXELS(4));
       Engine_GameFlagSet(FLAG_WEIGHT_ON_SCALES);
       Map_CopyCellAttributes(15, 12, 1, 1, 13, z);
@@ -964,21 +964,21 @@ s32 ColosseumNavampaMatch_Initialize(void) {
 
   Engine_ActorSetSpriteFlags(Object_GetById(FROST_TARGET), 0);
 
-  actor = Object_GetById(SCALE_PAN_WEST);
+  actor = Object_GetById(SCALES_WEST_PAN);
   Engine_ActorSetSpriteFlags(actor, 0);
   actor->motionFlags = 0;
   actor->y.fixed = PIXELS(32);
 
-  actor = Object_GetById(SCALE_PAN_EAST);
+  actor = Object_GetById(SCALES_EAST_PAN);
   Engine_ActorSetSpriteFlags(actor, 0);
   actor->motionFlags = 0;
   actor->y.fixed = PIXELS(4);
 
   if (Engine_GameFlagIsSet(866) != 0) {
     Engine_ActorSetAnimation(FROST_TARGET, 5);
-    actor = Object_GetById(SCALE_PAN_WEST);
+    actor = Object_GetById(SCALES_WEST_PAN);
     actor->y.fixed = PIXELS(4);
-    actor = Object_GetById(SCALE_PAN_EAST);
+    actor = Object_GetById(SCALES_EAST_PAN);
     actor->y.fixed = PIXELS(32);
     Map_CopyCellAttributes(15, 12, 1, 1, 13, 12);
   } else {
@@ -995,15 +995,15 @@ s32 ColosseumNavampaMatch_Initialize(void) {
   if (Engine_GameFlagIsSet(872) != 0) {
     Map_CopyCellAttributes(15, 12, 1, 1, 13, 12);
     Map_CopyCellAttributes(1, 25, 1, 1, 9, 12);
-    actor = Object_GetById(SCALE_WEIGHT);
+    actor = Object_GetById(SCALES_WEIGHT);
     Engine_ActorSetSpriteFlags(actor, 0);
     actor->motionFlags = 0;
     actor->y.fixed = PIXELS(2);
     actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-    actor = Object_GetById(SCALE_PAN_WEST);
+    actor = Object_GetById(SCALES_WEST_PAN);
     actor->y.fixed = PIXELS(4);
     actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-    actor = Object_GetById(SCALE_PAN_EAST);
+    actor = Object_GetById(SCALES_EAST_PAN);
     actor->y.fixed = PIXELS(32);
   }
 
@@ -1092,10 +1092,10 @@ s32 ColosseumNavampaMatch_Initialize(void) {
   actor = Object_GetById(FROST_TARGET);
   actor->motionFlags = 0;
   actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-  actor = Object_GetById(SCALE_PAN_WEST);
+  actor = Object_GetById(SCALES_WEST_PAN);
   actor->motionFlags = 0;
   actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-  actor = Object_GetById(SCALE_PAN_EAST);
+  actor = Object_GetById(SCALES_EAST_PAN);
   actor->motionFlags = 0;
   actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   Engine_ActorSetAnimation(OPPONENT, WARRIOR_ANIMATION_FIGHTING_STANCE);
@@ -1546,18 +1546,18 @@ static void Event_TalkToScalesAttendant(s32 guideId) {
     Engine_EventShowMessage(guideId, 0);
     Colosso_HidePointer();
     Engine_TaskWait(2);
-    westPan = Object_GetById(SCALE_PAN_WEST);
+    westPan = Object_GetById(SCALES_WEST_PAN);
     westPan->motionFlags = 0;
     ColosseumNavampaMatch_MoveOnScales(westPan, PIXELS(4));
-    eastPan = Object_GetById(SCALE_PAN_EAST);
+    eastPan = Object_GetById(SCALES_EAST_PAN);
     eastPan->motionFlags = 0;
     ColosseumNavampaMatch_MoveOnScales(eastPan, PIXELS(32));
     FieldObject_WaitForMove(eastPan);
     Engine_EventWait(45);
-    westPanAgain = Object_GetById(SCALE_PAN_WEST);
+    westPanAgain = Object_GetById(SCALES_WEST_PAN);
     westPanAgain->motionFlags = 0;
     ColosseumNavampaMatch_MoveOnScales(westPanAgain, PIXELS(32));
-    eastPanAgain = Object_GetById(SCALE_PAN_EAST);
+    eastPanAgain = Object_GetById(SCALES_EAST_PAN);
     eastPanAgain->motionFlags = 0;
     ColosseumNavampaMatch_MoveOnScales(eastPanAgain, PIXELS(4));
     FieldObject_WaitForMove(eastPanAgain);
@@ -2506,7 +2506,7 @@ struct SceneEvent gColosseumNavampaMatchEvents[] = {
     { TOUCH_WALKING, 91, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushWeightOrCheckAhead) },
     { EVENT_TOUCH, 11, FLAG_SIDEWALK_BLOCK_KNOCKED_OFF, EVENT_SCRIPT(Event_RideMovingSidewalk) },
     { TOUCH_WALKING, 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushWeight) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), SCALE_WEIGHT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SetWeightOnScales) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), SCALES_WEIGHT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SetWeightOnScales) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), STONE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveStone) },
     { TOUCH_WALKING, 22, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushRock) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ROCK, CONDITION_ALWAYS, EVENT_SCRIPT(Event_IgnoreMove) },

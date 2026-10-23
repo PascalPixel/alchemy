@@ -376,8 +376,8 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
         place.x = (gProcne_GridX[index] << 16) + wave.x + 0x280000;
         place.height = 0xff0000 + index * 0x400000;
         place.y = ((gProcne_GridY[index] + index * 64) << 16) + wave.y;
-        Object_ApplyProjectedPlacementFar(work->objects[index], &place, &scale,
-                                          0);
+        Object_ApplyProjectedPlacementFar(work->animations[index], &place,
+                                          &scale, 0);
         index++;
       } while (index != 9);
 
@@ -582,13 +582,13 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
 
   // Put the targets back.
   EFFECT_FOR_EACH_TARGET(index, work->effect) {
-    struct MotionObject *obj;
+    struct MotionObject *object;
 
     battleObject = GetBattleObjectSlotFar(work->effect->actors[index]);
-    obj = battleObject->object;
-    obj->x = home[index].x;
-    obj->z = home[index].y;
-    obj->angle = baseAngle[index];
+    object = battleObject->object;
+    object->x = home[index].x;
+    object->z = home[index].y;
+    object->angle = baseAngle[index];
   }
 
   gProjection.centerX = 120;
@@ -597,7 +597,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
 
   index = 0;
   do {
-    ResourceObject_ReleaseFar(work->objects[index]);
+    ResourceObject_ReleaseFar(work->animations[index]);
     index++;
   } while (index != 9);
 

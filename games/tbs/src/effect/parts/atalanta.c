@@ -162,7 +162,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
         for (column = 0; column != 3; column++) {
           position.x = (pathX + 80 + column * 32) << 16;
           position.y = (64 - pathY + row * 32) << 16;
-          Object_ApplyProjectedPlacementFar(work->objects[row * 3 + column],
+          Object_ApplyProjectedPlacementFar(work->animations[row * 3 + column],
                                             &position, &gAtalanta_UnitScale, 0);
         }
       }
@@ -280,7 +280,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
   gBgScroll[1].x = scrollX;
   BattleEffect_SetupBlendedDisplay();
   for (i = 0; i != 9; i++)
-    ResourceObject_ReleaseFar(work->objects[i]);
+    ResourceObject_ReleaseFar(work->animations[i]);
   REG_BG2PA = Q_8_8(0.5);
   REG_DISPCNT = EFFECT_DISPCNT;
   Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet,

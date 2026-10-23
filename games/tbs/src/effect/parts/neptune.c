@@ -253,7 +253,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
             (((gNeptune_ObjectX[i] * 3) >> 1) << 16) + formationX - 0x200000;
         pos.y =
             (((gNeptune_ObjectY[i] * 3) >> 1) << 16) + formationZ - 0x180000;
-        Object_ApplyProjectedPlacementFar(work->objects[i], &pos, &scale, 0);
+        Object_ApplyProjectedPlacementFar(work->animations[i], &pos, &scale, 0);
       }
     }
 
@@ -596,7 +596,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
 
   // The finish: release the formation's objects, then the canvas.
   for (i = 0; i != NEPTUNE_OBJECTS; i++) {
-    ResourceObject_ReleaseFar(work->objects[i]);
+    ResourceObject_ReleaseFar(work->animations[i]);
   }
   EFFECT_FINISH_CANVAS();
 }

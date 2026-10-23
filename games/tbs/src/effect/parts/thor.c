@@ -646,7 +646,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
     BattleEffect_RunImpactBurst(SUMMON_FORMATION_THOR, formationX, formationY);
   }
   for (i = 0; i != 9; i++) {
-    ResourceObject_ReleaseFar(work->objects[i]);
+    ResourceObject_ReleaseFar(work->animations[i]);
   }
   BattleEffect_EndCanvasLayer();
 }

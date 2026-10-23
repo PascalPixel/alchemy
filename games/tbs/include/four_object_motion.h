@@ -18,7 +18,7 @@ struct FourObjectMotionState {
   /// slot.
   s16 verticalOrigins[4];
   u8 unk14c[0xd8];
-  struct AnimationObject *objects[4];
+  struct AnimationObject *animations[4];
   s16 positionsX[4]; ///< screen pixels
   /// Screen pixels; negative marks a recovering Djinni, which faces 0x8000.
   s16 positionsY[4];
@@ -28,7 +28,7 @@ struct FourObjectMotionState {
 };
 
 STATIC_ASSERT(offsetof(struct FourObjectMotionState, verticalOrigins) == 0x144);
-STATIC_ASSERT(offsetof(struct FourObjectMotionState, objects) == 0x224);
+STATIC_ASSERT(offsetof(struct FourObjectMotionState, animations) == 0x224);
 STATIC_ASSERT(offsetof(struct FourObjectMotionState, positionsX) == 0x234);
 STATIC_ASSERT(offsetof(struct FourObjectMotionState, positionsY) == 0x23c);
 STATIC_ASSERT(offsetof(struct FourObjectMotionState, phases) == 0x244);

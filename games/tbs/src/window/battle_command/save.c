@@ -705,7 +705,7 @@ void SaveMenu_ShowDjinnSprites(struct UiWindow *window, s32 x, s32 y) {
         sprite->image.priority = 0;
       }
 
-      menu->objects[i] = sprite;
+      menu->animations[i] = sprite;
       menu->positionsX[i] =
           (window->x + x + i * SAVE_MENU_SPRITE_SPACING) * 8 + 16;
       menu->positionsY[i] = (window->y + y) * 8 + 16;
@@ -723,9 +723,9 @@ void SaveMenu_HideDjinnSprites(void) {
 
   Scheduler_RemoveCallback(SaveMenu_PlaceDjinnSprites);
   for (i = 0; i < 4; i++) {
-    if (menu->objects[i] != NULL) {
-      ResourceObject_ReleaseFar(menu->objects[i]);
-      menu->objects[i] = NULL;
+    if (menu->animations[i] != NULL) {
+      ResourceObject_ReleaseFar(menu->animations[i]);
+      menu->animations[i] = NULL;
     }
   }
 }
@@ -740,7 +740,7 @@ void SaveMenu_PlaceDjinnSprites(void) {
 
   index = 0;
   do {
-    struct AnimationObject *sprite = menu->objects[index];
+    struct AnimationObject *sprite = menu->animations[index];
 
     if (sprite != NULL) {
       s32 one = 0x10000;

@@ -223,7 +223,7 @@ void BattleEffect_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
 ///
 /// Called by the summon scenes (Ramses, Nereid, Kirin, Atalanta, Cybele,
 /// Neptune, Tiamat, Procne, Boreas, Thor), Judgment and the particle streams.
-/// Fills work->objects[0] to [entryCount - 1]: object n plays animation n,
+/// Fills work->animations[0] to [entryCount - 1]: object n plays animation n,
 /// with its flags cleared and its sprite priority set. A slot whose object
 /// could not be created is left NULL.
 ///
@@ -240,11 +240,11 @@ void BattleEffect_SpawnObjects(s32 entryCount, s32 source, u32 priority) {
   do {
     struct AnimationObject *animation = ResourceObject_CreateFar(source);
 
-    work->objects[entryIndex] = animation;
+    work->animations[entryIndex] = animation;
     if (animation != 0) {
       animation->flags = 0;
       AnimationObject_SelectAnimationFar(animation, entryIndex);
-      work->objects[entryIndex]->image.priority = priority;
+      work->animations[entryIndex]->image.priority = priority;
     }
     entryIndex++;
   } while (entryIndex != entryCount);

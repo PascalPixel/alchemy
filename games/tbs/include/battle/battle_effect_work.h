@@ -106,7 +106,7 @@ struct BattleEffectWork {
   s32 bg2x;
   s32 bg2y;
   ///@}
-  struct AnimationObject *objects[16]; ///< the effect's animation objects
+  struct AnimationObject *animations[16]; ///< the effect's animation objects
   /// Each target's flash timer in frames, for effect->actors[n]: set by
   /// ObjectGroup_UpdateMembers, counted down by ObjectGroup_TickMemberTimers.
   u8 actorTimers[8];
@@ -134,7 +134,7 @@ STATIC_ASSERT(offsetof(struct BattleEffectWork, fadeFrames) == 0x77b4);
 STATIC_ASSERT(offsetof(struct BattleEffectWork, fadeStep) == 0x77b8);
 STATIC_ASSERT(offsetof(struct BattleEffectWork, win0h) == 0x77bc);
 STATIC_ASSERT(offsetof(struct BattleEffectWork, bg2x) == 0x77d0);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, objects) == 0x77d8);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, animations) == 0x77d8);
 STATIC_ASSERT(offsetof(struct BattleEffectWork, actorTimers) == 0x7818);
 STATIC_ASSERT(offsetof(struct BattleEffectWork, framesSinceTransfer) == 0x7820);
 STATIC_ASSERT(offsetof(struct BattleEffectWork, transferPending) == 0x7824);

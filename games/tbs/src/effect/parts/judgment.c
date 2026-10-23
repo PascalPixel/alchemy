@@ -318,7 +318,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
     for (i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
       place.x = ((i % 4) << 21) + (152 << 15);
       place.y = ((i / 4) << 21) + depth;
-      Object_ApplyProjectedPlacementFar(work->objects[i], &place, &pair, 0);
+      Object_ApplyProjectedPlacementFar(work->animations[i], &place, &pair, 0);
     }
 
     depth += zoom;
@@ -337,12 +337,12 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
 
     if (frame == 72) {
       for (i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
-        AnimationObject_SelectAnimationFar(work->objects[i], i + 16);
+        AnimationObject_SelectAnimationFar(work->animations[i], i + 16);
       }
     }
     if (frame == 76) {
       for (i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
-        AnimationObject_SelectAnimationFar(work->objects[i], i + 32);
+        AnimationObject_SelectAnimationFar(work->animations[i], i + 32);
       }
     }
 
@@ -450,16 +450,16 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
   Iwram_FillWords(canvas, CANVAS_BYTES, 0);
 
   for (i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
-    ResourceObject_ReleaseFar(work->objects[i]);
+    ResourceObject_ReleaseFar(work->animations[i]);
   }
 
   for (i = 0; i != JUDGMENT_DEBRIS_OBJECTS; i++) {
     struct AnimationObject *animation = ResourceObject_CreateFar(390);
-    work->objects[i] = animation;
+    work->animations[i] = animation;
     if (animation != 0) {
       animation->flags = 0;
       AnimationObject_SelectAnimationFar(animation, (i % 3));
-      work->objects[i]->image.priority = 0;
+      work->animations[i]->image.priority = 0;
     }
   }
 
@@ -959,7 +959,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
           debrisPlace.x = particle->x;
           debrisPlace.height = 0xff0000;
           debrisPlace.y = particle->y + 0xff0000;
-          Object_ApplyProjectedPlacementFar(work->objects[i], &debrisPlace,
+          Object_ApplyProjectedPlacementFar(work->animations[i], &debrisPlace,
                                             &scale, 0);
           particle->y -= particle->velocityY;
           if (particle->y < 0x100000) {
@@ -1022,7 +1022,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
 
   // The finish: release the debris objects, then the canvas and its blitter.
   for (i = 0; i != JUDGMENT_DEBRIS_OBJECTS; i++) {
-    ResourceObject_ReleaseFar(work->objects[i]);
+    ResourceObject_ReleaseFar(work->animations[i]);
   }
 
   EFFECT_FINISH_CANVAS_ONE_BLITTER();

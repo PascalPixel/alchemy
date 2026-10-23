@@ -72,11 +72,11 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
   for (i = 0; i != RAMSES_ROCKS; i++) {
     struct AnimationObject *animation = ResourceObject_CreateFar(390);
 
-    work->objects[9 + i] = animation;
+    work->animations[9 + i] = animation;
     if (animation != 0) {
       animation->flags = 0;
       AnimationObject_SelectAnimationFar(animation, i % 3);
-      work->objects[9 + i]->image.priority = 1;
+      work->animations[9 + i]->image.priority = 1;
     }
   }
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
@@ -148,7 +148,8 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
     for (i = 0; i != 7; i++) {
       position.x = (gRamses_ObjectColumns[i] << 16) + base.x - 0x200000;
       position.y = (gRamses_ObjectRows[i] << 16) + base.y - 0x200000;
-      Object_ApplyProjectedPlacementFar(work->objects[i], &position, &scale, 0);
+      Object_ApplyProjectedPlacementFar(work->animations[i], &position, &scale,
+                                        0);
     }
     // The orb circles until frame 90, 16 pixels around (156, 92), a 128th
     // of a turn a frame.
@@ -194,9 +195,11 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
       position.x = orb.x;
       position.height = -0x1000000;
       position.y = orb.y - 0x1000000;
-      Object_ApplyProjectedPlacementFar(work->objects[7], &position, &scale, 0);
+      Object_ApplyProjectedPlacementFar(work->animations[7], &position, &scale,
+                                        0);
       position.x = orb.x + 0x200000;
-      Object_ApplyProjectedPlacementFar(work->objects[8], &position, &scale, 0);
+      Object_ApplyProjectedPlacementFar(work->animations[8], &position, &scale,
+                                        0);
     }
     position.height = 0;
     // The rocks fall after frame 96, gaining 1/4 pixel a frame of speed each
@@ -210,7 +213,7 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
       if (rock->variant != 2) {
         position.x = rock->x;
         position.y = rock->y;
-        Object_ApplyProjectedPlacementFar(work->objects[9 + i], &position,
+        Object_ApplyProjectedPlacementFar(work->animations[9 + i], &position,
                                           &scale, 0);
         rock->x += rock->velocityX;
         rock->y += rock->velocityY;
@@ -312,7 +315,7 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
   EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
   BattleEffect_SetupBlendedDisplay();
   for (i = 0; i != 15; i++)
-    ResourceObject_ReleaseFar(work->objects[i]);
+    ResourceObject_ReleaseFar(work->animations[i]);
   EFFECT_FINISH_CANVAS();
 }
 

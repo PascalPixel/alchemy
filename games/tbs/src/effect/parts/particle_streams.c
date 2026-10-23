@@ -204,11 +204,11 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
       struct AnimationObject *animation =
           ResourceObject_CreateFar(483 + i * SPRITE_SECOND_PART);
 
-      work->objects[i] = animation;
+      work->animations[i] = animation;
       if (animation != 0) {
         animation->flags = 0;
         AnimationObject_SelectAnimationFar(animation, 2);
-        work->objects[i]->image.priority = 3;
+        work->animations[i]->image.priority = 3;
       }
     }
   } else {
@@ -415,18 +415,18 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
         scale.y = size;
         position.x = (x << 16) + 0x500000;
         position.y = (64 - y) << 16;
-        Object_ApplyProjectedPlacementFar(work->objects[0], &position, &scale,
-                                          0);
-        Object_ApplyProjectedPlacementFar(work->objects[1], &position, &scale,
-                                          0);
+        Object_ApplyProjectedPlacementFar(work->animations[0], &position,
+                                          &scale, 0);
+        Object_ApplyProjectedPlacementFar(work->animations[1], &position,
+                                          &scale, 0);
       } else {
         size = angle + 0x10000;
         scale.x = size;
         scale.y = size;
         position.x = (x << 16) + 0x600000;
         position.y = (96 - y) << 16;
-        Object_ApplyProjectedPlacementFar(work->objects[0], &position, &scale,
-                                          0);
+        Object_ApplyProjectedPlacementFar(work->animations[0], &position,
+                                          &scale, 0);
       }
       // A new mote rises from a random point on the lower half of a circle
       // of radius 30 * size beneath the formation.
@@ -576,8 +576,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
       AudioCommand_PlayFar(SE_145);
     if (frame == 48) {
       if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
-        ResourceObject_ReleaseFar(work->objects[0]);
-        ResourceObject_ReleaseFar(work->objects[1]);
+        ResourceObject_ReleaseFar(work->animations[0]);
+        ResourceObject_ReleaseFar(work->animations[1]);
         BattleObject_PutFar();
       }
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
@@ -683,14 +683,17 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
       scale.y = size;
       position.x = (x << 16) + 0x600000;
       position.y = (96 - y) << 16;
-      Object_ApplyProjectedPlacementFar(work->objects[0], &position, &scale, 0);
-      Object_ApplyProjectedPlacementFar(work->objects[1], &position, &scale, 0);
+      Object_ApplyProjectedPlacementFar(work->animations[0], &position, &scale,
+                                        0);
+      Object_ApplyProjectedPlacementFar(work->animations[1], &position, &scale,
+                                        0);
     } else {
       scale.x = grow;
       scale.y = grow;
       position.x = (x << 16) + 0x600000;
       position.y = (96 - y) << 16;
-      Object_ApplyProjectedPlacementFar(work->objects[0], &position, &scale, 0);
+      Object_ApplyProjectedPlacementFar(work->animations[0], &position, &scale,
+                                        0);
     }
     work->shakeFrames = 1;
     Camera_ApplyShake(8, 8);
@@ -699,7 +702,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
   Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   if (mode == PARTICLE_STREAMS_METEOR)
-    ResourceObject_ReleaseFar(work->objects[0]);
+    ResourceObject_ReleaseFar(work->animations[0]);
   BattleEffect_EndCanvasLayer();
 }
 

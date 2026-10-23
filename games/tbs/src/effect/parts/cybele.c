@@ -180,9 +180,9 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
       s32 pose = (frame - 48) / 24 % 3;
 
       AnimationObject_SelectAnimationFar(
-          work->objects[3], gCybele_ObjectPoses[pose][CYBELE_POSE_OBJECT3]);
+          work->animations[3], gCybele_ObjectPoses[pose][CYBELE_POSE_OBJECT3]);
       AnimationObject_SelectAnimationFar(
-          work->objects[4], gCybele_ObjectPoses[pose][CYBELE_POSE_OBJECT4]);
+          work->animations[4], gCybele_ObjectPoses[pose][CYBELE_POSE_OBJECT4]);
     }
 
     // Frames 72 to 127: thorn i flies from frame 72 + i until it reaches
@@ -541,7 +541,7 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
   EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
   BattleEffect_RunImpactBurst(SUMMON_FORMATION_CYBELE, 128 << 16, height);
   for (i = 0; i != 8; i++)
-    ResourceObject_ReleaseFar(work->objects[i]);
+    ResourceObject_ReleaseFar(work->animations[i]);
   BattleEffect_EndCanvasLayer();
 }
 

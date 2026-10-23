@@ -4,7 +4,7 @@
 
 #include "../effect_internal.h"
 
-#define KIRIN_OBJECTS 9 ///< objects in the row, work->objects[0] to [8]
+#define KIRIN_OBJECTS 9 ///< objects in the row, work->animations[0] to [8]
 /// One 48x32 fire blob picture; the fire sheet holds four.
 #define KIRIN_BLOB_BYTES (48 * 32)
 
@@ -200,7 +200,8 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
       do {
         place.x = ((baseX + gKirin_Columns[i] - lift) << 16) + (224 << 16);
         place.y = ((gKirin_Rows[i] - wave) << 16) + (144 << 15);
-        Object_ApplyProjectedPlacementFar(work->objects[i], &place, &pair, 0);
+        Object_ApplyProjectedPlacementFar(work->animations[i], &place, &pair,
+                                          0);
         i++;
       } while (i != KIRIN_OBJECTS);
     }
@@ -303,7 +304,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
 
   i = 0;
   do {
-    struct AnimationObject *animation = work->objects[i];
+    struct AnimationObject *animation = work->animations[i];
 
     animation->image.priority = 3;
     i++;
@@ -368,7 +369,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
         do {
           risePlace.x = (rowX + gKirin_Columns[i]) << 16;
           risePlace.y = ((gKirin_Rows[i] - rise) << 16) + (144 << 15);
-          Object_ApplyProjectedPlacementFar(work->objects[i], &risePlace,
+          Object_ApplyProjectedPlacementFar(work->animations[i], &risePlace,
                                             &riseScaleCopy, 0);
           i++;
         } while (i != KIRIN_OBJECTS);
@@ -480,7 +481,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
   EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
   i = 0;
   do {
-    ResourceObject_ReleaseFar(work->objects[i]);
+    ResourceObject_ReleaseFar(work->animations[i]);
     i++;
   } while (i != KIRIN_OBJECTS);
   EFFECT_FINISH_CANVAS_ONE_BLITTER();

@@ -134,11 +134,11 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
   for (i = 0; i != GAIA_ROCKS; i++) {
     struct AnimationObject *rock = ResourceObject_CreateFar(390);
 
-    work->objects[i] = rock;
+    work->animations[i] = rock;
     if (rock != 0) {
       rock->flags = 0;
       AnimationObject_SelectAnimationFar(rock, i / 4);
-      work->objects[i]->image.priority = 1;
+      work->animations[i]->image.priority = 1;
     }
   }
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
@@ -304,7 +304,7 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
           // DEAD: always true, as slot is a remainder of a positive count; the
           // ROM keeps the test.
           if (slot != -1)
-            Object_ApplyProjectedPlacementFar(work->objects[slot], &position,
+            Object_ApplyProjectedPlacementFar(work->animations[slot], &position,
                                               &scale, 0);
           rock->y -= rock->z;
           rock->velocityX += rock->velocityY;
@@ -358,7 +358,7 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
   Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
   for (i = 0; i != GAIA_ROCKS; i++)
-    ResourceObject_ReleaseFar(work->objects[i]);
+    ResourceObject_ReleaseFar(work->animations[i]);
   BattleEffect_EndCanvasLayer();
 }
 

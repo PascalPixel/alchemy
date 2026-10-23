@@ -8,9 +8,6 @@
 #define SPRITE_ISAAC_MACHETE 480
 #define SPRITE_GARET_MACHETE 482
 
-/// BattleObject.scale and MotionObject scales are 16.16 fixed point.
-#define SCALE_ONE 0x10000
-
 /// BattleObject.effect as a battle object is made: the sprite
 /// BattleObject_SpawnObjectsForList adds as a layer of every one-part body
 /// (NARROW_EFFECT_SPRITE on a body 32 pixels wide). Its 64 by 64 picture
@@ -92,7 +89,7 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   // (0x18000 is 1.5, 0xe666 0.9). Grouping equal scale cases shortens the
   // matching EN function by 148 bytes, so each case keeps its own store.
   // Bandit and Orc Captain are set to 1.0 again.
-  actor->scale = SCALE_ONE;
+  actor->scale = Q16_ONE;
   switch (unit->classId) {
   case ENEMY_KILLER_APE:
     actor->scale = 0x19999;
@@ -272,8 +269,8 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
     object->scaleX = 0x14ccc;
     object->scaleY = 0x14ccc;
   } else {
-    object->scaleX = SCALE_ONE;
-    object->scaleY = SCALE_ONE;
+    object->scaleX = Q16_ONE;
+    object->scaleY = Q16_ONE;
   }
   ObjectDispatch_InitializeFar((struct DispatchObject *)object,
                                gBattlePresentation_ActorObjectScript);

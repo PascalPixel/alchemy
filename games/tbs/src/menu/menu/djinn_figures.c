@@ -15,11 +15,11 @@ void FourObjectMotion_InitializeTopRow(void *unused0, s32 unused1) {
   s32 index;
 
   for (index = 0; index < 4; index++) {
-    struct AnimationObject *animation = state->objects[index];
+    struct AnimationObject *animation = state->animations[index];
 
     if (animation != NULL) {
       ResourceObject_ReleaseFar(animation);
-      state->objects[index] = NULL;
+      state->animations[index] = NULL;
     }
   }
 
@@ -30,7 +30,7 @@ void FourObjectMotion_InitializeTopRow(void *unused0, s32 unused1) {
     if (animation != NULL) {
       AnimationObject_SelectAnimationFar(animation, 2);
     }
-    state->objects[index] = animation;
+    state->animations[index] = animation;
     state->positionsX[index] = 0x10;
     state->positionsY[index] = 0x20;
   }
@@ -47,11 +47,11 @@ void FourObjectMotion_InitializeTopRow(void *unused0, s32 unused1) {
     s32 index = 0;                                                             \
                                                                                \
     do {                                                                       \
-      struct AnimationObject *object = state->objects[index];                  \
+      struct AnimationObject *object = state->animations[index];               \
                                                                                \
       if (object != NULL) {                                                    \
         ResourceObject_ReleaseFar(object);                                     \
-        state->objects[index] = NULL;                                          \
+        state->animations[index] = NULL;                                       \
       }                                                                        \
       index++;                                                                 \
     } while (index < 4);                                                       \
@@ -80,7 +80,7 @@ void FourObjectMotion_UpdateAllPositions(void) {
 
   index = 0;
   while (1) {
-    struct AnimationObject *animation = state->objects[index];
+    struct AnimationObject *animation = state->animations[index];
 
     if (animation != 0) {
       u32 vertical = FOUR_OBJECT_MOTION_ORIGIN_Y -
@@ -114,7 +114,7 @@ void FourObjectMotion_UpdateBottomRow(void) {
   Link_DrawShiftedTilePairFar(UI_PAGE_ARROW_VRAM);
   objectIndex = 0;
   do {
-    struct AnimationObject *animation = menu->objects[objectIndex];
+    struct AnimationObject *animation = menu->animations[objectIndex];
 
     if (animation != 0) {
       u32 projectedY =
@@ -162,11 +162,11 @@ void FourObjectMotion_InitializeBottomRow(s32 unused0, s32 unused1) {
   s32 index;
 
   for (index = 0; index < 4; index++) {
-    struct AnimationObject *animation = state->objects[index];
+    struct AnimationObject *animation = state->animations[index];
 
     if (animation != NULL) {
       ResourceObject_ReleaseFar(animation);
-      state->objects[index] = NULL;
+      state->animations[index] = NULL;
     }
   }
   for (index = 0; index < 4; index++) {
@@ -175,7 +175,7 @@ void FourObjectMotion_InitializeBottomRow(s32 unused0, s32 unused1) {
 
     if (animation != NULL)
       AnimationObject_SelectAnimationFar(animation, 2);
-    state->objects[index] = animation;
+    state->animations[index] = animation;
     state->phases[index] = 0x10000;
     state->positionsX[index] = 0x10;
     state->positionsY[index] = 0xc8;
@@ -190,7 +190,7 @@ void FourObjectMotion_InitializeBottomRow(s32 unused0, s32 unused1) {
 s32 FourObjectMotion_SetSlotPosition(s32 index, s32 x, s32 y, s32 negative) {
   struct FourObjectMotionState *state = gMenuWork;
 
-  if (state->objects[index] != NULL) {
+  if (state->animations[index] != NULL) {
     state->positionsX[index] = x;
     state->positionsY[index] = negative != 0 ? y | (s32)0xffff8000 : y;
     return 0x23c + index * 2;
@@ -214,9 +214,9 @@ s32 FourObjectMotion_SetSlotPhase(s32 index, s32 phase) {
 s32 FourObjectMotion_ReplaceSlot(s32 index, s32 resourceKind, s32 value) {
   struct FourObjectMotionState *state = gMenuWork;
 
-  if (state->objects[index] != NULL) {
-    ResourceObject_ReleaseFar(state->objects[index]);
-    state->objects[index] = NULL;
+  if (state->animations[index] != NULL) {
+    ResourceObject_ReleaseFar(state->animations[index]);
+    state->animations[index] = NULL;
   }
   {
     struct AnimationObject *animation =
@@ -224,7 +224,7 @@ s32 FourObjectMotion_ReplaceSlot(s32 index, s32 resourceKind, s32 value) {
 
     if (animation != NULL)
       AnimationObject_SelectAnimationFar(animation, value);
-    state->objects[index] = animation;
+    state->animations[index] = animation;
   }
   return 1;
 }

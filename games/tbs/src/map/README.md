@@ -219,7 +219,7 @@ such case.
 A cutscene is written as a list of what happens, one step to a line, and the
 game plays it from top to bottom while the party waits.
 
-![A cutscene runs from top to bottom. The script a woman in Vale runs when Isaac talks to her after Kalay, one step to a line with how long each step holds the scene. The player loses control. The view starts to shake, and the script waits ten frames. The shake is set to die away. She says "Aghh! I felt another one!", which holds until the player answers it and then twenty frames more. She turns to face Isaac and the scene holds twenty frames. She says the next line, which holds until the player answers it. Then the player has control again.](https://alchemy.pascalpixel.com/illustrations/scene/script-steps.svg)
+![A cutscene runs from top to bottom. At the top, the scene as the game plays it, each message answered: the view shakes, she cries out, turns to Isaac and speaks again. The script a woman in Vale runs when Isaac talks to her after Kalay, one step to a line with how long each step holds the scene. The player loses control. The view starts to shake, and the script waits ten frames. The shake is set to die away. She says "Aghh! I felt another one!", which holds until the player answers it and then twenty frames more. She turns to face Isaac and the scene holds twenty frames. She says the next line, which holds until the player answers it. Then the player has control again.](https://alchemy.pascalpixel.com/illustrations/scene/script-steps.svg)
 
 A step that takes time, such as a wait, a line of dialogue or someone
 walking somewhere, waits inside itself, so the next line starts only when it

@@ -110,7 +110,7 @@ Everything on the field that moves or changes by itself, the party, the
 townspeople, the camera, even the footprints the leader leaves in snow, is a
 field object, and each one runs a small script.
 
-![Three field objects and their scripts. The leader moves by the direction pad, waits one frame and repeats, for good. The camera follows the leader, waits one frame and repeats. A footprint waits 120 frames and then disappears. Each frame every object runs its steps in order until one says to wait, which ends its turn until the next frame.](https://alchemy.pascalpixel.com/illustrations/field/object-scripts.svg)
+![Three field objects and their scripts. The leader moves by the direction pad, waits one frame and repeats, for good. The camera follows the leader, waits one frame and repeats. A footprint waits 120 frames and then disappears. Each frame every object runs its steps in order until one says to wait, which ends its turn until the next frame. Below, Isaac in Imil's snow as the game draws him, with the footprints his steps left beside him.](https://alchemy.pascalpixel.com/illustrations/field/object-scripts.svg)
 
 Every frame each object takes a turn: it runs the steps of its script in
 order until one says to wait. A step that only tests something or jumps
@@ -182,7 +182,7 @@ object](src/field/README.md#how-high-a-step-can-go).
 A layout is a grid of 16-pixel squares, cells, and each cell says three things:
 what is drawn there, how high its ground is, and what standing there does.
 
-![What one cell of a layout says. A layout is a grid of square cells, 16 pixels on a side. Each cell says what is drawn there, one metatile, a 16-pixel picture made of 2 by 2 tiles, each tile an 8-pixel square; how high its ground is, flat, a slope or a step; and what standing there does: nothing, a wall, a spot this map's events name such as a door, a chest or a ladder, ground where battles start, or a ledge to jump down. The engine reads the ground to decide where the leader can step; the map's events read what standing there does to decide what happens.](https://alchemy.pascalpixel.com/illustrations/world/cell-word.svg)
+![What one cell of a layout says. Nine cells of Vale, a grass corner against a cliff, as the game draws them, with the middle cell outlined and its four tiles dotted. A layout is a grid of square cells, 16 pixels on a side. Each cell says what is drawn there, one metatile, a 16-pixel picture made of 2 by 2 tiles, each tile an 8-pixel square; how high its ground is, flat, a slope or a step; and what standing there does: nothing, a wall, a spot this map's events name such as a door, a chest or a ladder, ground where battles start, or a ledge to jump down. The engine reads the ground to decide where the leader can step; the map's events read what standing there does to decide what happens.](https://alchemy.pascalpixel.com/illustrations/world/cell-word.svg)
 
 What standing on a cell does is its metatile behavior, and it is what walls
 and map events are keyed on. Some behaviors mean the same on every map: a wall,
@@ -323,7 +323,7 @@ Using Move on a stone pillar slides it; using it on a blank wall shows the
 same hand and moves nothing. What Psynergy does to a map is decided by the
 map's own map events, and the effect only draws it.
 
-![Psynergy on the field, step by step. Isaac uses Move on the stone pillar in Vale. The game checks Psynergy can be used here and takes the PP. It runs the map's event for before the cast, if there is one. The effect plays: Move's hand appears, and it pushes the pillar only because Vale has a map event for Move on it. Last it runs the map's event for after the cast, which notes where the pillar now stands and makes its new cell solid.](https://alchemy.pascalpixel.com/illustrations/object/psynergy-phases.svg)
+![Psynergy on the field, step by step. At the top, the cast as the game plays it: the screen tints, Move's hand pushes the pillar, and the colours come back. Isaac uses Move on the stone pillar in Vale. The game checks Psynergy can be used here and takes the PP. It runs the map's event for before the cast, if there is one. The effect plays: Move's hand appears, and it pushes the pillar only because Vale has a map event for Move on it. Last it runs the map's event for after the cast, which notes where the pillar now stands and makes its new cell solid.](https://alchemy.pascalpixel.com/illustrations/object/psynergy-phases.svg)
 
 Choosing Psynergy from the menu or a shortcut raises the `psynergy` request,
 and `Field_UsePsynergy` checks it can be used there, pays the PP and looks up

@@ -332,7 +332,7 @@ layout's tile animation script says which pictures to copy over which tiles and
 how long to wait between them; its blend script changes, in the same way, how
 the layers mix.
 
-![One channel of a layout's tile animation. Several pictures of the same patch of the map are stored apart from the tiles on screen. The channel copies the first over the patch's tiles, waits a few frames, copies the second, waits, and so on, then goes back to the first. Nothing else changes: every cell that uses those tiles shows the new picture at once. A layout can run up to 16 channels, each on its own timer.](https://alchemy.pascalpixel.com/illustrations/map/tile-animation.svg)
+![One channel of a layout's tile animation. Several pictures of the same patch of the map are stored apart from the tiles on screen. The channel copies the first over the patch's tiles, waits a few frames, copies the second, waits, and so on, then goes back to the first. Nothing else changes: every cell that uses those tiles shows the new picture at once. A layout can run up to 16 channels, each on its own timer. On screen, Vale's waterfall and river as the game plays them, several channels changing their tiles at once.](https://alchemy.pascalpixel.com/illustrations/map/tile-animation.svg)
 
 Suhalla Desert's north shows the usual shape: its channel 0 copies four rows
 of four tiles from one of four stored pictures, waits 15 frames, takes the

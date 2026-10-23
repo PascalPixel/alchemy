@@ -207,7 +207,7 @@ When the player uses Move on a stone pillar, the pillar slides; used on a
 blank wall, the same hand appears and nothing moves. What Psynergy does to a
 map is decided by that map's own events, and the effect only draws it.
 
-![Psynergy on the field, step by step. Isaac uses Move on the stone pillar in Vale. First the game checks Psynergy can be used here and takes the PP. Then it runs the map's event for before the cast, if the map has one. Then the effect plays: Move's hand appears, and it pushes the thing ahead only because the map has an event for Move on that pillar; with no such event the hand pushes at nothing. Last it runs the map's event for after the cast: in Vale, noting where the pillar now stands and making its new cell solid. The map decides; the effect only draws.](https://alchemy.pascalpixel.com/illustrations/object/psynergy-phases.svg)
+![Psynergy on the field, step by step. At the top, the cast as the game plays it: the screen tints, Move's hand pushes the pillar, and the colours come back. Isaac uses Move on the stone pillar in Vale. First the game checks Psynergy can be used here and takes the PP. Then it runs the map's event for before the cast, if the map has one. Then the effect plays: Move's hand appears, and it pushes the thing ahead only because the map has an event for Move on that pillar; with no such event the hand pushes at nothing. Last it runs the map's event for after the cast: in Vale, noting where the pillar now stands and making its new cell solid. The map decides; the effect only draws.](https://alchemy.pascalpixel.com/illustrations/object/psynergy-phases.svg)
 
 A map can have an event for a Psynergy at three moments: before the effect
 plays, after it, and while it acts. The game looks up all three first, runs

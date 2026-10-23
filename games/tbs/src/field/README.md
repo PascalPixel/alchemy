@@ -69,7 +69,7 @@ to load the next map.
 Everything on the field that moves or changes by itself is an object event,
 and each one runs a small script of steps.
 
-![Three object events and their scripts. The leader moves by the direction pad, waits one frame and repeats, for good. The camera follows the leader, waits one frame and repeats. A footprint waits 120 frames and then disappears. Each frame every object runs its steps in order until one says to wait, which ends its turn until the next frame.](https://alchemy.pascalpixel.com/illustrations/field/object-scripts.svg)
+![Three object events and their scripts. The leader moves by the direction pad, waits one frame and repeats, for good. The camera follows the leader, waits one frame and repeats. A footprint waits 120 frames and then disappears. Each frame every object runs its steps in order until one says to wait, which ends its turn until the next frame. Below, Isaac in Imil's snow as the game draws him, with the footprints his steps left beside him.](https://alchemy.pascalpixel.com/illustrations/field/object-scripts.svg)
 
 The object events are the party, the people and things a map places, the
 camera, even the footprints the leader leaves, and there are 64 slots for

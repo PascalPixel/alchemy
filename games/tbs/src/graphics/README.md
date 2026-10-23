@@ -90,7 +90,7 @@ The halves are named in `include/graphics/palbuf.h`.
 The title sequence is the logos at power-on, then the intro that scrolls
 into the title picture and waits for Start.
 
-![The title sequence at power-on. First the Nintendo logo with its jingle, then the Camelot logo for two seconds. If a save file exists, the title intro follows: the backgrounds scroll down while the sun rises, a white flash brings up the title picture, and Press Start pulses. Pressing A or Start goes on to the file select screen. If a minute passes with nothing pressed, the screen fades out and the sequence starts again from the Nintendo logo. With no save file, the logos lead straight to the file select screen.](https://alchemy.pascalpixel.com/illustrations/graphics/title-sequence.svg)
+![The title sequence at power-on. At the top, the two logos as the game shows them. First the Nintendo logo with its jingle, then the Camelot logo for two seconds. If a save file exists, the title intro follows: the backgrounds scroll down while the sun rises, a white flash brings up the title picture, and Press Start pulses. Pressing A or Start goes on to the file select screen. If a minute passes with nothing pressed, the screen fades out and the sequence starts again from the Nintendo logo. With no save file, the logos lead straight to the file select screen.](https://alchemy.pascalpixel.com/illustrations/graphics/title-sequence.svg)
 
 The title overlay, `Title_Run` in [Menus](../menu/README.md), decides what
 runs; the code is here, in the palette bank. At power-on

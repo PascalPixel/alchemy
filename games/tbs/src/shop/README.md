@@ -1,6 +1,6 @@
 # Shops
 
-![Where the party spends coins, a town has three kinds of counter. A shop, for weapons, armor or items, offers four things: Buy, Sell, its rare items (Artifacts) and Repair. A sanctum serves one member at a time: it revives, cures poison, drives out a haunting or takes off cursed equipment, for a fee. An inn charges for each member still standing and gives them back their HP and PP overnight. Each is opened by its town's map script, when the player talks to the keeper.](https://alchemy.pascalpixel.com/illustrations/shop/counters.svg)
+![Where the party spends coins, a town has three kinds of counter. A shop, for weapons, armor or items, offers four things: Buy, Sell, its rare items (Artifacts) and Repair. Above them, the four as Bilibin's item shop shows them when it opens, Buy chosen. A sanctum serves one member at a time: it revives, cures poison, drives out a haunting or takes off cursed equipment, for a fee. An inn charges for each member still standing and gives them back their HP and PP overnight. Each is opened by its town's map script, when the player talks to the keeper.](https://alchemy.pascalpixel.com/illustrations/shop/counters.svg)
 
 In a town the party spends its coins at three kinds of counter. At a shop it
 buys and sells weapons, armor or items, has broken equipment mended, and

@@ -155,7 +155,7 @@ Each warp out of a map leads to another map and a warp destination there,
 and the warp destination decides where the party appears. One warp can lead
 to different maps at different points in the story.
 
-![One warp, three destinations. The way down from Sol Sanctum's entrance has three rows in the warp table, read from the top. The first leads to Vale, and is taken until the sanctum erupts. The second leads to Vale during the eruption, and is taken until the party leaves Vale. The third leads to Vale, always. The first row whose condition still holds is taken, so the same path leads to Vale, then to Vale erupting, then to Vale again for the rest of the game.](https://alchemy.pascalpixel.com/illustrations/front/exits.svg)
+![One warp, three destinations. At the top, the room as the game draws it, with the path from the sanctum's steps down to the bottom edge. The way down from Sol Sanctum's entrance has three rows in the warp table, read from the top. The first leads to Vale, and is taken until the sanctum erupts. The second leads to Vale during the eruption, and is taken until the party leaves Vale. The third leads to Vale, always. The first row whose condition still holds is taken, so the same path leads to Vale, then to Vale erupting, then to Vale again for the rest of the game.](https://alchemy.pascalpixel.com/illustrations/front/exits.svg)
 
 [map_warps.h](include/map_warps.h) names every way between maps. Each
 map's warp destinations are named by where the party arrives from
@@ -226,7 +226,7 @@ The same town looks different at different points in the story: other people
 stand in it and say other things. A map does this by asking the flags
 which version of itself to be.
 
-![One map, five moments in the story. Vale's town gate is one map for the whole game, and each time the party arrives it asks the story which set of map events to use, testing in order. Has the party reached Kalay? Then the map events after Kalay. Has the party left Vale? Then the map events after leaving. Has the party come from the Sanctum? Then the farewell. Is it the stormy night? Then the storm. Otherwise, the map events of the day the story begins.](https://alchemy.pascalpixel.com/illustrations/front/vale-gate.svg)
+![One map, five moments in the story. Vale's town gate is one map for the whole game, and each time the party arrives it asks the story which set of map events to use, testing in order. Has the party reached Kalay? Then the map events after Kalay. Has the party left Vale? Then the map events after leaving. Has the party come from the Sanctum? Then the farewell. Is it the stormy night? Then the storm. Otherwise, the map events of the day the story begins. Below, the same map on the day the story begins and on the stormy night, as the game draws them: Isaac grown, in the sun, and Isaac as a child, in the rain.](https://alchemy.pascalpixel.com/illustrations/front/vale-gate.svg)
 
 The story is the order the flags are set in, and these maps show the forms
 that dependence takes, in story order.

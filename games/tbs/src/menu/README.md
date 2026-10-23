@@ -1,6 +1,6 @@
 # Menus
 
-![The field menu is a row of icons: Psynergy, Djinn, Item and Status, with the Djinn icon left out until the first Djinni joins. Choosing one opens that screen, which runs its own steps a frame at a time. Backing out of a screen, or pressing Start, brings the icons back, and the Djinn screen always comes back to them. Choosing Psynergy or an item meant for the field closes the menu instead, and the field uses it, as Move pushes a stone pillar. Backing out of the icons returns to walking.](https://alchemy.pascalpixel.com/illustrations/menu/field-menu.svg)
+![The field menu is a row of icons: Psynergy, Djinn, Item and Status, with the Djinn icon left out until the first Djinni joins. Choosing one opens that screen, which runs its own steps a frame at a time. Backing out of a screen, or pressing Start, brings the icons back, and the Djinn screen always comes back to them. Choosing Psynergy or an item meant for the field closes the menu instead, and the field uses it, as Move pushes a stone pillar. Backing out of the icons returns to walking. In the game, before the first Djinni joins: three icons, Psynergy, Item and Status, the chosen one raised with its name beside it.](https://alchemy.pascalpixel.com/illustrations/menu/field-menu.svg)
 
 When the player opens the menu on the field, a row of icons comes up:
 Psynergy, Djinn, Item and Status. Each opens a screen where the player picks
@@ -120,13 +120,15 @@ button casts on the field.
 The Item screen asks whose item and which one, and then what to do with it:
 use it, equip it, give it, drop it, take it off or read about it.
 
-![The Item screen is six windows laid over a screen 30 tiles wide and 20 tall. Top left, 13 by 5 tiles, the party, where the hand picks a member. Top right, 17 by 3, the question the screen is asking. Below the party, 13 by 12, the chosen member's level, HP and PP. On the right, 17 by 10, that member's items as icons, and under it, 17 by 4, the button help: L and A to sort, R to show the equipment. Along the bottom, 30 by 3, the description of the item the hand is on. Once an item is chosen, a taller list window, 17 by 14, takes the right side and offers the commands.](https://alchemy.pascalpixel.com/illustrations/menu/item-windows.svg)
+![The Item screen is six windows laid over a screen 30 tiles wide and 20 tall. Top left, 13 by 5 tiles, the party, where the hand picks a member. Top right, 17 by 3, the question the screen is asking. Below the party, 13 by 12, the chosen member's level, HP and PP. On the right, 17 by 10, that member's items as icons, and under it, 17 by 4, the button help: L and A to sort, R to show the equipment. Along the bottom, 30 by 3, the party's coins while a member is chosen, then the description of the item the hand is on. Once an item is chosen, a taller list window, 17 by 14, takes the right side and offers the commands. Below, the screen as the game draws it while it asks whose item: Isaac and Garet, Isaac's panel, his items as icons, the button help and 0 coins.](https://alchemy.pascalpixel.com/illustrations/menu/item-windows.svg)
 
 The screen is built from six windows: the party along the top left, the
 question it is asking at the top right, the chosen member's panel below the
-party, their items on the right with the button help under them, and the
-description of the item under the hand along the bottom. Once an item is
-chosen, a taller list takes the right side and offers the commands. Giving
+party, their items on the right with the button help under them, and a
+window along the bottom that shows the party's coins while a member is being
+chosen (`UiText_DrawWorkValueWithLabel`), then the description of the item
+under the hand. Once an item is chosen, a taller list takes the right side and
+offers the commands. Giving
 an item asks who receives it and, when that member's bag is full, what they
 give back.
 

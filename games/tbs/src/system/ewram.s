@@ -111,8 +111,8 @@ gMusicVolumeTarget:
 	.global gMusicPitch
 gMusicPitch:
 	.space 0x00000004
-	.global gAudioSecondaryState
-gAudioSecondaryState:
+	.global gMusicCue
+gMusicCue:
 	.space 0x00000004
 	.global gAudio_CommandMask
 gAudio_CommandMask:

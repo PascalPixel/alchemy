@@ -16,7 +16,7 @@ s32 AudioCommand_GetStateByte(void);
 void AudioCommand_StopAllPlayers(void);
 void AudioCommand_ResumeAllPlayers(void);
 void AudioCommand_UpdateToggleMask(u32 command);
-s32 AudioCommand_GetSecondaryStateByte(void);
+s32 AudioCommand_GetMusicCue(void);
 void AudioCommand_WaitForCompletion(void);
 s32 AudioCommand_GetWidth(s32 command);
 

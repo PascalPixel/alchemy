@@ -22,7 +22,7 @@ void MusicCommand_SetPitchAndUpdateFrequencyFar(u16 value);
 s32 AudioCommand_GetStateByteFar(void);
 /// Returns the music cue last chosen, 0xff before any; the pause menu saves it
 /// to restart the music.
-s32 AudioCommand_GetSecondaryStateByteFar(void);
+s32 AudioCommand_GetMusicCueFar(void);
 /// Waits a frame at a time for the music to come back after a fanfare, at most
 /// 300 frames.
 void AudioCommand_WaitForCompletionFar(void);

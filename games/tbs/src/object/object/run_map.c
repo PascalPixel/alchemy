@@ -328,7 +328,7 @@ s32 Field_RunMap(s32 warpDest) {
           } else {
             Field_EndBusyAndReveal();
             UiTimedNotice_CloseIfActiveFar();
-            gGameState.returnCue = AudioCommand_GetSecondaryStateByteFar();
+            gGameState.returnCue = AudioCommand_GetMusicCueFar();
             if (GameFlag_TestFar(FLAG_IN_BATTLE_ARENA) == 0) {
               // With fewer than 136 of the 512 sprite VRAM blocks (64 bytes
               // each) free, sprite drawing stays suspended while the menu

@@ -25,10 +25,10 @@
 
 /// Starts the Lucky Dice minigame: leaves only the backdrop on screen, starts
 /// song MUS_009 and plays until the player quits. Returns 0. Reached through
-/// Runtime_BlankDisplayAndRunFar from RunLuckyDice (object/object/map.c),
+/// LuckyDice_StartFar from RunLuckyDice (object/object/map.c),
 /// which saves background palettes 14 and 15 around it and passes a
 /// warp destination this function does not take.
-s32 Runtime_BlankDisplayAndRun(void) {
+s32 LuckyDice_Start(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
   AudioCommand_PlayFar(MUS_009);
   LuckyDice_Run();
@@ -248,7 +248,7 @@ s32 Graphics_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
 /// stops in give four numbers. Four of a kind pays 5 times the bet (15 or 25
 /// times when it matches one of the two lucky numbers shown at the top),
 /// three of a kind 3 times, two pairs twice and one pair the bet back.
-/// Called by Runtime_BlankDisplayAndRun. Takes the bet from and pays the
+/// Called by LuckyDice_Start. Takes the bet from and pays the
 /// winnings into gGameState.coins, resets the scheduler's task table, and
 /// frees the five heap slots it allocates before it returns.
 void LuckyDice_Run(void) {

@@ -16,8 +16,10 @@ RAM variables in their fixed order, the resident code copied into [IWRAM](../../
 [far-call](../../glossary.md#far-call) tables that join the banks of the [main image](../../glossary.md#main-image), the [overlays](../../glossary.md#overlay) that hold
 each map's code, the resource directory every picture, table and overlay is
 found through, and the flash library that writes saves. Nearly all of it is
-assembly: code no C [compiler](../../glossary.md#the-compilers) emits, each file saying in its header what proves
-it, and tables the linker lays out. [Runtime](../runtime/README.md) builds
+assembly: tables the linker lays out, and code no C [compiler](../../glossary.md#the-compilers) emits. Since
+the source must compile back into the cartridge's exact bytes (a [matching
+decompilation](../../glossary.md#matching-decompilation)), each assembly file names in its header the instruction or
+pattern that shows no compiler wrote it. [Runtime](../runtime/README.md) builds
 directly on it, and [Maps](../map/README.md) are the main users of its
 overlays.
 
@@ -40,8 +42,9 @@ the processor uses to name it; EWRAM's bytes are numbered from `0x02000000`
 and IWRAM's from `0x03000000`. Addresses are written in hexadecimal (base
 16, marked `0x`), as the link map and the source write them, so the tables
 also say how far into the area each part starts, in KB. The addresses are
-tbs-en's, from its link map (`out/tbs-en/tbs-en.map`). German moves three
-IWRAM variables ([below](#the-addresses-that-never-move)).
+the English edition's, from its link map (`out/tbs-en/tbs-en.map`); the
+other [editions](../../glossary.md#editions) agree except that German moves three IWRAM variables
+([below](#the-addresses-that-never-move)).
 
 **EWRAM**, laid out by `ewram.s`:
 
@@ -120,19 +123,31 @@ function. When a bank's code grows or shrinks, its functions move, but the
 table and every entry in it stay where they were, so no other bank has to
 change.
 
-`main.ld` puts each bank at an address of its own, written per [edition](../../glossary.md#editions) (the
-`. = ABSOLUTE(...)` before each `rom_main_NN` from 01 on, and before the later
-`rom_tail` places), and leaves the space up to that address empty.
+`main.ld` puts each bank at an address of its own, written per edition,
+and leaves the space up to that address empty. Each bank is a place in
+`objects.tsv` and the linker scripts, `rom_main_00` to `rom_main_13`
+([Source](../README.md#banks-and-folders) lists them), and the resource
+bank's table opens `rom_tail_01`, after the sound code and the music.
 
 Each bank opens with its far-call table, one 8-byte stub for each function
 another bank calls. A caller in another bank calls the table's entry, by the
 function's `...Far` name, rather than the function's own address:
 `AudioCommand_PlayFar` reaches `AudioCommand_Play`. The runtime bank is the
 exception: the other banks call its functions directly, and its table,
-`FarCall_RuntimeTable` (`WaitFramesFar` for `WaitFrames`), serves the
-overlays. In `objects.tsv` the table is the first row of every `rom_main_NN`
-place from 01 on (a `far_call/*.S` file); the runtime bank's table follows the
-cartridge header, and the resource bank's opens `rom_tail_01`.
+`FarCall_RuntimeTable` (`WaitFramesFar` for `WaitFrames`), which follows the
+cartridge header, serves the overlays. Why the runtime alone is called
+directly is an open question in [Engine](../../engine.md#open-questions).
+
+A table's entries keep their order. A row added in the middle moves every
+later entry, and the bank's code, by 8 bytes. Callers follow through their
+`...Far` symbols, but the bank's code moves towards the next bank's fixed
+start, and once the gap is gone the link fails. Code that reads a table by
+place goes wrong: `Transform_UpdateVertices` (`games/tbs/src/field/vertices.c`)
+calls `ArcTan2`, `Trig_Sin` and `Trig_Cos` as members of `FarCall_RuntimeTable`
+at byte offsets 64, 88 and 96, which its `STATIC_ASSERT`s check. And every
+caller of a later entry, in every bank and overlay, changes its bytes, so no
+edition compares OK. A row at the end of a table moves no other entry, though
+the bank's code after it still shifts.
 
 The stub is the `overlay_veneer` macro in `overlay.s`: `ldr r4` of the
 target's address from the word after it, then `bx r4`. It may use r4 freely
@@ -179,7 +194,8 @@ rule). It is three objects:
 
 - The [entry table](../../glossary.md#entry-table-and-import-table) (`map/entry/<map>.s`) opens it: six 8-byte stubs whose
   words hold the map's start-up function and the functions that return its
-  [warp destinations](../../glossary.md#warp-destination), [warps](../../glossary.md#warp), [object event](../../glossary.md#object-event) templates, events and regions. The field code reads them
+  [warp destinations](../../glossary.md#warp-destination), [warps](../../glossary.md#warp), [object event](../../glossary.md#object-event) templates, [map events](../../glossary.md#map-event) and warp
+  regions (boxes on the map that take a warp). The field code reads them
   through `struct MapEntries` (`include/field_runtime.h`), calling
   `gOverlayArea.initialize()`, `gOverlayArea.events()` and so on.
 - The overlay's code and data.
@@ -208,13 +224,11 @@ runs `Resource_PatchThumbBranch` over it. In the packed stream each `bl` holds
 its target's offset from the start of the overlay, and the patch turns it into
 the offset from the instruction itself, which is what the CPU expects. The
 packer, `tools/ags-overlays`, does the reverse, so in the stream every call to
-the same routine has the same bytes wherever it is made from, likely so that
-the overlays compress better, since repeated bytes are what the packing (LZ
-compression, which replaces a run of bytes seen before with a pointer back
-to it) shrinks best.
+the same routine has the same bytes wherever it is made from. Why is an open
+question ([below](#evidence-and-open-questions)).
 
-The entry table's members, as `struct MapEntries` lays them out, each
-behind its [veneer](../../glossary.md#veneer) word:
+`struct MapEntries` reads each entry's [veneer](../../glossary.md#veneer) as the address word in its
+last four bytes, so member `i` sits at `8 * i + 4`:
 
 | Member | Offset | What it returns |
 | --- | --- | --- |
@@ -242,24 +256,11 @@ tables work the same way: an entry is found by its place.
 
 Every resource is a row of `Resource_DirectoryTable` (`resource/directory.s`).
 Code asks for a resource by its number (`Resource_GetTableEntry`), and the
-`resource` macro defines `ResourceId_NAME` as that row's place. Callers in
-this tree use names the linker resolves, so a moved row still builds, but the
-bytes change, and some code reads a list by position.
+`resource` macro defines `ResourceId_NAME` as that row's place.
 
-A row added in the middle of a far-call table moves every later entry and the
-bank's code by 8 bytes. Callers follow through their `...Far` symbols, but the
-bank's code moves towards the next bank's fixed start, and once the gap is gone
-the link fails. Code that reads a table by place goes wrong:
-`Transform_UpdateVertices` (`games/tbs/src/field/vertices.c`) calls `ArcTan2`,
-`Trig_Sin` and `Trig_Cos` as members of `FarCall_RuntimeTable` at byte offsets
-64, 88 and 96, which its `STATIC_ASSERT`s check. And every caller of a later
-entry, in every bank and overlay, changes its bytes, so no edition compares
-OK. A row at the end of a table moves no other entry, though the bank's code
-after it still shifts.
-
-In the directory, a row added in the middle renumbers every row after it.
-Code that names a resource by its symbol follows, but numbers travel without
-symbols in several places: the map table (`games/tbs/src/field/maps.s`)
+Moving a row in the middle still builds, since code that names a resource by
+its symbol follows, but every later row is renumbered, so the ROM no longer
+matches, and numbers travel without symbols in several places: the map table (`games/tbs/src/field/maps.s`)
 gives each map its overlay as a resource number, and the first column of
 `objects.tsv` numbers each overlay's rows the same way. The layout table
 (`games/tbs/src/field/layouts.tsv`) holds numbers counted from
@@ -276,7 +277,6 @@ any other.
 | `objects.tsv`'s first column | each overlay's rows are numbered by resource |
 | `field/layouts.tsv` | numbers counted from `ResourceId_Layout001` |
 | `window/window/options.c` | eight frames counted from `ResourceId_ShopCursorFrames` |
-| `field/vertices.c` | `FarCall_RuntimeTable` read at byte offsets 64, 88 and 96 |
 
 ## The addresses that never move
 
@@ -292,7 +292,7 @@ at. Each is written down once, beside the name it stands for.
 
 `include/ram_buffer.h`, `include/iwram_call.h` and `include/cartboot.h` list
 them, each once, with `FIXED_ADDRESS(type, address, linked)`. The matching
-build compiles the number, and `make modern` compiles the linked name instead
+build compiles the number, and `make modern`, the check build with a current GCC, compiles the linked name instead
 (`FIXED_LINKED_` in `include/types.h`). Because the code holds these numbers
 itself, the layout has to keep every one:
 
@@ -303,17 +303,44 @@ itself, the layout has to keep every one:
 | The overlay area, `gOverlayArea` | `0x02008000`, 32 KB of EWRAM | Every overlay is linked to run there and has to fit. Its first 48 bytes are the entry table, which the field object calls by member. |
 | The map and decode buffers: `Ram_MapGridCellBuffer`, `Ram_ActorSpriteSlots`, `Ram_DecodeBuffer`, `Ram_Metatiles`, `Ram_MapGridCollision`, `Ram_BgTileBuffer` | after the overlay area, as the EWRAM table lists | Code reaches across their boundaries by arithmetic: the map grid's [cells](../../glossary.md#cell) fill 64 KB from the start of `Ram_MapGridCellBuffer`, through the sprite slots and the decode buffer, and the tile animation reads tiles from `Ram_DecodeBuffer` that land in `gMapGridLayerData` ([Layouts](../layout/README.md)). So `ewram.s` can't reorder or resize them. |
 | The ends of the two heaps | `0x03007800` in IWRAM and `0x02040000`, the end of EWRAM | The allocators test against these numbers (`heap.c`). `gCartridgeResetMarker` sits at the first, and the system stack lives above it. |
-| The sound driver's mixer, `SoundDriver_Mixer` (932 bytes) | `0x03007000`, inside the IWRAM heap's range | `Audio_Initialize` copies 1 KB at once (`SOUND_MIXER_CODE_SIZE`), so the 92 bytes after the mixer in the ROM land just after it. `Sound_LoadPresetParameters` copies its 152-byte presets elsewhere, into the resident code at `IwramSoundPresetCode`. |
+| The sound driver's mixer, `SoundDriver_Mixer` (932 bytes) | `0x03007000`, inside the IWRAM heap's range | `Audio_Initialize` copies the mixer to that number (`Ram_SoundMixer`), and the driver runs it there. The copy is 1 KB at once (`SOUND_MIXER_CODE_SIZE`), so the 92 bytes after the mixer in the ROM land just after it. |
 | The frame wait's stack top, `Ram_FrameWaitStackTop` | `0x03007a00` | The 512 bytes between it and the heap's end are what the frame loop, its [tasks](../../glossary.md#task) and the VBlank work always have ([Runtime](../runtime/README.md)). |
 | The stacks and the interrupt vector, `gIrqVector` | the top of IWRAM | `System_Entry` sets the system and IRQ stacks there, and the BIOS jumps through `gIrqVector` on an interrupt. |
 | `gBgScroll`, `gVramBlockCache` and `gWorkSlot` (`Ram_WorkSlot`) | among the main image's IWRAM variables | The code reaches them as constants. German moves all three 16 bytes up, so `ram_buffer.h` chooses them per edition. |
+
+## How far the heaps run past their space
+
+Both heaps can grow into the memory above them, and in play both do, without
+harm that anyone has seen.
+
+The allocators test only against the heap's end, and so does
+`Runtime_GetRemainingIwram`, which `Battle_RunEncounter` calls around every
+action and then ignores. So nothing stops a heap running into the buffers
+above its own space. The marks below come from the English edition played in
+libmgba, an emulator library, with the heap's next address read at every
+frame and every release: a Goma Cave battle, and the field menu, the Item
+screen, field [Psynergy](../../glossary.md#psynergy-and-pp) cast from the menu and directly, a shop, an inn, a
+talk, the world map and its still picture, the credits and sleep mode.
+
+- In battle the IWRAM heap runs into the sound driver's mixer. With the
+  heap's next address at `0x0300667c`, `Sprite_ComposeAnimationFrame` takes
+  the 4 KB pixel buffer of a 64 by 64 sprite from `MemAlloc`, 1,660 bytes of
+  it over `SoundDriver_Mixer`, and clearing the buffer overwrites the mixer
+  from its first word. Nothing copies the mixer back, and nothing needs it:
+  the VBlank handler mixes through `SoundDriver_EnterMixer` and the resident
+  code at `IwramSoundMixEntry`, and through a whole battle neither
+  `AudioEngine_RunMixerTick` nor the code at `0x03007000` runs once.
+- The EWRAM heap runs into `gBgTileBuffer`, to `0x02038e60` in the field and
+  `0x0203d960` in battle. Only the world map uses that buffer, and there the
+  heap reaches `0x02038004`, one word into it, while the still map picture is
+  open.
 
 ## Design
 
 The banks and their tables buy independence. Distance is not the reason: a
 Thumb `bl` reaches 4 MB either way, and the main image, a little over 1.5 MB
-from the start of the ROM to the last bank's table, is within reach of every
-bank. Another bank knows only where a bank starts and the place of each export
+from the start of the ROM to the resource bank's table, is within reach of
+every bank. Another bank knows only where a bank starts and the place of each export
 in its table, so a bank can grow or shrink inside its gap without moving any
 address other code holds. How [Camelot](../../glossary.md#camelot) built them is an open question (at
 the end of this page).
@@ -348,26 +375,8 @@ the flash library in `save/`.
 - The IWRAM heap ends just below the frame wait's stack and the EWRAM heap at
   the end of EWRAM; `Runtime_AllocateHeapBlock` takes IWRAM first and EWRAM
   when IWRAM is full.
-- Nothing keeps either heap out of the buffers above its own space. The
-  allocators test only against the heap's end, and so does
-  `Runtime_GetRemainingIwram`, which `Battle_RunEncounter` calls around every
-  action and then ignores. In battle the IWRAM heap runs into the sound
-  driver's mixer: with the heap's next address at `0x0300667c`,
-  `Sprite_ComposeAnimationFrame` takes the 4 KB pixel buffer of a 64 by 64
-  sprite from `MemAlloc`, 1,660 bytes of it over `SoundDriver_Mixer`, and
-  clearing the buffer overwrites the mixer from its first word. Nothing
-  copies the mixer back, and nothing needs it: the VBlank handler mixes
-  through `SoundDriver_EnterMixer` and the resident code at
-  `IwramSoundMixEntry`, and through a whole battle neither
-  `AudioEngine_RunMixerTick` nor the code at `0x03007000` runs once. The
-  EWRAM heap runs into `gBgTileBuffer` the same way, to `0x02038e60` in the
-  field and `0x0203d960` in battle, where only the world map uses that
-  buffer; on the world map the heap reaches `0x02038004`, one word into it,
-  while the still map picture is open. These marks come from tbs-en played
-  in libmgba, the heap's next addresses read at every frame and every free:
-  a Goma Cave battle fought with A, and the field menu, the Item screen,
-  field [Psynergy](../../glossary.md#psynergy-and-pp) cast from the menu and directly, a shop, an inn, a talk,
-  the world map and its still picture, the credits and sleep mode.
+- Nothing keeps either heap out of the buffers above its own space; both
+  run past it in play ([below](#how-far-the-heaps-run-past-their-space)).
 - A far-call table's entries keep their order, because code in other banks
   and overlays calls them by place.
 - The resource directory has 25 spare rows at its end.
@@ -422,7 +431,6 @@ as constants. [Matching](../MATCHING.md) explains the markers in the code.
 | `Iwram` | the resident IWRAM code and its entry stubs (`IwramIrqMain`, `Iwram_Halt`, `IwramMulQ16`) |
 | `Bios_` | the BIOS calls |
 | `Dma_`, `Io_`, `Memory_` | DMA transfers, stops and fills (`system/dma.h`) and single register writes |
-| `ResourceTable_` | the table of the 512 resource blocks and who owns each |
 | `Resource_`, `ResourceId_` | the resource decoders and the directory's ids |
 | `Flash_`, `EraseFlash`, `ProgramFlash` | the flash library, named as pret names it |
 | `Runtime_`, `Sound_`, `ColorBuffer_`, `Render_` | things the engine names elsewhere |
@@ -435,18 +443,15 @@ the overlays by their directory number. `IwramIrqMain` and the other resident
 routines are named from their code. The fixed addresses come from the literals
 in the ROM's code.
 
-[XXX](../../glossary.md#xxx): likely the overlay packer stores each call's target as an offset from
-the overlay's start so the overlays compress better under LZ, because that is
-what the filter achieves; nothing in the ROM says so. XXX: likely Camelot
-linked each bank on its own against the others' tables, because fixed starts
-and tables are what that would need; the bytes show only the starts and the
-tables.
-
 No build step compares a `FIXED_ADDRESS` literal with its symbol's linked
 address; `make modern` only builds with the name. A one-off comparison of all
 27 `FIXED_ADDRESS` uses with the six Broken Seal linker maps found every literal equal
 to its symbol in each edition its `#if` selects.
 
+- [XXX](../../glossary.md#xxx) (no evidence): why the overlay packer stores each call's target as an
+  offset from the overlay's start; likely so the overlays compress better
+  under LZ, since every call to one routine then has the same bytes, but the
+  ROM holds only the packed result, so only Camelot's tools could say.
 - XXX (no evidence): whether Camelot linked the banks separately; the fixed
   bank starts and the tables are what a separate link needs, but one link
   with fixed starts leaves the same bytes, so only Camelot's build could say.

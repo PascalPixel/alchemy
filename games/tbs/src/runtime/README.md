@@ -5,8 +5,8 @@
 When a cutscene pauses for half a second, the code that runs it simply stops
 and waits, yet the screen keeps moving: windows still type their text, the [map](../../glossary.md#map)
 still scrolls with the camera. Everything in the game waits the same way,
-through one function, `WaitFrames`, and while it waits `WaitFrames` keeps a
-short list of jobs, the [tasks](../../glossary.md#task), running once a [frame](../../glossary.md#frame). That function, and what
+through one function, `WaitFrames`. While it waits, `WaitFrames` runs a short
+list of jobs, called [tasks](../../glossary.md#task), once every [frame](../../glossary.md#frame). That function, and what
 it needs around it, is the runtime: the layer every other part of the game
 runs on.
 
@@ -31,33 +31,38 @@ each frame on screen, the sound, the list of tasks. Start-up does that once,
 then hands over to the loop that runs one map after another for as long as
 the console is on.
 
-In the code, a few hardware words recur. IWRAM is the console's 32 KB of
-fast memory inside the processor chip, EWRAM its 256 KB of slower work
-memory, and VRAM its video memory. An interrupt (IRQ) is the hardware
-stopping the program to run a handler, as it does at each VBlank, the pause
-after the last line of the picture; a stack is the memory a function's local
-values live in. An HBlank DMA is a copy the console makes by itself in the
-pause after each line of the picture.
+In the code, a few hardware words recur. The console's memories sit at
+fixed addresses: EWRAM from `0x02000000`, IWRAM from `0x03000000`, VRAM, the
+video memory, from `0x06000000`, and the cartridge from `0x08000000`
+([System](../system/README.md#memory-map) lays them out). An interrupt (IRQ)
+is the hardware stopping the program to run a handler, as it does at each
+VBlank, the pause after the last line of the picture. An HBlank DMA is a copy
+the console makes by itself in the pause after each line of the picture.
 
 The cartridge header jumps to `System_Entry`
 (`games/tbs/src/system/entry.s`), which sets the IRQ and system stacks at the
 top of IWRAM and calls `System_Initialize` (`runtime/system.c`). That
-function stops any HBlank DMA left running, sets the cartridge wait states
-(how long the processor waits for each read from the cartridge) and
-clears IWRAM up to `Ram_IwramHeapEnd`, leaving the stacks above it alone. It
-empties the heap (`Runtime_InitializeHeap`), copies the resident runtime into
-IWRAM and points the interrupt vector at its dispatcher
-(`Runtime_InstallIwramAndIrqs`), copies the build stamp and loads the window
-graphics. It then installs `System_VBlankHandler`, arms the soft-reset keys,
-starts the sound driver, resets the sprite VRAM cache and the task table,
-waits ten frames and calls `Game_RunFar`. The German, French, Spanish and
-Italian [editions](../../glossary.md#editions) (`TBS_PATCH_2`) also install `Iwram_Halt` for the
-cartridge-removed interrupt.
+function, in order:
 
-Neither function returns. `Game_Run` (`games/tbs/src/object/object/map.c`)
-runs one map after another, starting at the title, and before each one it
-resets the task table, removes the HBlank and VCount handlers, empties the heap
-and resets the VRAM cache.
+1. stops any HBlank DMA left running and sets the cartridge wait states (how
+   long the processor waits for each read from the cartridge);
+2. clears IWRAM up to `Ram_IwramHeapEnd`, leaving the stacks above it alone,
+   and empties the heap (`Runtime_InitializeHeap`);
+3. copies the resident runtime into IWRAM and points the interrupt vector at
+   its dispatcher (`Runtime_InstallIwramAndIrqs`);
+4. copies the build stamp and loads the window graphics;
+5. installs `System_VBlankHandler`, arms the soft-reset keys, starts the
+   sound driver, and empties the sprite VRAM cache and the task table;
+6. waits ten frames and calls `Game_Run`.
+
+The German, French, Spanish and Italian [editions](../../glossary.md#editions) (`TBS_PATCH_2`) also
+install `Iwram_Halt` for the cartridge-removed interrupt.
+
+`Game_Run` (`games/tbs/src/object/object/map.c`) is in the object [bank](../../glossary.md#bank), so
+start-up reaches it through its [far-call](../../glossary.md#far-call) entry, `Game_RunFar`. It never
+returns: it runs one map after another, starting at the title, and before
+each one it resets the task table, removes the HBlank and VCount handlers,
+empties the heap and resets the VRAM cache.
 
 ## The frame loop
 
@@ -76,11 +81,14 @@ a wait for the blank in which everything lands.
 
 `WaitFrames(n)` (`runtime/frame.c`) runs `n` frames and returns. If the
 caller's stack has grown below `Ram_FrameWaitStackTop`, the stack is first
-moved ([below](#the-stack-switch-in-waitframes)). Each frame then:
+moved ([below](#the-stack-switch-in-waitframes)). During a frame, code links
+each sprite it wants shown into one of 256 depth slots (`gRenderSlotHeads`),
+lists by depth that decide which sprite is drawn in front. Each frame then:
 
 1. runs the main-loop tasks (`Scheduler_RunPass(SCHEDULER_KEY_MAIN_LOOP)`);
-2. allocates `HEAP_SLOT_FRAME_SCRATCH` (1 KB), builds the OAM list in it from
-   the depth slots (`Render_BuildOamList`) and sets `gFrameRenderPending`;
+2. allocates the [heap slot](../../glossary.md#heap-slot) `HEAP_SLOT_FRAME_SCRATCH` (1 KB), builds the OAM
+   list in it by walking the depth slots in order (`Render_BuildOamList`) and
+   sets `gFrameRenderPending`, which marks the frame finished;
 3. measures CPU load for the debug display when it is on, and counts the
    frames toward sleep;
 4. halts the CPU until the VBlank handler has run (`swi 2`, the BIOS's Halt);
@@ -89,14 +97,22 @@ moved ([below](#the-stack-switch-in-waitframes)). Each frame then:
 6. sleeps, or restarts the game, if either was requested.
 
 VBlank interrupts the halt. `System_VBlankHandler`, reached through the IWRAM
-dispatcher and `gIrqHandlers`, stops any HBlank DMA, trades the link payloads
-and steps the music's fades and the screen fade. Only if
-`gFrameRenderPending` is set does it copy the frame's OAM list (when
-`gOamCopyEnabled`), the four BG scroll registers from `gBgScroll` and the
-queued register writes to the hardware, and clear the flag. It then runs and
-clears the one-shot `gVBlankHook`, runs the VBlank tasks
-(`SCHEDULER_KEY_VBLANK`), reads the keypad, counts the frame, sets
-`gVBlankDone` and mixes the next sound buffer.
+dispatcher and `gIrqHandlers`, then:
+
+1. stops any HBlank DMA, trades the link payloads and steps the music's fades
+   and the screen fade;
+2. commits the frame, only if `gFrameRenderPending` is set: it copies the
+   frame's OAM list (when `gOamCopyEnabled`), the scroll of the four
+   [background layers](../../glossary.md#background-layer) from `gBgScroll`, and the queued register writes to the
+   hardware, and clears the flag;
+3. runs and clears the one-shot `gVBlankHook`, and runs the VBlank tasks
+   (`SCHEDULER_KEY_VBLANK`);
+4. reads the keypad, counts the frame, sets `gVBlankDone` and mixes the next
+   sound buffer.
+
+A frame whose work is still running when VBlank comes has not yet set
+`gFrameRenderPending`, so only step 2 is skipped: the VBlank tasks, the keys
+and the sound go on every VBlank.
 
 The order has consequences for the code that runs in a frame:
 
@@ -114,11 +130,7 @@ The order has consequences for the code that runs in a frame:
 Why the VBlank handler keeps this order is an open question (at the end of
 this page).
 
-The sprites are the small pictures the hardware draws over the backgrounds,
-and OAM is the hardware's list of them. During a frame, code links each
-sprite it wants shown into one of the depth slots (`gRenderSlotHeads`), and
-the OAM build walks the slots in order. Here is one frame's list, each entry
-outlined:
+Here is one frame's OAM list, each entry outlined:
 
 ![One frame's sprite list. One frame of Vale with each of its nine sprite list entries outlined: each of the four people is a 32 by 32 pixel entry with a 16 by 8 entry for the shadow under their feet, and the stone pillar is one tall entry, 32 by 64; the girl at the left edge is partly off the screen. Below, the three people in the middle closer up: their entries overlap, and the order of the list decides which is drawn in front.](https://alchemy.pascalpixel.com/illustrations/runtime/oam.svg)
 
@@ -126,7 +138,7 @@ outlined:
 | --- | --- | --- |
 | `SCHEDULER_KEY_MAIN_LOOP` | `0xc80` | the pass `WaitFrames` runs each frame |
 | `SCHEDULER_KEY_VBLANK` | `0x480` | the pass the VBlank handler runs |
-| `HEAP_SLOT_FRAME_SCRATCH` | 52 | the [heap slot](../../glossary.md#heap-slot) the frame's OAM list is built in |
+| `HEAP_SLOT_FRAME_SCRATCH` | 52 | the heap slot the frame's OAM list is built in |
 | `RENDER_DEPTH_SLOT_COUNT` | 256 | depth slots a sprite is linked into |
 | `OBJ_AFFINE_MATRIX_COUNT` | 32 | the OAM's rotation-scaling matrices a frame |
 | `CPU_LOAD_PEAK_FRAMES` | 30 | frames the debug display holds a CPU load peak |
@@ -144,7 +156,8 @@ keeps none.
 
 A, B, Select and Start pressed together restart the game. They raise the
 keypad interrupt; `Input_HandleKeyInterrupt` sets `gResetRequested`, and the
-frame loop jumps to `Cart_Restart`, the cartridge entry. In debug mode
+frame loop jumps to `Cart_Restart`, the cartridge entry, so start-up runs
+again from the top. In debug mode
 (`gDebugMode`), holding Start and Select pauses the loop; A, B, Select or the
 D-pad then advance one frame and Start resumes.
 
@@ -184,13 +197,28 @@ The system stack runs from the top of IWRAM down to the end of the IWRAM heap,
 VBlank handler, the VBlank tasks and the sound mixer run below whatever they
 interrupted.
 
-When the caller's stack pointer is below `Ram_FrameWaitStackTop`, 512 bytes
-above the heap's end, `WaitFrames` copies everything from the stack pointer up
-to that top into `gSavedStack` in EWRAM by DMA, sets the stack pointer to the
-top and runs its frames there; on return it copies the stack back and
-restores the pointer. The frame loop, the main-loop tasks and the VBlank work
-therefore always start with 512 bytes above the heap, however deep the code
-that waits.
+`WaitFrames` keeps the frame loop's room in four steps:
+
+1. If the stack pointer is below `Ram_FrameWaitStackTop`, 512 bytes above the
+   heap's end, it copies the bytes from the stack pointer up to
+   `Ram_FrameWaitStackTop` into `gSavedStack` in EWRAM by DMA, and keeps
+   their count in `gSavedStackSize`.
+2. It sets the stack pointer to `Ram_FrameWaitStackTop`.
+3. It runs its frames there.
+4. On return, if it saved anything, it sets the stack pointer back and
+   copies the saved bytes back over it.
+
+```
+0x03007fa0  IRQ-mode stack top (the dispatcher only)
+0x03007f00  system stack top: the game's code starts here and grows down
+            ... a deep caller's frames, copied aside while it waits
+0x03007a00  Ram_FrameWaitStackTop: WaitFrames runs its frames from here
+            ... 512 bytes for the frame loop, its tasks and the VBlank work
+0x03007800  Ram_IwramHeapEnd: the end of the IWRAM heap
+```
+
+The frame loop, the main-loop tasks and the VBlank work therefore always
+start with 512 bytes above the heap, however deep the code that waits.
 
 `WaitFrames` must not be called from inside a task: the nested call would find
 its stack below the top again and overwrite `gSavedStack` and
@@ -245,9 +273,10 @@ once: the later blocks stay in their slots, pointing at memory the next
 allocation hands out again. `Game_Run` empties both pools and clears every
 slot before each map.
 
-That rule is why an effect's transfer callback has to be removed before its
-heap blocks are released, and why `RamCode_Load` copies of code are freed
-right after use. A slot that already has a block is returned whatever size is
+That rule is why a battle effect's transfer task, which copies its picture to
+the screen every frame, has to be removed before the effect's heap blocks are
+released, and why code copied into a heap block to run from RAM
+(`RamCode_Load`) is released right after use. A slot that already has a block is returned whatever size is
 asked for, so `Runtime_AllocateHeapBlock` also means "get".
 
 The frame's scratch block is taken after the main-loop tasks have run and
@@ -272,7 +301,11 @@ order.
 
 ![The tasks of a map, as the task table holds them. Each task's order says which pass runs it and where in that pass. Every frame, WaitFrames runs the map's task, which scrolls the map grid's layers, and then the windows' task, which opens, closes and types the windows; the map's has the higher order, so it runs first. In every vertical blank, the VBlank handler runs the task that copies changed window tiles to the screen. While a menu is open, the map's own tasks, whose code is in its overlay, are suspended: both passes skip them, and they keep their place for when the menu closes. The table has 20 slots, and each map starts with it empty.](https://alchemy.pascalpixel.com/illustrations/runtime/tasks.svg)
 
-A task is added once and then runs by itself until it is removed. Some
+A task is added once and then runs by itself until it is removed. It is a
+`void (*)(void)` routine (`SchedulerCallback`), added with
+`Scheduler_AddOrUpdateCallback(callback, order)` and removed with
+`Scheduler_RemoveCallback(callback)`; [Engine](../../engine.md#waiting-and-tasks)
+shows the battle camera being added. Some
 belong in the frame's work, such as scrolling the map
 (`MapGrid_UpdateLayerScroll`) or updating the windows (`UiWork_ProcessAll`);
 others have to happen in the blank, such as copying the windows' changed
@@ -290,8 +323,8 @@ table by order, highest first, comparing orders as signed halfwords
 (`Scheduler_SortTasks`), and `Scheduler_RunPass` runs, in table order, every
 task whose high byte equals the pass's.
 
-The sort stops one pass short, so the tasks in the first two slots can stay
-out of order ([`// BUG:`](../../glossary.md#bug-bugfix-and-ubfix) in the code). It swaps only on strictly greater, so
+The sort stops one pass short: it never compares slots 0 and 1, so when the
+task in slot 1 has the higher order, the two run in the wrong order ([`// BUG:`](../../glossary.md#bug-bugfix-and-ubfix) in the code). It swaps only on strictly greater, so
 tasks of equal order keep their table order, which depends on the free slot
 each was given; code that needs an order gives its tasks different orders.
 
@@ -327,7 +360,7 @@ The code is `runtime/scheduler.c`, its names in
 The queue holds changes to the hardware's settings until the blank, so that a
 frame's changes reach the screen together or not at all.
 
-![Three timelines of a figure walking right. On time: the frame's work ends before the vertical blank, and at the blank the figure appears in its new place, whole. Late: the work is still running when the blank comes, so nothing is sent and the screen keeps the old picture, whole; the new one appears at the next blank. Had the work written to the hardware directly, the screen could be drawn while the figure was half moved, its head in the new place and its body in the old.](https://alchemy.pascalpixel.com/illustrations/runtime/whole-frames.svg)
+![Three timelines of Isaac taking a step right in Vale. On time: the frame's work ends before the vertical blank, and at the blank he appears in his new place, whole. Late: the work is still running when the blank comes, so nothing is sent and the screen keeps the old picture, whole; the new one appears at the next blank. Had the work written to the hardware directly, the screen could be drawn while he was half moved, his head in the new place and his legs in the old.](https://alchemy.pascalpixel.com/illustrations/runtime/whole-frames.svg)
 
 The hardware's registers decide how the screen is drawn: which layers show,
 how two layers blend, where a window cuts the picture. Written during the
@@ -347,7 +380,9 @@ go to DMA3) and bits 18 and 19 the operation (`IO_WRITE_SET` ORs the value in,
 
 `IoWriteQueue_FlushPending` copies `Resource_ExecuteTransfer`
 (`system/resource/decode_01.s`), the ARM routine that carries the entries out,
-onto the stack, which is in IWRAM, and runs it there.
+onto the stack, which is in IWRAM, and runs it there. ARM code runs fastest
+from IWRAM, whose 32-bit bus fetches each 4-byte ARM instruction in one read,
+where the cartridge's 16-bit bus takes two and waits on each.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -374,8 +409,9 @@ whole copy remains, and the game keeps the one with the higher number.
 The cartridge's flash has 16 sectors of 4 KB, each holding one record: a
 16-byte header (signature, record id, a checksum and a sequence number) and a
 payload of 4,080 bytes, of which the checksum covers the first 4,072. A save
-file is records `n` and `n + 3`, for the three files of the file select
-screen.
+file is 8 KB, too large for one record, so file `n` of the three on the file
+select screen is two records: `n` holds the first half of the save buffer
+and `n + 3` the second.
 
 `SaveState_WriteRecord` writes the new copy, numbered one past the record's
 highest sequence, into a free sector picked at random, and only then
@@ -463,12 +499,12 @@ in the code needs it.
 Every other folder runs on the runtime. The field, the battles and the menus
 let time pass through `WaitFrames` and keep their per-frame work as tasks;
 their memory comes from the heap's named slots; their changes to the screen
-go through the depth slots, `gBgScroll` and the write queue. The other [banks](../../glossary.md#bank)
+go through the depth slots, `gBgScroll` and the write queue. The other banks
 call the runtime's functions directly, and overlays reach them through the
-runtime bank's [far-call](../../glossary.md#far-call) table
-([System](../system/README.md#why-the-program-is-cut-into-banks)), and
+runtime bank's far-call table
+([System](../system/README.md#why-the-program-is-cut-into-banks)).
 `Game_Run`, which resets the runtime before every map, is in
-[Running a map](../object/README.md).
+[Running a map](../object/README.md), the `object` folder.
 
 ## Limits
 
@@ -518,12 +554,9 @@ names ending in `Far`, so renaming one touches other folders too.
 
 ## Words used here
 
-- **frame** and **VBlank**: the screen is redrawn about sixty times a second,
-  each picture a frame. The vertical blank (VBlank) is the pause after the
-  last line of one picture, signalled by an interrupt; it is when the game
-  changes what is on screen.
-- **IWRAM** and **EWRAM**: the console's 32 KB of fast internal RAM and 256 KB
-  of slower external RAM.
+Frame, VBlank, IWRAM, EWRAM, heap slot, task, sprite and OAM are in the
+[glossary](../../glossary.md).
+
 - **16.16 fixed point**: a word read as a whole part in its upper 16 bits and
   a fraction in its lower 16, so 65,536 is 1.0. Positions, scales and the
   transform use it.
@@ -531,15 +564,8 @@ names ending in `Far`, so renaming one touches other folders too.
   16.16 values from a table of 256 entries for the first quarter turn, one per
   1/1024 of a turn; `ArcTan2` measures from the y axis, 0 along +y and a
   quarter turn along +x.
-- **heap slot**: one of the 62 named long-lived blocks (`enum HeapSlot`,
-  `HEAP_SLOT_*`) in `gWorkSlot`.
-- **task**: a routine the scheduler runs once every frame from `WaitFrames`,
-  or once every VBlank, in the order of its order value (`scheduler.c`).
 - **queued write**: a register write, or a DMA, that the VBlank handler
   carries out once the frame loop has finished a frame (`io_queue.c`).
-- **sprite** and **OAM**: sprites are the small pictures the hardware draws
-  over the backgrounds; OAM is the hardware's table of them, rebuilt every
-  frame.
 - **depth slot**: one of 256 lists sprites are linked into each frame, which
   the OAM build walks in order (`render.c`).
 - **cache entry**: one of the 96 entries of the sprite VRAM cache. Sprite tile
@@ -566,7 +592,7 @@ names ending in `Far`, so renaming one touches other folders too.
 | `Scheduler_` | the task scheduler |
 | `Math_`, `Vector_` | square roots and polar offsets beside `Random16` and `ArcTan2` |
 | `FixedPoint_` | 16.16 and 8.8 arithmetic: a remainder, a product, a reciprocal and the distance between two positions |
-| `Transform_`, `Transform_`, `Projection_` | the 3D transform and projection |
+| `Transform_`, `Projection_` | the 3D transform and projection |
 | `NumberText_`, `DebugText_` | number text and the debug text screen |
 | `ColorBuffer_` | shading a buffer of pixels, keeping a copy |
 | `SaveState_` | saving |

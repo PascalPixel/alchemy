@@ -37,7 +37,7 @@ void FieldEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
   running = ev->resolvingAction;
   if (running != 0)
     return;
-  effectWork->freeBlocks = 512 - ResourceTable_CountFreeBlocks();
+  effectWork->freeBlocks = 512 - VramCache_CountFreeBlocks();
   effectWork->mode = mode;
   effectWork->visible = 1;
   effectWork->enabled = 1;

@@ -18,5 +18,5 @@ FarCall_SoundTable:
 	overlay_veneer AudioCommand_StopAllPlayers
 	overlay_veneer AudioCommand_ResumeAllPlayers
 	overlay_veneer AudioCommand_UpdateToggleMask
-	export AudioCommand_GetSecondaryStateByteFar, AudioCommand_GetSecondaryStateByte
+	export AudioCommand_GetMusicCueFar, AudioCommand_GetMusicCue
 	export AudioCommand_WaitForCompletionFar, AudioCommand_WaitForCompletion

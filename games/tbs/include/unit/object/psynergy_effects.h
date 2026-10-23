@@ -311,7 +311,7 @@ s32 Field_RunEventAction(const void *event, s32 param, s32 target);
 void ObjectGroup_ApplyRandomChildValues(union FieldObject *fieldObject);
 void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object,
                                                 s32 magnitude, s32 angle);
-s32 ResourceTable_CountFreeBlocks(void);
+s32 VramCache_CountFreeBlocks(void);
 struct AnimationObject *
 Sprite_ShareVramCache(struct AnimationObject *sourceSprite,
                       struct AnimationObject *sharedSprite);

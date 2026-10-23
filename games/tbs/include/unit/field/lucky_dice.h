@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-s32 Runtime_BlankDisplayAndRun(void);
+s32 LuckyDice_Start(void);
 void Camera_ResetViewDefaults(void);
 s32 FixedPoint_Multiply8_8(s32 leftValue, s32 rightValue);
 s16 Math_ScaleByRatio(s16 numerator, s16 denominator);

@@ -569,7 +569,7 @@ void BattleHighlight_SetSpriteMode(s32 actorId, s32 mode) {
 /// left as they are; nothing calls it.
 void BattleHighlight_SetOtherSpriteModes(s32 selectedUnitId) {
   s16 unitIds[14];
-  s32 unitCount = BattleUnit_ListIds(BATTLE_SIDES_BOTH, unitIds);
+  s32 unitCount = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
   s32 unitIndex;
 
   for (unitIndex = 0; unitIndex < unitCount; unitIndex++) {
@@ -583,7 +583,7 @@ void BattleHighlight_SetOtherSpriteModes(s32 selectedUnitId) {
 /// BattleHighlight_SetModes when the highlight stops.
 void BattleHighlight_ClearAllSpriteModes(void) {
   s16 unitIds[14];
-  s32 unitCount = BattleUnit_ListIds(BATTLE_SIDES_BOTH, unitIds);
+  s32 unitCount = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
   s32 unitIndex;
 
   for (unitIndex = 0; unitIndex < unitCount; unitIndex++)
@@ -645,7 +645,7 @@ void BattleHighlight_SetModes(u16 *selectedUnits, s32 mode) {
     REG_BLDY = 0;
     Io_Write16(BLEND_ALPHA(16, 0), &REG_BLDALPHA);
 
-    unitCount = BattleUnit_ListIds(BATTLE_SIDES_BOTH, unitIds);
+    unitCount = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
     for (unitIndex = 0; unitIndex < unitCount; unitIndex++)
       BattleHighlight_SetSpriteMode(unitIds[unitIndex], mode & 1);
 

@@ -24,7 +24,8 @@ struct ObjectEventDouseView {
   /// gFieldEffect_CommonParticleScript frees it.
   s16 phase;
   u8 reserved60[0xc];
-  void (*callback)(union FieldObject *fieldObject); ///< per-frame update
+  void (*callback)(
+      union ObjectEventOrEffect *fieldObject); ///< per-frame update
 };
 
 /// The effect scene (struct FieldEffectWork, gFieldEffectWork) as Douse reads
@@ -50,7 +51,8 @@ struct FieldEffectDouseView {
 /// Per-frame update of a falling drop: on reaching altitude it is freed 2
 /// frames later and scatters three half-size splashes, which hop toward
 /// points 32 pixels away and are freed after 6 frames.
-void FieldEffect_SpawnRandomAngleTriplet(union FieldObject *fieldObject) {
+void FieldEffect_SpawnRandomAngleTriplet(
+    union ObjectEventOrEffect *fieldObject) {
   struct ObjectEventDouseView *particle =
       (struct ObjectEventDouseView *)fieldObject;
   s32 i;
@@ -93,7 +95,8 @@ void FieldEffect_SpawnRandomAngleTriplet(union FieldObject *fieldObject) {
 /// Per-frame update: drifts from side to side, up to a pixel a frame, as it
 /// falls 0.3 pixels a frame, and is released on reaching its ground height.
 /// Douse's swaying particles in Mercury Lighthouse.
-void FieldEffect_UpdateDriftingFallObject(union FieldObject *fieldObject) {
+void FieldEffect_UpdateDriftingFallObject(
+    union ObjectEventOrEffect *fieldObject) {
   struct Object *particle = (struct Object *)fieldObject;
   s32 drift;
 
@@ -121,14 +124,14 @@ void FieldEffect_RunDouseOnTarget(s32 unused) { FieldEffect_RunDouse(); }
 /// with no target it is 16 pixels in front of the caster, on the ground.
 /// Called by FieldEffect_Run, and through FieldEffect_RunDouseOnTarget.
 void FieldEffect_RunDouse(void) {
-  struct EffectVector pos;
-  struct EffectVector start;
-  struct EffectVector end;
+  struct Vector3 pos;
+  struct Vector3 start;
+  struct Vector3 end;
   struct FieldEffectDouseView *work = gFieldEffectWork;
   struct Object *target = work->target;
   struct ObjectEventDouseView *lightOrb;
-  struct EffectVector *from;
-  struct EffectVector *to;
+  struct Vector3 *from;
+  struct Vector3 *to;
   s32 step;
   s32 steps = 11;
   s32 count;
@@ -144,8 +147,7 @@ void FieldEffect_RunDouse(void) {
   if (work->initialized == 0) {
     work->x = target->x;
     work->z = target->z;
-    Vector_AddPolarOffset(16 << 16, work->angle,
-                          (struct EffectVector *)&work->x);
+    Vector_AddPolarOffset(16 << 16, work->angle, (struct Vector3 *)&work->x);
     work->y = MapGrid_GetTerrainHeightFar(0, work->x, work->z);
   }
   from = &start;
@@ -163,8 +165,8 @@ void FieldEffect_RunDouse(void) {
     s32 scale;
 
     {
-      struct EffectVector *a = &start;
-      struct EffectVector *b = &end;
+      struct Vector3 *a = &start;
+      struct Vector3 *b = &end;
       s32 e, t;
 
       e = b->x;
@@ -247,8 +249,8 @@ void FieldEffect_RunDouse(void) {
     s32 scale;
 
     {
-      struct EffectVector *a = &end;
-      struct EffectVector *b = &start;
+      struct Vector3 *a = &end;
+      struct Vector3 *b = &start;
       s32 e, t;
 
       e = b->x;

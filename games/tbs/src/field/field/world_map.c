@@ -5,11 +5,16 @@
 
 #include "../field_internal.h"
 
-/// Writes a halfword register (value first).
-static __inline__ void Io_Set16(s32 value, volatile u16 *reg) { *reg = value; }
+/// Io_Write16 as an inline function, whose store may move, as these sites
+/// match only through it (the macro keeps the store in place).
+static __inline__ void Io_Write16Inline(s32 value, volatile u16 *reg) {
+  *reg = value;
+}
 
-/// Writes a halfword register (register first).
-static __inline__ void Io_Put16(volatile u16 *reg, s32 value) { *reg = value; }
+/// Io_Write16Inline with the address first.
+static __inline__ void Io_Write16Swapped(volatile u16 *reg, s32 value) {
+  *reg = value;
+}
 
 typedef s32 (*WorldMapPlaneFn)(void *camera, s32 *position, void *lines,
                                void *out);
@@ -152,10 +157,11 @@ s32 WorldMap_InitializePerspective(void) {
       Resource_GetTableEntry((s32)&ResourceId_DefaultTileAnimation),
       Ram_MapGridShapes + 0x1000);
   TilesetAnim_StartAll((const u16 *)(Ram_MapGridShapes + 0x1000));
-  Io_Set16(BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 |
-               BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL,
-           &REG_BLDCNT);
-  Io_Set16(BLEND_ALPHA(16, 16), &REG_BLDALPHA);
+  Io_Write16Inline(BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 |
+                       BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_LIGHTEN |
+                       BLDCNT_TGT2_ALL,
+                   &REG_BLDCNT);
+  Io_Write16Inline(BLEND_ALPHA(16, 16), &REG_BLDALPHA);
   REG_BLDY = 0;
   Decompress_Type01(Resource_GetTableEntry((s32)&ResourceId_DefaultGridCells),
                     Ram_MapGridCellBuffer);
@@ -169,13 +175,13 @@ s32 WorldMap_InitializePerspective(void) {
   // map's fade-in turns on: 0x1f00 is BG0 to BG3 and the sprites.
   perspective->fade = 0x1f00;
   perspective->fadeStep = 0x80;
-  Io_Set16(BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(2) | BGCNT_SCREEN_BASE(8) |
-               BGCNT_WRAP | BGCNT_SIZE(2),
-           &REG_BG3CNT);
-  Io_Set16(BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(3) | BGCNT_SCREEN_BASE(10) |
-               BGCNT_WRAP | BGCNT_SIZE(2),
-           &REG_BG2CNT);
-  Io_Set16(BGCNT_PRIORITY(1) | BGCNT_SCREEN_BASE(5), &REG_BG1CNT);
+  Io_Write16Inline(BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(2) |
+                       BGCNT_SCREEN_BASE(8) | BGCNT_WRAP | BGCNT_SIZE(2),
+                   &REG_BG3CNT);
+  Io_Write16Inline(BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(3) |
+                       BGCNT_SCREEN_BASE(10) | BGCNT_WRAP | BGCNT_SIZE(2),
+                   &REG_BG2CNT);
+  Io_Write16Inline(BGCNT_PRIORITY(1) | BGCNT_SCREEN_BASE(5), &REG_BG1CNT);
   // The identity and the REG_BG3Y clear go through Io_Write16, which keeps
   // the 0x100 for REG_BG2PD built just before its store; as plain stores, 3
   // of 331 instructions differ in tbs-en.
@@ -239,7 +245,7 @@ s32 WorldMap_InitializePerspective(void) {
   // turn) and yaw 0, with the eye one pixel beyond the distance.
   SET_VECTOR(cameraPosition, 0, 0, 0);
   Transform_Reset();
-  Io_Put16(pitch, 0xe000);
+  Io_Write16Swapped(pitch, 0xe000);
   *yaw = 0;
   Transform_Reset();
   Transform_ApplyPosition(cameraPosition);

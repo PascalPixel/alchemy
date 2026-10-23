@@ -149,11 +149,11 @@ void ScreenTransition_UpdateScanlineTable(void) {
   }
 
   // Build the page not shown. Its line pairs start as the open UI windows'
-  // edges (Win_FillScanlineSpansFar; with no UI work, 0xe0e0 over the
+  // edges (ScanlineWindow_FillSpansFar; with no UI work, 0xe0e0 over the
   // first 80 lines only, as its XXX notes); each mode below then writes window
   // 0's edge of every pair and leaves window 1's.
   scanlineData = state->pages[1 ^ state->page];
-  Win_FillScanlineSpansFar(scanlineData + 2);
+  ScanlineWindow_FillSpansFar(scanlineData + 2);
 
   // Each mode writes WININ and WINOUT first. 0x7f7f shows every layer inside
   // both windows and 1 only background 0 outside them; a mode swaps the two

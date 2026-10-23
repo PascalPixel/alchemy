@@ -175,7 +175,8 @@ static void Sanctum_RequestQuestAcceptance(void);
 static void Sanctum_ReceiveWiseOnesMission(void);
 static void Sanctum_ShowHealerAfterimage(void);
 static void Sanctum_HideHealerAfterimage(void);
-static void Sanctum_UpdateHealerAfterimage(union FieldObject *fieldObject);
+static void
+Sanctum_UpdateHealerAfterimage(union ObjectEventOrEffect *fieldObject);
 static void Sanctum_SpawnOrbitingEffect(s32 localId, s32 angleStep);
 static s32 Sanctum_ChooseRestartOption(void);
 static void Sanctum_ReenactSolSanctum(void);
@@ -188,10 +189,11 @@ static void Sanctum_RestoreQuestFloor(void);
 #ifdef UBFIX
 /// Faces the object event whose ID this callback stores in the timer field.
 static void
-Sanctum_FaceObjectEventNamedByTimer(union FieldObject *fieldObject) {
+Sanctum_FaceObjectEventNamedByTimer(union ObjectEventOrEffect *fieldObject) {
 #else
 /// Faces the object event whose ID this callback stores in the timer field.
-static s32 Sanctum_FaceObjectEventNamedByTimer(union FieldObject *fieldObject) {
+static s32
+Sanctum_FaceObjectEventNamedByTimer(union ObjectEventOrEffect *fieldObject) {
 #endif
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   struct ObjectEvent *target;
@@ -557,10 +559,11 @@ static void EventScript_LeaveAfterRefusing(void) {
 // Plain void changes 66 to 64 bytes in tbs-en.
 #ifdef UBFIX
 /// Keeps this object event at the party leader's drawing priority.
-static void Sanctum_MatchLeaderPriority(union FieldObject *fieldObject) {
+static void
+Sanctum_MatchLeaderPriority(union ObjectEventOrEffect *fieldObject) {
 #else
 /// Keeps this object event at the party leader's drawing priority.
-static s32 Sanctum_MatchLeaderPriority(union FieldObject *fieldObject) {
+static s32 Sanctum_MatchLeaderPriority(union ObjectEventOrEffect *fieldObject) {
 #endif
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   objectEvent->sprite->image.priority =
@@ -1185,7 +1188,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
         Sanctum_MatchLeaderPriority;
 #else
     ObjectEvent_GetById(LOCALID_EAST_HEALER)->update =
-        (void (*)(union FieldObject *))Sanctum_MatchLeaderPriority;
+        (void (*)(union ObjectEventOrEffect *))Sanctum_MatchLeaderPriority;
 #endif
   }
   FieldScript_End();
@@ -1631,7 +1634,8 @@ static void Sanctum_HideHealerAfterimage(void) {
 }
 
 /// Cycles the afterimage through four offsets from the healer.
-static void Sanctum_UpdateHealerAfterimage(union FieldObject *fieldObject) {
+static void
+Sanctum_UpdateHealerAfterimage(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   struct ObjectEvent *healer;
 
@@ -1657,7 +1661,8 @@ static void Sanctum_UpdateHealerAfterimage(union FieldObject *fieldObject) {
 }
 
 /// Advances an effect around its linked object event on an elliptical path.
-static void Sanctum_UpdateOrbitingEffect(union FieldObject *fieldObject) {
+static void
+Sanctum_UpdateOrbitingEffect(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *effect = (struct ObjectEvent *)fieldObject;
   struct ObjectEvent *anchor = effect->linkedObject;
   u16 *angle = &effect->timer;
@@ -1878,16 +1883,16 @@ static void Sanctum_ReenactSolSanctum(void) {
   ObjectEvent_GetById(LOCALID_HEALER)->update =
       Sanctum_FaceObjectEventNamedByTimer;
 #else
-  ObjectEvent_GetById(LOCALID_HEALER)->update =
-      (void (*)(union FieldObject *))Sanctum_FaceObjectEventNamedByTimer;
+  ObjectEvent_GetById(LOCALID_HEALER)->update = (void (*)(
+      union ObjectEventOrEffect *))Sanctum_FaceObjectEventNamedByTimer;
 #endif
   ObjectEvent_GetById(LOCALID_GARETS_GRANDFATHER)->timer = GARET;
 #ifdef UBFIX
   ObjectEvent_GetById(LOCALID_GARETS_GRANDFATHER)->update =
       Sanctum_FaceObjectEventNamedByTimer;
 #else
-  ObjectEvent_GetById(LOCALID_GARETS_GRANDFATHER)->update =
-      (void (*)(union FieldObject *))Sanctum_FaceObjectEventNamedByTimer;
+  ObjectEvent_GetById(LOCALID_GARETS_GRANDFATHER)->update = (void (*)(
+      union ObjectEventOrEffect *))Sanctum_FaceObjectEventNamedByTimer;
 #endif
   ObjectMotion_SetPositionAndReset(LOCALID_GARET, 196, 180);
   ObjectMotion_SetPositionAndReset(LOCALID_GARET, 184, 184);
@@ -2053,7 +2058,7 @@ static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY,
 }
 
 /// Moves a spark upward, cycles its scale, and expires its lifetime.
-static void Sanctum_UpdateRisingSpark(union FieldObject *fieldObject) {
+static void Sanctum_UpdateRisingSpark(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *spark = &fieldObject->objectEvent;
   s32 scale;
   s32 timer;

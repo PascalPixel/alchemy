@@ -483,7 +483,8 @@ void ObjectMotion_SetVarCbAndRefresh(u32 objectId, s32 count) {
 /// and z velocity (kept in speed and acceleration), which drag slows by 1/18
 /// and 1/16 each frame, and rises 1/64 pixel a frame. Runs each frame as the
 /// puff's update hook.
-void FieldEffect_UpdateParticleLinearMotion(union FieldObject *fieldObject) {
+void FieldEffect_UpdateParticleLinearMotion(
+    union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *particle = (struct ObjectEvent *)fieldObject;
   s32 velocityX;
   s32 x;
@@ -748,7 +749,7 @@ void ObjectEvent_ConfigureSpriteColor(s32 objectId, s32 param) {
 /// Per-frame hook of a blinking object event: sets its sprite parts' param from
 /// gObjectEvent_BlinkSpriteColors (7 for two frames out of eight, otherwise 0).
 /// ObjectEvent_ConfigureSpriteColor installs it.
-void ObjectEvent_UpdateBlink(union FieldObject *fieldObject) {
+void ObjectEvent_UpdateBlink(union ObjectEventOrEffect *fieldObject) {
   struct Object *object = (struct Object *)fieldObject;
 
   if ((object->spriteStorageKind & 0xf) == 1) {

@@ -79,8 +79,8 @@ void FieldEffect_UpdateMindReadWave(void) {
   struct ObjectEvent *target;
   struct ObjectEvent *particle;
   struct WaveEffectSprite *sprite;
-  struct EffectVector from;
-  struct EffectVector to;
+  struct Vector3 from;
+  struct Vector3 to;
   struct AnimationMetadata *meta;
 
   if (work->delay != 0) {
@@ -240,7 +240,8 @@ s32 FixedPoint_Remainder(s32 value, s32 divisor) {
 /// Per-frame update: once the object has arrived (no destination left on any
 /// axis), frees it: gFieldEffect_UntargetedObjectScript is a lone SC_FREE.
 /// Mind Read's particles end this way at the caster.
-void FieldEffect_SetCallbackWhenTargetUnset(union FieldObject *fieldObject) {
+void FieldEffect_SetCallbackWhenTargetUnset(
+    union ObjectEventOrEffect *fieldObject) {
   struct Object *object = (struct Object *)fieldObject;
   s32 targetY;
   s32 targetX;

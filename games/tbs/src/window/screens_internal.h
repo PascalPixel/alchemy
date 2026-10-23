@@ -348,10 +348,10 @@ enum BattleTargetHint {
 
 #define BATTLE_OK 0x80 ///< AbilityDefinition.flags: usable in battle
 
-/// One icon of the command row (struct SelectionWork): its sprite, where it
-/// stands and the command it stands for. pictures.c loads it, command_row.c
+/// One icon of the command row (struct BattleCommandRowWork): its sprite, where
+/// it stands and the command it stands for. pictures.c loads it, command_row.c
 /// runs the row.
-struct SelectionEntry {
+struct BattleCommandRowIcon {
   /// The icon as a 32x32 sprite, drawn only while it is selected (pulsing);
   /// the others show as tiles of BG1.
   struct MenuSprite sprite;
@@ -368,11 +368,11 @@ struct SelectionEntry {
 /// the label window, the pulsing icon's transform and the selection.
 /// BattleCommandRow_Run takes it from the EWRAM pool and frees it on
 /// return.
-struct SelectionWork {
+struct BattleCommandRowWork {
   /// BG palette slots for the icons' 256-colour pixels, filled as each icon
   /// is loaded (Text_LoadRemappedGlyph).
   struct GlyphPalette palette;
-  struct SelectionEntry entries[6];
+  struct BattleCommandRowIcon entries[6];
   struct Window *window; ///< shows the selected command's name
   s32 iconCount;
   /// The selected icon's scale, 8.8 fixed point: it pulses between 304 and

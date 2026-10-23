@@ -20,7 +20,7 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   s8 *slotState;
   s32 remaining;
   s32 scale;
-  struct EffectVector position;
+  struct Vector3 position;
 
   leader = (struct Object *)ObjectEvent_GetById(gSaveBlock.leaderLocalId);
   djinni = (struct Object *)ObjectEvent_GetById(djinniId);
@@ -167,7 +167,7 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
 /// MercuryDropletState).
 void FieldEffect_UpdateRandomTargetParticle(struct FieldEffectSprite *effect) {
   struct Object *source;
-  struct EffectVector position;
+  struct Vector3 position;
   s8 *statePointer;
   s32 state;
 
@@ -223,6 +223,6 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldEffectSprite *effect) {
 /// Per-frame update of an afterimage: closes half the distance to the object
 /// it is linked to. Set on the Mercury Djinni's afterimages by
 /// FieldEffect_RunMercuryDjinnCapture.
-void FieldEffect_HalveDistanceToTarget(union FieldObject *fieldObject) {
+void FieldEffect_HalveDistanceToTarget(union ObjectEventOrEffect *fieldObject) {
   FieldEffect_MoveAfterimageHalfway(fieldObject);
 }

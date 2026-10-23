@@ -255,7 +255,8 @@ static void BabiLighthouse_LandWithParticles(void) {
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   // Spread the landing particles around the leader before restoring bounce.
   options.palette = 7;
-  options.update = (void (*)(union FieldObject *))FieldEffect_AdvanceMotion;
+  options.update =
+      (void (*)(union ObjectEventOrEffect *))FieldEffect_AdvanceMotion;
   options.startScaleX = 0xcccc;
   options.startScaleY = 0xcccc;
   for (particle = 0; particle < 17; particle++) {
@@ -1294,7 +1295,8 @@ static void BabiLighthouse_RedrawLedgePillarCells(void) {
 /// Update callback of the pillars at the Babi Lighthouse Entry (TBS_PATCH_2 and
 /// later): each is drawn in front of the leader when nearer the screen, and
 /// on its layer otherwise.
-static void BabiLighthouse_MatchLeaderPriority(union FieldObject *fieldObject) {
+static void
+BabiLighthouse_MatchLeaderPriority(union ObjectEventOrEffect *fieldObject) {
   struct Sprite *sprite;
   struct ObjectEvent *objectEvent;
   s32 priority;
@@ -1367,9 +1369,9 @@ s32 BabiLighthouse_SetupMap(void) {
     ObjectEvent_SetSpriteColorById(LOCALID_LEFT_PILLAR, 6);
     ObjectEvent_SetSpriteColorById(LOCALID_RIGHT_PILLAR, 6);
 #if TBS_PATCH_2
-    ((union FieldObject *)ObjectEvent_GetById(LOCALID_LEFT_PILLAR))
+    ((union ObjectEventOrEffect *)ObjectEvent_GetById(LOCALID_LEFT_PILLAR))
         ->objectEvent.update = BabiLighthouse_MatchLeaderPriority;
-    ((union FieldObject *)ObjectEvent_GetById(LOCALID_RIGHT_PILLAR))
+    ((union ObjectEventOrEffect *)ObjectEvent_GetById(LOCALID_RIGHT_PILLAR))
         ->objectEvent.update = BabiLighthouse_MatchLeaderPriority;
 #endif
     if (state->warpDest ==

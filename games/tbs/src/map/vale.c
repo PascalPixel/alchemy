@@ -156,11 +156,12 @@ static void Vale_CycleFirstBoardPalette(void);
 static void Vale_CycleSecondBoardPalette(void);
 static void Vale_CycleThirdBoardPalette(void);
 #ifdef UBFIX
-static void Vale_HaveGuardWatchTheLeader(union FieldObject *fieldObject);
+static void
+Vale_HaveGuardWatchTheLeader(union ObjectEventOrEffect *fieldObject);
 #else
-static s32 Vale_HaveGuardWatchTheLeader(union FieldObject *fieldObject);
+static s32 Vale_HaveGuardWatchTheLeader(union ObjectEventOrEffect *fieldObject);
 #endif
-static void Vale_TrailSparkles(union FieldObject *fieldObject);
+static void Vale_TrailSparkles(union ObjectEventOrEffect *fieldObject);
 static void Vale_VanishMoveHand(struct ObjectEvent *emitter);
 static void Vale_UpdateParticlePosition(struct ObjectEvent *particle,
                                         s32 distance, s32 angle);
@@ -872,7 +873,7 @@ static void EventScript_WarnAgainstSneakingUpMtAleph(void) {
   objectEvent->update = Vale_HaveGuardWatchTheLeader;
 #else
   objectEvent->update =
-      (void (*)(union FieldObject *))Vale_HaveGuardWatchTheLeader;
+      (void (*)(union ObjectEventOrEffect *))Vale_HaveGuardWatchTheLeader;
 #endif
   ObjectEvent_SetActionScript(LOCALID_MAN_GUARDING_MT_ALEPH,
                               gVale_AlephGuardPatrol);
@@ -929,7 +930,7 @@ static void Vale_AskAboutSneakingToAleph(const s32 *leaderActions,
   objectEvent->update = Vale_HaveGuardWatchTheLeader;
 #else
   objectEvent->update =
-      (void (*)(union FieldObject *))Vale_HaveGuardWatchTheLeader;
+      (void (*)(union ObjectEventOrEffect *))Vale_HaveGuardWatchTheLeader;
 #endif
   ObjectEvent_SetActionScript(LOCALID_MAN_GUARDING_MT_ALEPH,
                               gVale_AlephGuardPatrol);
@@ -2184,7 +2185,7 @@ static void EventScript_MendingTheRoof(void) {
   ObjectEvent_MoveToAndWait(LOCALID_OPENING_PILLAR, 378, 584);
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_JENNA, 0, 10);
-  moveHand->update = (void (*)(union FieldObject *))stoppedMotionFlags;
+  moveHand->update = (void (*)(union ObjectEventOrEffect *))stoppedMotionFlags;
   ObjectMotion_SetActionVariant(LOCALID_GARET, 2);
   ObjectEvent_Get(LOCALID_GARET)->priorityFlags |= OBJ_EVENT_PRIORITY_AUTOMATIC;
   Task_Remove(Vale_UpdateGaretPaletteAndEffects);
@@ -3089,9 +3090,11 @@ static s32 Vale_TestFacing(struct ObjectEvent *objectEvent,
 // UB: calling this s32 function through a void update hook is incompatible.
 // Plain void changes 48 to 44 bytes in tbs-en.
 #ifdef UBFIX
-static void Vale_HaveGuardWatchTheLeader(union FieldObject *fieldObject) {
+static void
+Vale_HaveGuardWatchTheLeader(union ObjectEventOrEffect *fieldObject) {
 #else
-static s32 Vale_HaveGuardWatchTheLeader(union FieldObject *fieldObject) {
+static s32
+Vale_HaveGuardWatchTheLeader(union ObjectEventOrEffect *fieldObject) {
 #endif
   struct ObjectEvent *guard = &fieldObject->objectEvent;
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -3112,7 +3115,7 @@ static s32 Vale_HaveGuardWatchTheLeader(union FieldObject *fieldObject) {
 
 /// The Move hand's update hook in the opening: each frame it sheds a sparkle
 /// (SPRITE_SPARKLE) just below and around it, with SE_ITEM_BREAK.
-static void Vale_TrailSparkles(union FieldObject *fieldObject) {
+static void Vale_TrailSparkles(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *source = &fieldObject->objectEvent;
   s32 spawnPosition[3];
   s32 randomDistance;

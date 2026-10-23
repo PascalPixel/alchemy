@@ -604,7 +604,7 @@ static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
 /// Moves the particle while damping its velocity, growing it, and advancing
 /// rotation.
 static void CrossboneIsleSteppingStones_UpdateDampedParticle(
-    union FieldObject *fieldObject) {
+    union ObjectEventOrEffect *fieldObject) {
   s32 velocityX;
   s32 velocityY;
   s32 velocityZ;
@@ -925,12 +925,12 @@ static s32 CrossboneIsleSteppingStones_SyncPriorityIfAhead(
 /// Keeps each moving pillar's priority and collision flags consistent with the
 /// leader.
 static void CrossboneIsleSteppingStones_UpdateObjectEventPriority(
-    union FieldObject *fieldObject) {
+    union ObjectEventOrEffect *fieldObject) {
 #else
 /// Keeps each moving pillar's priority and collision flags consistent with the
 /// leader.
 static s32 CrossboneIsleSteppingStones_UpdateObjectEventPriority(
-    union FieldObject *fieldObject) {
+    union ObjectEventOrEffect *fieldObject) {
 #endif
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -1213,12 +1213,12 @@ static void EventScript_StopRising(void) {
 /// Keeps the frozen puddle's underfoot flag consistent with the leader's height
 /// and depth.
 static void CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority(
-    union FieldObject *fieldObject) {
+    union ObjectEventOrEffect *fieldObject) {
 #else
 /// Puts the frozen puddle under the leader when it is behind and below the
 /// leader.
 static s32 CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority(
-    union FieldObject *fieldObject) {
+    union ObjectEventOrEffect *fieldObject) {
 #endif
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   struct ObjectEvent *ref = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -1246,7 +1246,7 @@ static void CrossboneIsleSteppingStones_FreezePuddle(s32 id) {
 #ifdef UBFIX
   objectEvent->update = CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority;
 #else
-  objectEvent->update = (void (*)(union FieldObject *))
+  objectEvent->update = (void (*)(union ObjectEventOrEffect *))
       CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority;
 #endif
   MapGrid_CopyCellAttributes(20, 14, 1, 1, objectEvent->x.fixed >> 20,
@@ -1346,12 +1346,12 @@ static void CrossboneIsleSteppingStones_SpawnFrostParticle(void) {
 // Plain void changes 172 to 168 bytes in tbs-en.
 #ifdef UBFIX
 /// Emits a randomized particle from the thawing puddle every eight frames.
-static void
-CrossboneIsleSteppingStones_SpawnThawParticle(union FieldObject *fieldObject) {
+static void CrossboneIsleSteppingStones_SpawnThawParticle(
+    union ObjectEventOrEffect *fieldObject) {
 #else
 /// Emits a randomized particle from the thawing puddle every eight frames.
-static s32
-CrossboneIsleSteppingStones_SpawnThawParticle(union FieldObject *fieldObject) {
+static s32 CrossboneIsleSteppingStones_SpawnThawParticle(
+    union ObjectEventOrEffect *fieldObject) {
 #endif
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   struct EffectOptions options;
@@ -1418,13 +1418,14 @@ static void EventScript_FreezeThirdPuddle(void) {
       ObjectEvent_GetById(LOCALID_SECOND_PUDDLE)->update =
           CrossboneIsleSteppingStones_SpawnThawParticle;
 #else
-      ObjectEvent_GetById(LOCALID_SECOND_PUDDLE)->update = (void (*)(
-          union FieldObject *))CrossboneIsleSteppingStones_SpawnThawParticle;
+      ObjectEvent_GetById(LOCALID_SECOND_PUDDLE)->update =
+          (void (*)(union ObjectEventOrEffect *))
+              CrossboneIsleSteppingStones_SpawnThawParticle;
 #endif
       OBJECT_ANIMATION(LOCALID_SECOND_PUDDLE, 6);
       ObjectMotion_WaitForAnimationChange(LOCALID_SECOND_PUDDLE);
       ObjectEvent_GetById(LOCALID_SECOND_PUDDLE)->update =
-          (void (*)(union FieldObject *))set;
+          (void (*)(union ObjectEventOrEffect *))set;
       MapGrid_CopyCellAttributes(17, 13, 1, 1, 18, 13);
       GameFlag_Clear(FIRST_FROZEN_PUDDLE_FLAG + 1);
       ObjectEvent_ConfigureSpriteColor(LOCALID_SECOND_PUDDLE, 0);
@@ -1543,7 +1544,7 @@ static void CrossboneIsleSteppingStones_RestoreFlaggedPillar(s32 localId) {
     objectEvent->update =
         CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority;
 #else
-    objectEvent->update = (void (*)(union FieldObject *))
+    objectEvent->update = (void (*)(union ObjectEventOrEffect *))
         CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority;
 #endif
     MapGrid_CopyCellAttributes(20, 14, 1, 1, objectEvent->x.fixed >> 20,
@@ -1562,7 +1563,7 @@ static void CrossboneIsleSteppingStones_InitializePillarPriority(s32 id) {
 #ifdef UBFIX
   objectEvent->update = CrossboneIsleSteppingStones_UpdateObjectEventPriority;
 #else
-  objectEvent->update = (void (*)(union FieldObject *))
+  objectEvent->update = (void (*)(union ObjectEventOrEffect *))
       CrossboneIsleSteppingStones_UpdateObjectEventPriority;
 #endif
 }

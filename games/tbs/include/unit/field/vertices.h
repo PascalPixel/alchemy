@@ -4,10 +4,10 @@
 #include "types.h"
 
 struct BgAffine;
-struct Position;
+struct Vector3;
 struct ScanVertex;
 
-void Transform_UpdateVertices(struct Position *eye, struct Position *target,
+void Transform_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
                               struct ScanVertex *line, struct BgAffine *affine);
 
 #endif

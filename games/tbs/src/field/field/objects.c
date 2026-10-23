@@ -201,10 +201,10 @@ void ObjectSystem_Initialize(s32 controlMode) {
 }
 
 /// Unused: an empty function nothing calls.
-UNUSED void ResourceTable_ReservedNoOpC0C4(void) {}
+UNUSED void Resource_ReservedNoOpC0C4(void) {}
 
 /// Unused: an empty function nothing calls.
-UNUSED void ResourceTable_ReservedNoOp2(void) {}
+UNUSED void Resource_ReservedNoOp2(void) {}
 
 /// Returns the first of the 64 objects not in use (with no script), or 0.
 /// Called by Object_CreateField.

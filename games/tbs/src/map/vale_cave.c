@@ -240,10 +240,10 @@ ValeCave_WaitForObjectEventLanding(struct ObjectEvent *objectEvent) {
 // Plain void changes 38 to 36 bytes in tbs-en.
 #ifdef UBFIX
 static void
-ValeCave_FaceObjectEventTowardLeader(union FieldObject *fieldObject) {
+ValeCave_FaceObjectEventTowardLeader(union ObjectEventOrEffect *fieldObject) {
 #else
 static s32
-ValeCave_FaceObjectEventTowardLeader(union FieldObject *fieldObject) {
+ValeCave_FaceObjectEventTowardLeader(union ObjectEventOrEffect *fieldObject) {
 #endif
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -262,7 +262,7 @@ ValeCave_FaceObjectEventTowardLeader(union FieldObject *fieldObject) {
 #define VALE_CAVE_FACE_LEADER_CALLBACK ValeCave_FaceObjectEventTowardLeader
 #else
 #define VALE_CAVE_FACE_LEADER_CALLBACK                                         \
-  ((void (*)(union FieldObject *))ValeCave_FaceObjectEventTowardLeader)
+  ((void (*)(union ObjectEventOrEffect *))ValeCave_FaceObjectEventTowardLeader)
 #endif
 
 /// Selects warp destination positions and camera bounds for the current cave

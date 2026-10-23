@@ -170,7 +170,7 @@ static void ShipGlow_CyclePalette(void) {
 /// A drop of spray rises and wobbles for its timer, then falls back by
 /// gSprayFallScript, which frees it.
 /// The update hook Ship_UpdateSwell gives each drop it creates.
-static void Spray_Update(union FieldObject *fieldObject) {
+static void Spray_Update(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *drop = (struct ObjectEvent *)fieldObject;
 
   if (drop->timer != 0) {

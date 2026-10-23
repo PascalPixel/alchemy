@@ -6,7 +6,8 @@
 
 /// Per-frame update Frost leaves on its target: sprite param 2 for 2 frames in
 /// every 8, otherwise 0, so the target glints.
-void FieldEffect_UpdateOrbitingParticleMain(union FieldObject *fieldObject) {
+void FieldEffect_UpdateOrbitingParticleMain(
+    union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *particle = (struct ObjectEvent *)fieldObject;
   s32 frame = gFrameCount & 7;
   if (frame == 0) {
@@ -17,7 +18,8 @@ void FieldEffect_UpdateOrbitingParticleMain(union FieldObject *fieldObject) {
 }
 
 /// Per-frame update: shrinks by 1/16 a frame and is released at 1/16.
-void FieldEffect_UpdateOrbitingParticleFade(union FieldObject *fieldObject) {
+void FieldEffect_UpdateOrbitingParticleFade(
+    union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *particle = (struct ObjectEvent *)fieldObject;
   s32 scale;
 
@@ -36,10 +38,10 @@ void FieldEffect_UpdateOrbitingParticleFade(union FieldObject *fieldObject) {
 /// (targetX to targetZ) at a radius of 2 pixels and an angle of 1/32 turn for
 /// each frame left, so it closes in from 118 pixels.
 static inline void
-FieldEffect_UpdateSpiralParticle(union FieldObject *fieldObject,
+FieldEffect_UpdateSpiralParticle(union ObjectEventOrEffect *fieldObject,
                                  s32 clockwise) {
   struct ObjectEvent *particle = (struct ObjectEvent *)fieldObject;
-  struct EffectVector position;
+  struct Vector3 position;
   s16 remainingFrames;
   s32 decrementedTimer;
 
@@ -67,12 +69,14 @@ FieldEffect_UpdateSpiralParticle(union FieldObject *fieldObject,
 }
 
 /// Spirals anticlockwise at twice the frames left in pixels, then fades.
-void FieldEffect_UpdateOrbitingParticleLeft(union FieldObject *fieldObject) {
+void FieldEffect_UpdateOrbitingParticleLeft(
+    union ObjectEventOrEffect *fieldObject) {
   FieldEffect_UpdateSpiralParticle(fieldObject, 0);
 }
 
 /// Per-frame update: as FieldEffect_UpdateOrbitingParticleLeft, clockwise.
-void FieldEffect_UpdateOrbitingParticleRight(union FieldObject *fieldObject) {
+void FieldEffect_UpdateOrbitingParticleRight(
+    union ObjectEventOrEffect *fieldObject) {
   FieldEffect_UpdateSpiralParticle(fieldObject, 1);
 }
 
@@ -109,8 +113,8 @@ void FieldEffect_RunFrostOnTarget(s32 unused) {
 /// FieldEffect_RunFrostOnTarget.
 void FieldEffect_RunFrost(void) {
   s32 eventTarget;
-  struct EffectVector pos;
-  struct EffectVector *p;
+  struct Vector3 pos;
+  struct Vector3 *p;
   struct FieldEffectWork *effectWork;
   struct ObjectEvent *target;
   struct ObjectEvent *particle;

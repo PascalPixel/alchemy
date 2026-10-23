@@ -644,7 +644,7 @@ static void AltmillerCave_MoveStagedObjectEventToClearPosition(void) {
 
 /// Update callback of the light at the top of the stopped ring: it pulses
 /// through four sizes.
-static void AltmillerCave_PulseLight(union FieldObject *fieldObject) {
+static void AltmillerCave_PulseLight(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *light = (struct ObjectEvent *)fieldObject;
   s32 scale = gAltmillerCave_PulseScales[(light->timer >> 2) & 3];
 
@@ -2070,7 +2070,8 @@ const struct MapEvent *AltmillerCave_GetEvents(void) {
 
 /// Update callback of AltmillerCaveDraught's obstacles: drawn on the leader's
 /// sprite priority.
-static void AltmillerCave_MatchLeaderPriority(union FieldObject *fieldObject) {
+static void
+AltmillerCave_MatchLeaderPriority(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   if (objectEvent != NULL) {
     objectEvent->priorityFlags = 0;
@@ -2286,7 +2287,7 @@ AltmillerCave_UpdateWallFragment(struct FieldEffectSprite *fragment) {
 /// cells open to the passage, and the shaking calms.
 static void AltmillerCave_ReleaseWallBurst(void) {
   struct FieldEffectWork *effectWork;
-  struct EffectVector position;
+  struct Vector3 position;
   struct FieldEffectSprite *fragment;
   s32 fragmentIndex;
 

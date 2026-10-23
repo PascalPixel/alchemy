@@ -178,10 +178,10 @@ static void SolSanctum_UpdateRing(void) {
 /// Starts the floating lights: count object events (at most 10) from first,
 /// each drawn translucent and starting at its largest scale.
 void SolSanctum_StartFloatingLights(s32 first, u32 count) {
-  // Each light is read here as FieldEffect, union FieldObject's effect view of
-  // the same object, the plain-C form this site matches with (MATCHING.md):
-  // through ObjectEvent's sprite union, the sprite-flags address moves after
-  // the ring-entry store. The callback reads ObjectEvent.
+  // Each light is read here as FieldEffect, union ObjectEventOrEffect's effect
+  // view of the same object, the plain-C form this site matches with
+  // (MATCHING.md): through ObjectEvent's sprite union, the sprite-flags address
+  // moves after the ring-entry store. The callback reads ObjectEvent.
   struct SolSanctumRingList *list;
   struct SolSanctumRingEntry *entry;
   struct FieldEffect *light;
@@ -200,7 +200,8 @@ void SolSanctum_StartFloatingLights(s32 first, u32 count) {
   if (count != 0) {
     cleared = none;
     do {
-      light = &((union FieldObject *)ObjectEvent_GetById(first))->effect;
+      light =
+          &((union ObjectEventOrEffect *)ObjectEvent_GetById(first))->effect;
       {
         u8 *flags = &light->sprite->flags;
 

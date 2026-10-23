@@ -155,7 +155,7 @@ s32 Map_Initialize(void) {
 }
 
 /// The leaping stump's update hook turns its sprite a fixed amount per frame.
-static void GomaCaveStream_SpinStump(union FieldObject *fieldObject) {
+static void GomaCaveStream_SpinStump(union ObjectEventOrEffect *fieldObject) {
   struct Sprite *sprite = fieldObject->objectEvent.sprite;
 
   sprite->rotation -= 0x800;

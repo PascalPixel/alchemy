@@ -27,9 +27,9 @@ struct WindowSprite *CreateSideObject(s32 character, s32 unused, s32 side,
 void Portrait_Reload(u32 side, s32 character, s32 unused);
 void WindowSprite_SetMotion(struct WindowSprite *out, s32 mode);
 void WindowSprite_SetInvertedSentinel(void *sprite, s32 priority);
-void Win_FillScanlineSpans(void *spans);
-void Win_FillScreenBlockRect(s32 unused0, s32 unused1, u32 width, u32 height,
-                             s32 value);
+void ScanlineWindow_FillSpans(void *spans);
+void BgScreen_FillRect(s32 unused0, s32 unused1, u32 width, u32 height,
+                       s32 value);
 
 void PartyStatus_BuildLayoutBounds(s32 flags);
 void PartyStatus_CreateWindow(s32 flags);
@@ -103,7 +103,7 @@ struct BattleAction;
 struct AbilityDefinition;
 struct GlyphPalette;
 struct PsynergyEntry;
-struct SelectionWork;
+struct BattleCommandRowWork;
 
 #ifdef UBFIX
 void Menu_BuildLocalizedPatternTiles(void);
@@ -127,7 +127,7 @@ void Icon_Decompress(GlyphTransfer *work);
 struct Window *Link_CreateCountdownLabelWindow(void);
 s32 Resource_LoadIndexedIntoBuffer(s32 arg0, s32 arg1);
 void Text_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph, s32 tile);
-void Text_DrawCharacter(struct SelectionWork *work, s32 index, u32 kind);
+void Text_DrawCharacter(struct BattleCommandRowWork *work, s32 index, u32 kind);
 void Graphics_SetBg1Priority3(void);
 void Graphics_SetBg1Priority0(void);
 void Graphics_InstallBg1VCountHandler(void);

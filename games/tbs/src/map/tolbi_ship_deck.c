@@ -776,7 +776,8 @@ TolbiShipDeck_RandomlyStartObjectEventHop(struct Object *interpreter) {
 
 /// The update that shrinks an enlarged object event by 1/32 a frame until it is
 /// back to normal size.
-static void TolbiShipDeck_ShrinkToNormalSize(union FieldObject *fieldObject) {
+static void
+TolbiShipDeck_ShrinkToNormalSize(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   if (objectEvent->scaleX > Q16_ONE) {
     objectEvent->scaleX -= Q16_ONE / 32;

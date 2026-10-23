@@ -282,8 +282,8 @@ void SpriteViewer_SetGridColumnPriority(s32 slot, s32 value);
 s32 MapGrid_GetScreenRelativePosition(struct Object *object,
                                       s32 *screenPosition);
 void ObjectSystem_Initialize(s32 controlMode);
-void ResourceTable_ReservedNoOpC0C4(void);
-void ResourceTable_ReservedNoOp2(void);
+void Resource_ReservedNoOpC0C4(void);
+void Resource_ReservedNoOp2(void);
 void *Object_FindFree(void);
 void Object_Release(struct Object *object);
 struct Object *Object_CreateField(s32 encodedSprite, s32 x, s32 y, s32 z);

@@ -260,9 +260,9 @@ s32 Battle_Run(s32 enemyGroup) {
       }
       Heap_GetRemainingIwram();
       Heap_GetRemainingEwram();
-      if (BattleUnit_ListLiving(BATTLE_SIDES_PARTY, 0) == 0)
+      if (BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, 0) == 0)
         goto party_lost;
-      if (BattleUnit_ListLiving(BATTLE_SIDES_ENEMIES, 0) == 0) {
+      if (BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, 0) == 0) {
         // Unit ids 0 to 7 are party members.
         if (actingUnit <= ALLY_MAX && battle->spoils.defeated == 1)
           battle->defeatState = DEFEAT_BY_PARTY_MEMBER;
@@ -442,9 +442,9 @@ s32 BattleEnemy_List(s16 *unitIds) {
 }
 
 /// Lists the units still standing (HP above 0) on the sides in sideMask
-/// (BATTLE_SIDES_PARTY, BATTLE_SIDES_ENEMIES or both), party first. unitIds,
-/// if not null, receives them ended by BATTLE_UNIT_LIST_END. Returns how
-/// many there are. Called across the battle parts (the round, staging, auto
+/// (BATTLE_SIDE_MASK_PARTY, BATTLE_SIDE_MASK_ENEMIES or both), party first.
+/// unitIds, if not null, receives them ended by BATTLE_UNIT_LIST_END. Returns
+/// how many there are. Called across the battle parts (the round, staging, auto
 /// battle, turn end and spoils) to test whether a side still stands and to
 /// pick targets.
 s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
@@ -469,7 +469,7 @@ s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
   }
   // The party, in its battle order; then every enemy unit id that is
   // present, which a link battle limits to the opponent's three.
-  if (sideMask & BATTLE_SIDES_PARTY) {
+  if (sideMask & BATTLE_SIDE_MASK_PARTY) {
     base = activeMembers;
     activeCount = BattleParty_PrepareMembers(base);
     if (livingCount < activeCount) {
@@ -490,7 +490,7 @@ s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
       } while (remaining != 0);
     }
   }
-  if (sideMask & BATTLE_SIDES_ENEMIES) {
+  if (sideMask & BATTLE_SIDE_MASK_ENEMIES) {
     // remaining walks the enemy unit ids here.
     remaining = FIRST_ENEMY_UNIT;
     lastEnemy = enemyCapacity + FIRST_ENEMY_UNIT;
@@ -527,7 +527,7 @@ s32 BattleUnit_ListIds(s32 sideMask, u16 *unitIds) {
 
   battle = gBattleWork;
   count = 0;
-  if (sideMask & BATTLE_SIDES_PARTY) {
+  if (sideMask & BATTLE_SIDE_MASK_PARTY) {
     for (i = 0; battle->partyUnits[i] != BATTLE_UNIT_LIST_END; i++) {
       if (battle->partyUnits[i] != BATTLE_UNIT_REMOVED) {
         if (unitIds != NULL)
@@ -536,7 +536,7 @@ s32 BattleUnit_ListIds(s32 sideMask, u16 *unitIds) {
       }
     }
   }
-  if (sideMask & BATTLE_SIDES_ENEMIES) {
+  if (sideMask & BATTLE_SIDE_MASK_ENEMIES) {
     for (i = 0; battle->enemyIds[i] != BATTLE_UNIT_LIST_END; i++) {
       if (battle->enemyIds[i] != BATTLE_UNIT_REMOVED) {
         if (unitIds != NULL)

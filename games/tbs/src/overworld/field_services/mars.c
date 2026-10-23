@@ -12,7 +12,7 @@
 /// then clears the Djinni's object event slot. Uses all 24 field effect
 /// sprites, tints the field palette red and fades it back at the end.
 void Djinn_RunMarsJoinEffect(s32 djinniId) {
-  struct EffectVector position;
+  struct Vector3 position;
   s32 scale;
   s32 remaining;
   struct ObjectEvent *djinni;
@@ -142,9 +142,10 @@ DEFINE_SHRINK_AND_DESTROY(FieldEffect_ShrinkObjectAndDestroyFast, 0xFFFFFC00)
 /// leader on a shrinking spiral (radius timer * 0.4 pixels) while it sinks a
 /// pixel a frame, and is released 20 pixels above the leader's feet. Set by
 /// FieldEffect_RunVenusDjinnCapture in venus.c.
-void FieldEffect_UpdateDescendingOrbitObject(union FieldObject *fieldObject) {
+void FieldEffect_UpdateDescendingOrbitObject(
+    union ObjectEventOrEffect *fieldObject) {
   struct Object *mote = (struct Object *)fieldObject;
-  struct EffectVector position;
+  struct Vector3 position;
   struct Object *leader;
   s32 timer;
   s16 frames;
@@ -174,7 +175,7 @@ void FieldEffect_UpdateDescendingOrbitObject(union FieldObject *fieldObject) {
 /// odd frame plays SE_144. It speeds up by 1 pixel a frame to at most 5,
 /// straight at its target.
 void FieldEffect_UpdateRadialSpread(struct FieldEffectSprite *effect) {
-  struct EffectVector position;
+  struct Vector3 position;
   struct Object *source;
   s32 state;
   u32 random;

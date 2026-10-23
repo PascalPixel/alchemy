@@ -40,7 +40,7 @@ struct Window *Message_ShowAndWait(s32 message, s32 x, s32 y) {
 s32 BattleCommandRow_Run(s32 mode) {
   u8 party[4];
   struct WindowWork *work;
-  struct SelectionWork *selectionUi;
+  struct BattleCommandRowWork *selectionUi;
   struct BattleMenuWork *navigation;
   s32 stripDirty, tradeCount, pulseScale, command;
   s32 entryIndex;
@@ -233,7 +233,7 @@ s32 BattleCommandRow_Run(s32 mode) {
     // Only the selected icon is drawn as a sprite: double-size affine (mode
     // 3), on layer 0xf1, moved with the pulse. The others are BG1 tiles.
     for (entryIndex = 0; entryIndex < selectionUi->iconCount; entryIndex++) {
-      struct SelectionEntry *entry = &selectionUi->entries[entryIndex];
+      struct BattleCommandRowIcon *entry = &selectionUi->entries[entryIndex];
       if (entryIndex == selectionUi->selectedIndex) {
         entry->sprite.oam.f.affineIndex = selectionUi->affineIndex;
         entry->sprite.oam.f.affine = 3;

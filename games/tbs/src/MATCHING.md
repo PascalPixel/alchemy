@@ -328,7 +328,7 @@ is, and its note says so.
   `gPushedObject_FootprintBounds`); `gFont_MarkGlyphCodes` is placed the same
   way because a `const` extern changes the schedule of its reader.
 - One table can go by several extern names, given as `__asm__` labels, where
-  the ROM keeps a literal for each use (`RenderResource_LoadTableEntry`).
+  the ROM keeps a literal for each use (`Resource_LoadTableEntry`).
 - A local array of constants compiles to an anonymous read-only constant
   copied into the frame, and a struct copy of a named table to the same code;
   which one a site keeps decides where the data lands

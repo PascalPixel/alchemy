@@ -374,7 +374,7 @@ void FieldEffectSprite_InitializeFar(struct FieldEffectSprite *effect, s32 kind,
 void FieldEffect_ClearOwnedSlotFar(struct FieldEffectSprite *effect);
 /// Converts a world position in 16.16 pixels to screen x and y, in place,
 /// using the world map's perspective there.
-void Camera_WorldToScreenFar(struct EffectVector *position);
+void Camera_WorldToScreenFar(struct Vector3 *position);
 /// Returns the blip sound that voices a sprite's messages, or 0 for none or
 /// with the Speech option off.
 s32 Speaker_GetVoiceFar(u32 id);

@@ -512,9 +512,10 @@ void Text_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph, s32 tile) {
 /// from tile index * 16 (Text_LoadRemappedGlyph), and into the row's
 /// shared VRAM cache entry for its 32x32 sprite, which BattleCommandRow_Run
 /// shows only for the selected icon. The icon number is also its command
-/// (SelectionEntry.kind), which names its label.
-void Text_DrawCharacter(struct SelectionWork *work, s32 index, u32 icon) {
-  struct SelectionEntry *entry = &work->entries[index];
+/// (BattleCommandRowIcon.kind), which names its label.
+void Text_DrawCharacter(struct BattleCommandRowWork *work, s32 index,
+                        u32 icon) {
+  struct BattleCommandRowIcon *entry = &work->entries[index];
 
   Text_LoadRemappedGlyph(&work->palette, icon, index * 16);
   work->entries[index].kind = icon;

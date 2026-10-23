@@ -5,7 +5,7 @@
 /// (TEXT_CANVAS_VRAM, mapped by Window_MapTextCanvasTiles). The canvas tiles
 /// run down columns: each column of tiles is as tall as the window's interior,
 /// which is the window height less its two frame rows. Glyph_Draw and
-/// Win_FillScanlineSpans copy these routines into RAM for each call.
+/// ScanlineWindow_FillSpans copy these routines into RAM for each call.
 
 #include "unit/window/glyph_arm.h"
 #include "types.h"
@@ -305,7 +305,7 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
 /// gets 0. The rounded corner tiles trim the first or last scanline of a row by
 /// one pixel on that side, so the window follows the frame's rounded corners.
 /// Each frame of a window transition calls it, through
-/// Win_FillScanlineSpans (screens/outputs.c).
+/// ScanlineWindow_FillSpans (screens/outputs.c).
 void Tile_BuildMetatiles(u16 *scanlineBounds, u16 *frameTiles) {
   u32 tileRow;
   u32 tileColumn;

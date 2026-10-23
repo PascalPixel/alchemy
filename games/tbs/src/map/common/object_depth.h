@@ -14,10 +14,10 @@
 // unused native result in matching builds.
 #ifdef UBFIX
 static void
-ObjectEvent_SetFlagBitByRelativeDepth(union FieldObject *fieldObject) {
+ObjectEvent_SetFlagBitByRelativeDepth(union ObjectEventOrEffect *fieldObject) {
 #else
 static s32
-ObjectEvent_SetFlagBitByRelativeDepth(union FieldObject *fieldObject) {
+ObjectEvent_SetFlagBitByRelativeDepth(union ObjectEventOrEffect *fieldObject) {
 #endif
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   struct ObjectEvent *ref;

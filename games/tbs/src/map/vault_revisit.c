@@ -693,7 +693,7 @@ s32 Map_Initialize(void) {
   objectEvent->update = Vault_UpdateWalkingVillager;
 #else
   objectEvent->update =
-      (void (*)(union FieldObject *))Vault_UpdateWalkingVillager;
+      (void (*)(union ObjectEventOrEffect *))Vault_UpdateWalkingVillager;
 #endif
   {
     struct ObjectEvent *objectEvent =
@@ -707,7 +707,7 @@ s32 Map_Initialize(void) {
   objectEvent->update = Vault_UpdateWalkingVillager;
 #else
   objectEvent->update =
-      (void (*)(union FieldObject *))Vault_UpdateWalkingVillager;
+      (void (*)(union ObjectEventOrEffect *))Vault_UpdateWalkingVillager;
 #endif
   ObjectEvent_GetById(LOCALID_GIRL_ROUND_THE_WELL)->timer = mode;
   // Restore the dog's clue position and the bell's current Djinni position.

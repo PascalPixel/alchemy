@@ -25,7 +25,8 @@ enum {
 /// Per-frame update of a particle: moves by its velocity, slowing its x and z
 /// velocity a little, and changes its scale and spin. Assigned by
 /// FieldEffect_SpawnRadialParticleRing for Carry's landing particles.
-void FieldEffect_UpdateParticleMotionAndScale(union FieldObject *fieldObject) {
+void FieldEffect_UpdateParticleMotionAndScale(
+    union ObjectEventOrEffect *fieldObject) {
   struct FieldEffect *effect = &fieldObject->effect;
 
   effect->x += effect->velocity.x;
@@ -72,7 +73,7 @@ void FieldEffect_SpawnRadialParticleRing(struct Object *origin) {
 /// While it wanders, the engine's own motion lifts the particle (the velocity
 /// and gravity FieldEffect_CircleAnchor gave it); this only moves it across the
 /// ground.
-void FieldEffect_WanderAroundAnchor(union FieldObject *fieldObject) {
+void FieldEffect_WanderAroundAnchor(union ObjectEventOrEffect *fieldObject) {
   struct Object *effect = (struct Object *)fieldObject;
   s32 len;
   s32 angle;
@@ -103,7 +104,7 @@ void FieldEffect_WanderAroundAnchor(union FieldObject *fieldObject) {
 /// Per-frame update: circles the anchor at 8 pixels; after 121 frames it
 /// starts to wander (FieldEffect_WanderAroundAnchor). FieldEffect_RunWhirlwind
 /// gives it to each of the 16 particles it spawns round the orb.
-void FieldEffect_CircleAnchor(union FieldObject *fieldObject) {
+void FieldEffect_CircleAnchor(union ObjectEventOrEffect *fieldObject) {
   struct Object *effect = (struct Object *)fieldObject;
   struct Object *anchor;
   s32 angle;
@@ -135,7 +136,8 @@ void FieldEffect_CircleAnchor(union FieldObject *fieldObject) {
 /// moves it to the origin, stops it and removes the update.
 /// The scale falls by 1/512 each frame. From unit scale the strict lower bound
 /// takes 257 updates.
-void FieldEffect_ShrinkObjectScaleUntilHalf(union FieldObject *fieldObject) {
+void FieldEffect_ShrinkObjectScaleUntilHalf(
+    union ObjectEventOrEffect *fieldObject) {
   struct Object *object = (struct Object *)fieldObject;
   s32 scale;
 
@@ -174,9 +176,9 @@ void FieldEffect_RunWhirlwind(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct ObjectEvent *src = effectWork->mainObject;
   struct ObjectEvent *target = effectWork->child;
-  struct EffectVector pos;
-  struct EffectVector from;
-  struct EffectVector to;
+  struct Vector3 pos;
+  struct Vector3 from;
+  struct Vector3 to;
   struct ObjectEvent *ball;
   s32 step;
   struct ObjectEvent *particle;

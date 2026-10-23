@@ -268,9 +268,9 @@ static s32 Xian_UpdateCarrierTracking(struct ObjectEvent *objectEvent,
 // UB: calling this s32 function through a void update hook is incompatible.
 // Plain void changes 154 to 150 bytes in tbs-en.
 #ifdef UBFIX
-static void Xian_WatchWaterCarrierPath(union FieldObject *fieldObject) {
+static void Xian_WatchWaterCarrierPath(union ObjectEventOrEffect *fieldObject) {
 #else
-static s32 Xian_WatchWaterCarrierPath(union FieldObject *fieldObject) {
+static s32 Xian_WatchWaterCarrierPath(union ObjectEventOrEffect *fieldObject) {
 #endif
   struct ObjectEvent *self = (struct ObjectEvent *)fieldObject;
   struct ObjectEvent *leader;

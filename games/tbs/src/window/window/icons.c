@@ -210,7 +210,7 @@ extern const u8 *gHeadingPictures[];
 /// XXX: those bytes are the table's eight label pointers, not a picture, and
 /// what the cases were meant to load is not known. A use would settle it, but
 /// the one caller, WindowSprite_CreateFromTable, has no caller in the tree.
-s32 RenderResource_LoadTableEntry(u32 value, s32 unused, u32 slot) {
+s32 Resource_LoadTableEntry(u32 value, s32 unused, u32 slot) {
   // Three more names of the one table: the ROM keeps a literal for each case,
   // and with one name the switch folds into a single load.
   extern const u8 *PairSource1[] __asm__("gHeadingPictures"),

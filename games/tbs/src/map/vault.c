@@ -174,9 +174,10 @@ static void Vault_FaceObjectEventAndWait(s32 localId, s32 other, s32 delay);
 // Plain void changes 108 to 104 bytes in tbs-en.
 #ifdef UBFIX
 static void
-Vault_UpdateRoofComplainerProximity(union FieldObject *fieldObject) {
+Vault_UpdateRoofComplainerProximity(union ObjectEventOrEffect *fieldObject) {
 #else
-static s32 Vault_UpdateRoofComplainerProximity(union FieldObject *fieldObject) {
+static s32
+Vault_UpdateRoofComplainerProximity(union ObjectEventOrEffect *fieldObject) {
 #endif
   struct ObjectEvent *entity = (struct ObjectEvent *)fieldObject;
   struct WindowWork *work = (struct WindowWork *)gWindowWork[0];
@@ -903,7 +904,7 @@ s32 Map_Initialize(void) {
   objectEvent->update = Vault_UpdateWalkingVillager;
 #else
   objectEvent->update =
-      (void (*)(union FieldObject *))Vault_UpdateWalkingVillager;
+      (void (*)(union ObjectEventOrEffect *))Vault_UpdateWalkingVillager;
 #endif
   objectEvent = ObjectEvent_GetById(LOCALID_GIRL_ROUND_THE_WELL);
   objectEvent->timer = zero;
@@ -911,7 +912,7 @@ s32 Map_Initialize(void) {
   objectEvent->update = Vault_UpdateWalkingVillager;
 #else
   objectEvent->update =
-      (void (*)(union FieldObject *))Vault_UpdateWalkingVillager;
+      (void (*)(union ObjectEventOrEffect *))Vault_UpdateWalkingVillager;
 #endif
   if (GameFlag_Get(FLAG_VAULT_DOG_SHOWN_PASSAGE) != 0) {
     ObjectEvent_SetPosition(LOCALID_VAULT_DOG, PIXELS(216), PIXELS(392));
@@ -923,8 +924,8 @@ s32 Map_Initialize(void) {
 #ifdef UBFIX
       objectEvent->update = Vault_UpdateRoofComplainerProximity;
 #else
-      objectEvent->update =
-          (void (*)(union FieldObject *))Vault_UpdateRoofComplainerProximity;
+      objectEvent->update = (void (*)(
+          union ObjectEventOrEffect *))Vault_UpdateRoofComplainerProximity;
 #endif
     }
   }
@@ -1030,7 +1031,7 @@ static void Vault_FaceObjectEventAndWait(s32 localId, s32 other, s32 delay) {
 /// Applies drift and gradually damps both rates toward zero.
 /// This custom update uses speed/acceleration as its two drift rates and
 /// mirrors the resulting position into the object event's target coordinates.
-static void Vault_UpdateDriftingEffect(union FieldObject *fieldObject) {
+static void Vault_UpdateDriftingEffect(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *effect = (struct ObjectEvent *)fieldObject;
   s32 horizontalRate;
   s32 verticalRate;
@@ -1137,7 +1138,7 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
   }
   // Install the custom motion and share the anchor's drawing priority.
   {
-    void (*update)(union FieldObject *) = Vault_UpdateDriftingEffect;
+    void (*update)(union ObjectEventOrEffect *) = Vault_UpdateDriftingEffect;
     u8 *spriteFlags;
 
     /* FAKEMATCH(one-pass): the block takes the flags address before the update

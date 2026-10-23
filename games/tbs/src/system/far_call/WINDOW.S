@@ -81,7 +81,7 @@ FarCall_WindowTable:
 	export Icon_DrawItemFar, Icon_DrawItem
 	export Text_DrawWideStringAtOffsetFar, Text_DrawWideStringAtOffset
 	overlay_veneer OptionMenu_SelectionNoOp
-	export Win_FillScanlineSpansFar, Win_FillScanlineSpans
+	export ScanlineWindow_FillSpansFar, ScanlineWindow_FillSpans
 	export WindowSprite_RedrawSavedRectFar, WindowSprite_RedrawSavedRect
 	export WindowSprite_ClearListFar, WindowSprite_ClearList
 	export Window_SetTilemapEntryFar, Window_SetTilemapEntry
@@ -115,13 +115,13 @@ FarCall_WindowTable:
 	export WindowColor_ApplyFar, WindowColor_Apply
 	overlay_veneer OptionMenu_Run
 	export PauseMenu_RunFar, PauseMenu_Run
-	overlay_veneer Win_FillScreenBlockRect
+	overlay_veneer BgScreen_FillRect
 	export Menu_SelectShopCommandFar, Menu_SelectShopCommand
 	export Menu_SelectSanctumServiceFar, Menu_SelectSanctumService
 	export YesNoMenu_RunFar, YesNoMenu_Run
 	export Menu_SelectCoinsOrMedalsFar, Menu_SelectCoinsOrMedals
 	export ColossoMenu_ChooseFar, ColossoMenu_Choose
-	overlay_veneer RenderResource_LoadTableEntry
+	overlay_veneer Resource_LoadTableEntry
 	export YesNoMenu_RunAtFar, YesNoMenu_RunAt
 	export Resource_LoadFixedBlockBIntoFreeSlotFar, Resource_LoadFixedBlockBIntoFreeSlot
 	export Text_MeasureMessageFar, Text_MeasureMessage

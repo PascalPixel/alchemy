@@ -35,7 +35,7 @@ static void MercuryLighthouse_ArriveWithSparks(void) {
     objectEvent->update = MercuryLighthouse_TrailSparks;
 #else
     objectEvent->update =
-        (void (*)(union FieldObject *))MercuryLighthouse_TrailSparks;
+        (void (*)(union ObjectEventOrEffect *))MercuryLighthouse_TrailSparks;
 #endif
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x6666, 0x3333);
     ObjectEvent_WalkByAndWait(LOCALID_PARTY_LEADER, 0, 8);

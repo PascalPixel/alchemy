@@ -122,7 +122,8 @@ static void EventScript_DoraWakesIsaac(void);
 static void EventScript_HurryToThePlaza(void);
 static void ValeInteriorsInn_RestoreRoomPatch(void);
 static void EventScript_ShowMythrilBag(void);
-static void ValeInteriorsInn_SpawnEffectPair(union FieldObject *fieldObject);
+static void
+ValeInteriorsInn_SpawnEffectPair(union ObjectEventOrEffect *fieldObject);
 static void ValeInteriorsInn_DemonstrateCatch(void);
 
 // Shared facing code retains its position before the overlay entry points.
@@ -1196,8 +1197,8 @@ static void EventScript_ShowMythrilBag(void) {
 
 /// Unused: an update hook that flashes between two palettes and gives off a
 /// pair of effects every sixteen frames; no object event is given it.
-UNUSED static void
-ValeInteriorsInn_FlashPaletteAndSpawnPair(union FieldObject *fieldObject) {
+UNUSED static void ValeInteriorsInn_FlashPaletteAndSpawnPair(
+    union ObjectEventOrEffect *fieldObject) {
   if ((gFrameCount & 2) != 0) {
     ObjectEvent_SetColorMode(&fieldObject->objectEvent, 7);
   } else {
@@ -1209,8 +1210,8 @@ ValeInteriorsInn_FlashPaletteAndSpawnPair(union FieldObject *fieldObject) {
 }
 
 /// Cycles six palettes on odd frames and periodically emit paired effects.
-static void
-ValeInteriorsInn_CyclePaletteAndSpawnPair(union FieldObject *fieldObject) {
+static void ValeInteriorsInn_CyclePaletteAndSpawnPair(
+    union ObjectEventOrEffect *fieldObject) {
   if ((gFrameCount & 1) != 0) {
     ObjectEvent_SetColorMode(&fieldObject->objectEvent, (gFrameCount >> 1) % 6);
   }
@@ -1220,8 +1221,8 @@ ValeInteriorsInn_CyclePaletteAndSpawnPair(union FieldObject *fieldObject) {
 }
 
 /// Advances deterministically through six palettes on odd frames.
-static void
-ValeInteriorsInn_CyclePaletteOnOddFrames(union FieldObject *fieldObject) {
+static void ValeInteriorsInn_CyclePaletteOnOddFrames(
+    union ObjectEventOrEffect *fieldObject) {
   if ((gFrameCount & 1) != 0) {
     s32 slot = (gFrameCount >> 1) % 6;
 
@@ -1234,7 +1235,8 @@ ValeInteriorsInn_CyclePaletteOnOddFrames(union FieldObject *fieldObject) {
 
 /// Copies the parent's ground height into two oppositely moving vertical
 /// effects.
-static void ValeInteriorsInn_SpawnEffectPair(union FieldObject *fieldObject) {
+static void
+ValeInteriorsInn_SpawnEffectPair(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *parent = &fieldObject->objectEvent;
   struct ObjectEvent *pair[2];
   struct ObjectEvent *child;
@@ -1292,13 +1294,13 @@ static void ValeInteriorsInn_SpawnEffectPair(union FieldObject *fieldObject) {
 /// Unused: cycles Dora's palette with particles; nothing calls it.
 UNUSED static void ValeInteriorsInn_CyclePaletteWithParticles(void) {
   ValeInteriorsInn_CyclePaletteAndSpawnPair(
-      (union FieldObject *)ObjectEvent_GetById(LOCALID_DORA));
+      (union ObjectEventOrEffect *)ObjectEvent_GetById(LOCALID_DORA));
 }
 
 /// Unused: cycles Dora's palette without particles; nothing calls it.
 UNUSED static void ValeInteriorsInn_CyclePaletteWithoutParticles(void) {
   ValeInteriorsInn_CyclePaletteOnOddFrames(
-      (union FieldObject *)ObjectEvent_GetById(LOCALID_TUNIC));
+      (union ObjectEventOrEffect *)ObjectEvent_GetById(LOCALID_TUNIC));
 }
 
 /// Catch plays from Dora on the tunic, then its objects are released.

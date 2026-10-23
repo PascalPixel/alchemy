@@ -122,7 +122,7 @@ void BattleUnit_ResetGuardLevels(void) {
   s32 count;
   s32 unitIndex;
 
-  count = BattleUnit_ListIds(BATTLE_SIDES_BOTH, unitIds);
+  count = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
   for (unitIndex = 0; unitIndex < count; unitIndex++) {
     struct Unit *unit;
 
@@ -157,13 +157,13 @@ s32 BattleFlee_CheckSuccess(void) {
   } else {
     failedAttempts = &escapeState->fleeFailures;
     chance = 5000 + (escapeState->fleeFailures * 2000);
-    livingCount = BattleUnit_ListLiving(BATTLE_SIDES_PARTY, livingUnits);
+    livingCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, livingUnits);
     levelTotal = 0;
     for (unitIndex = escaped; unitIndex < livingCount; unitIndex++) {
       levelTotal += Unit_GetFar(livingUnits[unitIndex])->level;
     }
     chance += levelTotal * 500 / livingCount;
-    livingCount = BattleUnit_ListLiving(BATTLE_SIDES_ENEMIES, livingUnits);
+    livingCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, livingUnits);
     levelTotal = 0;
     for (unitIndex = 0; unitIndex < livingCount; unitIndex++) {
       levelTotal += Unit_GetFar(livingUnits[unitIndex])->level;
@@ -192,7 +192,7 @@ s32 Battle_BuildUnitActions(struct BattleAction *entries) {
   // end mark.
   u16 *choosingUnits = AllocEwram(17);
   u16 *unitIds = AllocEwram(9);
-  s32 unitCount = BattleUnit_ListLiving(BATTLE_SIDES_PARTY, unitIds);
+  s32 unitCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, unitIds);
   s32 choosingCount = 0;
   s32 entryCount = 0;
   s32 unitIndex;
@@ -255,7 +255,7 @@ s32 Battle_BuildOpponentActions(struct BattleAction *entries) {
     return 0;
   }
 
-  unitCount = BattleUnit_ListLiving(BATTLE_SIDES_ENEMIES, unitIds);
+  unitCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, unitIds);
   if (unitCount == 0) {
     return 0;
   }

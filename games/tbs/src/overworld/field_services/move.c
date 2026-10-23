@@ -15,10 +15,11 @@ s32 Input_GetDpadAngle(u32 unused) {
 /// Per-frame update of Move's hand (FieldEffect_StartItemBreak): turns it
 /// toward the object it is linked to, at most 1/16 turn a frame, and sheds a
 /// particle (SPRITE_SPARKLE) round it.
-void FieldEffect_UpdateItemBreakFragment(union FieldObject *fieldObject) {
+void FieldEffect_UpdateItemBreakFragment(
+    union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *source = (struct ObjectEvent *)fieldObject;
   struct ObjectEvent *target;
-  struct EffectVector position;
+  struct Vector3 position;
   struct Object *fragment;
   s32 turn;
   s32 radius;
@@ -66,8 +67,8 @@ void FieldEffect_UpdateItemBreakFragment(union FieldObject *fieldObject) {
 /// push would run into the caster, the caster blocks it or, when the cell
 /// beyond is free, is pushed along too.
 void FieldEffect_SteerPushedTarget(s32 targetId) {
-  struct EffectVector position;
-  struct EffectVector beyond;
+  struct Vector3 position;
+  struct Vector3 beyond;
   struct FieldEffectWork *effectWork;
   struct ObjectEvent *user;
   struct ObjectEvent *target;
@@ -81,7 +82,7 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
   s32 keys;
   s32 cellX;
   s32 cellZ;
-  struct EffectVector *candidate;
+  struct Vector3 *candidate;
 
   effectWork = gFieldEffectWork;
   user = effectWork->mainObject;
@@ -260,7 +261,7 @@ void FieldEffect_UpdateOrbitAndReturn(struct FieldEffectSprite *effect) {
   // Forward OUT_AND_BACK_FLYING_OUT fallthrough keeps the callback extent but
   // changes native instructions; retain the immediate retry until a plain form
   // matches.
-  struct EffectVector position;
+  struct Vector3 position;
   s8 *statePtr = &effect->state;
   s32 state;
 

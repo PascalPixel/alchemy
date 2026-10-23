@@ -30,7 +30,7 @@ enum MapTransitionStyle {
 
 #include "animspr.h"
 
-union FieldObject;
+union ObjectEventOrEffect;
 
 /// An object event: a person or thing on the field with a position, motion
 /// toward a target, sprites and an update callback.
@@ -114,7 +114,7 @@ struct ObjectEvent {
   /// The object its action script follows or faces.
   struct ObjectEvent *linkedObject;
   /// Called each frame before the object's script, while the object is live.
-  void (*update)(union FieldObject *fieldObject);
+  void (*update)(union ObjectEventOrEffect *fieldObject);
 };
 
 STATIC_ASSERT(offsetof(struct ObjectEvent, facing) == 0x06);

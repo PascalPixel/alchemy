@@ -17,7 +17,7 @@ u32 Random16(void) {
 
 /// Moves the point `position` by `radius` in direction `angle` on the ground
 /// plane: x by the cosine, z by the sine. The point is any three s32
-/// coordinates x, y, z in a row (struct FieldPosition, struct EffectVector and
+/// coordinates x, y, z in a row (struct FieldPosition, struct Vector3 and
 /// others), so it takes a plain pointer. Byte offsets reach each coordinate
 /// without treating separate struct members as an array.
 void Vector_AddPolarOffset(s32 radius, s32 angle, void *position) {

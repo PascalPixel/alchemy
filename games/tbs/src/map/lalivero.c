@@ -838,7 +838,7 @@ const struct MapEvent *Lalivero_GetEvents(void) {
 /// the wounded soldiers of the first visit (and its cutscene), or the sign at
 /// the north exit after Venus Lighthouse.
 s32 Lalivero_Initialize(void) {
-  union FieldObject *fieldObject;
+  union ObjectEventOrEffect *fieldObject;
   struct Sprite *sprite;
   GlyphTransfer *icon;
 
@@ -867,7 +867,7 @@ s32 Lalivero_Initialize(void) {
 
   // The Black Orb Iodem hands over is drawn from its item icon, floating
   // 10 pixels up.
-  fieldObject = (union FieldObject *)ObjectEvent_Get(LOCALID_BLACK_ORB);
+  fieldObject = (union ObjectEventOrEffect *)ObjectEvent_Get(LOCALID_BLACK_ORB);
   fieldObject->objectEvent.retainSpriteCache = 1;
   fieldObject->objectEvent.motionFlags = 0;
   sprite = fieldObject->objectEvent.sprite;
@@ -896,12 +896,14 @@ s32 Lalivero_Initialize(void) {
     // party with their own collision off, and the two cells each covers
     // become wall instead. The third cell copied, at x 78, lies outside the
     // town's 32 columns, where the camera never goes, and changes nothing.
-    fieldObject = (union FieldObject *)ObjectEvent_Get(LOCALID_WEST_SOLDIER);
+    fieldObject =
+        (union ObjectEventOrEffect *)ObjectEvent_Get(LOCALID_WEST_SOLDIER);
     fieldObject->objectEvent.collisionFlags = 0;
     fieldObject->objectEvent.priorityFlags |= OBJ_EVENT_PRIORITY_UNDERFOOT;
     fieldObject->objectEvent.sprite->flags = 0;
     fieldObject->objectEvent.sprite->rotation = FACING_NORTH;
-    fieldObject = (union FieldObject *)ObjectEvent_Get(LOCALID_EAST_SOLDIER);
+    fieldObject =
+        (union ObjectEventOrEffect *)ObjectEvent_Get(LOCALID_EAST_SOLDIER);
     fieldObject->objectEvent.collisionFlags = 0;
     fieldObject->objectEvent.priorityFlags |= OBJ_EVENT_PRIORITY_UNDERFOOT;
     fieldObject->objectEvent.sprite->flags = 0;
@@ -917,18 +919,18 @@ s32 Lalivero_Initialize(void) {
       GameFlag_Set(FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN);
       // The woman and the girl who wander nearest the soldiers stay put during
       // the cutscene.
-      fieldObject =
-          (union FieldObject *)ObjectEvent_Get(LOCALID_WOMAN_OUR_ONLY_HOPE);
+      fieldObject = (union ObjectEventOrEffect *)ObjectEvent_Get(
+          LOCALID_WOMAN_OUR_ONLY_HOPE);
       fieldObject->objectEvent.paused = 1;
-      fieldObject =
-          (union FieldObject *)ObjectEvent_Get(LOCALID_GIRL_SHEBAS_POWERS);
+      fieldObject = (union ObjectEventOrEffect *)ObjectEvent_Get(
+          LOCALID_GIRL_SHEBAS_POWERS);
       fieldObject->objectEvent.paused = 1;
       EventScript_WatchWoundedSoldiers();
-      fieldObject =
-          (union FieldObject *)ObjectEvent_Get(LOCALID_WOMAN_OUR_ONLY_HOPE);
+      fieldObject = (union ObjectEventOrEffect *)ObjectEvent_Get(
+          LOCALID_WOMAN_OUR_ONLY_HOPE);
       fieldObject->objectEvent.paused = 0;
-      fieldObject =
-          (union FieldObject *)ObjectEvent_Get(LOCALID_GIRL_SHEBAS_POWERS);
+      fieldObject = (union ObjectEventOrEffect *)ObjectEvent_Get(
+          LOCALID_GIRL_SHEBAS_POWERS);
       fieldObject->objectEvent.paused = 0;
     }
   }

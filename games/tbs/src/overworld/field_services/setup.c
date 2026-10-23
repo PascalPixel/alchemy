@@ -152,9 +152,9 @@ void FieldEffect_End(void) {
   // from inside it frees only the slots; the rest waits for its own.
   if (runtime->psynergyActing == 0) {
     s32 waited = 0;
-    void (*firstActiveUpdate)(union FieldObject *) =
+    void (*firstActiveUpdate)(union ObjectEventOrEffect *) =
         FieldEffect_UpdateScaledArcObjectB;
-    void (*secondActiveUpdate)(union FieldObject *) =
+    void (*secondActiveUpdate)(union ObjectEventOrEffect *) =
         FieldEffect_UpdateScaledArcObjectA;
     s32 active;
 
@@ -164,7 +164,7 @@ void FieldEffect_End(void) {
       active = 0;
       remaining = 0;
       while (remaining <= 63) {
-        void (*update)(union FieldObject *) = slot->update;
+        void (*update)(union ObjectEventOrEffect *) = slot->update;
 
         if (update == firstActiveUpdate || update == secondActiveUpdate) {
           active = 1;
@@ -315,7 +315,7 @@ void FieldEffect_FadeFromEffectColor(void) {
 /// Converts a world position (16.16 pixels) to the screen: x and z receive
 /// the screen's x and y and y becomes 0. The world map uses its perspective
 /// projection.
-void Camera_WorldToScreen(struct EffectVector *position) {
+void Camera_WorldToScreen(struct Vector3 *position) {
 #ifdef UBFIX
   struct FieldWork *event = gFieldWork;
 

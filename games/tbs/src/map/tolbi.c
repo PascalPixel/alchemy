@@ -144,9 +144,9 @@ static s32 Tolbi_KidStopForTarget(struct ObjectEvent *kid,
 // UB: calling this s32 function through a void update hook is incompatible.
 // Plain void removes its zero result; its aligned extent stays 152 bytes.
 #ifdef UBFIX
-static void Tolbi_UpdateKid(union FieldObject *fieldObject) {
+static void Tolbi_UpdateKid(union ObjectEventOrEffect *fieldObject) {
 #else
-static s32 Tolbi_UpdateKid(union FieldObject *fieldObject) {
+static s32 Tolbi_UpdateKid(union ObjectEventOrEffect *fieldObject) {
 #endif
   struct ObjectEvent *self = &fieldObject->objectEvent;
   u8 **workAreas = gWindowWork;
@@ -441,7 +441,7 @@ static void Tolbi_EnterDoor(void) {
 /// The update of LOCALID_TOLBI_OLD_MAN, who during the festival says he is 65
 /// and that Babi was already old when he was born: gives him the leader's
 /// sprite priority every frame, for both of his sprite parts.
-static void Tolbi_CopyLeaderPriority(union FieldObject *fieldObject) {
+static void Tolbi_CopyLeaderPriority(union ObjectEventOrEffect *fieldObject) {
   s32 priority;
 
   if (fieldObject != NULL) {
@@ -457,7 +457,7 @@ static void Tolbi_CopyLeaderPriority(union FieldObject *fieldObject) {
 /// update, and everything the flags have already changed.
 s32 Tolbi_ApplyEntryState(s32 unused) {
   struct ObjectEvent *objectEvent;
-  void (*kidUpdate)(union FieldObject *);
+  void (*kidUpdate)(union ObjectEventOrEffect *);
   s32 clearFlags;
 
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -471,7 +471,7 @@ s32 Tolbi_ApplyEntryState(s32 unused) {
 #ifdef UBFIX
   kidUpdate = Tolbi_UpdateKid;
 #else
-  kidUpdate = (void (*)(union FieldObject *))Tolbi_UpdateKid;
+  kidUpdate = (void (*)(union ObjectEventOrEffect *))Tolbi_UpdateKid;
 #endif
   objectEvent->timer = KID_CHASES_YOUNGER;
   objectEvent->update = kidUpdate;

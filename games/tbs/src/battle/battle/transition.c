@@ -390,7 +390,7 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
     battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
     view->secondMode = BATTLE_BACKGROUND_FIXED;
     view->busy = 0;
-    count = BattleUnit_ListIds(BATTLE_SIDES_BOTH, (u16 *)unitIds);
+    count = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, (u16 *)unitIds);
     for (index = 0; index != count; index++) {
       // The list's index taken as a unit id: 0 to 7, then 128 onward.
       // BUG: unitIds is never read. A gap among party ids can make
@@ -414,7 +414,7 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
       // The enemies alone take part in the shattering opening.
       battle->background = (u32)&ResourceId_VenusLighthouseAerieStormBackdrop;
       work.effect.targetCount =
-          BattleUnit_ListIds(BATTLE_SIDES_ENEMIES, work.effect.targets);
+          BattleUnit_ListIds(BATTLE_SIDE_MASK_ENEMIES, work.effect.targets);
       work.effect.targets[work.effect.targetCount] = BATTLE_UNIT_LIST_END;
       BattleObject_SpawnObjectsForList(work.effect.targets, 0);
       BattleAnim_RunShatteringOpeningFar(&work.effect);
@@ -431,10 +431,12 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
     // semi-transparent sprites.
     REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
     visibleUnits = visibleUnitIds;
-    visibleCount = BattleUnit_ListIds(BATTLE_SIDES_BOTH, (u16 *)visibleUnits);
+    visibleCount =
+        BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, (u16 *)visibleUnits);
     visibleUnitIds[visibleCount] = BATTLE_UNIT_LIST_END;
     BattleObject_SpawnObjectsForList(visibleUnits, 0);
-    visibleCount = BattleUnit_ListIds(BATTLE_SIDES_PARTY, (u16 *)visibleUnits);
+    visibleCount =
+        BattleUnit_ListIds(BATTLE_SIDE_MASK_PARTY, (u16 *)visibleUnits);
     for (index = 0; index != visibleCount; index++)
       BattleHighlight_SetSpriteMode(visibleUnits[index],
                                     SPRITE_SEMI_TRANSPARENT);

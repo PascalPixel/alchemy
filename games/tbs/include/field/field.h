@@ -52,7 +52,7 @@ struct ObjectEventTemplate;
 struct MapWarpRegion;
 struct SparkleFrame;
 struct Swirl;
-union FieldObject;
+union ObjectEventOrEffect;
 
 /// The Colosso opponent's path player, at the start of gMapLocalState: the path
 /// in ColossoRaceWork is played back or recorded by Colosso_UpdatePathOpponent.

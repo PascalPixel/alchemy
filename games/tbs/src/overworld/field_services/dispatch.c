@@ -268,7 +268,7 @@ s32 Field_RunEventAction(const void *event, s32 param, s32 target) {
 /// frame % 6, which cycles its colours. Move, Lift and Carry give it to the
 /// target they hold, Retreat to its caster. A sprite that keeps its VRAM
 /// cache entry (retainCacheEntry) is left alone.
-void Object_CycleSpriteColors(union FieldObject *fieldObject) {
+void Object_CycleSpriteColors(union ObjectEventOrEffect *fieldObject) {
   struct Object *owner = (struct Object *)fieldObject;
   s32 kind;
   struct Sprite *animation;

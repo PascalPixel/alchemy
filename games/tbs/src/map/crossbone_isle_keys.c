@@ -271,10 +271,10 @@ static void EventScript_HaltPursuer(void) {}
 // Plain void changes 38 to 36 bytes in tbs-en.
 #ifdef UBFIX
 static void
-CrossboneIsleKeys_FaceBaneTowardLeader(union FieldObject *fieldObject) {
+CrossboneIsleKeys_FaceBaneTowardLeader(union ObjectEventOrEffect *fieldObject) {
 #else
 static s32
-CrossboneIsleKeys_FaceBaneTowardLeader(union FieldObject *fieldObject) {
+CrossboneIsleKeys_FaceBaneTowardLeader(union ObjectEventOrEffect *fieldObject) {
 #endif
   struct ObjectEvent *objectEvent = &fieldObject->objectEvent;
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -416,8 +416,8 @@ static void EventScript_BaneLastEscape(void) {
 #ifdef UBFIX
     djinni->update = CrossboneIsleKeys_FaceBaneTowardLeader;
 #else
-    djinni->update =
-        (void (*)(union FieldObject *))CrossboneIsleKeys_FaceBaneTowardLeader;
+    djinni->update = (void (*)(
+        union ObjectEventOrEffect *))CrossboneIsleKeys_FaceBaneTowardLeader;
 #endif
     SCRIPT_END();
   }
@@ -1444,8 +1444,8 @@ static void CrossboneIsleKeys_InitializeBane(void) {
 #ifdef UBFIX
       djinni->update = CrossboneIsleKeys_FaceBaneTowardLeader;
 #else
-      djinni->update =
-          (void (*)(union FieldObject *))CrossboneIsleKeys_FaceBaneTowardLeader;
+      djinni->update = (void (*)(
+          union ObjectEventOrEffect *))CrossboneIsleKeys_FaceBaneTowardLeader;
 #endif
     } else if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE) != 0) {
       OBJECT_POSITION_SET(LOCALID_BANE, 888, 664);

@@ -109,7 +109,7 @@ extern struct SpeakerDefinition gSpeakerDefinitions[];
 /// heading: the routine walks the coordinates as three words, and the callers
 /// read the result by name.
 union PolarOffsetPosition {
-  struct EffectVector vector;
+  struct Vector3 vector;
   s32 coordinates[3];
 };
 

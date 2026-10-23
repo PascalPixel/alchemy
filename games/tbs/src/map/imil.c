@@ -1261,7 +1261,7 @@ static void Imil_InitializeRisingEffect(struct ObjectEvent *work) {
 
 /// Moves and enlarges an ambient effect, then releases it when its timer
 /// expires.
-static void Imil_UpdateRisingEffect(union FieldObject *fieldObject) {
+static void Imil_UpdateRisingEffect(union ObjectEventOrEffect *fieldObject) {
   fieldObject->effect.x += (s16)fieldObject->effect.spin << 8;
   fieldObject->effect.y += PIXELS(1) / 2;
   fieldObject->effect.scaleX += 3 * Q16_ONE / 100;
@@ -1273,7 +1273,8 @@ static void Imil_UpdateRisingEffect(union FieldObject *fieldObject) {
 }
 
 /// Initializes a newly created ambient effect for its one-second rise.
-static inline void Imil_StartRisingEffect(union FieldObject *fieldObject) {
+static inline void
+Imil_StartRisingEffect(union ObjectEventOrEffect *fieldObject) {
   if (fieldObject != NULL) {
     Imil_InitializeRisingEffect(&fieldObject->objectEvent);
     fieldObject->effect.countdown = 60;
@@ -1288,31 +1289,31 @@ static void Imil_SpawnAmbientEffects(void) {
   // volatile: the type of &gFrameCount (frame.h); the six editions build the
   // same bytes without it
   volatile u32 *frame;
-  union FieldObject *fieldObject;
+  union ObjectEventOrEffect *fieldObject;
 
   frame = &gFrameCount;
   if (((u32)*frame % (u32)60) == 0) {
-    fieldObject = (union FieldObject *)ObjectEvent_Create(
+    fieldObject = (union ObjectEventOrEffect *)ObjectEvent_Create(
         SPRITE_DUST_PUFF, PIXELS(463), 0, PIXELS(292));
     Imil_StartRisingEffect(fieldObject);
   }
   if (((u32)(*frame + 30) % (u32)60) == 0) {
-    fieldObject = (union FieldObject *)ObjectEvent_Create(
+    fieldObject = (union ObjectEventOrEffect *)ObjectEvent_Create(
         SPRITE_DUST_PUFF, PIXELS(320), PIXELS(32), PIXELS(356));
     Imil_StartRisingEffect(fieldObject);
   }
   if (((u32)(*frame + 10) % (u32)60) == 0) {
-    fieldObject = (union FieldObject *)ObjectEvent_Create(
+    fieldObject = (union ObjectEventOrEffect *)ObjectEvent_Create(
         SPRITE_DUST_PUFF, PIXELS(118), 0, PIXELS(70));
     Imil_StartRisingEffect(fieldObject);
   }
   if (((u32)(*frame + 50) % (u32)60) == 0) {
-    fieldObject = (union FieldObject *)ObjectEvent_Create(
+    fieldObject = (union ObjectEventOrEffect *)ObjectEvent_Create(
         SPRITE_DUST_PUFF, PIXELS(342), 0, PIXELS(124));
     Imil_StartRisingEffect(fieldObject);
   }
   if (((u32)(*frame + 80) % (u32)60) == 0) {
-    fieldObject = (union FieldObject *)ObjectEvent_Create(
+    fieldObject = (union ObjectEventOrEffect *)ObjectEvent_Create(
         SPRITE_DUST_PUFF, PIXELS(431), 0, PIXELS(171));
     Imil_StartRisingEffect(fieldObject);
   }
@@ -1573,7 +1574,8 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
 }
 
 /// While sliding on Imil's ice, the leader turns toward the held direction.
-static void Imil_TurnSlidingObjectEvent(union FieldObject *fieldObject) {
+static void
+Imil_TurnSlidingObjectEvent(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *objectEvent;
   s32 z;
   s32 t;

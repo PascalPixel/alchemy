@@ -4,14 +4,14 @@
 
 #include "../field_services_internal.h"
 
-STATIC_ASSERT(sizeof(struct EffectVector) == 0x0c);
+STATIC_ASSERT(sizeof(struct Vector3) == 0x0c);
 
 /// Task while Carry holds its target: drops one particle a
 /// frame round the lifted object, 8 to 24 pixels above it and 0 to 48 pixels
 /// away in a random direction (FieldEffect_InitializeFallingFragment).
 void FieldEffect_SpawnFallingParticles(void) {
   struct ObjectEvent *liftedObject;
-  struct EffectVector position;
+  struct Vector3 position;
   struct Object *fragment;
   u32 radius;
 
@@ -35,7 +35,7 @@ void FieldEffect_SpawnFallingParticles(void) {
 /// allows 8). Restores the height before returning the collision result.
 static __inline__ s32
 FieldEffect_CheckRaisedTargetCollision(struct ObjectEvent *target,
-                                       struct EffectVector *position) {
+                                       struct Vector3 *position) {
   s32 collision;
 
   target->groundHeight += 16 << 16;
@@ -57,14 +57,14 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
   struct ObjectEvent *src;
   struct ObjectEvent *target;
   struct ObjectEvent *shards[CARRY_SHARD_MAX];
-  struct EffectVector pos;
+  struct Vector3 pos;
   struct ObjectEvent *hands[2];
   struct ObjectEvent *objectEvent;
   struct ObjectEvent *right;
   s32 i;
   s32 angle;
   s32 dist;
-  struct EffectVector *p;
+  struct Vector3 *p;
 
   effectWork = gFieldEffectWork;
   src = effectWork->mainObject;

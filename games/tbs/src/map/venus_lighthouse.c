@@ -685,9 +685,11 @@ static s32 VenusLighthouse_UpdateChildFromTimer(struct Object *interpreter) {
 // void differs in 6 bytes of the 56-byte function. Keep the unused
 // native result in matching builds.
 #ifdef UBFIX
-static void VenusLighthouse_PulseChildEffect(union FieldObject *fieldObject) {
+static void
+VenusLighthouse_PulseChildEffect(union ObjectEventOrEffect *fieldObject) {
 #else
-static s32 VenusLighthouse_PulseChildEffect(union FieldObject *fieldObject) {
+static s32
+VenusLighthouse_PulseChildEffect(union ObjectEventOrEffect *fieldObject) {
 #endif
   void *objectEvent = (void *)fieldObject;
   if ((gFrameCount & 3) == 0)
@@ -710,9 +712,10 @@ static s32 VenusLighthouse_PulseChildEffect(union FieldObject *fieldObject) {
 // native result in matching builds.
 #ifdef UBFIX
 static void
-VenusLighthouse_EmitRisingParticles(union FieldObject *fieldObject) {
+VenusLighthouse_EmitRisingParticles(union ObjectEventOrEffect *fieldObject) {
 #else
-static s32 VenusLighthouse_EmitRisingParticles(union FieldObject *fieldObject) {
+static s32
+VenusLighthouse_EmitRisingParticles(union ObjectEventOrEffect *fieldObject) {
 #endif
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   struct EffectOptions options;
@@ -755,10 +758,10 @@ VenusLighthouse_ClearScriptedSpriteFlags(struct Object *interpreter) {
 // native result in matching builds.
 #ifdef UBFIX
 static void
-VenusLighthouse_EmitPassageSparkTrail(union FieldObject *fieldObject) {
+VenusLighthouse_EmitPassageSparkTrail(union ObjectEventOrEffect *fieldObject) {
 #else
 static s32
-VenusLighthouse_EmitPassageSparkTrail(union FieldObject *fieldObject) {
+VenusLighthouse_EmitPassageSparkTrail(union ObjectEventOrEffect *fieldObject) {
 #endif
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   struct EffectOptions options;
@@ -810,8 +813,8 @@ static void EventScript_EnterSparklingPassage(void) {
 #ifdef UBFIX
   leader->update = VenusLighthouse_EmitPassageSparkTrail;
 #else
-  leader->update =
-      (void (*)(union FieldObject *))VenusLighthouse_EmitPassageSparkTrail;
+  leader->update = (void (*)(
+      union ObjectEventOrEffect *))VenusLighthouse_EmitPassageSparkTrail;
 #endif
   leader->speed = PIXELS(1) / 5;
   Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
@@ -846,8 +849,8 @@ static void VenusLighthouse_ArriveThroughSparkPassage(void) {
 #ifdef UBFIX
     leader->update = VenusLighthouse_EmitPassageSparkTrail;
 #else
-    leader->update =
-        (void (*)(union FieldObject *))VenusLighthouse_EmitPassageSparkTrail;
+    leader->update = (void (*)(
+        union ObjectEventOrEffect *))VenusLighthouse_EmitPassageSparkTrail;
 #endif
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
     ObjectEvent_WalkByAndWait(LOCALID_PARTY_LEADER, 0, 8);
@@ -905,7 +908,8 @@ static void VenusLighthouse_LandWithRadialDust(void) {
   leader->motionFlags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
   FieldScript_WaitFrames(24);
   options.palette = 7;
-  options.update = (void (*)(union FieldObject *))FieldEffect_AdvanceMotion;
+  options.update =
+      (void (*)(union ObjectEventOrEffect *))FieldEffect_AdvanceMotion;
   options.startScaleX = 4 * Q16_ONE / 5;
   options.startScaleY = 4 * Q16_ONE / 5;
   for (particleIndex = 0; particleIndex <= 16; particleIndex++) {
@@ -944,9 +948,9 @@ static void VenusLighthouse_LandWithRadialDust(void) {
 // void differs in 172 bytes (extent 196 to 192 bytes). Keep the
 // unused native result in matching builds.
 #ifdef UBFIX
-static void VenusLighthouse_TrailLight(union FieldObject *fieldObject) {
+static void VenusLighthouse_TrailLight(union ObjectEventOrEffect *fieldObject) {
 #else
-static s32 VenusLighthouse_TrailLight(union FieldObject *fieldObject) {
+static s32 VenusLighthouse_TrailLight(union ObjectEventOrEffect *fieldObject) {
 #endif
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   struct EffectOptions options;
@@ -1016,7 +1020,8 @@ static struct ObjectEvent *VenusLighthouse_CreateLight(s32 x, s32 z,
 #ifdef UBFIX
   effect->update = VenusLighthouse_TrailLight;
 #else
-  effect->update = (void (*)(union FieldObject *))VenusLighthouse_TrailLight;
+  effect->update =
+      (void (*)(union ObjectEventOrEffect *))VenusLighthouse_TrailLight;
 #endif
   effect->riseEnabled = 0;
   ObjectEvent_SetScript(effect, script);
@@ -1331,8 +1336,8 @@ static void EventScript_JumpDown(void) {
 #ifdef UBFIX
   leader->update = VenusLighthouse_EmitRisingParticles;
 #else
-  leader->update =
-      (void (*)(union FieldObject *))VenusLighthouse_EmitRisingParticles;
+  leader->update = (void (*)(
+      union ObjectEventOrEffect *))VenusLighthouse_EmitRisingParticles;
 #endif
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_SHAKE_HEAD);
@@ -2129,11 +2134,11 @@ static void EventScript_JumpOrPushSwitchPillar(void) {
 // void differs in 7 bytes (extent 34 to 32 bytes). Keep the
 // unused native result in matching builds.
 #ifdef UBFIX
-static void
-VenusLighthouse_FollowSupportingPillarHeight(union FieldObject *fieldObject) {
+static void VenusLighthouse_FollowSupportingPillarHeight(
+    union ObjectEventOrEffect *fieldObject) {
 #else
-static s32
-VenusLighthouse_FollowSupportingPillarHeight(union FieldObject *fieldObject) {
+static s32 VenusLighthouse_FollowSupportingPillarHeight(
+    union ObjectEventOrEffect *fieldObject) {
 #endif
   struct ObjectEvent *pillar = (struct ObjectEvent *)fieldObject;
   struct ObjectEvent *support;
@@ -2338,8 +2343,8 @@ static void EventScript_CarryFloatingPillar(void) {
           ->update = VenusLighthouse_FollowSupportingPillarHeight;
 #else
       ObjectEvent_GetById(settledIndex + LOCALID_FIRST_FLOATING_PILLAR)
-          ->update = (void (*)(
-          union FieldObject *))VenusLighthouse_FollowSupportingPillarHeight;
+          ->update = (void (*)(union ObjectEventOrEffect *))
+          VenusLighthouse_FollowSupportingPillarHeight;
 #endif
       VenusLighthouse_LowerFloatingPillars(40);
       ObjectEvent_GetById(settledIndex + LOCALID_FIRST_FLOATING_PILLAR)
@@ -2591,8 +2596,8 @@ static void EventScript_MoveSocketPillar(void) {
     pillar->layer = 0;
     motionFlags = &pillar->motionFlags;
     *motionFlags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
-    ((union FieldObject *)pillar)->effect.velocity.y = PIXELS(1) / 10;
-    ((union FieldObject *)pillar)->effect.velocity.x = 0;
+    ((union ObjectEventOrEffect *)pillar)->effect.velocity.y = PIXELS(1) / 10;
+    ((union ObjectEventOrEffect *)pillar)->effect.velocity.x = 0;
     MapGrid_CopyCellAttributes(6, 44, 1, 1,
                                gVenusFourthFloorSockets[switchIndex].x,
                                gVenusFourthFloorSockets[switchIndex].z);
@@ -2957,7 +2962,7 @@ s32 VenusLighthouse_Initialize(void) {
         objectEvent->update = VenusLighthouse_TrailLight;
 #else
         objectEvent->update =
-            (void (*)(union FieldObject *))VenusLighthouse_TrailLight;
+            (void (*)(union ObjectEventOrEffect *))VenusLighthouse_TrailLight;
 #endif
       }
       EventScript_MoveGatePillar();
@@ -3096,7 +3101,7 @@ s32 VenusLighthouse_Initialize(void) {
         objectEvent->update = VenusLighthouse_TrailLight;
 #else
         objectEvent->update =
-            (void (*)(union FieldObject *))VenusLighthouse_TrailLight;
+            (void (*)(union ObjectEventOrEffect *))VenusLighthouse_TrailLight;
 #endif
       }
       EventScript_MoveSwitchPillar();
@@ -3277,7 +3282,7 @@ s32 VenusLighthouse_Initialize(void) {
         objectEvent->update = VenusLighthouse_TrailLight;
 #else
         objectEvent->update =
-            (void (*)(union FieldObject *))VenusLighthouse_TrailLight;
+            (void (*)(union ObjectEventOrEffect *))VenusLighthouse_TrailLight;
 #endif
       }
       EventScript_MoveSocketPillar();
@@ -3653,9 +3658,11 @@ static void VenusLighthouse_AnimateEastTileWave(void) {
 // void differs in 14 bytes of the 196-byte function. Keep the unused
 // native result in matching builds.
 #ifdef UBFIX
-static void VenusLighthouse_UpdateRisingSpray(union FieldObject *fieldObject) {
+static void
+VenusLighthouse_UpdateRisingSpray(union ObjectEventOrEffect *fieldObject) {
 #else
-static s32 VenusLighthouse_UpdateRisingSpray(union FieldObject *fieldObject) {
+static s32
+VenusLighthouse_UpdateRisingSpray(union ObjectEventOrEffect *fieldObject) {
 #endif
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   struct EffectOptions optionsStorage;

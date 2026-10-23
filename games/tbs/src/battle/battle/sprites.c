@@ -13,7 +13,7 @@
 void BattleObject_Put(void) {
   s16 unitIds[14];
 
-  BattleUnit_ListIds(BATTLE_SIDES_BOTH, unitIds);
+  BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
   BattleObject_SpawnObjectsForList(unitIds, 1);
 }
 
@@ -23,7 +23,7 @@ void BattleObject_Put(void) {
 void BattleUnit_ListAllAndSubmit(void) {
   s16 unitIds[14];
 
-  BattleUnit_ListIds(BATTLE_SIDES_BOTH, unitIds);
+  BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
   BattleObject_SpawnObjectsForList(unitIds, 0);
 }
 

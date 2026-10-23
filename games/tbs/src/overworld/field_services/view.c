@@ -117,9 +117,11 @@ void FieldScript_WaitForZoomTransition(void) {
 // consumer ignores the result. Plain void removes the native zero result and
 // changes its return register (three instructions in tbs-en).
 #ifdef UBFIX
-void FieldEffect_CopyLinkedObjectPosition(union FieldObject *fieldObject) {
+void FieldEffect_CopyLinkedObjectPosition(
+    union ObjectEventOrEffect *fieldObject) {
 #else
-s32 FieldEffect_CopyLinkedObjectPosition(union FieldObject *fieldObject) {
+s32 FieldEffect_CopyLinkedObjectPosition(
+    union ObjectEventOrEffect *fieldObject) {
 #endif
   void *self = (void *)fieldObject;
   struct ObjectEvent *objectEvent = self;
@@ -177,8 +179,8 @@ void FieldEffect_SpawnLinked(s32 localId, s32 emote, s32 wait) {
 #ifdef UBFIX
       bubble->update = FieldEffect_CopyLinkedObjectPosition;
 #else
-      bubble->update =
-          (void (*)(union FieldObject *))FieldEffect_CopyLinkedObjectPosition;
+      bubble->update = (void (*)(
+          union ObjectEventOrEffect *))FieldEffect_CopyLinkedObjectPosition;
 #endif
       sprite->flags = 0;
       bubble->linkedObject = target;
@@ -269,8 +271,8 @@ void FieldEffect_ConfigureLinkedObject(s32 localId, s32 flags) {
 #ifdef UBFIX
   effect->update = FieldEffect_CopyLinkedObjectPosition;
 #else
-  effect->update =
-      (void (*)(union FieldObject *))FieldEffect_CopyLinkedObjectPosition;
+  effect->update = (void (*)(
+      union ObjectEventOrEffect *))FieldEffect_CopyLinkedObjectPosition;
 #endif
   visual = effect->sprite;
   visual->flags = 0;

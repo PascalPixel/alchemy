@@ -8,7 +8,8 @@
 /// (scale sin(frame / 64 turn)) while it rises a pixel a frame on the object
 /// it follows, 9 pixels in front of it and up to 5 pixels further while
 /// small.
-void FieldEffect_UpdateScaledArcObjectA(union FieldObject *fieldObject) {
+void FieldEffect_UpdateScaledArcObjectA(
+    union ObjectEventOrEffect *fieldObject) {
   // A shared inline kernel with a constant inversion argument changes both
   // arc updates from 0x58 to 0x5c bytes in the forced native English build.
   struct ObjectEvent *arc = (struct ObjectEvent *)fieldObject;
@@ -33,7 +34,8 @@ void FieldEffect_UpdateScaledArcObjectA(union FieldObject *fieldObject) {
 
 /// Per-frame update of arc B: arc A upside down, 16 pixels in front of the
 /// object and up to 5 pixels nearer while small.
-void FieldEffect_UpdateScaledArcObjectB(union FieldObject *fieldObject) {
+void FieldEffect_UpdateScaledArcObjectB(
+    union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *arc = (struct ObjectEvent *)fieldObject;
   struct ObjectEvent *anchor;
   s32 frame;
@@ -139,7 +141,7 @@ void FieldEffect_SpawnScaledArcObjects(struct ObjectEvent *linked) {
 /// Per-frame update: flashes an object between sprite param 7 and 0 every 2
 /// frames and spawns the swelling arcs on it every 16. FieldEffect_StartCast
 /// gives it to the caster as a cast starts with a flash (scene->visible).
-void FieldEffect_FlickerObjectAndTick(union FieldObject *fieldObject) {
+void FieldEffect_FlickerObjectAndTick(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   if ((gFrameCount & 2) != 0) {
     Anim_ApplyChildValuesFar((struct Object *)objectEvent, SPRITE_COLOR_WHITE);
@@ -155,7 +157,8 @@ void FieldEffect_FlickerObjectAndTick(union FieldObject *fieldObject) {
 /// every 2 frames, and spawns the swelling arcs on it every 16.
 /// FieldEffect_StartCast gives it to the caster in place of the flicker
 /// while flag 0x140 is set.
-void FieldEffect_CycleObjectValueByCounter(union FieldObject *fieldObject) {
+void FieldEffect_CycleObjectValueByCounter(
+    union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   if ((gFrameCount & 1) != 0) {
     s32 colorIndex = (gFrameCount >> 1) % 6;

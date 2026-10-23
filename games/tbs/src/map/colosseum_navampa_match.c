@@ -2170,8 +2170,8 @@ static void ColosseumNavampaMatch_WaitForOpponentToFinish(void) {
 
 /// Occasionally scatters an effect around the prize being raised at the
 /// arena.
-static void
-ColosseumNavampaMatch_SpawnRandomFinishEffect(union FieldObject *fieldObject) {
+static void ColosseumNavampaMatch_SpawnRandomFinishEffect(
+    union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *source = (struct ObjectEvent *)fieldObject;
 
   s32 position[3];

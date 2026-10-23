@@ -104,7 +104,7 @@
 /// Per-frame update of an afterimage: closes half the distance to the object
 /// it is linked to, on all three axes.
 static inline void
-FieldEffect_MoveAfterimageHalfway(union FieldObject *fieldObject) {
+FieldEffect_MoveAfterimageHalfway(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *afterimage = (struct ObjectEvent *)fieldObject;
   struct ObjectEvent *target = afterimage->linkedObject;
 
@@ -134,7 +134,7 @@ static __inline__ void FieldEffect_UpdateEffectSlots(void) {
 /// 0x3000 (3/16 of full size). step is negative: from full size the object
 /// lasts 0xd000 / -step frames, rounded down, plus one.
 #define DEFINE_SHRINK_AND_DESTROY(name, step)                                  \
-  void name(union FieldObject *fieldObject) {                                  \
+  void name(union ObjectEventOrEffect *fieldObject) {                          \
     void *obj = fieldObject;                                                   \
     s32 scale;                                                                 \
                                                                                \
@@ -188,7 +188,7 @@ FieldEffect_InitializeFallingFragment(struct Object *fragment) {
     struct FieldEffectWork *effectWork;                                        \
     struct Object *obj;                                                        \
     struct Object *pair[2];                                                    \
-    struct ScatterPosition pos;                                                \
+    struct Vector3 pos;                                                        \
     struct Object **walk;                                                      \
     s32 n;                                                                     \
     s32 dist;                                                                  \

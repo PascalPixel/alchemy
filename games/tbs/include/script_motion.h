@@ -8,7 +8,7 @@
 #include "types.h"
 #include "static_assert.h"
 
-union FieldObject;
+union ObjectEventOrEffect;
 
 // UB: scripts have variable lengths, so a one-word member cannot describe
 // them. Keep the native view outside UBFIX: a flat word pointer changes one
@@ -96,7 +96,7 @@ struct ObjectArmView {
   struct ObjectArmView *linkedObject;
   ///@}
   /// Called each frame before its script.
-  void (*update)(union FieldObject *fieldObject);
+  void (*update)(union ObjectEventOrEffect *fieldObject);
 };
 
 STATIC_ASSERT(sizeof(struct ObjectArmView) == 0x70);

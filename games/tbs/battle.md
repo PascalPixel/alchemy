@@ -154,9 +154,9 @@ for (;;) {                                     /* one round */
   for (i = 0; i < actionCount; i++) {          /* one action */
     if (BattleStaging_DispatchAction(&battle->actions[i], ...) == 1)
       goto fled;
-    if (BattleUnit_ListLiving(BATTLE_SIDES_PARTY, 0) == 0)
+    if (BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, 0) == 0)
       goto party_lost;
-    if (BattleUnit_ListLiving(BATTLE_SIDES_ENEMIES, 0) == 0)
+    if (BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, 0) == 0)
       goto won;
   }
   Battle_ProcessRoundEnd();

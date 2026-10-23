@@ -16,7 +16,8 @@ static void MercuryLighthouse_LeaveThroughPassage(s32 warp) {
 #ifdef UBFIX
   v->update = MercuryLighthouse_TrailSparks;
 #else
-  v->update = (void (*)(union FieldObject *))MercuryLighthouse_TrailSparks;
+  v->update =
+      (void (*)(union ObjectEventOrEffect *))MercuryLighthouse_TrailSparks;
 #endif
   v->speed = PIXELS(1) / 5;
   Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);

@@ -689,7 +689,7 @@ static void Altin_WalkThroughDoorway(void) {
 /// Update callback of the hopping water beast in Altin's village: once a
 /// second it leaps up, falls back with a splash that shakes the screen
 /// briefly, and stands while on the ground.
-static void Beast_Hop(union FieldObject *fieldObject) {
+static void Beast_Hop(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *beast = &fieldObject->objectEvent;
   s16 *shakeFrames = (s16 *)&beast->work;
 
@@ -922,7 +922,7 @@ static void Spray_Initialize(struct ObjectEvent *spray) {
 /// Update callback of a spray particle: it drifts and grows with a random
 /// wobble, then curls upward and flattens as its movement timer runs down.
 /// The separate lifetime releases it after 20 updates.
-static void Spray_Drift(union FieldObject *fieldObject) {
+static void Spray_Drift(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *spray = &fieldObject->objectEvent;
   spray->x.fixed += WATER_SPRAY_LATERAL_STEP(
       spray->timer, (s16)((s32)(((u32)Import_RandomNext() * 2) >> 16) - 1));
@@ -950,9 +950,9 @@ static void Spray_Drift(union FieldObject *fieldObject) {
 /// Task while the water beast spits: every fourth frame a spray
 /// particle starts from its spout, living 20 frames.
 static void Beast_SpawnSpray(void) {
-  union FieldObject *spray;
+  union ObjectEventOrEffect *spray;
   if ((gFrameCount & 3) == 0) {
-    spray = ((union FieldObject *)ObjectEvent_Create(
+    spray = ((union ObjectEventOrEffect *)ObjectEvent_Create(
         SPRITE_DUST_PUFF, PIXELS(64), 0, PIXELS(400)));
     if (spray != 0) {
       spray->objectEvent.timer = WATER_SPRAY_LIFETIME;

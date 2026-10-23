@@ -125,7 +125,7 @@ void FieldEffect_UpdateRadialBurst(struct FieldEffectSprite *effect) {
   // callback from 0xf8 to 0xfc bytes. OUT_AND_BACK_FLYING_OUT must enter
   // OUT_AND_BACK_AIM_BACK immediately.
   struct FieldEffectWork *effectWork = gFieldEffectWork;
-  struct EffectVector pos;
+  struct Vector3 pos;
   s32 state;
 
 again:
@@ -184,7 +184,7 @@ again:
 /// Returns 0, so the script moves on and frees the object.
 s32 SpawnHeavyImpactEffect(struct Object *interpreter) {
   struct Object *source = interpreter;
-  struct EffectVector pos;
+  struct Vector3 pos;
   struct Object *impact;
   struct Object *fragment;
   s32 fragmentIndex;

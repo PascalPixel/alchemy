@@ -6,7 +6,8 @@
 #include "../field_services_internal.h"
 
 /// Update hook shared by the Djinni battle-start and Mercury afterimages.
-void ObjectMotion_MoveHalfwayTowardTarget(union FieldObject *fieldObject) {
+void ObjectMotion_MoveHalfwayTowardTarget(
+    union ObjectEventOrEffect *fieldObject) {
   FieldEffect_MoveAfterimageHalfway(fieldObject);
 }
 
@@ -330,7 +331,7 @@ void FieldEffect_ClearActiveSlotsAndScheduleUpdates(void) {
 }
 
 /// Per-frame update: spins an object 1/8 turn a frame.
-void FieldEffect_AdvanceSpinAngle(union FieldObject *fieldObject) {
+void FieldEffect_AdvanceSpinAngle(union ObjectEventOrEffect *fieldObject) {
   struct Object *object = (struct Object *)fieldObject;
   object->facing += 0x2000;
 }
@@ -352,7 +353,7 @@ enum DjinniLightState {
 /// (Camera_WorldToScreen).
 void FieldEffect_RunAngledApproachPhases(struct FieldEffectSprite *particle) {
   struct Object *target;
-  struct EffectVector position;
+  struct Vector3 position;
 
   target = (struct Object *)ObjectEvent_GetById(gSaveBlock.leaderLocalId);
   if (particle->state == DJINNI_LIGHT_WIDENING) {

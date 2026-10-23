@@ -23,7 +23,7 @@ s32 AutoBattle_BuildActions(struct BattleAction *entries) {
   struct Unit *unit;
 
   // The party's actions. The four lookups' results are never used.
-  partyCount = BattleUnit_ListLiving(BATTLE_SIDES_PARTY, unitIds);
+  partyCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, unitIds);
   for (index = 0; index != PARTY_BATTLE_SIZE; index++)
     Unit_GetFar(index);
   for (index = 0; index < partyCount; index++) {
@@ -41,9 +41,9 @@ s32 AutoBattle_BuildActions(struct BattleAction *entries) {
   // The enemies' actions. Random16() * n >> 16 is a roll from 0 to n - 1;
   // the target is that number taken as a unit id, which
   // AutoBattle_RunAction replaces if the unit is down.
-  enemyCount = BattleUnit_ListLiving(BATTLE_SIDES_ENEMIES, unitIds);
+  enemyCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, unitIds);
   entry = &entries[partyCount];
-  targetRange = BattleUnit_ListLiving(BATTLE_SIDES_PARTY, NULL);
+  targetRange = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, NULL);
   for (index = 0; index < enemyCount; index++) {
     s32 unitId = unitIds[index];
 
@@ -167,7 +167,7 @@ s32 BattleFlee_PlayRun(struct BattleAction *action) {
   (void)action;
   // The roll's top four bits: flee unless all are clear, 15 in 16.
   if (((Random16() << 4) >> 16) != 0) {
-    partySize = BattleUnit_ListLiving(BATTLE_SIDES_PARTY, partyMembers);
+    partySize = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, partyMembers);
     animated = 0;
     if (partySize != 0) {
       memberSlot = 0;
@@ -251,10 +251,10 @@ s32 AutoBattle_RunPsynergy(struct BattleAction *action) {
   // The caster's side, taken as the side the target is not on, and the
   // caster's POSE_CAST when its id is among that side's first sideCount ids.
   if (targetId >= 0 && targetId <= ALLY_MAX) {
-    sideCount = BattleUnit_ListLiving(BATTLE_SIDES_ENEMIES, visibleUnits);
+    sideCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, visibleUnits);
     sideStart = FIRST_ENEMY_UNIT;
   } else {
-    sideCount = BattleUnit_ListLiving(BATTLE_SIDES_PARTY, visibleUnits);
+    sideCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, visibleUnits);
     sideStart = 0;
   }
 
@@ -282,7 +282,7 @@ s32 AutoBattle_RunPsynergy(struct BattleAction *action) {
   // walk counts unit ids up from the side's first until it has found as
   // many living units as the side has.
   if (targetId > FIRST_ENEMY_UNIT - 1) {
-    u32 count = BattleUnit_ListLiving(BATTLE_SIDES_ENEMIES, visibleUnits);
+    u32 count = BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, visibleUnits);
     for (index = 0; livingCount != count; index++) {
       u32 unit = index + FIRST_ENEMY_UNIT;
       if (Unit_GetFar(unit)->hp > 0) {
@@ -290,7 +290,7 @@ s32 AutoBattle_RunPsynergy(struct BattleAction *action) {
       }
     }
   } else {
-    u32 count = BattleUnit_ListLiving(BATTLE_SIDES_PARTY, visibleUnits);
+    u32 count = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, visibleUnits);
     for (index = 0; livingCount != count; index++) {
       if (Unit_GetFar(index)->hp > 0) {
         visibleUnits[livingCount++] = index;
@@ -414,10 +414,10 @@ s32 AutoBattle_RunAttackOrItem(struct BattleAction *action) {
     return -1;
   if (work.effect.firstTarget > FIRST_ENEMY_UNIT - 1)
     work.effect.targetCount =
-        BattleUnit_ListLiving(BATTLE_SIDES_ENEMIES, work.effect.targets);
+        BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, work.effect.targets);
   else
     work.effect.targetCount =
-        BattleUnit_ListLiving(BATTLE_SIDES_PARTY, work.effect.targets);
+        BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, work.effect.targets);
   // The status window without its PP row (see PARTY_STATUS_SUMMONS).
   PartyStatus_DrawFar(gBattleWork->partyStatus & ~PARTY_STATUS_SHOW_PP);
   // The actor raises its hand (POSE_CAST); then only the first living unit of
@@ -427,11 +427,11 @@ s32 AutoBattle_RunAttackOrItem(struct BattleAction *action) {
   Object_SetAnimationSpeedFar((struct Object *)object, 16);
   if ((u16)action->target <= ALLY_MAX) {
     work.effect.side = ANIM_SIDE_PARTY;
-    BattleUnit_ListLiving(BATTLE_SIDES_PARTY, work.effect.targets);
+    BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, work.effect.targets);
     work.effect.targetCount = 1;
   } else {
     work.effect.side = ANIM_SIDE_ENEMIES;
-    BattleUnit_ListLiving(BATTLE_SIDES_ENEMIES, work.effect.targets);
+    BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, work.effect.targets);
     work.effect.targetCount = 1;
   }
 
@@ -567,9 +567,9 @@ s32 BattleAbility_ReplaceDefeated(const struct BattleAction *action) {
   }
 
   if (targetId > FIRST_ENEMY_UNIT - 1) {
-    livingCount = BattleUnit_ListLiving(BATTLE_SIDES_ENEMIES, livingUnits);
+    livingCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, livingUnits);
   } else {
-    livingCount = BattleUnit_ListLiving(BATTLE_SIDES_PARTY, livingUnits);
+    livingCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, livingUnits);
   }
 
   if (livingCount == 0) {

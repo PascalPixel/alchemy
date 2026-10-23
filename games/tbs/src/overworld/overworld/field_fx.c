@@ -50,7 +50,7 @@ void TreasureSpot_MoveLeaderAway(void) {
         leader->x = cellX + (8 << 16);
         leader->z = cellZ + (8 << 16);
         Vector_AddPolarOffset(20 << 16, (u16)ArcTan2(dz, dx),
-                              (struct EffectVector *)&leader->x);
+                              (struct Vector3 *)&leader->x);
         leader->targetX = OBJ_EVENT_NO_TARGET;
         leader->targetY = OBJ_EVENT_NO_TARGET;
         leader->targetZ = OBJ_EVENT_NO_TARGET;
@@ -81,7 +81,7 @@ static inline void Object_InitializeSparkle(struct Object *object) {
 /// within 16 pixels of it. Installed as the picture's update hook by
 /// FieldEffect_StartRandomParticleEmitter, ItemDisplay_ShowPicture
 /// and FieldEffect_StartEffectObject22.
-void ItemDisplay_EmitSparkles(union FieldObject *fieldObject) {
+void ItemDisplay_EmitSparkles(union ObjectEventOrEffect *fieldObject) {
   struct Object *emitter = (struct Object *)fieldObject;
   union PolarOffsetPosition position;
   struct Object *object;
@@ -333,7 +333,7 @@ void FieldEffect_ClearRandomParticles(void) {
 /// Each frame of a Reveal marker: one time in ten, a sparkle appears within 16
 /// pixels of it. Installed as the marker's update hook by
 /// FieldEffect_SpawnNearbyMarkers.
-void Reveal_EmitSparkles(union FieldObject *fieldObject) {
+void Reveal_EmitSparkles(union ObjectEventOrEffect *fieldObject) {
   const struct ObjectEvent *source = (const struct ObjectEvent *)fieldObject;
   union PolarOffsetPosition position;
   struct Object *object;

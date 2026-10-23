@@ -164,8 +164,8 @@ static void VenusLighthouseAerie_UpdateBeaconRise(void);
 static void
 VenusLighthouseAerie_AdvanceObjectEventRise(struct ObjectEvent *objectEvent);
 static void VenusLighthouseAerie_SpawnSideOrbitParticles(void);
-static void
-VenusLighthouseAerie_UpdateOrbitingEffect(union FieldObject *fieldObject);
+static void VenusLighthouseAerie_UpdateOrbitingEffect(
+    union ObjectEventOrEffect *fieldObject);
 
 /// The metatile behaviors the aerie's coord events answer.
 enum VenusLighthouseAerieMetatileBehavior {
@@ -260,8 +260,8 @@ VenusLighthouseAerie_PulseObjectEventScale(struct Object *interpreter) {
 
 /// Moves a particle, damps its horizontal velocity and updates its scale and
 /// spin.
-static void
-VenusLighthouseAerie_UpdateDriftingParticle(union FieldObject *fieldObject) {
+static void VenusLighthouseAerie_UpdateDriftingParticle(
+    union ObjectEventOrEffect *fieldObject) {
   s32 velocityX = fieldObject->effect.velocity.x;
   s32 velocityZ;
 
@@ -278,8 +278,8 @@ VenusLighthouseAerie_UpdateDriftingParticle(union FieldObject *fieldObject) {
 
 /// Turns the falling object event sprite until its rotation leaves the negative
 /// half-turn.
-static void
-VenusLighthouseAerie_StepSpriteRotation(union FieldObject *fieldObject) {
+static void VenusLighthouseAerie_StepSpriteRotation(
+    union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   struct Sprite *sprite = objectEvent->sprite;
   u16 rotation = sprite->rotation;
@@ -1407,7 +1407,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   struct ObjectEvent *objectEvent;
   struct ObjectEvent *menardi;
   struct ObjectEvent *saturos;
-  union FieldObject *star = NULL;
+  union ObjectEventOrEffect *star = NULL;
   struct ObjectEvent *starShadow;
   struct Sprite *sprite;
   u8 *iconPixels;
@@ -1586,7 +1586,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHWEST, 0);
   ObjectEvent_FaceDirection(LOCALID_FELIX, FACING_NORTH + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_SHEBA, FACING_EAST, 0);
-  star = (union FieldObject *)ObjectEvent_Create(
+  star = (union ObjectEventOrEffect *)ObjectEvent_Create(
       22, objectEvent->x.fixed, objectEvent->y.fixed + PIXELS(8),
       objectEvent->z.fixed);
   if (star != NULL) {
@@ -1979,7 +1979,7 @@ static void VenusLighthouseAerie_FlashScreen(void) {
 /// Orbits a particle around the upper beam and keeps its target at that
 /// position.
 static void
-VenusLighthouseAerie_UpdateUpperOrbit(union FieldObject *fieldObject) {
+VenusLighthouseAerie_UpdateUpperOrbit(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *effect = &fieldObject->objectEvent;
   struct ObjectEvent *center = ObjectEvent_GetById(LOCALID_BEAM_BOTTOM);
   u16 angle = effect->timer;
@@ -1993,7 +1993,7 @@ VenusLighthouseAerie_UpdateUpperOrbit(union FieldObject *fieldObject) {
 
 /// Orbits a particle around the rising beam using its rise counter as a radius.
 static void
-VenusLighthouseAerie_UpdateRisingOrbit(union FieldObject *fieldObject) {
+VenusLighthouseAerie_UpdateRisingOrbit(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *objectEvent = &fieldObject->objectEvent;
   struct ObjectEvent *anchor = ObjectEvent_GetById(LOCALID_BEACON_ORB);
   s32 angle = (u16)objectEvent->timer;
@@ -3262,7 +3262,7 @@ VenusLighthouseAerie_AdvanceObjectEventRise(struct ObjectEvent *objectEvent) {
 /// Emits particles beside the lower beam and links each to its source object
 /// event.
 static void VenusLighthouseAerie_SpawnSideOrbitParticles(void) {
-  union FieldObject *center;
+  union ObjectEventOrEffect *center;
   struct ObjectEvent *effect;
   struct Sprite *sprite;
   struct MapGridScrollWork *grid;
@@ -3315,8 +3315,8 @@ static void VenusLighthouseAerie_SpawnSideOrbitParticles(void) {
 
 /// Moves a linked particle along its horizontal ellipse and preserves its
 /// target.
-static void
-VenusLighthouseAerie_UpdateOrbitingEffect(union FieldObject *fieldObject) {
+static void VenusLighthouseAerie_UpdateOrbitingEffect(
+    union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *anchor;
   s32 spin;
 

@@ -224,9 +224,9 @@ enum {
 };
 
 #ifdef UBFIX
-static void TunnelRuins_RideStoneBelow(union FieldObject *fieldObject);
+static void TunnelRuins_RideStoneBelow(union ObjectEventOrEffect *fieldObject);
 #else
-static s32 TunnelRuins_RideStoneBelow(union FieldObject *fieldObject);
+static s32 TunnelRuins_RideStoneBelow(union ObjectEventOrEffect *fieldObject);
 #endif
 static void TunnelRuins_UpdateFirstPillarCells(void);
 static void TunnelRuins_UpdateSecondPillarCells(void);
@@ -369,9 +369,11 @@ static void TunnelRuins_UpdateTrackedObjectEvent(void) {
 // While Douse rains on a pillar: its two frames alternate, and every fourth
 // frame a small splash appears on its top.
 #ifdef UBFIX
-static void TunnelRuins_SplashDousedPillar(union FieldObject *fieldObject) {
+static void
+TunnelRuins_SplashDousedPillar(union ObjectEventOrEffect *fieldObject) {
 #else
-static s32 TunnelRuins_SplashDousedPillar(union FieldObject *fieldObject) {
+static s32
+TunnelRuins_SplashDousedPillar(union ObjectEventOrEffect *fieldObject) {
 #endif
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   struct EffectOptions options;
@@ -412,9 +414,11 @@ static s32 TunnelRuins_SplashDousedPillar(union FieldObject *fieldObject) {
 // pillar while the pillar is in row 10 and the leader is above 48 pixels
 // down; otherwise the puddle is put away at the map's origin.
 #ifdef UBFIX
-static void TunnelRuins_PuddleFollowsPillar(union FieldObject *fieldObject) {
+static void
+TunnelRuins_PuddleFollowsPillar(union ObjectEventOrEffect *fieldObject) {
 #else
-static s32 TunnelRuins_PuddleFollowsPillar(union FieldObject *fieldObject) {
+static s32
+TunnelRuins_PuddleFollowsPillar(union ObjectEventOrEffect *fieldObject) {
 #endif
   struct ObjectEvent *puddle = (struct ObjectEvent *)fieldObject;
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -488,7 +492,8 @@ static void EventScript_HopDownStep(void) {
   WaitFrames(6);
   leader->motionFlags = 0;
   // Emit particles on alternate frames while the leader descends.
-  options.update = (void (*)(union FieldObject *))FieldEffect_AdvanceMotion;
+  options.update =
+      (void (*)(union ObjectEventOrEffect *))FieldEffect_AdvanceMotion;
   Sound_PlaySong(SE_LANDING_THUD);
   for (i = 0; i < 8; i++) {
     leader->y.fixed -= PIXELS(2);
@@ -516,13 +521,13 @@ static void EventScript_HopDownStep(void) {
 #define UPDATE_BY_RELATIVE_DEPTH ObjectEvent_SetFlagBitByRelativeDepth
 #else
 #define UPDATE_BY_RELATIVE_DEPTH                                               \
-  ((void (*)(union FieldObject *))ObjectEvent_SetFlagBitByRelativeDepth)
+  ((void (*)(union ObjectEventOrEffect *))ObjectEvent_SetFlagBitByRelativeDepth)
 #endif
 #ifdef UBFIX
 #define UPDATE_RIDE_STONE_BELOW TunnelRuins_RideStoneBelow
 #else
 #define UPDATE_RIDE_STONE_BELOW                                                \
-  ((void (*)(union FieldObject *))TunnelRuins_RideStoneBelow)
+  ((void (*)(union ObjectEventOrEffect *))TunnelRuins_RideStoneBelow)
 #endif
 
 #include "common/effect_radial.h"
@@ -957,7 +962,7 @@ static void EventScript_DouseStartsOnPillar(void) {
   puddle->update = TunnelRuins_PuddleFollowsPillar;
 #else
   puddle->update =
-      (void (*)(union FieldObject *))TunnelRuins_PuddleFollowsPillar;
+      (void (*)(union ObjectEventOrEffect *))TunnelRuins_PuddleFollowsPillar;
 #endif
 }
 
@@ -1001,9 +1006,9 @@ static void EventScript_FreezeDousePuddle(void) {
 // A carved stone set on the balance rides 16 pixels above what it rests on,
 // whose object event its timer holds.
 #ifdef UBFIX
-static void TunnelRuins_RideStoneBelow(union FieldObject *fieldObject) {
+static void TunnelRuins_RideStoneBelow(union ObjectEventOrEffect *fieldObject) {
 #else
-static s32 TunnelRuins_RideStoneBelow(union FieldObject *fieldObject) {
+static s32 TunnelRuins_RideStoneBelow(union ObjectEventOrEffect *fieldObject) {
 #endif
   struct ObjectEvent *supportedObjectEvent = (struct ObjectEvent *)fieldObject;
   s16 *supportingLocalId = &supportedObjectEvent->timer;
@@ -1194,7 +1199,7 @@ static void EventScript_SetStoneOnBalance(void) {
           TunnelRuins_RideStoneBelow;
 #else
       ObjectEvent_Get(settledIndex + LOCALID_WEST_CARRY_STONE)->update =
-          (void (*)(union FieldObject *))TunnelRuins_RideStoneBelow;
+          (void (*)(union ObjectEventOrEffect *))TunnelRuins_RideStoneBelow;
 #endif
       TunnelRuins_SettleBalance(40);
       ObjectEvent_Get(settledIndex + LOCALID_WEST_CARRY_STONE)->priorityFlags |=

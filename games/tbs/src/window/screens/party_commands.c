@@ -188,9 +188,9 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
 
       block = Alloc(12);
       if (gDebugMode != 0 && (gKeysHeld & KEY_START) != 0) {
-        selection = BATTLE_SIDES_ENEMIES;
+        selection = BATTLE_SIDE_MASK_ENEMIES;
       } else {
-        selection = BATTLE_SIDES_PARTY;
+        selection = BATTLE_SIDE_MASK_PARTY;
       }
       handle = BattleUnit_ListIdsFar(selection, block);
       WaitFrames(1);

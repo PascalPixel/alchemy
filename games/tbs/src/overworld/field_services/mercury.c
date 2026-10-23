@@ -28,7 +28,7 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
   s32 remaining;
   s32 resourceId;
   struct ObjectEvent *copies[MERCURY_AFTERIMAGE_MAX];
-  struct EffectVector position;
+  struct Vector3 position;
 
   djinni = ObjectEvent_GetById(djinniId);
   if (djinni == NULL)

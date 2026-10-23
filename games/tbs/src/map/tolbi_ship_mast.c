@@ -218,7 +218,8 @@ static s32 TolbiShipMast_RandomizeLookoutFacing(struct Object *interpreter) {
 
 /// Grows both axes by the same amount until the object event reaches full
 /// scale.
-static void TolbiShipMast_GrowObjectEventScale(union FieldObject *fieldObject) {
+static void
+TolbiShipMast_GrowObjectEventScale(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   if (objectEvent->scaleX < Q16_ONE) {
     objectEvent->scaleX += 160;
@@ -475,7 +476,7 @@ static void TolbiShipMast_RunAvastScene(void) {
   s32 x;
   s32 zero = 0;
   s32 scale;
-  void (*update)(union FieldObject *);
+  void (*update)(union ObjectEventOrEffect *);
 
   FieldScript_Start();
   FieldScript_CallWithLastActiveObjectId(

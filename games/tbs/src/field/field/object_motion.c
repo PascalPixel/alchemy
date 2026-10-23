@@ -116,7 +116,7 @@ void Object_UpdateAllThumb(void) {
 
     // The hook runs even for a paused object, and may free it.
     if (object->update != NULL) {
-      object->update((union FieldObject *)object);
+      object->update((union ObjectEventOrEffect *)object);
       script = (const ObjectScriptWords *)object->script;
     }
     if (script == NULL)

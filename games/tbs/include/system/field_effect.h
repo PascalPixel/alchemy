@@ -76,7 +76,7 @@ struct FieldEffect {
   s32 countdown;
   /// Called each frame while the effect is live: the spawner sets
   /// FieldEffect_UpdateMotionScaleAndSpin, or options.update.
-  void (*update)(union FieldObject *fieldObject);
+  void (*update)(union ObjectEventOrEffect *fieldObject);
 };
 
 STATIC_ASSERT(offsetof(struct FieldEffect, scaleRateX) == 0x30);
@@ -87,7 +87,7 @@ STATIC_ASSERT(offsetof(struct FieldEffect, countdown) == 0x68);
 STATIC_ASSERT(offsetof(struct FieldEffect, update) == 0x6c);
 
 /// An object on the field, read as an object event or as an effect.
-union FieldObject {
+union ObjectEventOrEffect {
   struct ObjectEvent objectEvent;
   struct FieldEffect effect;
 };
@@ -150,7 +150,8 @@ struct EffectOptions {
   const s32 *script; ///< the object script, run in mode 1
   u16 rotation;      ///< 1/65536 turns
   u16 spin;          ///< 1/65536 turns per frame
-  void (*update)(union FieldObject *fieldObject); ///< replaces the update hook
+  void (*update)(
+      union ObjectEventOrEffect *fieldObject); ///< replaces the update hook
 };
 
 STATIC_ASSERT(offsetof(struct EffectOptions, type) == 0x18);

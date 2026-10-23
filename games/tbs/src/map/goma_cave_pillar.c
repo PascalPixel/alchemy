@@ -157,7 +157,8 @@ static void EventScript_FightForge(void) {
 
 /// Advances the fragment's selected coordinate plane and keeps its targets in
 /// step.
-static void GomaCavePillar_UpdateFragment(union FieldObject *fieldObject) {
+static void
+GomaCavePillar_UpdateFragment(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *fragment = (struct ObjectEvent *)fieldObject;
   // The object event's speed and acceleration slots carry the two selected axis
   // steps.

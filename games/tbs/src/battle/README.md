@@ -751,8 +751,8 @@ keeps that thing's prefix (`Transform_`, `Palette_`, `Party_`, `Ability_`,
 - **place**, **place code**: a unit's position in its side's line-up
   (`BattleWork.partyUnits`, `BattleWork.enemyIds`). A command aims at a place
   code, the place plus `PLACE_PARTY` or `PLACE_ENEMY`.
-- **side**: the party or the enemies (`BATTLE_SIDES_PARTY`,
-  `BATTLE_SIDES_ENEMIES`). A unit's own `side` field says which side it is on,
+- **side**: the party or the enemies (`BATTLE_SIDE_MASK_PARTY`,
+  `BATTLE_SIDE_MASK_ENEMIES`). A unit's own `side` field says which side it is on,
   or that it has left the battle.
 - **turn**: the action under way (`struct BattleTurn`): the actor, the
   ability, its element, its targets with their distances and rolls, its

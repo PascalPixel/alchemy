@@ -12,7 +12,7 @@ void FieldEffect_RunForceOnTarget(s32 unused) { FieldEffect_RunForce(); }
 /// Writes the position 16 pixels above the object event.
 static __inline__ void
 FieldEffect_GetPositionAboveObjectEvent(struct ObjectEvent *objectEvent,
-                                        struct EffectVector *pos) {
+                                        struct Vector3 *pos) {
   SET_POSITION(pos, objectEvent->x.fixed, objectEvent->y.fixed + ABOVE,
                objectEvent->z.fixed);
 }
@@ -30,7 +30,7 @@ void FieldEffect_RunForce(void) {
   struct ObjectEvent *target;
   s32 eventTarget;
   struct ObjectEvent *copies[4];
-  struct EffectVector pos;
+  struct Vector3 pos;
   struct ObjectEvent *projectile;
   struct ObjectEvent *copy;
   struct ObjectEvent *caster;

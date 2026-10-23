@@ -61,12 +61,6 @@ struct BattleSource;
 struct TransitionActorList;
 struct MindReadWork;
 
-/// A world position, as Camera_WorldToScreen converts it to the screen.
-struct EffectVector {
-  s32 x; ///< 16.16 fixed-point pixels
-  s32 y; ///< 16.16 fixed-point pixels
-  s32 z; ///< 16.16 fixed-point pixels
-};
 /// One of the star field's three rings, moving outward on the animation canvas.
 struct Ring {
   s32 x;         ///< 1/1024 canvas pixels
@@ -74,12 +68,6 @@ struct Ring {
   s32 velocityX; ///< 1/1024 canvas pixels per frame
   s32 velocityY; ///< 1/1024 canvas pixels per frame
   s32 age;       ///< frames
-};
-/// The position an item-break animation spawns its objects and shards from.
-struct ScatterPosition {
-  s32 x; ///< 16.16 fixed-point pixels
-  s32 y; ///< 16.16 fixed-point pixels
-  s32 z; ///< 16.16 fixed-point pixels
 };
 extern u8 gAnim_ChildPaletteCycle[];
 /// The weights an enemy picks among its eight actions by, one table for each
@@ -100,8 +88,8 @@ extern s32 gBattleKnockback_VelocityY[];
 /// A fixed formation's places by order, as offsets from the middle place:
 /// 0, -1, 1, -2, 2 and so on out to 4.
 extern s8 gBattleParty_CenterOrderOffsets[];
-/// Round-end effects go to the party (BATTLE_SIDES_PARTY), then the enemies
-/// (BATTLE_SIDES_ENEMIES).
+/// Round-end effects go to the party (BATTLE_SIDE_MASK_PARTY), then the enemies
+/// (BATTLE_SIDE_MASK_ENEMIES).
 extern const struct BattleSideOrder gBattleParty_RoundEndSideOrder;
 /// A lone SC_END: a battle unit's object script, which BattleObject_Make
 /// starts.

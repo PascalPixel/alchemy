@@ -1090,7 +1090,7 @@ s32 Resource_LoadByMode(s32 mode, s32 value) {
     result = VramCache_FindFreeEntry();
     if (result == VRAM_CACHE_ENTRY_COUNT)
       return -1;
-    RenderResource_LoadTableEntry(value, 0, result);
+    Resource_LoadTableEntry(value, 0, result);
     break;
   case ICON_KIND_ABILITY:
     Ability_LoadGlyph(value, 1, &result, &output, 0);
@@ -1137,7 +1137,7 @@ s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option) {
     Icon_BuildMiscIconTiles(value, 0, result);
     break;
   case ICON_KIND_TABLE_ENTRY:
-    RenderResource_LoadTableEntry(value, 0, result);
+    Resource_LoadTableEntry(value, 0, result);
     break;
   }
 

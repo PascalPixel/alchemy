@@ -200,7 +200,7 @@ void Text_DrawWideStringAtOffsetFar(u16 *text, struct Window *window, s32 x,
                                     s32 y);
 /// Writes each scan line's window frame extent into a page of the screen
 /// transition's window table, as a window transition runs.
-void Win_FillScanlineSpansFar(void *dst);
+void ScanlineWindow_FillSpansFar(void *dst);
 /// Redraws a window's empty frame at its current rectangle.
 void WindowSprite_RedrawSavedRectFar(struct Window *window);
 /// Releases every sprite in a list of window sprites, or a window's, and

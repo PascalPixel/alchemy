@@ -428,7 +428,8 @@ static void EventScript_MovePillar(void) {
 static UNUSED void GondowanCave_UnusedObjectEventCallback(void) {}
 
 /// Rotates the sprite during the airborne part of the leap.
-static void GondowanCave_RotateLeapingObject(union FieldObject *fieldObject) {
+static void
+GondowanCave_RotateLeapingObject(union ObjectEventOrEffect *fieldObject) {
   fieldObject->objectEvent.sprite->rotation -= 0x400;
 }
 

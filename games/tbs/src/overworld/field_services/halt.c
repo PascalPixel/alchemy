@@ -15,7 +15,7 @@ void FieldEffect_UpdateRadialCamera(struct FieldEffectSprite *effect) {
   // Retain the immediate OUT_AND_BACK_FLYING_OUT to OUT_AND_BACK_AIM_BACK
   // transition on arrival.
   struct FieldEffectWork *effectWork;
-  struct EffectVector pos;
+  struct Vector3 pos;
   s8 *statePointer;
   s16 angle;
   s32 state;
@@ -85,9 +85,9 @@ void FieldEffect_RunHalt(void) {
   struct Object *caster = effectWork->mainObject;
   struct Object *orb;
   struct FieldEffectSprite *effect;
-  struct EffectVector pos;
-  struct EffectVector from;
-  struct EffectVector to;
+  struct Vector3 pos;
+  struct Vector3 from;
+  struct Vector3 to;
   s32 step;
   s32 i;
 
@@ -142,7 +142,7 @@ void FieldEffect_RunHalt(void) {
     pos.x = orb->x;
     pos.y = orb->y + (8 << 16);
     pos.z = orb->z;
-    Camera_WorldToScreen((struct EffectVector *)&pos.x);
+    Camera_WorldToScreen((struct Vector3 *)&pos.x);
     Vector_AddPolarOffset(4 << 16, Random16(), &pos.x);
     FieldEffectSprite_Initialize(effect, SPRITE_SPARKLE, pos.x, pos.z);
     FieldEffectSprite_SetCallback(effect, FieldEffect_UpdateRadialCamera);
@@ -164,7 +164,7 @@ void FieldEffect_RunHalt(void) {
 /// eight params at random. FieldEffect_PauseObject sets it, and
 /// FieldEffect_ResumeObject looks for it to know the object was paused this
 /// way.
-void FieldEffect_UpdatePausedObject(union FieldObject *fieldObject) {
+void FieldEffect_UpdatePausedObject(union ObjectEventOrEffect *fieldObject) {
   void *object = (void *)fieldObject;
   s8 *table = gFieldEffect_RandomChildValues;
   s32 random = Random16();
@@ -210,7 +210,8 @@ void FieldEffect_ResumeObject(s32 localId) {
   if (objectEvent != 0) {
     if (objectEvent->update == FieldEffect_UpdatePausedObject) {
       struct SaveBlock *state = &gSaveBlock;
-      objectEvent->update = (void (*)(union FieldObject *))state->pausedUpdate;
+      objectEvent->update =
+          (void (*)(union ObjectEventOrEffect *))state->pausedUpdate;
       state->pausedUpdate = 0;
       Anim_ApplyChildValuesFar((struct Object *)objectEvent, state->pausedPose);
     }

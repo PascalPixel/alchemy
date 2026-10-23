@@ -209,7 +209,8 @@ enum { TREASURE_SPOT_PASSAGE = 100 };
 /// automatic priority off. The first worker from Xian at the Alpine Crossing
 /// runs it from his object event template.
 static s32 ObjectEvent_DrawBehindScenery(struct Object *interpreter) {
-  union FieldObject *fieldObject = (union FieldObject *)interpreter;
+  union ObjectEventOrEffect *fieldObject =
+      (union ObjectEventOrEffect *)interpreter;
   fieldObject->objectEvent.priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   fieldObject->objectEvent.sprite->image.priority = 3;
   fieldObject->objectEvent.sprite->shadow.priority = 3;
@@ -221,9 +222,9 @@ static s32 ObjectEvent_DrawBehindScenery(struct Object *interpreter) {
 // UB: update hooks return void. Plain void removes the native zero result
 // and changes its return sequence (three instructions in tbs-en).
 #ifdef UBFIX
-static void Leader_FaceFeizhi(union FieldObject *fieldObject) {
+static void Leader_FaceFeizhi(union ObjectEventOrEffect *fieldObject) {
 #else
-static s32 Leader_FaceFeizhi(union FieldObject *fieldObject) {
+static s32 Leader_FaceFeizhi(union ObjectEventOrEffect *fieldObject) {
 #endif
   struct ObjectEvent *leader = (struct ObjectEvent *)fieldObject;
   struct ObjectEvent *feizhi;
@@ -580,7 +581,7 @@ static void AlpineCrossing_FeizhiArrives(void) {
 #ifdef UBFIX
     leader->update = Leader_FaceFeizhi;
 #else
-    leader->update = (void (*)(union FieldObject *))Leader_FaceFeizhi;
+    leader->update = (void (*)(union ObjectEventOrEffect *))Leader_FaceFeizhi;
 #endif
     leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     if ((leader->z.fixed >> 20) == 13) {
@@ -851,9 +852,9 @@ static void AlpineCrossing_HidePath(void) {
 // UB: this update hook has no result. Plain void changes the native return
 // sequence from pop {r1}; bx r1 to pop {r0}; bx r0 (tbs-en).
 #ifdef UBFIX
-static void Pillar_SortAgainstLeader(union FieldObject *fieldObject) {
+static void Pillar_SortAgainstLeader(union ObjectEventOrEffect *fieldObject) {
 #else
-static s32 Pillar_SortAgainstLeader(union FieldObject *fieldObject) {
+static s32 Pillar_SortAgainstLeader(union ObjectEventOrEffect *fieldObject) {
 #endif
   struct ObjectEvent *pillar = (struct ObjectEvent *)fieldObject;
   if (ObjectEvent_GetById(LOCALID_PARTY_LEADER)->y.fixed > pillar->y.fixed) {
@@ -893,7 +894,7 @@ static void AlpineCrossing_FreezePuddle(void) {
       Pillar_SortAgainstLeader;
 #else
   ObjectEvent_GetById(LOCALID_WATER_FOR_FROST)->update =
-      (void (*)(union FieldObject *))Pillar_SortAgainstLeader;
+      (void (*)(union ObjectEventOrEffect *))Pillar_SortAgainstLeader;
 #endif
 
   MapGrid_CopyCellAttributes(55, 16, 1, 1, 56, 18);

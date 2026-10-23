@@ -17,7 +17,7 @@ struct WindowSpriteList;
 struct SaveFileSummary;
 struct SelectionNode;
 struct SelectionScreenWork;
-struct SelectionWork;
+struct BattleCommandRowWork;
 struct MessageReader;
 struct TextPrinter;
 struct OptionMenuWork;
@@ -241,7 +241,7 @@ enum IconKind {
   /// An item's icon without the broken mark, for the equipment view.
   ICON_KIND_EQUIPMENT_ITEM = 7,
   ICON_KIND_PATTERN = 8, ///< one of the other icons (Icon_BuildMiscIconTiles)
-  /// The one tile RenderResource_LoadTableEntry loads.
+  /// The one tile Resource_LoadTableEntry loads.
   ICON_KIND_TABLE_ENTRY = 9
 };
 
@@ -402,7 +402,7 @@ void Icon_BuildItemIconTiles(u32 glyph, s32 with_base, s32 *src, s32 *dst,
 s32 ItemIcon_Compose(u32 code, u32 layers);
 s32 Icon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2);
 s32 Icon_BuildMiscIconTiles(s32 icon, s32 unused, s32 slot);
-s32 RenderResource_LoadTableEntry(u32 value, s32 unused, u32 slot);
+s32 Resource_LoadTableEntry(u32 value, s32 unused, u32 slot);
 void Icon_DrawItem(s32 code);
 void Ability_LoadGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile,
                        s32 reuse);

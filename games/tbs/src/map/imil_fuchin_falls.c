@@ -1556,7 +1556,7 @@ static void FuchinFallsCave_CollectDragonsEye(void) {
 }
 
 /// Applies the dust velocity and scale change for one frame.
-static void FuchinFallsCave_UpdateDustMotion(union FieldObject *raw) {
+static void FuchinFallsCave_UpdateDustMotion(union ObjectEventOrEffect *raw) {
   struct FieldEffect *object = &raw->effect;
 
   object->x += object->velocity.x;
@@ -1770,7 +1770,8 @@ static void FuchinFallsCave_EndRevealLighting(void) {
 
 /// Turns the object event sliding on Imil Falls Cave's ice gradually toward the
 /// held direction.
-static void Imil_TurnSkaterTowardHeldDirection(union FieldObject *fieldObject) {
+static void
+Imil_TurnSkaterTowardHeldDirection(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *objectEvent = &fieldObject->objectEvent;
   s32 timer;
   s32 direction;

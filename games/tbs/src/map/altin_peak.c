@@ -144,7 +144,7 @@ static void AltinPeak_RestoreHydrosStatueRoom(void);
 static void AltinPeak_RestoreWestExitRoom(void);
 static void AltinPeak_StartSpitting(s32 x, s32 y, s32 z, s32 facing);
 static void AltinPeak_SpawnDebris(void);
-static void AltinPeak_SparkleIce(union FieldObject *fieldObject);
+static void AltinPeak_SparkleIce(union ObjectEventOrEffect *fieldObject);
 static void AltinPeak_BeastFreezesSecondPuddle(void);
 static void AltinPeak_AwardFrostJewelAndDrain(void);
 static void AltinPeak_DrainAfterSecondBeast(void);
@@ -327,9 +327,11 @@ static void AltinPeak_TalkToDjinni(void) {
 // hooks return void. Plain void removes the native zero result and changes its
 // return sequence (three instructions in tbs-en).
 #ifdef UBFIX
-static void AltinPeak_ShadowFollowBoulder(union FieldObject *fieldObject) {
+static void
+AltinPeak_ShadowFollowBoulder(union ObjectEventOrEffect *fieldObject) {
 #else
-static s32 AltinPeak_ShadowFollowBoulder(union FieldObject *fieldObject) {
+static s32
+AltinPeak_ShadowFollowBoulder(union ObjectEventOrEffect *fieldObject) {
 #endif
   struct ObjectEvent *follower = (struct ObjectEvent *)fieldObject;
   struct ObjectEvent *objectEvent =
@@ -1014,7 +1016,8 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
 #ifdef UBFIX
   shadow->update = AltinPeak_ShadowFollowBoulder;
 #else
-  shadow->update = (void (*)(union FieldObject *))AltinPeak_ShadowFollowBoulder;
+  shadow->update =
+      (void (*)(union ObjectEventOrEffect *))AltinPeak_ShadowFollowBoulder;
 #endif
   Import_ObjectEventSetAnimation(LOCALID_FALLING_BOULDER, 4);
   boulder->bounce = PIXELS(1) / 2;
@@ -1262,7 +1265,7 @@ const struct MapEvent *Map_GetEvents(void) {
 
 /// Update callback of the hopping water beast: once a second it leaps up and
 /// lands with a splash (SE_SPLASH) that shakes the screen briefly.
-static void AltinPeak_UpdateBeastHops(union FieldObject *fieldObject) {
+static void AltinPeak_UpdateBeastHops(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *beast = &fieldObject->objectEvent;
   s16 *shakeDelay = (s16 *)&beast->work;
 
@@ -1312,12 +1315,13 @@ static __inline__ void AltinPeak_PlayLandingShake(s32 amplitude,
 /// second puddle with Frost and hops across it, then stops to watch the party
 /// leader.
 static void AltinPeak_ShowFirstBeastRoute(void) {
-  union FieldObject *beast;
+  union ObjectEventOrEffect *beast;
   struct ObjectEvent *leader;
   struct ObjectEvent *objectEvent;
   s32 jumpSpeed;
 
-  beast = (union FieldObject *)ObjectEvent_GetById(LOCALID_FIRST_WATER_BEAST);
+  beast = (union ObjectEventOrEffect *)ObjectEvent_GetById(
+      LOCALID_FIRST_WATER_BEAST);
   FieldScript_Start();
   FieldCamera_SetSpeedParameters(PIXELS(12) / 5, PIXELS(3) / 10);
   FieldCamera_MoveTo(PIXELS(298), -1, PIXELS(337), 1);
@@ -1451,12 +1455,12 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
 /// Stepping near the beast again: it hops back over the ice and settles down,
 /// spitting water.
 static void AltinPeak_ShowSecondBeastRoute(void) {
-  union FieldObject *objectEvent;
+  union ObjectEventOrEffect *objectEvent;
   struct ObjectEvent *movingObjectEvent;
   u32 waitedFrames;
 
-  objectEvent =
-      (union FieldObject *)ObjectEvent_GetById(LOCALID_FIRST_WATER_BEAST);
+  objectEvent = (union ObjectEventOrEffect *)ObjectEvent_GetById(
+      LOCALID_FIRST_WATER_BEAST);
   FieldScript_Start();
   ObjectMotion_EnableActionAndResetMotion(LOCALID_FIRST_WATER_BEAST);
   FieldCamera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
@@ -1535,7 +1539,8 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
        waitedFrames++) {
     FieldScript_WaitFrames(1);
   }
-  objectEvent = (union FieldObject *)ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  objectEvent =
+      (union ObjectEventOrEffect *)ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   FieldCamera_SetSpeed(PIXELS(24) / 5, PIXELS(3) / 5);
   FieldCamera_MoveWithinMapBounds(objectEvent->objectEvent.x.fixed,
                                   objectEvent->objectEvent.y.fixed,
@@ -1967,7 +1972,7 @@ static void AltinPeak_InitializeSpray(struct ObjectEvent *spray) {
 /// Update callback of a spray particle: it grows while drifting away from the
 /// beast, then curls and flattens when its movement timer runs low. The timer
 /// can start another curl; the separate lifetime still ends after 20 updates.
-static void AltinPeak_DriftSpray(union FieldObject *fieldObject) {
+static void AltinPeak_DriftSpray(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *spray = &fieldObject->objectEvent;
 
   switch (gAltinPeak_SprayDirection) {
@@ -2011,11 +2016,11 @@ static void AltinPeak_DriftSpray(union FieldObject *fieldObject) {
 /// Task while a beast spits: every fourth frame a spray particle
 /// starts from its spout, living 20 frames.
 static void AltinPeak_SpawnSpray(void) {
-  union FieldObject *spray;
+  union ObjectEventOrEffect *spray;
 
   if ((gFrameCount & 3) != 0)
     return;
-  spray = (union FieldObject *)Object_CreateField(
+  spray = (union ObjectEventOrEffect *)Object_CreateField(
       SPRITE_DUST_PUFF, gAltinPeak_SprayOrigin[0], gAltinPeak_SprayOrigin[1],
       gAltinPeak_SprayOrigin[2]);
   if (spray == NULL)
@@ -2077,7 +2082,7 @@ static void AltinPeak_SpawnDebris(void) {
 
 /// Update callback of the frozen second puddle: its ice glints every eight
 /// frames.
-static void AltinPeak_SparkleIce(union FieldObject *fieldObject) {
+static void AltinPeak_SparkleIce(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
 
   s32 framePhase = gFrameCount & 7;

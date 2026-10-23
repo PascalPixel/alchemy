@@ -29,7 +29,7 @@ void BattleObject_UpdateSpritePriorities(void) {
   struct Sprite **records;
 
   // Every unit's status icon.
-  BattleUnit_ListIds(BATTLE_SIDES_BOTH, unitIds);
+  BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
   unitIndex = 0;
   if (unitIds[unitIndex] != BATTLE_UNIT_LIST_END) {
     for (;;) {
@@ -75,7 +75,7 @@ void BattleObject_UpdateSpritePriorities(void) {
 
   // The party.
   {
-    count = BattleUnit_ListIds(BATTLE_SIDES_PARTY, unitIds);
+    count = BattleUnit_ListIds(BATTLE_SIDE_MASK_PARTY, unitIds);
     for (unitIndex = 0; unitIndex < count; unitIndex++) {
       struct BattleObject *slot = BattleObject_Get(unitIds[unitIndex]);
 
@@ -105,7 +105,7 @@ void BattleObject_UpdateSpritePriorities(void) {
 
   // The enemies.
   {
-    count = BattleUnit_ListIds(BATTLE_SIDES_ENEMIES, unitIds);
+    count = BattleUnit_ListIds(BATTLE_SIDE_MASK_ENEMIES, unitIds);
     for (unitIndex = 0; unitIndex < count; unitIndex++) {
       struct BattleObject *slot = BattleObject_Get(unitIds[unitIndex]);
 

@@ -4,6 +4,7 @@
 #include "mulq16.h"
 #include "project.h"
 #include "static_assert.h"
+#include "vector3.h"
 
 #define VISIBLE_SCANLINES 160 ///< visible scanlines
 
@@ -50,13 +51,6 @@ extern const struct FarCallRuntimeTrigView FarCall_RuntimeTable;
 /// ScanVertex were computed for.
 extern u32 gScanlineAngle;
 
-/// The camera's eye or target point, as this routine reads it.
-struct Position {
-  s32 x; ///< 16.16 fixed-point pixels
-  s32 y; ///< 16.16 fixed-point pixels; not read here
-  s32 z; ///< 16.16 fixed-point pixels
-};
-
 /// One scanline of the world map's ground plane. WorldMap_BuildScanlineTable
 /// fills x (the line's width scale) and z (its depth); the rest caches the
 /// rotation terms this routine computes from them for the current angle.
@@ -87,7 +81,7 @@ struct BgAffine {
 /// (heap slot 46) by WorldMap_InitializePerspective, which runs it once, and
 /// run from there each frame by WorldMap_UpdateView into the affine page of
 /// the frame's parity. Writes gScanlineAngle when the yaw changes.
-void Transform_UpdateVertices(struct Position *eye, struct Position *target,
+void Transform_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
                               struct ScanVertex *line,
                               struct BgAffine *affine) {
   u32 angle;

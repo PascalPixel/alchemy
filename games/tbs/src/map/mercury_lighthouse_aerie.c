@@ -1785,8 +1785,8 @@ UNUSED static void MercuryLighthouseAerie_UnusedAlexCastsPly(void) {
 /// A beacon spark's update: it swings round the beacon it is linked to, its
 /// angle (its timer, in 1/65536 turns) stepping back each frame; its speed
 /// holds the swing's radius in pixels, less 28.
-static void
-MercuryLighthouseAerie_UpdateBeaconSpark(union FieldObject *fieldObject) {
+static void MercuryLighthouseAerie_UpdateBeaconSpark(
+    union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *spark = &fieldObject->objectEvent;
   struct ObjectEvent *beacon;
   u16 angle;

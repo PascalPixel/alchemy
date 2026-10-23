@@ -33,7 +33,7 @@ struct Object;
 struct EffectLaunch;
 struct ScreenPoint;
 struct FieldEffectSprite;
-struct EffectVector;
+struct Vector3;
 struct EnemyDefinition;
 struct ObjectEvent;
 struct FieldPosition;

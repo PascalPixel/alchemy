@@ -183,7 +183,8 @@ static s32 PushedObject_FillGridAttributeRectangle(u32 layer, s32 x, s32 z,
 /// The leader's movement callback while pushing a large thing: stop the leader
 /// when another object event that is not a large thing, or a wall, is in the
 /// way.
-static void PushedObject_StopBlockedMotion(union FieldObject *fieldObject) {
+static void
+PushedObject_StopBlockedMotion(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
 #else
 /// The leader's movement callback while pushing a large thing: stop the leader
@@ -483,7 +484,7 @@ UNUSED static void ObjectEvent_MoveAndRedraw(struct PushedObjectProbe probe) {
   ObjectEvent_GetById(0)->update = PushedObject_StopBlockedMotion;
 #else
   ObjectEvent_GetById(0)->update =
-      (void (*)(union FieldObject *))PushedObject_StopBlockedMotion;
+      (void (*)(union ObjectEventOrEffect *))PushedObject_StopBlockedMotion;
 #endif
   FieldScript_WaitFrames(4);
   if ((u32)(direction - 6) <= 7)

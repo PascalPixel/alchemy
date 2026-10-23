@@ -965,7 +965,8 @@ static void TretTreeInteriors_PlayGesture(s32 gesture) {
 }
 
 /// Moves a fading spark outward from its saved origin, then releases it.
-static void TretTreeInteriors_UpdateSwirlSpark(union FieldObject *fieldObject) {
+static void
+TretTreeInteriors_UpdateSwirlSpark(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *spark = (struct ObjectEvent *)fieldObject;
   struct FieldPosition position;
   s32 frame;

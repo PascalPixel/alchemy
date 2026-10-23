@@ -10,12 +10,12 @@ struct ScreenTransitionState;
 struct ObjectEventDouseView;
 struct MapEventView;
 struct FieldEffectSprite;
-struct EffectVector;
+struct Vector3;
 struct ObjectEvent;
 struct OrbitEffect;
 struct ObjectEventTemplate;
 struct Window;
-union FieldObject;
+union ObjectEventOrEffect;
 
 /// gSaveBlock.movementMode: how the map loop hands the party leader back to
 /// the player (Map_Run).
@@ -123,8 +123,10 @@ void BattleBackground_SelectForEnvironment(s32 behavior);
 #ifdef UBFIX
 void Encounter_SelectBattleMusic(s32 zone, s32 slot);
 #endif
-void FieldEffect_ShrinkObjectAndDestroySlow(union FieldObject *fieldObject);
-void FieldEffect_ShrinkObjectAndDestroyFast(union FieldObject *fieldObject);
+void FieldEffect_ShrinkObjectAndDestroySlow(
+    union ObjectEventOrEffect *fieldObject);
+void FieldEffect_ShrinkObjectAndDestroyFast(
+    union ObjectEventOrEffect *fieldObject);
 void FieldEffect_RunLift(void);
 void FieldEffect_RunCarry(void);
 
@@ -215,14 +217,14 @@ void TreasureSpot_Hide(s32 id);
 void TreasureSpot_SetObjectEventPosition(s32 id, s32 x, s32 z);
 
 void TreasureSpot_MoveLeaderAway(void);
-void ItemDisplay_EmitSparkles(union FieldObject *fieldObject);
+void ItemDisplay_EmitSparkles(union ObjectEventOrEffect *fieldObject);
 struct Object *FieldEffect_StartRandomParticleEmitter(s32 localId, s32 item);
 void Object_DestroyIfPresent(void *object);
 void ItemDisplay_RaiseAboveLeader(struct Object *object);
 void ItemDisplay_ShowPicture(void *object, s32 flags);
 void FieldEffect_StartEffectObject22(s32 item, s32 flags);
 void FieldEffect_ClearRandomParticles(void);
-void Reveal_EmitSparkles(union FieldObject *fieldObject);
+void Reveal_EmitSparkles(union ObjectEventOrEffect *fieldObject);
 s32 Field_IsRevealActive(struct Object *interpreter);
 void FieldEffect_SpawnNearbyMarkers(void);
 

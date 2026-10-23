@@ -288,7 +288,7 @@ void Battle_ReservedNoOpF674(void) {}
 /// gBattleParty_RoundEndSideOrder gives it. Battle_ProcessRoundEnd copies it
 /// to its stack, and the link child swaps the copy's two sides.
 struct BattleSideOrder {
-  s32 group[2]; ///< enum BattleSides: the party, then the enemies
+  s32 group[2]; ///< enum BattleSideMask: the party, then the enemies
 };
 
 /// Ends a round: sets recovered Djinn, then gives each unit its regeneration
@@ -390,8 +390,8 @@ s32 Battle_ProcessRoundEnd(void) {
     // child takes the enemies first, so both consoles go through the
     // parent's units first and show the same messages in the same order.
     if (battle->isLink != 0 && battle->linkSide != 0) {
-      order.group[0] = BATTLE_SIDES_ENEMIES;
-      order.group[1] = BATTLE_SIDES_PARTY;
+      order.group[0] = BATTLE_SIDE_MASK_ENEMIES;
+      order.group[1] = BATTLE_SIDE_MASK_PARTY;
     }
     groupList = order.group;
     for (group = 0; group <= 1; group++) {
@@ -559,8 +559,8 @@ s32 BattleUnit_ProcessTurnEnd(struct BattleTurn *plan) {
                             list->entries[strongestElement].index);
     }
   }
-  if (BattleUnit_ListLiving(BATTLE_SIDES_PARTY, 0) != 0 &&
-      BattleUnit_ListLiving(BATTLE_SIDES_ENEMIES, 0) != 0) {
+  if (BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, 0) != 0 &&
+      BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, 0) != 0) {
     battleContinues = 1;
   }
   {

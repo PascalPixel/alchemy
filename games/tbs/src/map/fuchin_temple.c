@@ -243,9 +243,9 @@ FuchinTemple_ClearScriptedObjectEventSpriteFlags(struct Object *interpreter) {
 // UB: update hooks return void. The native produces an unused zero result;
 // plain void changes five instructions in the English build.
 #ifdef UBFIX
-static void FuchinTemple_FaceLeader(union FieldObject *fieldObject) {
+static void FuchinTemple_FaceLeader(union ObjectEventOrEffect *fieldObject) {
 #else
-static s32 FuchinTemple_FaceLeader(union FieldObject *fieldObject) {
+static s32 FuchinTemple_FaceLeader(union ObjectEventOrEffect *fieldObject) {
 #endif
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   struct ObjectEvent *player = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -2518,8 +2518,8 @@ static void FuchinTemple_SpawnNyunpasParticles(void) {
 
 /// Hama's and Ivan's update hook during the Reveal lesson: they glow, drawn red
 /// and blue in turn every two frames.
-static void
-FuchinTemple_AlternateLessonChildEffect(union FieldObject *fieldObject) {
+static void FuchinTemple_AlternateLessonChildEffect(
+    union ObjectEventOrEffect *fieldObject) {
   if ((*(u32 *)&gFrameCount >> 1) & 1) {
     ObjectEvent_SetSpriteColor((struct ObjectEvent *)fieldObject,
                                SPRITE_COLOR_RED_TINT);

@@ -596,8 +596,8 @@ static s32 TolbiShipInteriors_HasArrived(struct ObjectEvent *objectEvent) {
 /// at each, and signals the captain (LOCALID_QUARTERS_CAPTAIN) through his own
 /// riseEnabled at three points of the round, but not while the captain is
 /// paused. work holds the step.
-static void
-TolbiShipInteriors_PaceCaptainsQuarters(union FieldObject *fieldObject) {
+static void TolbiShipInteriors_PaceCaptainsQuarters(
+    union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   struct ObjectEvent *captain;
 
@@ -669,7 +669,8 @@ TolbiShipInteriors_PaceCaptainsQuarters(union FieldObject *fieldObject) {
 /// The update of the captain, who watches Kaja pace: turns north-northeast at
 /// the first signal, shrugs at the second if still turned, and faces east at
 /// the third. Does nothing while paused.
-static void TolbiShipInteriors_WatchPacer(union FieldObject *fieldObject) {
+static void
+TolbiShipInteriors_WatchPacer(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *watcher = (struct ObjectEvent *)fieldObject;
   struct ObjectEvent *pacer;
 

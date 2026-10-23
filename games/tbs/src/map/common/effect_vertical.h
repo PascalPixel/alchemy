@@ -12,7 +12,7 @@
 /// Rises beside the linked object event, expanding and shrinking over half a
 /// sine wave.
 static void
-FieldEffect_AnimateVerticalPositive(union FieldObject *fieldObject) {
+FieldEffect_AnimateVerticalPositive(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *self = &fieldObject->objectEvent;
   struct ObjectEvent *anchor;
   s32 frame;
@@ -38,7 +38,7 @@ FieldEffect_AnimateVerticalPositive(union FieldObject *fieldObject) {
 /// Mirrors the rising particle vertically and passes behind the linked object
 /// event.
 static void
-FieldEffect_AnimateVerticalNegative(union FieldObject *fieldObject) {
+FieldEffect_AnimateVerticalNegative(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *self = &fieldObject->objectEvent;
   struct ObjectEvent *anchor;
   s32 frame;

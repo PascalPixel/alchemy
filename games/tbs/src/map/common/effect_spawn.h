@@ -10,7 +10,8 @@
 // EFFECT_USE_ flags.
 
 /// Integrates linear motion, scale changes and rotation once per effect frame.
-void FieldEffect_UpdateMotionScaleAndSpin(union FieldObject *fieldObject) {
+void FieldEffect_UpdateMotionScaleAndSpin(
+    union ObjectEventOrEffect *fieldObject) {
   fieldObject->effect.x += fieldObject->effect.velocity.x;
   fieldObject->effect.y += fieldObject->effect.velocity.y;
   fieldObject->effect.z += fieldObject->effect.velocity.z;

@@ -186,11 +186,11 @@ static s32 MercuryLighthouseEntrance_PlayStepSound(struct Object *interpreter) {
 // UB: the field updater invokes a void hook. Plain void removes the zero
 // result and changes the native return register (three instructions in EN).
 #ifdef UBFIX
-static void
-MercuryLighthouseEntrance_MiaWatchesLeader(union FieldObject *fieldObject) {
+static void MercuryLighthouseEntrance_MiaWatchesLeader(
+    union ObjectEventOrEffect *fieldObject) {
 #else
-static s32
-MercuryLighthouseEntrance_MiaWatchesLeader(union FieldObject *fieldObject) {
+static s32 MercuryLighthouseEntrance_MiaWatchesLeader(
+    union ObjectEventOrEffect *fieldObject) {
 #endif
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -661,8 +661,8 @@ static void MercuryLighthouseEntrance_LizardManBlocksMia(void) {
 #ifdef UBFIX
   objectEvent->update = MercuryLighthouseEntrance_MiaWatchesLeader;
 #else
-  objectEvent->update =
-      (void (*)(union FieldObject *))MercuryLighthouseEntrance_MiaWatchesLeader;
+  objectEvent->update = (void (*)(
+      union ObjectEventOrEffect *))MercuryLighthouseEntrance_MiaWatchesLeader;
 #endif
   // The leader walks up behind her; the cells before the doorway become
   // walkable.

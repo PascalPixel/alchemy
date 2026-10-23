@@ -556,9 +556,9 @@ reader does, as [Matching](../MATCHING.md#views-of-one-struct) explains:
 | `ObjectArmView` (`include/script_motion.h`) | `Object_UpdateAll` (`update.c`) | ARM code built with GCC 2.95.2, which cannot read `Object`'s anonymous unions |
 | `BattleSpriteObject` (`include/battle/motobj.h`) | `BattleObject_SpawnObjectsForList` | the sprite word untyped |
 
-The update hook at offset 0x6c takes a `union FieldObject *`, through
+The update hook at offset 0x6c takes a `union ObjectEventOrEffect *`, through
 which a hook reads its object as an object event or as an effect.
-`ObjectEvent`, `FieldEffect` and `union FieldObject` stay because maps are
+`ObjectEvent`, `FieldEffect` and `union ObjectEventOrEffect` stay because maps are
 written through them; the views in the table stay because their readers compile to
 [the original](../../glossary.md#the-original)'s instructions only through
 them. [Camelot](../../glossary.md#camelot)'s source likely had one struct.

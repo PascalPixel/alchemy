@@ -426,7 +426,7 @@ void BattleAnim_RunCurse(struct BattleAnimArgs *effect);
 
 // djinn_heal.c
 void BattleAnim_RunDjinnHeal(struct BattleAnimArgs *effect);
-void Camera_ApplyPhasedDelta(void);
+void BattleCamera_ApplyPhasedDelta(void);
 
 // dispatch.c
 void BattleAnim_CallDoNothing(s32 count);
@@ -564,7 +564,7 @@ void BattleAnim_RunMars(struct BattleAnimArgs *effect);
 // hail.c
 void BattleAnim_RunHail(struct BattleAnimArgs *effect);
 void BattleAnim_RunGround(struct BattleAnimArgs *effect);
-void Camera_ApplyShake(s32 rangeX, u32 rangeY);
+void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 
 // thor.c
 void BattleAnim_RunThor(struct BattleAnimArgs *effect);

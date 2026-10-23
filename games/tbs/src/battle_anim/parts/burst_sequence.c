@@ -311,7 +311,7 @@ void BattleAnim_RunBurstSequence(struct BattleAnimArgs *effect, s32 mode) {
       }
     }
     ANIM_RELEASE_BLITTERS();
-    Camera_ApplyShake(8, 8);
+    BattleCamera_Shake(8, 8);
     ANIM_END_FRAME(work);
   }
   Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);

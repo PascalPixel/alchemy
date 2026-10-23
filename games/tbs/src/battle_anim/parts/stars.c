@@ -195,7 +195,7 @@ void BattleAnim_RunAstralBlast(struct BattleAnimArgs *effect) {
         }
       }
     }
-    Camera_ApplyShake(8, 8);
+    BattleCamera_Shake(8, 8);
     ANIM_END_FRAME(work);
   }
 
@@ -335,7 +335,7 @@ void BattleAnim_RunShiningStar(struct BattleAnimArgs *effect) {
         step->z += step->velocityZ;
       }
     }
-    Camera_ApplyShake(4, 4);
+    BattleCamera_Shake(4, 4);
     ANIM_END_FRAME(work);
   }
 

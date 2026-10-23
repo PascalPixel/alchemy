@@ -525,11 +525,11 @@ void BattleAnim_RunCybele(struct BattleAnimArgs *effect) {
     // The camera shake, by phase: the formation and thorns, the vines and
     // the dissolve, the blasts.
     if (frame <= 127)
-      Camera_ApplyShake(4, 16);
+      BattleCamera_Shake(4, 16);
     else if (frame <= 301)
-      Camera_ApplyShake(2, 2);
+      BattleCamera_Shake(2, 2);
     else
-      Camera_ApplyShake(4, 8);
+      BattleCamera_Shake(4, 8);
     ANIM_END_FRAME(work);
   }
 

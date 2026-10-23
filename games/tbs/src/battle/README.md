@@ -819,7 +819,8 @@ for its `struct BattleObject`, `object` for that object's
 | `BattleSpoils_` | the items the enemies leave |
 | `BattleSummon_` | which summons the party's standby Djinn make available |
 | `BattleIntro_` | the message that announces the encounter |
-| `BattleBackground_`, `BattleCamera_` | the battle background and the perspective plane's zoom |
+| `BattleBackground_` | the battle background: its picture, display mode and palette |
+| `BattleCamera_` | the battle camera: its views, its turn each frame, its shake, and the perspective plane's zoom it sets |
 | `EnemySprite_` | the enemy sprite slots a unit's battle sprite is loaded into |
 | `ElementGlow_` | a unit's elemental glow: the star field and the other glows |
 | `LinkBattle_` | link battles |
@@ -830,7 +831,7 @@ for its `struct BattleObject`, `object` for that object's
 | `Irq_` | the interrupt handlers the star field installs and removes |
 
 A function that acts on one thing the engine names elsewhere keeps that
-thing's prefix (`Camera_`, `Palette_`, `Party_`, `Ability_`, `Text_` and
+thing's prefix (`Transform_`, `Palette_`, `Party_`, `Ability_`, `Text_` and
 others). [Matching](../MATCHING.md) explains the unusual spellings and the
 [`FAKEMATCH`](../../glossary.md#fakematch) tags.
 

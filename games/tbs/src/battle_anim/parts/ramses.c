@@ -304,7 +304,7 @@ void BattleAnim_RunRamses(struct BattleAnimArgs *effect) {
         spark->variant--;
       }
     }
-    Camera_ApplyShake(8, 8);
+    BattleCamera_Shake(8, 8);
     ANIM_END_FRAME(work);
   }
 

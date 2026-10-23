@@ -1422,7 +1422,7 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
       ObjectGroup_UpdateMembers(work->effect->targets[0], SPRITE_COLOR_WHITE,
                                 POSE_DAMAGE, 0, 4);
     }
-    Camera_ApplyShake(8, 8);
+    BattleCamera_Shake(8, 8);
     ANIM_END_FRAME(work);
     frame++;
   }

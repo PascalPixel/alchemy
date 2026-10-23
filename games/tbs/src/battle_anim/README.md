@@ -965,7 +965,8 @@ lists it.
 | Prefix | What it acts on |
 | --- | --- |
 | `BattleAnim_` | the animations, their entry points, the canvas, blitters and pictures |
-| `Camera_`, `Palette_`, `Graphics_`, `Display_`, `Resource_` | the engine's camera, palettes, graphics, display and resources |
+| `BattleCamera_` | the battle camera: its shake and its turn in two phases |
+| `Palette_`, `Graphics_`, `Display_`, `Resource_` | the engine's palettes, graphics, display and resources |
 | `Particle_`, `ScreenPoint_`, `Projection_` | a particle, and a screen point an animation works out |
 | `BattleUnit_` | a unit's height and place on screen |
 | `ObjectGroup_` | an actor's parts, their animation and their colour timers (`work->actorTimers`) |

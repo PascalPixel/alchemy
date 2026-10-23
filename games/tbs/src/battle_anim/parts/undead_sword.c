@@ -137,9 +137,9 @@ void BattleAnim_RunUndeadSword(struct BattleAnimArgs *effect) {
     }
     ANIM_RELEASE_BLITTERS();
     if (frame <= 7)
-      Camera_ApplyShake(2, 2);
+      BattleCamera_Shake(2, 2);
     else
-      Camera_ApplyShake(16, 16);
+      BattleCamera_Shake(16, 16);
     ANIM_END_FRAME(work);
   }
   Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);

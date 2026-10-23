@@ -269,7 +269,7 @@ void BattleAnim_RunRagnarok(struct BattleAnimArgs *effect) {
       col++;
     } while (col != RAGNAROK_COLUMNS);
 
-    Camera_ApplyShake(16, 16);
+    BattleCamera_Shake(16, 16);
     ANIM_END_FRAME(work);
     frame++;
   } while (frame != RAGNAROK_FRAMES);

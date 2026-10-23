@@ -622,9 +622,9 @@ void BattleAnim_RunThor(struct BattleAnimArgs *effect) {
         }
       }
       if (frame <= 31) {
-        Camera_ApplyShake(8, 16);
+        BattleCamera_Shake(8, 16);
       } else {
-        Camera_ApplyShake(4, 4);
+        BattleCamera_Shake(4, 4);
       }
       ANIM_END_FRAME(work);
     }

@@ -223,7 +223,7 @@ void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
 /// horizontal scroll. Called by BattleCamera_SetView, by
 /// BattleCamera_Update and the shoulder-key camera
 /// (DEFINE_ADJUST_CAMERA) while BattleViewWork.flag is 0, by
-/// Battle_Run and by Camera_ConfigureView. Does nothing before
+/// Battle_Run and by BattleCamera_SetCommandView. Does nothing before
 /// HEAP_SLOT_BATTLE_SCANLINES is allocated, and builds no page unless the
 /// mode is BATTLE_BACKGROUND_ZOOMED.
 void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,

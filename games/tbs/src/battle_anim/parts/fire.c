@@ -16,10 +16,10 @@
 /// The camera swings round over frames 17 to 79, and the battle shows the
 /// damage 24 frames before the end.
 ///
-/// Adds Camera_ApplyPhasedDelta as a task for the swing and drives it through
-/// work->cameraDelta and work->cameraPhase; sets work->shakeFrames on each hit
-/// and writes REG_BLDALPHA. Ends with both callbacks removed, the blitters
-/// freed and the canvas layer closed.
+/// Adds BattleCamera_ApplyPhasedDelta as a task for the swing and drives it
+/// through work->cameraDelta and work->cameraPhase; sets work->shakeFrames on
+/// each hit and writes REG_BLDALPHA. Ends with both callbacks removed, the
+/// blitters freed and the canvas layer closed.
 ///
 /// effect: the targets; variant picks the number of embers
 ///         (gFire_Counts): 16 for Fire, 32 for Fireball, 64 for Inferno.
@@ -79,7 +79,7 @@ void BattleAnim_RunFire(struct BattleAnimArgs *effect) {
 
   work->cameraDelta = 0;
   work->cameraPhase = CAMERA_PHASE_IDLE;
-  Task_Add(Camera_ApplyPhasedDelta, ANIM_CALLBACK_ORDER);
+  Task_Add(BattleCamera_ApplyPhasedDelta, ANIM_CALLBACK_ORDER);
   // Each transfer keeps three quarters of every level, for long trails.
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
@@ -89,7 +89,7 @@ void BattleAnim_RunFire(struct BattleAnimArgs *effect) {
        frame++) {
     // The camera turns 0x100 of yaw (1/256 of a turn) a frame over frames
     // 17 to 79, about a quarter turn in all while each animation frame takes
-    // one display frame (Camera_ApplyPhasedDelta).
+    // one display frame (BattleCamera_ApplyPhasedDelta).
     if (frame > 16 && frame < 80)
       work->cameraDelta = 0x100;
     else
@@ -184,15 +184,15 @@ void BattleAnim_RunFire(struct BattleAnimArgs *effect) {
       }
     }
 
-    // Tell Camera_ApplyPhasedDelta a frame has passed.
+    // Tell BattleCamera_ApplyPhasedDelta a frame has passed.
     if (work->cameraPhase == CAMERA_PHASE_IDLE)
       work->cameraPhase = CAMERA_PHASE_FRAME_DONE;
-    Camera_ApplyShake(8, 8);
+    BattleCamera_Shake(8, 8);
     ANIM_END_FRAME(work);
   }
 
   Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);
-  Task_Remove(Camera_ApplyPhasedDelta);
+  Task_Remove(BattleCamera_ApplyPhasedDelta);
   ANIM_RELEASE_BLITTERS();
   BattleAnim_EndCanvasLayer();
 }

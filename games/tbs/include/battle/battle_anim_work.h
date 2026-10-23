@@ -78,10 +78,11 @@ struct BattleAnimWork {
   s32 scrollStepY;    ///< added to BG1 or BG2 y at each step
   s32 savedBg1X;      ///< BG1 scroll restored when a shake ends
   s32 savedBg1Y;      ///< BG1 scroll restored when a shake ends
-  s32 shakeFrames;    ///< shake frames left; Camera_ApplyShake counts down
+  s32 shakeFrames;    ///< shake frames left; BattleCamera_Shake counts down
   s32 cameraDelta;    ///< camera yaw turned per animation frame
-  /// The animation sets 1 after a frame; Camera_ApplyPhasedDelta then turns the
-  /// whole cameraDelta and sets 0, else turns half and toggles 0 and 2.
+  /// The animation sets 1 after a frame; BattleCamera_ApplyPhasedDelta then
+  /// turns the whole cameraDelta and sets 0, else turns half and toggles 0
+  /// and 2.
   s32 cameraPhase;
   s32 fadeFrames; ///< battle background fade frames left
                   ///< (Palette_StepFadeTransfer)

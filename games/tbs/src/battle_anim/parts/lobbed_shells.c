@@ -336,7 +336,7 @@ void BattleAnim_RunLobbedShells(struct BattleAnimArgs *effect, s32 mode) {
         burst->variant++;
       }
     }
-    Camera_ApplyShake(2, 2);
+    BattleCamera_Shake(2, 2);
     ANIM_END_FRAME(work);
   }
 

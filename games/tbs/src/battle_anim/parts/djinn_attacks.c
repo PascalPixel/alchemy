@@ -193,7 +193,7 @@ void BattleAnim_RunMercury(struct BattleAnimArgs *effect) {
         mote->variant--;
       }
     }
-    Camera_ApplyShake(4, 4);
+    BattleCamera_Shake(4, 4);
     ANIM_END_FRAME(work);
     frame++;
   } while (frame != MERCURY_FRAMES);
@@ -316,7 +316,7 @@ void BattleAnim_RunJupiter(struct BattleAnimArgs *effect) {
         mote->variant--;
       }
     }
-    Camera_ApplyShake(4, 4);
+    BattleCamera_Shake(4, 4);
     ANIM_END_FRAME(work);
     angle -= 0x800; // 11.25 degrees
     frame++;
@@ -459,7 +459,7 @@ void BattleAnim_RunVenus(struct BattleAnimArgs *effect) {
         mote->variant--;
       }
     }
-    Camera_ApplyShake(4, 4);
+    BattleCamera_Shake(4, 4);
     ANIM_END_FRAME(work);
     angle -= 0x800;
     frame++;
@@ -650,7 +650,7 @@ void BattleAnim_RunMars(struct BattleAnimArgs *effect) {
         ANIM_STRIKE_TARGET(work->effect, index, 16, KNOCKBACK_BOUNCE);
       }
     }
-    Camera_ApplyShake(8, 8);
+    BattleCamera_Shake(8, 8);
     ANIM_END_FRAME(work);
     diveY += 8;
     frame++;

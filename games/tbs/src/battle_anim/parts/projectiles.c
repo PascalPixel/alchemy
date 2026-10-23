@@ -969,7 +969,7 @@ void BattleAnim_RunProjectileVolley(struct BattleAnimArgs *effect, s32 mode) {
           particle->variant--;
         }
       }
-      Camera_ApplyShake(4, 4);
+      BattleCamera_Shake(4, 4);
       ANIM_END_FRAME(work);
     }
   }

@@ -692,7 +692,7 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *effect, s32 mode) {
                                         0);
     }
     work->shakeFrames = 1;
-    Camera_ApplyShake(8, 8);
+    BattleCamera_Shake(8, 8);
     ANIM_PRESENT_FRAME(work);
   }
   Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);

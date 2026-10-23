@@ -26,7 +26,7 @@
 ///   Blitters        blitter.c: BattleAnim_BuildBlitter; mirrored_wall.c:
 ///                   BattleAnim_FetchRectangleBlitters
 ///   Motion          positions.c: Particle_AdvanceWithGravity2D and 3D,
-///                   BattleUnit_ProjectToScreen; hail.c: Camera_ApplyShake
+///                   BattleUnit_ProjectToScreen; hail.c: BattleCamera_Shake
 ///   Targets         dispatch.c: BattleAnim_SelectLivingTargets;
 ///                   helm_splitter.c: BattleAnim_PlaceFormationObjects
 ///

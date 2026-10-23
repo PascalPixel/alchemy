@@ -148,7 +148,7 @@ void BattleAnim_RunFlashingStrike(struct BattleAnimArgs *effect, s32 mode) {
       work->shakeFrames = 8;
       BattleMotion_ApplyKnockbackFar(work->effect->targets[0], KNOCKBACK_HURL);
     }
-    Camera_ApplyShake(16, 16);
+    BattleCamera_Shake(16, 16);
     ANIM_END_FRAME(work);
   }
   // Releases the blitter before stopping the transfer, the other way round

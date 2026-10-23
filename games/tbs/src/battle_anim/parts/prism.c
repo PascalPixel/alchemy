@@ -164,10 +164,10 @@ void BattleAnim_RunPrism(struct BattleAnimArgs *effect) {
       }
     }
     // Shake ranges 4 by 8, 6 by 12 and 8 by 16 pixels by variant. Hail
-    // Prism's are not powers of two, so Camera_ApplyShake's masks (range - 1)
+    // Prism's are not powers of two, so BattleCamera_Shake's masks (range - 1)
     // leave gaps in its offsets.
-    Camera_ApplyShake(work->effect->variant * 2 + 4,
-                      work->effect->variant * 4 + 8);
+    BattleCamera_Shake(work->effect->variant * 2 + 4,
+                       work->effect->variant * 4 + 8);
     ANIM_END_FRAME(work);
   }
 

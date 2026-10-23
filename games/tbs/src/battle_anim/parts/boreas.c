@@ -519,9 +519,9 @@ void BattleAnim_RunBoreas(struct BattleAnimArgs *effect) {
 
     // The camera shakes hard while the boulders crumble, gently otherwise.
     if (frame >= 72 && frame < 80) {
-      Camera_ApplyShake(8, 8);
+      BattleCamera_Shake(8, 8);
     } else {
-      Camera_ApplyShake(2, 2);
+      BattleCamera_Shake(2, 2);
     }
     ANIM_PRESENT_FRAME(work);
   }

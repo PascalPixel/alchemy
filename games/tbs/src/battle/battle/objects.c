@@ -598,18 +598,18 @@ s32 Battle_GetWorkEntryPair(s32 place, struct FixedPointPosition *position) {
 
 /// Sets up the camera's view for projecting points; under
 /// FLAG_CHOOSING_COMMANDS, through the extra transform
-/// gCamera_FlagTransformWork first. Called by the three projections,
+/// gBattleCamera_CommandMatrix first. Called by the three projections,
 /// BattleMotion_ProjectPosition, BattleMotion_ProjectScaledPosition and
 /// BattleMotion_ProjectConditionalPosition. Replaces the transform state.
 #ifdef UBFIX
-void Camera_ApplyTransformByFlag(void) {
+void BattleCamera_ApplyTransform(void) {
 #else
-s32 Camera_ApplyTransformByFlag(void) {
+s32 BattleCamera_ApplyTransform(void) {
 #endif
   struct BattleCamera *camera = gCameraWork;
   Transform_Reset();
   if (GameFlag_TestFar(FLAG_CHOOSING_COMMANDS) != 0) {
-    Iwram_TransformMatrix((s32 *)gCamera_FlagTransformWork);
+    Iwram_TransformMatrix((s32 *)gBattleCamera_CommandMatrix);
     Transform_ApplyLookAt(camera->eye, camera->focus);
   } else {
     Transform_SetLookAt(camera->eye, camera->focus);
@@ -625,7 +625,7 @@ s32 BattleMotion_ProjectPosition(s32 unitId, s32 *projected) {
   s32 position[3];
   s32 projectionScale;
 
-  Camera_ApplyTransformByFlag();
+  BattleCamera_ApplyTransform();
   SET_VECTOR(position, object->x, object->y, object->z);
   projectionScale = Transform_ProjectPoint(position, projected);
   // The sprite's projected scale is worked out and thrown away; compare
@@ -652,7 +652,7 @@ void *GetMotionRecord(struct MotionObject *object, s32 recordIndex) {
 /// Called by Battle_Run as the battle is set up and by
 /// Battle_GatherActions. Writes the camera's yaw, pitch,
 /// distance, position and eye, and the transform state.
-void Camera_InitializeDefaultTransform(void) {
+void BattleCamera_SetDefaultView(void) {
   struct BattleCamera *camera = gCameraWork;
   struct FixedPointPosition eyeOffset;
 

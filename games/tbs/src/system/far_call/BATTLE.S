@@ -30,7 +30,7 @@ FarCall_BattleTable:
 	export BattleMotion_ProjectConditionalPositionFar, BattleMotion_ProjectConditionalPosition
 	overlay_veneer BattleUnit_ListLiving
 	export BattleParty_PrepareMembersFar, BattleParty_PrepareMembers
-	export Camera_ConfigureViewFar, Camera_ConfigureView
+	export BattleCamera_SetCommandViewFar, BattleCamera_SetCommandView
 	export GetMotionRecordFar, GetMotionRecord
 	export BattleHighlight_SetModesFar, BattleHighlight_SetModes
 	export BattlePlayback_StartFar, BattlePlayback_Start

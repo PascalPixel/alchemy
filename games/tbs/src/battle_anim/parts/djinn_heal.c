@@ -241,7 +241,7 @@ UNUSED void BattleAnim_RunDjinnHeal(struct BattleAnimArgs *effect) {
 /// XXX: likely to keep the turn smooth when an animation frame runs long,
 /// because every frame still turns at least half the delta; a run with a
 /// slow animation frame would settle it.
-void Camera_ApplyPhasedDelta(void) {
+void BattleCamera_ApplyPhasedDelta(void) {
   // Both come from the one heap slot table; a separate camera base compiles 4
   // bytes longer.
   void **slots = gHeapSlots + HEAP_SLOT_BATTLE_ANIM;

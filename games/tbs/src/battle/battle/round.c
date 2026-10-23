@@ -62,7 +62,7 @@ void Palette_UpdatePulseBrightness(void) {
 /// camera, gBattleViewWork's targetYaw and flag (left 1, so the camera
 /// callback leaves the background alone), gProjection and the background's
 /// affine page.
-void Camera_ConfigureView(s32 verticalOffset) {
+void BattleCamera_SetCommandView(s32 verticalOffset) {
   // UB: indexing past scalar gCameraWork reaches another heap slot. Named
   // slots add four bytes in the native EN trial (0xd8 to 0xdc).
 #ifdef UBFIX
@@ -652,7 +652,7 @@ s32 Battle_GatherActions(struct BattleAction *actions) {
   Palette_CopyBanksWithBrightnessOffset(8);
   GameFlag_SetBitFar(FLAG_CHOOSING_COMMANDS);
   firstStrike = &battle->firstStrike;
-  Camera_ConfigureView(0);
+  BattleCamera_SetCommandView(0);
   BattleMessage_CloseFar();
 
   // The party's commands (none when the enemies strike first).
@@ -709,7 +709,7 @@ s32 Battle_GatherActions(struct BattleAction *actions) {
 finish:
   // The battle view again, turned toward the party's turn.
   GameFlag_ClearBitFar(FLAG_CHOOSING_COMMANDS);
-  Camera_InitializeDefaultTransform();
+  BattleCamera_SetDefaultView();
   gBattleViewWork->targetYaw = YAW_PARTY_TURN;
   return count;
 }

@@ -142,7 +142,7 @@ void BattleAnim_RunSpire(struct BattleAnimArgs *effect) {
                                   POSE_DAMAGE, j, 8);
       }
     }
-    Camera_ApplyShake(2, 4);
+    BattleCamera_Shake(2, 4);
     ANIM_END_FRAME(work);
   }
   ANIM_FINISH_CANVAS_ONE_BLITTER();

@@ -126,7 +126,7 @@ void BattleAnim_RunMirroredWall(struct BattleAnimArgs *effect, s32 mode) {
   // Trails keep half a frame.
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
 
-  // Recovery sets no shake but still applies Camera_ApplyShake's 16 below,
+  // Recovery sets no shake but still applies BattleCamera_Shake's 16 below,
   // which does nothing while shakeFrames is 0.
   if (mode == MIRRORED_WALL_RECOVERY) {
     work->shakeFrames = 0;
@@ -175,9 +175,9 @@ void BattleAnim_RunMirroredWall(struct BattleAnimArgs *effect, s32 mode) {
       }
     }
     if (mode == MIRRORED_WALL_SPASM)
-      Camera_ApplyShake(2, 2);
+      BattleCamera_Shake(2, 2);
     else
-      Camera_ApplyShake(16, 16);
+      BattleCamera_Shake(16, 16);
     ANIM_END_FRAME(work);
   }
 

@@ -217,7 +217,7 @@ void BattleAnim_RunRushingStrike(struct BattleAnimArgs *effect, s32 mode) {
         }
       }
     }
-    Camera_ApplyShake(8, 8);
+    BattleCamera_Shake(8, 8);
     ANIM_END_FRAME(work);
   }
   ANIM_FINISH_CANVAS();

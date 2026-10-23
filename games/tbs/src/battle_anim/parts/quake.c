@@ -192,7 +192,7 @@ void BattleAnim_RunQuake(struct BattleAnimArgs *effect) {
       }
     }
     // Shake ranges of 2, 4 or 8 pixels, by variant, centred on the view.
-    Camera_ApplyShake(
+    BattleCamera_Shake(
         gQuake_Timings[work->effect->variant][QUAKE_TIMING_SHAKE],
         gQuake_Timings[work->effect->variant][QUAKE_TIMING_SHAKE]);
     ANIM_END_FRAME(work);

@@ -58,7 +58,7 @@ void UpdateLinkSessionCountdown(void) {
       }
       newOffset = current + step;
       state->viewOffset = newOffset;
-      Camera_ConfigureViewFar(newOffset);
+      BattleCamera_SetCommandViewFar(newOffset);
     }
 
     entry = state->icons;

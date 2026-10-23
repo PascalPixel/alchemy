@@ -226,7 +226,7 @@ void BattleAnim_RunIce(struct BattleAnimArgs *effect) {
     }
     ObjectGroup_TickMemberTimers();
     // Shakes while work->shakeFrames, which each landing sets to 2, lasts.
-    Camera_ApplyShake(4, 4);
+    BattleCamera_Shake(4, 4);
     ANIM_PRESENT_FRAME(work);
   }
 

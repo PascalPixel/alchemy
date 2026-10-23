@@ -38,8 +38,8 @@ gBattlePlacement_StepPairs:
 	.byte 0, 0
 	.byte 0, 0
 	.balign 4
-	.global gCamera_FlagTransformWork
-gCamera_FlagTransformWork:
+	.global gBattleCamera_CommandMatrix
+gBattleCamera_CommandMatrix:
 	.4byte 0x10000, 0x0, 0x0, -0xcccc
 	.4byte 0x10000, 0x0, 0x0, 0x0
 	.4byte 0x10000, 0x0, 0x0, 0x0

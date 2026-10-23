@@ -45,7 +45,7 @@ void BattleAnim_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 /// and holds BG1's scroll from the battle camera; the second gives BG1's x
 /// back, removes the scale callback and interrupt, and
 /// BattleAnim_SetupBlendedDisplay puts the centre back at 120, which its
-/// Camera_ApplyShake then moves while the screen shakes. The formation's
+/// BattleCamera_Shake then moves while the screen shakes. The formation's
 /// objects are released before the scene returns.
 ///
 /// In the first stage work->particles 0 to 31 are the converging flares, then
@@ -582,7 +582,7 @@ void BattleAnim_RunNeptune(struct BattleAnimArgs *effect) {
         }
       }
     }
-    Camera_ApplyShake(4, 8);
+    BattleCamera_Shake(4, 8);
     ANIM_END_FRAME(work);
   } while (++frame != 144);
 

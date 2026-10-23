@@ -375,7 +375,7 @@ void BattleAnim_RunAtalanta(struct BattleAnimArgs *effect) {
         }
       }
     }
-    Camera_ApplyShake(4, 8);
+    BattleCamera_Shake(4, 8);
     ANIM_END_FRAME(work);
   }
   ANIM_FINISH_CANVAS();

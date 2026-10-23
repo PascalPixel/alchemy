@@ -549,9 +549,9 @@ void BattleAnim_RunTargetStrike(struct BattleAnimArgs *effect, s32 mode) {
     }
     ANIM_RELEASE_BLITTERS();
     if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) & STRIKE_HEAVY)
-      Camera_ApplyShake(8, 8);
+      BattleCamera_Shake(8, 8);
     else
-      Camera_ApplyShake(2, 4);
+      BattleCamera_Shake(2, 4);
     ANIM_END_FRAME(work);
   }
 

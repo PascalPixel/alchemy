@@ -26,7 +26,7 @@
 /// mote sheet here. The sweep projects with gProjection.centerY at 240 and
 /// holds BG1's scroll from the battle camera; the rise gives BG1's x back and
 /// BattleAnim_SetupBlendedDisplay puts the centre back at 120, which the
-/// rise's Camera_ApplyShake then moves while the screen shakes. The nine
+/// rise's BattleCamera_Shake then moves while the screen shakes. The nine
 /// objects are released before the scene returns.
 ///
 /// work->particles 0 to 47 are the fire trail (x in pixels, y 16.16, variant
@@ -373,7 +373,7 @@ void BattleAnim_RunKirin(struct BattleAnimArgs *effect) {
         } while (i != KIRIN_OBJECTS);
       }
 
-      // Frame 8: Camera_ApplyShake shakes the screen for 8 frames.
+      // Frame 8: BattleCamera_Shake shakes the screen for 8 frames.
       if (frame == 8) {
         work->shakeFrames = frame;
         Sound_PlaySongFar(SE_145);
@@ -468,7 +468,7 @@ void BattleAnim_RunKirin(struct BattleAnimArgs *effect) {
         }
       }
 
-      Camera_ApplyShake(8, 8);
+      BattleCamera_Shake(8, 8);
       ANIM_END_FRAME(work);
       frame++;
     } while (frame != 96);

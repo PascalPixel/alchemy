@@ -163,7 +163,7 @@ extern u8 gVortices_Counts[][2];
 enum {
   WHIRLWIND_TORNADOES, ///< tornadoes drawn
   WHIRLWIND_SWAY,      ///< how far each sways across, in pixels
-  WHIRLWIND_SHAKE      ///< Camera_ApplyShake's range
+  WHIRLWIND_SHAKE      ///< BattleCamera_Shake's range
 };
 extern u8 gVortices_Shapes[][3];
 

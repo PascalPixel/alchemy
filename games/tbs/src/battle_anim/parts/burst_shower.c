@@ -363,7 +363,7 @@ void BattleAnim_RunBurstShower(struct BattleAnimArgs *effect, s32 mode) {
       }
     }
 
-    Camera_ApplyShake(4, 4);
+    BattleCamera_Shake(4, 4);
     // In the grey mode the flash timers never run down, so the targets stay
     // black.
     if (mode != BURST_SHOWER_MODE_GREY) {

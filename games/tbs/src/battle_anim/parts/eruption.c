@@ -212,7 +212,7 @@ void BattleAnim_RunEruption(struct BattleAnimArgs *effect, s32 mode) {
     }
     if (frame == 2)
       work->shakeFrames = 6;
-    Camera_ApplyShake(16, 16);
+    BattleCamera_Shake(16, 16);
     ANIM_END_FRAME(work);
   }
 

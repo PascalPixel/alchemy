@@ -171,7 +171,7 @@ void BattleAnim_RunHelmSplitter(struct BattleAnimArgs *effect) {
         }
       }
     }
-    Camera_ApplyShake(8, 8);
+    BattleCamera_Shake(8, 8);
     ANIM_END_FRAME(work);
   }
 

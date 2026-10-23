@@ -321,7 +321,7 @@ u8 gVortices_Counts[][2] = {
     [ANIM_VARIANT_STRONGEST] = {30, 200}, // Froth Spiral
 };
 /// Whirlwind, by variant: the WHIRLWIND_ columns. The sway is in pixels each
-/// way; the shake is Camera_ApplyShake's horizontal range, the vertical
+/// way; the shake is BattleCamera_Shake's horizontal range, the vertical
 /// twice that.
 u8 gVortices_Shapes[][3] = {
     // tornadoes, sway, screen shake

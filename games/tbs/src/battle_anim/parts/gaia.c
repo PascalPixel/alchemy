@@ -184,7 +184,7 @@ void BattleAnim_RunGaia(struct BattleAnimArgs *effect) {
   REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
   // The screen shakes throughout: 250 frames outlast the animation, and the
-  // ranges given to Camera_ApplyShake below set how hard.
+  // ranges given to BattleCamera_Shake below set how hard.
   work->shakeFrames = 250;
   for (frame = 0; frame != GAIA_FRAMES; frame++) {
     if (frame == 0)
@@ -350,9 +350,9 @@ void BattleAnim_RunGaia(struct BattleAnimArgs *effect) {
       }
     }
     if (frame < 90 || frame > 160)
-      Camera_ApplyShake(2, 2);
+      BattleCamera_Shake(2, 2);
     else
-      Camera_ApplyShake(8, 8);
+      BattleCamera_Shake(8, 8);
     ANIM_END_FRAME(work);
   }
   Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);

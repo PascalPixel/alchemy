@@ -31,7 +31,7 @@
 /// each target. The first 30 bytes of Ram_MapGridCellBuffer mark the motes that
 /// have struck. Loads the vortex palette into the first 64 background
 /// colours, sets REG_BLDALPHA and work->shakeFrames, and turns the camera
-/// through Camera_ApplyPhasedDelta (work->cameraDelta and cameraPhase),
+/// through BattleCamera_ApplyPhasedDelta (work->cameraDelta and cameraPhase),
 /// which it removes before it returns.
 void BattleAnim_RunFroth(struct BattleAnimArgs *effect) {
   struct ScreenPoint screenPosition;
@@ -87,7 +87,7 @@ void BattleAnim_RunFroth(struct BattleAnimArgs *effect) {
   }
   work->cameraDelta = 0;
   work->cameraPhase = CAMERA_PHASE_IDLE;
-  Task_Add(Camera_ApplyPhasedDelta, ANIM_CALLBACK_ORDER);
+  Task_Add(BattleCamera_ApplyPhasedDelta, ANIM_CALLBACK_ORDER);
   // Trails keep 75% of each pixel a frame.
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   Sound_PlaySongFar(SE_164);
@@ -162,15 +162,15 @@ void BattleAnim_RunFroth(struct BattleAnimArgs *effect) {
         point->variant++;
       }
     }
-    Camera_ApplyShake(work->effect->variant * 2 + 2,
-                      work->effect->variant * 2 + 2);
-    // Tell Camera_ApplyPhasedDelta a frame has ended.
+    BattleCamera_Shake(work->effect->variant * 2 + 2,
+                       work->effect->variant * 2 + 2);
+    // Tell BattleCamera_ApplyPhasedDelta a frame has ended.
     if (work->cameraPhase == CAMERA_PHASE_IDLE)
       work->cameraPhase = CAMERA_PHASE_FRAME_DONE;
     ANIM_END_FRAME(work);
   }
 
-  Task_Remove(Camera_ApplyPhasedDelta);
+  Task_Remove(BattleCamera_ApplyPhasedDelta);
   ANIM_FINISH_CANVAS();
 }
 
@@ -314,9 +314,9 @@ void BattleAnim_RunWhirlwind(struct BattleAnimArgs *effect) {
       }
     }
     work->shakeFrames = 1;
-    Camera_ApplyShake(gVortices_Shapes[work->effect->variant][WHIRLWIND_SHAKE],
-                      gVortices_Shapes[work->effect->variant][WHIRLWIND_SHAKE] *
-                          2);
+    BattleCamera_Shake(
+        gVortices_Shapes[work->effect->variant][WHIRLWIND_SHAKE],
+        gVortices_Shapes[work->effect->variant][WHIRLWIND_SHAKE] * 2);
     ANIM_END_FRAME(work);
   }
 

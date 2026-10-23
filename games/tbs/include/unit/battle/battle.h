@@ -138,13 +138,13 @@ void *BattleObject_DestroyAll(void);
 #endif
 s32 Battle_GetWorkEntryPair(s32 place, struct FixedPointPosition *position);
 #ifdef UBFIX
-void Camera_ApplyTransformByFlag(void);
+void BattleCamera_ApplyTransform(void);
 #else
-s32 Camera_ApplyTransformByFlag(void);
+s32 BattleCamera_ApplyTransform(void);
 #endif
 s32 BattleMotion_ProjectPosition(s32 unitId, s32 *projected);
 void *GetMotionRecord(struct MotionObject *object, s32 recordIndex);
-void Camera_InitializeDefaultTransform(void);
+void BattleCamera_SetDefaultView(void);
 void BattleMotion_ReturnToSpot(s32 unitId);
 void BattleMotion_SetupEscapeObject(s32 unitId);
 void BattleMotion_InterpolatePosition(struct BattleObject *startSlot,
@@ -178,7 +178,7 @@ void BattleMotion_SetMode5AndActivateSlot(s32 unitId);
 s32 BattleAbility_ReplaceDefeated(const struct BattleAction *action);
 
 void Palette_UpdatePulseBrightness(void);
-void Camera_ConfigureView(s32 verticalOffset);
+void BattleCamera_SetCommandView(s32 verticalOffset);
 void BattleUnit_ResetGuardLevels(void);
 s32 BattleFlee_CheckSuccess(void);
 s32 Battle_BuildUnitActions(struct BattleAction *entries);

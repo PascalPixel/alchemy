@@ -59,7 +59,7 @@ s32 BattleMotion_ProjectConditionalPositionFar(s32 id, s32 *projected);
 s32 BattleParty_PrepareMembersFar(u16 *owners);
 /// Sets the camera to the fixed view shown while commands are chosen, raised
 /// by `pos` pixels.
-void Camera_ConfigureViewFar(s32 pos);
+void BattleCamera_SetCommandViewFar(s32 pos);
 /// Returns one of an object's sprites, or null when it has no such sprite.
 void *GetMotionRecordFar(struct MotionObject *object, s32 record_index);
 /// Highlights the units in `actors` by turning every other unit's sprites

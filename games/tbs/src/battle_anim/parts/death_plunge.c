@@ -168,7 +168,7 @@ void BattleAnim_RunDeathPlunge(struct BattleAnimArgs *effect) {
     }
     if (frame == 53)
       work->shakeFrames = 6;
-    Camera_ApplyShake(16, 16);
+    BattleCamera_Shake(16, 16);
     ANIM_PRESENT_FRAME(work);
   }
   ANIM_FINISH_CANVAS_ONE_BLITTER();
@@ -335,7 +335,7 @@ UNUSED void BattleAnim_RunBladeRain(struct BattleAnimArgs *effect) {
       if ((frame & 7) == 0)
         Sound_PlaySongFar(SE_IMPACT);
     }
-    Camera_ApplyShake(8, 8);
+    BattleCamera_Shake(8, 8);
     ANIM_END_FRAME(work);
   }
   ANIM_FINISH_CANVAS();

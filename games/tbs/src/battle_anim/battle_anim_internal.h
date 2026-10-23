@@ -345,8 +345,8 @@ enum SummonFormation {
 /// picks.
 enum SpinAxis { SPIN_YAW, SPIN_PITCH, SPIN_ROLL, SPIN_PITCH_AND_ROLL };
 
-/// work->cameraPhase, which Camera_ApplyPhasedDelta and the animations that
-/// turn the camera through it (Fire, Froth) pass between them.
+/// work->cameraPhase, which BattleCamera_ApplyPhasedDelta and the animations
+/// that turn the camera through it (Fire, Froth) pass between them.
 enum CameraPhase {
   CAMERA_PHASE_IDLE,       ///< nothing marked since the last turn
   CAMERA_PHASE_FRAME_DONE, ///< the animation has finished a frame: turn the

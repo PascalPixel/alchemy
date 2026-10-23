@@ -175,7 +175,7 @@ void BattleAnim_RunRay(struct BattleAnimArgs *effect) {
                                     SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 10);
       }
     }
-    Camera_ApplyShake(2, 4);
+    BattleCamera_Shake(2, 4);
     ANIM_END_FRAME(work);
   }
 

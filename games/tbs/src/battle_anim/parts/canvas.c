@@ -499,7 +499,7 @@ void BattleAnim_EndCanvasLayer(void) {
   Sound_PlaySongFar(SONG_FADE_OUT_ACTION_SE);
   gBgScroll[1].x = work->savedBg1X;
   gBgScroll[1].y = work->savedBg1Y;
-  // The battle's projection centre, which Camera_ApplyShake moves.
+  // The battle's projection centre, which BattleCamera_Shake moves.
   gProjection.centerX = 120;
   gProjection.centerY = 120;
   REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |

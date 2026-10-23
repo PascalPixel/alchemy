@@ -188,7 +188,7 @@ void BattleAnim_RunPlasma(struct BattleAnimArgs *effect) {
         }
       }
     }
-    Camera_ApplyShake(8, 16);
+    BattleCamera_Shake(8, 16);
     ANIM_END_FRAME(work);
   }
 
@@ -473,7 +473,7 @@ void BattleAnim_RunSparkGroups(struct BattleAnimArgs *effect, s32 mode) {
         }
       }
     }
-    Camera_ApplyShake(16, 16);
+    BattleCamera_Shake(16, 16);
     ANIM_END_FRAME(work);
   }
 

@@ -831,7 +831,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       Window_Close((struct Window *)state->timerWindow, 1);
     }
   }
-  Camera_ConfigureViewFar(0);
+  BattleCamera_SetCommandViewFar(0);
   FreeHeapSlot(HEAP_SLOT_BATTLE_MENU);
   return commandCount;
 }

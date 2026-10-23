@@ -135,7 +135,7 @@ extern u16 gBattleUnit_WeaponAnimationsJenna[];
 extern u8 BitDecoder_Size[];
 /// The extra matrix the battle camera's projection applies first while
 /// commands are chosen (FLAG_CHOOSING_COMMANDS), in 16.16 words.
-extern u8 gCamera_FlagTransformWork[];
+extern u8 gBattleCamera_CommandMatrix[];
 /// Where SparkWork.sheet holds the spark's square picture for each frame of
 /// life left, 0 to 6: byte offsets, a byte a pixel.
 extern s32 gElementGlow_StarFrameOffsets[];

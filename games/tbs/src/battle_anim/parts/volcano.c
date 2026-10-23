@@ -210,7 +210,7 @@ void BattleAnim_RunVolcano(struct BattleAnimArgs *effect) {
         }
       }
     }
-    Camera_ApplyShake(16, 16);
+    BattleCamera_Shake(16, 16);
     ANIM_END_FRAME(work);
   }
 

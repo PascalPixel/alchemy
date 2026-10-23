@@ -158,7 +158,7 @@ void BattleAnim_RunHail(struct BattleAnimArgs *effect) {
                 120 - rise, 32, 32);
     }
 
-    Camera_ApplyShake(4, 8);
+    BattleCamera_Shake(4, 8);
     ANIM_END_FRAME(work);
   }
 
@@ -346,7 +346,7 @@ void BattleAnim_RunGround(struct BattleAnimArgs *effect) {
         }
       }
     }
-    Camera_ApplyShake(16, 16);
+    BattleCamera_Shake(16, 16);
     ANIM_END_FRAME(work);
   }
   ANIM_FINISH_CANVAS_ONE_BLITTER();
@@ -365,7 +365,7 @@ void BattleAnim_RunGround(struct BattleAnimArgs *effect) {
 /// rangeX: the horizontal range, a power of two.
 /// rangeY: the vertical range, a power of two; both offsets are centred on
 ///         half of it.
-void Camera_ApplyShake(s32 rangeX, u32 rangeY) {
+void BattleCamera_Shake(s32 rangeX, u32 rangeY) {
   struct BattleAnimWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
 
   if (work->shakeFrames > 0) {

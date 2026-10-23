@@ -132,7 +132,7 @@ void BattleAnim_RunSwirlSwipe(struct BattleAnimArgs *effect, s32 mode) {
         ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       }
     }
-    Camera_ApplyShake(8, 8);
+    BattleCamera_Shake(8, 8);
     ANIM_END_FRAME(work);
   }
   ANIM_FINISH_CANVAS_ONE_BLITTER();

@@ -384,7 +384,7 @@ void BattleAnim_RunTitanBlade(struct BattleAnimArgs *effect) {
       Iwram_FillWords(canvas, CANVAS_BYTES, 0x3F3F3F3F);
     }
 
-    Camera_ApplyShake(16, 16);
+    BattleCamera_Shake(16, 16);
     ANIM_END_FRAME(work);
     frame++;
   } while (frame != TITAN_BLADE_FRAMES);

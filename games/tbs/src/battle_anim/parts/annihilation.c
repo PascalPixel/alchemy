@@ -174,7 +174,7 @@ void BattleAnim_RunAnnihilation(struct BattleAnimArgs *effect) {
     if (frame == 14)
       ObjectGroup_UpdateMembers(work->effect->targets[0], SPRITE_COLOR_RED_TINT,
                                 -1, -1, 0);
-    Camera_ApplyShake(16, 16);
+    BattleCamera_Shake(16, 16);
     ANIM_END_FRAME(work);
   }
   Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);

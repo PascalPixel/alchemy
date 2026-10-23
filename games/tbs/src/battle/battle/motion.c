@@ -321,7 +321,7 @@ s32 BattleMotion_ProjectScaledPosition(s32 unitId, s32 *projected) {
    * 2 of 42 instructions differ in tbs-en. */
   UNUSED struct ScreenPoint input;
 
-  Camera_ApplyTransformByFlag();
+  BattleCamera_ApplyTransform();
   projectionScale = Transform_ProjectPoint(&object->x, projected);
   spriteScale = Iwram_MulQ16(projectionScale, record->scale);
   projectionScale =
@@ -340,7 +340,7 @@ s32 BattleMotion_ProjectConditionalPosition(s32 unitId, s32 *projected) {
   s32 projectedHeight;
   s32 spriteScale;
 
-  Camera_ApplyTransformByFlag();
+  BattleCamera_ApplyTransform();
   projectedHeight = Transform_ProjectPoint(&object->x, projected);
   spriteScale = Iwram_MulQ16(projectedHeight, record->scale);
   if (BattleSprite_IsSmall(Unit_GetFar(unitId)->id) != 0)

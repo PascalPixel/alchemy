@@ -174,7 +174,7 @@ s32 Battle_Run(s32 enemyGroup) {
   // The party status window, opened PARTY_STATUS_CLOSED: laid out, but erased
   // until it is drawn (window/screens/party_status.c).
   PartyStatus_CreateWindowFar(PARTY_STATUS_CLOSED);
-  Camera_InitializeDefaultTransform();
+  BattleCamera_SetDefaultView();
   BattleObject_Put();
   BattleBackground_Init();
   BattleBackground_Load(BATTLE_BACKGROUND_FIXED, battle->background, 0);

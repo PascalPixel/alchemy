@@ -308,7 +308,7 @@ void BattleAnim_RunGrowingColumns(struct BattleAnimArgs *effect, s32 mode) {
         i++;
       } while (i != 512);
 
-      Camera_ApplyShake(4, 4);
+      BattleCamera_Shake(4, 4);
       ANIM_END_FRAME(work);
       frame++;
     } while (frame != duration);
@@ -414,7 +414,7 @@ void BattleAnim_RunVine(struct BattleAnimArgs *effect) {
       i++;
       column++;
     } while (i != VINE_COLUMNS);
-    Camera_ApplyShake(4, 4);
+    BattleCamera_Shake(4, 4);
     ANIM_END_FRAME(work);
     frame++;
   } while (frame != VINE_FRAMES);
@@ -587,7 +587,7 @@ void BattleAnim_RunThorn(struct BattleAnimArgs *effect) {
         }
       }
     }
-    Camera_ApplyShake(8, 8);
+    BattleCamera_Shake(8, 8);
     ANIM_END_FRAME(work);
   }
 

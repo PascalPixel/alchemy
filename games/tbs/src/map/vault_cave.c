@@ -75,7 +75,7 @@
 #include "unit/import.h"
 #include "unit/map/vault_cave.h"
 #include "unit/overworld/overworld.h"
-#include "unit/overworld/psynergy_effects.h"
+#include "unit/overworld/field_services.h"
 #include "unit/runtime/runtime.h"
 #include "battle.h"
 #include "debug.h"

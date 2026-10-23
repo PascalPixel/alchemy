@@ -421,7 +421,7 @@ UNUSED void Text_DrawGlyphTileAtWorkOffset(u16 *buffer,
 /// control codes; a NULL text draws the decoded text in WindowWork.textBuffer.
 /// Control operands are skipped, not rendered as glyphs; the input is read
 /// only. The character code is the tile's number (Window_PutGlyph), so only
-/// codes up to 0xff show. The Djinn preview (battle_command/djinn_preview.c)
+/// codes up to 0xff show. The Djinn preview (screens/djinn_preview.c)
 /// draws its numbers this way.
 void Text_DrawWideStringInWindow(s16 *text, struct Window *window, s32 x,
                                  s32 y) {

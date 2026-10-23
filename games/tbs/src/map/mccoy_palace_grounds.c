@@ -34,7 +34,7 @@
 #include "unit/map/mccoy_palace_grounds.h"
 #include "unit/map/common/object_orbit.h"
 #include "unit/overworld/overworld.h"
-#include "unit/overworld/psynergy_effects.h"
+#include "unit/overworld/field_services.h"
 #include "unit/runtime/runtime.h"
 #include "battle.h"
 #include "debug.h"

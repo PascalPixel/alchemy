@@ -209,7 +209,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 /// to any target (MAP_EVENT_PSYNERGY_IN_AREA), to an object event
 /// (MAP_EVENT_PSYNERGY_ON_OBJ_EVENT) or to a metatile behavior. Called by
 /// Field_UsePsynergy for each phase, by Field_RunPsynergyEvents, and by the
-/// Force, Frost and Reveal effects (psynergy_effects/) for their own phases.
+/// Force, Frost and Reveal effects (field_services/) for their own phases.
 void *Map_FindPsynergyEvent(s32 eventFlags, s32 group, void *target) {
   struct FieldWork *work = (struct FieldWork *)gFieldWork;
   const struct MapEvent *event = work->events;

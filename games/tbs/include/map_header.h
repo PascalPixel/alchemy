@@ -14,8 +14,8 @@ struct MapGridCell;
 struct ObjectEvent;
 
 /// A map's row in gMapHeaders: its overlay's resource, its map section,
-/// its map type and its layout. One row per map number; field/maps.s writes
-/// them, and its MapId_ symbols are the row numbers.
+/// its map type and its layout. One row per map number; field/map_headers.s
+/// writes them, and its MapId_ symbols are the row numbers.
 struct MapHeader {
   s16 resourceId; ///< the overlay Overlay_Load loads into gOverlayArea
   /// The map section: entering a new one clears the FLAG_MAPSEC_TEMP_ flags
@@ -228,7 +228,7 @@ struct FieldPosition {
 
 STATIC_ASSERT(sizeof(struct FieldPosition) == 12);
 
-/// Every map's header, by map number (field/maps.s).
+/// Every map's header, by map number (field/map_headers.s).
 extern const struct MapHeader gMapHeaders[];
 /// The running map's overlay, loaded into these 0x8000 bytes of EWRAM at
 /// each map change; its code opens with its entry table.

@@ -36,7 +36,7 @@ mountain. The party follows the thieves through Vault, Bilibin, Kolima and
 Imil to Mercury Lighthouse, then through Xian, Altin, Kalay and Tolbi, and
 south across Gondowan to Lalivero and Venus Lighthouse, where the game
 ends. The story is the order the [game flags](#game-flag) are set in, so
-pages list places in that order; [Places](src/field/maps.s) lists every map.
+pages list places in that order; [Places](src/field/map_headers.s) lists every map.
 
 ### Psynergy and PP
 

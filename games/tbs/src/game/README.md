@@ -123,7 +123,7 @@ element 4, `ELEMENT_NONE`; every other column is 0.
 
 `action_id` and `unleash_action` are rows of `actions.tsv`. Used in battle,
 the item command builds a turn from its `action_id` (`BattleTurn_Build`,
-[battle/battle/plan.c](../battle/battle/plan.c)), and
+[battle/battle/turn.c](../battle/battle/turn.c)), and
 [Battles](../battle/README.md#how-an-ability-resolves) follows that ability
 to its effect. An item whose `use_type` is `ITEM_USE_TEACHES` is never used:
 while it is equipped its `action_id` is in the unit's Psynergy list

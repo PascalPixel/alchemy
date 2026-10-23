@@ -73,7 +73,7 @@
 ///   (VENUS_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT); after the look back
 ///   (WORLD_MAP_BEFORE_SHEBAS_FALL) the lighthouse shakes in clouds of dust
 ///   before Sheba's fall (WORLD_MAP_TO_VENUS_LIGHTHOUSE_AERIE).
-/// - The ending: once the cleared game is saved (menu/clear.c,
+/// - The ending: once the cleared game is saved (menu/main_menu.c,
 ///   WORLD_MAP_FROM_MAIN_MENU), the island Jenna and Kraden are adrift on
 ///   drifts east, and WORLD_MAP_JENNA_AND_KRADEN_ADRIFT shows Alex leading them
 ///   to Felix and Sheba before the title screen returns.
@@ -94,11 +94,11 @@
 #include "unit/map/world_map.h"
 #include "unit/map/common/world_map_linked_effects.h"
 #include "unit/overworld/overworld.h"
-#include "unit/overworld/psynergy_effects.h"
+#include "unit/overworld/field_services.h"
 #include "unit/field/field.h"
 #include "unit/game/game.h"
 #include "unit/window/window.h"
-#include "unit/window/battle_command.h"
+#include "unit/window/screens.h"
 #include "unit/runtime/runtime.h"
 #include "battle.h"
 #include "debug.h"
@@ -2570,7 +2570,7 @@ static void WorldMap_SpawnIslandWake(void) {
 /// with its wake under warm colours, and the map fades to white and leads into
 /// their scene (WORLD_MAP_TO_JENNA_AND_KRADEN_ADRIFT).
 /// Called by WorldMap_Initialize at WORLD_MAP_FROM_MAIN_MENU, once the cleared
-/// game is saved (menu/clear.c).
+/// game is saved (menu/main_menu.c).
 static void WorldMap_ShowIslandDrifting(void) {
   struct ObjectEvent *objectEvent;
   struct ObjectEvent *spriteObjectEvent;

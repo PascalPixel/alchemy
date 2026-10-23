@@ -255,7 +255,7 @@ These turn up all over the game.
   `and`, so 3 instructions differ at each site. `BattleAnim_RunNeptune`,
   `BattleAnim_RunPlanetDiver`, `BattleAnim_RunRamses`, `BattleAnim_RunMoteFountain`,
   `BattleAnim_RunTitanBlade` (`0x1FF`), `BattleAnim_RunThor` (`THOR_LAUNCH_SPARKS`
-  too) and `LuckyWheels_Run` ([`overworld/colorfx.c`](overworld/colorfx.c)) keep it.
+  too) and `LuckyWheels_Run` ([`overworld/lucky_wheels.c`](overworld/lucky_wheels.c)) keep it.
 - A message that follows a named one is written as `MsgName + n`, such as
   `MsgSaveDataCorrupted + 2` for `MsgSaveRecoveryFailed`, where the ROM adds to
   the register already holding the first.
@@ -349,7 +349,7 @@ each keeps its spelling until it is.
 
 One more spelling in the objects has been measured:
 `((16 - blend) << 8) | blend` in
-[`overworld/psynergy_effects/world_map.c`](overworld/psynergy_effects/world_map.c)
+[`overworld/field_services/world_map.c`](overworld/field_services/world_map.c)
 is `BLEND_ALPHA(blend, 16 - blend)` with its operands swapped, and the macro
 changes the registers.
 
@@ -442,7 +442,7 @@ its cells.
   `summary[0].party[4]`, indexed by `i * sizeof(struct SaveFileSummary) +
   SUMMARY_DISTANCE(party[4], field)`, for `summary[i].sendFlag` and
   `.flagCount` (`Save_ScanRecordFlags` in
-  [`window/battle_command/save.c`](window/battle_command/save.c)), which keeps
+  [`window/screens/save.c`](window/screens/save.c)), which keeps
   the literal `0x1070` and the offsets 1 and 2.
 - A selection entry's kind is cleared through a view from its base field,
   `((struct GlyphCursor *)&work->records[n].base)->cursor = 0`, for

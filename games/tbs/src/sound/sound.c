@@ -321,7 +321,7 @@ void Sound_SetBgmVolumeTarget(u16 targetVolume, u16 step) {
 
 /// Returns nonzero while a fanfare holds the music: from its start until its
 /// player falls silent and the music begins to fade back in. Polled by the
-/// Colosso maps, the Djinni-joined messages (window/battle_command/joined.c),
+/// Colosso maps, the Djinni-joined messages (window/screens/joined.c),
 /// the message windows' pause skip (window/window/messages.c) and
 /// Sound_WaitForFanfare (shop/shop/run.c), which the inn, the
 /// sanctum, the Lemurian ship and Tolbi's spring use.

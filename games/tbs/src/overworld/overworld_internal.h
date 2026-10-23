@@ -11,7 +11,7 @@
 #include "unit/overworld/zonedata.h"
 #include "vram_cache.h"
 #include "unit/overworld/overworld.h"
-#include "unit/overworld/psynergy_effects.h"
+#include "unit/overworld/field_services.h"
 #include "unit/runtime/runtime.h"
 #include "types.h"
 #include "field_offset.h"

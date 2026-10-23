@@ -133,7 +133,7 @@ Once a round, `round.c` gathers every unit's action and sorts them:
 Then, for each action in turn, `BattleStaging_DispatchAction`
 (`staging.c`):
 
-1. builds its turn: `BattleTurn_Build` (`plan.c`) turns the action into a
+1. builds its turn: `BattleTurn_Build` (`turn.c`) turns the action into a
    `struct BattleTurn`, with the ability id, the targets, double blows and
    critical hits rolled in advance, and the staging;
 2. stages the turn and runs its animation, during which

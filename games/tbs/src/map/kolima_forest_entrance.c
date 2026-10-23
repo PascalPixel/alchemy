@@ -41,7 +41,7 @@
 #include "unit/map/kolima_forest_entrance.h"
 #include "unit/map/common/kolima_forest_bridge_falling_effect.h"
 #include "unit/overworld/overworld.h"
-#include "unit/overworld/psynergy_effects.h"
+#include "unit/overworld/field_services.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

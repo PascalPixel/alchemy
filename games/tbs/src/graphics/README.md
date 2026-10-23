@@ -270,7 +270,7 @@ the code that loads them: battle animations, maps, layouts, windows and menus.
 | `shop/` | the eight frames of the shop cursor, `MenuCursor_FrameA` to `MenuCursor_FrameH` (`ResourceId_MenuCursorFrames`) |
 | `title/` | the title picture, the logos, the "Press Start" prompt and the "To be continued" lettering |
 | `render/labels.s` | the 64-by-16 text headings, each two 32-by-16 sprites |
-| `display/credits.s` | the credits font, with its glyph widths in `display/glyph_widths.h` |
+| `credits/font.s` | the credits font, with its glyph widths in `credits/glyph_widths.h` |
 | `backdrop/`, `monster/`, `sprite/`, `colosso/`, `lamakan/`, `lucky_dice/`, `slots/`, `sol_sanctum_statue/` | the pictures of the map or screen they name |
 | `animref*.s` | animation slot tables, whose entries point back at their own table |
 

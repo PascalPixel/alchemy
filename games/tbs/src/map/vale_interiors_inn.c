@@ -6,7 +6,7 @@
 /// In story order:
 ///
 /// - The stormy night, three years before the journey, when a new game begins
-///   at VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST (from menu/clear.c, or
+///   at VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST (from menu/main_menu.c, or
 ///   ValeGate's VALE_GATE_TO_VALE_INTERIORS_INN_SOUTHEAST). The setup sets
 ///   FLAG_VALE_STORM and plays EventScript_DoraWakesIsaac: Dora, Isaac's
 ///   mother, wakes him because the Mt. Aleph Boulder is going to fall, makes
@@ -79,10 +79,10 @@
 #include "unit/map/vale_interiors_inn.h"
 #include "unit/map/common/effect_psynergy.h"
 #include "unit/overworld/overworld.h"
-#include "unit/overworld/psynergy_effects.h"
+#include "unit/overworld/field_services.h"
 #include "unit/field/field.h"
 #include "unit/window/window.h"
-#include "unit/window/battle_command.h"
+#include "unit/window/screens.h"
 #include "unit/runtime/runtime.h"
 #include "types.h"
 #include "facing_object.h"
@@ -278,7 +278,8 @@ enum ValeInteriorsInnAnimation {
 /// VALE_INTERIORS_INN_FROM_BABI_PALACE from Babi's palace
 /// (BABI_PALACE_TO_VALE_INTERIORS_INN),
 /// VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST where a new game begins
-/// (menu/clear.c, and ValeGate's VALE_GATE_TO_VALE_INTERIORS_INN_SOUTHEAST),
+/// (menu/main_menu.c, and ValeGate's
+/// VALE_GATE_TO_VALE_INTERIORS_INN_SOUTHEAST),
 /// VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA from this map's
 /// own VALE_INTERIORS_INN_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA, and
 /// VALE_INTERIORS_INN_FROM_VALE_KRADEN_MYTHRIL_BAG from Kraden's cottage

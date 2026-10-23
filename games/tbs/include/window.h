@@ -6,7 +6,7 @@
 /// work.
 
 #include "unit/window/window.h"
-#include "unit/window/battle_command.h"
+#include "unit/window/screens.h"
 #include "types.h"
 #include "tbs_edition.h"
 #include "static_assert.h"

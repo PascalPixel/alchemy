@@ -42,7 +42,7 @@ s32 FieldEffect_GetAnimationValue(s32 id) {
 /// with the Speech option off (gGameState.speech). Message_OpenWindowFar
 /// takes it in the high half of its last argument and
 /// Message_SetVoiceFromObjectEvent as the window's voiceSound
-/// (psynergy_effects/messages.c); the shops ask it for their keepers.
+/// (field_services/messages.c); the shops ask it for their keepers.
 s32 Speaker_GetVoice(u32 id) {
   u8 portraitId;
 

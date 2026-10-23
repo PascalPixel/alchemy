@@ -68,7 +68,7 @@
 #include "item_ids.h"
 #include "macros.h"
 #include "flags.h"
-#include "unit/window/text_speed.h"
+#include "unit/window/message_speed.h"
 #include "game/character_ids.h"
 #include "ability_ids.h"
 

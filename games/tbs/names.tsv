@@ -9,7 +9,7 @@ gBattleEntryTimer	global	common	the battle's entry transition timer in frames (b
 task (struct Task, TaskFunc, gTasks, Task_, TASK_PRIORITY_*)	word	pret	pokeemerald include/task.h (gTasks, TaskFunc, priority); runtime/runtime/scheduler.c
 Object, gObjects, OBJECT_COUNT, HEAP_SLOT_OBJECTS	struct	common	the 64 records of 0x70 bytes for field and battle figures (include/object.h); pret's ObjectEvent is field-only
 OBJECT_SYSTEM_LAYOUT, _WORLD_MAP, _BATTLE	constant	pret	enum ObjectSystemMode; layout is pret's word for what the first mode runs
-MapHeader, gMapHeaders, MAP_HEADER, map_header	struct	pret	pokeemerald include/global.fieldmap.h struct MapHeader (layout, map section, map type); field/maps.s
+MapHeader, gMapHeaders, MAP_HEADER, map_header	struct	pret	pokeemerald include/global.fieldmap.h struct MapHeader (layout, map section, map type); field/map_headers.s
 main menu (MapId_MainMenu, MainMenu_)	word	pret	pokeemerald src/main_menu.c (New Game, Continue); the debug map list calls it "Clear data" (MsgDebugEntryName)
 GAME_RUN_DEBUG_MAIN_MENU	constant	pret	Game_Run's debug start at the main menu
 RUN_NONE, RUN_LUCKY_WHEELS, RUN_LUCKY_DICE, RUN_BATTLE	constant	game	runs instead of a map; RUN_NONE runs nothing (Map_Run)
@@ -264,7 +264,7 @@ SpriteDissolve_	prefix	common	kept: clears a sprite's pixels over 32 frames
 BattleBackground_	prefix	pret	battle background code (pret battle_bg); Graphics_ functions in battle/background.c join it
 OptionMenu_	prefix	pret	the option screen's no-op palette hooks (window/window/options.c)
 TestRoom_	prefix	game	the debug selector's room 'Test 0' to 'Test 7'
-IncreaseItemAndLevel_	prefix	game	the debug room the map table names IncreaseItemAndLevel (field/maps.s)
+IncreaseItemAndLevel_	prefix	game	the debug room the map table names IncreaseItemAndLevel (field/map_headers.s)
 MenuTest_	prefix	game	the debug room 'Menu test' (debug/test.c)
 DebugBrowser_	prefix	common	the window bank's icon and portrait browsers
 DebugMapSelect_	prefix	pret	the debug map selector (pret debug menu's warp list)

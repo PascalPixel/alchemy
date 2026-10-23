@@ -131,7 +131,7 @@ A text printer (`struct TextPrinter`) runs the control codes (`TEXT_`).
 `TextPrinter_Add` takes a free text printer and returns `NULL` when all
 three are busy. Each frame, `UiWork_ProcessAll` steps the windows, then the
 text printers, then the window sprites. Outside battle a text printer types
-as many cells a frame as the player's message speed allows (`text_speed.c`); in
+as many cells a frame as the player's message speed allows (`message_speed.c`); in
 battle, eight. A message window sizes and places itself to fit its text on
 the screen (`Window_FitOnScreen`).
 

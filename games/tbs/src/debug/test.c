@@ -2,10 +2,10 @@
 #include "unit/import.h"
 #include "unit/debug/test.h"
 #include "unit/overworld/overworld.h"
-#include "unit/overworld/psynergy_effects.h"
+#include "unit/overworld/field_services.h"
 #include "unit/game/game.h"
 #include "unit/window/window.h"
-#include "unit/window/battle_command.h"
+#include "unit/window/screens.h"
 #include "unit/menu/menu.h"
 #include "unit/shop/shop.h"
 #include "battle.h"
@@ -244,7 +244,7 @@ static void MenuTest_IgnorePsynergy(void) {}
 
 /// Keeps Force from moving LOCALID_IVY: run at phase 1 of Force cast at it,
 /// this sets the effect's childMode, and Force's shot then leaves its target
-/// where it is (overworld/psynergy_effects/force.c).
+/// where it is (overworld/field_services/force.c).
 static void MenuTest_EnableEffectChildMode(void) {
   ((struct FieldEffectWork *)gFieldEffectWork)->childMode = 1;
 }

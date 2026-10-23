@@ -32,7 +32,7 @@ enum {
 /// signature and checksum are good, and of two copies of a record only the
 /// newer stays taken. Returns 1 when no flash chip answers, 0 otherwise; either
 /// way the caller ends with Save_ReleaseWork. Called by the save
-/// screens (window/battle_command/save.c) before every save, load, copy or
+/// screens (window/screens/save.c) before every save, load, copy or
 /// delete. The workspace is EWRAM first (AllocHeapSlotEwram) and not cleared
 /// by the allocator, so it is cleared here; the record and sector-table
 /// functions in this file read it through gSaveWork, the slot's word in

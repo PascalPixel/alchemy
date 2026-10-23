@@ -160,7 +160,7 @@ extern s32 gSerialSendSource;
 extern volatile u16 gSerialSendSize;
 extern s32 gSerialReceiveDestination;
 /// volatile: tagged where it steers, in LinkBattle_ReceiveActions (tbs
-/// battle.c) and BattleArena_ReceivePartyRecords (tbs lobby.c)
+/// battle.c) and BattleArena_ReceivePartyRecords (tbs battle_arena.c)
 extern volatile u16 gSerialReceivedSize;
 extern u8 gSerialPeerPayloads[4][24];
 /// volatile: tagged where it steers, in SerialRuntime_StepBlockTransfer (tbs

@@ -38,7 +38,7 @@
 #include "flags.h"
 #include "unit/map/kolima_interiors.h"
 #include "unit/overworld/overworld.h"
-#include "unit/overworld/psynergy_effects.h"
+#include "unit/overworld/field_services.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

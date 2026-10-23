@@ -331,7 +331,7 @@ u32 BattlePlayback_RunAll(void) {
 /// Queues one playback command (enum BattlePlaybackCommand) with its operand,
 /// and returns the opcode. Called, directly or through PUSH_MESSAGE, by
 /// BattleAbility_ApplyToTarget for each step of an outcome, and by staging.c,
-/// plan.c and turn_end.c. Appends to gBattleWork->playback.queue with no test
+/// turn.c and turn_end.c. Appends to gBattleWork->playback.queue with no test
 /// against BATTLE_PLAYBACK_CAPACITY: a caller must keep one target's commands,
 /// or one queue played at once, within it. The queue is emptied by
 /// BattlePlayback_Reset, by BattlePlayback_SchedulePhase and before each target

@@ -204,7 +204,7 @@ void UiWork_UploadDirtyBlocks(void) {
 /// tiles) and frees the text tiles it showed. The height is cut at the
 /// screen's 20th row, and width and height are clamped to 2 to 30 tiles. In
 /// battle the rows below row 16 take tile 0x7f, the tile the battle command
-/// row fills its empty panels with (battle_command/command_row.c), instead of
+/// row fills its empty panels with (screens/command_row.c), instead of
 /// the blank tile.
 void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
   struct WindowWork *canvas = WINDOW_WORK;

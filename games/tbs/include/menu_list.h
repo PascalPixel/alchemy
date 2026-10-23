@@ -5,7 +5,7 @@
 /// Menu lists: sprites, cursors, the party status window and paged selections.
 
 #include "unit/window/window.h"
-#include "unit/window/battle_command.h"
+#include "unit/window/screens.h"
 #include "types.h"
 #include "resource.h"
 #include "task.h"

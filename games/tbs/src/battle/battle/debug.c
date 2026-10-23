@@ -178,7 +178,7 @@ void DebugBattle_ViewMessages(void) {
 
       REG_DISPCNT = control;
     }
-    // The fastest text speed (window/text_speed.c: 0 to 2, slowest first).
+    // The fastest text speed (window/message_speed.c: 0 to 2, slowest first).
     gGameState.messageSpeed = 2;
     for (;;) {
       // Sample arguments for the message's placeholders.

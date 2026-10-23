@@ -62,7 +62,7 @@
 #include "unit/map/common/object_orbit.h"
 #include "unit/map/common/effect_spawn.h"
 #include "unit/overworld/overworld.h"
-#include "unit/overworld/psynergy_effects.h"
+#include "unit/overworld/field_services.h"
 #include "types.h"
 #include "field_effect.h"
 #include "script_layer.h"

@@ -55,7 +55,7 @@
 #include "game_state.h"
 #include "unit/map/sol_sanctum_luna_sol_rooms.h"
 #include "unit/overworld/overworld.h"
-#include "unit/overworld/psynergy_effects.h"
+#include "unit/overworld/field_services.h"
 #include "unit/field/field.h"
 #include "battle.h"
 #include "debug.h"

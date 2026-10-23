@@ -136,7 +136,7 @@ the party stays inside. The two are chosen separately: the Bilibin
 Barricade runs on Bilibin's code but is a map section of its own, and
 Bilibin's houses have their own code but are part of Bilibin.
 
-The map table, `gMapHeaders` in [field/maps.s](src/field/maps.s),
+The map table, `gMapHeaders` in [field/map_headers.s](src/field/map_headers.s),
 has a row for each of the 201 maps, `struct MapHeader`: the overlay to
 load, the map section (`mapSec`), the map type (`mapType`) and the layout. Each row also defines the
 map's id, `MapId_<Place>`, as the row's position, so code names a map
@@ -308,7 +308,7 @@ that dependence takes, in [story order](glossary.md#the-places-in-story-order).
   edge of Lalivero, ends the game by leaving for the title screen by
   `TITLE_FROM_LEMURIAN_SHIP` with `FLAG_KEEP_MUSIC` set.
 
-[Places](src/field/maps.s) lists every map in story order with what
+[Places](src/field/map_headers.s) lists every map in story order with what
 happens there.
 
 ## The world map
@@ -373,7 +373,7 @@ compiles or assembles, in link order with the image and bank it goes in, and
   the windows text is drawn in.
 - [Engine](engine.md): start-up, frame timing and tasks, banks and far
   calls, overlays and songs.
-- [Places](src/field/maps.s): every map in story order, with its
+- [Places](src/field/map_headers.s): every map in story order, with its
   object event templates and map events.
 - [Game rules](src/game/README.md): stats, items, Djinn, classes, levels and
   the flags.

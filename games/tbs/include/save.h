@@ -5,7 +5,7 @@
 /// The save workspace: sector headers and file summaries.
 
 #include "unit/window/window.h"
-#include "unit/window/battle_command.h"
+#include "unit/window/screens.h"
 #include "types.h"
 #include "static_assert.h"
 #include "dma.h"

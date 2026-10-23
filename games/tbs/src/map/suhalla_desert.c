@@ -61,7 +61,7 @@
 #include "unit/map/suhalla_desert.h"
 #include "unit/map/common/effect_spawn.h"
 #include "unit/overworld/overworld.h"
-#include "unit/overworld/psynergy_effects.h"
+#include "unit/overworld/field_services.h"
 #include "unit/game/game.h"
 #include "object_event.h"
 #include "types.h"

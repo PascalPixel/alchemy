@@ -16,11 +16,11 @@ whole.
 Only the debug map selector leads to the rooms, and only debug mode opens it,
 which the released game never turns on.
 
-Ten rows at the end of the map table (`games/tbs/src/field/maps.s`) run
+Ten rows at the end of the map table (`games/tbs/src/field/map_headers.s`) run
 the rooms: `TestRoom0` to `TestRoom7` all run the Djinn room's overlay, each
 on its own [layout](../../glossary.md#layout), and `IncreaseItemAndLevel` and `MenuTest` run the other two.
 The debug map selector, `DebugMapSelect_Run`
-([debug.c](../window/battle_command/debug.c), among the window bank's menus,
+([debug.c](../window/screens/debug.c), among the window bank's menus,
 since it is built from windows), [warps](../../glossary.md#warp) to any map and [warp destination](../../glossary.md#warp-destination) by
 number. `Map_Run` opens it when the Start menu is opened with B held,
 and only while `gDebugMode` is set.

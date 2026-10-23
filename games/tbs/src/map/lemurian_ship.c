@@ -29,7 +29,7 @@
 #include "unit/map/lemurian_ship.h"
 #include "unit/map/common/scroll_initialize_hblank_dma.h"
 #include "unit/overworld/overworld.h"
-#include "unit/overworld/psynergy_effects.h"
+#include "unit/overworld/field_services.h"
 #include "unit/game/game.h"
 #include "unit/shop/shop.h"
 #include "unit/sound/sound.h"

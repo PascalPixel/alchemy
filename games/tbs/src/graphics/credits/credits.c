@@ -951,7 +951,7 @@ const void *gCredits_Lines[] = {
 };
 // clang-format on
 
-#include "../display/glyph_widths.h"
+#include "glyph_widths.h"
 
 /// A VBlank task added by Credits_InitTextSprites: maps the
 /// visible sixteen rows onto the tile ring and uploads their sprites. Advances

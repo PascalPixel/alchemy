@@ -401,7 +401,7 @@ s32 Field_IsRevealActive(struct ObjectScriptContext *interpreter) {
 /// object placed, whose bg event (MAP_EVENT_BG) gives an item, coins, a
 /// Psynergy Stone or a mimic and whose flag is not yet set. Each mark is an
 /// object of sprite 22 running gFieldEffect_MarkerParticleScript. Called by
-/// Reveal's effect (psynergy_effects/reveal.c).
+/// Reveal's effect (field_services/reveal.c).
 void FieldEffect_SpawnNearbyMarkers(void) {
   u8 *markerData;
   struct Object *objectEvent;

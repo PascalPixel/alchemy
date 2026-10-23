@@ -93,7 +93,7 @@ extern u8 gItemMenu_EquipmentKeyString[];
 extern const u8 gMenu_BackdropFrameTile[];
 #ifndef OWN_Menu_ColonString
 /// The colon the debug menus' map and flag rows draw
-/// (window/battle_command/debug.c): `:`.
+/// (window/screens/debug.c): `:`.
 extern const u8 gMenu_ColonString[];
 #endif
 /// The selection screen's left arrow, 8 by 16 at 256 colours (cursor_l).

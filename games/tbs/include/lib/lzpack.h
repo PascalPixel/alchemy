@@ -22,7 +22,8 @@ struct LzPackNode {
 
 /// The LZ packer's work: a node per window position, a chain head per byte
 /// value, the byte at each position, the best match and the output. Only the
-/// packer in overworld/colorfx.c uses it, and nothing in this game calls that.
+/// packer in overworld/lucky_wheels.c uses it, and nothing in this game calls
+/// that.
 struct LzPackWork {
   struct LzPackNode nodes[0x400];   ///< one per window position
   struct LzPackNode *bucket[0x100]; ///< each byte value's chain, or null

@@ -174,7 +174,7 @@ over whatever map's code was there before. Every overlay is built to run at that
 one address, so only one is ever loaded.
 
 There are 96 overlays, placed by `overlay/overlays.s` and listed in the map
-table (`field/maps.s`), each a compressed resource unpacked into
+table (`field/map_headers.s`), each a compressed resource unpacked into
 `gOverlayArea`. Some maps share one (the three `VaultCave` maps load the
 same overlay), and the title screen and a few other screens that are mostly
 menus are overlays too.
@@ -249,7 +249,7 @@ Code asks for a resource by its number (`Resource_GetTableEntry`), and the
 
 Moving a row in the middle still builds, since code that names a resource by
 its symbol follows, but every later row is renumbered, so the ROM no longer
-matches, and numbers travel without symbols in several places: the map table (`games/tbs/src/field/maps.s`)
+matches, and numbers travel without symbols in several places: the map table (`games/tbs/src/field/map_headers.s`)
 gives each map its overlay as a resource number, and the first column of
 `objects.tsv` numbers each overlay's rows the same way. The layout table
 (`games/tbs/src/field/layouts.tsv`) holds numbers counted from
@@ -262,7 +262,7 @@ any other.
 
 | Where a number travels without its symbol | Why its rows keep their order |
 | --- | --- |
-| the map table, `field/maps.s` | each map names its overlay as a resource number |
+| the map table, `field/map_headers.s` | each map names its overlay as a resource number |
 | `objects.tsv`'s first column | each overlay's rows are numbered by resource |
 | `field/layouts.tsv` | numbers counted from `ResourceId_Layout001` |
 | `window/window/options.c` | eight frames counted from `ResourceId_MenuCursorFrames` |
@@ -376,7 +376,7 @@ the flash library in `save/`.
 | --- | --- |
 | `rom_head.s`, `entry.s` | the cartridge header; the entry that sets the CPU modes and stacks, and the sound presets (`IwramCodeRecords`) |
 | `ewram.s`, `iwram.s`, `iwram_hi.s` | the main image's RAM variables, in their order in EWRAM and IWRAM |
-| `runtime.s`, `runtime_irq_table.s`, `runtime_mix*.s`, `runtime_mul_q16_ip.s` | the code copied to IWRAM: the interrupt dispatcher and its handler table, the resident sound mixing code, and the multiplies, divides, square root, word fills, transform and decoder the rest of the game calls |
+| `runtime.s`, `runtime_irq_table.s`, `sound_mixer*.s`, `runtime_mul_q16_ip.s` | the code copied to IWRAM: the interrupt dispatcher and its handler table, the resident sound mixing code, and the multiplies, divides, square root, word fills, transform and decoder the rest of the game calls |
 | `iwram_entry.s` | the stubs that call the IWRAM code from the ROM |
 | `cpu_set.s`, `sound_get_jump_list.s` | BIOS calls |
 | `heapfree.s` | `FreeHeapSlot` and `Free` |

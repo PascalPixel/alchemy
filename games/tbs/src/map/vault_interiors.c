@@ -69,7 +69,7 @@
 #include "vault_interiors.h"
 #include "unit/map/common/vault_itemobj.h"
 #include "unit/overworld/overworld.h"
-#include "unit/overworld/psynergy_effects.h"
+#include "unit/overworld/field_services.h"
 #include "unit/battle/battle.h"
 #include "unit/game/game.h"
 #include "unit/runtime/runtime.h"

@@ -274,7 +274,7 @@ their events above.
 The ten maps at the end of the map table, `TestRoom0` to `TestRoom7`,
 `IncreaseItemAndLevel` and `MenuTest`, are not unused in this sense: the
 debug map selector, `DebugMapSelect_Run`
-([debug.c](src/window/battle_command/debug.c)), reaches them, as it reaches
+([debug.c](src/window/screens/debug.c)), reaches them, as it reaches
 every map. The selector opens from the Start menu with B held, but only
 while `gDebugMode` is set. XXX: likely the retail game never sets it, because
 nothing writes `gDebugMode` but the reset at start-up and the sprite viewer,

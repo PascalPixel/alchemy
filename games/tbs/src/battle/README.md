@@ -61,7 +61,7 @@ standing or the party gets away. Steps 1 and 5 run once a round, steps 2 to
    and `BattleTurnOrder_Sort` sorts them, highest first, keeping the
    order of equal priorities; the three Djinn have `DJINN_FIRST_PRIORITY`
    added. Defend and Total Defense are raised here.
-2. `BattleTurn_Build` (`plan.c`) announces the action and fills in the
+2. `BattleTurn_Build` (`turn.c`) announces the action and fills in the
    turn.
 3. `BattleStaging_DispatchAction` (`staging.c`) stages the turn and runs
    its animation.
@@ -167,7 +167,7 @@ Just before a unit acts, the player reads its announcement, such as
 turn: which ability it is, who it reaches, and the rolls the animation must
 show.
 
-`BattleTurn_Build` ([`battle/plan.c`](battle/plan.c)) turns the chosen
+`BattleTurn_Build` ([`battle/turn.c`](battle/turn.c)) turns the chosen
 command into an ability id, shows its announcement, picks its targets and
 makes the rolls that must be known before the animation plays. It returns 0
 to stage the turn, or `TURN_REPORTED` when the action failed and its message
@@ -254,7 +254,7 @@ but a downed unit still holds its place and counts as a step. It keeps each
 target's distance from the aimed place, at most `TARGET_MAX` targets. If no
 one in range is left, the actor defends (`<unit> is defending!`). The player
 sees the same range as a cursor and smaller markers while aiming
-(`BattleTarget_RunSelection`, `../window/battle_command/targets.c`). The
+(`BattleTarget_RunSelection`, `../window/screens/targets.c`). The
 reach stops at the ends of the line rather than going round, though the
 cursor the player aims with wraps from the last place to the first.
 

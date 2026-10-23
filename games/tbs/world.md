@@ -115,7 +115,7 @@ the story](README.md#how-maps-depend-on-the-story) across the game.
 [Maps](src/map/README.md#the-entry-table) describes the [entry table](glossary.md#entry-table-and-import-table), the
 tables it returns and [how a map event is
 chosen](src/map/README.md#how-a-map-event-is-chosen), and
-[Places](src/field/maps.s) lists every map in [story order](glossary.md#the-places-in-story-order).
+[Places](src/field/map_headers.s) lists every map in [story order](glossary.md#the-places-in-story-order).
 
 ## Map and map section flags
 

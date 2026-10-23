@@ -110,7 +110,7 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
 /// the height allowed and the width of the cone. Object events with collision
 /// flag 0x10 count as 2/3 as far. Called with the leader by Field_UsePsynergy,
 /// by the item code (items.c) and by the Psynergy dispatch
-/// (psynergy_effects/dispatch.c).
+/// (field_services/dispatch.c).
 s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
   struct Object *source;
   struct Object *candidate;
@@ -228,7 +228,7 @@ s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 localId, s32 target,
 /// Gives every part of a motion object's sprite (but those at palette 15)
 /// palette - 1, or for palette 0 the next palette of a cycle that changes every
 /// 2 frames. Sets the sprite's dirty flag so it is drawn again. Called by
-/// Mind Read's wave effect (psynergy_effects/mind_read.c) on the caster: each
+/// Mind Read's wave effect (field_services/mind_read.c) on the caster: each
 /// frame with 0 to cycle its colours, and with 1 (palette 0) when it ends.
 void Animation_ApplyChildPalette(struct MotionObject *object, s32 palette) {
   struct Sprite *sprite;

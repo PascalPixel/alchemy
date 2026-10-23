@@ -12,7 +12,7 @@
 /// call.
 
 #include "unit/overworld/overworld.h"
-#include "unit/overworld/psynergy_effects.h"
+#include "unit/overworld/field_services.h"
 #include "unit/field/field.h"
 #include "unit/runtime/runtime.h"
 #include "script_layer.h"

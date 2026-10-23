@@ -45,7 +45,7 @@
 #include "version.h"
 #include "unit/map/suhalla_gate.h"
 #include "unit/overworld/overworld.h"
-#include "unit/overworld/psynergy_effects.h"
+#include "unit/overworld/field_services.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

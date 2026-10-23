@@ -12,7 +12,7 @@
 /// calls Task_Add, which resolves to the overlay's import
 /// stub. Main-image code calls the routines as ordinary functions; only the
 /// shared map/common/scroll_initialize_hblank_dma.h, which
-/// overworld/psynergy_effects.c includes as lemurian_ship.c does, reaches the
+/// overworld/field_services.c includes as lemurian_ship.c does, reaches the
 /// layer there. field_service.h includes this layer; rooms without the script
 /// command layer use it directly.
 
@@ -20,7 +20,7 @@
 // call.
 
 #include "types.h"
-#include "unit/overworld/psynergy_effects.h"
+#include "unit/overworld/field_services.h"
 #include "unit/runtime/runtime.h"
 #include "unit/window/window.h"
 #include "unit/game/game.h"

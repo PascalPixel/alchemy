@@ -5,7 +5,7 @@
 /// The option menu's work and the selection work.
 
 #include "unit/window/window.h"
-#include "unit/window/battle_command.h"
+#include "unit/window/screens.h"
 #include "types.h"
 #include "render_input.h"
 #include "cursor.h"

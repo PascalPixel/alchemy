@@ -4,7 +4,7 @@
 
 #include "speaker.h"
 #include "unit/overworld/overworld.h"
-#include "unit/overworld/psynergy_effects.h"
+#include "unit/overworld/field_services.h"
 #include "objcmd.h"
 #include "types.h"
 
@@ -311,7 +311,7 @@ const struct SpeakerDefinition gSpeakerDefinitions[131] = {
 
 /// Squashes as many times as the variant (1 to 3): variant v starts at word
 /// (3 - v) * 32 and runs to the end. field.h declares it const u8[], and
-/// psynergy_effects.c adds (3 - v) << 7 bytes and reads it through an s32 *.
+/// field_services.c adds (3 - v) << 7 bytes and reads it through an s32 *.
 const s32 gObjectMotion_VariantScripts[97] = {
     // variant 3
     SC_ADD(SW_SCALE_X, -0x4000),

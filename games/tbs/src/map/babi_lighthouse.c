@@ -56,7 +56,7 @@
 #include "unit/map/babi_lighthouse.h"
 #include "unit/map/common/effect_spawn.h"
 #include "unit/overworld/overworld.h"
-#include "unit/overworld/psynergy_effects.h"
+#include "unit/overworld/field_services.h"
 #include "unit/field/field.h"
 #include "macros.h"
 

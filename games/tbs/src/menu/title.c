@@ -7,11 +7,11 @@
 #include "vram_cache.h"
 #include "unit/menu/title.h"
 #include "unit/overworld/overworld.h"
-#include "unit/overworld/psynergy_effects.h"
+#include "unit/overworld/field_services.h"
 #include "unit/game/game.h"
 #include "unit/graphics/title/intro.h"
 #include "unit/window/window.h"
-#include "unit/window/battle_command.h"
+#include "unit/window/screens.h"
 #include "unit/runtime/runtime.h"
 #include "battle.h"
 #include "keystate.h"
@@ -336,7 +336,7 @@ static void Title_RevealScreen(s32 unused) {
 /// screen faded to black: its 224-colour palette, its 600 256-colour tiles,
 /// decoded through Ram_MapGridCellBuffer, and a map that numbers them row by
 /// row. Zeroes the four backgrounds' scroll and leaves the map work showing
-/// only BG2 and the sprites. MainMenu_LoadBackground (clear.c) is its twin.
+/// only BG2 and the sprites. MainMenu_LoadBackground (main_menu.c) is its twin.
 static void Title_LoadBackground(void) {
   u8 *encodedGraphics;
   s32 resourceId;

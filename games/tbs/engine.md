@@ -162,7 +162,7 @@ each map's code is packed on the cartridge and unpacked into the same
 32 KB area, `gOverlayArea` in EWRAM, when the party arrives, over the map
 before it. The 201 maps share 96 overlays, since the rooms of one dungeon
 often share its code: all fourteen of Crossbone Isle's maps run one overlay
-(the map table, `src/field/maps.s`, names each map's). Only one is loaded at a time, so overlays never call each other,
+(the map table, `src/field/map_headers.s`, names each map's). Only one is loaded at a time, so overlays never call each other,
 and code several maps need is copied into each of them (`src/map/common/`).
 
 An overlay and the main image meet at two tables, each in a fixed order:

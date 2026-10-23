@@ -126,7 +126,8 @@ void BattleBackground_SelectForEnvironment(s32 behavior);
 // overworld.c above its definition: in one file its definition
 // would come before Field_RequestDjinnBattle and
 // Field_RequestBattleFromEncounterTable, and Field_RequestDjinnBattle changes
-// (2 of 52 instructions in tbs-en). Split evidence for object|psynergy_effects.
+// (2 of 52 instructions in tbs-en). Split evidence for
+// overworld|field_services.
 #ifdef UBFIX
 void Encounter_SelectBattleMusic(s32 zone, s32 slot);
 #endif
@@ -252,12 +253,12 @@ void ScreenTransition_InitializeState(s32 value);
 void PaletteFade_CalculateSteps(s16 *source, s16 *target, s16 *step,
                                 s32 frames);
 void PaletteFade_Update(void);
-// UB: psynergy_effects.c calls PaletteFade_Build with no declaration in
+// UB: field_services.c calls PaletteFade_Build with no declaration in
 // scope, as a function returning int. With its prototype in scope (as in one
 // file with its definition) Weather_StartLightning and
 // Weather_StartLightningFlash change, 6 of 67 and 6 of 74 instructions in
 // tbs-en, and even a declaration without a prototype moves two instructions
-// in tbs-ja: evidence that overworld.c and psynergy_effects.c were separate
+// in tbs-ja: evidence that overworld.c and field_services.c were separate
 // files. UBFIX declares it.
 #ifdef UBFIX
 void PaletteFade_Build();

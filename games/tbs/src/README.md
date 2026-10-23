@@ -142,7 +142,7 @@ Each map's people, scripts and cutscenes are code that is needed only while
 the party is there, so it is kept apart from the main image as an overlay,
 packed on the cartridge and unpacked into one 32 KB area of EWRAM when the
 party arrives ([Engine](../engine.md#overlays)). The map table,
-`gMapHeaders` in [field/maps.s](field/maps.s), has 201 maps, and the
+`gMapHeaders` in [field/map_headers.s](field/map_headers.s), has 201 maps, and the
 rooms of one dungeon often share one overlay. `Map_LoadOverlay`
 ([overworld/overworld/map.c](overworld/overworld/map.c)) unpacks the overlay a map's row
 names before `Map_Run` runs it; a battle or a minigame is main-image
@@ -256,4 +256,4 @@ place's code is the map named for it. The game's text is in
 [`games/tbs/text`](../text), a PO catalog for each language, where each message
 carries its linker name: "(No saved data)" is `MsgSaveNoData`, which leads to
 the save file menu in
-[window/battle_command/save.c](window/battle_command/save.c).
+[window/screens/save.c](window/screens/save.c).

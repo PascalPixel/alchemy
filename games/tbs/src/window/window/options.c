@@ -155,7 +155,7 @@ u16 Color_ScaleComponents(s16 *rgb, s32 redScale, s32 greenScale,
 /// saved ones when the screen is cancelled. The file menu
 /// (FileMenu_SelectFile) shows the colours of the file under the cursor, and
 /// the saved ones for an empty file and on leaving. The main menu
-/// (menu/clear.c), the main loop's start (Game_Run), the end of the
+/// (menu/main_menu.c), the main loop's start (Game_Run), the end of the
 /// Mind Read wave (Ui_SetBank15PaletteAndClearRenderMode) and Vale and the
 /// world map call it with the saved settings.
 void WindowColor_Apply(s32 phase, s32 brightness) {
@@ -463,7 +463,7 @@ struct Window *OptionMenu_Open(void) {
 /// Every setting wraps at its ends. While sleep is held off (gSleepDisabled,
 /// as in the Battle Arena) auto-sleep shows as off and is saved so. The pause
 /// menu's Change settings runs it (PauseMenu_Run,
-/// battle_command/debug.c), and reopens the menu when it is cancelled.
+/// screens/debug.c), and reopens the menu when it is cancelled.
 s32 OptionMenu_Run(void) {
   struct OptionMenuWork *work;
   struct Window *settingsWindow;
@@ -755,7 +755,7 @@ struct Window *PauseMenu_Open(void) {
 /// PauseMenuEntry) or cancels with B or START (-1).
 /// The result counts in the full entry table even when only Change settings is
 /// shown. The menu's window and work block are freed before it returns;
-/// PauseMenu_Run (battle_command/debug.c) acts on the result.
+/// PauseMenu_Run (screens/debug.c) acts on the result.
 s32 PauseMenu_Choose(void) {
   struct Window *window;
   s32 redraw;

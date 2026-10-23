@@ -321,8 +321,8 @@ the top of its part or file, with a comment on what differs.
 | `menu/*.c` | the parts: one for each screen, and [`common.c`](menu/common.c), [`djinn_figures.c`](menu/djinn_figures.c), [`djinn_preview.c`](menu/djinn_preview.c), [`icons.c`](menu/icons.c) and [`use.c`](menu/use.c) for what the screens share |
 | `menudata.c`, `menustr.s` | the menu object's tables (the cursor's bob, the item sort orders, highlight widths) and its short strings and backdrop tile |
 | `title.c`, [`title.h`](title.h) | the title overlay; `title.h` names the Golden Sun logo the title screen and the main menu share |
-| `clear.c`, [`keyboard.s`](keyboard.s) | the main menu overlay: new game, continue, copy, delete, the Battle Arena door and the data transfer, by link or as a password |
-| `lobby.c` | the Battle Arena overlay: the link and monster battles, their records and the attendant |
+| `main_menu.c`, [`keyboard.s`](keyboard.s) | the main menu overlay: new game, continue, copy, delete, the Battle Arena door and the data transfer, by link or as a password |
+| `battle_arena.c` | the Battle Arena overlay: the link and monster battles, their records and the attendant |
 | `entry/`, `import/` | each overlay's entry [veneers](../../glossary.md#veneer) and the main-image functions it calls |
 | `backdrop.png` | the tile the Djinn screens copy into their backdrop's frame, which the Djinn preview blinks |
 | `cursor_l.png`, `cursor_r.png`, `cursor_spin.png` | the hand cursor pointing each way and the animated cursor, placed by `window/cursor.s` |
@@ -332,12 +332,12 @@ the top of its part or file, with a comment on what differs.
 `menu.c` includes `menu_internal.h` and then the parts in ROM order, and
 `head -4 menu/*.c` lists what each part holds. Link order is in
 `games/tbs/objects.tsv`, from `menu/menu` in the [main image](../../glossary.md#main-image) and from
-`menu/entry/title`, `menu/entry/clear` and `menu/entry/lobby` for the
+`menu/entry/title`, `menu/entry/main_menu` and `menu/entry/battle_arena` for the
 overlays, which the object list names by their [resource](../system/README.md#the-resource-directory-and-table-order) numbers: `36f`
 (title), `370` (main menu) and `3cb` (Battle Arena). The prototypes are in
 `games/tbs/include/unit/menu/`: [`menu.h`](../../include/unit/menu/menu.h)
 for the menu object and [`title.h`](../../include/unit/menu/title.h),
-`clear.h` and `lobby.h` for the overlays. The structs the screens read their
+`main_menu.h` and `battle_arena.h` for the overlays. The structs the screens read their
 work through are in the shared headers under `games/tbs/include`, such as
 `item_menu.h`.
 

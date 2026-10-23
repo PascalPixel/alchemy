@@ -58,7 +58,7 @@
 #include "unit/map/fuchin_temple.h"
 #include "unit/map/common/effect_spawn.h"
 #include "unit/overworld/overworld.h"
-#include "unit/overworld/psynergy_effects.h"
+#include "unit/overworld/field_services.h"
 #include "unit/runtime/runtime.h"
 #include "object_event.h"
 #include "action_script.h"

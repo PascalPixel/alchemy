@@ -59,7 +59,7 @@
 #include "unit/map/tolbi_ship_mast.h"
 #include "unit/overworld/overworld.h"
 #include "unit/field/field.h"
-#include "unit/overworld/psynergy_effects.h"
+#include "unit/overworld/field_services.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

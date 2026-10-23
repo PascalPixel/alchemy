@@ -91,7 +91,7 @@
 #include "battle_formation.h"
 #include "b5_context.h"
 #include "frame.h"
-#include "unit/overworld/psynergy_effects.h"
+#include "unit/overworld/field_services.h"
 #include "macros.h"
 #include "enemy_ids.h"
 

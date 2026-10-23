@@ -234,7 +234,7 @@ unpacked is the grid, which is stored in three separate pieces and put together 
 word per cell as it loads, so that everything about a cell can be read in
 one go.
 
-Each map's row of `gMapHeaders` ([`field/maps.s`](../field/maps.s))
+Each map's row of `gMapHeaders` ([`field/map_headers.s`](../field/map_headers.s))
 gives a layout number, which picks a row of `gLayouts`
 ([`field/layouts.tsv`](../field/layouts.tsv)): the layout's header, palette,
 its tileset's three sheets of tiles and layer data. `MapGrid_LoadLayout`

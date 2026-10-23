@@ -327,7 +327,7 @@ void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height) {
 /// a tile taken but not marked shown (attribute exactly 1). The shown bit
 /// stays set afterwards, until the tile's rectangle is cleared. The field
 /// menus (menu/menu/djinn.c, djinn_preview.c, item.c, psynergy.c and status.c)
-/// and the battle menus (battle_command/djinn_menu.c, party_commands.c and
+/// and the battle menus (screens/djinn_menu.c, party_commands.c and
 /// status.c) call it.
 void Window_MarkVisibleTextTiles(void) {
   u8 *base = gWindowWork[0];
@@ -561,7 +561,7 @@ void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2,
 }
 
 /// Sets the text colour (0 to 15) of drawn text. The menus colour the HP
-/// figures with it (menu/menu/common.c, battle_command/party_status.c), and
+/// figures with it (menu/menu/common.c, screens/party_status.c), and
 /// set colour 15 back after.
 void UiWork_SetParameterNibble(s32 param) {
   struct WindowWork *work = WINDOW_WORK;

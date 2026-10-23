@@ -190,7 +190,7 @@ Each ability, ids 0 to 518, has a row in
 [`battle/actflags.tsv`](../battle/actflags.tsv) (`gAbilityAnimations`). Its
 `effect` and `flags` columns are two 16-bit numbers; its `ability` column is
 a label for readers that the build skips. When `BattleTurn_Build`
-(`battle/battle/plan.c`) builds a turn, it copies the row into the turn's
+(`battle/battle/turn.c`) builds a turn, it copies the row into the turn's
 `animation` as one 32-bit number, `effect` in the low half, and the
 `ANIM_` macros in `battle/battle_internal.h` name its parts, bit by bit:
 
@@ -393,7 +393,7 @@ canvas. An animation usually holds its two as a `BlitterPair`, `[0]` in
 builds the usual pair, clipped on all four sides, `[0]` using `BLITTER_MAX`
 and `[1]` using `COMPOSITE_ADDITIVE`, both mirrored across when it is passed the
 targets' side. The battle's star field (`battle/battle/star_field.c`) and
-`overworld/colorfx.c` reach the builder from other [banks](../../glossary.md#bank) through its
+`overworld/lucky_wheels.c` reach the builder from other [banks](../../glossary.md#bank) through its
 [far-call](../../glossary.md#far-call) entry, `BattleAnim_BuildBlitterFar` (`system/far_call/BATTLE_ANIM.S`).
 
 ### How the builder writes a blitter
@@ -890,7 +890,7 @@ it borrows from the rest of the game: the heap's slots from
 [Layouts](../layout/README.md)), and the battle's own background, camera and
 fighters, which it shakes, tints and moves through the battle's helpers. The
 same blitter builder also serves the battle's star field and
-`overworld/colorfx.c`.
+`overworld/lucky_wheels.c`.
 
 ## Limits
 
@@ -1017,7 +1017,7 @@ reached:
   `ANIM_BY_ID_RANGE` and a kind from 100 to 135, the enumerator's value
   being the kind less 100;
 - `FIELD_PSYNERGY_` (`enum FieldPsynergy`,
-  [`psynergy_effects.h`](../../include/unit/overworld/psynergy_effects.h)): field
+  [`field_services.h`](../../include/unit/overworld/field_services.h)): field
   Psynergy, matched against the `type` column of `actions.tsv`, the form the
   [field Psynergy effects](../overworld/README.md) use.
 

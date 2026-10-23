@@ -13,13 +13,13 @@ const u16 gLuckyWheels_SparkCellOffsets[] = {0,   4,   20,  56,  120,
 /// winning line. Symbol 5 matches any other on a line, so a line is won by
 /// the symbol it shows besides 5. A line of five 5s leaves the symbol at -1
 /// and reads the byte before this table; every wheel holds three 5s
-/// (overworld/colorfx.c), so such a line can happen.
+/// (overworld/lucky_wheels.c), so such a line can happen.
 const u8 gLuckyWheels_SymbolPrizes[] = {0, 3, 1, 4, 2, 5};
 
 /// The tile of each title letter, the letter's place in its sheet: jackpot.png
 /// holds `Jackpot!` and jackpot_ja.png `ジャックポト!`. Japanese uses its ッ
 /// twice for `ジャックポット!`, and Spanish opens with the `!` drawn flipped
-/// both ways for `¡Jackpot!` (overworld/colorfx.c).
+/// both ways for `¡Jackpot!` (overworld/lucky_wheels.c).
 const u8 gLuckyWheels_TitleLetterTiles[LUCKY_WHEELS_TITLE_LETTERS] = {
 #if LANGUAGE == LANGUAGE_JAPANESE
     0, 1, 2, 3, 4,
@@ -35,7 +35,7 @@ const u8 gLuckyWheels_TitleLetterTiles[LUCKY_WHEELS_TITLE_LETTERS] = {
 
 /// The positions of the frame's fourteen sprites, in screen pixels. Lucky
 /// Wheels gives the first four tile 0x4e0 and the rest 0x4e8
-/// (overworld/colorfx.c).
+/// (overworld/lucky_wheels.c).
 const u8 gLuckyWheels_FrameSpriteX[] = {2,   0,  232, 232, 32,  32,  200,
                                         200, 28, 28,  208, 208, 219, 219};
 const u8 gLuckyWheels_FrameSpriteY[] = {2,   152, 0,   152, 8,   104, 8,

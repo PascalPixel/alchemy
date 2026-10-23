@@ -103,7 +103,7 @@ STATIC_ASSERT(offsetof(struct MapWarpDest, cameraLeft) == 14);
 enum {
   /// Runs nothing and returns 0; no ☀️ code sends the party there.
   RUN_NONE = 0x1fb,
-  RUN_LUCKY_WHEELS = 0x1fc, ///< Lucky Wheels at Tolbi's spring (colorfx.c)
+  RUN_LUCKY_WHEELS = 0x1fc, ///< Lucky Wheels at Tolbi's spring (lucky_wheels.c)
   RUN_LUCKY_DICE = 0x1fd,   ///< Lucky Dice at Tolbi's spring (lucky_dice.c)
   /// A battle; the warp destination is the formation, and the result -1 a
   /// defeat.

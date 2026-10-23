@@ -63,7 +63,7 @@
 #include "unit/import.h"
 #include "unit/map/altmiller_cave.h"
 #include "unit/overworld/overworld.h"
-#include "unit/overworld/psynergy_effects.h"
+#include "unit/overworld/field_services.h"
 #include "unit/field/field.h"
 #include "unit/shop/shop.h"
 #include "unit/runtime/runtime.h"

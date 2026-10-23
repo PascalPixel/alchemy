@@ -291,7 +291,7 @@ share = 3 + 5 × min(VBlanks, 2)    → 8 on time, 13 after a late frame
 `gMessageSpeed_VoiceGaps` characters, and is one of four sounds from
 `voiceSound`, chosen by the character's code.
 
-The speed tables are in `text_speed.c`, indexed by
+The speed tables are in `message_speed.c`, indexed by
 `gGameState.messageSpeed`, 0 to 2 from slowest to fastest; the codes a
 text printer runs are in `window_internal.h`, and codes from `TEXT_SPACE` up are
 characters.
@@ -413,19 +413,19 @@ code that reads it is the same in every edition.
 | File | What it holds |
 | --- | --- |
 | `window.c` | the window object, written as parts in `window/`: windows, text printers, the decoder, window sprites, icons, the selection row and the option and pause menus |
-| `battle_command.c` | the screens built on the window object, written as parts in `battle_command/`, from the party status window to the debug menus |
+| `screens.c` | the screens built on the window object, written as parts in `screens/`, from the party status window to the debug menus |
 | `glyph_arm.c` | the text canvas renderer, compiled as ARM code and copied to RAM to run |
 | `articles.c` | each edition's articles and possessives, the kana marks and the sprite motion curves |
 | `scales.c` | sprite scales, motion curves and the lookup tables of the window and menu code |
-| `text_speed.c` | the three message speed tables |
+| `message_speed.c` | the three message speed tables |
 | `windata.s` | glyph widths, kana mark ranges, the party and [Djinni](../../glossary.md#djinn) sprites, the growing bar and the cursor stops |
 | [`keyboard.s`](keyboard.s) | the naming screen's keyboard tilemaps |
 | [`cursor.s`](cursor.s), `cursor_frame.s`, `fixed_block.s`, `slider.s`, `slidpal.s` | sprite tiles and palettes, built from the PNGs beside them or under `../menu` and `../graphics` |
 
-Both objects are written as parts: `window.c` and `battle_command.c` include
-their private headers (`window_internal.h`, `battle_command_internal.h`) and
+Both objects are written as parts: `window.c` and `screens.c` include
+their private headers (`window_internal.h`, `screens_internal.h`) and
 then their parts in ROM order, and their opening comments say where to start.
-`head -3 window/*.c battle_command/*.c` lists what each part holds. Link order
+`head -3 window/*.c screens/*.c` lists what each part holds. Link order
 is in `games/tbs/objects.tsv`, from `glyph_arm`.
 
 The prototypes are in `games/tbs/include/unit/window/`; its

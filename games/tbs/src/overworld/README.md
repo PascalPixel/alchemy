@@ -265,13 +265,13 @@ The `PSYNERGY_PHASE_EFFECT_ACTS` event is never run here: it only makes the
 effect aim at a target, and the effects that act on one (Force, Frost,
 Reveal) find it themselves.
 
-[`psynergy_effects/dispatch.c`](psynergy_effects/dispatch.c) runs the field
+[`field_services/dispatch.c`](field_services/dispatch.c) runs the field
 kind's effect: `FieldEffect_Run` with no target, `FieldEffect_DispatchRequestKind`
 with one. Force, Frost, Ply, Whirlwind and Catch run through both, and
 `FieldEffect_DispatchRequestKind` clears `scene->enabled` first, which tells
 them that a map event, not the effect, decides what happens to the target: a
 stone pillar moves under Move because its map says so. Each field kind's effect is the
-part named for it (`psynergy_effects/reveal.c`), and its entry point names the
+part named for it (`field_services/reveal.c`), and its entry point names the
 abilities that reach it in a reach line, as the [battle
 animations](../battle_anim/README.md) do:
 
@@ -283,7 +283,7 @@ Halt is dispatched in `dispatch.c` itself: only one object event is held at a ti
 (`gGameState.pausedObject`), so casting it again frees the one held before.
 
 The field kind is the `type` column of `games/tbs/src/game/actions.tsv`,
-named by `enum FieldPsynergy` (`unit/overworld/psynergy_effects.h`); the phases are
+named by `enum FieldPsynergy` (`unit/overworld/field_services.h`); the phases are
 `enum PsynergyPhase` (`map_tables.h`), bits 30 to 28 of a map event's control
 word, the word that holds its kind ([Maps](../map/README.md#what-a-map-event-row-says)).
 
@@ -340,7 +340,7 @@ and `RegionMap_Show` shows the picture.
 `RegionMap_Show` decodes the picture into `gMapGridCellBuffer`, the map cells'
 scratch memory, and copies it to VRAM, the console's video memory; only then
 does
-[`psynergy_effects/world_map.c`](psynergy_effects/world_map.c) reuse that
+[`field_services/world_map.c`](field_services/world_map.c) reuse that
 buffer for its own work: the cursor, the markers and the name window. The
 marker [task](../../glossary.md#task) releases its window and VRAM before `WorldMap_LoadAreaGraphics`
 restores the field graphics into the same buffer.
@@ -359,7 +359,7 @@ them and the cursor last.
 `TBS_PATCH_2` [editions](../../glossary.md#editions) (German, French, Spanish and Italian) also glide the
 cursor onto the nearest place when the d-pad is released, and show a place's
 name from a shorter distance (`REGION_MAP_NAME_RANGE`). The edition block of
-`psynergy_effects/world_map.c` chooses these values.
+`field_services/world_map.c` chooses these values.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -400,9 +400,9 @@ effect scene's work serves the Djinn joining effects as well as Psynergy.
 | File | What it holds |
 | --- | --- |
 | `overworld.c`, `overworld/*.c` | the field object, in 16 parts: the main loop and map changes, the map loop and its requests, random encounters, a map's object events, its events, items and Psynergy used on the field, the map's treasure spots, the debug palette editor, and the screen transitions and palette fade the field shares with battles |
-| `psynergy_effects.c`, `psynergy_effects/*.c` | the field Psynergy and script object, in 37 parts: the commands map scripts run, the script camera, jumping and climbing, the field's weather and scanline effects, Djinn joining the party, the effect of each field kind, the field effect sprites and the world map screen |
-| `overworld_internal.h`, `psynergy_effects_internal.h` | each object's private header |
-| `colorfx.c` | Lucky Wheels, and an LZ packer nothing calls (`LzPack_PackStream` is [`UNUSED`](../../glossary.md#unused)); linked in `rom_main_12`, where the rest of the folder is in `rom_main_04` |
+| `field_services.c`, `field_services/*.c` | the field Psynergy and script object, in 37 parts: the commands map scripts run, the script camera, jumping and climbing, the field's weather and scanline effects, Djinn joining the party, the effect of each field kind, the field effect sprites and the world map screen |
+| `overworld_internal.h`, `field_services_internal.h` | each object's private header |
+| `lucky_wheels.c` | Lucky Wheels, and an LZ packer nothing calls (`LzPack_PackStream` is [`UNUSED`](../../glossary.md#unused)); linked in `rom_main_12`, where the rest of the folder is in `rom_main_04` |
 | `fxdata.c` | constant tables: object scripts, curves and lookups |
 | `battle_cue.c` | `gEncounter_BattleMusic`, the battle music of each encounter |
 | `zonedata.c` | the world map's encounter rules, and the zone and slot of each Djinni battle |
@@ -412,10 +412,10 @@ effect scene's work serves the Djinn joining effects as well as Psynergy.
 | `scripts.s` | object scripts, the leader's object event template, the screen transition shapes, the weather pictures and `gRegionMap_MapSecMarkers` |
 | `arcspark.s`, `swatch.s`, `mote.png` | the spark pictures, the debug palette editor's swatch (its picture is `../debug/swatch.png`) and the floating motes' picture |
 
-`overworld.c` and `psynergy_effects.c` are each one object in the ROM, written
+`overworld.c` and `field_services.c` are each one object in the ROM, written
 as parts: the `.c` includes its private header and then its parts in ROM
 order, so a part is compiled only through it. The header places no bytes.
-`head -2 overworld/*.c psynergy_effects/*.c` prints what each part holds.
+`head -2 overworld/*.c field_services/*.c` prints what each part holds.
 Prototypes are in `games/tbs/include/unit/overworld/`.
 
 ## Words used here
@@ -429,7 +429,7 @@ Prototypes are in `games/tbs/include/unit/overworld/`.
   walk (above).
 - **field kind**: what an ability does on the field, the `type` column of
   `games/tbs/src/game/actions.tsv`, named by `enum FieldPsynergy`
-  (`unit/overworld/psynergy_effects.h`), `FIELD_PSYNERGY_MOVE` (1) to
+  (`unit/overworld/field_services.h`), `FIELD_PSYNERGY_MOVE` (1) to
   `FIELD_PSYNERGY_AVOID` (16). Whirlwind and Gale share `FIELD_PSYNERGY_WHIRLWIND`.
 - **effect scene**: `struct FieldEffectWork` (`field/fx_work.h`), the work of
   the field effect playing: the ability, its field kind (`fieldPsynergy`), its
@@ -502,7 +502,7 @@ that nothing else uses.
 `FieldScript_ShowSpeakerMessage`, `FieldScript_ShowMessageAtPosition` and
 `FieldScript_ForwardShowMessageAtPosition` are unused: each is reached only through
 a bare [veneer](../../glossary.md#veneer) in `system/far_call/OVERWORLD.S`, which has no symbol for code to
-call ([`psynergy_effects/messages.c`](psynergy_effects/messages.c)).
+call ([`field_services/messages.c`](field_services/messages.c)).
 
 - XXX (no evidence): what units `FieldScript_ShowSpeakerMessage` and
   `FieldScript_ShowMessageAtPosition` expected; they clamp a position to 8 to 312

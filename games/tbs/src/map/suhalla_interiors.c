@@ -41,7 +41,7 @@
 #include "unit/import.h"
 #include "unit/map/suhalla_interiors.h"
 #include "unit/overworld/overworld.h"
-#include "unit/overworld/psynergy_effects.h"
+#include "unit/overworld/field_services.h"
 #include "field_service.h"
 #include "text/msg_ids.h"
 #include "types.h"

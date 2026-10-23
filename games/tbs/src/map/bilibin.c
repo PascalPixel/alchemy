@@ -39,7 +39,7 @@
 /// FLAG_MAPSEC_TEMP_04 is set while McCoy's gate guards have let the party in
 /// (FLAG_MCCOY_PALACE_ADMITTED) but it has not yet entered the palace
 /// (FLAG_MCCOY_PALACE_VISITED), for the garden's east guard to scold the party
-/// for keeping McCoy waiting. The garden is another map section (maps.s
+/// for keeping McCoy waiting. The garden is another map section (map_headers.s
 /// gives Bilibin 8 and the garden 9), so Map_ResetFlagsOnEnter clears the
 /// flag on the way in and the guard never sees it set.
 ///
@@ -93,7 +93,7 @@
 #include "unit/import.h"
 #include "unit/map/bilibin.h"
 #include "unit/overworld/overworld.h"
-#include "unit/overworld/psynergy_effects.h"
+#include "unit/overworld/field_services.h"
 #include "unit/field/field.h"
 #include "unit/runtime/runtime.h"
 #include "battle.h"

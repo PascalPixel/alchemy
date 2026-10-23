@@ -13,7 +13,7 @@
 /// LOCALID_PARTY_LEADER, 0); SCRIPT_END();`.
 
 #include "unit/overworld/overworld.h"
-#include "unit/overworld/psynergy_effects.h"
+#include "unit/overworld/field_services.h"
 #include "map_grid_copy.h"
 
 #include "static_assert.h"

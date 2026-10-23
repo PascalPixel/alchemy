@@ -45,7 +45,7 @@
 #include "script_layer.h"
 #include "unit/map/west_lunpa_cave.h"
 #include "unit/overworld/overworld.h"
-#include "unit/overworld/psynergy_effects.h"
+#include "unit/overworld/field_services.h"
 #include "west_lunpa_cave.h"
 #include "text/msg_ids.h"
 #include "fixed_math.h"

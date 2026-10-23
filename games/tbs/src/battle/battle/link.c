@@ -43,8 +43,9 @@ s32 LinkBattle_ReceiveParty(void) {
 
   // The block is only freed: each member is received straight into its
   // enemy unit, as in the Battle Arena's twin of this function
-  // (BattleArena_ReceivePartyRecords, menu/lobby.c). XXX: likely left from a
-  // receive into a buffer, because LinkBattle_SendParty does send from one.
+  // (BattleArena_ReceivePartyRecords, menu/battle_arena.c). XXX: likely left
+  // from a receive into a buffer, because LinkBattle_SendParty does send from
+  // one.
   buffer = AllocEwram(LINK_PARTY_UNIT_BYTES);
   memberCount = 0;
   partySlot = 0;

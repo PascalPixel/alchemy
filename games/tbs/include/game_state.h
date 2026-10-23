@@ -42,9 +42,9 @@ enum BattleType {
   /// The battles a script starts. Here and in a link battle the command menu
   /// itself refuses to run, with MsgNoTimeToRun ("This is no time to be
   /// running away!"), as it does once the party is challenged
-  /// (Message_ShowLocalizedAndWait, window/battle_command/link_timer.c).
+  /// (Message_ShowLocalizedAndWait, window/screens/link_timer.c).
   BATTLE_TYPE_SCRIPTED = 3,
-  BATTLE_TYPE_LINK = 4, ///< a link battle (Battle_Run, menu/lobby.c)
+  BATTLE_TYPE_LINK = 4, ///< a link battle (Battle_Run, menu/battle_arena.c)
   /// The debug battle menu's mark (DebugBattle_RunMenu), which no code tests
   /// by value; it still lets the party run.
   BATTLE_TYPE_DEBUG = 5

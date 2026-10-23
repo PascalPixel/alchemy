@@ -89,8 +89,8 @@ void TilesetAnim_Update(void) {
 }
 
 /// Resumes tileset animation channelIndex by clearing its paused byte.
-/// Map scripts and the Battle Arena (menu/lobby.c, tileset animation 5) reach
-/// it through TilesetAnim_ResumeFar.
+/// Map scripts and the Battle Arena (menu/battle_arena.c, tileset animation 5)
+/// reach it through TilesetAnim_ResumeFar.
 void TilesetAnim_Resume(u32 channelIndex) {
   struct MapGridState *gridState = gMapGridWork[0];
   struct TilesetAnim *channel = &gridState->animations[channelIndex];
@@ -99,8 +99,8 @@ void TilesetAnim_Resume(u32 channelIndex) {
 }
 
 /// Pauses tileset animation channelIndex by setting its paused byte.
-/// Map scripts and the Battle Arena (menu/lobby.c, tileset animation 5) reach
-/// it through TilesetAnim_PauseFar.
+/// Map scripts and the Battle Arena (menu/battle_arena.c, tileset animation 5)
+/// reach it through TilesetAnim_PauseFar.
 void TilesetAnim_Pause(u32 channelIndex) {
   struct MapGridState *gridState = gMapGridWork[0];
   struct TilesetAnim *channel = &gridState->animations[channelIndex];

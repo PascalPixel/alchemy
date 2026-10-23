@@ -83,10 +83,10 @@
 #include "unit/map/common/effect_psynergy.h"
 #include "unit/map/common/world_map_linked_effects.h"
 #include "unit/overworld/overworld.h"
-#include "unit/overworld/psynergy_effects.h"
+#include "unit/overworld/field_services.h"
 #include "unit/field/field.h"
 #include "unit/window/window.h"
-#include "unit/window/battle_command.h"
+#include "unit/window/screens.h"
 #include "unit/runtime/runtime.h"
 #include "battle.h"
 #include "debug.h"
@@ -349,7 +349,7 @@ enum ValeOpeningLocalId {
   /// ★ Named from what the player sees: a short plank of yellow wood,
   /// spr_206.png (its render)
   LOCALID_OPENING_THIRD_BOARD,
-  /// Sprite 0xd7, the hand of Move (psynergy_effects/catch.c): it pushes the
+  /// Sprite 0xd7, the hand of Move (field_services/catch.c): it pushes the
   /// pillar for Garet, shedding sparkles.
   /// ★ Named from what the player sees: a large open hand,
   /// spr_215.png (its render)

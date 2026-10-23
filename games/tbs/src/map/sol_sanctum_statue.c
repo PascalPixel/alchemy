@@ -55,7 +55,7 @@
 #include "version.h"
 #include "unit/map/sol_sanctum_statue.h"
 #include "unit/overworld/overworld.h"
-#include "unit/overworld/psynergy_effects.h"
+#include "unit/overworld/field_services.h"
 #include "unit/runtime/runtime.h"
 #include "task.h"
 #include "resource.h"

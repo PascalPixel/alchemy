@@ -5,7 +5,7 @@
 /// The summary screen's state, and the statuses it shows.
 
 #include "unit/window/window.h"
-#include "unit/window/battle_command.h"
+#include "unit/window/screens.h"
 #include "unit/menu/menu.h"
 #include "types.h"
 #include "heap_slots.h"

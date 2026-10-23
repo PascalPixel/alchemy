@@ -103,7 +103,7 @@ void BattleAnim_WipeCanvas(s32 direction, s32 fill) {
 /// are freed (ANIM_FINISH_CANVAS). Clears work->transferPending after a
 /// copy, and counts work->framesSinceTransfer: 1 on a frame that copied,
 /// one more on each frame that did not. No animation reads that count;
-/// overworld/colorfx.c keeps the same count for its own transfer.
+/// overworld/lucky_wheels.c keeps the same count for its own transfer.
 void BattleAnim_ProcessPendingGraphicsTransfer(void) {
   void **slots = gHeapSlots + HEAP_SLOT_BATTLE_ANIM;
   struct BattleAnimWork *work = slots[0];

@@ -616,7 +616,7 @@ guide](../../../tla/src/field/README.md), as differences from this one.
 | `lucky_dice.c` | the Lucky Dice minigame, with its camera defaults and 8.8 fixed-point helpers |
 | `layouts.tsv` | `gLayouts`: each layout's header, palette, three tilesets and layer data, as resource numbers counted from `ResourceId_Layout001` |
 | `remap0.tsv` to `remap3.tsv` | `gRuntime_ByteRemapTable`, four 256-byte colour remap tables |
-| `maps.s` | `gMapHeaders`: each map's overlay, [map section](../../glossary.md#map-section), map type (town or field) and layout; each row also defines the map's `MapId_` |
+| `map_headers.s` | `gMapHeaders`: each map's overlay, [map section](../../glossary.md#map-section), map type (town or field) and layout; each row also defines the map's `MapId_` |
 | `common/effect/` | the ground particle and sparkle pictures of the field's weather, which [`scripts.s`](../overworld/scripts.s) places |
 
 The headers are in `games/tbs/include/unit/field/`, one for each C file but

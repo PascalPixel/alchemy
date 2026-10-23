@@ -3,7 +3,7 @@
 
 /// @file
 /// Map numbers, named after their places, in the order of gMapHeaders
-/// (field/maps.s).
+/// (field/map_headers.s).
 ///
 /// Each MapId_ is an absolute symbol whose value is the map's row in the
 /// table; C takes the number as (s32)&MapId_Name, and the warp tables name a

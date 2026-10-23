@@ -12,7 +12,7 @@
 /// HEAP_SLOT_ENEMY_UNITS heap slot, gEnemyUnits, which Unit_Get
 /// reads for unit ids 128 to 133 while it is allocated (game/game/units.c). The
 /// Battle Arena passes the opponent's party to the battle in a copy of this
-/// block (menu/lobby.c).
+/// block (menu/battle_arena.c).
 #define LINK_OWNER_STATES_SIZE 0x7c8
 
 /// Fights the battle against the enemy formation enemyGroup, from the
@@ -114,9 +114,9 @@ s32 Battle_Run(s32 enemyGroup) {
 
   // A link battle: wait for the connection, take this console's side, put
   // the opponent's party into the enemy units from the copy the Battle Arena
-  // left at gActorSpriteSlots (menu/lobby.c), and lay it out left to right
-  // (FORMATION_LAYOUT_SHUFFLED). Both consoles start from seed 0 so their rolls
-  // agree; the opponent's party size is the enemy count.
+  // left at gActorSpriteSlots (menu/battle_arena.c), and lay it out left to
+  // right (FORMATION_LAYOUT_SHUFFLED). Both consoles start from seed 0 so their
+  // rolls agree; the opponent's party size is the enemy count.
   if (GameFlag_TestFar(FLAG_LINK_BATTLE) != 0) {
     battle->isLink = 1;
     Battle_SetType(BATTLE_TYPE_LINK);
@@ -173,7 +173,7 @@ s32 Battle_Run(s32 enemyGroup) {
   else
     battle->partyStatus = PARTY_STATUS_NO_SUMMONS;
   // The party status window, opened PARTY_STATUS_CLOSED: laid out, but erased
-  // until it is drawn (window/battle_command/party_status.c).
+  // until it is drawn (window/screens/party_status.c).
   PartyStatus_CreateWindowFar(PARTY_STATUS_CLOSED);
   Camera_InitializeDefaultTransform();
   BattleObject_Put();

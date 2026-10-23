@@ -32,7 +32,7 @@
 #include "map_ids.h"
 #include "unit/map/kalay_interiors.h"
 #include "unit/overworld/overworld.h"
-#include "unit/overworld/psynergy_effects.h"
+#include "unit/overworld/field_services.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

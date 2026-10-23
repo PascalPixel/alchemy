@@ -8,7 +8,7 @@ one 32 KB area of RAM when the party arrives, and replaced when it leaves.
 [Running a map](../overworld/README.md) (the `overworld` folder) runs the map and
 asks the overlay what to do; the overlay drives the engine back through its
 [import table](../../glossary.md#entry-table-and-import-table), the list of main-program functions it may call. Each overlay has a generated page of its own, listed in
-[Maps](../field/maps.s) in [story order](../../glossary.md#the-places-in-story-order), with its [layout](../../glossary.md#layout) and its [map events](../../glossary.md#map-event).
+[Maps](../field/map_headers.s) in [story order](../../glossary.md#the-places-in-story-order), with its [layout](../../glossary.md#layout) and its [map events](../../glossary.md#map-event).
 
 ## The entry table
 
@@ -391,7 +391,7 @@ page](../../README.md#the-map-table-and-map-sections). The layouts the maps are
 built on are in [Layouts](../layout/README.md), and the debug rooms, built the
 same way, in [Debug rooms](../debug/README.md).
 
-To find the code for a map, find its row in `field/maps.s`: the overlay's
+To find the code for a map, find its row in `field/map_headers.s`: the overlay's
 resource number begins the rows of `objects.tsv` that name its files. To find
 what someone says, search `games/tbs/text/en.po` for the line; its `msgctxt`
 is the name the map writes (`MsgVaultWelcomeToVaultTheTownAt`).
@@ -419,7 +419,7 @@ is the name the map writes (`MsgVaultWelcomeToVaultTheTownAt`).
 Each overlay is three objects in `games/tbs/objects.tsv`, linked in this order
 into the overlay area: `entry/<map>`, `<map>` and `import/<map>`; the
 rows' first column is the overlay's resource number. The map table,
-`gMapHeaders` in [`field/maps.s`](../field/maps.s), gives each
+`gMapHeaders` in [`field/map_headers.s`](../field/map_headers.s), gives each
 map its overlay, map section, map type and layout, and names it `MapId_<Map>`;
 several maps may share one overlay, and then share its file. A map overlay
 is never split into parts: its code is laid out by kind, entry points,

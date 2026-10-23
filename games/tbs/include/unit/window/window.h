@@ -274,12 +274,12 @@ void WindowSprite_ClearList(void *outputs);
 void Window_ClearInteriorTiles(const struct Window *window, u32 left, u32 top,
                                u32 right, u32 bottom);
 void WindowSprite_UpdateListTail(struct WindowSpriteList *list);
-// WindowSprite_AppendToList is called from battle_command.c with no prototype
+// WindowSprite_AppendToList is called from screens.c with no prototype
 // in scope: in one file its definition would come before WindowSprite_Create
 // and BattleDjinnMenu_ShowChangePreview, and WindowSprite_Create changes (2 of
-// 61 instructions in tbs-en). Split evidence for window|battle_command.
+// 61 instructions in tbs-en). Split evidence for window|screens.
 void WindowSprite_Release(struct WindowSprite *entry);
-// TextPrinter_Add is called from battle_command.c with no prototype
+// TextPrinter_Add is called from screens.c with no prototype
 // in scope: Party_ShowJoinedMessage, Party_ShowPairJoinedMessage and
 // Djinn_ShowJoinedMessage pass five of its six arguments, and in one file,
 // with its definition first, they would not compile. Split evidence for
@@ -323,10 +323,10 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
                                  s32 y);
 void Text_DrawGlyphTileAtWorkOffset(u16 *buffer, const struct Window *work,
                                     s32 offsetX, s32 offsetY);
-// Text_DrawWideStringInWindow is called from battle_command.c with no
+// Text_DrawWideStringInWindow is called from screens.c with no
 // prototype in scope: in one file its definition would come before
 // BattleDjinnMenu_ShowChangePreview's 17 calls, and that function changes by 18
-// bytes in tbs-en. Split evidence for window|battle_command.
+// bytes in tbs-en. Split evidence for window|screens.
 u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width);
 u32 Message_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry, s32 no,
                               s32 plural, s32 *suffix);
@@ -341,10 +341,10 @@ void Text_MeasureDecoded(s32 pos, u32 *out_width, u32 *out_height,
 void Text_MeasureAllPages(s32 start, u32 *out_width, u32 *out_height,
                           u16 *spacing);
 s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode);
-// Window_PutGlyph is called from battle_command.c with no prototype in
+// Window_PutGlyph is called from screens.c with no prototype in
 // scope, as in window.c above its definition: PartyStatus_Draw passes four of
 // its five arguments, and in one file, with its definition first, it would not
-// compile. Split evidence for window|battle_command.
+// compile. Split evidence for window|screens.
 void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
                             u32 mode);
 void WindowSprite_UpdateScaleAnimation(struct WindowSprite *output);
@@ -532,9 +532,9 @@ void Text_DrawNumberAtOffset(s32 value, s32 width, const struct Window *window,
                              s32 x, s32 y);
 void Text_DrawNumberInWindow(s32 value, s32 width, struct Window *window, s32 x,
                              s32 y);
-// Text_DrawPrefixedNumberAtOffset is called from battle_command.c with no
+// Text_DrawPrefixedNumberAtOffset is called from screens.c with no
 // prototype in scope: in one file its definition would come before
 // PartyStatus_Draw, and PartyStatus_Draw changes (2 of 435 instructions in
-// tbs-en). Split evidence for window|battle_command.
+// tbs-en). Split evidence for window|screens.
 
 #endif

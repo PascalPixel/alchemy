@@ -811,7 +811,7 @@ for its `struct BattleObject`, `object` for that object's
 | `BattleObject_` | the battle objects |
 | `BattleMotion_` | their movements |
 | `BattlePlacement_` | where each place stands on the battlefield |
-| `BattleUnit_` | one unit's battle state: its guard, weapon sprite, status flags and turn-end counters |
+| `BattleUnit_` | one unit's battle state (its guard, weapon sprite, status flags and turn-end counters) and the lists of a battle's units |
 | `BattleStatusIcon_` | the status icons that cycle over a unit |
 | `BattleFormation_`, `BattleEnemy_` | the formations, and each enemy's level, name letter, defeat and coins |
 | `BattleSprite_` | an enemy's row of the battle sprite table |
@@ -824,6 +824,10 @@ for its `struct BattleObject`, `object` for that object's
 | `ElementGlow_` | a unit's elemental glow: the star field and the other glows |
 | `LinkBattle_` | link battles |
 | `DebugBattle_`, `DebugParty_` | the debug battle menu, its message viewer and the party presets |
+| `BattleTransition_` | the opening transition into a battle and its mosaic fade out |
+| `BattleHighlight_` | which units glow: the acting unit or the targets being chosen stay opaque while the others turn semi-transparent |
+| `BattleDjinn_` | the party's Djinn on standby, counted |
+| `Irq_` | the interrupt handlers the star field installs and removes |
 
 A function that acts on one thing the engine names elsewhere keeps that
 thing's prefix (`Camera_`, `Palette_`, `Party_`, `Ability_`, `Text_` and

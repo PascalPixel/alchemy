@@ -282,6 +282,7 @@ driver's structures in `games/tbs/include/sound`.
 | `Cgb_`, `CgbAudio_`, `CgbChannel_`, `CgbNote_` | the CGB channels |
 | `SoundDriver_`, `MusicDriver_`, `Mixer_` | the handwritten routines: entering the mix, the mixer and their call helpers |
 | `Sound_`, `Runtime_` | functions the engine names elsewhere |
+| `SoundTest_` | the debug audio test's song selectors and mixer presets |
 
 ## Evidence and open questions
 

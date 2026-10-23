@@ -475,6 +475,13 @@ in `include/tbs_edition.h`.
 | `Color_` | scaling a colour's channels |
 | `UiRender_` | an empty function nothing calls |
 | `Resource_`, `Graphics_`, `Vram_`, `VramCache_` | things the engine names elsewhere: VRAM cache entries, pictures, palettes and video registers |
+| `FieldMessage_` | showing a message window in the field: at an object, centred, or at a window position |
+| `Glyph_` | drawing a font glyph with its outline into a window |
+| `BattleCommandRow_` | the row of battle commands a member chooses from |
+| `BattleSummaryScreen_` | the battle's status screen of a unit, stepping through the members with L and R |
+| `YesNoMenu_` | the yes-or-no menu |
+| `Heading_` | the 64 by 16 headings of the menus (Save, Continue, Copy, Erase, Battle, Link, Pause, Setup), loaded and bobbing |
+| `RenderResource_` | loading one sprite tile of the heading pictures into the VRAM cache |
 
 The `Ui_` functions that remain have no family yet. Many of these names are
 shared with [The Lost Age](../../glossary.md#the-two-games)'s copies of these files and with the [far-call](../../glossary.md#far-call) table

@@ -672,6 +672,7 @@ and a part undefines its macros at its end.
 | `Ui_`, `SpriteViewer_` | the debug sprite viewer |
 | `LuckyDice_` | the Lucky Dice minigame |
 | `ObjectCamera_` | a camera hook that returns 1 and nothing calls (`object_camera.c`) |
+| `ResourceTable_` | two empty reserved functions beside the resource table, nothing calls them |
 
 A few functions take the prefix of the one thing they act on
 (`Decompress_Lz`, `FieldCamera_FollowLeaderInBounds`). Names other

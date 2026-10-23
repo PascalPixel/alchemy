@@ -390,6 +390,7 @@ naming screen keyboard tilemap, the same as the Japanese one, that nothing reads
 | `Title_`, `MainMenu_`, `BattleArena_`, `MapData_` | the three overlays and their map entry functions |
 | `Owner_`, `State_` | copying a unit, and the Battle Arena's unused empty callback |
 | `Window_`, `Text_`, `Icon_`, `UiWork_`, `WindowPalette_`, `Palette_`, `Resource_`, `Render_`, `Task_` | windows, text, icons, palettes, VRAM entries and [tasks](../../glossary.md#task), whose main code is in other folders |
+| `PagedList_` | the equipment pages' item lists: building a page, its page numbers and moving through it |
 
 Some prefixes are older than the parts. `PsynergyMenu_InitializeEntryObjects`
 sets up the party figures for the Item, Psynergy and Djinn screens (through

@@ -466,6 +466,11 @@ Prototypes are in `games/tbs/include/unit/overworld/`.
 | `ItemGift_` | the message for an item the party has just received |
 | `FadeOverlay_`, `Reveal_`, `FieldMotes_` | the fade overlay's marks beside the object event, a Reveal marker's sparkles and the floating motes |
 | `DisplayState_` | clearing the background bits `ScreenTransition_` turns on |
+| `Warp_` | the leader's arrival and exit animations at a warp (stairs up, stairs down, falling in) |
+| `FieldYesNo_` | a yes-or-no question asked from a map script |
+| `ScanlineEffect_` | the per-scanline wave scroll driven by HBlank DMA, as pret's scanline effects |
+| `Weather_` | rain and lightning over a map |
+| `Speaker_` | a speaking sprite's definition: its voice and idle flags |
 
 Other functions keep the prefixes of the families they belong to elsewhere.
 Several structures are reached by more than one spelling (the field work, the

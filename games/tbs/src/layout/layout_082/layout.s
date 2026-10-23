@@ -19,7 +19,7 @@ Field_Layout082:
 	.incbin "games/tbs/src/layout/layout_082/shapes.table.lz"
 	.balign 4, 0
 .LField_Layout082_GRID:
-	.incbin "games/tbs/src/layout/layout_082/grid.parts.lz"
+	.incbin "games/tbs/src/layout/layout_082/map.grid.lz"
 	.balign 4, 0
 .LField_Layout082_ANIMATION:
 	.incbin "games/tbs/src/layout/layout_078/tileset_anims.script.lz"

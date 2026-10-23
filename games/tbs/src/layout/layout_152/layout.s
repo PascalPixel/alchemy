@@ -20,7 +20,7 @@ Field_Layout152:
 	.incbin "games/tbs/src/layout/layout_152/shapes_es.table.lz"
 	.balign 4, 0
 .LField_Layout152_GRID:
-	.incbin "games/tbs/src/layout/layout_152/grid_es.parts.lz"
+	.incbin "games/tbs/src/layout/layout_152/map_es.grid.lz"
 	.balign 4, 0
 .LField_Layout152_ANIMATION:
 	.incbin "games/tbs/src/layout/layout_031/tileset_anims.script.lz"
@@ -49,7 +49,7 @@ Field_Layout152:
 	.incbin "games/tbs/src/layout/layout_152/shapes_es.table.lz"
 	.balign 4, 0
 .LField_Layout152_GRID:
-	.incbin "games/tbs/src/layout/layout_152/grid_es.parts.lz"
+	.incbin "games/tbs/src/layout/layout_152/map_es.grid.lz"
 	.balign 4, 0
 .LField_Layout152_ANIMATION:
 	.incbin "games/tbs/src/layout/layout_031/tileset_anims.script.lz"
@@ -78,7 +78,7 @@ Field_Layout152:
 	.incbin "games/tbs/src/layout/layout_152/shapes_es.table.lz"
 	.balign 4, 0
 .LField_Layout152_GRID:
-	.incbin "games/tbs/src/layout/layout_152/grid_es.parts.lz"
+	.incbin "games/tbs/src/layout/layout_152/map_es.grid.lz"
 	.balign 4, 0
 .LField_Layout152_ANIMATION:
 	.incbin "games/tbs/src/layout/layout_031/tileset_anims.script.lz"
@@ -106,7 +106,7 @@ Field_Layout152:
 	.incbin "games/tbs/src/layout/layout_152/shapes.table.lz"
 	.balign 4, 0
 .LField_Layout152_GRID:
-	.incbin "games/tbs/src/layout/layout_152/grid.parts.lz"
+	.incbin "games/tbs/src/layout/layout_152/map.grid.lz"
 	.balign 4, 0
 .LField_Layout152_ANIMATION:
 	.incbin "games/tbs/src/layout/layout_031/tileset_anims.script.lz"

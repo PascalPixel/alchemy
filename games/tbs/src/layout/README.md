@@ -97,18 +97,20 @@ layout's `layout.s` puts the parts together behind its header.
 | `layout.s` | the header, three layers and six offsets, then the parts; in 129 layouts a tileset's palette and tiles follow (from `games/tbs/src/graphics/tileset`) | assembled |
 | `metatiles.tsv` | the metatiles; a metatile's number is its row, from 0 | `metatiles.delta0.lz`, `.delta1.lz` or `.delta2.lz` |
 | `shapes.tsv` | the shapes | `shapes.table.lz` |
-| `grid.tsv` | the three planes, in order | `grid.parts.lz` |
-| `grid_behavior.tsv`, `grid_shape.tsv`, `grid_metatile.tsv` | each cell's metatile behavior, shape and metatile | parts of the grid |
+| `map.txt` | the grid: each cell's metatile, metatile behavior and shape | `map.grid.lz` |
 | `tileset_anims.tsv` | the tileset animation script | `tileset_anims.script.lz` |
 | `blend.tsv` | the blend [script](../../glossary.md#script) | `blend.script.lz` |
 | `treasure_spots.tsv` | the treasure spots | `treasure_spots.table` |
-| `*_ja.tsv`, `*_de.tsv`, `*_es.tsv` and so on | an [edition](../../glossary.md#editions)'s own version of a table | chosen in `layout.s` |
+| `*_ja.tsv`, `map_de.txt`, `*_es.tsv` and so on | an [edition](../../glossary.md#editions)'s own version of a table | chosen in `layout.s` |
 | `*_patch.tsv` | bytes [Camelot](../../glossary.md#camelot) changed after packing | read by the packer |
 
-A plane's first line describes it: `cell:u8	grid:128x128	fill:0	at:2,3`
-gives the size of each value, the grid, the value of every cell the table
-leaves out, and the cell its first row starts at, column then row. The rows
-are hexadecimal, one row of the grid per line.
+`map.txt` holds one line of the grid per row, each cell written
+`metatile:behavior:shape` in hexadecimal, a part left off the end being 0
+(`4fff:ff`, `20`). Its first line, `grid:128x128	at:2,3	fill:1:0:0`, gives
+the grid's size, the cell its first written row starts at (column, then
+row), and the cell every square the rows leave out holds. The game reads the
+grid as three planes one after another: the behaviors, the shapes, then the
+metatiles.
 
 ### The header
 

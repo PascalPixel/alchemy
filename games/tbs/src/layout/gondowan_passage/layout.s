@@ -19,7 +19,7 @@ Field_GondowanPassage:
 	.incbin "games/tbs/src/layout/gondowan_passage/shapes.table.lz"
 	.balign 4, 0
 .LField_GondowanPassage_GRID:
-	.incbin "games/tbs/src/layout/gondowan_passage/grid.parts.lz"
+	.incbin "games/tbs/src/layout/gondowan_passage/map.grid.lz"
 	.balign 4, 0
 .LField_GondowanPassage_ANIMATION:
 	.incbin "games/tbs/src/layout/gondowan_passage/tileset_anims.script.lz"

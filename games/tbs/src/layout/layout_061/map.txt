@@ -1,0 +1,97 @@
+grid:128x128	at:0,0	fill:1:0:0
+fff fff 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 fff fff
+
+
+
+
+
+1 1 1 1 1 1:ff 1:ff 1:ff fff:ff fff:ff fff:ff fff:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 fff fff fff fff fff fff fff fff fff fff fff fff
+1 1 1 1:ff 1:ff 1:ff 1:ff 1:ff fff:ff fff:ff fff:ff fff:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 fff fff fff fff 1a fff fff fff fff fff fff fff
+1 1 1 1:ff 1:ff 1:ff 1:ff 1:ff fff:ff fff:ff fff:ff fff:ff fff:ff fff:ff fff:ff fff:ff fff:ff 1:ff 1:ff 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 fff fff fff fff fff fff 30 fff fff fff fff fff fff fff
+1 1 1 1:ff 1:ff 1:ff fff:ff fff:0:1 fff:ff fff fff:ff fff 1 fff fff:b fff fff:0:2 1:ff 1:ff 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 fff fff fff fff fff 1 47 fff fff fff:0:3 fff:0:3 fff:0:3 fff fff
+1 1 1 1:ff 1:ff fff:ff fff:0:1 fff fff fff fff fff 1 fff:b fff:ff fff:a fff:0:2 1:ff 1:ff 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 fff fff fff fff fff fff fff fff fff fff:0:3 fff fff:0:3 fff fff
+1 1 1 1:ff 1:ff fff:ff fff:ff fff fff fff fff fff 1 fff fff:a fff fff:0:2 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 fff fff 30 fff fff fff fff fff fff fff:0:3 fff:0:3 fff:0:3 fff fff
+1 1 1 1:ff 1:ff fff:ff fff:ff fff fff fff fff fff 1 fff fff fff fff:0:2 8001:ff 8001:ff 8001:ff 8001:ff 1:ff 1:ff 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 fff 1 fff 1 1 1 1 1 1 1 1 1 1 fff fff 47 fff fff fff fff fff fff fff fff fff fff fff fff fff fff fff
+1 1 1 1:ff 1:ff fff:ff fff fff fff fff fff fff 1 1 1 1 fff:0:2 8001:ff cfff cfff 8001:ff 1:ff 1:ff 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 fff 1 1 1 1 1 1 1 1 1 1 1 1 fff fff 1 fff fff fff fff fff fff fff fff fff fff fff fff fff fff fff
+1 1 1 1:ff 1:ff fff:ff fff:64:4 fff fff fff fff fff fff fff fff fff fff:0:2 8fff:ff cfff:ff cfff:ff 8fff:ff 1:ff 1:ff 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 fff fff fff fff fff fff fff fff fff fff fff fff fff fff fff fff fff fff 1 1 1 1 1 1 1 1 1 1 1 1 1 fff
+1 1 1 1:ff 1:ff fff:ff fff:ff fff:ff fff fff fff fff fff fff fff fff fff 8fff 8fff:3 8fff:3 8fff:ff 1:ff 1:ff 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 fff fff fff fff fff fff fff fff 1 1 1 1 1 1 1 1 fff fff 1 1 1 1 1 1 1 1 1 1 dc
+1 1 1 1:ff 1:ff fff:ff fff:0:5 fff fff fff fff fff fff fff fff fff fff fff fff fff fff:ff 1:ff 1:ff 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 fff fff 1 1 fff fff fff 1 1 1 1 1 1 1 1 1 fff fff
+1 1 1 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff fff:2 fff:2 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 fff fff
+1 1 1 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff
+1 1 1 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 b6 b7 fff fff fff fff
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 d8 d9 fff fff fff fff
+
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff
+1 1 1 1:ff 1:ff 1:ff 1:ff 4:ff 5:ff 6:ff fff:ff fff:ff fff:ff fff:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 4:ff 5:ff 6:ff 11a:ff 11b:ff 11c:ff 11d:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 9 fff 1 1 1 1 1 fff fff 1 1 1 1 1 1 1 1 1 1 9 11e 1 1 1 1 1 11f 120
+1 1 1 1:ff 1:ff 1:ff 1:ff 14:ff 15:ff 16:ff fff:ff fff:ff fff:ff fff:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 14:ff 15:ff 16:ff 121:ff 122:ff 123:ff 124:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 fff fff 19 1b 1 1 1 1 1 1b fff fff 1 1 1 1 1 1 1 125 126 19 1b 1 1 1 1 1 1b 127 128
+1 1 1 1:ff 1:ff 1:ff 1:ff 23:ff 24:ff 25:ff fff:ff fff:ff fff:ff fff:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 23:ff 24:ff 25:ff 129:ff 12a:ff 12b:ff 12c:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 fff 2d 2e 2f 31 fff fff fff fff fff 31 fff fff fff fff 1 1 1 1 12d 2d 2e 2f 31 12e 12f 130 131 132 31 133 134 135 136
+1 1 1 1:ff 1:ff 39:ff 3a:0:1 3b 3c:f2:4 3d:ff fff:ff fff:ff fff:65:4 fff fff:0:6 fff:ff fff:ff 1:ff 1:ff 1 1:ff 1:ff 1:ff 1:ff 39:ff 3a:0:1 3b 3c:66:4 3d:ff 137:ff 138:ff 139:f2:4 13a 13b:0:6 13c:ff 13d:ff 1:ff 1:ff 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 43 44 45 46 1 fff fff fff fff fff 1 fff fff fff fff 1 1 1 1 43 44 45 46 1 13e 13f 140 141 142 1 143 144 145 146
+1 1 1 1:ff 4f:ff 8050:0:1 8051 52 53:0:7 54:0:7 fff:0:7 fff:0:7 fff:0:7 8fff 8fff 8fff:0:6 fff:ff 1:ff 1:ff 1 1:ff 1:ff 1:ff 4f:ff 8050:0:1 8051 52 53:0:7 54:0:7 147:0:7 148:0:7 149:0:7 814a 814b 814c:0:6 14d:ff 1:ff 1:ff 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 5a 5b fff 1 1 fff fff fff fff fff 1 1 fff fff fff 1 1 1 1 5a 5b 14e 1 1 14f 150 151 152 153 1 1 154 155 156
+1 1 1 1:ff 8068:ff 8069:ff:8 c06a:0:5 806b 6c 6d fff fff fff 8fff cfff:0:8 8fff:ff:5 8fff:ff 1:ff 1:ff 1 1:ff 1:ff 1:ff 8068:ff 8069:ff c06a:0:5 806b 6c 6d 157 158 159 815a c15b:0:8 815c:ff 815d:ff 1:ff 1:ff 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 73 74 fff fff 1 fff fff fff fff fff 1 fff fff fff fff 1 1 1 1 73 74 15e 15f 1 160 161 162 163 164 1 165 166 167 168
+1 1 1 1:ff 8080:ff 4081:0:6 4082:0:1 8083 84 85 fff fff fff 8fff 4fff:0:6 4fff:0:1 8fff:ff 1:ff 1:ff 1 1:ff 1:ff 1:ff 8080:ff 4081:0:6 4082:0:1 8083 84 85 169 16a 16b 816c 416d:0:6 416e:0:1 816f:ff 1:ff 1:ff 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 8d 8e fff fff 1 fff fff fff fff fff 1 fff fff fff fff 1 1 1 1 8d 8e 170 171 1 172 173 174 175 176 1 177 178 179 17a
+1 1 1 1:ff 809e:ff 409f 40a0 80a1 a2 a3 fff fff fff 8fff 4fff 4fff 8fff:ff 1:ff 1:ff 1 1:ff 1:ff 1:ff 809e:ff 409f 40a0 80a1 a2 a3 17b 17c 17d 817e 417f 4180 8181:ff 1:ff 1:ff 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 a9 aa 1 1 1 fff fff fff fff fff fff 1 1 fff fff 1 1 1 1 a9 aa 1 1 1 182 183 184 185 186 187 1 1 188 189
+1 1 1 1:ff 80ba:ff c0bb:0:8 c0bc:0:5 80bd be bf fff fff fff 8fff cfff:0:8 cfff:0:5 8fff:ff 1:ff 1:ff 1 1:ff 1:ff 1:ff 80ba:ff c0bb:0:8 c0bc:0:5 80bd be bf 18a 18b 18c 818d c18e:0:8 c18f:0:5 8190:ff 1:ff 1:ff 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 ca cb 15e 15f 1 fff fff fff fff fff fff 165 166 fff fff 1 1 1 1 ca cb 15e 15f 1 191 192 193 194 195 196 165 166 197 198
+1 1 1 1:ff 80dd:ff 40de:0:6 40df:0:1 80e0 e1 e2 fff fff fff 8fff 4fff:0:6 4fff:0:1 8fff:ff 1:ff 1:ff 1 1:ff 1:ff 1:ff 80dd:ff 40de:ff 40df:0:1 80e0 e1 e2 199 19a 19b 819c 419d:0:6 419e:ff 819f:ff 1:ff 1:ff 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 ed ee 170 171 1 fff fff fff fff fff 1 177 178 fff fff 1 1 1 1 ed ee 170 171 1 1a0 1a1 1a2 1a3 1a4 1 177 178 1a5 1a6
+1 1 1 1:ff 80f7:ff 40f8:0:5 40f9 80fa fb fc fff fff fff 8fff 4fff 4fff:0:8 8fff:ff 1:ff 1:ff 1 1:ff 1:ff 1:ff 80f7:ff 40f8:0:5 40f9 80fa fb fc 1a7 1a8 1a9 81aa 41ab 41ac:0:8 81ad:ff 1:ff 1:ff 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 108 1 1 1 fff fff fff fff fff 1 1 1 fff 1 1 1 1 1 1 108 1 1 1 1ae 1af 1b0 1b1 1b2 1 1 1 1b3
+1 1 1 1:ff 8001:ff 8001:ff 8001:ff 8001:ff 1:ff fff:1:9 fff:1 fff:1:2 13d:ff 813d:ff 813d:ff 813d:ff 813d:ff 1:ff 1:ff 1 1:ff 1:ff 1:ff 8001:ff 8001:ff 8001:ff 8001:ff 1:ff 1b4:4:9 1b5:4 1b6:4:2 13d:ff 813d:ff 813d:ff 813d:ff 813d:ff 1:ff 1:ff
+1 1 1 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff fff:ff 13d:ff 13d:ff 13d:ff 13d:ff 13d:ff 13d:ff 1:ff 1:ff 1 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1b7:ff 13d:ff 13d:ff 13d:ff 13d:ff 13d:ff 13d:ff 1:ff 1:ff
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+dc
+dc
+dc
+dc
+dc
+dc
+dc
+8c
+
+
+
+
+
+
+
+
+
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 c001
+1 1 1 1 1 1 1 fff fff fff fff fff
+1 1 1 1 1 1 1 fff fff fff fff fff
+1 1 1 1 1 1 1 fff fff fff fff fff
+1 1 1 1 1 1 1 fff fff fff fff fff
+1 1 1 1 1 1 1 1 1 1 1 fff fff fff
+1 1 1 1 1 1 1 1 1 1 1 fff fff fff 1 fff fff
+1 1 1 1 1 1 1 1 1 1 1 fff fff fff 1 fff fff
+1 1 1 1 1 1 1 1 1 1 1 fff fff fff 1 fff fff
+
+
+
+
+
+
+
+1 1 1 1 1 1 1 1 1 fff fff fff 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1de 1df 1e0
+1 1 1 1 1 1 1 1 1 fff fff fff 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1e1 1e2 1e3
+
+1 1 1 1 1 fff fff 1 1 1 1 1 1 1 1e4 1e5 1 1 1 1 1 1 1 1 1e4 1e5 1 1 1 1 1 1 1 1e4 1e5
+1 1 1 1 1 fff fff 1 1 1 1 1 1 1 1e6 1e7 1 1 1 1 1 1 1 1 1e6 1e7 1 1 1 1 1 1 1 1e6 1e7 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 8b
+1 1 1 1 1 fff fff 1 1 1 1 1 1 1 1e8 1e9 1 1 1 1 1 1 1 1 1e8 1e9 1 1 1 1 1 1 1 1e8 1e9 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 dc
+1 1 1 1 1 1e4 1e5 1 1 1 1 1 1 1 1e4 1e5 1 1 1 1 1 1 1 1 1e4 1e5 1 1 1 1 1 1 1 1e4 1e5
+1 1 1 1 1 1e6 1e7 1 1 1 1 1 1 1 1e6 1e7 1 1 1 1 1 1 1 1 1e6 1e7 1 1 1 1 1 1 1 1e6 1e7
+1 1 1 1 1 1e8 1e9 1 1 fff fff fff 1 1 1e8 1e9 1 1 1 1 1 1 1 1 1e8 1e9 1 1 1ea 1eb 1ec 1 1 1e8 1e9
+1 1 1 1 1 1 1 1 1 fff fff fff 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1ed 1ee 1ef
+1 1 1 1 1 1 1 1 1 fff fff fff 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1f0 1f1 1f2

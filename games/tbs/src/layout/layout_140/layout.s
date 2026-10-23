@@ -21,7 +21,7 @@ Field_Layout140:
 	.incbin "games/tbs/src/layout/layout_062/shapes.table.lz"
 	.balign 4, 0
 .LField_Layout140_GRID:
-	.incbin "games/tbs/src/layout/layout_140/grid_ja.parts.lz"
+	.incbin "games/tbs/src/layout/layout_140/map_ja.grid.lz"
 	.balign 4, 0
 .LField_Layout140_ANIMATION:
 	.incbin "games/tbs/src/layout/layout_029/tileset_anims.script.lz"
@@ -49,7 +49,7 @@ Field_Layout140:
 	.incbin "games/tbs/src/layout/layout_062/shapes.table.lz"
 	.balign 4, 0
 .LField_Layout140_GRID:
-	.incbin "games/tbs/src/layout/layout_140/grid.parts.lz"
+	.incbin "games/tbs/src/layout/layout_140/map.grid.lz"
 	.balign 4, 0
 .LField_Layout140_ANIMATION:
 	.incbin "games/tbs/src/layout/layout_029/tileset_anims.script.lz"

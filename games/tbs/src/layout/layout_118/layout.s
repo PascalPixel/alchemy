@@ -21,7 +21,7 @@ Field_Layout118:
 	.incbin "games/tbs/src/layout/layout_118/shapes.table.lz"
 	.balign 4, 0
 .LField_Layout118_GRID:
-	.incbin "games/tbs/src/layout/layout_118/grid_ja.parts.lz"
+	.incbin "games/tbs/src/layout/layout_118/map_ja.grid.lz"
 	.balign 4, 0
 .LField_Layout118_ANIMATION:
 	.incbin "games/tbs/src/layout/layout_077/tileset_anims.script.lz"
@@ -49,7 +49,7 @@ Field_Layout118:
 	.incbin "games/tbs/src/layout/layout_118/shapes.table.lz"
 	.balign 4, 0
 .LField_Layout118_GRID:
-	.incbin "games/tbs/src/layout/layout_118/grid.parts.lz"
+	.incbin "games/tbs/src/layout/layout_118/map.grid.lz"
 	.balign 4, 0
 .LField_Layout118_ANIMATION:
 	.incbin "games/tbs/src/layout/layout_077/tileset_anims.script.lz"

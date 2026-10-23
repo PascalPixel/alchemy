@@ -282,3 +282,72 @@ blocks(const Buffer *input)
 	freeStrings(&lines);
 	return out;
 }
+
+/*
+ * A layout's grid: one text cell per map square, `metatile[:behavior[:shape]]`
+ * in hex, a left-out part 0. The header gives the grid's size, where the
+ * written rows start and the cell that fills every square they leave out, in
+ * the same order. The game reads three planes, behaviors (u8), shapes (u8) and
+ * metatiles (u16), one after another.
+ */
+Buffer
+grid(const Buffer *input)
+{
+	Strings lines = split((char *) input->data, '\n');
+	if (lines.len && !*lines.items[lines.len - 1])
+		free(lines.items[--lines.len]);
+	if (!lines.len)
+		fail("grid has no header");
+	Strings header = split(lines.items[0], '\t');
+	size_t width, height, left, top;
+	pair(headerField(&header, "grid"), 'x', &width, &height);
+	pair(headerField(&header, "at"), ',', &left, &top);
+	Strings fill = split(headerField(&header, "fill"), ':');
+	if (fill.len != 3)
+		fail("grid fill needs metatile:behavior:shape");
+	uint32_t fills[3] = {number(fill.items[0], 16, 0xffff),
+						 number(fill.items[1], 16, 0xff),
+						 number(fill.items[2], 16, 0xff)};
+	if (!width || !height || height > SIZE_MAX / width)
+		fail("invalid grid dimensions");
+	uint32_t *cells[3];
+	for (unsigned k = 0; k < 3; k++)
+	{
+		cells[k] = allocate(width * height, sizeof(uint32_t));
+		for (size_t i = 0; i < width * height; i++)
+			cells[k][i] = fills[k];
+	}
+	for (size_t y = 1; y < lines.len; y++)
+	{
+		Strings row = words(lines.items[y]);
+		if (top >= height || y - 1 >= height - top || left > width ||
+			row.len > width - left)
+			fail("grid row leaves the grid");
+		for (size_t x = 0; x < row.len; x++)
+		{
+			Strings parts = split(row.items[x], ':');
+			if (!parts.len || parts.len > 3)
+				fail("grid cell needs one to three parts");
+			size_t at = (top + y - 1) * width + left + x;
+			for (unsigned k = 0; k < 3; k++)
+				cells[k][at] = k < parts.len
+								   ? number(parts.items[k], 16, k ? 0xff : 0xffff)
+								   : 0;
+			freeStrings(&parts);
+		}
+		freeStrings(&row);
+	}
+	Buffer out = {0};
+	for (size_t i = 0; i < width * height; i++)
+		byte(&out, cells[1][i]);
+	for (size_t i = 0; i < width * height; i++)
+		byte(&out, cells[2][i]);
+	for (size_t i = 0; i < width * height; i++)
+		half(&out, cells[0][i]);
+	for (unsigned k = 0; k < 3; k++)
+		free(cells[k]);
+	freeStrings(&fill);
+	freeStrings(&header);
+	freeStrings(&lines);
+	return out;
+}

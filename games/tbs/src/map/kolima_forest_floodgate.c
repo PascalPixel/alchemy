@@ -82,6 +82,7 @@ enum {
 
 /// The metatile behavior of the Floodgate Switch's cell, which a search flips.
 enum KolimaForestFloodgateMetatileBehavior {
+  /// ★ Named from the game: "flipped the switch." (MsgFieldFlippedSwitch)
   MB_KOLIMA_FOREST_FLOODGATE_SWITCH = 9
 };
 

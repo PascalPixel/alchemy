@@ -173,6 +173,7 @@ enum SolSanctumReliefsMetatileBehavior {
   MB_SOL_SANCTUM_RELIEFS_ROW_STATUE = 24,
   /// The first relief room's statues, pushed west only.
   MB_SOL_SANCTUM_RELIEFS_FIRST_ROOM_STATUE_WEST = 25,
+  /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
   MB_SOL_SANCTUM_RELIEFS_CHEST = 100
 };
 

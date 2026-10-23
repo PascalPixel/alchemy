@@ -50,11 +50,17 @@
 enum VaultJailMetatileBehavior {
   MB_VAULT_JAIL_VAULT_DOOR = 1,
   MB_VAULT_JAIL_LUNPA_DOOR = 2,
+  /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
   MB_VAULT_JAIL_CHEST_WATER_OF_LIFE = 100,
+  /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
   MB_VAULT_JAIL_CHEST_SMOKE_BOMB,
+  /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
   MB_VAULT_JAIL_CHEST_LUCKY_MEDAL,
+  /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
   MB_VAULT_JAIL_CHEST_ANTIDOTE,
+  /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
   MB_VAULT_JAIL_CHEST_COINS,
+  /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
   MB_VAULT_JAIL_CHEST_ELIXIR
 };
 

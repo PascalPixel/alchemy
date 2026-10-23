@@ -286,7 +286,9 @@ enum BabiPalaceMetatileBehavior {
   /// (BabiPalace_HearSoldiersReport).
   MB_BABI_PALACE_BESIDE_IODEM = 60,
   MB_BABI_PALACE_BEDS = 70, ///< the big bedroom's four beds, searched to sleep
-  MB_BABI_PALACE_WELL = 90  ///< the well outside the palace
+  /// The well outside the palace.
+  /// ★ Named from the game: "peered into the well" (MsgFieldPeeredWell)
+  MB_BABI_PALACE_WELL = 90
 };
 
 /// A companion walks into the leader and is taken off the map, as the party

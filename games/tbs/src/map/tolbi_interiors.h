@@ -171,8 +171,11 @@ enum TolbiInteriorsMetatileBehavior {
   /// ★ Named from the game: "checked the sign."
   /// (MsgTolbiInteriorsIsaacCheckedTheSignInnFull)
   MB_TOLBI_INTERIORS_INN_SIGN = 40,
+  /// ★ Named from the game: "checked the barrel" (MsgVaultIsaacCheckedBarrel)
   MB_TOLBI_INTERIORS_VIAL_BARREL = 100,
+  /// ★ Named from the game: "checked the barrel" (MsgVaultIsaacCheckedBarrel)
   MB_TOLBI_INTERIORS_MEDAL_BARREL = 101,
+  /// ★ Named from the game: "checked the barrel" (MsgVaultIsaacCheckedBarrel)
   MB_TOLBI_INTERIORS_HIDDEN_MEDAL_BARREL =
       102, ///< where the woman hid her find
   /// ★ Named from the game: "Tolbi pizza."

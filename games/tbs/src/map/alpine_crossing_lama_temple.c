@@ -184,7 +184,9 @@ enum {
 enum LamaTempleMetatileBehavior {
   MB_LAMA_TEMPLE_DOOR = 2,
   MB_LAMA_TEMPLE_WALL_WRITING = 5,
+  /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
   MB_LAMA_TEMPLE_CHEST = 100,
+  /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
   MB_LAMA_TEMPLE_PSYNERGY_STONE = 110
 };
 
@@ -192,6 +194,7 @@ enum LamaTempleMetatileBehavior {
 enum AlpineCrossingMetatileBehavior {
   MB_ALPINE_CROSSING_SIGNPOST = 7,
   MB_ALPINE_CROSSING_FEIZHI_ARRIVAL = 10,
+  /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
   MB_ALPINE_CROSSING_CHEST = 100
 };
 

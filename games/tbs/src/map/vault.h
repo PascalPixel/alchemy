@@ -42,6 +42,7 @@ enum VaultMetatileBehavior {
   /// The cave mouth in the town's northeast cliff
   /// (VAULT_REVISIT_TO_VAULT_CAVE_MOUTH).
   MB_VAULT_CLIFF_CAVE_MOUTH = 41,
+  /// ★ Named from the game: "peered into the well" (MsgFieldPeeredWell)
   MB_VAULT_WELL = 90,
   MB_VAULT_WOODEN_BOX = 101
 };

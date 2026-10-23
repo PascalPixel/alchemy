@@ -145,8 +145,10 @@ enum TolbiMetatileBehavior {
   /// ★ Named from the game: "If you toss a Lucky Medal"
   /// (MsgTolbiTossLuckyMedal)
   MB_TOLBI_LUCKY_MEDAL_SIGN = 31,
+  /// ★ Named from the game: "checked the barrel" (MsgVaultIsaacCheckedBarrel)
   MB_TOLBI_BARREL = 100,
   MB_TOLBI_JAR = 101,
+  /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
   MB_TOLBI_HIDDEN_CHEST = 102,
   /// The gate to Tolbi Spring, open once the visitor at the gate has stepped
   /// aside.

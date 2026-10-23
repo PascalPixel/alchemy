@@ -441,7 +441,9 @@ enum TolbiShipInteriorsMetatileBehavior {
   MB_TOLBI_SHIP_INTERIORS_QUARTERS_CREW = 10,
   /// Inside the hold, where Ouranos threatens to go ashore.
   MB_TOLBI_SHIP_INTERIORS_HOLD_WARRIORS = 11,
+  /// ★ Named from the game: "checked the barrel" (MsgVaultIsaacCheckedBarrel)
   MB_TOLBI_SHIP_INTERIORS_CRATE_HOLD_BARREL = 100,
+  /// ★ Named from the game: "checked the barrel" (MsgVaultIsaacCheckedBarrel)
   MB_TOLBI_SHIP_INTERIORS_HOLD_BARREL = 101,
   MB_TOLBI_SHIP_INTERIORS_QUARTERS_JAR = 102
 };

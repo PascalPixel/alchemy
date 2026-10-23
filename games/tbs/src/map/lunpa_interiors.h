@@ -31,6 +31,7 @@ enum InteriorRoom {
 /// the number of its warp.
 enum LunpaInteriorsMetatileBehavior {
   MB_LUNPA_INTERIORS_WOODEN_BOX = 100,
+  /// ★ Named from the game: "checked the barrel" (MsgVaultIsaacCheckedBarrel)
   MB_LUNPA_INTERIORS_BARREL,
   MB_LUNPA_INTERIORS_FIRST_OVEN = 200,
   MB_LUNPA_INTERIORS_SECOND_OVEN

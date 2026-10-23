@@ -171,21 +171,32 @@
 /// they do the sparkling passages, which leave by their own number
 /// (EventScript_EnterSparklingPassage).
 enum VenusLighthouseMetatileBehavior {
+  /// ★ Named from the game: "The door is tightly locked."
+  /// (MsgFieldDoorTightlyLocked)
   MB_VENUS_LIGHTHOUSE_LOCKED_DOOR =
       25, ///< a locked door, from the second floor up
   MB_VENUS_LIGHTHOUSE_DRIFT_SOUTH =
-      30,                          ///< a floor that carries the party south
-  MB_VENUS_LIGHTHOUSE_CHEST = 100, ///< a floor's chest
-  MB_VENUS_LIGHTHOUSE_PSYNERGY_STONE = 110, ///< a floor's Psynergy Stone
+      30, ///< a floor that carries the party south
+  /// A floor's chest.
+  /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
+  MB_VENUS_LIGHTHOUSE_CHEST = 100,
+  /// A floor's Psynergy Stone.
+  /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
+  MB_VENUS_LIGHTHOUSE_PSYNERGY_STONE = 110,
   // VenusLighthouseGroundFloor
   /// The first of the six reliefs, whose words EventScript_ReadRelief shows in
   /// their order.
+  /// ★ Named from the game: "There are words carved into the relief"
+  /// (MsgVenusThereWordsCarvedIntoRelief)
   MB_VENUS_LIGHTHOUSE_FIRST_RELIEF = 35,
+  /// ★ Named from the game: "The statue speaks"
+  /// (MsgVenusStatueSpeaksIsaacSoulYe)
   MB_VENUS_LIGHTHOUSE_GREAT_STATUE = 41,
   MB_VENUS_LIGHTHOUSE_LEDGE =
       45, ///< where the leader jumps down until the switch is held
   MB_VENUS_LIGHTHOUSE_FLOOR_SWITCH = 46,
   MB_VENUS_LIGHTHOUSE_WALL_PILLAR = 50, ///< walking into LOCALID_WALL_PILLAR
+  /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
   MB_VENUS_LIGHTHOUSE_SECOND_CHEST = 101,
   // VenusLighthouseFirstFloor
   MB_VENUS_LIGHTHOUSE_HOLE = 35,

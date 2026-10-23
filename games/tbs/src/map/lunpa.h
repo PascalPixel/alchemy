@@ -40,9 +40,12 @@ enum LunpaMetatileBehavior {
   MB_LUNPA_EIGHTH_ROOM_DOOR,
   MB_LUNPA_HIDDEN_PASSAGE,
   MB_LUNPA_HIDDEN_SWITCH = 20,
+  /// ★ Named from the game: "peered into the well" (MsgFieldPeeredWell)
   MB_LUNPA_WELL = 90,
   MB_LUNPA_GRAVE_SLEEP_BOMB = 100,
+  /// ★ Named from the game: "checked the barrel" (MsgVaultIsaacCheckedBarrel)
   MB_LUNPA_BARREL_NUT,
+  /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
   MB_LUNPA_PSYNERGY_STONE
 };
 
@@ -53,6 +56,7 @@ enum LunpaFortressGatesMetatileBehavior {
   MB_LUNPA_FORTRESS_GATES_THIRD_ROAD,
   MB_LUNPA_FORTRESS_GATES_GUARDED_GROUND = 10,
   MB_LUNPA_FORTRESS_GATES_FORTRESS_APPROACH = 20,
+  /// ★ Named from the game: "peered into the well" (MsgFieldPeeredWell)
   MB_LUNPA_FORTRESS_GATES_WELL = 90
 };
 

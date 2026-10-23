@@ -115,7 +115,9 @@ static void VaultCave_SpawnPuffs(struct ObjectEvent *source);
 
 /// The metatile behaviors of the cells the events answer.
 enum VaultCaveMetatileBehavior {
-  MB_VAULT_CAVE_SWITCH = 20, ///< the switch MapId_VaultCavePassage flips
+  /// The switch MapId_VaultCavePassage flips.
+  /// ★ Named from the game: "flipped the switch." (MsgFieldFlippedSwitch)
+  MB_VAULT_CAVE_SWITCH = 20,
   /// The cells of MapId_VaultCaveMouth's northern pillar, pushed.
   MB_VAULT_CAVE_NORTHERN_PILLAR = 50,
   /// The cells of MapId_VaultCaveVambrace's southern pillar, pushed.
@@ -123,6 +125,7 @@ enum VaultCaveMetatileBehavior {
   /// ★ Named from the game: "The door is tightly locked."
   /// (MsgFieldDoorTightlyLocked)
   MB_VAULT_CAVE_LOCKED_DOOR = 99,
+  /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
   MB_VAULT_CAVE_CHEST = 100
 };
 

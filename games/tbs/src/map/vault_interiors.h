@@ -31,7 +31,9 @@ enum VaultInteriorsMetatileBehavior {
   /// thieves are jailed.
   MB_VAULT_INTERIORS_INN_BARREL = 41,
   MB_VAULT_INTERIORS_JAR = 100,
+  /// ★ Named from the game: "checked the barrel" (MsgVaultIsaacCheckedBarrel)
   MB_VAULT_INTERIORS_FIRST_BARREL = 101,
+  /// ★ Named from the game: "checked the barrel" (MsgVaultIsaacCheckedBarrel)
   MB_VAULT_INTERIORS_SECOND_BARREL = 102,
   MB_VAULT_INTERIORS_WOODEN_BOX = 103,
   /// ★ Named from the game: "History of Vault, Vol 1."

@@ -318,6 +318,8 @@ enum {
 /// The metatile behaviors the fortress's map events answer: the cell doors
 /// count from MB_LUNPA_FORTRESS_FIRST_DOOR in each map.
 enum LunpaFortressMetatileBehavior {
+  /// ★ Named from the game: "The door is tightly locked."
+  /// (MsgFieldDoorTightlyLocked)
   MB_LUNPA_FORTRESS_LOCKED_DOOR = 99,
   MB_LUNPA_FORTRESS_SEALED_DOOR = 98,
   MB_LUNPA_FORTRESS_FIRST_DOOR = 40

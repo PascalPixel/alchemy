@@ -118,6 +118,7 @@ enum SolSanctumLunaSolRoomsMetatileBehavior {
       19, ///< turns the backdrop black
   /// The symbol on the floor, searched to open the way up.
   MB_SOL_SANCTUM_LUNA_SOL_ROOMS_FLOOR_SYMBOL = 20,
+  /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
   MB_SOL_SANCTUM_LUNA_SOL_ROOMS_CHEST = 100
 };
 

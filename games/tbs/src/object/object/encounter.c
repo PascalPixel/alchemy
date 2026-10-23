@@ -208,8 +208,9 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
       bias = (a - b + c - (s32)Random16()) / 2;
       work->encounterBias = bias;
     }
-    // The step grows with the rate and the bias. The counter is not cleared
-    // here: Field_RunScene clears it when it starts the battle.
+    // The rate and the bias divide the step, so a higher rate (a party above
+    // the zone's level) means smaller steps and fewer battles. The counter is
+    // not cleared here: Field_RunScene clears it when it starts the battle.
     step =
         Iwram_RatioMulQ14((rate << 20) + ((rate << 4) - 16) * bias, 0x100000);
     total = gGameState.encounterSteps += Iwram_MulQ16(step, steps);

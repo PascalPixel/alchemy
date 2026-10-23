@@ -9,7 +9,7 @@
 struct Effect05Object {
   u8 reserved00[8];
   s32 x, y, z;  ///< 16.16 fixed-point pixels
-  s32 altitude; ///< terrainHeight: a drop's height to fall to
+  s32 altitude; ///< groundHeight: a drop's height to fall to
   s32 scaleX, scaleY;
   u8 reserved20[8];
   s32 velocityY; ///< 16.16 fixed-point pixels per frame, up
@@ -78,8 +78,8 @@ void FieldEffect_SpawnRandomAngleTriplet(union FieldObject *fieldObject) {
       p->flag = 2;
       p->velocityY = 1 << 16;
       p->speed = Random16() + 0x13333;
-      Motion_SetTargetPositionFromMagnitudeAngle((struct Object *)p, 32 << 16,
-                                                 Random16());
+      ObjectMotion_SetTargetPositionFromMagnitudeAngle((struct Object *)p,
+                                                       32 << 16, Random16());
       pp = &p->phase;
       phase2 = 6;
       *pp = phase2;
@@ -99,7 +99,7 @@ void FieldEffect_UpdateDriftingFallObject(union FieldObject *fieldObject) {
   particle->y -= 0x4ccc;
   drift = Random16();
   particle->x += drift - Random16();
-  if (particle->y <= particle->terrainHeight) {
+  if (particle->y <= particle->groundHeight) {
     ObjectDispatch_InitializeFar((struct DispatchObject *)particle,
                                  gFieldEffect_CommonParticleScript);
   }
@@ -107,14 +107,14 @@ void FieldEffect_UpdateDriftingFallObject(union FieldObject *fieldObject) {
 
 /// Runs Douse cast on a target, through FieldEffect_RunDouse.
 ///
-/// Abilities: Douse (FIELD_KIND_DOUSE).
+/// Abilities: Douse (FIELD_PSYNERGY_DOUSE).
 void FieldEffect_RunDouseOnTarget(s32 unused) { FieldEffect_RunDouse(); }
 
 /// An orb rises from 16 pixels above the caster to 32 pixels above the
 /// destination (80 with variant) over 10 frames, growing as it goes, rains
 /// particles, and returns.
 ///
-/// Abilities: Douse (FIELD_KIND_DOUSE).
+/// Abilities: Douse (FIELD_PSYNERGY_DOUSE).
 ///
 /// The destination is the target's position (FieldEffect_SetupObjectPair);
 /// with no target it is 16 pixels in front of the caster, on the ground.

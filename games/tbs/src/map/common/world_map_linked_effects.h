@@ -23,7 +23,7 @@ void WorldMap_CreateLinkedEffects(struct ObjectEvent *parent) {
                                 parent->z.fixed);
     pair[i] = child;
     if (child != NULL) {
-      child->terrainHeight = parent->terrainHeight;
+      child->groundHeight = parent->groundHeight;
       sprite = child->sprite;
       child->motionFlags = 0;
       child->timer = 0;

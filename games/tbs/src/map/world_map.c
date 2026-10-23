@@ -141,7 +141,7 @@
 #include "audio_engine_symbols.h"
 #include "item_ids.h"
 
-static s32 WorldMap_AlignToMap(struct ScriptInterpreter *interpreter);
+static s32 WorldMap_AlignToMap(struct ObjectScriptContext *interpreter);
 static void WorldMap_BoardBunzasWagon(void);
 static void WorldMap_ShowHammetsCaravan(void);
 static void WorldMap_ShakeCameraOverCaravan(void);
@@ -537,7 +537,7 @@ static void WorldMap_CircleFlint(union FieldObject *fieldObject) {
 
 /// Flint's object script (gWorldMapFlintScript): until he is caught or his
 /// lesson has begun (FLAG_DJINN_LESSON), he circles his spot at half size.
-static s32 WorldMap_SetUpFlint(struct ScriptInterpreter *interpreter) {
+static s32 WorldMap_SetUpFlint(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   if (Engine_GameFlagIsSet(FLAG_DJINNI(DJINNI_FLINT)) != 0) {
     return 0;
@@ -565,7 +565,7 @@ const u32 *WorldMap_GetWarps(void) { return gWorldMapWarps; }
 /// Kolima Bridge's object script (gWorldMapKolimaBridgeScript): it turns with
 /// the map and shows the drawbridge let down once FLAG_KOLIMA_BRIDGE_LOWERED is
 /// set.
-static s32 WorldMap_SetUpKolimaBridge(struct ScriptInterpreter *interpreter) {
+static s32 WorldMap_SetUpKolimaBridge(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   WorldMap_AlignToMap(interpreter);
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_BRIDGE_LOWERED) != 0) {
@@ -576,7 +576,7 @@ static s32 WorldMap_SetUpKolimaBridge(struct ScriptInterpreter *interpreter) {
 
 /// The object script of every picture on the map (gWorldMapAlignToMapScript):
 /// it turns the sprite with the map's rotation.
-static s32 WorldMap_AlignToMap(struct ScriptInterpreter *interpreter) {
+static s32 WorldMap_AlignToMap(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   struct WorldMapRenderWork *work = gMapGridWork[0];
   struct AnimationObject *sprite = objectEvent->sprite;
@@ -588,7 +588,7 @@ static s32 WorldMap_AlignToMap(struct ScriptInterpreter *interpreter) {
 
 /// Iodem's object script (gWorldMapIodemScript): he turns with the map and
 /// blocks the way, so the leader cannot walk through him.
-static s32 WorldMap_SetUpIodem(struct ScriptInterpreter *interpreter) {
+static s32 WorldMap_SetUpIodem(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   struct WorldMapRenderWork *work = gMapGridWork[0];
   struct AnimationObject *sprite = objectEvent->sprite;
@@ -603,7 +603,7 @@ static s32 WorldMap_SetUpIodem(struct ScriptInterpreter *interpreter) {
 /// (FLAG_TOLBI_SHIP_AT_ISLAND) it is put away at the map's origin and
 /// FLAG_MAP_TEMP_F1 keeps it from catching the party.
 /// Called by its object script.
-static s32 WorldMap_SetUpStorm(struct ScriptInterpreter *interpreter) {
+static s32 WorldMap_SetUpStorm(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
   Engine_ObjectSetPartPalettes(objectEvent, SPRITE_COLOR_RED_TINT);
@@ -620,7 +620,7 @@ static s32 WorldMap_SetUpStorm(struct ScriptInterpreter *interpreter) {
 /// hides the storm on odd frames, and WorldMap_UpdateLocationContacts shows it
 /// again on the next, so it flickers.
 static s32
-WorldMap_BlinkObjectEventSprite(struct ScriptInterpreter *interpreter) {
+WorldMap_BlinkObjectEventSprite(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   if ((objectEvent->spriteStorageKind & 1) && (gFrameCount & 1))
     objectEvent->spriteStorageKind ^= 1;
@@ -677,12 +677,12 @@ static void WorldMap_SelectWarpByX(s32 trigger, s32 warpBefore, s32 warpAfter) {
   struct ObjectEvent *other;
 
   subject = ObjectEvent_GetById(trigger - COORD_EVENT_PLACE_BASE);
-  other = ObjectEvent_GetById(gGameState.selectedLocalId);
+  other = ObjectEvent_GetById(gGameState.leaderLocalId);
   work = gFieldWork;
   if (other->x.fixed < subject->x.fixed) {
-    work->requestedWarp = warpBefore;
+    work->warp = warpBefore;
   } else {
-    work->requestedWarp = warpAfter;
+    work->warp = warpAfter;
   }
   Engine_AudioPlayCue(SE_MAP_EXIT);
 }
@@ -694,12 +694,12 @@ static void WorldMap_SelectWarpByZ(s32 trigger, s32 warpBefore, s32 warpAfter) {
   struct ObjectEvent *other;
 
   subject = ObjectEvent_GetById(trigger - COORD_EVENT_PLACE_BASE);
-  other = ObjectEvent_GetById(gGameState.selectedLocalId);
+  other = ObjectEvent_GetById(gGameState.leaderLocalId);
   work = gFieldWork;
   if (other->z.fixed < subject->z.fixed) {
-    work->requestedWarp = warpBefore;
+    work->warp = warpBefore;
   } else {
-    work->requestedWarp = warpAfter;
+    work->warp = warpAfter;
   }
   Engine_AudioPlayCue(SE_MAP_EXIT);
 }
@@ -769,10 +769,10 @@ static void WorldMap_UpdateLocationContacts(void) {
   s32 leaderReach;
   u32 i;
 
-  leader = ObjectEvent_GetById(gGameState.selectedLocalId);
+  leader = ObjectEvent_GetById(gGameState.leaderLocalId);
   leaderReach = leader->sprite->scale * leader->radius;
   work = gFieldWork;
-  objectEvent = work->viewCenter;
+  objectEvent = work->camera;
   left = objectEvent->x.fixed - PIXELS(160);
   right = objectEvent->x.fixed + PIXELS(160);
   top = objectEvent->z.fixed - PIXELS(300);
@@ -810,7 +810,7 @@ static void WorldMap_UpdateLocationContacts(void) {
                   : objectEvent->z.fixed - leader->z.fixed) <
             reach &&
         Engine_GameFlagIsSet(FLAG_FIELD_HANDLING_REQUESTS) == 0) {
-      work->touchedTrigger = i + COORD_EVENT_PLACE_BASE;
+      work->coordEvent = i + COORD_EVENT_PLACE_BASE;
     }
   }
 }
@@ -875,7 +875,7 @@ s32 WorldMap_Initialize(void) {
     Engine_ScriptRequestWarp(WORLD_MAP_TO_LUNPA_SUHALLA);
   } else {
     Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
-    gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_CENTRE_LINE, 0);
+    gFieldWork->transition = MAP_TRANSITION(TRANSITION_CENTRE_LINE, 0);
     gFieldWork->transitionFrames = 16;
     Engine_TaskWait(1);
     Engine_CameraSetSpeed(PIXELS(8), PIXELS(1));
@@ -1072,7 +1072,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
   WorldMap_StartScript();
-  Camera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(8) / 5, PIXELS(4) / 5);
   ObjectEvent_SetSpeed(GARET, PIXELS(8) / 5, PIXELS(4) / 5);
@@ -1150,7 +1150,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
                                  ANIMATION_STAND);
   Engine_ObjectEventSetAnimation(LOCALID_CARAVAN_FIRST_WAGON + 3,
                                  ANIMATION_STAND);
-  Camera_MoveTo(PIXELS(5640), -1, PIXELS(1784), 1);
+  FieldCamera_MoveTo(PIXELS(5640), -1, PIXELS(1784), 1);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(20);
   WorldMap_StartScript();
@@ -1213,7 +1213,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Engine_ObjectEventSetAnimationAndWait(LOCALID_CARAVAN_HAMMET, ANIMATION_NOD);
   WorldMap_EndScript();
   Script_PlaySong(SE_107);
-  Camera_SetSpeed(PIXELS(4), PIXELS(4));
+  FieldCamera_SetSpeed(PIXELS(4), PIXELS(4));
   // The ground shakes, and a rock falls beside Hammet and his man.
   WorldMap_ShakeCameraOverCaravan();
   Script_PlaySong(AUDIO_CUE_FADE_SLOT3);
@@ -1227,8 +1227,8 @@ static void WorldMap_ShowHammetsCaravan(void) {
                             FACING_NORTHWEST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_CARAVAN_MAN, FACING_NORTHWEST + FACING_STEP,
                             0);
-  Camera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
-  Camera_MoveTo(PIXELS(5608), -1, PIXELS(1736), 1);
+  FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
+  FieldCamera_MoveTo(PIXELS(5608), -1, PIXELS(1736), 1);
   Engine_CameraWaitForMove();
   ObjectEvent_SetPosition(LOCALID_BLANK_ROCK_GUIDE, PIXELS(5544), PIXELS(1704));
   Engine_TaskWait(1);
@@ -1264,12 +1264,12 @@ static void WorldMap_ShowHammetsCaravan(void) {
   spriteObjectEvent = ObjectEvent_GetById(LOCALID_CARAVAN_HAMMET);
   spriteObjectEvent->velocityY = PIXELS(6);
   Script_PlaySong(SE_145);
-  Camera_SetSpeed(PIXELS(4), PIXELS(4));
+  FieldCamera_SetSpeed(PIXELS(4), PIXELS(4));
   WorldMap_ShakeCameraWhereRockFalls();
   WorldMap_ShakeCameraWhereRockFalls();
   Engine_ScriptWait(60);
-  Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
-  Camera_MoveTo(PIXELS(5640), -1, PIXELS(1784), 1);
+  FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
+  FieldCamera_MoveTo(PIXELS(5640), -1, PIXELS(1784), 1);
   Engine_CameraWaitForMove();
   WorldMap_StartScript();
   ObjectEvent_SetAttachedEffect(LOCALID_CARAVAN_MAN, ATTACHED_EFFECT_IN_FRONT |
@@ -1323,14 +1323,14 @@ static void WorldMap_ShowHammetsCaravan(void) {
   WorldMap_EndScript();
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(5900), PIXELS(1576));
   ObjectEvent_SetPosition(GARET, PIXELS(5908), PIXELS(1600));
-  Camera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
-  Camera_MoveTo(PIXELS(5848), -1, PIXELS(1608), 1);
+  FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
+  FieldCamera_MoveTo(PIXELS(5848), -1, PIXELS(1608), 1);
   Engine_CameraWaitForMove();
   action = gCaravanWagonHeadsNorth;
   ObjectEvent_SetActionScript(LOCALID_CARAVAN_FIRST_WAGON, action);
   Engine_ScriptWait(20);
-  Camera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
-  Camera_MoveTo(PIXELS(5848), -1, PIXELS(1544), 1);
+  FieldCamera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
+  FieldCamera_MoveTo(PIXELS(5848), -1, PIXELS(1544), 1);
   ObjectEvent_SetActionScript(LOCALID_CARAVAN_FIRST_WAGON + 1, action);
   Engine_ScriptWait(20);
   ObjectEvent_SetActionScript(LOCALID_CARAVAN_FIRST_WAGON + 2, action);
@@ -1343,8 +1343,8 @@ static void WorldMap_ShowHammetsCaravan(void) {
   ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
   ObjectEvent_RefreshSelectorById(LOCALID_CARAVAN_FIRST_WAGON + 3);
   Script_PlaySong(AUDIO_CUE_FADE_SLOT3);
-  Camera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
-  Camera_MoveTo(PIXELS(5880), -1, PIXELS(1608), 1);
+  FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
+  FieldCamera_MoveTo(PIXELS(5880), -1, PIXELS(1608), 1);
   Engine_CameraWaitForMove();
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHEAST, 0);
   ObjectEvent_FaceDirection(GARET, FACING_NORTHWEST, 80);
@@ -1359,8 +1359,8 @@ static void WorldMap_ShowHammetsCaravan(void) {
   }
   Engine_ObjectEventWaitForMove(GARET);
   ObjectEvent_SetPosition(GARET, 0, 0);
-  Camera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
-  Camera_MoveTo(PIXELS(5848), -1, PIXELS(1608), 1);
+  FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
+  FieldCamera_MoveTo(PIXELS(5848), -1, PIXELS(1608), 1);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 5848, 1576);
   Engine_ScriptCloseScreen();
@@ -1372,7 +1372,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
 
 /// Moves to the next camera-shake point and holds it for four frames.
 static inline void WorldMap_MoveShakeCamera(s32 x, s32 z) {
-  Camera_MoveTo(x, -1, z, 1);
+  FieldCamera_MoveTo(x, -1, z, 1);
   Engine_TaskWait(4);
 }
 
@@ -1442,7 +1442,7 @@ static void WorldMap_SailToFirstMonsterAttack(void) {
 
   objectEvent = ObjectEvent_GetById(LOCALID_CROSSING_SHIP);
   Engine_ScriptStart();
-  Camera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, 0, 0);
   objectEvent->scaleY = 5 * Q16_ONE / 4;
@@ -1467,7 +1467,7 @@ static inline void WorldMap_SailCrossingLeg(s32 warp) {
 
   objectEvent = ObjectEvent_GetById(LOCALID_CROSSING_SHIP);
   Engine_ScriptStart();
-  Camera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, 0, 0);
   ObjectEvent_SetPosition(LOCALID_CROSSING_SHIP, PIXELS(7944), PIXELS(200));
@@ -1528,7 +1528,7 @@ static void WorldMap_SailUntilLandSighted(void) {
 
   objectEvent = ObjectEvent_GetById(LOCALID_CROSSING_SHIP);
   Engine_ScriptStart();
-  Camera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, 0, 0);
   ObjectEvent_SetPosition(LOCALID_CROSSING_SHIP, PIXELS(7944), PIXELS(200));
@@ -1564,7 +1564,7 @@ static void WorldMap_SailIntoTolbi(void) {
 
   objectEvent = ObjectEvent_GetById(LOCALID_CROSSING_SHIP);
   Engine_ScriptStart();
-  Camera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, 0, 0);
   ObjectEvent_SetPosition(LOCALID_CROSSING_SHIP, PIXELS(5096), PIXELS(2328));
@@ -1658,7 +1658,7 @@ static void EventScript_MeetFlint(void) {
     djinni->speed = PIXELS(1);
     djinni->acceleration = PIXELS(1);
     djinni->velocityY = 0;
-    djinni->terrainHeight = 0;
+    djinni->groundHeight = 0;
     Object_SetPosition(djinni, PIXELS(5584), 0, PIXELS(1328));
     for (i = 0; i < 16; i++) {
       djinni->scaleX += Q16_ONE / 32;
@@ -1718,7 +1718,7 @@ static void EventScript_MeetFlint(void) {
     Script_ShowMessage(LOCALID_VENUS_DJINNI, 0);
     djinni->motionFlags = OBJ_EVENT_FALLS;
     djinni->velocityY = 0;
-    djinni->terrainHeight = 0;
+    djinni->groundHeight = 0;
     for (i = 7; i >= 0; i--) {
       djinni->facing += FACING_STEP;
       Task_Wait(1);
@@ -1843,7 +1843,7 @@ static void WorldMap_StepDownFromBunzasWagon(void) {
 
   objectEvent = ObjectEvent_GetById(LOCALID_KALAY_WAGON);
   Engine_ScriptStart();
-  Camera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, 0, 0);
   Engine_TaskWait(1);
@@ -1859,8 +1859,8 @@ static void WorldMap_StepDownFromBunzasWagon(void) {
   ObjectEvent_SetSpeed(LOCALID_KALAY_WAGON, PIXELS(8) / 5, PIXELS(2) / 5);
   Engine_ObjectEventSetAnimation(LOCALID_KALAY_WAGON, ANIMATION_WALK);
   ObjectEvent_MoveToAndWait(LOCALID_KALAY_WAGON, 5485, 2136);
-  Camera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
-  Camera_MoveTo(PIXELS(5560), -1, PIXELS(2136), 1);
+  FieldCamera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
+  FieldCamera_MoveTo(PIXELS(5560), -1, PIXELS(2136), 1);
   ObjectEvent_MoveToAndWait(LOCALID_KALAY_WAGON, 5534, 2136);
   ObjectEvent_MoveToAndWait(LOCALID_KALAY_WAGON, 5544, 2158);
   ObjectEvent_MoveToAndWait(LOCALID_KALAY_WAGON, 5608, 2168);
@@ -1887,7 +1887,7 @@ static void WorldMap_StepDownFromBunzasWagon(void) {
   ObjectEvent_SetPosition(LOCALID_KALAY_WAGON, 0, 0);
   Script_PlaySong(AUDIO_CUE_FADE_SLOT3);
   Engine_ScriptWait(40);
-  Camera_MoveTo(PIXELS(5592), -1, PIXELS(2136), 1);
+  FieldCamera_MoveTo(PIXELS(5592), -1, PIXELS(2136), 1);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 5592, 2136);
   Engine_ScriptCloseScreen();
@@ -1998,13 +1998,13 @@ static void WorldMap_BlockGatewayCaveWarp(s32 localId) {
 
   i = 0;
   while (1) {
-    if (gWorldMapEvents[i].control == MAP_EVENT_WARP &&
+    if (gWorldMapEvents[i].kind == MAP_EVENT_WARP &&
         gWorldMapEvents[i].trigger ==
             COORD_EVENT_MAPSEC(LOCALID_MAPSEC_GATEWAY_CAVE)) {
-      gWorldMapEvents[i].control = MAP_EVENT_COORD;
+      gWorldMapEvents[i].kind = MAP_EVENT_COORD;
       gWorldMapEvents[i].value = (u32)EventScript_IodemCallsLeaderBack;
     }
-    if (gWorldMapEvents[i].control == MAP_EVENTS_END)
+    if (gWorldMapEvents[i].kind == MAP_EVENTS_END)
       break;
     i++;
   }
@@ -2025,14 +2025,14 @@ static void WorldMap_RestoreGatewayCaveWarp(void) {
 
   i = 0;
   while (1) {
-    if (gWorldMapEvents[i].control == MAP_EVENT_COORD &&
+    if (gWorldMapEvents[i].kind == MAP_EVENT_COORD &&
         gWorldMapEvents[i].trigger ==
             COORD_EVENT_MAPSEC(LOCALID_MAPSEC_GATEWAY_CAVE)) {
-      gWorldMapEvents[i].control = MAP_EVENT_WARP;
+      gWorldMapEvents[i].kind = MAP_EVENT_WARP;
       gWorldMapEvents[i].value = WORLD_MAP_TO_GATEWAY_CAVE;
       break;
     }
-    if (gWorldMapEvents[i].control == MAP_EVENTS_END)
+    if (gWorldMapEvents[i].kind == MAP_EVENTS_END)
       break;
     i++;
   }
@@ -2079,7 +2079,7 @@ static void EventScript_SearchShipwreck(void) {
 #endif
   Engine_MessageShowCentered(MsgWorldMapWreckageShipScuttledOffCoast, 1);
   if (Engine_GameFlagIsSet(FLAG_MAP_TEMP_34) != 0) {
-    gFieldWork->requestedMenu = 1;
+    gFieldWork->menu = 1;
   }
 #if !TBS_PATCH_3
   WorldMap_EndScript();
@@ -2104,8 +2104,8 @@ static void EventScript_UseBlackOrb(void) {
   Script_Start();
   WorldMap_EndScript();
   FieldEffect_ScheduleRatioTransition(7 * Q16_ONE / 5, 6);
-  Camera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
-  Camera_MoveTo(PIXELS(6024), -1, PIXELS(3432), 1);
+  FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
+  FieldCamera_MoveTo(PIXELS(6024), -1, PIXELS(3432), 1);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
   iodem = NULL;
   ObjectEvent_SetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
@@ -2249,13 +2249,13 @@ static void WorldMap_ShowEndingScene(void) {
   PaletteGlow_Update(gGameState.paletteGlow[0], gGameState.paletteGlow[1]);
   Engine_ScriptStart();
   FieldEffect_ScheduleRatioTransition(Q16_ONE, 300);
-  Camera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   Engine_ObjectEventSetAnimation(JENNA, ANIMATION_JENNA_LIE);
   Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_KRADEN_LIE);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, 0, 0);
   Engine_TaskWait(1);
   FieldEffect_ScheduleRatioTransition(3 * Q16_ONE / 2, 16);
-  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_WARM, 1);
   gFieldWork->transitionFrames = 16;
   Engine_ScriptOpenScreen();
@@ -2320,8 +2320,8 @@ static void WorldMap_ShowEndingScene(void) {
   ObjectEvent_SetSpeed(JENNA, PIXELS(3) / 5, PIXELS(3) / 10);
   ObjectEvent_SetActionScript(LOCALID_KRADEN, gEndingKradenWalk);
   Engine_ScriptWait(20);
-  Camera_SetSpeed(PIXELS(7) / 10, PIXELS(7) / 80);
-  Camera_MoveTo(PIXELS(7736), -1, PIXELS(3528), 1);
+  FieldCamera_SetSpeed(PIXELS(7) / 10, PIXELS(7) / 80);
+  FieldCamera_MoveTo(PIXELS(7736), -1, PIXELS(3528), 1);
   ObjectEvent_SetActionScript(JENNA, gEndingJennaWalk);
   do {
     Engine_ObjectEventSetAnimation(LOCALID_FELIX, ANIMATION_FELIX_LIE);
@@ -2340,8 +2340,8 @@ static void WorldMap_ShowEndingScene(void) {
                                 0);
   Engine_ScriptWait(20);
   WorldMap_LoadDefaultCellsAndUpdateBlock();
-  Camera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
-  Camera_MoveTo(PIXELS(7768), -1, PIXELS(3528), 1);
+  FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
+  FieldCamera_MoveTo(PIXELS(7768), -1, PIXELS(3528), 1);
   ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_SOUTHEAST + FACING_STEP, 0);
   ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(8) / 5, PIXELS(4) / 5);
   ObjectEvent_SetSpeed(JENNA, PIXELS(8) / 5, PIXELS(4) / 5);
@@ -2455,7 +2455,7 @@ static void WorldMap_SailTolbiShipToIsland(void) {
   struct ObjectEvent *objectEvent;
 
   Engine_ScriptStart();
-  Camera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
   Engine_ObjectEventSetAnimation(LOCALID_CROSSING_SHIP, ANIMATION_WALK);
   ObjectEvent_SetPosition(LOCALID_CROSSING_SHIP, PIXELS(4872), PIXELS(808));
@@ -2470,7 +2470,7 @@ static void WorldMap_SailTolbiShipToIsland(void) {
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, 0, 0);
   Engine_CameraFollowObjectEvent(LOCALID_CROSSING_SHIP, 1);
   Engine_TaskWait(1);
-  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Engine_ScriptOpenScreen();
   ObjectEvent_SetSpeed(LOCALID_CROSSING_SHIP, PIXELS(2) / 5, PIXELS(1) / 5);
   ObjectEvent_MoveToAndWait(LOCALID_CROSSING_SHIP, 4824, 712);
@@ -2593,7 +2593,7 @@ static void WorldMap_ShowIslandDrifting(void) {
   objectEvent->timer = 0;
   ObjectEvent_SetActionScript(LOCALID_DRIFTING_ISLAND, gIslandDriftsEast);
   FieldScheduler_AddCallback(WorldMap_SpawnIslandWake, TASK_PRIORITY_MAP);
-  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_WARM, 1);
   gFieldWork->transitionFrames = 32;
   Engine_ScriptOpenScreen();
@@ -2616,14 +2616,14 @@ static void WorldMap_UpdateStormTimer(void) {
   struct EventWork *scene;
   s32 progress;
 
-  objectEvent = ObjectEvent_GetById(gGameState.selectedLocalId);
+  objectEvent = ObjectEvent_GetById(gGameState.leaderLocalId);
   scene = gFieldWork;
   objectEvent->facing = (gFrameCount << 12);
 
   progress = FieldGameFlag_GetByte(FLAG_MAP_TEMP_F8);
   if (progress != 0) {
     if (progress == 1) {
-      scene->raisedTrigger = TRIGGER_STORM_TIME_UP;
+      scene->raisedEvent = TRIGGER_STORM_TIME_UP;
     } else if (Engine_GameFlagIsSet(FLAG_MENU_OPEN) == 0) {
       progress -= 1;
     }
@@ -2640,7 +2640,7 @@ static void WorldMap_CatchInStorm(s32 targetLocalId) {
   struct ObjectEvent *record;
   s32 id;
 
-  id = gGameState.selectedLocalId;
+  id = gGameState.leaderLocalId;
   objectEvent = ObjectEvent_GetById(id);
   alreadyTraveling = GameFlag_IsSet(FLAG_MAP_TEMP_F0);
   if (alreadyTraveling == 0) {
@@ -2667,7 +2667,7 @@ static void WorldMap_CatchInStorm(s32 targetLocalId) {
     GameFlag_Set(FLAG_MAP_TEMP_F0);
     FieldGameFlag_SetByte(FLAG_MAP_TEMP_F8, 180);
     Engine_ScriptEnd();
-    gFieldWork->encounterEnemyGroup = 0; // drop any battle this step rolled
+    gFieldWork->battle = 0; // drop any battle this step rolled
   }
 }
 
@@ -2694,8 +2694,8 @@ static void EventScript_StartDousingStorm(void) {
 static void EventScript_DouseMapStorm(void) {
   struct ObjectEvent *selectedObjectEvent;
 
-  if (gFieldWork->raisedTrigger == TRIGGER_STORM_TIME_UP) {
-    gFieldWork->raisedTrigger = 0;
+  if (gFieldWork->raisedEvent == TRIGGER_STORM_TIME_UP) {
+    gFieldWork->raisedEvent = 0;
   }
   Engine_GameFlagClear(FLAG_MAP_TEMP_F0);
   Engine_GameFlagSet(FLAG_MAP_TEMP_F1);
@@ -2703,7 +2703,7 @@ static void EventScript_DouseMapStorm(void) {
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 5);
   Battle_SetStart(BATTLE_START_SCRIPTED);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 7);
-  selectedObjectEvent = ObjectEvent_GetById(gGameState.selectedLocalId);
+  selectedObjectEvent = ObjectEvent_GetById(gGameState.leaderLocalId);
   selectedObjectEvent->motionFlags = OBJ_EVENT_FALLS;
 }
 
@@ -2713,12 +2713,12 @@ static void EventScript_DouseMapStorm(void) {
 /// raised as the timer runs out. Sets FLAG_ARRIVE_FALLING and sends the party
 /// to WORLD_MAP_FROM_SUHALLA.
 static void EventScript_StormDropsParty(void) {
-  struct ObjectEvent *objectEvent = ObjectEvent_Get(gGameState.selectedLocalId);
+  struct ObjectEvent *objectEvent = ObjectEvent_Get(gGameState.leaderLocalId);
   struct ObjectEvent *other = ObjectEvent_Get(LOCALID_STORM);
   s32 frames;
 
   Engine_ScriptStart();
-  Camera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   Script_PlaySong(SE_219);
   Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
   other->motionFlags = 0;
@@ -2763,24 +2763,24 @@ static void WorldMap_JitterTransitionCamera(void) {
   s32 sy;
   u32 mode;
 
-  record = ObjectEvent_Get(gGameState.selectedLocalId);
+  record = ObjectEvent_Get(gGameState.leaderLocalId);
   sx = record->x.part.pixel;
   sy = record->z.part.pixel;
   if (gFrameCount % 3 == 0) {
     mode = (u32)(Random_Next() << 2) >> 16;
     switch (mode) {
     case 0:
-      Camera_MoveTo((sx << 16) - PIXELS(1), -1, (sy << 16) + PIXELS(1), 1);
+      FieldCamera_MoveTo((sx << 16) - PIXELS(1), -1, (sy << 16) + PIXELS(1), 1);
       break;
     case 1:
       Engine_CameraMoveTo((sx << 16) + PIXELS(1), -1, (sy << 16) - PIXELS(1),
                           1);
       break;
     case 2:
-      Camera_MoveTo((sx << 16) + PIXELS(1), -1, (sy << 16) + PIXELS(1), 1);
+      FieldCamera_MoveTo((sx << 16) + PIXELS(1), -1, (sy << 16) + PIXELS(1), 1);
       break;
     case 3:
-      Camera_MoveTo((sx << 16) - PIXELS(1), -1, (sy << 16) - PIXELS(1), 1);
+      FieldCamera_MoveTo((sx << 16) - PIXELS(1), -1, (sy << 16) - PIXELS(1), 1);
       break;
     }
   }
@@ -2819,7 +2819,7 @@ static void WorldMap_PlayLighthouseTransition(s32 palette) {
   FieldScheduler_AddCallback(WorldMap_UpdateTransitionBlend, TASK_PRIORITY_MAP);
   Engine_ScriptStart();
   WORLD_MAP_QUEUE_TRANSITION_FRAME(buffer, 0x3a80);
-  ObjectEvent_GetById(gGameState.selectedLocalId)->spriteStorageKind = 0;
+  ObjectEvent_GetById(gGameState.leaderLocalId)->spriteStorageKind = 0;
   gFieldWork->transitionFrames = 16;
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
@@ -3528,198 +3528,198 @@ s32 gWorldMapStormScript[] = {
 // clang-format off
 struct ObjectEventTemplate gWorldMapObjectEventTemplates[] = {
     { VENUS_DJINNI, FLAG_DJINNI(DJINNI_VINE), (s32)gWorldMapFlintScript,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { MARS_DJINNI, FLAG_DJINNI(DJINNI_CORONA), MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { MERCURY_DJINNI, FLAG_DJINNI(DJINNI_HAIL), MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_WORLD_MAP_VILLAGE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(5678), 0, PIXELS(1200), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(5678), 0, PIXELS(1200), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_VILLAGE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(5848), 0, PIXELS(1576), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(5848), 0, PIXELS(1576), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_VILLAGE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(6976), 0, PIXELS(1624), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(6976), 0, PIXELS(1624), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_VILLAGE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(5416), 0, PIXELS(2840), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(5416), 0, PIXELS(2840), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_VILLAGE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(5892), 0, PIXELS(1128), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(5892), 0, PIXELS(1128), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_DOCK, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(5422), 0, PIXELS(2232), FACING_EAST, TALK_KEEP_FACING, 0 },
+        PIXELS(5422), 0, PIXELS(2232), FACING_EAST, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_DOCK, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(5036), 0, PIXELS(2328), FACING_WEST, TALK_KEEP_FACING, 0 },
+        PIXELS(5036), 0, PIXELS(2328), FACING_WEST, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_SNOWY_VILLAGE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(5928), 0, PIXELS(270), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(5928), 0, PIXELS(270), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_STUMP_VILLAGE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(7352), 0, PIXELS(1240), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(7352), 0, PIXELS(1240), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_BLUE_ROOFED_TOWN, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(7544), 0, PIXELS(1976), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(7544), 0, PIXELS(1976), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_TEMPLE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(6888), 0, PIXELS(1712), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(6888), 0, PIXELS(1712), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_TEMPLE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(7880), 0, PIXELS(1560), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(7880), 0, PIXELS(1560), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_TOWN, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(6584), 0, PIXELS(1192), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(6584), 0, PIXELS(1192), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_TOWN, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(5592), 0, PIXELS(2136), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(5592), 0, PIXELS(2136), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_TOWN, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(5996), 0, PIXELS(2894), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(5996), 0, PIXELS(2894), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_TOWN, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(4904), 0, PIXELS(2280), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(4904), 0, PIXELS(2280), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_MERCURY_LIGHTHOUSE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(6024), 0, PIXELS(168), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(6024), 0, PIXELS(168), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_MOUNTAIN, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(5656), 0, PIXELS(1112), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(5656), 0, PIXELS(1112), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_VENUS_LIGHTHOUSE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(6088), 0, PIXELS(3176), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(6088), 0, PIXELS(3176), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_BARRICADE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(6952), 0, PIXELS(1362), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(6952), 0, PIXELS(1362), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_BABI_LIGHTHOUSE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(5996), 0, PIXELS(2808), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(5996), 0, PIXELS(2808), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_CAVE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(6424), 0, PIXELS(1302), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(6424), 0, PIXELS(1302), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_CAVE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(6484), 0, PIXELS(1184), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(6484), 0, PIXELS(1184), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_CAVE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(4840), 0, PIXELS(1960), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(4840), 0, PIXELS(1960), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_CAVE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(5656), 0, PIXELS(2392), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(5656), 0, PIXELS(2392), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_CAVE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(5480), 0, PIXELS(2600), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(5480), 0, PIXELS(2600), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_FOREST, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(7790), 0, PIXELS(2080), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(7790), 0, PIXELS(2080), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_CAVE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(5976), 0, PIXELS(3400), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(5976), 0, PIXELS(3400), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_CAVE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(5988), 0, PIXELS(774), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(5988), 0, PIXELS(774), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_CAVE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(6224), 0, PIXELS(520), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(6224), 0, PIXELS(520), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_CAVE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(5856), 0, PIXELS(1174), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(5856), 0, PIXELS(1174), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_CAVE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(6920), 0, PIXELS(1664), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(6920), 0, PIXELS(1664), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_CAVE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(6092), 0, PIXELS(2200), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(6092), 0, PIXELS(2200), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_FOREST, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(7166), 0, PIXELS(1054), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(7166), 0, PIXELS(1054), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_FOREST, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(7856), 0, PIXELS(1736), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(7856), 0, PIXELS(1736), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_CAVE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(5480), 0, PIXELS(2088), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(5480), 0, PIXELS(2088), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SIGNPOST, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SIGNPOST, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SIGNPOST, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_WORLD_MAP_BRIDGE, CONDITION_ALWAYS, (s32)gWorldMapKolimaBridgeScript,
-        PIXELS(7568), 0, PIXELS(1384), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(7568), 0, PIXELS(1384), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_GATEHOUSE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(4942), 0, PIXELS(2690), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(4942), 0, PIXELS(2690), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SHIPWRECK, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(6036), 0, PIXELS(3458), FACING_WEST, TALK_KEEP_FACING, 0 },
+        PIXELS(6036), 0, PIXELS(3458), FACING_WEST, TALK_FACING_KEEP, 0 },
     { SPRITE_SHIP, IF_FLAG_SET(FLAG_TOLBI_SHIP_AT_ISLAND), (s32)gWorldMapAlignToMapScript,
-        PIXELS(4760), 0, PIXELS(440), FACING_NORTH, TALK_KEEP_FACING, 0 },
+        PIXELS(4760), 0, PIXELS(440), FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SANDSTORM, FLAG_MAP_TEMP_F1, (s32)gWorldMapStormScript,
-        PIXELS(4392), 0, PIXELS(296), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(4392), 0, PIXELS(296), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_IODEM, CONDITION_ALWAYS, (s32)gWorldMapIodemScript,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { MAP_TABLE_END },
     { GARET, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gWorldMapObjectEventTemplatesHammetsCaravan[] = {
     { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_HAMMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WAGON, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WAGON, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WAGON, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WAGON, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { 0xd8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_VILLAGE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(5848), 0, PIXELS(1576), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(5848), 0, PIXELS(1576), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gWorldMapObjectEventTemplatesFromWestLunpaCave[] = {
     { SPRITE_WAGON, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_VILLAGE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(5892), 0, PIXELS(1128), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(5892), 0, PIXELS(1128), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_CAVE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(5856), 0, PIXELS(1174), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(5856), 0, PIXELS(1174), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BUNZA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_HAMMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gWorldMapObjectEventTemplatesCrossingEnds[] = {
     { SPRITE_SHIP, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(5384), 0, PIXELS(2248), FACING_WEST, TALK_KEEP_FACING, 0 },
+        PIXELS(5384), 0, PIXELS(2248), FACING_WEST, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_TOWN, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(5592), 0, PIXELS(2136), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(5592), 0, PIXELS(2136), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_DOCK, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(5422), 0, PIXELS(2232), FACING_EAST, TALK_KEEP_FACING, 0 },
+        PIXELS(5422), 0, PIXELS(2232), FACING_EAST, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_DOCK, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(5028), 0, PIXELS(2328), FACING_WEST, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(5028), 0, PIXELS(2328), FACING_WEST, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gWorldMapObjectEventTemplatesCrossing[] = {
     { SPRITE_SHIP, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(5432), 0, PIXELS(2312), FACING_WEST, TALK_KEEP_FACING, 0 },
+        PIXELS(5432), 0, PIXELS(2312), FACING_WEST, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gWorldMapObjectEventTemplatesFromKalayTunnelEntranceSouth[] = {
     { SPRITE_WORLD_MAP_TOWN, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(5592), 0, PIXELS(2136), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(5592), 0, PIXELS(2136), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_CAVE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(5480), 0, PIXELS(2088), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(5480), 0, PIXELS(2088), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WAGON, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gWorldMapObjectEventTemplatesJennaAndKradenAdrift[] = {
     { JENNA, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(7560), 0, PIXELS(3512), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(7560), 0, PIXELS(3512), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SHEBA, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(7816), 0, PIXELS(3528), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(7816), 0, PIXELS(3528), FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_KRADEN, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(7544), 0, PIXELS(3496), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(7544), 0, PIXELS(3496), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_ALEX, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(7708), 0, PIXELS(3456), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(7708), 0, PIXELS(3456), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_FELIX, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(7800), 0, PIXELS(3544), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(7800), 0, PIXELS(3544), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_SHIPWRECK, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(7604), 0, PIXELS(3522), FACING_WEST, TALK_KEEP_FACING, 0 },
+        PIXELS(7604), 0, PIXELS(3522), FACING_WEST, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gWorldMapObjectEventTemplatesFromClear[] = {
     { SPRITE_WORLD_MAP_ISLAND, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(7464), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(7464), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gWorldMapObjectEventTemplatesBeforeShebasFall[] = {
     { SPRITE_WORLD_MAP_VENUS_LIGHTHOUSE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(6080), 0, PIXELS(3168), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(6080), 0, PIXELS(3168), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
@@ -3732,7 +3732,7 @@ struct MapEvent gWorldMapEvents[] = {
     { MAP_EVENT_COORD, TRIGGER_VINE, FLAG_DJINNI(DJINNI_VINE), EVENT_SCRIPT(EventScript_MeetVine) },
     { MAP_EVENT_COORD, TRIGGER_CORONA, FLAG_DJINNI(DJINNI_CORONA), EVENT_SCRIPT(EventScript_MeetCorona) },
     { MAP_EVENT_COORD, TRIGGER_HAIL, FLAG_DJINNI(DJINNI_HAIL), EVENT_SCRIPT(EventScript_MeetHail) },
-    { BG_EVENT(BG_EVENT_UNNAMED), TRIGGER_SHIPWRECK, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchShipwreck) },
+    { BG_EVENT(BG_EVENT_SILENT), TRIGGER_SHIPWRECK, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchShipwreck) },
     { USE_ITEM(ITEM_BLACK_ORB), TRIGGER_SHIPWRECK, FLAG_BLACK_ORB_RETURNED, EVENT_SCRIPT(EventScript_UseBlackOrb) },
     { BG_EVENT(BG_EVENT_GROUND), TRIGGER_TURTLE_BOOTS, FLAG_WORLD_MAP_TURTLE_BOOTS, FIND_ITEM(ITEM_TURTLE_BOOTS) },
     { MAP_EVENT_TALK, LOCALID_IODEM, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkAboutBlackOrb) },

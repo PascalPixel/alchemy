@@ -16,9 +16,9 @@ const struct ObjectEventTemplate *
 KolimaForestEntrance_GetObjectEventTemplates(void);
 const struct MapEvent *KolimaForestEntrance_GetEvents(void);
 s32 KolimaForestEntrance_Initialize(void);
-extern s32 gStagedObjectEvent_DirectionSteps[];
-extern u32 gStagedObjectEvent_FootprintKinds[];
-extern s32 gStagedObjectEvent_FootprintBounds[];
+extern s32 gPushedObject_DirectionSteps[];
+extern u32 gPushedObject_FootprintKinds[];
+extern s32 gPushedObject_FootprintBounds[];
 extern s32 gKolimaForestEntrance_GaretAction[];
 extern s32 gKolimaForestEntrance_IvanAction[];
 extern s32 gKolimaForestEntrance_MiaAction[];

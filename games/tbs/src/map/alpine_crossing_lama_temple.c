@@ -194,13 +194,13 @@ enum {
 enum { DOOR_X = 67, DOOR_Y = 6 };
 
 /// The map object that draws the passage behind the mossy rock.
-enum { MARKER_PASSAGE = 100 };
+enum { TREASURE_SPOT_PASSAGE = 100 };
 
 /// Draws the object event behind the background, on sprite priority 3 with
 /// automatic priority off. The first worker from Xian at the Alpine Crossing
 /// runs it from his object event template.
 static s32
-ObjectEvent_DrawBehindScenery(struct ScriptInterpreter *interpreter) {
+ObjectEvent_DrawBehindScenery(struct ObjectScriptContext *interpreter) {
   union FieldObject *fieldObject = (union FieldObject *)interpreter;
   fieldObject->objectEvent.priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   fieldObject->objectEvent.sprite->image.priority = 3;
@@ -293,7 +293,7 @@ static void LamaTemple_EnterHamasRoom(void) {
   MapGrid_AnimateCells(gLamaTemple_DoorOpenCells, DOOR_X, DOOR_Y);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0xcccc, 0x6666);
-  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
   ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0, -16);
   Engine_ScriptWait(16);
@@ -317,7 +317,7 @@ static void LamaTemple_RunHamasFarewell(void) {
   ObjectEvent_FaceDirection(GARET, FACING_NORTHWEST, 0);
   ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST, 0);
-  gFieldWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
@@ -420,7 +420,7 @@ static void LamaTemple_RunHamasFarewell(void) {
   Script_PlaySong(SE_188);
   MapGrid_AnimateCells(gLamaTemple_DoorCloseCells, DOOR_X, DOOR_Y);
   Engine_ScriptWait(60);
-  FieldEffect_PlayQueuedSound();
+  Map_PlayQueuedMusic();
 
   // Garet asks whether the leader means to leave Hama's words unasked.
   Engine_ObjectEventRunRepeatedMotion(GARET, 2);
@@ -519,7 +519,7 @@ static void LamaTemple_ReadWallWriting(void) {
 static void LamaTemple_ShowFalseWall(void) {
 
   MapGrid_CopyCellAttributes(85, 9, 1, 1, 21, 9);
-  Engine_MarkerSetPosition(MARKER_PASSAGE, 0, 0);
+  Engine_MarkerSetPosition(TREASURE_SPOT_PASSAGE, 0, 0);
   ObjectEvent_SetPosition(LOCALID_PASSAGE_ROCK, PIXELS(344), PIXELS(152));
 }
 
@@ -528,7 +528,7 @@ static void LamaTemple_ShowFalseWall(void) {
 /// map object returns to its place and the rock object event is put away.
 static void LamaTemple_RevealPassage(void) {
   MapGrid_CopyCellAttributes(21, 73, 1, 1, 21, 9);
-  Marker_SetPosition(MARKER_PASSAGE, -1, -1);
+  TreasureSpot_SetPosition(TREASURE_SPOT_PASSAGE, -1, -1);
   ObjectEvent_SetPosition(LOCALID_PASSAGE_ROCK, 0, 0);
 }
 
@@ -594,7 +594,7 @@ static void AlpineCrossing_FeizhiArrives(void) {
     // Feizhi runs down the path with the camera; the leader follows her
     // until the camera arrives.
     ObjectEvent_SetActionScript(LOCALID_FEIZHI, gAlpineCrossing_FeizhiPath);
-    Camera_MoveTo(PIXELS(296), -1, PIXELS(344), 1);
+    FieldCamera_MoveTo(PIXELS(296), -1, PIXELS(344), 1);
     GameFlag_Set(FLAG_FEIZHI_SAW_ROCKSLIDE);
     ObjectEvent_RefreshSelectorById(LOCALID_FEIZHI);
     Engine_CameraWaitForMove();
@@ -805,7 +805,7 @@ static void AlpineCrossing_LiftBoulder(void) {
   Engine_ScriptWait(20);
   Engine_ScriptEnd();
   GameFlag_Set(FLAG_HSU_RESCUED);
-  gFieldWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Engine_ScriptRequestWarp(ALPINE_CROSSING_TO_LAMA_TEMPLE);
 }
@@ -917,12 +917,12 @@ const struct MapEvent *Map_GetEvents(void) {
 s32 Map_Initialize(void) {
   s32 warpDest;
 
-  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (gGameState.mapId == MAP_LAMA_TEMPLE) {
     // Lama Temple: the temple's queued sound (SE_169) plays, two monks
     // meditate and the mossy rock stands; the rock's own cell attributes are
     // saved at (21, 73) for Reveal to restore.
-    FieldEffect_SetQueuedSoundAndPlay(SE_169);
+    Map_QueueMusic(SE_169);
     Engine_ObjectEventSetAnimation(LOCALID_MEDITATING_MONK,
                                    ANIMATION_MONK_MEDITATE);
     Engine_ObjectEventSetAnimation(LOCALID_MONK_SENSING_ANXIETY,
@@ -1148,47 +1148,47 @@ u32 gAlpineCrossingLamaTemple_Warps[] = {
 // clang-format off
 struct ObjectEventTemplate gLamaTemple_ObjectEventTemplates[] = {
     { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
     { IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
     { MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_HAMA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        0, 0, 0, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_MONK_IN_ORANGE_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(168), 0, PIXELS(336), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(168), 0, PIXELS(336), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_MONK_IN_ORANGE_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(216), 0, PIXELS(240), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(216), 0, PIXELS(240), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_MONK_IN_ORANGE_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(312), 0, PIXELS(320), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(312), 0, PIXELS(320), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_MONK_IN_ORANGE_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(344), 0, PIXELS(320), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(344), 0, PIXELS(320), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_MONK_IN_ORANGE_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(120), 0, PIXELS(176), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(120), 0, PIXELS(176), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_TURNING_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(344), 0, PIXELS(152), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(344), 0, PIXELS(152), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(232), 0, PIXELS(328), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(232), 0, PIXELS(328), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gAlpineCrossing_ObjectEventTemplates[] = {
     { SPRITE_HAMA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        0, 0, 0, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_HSU, CONDITION_ALWAYS, (s32)gAlpineCrossing_HsuStruggle,
-        0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_FEIZHI, FLAG_HSU_RESCUED, MOVEMENT_TYPE_STAND,
-        PIXELS(296), 0, PIXELS(344), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(296), 0, PIXELS(344), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_ROUND_BOULDER, FLAG_HSU_RESCUED, MOVEMENT_TYPE_STAND,
-        PIXELS(152), 0, PIXELS(276), FACING_WEST, TALK_FACE_PARTY, 0 },
+        PIXELS(152), 0, PIXELS(276), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUTH_WITH_HEADBAND, IF_FLAG_SET(FLAG_XIAN_HEARD_HSU_TRAPPED), (s32)gAlpineCrossing_WorkerObjectEventTemplateScript,
-        PIXELS(456), 0, PIXELS(200), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(456), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUTH_WITH_TIED_HAIR, IF_FLAG_SET(FLAG_XIAN_HEARD_HSU_TRAPPED), MOVEMENT_TYPE_STAND,
-        PIXELS(184), 0, PIXELS(264), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(184), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(328), 0, PIXELS(296), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(328), 0, PIXELS(296), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(344), 0, PIXELS(194), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(344), 0, PIXELS(194), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };
 
@@ -1219,7 +1219,7 @@ struct MapEvent gLamaTemple_Events[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TRAVELING_HEALER, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleForSomeReasonThesePeopleGive) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(LamaTemple_RevealPassage) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(LamaTemple_ShowFalseWall) },
-    { BG_EVENT(BG_EVENT_UNNAMED), TRIGGER_TEMPLE_WALL_WRITING, CONDITION_ALWAYS, EVENT_SCRIPT(LamaTemple_ReadWallWriting) },
+    { BG_EVENT(BG_EVENT_SILENT), TRIGGER_TEMPLE_WALL_WRITING, CONDITION_ALWAYS, EVENT_SCRIPT(LamaTemple_ReadWallWriting) },
     { BG_EVENT_FACING(FACING_NORTH), TRIGGER_STONE, FLAG_LAMA_TEMPLE_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
     { BG_EVENT_FACING(FACING_NORTHEAST), TRIGGER_STONE, FLAG_LAMA_TEMPLE_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
     { BG_EVENT_FACING(FACING_NORTHWEST), TRIGGER_STONE, FLAG_LAMA_TEMPLE_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
@@ -1254,7 +1254,7 @@ struct MapEvent gAlpineCrossing_Events[] = {
     { PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_FROST, PSYNERGY_PHASE_BEFORE_CAST), LOCALID_WATER_FOR_FROST, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AlpineCrossing_PrepareFrost) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_WATER_FOR_FROST, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AlpineCrossing_FreezePuddle) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_GROWTH), LOCALID_PLANT, FLAG_SPROUT_GROWN, EVENT_SCRIPT(AlpineCrossing_GrowSprout) },
-    { BG_EVENT(BG_EVENT_UNNAMED), TRIGGER_SIGNPOST, CONDITION_ALWAYS, EVENT_SCRIPT(AlpineCrossing_ReadSignpost) },
+    { BG_EVENT(BG_EVENT_SILENT), TRIGGER_SIGNPOST, CONDITION_ALWAYS, EVENT_SCRIPT(AlpineCrossing_ReadSignpost) },
     { BG_EVENT(BG_EVENT_CHEST), TRIGGER_CHEST, FLAG_ALPINE_CROSSING_POWER_BREAD, FIND_ITEM(ITEM_POWER_BREAD) },
     { MAP_EVENTS_END },
 };

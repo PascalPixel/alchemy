@@ -144,7 +144,7 @@ a map sets to hold an object where it is; a paused object does nothing else
 that frame, neither its script nor its motion. Otherwise, if the object is
 still waiting, the update counts its wait down; if not, the update runs
 commands until one yields. A command word is an index into
-`gScriptObject_CommandTable`, whose entry takes the object and returns 1 or
+`gObjectScript_CommandTable`, whose entry takes the object and returns 1 or
 0:
 
 - 1 means the command has finished and moved past its values, and the next
@@ -159,7 +159,7 @@ commands until one yields. A command word is an index into
 A word above 63 is not a command, and the update steps over it. That is what
 lets a label sit in the list: `SC_LABEL(n)` is a word with its top bit set and
 n in bits 16 up. A jump's target, `SC_TO(n)`, is the same word with bit 30
-also set. `ActionScript_FindLabel` clears bit 30 and searches the first 1,024
+also set. `ObjectScript_FindLabel` clears bit 30 and searches the first 1,024
 words for the result:
 
 ```text
@@ -179,8 +179,8 @@ gives it another script. `SC_FREE` frees the slot. A footprint is an object of
 
 The scripts the engine starts by itself (`object_script.c`) each repeat one
 command: the command, `SC_WAIT(1)`, `SC_LOOP(SC_FOREVER, SC_TOP)`. Most
-command handlers are in `field/script_commands.c`; `SC_BASE`, `SC_B54_OFF`
-and `SC_B54_ON` are at the top of `field/object_motion.c`, and the controls
+command handlers are in `field/script_commands.c`; `SC_BASE`, `SC_HIDE_SPRITES`
+and `SC_SHOW_SPRITE` are at the top of `field/object_motion.c`, and the controls
 (`SC_PLAYER`, `SC_KEYS`, `SC_WORLD`, `SC_KEY_COUNT`) are in
 `field/player_control.c`.
 
@@ -194,7 +194,7 @@ The objects are the 64 slots of `gObjects`, 112 bytes each, in a block
 of memory borrowed from the [heap](../../glossary.md#heap-and-pools) under the [heap slot](../../glossary.md#heap-slot)
 `HEAP_SLOT_OBJECTS`, and the
 handlers are the rows of
-`gScriptObject_CommandTable` (`object_script.c`).
+`gObjectScript_CommandTable` (`object_script.c`).
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -304,9 +304,9 @@ camera places them.
 
 | Mode | Started by | Object update | Camera |
 | --- | --- | --- | --- |
-| `OBJECT_SYSTEM_LAYOUT` (2) | the field map runner (`object/object/run_map.c`), the debug sprite viewer | `Object_UpdateAllThumb` | `ObjectSystem_UpdateCamera`, which scrolls with the map |
-| `OBJECT_SYSTEM_WORLD_MAP` (3) | the field map runner | `Object_UpdateAllThumb` | `ObjectSystem_UpdateCameraFixed`, which projects 3D points onto the screen |
-| `OBJECT_SYSTEM_BATTLE` (4) | the encounter (`battle/battle/encounter.c`) | `Object_UpdateAllMotion` | `ObjectSystem_UpdateCameraFixed` |
+| `OBJECT_SYSTEM_LAYOUT` (2) | the field map runner (`object/object/run_map.c`), the debug sprite viewer | `Object_UpdateAllThumb` | `ObjectSystem_PlaceSprites`, which scrolls with the map |
+| `OBJECT_SYSTEM_WORLD_MAP` (3) | the field map runner | `Object_UpdateAllThumb` | `ObjectSystem_ProjectSprites`, which projects 3D points onto the screen |
+| `OBJECT_SYSTEM_BATTLE` (4) | the encounter (`battle/battle/encounter.c`) | `Object_UpdateAllMotion` | `ObjectSystem_ProjectSprites` |
 
 The camera places each object's sprite and queues it by depth, and the
 frame's sprite list, the list of every sprite's position and picture that
@@ -361,9 +361,9 @@ edition and [the international editions](../../glossary.md#editions)
 | world map probe | 8 pixels; the step and 30 degrees either side, then up to 67.5 degrees off | 7 pixels; the step and 22.5 and 45 degrees either side, then up to 90 degrees off |
 | R and L on the world map | raise their events while held | raise them once a press |
 
-R raises `FIELD_EVENT_WORLD_MAP_PICTURE`, which opens [the world map
+R raises `FIELD_RAISED_EVENT_REGION_MAP`, which opens [the world map
 screen](../object/README.md#the-world-map-screen), and L
-`FIELD_EVENT_WORLD_MAP_ZOOM`, which zooms the view out.
+`FIELD_RAISED_EVENT_WORLD_MAP_ZOOM`, which zooms the view out.
 
 Speeds are 16.16 fixed-point pixels a frame: the top 16 bits are whole
 pixels and the low 16 bits a fraction, so `0x10000` is one pixel.
@@ -401,15 +401,15 @@ one of `TERRAIN_KIND_COUNT` (16) functions in
 samples (`MapGrid_GetTerrainHeight`).
 
 A town or dungeon has three layers ([below](#towns-and-dungeons-on-screen)),
-each with ground of its own. An object's `terrainId` names the layer whose
+each with ground of its own. An object's `layer` names the layer whose
 ground it follows, so walls and heights can differ from one layer to the
 next.
 
-`MapGrid_CheckObjectStep` (`field/terrain.c`) decides each test: `MAPGRID_STEP_WALL`
-for a cell marked `MB_WALL`, `MAPGRID_STEP_TOO_HIGH` for ground more than 8
-pixels above the object's, `MAPGRID_STEP_TOO_LOW` for ground more than 12 pixels
-below, and `MAPGRID_STEP_OPEN` otherwise. On the world map,
-`CheckWorldMapWalkable` asks `GetWorldMapCollision` instead, which reads a
+`MapGrid_CheckCollision` (`field/terrain.c`) decides each test: `COLLISION_IMPASSABLE`
+for a cell marked `MB_WALL`, `COLLISION_TOO_HIGH` for ground more than 8
+pixels above the object's, `COLLISION_TOO_LOW` for ground more than 12 pixels
+below, and `COLLISION_NONE` otherwise. On the world map,
+`WorldMap_IsWalkable` asks `WorldMap_GetCollision` instead, which reads a
 4-bit collision value from the world map's upper collision layer where it
 has one, else the lower.
 
@@ -420,10 +420,10 @@ describes.
 | Name | Value | Meaning |
 | --- | --- | --- |
 | `TERRAIN_KIND_COUNT` | 16 | ground height functions a shape can pick |
-| `MAPGRID_STEP_TOO_LOW` | -1 | the ground there is more than 12 pixels lower |
-| `MAPGRID_STEP_OPEN` | 0 | the object can step there |
-| `MAPGRID_STEP_TOO_HIGH` | 1 | the ground there is more than 8 pixels higher |
-| `MAPGRID_STEP_WALL` | 2 | the cell there is a wall (`MB_WALL`) |
+| `COLLISION_TOO_LOW` | -1 | the ground there is more than 12 pixels lower |
+| `COLLISION_NONE` | 0 | the object can step there |
+| `COLLISION_TOO_HIGH` | 1 | the ground there is more than 8 pixels higher |
+| `COLLISION_IMPASSABLE` | 2 | the cell there is a wall (`MB_WALL`) |
 
 ## Towns and dungeons on screen
 
@@ -515,7 +515,7 @@ The ground is unpacked a square at a time around the party
 most one missing square a frame as the party walks. `WorldMap_LoadGraphics`
 chooses between the two graphics sets of `gWorldMap_GraphicsResources` by the
 32-pixel region under the point it is given: the second set where it is
-`WORLD_MAP_REGION_SNOWFIELD`.
+`WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD`.
 
 When a menu or script starts, `WorldMap_StartStillView` draws the current
 frame into ordinary 256-colour tiles on `BG1` with `TileMap_DrawRows`, an ARM
@@ -530,7 +530,7 @@ The world map's graphics sets are `gWorldMap_GraphicsResources`
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `WORLD_MAP_REGION_SNOWFIELD` | 21 | the region whose ground takes the world map's second graphics set |
+| `WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD` | 21 | the region whose ground takes the world map's second graphics set |
 
 ## Design
 
@@ -538,7 +538,7 @@ The world map's graphics sets are `gWorldMap_GraphicsResources`
 
 All 64 objects are the same 112 bytes, but each family of code reads them
 through a struct of its own: `Object` (`include/object_runtime.h`),
-`DispatchObject` (`include/object_dispatch.h`), `ScriptInterpreter` and
+`DispatchObject` (`include/object_dispatch.h`), `ObjectScriptContext` and
 `ScriptOperands` (`include/field/action_script.h`), `ScriptMotionObject`
 (`include/script_motion.h`), `ScriptObjectRuntime`
 (`include/field/script_object_runtime.h`), `ScriptObjectEntry`
@@ -546,7 +546,7 @@ through a struct of its own: `Object` (`include/object_runtime.h`),
 Other folders add more, such as the battle's `MotionObject` and the field
 effects' `FieldEffect`. Each view was written from the code that reads it and
 names what that code uses; the bytes it leaves alone keep ObjectEvent's
-names under a "not named here" note. `ScriptInterpreter` is 100 bytes, since
+names under a "not named here" note. `ObjectScriptContext` is 100 bytes, since
 no command reads the last 12.
 
 The views agree on the layout (the script first, then position, velocity and
@@ -565,7 +565,7 @@ struct, since every view describes the same 112 bytes.
 
 ### Scripts without addresses
 
-A jump stores a label number, not an offset, and `ActionScript_FindLabel` searches
+A jump stores a label number, not an offset, and `ObjectScript_FindLabel` searches
 for it each time. A script is therefore a plain array of words that C
 initializers can write, with no assembler to fix up its branches, at the cost
 of a linear search on every jump and the 1,024-word reach.
@@ -601,7 +601,7 @@ guide](../../../tla/src/field/README.md), as differences from this one.
   four each.
 - 8 resource slots for a sprite's frames, 16 tile animation channels and 4
   palette cycles.
-- `gScriptObject_CommandTable` has 47 entries: 36 commands, then 11 that act
+- `gObjectScript_CommandTable` has 47 entries: 36 commands, then 11 that act
   as `SC_END`. A label must lie within the first 1,024 words of its script.
 - A step can climb 8 pixels and drop 12.
 
@@ -614,7 +614,7 @@ guide](../../../tla/src/field/README.md), as differences from this one.
 | `field/*.c` | the 14 parts, each one family of functions; `head -3 field/*.c` prints what each holds |
 | `update.c` | `Object_UpdateAll`, an ARM copy of the object update for the first eight objects, which only the unused `Object_RunUpdateAllFromHeap` would run |
 | `vertices.c` | `Transform_UpdateVertices`, the ARM routine that turns the world map's scanline table into `BG2`'s affine values |
-| `object_script.c`, `operand.c` | the scripts the engine starts by itself, `gScriptObject_CommandTable`, and the handlers of the work values |
+| `object_script.c`, `operand.c` | the scripts the engine starts by itself, `gObjectScript_CommandTable`, and the handlers of the work values |
 | `facing.c` | the facing tables and the small tables the parts read: the order a sprite's tiles dissolve in, the fixed camera's matrix, the wave a floating object bobs on, the idle script, the direction pad's headings, the footprint and dust scripts, and the world map camera's lean for each pad direction |
 | `curve_data.c`, `map_grid_data.c` | the ground height tables, `gMapGrid_TerrainHeightFunctions`, the world map's terrain behaviour table, and two tables nothing reads (`gWorldMap_DirectionOffsets`, `gWorldMap_UnitScale`) |
 | `world_map_resources.c` | `gWorldMap_GraphicsResources`, the world map's two graphics sets |
@@ -682,7 +682,7 @@ and a part undefines its macros at its end.
 | `ObjectCamera_` | a camera hook that returns 1 and nothing calls (`object_camera.c`) |
 
 A few functions take the prefix of the one thing they act on
-(`Decompress_Lz`, `Camera_FollowLeaderInBounds`). Names other
+(`Decompress_Lz`, `FieldCamera_FollowLeaderInBounds`). Names other
 folders or The Lost Age's copy also use change only in a rename across all of
 them.
 

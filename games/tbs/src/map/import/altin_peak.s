@@ -68,7 +68,7 @@
 	.set import.Engine_CameraSetSpeed, 1
 	.set import.Engine_CameraMoveTo, 1
 	.set import.Engine_CameraWaitForMove, 1
-	.set import.Camera_GetScriptObject, 1
+	.set import.FieldCamera_GetScriptObject, 1
 	.set import.Field_RequestBattleFromEncounterTable, 1
 	.set import.Field_RequestDjinnBattle, 1
 	.set import.FieldScript_SetNextDestination, 1
@@ -84,7 +84,7 @@
 	.set import.Engine_PsynergyRaiseHands, 1
 	.set import.Field_EndBusyAndReveal, 1
 	.set import.Map_PlayMusic, 1
-	.set import.FieldEffect_SetQueuedSoundAndPlay, 1
-	.set import.FieldEffect_PlayQueuedSound, 1
+	.set import.Map_QueueMusic, 1
+	.set import.Map_PlayQueuedMusic, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

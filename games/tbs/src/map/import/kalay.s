@@ -65,7 +65,7 @@
 	.set import.Engine_ObjectEventSetAttachedEffect, 1
 	.set import.Engine_CameraSetSpeed, 1
 	.set import.Engine_CameraMoveTo, 1
-	.set import.Camera_GetScriptObject, 1
+	.set import.FieldCamera_GetScriptObject, 1
 	.set import.Engine_ScriptRequestWarp, 1
 	.set import.Engine_ScriptOpenScreen, 1
 	.set import.Engine_ScriptCloseScreen, 1
@@ -74,8 +74,8 @@
 	.set import.FieldEffect_StartFadeOverlay, 1
 	.set import.Map_PlayMusic, 1
 	.set import.Djinn_JoinParty, 1
-	.set import.FieldEffect_SetQueuedSoundAndPlay, 1
-	.set import.FieldEffect_PlayQueuedSound, 1
+	.set import.Map_QueueMusic, 1
+	.set import.Map_PlayQueuedMusic, 1
 	.set import.Engine_ShopOpen, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

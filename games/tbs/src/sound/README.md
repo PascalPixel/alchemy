@@ -29,7 +29,7 @@ table or a control.
 Code anywhere in the game plays a sound by calling `Sound_PlaySong(s32
 id)` with a cue, and it returns nothing. Every caller outside the sound [bank](../../glossary.md#bank) uses its
 [far-call](../../glossary.md#far-call) name, `Sound_PlaySongFar`, as the field does when a chest
-holds a Psynergy Stone (`Field_SearchTile`):
+holds a Psynergy Stone (`Field_SearchCell`):
 
 ```c
 Sound_PlaySongFar(MUS_TREASURE_FOUND);

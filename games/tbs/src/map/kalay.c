@@ -354,7 +354,7 @@ static void Kalay_ScorchJoins(void) {
 
 /// In Kalay, while the tour waits, a tourist now and then nods, shakes his head
 /// or turns.
-static s32 Kalay_UpdateTouristFidget(struct ScriptInterpreter *interpreter) {
+static s32 Kalay_UpdateTouristFidget(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   u32 action;
   u32 nextTimer;
@@ -603,7 +603,7 @@ static void Kalay_OpenDoorAndExit(void) {
       objectEvent->motionFlags = 0;
     }
   }
-  trigger = &work->touchedTrigger;
+  trigger = &work->coordEvent;
   door = *trigger - 1;
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   {
@@ -698,11 +698,11 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Script_PlaySong(MUS_009);
     Engine_ScriptWait(10);
     Engine_ObjectEventRunRepeatedMotion(LOCALID_PARTY_LEADER, 2);
-    if (work->touchedTrigger == 9) {
-      Camera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
+    if (work->coordEvent == 9) {
+      FieldCamera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
       ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHEAST, 20);
     } else {
-      Camera_SetSpeed(PIXELS(6) / 5, PIXELS(3) / 20);
+      FieldCamera_SetSpeed(PIXELS(6) / 5, PIXELS(3) / 20);
       ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 20);
     }
     // Stagger the speeds so the group arrives in rows.
@@ -741,7 +741,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     last->timer = 0;
     ObjectEvent_SetActionScript(LOCALID_SECOND_GUIDE,
                                 gKalay_TourGroupWalkScript);
-    Camera_MoveTo(PIXELS(186), -1, PIXELS(272), 1);
+    FieldCamera_MoveTo(PIXELS(186), -1, PIXELS(272), 1);
     ObjectEvent_RefreshSelectorById(LOCALID_HEAD_GUIDE);
     ObjectEvent_FaceDirection(LOCALID_HEAD_GUIDE, FACING_EAST, 0);
     do {
@@ -1189,7 +1189,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Engine_ObjectEventDestroy(LOCALID_FIRST_TOURIST + 6);
     Engine_ObjectEventDestroy(LOCALID_OURANOS);
     Script_PlaySong(AUDIO_CUE_FADE_BGM);
-    if (work->touchedTrigger == 9) {
+    if (work->coordEvent == 9) {
       ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 224, 458);
       leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
       leader->facing = FACING_NORTH;
@@ -1202,7 +1202,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     GameFlag_Set(FLAG_KALAY_COLOSSO_TOUR_LEFT);
   } else {
     Script_PlaySong(SE_MAP_EXIT);
-    Engine_ScriptRequestWarp(work->touchedTrigger);
+    Engine_ScriptRequestWarp(work->coordEvent);
     Engine_ScriptCloseScreen();
     Engine_ScriptWaitForScreen();
   }
@@ -1386,7 +1386,7 @@ static void Kalay_PrepareTunnelEntrance(void) {
 /// from the north-east room
 /// (KALAY_TUNNEL_PASSAGE_LONG_PATH_FROM_NORTHEAST_ROOM) starts SE_170.
 static void Kalay_StartWindowTransition(void) {
-  gFieldWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (Engine_GameFlagIsSet(FLAG_KALAY_TUNNEL_OPEN) != 0) {
     MapGrid_CopyCellsTo(58, 5, 58, 8, 2, 3);
@@ -1399,7 +1399,7 @@ static void Kalay_StartWindowTransition(void) {
   }
   if (gGameState.warpDest <=
       KALAY_TUNNEL_PASSAGE_LONG_PATH_FROM_NORTHEAST_ROOM) {
-    FieldEffect_SetQueuedSoundAndPlay(SE_170);
+    Map_QueueMusic(SE_170);
   }
 }
 
@@ -1421,7 +1421,7 @@ static void Kalay_PrepareTunnel(void) {
   // declaration.
   void **workSlots = gHeapSlots + HEAP_SLOT_FIELD;
 
-  ((struct EventWork *)workSlots[0])->startTransition =
+  ((struct EventWork *)workSlots[0])->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   FieldEffect_StartFadeOverlay(0);
 #if TBS_PATCH_1
@@ -1549,7 +1549,7 @@ static void Kalay_PrepareTunnel(void) {
     switch (gGameState.warpDest) {
     case KALAY_TUNNEL_TREASURE_ROOM_FROM_HAMMET_PALACE:
     case KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY_TUNNEL_PASSAGE_WEST:
-      FieldEffect_SetQueuedSoundAndPlay(SE_170);
+      Map_QueueMusic(SE_170);
       break;
     }
   }
@@ -1580,7 +1580,7 @@ static void Kalay_PrepareTunnel(void) {
     switch (gGameState.warpDest) {
     case KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY_TUNNEL_PASSAGE_EAST:
     case KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY:
-      FieldEffect_SetQueuedSoundAndPlay(SE_170);
+      Map_QueueMusic(SE_170);
       break;
     }
   }
@@ -1665,12 +1665,12 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
   struct ObjectEvent *objectEvent;
 
   Engine_ScriptStart();
-  Camera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(192), PIXELS(342));
   Engine_TaskWait(1);
-  Camera_SetSpeed(PIXELS(1) / 5, PIXELS(1) / 40);
-  Camera_MoveTo(PIXELS(192), -1, PIXELS(252), 1);
+  FieldCamera_SetSpeed(PIXELS(1) / 5, PIXELS(1) / 40);
+  FieldCamera_MoveTo(PIXELS(192), -1, PIXELS(252), 1);
   gFieldWork->transitionFrames = 40;
   Engine_ScriptOpenScreen();
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -1858,7 +1858,7 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
   ObjectEvent_SetPosition(LOCALID_PALACE_GUARD, 0, 0);
   ObjectEvent_SetPosition(LOCALID_SECOND_PALACE_GUARD, 0, 0);
   gFieldWork->transitionFrames = 24;
-  gFieldWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
@@ -1883,23 +1883,23 @@ static void Kalay_HammetReturnsToPalace(void) {
   const s32 *exitActions;
 
   Engine_ScriptStart();
-  Camera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, 0, 0);
   ObjectEvent_SetPosition(LOCALID_WAGON, PIXELS(440), PIXELS(522));
   objectEvent = ObjectEvent_Get(LOCALID_WAGON);
   Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
-  Camera_MoveTo(PIXELS(440), -1, PIXELS(522), 0);
+  FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(522), 0);
   Engine_MapGridRedraw();
   Engine_TaskWait(1);
   Engine_ScriptOpenScreen();
-  Camera_SetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
-  Camera_MoveTo(PIXELS(440), -1, PIXELS(400), 1);
+  FieldCamera_SetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
+  FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(400), 1);
   Script_PlaySong(SE_RUMBLE);
   ObjectEvent_SetSpeed(LOCALID_WAGON, PIXELS(8) / 5, PIXELS(4) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_WAGON, 440, 400);
-  Camera_SetSpeed(PIXELS(3) / 4, PIXELS(3) / 32);
-  Camera_MoveTo(PIXELS(440), -1, PIXELS(300), 1);
+  FieldCamera_SetSpeed(PIXELS(3) / 4, PIXELS(3) / 32);
+  FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(300), 1);
   ObjectEvent_SetSpeed(LOCALID_WAGON, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_WAGON, 440, 300);
   Engine_ObjectEventSetAnimation(LOCALID_WAGON, 0);
@@ -1912,7 +1912,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   ObjectEvent_WalkToAndWait(LOCALID_BUNZA, 416, 312);
   ObjectEvent_WalkToAndWait(LOCALID_BUNZA, 400, 256);
   ObjectEvent_FaceDirection(LOCALID_BUNZA, FACING_SOUTHEAST + FACING_STEP, 40);
-  Camera_MoveTo(PIXELS(410), -1, PIXELS(280), 1);
+  FieldCamera_MoveTo(PIXELS(410), -1, PIXELS(280), 1);
   ObjectEvent_SetSpeed(LOCALID_HAMMET, PIXELS(3) / 5, PIXELS(3) / 10);
   ObjectEvent_SetPosition(LOCALID_HAMMET, PIXELS(439), PIXELS(306));
   Engine_ObjectEventJump(LOCALID_HAMMET, 4, 0);
@@ -2082,8 +2082,8 @@ static void Kalay_HammetReturnsToPalace(void) {
   ObjectEvent_FaceDirection(LOCALID_TUNNEL_GUARD,
                             FACING_SOUTHEAST + FACING_STEP, 0);
   Engine_ObjectEventSetAnimationAndWait(LOCALID_HAMMET, ANIMATION_NOD);
-  Camera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
-  Camera_MoveTo(PIXELS(280), -1, PIXELS(200), 1);
+  FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
+  FieldCamera_MoveTo(PIXELS(280), -1, PIXELS(200), 1);
   ObjectEvent_WalkToAndWait(LOCALID_HAMMET, 333, 222);
   ObjectEvent_WalkToAndWait(LOCALID_HAMMET, 284, 198);
   ObjectEvent_FaceDirection(LOCALID_HAMMET, FACING_WEST, 10);
@@ -2101,9 +2101,9 @@ static void Kalay_HammetReturnsToPalace(void) {
   Engine_ScriptWait(20);
   ObjectEvent_WalkToAndWait(LOCALID_TUNNEL_GUARD, 246, 198);
   ObjectEvent_FaceDirection(LOCALID_TUNNEL_GUARD, 0, 20);
-  Camera_GetScriptObject()->motionFlags = 0;
-  Camera_SetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
-  Camera_MoveTo(PIXELS(248), -1, PIXELS(170), 1);
+  FieldCamera_GetScriptObject()->motionFlags = 0;
+  FieldCamera_SetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
+  FieldCamera_MoveTo(PIXELS(248), -1, PIXELS(170), 1);
   ObjectEvent_WalkToAndWait(LOCALID_HAMMET, 270, 198);
   ObjectEvent_WalkToAndWait(LOCALID_HAMMET, 270, 174);
   ObjectEvent_WalkToAndWait(LOCALID_HAMMET, 224, 170);
@@ -2111,7 +2111,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   ObjectEvent_WalkToAndWait(LOCALID_HAMMET, 246, 148);
   ObjectEvent_WalkToAndWait(LOCALID_HAMMET, 246, 142);
   ObjectEvent_SetPosition(LOCALID_HAMMET, 0, 0);
-  gFieldWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
@@ -2119,7 +2119,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   objectEvent = ObjectEvent_Get(LOCALID_WAGON);
   southFacing = FACING_SOUTH;
   objectEvent->facing = southFacing;
-  Camera_MoveTo(PIXELS(380), -1, PIXELS(280), 0);
+  FieldCamera_MoveTo(PIXELS(380), -1, PIXELS(280), 0);
   Engine_MapGridRedraw();
   Engine_TaskWait(10);
   Engine_ScriptOpenScreen();
@@ -2141,25 +2141,25 @@ static void Kalay_HammetReturnsToPalace(void) {
   ObjectEvent_SetActionScript(GARET, exitActions);
   ObjectEvent_SetActionScript(IVAN, exitActions);
   ObjectEvent_RunActionScriptAndWait(MIA, exitActions);
-  Camera_MoveTo(PIXELS(410), -1, PIXELS(300), 1);
+  FieldCamera_MoveTo(PIXELS(410), -1, PIXELS(300), 1);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 416, 312);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 439, 312);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 439, 306);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, 0, 0);
   Script_PlaySong(SE_RUMBLE);
   ObjectEvent_SetSpeed(LOCALID_WAGON, PIXELS(4) / 5, PIXELS(2) / 5);
-  Camera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
-  Camera_MoveTo(PIXELS(440), -1, PIXELS(420), 1);
+  FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
+  FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(420), 1);
   ObjectEvent_WalkToAndWait(LOCALID_WAGON, 440, 420);
-  Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
-  Camera_MoveTo(PIXELS(440), -1, PIXELS(600), 1);
+  FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
+  FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(600), 1);
   ObjectEvent_SetSpeed(LOCALID_WAGON, PIXELS(8) / 5, PIXELS(4) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_WAGON, 440, 500);
   ObjectEvent_WalkTo(LOCALID_WAGON, 440, 600);
   Script_PlaySong(AUDIO_CUE_FADE_SLOT3);
   work = gFieldWork;
   work->transitionFrames = 24;
-  work->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  work->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
   Engine_ScriptRequestWarp(KALAY_TUNNEL_ENTRANCE_TO_WORLD_MAP_SOUTH);
@@ -2187,12 +2187,11 @@ static void Kalay_PushTunnelStatue(void) {
   direction = (leader->facing >> 12);
   leaderX = leader->x.part.pixel;
   probeStep = gKalay_TileStepByFacing[direction];
-  statue =
-      MapObjectEvent_FindAtCell((leaderX + (probeStep >> 16)) >> 4,
-                                (leader->z.part.pixel + (s16)probeStep) >> 4);
+  statue = ObjectEvent_FindAtCell((leaderX + (probeStep >> 16)) >> 4,
+                                  (leader->z.part.pixel + (s16)probeStep) >> 4);
   if (statue != NULL) {
     stoppedVelocity = 0;
-    statue->terrainId = 2;
+    statue->layer = 2;
     target = &destination;
     moveStep = gKalay_TileStepByFacing[direction];
     SET_POSITION(target, statue->x.fixed + (moveStep & -0x10000),
@@ -2209,7 +2208,7 @@ static void Kalay_PushTunnelStatue(void) {
       leader->acceleration = pushSpeed;
       Engine_ObjectSetPosition(leader, target->x, target->y, target->z);
       Object_WaitForMove(statue);
-      FieldEffect_PlayQueuedSound();
+      Map_PlayQueuedMusic();
       statue->x.fixed = target->x;
       statue->z.fixed = target->z;
       statue->velocityX = stoppedVelocity;
@@ -2348,9 +2347,10 @@ static void Kalay_UpdateTunnelPassages(void) {
 // destroyed, with an explicit status in the modern build.
 // Advance a particle, damp its velocity, and expire its lifetime.
 #ifdef UBFIX
-static s32 Kalay_UpdateTunnelParticle(struct ScriptInterpreter *interpreter) {
+static s32 Kalay_UpdateTunnelParticle(struct ObjectScriptContext *interpreter) {
 #else
-static void Kalay_UpdateTunnelParticle(struct ScriptInterpreter *interpreter) {
+static void
+Kalay_UpdateTunnelParticle(struct ObjectScriptContext *interpreter) {
 #endif
   struct ObjectEvent *particle = (struct ObjectEvent *)interpreter;
   s16 *lifetime;
@@ -2402,7 +2402,7 @@ static void Kalay_UpdateTunnelEmitters(void) {
   } else if (!GameFlag_IsSet(FLAG_TUNNEL_FIRST_PASSAGE_OPEN) &&
              firstEmitter->x.part.pixel <= 245 && (gFrameCount & 1) == 0) {
     if (!GameFlag_IsSet(FLAG_TUNNEL_FIRST_PARTICLES_SOUNDED)) {
-      FieldEffect_SetQueuedSoundAndPlay(-1);
+      Map_QueueMusic(-1);
       Script_PlaySong(SE_230);
       GameFlag_Set(FLAG_TUNNEL_FIRST_PARTICLES_SOUNDED);
     }
@@ -2412,7 +2412,7 @@ static void Kalay_UpdateTunnelEmitters(void) {
   if (!GameFlag_IsSet(FLAG_TUNNEL_SECOND_PASSAGE_OPEN) &&
       secondEmitter->x.part.pixel <= 709 && (gFrameCount & 1) == 0) {
     if (!GameFlag_IsSet(FLAG_TUNNEL_SECOND_PARTICLES_SOUNDED)) {
-      FieldEffect_SetQueuedSoundAndPlay(-1);
+      Map_QueueMusic(-1);
       Script_PlaySong(SE_230);
       GameFlag_Set(FLAG_TUNNEL_SECOND_PARTICLES_SOUNDED);
     }
@@ -2856,107 +2856,107 @@ struct ObjectEventTemplate gKalay_NoObjectEventTemplates[] = {
 // clang-format off
 struct ObjectEventTemplate gKalay_TownObjectEventTemplates[] = {
     { SPRITE_SOLDIER_IN_TURBAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(188), 0, PIXELS(476), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(188), 0, PIXELS(476), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_SOLDIER_IN_TURBAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(260), 0, PIXELS(476), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(260), 0, PIXELS(476), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(222), 0, PIXELS(382), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(222), 0, PIXELS(382), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(328), 0, PIXELS(134), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(328), 0, PIXELS(134), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(115), 0, PIXELS(453), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(115), 0, PIXELS(453), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(484), 0, PIXELS(258), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(484), 0, PIXELS(258), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(359), 0, PIXELS(314), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(359), 0, PIXELS(314), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(404), 0, PIXELS(268), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(404), 0, PIXELS(268), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(154), 0, PIXELS(119), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(154), 0, PIXELS(119), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(198), 0, PIXELS(84), FACING_WEST, TALK_FACE_PARTY, 0 },
+        PIXELS(198), 0, PIXELS(84), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(199), 0, PIXELS(233), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(199), 0, PIXELS(233), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(46), 0, PIXELS(217), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(46), 0, PIXELS(217), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(468), 0, PIXELS(434), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(468), 0, PIXELS(434), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(464), 0, PIXELS(416), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(464), 0, PIXELS(416), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_BALD_MAN_IN_RED, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(280), 0, PIXELS(408), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(280), 0, PIXELS(408), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_YOUNG_MAN_IN_GREEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(168), 0, PIXELS(232), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(168), 0, PIXELS(232), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_WOMAN_WITH_PONYTAIL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(278), 0, PIXELS(318), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(278), 0, PIXELS(318), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(440), 0, PIXELS(88), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(440), 0, PIXELS(88), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(56), 0, PIXELS(332), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(56), 0, PIXELS(332), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gKalay_TourGroupObjectEventTemplates[] = {
     { SPRITE_CHEF, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_WEST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_WOMAN_IN_GREEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_WEST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_WEST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_WEST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_PERSON_WITH_SWORD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_WEST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_WEST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BLUE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_WEST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_RED_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_WEST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_WEST, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gKalay_HammetPalaceObjectEventTemplates[] = {
     { IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SOLDIER_IN_TURBAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(168), 0, PIXELS(232), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(168), 0, PIXELS(232), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_SOLDIER_IN_TURBAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(212), 0, PIXELS(232), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(212), 0, PIXELS(232), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gKalay_TunnelEntranceObjectEventTemplates[] = {
     { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
     { IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
     { MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SOLDIER_IN_TURBAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(246), 0, PIXELS(198), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, 0 },
+        PIXELS(246), 0, PIXELS(198), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_LARGE_WAGON, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_HAMMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BUNZA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BLANK, FLAG_KALAY_TUNNEL_ENTRANCE_NUT_CAUGHT, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(136), 0, PIXELS(120), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(136), 0, PIXELS(120), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gKalay_TunnelObjectEventTemplates[] = {
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(376), 0, PIXELS(826), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(376), 0, PIXELS(826), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(808), 0, PIXELS(732), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(808), 0, PIXELS(732), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BUNZA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MARS_DJINNI, FLAG_DJINNI(DJINNI_SCORCH), MOVEMENT_TYPE_STAND,
-        PIXELS(632), 0, PIXELS(712), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(632), 0, PIXELS(712), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };
 
@@ -3018,7 +3018,7 @@ struct MapEvent gKalay_TownEvents[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_CATCH), LOCALID_TOWN_NUT, FLAG_KALAY_TOWN_NUT_CAUGHT, EVENT_SCRIPT(Kalay_CatchTownNut) },
     { BG_EVENT(BG_EVENT_JAR), 100, FLAG_KALAY_SLEEP_BOMB_JAR, FIND_ITEM(ITEM_SLEEP_BOMB) },
     { BG_EVENT(BG_EVENT_JAR), 101, FLAG_KALAY_VIAL_JAR, FIND_ITEM(ITEM_VIAL) },
-    { BG_EVENT(BG_EVENT_UNNAMED), 90, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_SearchWell) },
+    { BG_EVENT(BG_EVENT_SILENT), 90, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_SearchWell) },
     { MAP_EVENTS_END },
 };
 
@@ -3042,25 +3042,25 @@ struct MapEvent gKalay_TunnelEntranceEvents[] = {
 };
 
 struct MapEvent gKalay_TunnelCaveEvents[] = {
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED_ALTERNATE, 1, CONDITION_ALWAYS, KALAY_TUNNEL_CAVE_TO_KALAY_TUNNEL_PASSAGE },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, KALAY_TUNNEL_CAVE_TO_KALAY_TUNNEL_PASSAGE },
     { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, KALAY_TUNNEL_CAVE_TO_KALAY_TUNNEL_ENTRANCE },
     { BG_EVENT(BG_EVENT_CHEST), 100, FLAG_KALAY_TUNNEL_APPLE_CHEST, FIND_ITEM(ITEM_APPLE) },
     { MAP_EVENTS_END },
 };
 
 struct MapEvent gKalay_TunnelPassageEvents[] = {
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED_ALTERNATE, 1, CONDITION_ALWAYS, KALAY_TUNNEL_PASSAGE_TO_KALAY_TUNNEL_TREASURE_ROOM_WEST },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED_ALTERNATE, 2, CONDITION_ALWAYS, KALAY_TUNNEL_PASSAGE_TO_KALAY_TUNNEL_TREASURE_ROOM_EAST },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED, 3, CONDITION_ALWAYS, KALAY_TUNNEL_PASSAGE_LONG_PATH_TO_NORTHEAST_ROOM },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED_ALTERNATE, 4, CONDITION_ALWAYS, KALAY_TUNNEL_PASSAGE_NORTHEAST_ROOM_TO_LONG_PATH },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED, 5, CONDITION_ALWAYS, KALAY_TUNNEL_PASSAGE_TO_KALAY_TUNNEL_CAVE },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, KALAY_TUNNEL_PASSAGE_TO_KALAY_TUNNEL_TREASURE_ROOM_WEST },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, KALAY_TUNNEL_PASSAGE_TO_KALAY_TUNNEL_TREASURE_ROOM_EAST },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS, KALAY_TUNNEL_PASSAGE_LONG_PATH_TO_NORTHEAST_ROOM },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 4, CONDITION_ALWAYS, KALAY_TUNNEL_PASSAGE_NORTHEAST_ROOM_TO_LONG_PATH },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 5, CONDITION_ALWAYS, KALAY_TUNNEL_PASSAGE_TO_KALAY_TUNNEL_CAVE },
     { MAP_EVENTS_END },
 };
 
 struct MapEvent gKalay_TunnelEvents[] = {
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED, 1, CONDITION_ALWAYS, KALAY_TUNNEL_TREASURE_ROOM_TO_HAMMET_PALACE },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED, 2, CONDITION_ALWAYS, KALAY_TUNNEL_TREASURE_ROOM_TO_KALAY_TUNNEL_PASSAGE_WEST },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED, 3, CONDITION_ALWAYS, KALAY_TUNNEL_TREASURE_ROOM_TO_KALAY_TUNNEL_PASSAGE_EAST },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, KALAY_TUNNEL_TREASURE_ROOM_TO_HAMMET_PALACE },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, KALAY_TUNNEL_TREASURE_ROOM_TO_KALAY_TUNNEL_PASSAGE_WEST },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS, KALAY_TUNNEL_TREASURE_ROOM_TO_KALAY_TUNNEL_PASSAGE_EAST },
     { MAP_EVENT_WARP, 4, CONDITION_ALWAYS, KALAY_TUNNEL_TREASURE_ROOM_TO_KALAY },
     { MAP_EVENT_TALK, LOCALID_WAITING_MAN, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_TalkAboutLayana) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WAITING_MAN, CONDITION_ALWAYS, MSGNO(MsgKalayTreasureBeyondDoors) },

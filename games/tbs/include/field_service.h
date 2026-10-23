@@ -77,7 +77,7 @@ static inline void ObjectEvent_WaitForMove(s32 localId) {
 }
 
 /// Holds the script until the camera's pan is done.
-static inline void Camera_WaitForMove(void) { Engine_CameraWaitForMove(); }
+static inline void FieldCamera_WaitForMove(void) { Engine_CameraWaitForMove(); }
 
 /// Runs a script's colour fade, from the source colours to the target ones,
 /// over frames.
@@ -238,10 +238,10 @@ static inline void Field_SetWorldMapWindowCellTile(s32 a0, s32 a1, s32 a2,
 }
 
 /// Puts an object event on the leader and sends it walking off by (dx, dz),
-/// then starts the action facing names (Motion_LaunchFromFocusedObject).
+/// then starts the action facing names (ObjectMotion_LaunchFromFocusedObject).
 static inline void FieldMotion_LaunchFromFocusedObject(s32 localId, s32 dx,
                                                        s32 dz, s32 facing) {
-  Motion_LaunchFromFocusedObject(localId, dx, dz, facing);
+  ObjectMotion_LaunchFromFocusedObject(localId, dx, dz, facing);
 }
 
 /// Makes an object event follow another and starts a script on it

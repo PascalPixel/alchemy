@@ -7,7 +7,7 @@
 /// A hand appears 32 pixels to either side, each moves 14 pixels in, and
 /// they lift the target 32 pixels with them.
 ///
-/// Abilities: Lift (FIELD_KIND_LIFT).
+/// Abilities: Lift (FIELD_PSYNERGY_LIFT).
 ///
 /// This is Lift cast on a target, which FieldEffect_DispatchRequestKind calls.
 /// It leaves the target raised and floating (motion flag bit 2), with its
@@ -50,8 +50,8 @@ void FieldEffect_RunLiftOnTarget(s32 unused) {
   for (handIndex = 0; handIndex < 2; handIndex++) {
     struct MotionObject *hand = pair[handIndex];
     if (hand != NULL)
-      Motion_SetTargetPositionFromMagnitudeAngle((struct Object *)hand, 0xe0000,
-                                                 hand->angle);
+      ObjectMotion_SetTargetPositionFromMagnitudeAngle((struct Object *)hand,
+                                                       0xe0000, hand->angle);
   }
 
   Object_WaitForMoveFar(pair[0]);
@@ -79,7 +79,7 @@ void FieldEffect_RunLiftOnTarget(s32 unused) {
 /// Two hands appear 16 pixels above the spot in front of the caster, 32
 /// pixels to either side, then close in 24 pixels and scatter into shards.
 ///
-/// Abilities: Lift (FIELD_KIND_LIFT).
+/// Abilities: Lift (FIELD_PSYNERGY_LIFT).
 ///
 /// This is Lift cast with no target, which FieldEffect_Run calls.
 DEFINE_ITEM_BREAK_EFFECT(FieldEffect_RunLift, FieldEffect_SpawnItemBreakMode3)
@@ -121,7 +121,7 @@ struct MotionObject *FieldEffect_SpawnItemBreakMode3(s32 x, s32 y, s32 z,
 /// Effect slot callback of a particle that scatters 25 pixels from its origin
 /// in a random direction, then gathers beside the main object and is freed.
 /// Set on Force's 12 flashes by FieldEffect_RunForce in force.c.
-void FieldEffect_UpdateRadialBurst(struct EffectSlot *effect) {
+void FieldEffect_UpdateRadialBurst(struct FieldEffectSprite *effect) {
   // A for/continue retry keeps the same states but grows the native English
   // callback from 0xf8 to 0xfc bytes. OUT_AND_BACK_FLYING_OUT must enter
   // OUT_AND_BACK_AIM_BACK immediately.
@@ -147,7 +147,7 @@ again:
 
   if (state == OUT_AND_BACK_FLYING_OUT) {
     // On arrival, go straight on.
-    if (EffectSlot_HasPendingTarget(effect) == 0) {
+    if (FieldEffectSprite_HasPendingTarget(effect) == 0) {
       effect->state++;
       goto again;
     }
@@ -174,7 +174,7 @@ again:
   }
 
   if (state == OUT_AND_BACK_FLYING_BACK &&
-      EffectSlot_HasPendingTarget(effect) == 0)
+      FieldEffectSprite_HasPendingTarget(effect) == 0)
     FieldEffect_ClearOwnedSlot(effect);
 }
 
@@ -183,7 +183,7 @@ again:
 /// gFieldEffect_HeavyImpactScript (fxdata.c), where the interpreter is the
 /// object running the script, which Force's thrown object runs (force.c).
 /// Returns 0, so the script moves on and frees the object.
-s32 SpawnHeavyImpactEffect(struct ScriptInterpreter *interpreter) {
+s32 SpawnHeavyImpactEffect(struct ObjectScriptContext *interpreter) {
   struct MotionObject *source = (struct MotionObject *)interpreter;
   struct EffectVector pos;
   struct Object *impact;
@@ -211,7 +211,7 @@ s32 SpawnHeavyImpactEffect(struct ScriptInterpreter *interpreter) {
       fragment->speedLimit = Random16() + (1 << 16);
       fragment->acceleration = 1 << 16;
       fragment->flags = 0;
-      Motion_SetTargetPositionFromMagnitudeAngle(
+      ObjectMotion_SetTargetPositionFromMagnitudeAngle(
           fragment, Random16() * 24 + (8 << 16), Random16());
     }
   }

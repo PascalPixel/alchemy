@@ -60,7 +60,7 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 localId, s32 unused) {
 #endif
   handle = 0;
   portrait = 0;
-  sprite = ObjectTable_ReadActiveValue(localId);
+  sprite = ObjectEvent_ReadActiveValue(localId);
   extra = 0;
   portraitTop = 0;
   margin = 4;
@@ -68,7 +68,7 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 localId, s32 unused) {
   message = work->message;
   localId &= 0xfff;
   x = 0;
-  object = ObjectTable_Get(localId);
+  object = ObjectEvent_GetByLocalId(localId);
   work->speaker = localId;
   y = 0;
   found = 0;
@@ -91,15 +91,14 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 localId, s32 unused) {
       }
     } else if (localId <= 7) {
       sprite = localId;
-      object = ObjectTable_Get(gGameState.selectedLocalId);
+      object = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
       if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
         Render_ProjectPoint(&object->x, pos);
         x = pos[0] >> 3;
         y = pos[1] >> 3;
         found = 1;
       } else {
-        if (ObjectEvent_GetScreenPosition(gGameState.selectedLocalId, pos) !=
-            -1)
+        if (ObjectEvent_GetScreenPosition(gGameState.leaderLocalId, pos) != -1)
           found = 1;
         else
           found = 0;
@@ -228,7 +227,7 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 localId, s32 unused) {
       else
         handle = UiText_OpenMessageWindowFar(message, left, top, 2);
     } else {
-      s32 voice = FieldEffect_GetResourceId(sprite);
+      s32 voice = Speaker_GetVoice(sprite);
 
       if (extra != 0)
         handle = UiText_OpenMessageWindowFar(message, left, top + extra - 1,
@@ -272,7 +271,7 @@ void FieldScript_ShowMessageAndWait(s32 localId, s32 flags) {
   WaitFrames(1);
   // A party member the map does not place has its portrait under its
   // character id, as UiText_OpenMessageAtObject opened it.
-  sprite = ObjectTable_ReadActiveValue(localId);
+  sprite = ObjectEvent_ReadActiveValue(localId);
   if (localId <= 7) {
     member = localId & 0x0fff;
 
@@ -315,8 +314,7 @@ s32 FieldScript_AskYesNoAndShowResponse(s32 localId, s32 flags) {
 
   UiText_OpenMessageAtObject(localId, flags);
   save = &gGameState;
-  answer =
-      FieldScript_AskYesNoWithObjectEventAnimation(save->selectedLocalId, 0);
+  answer = FieldScript_AskYesNoWithObjectEventAnimation(save->leaderLocalId, 0);
   if (answer == 0) {
     FieldScript_ShowMessageAndWait(localId, flags);
     runtime = (struct FieldWork *)gFieldWork;
@@ -352,15 +350,16 @@ void FieldScript_ShowSpeakerMessage(s32 speaker) {
 
   speaker &= 0xfff;
 #ifdef UBFIX
-  // Only the object event slots hold object event pointers; ObjectTable_Get's
-  // legacy range also exposes the event fields after them.
+  // Only the object event slots hold object event pointers;
+  // ObjectEvent_GetByLocalId's legacy range also exposes the event fields after
+  // them.
   if ((u32)speaker <
       sizeof(state->objectEvents) / sizeof(state->objectEvents[0]))
-    object = ObjectTable_Get(speaker);
+    object = ObjectEvent_GetByLocalId(speaker);
   else
     object = NULL;
 #else
-  ObjectTable_Get(speaker);
+  ObjectEvent_GetByLocalId(speaker);
 #endif
   state->speaker = speaker;
   if (state->fastForward == 0) {
@@ -445,10 +444,10 @@ void FieldScript_ShowMessageAtPosition(s32 unused0, s32 unused1, s32 x, s32 y) {
 }
 
 /// Closes the portrait of an object event's sprite, if it has one.
-void ObjectTable_RunIfActive(s32 localId) {
+void ObjectEvent_RunIfActive(s32 localId) {
   s32 sprite;
 
-  sprite = ObjectTable_ReadActiveValue(localId);
+  sprite = ObjectEvent_ReadActiveValue(localId);
   if (sprite != -1)
     UiWork_FinalizeEntityMatchingLocalizedIdFar(sprite);
 }
@@ -462,20 +461,18 @@ void FieldScript_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
                                         s32 secondPortraitX,
                                         s32 secondPortraitY) {
   struct FieldWork *work = (struct FieldWork *)gFieldWork;
-  s32 firstSprite = ObjectTable_ReadActiveValue(first);
-  s32 secondSprite = ObjectTable_ReadActiveValue(second);
+  s32 firstSprite = ObjectEvent_ReadActiveValue(first);
+  s32 secondSprite = ObjectEvent_ReadActiveValue(second);
   s32 firstWindow;
   s32 secondWindow;
 
   firstWindow = (s32)UiText_OpenMessageWindowFar(
-      work->message++, firstX, firstY,
-      FieldEffect_GetResourceId(firstSprite) << 16);
+      work->message++, firstX, firstY, Speaker_GetVoice(firstSprite) << 16);
   UiWindow_CreateWithSideObjectFar(firstSprite, 0, firstPortraitX,
                                    firstPortraitY);
 
   secondWindow = (s32)UiText_OpenMessageWindowFar(
-      work->message++, secondX, secondY,
-      FieldEffect_GetResourceId(secondSprite) << 16);
+      work->message++, secondX, secondY, Speaker_GetVoice(secondSprite) << 16);
   UiWindow_CreateWithSideObjectFar(secondSprite, 0, secondPortraitX,
                                    secondPortraitY);
 
@@ -514,7 +511,7 @@ void Ui_SetMessageVoiceFromObjectEvent(s32 localId) {
     *(s16 *)&state->speakerVoiceSound = (rate = 0);
     *(s16 *)&state->speakerVoiceCountdown = rate;
   } else {
-    voice = FieldEffect_GetResourceId(ObjectTable_ReadActiveValue(localId));
+    voice = Speaker_GetVoice(ObjectEvent_ReadActiveValue(localId));
     rate = gUi_RenderResultValues[gGameState.messageSpeed];
     *(s16 *)&state->speakerVoiceSound = voice;
     *(s16 *)&state->speakerVoiceCountdown = rate;

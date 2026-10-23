@@ -13,8 +13,8 @@
 	.set import.Engine_MapGridRedraw, 1
 	.set import.Engine_MapGridAnimateCells, 1
 	.set import.Engine_MapGridCopyCellsTo, 1
-	.set import.TileAnimation_ResumeChannel, 1
-	.set import.TileAnimation_PauseChannel, 1
+	.set import.TilesetAnim_Resume, 1
+	.set import.TilesetAnim_Pause, 1
 	.set import.Engine_MapGridCopyCellAttributes, 1
 	.set import.Engine_ObjectEventSetSpriteFlags, 1
 	.set import.Engine_WorkSetValuesIfNonNegative, 1
@@ -64,21 +64,21 @@
 	.set import.Engine_CameraSetSpeed, 1
 	.set import.Engine_CameraMoveTo, 1
 	.set import.Engine_CameraWaitForMove, 1
-	.set import.Camera_GetScriptObject, 1
+	.set import.FieldCamera_GetScriptObject, 1
 	.set import.Engine_ScriptRequestWarp, 1
 	.set import.Field_RequestBattleFromEncounterTable, 1
-	.set import.FieldEffect_StartGroundParticles, 1
-	.set import.FieldEffect_StartLightning, 1
-	.set import.FieldEffect_StopLightning, 1
-	.set import.FieldEffect_LastLightning, 1
-	.set import.FieldEffect_ResumeLightning, 1
+	.set import.Weather_StartRain, 1
+	.set import.Weather_StartLightning, 1
+	.set import.Weather_StopLightning, 1
+	.set import.Weather_LastLightning, 1
+	.set import.Weather_ResumeLightning, 1
 	.set import.Engine_ColorBufferApplyTarget, 1
 	.set import.Engine_ColorBufferInterpolate, 1
 	.set import.Engine_ScriptOpenScreen, 1
 	.set import.Engine_ScriptWaitForScreen, 1
 	.set import.Engine_PsynergyStart, 1
 	.set import.FieldEffect_End, 1
-	.set import.FieldEffect_SetQueuedSoundAndPlay, 1
-	.set import.FieldEffect_PlayQueuedSound, 1
+	.set import.Map_QueueMusic, 1
+	.set import.Map_PlayQueuedMusic, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

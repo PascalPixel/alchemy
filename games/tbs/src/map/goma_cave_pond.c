@@ -78,12 +78,12 @@ s32 Map_Initialize(void) {
   struct EventWork *work;
 
   work = gFieldWork;
-  work->startTransition =
+  work->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   work->transitionFrames = 24;
   if (Engine_GameFlagIsSet(FLAG_GOMA_CAVE_STUMP_FELL) != 0) {
     OBJECT_POSITION_SET(LOCALID_FALLEN_STUMP, 216, 136);
-    OBJECT_MODE(LOCALID_FALLEN_STUMP, STUMP_ANIMATION_SINK);
+    OBJECT_ANIMATION(LOCALID_FALLEN_STUMP, STUMP_ANIMATION_SINK);
     Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_FALLEN_STUMP),
                                      0);
     ObjectEvent_GetById(LOCALID_FALLEN_STUMP)->priorityFlags =
@@ -120,17 +120,17 @@ u32 gGomaCavePondWarps[] = {
 // clang-format off
 struct ObjectEventTemplate gGomaCavePondObjectEventTemplates[] = {
     { SPRITE_STUMP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 // clang-format on
 
 struct MapEvent gGomaCavePondEvents[] = {
-    {MAP_EVENT_WARP | WARP_STYLE_ANIMATED, 5, CONDITION_ALWAYS,
+    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 5, CONDITION_ALWAYS,
      GOMA_CAVE_POND_TO_GOMA_CAVE_PILLAR_WEST},
-    {MAP_EVENT_WARP | WARP_STYLE_ANIMATED, 6, CONDITION_ALWAYS,
+    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 6, CONDITION_ALWAYS,
      GOMA_CAVE_POND_TO_GOMA_CAVE_PILLAR_SOUTH},
-    {MAP_EVENT_WARP | WARP_STYLE_ANIMATED, 7, CONDITION_ALWAYS,
+    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 7, CONDITION_ALWAYS,
      GOMA_CAVE_POND_TO_GOMA_CAVE_PILLAR_EAST},
     {MAP_EVENTS_END},
 };

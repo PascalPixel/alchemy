@@ -49,7 +49,7 @@ struct BurstParticleVisualGroup {
 /// to points round the target, which then takes the sprite priority of the
 /// ground under it.
 ///
-/// Abilities: Growth (FIELD_KIND_GROWTH).
+/// Abilities: Growth (FIELD_PSYNERGY_GROWTH).
 ///
 /// The target plays animation 2, stops being solid,
 /// loses its shadow and is depth-sorted as if 320 pixels higher
@@ -75,7 +75,7 @@ void FieldEffect_RunGrowthOnTarget(s32 unused) {
 /// caster, and then five falling objects appear 4 to 10 pixels round the
 /// effect's position.
 ///
-/// Abilities: Growth (FIELD_KIND_GROWTH).
+/// Abilities: Growth (FIELD_PSYNERGY_GROWTH).
 ///
 /// The objects (217) appear 2 or 3 frames apart and each lasts 60 frames
 /// (gFieldEffect_BurstParticleObjectScript).

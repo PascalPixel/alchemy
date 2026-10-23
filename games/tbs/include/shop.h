@@ -60,7 +60,7 @@ struct ShopWork {
   s8 burstMember; ///< the sanctum's member whose pose is randomized; -1 none
   u8 warriorShop; ///< 1 for stock rows 16 to 18, which greet as warriors'
   u8 padding[3];  ///< up to the word effects starts on
-  struct EffectSlot effects[24]; ///< the sanctum service's particles
+  struct FieldEffectSprite effects[24]; ///< the sanctum service's particles
 };
 
 STATIC_ASSERT(sizeof(struct ShopWork) == 0xa70);

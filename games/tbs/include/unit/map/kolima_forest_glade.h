@@ -11,9 +11,9 @@ const struct ObjectEventTemplate *
 KolimaForestGlade_GetObjectEventTemplates(void);
 const struct MapEvent *KolimaForestGlade_GetEvents(void);
 s32 KolimaForestGlade_Initialize(void);
-extern s32 gStagedObjectEvent_DirectionSteps[];
-extern u32 gStagedObjectEvent_FootprintKinds[];
-extern s32 gStagedObjectEvent_FootprintBounds[];
+extern s32 gPushedObject_DirectionSteps[];
+extern u32 gPushedObject_FootprintKinds[];
+extern s32 gPushedObject_FootprintBounds[];
 extern struct MapWarpDest gKolimaForestGlade_WarpDests[];
 extern u32 gKolimaForestGlade_Warps[];
 extern struct ObjectEventTemplate gKolimaForestGlade_ObjectEventTemplates[];

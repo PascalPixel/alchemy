@@ -47,12 +47,12 @@ s32 FieldScript_AskYesNoWithObjectEventAnimationFar(s32 localId,
 /// Teaches a character a Psynergy ability with its jingle and
 /// `<unit> learned <ability>.`
 void Party_LearnAbilityFar(s32 unit, s32 ability);
-/// Returns the object event with this id, or NULL; the form of ObjectTable_Get
-/// the other banks call.
+/// Returns the object event with this id, or NULL; the form of
+/// ObjectEvent_GetByLocalId the other banks call.
 struct ObjectEvent *ObjectEvent_GetByIdFar(s32 objectId);
 /// Releases an object event and empties its slot in the field work's object
 /// event table.
-void ObjectTable_DestroyByIdFar(s32 index);
+void ObjectEvent_DestroyByIdFar(s32 index);
 /// Sets an object event's top speed and acceleration, in 16.16 pixels per
 /// frame.
 void ObjectMotion_SetSpeedParametersFar(u32 objectId, s32 speedLimit,
@@ -100,7 +100,7 @@ void ObjectEvent_SetModeByIdFar(u32 objectId, s32 action);
 /// Tolbi ship and Lamakan Desert maps do.
 void ObjectEvent_SetActionByIdFar(u32 objectId, s32 action);
 /// Plays an object event's animation and waits for it to end.
-void Motion_SetModeAndWaitAnimationFar(u32 objectId, s32 action);
+void ObjectMotion_SetAnimationAndWaitFar(u32 objectId, s32 action);
 /// Waits, at most 90 frames, for an animated object event's animation to
 /// change.
 void ObjectMotion_WaitForAnimationChangeFar(u32 objectId);
@@ -111,7 +111,7 @@ void ObjectMotion_LaunchFar(u32 objectId, s32 speed, s32 event_id);
 /// gObjectMotion_VariantScripts.
 void ObjectMotion_SetVariantCallbackFar(u32 objectId, s32 variant);
 /// Runs that squash-and-spring motion and waits for it to end.
-void Motion_SetVarCbAndRefreshFar(u32 objectId, s32 variant);
+void ObjectMotion_SetVarCbAndRefreshFar(u32 objectId, s32 variant);
 /// Makes an object event hop down off the ledge in front of it and land 16
 /// pixels south, playing the queued sound as it lands. The field runs it for
 /// the leader at a ledge, and seven maps import it.
@@ -175,19 +175,19 @@ void FieldEffect_ConfigureLinkedObjectFar(s32 id, s32 flags);
 void ObjectVisual_CopyAttributesFar(u32 targetId, u32 sourceId);
 /// Makes the camera follow an object event; unless flag is set it jumps there
 /// at once and the map is redrawn around it.
-void Camera_FollowObjectEventFar(s32 id, s32 flag);
+void FieldCamera_FollowObjectEventFar(s32 id, s32 flag);
 /// Sets the camera's top speed and acceleration, in 16.16 pixels per frame.
-void Camera_SetSpeedParametersFar(s32 first, s32 second);
+void FieldCamera_SetSpeedParametersFar(s32 first, s32 second);
 /// Sends the camera to a point (-1 keeps an axis), kept inside the map so the
 /// screen never shows past its edge; with use_setter 0 it jumps there.
-void Camera_MoveWithinMapBoundsFar(s32 requested_x, s32 requested_y,
-                                   s32 requested_z, s32 use_setter);
+void FieldCamera_MoveWithinMapBoundsFar(s32 requested_x, s32 requested_y,
+                                        s32 requested_z, s32 use_setter);
 /// Waits, at most 600 frames, for the camera to arrive, then 2 frames more.
-void Camera_WaitForArrivalFar(void);
+void FieldCamera_WaitForArrivalFar(void);
 /// Moves the camera to an object event's position, kept inside the map.
 void ObjectEvent_PlaceCurrentWithinCameraBoundsFar(s32 arg0, s32 arg1);
 /// Returns the camera object, the script's view centre.
-struct ObjectEvent *Camera_GetScriptObjectFar(void);
+struct ObjectEvent *FieldCamera_GetScriptObjectFar(void);
 /// Sets the map rectangle the camera keeps the screen inside.
 void MapGrid_SetViewBoundsFar(s32 minX, s32 minY, s32 maxX, s32 maxY);
 /// Makes the script leave for a warp destination of a map; the title, lobby and
@@ -234,24 +234,24 @@ s32 Field_ClimbUpFar(void);
 void Leader_StopMovingFar(void);
 /// Puts 32 semi-transparent ground particles under the leader and queues
 /// SE_170.
-void FieldEffect_StartGroundParticlesFar(void);
+void Weather_StartRainFar(void);
 /// Starts the storm's lightning, bursts that repeat every 600 frames over
 /// Vale's storm maps.
-void FieldEffect_StartLightningFar(void);
+void Weather_StartLightningFar(void);
 /// Stops the lightning from flashing again.
-void FieldEffect_StopLightningFar(void);
+void Weather_StopLightningFar(void);
 /// One last burst of lightning, starting two frames from now.
-void FieldEffect_LastLightningFar(void);
+void Weather_LastLightningFar(void);
 /// Restarts the lightning, the next burst flashing 118 frames from now.
-void FieldEffect_ResumeLightningFar(void);
+void Weather_ResumeLightningFar(void);
 /// One burst of three palette flashes from one colour mode to another, as
 /// Vale's eruption shows.
-void FieldEffect_StartBufferBlendFar(s32 from, s32 to);
+void Weather_StartLightningFlashFar(s32 from, s32 to);
 /// Loads the sparkles' tiles and clears all 32.
 void FieldEffect_InitializeSparklesFar(void);
 /// Starts a window transition in a mode at value 0, for the caller to move;
 /// Reveal and three maps use it.
-void DisplayTransition_InitializeBattleEffectStateFar(s32 mode);
+void ScreenTransition_InitializeBattleEffectStateFar(s32 mode);
 /// Sets the colours the colour buffer moves toward.
 void ColorBuffer_SetTargetFar(s32 mode, s32 half);
 /// Sets the colours the colour buffer shows now.
@@ -286,10 +286,10 @@ void ItemDisplay_ShowPictureFar(void *object, s32 flags);
 void FieldEffect_StartEffectObject22Far(s32 value, s32 flags);
 /// Moves a marker's object event to (x, z) on the ground, in 16.16 pixels; -1
 /// keeps the centre of its cell on that axis.
-void Marker_SetObjectEventPositionFar(s32 id, s32 x, s32 y);
+void TreasureSpot_SetObjectEventPositionFar(s32 id, s32 x, s32 y);
 /// Moves a leader standing within 16 pixels of a marker cell's centre 20
 /// pixels away from it.
-void Marker_MoveLeaderAwayFar(void);
+void TreasureSpot_MoveLeaderAwayFar(void);
 /// On the world map, freezes the perspective view and the camera while an
 /// script or menu runs; elsewhere it does nothing.
 void WorldMap_StartScriptFar(void);
@@ -297,7 +297,7 @@ void WorldMap_StartScriptFar(void);
 void WorldMap_EndScriptFar(void);
 /// Returns the object event in a slot, or NULL; map overlays look object events
 /// up through it.
-void *ObjectTable_GetFar(u32 index);
+void *ObjectEvent_GetByLocalIdFar(u32 index);
 /// Starts the fade overlay on an object (the leader when NULL), which lasts
 /// until the next map change.
 void FieldEffect_StartFadeOverlayFar(void *object);
@@ -317,7 +317,7 @@ void FieldEffect_StopCasterHookFar(void);
 void FieldEffect_EndFar(void);
 /// Puts the caster in its casting pose, with the flash, sound and ability
 /// name the effect calls for.
-void EventObject_InitializeFar(void);
+void FieldEffect_StartCastFar(void);
 /// Clears the field's busy flag and, while Reveal is active, ends it.
 void Field_EndBusyAndRevealFar(void);
 /// Starts Mind Read's wave of shifting colour, with x the caster and y the
@@ -332,7 +332,7 @@ void Ui_SetBank15PaletteAndClearRenderModeFar(void);
 s32 FieldEffect_HasMatchingEvent5Far(s32 group);
 /// Returns whether the map has an event for this item and what the leader
 /// faces; the item menu then closes and the item is used on the field.
-u32 FieldEffect_HasTriggerFar(u16 item);
+u32 Map_HasPsynergyEventFar(u16 item);
 /// Makes a sprite share another's VRAM block, so a chain of afterimages draws
 /// from one copy. Returns the sprite whose block is shared from now on, or
 /// NULL for no source.
@@ -353,30 +353,32 @@ void Map_PlayMusicFar(void);
 /// slot plays its element's capture effect (none for slot -1).
 void Djinn_JoinPartyFar(s32 slot, s32 element, s32 djinn);
 /// Updates one effect slot for a frame: its age, callback, motion and sprite.
-void EffectSlot_UpdateFar(struct EffectSlot *effect);
+void FieldEffectSprite_UpdateFar(struct FieldEffectSprite *effect);
 /// Returns 1 while an effect slot is still on its way to its target, 0 once
 /// it arrives or when it never stops.
-u32 EffectSlot_HasPendingTargetFar(struct EffectSlot *effect);
+u32 FieldEffectSprite_HasPendingTargetFar(struct FieldEffectSprite *effect);
 /// Places an effect slot at (x, z), at rest with no target.
-void EffectSlot_SetPositionFar(struct EffectSlot *effect, s32 x, s32 z);
+void FieldEffectSprite_SetPositionFar(struct FieldEffectSprite *effect, s32 x,
+                                      s32 z);
 /// Sets the animation of an effect slot's sprite.
-void EffectSlot_SetObjectModeFar(struct EffectSlot *effect, s32 mode);
+void FieldEffectSprite_SetObjectModeFar(struct FieldEffectSprite *effect,
+                                        s32 mode);
 /// Gives an effect slot its per-frame callback, starting at state 0.
-void EffectSlot_SetCallbackFar(struct EffectSlot *effect,
-                               EffectCallback callback);
+void FieldEffectSprite_SetCallbackFar(struct FieldEffectSprite *effect,
+                                      EffectCallback callback);
 /// Fills an effect slot with a new sprite of a kind at (x, z), which the slot
 /// owns until it is cleared.
-void EffectSlot_InitializeFar(struct EffectSlot *effect, s32 kind, s32 x,
-                              s32 z);
+void FieldEffectSprite_InitializeFar(struct FieldEffectSprite *effect, s32 kind,
+                                     s32 x, s32 z);
 /// Frees an effect slot and its sprite; slot callbacks end with it on their
 /// own slot.
-void FieldEffect_ClearOwnedSlotFar(struct EffectSlot *effect);
+void FieldEffect_ClearOwnedSlotFar(struct FieldEffectSprite *effect);
 /// Converts a world position in 16.16 pixels to screen x and y, in place,
 /// using the world map's perspective there.
 void Camera_WorldToScreenFar(struct EffectVector *position);
 /// Returns the blip sound that voices a sprite's messages, or 0 for none or
 /// with the Speech option off.
-s32 FieldEffect_GetResourceIdFar(u32 id);
+s32 Speaker_GetVoiceFar(u32 id);
 /// Clears each button shortcut whose Psynergy the party can no longer cast.
 void FieldScript_ClearInvalidPackedValuesFar(void);
 /// Allocates and clears the effect slots and starts their update; the Djinn
@@ -386,7 +388,8 @@ void FieldEffect_InitializeSlotsFar(void);
 void FieldEffect_ClearActiveSlotsAndScheduleUpdatesFar(void);
 /// Places an object event on the leader and walks it out to an offset, then
 /// gives it an action.
-void Motion_LaunchFromFocusedObjectFar(u32 arg0, s32 arg1, s32 arg2, s32 arg3);
+void ObjectMotion_LaunchFromFocusedObjectFar(u32 arg0, s32 arg1, s32 arg2,
+                                             s32 arg3);
 /// Walks an object event a given offset in pixels from where it stands.
 void ObjectMotion_OffsetPositionAndResetFar(u32 objectId, s32 x_offset,
                                             s32 z_offset);
@@ -400,12 +403,12 @@ void ObjectEvent_LinkObjectAndSetCallbackFar(u32 objectId,
 /// Pauses an object, keeping its update and pose in gGameState for later;
 /// Halt and the Colosso operators use it.
 void FieldEffect_PauseObjectFar(s32 id);
-/// Captures up to 32 object events into gObjectSnapshots, for
-/// ObjectTable_Restore (ObjectTable_Snapshot); the save menu calls it.
+/// Captures up to 32 object events into gObjectEventSnapshot, for
+/// ObjectEvent_Restore (ObjectEvent_Snapshot); the save menu calls it.
 void Save_CaptureObjectEventsFar(void);
-/// Puts back the object events ObjectTable_Snapshot saved and moves the camera
+/// Puts back the object events ObjectEvent_Snapshot saved and moves the camera
 /// to the leader's height.
-void ObjectTable_RestoreFar(void);
+void ObjectEvent_RestoreFar(void);
 /// Starts a zoom to a 16.16 factor over the given frames, on the world map.
 void FieldEffect_ScheduleRatioTransitionFar(s32 zoom, s32 frames);
 /// Waits, at most 300 frames, for the world map's zoom to end.
@@ -415,12 +418,12 @@ void FieldScript_WaitForZoomTransitionFar(void);
 s32 MapSec_GetNameIndexFar(s32 mapId, s32 warpDest);
 /// Starts an object event's action script: an enum MovementType, or the script
 /// itself.
-void ObjectMotion_SetActionCallbackFar(struct Object *object, s32 kind);
+void ObjectEvent_SetMovementTypeFar(struct Object *object, s32 kind);
 /// Plays SE_STOP_SLOT5 and then sound_id (AUDIO_CUE_FADE_SLOT3 for -1), and
 /// remembers sound_id to play again later.
-void FieldEffect_SetQueuedSoundAndPlayFar(s32 sound_id);
-/// Plays the sound FieldEffect_SetQueuedSoundAndPlay remembered, if any.
-void FieldEffect_PlayQueuedSoundFar(void);
+void Map_QueueMusicFar(s32 sound_id);
+/// Plays the sound Map_QueueMusic remembered, if any.
+void Map_PlayQueuedMusicFar(void);
 /// Returns a character's sprite for a save file's summary, which records only
 /// whether it was childhood.
 s32 Party_RemapCharacterIdIfEnabledFar(s32 arg0, s32 arg1);

@@ -229,7 +229,7 @@ These turn up all over the game.
   behaviour, marked `// UB:`, with the declared access behind `UBFIX`:
   - a pointer read or stored as an integer: `*(s32 *)&metadata->frames`,
     which keeps the zero load ahead of it (`Animation_AllocateLayer`); the
-    `u32` views of `gMapGridWork[0]` (`MapObjectEvent_MoveAndRedraw`) and of
+    `u32` views of `gMapGridWork[0]` (`ObjectEvent_MoveAndRedraw`) and of
     `gFieldWork` (`TolbiShipDeck_SightLand`, where the word may alias the
     halfword facing stores before it and so stays after them); the update
     hooks `AltmillerCave_Initialize` stores as `s32` (as `->update`, one store
@@ -304,7 +304,7 @@ interrupts and calls into RAM.
 The field engine's spellings are about its map state and a few of its loops.
 
 - `(gridState->anim + channelIndex)->` stands for `gridState->anim[channelIndex].`
-  (`TileAnimation_Update`).
+  (`TilesetAnim_Update`).
 - `(u16)~(...)` makes a halfword mask (`MapGrid_SetShownLayers`).
 - Three loops are written with `goto` (`Sprite_ComposeAnimationFrame`,
   `AnimationObject_SelectAnimation`), and the comments beside them give the
@@ -337,7 +337,7 @@ each keeps its spelling until it is.
 - The field blend work is `gLightningWork[0]`,
   `HEAP_SLOT_BLOCK(HEAP_SLOT_LIGHTNING)` (`ValeInteriorsInn_Initialize`), or
   `AllocHeapSlotEwram(HEAP_SLOT_LIGHTNING, sizeof(struct
-  FieldBlendWork))`, which returns the existing block.
+  LightningWork))`, which returns the existing block.
 - The colour buffer is `gPaletteFadeWork`,
   `HEAP_SLOT_BLOCK(HEAP_SLOT_PALETTE_FADE)` (`TretPalette_UpdateMapTint`,
   `SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue`), or
@@ -345,7 +345,7 @@ each keeps its spelling until it is.
   (`FieldEffect_FadeToEffectColor`). It's also reached from a
   neighbouring slot, as in Menus below: as
   `gLightningWork[HEAP_SLOT_PALETTE_FADE - HEAP_SLOT_LIGHTNING]`
-  (`FieldEffect_UpdateLightning`), or as
+  (`Weather_UpdateLightning`), or as
   `workCells[HEAP_SLOT_PALETTE_FADE - HEAP_SLOT_FIELD]` through
   `(u32 *)&gFieldWork` (`Shop_SaveAndTintFieldPalette`), which is undefined
   behaviour with `gPaletteFadeWork` behind `UBFIX`.
@@ -404,8 +404,8 @@ come down to how a struct's member is addressed.
   array member, `((struct DirectionSteps *)gVaultCave_DirectionSteps)->xz[heading]`,
   because an `s32` pointer to the table loses the original's loads
   (`VaultCave_PushPillarAhead`); `UBFIX` builds the word from its halfwords.
-- `gStagedObjectEvent_DirectionSteps`, `gStagedObjectEvent_FootprintKinds` and
-  `gStagedObjectEvent_FootprintBounds`
+- `gPushedObject_DirectionSteps`, `gPushedObject_FootprintKinds` and
+  `gPushedObject_FootprintBounds`
   ([`map/lunpa_fortress.c`](map/lunpa_fortress.c)) are put in read-only
   data with `__attribute__((section(".rodata")))` instead of `const`. Their
   shared externs in `field.h` and `common/object_staged_object_event.h` lack `const`,

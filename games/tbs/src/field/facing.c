@@ -76,7 +76,7 @@ const u8 gSpriteDissolve_PixelOrder[64] = {
 const u16 gSpriteDissolve_PixelOrderTail = 0x01ff;
 
 /// The fixed camera's view matrix (Q16): identity with a -0.8 shear of y by x.
-/// ObjectSystem_UpdateCameraFixed applies it while battle commands are chosen.
+/// ObjectSystem_ProjectSprites applies it while battle commands are chosen.
 const s32 gCamera_FixedViewMatrix[12] = {
     0x10000, 0, 0,
     -0xcccc, 0x10000, 0,
@@ -95,7 +95,7 @@ const s32 gScriptObject_CycleTable[32] = {
 };
 
 /// The idle script an object returns to when its own one ends: a lone SC_END,
-/// which reloads it. ActionScript_End (SC_END) points an object here.
+/// which reloads it. ObjectScript_End (SC_END) points an object here.
 const s32 gScript_MainScript[1] = {
     SC_END,
 };

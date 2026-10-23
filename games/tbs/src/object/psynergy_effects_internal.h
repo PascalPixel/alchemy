@@ -113,7 +113,7 @@ struct ObjectVectorView {
   u16 angle;                    ///< ObjectEvent.facing, 1/65536 turns
   struct EffectVector position; ///< 16.16 fixed-point pixels
   u8 pad1[14];
-  u8 kind; ///< ObjectEvent.terrainId; not read through this view
+  u8 kind; ///< ObjectEvent.layer; not read through this view
   u8 pad2[0x2d];
   struct AnimationObject *sprite; ///< ObjectEvent.sprite
 };
@@ -134,14 +134,14 @@ FieldEffect_MoveAfterimageHalfway(union FieldObject *fieldObject) {
 /// FieldEffect_UpdateAllEffectSlots (setup.c) and FieldEffect_UpdateAllSlots
 /// (djinni.c) run it once a frame.
 static __inline__ void FieldEffect_UpdateEffectSlots(void) {
-  struct EffectSlot *effect;
+  struct FieldEffectSprite *effect;
   s32 remainingSlots;
 
-  effect = ((struct FieldEffectWork *)gFieldEffectWork)->effects;
+  effect = ((struct FieldEffectWork *)gFieldEffectWork)->sprites;
   remainingSlots = PSYNERGY_EFFECT_SLOT_COUNT - 1;
   do {
     remainingSlots -= 1;
-    EffectSlot_Update(effect);
+    FieldEffectSprite_Update(effect);
     effect++;
   } while (remainingSlots >= 0);
 }
@@ -160,7 +160,7 @@ struct DescendingOrbitObject {
   s32 x; ///< 16.16 fixed-point pixels
   s32 y; ///< 16.16 fixed-point pixels
   s32 z; ///< 16.16 fixed-point pixels
-  /// ObjectEvent's terrainHeight to riseEnabled; not named through this view.
+  /// ObjectEvent's groundHeight to riseEnabled; not named through this view.
   u8 terrainToRise[80];
   u16 timer; ///< ObjectEvent.timer: frames left of the spiral, 100 at the start
   s16 angle; ///< ObjectEvent.work: its start on the circle, 1/65536 turns
@@ -180,14 +180,14 @@ struct CaptureObject {
   s32 x;     ///< 16.16 fixed-point pixels
   s32 y;     ///< 16.16 fixed-point pixels
   s32 z;     ///< 16.16 fixed-point pixels
-  s32 baseY; ///< terrainHeight: a spark's ground, set to where it starts
+  s32 baseY; ///< groundHeight: a spark's ground, set to where it starts
   s32 scaleX;
   s32 scaleY;
-  /// ObjectEvent's radius, terrainId, priorityFlags and velocityX; not named
+  /// ObjectEvent's radius, layer, priorityFlags and velocityX; not named
   /// through this view.
   ///@{
   u16 radius;
-  u8 terrainId;
+  u8 layer;
   u8 priorityFlags;
   s32 velocityX;
   ///@}
@@ -315,8 +315,8 @@ static inline void FieldEffect_InitializeFallingFragment(
     for (n = 0; n < 2; n++) {                                                  \
       obj = *walk++;                                                           \
       if (obj != 0)                                                            \
-        Motion_SetTargetPositionFromMagnitudeAngle((struct Object *)obj,       \
-                                                   0x180000, obj->angle);      \
+        ObjectMotion_SetTargetPositionFromMagnitudeAngle(                      \
+            (struct Object *)obj, 0x180000, obj->angle);                       \
     }                                                                          \
                                                                                \
     Object_WaitForMoveFar(pair[0]);                                            \
@@ -334,8 +334,8 @@ static inline void FieldEffect_InitializeFallingFragment(
         obj->acceleration = 0x20000;                                           \
         obj->motionFlags = 0;                                                  \
         dist = Random16() * 24 + 0x80000;                                      \
-        Motion_SetTargetPositionFromMagnitudeAngle((struct Object *)obj, dist, \
-                                                   Random16());                \
+        ObjectMotion_SetTargetPositionFromMagnitudeAngle((struct Object *)obj, \
+                                                         dist, Random16());    \
       }                                                                        \
     }                                                                          \
                                                                                \
@@ -356,16 +356,16 @@ struct SparkObject {
   u16 scriptCursor;
   u16 facing;
   ///@}
-  s32 x;             ///< 16.16 fixed-point pixels
-  s32 y;             ///< 16.16 fixed-point pixels
-  s32 z;             ///< 16.16 fixed-point pixels
-  s32 terrainHeight; ///< ObjectEvent's; not named through this view
+  s32 x;            ///< 16.16 fixed-point pixels
+  s32 y;            ///< 16.16 fixed-point pixels
+  s32 z;            ///< 16.16 fixed-point pixels
+  s32 groundHeight; ///< ObjectEvent's; not named through this view
   s32 scaleX;
   s32 scaleY;
   /// ObjectEvent's radius to acceleration; not named through this view.
   ///@{
   u16 radius;
-  u8 terrainId;
+  u8 layer;
   u8 priorityFlags;
   s32 velocityX;
   s32 velocityY;
@@ -420,7 +420,7 @@ struct SparkObject {
 /// The states of an effect slot particle that flies out and back: Halt's,
 /// Force's and Move's (FieldEffect_UpdateRadialCamera,
 /// FieldEffect_UpdateRadialBurst, FieldEffect_UpdateOrbitAndReturn).
-/// EffectSlot_SetCallback starts it at the first; each takes the next.
+/// FieldEffectSprite_SetCallback starts it at the first; each takes the next.
 enum OutAndBackState {
   OUT_AND_BACK_AIM_OUT = 0,    ///< picks the point it flies out to
   OUT_AND_BACK_FLYING_OUT = 1, ///< waits to arrive there

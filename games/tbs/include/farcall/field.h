@@ -98,7 +98,8 @@ void MapGrid_CenterOnFollowedPointFar(void);
 /// Loads and draws the 2x2 world map tiles around the player in both layers.
 void WorldMap_UpdateCurrentTileBlockFar(void);
 /// Loads the world map's palette and tiles for the area at (x, z), taking the
-/// snowfield set where the ground there is WORLD_MAP_REGION_SNOWFIELD.
+/// snowfield set where the ground there is
+/// WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD.
 void WorldMap_LoadGraphicsFar(s32 x, s32 z);
 /// Leaves an object standing still on the idle script, a lone SC_END.
 void ObjectDispatch_StartIdleFar(struct DispatchObject *object);
@@ -127,14 +128,14 @@ void MapGrid_PlayMetatileCopySequenceFar(u16 *command, s32 destination_x,
 void MapGrid_CopyMetatileIndicesRectFar(s32 sourceX, s32 sourceY, u32 dst_x,
                                         u32 dst_y, u32 width, u32 height);
 /// Restarts tile animation channel `no` by clearing its paused byte.
-void TileAnimation_ResumeChannelFar(u32 no);
+void TilesetAnim_ResumeFar(u32 no);
 /// Pauses tile animation channel `no` by setting its paused byte.
-void TileAnimation_PauseChannelFar(u32 no);
-/// Lets the map's blend script run again after DisplayBlend_SuspendScriptFar.
-void DisplayBlend_ResumeScriptFar(void);
+void TilesetAnim_PauseFar(u32 no);
+/// Lets the map's blend script run again after BlendScript_SuspendFar.
+void BlendScript_ResumeFar(void);
 /// Stops the map's blend script, as the lighthouse maps and Vale's Babi
 /// scene do while they set the blend themselves.
-void DisplayBlend_SuspendScriptFar(void);
+void BlendScript_SuspendFar(void);
 /// Returns the ground height of `layer` at (x, y) in 16.16 pixels, where y is
 /// the map's down axis (an object's z).
 s32 MapGrid_GetTerrainHeightFar(s32 layer, s32 x, s32 y);
@@ -157,9 +158,9 @@ void MapGrid_CopyCellIndexRectFar(s32 sourceX, s32 sourceY, s32 width,
 /// (px / 16, py / 16), drawing it at once when it's next to the view.
 void WorldMap_SetWindowCellTileFar(s32 x, s32 y, s32 px, s32 py);
 /// Returns whether an object can step to `position`, as an enum
-/// MapGridStepCheck: a wall there, or ground too high or too low for one step.
-s32 MapGrid_CheckObjectStepFar(struct Object *object,
-                               struct FieldPosition *position);
+/// Collision: a wall there, or ground too high or too low for one step.
+s32 MapGrid_CheckCollisionFar(struct Object *object,
+                              struct FieldPosition *position);
 /// Sets the flags of a one-sprite object's sprite (bit 0 draws its shadow).
 void ObjectDispatch_SetSingleChildFlagsFar(struct DispatchObject *object,
                                            u32 flags);
@@ -200,7 +201,7 @@ void Animation_ApplyChildValuesFar(struct DispatchObject *object, u32 val);
 void ObjectGroup_SetChildValueUnlessFifteenFar(void *raw_parent, u32 value);
 /// Returns -1 when an object at `values` would overlap a solid object
 /// (OBJ_EVENT_SOLID), each radius less 2 pixels, else 0.
-s32 ScriptObject_CheckOverlapFar(struct ScriptObjectEntry *object, s32 *values);
+s32 ObjectScript_CheckOverlapFar(struct ScriptObjectEntry *object, s32 *values);
 /// Sets which of BG1 to BG3 the map shows, in bits 9 to 11 of its display
 /// flags as REG_DISPCNT lays them out.
 void MapGrid_SetShownLayersFar(u32 v);
@@ -209,12 +210,12 @@ void MapGrid_SetShownLayersFar(u32 v);
 s32 ResourceMetadata_SumCommandLengthsFar(s32 id, u32 no, s32 cnt);
 /// Returns the world map's terrain behaviour at `position` and stores the
 /// block's terrain kind in `terrain_kind`, for the world map's encounters.
-s32 GetWorldMapTerrainBehaviorFar(struct WorldPosition *position,
-                                  s32 *terrain_kind);
+s32 WorldMap_GetBattleEnvironmentFar(struct WorldPosition *position,
+                                     s32 *terrain_kind);
 /// Decodes the frames of animation `number` into resource slot `slot`'s
 /// `buffer`, remapping its colours for `variant` 1 to 5.
 s32 ResourceSlot_LoadFar(u32 slot, u32 *buffer, s32 number, u32 variant);
-/// Writes `collisionCode` into the cell of `layer` under (x, y), given in 16.16
+/// Writes `behavior` into the cell of `layer` under (x, y), given in 16.16
 /// pixels; before the map is set up it does nothing.
 void MapGrid_SetMetatileBehaviorAtFar(u32 layer, s32 x, s32 y,
                                       u32 collisionCode);
@@ -227,15 +228,15 @@ void AnimationObject_SetActiveTimerStepsFar(struct AnimationObject *group,
 void Runtime_RemapBytesByTableFar(u8 *buf, s32 cnt);
 /// Pauses the tile animations while a menu is open, unless the world map's
 /// still view is shown.
-void TileAnimation_SuspendFar(void);
+void TilesetAnim_SuspendAllFar(void);
 /// Restarts the tile animations when a menu closes, unless the world map's
 /// still view is shown.
-void TileAnimation_ResumeFar(void);
+void TilesetAnim_ResumeAllFar(void);
 /// Returns the first solid object an object at `values` would overlap, as
-/// ScriptObject_CheckOverlapFar tests, or NULL; the Move effect uses it to see
+/// ObjectScript_CheckOverlapFar tests, or NULL; the Move effect uses it to see
 /// what stands in the way of the stone pillar it pushes.
 struct ScriptObjectEntry *
-ScriptObject_FindOverlappingEntryFar(struct ScriptObjectEntry *object,
+ObjectScript_FindOverlappingEntryFar(struct ScriptObjectEntry *object,
                                      s32 *values);
 /// Returns the terrain kind (the low four bits of the first collision byte) of
 /// layer `index`'s cell under (x, y), given in 16.16 pixels.

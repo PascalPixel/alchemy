@@ -98,8 +98,8 @@
 #include "ability_ids.h"
 #include "sprite_ids.h"
 
-/// The speakers' definitions (fxdata.c), read by FieldEffect_FindDefinition.
-extern struct FieldEffectDefinition gFieldEffect_DefinitionTable[];
+/// The speakers' definitions (fxdata.c), read by Speaker_FindDefinition.
+extern struct SpeakerDefinition gSpeakerDefinitions[];
 
 /// The warp request whose destination is already in gGameState.mapId and
 /// .warpDest, so that Map_TakeWarp leaves them as they are. Random battles,

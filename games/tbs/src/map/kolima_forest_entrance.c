@@ -123,7 +123,7 @@ extern s32 gKolimaForestEntrance_SparkleSoundOn;
 /// The end of a field's growing: if a sparkle has burst on a field, the field
 /// takes its next pose.
 static s32 KolimaForestEntrance_FlashHitPsynergyFields(
-    struct ScriptInterpreter *interpreter) {
+    struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   s32 *pending = &gKolimaForestEntrance_PsynergyFieldHit;
   if (*pending) {
@@ -137,7 +137,7 @@ static s32 KolimaForestEntrance_FlashHitPsynergyFields(
 /// shows its bright frame (7) while the timer is past 1000, its dim one (10)
 /// before; at 1200 the timer starts over.
 static s32 KolimaForestEntrance_TwinkleGroundSparkle(
-    struct ScriptInterpreter *interpreter) {
+    struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   s16 *counter = &objectEvent->timer;
   *counter = (*counter + (((u32)Engine_RandomNext() * 100) >> 16));
@@ -178,11 +178,11 @@ KolimaForestEntrance_GetObjectEventTemplates(void) {
 /// column 20), tips over with a splash and floats in the water; its cells
 /// become ground the party can cross (sets FLAG_MAP_TEMP_00).
 static void KolimaForestEntrance_PushLog(void) {
-  struct StagedObjectEventProbe res;
+  struct PushedObjectProbe res;
   Engine_ScriptStart();
 
-  if (StagedObjectEvent_FindClearPosition(&res)) {
-    MapObjectEvent_MoveAndRedraw(res);
+  if (PushedObject_FindClearPosition(&res)) {
+    ObjectEvent_MoveAndRedraw(res);
     if (res.objectEventSlot == LOCALID_RIVER_LOG &&
         (res.position.x >> 20) == 20) {
       struct ObjectEvent *objectEvent;
@@ -196,7 +196,7 @@ static void KolimaForestEntrance_PushLog(void) {
       ObjectEvent_GetById(LOCALID_RIVER_LOG)->priorityFlags =
           OBJ_EVENT_PRIORITY_UNDERFOOT;
       MapGrid_CopyCellAttributes(0, 17, 2, 4, 19, 17);
-      StagedObjectEvent_FillGridAttributeRectangle(2, 20, 17, 1, 4, 0);
+      PushedObject_FillGridAttributeRectangle(2, 20, 17, 1, 4, 0);
       Engine_GameFlagSet(FLAG_MAP_TEMP_00);
       objectEvent = ObjectEvent_GetById(LOCALID_RIVER_LOG);
       Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
@@ -223,7 +223,7 @@ s32 KolimaForestEntrance_Initialize(void) {
     ObjectEvent_GetById(LOCALID_RIVER_LOG)->priorityFlags =
         OBJ_EVENT_PRIORITY_UNDERFOOT;
     MapGrid_CopyCellAttributes(0, 17, 2, 4, 19, 17);
-    StagedObjectEvent_FillGridAttributeRectangle(2, 20, 17, 1, 4, 0);
+    PushedObject_FillGridAttributeRectangle(2, 20, 17, 1, 4, 0);
     Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_RIVER_LOG), 0);
   }
   Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG);
@@ -265,9 +265,9 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   const s32 *shrinkFieldAction;
 
   Engine_ScriptStart();
-  Camera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
-  Camera_MoveTo(PIXELS(246), -1, PIXELS(604), 0);
+  FieldCamera_MoveTo(PIXELS(246), -1, PIXELS(604), 0);
   party = &gKolimaForestEntrance_MiaInParty;
   *party = GameFlag_IsSet(FLAG_IN_PARTY(MIA));
   record = ObjectEvent_GetById(LOCALID_LEADER_PSYNERGY_FIELD);
@@ -1162,7 +1162,7 @@ static void KolimaForestEntrance_SpawnCurseSparkle(void) {
 /// area, which differs with Mia) bursts with a sound, and the Psynergy fields
 /// are told.
 static s32 KolimaForestEntrance_BurstOnPsynergyField(
-    struct ScriptInterpreter *interpreter) {
+    struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *sparkle = (struct ObjectEvent *)interpreter;
   s32 x;
 
@@ -1250,7 +1250,7 @@ static void KolimaForestEntrance_FlickerPsynergyFields(void) {
 /// Pixel step by direction: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
-s32 gStagedObjectEvent_DirectionSteps[] = {
+s32 gPushedObject_DirectionSteps[] = {
     DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),
@@ -1260,11 +1260,11 @@ s32 gStagedObjectEvent_DirectionSteps[] = {
 };
 
 // clang-format off
-u32 gStagedObjectEvent_FootprintKinds[] = {
+u32 gPushedObject_FootprintKinds[] = {
     207, 205, 228, 229, 298, 297,
 };
 
-s32 gStagedObjectEvent_FootprintBounds[] = {
+s32 gPushedObject_FootprintBounds[] = {
     -32, -8, 32, 8,
     -8, -32, 8, 32,
     -32, -16, 32, 0,
@@ -1376,37 +1376,37 @@ u32 gKolimaForestEntrance_Warps[] = {
 /// four Psynergy fields; and the five ground sparkles.
 // clang-format off
 struct ObjectEventTemplate gKolimaForestEntrance_ObjectEventTemplates[] = {
-    { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
-    { IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
-    { MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+    { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
+    { IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
+    { MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(232), 0, PIXELS(128), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(232), 0, PIXELS(128), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(208), 0, PIXELS(296), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(208), 0, PIXELS(296), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(360), 0, PIXELS(304), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_TRET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { SPRITE_LAUREL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { SPRITE_PSYNERGY_FIELD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { SPRITE_PSYNERGY_FIELD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY,
+        PIXELS(360), 0, PIXELS(304), FACING_SOUTH, TALK_FACING_KEEP, 0 },
+    { SPRITE_TRET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
+    { SPRITE_LAUREL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
+    { SPRITE_PSYNERGY_FIELD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
+    { SPRITE_PSYNERGY_FIELD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY,
         OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_PSYNERGY_FIELD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY,
+    { SPRITE_PSYNERGY_FIELD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY,
         OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_PSYNERGY_FIELD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY,
-        OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_SPARKLE, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(232), 0, PIXELS(655), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { SPRITE_SPARKLE, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(166), 0, PIXELS(576), FACING_SOUTH, TALK_FACE_PARTY,
+    { SPRITE_PSYNERGY_FIELD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY,
         OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SPARKLE, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(189), 0, PIXELS(532), FACING_SOUTH, TALK_FACE_PARTY,
+        PIXELS(232), 0, PIXELS(655), FACING_SOUTH, TALK_FACING_PARTY, 0 },
+    { SPRITE_SPARKLE, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
+        PIXELS(166), 0, PIXELS(576), FACING_SOUTH, TALK_FACING_PARTY,
         OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SPARKLE, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(288), 0, PIXELS(570), FACING_SOUTH, TALK_FACE_PARTY,
+        PIXELS(189), 0, PIXELS(532), FACING_SOUTH, TALK_FACING_PARTY,
         OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SPARKLE, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(331), 0, PIXELS(659), FACING_SOUTH, TALK_FACE_PARTY,
+        PIXELS(288), 0, PIXELS(570), FACING_SOUTH, TALK_FACING_PARTY,
+        OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+    { SPRITE_SPARKLE, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
+        PIXELS(331), 0, PIXELS(659), FACING_SOUTH, TALK_FACING_PARTY,
         OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { MAP_TABLE_END },
 };

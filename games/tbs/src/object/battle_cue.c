@@ -2,7 +2,7 @@
 #include "types.h"
 
 /// Battle music: each song as 0x8000 | song, followed by the encounters that
-/// use it as (zone << 4) + slot, ended by 0 (FieldEffect_SelectBattleCue).
+/// use it as (zone << 4) + slot, ended by 0 (Encounter_SelectBattleMusic).
 /// The songs are MUS_FUSION_DRAGON_BATTLE, MUS_053, MUS_BOSS_BATTLE,
 /// MUS_COLOSSO_BATTLE, MUS_051 and MUS_BATTLE. MUS_BATTLE is listed last with
 /// no encounters: a key the list does not hold, such as the Djinni battles' 0,

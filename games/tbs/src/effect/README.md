@@ -1028,7 +1028,7 @@ reached:
   [`casting_impact.c`](parts/casting_impact.c)): a row with
   `STAGING_BY_ID_RANGE` and a kind from 100 to 135, the enumerator's value
   being the kind less 100;
-- `FIELD_KIND_` (`enum FieldKind`,
+- `FIELD_PSYNERGY_` (`enum FieldPsynergy`,
   [`psynergy_effects.h`](../../include/unit/object/psynergy_effects.h)): field
   Psynergy, matched against the `type` column of `actions.tsv`, the form the
   [field Psynergy effects](../object/README.md) use.

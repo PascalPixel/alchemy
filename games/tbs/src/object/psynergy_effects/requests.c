@@ -17,15 +17,15 @@ void Field_RequestBattleFromEncounterTable(s32 zoneNo, s32 slotNo) {
   s32 slot = slotNo;
   struct FieldWork *work = (struct FieldWork *)gFieldWork;
 
-  work->battle = Encounter_GetEnemyGroupAtSlot(zone, slot);
+  work->battle = Encounter_GetFormationAtSlot(zone, slot);
   if (zone == ENCOUNTER_ZONE_SCRIPTED && slot == 0)
     gGameState.special = (s32)&ResourceId_VenusLighthouseAerieStormBackdrop;
   if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
-    struct Object *leader = ObjectTable_Get(gGameState.selectedLocalId);
+    struct Object *leader = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
 
     Encounter_ResolveWorldMapZoneAndBackdrop(&leader->x);
   }
-  FieldEffect_SelectBattleCue(zone, slot);
+  Encounter_SelectBattleMusic(zone, slot);
 }
 
 /// Sets up the battle with Djinni number `no`. The low 8 bits of flag are the
@@ -52,15 +52,15 @@ void Field_RequestDjinnBattle(s32 flag, s32 no) {
   // the Djinni back 32 pixels north of the leader, not at its template's
   // position.
   state->pendingDjinnEvent = (no + DJINNI_EVENT_0) | skipHop;
-  work->battle = Encounter_GetDjinnEnemyGroup(no);
+  work->battle = Encounter_GetDjinnFormation(no);
   if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
-    struct Object *leader = ObjectTable_Get(state->selectedLocalId);
+    struct Object *leader = ObjectEvent_GetByLocalId(state->leaderLocalId);
 
     Encounter_ResolveWorldMapZoneAndBackdrop(&leader->x);
   }
   // Key 0 is no listed encounter, so every Djinni battle takes the music
   // list's last song (battle_cue.c).
-  FieldEffect_SelectBattleCue(0, 0);
+  Encounter_SelectBattleMusic(0, 0);
 }
 
 /// Sets the map and warp destination that the field goes to next
@@ -92,11 +92,11 @@ void FieldScript_RequestDestination(u16 mapId, u16 warpDest) {
 }
 
 /// Plays SE_STOP_SLOT5, then soundId (AUDIO_CUE_FADE_SLOT3 for -1), and
-/// remembers soundId for FieldEffect_PlayQueuedSound in the field work's
+/// remembers soundId for Map_PlayQueuedMusic in the field work's
 /// queuedSound; -1 is remembered as none, so it plays AUDIO_CUE_FADE_SLOT3 now
 /// and nothing later. About 30 maps reach it through the far alias, and the
 /// ground particles (weather.c) queue SE_170 with it.
-void FieldEffect_SetQueuedSoundAndPlay(s32 soundId) {
+void Map_QueueMusic(s32 soundId) {
   ((struct FieldWork *)gFieldWork)->queuedSound = soundId;
   if ((s16)soundId == -1) {
     soundId = AUDIO_CUE_FADE_SLOT3;
@@ -105,10 +105,10 @@ void FieldEffect_SetQueuedSoundAndPlay(s32 soundId) {
   Sound_PlaySongFar(soundId);
 }
 
-/// Plays the sound FieldEffect_SetQueuedSoundAndPlay remembered, if any. Called
+/// Plays the sound Map_QueueMusic remembered, if any. Called
 /// by maps, by the event runner (object/events.c), by setup.c and by an
 /// object event's landing (object_event_commands.c).
-void FieldEffect_PlayQueuedSound(void) {
+void Map_PlayQueuedMusic(void) {
   s16 soundId = ((struct FieldWork *)gFieldWork)->queuedSound;
 
   if (soundId != -1)

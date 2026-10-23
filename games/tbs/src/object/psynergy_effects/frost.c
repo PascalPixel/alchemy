@@ -80,7 +80,7 @@ void FieldEffect_UpdateOrbitingParticleRight(union FieldObject *fieldObject) {
 
 /// Runs Frost cast on a target.
 ///
-/// Abilities: Frost (FIELD_KIND_FROST).
+/// Abilities: Frost (FIELD_PSYNERGY_FROST).
 ///
 /// The target is the object event in scene->child. With childMode the target is
 /// left as it is and only the particles appear.
@@ -101,7 +101,7 @@ void FieldEffect_RunFrostOnTarget(s32 unused) {
 /// 16 particles spiral in on the effect's position and make the target flash 16
 /// times; without childOption the target takes animation 2.
 ///
-/// Abilities: Frost (FIELD_KIND_FROST).
+/// Abilities: Frost (FIELD_PSYNERGY_FROST).
 ///
 /// The target's part runs only when a map event named the target
 /// (FieldEffect_DispatchRequestKind clears enabled) and no map script set
@@ -185,11 +185,10 @@ void FieldEffect_RunFrost(void) {
     }
 
     target->update = FieldEffect_UpdateOrbitingParticleMain;
-    event =
-        FieldEffect_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_EFFECT_ACTS),
-                                      FIELD_KIND_FROST, &eventTarget);
+    event = Map_FindPsynergyEvent(PSYNERGY_EVENT(PSYNERGY_PHASE_EFFECT_ACTS),
+                                  FIELD_PSYNERGY_FROST, &eventTarget);
     if (event != NULL) {
-      Field_RunEventAction(event, gGameState.selectedLocalId, eventTarget);
+      Field_RunEventAction(event, gGameState.leaderLocalId, eventTarget);
     }
     WaitFrames(20);
   }

@@ -21,7 +21,7 @@ extern s32 gIwram_Data1;
 /// The second IWRAM word the scrolling camera's setup clears; also unread.
 extern s32 gIwram_Data2;
 extern const s32 gObjectDispatch_DefaultScript[];
-extern const u8 gWorldMap_TerrainBehaviorTable[];
+extern const u8 gWorldMap_BattleEnvironments[];
 /// The size of Render_DecodeFrame, copied to HEAP_SLOT_FRAME_SCRATCH; an
 /// address equal to the size (constants.ld).
 extern u8 Render_DecodeFrameCodeSize[];
@@ -134,7 +134,7 @@ extern u32 gWorldMap_GraphicsResources[][6];
 extern const u8 gObjectMotion_WaitScript[];
 /// The sparkles' 16 by 16 tiles, packed (FieldEffect_InitializeSparkles).
 extern const u8 gFieldEffect_SparkleTiles[];
-extern const u8 gField_TileMessageOffsets[];
+extern const u8 gField_BgEventMessageOffsets[];
 /// The motes of light's 16 by 16 tiles, packed (FieldMotes_Start).
 extern const u8 gFieldEffect_MoteTiles[];
 extern s32 gFourObjectMotion_ResourceIds[];
@@ -217,28 +217,28 @@ extern u16 gVaultInteriors_StopTimer;
 extern u8 Object_UpdateAllCodeSize[];
 extern u8 gObjectGroup_BlinkChildValues[];
 // The object motion scripts: actions 1 to 7, which
-// ObjectMotion_SetActionCallback starts by number, and two turning scripts
+// ObjectEvent_SetMovementType starts by number, and two turning scripts
 // with no action number.
 /// Action 1: a lone SC_END.
-extern const u8 gObjectMotion_ActionKind1Script[];
+extern const u8 gMovementType_StandScript[];
 /// Action 2: wanders within 16 pixels of home (SC_WANDER_HOME) at half a
 /// pixel a frame.
-extern const u8 gObjectMotion_ActionKind2Script[];
+extern const u8 gMovementType_WanderScript[];
 /// Action 3: the same within 8 pixels of home.
-extern const u8 gObjectMotion_ActionKind3Script[];
+extern const u8 gMovementType_WanderNearScript[];
 /// Action 4: wanders within 6 pixels of home at 0.4 pixels a frame.
-extern const u8 gObjectMotion_ActionKind4Script[];
+extern const u8 gMovementType_WanderCloseScript[];
 /// Waits to arrive, then turns by ObjectMotion_StepAngle until it faces the
-/// kept angle (Motion_LaunchFromFocusedObject).
+/// kept angle (ObjectMotion_LaunchFromFocusedObject).
 extern u8 gObjectMotion_LaunchScript;
 /// Action 5: ObjectMotion_MoveTowardTarget every frame, forever.
-extern const u8 gObjectMotion_MoveTowardTargetScript[];
+extern const u8 gMovementType_FollowLinkedScript[];
 /// Action 7: Object_ClearChildAndCollisionFlags once, then SC_END.
-extern const u8 gObjectMotion_ResetActionScript[];
+extern const u8 gMovementType_ResetActionScript[];
 /// Turns by ObjectMotion_StepAngle until it faces the kept angle, then SC_END.
 extern const u8 gObjectMotion_StepAngleScript[];
 /// Action 6: turns toward the leader every frame, forever.
-extern const u8 gObjectMotion_TurnTowardLinkedScript[];
+extern const u8 gMovementType_FaceLeaderScript[];
 extern const u8 gObjectMotion_VariantScripts[];
 // Lamakan Desert's heat gauge (HeatGauge_Start and HeatGauge_Draw).
 /// The gauge's tiles, packed (type 01).
@@ -266,8 +266,8 @@ extern u8 Render_DecodeFrame[];
 /// The statue map's three scrolling strips, packed (Decompress_ByteLz).
 extern u8 gSolSanctumStatue_SpriteRowsGraphics[];
 /// The six large things' sprite animations, which pick their footprints in
-/// gStagedObjectEvent_FootprintBounds; each map with them defines its own.
-extern u32 gStagedObjectEvent_FootprintKinds[];
+/// gPushedObject_FootprintBounds; each map with them defines its own.
+extern u32 gPushedObject_FootprintKinds[];
 /// The tilemap row drawer, run from a copy in HEAP_SLOT_RAM_CODE_TEMP.
 extern const u8 TileMap_DrawRows[];
 /// The size of TileMap_DrawRows (decode.s).
@@ -295,7 +295,7 @@ s32 Math_Atan2(s32 dy, s32 dx);
 void Object_Destroy(struct DispatchObject *work);
 #endif
 void ObjectEventTemplate_ClipToView(struct ObjectEventTemplate *templates);
-void MapTable_Prepare(struct ObjectEventTemplate *templates);
+void ObjectEventTemplate_Prepare(struct ObjectEventTemplate *templates);
 
 // The field effects' scripts and tables (object/fxdata.c, scripts.s and
 // arcspark.s).

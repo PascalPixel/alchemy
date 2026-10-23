@@ -97,7 +97,7 @@ void FieldEffect_RunSparkEmitter(union FieldObject *fieldObject) {
 
 /// Runs FieldEffect_RunPly, then stops the caster's hook.
 ///
-/// Abilities: Ply, Ply Well, Pure Ply (FIELD_KIND_PLY).
+/// Abilities: Ply, Ply Well, Pure Ply (FIELD_PSYNERGY_PLY).
 ///
 /// This is Ply cast on a target, which FieldEffect_DispatchRequestKind calls.
 void FieldEffect_RunPlyOnTarget(s32 unused) {
@@ -108,7 +108,7 @@ void FieldEffect_RunPlyOnTarget(s32 unused) {
 /// Eight particles spiral into the centre, where one appears, sheds sparks and
 /// flies far away.
 ///
-/// Abilities: Ply, Ply Well, Pure Ply (FIELD_KIND_PLY).
+/// Abilities: Ply, Ply Well, Pure Ply (FIELD_PSYNERGY_PLY).
 ///
 /// Called by FieldEffect_Run and FieldEffect_RunPlyOnTarget; frees the
 /// particles' shared sprite resource slot at the end and runs the effect
@@ -205,8 +205,8 @@ void FieldEffect_RunPly(void) {
     target->speed = 0x50000;
     target->acceleration = 0x6666;
     target->steeringFlags = 0;
-    Motion_SetTargetPositionFromMagnitudeAngle((struct Object *)target,
-                                               0xc00000, 0xe800);
+    ObjectMotion_SetTargetPositionFromMagnitudeAngle((struct Object *)target,
+                                                     0xc00000, 0xe800);
     Object_WaitForMoveFar(target);
     ObjectDispatch_ReleaseFar((struct DispatchObject *)target);
   }

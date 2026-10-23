@@ -10,16 +10,16 @@
 
 /// The display transition state as the centre-line transition and the dissolve
 /// read it: the dissolve's tile pixels and the transition's progress.
-struct DisplayTransitionFrame {
-  u16 pages[2][322]; ///< DisplayTransitionState's; not named here
-  /// DisplayTransitionState's solidTile, as 4-bit pixels two a byte: the
+struct ScreenTransitionFrame {
+  u16 pages[2][322]; ///< ScreenTransitionState's; not named here
+  /// ScreenTransitionState's solidTile, as 4-bit pixels two a byte: the
   /// dissolve sets two more each frame and copies the tile to BG character
   /// block 0.
   u8 paletteNibbles[0x22];
   /// The progress, moved from start to end over duration frames: bit 5 says
   /// whether the dissolve fills or clears, the low 5 bits how far it is.
   u16 value;
-  /// DisplayTransitionState's centreX to its unused byte; not named here.
+  /// ScreenTransitionState's centreX to its unused byte; not named here.
   ///@{
   s32 centreX;
   s32 centreY;
@@ -27,7 +27,7 @@ struct DisplayTransitionFrame {
   s16 active;
   u8 unused;
   ///@}
-  /// DisplayTransitionState's page: the dissolve flips it each frame and
+  /// ScreenTransitionState's page: the dissolve flips it each frame and
   /// never reads it.
   u8 ditherToggle;
   s8 start;    ///< the value's first step
@@ -39,8 +39,8 @@ struct DisplayTransitionFrame {
 /// The map work's display fields that transitions use: its display control
 /// bits and the lines where the centre-line transition shows and hides the
 /// screen, with the VCount interrupt's copies and phase.
-struct DisplayTransitionWindow {
-  /// The map work's origin, shake and script (PerspectiveWork's); no transition
+struct ScreenTransitionWin {
+  /// The map work's origin, shake and script (WorldMapView's); no transition
   /// names them.
   ///@{
   s32 *origin;
@@ -51,7 +51,7 @@ struct DisplayTransitionWindow {
   /// those of backgrounds 1 to 3.
   u16 dispcnt;
   /// The map work's fields from fadeStep to its window rows
-  /// (PerspectiveWork's); no transition names them.
+  /// (WorldMapView's); no transition names them.
   u8 viewState[0xea];
   /// scanlines: where the screen is hidden, 200 when it is not
   u16 firstLine;
@@ -67,14 +67,14 @@ struct DisplayTransitionWindow {
 /// The display transition state (heap block 31): two pages of window edges for
 /// every line, the dissolve's solid tile, and the transition's mode and
 /// progress.
-struct DisplayTransitionState {
+struct ScreenTransitionState {
   /// Window edges, two pages: WININ and WINOUT, then a WIN0H and WIN1H pair,
   /// each (left << 8 | right), for each of the 160 lines.
   u16 pages[2][322];
   /// The dissolve's solid tile, one 8 by 8 tile of 4-bit pixels.
   u32 solidTile[8];
   /// The window transition's shape, an enum WindowTransitionMode, which
-  /// DisplayTransition_UpdateScanlineTable draws.
+  /// ScreenTransition_UpdateScanlineTable draws.
   u16 mode;
   /// The progress, moved from start to end over duration frames: bit 5 says
   /// whether the transition opens or closes, the low 5 bits how far it is.
@@ -97,21 +97,21 @@ struct DisplayTransitionState {
   s8 nextMode;
 };
 
-STATIC_ASSERT(offsetof(struct DisplayTransitionFrame, value) == 0x52a);
-STATIC_ASSERT(offsetof(struct DisplayTransitionFrame, start) == 0x53a);
-STATIC_ASSERT(sizeof(struct DisplayTransitionFrame) == 0x540);
-STATIC_ASSERT(offsetof(struct DisplayTransitionWindow, dispcnt) == 0x14);
-STATIC_ASSERT(offsetof(struct DisplayTransitionWindow, firstLine) == 0x100);
-STATIC_ASSERT(offsetof(struct DisplayTransitionWindow, irqPhase) == 0x108);
-STATIC_ASSERT(sizeof(struct DisplayTransitionWindow) == 0x10c);
-STATIC_ASSERT(offsetof(struct DisplayTransitionState, pages) == 0);
-STATIC_ASSERT(offsetof(struct DisplayTransitionState, solidTile) == 0x508);
-STATIC_ASSERT(offsetof(struct DisplayTransitionState, page) == 0x539);
-STATIC_ASSERT(offsetof(struct DisplayTransitionState, mode) == 0x528);
-STATIC_ASSERT(offsetof(struct DisplayTransitionState, centreX) == 0x52c);
-STATIC_ASSERT(offsetof(struct DisplayTransitionState, mask) == 0x534);
-STATIC_ASSERT(offsetof(struct DisplayTransitionState, nextMode) == 0x53e);
-STATIC_ASSERT(offsetof(struct DisplayTransitionState, duration) == 0x53c);
-STATIC_ASSERT(sizeof(struct DisplayTransitionState) == 0x540);
+STATIC_ASSERT(offsetof(struct ScreenTransitionFrame, value) == 0x52a);
+STATIC_ASSERT(offsetof(struct ScreenTransitionFrame, start) == 0x53a);
+STATIC_ASSERT(sizeof(struct ScreenTransitionFrame) == 0x540);
+STATIC_ASSERT(offsetof(struct ScreenTransitionWin, dispcnt) == 0x14);
+STATIC_ASSERT(offsetof(struct ScreenTransitionWin, firstLine) == 0x100);
+STATIC_ASSERT(offsetof(struct ScreenTransitionWin, irqPhase) == 0x108);
+STATIC_ASSERT(sizeof(struct ScreenTransitionWin) == 0x10c);
+STATIC_ASSERT(offsetof(struct ScreenTransitionState, pages) == 0);
+STATIC_ASSERT(offsetof(struct ScreenTransitionState, solidTile) == 0x508);
+STATIC_ASSERT(offsetof(struct ScreenTransitionState, page) == 0x539);
+STATIC_ASSERT(offsetof(struct ScreenTransitionState, mode) == 0x528);
+STATIC_ASSERT(offsetof(struct ScreenTransitionState, centreX) == 0x52c);
+STATIC_ASSERT(offsetof(struct ScreenTransitionState, mask) == 0x534);
+STATIC_ASSERT(offsetof(struct ScreenTransitionState, nextMode) == 0x53e);
+STATIC_ASSERT(offsetof(struct ScreenTransitionState, duration) == 0x53c);
+STATIC_ASSERT(sizeof(struct ScreenTransitionState) == 0x540);
 
 #endif

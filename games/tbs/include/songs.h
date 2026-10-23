@@ -306,10 +306,10 @@
 /// A heavy landing: the leader thrown out of Lunpa, or hopping down a step in
 /// the Tunnel Ruins.
 #define SE_LANDING_THUD 127
-/// Climbing stairs: an WARP_STYLE_ANIMATED warp, and the stairs up in Vale's
+/// Climbing stairs: an WARP_STYLE_STAIRS_UP warp, and the stairs up in Vale's
 /// inn and Isaac's house.
 #define SE_STAIRS_UP 128
-/// Going down stairs: an WARP_STYLE_ANIMATED_ALTERNATE warp, and the stairs
+/// Going down stairs: an WARP_STYLE_STAIRS_DOWN warp, and the stairs
 /// down in Vale's inn and Isaac's house.
 #define SE_STAIRS_DOWN 129
 /// Field Psynergy beginning: Carry, Cloak, Force, Lift, Mind Read and Ply, and
@@ -429,21 +429,21 @@
 /// A map transition effect.
 #define SE_MAP_TRANSITION 167
 /// The ambient sound a map queues in Lama Temple, Xian and the Manticore's
-/// part of Lamakan Desert (FieldEffect_SetQueuedSoundAndPlay).
+/// part of Lamakan Desert (Map_QueueMusic).
 #define SE_169 169
-/// The ambient sound a map queues (FieldEffect_SetQueuedSoundAndPlay) with
+/// The ambient sound a map queues (Map_QueueMusic) with
 /// the ground particles and Altin's water-spitting beasts, and in Fuchin
 /// Temple, Vale, Kalay's tunnel, Mercury and Venus Lighthouse and the Goma Cave
 /// entrance.
 #define SE_170 170
-/// Thunder: lightning on the field (FieldEffect_UpdateLightning), the flash in
+/// Thunder: lightning on the field (Weather_UpdateLightning), the flash in
 /// Sol Sanctum's Luna room as the scene opens on Kraden, the flash of a Lucky
 /// Wheels win, and the Jupiter battle effect.
 /// ★ Named from what the player sees: lightning flashing over the stormy night
 /// (its render)
 #define SE_THUNDER 171
 /// The louder thunderclap lightning on the field plays in place of SE_THUNDER
-/// (struct FieldBlendWork's loud).
+/// (struct LightningWork's loud).
 /// ★ Named from what the player sees: lightning flashing over the stormy night
 /// (its render)
 #define SE_THUNDER_LOUD 172
@@ -478,7 +478,7 @@
 /// The leader pushing what stands ahead a cell on: a statue, pillar, crate or
 /// torch walked into in Bilibin, Bilibin Cave, Goma Cave, Kalay, Sol Sanctum,
 /// the Tunnel Ruins, Venus Lighthouse and Altin Peak, and the maps' staged
-/// pushes (StagedObjectEvent_AdvancePair).
+/// pushes (PushedObject_AdvancePair).
 /// ★ Named from what the player sees: the leader pushing a statue or pillar
 /// ahead (its render)
 #define SE_PUSH 185
@@ -536,7 +536,7 @@
 #define SE_212 212
 /// A pushed log or pillar coming to rest, after SE_STOP_SLOT3 cuts
 /// SE_HEAVY_MOVE: the Colosso matches, Kolima Forest's floodgate, Vale Cave,
-/// and the maps' staged moves (MapObjectEvent_MoveAndRedraw).
+/// and the maps' staged moves (ObjectEvent_MoveAndRedraw).
 /// ★ Named from what the player sees: a pushed log or pillar stopping (its
 /// render)
 #define SE_HEAVY_STOP 213
@@ -635,7 +635,7 @@
 /// ★ Named from what the player sees: a Colosso warrior appearing (its render)
 #define SE_COLOSSO_WARRIOR_APPEAR 252
 /// The first voice blip of a message: an object event's voice is 0x100 plus its
-/// sprite's value (FieldEffect_GetResourceId), and every few letters typed play
+/// sprite's value (Speaker_GetVoice), and every few letters typed play
 /// it plus the letter code's low two bits (UiWork_StepChannelScript).
 #define SE_256 256
 #define SE_257 257 ///< voice blip
@@ -676,7 +676,7 @@
 /// An effect pair spawned in the eruption at Sol Sanctum.
 #define SE_292 292
 /// A song with no tracks on player 5, which stops what plays there; played
-/// before each queued map sound (FieldEffect_SetQueuedSoundAndPlay).
+/// before each queued map sound (Map_QueueMusic).
 #define SE_STOP_SLOT5 298
 /// Tolbi Spring: 50 frames into a toss.
 #define SE_300 300

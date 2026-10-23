@@ -27,7 +27,7 @@
 	.set import.Engine_CameraWaitForMove, 1
 	.set import.Engine_ScriptRequestWarp, 1
 	.set import.Map_PlayMusic, 1
-	.set import.Motion_LaunchFromFocusedObject, 1
+	.set import.ObjectMotion_LaunchFromFocusedObject, 1
 	.set import.Engine_ObjectEventWalkByAndWait, 1
 	.set import.Engine_ShopOpen, 1
 	.set import.Engine_ShopConfirmAct, 1

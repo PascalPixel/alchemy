@@ -1,17 +1,17 @@
 #include "unit/object/zonedata.h"
 #include "types.h"
 
-/// The world map's encounter zones (struct TerrainRule): {terrain kind, terrain
-/// behavior (-1 for any), flag (-1, or a flag that turns the rule off once
-/// set), zone}, ended by kind -1. The first matching rule wins
+/// The world map's encounter zones (struct WorldMapEncounterRule): {terrain
+/// kind, terrain behavior (-1 for any), flag (-1, or a flag that turns the rule
+/// off once set), zone}, ended by kind -1. The first matching rule wins
 /// (Encounter_ResolveWorldMapZoneAndBackdrop), and terrain no rule matches
 /// has no random battles.
 ///
 /// Each kind is a region of the map, whose zones are made for party levels
 /// from 3 (kind 1) to 22 (kind 6). Each region has two zones:
-/// WORLD_MAP_TERRAIN_FOREST (WORLD_MAP_TERRAIN_SNOW_FOREST in
-/// WORLD_MAP_REGION_SNOWFIELD) takes the second, with a rate of 9 against the
-/// first's 20 or 25. No rule uses a flag or any-behavior.
+/// BATTLE_ENVIRONMENT_FOREST (BATTLE_ENVIRONMENT_SNOW_FOREST in
+/// WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD) takes the second, with a rate of 9
+/// against the first's 20 or 25. No rule uses a flag or any-behavior.
 const s16 gWorldMap_EncounterRules[132] = {
     1,  4,  -1, 7,  1,  7,  -1, 7,  1,  1,  -1, 7,  1,  2,  -1, 8,  2,  4,  -1,
     13, 2,  7,  -1, 13, 2,  1,  -1, 13, 2,  2,  -1, 14, 21, 5,  -1, 29, 21, 6,
@@ -22,7 +22,7 @@ const s16 gWorldMap_EncounterRules[132] = {
     -1, 80, 6,  7,  -1, 80, 6,  1,  -1, 80, 6,  2,  -1, 81, -1, 0,  0,  0,
 };
 
-/// The encounter of each Djinni battle (Encounter_GetDjinnEnemyGroup): {zone,
+/// The encounter of each Djinni battle (Encounter_GetDjinnFormation): {zone,
 /// slot}, by Djinni number (element * 20 + index). The 20 rows of an element
 /// all use its zone (ENCOUNTER_ZONE_VENUS_DJINN to
 /// ENCOUNTER_ZONE_JUPITER_DJINN), slot

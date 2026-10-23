@@ -10,10 +10,10 @@
 static void Vale_RequestBackdropWarp(s32 no) {
   struct EventWork *p;
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
-    FieldEffect_StopLightning();
+    Weather_StopLightning();
   }
   p = gFieldWork;
-  p->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  p->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   p->transitionFrames = 16;
   Engine_ScriptRequestWarp(no);
 }

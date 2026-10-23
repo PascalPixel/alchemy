@@ -54,11 +54,12 @@ UNUSED void ObjectDispatch_SetUpdateValue(void *rawObject, s32 value) {
 
 /// Handles a shortcut key's assignment: its top two bits choose what it
 /// requests (enum FieldShortcutKind) and the low 14 bits which one. With
-/// FLAG_MENUS_RAISE_EVENT set it raises FIELD_EVENT_MENUS_RAISED instead, as
+/// FLAG_MENUS_RAISE_EVENT set it raises FIELD_RAISED_EVENT_MENUS instead, as
 /// the menus do then; on the world map R raises
-/// FIELD_EVENT_WORLD_MAP_PICTURE and L FIELD_EVENT_WORLD_MAP_ZOOM. Returns the
-/// request id, the assignment's low 14 bits, even when it raised an event
-/// instead; a shortcut with nothing assigned returns 0, as no key pressed does.
+/// FIELD_RAISED_EVENT_REGION_MAP and L FIELD_RAISED_EVENT_WORLD_MAP_ZOOM.
+/// Returns the request id, the assignment's low 14 bits, even when it raised an
+/// event instead; a shortcut with nothing assigned returns 0, as no key pressed
+/// does.
 ///
 /// Called by Field_CheckConfiguredKeys. Sets work->psynergy,
 /// work->item or work->event, which the map loop (run_map.c)
@@ -69,12 +70,14 @@ u32 Field_RequestShortcut(u32 encodedAssignment) {
   struct FieldWork *work = (struct FieldWork *)gFieldWork;
 
   if (GameFlag_TestFar(FLAG_MENUS_RAISE_EVENT) != 0) {
-    Field_StoreHalfword(&work->event, FIELD_EVENT_MENUS_RAISED);
+    Field_StoreHalfword(&work->raisedEvent, FIELD_RAISED_EVENT_MENUS);
   } else if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
     if (FIELD_SHORTCUT_KEYS & KEY_R) {
-      Field_StoreHalfword(&work->event, (u16)FIELD_EVENT_WORLD_MAP_PICTURE);
+      Field_StoreHalfword(&work->raisedEvent,
+                          (u16)FIELD_RAISED_EVENT_REGION_MAP);
     } else if (FIELD_SHORTCUT_KEYS & KEY_L) {
-      Field_StoreHalfword(&work->event, (u16)FIELD_EVENT_WORLD_MAP_ZOOM);
+      Field_StoreHalfword(&work->raisedEvent,
+                          (u16)FIELD_RAISED_EVENT_WORLD_MAP_ZOOM);
     }
   } else {
     switch (assignmentKind) {
@@ -123,8 +126,8 @@ s32 Field_CheckConfiguredKeys(void) {
 
 /// Returns 0 when two spheres overlap: at positions a and b (16.16 pixels)
 /// with radii radiusA and radiusB (pixels); -1 otherwise. Called by
-/// SC_PLAYER's push test, ScriptObject_CheckOverlap and
-/// ScriptObject_FindOverlappingEntry.
+/// SC_PLAYER's push test, ObjectScript_CheckOverlap and
+/// ObjectScript_FindOverlappingEntry.
 s32 Runtime_CheckRadiusOverlap(s32 *firstPosition, s32 radiusA,
                                s32 *secondPosition, s32 radiusB) {
   const struct FieldPosition *firstPoint =
@@ -159,7 +162,7 @@ s32 Runtime_CheckRadiusOverlap(s32 *firstPosition, s32 radiusA,
 /// Sets the leader's speed, target, velocity, angle and action, moves the
 /// objects it pushes, counts gFieldWork->blockedSteps and creates the
 /// footprint objects.
-s32 Object_UpdateLeaderControl(struct ScriptInterpreter *interpreter) {
+s32 Object_UpdateLeaderControl(struct ObjectScriptContext *interpreter) {
   struct Object *object = (struct Object *)interpreter;
 
   struct FieldPosition position;
@@ -262,32 +265,30 @@ s32 Object_UpdateLeaderControl(struct ScriptInterpreter *interpreter) {
     if (gDebugMode != 0 && (gKeysHeld & KEY_L)) {
       heading = angle;
     } else {
-      if (MapGrid_CheckObjectStep(object, &position) == MAPGRID_STEP_OPEN) {
+      if (MapGrid_CheckCollision(object, &position) == COLLISION_NONE) {
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
         Vector_AddPolarOffset(0x80000, (u16)angle + 0x1000, &testPosition);
-        if (MapGrid_CheckObjectStep(object, &testPosition) ==
-            MAPGRID_STEP_OPEN) {
+        if (MapGrid_CheckCollision(object, &testPosition) == COLLISION_NONE) {
           testPosition.x = object->x;
           testPosition.y = object->y;
           testPosition.z = object->z;
           Vector_AddPolarOffset(0x80000, (u16)angle - 0x1000, &testPosition);
-          if (MapGrid_CheckObjectStep(object, &testPosition) ==
-              MAPGRID_STEP_OPEN) {
+          if (MapGrid_CheckCollision(object, &testPosition) == COLLISION_NONE) {
             testPosition.x = object->x;
             testPosition.y = object->y;
             testPosition.z = object->z;
             Vector_AddPolarOffset(0x80000, (u16)angle + 0x2000, &testPosition);
-            if (MapGrid_CheckObjectStep(object, &testPosition) ==
-                MAPGRID_STEP_OPEN) {
+            if (MapGrid_CheckCollision(object, &testPosition) ==
+                COLLISION_NONE) {
               testPosition.x = object->x;
               testPosition.y = object->y;
               testPosition.z = object->z;
               Vector_AddPolarOffset(0x80000, (u16)angle - 0x2000,
                                     &testPosition);
-              if (MapGrid_CheckObjectStep(object, &testPosition) ==
-                  MAPGRID_STEP_OPEN) {
+              if (MapGrid_CheckCollision(object, &testPosition) ==
+                  COLLISION_NONE) {
                 heading = angle;
                 goto push_objects;
               }
@@ -312,31 +313,31 @@ s32 Object_UpdateLeaderControl(struct ScriptInterpreter *interpreter) {
         position.y = object->y;
         position.z = object->z;
         Vector_AddPolarOffset(0x80000, (u16)heading, &position);
-        if (MapGrid_CheckObjectStep(object, &position) != MAPGRID_STEP_OPEN)
+        if (MapGrid_CheckCollision(object, &position) != COLLISION_NONE)
           continue;
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
         Vector_AddPolarOffset(0x80000, (u16)heading + 0x1000, &testPosition);
-        if (MapGrid_CheckObjectStep(object, &testPosition) != MAPGRID_STEP_OPEN)
+        if (MapGrid_CheckCollision(object, &testPosition) != COLLISION_NONE)
           continue;
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
         Vector_AddPolarOffset(0x80000, (u16)heading - 0x1000, &testPosition);
-        if (MapGrid_CheckObjectStep(object, &testPosition) != MAPGRID_STEP_OPEN)
+        if (MapGrid_CheckCollision(object, &testPosition) != COLLISION_NONE)
           continue;
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
         Vector_AddPolarOffset(0x80000, (u16)heading + 0x2000, &testPosition);
-        if (MapGrid_CheckObjectStep(object, &testPosition) != MAPGRID_STEP_OPEN)
+        if (MapGrid_CheckCollision(object, &testPosition) != COLLISION_NONE)
           continue;
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
         Vector_AddPolarOffset(0x80000, (u16)heading - 0x2000, &testPosition);
-        if (MapGrid_CheckObjectStep(object, &testPosition) == MAPGRID_STEP_OPEN)
+        if (MapGrid_CheckCollision(object, &testPosition) == COLLISION_NONE)
           goto push_objects;
       }
       // Nothing passed: the step is the object's own position.
@@ -379,31 +380,31 @@ s32 Object_UpdateLeaderControl(struct ScriptInterpreter *interpreter) {
           testPosition.z = pushedObject->z;
           heading = direction;
           Vector_AddPolarOffset(0x4000, direction, &testPosition);
-          if (!ScriptObject_CheckOverlap(
+          if (!ObjectScript_CheckOverlap(
                   (struct ScriptObjectEntry *)pushedObject,
                   (s32 *)&testPosition)) {
             testPosition.x = pushedObject->x;
             testPosition.y = pushedObject->y;
             testPosition.z = pushedObject->z;
             Vector_AddPolarOffset(0xa0000, direction, &testPosition);
-            if (MapGrid_CheckObjectStep(pushedObject, &testPosition) ==
-                MAPGRID_STEP_OPEN) {
+            if (MapGrid_CheckCollision(pushedObject, &testPosition) ==
+                COLLISION_NONE) {
               testPosition.x = pushedObject->x;
               testPosition.y = pushedObject->y;
               testPosition.z = pushedObject->z;
               Vector_AddPolarOffset(0xa0000, direction + 0x1000, &testPosition);
               // The same probe is tested twice.
-              if (MapGrid_CheckObjectStep(pushedObject, &testPosition) ==
-                      MAPGRID_STEP_OPEN &&
-                  MapGrid_CheckObjectStep(pushedObject, &testPosition) ==
-                      MAPGRID_STEP_OPEN) {
+              if (MapGrid_CheckCollision(pushedObject, &testPosition) ==
+                      COLLISION_NONE &&
+                  MapGrid_CheckCollision(pushedObject, &testPosition) ==
+                      COLLISION_NONE) {
                 testPosition.x = pushedObject->x;
                 testPosition.y = pushedObject->y;
                 testPosition.z = pushedObject->z;
                 Vector_AddPolarOffset(0xa0000, direction - 0x1000,
                                       &testPosition);
-                if (MapGrid_CheckObjectStep(pushedObject, &testPosition) ==
-                    MAPGRID_STEP_OPEN) {
+                if (MapGrid_CheckCollision(pushedObject, &testPosition) ==
+                    COLLISION_NONE) {
                   Vector_AddPolarOffset(
                       0x4000, direction,
                       (struct FieldPosition *)&pushedObject->x);
@@ -440,7 +441,7 @@ s32 Object_UpdateLeaderControl(struct ScriptInterpreter *interpreter) {
     s32 action;
 
     action = 9;
-    if (Unit_GetFar(gGameState.selectedLocalId)->hp == 0)
+    if (Unit_GetFar(gGameState.leaderLocalId)->hp == 0)
       action = 22;
     ObjectDispatch_SelectAnimation(object, action);
   } else {
@@ -459,13 +460,13 @@ s32 Object_UpdateLeaderControl(struct ScriptInterpreter *interpreter) {
     if (collision & 3) {
       s32 difference;
 
-      difference = (u16)angle - object->angle;
+      difference = (u16)angle - object->facing;
       difference = (s16)difference;
       if (difference > 0x1000)
         difference = 0x1000;
       if (difference < -0x1000)
         difference = -0x1000;
-      object->angle += difference;
+      object->facing += difference;
     }
     object->action = 0;
     object->footprintSide = 2;
@@ -501,7 +502,7 @@ s32 Object_UpdateLeaderControl(struct ScriptInterpreter *interpreter) {
       // sorts underfoot, draws at OAM priority 3, under
       // any map layer of priority 0 to 2, and lies rotated a quarter turn
       // from the heading.
-      effect->terrainHeight = object->terrainHeight;
+      effect->groundHeight = object->groundHeight;
       animation = effect->animation;
       ObjectDispatch_Initialize((struct DispatchObject *)effect,
                                 gWorldMap_FootprintActions);
@@ -520,7 +521,7 @@ s32 Object_UpdateLeaderControl(struct ScriptInterpreter *interpreter) {
         object->footprintSide = collision;
       }
       if (object->footprintSide != 0)
-        effect->angle = 0x8000;
+        effect->facing = 0x8000;
       if (movementAnimation == 5)
         object->action = 12;
       else
@@ -542,7 +543,7 @@ s32 Object_UpdateLeaderControl(struct ScriptInterpreter *interpreter) {
 /// ObjectDispatch_StartWorldMapControl on the world map. Sets the leader's
 /// speed, target, velocity, angle and action, turns the perspective work's
 /// yaw, counts gFieldWork->blockedSteps and creates the ripple objects.
-s32 Object_MoveOnWorldMap(struct ScriptInterpreter *interpreter) {
+s32 Object_MoveOnWorldMap(struct ObjectScriptContext *interpreter) {
   struct Object *object = (struct Object *)interpreter;
 
   struct FieldPosition position;
@@ -564,7 +565,7 @@ s32 Object_MoveOnWorldMap(struct ScriptInterpreter *interpreter) {
   s32 terrainCollision;
   s32 speed;
   s32 targetCameraYaw;
-  struct PerspectiveWork *perspective;
+  struct WorldMapView *perspective;
   s32 yawStep;
   struct AnimationObject *playerSprite;
   struct Object *ripple;
@@ -604,35 +605,35 @@ s32 Object_MoveOnWorldMap(struct ScriptInterpreter *interpreter) {
     // either side, then headings up to 67.5 degrees off.
     if (gDebugMode == 0 || (gKeysHeld & KEY_L) == 0) {
 #if TBS_PATCH_1
-      if (CheckWorldMapWalkable((s32)object,
-                                (struct WorldPosition *)&position) == 0) {
+      if (WorldMap_IsWalkable((s32)object, (struct WorldPosition *)&position) ==
+          0) {
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
         Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + 0x1000,
                               &testPosition);
-        if (CheckWorldMapWalkable((s32)object,
-                                  (struct WorldPosition *)&testPosition) == 0) {
+        if (WorldMap_IsWalkable((s32)object,
+                                (struct WorldPosition *)&testPosition) == 0) {
           testPosition.x = object->x;
           testPosition.y = object->y;
           testPosition.z = object->z;
           Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - 0x1000,
                                 &testPosition);
-          if (CheckWorldMapWalkable(
-                  (s32)object, (struct WorldPosition *)&testPosition) == 0) {
+          if (WorldMap_IsWalkable((s32)object,
+                                  (struct WorldPosition *)&testPosition) == 0) {
             testPosition.x = object->x;
             testPosition.y = object->y;
             testPosition.z = object->z;
             Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + 0x2000,
                                   &testPosition);
-            if (CheckWorldMapWalkable(
+            if (WorldMap_IsWalkable(
                     (s32)object, (struct WorldPosition *)&testPosition) == 0) {
               testPosition.x = object->x;
               testPosition.y = object->y;
               testPosition.z = object->z;
               Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - 0x2000,
                                     &testPosition);
-              if (CheckWorldMapWalkable(
+              if (WorldMap_IsWalkable(
                       (s32)object, (struct WorldPosition *)&testPosition) == 0)
                 goto update_object;
             }
@@ -654,40 +655,40 @@ s32 Object_MoveOnWorldMap(struct ScriptInterpreter *interpreter) {
         position.y = object->y;
         position.z = object->z;
         Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction, &position);
-        if (CheckWorldMapWalkable((s32)object,
-                                  (struct WorldPosition *)&position) != 0)
+        if (WorldMap_IsWalkable((s32)object,
+                                (struct WorldPosition *)&position) != 0)
           continue;
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
         Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + 0x1000,
                               &testPosition);
-        if (CheckWorldMapWalkable((s32)object,
-                                  (struct WorldPosition *)&testPosition) != 0)
+        if (WorldMap_IsWalkable((s32)object,
+                                (struct WorldPosition *)&testPosition) != 0)
           continue;
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
         Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - 0x1000,
                               &testPosition);
-        if (CheckWorldMapWalkable((s32)object,
-                                  (struct WorldPosition *)&testPosition) != 0)
+        if (WorldMap_IsWalkable((s32)object,
+                                (struct WorldPosition *)&testPosition) != 0)
           continue;
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
         Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + 0x2000,
                               &testPosition);
-        if (CheckWorldMapWalkable((s32)object,
-                                  (struct WorldPosition *)&testPosition) != 0)
+        if (WorldMap_IsWalkable((s32)object,
+                                (struct WorldPosition *)&testPosition) != 0)
           continue;
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
         Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - 0x2000,
                               &testPosition);
-        if (CheckWorldMapWalkable((s32)object,
-                                  (struct WorldPosition *)&testPosition) != 0)
+        if (WorldMap_IsWalkable((s32)object,
+                                (struct WorldPosition *)&testPosition) != 0)
           continue;
         angle = (s16)direction;
         goto update_object;
@@ -705,12 +706,11 @@ s32 Object_MoveOnWorldMap(struct ScriptInterpreter *interpreter) {
       rightPosition.z = object->z;
       Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - 0x1555,
                             &rightPosition);
-      if ((CheckWorldMapWalkable((s32)object,
-                                 (struct WorldPosition *)&position) |
-           CheckWorldMapWalkable((s32)object,
-                                 (struct WorldPosition *)&leftPosition) |
-           CheckWorldMapWalkable(
-               (s32)object, (struct WorldPosition *)&rightPosition)) != 0) {
+      if ((WorldMap_IsWalkable((s32)object, (struct WorldPosition *)&position) |
+           WorldMap_IsWalkable((s32)object,
+                               (struct WorldPosition *)&leftPosition) |
+           WorldMap_IsWalkable((s32)object,
+                               (struct WorldPosition *)&rightPosition)) != 0) {
         angleOffsets[count++] = direction + 0x1000;
         angleOffsets[count++] = direction - 0x1000;
         angleOffsets[count++] = direction + 0x2000;
@@ -733,11 +733,11 @@ s32 Object_MoveOnWorldMap(struct ScriptInterpreter *interpreter) {
           rightPosition.z = object->z;
           Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - 0x1555,
                                 &rightPosition);
-          if ((CheckWorldMapWalkable((s32)object,
-                                     (struct WorldPosition *)&position) |
-               CheckWorldMapWalkable((s32)object,
-                                     (struct WorldPosition *)&leftPosition) |
-               CheckWorldMapWalkable(
+          if ((WorldMap_IsWalkable((s32)object,
+                                   (struct WorldPosition *)&position) |
+               WorldMap_IsWalkable((s32)object,
+                                   (struct WorldPosition *)&leftPosition) |
+               WorldMap_IsWalkable(
                    (s32)object, (struct WorldPosition *)&rightPosition)) != 0)
             continue;
           angle = (s16)direction;
@@ -769,12 +769,12 @@ update_object:
     object->velocityZ = 0;
     if ((collision & 3) != 0) {
       direction = angle;
-      difference = (s16)(direction - object->angle);
+      difference = (s16)(direction - object->facing);
       if (difference > 0x1000)
         difference = 0x1000;
       if (difference < -0x1000)
         difference = -0x1000;
-      object->angle += difference;
+      object->facing += difference;
     }
     object->action = 0;
     object->footprintSide = 2;
@@ -807,7 +807,8 @@ update_object:
 
   if (object->animationKind == OBJECT_SPRITE_ONE) {
     playerSprite = object->animation;
-    terrainCollision = GetWorldMapCollision((struct WorldPosition *)&object->x);
+    terrainCollision =
+        WorldMap_GetCollision((struct WorldPosition *)&object->x);
     // In a forest the sprite's second layer is drawn (priority 1) and its
     // shadow is not; elsewhere that layer takes priority 9, and a layer above
     // 3 is not drawn.
@@ -830,7 +831,7 @@ update_object:
         ObjectDispatch_Initialize((struct DispatchObject *)ripple,
                                   gWorldMap_FootprintActions + 3);
         ripple->flags = collision;
-        ripple->terrainId = 1;
+        ripple->layer = 1;
         if (rippleSprite != 0) {
           AnimationObject_SelectAnimation(rippleSprite, 1);
           rippleSprite->flags = collision;
@@ -850,7 +851,7 @@ update_object:
 /// Returns 1. Run each frame by gObjectDispatch_KeyCheckScript, which the
 /// map loop starts on the leader in LEADER_MOVEMENT_AIRBORNE, where the pad
 /// does not move it.
-s32 Field_CheckConfiguredKeysAndCount(struct ScriptInterpreter *interpreter) {
+s32 Field_CheckConfiguredKeysAndCount(struct ObjectScriptContext *interpreter) {
   struct Object *object = (struct Object *)interpreter;
 
   Field_CheckConfiguredKeys();
@@ -866,7 +867,7 @@ s32 Field_CheckConfiguredKeysAndCount(struct ScriptInterpreter *interpreter) {
 /// Run each frame by gObjectDispatch_KeysScript, which the map loop starts
 /// on the leader in LEADER_MOVEMENT_CLIMB. Sets the leader's speed,
 /// angle, target or velocity, and counts gFieldWork->blockedSteps.
-s32 Object_MoveByKeys(struct ScriptInterpreter *interpreter) {
+s32 Object_MoveByKeys(struct ObjectScriptContext *interpreter) {
   struct Object *object = (struct Object *)interpreter;
 
   struct FieldPosition position;
@@ -880,7 +881,7 @@ s32 Object_MoveByKeys(struct ScriptInterpreter *interpreter) {
   s32 animation;
   s32 collisionFlags;
   s32 deltaZ;
-  s32 terrainHeight;
+  s32 groundHeight;
 
   object->speedLimit = 0x8000;
   object->acceleration = 0x4000;
@@ -907,9 +908,9 @@ s32 Object_MoveByKeys(struct ScriptInterpreter *interpreter) {
     position.x += object->x;
     deltaZ = position.z;
     if (deltaZ < 0)
-      object->angle = 0xc000;
+      object->facing = 0xc000;
     if (deltaZ > 0)
-      object->angle = 0x4000;
+      object->facing = 0x4000;
     position.y = object->y - position.z;
     position.z = object->z;
     // The cells (16 pixels, 0x100000) under the object and the step; a step
@@ -922,21 +923,21 @@ s32 Object_MoveByKeys(struct ScriptInterpreter *interpreter) {
               Ram_MapGridCellBuffer)[position.x / 0x100000 +
                                      (position.z / 0x100000) * 128];
     if (MapGrid_IsWallAt((struct WorldPosition *)&position) != 0 ||
-        sourceCell->collisionCode != destinationCell->collisionCode) {
+        sourceCell->behavior != destinationCell->behavior) {
       collisionFlags = 4;
       animation = 12;
     } else if (gKeysHeld & KEY_UP) {
       // Climbing needs the ground a cell further up to stand at least 16
       // pixels above the object; descending needs the ground at the step
       // at least 8 pixels below it.
-      terrainHeight = MapGrid_GetTerrainHeight(object->terrainId, position.x,
-                                               position.z - 0x100000);
-      if (terrainHeight - object->y < 0x100000)
+      groundHeight = MapGrid_GetTerrainHeight(object->layer, position.x,
+                                              position.z - 0x100000);
+      if (groundHeight - object->y < 0x100000)
         goto refused;
     } else if (gKeysHeld & KEY_DOWN) {
-      terrainHeight =
-          MapGrid_GetTerrainHeight(object->terrainId, position.x, position.z);
-      if (terrainHeight - object->y > -0x80000) {
+      groundHeight =
+          MapGrid_GetTerrainHeight(object->layer, position.x, position.z);
+      if (groundHeight - object->y > -0x80000) {
       refused:
         collisionFlags = 1;
         animation = 12;

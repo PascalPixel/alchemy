@@ -395,7 +395,7 @@ static void LunpaFortress_LowerCrates(void) {
 
 /// LunpaFortressCave, coord event 70: pushing the crates slides them one cell
 /// along.
-static void EventScript_PushCrates(void) { StagedObjectEvent_AdvancePair(); }
+static void EventScript_PushCrates(void) { PushedObject_AdvancePair(); }
 
 /// LunpaFortressCave, coord event 50: the crates, pushed onto their hole, slide
 /// in and sink.
@@ -456,7 +456,7 @@ static void EventScript_UnlockToadonpaDoor(void) {
 
   fieldWork = gFieldWork;
   if (Engine_PartyInventoryFindOwner(ITEM_CELL_KEY) != -1) {
-    doorTrigger = fieldWork->touchedTrigger;
+    doorTrigger = fieldWork->coordEvent;
     doorIndex = doorTrigger - TRIGGER_DOOR_FIRST;
     if (FLAG_CHECK(FLAG_DODONPA_LOCKED_UP) == 0 || doorIndex != 4) {
       LunpaFortress_OpenToadonpaDoor(doorIndex);
@@ -495,7 +495,7 @@ static void EventScript_UnlockCaveDoor(void) {
 
   fieldWork = gFieldWork;
   if (Engine_PartyInventoryFindOwner(ITEM_CELL_KEY) != -1) {
-    doorTrigger = fieldWork->touchedTrigger;
+    doorTrigger = fieldWork->coordEvent;
     LunpaFortress_OpenCaveDoor(doorTrigger - TRIGGER_DOOR_FIRST);
     SE(SE_GATE_MOVE);
     MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
@@ -523,7 +523,7 @@ static void EventScript_UnlockUpperFloorDoor(void) {
 
   fieldWork = gFieldWork;
   if (Engine_PartyInventoryFindOwner(ITEM_CELL_KEY) != -1) {
-    doorTrigger = fieldWork->touchedTrigger;
+    doorTrigger = fieldWork->coordEvent;
     LunpaFortress_OpenUpperFloorDoor(doorTrigger - TRIGGER_DOOR_FIRST);
     SE(SE_GATE_MOVE);
     MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
@@ -554,7 +554,7 @@ static void EventScript_UnlockGroundFloorDoor(void) {
 
   fieldWork = gFieldWork;
   if (Engine_PartyInventoryFindOwner(ITEM_CELL_KEY) != -1) {
-    doorTrigger = fieldWork->touchedTrigger;
+    doorTrigger = fieldWork->coordEvent;
     LunpaFortress_OpenGroundFloorDoor(doorTrigger - TRIGGER_DOOR_FIRST);
     SE(SE_GATE_MOVE);
     MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
@@ -626,18 +626,18 @@ static s32 LunpaFortress_TryCollectDisplayedItem(s32 localId, s32 itemId) {
   s32 itemGiven = 0;
   s32 itemEffect;
 
-  EV_START();
+  SCRIPT_START();
   itemEffect =
       Engine_FieldEffectPlayCueAndStartEmitterOnTarget(0, localId, itemId);
   if (Engine_PartyGiveItem(itemId, 0) != -1) {
-    OBJECT_MODE(localId, 2);
+    OBJECT_ANIMATION(localId, 2);
     itemGiven = 1;
   } else {
     SE(SE_125);
-    OBJECT_MODE(localId, 5);
+    OBJECT_ANIMATION(localId, 5);
   }
   Engine_ObjectDispatchRelease((struct ObjectEvent *)itemEffect);
-  EV_END();
+  SCRIPT_END();
   return itemGiven;
 }
 
@@ -656,9 +656,9 @@ static void EventScript_TakeCellKey(void) {
   Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
   Engine_ObjectEventFaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
   WAIT(10);
-  OBJECT_MODE(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIMATION_STAND);
   Engine_ItemShowFound(ITEM_CELL_KEY, 3);
-  OBJECT_MODE(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIMATION_STAND);
   Engine_PartyGiveItem(ITEM_CELL_KEY, 0);
   Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_CELL_KEY);
   Engine_ObjectEventSetPosition(UPPER_FLOOR_CELL_KEY, 0, 0);
@@ -695,7 +695,7 @@ static s32 LunpaFortress_IsLeaderInPatrolSafeZone(void) {
 #ifdef UBFIX
 #define PATROL_PSYNERGY_REQUEST(work) ((work)->psynergy)
 #define PATROL_ITEM_REQUEST(work) ((work)->item)
-#define PATROL_RAISED_TRIGGER(work) ((work)->event)
+#define PATROL_RAISED_TRIGGER(work) ((work)->raisedEvent)
 #else
 #define PATROL_PSYNERGY_REQUEST(work) ((work)[191])
 #define PATROL_ITEM_REQUEST(work) ((work)[192])
@@ -773,15 +773,15 @@ static void LunpaFortress_UpdatePairedGuardDetection(void) {
 /// LunpaFortressUpperFloor, raised when the patrolling pair spots the leader:
 /// the first stops and stares, and the second throws the party out.
 static void EventScript_PatrolPairThrowsPartyOut(void) {
-  EV_START();
+  SCRIPT_START();
   Engine_ObjectEventStop(UPPER_FLOOR_FIRST_PATROL);
   Engine_ObjectEventSetDestinationOffset(UPPER_FLOOR_FIRST_PATROL, 0, 0);
-  OBJECT_MODE(UPPER_FLOOR_FIRST_PATROL, 0);
+  OBJECT_ANIMATION(UPPER_FLOOR_FIRST_PATROL, 0);
   OBJECT_FACE(UPPER_FLOOR_FIRST_PATROL, LOCALID_PARTY_LEADER, 0);
   Engine_ObjectEventShowEmote(UPPER_FLOOR_FIRST_PATROL,
                               EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   LunpaFortress_GuardThrowsPartyOut(UPPER_FLOOR_SECOND_PATROL);
-  EV_END();
+  SCRIPT_END();
 }
 
 /// Whether the leader and the hall patrol are in the two parallel corridors,
@@ -876,7 +876,7 @@ static void LunpaFortress_UpdateHallGuardDetection(void) {
 /// throws the party out.
 static void EventScript_HallPatrolThrowsPartyOut(void) {
   LunpaFortress_GuardThrowsPartyOut(UPPER_FLOOR_HALL_PATROL);
-  EV_END();
+  SCRIPT_END();
 }
 
 /// Where LunpaFortressGroundFloor's patrol cannot see the leader: three
@@ -953,7 +953,7 @@ static void LunpaFortress_UpdateGroundFloorPatrolDetection(void) {
 /// the party out.
 static void EventScript_GroundFloorPatrolThrowsPartyOut(void) {
   LunpaFortress_GuardThrowsPartyOut(GROUND_FLOOR_PATROL_GUARD);
-  EV_END();
+  SCRIPT_END();
 }
 
 /// Whether the leader is outside the upper hall the guard there watches.
@@ -986,7 +986,7 @@ static void LunpaFortress_CheckUpperHallGuard(void) {
         }
       }
       if (FLAG_CHECK(FLAG_MAP_TEMP_14) != 0) {
-        fieldWork->raisedTrigger = TRIGGER_UPPER_HALL_SPOTTED;
+        fieldWork->raisedEvent = TRIGGER_UPPER_HALL_SPOTTED;
       }
     }
   }
@@ -996,7 +996,7 @@ static void LunpaFortress_CheckUpperHallGuard(void) {
 /// leader: he throws the party out.
 static void EventScript_UpperHallGuardThrowsPartyOut(void) {
   LunpaFortress_GuardThrowsPartyOut(GROUND_FLOOR_UPPER_HALL_GUARD);
-  EV_END();
+  SCRIPT_END();
 }
 
 /// Every frame after the party arrives in LunpaFortressGroundFloor's entrance
@@ -1012,7 +1012,7 @@ static void LunpaFortress_CheckEntranceGuard(void) {
     s32 caughtTrigger;
 
     Engine_TaskRemoveCallback(LunpaFortress_CheckEntranceGuard);
-    raisedTrigger = &fieldWork->raisedTrigger;
+    raisedTrigger = &fieldWork->raisedEvent;
     caughtTrigger = TRIGGER_ENTRANCE_GUARD_SPOTTED;
     *raisedTrigger = caughtTrigger;
   }
@@ -1032,7 +1032,7 @@ static void LunpaFortress_CheckFirstEntranceSentry(void) {
         FLAG_SET(FLAG_MAP_TEMP_25);
         Engine_TaskRemoveCallback(LunpaFortress_CheckFirstEntranceSentry);
         Engine_TaskRemoveCallback(LunpaFortress_CheckSecondEntranceSentry);
-        fieldWork->raisedTrigger = TRIGGER_SENTRIES_SPOTTED;
+        fieldWork->raisedEvent = TRIGGER_SENTRIES_SPOTTED;
       }
     }
   }
@@ -1050,7 +1050,7 @@ static void LunpaFortress_CheckSecondEntranceSentry(void) {
         FLAG_SET(FLAG_MAP_TEMP_25);
         Engine_TaskRemoveCallback(LunpaFortress_CheckSecondEntranceSentry);
         Engine_TaskRemoveCallback(LunpaFortress_CheckFirstEntranceSentry);
-        fieldWork->raisedTrigger = TRIGGER_SENTRIES_SPOTTED;
+        fieldWork->raisedEvent = TRIGGER_SENTRIES_SPOTTED;
       }
     }
   }
@@ -1170,7 +1170,7 @@ static void LunpaFortress_CheckGroundFloorDoorApproach(void) {
     s32 playerZ = leader->z.fixed / PIXELS(16);
 
     if (playerX == 43 && playerZ > 28 && playerZ <= 31) {
-      s16 *touchedTrigger = &gFieldWork->touchedTrigger;
+      s16 *touchedTrigger = &gFieldWork->coordEvent;
       s32 doorTrigger = TRIGGER_DOOR_FIRST + 1;
 
       *touchedTrigger = doorTrigger;
@@ -1191,7 +1191,7 @@ static void LunpaFortress_CheckUpperFloorDoorApproach(void) {
 
     if (playerX == 16 && playerZ > 55 && playerZ <= 58 &&
         (leader->facing == 0xc000 || leader->facing == 0x4000)) {
-      s16 *touchedTrigger = &gFieldWork->touchedTrigger;
+      s16 *touchedTrigger = &gFieldWork->coordEvent;
       s32 doorTrigger = TRIGGER_DOOR_FIRST;
 
       *touchedTrigger = doorTrigger;
@@ -1204,11 +1204,11 @@ static void LunpaFortress_CheckUpperFloorDoorApproach(void) {
 /// the party out through EventScript_PatrolPairThrowsPartyOut instead. The
 /// first patrol would stop, ask who the party is and send it out.
 static void UNUSED LunpaFortress_UnusedFirstPatrolThrowsPartyOut(void) {
-  EV_START();
+  SCRIPT_START();
   Engine_ObjectEventSetDestinationOffset(UPPER_FLOOR_FIRST_PATROL, 0, 0);
   ObjectEvent_SetBuiltinAction(UPPER_FLOOR_FIRST_PATROL, OBJ_EVENT_ACTION_IDLE);
   Engine_ObjectEventStop(UPPER_FLOOR_FIRST_PATROL);
-  OBJECT_MODE(UPPER_FLOOR_FIRST_PATROL, 0);
+  OBJECT_ANIMATION(UPPER_FLOOR_FIRST_PATROL, 0);
   ObjectEvent_SetBuiltinAction(LOCALID_PARTY_LEADER, OBJ_EVENT_ACTION_IDLE);
   {
     s32 challengeMessage = MsgLunpaWho2;
@@ -1222,24 +1222,24 @@ static void UNUSED LunpaFortress_UnusedFirstPatrolThrowsPartyOut(void) {
   MESSAGE_PUT(UPPER_FLOOR_FIRST_PATROL, 0);
   Engine_ScriptRequestWarp(WARP_THROWN_OUT);
   Engine_ScriptCloseScreen();
-  EV_END();
+  SCRIPT_END();
 }
 
 /// A guard who caught the party sends it back to the Lunpa Fortress Gates.
 /// "Who are you? How did you get in here?"
 static void LunpaFortress_GuardThrowsPartyOut(s32 localId) {
-  EV_START();
-  EV_START();
+  SCRIPT_START();
+  SCRIPT_START();
   Engine_ObjectEventShowEmote(localId, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 1);
   Engine_ObjectEventSetDestinationOffset(localId, 0, 0);
   ObjectEvent_SetBuiltinAction(localId, OBJ_EVENT_ACTION_IDLE);
-  OBJECT_MODE(localId, 0);
+  OBJECT_ANIMATION(localId, 0);
   OBJECT_FACE(localId, LOCALID_PARTY_LEADER, 0);
-  OBJECT_MODE(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIMATION_STAND);
   Engine_ObjectEventSetDestinationOffset(localId, 0, 0);
   ObjectEvent_SetBuiltinAction(localId, OBJ_EVENT_ACTION_IDLE);
   Engine_ObjectEventStop(localId);
-  OBJECT_MODE(localId, 0);
+  OBJECT_ANIMATION(localId, 0);
   ObjectEvent_SetBuiltinAction(LOCALID_PARTY_LEADER, OBJ_EVENT_ACTION_IDLE);
   {
     s32 challengeMessage = MsgLunpaWho2;
@@ -1255,7 +1255,7 @@ static void LunpaFortress_GuardThrowsPartyOut(s32 localId) {
   Engine_ScriptCloseScreen();
   WAIT(60);
   Engine_ScriptRequestWarp(WARP_THROWN_OUT);
-  EV_END();
+  SCRIPT_END();
 }
 
 /// A guard faces the leader with one of four challenges, chosen at random
@@ -1354,17 +1354,17 @@ static void LunpaFortress_ActOutScoundrelDialogue(s32 localId) {
 /// challenges the party to a battle with a Brigand, and is gone after it.
 static void EventScript_FightWestGuard(void) {
 
-  OBJECT_MODE(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIMATION_STAND);
   SE(SE_MENU_CANCEL);
   Engine_ObjectEventShowEmote(UPPER_FLOOR_WEST_GUARD,
                               EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   LunpaFortress_GuardChallengesParty(UPPER_FLOOR_WEST_GUARD);
-  gFieldWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   Battle_SetStart(BATTLE_START_SCRIPTED);
   Engine_EncounterRequestBattle(ENCOUNTER_ZONE_SCRIPTED, 2);
   Engine_ObjectEventSetPosition(UPPER_FLOOR_WEST_GUARD, 0, 0);
-  EV_END();
+  SCRIPT_END();
   Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_WEST_GUARD_BEATEN);
 }
 
@@ -1372,17 +1372,17 @@ static void EventScript_FightWestGuard(void) {
 /// challenges the party to a battle with a Brigand, and is gone after it.
 static void EventScript_FightHallGuard(void) {
 
-  OBJECT_MODE(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIMATION_STAND);
   SE(SE_MENU_CANCEL);
   Engine_ObjectEventShowEmote(UPPER_FLOOR_HALL_GUARD,
                               EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   LunpaFortress_GuardChallengesParty(UPPER_FLOOR_HALL_GUARD);
-  gFieldWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   Battle_SetStart(BATTLE_START_SCRIPTED);
   Engine_EncounterRequestBattle(ENCOUNTER_ZONE_SCRIPTED, 2);
   Engine_ObjectEventSetPosition(UPPER_FLOOR_HALL_GUARD, 0, 0);
-  EV_END();
+  SCRIPT_END();
   Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_MIDDLE_GUARD_BEATEN);
 }
 
@@ -1392,10 +1392,10 @@ static void EventScript_FightHallGuard(void) {
 static void EventScript_FightThreeGuards(void) {
   s32 messageBase;
 
-  OBJECT_MODE(LOCALID_PARTY_LEADER, ANIMATION_STAND);
-  OBJECT_MODE(UPPER_FLOOR_GUARD_A, 1);
-  OBJECT_MODE(UPPER_FLOOR_GUARD_B, 1);
-  OBJECT_MODE(UPPER_FLOOR_GUARD_C, 1);
+  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+  OBJECT_ANIMATION(UPPER_FLOOR_GUARD_A, 1);
+  OBJECT_ANIMATION(UPPER_FLOOR_GUARD_B, 1);
+  OBJECT_ANIMATION(UPPER_FLOOR_GUARD_C, 1);
   SE(SE_MENU_CANCEL);
   OBJECT_EMOTE(UPPER_FLOOR_GUARD_A, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   WAIT(30);
@@ -1438,7 +1438,7 @@ static void EventScript_FightThreeGuards(void) {
   WAIT(30);
   MESSAGE_SET((messageBase + 6));
   MESSAGE_PUT(UPPER_FLOOR_GUARD_A, 0);
-  gFieldWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   Engine_ScriptSetNextDestination(
       (s32)&MapId_LunpaFortressUpperFloor,
@@ -1448,21 +1448,21 @@ static void EventScript_FightThreeGuards(void) {
   OBJECT_POSITION_SET(UPPER_FLOOR_GUARD_A, 0, 0);
   OBJECT_POSITION_SET(UPPER_FLOOR_GUARD_B, 0, 0);
   OBJECT_POSITION_SET(UPPER_FLOOR_GUARD_C, 0, 0);
-  EV_END();
+  SCRIPT_END();
   FLAG_SET(FLAG_LUNPA_FORTRESS_THREE_GUARDS_BEATEN);
 }
 
 /// The three guards lie beaten where they fought.
 static void LunpaFortress_PlaceThreeBeatenGuards(void) {
-  EV_START();
+  SCRIPT_START();
   OBJECT_POSITION_SET(UPPER_FLOOR_GUARD_A, 688, 88);
   OBJECT_POSITION_SET(UPPER_FLOOR_GUARD_B, 704, 88);
   OBJECT_POSITION_SET(UPPER_FLOOR_GUARD_C, 720, 96);
-  OBJECT_MODE(UPPER_FLOOR_GUARD_A, 5);
-  OBJECT_MODE(UPPER_FLOOR_GUARD_B, 5);
-  OBJECT_MODE(UPPER_FLOOR_GUARD_C, 5);
+  OBJECT_ANIMATION(UPPER_FLOOR_GUARD_A, 5);
+  OBJECT_ANIMATION(UPPER_FLOOR_GUARD_B, 5);
+  OBJECT_ANIMATION(UPPER_FLOOR_GUARD_C, 5);
   OBJECT_FACE(LOCALID_PARTY_LEADER, UPPER_FLOOR_GUARD_B, 0);
-  EV_END();
+  SCRIPT_END();
   Engine_ScriptOpenScreen();
 }
 
@@ -1470,27 +1470,27 @@ static void LunpaFortress_PlaceThreeBeatenGuards(void) {
 /// challenges the party to a battle with a Brigand, and is gone after it.
 static void EventScript_FightEastGuard(void) {
 
-  OBJECT_MODE(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIMATION_STAND);
   SE(SE_MENU_CANCEL);
   Engine_ObjectEventShowEmote(UPPER_FLOOR_EAST_GUARD,
                               EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   LunpaFortress_GuardChallengesParty(UPPER_FLOOR_EAST_GUARD);
-  gFieldWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   Battle_SetStart(BATTLE_START_SCRIPTED);
   Engine_EncounterRequestBattle(ENCOUNTER_ZONE_SCRIPTED, 2);
   Engine_ObjectEventSetPosition(UPPER_FLOOR_EAST_GUARD, 0, 0);
-  EV_END();
+  SCRIPT_END();
   Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_EAST_GUARD_BEATEN);
 }
 
 /// LunpaFortressGroundFloor, coord event 50 or seen by the entrance guard: the
 /// party is sent back to the Lunpa Fortress Gates. "Who are you?"
 static void EventScript_EntranceGuardThrowsPartyOut(void) {
-  EV_START();
+  SCRIPT_START();
   Engine_ObjectEventSetDestinationOffset(LOCALID_PARTY_LEADER, 0, 0);
   ObjectEvent_SetBuiltinAction(LOCALID_PARTY_LEADER, OBJ_EVENT_ACTION_IDLE);
-  OBJECT_MODE(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIMATION_STAND);
   OBJECT_FACE(GROUND_FLOOR_ENTRANCE_GUARD, LOCALID_PARTY_LEADER, 0);
   SE(SE_MENU_CANCEL);
   Engine_ObjectEventShowEmote(GROUND_FLOOR_ENTRANCE_GUARD,
@@ -1508,7 +1508,7 @@ static void EventScript_EntranceGuardThrowsPartyOut(void) {
   Engine_ScriptCloseScreen();
   WAIT(60);
   Engine_ScriptRequestWarp(WARP_THROWN_OUT);
-  EV_END();
+  SCRIPT_END();
   Engine_GameFlagSet(FLAG_MAP_TEMP_24);
 }
 
@@ -1517,10 +1517,10 @@ static void EventScript_EntranceGuardThrowsPartyOut(void) {
 static void EventScript_SentriesThrowPartyOut(void) {
   s32 challengeMessage;
 
-  EV_START();
+  SCRIPT_START();
   ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0, 0);
   ObjectEvent_SetBuiltinAction(LOCALID_PARTY_LEADER, OBJ_EVENT_ACTION_IDLE);
-  OBJECT_MODE(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIMATION_STAND);
   SE(SE_MENU_CANCEL);
   OBJECT_EMOTE(GROUND_FLOOR_SECOND_SENTRY, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                0);
@@ -1537,7 +1537,7 @@ static void EventScript_SentriesThrowPartyOut(void) {
   Engine_ScriptCloseScreen();
   WAIT(60);
   Engine_ScriptRequestWarp(WARP_THROWN_OUT);
-  EV_END();
+  SCRIPT_END();
   FLAG_SET(FLAG_MAP_TEMP_25);
 }
 
@@ -1708,7 +1708,7 @@ static void LunpaFortress_RevealMonster(void) {
   OBJECT_WALK(TOADONPA_BOSS_PART, 472, 180);
   Engine_CameraFollowObjectEvent(TOADONPA_BOSS, 1);
   Engine_ObjectEventWaitForMove(TOADONPA_BOSS);
-  OBJECT_MODE(TOADONPA_BOSS, 4);
+  OBJECT_ANIMATION(TOADONPA_BOSS, 4);
   WAIT(30);
 }
 
@@ -1739,7 +1739,7 @@ static void EventScript_FindHammet(void) {
   if (FLAG_CHECK(FLAG_MAPSEC_TEMP_01) != 0)
     return;
   FLAG_SET(FLAG_MAP_TEMP_70);
-  EV_START();
+  SCRIPT_START();
   // A retry skips the introduction but repeats Dodonpa's trap and battle.
   if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_TRAP_SEEN) != 0) {
     OBJECT_SPEED(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
@@ -1761,7 +1761,7 @@ static void EventScript_FindHammet(void) {
     OBJECT_DIR(MIA, FACING_SOUTH, 0);
     // Dodonpa approaches from the south, then springs the lever trap.
     OBJECT_POSITION_SET(TOADONPA_DODONPA, 456, 320);
-    Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
+    FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
     messageBase = MsgLunpaBackMoreGuess;
     MESSAGE_SET(messageBase);
     MESSAGE_PUT(TOADONPA_DODONPA, 0);
@@ -1788,7 +1788,7 @@ static void EventScript_FindHammet(void) {
     MESSAGE_SET(messageBase);
     MESSAGE_PUT(TOADONPA_DODONPA, 0);
     LunpaFortress_RevealMonster();
-    gFieldWork->startTransition =
+    gFieldWork->transition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     WAIT(1);
     Battle_SetStart(BATTLE_START_SCRIPTED);
@@ -1796,7 +1796,7 @@ static void EventScript_FindHammet(void) {
                                     LUNPA_FORTRESS_TOADONPA_AFTER_BATTLE);
     Engine_EncounterRequestBattle(ENCOUNTER_ZONE_SCRIPTED, 4);
   } else {
-    OBJECT_MODE(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+    OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIMATION_STAND);
     SE(AUDIO_CUE_FADE_BGM);
     WAIT(30);
     // Ivan recognizes Hammet before Dodonpa interrupts the reunion.
@@ -1828,13 +1828,13 @@ static void EventScript_FindHammet(void) {
     WAIT(30);
     Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
     WAIT(20);
-    OBJECT_MODE(IVAN, ANIMATION_STAND);
+    OBJECT_ANIMATION(IVAN, ANIMATION_STAND);
     Engine_ObjectEventStartRepeatedMotion(TOADONPA_HAMMET, 1);
     WAIT(20);
     OBJECT_SPEED(TOADONPA_HAMMET, PIXELS(2) / 5, PIXELS(1) / 5);
     OBJECT_WALK(TOADONPA_HAMMET, 520, 208);
     Engine_ObjectEventWaitForMove(TOADONPA_HAMMET);
-    OBJECT_MODE(TOADONPA_HAMMET, 1);
+    OBJECT_ANIMATION(TOADONPA_HAMMET, 1);
     WAIT(20);
     OBJECT_DIR(TOADONPA_HAMMET, FACING_NORTHWEST + FACING_STEP, 0);
     WAIT(30);
@@ -1863,7 +1863,7 @@ static void EventScript_FindHammet(void) {
     MESSAGE_SET(messageBase + 6);
     MESSAGE_PUT(IVAN, 0);
     WAIT(20);
-    OBJECT_MODE(TOADONPA_HAMMET, 4);
+    OBJECT_ANIMATION(TOADONPA_HAMMET, 4);
     WAIT(80);
     MESSAGE_SET(messageBase + 7);
     MESSAGE_PUT(TOADONPA_HAMMET, 0);
@@ -1880,7 +1880,7 @@ static void EventScript_FindHammet(void) {
     OBJECT_FACE(TOADONPA_HAMMET, TOADONPA_DODONPA, 0);
     WAIT(30);
     SE(MUS_061);
-    Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
+    FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
     Engine_CameraMoveToObjectEvent(TOADONPA_DODONPA, 1);
     Engine_CameraWaitForMove();
     OBJECT_SPEED(TOADONPA_DODONPA, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -1920,7 +1920,7 @@ static void EventScript_FindHammet(void) {
     MESSAGE_PUT(TOADONPA_DODONPA, 0);
     OBJECT_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
     WAIT(60);
-    OBJECT_MODE(TOADONPA_DODONPA, 4);
+    OBJECT_ANIMATION(TOADONPA_DODONPA, 4);
     MESSAGE_SET(messageBase + 13);
     MESSAGE_PUT(TOADONPA_DODONPA, 0);
     OBJECT_WALK(GARET, 456, 248);
@@ -1945,7 +1945,7 @@ static void EventScript_FindHammet(void) {
     WAIT(10);
     MESSAGE_SET(messageBase + 17);
     MESSAGE_PUT(MIA, 0);
-    OBJECT_MODE(TOADONPA_DODONPA, 4);
+    OBJECT_ANIMATION(TOADONPA_DODONPA, 4);
     MESSAGE_SET(messageBase + 18);
     MESSAGE_PUT(TOADONPA_DODONPA, 0);
     OBJECT_EMOTE(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
@@ -1989,7 +1989,7 @@ static void EventScript_FindHammet(void) {
     LunpaFortress_PositionPartyForMonster();
     LunpaFortress_RevealMonster();
     FLAG_SET(FLAG_LUNPA_FORTRESS_TRAP_SEEN);
-    gFieldWork->startTransition =
+    gFieldWork->transition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     WAIT(1);
     Battle_SetStart(BATTLE_START_SCRIPTED);
@@ -1997,7 +1997,7 @@ static void EventScript_FindHammet(void) {
                                     LUNPA_FORTRESS_TOADONPA_AFTER_BATTLE);
     Engine_EncounterRequestBattle(ENCOUNTER_ZONE_SCRIPTED, 4);
   }
-  EV_END();
+  SCRIPT_END();
 }
 
 /// LunpaFortressToadonpa, LUNPA_FORTRESS_TOADONPA_AFTER_BATTLE after the battle
@@ -2015,7 +2015,7 @@ static void EventScript_DonpaJudgesDodonpa(void) {
   FLAG_SET(FLAG_DODONPA_LOCKED_UP);
   MapGrid_CopyCells(16, 75, 7, 4, 26, 55);
   LunpaFortress_OpenToadonpaDoor(4);
-  EV_START();
+  SCRIPT_START();
   leader = ObjectEvent_Get(TOADONPA_HAMMET);
   Engine_ObjectEventSetSpriteFlags(leader, 1);
   OBJECT_POSITION_SET(LOCALID_PARTY_LEADER, 456, 184);
@@ -2032,10 +2032,10 @@ static void EventScript_DonpaJudgesDodonpa(void) {
   OBJECT_DIR(TOADONPA_BOSS, FACING_WEST, 0);
   OBJECT_POSITION_SET(TOADONPA_BOSS_PART, 448, 238);
   Engine_ObjectEventSetSpritePriority(TOADONPA_BOSS_PART, 3);
-  OBJECT_MODE(TOADONPA_BOSS, 3);
+  OBJECT_ANIMATION(TOADONPA_BOSS, 3);
   OBJECT_POSITION_SET(TOADONPA_DODONPA, 458, 243);
   OBJECT_DIR(TOADONPA_DODONPA, FACING_SOUTH, 0);
-  OBJECT_MODE(TOADONPA_DODONPA, 5);
+  OBJECT_ANIMATION(TOADONPA_DODONPA, 5);
   Engine_ScriptOpenScreen();
   WAIT(120);
 
@@ -2060,7 +2060,7 @@ static void EventScript_DonpaJudgesDodonpa(void) {
   OBJECT_FACE(MIA, TOADONPA_HAMMET, 0);
   WAIT(60);
   OBJECT_WALK(TOADONPA_HAMMET, 512, 232);
-  OBJECT_MODE(TOADONPA_HAMMET, 4);
+  OBJECT_ANIMATION(TOADONPA_HAMMET, 4);
   WAIT(60);
   MESSAGE_SET((aftermathMessage + 3));
   MESSAGE_PUT(TOADONPA_HAMMET, 0);
@@ -2076,9 +2076,9 @@ static void EventScript_DonpaJudgesDodonpa(void) {
   MESSAGE_SET((aftermathMessage + 5));
   MESSAGE_PUT(IVAN, 0);
   OBJECT_EMOTE(MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-  OBJECT_MODE(MIA, ANIMATION_SHAKE_HEAD);
+  OBJECT_ANIMATION(MIA, ANIMATION_SHAKE_HEAD);
   WAIT(80);
-  OBJECT_MODE(MIA, ANIMATION_STAND);
+  OBJECT_ANIMATION(MIA, ANIMATION_STAND);
   MESSAGE_SET((aftermathMessage + 6));
   MESSAGE_PUT(MIA, 0);
   OBJECT_EMOTE(TOADONPA_HAMMET, EMOTE_IN_FRONT | EMOTE_WINCE, 65);
@@ -2098,9 +2098,9 @@ static void EventScript_DonpaJudgesDodonpa(void) {
   MESSAGE_SET((aftermathMessage + 10));
   MESSAGE_OPEN(MIA, 0);
   if (Engine_ScriptChooseYesNo(0, 0) == 0) {
-    OBJECT_MODE(IVAN, ANIMATION_NOD);
-    OBJECT_MODE(GARET, ANIMATION_NOD);
-    OBJECT_MODE(MIA, ANIMATION_NOD);
+    OBJECT_ANIMATION(IVAN, ANIMATION_NOD);
+    OBJECT_ANIMATION(GARET, ANIMATION_NOD);
+    OBJECT_ANIMATION(MIA, ANIMATION_NOD);
     OBJECT_FACE(TOADONPA_HAMMET, TOADONPA_DODONPA, 0);
     WAIT(60);
   } else {
@@ -2125,10 +2125,10 @@ static void EventScript_DonpaJudgesDodonpa(void) {
     OBJECT_FACE(GARET, TOADONPA_HAMMET, 0);
     OBJECT_FACE(MIA, TOADONPA_HAMMET, 0);
     OBJECT_FACE(LOCALID_PARTY_LEADER, TOADONPA_HAMMET, 0);
-    OBJECT_MODE(IVAN, ANIMATION_NOD);
-    OBJECT_MODE(GARET, ANIMATION_NOD);
-    OBJECT_MODE(MIA, ANIMATION_NOD);
-    OBJECT_MODE(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+    OBJECT_ANIMATION(IVAN, ANIMATION_NOD);
+    OBJECT_ANIMATION(GARET, ANIMATION_NOD);
+    OBJECT_ANIMATION(MIA, ANIMATION_NOD);
+    OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIMATION_NOD);
     WAIT(80);
     OBJECT_FACE(TOADONPA_HAMMET, TOADONPA_DODONPA, 0);
     OBJECT_FACE(IVAN, TOADONPA_DODONPA, 0);
@@ -2162,12 +2162,12 @@ static void EventScript_DonpaJudgesDodonpa(void) {
   Engine_ObjectEventFaceEachOther(MIA, IVAN, 0);
   WAIT(60);
   Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  OBJECT_MODE(IVAN, ANIMATION_NOD);
-  OBJECT_MODE(GARET, ANIMATION_NOD);
-  OBJECT_MODE(MIA, ANIMATION_NOD);
+  OBJECT_ANIMATION(IVAN, ANIMATION_NOD);
+  OBJECT_ANIMATION(GARET, ANIMATION_NOD);
+  OBJECT_ANIMATION(MIA, ANIMATION_NOD);
   WAIT(100);
   SE(SE_226);
-  OBJECT_MODE(TOADONPA_DODONPA, 7);
+  OBJECT_ANIMATION(TOADONPA_DODONPA, 7);
   // Move the party and both monster parts together to free Dodonpa.
   OBJECT_SPEED(LOCALID_PARTY_LEADER, PIXELS(1) / 10, PIXELS(1) / 20);
   ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, -24, 0);
@@ -2189,10 +2189,10 @@ static void EventScript_DonpaJudgesDodonpa(void) {
   OBJECT_DIR(IVAN, FACING_SOUTH, 0);
   OBJECT_DIR(MIA, FACING_NORTH, 0);
   WAIT(60);
-  OBJECT_MODE(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  OBJECT_MODE(GARET, ANIMATION_NOD);
-  OBJECT_MODE(IVAN, ANIMATION_NOD);
-  OBJECT_MODE(MIA, ANIMATION_NOD);
+  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  OBJECT_ANIMATION(GARET, ANIMATION_NOD);
+  OBJECT_ANIMATION(IVAN, ANIMATION_NOD);
+  OBJECT_ANIMATION(MIA, ANIMATION_NOD);
   WAIT(100);
   OBJECT_SPEED(LOCALID_PARTY_LEADER, PIXELS(7) / 10, PIXELS(7) / 20);
   OBJECT_SPEED(GARET, PIXELS(7) / 10, PIXELS(7) / 20);
@@ -2200,7 +2200,7 @@ static void EventScript_DonpaJudgesDodonpa(void) {
   OBJECT_SPEED(MIA, PIXELS(7) / 10, PIXELS(7) / 20);
   OBJECT_WALK(LOCALID_PARTY_LEADER, 456, 184);
   Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
-  OBJECT_MODE(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIMATION_STAND);
   OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
   OBJECT_WALK(GARET, 464, 256);
   Engine_ObjectEventWaitForMove(GARET);
@@ -2208,17 +2208,17 @@ static void EventScript_DonpaJudgesDodonpa(void) {
   Engine_ObjectEventWaitForMove(GARET);
   OBJECT_WALK(GARET, 440, 192);
   Engine_ObjectEventWaitForMove(GARET);
-  OBJECT_MODE(GARET, ANIMATION_STAND);
+  OBJECT_ANIMATION(GARET, ANIMATION_STAND);
   OBJECT_DIR(GARET, FACING_SOUTH, 0);
   OBJECT_WALK(MIA, 488, 248);
   Engine_ObjectEventWaitForMove(MIA);
   OBJECT_WALK(MIA, 488, 184);
   OBJECT_WALK(IVAN, 472, 184);
   Engine_ObjectEventWaitForMove(IVAN);
-  OBJECT_MODE(IVAN, ANIMATION_STAND);
+  OBJECT_ANIMATION(IVAN, ANIMATION_STAND);
   OBJECT_DIR(IVAN, FACING_SOUTH, 0);
   Engine_ObjectEventWaitForMove(MIA);
-  OBJECT_MODE(MIA, ANIMATION_STAND);
+  OBJECT_ANIMATION(MIA, ANIMATION_STAND);
   OBJECT_DIR(MIA, FACING_SOUTH, 0);
   WAIT(30);
   WAIT(60);
@@ -2226,11 +2226,11 @@ static void EventScript_DonpaJudgesDodonpa(void) {
   punishmentMessage = MsgLunpaAbleGet;
   MESSAGE_SET(punishmentMessage);
   MESSAGE_PUT(GARET, 0);
-  OBJECT_MODE(TOADONPA_DODONPA, 6);
+  OBJECT_ANIMATION(TOADONPA_DODONPA, 6);
   WAIT(120);
   Engine_ObjectEventStartRepeatedMotion(TOADONPA_DODONPA, 2);
   WAIT(60);
-  OBJECT_MODE(TOADONPA_DODONPA, 7);
+  OBJECT_ANIMATION(TOADONPA_DODONPA, 7);
   MESSAGE_SET((punishmentMessage + 1));
   MESSAGE_PUT(TOADONPA_DODONPA, 0);
   WAIT(20);
@@ -2244,11 +2244,11 @@ static void EventScript_DonpaJudgesDodonpa(void) {
   OBJECT_EMOTE(TOADONPA_DODONPA, EMOTE_IN_FRONT | EMOTE_WINCE, 70);
   Engine_ObjectEventStartRepeatedMotion(TOADONPA_DODONPA, 2);
   WAIT(60);
-  OBJECT_MODE(TOADONPA_DODONPA, 5);
+  OBJECT_ANIMATION(TOADONPA_DODONPA, 5);
   WAIT(70);
   MESSAGE_SET((punishmentMessage + 3));
   MESSAGE_PUT(TOADONPA_DODONPA, 0);
-  OBJECT_MODE(TOADONPA_DODONPA, 7);
+  OBJECT_ANIMATION(TOADONPA_DODONPA, 7);
   OBJECT_EMOTE(IVAN, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
   MESSAGE_SET((punishmentMessage + 4));
   MESSAGE_PUT(IVAN, 0);
@@ -2268,7 +2268,7 @@ static void EventScript_DonpaJudgesDodonpa(void) {
   OBJECT_FACE(GARET, IVAN, 0);
   OBJECT_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 75);
   OBJECT_FACE(GARET, LOCALID_PARTY_LEADER, 0);
-  OBJECT_MODE(GARET, ANIMATION_SHAKE_HEAD);
+  OBJECT_ANIMATION(GARET, ANIMATION_SHAKE_HEAD);
   MESSAGE_SET((punishmentMessage + 6));
   MESSAGE_PUT(GARET, 0);
   OBJECT_EMOTE(TOADONPA_HAMMET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -2277,7 +2277,7 @@ static void EventScript_DonpaJudgesDodonpa(void) {
   MESSAGE_PUT(TOADONPA_HAMMET, 0);
   OBJECT_WALK(GARET, 448, 208);
   Engine_ObjectEventWaitForMove(GARET);
-  OBJECT_MODE(GARET, ANIMATION_STAND);
+  OBJECT_ANIMATION(GARET, ANIMATION_STAND);
   OBJECT_FACE(GARET, TOADONPA_HAMMET, 0);
   MESSAGE_SET((punishmentMessage + 8));
   MESSAGE_PUT(GARET, 0);
@@ -2287,7 +2287,7 @@ static void EventScript_DonpaJudgesDodonpa(void) {
   WAIT(60);
   MESSAGE_SET((punishmentMessage + 9));
   MESSAGE_PUT(TOADONPA_HAMMET, 0);
-  OBJECT_MODE(GARET, ANIMATION_SHAKE_HEAD);
+  OBJECT_ANIMATION(GARET, ANIMATION_SHAKE_HEAD);
   WAIT(60);
   MESSAGE_SET((punishmentMessage + 10));
   MESSAGE_PUT(GARET, 0);
@@ -2322,7 +2322,7 @@ static void EventScript_DonpaJudgesDodonpa(void) {
   OBJECT_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_SCOWL, 110);
   OBJECT_WALK(GARET, 456, 212);
   Engine_ObjectEventWaitForMove(GARET);
-  OBJECT_MODE(GARET, ANIMATION_STAND);
+  OBJECT_ANIMATION(GARET, ANIMATION_STAND);
   MESSAGE_SET((punishmentMessage + 16));
   MESSAGE_PUT(GARET, 0);
   OBJECT_FACE(IVAN, GARET, 0);
@@ -2377,7 +2377,7 @@ static void EventScript_DonpaJudgesDodonpa(void) {
   OBJECT_FACE(IVAN, TOADONPA_DONPA, 0);
   OBJECT_FACE(TOADONPA_HAMMET, TOADONPA_DONPA, 0);
   OBJECT_FACE(TOADONPA_DODONPA, TOADONPA_DONPA, 0);
-  Camera_MoveTo(0x1c80000, -1, 0xf00000, 1);
+  FieldCamera_MoveTo(0x1c80000, -1, 0xf00000, 1);
   Engine_ObjectEventStartRepeatedMotion(TOADONPA_DODONPA, 1);
   WAIT(60);
   SE(MUS_008);
@@ -2388,13 +2388,13 @@ static void EventScript_DonpaJudgesDodonpa(void) {
   OBJECT_WALK(TOADONPA_DONPA, 456, 280);
   Engine_ObjectEventWaitForMove(TOADONPA_DONPA);
   OBJECT_WALK(TOADONPA_DONPA, 440, 256);
-  Camera_MoveTo(0x1c80000, -1, 0xe00000, 1);
+  FieldCamera_MoveTo(0x1c80000, -1, 0xe00000, 1);
   MESSAGE_SET((donpaMessage + 1));
   MESSAGE_PUT(TOADONPA_DONPA, 0);
   Engine_ObjectEventWaitForMove(TOADONPA_DONPA);
   OBJECT_DIR(TOADONPA_DONPA, FACING_NORTH + FACING_STEP, 0);
   OBJECT_EMOTE(TOADONPA_DODONPA, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
-  OBJECT_MODE(TOADONPA_DONPA, 4);
+  OBJECT_ANIMATION(TOADONPA_DONPA, 4);
   WAIT(89);
   MESSAGE_SET((donpaMessage + 2));
   MESSAGE_PUT(TOADONPA_DONPA, 0);
@@ -2403,7 +2403,7 @@ static void EventScript_DonpaJudgesDodonpa(void) {
   MESSAGE_SET((donpaMessage + 3));
   MESSAGE_PUT(TOADONPA_DONPA, 0);
   OBJECT_EMOTE(TOADONPA_DODONPA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 80);
-  OBJECT_MODE(TOADONPA_DONPA, 4);
+  OBJECT_ANIMATION(TOADONPA_DONPA, 4);
   WAIT(80);
   OBJECT_DIR(TOADONPA_DONPA, FACING_SOUTHEAST + FACING_STEP, 0);
   WAIT(20);
@@ -2448,22 +2448,22 @@ static void EventScript_DonpaJudgesDodonpa(void) {
   WAIT(20);
   MESSAGE_SET((donpaMessage + 12));
   MESSAGE_PUT(TOADONPA_DONPA, 0);
-  OBJECT_MODE(TOADONPA_DONPA, 3);
+  OBJECT_ANIMATION(TOADONPA_DONPA, 3);
   OBJECT_EMOTE(TOADONPA_HAMMET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   MESSAGE_SET((donpaMessage + 13));
   MESSAGE_PUT(TOADONPA_HAMMET, 0);
   OBJECT_EMOTE(TOADONPA_DONPA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 70);
   MESSAGE_SET((donpaMessage + 14));
   MESSAGE_PUT(TOADONPA_DONPA, 0);
-  OBJECT_MODE(TOADONPA_HAMMET, 3);
+  OBJECT_ANIMATION(TOADONPA_HAMMET, 3);
   WAIT(140);
-  OBJECT_MODE(TOADONPA_DONPA, 3);
+  OBJECT_ANIMATION(TOADONPA_DONPA, 3);
   WAIT(120);
   Engine_ObjectEventFaceEachOther(LOCALID_PARTY_LEADER, TOADONPA_DONPA, 0);
-  OBJECT_MODE(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  OBJECT_MODE(IVAN, ANIMATION_NOD);
-  OBJECT_MODE(GARET, ANIMATION_NOD);
-  OBJECT_MODE(MIA, ANIMATION_NOD);
+  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  OBJECT_ANIMATION(IVAN, ANIMATION_NOD);
+  OBJECT_ANIMATION(GARET, ANIMATION_NOD);
+  OBJECT_ANIMATION(MIA, ANIMATION_NOD);
   WAIT(120);
   OBJECT_EMOTE(TOADONPA_DONPA, EMOTE_IN_FRONT | EMOTE_SMILE, 180);
   MESSAGE_SET((donpaMessage + 15));
@@ -2503,20 +2503,20 @@ static void EventScript_DonpaJudgesDodonpa(void) {
   OBJECT_EMOTE(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   OBJECT_EMOTE(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   WAIT(120);
-  OBJECT_MODE(TOADONPA_DONPA, 4);
+  OBJECT_ANIMATION(TOADONPA_DONPA, 4);
   WAIT(120);
   MESSAGE_SET((donpaMessage + 21));
   MESSAGE_PUT(TOADONPA_DONPA, 0);
   OBJECT_EMOTE(TOADONPA_DONPA, EMOTE_IN_FRONT | EMOTE_WINCE, 90);
   MESSAGE_SET((donpaMessage + 22));
   MESSAGE_PUT(TOADONPA_DONPA, 0);
-  OBJECT_MODE(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  OBJECT_MODE(IVAN, ANIMATION_NOD);
-  OBJECT_MODE(MIA, ANIMATION_NOD);
-  OBJECT_MODE(GARET, ANIMATION_NOD);
-  OBJECT_MODE(TOADONPA_HAMMET, 3);
+  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  OBJECT_ANIMATION(IVAN, ANIMATION_NOD);
+  OBJECT_ANIMATION(MIA, ANIMATION_NOD);
+  OBJECT_ANIMATION(GARET, ANIMATION_NOD);
+  OBJECT_ANIMATION(TOADONPA_HAMMET, 3);
   WAIT(80);
-  OBJECT_MODE(TOADONPA_DONPA, 4);
+  OBJECT_ANIMATION(TOADONPA_DONPA, 4);
   WAIT(120);
   MESSAGE_SET((donpaMessage + 23));
   MESSAGE_PUT(TOADONPA_DONPA, 0);
@@ -2529,11 +2529,11 @@ static void EventScript_DonpaJudgesDodonpa(void) {
   WAIT(50);
   MESSAGE_SET((donpaMessage + 25));
   MESSAGE_PUT(TOADONPA_DONPA, 0);
-  OBJECT_MODE(GARET, ANIMATION_NOD);
+  OBJECT_ANIMATION(GARET, ANIMATION_NOD);
   WAIT(70);
   MESSAGE_SET((donpaMessage + 26));
   MESSAGE_PUT(GARET, 0);
-  OBJECT_MODE(MIA, ANIMATION_NOD);
+  OBJECT_ANIMATION(MIA, ANIMATION_NOD);
   MESSAGE_SET((donpaMessage + 27));
   MESSAGE_PUT(MIA, 0);
   OBJECT_FACE(TOADONPA_DONPA, LOCALID_PARTY_LEADER, 0);
@@ -2573,7 +2573,7 @@ static void EventScript_DonpaJudgesDodonpa(void) {
   MESSAGE_PUT(TOADONPA_DONPA, 0);
   OBJECT_FACE(IVAN, LOCALID_PARTY_LEADER, 0);
   WAIT(30);
-  OBJECT_MODE(IVAN, ANIMATION_NOD);
+  OBJECT_ANIMATION(IVAN, ANIMATION_NOD);
   WAIT(100);
   MESSAGE_SET((donpaMessage + 37));
   MESSAGE_OPEN(IVAN, 0);
@@ -2582,16 +2582,16 @@ static void EventScript_DonpaJudgesDodonpa(void) {
     MESSAGE_PUT(TOADONPA_DONPA, 0);
   }
   WAIT(30);
-  OBJECT_MODE(GARET, ANIMATION_NOD);
-  OBJECT_MODE(IVAN, ANIMATION_NOD);
-  OBJECT_MODE(MIA, ANIMATION_NOD);
+  OBJECT_ANIMATION(GARET, ANIMATION_NOD);
+  OBJECT_ANIMATION(IVAN, ANIMATION_NOD);
+  OBJECT_ANIMATION(MIA, ANIMATION_NOD);
   WAIT(100);
   Engine_ObjectEventFaceEachOther(LOCALID_PARTY_LEADER, TOADONPA_HAMMET, 0);
-  OBJECT_MODE(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  OBJECT_MODE(TOADONPA_HAMMET, 3);
+  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  OBJECT_ANIMATION(TOADONPA_HAMMET, 3);
   WAIT(100);
   // Rejoin the companions, then escort Hammet out of the fortress.
-  OBJECT_MODE(GARET, ANIMATION_WALK);
+  OBJECT_ANIMATION(GARET, ANIMATION_WALK);
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   if (leader != 0) {
     ObjectEvent_SetDestination(GARET, leader->x.part.pixel,
@@ -2599,7 +2599,7 @@ static void EventScript_DonpaJudgesDodonpa(void) {
   }
   Engine_ObjectEventWaitForMove(GARET);
   OBJECT_POSITION_SET(GARET, 0, 0);
-  OBJECT_MODE(IVAN, ANIMATION_WALK);
+  OBJECT_ANIMATION(IVAN, ANIMATION_WALK);
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   if (leader != 0) {
     ObjectEvent_SetDestination(IVAN, leader->x.part.pixel,
@@ -2607,7 +2607,7 @@ static void EventScript_DonpaJudgesDodonpa(void) {
   }
   Engine_ObjectEventWaitForMove(IVAN);
   OBJECT_POSITION_SET(IVAN, 0, 0);
-  OBJECT_MODE(MIA, ANIMATION_WALK);
+  OBJECT_ANIMATION(MIA, ANIMATION_WALK);
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   if (leader != 0) {
     ObjectEvent_SetDestination(MIA, leader->x.part.pixel, leader->z.part.pixel);
@@ -2618,10 +2618,10 @@ static void EventScript_DonpaJudgesDodonpa(void) {
   OBJECT_SPEED(TOADONPA_HAMMET, PIXELS(2) / 5, PIXELS(1) / 5);
   OBJECT_WALK(TOADONPA_HAMMET, 472, 184);
   Engine_ObjectEventWaitForMove(TOADONPA_HAMMET);
-  OBJECT_MODE(TOADONPA_HAMMET, 1);
+  OBJECT_ANIMATION(TOADONPA_HAMMET, 1);
   OBJECT_DIR(TOADONPA_HAMMET, FACING_SOUTHEAST + FACING_STEP, 0);
   OBJECT_FACE(TOADONPA_DONPA, LOCALID_PARTY_LEADER, 0);
-  OBJECT_MODE(TOADONPA_DONPA, 3);
+  OBJECT_ANIMATION(TOADONPA_DONPA, 3);
   WAIT(20);
   OBJECT_FACE(TOADONPA_DONPA, TOADONPA_DODONPA, 0);
   WAIT(20);
@@ -2630,7 +2630,7 @@ static void EventScript_DonpaJudgesDodonpa(void) {
   Engine_ObjectEventRunRepeatedMotion(TOADONPA_DODONPA, 2);
   MESSAGE_SET((donpaMessage + 40));
   MESSAGE_PUT(TOADONPA_DODONPA, 0);
-  OBJECT_MODE(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIMATION_NOD);
   WAIT(30);
   OBJECT_SPEED(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   OBJECT_SPEED(TOADONPA_HAMMET, PIXELS(1), PIXELS(1) / 2);
@@ -2645,11 +2645,11 @@ static void EventScript_DonpaJudgesDodonpa(void) {
   Engine_ObjectEventWaitForMove(TOADONPA_HAMMET);
   OBJECT_FACE(TOADONPA_HAMMET, TOADONPA_DONPA, 0);
   OBJECT_DIR(TOADONPA_HAMMET, FACING_SOUTHEAST + FACING_STEP, 0);
-  OBJECT_MODE(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIMATION_NOD);
   WAIT(5);
-  OBJECT_MODE(TOADONPA_HAMMET, 3);
+  OBJECT_ANIMATION(TOADONPA_HAMMET, 3);
   WAIT(100);
-  OBJECT_MODE(TOADONPA_DONPA, 3);
+  OBJECT_ANIMATION(TOADONPA_DONPA, 3);
   WAIT(100);
   OBJECT_WALK(TOADONPA_HAMMET, 480, 248);
   OBJECT_WALK(LOCALID_PARTY_LEADER, 456, 248);
@@ -2665,13 +2665,13 @@ static void EventScript_DonpaJudgesDodonpa(void) {
   OBJECT_WALK(TOADONPA_HAMMET, 352, 360);
   WAIT(20);
   SE(AUDIO_CUE_FADE_BGM);
-  gFieldWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
   Engine_ScriptCloseScreen();
   WAIT(1);
   WAIT(210);
   Engine_ScriptRequestWarp(LUNPA_FORTRESS_TOADONPA_TO_LUNPA_FORTRESS_GATES);
-  EV_END();
+  SCRIPT_END();
 }
 
 /// LunpaFortressGroundFloor: Mind Read on the second sentry reads his thoughts.
@@ -2740,7 +2740,7 @@ static void EventScript_TalkToSentry(void) {
   messageBase = MsgLunpaLeftGuardHearsSomeone;
   MESSAGE_SET(messageBase);
   MESSAGE_PUT(GROUND_FLOOR_SECOND_SENTRY, 0);
-  OBJECT_MODE(GROUND_FLOOR_SECOND_SENTRY, 4);
+  OBJECT_ANIMATION(GROUND_FLOOR_SECOND_SENTRY, 4);
   WAIT(60);
   OBJECT_DIR(GROUND_FLOOR_SECOND_SENTRY, FACING_NORTHWEST + FACING_STEP, 0);
   WAIT(40);
@@ -2756,18 +2756,18 @@ static void EventScript_TalkToAttendant(void) {
   s32 whisperMessage;
   s32 familyMessage;
 
-  EV_START();
+  SCRIPT_START();
   if (FLAG_CHECK(FLAG_DODONPA_LOCKED_UP) != 0) {
     MESSAGE_SET(MsgLunpaDonpaGrateful);
     // XXX: likely a slip for UPPER_FLOOR_ATTENDANT, because the line is the
     // attendant's and Dodonpa's wife stands at the far side of the fortress.
     MESSAGE_PUT(UPPER_FLOOR_DODONPAS_WIFE, 0);
-    EV_END();
+    SCRIPT_END();
   } else {
     if (FLAG_CHECK(FLAG_MAPSEC_TEMP_13) != 0) {
       MESSAGE_SET(MsgLunpaMaybeDodonpasEyes);
       MESSAGE_OPEN(UPPER_FLOOR_ATTENDANT, 0);
-      EV_END();
+      SCRIPT_END();
     } else {
       OBJECT_EMOTE(UPPER_FLOOR_ATTENDANT, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
       OBJECT_FACE(UPPER_FLOOR_ATTENDANT, LOCALID_PARTY_LEADER, 0);
@@ -2811,7 +2811,7 @@ static void EventScript_TalkToAttendant(void) {
       MESSAGE_SET(familyMessage + 2);
       MESSAGE_OPEN(UPPER_FLOOR_ATTENDANT, 0);
       FLAG_SET(FLAG_MAPSEC_TEMP_13);
-      EV_END();
+      SCRIPT_END();
     }
   }
 }
@@ -2855,7 +2855,7 @@ static void EventScript_TalkToDonpa(void) {
       OBJECT_SPEED(UPPER_FLOOR_DONPA, PIXELS(1) / 10, PIXELS(1) / 20);
       ObjectEvent_SetDestinationOffset(UPPER_FLOOR_DONPA, -4, 0);
       Engine_ObjectEventWaitForMove(UPPER_FLOOR_DONPA);
-      OBJECT_MODE(UPPER_FLOOR_DONPA, 3);
+      OBJECT_ANIMATION(UPPER_FLOOR_DONPA, 3);
       WAIT(60);
       OBJECT_SPEED(UPPER_FLOOR_DONPA, PIXELS(1) / 5, PIXELS(1) / 10);
       ObjectEvent_SetDestinationOffset(UPPER_FLOOR_DONPA, -6, 0);
@@ -2868,7 +2868,7 @@ static void EventScript_TalkToDonpa(void) {
       MESSAGE_SET(rewardMessage + 2);
       MESSAGE_PUT(UPPER_FLOOR_DONPA, 0);
       WAIT(70);
-      OBJECT_MODE(UPPER_FLOOR_ATTENDANT, 3);
+      OBJECT_ANIMATION(UPPER_FLOOR_ATTENDANT, 3);
       WAIT(60);
       OBJECT_SPEED(UPPER_FLOOR_ATTENDANT, PIXELS(2) / 5, PIXELS(1) / 5);
       OBJECT_WALK(UPPER_FLOOR_ATTENDANT, 880, 112);
@@ -2876,11 +2876,11 @@ static void EventScript_TalkToDonpa(void) {
       OBJECT_DIR(UPPER_FLOOR_ATTENDANT, FACING_NORTH + FACING_STEP, 0);
       MESSAGE_SET(rewardMessage + 3);
       MESSAGE_PUT(UPPER_FLOOR_DONPA, 0);
-      OBJECT_MODE(UPPER_FLOOR_DONPA, 3);
+      OBJECT_ANIMATION(UPPER_FLOOR_DONPA, 3);
       WAIT(70);
       ObjectEvent_SetDestinationOffset(UPPER_FLOOR_DONPA, 8, 0);
       Engine_ObjectEventWaitForMove(UPPER_FLOOR_DONPA);
-      OBJECT_MODE(UPPER_FLOOR_DONPA, 5);
+      OBJECT_ANIMATION(UPPER_FLOOR_DONPA, 5);
       MESSAGE_SET(rewardMessage + 4);
       MESSAGE_PUT(UPPER_FLOOR_DONPA, 0);
       OBJECT_WALK(LOCALID_PARTY_LEADER, 896, 120);
@@ -2888,7 +2888,7 @@ static void EventScript_TalkToDonpa(void) {
       Engine_ObjectEventFaceEachOther(LOCALID_PARTY_LEADER,
                                       UPPER_FLOOR_ATTENDANT, 0);
       WAIT(60);
-      OBJECT_MODE(UPPER_FLOOR_ATTENDANT, 3);
+      OBJECT_ANIMATION(UPPER_FLOOR_ATTENDANT, 3);
       WAIT(30);
       FLAG_SET(FLAG_MAPSEC_TEMP_14);
     } else {
@@ -2950,7 +2950,7 @@ static void EventScript_TalkToStartledOldMan(void) {
     MESSAGE_SET(MsgLunpaWontTellAnyone);
     MESSAGE_PUT(GROUND_FLOOR_STARTLED_OLD_MAN, 0);
   } else {
-    EV_START();
+    SCRIPT_START();
     OBJECT_FACE(GROUND_FLOOR_STARTLED_OLD_MAN, LOCALID_PARTY_LEADER, 0);
     if (FLAG_CHECK(FLAG_MAP_TEMP_27) == 0) {
       Engine_ObjectEventJump(GROUND_FLOOR_STARTLED_OLD_MAN, 4, 0);
@@ -2965,7 +2965,7 @@ static void EventScript_TalkToStartledOldMan(void) {
       MESSAGE_SET(frightMessage + 1);
       MESSAGE_PUT(GROUND_FLOOR_STARTLED_OLD_MAN, 0);
       WAIT(30);
-      OBJECT_MODE(GROUND_FLOOR_STARTLED_OLD_MAN, 4);
+      OBJECT_ANIMATION(GROUND_FLOOR_STARTLED_OLD_MAN, 4);
       WAIT(30);
     }
     purposeMessage = MsgLunpaDontLookNearly;
@@ -2984,7 +2984,7 @@ static void EventScript_TalkToStartledOldMan(void) {
       MESSAGE_OPEN(GROUND_FLOOR_STARTLED_OLD_MAN, 0);
     }
     FLAG_SET(FLAG_MAP_TEMP_27);
-    EV_END();
+    SCRIPT_END();
   }
 }
 
@@ -2997,7 +2997,7 @@ static void EventScript_ReadStartledResidentsThoughts(void) {
     MESSAGE_SET(MsgLunpaMaybeMerchantReason);
     MESSAGE_PUT(GROUND_FLOOR_STARTLED_OLD_MAN, 0);
   } else {
-    s16 *psynergyRequest = &gFieldWork->psynergyRequest;
+    s16 *psynergyRequest = &gFieldWork->psynergy;
 
     *psynergyRequest = 0;
     Engine_PsynergyCancel();
@@ -3041,11 +3041,11 @@ s32 Map_Initialize(void) {
   if (gGameState.mapId == (s32)&MapId_LunpaFortressCave)
     LunpaFortress_InitializeCave();
   if (gGameState.mapId == (s32)&MapId_LunpaFortressToadonpa) {
-    gFieldWork->startTransition =
+    gFieldWork->transition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
     Engine_ObjectEventSetSpriteFlags(ObjectEvent_Get(TOADONPA_HAMMET), 0);
     OBJECT_DIR(TOADONPA_HAMMET, FACING_EAST, 0);
-    OBJECT_MODE(TOADONPA_HAMMET, 0);
+    OBJECT_ANIMATION(TOADONPA_HAMMET, 0);
     LunpaFortress_RestoreToadonpaDoors();
     mapObjectEvent = ObjectEvent_Get(TOADONPA_WEST_JAR_BLOCKER);
     if (mapObjectEvent != 0)
@@ -3098,7 +3098,7 @@ static void LunpaFortress_InitializeGroundFloor(void) {
   case LUNPA_FORTRESS_GROUND_FLOOR_MAIN_PASSAGE_FROM_FEAST_ROOM:
   case LUNPA_FORTRESS_GROUND_FLOOR_MAIN_PASSAGE_FROM_NORTHEAST_PASSAGE:
   case LUNPA_FORTRESS_GROUND_FLOOR_MAIN_PASSAGE_FROM_EAST_PASSAGE:
-    gFieldWork->startTransition =
+    gFieldWork->transition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     Task_AddCallback(LunpaFortress_CheckEntranceGuard, TASK_PRIORITY_MAP);
     Task_AddCallback(LunpaFortress_CheckFirstEntranceSentry, TASK_PRIORITY_MAP);
@@ -3108,14 +3108,14 @@ static void LunpaFortress_InitializeGroundFloor(void) {
     break;
   case LUNPA_FORTRESS_GROUND_FLOOR_FEAST_ROOM_FROM_MAIN_PASSAGE:
   case LUNPA_FORTRESS_GROUND_FLOOR_BARREL_ROOM_FROM_NORTHEAST_PASSAGE:
-    gFieldWork->startTransition =
+    gFieldWork->transition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     Engine_MapGridSetShownLayers(LUNPA_FORTRESS_ROOM_LAYERS);
     break;
   case LUNPA_FORTRESS_GROUND_FLOOR_EAST_PASSAGE_FROM_MAIN_PASSAGE:
   case LUNPA_FORTRESS_GROUND_FLOOR_EAST_PASSAGE_FROM_NORTHEAST_PASSAGE:
   case LUNPA_FORTRESS_GROUND_FLOOR_EAST_PASSAGE_FROM_TREASURE_ROOM:
-    gFieldWork->startTransition =
+    gFieldWork->transition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     Task_AddCallback(LunpaFortress_UpdateGroundFloorPatrolDetection,
                      TASK_PRIORITY_MAP);
@@ -3130,12 +3130,12 @@ static void LunpaFortress_InitializeGroundFloor(void) {
   case LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_PASSAGE_FROM_MAIN_PASSAGE:
   case LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_PASSAGE_FROM_EAST_PASSAGE:
   case LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_PASSAGE_FROM_BARREL_ROOM:
-    gFieldWork->startTransition =
+    gFieldWork->transition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     Task_AddCallback(LunpaFortress_CheckUpperHallGuard, TASK_PRIORITY_MAP);
     break;
   default:
-    gFieldWork->startTransition =
+    gFieldWork->transition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     Engine_MapGridSetShownLayers(LUNPA_FORTRESS_PASSAGE_LAYERS);
     break;
@@ -3174,7 +3174,7 @@ static void LunpaFortress_InitializeUpperFloor(void) {
   case LUNPA_FORTRESS_UPPER_FLOOR_FROM_LUNPA_FORTRESS_GROUND_FLOOR_SOUTH:
   case LUNPA_FORTRESS_UPPER_FLOOR_WEST_PASSAGE_FROM_NORTH_PASSAGE:
   case LUNPA_FORTRESS_UPPER_FLOOR_WEST_PASSAGE_FROM_MIDDLE_PASSAGE:
-    gFieldWork->startTransition =
+    gFieldWork->transition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     Engine_MapGridSetShownLayers(LUNPA_FORTRESS_PASSAGE_LAYERS);
     Task_AddCallback(LunpaFortress_UpdatePairedGuardDetection,
@@ -3188,7 +3188,7 @@ static void LunpaFortress_InitializeUpperFloor(void) {
   case LUNPA_FORTRESS_UPPER_FLOOR_DONPAS_ROOM_FROM_SOUTH_PASSAGE:
   case LUNPA_FORTRESS_UPPER_FLOOR_TONIC_ROOM_FROM_DONPAS_ROOM:
   case LUNPA_FORTRESS_UPPER_FLOOR_DONPAS_ROOM_FROM_TONIC_ROOM:
-    gFieldWork->startTransition =
+    gFieldWork->transition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     Engine_MapGridSetShownLayers(LUNPA_FORTRESS_ROOM_LAYERS);
     Engine_ObjectEventSetSpriteFlags(ObjectEvent_Get(UPPER_FLOOR_DONPA), 0);
@@ -3198,7 +3198,7 @@ static void LunpaFortress_InitializeUpperFloor(void) {
     break;
   case LUNPA_FORTRESS_UPPER_FLOOR_EAST_PASSAGE_FROM_CELL_KEY_ROOM:
   case LUNPA_FORTRESS_UPPER_FLOOR_EAST_PASSAGE_FROM_SOUTH_PASSAGE:
-    gFieldWork->startTransition =
+    gFieldWork->transition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     Engine_MapGridSetShownLayers(LUNPA_FORTRESS_PASSAGE_LAYERS);
     Task_AddCallback(LunpaFortress_UpdateHallGuardDetection, TASK_PRIORITY_MAP);
@@ -3208,14 +3208,14 @@ static void LunpaFortress_InitializeUpperFloor(void) {
     break;
   case LUNPA_FORTRESS_UPPER_FLOOR_GUARD_ROOM_FROM_NORTH_PASSAGE:
   case LUNPA_FORTRESS_UPPER_FLOOR_GUARD_ROOM_FROM_SOUTH_PASSAGE:
-    gFieldWork->startTransition =
+    gFieldWork->transition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_THREE_GUARDS_BEATEN)) {
       LunpaFortress_PlaceThreeBeatenGuards();
     }
     break;
   case LUNPA_FORTRESS_UPPER_FLOOR_GUARD_ROOM_AFTER_BATTLE:
-    gFieldWork->startTransition =
+    gFieldWork->transition =
         MAP_TRANSITION(TRANSITION_WINDOW, LUNPA_RETURN_TRANSITION_VARIANT);
     LunpaFortress_PlaceThreeBeatenGuards();
     break;
@@ -3226,7 +3226,7 @@ static void LunpaFortress_InitializeUpperFloor(void) {
                      TASK_PRIORITY_MAP);
     break;
   default:
-    gFieldWork->startTransition =
+    gFieldWork->transition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     Engine_MapGridSetShownLayers(LUNPA_FORTRESS_PASSAGE_LAYERS);
     break;
@@ -3243,7 +3243,7 @@ static void LunpaFortress_InitializeUpperFloor(void) {
 static void LunpaFortress_InitializeCave(void) {
   struct ObjectEvent *mapObjectEvent;
 
-  gFieldWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   LunpaFortress_RestoreCaveDoors();
   if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_CRATES_MOVED)) {
@@ -3269,7 +3269,7 @@ static void LunpaFortress_InitializeCave(void) {
   if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_FLIPPED)) {
     LunpaFortress_OpenSecondSwitchPassage();
   }
-  EV_START();
+  SCRIPT_START();
   mapObjectEvent = ObjectEvent_Get(CAVE_FIRST_SWITCH_COVER);
   if (mapObjectEvent != 0) {
     mapObjectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
@@ -3292,7 +3292,7 @@ static void LunpaFortress_InitializeCave(void) {
     mapObjectEvent->collisionFlags |= OBJ_EVENT_NEAR_PSYNERGY;
   }
   Engine_ObjectEventSetSpriteFlags(ObjectEvent_Get(CAVE_JAR_BLOCKER), 0);
-  EV_END();
+  SCRIPT_END();
   Engine_MapGridSetShownLayers(LUNPA_FORTRESS_PASSAGE_LAYERS);
 }
 
@@ -3358,7 +3358,7 @@ static void LunpaFortress_RestoreToadonpaDoors(void) {
 // The ROM keeps these three tables in .rodata, but the shared declarations in
 // field.h and object_staged_object_event.h lack const, so a section attribute
 // places each one.
-s32 gStagedObjectEvent_DirectionSteps[] __attribute__((section(".rodata"))) = {
+s32 gPushedObject_DirectionSteps[] __attribute__((section(".rodata"))) = {
     DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),
@@ -3368,11 +3368,11 @@ s32 gStagedObjectEvent_DirectionSteps[] __attribute__((section(".rodata"))) = {
 };
 
 // clang-format off
-u32 gStagedObjectEvent_FootprintKinds[] __attribute__((section(".rodata"))) = {
+u32 gPushedObject_FootprintKinds[] __attribute__((section(".rodata"))) = {
     207, 205, 228, 229, 298, 297,
 };
 
-s32 gStagedObjectEvent_FootprintBounds[] __attribute__((section(".rodata"))) = {
+s32 gPushedObject_FootprintBounds[] __attribute__((section(".rodata"))) = {
     -32, -8, 32, 8,
     -8, -32, 8, 32,
     -32, -16, 32, 0,
@@ -3644,23 +3644,23 @@ struct ObjectEventTemplate gLunpaFortressObjectEventTemplatesOther[] = {
 /// a map this overlay never runs for.
 struct ObjectEventTemplate gLunpaFortressUnusedWestLunpaCaveObjectEventTemplates[] = {
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(184), 0, PIXELS(328), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(184), 0, PIXELS(328), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(232), 0, PIXELS(296), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(232), 0, PIXELS(296), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(344), 0, PIXELS(252), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(344), 0, PIXELS(252), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(552), 0, PIXELS(184), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(552), 0, PIXELS(184), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_BUNZA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_HAMMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_WEST, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_WEST, TALK_FACING_KEEP, 0 },
     { IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
     { MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
     { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
@@ -3668,119 +3668,119 @@ struct ObjectEventTemplate gLunpaFortressGroundFloorObjectEventTemplates[] = {
     // Unused: four chests at the map's origin, the display object events of the
     // unused sword pickups (FIRST_ITEM_DISPLAY_LOCALID).
     { SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_MAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(136), 0, PIXELS(760), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(136), 0, PIXELS(760), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(392), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(392), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(104), 0, PIXELS(440), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(104), 0, PIXELS(440), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_MAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(152), 0, PIXELS(464), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(152), 0, PIXELS(464), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_MAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(192), 0, PIXELS(432), FACING_SOUTH + FACING_STEP, TALK_KEEP_FACING, 0 },
+        PIXELS(192), 0, PIXELS(432), FACING_SOUTH + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_MAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(808), 0, PIXELS(232), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(808), 0, PIXELS(232), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, (s32)gGroundFloorPatrolRoute,
-        PIXELS(736), 0, PIXELS(648), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(736), 0, PIXELS(648), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(192), 0, PIXELS(464), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(192), 0, PIXELS(464), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(424), 0, PIXELS(392), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(424), 0, PIXELS(392), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(432), 0, PIXELS(768), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(432), 0, PIXELS(768), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gLunpaFortressUpperFloorObjectEventTemplates[] = {
     { 0xf5, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(264), 0, PIXELS(856), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(264), 0, PIXELS(856), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_MAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, (s32)gFirstPatrolRoute,
-        PIXELS(88), 0, PIXELS(192), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(88), 0, PIXELS(192), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, (s32)gSecondPatrolRoute,
-        PIXELS(88), 0, PIXELS(288), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(88), 0, PIXELS(288), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(456), 0, PIXELS(392), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(456), 0, PIXELS(392), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(680), 0, PIXELS(88), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(680), 0, PIXELS(88), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(704), 0, PIXELS(104), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(704), 0, PIXELS(104), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(680), 0, PIXELS(128), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(680), 0, PIXELS(128), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(312), 0, PIXELS(840), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(312), 0, PIXELS(840), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(680), 0, PIXELS(824), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(680), 0, PIXELS(824), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, (s32)gHallPatrolRoute,
-        PIXELS(920), 0, PIXELS(600), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(920), 0, PIXELS(600), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(88), 0, PIXELS(616), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(88), 0, PIXELS(616), FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(168), 0, PIXELS(560), FACING_WEST, TALK_FACE_PARTY, 0 },
+        PIXELS(168), 0, PIXELS(560), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(148), 0, PIXELS(616), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(148), 0, PIXELS(616), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(72), 0, PIXELS(560), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(72), 0, PIXELS(560), FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(664), 0, PIXELS(360), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(664), 0, PIXELS(360), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(712), 0, PIXELS(344), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(712), 0, PIXELS(344), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_DONPA, CONDITION_ALWAYS, (s32)gDonpaSleeps,
-        PIXELS(944), 0, PIXELS(122), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(944), 0, PIXELS(122), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(904), 0, PIXELS(120), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(904), 0, PIXELS(120), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { MERCURY_DJINNI, FLAG_DJINNI(DJINNI_TONIC), MOVEMENT_TYPE_STAND,
-        PIXELS(872), 0, PIXELS(336), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(872), 0, PIXELS(336), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gLunpaFortressCaveObjectEventTemplates[] = {
     { 0xf8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(280), 0, PIXELS(576), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(280), 0, PIXELS(576), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { 0xf8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(440), 0, PIXELS(282), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(440), 0, PIXELS(282), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { 0xf8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(56), 0, PIXELS(176), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(56), 0, PIXELS(176), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(504), 0, PIXELS(168), FACING_NORTH, TALK_KEEP_FACING, 0 },
+        PIXELS(504), 0, PIXELS(168), FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_CRATES, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(248), 0, PIXELS(136), FACING_NORTH, TALK_KEEP_FACING, 0 },
+        PIXELS(248), 0, PIXELS(136), FACING_NORTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gLunpaFortressToadonpaObjectEventTemplates[] = {
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(56), 0, PIXELS(72), FACING_NORTH, TALK_KEEP_FACING, 0 },
+        PIXELS(56), 0, PIXELS(72), FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(136), 0, PIXELS(72), FACING_NORTH, TALK_KEEP_FACING, 0 },
+        PIXELS(136), 0, PIXELS(72), FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(216), 0, PIXELS(72), FACING_NORTH, TALK_KEEP_FACING, 0 },
+        PIXELS(216), 0, PIXELS(72), FACING_NORTH, TALK_FACING_KEEP, 0 },
     { 0xbb, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(472), 0, PIXELS(88), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(472), 0, PIXELS(88), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_HAMMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(528), 0, PIXELS(216), FACING_WEST, TALK_KEEP_FACING, 0 },
+        PIXELS(528), 0, PIXELS(216), FACING_WEST, TALK_FACING_KEEP, 0 },
     { IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
     { MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
     { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_DODONPA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_DONPA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
     { 0x120, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(464), 0, PIXELS(88), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(464), 0, PIXELS(88), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
@@ -3797,10 +3797,10 @@ struct MapEvent gLunpaFortressGroundFloorEvents[] = {
     { MAP_EVENT_WARP, 5, CONDITION_ALWAYS, LUNPA_FORTRESS_GROUND_FLOOR_MAIN_PASSAGE_TO_FEAST_ROOM },
     { MAP_EVENT_WARP, 6, CONDITION_ALWAYS, LUNPA_FORTRESS_GROUND_FLOOR_MAIN_PASSAGE_TO_NORTHEAST_PASSAGE },
     { MAP_EVENT_WARP, 7, CONDITION_ALWAYS, LUNPA_FORTRESS_GROUND_FLOOR_MAIN_PASSAGE_TO_EAST_PASSAGE },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED, 8, CONDITION_ALWAYS, LUNPA_FORTRESS_GROUND_FLOOR_TO_LUNPA_FORTRESS_UPPER_FLOOR_SOUTH },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 8, CONDITION_ALWAYS, LUNPA_FORTRESS_GROUND_FLOOR_TO_LUNPA_FORTRESS_UPPER_FLOOR_SOUTH },
     { MAP_EVENT_WARP, 9, CONDITION_ALWAYS, LUNPA_FORTRESS_GROUND_FLOOR_NORTH_PASSAGE_TO_MAIN_PASSAGE },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED, 10, CONDITION_ALWAYS, LUNPA_FORTRESS_GROUND_FLOOR_TO_LUNPA_FORTRESS_UPPER_FLOOR_NORTH },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED_ALTERNATE, 11, CONDITION_ALWAYS, LUNPA_FORTRESS_GROUND_FLOOR_TO_LUNPA_FORTRESS_CAVE },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 10, CONDITION_ALWAYS, LUNPA_FORTRESS_GROUND_FLOOR_TO_LUNPA_FORTRESS_UPPER_FLOOR_NORTH },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 11, CONDITION_ALWAYS, LUNPA_FORTRESS_GROUND_FLOOR_TO_LUNPA_FORTRESS_CAVE },
     { MAP_EVENT_WARP, 12, CONDITION_ALWAYS, LUNPA_FORTRESS_GROUND_FLOOR_FEAST_ROOM_TO_MAIN_PASSAGE },
     { MAP_EVENT_WARP, 13, CONDITION_ALWAYS, LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_PASSAGE_TO_MAIN_PASSAGE },
     { MAP_EVENT_WARP, 14, CONDITION_ALWAYS, LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_PASSAGE_TO_EAST_PASSAGE },
@@ -3810,7 +3810,7 @@ struct MapEvent gLunpaFortressGroundFloorEvents[] = {
     { MAP_EVENT_WARP, 18, CONDITION_ALWAYS, LUNPA_FORTRESS_GROUND_FLOOR_EAST_PASSAGE_TO_TREASURE_ROOM },
     { MAP_EVENT_WARP, 19, CONDITION_ALWAYS, LUNPA_FORTRESS_GROUND_FLOOR_BARREL_ROOM_TO_NORTHEAST_PASSAGE },
     { MAP_EVENT_WARP, 20, CONDITION_ALWAYS, LUNPA_FORTRESS_GROUND_FLOOR_TREASURE_ROOM_TO_EAST_PASSAGE },
-    { BG_EVENT(BG_EVENT_UNNAMED), TRIGGER_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchLockedDoor) },
+    { BG_EVENT(BG_EVENT_SILENT), TRIGGER_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchLockedDoor) },
     { COORD_EVENT_FACING(FACING_NORTH), TRIGGER_DOOR_FIRST, GROUND_FLOOR_DOOR_FLAG, EVENT_SCRIPT(EventScript_UnlockGroundFloorDoor) },
     { COORD_EVENT_FACING(FACING_SOUTH), TRIGGER_DOOR_FIRST, GROUND_FLOOR_DOOR_FLAG, EVENT_SCRIPT(EventScript_UnlockGroundFloorDoor) },
     { COORD_EVENT_FACING(FACING_NORTH), TRIGGER_DOOR_FIRST + 1, GROUND_FLOOR_DOOR_FLAG + 1, EVENT_SCRIPT(EventScript_UnlockGroundFloorDoor) },
@@ -3844,7 +3844,7 @@ struct MapEvent gLunpaFortressGroundFloorEvents[] = {
 };
 
 struct MapEvent gLunpaFortressUpperFloorEvents[] = {
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED_ALTERNATE, 1, CONDITION_ALWAYS, LUNPA_FORTRESS_UPPER_FLOOR_TO_LUNPA_FORTRESS_GROUND_FLOOR_SOUTH },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, LUNPA_FORTRESS_UPPER_FLOOR_TO_LUNPA_FORTRESS_GROUND_FLOOR_SOUTH },
     { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, LUNPA_FORTRESS_UPPER_FLOOR_WEST_PASSAGE_TO_NORTH_PASSAGE },
     { MAP_EVENT_WARP, 3, CONDITION_ALWAYS, LUNPA_FORTRESS_UPPER_FLOOR_WEST_PASSAGE_TO_MIDDLE_PASSAGE },
     { MAP_EVENT_WARP, 4, CONDITION_ALWAYS, LUNPA_FORTRESS_UPPER_FLOOR_NORTH_PASSAGE_TO_WEST_PASSAGE },
@@ -3859,7 +3859,7 @@ struct MapEvent gLunpaFortressUpperFloorEvents[] = {
     { MAP_EVENT_WARP, 13, CONDITION_ALWAYS, LUNPA_FORTRESS_UPPER_FLOOR_WOMENS_ROOM_TO_NORTH_PASSAGE },
     { MAP_EVENT_WARP, 14, CONDITION_ALWAYS, LUNPA_FORTRESS_UPPER_FLOOR_CELL_KEY_ROOM_TO_MIDDLE_PASSAGE },
     { MAP_EVENT_WARP, 15, CONDITION_ALWAYS, LUNPA_FORTRESS_UPPER_FLOOR_CELL_KEY_ROOM_TO_EAST_PASSAGE },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED_ALTERNATE, 16, CONDITION_ALWAYS, LUNPA_FORTRESS_UPPER_FLOOR_TO_LUNPA_FORTRESS_GROUND_FLOOR_NORTH },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 16, CONDITION_ALWAYS, LUNPA_FORTRESS_UPPER_FLOOR_TO_LUNPA_FORTRESS_GROUND_FLOOR_NORTH },
     { MAP_EVENT_WARP, 17, CONDITION_ALWAYS, LUNPA_FORTRESS_UPPER_FLOOR_SOUTH_PASSAGE_TO_GUARD_ROOM },
     { MAP_EVENT_WARP, 18, CONDITION_ALWAYS, LUNPA_FORTRESS_UPPER_FLOOR_SOUTH_PASSAGE_TO_DONPAS_ROOM },
     { MAP_EVENT_WARP, 19, CONDITION_ALWAYS, LUNPA_FORTRESS_UPPER_FLOOR_SOUTH_PASSAGE_TO_EAST_PASSAGE },
@@ -3872,7 +3872,7 @@ struct MapEvent gLunpaFortressUpperFloorEvents[] = {
     { MAP_EVENT_COORD, 31, FLAG_LUNPA_FORTRESS_THREE_GUARDS_BEATEN, EVENT_SCRIPT(EventScript_FightThreeGuards) },
     { MAP_EVENT_COORD, 32, FLAG_LUNPA_FORTRESS_EAST_GUARD_BEATEN, EVENT_SCRIPT(EventScript_FightEastGuard) },
     { MAP_EVENT_COORD, 33, FLAG_LUNPA_FORTRESS_WEST_GUARD_BEATEN, EVENT_SCRIPT(EventScript_FightWestGuard) },
-    { BG_EVENT(BG_EVENT_UNNAMED), TRIGGER_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchLockedDoor) },
+    { BG_EVENT(BG_EVENT_SILENT), TRIGGER_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchLockedDoor) },
     { COORD_EVENT_FACING(FACING_SOUTH), TRIGGER_DOOR_FIRST, UPPER_FLOOR_DOOR_FLAG, EVENT_SCRIPT(EventScript_UnlockUpperFloorDoor) },
     { COORD_EVENT_FACING(FACING_NORTH), TRIGGER_DOOR_FIRST + 1, UPPER_FLOOR_DOOR_FLAG + 1, EVENT_SCRIPT(EventScript_UnlockUpperFloorDoor) },
     { COORD_EVENT_FACING(FACING_SOUTH), TRIGGER_DOOR_FIRST + 1, UPPER_FLOOR_DOOR_FLAG + 1, EVENT_SCRIPT(EventScript_UnlockUpperFloorDoor) },
@@ -3907,22 +3907,22 @@ struct MapEvent gLunpaFortressUpperFloorEvents[] = {
 };
 
 struct MapEvent gLunpaFortressCaveEvents[] = {
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED, 1, CONDITION_ALWAYS, LUNPA_FORTRESS_CAVE_TO_LUNPA_FORTRESS_GROUND_FLOOR },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, LUNPA_FORTRESS_CAVE_TO_LUNPA_FORTRESS_GROUND_FLOOR },
     { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, LUNPA_FORTRESS_CAVE_ENTRANCE_TO_LAKE },
     { MAP_EVENT_WARP, 3, CONDITION_ALWAYS, LUNPA_FORTRESS_CAVE_LAKE_TO_ENTRANCE },
     { MAP_EVENT_WARP, 4, CONDITION_ALWAYS, LUNPA_FORTRESS_CAVE_TO_LUNPA_FORTRESS_TOADONPA_NORTHEAST },
     { MAP_EVENT_WARP, 5, CONDITION_ALWAYS, LUNPA_FORTRESS_CAVE_TO_LUNPA_FORTRESS_TOADONPA_NORTH },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED_ALTERNATE, 6, CONDITION_ALWAYS, LUNPA_FORTRESS_CAVE_TO_LUNPA_FORTRESS_TOADONPA_NORTHWEST },
-    { BG_EVENT(BG_EVENT_UNNAMED), TRIGGER_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchLockedDoor) },
-    { BG_EVENT(BG_EVENT_UNNAMED), TRIGGER_SEALED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchSealedDoor) },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 6, CONDITION_ALWAYS, LUNPA_FORTRESS_CAVE_TO_LUNPA_FORTRESS_TOADONPA_NORTHWEST },
+    { BG_EVENT(BG_EVENT_SILENT), TRIGGER_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchLockedDoor) },
+    { BG_EVENT(BG_EVENT_SILENT), TRIGGER_SEALED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchSealedDoor) },
     { COORD_EVENT_FACING(FACING_NORTH), TRIGGER_DOOR_FIRST, CAVE_DOOR_FLAG, EVENT_SCRIPT(EventScript_UnlockCaveDoor) },
     { COORD_EVENT_FACING(FACING_NORTH), TRIGGER_DOOR_FIRST + 1, CAVE_DOOR_FLAG + 1, EVENT_SCRIPT(EventScript_UnlockCaveDoor) },
     { COORD_EVENT_FACING(FACING_NORTH), TRIGGER_DOOR_FIRST + 2, CAVE_DOOR_FLAG + 2, EVENT_SCRIPT(EventScript_UnlockCaveDoor) },
     { COORD_EVENT_FACING(FACING_SOUTH), TRIGGER_DOOR_FIRST + 2, CAVE_DOOR_FLAG + 2, EVENT_SCRIPT(EventScript_UnlockCaveDoor) },
     { COORD_EVENT_WALKING_INTO(FACING_SOUTH), 50, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_CratesSink) },
     { COORD_EVENT_WALKING, 70, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushCrates) },
-    { BG_EVENT(BG_EVENT_UNNAMED), 51, FLAG_MAP_TEMP_18, EVENT_SCRIPT(EventScript_FlipSecondSwitch) },
-    { BG_EVENT(BG_EVENT_UNNAMED), 52, FLAG_MAP_TEMP_17, EVENT_SCRIPT(EventScript_FlipFirstSwitch) },
+    { BG_EVENT(BG_EVENT_SILENT), 51, FLAG_MAP_TEMP_18, EVENT_SCRIPT(EventScript_FlipSecondSwitch) },
+    { BG_EVENT(BG_EVENT_SILENT), 52, FLAG_MAP_TEMP_17, EVENT_SCRIPT(EventScript_FlipFirstSwitch) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RevealSwitches) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HideSwitches) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_WHIRLWIND), CAVE_FIRST_SWITCH_COVER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_BlowAwayFirstSwitchCover) },
@@ -3935,8 +3935,8 @@ struct MapEvent gLunpaFortressCaveEvents[] = {
 struct MapEvent gLunpaFortressEventsOther[] = {
     { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, LUNPA_FORTRESS_TOADONPA_TO_LUNPA_FORTRESS_CAVE_NORTH },
     { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, LUNPA_FORTRESS_TOADONPA_TO_LUNPA_FORTRESS_CAVE_NORTHEAST },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED, 5, CONDITION_ALWAYS, LUNPA_FORTRESS_TOADONPA_TO_LUNPA_FORTRESS_CAVE_NORTHWEST },
-    { BG_EVENT(BG_EVENT_UNNAMED), TRIGGER_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchLockedDoor) },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 5, CONDITION_ALWAYS, LUNPA_FORTRESS_TOADONPA_TO_LUNPA_FORTRESS_CAVE_NORTHWEST },
+    { BG_EVENT(BG_EVENT_SILENT), TRIGGER_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchLockedDoor) },
     { COORD_EVENT_FACING(FACING_NORTH), TRIGGER_DOOR_FIRST, TOADONPA_DOOR_FLAG, EVENT_SCRIPT(EventScript_UnlockToadonpaDoor) },
     { COORD_EVENT_FACING(FACING_NORTH), TRIGGER_DOOR_FIRST + 1, TOADONPA_DOOR_FLAG + 1, EVENT_SCRIPT(EventScript_UnlockToadonpaDoor) },
     { COORD_EVENT_FACING(FACING_NORTH), TRIGGER_DOOR_FIRST + 2, TOADONPA_DOOR_FLAG + 2, EVENT_SCRIPT(EventScript_UnlockToadonpaDoor) },

@@ -167,13 +167,13 @@ static __inline__ void MapGrid_CopyMetatileToScreen(u32 *cell, u8 *screenMap,
 
 /// A row of gLayouts: a layout's resources, counted from
 /// ResourceId_Layout001: its header, palette, three tile sheets and layer data.
-struct LayoutEntry {
+struct LayoutResources {
   /// Offsets from ResourceId_Layout001: the header, the palette, the tile
   /// sheets for char blocks 1, 2 and 3, and the layer data (gMapGridLayerData).
   u16 resources[6];
 };
 
-extern struct LayoutEntry gLayouts[];
+extern struct LayoutResources gLayouts[];
 
 /// One background layer's setup in a layout's header: its origin, its
 /// parallax and drift, and where it wraps.
@@ -202,11 +202,11 @@ struct LayoutHeader {
   // Offsets from the header's start: type-01 packed data, but for the
   // markers, which are read in place.
   s32 metatiles; ///< the metatiles, staged and unpacked into gMetatiles
-  s32 shapes;    ///< the shapes, into Ram_MapGridCollision
+  s32 shapes;    ///< the shapes, into Ram_MapGridShapes
   s32 cells;     ///< the cells, into Ram_MapGridCellBuffer
   s32 animation; ///< the tile animation script, or 0 for none
   s32 blend;     ///< the blend script, or 0 for none
-  s32 markers;   ///< the chests and Psynergy stones (Field_PlaceMapMarkers)
+  s32 markers;   ///< the chests and Psynergy stones (Field_PlaceTreasureSpots)
 };
 
 /// Loads layout index from gLayouts: its metatiles, collision,
@@ -222,7 +222,7 @@ struct LayoutHeader {
 /// REG_BLDCNT and REG_DISPCNT; and registers MapGrid_UpdateLayerScroll with the
 /// scheduler.
 s32 MapGrid_LoadLayout(s32 index) {
-  struct LayoutEntry *layoutResources;
+  struct LayoutResources *layoutResources;
   struct MapGridScrollWork *grid;
   struct LayoutHeader *layoutHeader;
   struct MapGridLayerScroll *layer;
@@ -251,23 +251,23 @@ s32 MapGrid_LoadLayout(s32 index) {
   TileMap_DecodeStagedBuffer(
       Decompress_Type01(encodedData, Ram_MapGridCellBuffer + 1));
   encodedData = (u8 *)layoutHeader + layoutHeader->shapes;
-  Decompress_Type01(encodedData, Ram_MapGridCollision);
+  Decompress_Type01(encodedData, Ram_MapGridShapes);
   encodedData = (u8 *)layoutHeader + layoutHeader->cells;
   Decompress_Type01(encodedData, Ram_MapGridCellBuffer);
   TileMap_ConvertBuffer();
   // The tile animation and blend scripts are optional (offset 0), and decode
-  // into the space after the shapes in Ram_MapGridCollision.
+  // into the space after the shapes in Ram_MapGridShapes.
   if (layoutHeader->animation != 0) {
     encodedData = (u8 *)layoutHeader + layoutHeader->animation;
-    Decompress_Type01(encodedData, Ram_MapGridCollision + 0x1000);
-    TileAnimation_StartChannels((const u16 *)(Ram_MapGridCollision + 0x1000));
+    Decompress_Type01(encodedData, Ram_MapGridShapes + 0x1000);
+    TilesetAnim_StartAll((const u16 *)(Ram_MapGridShapes + 0x1000));
   }
   if (layoutHeader->blend != 0) {
     encodedData = (u8 *)layoutHeader + layoutHeader->blend;
-    Decompress_Type01(encodedData, Ram_MapGridCollision + 0x1e00);
-    DisplayBlend_StartScript((u16 *)(Ram_MapGridCollision + 0x1e00));
+    Decompress_Type01(encodedData, Ram_MapGridShapes + 0x1e00);
+    BlendScript_Start((u16 *)(Ram_MapGridShapes + 0x1e00));
   }
-  // The marker list is not decoded: Field_PlaceMapMarkers reads it in place
+  // The marker list is not decoded: Field_PlaceTreasureSpots reads it in place
   // through this pointer (MapGridMarkers.markers).
   grid->script = (u8 *)layoutHeader + layoutHeader->markers;
   // The header's bounds and origins are in 8-pixel tiles; << 19 makes them
@@ -374,7 +374,7 @@ s32 MapGrid_LoadLayout(s32 index) {
       Free(graphicsBuffer);
     }
   }
-  // Only BG0, the windows, is shown here; DisplayTransition_Start ORs
+  // Only BG0, the windows, is shown here; ScreenTransition_Start ORs
   // map->flags into REG_DISPCNT when the map fades in.
   displayFlags = 0;
   REG_MOSAIC = displayFlags;
@@ -756,17 +756,17 @@ void MapGrid_CopyMetatileIndicesRect(s32 sourceX, s32 sourceY, u32 dstX,
 
 /// One step of a map edit sequence: the rectangle of cells to copy from and the
 /// wait after it.
-struct MapGridCopyCommand {
+struct MapGridCellAnimationStep {
   u16 source; ///< the source rectangle's x in cells; 0xffff ends the sequence
   /// The source rectangle's y, width and height in cells, and the frames to
   /// wait after the copy.
   s16 y, width, height, delay;
 } __attribute__((packed, aligned(2)));
-typedef char
-    MapGridCopyCommandSize[(sizeof(struct MapGridCopyCommand) == 10) ? 1 : -1];
+typedef char MapGridCopyCommandSize
+    [(sizeof(struct MapGridCellAnimationStep) == 10) ? 1 : -1];
 
-/// Plays a map edit sequence (struct MapGridCopyCommand records, ended by a
-/// source of 0xffff): copies each record's rectangle of metatile numbers to
+/// Plays a map edit sequence (struct MapGridCellAnimationStep records, ended by
+/// a source of 0xffff): copies each record's rectangle of metatile numbers to
 /// (destinationX, destinationY) and waits its delay in frames. Doors and
 /// other changing scenery are drawn this way.
 ///
@@ -775,8 +775,8 @@ typedef char
 /// blocks the script that calls it.
 void MapGrid_PlayMetatileCopySequence(u16 *sequence, s32 destinationX,
                                       u32 destinationY) {
-  struct MapGridCopyCommand *copyCommand =
-      (struct MapGridCopyCommand *)sequence;
+  struct MapGridCellAnimationStep *copyCommand =
+      (struct MapGridCellAnimationStep *)sequence;
   u32 sourceX = copyCommand->source;
   u32 endMarker = 0xffff;
   u32 firstSourceCopy = sourceX;

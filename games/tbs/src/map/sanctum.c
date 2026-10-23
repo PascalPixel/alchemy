@@ -453,7 +453,7 @@ static void EventScript_AskAboutPsynergyChanges(void) {
 /// restore the floor and play the request, unless the party is returning after
 /// a battle.
 s32 Sanctum_Initialize(void) {
-  gFieldWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Engine_ColorBufferApplyTarget(PALETTE_TRANSFORM_PLAIN, PALETTE_HALVES_BOTH);
   Engine_ColorBufferInterpolate(1);
@@ -627,9 +627,9 @@ static void Sanctum_RequestQuestAcceptance(void) {
                                 LOCALID_PARTY_LEADER, 0);
     ObjectEvent_FaceObjectEvent(LOCALID_WEST_HEALER, LOCALID_PARTY_LEADER, 0);
     ObjectEvent_FaceObjectEvent(LOCALID_EAST_HEALER, LOCALID_PARTY_LEADER, 0);
-    Camera_MoveTo(PIXELS(192), -1, PIXELS(160), 1);
+    FieldCamera_MoveTo(PIXELS(192), -1, PIXELS(160), 1);
     Engine_CameraWaitForMove();
-    gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     gFieldWork->transitionFrames = 64;
     Engine_ScriptOpenScreen();
     Engine_ScriptWaitForScreen();
@@ -638,9 +638,9 @@ static void Sanctum_RequestQuestAcceptance(void) {
     ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_SEPIA, PALETTE_HALVES_BOTH);
     Engine_ColorBufferInterpolate(1);
     Engine_ScriptWait(1);
-    Camera_MoveTo(PIXELS(192), -1, PIXELS(160), 1);
+    FieldCamera_MoveTo(PIXELS(192), -1, PIXELS(160), 1);
     Engine_CameraWaitForMove();
-    gFieldWork->startTransition =
+    gFieldWork->transition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     Engine_ScriptOpenScreen();
     Engine_ScriptWaitForScreen();
@@ -1217,7 +1217,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   ObjectEvent_SetSpeed(LOCALID_WEST_HEALER, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetSpeed(LOCALID_EAST_HEALER, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetSpeed(LOCALID_HEALER, PIXELS(4) / 5, PIXELS(2) / 5);
-  Camera_MoveTo(PIXELS(192), -1, PIXELS(160), 1);
+  FieldCamera_MoveTo(PIXELS(192), -1, PIXELS(160), 1);
   Engine_CameraWaitForMove();
   ObjectEvent_FaceObjectEvent(GARET, LOCALID_PARTY_LEADER, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_GARETS_GRANDFATHER, LOCALID_PARTY_LEADER,
@@ -1275,8 +1275,8 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Engine_ColorBufferApplyTarget(PALETTE_TRANSFORM_PALE, PALETTE_HALF_BG);
   Engine_ColorBufferInterpolate(60);
   Engine_ScriptWait(40);
-  Camera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
-  Camera_MoveTo(PIXELS(192), -1, PIXELS(104), 1);
+  FieldCamera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
+  FieldCamera_MoveTo(PIXELS(192), -1, PIXELS(104), 1);
   Engine_ScriptWait(120);
   Script_PlaySong(MUS_021);
   Script_PlaySong(SE_308);
@@ -1323,7 +1323,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   ObjectEvent_SetChildValue(LOCALID_WISE_ONE, 0);
   ObjectEvent_SetPosition(LOCALID_WISE_ONE, 0, 0);
   Engine_ScriptWait(40);
-  Camera_MoveTo(PIXELS(192), -1, PIXELS(160), 1);
+  FieldCamera_MoveTo(PIXELS(192), -1, PIXELS(160), 1);
   Engine_CameraWaitForMove();
   Engine_ColorBufferApplyTarget(PALETTE_TRANSFORM_PLAIN, PALETTE_HALVES_BOTH);
   Engine_ColorBufferInterpolate(60);
@@ -2393,33 +2393,33 @@ struct ObjectEventTemplate gSanctum_NoObjectEventTemplates[] = {
 
 struct ObjectEventTemplate gSanctum_ValeObjectEventTemplates[] = {
     { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(200), 0, PIXELS(130), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(200), 0, PIXELS(130), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(152), 0, PIXELS(152), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(152), 0, PIXELS(152), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(248), 0, PIXELS(152), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(248), 0, PIXELS(152), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };
 
 #if TBS_PATCH_1
 struct ObjectEventTemplate gSanctum_IvanObjectEventTemplate[] = {
     { IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };
 #endif
 
 struct ObjectEventTemplate gSanctum_VaultBilibinObjectEventTemplates[] = {
     { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(200), 0, PIXELS(130), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(200), 0, PIXELS(130), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(200), 0, PIXELS(200), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(200), 0, PIXELS(200), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { 0xdd, CONDITION_ALWAYS, 7,
-        PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };
 
@@ -2427,25 +2427,25 @@ struct ObjectEventTemplate gSanctum_QuestObjectEventTemplates[] = {
     { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(208), 0, PIXELS(168), FACING_NORTH + FACING_STEP, 3, 0 },
     { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(168), 0, PIXELS(120), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(168), 0, PIXELS(120), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(224), 0, PIXELS(216), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(224), 0, PIXELS(216), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(246), 0, PIXELS(198), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(246), 0, PIXELS(198), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_DORA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(168), 0, PIXELS(208), FACING_NORTH + FACING_STEP, 3, 0 },
     { SPRITE_OLD_MAN_WITH_WHITE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(232), 0, PIXELS(120), FACING_SOUTH + FACING_STEP, 3, 0 },
     { 0xfc, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(8), 0, PIXELS(8), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(8), 0, PIXELS(8), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gSanctum_AltinXianObjectEventTemplates[] = {
     { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(200), 0, PIXELS(132), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(200), 0, PIXELS(132), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { MAP_TABLE_END },
 };
 

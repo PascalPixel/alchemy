@@ -30,8 +30,8 @@
 	.set import.ObjectDispatch_WaitForValue16, 1
 	.set import.Engine_ObjectSetPosition, 1
 	.set import.Object_WaitForMove, 1
-	.set import.TileAnimation_ResumeChannel, 1
-	.set import.TileAnimation_PauseChannel, 1
+	.set import.TilesetAnim_Resume, 1
+	.set import.TilesetAnim_Pause, 1
 	.set import.MapGrid_GetTerrainHeight, 1
 	.set import.MapGrid_GetMetatileBehaviorAt, 1
 	.set import.Engine_MapGridCopyCellAttributes, 1

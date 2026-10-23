@@ -309,12 +309,12 @@ static void CrossboneIsle_SpawnPillarMovedBurst(s32 objectId) {
 /// back to the ship at WARP_DEST_AFTER_BATTLE.
 static void EventScript_FightDeadbeard(void) {
 
-  EV_START();
+  SCRIPT_START();
   FieldScript_SetNextDestination(gGameState.mapId, WARP_DEST_AFTER_BATTLE);
   Battle_SetStart(BATTLE_START_SCRIPTED);
   Field_RequestBattleFromEncounterTable(
       ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS, 5);
-  EV_END();
+  SCRIPT_END();
 }
 
 const struct MapEvent *Map_GetEvents(void) {
@@ -341,12 +341,12 @@ const struct MapEvent *Map_GetEvents(void) {
 /// Catch on the Nut circling on Crossbone Isle: the party gets it
 /// (FLAG_CROSSBONE_ISLE_NUT_CAUGHT).
 static void EventScript_CatchNut(void) {
-  EV_START();
+  SCRIPT_START();
   Engine_ObjectEventSetPosition(LOCALID_ISLE_NUT, 0, 0);
   Engine_GameFlagSet(FLAG_CROSSBONE_ISLE_NUT_CAUGHT);
   Engine_ItemShowFound(ITEM_NUT, 3);
   Engine_PartyGiveItem(ITEM_NUT, 0);
-  EV_END();
+  SCRIPT_END();
 }
 
 /// Restores each map's puzzles from its flags: the sliding logs'
@@ -360,7 +360,7 @@ s32 Map_Initialize(void) {
   s32 current;
   s32 first;
 
-  gFieldWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   // CrossboneIsleFloatingLogs's sliding logs restore their map footprints
   // alone.
@@ -373,7 +373,7 @@ s32 Map_Initialize(void) {
     if (FLAG_CHECK(FLAG_PIRATE_SHIP_MIMIC_BEATEN) == 0) {
       MapGrid_CopyCellAttributes(0, 3, 1, 1, 13, 40);
       MapGrid_CopyCellAttributes(0, 2, 1, 1, 15, 40);
-      Marker_SetPosition(101, PIXELS(216), PIXELS(648));
+      TreasureSpot_SetPosition(101, PIXELS(216), PIXELS(648));
     }
     if (gGameState.mapId == mapId) {
       if (gGameState.warpDest != WARP_DEST_AFTER_BATTLE) {
@@ -383,7 +383,7 @@ s32 Map_Initialize(void) {
       }
       FLAG_SET(FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED);
       MapGrid_CopyCellAttributes(0, 1, 1, 1, 13, 30);
-      Marker_SetPosition(100, PIXELS(216), PIXELS(488));
+      TreasureSpot_SetPosition(100, PIXELS(216), PIXELS(488));
       return 0;
     }
   }
@@ -443,7 +443,7 @@ s32 Map_Initialize(void) {
   if (current == first) {
     if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_FLOOR_MIMIC_BEATEN) == 0) {
       MapGrid_CopyCellAttributes(0, 0, 1, 1, 37, 10);
-      Marker_SetPosition(100, PIXELS(600), PIXELS(168));
+      TreasureSpot_SetPosition(100, PIXELS(600), PIXELS(168));
     }
   }
   current = gGameState.mapId;
@@ -539,9 +539,9 @@ static void EventScript_MovePillar(void) {
 /// Walking into a corridor room's pillar in Crossbone Isle Cave (coord event
 /// 20): push it a step.
 static void EventScript_PushPillar(void) {
-  EV_START();
-  StagedObjectEvent_AdvancePair();
-  EV_END();
+  SCRIPT_START();
+  PushedObject_AdvancePair();
+  SCRIPT_END();
   EventScript_MovePillar();
 }
 
@@ -562,7 +562,7 @@ static void EventScript_OpenEastDoor(void) {
           gGameState.mapId +
           (FLAG_CROSSBONE_ISLE_FIRST_EAST_DOOR_MONSTERS_DEFEATED -
            (s32)&MapId_CrossboneIsleFirstFloor)) == 0) {
-    EV_START();
+    SCRIPT_START();
     FieldScript_SetNextDestination(gGameState.mapId, WARP_DEST_AFTER_BATTLE);
     Battle_SetStart(BATTLE_START_SCRIPTED);
     // The first four rooms use ENCOUNTER_ZONE_CROSSBONE_ISLE_FIRST_GUARDS; the
@@ -605,7 +605,7 @@ static void EventScript_OpenEastDoor(void) {
           ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS, 4);
       break;
     }
-    EV_END();
+    SCRIPT_END();
   } else {
     Engine_MapGridAnimateCells(gCrossboneIsle_EntranceCells, 44, 7);
     Engine_AudioPlayCue(SE_183);
@@ -616,7 +616,7 @@ static void EventScript_OpenEastDoor(void) {
 /// Back from the battle at a corridor room's east door
 /// (WARP_DEST_AFTER_BATTLE): the door opens, and the party walks through.
 static void CrossboneIsle_OpenEastDoorAfterBattle(void) {
-  EV_START();
+  SCRIPT_START();
   OBJECT_SPEED(LOCALID_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
@@ -627,7 +627,7 @@ static void CrossboneIsle_OpenEastDoorAfterBattle(void) {
   MapGrid_AnimateCells(gCrossboneIsle_EntranceCells, 44, 7);
   ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 3, -16);
   Engine_ScriptRequestWarp(CORRIDOR_TO_SIDE_ROOM_EAST);
-  EV_END();
+  SCRIPT_END();
 }
 
 /// Unused: Growth on Crossbone Isle's first plant would grow it and let the
@@ -751,7 +751,7 @@ static void CrossboneIsle_RestoreIvy(void) {
     OBJECT_POSITION_SET(LOCALID_FIRST_IVY + 3, 968, 968);
   } else {
     objectEvent = ObjectEvent_Get(LOCALID_FIRST_IVY + 3);
-    // BUG: no fourth ivy is placed, so its slot is empty (ObjectTable_ClearAll)
+    // BUG: no fourth ivy is placed, so its slot is empty (ObjectEvent_ClearAll)
     // and this writes to address 0x18, in the BIOS, where the write is lost.
 #ifdef BUGFIX
     if (objectEvent != NULL)
@@ -763,13 +763,13 @@ static void CrossboneIsle_RestoreIvy(void) {
 /// Walking into one of Crossbone Isle's two logs: push it if the cell beyond
 /// is clear.
 static void EventScript_PushIsleLog(void) {
-  struct StagedObjectEventProbe probe;
+  struct PushedObjectProbe probe;
 
-  EV_START();
-  if (StagedObjectEvent_FindClearPosition(&probe) != 0) {
-    MapObjectEvent_MoveAndRedraw(probe);
+  SCRIPT_START();
+  if (PushedObject_FindClearPosition(&probe) != 0) {
+    ObjectEvent_MoveAndRedraw(probe);
   }
-  EV_END();
+  SCRIPT_END();
 }
 
 /// Moves the selected object event and puzzle log by the same pixel offset.
@@ -781,9 +781,9 @@ static void CrossboneIsle_MoveSelectedObjectEventAndLog(s32 localId,
   s32 fixedX;
   s32 fixedZ;
 
-  selectedObjectEvent = ObjectEvent_GetById(gGameState.selectedLocalId);
+  selectedObjectEvent = ObjectEvent_GetById(gGameState.leaderLocalId);
   logObjectEvent = ObjectEvent_GetById(localId);
-  EV_START();
+  SCRIPT_START();
   {
     fixedX =
         ((selectedObjectEvent->x.fixed + (xOffset * PIXELS(1))) & 0xFFF00000) +
@@ -819,7 +819,7 @@ static void CrossboneIsle_MoveSelectedObjectEventAndLog(s32 localId,
   Engine_AudioPlayCue(SE_226);
   Object_WaitForMove(selectedObjectEvent);
   Engine_AudioPlayCue(SE_STOP_SLOT3);
-  EV_END();
+  SCRIPT_END();
 }
 
 /// Draws the three-cell horizontal footprint centered on this log.
@@ -869,8 +869,8 @@ static void CrossboneIsle_DrawVerticalLogFootprint(s32 localId,
 
 /// Runs the two animation changes used when touching a puzzle log.
 static void CrossboneIsle_AnimateTouchedLog(int localId) {
-  OBJECT_MODE(localId, 1);
-  OBJECT_MODE(localId, 2);
+  OBJECT_ANIMATION(localId, 1);
+  OBJECT_ANIMATION(localId, 2);
 }
 
 /// Draws all twelve log footprints in Crossbone Isle Cave
@@ -979,7 +979,7 @@ static s32 CrossboneIsle_TryHop(struct ObjectEvent *objectEvent,
 #endif
     s32 movingFlags;
 
-    EV_START();
+    SCRIPT_START();
     ObjectEvent_SetMode(objectEvent, 6);
     Engine_TaskWait(6);
     Engine_AudioPlayCue(SE_JUMP);
@@ -1004,7 +1004,7 @@ static s32 CrossboneIsle_TryHop(struct ObjectEvent *objectEvent,
     ObjectEvent_SetMode(objectEvent, 6);
     Engine_ObjectEventSetSpriteFlags(objectEvent, SPRITE_FLAG_SHADOW);
     *motionFlags = (u8)savedMotionFlags;
-    EV_END();
+    SCRIPT_END();
     return 1;
   }
   return 0;
@@ -2059,7 +2059,7 @@ static void EventScript_SlideNinthLogEast(void) {
 /// Pixel step by direction: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(dx, dz) (((u32)(dx) << 16) | ((dz) & 0xffff))
 
-s32 gStagedObjectEvent_DirectionSteps[] = {
+s32 gPushedObject_DirectionSteps[] = {
     DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),
@@ -2069,11 +2069,11 @@ s32 gStagedObjectEvent_DirectionSteps[] = {
 };
 
 // clang-format off
-u32 gStagedObjectEvent_FootprintKinds[] = {
+u32 gPushedObject_FootprintKinds[] = {
     207, 205, 228, 229, 298, 297,
 };
 
-s32 gStagedObjectEvent_FootprintBounds[] = {
+s32 gPushedObject_FootprintBounds[] = {
     -32, -8, 32, 8,
     -8, -32, 8, 32,
     -32, -16, 32, 0,
@@ -2240,59 +2240,59 @@ struct ObjectEventTemplate gCrossboneIsle_NoObjectEventTemplates[] = {
 
 struct ObjectEventTemplate gCrossboneIsle_IsleObjectEventTemplates[] = {
     { SPRITE_BLANK, FLAG_CROSSBONE_ISLE_NUT_CAUGHT, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(344), 0, PIXELS(280), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(344), 0, PIXELS(280), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(144), 0, PIXELS(392), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(144), 0, PIXELS(392), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(352), 0, PIXELS(376), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(352), 0, PIXELS(376), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(88), 0, PIXELS(368), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(88), 0, PIXELS(368), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(104), 0, PIXELS(336), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(104), 0, PIXELS(336), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(152), 0, PIXELS(320), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(152), 0, PIXELS(320), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(136), 0, PIXELS(352), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(136), 0, PIXELS(352), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(88), 0, PIXELS(312), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(88), 0, PIXELS(312), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gCrossboneIsle_FloatingLogsObjectEventTemplates[] = {
     { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(408), 0, PIXELS(312), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(408), 0, PIXELS(312), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(168), 0, PIXELS(312), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(168), 0, PIXELS(312), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(520), 0, PIXELS(296), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(520), 0, PIXELS(296), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(584), 0, PIXELS(280), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(584), 0, PIXELS(280), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(552), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(552), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(584), 0, PIXELS(136), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(584), 0, PIXELS(136), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(216), 0, PIXELS(216), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(216), 0, PIXELS(216), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(392), 0, PIXELS(136), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(392), 0, PIXELS(136), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(216), 0, PIXELS(168), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(216), 0, PIXELS(168), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(72), 0, PIXELS(312), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(72), 0, PIXELS(312), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(120), 0, PIXELS(312), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(120), 0, PIXELS(312), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(216), 0, PIXELS(264), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(216), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gCrossboneIsle_CorridorObjectEventTemplates[] = {
     { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(632), 0, PIXELS(168), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(632), 0, PIXELS(168), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 

@@ -18,17 +18,17 @@ union FieldObject;
 /// (HEAP_SLOT_OBJECT_SYSTEM), so it lives until the next map change. struct
 /// ObjectEvent is the same 0x70 bytes as maps see them.
 struct Object {
-  s32 *script; ///< the object script it runs; null when the object is free
-  s16 step;    ///< the script cursor, in words
-  u16 angle;   ///< 1/65536 turns
-  s32 x;       ///< 16.16 fixed-point pixels
-  s32 y;       ///< 16.16 fixed-point pixels
-  s32 z;       ///< 16.16 fixed-point pixels
-  s32 terrainHeight; ///< 16.16 fixed-point pixels
-  s32 scaleX;        ///< 16.16 fixed point, 0x10000 full size
-  s32 scaleY;        ///< 16.16 fixed point, 0x10000 full size
-  u16 radius;        ///< collision radius in pixels
-  u8 terrainId;      ///< the map layer its ground height is read from
+  s32 *script;      ///< the object script it runs; null when the object is free
+  s16 step;         ///< the script cursor, in words
+  u16 facing;       ///< 1/65536 turns
+  s32 x;            ///< 16.16 fixed-point pixels
+  s32 y;            ///< 16.16 fixed-point pixels
+  s32 z;            ///< 16.16 fixed-point pixels
+  s32 groundHeight; ///< 16.16 fixed-point pixels
+  s32 scaleX;       ///< 16.16 fixed point, 0x10000 full size
+  s32 scaleY;       ///< 16.16 fixed point, 0x10000 full size
+  u16 radius;       ///< collision radius in pixels
+  u8 layer;         ///< the map layer its ground height is read from
   /// ObjectEvent.priorityFlags: 1 for placed object events, 2 for footprints.
   u8 priorityFlags;
   s32 velocityX;  ///< 16.16 fixed-point pixels per frame
@@ -94,32 +94,34 @@ STATIC_ASSERT(offsetof(struct Object, wait) == 0x5e);
 STATIC_ASSERT(offsetof(struct Object, footprintSide) == 0x66);
 
 enum {
-  OBJECT_SNAPSHOT_CAPACITY = 32, ///< object events a snapshot keeps
-  OBJECT_SNAPSHOT_EMPTY = 255    ///< a free slot, and the end of the list
+  OBJECT_EVENT_SNAPSHOT_CAPACITY = 32, ///< object events a snapshot keeps
+  OBJECT_EVENT_SNAPSHOT_EMPTY = 255    ///< a free slot, and the end of the list
 };
 
 /// Object events kept across a battle or a saved map, with parallel sprite
-/// state. The slot list ends in OBJECT_SNAPSHOT_EMPTY unless every entry is
-/// filled.
-struct ObjectTableSnapshot {
-  u8 slots[OBJECT_SNAPSHOT_CAPACITY]; ///< local ids, or
-                                      ///< OBJECT_SNAPSHOT_EMPTY
-  struct Object objectEvents[OBJECT_SNAPSHOT_CAPACITY]; ///< copied by DMA
-  u8 animations[OBJECT_SNAPSHOT_CAPACITY];  ///< each sprite's lastNo
-  u8 spriteFlags[OBJECT_SNAPSHOT_CAPACITY]; ///< restored through the dispatcher
-  u8 priorities[OBJECT_SNAPSHOT_CAPACITY];  ///< both image and shadow priority
+/// state. The slot list ends in OBJECT_EVENT_SNAPSHOT_EMPTY unless every entry
+/// is filled.
+struct ObjectEventSnapshot {
+  u8 slots[OBJECT_EVENT_SNAPSHOT_CAPACITY]; ///< local ids, or
+                                            ///< OBJECT_EVENT_SNAPSHOT_EMPTY
+  struct Object objectEvents[OBJECT_EVENT_SNAPSHOT_CAPACITY]; ///< copied by DMA
+  u8 animations[OBJECT_EVENT_SNAPSHOT_CAPACITY];  ///< each sprite's lastNo
+  u8 spriteFlags[OBJECT_EVENT_SNAPSHOT_CAPACITY]; ///< restored through the
+                                                  ///< dispatcher
+  u8 priorities[OBJECT_EVENT_SNAPSHOT_CAPACITY];  ///< both image and shadow
+                                                  ///< priority
 };
 
-STATIC_ASSERT(offsetof(struct ObjectTableSnapshot, objectEvents) == 0x20);
-STATIC_ASSERT(offsetof(struct ObjectTableSnapshot, animations) == 0xe20);
-STATIC_ASSERT(offsetof(struct ObjectTableSnapshot, spriteFlags) == 0xe40);
-STATIC_ASSERT(offsetof(struct ObjectTableSnapshot, priorities) == 0xe60);
-STATIC_ASSERT(sizeof(struct ObjectTableSnapshot) == 0xe80);
+STATIC_ASSERT(offsetof(struct ObjectEventSnapshot, objectEvents) == 0x20);
+STATIC_ASSERT(offsetof(struct ObjectEventSnapshot, animations) == 0xe20);
+STATIC_ASSERT(offsetof(struct ObjectEventSnapshot, spriteFlags) == 0xe40);
+STATIC_ASSERT(offsetof(struct ObjectEventSnapshot, priorities) == 0xe60);
+STATIC_ASSERT(sizeof(struct ObjectEventSnapshot) == 0xe80);
 
 /// The one snapshot, in EWRAM outside the heap so that it outlives the map
-/// change into and out of a battle. ObjectTable_Snapshot fills it before a
-/// random battle and when saving; ObjectTable_Restore puts the object events
+/// change into and out of a battle. ObjectEvent_Snapshot fills it before a
+/// random battle and when saving; ObjectEvent_Restore puts the object events
 /// back when the party returns keeping its position (FLAG_KEEP_PARTY_POSITION).
-extern struct ObjectTableSnapshot gObjectSnapshots;
+extern struct ObjectEventSnapshot gObjectEventSnapshot;
 
 #endif

@@ -38,7 +38,7 @@
 /// FIELD_MENU_PSYNERGY), over the field, which stops meanwhile. Psynergy used
 /// on a member takes effect here. When the player picks Psynergy to use on the
 /// field, it is recorded as the field's Psynergy request (EventWork's
-/// psynergyRequest, owner << 10 | Psynergy), which Map_Run hands to
+/// psynergy, owner << 10 | Psynergy), which Map_Run hands to
 /// Field_UsePsynergy once the menu has closed, and 1 is returned; -1 when the
 /// player backs out or presses Start (the field menu then opens again). Owns
 /// the menu work (HEAP_SLOT_MENU) while it runs and frees it before returning.
@@ -79,7 +79,7 @@ s32 PsynergyMenu_Run(void) {
     // The action looked up here is not used.
     BattleAction_Get(OWNER_ACTION_ID_MASK & menu->paneAction[0]);
     request = psynergy | (owner << 10);
-    target->psynergyRequest = request;
+    target->psynergy = request;
   }
   // Close the menu and give the screen back to the field.
   RenderOutput_ClearListFar((void *)menu->statusWindow);
@@ -309,7 +309,7 @@ s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction) {
 }
 
 /// Says how the selected Psynergy is used from the menu: 0 on the field once
-/// the menu closes (the map has an event for its field Psynergy, type0c,
+/// the menu closes (the map has an event for its field Psynergy, fieldPsynergy,
 /// and what the leader faces), 2 on the whole party (range 0xff), 1 on one
 /// chosen member when its target mode is 2, and 0 otherwise.
 s32 PsynergyMenu_ClassifySelectedPsynergy(void) {
@@ -320,7 +320,7 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void) {
   action =
       BattleAction_Get(OWNER_ACTION_ID_MASK &
                        ((struct PsynergyMenuWork *)gMenuWork)->paneAction[0]);
-  if (FieldEffect_HasMatchingEvent5Far(action->type0c) != 0) {
+  if (FieldEffect_HasMatchingEvent5Far(action->fieldPsynergy) != 0) {
     return 0;
   }
   classification = 2;
@@ -863,13 +863,13 @@ s32 PsynergyMenu_CollectActions(struct BattleUnit *unit, u16 *actions,
     actions[clearIndex] = 0;
   actionCount = 0;
 
-  // type0c is the Psynergy's field effect. Passes 1 and 2 add nothing.
+  // fieldPsynergy is the Psynergy's field effect. Passes 1 and 2 add nothing.
   if (mode == PSYNERGY_LIST_SHORTCUTS) {
     for (slotIndex = 0; slotIndex < 32; slotIndex++) {
       if (unit->actionSlots[slotIndex].encodedAction != 0) {
         if (BattleAction_Get(unit->actionSlots[slotIndex].encodedAction &
                              OWNER_ACTION_ID_MASK)
-                ->type0c != 0) {
+                ->fieldPsynergy != 0) {
           actions[actionCount] = unit->actionSlots[slotIndex].encodedAction;
           actionCount++;
         }
@@ -884,13 +884,13 @@ s32 PsynergyMenu_CollectActions(struct BattleUnit *unit, u16 *actions,
                                OWNER_ACTION_ID_MASK);
 
           if (passIndex == 0 &&
-              (ability->type0c != 0 ||
+              (ability->fieldPsynergy != 0 ||
                (ability->flags & ACTION_USABLE_IN_FIELD) != 0)) {
             actions[actionCount] = unit->actionSlots[slotIndex].encodedAction;
             actionCount++;
           } else if (passIndex == 1) {
           } else if (passIndex == 2) {
-          } else if (passIndex == 3 && ability->type0c == 0 &&
+          } else if (passIndex == 3 && ability->fieldPsynergy == 0 &&
                      (ability->flags & ACTION_USABLE_IN_FIELD) == 0) {
             actions[actionCount] = unit->actionSlots[slotIndex].encodedAction;
             actionCount++;
@@ -1174,7 +1174,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
         if ((gKeysPressed & KEY_SELECT) != 0 && shortcutHelp == 0) {
           ability = BattleAction_Get(menu->psynergies[state.selectedIndex] &
                                      OWNER_ACTION_ID_MASK);
-          if (ability->type0c == 0) {
+          if (ability->fieldPsynergy == 0) {
             Sound_PlaySongFar(SE_MENU_ERROR);
           } else {
             Sound_PlaySongFar(SE_174); // the Use sound
@@ -1264,7 +1264,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
       if ((gKeysPressed & KEY_L) != 0 && (gKeysHeld & KEY_SELECT) != 0) {
         ability = BattleAction_Get(menu->psynergies[state.selectedIndex] &
                                    OWNER_ACTION_ID_MASK);
-        if (ability->type0c == 0) {
+        if (ability->fieldPsynergy == 0) {
           Sound_PlaySongFar(SE_MENU_ERROR);
         } else {
           Sound_PlaySongFar(SE_130); // the shortcut sound
@@ -1282,7 +1282,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
       if ((gKeysPressed & KEY_R) != 0 && (gKeysHeld & KEY_SELECT) != 0) {
         ability = BattleAction_Get(menu->psynergies[state.selectedIndex] &
                                    OWNER_ACTION_ID_MASK);
-        if (ability->type0c == 0) {
+        if (ability->fieldPsynergy == 0) {
           Sound_PlaySongFar(SE_MENU_ERROR);
         } else {
           if (PsynergyMenu_SetShortcut(menu->ownerIds[paneIndex],
@@ -1318,7 +1318,7 @@ s32 PsynergyMenu_IsActionRestricted(s32 actionEntry) {
   // Mask the unsigned entry without overflowing a signed left shift.
   struct BattleAct *action = BattleAction_Get(((u32)actionEntry << 18) >> 18);
 
-  if (action->type0c != 0 ||
+  if (action->fieldPsynergy != 0 ||
       (action->flags & (ACTION_USABLE_IN_FIELD | ACTION_USABLE_IN_BATTLE)) ==
           (ACTION_USABLE_IN_FIELD | ACTION_USABLE_IN_BATTLE))
     return 0;

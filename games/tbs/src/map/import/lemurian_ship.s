@@ -46,7 +46,7 @@
 	.set import.Engine_ScriptCloseScreen, 1
 	.set import.Engine_ScriptWaitForScreen, 1
 	.set import.Field_EndBusyAndReveal, 1
-	.set import.Motion_LaunchFromFocusedObject, 1
+	.set import.ObjectMotion_LaunchFromFocusedObject, 1
 	.set import.ObjectMotion_CommitPositionAndActivate, 1
 	.set import.AudioCommand_WaitForStateByteClear, 1
 	.set import.Engine_AudioPlayCue, 1

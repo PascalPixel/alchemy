@@ -6,7 +6,7 @@
 
 /// Runs Force cast on a target, through FieldEffect_RunForce.
 ///
-/// Abilities: Force (FIELD_KIND_FORCE).
+/// Abilities: Force (FIELD_PSYNERGY_FORCE).
 void FieldEffect_RunForceOnTarget(s32 unused) { FieldEffect_RunForce(); }
 
 /// Writes the position 16 pixels above the object event.
@@ -20,7 +20,7 @@ FieldEffect_GetPositionAboveObjectEvent(struct ObjectEvent *objectEvent,
 /// A shot appears in front of the caster, grows and flies forward with three
 /// afterimages; what it hits (scene->child) is pushed 16 pixels.
 ///
-/// Abilities: Force (FIELD_KIND_FORCE).
+/// Abilities: Force (FIELD_PSYNERGY_FORCE).
 ///
 /// The shot is object 215, the hand of Move and Carry, flying at 4 pixels a
 /// frame; where it lands it makes a heavy impact
@@ -35,7 +35,7 @@ void FieldEffect_RunForce(void) {
   struct ObjectEvent *copy;
   struct ObjectEvent *caster;
   struct FieldEffectWork *effectWork;
-  struct EffectSlot *effect;
+  struct FieldEffectSprite *effect;
   struct AnimationObject *sharedAnimation;
   void *event;
   s32 scale;
@@ -46,16 +46,16 @@ void FieldEffect_RunForce(void) {
   target = effectWork->child;
   FieldEffect_FadeToEffectColor();
   Sound_PlaySongFar(SE_130);
-  effect = effectWork->effects;
+  effect = effectWork->sprites;
 
   // 12 flashes burst from over the caster's head, one every 2 frames.
   for (i = 0; i <= 11; i++) {
     caster = effectWork->mainObject;
     FieldEffect_GetPositionAboveObjectEvent(caster, &pos);
     Camera_WorldToScreen(&pos);
-    EffectSlot_Initialize(effect, SPRITE_PARTICLE, pos.x, pos.z);
-    EffectSlot_SetCallback(effect, FieldEffect_UpdateRadialBurst);
-    EffectSlot_SetObjectMode(effect, 7);
+    FieldEffectSprite_Initialize(effect, SPRITE_PARTICLE, pos.x, pos.z);
+    FieldEffectSprite_SetCallback(effect, FieldEffect_UpdateRadialBurst);
+    FieldEffectSprite_SetObjectMode(effect, 7);
     ObjectGroup_SetChildValueUnlessFifteenFar(effect->object,
                                               SPRITE_COLOR_BLUE_TINT);
     effect->scaleY = 0xb333; // 0.7
@@ -155,7 +155,7 @@ void FieldEffect_RunForce(void) {
     WaitFrames(1);
 
   // Push what was hit 16 pixels, at 1 pixel a frame, if nothing is in the
-  // way: the ground there must be within a step (MapGrid_CheckObjectStep 0) and
+  // way: the ground there must be within a step (MapGrid_CheckCollision 0) and
   // free of objects. It hops (8 pixels a frame) with childOption; a map
   // script's childMode leaves it be.
   if (target != NULL && effectWork->childMode == 0) {
@@ -165,10 +165,10 @@ void FieldEffect_RunForce(void) {
     pos.y = target->y.fixed;
     pos.z = target->z.fixed;
     Vector_AddPolarOffset(16 << 16, effectWork->angle, &pos);
-    if (MapGrid_CheckObjectStepFar((struct Object *)target,
-                                   (struct FieldPosition *)&pos) ==
-            MAPGRID_STEP_OPEN &&
-        ScriptObject_CheckOverlapFar((struct ScriptObjectEntry *)target,
+    if (MapGrid_CheckCollisionFar((struct Object *)target,
+                                  (struct FieldPosition *)&pos) ==
+            COLLISION_NONE &&
+        ObjectScript_CheckOverlapFar((struct ScriptObjectEntry *)target,
                                      (s32 *)&pos) == 0) {
       target->acceleration = 1 << 16;
       target->speed = 1 << 16;
@@ -177,10 +177,10 @@ void FieldEffect_RunForce(void) {
   }
 
   // Run the map's event for it, if there is one.
-  event = FieldEffect_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_EFFECT_ACTS),
-                                        FIELD_KIND_FORCE, &eventTarget);
+  event = Map_FindPsynergyEvent(PSYNERGY_EVENT(PSYNERGY_PHASE_EFFECT_ACTS),
+                                FIELD_PSYNERGY_FORCE, &eventTarget);
   if (event != NULL)
-    Field_RunEventAction(event, gGameState.selectedLocalId, eventTarget);
+    Field_RunEventAction(event, gGameState.leaderLocalId, eventTarget);
   WaitFrames(10);
   FieldEffect_FadeFromEffectColor();
   WaitFrames(20);

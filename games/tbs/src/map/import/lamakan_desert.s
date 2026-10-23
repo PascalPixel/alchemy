@@ -53,8 +53,8 @@
 	.set import.Engine_DisplayScrollStartHBlankDma, 1
 	.set import.DisplayScroll_DisarmHBlankDma, 1
 	.set import.Engine_MarkerSetPosition, 1
-	.set import.Marker_MoveLeaderAway, 1
+	.set import.TreasureSpot_MoveLeaderAway, 1
 	.set import.Djinn_JoinParty, 1
-	.set import.FieldEffect_SetQueuedSoundAndPlay, 1
+	.set import.Map_QueueMusic, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

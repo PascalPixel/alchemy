@@ -47,7 +47,7 @@
 	.set import.Engine_ScriptCloseScreen, 1
 	.set import.Engine_ScriptWaitForScreen, 1
 	.set import.Engine_MarkerSetPosition, 1
-	.set import.Marker_MoveLeaderAway, 1
+	.set import.TreasureSpot_MoveLeaderAway, 1
 	.set import.QueueMapSound, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

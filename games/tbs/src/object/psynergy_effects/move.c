@@ -60,7 +60,7 @@ void FieldEffect_UpdateItemBreakFragment(union FieldObject *fieldObject) {
 /// it 16 pixels the way the d-pad points, for as long as the player pushes; A,
 /// B, L or R end it.
 ///
-/// Abilities: Move (FIELD_KIND_MOVE).
+/// Abilities: Move (FIELD_PSYNERGY_MOVE).
 ///
 /// Where the target cannot go, an error sound plays every 16 frames. When the
 /// push would run into the caster, the caster blocks it or, when the tile
@@ -121,7 +121,7 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
   target->speed = 0x6666;
   target->acceleration = 0x3333;
   target->steeringFlags = moved;
-  target->terrainId = 2;
+  target->layer = 2;
   for (;;) {
     WaitFrames(1);
     keys = gKeysPressed & (KEY_A | KEY_B | KEYS_SHOULDERS);
@@ -162,14 +162,14 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
     Vector_AddPolarOffset(32 << 16, direction, &beyond);
     // A wall (2) or ground more than 8 pixels higher (1) stops the push;
     // level ground or a drop does not.
-    if (MapGrid_CheckObjectStepFar((struct Object *)target,
-                                   (struct FieldPosition *)&position) > 0) {
+    if (MapGrid_CheckCollisionFar((struct Object *)target,
+                                  (struct FieldPosition *)&position) > 0) {
       ObjectDispatch_SelectAnimationFar(pusher, 4);
       if ((gFrameCount & 15) == 0)
         Sound_PlaySongFar(SE_MENU_ERROR);
       continue;
     }
-    hit = (struct ObjectEvent *)ScriptObject_FindOverlappingEntryFar(
+    hit = (struct ObjectEvent *)ObjectScript_FindOverlappingEntryFar(
         (struct ScriptObjectEntry *)target, (s32 *)candidate);
     if (hit != NULL) {
       if (hit != user) {
@@ -194,7 +194,7 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
       if (cellX == (beyond.x & MOVE_CELL_MASK) &&
           cellZ == (beyond.z & MOVE_CELL_MASK)) {
         // The caster can be pushed only onto flat ground.
-        if (MapGrid_GetCellAttributeLowNibbleFar(user->terrainId, beyond.x,
+        if (MapGrid_GetCellAttributeLowNibbleFar(user->layer, beyond.x,
                                                  beyond.z) != TERRAIN_FLAT) {
           ObjectDispatch_SelectAnimationFar(pusher, 4);
           if ((gFrameCount & 15) == 0)
@@ -258,7 +258,7 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
 /// Effect slot callback of a particle that flies 30 pixels out from where it
 /// started, comes back and is freed. It goes out straight at up to 4 pixels a
 /// frame and comes back turning at most 1/64 turn a frame, so it curves home.
-void FieldEffect_UpdateOrbitAndReturn(struct EffectSlot *effect) {
+void FieldEffect_UpdateOrbitAndReturn(struct FieldEffectSprite *effect) {
   // Forward OUT_AND_BACK_FLYING_OUT fallthrough keeps the callback extent but
   // changes native instructions; retain the immediate retry until a plain form
   // matches.
@@ -285,7 +285,7 @@ next_state:
   }
 
   if (state == OUT_AND_BACK_FLYING_OUT) {
-    if (EffectSlot_HasPendingTarget(effect) == 0) {
+    if (FieldEffectSprite_HasPendingTarget(effect) == 0) {
       (*statePtr)++;
       goto next_state;
     }
@@ -302,14 +302,14 @@ next_state:
   }
 
   if (state == OUT_AND_BACK_FLYING_BACK &&
-      EffectSlot_HasPendingTarget(effect) == 0)
+      FieldEffectSprite_HasPendingTarget(effect) == 0)
     FieldEffect_ClearOwnedSlot(effect);
 }
 
 /// When Move is cast with no target, the hand appears beside the caster for 30
 /// frames and then turns into particles.
 ///
-/// Abilities: Move (FIELD_KIND_MOVE).
+/// Abilities: Move (FIELD_PSYNERGY_MOVE).
 void FieldEffect_RunMove(void) {
   UNUSED s32 work[3];
   struct FieldEffectWork *effectWork;
@@ -361,8 +361,8 @@ void *FieldEffect_StartItemBreak(void *object) {
   parent->acceleration = 2 << 16;
   parent->motionFlags = 0;
   ObjectDispatch_SelectAnimationFar(parent, 3);
-  Motion_SetTargetPositionFromMagnitudeAngle((struct Object *)parent, 16 << 16,
-                                             angle);
+  ObjectMotion_SetTargetPositionFromMagnitudeAngle((struct Object *)parent,
+                                                   16 << 16, angle);
 
   // Particles: 8 to 32 pixels within 1/8 turn of the way it faces, at 1 to 2
   // pixels a frame.
@@ -381,9 +381,9 @@ void *FieldEffect_StartItemBreak(void *object) {
       child->velocityY = spread - Random16();
       radius = Random16() * 24 + (8 << 16);
       jitter = Random16();
-      Motion_SetTargetPositionFromMagnitudeAngle((struct Object *)child, radius,
-                                                 ((jitter - Random16()) >> 3) +
-                                                     source->angle);
+      ObjectMotion_SetTargetPositionFromMagnitudeAngle(
+          (struct Object *)child, radius,
+          ((jitter - Random16()) >> 3) + source->angle);
     }
   }
   Sound_PlaySongFar(SE_ITEM_BREAK);
@@ -452,8 +452,8 @@ void UpdateRisingParticleBurst(void *object) {
       child->velocityY = spread - Random16();
       dist = Random16() * 24;
       dist += 8 << 16;
-      Motion_SetTargetPositionFromMagnitudeAngle((struct Object *)child, dist,
-                                                 Random16());
+      ObjectMotion_SetTargetPositionFromMagnitudeAngle((struct Object *)child,
+                                                       dist, Random16());
     }
   }
   Sound_PlaySongFar(SE_131);

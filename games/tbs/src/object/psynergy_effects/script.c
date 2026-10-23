@@ -72,7 +72,7 @@ void FieldScript_WaitFrames(s32 frames) {
 void Leader_StopMoving(void) {
   struct Object *object;
 
-  object = ObjectTable_Get(gGameState.selectedLocalId);
+  object = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
   object->speedLimit = 0x10000;
   object->acceleration = 0x8000;
   object->targetX = OBJ_EVENT_NO_TARGET;
@@ -89,7 +89,7 @@ void Leader_StopMoving(void) {
 /// The script command "begin script": closes any timed notice, stops the
 /// leader, resets the message and timing state, and starts the debug
 /// fast-forward callback with the leader as the message speaker. Map scripts
-/// reach it as Engine_ScriptStart (EV_START); the field's item, Psynergy,
+/// reach it as Engine_ScriptStart (SCRIPT_START); the field's item, Psynergy,
 /// Djinni, Retreat and climbing scripts open with it too. Clears the field
 /// work's name window, fastForward and messageWindow, sets transitionFrames to
 /// 16 and the speaker to the leader.
@@ -114,17 +114,17 @@ void FieldScript_Start(void) {
   // XXX: flag 0x132 is cleared at every script and nothing in ☀️ names it; the
   // map scripts or overlays that set or test 0x132 would settle its meaning.
   GameFlag_ClearBitFar(0x132);
-  runtime->speaker = gGameState.selectedLocalId;
+  runtime->speaker = gGameState.leaderLocalId;
   runtime->messageWindow = 0;
 }
 
 /// Ends a script: stops the debug fast-forward callback, gives the camera back
 /// to the leader and refreshes FLAG_LURE_CAP (GameFlag_RefreshLureCap). Map
-/// scripts reach it as Engine_ScriptEnd (EV_END), and every script that opens
-/// with FieldScript_Start closes with it.
+/// scripts reach it as Engine_ScriptEnd (SCRIPT_END), and every script that
+/// opens with FieldScript_Start closes with it.
 void FieldScript_End(void) {
   Task_Remove(FieldScript_UpdateDebugSkip);
-  Camera_FollowObjectEvent(gGameState.selectedLocalId, 1);
+  FieldCamera_FollowObjectEvent(gGameState.leaderLocalId, 1);
   GameFlag_RefreshLureCapFar();
 }
 
@@ -140,18 +140,18 @@ void FieldScript_NoOpHook(void) {}
 /// in the object bank's far-call table; nothing in ☀️ names it.
 void FieldScript_RunObjectHookAndWait(struct ObjectEventTemplate *table) {
   FieldScript_NoOpHook();
-  ObjectTable_ResetForObject(table);
+  ObjectEvent_ResetForObject(table);
   WaitFrames(1);
   // XXX: the leader's object is fetched and not used; a caller in an overlay
   // that reads the result would show whether this returned it once.
-  ObjectTable_Get(gGameState.selectedLocalId);
+  ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
 }
 
 /// Spawns the object events of an object event template table after the last
 /// object event in use. Called by the Kolima, Kalay and Tolbi ship map scripts
 /// to bring object events in during a scene.
 void FieldScript_CallWithLastActiveObjectId(struct ObjectEventTemplate *table) {
-  FieldScript_SpawnObjectTable(table, ObjectTable_FindLastActiveId());
+  FieldScript_SpawnObjectEventTemplates(table, ObjectEvent_FindLastActiveId());
 }
 
 /// Sets the map's event table, which the field checks as the leader moves:
@@ -239,7 +239,7 @@ void Party_RemoveOwnerRestored(s32 unit) {
       survivingMembers++;
   }
   if (survivingMembers == 0) {
-    vitals = Unit_GetFar(gGameState.selectedLocalId);
+    vitals = Unit_GetFar(gGameState.leaderLocalId);
     vitals->hp = 1;
     Unit_UpdateGauges(vitals);
   }
@@ -350,7 +350,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
         Inventory_DiscardFar(member, slot);
       owner = PartyInventory_AddFar(item);
       Sound_PlaySongFar(MUS_TREASURE_FOUND);
-      if (owner == gGameState.selectedLocalId) {
+      if (owner == gGameState.leaderLocalId) {
         ItemGift_ShowGotItem(item, 3);
       } else {
         UiWork_PushValueSlotFar(item, 2);
@@ -365,7 +365,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
     // <member>." when someone other than the leader carries it.
     Sound_PlaySongFar(MUS_TREASURE_FOUND);
     ItemGift_ShowGotItem(item, 3);
-    if (owner != gGameState.selectedLocalId) {
+    if (owner != gGameState.leaderLocalId) {
       UiWork_PushValueSlotFar(item, 2);
       UiWork_PushValueSlotFar(owner, 1);
       UiText_ShowPositionedMessageAndWaitFar(GIFT_RECEIVED_MESSAGE,
@@ -396,7 +396,7 @@ void Inventory_ReservedNoOp(void) {}
 /// Only object events drawn as an animation object (OBJECT_SPRITE_ONE) are
 /// waited for. Called by FieldScript_AskYesNoWithObjectEventAnimation.
 void ObjectEvent_WaitForAnimationEnd(s32 localId, s32 animation) {
-  struct Object *objectEventObject = ObjectTable_Get(localId);
+  struct Object *objectEventObject = ObjectEvent_GetByLocalId(localId);
 
   if (objectEventObject != 0 &&
       objectEventObject->animationKind == OBJECT_SPRITE_ONE) {
@@ -491,22 +491,22 @@ void Party_LearnAbility(s32 unit, s32 ability) {
 /// The script command "open screen": starts the script's screen transition and
 /// sets work->transitionActive. Map scripts reach it as
 /// Engine_ScriptOpenScreen; the inn, the title, cleared-game and link lobby
-/// menus and WorldMap_Show call it too.
+/// menus and RegionMap_Show call it too.
 void FieldScript_StartScreenTransition(void) {
   struct FieldWork *runtime = (struct FieldWork *)gFieldWork;
 
-  DisplayTransition_Start(runtime->transition, runtime->transitionFrames);
+  ScreenTransition_Start(runtime->transition, runtime->transitionFrames);
   runtime->transitionActive = 1;
 }
 
 /// The script command "close screen": finishes the script's screen transition
 /// and clears work->transitionActive. Map scripts reach it as
 /// Engine_ScriptCloseScreen; the inn, the cleared-game menu and
-/// WorldMap_Show call it too.
+/// RegionMap_Show call it too.
 void FieldScript_FinishScreenTransition(void) {
   struct FieldWork *runtime = (struct FieldWork *)gFieldWork;
 
-  DisplayTransition_Finish(runtime->transition, runtime->transitionFrames);
+  ScreenTransition_Finish(runtime->transition, runtime->transitionFrames);
   runtime->transitionActive = 0;
 }
 

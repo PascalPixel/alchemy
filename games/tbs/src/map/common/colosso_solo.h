@@ -94,7 +94,7 @@ void Colosso_ControlCharacterAlone(s32 id) {
   Party_RemoveActiveOwner(3);
   Party_RemoveActiveOwner(5);
   Party_AddActiveOwner(id);
-  gGameState.selectedLocalId = id;
+  gGameState.leaderLocalId = id;
   Engine_CameraFollowObjectEvent(id, 0);
   unit = Unit_Get(id);
   unit->hp = unit->hpMax;
@@ -130,11 +130,11 @@ void Colosso_ControlCharacterAlone(s32 id) {
 /// FLAG_PSYNERGY_TARGET is set, raise map event 99, Colosso_TakePlaceForMatch.
 void Colosso_RaiseTakePlaceOnPsynergy(void) {
   struct EventWork *work = gFieldWork;
-  s32 selection = gGameState.selectedLocalId;
+  s32 selection = gGameState.leaderLocalId;
 
-  if (selection != 0 && (work->psynergyRequest >> 10) == selection &&
+  if (selection != 0 && (work->psynergy >> 10) == selection &&
       Engine_GameFlagIsSet(FLAG_PSYNERGY_TARGET) != 0) {
-    u16 *raised = (u16 *)&work->raisedTrigger;
+    u16 *raised = (u16 *)&work->raisedEvent;
     s32 trigger = 99;
 
     *raised = trigger;
@@ -150,7 +150,7 @@ static void Colosso_TakePlaceForMatch(void) {
   struct EventWork *work = gFieldWork;
   s32 speakerId = 8;
   s32 nearestDistance = 0x100000;
-  s32 supporterId = gGameState.selectedLocalId;
+  s32 supporterId = gGameState.leaderLocalId;
   struct ObjectEvent *supporter = ObjectEvent_GetById(supporterId);
   s32 localId;
   s32 *transition;
@@ -184,7 +184,7 @@ static void Colosso_TakePlaceForMatch(void) {
   }
   Engine_ScriptSetMessage(MsgColossoMatchAboutBeginPleaseTake);
   Engine_ScriptShowMessage(speakerId, 0);
-  transition = &work->startTransition;
+  transition = &work->transition;
   *transition = MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   work->transitionFrames = 15;
   Engine_ScriptWait(20);
@@ -228,7 +228,7 @@ void Colosso_AskDoneCheering(s32 id) {
   // Look up the speaker twice and discard both results (two original calls).
   ObjectEvent_GetById(id);
   ObjectEvent_GetById(id);
-  slot = gGameState.selectedLocalId;
+  slot = gGameState.leaderLocalId;
   objectEvent = ObjectEvent_GetById(slot);
   Engine_ScriptStart();
   msg = MsgColossoCheering;
@@ -240,7 +240,7 @@ void Colosso_AskDoneCheering(s32 id) {
   if (res == 0) {
     Engine_ScriptSetMessage(msg + 1);
     Engine_ScriptShowMessage(id, 0);
-    work->startTransition =
+    work->transition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     work->transitionFrames = 15;
     Engine_ScriptCloseScreen();
@@ -257,7 +257,7 @@ void Colosso_AskDoneCheering(s32 id) {
       Colosso_ControlCharacterAlone(slot);
       Engine_ScriptOpenScreen();
       Engine_ScriptWaitForScreen();
-      work->startTransition = MAP_TRANSITION(TRANSITION_FADE, 0);
+      work->transition = MAP_TRANSITION(TRANSITION_FADE, 0);
     }
   } else {
     Engine_ScriptSetMessage(msg + 2);

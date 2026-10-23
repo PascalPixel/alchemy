@@ -62,7 +62,7 @@
 	.set import.Engine_CameraSetSpeed, 1
 	.set import.Engine_CameraMoveTo, 1
 	.set import.Engine_CameraWaitForMove, 1
-	.set import.Camera_GetScriptObject, 1
+	.set import.FieldCamera_GetScriptObject, 1
 	.set import.Engine_ScriptRequestWarp, 1
 	.set import.Engine_ColorBufferApplyTarget, 1
 	.set import.Engine_ColorBufferApplySource, 1

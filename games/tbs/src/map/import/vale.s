@@ -87,7 +87,7 @@
 	.set import.Engine_PsynergyStart, 1
 	.set import.FieldEffect_End, 1
 	.set import.Map_PlayMusic, 1
-	.set import.FieldEffect_SetQueuedSoundAndPlay, 1
-	.set import.FieldEffect_PlayQueuedSound, 1
+	.set import.Map_QueueMusic, 1
+	.set import.Map_PlayQueuedMusic, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

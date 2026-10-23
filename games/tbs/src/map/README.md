@@ -118,7 +118,7 @@ it lands after it falls, and only one of the two appears.
 The party takes slots 0 to 7, the leader the one the player moves
 (`LOCALID_PARTY_LEADER`), and the table's rows take the slots from
 `LOCALID_FIRST_PLACED` in order: local id `LOCALID_FIRST_PLACED + n` is always row n
-(`FieldScript_SpawnObjectTable`). A row whose sprite is one of the party's
+(`FieldScript_SpawnObjectEventTemplates`). A row whose sprite is one of the party's
 characters (sprites 0 to 7) takes that character's own slot instead. Each map names its object events in
 an enum in row order (`LOCALID_FALLEN_STATUE = LOCALID_FIRST_PLACED`).
 
@@ -145,7 +145,7 @@ These are four rows of Vale's table on the day the story begins
   EVENT_SCRIPT(EventScript_EnterIsaacsHouse) },
 { PSYNERGY_ON_OBJ_EVENT(ABILITY_CATCH), LOCALID_NUT, FLAG_VALE_NUT_CAUGHT,
   EVENT_SCRIPT(EventScript_CatchNut) },
-{ BG_EVENT(BG_EVENT_UNNAMED), 24, CONDITION_ALWAYS,
+{ BG_EVENT(BG_EVENT_SILENT), 24, CONDITION_ALWAYS,
   EVENT_SCRIPT(EventScript_SearchTheLockedDoor) },
 ```
 
@@ -254,12 +254,12 @@ one that always fits is never reached, as the cook's second row shows.
 
 `Map_FindEvent` returns the first row whose kind, trigger and condition
 fit. A bg event on a named target, which is every target but
-`BG_EVENT_UNNAMED` and says what the leader checks (a chest, a jar), is the
+`BG_EVENT_SILENT` and says what the leader checks (a chest, a jar), is the
 one exception, so that an opened chest still answers:
 
 1. `Map_FindEvent` returns it whatever its condition, unless it finds a
    mimic.
-2. `Field_SearchTile` shows the target's checking line (`MsgTileChecked`
+2. `Field_SearchCell` shows the target's checking line (`MsgTileChecked`
    plus the target, "checked the chest...").
 3. Only then does it test the condition: an unopened chest gives what it
    holds and sets its flag, and an opened one adds the result line, "but
@@ -271,7 +271,7 @@ such case.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `BG_EVENT_UNNAMED` | 0 | a bg event that shows nothing as the leader checks |
+| `BG_EVENT_SILENT` | 0 | a bg event that shows nothing as the leader checks |
 | `BG_EVENT_CHEST` | 1 | the first named target; target n shows `MsgTileChecked` + n |
 
 ## Scripts
@@ -304,23 +304,23 @@ walker arrives.
 /// LunpaFortressUpperFloor, raised when the patrolling pair spots the leader:
 /// the first stops and stares, and the second throws the party out.
 static void EventScript_PatrolPairThrowsPartyOut(void) {
-  EV_START();
+  SCRIPT_START();
   Engine_ObjectEventStop(UPPER_FLOOR_FIRST_PATROL);
   Engine_ObjectEventSetDestinationOffset(UPPER_FLOOR_FIRST_PATROL, 0, 0);
-  OBJECT_MODE(UPPER_FLOOR_FIRST_PATROL, 0);
+  OBJECT_ANIMATION(UPPER_FLOOR_FIRST_PATROL, 0);
   OBJECT_FACE(UPPER_FLOOR_FIRST_PATROL, LOCALID_PARTY_LEADER, 0);
   Engine_ObjectEventShowEmote(UPPER_FLOOR_FIRST_PATROL,
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   LunpaFortress_GuardThrowsPartyOut(UPPER_FLOOR_SECOND_PATROL);
-  EV_END();
+  SCRIPT_END();
 }
 ```
 
-`EV_START` stops the leader and makes it the speaker, and `EV_END` returns the
+`SCRIPT_START` stops the leader and makes it the speaker, and `SCRIPT_END` returns the
 camera to it. `WAIT(n)` waits `n` frames, about 59.73 a second.
 `MESSAGE_SET` chooses a message and `MESSAGE_PUT` shows it spoken by an object event.
-`OBJECT_POSITION_SET`, `OBJECT_WALK`, `OBJECT_SPEED`, `OBJECT_DIR`, `OBJECT_FACE` and `OBJECT_MODE`
-move, turn and animate object events by local id (`OBJECT_MODE` takes an `enum
+`OBJECT_POSITION_SET`, `OBJECT_WALK`, `OBJECT_SPEED`, `OBJECT_DIR`, `OBJECT_FACE` and `OBJECT_ANIMATION`
+move, turn and animate object events by local id (`OBJECT_ANIMATION` takes an `enum
 ObjectEventAnimation` such as `ANIMATION_NOD`). `FLAG_CHECK` and `FLAG_SET` test and set
 game flags, and `SE(n)` plays a sound from `songs.h`. Callbacks are added with
 `FieldScheduler_AddCallback` at `TASK_PRIORITY_MAP`.

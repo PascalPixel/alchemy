@@ -13,7 +13,7 @@
 
 /// An object event's animated sprite (struct AnimationObject), as far as the
 /// pointer to its sprite id.
-struct FieldEffectSpeakerSprite {
+struct SpeakerSprite {
   u8 beforeEntries[0x28]; ///< AnimationObject's fields before its layers
   /// AnimationObject.entries[0], its first layer, whose first halfword is the
   /// sprite id it shows (AnimationEntry.animationId); null for none.
@@ -22,7 +22,7 @@ struct FieldEffectSpeakerSprite {
 
 /// An object event as the speaker lookup reads it: its kind (1 for an animated
 /// sprite) and that sprite.
-struct FieldEffectSpeakerObject {
+struct SpeakerObject {
   u8 beforeVelocity[0x24]; ///< Object's fields before velocityX
   /// Object's motion, target, bounce, gravity and riseBaseY; not named
   /// through this view.
@@ -39,19 +39,19 @@ struct FieldEffectSpeakerObject {
   s32 gravity;
   s32 riseBaseY;
   ///@}
-  struct FieldEffectSpeakerSprite *animation; ///< Object.animation
+  struct SpeakerSprite *animation; ///< Object.animation
   u8 kind; ///< Object.animationKind: 1 for one animated sprite
 };
 
-/// A speaker definition, a row of gFieldEffect_DefinitionTable: a sprite, its
+/// A speaker definition, a row of gSpeakerDefinitions: a sprite, its
 /// voice (0xff for none) and the flags that choose its idle line.
-struct FieldEffectDefinition {
+struct SpeakerDefinition {
   u16 id; ///< the sprite id
   /// The first of its four voice blip sounds, less 256: a message plays sound
-  /// 256 + value as it types (FieldEffect_GetResourceId); 0xff for none.
+  /// 256 + value as it types (Speaker_GetVoice); 0xff for none.
   u8 value;
   u8 flags; ///< choose its line when it has nothing to say
-            ///< (FieldEffect_GetFlags)
+            ///< (Speaker_GetIdleFlags)
 };
 
 /// The colour buffer, heap slot HEAP_SLOT_PALETTE_FADE under its own name.

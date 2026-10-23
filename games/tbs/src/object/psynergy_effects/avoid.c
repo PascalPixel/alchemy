@@ -14,7 +14,7 @@ void FieldEffect_BlinkAvoidCaster(void) {
   struct AnimationEntry *entry;
   s32 phase;
 
-  caster = ObjectTable_Get(gGameState.selectedLocalId);
+  caster = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
   rec = caster->records;
   entry = rec->entries[0];
   phase = gFrameCount % 5;
@@ -73,7 +73,7 @@ void FieldScript_ShowStatusMessage(void) {
 /// The caster spins and flashes, then blinks, and encounters are kept away
 /// until Avoid wears off.
 ///
-/// Abilities: Avoid (FIELD_KIND_AVOID).
+/// Abilities: Avoid (FIELD_PSYNERGY_AVOID).
 ///
 /// Using the Sacred Feather plays it too, since the item's field action is
 /// Avoid.

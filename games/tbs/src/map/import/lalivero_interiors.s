@@ -32,7 +32,7 @@
 	.set import.Engine_ScriptOpenScreen, 1
 	.set import.Engine_ScriptWaitForScreen, 1
 	.set import.Engine_FieldEndBusyAndReveal, 1
-	.set import.Motion_LaunchFromFocusedObject, 1
+	.set import.ObjectMotion_LaunchFromFocusedObject, 1
 	.set import.Engine_ObjectEventWalkByAndWait, 1
 	.set import.Engine_ObjectEventSetActionCallback, 1
 	.set import.Shop_Run, 1

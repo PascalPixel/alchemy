@@ -178,7 +178,7 @@ static void Vale_CycleObjectEventPalette(struct ObjectEvent *objectEvent);
 /// gVale_ObjectEventTemplates and gVale_ObjectEventTemplatesAfterLeaving, which
 /// place the same people in the same rows. A row whose sprite is a party
 /// member's (Garet's, Jenna's) takes that member's local id instead
-/// (FieldScript_SpawnObjectTable), so the numbering skips it.
+/// (FieldScript_SpawnObjectEventTemplates), so the numbering skips it.
 enum ValeLocalId {
   /// An old woman: "Mt. Aleph looks beautiful today. It's so peaceful."; after
   /// the party has left, "Vale is saved thanks to the Wise One!"
@@ -699,7 +699,7 @@ static void Vale_HaveJennaStopTheAlephDetour(void) {
   jenna->targetY = OBJ_EVENT_NO_TARGET;
   jenna->targetZ = OBJ_EVENT_NO_TARGET;
   SET_VELOCITY(jenna, 0, 0, 0);
-  jenna->terrainHeight = leader->y.fixed;
+  jenna->groundHeight = leader->y.fixed;
   Engine_TaskWait(1);
   ObjectEvent_SetSpeed(JENNA, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_WalkToAndWait(JENNA, 110, 283);
@@ -981,10 +981,10 @@ UNUSED static void EventScript_UnusedRoofMended(void) {
   s32 i;
 
   Engine_ScriptStart();
-  Camera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   objectEvent = Engine_ScriptGetViewCenter();
   objectEvent->motionFlags = 0;
-  Camera_MoveTo(PIXELS(383), PIXELS(160), PIXELS(877), 0);
+  FieldCamera_MoveTo(PIXELS(383), PIXELS(160), PIXELS(877), 0);
   Engine_ScriptWait(1);
   Engine_MapGridRedraw();
   MapGrid_CopyCellAttributes(49, 41, 7, 3, 20, 50);
@@ -1006,7 +1006,7 @@ UNUSED static void EventScript_UnusedRoofMended(void) {
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_HAMMER);
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER, gVale_LeaderHammers);
   Vale_PlaceOrHideBoards(LOCALID_FIRST_BOARD, 2, 1);
-  gFieldWork->startTransition = 0;
+  gFieldWork->transition = 0;
   gFieldWork->transitionFrames = 32;
   Engine_ScriptOpenScreen();
   ObjectEvent_SetSpeed(JENNA, PIXELS(1) / 2, PIXELS(1) / 4);
@@ -1184,8 +1184,8 @@ UNUSED static void EventScript_UnusedRoofMended(void) {
   Engine_ScriptWait(20);
   Script_ShowMessageAndWait(LOCALID_DORA, 0, 10);
 
-  Camera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
-  Camera_MoveTo(PIXELS(377), PIXELS(160), PIXELS(860), 1);
+  FieldCamera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
+  FieldCamera_MoveTo(PIXELS(377), PIXELS(160), PIXELS(860), 1);
   ObjectEvent_SetSpeed(JENNA, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_WalkTo(GARET, 369, 904);
@@ -1282,8 +1282,8 @@ UNUSED static void EventScript_UnusedRoofMended(void) {
   Engine_ObjectEventRunRepeatedMotion(LOCALID_DORA, 2);
   Engine_ScriptWait(30);
   Script_ShowMessageAndWait(LOCALID_DORA, 0, 20);
-  Camera_SetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
-  Camera_MoveTo(PIXELS(373), PIXELS(160), PIXELS(837), 1);
+  FieldCamera_SetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
+  FieldCamera_MoveTo(PIXELS(373), PIXELS(160), PIXELS(837), 1);
   ObjectEvent_WalkToAndWait(LOCALID_DORA, 364, 816);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH + FACING_STEP,
                             0);
@@ -1366,8 +1366,8 @@ UNUSED static void EventScript_UnusedRoofMended(void) {
   Engine_ObjectEventRunRepeatedMotion(LOCALID_DORA, 2);
   Engine_ScriptWait(20);
   Script_ShowMessageAndWait(LOCALID_DORA, 0, 20);
-  Camera_SetSpeed(PIXELS(3) / 10, PIXELS(3) / 80);
-  Camera_MoveTo(PIXELS(372), PIXELS(160), PIXELS(859), 1);
+  FieldCamera_SetSpeed(PIXELS(3) / 10, PIXELS(3) / 80);
+  FieldCamera_MoveTo(PIXELS(372), PIXELS(160), PIXELS(859), 1);
   ObjectEvent_SetSpeed(LOCALID_DORA, PIXELS(3), PIXELS(3) / 2);
   Engine_ObjectEventJump(LOCALID_DORA, 6, 0);
   ObjectEvent_WalkToAndWait(LOCALID_DORA, 359, 835);
@@ -1513,7 +1513,7 @@ UNUSED static void EventScript_UnusedRoofMended(void) {
                             objectEvent->z.part.pixel);
   ObjectEvent_SetPosition(GARET, 0, 0);
   Engine_PartyAddMembers(GARET, JENNA);
-  Camera_MoveTo(PIXELS(377), PIXELS(160), PIXELS(887), 1);
+  FieldCamera_MoveTo(PIXELS(377), PIXELS(160), PIXELS(887), 1);
   Vale_MoveObjectEventAlongHigherZPath(LOCALID_PARTY_LEADER, 13, 10, 0);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 376, 912);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
@@ -1569,7 +1569,7 @@ s32 Vale_Initialize(void) {
     objectEvent->z.fixed = PIXELS(584);
     objectEvent->y.fixed = PIXELS(192);
     EventScript_SettleMovedPillar();
-    objectEvent->terrainId = 3;
+    objectEvent->layer = 3;
     objectEvent->motionFlags = 0;
     FieldScheduler_AddCallback(Vale_AdjustPillarPriorityForLeaderHeight,
                                TASK_PRIORITY_MAP);
@@ -1658,7 +1658,7 @@ s32 Vale_Initialize(void) {
       }
     }
 #endif
-    FieldEffect_SetQueuedSoundAndPlay(SE_170);
+    Map_QueueMusic(SE_170);
     Engine_MapGridRedraw();
     Engine_TaskWait(1);
   }
@@ -1679,8 +1679,8 @@ static void EventScript_GaretMeetsHisSister(void) {
   Engine_ScriptSetMessage(msg);
   Engine_ObjectEventStartRepeatedMotion(LOCALID_GARETS_SISTER_AFTER_KALAY, 2);
   Script_ShowMessageAndWait(LOCALID_GARETS_SISTER_AFTER_KALAY, 0, 20);
-  Camera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
-  Camera_MoveTo(PIXELS(398), -1, PIXELS(582), 1);
+  FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
+  FieldCamera_MoveTo(PIXELS(398), -1, PIXELS(582), 1);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 420, 608);
@@ -1766,7 +1766,7 @@ static void EventScript_GaretAsksToProtectFamily(void) {
   struct ObjectEvent *record;
 
   Engine_ScriptStart();
-  Camera_MoveTo(PIXELS(357), -1, PIXELS(738), 1);
+  FieldCamera_MoveTo(PIXELS(357), -1, PIXELS(738), 1);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 367, 745);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHWEST, 0);
   record = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -2022,7 +2022,7 @@ static void EventScript_MendingTheRoof(void) {
 
   // Prepare the damaged house and start Isaac's hammering behind the caption.
   Engine_ScriptStart();
-  Camera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
   ((struct ObjectEvent *)Engine_ScriptGetViewCenter())->motionFlags = 0;
   Engine_TaskWait(1);
@@ -2060,11 +2060,11 @@ static void EventScript_MendingTheRoof(void) {
   ObjectSystem_ResumeProjectionAndHideLayers();
 
   // Follow Jenna through the village until she notices the repair work.
-  Camera_MoveTo(PIXELS(339), PIXELS(160), PIXELS(1173), 0);
+  FieldCamera_MoveTo(PIXELS(339), PIXELS(160), PIXELS(1173), 0);
   Engine_MapGridRedraw();
   Engine_TaskWait(1);
-  Camera_SetSpeed(PIXELS(33) / 100, PIXELS(33) / 800);
-  Camera_MoveTo(PIXELS(296), PIXELS(160), PIXELS(921), 1);
+  FieldCamera_SetSpeed(PIXELS(33) / 100, PIXELS(33) / 800);
+  FieldCamera_MoveTo(PIXELS(296), PIXELS(160), PIXELS(921), 1);
   ObjectEvent_SetPosition(JENNA, PIXELS(409), PIXELS(1134));
   Engine_TaskWait(1);
   ObjectEvent_SetSpeed(JENNA, PIXELS(7) / 10, PIXELS(7) / 20);
@@ -2090,7 +2090,7 @@ static void EventScript_MendingTheRoof(void) {
   Engine_ObjectEventSetAnimationAndWait(JENNA, ANIMATION_NOD);
   Engine_ScriptWait(10);
   ObjectEvent_WalkTo(LOCALID_OPENING_WOMAN, 379, 1017);
-  Camera_SetSpeed(PIXELS(1) / 2, PIXELS(1) / 16);
+  FieldCamera_SetSpeed(PIXELS(1) / 2, PIXELS(1) / 16);
   ObjectEvent_WalkToAndWait(JENNA, 333, 920);
   ObjectEvent_WalkToAndWait(JENNA, 299, 924);
   Engine_CameraWaitForMove();
@@ -2098,8 +2098,8 @@ static void EventScript_MendingTheRoof(void) {
   ObjectEvent_FaceDirection(JENNA, FACING_NORTHEAST + FACING_STEP, 30);
   Engine_ObjectEventRunRepeatedMotion(JENNA, 2);
   Engine_ScriptWait(20);
-  Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
-  Camera_MoveTo(PIXELS(387), PIXELS(160), PIXELS(866), 1);
+  FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
+  FieldCamera_MoveTo(PIXELS(387), PIXELS(160), PIXELS(866), 1);
   Engine_CameraWaitForMove();
   Engine_ObjectEventJump(LOCALID_OPENING_DORA, 2, 20);
   Engine_ScriptSetMessage(message + 1);
@@ -2140,8 +2140,8 @@ static void EventScript_MendingTheRoof(void) {
   Script_ShowMessageAndWait(JENNA, 0, 30);
   Engine_ObjectEventSetAnimationAndWait(JENNA, ANIMATION_NOD);
   Engine_ScriptWait(10);
-  Camera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
-  Camera_MoveTo(PIXELS(396), -1, PIXELS(588), 1);
+  FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
+  FieldCamera_MoveTo(PIXELS(396), -1, PIXELS(588), 1);
   ObjectEvent_WalkToAndWait(JENNA, 456, 739);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(10);
@@ -2355,7 +2355,7 @@ static void EventScript_RoofMended(void) {
 
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   Engine_ScriptStart();
-  Camera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
   MapGrid_CopyCellAttributes(49, 53, 8, 4, 20, 50);
   MapGrid_CopyCellsTo(2, 102, 84, 41, 2, 1);
@@ -2396,7 +2396,7 @@ static void EventScript_RoofMended(void) {
   Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
   ((u8 *)Engine_ScriptGetViewCenter())[85] = 0;
   Engine_TaskWait(1);
-  Camera_MoveTo(PIXELS(383), PIXELS(160), PIXELS(877), 0);
+  FieldCamera_MoveTo(PIXELS(383), PIXELS(160), PIXELS(877), 0);
   Engine_MapGridRedraw();
   Engine_TaskWait(1);
   gFieldWork->transitionFrames = 32;
@@ -2622,8 +2622,8 @@ static void EventScript_RoofMended(void) {
   Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
   Engine_ObjectEventSetAnimationAndWait(LOCALID_DORA, ANIMATION_NOD);
   Script_ShowMessageAndWait(LOCALID_DORA, 0, 10);
-  Camera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
-  Camera_MoveTo(PIXELS(377), PIXELS(160), PIXELS(860), 1);
+  FieldCamera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
+  FieldCamera_MoveTo(PIXELS(377), PIXELS(160), PIXELS(860), 1);
   ObjectEvent_SetSpeed(JENNA, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_WalkTo(GARET, 369, 904);
@@ -2718,8 +2718,8 @@ static void EventScript_RoofMended(void) {
   Engine_ScriptWait(20);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_DORA, 2);
   Script_ShowMessageAndWait(LOCALID_DORA, 0, 20);
-  Camera_SetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
-  Camera_MoveTo(PIXELS(373), PIXELS(160), PIXELS(837), 1);
+  FieldCamera_SetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
+  FieldCamera_MoveTo(PIXELS(373), PIXELS(160), PIXELS(837), 1);
   ObjectEvent_WalkToAndWait(LOCALID_DORA, 364, 816);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH + FACING_STEP,
                             0);
@@ -2805,8 +2805,8 @@ static void EventScript_RoofMended(void) {
   Engine_ObjectEventRunRepeatedMotion(LOCALID_DORA, 2);
   Engine_ScriptWait(20);
   Script_ShowMessageAndWait(LOCALID_DORA, 0, 20);
-  Camera_SetSpeed(PIXELS(3) / 10, PIXELS(3) / 80);
-  Camera_MoveTo(PIXELS(372), PIXELS(160), PIXELS(859), 1);
+  FieldCamera_SetSpeed(PIXELS(3) / 10, PIXELS(3) / 80);
+  FieldCamera_MoveTo(PIXELS(372), PIXELS(160), PIXELS(859), 1);
   ObjectEvent_SetSpeed(LOCALID_DORA, PIXELS(3), PIXELS(3) / 2);
   Engine_ObjectEventJump(LOCALID_DORA, 6, 0);
   ObjectEvent_WalkToAndWait(LOCALID_DORA, 359, 835);
@@ -2950,7 +2950,7 @@ static void EventScript_RoofMended(void) {
                             objectEvent->z.part.pixel);
   ObjectEvent_SetPosition(GARET, 0, 0);
   Engine_PartyAddMembers(GARET, JENNA);
-  Camera_MoveTo(PIXELS(377), PIXELS(160), PIXELS(887), 1);
+  FieldCamera_MoveTo(PIXELS(377), PIXELS(160), PIXELS(887), 1);
   Vale_MoveObjectEventAlongHigherZPath(LOCALID_PARTY_LEADER, 13, 10, 0);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 376, 912);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
@@ -3209,7 +3209,7 @@ static void EventScript_PushPillar(void) {
     ObjectEvent_GetById(LOCALID_PILLAR);
 #endif
   MapGrid_CopyCellAttributes(17, 0, 3, 1, 22, 36);
-  StagedObjectEvent_AdvancePair();
+  PushedObject_AdvancePair();
   EventScript_SettleMovedPillar();
 }
 
@@ -3331,7 +3331,7 @@ static void Vale_CycleObjectEventPalette(struct ObjectEvent *objectEvent) {
 /// Pixel step by direction: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
-s32 gStagedObjectEvent_DirectionSteps[] = {
+s32 gPushedObject_DirectionSteps[] = {
     DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),
@@ -3341,11 +3341,11 @@ s32 gStagedObjectEvent_DirectionSteps[] = {
 };
 
 // clang-format off
-u32 gStagedObjectEvent_FootprintKinds[] = {
+u32 gPushedObject_FootprintKinds[] = {
     207, 205, 228, 229, 298, 297,
 };
 
-s32 gStagedObjectEvent_FootprintBounds[] = {
+s32 gPushedObject_FootprintBounds[] = {
     -32, -8, 32, 8,
     -8, -32, 8, 32,
     -32, -16, 32, 0,
@@ -3548,149 +3548,149 @@ u32 gVale_Warps[] = {
 
 struct ObjectEventTemplate gVale_ObjectEventTemplates[] = {
     { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(132), 0, PIXELS(908), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(132), 0, PIXELS(908), FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, 3,
-        PIXELS(92), 0, PIXELS(508), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(92), 0, PIXELS(508), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(252), 0, PIXELS(620), FACING_WEST, TALK_FACE_PARTY, 0 },
+        PIXELS(252), 0, PIXELS(620), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(164), 0, PIXELS(1236), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(164), 0, PIXELS(1236), FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(268), 0, PIXELS(1276), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(268), 0, PIXELS(1276), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(276), 0, PIXELS(1044), FACING_NORTH, TALK_FACE_PARTY, 0 },
+        PIXELS(276), 0, PIXELS(1044), FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(19), 0, PIXELS(614), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(19), 0, PIXELS(614), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_DOG, CONDITION_ALWAYS, 4,
-        PIXELS(50), 0, PIXELS(795), FACING_WEST, TALK_FACE_PARTY, 0 },
+        PIXELS(50), 0, PIXELS(795), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_DOG, CONDITION_ALWAYS, 4,
-        PIXELS(65), 0, PIXELS(800), FACING_WEST, TALK_FACE_PARTY, 0 },
+        PIXELS(65), 0, PIXELS(800), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_DOG, CONDITION_ALWAYS, 4,
-        PIXELS(57), 0, PIXELS(805), FACING_WEST, TALK_FACE_PARTY, 0 },
+        PIXELS(57), 0, PIXELS(805), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_ORANGE_PONYTAIL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(412), 0, PIXELS(586), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(412), 0, PIXELS(586), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_BOY_WITH_ORANGE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(398), 0, PIXELS(616), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(398), 0, PIXELS(616), FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(378), 0, PIXELS(584), FACING_EAST, TALK_KEEP_FACING, 0 },
+        PIXELS(378), 0, PIXELS(584), FACING_EAST, TALK_FACING_KEEP, 0 },
     { SPRITE_DORA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(373), 0, PIXELS(VALE_DORA_Z), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(373), 0, PIXELS(VALE_DORA_Z), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { 0xce, CONDITION_ALWAYS, 7,
-        0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { 0xce, CONDITION_ALWAYS, 7,
-        0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { 0xce, CONDITION_ALWAYS, 7,
-        0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_BLANK, FLAG_VALE_NUT_CAUGHT, 7,
-        PIXELS(152), 0, PIXELS(1016), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(152), 0, PIXELS(1016), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gVale_ObjectEventTemplatesAfterLeaving[] = {
     { JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(132), 0, PIXELS(908), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(132), 0, PIXELS(908), FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, 3,
-        PIXELS(92), 0, PIXELS(508), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(92), 0, PIXELS(508), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(252), 0, PIXELS(620), FACING_WEST, TALK_FACE_PARTY, 0 },
+        PIXELS(252), 0, PIXELS(620), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(164), 0, PIXELS(1236), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(164), 0, PIXELS(1236), FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(268), 0, PIXELS(1276), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(268), 0, PIXELS(1276), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(276), 0, PIXELS(1044), FACING_NORTH, TALK_FACE_PARTY, 0 },
+        PIXELS(276), 0, PIXELS(1044), FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(19), 0, PIXELS(614), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(19), 0, PIXELS(614), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_DOG, CONDITION_ALWAYS, 4,
-        PIXELS(50), 0, PIXELS(795), FACING_WEST, TALK_FACE_PARTY, 0 },
+        PIXELS(50), 0, PIXELS(795), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_DOG, CONDITION_ALWAYS, 4,
-        PIXELS(65), 0, PIXELS(800), FACING_WEST, TALK_FACE_PARTY, 0 },
+        PIXELS(65), 0, PIXELS(800), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_DOG, CONDITION_ALWAYS, 4,
-        PIXELS(57), 0, PIXELS(805), FACING_WEST, TALK_FACE_PARTY, 0 },
+        PIXELS(57), 0, PIXELS(805), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_ORANGE_PONYTAIL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(412), 0, PIXELS(586), FACING_WEST, 3, 0 },
     { SPRITE_BOY_WITH_ORANGE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(398), 0, PIXELS(616), FACING_NORTH, 3, 0 },
     { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(378), 0, PIXELS(584), FACING_EAST, TALK_KEEP_FACING, 0 },
+        PIXELS(378), 0, PIXELS(584), FACING_EAST, TALK_FACING_KEEP, 0 },
     { SPRITE_DORA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(335), 0, PIXELS(869), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(335), 0, PIXELS(869), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { 0xce, CONDITION_ALWAYS, 7,
-        0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { 0xce, CONDITION_ALWAYS, 7,
-        0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { 0xce, CONDITION_ALWAYS, 7,
-        0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_BLANK, FLAG_VALE_NUT_CAUGHT, 7,
-        PIXELS(152), 0, PIXELS(1016), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(152), 0, PIXELS(1016), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gVale_ObjectEventTemplatesAfterKalay[] = {
     { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_ORANGE_PONYTAIL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(412), 0, PIXELS(586), FACING_NORTH + FACING_STEP, 3, 0 },
     { SPRITE_BOY_WITH_ORANGE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(356), 0, PIXELS(727), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(356), 0, PIXELS(727), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(164), 0, PIXELS(1236), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(164), 0, PIXELS(1236), FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(268), 0, PIXELS(1276), FACING_WEST, TALK_KEEP_FACING, 0 },
+        PIXELS(268), 0, PIXELS(1276), FACING_WEST, TALK_FACING_KEEP, 0 },
     { 0xd6, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { 0xd6, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { 0xd6, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(132), 0, PIXELS(908), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(132), 0, PIXELS(908), FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, 3,
-        PIXELS(92), 0, PIXELS(508), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(92), 0, PIXELS(508), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(252), 0, PIXELS(620), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(252), 0, PIXELS(620), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(276), 0, PIXELS(1044), FACING_NORTH, TALK_KEEP_FACING, 0 },
+        PIXELS(276), 0, PIXELS(1044), FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BLANK, FLAG_VALE_NUT_CAUGHT, MOVEMENT_TYPE_STAND,
-        PIXELS(152), 0, PIXELS(1016), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(152), 0, PIXELS(1016), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(378), 0, PIXELS(584), FACING_EAST, TALK_KEEP_FACING, 0 },
+        PIXELS(378), 0, PIXELS(584), FACING_EAST, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gVale_RepairObjectEventTemplates[] = {
     { JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(409), 0, PIXELS(1134), FACING_NORTH, TALK_FACE_PARTY, 0 },
+        PIXELS(409), 0, PIXELS(1134), FACING_NORTH, TALK_FACING_PARTY, 0 },
     { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(428), 0, PIXELS(588), FACING_WEST, TALK_FACE_PARTY, 0 },
+        PIXELS(428), 0, PIXELS(588), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(204), 0, PIXELS(924), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(204), 0, PIXELS(924), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(394), 0, PIXELS(584), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(394), 0, PIXELS(584), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_DORA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(373), 0, PIXELS(VALE_DORA_Z), FACING_NORTH, TALK_FACE_PARTY, 0 },
+        PIXELS(373), 0, PIXELS(VALE_DORA_Z), FACING_NORTH, TALK_FACING_PARTY, 0 },
     { 0xce, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { 0xce, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { 0xce, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { 0xd7, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };
 
@@ -3731,7 +3731,7 @@ struct MapEvent gVale_Events[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SettleMovedPillar) },
     { COORD_EVENT_WALKING_INTO(FACING_EAST), 30, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushPillar) },
     { COORD_EVENT_WALKING_INTO(FACING_WEST), 31, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushPillar) },
-    { BG_EVENT(BG_EVENT_UNNAMED), 24, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchTheLockedDoor) },
+    { BG_EVENT(BG_EVENT_SILENT), 24, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchTheLockedDoor) },
     { MAP_EVENTS_END },
 };
 
@@ -3781,7 +3781,7 @@ struct MapEvent gVale_EventsAfterLeaving[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SettleMovedPillar) },
     { COORD_EVENT_WALKING_INTO(FACING_EAST), 30, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushPillar) },
     { COORD_EVENT_WALKING_INTO(FACING_WEST), 31, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushPillar) },
-    { BG_EVENT(BG_EVENT_UNNAMED), 24, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchTheLockedDoor) },
+    { BG_EVENT(BG_EVENT_SILENT), 24, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchTheLockedDoor) },
     { MAP_EVENTS_END },
 };
 
@@ -3828,7 +3828,7 @@ struct MapEvent gVale_EventsAfterKalay[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_PILLAR_AFTER_KALAY, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SettleMovedPillar) },
     { COORD_EVENT_WALKING_INTO(FACING_EAST), 30, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushPillar) },
     { COORD_EVENT_WALKING_INTO(FACING_WEST), 31, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushPillar) },
-    { BG_EVENT(BG_EVENT_UNNAMED), 24, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchTheLockedDoor) },
+    { BG_EVENT(BG_EVENT_SILENT), 24, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchTheLockedDoor) },
     { MAP_EVENTS_END },
 };
 // clang-format on

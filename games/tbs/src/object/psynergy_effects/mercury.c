@@ -22,7 +22,7 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
   struct FieldEffectWork *effectWork;
   struct ObjectEvent **cursor;
   struct ObjectEvent **list;
-  struct EffectSlot *effect;
+  struct FieldEffectSprite *effect;
   s8 *slotState;
   s32 kind;
   s32 remaining;
@@ -42,9 +42,9 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
   // Unpause the Djinni, so its script and motion run.
   djinni->paused = 0;
   Sound_PlaySongFar(SE_173);
-  Motion_SetVarCbAndRefresh(djinniId, 1);
+  ObjectMotion_SetVarCbAndRefresh(djinniId, 1);
   Sound_PlaySongFar(SE_175);
-  Motion_SetVarCbAndRefresh(djinniId, 1);
+  ObjectMotion_SetVarCbAndRefresh(djinniId, 1);
   WaitFrames(20);
 
   // Three hops, at 3, 5 and 7 pixels a frame.
@@ -102,10 +102,10 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
   if (resourceId != 96)
     Resource_ResetEntry(resourceId);
   WaitFrames(10);
-  ObjectMotion_ArmCallback(gGameState.selectedLocalId, 0x4000, 0);
+  ObjectMotion_ArmCallback(gGameState.leaderLocalId, 0x4000, 0);
   WaitFrames(20);
   ObjectDispatch_SelectAnimationFar(
-      ObjectEvent_GetById(gGameState.selectedLocalId), 28);
+      ObjectEvent_GetById(gGameState.leaderLocalId), 28);
   WaitFrames(20);
 
   // The droplets (object 240), one a frame, from where the Djinni was on
@@ -115,12 +115,13 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
   position.z = djinni->z.fixed;
   Camera_WorldToScreen(&position);
 
-  effect = effectWork->effects;
+  effect = effectWork->sprites;
   remaining = MERCURY_PARTICLE_MAX - 1;
   do {
-    EffectSlot_Initialize(effect, 240, position.x, position.z);
-    EffectSlot_SetCallback(effect, FieldEffect_UpdateRandomTargetParticle);
-    EffectSlot_SetObjectMode(effect, 7);
+    FieldEffectSprite_Initialize(effect, 240, position.x, position.z);
+    FieldEffectSprite_SetCallback(effect,
+                                  FieldEffect_UpdateRandomTargetParticle);
+    FieldEffectSprite_SetObjectMode(effect, 7);
     ObjectGroup_SetChildValueUnlessFifteenFar(effect->object,
                                               SPRITE_COLOR_BLUE_TINT);
     remaining--;
@@ -137,14 +138,14 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
 
     nextState = MERCURY_DROPLET_LAST_FALL;
     slotState = (s8 *)effectWork;
-    slotState += offsetof(struct FieldEffectWork, effects) +
-                 offsetof(struct EffectSlot, state);
+    slotState += offsetof(struct FieldEffectWork, sprites) +
+                 offsetof(struct FieldEffectSprite, state);
     remaining = MERCURY_PARTICLE_MAX - 1;
     do {
       if (slotState[5] != 0) // active
         slotState[0] = nextState;
       remaining--;
-      slotState += sizeof(struct EffectSlot);
+      slotState += sizeof(struct FieldEffectSprite);
     } while (remaining >= 0);
   }
 

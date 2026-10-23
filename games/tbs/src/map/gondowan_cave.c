@@ -232,7 +232,7 @@ static void EventScript_IodemAsksWhyTurningBack(void) {
 
   if (FLAG_CHECK(FLAG_BABI_LIGHTHOUSE_IODEM_ARRIVED) == 0 &&
       FLAG_CHECK(FLAG_IODEM_FOLLOWING_PARTY) != 0) {
-    EV_START();
+    SCRIPT_START();
     // Bring Iodem out of the party before opening his question.
     Engine_ObjectEventSetSpeed(LOCALID_IODEM, PIXELS(1), PIXELS(1) / 2);
     leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
@@ -253,7 +253,7 @@ static void EventScript_IodemAsksWhyTurningBack(void) {
       OBJECT_WALK(LOCALID_IODEM, 152, 232);
       GameFlag_Clear(FLAG_IODEM_FOLLOWING_PARTY);
       Engine_ObjectEventWaitForMove(LOCALID_IODEM);
-      OBJECT_MODE(LOCALID_IODEM, ANIMATION_STAND);
+      OBJECT_ANIMATION(LOCALID_IODEM, ANIMATION_STAND);
       gGameState.savedMap = (s32)&MapId_TolbiInteriors;
       gGameState.savedWarpDest = TOLBI_INTERIORS_SANCTUM_NORTH;
     } else {
@@ -261,7 +261,7 @@ static void EventScript_IodemAsksWhyTurningBack(void) {
       // the party, and Isaac steps away from the coord event.
       gFieldWork->message += 1;
       Script_ShowMessage(LOCALID_IODEM, 0);
-      OBJECT_MODE(LOCALID_IODEM, ANIMATION_WALK);
+      OBJECT_ANIMATION(LOCALID_IODEM, ANIMATION_WALK);
       leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
       if (leader != 0) {
         ObjectEvent_SetDestination(LOCALID_IODEM, leader->x.part.pixel,
@@ -270,12 +270,12 @@ static void EventScript_IodemAsksWhyTurningBack(void) {
       Engine_ObjectEventWaitForMove(LOCALID_IODEM);
       OBJECT_POSITION_SET(LOCALID_IODEM, 0, 0);
       WAIT(30);
-      OBJECT_MODE(LOCALID_PARTY_LEADER, ANIMATION_WALK);
+      OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIMATION_WALK);
       Engine_ObjectEventSetDestinationOffset(LOCALID_PARTY_LEADER, 0, 16);
       Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
-      OBJECT_MODE(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+      OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIMATION_STAND);
     }
-    EV_END();
+    SCRIPT_END();
   }
 }
 
@@ -284,15 +284,15 @@ static void EventScript_IodemAsksWhyTurningBack(void) {
 /// isn't with the party. `I've been waiting for you, Isaac! We should go to
 /// Babi Lighthouse soon.`
 static void EventScript_IodemRejoins(void) {
-  EV_START();
+  SCRIPT_START();
   OBJECT_FACE(LOCALID_IODEM, LOCALID_PARTY_LEADER, 0);
   OBJECT_FACE(LOCALID_PARTY_LEADER, LOCALID_IODEM, 0);
-  OBJECT_MODE(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIMATION_STAND);
   WAIT(10);
   Engine_ObjectEventFaceEachOther(LOCALID_PARTY_LEADER, LOCALID_IODEM, 0);
   MESSAGE_SET(MsgKaragolIveBeenWaitingForIsaac);
   MESSAGE_PUT(LOCALID_IODEM, 0);
-  OBJECT_MODE(LOCALID_IODEM, ANIMATION_WALK);
+  OBJECT_ANIMATION(LOCALID_IODEM, ANIMATION_WALK);
   {
     struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
 
@@ -304,7 +304,7 @@ static void EventScript_IodemRejoins(void) {
   Engine_ObjectEventSetPosition(LOCALID_IODEM, 0, 0);
   WAIT(20);
   Engine_GameFlagSet(FLAG_IODEM_FOLLOWING_PARTY);
-  EV_END();
+  SCRIPT_END();
 }
 
 /// Talking to the first soldier in Gondowan Passage before Babi has spoken
@@ -354,7 +354,7 @@ static void EventScript_LeaveToWorldMapEast(void) {
   struct EventWork *work;
 
   work = gFieldWork;
-  EV_START();
+  SCRIPT_START();
   if (FLAG_CHECK(FLAG_MAP_TEMP_04) != 0) {
     GameFlag_Clear(0x9a3);
     GameFlag_Clear(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED);
@@ -363,10 +363,10 @@ static void EventScript_LeaveToWorldMapEast(void) {
     FLAG_SET(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED);
     FLAG_SET(0x9a4);
   }
-  Engine_ScriptRequestWarp(work->touchedTrigger);
+  Engine_ScriptRequestWarp(work->coordEvent);
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
-  EV_END();
+  SCRIPT_END();
 }
 
 /// Walking west or east into coord events 10 and 11 in GondowanCave: the leader
@@ -378,7 +378,7 @@ static void EventScript_JumpAcross(void) { Engine_LeaderCheckAhead(); }
 /// less it spins and leaps into the water, freeing the cell where it stood.
 static void EventScript_MoveStump(void) {
   ObjectEvent_GetById(LOCALID_STUMP);
-  EV_START();
+  SCRIPT_START();
   {
     struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_STUMP);
 
@@ -388,13 +388,13 @@ static void EventScript_MoveStump(void) {
       Engine_GameFlagSet(FLAG_GONDOWAN_CAVE_STUMP_MOVED);
     }
   }
-  EV_END();
+  SCRIPT_END();
 }
 
 /// Pushing the pillar in GondowanCave (coord event 50): it moves a
 /// step, then may have reached its place.
 static void EventScript_PushPillar(void) {
-  StagedObjectEvent_AdvancePair();
+  PushedObject_AdvancePair();
   EventScript_MovePillar();
 }
 
@@ -403,13 +403,13 @@ static void EventScript_PushPillar(void) {
 static inline void GondowanCave_PlaceDroppedPillar(s32 animation) {
   OBJECT_POSITION_SET(LOCALID_PILLAR, 0, 0);
   OBJECT_POSITION_SET(LOCALID_DROPPED_PILLAR, 696, 288);
-  OBJECT_MODE(LOCALID_DROPPED_PILLAR, animation);
+  OBJECT_ANIMATION(LOCALID_DROPPED_PILLAR, animation);
 }
 
 /// Move on the pillar in GondowanCave, and after each push: past column 42 it
 /// drops into the water with a splash, for good.
 static void EventScript_MovePillar(void) {
-  EV_START();
+  SCRIPT_START();
   if ((ObjectEvent_GetById(LOCALID_PILLAR)->x.fixed >> 20) > 42) {
     s32 destinationCellX = 107;
     s32 destinationCellZ = 17;
@@ -421,7 +421,7 @@ static void EventScript_MovePillar(void) {
     SE(SE_CAST);
     FLAG_SET(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED);
   }
-  EV_END();
+  SCRIPT_END();
 }
 
 /// Unused: an empty function nothing calls.
@@ -471,7 +471,7 @@ static void GondowanCave_RunSpinningLeap(s32 localId) {
   ObjectEvent_SetDestination(localId, 472, 288);
   objectEvent->gravity = 4 * PIXELS(1) / 5;
   objectEvent->motionFlags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
-  objectEvent->terrainId = 0;
+  objectEvent->layer = 0;
   Engine_ObjectEventWaitForMove(localId);
   GondowanCave_WaitForDescent(objectEvent, PIXELS(32));
   MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
@@ -495,10 +495,10 @@ static void GondowanCave_RunSpinningLeap(s32 localId) {
   objectEvent->update = 0;
   objectEvent->sprite->rotation = 0x1000;
   Engine_AudioPlayCue(SE_CAST);
-  OBJECT_MODE(localId, STUMP_ANIMATION_SPLASH);
+  OBJECT_ANIMATION(localId, STUMP_ANIMATION_SPLASH);
   MapGrid_WaitForShakeToSettle();
   WAIT(10);
-  OBJECT_MODE(localId, STUMP_ANIMATION_SINK);
+  OBJECT_ANIMATION(localId, STUMP_ANIMATION_SINK);
 }
 
 /// Unused: an empty function nothing calls.
@@ -528,7 +528,7 @@ s32 Map_Initialize(void) {
     }
     if (FLAG_CHECK(FLAG_GONDOWAN_CAVE_STUMP_MOVED) != 0) {
       OBJECT_POSITION_SET(LOCALID_STUMP, 440, 308);
-      OBJECT_MODE(LOCALID_STUMP, STUMP_ANIMATION_SINK);
+      OBJECT_ANIMATION(LOCALID_STUMP, STUMP_ANIMATION_SINK);
       MapGrid_CopyCellAttributes(29, 19, 1, 1, 27, 19);
     }
     if (FLAG_CHECK(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED) != 0) {
@@ -559,7 +559,7 @@ s32 gLongEffectScript[] = {
 /// Shift the unsigned representation so westward steps remain defined C.
 #define DIRECTION_STEP(dx, dz) (((u32)(dx) << 16) | ((dz) & 0xffff))
 
-s32 gStagedObjectEvent_DirectionSteps[] = {
+s32 gPushedObject_DirectionSteps[] = {
     DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),
@@ -569,11 +569,11 @@ s32 gStagedObjectEvent_DirectionSteps[] = {
 };
 
 // clang-format off
-u32 gStagedObjectEvent_FootprintKinds[] = {
+u32 gPushedObject_FootprintKinds[] = {
     207, 205, 228, 229, 298, 297,
 };
 
-s32 gStagedObjectEvent_FootprintBounds[] = {
+s32 gPushedObject_FootprintBounds[] = {
     -32, -8, 32, 8,
     -8, -32, 8, 32,
     -32, -16, 32, 0,
@@ -642,48 +642,48 @@ struct ObjectEventTemplate gGondowanCaveObjectEventTemplatesOther[] = {
 
 struct ObjectEventTemplate gGondowanPassageObjectEventTemplates[] = {
     { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(144), 0, PIXELS(168), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(144), 0, PIXELS(168), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(120), 0, PIXELS(120), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(120), 0, PIXELS(120), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(184), 0, PIXELS(120), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(184), 0, PIXELS(120), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gGondowanPassageObjectEventTemplatesWithIodem[] = {
     { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(104), 0, PIXELS(136), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(104), 0, PIXELS(136), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(120), 0, PIXELS(120), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(120), 0, PIXELS(120), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(184), 0, PIXELS(120), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(184), 0, PIXELS(120), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     // Iodem
     { SPRITE_IODEM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(152), 0, PIXELS(232), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(152), 0, PIXELS(232), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gGondowanCaveRiverObjectEventTemplates[] = {
     { SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(504), 0, PIXELS(624), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(504), 0, PIXELS(624), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(440), 0, PIXELS(104), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(440), 0, PIXELS(104), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(392), 0, PIXELS(216), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(392), 0, PIXELS(216), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gGondowanCaveObjectEventTemplates[] = {
     { SPRITE_STUMP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(496), 0, PIXELS(304), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(496), 0, PIXELS(304), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(664), 0, PIXELS(280), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(664), 0, PIXELS(280), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_STUMP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(344), 0, PIXELS(636), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(344), 0, PIXELS(636), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(328), 0, PIXELS(640), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(328), 0, PIXELS(640), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { MAP_TABLE_END },
 };
 

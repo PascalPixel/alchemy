@@ -1400,7 +1400,7 @@ void Resource_ResetPendingTransfer(void) {
 /// undefined value, the missing result of UiWork_CloseAndRelease (0 under
 /// UBFIX); its one caller, Map_Run, ignores the result. Its case for
 /// command 0, which stores the trigger tile ahead in the event work's
-/// facingTrigger, is unreachable.
+/// searchCell, is unreachable.
 s32 Menu_RunTopSelection(void) {
   s32 ret;
   s32 selection;
@@ -1434,13 +1434,13 @@ s32 Menu_RunTopSelection(void) {
     // A screen left without a choice (-1, or nonzero from the Djinn screen)
     // opens the field menu again. Case 0 is unreachable: Menu_SelectTopEntry
     // returns a FieldMenuCommand or -1; it would store the trigger
-    // tile ahead of the leader (0xff for none) in facingTrigger.
+    // tile ahead of the leader (0xff for none) in searchCell.
     switch (selection) {
     case 0:
       ret = ObjectEvent_GetTriggerTileAheadOfCurrentFar();
       if (ret == 0)
         ret = 0xff;
-      ((struct EventWork *)state)->facingTrigger = ret;
+      ((struct EventWork *)state)->searchCell = ret;
       break;
     case FIELD_MENU_PSYNERGY:
       ret = PsynergyMenu_RunFar();

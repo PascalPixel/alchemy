@@ -10,32 +10,32 @@
 /// Terrain height functions, by enum TerrainKind, called with (the remaining
 /// samples, x within the cell, y within the cell). Each reads only the
 /// arguments it needs. Read by MapGrid_GetTerrainHeight and
-/// MapGrid_CheckObjectStep (terrain.c).
+/// MapGrid_CheckCollision (terrain.c).
 const TerrainHeightFn gMapGrid_TerrainHeightFunctions[TERRAIN_KIND_COUNT] = {
-    [TERRAIN_FLAT] = Curve_GetFirstSampleA,
-    [TERRAIN_SLOPE_X] = Curve_LerpTwoSamples,
-    [TERRAIN_SLOPE_Y] = Curve_LerpTwoSamplesB,
-    [TERRAIN_STEP_SUM_DIAGONAL] = Curve_StepAtSummedPosition,
-    [TERRAIN_STEP_DIFFERENCE_DIAGONAL] = Curve_StepAtDifferencePosition,
-    [TERRAIN_BEND_SUM_DIAGONAL] = Curve_LerpThreeSamplesByRatio,
-    [TERRAIN_BEND_DIFFERENCE_DIAGONAL] = Curve_LerpThreeSamplesAtDifference,
-    [TERRAIN_ROUNDED_SQUARE] = Curve_LerpTwoSamplesByTable,
-    [TERRAIN_STEP_X] = Curve_StepAtHalf,
-    [TERRAIN_STEP_Y] = Curve_StepAtHalfB,
-    [TERRAIN_BEND_X] = Curve_LerpThreeSamplesAtHalf,
-    [TERRAIN_BEND_Y] = Curve_LerpThreeSamplesAtHalfB,
-    [TERRAIN_SAMPLE_TABLE] = Curve_LookupSampleByTable,
-    [TERRAIN_SAMPLE_TABLE_MIRRORED] = Curve_LookupSampleByTableReversed,
-    [TERRAIN_FLAT_B] = Curve_GetFirstSampleB,
-    [TERRAIN_FLAT_C] = Curve_GetFirstSampleC,
+    [TERRAIN_FLAT] = Terrain_GetFirstSampleA,
+    [TERRAIN_SLOPE_X] = Terrain_LerpTwoSamples,
+    [TERRAIN_SLOPE_Y] = Terrain_LerpTwoSamplesB,
+    [TERRAIN_STEP_SUM_DIAGONAL] = Terrain_StepAtSummedPosition,
+    [TERRAIN_STEP_DIFFERENCE_DIAGONAL] = Terrain_StepAtDifferencePosition,
+    [TERRAIN_BEND_SUM_DIAGONAL] = Terrain_LerpThreeSamplesByRatio,
+    [TERRAIN_BEND_DIFFERENCE_DIAGONAL] = Terrain_LerpThreeSamplesAtDifference,
+    [TERRAIN_ROUNDED_SQUARE] = Terrain_LerpTwoSamplesByTable,
+    [TERRAIN_STEP_X] = Terrain_StepAtHalf,
+    [TERRAIN_STEP_Y] = Terrain_StepAtHalfB,
+    [TERRAIN_BEND_X] = Terrain_LerpThreeSamplesAtHalf,
+    [TERRAIN_BEND_Y] = Terrain_LerpThreeSamplesAtHalfB,
+    [TERRAIN_SAMPLE_TABLE] = Terrain_LookupSampleByTable,
+    [TERRAIN_SAMPLE_TABLE_MIRRORED] = Terrain_LookupSampleByTableReversed,
+    [TERRAIN_FLAT_B] = Terrain_GetFirstSampleB,
+    [TERRAIN_FLAT_C] = Terrain_GetFirstSampleC,
 };
 
-/// World map terrain behaviour (enum WorldMapTerrainBehavior), indexed by the
+/// World map terrain behaviour (enum BattleEnvironment), indexed by the
 /// collision value plus 0x10 when the block word's top bit is set, or plus
-/// 0x20 (whatever that bit) for WORLD_MAP_REGION_SNOWFIELD. Read only by
-/// GetWorldMapTerrainBehavior.
+/// 0x20 (whatever that bit) for WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD. Read only
+/// by WorldMap_GetBattleEnvironment.
 // clang-format off
-const u8 gWorldMap_TerrainBehaviorTable[48] = {
+const u8 gWorldMap_BattleEnvironments[48] = {
     0, 0, 0, 0, 0, 1, 7, 1, 1, 2, 1, 1, 1, 1, 0, 0,
     0, 0, 0, 0, 0, 4, 7, 1, 1, 6, 1, 1, 1, 1, 0, 0, // 0x10
     0, 0, 0, 0, 0, 5, 5, 5, 5, 6, 5, 5, 5, 5, 0, 0, // 0x20: the snowfield

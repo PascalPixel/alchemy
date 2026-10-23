@@ -75,10 +75,10 @@ KolimaForestCliff_GetObjectEventTemplates(void) {
 /// column 12), tips over with a splash and floats in the water; its cells
 /// become ground the party can cross (sets FLAG_MAP_TEMP_01).
 static void KolimaForestCliff_PushLog(void) {
-  struct StagedObjectEventProbe result;
+  struct PushedObjectProbe result;
   Engine_ScriptStart();
-  if (StagedObjectEvent_FindClearPosition(&result)) {
-    MapObjectEvent_MoveAndRedraw(result);
+  if (PushedObject_FindClearPosition(&result)) {
+    ObjectEvent_MoveAndRedraw(result);
     if (result.objectEventSlot == LOCALID_RIVER_LOG &&
         (result.position.x >> 20) == 12) {
       struct ObjectEvent *objectEvent;
@@ -91,7 +91,7 @@ static void KolimaForestCliff_PushLog(void) {
       ObjectEvent_GetById(LOCALID_RIVER_LOG)->priorityFlags =
           OBJ_EVENT_PRIORITY_UNDERFOOT;
       MapGrid_CopyCellAttributes(32, 20, 2, 4, 11, 16);
-      StagedObjectEvent_FillGridAttributeRectangle(2, 12, 16, 1, 4, 0);
+      PushedObject_FillGridAttributeRectangle(2, 12, 16, 1, 4, 0);
       Engine_GameFlagSet(FLAG_MAP_TEMP_01);
       objectEvent = ObjectEvent_GetById(LOCALID_RIVER_LOG);
       Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
@@ -113,7 +113,7 @@ const struct MapEvent *KolimaForestCliff_GetEvents(void) {
 s32 KolimaForestCliff_Initialize(void) {
   struct EventWork *work = gFieldWork;
 
-  work->startTransition =
+  work->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   Map_RedrawObjectEventFootprint(LOCALID_RIVER_LOG);
 
@@ -121,7 +121,7 @@ s32 KolimaForestCliff_Initialize(void) {
     ObjectEvent_GetById(LOCALID_RIVER_LOG)->priorityFlags =
         OBJ_EVENT_PRIORITY_UNDERFOOT;
     MapGrid_CopyCellAttributes(32, 20, 2, 4, 11, 16);
-    StagedObjectEvent_FillGridAttributeRectangle(2, 12, 16, 1, 4, 0);
+    PushedObject_FillGridAttributeRectangle(2, 12, 16, 1, 4, 0);
     Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_RIVER_LOG), 0);
   }
 
@@ -139,7 +139,7 @@ s32 KolimaForestCliff_Initialize(void) {
 /// Pixel step by direction: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
-s32 gStagedObjectEvent_DirectionSteps[] = {
+s32 gPushedObject_DirectionSteps[] = {
     DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),
@@ -149,11 +149,11 @@ s32 gStagedObjectEvent_DirectionSteps[] = {
 };
 
 // clang-format off
-u32 gStagedObjectEvent_FootprintKinds[] = {
+u32 gPushedObject_FootprintKinds[] = {
     207, 205, 228, 229, 298, 297,
 };
 
-s32 gStagedObjectEvent_FootprintBounds[] = {
+s32 gPushedObject_FootprintBounds[] = {
     -32, -8, 32, 8,
     -8, -32, 8, 32,
     -32, -16, 32, 0,
@@ -180,11 +180,11 @@ u32 gKolimaForestCliffWarps[] = {
 
 struct ObjectEventTemplate gKolimaForestCliffObjectEventTemplates[] = {
     { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(256), 0, PIXELS(344), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(256), 0, PIXELS(344), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(224), 0, PIXELS(280), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(224), 0, PIXELS(280), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(312), 0, PIXELS(288), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(312), 0, PIXELS(288), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 // clang-format on

@@ -48,7 +48,7 @@ enum RetreatParticleState {
 /// screen position (8 pixels lower) in a direction within 1/8 turn of up the
 /// screen, at up to 5 pixels a frame, and starts again from the main object on
 /// arrival until it takes its last flight.
-void FieldEffect_UpdateRadialLaunch(struct EffectSlot *effect) {
+void FieldEffect_UpdateRadialLaunch(struct FieldEffectSprite *effect) {
   struct EffectVector pos;
   struct ObjectEvent *main;
   s32 state;
@@ -85,10 +85,10 @@ void FieldEffect_UpdateRadialLaunch(struct EffectSlot *effect) {
     if ((gFrameCount & 2) != 0)
       Sound_PlaySongFar(SE_246);
   } else if (state == RETREAT_PARTICLE_FLYING) {
-    if (EffectSlot_HasPendingTarget(effect) == 0)
+    if (FieldEffectSprite_HasPendingTarget(effect) == 0)
       effect->state--;
   } else if (state == RETREAT_PARTICLE_LAST_FLIGHT) {
-    if (EffectSlot_HasPendingTarget(effect) == 0)
+    if (FieldEffectSprite_HasPendingTarget(effect) == 0)
       FieldEffect_ClearOwnedSlot(effect);
   }
 }
@@ -96,7 +96,7 @@ void FieldEffect_UpdateRadialLaunch(struct EffectSlot *effect) {
 /// Spins the main object and shrinks it while 24 particles fly out, one a
 /// frame.
 ///
-/// Abilities: Retreat (FIELD_KIND_RETREAT).
+/// Abilities: Retreat (FIELD_PSYNERGY_RETREAT).
 ///
 /// The caster turns south, plays animation 28 with its colours cycling,
 /// spins up for 70 frames (FieldEffect_UpdateSpinAngle), then rises and shrinks
@@ -109,12 +109,12 @@ void FieldEffect_RunRetreat(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct ObjectEvent *objectEvent = effectWork->mainObject;
   struct EffectVector pos;
-  struct EffectSlot *effect;
+  struct FieldEffectSprite *effect;
   u8 last;
   u32 i;
 
   FieldScript_Start();
-  Camera_MoveWithinMapBounds(-1, -1, -1, 0);
+  FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);
   FieldEffect_FadeToEffectColor();
   WaitFrames(10);
   ObjectMotion_ArmCallback(effectWork->firstObjectId, 0x4000, 0);
@@ -144,12 +144,12 @@ void FieldEffect_RunRetreat(void) {
   pos.z = objectEvent->z.fixed;
   Camera_WorldToScreen(&pos);
   i = 0;
-  effect = effectWork->effects;
+  effect = effectWork->sprites;
   do {
     s32 scale;
-    EffectSlot_Initialize(effect, SPRITE_PARTICLE, pos.x, pos.z);
-    EffectSlot_SetCallback(effect, FieldEffect_UpdateRadialLaunch);
-    EffectSlot_SetObjectMode(effect, 7);
+    FieldEffectSprite_Initialize(effect, SPRITE_PARTICLE, pos.x, pos.z);
+    FieldEffectSprite_SetCallback(effect, FieldEffect_UpdateRadialLaunch);
+    FieldEffectSprite_SetObjectMode(effect, 7);
     ObjectGroup_SetChildValueUnlessFifteenFar(effect->object,
                                               (Random16() * 7) >> 16);
     scale = (Random16() >> 1) + 0x13333; // 1.2 to 1.7
@@ -165,8 +165,8 @@ void FieldEffect_RunRetreat(void) {
   i = 0;
   last = RETREAT_PARTICLE_LAST_FLIGHT;
   do {
-    if (effectWork->effects[i].active != 0)
-      effectWork->effects[i].state = last;
+    if (effectWork->sprites[i].active != 0)
+      effectWork->sprites[i].state = last;
     i++;
   } while (i < PSYNERGY_EFFECT_SLOT_COUNT);
   WaitFrames(40);
@@ -188,10 +188,10 @@ void FieldEffect_UpdateDescendingParticlePositiveArc(
   s32 limit;
   s32 scale;
 
-  limit = particle->terrainHeight + 0xA0000;
+  limit = particle->groundHeight + 0xA0000;
   source = particle->linkedObject;
   if (gGameState.layoutId == (s32)&MapId_MainMenu)
-    limit = particle->terrainHeight + 0x40000;
+    limit = particle->groundHeight + 0x40000;
 
   y = particle->y.fixed;
   if (y <= limit) {
@@ -219,10 +219,10 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(
   s32 limit;
   s32 scale;
 
-  limit = particle->terrainHeight + 0xA0000;
+  limit = particle->groundHeight + 0xA0000;
   source = particle->linkedObject;
   if (gGameState.layoutId == (s32)&MapId_MainMenu)
-    limit = particle->terrainHeight + 0x40000;
+    limit = particle->groundHeight + 0x40000;
 
   y = particle->y.fixed;
   if (y <= limit) {
@@ -294,7 +294,7 @@ void FieldEffect_SpawnDescendingArcParticles(struct ObjectEvent *arc) {
     objectEvents[arcIndex] = objectEvent;
     if (objectEvent == NULL)
       continue;
-    objectEvent->terrainHeight = source->terrainHeight;
+    objectEvent->groundHeight = source->groundHeight;
     sprite = (struct DescendingArcSprite *)objectEvent->sprite;
     objectEvent->motionFlags = 0;
     objectEvent->timer = 0;

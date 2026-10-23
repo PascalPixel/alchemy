@@ -62,9 +62,9 @@ found:
 /// The flag is the low 12 bits, since GameFlag_Test ignores bit 12.
 ///
 /// Used for every condition column of a map's tables: events
-/// (Map_FindEvent, Field_SearchTile), object event templates
-/// (FieldScript_SpawnObjectTable), warp regions (Field_CheckWarpRegions) and
-/// item events.
+/// (Map_FindEvent, Field_SearchCell), object event templates
+/// (FieldScript_SpawnObjectEventTemplates), warp regions
+/// (Field_CheckWarpRegions) and item events.
 s32 GameFlag_IsConditionActive(s32 condition) {
   s32 flagSet;
 
@@ -82,7 +82,7 @@ s32 GameFlag_IsConditionActive(s32 condition) {
 /// condition: one with more flags than its kind, unless its result is a mimic
 /// battle (type 0x005 in its top 12 bits).
 ///
-/// Called by Map_FindEvent. Field_SearchTile tests such an event's condition
+/// Called by Map_FindEvent. Field_SearchCell tests such an event's condition
 /// itself (a chest's flag is set once it is opened), so the event is found
 /// either way and the leader still checks the spot; a mimic is found only
 /// while its condition holds.
@@ -117,7 +117,7 @@ struct EffectDescriptor *Map_FindEvent(s32 kind, s32 target) {
   struct EffectDescriptor *event = (struct EffectDescriptor *)work->events;
   s32 flags;
   u32 facing =
-      ((struct ObjectEvent *)ObjectTable_Get(gGameState.selectedLocalId))
+      ((struct ObjectEvent *)ObjectEvent_GetByLocalId(gGameState.leaderLocalId))
           ->facing;
 
   flags = event->flags;
@@ -231,7 +231,7 @@ s32 Map_TalkToObjectEvent(s32 id) {
       // one of two lines picked at random from the pair its definition flags
       // choose.
       if (event->result >= 0x10000) {
-        s32 definitionFlags = FieldEffect_GetFlags(id);
+        s32 definitionFlags = Speaker_GetIdleFlags(id);
         u32 random = Random16();
         s32 message =
             MsgPonderEllipsis + definitionFlags * 2 + (random * 2 >> 16);
@@ -255,17 +255,17 @@ s32 Map_TalkToObjectEvent(s32 id) {
       *movementState = 1;
       ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)objectEvent,
                                           0);
-      savedAngle = objectEvent->angle;
+      savedAngle = objectEvent->facing;
       talkFacing = (u8)template->talkFacing << 24;
       if (talkFacing <= (1 << 24) || talkFacing == (3 << 24)) {
         struct Object *leader =
-            (struct Object *)ObjectEvent_GetById(gGameState.selectedLocalId);
+            (struct Object *)ObjectEvent_GetById(gGameState.leaderLocalId);
 
         leader->targetX = leader->x;
         leader->targetY = leader->y;
         leader->targetZ = leader->z;
         SET_VELOCITY(leader, 0, 0, 0);
-        ObjectEvent_LinkPair(id, gGameState.selectedLocalId, 0);
+        ObjectEvent_LinkPair(id, gGameState.leaderLocalId, 0);
       }
     }
     // A result below 0x10000 is a message; above, a function to call.
@@ -285,10 +285,10 @@ s32 Map_TalkToObjectEvent(s32 id) {
       if (objectEvent->script[objectEvent->step] == 16) {
         if ((s8)template->talkFacing == 3) {
           objectEvent->linkedObject =
-              (struct Object *)ObjectEvent_GetById(gGameState.selectedLocalId);
+              (struct Object *)ObjectEvent_GetById(gGameState.leaderLocalId);
           objectEvent->actionFlags |= 1;
-          ObjectMotion_SetActionCallback(objectEvent,
-                                         (s32)gObjectMotion_LinkedActionScript);
+          ObjectEvent_SetMovementType(objectEvent,
+                                      (s32)gObjectMotion_LinkedActionScript);
         } else if ((s8)template->talkFacing == 1) {
           objectEvent->action = savedAngle;
           ObjectDispatch_InitializeFar(
@@ -384,13 +384,13 @@ s32 Map_RunCoordEventOrWarp(s32 value) {
       case WARP_STYLE_NORMAL:
         Sound_PlaySongFar(SE_MAP_EXIT);
         break;
-      case WARP_STYLE_ANIMATED:
+      case WARP_STYLE_STAIRS_UP:
         Sound_PlaySongFar(SE_STAIRS_UP);
-        ObjectEffect_StartContextEffect26();
+        Warp_StartStairsUpExit();
         break;
-      case WARP_STYLE_ANIMATED_ALTERNATE:
+      case WARP_STYLE_STAIRS_DOWN:
         Sound_PlaySongFar(SE_STAIRS_DOWN);
-        ObjectEffect_StartContextEffect25();
+        Warp_StartStairsDownExit();
         break;
       }
       work->warp = warp->result;
@@ -404,12 +404,12 @@ s32 Map_RunCoordEventOrWarp(s32 value) {
 /// MB_JUMP_FORWARD, and MB_JUMP_FORWARD_UNREACHED), once it has
 /// pushed for more than 12 frames; the count then restarts.
 ///
-/// Called by Map_Run for its push request (work->pushTile), which
+/// Called by Map_Run for its push request (work->pushCell), which
 /// Field_ProcessStep raises for MB_LEDGE to MB_JUMP_FORWARD.
 /// Clears work->blockedSteps when it acts.
-s32 Field_RunPushTileEvent(s32 collisionCode) {
+s32 Field_RunPushCellEvent(s32 collisionCode) {
   struct FieldWork *work = (struct FieldWork *)gFieldWork;
-  s32 leader = gGameState.selectedLocalId;
+  s32 leader = gGameState.leaderLocalId;
 
   switch (collisionCode) {
   case MB_LEDGE:
@@ -448,7 +448,7 @@ s32 Field_RunPushTileEvent(s32 collisionCode) {
 /// Called by Map_Run for its search request (work->tile). Opening a
 /// chest sets its condition flag, and it may raise a mimic battle
 /// (work->battle), give coins or an item, or restore all PP.
-s32 Field_SearchTile(s32 tile) {
+s32 Field_SearchCell(s32 tile) {
   const struct MapEvent *event;
   s32 leader;
   u32 messageOffset;
@@ -457,20 +457,20 @@ s32 Field_SearchTile(s32 tile) {
   s32 rewardType;
   s32 canOpen;
 
-  leader = gGameState.selectedLocalId;
+  leader = gGameState.leaderLocalId;
   // Each fixed spot has its own pair of lines, chosen through
-  // gField_TileMessageOffsets; the unsigned compare also rejects codes below
+  // gField_BgEventMessageOffsets; the unsigned compare also rejects codes below
   // MB_JAR.
   messageOffset = tile - MB_JAR;
   if (messageOffset <= MB_WELL - MB_JAR) {
     Leader_StopMoving();
-    tile = gField_TileMessageOffsets[messageOffset];
+    tile = gField_BgEventMessageOffsets[messageOffset];
     UiText_ShowPositionedMessageAndWaitFar(MsgTileChecked + tile, 1);
     UiText_ShowPositionedMessageAndWaitFar(MsgTileResult + tile, 1);
   } else {
     event = (const struct MapEvent *)Map_FindEvent(MAP_EVENT_BG, tile);
     if (event != NULL) {
-      s32 flags = event->control;
+      s32 flags = event->kind;
 
       // Bits 8 to 4, the search target (enum BgEventTarget), choose what the
       // leader checks ("checked the chest...") unless
@@ -497,7 +497,7 @@ s32 Field_SearchTile(s32 tile) {
         if ((searchResult & 0x0f000000) != 0) {
           // A function.
           if (GameFlag_IsConditionActive(condition) != 0)
-            ((void (*)(s32))event->value)(gGameState.selectedLocalId);
+            ((void (*)(s32))event->value)(gGameState.leaderLocalId);
           if (GameFlag_TestFar(FLAG_NOTHING_HAPPENS) != 0)
             UiText_ShowPositionedMessageAndWaitFar(
                 MsgTileResult + messageOffset, 1);
@@ -521,16 +521,16 @@ s32 Field_SearchTile(s32 tile) {
           if (canOpen != 0) {
             // A BG_EVENT(BG_EVENT_CHEST) event is a chest the map shows as a
             // marker.
-            if ((event->control & 0x1ff) == BG_EVENT(BG_EVENT_CHEST))
-              Marker_OpenChest(tile);
+            if ((event->kind & 0x1ff) == BG_EVENT(BG_EVENT_CHEST))
+              TreasureSpot_OpenChest(tile);
             rewardType = event->value & 0xfff00000;
             if (rewardType == FIND_PSYNERGY_STONE) {
               // A Psynergy Stone: restores all PP.
               void *object;
 
-              if ((event->control & 0x1ff) == BG_EVENT(BG_EVENT_CHEST))
-                Marker_ShowOpened(tile);
-              object = Marker_GetObjectEvent(tile);
+              if ((event->kind & 0x1ff) == BG_EVENT(BG_EVENT_CHEST))
+                TreasureSpot_ShowOpened(tile);
+              object = TreasureSpot_GetObjectEvent(tile);
               ItemDisplay_RaiseAboveLeader(object);
               Sound_PlaySongFar(MUS_TREASURE_FOUND);
               UiWork_PushValueSlotFar((u16)event->value, 5);
@@ -546,15 +546,15 @@ s32 Field_SearchTile(s32 tile) {
               FieldScript_WaitFrames(30);
               UiText_ShowPositionedMessageAndWaitFar(MsgGotPsynergyStone + 2,
                                                      1);
-              Marker_Hide(tile);
+              TreasureSpot_Hide(tile);
               if (condition != -1)
                 GameFlag_SetBitFar(condition);
             } else if (rewardType == FIND_MIMIC) {
               // A mimic: a battle with its slot of ENCOUNTER_ZONE_MIMIC.
               struct FieldWork *work = (struct FieldWork *)gFieldWork;
 
-              if ((event->control & 0x1ff) == BG_EVENT(BG_EVENT_CHEST))
-                Marker_LaunchMimic(tile);
+              if ((event->kind & 0x1ff) == BG_EVENT(BG_EVENT_CHEST))
+                TreasureSpot_LaunchMimic(tile);
               // The chest's flag (with 0x1000) waits in pendingDjinnEvent,
               // which Map_Run resolves when the map is entered again
               // after the battle.
@@ -565,10 +565,10 @@ s32 Field_SearchTile(s32 tile) {
               // or surprise, and every attempt to run fails; the command menu
               // still offers it, refusing outright only for
               // BATTLE_START_SCRIPTED and BATTLE_START_LINK.
-              work->battle = Encounter_GetEnemyGroupAtSlot(ENCOUNTER_ZONE_MIMIC,
-                                                           (u16)event->value);
+              work->battle = Encounter_GetFormationAtSlot(ENCOUNTER_ZONE_MIMIC,
+                                                          (u16)event->value);
               Battle_SetStart(BATTLE_START_NO_ESCAPE);
-              FieldEffect_SelectBattleCue(ENCOUNTER_ZONE_MIMIC,
+              Encounter_SelectBattleMusic(ENCOUNTER_ZONE_MIMIC,
                                           (u16)event->value);
               Sound_PlaySongFar(gGameState.battleMusic);
               UiText_ShowPositionedMessageAndWaitFar(MsgChestWasMimic, 1);
@@ -577,10 +577,10 @@ s32 Field_SearchTile(s32 tile) {
               void *object;
 
               object = FieldEffect_StartRandomParticleEmitter(
-                  gGameState.selectedLocalId, 0);
+                  gGameState.leaderLocalId, 0);
               WaitFrames(30);
-              if ((event->control & 0x1ff) == BG_EVENT(BG_EVENT_CHEST))
-                Marker_ShowOpened(tile);
+              if ((event->kind & 0x1ff) == BG_EVENT(BG_EVENT_CHEST))
+                TreasureSpot_ShowOpened(tile);
               ItemDisplay_RaiseAboveLeader(object);
               Sound_PlaySongFar(MUS_TREASURE_FOUND);
               UiWork_PushValueSlotFar((u16)event->value, 5);
@@ -595,7 +595,7 @@ s32 Field_SearchTile(s32 tile) {
               s32 recipient;
 
               object = FieldEffect_StartRandomParticleEmitter(
-                  gGameState.selectedLocalId, event->value & 0xfff);
+                  gGameState.leaderLocalId, event->value & 0xfff);
               WaitFrames(30);
               recipient = PartyInventory_AddFar((u16)event->value);
               // messageOffset is reused here as the item id's 0xffff mask.
@@ -605,15 +605,15 @@ s32 Field_SearchTile(s32 tile) {
                 UiText_ShowPositionedMessageAndWaitFar(MsgFoundItem, 1);
                 UiText_ShowPositionedMessageAndWaitFar(MsgFoundItem + 4, 1);
                 Object_DestroyIfPresent(object);
-                if ((event->control & 0x1ff) == BG_EVENT(BG_EVENT_CHEST))
-                  Marker_CloseChest(tile);
+                if ((event->kind & 0x1ff) == BG_EVENT(BG_EVENT_CHEST))
+                  TreasureSpot_CloseChest(tile);
               } else {
-                if ((event->control & 0x1ff) == BG_EVENT(BG_EVENT_CHEST))
-                  Marker_ShowOpened(tile);
+                if ((event->kind & 0x1ff) == BG_EVENT(BG_EVENT_CHEST))
+                  TreasureSpot_ShowOpened(tile);
                 ItemDisplay_RaiseAboveLeader(object);
                 Sound_PlaySongFar(MUS_TREASURE_FOUND);
                 UiWork_PushValueSlotFar(event->value & messageOffset, 2);
-                if (recipient == gGameState.selectedLocalId) {
+                if (recipient == gGameState.leaderLocalId) {
                   UiText_ShowPositionedMessageAndWaitFar(MsgColossoIsaacGotItem,
                                                          3);
                 } else {
@@ -635,7 +635,7 @@ s32 Field_SearchTile(s32 tile) {
                                                  1);
         }
         FieldScript_End();
-        FieldEffect_PlayQueuedSound();
+        Map_PlayQueuedMusic();
       }
     } else {
       UiText_ShowPositionedMessageAndWaitFar(MsgCheckedGround, 1);

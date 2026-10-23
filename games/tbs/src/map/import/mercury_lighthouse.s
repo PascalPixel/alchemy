@@ -20,8 +20,8 @@
 	.set import.Object_WaitForMove, 1
 	.set import.Engine_MapGridAnimateCells, 1
 	.set import.Engine_MapGridCopyCellsTo, 1
-	.set import.DisplayBlend_ResumeScript, 1
-	.set import.DisplayBlend_SuspendScript, 1
+	.set import.BlendScript_Resume, 1
+	.set import.BlendScript_Suspend, 1
 	.set import.Engine_MapGridCopyCellAttributes, 1
 	.set import.Object_CheckMovementCollision, 1
 	.set import.Engine_ObjectEventSetSpriteFlags, 1
@@ -93,7 +93,7 @@
 	.set import.Engine_PsynergyLowerHands, 1
 	.set import.Engine_PsynergyRaiseHands, 1
 	.set import.Engine_ObjectEventWalkByAndWait, 1
-	.set import.FieldEffect_SetQueuedSoundAndPlay, 1
-	.set import.FieldEffect_PlayQueuedSound, 1
+	.set import.Map_QueueMusic, 1
+	.set import.Map_PlayQueuedMusic, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

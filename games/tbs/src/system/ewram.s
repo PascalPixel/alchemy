@@ -26,9 +26,9 @@ gMapLocalState:
 	.global gInventorySnapshot
 gInventorySnapshot:
 	.space 0x0000008c
-	@ Slot ids, object event copies and their sprite state: ObjectTableSnapshot.
-	.global gObjectSnapshots
-gObjectSnapshots:
+	@ Slot ids, object event copies and their sprite state: ObjectEventSnapshot.
+	.global gObjectEventSnapshot
+gObjectEventSnapshot:
 	.space 0x00000efc
 	.global gSleepActive
 gSleepActive:
@@ -243,10 +243,10 @@ gMetatiles:
 	.size gMapGridLayerData, 0x4000
 gMapGridLayerData:
 	.space 0x00004000
-	.global gMapGridCollision
-	.type gMapGridCollision, %object
-	.size gMapGridCollision, 0x4000
-gMapGridCollision:
+	.global gMapGridShapes
+	.type gMapGridShapes, %object
+	.size gMapGridShapes, 0x4000
+gMapGridShapes:
 	.space 0x00004000
 	.global gEwramHeap
 gEwramHeap:

@@ -17,14 +17,14 @@ struct FieldEffect {
   u16 scriptCursor;
   u16 facing;
   ///@}
-  s32 x;             ///< 16.16 fixed-point pixels
-  s32 y;             ///< 16.16 fixed-point pixels
-  s32 z;             ///< 16.16 fixed-point pixels
-  s32 terrainHeight; ///< ObjectEvent's; not named by this view
-  s32 scaleX;        ///< 16.16 fixed point, 0x10000 full size
-  s32 scaleY;        ///< 16.16 fixed point, 0x10000 full size
-  u16 radius;        ///< ObjectEvent's; not named by this view
-  u8 terrainId;      ///< ObjectEvent's; not named by this view
+  s32 x;            ///< 16.16 fixed-point pixels
+  s32 y;            ///< 16.16 fixed-point pixels
+  s32 z;            ///< 16.16 fixed-point pixels
+  s32 groundHeight; ///< ObjectEvent's; not named by this view
+  s32 scaleX;       ///< 16.16 fixed point, 0x10000 full size
+  s32 scaleY;       ///< 16.16 fixed point, 0x10000 full size
+  u16 radius;       ///< ObjectEvent's; not named by this view
+  u8 layer;         ///< ObjectEvent's; not named by this view
   /// ObjectEventPriorityFlag bits: the spawner clears
   /// OBJ_EVENT_PRIORITY_AUTOMATIC when EFFECT_USE_PRIORITY sets the sprite's
   /// priority.

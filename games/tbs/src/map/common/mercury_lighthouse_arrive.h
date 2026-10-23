@@ -20,7 +20,7 @@ static void MercuryLighthouse_ArriveWithSparks(void) {
   flag = GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION);
   if (flag == 0) {
     Engine_ScriptStart();
-    Camera_MoveTo(-1, -1, -1, 0);
+    FieldCamera_MoveTo(-1, -1, -1, 0);
     objectEvent->motionFlags = 0;
     Engine_ObjectEventSetPosition(0, objectEvent->x.part.pixel << 16,
                                   (objectEvent->z.part.pixel << 16) +
@@ -47,7 +47,7 @@ static void MercuryLighthouse_ArriveWithSparks(void) {
     ObjectEvent_WalkByAndWait(LOCALID_PARTY_LEADER, 0, 10);
     objectEvent->motionFlags = 3;
     objectEvent->update = NULL;
-    FieldEffect_PlayQueuedSound();
+    Map_PlayQueuedMusic();
     Engine_ScriptEnd();
   }
 }

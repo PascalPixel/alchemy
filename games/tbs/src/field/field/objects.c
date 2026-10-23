@@ -188,9 +188,9 @@ void ObjectSystem_Initialize(s32 controlMode) {
     Task_Add(Object_UpdateAllThumb, 0xc8a);
   if (controlMode >= OBJECT_SYSTEM_WORLD_MAP &&
       controlMode <= OBJECT_SYSTEM_BATTLE) {
-    Task_Add(ObjectSystem_UpdateCameraFixed, 0xc80);
+    Task_Add(ObjectSystem_ProjectSprites, 0xc80);
   } else {
-    Task_Add(ObjectSystem_UpdateCamera, 0xc80);
+    Task_Add(ObjectSystem_PlaceSprites, 0xc80);
     // XXX: nothing in the tree reads these two IWRAM words; code that reads
     // them by address would say what the scrolling camera resets here.
     gIwram_Data2 = 0;
@@ -226,7 +226,7 @@ void *ObjectDispatch_FindFreeObject(void) {
 
 /// Releases an object's sprites and zeroes it, freeing it.
 /// Clearing the script lets ObjectDispatch_FindFreeObject hand the object out
-/// again. Reached through SC_FREE (ActionScript_FreeObject) and, as
+/// again. Reached through SC_FREE (ObjectScript_FreeObject) and, as
 /// ObjectDispatch_ReleaseFar, from the battle, the Psynergy effects and the
 /// field map's objects.
 void ObjectDispatch_Release(struct DispatchObject *object) {
@@ -333,7 +333,7 @@ struct Object *Object_CreateField(s32 encodedSprite, s32 x, s32 y, s32 z) {
     object->collisionFlags = 0;
     object->actionFlags = OBJ_EVENT_FACES_MOTION;
     objectEvent->riseBaseY = 0;
-    object->angle = 0x4000;
+    object->facing = 0x4000;
     // Its home position, in pixels.
     scripted->homeX = x / 65536;
     scripted->homeZ = z / 65536;
@@ -521,7 +521,7 @@ void ObjectDispatch_StartCamera(struct DispatchObject *object,
 /// commands and by map scripts that wait for a scripted move (Colosso, Venus
 /// Lighthouse, Vale).
 void ObjectDispatch_WaitForValue16(void *rawObject) {
-  struct ScriptInterpreter *interpreter = rawObject;
+  struct ObjectScriptContext *interpreter = rawObject;
   s32 waitedFrames;
 
   waitedFrames = 0;
@@ -578,8 +578,8 @@ void Animation_ApplyChildValues(struct DispatchObject *object, u32 param) {
 /// Tolbi ship, Vale, Venus Lighthouse). The scripts except Colosso's pair it
 /// with ObjectSystem_ResumeProjectionAndHideLayers.
 void ObjectSystem_SuspendProjectionAndShowSprites(void) {
-  Task_SuspendAll(ObjectSystem_UpdateCamera);
-  Task_SuspendAll(ObjectSystem_UpdateCameraFixed);
+  Task_SuspendAll(ObjectSystem_PlaceSprites);
+  Task_SuspendAll(ObjectSystem_ProjectSprites);
   ColorBuffer_SetTargetFar(0x10000, 1);
   ColorBuffer_StartInterpolationFar(1);
   WaitFrames(1);
@@ -592,8 +592,8 @@ void ObjectSystem_SuspendProjectionAndShowSprites(void) {
 /// Called through ObjectSystem_ResumeProjectionAndHideLayersFar by the same
 /// scripts except Colosso's.
 void ObjectSystem_ResumeProjectionAndHideLayers(void) {
-  Task_ResumeAll(ObjectSystem_UpdateCamera);
-  Task_ResumeAll(ObjectSystem_UpdateCameraFixed);
+  Task_ResumeAll(ObjectSystem_PlaceSprites);
+  Task_ResumeAll(ObjectSystem_ProjectSprites);
   REG_DISPCNT &=
       ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON | DISPCNT_OBJ_ON);
 }

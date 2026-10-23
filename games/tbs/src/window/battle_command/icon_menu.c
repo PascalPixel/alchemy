@@ -62,7 +62,7 @@ void AffineEffect_UpdateFrame(void) {
 #ifndef UBFIX
   u16 *spanCursor;
 #endif
-  struct DisplayTransitionState *state;
+  struct ScreenTransitionState *state;
 
   work = gIconMenuWork;
   entry = work->entries;
@@ -137,7 +137,7 @@ void AffineEffect_UpdateFrame(void) {
 
     s32 halfWidth;
 
-    state = (struct DisplayTransitionState *)gScreenTransitionWork;
+    state = (struct ScreenTransitionState *)gScreenTransitionWork;
     if (state == 0 || work->count == 0)
       return;
     page = (struct WindowBuffer *)state->pages[state->page];
@@ -187,7 +187,7 @@ void AffineEffect_UpdateFrame(void) {
 
     s32 halfWidth;
 
-    state = (struct DisplayTransitionState *)gScreenTransitionWork;
+    state = (struct ScreenTransitionState *)gScreenTransitionWork;
     if (state == 0 || work->count == 0)
       return;
     page = (struct WindowBuffer *)state->pages[state->page];

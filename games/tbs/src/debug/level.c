@@ -158,7 +158,7 @@ static void ItemLevel_RunLevelEditor(void) {
   s32 redraw;
   s32 messageId;
 
-  unit = Unit_Get(gGameState.selectedLocalId);
+  unit = Unit_Get(gGameState.leaderLocalId);
   window = UiWindow_Create(0, 0, 30, 9, 2);
 
   messageId = MsgDebugRaiseEveryonesLevel;
@@ -463,7 +463,7 @@ UNUSED static void ItemLevel_SelectAbility(void) {
 /// Unused: requests a warp through TRANSITION_WINDOW over 24 frames; no event
 /// row names it.
 UNUSED static void ItemLevel_RequestWarp(void) {
-  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 1);
+  gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 1);
   gFieldWork->transitionFrames = 24;
   Engine_ScriptRequestWarp();
 }
@@ -475,7 +475,7 @@ UNUSED static void ItemLevel_RequestWarp(void) {
 /// Japanese; 16.16 scales), and outside Japanese the two emote testers start
 /// animations 5 and 2.
 s32 Map_RunLevelRoomSetup(void) {
-  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
   gFieldWork->transitionFrames = 24;
 #if TBS_PATCH_1
   ObjectEvent_GetById(LOCALID_LEVEL_EDITOR)->scaleY = 0x19999;
@@ -587,32 +587,32 @@ u32 gItemLevelWarps[] = {
 // clang-format off
 struct ObjectEventTemplate gItemLevelObjectEventTemplates[] = {
     {0x1f4, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(792), 0, PIXELS(864), FACING_SOUTHEAST,
-        TALK_FACE_PARTY, 0},
+        TALK_FACING_PARTY, 0},
     {0x20, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(792), 0, PIXELS(480), FACING_SOUTHEAST,
-        TALK_FACE_PARTY, 0},
+        TALK_FACING_PARTY, 0},
     {0x21, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(792), 0, PIXELS(504), FACING_SOUTHEAST,
-        TALK_FACE_PARTY, 0},
+        TALK_FACING_PARTY, 0},
 #if !TBS_PATCH_1
     {0x88, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(792), 0, PIXELS(800), FACING_SOUTHEAST,
-        TALK_FACE_PARTY, 0},
+        TALK_FACING_PARTY, 0},
 #elif TBS_PATCH_1 && !TBS_PATCH_3
-    {0x88, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(792), 0, PIXELS(800), FACING_EAST, TALK_FACE_PARTY,
+    {0x88, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(792), 0, PIXELS(800), FACING_EAST, TALK_FACING_PARTY,
         0},
     {0x8f, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(848), 0, PIXELS(864), FACING_SOUTH + FACING_STEP,
-        TALK_FACE_PARTY_AND_BACK, 0},
+        TALK_FACING_PARTY_AND_BACK, 0},
     {0x15, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(848), 0, PIXELS(688), FACING_SOUTH + FACING_STEP,
-        TALK_KEEP_FACING, 0},
+        TALK_FACING_KEEP, 0},
     {0x15, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(816), 0, PIXELS(688), FACING_SOUTH + FACING_STEP,
-        TALK_KEEP_FACING, 0},
+        TALK_FACING_KEEP, 0},
 #else
-    {0x88, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(792), 0, PIXELS(800), FACING_EAST, TALK_FACE_PARTY,
+    {0x88, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(792), 0, PIXELS(800), FACING_EAST, TALK_FACING_PARTY,
         0},
     {0x8f, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(80), 0, PIXELS(864), FACING_SOUTH + FACING_STEP,
-        TALK_FACE_PARTY_AND_BACK, 0},
+        TALK_FACING_PARTY_AND_BACK, 0},
     {0x15, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(848), 0, PIXELS(688), FACING_SOUTH + FACING_STEP,
-        TALK_KEEP_FACING, 0},
+        TALK_FACING_KEEP, 0},
     {0x15, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(816), 0, PIXELS(688), FACING_SOUTH + FACING_STEP,
-        TALK_KEEP_FACING, 0},
+        TALK_FACING_KEEP, 0},
 #endif
     {MAP_TABLE_END},
 };

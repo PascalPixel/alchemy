@@ -1350,7 +1350,7 @@ s32 PsynergyMenu_DrawRangePage(struct UiWindow *window, s32 unused,
 #if LANGUAGE != LANGUAGE_JAPANESE
     UiWindow_ClearInteriorTilesFar(window, 0, 96, 224, 104);
     row = 0;
-    if (ability->type0c != 0 ||
+    if (ability->fieldPsynergy != 0 ||
         (ability->flags & ACTION_USABLE_IN_FIELD) != 0) {
       row = 2;
     }
@@ -1367,7 +1367,7 @@ s32 PsynergyMenu_DrawRangePage(struct UiWindow *window, s32 unused,
 #else
     UiWindow_ClearInteriorTilesFar(window, 0, 72, 64, 96);
     row = 0;
-    if (ability->type0c != 0 ||
+    if (ability->fieldPsynergy != 0 ||
         (ability->flags & ACTION_USABLE_IN_FIELD) != 0) {
       UiText_DrawCharacterAtOffsetFar(MsgUsableInField, window, 0, 72);
       row = 1;

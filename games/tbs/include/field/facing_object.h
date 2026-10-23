@@ -19,7 +19,7 @@ struct FacingObject {
   s32 positionX; ///< 16.16 fixed-point pixels
   s32 positionY; ///< ObjectEvent's y; not named through this view
   s32 positionZ; ///< 16.16 fixed-point pixels
-  /// ObjectEvent's terrainHeight to collisionFlags; not named through this
+  /// ObjectEvent's groundHeight to collisionFlags; not named through this
   /// view.
   u8 terrainToCollision[0x46];
   /// The steering flags (SW_STEERING); bit 0, turning toward its velocity, is

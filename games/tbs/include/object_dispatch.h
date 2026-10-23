@@ -20,11 +20,11 @@ struct DispatchObject {
   s32 x;
   s32 y;
   s32 z;
-  s32 terrainHeight;
+  s32 groundHeight;
   s32 scaleX;
   s32 scaleY;
   u16 radius;
-  u8 terrainId;
+  u8 layer;
   u8 priorityFlags;
   s32 velocityX;
   s32 velocityY;

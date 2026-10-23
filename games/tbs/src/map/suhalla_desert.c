@@ -145,7 +145,7 @@ enum { STORM_CAPTURE_FRAMES = 180 };
 /// row finds the stone (FIND_PSYNERGY_STONE). Its object event stands in its
 /// cell only while Reveal lasts (EventScript_RevealStarts moves it to the
 /// cell's centre) and is moved off the map as Reveal ends.
-enum { MARKER_PSYNERGY_STONE = 100 };
+enum { TREASURE_SPOT_PSYNERGY_STONE = 100 };
 
 /// The events the storms raise: the spinning has run out, or the chasing storm
 /// has reached the moving leader.
@@ -179,7 +179,7 @@ static void EventScript_FightDjinni(void) {
 /// A storm's object event template script: clears its sprite and collision
 /// flags.
 static s32 SuhallaDesert_ClearObjectEventSpriteAndCollisionFlags(
-    struct ScriptInterpreter *interpreter) {
+    struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
   objectEvent->collisionFlags = 0;
@@ -188,7 +188,7 @@ static s32 SuhallaDesert_ClearObjectEventSpriteAndCollisionFlags(
 
 /// A storm's object event template script: toggles its single-sprite storage.
 static s32
-SuhallaDesert_ToggleObjectEventActive(struct ScriptInterpreter *interpreter) {
+SuhallaDesert_ToggleObjectEventActive(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   objectEvent->spriteStorageKind ^= 1;
   return 1;
@@ -237,14 +237,14 @@ static void SuhallaDesert_UpdateCaptureTimer(void) {
   struct EventWork *requests;
   s32 remainingFrames;
 
-  selectedObjectEvent = ObjectEvent_GetById(gGameState.selectedLocalId);
+  selectedObjectEvent = ObjectEvent_GetById(gGameState.leaderLocalId);
   requests = gFieldWork;
   selectedObjectEvent->facing = (gFrameCount << 12);
 
   remainingFrames = FieldGameFlag_GetByte(FLAG_MAP_TEMP_10);
   if (remainingFrames != 0) {
     if (remainingFrames == 1) {
-      requests->raisedTrigger = RAISED_STORM_CARRIES_PARTY_AWAY;
+      requests->raisedEvent = RAISED_STORM_CARRIES_PARTY_AWAY;
     } else if (Engine_GameFlagIsSet(FLAG_MENU_OPEN) == 0) {
       remainingFrames -= 1;
     }
@@ -259,27 +259,26 @@ static void SuhallaDesert_CatchInStorm(s32 stormId) {
   s32 captureActive;
   struct ObjectEvent *selectedObjectEvent;
   struct ObjectEvent *storm;
-  s32 selectedLocalId;
+  s32 leaderLocalId;
 
   // The event-selected object event is pulled toward the storm before being
   // lifted.
-  selectedLocalId = gGameState.selectedLocalId;
+  leaderLocalId = gGameState.leaderLocalId;
   stormIdCopy = stormId;
-  selectedObjectEvent = ObjectEvent_GetById(selectedLocalId);
+  selectedObjectEvent = ObjectEvent_GetById(leaderLocalId);
   ObjectEvent_Get(stormIdCopy);
   captureActive = GameFlag_IsSet(FLAG_MAP_TEMP_0F);
   if (captureActive == 0) {
     Engine_ScriptStart();
-    ObjectEvent_SetAttachedEffect(selectedLocalId, ATTACHED_EFFECT_IN_FRONT |
-                                                       ATTACHED_EFFECT_ATTACH);
-    Engine_ObjectEventSetAnimation(selectedLocalId,
-                                   ANIMATION_LEADER_LOOK_AROUND);
+    ObjectEvent_SetAttachedEffect(leaderLocalId, ATTACHED_EFFECT_IN_FRONT |
+                                                     ATTACHED_EFFECT_ATTACH);
+    Engine_ObjectEventSetAnimation(leaderLocalId, ANIMATION_LEADER_LOOK_AROUND);
     storm = ObjectEvent_GetById(stormIdCopy);
     if (storm != 0) {
-      ObjectEvent_SetDestination(selectedLocalId, storm->x.part.pixel,
+      ObjectEvent_SetDestination(leaderLocalId, storm->x.part.pixel,
                                  storm->z.part.pixel);
     }
-    Engine_ObjectEventWaitForMove(selectedLocalId);
+    Engine_ObjectEventWaitForMove(leaderLocalId);
     // Start the capture countdown once the approach finishes.
     Script_PlaySong(SE_SANDSTORM);
     FieldScheduler_AddCallback(SuhallaDesert_UpdateCaptureTimer,
@@ -288,7 +287,7 @@ static void SuhallaDesert_CatchInStorm(s32 stormId) {
     Engine_ObjectSetPosition(selectedObjectEvent, selectedObjectEvent->x.fixed,
                              selectedObjectEvent->y.fixed + PIXELS(32),
                              selectedObjectEvent->z.fixed);
-    Engine_ObjectEventWaitForMove(selectedLocalId);
+    Engine_ObjectEventWaitForMove(leaderLocalId);
     selectedObjectEvent->velocityY = captureActive;
     selectedObjectEvent->motionFlags = OBJ_EVENT_FLOATS;
     gGameState.movementMode = LEADER_MOVEMENT_AIRBORNE;
@@ -296,7 +295,7 @@ static void SuhallaDesert_CatchInStorm(s32 stormId) {
     FieldGameFlag_SetByte(FLAG_MAP_TEMP_18, stormIdCopy);
     FieldGameFlag_SetByte(FLAG_MAP_TEMP_10, STORM_CAPTURE_FRAMES);
     Engine_ScriptEnd();
-    gFieldWork->encounterEnemyGroup = 0; // drop any battle this step rolled
+    gFieldWork->battle = 0; // drop any battle this step rolled
   }
 }
 
@@ -351,7 +350,7 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
   struct ObjectEvent *leader;
 
   stormIdCopy = stormId;
-  selectedObjectEvent = ObjectEvent_GetById(gGameState.selectedLocalId);
+  selectedObjectEvent = ObjectEvent_GetById(gGameState.leaderLocalId);
   storm = ObjectEvent_GetById(stormIdCopy);
   appearanceRestored = Engine_GameFlagIsSet(FLAG_STORMS_RISEN);
   leaderX = selectedObjectEvent->x.part.pixel;
@@ -529,7 +528,7 @@ static void EventScript_IodemAsksWhetherToPressOn(void) {
 /// The chasing storm's script: it follows the leader, throwing up sand every
 /// eight frames, and catches a moving leader it comes within 8 pixels of
 /// (event 55).
-static s32 SuhallaDesert_ChaseLeader(struct ScriptInterpreter *interpreter) {
+static s32 SuhallaDesert_ChaseLeader(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   struct EffectOptions options;
   struct ObjectEvent *selectedObjectEvent;
@@ -537,7 +536,7 @@ static s32 SuhallaDesert_ChaseLeader(struct ScriptInterpreter *interpreter) {
   s32 dz;
   s32 sparkFrame;
 
-  selectedObjectEvent = ObjectEvent_GetById(gGameState.selectedLocalId);
+  selectedObjectEvent = ObjectEvent_GetById(gGameState.leaderLocalId);
   objectEvent->acceleration = PIXELS(1) / 4;
   objectEvent->speed = PIXELS(3) / 2;
   objectEvent->motionFlags = 0;
@@ -549,7 +548,7 @@ static s32 SuhallaDesert_ChaseLeader(struct ScriptInterpreter *interpreter) {
     objectEvent->targetZ = OBJ_EVENT_NO_TARGET;
   } else {
     objectEvent->targetX = selectedObjectEvent->x.fixed;
-    objectEvent->targetY = selectedObjectEvent->terrainHeight;
+    objectEvent->targetY = selectedObjectEvent->groundHeight;
     objectEvent->targetZ = selectedObjectEvent->z.fixed;
     dx = objectEvent->x.fixed - selectedObjectEvent->x.fixed;
     if (dx < 0) {
@@ -562,7 +561,7 @@ static s32 SuhallaDesert_ChaseLeader(struct ScriptInterpreter *interpreter) {
       struct EventWork *work = gFieldWork;
 
       if (selectedObjectEvent->motionFlags != 0) {
-        work->raisedTrigger = RAISED_CHASING_STORM_CATCHES;
+        work->raisedEvent = RAISED_CHASING_STORM_CATCHES;
       }
       objectEvent->motionFlags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
       objectEvent->targetX = selectedObjectEvent->x.fixed;
@@ -614,8 +613,8 @@ static void EventScript_DouseStorm(s32 unused, s32 stormId) {
   struct GameState *state;
 
   // The storm no longer carries the party away.
-  if (gFieldWork->raisedTrigger == RAISED_STORM_CARRIES_PARTY_AWAY) {
-    gFieldWork->raisedTrigger = 0;
+  if (gFieldWork->raisedEvent == RAISED_STORM_CARRIES_PARTY_AWAY) {
+    gFieldWork->raisedEvent = 0;
   }
   Engine_GameFlagClear(FLAG_MAP_TEMP_0F);
   if (gGameState.mapId == (s32)&MapId_SuhallaDesertNorth) {
@@ -642,7 +641,7 @@ static void EventScript_DouseStorm(s32 unused, s32 stormId) {
       }
     }
   }
-  ObjectEvent_GetById(gGameState.selectedLocalId)->motionFlags =
+  ObjectEvent_GetById(gGameState.leaderLocalId)->motionFlags =
       OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
 }
 
@@ -658,17 +657,17 @@ static void EventScript_StormCarriesPartyAway(void) {
   s32 frame;
 
   stormId = FieldGameFlag_GetByte(FLAG_MAP_TEMP_18);
-  selectedObjectEvent = ObjectEvent_GetById(gGameState.selectedLocalId);
+  selectedObjectEvent = ObjectEvent_GetById(gGameState.leaderLocalId);
   storm = ObjectEvent_GetById(stormId);
   Engine_ScriptStart();
-  Camera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   Engine_AudioPlayCue(SE_219);
   // BUG: the native passes a local id where the sprite helper needs a pointer.
 #ifdef BUGFIX
   Engine_ObjectEventSetSpriteFlags(selectedObjectEvent, 0);
 #else
   Engine_ObjectEventSetSpriteFlags(
-      (struct ObjectEvent *)gGameState.selectedLocalId, 0);
+      (struct ObjectEvent *)gGameState.leaderLocalId, 0);
 #endif
   storm->motionFlags = 0;
   selectedObjectEvent->motionFlags = 0;
@@ -727,7 +726,7 @@ static s32 EventScript_RevealEnds(void) {
         OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
     ObjectEvent_SetPosition(LOCALID_REVEALED_PILLAR, 0, 0);
     MapGrid_CopyCellAttributes(16, 44, 1, 1, 15, 44);
-    Marker_SetPosition(MARKER_PSYNERGY_STONE, 0, 0);
+    TreasureSpot_SetPosition(TREASURE_SPOT_PSYNERGY_STONE, 0, 0);
     MapGrid_CopyCellAttributes(12, 71, 1, 1, 127, 127);
     MapGrid_CopyCellAttributes(11, 71, 1, 1, 12, 71);
 #ifdef UBFIX
@@ -759,8 +758,8 @@ static s32 EventScript_RevealStarts(void) {
     ObjectEvent_GetById(LOCALID_REVEALED_PILLAR)->motionFlags = 0;
     ObjectEvent_SetPosition(LOCALID_REVEALED_PILLAR, PIXELS(248), PIXELS(712));
     MapGrid_CopyCellAttributes(31, 95, 1, 1, 15, 44);
-    Marker_SetPosition(MARKER_PSYNERGY_STONE, -1, -1);
-    Marker_MoveLeaderAway();
+    TreasureSpot_SetPosition(TREASURE_SPOT_PSYNERGY_STONE, -1, -1);
+    TreasureSpot_MoveLeaderAway();
     MapGrid_CopyCellAttributes(127, 127, 1, 1, 12, 71);
 #ifdef UBFIX
     FieldScheduler_AddCallback(SuhallaDesert_PulseRevealPalette,
@@ -787,7 +786,7 @@ s32 Map_Initialize(void) {
   struct MapGridState *gridState;
 
   gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
-  ((struct EventWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->startTransition =
+  ((struct EventWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   if (FieldGameFlag_GetByte(FLAG_MAP_TEMP_10) != 0) {
     gGameState.movementMode = LEADER_MOVEMENT_AIRBORNE;
@@ -1022,37 +1021,37 @@ struct ObjectEventTemplate gSuhallaDesertObjectEventTemplatesOther[] = {
 // clang-format off
 struct ObjectEventTemplate gSuhallaDesertNorthObjectEventTemplates[] = {
     { SPRITE_SANDSTORM, FLAG_FIRST_MAP_STORM_DOUSED, (s32)gSuhallaDesertStormScript,
-        PIXELS(56), 0, PIXELS(264), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(56), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SANDSTORM, FLAG_FIRST_MAP_STORM_DOUSED + 1, (s32)gSuhallaDesertStormScript,
-        PIXELS(456), 0, PIXELS(264), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(456), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SANDSTORM, FLAG_FIRST_MAP_STORM_DOUSED + 2, (s32)gSuhallaDesertStormScript,
-        PIXELS(120), 0, PIXELS(712), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(120), 0, PIXELS(712), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SANDSTORM, FLAG_FIRST_MAP_STORM_DOUSED + 3, (s32)gSuhallaDesertStormScript,
-        PIXELS(264), 0, PIXELS(712), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(264), 0, PIXELS(712), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SANDSTORM, FLAG_FIRST_MAP_STORM_DOUSED + 4, (s32)gSuhallaDesertStormScript,
-        PIXELS(440), 0, PIXELS(744), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(440), 0, PIXELS(744), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_IODEM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gSuhallaDesertSouthObjectEventTemplates[] = {
     { SPRITE_SANDSTORM, FLAG_SECOND_MAP_STORM_DOUSED, (s32)gSuhallaDesertStormScript,
-        PIXELS(216), 0, PIXELS(328), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(216), 0, PIXELS(328), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SANDSTORM, FLAG_SECOND_MAP_STORM_DOUSED + 1, (s32)gSuhallaDesertStormScript,
-        PIXELS(296), 0, PIXELS(328), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(296), 0, PIXELS(328), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SANDSTORM, FLAG_SECOND_MAP_STORM_DOUSED + 2, (s32)gSuhallaDesertStormScript,
-        PIXELS(408), 0, PIXELS(328), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(408), 0, PIXELS(328), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SANDSTORM, FLAG_SECOND_MAP_STORM_DOUSED + 3, (s32)gSuhallaDesertFourthStormScript,
-        PIXELS(376), 0, PIXELS(632), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(376), 0, PIXELS(632), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SANDSTORM, FLAG_SECOND_MAP_STORM_DOUSED + 4, MOVEMENT_TYPE_RESET_ACTION,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_IODEM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MARS_DJINNI, FLAG_DJINNI(DJINNI_FLASH), MOVEMENT_TYPE_STAND,
-        PIXELS(72), 0, PIXELS(696), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(72), 0, PIXELS(696), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };
 
@@ -1098,7 +1097,7 @@ struct MapEvent gSuhallaDesertEventsOther[] = {
     { MAP_EVENT_COORD, 54, FLAG_SECOND_MAP_STORM_DOUSED + 3, EVENT_SCRIPT(EventScript_CaughtByFourthStorm) },
     { MAP_EVENT_COORD, 81, FLAG_MAP_TEMP_0E, EVENT_SCRIPT(EventScript_StormGivesChase) },
     { MAP_EVENT_TALK, LOCALID_FLASH, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_FightDjinni) },
-    { BG_EVENT(BG_EVENT_UNNAMED), MARKER_PSYNERGY_STONE, FLAG_SUHALLA_DESERT_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
+    { BG_EVENT(BG_EVENT_SILENT), TREASURE_SPOT_PSYNERGY_STONE, FLAG_SUHALLA_DESERT_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
     { BG_EVENT(BG_EVENT_CHEST), 103, FLAG_SUHALLA_DESERT_VIRTUOUS_ARMLET, FIND_ITEM(ITEM_VIRTUOUS_ARMLET) },
     { BG_EVENT(BG_EVENT_CHEST), 104, FLAG_SUHALLA_DESERT_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { BG_EVENT(BG_EVENT_CHEST), 101, FLAG_SUHALLA_DESERT_COOKIE, FIND_ITEM(ITEM_COOKIE) },
@@ -1124,8 +1123,8 @@ struct MapEvent gSuhallaDesertEventsOther[] = {
 struct MapEvent gSuhallaDesertCavesEvents[] = {
     {MAP_EVENT_WARP, 1, CONDITION_ALWAYS,
      SUHALLA_DESERT_CAVES_TO_SUHALLA_DESERT_SOUTH_WEST},
-    {MAP_EVENT_WARP | WARP_STYLE_ANIMATED, 2, CONDITION_ALWAYS, 2},
-    {MAP_EVENT_WARP | WARP_STYLE_ANIMATED_ALTERNATE, 3, CONDITION_ALWAYS, 3},
+    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
+    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 3, CONDITION_ALWAYS, 3},
     {MAP_EVENT_WARP, 4, CONDITION_ALWAYS,
      SUHALLA_DESERT_CAVES_TO_SUHALLA_DESERT_SOUTH_EAST},
     {MAP_EVENTS_END},

@@ -116,9 +116,9 @@ void Colosso_RestoreWarrior(s32 id) {
   objectEvent->velocityX = zero;
   objectEvent->velocityZ = zero;
   objectEvent->motionFlags = 3;
-  objectEvent->terrainId = 0;
+  objectEvent->layer = 0;
   objectEvent->y.fixed = zero;
-  ((struct Object *)objectEvent)->terrainHeight = zero;
+  ((struct Object *)objectEvent)->groundHeight = zero;
   Engine_ObjectEventSetSpriteFlags(objectEvent, SPRITE_FLAG_SHADOW);
   ObjectEvent_SetMode(objectEvent, 0);
   ObjectEvent_SetMode(objectEvent, 1);
@@ -126,7 +126,7 @@ void Colosso_RestoreWarrior(s32 id) {
 }
 
 /// Stops the object event where it is: no velocity and no destination.
-void OverlayObject_ResetMotionFields(s32 localId) {
+void ObjectEvent_ResetMotionFields(s32 localId) {
   struct ObjectEvent *o = ObjectEvent_GetById(localId);
 
   ObjectDispatch_StartIdle((struct DispatchObject *)o);

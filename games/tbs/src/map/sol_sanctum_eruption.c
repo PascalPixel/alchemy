@@ -179,9 +179,9 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   void Script_PlaySong();
 
   struct ObjectEvent *objectEvent;
-  struct GroundParticleWork *sparkles;
+  struct WeatherWork *sparkles;
 #ifndef UBFIX
-  struct GroundParticleWork **particleWorkSlot;
+  struct WeatherWork **particleWorkSlot;
   struct EventWork **eventWorkSlot;
 #endif
 
@@ -209,7 +209,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   // and change this scene's register allocation in tbs-en.
   eventWorkSlot = (struct EventWork **)((u8 *)particleWorkSlot - 8);
 #endif
-  Camera_MoveTo(PIXELS(232), -1, PIXELS(156), 0);
+  FieldCamera_MoveTo(PIXELS(232), -1, PIXELS(156), 0);
   Engine_MapGridRedraw();
 #ifdef UBFIX
   gFieldWork->transitionFrames = 8;
@@ -289,8 +289,8 @@ static void SolSanctumEruption_PlayHostageScene(void) {
                             FACING_SOUTHEAST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 10);
   SolSanctumEruption_PlaceHostageGroup();
-  Camera_SetSpeed(PIXELS(32) / 5, PIXELS(4) / 5);
-  Camera_MoveTo(PIXELS(328), -1, PIXELS(299), 1);
+  FieldCamera_SetSpeed(PIXELS(32) / 5, PIXELS(4) / 5);
+  FieldCamera_MoveTo(PIXELS(328), -1, PIXELS(299), 1);
   Engine_CameraWaitForMove();
   Script_PlaySong(SE_MAP_TRANSITION);
   ColorBuffer_ApplyTarget(0x205294, 2);
@@ -347,8 +347,8 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   ObjectEvent_FaceDirection(LOCALID_FELIX, FACING_WEST, 0);
   ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_WEST, 0);
   objectEvent = ObjectEvent_GetById(JENNA);
-  Camera_MoveTo(objectEvent->x.part.pixel * PIXELS(1), -1,
-                objectEvent->z.part.pixel * PIXELS(1), 1);
+  FieldCamera_MoveTo(objectEvent->x.part.pixel * PIXELS(1), -1,
+                     objectEvent->z.part.pixel * PIXELS(1), 1);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(40);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_FELIX, 2);
@@ -546,8 +546,8 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_NORTHWEST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(JENNA, FACING_NORTH + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_FELIX, FACING_NORTH + FACING_STEP, 0);
-  Camera_SetSpeed(PIXELS(1) / 2, PIXELS(1) / 16);
-  Camera_MoveTo(PIXELS(472), -1, PIXELS(300), 1);
+  FieldCamera_SetSpeed(PIXELS(1) / 2, PIXELS(1) / 16);
+  FieldCamera_MoveTo(PIXELS(472), -1, PIXELS(300), 1);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(40);
   GameFlag_Set(FLAG_MAP_TEMP_46);
@@ -645,8 +645,8 @@ s32 SolSanctumEruption_Initialize(void) {
 
 /// Keeps a flying ember sprite rotated a quarter-turn from its facing. Run by
 /// each ember's object script, gEruption_EmberScript.
-static s32
-SolSanctumEruption_AlignEmberToHeading(struct ScriptInterpreter *interpreter) {
+static s32 SolSanctumEruption_AlignEmberToHeading(
+    struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   objectEvent->sprite->rotation = objectEvent->facing + 0x4000;
   return 1;
@@ -726,7 +726,7 @@ static void SolSanctumEruption_ResetEmberEmission(void) {
 /// each frame as a callback that SolSanctumEruption_PlayHostageScene adds and
 /// SolSanctumEruption_PlayWiseOneRescue removes.
 static void SolSanctumEruption_StepEmbers(void) {
-  struct GroundParticleWork *sparkles;
+  struct WeatherWork *sparkles;
   s32 shakePixels;
   s32 shakeTimer;
   u8 emberIndex;
@@ -865,7 +865,7 @@ static inline void SolSanctumEruption_FinishMaterialization(void) {
 /// SOL_SANCTUM_ERUPTION_TO_SOL_SANCTUM_LUNA_SOL_ROOMS, to the rooms of Sol and
 /// Luna (SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_ERUPTION).
 static void SolSanctumEruption_PlayWiseOneRescue(void) {
-  struct GroundParticleWork *sparkles;
+  struct WeatherWork *sparkles;
   struct ObjectEvent *wiseOne;
   struct ObjectEvent *center;
   struct ObjectEvent *leader;
@@ -1023,30 +1023,30 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 0);
   ObjectEvent_FaceDirection(GARET, FACING_SOUTHWEST + FACING_STEP, 0);
   // Pan around the chamber before another tremor interrupts the conversation.
-  Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
-  Camera_MoveTo(PIXELS(284), -1, PIXELS(92), 1);
+  FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
+  FieldCamera_MoveTo(PIXELS(284), -1, PIXELS(92), 1);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(20);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 0);
   ObjectEvent_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 0);
-  Camera_SetSpeed(PIXELS(3) / 2, PIXELS(3) / 16);
-  Camera_MoveTo(PIXELS(127), -1, PIXELS(162), 1);
+  FieldCamera_SetSpeed(PIXELS(3) / 2, PIXELS(3) / 16);
+  FieldCamera_MoveTo(PIXELS(127), -1, PIXELS(162), 1);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(40);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHEAST, 0);
   ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 0);
-  Camera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
-  Camera_MoveTo(PIXELS(304), -1, PIXELS(294), 1);
+  FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
+  FieldCamera_MoveTo(PIXELS(304), -1, PIXELS(294), 1);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(20);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 0);
   ObjectEvent_FaceDirection(GARET, FACING_EAST + FACING_STEP, 0);
-  Camera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
-  Camera_MoveTo(PIXELS(400), -1, PIXELS(215), 1);
+  FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
+  FieldCamera_MoveTo(PIXELS(400), -1, PIXELS(215), 1);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(60);
-  Camera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
-  Camera_MoveTo(PIXELS(273), -1, PIXELS(145), 1);
+  FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
+  FieldCamera_MoveTo(PIXELS(273), -1, PIXELS(145), 1);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(20);
   // Garet: "This really is terrible..." and they have a long way to go.
@@ -1129,8 +1129,8 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER,
                             FACING_SOUTHWEST + FACING_STEP, 0);
   Engine_ScriptWait(10);
-  Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
-  Camera_MoveTo(PIXELS(217), -1, PIXELS(176), 1);
+  FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
+  FieldCamera_MoveTo(PIXELS(217), -1, PIXELS(176), 1);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(20);
   ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
@@ -1225,8 +1225,8 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   ObjectEvent_ShowEmote(LOCALID_WISE_ONE, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                         0);
   Engine_ScriptWait(40);
-  Camera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
-  Camera_MoveTo(PIXELS(186), -1, PIXELS(166), 1);
+  FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
+  FieldCamera_MoveTo(PIXELS(186), -1, PIXELS(166), 1);
   ObjectEvent_SetDestination(LOCALID_WISE_ONE, 130, 113);
   Engine_ObjectEventWaitForMove(LOCALID_WISE_ONE);
   ObjectEvent_FaceDirection(LOCALID_WISE_ONE, FACING_SOUTHEAST + FACING_STEP,
@@ -1271,8 +1271,8 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Engine_ScriptWait(60);
-  Camera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
-  Camera_MoveTo(PIXELS(218), -1, PIXELS(181), 1);
+  FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
+  FieldCamera_MoveTo(PIXELS(218), -1, PIXELS(181), 1);
   ObjectEvent_SetSpeed(LOCALID_WISE_ONE, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_SetDestination(LOCALID_WISE_ONE, 169, 151);
   Engine_ObjectEventWaitForMove(LOCALID_WISE_ONE);
@@ -1291,7 +1291,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER,
                             FACING_SOUTHWEST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(GARET, FACING_NORTHWEST + FACING_STEP, 0);
-  Camera_MoveTo(PIXELS(224), -1, PIXELS(158), 1);
+  FieldCamera_MoveTo(PIXELS(224), -1, PIXELS(158), 1);
   Engine_CameraWaitForMove();
   // Lights rise at the chamber's first corner. The Wise One: the Elemental
   // Djinn have returned; "Take out the Elemental Star..." Refusing, "Isaac
@@ -1367,7 +1367,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   // return to, and the world is exposed to Alchemy. Garet: "Alchemy? A
   // threat?"
   ObjectEvent_FaceDirection(LOCALID_WISE_ONE, FACING_SOUTH, 0);
-  Camera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
+  FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
   SolSanctumEruption_FadeCameraTo(232, 464);
   SolSanctumEruption_RaiseElementalArcs(CHAMBER_SOUTHWEST);
   Script_ShowMessage(LOCALID_WISE_ONE, 0);
@@ -1407,8 +1407,8 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   FieldScheduler_AddCallback(SolSanctumEruption_FlickerSecondCollapseTiles,
                              TASK_PRIORITY_MAP);
   Engine_ScriptWait(20);
-  Camera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
-  Camera_MoveTo(PIXELS(184), -1, PIXELS(132), 1);
+  FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
+  FieldCamera_MoveTo(PIXELS(184), -1, PIXELS(132), 1);
   Engine_ObjectEventJump(LOCALID_PARTY_LEADER, 6, 0);
   Engine_ObjectEventJump(GARET, 6, 0);
   ObjectEvent_Get(LOCALID_PARTY_LEADER)->steeringFlags &=
@@ -1849,7 +1849,7 @@ static void SolSanctumEruption_SpawnEffectPair(struct ObjectEvent *parent) {
                                 parent->z.fixed);
     pair[effectIndex] = child;
     if (child != NULL) {
-      child->terrainHeight = parent->terrainHeight;
+      child->groundHeight = parent->groundHeight;
       sprite = child->sprite;
       child->motionFlags = 0;
       child->timer = 0;
@@ -1933,57 +1933,57 @@ u32 gSolSanctumEruption_Warps[] = {
 
 struct ObjectEventTemplate gSolSanctumEruption_ObjectEventTemplates[] = {
     { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_SATUROS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_MENARDI, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_FELIX_MASKED, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_FELIX, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_ALEX, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { 0xfc, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { 0xd8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { 0xd8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { 0xd8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { 0xd8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { 0xd8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { 0xd8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { 0xd8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { 0xd8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { 0xd8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { 0xd8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { 0xd8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { 0xd8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { 0xd8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { 0xd8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { 0xd8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { 0xd8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };
 

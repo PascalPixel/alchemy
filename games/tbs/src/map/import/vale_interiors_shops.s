@@ -5,7 +5,7 @@
 	.set import.Task_Add, 1
 	.set import.Engine_TaskRemoveCallback, 1
 	.set import.ArcTan2, 1
-	.set import.TileAnimation_ResumeChannel, 1
+	.set import.TilesetAnim_Resume, 1
 	.set import.Engine_ObjectEventSetSpriteFlags, 1
 	.set import.Engine_MessageShowCentered, 1
 	.set import.Engine_GameFlagIsSet, 1
@@ -44,12 +44,12 @@
 	.set import.Engine_CameraSetSpeed, 1
 	.set import.Engine_CameraMoveTo, 1
 	.set import.Engine_CameraWaitForMove, 1
-	.set import.Camera_GetScriptObject, 1
+	.set import.FieldCamera_GetScriptObject, 1
 	.set import.Engine_ScriptRequestWarp, 1
-	.set import.FieldEffect_StartLightning, 1
-	.set import.FieldEffect_StopLightning, 1
-	.set import.FieldEffect_LastLightning, 1
-	.set import.FieldEffect_ResumeLightning, 1
+	.set import.Weather_StartLightning, 1
+	.set import.Weather_StopLightning, 1
+	.set import.Weather_LastLightning, 1
+	.set import.Weather_ResumeLightning, 1
 	.set import.Engine_ScriptOpenScreen, 1
 	.set import.Engine_ScriptCloseScreen, 1
 	.set import.Engine_ScriptWaitForScreen, 1

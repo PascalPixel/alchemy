@@ -9,13 +9,13 @@
 /// at once and, off the world map, the map is redrawn around it.
 /// FieldScript_End calls it with the leader and keepPosition 1, so after a
 /// script the view follows the leader again from where it is, without a jump.
-void Camera_FollowObjectEvent(s32 localId, s32 keepPosition) {
+void FieldCamera_FollowObjectEvent(s32 localId, s32 keepPosition) {
   struct Object *subject;
   struct Object *camera;
   struct FieldWork *work;
   struct MapGridScrollWork *grid;
 
-  subject = ObjectTable_Get(localId);
+  subject = ObjectEvent_GetByLocalId(localId);
   // The slot already holds the field work, which this returns; the camera
   // commands here all find it this way.
   work = AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
@@ -37,7 +37,7 @@ void Camera_FollowObjectEvent(s32 localId, s32 keepPosition) {
 
 /// The script command "camera set speed": the camera's top speed and
 /// acceleration, 16.16 pixels per frame.
-void Camera_SetSpeedParameters(s32 speedLimit, s32 acceleration) {
+void FieldCamera_SetSpeedParameters(s32 speedLimit, s32 acceleration) {
   struct FieldWork *owner =
       AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
   owner->camera->speedLimit = speedLimit;
@@ -48,8 +48,8 @@ void Camera_SetSpeedParameters(s32 speedLimit, s32 acceleration) {
 /// 16.16 pixels (-1 keeps that axis), kept far enough inside the map that the
 /// screen never shows past its edge. With glide 0 the camera jumps there at
 /// once; otherwise it travels at its own speed.
-void Camera_MoveWithinMapBounds(s32 requestedX, s32 requestedY, s32 requestedZ,
-                                s32 glide) {
+void FieldCamera_MoveWithinMapBounds(s32 requestedX, s32 requestedY,
+                                     s32 requestedZ, s32 glide) {
   s32 shouldGlide;
   struct FieldWork *runtimeBlock;
   s32 minimumX;
@@ -114,22 +114,22 @@ void Camera_MoveWithinMapBounds(s32 requestedX, s32 requestedY, s32 requestedZ,
   }
 }
 
-/// The script command "camera move to object event": Camera_MoveWithinMapBounds
-/// to the object event's x and z.
+/// The script command "camera move to object event":
+/// FieldCamera_MoveWithinMapBounds to the object event's x and z.
 void ObjectEvent_PlaceCurrentWithinCameraBounds(s32 localId, s32 glide) {
   struct Object *subject;
 
-  subject = ObjectTable_Get(localId);
+  subject = ObjectEvent_GetByLocalId(localId);
   // The field work, looked up and not used.
   AllocHeapSlotEwram(HEAP_SLOT_FIELD, 0xCCC);
   if (subject != NULL) {
-    Camera_MoveWithinMapBounds(subject->x, -1, subject->z, glide);
+    FieldCamera_MoveWithinMapBounds(subject->x, -1, subject->z, glide);
   }
 }
 
 /// The script command "camera wait for move": waits (at most 600 frames) for
 /// the camera to arrive, then 2 frames more.
-void Camera_WaitForArrival(void) {
+void FieldCamera_WaitForArrival(void) {
   Object_WaitForMoveFar(((struct FieldWork *)AllocHeapSlotEwram(
                              HEAP_SLOT_FIELD, sizeof(struct FieldWork)))
                             ->camera);
@@ -137,7 +137,7 @@ void Camera_WaitForArrival(void) {
 }
 
 /// The script command "get view centre": returns the camera object.
-struct ObjectEvent *Camera_GetScriptObject(void) {
+struct ObjectEvent *FieldCamera_GetScriptObject(void) {
   return (struct ObjectEvent *)((struct FieldWork *)AllocHeapSlotEwram(
                                     HEAP_SLOT_FIELD, sizeof(struct FieldWork)))
       ->camera;
@@ -146,8 +146,8 @@ struct ObjectEvent *Camera_GetScriptObject(void) {
 /// Unused: makes the camera follow target; unless keepCurrentPosition is set it
 /// jumps there at once.
 /// Nothing calls it.
-UNUSED void Camera_FollowObject(struct Object *target,
-                                s32 keepCurrentPosition) {
+UNUSED void FieldCamera_FollowObject(struct Object *target,
+                                     s32 keepCurrentPosition) {
   struct Object *camera;
 
   camera = ((struct FieldWork *)AllocHeapSlotEwram(HEAP_SLOT_FIELD,

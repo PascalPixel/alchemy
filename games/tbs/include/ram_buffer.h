@@ -11,8 +11,7 @@
   FIXED_ADDRESS((u8 *), 0x02010000, gMapGridCellBuffer)
 #define Ram_DecodeBuffer FIXED_ADDRESS((u8 *), 0x0201c000, gDecodeBuffer)
 #define Ram_Metatiles FIXED_ADDRESS((u8 *), 0x02020000, gMetatiles)
-#define Ram_MapGridCollision                                                   \
-  FIXED_ADDRESS((u8 *), 0x0202c000, gMapGridCollision)
+#define Ram_MapGridShapes FIXED_ADDRESS((u8 *), 0x0202c000, gMapGridShapes)
 #define Ram_BgTileBuffer FIXED_ADDRESS((u8 *), 0x02038000, gBgTileBuffer)
 
 #define Ram_ActorSpriteSlots                                                   \
@@ -55,6 +54,6 @@
   ((void **)&gHeapSlots[HEAP_SLOT_BATTLE_ENTRY_TIMER])
 #define Ram_FieldEffectWork ((void **)&gHeapSlots[HEAP_SLOT_FIELD_EFFECT])
 
-#define Ram_FieldBlendWorkOffset FIXED_OFFSET(0xc, gLightningWork, gFieldWork)
+#define Ram_LightningWorkOffset FIXED_OFFSET(0xc, gLightningWork, gFieldWork)
 
 #endif

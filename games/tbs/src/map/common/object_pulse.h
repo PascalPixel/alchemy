@@ -6,7 +6,7 @@
 
 /// An object script call, each frame: every 60 to 149 frames the object event
 /// squashes and stretches back to its own shape over six frames.
-static s32 Map_SquashAndStretch(struct ScriptInterpreter *interpreter) {
+static s32 Map_SquashAndStretch(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *state = (struct ObjectEvent *)interpreter;
   switch (state->timer) {
   case 6:

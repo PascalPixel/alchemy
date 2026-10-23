@@ -28,11 +28,11 @@ A cell is `struct MapGridCell` in [`map_grid.h`](../../include/map_grid.h):
 | --- | --- | --- |
 | 0 to 11 | `metatileAndFlags` | the metatile drawn in the cell |
 | 12 to 15 | `metatileAndFlags` | four flag bits ([below](#evidence-and-open-questions)) |
-| 16 to 23 | `collisionCode` | the metatile behavior |
-| 24 to 31 | `attributeB` | the shape, a row of the layout's shape table |
+| 16 to 23 | `behavior` | the metatile behavior |
+| 24 to 31 | `shape` | the shape, a row of the layout's shape table |
 
-The field names don't say what the fields hold: `collisionCode` is the
-metatile behavior and `attributeB` the shape.
+The field names don't say what the fields hold: `behavior` is the
+metatile behavior and `shape` the shape.
 
 **What is drawn.** A [metatile](../../glossary.md#metatile) is the picture of one cell, 2 by 2 of the
 console's 8-pixel tiles, stored as the four BG map entries that draw them
@@ -51,7 +51,7 @@ with its behavior, and a [bg event](../../glossary.md#bg-event) when the player 
 the same on every map: `MB_ENCOUNTER_GROUND_1` and `_2` for ground with
 random battles of its own, `MB_JAR` to `MB_WELL` for search spots with
 shared lines, `MB_DESERT_SAND` for the Lamakan Desert's sand, and
-`MB_LEDGE`, `MB_CLIMB` and `MB_JUMP_FORWARD`, which `Field_RunPushTileEvent`
+`MB_LEDGE`, `MB_CLIMB` and `MB_JUMP_FORWARD`, which `Field_RunPushCellEvent`
 acts on when the leader pushes against them.
 
 **How the ground is shaped.** A shape is four bytes, a row of `shapes.tsv`.
@@ -59,7 +59,7 @@ The low four bits of the first pick one of the 16 terrain kinds (flat
 ground, slopes, steps, ground shaped through three heights and others), and
 the other three are height samples in steps of 8 pixels, which the kind's
 height function interpolates (`MapGrid_GetTerrainHeight`, through
-`gMapGrid_TerrainHeightFunctions`). `MapGrid_CheckObjectStep` lets an object
+`gMapGrid_TerrainHeightFunctions`). `MapGrid_CheckCollision` lets an object
 step at most 8 pixels up or 12 down, so a sharp rise or drop stops the
 leader as surely as `MB_WALL`. Most of the game's walls are made this way:
 Goma Cave has no `MB_WALL` cells at all, only a rim of ground 32 pixels high
@@ -67,7 +67,7 @@ along the foot of each cliff, some of it cut along a cell's diagonal.
 
 Behavior and height belong to a layer. Each layer is a window onto the grid
 ([below](#one-grid-three-layers)), and an object follows one layer, the one
-its `terrainId` names, which a map's code sets. Code that asks about the
+its `layer` names, which a map's code sets. Code that asks about the
 ground at an object's position reads the cell at that position in its
 layer's window, so the three layers can have different walls and heights
 ([Field](../field/README.md#how-high-a-step-can-go)).
@@ -85,7 +85,7 @@ The behaviors are `enum MetatileBehavior`.
 | `MB_GRAVE` | 245 | a search spot with lines of its own |
 | `MB_BOOKS` | 246 | a search spot with lines of its own |
 | `MB_WELL` | 247 | a search spot with lines of its own |
-| `MB_JUMP_FORWARD_UNREACHED` | 249 | jumps forward like `MB_JUMP_FORWARD`, but never reaches `Field_RunPushTileEvent` |
+| `MB_JUMP_FORWARD_UNREACHED` | 249 | jumps forward like `MB_JUMP_FORWARD`, but never reaches `Field_RunPushCellEvent` |
 | `MB_DESERT_SAND` | 250 | ground that hurts the [party](../../glossary.md#the-party) over time: the Lamakan Desert's sand |
 | `MB_LEDGE` | 252 | jumped down with Down held |
 | `MB_CLIMB` | 253 | climbed up or down with Up or Down held |
@@ -254,7 +254,7 @@ gives a layout number, which picks a row of `gLayouts`
 three tile sheets and layer data. `MapGrid_LoadLayout`
 ([`field/field/map_grid.c`](../field/field/map_grid.c)) decodes each part
 into a fixed buffer in [EWRAM](../../glossary.md#iwram-and-ewram): the metatiles into `gMetatiles`, the
-shapes into `gMapGridCollision`, the grid into `Ram_MapGridCellBuffer`, and
+shapes into `gMapGridShapes`, the grid into `Ram_MapGridCellBuffer`, and
 the two scripts into the space after the shapes. The markers are not
 decoded: the loader keeps a pointer to them in the map grid work. A `Ram_`
 name is the same buffer as the `g` name after it (`Ram_MapGridCellBuffer` is
@@ -346,10 +346,10 @@ carrying it reaches the ladder, since its marker's cell lies past the room's
 east wall.
 
 The marker list is (column, row, id) triples, a cell and the trigger of a
-map event, ended by 255, 255. When a map loads, `Field_PlaceMapMarkers`
+map event, ended by 255, 255. When a map loads, `Field_PlaceTreasureSpots`
 ([`object/object/markers.c`](../object/object/markers.c)) places an
 object at each marker whose id (100 to 239) the map has an event for, up to
-`MARKER_MAX` (10): a chest for a chest event, shown open once its flag is set
+`TREASURE_SPOT_MAX` (10): a chest for a chest event, shown open once its flag is set
 and gone once its mimic has been beaten, and a Psynergy Stone for a search
 event that gives one, until it is taken. A marker the map has no event for
 takes no slot. 76 layouts place `layout_000/markers.table`, which holds only the end
@@ -359,7 +359,7 @@ marker.
 | --- | --- | --- |
 | a marker's id | 100 to 239 | the trigger of the map event that places it |
 | the end marker | column 255, row 255 | ends the list |
-| `MARKER_MAX` | 10 | markers placed on a map (`include/unit/object/object.h`) |
+| `TREASURE_SPOT_MAX` | 10 | markers placed on a map (`include/unit/object/object.h`) |
 
 ### Tile animation and blend scripts
 
@@ -395,7 +395,7 @@ The blend script changes how the layers blend over time. `control` sets
 mode is not alpha blending, and waits its second value in frames. `jump`,
 `stop` and `end` act as in the tile animation.
 
-The words are tested in `TileAnimation_Update` and `DisplayBlend_RunScript`,
+The words are tested in `TilesetAnim_Update` and `BlendScript_Run`,
 which have no names for them; the names are the tables' (`animation.tsv`,
 `blend.tsv`).
 
@@ -417,7 +417,7 @@ the party, bringing in new ones as the party walks.
 ![The world map's ground is a grid of 16 by 16 squares, each 512 pixels on a side, and each square is packed on its own, once for each of the world map's two ground layers. Only the 2 by 2 squares around the party are unpacked at any time; the rest stay packed. As the party walks half a square further, the 2 by 2 moves with it, and the squares it now covers are unpacked, one a frame.](https://alchemy.pascalpixel.com/illustrations/map/world-squares.svg)
 
 The world is 16 by 16 squares of 512 pixels, and a table in the world map's
-work (`PerspectiveWork.tileIds`) says which stored square shows at each of
+work (`WorldMapView.tileIds`) says which stored square shows at each of
 them. `WorldMap_UpdateCurrentTileBlock` unpacks the 2 by 2 squares whose top left
 holds the point 256 pixels left of the party and 320 above, in each of the
 two ground layers (`WorldMap_WriteLayerCellTile`), and
@@ -491,7 +491,7 @@ because a behavior plane is mostly runs of open ground and walls, as
 
 The markers are the one part stored unpacked, and the loader reads them in
 place rather than copying them. XXX: likely because only
-`Field_PlaceMapMarkers` reads them, once as the map loads.
+`Field_PlaceTreasureSpots` reads them, once as the map loads.
 
 One grid serves all three layers, so every layout takes the same 64 KB of cells,
 and a layer's window can sit anywhere in the grid.
@@ -503,7 +503,7 @@ and a layer's window can sit anywhere in the grid.
   is the placeholder.
 - 256 shapes a layout, since a cell names its shape in one byte.
 - 16 tile animation channels (`struct MapGridState`).
-- `MARKER_MAX` (10) chests and Psynergy Stones placed on a map.
+- `TREASURE_SPOT_MAX` (10) chests and Psynergy Stones placed on a map.
 
 ## Files
 
@@ -534,7 +534,7 @@ gives its layouts.
 The game keeps no names for any of this, so each part is named for what the
 code does with it: the 16-pixel pictures become BG map entries, so they are
 `metatiles`; the shapes feed the height functions; and the markers are where
-`Field_PlaceMapMarkers` puts chests and Psynergy Stones. The sixth offset is
+`Field_PlaceTreasureSpots` puts chests and Psynergy Stones. The sixth offset is
 called the marker list because that function is the only code that reads the
 pointer the loader stores to it, although `MapGridScrollWork`
 (`include/map_grid_scroll.h`) still names the field `script`.

@@ -62,7 +62,7 @@ enum HeapSlot {
   /// The world map's frame work (struct WorldMapFrameWork).
   HEAP_SLOT_WORLD_MAP_FRAME = 7,
   /// The field map's scrolling work (struct MapGridScrollWork), or on the world
-  /// map its perspective view (struct PerspectiveWork); gMapGridWork.
+  /// map its perspective view (struct WorldMapView); gMapGridWork.
   HEAP_SLOT_MAP_GRID = 8,
   /// A battle's struct BattleWork (gBattleWork), from Battle_RunEncounter to
   /// the next map change.
@@ -95,13 +95,13 @@ enum HeapSlot {
   /// The palette cycling queue (struct PaletteSnapshotWork).
   HEAP_SLOT_PALETTE_CYCLES = 28,
   /// The running ground particles, motes or sparkles (struct
-  /// GroundParticleWork).
-  HEAP_SLOT_GROUND_PARTICLES = 29,
+  /// WeatherWork).
+  HEAP_SLOT_WEATHER = 29,
   /// The field's colour blend work (gLightningWork): the struct
-  /// FieldBlendWork the storm's lightning and FieldEffect_StartBufferBlend
+  /// LightningWork the storm's lightning and Weather_StartLightningFlash
   /// allocate.
   HEAP_SLOT_LIGHTNING = 30,
-  /// The display transition (struct DisplayTransitionState,
+  /// The display transition (struct ScreenTransitionState,
   /// gScreenTransitionWork): the window edges and dissolve of a map change.
   HEAP_SLOT_SCREEN_TRANSITION = 31,
   /// The colour buffer (gPaletteFadeWork) that moves the BG and OBJ palettes

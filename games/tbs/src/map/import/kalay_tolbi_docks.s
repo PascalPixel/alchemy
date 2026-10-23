@@ -51,7 +51,7 @@
 	.set import.Engine_ScriptWaitForScreen, 1
 	.set import.Field_EndBusyAndReveal, 1
 	.set import.Djinn_JoinParty, 1
-	.set import.Motion_LaunchFromFocusedObject, 1
+	.set import.ObjectMotion_LaunchFromFocusedObject, 1
 	.set import.Engine_ObjectEventWalkBy, 1
 	.set import.Engine_ObjectEventWalkByAndWait, 1
 	.set import.Engine_AudioPlayCue, 1

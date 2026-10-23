@@ -117,7 +117,7 @@ The steps are `PSYNERGY_STEP_OWNER`, `_LIST`, `_CLASSIFY`
 | anything else | 0 | the field casts it, though the map has no event for it |
 
 Psynergy for the field is written as the field's Psynergy request,
-`psynergyRequest` in the event work (`gFieldWork`, the running map's state),
+`psynergy` in the event work (`gFieldWork`, the running map's state),
 and `PsynergyMenu_Run` returns 1. The request is one 16-bit word:
 
 ```

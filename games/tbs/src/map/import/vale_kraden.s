@@ -42,8 +42,8 @@
 	.set import.Engine_CameraWaitForMove, 1
 	.set import.Engine_ScriptRequestWarp, 1
 	.set import.Field_RequestBattleFromEncounterTable, 1
-	.set import.FieldEffect_StartGroundParticles, 1
-	.set import.FieldEffect_StartLightning, 1
+	.set import.Weather_StartRain, 1
+	.set import.Weather_StartLightning, 1
 	.set import.Engine_ColorBufferApplySource, 1
 	.set import.Engine_ScriptOpenScreen, 1
 	.set import.Engine_ScriptCloseScreen, 1

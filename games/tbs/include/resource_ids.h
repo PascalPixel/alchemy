@@ -39,8 +39,8 @@ extern char ResourceId_CamelotLogo;
 /// The title picture on BG2, loaded by Title_LoadBackground and, for the save
 /// menu, by MainMenu_LoadBackground.
 extern char ResourceId_GoldenSunLogo;
-/// The still world map WorldMap_Show shows for a
-/// FIELD_EVENT_WORLD_MAP_PICTURE event; it loads this one whatever picture
+/// The still world map RegionMap_Show shows for a
+/// FIELD_RAISED_EVENT_REGION_MAP event; it loads this one whatever picture
 /// it's passed.
 extern char ResourceId_WorldMapPicture;
 /// The lettering sprites Title_LoadSprites loads: 40 tiles of 16 colours in
@@ -259,7 +259,7 @@ extern char ResourceId_PerspectiveDataA;
 extern char ResourceId_DefaultGridCells;
 /// Colosso's first opponent's recorded path, played by the Azart match.
 extern char ResourceId_OpponentPathA;
-/// The world map's tile animation channels (TileAnimation_StartChannels).
+/// The world map's tile animation channels (TilesetAnim_StartAll).
 extern char ResourceId_DefaultTileAnimation;
 /// The world map's metatile attributes, loaded with its default cells.
 extern char ResourceId_DefaultMetatileAttributes;
@@ -267,7 +267,7 @@ extern char ResourceId_DefaultMetatileAttributes;
 // The world map's two graphics sets (gWorldMap_GraphicsResources), each a
 // palette and five tile sets: WorldMap_LoadGraphics decodes the first four
 // into char blocks 2 and 3 and the fifth into gMapGridLayerData for the tile
-// animation. The second set is for WORLD_MAP_REGION_SNOWFIELD.
+// animation. The second set is for WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD.
 
 extern char ResourceId_WorldMapPaletteA; ///< The first set's colours.
 extern char ResourceId_WorldMapTilesA;   ///< First set, first tile set.

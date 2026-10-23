@@ -27,7 +27,7 @@ struct MapGridLayerScroll {
 /// field map with a layout starts, and the next map change frees it.
 struct MapGridScrollWork {
   /// The followed point, read as x, height and z in 16.16 fixed-point pixels;
-  /// Camera_FollowObjectEvent points it at the camera's position.
+  /// FieldCamera_FollowObjectEvent points it at the camera's position.
   s32 *origin;
   /// Screen shake amplitudes in 16.16 fixed-point pixels, and the 16.16
   /// factor that scales them each frame.
@@ -36,7 +36,7 @@ struct MapGridScrollWork {
   u16 flags;     ///< REG_DISPCNT bits: objects and the BG1 to BG3 shown
   u8 wideTiles;  ///< nonzero: tile animations copy 64-byte tiles
   u8 footprints; ///< nonzero: the leader leaves footprints
-  struct TileAnimation animations[16];
+  struct TilesetAnim animations[16];
   struct BlendScriptState blend;
   s32 viewX, viewY;           ///< the view's top left, 16.16 fixed-point pixels
   s32 minX, minY, maxX, maxY; ///< 16.16 fixed-point pixels

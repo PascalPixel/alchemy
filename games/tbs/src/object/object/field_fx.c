@@ -45,9 +45,9 @@ STATIC_ASSERT(offsetof(struct EffectObject, updateHook) == 0x6c);
 /// marker cell's centre is moved 20 pixels from that centre, in the direction
 /// it stood, and loses its move target. Only the first marker it stands on
 /// moves it. Called by two map overlays (Suhalla Desert, Lamakan Desert).
-void Marker_MoveLeaderAway(void) {
-  struct Object *leader = ObjectTable_Get(gGameState.selectedLocalId);
-  struct MarkerSlot *marker = ((struct FieldWork *)gFieldWork)->markers;
+void TreasureSpot_MoveLeaderAway(void) {
+  struct Object *leader = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
+  struct TreasureSpot *marker = ((struct FieldWork *)gFieldWork)->treasureSpots;
   s32 markerIndex = 0;
   s32 x;
   s32 z;
@@ -136,8 +136,8 @@ void ItemDisplay_EmitSparkles(union FieldObject *fieldObject) {
 /// a free object. The picture is object 22, thrown up (velocityY 2 << 16,
 /// gravity 0x4000: it rises for 8 frames) while it grows to full size, its icon
 /// drawn through HEAP_SLOT_GLYPH_TRANSFER, which is released again, and loaded
-/// into VRAM. The caller owns the picture: Field_SearchTile releases it once
-/// the find is told. Called by Field_SearchTile for coins and items found, and
+/// into VRAM. The caller owns the picture: Field_SearchCell releases it once
+/// the find is told. Called by Field_SearchCell for coins and items found, and
 /// by FieldEffect_PlayCueAndStartEmitterOnTarget.
 struct EffectObject *FieldEffect_StartRandomParticleEmitter(s32 localId,
                                                             s32 item) {
@@ -221,7 +221,7 @@ struct EffectObject *FieldEffect_StartRandomParticleEmitter(s32 localId,
   return picture;
 }
 
-/// Releases object unless it is NULL. Called by Field_SearchTile to drop the
+/// Releases object unless it is NULL. Called by Field_SearchCell to drop the
 /// picture of an item nobody could carry.
 void Object_DestroyIfPresent(void *object) {
   if (object != 0)
@@ -229,7 +229,7 @@ void Object_DestroyIfPresent(void *object) {
 }
 
 /// Raises a found item's picture to 36 pixels above the party leader, who
-/// holds it up (animation 28) facing the screen. Called by Field_SearchTile for
+/// holds it up (animation 28) facing the screen. Called by Field_SearchCell for
 /// what a search finds, by ItemDisplay_ShowPicture and by
 /// FieldEffect_StartEffectObject22.
 void ItemDisplay_RaiseAboveLeader(struct Object *object) {
@@ -238,7 +238,7 @@ void ItemDisplay_RaiseAboveLeader(struct Object *object) {
   if (object == 0)
     return;
 
-  leader = ObjectTable_Get(gGameState.selectedLocalId);
+  leader = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
   // Up to 2 pixels a frame, gaining 1 a frame, in free flight: no motion
   // flags, so no gravity and no terrain.
   object->acceleration = 1 << 16;
@@ -250,7 +250,7 @@ void ItemDisplay_RaiseAboveLeader(struct Object *object) {
   ObjectDispatch_InitializeFar((struct DispatchObject *)object,
                                gFieldEffect_RisingPulseScript);
   // Angle 0x4000, a quarter turn, faces the screen.
-  leader->angle = 0x4000;
+  leader->facing = 0x4000;
 }
 
 /// Shows a found item's picture: flags bit 0 adds sparkles and bit 1 raises it
@@ -261,7 +261,7 @@ void ItemDisplay_ShowPicture(void *object, s32 flags) {
   void *leader;
 
   if (object != NULL) {
-    leader = ObjectTable_Get(gGameState.selectedLocalId);
+    leader = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
     if (flags & 1) {
       ObjectDispatch_SetSingleChildFlagsFar(object, 0);
       ObjectDispatch_InitializeFar(object, gFieldEffect_ParticleEmitterScript);
@@ -289,7 +289,8 @@ void ItemDisplay_ShowPicture(void *object, s32 flags) {
 /// block 17, taken for the icon, is not released (the map change's heap
 /// reset frees it).
 void FieldEffect_StartEffectObject22(s32 item, s32 flags) {
-  struct ObjectEvent *leader = ObjectTable_Get(gGameState.selectedLocalId);
+  struct ObjectEvent *leader =
+      ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
   void *iconBuffer = AllocHeapSlot(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
   struct EffectObject *object = (struct EffectObject *)Object_CreateFar(
       22, leader->x.fixed, leader->y.fixed + (36 << 16), leader->z.fixed);
@@ -381,7 +382,7 @@ void RevealMarker_EmitSparkles(union FieldObject *fieldObject) {
 /// Returns 1 while Reveal is active, else 0. Run by a Reveal marker's object
 /// script (gFieldEffect_MarkerParticleScript) through SC_CALL: the marker stays
 /// while it returns 1 and frees itself once it returns 0.
-s32 Field_IsRevealActive(struct ScriptInterpreter *interpreter) {
+s32 Field_IsRevealActive(struct ObjectScriptContext *interpreter) {
   s16 revealState;
   u32 isActive = 0;
   struct FieldWork *work = (struct FieldWork *)gFieldWork;
@@ -413,14 +414,14 @@ void FieldEffect_SpawnNearbyMarkers(void) {
   // The layout's marked cells: (column, row, id) triples, ended by 0xff, 0xff;
   // the same list as MapGridMarkers's markers in markers.c.
   markerData = *(u8 **)(((u8 *)gMapGridWork[0]) + 16);
-  objectEvent = ObjectTable_Get(gGameState.selectedLocalId);
+  objectEvent = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
   leaderColumn = objectEvent->x >> 20;
   leaderRow = objectEvent->z >> 20;
   if (markerData != 0) {
     while (column = *markerData++, row = *markerData++,
            column != 0xff || row != 0xff) {
       id = *markerData++;
-      if (Marker_GetObjectEvent(id) != NULL)
+      if (TreasureSpot_GetObjectEvent(id) != NULL)
         continue;
       if (id < 100 || id > 239)
         continue;
@@ -435,10 +436,10 @@ void FieldEffect_SpawnNearbyMarkers(void) {
       } else if (row - leaderRow > 5)
         continue;
       entry = gOverlayArea.events();
-      if (entry->control == (u32)-1)
+      if (entry->kind == (u32)-1)
         continue;
       do {
-        if (entry->trigger == id && (entry->control & 15) == MAP_EVENT_BG) {
+        if (entry->trigger == id && (entry->kind & 15) == MAP_EVENT_BG) {
           switch (entry->value & 0xfff00000) {
           case 0:
           case FIND_ITEM(0):
@@ -448,8 +449,9 @@ void FieldEffect_SpawnNearbyMarkers(void) {
             if (entry->condition != -1 &&
                 GameFlag_TestFar(entry->condition) == 0) {
               /* FAKEMATCH(temporary): the spawned marker reuses objectEvent, so
-               * the one pseudo keeps ObjectTable_Get's result in r5; as a
-               * variable of its own, 9 of 163 instructions differ in tbs-en. */
+               * the one pseudo keeps ObjectEvent_GetByLocalId's result in r5;
+               * as a variable of its own, 9 of 163 instructions differ in
+               * tbs-en. */
               objectEvent = (struct Object *)Object_CreateFar(
                   22, (column << 20) + (8 << 16), 0, (row << 20) + (8 << 16));
               if (objectEvent != 0) {
@@ -466,7 +468,7 @@ void FieldEffect_SpawnNearbyMarkers(void) {
           }
         }
         entry++;
-      } while (entry->control != (u32)-1);
+      } while (entry->kind != (u32)-1);
     }
   }
 }

@@ -42,7 +42,7 @@ void MercuryLighthouse_RestoreLights(s32 region,
     st->terrainCode = region;
     return;
   }
-  objectEvent = Engine_ObjectEventLookup(gGameState.selectedLocalId);
+  objectEvent = Engine_ObjectEventLookup(gGameState.leaderLocalId);
   z = objectEvent->z.fixed;
   cell = (struct MapGridCell *)Ram_MapGridCellBuffer + ((z / 0x100000) << 7) +
          objectEvent->x.fixed / 0x100000;
@@ -50,7 +50,7 @@ void MercuryLighthouse_RestoreLights(s32 region,
     obj = Engine_ObjectCreate(26, objectEvent->x.fixed,
                               objectEvent->y.fixed + 0x180000, z);
     if (obj != 0) {
-      obj->terrainHeight = objectEvent->terrainHeight;
+      obj->groundHeight = objectEvent->groundHeight;
       animation = obj->sprite;
       Engine_ObjectSetScript(obj, gMercuryLighthouse_PillarScript);
       obj->linkedObject = objectEvent;
@@ -66,12 +66,12 @@ void MercuryLighthouse_RestoreLights(s32 region,
   } else {
     st->pillar = 0;
   }
-  if (cell->collisionCode == region && st->stepEffect != 0) {
+  if (cell->behavior == region && st->stepEffect != 0) {
     obj = Engine_ObjectCreate(26, objectEvent->x.fixed, objectEvent->y.fixed,
                               objectEvent->z.fixed);
     if (obj == 0)
       return;
-    obj->terrainHeight = objectEvent->terrainHeight;
+    obj->groundHeight = objectEvent->groundHeight;
     animation = obj->sprite;
     Engine_ObjectSetScript(obj, gMercuryLighthouse_RampScript);
     obj->motionFlags = 0;

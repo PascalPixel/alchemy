@@ -9,7 +9,7 @@
 #define SPRITE_ATTR2_HIGH(sprite) (((u8 *)(sprite))[9])
 
 /// The script command "set view bounds": the camera keeps the screen inside
-/// these map coordinates (Camera_MoveWithinMapBounds).
+/// these map coordinates (FieldCamera_MoveWithinMapBounds).
 void MapGrid_SetViewBounds(s32 minX, s32 minY, s32 maxX, s32 maxY) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
 
@@ -29,7 +29,7 @@ void FieldEffect_StepRatioTransition(void) {
 #else
 s32 FieldEffect_StepRatioTransition(void) {
 #endif
-  struct PerspectiveWork *perspective;
+  struct WorldMapView *perspective;
   s16 *frames;
   s32 *from;
   s16 *step;
@@ -69,7 +69,7 @@ s32 FieldEffect_StepRatioTransition(void) {
 /// (farPlane times it, FieldEffect_StepRatioTransition): a zoom of 2 halves the
 /// distance. FieldScript_WaitForZoomTransition waits for it.
 void FieldEffect_ScheduleRatioTransition(s32 zoom, s32 frames) {
-  struct PerspectiveWork *perspective = gMapGridWork[0];
+  struct WorldMapView *perspective = gMapGridWork[0];
   s32 inverse;
 
   if (((struct FieldWork *)AllocHeapSlotEwram(HEAP_SLOT_FIELD,
@@ -96,7 +96,7 @@ void FieldEffect_ScheduleRatioTransition(s32 zoom, s32 frames) {
 /// frames).
 void FieldScript_WaitForZoomTransition(void) {
   s32 frames;
-  struct PerspectiveWork *perspective = gMapGridWork[0];
+  struct WorldMapView *perspective = gMapGridWork[0];
 
   if (((struct FieldWork *)AllocHeapSlotEwram(HEAP_SLOT_FIELD,
                                               sizeof(struct FieldWork)))
@@ -137,7 +137,7 @@ s32 FieldEffect_CopyLinkedObjectPosition(union FieldObject *fieldObject) {
              ->boxX
          << 16) +
         (8 << 16);
-    objectEvent->terrainHeight = host->terrainHeight;
+    objectEvent->groundHeight = host->groundHeight;
     objectEvent->z.fixed = host->z.fixed;
   }
 #ifndef UBFIX
@@ -159,7 +159,7 @@ void FieldEffect_SpawnLinked(s32 localId, s32 emote, s32 wait) {
     Sound_PlaySongFar(SE_110);
   }
 
-  target = ObjectTable_Get(localId);
+  target = ObjectEvent_GetByLocalId(localId);
   if (target != 0) {
     struct ObjectEvent *bubble = (struct ObjectEvent *)Object_CreateFar(
         21, target->x.fixed, target->y.fixed, target->z.fixed);
@@ -220,7 +220,7 @@ void FieldEffect_SpawnLinked(s32 localId, s32 emote, s32 wait) {
 /// releases whatever it is; a one-off is never recorded there. The leader's
 /// step runs all three for hazard ground (object/step.c).
 void FieldEffect_ConfigureLinkedObject(s32 localId, s32 flags) {
-  struct ObjectEvent *objectEvent = ObjectTable_Get(localId);
+  struct ObjectEvent *objectEvent = ObjectEvent_GetByLocalId(localId);
   struct ObjectEvent *effect;
   struct AnimationObject *visual;
   s32 mode;

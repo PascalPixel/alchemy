@@ -90,7 +90,7 @@
 	.set import.Engine_ScriptWaitForScreen, 1
 	.set import.Engine_PsynergyStart, 1
 	.set import.FieldEffect_End, 1
-	.set import.ObjectTable_Snapshot, 1
+	.set import.ObjectEvent_Snapshot, 1
 	.set import.Engine_ObjectEventsRefresh, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

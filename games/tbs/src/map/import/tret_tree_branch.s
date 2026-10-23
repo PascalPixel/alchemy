@@ -9,6 +9,6 @@
 	.set import.ObjectEvent_GetById, 1
 	.set import.Engine_ScriptRequestWarp, 1
 	.set import.Field_RequestDjinnBattle, 1
-	.set import.DisplayTransition_InitializeBattleEffectState, 1
+	.set import.ScreenTransition_InitializeBattleEffectState, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

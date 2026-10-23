@@ -23,20 +23,20 @@ struct MotionObject {
   const s32 *script;
   u16 scriptCursor;
   ///@}
-  u16 angle;         ///< 1/65536 turns
-  s32 x;             ///< 16.16 fixed-point pixels
-  s32 y;             ///< 16.16 fixed-point pixels
-  s32 z;             ///< 16.16 fixed-point pixels
-  s32 terrainHeight; ///< ObjectEvent's: the ground's y
-  s32 scaleX;        ///< 16.16 fixed point, 0x10000 full size
-  s32 scaleY;        ///< 16.16 fixed point, 0x10000 full size
-  u16 height;        ///< half the sprite's box height; ObjectEvent's radius
-  u8 terrainId;      ///< ObjectEvent's; not named through this view
-  u8 priorityFlags;  ///< ObjectEvent's; not named through this view
-  s32 velocityX;     ///< 16.16 fixed-point pixels per frame
-  s32 velocityY;     ///< 16.16 fixed-point pixels per frame
-  s32 velocityZ;     ///< 16.16 fixed-point pixels per frame
-  s32 speedLimit;    ///< 16.16 fixed-point pixels per frame
+  u16 angle;        ///< 1/65536 turns
+  s32 x;            ///< 16.16 fixed-point pixels
+  s32 y;            ///< 16.16 fixed-point pixels
+  s32 z;            ///< 16.16 fixed-point pixels
+  s32 groundHeight; ///< ObjectEvent's: the ground's y
+  s32 scaleX;       ///< 16.16 fixed point, 0x10000 full size
+  s32 scaleY;       ///< 16.16 fixed point, 0x10000 full size
+  u16 height;       ///< half the sprite's box height; ObjectEvent's radius
+  u8 layer;         ///< ObjectEvent's; not named through this view
+  u8 priorityFlags; ///< ObjectEvent's; not named through this view
+  s32 velocityX;    ///< 16.16 fixed-point pixels per frame
+  s32 velocityY;    ///< 16.16 fixed-point pixels per frame
+  s32 velocityZ;    ///< 16.16 fixed-point pixels per frame
+  s32 speedLimit;   ///< 16.16 fixed-point pixels per frame
   /// Horizontal speed gained each frame towards the target, or lost braking
   /// without one, in 16.16 fixed-point pixels per frame.
   s32 acceleration;

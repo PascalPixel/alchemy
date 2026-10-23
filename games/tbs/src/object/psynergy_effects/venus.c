@@ -16,14 +16,14 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   struct CaptureObject *leader;
   struct CaptureObject *djinni;
   struct FieldEffectWork *effectWork;
-  struct EffectSlot *effect;
+  struct FieldEffectSprite *effect;
   s8 *slotState;
   s32 remaining;
   s32 scale;
   struct EffectVector position;
 
   leader =
-      (struct CaptureObject *)ObjectEvent_GetById(gGameState.selectedLocalId);
+      (struct CaptureObject *)ObjectEvent_GetById(gGameState.leaderLocalId);
   djinni = (struct CaptureObject *)ObjectEvent_GetById(djinniId);
   if (djinni == NULL)
     return;
@@ -51,10 +51,10 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   ObjectDispatch_SelectAnimationFar(djinni, 3);
   // The leader turns to face the camera (angle 0x4000).
   WaitFrames(90);
-  ObjectMotion_ArmCallback(gGameState.selectedLocalId, 0x4000, 0);
+  ObjectMotion_ArmCallback(gGameState.leaderLocalId, 0x4000, 0);
   WaitFrames(20);
   ObjectDispatch_SelectAnimationFar(
-      ObjectEvent_GetById(gGameState.selectedLocalId), 28);
+      ObjectEvent_GetById(gGameState.leaderLocalId), 28);
   WaitFrames(30);
   MapGrid_SetScreenShakeFar(0x19999, 0x19999, 0x10000);
 
@@ -64,12 +64,13 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   Camera_WorldToScreen(&position);
 
   // One rising particle a frame into each of the 24 effect slots.
-  effect = effectWork->effects;
+  effect = effectWork->sprites;
   remaining = 23;
   do {
-    EffectSlot_Initialize(effect, SPRITE_PARTICLE, position.x, position.z);
-    EffectSlot_SetCallback(effect, FieldEffect_UpdateRadialSpread);
-    EffectSlot_SetObjectMode(effect, 7);
+    FieldEffectSprite_Initialize(effect, SPRITE_PARTICLE, position.x,
+                                 position.z);
+    FieldEffectSprite_SetCallback(effect, FieldEffect_UpdateRadialSpread);
+    FieldEffectSprite_SetObjectMode(effect, 7);
     ObjectGroup_SetChildValueUnlessFifteenFar(effect->object,
                                               SPRITE_COLOR_GREEN_TINT);
     effect->scaleX = 0x8000;
@@ -88,14 +89,14 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
 
     nextState = VENUS_PARTICLE_LAST_RISE;
     slotState = (s8 *)effectWork;
-    slotState += offsetof(struct FieldEffectWork, effects) +
-                 offsetof(struct EffectSlot, state);
+    slotState += offsetof(struct FieldEffectWork, sprites) +
+                 offsetof(struct FieldEffectSprite, state);
     remaining = 23;
     do {
       if (slotState[5] != 0)
         slotState[0] = nextState;
       remaining--;
-      slotState += sizeof(struct EffectSlot);
+      slotState += sizeof(struct FieldEffectSprite);
     } while (remaining >= 0);
   }
 
@@ -147,8 +148,8 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
     djinni->gravity = 0x50000;
     djinni->baseY = djinni->y;
     djinni->speed = Random16() + 0x16666;
-    Motion_SetTargetPositionFromMagnitudeAngle((struct Object *)djinni,
-                                               0x200000, Random16());
+    ObjectMotion_SetTargetPositionFromMagnitudeAngle((struct Object *)djinni,
+                                                     0x200000, Random16());
     Animation_ApplyChildValuesFar((struct DispatchObject *)djinni,
                                   SPRITE_COLOR_GREEN_TINT);
     djinni->lifetime = 8;
@@ -168,13 +169,13 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
 /// with SE_143. It then falls again 6 frames later, until
 /// FieldEffect_RunMercuryDjinnCapture sets MERCURY_DROPLET_LAST_FALL: its next
 /// splash is its last (enum MercuryDropletState).
-void FieldEffect_UpdateRandomTargetParticle(struct EffectSlot *effect) {
+void FieldEffect_UpdateRandomTargetParticle(struct FieldEffectSprite *effect) {
   struct Object *source;
   struct EffectVector position;
   s8 *statePointer;
   s32 state;
 
-  source = (struct Object *)ObjectEvent_GetById(gGameState.selectedLocalId);
+  source = (struct Object *)ObjectEvent_GetById(gGameState.leaderLocalId);
   statePointer = &effect->state;
   state = *statePointer;
 
@@ -198,7 +199,7 @@ void FieldEffect_UpdateRandomTargetParticle(struct EffectSlot *effect) {
     (*statePointer)++;
   } else if ((u8)(effect->state - MERCURY_DROPLET_FALLING) <=
              MERCURY_DROPLET_LAST_FALL - MERCURY_DROPLET_FALLING) {
-    if (EffectSlot_HasPendingTarget(effect) == 0) {
+    if (FieldEffectSprite_HasPendingTarget(effect) == 0) {
       position.x = effect->x;
       position.z = effect->z;
       Vector_AddPolarOffset(0xc0000, Random16(), &position);

@@ -7,11 +7,11 @@
 /// Each frame: runs the 16 tile animation channels. A channel script is
 /// groups of four halfwords (source tile, count, destination tile, frames to
 /// wait) that copy tiles into VRAM; 0xfeNN jumps to halfword offset NN * 2,
-/// 0xfeff stops, and 0xffff loops to the start. TileAnimation_StartChannels
+/// 0xfeff stops, and 0xffff loops to the start. TilesetAnim_StartAll
 /// schedules it (order 0xc80); the world map's still view
 /// (WorldMap_StartStillView) suspends it. Moves each channel's cursor and timer
 /// in the map work.
-void TileAnimation_Update(void) {
+void TilesetAnim_Update(void) {
   // Each channel is written (gridState->animations + channelIndex): as
   // gridState->animations[channelIndex], 78 of 119 instructions differ in
   // tbs-en, and a channel pointer swaps ip and lr. The retries stay gotos: as
@@ -89,30 +89,30 @@ void TileAnimation_Update(void) {
 
 /// Resumes tile animation channel channelIndex by clearing its paused byte.
 /// Map scripts and the lobby (menu/lobby.c, channel 5) reach it through
-/// TileAnimation_ResumeChannelFar.
-void TileAnimation_ResumeChannel(u32 channelIndex) {
+/// TilesetAnim_ResumeFar.
+void TilesetAnim_Resume(u32 channelIndex) {
   struct MapGridState *gridState = gMapGridWork[0];
-  struct TileAnimation *channel = &gridState->animations[channelIndex];
+  struct TilesetAnim *channel = &gridState->animations[channelIndex];
 
   channel->paused = 0;
 }
 
 /// Pauses tile animation channel channelIndex by setting its paused byte.
 /// Map scripts and the lobby (menu/lobby.c, channel 5) reach it through
-/// TileAnimation_PauseChannelFar.
-void TileAnimation_PauseChannel(u32 channelIndex) {
+/// TilesetAnim_PauseFar.
+void TilesetAnim_Pause(u32 channelIndex) {
   struct MapGridState *gridState = gMapGridWork[0];
-  struct TileAnimation *channel = &gridState->animations[channelIndex];
+  struct TilesetAnim *channel = &gridState->animations[channelIndex];
 
   channel->paused = 1;
 }
 
 /// Starts the tile animation channels a map's animation script lists: each
 /// 0xfdNN marker starts channel NN & 15 there (paused when bit 7 is set).
-/// Clears all 16 channels first, and schedules TileAnimation_Update when any
+/// Clears all 16 channels first, and schedules TilesetAnim_Update when any
 /// starts. Called by MapGrid_LoadLayout with the map's own script, and by
 /// WorldMap_InitializePerspective with the world map's default one.
-void TileAnimation_StartChannels(const u16 *script) {
+void TilesetAnim_StartAll(const u16 *script) {
   struct MapGridState *gridState;
   s32 channelsStarted;
   u32 marker;
@@ -127,7 +127,7 @@ void TileAnimation_StartChannels(const u16 *script) {
   marker = *script++;
   while (marker != 0xffff) {
     if ((marker & 0xff00) == 0xfd00) {
-      struct TileAnimation *channel;
+      struct TilesetAnim *channel;
       u32 channelIndex = marker & 15;
       u32 paused = 0;
       if (marker & 0x80)
@@ -143,32 +143,32 @@ void TileAnimation_StartChannels(const u16 *script) {
   }
   // A map with no channels never schedules the update.
   if (channelsStarted != 0)
-    Task_Add(TileAnimation_Update, 0xc80);
+    Task_Add(TilesetAnim_Update, 0xc80);
 }
 
 /// Suspends the tile animations, unless the world map's still view is shown.
 /// Menu_SuspendFieldTasks (menu/menu/common.c) calls it
-/// through TileAnimation_SuspendFar.
-void TileAnimation_Suspend(void) {
+/// through TilesetAnim_SuspendAllFar.
+void TilesetAnim_SuspendAll(void) {
   if (((struct MapGridScrollWork *)gMapGridWork[0])->animationActive == 0)
-    Task_SuspendAll(TileAnimation_Update);
+    Task_SuspendAll(TilesetAnim_Update);
 }
 
 /// Resumes the tile animations, unless the world map's still view is shown.
 /// Menu_ResumeFieldTasks (menu/menu/common.c) calls it
-/// through TileAnimation_ResumeFar.
-void TileAnimation_Resume(void) {
+/// through TilesetAnim_ResumeAllFar.
+void TilesetAnim_ResumeAll(void) {
   if (((struct MapGridScrollWork *)gMapGridWork[0])->animationActive == 0)
-    Task_ResumeAll(TileAnimation_Update);
+    Task_ResumeAll(TilesetAnim_Update);
 }
 
 /// Each frame: runs the map's blend script. A 0x3NNN command sets BLDCNT; any
 /// other sets BLDALPHA (or BLDY when not alpha blending) and waits the halfword
 /// after it in frames; 0xfeNN jumps, 0xfeff stops and 0xffff loops.
-/// DisplayBlend_StartScript schedules it (order 0xc80). Writes REG_BLDCNT,
+/// BlendScript_Start schedules it (order 0xc80). Writes REG_BLDCNT,
 /// REG_BLDALPHA and REG_BLDY, and keeps the last BLDCNT in the map work's
 /// blendControl.
-void DisplayBlend_RunScript(void) {
+void BlendScript_Run(void) {
   // The retries stay gotos: as a for (;;) loop with continue, loop.c hoists
   // blendControl's address and 118 bytes of tbs-en's code change.
   struct MapGridState *gridState = gMapGridWork[0];
@@ -231,9 +231,9 @@ again:
 }
 
 /// Starts a map's blend script, unless it is empty. Clears the map work's
-/// three-word blend state first, then schedules DisplayBlend_RunScript.
+/// three-word blend state first, then schedules BlendScript_Run.
 /// Called by MapGrid_LoadLayout when the map's header has a blend script.
-void DisplayBlend_StartScript(u16 *script) {
+void BlendScript_Start(u16 *script) {
   struct BlendScriptState *blend;
   s32 hasScript;
   volatile u32 zero;
@@ -253,17 +253,15 @@ void DisplayBlend_StartScript(u16 *script) {
     hasScript = 1;
   }
   if (hasScript)
-    Task_Add(DisplayBlend_RunScript, 0xc80);
+    Task_Add(BlendScript_Run, 0xc80);
 }
 
 /// Suspends the blend script. The lighthouse maps and Vale's Babi scene
-/// reach it through DisplayBlend_SuspendScriptFar.
-void DisplayBlend_SuspendScript(void) {
-  Task_SuspendAll(DisplayBlend_RunScript);
-}
+/// reach it through BlendScript_SuspendFar.
+void BlendScript_Suspend(void) { Task_SuspendAll(BlendScript_Run); }
 
-/// Resumes the blend script, through DisplayBlend_ResumeScriptFar.
-void DisplayBlend_ResumeScript(void) { Task_ResumeAll(DisplayBlend_RunScript); }
+/// Resumes the blend script, through BlendScript_ResumeFar.
+void BlendScript_Resume(void) { Task_ResumeAll(BlendScript_Run); }
 
 /// Unused: allocates the palette cycling queue (HEAP_SLOT_PALETTE_CYCLES) with
 /// its four entries cleared. Nothing calls it.

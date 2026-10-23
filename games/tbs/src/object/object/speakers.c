@@ -5,11 +5,11 @@
 #include "../object_internal.h"
 
 /// Returns the speaker definition of sprite id from
-/// gFieldEffect_DefinitionTable, or its last entry, the default, when there is
+/// gSpeakerDefinitions, or its last entry, the default, when there is
 /// none. The search stops after 0x82 entries, all but the table's last of its
 /// 131.
-struct FieldEffectDefinition *FieldEffect_FindDefinition(u32 id) {
-  struct FieldEffectDefinition *entry = gFieldEffect_DefinitionTable;
+struct SpeakerDefinition *Speaker_FindDefinition(u32 id) {
+  struct SpeakerDefinition *entry = gSpeakerDefinitions;
   u32 definitionIndex = 0;
 
   if (entry->id != id) {
@@ -25,10 +25,10 @@ struct FieldEffectDefinition *FieldEffect_FindDefinition(u32 id) {
 
 /// Returns the sprite id stored by a live object event's animated sprite, or 0
 /// when that object event has no animated sprite or its sprite-id pointer is
-/// absent. The object event must exist: a NULL from ObjectTable_Get is read
-/// through. Called by FieldEffect_GetFlags.
+/// absent. The object event must exist: a NULL from ObjectEvent_GetByLocalId is
+/// read through. Called by Speaker_GetIdleFlags.
 s32 FieldEffect_GetAnimationValue(s32 id) {
-  struct FieldEffectSpeakerObject *object = ObjectTable_Get(id);
+  struct SpeakerObject *object = ObjectEvent_GetByLocalId(id);
 
   if (object->kind != 1 || object->animation == NULL ||
       object->animation->value28 == NULL) {
@@ -43,11 +43,11 @@ s32 FieldEffect_GetAnimationValue(s32 id) {
 /// takes it in the high half of its last argument and
 /// Ui_SetMessageVoiceFromObjectEvent as the window's speakerVoiceSound
 /// (psynergy_effects/messages.c); the shops ask it for their keepers.
-s32 FieldEffect_GetResourceId(u32 id) {
+s32 Speaker_GetVoice(u32 id) {
   u8 portraitId;
 
   if (gGameState.speech == 0 ||
-      (portraitId = FieldEffect_FindDefinition(id)->value) == 0xFF) {
+      (portraitId = Speaker_FindDefinition(id)->value) == 0xFF) {
     return 0;
   }
   return portraitId + 0x100;
@@ -58,6 +58,6 @@ s32 FieldEffect_GetResourceId(u32 id) {
 /// event's pair of lines with them, and Halt cast with no map event
 /// (FieldEffect_Run) stops nothing when the nearest object event's flags are
 /// 0xff (FieldEffect_FilterObjectIdByFlags).
-s32 FieldEffect_GetFlags(s32 id) {
-  return FieldEffect_FindDefinition(FieldEffect_GetAnimationValue(id))->flags;
+s32 Speaker_GetIdleFlags(s32 id) {
+  return Speaker_FindDefinition(FieldEffect_GetAnimationValue(id))->flags;
 }

@@ -18,7 +18,7 @@ void MapGrid_SetScreenShake(s32 shakeX, s32 shakeY, s32 shakeDecay) {
 
   // A negative argument leaves that value alone, so a script can change the
   // decay without restarting the shake, or start one axis only. The view
-  // updates read the same three words on the world map (PerspectiveWork).
+  // updates read the same three words on the world map (WorldMapView).
   grid = gMapGridWork[0];
   if (shakeX >= 0) {
     grid->shakeX = shakeX;

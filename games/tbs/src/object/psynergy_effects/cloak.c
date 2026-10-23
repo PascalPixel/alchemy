@@ -5,7 +5,7 @@
 #include "../psynergy_effects_internal.h"
 
 /// The metatile behavior of the cells Cloak can stay hidden on: byte 2 of a
-/// cell (MapGridCell.collisionCode), or of a 4-byte gMetatiles entry on the
+/// cell (MapGridCell.behavior), or of a 4-byte gMetatiles entry on the
 /// world map.
 #define CLOAK_TILE 0xfb
 /// The Psynergy request that ends Cloak: ACT_PACKED (0x2000, no PP) |
@@ -32,7 +32,7 @@ void FieldEffect_CheckCloakTile(void) {
   slot = (u32)&gFieldWork;
 #endif
   work = (struct FieldWork *)gFieldWork;
-  leader = ObjectTable_Get(gGameState.selectedLocalId);
+  leader = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
 #ifdef UBFIX
   tile = gMapGridWork[0];
 #else
@@ -58,9 +58,8 @@ void FieldEffect_CheckCloakTile(void) {
 
     tile = (u8 *)gMetatiles + ((tx + (ty << 5)) << 2);
   } else {
-    if (leader->terrainId <= 2) {
-      tile =
-          (u8 *)((struct MapGridState *)tile)->layers[leader->terrainId].cells;
+    if (leader->layer <= 2) {
+      tile = (u8 *)((struct MapGridState *)tile)->layers[leader->layer].cells;
     } else
       tile = (u8 *)gMapGridCellBuffer;
 
@@ -94,7 +93,7 @@ void FieldEffect_EndCloak(void) {
   struct AnimationEntry *entry;
   u32 i;
 
-  object = ObjectTable_Get(gGameState.selectedLocalId);
+  object = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
   animation = object->animation;
   entry = animation->entries[0];
 
@@ -138,15 +137,15 @@ void FieldEffect_ResumeCloakCheck(void) {
 /// The leader blinks 10 times and hides (cloaked set), and the tile check
 /// starts; where the leader cannot hide it shows again at once.
 ///
-/// Abilities: Cloak (FIELD_KIND_CLOAK).
+/// Abilities: Cloak (FIELD_PSYNERGY_CLOAK).
 ///
 /// Hidden, the leader is drawn as an outline only (SPRITE_FLAG_OUTLINED, no
 /// shadow), and while gGameState.cloaked is set no random battles come
-/// (Encounter_SelectEnemyGroup). Called by FieldEffect_Run and
+/// (Encounter_CountStepsAndSelectFormation). Called by FieldEffect_Run and
 /// FieldEffect_DispatchRequestKind.
 void FieldEffect_StartCloak(void) {
   struct FieldWork *work = (struct FieldWork *)gFieldWork;
-  struct Object *leader = ObjectTable_Get(gGameState.selectedLocalId);
+  struct Object *leader = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
   struct AnimationObject *animation = leader->animation;
   struct AnimationEntry *entry = animation->entries[0];
   u32 n;

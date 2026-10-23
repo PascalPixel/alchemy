@@ -26,7 +26,7 @@ STATIC_ASSERT(sizeof(struct FadeOverlayWork) == 28);
 /// FieldEffect_StartFadeOverlay until the next map change.
 extern struct FadeOverlayWork *gObjectEventEffectWork;
 
-#define FIELD_WEATHER_PARTICLE_COUNT 32 ///< GroundParticleWork.particles
+#define WEATHER_PARTICLE_COUNT 32 ///< WeatherWork.particles
 
 /// One weather particle: OAM attributes followed by its world position.
 struct GroundParticle {
@@ -60,18 +60,18 @@ struct GroundParticle {
 STATIC_ASSERT(offsetof(struct GroundParticle, positionX) == 0x0c);
 STATIC_ASSERT(sizeof(struct GroundParticle) == 0x20);
 
-/// HEAP_SLOT_GROUND_PARTICLES while ground particles, motes or sparkles run.
-struct GroundParticleWork {
+/// HEAP_SLOT_WEATHER while ground particles, motes or sparkles run.
+struct WeatherWork {
   s32 entry;    ///< Resource entry holding the effect's tiles.
   s32 tileBase; ///< Their first tile in VRAM.
-  struct GroundParticle particles[FIELD_WEATHER_PARTICLE_COUNT];
+  struct GroundParticle particles[WEATHER_PARTICLE_COUNT];
   s32 unused;  ///< Unused by the weather effects.
   s32 stopped; ///< Nonzero stops new sparkle bursts.
 };
 
-STATIC_ASSERT(sizeof(struct GroundParticleWork) == 0x410);
+STATIC_ASSERT(sizeof(struct WeatherWork) == 0x410);
 
-/// HEAP_SLOT_GROUND_PARTICLES: the running ground particles, motes or sparkles.
-extern struct GroundParticleWork *gParticleWork;
+/// HEAP_SLOT_WEATHER: the running ground particles, motes or sparkles.
+extern struct WeatherWork *gParticleWork;
 
 #endif

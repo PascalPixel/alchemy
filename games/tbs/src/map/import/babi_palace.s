@@ -5,8 +5,8 @@
 	.set import.Engine_HeapRelease, 1
 	.set import.Engine_VramLoad, 1
 	.set import.Engine_MapGridAnimateCells, 1
-	.set import.TileAnimation_ResumeChannel, 1
-	.set import.TileAnimation_PauseChannel, 1
+	.set import.TilesetAnim_Resume, 1
+	.set import.TilesetAnim_Pause, 1
 	.set import.Engine_ObjectEventSetSpriteFlags, 1
 	.set import.Engine_MessageShowCentered, 1
 	.set import.Engine_UiTextDrawQuantity, 1
@@ -53,14 +53,14 @@
 	.set import.Engine_CameraMoveTo, 1
 	.set import.Engine_CameraWaitForMove, 1
 	.set import.Engine_ScriptRequestWarp, 1
-	.set import.DisplayTransition_InitializeBattleEffectState, 1
+	.set import.ScreenTransition_InitializeBattleEffectState, 1
 	.set import.Engine_ScriptOpenScreen, 1
 	.set import.Engine_ScriptWaitForScreen, 1
 	.set import.Engine_ItemShowFound, 1
 	.set import.Field_EndBusyAndReveal, 1
 	.set import.Engine_PsynergyCancel, 1
 	.set import.Map_PlayMusic, 1
-	.set import.Motion_LaunchFromFocusedObject, 1
+	.set import.ObjectMotion_LaunchFromFocusedObject, 1
 	.set import.Engine_ObjectEventWalkBy, 1
 	.set import.Engine_ObjectEventWalkByAndWait, 1
 	.set import.ObjectEvent_LinkObjectAndSetCallback, 1

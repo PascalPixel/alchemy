@@ -11,7 +11,7 @@ void Colosso_WalkObjectEventToAndStand(s32 localId, s32 x, s32 z);
 #endif
 void Colosso_RestoreWarrior(s32 id);
 
-void OverlayObject_ResetMotionFields(s32 localId);
+void ObjectEvent_ResetMotionFields(s32 localId);
 
 void Colosso_MovePointer(u32 x, u32 y, u32 duration);
 void Colosso_HidePointer(void);

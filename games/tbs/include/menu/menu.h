@@ -34,7 +34,7 @@ extern u8 gStatusMenu_LevelLetterString[];
 struct AnimationObject;
 struct BattleAct;
 struct DjinnListTable;
-struct EffectSlot;
+struct FieldEffectSprite;
 struct MenuResult;
 struct ObjectSystemWork;
 struct OwnerActionSlot;

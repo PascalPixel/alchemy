@@ -106,7 +106,7 @@ void FieldEffect_SpawnScaledArcObjects(struct ObjectEvent *linked) {
     arcs[arcIndex] = arc;
     if (arc == 0)
       continue;
-    arc->terrainHeight = linked->terrainHeight;
+    arc->groundHeight = linked->groundHeight;
     sprite = (struct ArcSprite *)arc->sprite;
     arc->motionFlags = 0;
     arc->timer = 0;
@@ -137,7 +137,7 @@ void FieldEffect_SpawnScaledArcObjects(struct ObjectEvent *linked) {
 }
 
 /// Per-frame update: flashes an object between sprite param 7 and 0 every 2
-/// frames and spawns the swelling arcs on it every 16. EventObject_Initialize
+/// frames and spawns the swelling arcs on it every 16. FieldEffect_StartCast
 /// gives it to the caster as a cast starts with a flash (scene->visible).
 void FieldEffect_FlickerObjectAndTick(union FieldObject *fieldObject) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
@@ -155,7 +155,7 @@ void FieldEffect_FlickerObjectAndTick(union FieldObject *fieldObject) {
 
 /// Per-frame update: cycles an object through sprite params 0 to 5, one step
 /// every 2 frames, and spawns the swelling arcs on it every 16.
-/// EventObject_Initialize gives it to the caster in place of the flicker
+/// FieldEffect_StartCast gives it to the caster in place of the flicker
 /// while flag 0x140 is set.
 void FieldEffect_CycleObjectValueByCounter(union FieldObject *fieldObject) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;

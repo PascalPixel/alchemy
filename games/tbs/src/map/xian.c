@@ -291,7 +291,7 @@ static s32 Xian_WatchWaterCarrierPath(union FieldObject *fieldObject) {
     self->riseCounter = 0;
   }
   if (near && self->riseCounter > XIAN_CARRIER_BLOCKED_FRAMES - 1) {
-    gFieldWork->raisedTrigger = XIAN_TRIGGER_CARRIER_BLOCKED;
+    gFieldWork->raisedEvent = XIAN_TRIGGER_CARRIER_BLOCKED;
     self->riseCounter = 0;
   }
   Xian_UpdateCarrierTracking(self, leader, 18, near);
@@ -321,7 +321,7 @@ const struct ObjectEventTemplate *Xian_GetObjectEventTemplates(void) {
   if (Engine_GameFlagIsSet(FLAG_XIAN_HEARD_HSU_TRAPPED) != 0)
     gXian_ObjectEventTemplates[LOCALID_MUSCULAR_MAN_ON_DISASTERS -
                                LOCALID_FIRST_PLACED]
-        .talkFacing = TALK_FACE_PARTY;
+        .talkFacing = TALK_FACING_PARTY;
   return gXian_ObjectEventTemplates;
 }
 
@@ -457,7 +457,7 @@ static void Xian_TalkToWaterCarrier(void) {
   Engine_ScriptWait(70);
   Engine_ScriptSetMessage(MsgXianDoingMadeMeSpillMy);
   Script_ShowMessageAndWait(LOCALID_WOMAN_CARRYING_WATER, 0, 20);
-  FieldEffect_PlayQueuedSound();
+  Map_PlayQueuedMusic();
   if ((ObjectEvent_GetById(LOCALID_PARTY_LEADER)->x.fixed >> 20) == 26 &&
       (ObjectEvent_GetById(LOCALID_PARTY_LEADER)->z.fixed >> 20) > 13) {
     leaderMustStepAside = 1;
@@ -615,7 +615,7 @@ static void Xian_TalkToKungFuStudent(void) {
     Engine_ScriptWait(20);
     Engine_ScriptShowMessageAndWait(LOCALID_KUNG_FU_STUDENT, 0, 20);
     Engine_GameFlagSet(FLAG_MAP_TEMP_02);
-    FieldEffect_PlayQueuedSound();
+    Map_PlayQueuedMusic();
     Engine_ScriptEnd();
   }
 }
@@ -694,7 +694,7 @@ static void Xian_OpenDoorAndLeave(void) {
 
   Engine_ScriptStart();
 
-  switch (work->touchedTrigger) {
+  switch (work->coordEvent) {
   case XIAN_TO_HOUSE:
     Engine_AudioPlayCue(SE_DOOR_OPEN);
     Engine_MapGridAnimateCells(gXian_HouseDoorOpens, 81, 18);
@@ -727,7 +727,7 @@ static void Xian_OpenDoorAndLeave(void) {
     break;
   }
 
-  Xian_WalkThroughExit(work->touchedTrigger);
+  Xian_WalkThroughExit(work->coordEvent);
   Engine_ScriptEnd();
 }
 
@@ -763,7 +763,7 @@ static void Xian_StrikeTrainingTreeWithForce(void) {
   }
   Engine_ScriptShowMessage(LOCALID_KUNG_FU_STUDENT, 0);
   Engine_GameFlagSet(FLAG_MAP_TEMP_03);
-  FieldEffect_PlayQueuedSound();
+  Map_PlayQueuedMusic();
   Engine_ScriptEnd();
 }
 
@@ -821,8 +821,8 @@ s32 Xian_Initialize(void) {
   struct ObjectEvent *objectEvent;
   u32 crateIndex;
 
-  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  FieldEffect_SetQueuedSoundAndPlay(SE_169);
+  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  Map_QueueMusic(SE_169);
   // Back from the school (XIAN_FROM_FUCHIN_TEMPLE_INTERIORS) or the Sanctum
   // (XIAN_FROM_SANCTUM_WEST), the last two warp destinations, the name is not
   // shown.
@@ -842,7 +842,7 @@ s32 Xian_Initialize(void) {
   if (Engine_GameFlagIsSet(FLAG_FEIZHI_SAW_ROCKSLIDE)) {
     Engine_ObjectEventSetPosition(LOCALID_FEIZHI, 0, 0);
   }
-  // Set the three crates up as OverlayObject_CreateConfiguredObject sets up
+  // Set the three crates up as ObjectEvent_CreateConfiguredObject sets up
   // its objects: still, not solid, never a target and hidden.
   for (crateIndex = 0; crateIndex <= 2; crateIndex++) {
     struct ObjectEvent *objectEvent;
@@ -1043,41 +1043,41 @@ u32 gXian_Warps[] = {
 // clang-format off
 struct ObjectEventTemplate gXian_ObjectEventTemplates[] = {
     { SPRITE_YOUNG_MAN_IN_BLUE_JACKET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(328), 0, PIXELS(448), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(328), 0, PIXELS(448), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_BLACK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(152), 0, PIXELS(184), FACING_SOUTHEAST, TALK_FACE_PARTY, 0 },
+        PIXELS(152), 0, PIXELS(184), FACING_SOUTHEAST, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_WITH_TOPKNOT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(420), 0, PIXELS(304), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(420), 0, PIXELS(304), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_MAN_IN_BLUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(144), 0, PIXELS(232), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(144), 0, PIXELS(232), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_WOMAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(312), 0, PIXELS(200), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(312), 0, PIXELS(200), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_BOY_IN_GREEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(264), 0, PIXELS(184), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(264), 0, PIXELS(184), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_GIRL_IN_PINK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(192), 0, PIXELS(312), FACING_WEST, TALK_KEEP_FACING, 0 },
+        PIXELS(192), 0, PIXELS(312), FACING_WEST, TALK_FACING_KEEP, 0 },
     { SPRITE_MUSCULAR_MAN_WITH_TOPKNOT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(428), 0, PIXELS(432), FACING_WEST, TALK_FACE_PARTY, 0 },
+        PIXELS(428), 0, PIXELS(432), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_BLACK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(200), 0, PIXELS(440), FACING_NORTH, TALK_FACE_PARTY, 0 },
+        PIXELS(200), 0, PIXELS(440), FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_FEIZHI, IF_FLAG_SET(FLAG_FEIZHI_WENT_TO_HSU), MOVEMENT_TYPE_STAND,
-        PIXELS(368), 0, PIXELS(496), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_THEN_WATCH, 0 },
+        PIXELS(368), 0, PIXELS(496), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_THEN_WATCH, 0 },
     { SPRITE_WOMAN_WITH_BLACK_HAIR, CONDITION_ALWAYS, (s32)gXian_WaterCarrierRoute,
-        PIXELS(280), 0, PIXELS(232), FACING_WEST, TALK_KEEP_FACING, 0 },
+        PIXELS(280), 0, PIXELS(232), FACING_WEST, TALK_FACING_KEEP, 0 },
     { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
-        PIXELS(168), 0, PIXELS(312), FACING_WEST, TALK_FACE_PARTY, 0 },
+        PIXELS(168), 0, PIXELS(312), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, 7,
-        0, 0, 0, FACING_WEST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(168), 0, PIXELS(312), FACING_WEST, TALK_FACE_PARTY, 0 },
+        PIXELS(168), 0, PIXELS(312), FACING_WEST, TALK_FACING_PARTY, 0 },
     { MERCURY_DJINNI, FLAG_DJINNI(DJINNI_MIST), MOVEMENT_TYPE_STAND,
-        PIXELS(448), 0, PIXELS(328), FACING_WEST, TALK_FACE_PARTY, 0 },
+        PIXELS(448), 0, PIXELS(328), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_CRATE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(426), 0, PIXELS(428), FACING_WEST, TALK_FACE_PARTY, 0 },
+        PIXELS(426), 0, PIXELS(428), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_CRATE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(299), 0, PIXELS(222), FACING_WEST, TALK_FACE_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(299), 0, PIXELS(222), FACING_WEST, TALK_FACING_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_CRATE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(168), 0, PIXELS(280), FACING_WEST, TALK_FACE_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(168), 0, PIXELS(280), FACING_WEST, TALK_FACING_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { MAP_TABLE_END },
 };
 

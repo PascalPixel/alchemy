@@ -28,7 +28,7 @@ struct WaveEffectWork {
 /// palettes toward a hue that shifts with the frame counter, and starts its
 /// per-frame update (FieldEffect_UpdateMindReadWave) after 8 frames.
 ///
-/// Abilities: Mind Read (FIELD_KIND_MIND_READ).
+/// Abilities: Mind Read (FIELD_PSYNERGY_MIND_READ).
 ///
 /// The effect stays up until FieldEffect_FinishMindRead ends it
 /// after the after event; meanwhile the message windows show thoughts

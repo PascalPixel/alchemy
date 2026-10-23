@@ -32,21 +32,21 @@
 // they stop.
 //
 // A large thing is one of six footprints, by its sprite's animation
-// (gStagedObjectEvent_FootprintKinds): its bounds in
-// gStagedObjectEvent_FootprintBounds are four words a footprint, the left, top,
+// (gPushedObject_FootprintKinds): its bounds in
+// gPushedObject_FootprintBounds are four words a footprint, the left, top,
 // right and bottom edges in pixels from its position.
 
 /// Pixel step by direction: X in the upper halfword, Z in the lower.
-extern s32 gStagedObjectEvent_DirectionSteps[];
-extern s32 gStagedObjectEvent_FootprintBounds[];
+extern s32 gPushedObject_DirectionSteps[];
+extern s32 gPushedObject_FootprintBounds[];
 
 #include "object_distance.h"
 
 /// Returns the placed object event on the cell of the 16.16 position and at its
 /// height (in whole pixels), or 0. origin is not read.
 static struct ObjectEvent *
-StagedObjectEvent_FindAtTile(const struct FieldPosition *position,
-                             const struct ObjectEvent *origin) {
+PushedObject_FindAtTile(const struct FieldPosition *position,
+                        const struct ObjectEvent *origin) {
   struct FieldWork *work = (struct FieldWork *)gFieldWork;
   struct ObjectEvent **slots = work->objectEvents;
   u32 i;
@@ -55,7 +55,7 @@ StagedObjectEvent_FindAtTile(const struct FieldPosition *position,
        i < sizeof(work->objectEvents) / sizeof(work->objectEvents[0]); i++) {
     struct ObjectEvent *objectEvent = (struct ObjectEvent *)slots[i];
 
-    // UB: ObjectTable_ClearAll leaves unfilled slots null. The guard grows
+    // UB: ObjectEvent_ClearAll leaves unfilled slots null. The guard grows
     // this helper from 0x58 to 0x5c bytes in the native English trial.
 #ifdef UBFIX
     if (objectEvent == NULL)
@@ -74,7 +74,7 @@ StagedObjectEvent_FindAtTile(const struct FieldPosition *position,
 /// something solid is beyond it or on top of it, the ground beyond refuses it
 /// or it is still moving: after a quarter second's push (animation 8) it and
 /// the leader slide one cell together, with SE_PUSH.
-UNUSED static void StagedObjectEvent_AdvancePair(void) {
+UNUSED static void PushedObject_AdvancePair(void) {
   struct FieldPosition dst;
   struct ObjectEvent *lead;
   struct ObjectEvent *next;
@@ -85,33 +85,33 @@ UNUSED static void StagedObjectEvent_AdvancePair(void) {
 
   lead = ObjectEvent_GetById(0);
   dir = lead->facing >> 12;
-  step = gStagedObjectEvent_DirectionSteps[dir];
+  step = gPushedObject_DirectionSteps[dir];
   dst.x = lead->x.fixed + (step & 0xffff0000);
   dst.y = lead->y.fixed;
   step <<= 16;
   dst.z = lead->z.fixed + step;
-  next = StagedObjectEvent_FindAtTile(&dst, lead);
+  next = PushedObject_FindAtTile(&dst, lead);
   if (next == 0)
     return;
 
-  step = gStagedObjectEvent_DirectionSteps[dir];
+  step = gPushedObject_DirectionSteps[dir];
   dst.x = next->x.fixed + (step & 0xffff0000);
   dst.y = next->y.fixed;
   step <<= 16;
   dst.z = next->z.fixed + step;
-  blocker = StagedObjectEvent_FindAtTile(&dst, next);
+  blocker = PushedObject_FindAtTile(&dst, next);
   if (blocker != 0 && (blocker->collisionFlags & 1) != 0)
     return;
 
   dst.x = next->x.fixed;
   dst.y = next->y.fixed + 0x100000;
   dst.z = next->z.fixed;
-  blocker = StagedObjectEvent_FindAtTile(&dst, next);
+  blocker = PushedObject_FindAtTile(&dst, next);
   if (blocker != 0 && (blocker->collisionFlags & 1) != 0)
     return;
 
-  next->terrainId = 2;
-  step = gStagedObjectEvent_DirectionSteps[dir];
+  next->layer = 2;
+  step = gPushedObject_DirectionSteps[dir];
   dst.x = next->x.fixed + (step & 0xffff0000);
   dst.y = next->y.fixed;
   step <<= 16;
@@ -133,7 +133,7 @@ UNUSED static void StagedObjectEvent_AdvancePair(void) {
   lead->acceleration = rate;
   Engine_ObjectSetPosition(lead, dst.x, dst.y, dst.z);
   Object_WaitForMove(next);
-  FieldEffect_PlayQueuedSound();
+  Map_PlayQueuedMusic();
   next->x.fixed = dst.x;
   next->z.fixed = dst.z;
   next->velocityX = 0;
@@ -150,9 +150,9 @@ UNUSED static void StagedObjectEvent_AdvancePair(void) {
 /// Sets the metatile behavior of a width by height rectangle of cells, from
 /// cell (x, z), to value, on map grid layer 0 to 2, or (3 and up) in
 /// gMapGridCellBuffer.
-static s32 StagedObjectEvent_FillGridAttributeRectangle(u32 layer, s32 x, s32 z,
-                                                        u32 width, u32 height,
-                                                        s32 value) {
+static s32 PushedObject_FillGridAttributeRectangle(u32 layer, s32 x, s32 z,
+                                                   u32 width, u32 height,
+                                                   s32 value) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
   struct MapGridCell *cells;
   u32 row;
@@ -169,7 +169,7 @@ static s32 StagedObjectEvent_FillGridAttributeRectangle(u32 layer, s32 x, s32 z,
       struct MapGridCell *cell = cells + (row << 7);
 
       for (column = 0; column < width; column++) {
-        cell->collisionCode = value;
+        cell->behavior = value;
         cell++;
       }
     }
@@ -183,15 +183,13 @@ static s32 StagedObjectEvent_FillGridAttributeRectangle(u32 layer, s32 x, s32 z,
 /// The leader's movement callback while pushing a large thing: stop the leader
 /// when another object event that is not a large thing, or a wall, is in the
 /// way.
-static void
-StagedObjectEvent_StopBlockedMotion(union FieldObject *fieldObject) {
+static void PushedObject_StopBlockedMotion(union FieldObject *fieldObject) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
 #else
 /// The leader's movement callback while pushing a large thing: stop the leader
 /// when another object event that is not a large thing, or a wall, is in the
 /// way.
-static s32
-StagedObjectEvent_StopBlockedMotion(struct ObjectEvent *objectEvent) {
+static s32 PushedObject_StopBlockedMotion(struct ObjectEvent *objectEvent) {
 #endif
   struct FieldPosition probe;
   u32 dir;
@@ -199,16 +197,16 @@ StagedObjectEvent_StopBlockedMotion(struct ObjectEvent *objectEvent) {
   struct ObjectEvent *target;
 
   dir = objectEvent->facing >> 12;
-  step = gStagedObjectEvent_DirectionSteps[dir];
+  step = gPushedObject_DirectionSteps[dir];
   probe.x = objectEvent->x.fixed + (step & 0xffff0000);
   probe.y = objectEvent->y.fixed;
   step <<= 16;
   probe.z = objectEvent->z.fixed + step;
-  target = StagedObjectEvent_FindAtTile(&probe, objectEvent);
+  target = PushedObject_FindAtTile(&probe, objectEvent);
   if (target != 0) {
     u32 i = 0;
     s32 kind = target->sprite->entries[0]->animationId;
-    s32 *kinds = gStagedObjectEvent_FootprintKinds;
+    s32 *kinds = gPushedObject_FootprintKinds;
 
     do {
       if (kind == *kinds++) {
@@ -225,7 +223,7 @@ StagedObjectEvent_StopBlockedMotion(struct ObjectEvent *objectEvent) {
     objectEvent->targetX = 0x80000000;
     objectEvent->targetZ = 0x80000000;
   }
-  step = gStagedObjectEvent_DirectionSteps[dir];
+  step = gPushedObject_DirectionSteps[dir];
   probe.x = objectEvent->x.fixed + (step & 0xffff0000);
   probe.y = objectEvent->y.fixed;
   step <<= 16;
@@ -267,26 +265,26 @@ static struct ObjectEvent *Map_FindObjectEventRegion(s32 *direction, s32 *slot,
 #endif
     kind = objectEvent->sprite->entries[0]->animationId;
     for (j = 0; j < 6; j++) {
-      if (kind == gStagedObjectEvent_FootprintKinds[j]) {
+      if (kind == gPushedObject_FootprintKinds[j]) {
         s32 x, z, left, top, right, bottom;
         *footprint = j;
         x = ((player->x.fixed >> 16) +
-             (gStagedObjectEvent_DirectionSteps[*direction] >> 16)) >>
+             (gPushedObject_DirectionSteps[*direction] >> 16)) >>
             4;
         z = ((player->z.fixed >> 16) +
-             (s16)gStagedObjectEvent_DirectionSteps[*direction]) >>
+             (s16)gPushedObject_DirectionSteps[*direction]) >>
             4;
         left = (objectEvent->x.part.pixel +
-                gStagedObjectEvent_FootprintBounds[j * 4 + 0]) >>
+                gPushedObject_FootprintBounds[j * 4 + 0]) >>
                4;
         top = (objectEvent->z.part.pixel +
-               gStagedObjectEvent_FootprintBounds[j * 4 + 1]) >>
+               gPushedObject_FootprintBounds[j * 4 + 1]) >>
               4;
         right = (objectEvent->x.part.pixel +
-                 gStagedObjectEvent_FootprintBounds[j * 4 + 2]) >>
+                 gPushedObject_FootprintBounds[j * 4 + 2]) >>
                 4;
         bottom = (objectEvent->z.part.pixel +
-                  gStagedObjectEvent_FootprintBounds[j * 4 + 3]) >>
+                  gPushedObject_FootprintBounds[j * 4 + 3]) >>
                  4;
         if (left <= x && x < right && top <= z && z < bottom) {
           if (j & 1) {
@@ -311,7 +309,7 @@ static struct ObjectEvent *Map_FindObjectEventRegion(s32 *direction, s32 *slot,
 /// footprint and that position; returns 0 when there is no thing or it cannot
 /// move.
 UNUSED static s32
-StagedObjectEvent_FindClearPosition(struct StagedObjectEventProbe *probe) {
+PushedObject_FindClearPosition(struct PushedObjectProbe *probe) {
   s32 direction;
   struct FieldPosition position;
   struct ObjectEvent *objectEvent;
@@ -328,51 +326,50 @@ StagedObjectEvent_FindClearPosition(struct StagedObjectEventProbe *probe) {
   if (objectEvent == 0) {
     return 0;
   }
-  mode = &objectEvent->terrainId;
+  mode = &objectEvent->layer;
   *mode = 2;
   {
     s32 footprint = probe->footprintIndex;
 
     steps = 0;
     offset = footprint * 4;
-    nearEdge = gStagedObjectEvent_FootprintBounds[offset + 1];
+    nearEdge = gPushedObject_FootprintBounds[offset + 1];
     if (nearEdge < 0) {
       nearEdge = -nearEdge;
     }
-    farEdge = gStagedObjectEvent_FootprintBounds[offset + 3];
+    farEdge = gPushedObject_FootprintBounds[offset + 3];
     if (farEdge < 0) {
       farEdge = -farEdge;
     }
     height = (nearEdge + farEdge) >> 4;
-    nearEdge = gStagedObjectEvent_FootprintBounds[offset];
+    nearEdge = gPushedObject_FootprintBounds[offset];
     if (nearEdge < 0) {
       nearEdge = -nearEdge;
     }
-    farEdge = gStagedObjectEvent_FootprintBounds[offset + 2];
+    farEdge = gPushedObject_FootprintBounds[offset + 2];
     if (farEdge < 0) {
       farEdge = -farEdge;
     }
     width = (nearEdge + farEdge) >> 4;
   }
   position.x = objectEvent->x.fixed +
-               (gStagedObjectEvent_DirectionSteps[direction] & 0xffff0000);
+               (gPushedObject_DirectionSteps[direction] & 0xffff0000);
   {
     s32 y = objectEvent->y.fixed;
 
     position.y = y;
-    position.z = objectEvent->z.fixed +
-                 (gStagedObjectEvent_DirectionSteps[direction] << 16);
+    position.z =
+        objectEvent->z.fixed + (gPushedObject_DirectionSteps[direction] << 16);
     probe->position.y = y;
   }
   for (;;) {
     probe->position.z =
         position.z +
-        (gStagedObjectEvent_FootprintBounds[probe->footprintIndex * 4 + 1]
-         << 16);
+        (gPushedObject_FootprintBounds[probe->footprintIndex * 4 + 1] << 16);
     for (row = 0; row < height; row++) {
       probe->position.x =
           position.x +
-          (gStagedObjectEvent_FootprintBounds[probe->footprintIndex * 4] << 16);
+          (gPushedObject_FootprintBounds[probe->footprintIndex * 4] << 16);
       for (column = 0; column < width; column++) {
         if (FieldObject_CheckMovementCollision(objectEvent, &probe->position) ==
             2) {
@@ -383,8 +380,8 @@ StagedObjectEvent_FindClearPosition(struct StagedObjectEventProbe *probe) {
       probe->position.z += 0x100000;
     }
     steps++;
-    position.x += gStagedObjectEvent_DirectionSteps[direction] & 0xffff0000;
-    position.z += gStagedObjectEvent_DirectionSteps[direction] << 16;
+    position.x += gPushedObject_DirectionSteps[direction] & 0xffff0000;
+    position.z += gPushedObject_DirectionSteps[direction] << 16;
   }
 found:
   *mode = 0;
@@ -393,11 +390,10 @@ found:
   }
   probe->position.x =
       objectEvent->x.fixed +
-      (gStagedObjectEvent_DirectionSteps[direction] & 0xffff0000) * steps;
+      (gPushedObject_DirectionSteps[direction] & 0xffff0000) * steps;
   probe->position.y = objectEvent->y.fixed;
-  probe->position.z =
-      objectEvent->z.fixed +
-      (gStagedObjectEvent_DirectionSteps[direction] << 16) * steps;
+  probe->position.z = objectEvent->z.fixed +
+                      (gPushedObject_DirectionSteps[direction] << 16) * steps;
   return 1;
 }
 
@@ -407,8 +403,7 @@ found:
 /// SE_STOP_SLOT3 and SE_HEAVY_STOP. Its cells are blocked (metatile behavior
 /// 255) at its new place, through the map grid's layer 1 offset, and its old
 /// place is given back what was under it.
-UNUSED static void
-MapObjectEvent_MoveAndRedraw(struct StagedObjectEventProbe probe) {
+UNUSED static void ObjectEvent_MoveAndRedraw(struct PushedObjectProbe probe) {
   struct MapGridScrollWork *workspace;
   struct ObjectEvent *objectEvent;
   struct FieldPosition originalPosition;
@@ -427,22 +422,21 @@ MapObjectEvent_MoveAndRedraw(struct StagedObjectEventProbe probe) {
 #endif
   direction = (ObjectEvent_GetById(0))->facing >> 12;
   objectEvent = ObjectEvent_GetById(probe.objectEventSlot);
-  footprintTable = (u8 *)gStagedObjectEvent_FootprintBounds;
+  footprintTable = (u8 *)gPushedObject_FootprintBounds;
   {
-    s32 extentA =
-        gStagedObjectEvent_FootprintBounds[probe.footprintIndex * 4 + 1];
+    s32 extentA = gPushedObject_FootprintBounds[probe.footprintIndex * 4 + 1];
     s32 extentB;
 
     if (extentA < 0)
       extentA = -extentA;
-    extentB = gStagedObjectEvent_FootprintBounds[probe.footprintIndex * 4 + 3];
+    extentB = gPushedObject_FootprintBounds[probe.footprintIndex * 4 + 3];
     if (extentB < 0)
       extentB = -extentB;
     verticalExtent = (extentA + extentB) >> 4;
-    extentA = gStagedObjectEvent_FootprintBounds[probe.footprintIndex * 4 + 0];
+    extentA = gPushedObject_FootprintBounds[probe.footprintIndex * 4 + 0];
     if (extentA < 0)
       extentA = -extentA;
-    extentB = gStagedObjectEvent_FootprintBounds[probe.footprintIndex * 4 + 2];
+    extentB = gPushedObject_FootprintBounds[probe.footprintIndex * 4 + 2];
     if (extentB < 0)
       extentB = -extentB;
     horizontalExtent = (extentA + extentB) >> 4;
@@ -463,8 +457,8 @@ MapObjectEvent_MoveAndRedraw(struct StagedObjectEventProbe probe) {
     tilePosition.z >>= 20;
   }
 
-  StagedObjectEvent_FillGridAttributeRectangle(
-      0, tilePosition.x, tilePosition.z, horizontalExtent, verticalExtent, 0);
+  PushedObject_FillGridAttributeRectangle(0, tilePosition.x, tilePosition.z,
+                                          horizontalExtent, verticalExtent, 0);
   Engine_ObjectEventSetSpeed(0, 0x8000, 0x1999);
   Engine_ObjectEventSetAnimation(0, ANIMATION_PUSH);
   Engine_ScriptWait(15);
@@ -484,10 +478,10 @@ MapObjectEvent_MoveAndRedraw(struct StagedObjectEventProbe probe) {
   }
 
 #ifdef UBFIX
-  ObjectEvent_GetById(0)->update = StagedObjectEvent_StopBlockedMotion;
+  ObjectEvent_GetById(0)->update = PushedObject_StopBlockedMotion;
 #else
   ObjectEvent_GetById(0)->update =
-      (void (*)(union FieldObject *))StagedObjectEvent_StopBlockedMotion;
+      (void (*)(union FieldObject *))PushedObject_StopBlockedMotion;
 #endif
   Engine_ScriptWait(4);
   if ((u32)(direction - 6) <= 7)
@@ -503,7 +497,7 @@ MapObjectEvent_MoveAndRedraw(struct StagedObjectEventProbe probe) {
   ObjectEvent_SetSpeed(0, 0x4ccc, 0x1999);
 
   {
-    s32 packedOrientation = gStagedObjectEvent_DirectionSteps[direction];
+    s32 packedOrientation = gPushedObject_DirectionSteps[direction];
     Engine_ObjectEventSetDestinationOffset(
         0, ((s16)(packedOrientation >> 16)) / 2, ((s16)packedOrientation) / 2);
   }
@@ -524,7 +518,7 @@ MapObjectEvent_MoveAndRedraw(struct StagedObjectEventProbe probe) {
   ObjectEvent_SetMode(objectEvent, 1);
 
   {
-    u8 *table = (u8 *)gStagedObjectEvent_FootprintBounds;
+    u8 *table = (u8 *)gPushedObject_FootprintBounds;
     s32 horizontalOrigin;
     s32 verticalOrigin;
 
@@ -544,12 +538,12 @@ MapObjectEvent_MoveAndRedraw(struct StagedObjectEventProbe probe) {
     MapGrid_CopyCellAttributes(
         probe.position.x, probe.position.z, horizontalExtent, verticalExtent,
         horizontalOrigin + probe.position.x, verticalOrigin + probe.position.z);
-    StagedObjectEvent_FillGridAttributeRectangle(
-        0, probe.position.x, probe.position.z, horizontalExtent, verticalExtent,
-        255);
-    StagedObjectEvent_FillGridAttributeRectangle(
-        2, probe.position.x, probe.position.z, horizontalExtent, verticalExtent,
-        255);
+    PushedObject_FillGridAttributeRectangle(0, probe.position.x,
+                                            probe.position.z, horizontalExtent,
+                                            verticalExtent, 255);
+    PushedObject_FillGridAttributeRectangle(2, probe.position.x,
+                                            probe.position.z, horizontalExtent,
+                                            verticalExtent, 255);
 
     {
       s32 tableOffset = probe.footprintIndex << 4;
@@ -567,11 +561,11 @@ MapObjectEvent_MoveAndRedraw(struct StagedObjectEventProbe probe) {
     Engine_MapGridCopyCellAttributes(horizontalOrigin, verticalOrigin,
                                      horizontalExtent, verticalExtent,
                                      originalPosition.x, originalPosition.z);
-    StagedObjectEvent_FillGridAttributeRectangle(
+    PushedObject_FillGridAttributeRectangle(
         2, originalPosition.x, originalPosition.z, horizontalExtent,
         verticalExtent, 0);
   }
-  FieldEffect_PlayQueuedSound();
+  Map_PlayQueuedMusic();
 }
 
 /// Block large thing id's cells (metatile behavior 255) where it stands,
@@ -580,7 +574,7 @@ MapObjectEvent_MoveAndRedraw(struct StagedObjectEventProbe probe) {
 UNUSED static s32 Map_RedrawObjectEventFootprint(s32 id) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(id);
-  struct StagedObjectEventProbe probe;
+  struct PushedObjectProbe probe;
   u32 idx = 0;
   s32 offset;
   s32 width;
@@ -593,7 +587,7 @@ UNUSED static s32 Map_RedrawObjectEventFootprint(s32 id) {
 
   for (idx = 0; idx <= 5; idx++) {
     if (objectEvent->sprite->entries[0]->animationId ==
-        gStagedObjectEvent_FootprintKinds[idx]) {
+        gPushedObject_FootprintKinds[idx]) {
       probe.footprintIndex = idx;
       break;
     }
@@ -606,22 +600,22 @@ UNUSED static s32 Map_RedrawObjectEventFootprint(s32 id) {
   probe.position.y = objectEvent->y.fixed;
   probe.position.z = objectEvent->z.fixed;
   offset = probe.footprintIndex * 4;
-  z0 = gStagedObjectEvent_FootprintBounds[offset + 1];
+  z0 = gPushedObject_FootprintBounds[offset + 1];
   if (z0 < 0)
     z0 = -z0;
-  z1 = gStagedObjectEvent_FootprintBounds[offset + 3];
+  z1 = gPushedObject_FootprintBounds[offset + 3];
   if (z1 < 0)
     z1 = -z1;
   height = (z0 + z1) >> 4;
-  x0 = gStagedObjectEvent_FootprintBounds[offset];
+  x0 = gPushedObject_FootprintBounds[offset];
   if (x0 < 0)
     x0 = -x0;
-  x1 = gStagedObjectEvent_FootprintBounds[offset + 2];
+  x1 = gPushedObject_FootprintBounds[offset + 2];
   if (x1 < 0)
     x1 = -x1;
   width = (x0 + x1) >> 4;
-  probe.position.x += gStagedObjectEvent_FootprintBounds[offset] << 16;
-  probe.position.z += gStagedObjectEvent_FootprintBounds[offset + 1] << 16;
+  probe.position.x += gPushedObject_FootprintBounds[offset] << 16;
+  probe.position.z += gPushedObject_FootprintBounds[offset + 1] << 16;
   probe.position.x >>= 20;
   probe.position.z >>= 20;
   idx = grid->layers[1].offsetX >> 20;
@@ -629,9 +623,9 @@ UNUSED static s32 Map_RedrawObjectEventFootprint(s32 id) {
   Engine_MapGridCopyCellAttributes(probe.position.x, probe.position.z, width,
                                    height, idx + probe.position.x,
                                    dstZ + probe.position.z);
-  StagedObjectEvent_FillGridAttributeRectangle(
-      0, probe.position.x, probe.position.z, width, height, 255);
-  StagedObjectEvent_FillGridAttributeRectangle(
-      2, probe.position.x, probe.position.z, width, height, 255);
+  PushedObject_FillGridAttributeRectangle(0, probe.position.x, probe.position.z,
+                                          width, height, 255);
+  PushedObject_FillGridAttributeRectangle(2, probe.position.x, probe.position.z,
+                                          width, height, 255);
   return 1;
 }

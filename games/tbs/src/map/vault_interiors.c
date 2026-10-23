@@ -499,7 +499,7 @@ static void EventScript_TalkToInnkeeper(void) {
 /// At Vault's inn, while the party corners the suspects, Garet refuses to stop
 /// for anything else. "We don't have time for that, Isaac!"
 ///
-/// Reached through FIELD_EVENT_MENUS_RAISED, which the engine raises in place
+/// Reached through FIELD_RAISED_EVENT_MENUS, which the engine raises in place
 /// of a menu or a shortcut while FLAG_MENUS_RAISE_EVENT is set.
 static void EventScript_GaretRefusesToLeave(void) {
 #if TBS_PATCH_1
@@ -1545,7 +1545,7 @@ static void EventScript_FreeRooferAndConfrontThieves(void) {
   Engine_ScriptShowMessage(LOCALID_THIEF_LEADER, 0);
   // Preserve the return destinations before requesting the thieves' encounter.
   GameFlag_Set(FLAG_VAULT_THIEVES_ATTACKED);
-  gFieldWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   base = (s32)&MapId_VaultInteriors;
   FieldScript_SetNextDestination(base, 17);
@@ -1861,7 +1861,7 @@ static void EventScript_ReadCorneredSuspectsMinds(void) {
   Engine_ScriptWait(10);
   localId = LOCALID_SUSPECTED_LEADER;
   // The event identifies the suspects blocked on the last frame of the wait.
-  switch (work->raisedTrigger) {
+  switch (work->raisedEvent) {
   case VAULT_INTERIORS_THIEF_CORNERED:
   case VAULT_INTERIORS_BOTH_CORNERED:
     Engine_ScriptSetMessage(MsgVaultImSurrounded);
@@ -1870,7 +1870,7 @@ static void EventScript_ReadCorneredSuspectsMinds(void) {
                                       ATTACHED_EFFECT_ONCE);
     Engine_ObjectEventRunRepeatedMotion(LOCALID_SUSPECTED_THIEF, 2);
     VaultInteriors_ShowMessageAndWait(LOCALID_SUSPECTED_THIEF, 20);
-    if (work->raisedTrigger == VAULT_INTERIORS_THIEF_CORNERED) {
+    if (work->raisedEvent == VAULT_INTERIORS_THIEF_CORNERED) {
       localId = LOCALID_SUSPECTED_THIEF;
       break;
     }
@@ -1918,7 +1918,7 @@ static void EventScript_ReadCorneredSuspectsMinds(void) {
   Engine_ScriptWait(40);
   VaultInteriors_SetPartyImagePriority();
   gFieldWork->transitionFrames = 24;
-  gFieldWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
@@ -1941,7 +1941,7 @@ static void EventScript_ReadCorneredSuspectsMinds(void) {
   }
   FieldScheduler_AddCallback(VaultInteriors_FaceSuspectsTowardLeader,
                              TASK_PRIORITY_MAP);
-  gFieldWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Engine_ScriptEnd();
 }
@@ -1985,7 +1985,7 @@ static void VaultInteriors_DiscussMindReading(void) {
     struct EventWork *work = gFieldWork;
 
     work->transitionFrames = 24;
-    work->startTransition =
+    work->transition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   }
   Engine_ScriptOpenScreen();
@@ -2083,7 +2083,7 @@ static void VaultInteriors_DiscussMindReading(void) {
 /// Reached by stepping on one of them while FLAG_SUSPECTS_FLEEING is
 /// set.
 static void EventScript_AdvanceSuspectRoutes(void) {
-  switch (gFieldWork->touchedTrigger) {
+  switch (gFieldWork->coordEvent) {
   case VAULT_INTERIORS_CELL_FIRST_SUSPECT_ROUTE:
     VaultInteriors_AdvanceSuspectRoute(LOCALID_SUSPECTED_LEADER, 1, 2,
                                        gVaultInteriors_SuspectToMiddleBedHead);
@@ -2178,7 +2178,7 @@ static void VaultInteriors_AdvanceSuspectRoute(s32 localId, s32 expected,
 /// FLAG_VAULT_THIEVES_JAILED through VaultInteriors_ReturnStolenGoods, which
 /// also removes Ivan from the party.
 s32 Map_Initialize(void) {
-  gFieldWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   switch (gGameState.warpDest) {
   case VAULT_INTERIORS_FROM_VAULT_EAST_SOUTHEAST: {
@@ -2187,7 +2187,7 @@ s32 Map_Initialize(void) {
     // The gem owner's house: he stands on the floor.
     ObjectEvent_GetById(LOCALID_GEM_OWNER)->motionFlags = zero;
     ObjectEvent_GetById(LOCALID_GEM_OWNER)->y.fixed = zero;
-    ObjectEvent_GetById(LOCALID_GEM_OWNER)->terrainHeight = zero;
+    ObjectEvent_GetById(LOCALID_GEM_OWNER)->groundHeight = zero;
   } break;
   case VAULT_INTERIORS_FROM_VAULT_NORTHWEST:
     // The mayor's house: Ivan waits a step back once met and is gone once he
@@ -2386,7 +2386,7 @@ static void VaultInteriors_LoseToThieves(void) {
   Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
   ObjectEvent_FaceDirection(LOCALID_TIED_UP_VILLAGER,
                             FACING_NORTHWEST + FACING_STEP, 0);
-  gFieldWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Engine_CameraFollowObjectEvent(LOCALID_PARTY_LEADER, 0);
   Engine_CameraWaitForMove();
@@ -2440,7 +2440,7 @@ static void VaultInteriors_ConfrontThievesAgain(void) {
   ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST + FACING_STEP, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_TIED_UP_VILLAGER, LOCALID_THIEF_LEADER,
                               0);
-  gFieldWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Engine_CameraFollowObjectEvent(LOCALID_PARTY_LEADER, 0);
   Engine_CameraWaitForMove();
@@ -2475,7 +2475,7 @@ static void VaultInteriors_ConfrontThievesAgain(void) {
   VaultInteriors_PlayAnimationAndWait(LOCALID_THIEF_LEADER,
                                       ANIMATION_SHAKE_HEAD, 20);
   Script_ShowMessage(LOCALID_THIEF_LEADER, 0);
-  gFieldWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   FieldScript_SetNextDestination((s32)&MapId_VaultInteriors, 17);
   FieldScript_SetDefeatDestination((s32)&MapId_VaultInteriors, 16);
@@ -2532,7 +2532,7 @@ static void VaultInteriors_DefeatThieves(void) {
   ObjectEvent_SetSpeed(LOCALID_TIED_UP_VILLAGER, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_FaceDirection(LOCALID_TIED_UP_VILLAGER,
                             FACING_NORTHWEST + FACING_STEP, 0);
-  gFieldWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Engine_CameraFollowObjectEvent(LOCALID_PARTY_LEADER, 0);
   Engine_CameraWaitForMove();
@@ -2733,8 +2733,7 @@ static void VaultInteriors_DefeatThieves(void) {
   // The window closes while the thieves are tied up.
   work = gFieldWork;
   work->transitionFrames = 30;
-  work->startTransition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
+  work->transition = MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
   Engine_ScriptWait(60);
@@ -2801,7 +2800,7 @@ static void VaultInteriors_ReturnStolenGoods(void) {
   ObjectEvent_FaceObjectEvent(GARET, LOCALID_THIEF_LEADER, 0);
   ObjectEvent_FaceObjectEvent(IVAN, LOCALID_THIEF_LEADER, 0);
   gFieldWork->transitionFrames = 30;
-  gFieldWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
@@ -3248,7 +3247,7 @@ static void VaultInteriors_ReturnStolenGoods(void) {
   ObjectEvent_SetPosition(LOCALID_FIRST_THIEF, 0, 0);
   ObjectEvent_SetPosition(LOCALID_SECOND_THIEF, 0, 0);
   ObjectEvent_SetPosition(IVAN, 0, 0);
-  gFieldWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Engine_ScriptEnd();
 }
@@ -3258,7 +3257,7 @@ static void VaultInteriors_OpenWindowTransition(void) {
   struct EventWork *state;
 
   state = gFieldWork;
-  state->startTransition =
+  state->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
@@ -3560,7 +3559,7 @@ static void VaultInteriors_UpdateObjectEventStops(void) {
   // A failed route choice alone is not enough to end the chase.
   if (blocked != 0) {
     if (++gVaultInteriors_StopTimer > VAULT_INTERIORS_CORNERED_FRAMES - 1)
-      work->raisedTrigger = blocked + VAULT_INTERIORS_CORNERED_EVENT_BASE;
+      work->raisedEvent = blocked + VAULT_INTERIORS_CORNERED_EVENT_BASE;
   } else {
     gVaultInteriors_StopTimer = blocked;
   }
@@ -3572,7 +3571,7 @@ static void VaultInteriors_UpdateObjectEventStops(void) {
 /// VaultInteriors_UpdateObjectEventStops and the chase music, MUS_009.
 static void VaultInteriors_StartObjectEventStops(void) {
   Engine_ScriptStart();
-  Camera_MoveTo(PIXELS(168), -1, PIXELS(656), 1);
+  FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(656), 1);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -4031,79 +4030,79 @@ u32 gVaultInteriors_Warps[] = {
 
 struct ObjectEventTemplate gVaultInteriors_ObjectEventTemplates[] = {
     { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(8), 0, PIXELS(8), FACING_NORTH, TALK_FACE_PARTY, 0 },
+        PIXELS(8), 0, PIXELS(8), FACING_NORTH, TALK_FACING_PARTY, 0 },
     { IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(376), 0, PIXELS(392), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(376), 0, PIXELS(392), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(160), 0, PIXELS(136), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(160), 0, PIXELS(136), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, 0x0, 3,
-        PIXELS(152), 0, PIXELS(72), FACING_WEST, TALK_FACE_PARTY, 0 },
+        PIXELS(152), 0, PIXELS(72), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_BURLY_MAN_WITH_GREY_HAIR, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(456), 0, PIXELS(184), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(456), 0, PIXELS(184), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_BOY_WITH_FAIR_HAIR, 0x0, MOVEMENT_TYPE_WANDER,
-        PIXELS(368), 0, PIXELS(120), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(368), 0, PIXELS(120), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, 0x0, MOVEMENT_TYPE_WANDER,
-        PIXELS(744), 0, PIXELS(200), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(744), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_WOMAN, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(752), 0, PIXELS(128), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(752), 0, PIXELS(128), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_BOY_WITH_FAIR_HAIR, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(496), 0, PIXELS(416), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(496), 0, PIXELS(416), FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_GIRL_WITH_PIGTAILS, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(512), 0, PIXELS(416), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(512), 0, PIXELS(416), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_OLD_MAN_WITH_WHITE_HAIR, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(536), 0, PIXELS(451), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(536), 0, PIXELS(451), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_IN_GREEN_DRESS, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(416), 0, PIXELS(464), FACING_NORTH, TALK_FACE_PARTY, 0 },
+        PIXELS(416), 0, PIXELS(464), FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, 0x0, MOVEMENT_TYPE_WANDER,
-        PIXELS(536), 0, PIXELS(672), FACING_NORTH, TALK_FACE_PARTY, 0 },
+        PIXELS(536), 0, PIXELS(672), FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_BALD_MAN_IN_RED, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(200), 0, PIXELS(392), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(200), 0, PIXELS(392), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_YOUNG_MAN_IN_GREEN, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(88), 0, PIXELS(392), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(88), 0, PIXELS(392), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_WOMAN_WITH_PONYTAIL, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(632), 0, PIXELS(136), FACING_SOUTH, 3, 0 },
     { SPRITE_BURLY_MAN_WITH_GREY_HAIR, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(664), 0, PIXELS(632), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(664), 0, PIXELS(632), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_WOMAN_IN_PINK_APRON, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(696), 0, PIXELS(696), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(696), 0, PIXELS(696), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_MAN_WITH_LONG_DARK_HAIR, FLAG_VAULT_THIEVES_ATTACKED, MOVEMENT_TYPE_STAND,
         PIXELS(104), 0, PIXELS(696), FACING_EAST, 3, 0 },
     { SPRITE_PERSON_IN_PURPLE, FLAG_VAULT_THIEVES_ATTACKED, MOVEMENT_TYPE_STAND,
-        PIXELS(200), 0, PIXELS(680), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(200), 0, PIXELS(680), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { 0xdf, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(692), 0, PIXELS(411), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(692), 0, PIXELS(411), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gVaultInteriors_LoftObjectEventTemplates[] = {
     { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(8), 0, PIXELS(8), FACING_NORTH, TALK_FACE_PARTY, 0 },
+        PIXELS(8), 0, PIXELS(8), FACING_NORTH, TALK_FACING_PARTY, 0 },
     { IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(376), 0, PIXELS(392), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(376), 0, PIXELS(392), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(160), 0, PIXELS(136), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(160), 0, PIXELS(136), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_OLD_MAN_WITH_WHITE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(504), 0, PIXELS(456), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(504), 0, PIXELS(456), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_WITH_LONG_DARK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(104), 0, PIXELS(696), FACING_EAST, 3, 0 },
     { SPRITE_PERSON_IN_PURPLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(200), 0, PIXELS(680), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(200), 0, PIXELS(680), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_PERSON_IN_PURPLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_CHEST, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(872), 0, PIXELS(424), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(872), 0, PIXELS(424), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_CHEST, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(872), 0, PIXELS(408), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(872), 0, PIXELS(408), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_CHEST, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(872), 0, PIXELS(376), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(872), 0, PIXELS(376), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { 0xfb, CONDITION_ALWAYS, 7,
-        PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { 0xdd, CONDITION_ALWAYS, 7,
-        PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };
 
@@ -4130,7 +4129,7 @@ struct MapEvent gVaultInteriors_Events[] = {
     { MAP_EVENT_RAISED, VAULT_INTERIORS_LEADER_CORNERED, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadCorneredSuspectsMinds) },
     { MAP_EVENT_RAISED, VAULT_INTERIORS_THIEF_CORNERED, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadCorneredSuspectsMinds) },
     { MAP_EVENT_RAISED, VAULT_INTERIORS_BOTH_CORNERED, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadCorneredSuspectsMinds) },
-    { MAP_EVENT_RAISED, FIELD_EVENT_MENUS_RAISED, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_GaretRefusesToLeave) },
+    { MAP_EVENT_RAISED, FIELD_RAISED_EVENT_MENUS, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_GaretRefusesToLeave) },
     { MAP_EVENT_COORD, VAULT_INTERIORS_CELL_LOFT_CLIMB, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ClimbToLoft) },
     { COORD_EVENT_WALKING, VAULT_INTERIORS_CELL_ROOF_GAP, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpAcrossRoofGap) },
     { MAP_EVENT_TALK, IVAN, IF_FLAG_SET(FLAG_MAP_TEMP_50), 0 },
@@ -4181,7 +4180,7 @@ struct MapEvent gVaultInteriors_Events[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | LOCALID_SUSPECTED_LEADER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SuspectedLeaderDodges) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | LOCALID_SUSPECTED_THIEF, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SuspectedThiefDodges) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_CRATE, FLAG_VAULT_CRATE_MOVED, EVENT_SCRIPT(EventScript_CheckCrateMoved) },
-    { BG_EVENT(BG_EVENT_UNNAMED), VAULT_INTERIORS_CELL_INN_BARREL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchEmptyBarrel) },
+    { BG_EVENT(BG_EVENT_SILENT), VAULT_INTERIORS_CELL_INN_BARREL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchEmptyBarrel) },
     { BG_EVENT(BG_EVENT_JAR), VAULT_INTERIORS_CELL_JAR, FLAG_VAULT_INTERIORS_JAR_COINS, FIND_COINS(7) },
     { BG_EVENT(BG_EVENT_BARREL), VAULT_INTERIORS_CELL_FIRST_BARREL, FLAG_VAULT_INTERIORS_BARREL_COINS, FIND_COINS(4) },
     { BG_EVENT(BG_EVENT_BARREL), VAULT_INTERIORS_CELL_SECOND_BARREL, FLAG_VAULT_INTERIORS_BARREL_SLEEP_BOMB, FIND_ITEM(ITEM_SLEEP_BOMB) },
@@ -4202,7 +4201,7 @@ struct MapEvent gVaultInteriors_LoftEvents[] = {
 };
 
 struct MapEvent gVaultInteriors_EventsAfterThieves[] = {
-    { BG_EVENT(BG_EVENT_UNNAMED), VAULT_INTERIORS_CELL_INN_BARREL, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_FindBone) },
+    { BG_EVENT(BG_EVENT_SILENT), VAULT_INTERIORS_CELL_INN_BARREL, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_FindBone) },
     { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, VAULT_INTERIORS_TO_VAULT_EAST_SOUTHEAST },
     { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, VAULT_INTERIORS_TO_VAULT_SOUTHEAST },
     { MAP_EVENT_WARP, 3, CONDITION_ALWAYS, VAULT_INTERIORS_TO_VAULT_SOUTHWEST },

@@ -431,9 +431,9 @@ static s32 Reveal_ShowSecrets(void) {
     }
   }
   for (i = 100; i <= 107; i++) {
-    Marker_SetPosition(i, -1, -1);
+    TreasureSpot_SetPosition(i, -1, -1);
   }
-  Marker_MoveLeaderAway();
+  TreasureSpot_MoveLeaderAway();
   if (gGameState.mapId != (s32)&MapId_LamakanDesertCave) {
     DisplayScroll_DisarmHBlankDma();
   }
@@ -516,15 +516,15 @@ static void HeatGauge_RaiseQuarterTriggers(void) {
   }
   if (GameFlag_IsSet(FLAG_HEAT_QUARTER) == 0 && percent > 24) {
     GameFlag_Set(FLAG_HEAT_QUARTER);
-    work->raisedTrigger = LAMAKAN_DESERT_RAISED_HEAT_QUARTER;
+    work->raisedEvent = LAMAKAN_DESERT_RAISED_HEAT_QUARTER;
   }
   if (GameFlag_IsSet(FLAG_HEAT_HALF) == 0 && percent > 49) {
     GameFlag_Set(FLAG_HEAT_HALF);
-    work->raisedTrigger = LAMAKAN_DESERT_RAISED_HEAT_HALF;
+    work->raisedEvent = LAMAKAN_DESERT_RAISED_HEAT_HALF;
   }
   if (GameFlag_IsSet(FLAG_HEAT_THREE_QUARTERS) == 0 && percent > 74) {
     GameFlag_Set(FLAG_HEAT_THREE_QUARTERS);
-    work->raisedTrigger = LAMAKAN_DESERT_RAISED_HEAT_THREE_QUARTERS;
+    work->raisedEvent = LAMAKAN_DESERT_RAISED_HEAT_THREE_QUARTERS;
   }
 }
 
@@ -617,8 +617,8 @@ static void LamakanDesert_BatheInOasis(void) {
   ObjectEvent_Get(LOCALID_PARTY_LEADER)->velocityY = 0x60000;
   Script_PlaySong(SE_JUMP);
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
-  MapObjectEvent_WaitBelowHeight(
-      leader, ObjectEvent_Get(LOCALID_PARTY_LEADER)->y.fixed);
+  ObjectEvent_WaitBelowHeight(leader,
+                              ObjectEvent_Get(LOCALID_PARTY_LEADER)->y.fixed);
   Script_PlaySong(SE_WATER_MOVE);
   {
     struct ObjectEvent *objectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
@@ -688,13 +688,13 @@ static void HeatGauge_CountStep(void) {
   s32 dx;
   s32 z;
   s32 phase;
-  objectEvent = ObjectEvent_GetById(gGameState.selectedLocalId);
+  objectEvent = ObjectEvent_GetById(gGameState.leaderLocalId);
   work = gFieldWork;
   if (objectEvent->targetX == OBJ_EVENT_NO_TARGET) {
     return;
   }
   gGameState.hazardSteps++;
-  if (work->touchedTrigger == LAMAKAN_DESERT_CELL_SLOPE) {
+  if (work->coordEvent == LAMAKAN_DESERT_CELL_SLOPE) {
     return;
   }
   if (objectEvent->speed <= 0x10000) {
@@ -747,7 +747,7 @@ static void LamakanDesert_FallIntoPit(void) {
   s32 dx;
   s32 dz;
 
-  target = ObjectEvent_Get(gGameState.selectedLocalId);
+  target = ObjectEvent_Get(gGameState.leaderLocalId);
   best = FIRST_PIT;
   GameFlag_Set(FLAG_DESERT_EVENT_RUNNING);
   min = 0x100000;
@@ -833,8 +833,8 @@ static void LamakanDesert_SlideDownDune(void) {
   {
     struct EventWork *work = gFieldWork;
 
-    id = gGameState.selectedLocalId;
-    center = work->viewCenter;
+    id = gGameState.leaderLocalId;
+    center = work->camera;
   }
   objectEvent = ObjectEvent_GetById(id);
   // First check for a ledge immediately below the sliding object event.
@@ -862,7 +862,7 @@ static void LamakanDesert_SlideDownDune(void) {
     Object_WaitForMove(objectEvent);
     do {
       Engine_TaskWait(1);
-    } while (objectEvent->y.fixed != objectEvent->terrainHeight);
+    } while (objectEvent->y.fixed != objectEvent->groundHeight);
     ObjectEvent_SetMode(objectEvent, ANIMATION_LEADER_SPRING);
     Engine_TaskWait(3);
     return;
@@ -975,7 +975,7 @@ s32 LamakanDesert_Initialize(s32 a0, s32 a1) {
   gGameState.hazardDamage = HAZARD_DAMAGE_PERCENT | 25;
   if (gGameState.mapId == (s32)&MapId_LamakanDesertCave) {
   } else {
-    gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     HeatGauge_Start();
     FieldScheduler_AddCallback(HeatGauge_RaiseQuarterTriggers,
                                TASK_PRIORITY_MAP);
@@ -1003,7 +1003,7 @@ s32 LamakanDesert_Initialize(s32 a0, s32 a1) {
       MapGrid_CopyCells(43, 56, 4, 2, 116, 126);
     } else if (gGameState.mapId == (s32)&MapId_LamakanDesertManticore) {
       v5 = 124;
-      FieldEffect_SetQueuedSoundAndPlay(SE_169);
+      Map_QueueMusic(SE_169);
       MapGrid_CopyCells(8, 14, 4, 4, 64, v5);
       MapGrid_CopyCells(6, 18, 4, 4, 68, v5);
       MapGrid_CopyCells(10, 21, 4, 4, 72, v5);
@@ -1299,33 +1299,33 @@ struct ObjectEventTemplate gLamakanDesertObjectEventTemplatesOther[] = {
 
 struct ObjectEventTemplate gLamakanDesertEastObjectEventTemplates[] = {
     { 0xc3, FLAG_LAMAKAN_MANTICORE_BEATEN, MOVEMENT_TYPE_STAND,
-        PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { 0xc1, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(400), 0, PIXELS(364), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(400), 0, PIXELS(364), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gLamakanDesertSmogObjectEventTemplates[] = {
     { 0xc3, FLAG_LAMAKAN_MANTICORE_BEATEN, MOVEMENT_TYPE_STAND,
-        PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { 0xc1, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(352), 0, PIXELS(204), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(352), 0, PIXELS(204), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { 0xc1, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(736), 0, PIXELS(396), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(736), 0, PIXELS(396), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { 0xc1, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(144), 0, PIXELS(380), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(144), 0, PIXELS(380), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { 0xc1, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(576), 0, PIXELS(716), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(576), 0, PIXELS(716), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { JUPITER_DJINNI, FLAG_DJINNI(DJINNI_SMOG), MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gLamakanDesertManticoreObjectEventTemplates[] = {
     { 0xc3, FLAG_LAMAKAN_MANTICORE_BEATEN, MOVEMENT_TYPE_STAND,
-        PIXELS(168), 0, PIXELS(104), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(168), 0, PIXELS(104), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { 0xc1, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(128), 0, PIXELS(316), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(128), 0, PIXELS(316), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };
 
@@ -1351,9 +1351,9 @@ struct MapEvent gLamakanDesertEvents[] = {
     { MAP_EVENT_TALK, MANTICORE, FLAG_LAMAKAN_MANTICORE_BEATEN, EVENT_SCRIPT(LamakanDesert_FightManticore) },
     { MAP_EVENT_TALK, SMOG, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_TalkToSmog) },
     { BG_EVENT(BG_EVENT_CHEST), 100, FLAG_LAMAKAN_DESERT_VULCAN_AXE, FIND_ITEM(ITEM_VULCAN_AXE) },
-    { BG_EVENT(BG_EVENT_UNNAMED), 101, FLAG_LAMAKAN_DESERT_FIRST_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
+    { BG_EVENT(BG_EVENT_SILENT), 101, FLAG_LAMAKAN_DESERT_FIRST_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
     { BG_EVENT(BG_EVENT_CHEST), 102, FLAG_LAMAKAN_DESERT_LUCKY_PEPPER, FIND_ITEM(ITEM_LUCKY_PEPPER) },
-    { BG_EVENT(BG_EVENT_UNNAMED), 103, FLAG_LAMAKAN_DESERT_SECOND_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
+    { BG_EVENT(BG_EVENT_SILENT), 103, FLAG_LAMAKAN_DESERT_SECOND_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
     { BG_EVENT(BG_EVENT_CHEST), 105, FLAG_LAMAKAN_DESERT_777_COINS, FIND_COINS(777) },
     { BG_EVENT(BG_EVENT_CHEST), 106, FLAG_LAMAKAN_DESERT_POTION, FIND_ITEM(ITEM_POTION) },
     { BG_EVENT(BG_EVENT_CHEST), 107, FLAG_LAMAKAN_DESERT_MINT, FIND_ITEM(ITEM_MINT) },

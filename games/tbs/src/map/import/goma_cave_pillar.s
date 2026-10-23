@@ -46,6 +46,6 @@
 	.endif
 	.set import.Engine_ScriptOpenScreen, 1
 	.set import.Engine_ScriptWaitForScreen, 1
-	.set import.FieldEffect_PlayQueuedSound, 1
+	.set import.Map_PlayQueuedMusic, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

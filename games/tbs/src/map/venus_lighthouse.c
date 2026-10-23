@@ -541,7 +541,7 @@ static void VenusLighthouse_PushAdjacentPillar(void) {
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   directionIndex = leader->facing >> 12;
   // Look ahead for a pillar before testing its destination and overhead space.
-  packedStep = gStagedObjectEvent_DirectionSteps[directionIndex];
+  packedStep = gPushedObject_DirectionSteps[directionIndex];
   targetPosition.x = leader->x.fixed + (packedStep & 0xffff0000);
   targetPosition.y = leader->y.fixed;
   packedStep <<= 16;
@@ -550,7 +550,7 @@ static void VenusLighthouse_PushAdjacentPillar(void) {
   if (pillar == 0)
     return;
 
-  packedStep = gStagedObjectEvent_DirectionSteps[directionIndex];
+  packedStep = gPushedObject_DirectionSteps[directionIndex];
   targetPosition.x = pillar->x.fixed + (packedStep & 0xffff0000);
   targetPosition.y = pillar->y.fixed;
   packedStep <<= 16;
@@ -568,8 +568,8 @@ static void VenusLighthouse_PushAdjacentPillar(void) {
       (blockingObjectEvent->collisionFlags & 1) != 0)
     return;
 
-  pillar->terrainId = 2;
-  packedStep = gStagedObjectEvent_DirectionSteps[directionIndex];
+  pillar->layer = 2;
+  packedStep = gPushedObject_DirectionSteps[directionIndex];
   targetPosition.x = pillar->x.fixed + (packedStep & 0xffff0000);
   targetPosition.y = pillar->y.fixed;
   packedStep <<= 16;
@@ -595,7 +595,7 @@ static void VenusLighthouse_PushAdjacentPillar(void) {
   Engine_ObjectSetPosition(leader, targetPosition.x, targetPosition.y,
                            targetPosition.z);
   Object_WaitForMove(pillar);
-  FieldEffect_PlayQueuedSound();
+  Map_PlayQueuedMusic();
   pillar->x.fixed = targetPosition.x;
   pillar->z.fixed = targetPosition.z;
   pillar->velocityX = transitionBusy;
@@ -611,8 +611,10 @@ static void VenusLighthouse_PushAdjacentPillar(void) {
 
 /// Unused: fills metatile behaviors in a rectangle of the requested map layer;
 /// nothing in Venus Lighthouse calls it.
-static UNUSED s32 StagedObjectEvent_FillGridAttributeRectangle(
-    u32 layerIndex, s32 x, s32 z, u32 width, u32 height, s32 collisionCode) {
+static UNUSED s32 PushedObject_FillGridAttributeRectangle(u32 layerIndex, s32 x,
+                                                          s32 z, u32 width,
+                                                          u32 height,
+                                                          s32 collisionCode) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
   struct MapGridCell *cells;
   u32 row;
@@ -629,7 +631,7 @@ static UNUSED s32 StagedObjectEvent_FillGridAttributeRectangle(
       struct MapGridCell *cell = cells + (row << 7);
 
       for (column = 0; column < width; column++) {
-        cell->collisionCode = collisionCode;
+        cell->behavior = collisionCode;
         cell++;
       }
     }
@@ -654,7 +656,7 @@ static void VenusLighthouse_RestoreScriptedChildValues(void) {
 /// Called by gVenusGreyStatueScript and gVenusGreyPillarScript: draws the
 /// object event in the colour mode of its VENUS_COLOR_MARK.
 static s32
-VenusLighthouse_UpdateChildFromTimer(struct ScriptInterpreter *interpreter) {
+VenusLighthouse_UpdateChildFromTimer(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   ObjectGroup_SetChildValue(objectEvent, objectEvent->timer & 15);
   return 0;
@@ -723,7 +725,7 @@ static s32 VenusLighthouse_EmitRisingParticles(union FieldObject *fieldObject) {
 
 /// Clears the scripted object event's sprite flags and advances its script.
 static s32 VenusLighthouse_ClearScriptedSpriteFlags(
-    struct ScriptInterpreter *interpreter) {
+    struct ObjectScriptContext *interpreter) {
   void *objectEvent = (void *)interpreter;
   Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
   return 0;
@@ -804,7 +806,7 @@ static void EventScript_EnterSparklingPassage(void) {
   Engine_ScriptWait(30);
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
-  Engine_ScriptRequestWarp(work->touchedTrigger);
+  Engine_ScriptRequestWarp(work->coordEvent);
   Engine_ScriptEnd();
 }
 
@@ -815,7 +817,7 @@ static void VenusLighthouse_ArriveThroughSparkPassage(void) {
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
     Engine_ScriptStart();
-    Camera_MoveTo(-1, -1, -1, 0);
+    FieldCamera_MoveTo(-1, -1, -1, 0);
     leader->motionFlags = 0;
     ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, leader->x.part.pixel << 16,
                             (leader->z.part.pixel << 16) - 0x100000);
@@ -837,7 +839,7 @@ static void VenusLighthouse_ArriveThroughSparkPassage(void) {
     ObjectEvent_WalkByAndWait(LOCALID_PARTY_LEADER, 0, 8);
     leader->motionFlags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
     leader->update = 0;
-    FieldEffect_PlayQueuedSound();
+    Map_PlayQueuedMusic();
     Engine_ScriptEnd();
   }
 }
@@ -872,7 +874,7 @@ static void VenusLighthouse_LandWithRadialDust(void) {
 
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   Engine_ScriptStart();
-  Camera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   Engine_MapGridRedraw();
   Engine_TaskWait(1);
   leader->y.fixed = PIXELS(130);
@@ -912,7 +914,7 @@ static void VenusLighthouse_LandWithRadialDust(void) {
   Engine_MapGridRenderWaitForValues();
   ObjectEvent_SetAttachedEffect(
       LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-  FieldEffect_PlayQueuedSound();
+  Map_PlayQueuedMusic();
   leader->gravity = PIXELS(1);
   leader->bounce = PIXELS(1) / 4;
   Engine_ScriptEnd();
@@ -1033,7 +1035,7 @@ static s32 EventScript_JumpAcrossGap(void) {
   Vector_AddPolarOffset(PIXELS(16), direction, &landing);
 #else
   direction = leader->facing >> 12;
-  step = gStagedObjectEvent_DirectionSteps[direction];
+  step = gPushedObject_DirectionSteps[direction];
   landing.x = leader->x.fixed + (step & 0xffff0000);
   landing.y = leader->y.fixed;
   step <<= 16;
@@ -1048,7 +1050,7 @@ static s32 EventScript_JumpAcrossGap(void) {
     Vector_AddPolarOffset(PIXELS(32), (leader->facing + 0x2000) & 0xc000,
                           &landing);
 #else
-    step = gStagedObjectEvent_DirectionSteps[direction];
+    step = gPushedObject_DirectionSteps[direction];
     landing.x = leader->x.fixed + ((step & 0xffff0000) << 1);
     landing.y = leader->y.fixed;
     step <<= 17;
@@ -1232,7 +1234,7 @@ static void EventScript_ReadRelief(void) {
 #if TBS_PATCH_1 && !TBS_PATCH_2
   message = (s32)MSGNO(MsgVenusThereWordsCarvedIntoRelief);
 #else
-  message = work->facingTrigger + MSGNO(MsgVenusThereWordsCarvedIntoRelief) -
+  message = work->searchCell + MSGNO(MsgVenusThereWordsCarvedIntoRelief) -
             TRIGGER_FIRST_RELIEF;
 #endif
   Engine_MessageShowCentered(message, 1);
@@ -1408,11 +1410,11 @@ static void EventScript_SearchStatue(void) {
   Engine_ColorBufferInterpolate(20);
   Engine_ScriptWait(40);
   // Follow the revealed path after the statue and color effect have finished.
-  Camera_SetSpeed(PIXELS(1) / 2, PIXELS(1) / 16);
-  Camera_MoveTo(PIXELS(456), -1, PIXELS(542), 1);
+  FieldCamera_SetSpeed(PIXELS(1) / 2, PIXELS(1) / 16);
+  FieldCamera_MoveTo(PIXELS(456), -1, PIXELS(542), 1);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(50);
-  Camera_MoveTo(PIXELS(456), -1, PIXELS(423), 1);
+  FieldCamera_MoveTo(PIXELS(456), -1, PIXELS(423), 1);
   Engine_CameraWaitForMove();
   Engine_ScriptEnd();
   work->busy = 0;
@@ -1506,7 +1508,7 @@ static void EventScript_MovePillarOntoSwitch(void) {
     Engine_AudioPlayCue(SE_188);
     pillar->motionFlags = 0;
     switchHeight = -PIXELS(2);
-    pillar->terrainHeight = switchHeight;
+    pillar->groundHeight = switchHeight;
     pillar->y.fixed = switchHeight;
     Engine_GameFlagSet(FLAG_MAP_TEMP_00);
     MapGrid_CopyCellsTo(44, 117, 41, 117, 3, 5);
@@ -1526,7 +1528,7 @@ static void EventScript_StepOnFloorSwitch(void) {
     MapGrid_CopyCellsTo(55, 117, 41, 117, 3, 5);
     GameFlag_Clear(FLAG_MAP_TEMP_01);
     leader->motionFlags |= OBJ_EVENT_FOLLOWS_TERRAIN;
-    leader->terrainHeight = 0;
+    leader->groundHeight = 0;
     leader->y.fixed = 0;
   } else if (!GameFlag_IsSet(FLAG_MAP_TEMP_01)) {
     Engine_ScriptStart();
@@ -1536,7 +1538,7 @@ static void EventScript_StepOnFloorSwitch(void) {
     GameFlag_Set(FLAG_MAP_TEMP_01);
     Engine_AudioPlayCue(SE_161);
     leader->motionFlags &= ~OBJ_EVENT_FOLLOWS_TERRAIN;
-    leader->terrainHeight = -PIXELS(2);
+    leader->groundHeight = -PIXELS(2);
     leader->y.fixed = -PIXELS(2);
     Engine_ScriptEnd();
   }
@@ -1557,8 +1559,8 @@ static void EventScript_TalkToScholarByDoor(void) {
   Engine_ScriptWait(10);
   Script_ShowMessageAndWait(LOCALID_DOOR_SCHOLAR, 0, 20);
   ObjectEvent_FaceDirection(LOCALID_DOOR_SCHOLAR, FACING_NORTHEAST, 0);
-  Camera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
-  Camera_MoveTo(PIXELS(448), -1, PIXELS(432), 1);
+  FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
+  FieldCamera_MoveTo(PIXELS(448), -1, PIXELS(432), 1);
   Engine_CameraWaitForMove();
   Script_ShowMessage(LOCALID_DOOR_SCHOLAR, 0);
   Engine_ScriptEnd();
@@ -1585,7 +1587,7 @@ static void EventScript_FallThroughFloor(void) {
   zero = 0;
   *motionFlags = zero;
 #endif
-  Camera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   leaderObjectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   Engine_ObjectEventSetSpriteFlags(leaderObjectEvent, 0);
   {
@@ -1628,7 +1630,7 @@ static void EventScript_FallThroughFloor(void) {
 #if TBS_PATCH_3
   *motionFlags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
 #endif
-  OverlayObject_WaitUntilIdle(0);
+  ObjectEvent_WaitUntilIdle(0);
   Engine_ObjectEventSetChildValue(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   Engine_ScriptRequestWarp(
       VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_TO_LOWER_ROOM_HOLE);
@@ -1664,8 +1666,8 @@ static void EventScript_MoveDepthPillar(void) {
     MapGrid_CopyCellAttributes(12, 50, 1, 1, column, row);
     pillarIndex++;
   } while (pillarIndex <= 2);
-  MapObjectEvent_SwapPositionsByDepth(LOCALID_FIRST_DEPTH_PILLAR + 2,
-                                      LOCALID_FIRST_DEPTH_PILLAR + 1);
+  ObjectEvent_SwapPositionsByDepth(LOCALID_FIRST_DEPTH_PILLAR + 2,
+                                   LOCALID_FIRST_DEPTH_PILLAR + 1);
   Engine_ScriptEnd();
 }
 
@@ -1749,7 +1751,7 @@ VenusLighthouse_ReleaseFallenCarryPillar(struct ObjectEvent *pillar) {
     pillar->bounce = zero;
     passageEffect = VenusLighthouse_CreateBlendedPassageEffect(
         pillar->x.fixed, 0, PIXELS(512), SPRITE_CRATE);
-    OverlayObject_WaitUntilIdle(pillar);
+    ObjectEvent_WaitUntilIdle(pillar);
     pillar->x.fixed = zero;
     pillar->z.fixed = zero;
     Engine_ObjectDispatchRelease(passageEffect);
@@ -1767,14 +1769,14 @@ static void EventScript_CarryPillarAcrossGap(void) {
   Engine_ScriptStart();
   pillar = ObjectEvent_GetById(LOCALID_FIRST_CARRY_PILLAR);
   if (pillar->x.fixed >> 20 == 8) {
-    OverlayObject_WaitUntilIdle(pillar);
+    ObjectEvent_WaitUntilIdle(pillar);
     VenusLighthouse_FixPillarAtDestination(pillar);
   } else {
     VenusLighthouse_ReleaseFallenCarryPillar(pillar);
   }
   pillar = ObjectEvent_GetById(LOCALID_FIRST_CARRY_PILLAR + 1);
   if (pillar->x.fixed >> 20 == 7) {
-    OverlayObject_WaitUntilIdle(pillar);
+    ObjectEvent_WaitUntilIdle(pillar);
     VenusLighthouse_FixPillarAtDestination(pillar);
   } else {
     VenusLighthouse_ReleaseFallenCarryPillar(pillar);
@@ -1856,7 +1858,7 @@ static void EventScript_StepOnWallSwitch(void) {
       Engine_AudioPlayCue(SE_188);
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
       Engine_MapGridRenderWaitForValues();
-      gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 2);
+      gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 2);
       Engine_ScriptRequestWarp(
           VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR_EAST);
       Engine_ScriptEnd();
@@ -1907,12 +1909,12 @@ static void EventScript_MoveGatePillar(void) {
         }
         pillarObjectEvent = ObjectEvent_GetById(LOCALID_GATE_PILLAR);
         Engine_ObjectEventSetSpriteFlags(pillarObjectEvent, 0);
-        pillar->terrainId = gateOpened;
+        pillar->layer = gateOpened;
         pillar->motionFlags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
         pillar->gravity = PIXELS(1) / 10;
         pillar->bounce = gateOpened;
         MapGrid_CopyCellAttributes(43, 45, 1, 1, column, row);
-        OverlayObject_WaitUntilIdle(pillar);
+        ObjectEvent_WaitUntilIdle(pillar);
         Engine_AudioPlayCue(SE_188);
         pillar->motionFlags = gateOpened;
         pillar->y.fixed = -PIXELS(16);
@@ -2026,14 +2028,14 @@ static void EventScript_MoveSwitchPillar(void) {
       Engine_ObjectEventSetSpritePriority(LOCALID_PARTY_LEADER, 3);
     }
     Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(pillarId), 0);
-    pillar->terrainId = 0;
+    pillar->layer = 0;
     pillar->motionFlags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
     pillar->bounce = 0;
     pillar->gravity = PIXELS(1) / 10;
     MapGrid_CopyCellAttributes(42, 41, 1, 1,
                                gVenusThirdFloorSockets[switchIndex].x,
                                gVenusThirdFloorSockets[switchIndex].z);
-    OverlayObject_WaitUntilIdle(pillar);
+    ObjectEvent_WaitUntilIdle(pillar);
     Engine_AudioPlayCue(SE_188);
     pillar->collisionFlags = 0;
     pillar->motionFlags = 0;
@@ -2070,8 +2072,8 @@ static void EventScript_MoveSwitchPillar(void) {
         VenusLighthouse_CreateLight(888, 680, gVenusThirdFloorLightToSoutheast);
     // SC_FREE clears the script pointer; work value 0x28 signals the
     // opening cue earlier, while the gate effects are still running.
-    while (((struct ScriptInterpreter *)firstGateEffect)->script != 0 ||
-           ((struct ScriptInterpreter *)secondGateEffect)->script != 0) {
+    while (((struct ObjectScriptContext *)firstGateEffect)->script != 0 ||
+           ((struct ObjectScriptContext *)secondGateEffect)->script != 0) {
       if (firstGateEffect->riseEnabled != 0 ||
           secondGateEffect->riseEnabled != 0) {
         Engine_ScriptWait(30);
@@ -2212,7 +2214,7 @@ static void VenusLighthouse_StackFloatingPillar(s32 pillarId) {
 static __inline__ void FloatingPillar_Settle(struct ObjectEvent *pillar,
                                              s32 resetValue) {
   pillar->targetY = OBJ_EVENT_NO_TARGET;
-  pillar->terrainHeight = resetValue;
+  pillar->groundHeight = resetValue;
   pillar->velocityY = resetValue;
   pillar->motionFlags = resetValue;
   pillar->timer = resetValue;
@@ -2249,7 +2251,7 @@ static void EventScript_CarryFloatingPillar(void) {
     column = pillar->x.fixed >> 20;
     if (column == 13 && (row = pillar->z.fixed >> 20) == 7 &&
         !GameFlag_IsSet(FLAG_MAP_TEMP_00 + pillarIndex)) {
-      OverlayObject_WaitUntilIdle(pillar);
+      ObjectEvent_WaitUntilIdle(pillar);
       GameFlag_Set(FLAG_MAP_TEMP_00 + pillarIndex);
       pillar->priorityFlags |= OBJ_EVENT_PRIORITY_UNDERFOOT;
       pillar->collisionFlags = 0;
@@ -2272,7 +2274,7 @@ static void EventScript_CarryFloatingPillar(void) {
         secondPassageEffect = VenusLighthouse_CreateBlendedPassageEffect(
             pillar->x.fixed, 0, PIXELS(240), SPRITE_CAPPED_PILLAR);
       }
-      OverlayObject_WaitUntilIdle(pillar);
+      ObjectEvent_WaitUntilIdle(pillar);
       Engine_ObjectEventSetPosition(pillarIndex + LOCALID_FIRST_FLOATING_PILLAR,
                                     0, 0);
       Engine_ObjectDispatchRelease(firstPassageEffect);
@@ -2300,7 +2302,7 @@ static void EventScript_CarryFloatingPillar(void) {
       other = ObjectEvent_GetById(settledIndex + LOCALID_FIRST_FLOATING_PILLAR);
       FloatingPillar_Settle(other, 0);
       Engine_CameraSetSpeed(PIXELS(3), PIXELS(3) / 8);
-      Camera_GetScriptObject()->motionFlags = 0;
+      FieldCamera_GetScriptObject()->motionFlags = 0;
       Engine_CameraMoveTo(PIXELS(136), PIXELS(8), PIXELS(344), 1);
       Engine_CameraWaitForMove();
       // Stack the pillar, then rebalance the two supports and attach the height
@@ -2410,7 +2412,7 @@ static void EventScript_StepOnWestWallSwitch(void) {
       Engine_AudioPlayCue(SE_188);
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
       Engine_MapGridRenderWaitForValues();
-      gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 2);
+      gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 2);
       Engine_ScriptRequestWarp(
           VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTHWEST);
       Engine_ScriptEnd();
@@ -2483,7 +2485,7 @@ static void EventScript_StepOnEastWallSwitch(void) {
       Engine_AudioPlayCue(SE_188);
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
       Engine_MapGridRenderWaitForValues();
-      gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 2);
+      gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 2);
       Engine_ScriptRequestWarp(
           VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_EAST_NORTHEAST);
       Engine_ScriptEnd();
@@ -2572,7 +2574,7 @@ static void EventScript_MoveSocketPillar(void) {
         ObjectEvent_SetSpritePriority(candidateIndex, 3);
     }
     ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(pillarId), 0);
-    pillar->terrainId = 0;
+    pillar->layer = 0;
     motionFlags = &pillar->motionFlags;
     *motionFlags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
     ((union FieldObject *)pillar)->effect.velocity.y = PIXELS(1) / 10;
@@ -2580,7 +2582,7 @@ static void EventScript_MoveSocketPillar(void) {
     MapGrid_CopyCellAttributes(6, 44, 1, 1,
                                gVenusFourthFloorSockets[switchIndex].x,
                                gVenusFourthFloorSockets[switchIndex].z);
-    OverlayObject_WaitUntilIdle(pillar);
+    ObjectEvent_WaitUntilIdle(pillar);
     Script_PlaySong(SE_188);
     pillar->collisionFlags = 0;
     *motionFlags = 0;
@@ -2620,21 +2622,21 @@ static void EventScript_MoveSocketPillar(void) {
       struct ObjectEvent *firstGateEffect;
       struct ObjectEvent *secondGateEffect;
 
-      Camera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
+      FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
       ObjectEvent_PlaceCurrentWithinCameraBounds(LOCALID_SOCKET_EFFECT_STATUE,
                                                  1);
-      Camera_WaitForMove();
+      FieldCamera_WaitForMove();
       firstGateEffect = VenusLighthouse_CreateLight(
           136, 776, gVenusFourthFloorLightFromStatue);
       Script_Wait(30);
-      Camera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
-      Camera_MoveTo(PIXELS(216), -1, PIXELS(632), 1);
+      FieldCamera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
+      FieldCamera_MoveTo(PIXELS(216), -1, PIXELS(632), 1);
       ObjectDispatch_WaitForValue16(firstGateEffect);
       ObjectEvent_SetScript(firstGateEffect, gVenusFourthFloorLightToSoutheast);
       secondGateEffect = VenusLighthouse_CreateLight(
           216, 760, gVenusFourthFloorLightToSouthwest);
-      while (((struct ScriptInterpreter *)firstGateEffect)->script != 0 ||
-             ((struct ScriptInterpreter *)secondGateEffect)->script != 0) {
+      while (((struct ObjectScriptContext *)firstGateEffect)->script != 0 ||
+             ((struct ObjectScriptContext *)secondGateEffect)->script != 0) {
         if (firstGateEffect->riseEnabled != 0 ||
             secondGateEffect->riseEnabled != 0) {
           Script_Wait(30);
@@ -2766,12 +2768,12 @@ s32 VenusLighthouse_Initialize(void) {
   if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION))
     VenusLighthouse_RestoreScriptedChildValues();
   Engine_GameFlagSet(FLAG_VENUS_LIGHTHOUSE_LIT);
-  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
   mapId = gGameState.mapId;
   // Restore the scholars and soldiers outside and each interior puzzle by its
   // warp destination.
   if (mapId == (s32)&MapId_VenusLighthouseEntry) {
-    gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     if (!Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD))
       VenusLighthouse_LayDownHurtObjectEvent(
           LOCALID_SOLDIER_TELLING_OF_THE_ATTACK);
@@ -2792,7 +2794,7 @@ s32 VenusLighthouse_Initialize(void) {
       VenusLighthouse_LayDownHurtObjectEvent(LOCALID_SCHOLAR_ATTACKED_ANYWAY);
       break;
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_FROM_CARRY_STONE_WEST:
-      Engine_GameFlagClear(FLAG_WARP_ARRIVAL_PENDING);
+      Engine_GameFlagClear(FLAG_WARP_ARRIVAL_STAIRS_UP);
       // The other scholar setup still applies.
       // fall through
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_FROM_FRONT_ROOM:
@@ -2811,7 +2813,7 @@ s32 VenusLighthouse_Initialize(void) {
       }
       break;
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_FLOOR_SWITCH_FROM_GREAT_STATUE:
-      Engine_GameFlagClear(FLAG_WARP_ARRIVAL_ALTERNATE);
+      Engine_GameFlagClear(FLAG_WARP_ARRIVAL_STAIRS_DOWN);
       // Restore the same passage tiles as the room's other two warp
       // destinations.
       // fall through
@@ -2844,7 +2846,7 @@ s32 VenusLighthouse_Initialize(void) {
       VenusLighthouse_AnimatePairedTileWaves();
       break;
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_LOWER_ROOM_FROM_DRIFTING_FLOOR_HOLE:
-      FieldEffect_SetQueuedSoundAndPlay(SE_170);
+      Map_QueueMusic(SE_170);
       if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION))
         VenusLighthouse_LandWithRadialDust();
       break;
@@ -2868,13 +2870,13 @@ s32 VenusLighthouse_Initialize(void) {
       Engine_TaskWait(2);
       objectEvent = ObjectEvent_GetById(LOCALID_FIRST_DEPTH_PILLAR);
       objectEvent->motionFlags = 0;
-      objectEvent->update = MapObjectEvent_SetFlagBitByRelativeDepth;
+      objectEvent->update = ObjectEvent_SetFlagBitByRelativeDepth;
       objectEvent = ObjectEvent_GetById(LOCALID_FIRST_DEPTH_PILLAR + 1);
       objectEvent->motionFlags = 0;
-      objectEvent->update = MapObjectEvent_SetFlagBitByRelativeDepth;
+      objectEvent->update = ObjectEvent_SetFlagBitByRelativeDepth;
       objectEvent = ObjectEvent_GetById(LOCALID_FIRST_DEPTH_PILLAR + 2);
       objectEvent->motionFlags = 0;
-      objectEvent->update = MapObjectEvent_SetFlagBitByRelativeDepth;
+      objectEvent->update = ObjectEvent_SetFlagBitByRelativeDepth;
       EventScript_MoveDepthPillar();
       break;
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_FROM_GAP:
@@ -2882,7 +2884,7 @@ s32 VenusLighthouse_Initialize(void) {
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_FROM_THUNDER_CROWN:
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_FROM_PILLARS:
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_FROM_PSYNERGY_STONE:
-      FieldEffect_SetQueuedSoundAndPlay(SE_170);
+      Map_QueueMusic(SE_170);
       FieldEffect_StartFadeOverlay(0);
       Engine_TaskWait(2);
       if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_WALL_MOVED)) {
@@ -2899,7 +2901,7 @@ s32 VenusLighthouse_Initialize(void) {
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_VENUS_LIGHTHOUSE_SECOND_FLOOR_SOUTH:
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_FROM_THUNDER_CROWN:
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_LOWER_ROOM_FROM_DRIFTING_FLOOR:
-      FieldEffect_SetQueuedSoundAndPlay(SE_170);
+      Map_QueueMusic(SE_170);
       break;
     }
   } else if (mapId == (s32)&MapId_VenusLighthouseSecondFloor) {
@@ -2907,7 +2909,7 @@ s32 VenusLighthouse_Initialize(void) {
     switch (gGameState.warpDest) {
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_SPARKLING_PASSAGE_FROM_PILLAR_PIT:
       VenusLighthouse_ArriveThroughSparkPassage();
-      FieldEffect_SetQueuedSoundAndPlay(SE_170);
+      Map_QueueMusic(SE_170);
       break;
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR_EAST:
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR:
@@ -2948,14 +2950,14 @@ s32 VenusLighthouse_Initialize(void) {
       EventScript_MoveGatePillar();
       break;
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR_SOUTH:
-      gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 2);
+      gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 2);
       ObjectEvent_GetById(LOCALID_PARTY_LEADER)->y.fixed = -PIXELS(2);
       // These warp destinations share the tile-wave setup.
       // fall through
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR_WEST:
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_WALL_SWITCH_FROM_GATE:
-      FieldEffect_SetQueuedSoundAndPlay(SE_170);
-      DisplayBlend_SuspendScript();
+      Map_QueueMusic(SE_170);
+      BlendScript_Suspend();
       {
         s32 zero = 0;
 
@@ -2978,10 +2980,10 @@ s32 VenusLighthouse_Initialize(void) {
         break;
       Engine_ScriptOpenScreen();
       Engine_ScriptWaitForScreen();
-      gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
+      gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
       break;
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR_NORTH:
-      FieldEffect_SetQueuedSoundAndPlay(SE_170);
+      Map_QueueMusic(SE_170);
       break;
     }
   } else if (mapId == (s32)&MapId_VenusLighthouseThirdFloor) {
@@ -2997,7 +2999,7 @@ s32 VenusLighthouse_Initialize(void) {
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR_SOUTHWEST:
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_DRIFTING_FLOOR_FROM_PILLAR_SOCKETS:
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR_EAST_NORTHEAST:
-      FieldEffect_SetQueuedSoundAndPlay(SE_170);
+      Map_QueueMusic(SE_170);
       if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED)) {
         MapGrid_CopyCells(53, 12, 3, 13, 26, 12);
         MapGrid_CopyCellsTo(81, 41, 89, 14, 9, 2);
@@ -3026,7 +3028,7 @@ s32 VenusLighthouse_Initialize(void) {
        * does not cross-jump with the second floor's same call; as a call by
        * its void prototype, 2 of 1431 instructions differ in tbs-en. */
       VENUS_LIGHTHOUSE_RUN_OPENING_SEQUENCE();
-      FieldEffect_SetQueuedSoundAndPlay(SE_170);
+      Map_QueueMusic(SE_170);
       break;
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_PILLAR_SOCKETS_FROM_DRIFTING_FLOOR:
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_PILLAR_SOCKETS_FROM_WEST_ROOM:
@@ -3087,7 +3089,7 @@ s32 VenusLighthouse_Initialize(void) {
       EventScript_MoveSwitchPillar();
       break;
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_SPARKLING_PASSAGES_FROM_DRIFTING_FLOOR:
-      FieldEffect_SetQueuedSoundAndPlay(SE_170);
+      Map_QueueMusic(SE_170);
       break;
     }
   } else if (mapId == (s32)&MapId_VenusLighthouseFourthFloor) {
@@ -3098,7 +3100,7 @@ s32 VenusLighthouse_Initialize(void) {
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLARS_FROM_WALL_SWITCHES:
       if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
         VenusLighthouse_LowerFloatingPillars(0);
-        OverlayObject_WaitUntilIdle(ObjectEvent_GetById(LOCALID_PARTY_LEADER));
+        ObjectEvent_WaitUntilIdle(ObjectEvent_GetById(LOCALID_PARTY_LEADER));
         for (pillarIndex = 0; pillarIndex <= 3; pillarIndex++) {
           objectEvent =
               ObjectEvent_GetById(pillarIndex + LOCALID_FIRST_FLOATING_PILLAR);
@@ -3154,11 +3156,11 @@ s32 VenusLighthouse_Initialize(void) {
       break;
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_GAIA_BLADE_FROM_WALL_SWITCHES_WEST:
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_GAIA_BLADE_FROM_WALL_SWITCHES_EAST:
-      FieldEffect_SetQueuedSoundAndPlay(SE_170);
+      Map_QueueMusic(SE_170);
       break;
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTHWEST:
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_EAST_NORTHEAST:
-      gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 2);
+      gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 2);
       ObjectEvent_GetById(LOCALID_PARTY_LEADER)->y.fixed = -PIXELS(2);
       // Restore the same spray and passage state.
       // fall through
@@ -3178,10 +3180,10 @@ s32 VenusLighthouse_Initialize(void) {
       ObjectEvent_GetById(LOCALID_RISING_PLATFORM)->priorityFlags |=
           OBJ_EVENT_PRIORITY_UNDERFOOT;
       ObjectEvent_GetById(LOCALID_RISING_PLATFORM)->y.fixed = -(PIXELS(33) / 2);
-      DisplayBlend_SuspendScript();
+      BlendScript_Suspend();
       Io_Write16(0, &REG_BLDCNT);
       if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED)) {
-        FieldEffect_SetQueuedSoundAndPlay(SE_170);
+        Map_QueueMusic(SE_170);
         MapGrid_CopyCellsTo(36, 81, 32, 81, 3, 2);
         MapGrid_CopyCellsTo(36, 83, 36, 81, 3, 2);
         MapGrid_CopyCellAttributes(36, 17, 3, 1, 32, 17);
@@ -3203,7 +3205,7 @@ s32 VenusLighthouse_Initialize(void) {
               VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_EAST_NORTHEAST) {
         Engine_ScriptOpenScreen();
         Engine_ScriptWaitForScreen();
-        gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
+        gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
       }
       if (gGameState.warpDest ==
           VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_FROM_PSYNERGY_STONE_RISING)
@@ -3331,8 +3333,8 @@ static void VenusLighthouse_StepObjectEventWithDust(struct Vector3 *direction) {
   {
     struct EventWork *work = gFieldWork;
 
-    localId = gGameState.selectedLocalId;
-    viewCenter = work->viewCenter;
+    localId = gGameState.leaderLocalId;
+    viewCenter = work->camera;
   }
   objectEvent = ObjectEvent_GetById(localId);
   nextPosition.x = objectEvent->x.fixed +
@@ -3366,7 +3368,7 @@ static void VenusLighthouse_StepObjectEventWithDust(struct Vector3 *direction) {
     Object_WaitForMove(objectEvent);
     do {
       Engine_TaskWait(1);
-    } while (objectEvent->y.fixed != objectEvent->terrainHeight);
+    } while (objectEvent->y.fixed != objectEvent->groundHeight);
     ObjectEvent_SetMode(objectEvent, ANIMATION_LEADER_SPRING);
     Engine_TaskWait(3);
     return;
@@ -3428,12 +3430,12 @@ static void VenusLighthouse_AnimatePairedTileWaves(void) {
   u32 row;
   u32 particleIndex;
 
-  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 2);
+  gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 2);
   Engine_ScriptStart();
   Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER),
                                    0);
   Engine_ObjectEventSetChildValue(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
-  FieldEffect_SetQueuedSoundAndPlay(SE_170);
+  Map_QueueMusic(SE_170);
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
   Engine_ScriptWait(40);
@@ -3523,12 +3525,12 @@ static void VenusLighthouse_AnimateWestTileWave(void) {
   u32 particleIndex;
   struct EffectOptions *options;
 
-  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 2);
+  gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 2);
   Engine_ScriptStart();
   Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER),
                                    0);
   Engine_ObjectEventSetChildValue(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
-  FieldEffect_SetQueuedSoundAndPlay(SE_170);
+  Map_QueueMusic(SE_170);
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
   Engine_ScriptWait(40);
@@ -3568,7 +3570,7 @@ static void VenusLighthouse_AnimateWestTileWave(void) {
   } while (row <= 12);
   MapGrid_CopyCellsTo(81, 41, 89, 14, 9, 2);
   Engine_CameraWaitForMove();
-  Camera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   Engine_ScriptWait(60);
   Engine_GameFlagSet(FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED);
   Engine_ScriptRequestWarp(
@@ -3590,12 +3592,12 @@ static void VenusLighthouse_AnimateEastTileWave(void) {
   u32 particleIndex;
   struct EffectOptions *options;
 
-  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 2);
+  gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 2);
   Engine_ScriptStart();
   Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER),
                                    0);
   Engine_ObjectEventSetChildValue(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
-  FieldEffect_SetQueuedSoundAndPlay(SE_170);
+  Map_QueueMusic(SE_170);
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
   Engine_ScriptWait(40);
@@ -3631,7 +3633,7 @@ static void VenusLighthouse_AnimateEastTileWave(void) {
   } while (row <= 12);
   MapGrid_CopyCellsTo(86, 41, 97, 14, 5, 2);
   Engine_CameraWaitForMove();
-  Camera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   Engine_ScriptWait(60);
   Engine_GameFlagSet(FLAG_VENUS_LIGHTHOUSE_EAST_WALL_MOVED);
   Engine_ScriptRequestWarp(
@@ -3692,7 +3694,7 @@ static void VenusLighthouse_RaiseLeaderWithSpray(void) {
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   platform = ObjectEvent_GetById(LOCALID_RISING_PLATFORM);
   Engine_ScriptStart();
-  Camera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   Engine_MapGridRedraw();
   Engine_TaskWait(1);
   // Land the leader on the platform, then synchronize their small settling
@@ -3714,23 +3716,23 @@ static void VenusLighthouse_RaiseLeaderWithSpray(void) {
   leader->motionFlags &= ~OBJ_EVENT_FOLLOWS_TERRAIN;
   platform->y.fixed += VENUS_LIGHTHOUSE_FIXED_OFFSET(-3, 16);
   leader->y.fixed += VENUS_LIGHTHOUSE_FIXED_OFFSET(-3, 16);
-  leader->terrainHeight += VENUS_LIGHTHOUSE_FIXED_OFFSET(-3, 16);
+  leader->groundHeight += VENUS_LIGHTHOUSE_FIXED_OFFSET(-3, 16);
   Engine_TaskWait(2);
   platform->y.fixed += VENUS_LIGHTHOUSE_FIXED_OFFSET(-2, 16);
   leader->y.fixed += VENUS_LIGHTHOUSE_FIXED_OFFSET(-2, 16);
-  leader->terrainHeight += VENUS_LIGHTHOUSE_FIXED_OFFSET(-2, 16);
+  leader->groundHeight += VENUS_LIGHTHOUSE_FIXED_OFFSET(-2, 16);
   Engine_TaskWait(10);
   platform->y.fixed += PIXELS(2);
   leader->y.fixed += PIXELS(2);
-  leader->terrainHeight += PIXELS(2);
+  leader->groundHeight += PIXELS(2);
   Engine_TaskWait(4);
   platform->y.fixed += PIXELS(2);
   leader->y.fixed += PIXELS(2);
-  leader->terrainHeight += PIXELS(2);
+  leader->groundHeight += PIXELS(2);
   Engine_TaskWait(4);
   platform->y.fixed += PIXELS(1);
   leader->y.fixed += PIXELS(1);
-  leader->terrainHeight += PIXELS(1);
+  leader->groundHeight += PIXELS(1);
   leader->motionFlags = 0;
   platform->motionFlags = 0;
   ObjectEvent_SetAttachedEffect(
@@ -3752,7 +3754,7 @@ static void VenusLighthouse_RaiseLeaderWithSpray(void) {
   // frame.
   for (riseFrame = 0; riseFrame < 128; riseFrame++) {
     leader->y.fixed += PIXELS(1);
-    leader->terrainHeight += PIXELS(1);
+    leader->groundHeight += PIXELS(1);
     platform->y.fixed += PIXELS(1);
     Engine_TaskWait(1);
   }
@@ -3775,7 +3777,7 @@ static void VenusLighthouse_RaiseLeaderWithSpray(void) {
 /// fourth floor only the
 /// middle socket has more than one piece, and only the light from the
 /// south-east socket reaches it.
-static s32 VenusLighthouse_RouteLight(struct ScriptInterpreter *interpreter) {
+static s32 VenusLighthouse_RouteLight(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *light = (struct ObjectEvent *)interpreter;
   struct FieldPosition pillarPosition;
   struct ObjectEvent *pillar;
@@ -3895,7 +3897,7 @@ s32 gLongEffectScript[] = {
 
 /// The cell ahead for each of sixteen headings, 16 pixels east-west in the
 /// upper halfword and north-south in the lower (DIRECTION_STEP).
-u32 gStagedObjectEvent_DirectionSteps[] = {
+u32 gPushedObject_DirectionSteps[] = {
     DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),
@@ -4635,125 +4637,125 @@ struct ObjectEventTemplate gVenusLighthouseObjectEventTemplatesOther[] = {
 
 struct ObjectEventTemplate gVenusLighthouseEntryObjectEventTemplates[] = {
     { SPRITE_SOLDIER, FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD, MOVEMENT_TYPE_STAND,
-        PIXELS(128), 0, PIXELS(268), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(128), 0, PIXELS(268), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_OLD_MAN_IN_BLUE_CAP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(352), 0, PIXELS(300), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(352), 0, PIXELS(300), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_OLD_MAN_IN_BLUE_CAP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(272), 0, PIXELS(428), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(272), 0, PIXELS(428), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_OLD_MAN_IN_BLUE_CAP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(368), 0, PIXELS(140), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(368), 0, PIXELS(140), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(400), 0, PIXELS(172), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(400), 0, PIXELS(172), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(416), 0, PIXELS(412), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(416), 0, PIXELS(412), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(192), 0, PIXELS(364), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(192), 0, PIXELS(364), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gVenusLighthouseGroundFloorObjectEventTemplates[] = {
     { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_OLD_MAN_IN_BLUE_CAP, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
-        PIXELS(128), 0, PIXELS(140), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(128), 0, PIXELS(140), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_MAN_WITH_GLASSES, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
-        PIXELS(304), 0, PIXELS(204), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(304), 0, PIXELS(204), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_OLD_MAN_IN_BLUE_CAP, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
-        PIXELS(344), 0, PIXELS(592), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(344), 0, PIXELS(592), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_SPIRAL_PILLAR, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
-        PIXELS(872), 0, PIXELS(120), FACING_NORTH, TALK_KEEP_FACING, 0 },
+        PIXELS(872), 0, PIXELS(120), FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SPIRAL_PILLAR, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
-        PIXELS(840), 0, PIXELS(88), FACING_NORTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(840), 0, PIXELS(88), FACING_NORTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_LADY_STATUE, CONDITION_IN_VIEW, (s32)gVenusGreyStatueScript,
-        PIXELS(664), 0, PIXELS(792), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(664), 0, PIXELS(792), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_VENUS_LIGHTHOUSE, CONDITION_IN_VIEW, (s32)gVenusMiniatureLighthouseScript,
-        PIXELS(488), 0, PIXELS(536), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(488), 0, PIXELS(536), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LADY_STATUE, CONDITION_IN_VIEW, (s32)gVenusGreyStatueScript,
-        PIXELS(72), 0, PIXELS(104), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(72), 0, PIXELS(104), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LADY_STATUE, CONDITION_IN_VIEW, (s32)gVenusGreyStatueScript,
-        PIXELS(72), 0, PIXELS(168), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(72), 0, PIXELS(168), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_LADY_STATUE, CONDITION_IN_VIEW, (s32)gVenusGreyStatueScript,
-        PIXELS(168), 0, PIXELS(104), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(168), 0, PIXELS(104), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_LADY_STATUE, CONDITION_IN_VIEW, (s32)gVenusGreyStatueScript,
-        PIXELS(168), 0, PIXELS(168), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(168), 0, PIXELS(168), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_LADY_STATUE, CONDITION_IN_VIEW, (s32)gVenusGreyStatueScript,
-        PIXELS(72), 0, PIXELS(344), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(72), 0, PIXELS(344), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LADY_STATUE, CONDITION_IN_VIEW, (s32)gVenusGreyStatueScript,
-        PIXELS(104), 0, PIXELS(344), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(104), 0, PIXELS(344), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_LADY_STATUE, CONDITION_IN_VIEW, (s32)gVenusGreyStatueScript,
-        PIXELS(136), 0, PIXELS(344), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(136), 0, PIXELS(344), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_LADY_STATUE, CONDITION_IN_VIEW, (s32)gVenusGreyStatueScript,
-        PIXELS(168), 0, PIXELS(344), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(168), 0, PIXELS(344), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_LADY_STATUE, CONDITION_IN_VIEW, (s32)gVenusGreyStatueScript,
-        PIXELS(200), 0, PIXELS(344), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(200), 0, PIXELS(344), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gVenusLighthouseFirstFloorObjectEventTemplates[] = {
     { SPRITE_CAPPED_PILLAR, CONDITION_IN_VIEW, (s32)gVenusGreyPillarScript,
-        PIXELS(248), 0, PIXELS(712), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(248), 0, PIXELS(712), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_CAPPED_PILLAR, CONDITION_IN_VIEW, (s32)gVenusGreyPillarScript,
-        PIXELS(184), 0, PIXELS(824), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(184), 0, PIXELS(824), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_CAPPED_PILLAR, CONDITION_IN_VIEW, (s32)gVenusGreyPillarScript,
-        PIXELS(200), 0, PIXELS(824), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(200), 0, PIXELS(824), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SPIRAL_PILLAR, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
-        PIXELS(168), 0, PIXELS(392), FACING_NORTH, TALK_KEEP_FACING, 0 },
+        PIXELS(168), 0, PIXELS(392), FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SPIRAL_PILLAR, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
-        PIXELS(88), 0, PIXELS(376), FACING_NORTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(88), 0, PIXELS(376), FACING_NORTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gVenusLighthouseSecondFloorObjectEventTemplates[] = {
     { SPRITE_LADY_STATUE, CONDITION_IN_VIEW, (s32)gVenusGreyStatueScript,
-        PIXELS(808), 0, PIXELS(728), FACING_NORTH, TALK_KEEP_FACING, 0 },
+        PIXELS(808), 0, PIXELS(728), FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SPIRAL_PILLAR, CONDITION_IN_VIEW, (s32)gVenusTrackNorthSouthScript,
-        PIXELS(776), 0, PIXELS(712), FACING_NORTH, TALK_KEEP_FACING, 0 },
+        PIXELS(776), 0, PIXELS(712), FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_PARTICLE, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(8), 0, PIXELS(8), FACING_NORTH, TALK_KEEP_FACING, 0 },
+        PIXELS(8), 0, PIXELS(8), FACING_NORTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gVenusLighthouseThirdFloorObjectEventTemplates[] = {
     { SPRITE_LADY_STATUE, CONDITION_IN_VIEW, (s32)gVenusGreyStatueScript,
-        PIXELS(888), 0, PIXELS(680), FACING_NORTH, TALK_KEEP_FACING, 0 },
+        PIXELS(888), 0, PIXELS(680), FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SPIRAL_PILLAR, CONDITION_IN_VIEW, (s32)gVenusTrackSouthEastScript,
-        PIXELS(792), 0, PIXELS(680), FACING_NORTH, TALK_KEEP_FACING, 0 },
+        PIXELS(792), 0, PIXELS(680), FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SPIRAL_PILLAR, CONDITION_IN_VIEW, (s32)gVenusTrackWestEastScript,
-        PIXELS(808), 0, PIXELS(648), FACING_NORTH, TALK_KEEP_FACING, 0 },
+        PIXELS(808), 0, PIXELS(648), FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SPIRAL_PILLAR, CONDITION_IN_VIEW, (s32)gVenusTrackNorthWestScript,
-        PIXELS(824), 0, PIXELS(680), FACING_NORTH, TALK_KEEP_FACING, 0 },
+        PIXELS(824), 0, PIXELS(680), FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_PARTICLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(8), 0, PIXELS(8), FACING_NORTH, TALK_KEEP_FACING, 0 },
+        PIXELS(8), 0, PIXELS(8), FACING_NORTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gVenusLighthouseFourthFloorObjectEventTemplates[] = {
     { SPRITE_BALANCE_PLATFORM, CONDITION_IN_VIEW, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(104), 0, PIXELS(312), FACING_NORTH, TALK_KEEP_FACING, 0 },
+        PIXELS(104), 0, PIXELS(312), FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BALANCE_PLATFORM, CONDITION_IN_VIEW, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(168), 0, PIXELS(312), FACING_NORTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(168), 0, PIXELS(312), FACING_NORTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SPIRAL_PILLAR, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
-        PIXELS(120), 0, PIXELS(280), FACING_NORTH, TALK_KEEP_FACING, 0 },
+        PIXELS(120), 0, PIXELS(280), FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SPIRAL_PILLAR, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
-        PIXELS(136), 0, PIXELS(280), FACING_NORTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(136), 0, PIXELS(280), FACING_NORTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SPIRAL_PILLAR, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
-        PIXELS(152), 0, PIXELS(280), FACING_NORTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(152), 0, PIXELS(280), FACING_NORTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SPIRAL_PILLAR, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
-        PIXELS(248), 0, PIXELS(120), FACING_NORTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(248), 0, PIXELS(120), FACING_NORTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_LADY_STATUE, CONDITION_IN_VIEW, (s32)gVenusGreyStatueScript,
-        PIXELS(136), 0, PIXELS(776), FACING_NORTH, TALK_KEEP_FACING, 0 },
+        PIXELS(136), 0, PIXELS(776), FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SPIRAL_PILLAR, CONDITION_IN_VIEW, (s32)gVenusTrackNorthSouthScript,
-        PIXELS(184), 0, PIXELS(616), FACING_NORTH, TALK_KEEP_FACING, 0 },
+        PIXELS(184), 0, PIXELS(616), FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SPIRAL_PILLAR, CONDITION_IN_VIEW, (s32)gVenusTrackSouthEastScript,
-        PIXELS(200), 0, PIXELS(616), FACING_NORTH, TALK_KEEP_FACING, 0 },
+        PIXELS(200), 0, PIXELS(616), FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SPIRAL_PILLAR, CONDITION_IN_VIEW, (s32)gVenusTrackSouthWestScript,
-        PIXELS(232), 0, PIXELS(616), FACING_NORTH, TALK_KEEP_FACING, 0 },
+        PIXELS(232), 0, PIXELS(616), FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SPIRAL_PILLAR, CONDITION_IN_VIEW, (s32)gVenusTrackNorthEastScript,
-        PIXELS(248), 0, PIXELS(616), FACING_NORTH, TALK_KEEP_FACING, 0 },
+        PIXELS(248), 0, PIXELS(616), FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_PARTICLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(8), 0, PIXELS(8), FACING_NORTH, TALK_KEEP_FACING, 0 },
+        PIXELS(8), 0, PIXELS(8), FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_FLOATING_PLATFORM, CONDITION_IN_VIEW, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(664), 0, PIXELS(136), FACING_NORTH, TALK_KEEP_FACING, 0 },
+        PIXELS(664), 0, PIXELS(136), FACING_NORTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
@@ -4782,27 +4784,27 @@ struct MapEvent gVenusLighthouseGroundFloorEvents[] = {
     { MAP_EVENT_WARP, VENUS_LIGHTHOUSE_GROUND_FLOOR_TO_VENUS_LIGHTHOUSE_ENTRY, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_TO_VENUS_LIGHTHOUSE_ENTRY },
     { MAP_EVENT_WARP, VENUS_LIGHTHOUSE_GROUND_FLOOR_FRONT_ROOM_TO_RELIEFS, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_FRONT_ROOM_TO_RELIEFS },
     { MAP_EVENT_WARP, VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_TO_FRONT_ROOM, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_TO_FRONT_ROOM },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED_ALTERNATE, VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_TO_CARRY_STONE_EAST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_TO_CARRY_STONE_EAST },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED_ALTERNATE, VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_TO_CARRY_STONE_WEST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_TO_CARRY_STONE_WEST },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_TO_CARRY_STONE_EAST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_TO_CARRY_STONE_EAST },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_TO_CARRY_STONE_WEST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_TO_CARRY_STONE_WEST },
     { MAP_EVENT_WARP, VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_TO_PILLARS, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_TO_PILLARS },
     { MAP_EVENT_WARP, VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_TO_RELIEFS, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_TO_RELIEFS },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED_ALTERNATE, VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_TO_CARRY_STONE, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_TO_CARRY_STONE },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED, VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_TO_FLOOR_SWITCH, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_TO_FLOOR_SWITCH },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_TO_CARRY_STONE, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_TO_CARRY_STONE },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_TO_FLOOR_SWITCH, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_TO_FLOOR_SWITCH },
     { MAP_EVENT_WARP, VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_TO_STATUE_ROW_NORTH, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_TO_STATUE_ROW_NORTH },
     { MAP_EVENT_WARP, VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_TO_STATUE_ROW_WEST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_TO_STATUE_ROW_WEST },
     { MAP_EVENT_WARP, VENUS_LIGHTHOUSE_GROUND_FLOOR_STATUE_ROW_TO_PILLARS_NORTH, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_STATUE_ROW_TO_PILLARS_NORTH },
     { MAP_EVENT_WARP, VENUS_LIGHTHOUSE_GROUND_FLOOR_STATUE_ROW_TO_PILLARS_WEST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_STATUE_ROW_TO_PILLARS_WEST },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED, VENUS_LIGHTHOUSE_GROUND_FLOOR_STATUE_ROW_TO_SMALL_ROOM, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_STATUE_ROW_TO_SMALL_ROOM },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED_ALTERNATE, VENUS_LIGHTHOUSE_GROUND_FLOOR_GREAT_STATUE_TO_FLOOR_SWITCH, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_GREAT_STATUE_TO_FLOOR_SWITCH },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED_ALTERNATE, VENUS_LIGHTHOUSE_GROUND_FLOOR_GREAT_STATUE_TO_SMALL_ROOM, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_GREAT_STATUE_TO_SMALL_ROOM },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED_ALTERNATE, VENUS_LIGHTHOUSE_GROUND_FLOOR_FLOOR_SWITCH_TO_PILLARS, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_FLOOR_SWITCH_TO_PILLARS },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED_ALTERNATE, VENUS_LIGHTHOUSE_GROUND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED_ALTERNATE, VENUS_LIGHTHOUSE_GROUND_FLOOR_SMALL_ROOM_TO_STATUE_ROW, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_SMALL_ROOM_TO_STATUE_ROW },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED, VENUS_LIGHTHOUSE_GROUND_FLOOR_SMALL_ROOM_TO_GREAT_STATUE, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_SMALL_ROOM_TO_GREAT_STATUE },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED, VENUS_LIGHTHOUSE_GROUND_FLOOR_FLOOR_SWITCH_TO_GREAT_STATUE, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_FLOOR_SWITCH_TO_GREAT_STATUE },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED, VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_TO_RELIEFS_WEST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_TO_RELIEFS_WEST },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED, VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_TO_RELIEFS_EAST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_TO_RELIEFS_EAST },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED, VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_TO_PILLARS, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_TO_PILLARS },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, VENUS_LIGHTHOUSE_GROUND_FLOOR_STATUE_ROW_TO_SMALL_ROOM, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_STATUE_ROW_TO_SMALL_ROOM },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, VENUS_LIGHTHOUSE_GROUND_FLOOR_GREAT_STATUE_TO_FLOOR_SWITCH, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_GREAT_STATUE_TO_FLOOR_SWITCH },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, VENUS_LIGHTHOUSE_GROUND_FLOOR_GREAT_STATUE_TO_SMALL_ROOM, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_GREAT_STATUE_TO_SMALL_ROOM },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, VENUS_LIGHTHOUSE_GROUND_FLOOR_FLOOR_SWITCH_TO_PILLARS, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_FLOOR_SWITCH_TO_PILLARS },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, VENUS_LIGHTHOUSE_GROUND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, VENUS_LIGHTHOUSE_GROUND_FLOOR_SMALL_ROOM_TO_STATUE_ROW, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_SMALL_ROOM_TO_STATUE_ROW },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, VENUS_LIGHTHOUSE_GROUND_FLOOR_SMALL_ROOM_TO_GREAT_STATUE, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_SMALL_ROOM_TO_GREAT_STATUE },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, VENUS_LIGHTHOUSE_GROUND_FLOOR_FLOOR_SWITCH_TO_GREAT_STATUE, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_FLOOR_SWITCH_TO_GREAT_STATUE },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_TO_RELIEFS_WEST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_TO_RELIEFS_WEST },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_TO_RELIEFS_EAST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_TO_RELIEFS_EAST },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_TO_PILLARS, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_TO_PILLARS },
     { MAP_EVENT_COORD, TRIGGER_LEDGE, FLAG_MAP_TEMP_00, EVENT_SCRIPT(EventScript_JumpDown) },
     { MAP_EVENT_COORD, TRIGGER_FLOOR_SWITCH, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StepOnFloorSwitch) },
     { MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, TRIGGER_WALL_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushPillarTowardWall) },
@@ -4812,17 +4814,17 @@ struct MapEvent gVenusLighthouseGroundFloorEvents[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SCHOLAR_ATTACKED_ANYWAY, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseIfKradenHadntBeenThereWe) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SCHOLAR_NOT_THE_ENTRANCE, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseKradenSaidSomethingAboutThisBeing) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_DOOR_SCHOLAR, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseIWonderWhatMysteriesTheStatue) },
-    { BG_EVENT(BG_EVENT_UNNAMED), TRIGGER_FIRST_RELIEF, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadRelief) },
+    { BG_EVENT(BG_EVENT_SILENT), TRIGGER_FIRST_RELIEF, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadRelief) },
 #if LANGUAGE == LANGUAGE_JAPANESE
-    { BG_EVENT(BG_EVENT_UNNAMED), TRIGGER_FIRST_RELIEF + 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadRelief) },
-    { BG_EVENT(BG_EVENT_UNNAMED), TRIGGER_FIRST_RELIEF + 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadRelief) },
-    { BG_EVENT(BG_EVENT_UNNAMED), TRIGGER_FIRST_RELIEF + 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadRelief) },
-    { BG_EVENT(BG_EVENT_UNNAMED), TRIGGER_FIRST_RELIEF + 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadRelief) },
+    { BG_EVENT(BG_EVENT_SILENT), TRIGGER_FIRST_RELIEF + 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadRelief) },
+    { BG_EVENT(BG_EVENT_SILENT), TRIGGER_FIRST_RELIEF + 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadRelief) },
+    { BG_EVENT(BG_EVENT_SILENT), TRIGGER_FIRST_RELIEF + 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadRelief) },
+    { BG_EVENT(BG_EVENT_SILENT), TRIGGER_FIRST_RELIEF + 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadRelief) },
 #endif
 #if !TBS_PATCH_1 || TBS_PATCH_2
-    { BG_EVENT(BG_EVENT_UNNAMED), TRIGGER_FIRST_RELIEF + 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadRelief) },
+    { BG_EVENT(BG_EVENT_SILENT), TRIGGER_FIRST_RELIEF + 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadRelief) },
 #endif
-    { BG_EVENT(BG_EVENT_UNNAMED), TRIGGER_GREAT_STATUE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchStatue) },
+    { BG_EVENT(BG_EVENT_SILENT), TRIGGER_GREAT_STATUE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchStatue) },
     { BG_EVENT(BG_EVENT_CHEST), TRIGGER_CHEST, FLAG_VENUS_LIGHTHOUSE_LUCKY_CAP, FIND_ITEM(ITEM_LUCKY_CAP) },
     { BG_EVENT(BG_EVENT_CHEST), TRIGGER_SECOND_CHEST, FLAG_VENUS_LIGHTHOUSE_CARRY_STONE, FIND_ITEM(ITEM_CARRY_STONE) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_WALL_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MovePillarTowardWall) },
@@ -4834,25 +4836,25 @@ struct MapEvent gVenusLighthouseGroundFloorEvents[] = {
 };
 
 struct MapEvent gVenusLighthouseFirstFloorEvents[] = {
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED_ALTERNATE, VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_TO_LOWER_ROOM, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_TO_LOWER_ROOM },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_TO_LOWER_ROOM, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_TO_LOWER_ROOM },
     { MAP_EVENT_WARP, VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_TO_GAP, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_TO_GAP },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED, VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR_NORTH, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR_NORTH },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR_NORTH, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR_NORTH },
     { MAP_EVENT_WARP, VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_TO_THUNDER_CROWN, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_TO_THUNDER_CROWN },
     { MAP_EVENT_WARP, VENUS_LIGHTHOUSE_FIRST_FLOOR_THUNDER_CROWN_TO_DRIFTING_FLOOR, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_THUNDER_CROWN_TO_DRIFTING_FLOOR },
     { MAP_EVENT_WARP, VENUS_LIGHTHOUSE_FIRST_FLOOR_THUNDER_CROWN_TO_LADDERS, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_THUNDER_CROWN_TO_LADDERS },
     { MAP_EVENT_WARP, VENUS_LIGHTHOUSE_FIRST_FLOOR_PILLARS_TO_LADDERS, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_PILLARS_TO_LADDERS },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED, VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR_EAST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR_EAST },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR_EAST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR_EAST },
     { MAP_EVENT_WARP, VENUS_LIGHTHOUSE_FIRST_FLOOR_GAP_TO_DRIFTING_FLOOR, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_GAP_TO_DRIFTING_FLOOR },
     { MAP_EVENT_WARP, VENUS_LIGHTHOUSE_FIRST_FLOOR_GAP_TO_LADDERS, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_GAP_TO_LADDERS },
     { MAP_EVENT_WARP, VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_TO_GAP, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_TO_GAP },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED, VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR_WEST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR_WEST },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR_WEST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR_WEST },
     { MAP_EVENT_WARP, VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_TO_THUNDER_CROWN, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_TO_THUNDER_CROWN },
     { MAP_EVENT_WARP, VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_TO_PILLARS, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_TO_PILLARS },
     { MAP_EVENT_WARP, VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_TO_PSYNERGY_STONE, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_TO_PSYNERGY_STONE },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED, VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_GROUND_FLOOR, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_GROUND_FLOOR },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_GROUND_FLOOR, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_GROUND_FLOOR },
     { MAP_EVENT_WARP, VENUS_LIGHTHOUSE_FIRST_FLOOR_PSYNERGY_STONE_TO_LADDERS, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_PSYNERGY_STONE_TO_LADDERS },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED_ALTERNATE, VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_TUNNEL_RUINS_LADY_STATUES, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_TUNNEL_RUINS_LADY_STATUES },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED, VENUS_LIGHTHOUSE_FIRST_FLOOR_LOWER_ROOM_TO_DRIFTING_FLOOR, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_LOWER_ROOM_TO_DRIFTING_FLOOR },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_TUNNEL_RUINS_LADY_STATUES, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_TUNNEL_RUINS_LADY_STATUES },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, VENUS_LIGHTHOUSE_FIRST_FLOOR_LOWER_ROOM_TO_DRIFTING_FLOOR, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_LOWER_ROOM_TO_DRIFTING_FLOOR },
     { MAP_EVENT_COORD, TRIGGER_DRIFT_SOUTH, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_DriftSouth) },
     { MAP_EVENT_COORD, TRIGGER_HOLE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_FallThroughFloor) },
     { MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 31, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushDepthPillar) },
@@ -4861,7 +4863,7 @@ struct MapEvent gVenusLighthouseFirstFloorEvents[] = {
     { MAP_EVENT_COORD, 32, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SetLeaderAsEffectTarget) },
     { MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, TRIGGER_CARRY_PILLARS, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpOrPushCarryPillar) },
     { BG_EVENT(BG_EVENT_CHEST), TRIGGER_CHEST, FLAG_VENUS_LIGHTHOUSE_THUNDER_CROWN, FIND_ITEM(ITEM_THUNDER_CROWN) },
-    { BG_EVENT(BG_EVENT_UNNAMED), TRIGGER_PSYNERGY_STONE, FLAG_VENUS_LIGHTHOUSE_FIRST_FLOOR_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
+    { BG_EVENT(BG_EVENT_SILENT), TRIGGER_PSYNERGY_STONE, FLAG_VENUS_LIGHTHOUSE_FIRST_FLOOR_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FIRST_DEPTH_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MoveDepthPillar) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FIRST_DEPTH_PILLAR + 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MoveDepthPillar) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FIRST_DEPTH_PILLAR + 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MoveDepthPillar) },
@@ -4877,46 +4879,46 @@ struct MapEvent gVenusLighthouseFirstFloorEvents[] = {
 };
 
 struct MapEvent gVenusLighthouseSecondFloorEvents[] = {
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED_ALTERNATE, VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR_SOUTH, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR_SOUTH },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR_SOUTH, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR_SOUTH },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), VENUS_LIGHTHOUSE_SECOND_FLOOR_SPARKLING_PASSAGE_TO_PILLAR_PIT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterSparklingPassage) },
     { MAP_EVENT_WARP, VENUS_LIGHTHOUSE_SECOND_FLOOR_PILLAR_PIT_TO_SPARKLING_PASSAGE, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_SECOND_FLOOR_PILLAR_PIT_TO_SPARKLING_PASSAGE },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED_ALTERNATE, VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR_WEST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR_WEST },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR_WEST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR_WEST },
     { MAP_EVENT_WARP, VENUS_LIGHTHOUSE_SECOND_FLOOR_PILLAR_PIT_TO_GATE, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_SECOND_FLOOR_PILLAR_PIT_TO_GATE },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED, VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED_ALTERNATE, VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR_NORTH, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR_NORTH },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR_NORTH, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR_NORTH },
     { MAP_EVENT_WARP, VENUS_LIGHTHOUSE_SECOND_FLOOR_WALL_SWITCH_TO_GATE, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_SECOND_FLOOR_WALL_SWITCH_TO_GATE },
     { MAP_EVENT_WARP, VENUS_LIGHTHOUSE_SECOND_FLOOR_GATE_TO_WALL_SWITCH, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_SECOND_FLOOR_GATE_TO_WALL_SWITCH },
     { MAP_EVENT_WARP, VENUS_LIGHTHOUSE_SECOND_FLOOR_GATE_TO_PILLAR_PIT, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_SECOND_FLOOR_GATE_TO_PILLAR_PIT },
     { MAP_EVENT_COORD, TRIGGER_WALL_SWITCH, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StepOnWallSwitch) },
     { MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, TRIGGER_GATE_PILLAR, FLAG_VENUS_LIGHTHOUSE_GATE_OPEN, EVENT_SCRIPT(EventScript_JumpOrPushGatePillar) },
-    { BG_EVENT(BG_EVENT_UNNAMED), TRIGGER_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchLockedDoor) },
+    { BG_EVENT(BG_EVENT_SILENT), TRIGGER_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchLockedDoor) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_GATE_PILLAR, FLAG_VENUS_LIGHTHOUSE_GATE_OPEN, EVENT_SCRIPT(EventScript_MoveGatePillar) },
     { MAP_EVENTS_END },
 };
 
 struct MapEvent gVenusLighthouseThirdFloorEvents[] = {
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED, VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_WEST_NORTHWEST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_WEST_NORTHWEST },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_WEST_NORTHWEST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_WEST_NORTHWEST },
     { MAP_EVENT_WARP, VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTHWEST_ROOM_TO_SPARKLING_PASSAGES, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTHWEST_ROOM_TO_SPARKLING_PASSAGES },
     { MAP_EVENT_WARP, VENUS_LIGHTHOUSE_THIRD_FLOOR_DRAGON_SCALES_TO_SPARKLING_PASSAGES, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_DRAGON_SCALES_TO_SPARKLING_PASSAGES },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), VENUS_LIGHTHOUSE_THIRD_FLOOR_SPARKLING_PASSAGES_TO_NORTHWEST_ROOM, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterSparklingPassage) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), VENUS_LIGHTHOUSE_THIRD_FLOOR_SPARKLING_PASSAGES_TO_DRAGON_SCALES, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterSparklingPassage) },
     { MAP_EVENT_WARP, VENUS_LIGHTHOUSE_THIRD_FLOOR_SPARKLING_PASSAGES_TO_DRIFTING_FLOOR, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_SPARKLING_PASSAGES_TO_DRIFTING_FLOOR },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED, VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTH_NORTHEAST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTH_NORTHEAST },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTH_NORTHEAST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTH_NORTHEAST },
     { MAP_EVENT_WARP, VENUS_LIGHTHOUSE_THIRD_FLOOR_SOUTHWEST_ROOM_TO_DRIFTING_FLOOR, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_SOUTHWEST_ROOM_TO_DRIFTING_FLOOR },
     { MAP_EVENT_WARP, VENUS_LIGHTHOUSE_THIRD_FLOOR_DRIFTING_FLOOR_TO_SPARKLING_PASSAGES, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_DRIFTING_FLOOR_TO_SPARKLING_PASSAGES },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED, VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTH_NORTHWEST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTH_NORTHWEST },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTH_NORTHWEST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTH_NORTHWEST },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), VENUS_LIGHTHOUSE_THIRD_FLOOR_DRIFTING_FLOOR_TO_SOUTHWEST_ROOM, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterSparklingPassage) },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED, VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTHEAST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTHEAST },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED, VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_SOUTHWEST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_SOUTHWEST },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTHEAST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTHEAST },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_SOUTHWEST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_SOUTHWEST },
     { MAP_EVENT_WARP, VENUS_LIGHTHOUSE_THIRD_FLOOR_DRIFTING_FLOOR_TO_PILLAR_SOCKETS, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_DRIFTING_FLOOR_TO_PILLAR_SOCKETS },
     { MAP_EVENT_WARP, VENUS_LIGHTHOUSE_THIRD_FLOOR_PILLAR_SOCKETS_TO_DRIFTING_FLOOR, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_PILLAR_SOCKETS_TO_DRIFTING_FLOOR },
     { MAP_EVENT_WARP, VENUS_LIGHTHOUSE_THIRD_FLOOR_PILLAR_SOCKETS_TO_WEST_ROOM, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_PILLAR_SOCKETS_TO_WEST_ROOM },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED_ALTERNATE, VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR },
     { MAP_EVENT_WARP, VENUS_LIGHTHOUSE_THIRD_FLOOR_WEST_ROOM_TO_PILLAR_SOCKETS, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_WEST_ROOM_TO_PILLAR_SOCKETS },
     { MAP_EVENT_COORD, TRIGGER_DRIFT_SOUTH, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_DriftSouth) },
     { MAP_EVENT_COORD, VENUS_LIGHTHOUSE_THIRD_FLOOR_DRIFTING_FLOOR_TO_SOUTHWEST_ROOM, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_DriftSouth) },
     { MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, TRIGGER_SWITCH_PILLARS, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpOrPushSwitchPillar) },
-    { BG_EVENT(BG_EVENT_UNNAMED), TRIGGER_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchLockedDoor) },
+    { BG_EVENT(BG_EVENT_SILENT), TRIGGER_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchLockedDoor) },
     { BG_EVENT(BG_EVENT_CHEST), TRIGGER_CHEST, FLAG_VENUS_LIGHTHOUSE_DRAGON_SCALES, FIND_ITEM(ITEM_DRAGON_SCALES) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FIRST_SWITCH_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MoveSwitchPillar) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FIRST_SWITCH_PILLAR + 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MoveSwitchPillar) },
@@ -4925,15 +4927,15 @@ struct MapEvent gVenusLighthouseThirdFloorEvents[] = {
 };
 
 struct MapEvent gVenusLighthouseFourthFloorEvents[] = {
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED_ALTERNATE, VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_WEST_NORTHWEST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_WEST_NORTHWEST },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_WEST_NORTHWEST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_WEST_NORTHWEST },
     { MAP_EVENT_WARP, VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLARS_TO_WALL_SWITCHES, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLARS_TO_WALL_SWITCHES },
     { MAP_EVENT_WARP, VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_PILLARS, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_PILLARS },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED_ALTERNATE, VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTH_NORTHWEST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTH_NORTHWEST },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED_ALTERNATE, VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTH_NORTHEAST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTH_NORTHEAST },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED, VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_PSYNERGY_STONE, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_PSYNERGY_STONE },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED_ALTERNATE, VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTHEAST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTHEAST },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTH_NORTHWEST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTH_NORTHWEST },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTH_NORTHEAST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTH_NORTHEAST },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_PSYNERGY_STONE, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_PSYNERGY_STONE },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTHEAST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTHEAST },
     { MAP_EVENT_WARP, VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_PILLAR_SOCKETS_EAST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_PILLAR_SOCKETS_EAST },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED_ALTERNATE, VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_SOUTHWEST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_SOUTHWEST },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_SOUTHWEST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_SOUTHWEST },
     { MAP_EVENT_WARP, VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_GAIA_BLADE_WEST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_GAIA_BLADE_WEST },
     { MAP_EVENT_WARP, VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_GAIA_BLADE_EAST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_GAIA_BLADE_EAST },
     { MAP_EVENT_WARP, VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_PILLAR_SOCKETS_SOUTH, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_PILLAR_SOCKETS_SOUTH },
@@ -4941,7 +4943,7 @@ struct MapEvent gVenusLighthouseFourthFloorEvents[] = {
     { MAP_EVENT_WARP, VENUS_LIGHTHOUSE_FOURTH_FLOOR_GAIA_BLADE_TO_WALL_SWITCHES_EAST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_GAIA_BLADE_TO_WALL_SWITCHES_EAST },
     { MAP_EVENT_WARP, VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLAR_SOCKETS_TO_WALL_SWITCHES_SOUTH, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLAR_SOCKETS_TO_WALL_SWITCHES_SOUTH },
     { MAP_EVENT_WARP, VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLAR_SOCKETS_TO_WALL_SWITCHES_EAST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLAR_SOCKETS_TO_WALL_SWITCHES_EAST },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED_ALTERNATE, VENUS_LIGHTHOUSE_FOURTH_FLOOR_PSYNERGY_STONE_TO_WALL_SWITCHES, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_PSYNERGY_STONE_TO_WALL_SWITCHES },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, VENUS_LIGHTHOUSE_FOURTH_FLOOR_PSYNERGY_STONE_TO_WALL_SWITCHES, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_PSYNERGY_STONE_TO_WALL_SWITCHES },
     { COORD_EVENT_WALKING_INTO(FACING_SOUTH), TRIGGER_RISING_PASSAGE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterRisingPassage) },
     { MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, TRIGGER_FLOATING_PILLARS, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushPuzzlePillar) },
     { COORD_EVENT_WALKING_INTO(FACING_WEST), TRIGGER_FLOATING_PILLARS_GAP, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpAcrossGap) },
@@ -4956,9 +4958,9 @@ struct MapEvent gVenusLighthouseFourthFloorEvents[] = {
     { MAP_EVENT_COORD, TRIGGER_DRIFT_WEST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_DriftWest) },
     { MAP_EVENT_COORD, TRIGGER_DRIFT_EAST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_DriftEast) },
     { MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, TRIGGER_SOCKET_PILLARS, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpOrPushSocketPillar) },
-    { BG_EVENT(BG_EVENT_UNNAMED), TRIGGER_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchLockedDoor) },
+    { BG_EVENT(BG_EVENT_SILENT), TRIGGER_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchLockedDoor) },
     { BG_EVENT(BG_EVENT_CHEST), TRIGGER_CHEST, FLAG_VENUS_LIGHTHOUSE_GAIA_BLADE, FIND_ITEM(ITEM_GAIA_BLADE) },
-    { BG_EVENT(BG_EVENT_UNNAMED), TRIGGER_PSYNERGY_STONE, FLAG_VENUS_LIGHTHOUSE_FOURTH_FLOOR_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
+    { BG_EVENT(BG_EVENT_SILENT), TRIGGER_PSYNERGY_STONE, FLAG_VENUS_LIGHTHOUSE_FOURTH_FLOOR_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FIRST_FLOATING_PILLAR, CONDITION_ALWAYS, 0 },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FIRST_FLOATING_PILLAR + 1, CONDITION_ALWAYS, 0 },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FIRST_FLOATING_PILLAR + 2, CONDITION_ALWAYS, 0 },

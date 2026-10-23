@@ -271,7 +271,7 @@ ColosseumNavampaMatch_GetObjectEventTemplates(void) {
 static void ColosseumNavampaMatch_UpdateWallWedge(void) {
   struct EventWork *work = gFieldWork;
   struct ObjectEvent *objectEvent =
-      ObjectEvent_GetById(gGameState.selectedLocalId);
+      ObjectEvent_GetById(gGameState.leaderLocalId);
   s32 row = objectEvent->z.fixed >> 20;
   s32 i;
   s32 kind;
@@ -300,9 +300,9 @@ static void ColosseumNavampaMatch_UpdateWallWedge(void) {
                                                     [i - FIRST_PISTON];
       if ((u32)(objectEvent->x.fixed - (i << 21) + 0x31ffff) <= 0x13fffe) {
         if (row == 11 && kind == 4)
-          work->raisedTrigger = kind;
+          work->raisedEvent = kind;
         if (row == 12 && kind == 5)
-          work->raisedTrigger = kind;
+          work->raisedEvent = kind;
       }
     }
   }
@@ -353,8 +353,8 @@ static void ColosseumNavampaMatch_WaitForWallWedgeOpening(void) {
 static void EventScript_RideMovingSidewalk(void) {
   struct EventWork *work = gFieldWork;
   struct GameState *state = &gGameState;
-  s32 id = state->selectedLocalId;
-  struct ObjectEvent *subject = work->viewCenter;
+  s32 id = state->leaderLocalId;
+  struct ObjectEvent *subject = work->camera;
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(id);
   s32 z = objectEvent->z.part.pixel;
 
@@ -413,7 +413,7 @@ static void EventScript_StepOnScales(void) {
   struct ObjectEvent *rider;
   u8 *flags;
 
-  localId = gGameState.selectedLocalId;
+  localId = gGameState.leaderLocalId;
   lowered = GameFlag_IsSet(FLAG_SCALES_FROZEN);
   if (lowered == 0) {
     log = ObjectEvent_GetById(SCALES_WEST_PAN);
@@ -437,7 +437,7 @@ static void EventScript_StepOnScales(void) {
     Engine_TaskWait(2);
     Engine_ObjectEventSetSpriteFlags(rider, SPRITE_FLAG_SHADOW);
     *flags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
-    rider->terrainHeight = rider->y.fixed;
+    rider->groundHeight = rider->y.fixed;
     Engine_GameFlagSet(FLAG_ON_SCALES);
   }
 }
@@ -446,7 +446,7 @@ static void EventScript_StepOnScales(void) {
 static void EventScript_StepOffScales(void) {
   struct ObjectEvent *objectEvent;
 
-  Engine_ObjectEventSetAnimation(gGameState.selectedLocalId, 1);
+  Engine_ObjectEventSetAnimation(gGameState.leaderLocalId, 1);
 
   objectEvent = ObjectEvent_GetById(SCALES_EAST_PAN);
   objectEvent->motionFlags = 0;
@@ -563,7 +563,7 @@ static void ColosseumNavampaMatch_UpdateEastEndCollision(void) {
   s32 z;
   s32 collisionKind;
 
-  objectEvent = ObjectEvent_GetById(gGameState.selectedLocalId);
+  objectEvent = ObjectEvent_GetById(gGameState.leaderLocalId);
   x = objectEvent->x.fixed >> 20;
   collisionKind = 23;
   z = objectEvent->z.fixed >> 20;
@@ -632,11 +632,11 @@ static void EventScript_RollLongLog(void) {
   s32 step;
   s32 ahead[3];
 
-  rider = ObjectEvent_GetById(gGameState.selectedLocalId);
+  rider = ObjectEvent_GetById(gGameState.leaderLocalId);
   log = ObjectEvent_GetById(LONG_LOG);
   steps = 0;
   angle = gColossoEarlySequenceData[rider->facing >> 13];
-  localId = gGameState.selectedLocalId;
+  localId = gGameState.leaderLocalId;
   SET_VECTOR(ahead, (rider->x.fixed & -0x100000) + PIXELS(8), rider->y.fixed,
              (rider->z.fixed & -0x100000) + PIXELS(8));
   Vector_AddPolarOffset(PIXELS(16), angle, ahead);
@@ -693,8 +693,7 @@ static void EventScript_RollLongLog(void) {
   Engine_ScriptWait(6);
   Engine_ObjectEventSetAnimation(localId, ANIMATION_WALK);
   work = AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
-  ObjectDispatch_StartCamera((struct DispatchObject *)work->viewCenter,
-                             (s32)log);
+  ObjectDispatch_StartCamera((struct DispatchObject *)work->camera, (s32)log);
   ObjectEvent_SetSpeed(localId, PIXELS(1) / 2, acceleration);
   Script_PlaySong(SE_HEAVY_MOVE);
   ObjectEvent_SetMode(rider, 2);
@@ -735,9 +734,9 @@ far:
 
 /// Displays the activated moving sidewalk and plays its arrival sounds.
 static s32 ColosseumNavampaMatch_ShowActivatedSidewalkLayer(
-    struct ScriptInterpreter *interpreter) {
-  TileAnimation_PauseChannel(1);
-  TileAnimation_ResumeChannel(2);
+    struct ObjectScriptContext *interpreter) {
+  TilesetAnim_Pause(1);
+  TilesetAnim_Resume(2);
   Engine_AudioPlayCue(SE_STOP_SLOT3);
   Engine_AudioPlayCue(SE_217);
   return 0;
@@ -782,11 +781,11 @@ static void EventScript_PassNorthWallOpening(void) {
   s32 z;
 
 #ifdef UBFIX
-  localId = &gGameState.selectedLocalId;
+  localId = &gGameState.leaderLocalId;
 #else
   // The original word-indexed address takes three more instructions here.
   gameWords = (s16 *)&gGameState;
-  localId = (s32 *)&gameWords[offsetof(struct GameState, selectedLocalId) /
+  localId = (s32 *)&gameWords[offsetof(struct GameState, leaderLocalId) /
                               sizeof(s16)];
 #endif
   objectEvent = ObjectEvent_GetById(*localId);
@@ -812,11 +811,11 @@ static void EventScript_PassSouthWallOpening(void) {
   s32 z;
 
 #ifdef UBFIX
-  localId = &gGameState.selectedLocalId;
+  localId = &gGameState.leaderLocalId;
 #else
   // The original word-indexed address takes three more instructions here.
   gameWords = (s16 *)&gGameState;
-  localId = (s32 *)&gameWords[offsetof(struct GameState, selectedLocalId) /
+  localId = (s32 *)&gameWords[offsetof(struct GameState, leaderLocalId) /
                               sizeof(s16)];
 #endif
   objectEvent = ObjectEvent_GetById(*localId);
@@ -855,7 +854,7 @@ UNUSED static void ColosseumNavampaMatch_UnusedWarriorTalk(s32 warriorId) {
   s32 warpDest;
 
   work = gFieldWork;
-  localId = gGameState.selectedLocalId;
+  localId = gGameState.leaderLocalId;
   warpDest = gGameState.warpDest;
   if (warpDest == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     Engine_ScriptStart();
@@ -865,7 +864,7 @@ UNUSED static void ColosseumNavampaMatch_UnusedWarriorTalk(s32 warriorId) {
     if (Engine_ScriptChooseYesNo(localId, 0) == 0) {
       Engine_ScriptSetMessage(messageOffset + MsgColossoDidntThinkBattles + 1);
       Engine_ScriptShowMessage(warriorId, 0);
-      work->startTransition =
+      work->transition =
           MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
       work->transitionFrames = 15;
       Engine_ScriptCloseScreen();
@@ -963,7 +962,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
   s32 height;
   s32 column;
 
-  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
   // Restore the scale pans, movable weight and supporting metatile behaviors.
   FieldScheduler_AddCallback(ColosseumNavampaMatch_UpdateEastEndCollision,
@@ -1074,7 +1073,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
   }
 
   if (Engine_GameFlagIsSet(867) != 0) {
-    TileAnimation_PauseChannel(1);
+    TilesetAnim_Pause(1);
     objectEvent = ObjectEvent_GetById(SIDEWALK_BLOCK);
     objectEvent->motionFlags = 0;
     objectEvent->x.fixed = PIXELS(1130);
@@ -1084,7 +1083,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
     Engine_ObjectSetScript(objectEvent,
                            gColosseumNavampaMatch_SidewalkBlockOffBelt);
   } else {
-    TileAnimation_PauseChannel(2);
+    TilesetAnim_Pause(2);
   }
 
   if (Engine_GameFlagIsSet(873) != 0) {
@@ -1181,7 +1180,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
 /// Advances one of the particles that rise from the sleeping Isaac after the
 /// last match; timer and work hold signed 1/256-pixel steps.
 static s32 ColosseumNavampaMatch_AdvanceParticleMotion(
-    struct ScriptInterpreter *interpreter) {
+    struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *particle = (struct ObjectEvent *)interpreter;
   particle->x.fixed += particle->timer * 256;
   particle->y.fixed += (s16)particle->work * 256;
@@ -1302,7 +1301,7 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   }
   Engine_TaskWait(1);
   Engine_CameraFollowObjectEvent(LOCALID_PARTY_LEADER, 0);
-  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_GREY, 1);
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
@@ -1612,8 +1611,8 @@ static void EventScript_TalkToSteppingStoneAttendant(s32 guideId) {
   promptResult = Colosso_GreetAtStage(guideId, 2);
   if (promptResult == COLOSSO_GUIDE_DESCRIBE) {
     Engine_ScriptSetMessage(MsgColossoSteppingStoneStage);
-    Camera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
-    Camera_MoveTo(PIXELS(376), -1, PIXELS(152), 1);
+    FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
+    FieldCamera_MoveTo(PIXELS(376), -1, PIXELS(152), 1);
     x = 280;
     Engine_CameraWaitForMove();
     Engine_ScriptWait(30);
@@ -1624,13 +1623,13 @@ static void EventScript_TalkToSteppingStoneAttendant(s32 guideId) {
     Colosso_WalkObjectEventToAndStand(LOCALID_PARTY_LEADER, 296, 152);
     Engine_ScriptWait(10);
     Engine_LeaderCheckAhead();
-    Camera_MoveTo(-1, -1, -1, 0);
+    FieldCamera_MoveTo(-1, -1, -1, 0);
     Engine_ObjectEventFaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 15);
     Engine_LeaderCheckAhead();
-    Camera_MoveTo(-1, -1, -1, 0);
+    FieldCamera_MoveTo(-1, -1, -1, 0);
     Engine_ObjectEventFaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 15);
     Engine_LeaderCheckAhead();
-    Camera_MoveTo(-1, -1, -1, 0);
+    FieldCamera_MoveTo(-1, -1, -1, 0);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 15);
     Script_ShowMessage(guideId, 0);
     Colosso_ShowPointer(96, 40, 0);
@@ -1686,13 +1685,13 @@ static void EventScript_TalkToWallWedgeAttendant(s32 guideId) {
       ColosseumNavampaMatch_WaitForWallWedgeOpening();
       ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
       Colosso_WalkObjectEventTo(LOCALID_PARTY_LEADER, 680, 200);
-      if (work->raisedTrigger != 5) {
+      if (work->raisedEvent != 5) {
         do {
           Engine_TaskWait(1);
           if (++promptResult > 239) {
             break;
           }
-        } while (work->raisedTrigger != 5);
+        } while (work->raisedEvent != 5);
       }
       EventScript_PassSouthWallOpening();
       ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 20);
@@ -1702,7 +1701,7 @@ static void EventScript_TalkToWallWedgeAttendant(s32 guideId) {
       Colosso_RestoreWarrior(LOCALID_PARTY_LEADER);
       Engine_CameraFollowObjectEvent(LOCALID_PARTY_LEADER, 0);
       Colosso_RepeatStageNumber(guideId, 3);
-      work->raisedTrigger = 0;
+      work->raisedEvent = 0;
     } else if (promptResult == COLOSSO_GUIDE_OFFER_CHEERING) {
       Engine_ScriptSetMessage(MsgColossoOperatorWallsCheer);
       Engine_ScriptShowMessage(guideId, 0);
@@ -1730,8 +1729,8 @@ static void EventScript_TalkToFreeClimbAttendant(s32 guideId) {
     result = Colosso_GreetAtStage(guideId, 4);
     if (result == COLOSSO_GUIDE_DESCRIBE) {
       Engine_ScriptSetMessage(MsgColossoPlaceNormallyCalledFreeClimb);
-      Camera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
-      Camera_MoveTo(PIXELS(856), -1, PIXELS(168), 1);
+      FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
+      FieldCamera_MoveTo(PIXELS(856), -1, PIXELS(168), 1);
       Engine_CameraWaitForMove();
       Engine_ScriptWait(30);
       Script_ShowMessage(guideId, 0);
@@ -1741,7 +1740,7 @@ static void EventScript_TalkToFreeClimbAttendant(s32 guideId) {
       ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 840, 200);
       Engine_ObjectEventFaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 20);
       Field_ClimbUp();
-      Camera_MoveTo(-1, -1, -1, 0);
+      FieldCamera_MoveTo(-1, -1, -1, 0);
       ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
       objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
       y = objectEvent->y.fixed;
@@ -1834,8 +1833,8 @@ static void EventScript_TalkToMovingSidewalkAttendant(s32 guideId) {
     if (result == COLOSSO_GUIDE_DESCRIBE) {
       // Walk against the sidewalk, then show how its current pushes the rider.
       Engine_ScriptSetMessage(MsgColossoCalledMovingSidewalkStage);
-      Camera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
-      Camera_MoveTo(PIXELS(1080), -1, PIXELS(168), 1);
+      FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
+      FieldCamera_MoveTo(PIXELS(1080), -1, PIXELS(168), 1);
       Engine_CameraWaitForMove();
       Engine_ScriptWait(30);
       Script_ShowMessage(guideId, 0);
@@ -1853,7 +1852,7 @@ static void EventScript_TalkToMovingSidewalkAttendant(s32 guideId) {
                                     ATTACHED_EFFECT_IN_FRONT |
                                         ATTACHED_EFFECT_ATTACH);
       Engine_ScriptWait(120);
-      OverlayObject_ResetMotionFields(LOCALID_PARTY_LEADER);
+      ObjectEvent_ResetMotionFields(LOCALID_PARTY_LEADER);
       Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
 #if !TBS_PATCH_3
       ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER,
@@ -1874,7 +1873,7 @@ static void EventScript_TalkToMovingSidewalkAttendant(s32 guideId) {
       ColosseumNavampaMatch_PositionObjectEvent(LOCALID_PARTY_LEADER, 1120,
                                                 184);
       Script_ShowMessage(guideId, 0);
-      OverlayObject_ResetMotionFields(LOCALID_PARTY_LEADER);
+      ObjectEvent_ResetMotionFields(LOCALID_PARTY_LEADER);
       gGameState.movementMode = LEADER_MOVEMENT_CLIMB;
       Colosso_RestoreWarrior(LOCALID_PARTY_LEADER);
       Engine_CameraFollowObjectEvent(LOCALID_PARTY_LEADER, 0);
@@ -2145,7 +2144,7 @@ ColosseumNavampaMatch_SpawnRandomFinishEffect(union FieldObject *fieldObject) {
 /// Presents the prize above the warrior who took it, with the treasure fanfare,
 /// and clears the link.
 static s32 ColosseumNavampaMatch_PlaceFinishItemAboveObjectEvent(
-    struct ScriptInterpreter *interpreter) {
+    struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *source = (struct ObjectEvent *)interpreter;
 
   struct ObjectEvent *effect = ObjectEvent_GetById(source->timer);
@@ -2171,7 +2170,7 @@ static s32 ColosseumNavampaMatch_CollectFinishEquipment(s32 firstItem,
   s16 *linkedItemLocalId;
 
   opponentFinishedFirst = Engine_GameFlagIsSet(FLAG_ARENA_REACHED);
-  objectEvent = ObjectEvent_GetById(gGameState.selectedLocalId);
+  objectEvent = ObjectEvent_GetById(gGameState.leaderLocalId);
   if (gauge->finishX < objectEvent->x.fixed) {
     x = gauge->finishX + PIXELS(12);
   } else {
@@ -2206,7 +2205,7 @@ static s32 ColosseumNavampaMatch_CollectFinishEquipment(s32 firstItem,
     COLOSSEUM_NAVAMPA_MATCH_APPLY_MATCHING_SLOT_VALUES(ISAAC, secondItem);
     UiWork_PushValueSlot(secondItem, 2);
   }
-  UiWork_PushValueSlot(gGameState.selectedLocalId, 1);
+  UiWork_PushValueSlot(gGameState.leaderLocalId, 1);
   Engine_MessageShowCentered(MsgColossoIsaacGotItem, 3);
   ObjectDispatch_WaitForValue16(objectEvent);
   return opponentFinishedFirst;
@@ -2229,12 +2228,12 @@ static void ColosseumNavampaMatch_PushObjectEventAhead(void) {
   s32 zero;
   s32 subjectHandle;
 
-  subjectHandle = gGameState.selectedLocalId;
+  subjectHandle = gGameState.leaderLocalId;
   subject = ObjectEvent_GetById(subjectHandle);
 
   direction = subject->facing >> 12;
 
-  step = gStagedObjectEvent_DirectionSteps[direction];
+  step = gPushedObject_DirectionSteps[direction];
   position.x = subject->x.fixed + (step & 0xffff0000);
   position.y = subject->y.fixed;
   step <<= 16;
@@ -2245,7 +2244,7 @@ static void ColosseumNavampaMatch_PushObjectEventAhead(void) {
     return;
   }
 
-  step = gStagedObjectEvent_DirectionSteps[direction];
+  step = gPushedObject_DirectionSteps[direction];
   position.x = target->x.fixed + (step & 0xffff0000);
   position.y = target->y.fixed;
   step <<= 16;
@@ -2265,10 +2264,10 @@ static void ColosseumNavampaMatch_PushObjectEventAhead(void) {
     return;
   }
 
-  target->terrainId = 2;
+  target->layer = 2;
   zero = 0;
 
-  step = gStagedObjectEvent_DirectionSteps[direction];
+  step = gPushedObject_DirectionSteps[direction];
   position.x = target->x.fixed + (step & 0xffff0000);
   position.y = target->y.fixed;
   step <<= 16;
@@ -2410,7 +2409,7 @@ s32 gColossoLinkedEffect[] = {
 /// Pixel step by direction: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(x, z) ((u32)(x) << 16 | (u16)(z))
 
-u32 gStagedObjectEvent_DirectionSteps[] = {
+u32 gPushedObject_DirectionSteps[] = {
     DIRECTION_STEP(16, 0),
     DIRECTION_STEP(16, 0),
     DIRECTION_STEP(16, 0),
@@ -2449,85 +2448,85 @@ u32 gColosseumNavampaMatchWarps[] = {
 
 struct ObjectEventTemplate gColosseumNavampaMatchObjectEventTemplates[] = {
     { 0x0, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(88), 0, PIXELS(104), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(88), 0, PIXELS(104), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WARRIOR_IN_GOLDEN_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_WEST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(216), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(216), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { 0x122, CONDITION_ALWAYS, 7,
-        PIXELS(152), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(152), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { 0x122, CONDITION_ALWAYS, 7,
-        PIXELS(216), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(216), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(88), 0, PIXELS(168), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(88), 0, PIXELS(168), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(312), 0, PIXELS(184), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(312), 0, PIXELS(184), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(712), 0, PIXELS(184), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(712), 0, PIXELS(184), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(1240), 0, PIXELS(136), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(1240), 0, PIXELS(136), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(1272), 0, PIXELS(168), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(1272), 0, PIXELS(168), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(1304), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(1304), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { 0x123, CONDITION_ALWAYS, 7,
-        PIXELS(536), 0, PIXELS(184), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(536), 0, PIXELS(184), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { 0x123, CONDITION_ALWAYS, 7,
-        PIXELS(568), 0, PIXELS(184), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(568), 0, PIXELS(184), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { 0x123, CONDITION_ALWAYS, 7,
-        PIXELS(600), 0, PIXELS(184), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(600), 0, PIXELS(184), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { 0x123, CONDITION_ALWAYS, 7,
-        PIXELS(632), 0, PIXELS(184), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(632), 0, PIXELS(184), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { 0x123, CONDITION_ALWAYS, 7,
-        PIXELS(664), 0, PIXELS(184), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(664), 0, PIXELS(184), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { 0x123, CONDITION_ALWAYS, 7,
-        PIXELS(536), 0, PIXELS(216), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(536), 0, PIXELS(216), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { 0x123, CONDITION_ALWAYS, 7,
-        PIXELS(568), 0, PIXELS(216), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(568), 0, PIXELS(216), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { 0x123, CONDITION_ALWAYS, 7,
-        PIXELS(600), 0, PIXELS(216), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(600), 0, PIXELS(216), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { 0x123, CONDITION_ALWAYS, 7,
-        PIXELS(632), 0, PIXELS(216), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(632), 0, PIXELS(216), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { 0x123, CONDITION_ALWAYS, 7,
-        PIXELS(664), 0, PIXELS(216), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(664), 0, PIXELS(216), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_YOUNG_MAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(720), 0, PIXELS(216), FACING_WEST, TALK_KEEP_FACING, 0 },
+        PIXELS(720), 0, PIXELS(216), FACING_WEST, TALK_FACING_KEEP, 0 },
     { SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(792), 0, PIXELS(194), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(792), 0, PIXELS(194), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { 0x126, CONDITION_ALWAYS, 7,
-        PIXELS(1080), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(1080), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
-        PIXELS(1208), 0, PIXELS(176), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(1208), 0, PIXELS(176), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(136), 0, PIXELS(408), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(136), 0, PIXELS(408), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_YOUNG_MAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(152), 0, PIXELS(312), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(152), 0, PIXELS(312), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_YOUNG_MAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(376), 0, PIXELS(312), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(376), 0, PIXELS(312), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_YOUNG_MAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(600), 0, PIXELS(312), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(600), 0, PIXELS(312), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_YOUNG_MAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(856), 0, PIXELS(312), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(856), 0, PIXELS(312), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_YOUNG_MAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(1080), 0, PIXELS(312), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(1080), 0, PIXELS(312), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_YOUNG_MAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(1304), 0, PIXELS(312), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(1304), 0, PIXELS(312), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(1512), 0, PIXELS(176), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(1512), 0, PIXELS(176), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(1512), 0, PIXELS(208), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(1512), 0, PIXELS(208), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { 0x118, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { 0x118, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACE_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { 0x118, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACE_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { MAP_TABLE_END },
 };
 

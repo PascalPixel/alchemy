@@ -8,9 +8,9 @@
 ///
 /// It is a habit of the whole game written once, as declarations and macros: a
 /// layer, not a compiler-steering device (AGENTS.md S2). The script.h commands
-/// and field_service.h are written over it. A map's script reads `EV_START();
-/// Engine_ObjectEventStop(9); OBJECT_FACE(9, LOCALID_PARTY_LEADER, 0);
-/// EV_END();`.
+/// and field_service.h are written over it. A map's script reads
+/// `SCRIPT_START(); Engine_ObjectEventStop(9); OBJECT_FACE(9,
+/// LOCALID_PARTY_LEADER, 0); SCRIPT_END();`.
 
 #include "unit/object/object.h"
 #include "unit/object/psynergy_effects.h"
@@ -221,13 +221,13 @@ void Engine_ObjectEventFaceEachOther(s32 localId, s32 other, s32 frames);
 /// (ObjectEvent_SetModeById).
 void Engine_ObjectEventSetAnimation();
 /// Plays an ObjectEventAnimation and waits for it to end
-/// (Motion_SetModeAndWaitAnimation).
+/// (ObjectMotion_SetAnimationAndWait).
 void Engine_ObjectEventSetAnimationAndWait(s32 localId, s32 animation);
 /// Starts an object event squashing and springing back repeats times, 1 to 3
 /// (ObjectMotion_SetVariantCallback).
 void Engine_ObjectEventStartRepeatedMotion(s32 localId, s32 repeats);
 /// The same squash and spring as Engine_ObjectEventStartRepeatedMotion, waiting
-/// for it to end (Motion_SetVarCbAndRefresh).
+/// for it to end (ObjectMotion_SetVarCbAndRefresh).
 void Engine_ObjectEventRunRepeatedMotion(s32 localId, s32 repeats);
 /// Shows an emote bubble over an object event, which frees itself after 46
 /// frames, then waits frames (FieldEffect_SpawnLinked). See EMOTE_IN_FRONT.
@@ -242,22 +242,22 @@ void Engine_ObjectEventSetSpritePriority(s32 localId, s32 priority);
 /// (ObjectDispatch_SetSingleChildFlags).
 void Engine_ObjectEventSetSpriteFlags(struct ObjectEvent *objectEvent,
                                       s32 flags);
-/// Makes the camera follow object event (Camera_FollowObjectEvent). Unless
+/// Makes the camera follow object event (FieldCamera_FollowObjectEvent). Unless
 /// keep_position is set it jumps there at once and, off the world map, the map
 /// is redrawn.
 void Engine_CameraFollowObjectEvent(s32 localId, s32 keep_position);
 /// Sets the camera's top speed and acceleration, in 16.16 pixels per frame
-/// (Camera_SetSpeedParameters).
+/// (FieldCamera_SetSpeedParameters).
 void Engine_CameraSetSpeed(s32 speed, s32 acceleration);
 /// Sends the camera to a point in 16.16 pixels, held far enough inside the map
-/// that the screen never shows past its edge (Camera_MoveWithinMapBounds). -1
-/// keeps an axis; pan 0 jumps there at once.
+/// that the screen never shows past its edge (FieldCamera_MoveWithinMapBounds).
+/// -1 keeps an axis; pan 0 jumps there at once.
 void Engine_CameraMoveTo(s32 fixed_x, s32 fixed_y, s32 fixed_z, s32 pan);
 /// Sends the camera to an object event's x and z, inside the map's edges
 /// (ObjectEvent_PlaceCurrentWithinCameraBounds).
 void Engine_CameraMoveToObjectEvent(s32 localId, s32 pan);
 /// Waits, 600 frames at most, for the camera to arrive, then two frames more
-/// (Camera_WaitForArrival).
+/// (FieldCamera_WaitForArrival).
 void Engine_CameraWaitForMove(void);
 /// Copies a rectangle of cells whole, metatile and attributes, from (sourceX,
 /// sourceY) to (destinationX, destinationY), and redraws those on screen
@@ -350,7 +350,7 @@ void Engine_MapGridAnimateCells(const u16 *steps, s32 destinationX,
                                 s32 destinationY);
 /// Moves the object event of a marker to (x, z) on the ground, in 16.16 pixels;
 /// -1 keeps the centre of its cell on that axis
-/// (Marker_SetObjectEventPosition).
+/// (TreasureSpot_SetObjectEventPosition).
 void Engine_MarkerSetPosition(s32 object, s32 fixed_x, s32 fixed_z);
 /// Draws an item's icon into the glyph work buffer, with no frame or marks
 /// (Ui_PrepareTransferForItem).
@@ -382,7 +382,7 @@ void Engine_PsynergyStart(s32 ability, s32 flags);
 /// pixels in front of the caster (FieldEffect_SetupObjectPair).
 void Engine_PsynergySetTarget(s32 caster, s32 target);
 /// Puts the caster in its casting pose and, unless the effect is silent or
-/// quiet, flashes it and shows the ability's name (EventObject_Initialize).
+/// quiet, flashes it and shows the ability's name (FieldEffect_StartCast).
 void Engine_PsynergyRaiseHands(void);
 /// Runs one step of the current field effect, an enum PsynergyEffectStep
 /// (Field_DispatchTypeHandler).
@@ -396,12 +396,12 @@ void Engine_PsynergyCancel(void);
 /// Shows the current message as Engine_ScriptShowMessage does, then waits
 /// frames (FieldScript_ShowMessageThenWait).
 void Engine_ScriptShowMessageAndWait(s32 speaker, s32 flags, s32 frames);
-/// Returns the camera object a script moves (Camera_GetScriptObject).
+/// Returns the camera object a script moves (FieldCamera_GetScriptObject).
 struct ObjectEvent *Engine_ScriptGetViewCenter(void);
-/// Returns the object event in a slot, or NULL (ObjectTable_Get).
+/// Returns the object event in a slot, or NULL (ObjectEvent_GetByLocalId).
 struct ObjectEvent *Engine_ObjectEventLookup(s32 localId);
 /// Releases an object event and empties its place in the object event table
-/// (ObjectTable_DestroyById).
+/// (ObjectEvent_DestroyById).
 void Engine_ObjectEventDestroy(s32 localId);
 /// Gives every sprite part of an object event a sprite param; with bit 0x100
 /// the object event blinks instead (ObjectGroup_ConfigureChildValue).
@@ -427,11 +427,11 @@ static inline void ObjectEvent_SetBuiltinAction(s32 localId, s32 action) {
 }
 
 /// Starts an object event's action, an enum MovementType or a script to run,
-/// leaving its facing flag alone (ObjectMotion_SetActionCallback).
+/// leaving its facing flag alone (ObjectEvent_SetMovementType).
 void Engine_ObjectEventSetActionCallback(struct ObjectEvent *objectEvent,
                                          s32 value);
-/// Puts back the object events ObjectTable_Snapshot saved and moves the camera
-/// to the leader's height (ObjectTable_Restore).
+/// Puts back the object events ObjectEvent_Snapshot saved and moves the camera
+/// to the leader's height (ObjectEvent_Restore).
 void Engine_ObjectEventsRefresh(void);
 /// Copies the metatile numbers of a rectangle of cells, keeping each
 /// destination's attributes, and redraws the copied cells on screen
@@ -595,13 +595,13 @@ static inline void ObjectEvent_SetAttachedEffect(s32 localId, s32 effect) {
 }
 
 /// Sets how fast the camera pans for the script's next camera moves.
-static inline void Camera_SetSpeed(s32 speed, s32 acceleration) {
+static inline void FieldCamera_SetSpeed(s32 speed, s32 acceleration) {
   Engine_CameraSetSpeed(speed, acceleration);
 }
 
 /// Pans the camera to a point in the room, or cuts there when pan is 0.
-static inline void Camera_MoveTo(s32 fixed_x, s32 fixed_y, s32 fixed_z,
-                                 s32 pan) {
+static inline void FieldCamera_MoveTo(s32 fixed_x, s32 fixed_y, s32 fixed_z,
+                                      s32 pan) {
   Engine_CameraMoveTo(fixed_x, fixed_y, fixed_z, pan);
 }
 
@@ -690,7 +690,8 @@ static inline void MapGrid_AnimateCells(const u16 *steps, s32 destinationX,
 }
 
 /// Moves a marker's object event to a point on the ground.
-static inline void Marker_SetPosition(s32 object, s32 fixed_x, s32 fixed_z) {
+static inline void TreasureSpot_SetPosition(s32 object, s32 fixed_x,
+                                            s32 fixed_z) {
   Engine_MarkerSetPosition(object, fixed_x, fixed_z);
 }
 

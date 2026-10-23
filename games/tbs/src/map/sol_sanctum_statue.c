@@ -316,7 +316,7 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   struct ObjectEvent *leader;
 
   Engine_ScriptStart();
-  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   gFieldWork->transitionFrames = 32;
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
@@ -327,8 +327,8 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   Engine_ScriptSetMessage(MsgSolSanctumKradenYouFoundIt);
   EventScript_SayThenWait(LOCALID_KRADEN, 6);
   ObjectEvent_SetPosition(LOCALID_KRADEN, PIXELS(576), PIXELS(280));
-  Camera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
-  Camera_MoveTo(PIXELS(574), -1, PIXELS(180), 1);
+  FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
+  FieldCamera_MoveTo(PIXELS(574), -1, PIXELS(180), 1);
   ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_WalkToAndWait(LOCALID_KRADEN, 576, 216);
   Engine_ScriptWait(20);
@@ -340,11 +340,11 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_WEST + FACING_STEP, 0);
   Engine_ScriptWait(10);
   // The camera swings west to the hole at the centre and back.
-  Camera_SetSpeed(PIXELS(28) / 5, PIXELS(7) / 10);
-  Camera_MoveTo(PIXELS(287), -1, PIXELS(176), 1);
+  FieldCamera_SetSpeed(PIXELS(28) / 5, PIXELS(7) / 10);
+  FieldCamera_MoveTo(PIXELS(287), -1, PIXELS(176), 1);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(60);
-  Camera_MoveTo(PIXELS(574), -1, PIXELS(180), 1);
+  FieldCamera_MoveTo(PIXELS(574), -1, PIXELS(180), 1);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(20);
   Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIMATION_NOD);
@@ -361,11 +361,11 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   Engine_ScriptWait(40);
   // The screen closes and opens on Kraden by the hole: "Where did that hole
   // come from?" Then back to the party.
-  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 2);
+  gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 2);
   gFieldWork->transitionFrames = 16;
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
-  Camera_MoveTo(PIXELS(287), -1, PIXELS(176), 0);
+  FieldCamera_MoveTo(PIXELS(287), -1, PIXELS(176), 0);
   Engine_MapGridRedraw();
   Engine_TaskWait(1);
   Engine_ScriptOpenScreen();
@@ -377,14 +377,14 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
   ObjectEvent_SetPosition(LOCALID_KRADEN, PIXELS(576), PIXELS(184));
-  Camera_MoveTo(PIXELS(574), -1, PIXELS(180), 0);
+  FieldCamera_MoveTo(PIXELS(574), -1, PIXELS(180), 0);
   Engine_MapGridRedraw();
   Engine_TaskWait(1);
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
   Engine_ScriptWait(20);
-  Camera_SetSpeed(PIXELS(6) / 5, PIXELS(3) / 20);
-  Camera_MoveTo(PIXELS(574), -1, PIXELS(157), 1);
+  FieldCamera_SetSpeed(PIXELS(6) / 5, PIXELS(3) / 20);
+  FieldCamera_MoveTo(PIXELS(574), -1, PIXELS(157), 1);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(20);
   // Garet: two beams shot out of the statues Isaac moved, and the hole
@@ -431,8 +431,8 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIMATION_NOD);
   // Kraden: he will observe from the Luna room. He leaves south.
   EventScript_SayThenWait(LOCALID_KRADEN, 6);
-  Camera_SetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
-  Camera_MoveTo(PIXELS(576), -1, PIXELS(215), 1);
+  FieldCamera_SetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
+  FieldCamera_MoveTo(PIXELS(576), -1, PIXELS(215), 1);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTH, 0);
   Engine_ScriptWait(10);
   Engine_ObjectEventJump(LOCALID_KRADEN, 6, 0);
@@ -440,8 +440,8 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   Engine_ScriptWait(20);
   ObjectEvent_WalkToAndWait(LOCALID_KRADEN, 576, 321);
   ObjectEvent_SetPosition(LOCALID_KRADEN, 0, 0);
-  Camera_SetSpeed(PIXELS(18) / 5, PIXELS(9) / 20);
-  Camera_MoveTo(PIXELS(576), -1, PIXELS(136), 1);
+  FieldCamera_SetSpeed(PIXELS(18) / 5, PIXELS(9) / 20);
+  FieldCamera_MoveTo(PIXELS(576), -1, PIXELS(136), 1);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(20);
   // Rejoin the companions to the leader and restore normal field control.
@@ -464,7 +464,7 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   Engine_ObjectEventWaitForMove(JENNA);
   ObjectEvent_SetPosition(JENNA, 0, 0);
   GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
-  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
   gFieldWork->transitionFrames = 16;
   Engine_ScriptEnd();
 }
@@ -485,7 +485,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
 
   Engine_ScriptStart();
   work = gFieldWork;
-  work->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  work->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->transitionFrames = 32;
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
@@ -495,8 +495,8 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   // Kraden, from the south: "Wait, Isaac!" Jenna: "What's wrong, Kraden?"
   Engine_ScriptSetMessage(MsgSolSanctumWait);
   EventScript_SayThenWait(LOCALID_KRADEN, 6);
-  Camera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
-  Camera_MoveTo(PIXELS(574), -1, PIXELS(180), 1);
+  FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
+  FieldCamera_MoveTo(PIXELS(574), -1, PIXELS(180), 1);
   ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_WalkToAndWait(LOCALID_KRADEN, 576, 216);
   Engine_ScriptWait(20);
@@ -508,10 +508,10 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Engine_ObjectEventFaceDirection(LOCALID_KRADEN, FACING_WEST + FACING_STEP, 0);
   Engine_ScriptWait(10);
   Engine_CameraSetSpeed(PIXELS(28) / 5, PIXELS(7) / 10);
-  Camera_MoveTo(PIXELS(287), -1, PIXELS(176), 1);
+  FieldCamera_MoveTo(PIXELS(287), -1, PIXELS(176), 1);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(60);
-  Camera_MoveTo(PIXELS(574), -1, PIXELS(180), 1);
+  FieldCamera_MoveTo(PIXELS(574), -1, PIXELS(180), 1);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(20);
   Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIMATION_NOD);
@@ -554,12 +554,12 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(6) / 5, PIXELS(3) / 5);
   Engine_ObjectEventWalkTo(LOCALID_KRADEN, 432, 200);
   Engine_ScriptWait(20);
-  Camera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
-  Camera_MoveTo(PIXELS(288), -1, PIXELS(171), 1);
+  FieldCamera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
+  FieldCamera_MoveTo(PIXELS(288), -1, PIXELS(171), 1);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(80);
   Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_STAND);
-  Camera_MoveTo(PIXELS(574), -1, PIXELS(180), 1);
+  FieldCamera_MoveTo(PIXELS(574), -1, PIXELS(180), 1);
   Engine_ScriptWait(20);
   Engine_ObjectEventFaceDirection(LOCALID_KRADEN, FACING_EAST, 0);
   Engine_ScriptWait(30);
@@ -631,7 +631,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   ObjectEvent_WalkToAndWait(LOCALID_KRADEN, 576, 216);
   Engine_ScriptWait(40);
   Engine_CameraSetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
-  Camera_MoveTo(PIXELS(574), -1, PIXELS(191), 1);
+  FieldCamera_MoveTo(PIXELS(574), -1, PIXELS(191), 1);
   ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(1), PIXELS(1) / 2);
   Engine_ObjectEventWalkToAndWait(LOCALID_KRADEN, 576, 232);
   Engine_ScriptWait(40);
@@ -643,11 +643,11 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Engine_ScriptWait(30);
   EventScript_SayThenWait(LOCALID_KRADEN, 6);
   Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIMATION_NOD);
-  Camera_MoveTo(PIXELS(576), -1, PIXELS(215), 1);
+  FieldCamera_MoveTo(PIXELS(576), -1, PIXELS(215), 1);
   ObjectEvent_WalkToAndWait(LOCALID_KRADEN, 574, 323);
   Engine_ObjectEventSetPosition(LOCALID_KRADEN, 0, 0);
   // Leave Isaac in control after Jenna and Garet rejoin him.
-  Camera_SetSpeed(PIXELS(18) / 5, PIXELS(9) / 20);
+  FieldCamera_SetSpeed(PIXELS(18) / 5, PIXELS(9) / 20);
   Engine_CameraMoveTo(PIXELS(576), -1, PIXELS(136), 1);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(20);
@@ -677,7 +677,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Engine_ObjectEventSetPosition(GARET, 0, 0);
   GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   work = gFieldWork;
-  work->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
+  work->transition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
   work->transitionFrames = 16;
   Engine_ScriptEnd();
 }
@@ -860,7 +860,7 @@ UNUSED static void SolSanctumStatue_UnusedMoveNorthwestStatue(void) {
 s32 SolSanctumStatue_Initialize(void) {
   struct ObjectEvent *centerEffect;
 
-  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
   SolSanctumStatue_InitializeScrollingSprites();
   // Retreat does not work here (FLAG_RETREAT_BLOCKED).
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
@@ -965,7 +965,7 @@ s32 SolSanctumStatue_Initialize(void) {
     }
   }
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
-    FieldEffect_SetQueuedSoundAndPlay(SE_RUMBLE);
+    Map_QueueMusic(SE_RUMBLE);
     MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
     InitializeSparkleRecordBuffer();
   }
@@ -1155,8 +1155,8 @@ static void EventScript_CenterStatueMoved(void) {
         Engine_GameFlagSet(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED);
         // The statue slides south into the hole; LOCALID_MOVED_CENTER_STATUE
         // stands in for it there and the room shakes hard, then settles.
-        Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
-        Camera_MoveTo(PIXELS(286), -1, PIXELS(146), 1);
+        FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
+        FieldCamera_MoveTo(PIXELS(286), -1, PIXELS(146), 1);
         Engine_CameraWaitForMove();
         ObjectEvent_GetById(LOCALID_CENTER_STATUE)->steeringFlags &=
             ~OBJ_EVENT_FACES_MOTION;
@@ -1680,8 +1680,8 @@ static void SolSanctumStatue_ShineLeftBeam(void) {
   Engine_ScriptStart();
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED) == 0) {
     if (GameFlag_IsSet(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING) == 0) {
-      Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
-      Camera_MoveTo(PIXELS(286), -1, PIXELS(146), 1);
+      FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
+      FieldCamera_MoveTo(PIXELS(286), -1, PIXELS(146), 1);
       Engine_CameraWaitForMove();
       Script_PlaySong(SE_SOL_SANCTUM_LIGHT_UP);
       MapGrid_CopyCellsTo(0, 59, 15, 38, 4, 3);
@@ -1705,8 +1705,8 @@ static void SolSanctumStatue_ShineRightBeam(void) {
   Engine_ScriptStart();
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED) == 0) {
     if (GameFlag_IsSet(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING) == 0) {
-      Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
-      Camera_MoveTo(PIXELS(286), -1, PIXELS(146), 1);
+      FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
+      FieldCamera_MoveTo(PIXELS(286), -1, PIXELS(146), 1);
       Engine_CameraWaitForMove();
       Script_PlaySong(SE_SOL_SANCTUM_LIGHT_UP);
       MapGrid_CopyCellsTo(4, 59, 17, 38, 4, 3);
@@ -1776,37 +1776,37 @@ u32 gSolSanctumStatue_Warps[] = {
 // clang-format off
 struct ObjectEventTemplate gSolSanctumStatue_ObjectEventTemplates[] = {
     { SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(1608), 0, PIXELS(1608), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(1608), 0, PIXELS(1608), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WINGED_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(488), 0, PIXELS(152), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(488), 0, PIXELS(152), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_WINGED_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(216), 0, PIXELS(152), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(216), 0, PIXELS(152), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_WINGED_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(664), 0, PIXELS(152), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(664), 0, PIXELS(152), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_WINGED_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(360), 0, PIXELS(152), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(360), 0, PIXELS(152), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_WINGED_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(488), 0, PIXELS(200), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(488), 0, PIXELS(200), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_WINGED_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(216), 0, PIXELS(216), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(216), 0, PIXELS(216), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_WINGED_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(664), 0, PIXELS(200), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(664), 0, PIXELS(200), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_WINGED_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(360), 0, PIXELS(216), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(360), 0, PIXELS(216), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SUN_DISC_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(288), 0, PIXELS(120), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(288), 0, PIXELS(120), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_SUN_DISC, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(1608), 0, PIXELS(1608), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(1608), 0, PIXELS(1608), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(560), 0, PIXELS(136), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(560), 0, PIXELS(136), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(592), 0, PIXELS(136), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(592), 0, PIXELS(136), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };
 // clang-format on
 
 struct MapEvent gSolSanctumStatue_Events[] = {
-    {MAP_EVENT_WARP | WARP_STYLE_ANIMATED_ALTERNATE, 1, CONDITION_ALWAYS,
+    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS,
      SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS},
     {MAP_EVENT_WARP, 2, CONDITION_ALWAYS,
      SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_PSYNERGY_STONE},

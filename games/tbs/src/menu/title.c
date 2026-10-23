@@ -86,7 +86,7 @@ s32 Title_Run(void) {
   // After 120 frames, the logo waits up to 3600 frames (a minute) for a key
   // press.
   if (gGameState.warpDest == 10) {
-    ObjectEvent_GetById(gGameState.selectedLocalId)->motionFlags = 0;
+    ObjectEvent_GetById(gGameState.leaderLocalId)->motionFlags = 0;
     Engine_AudioPlayCue(MUS_ENDING_LOGO);
     Title_RevealScreen(0);
     Engine_TaskWait(120);
@@ -326,7 +326,7 @@ static void Title_RevealScreen(s32 unused) {
   }
   // Open the screen in one frame, then set 60-frame transitions for what
   // follows.
-  gFieldWork->startTransition = 0;
+  gFieldWork->transition = 0;
   gFieldWork->transitionFrames = 1;
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();

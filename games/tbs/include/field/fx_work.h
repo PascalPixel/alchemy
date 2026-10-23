@@ -50,7 +50,7 @@ struct FieldEffectWork {
   s16 firstObjectId;  ///< the caster's object id
   s16 secondObjectId; ///< the target's object id, -1 for none
   u16 action;         ///< the ability id
-  s16 fieldKind;      ///< the ability's field kind (FIELD_KIND_)
+  s16 fieldPsynergy;  ///< the ability's field kind (FIELD_PSYNERGY_)
   /// Set at the start: Force then aims in front of the caster; cleared once
   /// the target has been dispatched.
   s8 enabled;
@@ -82,7 +82,7 @@ struct FieldEffectWork {
   s32 savedShakeY;
   s32 savedShakeDecay;
   ///@}
-  struct EffectSlot effects[24];
+  struct FieldEffectSprite sprites[24];
   u8 unusedAfterSlots[2]; ///< no code names it
   s16 arcTileSlot;        ///< resource entry of Avoid's falling arcs' tiles
   s8 messageMode;         ///< the announcement's box mode: 1, a script adds 8
@@ -95,7 +95,7 @@ STATIC_ASSERT(offsetof(struct FieldEffectWork, action) == 0x1c);
 STATIC_ASSERT(offsetof(struct FieldEffectWork, savedCallback) == 0x38);
 STATIC_ASSERT(offsetof(struct FieldEffectWork, tileSlot) == 0x46);
 STATIC_ASSERT(offsetof(struct FieldEffectWork, savedShakeX) == 0x4c);
-STATIC_ASSERT(offsetof(struct FieldEffectWork, effects) == 0x58);
+STATIC_ASSERT(offsetof(struct FieldEffectWork, sprites) == 0x58);
 STATIC_ASSERT(offsetof(struct FieldEffectWork, arcTileSlot) == 0x71a);
 STATIC_ASSERT(offsetof(struct FieldEffectWork, messageMode) == 0x71c);
 

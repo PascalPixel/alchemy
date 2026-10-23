@@ -24,7 +24,7 @@ void FieldEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
   struct FieldEffectWork *effectWork;
   s32 running;
 
-  running = ev->resolvingAction;
+  running = ev->psynergyActing;
   if (running == 0) {
     effectWork = AllocHeapSlot(HEAP_SLOT_FIELD_EFFECT, sizeof *effectWork);
     Dma_Fill32(running, effectWork, sizeof *effectWork);
@@ -32,8 +32,8 @@ void FieldEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
     effectWork = *(gHeapSlots + HEAP_SLOT_FIELD_EFFECT);
   }
   effectWork->action = abilityId;
-  effectWork->fieldKind = BattleAction_Get(abilityId)->type0c;
-  running = ev->resolvingAction;
+  effectWork->fieldPsynergy = BattleAction_Get(abilityId)->fieldPsynergy;
+  running = ev->psynergyActing;
   if (running != 0)
     return;
   effectWork->freeBlocks = 512 - VramCache_CountFreeBlocks();
@@ -50,10 +50,10 @@ void FieldEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
     effectWork->lit = 1;
   if (gGameState.layoutId == (s32)&MapId_MercuryLighthouseMiddle)
     effectWork->lit = 1;
-  FieldEffect_SetupObjectPair(gGameState.selectedLocalId, -1);
+  FieldEffect_SetupObjectPair(gGameState.leaderLocalId, -1);
   // Every effect but Reveal's own pauses Reveal's countdown (running is 0
   // here) until FieldEffect_End lets it run again.
-  if (effectWork->fieldKind != FIELD_KIND_REVEAL)
+  if (effectWork->fieldPsynergy != FIELD_PSYNERGY_REVEAL)
     ev->effectTimerRunning = running;
   effectWork->tileSlot = Resource_FindFreeEntry();
   VramCache_Load((s16)effectWork->tileSlot, 256, gFieldEffect_SparkTiles);
@@ -74,10 +74,10 @@ void FieldEffect_SetupObjectPair(s32 userId, s32 targetId) {
 
   effectWork = gFieldEffectWork;
   effectWork->firstObjectId = userId;
-  user = ObjectTable_Get((s16)userId);
+  user = ObjectEvent_GetByLocalId((s16)userId);
   effectWork->secondObjectId = targetId;
   effectWork->mainObject = user;
-  target = ObjectTable_Get((s16)targetId);
+  target = ObjectEvent_GetByLocalId((s16)targetId);
   dir = (user->facing + 0x2000) & 0xc000; // to the nearest quarter turn
   effectWork->child = target;
   effectWork->angle = dir;
@@ -128,7 +128,7 @@ void FieldEffect_End(void) {
   struct FieldEffectWork *effectWork;
   struct FieldWork *runtime;
   struct MapGridScrollWork *grid;
-  struct EffectSlot *effectSlot;
+  struct FieldEffectSprite *effectSlot;
   s32 remaining;
 
 #ifdef UBFIX
@@ -144,14 +144,14 @@ void FieldEffect_End(void) {
   grid = *(struct MapGridScrollWork **)((u8 *)effectWorkCell - 192);
 #endif
   for (remaining = 0; remaining < 24; remaining++) {
-    effectSlot = &effectWork->effects[remaining];
+    effectSlot = &effectWork->sprites[remaining];
     if (effectSlot->active != 0)
       FieldEffect_ClearOwnedSlot(effectSlot);
   }
 
-  // While Field_UsePsynergy resolves an effect (resolvingAction), a cleanup
+  // While Field_UsePsynergy resolves an effect (psynergyActing), a cleanup
   // from inside it frees only the slots; the rest waits for its own.
-  if (runtime->resolvingAction == 0) {
+  if (runtime->psynergyActing == 0) {
     s32 waited = 0;
     void (*firstActiveUpdate)(union FieldObject *) =
         FieldEffect_UpdateScaledArcObjectB;
@@ -187,9 +187,9 @@ void FieldEffect_End(void) {
     grid->shakeX = effectWork->savedShakeX;
     grid->shakeY = effectWork->savedShakeY;
     grid->shakeDecay = effectWork->savedShakeDecay;
-    if (effectWork->fieldKind != FIELD_KIND_REVEAL)
+    if (effectWork->fieldPsynergy != FIELD_PSYNERGY_REVEAL)
       runtime->effectTimerRunning = 1;
-    FieldEffect_PlayQueuedSound();
+    Map_PlayQueuedMusic();
     FreeHeapSlot(HEAP_SLOT_FIELD_EFFECT);
   }
 }
@@ -202,7 +202,7 @@ void FieldEffect_End(void) {
 /// castStarted, which FieldEffect_End clears. Called by
 /// Field_UsePsynergy and Goma Cave Entrance once the effect's caster and
 /// target are set up.
-void EventObject_Initialize(void) {
+void FieldEffect_StartCast(void) {
   s32 ability;
   s32 announcedAbility;
   struct ObjectEvent *caster;

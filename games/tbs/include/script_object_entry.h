@@ -13,9 +13,9 @@ struct ScriptObjectEntry {
   void *data;       ///< Object.script; null for a free object
   u16 scriptCursor; ///< Object's step; not named through this struct
   u16 facing;       ///< Object's angle; not named through this struct
-  s32 values08[6];  ///< x, y, z, terrainHeight, scaleX and scaleY
+  s32 values08[6];  ///< x, y, z, groundHeight, scaleX and scaleY
   u16 value20;      ///< Object.radius, in pixels
-  /// ObjectEvent's terrainId to snapToTarget; not named through this struct.
+  /// ObjectEvent's layer to snapToTarget; not named through this struct.
   u8 terrainToSnap[0x37];
   u8 flags59; ///< Object.collisionFlags: bit 0 solid
   /// ObjectEvent's steeringFlags to its update hook; not named through this

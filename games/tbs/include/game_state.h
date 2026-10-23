@@ -104,18 +104,18 @@ struct GameState {
   s32 y;                   ///< 16.16 fixed-point pixels
   s32 z;                   ///< 16.16 fixed-point pixels
   u32 heading;             ///< 1/65536 turns
-  u16 turn;                ///< the leader's terrainId, kept with its position
+  u16 turn;                ///< the leader's layer, kept with its position
   s16 battleMusic;         ///< the battle music chosen for the encounter
   s16 mapMusic;            ///< the current map's field music
   u8 movementMode;         ///< 1 while the leader is climbing, 0 otherwise
-  u8 paddingAfterMovement; ///< up to the word selectedLocalId starts on
-  s32 selectedLocalId;     ///< the leader: its unit and its object event
+  u8 paddingAfterMovement; ///< up to the word leaderLocalId starts on
+  s32 leaderLocalId;       ///< the leader: its unit and its object event
   u8 activeOwners[8];      ///< the party in order
   u8 unusedAfterOwners[5]; ///< no code names it
   u8 paletteGlow[2];       ///< window hue (0 to 23), brightness (0 to 14)
   u8 unusedAfterGlow[3];   ///< no code names it
   /// The voice sound option: 1, as on a new game, plays each speaker's voice
-  /// sound as their message types (FieldEffect_GetResourceId).
+  /// sound as their message types (Speaker_GetVoice).
   u8 speech;
   /// XXX: 1 on a new game and never read (see the game README).
   u8 unk20b;
@@ -203,7 +203,7 @@ STATIC_ASSERT(offsetof(struct GameState, warpDest) == 0x1c2);
 STATIC_ASSERT(offsetof(struct GameState, special) == 0x1d6);
 STATIC_ASSERT(offsetof(struct GameState, x) == 0x1dc);
 STATIC_ASSERT(offsetof(struct GameState, movementMode) == 0x1f2);
-STATIC_ASSERT(offsetof(struct GameState, selectedLocalId) == 0x1f4);
+STATIC_ASSERT(offsetof(struct GameState, leaderLocalId) == 0x1f4);
 STATIC_ASSERT(offsetof(struct GameState, activeOwners) == 0x1f8);
 STATIC_ASSERT(offsetof(struct GameState, speech) == 0x20a);
 STATIC_ASSERT(offsetof(struct GameState, messageSpeed) == 0x20c);

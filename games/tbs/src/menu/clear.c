@@ -198,7 +198,7 @@ static void MainMenu_LoadBackground(void) {
   {
     struct ObjectEvent *leader;
 
-    leader = ObjectEvent_GetById(gGameState.selectedLocalId);
+    leader = ObjectEvent_GetById(gGameState.leaderLocalId);
     leader->motionFlags = 0;
   }
 }
@@ -447,7 +447,7 @@ s32 MainMenu_Run(void) {
   blendStarted = 0;
   MainMenu_LoadBackground();
   FieldScheduler_AddCallback(MainMenu_CheckButtonCodes, 0xc80);
-  gFieldWork->startTransition = blendStarted;
+  gFieldWork->transition = blendStarted;
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
   // Warp destination 2, after the credits (Title_Run): save the cleared game,
@@ -610,7 +610,7 @@ menu_top:;
     if (v6 == -1) {
       goto menu_top;
     }
-    gGameState.selectedLocalId = 0;
+    gGameState.leaderLocalId = 0;
     if (GameFlag_IsSet(FLAG_COLOSSO_HOLDS_EQUIPMENT) != 0) {
       InventorySnapshot_Restore();
       Party_RemoveActiveOwner(0);
@@ -932,7 +932,7 @@ menu_top:;
     goto menu_top;
   }
 leave:;
-  gFieldWork->requestedWarp = 0x3e7;
+  gFieldWork->warp = 0x3e7;
   Engine_ScriptWait(30);
   Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
   Engine_ScriptCloseScreen();

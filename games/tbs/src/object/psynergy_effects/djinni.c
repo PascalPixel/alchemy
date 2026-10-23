@@ -32,14 +32,14 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
 
   // The way the leader faces, to the nearest quarter turn.
   djinni = ObjectEvent_GetById(djinniId);
-  dir = (ObjectEvent_GetById(gGameState.selectedLocalId)->facing + 0x2000) &
-        0xc000;
+  dir =
+      (ObjectEvent_GetById(gGameState.leaderLocalId)->facing + 0x2000) & 0xc000;
   FieldScript_Start();
   WaitFrames(10);
   Sound_PlaySongFar(SE_173);
-  Motion_SetVarCbAndRefresh(djinniId, 1);
+  ObjectMotion_SetVarCbAndRefresh(djinniId, 1);
   Sound_PlaySongFar(SE_175);
-  Motion_SetVarCbAndRefresh(djinniId, 1);
+  ObjectMotion_SetVarCbAndRefresh(djinniId, 1);
   back = dir + 0x8000;
   WaitFrames(20);
   ObjectMotion_ArmCallback(djinniId, back, 0);
@@ -54,18 +54,18 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
 
   // Hop 16 pixels away from the leader, three times.
   dist = 16 << 16;
-  Motion_SetTargetPositionFromMagnitudeAngle((struct Object *)djinni, dist,
-                                             dir);
+  ObjectMotion_SetTargetPositionFromMagnitudeAngle((struct Object *)djinni,
+                                                   dist, dir);
   Sound_PlaySongFar(SE_JUMP);
   ObjectMotion_Launch(djinniId, 4, 0);
   Object_WaitForMoveFar(djinni);
-  Motion_SetTargetPositionFromMagnitudeAngle((struct Object *)djinni, dist,
-                                             dir);
+  ObjectMotion_SetTargetPositionFromMagnitudeAngle((struct Object *)djinni,
+                                                   dist, dir);
   Sound_PlaySongFar(SE_JUMP);
   ObjectMotion_Launch(djinniId, 4, 0);
   Object_WaitForMoveFar(djinni);
-  Motion_SetTargetPositionFromMagnitudeAngle((struct Object *)djinni, dist,
-                                             dir);
+  ObjectMotion_SetTargetPositionFromMagnitudeAngle((struct Object *)djinni,
+                                                   dist, dir);
   Sound_PlaySongFar(SE_JUMP);
   ObjectMotion_Launch(djinniId, 4, 0);
   Object_WaitForMoveFar(djinni);
@@ -110,8 +110,8 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
 
   // Leap 64 pixels at the leader, 12 pixels a frame upward, and after 24
   // frames freeze wherever it is, landed or not.
-  Motion_SetTargetPositionFromMagnitudeAngle((struct Object *)djinni, 64 << 16,
-                                             dir + 0x8000);
+  ObjectMotion_SetTargetPositionFromMagnitudeAngle((struct Object *)djinni,
+                                                   64 << 16, dir + 0x8000);
   Sound_PlaySongFar(SE_136);
   ObjectMotion_Launch(djinniId, 12, 0);
   WaitFrames(24);
@@ -156,7 +156,7 @@ void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
       // On the world map the object events far from the view are removed while
       // the effect plays and placed again after it.
       if (work->mode == OBJECT_SYSTEM_WORLD_MAP)
-        ObjectTable_ClearOutOfBounds();
+        ObjectEvent_ClearOutOfBounds();
 
       if (element == 0) // Venus
         FieldEffect_RunVenusDjinnCapture(slot);
@@ -169,7 +169,7 @@ void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
 
       work->objectEvents[slot] = 0;
       if (work->mode == OBJECT_SYSTEM_WORLD_MAP)
-        ObjectTable_Respawn();
+        ObjectEvent_Respawn();
     }
 
     Djinn_ShowJoinedMessageFar(owner, element, djinn);
@@ -205,19 +205,20 @@ void ObjectEvent_PlaceMapObjectEvents(void) {
         if (desc == NULL ||
             desc->condition - FLAG_DJINN_FIRST != event - DJINNI_EVENT_0)
           continue;
-        object = ObjectTable_Get(id);
+        object = ObjectEvent_GetByLocalId(id);
         if (object == NULL)
           continue;
         // Without DJINN_NO_HOP, back at its template's position in a new object
         // event's ground state: no ground height yet, following the terrain and
         // falling.
         if (flags == 0) {
-          object->terrainHeight = flags;
+          object->groundHeight = flags;
           object->flags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
           Object_SetPositionAndResetMotionFar(object, desc->x, desc->y,
                                               desc->z);
         } else {
-          struct Object *leader = ObjectTable_Get(gGameState.selectedLocalId);
+          struct Object *leader =
+              ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
 
           Object_SetPositionAndResetMotionFar(object, leader->x, leader->y,
                                               leader->z - (32 << 16));
@@ -313,12 +314,12 @@ void FieldEffect_InitializeSlots(void) {
 /// frame. Pairs with FieldEffect_InitializeSlots.
 void FieldEffect_ClearActiveSlotsAndScheduleUpdates(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
-  struct EffectSlot *effect;
+  struct FieldEffectSprite *effect;
   s32 i;
 
   Task_Remove(FieldEffect_UpdateAllSlots);
   for (i = 0; i < PSYNERGY_EFFECT_SLOT_COUNT; i++) {
-    effect = &effectWork->effects[i];
+    effect = &effectWork->sprites[i];
     if (effect->active != 0)
       FieldEffect_ClearOwnedSlot(effect);
   }
@@ -347,12 +348,11 @@ enum DjinniLightState {
 /// 1/32 turn a frame throughout, and its radius grows, then shrinks, by 1
 /// pixel a frame. The slot's origin is the centre, in screen coordinates
 /// (Camera_WorldToScreen).
-void FieldEffect_RunAngledApproachPhases(struct EffectSlot *particle) {
+void FieldEffect_RunAngledApproachPhases(struct FieldEffectSprite *particle) {
   struct MotionObject *target;
   struct EffectVector position;
 
-  target =
-      (struct MotionObject *)ObjectEvent_GetById(gGameState.selectedLocalId);
+  target = (struct MotionObject *)ObjectEvent_GetById(gGameState.leaderLocalId);
   if (particle->state == DJINNI_LIGHT_WIDENING) {
     particle->orbitRadius += 1;
     particle->orbitAngle += 1;

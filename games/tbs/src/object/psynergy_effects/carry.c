@@ -38,10 +38,10 @@ FieldEffect_CheckRaisedTargetCollision(struct ObjectEvent *target,
                                        struct EffectVector *position) {
   s32 collision;
 
-  target->terrainHeight += 16 << 16;
-  collision = MapGrid_CheckObjectStepFar((struct Object *)target,
-                                         (struct FieldPosition *)position);
-  target->terrainHeight -= 16 << 16;
+  target->groundHeight += 16 << 16;
+  collision = MapGrid_CheckCollisionFar((struct Object *)target,
+                                        (struct FieldPosition *)position);
+  target->groundHeight -= 16 << 16;
   return collision;
 }
 
@@ -49,7 +49,7 @@ FieldEffect_CheckRaisedTargetCollision(struct ObjectEvent *target,
 /// ground; the d-pad moves it 16 pixels at a time and A, B, L or R drops it
 /// where it is.
 ///
-/// Abilities: Carry (FIELD_KIND_CARRY).
+/// Abilities: Carry (FIELD_PSYNERGY_CARRY).
 ///
 /// Where the way is blocked a buzzer sounds.
 void FieldEffect_SteerLiftedTarget(s32 targetId) {
@@ -114,7 +114,7 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
   target->motionFlags = 4;
   ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)target, 0);
   if (hands[0] != NULL && hands[1] != NULL) {
-    while (target->y.fixed - target->terrainHeight <= 24 << 16) {
+    while (target->y.fixed - target->groundHeight <= 24 << 16) {
       objectEvent->y.fixed += 0x6000;
       right->y.fixed += 0x6000;
       target->y.fixed += 0x6000;
@@ -130,7 +130,7 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
   target->speed = 0x6666;
   target->acceleration = 0x3333;
   target->steeringFlags = 0;
-  target->terrainId = 2;
+  target->layer = 2;
 
   //------------------------------------------------------------------
   // Move with the d-pad.
@@ -167,10 +167,10 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
     Object_WaitForMoveFar(hands[0]);
     Object_WaitForMoveFar(hands[1]);
     pos.x = target->x.fixed;
-    pos.y = target->terrainHeight;
+    pos.y = target->groundHeight;
     pos.z = target->z.fixed;
     Vector_AddPolarOffset(16 << 16, angle, &pos);
-    i = ScriptObject_CheckOverlapFar((struct ScriptObjectEntry *)target,
+    i = ObjectScript_CheckOverlapFar((struct ScriptObjectEntry *)target,
                                      (s32 *)&pos);
     // Both tests jump into the blocked path, which keeps it ahead of the drop
     // path as the ROM lays them out; written as one || test, 407 of 531
@@ -250,8 +250,8 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
         objectEvent->acceleration = 2 << 16;
         objectEvent->motionFlags = 0;
         dist = Random16() * 24 + (8 << 16);
-        Motion_SetTargetPositionFromMagnitudeAngle((struct Object *)objectEvent,
-                                                   dist, Random16());
+        ObjectMotion_SetTargetPositionFromMagnitudeAngle(
+            (struct Object *)objectEvent, dist, Random16());
       }
     }
   }
@@ -270,7 +270,7 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
   target->motionFlags = 3;
   target->velocityY = 10 << 16;
   target->bounce = 0x3333;
-  target->terrainId = 0;
+  target->layer = 0;
   src->update = 0;
   Animation_ApplyChildValuesFar((struct DispatchObject *)src,
                                 SPRITE_COLOR_NORMAL);
@@ -293,7 +293,7 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
 /// in front of the caster and 32 pixels to either side, close in 24 pixels and
 /// scatter into shards.
 ///
-/// Abilities: Carry (FIELD_KIND_CARRY).
+/// Abilities: Carry (FIELD_PSYNERGY_CARRY).
 DEFINE_ITEM_BREAK_EFFECT(FieldEffect_RunCarry, FieldEffect_SpawnItemBreakMode1)
 
 /// Spawns a hand (object 215) with the item break sound, in animation 1, and

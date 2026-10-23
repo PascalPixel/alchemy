@@ -20,7 +20,7 @@ static void *MapData_FindSlotAtPosition(const struct FieldPosition *position,
        i < sizeof(work->objectEvents) / sizeof(work->objectEvents[0]); i++) {
     struct ObjectEvent *p = slots[i];
 
-    // UB: ObjectTable_ClearAll leaves unused slots null. Skipping them grows
+    // UB: ObjectEvent_ClearAll leaves unused slots null. Skipping them grows
     // this helper from 0x48 to 0x4c bytes in the native English trial.
 #ifdef UBFIX
     if (p == NULL)

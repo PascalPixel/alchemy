@@ -80,8 +80,8 @@ void Object_UpdateAll(void) {
 #endif
 
         if (command <= 63) {
-          if (gScriptObject_CommandTable[command](
-                  (struct ScriptInterpreter *)object) == 0)
+          if (gObjectScript_CommandTable[command](
+                  (struct ObjectScriptContext *)object) == 0)
             break;
         } else {
           object->scriptCursor++;
@@ -170,7 +170,7 @@ void Object_UpdateAll(void) {
 
       // Gravity, and a bounce that loses energy on landing.
       if (object->motionFlags & 2) {
-        groundY = object->terrainHeight;
+        groundY = object->groundHeight;
         if (y > groundY)
           object->velocityY -= object->gravity;
         if (y <= groundY && object->velocityY < 0) {

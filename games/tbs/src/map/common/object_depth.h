@@ -14,10 +14,10 @@
 // unused native result in matching builds.
 #ifdef UBFIX
 static void
-MapObjectEvent_SetFlagBitByRelativeDepth(union FieldObject *fieldObject) {
+ObjectEvent_SetFlagBitByRelativeDepth(union FieldObject *fieldObject) {
 #else
 static s32
-MapObjectEvent_SetFlagBitByRelativeDepth(union FieldObject *fieldObject) {
+ObjectEvent_SetFlagBitByRelativeDepth(union FieldObject *fieldObject) {
 #endif
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   struct ObjectEvent *ref;
@@ -47,7 +47,7 @@ MapObjectEvent_SetFlagBitByRelativeDepth(union FieldObject *fieldObject) {
 
 /// Unless object event first is south of object event second, swaps their
 /// positions and waits a frame.
-static void MapObjectEvent_SwapPositionsByDepth(s32 first, s32 second) {
+static void ObjectEvent_SwapPositionsByDepth(s32 first, s32 second) {
   struct ObjectEvent *a = ObjectEvent_GetById(first);
   struct ObjectEvent *b = ObjectEvent_GetById(second);
 

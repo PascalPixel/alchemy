@@ -7,10 +7,10 @@
 #include "types.h"
 #include "effect_step.h"
 
-struct DisplayTransitionState;
+struct ScreenTransitionState;
 
 /// The work slots from HEAP_SLOT_MAP_GRID on: gMapGridWork[0] is the map's work
-/// (struct MapGridScrollWork, or the world map's struct PerspectiveWork).
+/// (struct MapGridScrollWork, or the world map's struct WorldMapView).
 extern void *gMapGridWork[];
 /// The menu work, heap slot HEAP_SLOT_MENU: each menu screen and the shop
 /// read it through their own struct while they are open.
@@ -20,7 +20,7 @@ extern void *gMenuWork;
 /// HEAP_SLOT_LIGHTNING onwards.
 extern void *gLightningWork[];
 /// HEAP_SLOT_SCREEN_TRANSITION under its own name.
-extern struct DisplayTransitionState *gScreenTransitionWork;
+extern struct ScreenTransitionState *gScreenTransitionWork;
 /// HEAP_SLOT_BATTLE_ENTRY_TIMER: the battle's entry transition timer in frames.
 extern s32 *gBattleEntryTimer;
 /// HEAP_SLOT_FIELD_EFFECT: points to a map-specific structure.

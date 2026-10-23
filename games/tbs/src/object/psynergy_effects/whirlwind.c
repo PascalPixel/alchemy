@@ -30,13 +30,13 @@ struct WhirlwindOrbit {
   s32 x;     ///< 16.16 pixels
   s32 y;     ///< 16.16 pixels
   s32 z;     ///< 16.16 pixels
-  /// ObjectEvent's terrainHeight to velocityX; not named through this view.
+  /// ObjectEvent's groundHeight to velocityX; not named through this view.
   ///@{
-  s32 terrainHeight;
+  s32 groundHeight;
   s32 scaleX;
   s32 scaleY;
   u16 radius;
-  u8 terrainId;
+  u8 layer;
   u8 priorityFlags;
   s32 velocityX;
   ///@}
@@ -214,7 +214,7 @@ void FieldEffect_ShrinkObjectScaleUntilHalf(union FieldObject *fieldObject) {
 /// Runs Whirlwind cast on a target, using the target already stored in the
 /// effect scene.
 ///
-/// Abilities: Whirlwind, Gale (FIELD_KIND_WHIRLWIND).
+/// Abilities: Whirlwind, Gale (FIELD_PSYNERGY_WHIRLWIND).
 ///
 /// FieldEffect_DispatchRequestKind passes an argument this adapter ignores; the
 /// shared runner reads scene->child instead.
@@ -225,7 +225,7 @@ void FieldEffect_RunWhirlwindOnTarget(s32 unused) {
 /// An orb is carried from the caster to 4 pixels above the effect's position
 /// over 10 frames, growing from 0.25.
 ///
-/// Abilities: Whirlwind, Gale (FIELD_KIND_WHIRLWIND).
+/// Abilities: Whirlwind, Gale (FIELD_PSYNERGY_WHIRLWIND).
 ///
 /// Without scene->enabled the target shrinks, and 16 particles appear round the
 /// orb, one every 6 frames, and circle it.

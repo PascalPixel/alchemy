@@ -65,10 +65,10 @@ s32 Map_Run(s32 warpDest) {
   Field_ClearRequests();
   work->events = gOverlayArea.events();
   Map_ApplyWarpDest();
-  ObjectTable_ResetForObject(
+  ObjectEvent_ResetForObject(
       (struct ObjectEventTemplate *)gOverlayArea.objectEventTemplates());
   if (GameFlag_TestFar(FLAG_KEEP_PARTY_POSITION) != 0)
-    ObjectTable_Restore();
+    ObjectEvent_Restore();
   if (gGameState.pendingDjinnEvent != 0)
     ObjectEvent_PlaceMapObjectEvents();
   if (mode == OBJECT_SYSTEM_WORLD_MAP) {
@@ -77,7 +77,7 @@ s32 Map_Run(s32 warpDest) {
   } else {
     MapGrid_CenterOnFollowedPointFar();
   }
-  Field_PlaceMapMarkers();
+  Field_PlaceTreasureSpots();
   ColorBuffer_Initialize();
   ColorBuffer_SetTarget(0x10000, 0);
   // The default fade is from the backdrop colour over 16 frames; the map's
@@ -95,7 +95,7 @@ s32 Map_Run(s32 warpDest) {
     work->walkingDistanceScale = 0;
     GameFlag_SetBitFar(FLAG_RETREAT_BLOCKED);
   }
-  work->previousTile = (struct MapGridCell *)Ram_MapGridCellBuffer;
+  work->previousCell = (struct MapGridCell *)Ram_MapGridCellBuffer;
   // A fresh entry (not a return from battle) resets the hazard count to its
   // defaults (damage 1 every 16 steps), the stopped object event and Cloak.
   if (GameFlag_TestFar(FLAG_KEEP_PARTY_POSITION) == 0) {
@@ -120,13 +120,13 @@ s32 Map_Run(s32 warpDest) {
     // Fade in, show the area name and give what was left pending.
     if (Field_CountRequests() == 0) {
       if (work->transitionActive == 0) {
-        DisplayTransition_Start(work->transition, work->transitionFrames);
+        ScreenTransition_Start(work->transition, work->transitionFrames);
         work->transitionActive = 1;
         PLTT_BACKDROP = 0;
         // An arrival the last map asked for
-        // (ObjectEffect_RunPendingFlagEvent) plays through the fade; with none,
+        // (Warp_PlayArrival) plays through the fade; with none,
         // wait out half of it.
-        if (ObjectEffect_RunPendingFlagEvent() == 0)
+        if (Warp_PlayArrival() == 0)
           WaitFrames((work->transitionFrames + 1) / 2);
       }
       if (GameFlag_TestFar(FLAG_SHOW_LOCATION_NAME) != 0) {
@@ -149,13 +149,13 @@ s32 Map_Run(s32 warpDest) {
     for (;;) {
       // Note where the leader is, for the requests to use.
       GameFlag_SetBitFar(FLAG_FIELD_HANDLING_REQUESTS);
-      objectEvent = work->objectEvents[gGameState.selectedLocalId];
+      objectEvent = work->objectEvents[gGameState.leaderLocalId];
       ObjectDispatch_StartIdleFar((struct DispatchObject *)objectEvent);
       gGameState.x = objectEvent->x.fixed;
       gGameState.y = 0;
       gGameState.z = objectEvent->z.fixed;
       gGameState.heading = objectEvent->facing;
-      gGameState.turn = objectEvent->terrainId;
+      gGameState.turn = objectEvent->layer;
 
       // Handle the pending requests, most urgent first.
       while (Field_CountRequests() != 0) {
@@ -166,9 +166,9 @@ s32 Map_Run(s32 warpDest) {
           work->warp = 0;
           goto done;
         }
-        if (work->event != 0) {
+        if (work->raisedEvent != 0) {
           work->busy = 1;
-          if (work->event == FIELD_EVENT_PARTY_FELL) {
+          if (work->raisedEvent == FIELD_RAISED_EVENT_PARTY_FELL) {
             // Characters fell to poison or hazardous ground.
             u32 i;
 
@@ -184,7 +184,7 @@ s32 Map_Run(s32 warpDest) {
               // The whole party fell: back to the last sanctum with 1 HP.
               struct BattleUnit *vitals;
 
-              if (gGameState.selectedLocalId == 0) {
+              if (gGameState.leaderLocalId == 0) {
                 if (GameFlag_TestFar(FLAG_CHILDHOOD) != 0)
                   ObjectDispatch_SelectAnimationFar(objectEvent, 21);
                 else
@@ -195,7 +195,7 @@ s32 Map_Run(s32 warpDest) {
               Sound_PlaySongFar(MUS_DEFEAT);
               UiText_ShowPositionedMessageAndWaitFar(MsgFieldPartyAnnihilated,
                                                      1);
-              vitals = Unit_GetFar(gGameState.selectedLocalId);
+              vitals = Unit_GetFar(gGameState.leaderLocalId);
               vitals->hp = 1;
               Unit_UpdateGauges(vitals);
               gGameState.mapId = gGameState.savedMap;
@@ -205,23 +205,23 @@ s32 Map_Run(s32 warpDest) {
               goto done;
             }
             WorldMap_EndScript();
-          } else if (work->event == FIELD_EVENT_WORLD_MAP_PICTURE) {
+          } else if (work->raisedEvent == FIELD_RAISED_EVENT_REGION_MAP) {
             Leader_StopMoving();
-            WorldMap_Show((s32)&ResourceId_WorldMapPicture);
-          } else if (work->event == FIELD_EVENT_WORLD_MAP_ZOOM) {
+            RegionMap_Show((s32)&ResourceId_WorldMapPicture);
+          } else if (work->raisedEvent == FIELD_RAISED_EVENT_WORLD_MAP_ZOOM) {
             Leader_StopMoving();
             FieldEffect_RunVisibilityTransition();
           } else {
-            Map_RunRaisedEvent(work->event);
+            Map_RunRaisedEvent(work->raisedEvent);
           }
           work->busy = 0;
-          work->event = 0;
+          work->raisedEvent = 0;
         } else if (work->battle != 0) {
           // A random encounter: save the object events and go to the battle.
           // Field_StartEncounterTransition closes the screen itself and
           // clears transitionActive, so the map ends without another fade.
           Leader_StopMoving();
-          ObjectTable_Snapshot();
+          ObjectEvent_Snapshot();
           gGameState.returnMusic = -1;
           gGameState.mapId = RUN_BATTLE;
           gGameState.warpDest = work->battle;
@@ -230,21 +230,21 @@ s32 Map_Run(s32 warpDest) {
           work->encounterBias = 0;
           work->battle = 0;
           gGameState.encounterSteps = 0;
-        } else if (work->action != 0) {
+        } else if (work->coordEvent != 0) {
           work->busy = 1;
-          Map_RunCoordEventOrWarp(work->action);
+          Map_RunCoordEventOrWarp(work->coordEvent);
           work->busy = 0;
-          work->action = 0;
-        } else if (work->pushTile != 0) {
-          Field_RunPushTileEvent(work->pushTile);
-          work->pushTile = 0;
+          work->coordEvent = 0;
+        } else if (work->pushCell != 0) {
+          Field_RunPushCellEvent(work->pushCell);
+          work->pushCell = 0;
         } else if (work->examine != 0) {
           // Examine the object event or tile ahead, or open the menu if neither
           // has an event.
           s32 object;
 
           UiTimedNotice_CloseIfActiveFar();
-          object = Field_FindNearbyTalkTarget(gGameState.selectedLocalId);
+          object = Field_FindNearbyTalkTarget(gGameState.leaderLocalId);
           mode = 0;
           if (object != -1) {
             mode = Map_FindObjectEventTalkEvent(object) != 0;
@@ -257,7 +257,7 @@ s32 Map_Run(s32 warpDest) {
           } else {
             mode = ObjectEvent_GetTriggerTileAheadOfCurrent();
             if (mode != 0) {
-              work->tile = mode;
+              work->searchCell = mode;
               work->menu = 0;
             } else {
               work->menu = 1;
@@ -275,7 +275,7 @@ s32 Map_Run(s32 warpDest) {
               (gKeysHeld & KEY_SELECT) != 0) {
             Menu_RunSelectionWithCursorObjectFar();
           } else if (GameFlag_TestFar(FLAG_MENUS_RAISE_EVENT) != 0) {
-            work->event = FIELD_EVENT_MENUS_RAISED;
+            work->raisedEvent = FIELD_RAISED_EVENT_MENUS;
           } else {
             work->effectTimerRunning = 0;
             Menu_RunTopSelectionFar();
@@ -290,11 +290,11 @@ s32 Map_Run(s32 warpDest) {
           Map_TalkToObjectEvent(work->talk & 0xfff);
           WorldMap_EndScript();
           work->talk = 0;
-        } else if (work->tile != 0) {
+        } else if (work->searchCell != 0) {
           WorldMap_StartScript();
-          Field_SearchTile(work->tile);
+          Field_SearchCell(work->searchCell);
           WorldMap_EndScript();
-          work->tile = 0;
+          work->searchCell = 0;
         } else if (work->psynergy != 0) {
           UiTimedNotice_CloseIfActiveFar();
           WorldMap_StartScript();
@@ -324,7 +324,7 @@ s32 Map_Run(s32 warpDest) {
             Debug_RunPaletteEditor();
           } else if (GameFlag_TestFar(FLAG_MENUS_RAISE_EVENT) != 0) {
             // As for the main menu above.
-            work->event = FIELD_EVENT_MENUS_RAISED;
+            work->raisedEvent = FIELD_RAISED_EVENT_MENUS;
           } else {
             Field_EndBusyAndReveal();
             UiTimedNotice_CloseIfActiveFar();
@@ -364,7 +364,7 @@ s32 Map_Run(s32 warpDest) {
       // air (only a key check runs), on the world map or walking, and step
       // until the next request.
       GameFlag_ClearBitFar(FLAG_FIELD_HANDLING_REQUESTS);
-      objectEvent = work->objectEvents[gGameState.selectedLocalId];
+      objectEvent = work->objectEvents[gGameState.leaderLocalId];
       if (objectEvent != NULL) {
         if (gGameState.movementMode == LEADER_MOVEMENT_AIRBORNE)
           ObjectDispatch_StartKeyCheckFar((struct DispatchObject *)objectEvent);
@@ -380,9 +380,9 @@ s32 Map_Run(s32 warpDest) {
       }
       do {
         WaitFrames(1);
-        objectEvent = work->objectEvents[gGameState.selectedLocalId];
+        objectEvent = work->objectEvents[gGameState.leaderLocalId];
         if (gDebugMode == 0 || GameFlag_TestFar(FLAG_DEBUG_STEPS_OFF) == 0)
-          Field_ProcessStep(objectEvent->terrainId, objectEvent->x.fixed,
+          Field_ProcessStep(objectEvent->layer, objectEvent->x.fixed,
                             objectEvent->y.fixed, objectEvent->z.fixed);
       } while (Field_CountRequests() == 0);
     }
@@ -390,7 +390,7 @@ s32 Map_Run(s32 warpDest) {
 
 done:
   if (work->transitionActive != 0) {
-    DisplayTransition_Finish(work->transition, work->transitionFrames);
+    ScreenTransition_Finish(work->transition, work->transitionFrames);
     work->transitionActive = 0;
     WaitFrames(work->transitionFrames);
   }
@@ -404,7 +404,7 @@ struct ObjectVectorView {
   u16 angle;                    ///< 1/65536 turns
   struct EffectVector position; ///< 16.16 fixed-point pixels
   u8 pad1[14];
-  u8 kind; ///< Object's terrainId: the map grid layer of its ground
+  u8 kind; ///< Object's layer: the map grid layer of its ground
   u8 pad2[0x2d];
   struct AnimationObject *sprite;
 };
@@ -416,7 +416,7 @@ struct ObjectVectorView {
 /// otherwise.
 ///
 /// Called by Map_Run for the A button (a non-zero result becomes
-/// work->tile, for Field_SearchTile), and by Menu_RunTopSelection's search
+/// work->tile, for Field_SearchCell), and by Menu_RunTopSelection's search
 /// entry through ObjectEvent_GetTriggerTileAheadOfCurrentFar. Changes nothing.
 s32 ObjectEvent_GetTriggerTileAheadOfCurrent(void) {
   u8 *workBytes;
@@ -426,11 +426,11 @@ s32 ObjectEvent_GetTriggerTileAheadOfCurrent(void) {
   u8 *cell;
   u8 *cells;
   s32 collisionCode;
-  s32 terrainHeight;
+  s32 groundHeight;
   s32 result;
 
   result = 0;
-  leader = ObjectTable_Get(gGameState.selectedLocalId);
+  leader = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
   workBytes = *(u8 **)Ram_FieldWork;
   gridBytes = *(u8 **)Ram_MapGridWork;
   if (leader != 0) {
@@ -454,10 +454,10 @@ s32 ObjectEvent_GetTriggerTileAheadOfCurrent(void) {
     }
     collisionCode = cell[2];
     if (collisionCode >= MB_JAR && collisionCode <= MB_WELL) {
-      terrainHeight = MapGrid_GetTerrainHeightFar(
+      groundHeight = MapGrid_GetTerrainHeightFar(
           leader->kind, probePosition.vector.x, probePosition.vector.z);
-      if (terrainHeight >= leader->position.y &&
-          terrainHeight <= leader->position.y + 0x400000) {
+      if (groundHeight >= leader->position.y &&
+          groundHeight <= leader->position.y + 0x400000) {
         result = collisionCode;
       }
     } else if (Map_FindEvent(MAP_EVENT_BG, collisionCode) != 0) {

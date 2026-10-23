@@ -4,16 +4,15 @@
 
 #include "../object_internal.h"
 
-/// Sets an object's y and terrainHeight to the map's height at its x and z.
-/// Called by Field_PlaceMapMarkers for each marker it places.
+/// Sets an object's y and groundHeight to the map's height at its x and z.
+/// Called by Field_PlaceTreasureSpots for each marker it places.
 void ObjectMotion_SnapToTerrain(void *object) {
   struct Object *objectEvent = object;
-  s32 terrainHeight;
+  s32 groundHeight;
 
-  terrainHeight =
-      MapGrid_GetTerrainHeightFar(0, objectEvent->x, objectEvent->z);
-  objectEvent->y = terrainHeight;
-  objectEvent->terrainHeight = terrainHeight;
+  groundHeight = MapGrid_GetTerrainHeightFar(0, objectEvent->x, objectEvent->z);
+  objectEvent->y = groundHeight;
+  objectEvent->groundHeight = groundHeight;
 }
 
 /// The map grid's work (gMapGridWork[0], HEAP_SLOT_MAP_GRID), seen as its
@@ -31,14 +30,17 @@ struct MapGridMarkers {
 };
 
 /// The sprites of the objects a map's markers place.
-enum { MARKER_CHEST_SPRITE = 20, MARKER_PSYNERGY_STONE_SPRITE = 28 };
+enum {
+  TREASURE_SPOT_CHEST_SPRITE = 20,
+  TREASURE_SPOT_PSYNERGY_STONE_SPRITE = 28
+};
 
 /// The chest sprite's animations.
 enum {
-  MARKER_CHEST_OPEN = 2,    ///< standing open
-  MARKER_CHEST_OPENING = 4, ///< opening
-  MARKER_CHEST_CLOSING = 5, ///< closing again on what nobody could carry
-  MARKER_CHEST_MIMIC = 7    ///< jumping up as a mimic
+  TREASURE_SPOT_CHEST_OPEN = 2,    ///< standing open
+  TREASURE_SPOT_CHEST_OPENING = 4, ///< opening
+  TREASURE_SPOT_CHEST_CLOSING = 5, ///< closing again on what nobody could carry
+  TREASURE_SPOT_CHEST_MIMIC = 7    ///< jumping up as a mimic
 };
 
 /// Places an object at each of the map's markers (ids 100 to 239) that the
@@ -48,7 +50,7 @@ enum {
 /// taken. A marker with no such event takes no slot. The objects are kept in
 /// work->markers, not in object event slots. Called by Map_Run on map
 /// load; clears and fills work->markers.
-void Field_PlaceMapMarkers(void) {
+void Field_PlaceTreasureSpots(void) {
   u32 id;
   struct MapGridMarkers *grid = gMapGridWork[0];
 #ifdef UBFIX
@@ -60,13 +62,13 @@ void Field_PlaceMapMarkers(void) {
 #endif
   s32 markerCount = 0;
   u8 *list = grid->markers;
-  struct MarkerSlot *marker = work->markers;
+  struct TreasureSpot *marker = work->treasureSpots;
   const struct MapEvent *event;
   struct ScriptObjectRuntime *markerObjectEvent;
   u32 column;
   u32 row;
 
-  Dma_Fill32(0, marker, sizeof(struct MarkerSlot) * MARKER_MAX);
+  Dma_Fill32(0, marker, sizeof(struct TreasureSpot) * TREASURE_SPOT_MAX);
   // A map without a marker list places nothing.
   if (list == NULL)
     return;
@@ -78,16 +80,16 @@ void Field_PlaceMapMarkers(void) {
     if (id >= 100 && id <= 239) {
       // The first event with this trigger that places something wins; the
       // event's value says what the search gives (its FIND_ type, as
-      // Field_SearchTile reads it).
+      // Field_SearchCell reads it).
       event = gOverlayArea.events();
-      for (; event->control != -1; event++) {
+      for (; event->kind != -1; event++) {
         if (event->trigger != id)
           continue;
-        if ((event->control & 0x1ff) == BG_EVENT(BG_EVENT_CHEST)) {
+        if ((event->kind & 0x1ff) == BG_EVENT(BG_EVENT_CHEST)) {
           // A chest, at the centre of its cell (cells are 16 pixels, and
           // positions 16.16).
           markerObjectEvent = (struct ScriptObjectRuntime *)Object_CreateFar(
-              MARKER_CHEST_SPRITE, (column << 20) + 0x80000, 0,
+              TREASURE_SPOT_CHEST_SPRITE, (column << 20) + 0x80000, 0,
               (row << 20) + 0x80000);
           if (markerObjectEvent == NULL)
             continue;
@@ -104,7 +106,7 @@ void Field_PlaceMapMarkers(void) {
               continue;
             }
             ObjectDispatch_SelectAnimationFar(markerObjectEvent,
-                                              MARKER_CHEST_OPEN);
+                                              TREASURE_SPOT_CHEST_OPEN);
           }
           ObjectDispatch_StartIdleFar(
               (struct DispatchObject *)markerObjectEvent);
@@ -118,16 +120,16 @@ void Field_PlaceMapMarkers(void) {
           marker->row = markerObjectEvent->z / 0x100000;
           marker++;
           markerCount++;
-          if (markerCount >= MARKER_MAX)
+          if (markerCount >= TREASURE_SPOT_MAX)
             return;
-        } else if ((event->control & 0x1ff) == MAP_EVENT_BG) {
+        } else if ((event->kind & 0x1ff) == MAP_EVENT_BG) {
           // A Psynergy Stone not yet taken.
           if ((event->value & 0xfff00000) != FIND_PSYNERGY_STONE)
             continue;
           if (GameFlag_TestFar(event->condition))
             continue;
           markerObjectEvent = (struct ScriptObjectRuntime *)Object_CreateFar(
-              MARKER_PSYNERGY_STONE_SPRITE, (column << 20) + 0x80000, 0,
+              TREASURE_SPOT_PSYNERGY_STONE_SPRITE, (column << 20) + 0x80000, 0,
               (row << 20) + 0x80000);
           if (markerObjectEvent == NULL)
             continue;
@@ -147,7 +149,7 @@ void Field_PlaceMapMarkers(void) {
           marker->row = markerObjectEvent->z / 0x100000;
           marker++;
           markerCount++;
-          if (markerCount >= MARKER_MAX)
+          if (markerCount >= TREASURE_SPOT_MAX)
             return;
         } else {
           continue;
@@ -160,17 +162,18 @@ void Field_PlaceMapMarkers(void) {
   }
 }
 
-/// Returns the marker slot (below MARKER_MAX) whose event trigger is id, or -1.
-/// Called by the Marker_ functions below. Unused slots hold id 0, which no
-/// marker has (ids are 100 to 239).
-s32 Marker_FindSlot(s32 id) {
+/// Returns the marker slot (below TREASURE_SPOT_MAX) whose event trigger is id,
+/// or -1. Called by the TreasureSpot_ functions below. Unused slots hold id 0,
+/// which no marker has (ids are 100 to 239).
+s32 TreasureSpot_FindSlot(s32 id) {
   s32 slotIndex;
   s32 matchingSlot;
-  struct MarkerSlot *marker;
+  struct TreasureSpot *marker;
 
-  marker = ((struct FieldWork *)gFieldWork)->markers;
+  marker = ((struct FieldWork *)gFieldWork)->treasureSpots;
   matchingSlot = -1;
-  for (slotIndex = 0; slotIndex <= MARKER_MAX - 1; slotIndex++, marker++) {
+  for (slotIndex = 0; slotIndex <= TREASURE_SPOT_MAX - 1;
+       slotIndex++, marker++) {
     if (marker->id == id) {
       matchingSlot = slotIndex;
       break;
@@ -180,18 +183,18 @@ s32 Marker_FindSlot(s32 id) {
 }
 
 /// Unused: an empty function nothing calls.
-UNUSED void Marker_ReservedNoOp(void) {}
+UNUSED void TreasureSpot_ReservedNoOp(void) {}
 
 /// Gives the object of marker id animation, plays sound and waits 12 frames.
 static __inline__ void SetMarkerAnimationAndPlaySound(s32 id, s32 animation,
                                                       s32 sound) {
   s32 slotIndex;
-  struct MarkerSlot *marker;
+  struct TreasureSpot *marker;
   struct Object *object;
 
-  slotIndex = Marker_FindSlot(id);
+  slotIndex = TreasureSpot_FindSlot(id);
   if (slotIndex != -1) {
-    marker = &((struct FieldWork *)gFieldWork)->markers[slotIndex];
+    marker = &((struct FieldWork *)gFieldWork)->treasureSpots[slotIndex];
     object = marker->object;
     if (object != NULL)
       ObjectDispatch_SelectAnimationFar(object, animation);
@@ -201,26 +204,26 @@ static __inline__ void SetMarkerAnimationAndPlaySound(s32 id, s32 animation,
 }
 
 /// Closes the chest of marker id again (its item could not be carried), with
-/// SE_125. Called by Field_SearchTile.
-void Marker_CloseChest(s32 id) {
-  SetMarkerAnimationAndPlaySound(id, MARKER_CHEST_CLOSING, SE_125);
+/// SE_125. Called by Field_SearchCell.
+void TreasureSpot_CloseChest(s32 id) {
+  SetMarkerAnimationAndPlaySound(id, TREASURE_SPOT_CHEST_CLOSING, SE_125);
 }
 
 /// Makes the chest of marker id jump up as a mimic: after 18 frames it takes
-/// MARKER_CHEST_MIMIC, plays SE_146 and gets an upward velocityY of 8 << 16.
-/// Called by Field_SearchTile before the mimic's battle.
-void Marker_LaunchMimic(s32 id) {
+/// TREASURE_SPOT_CHEST_MIMIC, plays SE_146 and gets an upward velocityY of 8
+/// << 16. Called by Field_SearchCell before the mimic's battle.
+void TreasureSpot_LaunchMimic(s32 id) {
   s32 slotIndex;
-  struct MarkerSlot *marker;
+  struct TreasureSpot *marker;
   struct Object *object;
 
-  slotIndex = Marker_FindSlot(id);
+  slotIndex = TreasureSpot_FindSlot(id);
   if (slotIndex != -1) {
-    marker = &((struct FieldWork *)gFieldWork)->markers[slotIndex];
+    marker = &((struct FieldWork *)gFieldWork)->treasureSpots[slotIndex];
     object = marker->object;
     WaitFrames(18);
     if (object != NULL)
-      ObjectDispatch_SelectAnimationFar(object, MARKER_CHEST_MIMIC);
+      ObjectDispatch_SelectAnimationFar(object, TREASURE_SPOT_CHEST_MIMIC);
     Sound_PlaySongFar(SE_146);
     if (object != NULL) {
       object->velocityY = 8 << 16;
@@ -230,51 +233,51 @@ void Marker_LaunchMimic(s32 id) {
 }
 
 /// Opens the chest of marker id with SE_124, and waits 12
-/// frames. Called by Field_SearchTile when a chest is searched.
-void Marker_OpenChest(s32 id) {
-  SetMarkerAnimationAndPlaySound(id, MARKER_CHEST_OPENING, SE_124);
+/// frames. Called by Field_SearchCell when a chest is searched.
+void TreasureSpot_OpenChest(s32 id) {
+  SetMarkerAnimationAndPlaySound(id, TREASURE_SPOT_CHEST_OPENING, SE_124);
 }
 
 /// Shows the chest of marker id open, with no sound. Called by
-/// Field_SearchTile once a chest's contents are taken.
-void Marker_ShowOpened(s32 id) {
+/// Field_SearchCell once a chest's contents are taken.
+void TreasureSpot_ShowOpened(s32 id) {
   s32 slotIndex;
-  struct MarkerSlot *marker;
+  struct TreasureSpot *marker;
   struct Object *object;
 
-  slotIndex = Marker_FindSlot(id);
+  slotIndex = TreasureSpot_FindSlot(id);
   if (slotIndex != -1) {
-    marker = &((struct FieldWork *)gFieldWork)->markers[slotIndex];
+    marker = &((struct FieldWork *)gFieldWork)->treasureSpots[slotIndex];
     object = marker->object;
     if (object != NULL)
-      ObjectDispatch_SelectAnimationFar(object, MARKER_CHEST_OPEN);
+      ObjectDispatch_SelectAnimationFar(object, TREASURE_SPOT_CHEST_OPEN);
   }
 }
 
 /// Returns the object of marker id, or NULL when no slot has it. Called by
-/// Field_SearchTile, and by the world map markers (field_fx.c) to skip a
+/// Field_SearchCell, and by the world map markers (field_fx.c) to skip a
 /// marker already placed.
-struct Object *Marker_GetObjectEvent(s32 id) {
-  s32 slotIndex = Marker_FindSlot(id);
-  struct MarkerSlot *marker;
+struct Object *TreasureSpot_GetObjectEvent(s32 id) {
+  s32 slotIndex = TreasureSpot_FindSlot(id);
+  struct TreasureSpot *marker;
 
   if (slotIndex == -1)
     return NULL;
-  marker = &((struct FieldWork *)gFieldWork)->markers[slotIndex];
+  marker = &((struct FieldWork *)gFieldWork)->treasureSpots[slotIndex];
   return marker->object;
 }
 
 /// Hides the object of marker id by clearing its animationKind:
 /// OBJECT_SPRITE_NONE draws no sprite, and the object stays in its slot. Called
-/// by Field_SearchTile once a Psynergy Stone is taken.
-void Marker_Hide(s32 id) {
+/// by Field_SearchCell once a Psynergy Stone is taken.
+void TreasureSpot_Hide(s32 id) {
   s32 slotIndex;
-  struct MarkerSlot *marker;
+  struct TreasureSpot *marker;
   struct Object *object;
 
-  slotIndex = Marker_FindSlot(id);
+  slotIndex = TreasureSpot_FindSlot(id);
   if (slotIndex != -1) {
-    marker = &((struct FieldWork *)gFieldWork)->markers[slotIndex];
+    marker = &((struct FieldWork *)gFieldWork)->treasureSpots[slotIndex];
     object = marker->object;
     if (object != NULL)
       object->animationKind = OBJECT_SPRITE_NONE;
@@ -284,19 +287,19 @@ void Marker_Hide(s32 id) {
 /// Moves the object of marker id to (x, z) on the ground; -1 keeps the centre
 /// of its cell on that axis. Positions are 16.16. Map overlays call it as
 /// Engine_MarkerSetPosition.
-void Marker_SetObjectEventPosition(s32 id, s32 x, s32 z) {
+void TreasureSpot_SetObjectEventPosition(s32 id, s32 x, s32 z) {
   s32 slotIndex;
-  s32 terrainHeight;
+  s32 groundHeight;
   s32 objectX;
   s32 objectZ;
-  struct MarkerSlot *marker;
+  struct TreasureSpot *marker;
   struct Object *object;
 
   objectZ = z;
   objectX = x;
-  slotIndex = Marker_FindSlot(id);
+  slotIndex = TreasureSpot_FindSlot(id);
   if (slotIndex != -1) {
-    marker = &((struct FieldWork *)gFieldWork)->markers[slotIndex];
+    marker = &((struct FieldWork *)gFieldWork)->treasureSpots[slotIndex];
     object = marker->object;
     if (object != NULL) {
       if (objectX == -1)
@@ -305,9 +308,9 @@ void Marker_SetObjectEventPosition(s32 id, s32 x, s32 z) {
         objectZ = (marker->row << 20) + 0x80000;
       object->x = objectX;
       object->z = objectZ;
-      terrainHeight = MapGrid_GetTerrainHeightFar(0, objectX, objectZ);
-      object->terrainHeight = terrainHeight;
-      object->y = terrainHeight;
+      groundHeight = MapGrid_GetTerrainHeightFar(0, objectX, objectZ);
+      object->groundHeight = groundHeight;
+      object->y = groundHeight;
     }
   }
 }

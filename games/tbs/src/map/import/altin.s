@@ -45,11 +45,11 @@
 	.set import.Engine_CameraSetSpeed, 1
 	.set import.Engine_CameraMoveTo, 1
 	.set import.Engine_CameraWaitForMove, 1
-	.set import.Camera_GetScriptObject, 1
+	.set import.FieldCamera_GetScriptObject, 1
 	.set import.Engine_ScriptRequestWarp, 1
 	.set import.Engine_ScriptCloseScreen, 1
 	.set import.Engine_ScriptWaitForScreen, 1
-	.set import.FieldEffect_SetQueuedSoundAndPlay, 1
+	.set import.Map_QueueMusic, 1
 	.set import.Engine_ShopOpen, 1
 	.set import.Engine_InnOpen, 1
 	.set import.Engine_AudioPlayCue, 1

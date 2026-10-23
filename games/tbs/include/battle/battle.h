@@ -15,7 +15,7 @@ struct BattleEffectArgument;
 struct BattlePlan;
 struct BattleUnit;
 struct DispatchObject;
-struct EffectSlot;
+struct FieldEffectSprite;
 struct Object;
 struct MapSecNameRule;
 
@@ -49,7 +49,7 @@ struct BattleSummonState;
 struct BattleUnit;
 struct DescendingOrbitObject;
 struct EffectDescriptor;
-struct EffectSlot;
+struct FieldEffectSprite;
 struct EnemyDefinition;
 struct ObjectEvent;
 struct FxObject;
@@ -153,7 +153,7 @@ extern s32 gElementGlow_RingFrameOffsets[];
 /// sixteen (a pulse up to 8 and back) over and over.
 extern s8 gBattlePresentation_HighlightBlendRamp[];
 /// The 104 encounter zones (encounter.tsv), read as struct EncounterZone rows.
-extern u16 gEncounter_EnemyGroupTable[];
+extern u16 gEncounterZones[];
 #ifndef OWN_gBattleBgFxWork
 /// The HEAP_SLOT_MIND_READ work slot: Mind Read's wave work while its effect
 /// runs.
@@ -208,7 +208,7 @@ extern const u8 gWorldMap_MarkerBlendCycle[];
 /// The world map's map section markers, {tile << 16 | flag, map section} for
 /// each map section's local id from 11, ended by -1; a zero row reserves a
 /// local id with no marker.
-extern const s32 gWorldMap_MapSecMarkers[];
+extern const s32 gRegionMap_MapSecMarkers[];
 u32 __udivsi3(u32 numerator, u32 denominator);
 #ifndef OWN__call_via_r0
 void _call_via_r0(u32 routine);

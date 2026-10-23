@@ -101,7 +101,7 @@ s32 PartyInventory_HasSpace(void) {
   s32 ownerIndex;
   s16 *ownerCursor;
 
-  if (Inventory_Count(gGameState.selectedLocalId) != INVENTORY_SLOTS)
+  if (Inventory_Count(gGameState.leaderLocalId) != INVENTORY_SLOTS)
     return 1;
   ownerCount = Party_ListActiveOwners(owners);
   ownerCursor = owners;
@@ -233,8 +233,8 @@ s32 PartyInventory_FindOwner(s32 itemId) {
   s16 *ownerCursor;
   s16 owner;
 
-  if (Inventory_Find(gGameState.selectedLocalId, itemId) != -1)
-    return gGameState.selectedLocalId;
+  if (Inventory_Find(gGameState.leaderLocalId, itemId) != -1)
+    return gGameState.leaderLocalId;
   ownerCount = Party_ListActiveOwners(owners);
   ownerCursor = owners;
   ownerIndex = 0;

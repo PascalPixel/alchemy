@@ -50,14 +50,14 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
 
   nearestLocalId = -1;
   nearestDistance = 32;
-  source = ObjectTable_Get(id);
+  source = ObjectEvent_GetByLocalId(id);
   if (source != 0) {
     for (objectEventIndex = 0; objectEventIndex <= OBJECT_LAST;
          objectEventIndex++) {
       if (objectEventIndex == id)
         continue;
 
-      candidate = ObjectTable_Get(objectEventIndex);
+      candidate = ObjectEvent_GetByLocalId(objectEventIndex);
       if (candidate == 0 || (candidate->collisionFlags & 8) != 0)
         continue;
 
@@ -89,7 +89,7 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
       // 0x2fff (about 67 degrees) of where the object event faces.
       angle = (u16)ArcTan2(candidate->z - source->z, candidate->x - source->x);
       if (distance > 11) {
-        s32 angleDifference = (s16)(angle - source->angle);
+        s32 angleDifference = (s16)(angle - source->facing);
 
         if (angleDifference < -0x2fff)
           continue;
@@ -128,29 +128,29 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
 
   nearestLocalId = -1;
   nearestDistance = Field_GetPsynergyTargetRange(kind);
-  source = (struct Object *)ObjectTable_Get(id);
+  source = (struct Object *)ObjectEvent_GetByLocalId(id);
   if (source == 0)
     return nearestLocalId;
 
   // The facing rounded to the nearest of the four quarter turns.
-  facingQuadrant = (source->angle + 0x2000) & 0xc000;
+  facingQuadrant = (source->facing + 0x2000) & 0xc000;
   for (objectEventIndex = 0; objectEventIndex <= OBJECT_LAST;
        objectEventIndex++) {
     if (objectEventIndex == id)
       continue;
 
-    candidate = (struct Object *)ObjectTable_Get(objectEventIndex);
+    candidate = (struct Object *)ObjectEvent_GetByLocalId(objectEventIndex);
     if (candidate == 0 || (candidate->collisionFlags & 8) != 0)
       continue;
 
     // The height allowed: 8 pixels, or 48 for Catch, 64 for Douse, 16 for
     // Mind Read.
     heightLimit = 8 << 16;
-    if (kind == FIELD_KIND_CATCH)
+    if (kind == FIELD_PSYNERGY_CATCH)
       heightLimit = 48 << 16;
-    if (kind == FIELD_KIND_DOUSE)
+    if (kind == FIELD_PSYNERGY_DOUSE)
       heightLimit = 64 << 16;
-    if (kind == FIELD_KIND_MIND_READ)
+    if (kind == FIELD_PSYNERGY_MIND_READ)
       heightLimit = 16 << 16;
 
     {
@@ -186,7 +186,7 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
     coneHalfAngle = 0x1800;
     if (distance > 19)
       coneHalfAngle = 0x1000;
-    if (kind == FIELD_KIND_MIND_READ)
+    if (kind == FIELD_PSYNERGY_MIND_READ)
       coneHalfAngle = 0x2000;
 
     if (distance > 11) {

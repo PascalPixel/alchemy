@@ -492,7 +492,7 @@ static void EventScript_KradenPlansSanctumVisit(void) {
                           0);
     ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
     ObjectEvent_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-    gFieldWork->startTransition =
+    gFieldWork->transition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
     Engine_ScriptCloseScreen();
     Engine_ScriptWaitForScreen();
@@ -523,7 +523,7 @@ static void EventScript_KradenSetsOff(void) {
   objectEvent = ObjectEvent_GetById(JENNA);
   objectEvent->facing = facing;
   MapGrid_AnimateCells(gValeKraden_GateCells, 43, 8);
-  gFieldWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
@@ -570,7 +570,7 @@ static void EventScript_KradenSetsOff(void) {
   ObjectEvent_SetPosition(LOCALID_SATUROS, 0, 0);
   ObjectEvent_SetPosition(LOCALID_MENARDI, 0, 0);
   GameFlag_Set(FLAG_SANCTUM_VISIT_PLANNED);
-  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   ColorBuffer_ApplySource(PALETTE_TRANSFORM_PLAIN, PALETTE_HALVES_BOTH);
   GameFlag_Set(FLAG_MAP_TEMP_42);
   Engine_ScriptEnd();
@@ -644,8 +644,8 @@ static void EventScript_MeetSaturosAndMenardi(void) {
   ObjectEvent_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   ValeKraden_FacePartySouth();
   // The camera pans down to the strangers, and their theme plays.
-  Camera_SetSpeed(PIXELS(6), PIXELS(3) / 4);
-  Camera_MoveTo(PIXELS(215), -1, PIXELS(345), 1);
+  FieldCamera_SetSpeed(PIXELS(6), PIXELS(3) / 4);
+  FieldCamera_MoveTo(PIXELS(215), -1, PIXELS(345), 1);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(20);
   Script_PlaySong(MUS_061);
@@ -684,7 +684,7 @@ static void EventScript_MeetSaturosAndMenardi(void) {
   ObjectEvent_WalkToAndWait(LOCALID_MENARDI, 216, 360);
   ObjectEvent_WalkTo(LOCALID_MENARDI, 376, 360);
   ValeKraden_FacePartySouth();
-  Camera_MoveTo(PIXELS(393), -1, PIXELS(339), 1);
+  FieldCamera_MoveTo(PIXELS(393), -1, PIXELS(339), 1);
   ObjectEvent_WalkTo(LOCALID_SATUROS, 392, 360);
   ObjectEvent_WalkToAndWait(LOCALID_MENARDI, 376, 360);
   Engine_ObjectEventSetAnimation(LOCALID_SATUROS, 0);
@@ -940,8 +940,8 @@ s32 ValeKraden_Initialize(void) {
   }
   // The rockslide chapter replaces residents with debris and a survivor.
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
-    FieldEffect_StartGroundParticles();
-    FieldEffect_StartLightning();
+    Weather_StartRain();
+    Weather_StartLightning();
     Engine_ScriptStart();
     Engine_ObjectEventSetPosition(LOCALID_BOY_BY_THE_FENCE, 0, 0);
     Engine_ObjectEventSetPosition(LOCALID_KRADEN, 0, 0);
@@ -1136,8 +1136,7 @@ static void EventScript_FightFirstMonster(void) {
   Engine_ScriptStart();
 
   work = gFieldWork;
-  work->startTransition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
+  work->transition = MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   work->transitionFrames = 64;
 
   Engine_GameFlagSet(FLAG_VALE_STORM_FIRST_MONSTER_FOUGHT);
@@ -1157,8 +1156,7 @@ static void EventScript_FightSecondMonster(void) {
   Engine_ScriptStart();
 
   work = gFieldWork;
-  work->startTransition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
+  work->transition = MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   work->transitionFrames = 64;
 
   Engine_GameFlagSet(FLAG_VALE_STORM_SECOND_MONSTER_FOUGHT);
@@ -1255,27 +1253,27 @@ u32 gValeKraden_Warps[] = {
 // clang-format off
 struct ObjectEventTemplate gValeKraden_ObjectEventTemplates[] = {
     { 0x127, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(72), 0, PIXELS(256), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(72), 0, PIXELS(256), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(240), 0, PIXELS(353), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(240), 0, PIXELS(353), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(384), 0, PIXELS(328), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(384), 0, PIXELS(328), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, (s32)gValeKraden_RockslideSurvivorSquashes,
-        PIXELS(83), 0, PIXELS(273), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(83), 0, PIXELS(273), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(92), 0, PIXELS(268), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(92), 0, PIXELS(268), FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(232), 0, PIXELS(232), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(232), 0, PIXELS(232), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(1608), 0, PIXELS(1608), FACING_NORTH, TALK_FACE_PARTY, 0 },
+        PIXELS(1608), 0, PIXELS(1608), FACING_NORTH, TALK_FACING_PARTY, 0 },
     { JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(1608), 0, PIXELS(1608), FACING_NORTH, TALK_FACE_PARTY, 0 },
+        PIXELS(1608), 0, PIXELS(1608), FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_SATUROS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(232), 0, PIXELS(344), FACING_SOUTH + FACING_STEP, 3, 0 },
     { SPRITE_MENARDI, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(200), 0, PIXELS(344), FACING_SOUTHEAST + FACING_STEP, 3, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        0, 0, 0, FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { MAP_TABLE_END },
 };
 

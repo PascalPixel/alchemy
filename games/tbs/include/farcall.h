@@ -32,7 +32,7 @@ struct BattleUnit;
 struct DispatchObject;
 struct EffectLaunch;
 struct EffectPosition;
-struct EffectSlot;
+struct FieldEffectSprite;
 struct EffectVector;
 struct EnemyDefinition;
 struct ObjectEvent;

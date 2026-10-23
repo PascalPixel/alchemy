@@ -9,7 +9,7 @@
 #include "types.h"
 #include "static_assert.h"
 
-/// A map cell's metatile behavior (`MapGridCell.collisionCode`): what stepping
+/// A map cell's metatile behavior (`MapGridCell.behavior`): what stepping
 /// on, pushing against or searching the cell does. 0 is open ground.
 enum MetatileBehavior {
   /// 1 to 239: the map's own events, coord event or warp when stepped on
@@ -21,7 +21,7 @@ enum MetatileBehavior {
   MB_ENCOUNTER_GROUND_1 = 240,
   MB_ENCOUNTER_GROUND_2 = 241,
   /// 242 to 247: bg events with lines of their own, the same on every map
-  /// (Field_SearchTile, gField_TileMessageOffsets).
+  /// (Field_SearchCell, gField_BgEventMessageOffsets).
   MB_JAR = 242,
   MB_BARREL = 243,
   MB_WOODEN_BOX = 244,
@@ -29,11 +29,11 @@ enum MetatileBehavior {
   MB_BOOKS = 246,
   MB_WELL = 247,
   /// Jumps forward like MB_JUMP_FORWARD, but Field_ProcessStep never
-  /// passes it to Field_RunPushTileEvent.
+  /// passes it to Field_RunPushCellEvent.
   MB_JUMP_FORWARD_UNREACHED = 249,
   /// Ground that hurts the party over time: the Lamakan Desert's sand.
   MB_DESERT_SAND = 250,
-  /// 252 to 254: cells the leader pushes against (Field_RunPushTileEvent).
+  /// 252 to 254: cells the leader pushes against (Field_RunPushCellEvent).
   MB_LEDGE = 252,        ///< jumped down with Down held
   MB_CLIMB = 253,        ///< climbed up or down with Up or Down held
   MB_JUMP_FORWARD = 254, ///< jumped across
@@ -46,10 +46,10 @@ struct MapGridCell {
   /// bits: 15..12 flags (15..14 read by MapGrid_GetCellHighFlags) | 11..0
   /// metatile
   u16 metatileAndFlags;
-  u8 collisionCode; ///< an enum MetatileBehavior
-  /// Indexes the 4-byte collision entries (gMapGridCollision): terrain kind in
+  u8 behavior; ///< an enum MetatileBehavior
+  /// Indexes the 4-byte collision entries (gMapGridShapes): terrain kind in
   /// the first byte's low four bits, then its height samples.
-  u8 attributeB;
+  u8 shape;
 };
 
 /// A map layer's scroll record, seen from its cells.
@@ -62,7 +62,7 @@ struct MapGridLayer {
 };
 
 /// The map's running blend script, which sets the blend registers over time
-/// (DisplayBlend_RunScript, each frame from DisplayBlend_StartScript).
+/// (BlendScript_Run, each frame from BlendScript_Start).
 struct BlendScriptState {
   u16 *script; ///< where 0xffff loops back to; null for none
   u16 *cursor; ///< the next command
@@ -71,9 +71,9 @@ struct BlendScriptState {
 };
 
 /// One of the 16 tile animation channels, which copy tiles into VRAM by
-/// script (TileAnimation_Update): groups of four halfwords, the source tile,
+/// script (TilesetAnim_Update): groups of four halfwords, the source tile,
 /// the count, the destination tile and the frames to wait.
-struct TileAnimation {
+struct TilesetAnim {
   const u16 *start;  ///< where 0xffff loops back to; null for none
   const u16 *cursor; ///< the next group
   u16 timer;         ///< frames left of the current wait
@@ -82,7 +82,7 @@ struct TileAnimation {
 
 /// A layout's three layers, by what they hold. Most layouts give them
 /// priorities 3, 2 and 1. An object event takes its sprite's priority from the
-/// cell under it (OBJ_EVENT_PRIORITY_AUTOMATIC, ObjectSystem_UpdateCamera):
+/// cell under it (OBJ_EVENT_PRIORITY_AUTOMATIC, ObjectSystem_PlaceSprites):
 /// 2 on open ground, which puts it over the middle layer and under the overhead
 /// one, and 3 where the cells put it behind a building. Each layer shows on its
 /// own background: `BG3`, `BG2` and `BG1`.
@@ -106,7 +106,7 @@ struct MapGridState {
   u16 flags;     ///< REG_DISPCNT bits; MapGrid_SetShownLayers sets BG1 to BG3
   u8 wideTiles;  ///< nonzero: tile animations copy 64-byte tiles
   u8 footprints; ///< MapGridScrollWork's; Bilibin Cave sets it
-  struct TileAnimation animations[16];
+  struct TilesetAnim animations[16];
   struct BlendScriptState blend;
   /// MapGridScrollWork's view, bounds and shown layers; not named through this
   /// view.
@@ -128,7 +128,7 @@ struct MapGridState {
   struct MapGridLayer layers[4];
 };
 
-STATIC_ASSERT(sizeof(struct TileAnimation) == 12);
+STATIC_ASSERT(sizeof(struct TilesetAnim) == 12);
 STATIC_ASSERT(offsetof(struct MapGridState, flags) == 0x14);
 STATIC_ASSERT(offsetof(struct MapGridState, wideTiles) == 0x16);
 STATIC_ASSERT(offsetof(struct MapGridState, animations) == 0x18);
@@ -152,8 +152,8 @@ extern u32 gMetatiles[];
 extern u8 gMapGridLayerData[];
 
 /// The map's collision shapes, 16 KB of EWRAM at 0x0202c000: 4-byte entries
-/// that MapGridCell.attributeB indexes.
-extern u8 gMapGridCollision[];
+/// that MapGridCell.shape indexes.
+extern u8 gMapGridShapes[];
 
 /// 32 KB of EWRAM at 0x02038000 holding background tiles, such as the world
 /// map's char blocks 2 and 3, which WorldMap_ShowBg1FromBuffer copies back

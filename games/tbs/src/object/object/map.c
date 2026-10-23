@@ -104,7 +104,7 @@ void Map_ReturnFromRun(s32 result) {
   gGameState.runResult = result;
   if (result == -1) {
     // Revive the leader before choosing the defeat return point.
-    unit = Unit_GetFar(gGameState.selectedLocalId);
+    unit = Unit_GetFar(gGameState.leaderLocalId);
     if (unit->hp == 0) {
       unit->hp = 1;
       Unit_UpdateGauges(unit);
@@ -156,9 +156,7 @@ void Map_ReturnFromRun(s32 result) {
 /// Returns the map section mapId belongs to. The maps of one map section share
 /// their music, area name and the flags kept while inside it.
 /// Called by Map_ChooseMusic.
-s32 FieldEffect_GetResourceGroup(s32 mapId) {
-  return gMapHeaders[mapId].mapSec;
-}
+s32 Map_GetMapSec(s32 mapId) { return gMapHeaders[mapId].mapSec; }
 
 /// The last two 16-colour background palettes, which the minigame runners save
 /// and restore around a minigame; palette 15 holds the window colours
@@ -355,7 +353,7 @@ void Map_ResetFlagsOnEnter(s32 unused, s32 keep) {
     GameFlag_ClearBitFar(FLAG_LINK_BATTLE);
     GameFlag_ClearBitFar(FLAG_RETREAT_BLOCKED);
     // FLAG_NO_ENCOUNTERS_IN_MAPSEC stops random battles
-    // (Encounter_SelectEnemyGroup).
+    // (Encounter_CountStepsAndSelectFormation).
     GameFlag_ClearBitFar(FLAG_NO_ENCOUNTERS_IN_MAPSEC);
     GameFlag_ClearBitFar(FLAG_IN_TOWN);
     GameFlag_ClearBitFar(FLAG_WORLD_MAP_LEFT);

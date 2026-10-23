@@ -183,7 +183,7 @@ enum LinkLobbySlot {
   LOBBY_SLOT_ALONE = 5
 };
 
-/// The lobby's raised events (EventWork.raisedTrigger).
+/// The lobby's raised events (EventWork.raisedEvent).
 enum LinkLobbyRaisedEvent {
   LOBBY_EVENT_NONE = 0,
   LOBBY_EVENT_PROMPT = 1,      ///< LinkLobby_PromptToParticipate
@@ -379,7 +379,7 @@ static s32 LinkLobby_PollPeerReady(void) {
     Engine_GameFlagClear(FLAG_MAPSEC_TEMP_04);
   }
   // While LOBBY_EVENT_DISCONNECTED waits, skip the partner tracking.
-  if (work->raisedTrigger != LOBBY_EVENT_DISCONNECTED) {
+  if (work->raisedEvent != LOBBY_EVENT_DISCONNECTED) {
     LinkLobby_PeerSlotMatches(LOBBY_SLOT_SIGNATURE);
     if (!Engine_GameFlagIsSet(FLAG_MAPSEC_TEMP_03)) {
       // Without a link for 26 frames, clear every console's received payload
@@ -402,7 +402,7 @@ static s32 LinkLobby_PollPeerReady(void) {
            LinkLobby_PeerSlotMatches(LOBBY_SLOT_IN_CIRCLE))) {
         Engine_GameFlagSet(FLAG_MAP_TEMP_01);
         if (Engine_GameFlagIsSet(FLAG_MAP_TEMP_02)) {
-          work->raisedTrigger = LOBBY_EVENT_PROMPT;
+          work->raisedEvent = LOBBY_EVENT_PROMPT;
         }
         result = 1;
       } else {
@@ -413,7 +413,7 @@ static s32 LinkLobby_PollPeerReady(void) {
     if (Engine_GameFlagIsSet(FLAG_MAP_TEMP_01) &&
         Engine_GameFlagIsSet(FLAG_MAP_TEMP_02) &&
         !Engine_GameFlagIsSet(FLAG_MAP_TEMP_00)) {
-      work->raisedTrigger = LOBBY_EVENT_PROMPT;
+      work->raisedEvent = LOBBY_EVENT_PROMPT;
     }
   }
   // The 25th frame without a link while a linked battle is being arranged:
@@ -422,14 +422,14 @@ static s32 LinkLobby_PollPeerReady(void) {
       !GameFlag_IsSet(FLAG_MONSTER_BATTLE) &&
       !LinkLobby_PeerSlotMatches(LOBBY_SLOT_SIGNATURE) &&
       sLinkLobbyWaitFrames > 24) {
-    work->raisedTrigger = LOBBY_EVENT_DISCONNECTED;
+    work->raisedEvent = LOBBY_EVENT_DISCONNECTED;
     GameFlag_Set(FLAG_MAP_TEMP_05);
     GameFlag_Clear(FLAG_MAP_TEMP_01);
     GameFlag_Clear(FLAG_MAP_TEMP_02);
     LinkLobby_WriteSlotValue(LOBBY_SLOT_IDLE);
   }
   if (GameFlag_IsSet(FLAG_MAP_TEMP_05)) {
-    work->raisedTrigger = LOBBY_EVENT_DISCONNECTED;
+    work->raisedEvent = LOBBY_EVENT_DISCONNECTED;
   }
 #ifdef UBFIX
   (void)result;
@@ -484,7 +484,7 @@ static s32 LinkLobby_ReportDisconnection(void) {
   Engine_GameFlagClear(FLAG_MAP_TEMP_00);
   Engine_GameFlagClear(FLAG_MAP_TEMP_03);
   Engine_ScriptStart();
-  work->raisedTrigger = LOBBY_EVENT_NONE;
+  work->raisedEvent = LOBBY_EVENT_NONE;
   Engine_ScriptSetMessage(MsgLobbyLinkDisconnected);
   Engine_ScriptOpenMessage(LOCALID_ATTENDANT, 0);
   Engine_GameFlagClear(FLAG_MAP_TEMP_05);
@@ -921,7 +921,7 @@ static s32 LinkLobby_EnterBattle(void) {
         missedFrames = 0;
       }
       if (cancelEntry) {
-        work->raisedTrigger = LOBBY_EVENT_DISCONNECTED;
+        work->raisedEvent = LOBBY_EVENT_DISCONNECTED;
         Engine_GameFlagSet(FLAG_MAP_TEMP_05);
         Engine_GameFlagClear(FLAG_MAP_TEMP_01);
         Engine_GameFlagClear(FLAG_MAP_TEMP_02);
@@ -946,12 +946,12 @@ static s32 LinkLobby_EnterBattle(void) {
     savedWork = AllocHeapSlotEwram(HEAP_SLOT_LINK_OWNER_STATES, 0x7c8);
     Engine_TaskRemoveCallback((TaskFunc)LinkLobby_PollPeerReady);
     // Run the map's tile animation channel 5 for eight frames.
-    TileAnimation_ResumeChannel(5);
+    TilesetAnim_Resume(5);
     Engine_TaskWait(8);
-    TileAnimation_PauseChannel(5);
+    TilesetAnim_Pause(5);
     if (Engine_GameFlagIsSet(FLAG_MONSTER_BATTLE)) {
       Engine_ObjectEventFaceObjectEvent(LOCALID_ATTENDANT,
-                                        gGameState.selectedLocalId, 0);
+                                        gGameState.leaderLocalId, 0);
       Engine_ScriptSetMessage(MsgLobbyGoodLuck);
       Engine_ScriptOpenMessage(LOCALID_ATTENDANT, 0);
       Engine_TaskWait(45);
@@ -973,9 +973,9 @@ static s32 LinkLobby_EnterBattle(void) {
       if (LinkLobby_ExchangePartyRecords() < 0) {
         ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x10000, 0x8000);
         Engine_ObjectEventWalkTo(LOCALID_PARTY_LEADER, 216, 200);
-        TileAnimation_ResumeChannel(5);
+        TilesetAnim_Resume(5);
         Engine_TaskWait(8);
-        TileAnimation_PauseChannel(5);
+        TilesetAnim_Pause(5);
         Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
         FreeHeapSlot(HEAP_SLOT_LINK_OWNER_STATES);
         LinkLobby_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
@@ -987,7 +987,7 @@ static s32 LinkLobby_EnterBattle(void) {
         Engine_GameFlagClear(FLAG_MAPSEC_TEMP_03);
         Engine_GameFlagClear(FLAG_MAP_TEMP_03);
         Engine_GameFlagClear(FLAG_MAP_TEMP_00);
-        work->raisedTrigger = LOBBY_EVENT_DISCONNECTED;
+        work->raisedEvent = LOBBY_EVENT_DISCONNECTED;
         Engine_ScriptEnd();
         return LOBBY_NO_RESULT;
       }
@@ -1045,8 +1045,8 @@ static s32 LinkLobby_ChooseBattleMode(void) {
   // +6 asks the player to wait for an opponent.
   messageBase = MsgLobbyPleaseSpeakWhen;
   Engine_ScriptStart();
-  Engine_ObjectEventFaceObjectEvent(LOCALID_ATTENDANT,
-                                    gGameState.selectedLocalId, 0);
+  Engine_ObjectEventFaceObjectEvent(LOCALID_ATTENDANT, gGameState.leaderLocalId,
+                                    0);
   // Look for the partner's signature twice, a frame apart.
   if (LinkLobby_PeerSlotMatches(LOBBY_SLOT_SIGNATURE) == 0) {
     Engine_TaskWait(1);
@@ -1150,7 +1150,7 @@ static s32 LinkLobby_ReportWinTallies(s32 localId) {
   s32 messageBase;
 
   Engine_ScriptStart();
-  Engine_ObjectEventFaceObjectEvent(localId, gGameState.selectedLocalId, 0);
+  Engine_ObjectEventFaceObjectEvent(localId, gGameState.leaderLocalId, 0);
   // FACING_IS_NORTH's test, written out: strictly between northwest and
   // northeast.
   if ((facing - 0xa001) <= 0x3ffe) {
@@ -1193,7 +1193,7 @@ static s32 LinkLobby_ChooseDebugPartyPreset(s32 localId) {
   s32 loadResult;
 
   Engine_ScriptStart();
-  Engine_ObjectEventFaceObjectEvent(localId, gGameState.selectedLocalId, 0);
+  Engine_ObjectEventFaceObjectEvent(localId, gGameState.leaderLocalId, 0);
   Engine_ScriptSetMessage(MsgLobbyChooseParameters);
   Engine_ScriptShowMessage(localId, 0);
   window = Engine_DebugCreateWindow(0, 0, 6, 4, 2);
@@ -1296,7 +1296,7 @@ static s32 LinkLobby_TalkByProgress(s32 localId) {
   s32 speakerPresent = LinkLobby_PartyContains(localId);
 
   Engine_ScriptStart();
-  Engine_ObjectEventFaceObjectEvent(localId, gGameState.selectedLocalId, 0);
+  Engine_ObjectEventFaceObjectEvent(localId, gGameState.leaderLocalId, 0);
   if (Engine_GameFlagIsSet(FLAG_MAPSEC_TEMP_04)) {
 
     // Isaac's flag is tested and the result dropped; messageBase first
@@ -1367,7 +1367,7 @@ static s32 LinkLobby_TalkToVisitor(s32 localId) {
     message = MsgLobbyBattleArenaOld;
     break;
   }
-  Engine_ObjectEventFaceObjectEvent(localId, gGameState.selectedLocalId, 0);
+  Engine_ObjectEventFaceObjectEvent(localId, gGameState.leaderLocalId, 0);
   if (Engine_GameFlagIsSet(FLAG_MAPSEC_TEMP_04))
     step = 2 - (Engine_GameFlagIsSet(FLAG_MAPSEC_TEMP_05) != 0);
   Engine_ScriptSetMessage(message + step);
@@ -1385,7 +1385,7 @@ static s32 LinkLobby_ExplainPartyOrder(s32 localId) {
   s32 message;
 
   Engine_ScriptStart();
-  Engine_ObjectEventFaceObjectEvent(localId, gGameState.selectedLocalId, 0);
+  Engine_ObjectEventFaceObjectEvent(localId, gGameState.leaderLocalId, 0);
   if (!GameFlag_IsSet(FLAG_MAP_TEMP_04)) {
     if (Party_CountActiveOwners() <= 3)
       message = MsgLobbyThreeAlliesFightLinkedFinals;
@@ -1411,7 +1411,7 @@ static s32 LinkLobby_ReportMonsterRecord(s32 localId) {
 
   Engine_ScriptStart();
   state = &gGameState;
-  Engine_ObjectEventFaceObjectEvent(localId, state->selectedLocalId, 0);
+  Engine_ObjectEventFaceObjectEvent(localId, state->leaderLocalId, 0);
   if (state->linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] != 0) {
     UiText_DrawQuantity(state->linkTallies[LINK_TALLY_MONSTER_BEST_STREAK], 5);
     Engine_ScriptSetMessage(MsgLobbyWonNumberConsecutive);
@@ -1507,14 +1507,14 @@ s32 LinkLobby_RunRoundResult(void) {
 
   gLinkLobbyCallFrames = 0;
   sLinkLobbyWaitFrames = 0;
-  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 1);
+  gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 1);
   Sound_LoadPresetParameters(2);
   LinkLobby_DrawThreeDigitValue(
       gGameState.linkTallies[LINK_TALLY_LINKED_BEST_STREAK]);
   MapGrid_CopyCellAttributes(11, 11, 1, 1, 13, 10);
   LinkLobby_WriteSlotValue(LOBBY_SLOT_IDLE);
   Engine_TaskWait(1);
-  TileAnimation_PauseChannel(5);
+  TilesetAnim_Pause(5);
 
   // The payload's halfwords 4 to 7 hold the link battle's phase word
   // ("VSST", "EDVS", "TUrn"); the lobby puts TALK there.
@@ -1563,7 +1563,7 @@ s32 LinkLobby_RunRoundResult(void) {
       FieldGameFlag_SetByte(FLAG_MAPSEC_TEMP_E8, v + 1);
     }
     Engine_ObjectEventFaceObjectEvent(LOCALID_ATTENDANT,
-                                      gGameState.selectedLocalId, 0);
+                                      gGameState.leaderLocalId, 0);
     Engine_ScriptSetMessage(MsgLobbyNotBadNextMonster + messageOffset);
     Engine_ScriptOpenMessage(LOCALID_ATTENDANT, 0);
     if (Engine_ScriptChooseYesNo(0, 0) == CONFIRM_YES) {
@@ -1599,7 +1599,7 @@ s32 LinkLobby_RunRoundResult(void) {
     Engine_ScriptWaitForScreen();
     LinkLobby_WriteSlotValue(LOBBY_SLOT_ALONE);
     Engine_ObjectEventFaceObjectEvent(LOCALID_ATTENDANT,
-                                      gGameState.selectedLocalId, 0);
+                                      gGameState.leaderLocalId, 0);
     UiText_DrawQuantity(gGameState.linkTallies[LINK_TALLY_MONSTER_STREAK], 5);
     if (gGameState.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] <
         gGameState.linkTallies[LINK_TALLY_MONSTER_STREAK]) {
@@ -1632,7 +1632,7 @@ s32 LinkLobby_RunRoundResult(void) {
     if (GameFlag_IsSet(FLAG_MAPSEC_TEMP_E8)) {
       work = gFieldWork;
       Engine_GameFlagClear(FLAG_MAPSEC_TEMP_E8);
-      work->raisedTrigger = LOBBY_EVENT_DISCONNECTED;
+      work->raisedEvent = LOBBY_EVENT_DISCONNECTED;
       Engine_GameFlagClear(FLAG_MAPSEC_TEMP_04);
       Engine_TaskWait(20);
       LinkLobby_InitializeSerial();
@@ -1681,7 +1681,7 @@ s32 LinkLobby_RunRoundResult(void) {
       Engine_ScriptOpenScreen();
       Engine_ScriptWaitForScreen();
       Engine_ObjectEventFaceObjectEvent(LOCALID_ATTENDANT,
-                                        gGameState.selectedLocalId, 0);
+                                        gGameState.leaderLocalId, 0);
       Engine_ScriptSetMessage(MsgLobbyNoteCantUse);
       Engine_ScriptShowMessage(LOCALID_ATTENDANT, 0);
       Engine_ScriptEnd();
@@ -1728,93 +1728,93 @@ u32 gLinkLobbyWarps[] = {
 
 struct ObjectEventTemplate gLinkLobbyObjectEventTemplates[] = {
     { 0x6a, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(152), 0, PIXELS(204), FACING_SOUTH, TALK_FACE_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(152), 0, PIXELS(204), FACING_SOUTH, TALK_FACING_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { 0x74, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(280), 0, PIXELS(204), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(280), 0, PIXELS(204), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { 0x79, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(304), 0, PIXELS(168), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(304), 0, PIXELS(168), FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { 0x6c, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(192), 0, PIXELS(272), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(192), 0, PIXELS(272), FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { 0x9d, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(128), 0, PIXELS(124), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(128), 0, PIXELS(124), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { 0x67, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(64), 0, PIXELS(92), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(64), 0, PIXELS(92), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { 0x6f, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(40), 0, PIXELS(120), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(40), 0, PIXELS(120), FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { 0x2e, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(256), 0, PIXELS(384), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(256), 0, PIXELS(384), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { 0x6b, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(104), 0, PIXELS(248), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(104), 0, PIXELS(248), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { 0x66, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(328), 0, PIXELS(248), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(328), 0, PIXELS(248), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { 0x98, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(104), 0, PIXELS(144), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(104), 0, PIXELS(144), FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { 0x96, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(152), 0, PIXELS(144), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(152), 0, PIXELS(144), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { 0x99, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(128), 0, PIXELS(164), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(128), 0, PIXELS(164), FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { 0x73, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(64), 0, PIXELS(136), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(64), 0, PIXELS(136), FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { 0x67, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(248), 0, PIXELS(184), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(248), 0, PIXELS(184), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { 0x6a, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(328), 0, PIXELS(88), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(328), 0, PIXELS(88), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { 0x74, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(72), 0, PIXELS(288), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(72), 0, PIXELS(288), FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { GARET, IF_FLAG_SET(0x1), MOVEMENT_TYPE_STAND,
-        PIXELS(352), 0, PIXELS(108), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(352), 0, PIXELS(108), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { IVAN, IF_FLAG_SET(0x2), MOVEMENT_TYPE_STAND,
-        PIXELS(328), 0, PIXELS(136), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(328), 0, PIXELS(136), FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { MIA, IF_FLAG_SET(0x3), MOVEMENT_TYPE_STAND,
-        PIXELS(376), 0, PIXELS(136), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(376), 0, PIXELS(136), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { JENNA, IF_FLAG_SET(0x5), MOVEMENT_TYPE_STAND,
-        PIXELS(376), 0, PIXELS(136), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(376), 0, PIXELS(136), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gLinkLobbyBattleObjectEventTemplates[] = {
     { 0x6a, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(152), 0, PIXELS(204), FACING_SOUTH, TALK_FACE_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(152), 0, PIXELS(204), FACING_SOUTH, TALK_FACING_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { 0x74, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(280), 0, PIXELS(204), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(280), 0, PIXELS(204), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { 0x79, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(304), 0, PIXELS(168), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(304), 0, PIXELS(168), FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { 0x6c, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(192), 0, PIXELS(272), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(192), 0, PIXELS(272), FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { 0x9d, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(328), 0, PIXELS(136), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(328), 0, PIXELS(136), FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { 0x67, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(64), 0, PIXELS(92), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(64), 0, PIXELS(92), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { 0x6f, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(40), 0, PIXELS(120), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(40), 0, PIXELS(120), FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { 0x2e, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(256), 0, PIXELS(384), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(256), 0, PIXELS(384), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { 0x6b, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(104), 0, PIXELS(248), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(104), 0, PIXELS(248), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { 0x66, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(328), 0, PIXELS(248), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(328), 0, PIXELS(248), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { 0x98, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(352), 0, PIXELS(108), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(352), 0, PIXELS(108), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { 0x96, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(352), 0, PIXELS(156), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(352), 0, PIXELS(156), FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { 0x99, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(376), 0, PIXELS(136), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(376), 0, PIXELS(136), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { 0x73, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(64), 0, PIXELS(136), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(64), 0, PIXELS(136), FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { 0x67, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(248), 0, PIXELS(184), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(248), 0, PIXELS(184), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { 0x6a, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(328), 0, PIXELS(88), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(328), 0, PIXELS(88), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { 0x74, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(72), 0, PIXELS(288), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(72), 0, PIXELS(288), FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { GARET, IF_FLAG_SET(0x1), MOVEMENT_TYPE_STAND,
-        PIXELS(104), 0, PIXELS(144), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(104), 0, PIXELS(144), FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { IVAN, IF_FLAG_SET(0x2), MOVEMENT_TYPE_STAND,
-        PIXELS(152), 0, PIXELS(144), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(152), 0, PIXELS(144), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { MIA, IF_FLAG_SET(0x3), MOVEMENT_TYPE_STAND,
-        PIXELS(128), 0, PIXELS(124), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(128), 0, PIXELS(124), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { JENNA, IF_FLAG_SET(0x5), MOVEMENT_TYPE_STAND,
-        PIXELS(128), 0, PIXELS(124), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(128), 0, PIXELS(124), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { MAP_TABLE_END },
 };
 // clang-format on

@@ -20,8 +20,8 @@ gField_DefaultObjectEventTemplates:
 	.2byte 0x0000
 	.byte 0, 0
 @ Display transition shapes: {first, second, {count, value, x0, x1, y0, y1} x 3}
-	.global gDisplayTransition_Shapes
-gDisplayTransition_Shapes:
+	.global gScreenTransition_Shapes
+gScreenTransition_Shapes:
 	.2byte 1, 32639
 	.2byte 160, 65535
 	.byte 0, 0, 0, 0
@@ -246,8 +246,8 @@ gDisplayTransition_Shapes:
 	.byte 0, 0, 0, 0
 	.2byte 0, 0
 	.byte 0, 0, 0, 0
-	.global DisplayTransition_ShapesTail
-DisplayTransition_ShapesTail:
+	.global ScreenTransition_ShapesTail
+ScreenTransition_ShapesTail:
 	.byte 0, 2, 4, 2
 	.byte 0, 2, 4, 2
 	.byte 0, 2, 4, 2
@@ -280,38 +280,38 @@ gFieldEffect_LinkedObjectScript:
 	.global gObjectMotion_WaitScript
 gObjectMotion_WaitScript:
 	.4byte 0, 40, 27
-	.global gObjectMotion_ActionKind2Script
-gObjectMotion_ActionKind2Script:
+	.global gMovementType_WanderScript
+gMovementType_WanderScript:
 	.4byte 21, 15, 32768, 21, 16, 3276, 21, 30
 	.4byte 131, 0x80010000, 28, 2, 9, 262144, 524288, 1048576
 	.4byte 1, 28, 1, 0, 20, 28, 2, 9
 	.4byte 262144, 524288, 1048576, 1, 28, 1, 0, 20
 	.4byte 28, 2, 9, 262144, 524288, 1048576, 1, 28
 	.4byte 1, 0, 60, 12, 65535, 0xc0010000, 16
-	.global gObjectMotion_ActionKind1Script
-gObjectMotion_ActionKind1Script:
+	.global gMovementType_StandScript
+gMovementType_StandScript:
 	.4byte 16
-	.global gObjectMotion_ResetActionScript
-gObjectMotion_ResetActionScript:
+	.global gMovementType_ResetActionScript
+gMovementType_ResetActionScript:
 	.4byte 34, Object_ClearChildAndCollisionFlags, 16
-	.global gObjectMotion_ActionKind3Script
-gObjectMotion_ActionKind3Script:
+	.global gMovementType_WanderNearScript
+gMovementType_WanderNearScript:
 	.4byte 21, 15, 32768, 21, 16, 3276, 21, 30
 	.4byte 131, 0x80010000, 28, 2, 9, 131072, 131072, 524288
 	.4byte 1, 28, 1, 0, 20, 28, 2, 9
 	.4byte 131072, 131072, 524288, 1, 28, 1, 0, 20
 	.4byte 28, 2, 9, 131072, 131072, 524288, 1, 28
 	.4byte 1, 0, 60, 12, 65535, 0xc0010000, 16
-	.global gObjectMotion_ActionKind4Script
-gObjectMotion_ActionKind4Script:
+	.global gMovementType_WanderCloseScript
+gMovementType_WanderCloseScript:
 	.4byte 21, 15, 26214, 21, 16, 13107, 28, 2
 	.4byte 0x80010000, 9, 131072, 131072, 393216, 1, 0, 4
 	.4byte 12, 65535, 0xc0010000
-	.global gObjectMotion_MoveTowardTargetScript
-gObjectMotion_MoveTowardTargetScript:
+	.global gMovementType_FollowLinkedScript
+gMovementType_FollowLinkedScript:
 	.4byte 34, ObjectMotion_MoveTowardTarget, 12, 65535, 0
-	.global gObjectMotion_TurnTowardLinkedScript
-gObjectMotion_TurnTowardLinkedScript:
+	.global gMovementType_FaceLeaderScript
+gMovementType_FaceLeaderScript:
 	.4byte 34, ObjectMotion_TurnTowardLinkedTarget, 12, 65535, 0
 	.global gObjectMotion_LinkedActionScript
 gObjectMotion_LinkedActionScript:
@@ -338,8 +338,8 @@ gFieldEffect_UntargetedObjectScript:
 gEffectScripts:
 	.4byte gFieldEffect_ShortEffectScript, gFieldEffect_MediumEffectScript, gFieldEffect_LongEffectScript
 @ {tile << 16 | flag, map section name}
-	.global gWorldMap_MapSecMarkers
-gWorldMap_MapSecMarkers:
+	.global gRegionMap_MapSecMarkers
+gRegionMap_MapSecMarkers:
 	.4byte 0x10183, 3
 	.4byte 0x10185, 20
 	.4byte 0x10199, 75

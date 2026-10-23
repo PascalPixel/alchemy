@@ -212,7 +212,7 @@ stored one above its value.
 | `MESSAGE_LINE_SPACING` | 10 | `TEXT_LINE_SPACING`, with its operand |
 | `MESSAGE_LOCALIZED_WORD` | 13 | German: a counted noun; Italian: a gender ending; Spanish and French: the plural suffix |
 | `MESSAGE_WINDOW_EFFECT` | 15 | `TEXT_WINDOW_STATE`, with its operand: the window effect to run |
-| `MESSAGE_PROTAGONIST_NAME` | 16 | the letters of the leader's name (`gGameState.selectedLocalId`) |
+| `MESSAGE_PROTAGONIST_NAME` | 16 | the letters of the leader's name (`gGameState.leaderLocalId`) |
 
 ## The decoded-text ring
 

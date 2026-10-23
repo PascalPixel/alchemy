@@ -7,7 +7,7 @@
 /// An object script call, each frame: when the object event's countdown (work)
 /// runs out, it turns by a random amount up to half a turn and waits a random 0
 /// to 79 frames.
-static s32 Map_LookAboutRandomly(struct ScriptInterpreter *interpreter) {
+static s32 Map_LookAboutRandomly(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   s32 cnt = objectEvent->work;
   s32 loaded = (s16)objectEvent->work;

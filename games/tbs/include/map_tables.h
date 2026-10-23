@@ -127,8 +127,8 @@ struct ObjectEventTemplate {
   /// is entered normally again.
   s16 condition;
   /// A built-in action (enum MovementType) or an action script, for
-  /// ObjectMotion_SetActionCallback.
-  s32 behavior;
+  /// ObjectEvent_SetMovementType.
+  s32 movement;
   s32 x;         ///< 16.16 fixed-point pixels
   s32 y;         ///< 16.16 fixed-point pixels
   s32 z;         ///< 16.16 fixed-point pixels
@@ -142,7 +142,7 @@ STATIC_ASSERT(sizeof(struct ObjectEventTemplate) == 24);
 STATIC_ASSERT(offsetof(struct ObjectEventTemplate, talkFacing) == 22);
 
 /// The built-in actions an object event template's behavior can name, which
-/// ObjectMotion_SetActionCallback turns into scripts.
+/// ObjectEvent_SetMovementType turns into scripts.
 enum MovementType {
   MOVEMENT_TYPE_STAND = 1, ///< its script only ends
   /// Wanders about where it stands (SC_WANDER_HOME), within 16 pixels.
@@ -151,20 +151,20 @@ enum MovementType {
   MOVEMENT_TYPE_WANDER_CLOSE = 4,  ///< within 6 pixels, at its own speed
   MOVEMENT_TYPE_FOLLOW_LINKED = 5, ///< moves toward the linked object
   MOVEMENT_TYPE_FACE_LEADER = 6,   ///< links to the leader and turns toward it
-  MOVEMENT_TYPE_RESET_ACTION = 7   ///< gObjectMotion_ResetActionScript
+  MOVEMENT_TYPE_RESET_ACTION = 7   ///< gMovementType_ResetActionScript
 };
 
 /// How a placed object event turns when the leader talks to it
-/// (Map_TalkToObjectEvent). With all but TALK_KEEP_FACING the leader stops and
+/// (Map_TalkToObjectEvent). With all but TALK_FACING_KEEP the leader stops and
 /// the two are linked.
 enum ObjectEventTalkFacing {
-  TALK_FACE_PARTY = 0,
+  TALK_FACING_PARTY = 0,
   /// Faces the party, then turns back to its old heading.
-  TALK_FACE_PARTY_AND_BACK = 1,
-  TALK_KEEP_FACING = 2,
+  TALK_FACING_PARTY_AND_BACK = 1,
+  TALK_FACING_KEEP = 2,
   /// Faces the party, then keeps turning to face the leader once the talk is
   /// over (gObjectMotion_LinkedActionScript).
-  TALK_FACE_PARTY_THEN_WATCH = 3
+  TALK_FACING_PARTY_THEN_WATCH = 3
 };
 
 /// ObjectEventTemplate.flags: the object event takes the previous object
@@ -192,7 +192,7 @@ struct MapEvent {
   /// kind. bits: 30..28 Psynergy phase | 15..12 coord facing | 15..8 item or
   /// ability | 11 short push | 10 facing | 9 walking | 8..4 bg target | 7
   /// Psynergy in area | 5..4 warp sound | 4 on an object event | 3..0 kind
-  u32 control;
+  u32 kind;
   /// What the event answers: a local id, a metatile behavior, a marker
   /// id or a raised value. Item and Psynergy events read it as bits below;
   /// bit 10 also skips a bg event's checking message and a Psynergy's effect.
@@ -236,18 +236,18 @@ enum WarpStyle {
   WARP_STYLE_NORMAL = 0x00, ///< with SE_MAP_EXIT
   WARP_STYLE_SILENT = 0x10,
   /// With SE_STAIRS_UP and ANIMATION_LEADER_LEAVE; the next map plays
-  /// ANIMATION_LEADER_ARRIVE (FLAG_WARP_ARRIVAL_PENDING).
-  WARP_STYLE_ANIMATED = 0x20,
+  /// ANIMATION_LEADER_ARRIVE (FLAG_WARP_ARRIVAL_STAIRS_UP).
+  WARP_STYLE_STAIRS_UP = 0x20,
   /// With SE_STAIRS_DOWN and ANIMATION_LEADER_LEAVE_ALTERNATE; the next map
-  /// plays ANIMATION_LEADER_ARRIVE_ALTERNATE (FLAG_WARP_ARRIVAL_ALTERNATE).
-  WARP_STYLE_ANIMATED_ALTERNATE = 0x30,
+  /// plays ANIMATION_LEADER_ARRIVE_ALTERNATE (FLAG_WARP_ARRIVAL_STAIRS_DOWN).
+  WARP_STYLE_STAIRS_DOWN = 0x30,
   WARP_STYLE_MASK = 0x30
 };
 
 /// The raised event the menus and shortcut keys raise instead of opening
 /// while FLAG_MENUS_RAISE_EVENT is set, as Vault's inn sets it while the
 /// party corners the suspects.
-#define FIELD_EVENT_MENUS_RAISED 250
+#define FIELD_RAISED_EVENT_MENUS 250
 
 /// A coord event that needs the leader to have pushed against it for more
 /// than 12 frames, or 2 with COORD_EVENT_FLAG_QUICK.
@@ -284,14 +284,14 @@ enum PsynergyPhase {
   /// this phase also makes Field_UsePsynergy aim the effect at the object event
   /// ahead.
   PSYNERGY_PHASE_EFFECT_ACTS = 5,
-  PSYNERGY_PHASE_ANY = 7 ///< FieldEffect_FindMatchingEvent matches every phase
+  PSYNERGY_PHASE_ANY = 7 ///< Map_FindPsynergyEvent matches every phase
 };
 
 /// The control word of a Psynergy event (MAP_EVENT_PSYNERGY) in the given
-/// phase, as FieldEffect_FindMatchingEvent compares it (bits 30..28 phase
+/// phase, as Map_FindPsynergyEvent compares it (bits 30..28 phase
 /// | 3..0 kind).
-#define PSYNERGY_EV(phase) ((phase) << 28 | MAP_EVENT_PSYNERGY)
-#define PSYNERGY_EV_ANY PSYNERGY_EV(PSYNERGY_PHASE_ANY)
+#define PSYNERGY_EVENT(phase) ((phase) << 28 | MAP_EVENT_PSYNERGY)
+#define PSYNERGY_EV_ANY PSYNERGY_EVENT(PSYNERGY_PHASE_ANY)
 
 /// A Psynergy event on the object event the leader faces.
 #define MAP_EVENT_PSYNERGY_ON_OBJ_EVENT 0x10
@@ -332,7 +332,7 @@ enum PsynergyEventTarget {
 /// message MsgTileChecked + n as the leader checks it, unless the trigger has
 /// bit 10; target 0 shows nothing.
 enum BgEventTarget {
-  BG_EVENT_UNNAMED = 0,
+  BG_EVENT_SILENT = 0,
   BG_EVENT_CHEST = 1,
   BG_EVENT_JAR,
   BG_EVENT_BARREL,

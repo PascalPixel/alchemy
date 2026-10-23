@@ -67,7 +67,7 @@ struct ObjectCameraFixed {
 /// suspends it. Resets the system's used count, may change an object's layer
 /// and its sprite's priorities, and holds the frame decoder in heap slot
 /// HEAP_SLOT_FRAME_SCRATCH only while it runs.
-void ObjectSystem_UpdateCamera(void) {
+void ObjectSystem_PlaceSprites(void) {
   /* FAKEMATCH(dead): an unused local for the room the native frame keeps for
    * three points above the position; without it, 2 of 267 instructions differ
    * in tbs-en. */
@@ -222,7 +222,7 @@ UNUSED s32 ObjectCamera_ReturnTrue(void) { return 1; }
 /// OBJECT_SYSTEM_WORLD_MAP and OBJECT_SYSTEM_BATTLE;
 /// ObjectSystem_SuspendProjectionAndShowSprites suspends it. Resets the
 /// system's used count.
-void ObjectSystem_UpdateCameraFixed(void) {
+void ObjectSystem_ProjectSprites(void) {
   s32 i;
   struct ObjectCameraFixed *camera;
   struct ObjectSystemWork *system;

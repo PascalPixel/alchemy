@@ -23,8 +23,8 @@
 ///                   MapGrid_UpdateLayerScroll; world_map.c:
 ///                   WorldMap_InitializePerspective, WorldMap_UpdateView
 ///   Ground          terrain.c: MapGrid_GetTerrainHeight,
-///   MapGrid_CheckObjectStep,
-///                   GetWorldMapCollision
+///   MapGrid_CheckCollision,
+///                   WorldMap_GetCollision
 
 #include "field_internal.h"
 

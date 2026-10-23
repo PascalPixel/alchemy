@@ -19,7 +19,7 @@
 	.set import.Object_WaitForMove, 1
 	.set import.Engine_MapGridAnimateCells, 1
 	.set import.Engine_MapGridCopyCellsTo, 1
-	.set import.DisplayBlend_SuspendScript, 1
+	.set import.BlendScript_Suspend, 1
 	.set import.Engine_MapGridCopyCells, 1
 	.set import.Engine_MapGridCopyCellAttributes, 1
 	.set import.Object_CheckMovementCollision, 1
@@ -66,7 +66,7 @@
 	.set import.Engine_CameraMoveTo, 1
 	.set import.Engine_CameraWaitForMove, 1
 	.set import.ObjectEvent_PlaceCurrentWithinCameraBounds, 1
-	.set import.Camera_GetScriptObject, 1
+	.set import.FieldCamera_GetScriptObject, 1
 	.set import.Engine_ScriptRequestWarp, 1
 	.set import.Engine_ColorBufferApplyTarget, 1
 	.set import.Engine_ColorBufferApplySource, 1
@@ -85,7 +85,7 @@
 	.set import.Field_EndBusyAndReveal, 1
 	.endif
 	.set import.Engine_ObjectEventWalkByAndWait, 1
-	.set import.FieldEffect_SetQueuedSoundAndPlay, 1
-	.set import.FieldEffect_PlayQueuedSound, 1
+	.set import.Map_QueueMusic, 1
+	.set import.Map_PlayQueuedMusic, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

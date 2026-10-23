@@ -23,18 +23,18 @@ void Field_ClearRequests(void) {
   struct FieldWork *work;
   noRequest = 0;
   work = (struct FieldWork *)gFieldWork;
-  work->action = noRequest;
-  work->pushTile = 0;
+  work->coordEvent = noRequest;
+  work->pushCell = 0;
   work->warp = 0;
   work->menu = 0;
   work->examine = 0;
   work->start = 0;
   work->talk = 0;
-  work->tile = 0;
+  work->searchCell = 0;
   work->battle = 0;
   work->psynergy = 0;
   work->item = 0;
-  work->event = 0;
+  work->raisedEvent = 0;
 }
 
 /// Returns the sum of the field's twelve pending requests (counting the talk
@@ -45,27 +45,27 @@ s32 Field_CountRequests(void) {
   struct FieldWork *work = (struct FieldWork *)gFieldWork;
 
   // BUG: a sum can be 0 with requests pending. Field_ProcessStep raises event
-  // FIELD_EVENT_PARTY_FELL (-1) on the frame a member falls to poison, and
-  // the action request is the cell's metatile behavior, 1 on coord event 1's
-  // cells (154 maps have them); together they sum to 0, and both wait until
+  // FIELD_RAISED_EVENT_PARTY_FELL (-1) on the frame a member falls to poison,
+  // and the action request is the cell's metatile behavior, 1 on coord event
+  // 1's cells (154 maps have them); together they sum to 0, and both wait until
   // another request breaks the tie, by which time a later cell's behavior may
   // have replaced the action. BUGFIX tests each request instead.
 #ifdef BUGFIX
-  return work->action | work->pushTile | work->warp | work->menu |
+  return work->action | work->pushCell | work->warp | work->menu |
          work->examine | work->start | (s16)work->talk | work->tile |
          work->battle | work->psynergy | work->item | work->event;
 #else
-  return work->action + work->pushTile + work->warp + work->menu +
-         work->examine + work->start + (s16)work->talk + work->tile +
+  return work->coordEvent + work->pushCell + work->warp + work->menu +
+         work->examine + work->start + (s16)work->talk + work->searchCell +
          (s16)work->talk + work->battle + work->psynergy + work->item +
-         work->event;
+         work->raisedEvent;
 #endif
 }
 
 /// Returns the metatile behavior of the map cell 16 pixels ahead of the party
 /// leader (a world map metatile on the world map), or 0 without a leader.
 ///
-/// Called by Field_FindItemEvent and FieldEffect_FindMatchingEvent (items.c),
+/// Called by Field_FindItemEvent and Map_FindPsynergyEvent (items.c),
 /// which match an item or Psynergy event to the tile the leader faces.
 s32 Field_GetCollisionAheadOfLeader(void) {
   struct FieldWork *work;
@@ -77,7 +77,7 @@ s32 Field_GetCollisionAheadOfLeader(void) {
   s32 fixedZ;
 
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
-  leader = (struct Object *)work->objectEvents[gGameState.selectedLocalId];
+  leader = (struct Object *)work->objectEvents[gGameState.leaderLocalId];
 
   gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
 
@@ -87,7 +87,7 @@ s32 Field_GetCollisionAheadOfLeader(void) {
   position.vector.x = leader->x;
   position.vector.y = leader->y;
   position.vector.z = leader->z;
-  Vector_AddPolarOffset(0x100000, leader->angle, position.coordinates);
+  Vector_AddPolarOffset(0x100000, leader->facing, position.coordinates);
 
   if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
     // World map metatiles are 32 pixels square, 32 to a row.
@@ -192,7 +192,7 @@ void Field_CheckWarpRegions(s32 positionX, s32 positionY, s32 positionZ) {
 /// Called by Map_Run each frame while the party walks (in debug mode,
 /// FLAG_DEBUG_STEPS_OFF skips it), so the counts below advance
 /// per frame. Sets work->action, input, battle, command and event
-/// (-1 when someone fell), work->currentTile and previousTile, walkingDistance,
+/// (-1 when someone fell), work->currentCell and previousCell, walkingDistance,
 /// fallenOwners and survivorCount, and gGameState's hazard and Avoid counts.
 void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
   /* FAKEMATCH(wrapper): the party read through struct StepOwner, whose alias
@@ -200,7 +200,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
    * of 472 instructions differ in tbs-en. */
   struct FieldWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
   struct MapGridState *gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
-  s32 leaderId = gGameState.selectedLocalId;
+  s32 leaderId = gGameState.leaderLocalId;
   struct Object *leader = (struct Object *)work->objectEvents[leaderId];
   s16 previousHp[8];
   struct MapGridCell *tile;
@@ -241,17 +241,17 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
       tile = (struct MapGridCell *)gMapGridCellBuffer;
     tile = &tile[(x / 0x100000) + ((z / 0x100000) << 7)];
   }
-  event = tile->collisionCode;
-  work->previousTile = work->currentTile;
-  work->currentTile = tile;
+  event = tile->behavior;
+  work->previousCell = work->currentCell;
+  work->currentCell = tile;
   // Warp regions are checked on any marked cell; the behavior then picks the
   // request it raises.
   if (event != 0)
     Field_CheckWarpRegions(x, y, z);
   if (event >= MB_EVENT_FIRST && event <= MB_EVENT_LAST)
-    work->action = event;
+    work->coordEvent = event;
   if (event >= MB_LEDGE && event <= MB_JUMP_FORWARD)
-    work->pushTile = event;
+    work->pushCell = event;
 
   // Only while walking (not climbing) towards a target.
   if (gGameState.movementMode == LEADER_MOVEMENT_WALK && leader != NULL &&
@@ -268,12 +268,12 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
     } else if (event == MB_ENCOUNTER_GROUND_1 ||
                event == MB_ENCOUNTER_GROUND_2) {
       fullEncounterRate =
-          work->encounterGroups[event - (MB_ENCOUNTER_GROUND_1 - 1)];
-      work->battle = Encounter_RollTerrain(event - (MB_ENCOUNTER_GROUND_1 - 1),
-                                           encounterSpeed);
+          work->encounterZones[event - (MB_ENCOUNTER_GROUND_1 - 1)];
+      work->battle = Encounter_RollLayoutStep(
+          event - (MB_ENCOUNTER_GROUND_1 - 1), encounterSpeed);
     } else {
-      fullEncounterRate = work->encounterGroups[0];
-      work->battle = Encounter_RollTerrain(0, encounterSpeed);
+      fullEncounterRate = work->encounterZones[0];
+      work->battle = Encounter_RollLayoutStep(0, encounterSpeed);
     }
 
     // Every 0x10000 of distance walked (counted at half speed on ground whose
@@ -300,7 +300,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
     // limit is 600).
     if (gGameState.hazardMode == HAZARD_COUNT_ON_CELLS &&
         event == MB_DESERT_SAND) {
-      if (work->previousTile->collisionCode == MB_DESERT_SAND)
+      if (work->previousCell->behavior == MB_DESERT_SAND)
         gGameState.hazardSteps += leader->speedLimit / 0x10000;
       else
         gGameState.hazardSteps = gGameState.hazardLimit / 2;
@@ -361,7 +361,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
         work->survivorCount++;
       } else if (previousHp[i] != 0) {
         work->fallenOwners[work->fallenCount++] = gGameState.activeOwners[i];
-        work->event = -1;
+        work->raisedEvent = -1;
         unitVitals->poison = 0;
       }
     }
@@ -371,7 +371,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
 /// Gives each character in the party amount PP (PP regenerates as the party
 /// walks).
 ///
-/// Called by Field_ProcessStep as the party walks, by Field_SearchTile for a
+/// Called by Field_ProcessStep as the party walks, by Field_SearchCell for a
 /// Psynergy stone (999, all PP), and by the Vale home map through
 /// Party_AddPpFar.
 void Party_AddPp(s32 amount, s32 unused) {
@@ -489,7 +489,7 @@ s32 Party_ApplyPoisonDamage(void) {
 /// leftover memory.
 void WorldMap_StartScript(void) {
   struct FieldWork *work;
-  struct DisplayTransitionState *state;
+  struct ScreenTransitionState *state;
 
   work = AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(*work));
   if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {

@@ -408,9 +408,9 @@ static void EventScript_AskWhetherMaskedManWasFelix(void) {
 /// Called by the warps below.
 static void ValeInteriorsInn_CloseScreenAndExit(s32 warpNumber) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
-    FieldEffect_StopLightning();
+    Weather_StopLightning();
   }
-  gFieldWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
@@ -516,7 +516,7 @@ s32 ValeInteriorsInn_Initialize(void) {
 
   if (gGameState.warpDest == VALE_INTERIORS_INN_FROM_BABI_PALACE) {
     Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
-    ((struct EventWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->startTransition =
+    ((struct EventWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   } else {
     if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
@@ -538,10 +538,10 @@ s32 ValeInteriorsInn_Initialize(void) {
               VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS) {
         if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
           if (Engine_GameFlagIsSet(FLAG_MAP_TEMP_03) != 0) {
-            TileAnimation_ResumeChannel(12);
+            TilesetAnim_Resume(12);
           }
         } else {
-          TileAnimation_ResumeChannel(11);
+          TilesetAnim_Resume(11);
           objectEvent = ObjectEvent_GetById(LOCALID_DORA);
           Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
           Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIMATION_DORA_IN_BED);
@@ -561,18 +561,17 @@ s32 ValeInteriorsInn_Initialize(void) {
               VALE_INTERIORS_INN_FROM_VALE_KRADEN_MYTHRIL_BAG) {
             EventScript_ShowMythrilBag();
           } else {
-            ((struct EventWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))
-                ->startTransition =
+            ((struct EventWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
                 MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
             if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
-              FieldEffect_StartLightning();
-              ((struct FieldBlendWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_LIGHTNING))
+              Weather_StartLightning();
+              ((struct LightningWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_LIGHTNING))
                   ->loud = 1;
-              FieldEffect_LastLightning();
+              Weather_LastLightning();
               Engine_TaskWait(30);
               Engine_ScriptOpenScreen();
               Engine_ScriptWaitForScreen();
-              FieldEffect_ResumeLightning();
+              Weather_ResumeLightning();
             } else {
               Engine_MapGridRedraw();
               Engine_TaskWait(1);
@@ -608,7 +607,7 @@ static void EventScript_DoraWakesIsaac(void) {
     struct EventWork *work = *eventSlot;
 
     grid = *(struct MapGridScrollWork **)Ram_MapGridWork;
-    viewCenter = work->viewCenter;
+    viewCenter = work->camera;
   }
   sprite = ObjectEvent_GetById(LOCALID_TUNIC)->sprite;
   // Present the bedside conversation before revealing the wider storm scene.
@@ -627,7 +626,7 @@ static void EventScript_DoraWakesIsaac(void) {
   ObjectEvent_GetById(LOCALID_TUNIC)->motionFlags = 0;
   Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_TUNIC), 0);
   Engine_ObjectEventSetPosition(LOCALID_TUNIC, PIXELS(576), PIXELS(650));
-  TileAnimation_ResumeChannel(7);
+  TilesetAnim_Resume(7);
   Engine_ObjectEventSetPosition(LOCALID_DORA, PIXELS(534), PIXELS(688));
   ObjectSystem_SuspendProjectionAndShowSprites();
   // On a dark screen, Dora's voice: "Isaac, wake up!" "Please, dear, wake up!"
@@ -650,17 +649,17 @@ static void EventScript_DoraWakesIsaac(void) {
   viewCenter->z.fixed = PIXELS(691);
   Engine_MapGridRedraw();
   Engine_TaskWait(1);
-  (*eventSlot)->startTransition =
+  (*eventSlot)->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   (*eventSlot)->transitionFrames = 64;
-  FieldEffect_StartLightning();
-  (*(struct FieldBlendWork **)((u8 *)eventSlot + Ram_FieldBlendWorkOffset))
+  Weather_StartLightning();
+  (*(struct LightningWork **)((u8 *)eventSlot + Ram_LightningWorkOffset))
       ->loud = 1;
-  FieldEffect_LastLightning();
+  Weather_LastLightning();
   Engine_TaskWait(30);
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
-  FieldEffect_ResumeLightning();
+  Weather_ResumeLightning();
   // "The Mt. Aleph Boulder is going to fall!" "Come on, Isaac. We have to go
   // now!"
   Engine_ObjectEventSetAnimationAndWait(LOCALID_DORA, ANIMATION_SHAKE_HEAD);
@@ -675,14 +674,14 @@ static void EventScript_DoraWakesIsaac(void) {
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | LOCALID_DORA, 0, 20);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_PARTY_LEADER, 2);
   // Isaac gets out of bed and jumps down beside Dora.
-  TileAnimation_PauseChannel(7);
+  TilesetAnim_Pause(7);
   Engine_ScriptWait(20);
-  TileAnimation_ResumeChannel(8);
+  TilesetAnim_Resume(8);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_ISAAC_GET_UP);
   ObjectEvent_MoveToAndWait(LOCALID_PARTY_LEADER, 557, 679);
-  TileAnimation_PauseChannel(8);
-  TileAnimation_ResumeChannel(9);
+  TilesetAnim_Pause(8);
+  TilesetAnim_Resume(9);
   ObjectEvent_MoveToAndWait(LOCALID_PARTY_LEADER, 555, 680);
   Engine_ScriptWait(30);
   ObjectEvent_FaceDirection(LOCALID_DORA, FACING_NORTH + FACING_STEP, 0);
@@ -753,7 +752,7 @@ static void EventScript_DoraWakesIsaac(void) {
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER,
                               gValeInteriorsInn_IsaacLeavesScript);
   Engine_ScriptWait(20);
-  (*eventSlot)->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 1);
+  (*eventSlot)->transition = MAP_TRANSITION(TRANSITION_WINDOW, 1);
   (*eventSlot)->transitionFrames = 16;
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
@@ -798,7 +797,7 @@ static void EventScript_HurryToThePlaza(void) {
   sprite->image.priority = 1;
   ObjectEvent_SetActionScript(LOCALID_FLAME,
                               gValeInteriorsInn_FlameShakesScript);
-  ((struct EventWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->startTransition =
+  ((struct EventWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, 1);
   MapGrid_CopyCellsTo(83, 15, 83, 19, 5, 4);
   MapGrid_CopyCellsTo(90, 16, 90, 20, 5, 4);
@@ -809,12 +808,12 @@ static void EventScript_HurryToThePlaza(void) {
   MapGrid_CopyCellsTo(94, 27, 94, 23, 6, 4);
   MapGrid_CopyCellsTo(92, 28, 87, 23, 4, 4);
   MapGrid_CopyCellsTo(65, 53, 88, 24, 2, 2);
-  DisplayBlend_SuspendScript();
+  BlendScript_Suspend();
   SetBlendTarget(BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
   Io_Write16(BLEND_ALPHA(12, 16), &REG_BLDALPHA);
-  FieldEffect_StartLightning();
-  ((struct FieldBlendWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_LIGHTNING))->loud = 1;
-  FieldEffect_LastLightning();
+  Weather_StartLightning();
+  ((struct LightningWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_LIGHTNING))->loud = 1;
+  Weather_LastLightning();
   Engine_TaskWait(30);
   // Dora and Isaac run out of the house (SE_DOOR_OPEN).
   Engine_CameraFollowObjectEvent(LOCALID_DORA, 1);
@@ -833,8 +832,8 @@ static void EventScript_HurryToThePlaza(void) {
   ObjectEvent_FaceDirection(LOCALID_DORA, FACING_SOUTH, 10);
   // The camera finds Kyle coming up the path: "Isaac, Dora, hurry! The
   // Boulder could fall at any second!"
-  Camera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
-  Camera_MoveTo(PIXELS(414), -1, PIXELS(530), 1);
+  FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
+  FieldCamera_MoveTo(PIXELS(414), -1, PIXELS(530), 1);
   ObjectEvent_SetPosition(LOCALID_KYLE, PIXELS(414), PIXELS(530));
   Engine_ObjectEventWalkToAndWait(LOCALID_KYLE, 427, 483);
   Engine_CameraWaitForMove();
@@ -899,7 +898,7 @@ ramp:
   ObjectEvent_SetActionScript(LOCALID_DORA, gValeInteriorsInn_RunToPlazaScript);
   ObjectEvent_RunActionScriptAndWait(LOCALID_PARTY_LEADER,
                                      gValeInteriorsInn_RunToPlazaScript);
-  ((struct EventWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->startTransition =
+  ((struct EventWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
       MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   ((struct EventWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transitionFrames = 32;
   Engine_ScriptCloseScreen();
@@ -1009,8 +1008,8 @@ static void EventScript_VisitSickDora(void) {
   ObjectEvent_SetSpeed(LOCALID_DORA, PIXELS(4) / 5, PIXELS(2) / 5);
   // Bring Dora out of bed before asking about her illness.
   Engine_ObjectEventSetDestination(LOCALID_DORA, 584, 406);
-  TileAnimation_PauseChannel(11);
-  TileAnimation_ResumeChannel(12);
+  TilesetAnim_Pause(11);
+  TilesetAnim_Resume(12);
   Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIMATION_DORA_HEAD_BOWED);
   Engine_ScriptWait(80);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_DORA, 2);
@@ -1160,7 +1159,7 @@ static void EventScript_ShowMythrilBag(void) {
   u8 clear;
 
   Engine_ScriptStart();
-  Camera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, 0, 0);
   ObjectEvent_SetPosition(LOCALID_KRADEN, PIXELS(480), PIXELS(202));
@@ -1181,7 +1180,7 @@ static void EventScript_ShowMythrilBag(void) {
   Engine_ItemLoadIcon(ITEM_MYTHRIL_BAG);
   Engine_VramLoad(sprite->slot, 128, glyph->tiles);
   Engine_HeapRelease(17);
-  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 2);
+  gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 2);
   Engine_ScriptOpenScreen();
   // Walk the presenter into view, then wait for both bag scripts to finish.
   ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(1), PIXELS(1) / 2);
@@ -1257,7 +1256,7 @@ static void ValeInteriorsInn_SpawnEffectPair(union FieldObject *fieldObject) {
                                 parent->z.fixed);
     pair[effectIndex] = child;
     if (child != NULL) {
-      child->terrainHeight = parent->terrainHeight;
+      child->groundHeight = parent->groundHeight;
       part = child->sprite;
       child->motionFlags = 0;
       child->timer = 0;
@@ -1570,85 +1569,85 @@ u32 gValeInteriorsInn_StormWarps[] = {
 // clang-format off
 struct ObjectEventTemplate gValeInteriorsInn_ObjectEventTemplates[] = {
     { SPRITE_DORA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_KYLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { 0xd0, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(151), 0, PIXELS(152), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(151), 0, PIXELS(152), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_IN_BLUE_DRESS, 0x0, MOVEMENT_TYPE_WANDER,
-        PIXELS(87), 0, PIXELS(67), FACING_WEST, TALK_FACE_PARTY, 0 },
+        PIXELS(87), 0, PIXELS(67), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_IN_PINK_APRON, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(246), 0, PIXELS(391), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(246), 0, PIXELS(391), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, 0x0, MOVEMENT_TYPE_WANDER,
-        PIXELS(159), 0, PIXELS(452), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(159), 0, PIXELS(452), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(218), 0, PIXELS(373), FACING_EAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(218), 0, PIXELS(373), FACING_EAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_FELIX_MASKED, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(54), 0, PIXELS(669), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(54), 0, PIXELS(669), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_TUNIC, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTHEAST, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_NORTHEAST, TALK_FACING_KEEP, 0 },
     { SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gValeInteriorsInn_ObjectEventTemplatesAfterLeaving[] = {
     { SPRITE_DORA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_KYLE, 0x0, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { 0xd0, 0x0, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(151), 0, PIXELS(152), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(151), 0, PIXELS(152), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_IN_BLUE_DRESS, 0x0, MOVEMENT_TYPE_WANDER,
-        PIXELS(87), 0, PIXELS(67), FACING_WEST, TALK_FACE_PARTY, 0 },
+        PIXELS(87), 0, PIXELS(67), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_IN_PINK_APRON, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(246), 0, PIXELS(391), FACING_WEST, TALK_FACE_PARTY, 0 },
+        PIXELS(246), 0, PIXELS(391), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, 0x0, MOVEMENT_TYPE_WANDER,
-        PIXELS(159), 0, PIXELS(452), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(159), 0, PIXELS(452), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(218), 0, PIXELS(373), FACING_EAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(218), 0, PIXELS(373), FACING_EAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gValeInteriorsInn_ObjectEventTemplatesAfterKalay[] = {
     { SPRITE_DORA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(586), 0, PIXELS(406), FACING_EAST, TALK_KEEP_FACING, 0 },
+        PIXELS(586), 0, PIXELS(406), FACING_EAST, TALK_FACING_KEEP, 0 },
     { SPRITE_KYLE, 0x0, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { 0xd0, 0x0, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(151), 0, PIXELS(152), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(151), 0, PIXELS(152), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_IN_BLUE_DRESS, 0x0, MOVEMENT_TYPE_WANDER,
-        PIXELS(87), 0, PIXELS(67), FACING_WEST, TALK_FACE_PARTY, 0 },
+        PIXELS(87), 0, PIXELS(67), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_IN_PINK_APRON, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(246), 0, PIXELS(391), FACING_WEST, TALK_FACE_PARTY, 0 },
+        PIXELS(246), 0, PIXELS(391), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, 0x0, MOVEMENT_TYPE_WANDER,
-        PIXELS(159), 0, PIXELS(452), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(159), 0, PIXELS(452), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(218), 0, PIXELS(373), FACING_EAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(218), 0, PIXELS(373), FACING_EAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_BURLY_MAN_WITH_GREY_HAIR, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(264), 0, PIXELS(373), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(264), 0, PIXELS(373), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_BLANK, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(252), 0, PIXELS(378), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(252), 0, PIXELS(378), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gValeInteriorsInn_ScholarsObjectEventTemplates[] = {
     { SPRITE_OLD_MAN_IN_BLUE_CAP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(792), 0, PIXELS(336), FACING_NORTH, TALK_FACE_PARTY, 0 },
+        PIXELS(792), 0, PIXELS(336), FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_WITH_GLASSES, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(864), 0, PIXELS(360), FACING_SOUTHWEST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(864), 0, PIXELS(360), FACING_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_OLD_MAN_IN_BLUE_CAP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(904), 0, PIXELS(376), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(904), 0, PIXELS(376), FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_MAN_WITH_GLASSES, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(728), 0, PIXELS(440), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(728), 0, PIXELS(440), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(832), 0, PIXELS(424), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(832), 0, PIXELS(424), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };
 
@@ -1787,7 +1786,7 @@ struct MapEvent gValeInteriorsInn_EventsAfterKalay[] = {
     { 0xc4f3, 212, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookTravelersEtiquette)) },
     { BG_EVENT(BG_EVENT_JAR), 108, FLAG_VALE_JAR_VIAL, FIND_ITEM(ITEM_VIAL) },
     { BG_EVENT(BG_EVENT_BARREL), 107, FLAG_VALE_BARREL_COINS, FIND_COINS(123) },
-    { BG_EVENT(BG_EVENT_UNNAMED), 109, FLAG_VALE_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
+    { BG_EVENT(BG_EVENT_SILENT), 109, FLAG_VALE_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
     { MAP_EVENTS_END },
 };
 
@@ -1802,7 +1801,7 @@ struct MapEvent gValeInteriorsInn_ScholarsEvents[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SCHOLAR_SEALED_ALCHEMY, CONDITION_ALWAYS, MSGNO(MsgBabiKradensJourneyWasMeantToRevive) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SCHOLAR_VENUS_RUINS, CONDITION_ALWAYS, MSGNO(MsgBabiTheVenusRuinsAreTheRemnants) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_OLD_MAN_ON_BABIS_RESEARCH, CONDITION_ALWAYS, MSGNO(MsgBabiLordBabiExpectedGreatResultsFrom) },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED, 20, CONDITION_ALWAYS, VALE_INTERIORS_INN_TO_BABI_PALACE },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 20, CONDITION_ALWAYS, VALE_INTERIORS_INN_TO_BABI_PALACE },
     { BG_EVENT(BG_EVENT_JAR), 103, FLAG_BABI_PALACE_HARD_NUT, FIND_ITEM(ITEM_HARD_NUT) },
     { BG_EVENT(BG_EVENT_BOOKCASE), 207, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeTheresABookEntitledEncyclopediaOf)) },
     { BG_EVENT(BG_EVENT_BOOKCASE), 208, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeTheresANotebookEntitledExperimentsIn)) },
@@ -1821,7 +1820,7 @@ struct MapEvent gValeInteriorsInn_ScholarsLaterEvents[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SCHOLAR_SEALED_ALCHEMY, CONDITION_ALWAYS, MSGNO(MsgBabiTheresGotToBeAGood) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SCHOLAR_VENUS_RUINS, CONDITION_ALWAYS, MSGNO(MsgBabiWhatSortOfUnfathomableRiddlesAre) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_OLD_MAN_ON_BABIS_RESEARCH, CONDITION_ALWAYS, MSGNO(MsgBabiThereMustBeAReasonWhy) },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED, 20, CONDITION_ALWAYS, VALE_INTERIORS_INN_TO_BABI_PALACE },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 20, CONDITION_ALWAYS, VALE_INTERIORS_INN_TO_BABI_PALACE },
     { BG_EVENT(BG_EVENT_JAR), 103, FLAG_BABI_PALACE_HARD_NUT, FIND_ITEM(ITEM_HARD_NUT) },
     { BG_EVENT(BG_EVENT_BOOKCASE), 207, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeTheresABookEntitledEncyclopediaOf)) },
     { BG_EVENT(BG_EVENT_BOOKCASE), 208, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeTheresANotebookEntitledExperimentsIn)) },

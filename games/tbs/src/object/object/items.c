@@ -12,15 +12,15 @@ typedef s32 (*BattleItemCallback)(s32 item, s32 localId, s32 slot);
 /// what the leader faces, or 0 (item 0 matches any item). The event's trigger
 /// names an object event (MAP_EVENT_ITEM_ON_OBJ_EVENT) or a metatile behavior,
 /// and may also require the leader to face within 0x17ff (about 34 degrees) of
-/// a direction. Called by Field_UseItem, and by FieldEffect_HasTrigger
+/// a direction. Called by Field_UseItem, and by Map_HasPsynergyEvent
 /// (psynergy.c) to test whether an item would do anything here.
 s32 Field_FindItemEvent(s32 item) {
   struct FieldWork *work = (struct FieldWork *)gFieldWork;
   const struct MapEvent *event = work->events;
-  s32 facing =
-      ((struct MotionObject *)ObjectTable_Get(gGameState.selectedLocalId))
-          ->angle;
-  s32 objectEventAhead = Field_FindNearbyTalkTarget(gGameState.selectedLocalId);
+  s32 facing = ((struct MotionObject *)ObjectEvent_GetByLocalId(
+                    gGameState.leaderLocalId))
+                   ->angle;
+  s32 objectEventAhead = Field_FindNearbyTalkTarget(gGameState.leaderLocalId);
   s32 tileAhead;
 
   item &= 0x1ff;
@@ -30,17 +30,17 @@ s32 Field_FindItemEvent(s32 item) {
 
   // trigger bits: 15..12 facing | 11 facing required | 7..0 object event or
   // tile code; control bits: 15..8 item | 4 on an object event | 3..0 kind.
-  while (event->control != -1) {
+  while (event->kind != -1) {
     s32 eventFacing = event->trigger & 0xf000;
     s16 requiresFacing = event->trigger & 0x0800;
     s32 eventTarget = event->trigger & 0xff;
 
-    if ((event->control & 0x0f) == MAP_EVENT_ITEM &&
+    if ((event->kind & 0x0f) == MAP_EVENT_ITEM &&
         GameFlag_IsConditionActive(event->condition) != 0 &&
         (requiresFacing == 0 ||
          (u16)(eventFacing - facing + 0x17ff) <= 0x2ffe)) {
-      u32 flags = event->control;
-      s32 eventItem = ((const u8 *)&event->control)[1];
+      u32 flags = event->kind;
+      s32 eventItem = ((const u8 *)&event->kind)[1];
 
       if (item == 0 || eventItem == item) {
         if ((flags & MAP_EVENT_ITEM_ON_OBJ_EVENT) != 0) {
@@ -132,8 +132,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
       UiText_ShowPositionedMessageAndWaitFar(MsgActorUsesItem, 1);
     }
     if ((s32)event->value < 0x10000) {
-      s32 nearbyLocalId =
-          Field_FindNearbyTalkTarget(gGameState.selectedLocalId);
+      s32 nearbyLocalId = Field_FindNearbyTalkTarget(gGameState.leaderLocalId);
       FieldScript_Start();
       FieldScript_SetMessageId(event->value);
       FieldScript_ShowMessageAndWait(nearbyLocalId, 0);
@@ -185,9 +184,9 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
        * void prototype, 2 of 253 instructions differ in tbs-en. */
       ((s32 (*)(s32, s32))FieldEffect_LoadActionEffectResources)(actionId, 0);
 #endif
-      work->resolvingAction = 1;
+      work->psynergyActing = 1;
       FieldEffect_Run();
-      work->resolvingAction = 0;
+      work->psynergyActing = 0;
       FieldEffect_End();
 
       if (Item_GetDirectFar(itemId)->useType & 1)
@@ -210,14 +209,14 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 /// (MAP_EVENT_PSYNERGY_ON_OBJ_EVENT) or to a metatile behavior. Called by
 /// Field_UsePsynergy for each phase, by Field_RunPsynergyEvents, and by the
 /// Force, Frost and Reveal effects (psynergy_effects/) for their own phases.
-void *FieldEffect_FindMatchingEvent(s32 eventFlags, s32 group, void *target) {
+void *Map_FindPsynergyEvent(s32 eventFlags, s32 group, void *target) {
   struct FieldWork *work = (struct FieldWork *)gFieldWork;
   const struct MapEvent *event = work->events;
-  s32 facing =
-      ((struct MotionObject *)ObjectTable_Get(gGameState.selectedLocalId))
-          ->angle;
+  s32 facing = ((struct MotionObject *)ObjectEvent_GetByLocalId(
+                    gGameState.leaderLocalId))
+                   ->angle;
   s32 objectEventAhead =
-      Field_FindNearbyPsynergyTarget(gGameState.selectedLocalId, group);
+      Field_FindNearbyPsynergyTarget(gGameState.leaderLocalId, group);
   s32 tileAhead;
   s32 anyPhase = 0;
 
@@ -227,21 +226,23 @@ void *FieldEffect_FindMatchingEvent(s32 eventFlags, s32 group, void *target) {
   if (eventFlags == PSYNERGY_EV_ANY)
     anyPhase = 1;
 
-  while (event->control != -1) {
+  while (event->kind != -1) {
     s32 eventFacing = event->trigger & 0xf000;
     s16 requiresFacing = event->trigger & 0x0800;
     s32 eventTarget = event->trigger & 0xff;
 
-    if ((event->control & 0x0f) == MAP_EVENT_PSYNERGY &&
+    if ((event->kind & 0x0f) == MAP_EVENT_PSYNERGY &&
         GameFlag_IsConditionActive(event->condition) != 0 &&
         (requiresFacing == 0 ||
          (u16)(eventFacing - facing + 0x17ff) <= 0x2ffe) &&
-        BattleAction_Get(((const u8 *)&event->control)[1])->type0c == group &&
-        (anyPhase || (event->control & 0x7000000f) == eventFlags)) {
-      // Any Psynergy of the same field kind (type0c) as the event's matches.
-      if ((event->control & MAP_EVENT_PSYNERGY_IN_AREA) != 0)
+        BattleAction_Get(((const u8 *)&event->kind)[1])->fieldPsynergy ==
+            group &&
+        (anyPhase || (event->kind & 0x7000000f) == eventFlags)) {
+      // Any Psynergy of the same field kind (fieldPsynergy) as the event's
+      // matches.
+      if ((event->kind & MAP_EVENT_PSYNERGY_IN_AREA) != 0)
         return (void *)event;
-      if ((event->control & MAP_EVENT_PSYNERGY_ON_OBJ_EVENT) != 0) {
+      if ((event->kind & MAP_EVENT_PSYNERGY_ON_OBJ_EVENT) != 0) {
         if (eventTarget == objectEventAhead)
           return (void *)event;
       } else if (eventTarget == tileAhead) {
@@ -269,15 +270,15 @@ s32 Field_RunPsynergyEvents(s32 packed) {
 
   abilityId = packed & 0x3FF;
   userId = ((u32)packed >> 10) & 0xF;
-  group = BattleAction_Get(abilityId)->type0c;
+  group = BattleAction_Get(abilityId)->fieldPsynergy;
   // The leader is looked up and the result is not used.
-  ObjectTable_Get(gGameState.selectedLocalId);
-  beforeEvent = FieldEffect_FindMatchingEvent(
-      PSYNERGY_EV(PSYNERGY_PHASE_BEFORE_END), group, &target);
-  afterEvent = FieldEffect_FindMatchingEvent(
-      PSYNERGY_EV(PSYNERGY_PHASE_AFTER_END), group, &target);
+  ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
+  beforeEvent = Map_FindPsynergyEvent(PSYNERGY_EVENT(PSYNERGY_PHASE_BEFORE_END),
+                                      group, &target);
+  afterEvent = Map_FindPsynergyEvent(PSYNERGY_EVENT(PSYNERGY_PHASE_AFTER_END),
+                                     group, &target);
   FieldEffect_LoadActionEffectResources(abilityId, 0);
-  FieldEffect_SetupObjectPair(gGameState.selectedLocalId, target);
+  FieldEffect_SetupObjectPair(gGameState.leaderLocalId, target);
   Field_RunEventAction(beforeEvent, userId, target);
   FieldScript_RunTypeHandler();
   FieldEffect_StopCasterHook();

@@ -35,7 +35,7 @@
 	.set import.Engine_ObjectEventSetAttachedEffect, 1
 	.set import.Engine_CameraFollowObjectEvent, 1
 	.set import.Engine_CameraMoveTo, 1
-	.set import.Camera_GetScriptObject, 1
+	.set import.FieldCamera_GetScriptObject, 1
 	.set import.Engine_ScriptRequestWarp, 1
 	.set import.Field_ClimbDown, 1
 	.set import.Field_ClimbUp, 1

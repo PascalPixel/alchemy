@@ -6,7 +6,7 @@
 
 /// Script step of action 7: clears an object's sprite flags and its collision
 /// flags, so nothing collides with it. Returns 0, so SC_CALL moves on at
-/// once (gObjectMotion_ResetActionScript then ends).
+/// once (gMovementType_ResetActionScript then ends).
 s32 Object_ClearChildAndCollisionFlags(void *obj) {
   ObjectDispatch_SetSingleChildFlagsFar(obj, 0);
   ((struct ScriptObjectRuntime *)obj)->flags59 = 0;
@@ -71,14 +71,14 @@ s32 ObjectMotion_TurnTowardLinkedTarget(struct Object *object) {
     // Clear OBJ_EVENT_FACES_MOTION, so moving does not turn it away again.
     object->actionFlags &= 0xfe;
     targetAngle = (u16)ArcTan2(target->z - object->z, target->x - object->x);
-    currentAngle = object->angle;
+    currentAngle = object->facing;
     turnStep = targetAngle - currentAngle;
     if (turnStep != 0) {
       if (turnStep > 0x1000)
         turnStep = 0x1000;
       if (turnStep < -0x1000)
         turnStep = -0x1000;
-      object->angle = (currentAngle + turnStep);
+      object->facing = (currentAngle + turnStep);
     }
   }
   return 1;
@@ -90,30 +90,30 @@ s32 ObjectMotion_TurnTowardLinkedTarget(struct Object *object) {
 /// (object/object_events.c), from Map_TalkToObjectEvent after a talk
 /// (object/events.c), from the object event commands and from Lalivero's
 /// interiors (Engine_ObjectEventSetActionCallback).
-void ObjectMotion_SetActionCallback(struct Object *object, s32 action) {
+void ObjectEvent_SetMovementType(struct Object *object, s32 action) {
   switch (action) {
   case MOVEMENT_TYPE_STAND:
-    action = (s32)gObjectMotion_ActionKind1Script;
+    action = (s32)gMovementType_StandScript;
     break;
   case MOVEMENT_TYPE_WANDER:
-    action = (s32)gObjectMotion_ActionKind2Script;
+    action = (s32)gMovementType_WanderScript;
     break;
   case MOVEMENT_TYPE_WANDER_NEAR:
-    action = (s32)gObjectMotion_ActionKind3Script;
+    action = (s32)gMovementType_WanderNearScript;
     break;
   case MOVEMENT_TYPE_WANDER_CLOSE:
-    action = (s32)gObjectMotion_ActionKind4Script;
+    action = (s32)gMovementType_WanderCloseScript;
     break;
   case MOVEMENT_TYPE_FOLLOW_LINKED:
-    action = (s32)gObjectMotion_MoveTowardTargetScript;
+    action = (s32)gMovementType_FollowLinkedScript;
     break;
   case MOVEMENT_TYPE_FACE_LEADER:
     object->linkedObject =
-        (struct Object *)ObjectEvent_GetById(gGameState.selectedLocalId);
-    action = (s32)gObjectMotion_TurnTowardLinkedScript;
+        (struct Object *)ObjectEvent_GetById(gGameState.leaderLocalId);
+    action = (s32)gMovementType_FaceLeaderScript;
     break;
   case MOVEMENT_TYPE_RESET_ACTION:
-    action = (s32)gObjectMotion_ResetActionScript;
+    action = (s32)gMovementType_ResetActionScript;
     break;
   default:
     break;
@@ -167,7 +167,7 @@ struct Object *Object_FindNearestFacingTarget(struct Object *self, s32 sprite) {
       continue;
     angle = (u16)ArcTan2(entry->z - self->z, entry->x - self->x);
     if (distance > 23) {
-      angleDifference = (s16)(angle - self->angle);
+      angleDifference = (s16)(angle - self->facing);
       if (angleDifference < -0x2fff)
         continue;
       if (angleDifference > 0x2fff)

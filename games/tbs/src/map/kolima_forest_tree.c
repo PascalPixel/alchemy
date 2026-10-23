@@ -184,7 +184,7 @@ UNUSED static void KolimaForestTree_ExitTouchedRegion(void) {
   scene = gFieldWork;
   Engine_ScriptStart();
   Engine_ObjectEventWalkByAndWait(LOCALID_PARTY_LEADER, 0, 0);
-  Engine_ScriptRequestWarp(scene->touchedTrigger);
+  Engine_ScriptRequestWarp(scene->coordEvent);
   Engine_ScriptEnd();
 }
 
@@ -253,7 +253,7 @@ static void KolimaForestTree_TalkToTret(void) {
       KolimaForestTree_PlayGesture(LOCALID_TRET_BLANK, FACE_GESTURE_CLOSE_EYES);
       waterOwner = PartyInventory_FindOwner(ITEM_HERMES_WATER);
       if (waterOwner != -1) {
-        u16 *menuRequest = &gFieldWork->requestedMenu;
+        u16 *menuRequest = &gFieldWork->menu;
         u16 open = 1;
 
         *menuRequest = open;
@@ -340,7 +340,7 @@ static void KolimaForestTree_RejectHermesWater(void) {
                              TASK_PRIORITY_MAP);
   Engine_TaskWait(30);
   gKolimaForestTreePlaySparkSound = 0;
-  Camera_MoveTo(PIXELS(328), -1, PIXELS(235), 1);
+  FieldCamera_MoveTo(PIXELS(328), -1, PIXELS(235), 1);
   Engine_ObjectEventSetSpritePriority(LOCALID_PARTY_LEADER, 1);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags &=
       ~OBJ_EVENT_FACES_MOTION;
@@ -465,19 +465,19 @@ static void KolimaForestTree_RestoreTret(void) {
                              TASK_PRIORITY_MAP);
   Engine_ScriptWait(40);
   ObjectEvent_FaceDirection(GARET, FACING_SOUTHWEST, 20);
-  Camera_SetSpeed(PIXELS(16) / 5, PIXELS(2) / 5);
-  Camera_MoveTo(PIXELS(256), -1, PIXELS(254), 1);
+  FieldCamera_SetSpeed(PIXELS(16) / 5, PIXELS(2) / 5);
+  FieldCamera_MoveTo(PIXELS(256), -1, PIXELS(254), 1);
   Engine_CameraWaitForMove();
   Script_PlaySong(SE_246);
   Engine_ScriptWait(40);
   ObjectEvent_FaceDirection(IVAN, FACING_SOUTHEAST, 20);
-  Camera_MoveTo(PIXELS(413), -1, PIXELS(261), 1);
+  FieldCamera_MoveTo(PIXELS(413), -1, PIXELS(261), 1);
   Engine_CameraWaitForMove();
   Script_PlaySong(SE_246);
   Engine_ScriptWait(40);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(MIA, FACING_SOUTH, 20);
-  Camera_MoveTo(PIXELS(326), -1, PIXELS(384), 1);
+  FieldCamera_MoveTo(PIXELS(326), -1, PIXELS(384), 1);
   Engine_CameraWaitForMove();
   Script_PlaySong(SE_246);
   if (*paletteFrame != 24) {
@@ -501,7 +501,7 @@ static void KolimaForestTree_RestoreTret(void) {
   KolimaPalette_Restore(0);
   Engine_ColorBufferInterpolate(40);
   Engine_TaskWait(80);
-  Camera_MoveTo(PIXELS(328), PIXELS(8), PIXELS(212), 1);
+  FieldCamera_MoveTo(PIXELS(328), PIXELS(8), PIXELS(212), 1);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(40);
   KolimaForestTree_PlayGesture(LOCALID_TRET_BLANK, FACE_GESTURE_OPEN_EYES);
@@ -527,7 +527,7 @@ static void KolimaForestTree_RestoreTret(void) {
   ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
-  Camera_MoveTo(PIXELS(234), 0, PIXELS(232), 1);
+  FieldCamera_MoveTo(PIXELS(234), 0, PIXELS(232), 1);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(40);
   KolimaForestTree_PlayGesture(LOCALID_LAUREL_BLANK, FACE_GESTURE_OPEN_EYES);
@@ -579,7 +579,7 @@ static void KolimaForestTree_RestoreTret(void) {
     Script_ShowMessage(SPEAKER_WINDOW_BELOW | LOCALID_TRET, 0);
   }
   KolimaForestTree_NodTogether();
-  Camera_MoveTo(PIXELS(328), PIXELS(8), PIXELS(212), 1);
+  FieldCamera_MoveTo(PIXELS(328), PIXELS(8), PIXELS(212), 1);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(20);
   KolimaForestTree_PlayGesture(LOCALID_TRET_BLANK, FACE_GESTURE_CLOSE_EYES);
@@ -610,7 +610,7 @@ static void KolimaForestTree_RestoreTret(void) {
   Engine_ScriptSetMessage(MsgKolimaShouldDoPeopleKolimaCursed);
   Script_ShowMessage(SPEAKER_WINDOW_BELOW | LOCALID_TRET, 0);
   KolimaForestTree_NodTogether();
-  Camera_MoveTo(PIXELS(234), 0, PIXELS(232), 1);
+  FieldCamera_MoveTo(PIXELS(234), 0, PIXELS(232), 1);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(20);
   Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_LAUREL, 0);
@@ -793,7 +793,7 @@ s32 KolimaForestTree_Initialize(void) {
   laurelBlank = ObjectEvent_GetById(LOCALID_LAUREL_BLANK);
   Engine_TaskWait(1);
   Engine_ObjectEventSetChildValue(LOCALID_TRETS_WRATHFUL_SIDE, 15);
-  gFieldWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   gGameState.retreatMap = (s32)&MapId_KolimaForestEntrance;
   gGameState.retreatWarpDest = KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP;
@@ -1123,25 +1123,25 @@ u32 gKolimaForestTreeWarps[] = {
 
 struct ObjectEventTemplate gKolimaForestTreeObjectEventTemplates[] = {
     { SPRITE_TRET_RAISED, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(327), 0, PIXELS(192), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(327), 0, PIXELS(192), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LAUREL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(136), 0, PIXELS(270), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(136), 0, PIXELS(270), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(327), 0, PIXELS(192), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(327), 0, PIXELS(192), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(136), 0, PIXELS(270), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(136), 0, PIXELS(270), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(327), 0, PIXELS(194), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(327), 0, PIXELS(194), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(136), 0, PIXELS(272), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(136), 0, PIXELS(272), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_TRET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(327), 0, PIXELS(192), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(327), 0, PIXELS(192), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0 },
     { IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0 },
     { MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 

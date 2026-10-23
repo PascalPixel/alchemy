@@ -54,8 +54,8 @@ void FadeOverlay_DrawMarks(void) {
     return;
   x = objectEvent->x.fixed;
   z = objectEvent->z.fixed;
-  terrainFloor = objectEvent->terrainHeight >> 16;
-  terrainLayer = objectEvent->terrainId;
+  terrainFloor = objectEvent->groundHeight >> 16;
+  terrainLayer = objectEvent->layer;
   // The first tile of the solid block FieldEffect_StartFadeOverlay loaded (VRAM
   // cache block 94; tiles are 32 bytes).
   tile = gVramBlockCache[94].offset >> 5;
@@ -135,7 +135,7 @@ void FieldEffect_StartFadeOverlay(void *object) {
   Io_Write16(31, &REG_BLDY);
   Dma_Fill32Cell(fill, 0, work, sizeof(*work));
   if (object == NULL)
-    object = ObjectTable_Get(gGameState.selectedLocalId);
+    object = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
   work->objectEvent = object;
 }
 

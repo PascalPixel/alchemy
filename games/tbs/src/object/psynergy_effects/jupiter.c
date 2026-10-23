@@ -15,7 +15,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   struct EffectVector position;
   struct MotionObject *djinni;
   struct FieldEffectWork *effectWork;
-  struct EffectSlot *effect;
+  struct FieldEffectSprite *effect;
   s32 scale;
   s32 remainingParticles;
 
@@ -27,11 +27,11 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   // Tint the screen yellow: PALETTE_TRANSFORM_TINT | RGB(12, 12, 4).
   Shop_SaveAndTintFieldPaletteFar(0x20118c);
   Sound_PlaySongFar(SE_173);
-  Motion_SetVarCbAndRefresh(djinniId, 1);
+  ObjectMotion_SetVarCbAndRefresh(djinniId, 1);
   Sound_PlaySongFar(SE_174);
-  Motion_SetVarCbAndRefresh(djinniId, 1);
+  ObjectMotion_SetVarCbAndRefresh(djinniId, 1);
   Sound_PlaySongFar(SE_175);
-  Motion_SetVarCbAndRefresh(djinniId, 1);
+  ObjectMotion_SetVarCbAndRefresh(djinniId, 1);
   WaitFrames(20);
 
   // Spin, then leap high.
@@ -48,13 +48,14 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   Camera_WorldToScreen(&position);
   ObjectDispatch_ReleaseFar((struct DispatchObject *)djinni);
   Sound_PlaySongFar(SE_164);
-  effect = effectWork->effects;
+  effect = effectWork->sprites;
   remainingParticles = 23;
   // One a frame, each with a random sprite param of 0 to 6.
   do {
-    EffectSlot_Initialize(effect, SPRITE_PARTICLE, position.x, position.z);
-    EffectSlot_SetCallback(effect, FieldEffect_RunAngledApproachPhases);
-    EffectSlot_SetObjectMode(effect, 7);
+    FieldEffectSprite_Initialize(effect, SPRITE_PARTICLE, position.x,
+                                 position.z);
+    FieldEffectSprite_SetCallback(effect, FieldEffect_RunAngledApproachPhases);
+    FieldEffectSprite_SetObjectMode(effect, 7);
     ObjectGroup_SetChildValueUnlessFifteenFar(effect->object,
                                               (Random16() * 7) >> 16);
     scale = Random16() / 3 + 0x10000; // 1.0 to 1.33
@@ -67,10 +68,10 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
 
   // The leader turns to face south (0x4000) and plays animation 28.
   WaitFrames(60);
-  ObjectMotion_ArmCallback(gGameState.selectedLocalId, 0x4000, 0);
+  ObjectMotion_ArmCallback(gGameState.leaderLocalId, 0x4000, 0);
   WaitFrames(20);
   ObjectDispatch_SelectAnimationFar(
-      ObjectEvent_GetById(gGameState.selectedLocalId), 28);
+      ObjectEvent_GetById(gGameState.leaderLocalId), 28);
   WaitFrames(40);
   Sound_PlaySongFar(SE_164);
   WaitFrames(100);
@@ -124,13 +125,13 @@ DEFINE_SHRINK_AND_DESTROY(FieldEffect_ShrinkObjectAndDestroySlow, 0xFFFFFE40)
 /// origin at up to 5 pixels a frame and starts over, until it stops where it
 /// arrives, hidden; 40 frames later it swarms to points within 4 pixels of
 /// one 20 pixels over the leader, until it is freed once it arrives.
-void FieldEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
+void FieldEffect_UpdatePhasedRadialParticle(struct FieldEffectSprite *effect) {
   struct ObjectVectorView *owner;
   struct EffectVector position;
   s32 state;
 
-  owner = (struct ObjectVectorView *)ObjectEvent_GetById(
-      gGameState.selectedLocalId);
+  owner =
+      (struct ObjectVectorView *)ObjectEvent_GetById(gGameState.leaderLocalId);
   state = effect->state;
 
   if (state == MARS_SPARK_AIM) {
@@ -163,10 +164,10 @@ void FieldEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
       ((struct AnimationObject *)effect->object)->image.priority = 0;
       effect->flags = 4;
     }
-    if (EffectSlot_HasPendingTarget(effect) == 0)
+    if (FieldEffectSprite_HasPendingTarget(effect) == 0)
       effect->state--;
   } else if (state == MARS_SPARK_STOPPING) {
-    if (EffectSlot_HasPendingTarget(effect) == 0) {
+    if (FieldEffectSprite_HasPendingTarget(effect) == 0) {
       effect->originX = effect->x;
       effect->originZ = effect->z;
       ((struct AnimationObject *)effect->object)->image.priority = 0;
@@ -190,10 +191,10 @@ void FieldEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
     if ((gFrameTick & 1) != 0)
       Sound_PlaySongFar(SE_145);
   } else if (state == MARS_SPARK_SWARMING) {
-    if (EffectSlot_HasPendingTarget(effect) == 0)
+    if (FieldEffectSprite_HasPendingTarget(effect) == 0)
       effect->state--;
   } else if (state == MARS_SPARK_LEAVING) {
-    if (EffectSlot_HasPendingTarget(effect) == 0)
+    if (FieldEffectSprite_HasPendingTarget(effect) == 0)
       FieldEffect_ClearOwnedSlot(effect);
   }
 }

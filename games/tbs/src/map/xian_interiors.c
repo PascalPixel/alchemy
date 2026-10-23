@@ -29,7 +29,7 @@
 ///
 /// - XXX (no evidence): why XianInteriors_Initialize places still objects of
 ///   SPRITE_CHEST's sheet in the inn and the shops that it hides
-///   (OverlayObject_CreateConfiguredObject draws them SPRITE_COLOR_HIDDEN, not
+///   (ObjectEvent_CreateConfiguredObject draws them SPRITE_COLOR_HIDDEN, not
 ///   solid and never a target), as Xian does its crates; nothing the player
 ///   sees or meets shows them, so only the authors' intent would explain them.
 
@@ -148,14 +148,14 @@ const struct MapWarpRegion *XianInteriors_GetRegions(void) { return NULL; }
 const u32 *XianInteriors_GetWarps(void) { return gXianInteriors_Warps; }
 
 /// The room behind the school places only Master Feh, Feizhi and Hsu. Every
-/// other room shares one table, whose condition 0 MapTable_Prepare replaces
-/// with whether each object event stands inside the view bounds of the room
-/// entered.
+/// other room shares one table, whose condition 0 ObjectEventTemplate_Prepare
+/// replaces with whether each object event stands inside the view bounds of the
+/// room entered.
 const struct ObjectEventTemplate *XianInteriors_GetObjectEventTemplates(void) {
   if (gGameState.warpDest == XIAN_INTERIORS_FROM_FUCHIN_TEMPLE_INTERIORS) {
     return gXianInteriors_SchoolRoomObjectEventTemplates;
   }
-  MapTable_Prepare(gXianInteriors_ObjectEventTemplates);
+  ObjectEventTemplate_Prepare(gXianInteriors_ObjectEventTemplates);
   return gXianInteriors_ObjectEventTemplates;
 }
 
@@ -292,7 +292,7 @@ const struct MapEvent *XianInteriors_GetEvents(void) {
 }
 
 /// Opens the room through a window transition and places hidden still objects
-/// of SPRITE_CHEST's sheet (OverlayObject_CreateConfiguredObject): one in the
+/// of SPRITE_CHEST's sheet (ObjectEvent_CreateConfiguredObject): one in the
 /// inn (XIAN_INTERIORS_INN_SOUTH and
 /// XIAN_INTERIORS_INN_FROM_INN_GUEST_ROOMS), two in the shops
 /// (XIAN_INTERIORS_WEAPON_AND_ARMOR_SHOP). In the room behind the school, it
@@ -300,18 +300,18 @@ const struct MapEvent *XianInteriors_GetEvents(void) {
 s32 XianInteriors_Initialize(void) {
   s16 warpDest;
 
-  gFieldWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   warpDest = gGameState.warpDest;
   if (warpDest == XIAN_INTERIORS_INN_SOUTH ||
       warpDest == XIAN_INTERIORS_INN_FROM_INN_GUEST_ROOMS) {
-    OverlayObject_CreateConfiguredObject(PIXELS(248), 0, PIXELS(417),
-                                         SPRITE_CHEST);
+    ObjectEvent_CreateConfiguredObject(PIXELS(248), 0, PIXELS(417),
+                                       SPRITE_CHEST);
   } else if (warpDest == XIAN_INTERIORS_WEAPON_AND_ARMOR_SHOP) {
-    OverlayObject_CreateConfiguredObject(PIXELS(460), 0, PIXELS(568),
-                                         SPRITE_CHEST);
-    OverlayObject_CreateConfiguredObject(PIXELS(484), 0, PIXELS(568),
-                                         SPRITE_CHEST);
+    ObjectEvent_CreateConfiguredObject(PIXELS(460), 0, PIXELS(568),
+                                       SPRITE_CHEST);
+    ObjectEvent_CreateConfiguredObject(PIXELS(484), 0, PIXELS(568),
+                                       SPRITE_CHEST);
   } else if (warpDest == XIAN_INTERIORS_FROM_FUCHIN_TEMPLE_INTERIORS) {
     Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
     Engine_ObjectEventSetAnimation(LOCALID_HSU, ANIMATION_HSU_IN_BED);
@@ -383,39 +383,39 @@ u32 gXianInteriors_Warps[] = {
 // clang-format off
 struct ObjectEventTemplate gXianInteriors_ObjectEventTemplates[] = {
     { SPRITE_MAN_WITH_TOPKNOT, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(144), 0, PIXELS(152), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(144), 0, PIXELS(152), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_IN_GREEN_APRON, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(136), 0, PIXELS(80), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(136), 0, PIXELS(80), FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_YOUNG_MAN_IN_BLUE_JACKET, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(496), 0, PIXELS(72), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(496), 0, PIXELS(72), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_BLACK_HAIR, 0x0, MOVEMENT_TYPE_WANDER,
-        PIXELS(368), 0, PIXELS(128), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(368), 0, PIXELS(128), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_MAN_IN_BLUE, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(760), 0, PIXELS(184), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(760), 0, PIXELS(184), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_WOMAN_WITH_CANE, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(680), 0, PIXELS(80), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(680), 0, PIXELS(80), FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_BALD_MAN_IN_RED, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(472), 0, PIXELS(600), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(472), 0, PIXELS(600), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_YOUNG_MAN_IN_GREEN, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(448), 0, PIXELS(600), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(448), 0, PIXELS(600), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_WOMAN_WITH_PONYTAIL, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(552), 0, PIXELS(600), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(552), 0, PIXELS(600), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_MAN_WITH_DARK_HAIR, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(232), 0, PIXELS(448), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(232), 0, PIXELS(448), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_WOMAN_IN_PINK_APRON, 0x0, MOVEMENT_TYPE_WANDER,
-        PIXELS(568), 0, PIXELS(416), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(568), 0, PIXELS(416), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_COOK, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(280), 0, PIXELS(408), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(280), 0, PIXELS(408), FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gXianInteriors_SchoolRoomObjectEventTemplates[] = {
     { SPRITE_FEH, IF_FLAG_SET(FLAG_XIAN_HEARD_HSU_TRAPPED), MOVEMENT_TYPE_STAND,
-        PIXELS(224), 0, PIXELS(656), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(224), 0, PIXELS(656), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_FEIZHI, IF_FLAG_SET(FLAG_XIAN_HEARD_HSU_TRAPPED), MOVEMENT_TYPE_STAND,
-        PIXELS(200), 0, PIXELS(704), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(200), 0, PIXELS(704), FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_HSU, IF_FLAG_SET(FLAG_XIAN_HEARD_HSU_TRAPPED), MOVEMENT_TYPE_STAND,
-        PIXELS(224), 0, PIXELS(704), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(224), 0, PIXELS(704), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 

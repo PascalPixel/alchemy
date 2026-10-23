@@ -126,7 +126,7 @@ const struct ObjectEventTemplate *LemurianShip_GetObjectEventTemplates(void) {
 /// colour. Reached by stepping on metatile behavior 1 (gLemurianShipEvents);
 /// takes LEMURIAN_SHIP_TO_LALIVERO_FARANS_HOUSE.
 static void EventScript_LeaveTheShip(void) {
-  Engine_ScriptRequestWarp(gFieldWork->touchedTrigger);
+  Engine_ScriptRequestWarp(gFieldWork->coordEvent);
   Io_Write16(0, &PLTT_BACKDROP);
 }
 
@@ -234,25 +234,25 @@ static void Ship_UpdateSwell(void) {
     if (gLeaderDeckY != SHIP_NOT_ON_DECK) {
       objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
       objectEvent->y.fixed = gLeaderDeckY + swell;
-      objectEvent->terrainHeight = gLeaderDeckY + swell;
+      objectEvent->groundHeight = gLeaderDeckY + swell;
       objectEvent->motionFlags = 0;
     }
     if (gGaretDeckY != SHIP_NOT_ON_DECK) {
       objectEvent = ObjectEvent_GetById(GARET);
       objectEvent->y.fixed = gGaretDeckY + swell;
-      objectEvent->terrainHeight = gLeaderDeckY + swell;
+      objectEvent->groundHeight = gLeaderDeckY + swell;
       objectEvent->motionFlags = 0;
     }
     if (gMiaDeckY != SHIP_NOT_ON_DECK) {
       objectEvent = ObjectEvent_GetById(MIA);
       objectEvent->y.fixed = gMiaDeckY + swell;
-      objectEvent->terrainHeight = gLeaderDeckY + swell;
+      objectEvent->groundHeight = gLeaderDeckY + swell;
       objectEvent->motionFlags = 0;
     }
     if (gIvanDeckY != SHIP_NOT_ON_DECK) {
       objectEvent = ObjectEvent_GetById(IVAN);
       objectEvent->y.fixed = gIvanDeckY + swell;
-      objectEvent->terrainHeight = gLeaderDeckY + swell;
+      objectEvent->groundHeight = gLeaderDeckY + swell;
       objectEvent->motionFlags = 0;
     }
     gSwellPhase++;
@@ -286,7 +286,7 @@ static void Ship_UpdateSwell(void) {
 /// the ship.
 /// Called by gLeaderBoardsShip as he steps on deck; the other members'
 /// boarding scripts call their own copies below.
-static s32 Leader_StepOnDeck(struct ScriptInterpreter *interpreter) {
+static s32 Leader_StepOnDeck(struct ObjectScriptContext *interpreter) {
   s32 *deckY;
   struct ObjectEvent *objectEvent;
 
@@ -297,7 +297,7 @@ static s32 Leader_StepOnDeck(struct ScriptInterpreter *interpreter) {
 }
 
 /// Remembers Garet's boarding height for the swell callback.
-static s32 Garet_StepOnDeck(struct ScriptInterpreter *interpreter) {
+static s32 Garet_StepOnDeck(struct ObjectScriptContext *interpreter) {
   s32 *deckY;
   struct ObjectEvent *objectEvent;
 
@@ -308,7 +308,7 @@ static s32 Garet_StepOnDeck(struct ScriptInterpreter *interpreter) {
 }
 
 /// Remembers Mia's boarding height for the swell callback.
-static s32 Mia_StepOnDeck(struct ScriptInterpreter *interpreter) {
+static s32 Mia_StepOnDeck(struct ObjectScriptContext *interpreter) {
   s32 *deckY;
   struct ObjectEvent *objectEvent;
 
@@ -319,7 +319,7 @@ static s32 Mia_StepOnDeck(struct ScriptInterpreter *interpreter) {
 }
 
 /// Remembers Ivan's boarding height for the swell callback.
-static s32 Ivan_StepOnDeck(struct ScriptInterpreter *interpreter) {
+static s32 Ivan_StepOnDeck(struct ObjectScriptContext *interpreter) {
   s32 *deckY;
   struct ObjectEvent *objectEvent;
 
@@ -341,7 +341,7 @@ static void LemurianShip_SetSail(void) {
   struct EventWork *work;
 
   Engine_ScriptStart();
-  Camera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   MapGrid_CopyCellAttributes(18, 0, 3, 1, 18, 12);
   // Garet, Mia and Ivan step out around the leader. Garet: "It looks like
   // it's finally time to leave Gondowan." Ivan and Mia say how much has
@@ -349,7 +349,7 @@ static void LemurianShip_SetSail(void) {
   Engine_ScriptSetMessage(MsgFieldLooksLikeFinally);
   FieldMotion_LaunchFromFocusedObject(GARET, -10, 16, FACING_NORTH);
   FieldMotion_LaunchFromFocusedObject(MIA, 0, 24, FACING_NORTH);
-  Motion_LaunchFromFocusedObject(IVAN, 10, 16, FACING_NORTH);
+  ObjectMotion_LaunchFromFocusedObject(IVAN, 10, 16, FACING_NORTH);
   Engine_ObjectEventWaitForMove(GARET);
   Engine_ScriptWait(50);
   Engine_ObjectEventRunRepeatedMotion(GARET, 2);
@@ -508,7 +508,7 @@ static void LemurianShip_SetSail(void) {
   ObjectEvent_SetSpeed(MIA, 0x13333, 0x9999);
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER, gLeaderBoardsShip);
   Engine_ScriptWait(50);
-  Camera_MoveTo(PIXELS(264), -1, PIXELS(200), 1);
+  FieldCamera_MoveTo(PIXELS(264), -1, PIXELS(200), 1);
   ObjectEvent_SetActionScript(GARET, gGaretBoardsShip);
   Engine_ScriptWait(50);
   ObjectEvent_SetActionScript(IVAN, gIvanBoardsShip);
@@ -528,7 +528,7 @@ static void LemurianShip_SetSail(void) {
   Engine_ObjectEventFaceDirection(MIA, FACING_NORTH, 0);
   Engine_ScriptWait(20);
   // On deck, all four turn west together and nod.
-  Camera_MoveTo(PIXELS(216), -1, PIXELS(168), 1);
+  FieldCamera_MoveTo(PIXELS(216), -1, PIXELS(168), 1);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(20);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 0);
@@ -563,7 +563,7 @@ static void LemurianShip_SetSail(void) {
   Engine_ScriptWait(300);
   // Fade out to the clear screen.
   work = gMapGridWork[19];
-  work->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  work->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Io_Write16(0, &PLTT_BACKDROP);
   work->transitionFrames = 96;
   Engine_ScriptCloseScreen();
@@ -711,7 +711,7 @@ s32 LemurianShip_SetupMap(void) {
   if (gGameState.warpDest == LEMURIAN_SHIP_WITH_BLACK_ORB) {
     Inventory_AddItem(LOCALID_PARTY_LEADER, ITEM_BLACK_ORB);
   }
-  ((struct EventWork *)gMapGridWork[19])->startTransition =
+  ((struct EventWork *)gMapGridWork[19])->transition =
       MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   ObjectEvent_GetById(GANGWAY_NORTH)->collisionFlags = 0;
   ObjectEvent_GetById(GANGWAY_NORTH)->priorityFlags =
@@ -989,15 +989,15 @@ u32 gLemurianShipWarps[] = {
 
 struct ObjectEventTemplate gLemurianShipObjectEventTemplates[] = {
     {GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST,
-     TALK_FACE_PARTY, 0},
+     TALK_FACING_PARTY, 0},
     {IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST,
-     TALK_FACE_PARTY, 0},
+     TALK_FACING_PARTY, 0},
     {MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST,
-     TALK_FACE_PARTY, 0},
+     TALK_FACING_PARTY, 0},
     {SPRITE_GANGWAY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(312), 0,
-     PIXELS(248), FACING_SOUTH, TALK_KEEP_FACING, 0},
+     PIXELS(248), FACING_SOUTH, TALK_FACING_KEEP, 0},
     {SPRITE_GANGWAY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(312), 0,
-     PIXELS(312), FACING_SOUTH, TALK_KEEP_FACING, 0},
+     PIXELS(312), FACING_SOUTH, TALK_FACING_KEEP, 0},
     {MAP_TABLE_END},
 };
 

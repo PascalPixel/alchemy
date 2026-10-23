@@ -30,8 +30,8 @@ void ObjectDispatch_ApplyValueToKind200Children(s32 value) {
   } while (remainingObjectEvents >= 0);
 }
 
-/// Scheduler callback of the timed effect (FIELD_KIND_REVEAL): asks for it to
-/// end once the leader is 60 pixels from its centre or its time has run out.
+/// Scheduler callback of the timed effect (FIELD_PSYNERGY_REVEAL): asks for it
+/// to end once the leader is 60 pixels from its centre or its time has run out.
 /// The centre and the time are in the event work from 0xcb8 on
 /// (FieldEffect_RunReveal). The time counts only while effectTimerRunning is
 /// set, so menus and other effects pause it. It asks every frame until
@@ -44,7 +44,7 @@ void FieldEffect_WatchLeaderDistance(void) {
   s32 distanceZ;
 
   work = (struct FieldWork *)gFieldWork;
-  objectEvent = ObjectTable_Get(gGameState.selectedLocalId);
+  objectEvent = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
   if (work->effectTimerRunning != 0) {
     timer = &work->revealFrames;
     if (*timer != 0)
@@ -71,7 +71,7 @@ void FieldEffect_WatchLeaderDistance(void) {
 /// Starts a screen transition centred on the leader, runs the matching event if
 /// there is one, and puts markers round the leader.
 ///
-/// Abilities: Reveal (FIELD_KIND_REVEAL).
+/// Abilities: Reveal (FIELD_PSYNERGY_REVEAL).
 ///
 /// The transition is WINDOW_TRANSITION_RIPPLE, a wobbling circle round the
 /// leader stepped over 19 frames, and the BG colours turn grey. Reveal lasts
@@ -80,7 +80,7 @@ void FieldEffect_WatchLeaderDistance(void) {
 /// Called by FieldEffect_Run and FieldEffect_DispatchRequestKind.
 void FieldEffect_RunReveal(void) {
   struct FieldWork *work;
-  struct DisplayTransitionState *state;
+  struct ScreenTransitionState *state;
   struct ObjectEvent *target;
   s32 eventTarget;
   void *event;
@@ -88,9 +88,9 @@ void FieldEffect_RunReveal(void) {
 
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
   ObjectDispatch_ApplyValueToKind200Children(6);
-  DisplayTransition_InitializeBattleEffectState(8);
+  ScreenTransition_InitializeBattleEffectState(8);
   state = HEAP_SLOT_BLOCK(HEAP_SLOT_SCREEN_TRANSITION);
-  target = ObjectTable_Get(gGameState.selectedLocalId);
+  target = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
   state->centreX = target->x.fixed;
   state->centreY = target->z.fixed - target->y.fixed;
   // From the plain colours (PALETTE_TRANSFORM_PLAIN, 0x10000) the BG half
@@ -103,10 +103,10 @@ void FieldEffect_RunReveal(void) {
   work->revealActive = 0;
 #endif
   WaitFrames(1);
-  event = FieldEffect_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_EFFECT_ACTS),
-                                        FIELD_KIND_REVEAL, &eventTarget);
+  event = Map_FindPsynergyEvent(PSYNERGY_EVENT(PSYNERGY_PHASE_EFFECT_ACTS),
+                                FIELD_PSYNERGY_REVEAL, &eventTarget);
   if (event != NULL)
-    Field_RunEventAction(event, gGameState.selectedLocalId, eventTarget);
+    Field_RunEventAction(event, gGameState.leaderLocalId, eventTarget);
   Sound_PlaySongFar(SE_131);
 
   // Record the centre (in pixels) and the time in the event work, and put
@@ -134,15 +134,15 @@ void FieldEffect_RunReveal(void) {
 void FieldEffect_EndReveal(void) {
 #ifdef UBFIX
   struct FieldEffectWork *effectWork = gFieldEffectWork;
-  struct DisplayTransitionState *scene = gScreenTransitionWork;
+  struct ScreenTransitionState *scene = gScreenTransitionWork;
   struct FieldWork *state = (struct FieldWork *)gFieldWork;
 #else
   // Named slots avoid stepping outside gFieldEffectWork. They add 8 bytes to
   // this function in the forced native EN build (0xe8 -> 0xf0).
   struct FieldEffectWork **cell = &gFieldEffectWork;
   struct FieldEffectWork *effectWork = *cell;
-  struct DisplayTransitionState *scene =
-      *(struct DisplayTransitionState **)((u8 *)cell - 0x64);
+  struct ScreenTransitionState *scene =
+      *(struct ScreenTransitionState **)((u8 *)cell - 0x64);
   struct FieldWork *state = *(struct FieldWork **)((u8 *)cell - 0x74);
 #endif
   s16 zero;
@@ -165,11 +165,10 @@ void FieldEffect_EndReveal(void) {
     ColorBuffer_StartInterpolation(30);
     WaitFrames(1);
 
-    event =
-        FieldEffect_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_EFFECT_ENDS),
-                                      FIELD_KIND_REVEAL, &eventTarget);
+    event = Map_FindPsynergyEvent(PSYNERGY_EVENT(PSYNERGY_PHASE_EFFECT_ENDS),
+                                  FIELD_PSYNERGY_REVEAL, &eventTarget);
     if (event != NULL)
-      Field_RunEventAction(event, gGameState.selectedLocalId, eventTarget);
+      Field_RunEventAction(event, gGameState.leaderLocalId, eventTarget);
 
     if (effectWork->childOption == 0) {
       scene->nextMode = 0;

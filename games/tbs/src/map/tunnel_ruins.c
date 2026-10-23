@@ -241,7 +241,7 @@ static void TunnelRuins_MarkPushPillarCells(void);
 /// gTunnelRuins_ShrinkScript has shrunk it
 /// (https://alchemy.pascalpixel.com/places/tunnel-ruins-great-statue/map-1.png).
 static s32 TunnelRuins_RefreshObjectEventAfterShrinking(
-    struct ScriptInterpreter *interpreter) {
+    struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
   return 0;
@@ -273,7 +273,7 @@ static s32 TunnelRuins_HopLeaderTo(struct FieldPosition *target) {
 
   if (FieldObject_CheckMovementCollision(objectEvent, &adjacentTile) != 1 &&
       FieldObject_CheckMovementCollision(objectEvent, target) == 0) {
-    EV_START();
+    SCRIPT_START();
     ObjectEvent_SetMode(objectEvent, ANIMATION_LEADER_SPRING);
     Engine_TaskWait(6);
     Engine_AudioPlayCue(SE_JUMP);
@@ -293,7 +293,7 @@ static s32 TunnelRuins_HopLeaderTo(struct FieldPosition *target) {
     Engine_TaskWait(6);
 
     objectEvent->motionFlags = savedMotionFlags;
-    EV_END();
+    SCRIPT_END();
     return 0;
   }
   return 1;
@@ -440,7 +440,7 @@ static s32 TunnelRuins_PuddleFollowsPillar(union FieldObject *fieldObject) {
 static void
 TunnelRuins_WaitForObjectEventToLand(struct ObjectEvent *objectEvent) {
   s32 remainingFrames = 60;
-  s32 terrainHeight;
+  s32 groundHeight;
 
   for (;;) {
     if (remainingFrames != 0) {
@@ -448,18 +448,18 @@ TunnelRuins_WaitForObjectEventToLand(struct ObjectEvent *objectEvent) {
 
       Engine_TaskWait(1);
       height = objectEvent->y.fixed;
-      terrainHeight = objectEvent->terrainHeight;
+      groundHeight = objectEvent->groundHeight;
       remainingFrames--;
-      if (height <= terrainHeight) {
+      if (height <= groundHeight) {
         break;
       }
       continue;
     }
-    terrainHeight = objectEvent->terrainHeight;
+    groundHeight = objectEvent->groundHeight;
     break;
   }
   objectEvent->velocityY = 0;
-  objectEvent->y.fixed = terrainHeight;
+  objectEvent->y.fixed = groundHeight;
   objectEvent->targetY = OBJ_EVENT_NO_TARGET;
 }
 
@@ -474,7 +474,7 @@ static void EventScript_HopDownStep(void) {
   struct EffectOptions options;
   u32 i;
 
-  EV_START();
+  SCRIPT_START();
   ObjectEvent_SetMode(leader, ANIMATION_LEADER_SPRING);
   ObjectMotion_WaitForAnimationChange(0);
   ObjectEvent_SetMode(leader, 1);
@@ -506,16 +506,16 @@ static void EventScript_HopDownStep(void) {
   }
   Engine_ObjectEventSetSpriteFlags(leader, 1);
   leader->motionFlags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
-  EV_END();
+  SCRIPT_END();
 }
 
 // The update functions the stones take, cast to the update slot's type
 // where they return a value.
 #ifdef UBFIX
-#define UPDATE_BY_RELATIVE_DEPTH MapObjectEvent_SetFlagBitByRelativeDepth
+#define UPDATE_BY_RELATIVE_DEPTH ObjectEvent_SetFlagBitByRelativeDepth
 #else
 #define UPDATE_BY_RELATIVE_DEPTH                                               \
-  ((void (*)(union FieldObject *))MapObjectEvent_SetFlagBitByRelativeDepth)
+  ((void (*)(union FieldObject *))ObjectEvent_SetFlagBitByRelativeDepth)
 #endif
 #ifdef UBFIX
 #define UPDATE_RIDE_STONE_BELOW TunnelRuins_RideStoneBelow
@@ -566,11 +566,11 @@ const struct ObjectEventTemplate *TunnelRuins_GetObjectEventTemplates(void) {
 /// Walking into the first pair of pillars pushes them along.
 /// Reached by walking into metatile behavior 24 in TunnelRuinsGreatStatue.
 static void EventScript_PushFirstPillars(void) {
-  EV_START();
+  SCRIPT_START();
   MapGrid_CopyCellAttributes(73, 38, 5, 5, 9, 38);
-  StagedObjectEvent_AdvancePair();
+  PushedObject_AdvancePair();
   TunnelRuins_UpdateFirstPillarCells();
-  EV_END();
+  SCRIPT_END();
 }
 
 /// Walking west into a gap: the leader hops 32 pixels across it.
@@ -590,11 +590,11 @@ static void EventScript_HopWest(void) {
 /// Walking into the second pair of pillars pushes them along.
 /// Reached by walking into metatile behavior 26 in TunnelRuinsGreatStatue.
 static void EventScript_PushSecondPillars(void) {
-  EV_START();
+  SCRIPT_START();
   MapGrid_CopyCellAttributes(93, 30, 6, 5, 29, 30);
-  StagedObjectEvent_AdvancePair();
+  PushedObject_AdvancePair();
   TunnelRuins_UpdateSecondPillarCells();
-  EV_END();
+  SCRIPT_END();
 }
 
 /// Walking south off a ledge: the leader jumps down.
@@ -621,12 +621,12 @@ static void EventScript_HopEast(void) {
 /// Walking into the small pillars pushes the one in front along.
 /// Reached by walking into metatile behavior 28 in TunnelRuinsGreatStatue.
 static void EventScript_PushSmallPillars(void) {
-  EV_START();
+  SCRIPT_START();
   MapGrid_CopyCellAttributes(89, 49, 3, 2, 25, 49);
   MapGrid_CopyCellAttributes(89, 51, 8, 5, 25, 51);
-  StagedObjectEvent_AdvancePair();
+  PushedObject_AdvancePair();
   TunnelRuins_UpdateSmallPillarCells();
-  EV_END();
+  SCRIPT_END();
 }
 
 /// Walking south at the small pillars: the leader hops a gap if there is one,
@@ -738,12 +738,12 @@ static void EventScript_SinkPillarA(void) {
   struct EffectOptions optionsStorage;
   struct EffectOptions *options;
 
-  EV_START();
+  SCRIPT_START();
   objectEvent = ObjectEvent_GetById(LOCALID_SINKING_PILLAR_A);
   if ((objectEvent->x.fixed >> 20) == 46) {
     WAIT(30);
-    overlay = OverlayObject_PrepareObject(PIXELS(744), 0, PIXELS(184),
-                                          SPRITE_CAPPED_PILLAR);
+    overlay = ObjectEvent_PrepareObject(PIXELS(744), 0, PIXELS(184),
+                                        SPRITE_CAPPED_PILLAR);
     // The pillar sinks a pixel every three frames, raising dust around it.
     options = &optionsStorage;
     options->startScaleX = 3 * Q16_ONE / 5;
@@ -767,7 +767,7 @@ static void EventScript_SinkPillarA(void) {
     WAIT(30);
     ObjectEvent_Get(LOCALID_SINKING_PILLAR_A)->priorityFlags |=
         OBJ_EVENT_PRIORITY_UNDERFOOT;
-    OBJECT_MODE(LOCALID_SINKING_PILLAR_A, 3);
+    OBJECT_ANIMATION(LOCALID_SINKING_PILLAR_A, 3);
     Engine_ObjectDispatchRelease(overlay);
     MapGrid_CopyCellAttributes(45, 4, 1, 1, 46, 8);
     OBJECT_POSITION_SET(LOCALID_PUDDLE_A, 744, 136);
@@ -778,16 +778,16 @@ static void EventScript_SinkPillarA(void) {
     WAIT(10);
     FLAG_SET(FLAG_TUNNEL_RUINS_PILLAR_A_IN_FLOOR);
   }
-  EV_END();
+  SCRIPT_END();
 }
 
 /// Walking into sinking pillar A pushes it, and it sinks if it reaches column
 /// 46 (until FLAG_TUNNEL_RUINS_PILLAR_A_IN_FLOOR).
 /// Reached by walking into metatile behavior 29 in TunnelRuinsGreatStatue.
 static void EventScript_PushSinkingPillarA(void) {
-  EV_START();
-  StagedObjectEvent_AdvancePair();
-  EV_END();
+  SCRIPT_START();
+  PushedObject_AdvancePair();
+  SCRIPT_END();
   EventScript_SinkPillarA();
 }
 
@@ -796,9 +796,9 @@ static void EventScript_PushSinkingPillarA(void) {
 static void EventScript_FreezePuddleA(void) {
   u8 *flags;
 
-  OBJECT_MODE(LOCALID_PUDDLE_A, 1);
+  OBJECT_ANIMATION(LOCALID_PUDDLE_A, 1);
   Engine_ObjectEventSetChildValue(LOCALID_PUDDLE_A, 0);
-  OBJECT_MODE(LOCALID_PUDDLE_A, 2);
+  OBJECT_ANIMATION(LOCALID_PUDDLE_A, 2);
   flags = &ObjectEvent_GetById(LOCALID_PUDDLE_A)->priorityFlags;
   *flags &= ~OBJ_EVENT_PRIORITY_UNDERFOOT;
   FLAG_SET(FLAG_MAP_TEMP_00);
@@ -820,12 +820,12 @@ static void EventScript_SinkPillarB(void) {
   struct EffectOptions optionsStorage;
   struct EffectOptions *options;
 
-  EV_START();
+  SCRIPT_START();
   objectEvent = ObjectEvent_GetById(LOCALID_SINKING_PILLAR_B);
   if ((objectEvent->x.fixed >> 20) == 48) {
     if (FLAG_CHECK(FLAG_MAP_TEMP_02) != 0) {
       WAIT(30);
-      overlay = OverlayObject_PrepareObject(PIXELS(770), 0, PIXELS(274), 223);
+      overlay = ObjectEvent_PrepareObject(PIXELS(770), 0, PIXELS(274), 223);
       options = &optionsStorage;
       options->startScaleX = 3 * Q16_ONE / 5;
       options->startScaleY = 3 * Q16_ONE / 5;
@@ -847,7 +847,7 @@ static void EventScript_SinkPillarB(void) {
       WAIT(30);
       ObjectEvent_Get(LOCALID_SINKING_PILLAR_B)->priorityFlags |=
           OBJ_EVENT_PRIORITY_UNDERFOOT;
-      OBJECT_MODE(LOCALID_SINKING_PILLAR_B, 3);
+      OBJECT_ANIMATION(LOCALID_SINKING_PILLAR_B, 3);
       Engine_ObjectDispatchRelease(overlay);
       MapGrid_CopyCellAttributes(45, 4, 1, 1, 48, 14);
       OBJECT_POSITION_SET(LOCALID_PUDDLE_B, 776, 232);
@@ -859,7 +859,7 @@ static void EventScript_SinkPillarB(void) {
       FLAG_SET(FLAG_TUNNEL_RUINS_PILLAR_B_IN_FLOOR);
     }
   }
-  EV_END();
+  SCRIPT_END();
 }
 
 /// Walking into sinking pillar B pushes it, and it sinks if it is soaked and
@@ -867,9 +867,9 @@ static void EventScript_SinkPillarB(void) {
 /// Reached by walking into metatile behavior 30, or east into 32 before Douse
 /// has soaked it, in TunnelRuinsGreatStatue.
 static void EventScript_PushSinkingPillarB(void) {
-  EV_START();
-  StagedObjectEvent_AdvancePair();
-  EV_END();
+  SCRIPT_START();
+  PushedObject_AdvancePair();
+  SCRIPT_END();
   EventScript_SinkPillarB();
 }
 
@@ -893,9 +893,9 @@ static void EventScript_DousePillarB(void) {
 static void EventScript_FreezePuddleB(void) {
   u8 *flags;
 
-  OBJECT_MODE(LOCALID_PUDDLE_B, 1);
+  OBJECT_ANIMATION(LOCALID_PUDDLE_B, 1);
   Engine_ObjectEventSetChildValue(LOCALID_PUDDLE_B, 0);
-  OBJECT_MODE(LOCALID_PUDDLE_B, 2);
+  OBJECT_ANIMATION(LOCALID_PUDDLE_B, 2);
   flags = &ObjectEvent_GetById(LOCALID_PUDDLE_B)->priorityFlags;
   *flags &= ~OBJ_EVENT_PRIORITY_UNDERFOOT;
   FLAG_SET(FLAG_MAP_TEMP_01);
@@ -908,31 +908,31 @@ static void EventScript_FreezePuddleB(void) {
 /// open here.
 /// Reached by searching metatile behavior 40 in TunnelRuinsGreatStatue.
 static void EventScript_ReadFirstStatue(void) {
-  EV_START();
-  OBJECT_MODE(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+  SCRIPT_START();
+  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIMATION_STAND);
   if (FLAG_CHECK(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH) != 0 ||
       FLAG_CHECK(FLAG_VENUS_LIGHTHOUSE_SECOND_PATH) != 0) {
     Engine_MessageShowCentered(MSGNO(MsgTunnelRuinsStatueSpeaksAfterAnswer), 1);
   } else {
     Engine_MessageShowCentered(MSGNO(MsgTunnelRuinsStatueSpeaksIsaacSoulYe), 1);
   }
-  EV_END();
+  SCRIPT_END();
 }
 
 /// Moving the Douse pillar (until its puddle is frozen): nothing more
 /// happens.
 /// Reached by Move on the Douse pillar until FLAG_MAP_TEMP_04 is set.
 static void EventScript_MoveDousePillar(void) {
-  EV_START();
-  EV_END();
+  SCRIPT_START();
+  SCRIPT_END();
 }
 
 /// Walking into the Douse pillar pushes it along.
 /// Reached by walking into metatile behavior 25 in TunnelRuinsLadyStatues.
 static void EventScript_PushDousePillar(void) {
-  EV_START();
-  StagedObjectEvent_AdvancePair();
-  EV_END();
+  SCRIPT_START();
+  PushedObject_AdvancePair();
+  SCRIPT_END();
   EventScript_MoveDousePillar();
 }
 
@@ -964,11 +964,11 @@ static void EventScript_FreezeDousePuddle(void) {
   s32 column;
   s32 row;
 
-  EV_START();
+  SCRIPT_START();
   Engine_ObjectEventSetSpritePriority(LOCALID_DOUSE_PUDDLE, 1);
-  OBJECT_MODE(LOCALID_DOUSE_PUDDLE, 1);
+  OBJECT_ANIMATION(LOCALID_DOUSE_PUDDLE, 1);
   Engine_ObjectEventSetChildValue(LOCALID_DOUSE_PUDDLE, 0);
-  OBJECT_MODE(LOCALID_DOUSE_PUDDLE, 2);
+  OBJECT_ANIMATION(LOCALID_DOUSE_PUDDLE, 2);
 
   {
     u8 *flag = &ObjectEvent_GetById(LOCALID_DOUSE_PUDDLE)->priorityFlags;
@@ -987,7 +987,7 @@ static void EventScript_FreezeDousePuddle(void) {
   objectEvent = ObjectEvent_GetById(LOCALID_DOUSE_PILLAR);
   objectEvent->update = UPDATE_BY_RELATIVE_DEPTH;
 
-  EV_END();
+  SCRIPT_END();
 }
 
 // UB: calling this s32 function through a void update hook is incompatible.
@@ -1113,7 +1113,7 @@ static void EventScript_SetStoneOnBalance(void) {
   s32 j;
   s32 settledIndex;
 
-  EV_START();
+  SCRIPT_START();
   for (i = 0; i <= 2; i++) {
     if (ObjectEvent_GetById(i + LOCALID_CARRY_STONE_A)
                 ->sprite->image.priority == 3 &&
@@ -1126,7 +1126,7 @@ static void EventScript_SetStoneOnBalance(void) {
     }
     if ((ObjectEvent_GetById(i + LOCALID_CARRY_STONE_A)->z.fixed >> 20) == 9 &&
         FLAG_CHECK(i + FLAG_MAP_TEMP_00) == 0) {
-      ObjectEvent_GetById(i + LOCALID_CARRY_STONE_A)->terrainHeight = 0;
+      ObjectEvent_GetById(i + LOCALID_CARRY_STONE_A)->groundHeight = 0;
       ObjectEvent_GetById(i + LOCALID_CARRY_STONE_A)->velocityY = 0;
       ObjectEvent_GetById(i + LOCALID_CARRY_STONE_A)->targetY =
           OBJ_EVENT_NO_TARGET;
@@ -1159,7 +1159,7 @@ static void EventScript_SetStoneOnBalance(void) {
           break;
         }
       }
-      ObjectEvent_GetById(settledIndex + LOCALID_CARRY_STONE_A)->terrainHeight =
+      ObjectEvent_GetById(settledIndex + LOCALID_CARRY_STONE_A)->groundHeight =
           0;
       ObjectEvent_Get(settledIndex + LOCALID_CARRY_STONE_A)->velocityY = 0;
       ObjectEvent_GetById(settledIndex + LOCALID_CARRY_STONE_A)->targetY =
@@ -1169,8 +1169,8 @@ static void EventScript_SetStoneOnBalance(void) {
       // The camera turns to the balance as the carved stone drops and the
       // platforms move.
       Engine_CameraSetSpeed(PIXELS(3), PIXELS(3) / 8);
-      Camera_GetScriptObject()->motionFlags = 0;
-      Camera_MoveTo(PIXELS(168), PIXELS(8), PIXELS(184), 1);
+      FieldCamera_GetScriptObject()->motionFlags = 0;
+      FieldCamera_MoveTo(PIXELS(168), PIXELS(8), PIXELS(184), 1);
       Engine_CameraWaitForMove();
       TunnelRuins_DropStoneOnStack(settledIndex + LOCALID_CARRY_STONE_A);
       if ((ObjectEvent_GetById(settledIndex + LOCALID_CARRY_STONE_A)->x.fixed >>
@@ -1195,16 +1195,16 @@ static void EventScript_SetStoneOnBalance(void) {
       break;
     }
   }
-  EV_END();
+  SCRIPT_END();
 }
 
 /// Walking into a pushable object pushes it along.
 /// Reached by walking into metatile behaviors 28 and 30 in
 /// TunnelRuinsLadyStatues.
 static void EventScript_PushObject(void) {
-  EV_START();
-  StagedObjectEvent_AdvancePair();
-  EV_END();
+  SCRIPT_START();
+  PushedObject_AdvancePair();
+  SCRIPT_END();
 }
 
 /// Moving either east pillar: whether each stands a cell west of its place is
@@ -1212,7 +1212,7 @@ static void EventScript_PushObject(void) {
 /// Reached by Move on either east pillar; sets or clears
 /// FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST and _B_PUSHED_WEST.
 static void EventScript_MoveEastPillar(void) {
-  EV_START();
+  SCRIPT_START();
 
   if ((ObjectEvent_GetById(LOCALID_EAST_PILLAR_A)->x.fixed >> 20) == 45) {
     FLAG_SET(FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST);
@@ -1227,16 +1227,16 @@ static void EventScript_MoveEastPillar(void) {
   }
 
   TunnelRuins_MarkPushPillarCells();
-  EV_END();
+  SCRIPT_END();
 }
 
 /// Walking into an east pillar pushes it along, and its place is kept.
 /// Reached by walking east into metatile behavior 29 in TunnelRuinsLadyStatues.
 static void EventScript_PushEastPillar(void) {
-  EV_START();
-  StagedObjectEvent_AdvancePair();
+  SCRIPT_START();
+  PushedObject_AdvancePair();
   EventScript_MoveEastPillar();
-  EV_END();
+  SCRIPT_END();
 }
 
 /// The two vanishing statues stand, blocking their cells: on entering their
@@ -1245,8 +1245,8 @@ static void EventScript_PushEastPillar(void) {
 static void EventScript_ShowFalseStatues(void) {
   MapGrid_CopyCellAttributes(72, 49, 1, 1, 8, 49);
   MapGrid_CopyCellAttributes(113, 43, 1, 1, 49, 43);
-  Marker_SetPosition(100, 0, 0);
-  Marker_SetPosition(101, 0, 0);
+  TreasureSpot_SetPosition(100, 0, 0);
+  TreasureSpot_SetPosition(101, 0, 0);
   OBJECT_POSITION_SET(LOCALID_VANISHING_STATUE_A, 136, 792);
   OBJECT_POSITION_SET(LOCALID_VANISHING_STATUE_B, 792, 696);
 }
@@ -1257,8 +1257,8 @@ static void EventScript_ShowFalseStatues(void) {
 static void EventScript_HideFalseStatues(void) {
   MapGrid_CopyCellAttributes(8, 113, 1, 1, 8, 49);
   MapGrid_CopyCellAttributes(49, 107, 1, 1, 49, 43);
-  Marker_SetPosition(100, -1, -1);
-  Marker_SetPosition(101, -1, -1);
+  TreasureSpot_SetPosition(100, -1, -1);
+  TreasureSpot_SetPosition(101, -1, -1);
   ObjectEvent_SetPosition(LOCALID_VANISHING_STATUE_A, 0, 0);
   ObjectEvent_SetPosition(LOCALID_VANISHING_STATUE_B, 0, 0);
 }
@@ -1276,7 +1276,7 @@ static void EventScript_MoveLadyStatue(void) {
   s32 row;
 
   correctPositions = 0;
-  EV_START();
+  SCRIPT_START();
   MapGrid_CopyCellAttributes(83, 45, 11, 8, 19, 45);
   objectEvent = ObjectEvent_GetById(LOCALID_LADY_STATUE_A);
   column = objectEvent->x.fixed;
@@ -1347,12 +1347,12 @@ static void EventScript_MoveLadyStatue(void) {
   // The door moves only when the arrangement is completed or broken.
   if (correctPositions == 5) {
     if (FLAG_CHECK(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN) != 0) {
-      EV_END();
+      SCRIPT_END();
       return;
     }
     WAIT(20);
-    Camera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
-    Camera_MoveTo(PIXELS(472), -1, PIXELS(780), 1);
+    FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
+    FieldCamera_MoveTo(PIXELS(472), -1, PIXELS(780), 1);
     Engine_CameraWaitForMove();
     WAIT(30);
     FLAG_SET(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN);
@@ -1363,8 +1363,8 @@ static void EventScript_MoveLadyStatue(void) {
   } else {
     if (FLAG_CHECK(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN) != 0) {
       WAIT(20);
-      Camera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
-      Camera_MoveTo(PIXELS(472), -1, PIXELS(780), 1);
+      FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
+      FieldCamera_MoveTo(PIXELS(472), -1, PIXELS(780), 1);
       Engine_CameraWaitForMove();
       WAIT(30);
       GameFlag_Clear(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN);
@@ -1374,38 +1374,38 @@ static void EventScript_MoveLadyStatue(void) {
       WAIT(40);
     }
   }
-  EV_END();
+  SCRIPT_END();
 }
 
 /// Walking into one of the five coloured statues pushes it along, then checks
 /// the door.
 /// Reached by walking into metatile behavior 41 in TunnelRuinsLadyStatues.
 static void EventScript_PushLadyStatue(void) {
-  EV_START();
+  SCRIPT_START();
   {
     MapGrid_CopyCellAttributes(83, 45, 11, 8, 19, 45);
   }
-  StagedObjectEvent_AdvancePair();
+  PushedObject_AdvancePair();
   EventScript_MoveLadyStatue();
-  EV_END();
+  SCRIPT_END();
 }
 
 /// Searching the statue in TunnelRuinsLadyStatues's room of the five coloured
 /// statues. "The statue seems to speak to your soul..." Reached by searching
 /// metatile behavior 42 in TunnelRuinsLadyStatues.
 static void EventScript_ReadSecondStatue(void) {
-  EV_START();
-  OBJECT_MODE(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+  SCRIPT_START();
+  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIMATION_STAND);
   Engine_MessageShowCentered(MSGNO(MsgTunnelRuinsStatueSeemsSpeakYourSoul), 1);
-  EV_END();
+  SCRIPT_END();
 }
 
 /// Searching the door in TunnelRuinsLadyStatues: it is tightly locked.
 /// Reached by searching metatile behavior 20 in TunnelRuinsLadyStatues.
 static void EventScript_SearchLockedDoor(void) {
-  EV_START();
+  SCRIPT_START();
   Engine_MessageShowCentered(MSGNO(MsgFieldDoorTightlyLocked), 1);
-  EV_END();
+  SCRIPT_END();
 }
 
 /// The map events of TunnelRuinsGreatStatue, or of TunnelRuinsLadyStatues and
@@ -1427,8 +1427,8 @@ static void TunnelRuins_UpdateFirstPillarCells(void) {
   {
     MapGrid_CopyCellAttributes(73, 38, 5, 5, 9, 38);
   }
-  MapObjectEvent_SwapPositionsByDepth(LOCALID_FIRST_PILLAR_B,
-                                      LOCALID_FIRST_PILLAR_A);
+  ObjectEvent_SwapPositionsByDepth(LOCALID_FIRST_PILLAR_B,
+                                   LOCALID_FIRST_PILLAR_A);
 
   {
     s32 column = ObjectEvent_GetById(LOCALID_FIRST_PILLAR_A)->x.fixed >> 20;
@@ -1452,8 +1452,8 @@ static void TunnelRuins_UpdateSecondPillarCells(void) {
   {
     MapGrid_CopyCellAttributes(93, 30, 6, 5, 29, 30);
   }
-  MapObjectEvent_SwapPositionsByDepth(LOCALID_SECOND_PILLAR_B,
-                                      LOCALID_SECOND_PILLAR_A);
+  ObjectEvent_SwapPositionsByDepth(LOCALID_SECOND_PILLAR_B,
+                                   LOCALID_SECOND_PILLAR_A);
 
   {
     s32 column = ObjectEvent_GetById(LOCALID_SECOND_PILLAR_A)->x.fixed >> 20;
@@ -1477,7 +1477,7 @@ static void TunnelRuins_UpdateSmallPillarCells(void) {
 
   MapGrid_CopyCellAttributes(89, 49, 3, 2, 25, 49);
   MapGrid_CopyCellAttributes(89, 51, 8, 5, 25, 51);
-  ObjectEvent_GetById(LOCALID_SMALL_PILLAR_C)->terrainId = 1;
+  ObjectEvent_GetById(LOCALID_SMALL_PILLAR_C)->layer = 1;
   objectEvent = ObjectEvent_GetById(LOCALID_SMALL_PILLAR_A);
   column = objectEvent->x.fixed;
   objectEvent = ObjectEvent_GetById(LOCALID_SMALL_PILLAR_A);
@@ -1501,10 +1501,10 @@ static void TunnelRuins_UpdateSmallPillarCells(void) {
 /// Redraws the east pillars' row and marks the cells they stand on.
 static void TunnelRuins_MarkPushPillarCells(void) {
   MapGrid_CopyCellAttributes(108, 19, 4, 1, 44, 19);
-  StagedObjectEvent_FillGridAttributeRectangle(
+  PushedObject_FillGridAttributeRectangle(
       0, ObjectEvent_GetById(LOCALID_EAST_PILLAR_A)->x.fixed >> 20,
       ObjectEvent_GetById(LOCALID_EAST_PILLAR_A)->z.fixed >> 20, 1, 1, 0xff);
-  StagedObjectEvent_FillGridAttributeRectangle(
+  PushedObject_FillGridAttributeRectangle(
       0, ObjectEvent_GetById(LOCALID_EAST_PILLAR_B)->x.fixed >> 20,
       ObjectEvent_GetById(LOCALID_EAST_PILLAR_B)->z.fixed >> 20, 1, 1, 0xff);
 }
@@ -1519,7 +1519,7 @@ static void TunnelRuins_MarkPushPillarCells(void) {
 /// (TUNNEL_RUINS_LADY_STATUES_PATHS_SOUTHWEST and the three after it) sets
 /// FLAG_TUNNEL_RUINS_FOUR_PATHS_ROOM_ENTERED.
 s32 TunnelRuins_Initialize(void) {
-  gFieldWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gGameState.mapId == (s32)&MapId_TunnelRuinsGreatStatue ||
       gGameState.mapId == (s32)&MapId_TunnelRuinsLadyStatues) {
@@ -1597,7 +1597,7 @@ s32 TunnelRuins_Initialize(void) {
           ObjectEvent_GetById(LOCALID_SINKING_PILLAR_A), 0);
       Engine_ObjectEventSetSpriteFlags(
           ObjectEvent_GetById(LOCALID_SINKING_PILLAR_B), 0);
-      OBJECT_MODE(LOCALID_SINKING_PILLAR_A, 2);
+      OBJECT_ANIMATION(LOCALID_SINKING_PILLAR_A, 2);
       Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_PUDDLE_A),
                                        0);
       Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_PUDDLE_B),
@@ -1609,7 +1609,7 @@ s32 TunnelRuins_Initialize(void) {
         MapGrid_CopyCellAttributes(51, 8, 1, 1, 49, 8);
         ObjectEvent_GetById(LOCALID_SINKING_PILLAR_A)->priorityFlags |=
             OBJ_EVENT_PRIORITY_UNDERFOOT;
-        OBJECT_MODE(LOCALID_SINKING_PILLAR_A, 3);
+        OBJECT_ANIMATION(LOCALID_SINKING_PILLAR_A, 3);
         MapGrid_CopyCellAttributes(45, 4, 1, 1, 46, 8);
         OBJECT_POSITION_SET(LOCALID_SINKING_PILLAR_A, 744, 136);
         ObjectEvent_GetById(LOCALID_SINKING_PILLAR_A)->y.fixed = -PIXELS(16);
@@ -1617,16 +1617,16 @@ s32 TunnelRuins_Initialize(void) {
       }
       if (FLAG_CHECK(FLAG_MAP_TEMP_00)) {
         Engine_ObjectEventSetChildValue(LOCALID_PUDDLE_A, 0);
-        OBJECT_MODE(LOCALID_PUDDLE_A, 5);
+        OBJECT_ANIMATION(LOCALID_PUDDLE_A, 5);
       }
       if (FLAG_CHECK(FLAG_MAP_TEMP_02))
-        OBJECT_MODE(LOCALID_SINKING_PILLAR_B, 2);
+        OBJECT_ANIMATION(LOCALID_SINKING_PILLAR_B, 2);
       if (FLAG_CHECK(FLAG_TUNNEL_RUINS_PILLAR_B_IN_FLOOR)) {
         MapGrid_CopyCellsTo(59, 8, 45, 14, 1, 3);
         MapGrid_CopyCellAttributes(51, 8, 1, 1, 45, 14);
         ObjectEvent_GetById(LOCALID_SINKING_PILLAR_B)->priorityFlags |=
             OBJ_EVENT_PRIORITY_UNDERFOOT;
-        OBJECT_MODE(LOCALID_SINKING_PILLAR_B, 3);
+        OBJECT_ANIMATION(LOCALID_SINKING_PILLAR_B, 3);
         MapGrid_CopyCellAttributes(45, 4, 1, 1, 48, 14);
         OBJECT_POSITION_SET(LOCALID_SINKING_PILLAR_B, 776, 232);
         ObjectEvent_GetById(LOCALID_SINKING_PILLAR_B)->y.fixed = -PIXELS(16);
@@ -1636,7 +1636,7 @@ s32 TunnelRuins_Initialize(void) {
       }
       if (FLAG_CHECK(FLAG_MAP_TEMP_01)) {
         Engine_ObjectEventSetChildValue(LOCALID_PUDDLE_B, 0);
-        OBJECT_MODE(LOCALID_PUDDLE_B, 5);
+        OBJECT_ANIMATION(LOCALID_PUDDLE_B, 5);
       }
       break;
     case TUNNEL_RUINS_GREAT_STATUE_WHIRLWIND_ROOM_FROM_SECOND_PILLARS:
@@ -1696,7 +1696,7 @@ s32 TunnelRuins_Initialize(void) {
       if (!FLAG_CHECK(FLAG_MAP_TEMP_04))
         break;
       Engine_ObjectEventSetChildValue(LOCALID_DOUSE_PUDDLE, 0);
-      OBJECT_MODE(LOCALID_DOUSE_PUDDLE, 5);
+      OBJECT_ANIMATION(LOCALID_DOUSE_PUDDLE, 5);
       Engine_MapGridCopyCellAttributes(
           26, 8, 1, 1, ObjectEvent_GetById(LOCALID_DOUSE_PUDDLE)->x.fixed >> 20,
           ObjectEvent_GetById(LOCALID_DOUSE_PUDDLE)->z.fixed >> 20);
@@ -1811,8 +1811,8 @@ s32 TunnelRuins_Initialize(void) {
       Engine_ObjectEventSetChildValue(LOCALID_LADY_STATUE_C, 4);
       Engine_ObjectEventSetChildValue(LOCALID_LADY_STATUE_D, 10);
       Engine_ObjectEventSetChildValue(LOCALID_LADY_STATUE_E, 0);
-      OBJECT_MODE(LOCALID_LADY_STATUE_A, 2);
-      OBJECT_MODE(LOCALID_LADY_STATUE_E, 2);
+      OBJECT_ANIMATION(LOCALID_LADY_STATUE_A, 2);
+      OBJECT_ANIMATION(LOCALID_LADY_STATUE_E, 2);
       Engine_MapGridCopyCellAttributes(
           20, 56, 1, 1,
           ObjectEvent_GetById(LOCALID_LADY_STATUE_A)->x.fixed >> 20,
@@ -1846,7 +1846,7 @@ s32 TunnelRuins_Initialize(void) {
 /// Pixel step by direction: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
-s32 gStagedObjectEvent_DirectionSteps[] = {
+s32 gPushedObject_DirectionSteps[] = {
     DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),
@@ -1855,11 +1855,11 @@ s32 gStagedObjectEvent_DirectionSteps[] = {
     DIRECTION_STEP(16, 0),
 };
 
-u32 gStagedObjectEvent_FootprintKinds[] = {
+u32 gPushedObject_FootprintKinds[] = {
     207, 205, 228, 229, 298, 297,
 };
 
-s32 gStagedObjectEvent_FootprintBounds[] = {
+s32 gPushedObject_FootprintBounds[] = {
     -32, -8,  32, 8,  -8,  -32, 8,  32, -32, -16, 32, 0,
     -8,  -32, 8,  32, -32, -8,  32, 8,  -8,  -32, 8,  32,
 };
@@ -2137,82 +2137,82 @@ u32 gTunnelRuinsWarps[] = {
 
 struct ObjectEventTemplate gTunnelRuinsGreatStatueObjectEventTemplates[] = {
     {SPRITE_CAPPED_PILLAR, 0, MOVEMENT_TYPE_STAND, PIXELS(152), 0, PIXELS(616),
-     FACING_SOUTH, TALK_KEEP_FACING, 0},
+     FACING_SOUTH, TALK_FACING_KEEP, 0},
     {SPRITE_CAPPED_PILLAR, 0, MOVEMENT_TYPE_STAND, PIXELS(168), 0, PIXELS(616),
-     FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE},
+     FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE},
     {SPRITE_CAPPED_PILLAR, 0, MOVEMENT_TYPE_STAND, PIXELS(520), 0, PIXELS(488),
-     FACING_SOUTH, TALK_KEEP_FACING, 0},
+     FACING_SOUTH, TALK_FACING_KEEP, 0},
     {SPRITE_CAPPED_PILLAR, 0, MOVEMENT_TYPE_STAND, PIXELS(536), 0, PIXELS(488),
-     FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE},
+     FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE},
     {SPRITE_SMALL_PILLAR, 0, MOVEMENT_TYPE_STAND, PIXELS(488), 0, PIXELS(840),
-     FACING_SOUTH, TALK_KEEP_FACING, 0},
+     FACING_SOUTH, TALK_FACING_KEEP, 0},
     {SPRITE_SMALL_PILLAR, 0, MOVEMENT_TYPE_STAND, PIXELS(520), 0, PIXELS(840),
-     FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE},
+     FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE},
     {SPRITE_SMALL_PILLAR, 0, MOVEMENT_TYPE_STAND, PIXELS(424), 0, PIXELS(792),
-     FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE},
+     FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE},
     {SPRITE_IVY, 0, (s32)gTunnelRuins_StretchScript, PIXELS(416), 0,
-     PIXELS(794), FACING_NORTH, TALK_FACE_PARTY, 0},
+     PIXELS(794), FACING_NORTH, TALK_FACING_PARTY, 0},
     {SPRITE_IVY, 0, (s32)gTunnelRuins_StretchScript, PIXELS(432), 0,
-     PIXELS(794), FACING_NORTH, TALK_FACE_PARTY, 0},
+     PIXELS(794), FACING_NORTH, TALK_FACING_PARTY, 0},
     {SPRITE_IVY, FLAG_TUNNEL_RUINS_IVY_BLOWN_AWAY,
      (s32)gTunnelRuins_StretchScript, PIXELS(568), 0, PIXELS(856), FACING_NORTH,
-     TALK_FACE_PARTY, 0},
+     TALK_FACING_PARTY, 0},
     {SPRITE_SINKING_PILLAR, 0, MOVEMENT_TYPE_STAND, PIXELS(680), 0, PIXELS(136),
-     FACING_NORTH, TALK_KEEP_FACING, 0},
+     FACING_NORTH, TALK_FACING_KEEP, 0},
     {SPRITE_SINKING_PILLAR, 0, MOVEMENT_TYPE_STAND, PIXELS(808), 0, PIXELS(232),
-     FACING_NORTH, TALK_KEEP_FACING, 0},
+     FACING_NORTH, TALK_FACING_KEEP, 0},
     {SPRITE_PUDDLE, 0, MOVEMENT_TYPE_STAND, PIXELS(728), 0, PIXELS(184),
-     FACING_NORTH, TALK_KEEP_FACING, 0},
+     FACING_NORTH, TALK_FACING_KEEP, 0},
     {SPRITE_PUDDLE, 0, MOVEMENT_TYPE_STAND, PIXELS(728), 0, PIXELS(184),
-     FACING_NORTH, TALK_KEEP_FACING, 0},
+     FACING_NORTH, TALK_FACING_KEEP, 0},
     // A model of Venus Lighthouse on the floor before the Great Statue: the
     // world map's tower, at three fifths of its size, with no collision
     // and no shadow.
     {SPRITE_WORLD_MAP_VENUS_LIGHTHOUSE, 0, (s32)gTunnelRuins_ShrinkScript,
-     PIXELS(232), 0, PIXELS(248), FACING_SOUTH, TALK_KEEP_FACING, 0},
+     PIXELS(232), 0, PIXELS(248), FACING_SOUTH, TALK_FACING_KEEP, 0},
     {MAP_TABLE_END},
 };
 
 struct ObjectEventTemplate gTunnelRuinsObjectEventTemplatesOther[] = {
     {SPRITE_SINKING_PILLAR, 0, MOVEMENT_TYPE_STAND, PIXELS(392), 0, PIXELS(168),
-     FACING_NORTH, TALK_KEEP_FACING, 0},
+     FACING_NORTH, TALK_FACING_KEEP, 0},
     {SPRITE_PUDDLE, 0, MOVEMENT_TYPE_STAND, PIXELS(392), 0, PIXELS(248),
-     FACING_NORTH, TALK_KEEP_FACING, 0},
+     FACING_NORTH, TALK_FACING_KEEP, 0},
     {SPRITE_BALANCE_PLATFORM, 0, MOVEMENT_TYPE_RESET_ACTION, PIXELS(136), 0,
-     PIXELS(152), FACING_NORTH, TALK_KEEP_FACING, 0},
+     PIXELS(152), FACING_NORTH, TALK_FACING_KEEP, 0},
     {SPRITE_BALANCE_PLATFORM, 0, MOVEMENT_TYPE_RESET_ACTION, PIXELS(200), 0,
-     PIXELS(152), FACING_NORTH, TALK_KEEP_FACING,
+     PIXELS(152), FACING_NORTH, TALK_FACING_KEEP,
      OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE},
     {SPRITE_CARRY_STONE, 0, MOVEMENT_TYPE_STAND, PIXELS(152), 0, PIXELS(136),
-     FACING_NORTH, TALK_KEEP_FACING, 0},
+     FACING_NORTH, TALK_FACING_KEEP, 0},
     {SPRITE_CARRY_STONE, 0, MOVEMENT_TYPE_STAND, PIXELS(184), 0, PIXELS(136),
-     FACING_NORTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE},
+     FACING_NORTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE},
     {SPRITE_CARRY_STONE, 0, MOVEMENT_TYPE_STAND, PIXELS(216), 0, PIXELS(136),
-     FACING_NORTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE},
+     FACING_NORTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE},
     {SPRITE_STATUE, 0, MOVEMENT_TYPE_STAND, PIXELS(136), 0, PIXELS(792),
-     FACING_SOUTH, TALK_KEEP_FACING, 0},
+     FACING_SOUTH, TALK_FACING_KEEP, 0},
     {SPRITE_STATUE, 0, MOVEMENT_TYPE_STAND, PIXELS(792), 0, PIXELS(696),
-     FACING_SOUTH, TALK_KEEP_FACING, 0},
+     FACING_SOUTH, TALK_FACING_KEEP, 0},
     {SPRITE_CAPPED_PILLAR, 0, MOVEMENT_TYPE_STAND, PIXELS(744), 0, PIXELS(312),
-     FACING_SOUTH, TALK_KEEP_FACING, 0},
+     FACING_SOUTH, TALK_FACING_KEEP, 0},
     {SPRITE_CAPPED_PILLAR, 0, MOVEMENT_TYPE_STAND, PIXELS(760), 0, PIXELS(312),
-     FACING_SOUTH, TALK_KEEP_FACING, 0},
+     FACING_SOUTH, TALK_FACING_KEEP, 0},
     {SPRITE_LADY_STATUE, 0, MOVEMENT_TYPE_STAND, PIXELS(344), 0, PIXELS(760),
-     FACING_SOUTH, TALK_KEEP_FACING, 0},
+     FACING_SOUTH, TALK_FACING_KEEP, 0},
     {SPRITE_LADY_STATUE, 0, MOVEMENT_TYPE_STAND, PIXELS(440), 0, PIXELS(760),
-     FACING_SOUTH, TALK_KEEP_FACING, 0},
+     FACING_SOUTH, TALK_FACING_KEEP, 0},
     {SPRITE_LADY_STATUE, 0, MOVEMENT_TYPE_STAND, PIXELS(344), 0, PIXELS(808),
-     FACING_SOUTH, TALK_KEEP_FACING, 0},
+     FACING_SOUTH, TALK_FACING_KEEP, 0},
     {SPRITE_LADY_STATUE, 0, MOVEMENT_TYPE_STAND, PIXELS(440), 0, PIXELS(808),
-     FACING_SOUTH, TALK_KEEP_FACING, 0},
+     FACING_SOUTH, TALK_FACING_KEEP, 0},
     {SPRITE_LADY_STATUE, 0, MOVEMENT_TYPE_STAND, PIXELS(392), 0, PIXELS(824),
-     FACING_SOUTH, TALK_KEEP_FACING, 0},
+     FACING_SOUTH, TALK_FACING_KEEP, 0},
     {MAP_TABLE_END},
 };
 
 // clang-format off
 struct MapEvent gTunnelRuinsGreatStatueEvents[] = {
-    {MAP_EVENT_WARP | WARP_STYLE_ANIMATED, 1, CONDITION_ALWAYS, TUNNEL_RUINS_GREAT_STATUE_TO_BABI_LIGHTHOUSE_STONE_DOOR},
+    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, TUNNEL_RUINS_GREAT_STATUE_TO_BABI_LIGHTHOUSE_STONE_DOOR},
     {MAP_EVENT_WARP, 2, CONDITION_ALWAYS, TUNNEL_RUINS_GREAT_STATUE_STATUE_TO_FIRST_PILLARS},
     {MAP_EVENT_WARP, 3, CONDITION_ALWAYS, TUNNEL_RUINS_GREAT_STATUE_FIRST_PILLARS_TO_STATUE},
     {MAP_EVENT_WARP, 4, CONDITION_ALWAYS, TUNNEL_RUINS_GREAT_STATUE_FIRST_PILLARS_TO_COLUMNS_NORTH},
@@ -2273,7 +2273,7 @@ struct MapEvent gTunnelRuinsGreatStatueEvents[] = {
         EVENT_SCRIPT(EventScript_HopEast)},
     {COORD_EVENT_WALKING_INTO(FACING_WEST), 32, CONDITION_ALWAYS,
         EVENT_SCRIPT(EventScript_HopWest)},
-    {BG_EVENT(BG_EVENT_UNNAMED), 40, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadFirstStatue)},
+    {BG_EVENT(BG_EVENT_SILENT), 40, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadFirstStatue)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FIRST_PILLAR_A, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_UpdateFirstPillarCells)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FIRST_PILLAR_B, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_UpdateFirstPillarCells)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_SECOND_PILLAR_A, CONDITION_ALWAYS,
@@ -2309,7 +2309,7 @@ struct MapEvent gTunnelRuinsEventsOther[] = {
     {MAP_EVENT_WARP, 11, CONDITION_ALWAYS, TUNNEL_RUINS_LADY_STATUES_TO_TREE_DOOR_SOUTH},
     {MAP_EVENT_WARP, 12, CONDITION_ALWAYS, TUNNEL_RUINS_LADY_STATUES_TO_TUNNEL_RUINS_GREAT_STATUE_SOUTHEAST},
     {MAP_EVENT_WARP, 13, CONDITION_ALWAYS, TUNNEL_RUINS_LADY_STATUES_TO_FIVE_STATUES_EAST},
-    {MAP_EVENT_WARP | WARP_STYLE_ANIMATED, 14, CONDITION_ALWAYS, TUNNEL_RUINS_LADY_STATUES_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR},
+    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 14, CONDITION_ALWAYS, TUNNEL_RUINS_LADY_STATUES_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR},
     {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 25, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushDousePillar)},
     {COORD_EVENT_WALKING_INTO(FACING_SOUTH), 26, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpDownLedge)},
     {COORD_EVENT_WALKING_INTO(FACING_WEST), 26, CONDITION_ALWAYS,
@@ -2328,8 +2328,8 @@ struct MapEvent gTunnelRuinsEventsOther[] = {
     {COORD_EVENT_WALKING_INTO(FACING_NORTH), 29, CONDITION_ALWAYS,
         EVENT_SCRIPT(EventScript_HopNorth)},
     {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 41, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushLadyStatue)},
-    {BG_EVENT(BG_EVENT_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchLockedDoor)},
-    {BG_EVENT(BG_EVENT_UNNAMED), 42, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadSecondStatue)},
+    {BG_EVENT(BG_EVENT_SILENT), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchLockedDoor)},
+    {BG_EVENT(BG_EVENT_SILENT), 42, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadSecondStatue)},
     {BG_EVENT(BG_EVENT_CHEST), 100, FLAG_TUNNEL_RUINS_ORACLES_ROBE, FIND_ITEM(ITEM_ORACLES_ROBE)},
     {BG_EVENT(BG_EVENT_CHEST), 101, FLAG_TUNNEL_RUINS_ASURAS_ARMOR, FIND_ITEM(ITEM_ASURAS_ARMOR)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_DOUSE_PILLAR, FLAG_MAP_TEMP_04, EVENT_SCRIPT(EventScript_MoveDousePillar)},

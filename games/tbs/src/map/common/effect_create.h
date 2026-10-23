@@ -11,7 +11,7 @@ UNUSED static void SetEffectRecordMode(struct ObjectEvent *work, s32 mode) {
 }
 
 /// A still, translucent effect in palette 14, at sprite priority 0.
-UNUSED static void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type) {
+UNUSED static void *ObjectEvent_PrepareObject(s32 x, s32 y, s32 z, s32 type) {
   struct ObjectEvent *objectEvent = Engine_ObjectCreate(type, x, y, z);
 
   if (objectEvent != 0) {
@@ -28,8 +28,8 @@ UNUSED static void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type) {
 
 /// A still effect in palette 15, at sprite priority 1, drawn under the object
 /// events.
-UNUSED static void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z,
-                                                         s32 type) {
+UNUSED static void *ObjectEvent_CreateConfiguredObject(s32 x, s32 y, s32 z,
+                                                       s32 type) {
   struct ObjectEvent *objectEvent = Engine_ObjectCreate(type, x, y, z);
 
   if (objectEvent != 0) {

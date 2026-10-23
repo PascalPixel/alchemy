@@ -31,14 +31,14 @@ struct ScriptMotionObject {
   s32 x;                           ///< 16.16 fixed-point pixels
   s32 y;                           ///< 16.16 fixed-point pixels
   s32 z;                           ///< 16.16 fixed-point pixels
-  s32 terrainHeight;               ///< 16.16 fixed-point pixels
+  s32 groundHeight;                ///< 16.16 fixed-point pixels
   /// ObjectEvent's scales and radius; not named here.
   ///@{
   s32 scaleX;
   s32 scaleY;
   u16 radius;
   ///@}
-  u8 terrainId;     ///< the map layer whose ground height it follows
+  u8 layer;         ///< the map layer whose ground height it follows
   u8 priorityFlags; ///< ObjectEvent's; not named here
   s32 velocityX;    ///< 16.16 fixed-point pixels per frame
   s32 velocityY;    ///< 16.16 fixed-point pixels per frame

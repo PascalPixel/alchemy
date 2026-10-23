@@ -38,11 +38,11 @@ once a frame, until `Field_CountRequests` finds a request. The running
 map's state is one block of memory, `struct FieldWork`, and each kind of
 request is one member of it, so at most one of each kind can be waiting. A
 battle request saves the [object events](glossary.md#object-event) with
-`ObjectTable_Snapshot`, sets the next map to `RUN_BATTLE` and sets the warp
+`ObjectEvent_Snapshot`, sets the next map to `RUN_BATTLE` and sets the warp
 the map returns to `WARP_NONE`, which tells the loop the next map is
 already chosen; afterwards `Map_ReturnFromRun`
 loads the field map again with `FLAG_KEEP_PARTY_POSITION` set, and
-`ObjectTable_Restore` puts the object events back.
+`ObjectEvent_Restore` puts the object events back.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -153,10 +153,10 @@ on `gWorldMap_FootprintActions`, the two words `SC_WAIT(120), SC_FREE`.
 
 The objects are the 64 slots of `gObjects`, each 112 bytes. A script is
 an array of 32-bit words, an `SC_` command from `objcmd.h` and then its
-operands, run through `gScriptObject_CommandTable` by
+operands, run through `gObjectScript_CommandTable` by
 `Object_UpdateAllThumb`. A command that returns 1 has finished and the next
 runs in the same frame; one that returns 0 ends the object's turn. A jump
-stores no offset: `ActionScript_FindLabel` searches the script for the matching
+stores no offset: `ObjectScript_FindLabel` searches the script for the matching
 `SC_LABEL` word, looking through at most the first 1,024 words
 (`SCRIPT_LABEL_SEARCH_WORDS`) and starting the script again from the top
 when it finds none. `SC_END` leaves the object idling on
@@ -192,7 +192,7 @@ On a town or dungeon map the leader walks at `FIELD_WALK_SPEED` and runs at
 checks 8 pixels away: the way the pad points and 22.5 and 45 degrees either
 side. When one fails, `Object_UpdateLeaderControl` tries headings 22.5,
 45 and 67.5 degrees off, nearest first, each with five checks of its own, and
-takes the first that passes. `MapGrid_CheckObjectStep` decides each check from
+takes the first that passes. `MapGrid_CheckCollision` decides each check from
 the cell there. Speeds are in 16.16 fixed point, the engine's way of
 holding fractions of a pixel in a whole number: the upper 16 bits count
 whole pixels and the lower 16 bits sixty-five-thousandths of one, so
@@ -200,10 +200,10 @@ whole pixels and the lower 16 bits sixty-five-thousandths of one, so
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `MAPGRID_STEP_TOO_LOW` | -1 | the ground there is more than 12 pixels lower |
-| `MAPGRID_STEP_OPEN` | 0 | the object can step there |
-| `MAPGRID_STEP_TOO_HIGH` | 1 | the ground there is more than 8 pixels higher |
-| `MAPGRID_STEP_WALL` | 2 | the cell there is a wall (`MB_WALL`) |
+| `COLLISION_TOO_LOW` | -1 | the ground there is more than 12 pixels lower |
+| `COLLISION_NONE` | 0 | the object can step there |
+| `COLLISION_TOO_HIGH` | 1 | the ground there is more than 8 pixels higher |
+| `COLLISION_IMPASSABLE` | 2 | the cell there is a wall (`MB_WALL`) |
 | `FIELD_WALK_SPEED` | `0x10000` | 1 pixel a frame |
 | `FIELD_RUN_SPEED` | `0x18000` | 1.5 pixels a frame, with a dash button held |
 
@@ -283,7 +283,7 @@ maps give the three layers 3, 2 and 1. A sprite wins a tie with a
 background. The object events placed from a table, the leader's included,
 carry `OBJ_EVENT_PRIORITY_AUTOMATIC`, so each frame their sprites take the
 priority the cell under them sets, and keep their last one where it sets
-none (`ObjectSystem_UpdateCamera`). In Vale:
+none (`ObjectSystem_PlaceSprites`). In Vale:
 
 - on open grass Isaac's sprite is at 2, so he stands in front of the middle
   layer and behind the overhead one;
@@ -361,7 +361,7 @@ its battles less often there.
 
 Each kind of ground belongs to a zone, and the zone decides how far apart
 its battles are and which enemies can appear. Each frame the leader walks,
-`Encounter_SelectEnemyGroup` adds to the counter, `gGameState.encounterSteps`;
+`Encounter_CountStepsAndSelectFormation` adds to the counter, `gGameState.encounterSteps`;
 despite its name it does both jobs, filling the counter every frame and
 choosing the enemy group once it is full. What it adds:
 
@@ -399,7 +399,7 @@ and `Field_UsePsynergy` handles it:
 1. It checks the Psynergy can be used there, pays the PP and looks up the
    map's Psynergy events for what the leader faces.
 2. It runs the `PSYNERGY_PHASE_BEFORE_CAST` event.
-3. It plays the effect for the ability's field kind (`enum FieldKind`, from
+3. It plays the effect for the ability's field kind (`enum FieldPsynergy`, from
    the `type` column of `src/game/actions.tsv`, so Move's hand or Frost's
    ice) through `FieldEffect_Run`, or `FieldEffect_DispatchRequestKind` when
    an event names the target. An event in the `PSYNERGY_PHASE_EFFECT_ACTS`

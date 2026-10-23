@@ -52,7 +52,7 @@
 /// still.
 #define FLAG_MENU_OPEN 0x106
 /// While set, opening the field menu or the pause menu, or pressing a shortcut,
-/// raises FIELD_EVENT_MENUS_RAISED instead (Map_Run,
+/// raises FIELD_RAISED_EVENT_MENUS instead (Map_Run,
 /// Field_RequestShortcut); Vault's inn sets it while the party corners the
 /// suspects.
 #define FLAG_MENUS_RAISE_EVENT 0x107
@@ -80,14 +80,14 @@
 /// As FLAG_KEEP_MUSIC, for as long as it is set.
 #define FLAG_KEEP_MUSIC_HELD 0x11b
 #define FLAG_WORLD_MAP_LEFT 0x11c ///< the current map is not the world map
-/// The leader left through an WARP_STYLE_ANIMATED warp; the next map plays
-/// the leader's arrival (ObjectEffect_RunPendingFlagEvent), unless its setup
+/// The leader left through an WARP_STYLE_STAIRS_UP warp; the next map plays
+/// the leader's arrival (Warp_PlayArrival), unless its setup
 /// clears this first.
-#define FLAG_WARP_ARRIVAL_PENDING 0x120
-/// As FLAG_WARP_ARRIVAL_PENDING, for an WARP_STYLE_ANIMATED_ALTERNATE warp.
-#define FLAG_WARP_ARRIVAL_ALTERNATE 0x121
+#define FLAG_WARP_ARRIVAL_STAIRS_UP 0x120
+/// As FLAG_WARP_ARRIVAL_STAIRS_UP, for an WARP_STYLE_STAIRS_DOWN warp.
+#define FLAG_WARP_ARRIVAL_STAIRS_DOWN 0x121
 /// The leader falls into the next map from 160 pixels above
-/// (ObjectEffect_RunPendingFlagEvent), as when the world map's airborne
+/// (Warp_PlayArrival), as when the world map's airborne
 /// travel ends.
 #define FLAG_ARRIVE_FALLING 0x122
 /// The party is in a town (MAP_TYPE_TOWN); the map loader sets and
@@ -114,8 +114,8 @@
 /// ★ Named from the game: "Retreat" (MsgAbilityName)
 #define FLAG_RETREAT_BLOCKED 0x144
 #define FLAG_ITEM_USE 0x145 ///< the Psynergy comes from an item
-/// No random encounters while set (Encounter_SelectEnemyGroup), unless flag
-/// 0x15f is set; debug warp destinations set it.
+/// No random encounters while set (Encounter_CountStepsAndSelectFormation),
+/// unless flag 0x15f is set; debug warp destinations set it.
 #define FLAG_NO_ENCOUNTERS 0x160
 /// No random battles until the party enters another map section: Venus
 /// Lighthouse sets it on its Reveal path, the world map's debug warp
@@ -156,7 +156,7 @@
 #define FLAG_DEBUG_RESOURCE_BEEP 350
 /// Encounters are rolled even where FLAG_NO_ENCOUNTERS,
 /// FLAG_NO_ENCOUNTERS_IN_MAPSEC, a zone of 0 or Cloak would stop them
-/// (Encounter_SelectEnemyGroup).
+/// (Encounter_CountStepsAndSelectFormation).
 #define FLAG_IGNORE_ENCOUNTER_CHECKS 351
 /// Flint's lesson on Djinn, after he joins on the world map: in its battle the
 /// party strikes first, two of Flint's messages follow each round, and no

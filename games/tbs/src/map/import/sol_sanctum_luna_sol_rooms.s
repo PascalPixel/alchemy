@@ -6,7 +6,7 @@
 	.set import.Engine_RandomNext, 1
 	.set import.Engine_MapGridRedraw, 1
 	.set import.Engine_MapGridCopyCellsTo, 1
-	.set import.TileAnimation_ResumeChannel, 1
+	.set import.TilesetAnim_Resume, 1
 	.set import.Engine_MapGridCopyCellAttributes, 1
 	.set import.Engine_WorkSetValuesIfNonNegative, 1
 	.set import.Engine_GameFlagIsSet, 1
@@ -48,6 +48,6 @@
 	.set import.Engine_ScriptOpenScreen, 1
 	.set import.Engine_ScriptCloseScreen, 1
 	.set import.Engine_ScriptWaitForScreen, 1
-	.set import.FieldEffect_SetQueuedSoundAndPlay, 1
+	.set import.Map_QueueMusic, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

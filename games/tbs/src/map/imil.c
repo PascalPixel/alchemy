@@ -279,7 +279,7 @@ extern s32 gImil_ArcOrigin[];
 
 /// A sick person shivers: a quick squash, then a pause, longer for
 /// LOCALID_SICK_OLD_MAN, whose work Imil_Initialize sets.
-static s32 Imil_UpdateShiver(struct ScriptInterpreter *interpreter) {
+static s32 Imil_UpdateShiver(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   switch (objectEvent->timer) {
   case 6:
@@ -337,10 +337,10 @@ const struct ObjectEventTemplate *Imil_GetObjectEventTemplates(void) {
       ((u8 *)script)[(LOCALID_RESTAURANT_OWNER - LOCALID_FIRST_PLACED) *
                          sizeof(struct ObjectEventTemplate) +
                      offsetof(struct ObjectEventTemplate, talkFacing)] =
-          TALK_FACE_PARTY;
+          TALK_FACING_PARTY;
       script[LOCALID_SICK_OLD_MAN - LOCALID_FIRST_PLACED].x = PIXELS(182);
       script[LOCALID_SICK_OLD_MAN - LOCALID_FIRST_PLACED].z = PIXELS(564);
-      script[LOCALID_SICK_OLD_MAN - LOCALID_FIRST_PLACED].behavior =
+      script[LOCALID_SICK_OLD_MAN - LOCALID_FIRST_PLACED].movement =
           MOVEMENT_TYPE_WANDER;
     }
     return script;
@@ -638,7 +638,7 @@ static void Imil_OpenDoorAndExit(void) {
       objectEvent->motionFlags = 0;
     }
   }
-  warp = (s16)(work->touchedTrigger - 50);
+  warp = (s16)(work->coordEvent - 50);
   if (warp == IMIL_TO_IMIL_INTERIORS_NORTHEAST) {
     Engine_AudioPlayCue(SE_188);
   } else {
@@ -651,7 +651,7 @@ static void Imil_OpenDoorAndExit(void) {
     Engine_MapGridAnimateCells(gImil_DoorCellSteps[warp - 1], x, y);
   }
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
-  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (warp == IMIL_TO_IMIL_INTERIORS_NORTHEAST) {
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
     Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
@@ -691,7 +691,7 @@ static void Imil_TalkToWeaponMerchant(void) {
     if (IMIL_FACES_COUNTER(facing)) {
       Engine_ScriptStart();
       Engine_CameraSetSpeed(PIXELS(6), PIXELS(3) / 4);
-      Camera_MoveTo(PIXELS(426), -1, PIXELS(492), 1);
+      FieldCamera_MoveTo(PIXELS(426), -1, PIXELS(492), 1);
       Engine_CameraWaitForMove();
       Engine_ScriptWait(20);
       ObjectEvent_RunActionScriptAndWait(LOCALID_WEAPON_MERCHANT,
@@ -729,7 +729,7 @@ static void Imil_TalkToArmorMerchant(void) {
     if (IMIL_FACES_COUNTER(facing)) {
       Engine_ScriptStart();
       Engine_CameraSetSpeed(PIXELS(6), PIXELS(3) / 4);
-      Camera_MoveTo(PIXELS(426), -1, PIXELS(492), 1);
+      FieldCamera_MoveTo(PIXELS(426), -1, PIXELS(492), 1);
       Engine_CameraWaitForMove();
       Engine_ScriptWait(20);
       ObjectEvent_RunActionScriptAndWait(LOCALID_ARMOR_MERCHANT,
@@ -852,7 +852,7 @@ s32 Imil_Initialize(void) {
 
   if (gGameState.mapId == (s32)&MapId_Imil) {
     leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-    gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Engine_ObjectEventSetAnimation(LOCALID_STRONGMAN_KEEPING_IN_SHAPE,
                                    IMIL_ANIMATION_SQUATS);
     if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION)) {
@@ -873,7 +873,7 @@ s32 Imil_Initialize(void) {
     }
   } else if (gGameState.mapId == (s32)&MapId_ImilInteriors) {
     // Restore each interior's occupants before running its arrival script.
-    gFieldWork->startTransition =
+    gFieldWork->transition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     warpDest = gGameState.warpDest;
     if (warpDest == IMIL_INTERIORS_HOUSE_SOUTHWEST) {
@@ -997,12 +997,12 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
 
   Engine_ScriptStart();
   ObjectEvent_SetPosition(MIA, PIXELS(182), PIXELS(150));
-  Camera_MoveTo(PIXELS(141), -1, PIXELS(221), 0);
+  FieldCamera_MoveTo(PIXELS(141), -1, PIXELS(221), 0);
   Engine_TaskWait(1);
-  Camera_SetSpeed(PIXELS(3) / 10, PIXELS(3) / 80);
-  Camera_MoveTo(PIXELS(140), -1, PIXELS(164), 1);
+  FieldCamera_SetSpeed(PIXELS(3) / 10, PIXELS(3) / 80);
+  FieldCamera_MoveTo(PIXELS(140), -1, PIXELS(164), 1);
   work = gFieldWork;
-  work->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  work->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->transitionFrames = 40;
   Engine_ScriptOpenScreen();
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
@@ -1091,7 +1091,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   while (ObjectEvent_GetById(MIA)->timer == 0) {
     Engine_TaskWait(1);
   }
-  Camera_MoveTo(PIXELS(140), -1, PIXELS(198), 1);
+  FieldCamera_MoveTo(PIXELS(140), -1, PIXELS(198), 1);
   ObjectEvent_RefreshSelectorById(MIA);
   ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
   Script_ShowMessageAndWait(MIA, 0, 40);
@@ -1163,7 +1163,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   ObjectEvent_RunActionScriptAndWait(IVAN, table);
   Engine_ScriptWait(20);
   work = gFieldWork;
-  work->startTransition =
+  work->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   work->transitionFrames = 24;
   Engine_GameFlagSet(FLAG_IMIL_MET_MIA);
@@ -1439,11 +1439,11 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
   Engine_ObjectEventWalkTo(LOCALID_PARTY_LEADER, 690, 200);
 
-  Camera_GetScriptObject()->motionFlags = 0;
+  FieldCamera_GetScriptObject()->motionFlags = 0;
   Engine_CameraSetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
-  Camera_MoveTo(PIXELS(690), 0, PIXELS(164), 1);
+  FieldCamera_MoveTo(PIXELS(690), 0, PIXELS(164), 1);
   work = gFieldWork;
-  work->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  work->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->transitionFrames = 48;
   Engine_ScriptOpenScreen();
   Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
@@ -1593,7 +1593,7 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   // the field, the next gFieldWork load moves after the constant.
   *((u8 *)ObjectEvent_GetById(LOCALID_SECOND_APPRENTICE) +
     offsetof(struct ObjectEvent, steeringFlags)) |= OBJ_EVENT_FACES_MOTION;
-  gFieldWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   GameFlag_Set(FLAG_IMIL_MIA_SAID_FAREWELL);
   GameFlag_Clear(FLAG_IMIL_APPRENTICE_OFFERED_HEALING);
@@ -1648,7 +1648,7 @@ static void Imil_RunIceSlide(void) {
   s32 x;
   u8 *terrainId;
 
-  subject = Engine_ObjectEventLookup(gGameState.selectedLocalId);
+  subject = Engine_ObjectEventLookup(gGameState.leaderLocalId);
 
   for (;;) {
     heading = gImil_SwayHeadings[(gKeysHeld >> 4) & 15];
@@ -1663,7 +1663,7 @@ static void Imil_RunIceSlide(void) {
     probe.z = (subject->z.fixed & 0xfff00000) + PIXELS(8);
     z = probe.z;
     x = probe.x;
-    terrainId = &subject->terrainId;
+    terrainId = &subject->layer;
     goal = MapGrid_GetMetatileBehaviorAt(*terrainId, x, z);
     Vector_AddPolarOffset(PIXELS(16), heading, &probe);
 
@@ -1910,63 +1910,63 @@ u32 gImil_Warps[] = {
 
 struct ObjectEventTemplate gImil_TownObjectEventTemplates[] = {
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, (s32)gImil_FreezingYoungManScript,
-        PIXELS(99), 0, PIXELS(234), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(99), 0, PIXELS(234), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(376), 0, PIXELS(408), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(376), 0, PIXELS(408), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(408), 0, PIXELS(248), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, 0 },
+        PIXELS(408), 0, PIXELS(248), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_SNOWMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(262), 0, PIXELS(124), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, 0 },
+        PIXELS(262), 0, PIXELS(124), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gImil_TownObjectEventTemplatesCured[] = {
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(99), 0, PIXELS(234), FACING_NORTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(99), 0, PIXELS(234), FACING_NORTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(376), 0, PIXELS(408), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(376), 0, PIXELS(408), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(408), 0, PIXELS(248), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, 0 },
+        PIXELS(408), 0, PIXELS(248), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_SNOWMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(262), 0, PIXELS(124), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, 0 },
+        PIXELS(262), 0, PIXELS(124), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gImil_InteriorObjectEventTemplates[] = {
     { SPRITE_OLD_WOMAN, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(111), 0, PIXELS(215), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(111), 0, PIXELS(215), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(166), 0, PIXELS(116), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(166), 0, PIXELS(116), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BLANK, 0x0, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(174), 0, PIXELS(173), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(174), 0, PIXELS(173), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(118), 0, PIXELS(488), FACING_NORTH, TALK_FACE_PARTY, 0 },
+        PIXELS(118), 0, PIXELS(488), FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(370), 0, PIXELS(468), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(370), 0, PIXELS(468), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(478), 0, PIXELS(468), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(478), 0, PIXELS(468), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_GIRL_WITH_PIGTAILS, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(460), 0, PIXELS(266), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(460), 0, PIXELS(266), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_IN_GREEN_DRESS, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(436), 0, PIXELS(184), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(436), 0, PIXELS(184), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_MAN_WITH_DARK_HAIR, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(100), 0, PIXELS(830), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(100), 0, PIXELS(830), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_WOMAN_IN_PINK_APRON, 0x0, MOVEMENT_TYPE_WANDER,
-        PIXELS(160), 0, PIXELS(880), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(160), 0, PIXELS(880), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(249), 0, PIXELS(832), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(249), 0, PIXELS(832), FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_BOY_WITH_FAIR_HAIR, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(686), 0, PIXELS(148), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(686), 0, PIXELS(148), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_GIRL_WITH_PIGTAILS, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(717), 0, PIXELS(229), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(717), 0, PIXELS(229), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_CRATE, 0x0, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(192), 0, PIXELS(124), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(192), 0, PIXELS(124), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 

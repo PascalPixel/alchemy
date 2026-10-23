@@ -5,7 +5,7 @@
 #include "../field_internal.h"
 
 /// SC_BASE: restarts the script at the next word, and returns 1 to run on.
-s32 ActionScript_SetBase(struct ScriptInterpreter *interpreter) {
+s32 ObjectScript_SetBase(struct ObjectScriptContext *interpreter) {
   s32 zero;
 
   // The word after the command becomes the script's start.
@@ -15,17 +15,17 @@ s32 ActionScript_SetBase(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-/// SC_B54_OFF: clears spriteStorageKind, hiding the sprites, and moves on to
-/// the next command.
-s32 ActionScript_ClearByte54(struct ScriptInterpreter *interpreter) {
+/// SC_HIDE_SPRITES: clears spriteStorageKind, hiding the sprites, and moves on
+/// to the next command.
+s32 ObjectScript_ClearByte54(struct ObjectScriptContext *interpreter) {
   interpreter->spriteStorageKind = OBJECT_SPRITE_NONE;
   interpreter->cursor++;
   return 1;
 }
 
-/// SC_B54_ON: sets spriteStorageKind to OBJECT_SPRITE_ONE, one sprite drawn,
-/// and moves on to the next command.
-s32 ActionScript_SetByte54(struct ScriptInterpreter *interpreter) {
+/// SC_SHOW_SPRITE: sets spriteStorageKind to OBJECT_SPRITE_ONE, one sprite
+/// drawn, and moves on to the next command.
+s32 ObjectScript_SetByte54(struct ObjectScriptContext *interpreter) {
   interpreter->spriteStorageKind = OBJECT_SPRITE_ONE;
   interpreter->cursor++;
   return 1;
@@ -49,7 +49,7 @@ void Object_WaitForMove(void *fieldObject) {
 /// Returns 1 when the object has no movement target: none of its target
 /// coordinates set, or for an object moved by the ground (any motion flag)
 /// neither its target x nor z. Called by Object_WaitForMove and SC_SYNC
-/// (ActionScript_WaitForArrival).
+/// (ObjectScript_WaitForArrival).
 s32 Object_IsTargetUnset(struct Object *object) {
   s32 first;
   s32 second;
@@ -139,8 +139,8 @@ void Object_UpdateAllThumb(void) {
         command = script->word[(s16)object->scriptCursor];
 #endif
         if (command <= 63) {
-          if (gScriptObject_CommandTable[command](
-                  (struct ScriptInterpreter *)object) == 0)
+          if (gObjectScript_CommandTable[command](
+                  (struct ObjectScriptContext *)object) == 0)
             break;
         } else {
           object->scriptCursor++;
@@ -269,8 +269,8 @@ void Object_UpdateAllThumb(void) {
           velocityX = x + object->velocityX;
           velocityZ = z + object->velocityZ;
           ground =
-              MapGrid_GetTerrainHeight(object->terrainId, velocityX, velocityZ);
-          velocityY = ground - object->terrainHeight;
+              MapGrid_GetTerrainHeight(object->layer, velocityX, velocityZ);
+          velocityY = ground - object->groundHeight;
           if (ground - y > -0x40000)
             y += velocityY;
           if (velocityY < 0)
@@ -295,12 +295,12 @@ void Object_UpdateAllThumb(void) {
                            Iwram_MulQ16(dy, ratio), Iwram_MulQ16(dz, ratio));
             }
           }
-          object->terrainHeight = ground;
+          object->groundHeight = ground;
         }
 
         // Gravity, and a bounce that loses energy on landing.
         if ((object->motionFlags & OBJ_EVENT_FALLS) != 0) {
-          ground = object->terrainHeight;
+          ground = object->groundHeight;
           if (y > ground) {
             object->velocityY -= object->gravity;
           } else if (object->velocityY < 0) {
@@ -343,7 +343,7 @@ void Object_UpdateAllThumb(void) {
     // it after 60.
     if ((object->collisionFlags & OBJ_EVENT_BLOCKED_BY_SOLID) != 0) {
       SET_VECTOR(pos, x, y, z);
-      if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)object, pos) !=
+      if (ObjectScript_CheckOverlap((struct ScriptObjectEntry *)object, pos) !=
           0) {
         object->refused++;
         continue;
@@ -615,10 +615,10 @@ void Object_UpdateAllMotion(void) {
       }
       // Gravity, and a bounce that loses energy on landing.
       if (object->motionFlags & OBJ_EVENT_FALLS) {
-        if (y > object->terrainHeight) {
+        if (y > object->groundHeight) {
           object->velocityY -= object->gravity;
         } else if (object->velocityY < 0) {
-          y = object->terrainHeight;
+          y = object->groundHeight;
           object->velocityY =
               -Iwram_MulQ16(object->velocityY, object->vertical.bounce);
           if ((object->velocityY < 0 ? -object->velocityY

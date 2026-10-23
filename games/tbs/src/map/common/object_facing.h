@@ -7,7 +7,7 @@
 
 /// An object script call: an object event with a facing target turns towards
 /// it, at most a sixteenth of a turn a frame.
-static s32 Map_TurnTowardTarget(struct ScriptInterpreter *interpreter) {
+static s32 Map_TurnTowardTarget(struct ObjectScriptContext *interpreter) {
   struct FacingObject *obj = (struct FacingObject *)interpreter;
   s32 delta;
   u16 old;

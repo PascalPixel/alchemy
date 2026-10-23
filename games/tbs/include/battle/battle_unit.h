@@ -219,7 +219,7 @@ struct BattleAct {
   /// The field Psynergy the ability works as, 1 (Move) to 16 (Avoid); 0 for
   /// none. The field effects branch on it, and the status screen counts it as
   /// usable in the field.
-  u8 type0c;
+  u8 fieldPsynergy;
   u8 reservedAfterType[3]; ///< 0 in every row
 };
 
@@ -385,7 +385,7 @@ struct BattleUnit {
 STATIC_ASSERT(sizeof(struct BattleAct) == BATTLE_ACTION_SIZE);
 STATIC_ASSERT(offsetof(struct BattleAct, effect) == 0x03);
 STATIC_ASSERT(offsetof(struct BattleAct, power) == 0x0a);
-STATIC_ASSERT(offsetof(struct BattleAct, type0c) == 0x0c);
+STATIC_ASSERT(offsetof(struct BattleAct, fieldPsynergy) == 0x0c);
 
 STATIC_ASSERT(sizeof(struct OwnerActionSlot) == 4);
 STATIC_ASSERT(sizeof(struct BattleElementStats) == 4);

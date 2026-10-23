@@ -59,17 +59,17 @@
 	.set import.Engine_ObjectEventSetAttachedEffect, 1
 	.set import.Engine_CameraSetSpeed, 1
 	.set import.Engine_CameraMoveTo, 1
-	.set import.Camera_WaitForArrival, 1
-	.set import.Camera_GetScriptObject, 1
+	.set import.FieldCamera_WaitForArrival, 1
+	.set import.FieldCamera_GetScriptObject, 1
 	.set import.Engine_ScriptRequestWarp, 1
 	.set import.Field_RequestBattleFromEncounterTable, 1
 	.set import.FieldScript_SetNextDestination, 1
 	.set import.FieldScript_SetDefeatDestination, 1
-	.set import.FieldEffect_StartGroundParticles, 1
-	.set import.FieldEffect_StartLightning, 1
-	.set import.FieldEffect_StopLightning, 1
-	.set import.FieldEffect_LastLightning, 1
-	.set import.FieldEffect_ResumeLightning, 1
+	.set import.Weather_StartRain, 1
+	.set import.Weather_StartLightning, 1
+	.set import.Weather_StopLightning, 1
+	.set import.Weather_LastLightning, 1
+	.set import.Weather_ResumeLightning, 1
 	.set import.Engine_ScriptOpenScreen, 1
 	.set import.Engine_ScriptCloseScreen, 1
 	.set import.Engine_ScriptWaitForScreen, 1

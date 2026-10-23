@@ -10,7 +10,7 @@
 /// on the 16 particles of FieldEffect_RunHalt. They fly
 /// out straight at up to 4 pixels a frame and come back turning at most 1/16
 /// turn a frame.
-void FieldEffect_UpdateRadialCamera(struct EffectSlot *effect) {
+void FieldEffect_UpdateRadialCamera(struct FieldEffectSprite *effect) {
   // A for/continue retry grows the native English callback 0x100 -> 0x104.
   // Retain the immediate OUT_AND_BACK_FLYING_OUT to OUT_AND_BACK_AIM_BACK
   // transition on arrival.
@@ -38,7 +38,7 @@ top:
     return;
   }
   if (state == OUT_AND_BACK_FLYING_OUT) {
-    if (EffectSlot_HasPendingTarget(effect) != 0)
+    if (FieldEffectSprite_HasPendingTarget(effect) != 0)
       return;
     *statePointer = *statePointer + 1;
     goto top;
@@ -57,7 +57,7 @@ top:
     return;
   }
   if (state == OUT_AND_BACK_FLYING_BACK &&
-      EffectSlot_HasPendingTarget(effect) == 0)
+      FieldEffectSprite_HasPendingTarget(effect) == 0)
     FieldEffect_ClearOwnedSlot(effect);
 }
 
@@ -79,12 +79,12 @@ void FieldEffect_RunHaltOnTarget(s32 unused) {
 /// FieldEffect_RunHaltOnTarget otherwise. Fills effect slots 0
 /// to 15 and sets scene->y to the caster's height.
 ///
-/// Abilities: Halt (FIELD_KIND_HALT).
+/// Abilities: Halt (FIELD_PSYNERGY_HALT).
 void FieldEffect_RunHalt(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct MotionObject *caster = effectWork->mainObject;
   struct MotionObject *orb;
-  struct EffectSlot *effect;
+  struct FieldEffectSprite *effect;
   struct EffectVector pos;
   struct EffectVector from;
   struct EffectVector to;
@@ -137,15 +137,15 @@ void FieldEffect_RunHalt(void) {
 
   // Particles 4 pixels round it fly out, then come back to the effect's
   // position.
-  effect = &effectWork->effects[0];
+  effect = &effectWork->sprites[0];
   for (i = 0; i < 16; i++) {
     pos.x = orb->x;
     pos.y = orb->y + (8 << 16);
     pos.z = orb->z;
     Camera_WorldToScreen((struct EffectVector *)&pos.x);
     Vector_AddPolarOffset(4 << 16, Random16(), &pos.x);
-    EffectSlot_Initialize(effect, SPRITE_SPARKLE, pos.x, pos.z);
-    EffectSlot_SetCallback(effect, FieldEffect_UpdateRadialCamera);
+    FieldEffectSprite_Initialize(effect, SPRITE_SPARKLE, pos.x, pos.z);
+    FieldEffectSprite_SetCallback(effect, FieldEffect_UpdateRadialCamera);
     ObjectGroup_SetChildValueUnlessFifteenFar(effect->object,
                                               SPRITE_COLOR_WHITE);
     effect++;
@@ -184,7 +184,7 @@ void FieldEffect_PauseObject(s32 localId) {
   struct ObjectEvent *objectEvent;
   struct AnimationEntry *entry;
 
-  objectEvent = ObjectTable_Get(localId);
+  objectEvent = ObjectEvent_GetByLocalId(localId);
   if (objectEvent != NULL) {
     gGameState.pausedUpdate = (u32)objectEvent->update;
     gGameState.pausedPose = 0;
@@ -208,7 +208,7 @@ void FieldEffect_PauseObject(s32 localId) {
 /// object event. Clears gGameState.pausedUpdate and the object's paused field,
 /// and restarts its animation at speed 16.
 void FieldEffect_ResumeObject(s32 localId) {
-  struct ObjectEvent *objectEvent = ObjectTable_Get(localId);
+  struct ObjectEvent *objectEvent = ObjectEvent_GetByLocalId(localId);
   if (objectEvent != 0) {
     if (objectEvent->update == FieldEffect_UpdatePausedObject) {
       struct GameState *state = &gGameState;
@@ -224,12 +224,12 @@ void FieldEffect_ResumeObject(s32 localId) {
 }
 
 /// Returns id, or -1 (no target) when object event id's sprite has flags 0xff
-/// in gFieldEffect_DefinitionTable (FieldEffect_GetFlags): the 20 rows before
+/// in gSpeakerDefinitions (Speaker_GetIdleFlags): the 20 rows before
 /// the default. Called by FieldEffect_Run on the nearest Halt target, so Halt
 /// does not stop those object events; an unlisted sprite takes the default
 /// row's flags 0.
 s32 FieldEffect_FilterObjectIdByFlags(s32 id) {
-  if (FieldEffect_GetFlags(id) == 0xff)
+  if (Speaker_GetIdleFlags(id) == 0xff)
     return -1;
   return id;
 }

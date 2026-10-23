@@ -6,7 +6,7 @@
 
 /// Runs Catch cast on a target, through FieldEffect_RunCatch.
 ///
-/// Abilities: Catch (FIELD_KIND_CATCH).
+/// Abilities: Catch (FIELD_PSYNERGY_CATCH).
 ///
 /// Called by FieldEffect_DispatchRequestKind; the target is ignored.
 void FieldEffect_RunCatchOnTarget(s32 unused) { FieldEffect_RunCatch(); }
@@ -15,7 +15,7 @@ void FieldEffect_RunCatchOnTarget(s32 unused) { FieldEffect_RunCatch(); }
 /// growing from a quarter to full size, presses down 20 pixels moving child to
 /// (-9, -9), rises 19.5 pixels and shrinks back.
 ///
-/// Abilities: Catch (FIELD_KIND_CATCH).
+/// Abilities: Catch (FIELD_PSYNERGY_CATCH).
 ///
 /// Object 215 is the hand of Move and Carry. The goal is 32 pixels in front
 /// of the caster with scene->enabled (no map event named the target),

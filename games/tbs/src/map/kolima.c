@@ -195,7 +195,7 @@ enum KolimaBridgeLocalId {
 };
 
 /// Applies the deferred pose change requested by the falling-effect script.
-static s32 Kolima_ApplyPendingPose(struct ScriptInterpreter *interpreter) {
+static s32 Kolima_ApplyPendingPose(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   if (gKolima_PendingPose != 0) {
     ObjectEvent_SetMode(objectEvent, 2);
@@ -207,7 +207,8 @@ static s32 Kolima_ApplyPendingPose(struct ScriptInterpreter *interpreter) {
 /// Each frame of a sparkle on Kolima's ground: its timer runs on at random, and
 /// it shows its bright frame (7) past 1000 and its dim one (10) before; at
 /// 1200 the timer starts over.
-static s32 Kolima_UpdateTimedAppearance(struct ScriptInterpreter *interpreter) {
+static s32
+Kolima_UpdateTimedAppearance(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   s32 randomValue = Engine_RandomNext();
   s32 scaledRandom = randomValue * 100;
@@ -244,15 +245,15 @@ Kolima_InitializeCursedVillagers(struct ObjectEventTemplate *templates) {
     if ((villagerIndex - 6) <= 1) {
       villager->sprite = alternateTreeSprite;
     }
-    villager->talkFacing = TALK_KEEP_FACING;
-    villager->behavior = MOVEMENT_TYPE_STAND;
+    villager->talkFacing = TALK_FACING_KEEP;
+    villager->movement = MOVEMENT_TYPE_STAND;
     villager++;
   }
 }
 
 /// Each frame of a piece of Kolima Bridge as it falls: it moves, grows, and is
 /// released when its timer runs out.
-static s32 Kolima_UpdateFallingDebris(struct ScriptInterpreter *interpreter) {
+static s32 Kolima_UpdateFallingDebris(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *debris = (struct ObjectEvent *)interpreter;
   debris->x.fixed += debris->velocityX;
   debris->z.fixed += debris->velocityZ;
@@ -371,7 +372,7 @@ static void Kolima_EnterDoor(void) {
 
   Engine_ScriptStart();
   Engine_AudioPlayCue(SE_DOOR_OPEN);
-  switch (work->touchedTrigger) {
+  switch (work->coordEvent) {
   case KOLIMA_TO_INN:
     x = 71;
     y = 9;
@@ -398,7 +399,7 @@ static void Kolima_EnterDoor(void) {
     return;
   }
   Engine_MapGridAnimateCells(gKolima_DoorCells, x, y);
-  Kolima_WalkThroughExit(work->touchedTrigger);
+  Kolima_WalkThroughExit(work->coordEvent);
   Engine_ScriptEnd();
 }
 
@@ -415,8 +416,8 @@ static void Kolima_LowerBridge(void) {
   u32 debrisIndex;
 
   Engine_ScriptStart();
-  Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
-  Camera_MoveTo(PIXELS(168), 0, PIXELS(246), 1);
+  FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
+  FieldCamera_MoveTo(PIXELS(168), 0, PIXELS(246), 1);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(20);
   ObjectEvent_ShowEmote(LOCALID_BRIDGE_VILLAGER,
@@ -425,7 +426,7 @@ static void Kolima_LowerBridge(void) {
   Engine_ScriptSetMessage(MsgKolimaGoingCrossBridge);
   Engine_ScriptShowMessage(LOCALID_BRIDGE_VILLAGER, 0);
   Engine_CameraSetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
-  Camera_MoveTo(PIXELS(168), 0, PIXELS(234), 1);
+  FieldCamera_MoveTo(PIXELS(168), 0, PIXELS(234), 1);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 174, 0x116);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHEAST, 20);
@@ -521,7 +522,7 @@ s32 Kolima_Initialize(void) {
   }
 
   if (mapId == (s32)&MapId_KolimaTunnel) {
-    gFieldWork->startTransition =
+    gFieldWork->transition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
     return 0;
   }
@@ -663,7 +664,7 @@ static void Kolima_WitnessForestCurse(void) {
   Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
   objectEvent = ObjectEvent_GetById(LOCALID_GARETS_PSYNERGY_FIELD);
   Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
-  Camera_MoveTo(PIXELS(104), -1, PIXELS(256), 0);
+  FieldCamera_MoveTo(PIXELS(104), -1, PIXELS(256), 0);
   Engine_MapGridRedraw();
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(23), PIXELS(247));
   Engine_TaskWait(1);
@@ -1632,7 +1633,7 @@ static void Kolima_SpawnCurseSparkle(void) {
 #include "common/kolima_blink.h"
 
 /// Triggers a temporary pose when an effect enters the party's occupied area.
-static s32 Kolima_TriggerRegionScript(struct ScriptInterpreter *interpreter) {
+static s32 Kolima_TriggerRegionScript(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   if (gKolima_MiaInParty != 0) {
     if ((objectEvent->x.fixed > PIXELS(59) &&
@@ -1879,51 +1880,51 @@ struct ObjectEventTemplate gKolimaTunnelObjectEventTemplates[] = {
 /// it joins (its Djinni flag, 0x31).
 struct ObjectEventTemplate gKolimaObjectEventTemplates[] = {
     { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(104), 0, PIXELS(192), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(104), 0, PIXELS(192), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(104), 0, PIXELS(312), FACING_WEST, TALK_FACE_PARTY, 0 },
+        PIXELS(104), 0, PIXELS(312), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(168), 0, PIXELS(360), FACING_WEST, TALK_FACE_PARTY, 0 },
+        PIXELS(168), 0, PIXELS(360), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(344), 0, PIXELS(280), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(344), 0, PIXELS(280), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(248), 0, PIXELS(392), FACING_SOUTH, 3, 0 },
     { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(248), 0, PIXELS(184), FACING_WEST, TALK_FACE_PARTY, 0 },
+        PIXELS(248), 0, PIXELS(184), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(216), 0, PIXELS(264), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(216), 0, PIXELS(264), FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(248), 0, PIXELS(264), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(248), 0, PIXELS(264), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(232), 0, PIXELS(136), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(232), 0, PIXELS(136), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_TRET, FLAG_KOLIMA_CURSE_WITNESSED, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_LAUREL, FLAG_KOLIMA_CURSE_WITNESSED, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_PSYNERGY_FIELD, FLAG_KOLIMA_CURSE_WITNESSED, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_PSYNERGY_FIELD, FLAG_KOLIMA_CURSE_WITNESSED, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_PSYNERGY_FIELD, FLAG_KOLIMA_CURSE_WITNESSED, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_PSYNERGY_FIELD, FLAG_KOLIMA_CURSE_WITNESSED, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, MOVEMENT_TYPE_STAND,
-        PIXELS(24), 0, PIXELS(232), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(24), 0, PIXELS(232), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, MOVEMENT_TYPE_STAND,
-        PIXELS(120), 0, PIXELS(296), FACING_SOUTH, TALK_FACE_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(120), 0, PIXELS(296), FACING_SOUTH, TALK_FACING_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, MOVEMENT_TYPE_STAND,
-        PIXELS(152), 0, PIXELS(280), FACING_SOUTH, TALK_FACE_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(152), 0, PIXELS(280), FACING_SOUTH, TALK_FACING_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, MOVEMENT_TYPE_STAND,
-        PIXELS(40), 0, PIXELS(328), FACING_SOUTH, TALK_FACE_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(40), 0, PIXELS(328), FACING_SOUTH, TALK_FACING_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { VENUS_DJINNI, 0x31, MOVEMENT_TYPE_STAND,
-        PIXELS(328), 0, PIXELS(360), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(328), 0, PIXELS(360), FACING_EAST, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };
 
@@ -1931,15 +1932,15 @@ struct ObjectEventTemplate gKolimaObjectEventTemplates[] = {
 /// and kept while it lasts.
 struct ObjectEventTemplate gKolima_EntryScript[] = {
     { SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, 7,
-        PIXELS(120), 0, PIXELS(424), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(120), 0, PIXELS(424), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, 7,
-        PIXELS(296), 0, PIXELS(376), FACING_SOUTH, TALK_FACE_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(296), 0, PIXELS(376), FACING_SOUTH, TALK_FACING_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, 7,
-        PIXELS(440), 0, PIXELS(344), FACING_SOUTH, TALK_FACE_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(440), 0, PIXELS(344), FACING_SOUTH, TALK_FACING_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, 7,
-        PIXELS(296), 0, PIXELS(232), FACING_SOUTH, TALK_FACE_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(296), 0, PIXELS(232), FACING_SOUTH, TALK_FACING_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, 7,
-        PIXELS(152), 0, PIXELS(184), FACING_SOUTH, TALK_FACE_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(152), 0, PIXELS(184), FACING_SOUTH, TALK_FACING_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { MAP_TABLE_END },
 };
 
@@ -1950,7 +1951,7 @@ struct ObjectEventTemplate gKolimaBridgeObjectEventTemplates[] = {
     { SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(234), 0, PIXELS(200), FACING_SOUTH + FACING_STEP, 3, 0 },
     { SPRITE_TREE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(234), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(234), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 

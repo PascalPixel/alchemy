@@ -2,7 +2,7 @@
 #define ALCHEMY_FXBLEND_H
 
 /// @file
-/// FieldBlendWork, the field's colour blend work.
+/// LightningWork, the field's colour blend work.
 
 #include "types.h"
 #include "static_assert.h"
@@ -10,8 +10,8 @@
 /// The storm's lightning work: the colours it flashes between and their
 /// difference, the countdown to the next flash and whether the thunder is
 /// loud. It is heap slot HEAP_SLOT_LIGHTNING (gLightningWork), which the
-/// lightning and FieldEffect_StartBufferBlend take.
-struct FieldBlendWork {
+/// lightning and Weather_StartLightningFlash take.
+struct LightningWork {
   /// The storm's dark colours (PALETTE_TRANSFORM_WARM), as the colour buffer's
   /// B, G and R channels: each flash fades back to them.
   s16 from[0x540];
@@ -28,10 +28,10 @@ struct FieldBlendWork {
   u8 padding[2]; ///< up to the struct's word-aligned size
 };
 
-STATIC_ASSERT(sizeof(struct FieldBlendWork) == 0x1f88);
-STATIC_ASSERT(offsetof(struct FieldBlendWork, to) == 0xa80);
-STATIC_ASSERT(offsetof(struct FieldBlendWork, delta) == 0x1500);
-STATIC_ASSERT(offsetof(struct FieldBlendWork, timer) == 0x1f80);
-STATIC_ASSERT(offsetof(struct FieldBlendWork, loud) == 0x1f84);
+STATIC_ASSERT(sizeof(struct LightningWork) == 0x1f88);
+STATIC_ASSERT(offsetof(struct LightningWork, to) == 0xa80);
+STATIC_ASSERT(offsetof(struct LightningWork, delta) == 0x1500);
+STATIC_ASSERT(offsetof(struct LightningWork, timer) == 0x1f80);
+STATIC_ASSERT(offsetof(struct LightningWork, loud) == 0x1f84);
 
 #endif

@@ -8,13 +8,13 @@
 /// Moves the character the player controls (in animation 27) and object event
 /// id together by (dx, dz) pixels to the centres of their cells, at a pixel a
 /// frame, as when pushing it; the object event faces the way it goes.
-static void MapObjectEvent_PlacePairAtOffset(s32 id, s32 dx, s32 dz) {
+static void ObjectEvent_PlacePairAtOffset(s32 id, s32 dx, s32 dz) {
   struct ObjectEvent *objectEvent;
   struct ObjectEvent *other;
   s32 x;
   s32 z;
 
-  objectEvent = ObjectEvent_GetById(gGameState.selectedLocalId);
+  objectEvent = ObjectEvent_GetById(gGameState.leaderLocalId);
   other = ObjectEvent_GetById(id);
   Engine_ScriptStart();
   {

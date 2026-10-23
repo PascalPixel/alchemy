@@ -185,7 +185,7 @@ u32 Save_BuildFileSummary(void) {
   }
   gGameState.idleSleepEnabled = gIdleSleepEnabled;
 
-  leader = Unit_GetFar(gGameState.selectedLocalId);
+  leader = Unit_GetFar(gGameState.leaderLocalId);
   destination = summary->name;
   source = leader->name;
   for (i = 11; i >= 0; i--)

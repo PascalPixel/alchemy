@@ -18,13 +18,13 @@
 /// is flat: the first sample everywhere.
 /// Each is reached only through that table, by the cell's enum TerrainKind:
 /// this one is TERRAIN_FLAT, and the rest follow in order.
-s32 Curve_GetFirstSampleA(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
+s32 Terrain_GetFirstSampleA(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
   return CURVE_HEIGHT_FIXED(samples[0]);
 }
 
 /// A slope along x: from sample 0 at x = 0 towards sample 1 at x = 16.
-s32 Curve_LerpTwoSamples(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
+s32 Terrain_LerpTwoSamples(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
   s32 startHeight;
   s32 heightDelta;
@@ -39,7 +39,7 @@ s32 Curve_LerpTwoSamples(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
 }
 
 /// A slope along y: from sample 0 at y = 0 towards sample 1 at y = 16.
-s32 Curve_LerpTwoSamplesB(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
+s32 Terrain_LerpTwoSamplesB(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
   s32 startHeight;
   s32 heightDelta;
@@ -55,7 +55,7 @@ s32 Curve_LerpTwoSamplesB(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
 
 /// A step across the diagonal x + y = 15: sample 0 before it, sample 1 after
 /// it and the higher of the two on it.
-s32 Curve_StepAtSummedPosition(const u8 *heightBytes, s32 x, s32 y) {
+s32 Terrain_StepAtSummedPosition(const u8 *heightBytes, s32 x, s32 y) {
   const s8 *samples = (const s8 *)heightBytes;
   s32 firstHeight;
   s32 secondHeight;
@@ -81,7 +81,7 @@ s32 Curve_StepAtSummedPosition(const u8 *heightBytes, s32 x, s32 y) {
 
 /// A step across the diagonal x = y: sample 0 where y < x, sample 1 where
 /// y > x and the higher of the two on it.
-s32 Curve_StepAtDifferencePosition(const u8 *heightBytes, s32 x, s32 y) {
+s32 Terrain_StepAtDifferencePosition(const u8 *heightBytes, s32 x, s32 y) {
   const s8 *samples = (const s8 *)heightBytes;
   s32 firstHeight;
   s32 secondHeight;
@@ -110,7 +110,7 @@ s32 Curve_StepAtDifferencePosition(const u8 *heightBytes, s32 x, s32 y) {
 
 /// A slope that bends on the diagonal x + y = 15: from sample 0 at the top
 /// left corner to sample 1 on the diagonal to sample 2 at the bottom right.
-s32 Curve_LerpThreeSamplesByRatio(const u8 *heightBytes, s32 x, s32 y) {
+s32 Terrain_LerpThreeSamplesByRatio(const u8 *heightBytes, s32 x, s32 y) {
   const s8 *samples = (const s8 *)heightBytes;
   s32 firstHeight;
   s32 middleHeight;
@@ -142,7 +142,7 @@ s32 Curve_LerpThreeSamplesByRatio(const u8 *heightBytes, s32 x, s32 y) {
 /// It divides by 16 with a shift where TERRAIN_BEND_SUM_DIAGONAL divides by
 /// 15, so its
 /// slopes are 15/16 as steep and it never reaches sample 2 exactly.
-s32 Curve_LerpThreeSamplesAtDifference(const u8 *heightBytes, s32 x, s32 y) {
+s32 Terrain_LerpThreeSamplesAtDifference(const u8 *heightBytes, s32 x, s32 y) {
   const s8 *samples = (const s8 *)heightBytes;
   s32 firstHeight;
   s32 middleHeight;
@@ -178,9 +178,9 @@ s32 Curve_LerpThreeSamplesAtDifference(const u8 *heightBytes, s32 x, s32 y) {
   return middleHeight + pixelDifference;
 }
 
-/// A raised or sunken rounded square: sample 1 where gCurve_LerpWeightTable is
-/// 1, sample 0 in the corners.
-s32 Curve_LerpTwoSamplesByTable(const u8 *heightBytes, s32 x, s32 y) {
+/// A raised or sunken rounded square: sample 1 where gTerrain_LerpWeightTable
+/// is 1, sample 0 in the corners.
+s32 Terrain_LerpTwoSamplesByTable(const u8 *heightBytes, s32 x, s32 y) {
   const s8 *samples = (const s8 *)heightBytes;
   s32 startHeight;
 
@@ -188,11 +188,11 @@ s32 Curve_LerpTwoSamplesByTable(const u8 *heightBytes, s32 x, s32 y) {
   // The weight is 0 or 1, so the result is one sample or the other, never
   // between.
   return startHeight + ((CURVE_HEIGHT_FIXED(samples[1]) - startHeight) *
-                        gCurve_LerpWeightTable[x + (y * CURVE_FULL_STEPS)]);
+                        gTerrain_LerpWeightTable[x + (y * CURVE_FULL_STEPS)]);
 }
 
 /// A step along x: sample 0 for x < 8, sample 1 from x = 8.
-s32 Curve_StepAtHalf(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
+s32 Terrain_StepAtHalf(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
   u32 cellX = pixelX;
   s32 heightSample;
@@ -204,7 +204,7 @@ s32 Curve_StepAtHalf(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
 }
 
 /// A step along y: sample 0 for y < 8, sample 1 from y = 8.
-s32 Curve_StepAtHalfB(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
+s32 Terrain_StepAtHalfB(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
   u32 cellY = pixelY;
   s32 heightSample;
@@ -217,8 +217,8 @@ s32 Curve_StepAtHalfB(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
 
 /// A slope along x that bends at the middle: sample 0 at x = 0, sample 1 at
 /// x = 8, towards sample 2 at x = 16.
-s32 Curve_LerpThreeSamplesAtHalf(const u8 *heightBytes, s32 pixelX,
-                                 s32 pixelY) {
+s32 Terrain_LerpThreeSamplesAtHalf(const u8 *heightBytes, s32 pixelX,
+                                   s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
   u32 cellX = pixelX;
   s32 endpointHeight;
@@ -255,8 +255,8 @@ s32 Curve_LerpThreeSamplesAtHalf(const u8 *heightBytes, s32 pixelX,
 /// A slope along y that bends at the middle, as TERRAIN_BEND_X does along x.
 /// Its samples are read unsigned: 128 to 255 are heights, where the
 /// other kinds read them as -128 to -1.
-s32 Curve_LerpThreeSamplesAtHalfB(const u8 *heightBytes, s32 pixelX,
-                                  s32 pixelY) {
+s32 Terrain_LerpThreeSamplesAtHalfB(const u8 *heightBytes, s32 pixelX,
+                                    s32 pixelY) {
   const u8 *samples = heightBytes;
   u32 cellY = pixelY;
   s32 endpointHeight;
@@ -287,36 +287,36 @@ s32 Curve_LerpThreeSamplesAtHalfB(const u8 *heightBytes, s32 pixelX,
   return middleHeight + (tailDelta >> 3);
 }
 
-/// The sample gCurve_SampleIndexTable picks for (x, y).
-s32 Curve_LookupSampleByTable(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
+/// The sample gTerrain_SampleIndexTable picks for (x, y).
+s32 Terrain_LookupSampleByTable(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
   u32 cellX = pixelX;
   u32 cellY = pixelY;
   // The table holds a byte per pixel of the cell, row by row.
   return CURVE_HEIGHT_FIXED(
-      samples[gCurve_SampleIndexTable[cellX + (cellY << 4)]]);
+      samples[gTerrain_SampleIndexTable[cellX + (cellY << 4)]]);
 }
 
 /// The same, with the table mirrored left to right.
-s32 Curve_LookupSampleByTableReversed(const u8 *heightBytes, s32 pixelX,
-                                      s32 pixelY) {
+s32 Terrain_LookupSampleByTableReversed(const u8 *heightBytes, s32 pixelX,
+                                        s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
   u32 cellX = pixelX;
   u32 cellY = pixelY;
   // Row y read from its right end: (y << 4) + 15 - x.
   return CURVE_HEIGHT_FIXED(
-      samples[gCurve_SampleIndexTable[((cellY << 4) - cellX) +
-                                      CURVE_FULL_STEPS - 1]]);
+      samples[gTerrain_SampleIndexTable[((cellY << 4) - cellX) +
+                                        CURVE_FULL_STEPS - 1]]);
 }
 
-/// Flat, as Curve_GetFirstSampleA.
-s32 Curve_GetFirstSampleB(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
+/// Flat, as Terrain_GetFirstSampleA.
+s32 Terrain_GetFirstSampleB(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
   return CURVE_HEIGHT_FIXED(samples[0]);
 }
 
-/// Flat, as Curve_GetFirstSampleA.
-s32 Curve_GetFirstSampleC(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
+/// Flat, as Terrain_GetFirstSampleA.
+s32 Terrain_GetFirstSampleC(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
   return CURVE_HEIGHT_FIXED(samples[0]);
 }
@@ -345,7 +345,7 @@ s32 MapGrid_GetTerrainHeight(s32 layer, s32 x, s32 y) {
   // Cells are 16 pixels, 128 to a row. A cell's collision record is four
   // bytes: the kind, then up to three height samples.
   cell += x / 16 + (y / 16 << 7);
-  heightBytes = Ram_MapGridCollision + cell->attributeB * 4;
+  heightBytes = Ram_MapGridShapes + cell->shape * 4;
   // UB: sequence the kind-byte read before passing the remaining samples.
 #ifdef UBFIX
   {
@@ -380,8 +380,8 @@ s32 MapGrid_GetCellAttributeLowNibble(s32 layer, s32 x, s32 y) {
   cellY = y / 16;
   cells += cellX + (cellY << 7);
   // The kind byte of the cell's four-byte collision record.
-  heightAttributeIndex = cells->attributeB;
-  return *(Ram_MapGridCollision + heightAttributeIndex * 4) & 15;
+  heightAttributeIndex = cells->shape;
+  return *(Ram_MapGridShapes + heightAttributeIndex * 4) & 15;
 }
 
 /// Returns the metatile behavior of a layer's cell at (x, y) in 16.16 pixels.
@@ -401,7 +401,7 @@ s32 MapGrid_GetMetatileBehaviorAt(s32 layer, s32 x, s32 y) {
     cell = gridState->layers[layer & 3].cells;
   }
   cell += x + (y << 7);
-  return cell->collisionCode;
+  return cell->behavior;
 }
 
 /// Sets the metatile behavior of a layer's cell at (x, y) in 16.16 pixels.
@@ -419,7 +419,7 @@ void MapGrid_SetMetatileBehaviorAt(u32 layer, s32 x, s32 y, u32 collisionCode) {
     struct MapGridCell *cell = gridState->layers[layer & 3].cells;
 
     cell += x + (y << 7);
-    cell->collisionCode = collisionCode;
+    cell->behavior = collisionCode;
   }
 }
 
@@ -435,16 +435,16 @@ UNUSED s32 MapGrid_GetCellHighFlags(s32 x, s32 y) {
   return ((u8 *)&cell->metatileAndFlags)[1] >> 6;
 }
 
-/// Returns whether an object can step to position, an enum MapGridStepCheck:
+/// Returns whether an object can step to position, an enum Collision:
 /// whether the cell there is a wall, or the ground too high or too low for a
 /// step from the object's.
 ///
 /// Called by the player control and the script commands that pick a free
-/// step, and as MapGrid_CheckObjectStepFar by the Psynergy effects (Move,
-/// Carry, Force, climbing). A terrainId past MAPGRID_LAYER_OVERHEAD reads the
+/// step, and as MapGrid_CheckCollisionFar by the Psynergy effects (Move,
+/// Carry, Force, climbing). A layer past MAPGRID_LAYER_OVERHEAD reads the
 /// grid from its start.
-s32 MapGrid_CheckObjectStep(struct Object *object,
-                            struct FieldPosition *position) {
+s32 MapGrid_CheckCollision(struct Object *object,
+                           struct FieldPosition *position) {
   struct MapGridState *gridState;
   s32 pixelX;
   s32 pixelZ;
@@ -457,18 +457,18 @@ s32 MapGrid_CheckObjectStep(struct Object *object,
   pixelZ = ((union FieldCoordinate *)&position->z)->part.pixel;
   gridState = gMapGridWork[0];
   if (gridState == NULL)
-    return MAPGRID_STEP_OPEN;
-  // The three layers have their windows into the grid; any other terrainId
+    return COLLISION_NONE;
+  // The three layers have their windows into the grid; any other layer
   // reads the grid from its start.
-  if (object->terrainId <= MAPGRID_LAYER_OVERHEAD)
-    cell = gridState->layers[object->terrainId].cells;
+  if (object->layer <= MAPGRID_LAYER_OVERHEAD)
+    cell = gridState->layers[object->layer].cells;
   else
     cell = (struct MapGridCell *)Ram_MapGridCellBuffer;
   cell += pixelX / 16 + (pixelZ / 16 << 7);
   // A wall blocks whatever the heights.
-  if (cell->collisionCode == MB_WALL)
-    return MAPGRID_STEP_WALL;
-  heightBytes = Ram_MapGridCollision + cell->attributeB * 4;
+  if (cell->behavior == MB_WALL)
+    return COLLISION_IMPASSABLE;
+  heightBytes = Ram_MapGridShapes + cell->shape * 4;
   // UB: sequence the kind-byte read before passing the remaining samples.
 #ifdef UBFIX
   {
@@ -482,12 +482,12 @@ s32 MapGrid_CheckObjectStep(struct Object *object,
       heightBytes, pixelX & 15, pixelZ & 15);
 #endif
   // Up to 8 pixels up or 12 down is a step the object can take.
-  stepHeight = targetGround - object->terrainHeight;
+  stepHeight = targetGround - object->groundHeight;
   if (stepHeight > 0x80000)
-    return MAPGRID_STEP_TOO_HIGH;
+    return COLLISION_TOO_HIGH;
   if (stepHeight < -0xc0000)
-    return MAPGRID_STEP_TOO_LOW;
-  return MAPGRID_STEP_OPEN;
+    return COLLISION_TOO_LOW;
+  return COLLISION_NONE;
 }
 
 /// Returns -1 when the cell under position (its x, and y less its height) in
@@ -514,7 +514,7 @@ s32 MapGrid_IsWallAt(struct WorldPosition *position) {
   cellY = pixelY / 16;
   cell += cellX + cellY * 128;
   // 1 - 1 for open ground, 0 - 1 for a wall: nonzero means walled.
-  return (cell->collisionCode != MB_WALL) - 1;
+  return (cell->behavior != MB_WALL) - 1;
 }
 
 /// Returns the world map's collision value (1-15) at position: from the upper
@@ -522,9 +522,9 @@ s32 MapGrid_IsWallAt(struct WorldPosition *position) {
 /// WORLD_MAP_COLLISION_DEFAULT. Each layer is a
 /// tile map of 4-bit collision pixels.
 ///
-/// Called by the player control, CheckWorldMapWalkable and
-/// GetWorldMapTerrainBehavior.
-s32 GetWorldMapCollision(struct WorldPosition *position) {
+/// Called by the player control, WorldMap_IsWalkable and
+/// WorldMap_GetBattleEnvironment.
+s32 WorldMap_GetCollision(struct WorldPosition *position) {
   s32 halfPixelX = position->x >> 17;
   s32 y = position->y;
   s32 halfPixelY = y >> 17;
@@ -544,7 +544,7 @@ s32 GetWorldMapCollision(struct WorldPosition *position) {
   // into the collision buffer.
   collisionTile = BG_SCREEN_BLOCK(10)[collisionCell];
   packedCollisions =
-      *(Ram_MapGridCollision + 0x800 + (collisionTile << 3) + pixelOffset);
+      *(Ram_MapGridShapes + 0x800 + (collisionTile << 3) + pixelOffset);
   if (packedCollisions != 0) {
     if (halfPixelX & 2)
       result = packedCollisions >> 4;
@@ -556,8 +556,7 @@ s32 GetWorldMapCollision(struct WorldPosition *position) {
 
   // The lower layer: its tile map in screen block 8, its tiles at the start.
   collisionTile = BG_SCREEN_BLOCK(8)[collisionCell];
-  packedCollisions =
-      *(Ram_MapGridCollision + (collisionTile << 3) + pixelOffset);
+  packedCollisions = *(Ram_MapGridShapes + (collisionTile << 3) + pixelOffset);
   if (packedCollisions != 0) {
     if (halfPixelX & 2)
       result = packedCollisions >> 4;
@@ -577,9 +576,9 @@ s32 GetWorldMapCollision(struct WorldPosition *position) {
 /// The first argument is not read; the player control passes its object.
 /// Called by the player control as it probes the steps around the object it
 /// moves.
-s32 CheckWorldMapWalkable(s32 unused, struct WorldPosition *position) {
+s32 WorldMap_IsWalkable(s32 unused, struct WorldPosition *position) {
   // One unsigned compare tests the walkable range.
-  if ((GetWorldMapCollision(position) - WORLD_MAP_COLLISION_WALKABLE_FIRST) <=
+  if ((WorldMap_GetCollision(position) - WORLD_MAP_COLLISION_WALKABLE_FIRST) <=
       (u32)(WORLD_MAP_COLLISION_WALKABLE_LAST -
             WORLD_MAP_COLLISION_WALKABLE_FIRST)) {
     return 0;
@@ -588,13 +587,13 @@ s32 CheckWorldMapWalkable(s32 unused, struct WorldPosition *position) {
 }
 
 /// Returns the world map's terrain behaviour at position from
-/// gWorldMap_TerrainBehaviorTable, and stores the block's terrain kind in
+/// gWorldMap_BattleEnvironments, and stores the block's terrain kind in
 /// terrainKind.
-/// Called through GetWorldMapTerrainBehaviorFar by the world map's
+/// Called through WorldMap_GetBattleEnvironmentFar by the world map's
 /// encounters (Encounter_ResolveWorldMapZoneAndBackdrop).
-s32 GetWorldMapTerrainBehavior(struct WorldPosition *position,
-                               s32 *terrainKind) {
-  s32 collisionKind = GetWorldMapCollision(position);
+s32 WorldMap_GetBattleEnvironment(struct WorldPosition *position,
+                                  s32 *terrainKind) {
+  s32 collisionKind = WorldMap_GetCollision(position);
   s32 x = position->x;
   s32 y;
   s32 behaviorBank = 0;
@@ -620,8 +619,8 @@ s32 GetWorldMapTerrainBehavior(struct WorldPosition *position,
 
   // The terrain kind is bits 24 to 30 of the block word.
   *terrainKind = (*metatileWord << 1) >> 25;
-  if (*terrainKind == WORLD_MAP_REGION_SNOWFIELD)
+  if (*terrainKind == WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD)
     behaviorBank = 0x20;
 
-  return gWorldMap_TerrainBehaviorTable[behaviorBank + collisionKind];
+  return gWorldMap_BattleEnvironments[behaviorBank + collisionKind];
 }

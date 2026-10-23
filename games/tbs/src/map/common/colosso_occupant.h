@@ -14,7 +14,7 @@ void *Colosso_FindObjectEventAhead(void) {
   struct FieldPosition position;
   struct ObjectEvent *occupant;
 
-  record = ObjectEvent_GetById(gGameState.selectedLocalId);
+  record = ObjectEvent_GetById(gGameState.leaderLocalId);
 
   facing = (record->facing + 0x2000) & 0xc000;
 

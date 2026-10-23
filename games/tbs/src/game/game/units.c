@@ -49,8 +49,8 @@ void *Djinn_GetRecoveryTable(s32 enemySide) {
 }
 
 /// Returns the average level of the party members, rounded down (0 with no
-/// members). Called by Encounter_SelectEnemyGroup to pick a random battle's
-/// enemies, and by the Lucky Dice game in Tolbi to set its prizes.
+/// members). Called by Encounter_CountStepsAndSelectFormation to pick a random
+/// battle's enemies, and by the Lucky Dice game in Tolbi to set its prizes.
 u32 Party_GetAverageLevel(void) {
   s32 partySize;
   s32 totalLevels;
@@ -535,15 +535,15 @@ u32 Runtime_GetBuildStampTime(void) {
 /// A view of EWRAM from gMapLocalState on, which GameState_InitializeDefaults
 /// writes one byte through. gMapLocalState's 0x78 bytes and
 /// gInventorySnapshot's 0x8c come first, so firstSnapshotSlot is the first byte
-/// of gObjectSnapshots.
+/// of gObjectEventSnapshot.
 struct MapLocalStateTail {
   u8 mapAndInventory[0x100]; ///< gMapLocalState, then most of
                              ///< gInventorySnapshot
   /// gInventorySnapshot's last word, past the 65 halfwords the snapshot
   /// uses; nothing reads or writes it through this view.
   u32 playTime;
-  /// gObjectSnapshots.slots[0]: set to 0xff, OBJECT_SNAPSHOT_EMPTY, so a
-  /// new game holds no saved object events.
+  /// gObjectEventSnapshot.slots[0]: set to 0xff, OBJECT_EVENT_SNAPSHOT_EMPTY,
+  /// so a new game holds no saved object events.
   u8 firstSnapshotSlot;
 };
 
@@ -559,8 +559,8 @@ void GameState_InitializeDefaults(void) {
   // Clear the state header, map state, flags and save metadata in DMA order:
   // 0xb0 words are gGameState up to the characters (owners, which
   // Party_InitializeCharacters sets up); 0x3e1 words run from gMapLocalState
-  // through gInventorySnapshot and gObjectSnapshots; 0x80 words are all 4096
-  // flags.
+  // through gInventorySnapshot and gObjectEventSnapshot; 0x80 words are all
+  // 4096 flags.
   zero = 0;
   START_DMA(&zero, &gGameState,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 0xb0);
@@ -586,7 +586,7 @@ void GameState_InitializeDefaults(void) {
   gGameState.dashKeys = KEY_B;
   gGameState.firstShortcut = 0;
   gGameState.secondShortcut = 0;
-  gGameState.selectedLocalId = 0;
+  gGameState.leaderLocalId = 0;
   Party_AddActiveOwner(0);
   gGameState.coins = 0;
   gGameState.messageSpeed = 1;

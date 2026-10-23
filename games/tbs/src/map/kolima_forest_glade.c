@@ -79,10 +79,10 @@ KolimaForestGlade_GetObjectEventTemplates(void) {
 /// Kolima Forest (MapId_KolimaForestGlade), walking into a log: it rolls
 /// ahead until something stops it.
 static void KolimaForestGlade_PushLog(void) {
-  struct StagedObjectEventProbe result;
+  struct PushedObjectProbe result;
   Engine_ScriptStart();
-  if (StagedObjectEvent_FindClearPosition(&result))
-    MapObjectEvent_MoveAndRedraw(result);
+  if (PushedObject_FindClearPosition(&result))
+    ObjectEvent_MoveAndRedraw(result);
   Engine_ScriptEnd();
 }
 
@@ -107,7 +107,7 @@ const struct MapEvent *KolimaForestGlade_GetEvents(void) {
 /// colours until the curse is lifted.
 s32 KolimaForestGlade_Initialize(void) {
 
-  gFieldWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_FOREST_NUT_CAUGHT) == 0) {
     Map_FloatNut(LOCALID_NUT);
@@ -127,7 +127,7 @@ s32 KolimaForestGlade_Initialize(void) {
 /// Pixel step by direction: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
-s32 gStagedObjectEvent_DirectionSteps[] = {
+s32 gPushedObject_DirectionSteps[] = {
     DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),
@@ -137,11 +137,11 @@ s32 gStagedObjectEvent_DirectionSteps[] = {
 };
 
 // clang-format off
-u32 gStagedObjectEvent_FootprintKinds[] = {
+u32 gPushedObject_FootprintKinds[] = {
     207, 205, 228, 229, 298, 297,
 };
 
-s32 gStagedObjectEvent_FootprintBounds[] = {
+s32 gPushedObject_FootprintBounds[] = {
     -32, -8, 32, 8,
     -8, -32, 8, 32,
     -32, -16, 32, 0,
@@ -170,17 +170,17 @@ u32 gKolimaForestGlade_Warps[] = {
 /// catching it sets.
 struct ObjectEventTemplate gKolimaForestGlade_ObjectEventTemplates[] = {
     { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(360), 0, PIXELS(368), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(360), 0, PIXELS(368), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(160), 0, PIXELS(392), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(160), 0, PIXELS(392), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(136), 0, PIXELS(336), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(136), 0, PIXELS(336), FACING_SOUTH, TALK_FACING_KEEP, 0 },
 #if !TBS_PATCH_3
     { SPRITE_BLANK, FLAG_VALE_NUT_CAUGHT, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(280), 0, PIXELS(280), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(280), 0, PIXELS(280), FACING_SOUTH, TALK_FACING_KEEP, 0 },
 #else
     { SPRITE_BLANK, FLAG_KOLIMA_FOREST_NUT_CAUGHT, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(280), 0, PIXELS(280), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(280), 0, PIXELS(280), FACING_SOUTH, TALK_FACING_KEEP, 0 },
 #endif
     { MAP_TABLE_END },
 };

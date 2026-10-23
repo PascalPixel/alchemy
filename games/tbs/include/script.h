@@ -22,7 +22,7 @@
 #define OBJECT_DIR(no, d, t) ObjectEvent_FaceDirection((no), (d), (t))
 #define OBJECT_FACE(no, to, t)                                                 \
   Engine_ObjectEventFaceObjectEvent((no), (to), (t))
-#define OBJECT_MODE(no, m) Engine_ObjectEventSetAnimation((no), (m))
+#define OBJECT_ANIMATION(no, m) Engine_ObjectEventSetAnimation((no), (m))
 #define OBJECT_EMOTE(no, e, t) ObjectEvent_ShowEmote((no), (e), (t))
 
 /// Gets an object by index as the same union FieldObject passed to update
@@ -34,7 +34,7 @@
 
 #define SE(n) Script_PlaySong(n)
 
-#define EV_START() Engine_ScriptStart()
-#define EV_END() Engine_ScriptEnd()
+#define SCRIPT_START() Engine_ScriptStart()
+#define SCRIPT_END() Engine_ScriptEnd()
 
 #endif

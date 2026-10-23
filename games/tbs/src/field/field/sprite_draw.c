@@ -382,7 +382,7 @@ void Render_PlaceSpritePartPair(struct AnimationObject *sprite, s32 screenX,
 /// has one) and then the image in a draw slot by depth; an object 100 pixels
 /// or more below the ground takes slot 1 instead, its shadow slot 0.
 ///
-/// Called by ObjectSystem_UpdateCamera for each one-sprite object on a
+/// Called by ObjectSystem_PlaceSprites for each one-sprite object on a
 /// layered map, by the sprite viewer, and as Object_ApplyProjectedPlacementFar
 /// by the battle effects, the Psynergy effects and the menus.
 void Render_ApplyProjectedPlacement(struct AnimationObject *sprite,
@@ -479,7 +479,7 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite,
 /// slot. A sprite off screen gives up its VRAM cache entry unless
 /// retainCacheEntry holds it.
 ///
-/// Called by ObjectSystem_UpdateCameraFixed for each object on the world map
+/// Called by ObjectSystem_ProjectSprites for each object on the world map
 /// and in the battle; while a menu suspends projection
 /// (ObjectSystemWork.suspended) every sprite is treated as off screen.
 void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,

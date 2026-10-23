@@ -22,24 +22,24 @@ enum PsynergyEffectStep {
 /// A field Psynergy's effect, as the field kind: the type column of
 /// games/tbs/src/game/actions.tsv, named for the abilities that have it. The
 /// effect scene keeps it as its animation.
-enum FieldKind {
-  FIELD_KIND_MOVE = 1,
-  FIELD_KIND_MIND_READ = 2,
-  FIELD_KIND_PLY = 3,
-  FIELD_KIND_FORCE = 4,
-  FIELD_KIND_DOUSE = 5,
-  FIELD_KIND_FROST = 6,
-  FIELD_KIND_LIFT = 7,
-  FIELD_KIND_REVEAL = 8,
-  FIELD_KIND_HALT = 9,
-  FIELD_KIND_CLOAK = 10,
-  FIELD_KIND_CARRY = 11,
-  FIELD_KIND_GROWTH = 12,
-  FIELD_KIND_CATCH = 13,
+enum FieldPsynergy {
+  FIELD_PSYNERGY_MOVE = 1,
+  FIELD_PSYNERGY_MIND_READ = 2,
+  FIELD_PSYNERGY_PLY = 3,
+  FIELD_PSYNERGY_FORCE = 4,
+  FIELD_PSYNERGY_DOUSE = 5,
+  FIELD_PSYNERGY_FROST = 6,
+  FIELD_PSYNERGY_LIFT = 7,
+  FIELD_PSYNERGY_REVEAL = 8,
+  FIELD_PSYNERGY_HALT = 9,
+  FIELD_PSYNERGY_CLOAK = 10,
+  FIELD_PSYNERGY_CARRY = 11,
+  FIELD_PSYNERGY_GROWTH = 12,
+  FIELD_PSYNERGY_CATCH = 13,
   /// Whirlwind and Gale.
-  FIELD_KIND_WHIRLWIND = 14,
-  FIELD_KIND_RETREAT = 15,
-  FIELD_KIND_AVOID = 16
+  FIELD_PSYNERGY_WHIRLWIND = 14,
+  FIELD_PSYNERGY_RETREAT = 15,
+  FIELD_PSYNERGY_AVOID = 16
 };
 
 /// One frame of a sparkle: its height offset and tile (fxdata.c).
@@ -87,8 +87,8 @@ void Field_RequestDjinnBattle(s32 flag, s32 no);
 void FieldScript_SetNextDestination(s32 mapId, s32 warpDest);
 void FieldScript_SetDefeatDestination(s32 mapId, s32 warpDest);
 void FieldScript_RequestDestination(u16 mapId, u16 warpDest);
-void FieldEffect_SetQueuedSoundAndPlay(s32 soundId);
-void FieldEffect_PlayQueuedSound(void);
+void Map_QueueMusic(s32 soundId);
+void Map_PlayQueuedMusic(void);
 
 struct DispatchObject;
 struct FacingObject;
@@ -98,7 +98,7 @@ struct Object;
 struct ObjectEvent *ObjectEvent_GetById(s32 localId);
 void ObjectMotion_SetSpeedParameters(u32 objectId, s32 speedLimit,
                                      s32 acceleration);
-// Built-in actions selected by ObjectMotion_SetActionCallback.
+// Built-in actions selected by ObjectEvent_SetMovementType.
 #define OBJ_EVENT_ACTION_IDLE 1
 #define OBJ_EVENT_ACTION_FOLLOW_LINKED_OBJECT 5
 #define OBJ_EVENT_ACTION_FACE_SELECTED_OBJ_EVENT 6
@@ -122,19 +122,19 @@ void ObjectMotion_OffsetPositionAndReset(u32 objectId, s32 xOffset,
                                          s32 zOffset);
 void ObjectMotion_CommitPositionAndActivate(u32 objectId, s32 xOffset,
                                             s32 zOffset);
-void Motion_LaunchFromFocusedObject(u32 objectId, s32 xOffset, s32 zOffset,
-                                    s32 action);
+void ObjectMotion_LaunchFromFocusedObject(u32 objectId, s32 xOffset,
+                                          s32 zOffset, s32 action);
 void ObjectMotion_CommitCurrentPositionAndActivate(u32 objectId);
 void ObjectMotion_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z);
 void ObjectMotion_SetPositionWithTerrain(u32 objectId, s32 x, s32 y, s32 z);
 void ObjectEvent_SetModeById(u32 objectId, s32 animation);
 void ObjectEvent_SetActionById(u32 objectId, s32 steps);
 void ObjectMotion_WaitForAnimationChange(u32 objectId);
-void Motion_SetModeAndWaitAnimation(u32 objectId, s32 animation);
+void ObjectMotion_SetAnimationAndWait(u32 objectId, s32 animation);
 void ObjectMotion_NoOp(void);
 void ObjectMotion_Launch(u32 objectId, s32 speed, s32 frames);
 void ObjectMotion_SetVariantCallback(u32 objectId, s32 count);
-void Motion_SetVarCbAndRefresh(u32 objectId, s32 count);
+void ObjectMotion_SetVarCbAndRefresh(u32 objectId, s32 count);
 void FieldEffect_UpdateParticleLinearMotion(union FieldObject *fieldObject);
 void FieldEffect_SpawnBurstParticle(struct ObjectEvent *source, s32 param);
 void ObjectEvent_JumpDownLedge(s32 localId, s32 pose, s32 param);
@@ -142,8 +142,8 @@ void ObjectMotion_SetAngleToward(s32 firstId, s32 secondId, s32 wait);
 void ObjectEvent_LinkPair(s32 firstId, s32 secondId, s32 wait);
 void FacingObject_TurnPairToFaceEachOther(struct FacingObject *firstObject,
                                           struct FacingObject *secondObject);
-void ObjectTable_DestroyById(s32 index);
-void ObjectTable_DestroyNoOp(void);
+void ObjectEvent_DestroyById(s32 index);
+void ObjectEvent_DestroyNoOp(void);
 void ObjectGroup_ConfigureChildValue(s32 objectId, s32 param);
 void ObjectGroup_ApplyIndexedChildValue(union FieldObject *fieldObject);
 void ObjectGroup_SetChildValue(struct ObjectEvent *objectEvent, s32 param);
@@ -159,8 +159,8 @@ void ObjectVisual_ReservedNoOp(void);
 struct UiWindow;
 
 void FieldScript_SetMessageId(s32 message);
-s32 ObjectTable_ReadActiveValue(s32 localId);
-s32 ObjectTable_FindActiveByValue(s32 sprite);
+s32 ObjectEvent_ReadActiveValue(s32 localId);
+s32 ObjectEvent_FindActiveByValue(s32 sprite);
 struct UiWindow *UiText_OpenMessageAtObject(s32 localId, s32 unused);
 void FieldScript_ShowMessageAndWait(s32 localId, s32 flags);
 void FieldScript_ShowMessageThenWait(s32 localId, s32 flags, s32 wait);
@@ -170,7 +170,7 @@ void FieldScript_ShowSpeakerMessage(s32 speaker);
 void FieldScript_ForwardShowMessageAtPosition(s32 unused0, s32 unused1, s32 x,
                                               s32 y);
 void FieldScript_ShowMessageAtPosition(s32 unused0, s32 unused1, s32 x, s32 y);
-void ObjectTable_RunIfActive(s32 localId);
+void ObjectEvent_RunIfActive(s32 localId);
 void FieldScript_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
                                         s32 firstPortraitX, s32 firstPortraitY,
                                         s32 second, s32 secondX, s32 secondY,
@@ -178,14 +178,14 @@ void FieldScript_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
                                         s32 secondPortraitY);
 void Ui_SetMessageVoiceFromObjectEvent(s32 localId);
 
-void Camera_FollowObjectEvent(s32 localId, s32 keepPosition);
-void Camera_SetSpeedParameters(s32 speedLimit, s32 acceleration);
-void Camera_MoveWithinMapBounds(s32 requestedX, s32 requestedY, s32 requestedZ,
-                                s32 glide);
+void FieldCamera_FollowObjectEvent(s32 localId, s32 keepPosition);
+void FieldCamera_SetSpeedParameters(s32 speedLimit, s32 acceleration);
+void FieldCamera_MoveWithinMapBounds(s32 requestedX, s32 requestedY,
+                                     s32 requestedZ, s32 glide);
 void ObjectEvent_PlaceCurrentWithinCameraBounds(s32 localId, s32 glide);
-void Camera_WaitForArrival(void);
-struct ObjectEvent *Camera_GetScriptObject(void);
-void Camera_FollowObject(struct Object *target, s32 keepCurrentPosition);
+void FieldCamera_WaitForArrival(void);
+struct ObjectEvent *FieldCamera_GetScriptObject(void);
+void FieldCamera_FollowObject(struct Object *target, s32 keepCurrentPosition);
 void MapGrid_SetViewBounds(s32 minX, s32 minY, s32 maxX, s32 maxY);
 #ifdef UBFIX
 void FieldEffect_StepRatioTransition(void);
@@ -236,42 +236,42 @@ void FieldEffect_ConfigureLinkedObject(s32 localId, s32 flags);
 s32 Object_ClearChildAndCollisionFlags(void *obj);
 s32 ObjectMotion_MoveTowardTarget(struct Object *object);
 s32 ObjectMotion_TurnTowardLinkedTarget(struct Object *object);
-void ObjectMotion_SetActionCallback(struct Object *object, s32 action);
+void ObjectEvent_SetMovementType(struct Object *object, s32 action);
 struct Object *Object_FindNearestFacingTarget(struct Object *self, s32 sprite);
 s32 Field_TryJumpForward(void);
 s32 Field_ClimbDown(void);
 s32 Field_ClimbUp(void);
 s32 ObjectEvent_GetScreenPosition(s32 objectId, s32 *position);
-void ObjectEffect_ReservedNoOp941DC(void);
+void Warp_ReservedNoOp941DC(void);
 #ifdef UBFIX
 void Field_StartEncounterTransition(s32 unused);
 #else
 s32 Field_StartEncounterTransition(s32 unused);
 #endif
-void ObjectEffect_PrepareContextEffect(s32 animation);
-void ObjectEffect_StartContextEffect26(void);
-void ObjectEffect_StartContextEffect25(void);
-void ObjectEffect_EndContextEffect(s32 animation);
-s32 ObjectEffect_RunPendingFlagEvent(void);
+void Warp_PrepareExitAnimation(s32 animation);
+void Warp_StartStairsUpExit(void);
+void Warp_StartStairsDownExit(void);
+void Warp_EndArrivalAnimation(s32 animation);
+s32 Warp_PlayArrival(void);
 
 void DisplayScroll_ArmHBlankDma(void);
 void DisplayScroll_BuildAndSwapHBlankPage(void);
 void DisplayScroll_DisarmHBlankDma(void);
-void FieldEffect_UpdateGroundParticles(void);
-void FieldEffect_UpdateLightning(void);
-void FieldEffect_StartGroundParticles(void);
+void Weather_UpdateRain(void);
+void Weather_UpdateLightning(void);
+void Weather_StartRain(void);
 void FieldMotes_Update(void);
 void FieldMotes_Start(void);
 void FieldEffect_UpdateSparkles(void);
 void FieldEffect_InitializeSparkles(void);
-void FieldEffect_StartLightning(void);
-void FieldEffect_StopLightning(void);
-void FieldEffect_LastLightning(void);
-void FieldEffect_ResumeLightning(void);
-void FieldEffect_StartBufferBlend(s32 from, s32 to);
+void Weather_StartLightning(void);
+void Weather_StopLightning(void);
+void Weather_LastLightning(void);
+void Weather_ResumeLightning(void);
+void Weather_StartLightningFlash(s32 from, s32 to);
 
 struct DescendingOrbitObject;
-struct EffectSlot;
+struct FieldEffectSprite;
 struct MotionObject;
 
 void ObjectMotion_MoveHalfwayTowardTarget(union FieldObject *fieldObject);
@@ -286,16 +286,16 @@ void FieldEffect_UpdateAllSlots(void);
 void FieldEffect_InitializeSlots(void);
 void FieldEffect_ClearActiveSlotsAndScheduleUpdates(void);
 void FieldEffect_AdvanceSpinAngle(union FieldObject *fieldObject);
-void FieldEffect_RunAngledApproachPhases(struct EffectSlot *particle);
+void FieldEffect_RunAngledApproachPhases(struct FieldEffectSprite *particle);
 void Djinn_RunJupiterJoinEffect(s32 djinniId);
 void FieldEffect_SetObjectAlternatingWords(union FieldObject *fieldObject);
 void FieldEffect_AdvanceAngleWithRamp(union FieldObject *fieldObject);
-void FieldEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect);
+void FieldEffect_UpdatePhasedRadialParticle(struct FieldEffectSprite *effect);
 void Djinn_RunMarsJoinEffect(s32 djinniId);
 void FieldEffect_UpdateDescendingOrbitObject(union FieldObject *fieldObject);
-void FieldEffect_UpdateRadialSpread(struct EffectSlot *effect);
+void FieldEffect_UpdateRadialSpread(struct FieldEffectSprite *effect);
 void FieldEffect_RunVenusDjinnCapture(s32 djinniId);
-void FieldEffect_UpdateRandomTargetParticle(struct EffectSlot *effect);
+void FieldEffect_UpdateRandomTargetParticle(struct FieldEffectSprite *effect);
 void FieldEffect_HalveDistanceToTarget(union FieldObject *fieldObject);
 void FieldEffect_RunMercuryDjinnCapture(s32 djinniId);
 
@@ -308,8 +308,8 @@ void FieldEffect_FinishMindRead(void);
 void FieldScript_RunTypeHandler(void);
 s32 Field_RunEventAction(const void *event, s32 param, s32 target);
 void ObjectGroup_ApplyRandomChildValues(union FieldObject *fieldObject);
-void Motion_SetTargetPositionFromMagnitudeAngle(struct Object *object,
-                                                s32 magnitude, s32 angle);
+void ObjectMotion_SetTargetPositionFromMagnitudeAngle(struct Object *object,
+                                                      s32 magnitude, s32 angle);
 s32 VramCache_CountFreeBlocks(void);
 struct AnimationObject *
 Sprite_ShareVramCache(struct AnimationObject *sourceSprite,
@@ -327,7 +327,7 @@ void FieldEffect_LoadActionEffectResources(s32 abilityId, s32 mode);
 void FieldEffect_SetupObjectPair(s32 userId, s32 targetId);
 void FieldEffect_StopCasterHook(void);
 void FieldEffect_End(void);
-void EventObject_Initialize(void);
+void FieldEffect_StartCast(void);
 void FieldEffect_FadeToEffectColor(void);
 void FieldEffect_FadeFromEffectColor(void);
 void Camera_WorldToScreen(struct EffectVector *position);
@@ -351,7 +351,7 @@ void Ui_SetBank15PaletteAndClearRenderMode(void);
 s32 Input_GetDpadAngle(u32 unused);
 void FieldEffect_UpdateItemBreakFragment(union FieldObject *fieldObject);
 void FieldEffect_SteerPushedTarget(s32 targetId);
-void FieldEffect_UpdateOrbitAndReturn(struct EffectSlot *effect);
+void FieldEffect_UpdateOrbitAndReturn(struct FieldEffectSprite *effect);
 void FieldEffect_RunMove(void);
 void *FieldEffect_StartItemBreak(void *object);
 void FieldEffect_SnapScaleToFull(struct MotionObject *object);
@@ -366,8 +366,8 @@ void FieldEffect_SpawnBurstParticleField(void);
 void FieldEffect_RunLiftOnTarget(s32 unused);
 struct MotionObject *FieldEffect_SpawnItemBreakMode3(s32 x, s32 y, s32 z,
                                                      s32 angle);
-void FieldEffect_UpdateRadialBurst(struct EffectSlot *effect);
-s32 SpawnHeavyImpactEffect(struct ScriptInterpreter *interpreter);
+void FieldEffect_UpdateRadialBurst(struct FieldEffectSprite *effect);
+s32 SpawnHeavyImpactEffect(struct ObjectScriptContext *interpreter);
 void FieldEffect_RunForceOnTarget(s32 unused);
 void FieldEffect_RunForce(void);
 void FieldEffect_UpdateOrbitingParticleMain(union FieldObject *fieldObject);
@@ -400,7 +400,7 @@ void FieldEffect_CircleAnchor(union FieldObject *fieldObject);
 void FieldEffect_ShrinkObjectScaleUntilHalf(union FieldObject *fieldObject);
 void FieldEffect_RunWhirlwindOnTarget(s32 unused);
 void FieldEffect_RunWhirlwind(void);
-void FieldEffect_UpdateRadialCamera(struct EffectSlot *effect);
+void FieldEffect_UpdateRadialCamera(struct FieldEffectSprite *effect);
 void FieldEffect_RunHaltOnTarget(s32 unused);
 void FieldEffect_RunHalt(void);
 void FieldEffect_UpdatePausedObject(union FieldObject *fieldObject);
@@ -411,7 +411,7 @@ void FieldEffect_RunCatchOnTarget(s32 unused);
 void FieldEffect_RunCatch(void);
 void FieldEffect_UpdateSpinAngle(union FieldObject *fieldObject);
 void FieldEffect_UpdateDescendingObject(union FieldObject *fieldObject);
-void FieldEffect_UpdateRadialLaunch(struct EffectSlot *effect);
+void FieldEffect_UpdateRadialLaunch(struct FieldEffectSprite *effect);
 void FieldEffect_RunRetreat(void);
 void FieldEffect_UpdateDescendingParticlePositiveArc(
     union FieldObject *fieldObject);
@@ -423,20 +423,24 @@ void FieldEffect_UpdatePairedArcSpawner(union FieldObject *fieldObject);
 void FieldScript_ShowStatusMessage(void);
 void FieldEffect_RunAvoid(void);
 
-void EffectSlot_Update(struct EffectSlot *effect);
-void FieldEffect_DrawScaledObject(struct EffectSlot *object);
-void EffectSlot_UpdateMotion(struct EffectSlot *effect);
-u32 EffectSlot_HasPendingTarget(struct EffectSlot *effect);
-void EffectSlot_SetPosition(struct EffectSlot *effect, s32 x, s32 z);
-void EffectSlot_SetObjectMode(struct EffectSlot *effect, s32 mode);
-void EffectSlot_SetCallback(struct EffectSlot *effect, EffectCallback callback);
-void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z);
-void FieldEffect_ClearOwnedSlot(struct EffectSlot *effect);
+void FieldEffectSprite_Update(struct FieldEffectSprite *effect);
+void FieldEffect_DrawScaledObject(struct FieldEffectSprite *object);
+void FieldEffectSprite_UpdateMotion(struct FieldEffectSprite *effect);
+u32 FieldEffectSprite_HasPendingTarget(struct FieldEffectSprite *effect);
+void FieldEffectSprite_SetPosition(struct FieldEffectSprite *effect, s32 x,
+                                   s32 z);
+void FieldEffectSprite_SetObjectMode(struct FieldEffectSprite *effect,
+                                     s32 mode);
+void FieldEffectSprite_SetCallback(struct FieldEffectSprite *effect,
+                                   EffectCallback callback);
+void FieldEffectSprite_Initialize(struct FieldEffectSprite *effect, s32 kind,
+                                  s32 x, s32 z);
+void FieldEffect_ClearOwnedSlot(struct FieldEffectSprite *effect);
 
 void FieldEffect_SetupResourcesAndWindow(void);
 void FieldEffect_CleanupResourcesAndWindow(void);
-void WorldMap_UpdateMarkers(void);
-void WorldMap_Show(s32 picture);
+void RegionMap_UpdateMarkers(void);
+void RegionMap_Show(s32 picture);
 void Field_UpdateObjectVisibilityBounds(void);
 void FieldEffect_RunVisibilityTransition(void);
 

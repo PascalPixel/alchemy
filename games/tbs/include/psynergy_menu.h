@@ -13,7 +13,7 @@
 
 struct AnimationObject;
 
-struct BattleUnit;
+struct Unit;
 
 /// The Psynergy menu: its windows, icons and cursors, the party members' tabs
 /// and the Psynergy listed for the chosen member. It is the HEAP_SLOT_MENU
@@ -57,7 +57,7 @@ struct PsynergyMenuWork {
   /// DjinnMenuWork's backdrop pointer at 0x184; no view names the rest.
   u8 aroundBackdrop[0x48];
   u16 psynergies[32]; ///< the chosen member's Psynergy listed
-  u16 ownerTable[8];  ///< the party in order (Party_ListActiveOwners)
+  u16 ownerTable[8];  ///< the party in order (Party_ListMembers)
   u8 psynergyCount;
   u8 ownerCount;
   /// The user and the target: [1] is MENU_TARGET_WHOLE_PARTY for Psynergy

@@ -16,7 +16,7 @@
 	.set import.Engine_MessageShowCentered, 1
 	.set import.Unit_Get, 1
 	.set import.Inventory_Find, 1
-	.set import.PartyInventory_FindOwner, 1
+	.set import.PartyInventory_FindMember, 1
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1
 	.set import.Engine_ScriptWait, 1

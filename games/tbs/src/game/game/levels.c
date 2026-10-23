@@ -6,11 +6,11 @@
 
 /// Returns the definition of action `actionId` (its low 14 bits); an id
 /// past the table gives the first. Reached through GAME.S as
-/// BattleAction_Get, which every bank uses to read an ability.
-struct BattleAct *BattleAction_GetDirect(s32 actionId) {
+/// Ability_Get, which every bank uses to read an ability.
+struct AbilityDefinition *Ability_GetDirect(s32 actionId) {
   u32 entryIndex;
 
-  entryIndex = actionId & OWNER_ACTION_ID_MASK;
+  entryIndex = actionId & PSYNERGY_ABILITY_MASK;
   // BUG: the bound is one past the table's 519 rows, so id 519 reads the
   // enemy table's first bytes as an action.
 #ifdef BUGFIX
@@ -20,19 +20,19 @@ struct BattleAct *BattleAction_GetDirect(s32 actionId) {
 #endif
     entryIndex = 0;
   }
-  return &gBattleAction_DefinitionTable[entryIndex];
+  return &gAbilityDefinitions[entryIndex];
 }
 
 /// Returns 1 when `actionId` is in the unit's action list. Called by the
 /// scripts that check whether a member knows a Psynergy
 /// (FieldScript_ValidatePackedId).
-s32 Unit_KnowsAction(s32 owner, s32 actionId) {
-  struct BattleUnit *unit = Unit_Get(owner);
-  struct OwnerActionSlot *entry;
-  s32 actionMask = OWNER_ACTION_ID_MASK;
+s32 Unit_KnowsPsynergy(s32 owner, s32 actionId) {
+  struct Unit *unit = Unit_Get(owner);
+  struct PsynergyEntry *entry;
+  s32 actionMask = PSYNERGY_ABILITY_MASK;
   s32 index = 0;
 
-  entry = unit->actionSlots;
+  entry = unit->psynergy;
   do {
     s32 currentAction = entry->encodedAction;
 
@@ -48,7 +48,7 @@ s32 Unit_KnowsAction(s32 owner, s32 actionId) {
 
 /// Marks on an action list entry: learned from the class, or granted by an
 /// equipped item. Plain entries were taught for good.
-enum { OWNER_ACTION_CLASS = 0x8000, OWNER_ACTION_ITEM = 0x4000 };
+enum { PSYNERGY_FROM_CLASS = 0x8000, PSYNERGY_FROM_ITEM = 0x4000 };
 
 // Slots are four-byte records, not a flat halfword array. The native view
 // preserves load scheduling; the typed view shortens the English object by
@@ -62,13 +62,13 @@ enum { OWNER_ACTION_CLASS = 0x8000, OWNER_ACTION_ITEM = 0x4000 };
 /// Rebuilds a character's Psynergy list: drops the actions its class and items
 /// gave, closes up the list, adds every class action learned by its level and
 /// the action of each equipped item that grants one, and closes it up again.
-/// Writes only the unit's actionSlots; enemies (CLASS_INDEX_ENEMY) are left
+/// Writes only the unit's psynergy; enemies (CLASS_NONE) are left
 /// alone. Called whenever the class, level or equipment changes:
 /// Inventory_Equip, Unit_UpdateClass, Unit_LevelUp, Unit_LearnPsynergy and the
 /// item menu.
 s32 Unit_RefreshPsynergy(s32 owner) {
-  struct BattleUnit *unit;
-  struct OwnerActionSlot *abilities;
+  struct Unit *unit;
+  struct PsynergyEntry *abilities;
   struct ClassDefinition *classDefinition;
   struct ItemDefinition *item;
   s32 slot;
@@ -77,17 +77,17 @@ s32 Unit_RefreshPsynergy(s32 owner) {
   struct ClassAbility *classAbility;
 
   unit = Unit_Get(owner);
-  abilities = unit->actionSlots;
-  classDefinition = Class_GetDefinition(unit->classIndex);
-  if (unit->classIndex == CLASS_INDEX_ENEMY)
+  abilities = unit->psynergy;
+  classDefinition = Class_GetDefinition(unit->classId);
+  if (unit->classId == CLASS_NONE)
     return 0;
   // Remove actions inherited from the previous class and equipment.
-  originFlag = OWNER_ACTION_CLASS;
+  originFlag = PSYNERGY_FROM_CLASS;
   for (sourceIndex = 0; sourceIndex < 32; sourceIndex++) {
     if (PSYNERGY_ACTION_AT(abilities, sourceIndex) & originFlag)
       PSYNERGY_ACTION_AT(abilities, sourceIndex) = 0;
   }
-  originFlag = OWNER_ACTION_ITEM;
+  originFlag = PSYNERGY_FROM_ITEM;
   for (sourceIndex = 0; sourceIndex < 32; sourceIndex++) {
     if (PSYNERGY_ACTION_AT(abilities, sourceIndex) & originFlag)
       PSYNERGY_ACTION_AT(abilities, sourceIndex) = 0;
@@ -107,7 +107,7 @@ s32 Unit_RefreshPsynergy(s32 owner) {
     PSYNERGY_ACTION_AT(abilities, sourceIndex) = 0;
 
   // Add level-eligible class abilities, followed by equipped-item abilities.
-  originFlag = OWNER_ACTION_CLASS;
+  originFlag = PSYNERGY_FROM_CLASS;
   for (sourceIndex = 0; sourceIndex < 16; sourceIndex++) {
     classAbility = &classDefinition->abilities[sourceIndex];
     if (classDefinition->abilities[sourceIndex].ability == 0)
@@ -140,8 +140,8 @@ s32 Unit_RefreshPsynergy(s32 owner) {
     if (item->useType != ITEM_USE_TEACHES)
       continue;
     for (slot = 0; slot < 32; slot++) {
-      if ((PSYNERGY_ACTION_AT(abilities, slot) & OWNER_ACTION_ID_MASK) ==
-          item->actionId)
+      if ((PSYNERGY_ACTION_AT(abilities, slot) & PSYNERGY_ABILITY_MASK) ==
+          item->abilityId)
         break;
     }
     if (slot != 32)
@@ -149,7 +149,7 @@ s32 Unit_RefreshPsynergy(s32 owner) {
     for (slot = 0; slot < 32; slot++) {
       if (PSYNERGY_ACTION_AT(abilities, slot) == 0) {
         PSYNERGY_ACTION_AT(abilities, slot) =
-            item->actionId | OWNER_ACTION_ITEM;
+            item->abilityId | PSYNERGY_FROM_ITEM;
         break;
       }
     }
@@ -188,16 +188,16 @@ struct LevelUpWork {
 /// scripts that teach Psynergy, the prologue's end, the debug presets and the
 /// debug shortcut menu.
 s32 Unit_LearnPsynergy(s32 stateIndex, s32 value) {
-  struct BattleUnit *state = Unit_Get(stateIndex);
-  s32 key = value & OWNER_ACTION_ID_MASK;
+  struct Unit *state = Unit_Get(stateIndex);
+  s32 key = value & PSYNERGY_ABILITY_MASK;
   s32 found = -1;
   s32 index;
 
   for (index = 0; index <= 30; index++) {
-    s32 masked = state->actionSlots[index].encodedAction & OWNER_ACTION_ID_MASK;
+    s32 masked = state->psynergy[index].encodedAction & PSYNERGY_ABILITY_MASK;
 
     if ((masked ^ key) == 0) {
-      state->actionSlots[index].encodedAction = masked;
+      state->psynergy[index].encodedAction = masked;
       found = index;
       break;
     }
@@ -205,10 +205,10 @@ s32 Unit_LearnPsynergy(s32 stateIndex, s32 value) {
 
   if (found < 0) {
     for (index = 0; index <= 30; index++) {
-      s32 action = state->actionSlots[index].encodedAction;
+      s32 action = state->psynergy[index].encodedAction;
 
       if (action == 0) {
-        state->actionSlots[index].encodedAction = key;
+        state->psynergy[index].encodedAction = key;
         found = index;
         break;
       }
@@ -220,7 +220,7 @@ s32 Unit_LearnPsynergy(s32 stateIndex, s32 value) {
 
   Unit_RefreshPsynergy(stateIndex);
   for (index = 0; index <= 31; index++) {
-    if (state->actionSlots[index].encodedAction == key) {
+    if (state->psynergy[index].encodedAction == key) {
       break;
     }
   }
@@ -248,7 +248,7 @@ struct CharacterDefinition *Character_GetDefinition(s32 index) {
 /// starting equipment equipped, class and elements worked out, and levels
 /// raised to their starting level. Called by GameState_InitializeDefaults.
 void Party_InitializeCharacters(void) {
-  struct BattleUnit *unit;
+  struct Unit *unit;
   struct CharacterDefinition *character;
   u16 nameBuf[16];
   s32 owner;
@@ -280,8 +280,8 @@ void Party_InitializeCharacters(void) {
     do {
       unit = Unit_Get(*startingOwner);
       if (unit != 0) {
-        unit->classId = *startingOwner;
-        character = Character_GetDefinition(unit->classId);
+        unit->id = *startingOwner;
+        character = Character_GetDefinition(unit->id);
 
         for (i = 14; i >= 0; i--)
           unit->inventory[i] = 0;
@@ -310,14 +310,14 @@ UNUSED void Unit_LevelNoOp(void) {}
 /// below); -1 for an enemy or a level above 99. Called by the levelling code
 /// and by the two status screens to show the experience to the next level.
 u32 Unit_GetExperienceForLevel(s32 owner, s32 level) {
-  struct BattleUnit *unit = Unit_Get(owner);
+  struct Unit *unit = Unit_Get(owner);
 
-  if (unit->classIndex != CLASS_INDEX_ENEMY) {
+  if (unit->classId != CLASS_NONE) {
     if (level <= 0) {
       return 0;
     }
-    if (level <= 99 && unit->classId <= 7) {
-      return gCharacter_LevelExpTable[unit->classId * 99 + level - 1];
+    if (level <= 99 && unit->id <= 7) {
+      return gCharacter_LevelExpTable[unit->id * 99 + level - 1];
     }
   }
   return -1;
@@ -330,7 +330,7 @@ u32 Unit_GetExperienceForLevel(s32 owner, s32 level) {
 /// then rebuilds its Psynergy and stats. The gains go to `gains`, which is
 /// returned.
 struct LevelUpResult *Unit_LevelUp(s32 owner, struct LevelUpResult *gains) {
-  struct BattleUnit *unit;
+  struct Unit *unit;
   struct LevelUpWork *work;
   u32 requiredExperience;
   s16 growthBand;
@@ -339,7 +339,7 @@ struct LevelUpResult *Unit_LevelUp(s32 owner, struct LevelUpResult *gains) {
 
   unit = Unit_Get(owner);
   work = AllocEwram(sizeof(struct LevelUpWork));
-  work->classIndex = unit->classIndex;
+  work->classIndex = unit->classId;
   level = unit->level;
   work->level = level;
   gains->level = level;
@@ -417,7 +417,7 @@ struct LevelUpResult *Unit_LevelUp(s32 owner, struct LevelUpResult *gains) {
 /// Battle_AwardSpoils, once for each level a member reaches. At level 99 the
 /// next level needs -1 (0xffffffff) experience, which none reaches.
 struct LevelUpResult *Unit_TryLevelUp(s32 owner, struct LevelUpResult *gains) {
-  struct BattleUnit *unit;
+  struct Unit *unit;
 
   unit = Unit_Get(owner);
   if ((unit->experience >=

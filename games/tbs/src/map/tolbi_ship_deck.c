@@ -2061,7 +2061,7 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   Engine_ScriptWait(20);
   gGameState.savedMap = (s32)&MapId_TolbiShipInteriors;
   gGameState.savedWarpDest = TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_AFTER_DEFEAT;
-  Battle_SetStart(BATTLE_START_SCRIPTED);
+  Battle_SetType(BATTLE_TYPE_SCRIPTED);
   FieldScript_SetNextDestination((s32)&MapId_TolbiShipDeck,
                                  TOLBI_SHIP_DECK_AFTER_JUMP_INTO_KRAKEN_BATTLE);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_TOLBI_SHIP, 3);

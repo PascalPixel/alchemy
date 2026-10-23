@@ -920,7 +920,7 @@ static void EventScript_ReachArena(void) {
    * as 4 - place + 1, 1 of 106 instructions differ in tbs-en. */
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_COLOSSO,
                                         last - place + 1);
-  Battle_SetStart(BATTLE_START_SCRIPTED);
+  Battle_SetType(BATTLE_TYPE_SCRIPTED);
   FieldScript_SetNextDestination((s32)&MapId_ColosseumNavampaMatch,
                                  COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_WON);
   FieldScript_SetDefeatDestination((s32)&MapId_ColosseumNavampaMatch,

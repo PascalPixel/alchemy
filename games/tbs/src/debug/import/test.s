@@ -26,7 +26,7 @@
 	.endif
 	.set import.Engine_DebugRedrawWindow, 1
 	.set import.Engine_DebugClearWindow, 1
-	.set import.NameEntry_EditOwnerName, 1
+	.set import.NamingScreen_EditMemberName, 1
 	.set import.DebugMenu_BrowseIcons, 1
 	.set import.Unit_Get, 1
 	.set import.Unit_Calculate, 1
@@ -35,10 +35,10 @@
 	.set import.PartyInventory_Add, 1
 	.set import.Unit_AddHp, 1
 	.set import.Unit_AddPp, 1
-	.set import.Party_AddActiveOwner, 1
-	.set import.Party_RemoveActiveOwner, 1
-	.set import.Djinn_AddToOwner, 1
-	.set import.Djinn_Activate, 1
+	.set import.Party_AddMember, 1
+	.set import.Party_RemoveMember, 1
+	.set import.Djinn_Give, 1
+	.set import.Djinn_Set, 1
 	.set import.Unit_LevelUpTo, 1
 	.set import.Item_AdjustCounter, 1
 	.set import.PartyInventory_HasSpace, 1

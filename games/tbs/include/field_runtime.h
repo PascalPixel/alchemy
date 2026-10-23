@@ -79,8 +79,8 @@ STATIC_ASSERT(offsetof(struct TreasureSpot, id) == 4);
 STATIC_ASSERT(offsetof(struct TreasureSpot, column) == 6);
 STATIC_ASSERT(offsetof(struct TreasureSpot, row) == 7);
 
-/// The values of FieldWork.event that the field loop handles itself, rather
-/// than passing them to the map (Map_RunRaisedEvent).
+/// The values of FieldWork.raisedEvent that the field loop handles itself,
+/// rather than passing them to the map (Map_RunRaisedEvent).
 enum FieldRaisedEvent {
   /// Party members fell to poison or hazardous ground this step.
   FIELD_RAISED_EVENT_PARTY_FELL = -1,

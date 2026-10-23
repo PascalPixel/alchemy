@@ -16,20 +16,20 @@
 /// camera swings round; each knocks the target back on arrival, and the third
 /// lets the battle show the damage.
 ///
-/// Abilities: Astral Blast (BATTLE_EFFECT_ASTRAL_BLAST).
+/// Abilities: Astral Blast (BATTLE_ANIM_ASTRAL_BLAST).
 ///
 /// work->particles 0 to 2 are the rings, battle positions in 16.16. Loads the
 /// rune palette into the first 64 background colours, sets the user's
 /// animation (2, at speed 48, three times the usual, and does not set it
 /// back), turns the camera's yaw, sends the target back with its motion
 /// fields and sets work->shakeFrames.
-void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
-  struct EffectPosition screenPosition;
+void BattleAnim_RunAstralBlast(struct BattleAnimArgs *effect) {
+  struct ScreenPoint screenPosition;
 #ifndef UBFIX
-  struct EffectPosition base;
+  struct ScreenPoint base;
 #endif
   struct Vector3 scale;
-  struct BattleEffectWork *work;
+  struct BattleAnimWork *work;
   void *canvas;
   s32 frame;
   /* FAKEMATCH(dead): a blitter pair of which only draw[0] is used, the second
@@ -42,37 +42,37 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
   struct MotionObject *caster;
   struct MotionObject *source;
   struct MotionObject *target;
-  struct EffectStep *point;
-  struct EffectStep *step;
+  struct Particle *point;
+  struct Particle *step;
   s32 start;
   s32 peak;
   s32 size;
   s32 j;
   s32 k;
-  struct EffectStep *trails;
+  struct Particle *trails;
 
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   graphics = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
-  caster = GetBattleObjectSlotFar(effect->actor)->object;
+  caster = GetBattleObjectSlotFar(effect->user)->object;
   work->effect = effect;
-  BattleEffect_StartCanvasLayer(1);
+  BattleAnim_StartCanvasLayer(1);
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
   Decompress_Type01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA),
                     graphics);
   ObjectDispatch_SelectAnimationFar(caster, POSE_LEAP);
   ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)caster, 48);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
   // Trails keep 75% of each pixel a frame.
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 75;
   draw[0] = (DrawRectangle) * (gHeapSlots + HEAP_SLOT_RAM_CODE);
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, EFFECT_CALLBACK_ORDER);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
 
-  source = GetBattleObjectSlotFar(work->effect->actor)->object;
-  target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
+  source = GetBattleObjectSlotFar(work->effect->user)->object;
+  target = GetBattleObjectSlotFar(work->effect->targets[0])->object;
   // Each ring reaches the target in 12 frames; the second and third aim
   // twice as far across, past it.
   for (i = 0, point = work->particles; i != 3; i++) {
@@ -111,8 +111,8 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
         size = (frame - start) / 4 + 2;
         if (size > 10)
           size = 10;
-        EFFECT_VIEW_FROM_CAMERA(camera);
-        Transform_ApplyPosition(EffectStep_Coordinates(step));
+        ANIM_VIEW_FROM_CAMERA(camera);
+        Transform_ApplyPosition(Particle_Coordinates(step));
         // The ring's ten points, alternately near and far from its centre,
         // projected onto the canvas; peak is the largest projection scale
         // (16.16), that of the point nearest the camera. The ring spins 1/64
@@ -131,8 +131,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
           scale.z = scale.x;
           Transform_ApplyScale(Vector3_Coordinates(&scale));
           Transform_ApplyRoll(j * 0x199a);
-          depth = EffectPosition_ProjectPoint(&gStar_Points[j & 1],
-                                              &screenPosition);
+          depth = Projection_Point(&gStar_Points[j & 1], &screenPosition);
           if (peak < depth)
             peak = depth;
           screenPosition.x >>= 1;
@@ -150,10 +149,9 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
         // scale over 399999 (about 6.1), very near the camera.
         if (peak <= 399999) {
           for (j = 0; j != 10; j++) {
-            struct EffectStep *from =
-                &((struct EffectStep *)PARTICLES)[j + i * 10];
-            struct EffectStep *to =
-                &((struct EffectStep *)PARTICLES)[(j + 1) % 10 + i * 10];
+            struct Particle *from = &((struct Particle *)PARTICLES)[j + i * 10];
+            struct Particle *to =
+                &((struct Particle *)PARTICLES)[(j + 1) % 10 + i * 10];
 
             for (k = 0; k != 16; k++) {
               s32 x =
@@ -161,7 +159,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
               s32 y =
                   from->velocityY + (to->velocityY - from->velocityY) * k / 16;
 
-              EFFECT_DRAW_MOTE(draw[0], canvas, graphics, x, y, size);
+              ANIM_DRAW_MOTE(draw[0], canvas, graphics, x, y, size);
             }
           }
         }
@@ -187,10 +185,10 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
             Object_SetMoveTargetFar((struct Object *)target,
                                     target->x + 0x280000, 0, target->z);
           if (i == 2) {
-            EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
+            ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
           } else {
             Sound_PlaySongFar(SE_HEAVY_IMPACT);
-            ObjectGroup_UpdateMembers(work->effect->actors[0],
+            ObjectGroup_UpdateMembers(work->effect->targets[0],
                                       SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 8);
           }
           work->shakeFrames = 4;
@@ -198,10 +196,10 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
       }
     }
     Camera_ApplyShake(8, 8);
-    EFFECT_END_FRAME(work);
+    ANIM_END_FRAME(work);
   }
 
-  EFFECT_FINISH_CANVAS();
+  ANIM_FINISH_CANVAS();
 }
 
 /// Eight spinning star outlines fall from 120 pixels above the user towards the
@@ -209,14 +207,14 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
 /// bounce shaking the screen and flashing the targets; the battle shows the
 /// damage on frame 96.
 ///
-/// Abilities: Shining Star (BATTLE_EFFECT_SHINING_STAR).
+/// Abilities: Shining Star (BATTLE_ANIM_SHINING_STAR).
 ///
 /// It lasts 128 frames. work->particles 0 to 7 are the stars, battle positions
 /// in 16.16, each variant the frame it starts. Rebuilds the background ramp
 /// each frame (Graphics_UpdatePhasePalette, after loading the rune palette)
 /// and sets work->shakeFrames at each bounce.
-void BattleEffect_RunShiningStar(struct BattleEffectArgument *effect) {
-  struct BattleEffectWork *work;
+void BattleAnim_RunShiningStar(struct BattleAnimArgs *effect) {
+  struct BattleAnimWork *work;
   void *canvas;
   s32 frame;
   /* FAKEMATCH(dead): a blitter pair of which only draw[0] is used, the second
@@ -228,33 +226,33 @@ void BattleEffect_RunShiningStar(struct BattleEffectArgument *effect) {
   struct BattleCamera *camera;
   struct MotionObject *source;
   struct MotionObject *target;
-  struct EffectStep *point;
-  struct EffectStep *step;
-  struct EffectPosition screenPosition;
+  struct Particle *point;
+  struct Particle *step;
+  struct ScreenPoint screenPosition;
   s32 size;
   s32 j;
   s32 k;
-  struct EffectStep *trails;
+  struct Particle *trails;
 
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   graphics = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   work->effect = effect;
-  BattleEffect_StartCanvasLayer(1);
+  BattleAnim_StartCanvasLayer(1);
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
   Decompress_Type01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA),
                     graphics);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
   // Trails keep half of each pixel a frame.
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 50;
   draw[0] = (DrawRectangle) * (gHeapSlots + HEAP_SLOT_RAM_CODE);
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, EFFECT_CALLBACK_ORDER);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
 
-  source = GetBattleObjectSlotFar(work->effect->actor)->object;
-  target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
+  source = GetBattleObjectSlotFar(work->effect->user)->object;
+  target = GetBattleObjectSlotFar(work->effect->targets[0])->object;
   // Each star starts 120 pixels above the user, at half its x (towards the
   // middle of the field), aims at a random spot up to 64 pixels either side
   // of the target, 20 pixels up, over 12 frames, and starts 8i to 8i + 15
@@ -278,12 +276,12 @@ void BattleEffect_RunShiningStar(struct BattleEffectArgument *effect) {
     // The three channels sway a third of a turn apart.
     Graphics_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
     if (frame == 96)
-      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
+      ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     for (i = 0; i != 8; i++) {
       step = &work->particles[i];
       if (frame >= step->variant) {
-        EFFECT_VIEW_FROM_CAMERA(camera);
-        EffectPosition_ProjectPoint(step, &screenPosition);
+        ANIM_VIEW_FROM_CAMERA(camera);
+        Projection_Point(step, &screenPosition);
         screenPosition.x >>= 1;
         // On the canvas, draw the star: ten points, alternately near and
         // far, turning 1/32 turn a frame as it falls, joined by 12 motes
@@ -305,8 +303,8 @@ void BattleEffect_RunShiningStar(struct BattleEffectArgument *effect) {
                      16);
               }
               for (j = 0; j != 10; j++) {
-                struct EffectStep *from = &trails[j + i * 10];
-                struct EffectStep *to = &trails[i * 10 + (j + 1) % 10];
+                struct Particle *from = &trails[j + i * 10];
+                struct Particle *to = &trails[i * 10 + (j + 1) % 10];
 
                 for (k = 0; k != 12; k++) {
                   s32 x = from->velocityX +
@@ -314,7 +312,7 @@ void BattleEffect_RunShiningStar(struct BattleEffectArgument *effect) {
                   s32 y = from->velocityY +
                           (to->velocityY - from->velocityY) * k / 12;
 
-                  EFFECT_DRAW_MOTE(draw[0], canvas, graphics, x, y, size);
+                  ANIM_DRAW_MOTE(draw[0], canvas, graphics, x, y, size);
                 }
               }
             }
@@ -328,9 +326,9 @@ void BattleEffect_RunShiningStar(struct BattleEffectArgument *effect) {
           step->velocityZ /= 2;
           work->shakeFrames = 4;
           Sound_PlaySongFar(SE_HEAVY_IMPACT);
-          EFFECT_FOR_EACH_TARGET(j, work->effect)
-            ObjectGroup_UpdateMembers(work->effect->actors[j],
-                                      SPRITE_COLOR_WHITE, POSE_DAMAGE, j, 8);
+          ANIM_FOR_EACH_TARGET(j, work->effect)
+          ObjectGroup_UpdateMembers(work->effect->targets[j],
+                                    SPRITE_COLOR_WHITE, POSE_DAMAGE, j, 8);
         }
         step->x += step->velocityX;
         step->y += step->velocityY;
@@ -338,8 +336,8 @@ void BattleEffect_RunShiningStar(struct BattleEffectArgument *effect) {
       }
     }
     Camera_ApplyShake(4, 4);
-    EFFECT_END_FRAME(work);
+    ANIM_END_FRAME(work);
   }
 
-  EFFECT_FINISH_CANVAS();
+  ANIM_FINISH_CANVAS();
 }

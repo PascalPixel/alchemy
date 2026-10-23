@@ -24,7 +24,7 @@
 /// and keeps spitting more, and each eruption knocks the targets back.
 ///
 /// Abilities: Volcano, Eruption, Pyroclasm, Lava Shower, Molten Bath, Magma
-/// Storm (BATTLE_EFFECT_VOLCANO).
+/// Storm (BATTLE_ANIM_VOLCANO).
 ///
 /// The battle shows the damage on frame 16. Volcano and Lava Shower are red,
 /// Pyroclasm and Magma Storm orange, and those two also swing the camera round
@@ -36,15 +36,15 @@
 /// background colours (Eruption and Molten Bath keep the fire pillar sheet's),
 /// turns the camera's yaw (the strongest variant) and sets work->shakeFrames
 /// at each eruption.
-void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
+void BattleAnim_RunVolcano(struct BattleAnimArgs *effect) {
   void **slots;
   void **cursor;
-  struct BattleEffectWork *work;
+  struct BattleAnimWork *work;
   void *canvas;
   s32 frame;
   s32 pillar;
   u8 *sheet;
-  struct EffectPosition screen;
+  struct ScreenPoint screen;
   BlitterPair draw;
   struct MotionObject *object;
   struct BattleCamera *camera;
@@ -52,34 +52,34 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
 
   slots = &gHeapSlots[HEAP_SLOT_BATTLE_ANIM];
   cursor = slots;
-  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
-  sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  ANIM_GET_WORK_AND_CANVAS(cursor, work, canvas);
+  sheet = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
-  BattleEffect_StartCanvasLayer(1);
+  BattleAnim_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetA, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-  if (work->effect->variant == EFFECT_VARIANT_BASIC)
+  if (work->effect->variant == ANIM_VARIANT_BASIC)
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_RedPaletteB), 128);
-  else if (work->effect->variant == EFFECT_VARIANT_STRONGEST)
+  else if (work->effect->variant == ANIM_VARIANT_STRONGEST)
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                     128);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
-                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                    BLITTER_MAX);
   draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
 
   for (i = 0; i != VOLCANO_SPARK_POOL; i++)
     PARTICLES[i].variant = 0;
 
   // The pillars stand 72 to 87 pixels out on the first target's side.
-  object = GetBattleObjectSlotFar(work->effect->actors[0])->object;
+  object = GetBattleObjectSlotFar(work->effect->targets[0])->object;
   for (i = 0; i != 4; i++) {
-    struct EffectStep *base = &work->particles[i];
+    struct Particle *base = &work->particles[i];
     s32 x;
 
     x = ((Random16() & 15) + 72) << 16;
@@ -91,24 +91,24 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
   }
 
   // Trails keep half of each pixel a frame.
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
 
   for (frame = 0; frame != VOLCANO_FRAMES; frame++) {
     camera = gCameraWork;
-    if (work->effect->variant == EFFECT_VARIANT_STRONGEST && frame < 64) {
+    if (work->effect->variant == ANIM_VARIANT_STRONGEST && frame < 64) {
       if (work->effect->side == 0)
         camera->yaw = camera->yaw + 192;
       else
         camera->yaw = (s16)camera->yaw - 192;
     }
     if (frame == 16)
-      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-    EFFECT_VIEW_FROM_CAMERA(camera);
+      ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
+    ANIM_VIEW_FROM_CAMERA(camera);
 
     if (frame < 64) {
       for (pillar = 0; pillar != gVolcano_Counts[work->effect->variant];
            pillar++) {
-        EffectPosition_ProjectPoint(&work->particles[pillar], &screen);
+        Projection_Point(&work->particles[pillar], &screen);
         screen.x /= 2;
         screen.y -= 8;
         if (frame == gVolcano_StartFrames[pillar])
@@ -143,7 +143,7 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
           s32 spawned = 0;
 
           for (i = 0; i != VOLCANO_SPARK_POOL; i++) {
-            struct EffectStep *spark = &PARTICLES[i];
+            struct Particle *spark = &PARTICLES[i];
 
             if (spark->variant == 0) {
               s32 speed;
@@ -169,11 +169,11 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
         }
         if (frame == gVolcano_StartFrames[pillar]) {
           work->shakeFrames = 2;
-          EFFECT_FOR_EACH_TARGET(i, work->effect) {
-            ObjectGroup_UpdateMembers(work->effect->actors[i],
+          ANIM_FOR_EACH_TARGET(i, work->effect) {
+            ObjectGroup_UpdateMembers(work->effect->targets[i],
                                       SPRITE_COLOR_RED_TINT, POSE_DAMAGE, i, 8);
-            BattleMotion_ApplyVariantMotionFar(work->effect->actors[i],
-                                               KNOCKBACK_HOP);
+            BattleMotion_ApplyKnockbackFar(work->effect->targets[i],
+                                           KNOCKBACK_HOP);
           }
         }
       }
@@ -184,7 +184,7 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
     // at a rise of 1 pixel a frame; one below y 120 bounces back at half
     // speed instead of being drawn. A spark shrinks with its life.
     for (i = 0; i != VOLCANO_SPARK_POOL; i++) {
-      struct EffectStep *spark = &PARTICLES[i];
+      struct Particle *spark = &PARTICLES[i];
       s32 life = spark->variant;
 
       if (life > 0) {
@@ -206,17 +206,17 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
 
           if (size <= 0)
             size = 1;
-          EFFECT_DRAW_MOTE(draw[i & 1], canvas, sheet, px, py, size);
+          ANIM_DRAW_MOTE(draw[i & 1], canvas, sheet, px, py, size);
         }
       }
     }
     Camera_ApplyShake(16, 16);
-    EFFECT_END_FRAME(work);
+    ANIM_END_FRAME(work);
   }
 
-  EFFECT_RELEASE_BLITTERS();
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  BattleEffect_EndCanvasLayer();
+  ANIM_RELEASE_BLITTERS();
+  Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);
+  BattleAnim_EndCanvasLayer();
 }
 
 #undef VOLCANO_FRAMES

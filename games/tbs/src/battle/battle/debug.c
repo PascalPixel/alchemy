@@ -54,7 +54,7 @@ extern struct DebugPartyEntry gDebug_PartyPresets[];
 s32 DebugParty_LoadPreset(s32 preset) {
   // The next Djinni number of each element to hand out.
   s32 nextDjinn[ELEMENT_COUNT];
-  struct BattleUnit *member;
+  struct Unit *member;
   s32 owner;
   s32 notFound;
   s32 row;
@@ -64,11 +64,11 @@ s32 DebugParty_LoadPreset(s32 preset) {
 
   notFound = 0;
   // Empty the active party; the preset's rows add its members back.
-  Party_RemoveActiveOwnerFar(ISAAC);
-  Party_RemoveActiveOwnerFar(GARET);
-  Party_RemoveActiveOwnerFar(IVAN);
-  Party_RemoveActiveOwnerFar(MIA);
-  Party_RemoveActiveOwnerFar(JENNA);
+  Party_RemoveMemberFar(ISAAC);
+  Party_RemoveMemberFar(GARET);
+  Party_RemoveMemberFar(IVAN);
+  Party_RemoveMemberFar(MIA);
+  Party_RemoveMemberFar(JENNA);
 
   currentPreset = 0;
   for (i = 0; i < ELEMENT_COUNT; i++)
@@ -91,21 +91,21 @@ s32 DebugParty_LoadPreset(s32 preset) {
     if (currentPreset != preset)
       continue;
 
-    Party_AddActiveOwnerFar(owner);
+    Party_AddMemberFar(owner);
     Unit_LevelUpToFar(owner, gDebug_PartyPresets[row].level);
 
     // Start from no Djinn and no abilities.
-    member = (struct BattleUnit *)Unit_GetFar(owner);
+    member = (struct Unit *)Unit_GetFar(owner);
     for (i = 0; i < ELEMENT_COUNT; i++) {
-      member->djinnOwnedCounts[i] = 0;
-      member->djinnActiveCounts[i] = 0;
-      member->djinnAvailable[i] = 0;
-      member->djinnActive[i] = 0;
+      member->djinnHeldCounts[i] = 0;
+      member->djinnSetCounts[i] = 0;
+      member->djinnHeld[i] = 0;
+      member->djinnSet[i] = 0;
     }
     // The slot's first halfword, its encodedAction, stored through a cast:
     // the zero comes from the literal pool, as in the ROM (MATCHING.md).
     for (i = 0; i < 32; i++)
-      *(u16 *)&member->actionSlots[i] = 0;
+      *(u16 *)&member->psynergy[i] = 0;
     for (i = 0; i < 2; i++) {
       if (gDebug_PartyPresets[row].abilities[i] != 0)
         Unit_LearnPsynergyFar(owner, gDebug_PartyPresets[row].abilities[i]);
@@ -115,8 +115,8 @@ s32 DebugParty_LoadPreset(s32 preset) {
     for (i = 0; i < ELEMENT_COUNT; i++) {
       for (djinnIndex = 0; djinnIndex < gDebug_PartyPresets[row].djinnCounts[i];
            djinnIndex++) {
-        Djinn_AddToOwnerFar(owner, i, nextDjinn[i]);
-        Djinn_ActivateFar(owner, i, nextDjinn[i]);
+        Djinn_GiveFar(owner, i, nextDjinn[i]);
+        Djinn_SetFar(owner, i, nextDjinn[i]);
         nextDjinn[i]++;
       }
     }
@@ -154,7 +154,7 @@ s32 DebugParty_LoadPreset(s32 preset) {
 void DebugBattle_ViewMessages(void) {
   u16 text[64];
   s32 secondRange = 0;
-  struct BattleUnit *unit = Unit_GetFar(0);
+  struct Unit *unit = Unit_GetFar(0);
   s32 i;
   s32 index;
   struct UiWindow *messageWindow;
@@ -249,7 +249,7 @@ void DebugBattle_ViewMessages(void) {
 /// fights DEBUG_FIRST_ENCOUNTER again and again with auto battle on. Holding
 /// Down at the start opens the chooser: Right and Left step the encounter, Up
 /// and Down by ten, R and L pick the party preset, Start opens the message
-/// viewer and A fights; B marks every later battle BATTLE_START_DEBUG.
+/// viewer and A fights; B marks every later battle BATTLE_TYPE_DEBUG.
 /// Holding Down when A is pressed makes it a link battle. Exported as
 /// DebugBattle_RunMenuFar; nothing in the source calls it. Sets
 /// FLAG_DEBUG_BATTLE and, as chosen, FLAG_AUTO_BATTLE, FLAG_LINK_BATTLE and
@@ -298,7 +298,7 @@ restart:
           Battle_ReservedNoOp2A08();
         if ((gKeysRepeat & KEY_B) || startModeSet) {
           startModeSet = 1;
-          Battle_SetStart(BATTLE_START_DEBUG);
+          Battle_SetType(BATTLE_TYPE_DEBUG);
         }
         if (preset != loadedPreset) {
           GameState_InitializeDefaultsFar();
@@ -309,7 +309,7 @@ restart:
       }
       // A fights: Down still held makes it a link battle. The battle's
       // background comes from gGameState.special
-      // (FieldScript_GetSpecialValueFar in Battle_RunEncounter).
+      // (FieldScript_GetSpecialValueFar in Battle_Run).
       if (gKeysHeld & KEY_DOWN)
         GameFlag_SetBitFar(FLAG_LINK_BATTLE);
       Unit_CalculateFar(0);
@@ -317,7 +317,7 @@ restart:
       if (encounter == DJINN_TUTORIAL_ENCOUNTER)
         GameFlag_SetBitFar(FLAG_DJINN_LESSON);
       GameFlag_SetBitFar(FLAG_DEBUG_BATTLE);
-      Battle_RunEncounter(encounter);
+      Battle_Run(encounter);
       // Rebuild what the battle replaced, then return to the chooser.
       Ui_LoadWindowGraphics();
       DebugText_Clear();
@@ -328,6 +328,6 @@ restart:
   }
   // Without Down: the same auto battle, over and over.
   GameFlag_SetBitFar(FLAG_DEBUG_BATTLE);
-  Battle_RunEncounter(DEBUG_FIRST_ENCOUNTER);
+  Battle_Run(DEBUG_FIRST_ENCOUNTER);
   goto restart;
 }

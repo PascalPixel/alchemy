@@ -7,7 +7,7 @@
 /// The smoke trails behind the spray, after the 128 spray particles in
 /// PARTICLES (28 bytes each, 0xe00 in all).
 #define BOREAS_ICE_BLOCK_TRAILS                                                \
-  ((struct EffectStep *)(Ram_MapGridCellBuffer + 0xe00))
+  ((struct Particle *)(Ram_MapGridCellBuffer + 0xe00))
 #define BOREAS_BIG_BLOCK_CELLS 0xc46      ///< the dropping 24x48 ice block
 #define BOREAS_FALLING_BLOCK_CELLS 0x14f9 ///< the diagonal 40x80 ice block
 
@@ -19,7 +19,7 @@
 /// throws up spray; then ice blocks rain down on the targets, and boulders
 /// crumble into bouncing chips.
 ///
-/// Abilities: Boreas (SUMMON_EFFECT_BOREAS).
+/// Abilities: Boreas (SUMMON_ANIM_BOREAS).
 ///
 /// The longest of the effects, in two halves. The first (288 frames, which A
 /// or B cuts short after frame 16) opens a window on a field of 16 rocks over
@@ -40,10 +40,10 @@
 /// Also clears background colours 0 and 1 for the wipe and then loads the
 /// ice block palette over the first 64, writes the window registers and the
 /// window-edge table at Ram_MapGridCellBuffer (through
-/// BattleEffect_BuildWindowEdgeTable), gBgScroll[1] for the shake,
+/// BattleAnim_BuildWindowEdgeTable), gBgScroll[1] for the shake,
 /// gProjection.centerY and work->shakeFrames; it releases the nine objects
 /// before the second half and its callbacks and blitters at the end.
-void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
+void BattleAnim_RunBoreas(struct BattleAnimArgs *effect) {
   // One to one; the frame loop copies it and then sets both factors to 1.0
   // again.
   static struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
@@ -52,7 +52,7 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
   UNUSED s32 rockPoints[32][2];
   struct SpritePlacement position;
   void *canvas;
-  struct BattleEffectWork *work;
+  struct BattleAnimWork *work;
   s32 frame;
   DrawRectangle draw;
   DrawRectangle drawAlt;
@@ -67,46 +67,46 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
   s32 shakeY;
   s32 y;
   s32 dropFrame;
-  struct EffectStep *spray;
-  struct EffectStep *trail;
+  struct Particle *spray;
+  struct Particle *trail;
   struct SpriteScale scale;
 
   slots = (u32 *)&gHeapSlots[HEAP_SLOT_BATTLE_CANVAS];
   canvas = (void *)slots[0];
-  work = (struct BattleEffectWork *)CANVAS_SLOT(slots, HEAP_SLOT_BATTLE_ANIM);
+  work = (struct BattleAnimWork *)CANVAS_SLOT(slots, HEAP_SLOT_BATTLE_ANIM);
   puffSheet = (u8 *)CANVAS_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   edgeSpeed = 1;
   work->effect = effect;
-  BattleEffect_StartCanvasLayer(0);
-  BattleEffect_ConfigureEffectDisplay();
+  BattleAnim_StartCanvasLayer(0);
+  BattleAnim_ConfigureEffectDisplay();
   PLTT_BACKDROP = 0;
   *(u16 *)&BG_PLTT[1] = 0; // background palette 0, colour 1
   work->transferMode = CANVAS_COPY;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, EFFECT_CALLBACK_ORDER);
-  REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_CLR;
-  BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
+  REG_WININ = ANIM_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_CLR;
+  BattleAnim_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   REG_WIN0H = WIN_RANGE(240, 240); // an empty window
   Resource_LoadAndDecompress((s32)&ResourceId_IceBlockSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, puffSheet, 0, 0);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
   draw = (DrawRectangle)CANVAS_SLOT(slots, HEAP_SLOT_RAM_CODE);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
-                      COMPOSITE_TRANSPARENT);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS,
+                    COMPOSITE_TRANSPARENT);
   drawAlt = (DrawRectangle)CANVAS_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
   gProjection.centerY = 240;
-  BattleEffect_SelectLivingTargets(work->effect);
+  BattleAnim_SelectLivingTargets(work->effect);
   WaitFrames(1);
-  BattleBackground_LoadFar(BATTLE_BACKGROUND_FLAT,
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                            (s32)&ResourceId_VioletSkyBackdrop, 0);
   // The formation: nine objects from resource object 372, sprite priority 1.
-  BattleEffect_SpawnObjects(9, 0x174, 1);
-  EFFECT_SHOW_WIDE_CANVAS(16);
-  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+  BattleAnim_SpawnObjects(9, 0x174, 1);
+  ANIM_SHOW_WIDE_CANVAS(16);
+  ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
 
   // Mark the chips unthrown. Their positions here are never drawn: each chip
   // gets a new one when its wave throws it. The window's edge (from frame 0),
   // its insets and its table (frames 1 to 15,
-  // BattleEffect_BuildWindowEdgeTable) are written over chips 0 to 16, the
+  // BattleAnim_BuildWindowEdgeTable) are written over chips 0 to 16, the
   // first 0x1c2 bytes of the buffer; the first wave throws chips 0 to 31 anew
   // on frame 32, before any chip is drawn.
   for (i = 0; i != 64; i++) {
@@ -143,12 +143,12 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
           inset[line] = Random16() & 63;
         }
         *edge = 0;
-        Task_Add(BattleEffect_BuildWindowEdgeTable, EFFECT_CALLBACK_ORDER);
+        Task_Add(BattleAnim_BuildWindowEdgeTable, ANIM_CALLBACK_ORDER);
       }
       *edge += edgeSpeed;
       edgeSpeed += 3;
       if (frame == 15) {
-        Task_Remove(BattleEffect_BuildWindowEdgeTable);
+        Task_Remove(BattleAnim_BuildWindowEdgeTable);
       }
     }
 
@@ -355,8 +355,8 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
            i++, trail++, spray++) {
         if (frame >= i + 228) {
           s32 cell = trail->variant / 2 % 9;
-          s32 size = gBattleEffect_PuffSizes[cell];
-          draw(canvas, puffSheet + gBattleEffect_PuffCells[cell],
+          s32 size = gBattleAnim_PuffSizes[cell];
+          draw(canvas, puffSheet + gBattleAnim_PuffCells[cell],
                Q_16_16_TO_INT(trail->x) - size / 2,
                Q_16_16_TO_INT(trail->y) - size / 2, size, size);
           if (++trail->variant == 18) {
@@ -368,7 +368,7 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
       }
     }
 
-    EFFECT_PRESENT_FRAME(work);
+    ANIM_PRESENT_FRAME(work);
   }
 
   //------------------------------------------------------------------
@@ -381,7 +381,7 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
   // Blend the canvas fully over the battle background, set the ice blocks
   // above the canvas to the right, and stagger the smoke puffs, puff i
   // waiting i / 2 frames (its negative variant) before it shows.
-  BattleEffect_SetupBlendedDisplay();
+  BattleAnim_SetupBlendedDisplay();
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Sound_PlaySongFar(AUDIO_CUE_FADE_SLOT3);
 
@@ -402,7 +402,7 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != 146; frame++) {
     count = 0;
     if (frame == 96) {
-      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
+      ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }
     if (frame == 16) {
       work->shakeFrames = 32;
@@ -459,14 +459,14 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
         count = 64;
       }
       for (i = 0; i != count; i++) {
-        struct EffectStep *chip = &work->particles[i];
+        struct Particle *chip = &work->particles[i];
         y = Q_16_16_TO_INT(chip->y);
         if (y <= 135) {
           s32 cell = i % 3;
           draw(canvas, work->sheet + gBoreas_FallCells[cell],
                Q_16_16_TO_INT(chip->x), y - gBoreas_FallHeights[cell],
                gBoreas_FallWidths[cell], gBoreas_FallHeights[cell]);
-          EffectStep_AdvanceWithGravity2D(chip, 64, 1 << 16);
+          Particle_AdvanceWithGravity2D(chip, 64, 1 << 16);
           if (Q_16_16_TO_INT(chip->y) > 120 && chip->velocityY > 8 << 16) {
             chip->velocityY = -chip->velocityY / 4;
             chip->y = 120 << 16;
@@ -491,9 +491,9 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
     }
 
     // Target i takes a blue tint and its damage pose on frame 32 + 8i.
-    EFFECT_FOR_EACH_TARGET(i, work->effect) {
+    ANIM_FOR_EACH_TARGET(i, work->effect) {
       if (frame == i * 8 + 32) {
-        ObjectGroup_UpdateMembers(work->effect->actors[i],
+        ObjectGroup_UpdateMembers(work->effect->targets[i],
                                   SPRITE_COLOR_BLUE_TINT, POSE_DAMAGE, -1, 0);
       }
     }
@@ -504,8 +504,8 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
       for (i = 0; i != 64; i++) {
         if (PARTICLES[i].variant >= 0 && PARTICLES[i].variant < 18) {
           s32 cell = PARTICLES[i].variant / 2 % 9;
-          s32 size = gBattleEffect_PuffSizes[cell];
-          draw(canvas, puffSheet + gBattleEffect_PuffCells[cell],
+          s32 size = gBattleAnim_PuffSizes[cell];
+          draw(canvas, puffSheet + gBattleAnim_PuffCells[cell],
                PARTICLES[i].x - size / 2, PARTICLES[i].y - size / 2, size,
                size);
         }
@@ -523,12 +523,12 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
     } else {
       Camera_ApplyShake(2, 2);
     }
-    EFFECT_PRESENT_FRAME(work);
+    ANIM_PRESENT_FRAME(work);
   }
 
-  EFFECT_RELEASE_BLITTERS();
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  BattleEffect_EndCanvasLayer();
+  ANIM_RELEASE_BLITTERS();
+  Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);
+  BattleAnim_EndCanvasLayer();
 }
 
 #undef BOREAS_ICE_BLOCK_TRAILS

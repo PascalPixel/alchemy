@@ -206,8 +206,8 @@ explains them.
 
 A call from one bank into another. It goes to an 8-byte jump in the
 callee's far-call table, which leads on to the function, and the jump is
-named after the function with `Far` added: `Battle_RunEncounterFar` leads
-to `Battle_RunEncounter`. Every bank calls the runtime bank directly; its
+named after the function with `Far` added: `Battle_RunFar` leads
+to `Battle_Run`. Every bank calls the runtime bank directly; its
 table serves the overlays. [Engine](engine.md#banks-and-far-calls) explains
 them.
 

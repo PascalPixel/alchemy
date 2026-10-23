@@ -11,24 +11,24 @@
 /// To find the effect a move plays, search for the move's English name: each
 /// handler's reach line, the paragraph of its comment that starts
 /// "Abilities:", lists the abilities that reach it and the effect each one
-/// selects, and each row of gBattleEffect_EffectHandlers (effect_table.c) gives
+/// selects, and each row of gBattleAnim_Handlers (effect_table.c) gives
 /// an effect kind's enumerator, the part that defines its handler and, where
 /// an ability selects it, the first one that does. README.md gives the words
 /// and prefixes the parts use, and ../MATCHING.md the spellings some sites
 /// keep to match. The shared machinery is in these parts:
 ///
-///   Entry points    dispatch.c: BattleEffect_RunTableEffect,
-///                   BattleEffect_RunSummonEffect; positions.c:
-///                   BattleEffect_DispatchByIdRange
-///   Canvas          canvas.c: BattleEffect_StartCanvasLayer,
-///                   BattleEffect_EndCanvasLayer, BattleEffect_WipeCanvas,
-///                   BattleEffect_ProcessPendingGraphicsTransfer
-///   Blitters        blitter.c: BattleEffect_BuildBlitter; mirrored_wall.c:
-///                   BattleEffect_FetchRectangleBlitters
-///   Motion          positions.c: EffectStep_AdvanceWithGravity2D and 3D,
+///   Entry points    dispatch.c: BattleAnim_RunTableEffect,
+///                   BattleAnim_RunSummonEffect; positions.c:
+///                   BattleAnim_DispatchByIdRange
+///   Canvas          canvas.c: BattleAnim_StartCanvasLayer,
+///                   BattleAnim_EndCanvasLayer, BattleAnim_WipeCanvas,
+///                   BattleAnim_ProcessPendingGraphicsTransfer
+///   Blitters        blitter.c: BattleAnim_BuildBlitter; mirrored_wall.c:
+///                   BattleAnim_FetchRectangleBlitters
+///   Motion          positions.c: Particle_AdvanceWithGravity2D and 3D,
 ///                   BattleUnit_ProjectToScreen; hail.c: Camera_ApplyShake
-///   Targets         dispatch.c: BattleEffect_SelectLivingTargets;
-///                   helm_splitter.c: BattleEffect_PlaceFormationObjects
+///   Targets         dispatch.c: BattleAnim_SelectLivingTargets;
+///                   helm_splitter.c: BattleAnim_PlaceFormationObjects
 ///
 /// While an effect plays, its entry point owns the sheet
 /// (HEAP_SLOT_BATTLE_SHEET), the work block (HEAP_SLOT_BATTLE_ANIM) and the

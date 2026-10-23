@@ -16,8 +16,8 @@
 	.set import.Engine_GameFlagSet, 1
 	.set import.Engine_GameFlagClear, 1
 	.set import.Engine_OwnerRecalculateRatios, 1
-	.set import.Party_AddActiveOwner, 1
-	.set import.Party_ListActiveOwners, 1
+	.set import.Party_AddMember, 1
+	.set import.Party_ListMembers, 1
 	.set import.Engine_InventorySnapshotRestore, 1
 	.set import.Engine_ScriptWait, 1
 	.set import.Engine_ScriptStart, 1

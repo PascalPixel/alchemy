@@ -16,7 +16,7 @@
 /// Psynergy. Returns DJINN_RESULT_CONFIRMED for A, DJINN_RESULT_BACK for B and
 /// DJINN_RESULT_START for Start; the caller makes the change. The page counts
 /// are measured on the real units, which are put back from a copy at once.
-s32 OwnerAction_RunCompareLoop(u32 mode) {
+s32 PsynergyList_RunCompareLoop(u32 mode) {
   struct DjinnMenuWork *menu;
   struct DjinnMenuBackdrop *backdrop;
   struct UiRenderWork *work;
@@ -67,8 +67,8 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
   // Measure the action-list pages using temporary unit mutations.
   if (mode <= DJINN_COMPARE_GIVE) {
     u16 *diffWork;
-    struct BattleUnit *originalUnit;
-    struct BattleUnit *unit;
+    struct Unit *originalUnit;
+    struct Unit *unit;
     s32 ownerId;
     s32 firstElement;
     s32 firstIndex;
@@ -92,43 +92,41 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
 
     unit = Unit_GetFar(ownerId);
     Iwram_CopyWords(originalUnit, unit, size);
-    Djinn_DeactivateFar(ownerId, firstElement, firstIndex);
+    Djinn_PutOnStandbyFar(ownerId, firstElement, firstIndex);
     if (mode == DJINN_COMPARE_TRADE) {
       secondElement = menu->pairElement[1];
       secondIndex = menu->pairIndex[1] & DJINN_ENTRY_INDEX;
       secondWasSet = (u16)(menu->pairEntries[1] & DJINN_ENTRY_IS_SET);
-      Djinn_AddToOwnerFar(ownerId, secondElement, secondIndex);
+      Djinn_GiveFar(ownerId, secondElement, secondIndex);
       if (secondWasSet != 0) {
-        Djinn_ActivateFar(ownerId, secondElement, secondIndex);
+        Djinn_SetFar(ownerId, secondElement, secondIndex);
       }
     }
     Unit_CalculateFar(ownerId);
-    pageCounts[0] =
-        OwnerAction_DiffSlots(originalUnit->actionSlots, unit->actionSlots,
-                              diffWork, &gainedCount, &lostCount);
+    pageCounts[0] = PsynergyList_Diff(originalUnit->psynergy, unit->psynergy,
+                                      diffWork, &gainedCount, &lostCount);
     Iwram_CopyWords(unit, originalUnit, size);
 
     ownerId = menu->shownOwner[1];
     unit = Unit_GetFar(ownerId);
     Iwram_CopyWords(originalUnit, unit, size);
     if (mode == DJINN_COMPARE_TRADE) {
-      Djinn_DeactivateFar(ownerId, secondElement, secondIndex);
+      Djinn_PutOnStandbyFar(ownerId, secondElement, secondIndex);
     }
-    Djinn_AddToOwnerFar(ownerId, firstElement, firstIndex);
+    Djinn_GiveFar(ownerId, firstElement, firstIndex);
     if (firstWasSet != 0) {
-      Djinn_ActivateFar(ownerId, firstElement, firstIndex);
+      Djinn_SetFar(ownerId, firstElement, firstIndex);
     }
     Unit_CalculateFar(ownerId);
-    pageCounts[1] =
-        OwnerAction_DiffSlots(originalUnit->actionSlots, unit->actionSlots,
-                              diffWork, &gainedCount, &lostCount);
+    pageCounts[1] = PsynergyList_Diff(originalUnit->psynergy, unit->psynergy,
+                                      diffWork, &gainedCount, &lostCount);
     Iwram_CopyWords(unit, originalUnit, size);
     Free(originalUnit);
     Free(diffWork);
   } else if (mode == DJINN_COMPARE_STANDBY || mode == DJINN_COMPARE_SET) {
     u16 *diffWork;
-    struct BattleUnit *originalUnit;
-    struct BattleUnit *unit;
+    struct Unit *originalUnit;
+    struct Unit *unit;
     s32 firstOwnerId;
     s32 firstElement;
     s32 firstIndex;
@@ -145,14 +143,13 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
 
     unit = Unit_GetFar(firstOwnerId);
     Iwram_CopyWords(originalUnit, unit, sizeof(*originalUnit));
-    Djinn_DeactivateFar(firstOwnerId, firstElement, firstIndex);
+    Djinn_PutOnStandbyFar(firstOwnerId, firstElement, firstIndex);
     if (applySecond != 0) {
-      Djinn_ActivateFar(firstOwnerId, firstElement, firstIndex);
+      Djinn_SetFar(firstOwnerId, firstElement, firstIndex);
     }
     Unit_CalculateFar(firstOwnerId);
-    pageCounts[0] =
-        OwnerAction_DiffSlots(originalUnit->actionSlots, unit->actionSlots,
-                              diffWork, &gainedCount, &lostCount);
+    pageCounts[0] = PsynergyList_Diff(originalUnit->psynergy, unit->psynergy,
+                                      diffWork, &gainedCount, &lostCount);
     Iwram_CopyWords(unit, originalUnit, sizeof(*originalUnit));
     pageCounts[1] = pageCounts[0];
     page = DJINN_COMPARE_PAGE_GIVER;
@@ -590,7 +587,7 @@ s32 DjinnMenu_ShowOwnerStatus(void) {
   u32 pressedKeys;
   u32 repeatedKeys;
   struct DjinnMenuWork *menu;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   struct UiWindow *window;
   u16 *listedActions;
   void *saved;
@@ -619,8 +616,8 @@ s32 DjinnMenu_ShowOwnerStatus(void) {
   listedActions = AllocEwram(96);
   saved = AllocEwram(332);
   unit = Unit_GetFar(menu->shownOwner[0]);
-  counts[1] = counts[0] = OwnerAction_DiffSlots(
-      unit->actionSlots, unit->actionSlots, listedActions, &gained, &lost);
+  counts[1] = counts[0] = PsynergyList_Diff(unit->psynergy, unit->psynergy,
+                                            listedActions, &gained, &lost);
   Free(saved);
   Free(listedActions);
   counts[0] = (counts[0] - 1) / 6 + 1;
@@ -803,7 +800,7 @@ s32 Djinn_CheckTurnBalance(s32 sourceOwnerColumn, s32 targetOwnerColumn) {
 /// every party member's total, set or not, into ownedCounts by list column.
 void Djinn_CountTurns(u8 *ownedCounts) {
   struct DjinnMenuWork *menu;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   s32 ownerIndex;
   s32 element;
   s32 djinnIndex;
@@ -815,9 +812,9 @@ void Djinn_CountTurns(u8 *ownedCounts) {
     ownedCount = 0;
     for (element = 0; element <= 3; element++) {
       for (djinnIndex = 0; djinnIndex <= 19; djinnIndex++) {
-        if (unit->djinnActive[element] & (1 << djinnIndex))
+        if (unit->djinnSet[element] & (1 << djinnIndex))
           ownedCount++;
-        else if (unit->djinnAvailable[element] & (1 << djinnIndex))
+        else if (unit->djinnHeld[element] & (1 << djinnIndex))
           ownedCount++;
       }
     }

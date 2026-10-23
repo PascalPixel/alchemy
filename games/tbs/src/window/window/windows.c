@@ -104,7 +104,7 @@ void UiWork_InitializeWithResourceCounters(void) {
 
 /// Sets up the window system for battle, as
 /// UiWork_InitializeWithResourceCounters does for the field, and marks the work
-/// block as in battle (menuState 1). Battle_RunEncounter's setup
+/// block as in battle (menuState 1). Battle_Run's setup
 /// (battle/battle/encounter.c) passes loadGlyphTiles set only while
 /// FLAG_DJINN_LESSON is set: it reserves the glyph sprites' tiles, which
 /// only windows other than text canvases need. Unlike the field setup it does
@@ -584,10 +584,10 @@ struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window,
 /// Starts a channel typing the decoded text at entry into the battle message
 /// window. A channel that already serves a finished window continues below its
 /// last line (scrolling up once both lines are used) unless keepPosition is
-/// set; UiText_PrepareMessageWork passes the battle display's marked flag
+/// set; BattleMessage_Open passes the battle display's marked flag
 /// there. Returns the channel, or NULL when all three are busy.
-struct UiChannelSlot *UiText_StartBattleMessage(struct UiWindow *window,
-                                                s32 entry, s32 keepPosition) {
+struct UiChannelSlot *BattleMessage_Continue(struct UiWindow *window, s32 entry,
+                                             s32 keepPosition) {
   struct UiChannelSlot *channel;
   struct UiChannelSlot *selected;
   u16 *spacing;

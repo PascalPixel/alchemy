@@ -20,7 +20,7 @@
 
 // The falling shards (Ice) and bolts (Douse) rain diagonally onto the
 // targets' side. Both show the canvas only inside a slanted band of window 0,
-// whose edges BattleEffect_ArmWin0HBlankDma feeds line by line from a table at
+// whose edges BattleAnim_ArmWin0HBlankDma feeds line by line from a table at
 // the start of Ram_MapGridCellBuffer. Each particle falls until it passes y 80,
 // then lands: shards shatter and kick up sparkle puffs, bolts flash and throw a
 // fountain of sparks. A falling particle's variant is -1 until it lands, then
@@ -42,7 +42,7 @@ enum { FALLING_SHARD_COUNT = 32, FALLING_SHARD_PUFF_COUNT = 32 };
 /// shatter into puffs of sparkle, flashing and shaking each target as they
 /// land.
 ///
-/// Abilities: Ice, Ice Horn, Ice Missile (BATTLE_EFFECT_ICE).
+/// Abilities: Ice, Ice Horn, Ice Missile (BATTLE_ANIM_ICE).
 ///
 /// The canvas shows only inside a slanted band of window 0, so the shards
 /// stream out of the sky above the targets. effect->variant picks the size of
@@ -50,31 +50,31 @@ enum { FALLING_SHARD_COUNT = 32, FALLING_SHARD_PUFF_COUNT = 32 };
 /// for Ice, 20 for 52 for Ice Horn, 32 for 80 for Ice Missile); Ice Horn
 /// leaves longer trails and Ice Missile draws additively. effect->side is 1
 /// when the targets are the party, 0 when they are enemies.
-void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
+void BattleAnim_RunIce(struct BattleAnimArgs *effect) {
   void **slots;
   void **cursor;
-  struct BattleEffectWork *work;
+  struct BattleAnimWork *work;
   void *canvas;
   s32 frame;
   u8 *sparkles;
   BlitterPair draw;
-  struct EffectStep *shard;
-  struct EffectStep *puff;
+  struct Particle *shard;
+  struct Particle *puff;
   u16 *line;
   s32 i;
   s32 k;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
-  sparkles = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  ANIM_GET_SLOTS(slots, cursor, work, canvas);
+  sparkles = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   // Setup: the narrow canvas, the shard sheet and the sparkle dots in the
   // sheet slot, then the display; window 1 hides BG2.
-  EFFECT_START_NARROW_CANVAS(BGCNT_WRAP | BGCNT_PRIORITY(1));
+  ANIM_START_NARROW_CANVAS(BGCNT_WRAP | BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress((s32)&ResourceId_IceShardSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, sparkles, 0, 0);
-  BattleEffect_ConfigureEffectDisplay();
+  BattleAnim_ConfigureEffectDisplay();
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
+  REG_WININ = ANIM_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
               WININ_WIN1_OBJ | WININ_WIN1_CLR;
 
   // Line the shards up above the screen, each one 8 pixels higher and
@@ -105,18 +105,16 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
   // The shards fall towards the targets' side, so the blitters mirror them
   // when the targets are the party.
   if (work->effect->side == 0) {
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, COMPOSITE_CLIP_Y, COMPOSITE_MAX);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, COMPOSITE_CLIP_Y,
-                        COMPOSITE_ADDITIVE);
+    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, BLITTER_CLIP_Y, BLITTER_MAX);
+    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, BLITTER_CLIP_Y, COMPOSITE_ADDITIVE);
   } else {
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
-                        COMPOSITE_MAX);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
-                        COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
-                        COMPOSITE_ADDITIVE);
+    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, BLITTER_CLIP_Y | COMPOSITE_FLIP_X,
+                      BLITTER_MAX);
+    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, BLITTER_CLIP_Y | COMPOSITE_FLIP_X,
+                      COMPOSITE_ADDITIVE);
   }
   draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
-  draw[1] = EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2];
+  draw[1] = ANIM_BLITTERS[HEAP_SLOT_RAM_CODE_2];
 
   // Window 0's edges, one per scanline: a 128-pixel band slanting one pixel
   // a line the way the shards fall (on line 8 from x 104 against the
@@ -132,14 +130,14 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
                                  WIN_RANGE(120, 248));
   }
 
-  Task_Add(BattleEffect_ArmWin0HBlankDma, EFFECT_CALLBACK_ORDER);
+  Task_Add(BattleAnim_ArmWin0HBlankDma, ANIM_CALLBACK_ORDER);
   // Trails: Ice Horn keeps 75% of each pixel a frame, the others 50%.
   work->transferMode = CANVAS_COPY_AND_FADE;
-  if (work->effect->variant == EFFECT_VARIANT_STRONGER)
+  if (work->effect->variant == ANIM_VARIANT_STRONGER)
     work->transferValue = 75;
   else
     work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, EFFECT_CALLBACK_ORDER);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
 
   for (frame = 0;
        frame != gFalling_IceCounts[work->effect->variant][ICE_FRAMES];
@@ -147,7 +145,7 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
     // Frame loop. 16 frames before the end, the battle shows the damage,
     // with sound 132 as each target is hit.
     if (frame == gFalling_IceCounts[work->effect->variant][ICE_FRAMES] - 16)
-      EFFECT_SHOW_DAMAGE(SE_132);
+      ANIM_SHOW_DAMAGE(SE_132);
 
     // Shards: fall 8 pixels a frame down the slant; on landing, shatter
     // through five images, kicking up puffs in the middle of it.
@@ -158,7 +156,7 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
         s32 x = shard->x / 8;
         s32 y = shard->y / 8;
 
-        draw[work->effect->variant == EFFECT_VARIANT_STRONGEST ? 1 : 0](
+        draw[work->effect->variant == ANIM_VARIANT_STRONGEST ? 1 : 0](
             canvas, work->sheet, x, y, 32, 32);
         if (shard->y <= FALLING_LAND_Y) { // above y 80
           if (work->effect->side == 0)
@@ -173,10 +171,9 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
             Sound_PlaySongFar(SE_ICE);
           work->shakeFrames = 2;
           shard->variant = 0;
-          EFFECT_FOR_EACH_TARGET(k, work->effect)
-            ObjectGroup_UpdateMembers(work->effect->actors[k],
-                                      SPRITE_COLOR_BLUE_TINT, POSE_DAMAGE, k,
-                                      8);
+          ANIM_FOR_EACH_TARGET(k, work->effect)
+          ObjectGroup_UpdateMembers(work->effect->targets[k],
+                                    SPRITE_COLOR_BLUE_TINT, POSE_DAMAGE, k, 8);
         }
       }
       if (shard->variant != -1) {
@@ -187,7 +184,7 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
         // 1 to 5, three frames each (0x400 bytes a picture); frame 15 ends
         // it.
         if (shard->variant >= 1 && shard->variant <= 14) {
-          draw[work->effect->variant == EFFECT_VARIANT_STRONGEST ? 1 : 0](
+          draw[work->effect->variant == ANIM_VARIANT_STRONGEST ? 1 : 0](
               canvas, work->sheet + 0x400 + ((shard->variant / 3) << 10), x, y,
               32, 32);
         }
@@ -216,12 +213,12 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
       if (puff->variant != -1) {
         if (puff->variant <= 17) {
           s32 image = puff->variant / 2;
-          s32 x = puff->x / 8 - (gBattleEffect_PuffSizes[image] >> 1);
-          s32 y = puff->y / 8 - (gBattleEffect_PuffSizes[image] >> 1);
+          s32 x = puff->x / 8 - (gBattleAnim_PuffSizes[image] >> 1);
+          s32 y = puff->y / 8 - (gBattleAnim_PuffSizes[image] >> 1);
 
-          draw[work->effect->variant == EFFECT_VARIANT_STRONGEST ? 1 : 0](
-              canvas, sparkles + gBattleEffect_PuffCells[image], x, y,
-              gBattleEffect_PuffSizes[image], gBattleEffect_PuffSizes[image]);
+          draw[work->effect->variant == ANIM_VARIANT_STRONGEST ? 1 : 0](
+              canvas, sparkles + gBattleAnim_PuffCells[image], x, y,
+              gBattleAnim_PuffSizes[image], gBattleAnim_PuffSizes[image]);
         }
         if (puff->variant > -1)
           puff->variant--;
@@ -230,16 +227,16 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
     ObjectGroup_TickMemberTimers();
     // Shakes while work->shakeFrames, which each landing sets to 2, lasts.
     Camera_ApplyShake(4, 4);
-    EFFECT_PRESENT_FRAME(work);
+    ANIM_PRESENT_FRAME(work);
   }
 
   // Finish: the callbacks before the blocks they read, in the reverse of
   // the order they were added.
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Task_Remove(BattleEffect_ArmWin0HBlankDma);
-  EFFECT_RELEASE_BLITTERS();
-  BattleEffect_EndCanvasLayer();
-  BattleEffect_ConfigureEffectDisplay();
+  Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleAnim_ArmWin0HBlankDma);
+  ANIM_RELEASE_BLITTERS();
+  BattleAnim_EndCanvasLayer();
+  BattleAnim_ConfigureEffectDisplay();
 }
 
 /// Douse's bolts are work->particles 0 to 63; their sparks follow window 0's
@@ -250,7 +247,7 @@ enum { FALLING_BOLT_COUNT = 64, FALLING_BOLT_SPARK_COUNT = 512 };
 /// table, then the bolts' sparks.
 struct BoltSparkBuffer {
   u16 lines[160]; ///< WIN0H for each screen line, read by the HBlank DMA
-  struct EffectStep sparks[FALLING_BOLT_SPARK_COUNT]; ///< free while -1
+  struct Particle sparks[FALLING_BOLT_SPARK_COUNT]; ///< free while -1
 };
 
 /// Ram_MapGridCellBuffer seen as Douse's struct BoltSparkBuffer.
@@ -264,7 +261,7 @@ struct BoltSparkBuffer {
 /// bursting into a fountain of falling sparks where it lands, while the targets
 /// flash.
 ///
-/// Abilities: Douse, Drench, Deluge (BATTLE_EFFECT_DOUSE).
+/// Abilities: Douse, Drench, Deluge (BATTLE_ANIM_DOUSE).
 ///
 /// Like the falling shards, the canvas shows only inside a slanted band of
 /// window 0. effect->variant picks the volley from gFalling_Counts: 6 bolts of
@@ -272,42 +269,40 @@ struct BoltSparkBuffer {
 /// pixels apart, over 80 frames; it also picks how the canvas fades (see
 /// below). effect->side is 1 when the targets are the party, 0 when they are
 /// enemies.
-void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
+void BattleAnim_RunDouse(struct BattleAnimArgs *effect) {
   void **slots;
   void **cursor;
-  struct BattleEffectWork *work;
+  struct BattleAnimWork *work;
   void *canvas;
   s32 frame;
   DrawRectangle drawSpark;
   DrawRectangle drawBolt;
-  struct EffectStep *bolt;
-  struct EffectStep *spark;
+  struct Particle *bolt;
+  struct Particle *spark;
   u16 *line;
   s32 i;
   s32 k;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
+  ANIM_GET_SLOTS(slots, cursor, work, canvas);
   work->effect = effect;
   // Setup: the bolt pictures go after the spark cells, which the particle
   // sheet decodes at the start of work->sheet; window 1 hides BG2.
-  EFFECT_START_NARROW_CANVAS(BGCNT_WRAP | BGCNT_PRIORITY(1));
+  ANIM_START_NARROW_CANVAS(BGCNT_WRAP | BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress((s32)&ResourceId_BlueBeamSheet,
                              work->sheet + DOUSE_FALLING_CELL, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, work->sheet, 0,
                              0);
-  BattleEffect_ConfigureEffectDisplay();
+  BattleAnim_ConfigureEffectDisplay();
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
+  REG_WININ = ANIM_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
               WININ_WIN1_OBJ | WININ_WIN1_CLR;
 
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, COMPOSITE_CLIP_Y, COMPOSITE_MAX);
-  drawBolt = EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, COMPOSITE_CLIP_Y,
-                      COMPOSITE_ADDITIVE);
-  drawSpark = EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, BLITTER_CLIP_Y, BLITTER_MAX);
+  drawBolt = ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, BLITTER_CLIP_Y, COMPOSITE_ADDITIVE);
+  drawSpark = ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
 
-  EFFECT_FREE_PARTICLES(i, FALLING_BOLT_SPARKS->sparks,
-                        FALLING_BOLT_SPARK_COUNT);
+  ANIM_FREE_PARTICLES(i, FALLING_BOLT_SPARKS->sparks, FALLING_BOLT_SPARK_COUNT);
 
   // Line the bolts up above the screen along the slant, FALLING_BOLT_SPACING
   // apart; all 64 are placed, though a variant drops only its first
@@ -342,17 +337,17 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
         line, i, 103, ((i / 2 + 60) << 8) | (i / 2 + 188), WIN_RANGE(112, 240));
   }
 
-  Task_Add(BattleEffect_ArmWin0HBlankDma, EFFECT_CALLBACK_ORDER);
+  Task_Add(BattleAnim_ArmWin0HBlankDma, ANIM_CALLBACK_ORDER);
   // Douse clears the canvas every frame; Drench keeps half of each pixel and
   // Deluge three quarters, for trails.
-  if (work->effect->variant == EFFECT_VARIANT_BASIC) {
-    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-  } else if (work->effect->variant == EFFECT_VARIANT_STRONGER) {
-    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+  if (work->effect->variant == ANIM_VARIANT_BASIC) {
+    ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
+  } else if (work->effect->variant == ANIM_VARIANT_STRONGER) {
+    ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
   } else {
-    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+    ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   }
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, EFFECT_CALLBACK_ORDER);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
 
   for (frame = 0;
        frame != gFalling_Counts[work->effect->variant][FALLING_BOLT_DURATION];
@@ -361,7 +356,7 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
     // with sound 132 as each target is hit.
     if (frame ==
         gFalling_Counts[work->effect->variant][FALLING_BOLT_DURATION] - 64)
-      EFFECT_SHOW_DAMAGE(SE_132);
+      ANIM_SHOW_DAMAGE(SE_132);
 
     // Bolts: fall 8 pixels a frame (4 across) until they pass y 80, then
     // flash for frames 0 to 3 and burst for 4 to 7; the count stops at 15.
@@ -398,7 +393,7 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
             spark->x = (x + 12) << 16;
             spark->y = y << 16;
             spark->velocityX = ((Random16() & 255) - 128) << 9;
-            if (work->effect->variant == EFFECT_VARIANT_STRONGEST)
+            if (work->effect->variant == ANIM_VARIANT_STRONGEST)
               spark->velocityY = ((Random16() & 0x1ff) - 0x180) << 10;
             else
               spark->velocityY = ((Random16() & 255) - 255) << 10;
@@ -408,9 +403,9 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
           // flashes white in its damage pose for 2 frames.
           if ((i & 3) == 0)
             Sound_PlaySongFar(SE_132);
-          EFFECT_FOR_EACH_TARGET(k, work->effect)
-            ObjectGroup_UpdateMembers(work->effect->actors[k],
-                                      SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 2);
+          ANIM_FOR_EACH_TARGET(k, work->effect)
+          ObjectGroup_UpdateMembers(work->effect->targets[k],
+                                    SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 2);
         }
       } else {
         if (bolt->variant >= 0 && bolt->variant <= 3)
@@ -432,20 +427,20 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
 
         if (size > 6)
           size = 6;
-        EFFECT_DRAW_FLARE(drawSpark, canvas, work->sheet,
-                          Q_16_16_TO_INT(spark->x), Q_16_16_TO_INT(spark->y),
-                          size);
-        EffectStep_AdvanceWithGravity2D(spark, 60, 0x2000);
+        ANIM_DRAW_FLARE(drawSpark, canvas, work->sheet,
+                        Q_16_16_TO_INT(spark->x), Q_16_16_TO_INT(spark->y),
+                        size);
+        Particle_AdvanceWithGravity2D(spark, 60, 0x2000);
         spark->variant--;
       }
     }
-    EFFECT_END_FRAME(work);
+    ANIM_END_FRAME(work);
   }
 
   // Finish: stop both transfers before releasing the blitters and canvas.
-  Task_Remove(BattleEffect_ArmWin0HBlankDma);
-  EFFECT_FINISH_CANVAS();
-  BattleEffect_ConfigureEffectDisplay();
+  Task_Remove(BattleAnim_ArmWin0HBlankDma);
+  ANIM_FINISH_CANVAS();
+  BattleAnim_ConfigureEffectDisplay();
 }
 
 #undef FALLING_BUILD_SLANTED_WINDOW

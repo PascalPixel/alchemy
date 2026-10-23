@@ -22,7 +22,7 @@
 /// A huge flaming blade swings down over the targets and two columns of light
 /// strike through them.
 ///
-/// Abilities: Ragnarok (BATTLE_EFFECT_RAGNAROK).
+/// Abilities: Ragnarok (BATTLE_ANIM_RAGNAROK).
 ///
 /// The sword is drawn for 40 frames: it swings down over 10 frames, pauses
 /// until frame 20, then creeps on. The columns flash at frames 16 and 24 and
@@ -31,12 +31,12 @@
 /// of three per side. work->particles holds 16 flashes a column and PARTICLES
 /// 340 sparks a column.
 ///
-/// Leaves effect->variant at EFFECT_VARIANT_STRONGER, and the user in its
+/// Leaves effect->variant at ANIM_VARIANT_STRONGER, and the user in its
 /// action pose with its animation back at the usual speed.
-void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
+void BattleAnim_RunRagnarok(struct BattleAnimArgs *effect) {
   void **slots;
   void **cursor;
-  struct BattleEffectWork *work;
+  struct BattleAnimWork *work;
   void *canvas;
   s32 col;
   u8 *sheet;
@@ -45,17 +45,17 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
   s32 frame;
   s32 i;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
-  sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  ANIM_GET_SLOTS(slots, cursor, work, canvas);
+  sheet = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
 
-  user = GetBattleObjectSlotFar(effect->actor)->object;
+  user = GetBattleObjectSlotFar(effect->user)->object;
   // XXX: why the variant is forced to the stronger one, as nothing in the
   // effect or the battle reads it afterwards; the Lost Age's Ragnarok may show.
-  effect->variant = EFFECT_VARIANT_STRONGER;
+  effect->variant = ANIM_VARIANT_STRONGER;
   work->effect = effect;
-  BattleEffect_StartCanvasLayer(1);
+  BattleAnim_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  BattleEffect_FetchRectangleBlitters(work->effect->side, blit);
+  BattleAnim_FetchRectangleBlitters(work->effect->side, blit);
   // The user takes its leap pose and animates fast until the end: an
   // animation step of 48, three times the usual 16.
   ObjectDispatch_SelectAnimationFar(user, POSE_LEAP);
@@ -74,7 +74,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
     // Flashes: i * 2 pixels from the center, lifetime 25-32.
     i = 0;
     do {
-      struct EffectStep *flash = &work->particles[col * RAGNAROK_FLASHES + i];
+      struct Particle *flash = &work->particles[col * RAGNAROK_FLASHES + i];
 
       s32 radius = i * 2;
       s32 angle = Random16() & 0xffff;
@@ -89,7 +89,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
     // speeds of 0.5 to 8.5 pixels a frame (speed / 64), doubled vertically.
     i = 0;
     do {
-      struct EffectStep *spark = &PARTICLES[col * RAGNAROK_SPARKS + i];
+      struct Particle *spark = &PARTICLES[col * RAGNAROK_SPARKS + i];
 
       s32 speed;
       s32 angle;
@@ -107,7 +107,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
   } while (col != RAGNAROK_SEEDED);
 
   // Each transfer keeps 3/4 of every canvas level, for an afterimage.
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
   frame = 0;
   do {
@@ -123,7 +123,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
       Sound_PlaySongFar(SE_145);
     }
     if (frame == 40) {
-      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
+      ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }
 
     // Frames 0 to 39, the blade: it swings down 16 pixels and 10 across a
@@ -168,7 +168,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
 
     // From frame 17 the palette fades towards the blast colours.
     if (frame > 16) {
-      BattleEffect_StepPaletteToResource((s32)&ResourceId_BlastSheet);
+      BattleAnim_StepPaletteToResource((s32)&ResourceId_BlastSheet);
     }
 
     // The two columns, from frames 16 and 24: a 12-frame shake and the
@@ -192,8 +192,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
         }
         i = 0;
         do {
-          struct EffectStep *flash =
-              &work->particles[col * RAGNAROK_FLASHES + i];
+          struct Particle *flash = &work->particles[col * RAGNAROK_FLASHES + i];
 
           s32 x;
           s32 life;
@@ -221,14 +220,14 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
       if (frame > start + 5) {
         i = 0;
         do {
-          struct EffectStep *spark = &PARTICLES[col * RAGNAROK_SPARKS + i];
+          struct Particle *spark = &PARTICLES[col * RAGNAROK_SPARKS + i];
 
           if (spark->variant > 0) {
             s32 x;
             s32 y;
             s32 size;
 
-            EffectStep_AdvanceWithGravity2D(spark, 64, 0x1000);
+            Particle_AdvanceWithGravity2D(spark, 64, 0x1000);
             spark->variant--;
             y = spark->y;
             if (y > (108 << 16)) {
@@ -245,7 +244,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
                 // the brighter pixel or add.
                 size = spark->variant / 5 + 1;
                 lane = i & 1;
-                cell = sheet + gBattleEffect_MoteCells[size - 1];
+                cell = sheet + gBattleAnim_MoteCells[size - 1];
                 px -= size / 2;
                 py -= size;
                 blit[lane](canvas, cell, px, py, size, size * 2);
@@ -258,24 +257,24 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
 
       // As the column's sparks start to fly, every target flashes and
       // recoils.
-      EFFECT_FOR_EACH_TARGET(i, work->effect) {
+      ANIM_FOR_EACH_TARGET(i, work->effect) {
         if (frame == start + 6) {
-          ObjectGroup_UpdateMembers(work->effect->actors[i], SPRITE_COLOR_WHITE,
-                                    POSE_DAMAGE, i, 10);
-          BattleMotion_ApplyVariantMotionFar(work->effect->actors[i],
-                                             KNOCKBACK_HURL);
+          ObjectGroup_UpdateMembers(work->effect->targets[i],
+                                    SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 10);
+          BattleMotion_ApplyKnockbackFar(work->effect->targets[i],
+                                         KNOCKBACK_HURL);
         }
       }
       col++;
     } while (col != RAGNAROK_COLUMNS);
 
     Camera_ApplyShake(16, 16);
-    EFFECT_END_FRAME(work);
+    ANIM_END_FRAME(work);
     frame++;
   } while (frame != RAGNAROK_FRAMES);
 
   ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)user, 16);
-  EFFECT_FINISH_CANVAS();
+  ANIM_FINISH_CANVAS();
 }
 
 #undef RAGNAROK_FLASH_CELLS

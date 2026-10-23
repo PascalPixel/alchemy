@@ -11,7 +11,7 @@ enum {
   QUAKE_TIMING_SHAKE        ///< how far the screen shakes
 };
 
-/// The peak heights of Quake's rock pillars: BattleEffect_RunQuake copies its
+/// The peak heights of Quake's rock pillars: BattleAnim_RunQuake copies its
 /// static table into a local of this type before the frame loop, and only
 /// the first three columns are drawn.
 struct RockWallHeights {
@@ -28,7 +28,7 @@ struct RockWallHeights {
 /// Three rock pillars rise from the left, 4 frames apart, and sink again,
 /// throwing the targets standing on them into the air.
 ///
-/// Abilities: Quake, Earthquake, Quake Sphere (BATTLE_EFFECT_QUAKE).
+/// Abilities: Quake, Earthquake, Quake Sphere (BATTLE_ANIM_QUAKE).
 ///
 /// Each pillar is capped with a strip of ground cut from the background.
 ///
@@ -37,7 +37,7 @@ struct RockWallHeights {
 /// vertical velocity and gravity; arms work->shakeFrames.
 ///
 /// effect: the targets; variant picks the row of gQuake_Timings.
-void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
+void BattleAnim_RunQuake(struct BattleAnimArgs *effect) {
   static s32 wallHeights[4] = {
       -32,
       -32,
@@ -46,7 +46,7 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
   };
   void **slots;
   void **cursor;
-  struct BattleEffectWork *work;
+  struct BattleAnimWork *work;
   void *canvas;
   s32 frame;
   s32 column;
@@ -55,7 +55,7 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
   s32 xOffset;
   struct RockWallHeights heights;
   s32 point[3];
-  struct EffectPosition screen;
+  struct ScreenPoint screen;
   s32 member;
   s32 row;
   s32 col;
@@ -63,10 +63,10 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
 
   slots = &gHeapSlots[HEAP_SLOT_BATTLE_ANIM];
   cursor = slots;
-  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
+  ANIM_GET_WORK_AND_CANVAS(cursor, work, canvas);
   camera = ((struct BattleCamera *)HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA));
   work->effect = effect;
-  BattleEffect_StartCanvasLayer(1);
+  BattleAnim_StartCanvasLayer(1);
   // The canvas at its own width, opaque: the pillars hide what is behind.
   REG_BG2PA = Q_8_8(1);
   REG_BLDCNT = 0;
@@ -97,14 +97,14 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
   } else {
     xOffset = 0;
   }
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
-                      COMPOSITE_TRANSPARENT);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS,
+                    COMPOSITE_TRANSPARENT);
   draw = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
   // particles[member].variant becomes 1 once that target has landed.
-  EFFECT_FOR_EACH_TARGET(member, work->effect)
-    work->particles[member].variant = 0;
+  ANIM_FOR_EACH_TARGET(member, work->effect)
+  work->particles[member].variant = 0;
   // Each transfer clears the canvas: the pillars are redrawn every frame.
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   // The heights are negative; the sine below is taken as its absolute value,
   // so each pillar still rises up to 32 pixels.
   heights = (*(const struct RockWallHeights *)&wallHeights);
@@ -116,11 +116,11 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
   for (frame = 0;
        frame != gQuake_Timings[work->effect->variant][QUAKE_TIMING_FRAMES];
        frame++) {
-    EFFECT_VIEW_FROM_CAMERA(camera);
+    ANIM_VIEW_FROM_CAMERA(camera);
     // The damage shows 16 frames before the end.
     if (frame ==
         gQuake_Timings[work->effect->variant][QUAKE_TIMING_FRAMES] - 16)
-      EFFECT_SHOW_DAMAGE(SE_IMPACT);
+      ANIM_SHOW_DAMAGE(SE_IMPACT);
 
     // The pillars rise from frames 16, 20 and 24.
     for (column = 0; column != 3; column++) {
@@ -154,12 +154,13 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
         // point, 16 pixels above the feet, lies in its 41 columns (both edges
         // count) and at or below its top. A target below the ground takes its
         // damage pose.
-        EFFECT_FOR_EACH_TARGET(member, work->effect) {
+        ANIM_FOR_EACH_TARGET(member, work->effect) {
           struct MotionObject *object;
 
-          object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
+          object =
+              GetBattleObjectSlotFar(work->effect->targets[member])->object;
           SET_VECTOR(point, object->x, object->y, object->z);
-          EffectPosition_ProjectPoint(point, &screen);
+          Projection_Point(point, &screen);
           screen.x += xOffset;
           if (screen.x >= column * QUAKE_PILLAR_WIDTH + 8 &&
               screen.x <=
@@ -171,22 +172,22 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
             object->verticalMotionStrength = 0xab85;
           }
           if (object->y < 0)
-            ObjectGroup_UpdateMembers(work->effect->actors[member], 0,
+            ObjectGroup_UpdateMembers(work->effect->targets[member], 0,
                                       POSE_DAMAGE, -1, 0);
         }
       }
     }
 
     // A target that lands flashes white for 5 frames.
-    EFFECT_FOR_EACH_TARGET(member, work->effect) {
+    ANIM_FOR_EACH_TARGET(member, work->effect) {
       struct MotionObject *object;
-      struct EffectStep *state;
+      struct Particle *state;
 
-      object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
+      object = GetBattleObjectSlotFar(work->effect->targets[member])->object;
       state = &work->particles[member];
       if (state->variant == 0 && object->y <= 0 && object->velocityY < 0) {
         state->variant = 1;
-        ObjectGroup_UpdateMembers(work->effect->actors[member],
+        ObjectGroup_UpdateMembers(work->effect->targets[member],
                                   SPRITE_COLOR_WHITE, POSE_DAMAGE, member, 5);
       }
     }
@@ -194,10 +195,10 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
     Camera_ApplyShake(
         gQuake_Timings[work->effect->variant][QUAKE_TIMING_SHAKE],
         gQuake_Timings[work->effect->variant][QUAKE_TIMING_SHAKE]);
-    EFFECT_END_FRAME(work);
+    ANIM_END_FRAME(work);
   }
 
-  EFFECT_FINISH_CANVAS_ONE_BLITTER();
+  ANIM_FINISH_CANVAS_ONE_BLITTER();
 }
 
 #undef QUAKE_PILLAR_WIDTH

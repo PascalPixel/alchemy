@@ -1474,7 +1474,7 @@ static void ValeGate_FightTravelers(void) {
   ObjectEvent_RunActionScriptAndWait(LOCALID_STORM_GARET,
                                      gValeGate_StormGaretLeapActions);
   // The confrontation continues in battle; both outcomes return here.
-  Battle_SetStart(BATTLE_START_NO_ESCAPE);
+  Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
   {
     const void *message = &MapId_ValeGate;
 

@@ -32,7 +32,7 @@
 	.set import.Save_CopyFile, 1
 	.set import.Save_EraseSelectedFile, 1
 	.set import.Save_ScanRecordFlags, 1
-	.set import.NameEntry_EditOwnerName, 1
+	.set import.NamingScreen_EditMemberName, 1
 	.set import.PaletteGlow_Update, 1
 	.set import.Menu_RunConfirmSelection, 1
 	.set import.Graphics_ExpandVramTilesByColorTable, 1
@@ -43,8 +43,8 @@
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1
 	.set import.GameFlag_ClearBit, 1
-	.set import.Party_AddActiveOwner, 1
-	.set import.Party_RemoveActiveOwner, 1
+	.set import.Party_AddMember, 1
+	.set import.Party_RemoveMember, 1
 	.set import.Party_StartChildhood, 1
 	.set import.Runtime_GetBuildStampTime, 1
 	.set import.InventorySnapshot_Restore, 1

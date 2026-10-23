@@ -64,7 +64,7 @@ enum HeapSlot {
   /// The field map's scrolling work (struct MapGridScrollWork), or on the world
   /// map its perspective view (struct WorldMapView); gMapGridWork.
   HEAP_SLOT_MAP_GRID = 8,
-  /// A battle's struct BattleWork (gBattleWork), from Battle_RunEncounter to
+  /// A battle's struct BattleWork (gBattleWork), from Battle_Run to
   /// the next map change.
   HEAP_SLOT_BATTLE = 9,
   /// The battle background's scanline work (struct BattleAffineHdma).
@@ -119,7 +119,7 @@ enum HeapSlot {
   HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS = 35,
   /// The fade overlay's work (struct FadeOverlayWork).
   HEAP_SLOT_FADE_OVERLAY = 36,
-  /// The battle message display (struct BattleDisplayWork).
+  /// The battle message display (struct BattleMessageWork).
   HEAP_SLOT_BATTLE_MESSAGE = 37,
   /// The running battle effect's own work (gBattleAnimWork). Lucky Dice keeps
   /// its own work in this slot and the next two.
@@ -133,12 +133,12 @@ enum HeapSlot {
   /// The title intro's state (struct IntroWork).
   HEAP_SLOT_TITLE_INTRO = 43,
   /// The battle background's view and entry transition (32 bytes), from
-  /// Battle_RunEncounter.
+  /// Battle_Run.
   HEAP_SLOT_BATTLE_BACKGROUND = 44,
   /// Lucky Dice's sprites (0x618 bytes), for as long as the game runs.
   HEAP_SLOT_LUCKY_DICE_SPRITES = 45,
   /// A routine run from RAM: the canvas drawing routine
-  /// BattleEffect_BuildBlitter writes, called as a DrawRectangle and released
+  /// BattleAnim_BuildBlitter writes, called as a DrawRectangle and released
   /// before its canvas, or the world map's copy of Transform_UpdateVertices.
   HEAP_SLOT_RAM_CODE = 46,
   /// A second routine as HEAP_SLOT_RAM_CODE, released before it.
@@ -157,8 +157,8 @@ enum HeapSlot {
   /// VRAM; loaded with the animation pools.
   HEAP_SLOT_FRAME_UPLOADER = 53,
   /// Each linked console's party (LINK_OWNER_STATES_SIZE bytes), from the
-  /// link lobby and Battle_RunEncounter.
-  HEAP_SLOT_LINK_OWNER_STATES = 54,
+  /// link lobby and Battle_Run.
+  HEAP_SLOT_ENEMY_UNITS = 54,
   /// The menu work (MENU_WORK_SIZE bytes) shared by the main menu's screens
   /// and the shop; each takes it on opening and releases it on closing. The
   /// save screen takes it for its sprite work (struct ShopWork).

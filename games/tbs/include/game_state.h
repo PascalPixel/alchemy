@@ -30,24 +30,24 @@ enum HazardMode {
 /// rather than HP.
 #define HAZARD_DAMAGE_PERCENT 0x100
 
-/// gGameState.battleStart: how the next battle starts (Battle_SetStart); it is
-/// set back to BATTLE_START_NORMAL as the battle ends. Any start but that one
-/// stops the opening's first-strike and surprise rolls (Battle_RunEncounter).
-enum BattleStart {
-  BATTLE_START_NORMAL = 0,
+/// gGameState.battleType: how the next battle starts (Battle_SetType); it is
+/// set back to BATTLE_TYPE_NORMAL as the battle ends. Any start but that one
+/// stops the opening's first-strike and surprise rolls (Battle_Run).
+enum BattleType {
+  BATTLE_TYPE_NORMAL = 0,
   /// A battle the party cannot run from: a Mimic's (object/object/events.c)
   /// and the travelers' fight in Vale (ValeGate_FightTravelers,
   /// map/vale_gate.c).
-  BATTLE_START_NO_ESCAPE = 2,
+  BATTLE_TYPE_NO_ESCAPE = 2,
   /// The battles a script starts. Here and in a link battle the command menu
   /// itself refuses to run, with MsgNoTimeToRun ("This is no time to be
   /// running away!"), as it does once the party is challenged
   /// (UiText_ShowLocalizedMessageAndWait, window/battle_command/link_timer.c).
-  BATTLE_START_SCRIPTED = 3,
-  BATTLE_START_LINK = 4, ///< a link battle (Battle_RunEncounter, menu/lobby.c)
+  BATTLE_TYPE_SCRIPTED = 3,
+  BATTLE_TYPE_LINK = 4, ///< a link battle (Battle_Run, menu/lobby.c)
   /// The debug battle menu's mark (DebugBattle_RunMenu), which no code tests
   /// by value; it still lets the party run.
-  BATTLE_START_DEBUG = 5
+  BATTLE_TYPE_DEBUG = 5
 };
 
 /// The game's state: play time, coins, the map and the leader's position,
@@ -110,7 +110,7 @@ struct GameState {
   u8 movementMode;         ///< 1 while the leader is climbing, 0 otherwise
   u8 paddingAfterMovement; ///< up to the word leaderLocalId starts on
   s32 leaderLocalId;       ///< the leader: its unit and its object event
-  u8 activeOwners[8];      ///< the party in order
+  u8 party[8];             ///< the party in order
   u8 unusedAfterOwners[5]; ///< no code names it
   u8 paletteGlow[2];       ///< window hue (0 to 23), brightness (0 to 14)
   u8 unusedAfterGlow[3];   ///< no code names it
@@ -145,7 +145,7 @@ struct GameState {
   u8 perspectiveMap; ///< set to 1 on the world map; not read by name in TBS
   u8 unusedAfterPerspective[5]; ///< no code names it
   u8 idleSleepEnabled;          ///< the option, saved from gIdleSleepEnabled
-  u8 battleStart;               ///< an enum BattleStart
+  u8 battleType;                ///< an enum BattleType
   /// Hazardous ground (the Lamakan Desert's heat): when hazardSteps reaches
   /// hazardLimit the party takes hazardDamage and the count starts again. A
   /// fresh entry into a map, not a return from battle, resets them to 1 HP
@@ -184,7 +184,7 @@ struct GameState {
   u8 unusedAfterTallies[4]; ///< no code names it
   u32 startStamp;           ///< Runtime_GetBuildStampTime's value at a new game
   u8 unusedAfterStartStamp[4]; ///< no code names it
-  struct BattleUnit owners[8]; ///< the characters
+  struct Unit units[8];        ///< the characters
 };
 
 STATIC_ASSERT(offsetof(struct GameState, buildStamp) == 0);
@@ -193,7 +193,7 @@ STATIC_ASSERT(offsetof(struct GameState, idleSleepEnabled) == 0x22a);
 STATIC_ASSERT(offsetof(struct GameState, coins) == 0x10);
 STATIC_ASSERT(offsetof(struct GameState, shopCredit) == 0x118);
 STATIC_ASSERT(offsetof(struct GameState, shopGifts) == 0x11c);
-STATIC_ASSERT(offsetof(struct GameState, owners) == 0x2c0);
+STATIC_ASSERT(offsetof(struct GameState, units) == 0x2c0);
 STATIC_ASSERT(sizeof(struct GameState) == 0xd20);
 STATIC_ASSERT(offsetof(struct GameState, wonPrizes) == 0x12c);
 STATIC_ASSERT(offsetof(struct GameState, mapSec) == 0x1cc);
@@ -204,7 +204,7 @@ STATIC_ASSERT(offsetof(struct GameState, special) == 0x1d6);
 STATIC_ASSERT(offsetof(struct GameState, x) == 0x1dc);
 STATIC_ASSERT(offsetof(struct GameState, movementMode) == 0x1f2);
 STATIC_ASSERT(offsetof(struct GameState, leaderLocalId) == 0x1f4);
-STATIC_ASSERT(offsetof(struct GameState, activeOwners) == 0x1f8);
+STATIC_ASSERT(offsetof(struct GameState, party) == 0x1f8);
 STATIC_ASSERT(offsetof(struct GameState, speech) == 0x20a);
 STATIC_ASSERT(offsetof(struct GameState, messageSpeed) == 0x20c);
 STATIC_ASSERT(offsetof(struct GameState, aKeys) == 0x210);
@@ -224,9 +224,9 @@ extern struct GameState gGameState;
 /// Sets the battle start type.
 // A statement macro (S2: a layer, 34 sites): written as one, its store stays in
 // place at every use; as a plain assignment, tbs-en differs.
-#define Battle_SetStart(mode)                                                  \
+#define Battle_SetType(mode)                                                   \
   do {                                                                         \
-    gGameState.battleStart = (mode);                                           \
+    gGameState.battleType = (mode);                                            \
   } while (0)
 
 #endif

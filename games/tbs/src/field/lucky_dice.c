@@ -281,7 +281,7 @@ void LuckyDice_Run(void) {
   UNUSED s32 matchedNumbers[2]; // written, never read
 #endif
   u16 *spritePalette;
-  struct BattleEffectWork *diceWork;
+  struct BattleAnimWork *diceWork;
   /* FAKEMATCH(volatile): the OAM shadow it builds is struct OamShadow, whose
    * words are volatile (oambuf.h); as plain u32 words, 1550 of 2046
    * instructions differ in tbs-en. */
@@ -298,8 +298,8 @@ void LuckyDice_Run(void) {
   // It persists across frames to clear the same numeric field afterward.
   s32 digits;
   s32 spriteCount;
-  struct EffectStep *rollingDie;
-  struct EffectStep *otherDie;
+  struct Particle *rollingDie;
+  struct Particle *otherDie;
   s32 resetDice; // put the dice back at the throwing line
   struct UiWindow *window;
   s32 index;

@@ -161,7 +161,7 @@ s32 Save_ScanRecordFlags(void) {
 u32 Save_BuildFileSummary(void) {
   u16 members[14];
   struct SaveFileSummary *summary;
-  struct BattleUnit *leader;
+  struct Unit *leader;
   u8 *source;
   u8 *destination;
   u32 *word;
@@ -193,14 +193,14 @@ u32 Save_BuildFileSummary(void) {
   summary->level = leader->level;
   summary->playTime = gGameState.playTime;
   summary->area = MapSec_GetNameIndexFar(gGameState.mapId, gGameState.warpDest);
-  summary->classId = leader->classIndex;
+  summary->classId = leader->classId;
   summary->coins = gGameState.coins;
   summary->djinn[0] = Party_SumDjinnCountsFar(0);
   summary->djinn[1] = Party_SumDjinnCountsFar(1);
   summary->djinn[2] = Party_SumDjinnCountsFar(2);
   summary->djinn[3] = Party_SumDjinnCountsFar(3);
   // Up to four party members, ended by -1.
-  Party_ListActiveOwnersFar(members);
+  Party_ListMembersFar(members);
   for (i = 0; i <= 3 && members[i] != 255; i++)
     summary->party[i] = members[i];
   summary->party[i] = -1;

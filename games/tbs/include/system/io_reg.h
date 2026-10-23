@@ -159,7 +159,7 @@ enum DisplayControl {
 #define REG_BLDY (*(volatile u16 *)0x04000054) ///< fade level, 0 to 16
 
 /// Screen block 7: BG2's affine map of a battle effect's canvas, a byte a
-/// tile (EFFECT_WRITE_CANVAS_MAP_ROW).
+/// tile (ANIM_WRITE_CANVAS_MAP_ROW).
 #define BG_CANVAS_MAP ((volatile s16 *)0x06003800)
 /// BG0HOFS as an address for a DMA: copies of gBgScroll over all four
 /// backgrounds' scroll registers start here, and Mind Read's HBlank DMA writes

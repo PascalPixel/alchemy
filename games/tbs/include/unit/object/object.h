@@ -120,8 +120,8 @@ void Map_ChooseMusic(void);
 s32 MapSec_GetNameIndex(s32 mapId, s32 warpDest);
 void Map_SetDefeatReturnPoint(void);
 s16 FieldScript_GetSpecialValue(void);
-void Battle_SelectMapBackdrop(void);
-void Battle_SelectTerrainBackdrop(s32 behavior);
+void BattleBackground_SelectForMap(void);
+void BattleBackground_SelectForEnvironment(s32 behavior);
 // Matching builds call Encounter_SelectBattleMusic without a prototype, as in
 // object.c above its definition: in one file its definition
 // would come before Field_RequestDjinnBattle and

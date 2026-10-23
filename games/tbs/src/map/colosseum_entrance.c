@@ -1514,9 +1514,9 @@ static void ColosseumEntrance_ApplyArrivalState(void) {
     ColosseumEntrance_AnnounceFinals();
     break;
   case COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_EAST:
-    Party_AddActiveOwner(GARET);
-    Party_AddActiveOwner(IVAN);
-    Party_AddActiveOwner(MIA);
+    Party_AddMember(GARET);
+    Party_AddMember(IVAN);
+    Party_AddMember(MIA);
     Engine_GameFlagSet(FLAG_COLOSSO_FIRST_MATCH_WON);
     ColosseumEntrance_CelebrateAdvancement();
     break;
@@ -1527,9 +1527,9 @@ static void ColosseumEntrance_ApplyArrivalState(void) {
     ColosseumEntrance_WalkToWestExit();
     break;
   case COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_NORTH:
-    Party_AddActiveOwner(GARET);
-    Party_AddActiveOwner(IVAN);
-    Party_AddActiveOwner(MIA);
+    Party_AddMember(GARET);
+    Party_AddMember(IVAN);
+    Party_AddMember(MIA);
     Engine_GameFlagSet(FLAG_COLOSSO_SECOND_MATCH_WON);
     ColosseumEntrance_CelebrateBothWins();
     break;
@@ -1810,8 +1810,8 @@ static void ColosseumEntrance_EscortToEastExit(void) {
 
   if (GameFlag_IsSet(JENNA) != 0) {
     GameFlag_Set(FLAG_DEBUG_BATTLE_KEYS);
-    Party_RemoveActiveOwner(JENNA);
-    Party_AddActiveOwner(MIA);
+    Party_RemoveMember(JENNA);
+    Party_AddMember(MIA);
   }
   Engine_ScriptStart();
   ObjectEvent_SetPosition(LOCALID_ESCORTING_SOLDIER, PIXELS(712), PIXELS(588));
@@ -1970,8 +1970,8 @@ static void ColosseumEntrance_EscortToWestExit(void) {
 
   if (GameFlag_IsSet(JENNA) != 0) {
     GameFlag_Set(FLAG_DEBUG_BATTLE_KEYS);
-    Party_RemoveActiveOwner(JENNA);
-    Party_AddActiveOwner(MIA);
+    Party_RemoveMember(JENNA);
+    Party_AddMember(MIA);
   }
   Engine_ScriptStart();
   ObjectEvent_SetPosition(LOCALID_ESCORTING_SOLDIER, PIXELS(868), PIXELS(588));

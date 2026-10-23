@@ -12,7 +12,7 @@
 /// A whirlwind lifts the targets, then comets from a block of objects in a
 /// violet sky strike them.
 ///
-/// Abilities: Procne (SUMMON_EFFECT_PROCNE).
+/// Abilities: Procne (SUMMON_ANIM_PROCNE).
 ///
 /// The scene runs for 400 frames:
 ///   0 to 159   : a whirlwind rises over the field and lifts the targets,
@@ -38,12 +38,12 @@
 /// back to 120, and sets work->shakeFrames on each comet. It spawns the nine
 /// objects of the block on frame 160 and releases them before closing the
 /// canvas.
-void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
+void BattleAnim_RunProcne(struct BattleAnimArgs *effect) {
   static struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
   void **slots;
   void *canvas;
   struct BattleCamera *camera;
-  struct BattleEffectWork *work;
+  struct BattleAnimWork *work;
   BlitterPair draw;
   s32 frame;
   u8 *graphics;
@@ -51,9 +51,9 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
   struct Point2D drift;
   struct MotionObject *object;
   struct BattleObject *battleObject;
-  struct EffectStep *point;
-  struct EffectStep *spark;
-  struct EffectStep *mark;
+  struct Particle *point;
+  struct Particle *spark;
+  struct Particle *mark;
   u8 *resource;
   u8 *image;
   s32 index;
@@ -69,7 +69,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
   struct Point2D home[8];
   s32 baseAngle[8];
   struct Vector3 world;
-  struct EffectPosition screen;
+  struct ScreenPoint screen;
   struct Vector3 depthOffset;
   struct SpritePlacement place;
   struct SpriteScale scale;
@@ -81,11 +81,10 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
   graphics = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_CANVAS];
   work->effect = effect;
 
-  BattleEffect_StartCanvasLayer(0);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+  BattleAnim_StartCanvasLayer(0);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)slots[HEAP_SLOT_RAM_CODE - HEAP_SLOT_BATTLE_CANVAS];
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
-                      COMPOSITE_ADDITIVE);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS, COMPOSITE_ADDITIVE);
   draw[1] =
       (DrawRectangle)slots[HEAP_SLOT_RAM_CODE_2 - HEAP_SLOT_BATTLE_CANVAS];
 
@@ -97,7 +96,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
                     graphics);
 
   // Trails keep half of each pixel a frame.
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
 
   // wave is where the block of objects sways, from (128, 40); drift is a
   // push from each comet.
@@ -109,8 +108,8 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
   // Remember each target's place, and its heading and distance from the
   // middle of the field for the whirlwind to turn. The distance is in half
   // pixels: the root of the 8.8 squares is 8.8, and >> 7 keeps one more bit.
-  EFFECT_FOR_EACH_TARGET(index, work->effect) {
-    battleObject = GetBattleObjectSlotFar(work->effect->actors[index]);
+  ANIM_FOR_EACH_TARGET(index, work->effect) {
+    battleObject = GetBattleObjectSlotFar(work->effect->targets[index]);
     object = battleObject->object;
     home[index].x = object->x;
     home[index].y = object->z;
@@ -151,7 +150,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
         frame = 395;
     }
 
-    EFFECT_VIEW_FROM_CAMERA(camera);
+    ANIM_VIEW_FROM_CAMERA(camera);
 
     if (frame == 16)
       Sound_PlaySongFar(SE_RUMBLE);
@@ -170,9 +169,9 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
     // in, rising quickly once near it, until frame 160; they keep turning
     // until frame 490 (past the end), fall on frame 395 and flash on each
     // comet strike.
-    EFFECT_FOR_EACH_TARGET(index, work->effect) {
+    ANIM_FOR_EACH_TARGET(index, work->effect) {
       if (frame > index * 16) {
-        battleObject = GetBattleObjectSlotFar(work->effect->actors[index]);
+        battleObject = GetBattleObjectSlotFar(work->effect->targets[index]);
         object = battleObject->object;
         object->x = (radius[index] * Trig_Sin(heading[index])) >> 1;
         object->z = (radius[index] * Trig_Cos(heading[index])) >> 1;
@@ -205,7 +204,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
         do {
           if (frame == gProcne_Frames[slot]) {
             object->velocityY = 0;
-            ObjectGroup_UpdateMembers(work->effect->actors[index],
+            ObjectGroup_UpdateMembers(work->effect->targets[index],
                                       SPRITE_COLOR_WHITE, POSE_DAMAGE, index,
                                       8);
           }
@@ -257,7 +256,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
           world.x = point[index].z * Trig_Sin(point[index].velocityY);
           world.y = point[index].y;
           world.z = point[index].z * Trig_Cos(point[index].velocityY);
-          EffectPosition_ProjectPoint(&world.x, &screen);
+          Projection_Point(&world.x, &screen);
           screen.x >>= 1;
           // Always true: a mote restarts once past 48 pixels up, and climbs
           // little more than 2 pixels a frame.
@@ -296,12 +295,12 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
       s32 speed;
       s32 angle;
 
-      BattleBackground_LoadFar(BATTLE_BACKGROUND_FLAT,
+      BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                                (s32)&ResourceId_VioletSkyBackdrop, 0);
       BattlePresentation_ConfigurePaletteFadeFar(
-          BATTLE_BACKGROUND_FLAT, (s32)&ResourceId_VioletSkyBackdrop, 8);
-      BattleEffect_SelectLivingTargets(work->effect);
-      BattleEffect_SpawnObjects(9, 376, 2);
+          BATTLE_BACKGROUND_FIXED, (s32)&ResourceId_VioletSkyBackdrop, 8);
+      BattleAnim_SelectLivingTargets(work->effect);
+      BattleAnim_SpawnObjects(9, 376, 2);
 
       resource = Resource_GetTableEntry((s32)&ResourceId_VioletCometSheet);
       Iwram_CopyWords((void *)BG_PLTT, resource, 0x80);
@@ -314,8 +313,8 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
         index++;
       } while (index != 512);
 
-      EFFECT_FOR_EACH_TARGET(index, work->effect) {
-        battleObject = GetBattleObjectSlotFar(work->effect->actors[index]);
+      ANIM_FOR_EACH_TARGET(index, work->effect) {
+        battleObject = GetBattleObjectSlotFar(work->effect->targets[index]);
         object = battleObject->object;
         object->y = ((Random16() & 15) + 8) << 16;
       }
@@ -340,7 +339,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
 
       // 8 pixels out, turning 6000/65536 turn a frame, about a full turn
       // every 11 frames.
-      EFFECT_FOR_EACH_TARGET(index, work->effect) {
+      ANIM_FOR_EACH_TARGET(index, work->effect) {
         radius[index] = 16;
         spin[index] = 6000;
       }
@@ -415,7 +414,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
             zz = (point->z >> 8) * (point->z >> 8);
             dist = Iwram_Sqrt(xx + yy + zz) >> 9;
             if (dist != 0) {
-              EffectPosition_ProjectPoint(&point->x, &screen);
+              Projection_Point(&point->x, &screen);
               screen.x = (screen.x >> 17) + (wave.x >> 17) + 32;
               screen.y = (screen.y >> 16) + (wave.y >> 16) - 4;
               screen.depth >>= 16;
@@ -424,8 +423,8 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
               if (screen.depth > 350)
                 screen.depth = 350;
               span = 6 - (screen.depth - 170) / 36;
-              EFFECT_DRAW_MOTE(draw[1], canvas, graphics, screen.x, screen.y,
-                               span);
+              ANIM_DRAW_MOTE(draw[1], canvas, graphics, screen.x, screen.y,
+                             span);
               point->x -= point->x / dist;
               point->y -= point->y / dist;
               point->z -= point->z / dist;
@@ -437,7 +436,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
 
           if (alive > 0) {
             span = alive / 10 + 1;
-            draw[1](canvas, graphics + gBattleEffect_MoteCells[span - 1],
+            draw[1](canvas, graphics + gBattleAnim_MoteCells[span - 1],
                     (wave.x >> 17) - span / 2 + 32, (wave.y >> 16) - span - 4,
                     span, span * 2);
           }
@@ -474,7 +473,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
             index = 0;
             do {
               if (spark[index].variant > 0) {
-                EffectPosition_ProjectPoint(&spark[index].x, &screen);
+                Projection_Point(&spark[index].x, &screen);
                 screen.x = (screen.x >> 17) + 32;
                 screen.y = (screen.y >> 16) + 56;
                 screen.depth >>= 16;
@@ -483,8 +482,8 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
                 if (screen.depth > 350)
                   screen.depth = 350;
                 span = 3 - (screen.depth - 170) / 90;
-                EFFECT_DRAW_MOTE(draw[0], canvas, graphics, screen.x, screen.y,
-                                 span);
+                ANIM_DRAW_MOTE(draw[0], canvas, graphics, screen.x, screen.y,
+                               span);
                 spark[index].x += spark[index].velocityX;
                 spark[index].y += spark[index].velocityY;
                 spark[index].z += spark[index].velocityY;
@@ -544,14 +543,14 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
               slot = 0;
               spark = &work->particles[32];
               do {
-                struct EffectStep *step;
+                struct Particle *step;
 
                 step = &spark[slot];
                 world.x = 0;
                 world.y = step->variant * Trig_Cos(slot * 2340);
                 world.z = step->variant * Trig_Sin(slot * 2340);
                 step->variant += 2;
-                EffectPosition_ProjectPoint(&world.x, &screen);
+                Projection_Point(&world.x, &screen);
                 screen.x =
                     (screen.x >> 17) + work->particles[index + 60].velocityX;
                 screen.y =
@@ -562,8 +561,8 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
                 if (screen.depth > 350)
                   screen.depth = 350;
                 span = 3 - (screen.depth - 170) / 90;
-                EFFECT_DRAW_MOTE(draw[0], canvas, graphics, screen.x, screen.y,
-                                 span);
+                ANIM_DRAW_MOTE(draw[0], canvas, graphics, screen.x, screen.y,
+                               span);
                 slot++;
               } while (slot != 28);
             }
@@ -573,18 +572,18 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
       }
     }
 
-    EFFECT_END_FRAME(work);
+    ANIM_END_FRAME(work);
     frame++;
   } while (frame != 400);
 
   // The end.
-  EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
+  ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 
   // Put the targets back.
-  EFFECT_FOR_EACH_TARGET(index, work->effect) {
+  ANIM_FOR_EACH_TARGET(index, work->effect) {
     struct MotionObject *object;
 
-    battleObject = GetBattleObjectSlotFar(work->effect->actors[index]);
+    battleObject = GetBattleObjectSlotFar(work->effect->targets[index]);
     object = battleObject->object;
     object->x = home[index].x;
     object->z = home[index].y;
@@ -593,7 +592,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
 
   gProjection.centerX = 120;
 
-  BattleEffect_SetupBlendedDisplay();
+  BattleAnim_SetupBlendedDisplay();
 
   index = 0;
   do {
@@ -601,7 +600,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
     index++;
   } while (index != 9);
 
-  EFFECT_FINISH_CANVAS();
+  ANIM_FINISH_CANVAS();
 }
 
 #undef PROCNE_DUST_CELLS

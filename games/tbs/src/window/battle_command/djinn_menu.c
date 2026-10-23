@@ -54,7 +54,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
   s32 alreadySelected;
   s32 previewPages;
   struct BattleMenuWork *navigation;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   struct DjinnRecoveryList *list;
   struct UiWindow *listWindow;
   struct UiWindow *iconWindow;
@@ -102,11 +102,11 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
     for (djinnIndex = 0,
         entryCursor = (u32 *)((djinnCount << 2) + (u32)djinnEntries);
          djinnIndex <= 19; djinnIndex++) {
-      if (unit->djinnActive[element] & (u32)(1 << djinnIndex)) {
+      if (unit->djinnSet[element] & (u32)(1 << djinnIndex)) {
         *entryCursor = (u32)((element << 8) | djinnIndex);
         entryCursor++;
         djinnCount++;
-      } else if (unit->djinnAvailable[element] & (u32)(1 << djinnIndex)) {
+      } else if (unit->djinnHeld[element] & (u32)(1 << djinnIndex)) {
         u32 v;
         s32 k;
         // Owned but not set: look for its recovery in its side's list

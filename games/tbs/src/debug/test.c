@@ -236,7 +236,9 @@ static void DebugMenu_TestItemSelection(void) {
 }
 
 /// Talking to Mia: the name entry screen for Isaac.
-static void DebugMenu_EditIsaacName(void) { NameEntry_EditOwnerName(ISAAC); }
+static void DebugMenu_EditIsaacName(void) {
+  NamingScreen_EditMemberName(ISAAC);
+}
 
 /// Leaves the test object event unchanged when targeted by Psynergy. The event
 /// for Whirlwind, Force and Catch cast at LOCALID_IVY.
@@ -511,72 +513,72 @@ static void DebugMenu_GivePartyDjinn(void) {
 #endif
   // Add and set each element in separate passes, preserving recovery updates.
   UiText_ShowPositionedMessageAndWait(MsgDebugGotDjinni, 1);
-  Djinn_AddToOwner(ISAAC, ELEMENT_VENUS, 0);
-  Djinn_AddToOwner(ISAAC, ELEMENT_VENUS, 1);
-  Djinn_AddToOwner(ISAAC, ELEMENT_VENUS, 2);
-  Djinn_AddToOwner(ISAAC, ELEMENT_VENUS, 3);
-  Djinn_AddToOwner(ISAAC, ELEMENT_VENUS, 4);
-  Djinn_AddToOwner(ISAAC, ELEMENT_VENUS, 5);
-  Djinn_AddToOwner(ISAAC, ELEMENT_VENUS, 6);
-  Djinn_Activate(ISAAC, ELEMENT_VENUS, 0);
-  Djinn_Activate(ISAAC, ELEMENT_VENUS, 1);
-  Djinn_Activate(ISAAC, ELEMENT_VENUS, 2);
-  Djinn_Activate(ISAAC, ELEMENT_VENUS, 3);
-  Djinn_Activate(ISAAC, ELEMENT_VENUS, 4);
-  Djinn_Activate(ISAAC, ELEMENT_VENUS, 5);
-  Djinn_Activate(ISAAC, ELEMENT_VENUS, 6);
-  Djinn_AddToOwner(GARET, ELEMENT_MARS, 0);
-  Djinn_AddToOwner(GARET, ELEMENT_MARS, 1);
-  Djinn_AddToOwner(GARET, ELEMENT_MARS, 2);
-  Djinn_AddToOwner(GARET, ELEMENT_MARS, 3);
-  Djinn_AddToOwner(GARET, ELEMENT_MARS, 4);
-  Djinn_AddToOwner(GARET, ELEMENT_MARS, 5);
-  Djinn_AddToOwner(GARET, ELEMENT_MARS, 6);
-  Djinn_Activate(GARET, ELEMENT_MARS, 0);
-  Djinn_Activate(GARET, ELEMENT_MARS, 1);
-  Djinn_Activate(GARET, ELEMENT_MARS, 2);
-  Djinn_Activate(GARET, ELEMENT_MARS, 3);
-  Djinn_Activate(GARET, ELEMENT_MARS, 4);
-  Djinn_Activate(GARET, ELEMENT_MARS, 5);
-  Djinn_Activate(GARET, ELEMENT_MARS, 6);
-  Djinn_AddToOwner(MIA, ELEMENT_MERCURY, 0);
-  Djinn_AddToOwner(MIA, ELEMENT_MERCURY, 1);
-  Djinn_AddToOwner(MIA, ELEMENT_MERCURY, 2);
-  Djinn_AddToOwner(MIA, ELEMENT_MERCURY, 3);
-  Djinn_AddToOwner(MIA, ELEMENT_MERCURY, 4);
-  Djinn_AddToOwner(MIA, ELEMENT_MERCURY, 5);
-  Djinn_AddToOwner(MIA, ELEMENT_MERCURY, 6);
-  Djinn_Activate(MIA, ELEMENT_MERCURY, 0);
-  Djinn_Activate(MIA, ELEMENT_MERCURY, 1);
-  Djinn_Activate(MIA, ELEMENT_MERCURY, 2);
-  Djinn_Activate(MIA, ELEMENT_MERCURY, 3);
-  Djinn_Activate(MIA, ELEMENT_MERCURY, 4);
-  Djinn_Activate(MIA, ELEMENT_MERCURY, 5);
-  Djinn_Activate(MIA, ELEMENT_MERCURY, 6);
-  Djinn_AddToOwner(IVAN, ELEMENT_JUPITER, 0);
-  Djinn_AddToOwner(IVAN, ELEMENT_JUPITER, 1);
-  Djinn_AddToOwner(IVAN, ELEMENT_JUPITER, 2);
-  Djinn_AddToOwner(IVAN, ELEMENT_JUPITER, 3);
-  Djinn_AddToOwner(IVAN, ELEMENT_JUPITER, 4);
-  Djinn_AddToOwner(IVAN, ELEMENT_JUPITER, 5);
-  Djinn_Activate(IVAN, ELEMENT_JUPITER, 0);
-  Djinn_Activate(IVAN, ELEMENT_JUPITER, 1);
-  Djinn_Activate(IVAN, ELEMENT_JUPITER, 2);
-  Djinn_Activate(IVAN, ELEMENT_JUPITER, 3);
-  Djinn_Activate(IVAN, ELEMENT_JUPITER, 4);
-  Djinn_Activate(IVAN, ELEMENT_JUPITER, 5);
+  Djinn_Give(ISAAC, ELEMENT_VENUS, 0);
+  Djinn_Give(ISAAC, ELEMENT_VENUS, 1);
+  Djinn_Give(ISAAC, ELEMENT_VENUS, 2);
+  Djinn_Give(ISAAC, ELEMENT_VENUS, 3);
+  Djinn_Give(ISAAC, ELEMENT_VENUS, 4);
+  Djinn_Give(ISAAC, ELEMENT_VENUS, 5);
+  Djinn_Give(ISAAC, ELEMENT_VENUS, 6);
+  Djinn_Set(ISAAC, ELEMENT_VENUS, 0);
+  Djinn_Set(ISAAC, ELEMENT_VENUS, 1);
+  Djinn_Set(ISAAC, ELEMENT_VENUS, 2);
+  Djinn_Set(ISAAC, ELEMENT_VENUS, 3);
+  Djinn_Set(ISAAC, ELEMENT_VENUS, 4);
+  Djinn_Set(ISAAC, ELEMENT_VENUS, 5);
+  Djinn_Set(ISAAC, ELEMENT_VENUS, 6);
+  Djinn_Give(GARET, ELEMENT_MARS, 0);
+  Djinn_Give(GARET, ELEMENT_MARS, 1);
+  Djinn_Give(GARET, ELEMENT_MARS, 2);
+  Djinn_Give(GARET, ELEMENT_MARS, 3);
+  Djinn_Give(GARET, ELEMENT_MARS, 4);
+  Djinn_Give(GARET, ELEMENT_MARS, 5);
+  Djinn_Give(GARET, ELEMENT_MARS, 6);
+  Djinn_Set(GARET, ELEMENT_MARS, 0);
+  Djinn_Set(GARET, ELEMENT_MARS, 1);
+  Djinn_Set(GARET, ELEMENT_MARS, 2);
+  Djinn_Set(GARET, ELEMENT_MARS, 3);
+  Djinn_Set(GARET, ELEMENT_MARS, 4);
+  Djinn_Set(GARET, ELEMENT_MARS, 5);
+  Djinn_Set(GARET, ELEMENT_MARS, 6);
+  Djinn_Give(MIA, ELEMENT_MERCURY, 0);
+  Djinn_Give(MIA, ELEMENT_MERCURY, 1);
+  Djinn_Give(MIA, ELEMENT_MERCURY, 2);
+  Djinn_Give(MIA, ELEMENT_MERCURY, 3);
+  Djinn_Give(MIA, ELEMENT_MERCURY, 4);
+  Djinn_Give(MIA, ELEMENT_MERCURY, 5);
+  Djinn_Give(MIA, ELEMENT_MERCURY, 6);
+  Djinn_Set(MIA, ELEMENT_MERCURY, 0);
+  Djinn_Set(MIA, ELEMENT_MERCURY, 1);
+  Djinn_Set(MIA, ELEMENT_MERCURY, 2);
+  Djinn_Set(MIA, ELEMENT_MERCURY, 3);
+  Djinn_Set(MIA, ELEMENT_MERCURY, 4);
+  Djinn_Set(MIA, ELEMENT_MERCURY, 5);
+  Djinn_Set(MIA, ELEMENT_MERCURY, 6);
+  Djinn_Give(IVAN, ELEMENT_JUPITER, 0);
+  Djinn_Give(IVAN, ELEMENT_JUPITER, 1);
+  Djinn_Give(IVAN, ELEMENT_JUPITER, 2);
+  Djinn_Give(IVAN, ELEMENT_JUPITER, 3);
+  Djinn_Give(IVAN, ELEMENT_JUPITER, 4);
+  Djinn_Give(IVAN, ELEMENT_JUPITER, 5);
+  Djinn_Set(IVAN, ELEMENT_JUPITER, 0);
+  Djinn_Set(IVAN, ELEMENT_JUPITER, 1);
+  Djinn_Set(IVAN, ELEMENT_JUPITER, 2);
+  Djinn_Set(IVAN, ELEMENT_JUPITER, 3);
+  Djinn_Set(IVAN, ELEMENT_JUPITER, 4);
+  Djinn_Set(IVAN, ELEMENT_JUPITER, 5);
   DebugMenu_RecalculateParty();
 }
 
 /// Reduces HP and PP, then poisons and haunts Isaac and binds and venoms Garet.
 /// Talking to LOCALID_SATUROS: `The body is being torn apart.` Isaac is
-/// poisoned and haunted, Garet given deadly poison. Garet's restraint is set to
+/// poisoned and haunted, Garet given deadly poison. Garet's curse is set to
 /// 1 too, but the closing Unit_Calculate clears the curse bits again unless he
 /// wears cursed equipment (game/game/units.c).
 static void DebugMenu_DamageAndAfflictParty(void) {
-  // Named BattleUnit stores change address setup and store ordering in the
+  // Named Unit stores change address setup and store ordering in the
   // native build; retain the byte cursor for poison (0x131), haunt (0x140) and
-  // restraint (0x130).
+  // curse (0x130).
   u8 *record;
 
   UiText_ShowPositionedMessageAndWait(MsgDebugBodyTornApart, 1);
@@ -594,7 +596,7 @@ static void DebugMenu_DamageAndAfflictParty(void) {
   *record = 1;
   record = (u8 *)Unit_Get(GARET);
   record[0x130] = 1;
-  record[0x131] = POISON_DEADLY;
+  record[0x131] = POISON_VENOM;
   DebugMenu_RecalculateParty();
 }
 
@@ -801,10 +803,10 @@ static void DebugMenu_GiveTreasureTestStock(void) {
 s32 CommandTable_ConfigureCommandList(void) {
   // Assemble the test party before adding stock and setting levels: Jenna
   // leaves, Garet, Mia and Ivan join.
-  Party_RemoveActiveOwner(JENNA);
-  Party_AddActiveOwner(GARET);
-  Party_AddActiveOwner(MIA);
-  Party_AddActiveOwner(IVAN);
+  Party_RemoveMember(JENNA);
+  Party_AddMember(GARET);
+  Party_AddMember(MIA);
+  Party_AddMember(IVAN);
   // Populate the original shop counters, retaining repeated increments: how
   // many of each rare item the shops may sell, here three Shamshirs, two
   // Silver Blades, a Masamune and eight rare pieces of armor.

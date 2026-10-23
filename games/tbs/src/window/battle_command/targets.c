@@ -26,8 +26,8 @@ struct CursorSlot {
 
 /// Lets the player choose the target of an action of unit `selection`, with
 /// a cursor over the aimed unit and smaller markers on the others its range
-/// covers. `mode` is the action's targetMode: TARGET_MODE_ALLIES the party,
-/// TARGET_MODE_SELF only `selection` itself, anything else the enemies
+/// covers. `mode` is the action's targetMode: ABILITY_TARGET_ALLIES the party,
+/// ABILITY_TARGET_SELF only `selection` itself, anything else the enemies
 /// (battle_internal.h has the names, which this folder cannot see yet).
 /// `spread` is its range: 1 one unit, n the aimed one and n - 1 either side,
 /// ABILITY_RANGE_ALL every one (the cursor does not move); 0 counts as 1.
@@ -41,21 +41,21 @@ struct CursorSlot {
 /// chosen with A, or -1 when cancelled or when the link battle's time runs
 /// out. While it runs, the battle scene slides (targetViewOffset of
 /// BattleMenuWork: -2 for the party, 16 for the enemies) and the covered
-/// units are marked (BattlePresentation_SetActorModesFar). The Djinn tutorial
+/// units are marked (BattleHighlight_SetModesFar). The Djinn tutorial
 /// presses A every 60 frames.
 s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   u16 candidateIds[8];
   struct SelectionSprite cursorSprites[6];
   struct CursorSlot cursorTracks[6];
-  struct EffectPosition actorPosition;
+  struct ScreenPoint actorPosition;
   u16 spreadActorIds[14];
   u8 spreadTrackIndices[8];
-  struct EffectPosition selectedPosition;
+  struct ScreenPoint selectedPosition;
   u16 targetName[15];
-  struct EffectPosition namePosition;
-  struct EffectPosition markerPosition;
+  struct ScreenPoint namePosition;
+  struct ScreenPoint markerPosition;
   struct AffineTransform effect;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   struct BattleWork *battle;
   struct UiWindow *window;
 #if TBS_PATCH_4
@@ -90,7 +90,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   struct CursorSlot *track;
   struct SelectionSprite *marker;
   struct SelectionSprite *firstSprite;
-  struct BattleUnit *target;
+  struct Unit *target;
 
   battle = gBattleWork;
   targetCount = 0;
@@ -108,12 +108,12 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   // UB: slot 57 is outside the scalar gBattleWork pointer. Named accesses
   // add 12 bytes here in EN; using gHeapSlots adds 16 bytes.
 #ifdef UBFIX
-  if (mode == TARGET_MODE_ALLIES || mode == TARGET_MODE_SELF)
+  if (mode == ABILITY_TARGET_ALLIES || mode == ABILITY_TARGET_SELF)
     gBattleMenuWork->targetViewOffset = -2;
   else
     gBattleMenuWork->targetViewOffset = 16;
 #else
-  if (mode == TARGET_MODE_ALLIES || mode == TARGET_MODE_SELF)
+  if (mode == ABILITY_TARGET_ALLIES || mode == ABILITY_TARGET_SELF)
     ((struct BattleMenuWork **)&gBattleWork)[48]->targetViewOffset = -2;
   else
     ((struct BattleMenuWork **)&gBattleWork)[48]->targetViewOffset = 16;
@@ -122,12 +122,12 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     cursorTracks[i].flags = 0;
   // The candidates: the party, the acting unit alone, or the enemies.
   targetIndex = -1;
-  if (mode == TARGET_MODE_ALLIES) {
+  if (mode == ABILITY_TARGET_ALLIES) {
     for (i = 0; i <= 5 && battle->partyUnits[i] != BATTLE_UNIT_LIST_END; i++) {
       candidateIds[targetCount] = battle->partyUnits[i];
       targetCount++;
     }
-  } else if (mode == TARGET_MODE_SELF) {
+  } else if (mode == ABILITY_TARGET_SELF) {
     candidateIds[0] = (u16)selection;
     targetCount = 1;
   } else {
@@ -142,11 +142,11 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   // Restorative actions prefer an ally who benefits from their effect.
   // Otherwise the cursor starts on the acting unit when it is a
   // candidate.
-  if (mode == TARGET_MODE_ALLIES) {
+  if (mode == ABILITY_TARGET_ALLIES) {
     if (spread != ABILITY_RANGE_ALL && kind != TARGET_HINT_NONE) {
       found = 0;
       for (j = 0; j < targetCount; j++) {
-        struct BattleUnit *candidate;
+        struct Unit *candidate;
 
         if (candidateIds[j] == BATTLE_UNIT_REMOVED)
           continue;
@@ -194,16 +194,16 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   if (targetIndex < 0)
     targetIndex = (targetCount - 1) / 2;
   while (candidateIds[targetIndex] == BATTLE_UNIT_REMOVED ||
-         (GameFlag_TestFar(FLAG_LINK_BATTLE) && mode == TARGET_MODE_FOES &&
+         (GameFlag_TestFar(FLAG_LINK_BATTLE) && mode == ABILITY_TARGET_FOES &&
           Unit_GetFar(candidateIds[targetIndex])->hp == 0)) {
     targetIndex = targetIndex + targetCount - 1;
     targetIndex %= targetCount;
   }
   // Aimed at enemies or itself, the cursor starts at the acting unit (at y
   // 128), stays two frames, then eases to the target.
-  if (mode != TARGET_MODE_ALLIES) {
+  if (mode != ABILITY_TARGET_ALLIES) {
     BattleMotion_ProjectConditionalPositionFar(
-        selection, EffectPosition_Coordinates(&actorPosition));
+        selection, ScreenPoint_Coordinates(&actorPosition));
     cursorTracks[0].flags = 8;
     cursorTracks[0].x = (u8)actorPosition.x;
     cursorTracks[0].y = 0x80;
@@ -228,7 +228,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       }
       BattleMotion_ProjectConditionalPositionFar(
           *(u16 *)((u8 *)candidateIds + t),
-          EffectPosition_Coordinates(&selectedPosition));
+          ScreenPoint_Coordinates(&selectedPosition));
     }
     // The cursor: a 16x16, 256-colour sprite of 32 frames (256 bytes each),
     // a frame every four frames, bobbing 2 pixels each way every 16 frames.
@@ -337,7 +337,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
           cursorTracks[i].index = 6;
       }
       spreadActorIds[targetCount] = BATTLE_UNIT_LIST_END;
-      BattlePresentation_SetActorModesFar(spreadActorIds, 1);
+      BattleHighlight_SetModesFar(spreadActorIds, 1);
       // A party member (units 0 to 7): the window of what the action does,
       // placed by the member's tile column (anchor) and kept on screen.
       if (candidateIds[targetIndex] <= 7) {
@@ -345,7 +345,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
           unit = Unit_GetFar(candidateIds[targetIndex]);
           BattleMotion_ProjectConditionalPositionFar(
               candidateIds[targetIndex],
-              EffectPosition_Coordinates(&selectedPosition));
+              ScreenPoint_Coordinates(&selectedPosition));
           if (conditionWindow != 0)
             UiWork_Finalize(conditionWindow, 1);
           switch (kind) {
@@ -647,12 +647,11 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         // Woman".
         target = Unit_GetFar(candidateIds[targetIndex]);
         BattleMotion_ProjectConditionalPositionFar(
-            candidateIds[targetIndex],
-            EffectPosition_Coordinates(&namePosition));
+            candidateIds[targetIndex], ScreenPoint_Coordinates(&namePosition));
         namePosition.y += Trig_Sin(gFrameCount << 12) / 32768;
-        if (target->classId == 125 || target->classId == 122) {
+        if (target->id == 125 || target->id == 122) {
           width = MsgMysteryPersonName;
-          if (target->classId == 125)
+          if (target->id == 125)
             width++;
           TARGET_MYSTERY_NAME_COPY(width, targetName,
                                    TARGET_MYSTERY_NAME_CAPACITY);
@@ -681,7 +680,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         marker = &firstSprite[i];
         track = &cursorTracks[spreadTrackIndices[i]];
         BattleMotion_ProjectConditionalPositionFar(
-            spreadActorIds[i], EffectPosition_Coordinates(&markerPosition));
+            spreadActorIds[i], ScreenPoint_Coordinates(&markerPosition));
         markerPosition.y =
             markerPosition.y + Trig_Sin(gFrameCount << 12) / 32768;
         *marker = *firstSprite;
@@ -784,7 +783,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   if (conditionWindow != 0)
     UiWork_Finalize(conditionWindow, 1);
   UiWork_Finalize(window, 1);
-  BattlePresentation_SetActorModesFar(candidateIds, 0);
+  BattleHighlight_SetModesFar(candidateIds, 0);
   gBattleMenuWork->targetViewOffset = 0;
   WaitFrames(1);
   return targetIndex;

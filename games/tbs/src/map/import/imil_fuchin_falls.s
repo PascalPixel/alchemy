@@ -23,7 +23,7 @@
 	.set import.Engine_ObjectEventSetSpriteFlags, 1
 	.set import.Engine_MessageShowCentered, 1
 	.set import.Engine_ItemLoadIcon, 1
-	.set import.PartyInventory_FindOwner, 1
+	.set import.PartyInventory_FindMember, 1
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1
 	.set import.Engine_GameFlagClear, 1

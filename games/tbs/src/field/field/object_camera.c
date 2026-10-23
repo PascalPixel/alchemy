@@ -217,7 +217,7 @@ UNUSED s32 ObjectCamera_ReturnTrue(void) { return 1; }
 /// Each frame, with the fixed camera: places every object's sprite, from the
 /// 64th object down, facing them by the angle from the eye to the target.
 /// While battle commands are chosen (FLAG_CHOOSING_COMMANDS, set by
-/// BattlePresentation_BuildActions) it uses the fixed view matrix and 1.0
+/// Battle_GatherActions) it uses the fixed view matrix and 1.0
 /// scale. ObjectSystem_Initialize schedules it (order 0xc80) for
 /// OBJECT_SYSTEM_WORLD_MAP and OBJECT_SYSTEM_BATTLE;
 /// ObjectSystem_SuspendProjectionAndShowSprites suspends it. Resets the

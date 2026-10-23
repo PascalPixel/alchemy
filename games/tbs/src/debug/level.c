@@ -123,20 +123,20 @@ u8 *ItemLevel_GetEvents(void) { return (u8 *)gItemLevelEvents; }
 
 /// Raises one owner's level by amount, then recalculates that unit.
 static void ItemLevel_AdjustOwnerLevel(s32 ownerId, s32 amount) {
-  struct BattleUnit *unit = Unit_Get(ownerId);
+  struct Unit *unit = Unit_Get(ownerId);
 
   Unit_LevelUpTo(ownerId, unit->level + amount);
   Unit_Calculate(ownerId);
 }
 
 /// Applies the level change to the owners returned by the active-party service
-/// (FieldParty_ListActiveOwners): every member of the party.
+/// (FieldParty_ListMembers): every member of the party.
 static void ItemLevel_AdjustPartyLevels(s32 amount) {
   u16 ownerIds[16];
   u16 *owner;
   s32 ownerCount;
 
-  ownerCount = FieldParty_ListActiveOwners(ownerIds);
+  ownerCount = FieldParty_ListMembers(ownerIds);
   if (ownerCount > 0) {
     s32 remaining;
     owner = ownerIds;
@@ -153,7 +153,7 @@ static void ItemLevel_AdjustPartyLevels(s32 amount) {
 /// name and level; Start or Select raises the whole party five levels with
 /// fanfare MUS_FANFARE_LARGE, A one level with MUS_FANFARE_SMALL.
 static void ItemLevel_RunLevelEditor(void) {
-  struct BattleUnit *unit;
+  struct Unit *unit;
   struct UiWindow *window;
   s32 redraw;
   s32 messageId;
@@ -427,7 +427,7 @@ UNUSED static void ItemLevel_SelectAbility(void) {
       Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
     }
     // Skip definitions with no icon/availability byte in the chosen direction:
-    // byte 4 of an ability is the icon the menus draw (BattleAct).
+    // byte 4 of an ability is the icon the menus draw (AbilityDefinition).
     if (seekDirection == -1) {
       selectedAbilityId = (selectedAbilityId + ABILITY_COUNT) % entryCount;
       goto check_back;

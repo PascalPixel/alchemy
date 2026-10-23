@@ -71,7 +71,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
   s32 result;
   s32 itemId;
   s32 localId;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   const struct MapEvent *event;
   s32 inventorySlot;
   s32 partyIndex;
@@ -88,12 +88,12 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
   // it ends the use at once.
   {
     mostMatchingSlots = 0;
-    partyCount = Party_CountActiveOwnersFar();
+    partyCount = Party_CountMembersFar();
 
     if (localId == 15) {
       localId = 0;
       for (partyIndex = 0; partyIndex < partyCount; partyIndex++) {
-        unit = Unit_GetFar(gGameState.activeOwners[partyIndex]);
+        unit = Unit_GetFar(gGameState.party[partyIndex]);
         matchingSlots = 0;
         for (inventorySlot = 0; inventorySlot < 15; inventorySlot++) {
           if ((unit->inventory[inventorySlot] & 0x1ff) == itemId)
@@ -102,7 +102,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 
         if (mostMatchingSlots < matchingSlots) {
           mostMatchingSlots = matchingSlots;
-          localId = gGameState.activeOwners[partyIndex];
+          localId = gGameState.party[partyIndex];
         }
       }
     } else {
@@ -148,7 +148,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 
     GameFlag_ClearBitFar(FLAG_ITEM_USED_UP);
     GameFlag_SetBitFar(FLAG_NOTHING_HAPPENS);
-    actionId = Item_GetDirectFar(itemId)->actionId;
+    actionId = Item_GetDirectFar(itemId)->abilityId;
     work = (struct FieldWork *)gFieldWork;
 
     if (actionId != 0) {
@@ -235,8 +235,7 @@ void *Map_FindPsynergyEvent(s32 eventFlags, s32 group, void *target) {
         GameFlag_IsConditionActive(event->condition) != 0 &&
         (requiresFacing == 0 ||
          (u16)(eventFacing - facing + 0x17ff) <= 0x2ffe) &&
-        BattleAction_Get(((const u8 *)&event->kind)[1])->fieldPsynergy ==
-            group &&
+        Ability_Get(((const u8 *)&event->kind)[1])->fieldPsynergy == group &&
         (anyPhase || (event->kind & 0x7000000f) == eventFlags)) {
       // Any Psynergy of the same field kind (fieldPsynergy) as the event's
       // matches.
@@ -270,7 +269,7 @@ s32 Field_RunPsynergyEvents(s32 packed) {
 
   abilityId = packed & 0x3FF;
   userId = ((u32)packed >> 10) & 0xF;
-  group = BattleAction_Get(abilityId)->fieldPsynergy;
+  group = Ability_Get(abilityId)->fieldPsynergy;
   // The leader is looked up and the result is not used.
   ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
   beforeEvent = Map_FindPsynergyEvent(PSYNERGY_EVENT(PSYNERGY_PHASE_BEFORE_END),

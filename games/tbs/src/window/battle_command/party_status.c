@@ -47,10 +47,10 @@ void UiWindow_BuildLayoutBounds(s32 flags) {
   s32 x;
 
   if (work->menuState != 0) {
-    members = BattleParty_PrepareActiveOwnersFar(0);
+    members = BattleParty_PrepareMembersFar(0);
     height = 3;
   } else {
-    members = Party_CountActiveOwnersFar();
+    members = Party_CountMembersFar();
   }
   if (flags & PARTY_STATUS_SHOW_PP)
     height++;
@@ -75,7 +75,7 @@ void UiWindow_BuildLayoutBounds(s32 flags) {
 /// heap block, HEAP_SLOT_PARTY_STATUS, which PartyStatus_Close frees, and draws
 /// it; the tilemap upload is held back (menuBusy) while it is drawn. A battle
 /// opens it with flags 9, which lays it out with the PP row and leaves it
-/// erased until the battle draws it (Battle_RunEncounter); the field opens it
+/// erased until the battle draws it (Battle_Run); the field opens it
 /// with flags 1 (object/object/events.c).
 void UiWindow_CreateWithLayoutBounds(s32 flags) {
   s32 zero;
@@ -255,7 +255,7 @@ void PartyStatus_Draw(s32 flags) {
   // List the members shown: those fighting in battle, the party otherwise.
   // In battle the window is a row shorter and its text starts a row higher.
   if (work->menuState != 0) {
-    count = BattleParty_PrepareActiveOwnersFar(0);
+    count = BattleParty_PrepareMembersFar(0);
     y = -1;
     for (i = 0; i < count; i++) {
       members[i] = battle->partyUnits[i];
@@ -263,9 +263,9 @@ void PartyStatus_Draw(s32 flags) {
         break;
     }
   } else {
-    count = Party_CountActiveOwnersFar();
+    count = Party_CountMembersFar();
     for (i = 0; i < count; i++)
-      members[i] = gGameState.activeOwners[i];
+      members[i] = gGameState.party[i];
     members[i] = 255;
   }
   count = i;
@@ -274,7 +274,7 @@ void PartyStatus_Draw(s32 flags) {
     flags = layout->flags;
   if (!(flags & PARTY_STATUS_SHOW_PP))
     flags &= ~PARTY_STATUS_SHOW_DJINN;
-  if (work->menuState == 0 || BattleParty_CountStandbyDjinnFar(0, 0) == 0)
+  if (work->menuState == 0 || BattleDjinn_CountStandbyFar(0, 0) == 0)
     flags &= ~PARTY_STATUS_SHOW_DJINN;
   if (flags == PARTY_STATUS_CLOSED) {
     UiWindow_EraseBorderRect(layout->x, layout->y, layout->width,
@@ -302,7 +302,7 @@ void PartyStatus_Draw(s32 flags) {
   if (flags & PARTY_STATUS_SHOW_DJINN)
     x = PARTY_STATUS_DJINN_WIDTH;
   for (i = 0; i != count; i++) {
-    struct BattleUnit *unit = Unit_GetFar(members[i]);
+    struct Unit *unit = Unit_GetFar(members[i]);
     s32 hp = unit->hp;
     s32 hpMax = unit->hpMax;
     s32 barLength;
@@ -359,7 +359,7 @@ void PartyStatus_Draw(s32 flags) {
 
     if (flags & PARTY_STATUS_SHOW_PP)
       row++;
-    BattleParty_CountStandbyDjinnFar(0, standbyDjinn);
+    BattleDjinn_CountStandbyFar(0, standbyDjinn);
     UiWindow_SetTilemapEntry(window, LIST_TILE_SUMMON_ELEMENT + ELEMENT_VENUS,
                              0, row, 0);
     UiWindow_SetTilemapEntry(window, LIST_TILE_SUMMON_ELEMENT + ELEMENT_MERCURY,

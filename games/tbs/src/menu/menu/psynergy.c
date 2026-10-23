@@ -57,7 +57,7 @@ s32 PsynergyMenu_Run(void) {
   UiWindow_DrawFrameFar(0, 0, 30, 20);
   WaitFrames(1);
   UiWindow_InitializeWork(0);
-  menu->ownerCount = Party_ListActiveOwnersFar(menu->ownerTable);
+  menu->ownerCount = Party_ListMembersFar(menu->ownerTable);
   ItemMenu_Initialize(0, 3, 0, 7);
   menu->messageWindow = UiWindow_CreateFar(13, 0, 17, 3, 2);
   Palette_LightenBankHighlight(14);
@@ -77,7 +77,7 @@ s32 PsynergyMenu_Run(void) {
     struct EventWork *target = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
     u16 request;
     // The action looked up here is not used.
-    BattleAction_Get(OWNER_ACTION_ID_MASK & menu->paneAction[0]);
+    Ability_Get(PSYNERGY_ABILITY_MASK & menu->paneAction[0]);
     request = psynergy | (owner << 10);
     target->psynergy = request;
   }
@@ -107,7 +107,7 @@ s32 PsynergyMenu_Run(void) {
 
 /// The steps of the Psynergy menu (Menu_ResolveSelectedAction).
 enum PsynergyMenuStep {
-  PSYNERGY_STEP_OWNER,
+  PSYNERGY_STEP_MEMBER,
   PSYNERGY_STEP_LIST,
   /// how the Psynergy is used (PsynergyMenu_ClassifySelectedPsynergy)
   PSYNERGY_STEP_CLASSIFY,
@@ -130,9 +130,9 @@ s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction) {
   s32 targetMode;
   s32 actionEntry;
   s32 chosenTarget;
-  struct BattleAct *action;
+  struct AbilityDefinition *action;
 
-  step = PSYNERGY_STEP_OWNER;
+  step = PSYNERGY_STEP_MEMBER;
   done = 0;
   menu = gMenuWork;
   useResult = 0;
@@ -140,7 +140,7 @@ s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction) {
   while (done == 0 && GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
     switch (step) {
     // Choose whose Psynergy to look at.
-    case PSYNERGY_STEP_OWNER: {
+    case PSYNERGY_STEP_MEMBER: {
       s32 cancelled;
       s32 chosen;
 
@@ -167,7 +167,7 @@ s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction) {
     case PSYNERGY_STEP_LIST:
       WaitFrames(1);
       Unit_GetFar(menu->ownerIds[0]);
-      step = PSYNERGY_STEP_OWNER;
+      step = PSYNERGY_STEP_MEMBER;
       if (menu->psynergyCount != 0) {
         {
           struct PsynergyMenuWork *savedWork = menu;
@@ -195,7 +195,7 @@ s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction) {
         Menu_DrawOwnerStatusPanel(menu->statusWindow, menu->ownerIds[0], 0,
                                   STATUS_PANEL_EXPERIENCE);
         chosenAction = PsynergyMenu_RunList(0);
-        step = PSYNERGY_STEP_OWNER;
+        step = PSYNERGY_STEP_MEMBER;
         if (chosenAction != -1) {
           step = PSYNERGY_STEP_CLASSIFY;
           if (menu->mode != PSYNERGY_MODE_USE) {
@@ -216,7 +216,7 @@ s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction) {
               RenderOutput_RedrawSavedRectFar(menu->infoWindow);
 #endif
             }
-            step = PSYNERGY_STEP_OWNER;
+            step = PSYNERGY_STEP_MEMBER;
           }
         }
       }
@@ -249,7 +249,7 @@ s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction) {
       done = 1;
       useResult = 1;
       *outOwner = menu->ownerIds[0];
-      *outAction = menu->paneAction[0] & OWNER_ACTION_ID_MASK;
+      *outAction = menu->paneAction[0] & PSYNERGY_ABILITY_MASK;
       break;
 
     // Use it: pay its PP, show the result and go back to the list, or to the
@@ -264,14 +264,14 @@ s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction) {
         chosenTarget = MENU_TARGET_WHOLE_PARTY;
       }
       if (useResult != -1) {
-        action = BattleAction_Get(menu->paneAction[0] & OWNER_ACTION_ID_MASK);
+        action = Ability_Get(menu->paneAction[0] & PSYNERGY_ABILITY_MASK);
         Unit_AddPpFar(menu->ownerIds[0], -action->ppCost);
       }
       Unit_CalculateFar(menu->ownerIds[0]);
       if (useResult != -1) {
         Menu_DrawOwnerStatusPanel(menu->statusWindow, menu->ownerIds[1], 0,
                                   STATUS_PANEL_EXPERIENCE);
-        Ability_PlayUseAnimation(menu->paneAction[0] & OWNER_ACTION_ID_MASK);
+        Ability_PlayUseAnimation(menu->paneAction[0] & PSYNERGY_ABILITY_MASK);
         RenderOutput_ClearListFar((void *)menu->infoWindow);
         InventoryMenu_ShowModalMessage(menu->useResult + MsgItemUseResult, 0,
                                        -1);
@@ -313,12 +313,11 @@ s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction) {
 /// and what the leader faces), 2 on the whole party (range 0xff), 1 on one
 /// chosen member when its target mode is 2, and 0 otherwise.
 s32 PsynergyMenu_ClassifySelectedPsynergy(void) {
-  struct BattleAct *action;
+  struct AbilityDefinition *action;
   s32 targetModeDifference;
   s32 classification;
 
-  action =
-      BattleAction_Get(OWNER_ACTION_ID_MASK &
+  action = Ability_Get(PSYNERGY_ABILITY_MASK &
                        ((struct PsynergyMenuWork *)gMenuWork)->paneAction[0]);
   if (FieldEffect_HasMatchingEvent5Far(action->fieldPsynergy) != 0) {
     return 0;
@@ -342,7 +341,7 @@ s32 PsynergyMenu_SelectPartySlot(s32 partySlot) {
   struct PsynergyMenuWork *menu = gMenuWork;
   s32 ownerIndex = menu->tabIndex[partySlot];
   struct RenderOutput *icon;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   u16 *actions;
   s32 result;
 
@@ -382,7 +381,7 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
   s32 ownerCount;
   s32 redraw;
   s32 result;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   struct UiWindow *window;
   s32 shown;
   s32 i;
@@ -449,8 +448,8 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
       else
         menu->mode = PSYNERGY_MODE_SET_R;
       actions = Alloc(32 * sizeof(u16));
-      fieldCount = PsynergyMenu_CollectActions(
-          (struct BattleUnit *)unit, actions, PSYNERGY_LIST_SHORTCUTS);
+      fieldCount = PsynergyMenu_CollectActions((struct Unit *)unit, actions,
+                                               PSYNERGY_LIST_SHORTCUTS);
       Free(actions);
       shortcutCount = fieldCount;
       if (shortcutCount == 0) {
@@ -488,7 +487,7 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
 void PsynergyMenu_RefreshOwnerPsynergy(s32 ownerId) {
   u16 *psynergies;
   struct PsynergyMenuWork *menu;
-  struct BattleUnit *owner;
+  struct Unit *owner;
 
   menu = gMenuWork;
   owner = Unit_GetFar(ownerId);
@@ -552,7 +551,7 @@ s32 PsynergyMenu_SelectTarget(s32 targetMode) {
                                               menu->ownerTable[selection]);
         if (!GameFlag_TestFar(FLAG_MENU_INFO_KEPT) && !shown) {
           MENU_RESET_INFO_WINDOW((void *)menu->infoWindow);
-          MENU_DRAW_INFO_TEXT((menu->paneAction[0] & OWNER_ACTION_ID_MASK) +
+          MENU_DRAW_INFO_TEXT((menu->paneAction[0] & PSYNERGY_ABILITY_MASK) +
                                   MsgAbilityDescription,
                               menu->infoWindow, 0, 0);
           shown = 1;
@@ -597,14 +596,14 @@ s32 PsynergyMenu_SelectTarget(s32 targetMode) {
 }
 
 /// A Psynergy shortcut: its owner above bit 10, the Psynergy's id below.
-#define PSYNERGY_SHORTCUT_OWNER_SHIFT 10
+#define PSYNERGY_SHORTCUT_MEMBER_SHIFT 10
 #define PSYNERGY_SHORTCUT_ID_MASK 0x3ff
 
 /// Sets the L or R Psynergy shortcut (enum PsynergyShortcut):
 /// ownerId << 10 | the Psynergy's id. Returns 1.
 s32 PsynergyMenu_SetShortcut(s32 ownerId, s32 actionId, s32 shortcutIndex) {
-  s32 id = actionId & OWNER_ACTION_ID_MASK;
-  s32 code = (ownerId << PSYNERGY_SHORTCUT_OWNER_SHIFT) | id;
+  s32 id = actionId & PSYNERGY_ABILITY_MASK;
+  s32 code = (ownerId << PSYNERGY_SHORTCUT_MEMBER_SHIFT) | id;
 
   if (shortcutIndex == 0) {
     gGameState.firstShortcut = code;
@@ -646,10 +645,10 @@ s32 PsynergyMenu_DrawShortcuts(struct UiWindow *window, s32 ownerId) {
                             MESSAGE_ARGUMENT_ABILITY);
     UiText_DrawCharacterAtOffsetFar(MsgShortcutNameL, window, 0, 0);
     if (wide == 0)
-      UiText_DrawStringAtOffsetFar(
-          Unit_GetFar(gGameState.firstShortcut >> PSYNERGY_SHORTCUT_OWNER_SHIFT)
-              ->name,
-          window, 80, 0);
+      UiText_DrawStringAtOffsetFar(Unit_GetFar(gGameState.firstShortcut >>
+                                               PSYNERGY_SHORTCUT_MEMBER_SHIFT)
+                                       ->name,
+                                   window, 80, 0);
   } else {
     UiText_DrawCharacterAtOffsetFar(MsgShortcutEmptyL, window, 0, 0);
   }
@@ -668,7 +667,7 @@ s32 PsynergyMenu_DrawShortcuts(struct UiWindow *window, s32 ownerId) {
     UiText_DrawCharacterAtOffsetFar(MsgShortcutNameR, window, 0, 8);
     if (wide == 0)
       UiText_DrawStringAtOffsetFar(Unit_GetFar(gGameState.secondShortcut >>
-                                               PSYNERGY_SHORTCUT_OWNER_SHIFT)
+                                               PSYNERGY_SHORTCUT_MEMBER_SHIFT)
                                        ->name,
                                    window, 80, 8);
     UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
@@ -715,7 +714,7 @@ s32 PsynergyMenu_DrawShortcuts(struct UiWindow *window, s32 owner) {
               MsgAbilityName,
           window, 16, 0);
     UiText_DrawStringAtOffsetFar(
-        Unit_GetFar(gGameState.firstShortcut >> PSYNERGY_SHORTCUT_OWNER_SHIFT)
+        Unit_GetFar(gGameState.firstShortcut >> PSYNERGY_SHORTCUT_MEMBER_SHIFT)
             ->name,
         window, 80, 0);
   } else {
@@ -746,7 +745,7 @@ s32 PsynergyMenu_DrawShortcuts(struct UiWindow *window, s32 owner) {
               MsgAbilityName,
           window, 16, 8);
     UiText_DrawStringAtOffsetFar(
-        Unit_GetFar(gGameState.secondShortcut >> PSYNERGY_SHORTCUT_OWNER_SHIFT)
+        Unit_GetFar(gGameState.secondShortcut >> PSYNERGY_SHORTCUT_MEMBER_SHIFT)
             ->name,
         window, 80, 8);
     UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
@@ -850,8 +849,7 @@ void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies) {
 /// how many there are, as mode (enum PsynergyListMode) chooses; any mode
 /// other than PSYNERGY_LIST_SHORTCUTS and PSYNERGY_LIST_FIELD lists as
 /// PSYNERGY_LIST_ALL.
-s32 PsynergyMenu_CollectActions(struct BattleUnit *unit, u16 *actions,
-                                s32 mode) {
+s32 PsynergyMenu_CollectActions(struct Unit *unit, u16 *actions, s32 mode) {
   s32 clearIndex;
   s32 passCount;
   s32 actionCount;
@@ -866,11 +864,11 @@ s32 PsynergyMenu_CollectActions(struct BattleUnit *unit, u16 *actions,
   // fieldPsynergy is the Psynergy's field effect. Passes 1 and 2 add nothing.
   if (mode == PSYNERGY_LIST_SHORTCUTS) {
     for (slotIndex = 0; slotIndex < 32; slotIndex++) {
-      if (unit->actionSlots[slotIndex].encodedAction != 0) {
-        if (BattleAction_Get(unit->actionSlots[slotIndex].encodedAction &
-                             OWNER_ACTION_ID_MASK)
+      if (unit->psynergy[slotIndex].encodedAction != 0) {
+        if (Ability_Get(unit->psynergy[slotIndex].encodedAction &
+                        PSYNERGY_ABILITY_MASK)
                 ->fieldPsynergy != 0) {
-          actions[actionCount] = unit->actionSlots[slotIndex].encodedAction;
+          actions[actionCount] = unit->psynergy[slotIndex].encodedAction;
           actionCount++;
         }
       }
@@ -878,21 +876,20 @@ s32 PsynergyMenu_CollectActions(struct BattleUnit *unit, u16 *actions,
   } else {
     for (passIndex = 0; passIndex < passCount; passIndex++) {
       for (slotIndex = 0; slotIndex < 32; slotIndex++) {
-        if (unit->actionSlots[slotIndex].encodedAction != 0) {
-          struct BattleAct *ability =
-              BattleAction_Get(unit->actionSlots[slotIndex].encodedAction &
-                               OWNER_ACTION_ID_MASK);
+        if (unit->psynergy[slotIndex].encodedAction != 0) {
+          struct AbilityDefinition *ability = Ability_Get(
+              unit->psynergy[slotIndex].encodedAction & PSYNERGY_ABILITY_MASK);
 
           if (passIndex == 0 &&
               (ability->fieldPsynergy != 0 ||
-               (ability->flags & ACTION_USABLE_IN_FIELD) != 0)) {
-            actions[actionCount] = unit->actionSlots[slotIndex].encodedAction;
+               (ability->flags & ABILITY_USABLE_IN_FIELD) != 0)) {
+            actions[actionCount] = unit->psynergy[slotIndex].encodedAction;
             actionCount++;
           } else if (passIndex == 1) {
           } else if (passIndex == 2) {
           } else if (passIndex == 3 && ability->fieldPsynergy == 0 &&
-                     (ability->flags & ACTION_USABLE_IN_FIELD) == 0) {
-            actions[actionCount] = unit->actionSlots[slotIndex].encodedAction;
+                     (ability->flags & ABILITY_USABLE_IN_FIELD) == 0) {
+            actions[actionCount] = unit->psynergy[slotIndex].encodedAction;
             actionCount++;
           }
         }
@@ -1007,8 +1004,8 @@ s32 PsynergyMenu_DrawActionPage(struct UiWindow *window, s32 unused,
   u32 visibleCount;
   u8 row;
   s32 cursor;
-  struct BattleUnit *owner;
-  struct BattleAct *ability;
+  struct Unit *owner;
+  struct AbilityDefinition *ability;
   struct PsynergyMenuWork *menu = gMenuWork;
 
   (void)unused;
@@ -1041,20 +1038,19 @@ s32 PsynergyMenu_DrawActionPage(struct UiWindow *window, s32 unused,
     cursor = firstEntry;
     do {
       owner = Unit_GetFar(menu->ownerIds[0]);
-      ability =
-          BattleAction_Get(OWNER_ACTION_ID_MASK & menu->psynergies[cursor]);
+      ability = Ability_Get(PSYNERGY_ABILITY_MASK & menu->psynergies[cursor]);
 
       if (ability->ppCost > owner->pp) {
         UiWork_SetParameterNibbleFar(TEXT_COLOR_NO_HP);
       } else if (PsynergyMenu_IsActionRestricted(
-                     OWNER_ACTION_ID_MASK & menu->psynergies[cursor]) != 0) {
+                     PSYNERGY_ABILITY_MASK & menu->psynergies[cursor]) != 0) {
         UiWork_SetParameterNibbleFar(TEXT_COLOR_LOW_HP);
       } else {
         UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
       }
 
       UiText_DrawCharacterAtOffsetFar(
-          (OWNER_ACTION_ID_MASK & menu->psynergies[cursor]) + MsgAbilityName,
+          (PSYNERGY_ABILITY_MASK & menu->psynergies[cursor]) + MsgAbilityName,
           window, PSYNERGY_NAME_X, row * 16 + 8);
       UiText_DrawNumberAtOffsetFar(ability->ppCost, 2, window, 104,
                                    row * 16 + 8);
@@ -1078,7 +1074,7 @@ s32 PsynergyMenu_DrawActionPage(struct UiWindow *window, s32 unused,
 /// when the player backs out.
 s32 PsynergyMenu_RunList(s32 paneIndex) {
   struct PsynergyMenuWork *menu;
-  struct BattleAct *ability;
+  struct AbilityDefinition *ability;
   struct RenderOutput *icon;
   struct UiWindow *window;
   s32 changed;
@@ -1089,7 +1085,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
   s32 result;
   s32 redraw;
   s32 done;
-  struct BattleUnit *owner;
+  struct Unit *owner;
   s32 previous;
   s32 shortcutHelp;
   s32 work[5];
@@ -1172,8 +1168,8 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
       // Select shows the shortcut help while held, for field Psynergy.
       if (menu->mode == PSYNERGY_MODE_USE) {
         if ((gKeysPressed & KEY_SELECT) != 0 && shortcutHelp == 0) {
-          ability = BattleAction_Get(menu->psynergies[state.selectedIndex] &
-                                     OWNER_ACTION_ID_MASK);
+          ability = Ability_Get(menu->psynergies[state.selectedIndex] &
+                                PSYNERGY_ABILITY_MASK);
           if (ability->fieldPsynergy == 0) {
             Sound_PlaySongFar(SE_MENU_ERROR);
           } else {
@@ -1208,8 +1204,8 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
             Sound_PlaySongFar(SE_MENU_ERROR);
             continue;
           }
-          ability = BattleAction_Get(menu->psynergies[state.selectedIndex] &
-                                     OWNER_ACTION_ID_MASK);
+          ability = Ability_Get(menu->psynergies[state.selectedIndex] &
+                                PSYNERGY_ABILITY_MASK);
           if (ability->ppCost > owner->pp) {
             Sound_PlaySongFar(SE_MENU_ERROR);
           } else {
@@ -1262,8 +1258,8 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
 
       // Select + L or R: make the field Psynergy that shortcut.
       if ((gKeysPressed & KEY_L) != 0 && (gKeysHeld & KEY_SELECT) != 0) {
-        ability = BattleAction_Get(menu->psynergies[state.selectedIndex] &
-                                   OWNER_ACTION_ID_MASK);
+        ability = Ability_Get(menu->psynergies[state.selectedIndex] &
+                              PSYNERGY_ABILITY_MASK);
         if (ability->fieldPsynergy == 0) {
           Sound_PlaySongFar(SE_MENU_ERROR);
         } else {
@@ -1280,8 +1276,8 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
       }
 
       if ((gKeysPressed & KEY_R) != 0 && (gKeysHeld & KEY_SELECT) != 0) {
-        ability = BattleAction_Get(menu->psynergies[state.selectedIndex] &
-                                   OWNER_ACTION_ID_MASK);
+        ability = Ability_Get(menu->psynergies[state.selectedIndex] &
+                              PSYNERGY_ABILITY_MASK);
         if (ability->fieldPsynergy == 0) {
           Sound_PlaySongFar(SE_MENU_ERROR);
         } else {
@@ -1316,11 +1312,12 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
 /// draws such Psynergy in the low-HP colour and refuses A on it.
 s32 PsynergyMenu_IsActionRestricted(s32 actionEntry) {
   // Mask the unsigned entry without overflowing a signed left shift.
-  struct BattleAct *action = BattleAction_Get(((u32)actionEntry << 18) >> 18);
+  struct AbilityDefinition *action =
+      Ability_Get(((u32)actionEntry << 18) >> 18);
 
   if (action->fieldPsynergy != 0 ||
-      (action->flags & (ACTION_USABLE_IN_FIELD | ACTION_USABLE_IN_BATTLE)) ==
-          (ACTION_USABLE_IN_FIELD | ACTION_USABLE_IN_BATTLE))
+      (action->flags & (ABILITY_USABLE_IN_FIELD | ABILITY_USABLE_IN_BATTLE)) ==
+          (ABILITY_USABLE_IN_FIELD | ABILITY_USABLE_IN_BATTLE))
     return 0;
   return 1;
 }
@@ -1333,6 +1330,6 @@ s32 PsynergyMenu_IsActionRestricted(s32 actionEntry) {
 #undef PSYNERGY_PP_LABEL_X
 #undef PSYNERGY_NAME_X
 #undef PSYNERGY_LIST_CURSOR_X
-#undef PSYNERGY_SHORTCUT_OWNER_SHIFT
+#undef PSYNERGY_SHORTCUT_MEMBER_SHIFT
 #undef PSYNERGY_SHORTCUT_ID_MASK
 #undef PSYNERGY_MENU_SHORTCUT_HELP

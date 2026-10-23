@@ -32,12 +32,12 @@ extern u8 gShop_GlyphBytes[];
 extern u8 gStatusMenu_LevelLetterString[];
 
 struct AnimationObject;
-struct BattleAct;
+struct AbilityDefinition;
 struct DjinnListTable;
 struct FieldEffectSprite;
 struct MenuResult;
 struct ObjectSystemWork;
-struct OwnerActionSlot;
+struct PsynergyEntry;
 struct PlacementDescriptor;
 struct RenderInput;
 struct RenderOutput;
@@ -157,7 +157,7 @@ extern const u16 gOptionMenu_SliderPalette[];
 /// The option screen's slider, 32 by 8 (slider.4bpp32x8).
 extern const u8 gOptionMenu_SliderTiles[];
 #ifndef OWN_Ability_GetData
-struct BattleAct *Ability_GetData(s32 actionId);
+struct AbilityDefinition *Ability_GetData(s32 actionId);
 #endif
 s32 Item_FindSlot(s32 unitId, s32 item_id);
 s32 TitleFar_Entry00(s32 mode);

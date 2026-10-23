@@ -34,7 +34,7 @@
 	.set import.UiText_ShowCenteredMessage, 1
 	.set import.Engine_ItemLoadIcon, 1
 	.set import.Inventory_AddItem, 1
-	.set import.PartyInventory_FindOwner, 1
+	.set import.PartyInventory_FindMember, 1
 	.set import.PartyInventory_Remove, 1
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1

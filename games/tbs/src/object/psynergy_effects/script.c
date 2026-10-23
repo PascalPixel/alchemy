@@ -169,7 +169,7 @@ void FieldScript_SetMapEvents(const struct MapEvent *events) {
 /// the Vault, Goma Cave and Mercury Lighthouse among them).
 void FieldScript_PrepareObjectAndApplyValue(s32 unit, s32 announce) {
   Unit_GetFar(unit);
-  Party_AddActiveOwnerFar(unit);
+  Party_AddMemberFar(unit);
   if (announce != 0) {
     Party_ShowJoinedMessageFar(unit, announce);
   }
@@ -178,8 +178,8 @@ void FieldScript_PrepareObjectAndApplyValue(s32 unit, s32 announce) {
 /// Adds two units to the party and announces them together. Vale's map
 /// script calls it twice, as Engine_PartyAddMembers.
 void FieldScript_PrepareTwoObjectsAndApply(s32 first, s32 second) {
-  Party_AddActiveOwnerFar(first);
-  Party_AddActiveOwnerFar(second);
+  Party_AddMemberFar(first);
+  Party_AddMemberFar(second);
   Party_ShowPairJoinedMessageFar(first, second);
 }
 
@@ -197,14 +197,14 @@ s32 FieldScript_ValidatePackedId(u32 shortcut) {
   // Flags 0 to 7 say who is in the party (FLAG_IN_PARTY).
   if (GameFlag_TestFar(member) == 0)
     return -2;
-  if (Unit_KnowsActionFar(member, ability) == 0)
+  if (Unit_KnowsPsynergyFar(member, ability) == 0)
     return -3;
   return 0;
 }
 
 /// Clears each button shortcut whose Psynergy can no longer be cast: zeroes
 /// gGameState.firstShortcut or secondShortcut. Called whenever the party or
-/// what it knows may have changed: by Party_RemoveOwnerRestored,
+/// what it knows may have changed: by Party_RemoveMemberRestored,
 /// Inventory_Discard, and the field menu's item, Psynergy and Djinn screens.
 void FieldScript_ClearInvalidPackedValues(void) {
   if (FieldScript_ValidatePackedId(gGameState.firstShortcut) != 0)
@@ -217,13 +217,13 @@ void FieldScript_ClearInvalidPackedValues(void) {
 /// poison. If no member left standing has HP, the leader is given 1 HP so the
 /// party is never left all down. Called by the map scripts where a member
 /// leaves: Vale in the storm, the Vault, and Sol Sanctum.
-void Party_RemoveOwnerRestored(s32 unit) {
-  struct BattleUnit *vitals;
+void Party_RemoveMemberRestored(s32 unit) {
+  struct Unit *vitals;
   s32 partyIndex;
   s32 partyCount;
   s32 survivingMembers;
 
-  Party_RemoveActiveOwnerFar(unit);
+  Party_RemoveMemberFar(unit);
   FieldScript_ClearInvalidPackedValues();
   vitals = Unit_GetFar(unit);
   vitals->hp = vitals->hpMax;
@@ -232,9 +232,9 @@ void Party_RemoveOwnerRestored(s32 unit) {
   vitals->poison = 0;
   // Count the members who remain and still have HP.
   survivingMembers = 0;
-  partyCount = Party_CountActiveOwnersFar();
+  partyCount = Party_CountMembersFar();
   for (partyIndex = 0; partyIndex < partyCount; partyIndex++) {
-    vitals = Unit_GetFar(gGameState.activeOwners[partyIndex]);
+    vitals = Unit_GetFar(gGameState.party[partyIndex]);
     if (vitals->hp != 0)
       survivingMembers++;
   }
@@ -256,10 +256,9 @@ s32 Party_CheckItemLimit(s32 item) {
   s32 heldQuantity = 0;
   s32 partyIndex;
 
-  partyCount = Party_CountActiveOwnersFar();
+  partyCount = Party_CountMembersFar();
   for (partyIndex = 0; partyIndex < partyCount; partyIndex++)
-    heldQuantity +=
-        Inventory_CountItemFar(gGameState.activeOwners[partyIndex], item);
+    heldQuantity += Inventory_CountItemFar(gGameState.party[partyIndex], item);
 
   if (heldQuantity >= partyCount * 30) {
     UiWork_PushValueSlotFar(item, 2);
@@ -379,7 +378,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
 /// Gives item to one party member. Returns unit, or -1 if its bag is full.
 /// Reached only through an unnamed veneer in the object bank's far-call
 /// table; nothing in ☀️ names it.
-s32 Inventory_TryAddAndReturnOwner(s32 item, s32 unused, s32 unit) {
+s32 Inventory_TryAddAndReturnMember(s32 item, s32 unused, s32 unit) {
   if (Inventory_AddItemFar(unit, item) >= 0)
     return unit;
   return -1;

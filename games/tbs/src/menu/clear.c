@@ -518,7 +518,7 @@ menu_top:;
     v7 = 0;
     for (;;) {
       Engine_TaskWait(6);
-      v6 = NameEntry_EditOwnerName(v7);
+      v6 = NamingScreen_EditMemberName(v7);
       if (v6 == -1) {
         if (v7 == 0) {
           goto menu_top;
@@ -613,14 +613,14 @@ menu_top:;
     gGameState.leaderLocalId = 0;
     if (GameFlag_IsSet(FLAG_COLOSSO_HOLDS_EQUIPMENT) != 0) {
       InventorySnapshot_Restore();
-      Party_RemoveActiveOwner(0);
-      Party_RemoveActiveOwner(1);
-      Party_RemoveActiveOwner(2);
-      Party_RemoveActiveOwner(3);
-      Party_AddActiveOwner(0);
-      Party_AddActiveOwner(1);
-      Party_AddActiveOwner(2);
-      Party_AddActiveOwner(3);
+      Party_RemoveMember(0);
+      Party_RemoveMember(1);
+      Party_RemoveMember(2);
+      Party_RemoveMember(3);
+      Party_AddMember(0);
+      Party_AddMember(1);
+      Party_AddMember(2);
+      Party_AddMember(3);
     }
     PaletteGlow_Update(gGameState.paletteGlow[0], gGameState.paletteGlow[1]);
     GameFlag_ClearBit(FLAG_KEEP_PARTY_POSITION);
@@ -1009,12 +1009,12 @@ UNUSED static void SaveMenu_FillTileBlock(const struct UiWindow *window) {
 }
 
 /// A party member's base stats, which the password clamps and packs: struct
-/// BattleUnit's from baseHp to baseLuck, at the same offsets.
+/// Unit's from baseHp to baseLuck, at the same offsets.
 struct PasswordStats {
   s16 baseHp;      ///< clamped to 0 to 1999; 11 bits in the password
   s16 basePp;      ///< clamped to 0 to 1999; 11 bits
-  s16 hpGauge;     ///< BattleUnit's; not read here
-  s16 ppGauge;     ///< BattleUnit's; not read here
+  s16 hpGauge;     ///< Unit's; not read here
+  s16 ppGauge;     ///< Unit's; not read here
   u16 baseAttack;  ///< clamped to 999; 10 bits
   u16 baseDefense; ///< clamped to 999; 10 bits
   u16 baseAgility; ///< clamped to 999; 10 bits
@@ -1022,17 +1022,17 @@ struct PasswordStats {
 };
 
 /// A party member as the password reads them: their level, base stats,
-/// inventory and Djinn. A view of struct BattleUnit at its offsets;
+/// inventory and Djinn. A view of struct Unit at its offsets;
 /// MainMenu_PackPasswordData's opening note says why it is kept.
 struct PasswordOwner {
-  u8 name[0x0f]; ///< BattleUnit's; not read here
+  u8 name[0x0f]; ///< Unit's; not read here
   u8 level;      ///< clamped to 1 to 99; 7 bits
   struct PasswordStats stats;
-  u8 regenToActions[0xb8]; ///< BattleUnit's baseHpRegen to actionSlots
+  u8 regenToActions[0xb8]; ///< Unit's baseHpRegen to psynergy
   /// bits: 15..11 quantity | 10 broken | 9 equipped | 8..0 item
   u16 inventory[15];
-  u8 padding[2];         ///< BattleUnit's paddingBeforeDjinn
-  u32 djinnAvailable[4]; ///< the Djinn held, a bit per Djinni, by element
+  u8 padding[2];    ///< Unit's paddingBeforeDjinn
+  u32 djinnHeld[4]; ///< the Djinn held, a bit per Djinni, by element
 };
 
 /// Packs the four heroes' data for a password of level mode (enum
@@ -1050,9 +1050,9 @@ struct PasswordOwner {
 /// gMainMenu_PasswordStackItems for each member; and the coins in bytes 165 to
 /// 167.
 static s32 MainMenu_PackPasswordData(s32 unused, s32 mode, u8 *out) {
-  // A direct BattleUnit owner plus the real member table shrinks the native
+  // A direct Unit owner plus the real member table shrinks the native
   // function from 0x400 to 0x3f4. The private view remains pending owner
-  // reconciliation; its fields below follow BattleUnit's actual base stats.
+  // reconciliation; its fields below follow Unit's actual base stats.
   s32 length;
   u32 levelBits;
   u32 djinnBits;
@@ -1140,7 +1140,7 @@ static s32 MainMenu_PackPasswordData(s32 unused, s32 mode, u8 *out) {
     }
     levelBits |= owner->level << (i * 7);
     for (j = 0; j != 4; j++) {
-      djinnBits += owner->djinnAvailable[j] << (j * 7);
+      djinnBits += owner->djinnHeld[j] << (j * 7);
     }
     // Which of the eight Psynergy items (gMainMenu_PasswordKeyItems) any member
     // carries.

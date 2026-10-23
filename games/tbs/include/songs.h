@@ -110,7 +110,7 @@
 /// Battle music gEncounter_BattleMusic gives the Mystery Man and Mystery Woman
 /// who catch Isaac at Vale Gate (ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, slot 4)
 /// and Saturos at Mercury Lighthouse's aerie
-/// (ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY, slot 2); Battle_RunEncounter plays
+/// (ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY, slot 2); Battle_Run plays
 /// it, then MUS_COLOSSO_BATTLE, for a battle with no cue of its own.
 #define MUS_051 51
 /// Battle music gEncounter_BattleMusic gives the guardians and bosses: Tret,
@@ -130,10 +130,10 @@
 /// fuse at Venus Lighthouse's aerie.
 /// ★ Named from the game: "Fusion Dragon" (MsgEnemyName)
 #define MUS_FUSION_DRAGON_BATTLE 54
-/// Played after a link battle's own cue (Battle_RunEncounter), and as the
+/// Played after a link battle's own cue (Battle_Run), and as the
 /// boulder chases the party down Altin Peak.
 #define MUS_055 55
-/// Plays when a battle is won (Battle_RunEncounter), except during the Djinn
+/// Plays when a battle is won (Battle_Run), except during the Djinn
 /// lesson (FLAG_DJINN_LESSON).
 #define MUS_VICTORY 58
 /// Plays when the whole party falls: defeated in battle, before "goes down in
@@ -185,7 +185,7 @@
 /// ending's last scene (its render)
 #define MUS_ENDING_LOGO 75
 /// Battle music gEncounter_BattleMusic gives the battles that end the Colosso
-/// finals' matches (ENCOUNTER_ZONE_COLOSSO); Battle_RunEncounter plays it after
+/// finals' matches (ENCOUNTER_ZONE_COLOSSO); Battle_Run plays it after
 /// MUS_051 for a battle with no cue of its own.
 /// ★ Named from what the player sees: the battle that ends a Colosso match
 /// (its render)
@@ -372,7 +372,7 @@
 /// eruption, and the Boreas, Gaia, Judgment, Ragnarok, Thor and other summons.
 #define SE_145 145
 /// An enemy falling, for defeat-sound kind 0: each kind's sound is SE_146 plus
-/// it (BattleClass_GetDefeatSoundKind). A mimic chest leaping up and the
+/// it (BattleSprite_GetDefeatSound). A mimic chest leaping up and the
 /// monsters on the Tolbi-bound ship use it too.
 #define SE_146 146
 /// An enemy falling, for defeat-sound kind 1; also a battle starting on the

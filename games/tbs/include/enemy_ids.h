@@ -4,15 +4,15 @@
 /// @file
 /// Enemy class ids, named from the English release.
 
-/// The first enemy class id: class id `ENEMY_CLASS_FIRST + n` is the enemy in
+/// The first enemy class id: class id `ENEMY_ID_FIRST + n` is the enemy in
 /// row n of enemies.tsv (Enemy_GetDefinition); the ids below it are the
 /// party's characters. A formation lists its members by row.
-#define ENEMY_CLASS_FIRST 8
+#define ENEMY_ID_FIRST 8
 
 /// The enemy classes the code tests by id, each named by its row of
-/// enemies.tsv: a class id is the row plus ENEMY_CLASS_FIRST. Where several
+/// enemies.tsv: a class id is the row plus ENEMY_ID_FIRST. Where several
 /// rows share a name, the later ones take `_2` onwards in row order.
-enum EnemyClassId {
+enum EnemyId {
   ENEMY_SLIME = 18,
   ENEMY_SLIME_2 = 19,
   ENEMY_OOZE = 20,

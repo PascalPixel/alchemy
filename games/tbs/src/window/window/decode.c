@@ -33,7 +33,7 @@ struct ArticleTable {
 // capitalised; 0: anything else). With mode set (battle messages) the name is
 // set off with spaces and style codes: a space and line spacing 10 before it,
 // line spacing 8 and a space after. Only the Japanese decoder sets mode
-// (UiRenderWork.menuState bit 1, which UiText_PrepareMessageWork sets while it
+// (UiRenderWork.menuState bit 1, which BattleMessage_Open sets while it
 // decodes); the others always pass 0. The write position wraps at 0x1ff, the
 // ring's mask (RENDER_ENTRY_MASK) outside Japanese.
 
@@ -901,7 +901,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
   u8 *numberText;
   u8 *nameBytes;
   u16 *nameOutput;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   u16 name[UI_MESSAGE_NAME_HALFWORDS];
   u8 numberBuffer[UI_NUMBER_BUFFER_SIZE];
   struct TextReader reader;
@@ -1089,10 +1089,9 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
                 UiText_LookupArgument(MESSAGE_ARGUMENT_ACTOR, clear));
             // In battle a unit of class 122 is called Mystery Man and one of
             // class 125 Mystery Woman (MsgMysteryPersonName and the next).
-            if (work->menuState != 0 &&
-                (unit->classId == 122 || unit->classId == 125)) {
+            if (work->menuState != 0 && (unit->id == 122 || unit->id == 125)) {
               message = MsgMysteryPersonName;
-              if (unit->classId == 125)
+              if (unit->id == 125)
                 message++;
               UiText_DecodeMessage(message, name, 10);
               writePosition = UiText_AppendArticleName(

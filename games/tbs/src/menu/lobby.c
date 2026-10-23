@@ -48,7 +48,7 @@
 #include "heap_state.h"
 
 // Link transfers use three unit records followed by one recovery-table record.
-/// The bytes sent for each member: a BattleUnit (BATTLE_UNIT_SIZE, 0x14c)
+/// The bytes sent for each member: a Unit (BATTLE_UNIT_SIZE, 0x14c)
 /// and the eight bytes after it. XXX: likely rounded up to whole 20-byte
 /// blocks, because the serial runtime stores each block whole and 0x154 is
 /// 17 of them.
@@ -101,7 +101,7 @@
 // south of z
 //   224; FLAG_MAPSEC_TEMP_05: it was won. The party's and visitors' lines read
 //   them.
-// FLAG_MAPSEC_TEMP_E8: the last linked battle broke off (Battle_RunEncounter).
+// FLAG_MAPSEC_TEMP_E8: the last linked battle broke off (Battle_Run).
 //   In a monster series, the byte flag at FLAG_MAPSEC_TEMP_E8 instead counts
 //   the victories, 0 to 2, towards a stronger monster.
 
@@ -498,7 +498,7 @@ static s32 LinkLobby_ReportDisconnection(void) {
 /// battle's enemies, by Unit_Get) and its Djinn recovery table into the enemy
 /// side's (Djinn_GetRecoveryTable(1)). Each name gets the edition's
 /// MsgEnemyLabel ("Enemy" in English) in front, within the 14 letters a
-/// BattleUnit name holds. Returns how many records hold a member, or -1 when
+/// Unit name holds. Returns how many records hold a member, or -1 when
 /// a transfer fails, overruns or runs out of time. The alternate-pool buffer
 /// it allocates and frees is never written: the records are received in
 /// place.
@@ -547,14 +547,14 @@ test1:
     result = -1;
     goto done;
   }
-  // BattleUnit's side (0x12a): the sender marks a member 2 and a padding
+  // Unit's side (0x12a): the sender marks a member 2 and a padding
   // record 0.
   if (record[0x12a] != 0) {
     result++;
   }
   Engine_TaskWait(2);
   // Put the prefix before the name, shifting it right and cutting it to the
-  // 14 letters and terminator a BattleUnit name holds.
+  // 14 letters and terminator a Unit name holds.
   FieldUi_AdjustValueWithoutLimit(MsgEnemyLabel, namePrefix);
   nameIndex = 0;
   if (namePrefix[nameIndex] != 0) {
@@ -634,10 +634,10 @@ done:
 }
 
 /// Copies the character ids of the party's first three members
-/// (gGameState.activeOwners), ends them with 0xff and returns how many. A
+/// (gGameState.party), ends them with 0xff and returns how many. A
 /// null destination only counts them.
 static s32 LinkLobby_CopyPartyOwnerIds(u16 *ownerIds) {
-  s32 ownerCount = Party_CountActiveOwners();
+  s32 ownerCount = Party_CountMembers();
   if (ownerCount > LOBBY_UNIT_RECORD_COUNT)
     ownerCount = LOBBY_UNIT_RECORD_COUNT;
   if (ownerCount > 0) {
@@ -650,7 +650,7 @@ static s32 LinkLobby_CopyPartyOwnerIds(u16 *ownerIds) {
     // The original short-pointer addition traverses a struct as an array.
     // The actual member avoids that UB; used plainly, it removes four native
     // bytes (0x44 to 0x40), so matching builds retain the old address form.
-    source = gGameState.activeOwners;
+    source = gGameState.party;
 #else
     partyAddress += 252;
     source = (const u8 *)partyAddress;
@@ -671,7 +671,7 @@ static s32 LinkLobby_CopyPartyOwnerIds(u16 *ownerIds) {
 }
 
 /// Sends the party's first three members' records, marked side 2
-/// (BATTLE_UNIT_PARTY), and for a smaller party absent records, copies of
+/// (BATTLE_SIDE_PARTY), and for a smaller party absent records, copies of
 /// the last member marked side 0. Then sends this side's Djinn recovery
 /// table, rewritten for the partner: each entry's owner becomes the number
 /// the partner gives that member (0x80 plus its place), and the entries of
@@ -937,13 +937,13 @@ static s32 LinkLobby_EnterBattle(void) {
   }
   // Suspend peer polling while transferring the party and entering battle.
   if (!failed) {
-    // HEAP_SLOT_LINK_OWNER_STATES is gBattleOwnerStates, the battle's enemy
+    // HEAP_SLOT_ENEMY_UNITS is gEnemyUnits, the battle's enemy
     // units (LINK_OWNER_STATES_SIZE, battle/battle/encounter.c). While it is
     // allocated, the exchange below receives the partner's members and Djinn
     // into units 0x80 to 0x83. The copy to gActorSpriteSlots
     // (gMapGridCellBuffer
-    // + 0x8000) hands them to Battle_RunEncounter, which copies them back.
-    savedWork = AllocHeapSlotEwram(HEAP_SLOT_LINK_OWNER_STATES, 0x7c8);
+    // + 0x8000) hands them to Battle_Run, which copies them back.
+    savedWork = AllocHeapSlotEwram(HEAP_SLOT_ENEMY_UNITS, 0x7c8);
     Engine_TaskRemoveCallback((TaskFunc)LinkLobby_PollPeerReady);
     // Run the map's tile animation channel 5 for eight frames.
     TilesetAnim_Resume(5);
@@ -977,7 +977,7 @@ static s32 LinkLobby_EnterBattle(void) {
         Engine_TaskWait(8);
         TilesetAnim_Pause(5);
         Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
-        FreeHeapSlot(HEAP_SLOT_LINK_OWNER_STATES);
+        FreeHeapSlot(HEAP_SLOT_ENEMY_UNITS);
         LinkLobby_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
         LinkLobby_WriteSlotValue(LOBBY_SLOT_IDLE);
         FieldScheduler_AddCallback((TaskFunc)LinkLobby_PollPeerReady, 0xc80);
@@ -1004,7 +1004,7 @@ static s32 LinkLobby_EnterBattle(void) {
     // Publish EXEC only after the battle and return destinations are ready.
     // It fills the payload's first four halfwords, where the link battle's
     // command entry looks for it in the partner's (party_commands.c).
-    Battle_SetStart(BATTLE_START_LINK);
+    Battle_SetType(BATTLE_TYPE_LINK);
     Field_RequestBattleFromEncounterTable(1, 1);
     signature = (u16 *)gSerialTransfer.payload;
     signature[0] = 'E';
@@ -1018,7 +1018,7 @@ static s32 LinkLobby_EnterBattle(void) {
       i++;
       *destination++ = *source++;
     } while (i <= 0x7c7);
-    FreeHeapSlot(HEAP_SLOT_LINK_OWNER_STATES);
+    FreeHeapSlot(HEAP_SLOT_ENEMY_UNITS);
   }
   Engine_ScriptEnd();
 #ifdef UBFIX
@@ -1263,7 +1263,7 @@ static s32 LinkLobby_PartyContains(s32 ownerId) {
   s32 ownerLimit;
   s32 i;
 
-  count = Party_CountActiveOwners();
+  count = Party_CountMembers();
   ownerLimit = 3;
   if (Engine_GameFlagIsSet(FLAG_LINK_BATTLE_ARRANGED) == 0) {
     ownerLimit = 4;
@@ -1272,10 +1272,10 @@ static s32 LinkLobby_PartyContains(s32 ownerId) {
     count = ownerLimit;
   }
   for (i = 0; i < count; i++) {
-    if (gGameState.activeOwners[i] == 0xff) {
+    if (gGameState.party[i] == 0xff) {
       return 0;
     }
-    if (gGameState.activeOwners[i] == ownerId) {
+    if (gGameState.party[i] == ownerId) {
       return 1;
     }
   }
@@ -1387,7 +1387,7 @@ static s32 LinkLobby_ExplainPartyOrder(s32 localId) {
   Engine_ScriptStart();
   Engine_ObjectEventFaceObjectEvent(localId, gGameState.leaderLocalId, 0);
   if (!GameFlag_IsSet(FLAG_MAP_TEMP_04)) {
-    if (Party_CountActiveOwners() <= 3)
+    if (Party_CountMembers() <= 3)
       message = MsgLobbyThreeAlliesFightLinkedFinals;
     else
       message = MsgLobbyThreeAlliesFightLinked;
@@ -1627,7 +1627,7 @@ s32 LinkLobby_RunRoundResult(void) {
     Engine_ScriptWaitForScreen();
     LinkLobby_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
     LinkLobby_WriteSlotValue(LOBBY_SLOT_IDLE);
-    // The battle broke off instead (Battle_RunEncounter set
+    // The battle broke off instead (Battle_Run set
     // FLAG_MAPSEC_TEMP_E8): report the link lost and restart it.
     if (GameFlag_IsSet(FLAG_MAPSEC_TEMP_E8)) {
       work = gFieldWork;

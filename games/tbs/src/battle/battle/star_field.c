@@ -20,7 +20,7 @@ struct Spark {
 /// writes its canvas origin.
 struct SparkWork {
   /// The blue ring sheet's pictures, decoded: the sparks' sizes at
-  /// gElementGlow_StarWorkOffsets, the rings' frames at
+  /// gElementGlow_StarFrameOffsets, the rings' frames at
   /// gElementGlow_RingFrameOffsets.
   u8 sheet[0x11c0];
   struct Spark sparks[16];
@@ -33,7 +33,7 @@ struct SparkWork {
 };
 
 STATIC_ASSERT(offsetof(struct SparkWork, canvasOrigin) ==
-              offsetof(struct BattleEffectWork, trackedCanvas.origin));
+              offsetof(struct BattleAnimWork, trackedCanvas.origin));
 
 /// A blitter loaded into a work slot: draws a width by height picture at
 /// (x, y) on the canvas.
@@ -139,7 +139,7 @@ s32 ElementGlow_UpdateStarField(void) {
       else if (frame > 6)
         frame = 6;
       size = gElementGlow_StarSizes[frame];
-      draw(canvas, (u8 *)work + gElementGlow_StarWorkOffsets[frame],
+      draw(canvas, (u8 *)work + gElementGlow_StarFrameOffsets[frame],
            x - (size >> 1), y - (size >> 1), size, size);
     }
   }
@@ -201,7 +201,7 @@ u32 ElementGlow_UploadStarField(void) {
 /// into the work, loads the element's 64 colours over the first of BG palette
 /// RAM, sets BG2's affine parameters to no zoom, loads both blitters and adds
 /// ElementGlow_UpdateStarField and ElementGlow_UploadStarField. Also sets
-/// BattleBackgroundView.mode to BATTLE_BACKGROUND_FLAT. Called by
+/// BattleBackgroundView.mode to BATTLE_BACKGROUND_FIXED. Called by
 /// ElementGlow_Play; Graphics_ResetVramBlockAndReleaseHeapBlocks
 /// undoes it. Returns the upload callback's task index (-1 when the task table
 /// is full), which the caller does not read.
@@ -216,7 +216,7 @@ s32 ElementGlow_InitializeStarField(s32 element) {
   UNUSED struct Spark unused;
 
   // Word 2 of the background's work is BattleBackgroundView.mode.
-  ((s32 *)gTransitionWork)[2] = BATTLE_BACKGROUND_FLAT;
+  ((s32 *)gBattleViewWork)[2] = BATTLE_BACKGROUND_FIXED;
   work = AllocHeapSlotEwram(HEAP_SLOT_BATTLE_ANIM, sizeof *work);
   AllocHeapSlot(HEAP_SLOT_BATTLE_CANVAS, 0x4000);
   /* FAKEMATCH(one-pass): an empty one-pass loop, a scheduling barrier that
@@ -288,8 +288,8 @@ s32 ElementGlow_InitializeStarField(s32 element) {
   Io_Write16(0, &REG_BG2PB);
   Io_Write16(0, &REG_BG2PC);
   Io_Write16(Q_8_8(1), &REG_BG2PD);
-  BattleEffect_BuildBlitterFar(HEAP_SLOT_RAM_CODE, 7, 7, 3, 3);
-  BattleEffect_BuildBlitterFar(HEAP_SLOT_RAM_CODE_2, 7, 7, 3, 2);
+  BattleAnim_BuildBlitterFar(HEAP_SLOT_RAM_CODE, 7, 7, 3, 3);
+  BattleAnim_BuildBlitterFar(HEAP_SLOT_RAM_CODE_2, 7, 7, 3, 2);
   Task_Add(STAR_FIELD_UPDATE_CALLBACK, 0xc80);
   return Task_Add(STAR_FIELD_UPLOAD_CALLBACK, 0xc80);
 }
@@ -314,7 +314,7 @@ s32 Graphics_ResetVramBlockAndReleaseHeapBlocks(s32 unused) {
 /// Copies count colours from source to destination, each channel scaled by
 /// scale (16.16, at most 1), and returns 0.
 /// Called to darken the background's palette by
-/// BattlePresentation_SetPaletteLevel, BattleBackground_Load,
+/// BattleBackground_SetPaletteLevel, BattleBackground_Load,
 /// ElementGlow_Play, the item staging (staging.c) and the
 /// effects' canvas (canvas.c).
 s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale,
@@ -357,21 +357,21 @@ s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale,
 /// Plays a glow of the element about a unit, and returns when it is over.
 /// The glow is mode (enum BattleElementGlow), GLOW_PILLAR at strength
 /// variant. Called with GLOW_STAR_FIELD by
-/// BattlePresentation_RunUnitTransition and BattlePresentation_RunPsynergyCast,
+/// BattleStaging_HideField and BattleStaging_RunPsynergyCast,
 /// with GLOW_STREAKS by the latter, with GLOW_PILLAR by
 /// BattleUnit_ProcessTurnEnd and with GLOW_BURST by Battle_ProcessRoundEnd and
-/// BattleCommand_BuildPlan. Every glow first puts the background in
-/// BATTLE_BACKGROUND_FLAT and opens window 0 over lines 16 to 135, with BG2
+/// BattleTurn_Build. Every glow first puts the background in
+/// BATTLE_BACKGROUND_FIXED and opens window 0 over lines 16 to 135, with BG2
 /// blended over the other layers; GLOW_STAR_FIELD leaves the background's
 /// palette and BattleWork.brightness darkened.
 void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
   /* FAKEMATCH(dead): an unused array for the frame's 40 bytes; without it, 2
    * of 249 instructions differ in tbs-en. */
   UNUSED s32 spare[10];
-  struct EffectPosition position;
-  struct EffectPosition position2;
-  struct BattlePresentationWork launch;
-  struct BattlePresentationWork launch2;
+  struct ScreenPoint position;
+  struct ScreenPoint position2;
+  struct BattleStagingWork launch;
+  struct BattleStagingWork launch2;
   /* FAKEMATCH(temporary): one variable holds HEAP_SLOT_CAMERA's address, the
    * battle work's base and later IME's; as battle =
    * gHeapSlots[HEAP_SLOT_BATTLE] with ime set only in the loop, 61 of 249
@@ -381,10 +381,10 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
   struct SparkWork *work;
   s32 frame;
   s32 *brightness;
-  struct EffectPosition *projectedPosition;
+  struct ScreenPoint *projectedPosition;
 
   WaitFrames(1);
-  BattlePresentation_ConfigurePaletteFade(BATTLE_BACKGROUND_FLAT,
+  BattlePresentation_ConfigurePaletteFade(BATTLE_BACKGROUND_FIXED,
                                           battle->background, 0);
   Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
   IoWriteQueue_Store16((u32)&REG_DISPCNT, DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP |
@@ -414,7 +414,7 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
         Graphics_ScaleRgb555Clamped(battle->palette, BATTLE_BG_PALETTE,
                                     *brightness = 0x10000 - frame * 1092, 128);
       BattleMotion_ProjectScaledPosition(
-          unitId, EffectPosition_Coordinates(projectedPosition));
+          unitId, ScreenPoint_Coordinates(projectedPosition));
       work->canvasOrigin.x = (64U - (u32)projectedPosition->x) << 8;
       work->canvasOrigin.y = (64U - (u32)projectedPosition->y) << 8;
       IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2X, (u32)&work->canvasOrigin.x,
@@ -425,14 +425,14 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
     Graphics_ResetVramBlockAndReleaseHeapBlocks(element);
   } else if (mode == GLOW_STREAKS) {
     // The streaks for 40 frames, their canvas centred on the unit likewise.
-    struct BattleEffectWork *effectWork;
+    struct BattleAnimWork *effectWork;
 
     // The scene uses its image area to stage the tracked canvas origin.
-    BattleEffect_StartElementStreaksFar(element);
+    BattleAnim_StartElementStreaksFar(element);
     for (frame = 0; frame < 40; frame++) {
       effectWork = gHeapSlots[HEAP_SLOT_BATTLE_ANIM];
-      BattleMotion_ProjectScaledPosition(
-          unitId, EffectPosition_Coordinates(&position2));
+      BattleMotion_ProjectScaledPosition(unitId,
+                                         ScreenPoint_Coordinates(&position2));
       effectWork->trackedCanvas.origin.x = (64U - (u32)position2.x) << 8;
       effectWork->trackedCanvas.origin.y = (64U - (u32)position2.y) << 8;
       IO_WRITE_QUEUE_PUSH((u32)&REG_BG2X,
@@ -441,40 +441,40 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
       effectWork->trackedCanvas.origin.queued = 1;
       WaitFrames(1);
     }
-    BattleEffect_EndElementStreaksFar();
+    BattleAnim_EndElementStreaksFar();
   } else if (mode == GLOW_PILLAR) {
     // The pillar and the burst run an effect with the unit as its actor and
     // only target.
     launch.effect.prelude = 0;
     launch.effect.kind = element;
     launch.effect.variant = variant;
-    launch.effect.actor = unitId;
-    launch.effect.actors[0] = unitId;
+    launch.effect.user = unitId;
+    launch.effect.targets[0] = unitId;
     launch.effect.firstTarget = unitId;
-    launch.effect.count = 1;
+    launch.effect.targetCount = 1;
     launch.effect.range = 1;
-    BattleEffect_RunElementPillarFar(&launch.effect);
+    BattleAnim_RunElementPillarFar(&launch.effect);
   } else {
     launch2.effect.kind = element;
     launch2.effect.prelude = 0;
     launch2.effect.variant = 0;
-    launch2.effect.actor = unitId;
-    launch2.effect.actors[0] = unitId;
+    launch2.effect.user = unitId;
+    launch2.effect.targets[0] = unitId;
     launch2.effect.firstTarget = unitId;
-    launch2.effect.count = 1;
+    launch2.effect.targetCount = 1;
     launch2.effect.range = 1;
-    BattleEffect_RunElementBurstFar(&launch2.effect);
+    BattleAnim_RunElementBurstFar(&launch2.effect);
   }
 }
 
 /// Copies the background's saved palette back undarkened, as the star field
 /// of ElementGlow_Play leaves it dark.
-/// Called by BattlePresentation_RunUnitTransition and
-/// BattlePresentation_RunPsynergyCast once the effect has played.
-void BattlePresentation_RestorePalette(void) {
-  BattlePresentation_SetPaletteLevel(0, 0);
+/// Called by BattleStaging_HideField and
+/// BattleStaging_RunPsynergyCast once the effect has played.
+void BattleBackground_RestorePalette(void) {
+  BattleBackground_SetPaletteLevel(0, 0);
 }
 
 /// Removes the VCount interrupt's handler, as
-/// BattlePresentation_RunEntryTransition installs one; nothing calls it.
+/// BattleTransition_Run installs one; nothing calls it.
 void Irq_RemoveVCountHandler(void) { Runtime_SetIrqHandler(IRQ_VCOUNT, 0, 0); }

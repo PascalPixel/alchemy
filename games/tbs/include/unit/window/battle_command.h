@@ -90,7 +90,7 @@ void Resource_CopyFixedBlockB(s32 slot);
 void Resource_CopyFixedBlockA(s32 slot);
 s32 UiText_SetRenderString(const u8 *str);
 void UiText_DrawPaddedLabel(struct UiWindow *window, u8 *name);
-s32 NameEntry_EditOwnerName(s32 member);
+s32 NamingScreen_EditMemberName(s32 member);
 s32 PartyTalkMenu_Choose(s32 unused);
 void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn);
 s32 Party_LookupCharacterValueByFlag32(u32 index);
@@ -106,10 +106,10 @@ struct RenderOutput *RenderResource_CreateFrame(s32 icon, s32 remap,
                                                 s32 y);
 void Ui_ApplyTableScaleToObject(struct RenderOutput *obj);
 
-struct BattleActionRecord;
-struct BattleAct;
+struct BattleAction;
+struct AbilityDefinition;
 struct GlyphPalette;
-struct OwnerActionSlot;
+struct PsynergyEntry;
 struct SelectionWork;
 
 #ifdef UBFIX
@@ -148,8 +148,8 @@ void UiText_FormatNumberToHalfwords(s16 *out, s32 value);
 #else
 s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value);
 #endif
-s32 DjinnMenu_ListChangedDjinn(const struct OwnerActionSlot *oldGrid,
-                               const struct OwnerActionSlot *newGrid, u16 *out,
+s32 DjinnMenu_ListChangedDjinn(const struct PsynergyEntry *oldGrid,
+                               const struct PsynergyEntry *newGrid, u16 *out,
                                s32 *gained, s32 *lost);
 #ifdef UBFIX
 void Ui_CreateOutputFromResourceSlot(struct UiWindow *input, s32 x, s32 y,
@@ -171,9 +171,8 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count);
 s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind);
 void UpdateLinkSessionCountdown(void);
 s32 UiText_ShowLocalizedMessageAndWait(void);
-s32 Battle_ClassifyEntryKind(const struct BattleAct *act);
-s32 Battle_CollectPartyCommands(struct BattleActionRecord *out, u16 *in,
-                                s32 count);
+s32 Battle_ClassifyEntryKind(const struct AbilityDefinition *act);
+s32 Battle_CollectPartyCommands(struct BattleAction *out, u16 *in, s32 count);
 
 void AffineEffect_UpdateFrame(void);
 void *AffineEffect_InitializeWork(void);

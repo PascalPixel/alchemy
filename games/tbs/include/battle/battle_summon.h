@@ -15,18 +15,18 @@
 struct BattleSpriteDefinition {
   u16 animation; ///< the class's battle sprite
   /// The byte at 2.
-  /// bits: 7..5 spriteBits5 | 4..1 spriteBits1 | 0 spriteBit0
+  /// bits: 7..5 attackHop | 4..1 attackAnim | 0 isSmall
   ///@{
-  u8 spriteBit0 : 1;  ///< 1 for a small enemy, which takes one sprite slot
-  u8 spriteBits1 : 4; ///< the attack-effect kind; 0 reads as 1
-  u8 spriteBits5 : 3; ///< the attack-hop height
+  u8 isSmall : 1;    ///< 1 for a small enemy, which takes one sprite slot
+  u8 attackAnim : 4; ///< the attack-effect kind; 0 reads as 1
+  u8 attackHop : 3;  ///< the attack-hop height
   ///@}
   /// The byte at 3.
-  /// bits: 7..5 layoutKind | 4..1 layoutBits1 | 0 heavyImpact
+  /// bits: 7..5 defeatSound | 4..1 palette | 0 heavyImpact
   ///@{
   u8 heavyImpact : 1; ///< 1 for a class whose beam blow lands heavily
-  u8 layoutBits1 : 4; ///< the sprite's palette
-  u8 layoutKind : 3;  ///< the defeat-sound kind; above 4 reads as none
+  u8 palette : 4;     ///< the sprite's palette
+  u8 defeatSound : 3; ///< the defeat-sound kind; above 4 reads as none
   ///@}
   /// The height an effect is drawn at over the class, in pixels; 0 for its
   /// size's default.
@@ -37,13 +37,13 @@ struct BattleSpriteDefinition {
 STATIC_ASSERT(sizeof(struct BattleSpriteDefinition) == 8);
 /// The enemy classes' battle sprites, one row per class 0 to 171 (sprites.tsv),
 /// read by the BattleClass_ getters; row 0 stands in for a class out of range.
-extern struct BattleSpriteDefinition gSummon_EntryTable[];
+extern struct BattleSpriteDefinition gBattleSprites[];
 
 /// A summon: its name's message and the Djinn of each element it needs.
 struct SummonDefinition {
   /// The summon's ability id: its name is message MsgAbilityName plus it, and
   /// its low 14 bits pick the icon.
-  u16 nameMessageId;
+  u16 abilityId;
   u8 reserved[2];      ///< 0 in every row; read by no code
   u8 djinnRequired[4]; ///< standby Djinn needed, by element
 };

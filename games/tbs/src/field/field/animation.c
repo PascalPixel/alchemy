@@ -415,7 +415,7 @@ void AnimationObject_SetActiveTimerSteps(struct AnimationObject *sprite,
 /// first in OBJECT_SYSTEM_WORLD_MAP and IWRAM first otherwise), loads the basic
 /// sprite palettes, loads the shadow tiles into VRAM cache entry 93 and puts
 /// the sprite tile uploader in RAM. Called by ObjectSystem_Initialize.
-/// Battle_RunEncounter (OBJECT_SYSTEM_BATTLE) takes both slots from EWRAM, at
+/// Battle_Run (OBJECT_SYSTEM_BATTLE) takes both slots from EWRAM, at
 /// the same sizes, before it starts the object system, so in battle this gets
 /// those blocks back.
 void ObjectSystem_Configure(s32 mode) {

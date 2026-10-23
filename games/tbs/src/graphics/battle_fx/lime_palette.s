@@ -1,5 +1,5 @@
 	.section .rodata
-	.global BattleEffect_LimePalette
-BattleEffect_LimePalette:
+	.global BattleAnim_LimePalette
+BattleAnim_LimePalette:
 	.incbin "games/tbs/src/graphics/battle_fx/lime_palette.gbapal"
 	.incbin "games/tbs/src/graphics/battle_fx/lime_palette.bitmap.lz"

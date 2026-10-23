@@ -12,7 +12,7 @@ FarCall_GameTable:
 	export Inventory_AddItemFar, Inventory_AddItem
 	export PartyInventory_AddFar, PartyInventory_Add
 	export Inventory_FindFar, Inventory_Find
-	export PartyInventory_FindOwnerFar, PartyInventory_FindOwner
+	export PartyInventory_FindMemberFar, PartyInventory_FindMember
 	export PartyInventory_RemoveFar, PartyInventory_Remove
 	export Inventory_EquipFar, Inventory_Equip
 	export Inventory_RemoveFar, Inventory_Remove
@@ -20,9 +20,9 @@ FarCall_GameTable:
 	export Inventory_RepairFar, Inventory_Repair
 	overlay_veneer Item_GetTargetMode
 	export Inventory_GetEquippedItemFar, Inventory_GetEquippedItem
-	export BattleAction_Get, BattleAction_GetDirect
+	export Ability_Get, Ability_GetDirect
 	export Unit_LearnPsynergyFar, Unit_LearnPsynergy
-	export Unit_KnowsActionFar, Unit_KnowsAction
+	export Unit_KnowsPsynergyFar, Unit_KnowsPsynergy
 	export GameState_InitializeDefaultsFar, GameState_InitializeDefaults
 	overlay_veneer Unit_CheckLevelUp
 	overlay_veneer Party_InitializeCharacters
@@ -41,15 +41,15 @@ FarCall_GameTable:
 	overlay_veneer Game_Restart
 	export Unit_AddHpFar, Unit_AddHp
 	export Unit_AddPpFar, Unit_AddPp
-	export Unit_UpdateRatiosFar, Unit_UpdateRatios
+	export Unit_RecalculateGaugesFar, Unit_RecalculateGauges
 	export Unit_SetHpFar, Unit_SetHp
 	overlay_veneer Unit_SetPp
 	export BattleUnit_SetFar, BattleUnit_Set
-	export Party_CountActiveOwnersFar, Party_CountActiveOwners
-	export Party_AddActiveOwnerFar, Party_AddActiveOwner
-	export Party_ListActiveOwnersFar, Party_ListActiveOwners
+	export Party_CountMembersFar, Party_CountMembers
+	export Party_AddMemberFar, Party_AddMember
+	export Party_ListMembersFar, Party_ListMembers
 	export RollWeaponUnleashFar, RollWeaponUnleash
-	export Party_RemoveActiveOwnerFar, Party_RemoveActiveOwner
+	export Party_RemoveMemberFar, Party_RemoveMember
 	export Item_GetEquippedElementFar, Item_GetEquippedElement
 	export Battle_RollEffectSuccessFar, Battle_RollEffectSuccess
 	export Battle_CalculateAttackDamageFar, Battle_CalculateAttackDamage
@@ -57,9 +57,9 @@ FarCall_GameTable:
 	export Battle_CalculateRecoveryFar, Battle_CalculateRecovery
 	export Enemy_GetDefinitionFar, Enemy_GetDefinition
 	export Battle_RandomFar, Battle_Random
-	export Djinn_AddToOwnerFar, Djinn_AddToOwner
-	export Djinn_ActivateFar, Djinn_Activate
-	export Djinn_DeactivateFar, Djinn_Deactivate
+	export Djinn_GiveFar, Djinn_Give
+	export Djinn_SetFar, Djinn_Set
+	export Djinn_PutOnStandbyFar, Djinn_PutOnStandby
 	export DjinnRecovery_RemoveFar, DjinnRecovery_Remove
 	export DjinnRecovery_AddStandbyFar, DjinnRecovery_AddStandby
 	export Djinn_TransferFar, Djinn_Transfer
@@ -69,10 +69,10 @@ FarCall_GameTable:
 	export Unit_LevelUpToFar, Unit_LevelUpTo
 	export Unit_GetElementLevelFar, Unit_GetElementLevel
 	overlay_veneer DjinnRecovery_CountStandby
-	export Djinn_IsActiveFar, Djinn_IsActive
-	export Djinn_IsReadyFar, Djinn_IsReady
-	export Item_CanOwnerEquip, Item_CanOwnerEquipDirect
-	export Item_IsCompatibleWithOwnerFar, Item_IsCompatibleWithOwner
+	export Djinn_IsSetFar, Djinn_IsSet
+	export Djinn_CanSetFar, Djinn_CanSet
+	export Item_CanUnitEquip, Item_CanUnitEquipDirect
+	export Item_IsCompatibleWithUnitFar, Item_IsCompatibleWithUnit
 	export Inventory_FindEquippedFar, Inventory_FindEquipped
 	export Party_AdjustCoinsFar, Party_AdjustCoins
 	export Item_GetEquipmentGroupFar, Item_GetEquipmentGroup
@@ -84,8 +84,8 @@ FarCall_GameTable:
 	export Party_RestorePpOfLitElementsFar, Party_RestorePpOfLitElements
 	export Party_StartChildhoodFar, Party_StartChildhood
 	export Party_EndChildhoodFar, Party_EndChildhood
-	overlay_veneer Unit_RatioNoOp
-	export Djinn_AddToLeastLoadedOwnerFar, Djinn_AddToLeastLoadedOwner
+	overlay_veneer Unit_GaugeNoOp
+	export Djinn_GiveToPartyFar, Djinn_GiveToParty
 	export Party_SumDjinnCountsFar, Party_SumDjinnCounts
 	export Party_AdjustShopCreditFar, Party_AdjustShopCredit
 	export Party_AdjustShopGiftsFar, Party_AdjustShopGifts

@@ -22,8 +22,8 @@
 
 /// Two identical tables; the first has no references.
 u16 gUnused_BitOperands[] = {ARM_IMMEDIATE_POWERS};
-/// The operand for 1 << n, by n from 0 to 15: BattleEffect_BuildBlitter
+/// The operand for 1 << n, by n from 0 to 15: BattleAnim_BuildBlitter
 /// (parts/blitter.c) adds entry widthShift, the canvas width as a power of
 /// two (7 for the 128-pixel canvas), to horizontal clip template words 8 and
 /// 11, counting from 0.
-u16 gBattleEffect_BitOperands[] = {ARM_IMMEDIATE_POWERS};
+u16 gBattleAnim_BitOperands[] = {ARM_IMMEDIATE_POWERS};

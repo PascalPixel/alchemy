@@ -1637,7 +1637,7 @@ static void EventScript_MeetFlint(void) {
     if (leader != 0)
       ObjectEvent_SetPosition(LOCALID_VENUS_DJINNI, leader->x.fixed,
                               leader->z.fixed);
-    Djinn_AddToOwner(ISAAC, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_FLINT));
+    Djinn_Give(ISAAC, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_FLINT));
     DjinnRecovery_AddStandby(0, 0, 0);
     WorldMap_StartScript();
     ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_VENUS_DJINNI, 0);
@@ -2701,7 +2701,7 @@ static void EventScript_DouseMapStorm(void) {
   Engine_GameFlagSet(FLAG_MAP_TEMP_F1);
   FieldGameFlag_SetByte(FLAG_MAP_TEMP_F8, 0);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 5);
-  Battle_SetStart(BATTLE_START_SCRIPTED);
+  Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 7);
   selectedObjectEvent = ObjectEvent_GetById(gGameState.leaderLocalId);
   selectedObjectEvent->motionFlags = OBJ_EVENT_FALLS;

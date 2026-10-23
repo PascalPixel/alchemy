@@ -313,9 +313,9 @@ void UiWork_InitializeCountersAndScheduleRefresh(s32 loadGlyphTiles) {
 }
 
 /// Closes the battle message window at once, if one is open, and forgets it,
-/// so the next battle message (UiText_PrepareMessageWork) opens a new one.
-void UiWork_FinalizeSharedSlot(void) {
-  struct BattleDisplayWork *display = gBattleMessageWork;
+/// so the next battle message (BattleMessage_Open) opens a new one.
+void BattleMessage_Close(void) {
+  struct BattleMessageWork *display = gBattleMessageWork;
   struct UiWindow *window = display->window;
 
   if (window != NULL) {
@@ -327,19 +327,19 @@ void UiWork_FinalizeSharedSlot(void) {
 /// Shows a message in the battle message window, opening the window (a
 /// full-width text canvas along the bottom of the screen) if it is not open,
 /// and returns without waiting. The window stays open from message to message
-/// until UiWork_FinalizeSharedSlot closes it; the channel typing the message
-/// is kept in the battle display's work (BattleDisplayWork.offset), NULL when
+/// until BattleMessage_Close closes it; the channel typing the message
+/// is kept in the battle display's work (BattleMessageWork.offset), NULL when
 /// none was free.
-void UiText_PrepareMessageWork(s32 argument) {
+void BattleMessage_Open(s32 argument) {
   s32 entryIndex;
   struct UiChannelSlot *channel;
   struct UiWindow *previousWindow;
   struct UiWindow *messageWindow;
   struct UiRenderWork *state;
-  struct BattleDisplayWork *control;
+  struct BattleMessageWork *control;
 
   state = UI_WORK;
-  control = (struct BattleDisplayWork *)
+  control = (struct BattleMessageWork *)
       gWindowWork[HEAP_SLOT_BATTLE_MESSAGE - HEAP_SLOT_WINDOW];
   // channel starts as NULL, though it is assigned again before it is read; the
   // same zero clears marked below
@@ -365,8 +365,8 @@ void UiText_PrepareMessageWork(s32 argument) {
     }
     if (messageWindow != NULL) {
       channel =
-          UiText_StartBattleMessage(messageWindow, entryIndex, control->marked);
-      control->offset = (struct BattleDisplayOffset *)channel;
+          BattleMessage_Continue(messageWindow, entryIndex, control->marked);
+      control->offset = (struct BattleMessageOffset *)channel;
       control->marked = 0;
       // With no channel free the window is closed, though control->window
       // still names its slot.
@@ -379,8 +379,8 @@ void UiText_PrepareMessageWork(s32 argument) {
 
 /// Shows a message in the battle message window and waits until it has been
 /// typed out.
-void UiText_ShowMessageAndWaitCore(s32 argument) {
-  UiText_PrepareMessageWork(argument);
+void BattleMessage_ShowAndWait(s32 argument) {
+  BattleMessage_Open(argument);
   while (UiWork_IsComplete() == 0)
     WaitFrames(1);
   WaitFrames(1);

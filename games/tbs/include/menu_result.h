@@ -10,7 +10,7 @@
 /// A paged list for one party member: their unit, the list's length and pages,
 /// and the page and row of the entry chosen last.
 struct MenuResult {
-  s32 ownerState;    ///< the member's struct BattleUnit, as a word
+  s32 ownerState;    ///< the member's struct Unit, as a word
   s32 unused04;      ///< not named by TBS code
   s32 page;          ///< the chosen entry's page, from 0
   s32 pageCount;     ///< pages the list fills, the last one perhaps part full

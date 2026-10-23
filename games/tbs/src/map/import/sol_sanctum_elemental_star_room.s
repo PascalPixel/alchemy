@@ -33,7 +33,7 @@
 	.set import.Inventory_AddItem, 1
 	.set import.PartyInventory_Add, 1
 	.set import.Inventory_Find, 1
-	.set import.PartyInventory_FindOwner, 1
+	.set import.PartyInventory_FindMember, 1
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1
 	.set import.Engine_GameFlagClear, 1
@@ -43,7 +43,7 @@
 	.set import.Engine_ScriptWait, 1
 	.set import.Engine_ScriptStart, 1
 	.set import.Engine_ScriptEnd, 1
-	.set import.Party_RemoveOwnerRestored, 1
+	.set import.Party_RemoveMemberRestored, 1
 	.set import.Engine_ScriptChooseYesNo, 1
 	.set import.ObjectEvent_GetById, 1
 	.set import.Engine_ObjectEventSetSpeed, 1

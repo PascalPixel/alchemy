@@ -18,39 +18,39 @@
 /// The small thorn in the thorn sheet, after the 48x80 big one.
 #define THORN_SMALL_CELLS (48 * 80)
 
-/// What the growing columns grow (BattleEffect_RunGrowingColumns).
+/// What the growing columns grow (BattleAnim_RunGrowingColumns).
 enum GrowingColumnsMode {
   GROWING_COLUMNS_VINES,  ///< Growth
   GROWING_COLUMNS_PILLARS ///< Punji's green pillars
 };
 
-/// One growing column, laid over a struct EffectStep in work->particles.
+/// One growing column, laid over a struct Particle in work->particles.
 struct DualColumn {
   s32 x; ///< the root, in canvas pixels
   s32 y; ///< the root's row: 108 to 115, lower for later columns
-  s32 z; ///< the EffectStep's z and velocityX, unused here
+  s32 z; ///< the Particle's z and velocityX, unused here
   s32 velocityX;
   s32 height;    ///< the full length, 55 to 118 capped by its shape
-  s32 velocityZ; ///< the EffectStep's, unused here
+  s32 velocityZ; ///< the Particle's, unused here
   /// The frame it starts to grow; set, but the frame loop computes its own.
   s32 start;
 };
 
 /// Vines grow from the ground, scattering dust from each root.
 ///
-/// Abilities: Growth, Mad Growth, Wild Growth (BATTLE_EFFECT_GROWTH).
-void BattleEffect_RunGrowth(struct BattleEffectArgument *effect) {
-  BattleEffect_RunGrowingColumns(effect, GROWING_COLUMNS_VINES);
+/// Abilities: Growth, Mad Growth, Wild Growth (BATTLE_ANIM_GROWTH).
+void BattleAnim_RunGrowth(struct BattleAnimArgs *effect) {
+  BattleAnim_RunGrowingColumns(effect, GROWING_COLUMNS_VINES);
 }
 /// Green pillars grow from the ground, scattering dust from each root.
 ///
-/// Abilities: Punji, Punji Trap, Punji Strike (BATTLE_EFFECT_PUNJI).
+/// Abilities: Punji, Punji Trap, Punji Strike (BATTLE_ANIM_PUNJI).
 ///
 /// Punji Strike's row of actflags.tsv gives the stronger variant, as Punji
 /// Trap's does,
-/// so no ability plays BATTLE_EFFECT_PUNJI's strongest variant.
-void BattleEffect_RunPunji(struct BattleEffectArgument *effect) {
-  BattleEffect_RunGrowingColumns(effect, GROWING_COLUMNS_PILLARS);
+/// so no ability plays BATTLE_ANIM_PUNJI's strongest variant.
+void BattleAnim_RunPunji(struct BattleAnimArgs *effect) {
+  BattleAnim_RunGrowingColumns(effect, GROWING_COLUMNS_PILLARS);
 }
 /// Vines or green pillars grow one every 4 frames,
 /// alternately mirrored, each throwing up dust from its root.
@@ -62,7 +62,7 @@ void BattleEffect_RunPunji(struct BattleEffectArgument *effect) {
 /// up a puff of dust. The battle moves on to the results 64 frames before the
 /// end; the scene fades out over 16 frames, and nothing grows in its last 4.
 ///
-/// Called by BattleEffect_RunGrowth and BattleEffect_RunPunji.
+/// Called by BattleAnim_RunGrowth and BattleAnim_RunPunji.
 /// work->particles holds the 16 columns (struct DualColumn) and PARTICLES
 /// the dust. Writes REG_BG2PA, REG_BLDCNT, REG_BLDALPHA and, on side 1,
 /// REG_BG2X; sets work->shakeFrames as each column appears.
@@ -71,11 +71,10 @@ void BattleEffect_RunPunji(struct BattleEffectArgument *effect) {
 ///         (gGrowth_ColumnCounts): 4 for Growth and Punji, 8 for Mad Growth,
 ///         Punji Trap and Punji Strike, 12 for Wild Growth. The scene runs 4
 ///         frames a column and 56 more.
-void BattleEffect_RunGrowingColumns(struct BattleEffectArgument *effect,
-                                    s32 mode) {
+void BattleAnim_RunGrowingColumns(struct BattleAnimArgs *effect, s32 mode) {
   void **slots;
   void **cursor;
-  struct BattleEffectWork *work;
+  struct BattleAnimWork *work;
   void *canvas;
   void *rectangle[2];
   void *secondSlot;
@@ -105,13 +104,13 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectArgument *effect,
   s32 reactFrame;
 
   s32 i;
-  struct EffectStep *puff;
+  struct Particle *puff;
   s32 puffAge;
   s32 image;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
+  ANIM_GET_SLOTS(slots, cursor, work, canvas);
   work->effect = effect;
-  BattleEffect_StartCanvasLayer(1);
+  BattleAnim_StartCanvasLayer(1);
   REG_BG2PA = Q_8_8(1); // the canvas at its own width
   REG_BLDCNT = 0;
   if (mode == GROWING_COLUMNS_PILLARS) {
@@ -123,12 +122,11 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectArgument *effect,
   if (work->effect->side == 1) {
     REG_BG2X = -0x7000; // 112 pixels right
   }
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
-                      COMPOSITE_TRANSPARENT);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS,
+                    COMPOSITE_TRANSPARENT);
   rectangle[0] = gHeapSlots[HEAP_SLOT_RAM_CODE];
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
-                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
-                      COMPOSITE_TRANSPARENT);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                    COMPOSITE_TRANSPARENT);
   /* FAKEMATCH(temporary): secondSlot and draw, a second pointer to the pair,
    * order the frame's spill slots; as rectangle[1] = gHeapSlots[n] and
    * rectangle[side], 11 of 503 instructions differ in tbs-en. */
@@ -140,12 +138,12 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectArgument *effect,
 
   // Mark the dust free (variant -1): 1024 records, though only the first 512
   // are used.
-  variantCursor = Ram_MapGridCellBuffer + offsetof(struct EffectStep, variant);
+  variantCursor = Ram_MapGridCellBuffer + offsetof(struct Particle, variant);
   i = 0;
   do {
     i++;
     *(s32 *)variantCursor = -1;
-    variantCursor += sizeof(struct EffectStep);
+    variantCursor += sizeof(struct Particle);
   } while (i != 1024);
 
   // The 16 columns' roots and lengths: each root up to 4 pixels either side
@@ -170,7 +168,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectArgument *effect,
   } while (i != 16);
 
   // Each transfer clears the canvas: everything is redrawn every frame.
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
 
   frame = 0;
   if (duration != 0) {
@@ -179,7 +177,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectArgument *effect,
     fadeEnd = duration - 4;
     do {
       if (frame == cueFrame) {
-        EFFECT_SHOW_DAMAGE(SE_132);
+        ANIM_SHOW_DAMAGE(SE_132);
       }
       if (frame >= fadeStart && frame < fadeEnd) {
         // Fade out over 16 frames, the canvas's share falling from 15/16 to
@@ -238,19 +236,19 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectArgument *effect,
             // The targets react 4 frames after the column starts to grow,
             // with a sound for even columns only.
             n = 0;
-            if (work->effect->count != 0) {
+            if (work->effect->targetCount != 0) {
               reactFrame = start + 4;
               do {
                 if (frame == reactFrame) {
                   if (!(i & 1)) {
                     Sound_PlaySongFar(SE_IMPACT);
                   }
-                  ObjectGroup_UpdateMembers(work->effect->actors[n],
+                  ObjectGroup_UpdateMembers(work->effect->targets[n],
                                             SPRITE_COLOR_WHITE, POSE_DAMAGE, n,
                                             3);
                 }
                 n++;
-              } while (n != work->effect->count);
+              } while (n != work->effect->targetCount);
             } else {
               reactFrame = start + 4;
             }
@@ -264,14 +262,14 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectArgument *effect,
               length = (u32)PARTICLES;
               n = 0;
               while (n != 512) {
-                if (((struct EffectStep *)length)->variant == -1) {
-                  ((struct EffectStep *)length)->x =
+                if (((struct Particle *)length)->variant == -1) {
+                  ((struct Particle *)length)->x =
                       ((Random16() & 0xf) + column->x) - 8;
-                  ((struct EffectStep *)length)->y = (Random16() & 0xf) + 80;
-                  ((struct EffectStep *)length)->variant = 0;
+                  ((struct Particle *)length)->y = (Random16() & 0xf) + 80;
+                  ((struct Particle *)length)->variant = 0;
                   break;
                 }
-                length += sizeof(struct EffectStep);
+                length += sizeof(struct Particle);
                 n++;
               }
             }
@@ -311,11 +309,11 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectArgument *effect,
       } while (i != 512);
 
       Camera_ApplyShake(4, 4);
-      EFFECT_END_FRAME(work);
+      ANIM_END_FRAME(work);
       frame++;
     } while (frame != duration);
   }
-  EFFECT_FINISH_CANVAS();
+  ANIM_FINISH_CANVAS();
 }
 
 #define VINE_COLUMNS 16 ///< columns that rise
@@ -324,35 +322,35 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectArgument *effect,
 /// Sixteen green vines grow from the middle of the row of targets, 2 frames
 /// apart, and shrink back.
 ///
-/// Abilities: Vine (BATTLE_EFFECT_VINE).
+/// Abilities: Vine (BATTLE_ANIM_VINE).
 ///
 /// Vine i appears on frame 2i + 5 and grows 4 pixels a frame up to 32,
 /// cycling through five 32x32 pictures, then shrinks away from frame 2i + 32;
 /// odd vines are mirrored. Vine i shakes the screen on frame 4i + 5. On frame
 /// 32 the targets react together, with a sound.
 ///
-/// A Djinni appears first (BattleEffect_RunDjinniEntrance). work->particles
+/// A Djinni appears first (BattleAnim_RunDjinniEntrance). work->particles
 /// holds the 16 vines' x. Writes REG_BG2PA, REG_BLDCNT and REG_BG2X, sets
 /// work->shakeFrames.
-void BattleEffect_RunVine(struct BattleEffectArgument *effect) {
+void BattleAnim_RunVine(struct BattleAnimArgs *effect) {
   u32 *slots, *cursor;
-  struct BattleEffectWork *work;
+  struct BattleAnimWork *work;
   void *canvas;
   BlitterPair draw;
   s32 originX, originY;
-  struct EffectPosition first, last;
+  struct ScreenPoint first, last;
   s32 i, frame, cell, height, offset, middle;
-  struct EffectStep *column;
+  struct Particle *column;
 
   slots = (u32 *)(gHeapSlots + HEAP_SLOT_BATTLE_ANIM);
   cursor = slots;
-  work = (struct BattleEffectWork *)*cursor++;
+  work = (struct BattleAnimWork *)*cursor++;
   canvas = (void *)*cursor;
   work->effect = effect;
-  BattleEffect_RunDjinniEntrance(effect, ELEMENT_VENUS + DJINNI_ENTRANCE_LONG,
-                                 effect->side, DJINNI_ANCHOR_CENTRE, &originX,
-                                 &originY);
-  BattleEffect_StartCanvasLayer(1);
+  BattleAnim_RunDjinniEntrance(effect, ELEMENT_VENUS + DJINNI_ENTRANCE_LONG,
+                               effect->side, DJINNI_ANCHOR_CENTRE, &originX,
+                               &originY);
+  BattleAnim_StartCanvasLayer(1);
   REG_BG2PA = Q_8_8(1); // the canvas at its own width
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_GreenVineSheet, work->sheet, 1,
@@ -360,20 +358,19 @@ void BattleEffect_RunVine(struct BattleEffectArgument *effect) {
 
   // Put the point halfway between the first and last targets at canvas x
   // 64.
-  EffectPosition_ProjectScaledBattler(work->effect->actors[0], &first);
-  EffectPosition_ProjectScaledBattler(
-      work->effect->actors[work->effect->count - 1], &last);
+  Projection_ScaledUnit(work->effect->targets[0], &first);
+  Projection_ScaledUnit(work->effect->targets[work->effect->targetCount - 1],
+                        &last);
   middle = first.x;
   middle += (last.x - middle) / 2;
   first.x = middle;
   REG_BG2X = (64 - first.x) << 8;
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
-                      COMPOSITE_TRANSPARENT);
-  draw[0] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
-                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
-                      COMPOSITE_TRANSPARENT);
-  draw[1] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS,
+                    COMPOSITE_TRANSPARENT);
+  draw[0] = (DrawRectangle)ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                    COMPOSITE_TRANSPARENT);
+  draw[1] = (DrawRectangle)ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
   column = work->particles;
   i = 0;
   do {
@@ -381,15 +378,15 @@ void BattleEffect_RunVine(struct BattleEffectArgument *effect) {
     i++;
   } while (i != VINE_COLUMNS);
   // Each transfer clears the canvas: the vines are redrawn every frame.
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   frame = 0;
   do {
-    // No EFFECT_SHOW_DAMAGE here: the targets only flash, on frame 32.
+    // No ANIM_SHOW_DAMAGE here: the targets only flash, on frame 32.
     if (frame == 32) {
       Sound_PlaySongFar(SE_143);
-      EFFECT_FOR_EACH_TARGET(i, work->effect)
-        ObjectGroup_UpdateMembers(work->effect->actors[i], SPRITE_COLOR_WHITE,
-                                  POSE_DAMAGE, i, 16);
+      ANIM_FOR_EACH_TARGET(i, work->effect)
+      ObjectGroup_UpdateMembers(work->effect->targets[i], SPRITE_COLOR_WHITE,
+                                POSE_DAMAGE, i, 16);
     }
     i = 0;
     column = work->particles;
@@ -418,16 +415,16 @@ void BattleEffect_RunVine(struct BattleEffectArgument *effect) {
       column++;
     } while (i != VINE_COLUMNS);
     Camera_ApplyShake(4, 4);
-    EFFECT_END_FRAME(work);
+    ANIM_END_FRAME(work);
     frame++;
   } while (frame != VINE_FRAMES);
-  EFFECT_FINISH_CANVAS();
+  ANIM_FINISH_CANVAS();
 }
 
 /// Thorns burst from the ground one every 8 frames, throwing up dust from
 /// their roots.
 ///
-/// Abilities: Thorn, Briar, Nettle (BATTLE_EFFECT_THORN).
+/// Abilities: Thorn, Briar, Nettle (BATTLE_ANIM_THORN).
 ///
 /// Thorn i appears on frame 8i + 9, shaking the screen, and throws up a puff
 /// of dust on each of its first two frames; on frame 8i + 12 the targets
@@ -442,7 +439,7 @@ void BattleEffect_RunVine(struct BattleEffectArgument *effect) {
 /// PARTICLES holds the dust, 64 puffs. Writes REG_BG2PA, REG_BLDCNT,
 /// REG_BLDALPHA and, on side 1, REG_BG2X; sets work->shakeFrames as each
 /// thorn appears.
-void BattleEffect_RunThorn(struct BattleEffectArgument *effect) {
+void BattleAnim_RunThorn(struct BattleAnimArgs *effect) {
   void *canvas;
   s32 frame;
   DrawRectangle drawFlip;
@@ -450,7 +447,7 @@ void BattleEffect_RunThorn(struct BattleEffectArgument *effect) {
   s32 frameCount;
   u32 *slots;
   u32 *cursor;
-  struct BattleEffectWork *work;
+  struct BattleAnimWork *work;
   s32 i;
   s32 j;
   s32 age;
@@ -458,10 +455,10 @@ void BattleEffect_RunThorn(struct BattleEffectArgument *effect) {
 
   slots = (u32 *)(gHeapSlots + HEAP_SLOT_BATTLE_ANIM);
   cursor = slots;
-  work = (struct BattleEffectWork *)*cursor++;
+  work = (struct BattleAnimWork *)*cursor++;
   canvas = (void *)*cursor;
   work->effect = effect;
-  BattleEffect_StartCanvasLayer(1);
+  BattleAnim_StartCanvasLayer(1);
   REG_BG2PA = Q_8_8(1); // the canvas at its own width
   REG_BLDCNT = 0;
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -469,17 +466,16 @@ void BattleEffect_RunThorn(struct BattleEffectArgument *effect) {
   if (work->effect->side == 1) {
     REG_BG2X = -0x7000; // 112 pixels right
   }
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
-                      COMPOSITE_TRANSPARENT);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS,
+                    COMPOSITE_TRANSPARENT);
   draw = ((DrawRectangle *)slots)[HEAP_SLOT_RAM_CODE - HEAP_SLOT_BATTLE_ANIM];
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
-                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
-                      COMPOSITE_TRANSPARENT);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                    COMPOSITE_TRANSPARENT);
   work->transferMode = CANVAS_COPY_AND_CLEAR; // clear the canvas every frame
   work->transferValue = 0;
   drawFlip =
       ((DrawRectangle *)slots)[HEAP_SLOT_RAM_CODE_2 - HEAP_SLOT_BATTLE_ANIM];
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, EFFECT_CALLBACK_ORDER);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
   frameCount = gGrowth_Counts[work->effect->variant] * 8 + 56;
 
   // Mark the dust free: 1024 records, though only the first 64 are used.
@@ -489,7 +485,7 @@ void BattleEffect_RunThorn(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != frameCount; frame++) {
     if (frame == frameCount - 64) {
-      EFFECT_SHOW_DAMAGE(SE_132);
+      ANIM_SHOW_DAMAGE(SE_132);
     }
     if (frame >= frameCount - 16) {
       // Fade out over the last 16 frames, the canvas's share falling from
@@ -550,7 +546,7 @@ void BattleEffect_RunThorn(struct BattleEffectArgument *effect) {
         // further than 96, on rows 72 to 103.
         if (frame < start + 3) {
           s32 y = (Random16() & 31) + 72;
-          struct EffectStep *puff;
+          struct Particle *puff;
           for (j = 0; j != 64; j++) {
             puff = &PARTICLES[j];
             if (puff->variant == -1) {
@@ -565,11 +561,11 @@ void BattleEffect_RunThorn(struct BattleEffectArgument *effect) {
           }
         }
       }
-      EFFECT_FOR_EACH_TARGET(j, work->effect) {
+      ANIM_FOR_EACH_TARGET(j, work->effect) {
         if (frame == start + 4) {
           Sound_PlaySongFar(SE_132);
-          ObjectGroup_UpdateMembers(work->effect->actors[j], SPRITE_COLOR_WHITE,
-                                    POSE_DAMAGE, j, 3);
+          ObjectGroup_UpdateMembers(work->effect->targets[j],
+                                    SPRITE_COLOR_WHITE, POSE_DAMAGE, j, 3);
         }
       }
     }
@@ -592,10 +588,10 @@ void BattleEffect_RunThorn(struct BattleEffectArgument *effect) {
       }
     }
     Camera_ApplyShake(8, 8);
-    EFFECT_END_FRAME(work);
+    ANIM_END_FRAME(work);
   }
 
-  EFFECT_FINISH_CANVAS();
+  ANIM_FINISH_CANVAS();
 }
 
 #undef GROWING_COLUMNS_VINE_DUST_CELLS

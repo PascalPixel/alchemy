@@ -211,7 +211,7 @@ STATIC_ASSERT(sizeof(struct MapEvent) == 12);
 /// bg event shows no checking message.
 #define MAP_EVENT_TRIGGER_OWN_EFFECT 0x400
 
-/// MapEvent.control's low four bits: what the event answers.
+/// MapEvent.kind's low four bits: what the event answers.
 enum MapEventKind {
   MAP_EVENT_TALK = 0, ///< the A button on an object event; trigger is its id
   /// Stepping onto a cell whose metatile behavior is the trigger, when no coord
@@ -222,7 +222,7 @@ enum MapEventKind {
       3, ///< the A button on what is ahead, when it is no object event
   MAP_EVENT_ITEM = 4, ///< an item used on a cell or an object event
   MAP_EVENT_PSYNERGY = 5,
-  MAP_EVENT_RAISED = 6, ///< raised by code through FieldWork.event
+  MAP_EVENT_RAISED = 6, ///< raised by code through FieldWork.raisedEvent
   /// Talking to an object event Halt has stopped
   /// (Map_FindObjectEventTalkEvent).
   MAP_EVENT_TALK_HALTED = 7

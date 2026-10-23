@@ -4,11 +4,11 @@
 
 #include "../effect_internal.h"
 
-// The triangle effects (Bind, Luff and BattleEffect_RunUnusedTriangleStrike)
+// The triangle effects (Bind, Luff and BattleAnim_RunUnusedTriangleStrike)
 // spin a shrinking triangle onto the first target for 64 frames and then stand
 // a rune there. The triangle is drawn as the ring and star effects draw their
 // outlines: its corners are projected onto the canvas and stored in the
-// velocity fields of EffectStep records, then each edge is sampled at evenly
+// velocity fields of Particle records, then each edge is sampled at evenly
 // spaced points and a flare is stamped at each. Both runners write the same
 // frame loop; only the prelude, the step towards the target, the canvas's
 // priority and the vertex table differ. The blue-ramp helper here, which
@@ -112,32 +112,32 @@ UNUSED void Graphics_ConvertBackgroundToBlueRamp(void) {
 /// A triangle of light spins and shrinks onto the first target for 64 frames,
 /// then a rune stands on the target; the battle shows the result on frame 64.
 ///
-/// Abilities: Bind (BATTLE_EFFECT_BIND); Luff (BATTLE_EFFECT_BIND_218).
+/// Abilities: Bind (BATTLE_ANIM_BIND); Luff (BATTLE_ANIM_BIND_218).
 ///
 /// When effect->prelude is 1 a Jupiter Djinni first appears over the first
 /// target, sways and rises away. The canvas darkens a little faster every 16
 /// frames.
 ///
-/// Runs BattleEffect_RunDjinniEntrance first when effect->prelude is 1. Moves
+/// Runs BattleAnim_RunDjinniEntrance first when effect->prelude is 1. Moves
 /// BG2X so the canvas's x 64 is on the first target, cycles the palette
 /// each frame through Graphics_UpdatePhasePalette, raises
 /// work->transferValue every 16 frames, keeps the triangle's corners in
 /// work->particles 0 to 2, and builds and frees its blitters every frame.
-void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
-  struct EffectPosition anchor;
+void BattleAnim_RunBind(struct BattleAnimArgs *effect) {
+  struct ScreenPoint anchor;
   // World input and projected vertices reuse one coordinate workspace.
   union {
     struct Vector3 world;
-    struct EffectPosition projected;
+    struct ScreenPoint projected;
   } position;
-  struct EffectPosition screen;
+  struct ScreenPoint screen;
   struct Vector3 scale;
   s32 originX;
   s32 originY;
   BlitterPair draw;
   void **slots;
   void **cursor;
-  struct BattleEffectWork *work;
+  struct BattleAnimWork *work;
   void *canvas;
   s32 frame;
   s32 member;
@@ -147,22 +147,21 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
   u8 *palette;
   struct MotionObject *object;
   s32 tick;
-  struct EffectStep *point;
+  struct Particle *point;
   s32 size;
   s32 j;
   s32 k;
 
   slots = &gHeapSlots[HEAP_SLOT_BATTLE_ANIM];
   cursor = slots;
-  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
-  graphics = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  ANIM_GET_WORK_AND_CANVAS(cursor, work, canvas);
+  graphics = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   work->effect = effect;
-  BattleEffect_StartCanvasLayer(1);
+  BattleAnim_StartCanvasLayer(1);
   if (work->effect->prelude == 1)
-    BattleEffect_RunDjinniEntrance(effect, ELEMENT_JUPITER, work->effect->side,
-                                   DJINNI_ANCHOR_OVER_TARGET, &originX,
-                                   &originY);
+    BattleAnim_RunDjinniEntrance(effect, ELEMENT_JUPITER, work->effect->side,
+                                 DJINNI_ANCHOR_OVER_TARGET, &originX, &originY);
   REG_BG2PA = Q_8_8(1);
 
   // Setup. The rune, the flares at 0x1000 and the Djinni at 0x2000, in the
@@ -179,17 +178,17 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
   palette += 128;
   Decompress_Type01(palette, work->sheet + 0x2000);
   // 4 off every pixel each frame.
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, 0x04040404);
-  EffectPosition_ProjectScaledBattler(work->effect->actors[0], &anchor);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, 0x04040404);
+  Projection_ScaledUnit(work->effect->targets[0], &anchor);
   shift = 64 - anchor.x;
   REG_BG2X = shift << 8;
   Sound_PlaySongFar(SE_142);
 
-  for (frame = 0; frame != work->effect->count * 20 + 72; frame++) {
+  for (frame = 0; frame != work->effect->targetCount * 20 + 72; frame++) {
     // Frame loop: 20 frames a target and 72 more, though only the first
     // target is drawn.
     if (frame == 64)
-      EFFECT_SHOW_DAMAGE(0);
+      ANIM_SHOW_DAMAGE(0);
     // Red, green and blue sway a third of a turn apart.
     Graphics_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
 
@@ -202,20 +201,20 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
 
       x = ((Trig_Sin(frame << 11) * 20) >> 16) + originX + shift - 20;
       y = (((Trig_Cos(frame << 11) * 4)) >> 16) + originY - 24;
-      BattleEffect_FetchRectangleBlitters(work->effect->side, draw);
+      BattleAnim_FetchRectangleBlitters(work->effect->side, draw);
       if (frame > 32)
         y = y - frame * 2 + 64;
       draw[0](canvas, work->sheet + 0x2000, x, y, 40, 40);
       if (frame <= 3)
         draw[1](canvas, work->sheet + 0x2000, x, y, 40, 40);
-      EFFECT_RELEASE_BLITTERS();
+      ANIM_RELEASE_BLITTERS();
     }
     // The blitters, plain and mirrored, keeping the brighter pixel; from
     // frame 32 the canvas darkens one level faster every 16 frames.
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
     draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
-                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
+    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                      BLITTER_MAX);
     draw[1] = (DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_2);
     if (frame > 16 && (frame & 15) == 0)
       work->transferValue += 0x01010101;
@@ -223,13 +222,13 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
     // Only the first target is drawn.
     for (member = 0; member != 1; member++) {
       tick = frame - member * 8;
-      object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
+      object = GetBattleObjectSlotFar(work->effect->targets[member])->object;
       if (tick >= 0 && tick < 96) {
-        EFFECT_VIEW_FROM_CAMERA(camera);
+        ANIM_VIEW_FROM_CAMERA(camera);
         position.world.x = object->x;
         position.world.y = object->y;
         position.world.z = object->z;
-        EffectPosition_ProjectPoint(&position.world, &screen);
+        Projection_Point(&position.world, &screen);
         // Always canvas x 64, where BG2X puts the target; only the
         // projected y is kept.
         screen.x = anchor.x + shift;
@@ -252,13 +251,13 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
               Transform_ApplyYaw((64 - tick) << 9);
             }
             Transform_ApplyRoll(j * 0x5555);
-            EffectPosition_ProjectPoint(gBind_Vertex, &position.projected);
+            Projection_Point(gBind_Vertex, &position.projected);
             point->velocityX = position.projected.x + screen.x;
             point->velocityY = position.projected.y + screen.y + 16;
           }
           for (j = 0; j != 3; j++) {
-            struct EffectStep *from = &work->particles[j + member * 32];
-            struct EffectStep *to = &work->particles[(j + 1) % 3 + member * 32];
+            struct Particle *from = &work->particles[j + member * 32];
+            struct Particle *to = &work->particles[(j + 1) % 3 + member * 32];
 
             // Flares shrink from size 5 to 1, a size every 16 frames.
             size = 5 - tick / 16;
@@ -269,7 +268,7 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
                   from->velocityY + k * (to->velocityY - from->velocityY) / 24;
 
               draw[0](canvas,
-                      work->sheet + gBattleEffect_FlareCells[size - 1] + 0x1000,
+                      work->sheet + gBattleAnim_FlareCells[size - 1] + 0x1000,
                       x - size, y - size, size * 2, size * 2);
             }
           }
@@ -281,39 +280,39 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
         }
       }
     }
-    EFFECT_RELEASE_BLITTERS();
-    EFFECT_PRESENT_FRAME(work);
+    ANIM_RELEASE_BLITTERS();
+    ANIM_PRESENT_FRAME(work);
   }
 
   // Finish: the blitters were freed each frame.
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  BattleEffect_EndCanvasLayer();
+  Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);
+  BattleAnim_EndCanvasLayer();
 }
 
 /// Unused: no row of actflags.tsv in either game names its kind, and the
-/// handler table is reached with no other kind (BattleEffect_RunTableEffect),
+/// handler table is reached with no other kind (BattleAnim_RunTableEffect),
 /// so the player never sees it. It would show the spinning triangle and rune of
-/// BattleEffect_RunBind without the Djinni, with the user stepping up to the
+/// BattleAnim_RunBind without the Djinni, with the user stepping up to the
 /// first target on frame 46.
 ///
-/// Abilities: none (BATTLE_EFFECT_UNUSED_TRIANGLE_STRIKE).
+/// Abilities: none (BATTLE_ANIM_UNUSED_TRIANGLE_STRIKE).
 ///
 /// It reads its own copy of the vertex, gBind_TriangleStrikeVertex, which
 /// holds the same point as Bind's (gBind_Vertex). Changes the same state as
-/// BattleEffect_RunBind, on the narrow canvas at priority 0, and starts the
+/// BattleAnim_RunBind, on the narrow canvas at priority 0, and starts the
 /// user's approach through BattleMotion_ApproachTargetFar.
-void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectArgument *effect) {
-  struct EffectPosition anchor;
+void BattleAnim_RunUnusedTriangleStrike(struct BattleAnimArgs *effect) {
+  struct ScreenPoint anchor;
   // World input and projected vertices reuse one coordinate workspace.
   union {
     struct Vector3 world;
-    struct EffectPosition projected;
+    struct ScreenPoint projected;
   } position;
-  struct EffectPosition screen;
+  struct ScreenPoint screen;
   struct Vector3 scale;
   void **slots;
   void **cursor;
-  struct BattleEffectWork *work;
+  struct BattleAnimWork *work;
   void *canvas;
   s32 frame;
   BlitterPair draw;
@@ -324,18 +323,18 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectArgument *effect) {
   u8 *palette;
   struct MotionObject *object;
   s32 tick;
-  struct EffectStep *point;
+  struct Particle *point;
   s32 size;
   s32 j;
   s32 k;
 
   slots = &gHeapSlots[HEAP_SLOT_BATTLE_ANIM];
   cursor = slots;
-  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
-  graphics = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  ANIM_GET_WORK_AND_CANVAS(cursor, work, canvas);
+  graphics = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   work->effect = effect;
-  EFFECT_START_NARROW_CANVAS(0);
+  ANIM_START_NARROW_CANVAS(0);
 
   // Setup, as for Bind: the rune, and the flares at 0x1000.
   palette = Resource_GetTableEntry((s32)&ResourceId_RuneSheet);
@@ -347,26 +346,26 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectArgument *effect) {
   palette = Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesD);
   Decompress_Type01(palette, work->sheet + 0x1000);
   // 4 off every pixel each frame.
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, 0x04040404);
-  EffectPosition_ProjectScaledBattler(work->effect->actors[0], &anchor);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, 0x04040404);
+  Projection_ScaledUnit(work->effect->targets[0], &anchor);
   shift = 64 - anchor.x;
   REG_BG2X = shift << 8;
   Sound_PlaySongFar(SE_142);
 
-  for (frame = 0; frame != work->effect->count * 20 + 72; frame++) {
-    // Frame loop, as in BattleEffect_RunBind.
+  for (frame = 0; frame != work->effect->targetCount * 20 + 72; frame++) {
+    // Frame loop, as in BattleAnim_RunBind.
     if (frame == 64)
-      EFFECT_SHOW_DAMAGE(0);
+      ANIM_SHOW_DAMAGE(0);
     // The user sets off three quarters of the way to the target, arriving
     // in 16 steps.
     if (frame == 46)
-      BattleMotion_ApproachTargetFar(work->effect->actor,
-                                     work->effect->actors[0], 16, 0);
+      BattleMotion_ApproachTargetFar(work->effect->user,
+                                     work->effect->targets[0], 16, 0);
     Graphics_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
     draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
-                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
+    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                      BLITTER_MAX);
     draw[1] = (DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_2);
     if (frame > 16 && (frame & 15) == 0)
       work->transferValue += 0x01010101;
@@ -374,13 +373,13 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectArgument *effect) {
     // Only the first target is drawn.
     for (member = 0; member != 1; member++) {
       tick = frame - member * 8;
-      object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
+      object = GetBattleObjectSlotFar(work->effect->targets[member])->object;
       if (tick >= 0 && tick < 96) {
-        EFFECT_VIEW_FROM_CAMERA(camera);
+        ANIM_VIEW_FROM_CAMERA(camera);
         position.world.x = object->x;
         position.world.y = object->y;
         position.world.z = object->z;
-        EffectPosition_ProjectPoint(&position.world, &screen);
+        Projection_Point(&position.world, &screen);
         screen.x = anchor.x + shift;
         screen.y -= 24;
         if (tick <= 67) {
@@ -396,14 +395,13 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectArgument *effect) {
               Transform_ApplyYaw((64 - tick) << 9);
             }
             Transform_ApplyRoll(j * 0x5555);
-            EffectPosition_ProjectPoint(gBind_TriangleStrikeVertex,
-                                        &position.projected);
+            Projection_Point(gBind_TriangleStrikeVertex, &position.projected);
             point->velocityX = position.projected.x + screen.x;
             point->velocityY = position.projected.y + screen.y + 16;
           }
           for (j = 0; j != 3; j++) {
-            struct EffectStep *from = &work->particles[j + member * 32];
-            struct EffectStep *to = &work->particles[(j + 1) % 3 + member * 32];
+            struct Particle *from = &work->particles[j + member * 32];
+            struct Particle *to = &work->particles[(j + 1) % 3 + member * 32];
 
             size = 5 - tick / 16;
             for (k = 0; k != 24; k++) {
@@ -413,7 +411,7 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectArgument *effect) {
                   from->velocityY + k * (to->velocityY - from->velocityY) / 24;
 
               draw[0](canvas,
-                      work->sheet + gBattleEffect_FlareCells[size - 1] + 0x1000,
+                      work->sheet + gBattleAnim_FlareCells[size - 1] + 0x1000,
                       x - size, y - size, size * 2, size * 2);
             }
           }
@@ -425,10 +423,10 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectArgument *effect) {
         }
       }
     }
-    EFFECT_RELEASE_BLITTERS();
-    EFFECT_PRESENT_FRAME(work);
+    ANIM_RELEASE_BLITTERS();
+    ANIM_PRESENT_FRAME(work);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  BattleEffect_EndCanvasLayer();
+  Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);
+  BattleAnim_EndCanvasLayer();
 }

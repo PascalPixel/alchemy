@@ -24,17 +24,17 @@ s32 Shop_ServicePrice(s32 unitId, s32 serviceKind) {
 }
 
 /// Returns 1 when member `unitId` needs `serviceKind`: down (HP 0) for a
-/// revive, poisoned for a cure, haunted for an exorcism, any restraint bit set
+/// revive, poisoned for a cure, haunted for an exorcism, any curse bit set
 /// for removing a curse. Called by the member choice, its count, its highlight
 /// and its fee line.
 s32 Shop_CanServe(s32 unitId, s32 serviceKind) {
-  struct BattleUnit *unit = Unit_GetFar(unitId);
+  struct Unit *unit = Unit_GetFar(unitId);
   s32 eligible = 0;
 
   if ((serviceKind == SANCTUM_SERVICE_REVIVE && unit->hp <= 0) ||
       (serviceKind == SANCTUM_SERVICE_CURE_POISON && unit->poison != 0) ||
       (serviceKind == SANCTUM_SERVICE_EXORCISE && unit->haunt != 0) ||
-      (serviceKind == SANCTUM_SERVICE_REMOVE_CURSE && unit->restraint != 0)) {
+      (serviceKind == SANCTUM_SERVICE_REMOVE_CURSE && unit->curse != 0)) {
     eligible = 1;
   }
   return eligible;
@@ -328,14 +328,14 @@ s32 Sanctum_RunPartyService(void) {
 /// revive, poison or the haunting cleared, or every cursed item taken off
 /// (Unit_Calculate then rebuilds the curse bits from what is still equipped).
 /// With no cursed item equipped, removing a curse changes nothing, whatever
-/// restraint bits Shop_CanServe saw. Called by Sanctum_RunPartyService.
+/// curse bits Shop_CanServe saw. Called by Sanctum_RunPartyService.
 void BattleUnit_ResetStateByMode(s32 unitId, s32 serviceKind) {
-  struct BattleUnit *unit;
+  struct Unit *unit;
 
   unit = Unit_GetFar(unitId);
   if (serviceKind == SANCTUM_SERVICE_REVIVE) {
     unit->hp = unit->hpMax;
-    Unit_UpdateRatiosFar(unitId);
+    Unit_RecalculateGaugesFar(unitId);
   } else if (serviceKind == SANCTUM_SERVICE_CURE_POISON) {
     unit->poison = 0;
   } else if (serviceKind == SANCTUM_SERVICE_EXORCISE) {

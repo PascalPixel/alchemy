@@ -16,7 +16,7 @@
 /// Boulders drop along the row of targets, centred on it, and shatter into
 /// tumbling shards, hitting every target as each lands.
 ///
-/// Abilities: Spire, Clay Spire, Stone Spire (BATTLE_EFFECT_SPIRE).
+/// Abilities: Spire, Clay Spire, Stone Spire (BATTLE_ANIM_SPIRE).
 ///
 /// The boulders are work->particles, of which only y and its speed move; their
 /// shards are PARTICLES, SPIRE_SHARDS for each boulder. Each transfer clears
@@ -24,17 +24,17 @@
 ///
 /// effect: the targets; its variant picks the number of boulders
 ///         (gSpire_RockCounts: 1, 3 or 5).
-void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
+void BattleAnim_RunSpire(struct BattleAnimArgs *effect) {
   void **slots;
   void **cursor;
-  struct BattleEffectWork *work;
+  struct BattleAnimWork *work;
   void *canvas;
   DrawRectangle blit;
   s32 rockCount;
-  struct EffectPosition first;
-  struct EffectPosition last;
-  struct EffectStep *rock;
-  struct EffectStep *shard;
+  struct ScreenPoint first;
+  struct ScreenPoint last;
+  struct Particle *rock;
+  struct Particle *shard;
   s32 frame;
   s32 i;
   s32 j;
@@ -42,22 +42,22 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
   u32 width;
   u32 height;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
+  ANIM_GET_SLOTS(slots, cursor, work, canvas);
   work->effect = effect;
-  EFFECT_START_NARROW_CANVAS(1);
+  ANIM_START_NARROW_CANVAS(1);
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, work->sheet, 1, 1);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
-                      COMPOSITE_TRANSPARENT);
-  blit = EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS,
+                    COMPOSITE_TRANSPARENT);
+  blit = ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE);
   // BG2 is scrolled so that canvas column 64 is the middle of the row of
   // targets.
-  EffectPosition_ProjectScaledBattler(work->effect->actors[0], &first);
-  EffectPosition_ProjectScaledBattler(
-      work->effect->actors[work->effect->count - 1], &last);
+  Projection_ScaledUnit(work->effect->targets[0], &first);
+  Projection_ScaledUnit(work->effect->targets[work->effect->targetCount - 1],
+                        &last);
   first.x += (last.x - first.x) / 2;
   REG_BG2X = (64 - first.x) << 8;
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   // The rocks wait 64 pixels above the canvas until they drop.
   rockCount = gSpire_RockCounts[work->effect->variant];
   for (i = 0; i != rockCount; i++) {
@@ -70,7 +70,7 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
   // shard's tumbling speed and variant how far it has tumbled.
   for (i = 0; i != rockCount; i++) {
     for (j = 0; j != SPIRE_SHARDS; j++) {
-      struct EffectStep *shard = &PARTICLES[i * SPIRE_SHARDS + j];
+      struct Particle *shard = &PARTICLES[i * SPIRE_SHARDS + j];
 
       shard->x = (gSpire_ShardOffsets[j][SPIRE_SHARD_X] + gSpire_RockX[i])
                  << 16;
@@ -85,7 +85,7 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
   // shows 30 frames after that rock lands.
   for (frame = 0; frame != gSpire_DropFrames[rockCount - 1] + 80; frame++) {
     if (frame == gSpire_DropFrames[rockCount - 1] + 48)
-      EFFECT_SHOW_DAMAGE(SE_132);
+      ANIM_SHOW_DAMAGE(SE_132);
     for (i = 0; i != rockCount; i++) {
       rock = &work->particles[i];
       if (frame == gSpire_DropFrames[i] + SPIRE_FALL_FRAMES) {
@@ -118,7 +118,7 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
                    ((height = gSpire_ShardHeights[cell]) >> 1),
                width, height);
 #endif
-          EffectStep_AdvanceWithGravity2D(shard, 64, 0x4000);
+          Particle_AdvanceWithGravity2D(shard, 64, 0x4000);
           shard->variant += shard->z;
           if (shard->z > 1 && (frame & 1))
             shard->z--;
@@ -137,15 +137,15 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
           rock->y = 0x320000;
       }
       if (frame == gSpire_DropFrames[i] + SPIRE_FALL_FRAMES) {
-        EFFECT_FOR_EACH_TARGET(j, work->effect)
-          ObjectGroup_UpdateMembers(work->effect->actors[j], SPRITE_COLOR_WHITE,
-                                    POSE_DAMAGE, j, 8);
+        ANIM_FOR_EACH_TARGET(j, work->effect)
+        ObjectGroup_UpdateMembers(work->effect->targets[j], SPRITE_COLOR_WHITE,
+                                  POSE_DAMAGE, j, 8);
       }
     }
     Camera_ApplyShake(2, 4);
-    EFFECT_END_FRAME(work);
+    ANIM_END_FRAME(work);
   }
-  EFFECT_FINISH_CANVAS_ONE_BLITTER();
+  ANIM_FINISH_CANVAS_ONE_BLITTER();
 }
 
 #undef SPIRE_ROCK_WIDTH

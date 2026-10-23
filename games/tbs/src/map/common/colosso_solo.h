@@ -84,16 +84,16 @@ void Colosso_PlaceFriendsAtCheeringSpots(void) {
 /// the camera follows, with full HP and PP and no poison. The gauges are the
 /// battle's (0x4000 full; a character with any HP or PP left shows at least 1).
 void Colosso_ControlCharacterAlone(s32 id) {
-  struct BattleUnit *unit;
+  struct Unit *unit;
   s32 v;
   s32 t;
 
-  Party_RemoveActiveOwner(0);
-  Party_RemoveActiveOwner(1);
-  Party_RemoveActiveOwner(2);
-  Party_RemoveActiveOwner(3);
-  Party_RemoveActiveOwner(5);
-  Party_AddActiveOwner(id);
+  Party_RemoveMember(0);
+  Party_RemoveMember(1);
+  Party_RemoveMember(2);
+  Party_RemoveMember(3);
+  Party_RemoveMember(5);
+  Party_AddMember(id);
   gGameState.leaderLocalId = id;
   Engine_CameraFollowObjectEvent(id, 0);
   unit = Unit_Get(id);
@@ -404,7 +404,7 @@ void Colosso_OfferCheeringSpot(s32 mode, s32 guide, s32 stage) {
   if (mode != COLOSSO_GUIDE_NOTHING) {
     memberCount = GetPartyMemberCount();
     for (i = 0; i < memberCount; i++) {
-      members[i] = gGameState.activeOwners[i];
+      members[i] = gGameState.party[i];
     }
     if (memberCount <= 1) {
       Engine_ScriptSetMessage(MsgColossoDoYourBest);
@@ -427,20 +427,20 @@ void Colosso_OfferCheeringSpot(s32 mode, s32 guide, s32 stage) {
     if (answer == 0) {
       if (answer < memberCount) {
         for (i = 0; i < memberCount; i++) {
-          Party_RemoveActiveOwner((s8)members[i]);
+          Party_RemoveMember((s8)members[i]);
         }
       }
       for (i = 0; i < memberCount; i++) {
         if ((s8)members[i] != 0) {
-          Party_AddActiveOwner((s8)members[i]);
+          Party_AddMember((s8)members[i]);
         }
       }
       friendId = Menu_OpenCharacterSelector();
       for (i = 0; i < memberCount; i++) {
-        Party_RemoveActiveOwner((s8)members[i]);
+        Party_RemoveMember((s8)members[i]);
       }
       for (i = 0; i < memberCount; i++) {
-        Party_AddActiveOwner((s8)members[i]);
+        Party_AddMember((s8)members[i]);
       }
       if (friendId != -1) {
         goto L_main;
@@ -478,7 +478,7 @@ L_main:
   ObjectEvent_WalkToAndWait(friendId, guideX, guideZ - 48);
   ObjectEvent_WalkToAndWait(guide, guideX, behindZ);
   ObjectEvent_WalkToAndWait(guide, guideX, guideZ);
-  Party_RemoveActiveOwner(friendId);
+  Party_RemoveMember(friendId);
   GameFlag_Set(stage + COLOSSO_STAGE_CHEERED);
   objectEvent = ObjectEvent_GetById(friendId);
   column = objectEvent->x.fixed >> 20;

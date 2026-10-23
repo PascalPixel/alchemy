@@ -57,12 +57,12 @@ u32 Party_GetAverageLevel(void) {
   s32 partyIndex;
 
   totalLevels = 0;
-  partySize = Party_CountActiveOwners();
+  partySize = Party_CountMembers();
   if (partySize == 0) {
     return 0;
   }
   for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
-    totalLevels += Unit_Get(gGameState.activeOwners[partyIndex])->level;
+    totalLevels += Unit_Get(gGameState.party[partyIndex])->level;
   }
   totalLevels = totalLevels / partySize;
   return totalLevels;
@@ -72,9 +72,9 @@ u32 Party_GetAverageLevel(void) {
 /// characters in the game state, 0x80 to 0x85 the enemies of the current
 /// battle. Anything else, or an enemy outside a battle, is NULL. Nearly every
 /// bank calls it, through GAME.S as Unit_GetFar.
-struct BattleUnit *Unit_Get(u32 owner) {
-  struct BattleUnit *states;
-  struct BattleUnit *unit;
+struct Unit *Unit_Get(u32 owner) {
+  struct Unit *states;
+  struct Unit *unit;
 
   {
     void *caller = __builtin_return_address(0);
@@ -84,29 +84,29 @@ struct BattleUnit *Unit_Get(u32 owner) {
      * instructions differ in tbs-en. */
     asm("" : : "l"(caller));
   }
-  states = gGameState.owners;
+  states = gGameState.units;
   if (owner <= PIERS) {
     unit = &states[owner];
     return unit;
   }
-  if (owner - 0x80 < 6 && gBattleOwnerStates != NULL) {
-    unit = &((struct BattleUnit *)gBattleOwnerStates)[owner - 0x80];
+  if (owner - 0x80 < 6 && gEnemyUnits != NULL) {
+    unit = &((struct Unit *)gEnemyUnits)[owner - 0x80];
     return unit;
   }
   return NULL;
 }
 
 /// Returns the definition of enemy `selector`, in row `selector -
-/// ENEMY_CLASS_FIRST`; an id past the first 250 gives the first. Called by the
+/// ENEMY_ID_FIRST`; an id past the first 250 gives the first. Called by the
 /// battle code that builds and scores enemies (the formations, the enemy AI,
 /// the spoils) and by the element and weakness reads in this object.
-/// XXX: why enemy ids start at ENEMY_CLASS_FIRST is unknown; the encounter
+/// XXX: why enemy ids start at ENEMY_ID_FIRST is unknown; the encounter
 /// tables' enemy column would show whether the ids below it were meant for
 /// the characters.
 const u8 *Enemy_GetDefinition(s32 selector) {
   u32 recordIndex;
 
-  recordIndex = selector - ENEMY_CLASS_FIRST;
+  recordIndex = selector - ENEMY_ID_FIRST;
   // BUG: the table has 165 rows, but only rows past 249 are refused, so 165 to
   // 249 read the tables after it. BattleUnit_Set refuses them itself.
 #ifdef BUGFIX
@@ -145,13 +145,13 @@ void Runtime_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
 /// Recomputes a unit's stats from its base stats, equipment, set Djinn, class
 /// and battle stat levels, clamps each to its range and writes them to the
 /// unit. A change of maximum HP or PP keeps the unit's current HP and PP at
-/// the same fraction of it. Also sets the unit's curse restraint bits and
+/// the same fraction of it. Also sets the unit's curse curse bits and
 /// equipment bonuses. Called after anything that changes those inputs:
 /// equipping, setting Djinn, levelling up, a class change, battle stat
 /// changes.
 void Unit_Calculate(s32 owner) {
   struct StatWork *stats;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   s32 index, effectIndex, elementIndex;
   s32 value;
   s32 lighthouseLit;
@@ -179,8 +179,9 @@ void Unit_Calculate(s32 owner) {
 
   // A gauge is HP or PP as a fraction of its maximum, 0x4000 full. When
   // either no longer gives its stat to within 1 (the stat was written
-  // without Unit_UpdateRatios), both gauges are reset to full and the unit's HP
-  // and PP refilled, before the fractions carry over to the new maxima.
+  // without Unit_RecalculateGauges), both gauges are reset to full and the
+  // unit's HP and PP refilled, before the fractions carry over to the new
+  // maxima.
   if (UNIT_STAT_DIFF(unit->hpMax * unit->hpGauge / 0x4000, unit->hp) > 1 ||
       UNIT_STAT_DIFF(unit->ppMax * unit->ppGauge / 0x4000, unit->pp) > 1) {
     unit->hpGauge = 0x4000;
@@ -189,25 +190,25 @@ void Unit_Calculate(s32 owner) {
     unit->pp = unit->ppMax;
   }
 
-  // RESTRAINT_KEEP_BOUND keeps RESTRAINT_BOUND, and RESTRAINT_REMOVABLE clears
+  // CURSE_KEEP_BOUND keeps CURSE_BOUND, and CURSE_REMOVABLE clears
   // both again below.
-  unit->restraint &= ~(RESTRAINT_BOUND | RESTRAINT_CURSED_ITEM);
-  if (unit->restraint & RESTRAINT_KEEP_BOUND)
-    unit->restraint |= RESTRAINT_BOUND;
+  unit->curse &= ~(CURSE_BOUND | CURSE_ITEM);
+  if (unit->curse & CURSE_KEEP_BOUND)
+    unit->curse |= CURSE_BOUND;
   if (unit->ready)
     stats->turns++;
   unit->equipBonus[0] = 0;
   unit->equipBonus[1] = 0;
 
   // Apply additive equipment and set-Djinn bonuses before class scaling.
-  // An enemy (CLASS_INDEX_ENEMY) skips equipment, Djinn and class entirely.
-  if (unit->classIndex != CLASS_INDEX_ENEMY) {
+  // An enemy (CLASS_NONE) skips equipment, Djinn and class entirely.
+  if (unit->classId != CLASS_NONE) {
     for (index = 0; index < INVENTORY_SLOTS; index++) {
       if (!(unit->inventory[index] & INVENTORY_EQUIPPED))
         continue;
       stats->item = Item_GetDirect(unit->inventory[index]);
       if (stats->item->flags & ITEM_CURSED)
-        unit->restraint |= RESTRAINT_BOUND | RESTRAINT_CURSED_ITEM;
+        unit->curse |= CURSE_BOUND | CURSE_ITEM;
       /* FAKEMATCH(one-pass): the Attack bonus in a once-only block keeps the
        * Defense load after the item's second bonus; as plain statements, 1 of
        * 864 instructions differ in tbs-en. */
@@ -221,71 +222,71 @@ void Unit_Calculate(s32 owner) {
         stats->kind = effectKind;
         stats->amount = effectAmount;
         switch (stats->kind) {
-        case ITEM_EFFECT_NONE:
+        case EQUIP_EFFECT_NONE:
           break;
-        case ITEM_EFFECT_ADD_HP:
+        case EQUIP_EFFECT_ADD_HP:
           stats->hp += stats->amount;
           break;
-        case ITEM_EFFECT_ADD_HP_REGEN:
+        case EQUIP_EFFECT_ADD_HP_REGEN:
           stats->hpRegen += stats->amount;
           break;
-        case ITEM_EFFECT_ADD_PP:
+        case EQUIP_EFFECT_ADD_PP:
           stats->pp += stats->amount;
           break;
-        case ITEM_EFFECT_ADD_PP_REGEN:
+        case EQUIP_EFFECT_ADD_PP_REGEN:
           stats->ppRegen += stats->amount;
           break;
-        case ITEM_EFFECT_ADD_AGILITY:
+        case EQUIP_EFFECT_ADD_AGILITY:
           stats->agi += stats->amount;
           break;
-        case ITEM_EFFECT_ADD_LUCK:
+        case EQUIP_EFFECT_ADD_LUCK:
           stats->luck += stats->amount;
           break;
-        case ITEM_EFFECT_ADD_VENUS_POWER:
+        case EQUIP_EFFECT_ADD_VENUS_POWER:
           stats->element[0][0] += stats->amount;
           break;
-        case ITEM_EFFECT_ADD_MERCURY_POWER:
+        case EQUIP_EFFECT_ADD_MERCURY_POWER:
           stats->element[1][0] += stats->amount;
           break;
-        case ITEM_EFFECT_ADD_MARS_POWER:
+        case EQUIP_EFFECT_ADD_MARS_POWER:
           stats->element[2][0] += stats->amount;
           break;
-        case ITEM_EFFECT_ADD_JUPITER_POWER:
+        case EQUIP_EFFECT_ADD_JUPITER_POWER:
           stats->element[3][0] += stats->amount;
           break;
-        case ITEM_EFFECT_ADD_VENUS_RESIST:
+        case EQUIP_EFFECT_ADD_VENUS_RESIST:
           stats->element[0][1] += stats->amount;
           break;
-        case ITEM_EFFECT_ADD_MERCURY_RESIST:
+        case EQUIP_EFFECT_ADD_MERCURY_RESIST:
           stats->element[1][1] += stats->amount;
           break;
-        case ITEM_EFFECT_ADD_MARS_RESIST:
+        case EQUIP_EFFECT_ADD_MARS_RESIST:
           stats->element[2][1] += stats->amount;
           break;
-        case ITEM_EFFECT_ADD_JUPITER_RESIST:
+        case EQUIP_EFFECT_ADD_JUPITER_RESIST:
           stats->element[3][1] += stats->amount;
           break;
-        case ITEM_EFFECT_ADD_UNLEASH_CHANCE:
+        case EQUIP_EFFECT_ADD_UNLEASH_CHANCE:
           unit->equipBonus[0] += stats->amount;
           break;
-        case ITEM_EFFECT_24:
+        case EQUIP_EFFECT_24:
           unit->equipBonus[1] += stats->amount;
           break;
-        case ITEM_EFFECT_CURSE_REMOVABLE:
-          unit->restraint |= RESTRAINT_REMOVABLE;
+        case EQUIP_EFFECT_CURSE_REMOVABLE:
+          unit->curse |= CURSE_REMOVABLE;
           break;
-        case ITEM_EFFECT_ADD_TURNS:
+        case EQUIP_EFFECT_ADD_TURNS:
           stats->turns += stats->amount;
           break;
         }
       }
     }
-    if (unit->restraint & RESTRAINT_REMOVABLE)
-      unit->restraint &= ~(RESTRAINT_REMOVABLE | RESTRAINT_BOUND);
+    if (unit->curse & CURSE_REMOVABLE)
+      unit->curse &= ~(CURSE_REMOVABLE | CURSE_BOUND);
 
     // Only set Djinn contribute their stat bonuses.
     for (elementIndex = 0; elementIndex < ELEMENT_COUNT; elementIndex++) {
-      u32 activeDjinn = unit->djinnActive[elementIndex];
+      u32 activeDjinn = unit->djinnSet[elementIndex];
 
       for (index = 0; index < DJINN_PER_ELEMENT; index++) {
         if (activeDjinn & (1 << index)) {
@@ -305,7 +306,7 @@ void Unit_Calculate(s32 owner) {
     // The class's multipliers are in tenths: 10 keeps a stat as it is
     {
       struct ClassDefinition *classDefinition =
-          Class_GetDefinition(unit->classIndex);
+          Class_GetDefinition(unit->classId);
 
       stats->hp = stats->hp * classDefinition->hp / 10;
       stats->pp = stats->pp * classDefinition->pp / 10;
@@ -315,8 +316,8 @@ void Unit_Calculate(s32 owner) {
       stats->luck = stats->luck * classDefinition->luck / 10;
     }
 
-    // Then the equipment's multiplying effects, ITEM_EFFECT_SCALE_HP to
-    // ITEM_EFFECT_SCALE_LUCK, also in tenths, applied after the class
+    // Then the equipment's multiplying effects, EQUIP_EFFECT_SCALE_HP to
+    // EQUIP_EFFECT_SCALE_LUCK, also in tenths, applied after the class
     for (index = 0; index < INVENTORY_SLOTS; index++) {
       if (!(unit->inventory[index] & INVENTORY_EQUIPPED))
         continue;
@@ -325,32 +326,33 @@ void Unit_Calculate(s32 owner) {
         effectKind = stats->item->effects[effectIndex].kind;
         effectAmount = stats->item->effects[effectIndex].amount;
         stats->kind = effectKind;
-        effectKind -= ITEM_EFFECT_SCALE_HP;
+        effectKind -= EQUIP_EFFECT_SCALE_HP;
         stats->amount = effectAmount;
-        // The kind less ITEM_EFFECT_SCALE_HP, as the switch table begins there.
+        // The kind less EQUIP_EFFECT_SCALE_HP, as the switch table begins
+        // there.
         switch (effectKind) {
-        case ITEM_EFFECT_SCALE_HP - ITEM_EFFECT_SCALE_HP:
+        case EQUIP_EFFECT_SCALE_HP - EQUIP_EFFECT_SCALE_HP:
           stats->hp = stats->hp * stats->amount / 10;
           break;
-        case ITEM_EFFECT_SCALE_HP_REGEN - ITEM_EFFECT_SCALE_HP:
+        case EQUIP_EFFECT_SCALE_HP_REGEN - EQUIP_EFFECT_SCALE_HP:
           stats->hpRegen = stats->hpRegen * stats->amount / 10;
           break;
-        case ITEM_EFFECT_SCALE_PP - ITEM_EFFECT_SCALE_HP:
+        case EQUIP_EFFECT_SCALE_PP - EQUIP_EFFECT_SCALE_HP:
           stats->pp = stats->pp * stats->amount / 10;
           break;
-        case ITEM_EFFECT_SCALE_PP_REGEN - ITEM_EFFECT_SCALE_HP:
+        case EQUIP_EFFECT_SCALE_PP_REGEN - EQUIP_EFFECT_SCALE_HP:
           stats->ppRegen = stats->ppRegen * stats->amount / 10;
           break;
-        case ITEM_EFFECT_SCALE_ATTACK - ITEM_EFFECT_SCALE_HP:
+        case EQUIP_EFFECT_SCALE_ATTACK - EQUIP_EFFECT_SCALE_HP:
           stats->atk = stats->atk * stats->amount / 10;
           break;
-        case ITEM_EFFECT_SCALE_DEFENSE - ITEM_EFFECT_SCALE_HP:
+        case EQUIP_EFFECT_SCALE_DEFENSE - EQUIP_EFFECT_SCALE_HP:
           stats->def = stats->def * stats->amount / 10;
           break;
-        case ITEM_EFFECT_SCALE_AGILITY - ITEM_EFFECT_SCALE_HP:
+        case EQUIP_EFFECT_SCALE_AGILITY - EQUIP_EFFECT_SCALE_HP:
           stats->agi = stats->agi * stats->amount / 10;
           break;
-        case ITEM_EFFECT_SCALE_LUCK - ITEM_EFFECT_SCALE_HP:
+        case EQUIP_EFFECT_SCALE_LUCK - EQUIP_EFFECT_SCALE_HP:
           stats->luck = stats->luck * stats->amount / 10;
           break;
         }
@@ -365,16 +367,16 @@ void Unit_Calculate(s32 owner) {
   stats->agi = stats->agi * (unit->agilityStage + 8) / 8;
   for (index = 0; index < ELEMENT_COUNT; index++)
     stats->element[index][0] +=
-        (unit->elementLevels[index] * unit->elementLevels[index] +
-         unit->elementLevels[index]) *
+        (unit->summonBoost[index] * unit->summonBoost[index] +
+         unit->summonBoost[index]) *
         5;
   for (index = 0; index < ELEMENT_COUNT; index++)
     stats->element[index][1] += unit->resistanceStage * 20;
 
-  if (unit->classIndex != CLASS_INDEX_ENEMY) {
+  if (unit->classId != CLASS_NONE) {
     lighthouseLit = 0;
     // Faster PP recovery once the character's own element's lighthouse is lit
-    switch (unit->classId) {
+    switch (unit->id) {
     case ISAAC:
       lighthouseLit = GameFlag_Test(FLAG_VENUS_LIGHTHOUSE_LIT);
       break;
@@ -411,7 +413,7 @@ void Unit_Calculate(s32 owner) {
   unit->def = stats->def;
   unit->agi = stats->agi;
   unit->luck = stats->luck;
-  unit->actionEntryCount = stats->turns;
+  unit->actionsPerRound = stats->turns;
   unit->hpRegen = stats->hpRegen;
   unit->ppRegen = stats->ppRegen;
   for (index = 0; index < ELEMENT_COUNT; index++) {
@@ -421,7 +423,7 @@ void Unit_Calculate(s32 owner) {
 
   // A character's maximum HP and PP stop at 1999, an enemy's at 9999.
   statLimit = 9999;
-  if (unit->classIndex)
+  if (unit->classId)
     statLimit = 1999;
 
   previousMaximum = unit->hpMax;
@@ -450,23 +452,23 @@ void Unit_Calculate(s32 owner) {
 }
 
 /// Sets FLAG_LURE_CAP when any party member has the Lure Cap (the one item
-/// with ITEM_EFFECT_LURE) equipped, and clears it otherwise. Called on entering
-/// a map (Map_ResetFlagsOnEnter, Map_Run) and at the end of a field
+/// with EQUIP_EFFECT_LURE) equipped, and clears it otherwise. Called on
+/// entering a map (Map_ResetFlagsOnEnter, Map_Run) and at the end of a field
 /// script, so the encounter rate follows the cap.
 void GameFlag_RefreshLureCap(void) {
   s32 partySize;
   s32 partyIndex;
 
   GameFlag_ClearBit(FLAG_LURE_CAP);
-  partySize = Party_CountActiveOwners();
+  partySize = Party_CountMembers();
   for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
-    struct BattleUnit *unit;
+    struct Unit *unit;
     s32 inventorySlot;
 
-    unit = Unit_Get(gGameState.activeOwners[partyIndex]);
+    unit = Unit_Get(gGameState.party[partyIndex]);
     for (inventorySlot = 0; inventorySlot < INVENTORY_SLOTS; inventorySlot++) {
       if (unit->inventory[inventorySlot] & INVENTORY_EQUIPPED) {
-        struct ItemEffect *effect;
+        struct EquipEffect *effect;
         s32 effectIndex;
 
         effect = Item_GetDirect(unit->inventory[inventorySlot])->effects;
@@ -475,7 +477,7 @@ void GameFlag_RefreshLureCap(void) {
 
           effectKind = effect->kind;
           effect++;
-          if (effectKind == ITEM_EFFECT_LURE) {
+          if (effectKind == EQUIP_EFFECT_LURE) {
             GameFlag_SetBit(FLAG_LURE_CAP);
           }
         }
@@ -587,7 +589,7 @@ void GameState_InitializeDefaults(void) {
   gGameState.firstShortcut = 0;
   gGameState.secondShortcut = 0;
   gGameState.leaderLocalId = 0;
-  Party_AddActiveOwner(0);
+  Party_AddMember(0);
   gGameState.coins = 0;
   gGameState.messageSpeed = 1;
   gGameState.speech = 1;
@@ -651,7 +653,7 @@ void Party_EndChildhood(void) {
   GameFlag_SetBit(FLAG_KEEP_MUSIC);
 
   for (owner = 0; owner <= 1; owner++) {
-    struct BattleUnit *unit = Unit_Get(owner);
+    struct Unit *unit = Unit_Get(owner);
     s32 slot;
 
     unit->hp = unit->hpMax;
@@ -685,11 +687,11 @@ void Party_EndChildhood(void) {
 void Party_RestoreHpPp(s32 cureConditions) {
   s32 partySize;
   s32 partyIndex;
-  struct BattleUnit *unit;
+  struct Unit *unit;
 
-  partySize = Party_CountActiveOwners();
+  partySize = Party_CountMembers();
   for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
-    unit = Unit_Get(gGameState.activeOwners[partyIndex]);
+    unit = Unit_Get(gGameState.party[partyIndex]);
 
     unit->hp = unit->hpMax;
     unit->pp = unit->ppMax;
@@ -711,11 +713,11 @@ void Party_RestorePpOfLitElements(void) {
   u8 ownerId;
   s32 elementGroup;
   s32 restorePp;
-  struct BattleUnit *unit;
+  struct Unit *unit;
 
-  partySize = Party_CountActiveOwners();
+  partySize = Party_CountMembers();
   for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
-    ownerId = gGameState.activeOwners[partyIndex];
+    ownerId = gGameState.party[partyIndex];
     elementGroup = gCharacter_ElementGroupTable[ownerId];
     restorePp = 0;
     if (elementGroup == 0) {
@@ -741,14 +743,14 @@ void Party_RestorePpOfLitElements(void) {
 }
 
 /// Unused: reserved entry; keeps its place in the far-call table.
-UNUSED void Unit_RatioNoOp(void) {}
+UNUSED void Unit_GaugeNoOp(void) {}
 
 /// Recomputes the HP and PP gauges of `owner` from its current HP and PP, so
 /// that Unit_Calculate keeps the same fractions. Called after anything that
 /// writes HP or PP directly: Unit_AddHp, the inn, the sanctum, item use,
 /// battle.
-void Unit_UpdateRatios(s32 owner) {
-  struct BattleUnit *unit;
+void Unit_RecalculateGauges(s32 owner) {
+  struct Unit *unit;
 
   unit = Unit_Get(owner);
   Unit_UpdateGauges(unit);
@@ -770,7 +772,7 @@ static inline s32 Unit_ClampGaugeValue(s32 value, s32 maximum) {
 
 /// Sets the unit's HP, clamped to 0..hpMax, and recomputes its HP and PP
 /// gauges. Called by BattleObject_DestroyTemporaryObject.
-void Unit_SetHp(struct BattleUnit *unit, s32 hp) {
+void Unit_SetHp(struct Unit *unit, s32 hp) {
   s32 clamped;
 
   clamped = Unit_ClampGaugeValue(hp, unit->hpMax);
@@ -780,7 +782,7 @@ void Unit_SetHp(struct BattleUnit *unit, s32 hp) {
 
 /// Sets the unit's PP, clamped to 0..ppMax, and recomputes its HP and PP
 /// gauges. Only GAME.S's bare veneer reaches it; nothing calls it by name.
-void Unit_SetPp(struct BattleUnit *unit, s32 pp) {
+void Unit_SetPp(struct Unit *unit, s32 pp) {
   s32 clamped;
 
   clamped = Unit_ClampGaugeValue(pp, unit->ppMax);
@@ -792,7 +794,7 @@ void Unit_SetPp(struct BattleUnit *unit, s32 pp) {
 /// gauges and returns the new HP. Called by battle's round end, poison and
 /// regeneration, and by the field's damage floors and status damage.
 s32 Unit_AddHp(s32 owner, s32 delta) {
-  struct BattleUnit *unit = Unit_Get(owner);
+  struct Unit *unit = Unit_Get(owner);
   s32 currentHp = unit->hp;
   s32 maximumHp = unit->hpMax;
   s32 value = currentHp + delta;
@@ -800,7 +802,7 @@ s32 Unit_AddHp(s32 owner, s32 delta) {
 
   result = Unit_ClampGaugeValue(value, maximumHp);
   unit->hp = result;
-  Unit_UpdateRatios(owner);
+  Unit_RecalculateGauges(owner);
   return unit->hp;
 }
 
@@ -809,7 +811,7 @@ s32 Unit_AddHp(s32 owner, s32 delta) {
 /// in battle and from the menu, by PP recovery at the end of a battle round,
 /// and by the debug menu.
 s16 Unit_AddPp(s32 owner, s32 delta) {
-  struct BattleUnit *unit = Unit_Get(owner);
+  struct Unit *unit = Unit_Get(owner);
   s32 currentPp = unit->pp;
   s32 maximumPp = unit->ppMax;
   s32 value = currentPp + delta;
@@ -817,7 +819,7 @@ s16 Unit_AddPp(s32 owner, s32 delta) {
 
   result = Unit_ClampGaugeValue(value, maximumPp);
   unit->pp = result;
-  Unit_UpdateRatios(owner);
+  Unit_RecalculateGauges(owner);
   return unit->pp;
 }
 

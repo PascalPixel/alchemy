@@ -35,7 +35,7 @@ void FieldScript_PrepareObjectAndApplyValueFar(s32 event_id, s32 value);
 void FieldScript_PrepareTwoObjectsAndApplyFar(s32 first, s32 second);
 /// Takes a character out of the party with HP and PP restored and poison
 /// cured; if nobody left standing has HP, the leader keeps 1.
-void Party_RemoveOwnerRestoredFar(s32 owner);
+void Party_RemoveMemberRestoredFar(s32 owner);
 /// Gives an item to the first member with room and says so, letting the
 /// player drop something when every bag is full. Returns the member who got
 /// it, or -1 when it was left behind.

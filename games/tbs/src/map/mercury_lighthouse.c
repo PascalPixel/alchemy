@@ -2080,7 +2080,7 @@ static void MercuryLighthouse_InspectHealingFountain(void) {
   else
     Engine_MessageShowCentered(
         MSGNO(MsgMercuryLighthouseFountainFlowsWithWater), 1);
-  if (PartyInventory_FindOwner(ITEM_EMPTY_BOTTLE) != -1) {
+  if (PartyInventory_FindMember(ITEM_EMPTY_BOTTLE) != -1) {
     // The field loop handles this menu request after the inspection ends.
     s16 *menuRequest = &((struct FieldWork *)gFieldWork)->menu;
     s32 enabled = 1;
@@ -2098,7 +2098,7 @@ static void MercuryLighthouse_FillHermesWaterBottle(void) {
   Engine_AudioPlayCue(MUS_TREASURE_FOUND);
   Engine_ItemShowFound(ITEM_HERMES_WATER, 3);
   MercuryLighthouse_ReplaceInventoryItem(ITEM_EMPTY_BOTTLE, ITEM_HERMES_WATER);
-  UiWork_PushValueSlot(PartyInventory_FindOwner(ITEM_HERMES_WATER), 1);
+  UiWork_PushValueSlot(PartyInventory_FindMember(ITEM_HERMES_WATER), 1);
   UiWork_PushValueSlot(ITEM_HERMES_WATER, 2);
   Engine_MessageShowCentered(MSGNO(MsgMercuryLighthouseIsaacGot), 1);
   Engine_GameFlagSet(FLAG_HERMES_WATER_TAKEN);
@@ -2831,8 +2831,8 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
   // "The Adept Mia joined your party!" Fizz, a Mercury Djinni, comes with
   // her and is set; her stats are worked out again.
   Engine_GameFlagSet(FLAG_DJINNI(DJINNI_FIZZ));
-  Djinn_AddToOwner(MIA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_FIZZ));
-  Djinn_Activate(MIA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_FIZZ));
+  Djinn_Give(MIA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_FIZZ));
+  Djinn_Set(MIA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_FIZZ));
   Unit_Calculate(MIA);
   Engine_ObjectEventSetAnimation(MIA, ANIMATION_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -2961,7 +2961,7 @@ static void MercuryLighthouse_MiaCastsPlyOnEntrance(void) {
 
 /// Replaces one inventory item in the owner and slot that contain it.
 static void MercuryLighthouse_ReplaceInventoryItem(s32 oldItem, s32 newItem) {
-  s32 owner = PartyInventory_FindOwner(oldItem);
+  s32 owner = PartyInventory_FindMember(oldItem);
 
   if (owner != -1) {
     s32 inventorySlot = Inventory_Find(owner, oldItem);

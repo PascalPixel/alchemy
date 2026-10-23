@@ -66,7 +66,7 @@ is doing:
 | --- | --- | --- |
 | 0 | the field setup, which clears the block | on the field |
 | 1 | `UiWork_Initialize` | in battle: typing is faster, and cleared rows near the bottom keep the battle's tile |
-| 2 | `UiText_PrepareMessageWork`, while it decodes | a battle message is being decoded |
+| 2 | `BattleMessage_Open`, while it decodes | a battle message is being decoded |
 
 `mode` is set while Mind Read, the Psynergy that shows what a person is
 thinking, shows someone's thoughts ([Drawing text](#drawing-text)).
@@ -263,7 +263,7 @@ position in 1/256 pixels, the index of its next code, the countdowns for
 pauses and for the wait after each character, and its style.
 `UiText_QueueRenderEntries` takes a free channel and returns `NULL` when all
 three are busy; the channel stays taken until its window closes.
-`UiText_StartBattleMessage` also reuses a channel whose window has finished,
+`BattleMessage_Continue` also reuses a channel whose window has finished,
 continuing below its last line and scrolling once both lines are used.
 
 `UiWork_ProcessAll` is the window system's [task](../../glossary.md#task). Both setups schedule it in
@@ -345,7 +345,7 @@ a page's wait is dropped.
 The canvas (`UI_WINDOW_TEXT_CANVAS`) draws into bitmap tiles at
 `UI_CANVAS_VRAM`, through `glyph_arm.c`. It is 120 tiles from
 `UI_CANVAS_FIRST_TILE`, enough for the interior of a full-width window six
-tiles tall, and its tiles run down columns; `UiText_PrepareMessageWork` opens
+tiles tall, and its tiles run down columns; `BattleMessage_Open` opens
 it as a frameless window over the bottom rows for battle messages. Every canvas window maps the
 same tiles. Canvas lines are 13 pixels apart, and from the second line on the
 canvas scrolls up instead.

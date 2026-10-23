@@ -10,7 +10,7 @@
 #include "owner_value.h"
 #include "static_assert.h"
 
-struct BattleUnit;
+struct Unit;
 
 /// A character's definition: the growth curves of its stats, its element
 /// bonus, starting level and starting equipment.
@@ -63,7 +63,7 @@ struct ClassDefinition {
   u8 padding[2];                     ///< padding in classes.tsv
   struct ClassAbility abilities[16]; ///< the Psynergy the class teaches
   /// [0] to [2]: the ability effects the class is weak to
-  /// (BattleTarget_IsWeakToEffect); [3] is 0 in every row and not read.
+  /// (BattleAbility_IsWeakToEffect); [3] is 0 in every row and not read.
   u8 weakEffects[4];
 };
 
@@ -86,21 +86,21 @@ struct DjinnDefinition {
 
 /// EnemyDefinition.targetStrategy: a single-target attacker favours the
 /// target with the most HP left, the most maximum HP, or no one
-/// (BattleTarget_SelectForAction). The same column steers
-/// BattleCommand_SelectAutomatic: with any strategy but STRATEGY_MOST_HP an
-/// enemy skips Psynergy it lacks the PP for, and with STRATEGY_RANDOM any
-/// Psynergy while sealed; with STRATEGY_MOST_HP, an enemy that picks an item
-/// place with no items left still commands COMMAND_ITEM.
+/// (BattleAI_ChooseTarget). The same column steers
+/// BattleAI_ChooseAction: with any strategy but TARGET_STRATEGY_MOST_HP an
+/// enemy skips Psynergy it lacks the PP for, and with TARGET_STRATEGY_RANDOM
+/// any Psynergy while sealed; with TARGET_STRATEGY_MOST_HP, an enemy that picks
+/// an item place with no items left still commands COMMAND_ITEM.
 enum EnemyTargetStrategy {
-  STRATEGY_MOST_HP = 0,
-  STRATEGY_MOST_MAX_HP = 1,
-  STRATEGY_RANDOM = 2
+  TARGET_STRATEGY_MOST_HP = 0,
+  TARGET_STRATEGY_MOST_MAX_HP = 1,
+  TARGET_STRATEGY_RANDOM = 2
 };
 
-/// EnemyDefinition.actionStrategy: how BattleCommand_SelectAutomatic picks a
+/// EnemyDefinition.actionStrategy: how BattleAI_ChooseAction picks a
 /// place in the enemy's eight actions. The first three roll against
-/// gBattleCommand_SelectionWeights; the next two remember the place in
-/// BattleUnit.rewards. No row of enemies.tsv has a strategy past
+/// gBattleAI_ActionWeights; the next two remember the place in
+/// Unit.aiActionIndex. No row of enemies.tsv has a strategy past
 /// ACTION_STRATEGY_RANDOM_START.
 enum EnemyActionStrategy {
   ACTION_STRATEGY_EVEN,           ///< 32 in 256 each
@@ -128,25 +128,25 @@ struct EnemyDefinition {
   u16 def;
   u16 agi;
   u8 luck;
-  u8 turns;   ///< actions a round (BattleUnit.baseActionCount)
-  u8 hpRegen; ///< HP restored at each round's end (BattleUnit.baseHpRegen)
-  u8 ppRegen; ///< PP restored at each round's end (BattleUnit.basePpRegen)
+  u8 turns;   ///< actions a round (Unit.baseActionCount)
+  u8 hpRegen; ///< HP restored at each round's end (Unit.baseHpRegen)
+  u8 ppRegen; ///< PP restored at each round's end (Unit.basePpRegen)
   ///@}
   u8 reservedBeforeRewards[2]; ///< reserved in enemies.tsv: 0 in every row
-  u32 rewards;                 ///< 0 in every row; copied to BattleUnit.rewards
+  u32 aiActionIndex;           ///< 0 in every row; copied to Unit.aiActionIndex
   u8 reservedAfterRewards[4];  ///< reserved in enemies.tsv: 0 in every row
   u16 items[4];                ///< items the enemy carries, 0 for none
   u8 counts[4];                ///< how many of each item it carries
   u8 elementPreset;            ///< row of gEnemy_ElementPresetTable, 0 to 43
   /// Whom a single-target attack favours: an enum EnemyTargetStrategy.
   s8 targetStrategy;
-  /// How the action is chosen from `actions` (BattleCommand_SelectAutomatic):
+  /// How the action is chosen from `actions` (BattleAI_ChooseAction):
   /// an enum EnemyActionStrategy.
   s8 actionStrategy;
   u8 itemActions; ///< one bit per place in `actions`: use an item held instead
-  u16 actions[8]; ///< the abilities the enemy chooses from
+  u16 abilities[8]; ///< the abilities the enemy chooses from
   /// [0] to [2]: the ability effects the enemy is weak to
-  /// (BattleTarget_IsWeakToEffect); [3] is 0 in every row.
+  /// (BattleAbility_IsWeakToEffect); [3] is 0 in every row.
   u8 weakEffects[4];
   u16 coins; ///< coins won
   s16 item;  ///< the item it may leave, 0 for none
@@ -188,10 +188,10 @@ STATIC_ASSERT(offsetof(struct DjinnDefinition, abilityId) == 0);
 STATIC_ASSERT(offsetof(struct DjinnDefinition, reservedAfterAbility) == 2);
 STATIC_ASSERT(offsetof(struct DjinnDefinition, hp) == 4);
 STATIC_ASSERT(sizeof(struct EnemyDefinition) == 0x54);
-STATIC_ASSERT(offsetof(struct EnemyDefinition, rewards) == 0x20);
+STATIC_ASSERT(offsetof(struct EnemyDefinition, aiActionIndex) == 0x20);
 STATIC_ASSERT(offsetof(struct EnemyDefinition, actionStrategy) == 0x36);
 STATIC_ASSERT(offsetof(struct EnemyDefinition, itemActions) == 0x37);
-STATIC_ASSERT(offsetof(struct EnemyDefinition, actions) == 0x38);
+STATIC_ASSERT(offsetof(struct EnemyDefinition, abilities) == 0x38);
 STATIC_ASSERT(offsetof(struct EnemyDefinition, coins) == 0x4c);
 STATIC_ASSERT(offsetof(struct EnemyDefinition, experience) == 0x52);
 STATIC_ASSERT(sizeof(struct LevelUpResult) == 0x10);

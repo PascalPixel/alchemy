@@ -6,7 +6,7 @@
 
 // The canvas blitters, and the 48-frame wall effects.
 
-/// The mirrored wall's modes (BattleEffect_RunMirroredWall), each named for the
+/// The mirrored wall's modes (BattleAnim_RunMirroredWall), each named for the
 /// effect that plays it.
 enum MirroredWallMode {
   MIRRORED_WALL_SPASM,   ///< actual size, a gentle shake for 32 frames
@@ -22,74 +22,72 @@ enum MirroredWallMode {
 /// lights and the Djinn beams to the casting impacts and Ragnarok, usually
 /// with effect->side as `flip` so pictures face the targets. Builds the
 /// blitters in heap slots HEAP_SLOT_RAM_CODE and HEAP_SLOT_RAM_CODE_2,
-/// which the caller frees (EFFECT_RELEASE_BLITTERS).
+/// which the caller frees (ANIM_RELEASE_BLITTERS).
 ///
 /// flip : nonzero draws mirrored.
 /// out  : [0] keeps the higher colour index, [1] adds the colours (up to 63).
-void BattleEffect_FetchRectangleBlitters(s32 flip, BlitterPair out) {
+void BattleAnim_FetchRectangleBlitters(s32 flip, BlitterPair out) {
   if (flip == 0) {
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
     out[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
-                        COMPOSITE_ADDITIVE);
+    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS,
+                      COMPOSITE_ADDITIVE);
     out[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
   } else {
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
-                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
+    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                      BLITTER_MAX);
     out[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
-                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
-                        COMPOSITE_ADDITIVE);
+    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                      COMPOSITE_ADDITIVE);
     out[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
   }
 }
 
 /// The wall rises wide and shakes the screen hard.
 ///
-/// Abilities: Berserk (BATTLE_EFFECT_BERSERK).
-void BattleEffect_RunBerserk(struct BattleEffectArgument *effect) {
-  BattleEffect_RunMirroredWall(effect, MIRRORED_WALL_BERSERK);
+/// Abilities: Berserk (BATTLE_ANIM_BERSERK).
+void BattleAnim_RunBerserk(struct BattleAnimArgs *effect) {
+  BattleAnim_RunMirroredWall(effect, MIRRORED_WALL_BERSERK);
 }
 /// The wall rises with a long gentle shake and the recovery sound.
 ///
-/// Abilities: Spasm (BATTLE_EFFECT_SPASM).
-void BattleEffect_RunSpasm(struct BattleEffectArgument *effect) {
-  BattleEffect_RunMirroredWall(effect, MIRRORED_WALL_SPASM);
+/// Abilities: Spasm (BATTLE_ANIM_SPASM).
+void BattleAnim_RunSpasm(struct BattleAnimArgs *effect) {
+  BattleAnim_RunMirroredWall(effect, MIRRORED_WALL_SPASM);
 }
 /// A wide wall of fire rises without shaking the screen.
 ///
-/// Abilities: Recovery (BATTLE_EFFECT_RECOVERY).
-void BattleEffect_RunRecovery(struct BattleEffectArgument *effect) {
-  BattleEffect_RunMirroredWall(effect, MIRRORED_WALL_RECOVERY);
+/// Abilities: Recovery (BATTLE_ANIM_RECOVERY).
+void BattleAnim_RunRecovery(struct BattleAnimArgs *effect) {
+  BattleAnim_RunMirroredWall(effect, MIRRORED_WALL_RECOVERY);
 }
 /// Raises a symmetrical wall (the EarthWall images) at the first target's
 /// feet for 48 frames; the target glows and the battle shows the result on
 /// frame 24.
 ///
-/// Called by BattleEffect_RunBerserk, BattleEffect_RunSpasm and
-/// BattleEffect_RunRecovery. Loads its colours over the first 64 of the
+/// Called by BattleAnim_RunBerserk, BattleAnim_RunSpasm and
+/// BattleAnim_RunRecovery. Loads its colours over the first 64 of the
 /// background palette, sets BG2PA and BG2X so the wall stands on the target,
 /// and sets work->shakeFrames. Frees its blitters and closes the canvas
 /// layer before it returns.
 ///
 /// mode: the wall's width, shake and colours (enum MirroredWallMode).
-void BattleEffect_RunMirroredWall(struct BattleEffectArgument *effect,
-                                  s32 mode) {
+void BattleAnim_RunMirroredWall(struct BattleAnimArgs *effect, s32 mode) {
   void **cursor;
-  struct BattleEffectWork *work;
+  struct BattleAnimWork *work;
   void *canvas;
   u8 *palette;
   s32 x;
-  struct EffectPosition screenPosition;
+  struct ScreenPoint screenPosition;
   BlitterPair draw;
   void **slots;
   s32 frame;
   s32 cell;
 
   cursor = gBattleAnimWork;
-  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
+  ANIM_GET_WORK_AND_CANVAS(cursor, work, canvas);
   work->effect = effect;
-  BattleEffect_StartCanvasLayer(0);
+  BattleAnim_StartCanvasLayer(0);
 
   // Setup. The EarthWall images, coloured with the Mars Djinn palette (the
   // Fireball palette for Recovery), each palette replacing the one before.
@@ -106,7 +104,7 @@ void BattleEffect_RunMirroredWall(struct BattleEffectArgument *effect,
 
   // Scroll BG2 so the canvas's x 64 is on the target. Berserk and Recovery
   // show the canvas 1.25 times as wide, so the target's x is scaled by 4/5.
-  EffectPosition_ProjectBattler(work->effect->actors[0], &screenPosition);
+  Projection_Unit(work->effect->targets[0], &screenPosition);
   if (mode == MIRRORED_WALL_SPASM) {
     REG_BG2PA = Q_8_8(1);
     x = 64 - screenPosition.x;
@@ -119,14 +117,14 @@ void BattleEffect_RunMirroredWall(struct BattleEffectArgument *effect,
 
   // The left half as drawn, the right half mirrored, keeping the higher
   // colour.
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
   slots = gHeapSlots;
   draw[0] = slots[HEAP_SLOT_RAM_CODE];
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
-                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                    BLITTER_MAX);
   draw[1] = slots[HEAP_SLOT_RAM_CODE_2];
   // Trails keep half a frame.
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
 
   // Recovery sets no shake but still applies Camera_ApplyShake's 16 below,
   // which does nothing while shakeFrames is 0.
@@ -145,14 +143,14 @@ void BattleEffect_RunMirroredWall(struct BattleEffectArgument *effect,
     // Recovery, red otherwise.
     if (frame == 0) {
       if (mode == MIRRORED_WALL_RECOVERY)
-        ObjectGroup_UpdateMembers(work->effect->actors[0], SPRITE_COLOR_WHITE,
+        ObjectGroup_UpdateMembers(work->effect->targets[0], SPRITE_COLOR_WHITE,
                                   -1, 0, 32);
       else
-        ObjectGroup_UpdateMembers(work->effect->actors[0],
+        ObjectGroup_UpdateMembers(work->effect->targets[0],
                                   SPRITE_COLOR_RED_TINT, -1, 0, 32);
     }
     if (frame == 24)
-      EFFECT_SHOW_DAMAGE(0);
+      ANIM_SHOW_DAMAGE(0);
     if (frame == 8 && mode == MIRRORED_WALL_SPASM)
       Sound_PlaySongFar(SE_RECOVERY);
 
@@ -180,8 +178,8 @@ void BattleEffect_RunMirroredWall(struct BattleEffectArgument *effect,
       Camera_ApplyShake(2, 2);
     else
       Camera_ApplyShake(16, 16);
-    EFFECT_END_FRAME(work);
+    ANIM_END_FRAME(work);
   }
 
-  EFFECT_FINISH_CANVAS();
+  ANIM_FINISH_CANVAS();
 }

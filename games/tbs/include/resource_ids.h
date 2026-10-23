@@ -48,10 +48,10 @@ extern char ResourceId_WorldMapPicture;
 /// which it keeps the bottom 32 rows.
 extern char ResourceId_IntroTilesB;
 
-// Battle backdrops. Battle_SelectMapBackdrop picks one for the current
-// map from gBattle_BackdropMaps (object/map_rules.s), and on the world
-// map Battle_SelectTerrainBackdrop picks one by terrain; either leaves it in
-// gGameState.special for the battle. The credits slideshow
+// Battle backdrops. BattleBackground_SelectForMap picks one for the current
+// map from gBattleBackground_Maps (object/map_rules.s), and on the world
+// map BattleBackground_SelectForEnvironment picks one by terrain; either leaves
+// it in gGameState.special for the battle. The credits slideshow
 // (gDisplayScroll_SlideResources) shows every one but DesertBackdrop and
 // AerialViewBackdrop, and some summons draw one as their sky.
 
@@ -102,7 +102,7 @@ extern char ResourceId_ValeStormBackdrop;
 extern char ResourceId_TretTreeBranchBackdrop; ///< MapId_TretTreeBranch.
 /// Set by the first slot of ENCOUNTER_ZONE_SCRIPTED
 /// (Field_RequestBattleFromEncounterTable), and by the storm opening of
-/// BattlePresentation_RunEntryTransition, where the enemies alone take part.
+/// BattleTransition_Run, where the enemies alone take part.
 extern char ResourceId_VenusLighthouseAerieStormBackdrop;
 /// World map beaches and shallows; Judgment draws it too.
 extern char ResourceId_BeachBackdrop;
@@ -178,7 +178,7 @@ extern char ResourceId_ParticleSpritesA;
 /// A second shared particle sheet: the beam sequences, Bind, Death Plunge,
 /// Ice and Douse, the Neptune summon, the stat changes, and the slot machine.
 extern char ResourceId_ParticleSpritesD;
-/// Curse's flames (BattleEffect_RunCurse).
+/// Curse's flames (BattleAnim_RunCurse).
 extern char ResourceId_FlameColumnSheet;
 /// Shared by the blessings' showers, the casting impact, Death Plunge, Dragon
 /// Cloud, Planet Diver, Plasma, Ragnarok, Tiamat and Titan Blade.
@@ -191,10 +191,10 @@ extern char ResourceId_CometSheetA;
 extern char ResourceId_CometSheetB;
 /// Cutting Edge's large comet, and one of Slash's.
 extern char ResourceId_CometSheetC;
-/// GROWING_COLUMNS_PILLARS, in BattleEffect_RunGrowingColumns.
+/// GROWING_COLUMNS_PILLARS, in BattleAnim_RunGrowingColumns.
 extern char ResourceId_GreenPillarSheet;
 extern char
-    ResourceId_VineSheet; ///< BattleEffect_RunGrowingColumns' other modes.
+    ResourceId_VineSheet; ///< BattleAnim_RunGrowingColumns' other modes.
 extern char ResourceId_StarDotSheet; ///< The swirling stars of orbiting.c.
 /// Borrowed mostly for its colours: by the showers, the casting impact,
 /// Rumble's lights, the healing motes, the lobbed shells, the walls, the
@@ -401,7 +401,7 @@ extern char ResourceId_BlueBeamSheet;
 /// Froth and Whirlwind, and the status motes.
 extern char ResourceId_VortexSheet;
 extern char ResourceId_LightningPillarSheet; ///< Plasma and the Thor summon.
-/// The shattering opening (BattleEffect_RunShatteringOpening).
+/// The shattering opening (BattleAnim_RunShatteringOpening).
 extern char ResourceId_TileAnimationMask;
 extern char ResourceId_VioletPaletteA;  ///< Colours for Death Plunge.
 extern char ResourceId_RedPaletteA;     ///< Colours for Death Plunge.

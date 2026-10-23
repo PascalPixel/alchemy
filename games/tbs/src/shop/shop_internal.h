@@ -104,7 +104,7 @@ enum SanctumService {
   SANCTUM_SERVICE_REVIVE,      ///< for a downed member (HP 0)
   SANCTUM_SERVICE_CURE_POISON, ///< for poison or deadly poison
   SANCTUM_SERVICE_EXORCISE,    ///< for a haunted member
-  SANCTUM_SERVICE_REMOVE_CURSE ///< for any restraint bit set
+  SANCTUM_SERVICE_REMOVE_CURSE ///< for any curse bit set
 };
 
 enum {

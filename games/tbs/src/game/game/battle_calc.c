@@ -70,7 +70,7 @@ u32 Battle_RandomPercent(void) { return ((u32)Battle_Random() * 100) >> 16; }
 /// elemental multiplier, then halves it. elementDifference is power minus
 /// resistance; its effect here is half Psynergy's (128..384 with 256 = 1x).
 /// Reached through GAME.S as Battle_CalculateAttackDamageFar, which
-/// BattleTarget_Execute calls for attacks and physical abilities.
+/// BattleAbility_ApplyToTarget calls for attacks and physical abilities.
 s32 Battle_CalculateAttackDamage(s32 attack, s32 defense, s32 addedPower,
                                  s32 elementDifference) {
   s32 damage;
@@ -93,8 +93,8 @@ s32 Battle_CalculateAttackDamage(s32 attack, s32 defense, s32 addedPower,
 /// Returns the power of Psynergy: `power` times the multiplier for the element
 /// difference (power minus resistance, 0..512 with 256 = 1x) and the supplied
 /// powerMultiplier (also 256 = 1x). Reached through GAME.S as
-/// Battle_CalculatePsynergyPowerFar, which BattleTarget_Execute calls for
-/// Psynergy damage.
+/// Battle_CalculatePsynergyPowerFar, which BattleAbility_ApplyToTarget calls
+/// for Psynergy damage.
 s32 Battle_CalculatePsynergyPower(s32 power, s32 elementDifference,
                                   s32 powerMultiplier) {
   s32 scaledPower;
@@ -129,10 +129,10 @@ s32 Battle_CalculateRecovery(s32 power, s32 elementPower, s32 powerMultiplier) {
 /// Called by the battle plan for an attack's element.
 s32 Item_GetEquippedElement(s32 owner) {
   struct ItemDefinition *item;
-  struct BattleUnit *unit;
+  struct Unit *unit;
 
   unit = Unit_Get(owner);
-  if (unit->classIndex == CLASS_INDEX_ENEMY)
+  if (unit->classId == CLASS_NONE)
     return Enemy_GetAttackElement(unit);
   item = Inventory_GetEquippedDefinition(unit, ITEM_TYPE_WEAPON);
   if (item != NULL)
@@ -141,9 +141,9 @@ s32 Item_GetEquippedElement(s32 owner) {
 }
 
 /// Returns the unleash chance, in percent, that a unit's equipment adds
-/// (ITEM_EFFECT_ADD_UNLEASH_CHANCE). Called by RollWeaponUnleash and the
+/// (EQUIP_EFFECT_ADD_UNLEASH_CHANCE). Called by RollWeaponUnleash and the
 /// battle plan.
-s32 Equipment_GetUnleashRateBonus(struct BattleUnit *unit) {
+s32 Equipment_GetUnleashRateBonus(struct Unit *unit) {
   s32 chanceBonus;
   s32 inventorySlot;
   s32 effectIndex;
@@ -154,7 +154,7 @@ s32 Equipment_GetUnleashRateBonus(struct BattleUnit *unit) {
     if (unit->inventory[inventorySlot] & INVENTORY_EQUIPPED) {
       item = Item_GetDirect(unit->inventory[inventorySlot]);
       for (effectIndex = 0; effectIndex < 4; effectIndex++) {
-        if (item->effects[effectIndex].kind == ITEM_EFFECT_ADD_UNLEASH_CHANCE)
+        if (item->effects[effectIndex].kind == EQUIP_EFFECT_ADD_UNLEASH_CHANCE)
           chanceBonus += item->effects[effectIndex].amount;
       }
     }
@@ -168,25 +168,25 @@ s32 Equipment_GetUnleashRateBonus(struct BattleUnit *unit) {
 /// unleashChance times 5 percent plus what the equipment adds. Returns the
 /// unleash action, or 1 for a plain attack. Called by the battle plan for
 /// each Attack command.
-s32 RollWeaponUnleash(struct BattleUnit *owner) {
+s32 RollWeaponUnleash(struct Unit *owner) {
   struct ItemDefinition *item;
   s32 rate;
 
-  if (owner->classIndex == CLASS_INDEX_ENEMY) {
+  if (owner->classId == CLASS_NONE) {
     return 1;
   }
   item = Inventory_GetEquippedDefinition(owner, ITEM_TYPE_WEAPON);
   if (item == NULL) {
     return 1;
   }
-  if (item->unleashAction == 0) {
+  if (item->unleashAbility == 0) {
     return 1;
   }
   rate = ((Equipment_GetUnleashRateBonus(owner) + (item->unleashChance * 5))
           << 0x10) /
          100;
   if (rate > (Battle_Random() & 0xFFFF)) {
-    return item->unleashAction;
+    return item->unleashAbility;
   }
   return 1;
 }
@@ -214,7 +214,7 @@ s32 Battle_GetEffectBaseSuccessRate(s32 effectId) {
   case ABILITY_EFFECT_SLEEP - 8:
     return 45;
   case ABILITY_EFFECT_POISON - 8:
-  case ABILITY_EFFECT_DEADLY_POISON - 8:
+  case ABILITY_EFFECT_VENOM - 8:
   case ABILITY_EFFECT_SEAL - 8:
     return 55;
   case ABILITY_EFFECT_HAUNT - 8:
@@ -250,13 +250,13 @@ s32 Battle_GetEffectBaseSuccessRate(s32 effectId) {
 /// Returns 1 when the unit is weak to effect `effectId`: one of three listed
 /// for its enemy kind (EnemyDefinition.weakEffects) or class
 /// (ClassDefinition.weakEffects). Called by Battle_RollEffectSuccess.
-s32 BattleTarget_IsWeakToEffect(const struct BattleUnit *target, s32 effectId) {
+s32 BattleAbility_IsWeakToEffect(const struct Unit *target, s32 effectId) {
   const u8 *weakEffects;
   s32 weaknessIndex;
 
-  if (target->classIndex == CLASS_INDEX_ENEMY) {
+  if (target->classId == CLASS_NONE) {
     weakEffects =
-        ((const struct EnemyDefinition *)Enemy_GetDefinition(target->classId))
+        ((const struct EnemyDefinition *)Enemy_GetDefinition(target->id))
             ->weakEffects;
     for (weaknessIndex = 0; weaknessIndex < 3; weaknessIndex++) {
       if (*weakEffects == effectId)
@@ -264,7 +264,7 @@ s32 BattleTarget_IsWeakToEffect(const struct BattleUnit *target, s32 effectId) {
       weakEffects++;
     }
   } else {
-    weakEffects = Class_GetDefinition(target->classIndex)->weakEffects;
+    weakEffects = Class_GetDefinition(target->classId)->weakEffects;
     for (weaknessIndex = 0; weaknessIndex < 3; weaknessIndex++) {
       if (*weakEffects++ == effectId)
         return 1;
@@ -294,14 +294,14 @@ s32 Battle_IsReviveEffect(s32 effectId) {
 /// and weakness; 0 still succeeds when Battle_RandomPercent gives 0, about 1
 /// time in 100. Luff gets three tries.
 /// Reached through GAME.S as Battle_RollEffectSuccessFar, which
-/// BattleTarget_Execute and the battle plan call for each target of an ability
-/// with an effect.
+/// BattleAbility_ApplyToTarget and the battle plan call for each target of an
+/// ability with an effect.
 s32 Battle_RollEffectSuccess(s32 caster, s32 target, s32 resistanceCategory,
                              s32 effectId, s32 successScale) {
   // Restore's psySeal and confusion reads and Cure All's haunt read go
   // through the byte view; as unit fields, each zero test merges with its
   // neighbour's into one halfword or word load.
-  struct BattleUnit *unit = Unit_Get(target);
+  struct Unit *unit = Unit_Get(target);
   s32 attempts = 1;
   s32 score;
   s32 attempt;
@@ -362,7 +362,7 @@ action4_done:
                      Unit_GetElementLevel(target, resistanceCategory) -
                      (unit->luck >> 1);
     score += difference * 3;
-    if (BattleTarget_IsWeakToEffect(unit, effectId) != 0) {
+    if (BattleAbility_IsWeakToEffect(unit, effectId) != 0) {
       score += 25;
     }
   } else {

@@ -62,7 +62,7 @@ struct ItemMenuWork {
   /// DjinnMenuWork's backdrop pointer at 0x184; no view names the rest.
   u8 aroundBackdrop[0x48];
   u16 items[32];   ///< the inventory entries listed
-  u16 ownerIds[8]; ///< the party in order (Party_ListActiveOwners)
+  u16 ownerIds[8]; ///< the party in order (Party_ListMembers)
   u8 itemCount;
   u8 partyCount;
   u8 paneOwner[2]; ///< each pane's member
@@ -126,6 +126,6 @@ enum ItemMenuCommand {
   ITEM_COMMAND_DROP
 };
 
-struct BattleUnit;
+struct Unit;
 
 #endif

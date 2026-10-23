@@ -7,11 +7,11 @@
 #include "edition.h"
 #include "static_assert.h"
 
-/// BattleUnit.side: which side a unit fights on, if it is in the battle.
-enum BattleUnitPresence {
-  BATTLE_UNIT_ABSENT = 0,
-  BATTLE_UNIT_ENEMY = 1,
-  BATTLE_UNIT_PARTY = 2
+/// Unit.side: which side a unit fights on, if it is in the battle.
+enum BattleSide {
+  BATTLE_SIDE_NONE = 0,
+  BATTLE_SIDE_ENEMY = 1,
+  BATTLE_SIDE_PARTY = 2
 };
 
 /// Marks in a list of unit ids, such as BattleWork.partyUnits and enemyIds.
@@ -20,11 +20,11 @@ enum BattleUnitListMark {
   BATTLE_UNIT_LIST_END = 0xff ///< ends the list
 };
 
-/// Which sides a unit list takes, as BattleParty_ListLivingUnits reads it.
-enum BattleSideMask {
-  BATTLE_SIDE_PARTY = 1,
-  BATTLE_SIDE_ENEMIES = 2,
-  BATTLE_SIDE_BOTH = BATTLE_SIDE_PARTY | BATTLE_SIDE_ENEMIES
+/// Which sides a unit list takes, as BattleUnits_ListLiving reads it.
+enum BattleSides {
+  BATTLE_SIDES_PARTY = 1,
+  BATTLE_SIDES_ENEMIES = 2,
+  BATTLE_SIDES_BOTH = BATTLE_SIDES_PARTY | BATTLE_SIDES_ENEMIES
 };
 
 /// The Djinn recovery list's two tables (Djinn_GetRecoveryTableFar): the
@@ -35,9 +35,9 @@ enum BattleSideMask {
 /// DjinnRecoveryEntry.turns of a Djinni on standby. In battle it stays so
 /// until a Djinn command sets it again or a summon uses it
 /// (DJINN_RECOVERY_SUMMONED), both in
-/// BattleCommand_BuildPlan; an owner who does not fight has it set as the
+/// BattleTurn_Build; an owner who does not fight has it set as the
 /// next battle starts, outside a link battle
-/// (BattleParty_ReconcileDjinnRecovery). DjinnRecovery_Tick counts down only
+/// (DjinnRecovery_Reconcile). DjinnRecovery_Tick counts down only
 /// positive turns.
 #define DJINN_RECOVERY_AFTER_BATTLE -1
 

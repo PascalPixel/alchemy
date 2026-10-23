@@ -411,7 +411,7 @@ static void MercuryLighthouseEntrance_FightLizardMan(void) {
   FieldScript_SetNextDestination(
       (s32)&MapId_MercuryLighthouseEntrance,
       MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_AFTER_LIZARD_MAN);
-  Battle_SetStart(BATTLE_START_SCRIPTED);
+  Battle_SetType(BATTLE_TYPE_SCRIPTED);
   // The second slot of the encounter zone of Tret Tree's and Mercury
   // Lighthouse's scripted battles: the Lizard Man.
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY,

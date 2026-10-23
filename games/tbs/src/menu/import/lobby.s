@@ -38,7 +38,7 @@
 	.set import.Engine_GameFlagClear, 1
 	.set import.GameFlag_GetByte, 1
 	.set import.GameFlag_SetByte, 1
-	.set import.Party_CountActiveOwners, 1
+	.set import.Party_CountMembers, 1
 	.set import.Party_RestoreHpPp, 1
 	.set import.Engine_ScriptStart, 1
 	.set import.Engine_ScriptEnd, 1

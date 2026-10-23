@@ -20,12 +20,12 @@
 /// are put on the party's side.
 /// Returns 0 for an id out of range, 1 otherwise; enemy ids 173 to 250, past
 /// the table's 165 rows but within the check, are filled from row 0. Called by
-/// the battle set-up (Battle_RunEncounter, BattleFormation_BuildEnemyList) and
-/// by BattleTarget_Execute when an enemy calls for help.
+/// the battle set-up (Battle_Run, BattleFormation_BuildEnemyList) and
+/// by BattleAbility_ApplyToTarget when an enemy calls for help.
 /// XXX: why a Djinni is put on the party's side is unknown; the battle code
-/// that reads BATTLE_UNIT_PARTY for an enemy would say.
+/// that reads BATTLE_SIDE_PARTY for an enemy would say.
 s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
-  struct BattleUnit *unit;
+  struct Unit *unit;
   const struct EnemyDefinition *enemy;
   u16 name[15];
   s32 i;
@@ -33,7 +33,7 @@ s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
   s32 q;
   s32 count;
 
-  index = enemyId - ENEMY_CLASS_FIRST;
+  index = enemyId - ENEMY_ID_FIRST;
   if (unitId <= 127)
     return 0;
   if (unitId > 134)
@@ -81,17 +81,17 @@ s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
       }
     }
   }
-  unit->rewards = enemy->rewards;
-  unit->classIndex = 0;
-  unit->classId = enemyId;
+  unit->aiActionIndex = enemy->aiActionIndex;
+  unit->classId = 0;
+  unit->id = enemyId;
 #ifdef UBFIX
   Unit_CalculateBaseElements(unitId, unit->baseElement);
 #else
   Unit_CalculateBaseElements(unitId, (s16 (*)[2])unit->baseElement);
 #endif
   Unit_Calculate(unitId);
-  unit->side = BATTLE_UNIT_ENEMY;
-  switch (unit->classId) {
+  unit->side = BATTLE_SIDE_ENEMY;
+  switch (unit->id) {
   case ENEMY_VENUS_DJINNI:
   case ENEMY_VENUS_DJINNI_2:
   case ENEMY_VENUS_DJINNI_3:
@@ -106,17 +106,17 @@ s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
   case ENEMY_JUPITER_DJINNI_2:
   case ENEMY_JUPITER_DJINNI_3:
   case ENEMY_JUPITER_DJINNI_4:
-    unit->side = BATTLE_UNIT_PARTY;
+    unit->side = BATTLE_SIDE_PARTY;
     break;
   }
   return 1;
 }
 
 // The party: the FLAG_IN_PARTY flags say who is in it, and
-// gGameState.activeOwners lists them in order.
+// gGameState.party lists them in order.
 
 /// Returns the number of party members, counted from its FLAG_IN_PARTY flags.
-s32 Party_CountActiveOwners(void) {
+s32 Party_CountMembers(void) {
   s32 owner;
   s32 count;
 
@@ -131,58 +131,57 @@ s32 Party_CountActiveOwners(void) {
 }
 
 /// Adds character `owner` to the end of the party: sets its game flag and
-/// appends it to gGameState.activeOwners unless it is already listed.
+/// appends it to gGameState.party unless it is already listed.
 /// Returns the party size. Called by the scenes where a character joins, by
 /// the member chooser and the file select screen, and by the debug presets.
-s32 Party_AddActiveOwner(s32 owner) {
-  s32 partySize = Party_CountActiveOwners();
+s32 Party_AddMember(s32 owner) {
+  s32 partySize = Party_CountMembers();
   s32 partyIndex;
 
   GameFlag_SetBit(FLAG_IN_PARTY(owner));
   partyIndex = 0;
   while (partyIndex < partySize) {
-    if (gGameState.activeOwners[partyIndex] == owner)
+    if (gGameState.party[partyIndex] == owner)
       return partySize;
     partyIndex++;
   }
-  gGameState.activeOwners[partyIndex] = owner;
+  gGameState.party[partyIndex] = owner;
   return partySize + 1;
 }
 
 /// Takes character `owner` out of the party: clears its game flag and closes
-/// the gap it leaves in gGameState.activeOwners. Returns the party size.
+/// the gap it leaves in gGameState.party. Returns the party size.
 /// Called by the scenes where a character leaves, by the member chooser and
 /// the file select screen, and by the debug presets.
-s32 Party_RemoveActiveOwner(s32 owner) {
-  s32 partySize = Party_CountActiveOwners();
+s32 Party_RemoveMember(s32 owner) {
+  s32 partySize = Party_CountMembers();
   s32 removedIndex;
   s32 partyIndex;
 
   GameFlag_ClearBit(FLAG_IN_PARTY(owner));
   for (removedIndex = 0; removedIndex < partySize; removedIndex++) {
-    if (gGameState.activeOwners[removedIndex] == owner)
+    if (gGameState.party[removedIndex] == owner)
       break;
   }
   for (partyIndex = removedIndex; partyIndex < partySize - 1; partyIndex++)
-    gGameState.activeOwners[partyIndex] =
-        gGameState.activeOwners[partyIndex + 1];
-  return Party_CountActiveOwners();
+    gGameState.party[partyIndex] = gGameState.party[partyIndex + 1];
+  return Party_CountMembers();
 }
 
 /// Writes the party members to `owners`, ending with BATTLE_UNIT_LIST_END, and
 /// returns how many there are. Every screen that lists the party starts here:
 /// the menus, the shops, the inn and the party inventory searches.
-s32 Party_ListActiveOwners(s16 *owners) {
+s32 Party_ListMembers(s16 *owners) {
   s32 count = 0;
 
   if (owners != NULL) {
     s32 index;
 
-    count = Party_CountActiveOwners();
+    count = Party_CountMembers();
     index = 0;
     if (count != 0) {
       do {
-        *owners++ = gGameState.activeOwners[index];
+        *owners++ = gGameState.party[index];
         index++;
       } while (index != count);
     }

@@ -32,7 +32,7 @@ void FieldEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
     effectWork = *(gHeapSlots + HEAP_SLOT_FIELD_EFFECT);
   }
   effectWork->action = abilityId;
-  effectWork->fieldPsynergy = BattleAction_Get(abilityId)->fieldPsynergy;
+  effectWork->fieldPsynergy = Ability_Get(abilityId)->fieldPsynergy;
   running = ev->psynergyActing;
   if (running != 0)
     return;

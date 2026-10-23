@@ -4,14 +4,14 @@
 
 #include "../object_internal.h"
 
-// The fields of struct BattleUnit that Field_ProcessStep reads (see its tag).
+// The fields of struct Unit that Field_ProcessStep reads (see its tag).
 #ifndef UBFIX
 /// A party member's battle unit, seen as the HP and poison a step reads.
 struct StepOwner {
   u8 unitFieldsBeforeHp[0x38];
-  s16 hp; ///< struct BattleUnit's hp: current HP, 0 when downed
+  s16 hp; ///< struct Unit's hp: current HP, 0 when downed
   u8 unitFieldsBeforePoison[0x131 - 0x3a];
-  u8 poison; ///< struct BattleUnit's poison: POISON_NORMAL or POISON_DEADLY
+  u8 poison; ///< struct Unit's poison: POISON_NORMAL or POISON_VENOM
 };
 #endif
 
@@ -196,7 +196,7 @@ void Field_CheckWarpRegions(s32 positionX, s32 positionY, s32 positionZ) {
 /// fallenOwners and survivorCount, and gGameState's hazard and Avoid counts.
 void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
   /* FAKEMATCH(wrapper): the party read through struct StepOwner, whose alias
-   * set keeps the load order and the 44-byte frame; as struct BattleUnit, 2
+   * set keeps the load order and the 44-byte frame; as struct Unit, 2
    * of 472 instructions differ in tbs-en. */
   struct FieldWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
   struct MapGridState *gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
@@ -205,10 +205,10 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
   s16 previousHp[8];
   struct MapGridCell *tile;
 #ifdef UBFIX
-  // The defined form reads the struct BattleUnit Unit_GetFar returns, rather
+  // The defined form reads the struct Unit Unit_GetFar returns, rather
   // than through the unrelated struct StepOwner; it compiles to the same size
   // with a different register allocation (see the tag above).
-  struct BattleUnit *unitVitals;
+  struct Unit *unitVitals;
 #else
   struct StepOwner *unitVitals;
 #endif
@@ -227,9 +227,9 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
     return;
 
   // Note each character's HP, to see who falls.
-  partyCount = Party_CountActiveOwnersFar();
+  partyCount = Party_CountMembersFar();
   for (i = 0; i < partyCount; i++)
-    previousHp[i] = Unit_GetFar(gGameState.activeOwners[i])->hp;
+    previousHp[i] = Unit_GetFar(gGameState.party[i])->hp;
 
   if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
     tile = &((struct MapGridCell *)Ram_Metatiles)[((x / 0x200000) & 31) +
@@ -353,14 +353,14 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
                                                     ATTACHED_EFFECT_ONCE);
     for (i = 0; i < partyCount; i++) {
 #ifdef UBFIX
-      unitVitals = Unit_GetFar(gGameState.activeOwners[i]);
+      unitVitals = Unit_GetFar(gGameState.party[i]);
 #else
-      unitVitals = (struct StepOwner *)Unit_GetFar(gGameState.activeOwners[i]);
+      unitVitals = (struct StepOwner *)Unit_GetFar(gGameState.party[i]);
 #endif
       if (unitVitals->hp > 0) {
         work->survivorCount++;
       } else if (previousHp[i] != 0) {
-        work->fallenOwners[work->fallenCount++] = gGameState.activeOwners[i];
+        work->fallenOwners[work->fallenCount++] = gGameState.party[i];
         work->raisedEvent = -1;
         unitVitals->poison = 0;
       }
@@ -375,11 +375,11 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
 /// Psynergy stone (999, all PP), and by the Vale home map through
 /// Party_AddPpFar.
 void Party_AddPp(s32 amount, s32 unused) {
-  s32 partyCount = Party_CountActiveOwnersFar();
+  s32 partyCount = Party_CountMembersFar();
   s32 partyIndex;
 
   for (partyIndex = 0; partyIndex < partyCount; partyIndex++)
-    Unit_AddPpFar(gGameState.activeOwners[partyIndex], amount);
+    Unit_AddPpFar(gGameState.party[partyIndex], amount);
 }
 
 /// Changes each party member's HP by amount, or by that percentage of maximum
@@ -397,7 +397,7 @@ void Party_AddHp(s32 amount, s32 percent) {
   s32 partyCount;
   s32 partyIndex;
   s32 hpDelta;
-  struct BattleUnit *unit;
+  struct Unit *unit;
 
   // Damage of more than 10 plays the heavier impact sound.
   if (amount < 0) {
@@ -411,9 +411,9 @@ void Party_AddHp(s32 amount, s32 percent) {
     Sound_PlaySongFar(SE_RECOVERY);
   }
 
-  partyCount = Party_CountActiveOwnersFar();
+  partyCount = Party_CountMembersFar();
   for (partyIndex = 0; partyIndex < partyCount; partyIndex++) {
-    unit = Unit_GetFar(gGameState.activeOwners[partyIndex]);
+    unit = Unit_GetFar(gGameState.party[partyIndex]);
     if (!percent) {
       hpDelta = amount;
     } else {
@@ -424,7 +424,7 @@ void Party_AddHp(s32 amount, s32 percent) {
           hpDelta = -hpDelta;
       }
     }
-    Unit_AddHpFar(gGameState.activeOwners[partyIndex], hpDelta);
+    Unit_AddHpFar(gGameState.party[partyIndex], hpDelta);
   }
 }
 
@@ -432,17 +432,17 @@ void Party_AddHp(s32 amount, s32 percent) {
 /// their maximum HP and deadly poison a tenth, rounded to the nearest and at
 /// least 1.
 /// Returns 0 when nobody was hurt, else the worst status found
-/// (POISON_NORMAL or POISON_DEADLY), after a flash; Field_ProcessStep counts a
+/// (POISON_NORMAL or POISON_VENOM), after a flash; Field_ProcessStep counts a
 /// non-zero result as the party being hurt.
 ///
 /// Called by Field_ProcessStep at each tick of the distance walked.
 s32 Party_ApplyPoisonDamage(void) {
   s32 worstPoison = 0;
-  s32 partyCount = Party_CountActiveOwnersFar();
+  s32 partyCount = Party_CountMembersFar();
   s32 partyIndex;
 
   for (partyIndex = 0; partyIndex < partyCount; partyIndex++) {
-    struct BattleUnit *unit = Unit_GetFar(gGameState.activeOwners[partyIndex]);
+    struct Unit *unit = Unit_GetFar(gGameState.party[partyIndex]);
     s32 hpDelta;
 
     switch (unit->poison) {
@@ -453,18 +453,18 @@ s32 Party_ApplyPoisonDamage(void) {
       if (worstPoison <= 0)
         worstPoison = POISON_NORMAL;
       break;
-    case POISON_DEADLY:
+    case POISON_VENOM:
       hpDelta = -((unit->hpMax + 5) / 10);
       if (hpDelta == 0)
         hpDelta = -1;
       if (worstPoison <= POISON_NORMAL)
-        worstPoison = POISON_DEADLY;
+        worstPoison = POISON_VENOM;
       break;
     default:
       hpDelta = 0;
       break;
     }
-    Unit_AddHpFar(gGameState.activeOwners[partyIndex], hpDelta);
+    Unit_AddHpFar(gGameState.party[partyIndex], hpDelta);
   }
 
   if (worstPoison != 0) {

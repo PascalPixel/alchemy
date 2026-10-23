@@ -478,7 +478,7 @@ static void KalayTolbiDocks_TalkToTicketTaker(void) {
     Script_ShowMessage(LOCALID_CHECKING_TICKETS, 0);
     // Hand over the actual inventory ticket before walking past the gate.
     if (GameFlag_IsSet(FLAG_KALAY_DOCKS_TICKET_BOUGHT) != 0) {
-      ticketOwner = PartyInventory_FindOwner(ITEM_BOAT_TICKET);
+      ticketOwner = PartyInventory_FindMember(ITEM_BOAT_TICKET);
       ticketSlot = Inventory_Find(ticketOwner, ITEM_BOAT_TICKET);
       Engine_ObjectEventSetAnimationAndWait(LOCALID_CHECKING_TICKETS,
                                             ANIMATION_NOD);

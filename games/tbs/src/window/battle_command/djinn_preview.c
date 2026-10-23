@@ -44,8 +44,8 @@ s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value) {
 /// lacks, marked DJINN_PREVIEW_ABILITY_LOST. Both lists are 32 slots, ended
 /// early by a 0 action. Returns the entries written, and the gained and lost
 /// counts through `gained` and `lost`.
-s32 DjinnMenu_ListChangedDjinn(const struct OwnerActionSlot *oldGrid,
-                               const struct OwnerActionSlot *newGrid, u16 *out,
+s32 DjinnMenu_ListChangedDjinn(const struct PsynergyEntry *oldGrid,
+                               const struct PsynergyEntry *newGrid, u16 *out,
                                s32 *gained, s32 *lost) {
   s32 i;
   s32 j;
@@ -57,7 +57,7 @@ s32 DjinnMenu_ListChangedDjinn(const struct OwnerActionSlot *oldGrid,
   lostCount = 0;
   count = 0;
   for (i = 0; i < 32 && newGrid[i].encodedAction != 0; i++) {
-    if (BattleAction_Get(newGrid[i].encodedAction)->flags & 0x80) {
+    if (Ability_Get(newGrid[i].encodedAction)->flags & 0x80) {
       out[count] = newGrid[i].encodedAction & ACTION_ID_MASK;
       count++;
       for (j = 0; j < 32; j++) {
@@ -72,7 +72,7 @@ s32 DjinnMenu_ListChangedDjinn(const struct OwnerActionSlot *oldGrid,
     }
   }
   for (i = 0; i < 32 && oldGrid[i].encodedAction != 0; i++) {
-    if (BattleAction_Get(oldGrid[i].encodedAction)->flags & 0x80) {
+    if (Ability_Get(oldGrid[i].encodedAction)->flags & 0x80) {
       for (j = 0; j < 32; j++) {
         if (((oldGrid[i].encodedAction ^ newGrid[j].encodedAction) &
              ACTION_ID_MASK) == 0)
@@ -128,9 +128,9 @@ s32 Ui_CreateOutputFromResourceSlot(struct UiWindow *window, s32 x, s32 y,
 struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
                                              s32 encodedDjinn, s32 page,
                                              s32 *pageCount) {
-  struct BattleUnit *unit;
-  struct BattleUnit *savedUnit;
-  struct BattleAct *ability;
+  struct Unit *unit;
+  struct Unit *savedUnit;
+  struct AbilityDefinition *ability;
   s16 *numberText;
   s32 oldHp;
   s32 oldPp;
@@ -217,15 +217,14 @@ struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
 
   element = (encodedDjinn >> 8) & 15;
   djinnIndex = encodedDjinn & 255;
-  if (Djinn_IsActiveFar(owner, element, djinnIndex) != 0)
-    Djinn_DeactivateFar(owner, element, djinnIndex);
+  if (Djinn_IsSetFar(owner, element, djinnIndex) != 0)
+    Djinn_PutOnStandbyFar(owner, element, djinnIndex);
   else
-    Djinn_ActivateFar(owner, element, djinnIndex);
+    Djinn_SetFar(owner, element, djinnIndex);
   Unit_CalculateFar(owner);
 
-  abilityCount =
-      DjinnMenu_ListChangedDjinn(savedUnit->actionSlots, unit->actionSlots,
-                                 changedAbilities, &gained, &lost);
+  abilityCount = DjinnMenu_ListChangedDjinn(savedUnit->psynergy, unit->psynergy,
+                                            changedAbilities, &gained, &lost);
   // Five abilities a page; a page past the list shows the last.
   pages = ((abilityCount - 1) / 5) + 1;
   *pageCount = pages;
@@ -287,7 +286,7 @@ struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
     i = page * 5 - 5;
     for (visibleRow = 0; visibleRow < visibleRows && i < abilityCount;
          visibleRow++, i++) {
-      ability = BattleAction_Get(changedAbilities[i]);
+      ability = Ability_Get(changedAbilities[i]);
       if (ability->element != ELEMENT_NONE)
         UiWindow_SetTilemapEntry(win, 0x5001 + ability->element, 15,
                                  visibleRow * 2, 0);
@@ -315,8 +314,8 @@ struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
       UiWindow_SetTilemapEntry(win, 0xf01f, 11, visibleRow * 2, 0);
       UiWindow_SetTilemapEntry(win, PSYNERGY_COST_SECOND_TILE, 12,
                                visibleRow * 2, 0);
-      UiText_DrawNumberInWindow(BattleAction_Get(changedAbilities[i])->ppCost,
-                                2, win, 104, visibleRow * 16);
+      UiText_DrawNumberInWindow(Ability_Get(changedAbilities[i])->ppCost, 2,
+                                win, 104, visibleRow * 16);
     }
 
     if (gained != 0) {
@@ -338,12 +337,11 @@ struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
   }
 
   if (page == 0) {
-    UiText_DrawCharacterAtOffset(MsgClassName + savedUnit->classIndex, win, 0,
-                                 0);
-    UiText_DrawCharacterAtOffset(MsgClassName + unit->classIndex, win, 80, 0);
+    UiText_DrawCharacterAtOffset(MsgClassName + savedUnit->classId, win, 0, 0);
+    UiText_DrawCharacterAtOffset(MsgClassName + unit->classId, win, 80, 0);
     // The arrow between the classes, flipped (0x400): tile 0x328 blinks
     // when the class changes, 0x329 stays (gDjinnMenu_BlinkTile).
-    if (savedUnit->classIndex != unit->classIndex)
+    if (savedUnit->classId != unit->classId)
       UiWindow_SetTilemapEntry(win, 0xf728, 9, 0, page);
     else
       UiWindow_SetTilemapEntry(win, 0xf729, 9, 0, page);

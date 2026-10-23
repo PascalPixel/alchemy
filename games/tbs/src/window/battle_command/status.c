@@ -61,7 +61,7 @@ enum OwnerStatusHelp {
 
 /// A condition the status screen shows as an icon, which picks both the icon
 /// and its help (MsgOwnerStatusConditionHelp + condition).
-enum OwnerStatusCondition {
+enum BattleSummaryStatus {
   OWNER_CONDITION_EMPTY = -1, ///< a place with no icon
   OWNER_CONDITION_NORMAL = 0, ///< no condition: "Normal status."
   OWNER_CONDITION_POISON = 1,
@@ -147,8 +147,8 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
   s32 j;
   s32 attackDelta;
   s32 redraw;
-  struct BattleUnit *unit;
-  struct BattleUnit *savedUnit;
+  struct Unit *unit;
+  struct Unit *savedUnit;
   const struct OwnerStatusStatCursor *cursorStop;
   struct MenuSprite *statusSprite;
   s32 agilityDelta;
@@ -503,8 +503,8 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
         UiText_DrawNumberInWindow(unit->luck, 3, statusWindow,
                                   OWNER_STATUS_VALUE_X, 40);
 
-        UiText_DrawCharacterAtOffset(MsgClassName + unit->classIndex,
-                                     statusWindow, 0, 48);
+        UiText_DrawCharacterAtOffset(MsgClassName + unit->classId, statusWindow,
+                                     0, 48);
         if (hasDjinn != 0) {
           UiText_DrawCharacterAtOffset(
               OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_DJINN), statusWindow, 0,
@@ -528,12 +528,12 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
           UiWindow_SetTilemapEntry(statusWindow, 0x5001 + j, 7 + j * 4, pal + 8,
                                    0);
           if (hasDjinn != 0) {
-            UiText_DrawNumberInWindow(unit->djinnActiveCounts[j], 1,
-                                      statusWindow, 40 + j * 32, 72);
+            UiText_DrawNumberInWindow(unit->djinnSetCounts[j], 1, statusWindow,
+                                      40 + j * 32, 72);
             UiText_DrawStringAtOffset((u8 *)gOwnerStatus_SlashString,
                                       statusWindow, 48 + j * 32, 72);
-            UiText_DrawNumberInWindow(unit->djinnOwnedCounts[j], 1,
-                                      statusWindow, 48 + j * 32 + 8, 72);
+            UiText_DrawNumberInWindow(unit->djinnHeldCounts[j], 1, statusWindow,
+                                      48 + j * 32 + 8, 72);
           }
           UiText_DrawNumberInWindow(Unit_GetElementLevelFar(owner, j), 2,
                                     statusWindow, 48 + j * 32, 80);
@@ -553,7 +553,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
           i = 1;
         }
         do {
-          if (unit->restraint != 0) {
+          if (unit->curse != 0) {
             statusKinds[i++] = OWNER_CONDITION_CURSED_ITEM;
           }
           if (i > 7) {
@@ -680,7 +680,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
         // what the stat stages add (the stats less those recalculated with
         // the stages cleared, after which the unit is restored from a copy),
         // or 20 for each Resistance stage.
-        savedUnit = (struct BattleUnit *)Alloc(sizeof(*unit));
+        savedUnit = (struct Unit *)Alloc(sizeof(*unit));
         helpValue = 0;
         Iwram_CopyWords(savedUnit, unit, sizeof(*unit));
 

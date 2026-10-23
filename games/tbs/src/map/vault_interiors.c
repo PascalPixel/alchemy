@@ -1550,7 +1550,7 @@ static void EventScript_FreeRooferAndConfrontThieves(void) {
   base = (s32)&MapId_VaultInteriors;
   FieldScript_SetNextDestination(base, 17);
   FieldScript_SetDefeatDestination(base, 16);
-  Battle_SetStart(BATTLE_START_SCRIPTED);
+  Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 5);
   Engine_ScriptEnd();
 }
@@ -2479,14 +2479,14 @@ static void VaultInteriors_ConfrontThievesAgain(void) {
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   FieldScript_SetNextDestination((s32)&MapId_VaultInteriors, 17);
   FieldScript_SetDefeatDestination((s32)&MapId_VaultInteriors, 16);
-  Battle_SetStart(BATTLE_START_SCRIPTED);
+  Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 5);
 }
 
 /// Counts the Venus Djinn Ivan holds, which he gives back before he leaves the
 /// party.
 static s32 VaultInteriors_GetIvanVenusDjinnCount(void) {
-  return Unit_Get(IVAN)->djinnOwnedCounts[ELEMENT_VENUS];
+  return Unit_Get(IVAN)->djinnHeldCounts[ELEMENT_VENUS];
 }
 
 #include "common/vault_djinn.h"
@@ -3214,7 +3214,7 @@ static void VaultInteriors_ReturnStolenGoods(void) {
       Script_ShowMessage(IVAN, 0);
       Vault_ReturnIsaacsDjinni();
     }
-    Party_RemoveOwnerRestored(IVAN);
+    Party_RemoveMemberRestored(IVAN);
     *slot = saved;
   }
   VaultInteriors_PlayAnimationAndWait(GARET, ANIMATION_NOD, 50);

@@ -34,12 +34,12 @@
 	.set import.Unit_Get, 1
 	.set import.Unit_Calculate, 1
 	.set import.Inventory_Find, 1
-	.set import.PartyInventory_FindOwner, 1
+	.set import.PartyInventory_FindMember, 1
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1
 	.set import.Engine_GameFlagClear, 1
-	.set import.Djinn_AddToOwner, 1
-	.set import.Djinn_Activate, 1
+	.set import.Djinn_Give, 1
+	.set import.Djinn_Set, 1
 	.set import.Engine_ScriptWait, 1
 	.set import.Engine_ScriptStart, 1
 	.set import.Engine_ScriptEnd, 1

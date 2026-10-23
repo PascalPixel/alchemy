@@ -78,8 +78,8 @@ static inline void FieldGameFlag_SetByte(s32 flag, s32 value) {
   GameFlag_SetByte(flag, value);
 }
 
-static inline s32 FieldParty_ListActiveOwners(s16 *owners) {
-  return Party_ListActiveOwners(owners);
+static inline s32 FieldParty_ListMembers(s16 *owners) {
+  return Party_ListMembers(owners);
 }
 
 static inline s32 FieldUnit_AddHp(s32 owner, s32 delta) {

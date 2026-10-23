@@ -61,8 +61,8 @@ FarCall_WindowTable:
 	overlay_veneer SelectionScreen_BuildEntries
 	overlay_veneer UiWork_ReservedNoOp
 	export Battle_CollectPartyCommandsFar, Battle_CollectPartyCommands
-	export UiText_ShowMessageAndWaitCoreFar, UiText_ShowMessageAndWaitCore
-	export UiText_PrepareMessageWorkFar, UiText_PrepareMessageWork
+	export BattleMessage_ShowAndWaitFar, BattleMessage_ShowAndWait
+	export BattleMessage_OpenFar, BattleMessage_Open
 	overlay_veneer UiTextResource_NoOpCallback4
 	export Localization_LookupEntryIdFar, UiText_GetSpeakerPortrait
 	export Menu_RunTopSelectionFar, Menu_RunTopSelection
@@ -71,7 +71,7 @@ FarCall_WindowTable:
 	export UiTimedNotice_CreateFar, UiTimedNotice_Create
 	export UiTimedNotice_CloseIfActiveFar, UiTimedNotice_CloseIfActive
 	export UiText_ShowCenteredMessageFar, UiText_ShowCenteredMessage
-	export UiWork_FinalizeSharedSlotFar, UiWork_FinalizeSharedSlot
+	export BattleMessage_CloseFar, BattleMessage_Close
 	export UiWork_ResetFreeChannelFar, UiWork_ResetFreeChannel
 	export UiTextResource_InitializeFar, UiTextResource_Initialize
 	export UiTextResource_SetPositionFar, UiTextResource_SetPosition
@@ -104,7 +104,7 @@ FarCall_WindowTable:
 	export Save_ProcessSelectedFileFar, Save_ProcessSelectedFile
 	overlay_veneer Save_WriteFile
 	export Save_ScanRecordFlagsFar, Save_ScanRecordFlags
-	export NameEntry_EditOwnerNameFar, NameEntry_EditOwnerName
+	export NamingScreen_EditMemberNameFar, NamingScreen_EditMemberName
 	overlay_veneer Resource_CopyFixedBlockB
 	overlay_veneer Resource_CopyFixedBlockA
 	overlay_veneer Menu_SetNodeCoordinates

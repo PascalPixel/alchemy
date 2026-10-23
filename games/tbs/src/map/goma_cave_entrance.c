@@ -610,7 +610,7 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
 /// Gives Ivan the Shaman's Rod and equips it. With his items full, he drops
 /// another to make room; later patches skip items marked only indispensable.
 static void GomaCaveEntrance_GiveShamansRod(void) {
-  struct BattleUnit *member;
+  struct Unit *member;
   struct ItemDefinition *item;
   s32 tries;
   s32 i;

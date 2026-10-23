@@ -3,9 +3,9 @@
 
 #include "types.h"
 
-struct BattleAct;
+struct AbilityDefinition;
 struct BattleElementStats;
-struct BattleUnit;
+struct Unit;
 struct CharacterDefinition;
 struct ClassDefinition;
 struct DjinnDefinition;
@@ -16,7 +16,7 @@ struct SummonDefinition;
 void Game_Restart(void);
 void *Djinn_GetRecoveryTable(s32 enemySide);
 u32 Party_GetAverageLevel(void);
-struct BattleUnit *Unit_Get(u32 owner);
+struct Unit *Unit_Get(u32 owner);
 const u8 *Enemy_GetDefinition(s32 selector);
 void Runtime_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
                                   s32 direction);
@@ -28,18 +28,18 @@ void Party_StartChildhood(void);
 void Party_EndChildhood(void);
 void Party_RestoreHpPp(s32 cureConditions);
 void Party_RestorePpOfLitElements(void);
-void Unit_RatioNoOp(void);
-void Unit_UpdateRatios(s32 owner);
-void Unit_SetHp(struct BattleUnit *unit, s32 hp);
-void Unit_SetPp(struct BattleUnit *unit, s32 pp);
+void Unit_GaugeNoOp(void);
+void Unit_RecalculateGauges(s32 owner);
+void Unit_SetHp(struct Unit *unit, s32 hp);
+void Unit_SetPp(struct Unit *unit, s32 pp);
 s32 Unit_AddHp(s32 owner, s32 delta);
 s16 Unit_AddPp(s32 owner, s32 delta);
 s32 Party_AdjustShopCredit(s32 amount);
 s32 Party_AdjustShopGifts(s32 amount);
 
 struct ItemDefinition *Item_GetDirect(s32 item);
-s32 Item_CanOwnerEquipDirect(s32 owner, s32 item);
-s32 Item_IsCompatibleWithOwner(s32 unit, s32 item);
+s32 Item_CanUnitEquipDirect(s32 owner, s32 item);
+s32 Item_IsCompatibleWithUnit(s32 unit, s32 item);
 s32 Item_GetEquipmentGroup(s32 itemId);
 s32 Inventory_GetQuantity(s32 owner, s32 slot);
 s32 Inventory_Count(s32 owner);
@@ -48,12 +48,12 @@ s32 PartyInventory_CountFreeSlots(void);
 s32 Inventory_AddItem(s32 owner, s32 itemId);
 s32 PartyInventory_Add(s32 itemId);
 s32 Inventory_Find(s32 owner, s32 itemId);
-s32 PartyInventory_FindOwner(s32 itemId);
+s32 PartyInventory_FindMember(s32 itemId);
 s32 Inventory_Equip(s32 owner, s32 slot);
 s32 Inventory_FindEquipped(s32 owner, s32 type);
-struct ItemDefinition *Inventory_GetEquippedDefinition(struct BattleUnit *unit,
+struct ItemDefinition *Inventory_GetEquippedDefinition(struct Unit *unit,
                                                        s32 type);
-s32 Inventory_GetEquippedItem(struct BattleUnit *unit, s32 type);
+s32 Inventory_GetEquippedItem(struct Unit *unit, s32 type);
 s32 Inventory_Remove(s32 owner, s32 slot);
 s32 Inventory_Discard(s32 owner, s32 slot);
 s32 Inventory_CheckDiscard(s32 owner, s32 slot);
@@ -66,8 +66,8 @@ s32 ItemCounter_Adjust(s32 index, s32 delta);
 s32 Item_AdjustCounter(s32 itemId, s32 delta);
 s32 Inventory_CountItem(s32 owner, s32 itemId);
 s32 PartyInventory_CountItem(s32 itemId);
-struct BattleAct *BattleAction_GetDirect(s32 actionId);
-s32 Unit_KnowsAction(s32 owner, s32 actionId);
+struct AbilityDefinition *Ability_GetDirect(s32 actionId);
+s32 Unit_KnowsPsynergy(s32 owner, s32 actionId);
 s32 Unit_RefreshPsynergy(s32 owner);
 s32 Unit_LearnPsynergy(s32 stateIndex, s32 value);
 struct LevelUpResult *Unit_CheckLevelUp(s32 owner, struct LevelUpResult *gains);
@@ -91,10 +91,10 @@ s32 GameFlag_GetNibble(u32 flag);
 void GameFlag_SetNibble(s32 flag, s32 value);
 
 s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix);
-s32 Party_CountActiveOwners(void);
-s32 Party_AddActiveOwner(s32 owner);
-s32 Party_RemoveActiveOwner(s32 owner);
-s32 Party_ListActiveOwners(s16 *owners);
+s32 Party_CountMembers(void);
+s32 Party_AddMember(s32 owner);
+s32 Party_RemoveMember(s32 owner);
+s32 Party_ListMembers(s16 *owners);
 s32 Party_AdjustCoins(s32 amount);
 
 s32 Summon_ListLearned(u8 *output);
@@ -102,7 +102,7 @@ const struct SummonDefinition *SummonDefinition_GetNear(u32 summonId);
 s32 Class_GetSeries(s32 primaryElement, s32 secondaryElement);
 s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]);
 s32 Unit_GetElementLevel(s32 owner, s32 element);
-s32 Enemy_GetAttackElement(struct BattleUnit *unit);
+s32 Enemy_GetAttackElement(struct Unit *unit);
 #ifdef UBFIX
 void Unit_CalculateBaseElements(s32 owner,
                                 struct BattleElementStats *destination);
@@ -122,21 +122,21 @@ s32 Battle_CalculatePsynergyPower(s32 power, s32 elementDifference,
                                   s32 powerMultiplier);
 s32 Battle_CalculateRecovery(s32 power, s32 elementPower, s32 powerMultiplier);
 s32 Item_GetEquippedElement(s32 owner);
-s32 Equipment_GetUnleashRateBonus(struct BattleUnit *unit);
-s32 RollWeaponUnleash(struct BattleUnit *owner);
+s32 Equipment_GetUnleashRateBonus(struct Unit *unit);
+s32 RollWeaponUnleash(struct Unit *owner);
 s32 Battle_GetEffectBaseSuccessRate(s32 effectId);
-s32 BattleTarget_IsWeakToEffect(const struct BattleUnit *target, s32 effectId);
+s32 BattleAbility_IsWeakToEffect(const struct Unit *target, s32 effectId);
 s32 Battle_IsReviveEffect(s32 effectId);
 s32 Battle_RollEffectSuccess(s32 caster, s32 target, s32 resistanceCategory,
                              s32 effectId, s32 successScale);
 
 const struct DjinnDefinition *Djinn_GetDefinition(u32 group, u32 index);
-s32 Djinn_AddToLeastLoadedOwner(s32 element, s32 djinn);
-s32 Djinn_AddToOwner(s32 owner, s32 element, s32 djinnIndex);
-s32 Djinn_IsReady(s32 owner, s32 element, s32 djinnIndex);
-u32 Djinn_IsActive(s32 owner, s32 element, s32 djinnIndex);
-s32 Djinn_Activate(s32 owner, s32 element, s32 djinnIndex);
-u32 Djinn_Deactivate(s32 owner, s32 element, s32 djinnIndex);
+s32 Djinn_GiveToParty(s32 element, s32 djinn);
+s32 Djinn_Give(s32 owner, s32 element, s32 djinnIndex);
+s32 Djinn_CanSet(s32 owner, s32 element, s32 djinnIndex);
+u32 Djinn_IsSet(s32 owner, s32 element, s32 djinnIndex);
+s32 Djinn_Set(s32 owner, s32 element, s32 djinnIndex);
+u32 Djinn_PutOnStandby(s32 owner, s32 element, s32 djinnIndex);
 s32 DjinnRecovery_Remove(s32 owner, s32 element, s32 djinnIndex);
 u32 *DjinnRecovery_AddStandby(u32 owner, u32 element, u32 djinnIndex);
 s32 Djinn_Transfer(s32 source, s32 element, s32 djinnIndex, s32 target);

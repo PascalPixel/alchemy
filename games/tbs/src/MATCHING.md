@@ -186,7 +186,7 @@ These turn up all over the game.
 - Palette RAM and VRAM are written through either a volatile pointer or a
   plain one. Palette RAM is either `BG_PLTT_COLOR`, which is volatile, or a
   plain pointer to it such as `(u16 *)&BG_PLTT_COLOR(14, 0)`.
-  `BattleEffect_RunJudgment`'s brightening ramp, which raises each colour's
+  `BattleAnim_RunJudgment`'s brightening ramp, which raises each colour's
   red, green and blue levels in turn, keeps a `volatile u16 *` from
   `&BG_PLTT_COLOR(0, 1)`, because with a plain pointer the mask that picks out
   red is hoisted out of the loop (24 of 2455 instructions differ in tbs-en).
@@ -255,9 +255,9 @@ These turn up all over the game.
 - A random value is masked in place, with the mask assigned first
   (`speed = 0x3ff; speed &= Random16();`). Written as `Random16() & 0x3ff`,
   the mask goes into a scratch register and the result is copied before the
-  `and`, so 3 instructions differ at each site. `BattleEffect_RunNeptune`,
-  `BattleEffect_RunPlanetDiver`, `BattleEffect_RunRamses`, `BattleEffect_RunMoteFountain`,
-  `BattleEffect_RunTitanBlade` (`0x1FF`), `BattleEffect_RunThor` (`THOR_LAUNCH_SPARKS`
+  `and`, so 3 instructions differ at each site. `BattleAnim_RunNeptune`,
+  `BattleAnim_RunPlanetDiver`, `BattleAnim_RunRamses`, `BattleAnim_RunMoteFountain`,
+  `BattleAnim_RunTitanBlade` (`0x1FF`), `BattleAnim_RunThor` (`THOR_LAUNCH_SPARKS`
   too) and `LuckyWheels_Run` ([`object/colorfx.c`](object/colorfx.c)) keep it.
 - A message that follows a named one is written as `MsgName + n`, such as
   `MsgSaveDataCorrupted + 2` for `MsgSaveRecoveryFailed`, where the ROM adds to
@@ -492,7 +492,7 @@ The battle engine's few spellings are a store, its background's blend
 arithmetic and its work slots.
 
 - An action slot's first halfword is cleared through a cast,
-  `*(u16 *)&member->actionSlots[i] = 0`, because the field store loads its
+  `*(u16 *)&member->psynergy[i] = 0`, because the field store loads its
   zero differently ([`battle/battle/debug.c`](battle/battle/debug.c)).
 - The background's blend steps are `BLEND_ALPHA(16, 16) - alphaStep` and
   `step + BLEND_ALPHA(0, 16)`, where the macro's `|` form changes the code
@@ -506,21 +506,21 @@ The effects lean hard on their heap slots, and some of them on arithmetic and
 macros whose exact shape decides the code.
 
 - A work slot is read as `HEAP_SLOT_BLOCK(n)` or `gHeapSlots[n]`, through a base
-  pointer as `slots[n - base]`, `EFFECT_SLOT` or `CANVAS_SLOT`, and when it
-  holds a blitter (a drawing routine `BattleEffect_BuildBlitter` writes into a heap
-  slot) as `EFFECT_BLITTERS[n]` or `(DrawRectangle)gHeapSlots[n]`.
-  `BattleEffect_RunParticleStreams` reads the background and blitter slots through
+  pointer as `slots[n - base]`, `ANIM_SLOT` or `CANVAS_SLOT`, and when it
+  holds a blitter (a drawing routine `BattleAnim_BuildBlitter` writes into a heap
+  slot) as `ANIM_BLITTERS[n]` or `(DrawRectangle)gHeapSlots[n]`.
+  `BattleAnim_RunParticleStreams` reads the background and blitter slots through
   one base pointer, where two absolute reads make the function 16 bytes longer
   in tbs-en.
-  `BattleEffect_RunIce` reads its two blitters one each way (both cast, 2 of 586
-  instructions differ; both through `EFFECT_BLITTERS`, 3).
+  `BattleAnim_RunIce` reads its two blitters one each way (both cast, 2 of 586
+  instructions differ; both through `ANIM_BLITTERS`, 3).
 - A signed halving is written out as its expansion, `x = p->x; x += (u32)x >>
   31; x >>= 1;`, which lets the final shift follow later arithmetic (the
   centre of the Forcible Arm and Truncheon Fist flame in
-  `BattleEffect_RunCastingImpact`). As `p->x / 2` in each arm, 57 of 3070
+  `BattleAnim_RunCastingImpact`). As `p->x / 2` in each arm, 57 of 3070
   instructions differ; as `x /= 2`, 6.
 - A statement macro takes the shape that all its uses match with. In
-  `BattleEffect_BuildBlitter`'s second walk
+  `BattleAnim_BuildBlitter`'s second walk
   ([`effect/parts/blitter.c`](effect/parts/blitter.c)), `PUT`, `COPY` and
   `PATCH` are `do { } while (0)` blocks, `COPY_FROM` and `PUT_BRANCH` plain
   statements and `COPY_TWICE` a plain `{ }` block. As plain statements, `PUT`,

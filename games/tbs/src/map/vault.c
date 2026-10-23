@@ -220,7 +220,7 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
 
 /// Counts the Venus Djinn that must leave Ivan before he leaves the party.
 static int Vault_GetIvanVenusDjinnCount(void) {
-  return Unit_Get(IVAN)->djinnOwnedCounts[ELEMENT_VENUS];
+  return Unit_Get(IVAN)->djinnHeldCounts[ELEMENT_VENUS];
 }
 
 #include "common/vault_djinn.h"
@@ -269,7 +269,7 @@ static void EventScript_IvanStaysBehind(void) {
     Vault_ReturnIsaacsDjinni();
     Engine_TaskWait(20);
   }
-  Party_RemoveOwnerRestored(IVAN);
+  Party_RemoveMemberRestored(IVAN);
   Engine_ScriptRequestWarp(work->coordEvent -
                            (VAULT_CELL_SOUTH_GATE - VAULT_TO_WORLD_MAP_SOUTH));
   Engine_ScriptCloseScreen();
@@ -579,7 +579,7 @@ static void EventScript_TalkToDogAfterCapture(void) {
   Vault_FaceObjectEventAndWait(LOCALID_VAULT_DOG, LOCALID_PARTY_LEADER, 2);
   Engine_ScriptShowMessage(LOCALID_VAULT_DOG, 0);
   Engine_ObjectEventSetAnimation(LOCALID_VAULT_DOG, ANIMATION_STAND);
-  if (PartyInventory_FindOwner(ITEM_BONE) != -1 &&
+  if (PartyInventory_FindMember(ITEM_BONE) != -1 &&
       Engine_GameFlagIsSet(FLAG_VAULT_DOG_SHOWN_PASSAGE) == 0) {
     u16 *menuRequest = &gFieldWork->menu;
     u16 open = 1;

@@ -12,21 +12,21 @@
 /// again, scattering 16 sparks that drift upward; the target is struck on frame
 /// 10.
 ///
-/// Abilities: Undead Sword (BATTLE_EFFECT_UNDEAD_SWORD).
+/// Abilities: Undead Sword (BATTLE_ANIM_UNDEAD_SWORD).
 ///
 /// The effect runs 54 frames. BG2 is moved so that the canvas's centre line
 /// stands on the target. The sparks are work->particles 0 to 15, variant their
 /// age in frames.
-void BattleEffect_RunUndeadSword(struct BattleEffectArgument *effect) {
+void BattleAnim_RunUndeadSword(struct BattleAnimArgs *effect) {
   void **slots;
   void **cursor;
-  struct BattleEffectWork *work;
+  struct BattleAnimWork *work;
   void *canvas;
   void *sprites;
   DrawRectangle draw[2];
-  struct EffectPosition screenPosition;
-  struct EffectStep *spark;
-  struct EffectStep *particle;
+  struct ScreenPoint screenPosition;
+  struct Particle *spark;
+  struct Particle *particle;
   s32 frame;
   s32 i;
   s32 height;
@@ -38,20 +38,20 @@ void BattleEffect_RunUndeadSword(struct BattleEffectArgument *effect) {
   s32 cell;
   s32 size;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
+  ANIM_GET_SLOTS(slots, cursor, work, canvas);
   work->effect = effect;
   sprites = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_ANIM];
-  EFFECT_START_NARROW_CANVAS(0);
+  ANIM_START_NARROW_CANVAS(0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_LimeColumnSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet,
                              work->sheet + UNDEAD_SWORD_SPARK_SHEET, 1, 0);
-  BattleEffect_FetchRectangleBlitters(work->effect->side, draw);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  BattleAnim_FetchRectangleBlitters(work->effect->side, draw);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
   // Shift BG2 so that canvas x 64 lines up with the target.
-  EffectPosition_ProjectBattler(work->effect->actors[0], &screenPosition);
+  Projection_Unit(work->effect->targets[0], &screenPosition);
   REG_BG2X = (64 - screenPosition.x) << 8;
 
   // Scatter sparks in all directions from (64, 112), at 1/2 to 2.5 pixels a
@@ -72,10 +72,9 @@ void BattleEffect_RunUndeadSword(struct BattleEffectArgument *effect) {
     // Frame 10: the strike, with a second 8-frame shake.
     if (frame == 10) {
       work->shakeFrames = 8;
-      EFFECT_SHOW_DAMAGE(SE_212);
-      BattleMotion_ApplyVariantMotionFar(work->effect->actors[0],
-                                         KNOCKBACK_NUDGE);
-      ObjectGroup_UpdateMembers(work->effect->actors[0], SPRITE_COLOR_WHITE,
+      ANIM_SHOW_DAMAGE(SE_212);
+      BattleMotion_ApplyKnockbackFar(work->effect->targets[0], KNOCKBACK_NUDGE);
+      ObjectGroup_UpdateMembers(work->effect->targets[0], SPRITE_COLOR_WHITE,
                                 POSE_DAMAGE, 0, 8);
     }
 
@@ -93,16 +92,16 @@ void BattleEffect_RunUndeadSword(struct BattleEffectArgument *effect) {
       if (height > 0) {
         if (height > 80) {
           height = 80;
-          mode = COMPOSITE_MAX;
+          mode = BLITTER_MAX;
         } else {
           mode = COMPOSITE_ADDITIVE;
         }
         for (i = 0, x = 50; i != 2; i++, x += 14) {
           if (i == 0)
-            EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, mode);
+            ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, mode);
           else
-            EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
-                                EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, mode);
+            ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                              ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X, mode);
           draw[0] = ((DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE]);
           ((DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE])(
               canvas, work->sheet, x, 112 - height, 14, height);
@@ -116,7 +115,7 @@ void BattleEffect_RunUndeadSword(struct BattleEffectArgument *effect) {
     // 1/8 pixel a frame each frame and slowed to 62/64, until it is 29 frames
     // old. The blitters are fetched and released each frame, as the columns
     // took the slot.
-    BattleEffect_FetchRectangleBlitters(work->effect->side, draw);
+    BattleAnim_FetchRectangleBlitters(work->effect->side, draw);
     for (i = 0, particle = work->particles; i != 16; i++) {
       if (frame >= i / 2 + 8 && particle->variant <= 28) {
         s32 px;
@@ -132,19 +131,19 @@ void BattleEffect_RunUndeadSword(struct BattleEffectArgument *effect) {
         size = gUndeadSword_SparkSizes[cell];
         draw[0](canvas, src, px - size / 2, py - size / 2, size, size);
         particle->variant++;
-        EffectStep_AdvanceWithGravity2D(particle, 62, -0x2000);
+        Particle_AdvanceWithGravity2D(particle, 62, -0x2000);
       }
       particle++;
     }
-    EFFECT_RELEASE_BLITTERS();
+    ANIM_RELEASE_BLITTERS();
     if (frame <= 7)
       Camera_ApplyShake(2, 2);
     else
       Camera_ApplyShake(16, 16);
-    EFFECT_END_FRAME(work);
+    ANIM_END_FRAME(work);
   }
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  BattleEffect_EndCanvasLayer();
+  Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);
+  BattleAnim_EndCanvasLayer();
 }
 
 #undef UNDEAD_SWORD_SPARK_SHEET

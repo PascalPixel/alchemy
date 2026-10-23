@@ -352,8 +352,8 @@ The main image is the program the processor runs from the cartridge.
 1 MB of the English cartridge, and the sound code, the music and the game's packed
 data follow them. A caller in another bank goes through the bank's
 far-call table, by the function's name with `Far` added: `Game_Run`, in the
-`object` bank, starts a battle with `Battle_RunEncounterFar`, which leads to
-`Battle_RunEncounter` in the `battle` bank. The [glossary](glossary.md#far-call)
+`object` bank, starts a battle with `Battle_RunFar`, which leads to
+`Battle_Run` in the `battle` bank. The [glossary](glossary.md#far-call)
 says how a [far call](glossary.md#far-call) works, and
 [System](src/system/README.md#why-the-program-is-cut-into-banks) why the
 program is cut into banks.

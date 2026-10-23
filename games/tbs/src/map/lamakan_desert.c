@@ -447,7 +447,7 @@ static void LamakanDesert_FightManticore(void) {
   FieldScript_SetNextDestination(
       (s32)&MapId_LamakanDesertManticore,
       LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE);
-  Battle_SetStart(BATTLE_START_SCRIPTED);
+  Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Field_RequestBattleFromEncounterTable(
       ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 5);
 }

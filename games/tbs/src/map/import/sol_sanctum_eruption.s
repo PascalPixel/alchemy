@@ -33,7 +33,7 @@
 	.set import.Engine_GameFlagSet, 1
 	.set import.Engine_ScriptWait, 1
 	.set import.Engine_ScriptStart, 1
-	.set import.Party_RemoveOwnerRestored, 1
+	.set import.Party_RemoveMemberRestored, 1
 	.set import.Engine_ScriptChooseYesNo, 1
 	.set import.ObjectEvent_GetById, 1
 	.set import.Engine_ObjectEventDestroy, 1

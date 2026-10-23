@@ -561,13 +561,13 @@ s32 Field_SearchCell(s32 tile) {
               if (condition != -1) {
                 condition = gGameState.pendingDjinnEvent = condition | 0x1000;
               }
-              // BATTLE_START_NO_ESCAPE (battle/battle/round.c): no first strike
+              // BATTLE_TYPE_NO_ESCAPE (battle/battle/round.c): no first strike
               // or surprise, and every attempt to run fails; the command menu
               // still offers it, refusing outright only for
-              // BATTLE_START_SCRIPTED and BATTLE_START_LINK.
+              // BATTLE_TYPE_SCRIPTED and BATTLE_TYPE_LINK.
               work->battle = Encounter_GetFormationAtSlot(ENCOUNTER_ZONE_MIMIC,
                                                           (u16)event->value);
-              Battle_SetStart(BATTLE_START_NO_ESCAPE);
+              Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
               Encounter_SelectBattleMusic(ENCOUNTER_ZONE_MIMIC,
                                           (u16)event->value);
               Sound_PlaySongFar(gGameState.battleMusic);

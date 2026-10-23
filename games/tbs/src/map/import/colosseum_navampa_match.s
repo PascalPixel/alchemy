@@ -54,8 +54,8 @@
 	.set import.GameFlag_GetByte, 1
 	.set import.GameFlag_SetByte, 1
 	.set import.GetPartyMemberCount, 1
-	.set import.Party_AddActiveOwner, 1
-	.set import.Party_RemoveActiveOwner, 1
+	.set import.Party_AddMember, 1
+	.set import.Party_RemoveMember, 1
 	.set import.Party_RestoreHpPp, 1
 	.set import.Engine_ScriptWait, 1
 	.set import.Engine_ScriptStart, 1

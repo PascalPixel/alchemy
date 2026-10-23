@@ -78,7 +78,7 @@ s32 Menu_RunCommandRow(s32 mode) {
     selectionUi->commandKinds[kindCount++] = COMMAND_ICON_ATTACK;
     selectionUi->commandKinds[kindCount++] = COMMAND_ICON_PSYNERGY;
     if (*((s32 *)Djinn_GetRecoveryTableFar(0)) != 0) {
-      BattleParty_CountStandbyDjinnFar(0, party);
+      BattleDjinn_CountStandbyFar(0, party);
       for (i = 0; i <= 3; i++)
         tradeCount += party[i];
       selectionUi->commandKinds[kindCount++] = COMMAND_ICON_DJINN;
@@ -274,7 +274,7 @@ s32 Menu_RunCommandRow(s32 mode) {
               else if (kind == COMMAND_ICON_SUMMON)
                 message = UiText_ShowMessageAndWaitComplete(
                     MsgDjinnTutorialSummon, 15, 8);
-              BattlePresentation_WaitForPromptAtFar(102, 155);
+              BattleMessage_WaitForAdvanceAtFar(102, 155);
               UiWork_Finalize(message, 1);
               navigation->tutorialStep++;
               navigation->tutorialDelay = 45;
@@ -428,7 +428,7 @@ s32 BattleLayout_HighlightPartyPanels(u16 *ids) {
   s32 i;
   s32 j;
 
-  count = BattleParty_ListActorIdsFar(1, 0);
+  count = BattleUnits_ListIdsFar(1, 0);
   Ui_SetRectHighlight(29 - count * 6, 0, 25, 5, 15);
   i = 0;
   // The loop over ids is written with goto (MATCHING.md): as

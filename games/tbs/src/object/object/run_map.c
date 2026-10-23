@@ -182,7 +182,7 @@ s32 Map_Run(s32 warpDest) {
             }
             if (work->survivorCount == 0) {
               // The whole party fell: back to the last sanctum with 1 HP.
-              struct BattleUnit *vitals;
+              struct Unit *vitals;
 
               if (gGameState.leaderLocalId == 0) {
                 if (GameFlag_TestFar(FLAG_CHILDHOOD) != 0)

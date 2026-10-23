@@ -122,7 +122,7 @@ s32 ItemMenu_Run(void) {
   UiWindow_DrawFrameFar(0, 0, 30, 20);
   WaitFrames(1);
   UiWindow_InitializeWork(0);
-  screen->partyCount = Party_ListActiveOwnersFar(screen->ownerIds);
+  screen->partyCount = Party_ListMembersFar(screen->ownerIds);
   ItemMenu_Initialize(0, 3, 0, 7);
   Resource_LoadPairedBlocks();
   Palette_LightenBankHighlight(14);
@@ -221,12 +221,12 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
 #endif
   s32 selection;
   s32 menuResult;
-  struct BattleUnit *sourceUnit;
-  struct BattleUnit *targetUnit;
+  struct Unit *sourceUnit;
+  struct Unit *targetUnit;
   struct ItemMenuWork *menu;
   struct ItemDefinition *item;
-  struct BattleUnit *sourceCopy;
-  struct BattleUnit *targetCopy;
+  struct Unit *sourceCopy;
+  struct Unit *targetCopy;
   u32 state;
   s32 command;
   s32 result;
@@ -1035,7 +1035,7 @@ s32 ItemMenu_SelectMember(s32 pane) {
   struct ItemMenuWork *menu = gMenuWork;
   s32 result = 0;
   s32 ownerIndex;
-  struct BattleUnit *unit;
+  struct Unit *unit;
 
   ownerIndex = menu->paneIndex[pane];
   RenderOutput_ClearListFar(menu->infoWindow);
@@ -1064,7 +1064,7 @@ s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
   s32 selection;
   s32 ownerCount;
   s32 result;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   u8 sortMode;
   s32 showEquipment;
   s32 redraw;
@@ -1341,8 +1341,8 @@ void EquipmentMenu_UpdateCompatibilityIndicators(void) {
   if ((gFrameCount & 31) == 0 && menu->partyCount != 0) {
     memberIndex = 0;
     do {
-      if (Item_CanOwnerEquip(menu->ownerIds[memberIndex],
-                             menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK) !=
+      if (Item_CanUnitEquip(menu->ownerIds[memberIndex],
+                            menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK) !=
           0) {
         struct AnimationObject *partyFigure = menu->ownerObjects[memberIndex];
         AnimationObject_SelectAnimationFar(partyFigure, 3);
@@ -1436,7 +1436,7 @@ s32 ItemMenu_CountItems(s32 ownerId) {
 /// its first stack, or 0. The Spanish and Italian editions add up every stack
 /// of it.
 s32 InventoryMenu_GetItemQuantity(s32 ownerId, s32 itemId) {
-  struct BattleUnit *unit;
+  struct Unit *unit;
   s32 slotIndex;
   s32 quantity;
 
@@ -1464,7 +1464,7 @@ s32 InventoryMenu_GetItemQuantity(s32 ownerId, s32 itemId) {
 
 /// Copies the unit's items into the list items (32 entries), skipping empty
 /// slots and clearing the rest. Returns how many there are. mode is not used.
-s32 ItemMenu_CollectItems(struct BattleUnit *unit, u16 *items, s32 mode) {
+s32 ItemMenu_CollectItems(struct Unit *unit, u16 *items, s32 mode) {
   s32 itemCount;
   s32 slotIndex;
 
@@ -1516,7 +1516,7 @@ void ItemMenu_DrawIcons(u16 *inventoryEntries, s32 iconStyle) {
 /// (see ItemMenu_RefreshEntry), or "no items" when there are none.
 void ItemMenu_RefreshOwner(s32 ownerId, s32 mode) {
   struct ItemMenuWork *menu;
-  struct BattleUnit *owner;
+  struct Unit *owner;
   u16 *items;
 
   menu = gMenuWork;
@@ -1546,7 +1546,7 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
    * void *saved, 22 of 172 instructions differ in tbs-en. */
   struct ItemMenuWork *menu = gMenuWork;
   s32 panelStyle = 0;
-  struct BattleUnit *unit = Unit_GetFar(owner);
+  struct Unit *unit = Unit_GetFar(owner);
   s32 inventoryEntry = unit->inventory[slot];
   s32 previewSlot;
 
@@ -1634,7 +1634,7 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
 /// stack in the first slot that is not equipped. Returns 1 when a slot is free
 /// (or was freed), 0 otherwise.
 s32 Inventory_RemoveFirstUnflagged(s32 ownerId) {
-  struct BattleUnit *unit = Unit_GetFar(ownerId);
+  struct Unit *unit = Unit_GetFar(ownerId);
   s32 result = 0;
   s32 slotIndex;
 
@@ -1905,8 +1905,8 @@ void ItemMenu_BuildCommands(s8 *commandStates) {
   if (menu->selectedItems[0] & INVENTORY_BROKEN)
     commandStates[ITEM_COMMAND_USE] = ITEM_COMMAND_STATE_DISABLED;
 
-  if (Item_CanOwnerEquip(menu->paneOwner[0], menu->selectedItems[0] &
-                                                 INVENTORY_ITEM_ID_MASK) == 0) {
+  if (Item_CanUnitEquip(menu->paneOwner[0],
+                        menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK) == 0) {
     commandStates[ITEM_COMMAND_EQUIP] = ITEM_COMMAND_STATE_DISABLED;
   }
 
@@ -2002,13 +2002,13 @@ s32 Item_ClassifyUseMode(s32 ownerId, s32 inventoryEntry) {
   }
 
   {
-    struct BattleAct *action =
-        BattleAction_Get(item->actionId & OWNER_ACTION_ID_MASK);
+    struct AbilityDefinition *action =
+        Ability_Get(item->abilityId & PSYNERGY_ABILITY_MASK);
 
-    if (item->actionId != 0) {
+    if (item->abilityId != 0) {
       if (item->type != ITEM_TYPE_NONE) {
         if (item->useType != ITEM_USE_TEACHES) {
-          if (Item_CanOwnerEquip(ownerId, itemId) != 0) {
+          if (Item_CanUnitEquip(ownerId, itemId) != 0) {
             result = ITEM_USE_MODE_CHOOSE_MEMBER;
           }
         }
@@ -2017,10 +2017,10 @@ s32 Item_ClassifyUseMode(s32 ownerId, s32 inventoryEntry) {
       }
 
       if (result == ITEM_USE_MODE_CHOOSE_MEMBER) {
-        s32 mask = ACTION_USABLE_IN_BATTLE;
+        s32 mask = ABILITY_USABLE_IN_BATTLE;
         u8 flags = action->flags;
 
-        if ((flags & ACTION_USABLE_IN_FIELD) != 0) {
+        if ((flags & ABILITY_USABLE_IN_FIELD) != 0) {
           u8 range = action->range;
           result = (range == ABILITY_RANGE_ALL) ? ITEM_USE_MODE_WHOLE_PARTY
                                                 : ITEM_USE_MODE_CHOOSE_MEMBER;
@@ -2217,29 +2217,29 @@ void ItemMenu_DrawItemDetails(struct UiWindow *window, s32 inventoryEntry) {
   }
   // Each of its effects.
   for (i = 0; i < 4; i++) {
-    if (def->effects[i].kind == ITEM_EFFECT_NONE)
+    if (def->effects[i].kind == EQUIP_EFFECT_NONE)
       continue;
     amount = def->effects[i].amount;
     switch (def->effects[i].kind) {
-    case ITEM_EFFECT_NONE:
+    case EQUIP_EFFECT_NONE:
       break;
-    case ITEM_EFFECT_ADD_HP:
-    case ITEM_EFFECT_ADD_HP_REGEN:
-    case ITEM_EFFECT_ADD_PP:
-    case ITEM_EFFECT_ADD_PP_REGEN:
-    case ITEM_EFFECT_ADD_AGILITY:
-    case ITEM_EFFECT_ADD_LUCK:
-    case ITEM_EFFECT_ADD_TURNS:
+    case EQUIP_EFFECT_ADD_HP:
+    case EQUIP_EFFECT_ADD_HP_REGEN:
+    case EQUIP_EFFECT_ADD_PP:
+    case EQUIP_EFFECT_ADD_PP_REGEN:
+    case EQUIP_EFFECT_ADD_AGILITY:
+    case EQUIP_EFFECT_ADD_LUCK:
+    case EQUIP_EFFECT_ADD_TURNS:
       UiText_DrawCharacterAtOffsetFar(def->effects[i].kind + MsgEquipEffectName,
                                       window, 0, row * 8);
       ItemMenu_DrawStat(amount, 3, window, 64, row * 8);
       break;
     // Power and Resist in each of the four elements, after the element's
     // icon.
-    case ITEM_EFFECT_ADD_VENUS_POWER ... ITEM_EFFECT_ADD_JUPITER_RESIST:
+    case EQUIP_EFFECT_ADD_VENUS_POWER ... EQUIP_EFFECT_ADD_JUPITER_RESIST:
       UiWindow_SetTilemapEntryFar(
           window,
-          (u8)((def->effects[i].kind - ITEM_EFFECT_ADD_VENUS_POWER) %
+          (u8)((def->effects[i].kind - EQUIP_EFFECT_ADD_VENUS_POWER) %
                ELEMENT_COUNT) +
               1,
           0, row, 2);
@@ -2248,14 +2248,14 @@ void ItemMenu_DrawItemDetails(struct UiWindow *window, s32 inventoryEntry) {
       ItemMenu_DrawStat(amount, 3, window, 64, row * 8);
       break;
     // Rates, in tenths: shown as a multiplier from 0.0 to 1.9.
-    case ITEM_EFFECT_SCALE_HP:
-    case ITEM_EFFECT_SCALE_HP_REGEN:
-    case ITEM_EFFECT_SCALE_PP:
-    case ITEM_EFFECT_SCALE_PP_REGEN:
-    case ITEM_EFFECT_SCALE_ATTACK:
-    case ITEM_EFFECT_SCALE_DEFENSE:
-    case ITEM_EFFECT_SCALE_AGILITY:
-    case ITEM_EFFECT_SCALE_LUCK:
+    case EQUIP_EFFECT_SCALE_HP:
+    case EQUIP_EFFECT_SCALE_HP_REGEN:
+    case EQUIP_EFFECT_SCALE_PP:
+    case EQUIP_EFFECT_SCALE_PP_REGEN:
+    case EQUIP_EFFECT_SCALE_ATTACK:
+    case EQUIP_EFFECT_SCALE_DEFENSE:
+    case EQUIP_EFFECT_SCALE_AGILITY:
+    case EQUIP_EFFECT_SCALE_LUCK:
       UiText_DrawCharacterAtOffsetFar(def->effects[i].kind + MsgEquipEffectName,
                                       window, 0, row * 8);
 #if LANGUAGE != LANGUAGE_JAPANESE
@@ -2282,9 +2282,9 @@ void ItemMenu_DrawItemDetails(struct UiWindow *window, s32 inventoryEntry) {
       UiText_DrawCharacterAtOffsetFar(MsgEffectRateSuffix, window, 72, row * 8);
 #endif
       break;
-    case ITEM_EFFECT_ADD_UNLEASH_CHANCE: // "Critical Hits increase"
-    case ITEM_EFFECT_CURSE_REMOVABLE:
-    case ITEM_EFFECT_LURE: // "Boosts monster encounters"
+    case EQUIP_EFFECT_ADD_UNLEASH_CHANCE: // "Critical Hits increase"
+    case EQUIP_EFFECT_CURSE_REMOVABLE:
+    case EQUIP_EFFECT_LURE: // "Boosts monster encounters"
       UiText_DrawCharacterAtOffsetFar(def->effects[i].kind + MsgEquipEffectName,
                                       window, 0, row * 8);
       break;
@@ -2648,8 +2648,8 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
   s32 selection = 0;
   s32 changed = 1;
   struct ItemMenuWork *menu = gMenuWork;
-  struct BattleUnit *unit = Unit_GetFar(menu->paneOwner[1]);
-  struct BattleUnit *saved;
+  struct Unit *unit = Unit_GetFar(menu->paneOwner[1]);
+  struct Unit *saved;
   struct UiWindow *window;
   s32 slot;
   s32 owner;
@@ -2880,7 +2880,7 @@ s32 ItemMenu_RunList(s32 paneIndex) {
   s32 result;
   s32 redraw;
   s32 done;
-  struct BattleUnit *owner;
+  struct Unit *owner;
   s32 previous;
   struct RenderOutput *icon;
   s32 work[5];
@@ -2945,9 +2945,9 @@ s32 ItemMenu_RunList(s32 paneIndex) {
       // Every 32 frames, the members who can equip the item move.
       if ((gFrameCount & 31) == 0) {
         for (i = 0; i < menu->partyCount; i++) {
-          if (Item_CanOwnerEquip(menu->ownerIds[i],
-                                 INVENTORY_ITEM_ID_MASK &
-                                     menu->items[state.selectedIndex]) != 0) {
+          if (Item_CanUnitEquip(menu->ownerIds[i],
+                                INVENTORY_ITEM_ID_MASK &
+                                    menu->items[state.selectedIndex]) != 0) {
             AnimationObject_SelectAnimationFar(menu->ownerObjects[i], 3);
           }
         }

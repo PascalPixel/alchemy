@@ -10,21 +10,21 @@
 #include "render_input.h"
 #include "djinn_ids.h"
 
-// A Djinni's list entry, as Djinn_ListOwnerEntries writes it into
+// A Djinni's list entry, as Djinn_ListUnitEntries writes it into
 // DjinnListTable.ids. bits: 15 set | 11..8 owner | 7..5 element | 4..0 index
 #define DJINN_ENTRY_INDEX 31      ///< its number within its element
 #define DJINN_ENTRY_ELEMENT 0xe0  ///< its element (enum Element)
-#define DJINN_ENTRY_OWNER 0xf00   ///< the member holding it
+#define DJINN_ENTRY_MEMBER 0xf00  ///< the member holding it
 #define DJINN_ENTRY_IS_SET 0x8000 ///< set; an unset one is drawn in colour 2
 
 #define DJINN_ELEMENTS 4
-#define DJINN_LIST_OWNERS 8 ///< list columns: one per party member
-#define DJINN_LIST_ROWS 10  ///< entries one member's list holds
+#define DJINN_LIST_MEMBERS 8 ///< list columns: one per party member
+#define DJINN_LIST_ROWS 10   ///< entries one member's list holds
 
 /// The Djinn menu's lists: each party member's Djinn entries and their count.
 struct DjinnListTable {
-  u16 ids[DJINN_LIST_OWNERS][DJINN_LIST_ROWS];
-  s8 counts[DJINN_LIST_OWNERS];
+  u16 ids[DJINN_LIST_MEMBERS][DJINN_LIST_ROWS];
+  s8 counts[DJINN_LIST_MEMBERS];
 };
 
 /// The Djinn menu's lists, the field tiles and palette it restores on closing,
@@ -84,9 +84,9 @@ struct DjinnMenuWork {
   struct RenderOutput *secondCursor;
   u8 unusedBeforeBackdrop[4]; ///< no view of the menu work names it
   struct DjinnMenuBackdrop *backdrop;
-  u8 unusedAfterBackdrop[0x40];  ///< no view of the menu work names it
-  u16 entries[32];               ///< ItemMenuWork's items; not named here
-  u16 owners[DJINN_LIST_OWNERS]; ///< the party in order
+  u8 unusedAfterBackdrop[0x40];   ///< no view of the menu work names it
+  u16 entries[32];                ///< ItemMenuWork's items; not named here
+  u16 owners[DJINN_LIST_MEMBERS]; ///< the party in order
   u8 pairCount;
   u8 ownerCount;
   u8 shownOwner[2]; ///< the member giving and the one receiving

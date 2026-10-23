@@ -24,12 +24,12 @@ extern struct ItemDefinition gItem_DefinitionTable[];
 /// lists; read through SummonDefinition_Get.
 extern const struct SummonDefinition gSummon_DefinitionTable[];
 
-struct BattleAct;
+struct AbilityDefinition;
 struct EnemyDefinition;
 struct PresetValues;
 
 /// The 519 abilities by ability id (actions.tsv).
-extern struct BattleAct gBattleAction_DefinitionTable[];
+extern struct AbilityDefinition gAbilityDefinitions[];
 /// Each character's lighthouse group: 0 for Isaac, Garet, Felix and Jenna,
 /// whose PP a lit Venus or Mars Lighthouse restores; 1 for the others, by
 /// Mercury or Jupiter (Party_RestorePpOfLitElements).

@@ -20,7 +20,7 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
   s32 firstEntry;
   s32 drawnRow;
   s32 cursorHandle;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   struct UiWindow *messageWindow;
   s32 iconCount;
   s32 preferredRow;
@@ -94,13 +94,13 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
       if (firstEntry != drawnFirstEntry) {
         RenderOutput_RedrawSavedRect(window);
         for (i = 0; i < BATTLE_LIST_ROWS; i++) {
-          struct BattleAct *action;
+          struct AbilityDefinition *action;
 
           encodedAction = actions[firstEntry + i];
           if (encodedAction == 0) {
             break;
           }
-          action = BattleAction_Get(encodedAction);
+          action = Ability_Get(encodedAction);
           UiWindow_SetTilemapEntry(window, 0xf01f, 11, i * 2, 0);
           UiWindow_SetTilemapEntry(window, PSYNERGY_COST_SECOND_TILE, 12, i * 2,
                                    0);
@@ -108,7 +108,7 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
                             &glyph, 1);
           sprites[i].oam.f.tile = glyph;
 
-          if ((action->flags & ACTION_USABLE_IN_BATTLE) == 0) {
+          if ((action->flags & ABILITY_USABLE_IN_BATTLE) == 0) {
             UiWork_SetParameterNibble(4);
           } else if (action->ppCost > unit->pp) {
             UiWork_SetParameterNibble(2);
@@ -204,8 +204,8 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
     if ((gKeysPressed & KEY_A) != 0) {
       if (count != 0) {
         result = firstEntry + selectedRow;
-        if ((BattleAction_Get(actions[result])->flags &
-             ACTION_USABLE_IN_BATTLE) != 0) {
+        if ((Ability_Get(actions[result])->flags & ABILITY_USABLE_IN_BATTLE) !=
+            0) {
           break;
         }
         /* FAKEMATCH(dead): a dead store keeps the test above from being

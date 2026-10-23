@@ -133,7 +133,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
 /// element's capture effect and is freed. Ends with
 /// `<Djinni> joined <member>.`
 ///
-/// Nothing happens when Djinn_AddToLeastLoadedOwner refuses the Djinni: -1
+/// Nothing happens when Djinn_GiveToParty refuses the Djinni: -1
 /// when it was found before, -2 when no member has room; its object event then
 /// stays. Called by Djinn_ResolvePendingEvent after a won Djinni battle, by
 /// 13 maps directly and by the debug rooms.
@@ -146,7 +146,7 @@ void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
     owner = 0;
     GameFlag_SetBitFar(djinn + element * 20 + FLAG_DJINN_FIRST);
   } else {
-    owner = Djinn_AddToLeastLoadedOwnerFar(element, djinn);
+    owner = Djinn_GiveToPartyFar(element, djinn);
   }
 
   if (owner >= 0) {

@@ -25,7 +25,7 @@
 /// shows the damage on frame 32.
 ///
 /// Abilities: Plasma, Shine Plasma, Spark Plasma, Thunderclap, Thunderbolt,
-/// Thunderstorm (BATTLE_EFFECT_PLASMA).
+/// Thunderstorm (BATTLE_ANIM_PLASMA).
 ///
 /// effect->variant picks how many pillars (gPlasma_Counts), how many sparks
 /// each throws and how long the screen shakes (gPlasma_Sparks); for Spark
@@ -36,11 +36,11 @@
 /// loads the violet palette into the first 64 background colours (the
 /// strongest variant keeps the lightning pillar sheet's), scrolls the camera
 /// (the strongest variant) and sets work->shakeFrames at each strike.
-void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
+void BattleAnim_RunPlasma(struct BattleAnimArgs *effect) {
   BlitterPair draw;
   void **slots;
   void **cursor;
-  struct BattleEffectWork *work;
+  struct BattleAnimWork *work;
   void *canvas;
   s32 i;
   u8 *sprites;
@@ -49,39 +49,38 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
   s32 k;
   s32 start;
   s32 *life;
-  struct EffectStep *spark;
-  struct EffectStep *sparks;
+  struct Particle *spark;
+  struct Particle *sparks;
 
   slots = &gHeapSlots[HEAP_SLOT_BATTLE_ANIM];
   cursor = slots;
-  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
-  sprites = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  ANIM_GET_WORK_AND_CANVAS(cursor, work, canvas);
+  sprites = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
-  BattleEffect_StartCanvasLayer(1);
+  BattleAnim_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
-                      COMPOSITE_ADDITIVE);
-  draw[0] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
-                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
-  draw[1] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_ADDITIVE);
+  draw[0] = (DrawRectangle)ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                    BLITTER_MAX);
+  draw[1] = (DrawRectangle)ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
   Resource_LoadAndDecompress((s32)&ResourceId_LightningPillarSheet, work->sheet,
                              1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
-  if (work->effect->variant != EFFECT_VARIANT_STRONGEST) {
+  if (work->effect->variant != ANIM_VARIANT_STRONGEST) {
     void *palette = Resource_GetTableEntry((s32)&ResourceId_VioletPaletteB);
     Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   }
 
   // Every spark starts idle.
-  life = &((struct EffectStep *)PARTICLES)->variant;
+  life = &((struct Particle *)PARTICLES)->variant;
   for (k = 0; k != PLASMA_SPARK_COUNT; k++) {
     *life = 0;
     life += 7;
   }
   sparks = PARTICLES;
   // Trails keep half of each pixel a frame.
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
   count = gPlasma_Counts[work->effect->variant];
 
   // The last pillar strikes on frame (count - 1) * 8; the effect runs on
@@ -90,7 +89,7 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
     // The strongest variant swings the camera round for the first 64 frames:
     // its yaw turns 1/256 turn a frame, easing off over the last seven,
     // 16160/65536 in all, nearly a quarter turn.
-    if (work->effect->variant == EFFECT_VARIANT_STRONGEST && frame <= 63) {
+    if (work->effect->variant == ANIM_VARIANT_STRONGEST && frame <= 63) {
       struct CameraWork *camera = (struct CameraWork *)gCameraWork;
       s32 speed;
 
@@ -104,7 +103,7 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
         camera->scroll += speed;
     }
     if (frame == 32)
-      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
+      ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 
     // Pillar i strikes on frame 8i with a flash, shows its first image the
     // frame after and its second for two frames after that.
@@ -157,11 +156,11 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
       }
       // Two frames after the sparks the targets recoil, their motion first.
       if (frame == start + 4) {
-        EFFECT_FOR_EACH_TARGET(k, work->effect) {
-          BattleMotion_ApplyVariantMotionFar(work->effect->actors[k],
-                                             KNOCKBACK_HOP);
-          ObjectGroup_UpdateMembers(work->effect->actors[k], SPRITE_COLOR_WHITE,
-                                    POSE_DAMAGE, k, 8);
+        ANIM_FOR_EACH_TARGET(k, work->effect) {
+          BattleMotion_ApplyKnockbackFar(work->effect->targets[k],
+                                         KNOCKBACK_HOP);
+          ObjectGroup_UpdateMembers(work->effect->targets[k],
+                                    SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 8);
         }
       }
     }
@@ -173,7 +172,7 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
       spark = &sparks[k];
       if (spark->variant > 0) {
         spark->variant--;
-        EffectStep_AdvanceWithGravity2D(spark, 60, 0x1000);
+        Particle_AdvanceWithGravity2D(spark, 60, 0x1000);
         if (spark->y > 104 << 16) {
           spark->velocityY = -spark->velocityY / 2;
         } else {
@@ -184,16 +183,16 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
           if (spark->x >= 0 && x <= 119 && spark->y >= 0) {
             y = spark->y >> 16;
             size = spark->variant / 8 + 1;
-            EFFECT_DRAW_MOTE(draw[k & 1], canvas, sprites, x, y, size);
+            ANIM_DRAW_MOTE(draw[k & 1], canvas, sprites, x, y, size);
           }
         }
       }
     }
     Camera_ApplyShake(8, 16);
-    EFFECT_END_FRAME(work);
+    ANIM_END_FRAME(work);
   }
 
-  EFFECT_FINISH_CANVAS();
+  ANIM_FINISH_CANVAS();
 }
 
 // Spark bursts: the folder README describes them under "Effect families".
@@ -202,15 +201,15 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
 /// (priority 1).
 ///
 /// Abilities: Blast, Nova, Supernova, Fire Bomb, Cluster Bomb, Carpet Bomb
-/// (BATTLE_EFFECT_NOVA).
-void BattleEffect_RunNova(struct BattleEffectArgument *effect) {
-  BattleEffect_RunSparkGroups(effect, SPARK_GROUPS_NOVA);
+/// (BATTLE_ANIM_NOVA).
+void BattleAnim_RunNova(struct BattleAnimArgs *effect) {
+  BattleAnim_RunSparkGroups(effect, SPARK_GROUPS_NOVA);
 }
 /// Orange bursts go off at (60, 64), with the canvas in front (priority 0).
 ///
-/// Abilities: Dynamite (BATTLE_EFFECT_DYNAMITE).
-void BattleEffect_RunDynamite(struct BattleEffectArgument *effect) {
-  BattleEffect_RunSparkGroups(effect, SPARK_GROUPS_DYNAMITE);
+/// Abilities: Dynamite (BATTLE_ANIM_DYNAMITE).
+void BattleAnim_RunDynamite(struct BattleAnimArgs *effect) {
+  BattleAnim_RunSparkGroups(effect, SPARK_GROUPS_DYNAMITE);
 }
 #define SPARK_GROUPS_FLASHES 16     ///< flashes kept per burst
 #define SPARK_GROUPS_SPACING 8      ///< frames between bursts
@@ -227,9 +226,9 @@ void BattleEffect_RunDynamite(struct BattleEffectArgument *effect) {
 /// on frame 4.
 /// mode: where the bursts go off (enum SparkGroupsMode).
 ///
-/// Called by BattleEffect_RunNova and BattleEffect_RunDynamite, and with
-/// SPARK_GROUPS_RISING by BattleEffect_RunCastingImpact for Severe Blow and by
-/// BattleEffect_RunThrash and BattleEffect_RunUnusedSevereBlowLeap in thrash.c,
+/// Called by BattleAnim_RunNova and BattleAnim_RunDynamite, and with
+/// SPARK_GROUPS_RISING by BattleAnim_RunCastingImpact for Severe Blow and by
+/// BattleAnim_RunThrash and BattleAnim_RunUnusedSevereBlowLeap in thrash.c,
 /// which set effect->variant first (SPARK_GROUPS_SEVERE_BLOW or
 /// SPARK_GROUPS_THRASH).
 ///
@@ -239,13 +238,12 @@ void BattleEffect_RunDynamite(struct BattleEffectArgument *effect) {
 /// colours, then the orange (Dynamite) or lightning (SPARK_GROUPS_RISING) one
 /// over it, scrolls the camera (the strongest variant) and sets
 /// work->shakeFrames at each burst.
-void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
-                                 s32 mode) {
-  struct EffectPosition screenPosition;
+void BattleAnim_RunSparkGroups(struct BattleAnimArgs *effect, s32 mode) {
+  struct ScreenPoint screenPosition;
   BlitterPair draw;
   void **slots;
   void **cursor;
-  struct BattleEffectWork *work;
+  struct BattleAnimWork *work;
   void *canvas;
   s32 i;
   s32 frame;
@@ -254,34 +252,33 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
   s32 originY;
   s32 j;
   s32 start;
-  struct EffectStep *point;
-  struct EffectStep *spark;
-  struct EffectStep *sparks;
+  struct Particle *point;
+  struct Particle *spark;
+  struct Particle *sparks;
 
   slots = gHeapSlots + HEAP_SLOT_BATTLE_ANIM;
   cursor = slots;
-  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
-  graphics = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  ANIM_GET_WORK_AND_CANVAS(cursor, work, canvas);
+  graphics = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   if (mode == SPARK_GROUPS_NOVA) {
-    BattleEffect_StartCanvasLayer(1);
+    BattleAnim_StartCanvasLayer(1);
     originX = 60;
     originY = 48;
   } else if (mode == SPARK_GROUPS_DYNAMITE) {
-    BattleEffect_StartCanvasLayer(0);
+    BattleAnim_StartCanvasLayer(0);
     originX = 60;
     originY = 64;
   } else {
-    BattleEffect_StartCanvasLayer(0);
-    EffectPosition_ProjectScaledBattler(work->effect->actor, &screenPosition);
+    BattleAnim_StartCanvasLayer(0);
+    Projection_ScaledUnit(work->effect->user, &screenPosition);
     originX = screenPosition.x / 2;
     originY = screenPosition.y + 48;
   }
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
-                      COMPOSITE_ADDITIVE);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS, COMPOSITE_ADDITIVE);
   draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              1);
@@ -346,7 +343,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
     }
   }
   // Trails keep 3/4 a frame.
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
   for (frame = 0;
        frame != gPlasma_Shapes[work->effect->variant][SPARK_GROUPS_BURSTS] *
@@ -358,7 +355,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
 
     // The strongest variant turns the camera's yaw 1/256 turn a frame for 52
     // frames, about a fifth of a turn.
-    if (work->effect->variant == EFFECT_VARIANT_STRONGEST && frame <= 51) {
+    if (work->effect->variant == ANIM_VARIANT_STRONGEST && frame <= 51) {
       if (work->effect->side == 0)
         camera->scroll += 256;
       else
@@ -372,12 +369,12 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES, 0x3f3f3f3f);
     if (mode == SPARK_GROUPS_DYNAMITE || mode == SPARK_GROUPS_RISING) {
       if (frame == 2)
-        EFFECT_SHOW_DAMAGE(SE_145);
+        ANIM_SHOW_DAMAGE(SE_145);
     } else {
       if (frame == 2)
         Sound_PlaySongFar(SE_145);
       if (frame == 24)
-        EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
+        ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }
 
     // Burst i starts on frame 8i with a two-frame flash, then its ring and
@@ -453,7 +450,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
                                             [SPARK_GROUPS_SPARKS]] +
                   j;
           if (spark->variant > 0) {
-            EffectStep_AdvanceWithGravity2D(spark, 60, gravity);
+            Particle_AdvanceWithGravity2D(spark, 60, gravity);
             spark->variant--;
             if (spark->y > 0x6c0000) {
               spark->velocityY = -spark->velocityY / 2;
@@ -462,25 +459,25 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
               s32 x = spark->x >> 16;
               s32 size = spark->variant / 5 + 1;
 
-              EFFECT_DRAW_MOTE(draw[j & 1], canvas, graphics, x, y, size);
+              ANIM_DRAW_MOTE(draw[j & 1], canvas, graphics, x, y, size);
             }
           }
         }
       }
-      EFFECT_FOR_EACH_TARGET(j, work->effect) {
+      ANIM_FOR_EACH_TARGET(j, work->effect) {
         if (frame == start + 6) {
-          ObjectGroup_UpdateMembers(work->effect->actors[j], SPRITE_COLOR_WHITE,
-                                    POSE_DAMAGE, j, 10);
-          BattleMotion_ApplyVariantMotionFar(work->effect->actors[j],
-                                             KNOCKBACK_HURL);
+          ObjectGroup_UpdateMembers(work->effect->targets[j],
+                                    SPRITE_COLOR_WHITE, POSE_DAMAGE, j, 10);
+          BattleMotion_ApplyKnockbackFar(work->effect->targets[j],
+                                         KNOCKBACK_HURL);
         }
       }
     }
     Camera_ApplyShake(16, 16);
-    EFFECT_END_FRAME(work);
+    ANIM_END_FRAME(work);
   }
 
-  EFFECT_FINISH_CANVAS();
+  ANIM_FINISH_CANVAS();
 }
 
 #undef PLASMA_SPARK_COUNT

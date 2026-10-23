@@ -1361,7 +1361,7 @@ static void EventScript_FightWestGuard(void) {
   LunpaFortress_GuardChallengesParty(UPPER_FLOOR_WEST_GUARD);
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-  Battle_SetStart(BATTLE_START_SCRIPTED);
+  Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Engine_EncounterRequestBattle(ENCOUNTER_ZONE_SCRIPTED, 2);
   Engine_ObjectEventSetPosition(UPPER_FLOOR_WEST_GUARD, 0, 0);
   SCRIPT_END();
@@ -1379,7 +1379,7 @@ static void EventScript_FightHallGuard(void) {
   LunpaFortress_GuardChallengesParty(UPPER_FLOOR_HALL_GUARD);
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-  Battle_SetStart(BATTLE_START_SCRIPTED);
+  Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Engine_EncounterRequestBattle(ENCOUNTER_ZONE_SCRIPTED, 2);
   Engine_ObjectEventSetPosition(UPPER_FLOOR_HALL_GUARD, 0, 0);
   SCRIPT_END();
@@ -1443,7 +1443,7 @@ static void EventScript_FightThreeGuards(void) {
   Engine_ScriptSetNextDestination(
       (s32)&MapId_LunpaFortressUpperFloor,
       LUNPA_FORTRESS_UPPER_FLOOR_GUARD_ROOM_AFTER_BATTLE);
-  Battle_SetStart(BATTLE_START_SCRIPTED);
+  Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Engine_EncounterRequestBattle(ENCOUNTER_ZONE_SCRIPTED, 3);
   OBJECT_POSITION_SET(UPPER_FLOOR_GUARD_A, 0, 0);
   OBJECT_POSITION_SET(UPPER_FLOOR_GUARD_B, 0, 0);
@@ -1477,7 +1477,7 @@ static void EventScript_FightEastGuard(void) {
   LunpaFortress_GuardChallengesParty(UPPER_FLOOR_EAST_GUARD);
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-  Battle_SetStart(BATTLE_START_SCRIPTED);
+  Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Engine_EncounterRequestBattle(ENCOUNTER_ZONE_SCRIPTED, 2);
   Engine_ObjectEventSetPosition(UPPER_FLOOR_EAST_GUARD, 0, 0);
   SCRIPT_END();
@@ -1791,7 +1791,7 @@ static void EventScript_FindHammet(void) {
     gFieldWork->transition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     WAIT(1);
-    Battle_SetStart(BATTLE_START_SCRIPTED);
+    Battle_SetType(BATTLE_TYPE_SCRIPTED);
     Engine_ScriptSetNextDestination((s32)&MapId_LunpaFortressToadonpa,
                                     LUNPA_FORTRESS_TOADONPA_AFTER_BATTLE);
     Engine_EncounterRequestBattle(ENCOUNTER_ZONE_SCRIPTED, 4);
@@ -1992,7 +1992,7 @@ static void EventScript_FindHammet(void) {
     gFieldWork->transition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     WAIT(1);
-    Battle_SetStart(BATTLE_START_SCRIPTED);
+    Battle_SetType(BATTLE_TYPE_SCRIPTED);
     Engine_ScriptSetNextDestination((s32)&MapId_LunpaFortressToadonpa,
                                     LUNPA_FORTRESS_TOADONPA_AFTER_BATTLE);
     Engine_EncounterRequestBattle(ENCOUNTER_ZONE_SCRIPTED, 4);

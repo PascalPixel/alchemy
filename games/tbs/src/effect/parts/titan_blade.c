@@ -6,8 +6,8 @@
 
 /// The sparks, in PARTICLES after the dust.
 #define TITAN_BLADE_SWORD_SPARKS                                               \
-  ((struct EffectStep *)(Ram_MapGridCellBuffer +                               \
-                         TITAN_BLADE_DUST * sizeof(struct EffectStep)))
+  ((struct Particle *)(Ram_MapGridCellBuffer +                                 \
+                       TITAN_BLADE_DUST * sizeof(struct Particle)))
 
 #define TITAN_BLADE_FRAMES 102
 #define TITAN_BLADE_SWORD_IMAGE 20000 ///< the sword picture in the sheet
@@ -23,7 +23,7 @@
 /// A huge sword drops onto the first target amid charging flashes, dust and
 /// sparks.
 ///
-/// Abilities: Titan Blade (BATTLE_EFFECT_TITAN_BLADE).
+/// Abilities: Titan Blade (BATTLE_ANIM_TITAN_BLADE).
 ///
 /// Dust rises at the target's feet from frame 28 while a pillar of fire scrolls
 /// over it; the sword drops in, holds, sinks and plunges after frame 60. A ring
@@ -34,34 +34,34 @@
 /// Uses work->particles 0 to 31 for the flashes and PARTICLES for the dust
 /// (0 to 683) and the sparks after it. Opens and closes the canvas layer and
 /// steps background colours 0 to 63 towards two resources' palettes
-/// (BattleEffect_StepPaletteToResource), one level a frame.
-void BattleEffect_RunTitanBlade(struct BattleEffectArgument *effect) {
+/// (BattleAnim_StepPaletteToResource), one level a frame.
+void BattleAnim_RunTitanBlade(struct BattleAnimArgs *effect) {
   void **slots;
   void **slotCursor;
-  struct BattleEffectWork *work;
+  struct BattleAnimWork *work;
   void *canvas;
   DrawRectangle blitters[2];
   u8 *sheet;
-  struct EffectPosition screenPosition;
+  struct ScreenPoint screenPosition;
   s32 frame;
   s32 canvasCenterX;
   s32 step;
   s32 sparkOriginX;
   s32 i;
 
-  EFFECT_GET_SLOTS(slots, slotCursor, work, canvas);
+  ANIM_GET_SLOTS(slots, slotCursor, work, canvas);
   sheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_ANIM];
 
   work->effect = effect;
-  BattleEffect_StartCanvasLayer(1);
+  BattleAnim_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  EffectPosition_ProjectBattler(work->effect->actors[0], &screenPosition);
+  Projection_Unit(work->effect->targets[0], &screenPosition);
   canvasCenterX = screenPosition.x / 2;
 
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
   blitters[0] = slots[HEAP_SLOT_RAM_CODE - HEAP_SLOT_BATTLE_ANIM];
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
-                      COMPOSITE_TRANSPARENT);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS,
+                    COMPOSITE_TRANSPARENT);
   blitters[1] = slots[HEAP_SLOT_RAM_CODE_2 - HEAP_SLOT_BATTLE_ANIM];
 
   Resource_LoadAndDecompress((s32)&ResourceId_SwordSheet,
@@ -72,13 +72,13 @@ void BattleEffect_RunTitanBlade(struct BattleEffectArgument *effect) {
                              work->sheet + TITAN_BLADE_FLASH_CELLS, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
 
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
   // The flashes: flash i sits i * 2 pixels from the ring's centre at a
   // random angle and lives 25 to 40 frames; only the first 16 are drawn.
   i = 0;
   do {
-    struct EffectStep *flash = &work->particles[i];
+    struct Particle *flash = &work->particles[i];
 
     s32 scale = i * 2;
     s32 ang = Random16() & 0xFFFF;
@@ -102,7 +102,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectArgument *effect) {
   // Ragnarok's and half as fast up), and live 32 to 39 frames.
   sparkOriginX = canvasCenterX << 16;
   do {
-    struct EffectStep *spark = &TITAN_BLADE_SWORD_SPARKS[i];
+    struct Particle *spark = &TITAN_BLADE_SWORD_SPARKS[i];
 
     s32 mag;
     s32 ang;
@@ -123,10 +123,10 @@ void BattleEffect_RunTitanBlade(struct BattleEffectArgument *effect) {
     // The palette fades towards the blast colours over frames 25 to 47,
     // then towards the lightning colours from frame 57.
     if (frame >= 25 && frame <= 47) {
-      BattleEffect_StepPaletteToResource((s32)&ResourceId_BlastSheet);
+      BattleAnim_StepPaletteToResource((s32)&ResourceId_BlastSheet);
     }
     if (frame > 56) {
-      BattleEffect_StepPaletteToResource((s32)&ResourceId_LightningBoltSheet);
+      BattleAnim_StepPaletteToResource((s32)&ResourceId_LightningBoltSheet);
     }
 
     // Shakes of 8 frames from frames 8 and 48, and of 16 from the strike.
@@ -148,7 +148,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectArgument *effect) {
     }
     if (frame == 60) {
       Sound_PlaySongFar(SE_145);
-      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
+      ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }
 
     // From frame 56: a ring of 16 flashes centred on the target's x and
@@ -158,7 +158,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectArgument *effect) {
     if (frame > 55) {
       i = 0;
       do {
-        struct EffectStep *flash = &work->particles[i];
+        struct Particle *flash = &work->particles[i];
 
         s32 x;
         s32 life;
@@ -185,7 +185,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectArgument *effect) {
     if (frame == 28) {
       i = 0;
       do {
-        struct EffectStep *dust = &PARTICLES[i];
+        struct Particle *dust = &PARTICLES[i];
 
         if (dust->variant == -1) {
           s32 mag;
@@ -213,7 +213,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectArgument *effect) {
       cnt = 0;
       i = 0;
       do {
-        struct EffectStep *dust = &PARTICLES[i];
+        struct Particle *dust = &PARTICLES[i];
 
         if (dust->variant == -1) {
           s32 mag;
@@ -255,7 +255,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectArgument *effect) {
     if (frame <= 71) {
       i = 0;
       do {
-        struct EffectStep *dust = &PARTICLES[i];
+        struct Particle *dust = &PARTICLES[i];
 
         if (dust->variant >= 0) {
           s32 size;
@@ -279,8 +279,8 @@ void BattleEffect_RunTitanBlade(struct BattleEffectArgument *effect) {
           if (frame > 76) {
             size = 10;
           }
-          EFFECT_DRAW_MOTE(blitters[0], canvas, sheet, Q_16_16_TO_INT(dust->x),
-                           Q_16_16_TO_INT(dust->y), size);
+          ANIM_DRAW_MOTE(blitters[0], canvas, sheet, Q_16_16_TO_INT(dust->x),
+                         Q_16_16_TO_INT(dust->y), size);
 
           dust->x += dust->velocityX;
           dust->y += dust->velocityY;
@@ -334,14 +334,14 @@ void BattleEffect_RunTitanBlade(struct BattleEffectArgument *effect) {
     if (frame > 59) {
       i = 0;
       do {
-        struct EffectStep *spark = &TITAN_BLADE_SWORD_SPARKS[i];
+        struct Particle *spark = &TITAN_BLADE_SWORD_SPARKS[i];
 
         if (spark->variant > 0) {
           s32 x;
           s32 y;
           s32 size;
 
-          EffectStep_AdvanceWithGravity2D(spark, 64, 128 << 6);
+          Particle_AdvanceWithGravity2D(spark, 64, 128 << 6);
           y = spark->y;
           spark->variant--;
           if (y > (216 << 15)) {
@@ -352,7 +352,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectArgument *effect) {
               u8 *cell;
 
               size = spark->variant / 5 + 1;
-              cell = sheet + gBattleEffect_MoteCells[size - 1];
+              cell = sheet + gBattleAnim_MoteCells[size - 1];
               x >>= 16;
               y >>= 16;
               x -= size / 2;
@@ -367,11 +367,11 @@ void BattleEffect_RunTitanBlade(struct BattleEffectArgument *effect) {
 
     // Frame 68: every target flashes and recoils.
     if (frame == 68) {
-      EFFECT_FOR_EACH_TARGET(i, work->effect) {
-        ObjectGroup_UpdateMembers(work->effect->actors[i], SPRITE_COLOR_WHITE,
+      ANIM_FOR_EACH_TARGET(i, work->effect) {
+        ObjectGroup_UpdateMembers(work->effect->targets[i], SPRITE_COLOR_WHITE,
                                   POSE_DAMAGE, i, 16);
-        BattleMotion_ApplyVariantMotionFar(work->effect->actors[i],
-                                           KNOCKBACK_JOLT);
+        BattleMotion_ApplyKnockbackFar(work->effect->targets[i],
+                                       KNOCKBACK_JOLT);
       }
     }
 
@@ -385,11 +385,11 @@ void BattleEffect_RunTitanBlade(struct BattleEffectArgument *effect) {
     }
 
     Camera_ApplyShake(16, 16);
-    EFFECT_END_FRAME(work);
+    ANIM_END_FRAME(work);
     frame++;
   } while (frame != TITAN_BLADE_FRAMES);
 
-  EFFECT_FINISH_CANVAS();
+  ANIM_FINISH_CANVAS();
 }
 
 #undef TITAN_BLADE_SWORD_SPARKS

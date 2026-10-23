@@ -13,7 +13,7 @@
 #include "farcall.h"
 
 struct DispatchObject;
-struct EffectPosition;
+struct ScreenPoint;
 
 /// An IWRAM word the scrolling camera's setup clears; nothing in the tree
 /// reads it (see ObjectSystem_Initialize's XXX).
@@ -31,13 +31,13 @@ extern u8 Render_DecodeFrameCodeSize[];
 extern u8 gRuntime_ByteRemapTable[];
 
 struct AbilityListEntry;
-struct BattleEffectArgument;
-struct BattleUnit;
+struct BattleAnimArgs;
+struct Unit;
 struct BurstParticle;
 struct DispatchObject;
 struct FieldEffectObject;
-struct EffectPosition;
-struct EffectStep;
+struct ScreenPoint;
+struct Particle;
 struct FacingObject;
 struct ObjectEvent;
 struct FieldPosition;

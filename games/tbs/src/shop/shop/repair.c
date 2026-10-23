@@ -19,20 +19,20 @@ s32 Shop_RepairPrice(s32 inventoryEntry) {
 /// Runs the repair counter's member choice; always returns 0. Called by
 /// Shop_Run for Repair.
 s32 Shop_SelectUnit(void) {
-  Shop_PickUnit();
+  Shop_ChooseMember();
   return 0;
 }
 
 /// Lets the player choose items to repair from the member's grid, one at a
 /// time, with each one's repair price, until B or the inventory is empty.
 /// Returns -1 when cancelled, 0 when the inventory ran out. Called by
-/// Shop_PickUnit.
+/// Shop_ChooseMember.
 s32 Shop_SelectRepair(s32 unitId) {
   struct ShopWork *shop;
   s32 inventoryCount;
   struct UiWindow *descriptionWindow;
   struct UiWindow *priceWindow;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   s32 slot;
   s32 redraw;
   s32 result;
@@ -137,7 +137,7 @@ s32 Shop_SelectRepair(s32 unitId) {
 /// Shop_SelectRepair.
 void Shop_RepairItem(s32 unitId, s32 slot) {
   struct ShopWork *shop = gMenuWork;
-  struct BattleUnit *unit = Unit_GetFar(unitId);
+  struct Unit *unit = Unit_GetFar(unitId);
   s32 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
   struct ItemDefinition *item = Item_GetDirectFar(itemId);
   s32 equipped = Inventory_FindEquippedFar(unitId, item->type);

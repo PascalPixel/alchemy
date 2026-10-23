@@ -324,8 +324,8 @@ gParty_PairResolveRules:
 	.2byte -1, -1, -1, -1	@ end
 
 @ A map not listed takes the last backdrop.
-	.global gBattle_BackdropMaps
-gBattle_BackdropMaps:
+	.global gBattleBackground_Maps
+gBattleBackground_Maps:
 	backdrop ValeStormBackdrop, ValeStorm, Vale, ValeGate, ValeKraden
 	backdrop SolSanctumBackdrop, SolSanctumCorridor, SolSanctumReliefs, SolSanctumMaze, SolSanctumLunaSolRooms, AltinPeakHydrosStatue, CrossboneIsleSteppingStones
 	backdrop InteriorBackdrop, VaultInteriors

@@ -6,7 +6,7 @@
 /// update callbacks.
 void UiWork_InitializeWithResourceCountersFar(void);
 /// Sets up the window system for battle; kind set reserves the glyph sprites'
-/// tiles, which Battle_RunEncounter asks for only during the Djinn lesson.
+/// tiles, which Battle_Run asks for only during the Djinn lesson.
 void UiWork_InitializeFar(s32 kind);
 #ifndef OWN_UiWindow_CreateFar
 /// Opens a window at tile (x, y), width by height tiles, and waits for it to
@@ -157,13 +157,13 @@ void UiWork_DrainPendingFar(s32 unused);
 /// Runs the party's battle commands for a round into out, one per unit in in,
 /// and returns how many it wrote: 1 when the party flees, -1 when the link
 /// fails.
-s32 Battle_CollectPartyCommandsFar(struct BattleActionRecord *out, u16 *in,
+s32 Battle_CollectPartyCommandsFar(struct BattleAction *out, u16 *in,
                                    s32 count);
 /// Shows a message in the battle message window and waits until it's typed out.
-void UiText_ShowMessageAndWaitCoreFar(s32 argument);
+void BattleMessage_ShowAndWaitFar(s32 argument);
 /// Starts typing a message into the battle message window without waiting,
 /// opening the window along the bottom of the screen if it's closed.
-void UiText_PrepareMessageWorkFar(s32 argument);
+void BattleMessage_OpenFar(s32 argument);
 /// Returns the portrait of a character, or the sprite of another speaker, or -1
 /// when the speaker has none.
 s32 Localization_LookupEntryIdFar(u32 value);
@@ -186,7 +186,7 @@ void UiTimedNotice_CloseIfActiveFar(void);
 void UiText_ShowCenteredMessageFar(s32 message, s32 mode, s32 yOffset);
 /// Closes the battle message window at once, so the next battle message opens a
 /// new one.
-void UiWork_FinalizeSharedSlotFar(void);
+void BattleMessage_CloseFar(void);
 /// Clears the first idle message channel's pen, style and canvas, as auto
 /// battle does after each action.
 void UiWork_ResetFreeChannelFar(void);
@@ -271,7 +271,7 @@ s32 Save_ProcessSelectedFileFar(void);
 s32 Save_ScanRecordFlagsFar(void);
 /// Runs the name entry screen for member entry. Returns 0, or -1 when
 /// cancelled; the name changes only when the player ends on End.
-s32 NameEntry_EditOwnerNameFar(s32 entry);
+s32 NamingScreen_EditMemberNameFar(s32 entry);
 /// Debug: pages through the item, Psynergy and status icons. Returns 0.
 s32 DebugMenu_BrowseIconsFar(void);
 /// Debug: steps through the character and sprite portrait maps, showing each

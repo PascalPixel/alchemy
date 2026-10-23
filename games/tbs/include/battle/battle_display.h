@@ -58,10 +58,10 @@ struct BattlePresentationTransition {
 /// A presentation step's stack work: the effect command it builds and runs,
 /// and the targets' sprite colour modes saved beside it. The
 /// BattlePresentation_Run functions of staging.c and auto_battle.c,
-/// BattlePresentation_RunEntryTransition and ElementGlow_Play
+/// BattleTransition_Run and ElementGlow_Play
 /// keep one as a local.
-struct BattlePresentationWork {
-  struct BattleEffectArgument effect;
+struct BattleStagingWork {
+  struct BattleAnimArgs effect;
   /// Each target's layers' SpriteColorMode (AnimationEntry.colorMode), all but
   /// its last layer, saved before the effect; no code reads them back by name.
   u8 savedAnimationParameters[8][4];
@@ -69,8 +69,8 @@ struct BattlePresentationWork {
 
 STATIC_ASSERT(sizeof(struct BattlePresentationTransition) == 0x20);
 STATIC_ASSERT(offsetof(struct BattlePresentationTransition, active) == 0x10);
-STATIC_ASSERT(sizeof(struct BattlePresentationWork) == 0x54);
-STATIC_ASSERT(offsetof(struct BattlePresentationWork, effect.actors) == 0x24);
+STATIC_ASSERT(sizeof(struct BattleStagingWork) == 0x54);
+STATIC_ASSERT(offsetof(struct BattleStagingWork, effect.targets) == 0x24);
 
 /// BattleBackgroundView.mode and secondMode: how the battle background is
 /// shown.
@@ -79,11 +79,11 @@ enum BattleBackgroundMode {
   BATTLE_BACKGROUND_NONE,
   /// The flat picture on BG1 (BATTLE_BG1CNT), its scroll following the
   /// camera, BG2 left to an effect.
-  BATTLE_BACKGROUND_FLAT,
+  BATTLE_BACKGROUND_FIXED,
   /// The picture zoomed and panned on BG2, an affine layer; HBlank DMA sets
   /// each line's BG2CNT to the half of the picture it reads. The code's
   /// "perspective plane" is this plain zoom: the depth is in the picture.
-  BATTLE_BACKGROUND_PLANE
+  BATTLE_BACKGROUND_ZOOMED
 };
 
 /// The battle background's work slot as the background code reads it: its
@@ -92,7 +92,7 @@ struct BattleBackgroundView {
   s32 targetYaw; ///< BattlePresentationTransition's; not named here
   s32 frames;    ///< BattlePresentationTransition's; not named here
   s32 mode;      ///< enum BattleBackgroundMode
-  /// BATTLE_BACKGROUND_FLAT also sets BG1's scroll whatever the mode;
+  /// BATTLE_BACKGROUND_FIXED also sets BG1's scroll whatever the mode;
   /// the effects' canvas layers set it.
   s32 secondMode;
   s32 busy; ///< while set, BattleCamera_SetRange leaves BG1's scroll
@@ -125,7 +125,7 @@ STATIC_ASSERT(sizeof(struct BattleAffineHdma) == 0x2a0);
 STATIC_ASSERT(offsetof(struct BattleAffineHdma, affine) == 0x10);
 STATIC_ASSERT(offsetof(struct BattleAffineHdma, lines) == 0x20);
 
-struct BattlePlan;
-struct BattleEffectArgument;
+struct BattleTurn;
+struct BattleAnimArgs;
 
 #endif

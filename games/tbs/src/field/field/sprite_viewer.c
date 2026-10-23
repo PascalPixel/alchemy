@@ -120,7 +120,7 @@ restart:
   ResourceSlot_Load(0, (u32 *)Ram_MapGridCellBuffer, layers[0].spriteId, 0);
   spriteMetadata = Resource_GetMetadataRecordFar(layers[0].spriteId);
   if (spriteMetadata->drawKind == ANIMATION_FACING_TWO_PART) {
-    ResourceSlot_Load(1, (u32 *)Ram_ActorSpriteSlots, layers[0].spriteId + 1,
+    ResourceSlot_Load(1, (u32 *)Ram_EnemySpriteSlots, layers[0].spriteId + 1,
                       0);
   }
 

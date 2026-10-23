@@ -46,7 +46,7 @@ while (1) {
     Shop_SelectBuy();
   } else if (action == SHOP_ACTION_SELL) {
     UiMessage_ShowAndWait(MsgWhatToSell);
-    Shop_PickUnit();
+    Shop_ChooseMember();
   } else if (action == SHOP_ACTION_ARTIFACTS) {
     /* Shop_ListAvailableArtifacts, then Shop_SelectBuy */
   } else if (action == SHOP_ACTION_REPAIR) {
@@ -199,13 +199,13 @@ choice comes round again while anyone is left who does. Reviving and
 removing a curse cost more for a higher-level member.
 
 `Shop_CanServe` tests the member and `Shop_ServicePrice` sets the fee. A
-curse is the member's restraint bits (`BattleUnit.restraint`, `enum
-RestraintFlag`): bound, which costs a member one action in four in battle,
+curse is the member's curse bits (`Unit.curse`, `enum
+CurseFlag`): bound, which costs a member one action in four in battle,
 and a cursed item worn. `BattleUnit_ResetStateByMode` applies the service:
 full HP for a revive, poison or the haunting cleared, or every cursed item
-taken off, after which `Unit_Calculate` rebuilds the restraint bits from what
+taken off, after which `Unit_Calculate` rebuilds the curse bits from what
 is still equipped. Since `Unit_Calculate` sets those bits only for a cursed
-item worn, and nothing sets `RESTRAINT_KEEP_BOUND`, a member the sanctum
+item worn, and nothing sets `CURSE_KEEP_BOUND`, a member the sanctum
 accepts for removing a curse always has a cursed item to take off. Each
 service's lines are a run in
 the same order from `MsgReviveService`, `MsgCurePoisonService`,
@@ -217,7 +217,7 @@ the same order from `MsgReviveService`, `MsgCurePoisonService`,
 | `SANCTUM_SERVICE_REVIVE` | 0 | is down (HP 0) | 20 coins a level |
 | `SANCTUM_SERVICE_CURE_POISON` | 1 | is poisoned or deadly poisoned | 10 coins |
 | `SANCTUM_SERVICE_EXORCISE` | 2 | is haunted | 50 coins |
-| `SANCTUM_SERVICE_REMOVE_CURSE` | 3 | wears a cursed item (any restraint bit set) | 10 coins a level |
+| `SANCTUM_SERVICE_REMOVE_CURSE` | 3 | wears a cursed item (any curse bit set) | 10 coins a level |
 
 ## Inns
 
@@ -380,7 +380,7 @@ work block's layout, `struct ShopWork`, is in
 - **cursor duration**: `shop->mode`, the frames the hand cursor's next glide
   takes (`Shop_PlaceCursor`, `Shop_SetCursor`, `ShopCursor_Advance`).
 - **party row**: the members' icons across a window, which the counters
-  select and animate (`partyMemberIcons`, `Shop_PickUnit`).
+  select and animate (`partyMemberIcons`, `Shop_ChooseMember`).
 - `unk` plus an offset: a field whose meaning is not known.
 
 ## Function prefixes

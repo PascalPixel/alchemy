@@ -36,7 +36,7 @@ struct ShopWork {
   /// figures; not named here.
   u8 menuLists[0xf8];
   s16 stockItemIds[129];    ///< the items on sale, ended by 0
-  s16 partyMemberIds[9];    ///< the party in order (Party_ListActiveOwners)
+  s16 partyMemberIds[9];    ///< the party in order (Party_ListMembers)
   struct ShopCursor cursor; ///< the hand cursor
   /// VRAM cache slots of the six cursor icons, loaded when the work is set
   /// up and freed with it.

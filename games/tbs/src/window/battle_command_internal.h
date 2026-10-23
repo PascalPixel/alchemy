@@ -353,7 +353,7 @@ enum BattleTargetHint {
   TARGET_HINT_SET_DJINNI = 7 ///< setting a Djinni: "Set Djinni"
 };
 
-#define BATTLE_OK 0x80 ///< BattleAct.flags: usable in battle
+#define BATTLE_OK 0x80 ///< AbilityDefinition.flags: usable in battle
 
 /// One icon of the command row (struct SelectionWork): its sprite, where it
 /// stands and the command it stands for. pictures.c loads it, command_row.c

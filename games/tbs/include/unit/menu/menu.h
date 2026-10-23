@@ -3,11 +3,11 @@
 
 #include "types.h"
 
-struct BattleUnit;
+struct Unit;
 struct DjinnListTable;
 struct ItemMenuWork;
 struct MenuResult;
-struct OwnerActionSlot;
+struct PsynergyEntry;
 struct UiWindow;
 struct RenderOutput;
 
@@ -43,9 +43,9 @@ void Menu_DrawOwnerStatusPanel(struct UiWindow *unused, s32 owner, s32 slot,
                                s32 mode);
 void UiText_DrawNumberRightAligned(s32 number, struct UiWindow *window, s32 x,
                                    s32 y);
-void Ui_DrawValuePairRows(struct BattleUnit *unit, struct UiWindow *window);
-void UiText_DrawStatComparison(const struct BattleUnit *after,
-                               const struct BattleUnit *before,
+void Ui_DrawValuePairRows(struct Unit *unit, struct UiWindow *window);
+void UiText_DrawStatComparison(const struct Unit *after,
+                               const struct Unit *before,
                                struct UiWindow *window);
 s32 UiIcon_CreateWithResource(struct UiWindow *window, s32 unused, s32 x,
                               s32 y);
@@ -116,7 +116,7 @@ void ItemMenu_DrawMessage(s32 unused, s32 message);
 void Menu_HideEmptyEntryIcons(const u16 *items);
 s32 ItemMenu_CountItems(s32 ownerId);
 s32 InventoryMenu_GetItemQuantity(s32 ownerId, s32 itemId);
-s32 ItemMenu_CollectItems(struct BattleUnit *unit, u16 *items, s32 mode);
+s32 ItemMenu_CollectItems(struct Unit *unit, u16 *items, s32 mode);
 void ItemMenu_DrawIcons(u16 *inventoryEntries, s32 iconStyle);
 void ItemMenu_RefreshOwner(s32 ownerId, s32 mode);
 void InventoryMenu_NoOp(void);
@@ -169,8 +169,7 @@ s32 PsynergyMenu_DrawShortcuts(struct UiWindow *window, s32 owner);
 void PsynergyMenu_CreateEntryGrid(void);
 void PsynergyMenu_CloseWindows(void);
 void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies);
-s32 PsynergyMenu_CollectActions(struct BattleUnit *unit, u16 *actions,
-                                s32 mode);
+s32 PsynergyMenu_CollectActions(struct Unit *unit, u16 *actions, s32 mode);
 s32 PsynergyMenu_BuildPageResult(struct MenuResult *result, s32 index);
 s32 PsynergyMenu_DrawDetailPage(struct UiWindow *window, s32 *work,
                                 struct MenuResult *state);
@@ -183,7 +182,7 @@ s32 Menu_OpenCharacterSelector(void);
 s32 CharacterSelector_Run(void);
 s32 StatusMenu_Run(void);
 s32 Menu_RunActionFlow(void);
-s32 CharacterMenu_SelectOwner(s32 slot);
+s32 SummaryScreen_SelectMember(s32 slot);
 s32 DjinnMenu_ShowCurrentList(void);
 s32 CharacterSelector_RunRearrange(void);
 s32 PsynergyMenu_SelectOwner(void);
@@ -259,9 +258,8 @@ typedef s32 MenuBackdropResult;
 // The native wrapper forwards an implicit result; the defined interface is
 // void.
 MenuBackdropResult Menu_OpenBackdropScreen(void);
-s32 OwnerAction_DiffSlots(struct OwnerActionSlot *before,
-                          struct OwnerActionSlot *after, u16 *actionsOut,
-                          s32 *gainedCountOut, s32 *lostCountOut);
+s32 PsynergyList_Diff(struct PsynergyEntry *before, struct PsynergyEntry *after,
+                      u16 *actionsOut, s32 *gainedCountOut, s32 *lostCountOut);
 s32 DjinnMenu_BuildLists(void *table);
 #ifdef UBFIX
 void DjinnMenu_DrawElementList(struct DjinnListTable *table);
@@ -274,7 +272,7 @@ void UiWindow_SetInteriorRectPalette(void *window, s32 x, s32 y, s32 width,
                                      s32 height, s32 palette);
 s32 DjinnMenu_ShowHelp(void);
 s32 DjinnMenu_SelectDjinn(s32 mode);
-s32 Djinn_ListOwnerEntries(u16 *entriesOut, s32 ownerId, s32 element);
+s32 Djinn_ListUnitEntries(u16 *entriesOut, s32 ownerId, s32 element);
 s32 DjinnMenu_DrawPairPreview(s32 mode, s32 pageIndex);
 s32 DjinnMenu_DrawStatPreview(struct UiWindow *window, s32 x, s32 y,
                               s32 ownerId, s32 removePairSlot, s32 addPairSlot,
@@ -289,7 +287,7 @@ s32 FourObjectMotion_SetSlotPhase(s32 index, s32 phase);
 s32 FourObjectMotion_ReplaceSlot(s32 index, s32 resourceKind, s32 value);
 void Menu_StartPartyFiguresWalking(void);
 
-s32 OwnerAction_RunCompareLoop(u32 mode);
+s32 PsynergyList_RunCompareLoop(u32 mode);
 s32 DjinnMenu_ShowOwnerStatus(void);
 s32 Djinn_MarkBalancedEntries(s8 *requiresTrade, s32 sourceOwnerColumn);
 s32 Djinn_CheckTurnBalance(s32 sourceOwnerColumn, s32 targetOwnerColumn);

@@ -311,7 +311,7 @@ static void EventScript_FightDeadbeard(void) {
 
   SCRIPT_START();
   FieldScript_SetNextDestination(gGameState.mapId, WARP_DEST_AFTER_BATTLE);
-  Battle_SetStart(BATTLE_START_SCRIPTED);
+  Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Field_RequestBattleFromEncounterTable(
       ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS, 5);
   SCRIPT_END();
@@ -564,7 +564,7 @@ static void EventScript_OpenEastDoor(void) {
            (s32)&MapId_CrossboneIsleFirstFloor)) == 0) {
     SCRIPT_START();
     FieldScript_SetNextDestination(gGameState.mapId, WARP_DEST_AFTER_BATTLE);
-    Battle_SetStart(BATTLE_START_SCRIPTED);
+    Battle_SetType(BATTLE_TYPE_SCRIPTED);
     // The first four rooms use ENCOUNTER_ZONE_CROSSBONE_ISLE_FIRST_GUARDS; the
     // next five use ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS.
     switch (gGameState.mapId - (s32)&MapId_CrossboneIsleFirstFloor) {

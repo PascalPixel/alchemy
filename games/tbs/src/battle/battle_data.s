@@ -45,30 +45,30 @@ gCamera_FlagTransformWork:
 	.4byte 0x10000, 0x0, 0x0, 0x0
 	.4byte 0x500000, 0x0, 0x0
 	.include "games/tbs/src/battle/battle_calc.s"
-	.global gBattleCommand_SelectionWeights
-gBattleCommand_SelectionWeights:
+	.global gBattleAI_ActionWeights
+gBattleAI_ActionWeights:
 	.byte 32, 32, 32, 32, 32, 32, 32, 32
 	.byte 53, 47, 41, 35, 29, 23, 17, 11
 	.byte 113, 56, 31, 20, 14, 10, 7, 5
 @ Resulting states by ability.
-	.global gBattle_ActionStatus
-gBattle_ActionStatus:
+	.global gAbilityStaging
+gAbilityStaging:
 	.incbin "games/tbs/src/battle/actstat.table"
 	.balign 4, 0
 @ Ability presentations: effect id, phase and flags.
-	.global gBattle_ActionFlags
-gBattle_ActionFlags:
+	.global gAbilityAnimations
+gAbilityAnimations:
 	.incbin "games/tbs/src/battle/actflags.table"
-	.global gBattleParty_RoundEndGroupOrder
-gBattleParty_RoundEndGroupOrder:
+	.global gBattleParty_RoundEndSideOrder
+gBattleParty_RoundEndSideOrder:
 	.4byte 1, 2
 	.byte 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
 	.4byte 0x10000, 0x0, 0x0, 0x0
 	.4byte 0x10000, 0x0, 0x0, 0x0
 	.4byte 0x10000, 0x0, 0x0, 0x0
 @ Star workspace positions.
-	.global gElementGlow_StarWorkOffsets
-gElementGlow_StarWorkOffsets:
+	.global gElementGlow_StarFrameOffsets
+gElementGlow_StarFrameOffsets:
 	.4byte 0, 1, 5, 14, 30, 46, 62
 	.global gElementGlow_StarSizes
 gElementGlow_StarSizes:

@@ -532,7 +532,7 @@ static void EventScript_UseRedKey(void) {
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader->facing == FACING_NORTH) {
     if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_RED_DOOR_OPEN) == 0) {
-      if (PartyInventory_FindOwner(ITEM_RED_KEY) != -1) {
+      if (PartyInventory_FindMember(ITEM_RED_KEY) != -1) {
         FLAG_SET(FLAG_CROSSBONE_ISLE_RED_DOOR_OPEN);
         CrossboneIsleKeys_OpenRedDoor(PASSAGE_PLAY_OPENING);
         PartyInventory_Remove(ITEM_RED_KEY);
@@ -554,7 +554,7 @@ static void CrossboneIsleKeys_UseBlueKey(s32 doorIndex) {
   if (Engine_GameFlagIsSet(flag) != 0) {
     return;
   }
-  if (PartyInventory_FindOwner(ITEM_BLUE_KEY) == -1) {
+  if (PartyInventory_FindMember(ITEM_BLUE_KEY) == -1) {
     return;
   }
   Engine_GameFlagSet(flag);

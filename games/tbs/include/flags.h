@@ -5,7 +5,7 @@
 /// Game flags, named where their meaning is shown.
 
 /// Set while `character` (character_ids.h) is in the party
-/// (Party_AddActiveOwner).
+/// (Party_AddMember).
 /// ★ Named from the game: "joined your party." (MsgJoinedParty)
 #define FLAG_IN_PARTY(character) (character)
 /// The prologue: Isaac and Garet are children. It ends with the caption
@@ -130,18 +130,18 @@
 /// ★ Named from the game: "Lure Cap" (MsgItemName)
 #define FLAG_LURE_CAP 0x167
 /// Auto battle: every living unit, party and enemies, makes a plain attack
-/// each round with no command menu (BattlePresentation_BuildSortedUnitEntries).
+/// each round with no command menu (Battle_BuildSortedUnitActions).
 /// The debug battle menu sets it, and clears it again for its chooser.
 #define FLAG_AUTO_BATTLE 0x16a
 #define FLAG_CHOOSING_COMMANDS 0x16b ///< set while the commands are chosen
-/// The next battle is a link battle (Battle_RunEncounter); the Battle Arena
+/// The next battle is a link battle (Battle_Run); the Battle Arena
 /// sets it, and every normal map entry (not a return keeping the party's
 /// position) clears it.
 /// ★ Named from the game: "Test your skills in Linked Battles"
 /// (MsgFieldWelcomeToBattleArenaWherePeople)
 #define FLAG_LINK_BATTLE 0x16c
 /// In debug mode, with it set, holding R as an action is planned defeats every
-/// enemy, and R with Select the party (BattleCommand_BuildPlan); that is its
+/// enemy, and R with Select the party (BattleTurn_Build); that is its
 /// only reader. Vale Gate's debug story preset sets it, and so do the
 /// Colosseum's escorts as they swap Mia in for Jenna. XXX: likely a debug
 /// switch at the Colosseum too, because Jenna is never in the party there in

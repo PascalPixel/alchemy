@@ -14,7 +14,7 @@
 #define Ram_MapGridShapes FIXED_ADDRESS((u8 *), 0x0202c000, gMapGridShapes)
 #define Ram_BgTileBuffer FIXED_ADDRESS((u8 *), 0x02038000, gBgTileBuffer)
 
-#define Ram_ActorSpriteSlots                                                   \
+#define Ram_EnemySpriteSlots                                                   \
   FIXED_ADDRESS((u8 *), 0x02018000, gActorSpriteSlots)
 
 #define Ram_SoundMixer FIXED_ADDRESS((u8 *), 0x03007000, SoundDriver_Mixer)
@@ -26,7 +26,7 @@
   FIXED_ADDRESS((u8 *), 0x03007a00, gFrameWaitStackTop)
 
 // IWRAM variables the code reaches as constants; German moves them 16 bytes
-// up. Only BattleEffect_RunSpiderWeb takes the work slot table's address as
+// up. Only BattleAnim_RunSpiderWeb takes the work slot table's address as
 // Ram_HeapSlots; other code uses gHeapSlots (MATCHING.md).
 // The 16 bytes are space German alone reserves before gRenderSlotHeads
 // (system/iwram.s), so the test is on the language: French, Spanish and

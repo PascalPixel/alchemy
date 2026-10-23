@@ -9,7 +9,7 @@
 	.set import.UiText_DrawNumberInWindow, 1
 	.set import.UiWork_PushValueSlot, 1
 	.set import.Inventory_Find, 1
-	.set import.PartyInventory_FindOwner, 1
+	.set import.PartyInventory_FindMember, 1
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1
 	.set import.Engine_GameFlagClear, 1

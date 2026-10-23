@@ -66,7 +66,7 @@ sits in the folder it belongs with.
 address fixed per [edition](../glossary.md#editions) and opening with a far-call table; the
 glossary's [bank](../glossary.md#bank) entry says why. Code in another bank calls a function
 through its table entry, by its name with `Far` added
-(`Battle_RunEncounterFar`); inside a bank, functions call each other
+(`Battle_RunFar`); inside a bank, functions call each other
 directly. Every bank calls the runtime bank's functions directly instead,
 and its table serves only the overlays
 ([Engine](../engine.md#banks-and-far-calls)).

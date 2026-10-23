@@ -251,7 +251,7 @@ static void KolimaForestTree_TalkToTret(void) {
       Engine_ScriptSetMessage(MsgKolimaSilence2);
       Script_ShowMessage(LOCALID_TRET, 0);
       KolimaForestTree_PlayGesture(LOCALID_TRET_BLANK, FACE_GESTURE_CLOSE_EYES);
-      waterOwner = PartyInventory_FindOwner(ITEM_HERMES_WATER);
+      waterOwner = PartyInventory_FindMember(ITEM_HERMES_WATER);
       if (waterOwner != -1) {
         u16 *menuRequest = &gFieldWork->menu;
         u16 open = 1;
@@ -1061,7 +1061,7 @@ static void KolimaForestTree_SpawnOrbitSparks(void) {
 /// Replaces the used water with its empty bottle in the same inventory slot.
 static void KolimaForestTree_ReplaceInventoryItem(s32 oldItemId,
                                                   s32 newItemId) {
-  s32 owner = PartyInventory_FindOwner(oldItemId);
+  s32 owner = PartyInventory_FindMember(oldItemId);
 
   if (owner != -1) {
     s32 inventorySlot = Inventory_Find(owner, oldItemId);

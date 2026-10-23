@@ -411,7 +411,7 @@ s32 UiGlyph_LoadPortrait(u32 member, s32 cacheSlot) {
 }
 
 /// Returns gUi_FixedTileBlocks[0], whatever `no` is. The battle's prompt
-/// reads it by far call (BattlePresentation_WaitForPromptAt).
+/// reads it by far call (BattleMessage_WaitForAdvanceAt).
 s32 Ui_GetTableWordZero(s32 no) {
   if (no != 0)
     no = 0;

@@ -57,7 +57,7 @@ void Shop_InitializeCursorWork(void) {
   Dma_Fill32(0, shop, sizeof(struct ShopWork));
   // The hand cursor's glides take 12 frames until a screen changes it
   shop->mode = 12;
-  shop->partyMemberCount = Party_ListActiveOwnersFar(shop->partyMemberIds);
+  shop->partyMemberCount = Party_ListMembersFar(shop->partyMemberIds);
   // Each icon is 128 bytes: four tiles of 4 bits a pixel, a 16x16 sprite
   resourceSlot = Resource_FindFreeEntry();
   shop->cursorIcon = resourceSlot;
@@ -150,7 +150,7 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
       Shop_SelectBuy();
     } else if (action == SHOP_ACTION_SELL) {
       UiMessage_ShowAndWait(MsgWhatToSell);
-      Shop_PickUnit();
+      Shop_ChooseMember();
     } else if (action == SHOP_ACTION_ARTIFACTS) {
       if (Shop_ListAvailableArtifacts() != 0) {
         UiMessage_ShowAndWait(MsgConnoisseur);

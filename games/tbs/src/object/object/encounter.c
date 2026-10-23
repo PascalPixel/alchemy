@@ -25,7 +25,7 @@ extern const struct BattleLocationRule gBattle_LocationRules[];
 typedef struct WorldMapEncounterRule {
   s16 kind; ///< the terrain kind of the world map metatile; -1 ends the table
   /// The terrain's behavior, which also picks the backdrop (1 to 7,
-  /// Battle_SelectTerrainBackdrop), or -1 for any.
+  /// BattleBackground_SelectForEnvironment), or -1 for any.
   s16 behavior;
   s16 flag; ///< -1, or a flag that turns the rule off once set
   s16 zone; ///< a row of encounter.tsv
@@ -105,7 +105,7 @@ void Encounter_SelectMapZones(s32 useRules) {
   // 16 in 16.16: Encounter_CountStepsAndSelectFormation starts a battle once
   // gGameState.encounterSteps reaches it.
   work->encounterThreshold = 16 * Q16_ONE;
-  Battle_SelectMapBackdrop();
+  BattleBackground_SelectForMap();
 }
 
 /// Returns the world map encounter zone for the terrain at pos (0 for none),
@@ -129,7 +129,7 @@ s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *pos) {
     }
     rule++;
   }
-  Battle_SelectTerrainBackdrop(behavior);
+  BattleBackground_SelectForEnvironment(behavior);
   return zone;
 }
 
@@ -407,14 +407,14 @@ void Map_SetDefeatReturnPoint(void) {
 /// battle's background.
 s16 FieldScript_GetSpecialValue(void) { return gGameState.special; }
 
-/// Chooses the battle backdrop for the current map. gBattle_BackdropMaps
+/// Chooses the battle backdrop for the current map. gBattleBackground_Maps
 /// lists each backdrop (a word with bit 31 set) followed by the maps that
 /// use it, ended by 0; a map takes the backdrop listed last before it, and a
 /// map not listed takes the last backdrop. Called by
 /// Encounter_SelectMapZones; sets gGameState.special.
-void Battle_SelectMapBackdrop(void) {
+void BattleBackground_SelectForMap(void) {
   s32 target = gGameState.mapId;
-  s32 *table = gBattle_BackdropMaps;
+  s32 *table = gBattleBackground_Maps;
   s32 entry = *table++;
   // The first map_rules.s word is a backdrop marker. It cannot match the
   // halfword map id, so the loop sets this before testing any map.
@@ -435,7 +435,7 @@ void Battle_SelectMapBackdrop(void) {
 /// Chooses the battle backdrop for a world map terrain behavior (enum
 /// BattleEnvironment; any other gives Sol Sanctum's) and sets
 /// gGameState.special. Called by Encounter_ResolveWorldMapZoneAndBackdrop.
-void Battle_SelectTerrainBackdrop(s32 behavior) {
+void BattleBackground_SelectForEnvironment(s32 behavior) {
   u16 backdrop;
 
   switch (behavior - 1) {

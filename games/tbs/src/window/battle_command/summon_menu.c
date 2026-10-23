@@ -136,8 +136,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
 
         definition =
             SummonDefinition_Get(orderedSummons[firstEntry + selectedRow]);
-        BATTLE_MENU_MESSAGE_COPY(definition->nameMessageId +
-                                     MsgAbilityDescription,
+        BATTLE_MENU_MESSAGE_COPY(definition->abilityId + MsgAbilityDescription,
                                  text, BATTLE_MENU_MESSAGE_CAPACITY);
         UiText_RenderWideStringAtOffset(text, (struct UiWindow *)description, 0,
                                         4);
@@ -178,16 +177,16 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
                 break;
             }
             affordable = element == 4;
-            Ability_LoadGlyph(summon->nameMessageId & 0x3fff, 0,
-                              &iconSlots[index], &glyph, 1);
+            Ability_LoadGlyph(summon->abilityId & 0x3fff, 0, &iconSlots[index],
+                              &glyph, 1);
             y = index * 2;
             sprites[index].oam.f.tile = glyph;
             // A summon the party cannot afford is drawn in colour 2.
             if (!affordable)
               UiWork_SetParameterNibble(2);
-            UiText_DrawCharacterAtOffset(
-                SummonDefinition_Get(id)->nameMessageId + MsgAbilityName,
-                window, 16, index * 16);
+            UiText_DrawCharacterAtOffset(SummonDefinition_Get(id)->abilityId +
+                                             MsgAbilityName,
+                                         window, 16, index * 16);
             for (element = 0; element <= 3; element++) {
               if (summon->djinnRequired[element] != 0) {
                 UiWindow_SetTilemapEntry(window,

@@ -20,7 +20,7 @@
 /// bounce, and the orb's flight ends in a burst of RAMSES_SPARKS sparks from
 /// PARTICLES.
 ///
-/// Abilities: Ramses (SUMMON_EFFECT_RAMSES).
+/// Abilities: Ramses (SUMMON_ANIM_RAMSES).
 ///
 /// The scene plays for up to RAMSES_FRAMES frames, and A or B ends it early.
 ///
@@ -33,7 +33,7 @@
 /// After frame 96 the rocks fall and bounce. Within a frame the order of the
 /// steps matters: later steps draw over earlier ones, and several of them
 /// consume random numbers.
-void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
+void BattleAnim_RunRamses(struct BattleAnimArgs *effect) {
   // Every object of the scene takes this scale.
   static struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
   struct SpritePlacement position;
@@ -41,7 +41,7 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
   struct SpriteScale scale;
   void **slots;
   void *canvas;
-  struct BattleEffectWork *work;
+  struct BattleAnimWork *work;
   s32 frame;
   u8 *sheet;
   struct Point2D base;
@@ -54,20 +54,20 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
   work = slots[HEAP_SLOT_BATTLE_ANIM - HEAP_SLOT_BATTLE_CANVAS];
   sheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_CANVAS];
   work->effect = effect;
-  BattleEffect_StartCanvasLayer(0);
-  BattleEffect_ConfigureEffectDisplay();
+  BattleAnim_StartCanvasLayer(0);
+  BattleAnim_ConfigureEffectDisplay();
   // A wipe to black (colour 1) hides the battle; the desert backdrop loads
   // behind it, and a second wipe clears the canvas to show it.
   PLTT_BACKDROP = 0;
   *(u16 *)&BG_PLTT[1] = 0;
   work->transferMode = CANVAS_COPY;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, EFFECT_CALLBACK_ORDER);
-  BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
-  BattleEffect_SelectLivingTargets(work->effect);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
+  BattleAnim_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
+  BattleAnim_SelectLivingTargets(work->effect);
   // Nine objects of resource 379, the formation (0 to 6) and the orb (7 and
   // 8), then the six rocks from resource 390, each playing one of its three
   // animations.
-  BattleEffect_SpawnObjects(9, 379, 2);
+  BattleAnim_SpawnObjects(9, 379, 2);
   for (i = 0; i != RAMSES_ROCKS; i++) {
     struct AnimationObject *animation = ResourceObject_CreateFar(390);
 
@@ -78,24 +78,23 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
       work->animations[9 + i]->image.priority = 1;
     }
   }
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
-                      COMPOSITE_ADDITIVE);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS, COMPOSITE_ADDITIVE);
   draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
   // Keep the effect between lines 16 and 136.
-  REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
+  REG_WININ = ANIM_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
               WININ_WIN1_BG2 | WININ_WIN1_CLR;
   REG_WIN0H = WIN_RANGE(0, 240);
   REG_WIN1V = WIN_RANGE(16, 136);
   WaitFrames(1);
-  BattleBackground_LoadFar(BATTLE_BACKGROUND_FLAT,
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                            (s32)&ResourceId_DesertBackdrop, 0);
-  BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_CLEAR);
+  BattleAnim_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_CLEAR);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 1);
-  EFFECT_SHOW_WIDE_CANVAS(16);
-  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+  ANIM_SHOW_WIDE_CANVAS(16);
+  ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
   // The formation's corner at (188, 92) and the orb at (160, 92); the rocks
   // wait 16 pixels apart above the field at random columns.
   base.x = 0xbc0000;
@@ -103,7 +102,7 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
   orb.x = 0xa00000;
   orb.y = 0x5c0000;
   for (i = 0; i != RAMSES_ROCKS; i++) {
-    struct EffectStep *rock = &work->particles[i];
+    struct Particle *rock = &work->particles[i];
 
     rock->x = (Random16() & 127) << 16;
     rock->y = i * -0x100000;
@@ -116,9 +115,9 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
   // runs to 63.
   for (i = 0; i != 58; i++)
     work->particles[RAMSES_FIRST_PUFF + i].variant = 24;
-  EFFECT_FREE_PARTICLES(i, PARTICLES, 1024);
+  ANIM_FREE_PARTICLES(i, PARTICLES, 1024);
   // Restart the background palette fade over 24 frames
-  // (Palette_StepFadeTransfer, added by BattleEffect_StartCanvasLayer).
+  // (Palette_StepFadeTransfer, added by BattleAnim_StartCanvasLayer).
   work->fadeFrames = 24;
   work->fadeStep = 0;
 
@@ -167,7 +166,7 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
           orb.y += 0x80000;
         if (frame == start + 3) {
           for (k = 0; k != 4; k++) {
-            struct EffectStep *puff =
+            struct Particle *puff =
                 &work->particles[RAMSES_FIRST_PUFF + i * 8 + k];
 
             puff->x = 0x400000;
@@ -207,7 +206,7 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
     // 199, and after that it is left where it lands. Rocks are placed in
     // screen pixels; their puffs halve x for the canvas.
     for (i = 0; i != RAMSES_ROCKS; i++) {
-      struct EffectStep *rock = &work->particles[i];
+      struct Particle *rock = &work->particles[i];
 
       if (rock->variant != 2) {
         position.x = rock->x;
@@ -223,7 +222,7 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
           if (rock->variant == 1) {
             rock->velocityY = -rock->velocityY / 2;
             for (k = 0; k != 2; k++) {
-              struct EffectStep *puff =
+              struct Particle *puff =
                   &work->particles[RAMSES_FIRST_ROCK_PUFF + i * 2 + k];
 
               puff->x = rock->x / 2;
@@ -244,7 +243,7 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
     // upward (1/4 pixel a frame faster each frame, keeping 60/64 of their
     // speed); each starts at a random point of its first 16 frames.
     for (i = 0; i != 56; i++) {
-      struct EffectStep *puff = &work->particles[RAMSES_FIRST_PUFF + i];
+      struct Particle *puff = &work->particles[RAMSES_FIRST_PUFF + i];
 
       if (puff->variant >= 0) {
         if (puff->variant >= 0 && puff->variant <= 23) {
@@ -255,17 +254,17 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
                   Q_16_16_TO_INT(puff->y) - gRamses_PuffSizes[cell] / 2,
                   gRamses_PuffSizes[cell], gRamses_PuffSizes[cell]);
         }
-        EffectStep_AdvanceWithGravity2D(puff, 60, -0x4000);
+        Particle_AdvanceWithGravity2D(puff, 60, -0x4000);
         puff->variant++;
       }
     }
     if (frame == RAMSES_STRIKE_FRAME) {
       // The strike: every target recoils and flashes white, and the screen
       // shakes.
-      EFFECT_FOR_EACH_TARGET(i, work->effect) {
-        BattleMotion_ApplyVariantMotionFar(work->effect->actors[i],
-                                           KNOCKBACK_HURL);
-        ObjectGroup_UpdateMembers(work->effect->actors[i], SPRITE_COLOR_WHITE,
+      ANIM_FOR_EACH_TARGET(i, work->effect) {
+        BattleMotion_ApplyKnockbackFar(work->effect->targets[i],
+                                       KNOCKBACK_HURL);
+        ObjectGroup_UpdateMembers(work->effect->targets[i], SPRITE_COLOR_WHITE,
                                   -1, i, 8);
       }
       work->shakeFrames = 8;
@@ -276,7 +275,7 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
       // hard up and down as across, each living 32 to 47 frames, at speeds
       // of 0.25 to 8.2 pixels a frame ((speed + 32) / 128).
       for (i = 0; i != RAMSES_SPARKS; i++) {
-        struct EffectStep *spark = &PARTICLES[i];
+        struct Particle *spark = &PARTICLES[i];
         s32 speed;
         s32 angle;
 
@@ -294,28 +293,28 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
     // additively, the others brightest-wins. They gain 1/16 pixel a frame of
     // downward speed each frame, keeping 62/64 of their speed.
     for (i = 0; i != RAMSES_SPARKS; i++) {
-      struct EffectStep *spark = &PARTICLES[i];
+      struct Particle *spark = &PARTICLES[i];
 
       if (spark->variant >= 0) {
         s32 size = (spark->variant >> 3) + 1;
 
-        EFFECT_DRAW_MOTE(draw[i & 1], canvas, sheet, Q_16_16_TO_INT(spark->x),
-                         Q_16_16_TO_INT(spark->y), size);
-        EffectStep_AdvanceWithGravity2D(spark, 62, 0x1000);
+        ANIM_DRAW_MOTE(draw[i & 1], canvas, sheet, Q_16_16_TO_INT(spark->x),
+                       Q_16_16_TO_INT(spark->y), size);
+        Particle_AdvanceWithGravity2D(spark, 62, 0x1000);
         spark->variant--;
       }
     }
     Camera_ApplyShake(8, 8);
-    EFFECT_END_FRAME(work);
+    ANIM_END_FRAME(work);
   }
 
   // The battle shows the damage once the scene is over, and gets its own
   // background back.
-  EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-  BattleEffect_SetupBlendedDisplay();
+  ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
+  BattleAnim_SetupBlendedDisplay();
   for (i = 0; i != 15; i++)
     ResourceObject_ReleaseFar(work->animations[i]);
-  EFFECT_FINISH_CANVAS();
+  ANIM_FINISH_CANVAS();
 }
 
 #undef RAMSES_FRAMES

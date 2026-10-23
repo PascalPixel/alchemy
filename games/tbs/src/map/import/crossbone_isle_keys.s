@@ -18,7 +18,7 @@
 	.set import.Object_CheckMovementCollision, 1
 	.set import.Engine_WorkSetValuesIfNonNegative, 1
 	.set import.ItemIcon_LoadTilesFar, 1
-	.set import.PartyInventory_FindOwner, 1
+	.set import.PartyInventory_FindMember, 1
 	.set import.PartyInventory_Remove, 1
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1

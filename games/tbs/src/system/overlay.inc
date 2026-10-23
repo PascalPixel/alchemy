@@ -177,7 +177,7 @@
 	import Save_EraseSelectedFile, Save_EraseSelectedFileFar
 	import Save_ProcessSelectedFile, Save_ProcessSelectedFileFar
 	import Save_ScanRecordFlags, Save_ScanRecordFlagsFar
-	import NameEntry_EditOwnerName, NameEntry_EditOwnerNameFar
+	import NamingScreen_EditMemberName, NamingScreen_EditMemberNameFar
 	import DebugMenu_BrowseIcons, DebugMenu_BrowseIconsFar
 	import DebugMenu_BrowsePortraits, DebugMenu_BrowsePortraitsFar
 	import PaletteGlow_Update, PaletteGlow_UpdateFar
@@ -198,11 +198,11 @@
 	import Inventory_AddItem, Inventory_AddItemFar
 	import PartyInventory_Add, PartyInventory_AddFar
 	import Inventory_Find, Inventory_FindFar
-	import Engine_PartyInventoryFindOwner, PartyInventory_FindOwnerFar
-	import PartyInventory_FindOwner, PartyInventory_FindOwnerFar
+	import Engine_PartyInventoryFindOwner, PartyInventory_FindMemberFar
+	import PartyInventory_FindMember, PartyInventory_FindMemberFar
 	import PartyInventory_Remove, PartyInventory_RemoveFar
 	import Inventory_Equip, Inventory_EquipFar
-	import Engine_DebugGetAbility, BattleAction_Get
+	import Engine_DebugGetAbility, Ability_Get
 	import GameState_InitializeDefaults, GameState_InitializeDefaultsFar
 	import Engine_GameFlagIsSet, GameFlag_TestFar
 	import Engine_GameFlagSet, GameFlag_SetBitFar
@@ -212,14 +212,14 @@
 	import GameFlag_SetByte, GameFlag_SetByteFar
 	import Unit_AddHp, Unit_AddHpFar
 	import Unit_AddPp, Unit_AddPpFar
-	import Engine_OwnerRecalculateRatios, Unit_UpdateRatiosFar
-	import GetPartyMemberCount, Party_CountActiveOwnersFar
-	import Party_CountActiveOwners, Party_CountActiveOwnersFar
-	import Party_AddActiveOwner, Party_AddActiveOwnerFar
-	import Party_ListActiveOwners, Party_ListActiveOwnersFar
-	import Party_RemoveActiveOwner, Party_RemoveActiveOwnerFar
-	import Djinn_AddToOwner, Djinn_AddToOwnerFar
-	import Djinn_Activate, Djinn_ActivateFar
+	import Engine_OwnerRecalculateRatios, Unit_RecalculateGaugesFar
+	import GetPartyMemberCount, Party_CountMembersFar
+	import Party_CountMembers, Party_CountMembersFar
+	import Party_AddMember, Party_AddMemberFar
+	import Party_ListMembers, Party_ListMembersFar
+	import Party_RemoveMember, Party_RemoveMemberFar
+	import Djinn_Give, Djinn_GiveFar
+	import Djinn_Set, Djinn_SetFar
 	import DjinnRecovery_AddStandby, DjinnRecovery_AddStandbyFar
 	import Djinn_Transfer, Djinn_TransferFar
 	import Unit_LevelUpTo, Unit_LevelUpToFar
@@ -253,7 +253,7 @@
 	import FieldScript_LoadAreaScript, FieldScript_SetMapEventsFar
 	import FieldScript_PrepareObjectAndApplyValue, FieldScript_PrepareObjectAndApplyValueFar
 	import Engine_PartyAddMembers, FieldScript_PrepareTwoObjectsAndApplyFar
-	import Party_RemoveOwnerRestored, Party_RemoveOwnerRestoredFar
+	import Party_RemoveMemberRestored, Party_RemoveMemberRestoredFar
 	import Engine_PartyGiveItem, PartyInventory_GiveItemFar
 	import PartyInventory_GiveItem, PartyInventory_GiveItemFar
 	import Engine_ScriptChooseYesNo, FieldScript_AskYesNoWithObjectEventAnimationFar

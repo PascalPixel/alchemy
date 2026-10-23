@@ -20,11 +20,11 @@ struct SlotArray {
 /// Picks a random place: with requireLivingUnit, a party member still
 /// standing; otherwise any enemy place in use. Returns its place code, or 0
 /// when there is none.
-/// Called by BattleCommand_SelectAutomatic when BattleTarget_SelectForAction
+/// Called by BattleAI_ChooseAction when BattleAI_ChooseTarget
 /// finds no one listed on the side (TARGET_PICK_SIDE_EMPTY), with
 /// requireLivingUnit set for a party actor. Takes one Random16 roll when any
 /// position qualifies.
-s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit) {
+s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
 
   u16 positions[6];
   s32 count;
@@ -116,8 +116,8 @@ s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit) {
 /// Counts the ailments of unit that Restore is taken to cure: delusion,
 /// confusion, charm, sleep, the Psynergy seal and the Grim Reaper.
 /// XXX: likely wrong, because Restore and Tonic clear stun and never
-/// confusion or charm (BattleTarget_Execute), as Restore's description and the
-/// party's target window (BattleTarget_RunSelection) have it; only
+/// confusion or charm (BattleAbility_ApplyToTarget), as Restore's description
+/// and the party's target window (BattleTarget_RunSelection) have it; only
 /// Battle_RollEffectSuccessFar counts confusion and charm too. Cerebus and the
 /// Hydros Statue, the enemies with Restore, pass over an ally who is only
 /// stunned, and may spend it on one who is only confused or charmed.
@@ -159,13 +159,13 @@ s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit) {
       (count)++;                                                               \
     if ((unit)->resistanceStage > 0)                                           \
       (count)++;                                                               \
-    if ((unit)->elementLevels[ELEMENT_VENUS] > 0)                              \
+    if ((unit)->summonBoost[ELEMENT_VENUS] > 0)                                \
       (count)++;                                                               \
-    if ((unit)->elementLevels[ELEMENT_MERCURY] > 0)                            \
+    if ((unit)->summonBoost[ELEMENT_MERCURY] > 0)                              \
       (count)++;                                                               \
-    if ((unit)->elementLevels[ELEMENT_MARS] > 0)                               \
+    if ((unit)->summonBoost[ELEMENT_MARS] > 0)                                 \
       (count)++;                                                               \
-    if ((unit)->elementLevels[ELEMENT_JUPITER] > 0)                            \
+    if ((unit)->summonBoost[ELEMENT_JUPITER] > 0)                              \
       (count)++;                                                               \
   }
 
@@ -174,7 +174,7 @@ s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit) {
 /// to wear off), a cure or a heal the unit needs, an ailment it lacks, a
 /// revival of a downed unit (100). Failing its added effect, the ability's
 /// damage or healing must have something to work on. kindIndex receives the
-/// ability kind less one (enum AbilityKind). The two unnamed effects below
+/// ability kind less one (enum AbilityFormula). The two unnamed effects below
 /// ABILITY_EFFECT_CURE_POISON, which no row has, count as nothing.
 #define CHECK_EFFECT_TARGET(unit, action, applies, kindIndex)                  \
   {                                                                            \
@@ -248,7 +248,7 @@ s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit) {
       if ((unit)->poison == 0)                                                 \
         (applies) = 1;                                                         \
       break;                                                                   \
-    case ABILITY_EFFECT_DEADLY_POISON:                                         \
+    case ABILITY_EFFECT_VENOM:                                                 \
       if ((unit)->poison <= POISON_NORMAL)                                     \
         (applies) = 1;                                                         \
       break;                                                                   \
@@ -281,29 +281,29 @@ s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit) {
     if ((unit)->hp == 0 && Battle_IsReviveEffectFar((action)->effect) == 0)    \
       (applies) = 0;                                                           \
     if ((applies) == 0) {                                                      \
-      (kindIndex) = ((action)->flags & ABILITY_KIND_MASK) - 1;                 \
+      (kindIndex) = ((action)->flags & ABILITY_FORMULA_MASK) - 1;              \
       switch (kindIndex) {                                                     \
-      case ABILITY_KIND_ATTACK - 1:                                            \
-      case ABILITY_KIND_ATTACK_MULTIPLIED - 1:                                 \
+      case ABILITY_FORMULA_ATTACK - 1:                                         \
+      case ABILITY_FORMULA_ATTACK_MULTIPLIED - 1:                              \
         if ((unit)->hp != 0)                                                   \
           (applies)++;                                                         \
         break;                                                                 \
-      case ABILITY_KIND_SUMMON - 1:                                            \
-      case ABILITY_KIND_NO_POWER - 1:                                          \
+      case ABILITY_FORMULA_SUMMON - 1:                                         \
+      case ABILITY_FORMULA_NO_POWER - 1:                                       \
         if ((action)->power != 0 && (unit)->hp != 0)                           \
           (applies)++;                                                         \
         break;                                                                 \
-      case ABILITY_KIND_PP_DAMAGE - 1:                                         \
+      case ABILITY_FORMULA_PP_DAMAGE - 1:                                      \
         if ((unit)->pp != 0)                                                   \
           (applies)++;                                                         \
         break;                                                                 \
-      case ABILITY_KIND_HEAL_HP - 1:                                           \
+      case ABILITY_FORMULA_HEAL_HP - 1:                                        \
         if ((unit)->hp != 0 && (unit)->hp < (unit)->hpMax)                     \
           (applies)++;                                                         \
         break;                                                                 \
-      case ABILITY_KIND_EFFECT - 1:                                            \
-      case ABILITY_KIND_DAMAGE - 1:                                            \
-      case ABILITY_KIND_UNLEASHED_DAMAGE - 1:                                  \
+      case ABILITY_FORMULA_EFFECT - 1:                                         \
+      case ABILITY_FORMULA_DAMAGE - 1:                                         \
+      case ABILITY_FORMULA_ENEMY_DAMAGE - 1:                                   \
         if ((action)->power != 0 && (unit)->hp != 0)                           \
           (applies)++;                                                         \
         break;                                                                 \
@@ -318,16 +318,16 @@ s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit) {
 /// in 11, 15 or 18, the next 5 times, and so on. Returns
 /// TARGET_PICK_SIDE_EMPTY when the side has no one, TARGET_PICK_NONE when the
 /// ability would affect no one.
-/// Called by BattleCommand_SelectAutomatic for an ability aimed at allies,
+/// Called by BattleAI_ChooseAction for an ability aimed at allies,
 /// the user or foes. Takes Random16 rolls to choose among eligible targets.
-s32 BattleTarget_SelectForAction(s32 actorId, struct BattleAct *action) {
+s32 BattleAI_ChooseTarget(s32 actorId, struct AbilityDefinition *action) {
   u16 orderPositions[6];
   s32 unitIds[6];
   s32 targetPositions[6];
   struct BattleWork *turnOrder;
-  struct BattleUnit *unit;
-  struct BattleUnit *nextUnit;
-  struct BattleUnit *thisUnit;
+  struct Unit *unit;
+  struct Unit *nextUnit;
+  struct Unit *thisUnit;
   s32 candidateCount;
   s32 targetIndex;
   s32 targetCount;
@@ -348,12 +348,12 @@ s32 BattleTarget_SelectForAction(s32 actorId, struct BattleAct *action) {
   candidateCount = 0;
 
   // The candidates: every unit listed on the side the ability may target,
-  // downed or not (only the user, for TARGET_MODE_SELF), with its place code.
-  // Allies of a party unit and foes of an enemy are the party.
-  if (action->targetMode != TARGET_MODE_NONE) {
+  // downed or not (only the user, for ABILITY_TARGET_SELF), with its place
+  // code. Allies of a party unit and foes of an enemy are the party.
+  if (action->targetMode != ABILITY_TARGET_ONE) {
     ownSide = 0;
-    if (action->targetMode == TARGET_MODE_ALLIES ||
-        action->targetMode == TARGET_MODE_SELF)
+    if (action->targetMode == ABILITY_TARGET_ALLIES ||
+        action->targetMode == ABILITY_TARGET_SELF)
       ownSide = 1;
 
     if (actorId < 0 || actorId > ALLY_MAX) {
@@ -368,7 +368,7 @@ s32 BattleTarget_SelectForAction(s32 actorId, struct BattleAct *action) {
       slot = &turnOrder->partyUnits[targetIndex];
       unitId = *slot;
       if (unitId != BATTLE_UNIT_REMOVED) {
-        if (action->targetMode != TARGET_MODE_SELF || unitId == actorId) {
+        if (action->targetMode != ABILITY_TARGET_SELF || unitId == actorId) {
           unitIds[candidateCount] = unitId;
           orderPositions[candidateCount] = PLACE_PARTY;
           orderPositions[candidateCount] |= targetIndex;
@@ -384,7 +384,7 @@ s32 BattleTarget_SelectForAction(s32 actorId, struct BattleAct *action) {
     while (turnOrder->enemyIds[targetIndex] != BATTLE_UNIT_LIST_END) {
       unitId = turnOrder->enemyIds[targetIndex];
       if (unitId != BATTLE_UNIT_REMOVED) {
-        if (action->targetMode != TARGET_MODE_SELF || unitId == actorId) {
+        if (action->targetMode != ABILITY_TARGET_SELF || unitId == actorId) {
           unitIds[candidateCount] = unitId;
           orderPositions[candidateCount] = PLACE_ENEMY;
           orderPositions[candidateCount] |= targetIndex;
@@ -414,16 +414,17 @@ scan_complete:
   if (targetCount == 0)
     return TARGET_PICK_NONE;
 
-  if (action->targetMode == TARGET_MODE_FOES && action->range == 1 &&
+  if (action->targetMode == ABILITY_TARGET_FOES && action->range == 1 &&
       ((struct EnemyDefinition *)Enemy_GetDefinitionFar(
-           Unit_GetFar(actorId)->classId))
-              ->targetStrategy != STRATEGY_RANDOM &&
-      (u32)((action->flags & ABILITY_KIND_MASK) - ABILITY_KIND_ATTACK) <=
-          ABILITY_KIND_DAMAGE - ABILITY_KIND_ATTACK) {
-    // A single-target ability of ABILITY_KIND_ATTACK to ABILITY_KIND_DAMAGE
-    // by an enemy with a strategy: sort the targets by HP left or by maximum
-    // HP, the most first. Each pass of the exchange sort starts one place
-    // later, so the order can come out wrong: HP 1, 2 and 3 end as 2, 3 and 1.
+           Unit_GetFar(actorId)->id))
+              ->targetStrategy != TARGET_STRATEGY_RANDOM &&
+      (u32)((action->flags & ABILITY_FORMULA_MASK) - ABILITY_FORMULA_ATTACK) <=
+          ABILITY_FORMULA_DAMAGE - ABILITY_FORMULA_ATTACK) {
+    // A single-target ability of ABILITY_FORMULA_ATTACK to
+    // ABILITY_FORMULA_DAMAGE by an enemy with a strategy: sort the targets by
+    // HP left or by maximum HP, the most first. Each pass of the exchange sort
+    // starts one place later, so the order can come out wrong: HP 1, 2 and 3
+    // end as 2, 3 and 1.
     selected = -1;
     for (targetIndex = 0; targetIndex < targetCount; targetIndex++) {
       for (innerIndex = targetIndex; innerIndex < targetCount - 1;
@@ -431,8 +432,8 @@ scan_complete:
         thisUnit = Unit_GetFar(unitIds[innerIndex]);
         nextUnit = Unit_GetFar(unitIds[innerIndex + 1]);
         if (((struct EnemyDefinition *)Enemy_GetDefinitionFar(
-                 Unit_GetFar(actorId)->classId))
-                ->targetStrategy == STRATEGY_MOST_HP) {
+                 Unit_GetFar(actorId)->id))
+                ->targetStrategy == TARGET_STRATEGY_MOST_HP) {
           value = thisUnit->hp;
           nextValue = nextUnit->hp;
         } else {

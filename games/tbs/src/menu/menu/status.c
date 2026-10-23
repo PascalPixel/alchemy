@@ -106,7 +106,7 @@ s32 Menu_OpenCharacterSelector(void) {
   WaitFrames(1);
   UiWindow_InitializeWork(0);
 
-  menu->partyCount = Party_ListActiveOwnersFar(menu->ownerIds);
+  menu->partyCount = Party_ListMembersFar(menu->ownerIds);
   Menu_InitializeSelectorCursorAndEntries(0, 3, 0, 7);
   menu->selectorWindow = UiWindow_CreateFar(13, 0, 17, 5, 2);
   for (index = 0; index < CHARACTER_SELECTOR_OWNER_COUNT; index++)
@@ -134,7 +134,7 @@ s32 CharacterSelector_Run(void) {
   do {
     work->selectedSlots[0] = result;
   } while (0);
-  if (CharacterMenu_SelectOwner(0) == -1)
+  if (SummaryScreen_SelectMember(0) == -1)
     result = -1;
   else
     result = work->selectedIds[0];
@@ -163,7 +163,7 @@ s32 StatusMenu_Run(void) {
   Menu_SuspendFieldTasks();
   UiWindow_InitializeWork(0);
   menu->page = CHARACTER_MENU_PAGE_STATUS;
-  menu->partyCount = Party_ListActiveOwnersFar(menu->ownerIds);
+  menu->partyCount = Party_ListMembersFar(menu->ownerIds);
   Menu_InitializeSelectorCursorAndEntries(0, 3, 0, 7);
   Iwram_CopyWords(palette, (void *)BG_PLTT, 64);
 #if !TBS_PATCH_1
@@ -254,7 +254,7 @@ s32 Menu_RunActionFlow(void) {
     switch (step) {
     case STATUS_STEP_MEMBER:
       menu->selectedSlots[0] = finished;
-      if (CharacterMenu_SelectOwner(0) == -1) {
+      if (SummaryScreen_SelectMember(0) == -1) {
         result = -1;
         finished = 1;
       }
@@ -295,7 +295,7 @@ s32 Menu_RunActionFlow(void) {
 /// member chooser on CHARACTER_MENU_PAGE_CHOOSER, else the Status menu's party
 /// row. Returns the chooser's result: 1 when a member was chosen, -1 when the
 /// player backed out, and on the party row 0 when Start ended it.
-s32 CharacterMenu_SelectOwner(s32 slot) {
+s32 SummaryScreen_SelectMember(s32 slot) {
   struct SummaryScreenWork *menu;
   struct RenderOutput *cursor;
   s32 result;
@@ -660,12 +660,12 @@ s32 CharacterSelector_MoveEntry(s32 selectedIndex, s32 direction) {
 
   // Rebuild the party in the new order.
   for (index = 0; index < menu->partyCount; index++) {
-    Party_RemoveActiveOwnerFar(menu->ownerIds[index]);
+    Party_RemoveMemberFar(menu->ownerIds[index]);
   }
   for (index = 0; index < menu->partyCount; index++) {
-    Party_AddActiveOwnerFar(reordered[index]);
+    Party_AddMemberFar(reordered[index]);
   }
-  menu->partyCount = Party_ListActiveOwnersFar(menu->ownerIds);
+  menu->partyCount = Party_ListMembersFar(menu->ownerIds);
   return 1;
 }
 
@@ -977,7 +977,7 @@ void StatusMenu_ShowOwnerProgressMessage(struct UiWindow *destination,
     messageVariant++;
   }
   if (messageVariant == 1) {
-    struct BattleUnit *owner = Unit_GetFar(menu->selectedIds[0]);
+    struct Unit *owner = Unit_GetFar(menu->selectedIds[0]);
 
     if (owner->level == 99) {
       messageVariant = 8; // "These are your experience points."
@@ -1004,7 +1004,7 @@ void StatusMenu_ShowOwnerProgressMessage(struct UiWindow *destination,
 void CharacterMenu_DrawStatusAilments(struct UiWindow *window, s32 ownerId,
                                       s32 mode) {
   struct SummaryScreenWork *menu = gMenuWork;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   s32 djinnRow;
   s32 hasDjinn;
   s32 keepDrawn;
@@ -1088,12 +1088,12 @@ void CharacterMenu_DrawStatusAilments(struct UiWindow *window, s32 ownerId,
   }
   for (ailmentIndex = 0; ailmentIndex <= 3; ailmentIndex++) {
     if (hasDjinn)
-      UiText_DrawNumberInWindowFar(unit->djinnOwnedCounts[ailmentIndex], 1,
+      UiText_DrawNumberInWindowFar(unit->djinnHeldCounts[ailmentIndex], 1,
                                    window, ailmentIndex * 32 + 120,
                                    djinnRow * 8 + 8);
     if ((mode & 0xff) == 1) {
       if (hasDjinn) {
-        UiText_DrawNumberInWindowFar(unit->djinnActiveCounts[ailmentIndex], 1,
+        UiText_DrawNumberInWindowFar(unit->djinnSetCounts[ailmentIndex], 1,
                                      window, ailmentIndex * 32 + 104,
                                      djinnRow * 8 + 8);
         UiText_DrawStringInWindowFar(gMenu_SlashString, window,
@@ -1131,7 +1131,7 @@ spin:
 /// on the right. flags' 0x100 keeps what is drawn instead of clearing it.
 void ItemMenu_DrawOwnerStatus(struct UiWindow *window, s32 ownerId, s32 flags) {
   struct ItemMenuWork *menu;
-  struct BattleUnit *unit;
+  struct Unit *unit;
 
   menu = gMenuWork;
   unit = Unit_GetFar(ownerId);
@@ -1141,8 +1141,7 @@ void ItemMenu_DrawOwnerStatus(struct UiWindow *window, s32 ownerId, s32 flags) {
     UiWindow_ClearInteriorTilesFar(window, 0, 0, 128, 40);
   }
   UiText_DrawStringAtOffsetFar(unit->name, window, 40, 0);
-  UiText_DrawCharacterAtOffsetFar(unit->classIndex + MsgClassName, window, 0,
-                                  32);
+  UiText_DrawCharacterAtOffsetFar(unit->classId + MsgClassName, window, 0, 32);
   MENU_DRAW_STATUS_LABEL(gMenu_LvString, window, 104, 0);
   UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
   UiText_DrawNumberInWindowFar(unit->level, 2, window, 128, 0);
@@ -1176,11 +1175,11 @@ void ItemMenu_DrawOwnerStatus(struct UiWindow *window, s32 ownerId, s32 flags) {
                                STATUS_STAT_X, 24);
 }
 
-/// Fills ailments[0..4] (CharacterAilment) with member ownerId's ailments: down
+/// Fills ailments[0..4] (UnitStatus) with member ownerId's ailments: down
 /// (only when requested is 1), poison or venom, curse and haunt. Returns how
 /// many they have.
 s32 CharacterMenu_BuildAvailability(u8 *ailments, s32 requested, s32 ownerId) {
-  struct BattleUnit *unit;
+  struct Unit *unit;
   s32 ailmentIndex;
   s32 count;
   s32 poison;
@@ -1203,7 +1202,7 @@ s32 CharacterMenu_BuildAvailability(u8 *ailments, s32 requested, s32 ownerId) {
       ailments[CHARACTER_VENOM] = 1;
     count++;
   }
-  if (unit->restraint != 0) {
+  if (unit->curse != 0) {
     ailments[CHARACTER_CURSE] = 1;
     count++;
   }
@@ -1326,7 +1325,7 @@ void PsynergyMenu_DrawRange(struct UiWindow *window, s32 x, s32 y, s32 range,
 s32 PsynergyMenu_DrawRangePage(struct UiWindow *window, s32 unused,
                                struct MenuResult *state) {
   struct PsynergyMenuWork *menu;
-  struct BattleAct *ability;
+  struct AbilityDefinition *ability;
   s32 row;
   s32 base;
 
@@ -1342,19 +1341,19 @@ s32 PsynergyMenu_DrawRangePage(struct UiWindow *window, s32 unused,
   WaitFrames(1);
   if (menu->psynergies[state->selectedIndex] != 0) {
     MENU_DRAW_INFO_TEXT(
-        (menu->psynergies[state->selectedIndex] & OWNER_ACTION_ID_MASK) +
+        (menu->psynergies[state->selectedIndex] & PSYNERGY_ABILITY_MASK) +
             MsgAbilityDescription,
         menu->infoWindow, 0, 0);
-    ability = BattleAction_Get(menu->psynergies[state->selectedIndex] &
-                               OWNER_ACTION_ID_MASK);
+    ability = Ability_Get(menu->psynergies[state->selectedIndex] &
+                          PSYNERGY_ABILITY_MASK);
 #if LANGUAGE != LANGUAGE_JAPANESE
     UiWindow_ClearInteriorTilesFar(window, 0, 96, 224, 104);
     row = 0;
     if (ability->fieldPsynergy != 0 ||
-        (ability->flags & ACTION_USABLE_IN_FIELD) != 0) {
+        (ability->flags & ABILITY_USABLE_IN_FIELD) != 0) {
       row = 2;
     }
-    if ((ability->flags & ACTION_USABLE_IN_BATTLE) != 0) {
+    if ((ability->flags & ABILITY_USABLE_IN_BATTLE) != 0) {
       row |= 1;
     }
     if (row == 3) {
@@ -1368,11 +1367,11 @@ s32 PsynergyMenu_DrawRangePage(struct UiWindow *window, s32 unused,
     UiWindow_ClearInteriorTilesFar(window, 0, 72, 64, 96);
     row = 0;
     if (ability->fieldPsynergy != 0 ||
-        (ability->flags & ACTION_USABLE_IN_FIELD) != 0) {
+        (ability->flags & ABILITY_USABLE_IN_FIELD) != 0) {
       UiText_DrawCharacterAtOffsetFar(MsgUsableInField, window, 0, 72);
       row = 1;
     }
-    if ((ability->flags & ACTION_USABLE_IN_BATTLE) != 0) {
+    if ((ability->flags & ABILITY_USABLE_IN_BATTLE) != 0) {
       UiText_DrawCharacterAtOffsetFar(MsgUsableInBattle, window, 0,
                                       row * 8 + 72);
       row++;
@@ -1388,7 +1387,7 @@ s32 PsynergyMenu_DrawRangePage(struct UiWindow *window, s32 unused,
   for (row = 0; row <= PAGE_ROWS - 1; row++) {
     if (row == state->row) {
       ability =
-          BattleAction_Get(menu->psynergies[base + row] & OWNER_ACTION_ID_MASK);
+          Ability_Get(menu->psynergies[base + row] & PSYNERGY_ABILITY_MASK);
       if (ability->element != 4) {
         UiWindow_SetTilemapEntryFar(window, ability->element + 1, 24,
                                     row * 2 + LIST_FIRST_ROW, 0);
@@ -1402,7 +1401,7 @@ s32 PsynergyMenu_DrawRangePage(struct UiWindow *window, s32 unused,
       }
     } else {
       ability =
-          BattleAction_Get(menu->psynergies[base + row] & OWNER_ACTION_ID_MASK);
+          Ability_Get(menu->psynergies[base + row] & PSYNERGY_ABILITY_MASK);
       if (ability->element != 4) {
         UiWindow_SetTilemapEntryFar(window, ability->element + 1, 24,
                                     row * 2 + LIST_FIRST_ROW, 4);
@@ -1427,7 +1426,7 @@ s32 PsynergyMenu_DrawRangePage(struct UiWindow *window, s32 unused,
 s32 PsynergyMenu_DrawListPage(struct UiWindow *window, s32 unused,
                               const struct MenuResult *res) {
   struct PsynergyMenuWork *menu = gMenuWork;
-  struct BattleUnit *owner;
+  struct Unit *owner;
   u32 firstEntry;
   u32 rows;
   u8 row;
@@ -1454,13 +1453,13 @@ s32 PsynergyMenu_DrawListPage(struct UiWindow *window, s32 unused,
   if (rows > row) {
     entryIndex = firstEntry;
     do {
-      struct BattleAct *action;
+      struct AbilityDefinition *action;
       s32 messageId;
       s32 y;
       s32 range;
       action =
-          BattleAction_Get(OWNER_ACTION_ID_MASK & menu->psynergies[entryIndex]);
-      messageId = (menu->psynergies[entryIndex] & OWNER_ACTION_ID_MASK) +
+          Ability_Get(PSYNERGY_ABILITY_MASK & menu->psynergies[entryIndex]);
+      messageId = (menu->psynergies[entryIndex] & PSYNERGY_ABILITY_MASK) +
                   MsgAbilityName;
       y = row * 16 + LIST_FIRST_ROW * 8;
 
@@ -1487,8 +1486,7 @@ s32 PsynergyMenu_DrawListPage(struct UiWindow *window, s32 unused,
   }
 
   UiText_DrawStringAtOffsetFar(owner->name, (void *)window, 40, 0);
-  UiText_DrawCharacterAtOffsetFar(owner->classIndex + MsgClassName, window, 0,
-                                  32);
+  UiText_DrawCharacterAtOffsetFar(owner->classId + MsgClassName, window, 0, 32);
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH
   UiText_DrawStringAtOffsetFar(gMenu_LvString, (void *)window, 0, 48);
 #else
@@ -1737,7 +1735,7 @@ s32 ItemMenu_DrawEquipPage(struct UiWindow *window, s32 unused,
 s32 Shop_DrawItemPage(struct UiWindow *window, s32 unused,
                       struct MenuResult *state) {
   struct ItemMenuWork *menu = gMenuWork;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   u16 *inventoryEntry;
   s32 firstEntry;
   u32 rowCount;
@@ -1786,7 +1784,7 @@ s32 Shop_DrawItemPage(struct UiWindow *window, s32 unused,
 s32 ItemMenu_SelectItem(void) {
 
   struct ItemMenuWork *menu;
-  struct BattleUnit *owner;
+  struct Unit *owner;
   s32 result;
   s32 done;
   s32 redraw;

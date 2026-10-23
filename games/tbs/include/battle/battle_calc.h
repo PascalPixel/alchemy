@@ -9,31 +9,31 @@
 #include "farcall.h"
 
 // Percentages by a target's distance from the aimed position, 0 for the aimed
-// target to 5 for the farthest: BattleTarget_Execute scales an amount by the
-// entry and divides by 100, so an ability spread over a group weakens step by
-// step. gHitTable instead scales the effect's chance, through
-// Battle_RollEffectSuccessFar.
+// target to 5 for the farthest: BattleAbility_ApplyToTarget scales an amount by
+// the entry and divides by 100, so an ability spread over a group weakens step
+// by step. gRangeFalloff_EffectChance instead scales the effect's chance,
+// through Battle_RollEffectSuccessFar.
 /// The share of an effect's chance to land (Battle_RollEffectSuccess's
 /// successScale): 100, 60, then 30.
-extern u8 gHitTable[];
-/// PP loss (ABILITY_KIND_PP_DAMAGE), Crazy Voice's and Psy Drain's: 100, 50,
+extern u8 gRangeFalloff_EffectChance[];
+/// PP loss (ABILITY_FORMULA_PP_DAMAGE), Crazy Voice's and Psy Drain's: 100, 50,
 /// 30, then 10.
-extern s32 gPpLossTable[];
-/// HP healing (ABILITY_KIND_HEAL_HP): 100 down to 20 by 20, then 10.
-extern s32 gHpRecoveryTable[];
+extern s32 gRangeFalloff_PpLoss[];
+/// HP healing (ABILITY_FORMULA_HEAL_HP): 100 down to 20 by 20, then 10.
+extern s32 gRangeFalloff_HealHp[];
 /// PP damage of the never-reached ability kind -1: 100, 50, 30, then 10.
-extern s32 gPpDmgTable[];
-/// Psynergy damage (ABILITY_KIND_DAMAGE): 100 down to 20 by 20, then 10.
-extern s32 gHpDmgTable5[];
-/// Summon damage (ABILITY_KIND_SUMMON): 100, 70, 40, 30, 20, then 10.
-extern s32 gHpDmgTable8[];
-/// An enemy's unleashed damage (ABILITY_KIND_UNLEASHED_DAMAGE): 100, 50, 30,
+extern s32 gRangeFalloff_PpDamage[];
+/// Psynergy damage (ABILITY_FORMULA_DAMAGE): 100 down to 20 by 20, then 10.
+extern s32 gRangeFalloff_PsynergyDamage[];
+/// Summon damage (ABILITY_FORMULA_SUMMON): 100, 70, 40, 30, 20, then 10.
+extern s32 gRangeFalloff_SummonDamage[];
+/// An enemy's unleashed damage (ABILITY_FORMULA_ENEMY_DAMAGE): 100, 50, 30,
 /// then 10.
-extern s32 gHpDmgTable6[];
-/// PP healing (ABILITY_KIND_HEAL_PP): 100 down to 20 by 20, then 10.
-extern s32 gPpRecoveryTable[];
-/// The damage of an effect ability whose effect lands (ABILITY_KIND_EFFECT):
+extern s32 gRangeFalloff_EnemyDamage[];
+/// PP healing (ABILITY_FORMULA_HEAL_PP): 100 down to 20 by 20, then 10.
+extern s32 gRangeFalloff_HealPp[];
+/// The damage of an effect ability whose effect lands (ABILITY_FORMULA_EFFECT):
 /// 100, 50, 30, then 10.
-extern s32 gHpDmgTable[];
+extern s32 gRangeFalloff_EffectDamage[];
 
 #endif

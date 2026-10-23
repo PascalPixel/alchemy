@@ -35,13 +35,13 @@ void Transform_Push(void) {
   }
 }
 
-/// Copies gTransform to `dst`. Called by BattleEffect_RunAtalanta.
+/// Copies gTransform to `dst`. Called by BattleAnim_RunAtalanta.
 void Transform_Store(void *dst) {
   Dma_Set(gTransform, dst, TRANSFORM_DMA, REG_DMA3);
 }
 
 /// Copies the matrix at `src` into gTransform. Called by
-/// BattleEffect_RunAtalanta.
+/// BattleAnim_RunAtalanta.
 void Transform_Load(const void *src) {
   Dma_Set(src, gTransform, TRANSFORM_DMA, REG_DMA3);
 }

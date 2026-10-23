@@ -216,7 +216,7 @@ void SelectionScreen_Draw(void) {
   s32 entryIndex = 0;
   s32 slot;
   s32 axisStep;
-  struct EffectPosition position;
+  struct ScreenPoint position;
 
   node = state->head;
   // Move and queue the visible row before drawing its overlays. An icon
@@ -250,7 +250,7 @@ void SelectionScreen_Draw(void) {
       slot = 241;
       if (cursor->kind != ICON_KIND_NONE) {
         if (BattleMotion_ProjectScaledPositionFar(
-                node->base, EffectPosition_Coordinates(&position)) != -1) {
+                node->base, ScreenPoint_Coordinates(&position)) != -1) {
           cursor->targetX = position.x;
           cursor->targetY = position.y;
           if (cursor->scale == 0) {
@@ -946,7 +946,7 @@ void SelectionScreen_HighlightIcon(struct SelectionScreen *state,
   }
 }
 
-/// Stops the battle's highlight of units (BattlePresentation_SetActorModesFar
+/// Stops the battle's highlight of units (BattleHighlight_SetModesFar
 /// with mode 0); Menu_ConfirmSelection calls it as an entry is chosen. It
 /// passes a unit list with one place an icon, of which only the end marker
 /// (0xff, BATTLE_UNIT_LIST_END) is written; mode 0 never reads the list.
@@ -960,7 +960,7 @@ void Menu_SendNodeCountList(struct SelectionScreen *screen) {
     count++;
   }
   data[count] = 0xff;
-  BattlePresentation_SetActorModesFar(data, 0);
+  BattleHighlight_SetModesFar(data, 0);
 }
 
 /// Scrolls the row one entry: forward brings an icon in from the right as the

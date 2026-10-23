@@ -628,7 +628,7 @@ static void EventScript_DouseStorm(s32 unused, s32 stormId) {
   }
   FieldGameFlag_SetByte(FLAG_MAP_TEMP_10, 0);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 5);
-  Battle_SetStart(BATTLE_START_SCRIPTED);
+  Battle_SetType(BATTLE_TYPE_SCRIPTED);
   state = &gGameState;
   if (state->mapId == (s32)&MapId_SuhallaDesertSouth) {
     if (stormId == LOCALID_FOURTH_STORM) {

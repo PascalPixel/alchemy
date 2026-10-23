@@ -4,7 +4,7 @@
 
 #include "../effect_internal.h"
 
-/// The eruption's modes (BattleEffect_RunEruption).
+/// The eruption's modes (BattleAnim_RunEruption).
 enum EruptionMode {
   ERUPTION_BLAST,     ///< fire streak colours; the variant picks the counts and
                       ///< the targets recoil
@@ -14,19 +14,19 @@ enum EruptionMode {
 /// A fountain of grey motes and puffs of smoke bursts up beside the targets and
 /// falls back, flashing each target.
 ///
-/// Abilities: Smoke Bomb, Sleep Bomb (BATTLE_EFFECT_SMOKE_BOMB).
+/// Abilities: Smoke Bomb, Sleep Bomb (BATTLE_ANIM_SMOKE_BOMB).
 ///
 /// It always uses Mad Blast's row of gEruption_Counts: 32 motes, 16 puffs, 80
 /// frames.
-void BattleEffect_RunSmokeBomb(struct BattleEffectArgument *effect) {
-  BattleEffect_RunEruption(effect, ERUPTION_SMOKE_BOMB);
+void BattleAnim_RunSmokeBomb(struct BattleAnimArgs *effect) {
+  BattleAnim_RunEruption(effect, ERUPTION_SMOKE_BOMB);
 }
 /// A fountain of fire-coloured motes and puffs of smoke bursts up beside the
 /// targets and falls back, flashing each target and making it recoil.
 ///
-/// Abilities: Blast, Mad Blast, Fiery Blast (BATTLE_EFFECT_BLAST).
-void BattleEffect_RunBlast(struct BattleEffectArgument *effect) {
-  BattleEffect_RunEruption(effect, ERUPTION_BLAST);
+/// Abilities: Blast, Mad Blast, Fiery Blast (BATTLE_ANIM_BLAST).
+void BattleAnim_RunBlast(struct BattleAnimArgs *effect) {
+  BattleAnim_RunEruption(effect, ERUPTION_BLAST);
 }
 /// The columns of a gEruption_Counts row.
 enum {
@@ -41,7 +41,7 @@ enum {
 /// A fountain of motes and puffs of smoke bursts up beside the targets and
 /// falls back, hitting the targets one frame apart from frame 6.
 ///
-/// Called by BattleEffect_RunBlast and BattleEffect_RunSmokeBomb.
+/// Called by BattleAnim_RunBlast and BattleAnim_RunSmokeBomb.
 /// A sound and a 6-frame screen shake start on frame 2, and the battle shows
 /// the damage 48 frames before the end. Writes the first 64 BG colours, sets
 /// work->shakeFrames.
@@ -51,23 +51,23 @@ enum {
 ///       give 16 motes, 8 puffs and 72 frames (Blast), 32, 16 and 80 (Mad
 ///       Blast, and Smoke Bomb and Sleep Bomb) and 128, 32 and 88 (Fiery
 ///       Blast).
-void BattleEffect_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
+void BattleAnim_RunEruption(struct BattleAnimArgs *effect, s32 mode) {
   void **cursor;
-  struct BattleEffectWork *work;
+  struct BattleAnimWork *work;
   void *canvas;
   /* FAKEMATCH(dead): draw as a BlitterPair whose second word nothing uses,
    * for 4 bytes of frame; as one DrawRectangle, 10 of 470 instructions differ
    * in tbs-en. */
   BlitterPair draw;
   s32 variant;
-  struct EffectPosition screen;
+  struct ScreenPoint screen;
   s32 frame;
   s32 i;
 
   cursor = gBattleAnimWork;
-  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
+  ANIM_GET_WORK_AND_CANVAS(cursor, work, canvas);
   work->effect = effect;
-  BattleEffect_StartCanvasLayer(1);
+  BattleAnim_StartCanvasLayer(1);
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 0);
   // Smoke Bomb's palette is a ramp of greys, two levels to each step of
   // brightness, 0 to 31; Blast takes the fire streak's.
@@ -77,7 +77,7 @@ void BattleEffect_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
 
       BG_PLTT[i] = RGB(level, level, level);
     }
-    variant = EFFECT_VARIANT_STRONGER;
+    variant = ANIM_VARIANT_STRONGER;
   } else {
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_FireStreakSheet),
@@ -90,7 +90,7 @@ void BattleEffect_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
   // frame across and in depth and 1 to 5 upwards. All 32 puffs (Fiery
   // Blast's count) and 1024 motes (eight times its 128) are placed.
   for (i = 0; i != 32; i++) {
-    struct EffectStep *puff = &work->particles[i];
+    struct Particle *puff = &work->particles[i];
 
     if (work->effect->side == 1)
       puff->x = 200 << 14;
@@ -104,7 +104,7 @@ void BattleEffect_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
     puff->variant = 0;
   }
   for (i = 0; i != 1024; i++) {
-    struct EffectStep *mote = &PARTICLES[i];
+    struct Particle *mote = &PARTICLES[i];
 
     if (work->effect->side == 1)
       mote->x = 200 << 14;
@@ -117,34 +117,34 @@ void BattleEffect_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
     mote->variant = 0;
   }
 
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
   for (frame = 0; frame != gEruption_Counts[variant][ERUPTION_FIELD_FRAMES];
        frame++) {
     struct BattleCamera *camera;
 
     camera = gCameraWork;
-    EFFECT_VIEW_FROM_CAMERA(camera);
+    ANIM_VIEW_FROM_CAMERA(camera);
     if (frame == 2)
       Sound_PlaySongFar(SE_144);
     if (frame == gEruption_Counts[variant][ERUPTION_FIELD_FRAMES] - 48)
-      EFFECT_SHOW_DAMAGE(SE_IMPACT);
+      ANIM_SHOW_DAMAGE(SE_IMPACT);
 
     // The motes still above the ground, alternating the two mote sets,
     // falling under a gravity of 1/8 pixel a frame per frame. The half-width
     // x is shifted 16 pixels left, or right on side 1. A mote is size 9 at
     // depth 160 or nearer and one smaller for each 64 deeper; from depth 736
-    // the size is 0, which would read gBattleEffect_MoteCells[-1].
+    // the size is 0, which would read gBattleAnim_MoteCells[-1].
     // XXX: whether a mote ever gets that deep needs a run of the effect.
     for (i = 0; i != gEruption_Counts[variant][ERUPTION_FIELD_MOTES]; i++) {
-      struct EffectStep *mote = &PARTICLES[i];
+      struct Particle *mote = &PARTICLES[i];
 
       if (mote->y >= 0) {
         s32 size;
 
-        EffectPosition_ProjectPoint(mote, &screen);
+        Projection_Point(mote, &screen);
         screen.x >>= 1;
         screen.x += work->effect->side * 32 - 16;
         CLAMP(screen.depth, 160, 799);
@@ -152,10 +152,10 @@ void BattleEffect_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
         draw[0](
             canvas,
             work->sheet +
-                (gBattleEffect_MoteCells[size - 1] + (i & 1) * MOTE_SET_BYTES) +
+                (gBattleAnim_MoteCells[size - 1] + (i & 1) * MOTE_SET_BYTES) +
                 ERUPTION_FIELD_MOTE_CELLS,
             screen.x - size / 2, screen.y - size, size, size * 2);
-        EffectStep_AdvanceWithGravity3D(mote, 64, -0x2000);
+        Particle_AdvanceWithGravity3D(mote, 64, -0x2000);
       }
     }
 
@@ -163,10 +163,10 @@ void BattleEffect_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
     // plays seven pictures, 3 frames each, while above the ground.
     if (frame > 2) {
       for (i = 0; i != gEruption_Counts[variant][ERUPTION_FIELD_PUFFS]; i++) {
-        struct EffectStep *puff = &work->particles[i];
+        struct Particle *puff = &work->particles[i];
 
         if (i < frame && puff->y >= 0) {
-          EffectPosition_ProjectPoint(puff, &screen);
+          Projection_Point(puff, &screen);
           screen.x >>= 1;
           screen.x += work->effect->side * 32 - 16;
           if (puff->variant >= 0 && puff->variant <= 20) {
@@ -187,7 +187,7 @@ void BattleEffect_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
           }
           if (puff->variant <= 20)
             puff->variant++;
-          EffectStep_AdvanceWithGravity3D(puff, 64, -0x2000);
+          Particle_AdvanceWithGravity3D(puff, 64, -0x2000);
         }
       }
     }
@@ -195,28 +195,28 @@ void BattleEffect_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
     // The hits, one target a frame from frame 6; Blast's targets also recoil
     // (KNOCKBACK_LEAP).
     if (mode == ERUPTION_BLAST) {
-      EFFECT_FOR_EACH_TARGET(i, work->effect) {
+      ANIM_FOR_EACH_TARGET(i, work->effect) {
         if (frame == i + 6) {
-          ObjectGroup_UpdateMembers(work->effect->actors[i], SPRITE_COLOR_WHITE,
-                                    POSE_DAMAGE, i, 10);
-          BattleMotion_ApplyVariantMotionFar(work->effect->actors[i],
-                                             KNOCKBACK_LEAP);
+          ObjectGroup_UpdateMembers(work->effect->targets[i],
+                                    SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 10);
+          BattleMotion_ApplyKnockbackFar(work->effect->targets[i],
+                                         KNOCKBACK_LEAP);
         }
       }
     } else {
-      EFFECT_FOR_EACH_TARGET(i, work->effect) {
+      ANIM_FOR_EACH_TARGET(i, work->effect) {
         if (frame == i + 6)
-          ObjectGroup_UpdateMembers(work->effect->actors[i], SPRITE_COLOR_WHITE,
-                                    POSE_DAMAGE, i, 10);
+          ObjectGroup_UpdateMembers(work->effect->targets[i],
+                                    SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 10);
       }
     }
     if (frame == 2)
       work->shakeFrames = 6;
     Camera_ApplyShake(16, 16);
-    EFFECT_END_FRAME(work);
+    ANIM_END_FRAME(work);
   }
 
-  EFFECT_FINISH_CANVAS_ONE_BLITTER();
+  ANIM_FINISH_CANVAS_ONE_BLITTER();
 }
 
 /// Creates the effect's animation objects in gBattleAnimWork's objects.
@@ -230,8 +230,8 @@ void BattleEffect_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
 /// entryCount: how many objects to create.
 /// source: the resource object every one of them is made from.
 /// priority: the sprite priority they take.
-void BattleEffect_SpawnObjects(s32 entryCount, s32 source, u32 priority) {
-  struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
+void BattleAnim_SpawnObjects(s32 entryCount, s32 source, u32 priority) {
+  struct BattleAnimWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
   s32 entryIndex = 0;
 
   if (entryCount == 0) {
@@ -250,8 +250,8 @@ void BattleEffect_SpawnObjects(s32 entryCount, s32 source, u32 priority) {
   } while (entryIndex != entryCount);
 }
 
-/// Does nothing. BattleEffect_CallDoNothing calls it in a loop, 10000 times for
+/// Does nothing. BattleAnim_CallDoNothing calls it in a loop, 10000 times for
 /// Annihilation, a busy wait.
-void BattleEffect_DoNothing(void) {}
+void BattleAnim_DoNothing(void) {}
 
 #undef ERUPTION_FIELD_MOTE_CELLS

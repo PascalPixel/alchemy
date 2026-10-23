@@ -141,43 +141,43 @@ extern const u8 Resource_PatchThumbBranch[];
 /// The game code's last letter in the cartridge header: `J` in Japanese, `E`,
 /// `D`, `F`, `S` or `I` (System_GetLanguage).
 extern const u8 gRom_LanguageCode;
-// The pixel fragments BattleEffect_BuildBlitter copies into its blitters, from
+// The pixel fragments BattleAnim_BuildBlitter copies into its blitters, from
 // battle_effect_composite.s: Forward reads the picture left to right and
 // Reverse right to left. None of them runs where it is.
 /// Max, four pixels (one canvas word), right to left; a full cell's row takes
 /// it twice.
-extern const u32 BattleEffect_Max4Reverse[];
+extern const u32 BattleAnim_Max4Reverse[];
 /// Max, four pixels (one canvas word), left to right; a full cell's row takes
 /// it twice.
-extern const u32 BattleEffect_Max4Forward[];
+extern const u32 BattleAnim_Max4Forward[];
 /// Max, one pixel, right to left.
-extern const u32 BattleEffect_MaxReverse[];
+extern const u32 BattleAnim_MaxReverse[];
 /// Max, one pixel, left to right.
-extern const u32 BattleEffect_MaxForward[];
+extern const u32 BattleAnim_MaxForward[];
 /// Additive, four pixels added a word at a time, right to left; a full cell's
 /// row takes it twice.
-extern const u32 BattleEffect_ColorReverse[];
+extern const u32 BattleAnim_ColorReverse[];
 /// Additive, four pixels added a word at a time, left to right; a full cell's
 /// row takes it twice.
-extern const u32 BattleEffect_ColorForward[];
+extern const u32 BattleAnim_ColorForward[];
 /// Additive, one pixel, right to left.
-extern const u32 BattleEffect_AdditiveReverse[];
+extern const u32 BattleAnim_AdditiveReverse[];
 /// Additive, one pixel, left to right.
-extern const u32 BattleEffect_AdditiveForward[];
+extern const u32 BattleAnim_AdditiveForward[];
 /// Sets 0x40 in every byte of sl, which caps an additive word's pixels at 63.
-extern const u32 BattleEffect_Mask[];
+extern const u32 BattleAnim_Mask[];
 /// Transparent, a full cell's eight pixels, right to left.
-extern const u32 BattleEffect_Transparent8Reverse[];
+extern const u32 BattleAnim_Transparent8Reverse[];
 /// Transparent, a full cell's eight pixels, left to right.
-extern const u32 BattleEffect_Transparent8Forward[];
+extern const u32 BattleAnim_Transparent8Forward[];
 /// Transparent, one pixel, right to left.
-extern const u32 BattleEffect_TransparentReverse[];
+extern const u32 BattleAnim_TransparentReverse[];
 /// Transparent, one pixel, left to right.
-extern const u32 BattleEffect_TransparentForward[];
+extern const u32 BattleAnim_TransparentForward[];
 /// Copy, one pixel, right to left.
-extern const u32 BattleEffect_CopyReverse[];
+extern const u32 BattleAnim_CopyReverse[];
 /// Copy, one pixel, left to right.
-extern const u32 BattleEffect_CopyForward[];
+extern const u32 BattleAnim_CopyForward[];
 /// The basic sprite palettes 0 to 13, 224 colours
 /// (Palette_LoadBasicSpriteColors).
 extern const u8 gSystem_BasicColorPalette[];

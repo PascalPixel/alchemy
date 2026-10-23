@@ -314,20 +314,20 @@ static inline void BabiPalace_CloseDoors(void) {
 /// Garet, Ivan and Mia rejoin, and the inventory Colosso held is returned.
 static __inline__ void BabiPalace_RestorePartyAndInventory(void) {
   s16 owners[8];
-  struct BattleUnit *state;
+  struct Unit *state;
   s32 ownerCount;
   s32 i;
 
-  ownerCount = FieldParty_ListActiveOwners(owners);
+  ownerCount = FieldParty_ListMembers(owners);
   for (i = 0; i < ownerCount; i++) {
     state = Unit_Get(owners[i]);
     state->hp = state->hpMax;
     state->pp = state->ppMax;
     Engine_OwnerRecalculateRatios(owners[i]);
   }
-  Party_AddActiveOwner(GARET);
-  Party_AddActiveOwner(IVAN);
-  Party_AddActiveOwner(MIA);
+  Party_AddMember(GARET);
+  Party_AddMember(IVAN);
+  Party_AddMember(MIA);
   Engine_InventorySnapshotRestore();
 }
 

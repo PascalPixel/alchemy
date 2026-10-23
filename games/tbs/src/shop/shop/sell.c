@@ -8,7 +8,7 @@
 /// window and the member's item grid, and runs Shop_SelectSell or
 /// Shop_SelectRepair for each member chosen until B. Called by Shop_Run for
 /// Sell and Repair.
-s32 Shop_PickUnit(void) {
+s32 Shop_ChooseMember(void) {
   struct ShopWork *shop = gMenuWork;
   struct UiWindow *listWindow;
   s32 memberIndex = 0;
@@ -80,14 +80,14 @@ s32 Shop_PickUnit(void) {
 /// Lets the player choose items to sell from the member's grid, one at a
 /// time, with each one's price and description, until B or the inventory is
 /// empty. Returns -1 when cancelled, 0 when the inventory ran out. Called by
-/// Shop_PickUnit.
+/// Shop_ChooseMember.
 s32 Shop_SelectSell(s32 unitId) {
   // Shared previous/next-row inlines added four bytes to each sell, repair and
   // use picker in the English native build; the direct row arithmetic remains.
   struct UiWindow *descriptionWindow;
   struct ShopWork *shop;
   struct UiWindow *priceWindow;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   s32 slot;
   s32 inventoryCount;
   s32 redraw;
@@ -194,7 +194,7 @@ s32 Shop_SelectSell(s32 unitId) {
 /// none. Called by the sell, repair and drop screens each time the
 /// member changes, and after a sale.
 void Shop_DrawUnitGrid(struct UiWindow *window, s32 unitId) {
-  struct BattleUnit *unit;
+  struct Unit *unit;
   s32 x;
   s32 y;
   s32 slot;
@@ -243,7 +243,7 @@ s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
   s32 quantityLimit;
   struct ItemDefinition *item;
   struct ShopWork *shop;
-  struct BattleUnit *unit;
+  struct Unit *unit;
 
   shop = gMenuWork;
   unit = Unit_GetFar(unitId);
@@ -278,7 +278,7 @@ s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
 /// it, and the shops of its type may sell it again.
 void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
   struct ShopWork *shop = gMenuWork;
-  struct BattleUnit *unit = Unit_GetFar(unitId);
+  struct Unit *unit = Unit_GetFar(unitId);
   s32 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
   struct ItemDefinition *item = Item_GetDirectFar(itemId);
   u8 rare = item->flags & ITEM_RARE;

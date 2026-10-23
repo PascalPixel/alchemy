@@ -2102,7 +2102,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Engine_ObjectEventWaitForMove(GARET);
   ObjectEvent_SetPosition(GARET, 0, 0);
   GameFlag_Set(FLAG_SOL_SANCTUM_STAR_ROOM_EXPLAINED);
-  Party_RemoveOwnerRestored(5);
+  Party_RemoveMemberRestored(5);
   // Give out the bags and make the pedestal crossings available.
   SolSanctumElementalStarRoom_GiveMythrilBags();
   MapGrid_CopyCellAttributes(8, 0, 5, 1, 27, 17);
@@ -2195,7 +2195,7 @@ static s32 SolSanctumElementalStarRoom_PresentStar(s32 item, s32 x, s32 y,
 
   glyph = NULL;
   objectEvent = Engine_ObjectCreate(SPRITE_BLANK, x, y, z);
-  owner = PartyInventory_FindOwner(ITEM_MYTHRIL_BAG);
+  owner = PartyInventory_FindMember(ITEM_MYTHRIL_BAG);
   slot = Inventory_Find(owner, ITEM_MYTHRIL_BAG);
   if (objectEvent == NULL)
     return owner;

@@ -494,7 +494,7 @@ static void AltinPeak_RideCart(s32 log) {
 /// a room's water beast starts its battle; afterwards the party returns to the
 /// room's warp destination after battle.
 static void AltinPeak_FightFirstWaterBeast(void) {
-  Battle_SetStart(BATTLE_START_SCRIPTED);
+  Battle_SetType(BATTLE_TYPE_SCRIPTED);
   FieldScript_SetNextDestination((s32)&MapId_AltinPeakFirstWaterBeast,
                                  WARP_DEST_AFTER_BATTLE);
   Field_RequestBattleFromEncounterTable(
@@ -504,7 +504,7 @@ static void AltinPeak_FightFirstWaterBeast(void) {
 /// The party fights the second water beast. It starts and ends as the first
 /// one's does, from its own room.
 static void AltinPeak_FightSecondWaterBeast(void) {
-  Battle_SetStart(BATTLE_START_SCRIPTED);
+  Battle_SetType(BATTLE_TYPE_SCRIPTED);
   FieldScript_SetNextDestination((s32)&MapId_AltinPeakSecondWaterBeast,
                                  WARP_DEST_AFTER_BATTLE);
   Field_RequestBattleFromEncounterTable(
@@ -514,7 +514,7 @@ static void AltinPeak_FightSecondWaterBeast(void) {
 /// The party fights the third water beast. It starts and ends as the first
 /// one's does, from its own room.
 static void AltinPeak_FightThirdWaterBeast(void) {
-  Battle_SetStart(BATTLE_START_SCRIPTED);
+  Battle_SetType(BATTLE_TYPE_SCRIPTED);
   FieldScript_SetNextDestination((s32)&MapId_AltinPeakThirdWaterBeast,
                                  WARP_DEST_AFTER_BATTLE);
   Field_RequestBattleFromEncounterTable(
@@ -2206,7 +2206,7 @@ static void AltinPeak_StartHydrosBattle(void) {
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 2);
   Engine_ObjectEventWaitForMove(LOCALID_STATUE);
-  Battle_SetStart(BATTLE_START_SCRIPTED);
+  Battle_SetType(BATTLE_TYPE_SCRIPTED);
   FieldScript_SetNextDestination((s32)&MapId_AltinPeakHydrosStatue,
                                  WARP_DEST_AFTER_BATTLE);
   Field_RequestBattleFromEncounterTable(

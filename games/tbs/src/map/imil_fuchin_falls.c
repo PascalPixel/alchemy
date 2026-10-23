@@ -1728,7 +1728,7 @@ static void Fuchin_SearchDragonStatue(void) {
     Engine_MessageShowCentered(MsgFuchinDragonRedEyes, 1);
   } else {
     Engine_MessageShowCentered(MsgFuchinEyelessDragon, 1);
-    if (PartyInventory_FindOwner(ITEM_DRAGONS_EYE) != -1) {
+    if (PartyInventory_FindMember(ITEM_DRAGONS_EYE) != -1) {
       gFieldWork->menu = 1;
     }
   }

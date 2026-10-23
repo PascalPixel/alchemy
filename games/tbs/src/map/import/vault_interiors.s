@@ -34,7 +34,7 @@
 	.set import.Engine_ScriptEnd, 1
 	.set import.Map_PrepareObjectEvents, 1
 	.set import.FieldScript_PrepareObjectAndApplyValue, 1
-	.set import.Party_RemoveOwnerRestored, 1
+	.set import.Party_RemoveMemberRestored, 1
 	.set import.Engine_PartyGiveItem, 1
 	.set import.Engine_ScriptChooseYesNo, 1
 	.set import.ObjectEvent_GetById, 1

@@ -105,7 +105,7 @@ with a request for the field to cast it once the menu has closed. Psynergy
 used on the party takes effect here: the target is healed, the caster pays
 the PP, and the list comes back for another choice.
 
-The steps are `PSYNERGY_STEP_OWNER`, `_LIST`, `_CLASSIFY`
+The steps are `PSYNERGY_STEP_MEMBER`, `_LIST`, `_CLASSIFY`
 (`PsynergyMenu_ClassifySelectedPsynergy`), `_TARGET` and `_APPLY`, run by
 `Menu_ResolveSelectedAction`. `_CLASSIFY` asks its questions in this order:
 
@@ -113,7 +113,7 @@ The steps are `PSYNERGY_STEP_OWNER`, `_LIST`, `_CLASSIFY`
 | --- | --- | --- |
 | has a Psynergy event in this map for what the leader faces | 0 | the field casts it |
 | has a range of `ABILITY_RANGE_ALL` | 2 | used on the whole party at once (`_APPLY`) |
-| has the target mode `TARGET_MODE_ALLIES` | 1 | asks whom (`_TARGET`) |
+| has the target mode `ABILITY_TARGET_ALLIES` | 1 | asks whom (`_TARGET`) |
 | anything else | 0 | the field casts it, though the map has no event for it |
 
 Psynergy for the field is written as the field's Psynergy request,
@@ -133,7 +133,7 @@ button casts on the field. The steps are an enum in `menu/psynergy.c`.
 
 | Step | Value | What the screen is doing |
 | --- | --- | --- |
-| `PSYNERGY_STEP_OWNER` | 0 | choosing a member |
+| `PSYNERGY_STEP_MEMBER` | 0 | choosing a member |
 | `PSYNERGY_STEP_LIST` | 1 | choosing one of their Psynergy |
 | `PSYNERGY_STEP_CLASSIFY` | 2 | working out how it is used, within the same frame |
 | `PSYNERGY_STEP_TARGET` | 3 | choosing whom to use it on |

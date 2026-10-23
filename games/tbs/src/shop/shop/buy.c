@@ -6,7 +6,7 @@
 
 // Shop_DrawUnitItem reads the unit and writes its icons as bytes; these are
 // the offsets of the unit's inventory and the icon's depth.
-#define SHOP_INVENTORY_OFFSET ((s32)offsetof(struct BattleUnit, inventory))
+#define SHOP_INVENTORY_OFFSET ((s32)offsetof(struct Unit, inventory))
 #define SHOP_ICON_DEPTH_OFFSET ((s32)offsetof(struct RenderOutput, sentinel))
 
 #define SHOP_STACK_LIMIT 30 ///< maximum quantity accepted by Inventory_AddItem
@@ -178,7 +178,7 @@ next_page:
         selectionResult = -1;
         break;
       }
-      if (Item_IsCompatibleWithOwnerFar(unitId, shop->selectedItem) == 0) {
+      if (Item_IsCompatibleWithUnitFar(unitId, shop->selectedItem) == 0) {
         UiWork_PushValueSlotFar(unitId, MESSAGE_ARGUMENT_ACTOR);
         UiMessage_ShowAndWait(MsgCannotEquipStillWant);
         if (UiMessage_ShowChoice(0) != 0) {
@@ -397,8 +397,8 @@ void Shop_DrawParty(struct UiWindow *window, s32 selected, s32 itemId) {
         AnimationObject_SelectAnimationFar(shop->partyMemberIcons[memberIndex],
                                            1);
       shop->partyMemberScale[memberIndex] = 0x10000;
-      if (!Item_IsCompatibleWithOwnerFar(shop->partyMemberIds[memberIndex],
-                                         itemId))
+      if (!Item_IsCompatibleWithUnitFar(shop->partyMemberIds[memberIndex],
+                                        itemId))
         shop->partyMemberScale[memberIndex] = 0xcccc;
     }
   }
@@ -411,7 +411,7 @@ void Shop_DrawParty(struct UiWindow *window, s32 selected, s32 itemId) {
 /// weapons and armor.
 void Shop_DrawEquipComparison(struct UiWindow *window, s32 unitId, s32 itemId) {
   struct ShopWork *shop = gMenuWork;
-  struct BattleUnit *unit = Unit_GetFar(unitId);
+  struct Unit *unit = Unit_GetFar(unitId);
   struct ItemDefinition *item = Item_GetDirectFar(itemId);
   s32 replacedItemId = -1;
   s32 previewSlot;
@@ -423,7 +423,7 @@ void Shop_DrawEquipComparison(struct UiWindow *window, s32 unitId, s32 itemId) {
   if (window == 0)
     return;
   RenderOutput_PrepareForRedrawFar(window);
-  if (!Item_CanOwnerEquip(unitId, itemId)) {
+  if (!Item_CanUnitEquip(unitId, itemId)) {
     UiText_DrawResourceFar(MsgShopCannotEquip, window, 8, 24);
     return;
   }
@@ -551,7 +551,7 @@ void Shop_DrawUnitItem(struct UiWindow *window, s32 unitId, s32 itemId) {
 /// Shop_SelectBuy.
 s32 Shop_SelectBuyCount(s32 unitId, s32 itemId) {
   struct ShopWork *shop;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   struct ItemDefinition *item;
   s32 carriedQuantity;
   s32 quantityLimit;
@@ -742,7 +742,7 @@ void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity) {
 /// equipped. Called by Shop_BuyDone.
 s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
   struct ShopWork *shop = gMenuWork;
-  struct BattleUnit *unit = Unit_GetFar(unitId);
+  struct Unit *unit = Unit_GetFar(unitId);
   s32 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
   struct ItemDefinition *item = Item_GetDirectFar(itemId);
   s32 replacedSlot;
@@ -751,7 +751,7 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
   if (unit->inventory[slot] & INVENTORY_EQUIPPED)
     return 0;
 
-  if (Item_CanOwnerEquip(unitId, itemId) == 0)
+  if (Item_CanUnitEquip(unitId, itemId) == 0)
     return 0;
 
   replacedSlot = Inventory_FindEquippedFar(unitId, item->type);
@@ -790,7 +790,7 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
 /// is a Psynergy item or indispensable. Returns 1 when it offered. Called by
 /// Shop_BuyDone.
 s32 Shop_SellOld(s32 unitId, s32 slot) {
-  struct BattleUnit *unit;
+  struct Unit *unit;
   s32 itemId;
 
   unit = Unit_GetFar(unitId);

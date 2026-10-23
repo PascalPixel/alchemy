@@ -17,7 +17,7 @@ typedef void (*EffectCallback)(struct FieldEffectSprite *);
 
 /// A particle a Psynergy effect moves and draws: its sprite, its position and
 /// target, its speed, scale and heading, and its per-frame callback. The 24 are
-/// FieldEffectWork.effects, in the HEAP_SLOT_FIELD_EFFECT work slot.
+/// FieldEffectWork.sprites, in the HEAP_SLOT_FIELD_EFFECT work slot.
 struct FieldEffectSprite {
   void *object; ///< the slot's sprite, released with the slot
   s32 x;        ///< 16.16 fixed-point pixels

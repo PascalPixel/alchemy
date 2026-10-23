@@ -113,7 +113,7 @@ enum WorldMapCollision {
 
 /// A world map terrain behaviour (gWorldMap_BattleEnvironments,
 /// WorldMap_GetBattleEnvironment): what its ground means for battles, named by
-/// the battle backdrop Battle_SelectTerrainBackdrop gives it.
+/// the battle backdrop BattleBackground_SelectForEnvironment gives it.
 enum BattleEnvironment {
   BATTLE_ENVIRONMENT_NONE = 0,      ///< Sol Sanctum's backdrop
   BATTLE_ENVIRONMENT_GRASSLAND = 1, ///< ResourceId_GrasslandBackdrop

@@ -312,7 +312,7 @@ others have to happen in the blank, such as copying the windows' changed
 tiles to the screen (`UiWork_UploadDirtyBlocks`). Each task carries one
 number, its order, which says both: which of the two passes runs it, and
 where in that pass. Where the order matters, it matters a lot: in a battle the
-camera (`BattlePresentation_UpdateCamera`) is added with a lower order than
+camera (`BattleCamera_Update`) is added with a lower order than
 the battle's objects and event playback, so it moves only after they have.
 
 The task table holds `TASK_COUNT` tasks, each a routine, an
@@ -479,7 +479,7 @@ and when time has to pass it calls `WaitFrames` and carries on from the same
 place. Nothing returns to a main loop between frames. Work that must continue
 while such a function waits is a task, which `WaitFrames` runs however deep
 the waiting function is: window animation, the battle's event playback
-(`BattleEvent_Playback`) and a map's callbacks are tasks. Most of the
+(`BattlePlayback_Run`) and a map's callbacks are tasks. Most of the
 runtime's shape follows from that choice: the stack switch keeps the stack
 bounded however deep the caller, the scheduler gives tasks a known order, and
 the heap's slots let a task's blocks outlive the call that took them.

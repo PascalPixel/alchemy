@@ -578,7 +578,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Script_ShowMessageAndWait(LOCALID_ALEX, 0, 30);
   SolSanctumEruption_RaiseAndShrinkObjectEvent(LOCALID_ALEX);
   SolSanctumEruption_PlayWiseOneRescue();
-  Party_RemoveOwnerRestored(JENNA);
+  Party_RemoveMemberRestored(JENNA);
 }
 
 /// Lifts one departing object event and shrinks it together with its shadow on

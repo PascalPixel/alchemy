@@ -182,10 +182,10 @@ void Debug_SelectAbilityPair(void) {
         RenderOutput_RedrawSavedRect(info);
         UiText_DrawCharacterAtOffset(MsgPsynergyNeedMorePp, info, 0, 16);
         if (row != 0) {
-          cost = BattleAction_Get(list[second].ability)->ppCost;
+          cost = Ability_Get(list[second].ability)->ppCost;
           ability = list[second].ability;
         } else {
-          cost = BattleAction_Get(list[first].ability)->ppCost;
+          cost = Ability_Get(list[first].ability)->ppCost;
           ability = list[first].ability;
         }
         UiText_DrawNumberAtOffset(cost, 2, info, 64, 16);
@@ -254,24 +254,24 @@ void Debug_SelectAbilityPair(void) {
 s32 Party_ListPsynergy(struct AbilityListEntry *output) {
   u16 ownerIds[14];
   s32 outputCount = 0;
-  s32 ownerCount = Party_ListActiveOwnersFar(ownerIds);
+  s32 ownerCount = Party_ListMembersFar(ownerIds);
   s32 i;
 
   for (i = 0; i < ownerCount; i++) {
-    struct BattleUnit *unit;
+    struct Unit *unit;
     u32 owner;
     s32 slotIndex;
     u32 ability;
 
     owner = ownerIds[i];
     unit = Unit_GetFar(owner);
-    for (slotIndex = 0; slotIndex < (s32)(sizeof(unit->actionSlots) /
-                                          sizeof(unit->actionSlots[0]));
+    for (slotIndex = 0;
+         slotIndex < (s32)(sizeof(unit->psynergy) / sizeof(unit->psynergy[0]));
          slotIndex++) {
-      ability = unit->actionSlots[slotIndex].encodedAction & ACTION_ID_MASK;
+      ability = unit->psynergy[slotIndex].encodedAction & ACTION_ID_MASK;
       if (ability == 0)
         break;
-      BattleAction_Get(ability);
+      Ability_Get(ability);
       output[outputCount].owner = owner;
       output[outputCount].ability = ability;
       outputCount++;

@@ -12,12 +12,12 @@
 /// at its position (or at the one it follows) with its yaw, pitch and
 /// distance, and, unless a transition owns the background, refreshes the
 /// background's perspective. Runs as a scheduler callback that
-/// Battle_RunEncounter adds with order 0xc7f: in the main-loop pass, after
+/// Battle_Run adds with order 0xc7f: in the main-loop pass, after
 /// the tasks of order 0xc80 (the objects' camera, the sprite priorities and
 /// event playback). Changes battle->linkMisses and linkPaused,
 /// the camera's yaw and the transition's frame count, the transform state,
 /// and through BattleCamera_SetRange the background's affine page.
-void BattlePresentation_UpdateCamera(void) {
+void BattleCamera_Update(void) {
   // UB: indexing past scalar gCameraWork reaches other work slots. Named
   // slots add four bytes in the native EN trial (0xf8 to 0xfc).
 #ifdef UBFIX
@@ -39,7 +39,7 @@ void BattlePresentation_UpdateCamera(void) {
 
   // The link check: a missed frame counts only while the link is down, and
   // any frame with it up resets the count.
-  if (battle->twoSided != 0) {
+  if (battle->isLink != 0) {
     if ((gLinkStatus & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
       battle->linkMisses++;
       if (battle->linkMisses > LINK_MAX_MISSED_FRAMES) {
@@ -89,7 +89,7 @@ void BattlePresentation_UpdateCamera(void) {
 /// strikes first or is caught by surprise. Each of the first enemyCount enemies
 /// gets `<enemy> appeared!`; the last one's comes from a message of its own,
 /// MsgLastEnemyAppeared, whose text matches MsgEnemyAppeared's in every
-/// edition. Called by BattlePresentation_RunEntryTransition. Rewrites the
+/// edition. Called by BattleTransition_Run. Rewrites the
 /// message argument tables.
 void BattleIntro_AnnounceEncounter(s32 enemyCount) {
   s16 enemies[8];
@@ -107,36 +107,36 @@ void BattleIntro_AnnounceEncounter(s32 enemyCount) {
     do {
       UiWork_PushValueSlotFar((u16)*enemy++, VALUE_UNIT_NAME);
       if (announced == enemyCount - 1)
-        UiText_ShowMessageAndWaitCoreFar(MsgLastEnemyAppeared);
+        BattleMessage_ShowAndWaitFar(MsgLastEnemyAppeared);
       else
-        UiText_ShowMessageAndWaitCoreFar(MsgEnemyAppeared);
+        BattleMessage_ShowAndWaitFar(MsgEnemyAppeared);
       announced++;
-      BattlePresentation_WaitForAdvance();
+      BattleMessage_WaitForAdvance();
     } while (announced != enemyCount);
   }
 
-  UiWork_FinalizeSharedSlotFar();
+  BattleMessage_CloseFar();
   // Unit 0's name stands for the party in either message.
-  if (battle->encounterMode == BATTLE_ENCOUNTER_PARTY_FIRST) {
+  if (battle->firstStrike == FIRST_STRIKE_PARTY) {
     UiWork_ClearValueNameTablesFar();
     UiWork_PushValueSlotFar(0, VALUE_UNIT_NAME);
-    UiText_ShowMessageAndWaitCoreFar(MsgPartyStrikesFirst);
-    BattlePresentation_WaitForAdvance();
-  } else if (battle->encounterMode == BATTLE_ENCOUNTER_ENEMIES_FIRST) {
+    BattleMessage_ShowAndWaitFar(MsgPartyStrikesFirst);
+    BattleMessage_WaitForAdvance();
+  } else if (battle->firstStrike == FIRST_STRIKE_ENEMIES) {
     UiWork_ClearValueNameTablesFar();
     UiWork_PushValueSlotFar(0, VALUE_UNIT_NAME);
-    UiText_ShowMessageAndWaitCoreFar(MsgPartySurprised);
-    BattlePresentation_WaitForAdvance();
+    BattleMessage_ShowAndWaitFar(MsgPartySurprised);
+    BattleMessage_WaitForAdvance();
   }
 }
 
 /// Fills the battle's two unit lists, each ended by BATTLE_UNIT_LIST_END:
 /// the party members in their order, and the enemies, left to right for a
 /// random formation or, for a fixed one, alternating out from the centre
-/// (gBattleParty_CenterOrderOffsets). Called by Battle_RunEncounter as the
+/// (gBattleParty_CenterOrderOffsets). Called by Battle_Run as the
 /// battle is set up. Writes gBattleWork->partyUnits and enemyIds, and marks
 /// each party member's side.
-void BattleParty_CollectUnitList(void) {
+void BattleUnits_Collect(void) {
   u16 unitIds[14];
   struct BattleWork *battle;
   s32 count;
@@ -145,7 +145,7 @@ void BattleParty_CollectUnitList(void) {
   s32 formation;
 
   battle = gBattleWork;
-  count = BattleParty_PrepareActiveOwners(unitIds);
+  count = BattleParty_PrepareMembers(unitIds);
   for (i = 0; i < count; i++)
     battle->partyUnits[i] = unitIds[i];
   battle->partyUnits[count] = BATTLE_UNIT_LIST_END;
@@ -154,9 +154,9 @@ void BattleParty_CollectUnitList(void) {
   // keep the enemies in unit order; the others place the first enemy in
   // the centre and the rest alternately either side of it.
   count = BattleEnemy_List(unitIds);
-  formation = battle->battleType;
-  if (formation >= FORMATION_SHUFFLED) {
-    if (formation <= FORMATION_INTERLEAVED) {
+  formation = battle->layout;
+  if (formation >= FORMATION_LAYOUT_SHUFFLED) {
+    if (formation <= FORMATION_LAYOUT_INTERLEAVED) {
       for (i = 0; i < count; i++)
         battle->enemyIds[i] = unitIds[i];
       goto done;
@@ -187,13 +187,13 @@ void BattlePresentation_ClearBg0VerticalOffset(void) {
   REG_BG0VOFS = zero;
 }
 
-/// Does nothing; Battle_RunEncounter calls it with 1 as the battle is set
+/// Does nothing; Battle_Run calls it with 1 as the battle is set
 /// up.
 void Party_ReservedNoOp5B14(s32 unused) {}
 
 /// Clears every battle-only state of the party members (stat stages and
 /// their turns, statuses, Djinn element boosts, the countdowns) and
-/// recalculates their stats, as a battle ends. Called by Battle_RunEncounter
+/// recalculates their stats, as a battle ends. Called by Battle_Run
 /// on every way out of the battle.
 #ifdef UBFIX
 void BattleParty_ResetActiveRuntimeFields(void) {
@@ -204,11 +204,11 @@ s32 BattleParty_ResetActiveRuntimeFields(void) {
   s32 count;
   s32 i;
 
-  count = BattleParty_PrepareActiveOwners(owners);
+  count = BattleParty_PrepareMembers(owners);
 
   i = 0;
   if (i < count) {
-    struct BattleUnit *unit;
+    struct Unit *unit;
     u8 *level;
     s32 remaining;
 
@@ -216,7 +216,7 @@ s32 BattleParty_ResetActiveRuntimeFields(void) {
       unit = Unit_GetFar(owners[i]);
 
       // The four element levels, cleared from the last.
-      level = (u8 *)&unit->elementLevels[ELEMENT_COUNT - 1];
+      level = (u8 *)&unit->summonBoost[ELEMENT_COUNT - 1];
       remaining = ELEMENT_COUNT - 1;
       do {
         remaining--;
@@ -235,7 +235,7 @@ s32 BattleParty_ResetActiveRuntimeFields(void) {
       unit->stun = 0;
       unit->sleep = 0;
       unit->psySeal = 0;
-      unit->refrain = 0;
+      unit->regenerate = 0;
       unit->reflect = 0;
       unit->grimReaper = 0;
       unit->equipBonus[0] = 0;
@@ -256,12 +256,12 @@ s32 BattleParty_ResetActiveRuntimeFields(void) {
 /// Djinni a party member has on standby that the list lacks joins it. Then,
 /// outside a link battle, each Djinni waiting for a battle to end whose
 /// owner has no battle object is Set again and leaves the list. Called by
-/// Battle_RunEncounter once the unit lists and battle objects are in place.
+/// Battle_Run once the unit lists and battle objects are in place.
 /// Changes the party's and the opponent's recovery lists and Djinn states.
 #ifdef UBFIX
-void BattleParty_ReconcileDjinnRecovery(void) {
+void DjinnRecovery_Reconcile(void) {
 #else
-s32 BattleParty_ReconcileDjinnRecovery(void) {
+s32 DjinnRecovery_Reconcile(void) {
 #endif
   u16 owners[10];
   s32 count;
@@ -270,14 +270,14 @@ s32 BattleParty_ReconcileDjinnRecovery(void) {
   s32 element;
   s32 djinni;
 
-  count = BattleParty_PrepareActiveOwners(owners);
+  count = BattleParty_PrepareMembers(owners);
 
   // Owners 0 to 7 use the party's list, any other the opponent's.
   for (i = 0; i < count; i++) {
     owner = owners[i];
     for (element = 0; element < ELEMENT_COUNT; element++) {
       for (djinni = 0; djinni < DJINN_PER_ELEMENT; djinni++) {
-        if (Djinn_IsReadyFar(owner, element, djinni) != 0) {
+        if (Djinn_CanSetFar(owner, element, djinni) != 0) {
           struct DjinnRecoveryList *list =
               &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(
                     (owner < 0 || owner > ALLY_MAX) ? DJINN_RECOVERY_OPPONENT
@@ -320,7 +320,7 @@ s32 BattleParty_ReconcileDjinnRecovery(void) {
           u8 element = entry->element;
           u8 index = entry->index;
 
-          Djinn_ActivateFar(id, element, index);
+          Djinn_SetFar(id, element, index);
           DjinnRecovery_RemoveFar(id, element, index);
         }
         i++;
@@ -335,12 +335,12 @@ s32 BattleParty_ReconcileDjinnRecovery(void) {
 
 /// Works out which summons the party can call: one whose Djinn requirement
 /// of every element is met by the Djinn the party holds of that element
-/// (djinnOwnedCounts, set or not), all members together. Whether enough of
+/// (djinnHeldCounts, set or not), all members together. Whether enough of
 /// them are on standby is checked as the summon is chosen
 /// (SummonMenu_SelectSummon, Battle_CollectPartyCommands) and again when it
-/// is planned (BattleCommand_BuildPlan). Stores the mask of them (bit n for
+/// is planned (BattleTurn_Build). Stores the mask of them (bit n for
 /// summon n) and returns the state that holds it. Called by
-/// Battle_RunEncounter as the battle is set up and at the start of each
+/// Battle_Run as the battle is set up and at the start of each
 /// round, which asks for the party status window's standby Djinn column
 /// (PARTY_STATUS_SUMMONS) while the mask is not 0; PartyStatus_Draw shows it
 /// only while a Djinni is on standby. Writes the party recovery table's
@@ -352,7 +352,7 @@ struct BattleSummonState *BattleSummon_UpdateAvailability(void) {
   s32 element;
   u32 availableMask;
 
-  partySize = BattleParty_PrepareActiveOwners(partyMembers);
+  partySize = BattleParty_PrepareMembers(partyMembers);
   availableMask = 0;
 
   // The party's Djinn of each element.
@@ -363,9 +363,9 @@ struct BattleSummonState *BattleSummon_UpdateAvailability(void) {
       s32 partySlot;
 
       for (partySlot = 0; partySlot < partySize; partySlot++) {
-        struct BattleUnit *member = Unit_GetFar(partyMembers[partySlot]);
+        struct Unit *member = Unit_GetFar(partyMembers[partySlot]);
 
-        totals[element] += member->djinnOwnedCounts[element];
+        totals[element] += member->djinnHeldCounts[element];
       }
     }
     element++;

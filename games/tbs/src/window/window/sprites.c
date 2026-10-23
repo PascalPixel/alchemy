@@ -38,7 +38,7 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y,
     s32 mark;
 
     font = NULL;
-    if (((struct BattleDisplayWork *)
+    if (((struct BattleMessageWork *)
              gWindowWork[HEAP_SLOT_BATTLE_MESSAGE - HEAP_SLOT_WINDOW])
             ->window == window) {
       font = Resource_GetTableEntry((s32)&ResourceId_SmallFont);
@@ -50,7 +50,7 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y,
     character &= (1 << TEXT_CODE_MARK_SHIFT) - 1;
     width = 4;
 #else
-    if (((struct BattleDisplayWork *)
+    if (((struct BattleMessageWork *)
              gWindowWork[HEAP_SLOT_BATTLE_MESSAGE - HEAP_SLOT_WINDOW])
             ->window == window) {
       Resource_GetTableEntry((s32)&ResourceId_SmallFont);

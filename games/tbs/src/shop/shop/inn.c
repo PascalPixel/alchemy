@@ -111,10 +111,10 @@ void Inn_PlaySleep(s32 roomPrice) {
   s16 partyMemberIds[8];
   s32 memberCount;
   s32 memberIndex;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   struct FieldWork *work;
 
-  memberCount = Party_ListActiveOwnersFar(partyMemberIds);
+  memberCount = Party_ListMembersFar(partyMemberIds);
   // Charge once and restore only party members who are alive.
   Party_AdjustCoinsFar(-roomPrice);
 
@@ -123,7 +123,7 @@ void Inn_PlaySleep(s32 roomPrice) {
     if (unit->hp != 0) {
       unit->hp = unit->hpMax;
       unit->pp = unit->ppMax;
-      Unit_UpdateRatiosFar(partyMemberIds[memberIndex]);
+      Unit_RecalculateGaugesFar(partyMemberIds[memberIndex]);
     }
   }
 

@@ -4,11 +4,11 @@
 
 #include "../effect_internal.h"
 
-/// The palette particles' modes (BattleEffect_RunPaletteParticles).
+/// The palette particles' modes (BattleAnim_RunPaletteParticles).
 enum PaletteParticlesMode {
   PALETTE_PARTICLES_TIAMAT,       ///< also a formation of eight objects that
                                   ///< sweeps in and explodes at the end
-                                  ///< (BattleEffect_RunImpactBurst)
+                                  ///< (BattleAnim_RunImpactBurst)
   PALETTE_PARTICLES_DRAGON_DRIVER ///< the sparks and flashes thrown from the
                                   ///< user's side, in the LightningBolt colours
 };
@@ -16,16 +16,16 @@ enum PaletteParticlesMode {
 /// Embers rise from the ground while sparks and flashes fly from the user's
 /// side, in the LightningBolt colours.
 ///
-/// Abilities: Dragon Driver (BATTLE_EFFECT_DRAGON_DRIVER).
-void BattleEffect_RunDragonDriver(struct BattleEffectArgument *effect) {
-  BattleEffect_RunPaletteParticles(effect, PALETTE_PARTICLES_DRAGON_DRIVER);
+/// Abilities: Dragon Driver (BATTLE_ANIM_DRAGON_DRIVER).
+void BattleAnim_RunDragonDriver(struct BattleAnimArgs *effect) {
+  BattleAnim_RunPaletteParticles(effect, PALETTE_PARTICLES_DRAGON_DRIVER);
 }
 /// Embers rise from the ground while a formation of eight objects sweeps in,
 /// and the formation explodes at the end.
 ///
-/// Abilities: Tiamat (SUMMON_EFFECT_TIAMAT).
-void BattleEffect_RunTiamat(struct BattleEffectArgument *effect) {
-  BattleEffect_RunPaletteParticles(effect, PALETTE_PARTICLES_TIAMAT);
+/// Abilities: Tiamat (SUMMON_ANIM_TIAMAT).
+void BattleAnim_RunTiamat(struct BattleAnimArgs *effect) {
+  BattleAnim_RunPaletteParticles(effect, PALETTE_PARTICLES_TIAMAT);
 }
 #define PALETTE_PARTICLES_FRAMES 208
 /// Falling streaks, work->particles 24 to 39.
@@ -44,7 +44,7 @@ void BattleEffect_RunTiamat(struct BattleEffectArgument *effect) {
 /// over frames 160 to 175 and fades out after, and the battle shows the damage
 /// on frame 178.
 ///
-/// Called by BattleEffect_RunTiamat and BattleEffect_RunDragonDriver.
+/// Called by BattleAnim_RunTiamat and BattleAnim_RunDragonDriver.
 ///
 /// Four kinds of particle, in canvas coordinates with y growing downwards,
 /// 16.16 except the streaks, which are whole pixels:
@@ -66,13 +66,12 @@ void BattleEffect_RunTiamat(struct BattleEffectArgument *effect) {
 /// eight formation objects and releases them after the impact burst.
 ///
 /// mode: Tiamat's or Dragon Driver's (enum PaletteParticlesMode).
-void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
-                                      s32 mode) {
-  struct EffectPosition origin;
+void BattleAnim_RunPaletteParticles(struct BattleAnimArgs *effect, s32 mode) {
+  struct ScreenPoint origin;
   void **cursor;
   void *canvas;
   struct BattleCamera *camera;
-  struct BattleEffectWork *work;
+  struct BattleAnimWork *work;
   BlitterPair draw;
   s32 frame;
   u8 *sheet;
@@ -87,14 +86,13 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
   work = cursor[HEAP_SLOT_BATTLE_ANIM - HEAP_SLOT_BATTLE_CANVAS];
   sheet = cursor[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_CANVAS];
   work->effect = effect;
-  BattleEffect_StartCanvasLayer(0);
+  BattleAnim_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = CANVAS_SLOT(cursor, HEAP_SLOT_RAM_CODE);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
-                      COMPOSITE_ADDITIVE);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS, COMPOSITE_ADDITIVE);
   draw[1] = CANVAS_SLOT(cursor, HEAP_SLOT_RAM_CODE_2);
 
   // The flashes from FlashBurst, the streaks from EmberStreak (at sheet +
@@ -113,7 +111,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
                     Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet),
                     128);
   // Trails keep 75% of each pixel a frame.
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
   // Dragon Driver mirrors everything when the user is on the right (side 1).
   if (mode == PALETTE_PARTICLES_TIAMAT)
@@ -125,7 +123,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
   // Dragon Driver's sparks and flashes start at a fixed point on the user's
   // side: the user's projected x is overwritten.
   if (mode == PALETTE_PARTICLES_DRAGON_DRIVER) {
-    EffectPosition_ProjectScaledBattler(work->effect->actor, &origin);
+    Projection_ScaledUnit(work->effect->user, &origin);
     origin.x /= 2;
     origin.y = 66;
     if (work->effect->side == 1)
@@ -138,9 +136,9 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
   // (148, 68) after the sweep of frames 40 to 47.
   focus.x = 212 << 16;
   focus.y = -(60 << 16);
-  EFFECT_FREE_PARTICLES(i, work->particles, 64);
+  ANIM_FREE_PARTICLES(i, work->particles, 64);
   for (i = 0; i != PALETTE_PARTICLES_STREAKS; i++) {
-    struct EffectStep *streak =
+    struct Particle *streak =
         &work->particles[PALETTE_PARTICLES_FIRST_STREAK + i];
 
     // Off the canvas at the top, x 128 to 255 (mirrored, -128 to -1), 65
@@ -153,11 +151,11 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
     // Frames to wait before falling.
     streak->variant = -(Random16() & 31);
   }
-  EFFECT_FREE_PARTICLES(i, PARTICLES, PALETTE_PARTICLES_EMBERS);
+  ANIM_FREE_PARTICLES(i, PARTICLES, PALETTE_PARTICLES_EMBERS);
   if (mode == PALETTE_PARTICLES_TIAMAT) {
-    BattleEffect_SelectLivingTargets(work->effect);
+    BattleAnim_SelectLivingTargets(work->effect);
     WaitFrames(1);
-    BattleEffect_SpawnObjects(8, 377, 2);
+    BattleAnim_SpawnObjects(8, 377, 2);
   }
 
   for (frame = 0; frame != PALETTE_PARTICLES_FRAMES; frame++) {
@@ -172,17 +170,17 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
         AnimationObject_SelectAnimationFar(work->animations[3], 10);
         AnimationObject_SelectAnimationFar(work->animations[4], 11);
       }
-      EFFECT_FOR_EACH_TARGET(i, work->effect) {
-        ObjectGroup_UpdateMembers(work->effect->actors[i],
+      ANIM_FOR_EACH_TARGET(i, work->effect) {
+        ObjectGroup_UpdateMembers(work->effect->targets[i],
                                   SPRITE_COLOR_RED_TINT, POSE_DAMAGE, -1, 0);
-        BattleMotion_ApplyVariantMotionFar(work->effect->actors[i],
-                                           KNOCKBACK_HURL);
+        BattleMotion_ApplyKnockbackFar(work->effect->targets[i],
+                                       KNOCKBACK_HURL);
       }
       frame = 160;
     }
-    EFFECT_VIEW_FROM_CAMERA(camera);
+    ANIM_VIEW_FROM_CAMERA(camera);
     if (frame == 178)
-      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
+      ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 
     // From frame 128 the trails keep only half; over frames 160 to 175 the
     // canvas is filled each frame, with level 16 and on the last two frames
@@ -191,11 +189,11 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
     if (frame == 128)
       work->transferValue = 50;
     if (frame == 176) {
-      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, 0x02020202);
+      ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, 0x02020202);
       palette = Resource_GetTableEntry((s32)&ResourceId_EmberStreakSheet);
       Iwram_CopyWords((void *)BG_PLTT, palette, 128);
     } else if (frame >= 160 && frame <= 175) {
-      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0x10101010);
+      ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0x10101010);
       if (frame > 173)
         work->transferValue = 0x3f3f3f3f;
       Palette_BrightenBgEntries(2, 2, 2);
@@ -214,7 +212,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
       if (frame > 103)
         limit = 8;
       for (i = 0; i != PALETTE_PARTICLES_EMBERS; i++) {
-        struct EffectStep *grain = &PARTICLES[i];
+        struct Particle *grain = &PARTICLES[i];
 
         if (grain->variant == -1) {
           grain->x = ((Random16() & 255) - 32) << 16;
@@ -238,7 +236,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
 
       if (frame & 1) {
         for (i = 0; i != PALETTE_PARTICLES_SPARKS; i++) {
-          struct EffectStep *spark =
+          struct Particle *spark =
               &work->particles[PALETTE_PARTICLES_FIRST_SPARK + i];
 
           if (spark->variant == -1) {
@@ -272,7 +270,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
       s32 spawned = 0;
 
       for (i = 0; i != PALETTE_PARTICLES_FLASHES; i++) {
-        struct EffectStep *flash = &work->particles[i];
+        struct Particle *flash = &work->particles[i];
 
         if (flash->variant == -1) {
           s32 speed = (Random16() & 255) + 128;
@@ -300,7 +298,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
     // Flashes: a new image every 4 frames; gone after 24 frames.
     if (frame <= 175) {
       for (i = 0; i != PALETTE_PARTICLES_FLASHES; i++) {
-        struct EffectStep *flash = &work->particles[i];
+        struct Particle *flash = &work->particles[i];
 
         if (flash->variant >= 0) {
           draw[0](canvas, work->sheet + ((flash->variant >> 2) << 11),
@@ -317,7 +315,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
 
     // Sparks: 1x2 dots that speed upwards; gone after 48 frames.
     for (i = 0; i != PALETTE_PARTICLES_SPARKS; i++) {
-      struct EffectStep *spark =
+      struct Particle *spark =
           &work->particles[PALETTE_PARTICLES_FIRST_SPARK + i];
       s32 size = 1;
 
@@ -339,13 +337,13 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
     // by 1/8; gone after 256 frames.
     if (frame <= 175) {
       for (i = 0; i != PALETTE_PARTICLES_EMBERS; i++) {
-        struct EffectStep *grain = &PARTICLES[i];
+        struct Particle *grain = &PARTICLES[i];
 
         if (grain->variant >= 0) {
           u8 size = gTiamat_DropSizes[i & 3];
           s32 height = size * 2;
 
-          draw[0](canvas, sheet + gBattleEffect_MoteCells[size - 1],
+          draw[0](canvas, sheet + gBattleAnim_MoteCells[size - 1],
                   Q_16_16_TO_INT(grain->x) - size / 2,
                   Q_16_16_TO_INT(grain->y) - size, size, height);
           grain->x += grain->velocityX * dir;
@@ -390,15 +388,15 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
         AnimationObject_SelectAnimationFar(work->animations[3], 3);
         AnimationObject_SelectAnimationFar(work->animations[4], 4);
       }
-      BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_TIAMAT, focus.x,
-                                         focus.y);
+      BattleAnim_PlaceFormationObjects(SUMMON_FORMATION_TIAMAT, focus.x,
+                                       focus.y);
     }
     if (frame == 138) {
-      EFFECT_FOR_EACH_TARGET(i, work->effect) {
-        ObjectGroup_UpdateMembers(work->effect->actors[i],
+      ANIM_FOR_EACH_TARGET(i, work->effect) {
+        ObjectGroup_UpdateMembers(work->effect->targets[i],
                                   SPRITE_COLOR_RED_TINT, POSE_DAMAGE, -1, 0);
-        BattleMotion_ApplyVariantMotionFar(work->effect->actors[i],
-                                           KNOCKBACK_HURL);
+        BattleMotion_ApplyKnockbackFar(work->effect->targets[i],
+                                       KNOCKBACK_HURL);
       }
     }
 
@@ -406,7 +404,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
     // below y 55 they play six images, two frames each, over and over.
     if (frame <= 175) {
       for (i = 0; i != PALETTE_PARTICLES_STREAKS; i++) {
-        struct EffectStep *streak =
+        struct Particle *streak =
             &work->particles[PALETTE_PARTICLES_FIRST_STREAK + i];
 
         if (streak->y > 55) {
@@ -430,7 +428,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
           streak->y += 6;
           if (frame <= 47 && streak->y > 55)
             Sound_PlaySongFar(SE_136);
-          draw[0](canvas, sheet + gBattleEffect_MoteCells[size - 1],
+          draw[0](canvas, sheet + gBattleAnim_MoteCells[size - 1],
                   streak->x - size / 2, streak->y + 30, size, size * 2);
         } else {
           streak->variant++;
@@ -438,18 +436,18 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
       }
     }
     Camera_ApplyShake(8, 8);
-    EFFECT_END_FRAME(work);
+    ANIM_END_FRAME(work);
   }
 
   // The impact burst builds its own blitters and transfer.
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  EFFECT_RELEASE_BLITTERS();
+  Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);
+  ANIM_RELEASE_BLITTERS();
   if (mode == PALETTE_PARTICLES_TIAMAT) {
-    BattleEffect_RunImpactBurst(SUMMON_FORMATION_TIAMAT, focus.x, focus.y);
+    BattleAnim_RunImpactBurst(SUMMON_FORMATION_TIAMAT, focus.x, focus.y);
     for (i = 0; i != 8; i++)
       ResourceObject_ReleaseFar(work->animations[i]);
   }
-  BattleEffect_EndCanvasLayer();
+  BattleAnim_EndCanvasLayer();
 }
 
 #undef PALETTE_PARTICLES_FRAMES

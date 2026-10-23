@@ -25,16 +25,16 @@
 /// already holds; a party member's battle sprite), palette, size and weapon
 /// sprite, turned to face the centre, and starts its motion script
 /// (gBattlePresentation_ActorObjectScript). Called by
-/// BattleUnit_RefreshPlacement and by BattleTarget_Execute for an enemy that
-/// joins. Fills in actor, creates an object event for it and, for an enemy,
-/// claims its sprite slots.
+/// BattleUnit_RefreshPlacement and by BattleAbility_ApplyToTarget for an enemy
+/// that joins. Fills in actor, creates an object event for it and, for an
+/// enemy, claims its sprite slots.
 void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   s32 fixedX;
   s32 fixedZ;
   s32 palette;
   s32 sprite;
   s32 registeredSprite;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   struct MotionObject *object;
   s32 facingAngle;
   s32 weaponSprite;
@@ -49,21 +49,21 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   object = (struct MotionObject *)Object_CreateFar(0xf000, fixedX, 0, fixedZ);
   unit = Unit_GetFar(unitId);
   palette = 0;
-  registeredSprite = SummonSlot_RegisterActorSprites(unitId);
+  registeredSprite = EnemySprite_LoadIntoSlots(unitId);
 
-  // The sprite: an enemy's from its class (CLASS_INDEX_ENEMY), a party member's
+  // The sprite: an enemy's from its class (CLASS_NONE), a party member's
   // by character. An enemy whose sprite went into its own slots takes the
   // slot's sprite and palette 0, else its class's sprite and palette; a
   // character fighting on the enemy side (a link opponent, a unit id above
   // ALLY_MAX) takes palette 1.
-  if (unit->classIndex == CLASS_INDEX_ENEMY) {
-    sprite = BattleClass_GetSprite(unit->classId);
+  if (unit->classId == CLASS_NONE) {
+    sprite = BattleSprite_GetSprite(unit->id);
     if (registeredSprite == 0)
-      palette = BattleClass_GetPalette(unit->classId);
+      palette = BattleSprite_GetPalette(unit->id);
     else
       sprite = registeredSprite;
   } else {
-    switch (unit->classId) {
+    switch (unit->id) {
     case GARET:
       sprite = BATTLE_CHARACTER(GARET);
       break;
@@ -90,7 +90,7 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   // matching EN function by 148 bytes, so each case keeps its own store.
   // Bandit and Orc Captain are set to 1.0 again.
   actor->scale = Q16_ONE;
-  switch (unit->classId) {
+  switch (unit->id) {
   case ENEMY_KILLER_APE:
     actor->scale = 0x19999;
     break;
@@ -241,14 +241,14 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   actor->active = 0;
   actor->fading = 0;
   actor->effect = BATTLE_OBJ_NO_EFFECT;
-  classId = unit->classId;
+  classId = unit->id;
   actor->overlay = weaponSprite;
 
   // Isaac and Garet draw a Machete as part of their own sprite, with no
   // weapon overlay.
   if (classId <= GARET &&
       Inventory_GetEquippedItemFar(unit, EQUIP_WEAPON) == ITEM_MACHETE) {
-    if (unit->classId == ISAAC) {
+    if (unit->id == ISAAC) {
       sprite = SPRITE_ISAAC_MACHETE;
       actor->resource = sprite;
     } else {
@@ -265,7 +265,7 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   object->angle = facingAngle;
   object->collisionFlags = 3;
   object->motionFlags = OBJ_EVENT_FALLS;
-  if (unit->classIndex == CLASS_INDEX_ENEMY) {
+  if (unit->classId == CLASS_NONE) {
     object->scaleX = 0x14ccc;
     object->scaleY = 0x14ccc;
   } else {
@@ -296,8 +296,9 @@ void BattlePlacement_GetStepPair(s32 partyPlace, s32 *x, s32 *y) {
 /// enemy (27 for more than four), so it sits only roughly centred. The
 /// Kraken and the Fusion Dragon would stand nearer, 50 pixels left, past the
 /// first place; each is fought alone (formatn.tsv rows 213 and 347), so
-/// neither does. Called by BattleUnit_RefreshPlacement and Enemy_Update;
-/// writes only xPositions and zPositions, in pixels.
+/// neither does. Called by BattleUnit_RefreshPlacement and
+/// BattlePlacement_RelayoutEnemies; writes only xPositions and zPositions, in
+/// pixels.
 void BattlePlacement_LayoutEnemies(u16 *actorIds, s32 count, s32 *xPositions,
                                    s32 *zPositions) {
   s32 totalSpacing = count <= 4 ? 30 : 27;
@@ -311,15 +312,14 @@ void BattlePlacement_LayoutEnemies(u16 *actorIds, s32 count, s32 *xPositions,
 
     xPositions[index] = -80;
     if (index != 0) {
-      struct BattleUnit *actor;
+      struct Unit *actor;
 
       spacing = 25;
       if (!IS_PLACEHOLDER_ID(actorIds[index])) {
         actor = Unit_GetFar(actorIds[index]);
-        spacing = BattleClass_IsSmall(actor->classId) ? 27 : 38;
+        spacing = BattleSprite_IsSmall(actor->id) ? 27 : 38;
         // The first place keeps -80 whatever its class.
-        if (actor->classId == ENEMY_FUSION_DRAGON ||
-            actor->classId == ENEMY_KRAKEN) {
+        if (actor->id == ENEMY_FUSION_DRAGON || actor->id == ENEMY_KRAKEN) {
           xPositions[index] = -50;
         }
       }
@@ -328,23 +328,23 @@ void BattlePlacement_LayoutEnemies(u16 *actorIds, s32 count, s32 *xPositions,
     zPositions[index] = z;
     spacing = 25;
     if (!IS_PLACEHOLDER_ID(actorIds[index])) {
-      struct BattleUnit *actor = Unit_GetFar(actorIds[index]);
+      struct Unit *actor = Unit_GetFar(actorIds[index]);
 
-      spacing = BattleClass_IsSmall(actor->classId) ? 27 : 38;
+      spacing = BattleSprite_IsSmall(actor->id) ? 27 : 38;
     }
     z -= spacing / 2;
   }
 }
 
 /// Returns the id of the first free enemy unit, or -1 when all six are taken.
-/// Called by BattleTarget_Execute when an enemy calls for help.
-s32 Enemy_GetFreeSlot(void) {
+/// Called by BattleAbility_ApplyToTarget when an enemy calls for help.
+s32 Enemy_GetFreeUnitId(void) {
   s32 enemySlot;
   s32 unitId;
 
   for (enemySlot = 0; enemySlot < ENEMY_BATTLE_SIZE; enemySlot++) {
     unitId = enemySlot + FIRST_ENEMY_UNIT;
-    if (Unit_GetFar(unitId)->side == BATTLE_UNIT_ABSENT)
+    if (Unit_GetFar(unitId)->side == BATTLE_SIDE_NONE)
       break;
   }
   if (enemySlot == ENEMY_BATTLE_SIZE)
@@ -353,12 +353,12 @@ s32 Enemy_GetFreeSlot(void) {
 }
 
 /// Lays the enemies out again and moves each one's object anchor to its new
-/// place. Called by BattleTarget_Execute after an enemy joins. Writes the
-/// anchorX and anchorZ of every enemy's battle object.
+/// place. Called by BattleAbility_ApplyToTarget after an enemy joins. Writes
+/// the anchorX and anchorZ of every enemy's battle object.
 #ifdef UBFIX
-void Enemy_Update(void) {
+void BattlePlacement_RelayoutEnemies(void) {
 #else
-s32 Enemy_Update(void) {
+s32 BattlePlacement_RelayoutEnemies(void) {
 #endif
   struct BattleWork *battle = gBattleWork;
   u16 unitIds[14];
@@ -387,7 +387,7 @@ s32 Enemy_Update(void) {
 
 /// Places every unit at the start of a battle: numbers the places (party
 /// members 0 up in their order, enemies 8 to 13) and creates each unit's
-/// object at its spot. Called by Battle_RunEncounter once the unit lists are
+/// object at its spot. Called by Battle_Run once the unit lists are
 /// filled. Writes gBattleWork->placement and every unit's battle object.
 void BattleUnit_RefreshPlacement(void) {
   struct BattleWork *battle;
@@ -405,13 +405,13 @@ void BattleUnit_RefreshPlacement(void) {
   partyPlace = 0;
   enemyPlace = 0;
   battle = gBattleWork;
-  count = BattleParty_PrepareActiveOwners(unitIds);
+  count = BattleParty_PrepareMembers(unitIds);
   // placement[0..7] is each party unit id's place (0xff for none) and
   // placement[8..13] the enemy places, numbered 8 to 13.
   placementValue = 0xff;
   for (unitIndex = 13; unitIndex >= 0; unitIndex--)
-    battle->placement[unitIndex] = placementValue;
-  placementCursor = &battle->placement[13];
+    battle->objectIndex[unitIndex] = placementValue;
+  placementCursor = &battle->objectIndex[13];
   for (remainingPlaces = 5, placementValue = 13; remainingPlaces >= 0;
        remainingPlaces--, placementValue--)
     *placementCursor-- = placementValue;
@@ -421,7 +421,7 @@ void BattleUnit_RefreshPlacement(void) {
   for (unitIndex = 0; unitIndex < count; partyPlace++, unitIndex++) {
     s32 unitId = unitIds[unitIndex];
 
-    battle->placement[unitId] = partyPlace;
+    battle->objectIndex[unitId] = partyPlace;
     BattleObject_Make(BattleObject_Get(unitId), unitId,
                       gBattlePlacement_StepPairs[partyPlace * 2],
                       gBattlePlacement_StepPairs[partyPlace * 2 + 1]);

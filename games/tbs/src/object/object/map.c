@@ -96,7 +96,7 @@ void Map_TakeWarp(s32 warpId) {
 /// Game_Run after each map from RUN_NONE on; stores result in
 /// gGameState.runResult and sets gGameState.mapId and .warpDest.
 void Map_ReturnFromRun(s32 result) {
-  struct BattleUnit *unit;
+  struct Unit *unit;
   s32 i;
   s32 mapId;
   s32 warpDest;
@@ -263,7 +263,7 @@ void Game_Run(s32 mode) {
     if (gGameState.mapId >= RUN_NONE) {
       switch (gGameState.mapId) {
       case RUN_BATTLE:
-        warpDest = Battle_RunEncounterFar(warpDest);
+        warpDest = Battle_RunFar(warpDest);
         break;
       case RUN_LUCKY_DICE:
         warpDest = RunLuckyDice(warpDest);

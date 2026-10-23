@@ -658,7 +658,7 @@ static void MogallForest_FirstArea_ApeAttacks(void) {
   Engine_GameFlagSet(FLAG_FIRST_AREA_ATTACKING_APE_OUT);
   Engine_ObjectEventSetPosition(LOCALID_FIRST_AREA_ATTACKING_APE_STUMP, 0, 0);
 
-  Battle_SetStart(BATTLE_START_SCRIPTED);
+  Battle_SetType(BATTLE_TYPE_SCRIPTED);
 
   Field_RequestBattleFromEncounterTable(
       ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 0);
@@ -1156,7 +1156,7 @@ static void MogallForest_ThirdArea_ApeAttacks(void) {
                                 leaderForZ->z.part.pixel, PIXELS(6));
   Engine_ScriptWait(10);
   Engine_GameFlagSet(FLAG_THIRD_AREA_ATTACKING_APE_OUT);
-  Battle_SetStart(BATTLE_START_SCRIPTED);
+  Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Field_RequestBattleFromEncounterTable(
       ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 0);
   Engine_ScriptEnd();
@@ -1450,7 +1450,7 @@ static void MogallForest_KillerApeAttacks(void) {
         PIXELS(8));
   }
   Engine_ScriptWait(10);
-  Battle_SetStart(BATTLE_START_SCRIPTED);
+  Battle_SetType(BATTLE_TYPE_SCRIPTED);
   FieldScript_SetNextDestination(
       (s32)&MapId_MogallForestKillerApe,
       MOGALL_FOREST_KILLER_APE_AFTER_KILLER_APE_ATTACKS);

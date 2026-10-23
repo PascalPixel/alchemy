@@ -240,7 +240,7 @@ void UiText_DrawPaddedLabel(struct UiWindow *window, u8 *name) {
 /// The keyboard: letter keys in columns 0 to 16, in groups of five with gaps
 /// at columns 5, 11 and 17, rows 0 to 5; column 18 holds Delete (row 4) and
 /// End (row 5).
-s32 NameEntry_EditOwnerName(s32 member) {
+s32 NamingScreen_EditMemberName(s32 member) {
   struct UiWindow *nameWindow;
   s32 result = 0;
   s32 originalLength = 0;
@@ -515,7 +515,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
 /// The keyboard: letter keys in columns 0 to 16, in groups of five with gaps
 /// at columns 5, 11 and 17, on rows 0 to 4 and 6 to 10; column 18 holds the
 /// keyboard switch (row 0, or Select), Delete (row 8) and End (row 10).
-s32 NameEntry_EditOwnerName(s32 member) {
+s32 NamingScreen_EditMemberName(s32 member) {
   struct UiWindow *nameWindow;
   s32 result = 0;
   s32 keyboard = 0;

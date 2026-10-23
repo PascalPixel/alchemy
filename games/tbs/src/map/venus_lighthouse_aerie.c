@@ -1244,7 +1244,7 @@ static void EventScript_ConfrontSaturosAndMenardi(void) {
   Engine_ObjectEventRunRepeatedMotion(LOCALID_MENARDI, 1);
   VenusLighthouseAerie_ShowMessage(LOCALID_MENARDI);
   // Save the rod owner for the defeat return path, then enter battle.
-  rodOwner = PartyInventory_FindOwner(ITEM_SHAMANS_ROD);
+  rodOwner = PartyInventory_FindMember(ITEM_SHAMANS_ROD);
   GameFlag_Set(rodOwner + FLAG_SHAMANS_ROD_OWNER);
   PartyInventory_Remove(ITEM_SHAMANS_ROD);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags &=
@@ -1271,7 +1271,7 @@ static void EventScript_ConfrontSaturosAndMenardi(void) {
                               gVenusLighthouseAerie_StepBackWestAction);
   ObjectEvent_RunActionScriptAndWait(SHEBA,
                                      gVenusLighthouseAerie_StepBackWestAction);
-  Battle_SetStart(BATTLE_START_SCRIPTED);
+  Battle_SetType(BATTLE_TYPE_SCRIPTED);
   {
     s32 localId = (s32)&MapId_VenusLighthouseAerie;
 
@@ -1958,7 +1958,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   Script_Wait(20);
   VenusLighthouseAerie_FlashScreen();
   Script_Wait(20);
-  Battle_SetStart(BATTLE_START_SCRIPTED);
+  Battle_SetType(BATTLE_TYPE_SCRIPTED);
   FieldScript_SetNextDestination((s32)&MapId_VenusLighthouseAerie,
                                  VENUS_LIGHTHOUSE_AERIE_AFTER_SECOND_BATTLE);
   FieldScript_SetDefeatDestination((s32)&MapId_VenusLighthouseAerie,

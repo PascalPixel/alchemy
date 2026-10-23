@@ -933,7 +933,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 20);
   ObjectEvent_WalkToAndWait(LOCALID_SATUROS, 336, 216);
   FieldScript_SetNextDestination((s32)&MapId_MercuryLighthouseAerie, 2);
-  Battle_SetStart(BATTLE_START_SCRIPTED);
+  Battle_SetType(BATTLE_TYPE_SCRIPTED);
   // Saturos: ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY, slot 2.
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY,
                                         2);

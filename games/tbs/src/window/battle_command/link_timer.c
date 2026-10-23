@@ -135,7 +135,7 @@ void UpdateLinkSessionCountdown(void) {
 
 /// Tests whether the party may not run from this battle: battle starts 3 and
 /// 4 (the battles a script starts, and link battles; see
-/// BATTLE_START_NO_ESCAPE in battle/battle/round.c) and a party once
+/// BATTLE_TYPE_NO_ESCAPE in battle/battle/round.c) and a party once
 /// challenged (BattleWork.challengeFlag). When it may not, shows "This is no
 /// time to be running away!" until A or B is pressed or the link battle's
 /// time runs out, and returns 1; else returns 0. The Flee command asks it
@@ -148,8 +148,8 @@ s32 UiText_ShowLocalizedMessageAndWait(void) {
   s32 mode;
 
   battle = gBattleWork;
-  mode = gGameState.battleStart;
-  if (gGameState.battleStart == 2 || mode <= 2 || (result = 1, mode > 4)) {
+  mode = gGameState.battleType;
+  if (gGameState.battleType == 2 || mode <= 2 || (result = 1, mode > 4)) {
     result = 0;
   }
   if (result == 0) {

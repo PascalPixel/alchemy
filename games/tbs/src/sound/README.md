@@ -211,7 +211,7 @@ fast memory inside the processor, with the rest of the resident runtime
 `system/entry.s`) over `IwramSoundPresetCode`, in the middle of the code
 that renders the mix. Music loads record 3 for `MUS_ENDING`, `MUS_TITLE` and
 `MUS_ENDING_LOGO` and record 2 for the rest. A link battle loads record 4 with its
-music (`Battle_RunEncounter`), the link lobby record 2, and the audio test
+music (`Battle_Run`), the link lobby record 2, and the audio test
 steps through all five with Select. What each record does is under
 [Evidence and open questions](#evidence-and-open-questions).
 

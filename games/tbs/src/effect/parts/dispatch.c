@@ -4,25 +4,25 @@
 
 #include "../effect_internal.h"
 
-/// Calls the empty BattleEffect_DoNothing count times, without waiting for a
+/// Calls the empty BattleAnim_DoNothing count times, without waiting for a
 /// frame: a busy delay that changes no state.
 ///
-/// Called only by BattleEffect_RunAnnihilation (annihilation.c), with 10000,
+/// Called only by BattleAnim_RunAnnihilation (annihilation.c), with 10000,
 /// before it releases the blitter it has just drawn with.
-void BattleEffect_CallDoNothing(s32 count) {
+void BattleAnim_CallDoNothing(s32 count) {
   s32 callIndex;
 
   callIndex = 0;
   if (count != 0) {
     do {
       callIndex += 1;
-      BattleEffect_DoNothing();
+      BattleAnim_DoNothing();
     } while (callIndex != count);
   }
 }
 
-// Two of the battle's three entry points, BattleEffect_RunSummonEffect and
-// BattleEffect_RunTableEffect; README.md describes all three and the heap
+// Two of the battle's three entry points, BattleAnim_RunSummonEffect and
+// BattleAnim_RunTableEffect; README.md describes all three and the heap
 // blocks they lend an effect. Both size the sheet slot for one set of the ten
 // mote cells (MOTE_SET_BYTES), where most effects decode ParticleSpritesA; an
 // effect's own pictures go in work->sheet. The shared helpers after them
@@ -32,62 +32,62 @@ void BattleEffect_CallDoNothing(s32 count) {
 /// have bit 15 set: takes the effect's sheet, work and canvas, runs the
 /// effect chosen by its kind to the end, and frees them again.
 ///
-/// Called through BattleEffect_RunSummonEffectFar by
-/// BattlePresentation_RunUnitTransition (battle/staging.c), when the plan's
-/// presentation flags have STAGING_SUMMON, and by
+/// Called through BattleAnim_RunSummonEffectFar by
+/// BattleStaging_HideField (battle/staging.c), when the plan's
+/// presentation flags have ANIM_SUMMON, and by
 /// BattlePresentation_RunPairedUnitTransition (battle/auto_battle.c).
 ///
-/// Each scene is named for the summon whose gBattle_ActionFlags entry selects
-/// its kind, as the handlers of gBattleEffect_EffectHandlers are;
-/// SUMMON_EFFECT_NONE, which no ability selects, runs Meteor's scene too. Takes
+/// Each scene is named for the summon whose gAbilityAnimations entry selects
+/// its kind, as the handlers of gBattleAnim_Handlers are;
+/// SUMMON_ANIM_NONE, which no ability selects, runs Meteor's scene too. Takes
 /// heap slots HEAP_SLOT_BATTLE_SHEET, HEAP_SLOT_BATTLE_ANIM and
 /// HEAP_SLOT_BATTLE_CANVAS and releases them in reverse, so the scene must have
-/// removed every callback that reads them. Unlike BattleEffect_RunTableEffect
+/// removed every callback that reads them. Unlike BattleAnim_RunTableEffect
 /// it does not set work->effect: each scene does that itself.
-void BattleEffect_RunSummonEffect(struct BattleEffectArgument *effect) {
+void BattleAnim_RunSummonEffect(struct BattleAnimArgs *effect) {
   AllocHeapSlot(HEAP_SLOT_BATTLE_SHEET, MOTE_SET_BYTES);
-  AllocHeapSlot(HEAP_SLOT_BATTLE_ANIM, sizeof(struct BattleEffectWork));
+  AllocHeapSlot(HEAP_SLOT_BATTLE_ANIM, sizeof(struct BattleAnimWork));
   AllocHeapSlot(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
 
-  if (effect->kind == SUMMON_EFFECT_NONE) {
-    BattleEffect_RunMeteor(effect);
+  if (effect->kind == SUMMON_ANIM_NONE) {
+    BattleAnim_RunMeteor(effect);
   } else {
     switch (effect->kind) {
-    case SUMMON_EFFECT_RAMSES:
-      BattleEffect_RunRamses(effect);
+    case SUMMON_ANIM_RAMSES:
+      BattleAnim_RunRamses(effect);
       break;
-    case SUMMON_EFFECT_NEREID:
-      BattleEffect_RunNereid(effect);
+    case SUMMON_ANIM_NEREID:
+      BattleAnim_RunNereid(effect);
       break;
-    case SUMMON_EFFECT_KIRIN:
-      BattleEffect_RunKirin(effect);
+    case SUMMON_ANIM_KIRIN:
+      BattleAnim_RunKirin(effect);
       break;
-    case SUMMON_EFFECT_ATALANTA:
-      BattleEffect_RunAtalanta(effect);
+    case SUMMON_ANIM_ATALANTA:
+      BattleAnim_RunAtalanta(effect);
       break;
-    case SUMMON_EFFECT_CYBELE:
-      BattleEffect_RunCybele(effect);
+    case SUMMON_ANIM_CYBELE:
+      BattleAnim_RunCybele(effect);
       break;
-    case SUMMON_EFFECT_NEPTUNE:
-      BattleEffect_RunNeptune(effect);
+    case SUMMON_ANIM_NEPTUNE:
+      BattleAnim_RunNeptune(effect);
       break;
-    case SUMMON_EFFECT_TIAMAT:
-      BattleEffect_RunTiamat(effect);
+    case SUMMON_ANIM_TIAMAT:
+      BattleAnim_RunTiamat(effect);
       break;
-    case SUMMON_EFFECT_PROCNE:
-      BattleEffect_RunProcne(effect);
+    case SUMMON_ANIM_PROCNE:
+      BattleAnim_RunProcne(effect);
       break;
-    case SUMMON_EFFECT_JUDGMENT:
-      BattleEffect_RunJudgment(effect);
+    case SUMMON_ANIM_JUDGMENT:
+      BattleAnim_RunJudgment(effect);
       break;
-    case SUMMON_EFFECT_BOREAS:
-      BattleEffect_RunBoreas(effect);
+    case SUMMON_ANIM_BOREAS:
+      BattleAnim_RunBoreas(effect);
       break;
-    case SUMMON_EFFECT_METEOR:
-      BattleEffect_RunMeteor(effect);
+    case SUMMON_ANIM_METEOR:
+      BattleAnim_RunMeteor(effect);
       break;
-    case SUMMON_EFFECT_THOR:
-      BattleEffect_RunThor(effect);
+    case SUMMON_ANIM_THOR:
+      BattleAnim_RunThor(effect);
       break;
     }
   }
@@ -98,34 +98,34 @@ void BattleEffect_RunSummonEffect(struct BattleEffectArgument *effect) {
 }
 
 /// Runs an ordinary battle effect: takes the effect's sheet, work and
-/// canvas, runs the entry of gBattleEffect_EffectHandlers for its kind,
+/// canvas, runs the entry of gBattleAnim_Handlers for its kind,
 /// and frees them again.
 ///
-/// Called through BattleEffect_RunTableEffectFar by
-/// BattlePresentation_RunAttack, BattlePresentation_RunItem,
-/// BattlePresentation_RunPsynergyCast and BattlePresentation_RunUnitTransition
-/// (battle/staging.c, the last when the plan sets neither STAGING_SUMMON nor
-/// STAGING_BY_ID_RANGE), and by BattlePresentation_RunUnitAction
+/// Called through BattleAnim_RunTableEffectFar by
+/// BattleStaging_RunAttack, BattleStaging_RunItem,
+/// BattleStaging_RunPsynergyCast and BattleStaging_HideField
+/// (battle/staging.c, the last when the plan sets neither ANIM_SUMMON nor
+/// ANIM_BY_ID_RANGE), and by BattlePresentation_RunUnitAction
 /// (battle/auto_battle.c).
 ///
 /// Sets work->effect before the handler runs, which every handler and
-/// callback reads the effect through. BATTLE_EFFECT_NONE is no effect and only
+/// callback reads the effect through. BATTLE_ANIM_NONE is no effect and only
 /// clears effect->variant.
-void BattleEffect_RunTableEffect(struct BattleEffectArgument *effect) {
+void BattleAnim_RunTableEffect(struct BattleAnimArgs *effect) {
   s32 kind;
-  struct BattleEffectWork *work;
+  struct BattleAnimWork *work;
 
   AllocHeapSlot(HEAP_SLOT_BATTLE_SHEET, MOTE_SET_BYTES);
-  AllocHeapSlot(HEAP_SLOT_BATTLE_ANIM, sizeof(struct BattleEffectWork));
+  AllocHeapSlot(HEAP_SLOT_BATTLE_ANIM, sizeof(struct BattleAnimWork));
   AllocHeapSlot(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
 
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
   work->effect = effect;
   kind = effect->kind;
-  if (kind == BATTLE_EFFECT_NONE)
-    effect->variant = EFFECT_VARIANT_BASIC;
+  if (kind == BATTLE_ANIM_NONE)
+    effect->variant = ANIM_VARIANT_BASIC;
   else
-    gBattleEffect_EffectHandlers[kind - 1](effect);
+    gBattleAnim_Handlers[kind - 1](effect);
 
   FreeHeapSlot(HEAP_SLOT_BATTLE_CANVAS);
   FreeHeapSlot(HEAP_SLOT_BATTLE_ANIM);
@@ -135,8 +135,8 @@ void BattleEffect_RunTableEffect(struct BattleEffectArgument *effect) {
 /// Builds window 0's right edge for every scanline and restarts the HBlank
 /// DMA that writes it to WIN0H each line.
 ///
-/// Runs each frame as a scheduler callback added by BattleEffect_RunNeptune
-/// (neptune.c) and BattleEffect_RunBoreas (boreas.c), which fill the edge
+/// Runs each frame as a scheduler callback added by BattleAnim_RunNeptune
+/// (neptune.c) and BattleAnim_RunBoreas (boreas.c), which fill the edge
 /// offsets and remove the callback again. Writes the WIN0H table and stops and
 /// re-arms DMA channel 0.
 ///
@@ -147,9 +147,9 @@ void BattleEffect_RunTableEffect(struct BattleEffectArgument *effect) {
 /// Ram_MapGridCellBuffer + 0x82 : the WIN0H table built here (u16 x 160)
 /// Lines outside 8 to 135 get 0xfff1, a left edge (255) past the right (241);
 /// window 0's vertical range, lines 16 to 135 since
-/// BattleEffect_ConfigureEffectDisplay, leaves them out anyway. Edges are
+/// BattleAnim_ConfigureEffectDisplay, leaves them out anyway. Edges are
 /// clamped to 0 to 240.
-void BattleEffect_BuildWindowEdgeTable(void) {
+void BattleAnim_BuildWindowEdgeTable(void) {
   u16 *baseRightEdge;
   u16 *scanlineEdges;
   u8 *edgeOffsets;
@@ -185,13 +185,13 @@ void BattleEffect_BuildWindowEdgeTable(void) {
 /// Neptune, Tiamat, Procne, Judgment, Boreas, Thor) and the particle streams
 /// as they open. Spawns the
 /// objects through BattleObject_SpawnObjectsForListFar.
-void BattleEffect_SelectLivingTargets(struct BattleEffectArgument *effect) {
+void BattleAnim_SelectLivingTargets(struct BattleAnimArgs *effect) {
   s16 list[14];
   s32 count;
   s32 i;
 
   count = 0;
-  if (effect->actors[0] > 127) {
+  if (effect->targets[0] > 127) {
     for (i = 0; i != 6; i++) {
       s32 id = i + 128;
 
@@ -219,7 +219,7 @@ void BattleEffect_SelectLivingTargets(struct BattleEffectArgument *effect) {
 /// BG1 with the battle's background darkened to level 24, waits one frame
 /// with every layer off, then writes REG_BLDALPHA, REG_BLDCNT and
 /// REG_DISPCNT and gProjection.centerY.
-void BattleEffect_SetupBlendedDisplay(void) {
+void BattleAnim_SetupBlendedDisplay(void) {
   void **slots = &gHeapSlots[HEAP_SLOT_BATTLE];
   u8 *canvas = slots[HEAP_SLOT_BATTLE_CANVAS - HEAP_SLOT_BATTLE];
   struct BattleWork *battle = slots[0];
@@ -229,14 +229,14 @@ void BattleEffect_SetupBlendedDisplay(void) {
   gBgScroll[1].y = 32;
   // Level 24 is 60% brightness: each level takes 1092 from the 16.16
   // brightness (BattleBackground_Load).
-  BattleBackground_LoadFar(BATTLE_BACKGROUND_FLAT, battle->background, 24);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, battle->background, 24);
   Dma_Fill32Cell(fill, 0, canvas, CANVAS_BYTES);
   Dma_Fill32Cell(fill, 0, BG_CHAR_BLOCK(1), CANVAS_BYTES);
   WaitFrames(1);
   REG_BLDALPHA = BLEND_ALPHA(14, 16);
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  REG_DISPCNT = EFFECT_DISPCNT;
+  REG_DISPCNT = ANIM_DISPCNT;
   gProjection.centerY = 120;
 }
 
@@ -256,13 +256,13 @@ void BattleEffect_SetupBlendedDisplay(void) {
 /// but its timer is still set.
 ///
 /// Called throughout the effects, most often through
-/// EFFECT_STRIKE_TARGET when a hit lands. Writes work->actorTimers[timerSlot]
+/// ANIM_STRIKE_TARGET when a hit lands. Writes work->actorTimers[timerSlot]
 /// and each part's param and frame (0xff restarts it).
 void ObjectGroup_UpdateMembers(s32 actorId, s32 palette, s32 animation,
                                s32 timerSlot, s32 timerFrames) {
   struct BattleObject *slot;
   struct AnimationObject *group;
-  struct BattleEffectWork *work;
+  struct BattleAnimWork *work;
   s32 groupIndex;
 
   slot = GetBattleObjectSlotFar(actorId);
@@ -312,7 +312,7 @@ void ObjectGroup_UpdateMembers(s32 actorId, s32 palette, s32 animation,
 /// canvas layer again, which fades the background palette back in.
 ///
 /// Nothing in The Broken Seal calls it; The Lost Age keeps it too.
-UNUSED void BattleEffect_InitializeTilemapAndFlushQueue(void) {
-  BattleEffect_StartTiledCanvas(1);
-  BattleEffect_EndCanvasLayer();
+UNUSED void BattleAnim_InitializeTilemapAndFlushQueue(void) {
+  BattleAnim_StartTiledCanvas(1);
+  BattleAnim_EndCanvasLayer();
 }

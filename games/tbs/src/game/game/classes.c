@@ -45,8 +45,8 @@ s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
     cursor = output;
     // `source` points at the unit's Djinn bits; the counts of set Djinn by
     // element follow them in the unit.
-    source += (u8 *)&((struct BattleUnit *)0)->djinnActiveCounts -
-              (u8 *)&((struct BattleUnit *)0)->djinnAvailable;
+    source += (u8 *)&((struct Unit *)0)->djinnSetCounts -
+              (u8 *)&((struct Unit *)0)->djinnHeld;
     for (i = 3; i >= 0; i--) {
       u32 value = *source;
       source++;
@@ -70,23 +70,22 @@ s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
 /// Called by the two status screens to show the element levels, and by
 /// Battle_IsReviveEffect.
 s32 Unit_GetElementLevel(s32 owner, s32 element) {
-  struct BattleUnit *unit = Unit_Get(owner);
-  s32 elementLevels[4];
+  struct Unit *unit = Unit_Get(owner);
+  s32 summonBoost[4];
   s32 result = 0;
 
   if (element < ELEMENT_COUNT) {
-    Unit_GetElementLevels(unit->classId, (u8 *)unit->djinnAvailable,
-                          elementLevels);
-    result = elementLevels[element] / 10;
+    Unit_GetElementLevels(unit->id, (u8 *)unit->djinnHeld, summonBoost);
+    result = summonBoost[element] / 10;
   }
   return result;
 }
 
 /// Returns the element an enemy attacks with, from its element preset. Called
 /// by Item_GetEquippedElement for an enemy, which has no weapon.
-s32 Enemy_GetAttackElement(struct BattleUnit *unit) {
+s32 Enemy_GetAttackElement(struct Unit *unit) {
   const struct EnemyDefinition *enemy =
-      (const struct EnemyDefinition *)Enemy_GetDefinition(unit->classId);
+      (const struct EnemyDefinition *)Enemy_GetDefinition(unit->id);
   u8 presetIndex = enemy->elementPreset;
 
   if (presetIndex > 43)
@@ -109,15 +108,14 @@ u32 Unit_CalculateBaseElements(s32 owner, s16 destination[4][2]) {
   // (as void, the two return instructions differ: 4 in tbs-en), and the
   // destination is the array view, which keeps the table address added
   // after the first store (the typed fields differ by 2 in tbs-en).
-  struct BattleUnit *state = Unit_Get(owner);
+  struct Unit *state = Unit_Get(owner);
   u32 index;
   s32 values[4];
   s32 i;
 
-  if (state->classIndex == CLASS_INDEX_ENEMY) {
-    index =
-        ((const struct EnemyDefinition *)Enemy_GetDefinition(state->classId))
-            ->elementPreset;
+  if (state->classId == CLASS_NONE) {
+    index = ((const struct EnemyDefinition *)Enemy_GetDefinition(state->id))
+                ->elementPreset;
     if (index > 43)
       index = 0;
 
@@ -138,7 +136,7 @@ u32 Unit_CalculateBaseElements(s32 owner, s16 destination[4][2]) {
 #endif
   }
 
-  Unit_GetElementLevels(state->classId, (u8 *)state->djinnAvailable, values);
+  Unit_GetElementLevels(state->id, (u8 *)state->djinnHeld, values);
   for (i = 0; i < ELEMENT_COUNT; i++) {
     s32 value;
     s32 ones;
@@ -238,14 +236,13 @@ struct ClassDefinition *Class_GetDefinition(s32 classId) {
 
 /// Works out a character's class again after its Djinn change, then its
 /// Psynergy list and its base elements. Writes the unit's classIndex,
-/// actionSlots and baseElement. Called when a Djinni is set or put on
+/// psynergy and baseElement. Called when a Djinni is set or put on
 /// standby, at the prologue's start and end, at a new game and around the
 /// Colosso's inventory snapshot.
 void Unit_UpdateClass(s32 ownerId) {
-  struct BattleUnit *owner = Unit_Get(ownerId);
+  struct Unit *owner = Unit_Get(ownerId);
 
-  owner->classIndex =
-      Class_Determine(owner->classId, (u8 *)owner->djinnAvailable);
+  owner->classId = Class_Determine(owner->id, (u8 *)owner->djinnHeld);
   Unit_RefreshPsynergy(ownerId);
 #ifdef UBFIX
   Unit_CalculateBaseElements(ownerId, owner->baseElement);

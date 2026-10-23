@@ -110,10 +110,9 @@ void UiWindow_CloseIfOpen(struct UiWindow **handle, s32 style) {
   }
 }
 
-/// Copies one BattleUnit with the resident IWRAM word copy.
-static inline void Owner_Copy(struct BattleUnit *destination,
-                              struct BattleUnit *source) {
-  _call_via_r3(destination, source, sizeof(struct BattleUnit), IwramCopyWords);
+/// Copies one Unit with the resident IWRAM word copy.
+static inline void Owner_Copy(struct Unit *destination, struct Unit *source) {
+  _call_via_r3(destination, source, sizeof(struct Unit), IwramCopyWords);
 }
 
 /// Draws the status panel of the Item and Psynergy screens for the party
@@ -133,7 +132,7 @@ void Menu_DrawOwnerStatusPanel(struct UiWindow *unused, s32 owner, s32 slot,
   struct ItemDefinition *def;
   u32 item;
   struct ItemMenuWork *menu;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   struct UiWindow *window;
   s32 ailmentRows;
   s32 value;
@@ -199,7 +198,7 @@ void Menu_DrawOwnerStatusPanel(struct UiWindow *unused, s32 owner, s32 slot,
 
   switch (mode & STATUS_PANEL_KIND_MASK) {
   case STATUS_PANEL_EXPERIENCE:
-    value = unit->classIndex + MsgClassName;
+    value = unit->classId + MsgClassName;
     UiText_DrawCharacterAtOffsetFar(value, window, 0, 32);
     Ui_DrawValuePairRows(unit, window);
     value = unit->experience;
@@ -207,15 +206,15 @@ void Menu_DrawOwnerStatusPanel(struct UiWindow *unused, s32 owner, s32 slot,
     UiText_DrawNumberInWindowFar(value, 8, window, 24, 72);
     break;
   case STATUS_PANEL_CLASS:
-    value = unit->classIndex + MsgClassName;
+    value = unit->classId + MsgClassName;
     UiText_DrawCharacterAtOffsetFar(value, window, 0, 32);
     Ui_DrawValuePairRows(unit, window);
     break;
   case STATUS_PANEL_EQUIP:
   case STATUS_PANEL_EQUIP + 1: { // draws the same panel
-    struct BattleUnit *backup;
+    struct Unit *backup;
 
-    if (!Item_CanOwnerEquip(owner, item)) {
+    if (!Item_CanUnitEquip(owner, item)) {
       UiText_DrawCharacterAtOffsetFar(MsgCannotEquip, window,
                                       STATUS_PANEL_CANNOT_EQUIP_X, 48);
       break;
@@ -223,7 +222,7 @@ void Menu_DrawOwnerStatusPanel(struct UiWindow *unused, s32 owner, s32 slot,
     // Equip (or, previewing a removal, unequip) the item on the real unit,
     // recalculate its stats, show them against the saved copy, then put the
     // unit back as it was.
-    backup = Alloc(sizeof(struct BattleUnit));
+    backup = Alloc(sizeof(struct Unit));
     Owner_Copy(backup, unit);
     if (menu->equipPreview)
       unit->inventory[slot] &= ~INVENTORY_EQUIPPED;
@@ -236,13 +235,13 @@ void Menu_DrawOwnerStatusPanel(struct UiWindow *unused, s32 owner, s32 slot,
     break;
   }
   case STATUS_PANEL_LEARN: {
-    s32 psynergy = def->actionId;
+    s32 psynergy = def->abilityId;
     s32 known = 0;
     s32 i;
 
     // Whether the member already knows it, from any of the 32 action slots.
     for (i = 0; i < 32; i++) {
-      if ((unit->actionSlots[i].encodedAction & OWNER_ACTION_ID_MASK) ==
+      if ((unit->psynergy[i].encodedAction & PSYNERGY_ABILITY_MASK) ==
           psynergy) {
         known = 1;
         break;
@@ -346,7 +345,7 @@ void UiText_DrawNumberRightAligned(s32 number, struct UiWindow *window, s32 x,
 /// at pixel row 40 and "PP current/maximum" at row 48. Current HP is drawn in
 /// colour 4 when it is below a quarter of maximum HP and in colour 2 at 0;
 /// then the colour goes back to 15, the default text colour.
-void Ui_DrawValuePairRows(struct BattleUnit *unit, struct UiWindow *window) {
+void Ui_DrawValuePairRows(struct Unit *unit, struct UiWindow *window) {
   // Each figure in turn, as an s16. Read straight from unit, the figures
   // compile differently.
   s16 value;
@@ -407,8 +406,8 @@ enum StatArrow { STAT_ARROW_UP, STAT_ARROW_DOWN };
 /// Writes Attack, Defense and Agility into a status window as they are now
 /// (before), and beside each one that changes its new value (after) with an up
 /// or down arrow: the equipment preview.
-void UiText_DrawStatComparison(const struct BattleUnit *after,
-                               const struct BattleUnit *before,
+void UiText_DrawStatComparison(const struct Unit *after,
+                               const struct Unit *before,
                                struct UiWindow *window) {
   UiText_DrawCharacterAtOffsetFar(MsgPanelStatLabel, window, 0, 32);
   UiText_DrawNumberAtOffsetFar(before->atk, 3, window, 16, 40);
@@ -548,7 +547,7 @@ void PsynergyMenu_InitializeEntryObjects(void *source, s32 originX, s32 originY,
   u16 ownerIds[14];
   struct PsynergyMenuWork *menu = gMenuWork;
   struct UiWindow *window = source;
-  s32 ownerCount = (u16)Party_ListActiveOwnersFar(ownerIds);
+  s32 ownerCount = (u16)Party_ListMembersFar(ownerIds);
   s32 i;
 
   menu->tabCounts[0] = ownerCount;
@@ -596,7 +595,7 @@ void Menu_ReleaseEntryObjects(void) {
   struct AnimationObject **figures;
   s32 i;
 
-  count = (u16)Party_ListActiveOwnersFar(ownerIds);
+  count = (u16)Party_ListMembersFar(ownerIds);
   if (count != 0) {
     figures = menu->tabObjects;
     i = count;
@@ -621,7 +620,7 @@ void Menu_UpdateEntryObjectTransforms(void) {
   s32 i;
   s32 count;
 
-  count = (u16)Party_CountActiveOwnersFar();
+  count = (u16)Party_CountMembersFar();
   for (i = 0; i < count; i++) {
     struct AnimationObject *figure = menu->tabObjects[i];
     // 482 less the row's screen y, in 16.16. The ground y is always 482,

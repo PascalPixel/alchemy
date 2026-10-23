@@ -258,14 +258,14 @@ gBattleAnimWork:
 	.global gBattleEntryTimer
 gBattleEntryTimer:
 	.space 0x00000008
-	.global gTransitionWork
-gTransitionWork:
+	.global gBattleViewWork
+gBattleViewWork:
 	.space 0x0000001c
 	.global gSaveWork
 gSaveWork:
 	.space 0x0000000c
-	.global gBattleOwnerStates
-gBattleOwnerStates:
+	.global gEnemyUnits
+gEnemyUnits:
 	.space 0x00000004
 	.global gMenuWork
 gMenuWork:

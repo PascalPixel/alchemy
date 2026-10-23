@@ -39,7 +39,7 @@ code uses. That `.s` usually sits beside the picture; the tile sets in
 an entry of the resource directory (`system/resource/directory.s`): the
 grassland backdrop above is `Battle_GrasslandBackdrop`, placed by
 `backdrop/grassland.s`, and `ResourceId_GrasslandBackdrop` in the directory,
-which `Battle_SelectTerrainBackdrop` and the credits ask for.
+which `BattleBackground_SelectForEnvironment` and the credits ask for.
 
 Some packed pictures are followed by a few bytes [Camelot](../../glossary.md#camelot)'s packing tool left
 behind. The rebuild must reproduce them to match the cartridge, so the `.s`

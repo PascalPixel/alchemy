@@ -57,7 +57,7 @@ void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity);
 s32 Shop_ConfirmEquip(s32 unitId, s32 slot);
 s32 Shop_SellOld(s32 unitId, s32 slot);
 s32 Shop_SalePrice(s32 inventoryEntry);
-s32 Shop_PickUnit(void);
+s32 Shop_ChooseMember(void);
 s32 Shop_SelectSell(s32 unitId);
 void Shop_DrawUnitGrid(struct UiWindow *window, s32 unitId);
 s32 Shop_SelectSellCount(s32 unitId, s32 slot);

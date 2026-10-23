@@ -42,7 +42,7 @@
 //--------------------------------------------------------------------------
 
 /// The sparks of the jackpot, kept in the map cell buffer.
-#define LUCKY_WHEELS_SPARKS ((struct EffectStep *)Ram_MapGridCellBuffer)
+#define LUCKY_WHEELS_SPARKS ((struct Particle *)Ram_MapGridCellBuffer)
 
 /// The slot machine's own work block (struct LuckyWheelsWork), beside the
 /// battle effect blocks it borrows.
@@ -104,7 +104,7 @@ s32 Graphics_ScaleRgb555(u16 *src, u16 *dst, s32 scale, s32 count) {
 /// sends the canvas to its tiles in VRAM (LUCKY_WHEELS_CANVAS_TILES), then
 /// clears it or fades it into trails as transferMode says.
 void LuckyWheels_TransferCanvas(void) {
-  struct BattleEffectWork *work;
+  struct BattleAnimWork *work;
   u8 *buf;
 
   work = gBattleAnimWork[0];
@@ -356,7 +356,7 @@ void LuckyWheels_RunFrame(void) {
    * each list loop's offset givs; as plain u32 words, 1242 of 1729
    * instructions differ in tbs-en. */
   struct LuckyWheelsWork *work;
-  struct BattleEffectWork *fx;
+  struct BattleAnimWork *fx;
   volatile u16 *dma;
   s32 sprite;
   s32 objMode;
@@ -779,7 +779,7 @@ void LuckyWheels_RunFrame(void) {
 
   if (work->state == LUCKY_WHEELS_SHOWING_WIN) {
     for (i = 0; i != LUCKY_WHEELS_TITLE_LETTERS; i++) {
-      struct EffectStep *p = &fx->particles[i];
+      struct Particle *p = &fx->particles[i];
 
 #if (LANGUAGE == LANGUAGE_SPANISH)
       if (i == 0)
@@ -902,8 +902,8 @@ void LuckyWheels_RunFrame(void) {
 /// screen's lines and the betting window, and starts at betting.
 void LuckyWheels_InitializeTitle(void) {
   struct LuckyWheelsWork *state;
-  struct BattleEffectWork *work;
-  struct EffectStep *letter;
+  struct BattleAnimWork *work;
+  struct Particle *letter;
   const u8 *width;
   s32 left;
   s32 step;
@@ -967,7 +967,7 @@ void LuckyWheels_Run(void) {
   DrawRectangle draw[2];
   u8 *sheet;
   void *canvas;
-  struct BattleEffectWork *work;
+  struct BattleAnimWork *work;
   struct LuckyWheelsWork *state;
   struct ReelSave *save;
   u8 *entry;
@@ -980,8 +980,8 @@ void LuckyWheels_Run(void) {
 
   sheet = AllocHeapSlot(HEAP_SLOT_BATTLE_SHEET, 0x60e);
   canvas = AllocHeapSlot(HEAP_SLOT_BATTLE_CANVAS, LUCKY_WHEELS_CANVAS_SIZE);
-  work = AllocHeapSlotEwram(HEAP_SLOT_BATTLE_ANIM,
-                            sizeof(struct BattleEffectWork));
+  work =
+      AllocHeapSlotEwram(HEAP_SLOT_BATTLE_ANIM, sizeof(struct BattleAnimWork));
   state = AllocHeapSlotEwram(LUCKY_WHEELS_HEAP_SLOT,
                              sizeof(struct LuckyWheelsWork));
   tiles = Ram_MapGridCellBuffer;
@@ -1123,9 +1123,9 @@ void LuckyWheels_Run(void) {
       }
     }
 
-    BattleEffect_BuildBlitterFar(HEAP_SLOT_RAM_CODE, 8, 7, 3, 2);
+    BattleAnim_BuildBlitterFar(HEAP_SLOT_RAM_CODE, 8, 7, 3, 2);
     draw[0] = gHeapSlots[HEAP_SLOT_RAM_CODE];
-    BattleEffect_BuildBlitterFar(HEAP_SLOT_RAM_CODE_2, 8, 7, 3, 3);
+    BattleAnim_BuildBlitterFar(HEAP_SLOT_RAM_CODE_2, 8, 7, 3, 3);
     draw[1] = gHeapSlots[HEAP_SLOT_RAM_CODE_2];
     Iwram_FillWords(canvas, size, 0);
     Dma_Set(canvas, (void *)LUCKY_WHEELS_CANVAS_TILES,
@@ -1181,8 +1181,7 @@ void LuckyWheels_Run(void) {
         if (state->timer > 16 && (frame & 7) == 0) {
           s32 x = (Random16() & 127) + 56;
           s32 y = (Random16() & 31) + 48;
-          struct EffectStep *spark =
-              &LUCKY_WHEELS_SPARKS[(frame / 8 & 3) * 256];
+          struct Particle *spark = &LUCKY_WHEELS_SPARKS[(frame / 8 & 3) * 256];
 
           for (j = 0; j != 256; j++) {
             s32 speed;
@@ -1200,7 +1199,7 @@ void LuckyWheels_Run(void) {
           }
         }
         for (j = 0; j != 1024; j++) {
-          struct EffectStep *spark = &LUCKY_WHEELS_SPARKS[j];
+          struct Particle *spark = &LUCKY_WHEELS_SPARKS[j];
 
           if (spark->variant > 0) {
             s32 x;

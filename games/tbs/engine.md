@@ -76,10 +76,10 @@ for (i = 0; i < 120; i++) {
 
 A task is a `void (*)(void)` routine, added once with an order and run every
 frame until it is removed (`Task_Remove`) or the next map
-empties the table. A battle adds its camera this way (`Battle_RunEncounter`):
+empties the table. A battle adds its camera this way (`Battle_Run`):
 
 ```c
-Task_Add(BattlePresentation_UpdateCamera, 0xc7f);
+Task_Add(BattleCamera_Update, 0xc7f);
 ```
 
 The order's high byte picks the pass that runs the task, `0x0c` for the
@@ -87,7 +87,7 @@ frame's work (`TASK_PRIORITY_MAIN_LOOP`) and `0x04` for the vertical blank
 (`TASK_PRIORITY_VBLANK`), and its low byte ranks it within the pass, higher
 first: at `0x7f` the camera moves only after the battle's event playback
 and sprites, added at `0x80`, have run. Window animation, battle event playback
-(`BattleEvent_Playback`) and a map's callbacks are tasks too.
+(`BattlePlayback_Run`) and a map's callbacks are tasks too.
 
 Each frame, `WaitFrames`:
 

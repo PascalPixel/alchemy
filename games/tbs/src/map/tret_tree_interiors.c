@@ -464,7 +464,7 @@ static void EventScript_FightTret(void) {
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   gFieldWork->transitionFrames = 64;
-  Battle_SetStart(BATTLE_START_SCRIPTED);
+  Battle_SetType(BATTLE_TYPE_SCRIPTED);
   FieldScript_SetNextDestination((s32)&MapId_TretTreeInteriors,
                                  TRET_TREE_INTERIORS_AFTER_FIGHT_TRET);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY,
@@ -493,7 +493,7 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->priorityFlags &=
       ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   Engine_ObjectEventSetSpritePriority(LOCALID_PARTY_LEADER, 2);
-  PartyInventory_FindOwner(ITEM_HERMES_WATER);
+  PartyInventory_FindMember(ITEM_HERMES_WATER);
   SE(AUDIO_CUE_FADE_BGM);
   SCRIPT_START();
   OBJECT_SPEED(LOCALID_PARTY_LEADER, 0xcccc, 0x6666);

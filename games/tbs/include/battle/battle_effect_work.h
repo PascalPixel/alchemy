@@ -2,7 +2,7 @@
 #define ALCHEMY_BATTLE_EFFECT_WORK_H
 
 /// @file
-/// BattleEffectWork, the running battle effect's work, and its animation
+/// BattleAnimWork, the running battle effect's work, and its animation
 /// objects.
 
 #include "effect_step.h"
@@ -24,7 +24,7 @@ struct BattleCanvasOrigin {
 STATIC_ASSERT(sizeof(struct BattleCanvasOrigin) == 0x0c);
 STATIC_ASSERT(offsetof(struct BattleCanvasOrigin, y) == 0x04);
 
-/// How BattleEffect_ProcessPendingGraphicsTransfer moves the effect's
+/// How BattleAnim_ProcessPendingGraphicsTransfer moves the effect's
 /// 128x128 canvas into VRAM once a frame (work->transferMode); the canvas
 /// pixels are indices into a palette ramp, so scaling them fades a trail.
 /// For the clear, darken and brighten modes transferValue is a word, a fill or
@@ -46,7 +46,7 @@ enum CanvasTransferMode {
 /// The running battle effect's work: its canvas image, 64 particles, the
 /// display registers it stages and its animation objects. It lives in the
 /// HEAP_SLOT_BATTLE_ANIM work slot.
-struct BattleEffectWork {
+struct BattleAnimWork {
   /// Images and scanline tables reuse the storage before the particles.
   /// The tile-animation mask extends beyond sheet into the table area.
   union {
@@ -64,7 +64,7 @@ struct BattleEffectWork {
       struct BattleCanvasOrigin origin;
     } trackedCanvas;
   };
-  struct EffectStep particles[64]; ///< free while variant is -1
+  struct Particle particles[64]; ///< free while variant is -1
   /// How the canvas transfer callbacks treat the canvas after each copy
   /// (enum CanvasTransferMode in effect_internal.h).
   s32 transferMode; ///< an enum CanvasTransferMode
@@ -101,7 +101,7 @@ struct BattleEffectWork {
   ///@}
   u16 padding; ///< aligns bg2x; never read or written
   /// BG2's reference point, written to BG2X and BG2Y by
-  /// Display_ApplyBg2Reference and BattleEffect_AdvanceBg2OnInterval.
+  /// Display_ApplyBg2Reference and BattleAnim_AdvanceBg2OnInterval.
   ///@{
   s32 bg2x;
   s32 bg2y;
@@ -111,34 +111,33 @@ struct BattleEffectWork {
   /// ObjectGroup_UpdateMembers, counted down by ObjectGroup_TickMemberTimers.
   u8 actorTimers[8];
   s32 framesSinceTransfer; ///< 1 on a canvas copy's frame, then counts up
-  /// 1 once the effect has drawn a frame (EFFECT_PRESENT_FRAME); the canvas
+  /// 1 once the effect has drawn a frame (ANIM_PRESENT_FRAME); the canvas
   /// transfer callback copies the canvas and clears it.
   s32 transferPending;
-  struct BattleEffectArgument *effect; ///< the command being run
+  struct BattleAnimArgs *effect; ///< the command being run
 };
 
-STATIC_ASSERT(offsetof(struct BattleEffectWork, bg2xLines) == 0x6980);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, imageStorage) == 0);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, trackedCanvas.origin) ==
-              0x13c4);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, particles) == 0x7080);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, transferMode) == 0x7780);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, transferValue) == 0x7784);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, frame) == 0x778c);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, scrollTimer) == 0x7790);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, scrollStepX) == 0x7798);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, savedBg1X) == 0x77a0);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, shakeFrames) == 0x77a8);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, cameraDelta) == 0x77ac);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, fadeFrames) == 0x77b4);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, fadeStep) == 0x77b8);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, win0h) == 0x77bc);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, bg2x) == 0x77d0);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, animations) == 0x77d8);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, actorTimers) == 0x7818);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, framesSinceTransfer) == 0x7820);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, transferPending) == 0x7824);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, effect) == 0x7828);
-STATIC_ASSERT(sizeof(struct BattleEffectWork) == 0x782c);
+STATIC_ASSERT(offsetof(struct BattleAnimWork, bg2xLines) == 0x6980);
+STATIC_ASSERT(offsetof(struct BattleAnimWork, imageStorage) == 0);
+STATIC_ASSERT(offsetof(struct BattleAnimWork, trackedCanvas.origin) == 0x13c4);
+STATIC_ASSERT(offsetof(struct BattleAnimWork, particles) == 0x7080);
+STATIC_ASSERT(offsetof(struct BattleAnimWork, transferMode) == 0x7780);
+STATIC_ASSERT(offsetof(struct BattleAnimWork, transferValue) == 0x7784);
+STATIC_ASSERT(offsetof(struct BattleAnimWork, frame) == 0x778c);
+STATIC_ASSERT(offsetof(struct BattleAnimWork, scrollTimer) == 0x7790);
+STATIC_ASSERT(offsetof(struct BattleAnimWork, scrollStepX) == 0x7798);
+STATIC_ASSERT(offsetof(struct BattleAnimWork, savedBg1X) == 0x77a0);
+STATIC_ASSERT(offsetof(struct BattleAnimWork, shakeFrames) == 0x77a8);
+STATIC_ASSERT(offsetof(struct BattleAnimWork, cameraDelta) == 0x77ac);
+STATIC_ASSERT(offsetof(struct BattleAnimWork, fadeFrames) == 0x77b4);
+STATIC_ASSERT(offsetof(struct BattleAnimWork, fadeStep) == 0x77b8);
+STATIC_ASSERT(offsetof(struct BattleAnimWork, win0h) == 0x77bc);
+STATIC_ASSERT(offsetof(struct BattleAnimWork, bg2x) == 0x77d0);
+STATIC_ASSERT(offsetof(struct BattleAnimWork, animations) == 0x77d8);
+STATIC_ASSERT(offsetof(struct BattleAnimWork, actorTimers) == 0x7818);
+STATIC_ASSERT(offsetof(struct BattleAnimWork, framesSinceTransfer) == 0x7820);
+STATIC_ASSERT(offsetof(struct BattleAnimWork, transferPending) == 0x7824);
+STATIC_ASSERT(offsetof(struct BattleAnimWork, effect) == 0x7828);
+STATIC_ASSERT(sizeof(struct BattleAnimWork) == 0x782c);
 
 #endif

@@ -53,7 +53,7 @@ other [editions](../../glossary.md#editions) agree except that German moves thre
 | 0 KB | `0x02000000` | 32 KB | the main image's variables: the save buffer, the [game flags](../../glossary.md#game-flag) (`gGameFlagBytes`), the game state (`gGameState`), the sound driver's work and the flash library's | `ewram.s` |
 | 32 KB | `0x02008000` | 32 KB | `gOverlayArea`, the loaded map or screen overlay | `ewram.s`, `overlay/overlay.ld` |
 | 64 KB | `0x02010000` | 32 KB | `gMapGridCellBuffer`; battle effects also use it for particles | `Ram_MapGridCellBuffer` |
-| 96 KB | `0x02018000` | 16 KB | `gActorSpriteSlots` | `Ram_ActorSpriteSlots` |
+| 96 KB | `0x02018000` | 16 KB | `gActorSpriteSlots` | `Ram_EnemySpriteSlots` |
 | 112 KB | `0x0201c000` | 16 KB | `gDecodeBuffer` | `Ram_DecodeBuffer` |
 | 128 KB | `0x02020000` | 32 KB | `gMetatiles`, the layout's [metatiles](../../glossary.md#metatile) (`games/tbs/src/field/field/map_grid.c`) | `Ram_Metatiles` |
 | 160 KB | `0x02028000` | 16 KB | `gMapGridLayerData` | `ewram.s` |
@@ -301,7 +301,7 @@ itself, the layout has to keep every one:
 | The cartridge restart entry, `Cart_Restart` | `0x08000000`, the start of the ROM | The soft reset in `WaitFrames` jumps there, and `SerialTest_Run`, a link cable test nothing reaches, sends the first 640 bytes from there over the cable. So the header and `System_Entry` stay at the start of the ROM. |
 | The resident runtime, `.iwram_runtime` (5 KB, copied by `Runtime_InstallIwramAndIrqs`) | `0x03000000`, the start of IWRAM | C calls its routines at their addresses (`IwramSqrt` and the rest), and the ARM code that runs from RAM reaches them as offsets from `IwramIrqMain` (`IWRAM_ENTRY`, `games/tbs/src/field/update.c`). |
 | The overlay area, `gOverlayArea` | `0x02008000`, 32 KB of EWRAM | Every overlay is linked to run there and has to fit. Its first 48 bytes are the entry table, which the field object calls by member. |
-| The map and decode buffers: `Ram_MapGridCellBuffer`, `Ram_ActorSpriteSlots`, `Ram_DecodeBuffer`, `Ram_Metatiles`, `Ram_MapGridShapes`, `Ram_BgTileBuffer` | after the overlay area, as the EWRAM table lists | Code reaches across their boundaries by arithmetic: the map grid's [cells](../../glossary.md#cell) fill 64 KB from the start of `Ram_MapGridCellBuffer`, through the sprite slots and the decode buffer, and the tile animation reads tiles from `Ram_DecodeBuffer` that land in `gMapGridLayerData` ([Layouts](../layout/README.md)). So `ewram.s` can't reorder or resize them. |
+| The map and decode buffers: `Ram_MapGridCellBuffer`, `Ram_EnemySpriteSlots`, `Ram_DecodeBuffer`, `Ram_Metatiles`, `Ram_MapGridShapes`, `Ram_BgTileBuffer` | after the overlay area, as the EWRAM table lists | Code reaches across their boundaries by arithmetic: the map grid's [cells](../../glossary.md#cell) fill 64 KB from the start of `Ram_MapGridCellBuffer`, through the sprite slots and the decode buffer, and the tile animation reads tiles from `Ram_DecodeBuffer` that land in `gMapGridLayerData` ([Layouts](../layout/README.md)). So `ewram.s` can't reorder or resize them. |
 | The ends of the two heaps | `0x03007800` in IWRAM and `0x02040000`, the end of EWRAM | The allocators test against these numbers (`heap.c`). `gCartridgeResetMarker` sits at the first, and the system stack lives above it. |
 | The sound driver's mixer, `SoundDriver_Mixer` (932 bytes) | `0x03007000`, inside the IWRAM heap's range | `Audio_Initialize` copies the mixer to that number (`Ram_SoundMixer`), and the driver runs it there. The copy is 1 KB at once (`SOUND_MIXER_CODE_SIZE`), so the 92 bytes after the mixer in the ROM land just after it. |
 | The frame wait's stack top, `Ram_FrameWaitStackTop` | `0x03007a00` | The 512 bytes between it and the heap's end are what the frame loop, its [tasks](../../glossary.md#task) and the VBlank work always have ([Runtime](../runtime/README.md)). |
@@ -314,7 +314,7 @@ Both heaps can grow into the memory above them, and in play both do, without
 harm that anyone has seen.
 
 The allocators test only against the heap's end, and so does
-`Runtime_GetRemainingIwram`, which `Battle_RunEncounter` calls around every
+`Runtime_GetRemainingIwram`, which `Battle_Run` calls around every
 action and then ignores. So nothing stops a heap running into the buffers
 above its own space. The marks below come from the English edition played in
 libmgba, an emulator library, with the heap's next address read at every

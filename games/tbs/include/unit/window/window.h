@@ -6,11 +6,11 @@
 #include "glyph.h"
 
 struct AbilityListEntry;
-struct BattleActionRecord;
-struct BattleAct;
+struct BattleAction;
+struct AbilityDefinition;
 struct GlyphPalette;
 struct MenuSprite;
-struct OwnerActionSlot;
+struct PsynergyEntry;
 struct UiWindow;
 struct RenderOutput;
 struct RenderOutputList;
@@ -275,8 +275,8 @@ void RenderOutput_Release(struct RenderOutput *entry);
 // Djinn_ShowJoinedMessage pass five of its six arguments, and in one file,
 // with its definition first, they would not compile. Split evidence for
 // window|battle_command.
-struct UiChannelSlot *UiText_StartBattleMessage(struct UiWindow *window,
-                                                s32 entry, s32 keepPosition);
+struct UiChannelSlot *BattleMessage_Continue(struct UiWindow *window, s32 entry,
+                                             s32 keepPosition);
 s32 Ui_ClearVramBlock(void);
 s32 Ui_FillVramBlockPattern(void);
 void UiWork_ResetFreeChannel(void);
@@ -296,9 +296,9 @@ s32 UiWork_IsIdle(struct UiWindow *window);
 void UiWork_ResetCounters();
 void UiWork_InitializeCountersWithResourceAndScheduleRefresh(void);
 void UiWork_InitializeCountersAndScheduleRefresh(s32 loadGlyphTiles);
-void UiWork_FinalizeSharedSlot(void);
-void UiText_PrepareMessageWork(s32 argument);
-void UiText_ShowMessageAndWaitCore(s32 argument);
+void BattleMessage_Close(void);
+void BattleMessage_Open(s32 argument);
+void BattleMessage_ShowAndWait(s32 argument);
 s32 UiText_OpenEntryMessage(struct UiWindow *window, s32 argument);
 void UiWork_SetBusyFlags(s32 flags);
 struct UiWindow *UiText_OpenMessageWindow(s32 message, s32 x, s32 y,

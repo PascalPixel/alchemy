@@ -21,7 +21,7 @@
 	.ifndef TBS_EDITION_JA
 	.set import.Engine_DebugGetAbility, 1
 	.endif
-	.set import.Party_ListActiveOwners, 1
+	.set import.Party_ListMembers, 1
 	.set import.Unit_LevelUpTo, 1
 	.set import.PartyInventory_HasSpace, 1
 	.ifdef TBS_EDITION_JA

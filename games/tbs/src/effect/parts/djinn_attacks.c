@@ -7,7 +7,7 @@
 /// Copies a w x h byte picture into an h x w one turned 90 degrees
 /// clockwise: the top row of src becomes the right column of dst.
 ///
-/// Called twice by BattleEffect_RunMercury, to lay its blue flames on their
+/// Called twice by BattleAnim_RunMercury, to lay its blue flames on their
 /// side. Writes only dst.
 void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
   s32 y;
@@ -68,34 +68,34 @@ void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
 /// to the left; each flame shatters into 32 motes after 5 frames, hitting
 /// every target.
 ///
-/// Abilities: Mercury (BATTLE_EFFECT_MERCURY).
+/// Abilities: Mercury (BATTLE_ANIM_MERCURY).
 ///
 /// work->particles 0 to 4 hold the flames, variant -1 until launched and then
 /// counting the frames since; Ram_MapGridCellBuffer takes the blue flame sheet
 /// before it is turned. Sets work->shakeFrames as each flame shatters.
 ///
 /// effect: the targets.
-void BattleEffect_RunMercury(struct BattleEffectArgument *effect) {
+void BattleAnim_RunMercury(struct BattleAnimArgs *effect) {
   void **slots;
   void **cursor;
-  struct BattleEffectWork *work;
+  struct BattleAnimWork *work;
   void *canvas;
   s32 frame;
   u8 *sheet;
   BlitterPair blit;
   DrawRectangle *draw;
-  struct EffectStep *flame;
-  struct EffectStep *mote;
+  struct Particle *flame;
+  struct Particle *mote;
   u8 *cells;
   s32 i;
   s32 j;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
-  sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  ANIM_GET_SLOTS(slots, cursor, work, canvas);
+  sheet = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
-  BattleEffect_StartCanvasLayer(0);
+  BattleAnim_StartCanvasLayer(0);
   draw = blit;
-  BattleEffect_FetchRectangleBlitters(0, draw);
+  BattleAnim_FetchRectangleBlitters(0, draw);
 
   // The flame pictures are the blue flame sheet turned on its side.
   cells = Ram_MapGridCellBuffer;
@@ -108,14 +108,14 @@ void BattleEffect_RunMercury(struct BattleEffectArgument *effect) {
   Graphics_TransposeCopy(cells + DJINN_ATTACKS_FLAME2_CELLS,
                          work->sheet + MERCURY_FLAME_CELLS, 34, 65);
   // Each transfer keeps three quarters of every level, for trails.
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
-  EFFECT_FREE_PARTICLES(i, work->particles, 8);
-  EFFECT_FREE_PARTICLES(i, PARTICLES, DJINN_ATTACKS_MOTE_SLOTS);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_FREE_PARTICLES(i, work->particles, 8);
+  ANIM_FREE_PARTICLES(i, PARTICLES, DJINN_ATTACKS_MOTE_SLOTS);
   Sound_PlaySongFar(SE_162);
   frame = 0;
   do {
     if (frame == 56)
-      EFFECT_SHOW_DAMAGE(SE_IMPACT);
+      ANIM_SHOW_DAMAGE(SE_IMPACT);
 
     // Flames move 12 pixels left a frame and shatter on their 5th frame;
     // a shattered flame is still drawn, flying on off the canvas.
@@ -163,7 +163,7 @@ void BattleEffect_RunMercury(struct BattleEffectArgument *effect) {
         // pose for 6 frames and take KNOCKBACK_BOUNCE. velocityX keeps the
         // launch x, which nothing reads.
         if (frame == gDjinnAttacks_LaunchFrames[i]) {
-          struct EffectStep *shot = &work->particles[i];
+          struct Particle *shot = &work->particles[i];
 
           if (shot->variant == -1) {
             shot->x = x - 8;
@@ -174,8 +174,8 @@ void BattleEffect_RunMercury(struct BattleEffectArgument *effect) {
           }
         }
         if (frame == gDjinnAttacks_LaunchFrames[i] + 6) {
-          EFFECT_FOR_EACH_TARGET(j, work->effect) {
-            EFFECT_STRIKE_TARGET(work->effect, j, 6, KNOCKBACK_BOUNCE);
+          ANIM_FOR_EACH_TARGET(j, work->effect) {
+            ANIM_STRIKE_TARGET(work->effect, j, 6, KNOCKBACK_BOUNCE);
           }
         }
       }
@@ -187,17 +187,17 @@ void BattleEffect_RunMercury(struct BattleEffectArgument *effect) {
       if (mote->variant != -1) {
         s32 size = mote->variant / 16 + 2;
 
-        EFFECT_DRAW_MOTE(draw[1], canvas, sheet, Q_16_16_TO_INT(mote->x),
-                         Q_16_16_TO_INT(mote->y), size);
-        EffectStep_AdvanceWithGravity2D(mote, 62, 0x2000);
+        ANIM_DRAW_MOTE(draw[1], canvas, sheet, Q_16_16_TO_INT(mote->x),
+                       Q_16_16_TO_INT(mote->y), size);
+        Particle_AdvanceWithGravity2D(mote, 62, 0x2000);
         mote->variant--;
       }
     }
     Camera_ApplyShake(4, 4);
-    EFFECT_END_FRAME(work);
+    ANIM_END_FRAME(work);
     frame++;
   } while (frame != MERCURY_FRAMES);
-  EFFECT_FINISH_CANVAS();
+  ANIM_FINISH_CANVAS();
 }
 
 #define JUPITER_FRAMES 96
@@ -209,42 +209,42 @@ void BattleEffect_RunMercury(struct BattleEffectArgument *effect) {
 /// right to the bottom left, 4 frames apart; each shatters into 32 motes below
 /// line 95, hitting every target.
 ///
-/// Abilities: Jupiter (BATTLE_EFFECT_JUPITER).
+/// Abilities: Jupiter (BATTLE_ANIM_JUPITER).
 ///
 /// work->particles holds the flameballs. Copies the Djinni's palette over the
 /// first 128 bytes of BG palette RAM, writes REG_BLDALPHA, sets
 /// work->shakeFrames as each ball lands.
 ///
 /// effect: the targets.
-void BattleEffect_RunJupiter(struct BattleEffectArgument *effect) {
+void BattleAnim_RunJupiter(struct BattleAnimArgs *effect) {
   void **slots;
   void **cursor;
-  struct BattleEffectWork *work;
+  struct BattleAnimWork *work;
   void *canvas;
   u8 *sheet;
   BlitterPair blit;
   DrawRectangle *draw;
-  struct EffectStep *ball;
-  struct EffectStep *mote;
+  struct Particle *ball;
+  struct Particle *mote;
   s32 frame;
   s32 i;
   s32 j;
   s32 angle;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
-  sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  ANIM_GET_SLOTS(slots, cursor, work, canvas);
+  sheet = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
-  BattleEffect_StartCanvasLayer(0);
+  BattleAnim_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   draw = blit;
-  BattleEffect_FetchRectangleBlitters(0, draw);
+  BattleAnim_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSmallSheet,
                              work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_FlameballSheet,
                              work->sheet + JUPITER_FLAMEBALL_CELLS, 1, 0);
   // Each transfer fades the canvas to 3/4.
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
   // The flameballs start at x 64 to 127, y -80 to -17; 32 are placed, the
   // first 8 fall. A ball is done once it is below the ground line.
@@ -253,13 +253,13 @@ void BattleEffect_RunJupiter(struct BattleEffectArgument *effect) {
     ball->x = (Random16() & 63) + 64;
     ball->y = (Random16() & 63) - 80;
   }
-  EFFECT_FREE_PARTICLES(i, PARTICLES, DJINN_ATTACKS_MOTE_SLOTS);
+  ANIM_FREE_PARTICLES(i, PARTICLES, DJINN_ATTACKS_MOTE_SLOTS);
   Sound_PlaySongFar(SE_THUNDER);
   frame = 0;
   angle = 0x8000; // 180 degrees
   do {
     if (frame == 56)
-      EFFECT_SHOW_DAMAGE(SE_IMPACT);
+      ANIM_SHOW_DAMAGE(SE_IMPACT);
 
     // The Djinni turns 11.25 degrees a frame. Its radius, 64 - 2 * frame
     // (half that across), reaches 0 at frame 32, passing through the
@@ -297,8 +297,8 @@ void BattleEffect_RunJupiter(struct BattleEffectArgument *effect) {
           }
           Sound_PlaySongFar(SE_IMPACT);
           work->shakeFrames = 4;
-          EFFECT_FOR_EACH_TARGET(j, work->effect) {
-            EFFECT_STRIKE_TARGET(work->effect, j, 6, KNOCKBACK_BOUNCE);
+          ANIM_FOR_EACH_TARGET(j, work->effect) {
+            ANIM_STRIKE_TARGET(work->effect, j, 6, KNOCKBACK_BOUNCE);
           }
         }
       }
@@ -310,18 +310,18 @@ void BattleEffect_RunJupiter(struct BattleEffectArgument *effect) {
       if (mote->variant != -1) {
         s32 size = mote->variant / 16 + 1;
 
-        EFFECT_DRAW_MOTE(draw[1], canvas, sheet, Q_16_16_TO_INT(mote->x),
-                         Q_16_16_TO_INT(mote->y), size);
-        EffectStep_AdvanceWithGravity2D(mote, 62, 0x2000);
+        ANIM_DRAW_MOTE(draw[1], canvas, sheet, Q_16_16_TO_INT(mote->x),
+                       Q_16_16_TO_INT(mote->y), size);
+        Particle_AdvanceWithGravity2D(mote, 62, 0x2000);
         mote->variant--;
       }
     }
     Camera_ApplyShake(4, 4);
-    EFFECT_END_FRAME(work);
+    ANIM_END_FRAME(work);
     angle -= 0x800; // 11.25 degrees
     frame++;
   } while (frame != JUPITER_FRAMES);
-  EFFECT_FINISH_CANVAS();
+  ANIM_FINISH_CANVAS();
 }
 
 /// Decompresses a resource whose first 128 bytes may be a palette.
@@ -354,44 +354,43 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
 /// from the ground one after another, each bursting into motes and hitting
 /// every target.
 ///
-/// Abilities: Venus (BATTLE_EFFECT_VENUS).
+/// Abilities: Venus (BATTLE_ANIM_VENUS).
 ///
 /// work->particles holds the columns. Copies the Djinni's palette over the
 /// first 128 bytes of BG palette RAM, writes REG_BLDALPHA, sets
 /// work->shakeFrames as each column appears.
 ///
 /// effect: the targets.
-void BattleEffect_RunVenus(struct BattleEffectArgument *effect) {
+void BattleAnim_RunVenus(struct BattleAnimArgs *effect) {
   void **slots;
   void **cursor;
-  struct BattleEffectWork *work;
+  struct BattleAnimWork *work;
   void *canvas;
   s32 frame;
   BlitterPair draw;
   u8 *sheet;
-  struct EffectStep *column;
-  struct EffectStep *mote;
+  struct Particle *column;
+  struct Particle *mote;
   s32 i;
   s32 j;
   s32 angle;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
-  sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  ANIM_GET_SLOTS(slots, cursor, work, canvas);
+  sheet = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
-  BattleEffect_StartCanvasLayer(0);
+  BattleAnim_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
-                      COMPOSITE_MAX);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
-                      COMPOSITE_ADDITIVE);
-  draw[0] = EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
-  draw[1] = EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
+                    BLITTER_MAX);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS, COMPOSITE_ADDITIVE);
+  draw[0] = ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE);
+  draw[1] = ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet, work->sheet,
                              1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet,
                              work->sheet + VENUS_FLAME_SHEET, 1, 0);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   // The flame columns start at the bottom, at random x from 0 to 63; 32
   // are placed, the first 10 rise. The columns draw flipped upside down.
   for (i = 0; i != 32; i++) {
@@ -399,7 +398,7 @@ void BattleEffect_RunVenus(struct BattleEffectArgument *effect) {
     column->x = Random16() & 63;
     column->y = 104;
   }
-  EFFECT_FREE_PARTICLES(i, PARTICLES, DJINN_ATTACKS_MOTE_SLOTS);
+  ANIM_FREE_PARTICLES(i, PARTICLES, DJINN_ATTACKS_MOTE_SLOTS);
   Sound_PlaySongFar(SE_RUMBLE);
   frame = 0;
   angle = 0x8000;
@@ -414,7 +413,7 @@ void BattleEffect_RunVenus(struct BattleEffectArgument *effect) {
       draw[1](canvas, work->sheet, x + 22, y + 29, 20, 38);
     }
     if (frame == 56)
-      EFFECT_SHOW_DAMAGE(SE_IMPACT);
+      ANIM_SHOW_DAMAGE(SE_IMPACT);
     // Ten flame columns rise 12 pixels a frame, one every 4 frames from
     // frame 16; each throws 16 motes upwards (in the upper half turn of
     // directions at 2 to 6 pixels a frame, the vertical part doubled) and
@@ -441,8 +440,8 @@ void BattleEffect_RunVenus(struct BattleEffectArgument *effect) {
           if (i & 1)
             Sound_PlaySongFar(SE_IMPACT);
           work->shakeFrames = 4;
-          EFFECT_FOR_EACH_TARGET(j, work->effect) {
-            EFFECT_STRIKE_TARGET(work->effect, j, 6, KNOCKBACK_BOUNCE);
+          ANIM_FOR_EACH_TARGET(j, work->effect) {
+            ANIM_STRIKE_TARGET(work->effect, j, 6, KNOCKBACK_BOUNCE);
           }
         }
         column->y -= 12;
@@ -454,18 +453,18 @@ void BattleEffect_RunVenus(struct BattleEffectArgument *effect) {
       if (mote->variant != -1) {
         s32 size = mote->variant / 16 + 2;
 
-        EFFECT_DRAW_MOTE(draw[1], canvas, sheet, Q_16_16_TO_INT(mote->x),
-                         Q_16_16_TO_INT(mote->y), size);
-        EffectStep_AdvanceWithGravity2D(mote, 62, 0x2000);
+        ANIM_DRAW_MOTE(draw[1], canvas, sheet, Q_16_16_TO_INT(mote->x),
+                       Q_16_16_TO_INT(mote->y), size);
+        Particle_AdvanceWithGravity2D(mote, 62, 0x2000);
         mote->variant--;
       }
     }
     Camera_ApplyShake(4, 4);
-    EFFECT_END_FRAME(work);
+    ANIM_END_FRAME(work);
     angle -= 0x800;
     frame++;
   } while (frame != VENUS_FRAMES);
-  EFFECT_FINISH_CANVAS();
+  ANIM_FINISH_CANVAS();
 }
 
 #define MARS_FRAMES 112
@@ -477,7 +476,7 @@ void BattleEffect_RunVenus(struct BattleEffectArgument *effect) {
 /// A glowing orb flares, the small Mars Djinni dives to the ground, and nine
 /// flames erupt in a row while embers rise.
 ///
-/// Abilities: Mars (BATTLE_EFFECT_MARS).
+/// Abilities: Mars (BATTLE_ANIM_MARS).
 ///
 /// The scene runs for 112 frames:
 ///
@@ -494,33 +493,33 @@ void BattleEffect_RunVenus(struct BattleEffectArgument *effect) {
 /// work->shakeFrames on the strike.
 ///
 /// effect: the targets.
-void BattleEffect_RunMars(struct BattleEffectArgument *effect) {
+void BattleAnim_RunMars(struct BattleAnimArgs *effect) {
   void **slots;
   void **cursor;
-  struct BattleEffectWork *work;
+  struct BattleAnimWork *work;
   void *canvas;
   u8 *sheet;
   BlitterPair blitters;
   DrawRectangle *draw;
-  struct EffectStep *step;
-  struct EffectStep *mote;
+  struct Particle *step;
+  struct Particle *mote;
   s32 index;
   s32 frame;
   s32 i;
   s32 diveY;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
-  sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  ANIM_GET_SLOTS(slots, cursor, work, canvas);
+  sheet = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
-  BattleEffect_StartCanvasLayer(0);
+  BattleAnim_StartCanvasLayer(0);
   draw = blitters;
-  BattleEffect_FetchRectangleBlitters(0, draw);
+  BattleAnim_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSmallSheet, work->sheet,
                              1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet,
                              work->sheet + MARS_ORB_CELLS, 1, 1);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
   // Nine flames spread out from x 32 alternately left and right (odd flames
   // left), 2 frames apart: flame i stands sin(i * 11.25 degrees) * 24 pixels
@@ -558,7 +557,7 @@ void BattleEffect_RunMars(struct BattleEffectArgument *effect) {
   diveY = -172;
   do {
     if (frame == 56)
-      EFFECT_SHOW_DAMAGE(SE_IMPACT);
+      ANIM_SHOW_DAMAGE(SE_IMPACT);
     // A glowing orb flares, six pictures of 4 frames, then the Djinni shows
     // beside it and from frame 24 dives down to the left, 4 pixels across
     // and 8 down a frame. diveY is -172 + 8 * frame, so the dive starts where
@@ -600,17 +599,17 @@ void BattleEffect_RunMars(struct BattleEffectArgument *effect) {
 
           // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
-          width = gBattleEffect_PuffArcCellWidths[cell];
-          blitters[0](canvas, work->sheet + gBattleEffect_PuffArcCells[cell],
+          width = gBattleAnim_PuffArcCellWidths[cell];
+          blitters[0](canvas, work->sheet + gBattleAnim_PuffArcCells[cell],
                       step->x - (width >> 1),
-                      step->y + gBattleEffect_PuffArcCellBiasY[cell], width,
-                      gBattleEffect_PuffArcCellHeights[cell]);
+                      step->y + gBattleAnim_PuffArcCellBiasY[cell], width,
+                      gBattleAnim_PuffArcCellHeights[cell]);
 #else
-          blitters[0](
-              canvas, work->sheet + gBattleEffect_PuffArcCells[cell],
-              step->x - ((width = gBattleEffect_PuffArcCellWidths[cell]) >> 1),
-              step->y + gBattleEffect_PuffArcCellBiasY[cell], width,
-              gBattleEffect_PuffArcCellHeights[cell]);
+          blitters[0](canvas, work->sheet + gBattleAnim_PuffArcCells[cell],
+                      step->x -
+                          ((width = gBattleAnim_PuffArcCellWidths[cell]) >> 1),
+                      step->y + gBattleAnim_PuffArcCellBiasY[cell], width,
+                      gBattleAnim_PuffArcCellHeights[cell]);
 #endif
         }
         index++;
@@ -632,10 +631,10 @@ void BattleEffect_RunMars(struct BattleEffectArgument *effect) {
 
         size = (index & 1) + 3;
         x = Q_16_16_TO_INT(step->x) + ((Trig_Sin(step->z) * 4) >> 16);
-        draw[1](canvas, sheet + gBattleEffect_MoteCells[size - 1],
+        draw[1](canvas, sheet + gBattleAnim_MoteCells[size - 1],
                 x - ((u32)size >> 1), Q_16_16_TO_INT(step->y) - size, size,
                 size * 2);
-        EffectStep_AdvanceWithGravity2D(step, 64, -0x2000);
+        Particle_AdvanceWithGravity2D(step, 64, -0x2000);
         angle = step->z;
         step->z = angle + 0x800;
         if (step->z > 0xffff)
@@ -647,16 +646,16 @@ void BattleEffect_RunMars(struct BattleEffectArgument *effect) {
 
     // Every target is hit on frame 38, flashing for 16 frames.
     if (frame == 38) {
-      EFFECT_FOR_EACH_TARGET(index, work->effect) {
-        EFFECT_STRIKE_TARGET(work->effect, index, 16, KNOCKBACK_BOUNCE);
+      ANIM_FOR_EACH_TARGET(index, work->effect) {
+        ANIM_STRIKE_TARGET(work->effect, index, 16, KNOCKBACK_BOUNCE);
       }
     }
     Camera_ApplyShake(8, 8);
-    EFFECT_END_FRAME(work);
+    ANIM_END_FRAME(work);
     diveY += 8;
     frame++;
   } while (frame != MARS_FRAMES);
-  EFFECT_FINISH_CANVAS();
+  ANIM_FINISH_CANVAS();
 }
 
 #undef MERCURY_FRAMES

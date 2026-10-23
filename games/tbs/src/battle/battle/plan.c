@@ -1,24 +1,24 @@
 /// @file
-/// An action announced and planned, BattleCommand_BuildPlan.
+/// An action announced and planned, BattleTurn_Build.
 // Part of battle.c.
 
 #include "../battle_internal.h"
 
 /// Returns 1 when the unit is in its side's list of units in the battle
-/// (BattleParty_ListActorIds), 0 otherwise.
-/// Called by BattleCommand_BuildPlan, for the owners of the standby Djinn a
+/// (BattleUnits_ListIds), 0 otherwise.
+/// Called by BattleTurn_Build, for the owners of the standby Djinn a
 /// summon uses.
 /// @param unitId a party member's, up to ALLY_MAX, or an enemy's
-u32 BattleParty_IsUnitListed(u32 unitId) {
+u32 BattleUnits_IsListed(u32 unitId) {
   u16 list[8];
   s32 side;
   s32 unitCount;
   s32 unitIndex;
 
-  side = BATTLE_SIDE_PARTY;
+  side = BATTLE_SIDES_PARTY;
   if (unitId > ALLY_MAX)
-    side = BATTLE_SIDE_ENEMIES;
-  unitCount = BattleParty_ListActorIds(side, list);
+    side = BATTLE_SIDES_ENEMIES;
+  unitCount = BattleUnits_ListIds(side, list);
 
   for (unitIndex = 0; unitIndex < unitCount; unitIndex++) {
     if (list[unitIndex] == unitId)
@@ -30,14 +30,14 @@ u32 BattleParty_IsUnitListed(u32 unitId) {
 
 /// Counts the standby Djinn whose owners fight on unitId's side, from that
 /// side's Djinn recovery list.
-/// Called by BattleCommand_BuildPlan for a summon, and through
-/// BattleParty_CountStandbyDjinnFar by the command menu (Menu_RunCommandRow,
+/// Called by BattleTurn_Build for a summon, and through
+/// BattleDjinn_CountStandbyFar by the command menu (Menu_RunCommandRow,
 /// Battle_CollectPartyCommands, PartyStatus_Draw). Returns the total.
 /// @param unitId a unit of the party's side, up to ALLY_MAX, or of the
 /// enemies'
 /// @param counts if not null, receives the count for each of the four
 /// elements
-s32 BattleParty_CountStandbyDjinn(u32 unitId, u8 *counts) {
+s32 BattleDjinn_CountStandby(u32 unitId, u8 *counts) {
   u16 unitIds[8];
   struct DjinnRecoveryList *list;
   s32 unitCount;
@@ -48,10 +48,10 @@ s32 BattleParty_CountStandbyDjinn(u32 unitId, u8 *counts) {
   s32 enemySide;
 
   standbyCount = 0;
-  sideMask = BATTLE_SIDE_PARTY;
+  sideMask = BATTLE_SIDES_PARTY;
   if (unitId > ALLY_MAX)
-    sideMask = BATTLE_SIDE_ENEMIES;
-  unitCount = BattleParty_ListActorIds(sideMask, unitIds);
+    sideMask = BATTLE_SIDES_ENEMIES;
+  unitCount = BattleUnits_ListIds(sideMask, unitIds);
   enemySide = DJINN_RECOVERY_PARTY;
   if (unitId > ALLY_MAX)
     enemySide = DJINN_RECOVERY_OPPONENT;
@@ -89,9 +89,9 @@ s32 BattleParty_CountStandbyDjinn(u32 unitId, u8 *counts) {
 /// The most targets a plan holds (BATTLE_TARGET_CAPACITY).
 #define TARGET_MAX 14
 /// Announces the action and plans its targets and effects.
-/// Returns 0 to stage the plan, PLAN_REPORTED when the action failed (its
-/// message shown), or PLAN_NO_ACTION.
-/// Called by BattlePresentation_DispatchAction for each action of the round.
+/// Returns 0 to stage the plan, TURN_REPORTED when the action failed (its
+/// message shown), or TURN_NO_ACTION.
+/// Called by BattleStaging_DispatchAction for each action of the round.
 /// Fills plan (its actor, targets, hit and critical rolls, ability, element,
 /// outcome, presentation flags and failure), resets the battle events and
 /// shows the announcing message. The command's costs are paid here: a
@@ -102,9 +102,8 @@ s32 BattleParty_CountStandbyDjinn(u32 unitId, u8 *counts) {
 /// The phases: the debug defeat; what stops the actor; the announcement and
 /// the ability id, by command; the rolls of a plain attack, or an ability's
 /// extra blows, critical hit or advance hit roll; then how it is staged.
-s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
-                            struct BattlePlan *plan) {
-  struct BattleUnit *actor = Unit_GetFar(request->unitId);
+s32 BattleTurn_Build(struct BattleAction *request, struct BattleTurn *plan) {
+  struct Unit *actor = Unit_GetFar(request->unitId);
   struct BattleWork *battle = gBattleWork;
   s32 selectedTargetId;
   s32 abilityId;
@@ -112,10 +111,10 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
   /// Fills the plan's targets: the aimed unit, or for a range the places
   /// within range - 1 of the aimed place on its side, standing units only
   /// unless the ability revives. With none, the actor defends ("defends")
-  /// and it returns PLAN_REPORTED.
-  /// Called by BattleCommand_BuildPlan once the command gives its ability id.
-  s32 BattlePlan_SetTargets(s32 abilityId) {
-    struct BattleAct *ability = BattleAction_Get(abilityId);
+  /// and it returns TURN_REPORTED.
+  /// Called by BattleTurn_Build once the command gives its ability id.
+  s32 BattleTurn_SetTargets(s32 abilityId) {
+    struct AbilityDefinition *ability = Ability_Get(abilityId);
     s32 mode = ability->targetMode;
     s32 includeDowned = 0;
     s32 targetCount;
@@ -135,13 +134,13 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
     }
     // No target mode, and the user alone: the aimed unit, as one target.
     switch (mode) {
-    case TARGET_MODE_NONE:
+    case ABILITY_TARGET_ONE:
       plan->targetOffset[0] = mode;
       plan->targetCount = 1;
       plan->targetIds[0] = selectedTargetId;
       plan->targetMultiplier[0] = 1;
       break;
-    case TARGET_MODE_SELF:
+    case ABILITY_TARGET_SELF:
       plan->targetOffset[0] = 0;
       plan->targetCount = 1;
       plan->targetIds[0] = selectedTargetId;
@@ -199,10 +198,10 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
       plan->targetCount = targetCount;
       if (targetCount <= 0) {
         UiWork_PushValueSlotFar(request->unitId, VALUE_UNIT_NAME);
-        UiText_ShowMessageAndWaitCoreFar(MsgActorDefends);
+        BattleMessage_ShowAndWaitFar(MsgActorDefends);
         if (actor->guardLevel == 0)
           actor->guardLevel = GUARD_DEFEND;
-        return PLAN_REPORTED;
+        return TURN_REPORTED;
       }
     }
 #ifdef UBFIX
@@ -215,16 +214,16 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
   // A fresh plan, and the debug defeat
   //----------------------------------------------------------------------
   selectedTargetId = Battle_GetTaggedSlotValue(request->target);
-  BattleEvent_Reset();
+  BattlePlayback_Reset();
   plan->hauntDamage = 0;
   plan->actorId = request->unitId;
   plan->targetCount = 0;
-  plan->presentationFlags = 0;
-  plan->failure = PLAN_FAILURE_NONE;
+  plan->animation = 0;
+  plan->failure = TURN_FAILURE_NONE;
   plan->element = ELEMENT_NONE;
   UiWork_ClearValueNameTablesFar();
   if (actor->hp == 0)
-    return PLAN_NO_ACTION;
+    return TURN_NO_ACTION;
 
   // Debug: hold R to defeat all enemies, or R+Select to defeat the whole party.
   // Only in debug mode, with FLAG_DEBUG_BATTLE_KEYS set; each unit loses
@@ -247,12 +246,12 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
       if (id == BATTLE_UNIT_REMOVED)
         continue;
       if (Unit_AddHpFar(id, 0xc0000000) == 0) {
-        BattleEvent_Push(BATTLE_EVENT_HIT, id);
-        BattleEvent_Push(BATTLE_EVENT_DEFEAT, id);
+        BattlePlayback_Push(PLAYBACK_HIT, id);
+        BattlePlayback_Push(PLAYBACK_DEFEAT, id);
       }
     }
-    BattleEvent_DispatchQueued();
-    return PLAN_NO_ACTION;
+    BattlePlayback_RunAll();
+    return TURN_NO_ACTION;
   }
 
   //----------------------------------------------------------------------
@@ -262,29 +261,29 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
   if (actor->immobile) {
     actor->immobile = 0;
     UiWork_PushValueSlotFar(request->unitId, VALUE_UNIT_NAME);
-    UiText_ShowMessageAndWaitCoreFar(MsgUnableToMove);
-    return PLAN_REPORTED;
+    BattleMessage_ShowAndWaitFar(MsgUnableToMove);
+    return TURN_REPORTED;
   }
   if (actor->sleep) {
     UiWork_PushValueSlotFar(request->unitId, VALUE_UNIT_NAME);
-    UiText_ShowMessageAndWaitCoreFar(MsgIsAsleep);
-    return PLAN_REPORTED;
+    BattleMessage_ShowAndWaitFar(MsgIsAsleep);
+    return TURN_REPORTED;
   }
   if (actor->stun) {
     UiWork_PushValueSlotFar(request->unitId, VALUE_UNIT_NAME);
-    UiText_ShowMessageAndWaitCoreFar(MsgIsParalyzed);
-    return PLAN_REPORTED;
+    BattleMessage_ShowAndWaitFar(MsgIsParalyzed);
+    return TURN_REPORTED;
   }
-  // A bound unit (restraint bit 0) loses one action in four,
+  // A bound unit (curse bit 0) loses one action in four,
   // except Defend.
-  if ((actor->restraint & RESTRAINT_BOUND) &&
-      request->command != COMMAND_DEFEND && (Battle_RandomFar() & 3) == 0) {
+  if ((actor->curse & CURSE_BOUND) && request->command != COMMAND_DEFEND &&
+      (Battle_RandomFar() & 3) == 0) {
     UiWork_PushValueSlotFar(request->unitId, VALUE_UNIT_NAME);
-    UiText_ShowMessageAndWaitCoreFar(MsgIsBound);
-    return PLAN_REPORTED;
+    BattleMessage_ShowAndWaitFar(MsgIsBound);
+    return TURN_REPORTED;
   }
   if (request->command == COMMAND_NONE)
-    return PLAN_NO_ACTION;
+    return TURN_NO_ACTION;
   abilityId = ABILITY_ATTACK;
   {
     s32 index;
@@ -297,64 +296,64 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
 
   //----------------------------------------------------------------------
   // Announce the selected action and find its ability id and targets. A
-  // command that ends here returns PLAN_REPORTED when a message has shown why
-  // (BattlePresentation_DispatchAction then waits for the player), or
-  // PLAN_NO_ACTION.
+  // command that ends here returns TURN_REPORTED when a message has shown why
+  // (BattleStaging_DispatchAction then waits for the player), or
+  // TURN_NO_ACTION.
   //----------------------------------------------------------------------
   switch (request->command) {
   case COMMAND_FLEE:
     if ((u16)request->unitId <= ALLY_MAX) {
-      UiText_ShowMessageAndWaitCoreFar(MsgPartyFlees);
+      BattleMessage_ShowAndWaitFar(MsgPartyFlees);
     } else {
       UiWork_PushValueSlotFar(request->unitId, VALUE_UNIT_NAME);
-      UiText_ShowMessageAndWaitCoreFar(MsgActorRuns);
+      BattleMessage_ShowAndWaitFar(MsgActorRuns);
     }
-    BattlePresentation_WaitForAdvance();
-    plan->outcome = PLAN_SHOW_FLEE;
+    BattleMessage_WaitForAdvance();
+    plan->staging = STAGING_FLEE;
     return 0;
 
   case COMMAND_ATTACK:
     // A weapon unleash replaces the action with its ability.
     abilityId = RollWeaponUnleashFar(actor);
-    if (BattlePlan_SetTargets(abilityId) == PLAN_REPORTED)
-      return PLAN_REPORTED;
+    if (BattleTurn_SetTargets(abilityId) == TURN_REPORTED)
+      return TURN_REPORTED;
     if (abilityId != ABILITY_ATTACK) {
       UiWork_PushValueSlotFar(request->unitId, VALUE_UNIT_NAME);
       UiWork_PushValueSlotFar(Inventory_GetEquippedItemFar(actor, EQUIP_WEAPON),
                               VALUE_ITEM_NAME);
-      UiText_ShowMessageAndWaitCoreFar(MsgWeaponHowls);
-      BattleEvent_MarkDisplay();
+      BattleMessage_ShowAndWaitFar(MsgWeaponHowls);
+      BattlePlayback_MarkMessage();
       UiWork_PushValueSlotFar(abilityId, VALUE_ABILITY_NAME);
-      UiText_ShowMessageAndWaitCoreFar(MsgWeaponHowls + 1);
+      BattleMessage_ShowAndWaitFar(MsgWeaponHowls + 1);
     }
     break;
 
   case COMMAND_PSYNERGY: {
-    struct BattleAct *ability;
+    struct AbilityDefinition *ability;
     s32 canCast = 1;
 
     abilityId = request->parameter;
-    ability = BattleAction_Get(abilityId);
-    if (BattlePlan_SetTargets(abilityId) == PLAN_REPORTED)
-      return PLAN_REPORTED;
+    ability = Ability_Get(abilityId);
+    if (BattleTurn_SetTargets(abilityId) == TURN_REPORTED)
+      return TURN_REPORTED;
     UiWork_PushValueSlotFar(request->unitId, VALUE_UNIT_NAME);
     UiWork_PushValueSlotFar(abilityId, VALUE_ABILITY_NAME);
-    UiText_ShowMessageAndWaitCoreFar(MsgActorCasts);
+    BattleMessage_ShowAndWaitFar(MsgActorCasts);
     // Fail if PP is insufficient or Psynergy is sealed (the seal wins); the
     // failure is shown by the staging (plan->failure). Only a cast that goes
     // ahead pays its PP.
     if (actor->pp < ability->ppCost) {
-      plan->failure = PLAN_FAILURE_NO_PP;
+      plan->failure = TURN_FAILURE_NO_PP;
       canCast = 0;
     }
     if (actor->psySeal) {
-      plan->failure = PLAN_FAILURE_SEALED;
+      plan->failure = TURN_FAILURE_SEALED;
       canCast = 0;
     }
     if (canCast) {
-      plan->failure = PLAN_FAILURE_NONE;
+      plan->failure = TURN_FAILURE_NONE;
       actor->pp -= ability->ppCost;
-      Unit_UpdateRatiosFar(request->unitId);
+      Unit_RecalculateGaugesFar(request->unitId);
       CLAMP(actor->pp, 0, actor->ppMax);
     }
   } break;
@@ -363,25 +362,25 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
     struct ItemDefinition *item;
 
     // A slot of -1: an earlier command this round used the item up
-    // (BattlePresentation_RunItem).
+    // (BattleStaging_RunItem).
     if (request->parameter < 0) {
       UiWork_PushValueSlotFar(request->unitId, VALUE_UNIT_NAME);
-      UiText_ShowMessageAndWaitCoreFar(MsgItemAlreadyUsed);
-      return PLAN_REPORTED;
+      BattleMessage_ShowAndWaitFar(MsgItemAlreadyUsed);
+      return TURN_REPORTED;
     }
     // An item with no ability, or a broken one, and the user defends.
     item = Item_GetDirectFar(actor->inventory[request->parameter]);
-    abilityId = item->actionId;
+    abilityId = item->abilityId;
     if (abilityId == 0 ||
         (actor->inventory[request->parameter] & INVENTORY_BROKEN)) {
       UiWork_PushValueSlotFar(request->unitId, VALUE_UNIT_NAME);
-      UiText_ShowMessageAndWaitCoreFar(MsgActorDefends);
+      BattleMessage_ShowAndWaitFar(MsgActorDefends);
       if (actor->guardLevel == 0)
         actor->guardLevel = GUARD_DEFEND;
-      return PLAN_REPORTED;
+      return TURN_REPORTED;
     }
-    if (BattlePlan_SetTargets(abilityId) == PLAN_REPORTED)
-      return PLAN_REPORTED;
+    if (BattleTurn_SetTargets(abilityId) == TURN_REPORTED)
+      return TURN_REPORTED;
     UiWork_PushValueSlotFar(request->unitId, VALUE_UNIT_NAME);
     UiWork_PushValueSlotFar(actor->inventory[request->parameter],
                             VALUE_ITEM_NAME);
@@ -395,36 +394,36 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
       case ITEM_TYPE_PSYNERGY:
       case ITEM_TYPE_UNUSED:
       case ITEM_TYPE_RING:
-        UiText_ShowMessageAndWaitCoreFar(MsgActorRaisesItem);
+        BattleMessage_ShowAndWaitFar(MsgActorRaisesItem);
         break;
       default:
-        UiText_ShowMessageAndWaitCoreFar(MsgActorUsesBattleItem);
+        BattleMessage_ShowAndWaitFar(MsgActorUsesBattleItem);
         break;
       }
     } else {
-      UiText_ShowMessageAndWaitCoreFar(MsgActorUsesBattleItem);
+      BattleMessage_ShowAndWaitFar(MsgActorUsesBattleItem);
     }
   } break;
 
   case COMMAND_DEFEND:
-  case COMMAND_DEFEND2:
+  case COMMAND_TOTAL_DEFENSE:
     UiWork_PushValueSlotFar(request->unitId, VALUE_UNIT_NAME);
-    UiText_ShowMessageAndWaitCoreFar(MsgActorDefends);
-    return PLAN_REPORTED;
+    BattleMessage_ShowAndWaitFar(MsgActorDefends);
+    return TURN_REPORTED;
 
   case COMMAND_NONE:
-    return PLAN_NO_ACTION;
+    return TURN_NO_ACTION;
 
-  case COMMAND_ABILITY: {
+  case COMMAND_ENEMY_ABILITY: {
     s32 message;
 
     abilityId = request->parameter;
-    if (BattlePlan_SetTargets(abilityId) == PLAN_REPORTED)
-      return PLAN_REPORTED;
+    if (BattleTurn_SetTargets(abilityId) == TURN_REPORTED)
+      return TURN_REPORTED;
     UiWork_PushValueSlotFar(request->unitId, VALUE_UNIT_NAME);
     UiWork_PushValueSlotFar(abilityId, VALUE_ABILITY_NAME);
-    if ((BattleAction_Get(abilityId)->flags & ABILITY_KIND_MASK) ==
-        ABILITY_KIND_UNLEASHED_DAMAGE)
+    if ((Ability_Get(abilityId)->flags & ABILITY_FORMULA_MASK) ==
+        ABILITY_FORMULA_ENEMY_DAMAGE)
       message = MsgActorUnleashesAbility;
     else
       message = MsgActorUsesAbility;
@@ -483,39 +482,39 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
       message = MsgLooksForHelp;
       break;
     }
-    UiText_ShowMessageAndWaitCoreFar(message);
+    BattleMessage_ShowAndWaitFar(message);
   } break;
 
   case COMMAND_DJINN:
     // A Djinni not set: one ready again is set, with its own short scene
     // played through the event queue, and nothing else happens
-    // (PLAN_NO_ACTION); one still recovering says so (PLAN_REPORTED). A set
+    // (TURN_NO_ACTION); one still recovering says so (TURN_REPORTED). A set
     // Djinni is unleashed below.
     abilityId = Djinn_GetAbilityIdFar(DJINN_ELEMENT(request->parameter),
                                       DJINN_INDEX(request->parameter));
-    if (!Djinn_IsActiveFar(request->unitId, DJINN_ELEMENT(request->parameter),
-                           DJINN_INDEX(request->parameter))) {
-      if (Djinn_IsReadyFar(request->unitId, DJINN_ELEMENT(request->parameter),
-                           DJINN_INDEX(request->parameter))) {
-        BattleAction_Get(abilityId);
-        BattlePresentation_SetActorModes(0, HIGHLIGHT_OFF);
-        Djinn_ActivateFar(request->unitId, DJINN_ELEMENT(request->parameter),
-                          DJINN_INDEX(request->parameter));
+    if (!Djinn_IsSetFar(request->unitId, DJINN_ELEMENT(request->parameter),
+                        DJINN_INDEX(request->parameter))) {
+      if (Djinn_CanSetFar(request->unitId, DJINN_ELEMENT(request->parameter),
+                          DJINN_INDEX(request->parameter))) {
+        Ability_Get(abilityId);
+        BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
+        Djinn_SetFar(request->unitId, DJINN_ELEMENT(request->parameter),
+                     DJINN_INDEX(request->parameter));
         DjinnRecovery_RemoveFar(request->unitId,
                                 DJINN_ELEMENT(request->parameter),
                                 DJINN_INDEX(request->parameter));
         Unit_CalculateFar(request->unitId);
-        BattleEvent_Reset();
-        BattleEvent_SchedulePhase(30);
-        BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, request->unitId);
-        BattleEvent_Push(BATTLE_EVENT_ABILITY_NAME,
-                         DJINN_ELEMENT(request->parameter) * DJINN_PER_ELEMENT +
-                             DJINN_INDEX(request->parameter) +
-                             ABILITY_DJINNI_FIRST);
-        BattleEvent_Push(BATTLE_EVENT_SOUND, SE_175);
-        BattleEvent_Push(BATTLE_EVENT_DRAW_STATUS, 0);
-        BattleEvent_Push(BATTLE_EVENT_MESSAGE, MsgDjinnSet);
-        BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, request->unitId);
+        BattlePlayback_Reset();
+        BattlePlayback_SchedulePhase(30);
+        BattlePlayback_Push(PLAYBACK_UNIT_NAME, request->unitId);
+        BattlePlayback_Push(
+            PLAYBACK_ABILITY_NAME,
+            DJINN_ELEMENT(request->parameter) * DJINN_PER_ELEMENT +
+                DJINN_INDEX(request->parameter) + ABILITY_DJINNI_FIRST);
+        BattlePlayback_Push(PLAYBACK_SOUND, SE_175);
+        BattlePlayback_Push(PLAYBACK_DRAW_STATUS, 0);
+        BattlePlayback_Push(PLAYBACK_MESSAGE, MsgDjinnSet);
+        BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, request->unitId);
         Sound_PlaySongFar(SE_212);
         ObjectDispatch_SelectAnimationFar(
             BattleObject_Get(request->unitId)->object, POSE_CAST);
@@ -524,30 +523,30 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
             32);
         ElementGlow_Play(request->unitId, DJINN_ELEMENT(request->parameter),
                          GLOW_BURST, 0);
-        BattleEvent_WaitForReady();
-        return PLAN_NO_ACTION;
+        BattlePlayback_WaitForReady();
+        return TURN_NO_ACTION;
       }
       // Recovering.
       UiWork_PushValueSlotFar(request->unitId, VALUE_UNIT_NAME);
       UiWork_PushValueSlotFar(abilityId, VALUE_ABILITY_NAME);
       Sound_PlaySongFar(SE_MENU_ERROR);
-      UiText_ShowMessageAndWaitCoreFar(MsgDjinnInRecovery);
+      BattleMessage_ShowAndWaitFar(MsgDjinnInRecovery);
       WaitFrames(60);
-      return PLAN_REPORTED;
+      return TURN_REPORTED;
     }
     // Unleash the set Djinni; it goes on standby.
     {
-      struct BattleAct *ability;
+      struct AbilityDefinition *ability;
 
-      if (BattlePlan_SetTargets(abilityId) == PLAN_REPORTED)
-        return PLAN_REPORTED;
+      if (BattleTurn_SetTargets(abilityId) == TURN_REPORTED)
+        return TURN_REPORTED;
       DjinnRecovery_AddStandbyFar(request->unitId,
                                   DJINN_ELEMENT(request->parameter),
                                   DJINN_INDEX(request->parameter));
-      ability = BattleAction_Get(abilityId);
+      ability = Ability_Get(abilityId);
       UiWork_PushValueSlotFar(request->unitId, VALUE_UNIT_NAME);
       UiWork_PushValueSlotFar(abilityId, VALUE_ABILITY_NAME);
-      UiText_ShowMessageAndWaitCoreFar(MsgActorUnleashesDjinn);
+      BattleMessage_ShowAndWaitFar(MsgActorUnleashesDjinn);
       plan->element = ability->element;
     }
     break;
@@ -566,7 +565,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
     // stops at the first element short (index below 4), and leaves counts
     // holding what each element gives.
     summon = SummonDefinition_Get(request->parameter);
-    BattleParty_CountStandbyDjinn(request->unitId, counts);
+    BattleDjinn_CountStandby(request->unitId, counts);
     side = DJINN_RECOVERY_PARTY;
     if ((u16)request->unitId > ALLY_MAX)
       side = DJINN_RECOVERY_OPPONENT;
@@ -576,26 +575,25 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
          index < ELEMENT_COUNT && counts[index] >= summon->djinnRequired[index];
          index++)
       counts[index] = summon->djinnRequired[index];
-    abilityId = summon->nameMessageId;
-    if (BattlePlan_SetTargets(abilityId) == PLAN_REPORTED)
-      return PLAN_REPORTED;
+    abilityId = summon->abilityId;
+    if (BattleTurn_SetTargets(abilityId) == TURN_REPORTED)
+      return TURN_REPORTED;
     if (index != ELEMENT_COUNT) {
       UiWork_PushValueSlotFar(request->unitId, VALUE_UNIT_NAME);
       UiWork_PushValueSlotFar(abilityId, VALUE_ABILITY_NAME);
-      UiText_ShowMessageAndWaitCoreFar(MsgSummonLacksDjinn);
-      return PLAN_REPORTED;
+      BattleMessage_ShowAndWaitFar(MsgSummonLacksDjinn);
+      return TURN_REPORTED;
     }
     UiWork_PushValueSlotFar(request->unitId, VALUE_UNIT_NAME);
     UiWork_PushValueSlotFar(abilityId, VALUE_ABILITY_NAME);
-    UiText_ShowMessageAndWaitCoreFar(MsgActorSummons);
+    BattleMessage_ShowAndWaitFar(MsgActorSummons);
     // Mark the standby Djinn being used DJINN_RECOVERY_SUMMONED, the first
     // found of each element, from owners in the formation.
     for (index = 0; index != list->count; index++) {
       struct DjinnRecoveryEntry *entry = &list->entries[index];
 
       if (entry->turns == DJINN_RECOVERY_AFTER_BATTLE &&
-          BattleParty_IsUnitListed(entry->unitId) &&
-          counts[entry->element] != 0) {
+          BattleUnits_IsListed(entry->unitId) && counts[entry->element] != 0) {
         entry->turns = DJINN_RECOVERY_SUMMONED;
         counts[entry->element]--;
       }
@@ -607,39 +605,39 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
   // Plan a normal attack.
   //----------------------------------------------------------------------
   if (abilityId == ABILITY_ATTACK) {
-    struct BattleUnit *target = Unit_GetFar(plan->targetIds[0]);
+    struct Unit *target = Unit_GetFar(plan->targetIds[0]);
 
     plan->abilityId = ABILITY_ATTACK;
     plan->element = Item_GetEquippedElementFar(request->unitId);
-    plan->outcome = PLAN_SHOW_ATTACK;
+    plan->staging = STAGING_ATTACK;
     // An enemy's attack effect comes from its class; a party member's is
     // effect 1 for Isaac, Garet and Jenna and 4 for Ivan and Mia, any other
-    // none. Each is played by id range (STAGING_BY_ID_RANGE).
-    if (actor->classIndex == CLASS_INDEX_ENEMY) {
-      plan->presentationFlags =
-          BattleClass_GetAttackEffect(actor->classId) | STAGING_BY_ID_RANGE;
+    // none. Each is played by id range (ANIM_BY_ID_RANGE).
+    if (actor->classId == CLASS_NONE) {
+      plan->animation =
+          BattleSprite_GetAttackAnim(actor->id) | ANIM_BY_ID_RANGE;
     } else {
-      plan->presentationFlags = 0;
-      switch (actor->classId) {
+      plan->animation = 0;
+      switch (actor->id) {
       case ISAAC:
-        plan->presentationFlags = STAGING_BY_ID_RANGE | 1;
+        plan->animation = ANIM_BY_ID_RANGE | 1;
         break;
       case GARET:
-        plan->presentationFlags = STAGING_BY_ID_RANGE | 1;
+        plan->animation = ANIM_BY_ID_RANGE | 1;
         break;
       case IVAN:
-        plan->presentationFlags = STAGING_BY_ID_RANGE | 4;
+        plan->animation = ANIM_BY_ID_RANGE | 4;
         break;
       case MIA:
-        plan->presentationFlags = STAGING_BY_ID_RANGE | 4;
+        plan->animation = ANIM_BY_ID_RANGE | 4;
         break;
       case JENNA:
-        plan->presentationFlags = STAGING_BY_ID_RANGE | 1;
+        plan->animation = ANIM_BY_ID_RANGE | 1;
         break;
       }
     }
     UiWork_PushValueSlotFar(request->unitId, VALUE_UNIT_NAME);
-    UiText_ShowMessageAndWaitCoreFar(MsgActorAttacks);
+    BattleMessage_ShowAndWaitFar(MsgActorAttacks);
     // Miss chance: 153/256 when deluded, plus a separate 1/32 roll.
     // Attacks cannot miss a target that cannot move. In the Djinn tutorial
     // the attack always misses.
@@ -672,10 +670,10 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
   // Plan an ability.
   //----------------------------------------------------------------------
   else {
-    struct BattleAct *ability = BattleAction_Get(abilityId);
+    struct AbilityDefinition *ability = Ability_Get(abilityId);
 
     plan->element = ability->element;
-    plan->presentationFlags = 0;
+    plan->animation = 0;
     plan->abilityId = abilityId;
     if (ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_60 ||
         ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_1_IN_8 ||
@@ -752,37 +750,36 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
     // blow); then the outcome, from actstat.tsv where it gives one. The two
     // tables end at ABILITY_THRASH and ABILITY_SEVERE_BLOW.
     if (abilityId >= 0 && abilityId <= ABILITY_THRASH) {
-      plan->presentationFlags = gBattle_ActionFlags[abilityId];
+      plan->animation = gAbilityAnimations[abilityId];
       if (plan->targetMultiplier[0] > 1)
-        plan->presentationFlags =
-            gBattle_ActionFlags[abilityId] +
-            (plan->targetMultiplier[0] << STAGING_VARIANT_SHIFT) -
-            (1 << STAGING_VARIANT_SHIFT);
+        plan->animation = gAbilityAnimations[abilityId] +
+                          (plan->targetMultiplier[0] << ANIM_VARIANT_SHIFT) -
+                          (1 << ANIM_VARIANT_SHIFT);
     }
     if ((abilityId >= 0 && abilityId <= ABILITY_SEVERE_BLOW) &&
-        gBattle_ActionStatus[abilityId] != 0)
-      plan->outcome = gBattle_ActionStatus[abilityId];
+        gAbilityStaging[abilityId] != 0)
+      plan->staging = gAbilityStaging[abilityId];
     else if (Ability_IsPsynergy(abilityId))
-      plan->outcome = PLAN_SHOW_CAST;
-    else if (plan->presentationFlags != 0) {
-      if (actor->classIndex == CLASS_INDEX_ENEMY)
-        plan->outcome = PLAN_SHOW_ENEMY_CAST;
+      plan->staging = STAGING_CAST;
+    else if (plan->animation != 0) {
+      if (actor->classId == CLASS_NONE)
+        plan->staging = STAGING_ENEMY_CAST;
       else
-        plan->outcome = PLAN_SHOW_CAST;
+        plan->staging = STAGING_CAST;
     } else
-      plan->outcome = PLAN_SHOW_MESSAGES;
+      plan->staging = STAGING_MESSAGES;
     if (Battle_IsReviveEffectFar(ability->effect))
-      plan->presentationFlags |= STAGING_ON_DOWNED;
+      plan->animation |= ANIM_ON_DOWNED;
     // When Annihilation's instant death lands on its first target, the
     // variant becomes 1: the burst then shows its second picture and plays a
-    // sound (BattleEffect_RunAnnihilation).
+    // sound (BattleAnim_RunAnnihilation).
     if (abilityId == ABILITY_ANNIHILATION && plan->targetHit[0] != 0)
-      plan->presentationFlags |= 1 << STAGING_VARIANT_SHIFT;
+      plan->animation |= 1 << ANIM_VARIANT_SHIFT;
   }
   // An item is staged as an item, unless its ability takes the whole screen.
-  if (request->command == COMMAND_ITEM && plan->outcome != PLAN_SHOW_SUMMON &&
-      plan->outcome != PLAN_SHOW_FULL_SCREEN)
-    plan->outcome = PLAN_SHOW_ITEM;
+  if (request->command == COMMAND_ITEM && plan->staging != STAGING_SUMMON &&
+      plan->staging != STAGING_FULL_SCREEN)
+    plan->staging = STAGING_ITEM;
   plan->command = request->command;
   return 0;
 }

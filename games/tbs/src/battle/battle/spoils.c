@@ -30,7 +30,7 @@ u32 BattleSpoils_RankItem(u32 inventoryEntry) {
 }
 
 /// Empties the battle's spoils (BattleWork.spoils) and gGameState.pendingItem.
-/// Called once by Battle_RunEncounter as the battle opens.
+/// Called once by Battle_Run as the battle opens.
 void BattleSpoils_Clear(void) {
   struct BattleWork *battle = gBattleWork;
   struct BattleSpoils *spoils = &battle->spoils;
@@ -49,7 +49,7 @@ void BattleSpoils_Clear(void) {
 /// Returns an enemy's coins with the Djinn bonus: its own, plus a six-sided
 /// die for every ten levels and one more, at least 30 percent of its own.
 /// Used by BattleEnemy_RecordDefeat.
-static __inline__ s32 BattleEnemy_CalculateCoinReward(struct BattleUnit *unit,
+static __inline__ s32 BattleEnemy_CalculateCoinReward(struct Unit *unit,
                                                       u16 *reward) {
   // These reward rolls retain separate inline bodies: a die-size parameter adds
   // eight bytes to BattleEnemy_RecordDefeat in EN.
@@ -70,8 +70,8 @@ static __inline__ s32 BattleEnemy_CalculateCoinReward(struct BattleUnit *unit,
 /// Returns an enemy's experience with the Djinn bonus: its own, plus a
 /// four-sided die for every ten levels and one more, at least 30 percent of
 /// its own. Used by BattleEnemy_RecordDefeat.
-static __inline__ s32
-BattleEnemy_CalculateExperienceReward(struct BattleUnit *unit, u16 *reward) {
+static __inline__ s32 BattleEnemy_CalculateExperienceReward(struct Unit *unit,
+                                                            u16 *reward) {
   s32 rollIndex;
   s32 bonus = 0;
   s32 base;
@@ -95,10 +95,10 @@ BattleEnemy_CalculateExperienceReward(struct BattleUnit *unit, u16 *reward) {
 /// djinnBonus nonzero, the rolls above) and rolls the item: 1 in
 /// 2^(itemChance - 1), two powers likelier with the bonus. An item not yet
 /// among the four kept replaces the lowest ranked, if it ranks higher.
-/// Called as each enemy falls by BattleEvent_DispatchQueued and
-/// BattleEvent_Playback.
+/// Called as each enemy falls by BattlePlayback_RunAll and
+/// BattlePlayback_Run.
 s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
-  struct BattleUnit *unit;
+  struct Unit *unit;
   struct EnemyDefinition *enemy;
   struct BattleWork *battle;
   struct BattleSpoils *spoils;
@@ -114,15 +114,15 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   spoils = &battle->spoils;
   if (unitId >= 0 && unitId <= ALLY_MAX)
     return -1;
-  if (unit->classIndex != CLASS_INDEX_ENEMY)
+  if (unit->classId != CLASS_NONE)
     return -2;
   classSlot = 0;
   itemOrClassIndex = 0;
-  if (battle->enemyClasses[0] != unit->classId) {
+  if (battle->enemyKinds[0] != unit->id) {
     do {
       if (++itemOrClassIndex > BATTLE_ENEMY_CAPACITY - 1)
         break;
-    } while (battle->enemyClasses[itemOrClassIndex] != unit->classId);
+    } while (battle->enemyKinds[itemOrClassIndex] != unit->id);
   }
   if (itemOrClassIndex != BATTLE_ENEMY_CAPACITY)
     classSlot = itemOrClassIndex;
@@ -139,8 +139,8 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   spoils->defeated++;
   if (GameFlag_TestFar(FLAG_MONSTER_BATTLE))
     return 0;
-  GameFlag_SetBitFar(ENEMY_DEFEATED_FLAG(unit->classId));
-  enemy = (struct EnemyDefinition *)Enemy_GetDefinitionFar(unit->classId);
+  GameFlag_SetBitFar(ENEMY_DEFEATED_FLAG(unit->id));
+  enemy = (struct EnemyDefinition *)Enemy_GetDefinitionFar(unit->id);
   if (djinnBonus != 0) {
     if (enemy->coins != 0)
       spoils->coins += BattleEnemy_CalculateCoinReward(unit, &enemy->coins);
@@ -189,7 +189,7 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
 /// coins, then the items best first.
 /// Each level up shows its message, every Psynergy newly learned and each
 /// stat that rose. An item the inventory cannot take goes to gOverflowItem
-/// and ends the handing out. Called by Battle_RunEncounter once the battle is
+/// and ends the handing out. Called by Battle_Run once the battle is
 /// won. Changes the members' experience, levels and stats, the party's coins
 /// and inventory.
 void Battle_AwardSpoils(void) {
@@ -198,8 +198,8 @@ void Battle_AwardSpoils(void) {
   u16 *unitIds;
   s32 unitIndex;
   s32 unitId;
-  struct BattleUnit *unit;
-  struct BattleUnit *beforeLevelUp;
+  struct Unit *unit;
+  struct Unit *beforeLevelUp;
   s32 abilityIndex;
   u32 encodedAbility;
   s32 oldAbilityIndex;
@@ -214,86 +214,87 @@ void Battle_AwardSpoils(void) {
   spoils = &gBattleWork->spoils;
   if (spoils->experience != 0) {
     UiWork_PushValueSlotFar(spoils->experience, VALUE_NUMBER);
-    UiText_ShowMessageAndWaitCoreFar(MsgExpGained);
-    BattlePresentation_WaitForAdvance();
+    BattleMessage_ShowAndWaitFar(MsgExpGained);
+    BattleMessage_WaitForAdvance();
   }
   // Experience and level ups: each member is copied before every level it
   // may gain, so that what the level brought can be read against the copy.
   unitIds = units;
-  count = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, unitIds);
-  beforeLevelUp = AllocEwram(sizeof(struct BattleUnit));
+  count = BattleUnits_ListLiving(BATTLE_SIDES_PARTY, unitIds);
+  beforeLevelUp = AllocEwram(sizeof(struct Unit));
   for (unitIndex = 0; unitIndex < count; unitIndex++) {
     unitId = unitIds[unitIndex];
     unit = Unit_GetFar(unitId);
     unit->experience += spoils->experience;
-    while (Iwram_CopyWords(beforeLevelUp, unit, sizeof(struct BattleUnit)),
+    while (Iwram_CopyWords(beforeLevelUp, unit, sizeof(struct Unit)),
            Unit_TryLevelUpFar(unitId, &gains) != 0) {
       Sound_PlaySongFar(MUS_LEVEL_UP);
       UiWork_ClearValueNameTablesFar();
-      UiWork_PushValueSlotFar(unit->classIndex, VALUE_CLASS_NAME);
+      UiWork_PushValueSlotFar(unit->classId, VALUE_CLASS_NAME);
       UiWork_PushValueSlotFar(unitIds[unitIndex], VALUE_UNIT_NAME);
       UiWork_PushValueSlotFar(unit->level, VALUE_NUMBER);
-      UiText_ShowMessageAndWaitCoreFar(MsgLevelUp);
-      BattlePresentation_WaitForAdvance();
+      BattleMessage_ShowAndWaitFar(MsgLevelUp);
+      BattleMessage_WaitForAdvance();
       // A class ability (bit 15) the copy lacks is newly learned.
       for (abilityIndex = 0; abilityIndex < 32; abilityIndex++) {
-        encodedAbility = unit->actionSlots[abilityIndex].encodedAction;
-        if ((encodedAbility & OWNER_ACTION_ID_MASK) && (encodedAbility >> 15)) {
+        encodedAbility = unit->psynergy[abilityIndex].encodedAction;
+        if ((encodedAbility & PSYNERGY_ABILITY_MASK) &&
+            (encodedAbility >> 15)) {
           for (oldAbilityIndex = 0; oldAbilityIndex < 32; oldAbilityIndex++) {
             if (encodedAbility ==
-                beforeLevelUp->actionSlots[oldAbilityIndex].encodedAction)
+                beforeLevelUp->psynergy[oldAbilityIndex].encodedAction)
               break;
           }
           if (oldAbilityIndex == 32) {
             UiWork_ClearValueNameTablesFar();
-            UiWork_PushValueSlotFar(unit->classIndex, VALUE_CLASS_NAME);
+            UiWork_PushValueSlotFar(unit->classId, VALUE_CLASS_NAME);
             UiWork_PushValueSlotFar(unitId, VALUE_UNIT_NAME);
-            UiWork_PushValueSlotFar(encodedAbility & OWNER_ACTION_ID_MASK,
+            UiWork_PushValueSlotFar(encodedAbility & PSYNERGY_ABILITY_MASK,
                                     VALUE_ABILITY_NAME);
             Sound_PlaySongFar(SE_CAST);
-            UiText_ShowMessageAndWaitCoreFar(MsgAbilityMastered);
-            BattlePresentation_WaitForAdvance();
+            BattleMessage_ShowAndWaitFar(MsgAbilityMastered);
+            BattleMessage_WaitForAdvance();
           }
         }
       }
       if ((s16)gains.hp != 0) {
         UiWork_PushValueSlotFar((s16)gains.hp, VALUE_NUMBER);
-        UiText_ShowMessageAndWaitCoreFar(MsgMaxHpRises);
-        BattlePresentation_WaitForAdvance();
+        BattleMessage_ShowAndWaitFar(MsgMaxHpRises);
+        BattleMessage_WaitForAdvance();
       }
       if ((s16)gains.pp != 0) {
         UiWork_PushValueSlotFar((s16)gains.pp, VALUE_NUMBER);
-        UiText_ShowMessageAndWaitCoreFar(MsgMaxPpRises);
-        BattlePresentation_WaitForAdvance();
+        BattleMessage_ShowAndWaitFar(MsgMaxPpRises);
+        BattleMessage_WaitForAdvance();
       }
       if ((s16)gains.atk != 0) {
         UiWork_PushValueSlotFar((s16)gains.atk, VALUE_NUMBER);
-        UiText_ShowMessageAndWaitCoreFar(MsgAttackRises);
-        BattlePresentation_WaitForAdvance();
+        BattleMessage_ShowAndWaitFar(MsgAttackRises);
+        BattleMessage_WaitForAdvance();
       }
       if ((s16)gains.def != 0) {
         UiWork_PushValueSlotFar((s16)gains.def, VALUE_NUMBER);
-        UiText_ShowMessageAndWaitCoreFar(MsgDefenseRises);
-        BattlePresentation_WaitForAdvance();
+        BattleMessage_ShowAndWaitFar(MsgDefenseRises);
+        BattleMessage_WaitForAdvance();
       }
       if ((s16)gains.agi != 0) {
         UiWork_PushValueSlotFar((s16)gains.agi, VALUE_NUMBER);
-        UiText_ShowMessageAndWaitCoreFar(MsgAgilityRises);
-        BattlePresentation_WaitForAdvance();
+        BattleMessage_ShowAndWaitFar(MsgAgilityRises);
+        BattleMessage_WaitForAdvance();
       }
       if ((s16)gains.luck != 0) {
         UiWork_PushValueSlotFar((s16)gains.luck, VALUE_NUMBER);
-        UiText_ShowMessageAndWaitCoreFar(MsgLuckRises);
-        BattlePresentation_WaitForAdvance();
+        BattleMessage_ShowAndWaitFar(MsgLuckRises);
+        BattleMessage_WaitForAdvance();
       }
     }
   }
   Free(beforeLevelUp);
   if (spoils->coins != 0) {
     UiWork_PushValueSlotFar(spoils->coins, VALUE_NUMBER);
-    UiText_ShowMessageAndWaitCoreFar(MsgCoinsGained);
+    BattleMessage_ShowAndWaitFar(MsgCoinsGained);
     Party_AdjustCoinsFar(spoils->coins);
-    BattlePresentation_WaitForAdvance();
+    BattleMessage_WaitForAdvance();
   }
   // The items, the highest ranked first; the first the inventory cannot
   // take is left in gOverflowItem.
@@ -313,8 +314,8 @@ void Battle_AwardSpoils(void) {
     if (highestItemSlot == -1)
       break;
     UiWork_PushValueSlotFar(spoils->items[highestItemSlot], VALUE_ITEM_NAME);
-    UiText_ShowMessageAndWaitCoreFar(MsgItemGained);
-    BattlePresentation_WaitForAdvance();
+    BattleMessage_ShowAndWaitFar(MsgItemGained);
+    BattleMessage_WaitForAdvance();
     if (PartyInventory_AddFar(spoils->items[highestItemSlot]) == -1) {
       *overflowItem = spoils->items[highestItemSlot];
       break;

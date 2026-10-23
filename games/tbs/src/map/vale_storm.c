@@ -2675,7 +2675,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   Script_Wait(60);
   Map_PlayQueuedMusic();
   Script_Wait(60);
-  Party_RemoveOwnerRestored(1);
+  Party_RemoveMemberRestored(1);
   Weather_ResumeLightning();
 }
 

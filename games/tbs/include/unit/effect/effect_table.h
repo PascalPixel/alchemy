@@ -42,17 +42,17 @@ enum TargetStrikeStyle {
 
 // Every table effect_table.c defines, in its order. A table read by columns
 // is a two-dimensional array, its columns named by the enum above it.
-extern u16 gBattleEffect_MoteCells[];
-extern u16 gBattleEffect_FlareCells[];
-extern u16 gBattleEffect_PuffCells[];
-extern u8 gBattleEffect_PuffSizes[];
-extern u8 gBattleEffect_PuffArcCellWidths[];
-extern u8 gBattleEffect_PuffArcCellHeights[];
-extern u8 gBattleEffect_PuffArcCellBiasY[];
-extern u16 gBattleEffect_PuffArcCells[];
-extern u16 gBattleEffect_GlintCells[];
-extern u8 gBattleEffect_GlintCellWidths[];
-extern u8 gBattleEffect_GlintCellHeights[];
+extern u16 gBattleAnim_MoteCells[];
+extern u16 gBattleAnim_FlareCells[];
+extern u16 gBattleAnim_PuffCells[];
+extern u8 gBattleAnim_PuffSizes[];
+extern u8 gBattleAnim_PuffArcCellWidths[];
+extern u8 gBattleAnim_PuffArcCellHeights[];
+extern u8 gBattleAnim_PuffArcCellBiasY[];
+extern u16 gBattleAnim_PuffArcCells[];
+extern u16 gBattleAnim_GlintCells[];
+extern u8 gBattleAnim_GlintCellWidths[];
+extern u8 gBattleAnim_GlintCellHeights[];
 
 /// Each Ice variant: its shards and how many frames it runs.
 enum {
@@ -102,7 +102,7 @@ enum {
   GATHERING_LIGHTS_COUNT, ///< lights for each target
   GATHERING_LIGHTS_FRAMES ///< frames before the targets' turns
 };
-/// The gathering lights' modes (BattleEffect_RunGatheringLights), each named
+/// The gathering lights' modes (BattleAnim_RunGatheringLights), each named
 /// for the effect that plays it, and its row of gGatheringLights_Counts.
 enum GatheringLightsMode {
   GATHERING_LIGHTS_DEMON_NIGHT, ///< pink
@@ -203,11 +203,11 @@ enum {
   SPARK_GROUPS_OFFSET  ///< burst i's offset across, in pixels, at [2 + i]
 };
 /// The spark groups' variants past the three strengths of Blast and
-/// Dynamite (enum EffectVariant), which their callers set before the run.
+/// Dynamite (enum AnimVariant), which their callers set before the run.
 enum {
   SPARK_GROUPS_SEVERE_BLOW =
       3,              ///< 340 sparks and a flash: Severe Blow's
-                      ///< impact and BattleEffect_RunUnusedSevereBlowLeap
+                      ///< impact and BattleAnim_RunUnusedSevereBlowLeap
   SPARK_GROUPS_THRASH ///< 32 sparks: Thrash
 };
 extern u16 gPlasma_Shapes[][5];
@@ -323,7 +323,7 @@ enum ProjectileVolleyComet {
   PROJECTILE_VOLLEY_COMET_C  ///< CometSheetC, also Cutting Edge's
 };
 extern u8 gProjectileVolley_CometHeights[];
-/// The projectile volley's modes (BattleEffect_RunProjectileVolley), each named
+/// The projectile volley's modes (BattleAnim_RunProjectileVolley), each named
 /// for the effect that fires it; the casting impacts fire two of them.
 enum ProjectileVolleyMode {
   PROJECTILE_VOLLEY_SLASH,         ///< comets, picked by the variant
@@ -374,7 +374,7 @@ extern u8 gSpire_RockCounts[];
 extern u8 gSpire_ShardWidths[];
 extern u8 gSpire_ShardHeights[];
 extern u16 gSpire_ShardCells[];
-/// The burst sequence's modes (BattleEffect_RunBurstSequence), its rows of
+/// The burst sequence's modes (BattleAnim_RunBurstSequence), its rows of
 /// gBurstSequence_Records: Gust and Flying Attack take one, two or three
 /// strikes as a double or triple blow raises their variant.
 enum BurstSequenceMode {

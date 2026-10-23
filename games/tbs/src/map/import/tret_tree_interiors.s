@@ -22,7 +22,7 @@
 	.set import.Engine_ObjectSetBlendMode, 1
 	.set import.Engine_WorkSetValuesIfNonNegative, 1
 	.set import.Engine_MapGridWaitForShakeToSettle, 1
-	.set import.PartyInventory_FindOwner, 1
+	.set import.PartyInventory_FindMember, 1
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1
 	.set import.Engine_ScriptWait, 1

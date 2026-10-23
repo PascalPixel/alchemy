@@ -15,7 +15,8 @@
 
 /// Sends unitId back to its spot, landing exactly there (snapToTarget), and
 /// turns it to face the centre at once. Called after an action by the
-/// staging code, the auto battle, BattleTarget_Execute and the Quake effect.
+/// staging code, the auto battle, BattleAbility_ApplyToTarget and the Quake
+/// effect.
 void BattleMotion_ReturnToSpot(s32 unitId) {
   s32 z;
   s32 stopped;
@@ -44,7 +45,7 @@ void BattleMotion_ReturnToSpot(s32 unitId) {
 
 /// Sends unitId running off its side of the battlefield, three times
 /// as far out as its spot, with a hop, in POSE_STANDING. Called by
-/// BattleEscape_PlayRun and BattlePresentation_RunEscape.
+/// BattleFlee_PlayRun and BattleStaging_RunFlee.
 void BattleMotion_SetupEscapeObject(s32 unitId) {
   struct BattleObject *battleObject;
   struct MotionObject *object;
@@ -109,7 +110,7 @@ void BattleMotion_SetObjectPosition(struct BattleObject *battleObject) {
 }
 
 /// Sends unitId hopping out to one and a half times its spot's
-/// distance from the centre. Called by BattlePresentation_RunAttack and
+/// distance from the centre. Called by BattleStaging_RunAttack and
 /// BattlePresentation_RunPlainAttack.
 void BattleMotion_ResetObjectAtScaledAnchor(s32 unitId) {
   u32 scaledX;
@@ -155,9 +156,9 @@ void BattleMotion_InitializeObject(s32 unitId) {
 /// Knocks unit id back by the speed, hop and distance of the knockback
 /// variant (enum BattleKnockback), and puts it in POSE_DAMAGE.
 /// The Fusion Dragon only takes the pose. Reached through its far stub from
-/// the effects, by the EFFECT_STRIKE_TARGET macro of effect_internal.h and
+/// the effects, by the ANIM_STRIKE_TARGET macro of effect_internal.h and
 /// directly.
-void BattleMotion_ApplyVariantMotion(s32 unitId, s32 variant) {
+void BattleMotion_ApplyKnockback(s32 unitId, s32 variant) {
   struct BattleObject *battleObject;
   struct MotionObject *object;
   s32 targetX;
@@ -165,18 +166,18 @@ void BattleMotion_ApplyVariantMotion(s32 unitId, s32 variant) {
 
   battleObject = BattleObject_Get(unitId);
   object = battleObject->object;
-  if (Unit_GetFar(unitId)->classId != ENEMY_FUSION_DRAGON) {
-    object->acceleration = gBattleMotion_VariantAcceleration[variant];
-    object->speedLimit = gBattleMotion_VariantSpeedLimit[variant];
+  if (Unit_GetFar(unitId)->id != ENEMY_FUSION_DRAGON) {
+    object->acceleration = gBattleKnockback_Acceleration[variant];
+    object->speedLimit = gBattleKnockback_SpeedLimit[variant];
     // A unit already in the air keeps its hop, except from KNOCKBACK_SKID on.
     if (object->y == 0 || variant > KNOCKBACK_HURL)
-      object->velocityY = gBattleMotion_VariantVelocityY[variant];
+      object->velocityY = gBattleKnockback_VelocityY[variant];
     object->verticalMotionStrength = 0x9999;
     object->verticalMotionPhase = 0;
     object->autoFaceMotion = 0;
     ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
     anchorX = battleObject->anchorX;
-    targetX = (anchorX * gBattleMotion_VariantDistancePercent[variant]) / 100;
+    targetX = (anchorX * gBattleKnockback_DistancePercent[variant]) / 100;
     Object_SetMoveTargetFar((struct Object *)object, targetX, 0,
                             battleObject->anchorZ);
   }
@@ -186,7 +187,7 @@ void BattleMotion_ApplyVariantMotion(s32 unitId, s32 variant) {
 /// Sends unit actorId three quarters of the way to unit targetId, arriving
 /// in travelDivisor frames at a steady speed, leaping up at initialVelocityY
 /// (16.16 pixels a frame), in POSE_LEAP.
-/// Called by BattlePresentation_RunAttack, BattlePresentation_RunPlainAttack
+/// Called by BattleStaging_RunAttack, BattlePresentation_RunPlainAttack
 /// and BattlePresentation_RunApproachAction, and through its far stub by the
 /// Bind, burst scene, Annihilation, target motes and Thrash effects.
 void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelDivisor,
@@ -311,7 +312,7 @@ void BattleMotion_SpawnSlotEffectAndWait(s32 unitId) {
 /// height, BattleUnit_GetEffectHeight) onto the screen, into projected; the
 /// height is scaled by the sprite's projected scale. Returns 0. Called by
 /// ElementGlow_Play, and through its far stub by
-/// EffectPosition_ProjectScaledBattler and SelectionScreen_Draw.
+/// Projection_ScaledUnit and SelectionScreen_Draw.
 s32 BattleMotion_ProjectScaledPosition(s32 unitId, s32 *projected) {
   struct MotionObject *object = BattleObject_Get(unitId)->object;
   struct AnimationObject *record = GetMotionRecord(object, 0);
@@ -319,7 +320,7 @@ s32 BattleMotion_ProjectScaledPosition(s32 unitId, s32 *projected) {
   s32 spriteScale;
   /* FAKEMATCH(dead): an unused position for the frame's 12 bytes; without it,
    * 2 of 42 instructions differ in tbs-en. */
-  UNUSED struct EffectPosition input;
+  UNUSED struct ScreenPoint input;
 
   Camera_ApplyTransformByFlag();
   projectionScale = Render_ProjectPoint(&object->x, projected);
@@ -343,7 +344,7 @@ s32 BattleMotion_ProjectConditionalPosition(s32 unitId, s32 *projected) {
   Camera_ApplyTransformByFlag();
   projectedHeight = Render_ProjectPoint(&object->x, projected);
   spriteScale = Iwram_MulQ16(projectedHeight, record->scale);
-  if (BattleClass_IsSmall(Unit_GetFar(unitId)->classId) != 0)
+  if (BattleSprite_IsSmall(Unit_GetFar(unitId)->id) != 0)
     projectedHeight = Iwram_MulQ16(spriteScale, 24);
   else
     projectedHeight = Iwram_MulQ16(spriteScale, 48);
@@ -352,18 +353,18 @@ s32 BattleMotion_ProjectConditionalPosition(s32 unitId, s32 *projected) {
 }
 
 /// Returns the height above unit id where its effects play, 16.16: its
-/// class's own (BattleClass_GetEffectHeight), else 24 for a small enemy and 48
+/// class's own (BattleSprite_GetAnimHeight), else 24 for a small enemy and 48
 /// for others. Called by BattleMotion_ProjectScaledPosition, and through its
 /// far stub by the effects that play at a unit's body.
 s32 BattleUnit_GetEffectHeight(s32 unitId) {
   u32 height;
   u8 classId;
 
-  classId = Unit_GetFar(unitId)->classId;
-  height = (u8)BattleClass_GetEffectHeight(classId) << 16;
+  classId = Unit_GetFar(unitId)->id;
+  height = (u8)BattleSprite_GetAnimHeight(classId) << 16;
   if (height == 0) {
-    classId = Unit_GetFar(unitId)->classId;
-    if (BattleClass_IsSmall(classId) != 0) {
+    classId = Unit_GetFar(unitId)->id;
+    if (BattleSprite_IsSmall(classId) != 0) {
       height = 0x180000;
     } else {
       height = 0x300000;

@@ -77,11 +77,11 @@ extern u8 IwramCopyWords[];
 
 s32 _call_via_r3(void *, void *, s32, void *);
 
-/// BattleAct.flags: where an ability or item can be used, as the Psynergy
-/// list says ("Usable in the field", "Usable in battle"). The same values as
-/// enum BattleActionUse (battle_unit.h), which these macros shadow here.
-#define ACTION_USABLE_IN_FIELD 0x40
-#define ACTION_USABLE_IN_BATTLE 0x80
+/// AbilityDefinition.flags: where an ability or item can be used, as the
+/// Psynergy list says ("Usable in the field", "Usable in battle"). The same
+/// values as enum AbilityUse (battle_unit.h), which these macros shadow here.
+#define ABILITY_USABLE_IN_FIELD 0x40
+#define ABILITY_USABLE_IN_BATTLE 0x80
 
 /// Game flags of the menus. Start was pressed: every menu screen unwinds and
 /// the whole menu closes. Menu_CancelSoundReset clears it and
@@ -246,7 +246,7 @@ enum DjinnPreviewMode {
   DJINN_PREVIEW_ADD = 4        ///< the other's Djinni is added, set if it was
 };
 
-/// OwnerAction_RunCompareLoop's pages for a give or trade, which R cycles; the
+/// PsynergyList_RunCompareLoop's pages for a give or trade, which R cycles; the
 /// first two also index its per-member page counts.
 enum DjinnComparePage {
   DJINN_COMPARE_PAGE_GIVER = 0,    ///< the giver's stats and Psynergy
@@ -280,7 +280,7 @@ enum DjinnMenuResult {
 /// DjinnMenuBackdrop.tutorialStep: where the Djinn tutorial is. Each lesson's
 /// steps follow its first in order, each waiting, showing a message or
 /// pressing a key for the player (DjinnMenu_SelectDjinn,
-/// OwnerAction_RunCompareLoop); the flags that pick the lesson are
+/// PsynergyList_RunCompareLoop); the flags that pick the lesson are
 /// FLAG_DJINN_LESSON_PART_A and _PART_B (DjinnMenu_Run).
 enum DjinnTutorialStep {
   DJINN_TUTORIAL_OFF = 0,
@@ -304,14 +304,14 @@ enum DjinnSelectMode {
 /// elements follow it in order.
 #define DJINN_ELEMENT_TILE 0x5001
 
-/// A Djinn list entry's owner, element and index (DJINN_ENTRY_OWNER,
+/// A Djinn list entry's owner, element and index (DJINN_ENTRY_MEMBER,
 /// _ELEMENT and _INDEX), shifted down.
-#define DJINN_OWNER(v) (((v) & 0xf00) >> 8)
+#define DJINN_MEMBER(v) (((v) & 0xf00) >> 8)
 #define DJINN_ELEMENT(v) (((v) & 0xe0) >> 5)
 #define DJINN_NUMBER(v) ((v) & 0x1f)
 
 /// The preview loop's four operations, as its confirmation text describes them
-/// (OwnerAction_RunCompareLoop's mode). Trade and Give, the first two, have
+/// (PsynergyList_RunCompareLoop's mode). Trade and Give, the first two, have
 /// two members and the paged previews; Standby and Set one member.
 enum DjinnCompareOperation {
   DJINN_COMPARE_TRADE = 0,

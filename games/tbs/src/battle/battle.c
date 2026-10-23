@@ -6,13 +6,13 @@
 /// recoverable: the ROM shows one object, and these parts are ours, cut where
 /// one family ends and the next begins.
 ///
-/// A battle runs from Battle_RunEncounter (encounter.c). Each round the
+/// A battle runs from Battle_Run (encounter.c). Each round the
 /// actions are gathered and put in turn order (round.c, or auto_battle.c under
 /// auto battle), and each action is announced and planned
-/// (BattleCommand_BuildPlan, plan.c), staged
-/// (BattlePresentation_DispatchAction, staging.c) and applied to each target
-/// (BattleTarget_Execute, target_exec.c), which queues the battle events
-/// BattleEvent_Playback plays (playback.c). README.md in this folder gives the
+/// (BattleTurn_Build, plan.c), staged
+/// (BattleStaging_DispatchAction, staging.c) and applied to each target
+/// (BattleAbility_ApplyToTarget, target_exec.c), which queues the battle events
+/// BattlePlayback_Run plays (playback.c). README.md in this folder gives the
 /// words, prefixes and spellings the parts use.
 
 #include "battle_internal.h"

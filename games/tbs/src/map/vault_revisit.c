@@ -634,7 +634,7 @@ static void EventScript_TalkToDog(void) {
   Engine_ScriptShowMessage(LOCALID_VAULT_DOG, 0);
   Engine_ObjectEventSetAnimation(LOCALID_VAULT_DOG, ANIMATION_STAND);
 
-  if (PartyInventory_FindOwner(ITEM_BONE) != -1 &&
+  if (PartyInventory_FindMember(ITEM_BONE) != -1 &&
       Engine_GameFlagIsSet(FLAG_VAULT_DOG_SHOWN_PASSAGE) == 0) {
     gFieldWork->menu = 1;
   }

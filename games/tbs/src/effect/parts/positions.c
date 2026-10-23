@@ -6,7 +6,7 @@
 
 // Particle motion and projection into the battle view.
 //
-// Effect particles are EffectStep records in 16.16 fixed point. The two
+// Effect particles are Particle records in 16.16 fixed point. The two
 // integrators move a particle one frame: they add its velocity to its
 // position, add gravity to its vertical speed and then damp every speed by a
 // factor out of 64 (64 keeps the speed, 60 loses about 6% a frame). The 3D one
@@ -14,7 +14,7 @@
 // screen, where a positive gravity pulls down.
 //
 // The EffectPosition_Project* helpers turn a point or a battler into an
-// EffectPosition on the screen. Each returns a point 16 pixels higher than the
+// ScreenPoint on the screen. Each returns a point 16 pixels higher than the
 // projection, which is where effects anchor on a battler. They differ only in
 // how the battler is projected: at its sprite's scaled height, scaled for the
 // battle view, or plainly.
@@ -25,9 +25,9 @@
 /// Called each frame for the 3D sparks, motes, shards and shells of 18 parts,
 /// from the casting impacts, the beam sequences and the burst scene to the
 /// lobbed shells and the stat reductions; each then projects the particle
-/// with EffectPosition_ProjectPoint. Changes only the step.
-void EffectStep_AdvanceWithGravity3D(struct EffectStep *step, s32 damping,
-                                     s32 gravity) {
+/// with Projection_Point. Changes only the step.
+void Particle_AdvanceWithGravity3D(struct Particle *step, s32 damping,
+                                   s32 gravity) {
   step->x += step->velocityX;
   step->y += step->velocityY;
   step->z += step->velocityZ;
@@ -43,8 +43,8 @@ void EffectStep_AdvanceWithGravity3D(struct EffectStep *step, s32 damping,
 /// 20 parts, among them Thor, Spire, Ramses, Ragnarok, the Titan Blade, the
 /// Helm Splitter, the Djinn attacks and the projectile volleys. Changes only
 /// the step; z and velocityZ are left alone.
-void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping,
-                                     s32 gravity) {
+void Particle_AdvanceWithGravity2D(struct Particle *step, s32 damping,
+                                   s32 gravity) {
   step->x += step->velocityX;
   step->y += step->velocityY;
   step->velocityY += gravity;
@@ -66,10 +66,9 @@ void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping,
 /// returns 0 and leaves the transformed point in position, still in 16.16
 /// (Render_ProjectPoint); the 16 is taken off its y all the same.
 ///
-/// point: three s32s in 16.16, x, y and z (an EffectStep's position).
-s32 EffectPosition_ProjectPoint(const void *point,
-                                struct EffectPosition *position) {
-  s32 result = Render_ProjectPoint(point, EffectPosition_Coordinates(position));
+/// point: three s32s in 16.16, x, y and z (an Particle's position).
+s32 Projection_Point(const void *point, struct ScreenPoint *position) {
+  s32 result = Render_ProjectPoint(point, ScreenPoint_Coordinates(position));
   position->y -= 16;
   return result;
 }
@@ -77,11 +76,11 @@ s32 EffectPosition_ProjectPoint(const void *point,
 /// The screen position of a battler's sprite, at its scaled height, 16
 /// pixels higher.
 ///
-/// Called by BattleEffect_RunBeamSequence (beams.c), for the first target, and
-/// BattleEffect_RunBurstShower (burst_shower.c), for the user. Leaves the view
+/// Called by BattleAnim_RunBeamSequence (beams.c), for the first target, and
+/// BattleAnim_RunBurstShower (burst_shower.c), for the user. Leaves the view
 /// set to the battle camera (BattleUnit_ProjectToScreen).
-void EffectPosition_ProjectSprite(s32 id, struct EffectPosition *position) {
-  BattleUnit_ProjectToScreen(id, EffectPosition_Coordinates(position));
+void Projection_Sprite(s32 id, struct ScreenPoint *position) {
+  BattleUnit_ProjectToScreen(id, ScreenPoint_Coordinates(position));
   position->y -= 16;
 }
 
@@ -91,10 +90,8 @@ void EffectPosition_ProjectSprite(s32 id, struct EffectPosition *position) {
 /// The usual anchor for an effect on its user or first target: called during
 /// the setup of 21 parts, from the casting impacts, beams, the burst
 /// scene and Spire to the healing motes and the stat boosts.
-void EffectPosition_ProjectScaledBattler(s32 id,
-                                         struct EffectPosition *position) {
-  BattleMotion_ProjectScaledPositionFar(id,
-                                        EffectPosition_Coordinates(position));
+void Projection_ScaledUnit(s32 id, struct ScreenPoint *position) {
+  BattleMotion_ProjectScaledPositionFar(id, ScreenPoint_Coordinates(position));
   position->y -= 16;
 }
 
@@ -103,8 +100,8 @@ void EffectPosition_ProjectScaledBattler(s32 id,
 /// Called during the setup of 11 parts, among them the target strikes, Bolt,
 /// the rushing strike, the Titan Blade, the Helm Splitter and the element
 /// pillar.
-void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position) {
-  BattleMotion_ProjectPositionFar(id, EffectPosition_Coordinates(position));
+void Projection_Unit(s32 id, struct ScreenPoint *position) {
+  BattleMotion_ProjectPositionFar(id, ScreenPoint_Coordinates(position));
   position->y -= 16;
 }
 
@@ -113,7 +110,7 @@ void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position) {
 /// reset to the battle camera first, so the result does not depend on the
 /// transform an effect has left behind.
 ///
-/// Called only by EffectPosition_ProjectSprite. Leaves the render transform
+/// Called only by Projection_Sprite. Leaves the render transform
 /// looking from gCameraWork's eye to its position, and always returns 0.
 ///
 /// screen: receives x and y.
@@ -129,7 +126,7 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
   camera = gCameraWork;
   object = GetBattleObjectSlotFar(unit)->object;
   info = GetMotionRecordFar(object, 0);
-  EFFECT_VIEW_FROM_CAMERA(camera);
+  ANIM_VIEW_FROM_CAMERA(camera);
   scale = Iwram_MulQ16(Render_ProjectPoint(&object->x, screen), info->scale);
   // The table height is 16.16: >> 17 takes half of it in whole pixels.
   screen[1] -= Iwram_MulQ16(scale, BattleUnit_GetEffectHeightFar(unit) >> 17);
@@ -141,11 +138,11 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
 ///
 /// XXX: what it was for; a debug build or the Lost Age's twin of this part
 /// would show whether the keys once chose an effect for enemy targets.
-void BattleEffect_ProbeKeysForExtendedActor(void) {
-  struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
-  struct BattleEffectArgument *effect = work->effect;
+void BattleAnim_ProbeKeysForExtendedActor(void) {
+  struct BattleAnimWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
+  struct BattleAnimArgs *effect = work->effect;
 
-  if (effect->actors[0] > 0x7f)
+  if (effect->targets[0] > 0x7f)
     (void)gKeysHeld;
 }
 
@@ -155,13 +152,13 @@ void BattleEffect_ProbeKeysForExtendedActor(void) {
 ///
 /// Reached from the battle's presentation through its far-call stub: from
 /// the attack, item, Psynergy cast and unit transition runners
-/// (battle/staging.c) when the plan has STAGING_BY_ID_RANGE (bit 14 of the
+/// (battle/staging.c) when the plan has ANIM_BY_ID_RANGE (bit 14 of the
 /// effect word), and always from the plain attack runner and the approach
 /// action (battle/auto_battle.c). Takes heap slots
 /// HEAP_SLOT_BATTLE_SHEET (from EWRAM first), HEAP_SLOT_BATTLE_ANIM and
 /// HEAP_SLOT_BATTLE_CANVAS for the effect, and releases them in the reverse
 /// order once it returns.
-void BattleEffect_DispatchByIdRange(struct BattleEffectArgument *effect) {
+void BattleAnim_DispatchByIdRange(struct BattleAnimArgs *effect) {
   s32 kind;
   s32 value;
 
@@ -171,18 +168,18 @@ void BattleEffect_DispatchByIdRange(struct BattleEffectArgument *effect) {
   // (2 * MOTE_SET_BYTES); the slot's last 10 bytes are never written.
   value = 0x60e;
   AllocHeapSlotEwram(HEAP_SLOT_BATTLE_SHEET, value);
-  AllocHeapSlot(HEAP_SLOT_BATTLE_ANIM, sizeof(struct BattleEffectWork));
+  AllocHeapSlot(HEAP_SLOT_BATTLE_ANIM, sizeof(struct BattleAnimWork));
   AllocHeapSlot(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
   value = effect->kind;
   kind = value;
   value = kind - 100;
   // Unsigned, so kinds below 100 fall through to the beam sequences too.
   if ((u32)value <= 35) {
-    BattleEffect_RunCastingImpact(effect, value);
+    BattleAnim_RunCastingImpact(effect, value);
   } else if (kind > 199) {
-    BattleEffect_RunRingAndSparkSequence(effect);
+    BattleAnim_RunRingAndSparkSequence(effect);
   } else {
-    BattleEffect_RunBeamSequence(effect);
+    BattleAnim_RunBeamSequence(effect);
   }
   FreeHeapSlot(HEAP_SLOT_BATTLE_CANVAS);
   FreeHeapSlot(HEAP_SLOT_BATTLE_ANIM);

@@ -27,14 +27,14 @@ s32 Item_Use(s32 slot, s32 ownerId, s32 targetId) {
   struct ItemMenuWork *menu;
   s32 useResult;
   s32 itemId;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   struct ItemDefinition *item;
 
   unit = Unit_GetFar(ownerId);
   menu = gMenuWork;
   itemId = INVENTORY_ITEM_ID_MASK & unit->inventory[slot];
   item = Item_GetDirectFar(itemId);
-  useResult = Ability_ApplyToTargets(OWNER_ACTION_ID_MASK & item->actionId,
+  useResult = Ability_ApplyToTargets(PSYNERGY_ABILITY_MASK & item->abilityId,
                                      ownerId, targetId, 1);
   if (useResult != -1) {
     item = Item_GetDirectFar(unit->inventory[slot]);
@@ -66,10 +66,10 @@ s32 Item_ReturnOne(void) { return 1; }
 /// when nothing changed.
 s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
                            s32 fixedScale) {
-  struct BattleAct *effect;
+  struct AbilityDefinition *effect;
   struct ItemMenuWork *menu;
-  struct BattleUnit *target;
-  struct BattleUnit *caster;
+  struct Unit *target;
+  struct Unit *caster;
   s32 partyResultShown;
   s32 changed;
   u8 targetIndex;
@@ -79,7 +79,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
   s32 amount;
   s32 messageOffset;
 
-  effect = BattleAction_Get(effectId);
+  effect = Ability_Get(effectId);
   menu = gMenuWork;
   changed = 0;
   messageOffset = 0;
@@ -105,8 +105,8 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
 
     // The ability kind first; the result messages are enum ItemUseResult.
     amount = effect->power;
-    switch (effect->flags & ABILITY_KIND_MASK) {
-    case ABILITY_KIND_HEAL_HP:
+    switch (effect->flags & ABILITY_FORMULA_MASK) {
+    case ABILITY_FORMULA_HEAL_HP:
       if (fixedScale == 0) {
         if (effect->element != ELEMENT_NONE) {
           s32 elementIndex;
@@ -136,7 +136,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
           } else if (partyResultShown == 0) {
             messageOffset = ITEM_USE_RESULT_HP_RECOVERED;
           }
-          Unit_UpdateRatiosFar(targetId);
+          Unit_RecalculateGaugesFar(targetId);
           changed = 1;
           if (effect->range == ABILITY_RANGE_ALL) {
             partyResultShown = 1;
@@ -149,7 +149,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
     // The stat items. The stat rises by power, less one a quarter of the time
     // and plus one a quarter of the time (a roll of 0 to 3: 0 gives -1, 1 gives
     // +1, 2 and 3 give 0); Luck rises by power alone.
-    case ABILITY_KIND_NO_POWER:
+    case ABILITY_FORMULA_NO_POWER:
       randomAdjust = (Random16() * 4) >> 16;
       if (randomAdjust == 0) {
         randomAdjust = -1;
@@ -159,7 +159,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
         randomAdjust = 1 - randomAdjust;
       }
 
-      switch (effectId & OWNER_ACTION_ID_MASK) {
+      switch (effectId & PSYNERGY_ABILITY_MASK) {
       case ABILITY_POWER_BREAD:
         target->baseHp += amount + randomAdjust;
         messageOffset = ITEM_USE_RESULT_MAX_HP_UP;
@@ -195,7 +195,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
       }
       break;
 
-    case ABILITY_KIND_HEAL_PP:
+    case ABILITY_FORMULA_HEAL_PP:
       if (target->pp == target->ppMax) {
         if (partyResultShown == 0)
           messageOffset = ITEM_USE_RESULT_PP_FULL;
@@ -209,7 +209,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
         } else if (partyResultShown == 0) {
           messageOffset = ITEM_USE_RESULT_PP_RECOVERED;
         }
-        Unit_UpdateRatiosFar(targetId);
+        Unit_RecalculateGaugesFar(targetId);
         changed = 1;
         if (effect->range == ABILITY_RANGE_ALL) {
           partyResultShown = 1;
@@ -218,14 +218,14 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
       }
       break;
 
-    case ABILITY_KIND_EFFECT:
-    case ABILITY_KIND_ATTACK:
-    case ABILITY_KIND_ATTACK_MULTIPLIED:
-    case ABILITY_KIND_DAMAGE:
-    case ABILITY_KIND_UNLEASHED_DAMAGE:
-    case ABILITY_KIND_EFFECT_ONLY:
-    case ABILITY_KIND_SUMMON:
-    case ABILITY_KIND_PP_DAMAGE:
+    case ABILITY_FORMULA_EFFECT:
+    case ABILITY_FORMULA_ATTACK:
+    case ABILITY_FORMULA_ATTACK_MULTIPLIED:
+    case ABILITY_FORMULA_DAMAGE:
+    case ABILITY_FORMULA_ENEMY_DAMAGE:
+    case ABILITY_FORMULA_EFFECT_ONLY:
+    case ABILITY_FORMULA_SUMMON:
+    case ABILITY_FORMULA_PP_DAMAGE:
       break;
     }
 
@@ -245,7 +245,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
         } else if (partyResultShown == 0) {
           messageOffset = ITEM_USE_RESULT_HP_RECOVERED;
         }
-        Unit_UpdateRatiosFar(targetId);
+        Unit_RecalculateGaugesFar(targetId);
         changed = 1;
       }
       break;
@@ -263,7 +263,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
         } else if (partyResultShown == 0) {
           messageOffset = ITEM_USE_RESULT_PP_RECOVERED;
         }
-        Unit_UpdateRatiosFar(targetId);
+        Unit_RecalculateGaugesFar(targetId);
         changed = 1;
       }
       break;
@@ -271,7 +271,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
     case ABILITY_EFFECT_REVIVE:
       if (target->hp == 0) {
         target->hp = target->hpMax;
-        Unit_UpdateRatiosFar(targetId);
+        Unit_RecalculateGaugesFar(targetId);
         changed = 1;
         if (partyResultShown == 0)
           messageOffset = ITEM_USE_RESULT_REVIVED;
@@ -286,7 +286,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
     case ABILITY_EFFECT_REVIVE_HALF:
       if (target->hp == 0) {
         target->hp = target->hpMax / 2;
-        Unit_UpdateRatiosFar(targetId);
+        Unit_RecalculateGaugesFar(targetId);
         if (partyResultShown == 0)
           messageOffset = ITEM_USE_RESULT_REVIVED;
       } else if (partyResultShown == 0) {
@@ -297,7 +297,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
     case ABILITY_EFFECT_REVIVE_80:
       if (target->hp == 0) {
         target->hp = target->hpMax * 7 / 10;
-        Unit_UpdateRatiosFar(targetId);
+        Unit_RecalculateGaugesFar(targetId);
         if (partyResultShown == 0)
           messageOffset = ITEM_USE_RESULT_REVIVED;
       } else if (partyResultShown == 0) {
@@ -335,33 +335,33 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
 /// Plays the use sound of item's action (Ability_PlayUseAnimation). Called by
 /// ItemMenu_Use after a use that changed something.
 void Item_PlayUseAnimation(u32 item) {
-  Ability_PlayUseAnimation(Item_GetDirectFar(item)->actionId &
-                           OWNER_ACTION_ID_MASK);
+  Ability_PlayUseAnimation(Item_GetDirectFar(item)->abilityId &
+                           PSYNERGY_ABILITY_MASK);
 }
 
 /// Plays the sound of action used from the menu, and returns at once: no
 /// animation is drawn and nothing waits. HP and PP healing
-/// (ABILITY_KIND_HEAL_HP and ABILITY_KIND_HEAL_PP) play SE_RECOVERY, HP healing
-/// twice; otherwise Revive's effect plays MUS_REVIVE, Cure Poison's MUS_CURE,
-/// Drain, Psy Drain and the unused HP and PP restores nothing, and every other
-/// effect, ABILITY_EFFECT_NONE of the stat items among them, MUS_FANFARE_SMALL.
-/// Called after a successful use by Item_PlayUseAnimation (for ItemMenu_Use)
-/// and by the Psynergy screen.
+/// (ABILITY_FORMULA_HEAL_HP and ABILITY_FORMULA_HEAL_PP) play SE_RECOVERY, HP
+/// healing twice; otherwise Revive's effect plays MUS_REVIVE, Cure Poison's
+/// MUS_CURE, Drain, Psy Drain and the unused HP and PP restores nothing, and
+/// every other effect, ABILITY_EFFECT_NONE of the stat items among them,
+/// MUS_FANFARE_SMALL. Called after a successful use by Item_PlayUseAnimation
+/// (for ItemMenu_Use) and by the Psynergy screen.
 void Ability_PlayUseAnimation(s32 action) {
   s32 animationType;
   u32 targetType;
-  struct BattleAct *actionDefinition;
+  struct AbilityDefinition *actionDefinition;
 
-  actionDefinition = BattleAction_Get(action);
-  animationType = ABILITY_KIND_MASK & actionDefinition->flags;
+  actionDefinition = Ability_Get(action);
+  animationType = ABILITY_FORMULA_MASK & actionDefinition->flags;
   switch (animationType) {
-  case ABILITY_KIND_HEAL_HP:
+  case ABILITY_FORMULA_HEAL_HP:
     // XXX: with no break the recovery sound is started twice; whether that
     // was meant would show only in the sound driver's handling of a cue
     // started again in the same frame.
     Audio_PlayCueReturnOne(SE_RECOVERY);
     // Fall through.
-  case ABILITY_KIND_HEAL_PP:
+  case ABILITY_FORMULA_HEAL_PP:
     Audio_PlayCueReturnOne(SE_RECOVERY);
     return;
   default:

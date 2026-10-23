@@ -21,7 +21,7 @@ void InitHeap(void) {
 }
 
 /// Returns the IWRAM bytes left to allocate, up to gCartridgeResetMarker
-/// (0x03007800), the same end the allocators test. Battle_RunEncounter calls
+/// (0x03007800), the same end the allocators test. Battle_Run calls
 /// it around each action and ignores the result.
 s32 Runtime_GetRemainingIwram(void) {
   union HeapState *work = (union HeapState *)gHeapSlots;
@@ -30,7 +30,7 @@ s32 Runtime_GetRemainingIwram(void) {
 }
 
 /// Returns the EWRAM bytes left to allocate, up to the end of EWRAM.
-/// Battle_RunEncounter calls it around each action and ignores the result.
+/// Battle_Run calls it around each action and ignores the result.
 s32 Runtime_GetRemainingEwram(void) {
   union HeapState *work = (union HeapState *)gHeapSlots;
 

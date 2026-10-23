@@ -1455,7 +1455,7 @@ static void TolbiShipInteriors_FightRowingDeckMonsters(void) {
 
   Engine_ScriptStart();
   Field_EndBusyAndReveal();
-  Battle_SetStart(BATTLE_START_SCRIPTED);
+  Battle_SetType(BATTLE_TYPE_SCRIPTED);
   GameFlag_Clear(FLAG_TOLBI_SHIP_MONSTERS_SIGHTED);
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) == 0) {
     FieldScript_SetNextDestination(

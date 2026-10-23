@@ -101,7 +101,7 @@ enum ReunionLine {
   REUNION_BUNZA_AGREES_NOT_TO_FIGHT
 };
 
-enum PlanLine {
+enum TurnLine {
   PLAN_HAMMET_ASKS_PLAN,
   PLAN_BUNZA_HAS_WAGON,
   PLAN_MIA_ASKS_ABOUT_WAGON,

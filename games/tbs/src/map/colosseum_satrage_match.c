@@ -876,11 +876,11 @@ static void EventScript_ReachArena(void) {
   Engine_ScriptWait(10);
   /* FAKEMATCH(temporary): resultBase, set to 2 at the top, keeps the + 1
    * unfolded; as 3 - opponentFinishedFirst, which shares r5's 3 with
-   * Battle_SetStart(BATTLE_START_SCRIPTED), 3 of 106 instructions differ in
+   * Battle_SetType(BATTLE_TYPE_SCRIPTED), 3 of 106 instructions differ in
    * tbs-en. */
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_COLOSSO,
                                         resultBase - opponentFinishedFirst + 1);
-  Battle_SetStart(BATTLE_START_SCRIPTED);
+  Battle_SetType(BATTLE_TYPE_SCRIPTED);
   FieldScript_SetNextDestination((s32)&MapId_ColosseumSatrageMatch,
                                  COLOSSEUM_SATRAGE_MATCH_AFTER_MATCH_WON);
   FieldScript_SetDefeatDestination((s32)&MapId_ColosseumSatrageMatch,

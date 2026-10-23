@@ -22,11 +22,11 @@
 /// While Babi is missing, the attendant shows the party four beds
 /// (BabiPalace_ShowBeds), which a search then sleeps in
 /// (BabiPalace_RestInPalaceBeds, with a talk the first night,
-/// FLAG_BABI_PALACE_FIRST_NIGHT). Stepping beside Iodem (TRIGGER_BESIDE_IODEM)
-/// plays BabiPalace_HearSoldiersReport once (FLAG_IODEM_HEARD_SOLDIERS, whose
-/// rows for Iodem and his soldiers place no one once it is set), and Sheba
-/// notices the first Mind Read on her (BabiPalace_ReadShebasMind,
-/// FLAG_SHEBA_NOTICED_MIND_READ).
+/// FLAG_BABI_PALACE_FIRST_NIGHT). Stepping beside Iodem
+/// (MB_BABI_PALACE_BESIDE_IODEM) plays BabiPalace_HearSoldiersReport once
+/// (FLAG_IODEM_HEARD_SOLDIERS, whose rows for Iodem and his soldiers place no
+/// one once it is set), and Sheba notices the first Mind Read on her
+/// (BabiPalace_ReadShebasMind, FLAG_SHEBA_NOTICED_MIND_READ).
 ///
 /// During the finals the guards outside pass on Babi's word once
 /// (BabiPalace_PassOnBabisWord, FLAG_BABI_PALACE_GUARD_GAVE_WORD) and the
@@ -281,12 +281,12 @@ enum BabiPalaceBedAnimation {
 
 /// Metatile behaviors the map events answer besides the warps, whose metatile
 /// behaviors are their warps' numbers.
-enum BabiPalaceTrigger {
+enum BabiPalaceMetatileBehavior {
   /// The cells beside Iodem, while Babi is missing
   /// (BabiPalace_HearSoldiersReport).
-  TRIGGER_BESIDE_IODEM = 60,
-  TRIGGER_BEDS = 70, ///< the big bedroom's four beds, searched to sleep
-  TRIGGER_WELL = 90  ///< the well outside the palace
+  MB_BABI_PALACE_BESIDE_IODEM = 60,
+  MB_BABI_PALACE_BEDS = 70, ///< the big bedroom's four beds, searched to sleep
+  MB_BABI_PALACE_WELL = 90  ///< the well outside the palace
 };
 
 /// A companion walks into the leader and is taken off the map, as the party
@@ -2852,7 +2852,7 @@ struct MapEvent gBabiPalace_EventsBabiMissing[] = {
     { MAP_EVENT_WARP, 43, CONDITION_ALWAYS, BABI_PALACE_SHEBAS_LANDING_TO_CARPET_ROOM },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), BABI_PALACE_SHEBAS_LANDING_TO_SHEBAS_ROOM, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
     { MAP_EVENT_WARP, 45, CONDITION_ALWAYS, BABI_PALACE_SHEBAS_ROOM_TO_SHEBAS_LANDING },
-    { MAP_EVENT_COORD, TRIGGER_BESIDE_IODEM, FLAG_IODEM_HEARD_SOLDIERS, EVENT_SCRIPT(BabiPalace_HearSoldiersReport) },
+    { MAP_EVENT_COORD, MB_BABI_PALACE_BESIDE_IODEM, FLAG_IODEM_HEARD_SOLDIERS, EVENT_SCRIPT(BabiPalace_HearSoldiersReport) },
     { MAP_EVENT_TALK, LOCALID_ASKING_ABOUT_BABIS_SOLDIERS, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_AskAboutSoldiers) },
     { MAP_EVENT_TALK, LOCALID_HURRYING_WARRIORS_ALONG, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIfYoureEnteringColossoHurryAlong) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ASKING_ABOUT_BABIS_SOLDIERS, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIWonderHowDiligentlyBabisSoldiers) },
@@ -2879,7 +2879,7 @@ struct MapEvent gBabiPalace_EventsBabiMissing[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SORRY_FOR_SHEBA, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceActorWasTakenHostageToForce) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_OLD_WOMAN_IN_SHEBAS_ROOM, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceActorIsNotPermittedToLeave) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), SHEBA, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_ReadShebasMind) },
-    { BG_EVENT(BG_EVENT_SILENT), TRIGGER_BEDS, IF_FLAG_SET(FLAG_BABI_PALACE_BEDS_OPEN), EVENT_SCRIPT(BabiPalace_RestInPalaceBeds) },
+    { BG_EVENT(BG_EVENT_SILENT), MB_BABI_PALACE_BEDS, IF_FLAG_SET(FLAG_BABI_PALACE_BEDS_OPEN), EVENT_SCRIPT(BabiPalace_RestInPalaceBeds) },
     { BG_EVENT(BG_EVENT_SHELF), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheArmorLooksHeavyItLooks)) },
     { BG_EVENT(BG_EVENT_SHELF), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresNothingInThereItsCompletely)) },
     { BG_EVENT(BG_EVENT_SHELF), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresAHeadbandItSaysNever)) },
@@ -2945,7 +2945,7 @@ struct MapEvent gBabiPalace_EventsFinals[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_FINALS_SORRY_FOR_SHEBA, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceASmileOnAPrettyGirl) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_FINALS_OLD_WOMAN_IN_SHEBAS_ROOM, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceActorIsAGoodGirlBut) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), SHEBA, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIDontHaveTheLeastInterest) },
-    { BG_EVENT(BG_EVENT_SILENT), TRIGGER_BEDS, IF_FLAG_SET(FLAG_BABI_PALACE_FINALS_BEDS_OPEN), EVENT_SCRIPT(BabiPalace_RestInPalaceBeds) },
+    { BG_EVENT(BG_EVENT_SILENT), MB_BABI_PALACE_BEDS, IF_FLAG_SET(FLAG_BABI_PALACE_FINALS_BEDS_OPEN), EVENT_SCRIPT(BabiPalace_RestInPalaceBeds) },
     { BG_EVENT(BG_EVENT_SHELF), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheArmorLooksHeavyItLooks)) },
     { BG_EVENT(BG_EVENT_SHELF), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresNothingInThereItsCompletely)) },
     { BG_EVENT(BG_EVENT_SHELF), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresAHeadbandItSaysNever)) },
@@ -3020,7 +3020,7 @@ struct MapEvent gBabiPalace_EventsAfterColosso[] = {
     { MAP_EVENT_TALK, LOCALID_AFTER_COLOSSO_OLD_WOMAN_IN_SHEBAS_ROOM, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIAmSurprisedActorWasAllowed) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_AFTER_COLOSSO_SORRY_FOR_SHEBA, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceItSeemedOnlyNaturalThatActor) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_AFTER_COLOSSO_OLD_WOMAN_IN_SHEBAS_ROOM, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIAmSoRelievedActorHas) },
-    { BG_EVENT(BG_EVENT_SILENT), TRIGGER_BEDS, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_RestInPalaceBeds) },
+    { BG_EVENT(BG_EVENT_SILENT), MB_BABI_PALACE_BEDS, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_RestInPalaceBeds) },
     { BG_EVENT(BG_EVENT_SHELF), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheArmorLooksHeavyItLooks)) },
     { BG_EVENT(BG_EVENT_SHELF), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresNothingInThereItsCompletely)) },
     { BG_EVENT(BG_EVENT_SHELF), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresAHeadbandItSaysNever)) },
@@ -3039,7 +3039,7 @@ struct MapEvent gBabiPalace_OutsideEventsBabiMissing[] = {
     { MAP_EVENT_TALK, LOCALID_SECOND_GUARD, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceSomeOfTheRoomsInThe) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_FIRST_GUARD, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceShouldThePalaceReallyBeOpen) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SECOND_GUARD, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIWonderHowManyPeopleWill) },
-    { BG_EVENT(BG_EVENT_SILENT), TRIGGER_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_ExamineWell) },
+    { BG_EVENT(BG_EVENT_SILENT), MB_BABI_PALACE_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_ExamineWell) },
     { MAP_EVENTS_END },
 };
 
@@ -3054,7 +3054,7 @@ struct MapEvent gBabiPalace_OutsideEventsFinals[] = {
     { MAP_EVENT_TALK, LOCALID_SECOND_GUARD, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_ThankForSavingBabi) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_FIRST_GUARD, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceSureTheySavedBabiButIm) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SECOND_GUARD, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceBabiIsADeliberateManHe) },
-    { BG_EVENT(BG_EVENT_SILENT), TRIGGER_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_ExamineWell) },
+    { BG_EVENT(BG_EVENT_SILENT), MB_BABI_PALACE_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_ExamineWell) },
     { MAP_EVENTS_END },
 };
 
@@ -3065,7 +3065,7 @@ struct MapEvent gBabiPalace_OutsideEventsAfterColosso[] = {
     { MAP_EVENT_TALK, LOCALID_SECOND_GUARD, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_AskAboutRemainingWarriors) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_FIRST_GUARD, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceTheEndOfAFestivalIs) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SECOND_GUARD, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceAllTheHeroicWarriorsWhoTook) },
-    { BG_EVENT(BG_EVENT_SILENT), TRIGGER_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_ExamineWell) },
+    { BG_EVENT(BG_EVENT_SILENT), MB_BABI_PALACE_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_ExamineWell) },
     { MAP_EVENTS_END },
 };
 // clang-format on

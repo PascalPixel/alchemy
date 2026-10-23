@@ -146,10 +146,10 @@ enum CrossboneIsleStatuesLocalId {
 /// The events CrossboneIsleStatues's per-frame checks raise when the
 /// leader crosses the first, second or fifth pursuer's stretch of the room.
 /// The third and fourth chases start from coord events instead.
-enum CrossboneIsleStatuesTrigger {
-  TRIGGER_FIRST_CHASE = 91,
-  TRIGGER_SECOND_CHASE = 92,
-  TRIGGER_FIFTH_CHASE = 96
+enum CrossboneIsleStatuesRaisedEvent {
+  RAISED_FIRST_CHASE = 91,
+  RAISED_SECOND_CHASE = 92,
+  RAISED_FIFTH_CHASE = 96
 };
 
 /// CrossboneIsleBane's placed object events, numbered in the order of
@@ -679,7 +679,7 @@ static void CrossboneIsleKeys_CheckFirstPursuerTrigger(void) {
       gGameState.pausedObject != LOCALID_FIRST_STATUE &&
       (u32)(column - 21) <= 2 && row >= 10 && row <= 11) {
     Engine_GameFlagSet(PURSUER_AFTER_LEADER_FLAG);
-    work->raisedEvent = TRIGGER_FIRST_CHASE;
+    work->raisedEvent = RAISED_FIRST_CHASE;
   }
 }
 
@@ -721,7 +721,7 @@ static void CrossboneIsleKeys_CheckSecondPursuerTrigger(void) {
       gGameState.pausedObject != LOCALID_SECOND_STATUE && column == 10 &&
       (u32)(row - 16) <= 2) {
     FLAG_SET(PURSUER_AFTER_LEADER_FLAG);
-    MapLocalState_StoreStep(&work->raisedEvent, TRIGGER_SECOND_CHASE);
+    MapLocalState_StoreStep(&work->raisedEvent, RAISED_SECOND_CHASE);
   }
 }
 
@@ -880,7 +880,7 @@ static void CrossboneIsleKeys_CheckFifthPursuerTrigger(void) {
       FLAG_CHECK(PURSUER_AFTER_LEADER_FLAG) == 0 && state->cloaked == 0 &&
       column == 19 && (u32)(row - 15) <= 1) {
     FLAG_SET(PURSUER_AFTER_LEADER_FLAG);
-    MapLocalState_StoreStep(&work->raisedEvent, TRIGGER_FIFTH_CHASE);
+    MapLocalState_StoreStep(&work->raisedEvent, RAISED_FIFTH_CHASE);
   }
 }
 
@@ -1654,9 +1654,9 @@ struct MapEvent gCrossboneIsleStatuesEvents[] = {
     { MAP_EVENT_COORD, 54, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TrackFourthPursuerColumn) },
     { MAP_EVENT_COORD, 61, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_DodgeThirdPursuer) },
     { MAP_EVENT_COORD, 62, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_DodgeFourthPursuer) },
-    { MAP_EVENT_RAISED, TRIGGER_FIFTH_CHASE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_DodgeFifthPursuer) },
-    { MAP_EVENT_RAISED, TRIGGER_SECOND_CHASE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_DodgeSecondPursuer) },
-    { MAP_EVENT_RAISED, TRIGGER_FIRST_CHASE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_DodgeFirstPursuer) },
+    { MAP_EVENT_RAISED, RAISED_FIFTH_CHASE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_DodgeFifthPursuer) },
+    { MAP_EVENT_RAISED, RAISED_SECOND_CHASE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_DodgeSecondPursuer) },
+    { MAP_EVENT_RAISED, RAISED_FIRST_CHASE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_DodgeFirstPursuer) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StartRevealBlend) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EndRevealBlend) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_HALT), LOCALID_FIRST_STATUE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HaltPursuer) },

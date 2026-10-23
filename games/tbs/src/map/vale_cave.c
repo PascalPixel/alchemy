@@ -177,7 +177,7 @@ enum ValeCaveLogsLocalId {
 
 /// The first of the twelve metatile behaviors that send Kite round its ledge
 /// (EventScript_KiteKeepsAway), one for each of gValeCave_WalkTargets.
-#define VALE_CAVE_FIRST_KITE_TRIGGER_CELL 45
+enum ValeCaveMetatileBehavior { MB_VALE_CAVE_FIRST_KITE_ROUTE = 45 };
 
 /// The flag of Kite, set once it is caught.
 /// ★ Named from the game: "Kite" (MsgDjinnName)
@@ -585,7 +585,7 @@ static void EventScript_KiteKeepsAway(void) {
       djinni = ObjectEvent_GetById(LOCALID_KITE);
       leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
       djinni->acceleration = leader->acceleration;
-      routeIndex -= VALE_CAVE_FIRST_KITE_TRIGGER_CELL;
+      routeIndex -= MB_VALE_CAVE_FIRST_KITE_ROUTE;
       // X/Z pairs occupy eight bytes. Plain pair indexing changes six
       // instruction words in the English build, so keep separate offsets.
       walkTargetBytes = (const u8 *)gValeCave_WalkTargets;
@@ -1025,7 +1025,7 @@ s32 gPushedObject_FootprintBounds[] = {
 };
 
 /// The twelve points round the far side of Kite's ledge, x then z in pixels,
-/// one for each metatile behavior from VALE_CAVE_FIRST_KITE_TRIGGER_CELL on.
+/// one for each metatile behavior from MB_VALE_CAVE_FIRST_KITE_ROUTE on.
 s32 gValeCave_WalkTargets[] = {
     760, 296,
     760, 280,

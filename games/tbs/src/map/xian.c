@@ -22,7 +22,7 @@
 ///   jumps the leader over it (Xian_JumpOverSpilledWater), and she walks back
 ///   for more. Frost freezes the puddle (FLAG_MAP_TEMP_01) into ice that can be
 ///   stood on. A leader who stands in her way for two seconds makes her raise
-///   XIAN_TRIGGER_CARRIER_BLOCKED (Xian_WatchWaterCarrierPath), and both walk
+///   RAISED_CARRIER_BLOCKED (Xian_WatchWaterCarrierPath), and both walk
 ///   back to the start of her round.
 /// - the kung fu student, a little girl, shows her strike on the tree before
 ///   her once (FLAG_MAP_TEMP_02), and Force on the tree makes it jump on its
@@ -165,8 +165,10 @@ enum XianLocalId {
 enum { PUDDLE_ANIMATION_FROZEN = 5 };
 
 /// The event the water carrier raises when the leader has stood in her way
-/// for two seconds.
-enum { XIAN_TRIGGER_CARRIER_BLOCKED = 200, XIAN_CARRIER_BLOCKED_FRAMES = 120 };
+/// for XIAN_CARRIER_BLOCKED_FRAMES.
+enum XianRaisedEvent { RAISED_CARRIER_BLOCKED = 200 };
+
+enum { XIAN_CARRIER_BLOCKED_FRAMES = 120 };
 
 /// Talking to Mist in Xian: Mist, a Mercury Djinni, joins the party.
 static void Xian_MistJoins(void) {
@@ -292,7 +294,7 @@ static s32 Xian_WatchWaterCarrierPath(union FieldObject *fieldObject) {
     self->riseCounter = 0;
   }
   if (near && self->riseCounter > XIAN_CARRIER_BLOCKED_FRAMES - 1) {
-    gFieldWork->raisedEvent = XIAN_TRIGGER_CARRIER_BLOCKED;
+    gFieldWork->raisedEvent = RAISED_CARRIER_BLOCKED;
     self->riseCounter = 0;
   }
   Xian_UpdateCarrierTracking(self, leader, 18, near);
@@ -1140,7 +1142,7 @@ struct MapEvent gXian_Events[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_FEIZHI, CONDITION_ALWAYS, MSGNO(MsgXianWhereAreTheMerchantsNoOne) },
     { BG_EVENT(BG_EVENT_JAR), 101, FLAG_XIAN_LUCKY_MEDAL_JAR, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { MAP_EVENT_TALK, LOCALID_MIST, CONDITION_ALWAYS, EVENT_SCRIPT(Xian_MistJoins) },
-    { MAP_EVENT_RAISED, XIAN_TRIGGER_CARRIER_BLOCKED, CONDITION_ALWAYS, EVENT_SCRIPT(Xian_MoveAsideForWaterCarrier) },
+    { MAP_EVENT_RAISED, RAISED_CARRIER_BLOCKED, CONDITION_ALWAYS, EVENT_SCRIPT(Xian_MoveAsideForWaterCarrier) },
     { MAP_EVENTS_END },
 };
 // clang-format on

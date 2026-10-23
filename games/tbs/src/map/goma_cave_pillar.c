@@ -27,7 +27,7 @@
 /// Forge makes him jump in surprise, and the Djinni's battle begins. After a
 /// win the room reloads with the Djinni's script still pending, so the man
 /// fidgets on a timer while Forge joins the party; once it has, the timer
-/// raises TRIGGER_FORGE_JOINED, and the man is amazed and walks away for good
+/// raises RAISED_FORGE_JOINED, and the man is amazed and walks away for good
 /// (FLAG_GOMA_CAVE_WITNESS_LEFT). After a loss or an escape Forge hides until
 /// the room is entered again (FLAG_DJINNI_HIDING(DJINNI_FORGE)), and the man
 /// says `Hmmm... It must be hiding somewhere again...`.
@@ -142,7 +142,7 @@ enum { WARP_DEST_STUMP_FALL = 99 };
 
 /// The map event the man's timer raises once Forge has joined the party
 /// (GomaCavePillar_FidgetWhileForgeFights).
-enum { TRIGGER_FORGE_JOINED = 99 };
+enum GomaCavePillarRaisedEvent { RAISED_FORGE_JOINED = 99 };
 
 // Shared movement routines stay in their linked order.
 #include "common/object_staged_object_event.h"
@@ -542,7 +542,7 @@ const struct MapEvent *Map_GetEvents(void) { return gGomaCavePillar_Events; }
 
 /// Back from a won battle with Forge, the man reacts on a timer while the
 /// Djinni joins the party; once the Djinni's script is over, it raises
-/// TRIGGER_FORGE_JOINED.
+/// RAISED_FORGE_JOINED.
 static void GomaCavePillar_FidgetWhileForgeFights(void) {
   struct EventWork *work;
   s32 frame;
@@ -566,7 +566,7 @@ static void GomaCavePillar_FidgetWhileForgeFights(void) {
     break;
   }
   if (gGameState.pendingDjinnEvent == 0)
-    work->raisedEvent = TRIGGER_FORGE_JOINED;
+    work->raisedEvent = RAISED_FORGE_JOINED;
 }
 
 /// Raised in Goma Cave once Forge has joined the party: the man who fought it
@@ -754,7 +754,7 @@ struct MapEvent gGomaCavePillar_Events[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_STUMP, FLAG_GOMA_CAVE_STUMP_FELL, EVENT_SCRIPT(EventScript_PushStumpOver) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_EAST_PILLAR, FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE, EVENT_SCRIPT(EventScript_MoveEastPillar) },
     { BG_EVENT(BG_EVENT_CHEST), 101, 0xf4f, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { MAP_EVENT_RAISED, TRIGGER_FORGE_JOINED, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WitnessCheersForgeCaught) },
+    { MAP_EVENT_RAISED, RAISED_FORGE_JOINED, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WitnessCheersForgeCaught) },
     { MAP_EVENTS_END },
 };
 // clang-format on

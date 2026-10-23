@@ -1,13 +1,14 @@
 /// @file
 /// Kolima Forest (MapId_KolimaForestFloodgate), the fourth of the forest's
 /// five maps, between MapId_KolimaForestCliff and the map where Tret stands
-/// (MapId_KolimaForestTree). A Floodgate Switch (CELL_FLOODGATE_SWITCH),
-/// beside a sign that reads "Do not touch Floodgate Switch!", raises and lowers
-/// the river: with the water high the logs float (26 pixels up) and can be
-/// rolled along it; with it low they lie on the riverbed. A short log slides
-/// between two places, the leader can jump south across a gap (coord event 10),
-/// and a chest holds a Fur Coat. The forest keeps its cursed colours until Tret
-/// lifts the curse (FLAG_KOLIMA_CURSE_LIFTED).
+/// (MapId_KolimaForestTree). A Floodgate Switch
+/// (MB_KOLIMA_FOREST_FLOODGATE_SWITCH), beside a sign that reads "Do not touch
+/// Floodgate Switch!", raises and lowers the river: with the water high the
+/// logs float (26 pixels up) and can be rolled along it; with it low they lie
+/// on the riverbed. A short log slides between two places, the leader can jump
+/// south across a gap (coord event 10), and a chest holds a Fur Coat. The
+/// forest keeps its cursed colours until Tret lifts the curse
+/// (FLAG_KOLIMA_CURSE_LIFTED).
 ///
 /// The water level, the short log's place and each log's cells are kept in
 /// gMapLocalState (gKolimaForestFloodgateLayout, gKolimaForestFloodgateReturned
@@ -80,7 +81,9 @@ enum {
 };
 
 /// The metatile behavior of the Floodgate Switch's cell, which a search flips.
-enum { CELL_FLOODGATE_SWITCH = 9 };
+enum KolimaForestFloodgateMetatileBehavior {
+  MB_KOLIMA_FOREST_FLOODGATE_SWITCH = 9
+};
 
 static void KolimaForestFloodgate_MarkShortLogCells(void);
 static void KolimaForestFloodgate_CreateLogs(struct FloodgateLog *log);
@@ -676,8 +679,8 @@ struct MapEvent gKolimaForestFloodgateEvents[] = {
      EVENT_SCRIPT(KolimaForestFloodgate_PushShortLogEast)},
     {MAP_EVENT_TALK, LOCALID_SIGN, CONDITION_ALWAYS,
      MSGNO(MsgKolimaDoNotTouchFloodgate)},
-    {BG_EVENT(BG_EVENT_SILENT), CELL_FLOODGATE_SWITCH, CONDITION_ALWAYS,
-     EVENT_SCRIPT(KolimaForestFloodgate_FlipFloodgateSwitch)},
+    {BG_EVENT(BG_EVENT_SILENT), MB_KOLIMA_FOREST_FLOODGATE_SWITCH,
+     CONDITION_ALWAYS, EVENT_SCRIPT(KolimaForestFloodgate_FlipFloodgateSwitch)},
     {BG_EVENT(BG_EVENT_CHEST), 100, 0xf00, FIND_ITEM(ITEM_FUR_COAT)},
     {MAP_EVENTS_END},
 };

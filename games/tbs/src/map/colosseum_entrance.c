@@ -316,16 +316,18 @@ enum ColosseumWaitingRoomLocalId {
   LOCALID_BUFORD
 };
 
-/// The coord event triggers the map event tables answer, as the map's
-/// metatile behaviors.
-enum ColosseumEntranceTrigger {
-  /// Before the gates at the Colosseum Entrance
-  /// (EventScript_CrowdRecognizesIsaac).
-  TRIGGER_BEFORE_GATES = 10,
+/// The metatile behaviors the Colosseum Entrance's map events answer.
+enum ColosseumEntranceMetatileBehavior {
+  /// Before the gates (EventScript_CrowdRecognizesIsaac).
+  MB_COLOSSEUM_ENTRANCE_BEFORE_GATES = 10
+};
+
+/// The metatile behaviors the Colosseum's map events answer.
+enum ColosseumMetatileBehavior {
   /// The line before the waiting room's east passage (EventScript_FinalsStart).
-  TRIGGER_FINALS_LINE = 12,
+  MB_COLOSSEUM_FINALS_LINE = 12,
   /// The cells behind it (EventScript_RearmFinalsStart).
-  TRIGGER_BEHIND_FINALS_LINE = 13
+  MB_COLOSSEUM_BEHIND_FINALS_LINE = 13
 };
 
 /// The temporary flags the colosseum's maps keep.
@@ -658,12 +660,13 @@ static void EventScript_AskIfReadyForFinals(void) {
   FieldScript_End();
 }
 
-/// Stepping toward the gates at the Colosseum Entrance (TRIGGER_BEFORE_GATES)
-/// on the finals day: four soldiers recognize Isaac as Babi's pick and quarrel
-/// over a boy in the finals, then one takes the party in to the Colosseum's
-/// COLOSSEUM_FROM_COLOSSEUM_ENTRANCE. If Isaac will not go, the soldiers
-/// insist and Ivan, Mia and Garet talk him round; if he still refuses, Garet
-/// leads the way in. Before Babi is saved it does nothing.
+/// Stepping toward the gates at the Colosseum Entrance
+/// (MB_COLOSSEUM_ENTRANCE_BEFORE_GATES) on the finals day: four soldiers
+/// recognize Isaac as Babi's pick and quarrel over a boy in the finals, then
+/// one takes the party in to the Colosseum's COLOSSEUM_FROM_COLOSSEUM_ENTRANCE.
+/// If Isaac will not go, the soldiers insist and Ivan, Mia and Garet talk him
+/// round; if he still refuses, Garet leads the way in. Before Babi is saved it
+/// does nothing.
 static void EventScript_CrowdRecognizesIsaac(void) {
   // The native sequence reuses this word for object event handles and the
   // reply.
@@ -922,11 +925,12 @@ static void EventScript_CrowdRecognizesIsaac(void) {
   FieldScript_End();
 }
 
-/// Stepping to the line in the Colosseum's waiting room (TRIGGER_FINALS_LINE,
-/// while FLAG_FINALS_LINE_ARMED is set and FLAG_FINALS_LINE_REACHED clear):
-/// asked whether he is ready, Isaac can still wait; if he is, the warriors
-/// grumble, line up by rank and march out, and Isaac follows them out by the
-/// east passage (COLOSSEUM_WAITING_ROOM_TO_PILLARED_PASSAGE_EAST).
+/// Stepping to the line in the Colosseum's waiting room
+/// (MB_COLOSSEUM_FINALS_LINE, while FLAG_FINALS_LINE_ARMED is set and
+/// FLAG_FINALS_LINE_REACHED clear): asked whether he is ready, Isaac can still
+/// wait; if he is, the warriors grumble, line up by rank and march out, and
+/// Isaac follows them out by the east passage
+/// (COLOSSEUM_WAITING_ROOM_TO_PILLARED_PASSAGE_EAST).
 static void EventScript_FinalsStart(void) {
   struct ObjectEvent *objectEvent;
   const s32 *script;
@@ -1069,8 +1073,8 @@ static void EventScript_FinalsStart(void) {
 }
 
 /// Stepping back from the line in the Colosseum's waiting room
-/// (TRIGGER_BEHIND_FINALS_LINE) arms the question again (FLAG_FINALS_LINE_ARMED
-/// and FLAG_FINALS_LINE_REACHED).
+/// (MB_COLOSSEUM_BEHIND_FINALS_LINE) arms the question again
+/// (FLAG_FINALS_LINE_ARMED and FLAG_FINALS_LINE_REACHED).
 static void EventScript_RearmFinalsStart(void) {
   GameFlag_ClearBit(FLAG_FINALS_LINE_REACHED);
   Engine_GameFlagSet(FLAG_FINALS_LINE_ARMED);
@@ -2576,7 +2580,7 @@ struct MapEvent gColosseumEntranceEvents[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SCALPER, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceImGoingToBeInTrouble) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_LUCKY_GUESS_MAN, FLAG_BABI_SAVED, MSGNO(MsgColosseumEntranceOnceTheTrialsAreOverIts) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_LUCKY_GUESS_MAN, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceAllOfTheProfitsFromThe) },
-    { MAP_EVENT_COORD, TRIGGER_BEFORE_GATES, FLAG_COLOSSO_OVER, EVENT_SCRIPT(EventScript_CrowdRecognizesIsaac) },
+    { MAP_EVENT_COORD, MB_COLOSSEUM_ENTRANCE_BEFORE_GATES, FLAG_COLOSSO_OVER, EVENT_SCRIPT(EventScript_CrowdRecognizesIsaac) },
     { MAP_EVENTS_END },
 };
 // clang-format on
@@ -2604,9 +2608,9 @@ struct MapEvent gColosseumEventsFromColosseumAzartMatchWest[] = {
      MSGNO(MsgColosseumEntranceIFeelWeveBeenWaitingForever)},
     {MAP_EVENT_TALK, LOCALID_GONG_SOLDIER, CONDITION_ALWAYS,
      MSGNO(MsgColosseumEntranceWhenTheGongSoundsTheFinals)},
-    {MAP_EVENT_COORD, TRIGGER_FINALS_LINE, FLAG_FINALS_LINE_REACHED,
+    {MAP_EVENT_COORD, MB_COLOSSEUM_FINALS_LINE, FLAG_FINALS_LINE_REACHED,
      EVENT_SCRIPT(EventScript_FinalsStart)},
-    {MAP_EVENT_COORD, TRIGGER_BEHIND_FINALS_LINE, CONDITION_ALWAYS,
+    {MAP_EVENT_COORD, MB_COLOSSEUM_BEHIND_FINALS_LINE, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_RearmFinalsStart)},
     {MAP_EVENTS_END},
 };

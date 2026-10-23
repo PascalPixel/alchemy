@@ -154,7 +154,7 @@ enum LaliveroLocalId {
 
 /// The door at coord event 6, into the Lalivero Sanctum, is a gate two cells
 /// wide.
-enum { GATE_TRIGGER = 6 };
+enum LaliveroMetatileBehavior { MB_LALIVERO_SANCTUM_GATE = 6 };
 
 /// A cell of the wall along the town's south edge (MB_WALL), whose
 /// attributes Lalivero_SetupMap copies onto cells the party may not cross.
@@ -248,7 +248,7 @@ static void EventScript_EnterDoor(void) {
 
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = OBJ_EVENT_FALLS;
   Sound_PlaySong(SE_DOOR_OPEN);
-  if (door == GATE_TRIGGER) {
+  if (door == MB_LALIVERO_SANCTUM_GATE) {
     MapGrid_AnimateCells(gLaliveroGateOpenSteps, (u16)x, (u16)y);
     ObjectEvent_WalkBy(LOCALID_PARTY_LEADER, 0, -16);
   } else {

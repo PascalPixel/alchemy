@@ -222,9 +222,12 @@ enum { SHOP_IMIL_WEAPONS = 10, SHOP_IMIL_ARMOR = 11, SHOP_IMIL_ITEMS = 12 };
 /// Imil's inn, as Inn_CheckIn numbers the inns.
 enum { IMIL_INN = 4 };
 
-/// The weapon and armor counters' bg event triggers in the houses: searching
+/// The weapon and armor counters' metatile behaviors in the houses: searching
 /// one facing north reaches its seller.
-enum { TRIGGER_WEAPON_COUNTER = 10, TRIGGER_ARMOR_COUNTER = 11 };
+enum ImilInteriorsMetatileBehavior {
+  MB_IMIL_INTERIORS_WEAPON_COUNTER = 10,
+  MB_IMIL_INTERIORS_ARMOR_COUNTER = 11
+};
 
 // The leader faces a counter: FACING_IS_NORTH, in the two spellings the sites
 // match with, the shops' from the heading read as s16 and the inn's and the
@@ -2021,8 +2024,8 @@ struct MapEvent gImil_InteriorEvents[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_JUSTIN, CONDITION_ALWAYS, MSGNO(MsgImilMiasGoingToDefendTheHonor) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MEGAN, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT_SCRIPT(Imil_ReadMegansMind) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MEGAN, CONDITION_ALWAYS, MSGNO(MsgImilImSorryMiaButICant) },
-    { BG_EVENT_FACING(FACING_NORTH), TRIGGER_WEAPON_COUNTER, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT_SCRIPT(Imil_TalkToWeaponMerchant) },
-    { BG_EVENT_FACING(FACING_NORTH), TRIGGER_ARMOR_COUNTER, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT_SCRIPT(Imil_TalkToArmorMerchant) },
+    { BG_EVENT_FACING(FACING_NORTH), MB_IMIL_INTERIORS_WEAPON_COUNTER, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT_SCRIPT(Imil_TalkToWeaponMerchant) },
+    { BG_EVENT_FACING(FACING_NORTH), MB_IMIL_INTERIORS_ARMOR_COUNTER, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT_SCRIPT(Imil_TalkToArmorMerchant) },
     { BG_EVENT(BG_EVENT_CHEST), 100, 0xf26, FIND_ITEM(ITEM_EMPTY_BOTTLE) },
     { BG_EVENT(BG_EVENT_BARREL), 101, 0xf62, FIND_ITEM(ITEM_SLEEP_BOMB) },
     { BG_EVENT(BG_EVENT_OVEN), 102, 0xf63, FIND_ITEM(ITEM_LUCKY_PEPPER) },

@@ -2561,12 +2561,12 @@ static void AltinPeak_AdvanceCart(struct ObjectEvent *objectEvent) {
 }
 
 /// The metatile behaviors that mark the mine cart's route, on map layer 2.
-enum AltinPeakCartCell {
-  ALTIN_PEAK_CART_COUNTDOWN = 96, ///< AltinPeak_StartCartCountdown
-  ALTIN_PEAK_CART_TURN_LEFT = 97,
-  ALTIN_PEAK_CART_TURN_RIGHT = 98,
+enum AltinPeakMetatileBehavior {
+  MB_ALTIN_PEAK_CART_COUNTDOWN = 96, ///< AltinPeak_StartCartCountdown
+  MB_ALTIN_PEAK_CART_TURN_LEFT = 97,
+  MB_ALTIN_PEAK_CART_TURN_RIGHT = 98,
   /// The end of the route, where the leader jumps off.
-  ALTIN_PEAK_CART_STOP = 99
+  MB_ALTIN_PEAK_CART_STOP = 99
 };
 
 /// Rolls the mine cart the party leader rides: it sets off the first way it can
@@ -2621,16 +2621,16 @@ static void AltinPeak_RollCart(s32 id, s32 heading) {
   for (;;) {
     switch (MapGrid_GetMetatileBehaviorAt(2, objectEvent->x.fixed,
                                           objectEvent->z.fixed)) {
-    case ALTIN_PEAK_CART_TURN_RIGHT:
+    case MB_ALTIN_PEAK_CART_TURN_RIGHT:
       AltinPeak_TurnCartRight(objectEvent);
       break;
-    case ALTIN_PEAK_CART_TURN_LEFT:
+    case MB_ALTIN_PEAK_CART_TURN_LEFT:
       AltinPeak_TurnCartLeft(objectEvent);
       break;
-    case ALTIN_PEAK_CART_COUNTDOWN:
+    case MB_ALTIN_PEAK_CART_COUNTDOWN:
       AltinPeak_StartCartCountdown(objectEvent);
       break;
-    case ALTIN_PEAK_CART_STOP:
+    case MB_ALTIN_PEAK_CART_STOP:
       goto arrived;
     }
     AltinPeak_AdvanceCart(objectEvent);

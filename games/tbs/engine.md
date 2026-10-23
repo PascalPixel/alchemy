@@ -21,26 +21,29 @@ Memory is put in order and the services everything relies on are started
 once; after that one loop runs map after map for as long as the console
 is on.
 
-The console has two kinds of work memory: [IWRAM](glossary.md#iwram-and-ewram), 32 KB inside the processor
-chip and the fastest memory it has, and EWRAM, 256 KB beside it and slower.
-The [heap](glossary.md#heap-and-pools) is the part of that memory from which code borrows blocks for its
-state and gives them back. A stack is the memory a function's local values
-live in while it runs, and an interrupt is the hardware stopping the
-program to run a handler, as it does at the end of every frame.
-
 The cartridge header jumps to `System_Entry` (`src/system/entry.s`), which
-sets up the interrupt and system stacks at the top of IWRAM and calls
-`System_Initialize`. That function clears IWRAM below the stacks, empties the
-heap, copies the resident runtime (the routines that must run fast) into
-IWRAM and points the interrupt vector at its dispatcher, installs `System_VBlankHandler`, starts the sound driver,
-resets the [task](glossary.md#task) table, waits ten frames and calls `Game_RunFar`, the jump in
-the object bank's [far-call](glossary.md#far-call) table that leads to `Game_Run`
-([Banks and far calls](#banks-and-far-calls) explains them). Neither
-function returns. `Game_Run` loads one map after another for as long as the
-game runs, starting with the title. A soft reset (A, B, Select and Start held
-together) sets `gResetRequested`, and the frame loop restarts the game from
-the cartridge's entry point. The title's intro, with the Nintendo and
-[Camelot](glossary.md#camelot) logos before it, is code in
+sets up the interrupt and system stacks at the top of [IWRAM](glossary.md#iwram-and-ewram) and calls
+`System_Initialize`. That function, in order:
+
+1. clears IWRAM below the stacks and empties the [heap](glossary.md#heap-and-pools);
+2. copies the resident runtime, the routines that must run fast, into IWRAM
+   and points the interrupt vector at its dispatcher;
+3. installs `System_VBlankHandler`, starts the sound driver and empties the
+   [task](glossary.md#task) table;
+4. waits ten frames and calls `Game_Run`, the loop of maps, which never
+   returns.
+
+`Game_Run` lives in another [bank](glossary.md#bank), so start-up calls it through its
+[far-call](glossary.md#far-call) entry, `Game_RunFar` ([Banks and far calls](#banks-and-far-calls)).
+It starts with the title. Before each map it drops the last map's tasks,
+empties the heap, unpacks the map's [overlay](glossary.md#overlay) and runs the map until the
+[party](glossary.md#the-party) takes a [warp](glossary.md#warp), whose row names the next map; a battle or a
+minigame runs in its place without an overlay.
+
+A soft reset (A, B, Select and Start held together) sets `gResetRequested`;
+`WaitFrames` sees it after its next frame and jumps to `Cart_Restart`, the
+cartridge's first instruction, so start-up runs again from the top. The
+title's intro, with the Nintendo and [Camelot](glossary.md#camelot) logos before it, is code in
 [Graphics](src/graphics/README.md#the-title-sequence).
 
 [Runtime](src/runtime/README.md#start-up) goes through start-up step by step.
@@ -57,34 +60,58 @@ moving because a short list of jobs, the tasks, runs once every frame
 whatever that code is doing. There is no main loop that calls each part of
 the game once a frame. A menu screen, a cutscene or a battle effect is an
 ordinary function with a loop of its own, and when time has to pass it calls
-`WaitFrames(n)` and continues after `n` frames.
+`WaitFrames(n)`, which runs `n` frames itself and then returns. The Camelot
+logo at power-on is such a loop (`Title_ShowAnimatedSplash`, simplified):
 
-Each frame, `WaitFrames` runs the main-loop tasks
-(`Scheduler_RunPass(SCHEDULER_KEY_MAIN_LOOP)`), builds the [sprite](glossary.md#sprite-and-oam) list
-(`Render_BuildOamList`: the position, size and picture of every sprite to
-draw, which the hardware keeps in its OAM, the object attribute memory) and
-halts the CPU until VBlank, the pause after the last line of the picture.
-The VBlank handler then copies the sprite list and the layers' scroll
-positions to the hardware, carries out
-the queued register writes and runs the VBlank tasks. A task is a routine
-added with `Scheduler_AddOrUpdateCallback`; window animation, battle event
-playback (`BattleEvent_Playback`) and a map's callbacks are tasks.
+```c
+for (i = 0; i < 120; i++) {
+  // show the logo's next animation frame
+  Dma_Set(((gFrameCount >> 3) & 3) * 0x400 + frames,
+          BG_CHAR_BLOCK(1) + 0x100, DMA_COPY_WORDS(0x340 / 4), REG_DMA3);
+  if (gKeysPressed & (KEY_A | KEY_START))
+    break;
+  WaitFrames(1);
+}
+```
 
-This design puts a bound on the stack. The system stack is 1,792 bytes of
-IWRAM, and the interrupt handlers and the sound mixer run on it too. When the
-stack pointer is below `Ram_FrameWaitStackTop`, 512 bytes above the heap's
-end, `WaitFrames` copies everything from the stack pointer up to that top into
-`gSavedStack` in EWRAM, runs its frames from the top and copies the stack back
-on return, so tasks always start with the same 512 bytes. It also means a task
-must not call `WaitFrames`: the nested call would overwrite the outer caller's
-saved stack. Nothing guards against it, and no task does.
+A task is a `void (*)(void)` routine, added once with an order and run every
+frame until it is removed (`Scheduler_RemoveCallback`) or the next map
+empties the table. A battle adds its camera this way (`Battle_RunEncounter`):
+
+```c
+Scheduler_AddOrUpdateCallback(BattlePresentation_UpdateCamera, 0xc7f);
+```
+
+The order's high byte picks the pass that runs the task, `0x0c` for the
+frame's work (`SCHEDULER_KEY_MAIN_LOOP`) and `0x04` for the vertical blank
+(`SCHEDULER_KEY_VBLANK`), and its low byte ranks it within the pass, higher
+first: at `0x7f` the camera moves only after the battle's event playback
+and sprites, added at `0x80`, have run. Window animation, battle event playback
+(`BattleEvent_Playback`) and a map's callbacks are tasks too.
+
+Each frame, `WaitFrames`:
+
+1. runs the main-loop tasks;
+2. builds the frame's [sprite](glossary.md#sprite-and-oam) list (`Render_BuildOamList`);
+3. halts the CPU until VBlank.
+
+The VBlank handler then copies the sprite list, the layers' scroll positions
+and the register writes the frame's code queued to the hardware, and runs
+the VBlank tasks.
+
+The stack has a bound. Code may call `WaitFrames` from deep inside its own
+calls, so `WaitFrames` first copies the part of the caller's stack below
+`Ram_FrameWaitStackTop` aside into EWRAM, and runs its frames from that line.
+The frame loop, its tasks and the VBlank work therefore always have the same
+512 bytes, from the line down to the heap's end, however deep the caller. A
+task must not call `WaitFrames`: the nested call would overwrite the outer
+caller's saved stack. Nothing guards against it, and no task does.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `SCHEDULER_KEY_MAIN_LOOP` | 3200 (`0xc80`) | the pass `WaitFrames` runs each frame |
-| `SCHEDULER_KEY_VBLANK` | 1152 (`0x480`) | the pass the VBlank handler runs |
-| `Ram_IwramHeapEnd` | `0x03007800` | the end of the IWRAM heap, as an address in IWRAM |
-| `Ram_FrameWaitStackTop` | `0x03007a00` | the stack top `WaitFrames` runs its frames from, 512 bytes above the heap's end |
+| `SCHEDULER_KEY_MAIN_LOOP` | `0xc80` | order of a task in the frame's work, ranked in the middle |
+| `SCHEDULER_KEY_VBLANK` | `0x480` | order of a task in the vertical blank, ranked in the middle |
+| `Ram_FrameWaitStackTop` | `0x03007a00` | the stack line `WaitFrames` runs its frames from, 512 bytes above the heap's end |
 
 [Runtime](src/runtime/README.md#the-frame-loop) has the frame's order,
 [the stack switch](src/runtime/README.md#the-stack-switch-in-waitframes) and
@@ -104,19 +131,23 @@ with room to spare, and opens with a table of short jumps, one for each
 function other banks call. A call from another bank goes to the jump, and the
 jump goes on to the function wherever it is.
 
-`main.ld` places the main image's code in banks (`runtime`, `field`,
-`window`, `game` and the rest), each at an address fixed per [edition](glossary.md#editions), with
-unused space after it. A caller in another bank calls the table entry
-(`AudioCommand_PlayFar` for `AudioCommand_Play`) rather than the function's
-own address. The runtime bank is the exception: every bank calls its
-functions directly, and its table (`WaitFramesFar` for `WaitFrames`) serves
-the [overlays](glossary.md#overlay).
+`main.ld` places the main image's code in fourteen banks (`runtime`,
+`field`, `window`, `game` and the rest), each at an address fixed per
+[edition](glossary.md#editions), with unused space after it. A caller in another bank calls
+the table entry, named after the function with `Far` added, rather than the
+function's own address:
 
-Distance isn't the reason. The processor's call instruction (a Thumb `bl`)
-reaches 4 MB either way, and the farthest call in the program, from the
-first bank to the resource bank's table after the sound code and the music,
-spans a little over 1.5 MB; the fourteen banks themselves take about 1 MB.
-How Camelot built the banks is an open question (below).
+```c
+AudioCommand_PlayFar(MUS_TREASURE_FOUND); // the field opens a chest
+```
+
+goes to the sound bank's table, whose entry jumps on to `AudioCommand_Play`.
+The runtime bank is the exception: every bank calls its functions directly,
+and its table (`WaitFramesFar` for `WaitFrames`) serves only the overlays.
+Why the runtime alone may be called directly is an open question (below).
+
+The reason for banks isn't distance: a call instruction reaches every bank
+from every other, as the glossary's [bank](glossary.md#bank) entry measures.
 [System](src/system/README.md#why-the-program-is-cut-into-banks) has the
 memory map and the per-edition bank addresses.
 
@@ -128,30 +159,31 @@ the map loads, and it meets the main image only through two tables.
 ![The cartridge holds each map's code packed, as one of 96 overlays: Vale, Vault, Bilibin, Bilibin's houses, Kolima, Imil and the rest. In RAM there is room for one, the 32 KB overlay area. While the party is in Bilibin, Bilibin's overlay is unpacked there. When the party walks into one of Bilibin's houses, the new map's overlay, the houses', is unpacked into the same area over Bilibin's, which is gone until the party walks back out.](https://alchemy.pascalpixel.com/illustrations/system/overlays.svg)
 
 A town's people, [scripts](glossary.md#script) and cutscenes are code that is needed only while the
-[party](glossary.md#the-party) is there, and all the maps' code together would not fit in RAM. So
+party is there, and all the maps' code together would not fit in RAM. So
 each map's code is packed on the cartridge and unpacked into the same
-32 KB area when the party arrives, over the map before it.
-
-An overlay is a compressed resource unpacked into `gOverlayArea`, 32 KB of
-EWRAM. There are 96 of them, listed in the map table (`src/field/maps.s`).
-Only one is loaded at a time, so overlays never call each other, and code
-several maps need is copied into each of them (`src/map/common/`).
+32 KB area, `gOverlayArea` in EWRAM, when the party arrives, over the map
+before it. The 201 maps share 96 overlays, since the rooms of one dungeon
+often share its code: all fourteen of Crossbone Isle's maps run one overlay
+(the map table, `src/field/maps.s`, names each map's). Only one is loaded at a time, so overlays never call each other,
+and code several maps need is copied into each of them (`src/map/common/`).
 
 An overlay and the main image meet at two tables, each in a fixed order:
 
 - The [entry table](glossary.md#entry-table-and-import-table) (`map/entry/<map>.s`) opens the overlay with six stubs
   the field code calls through `struct MapEntries`: the map's start-up
-  and the functions that return its [warp destinations](glossary.md#warp-destination), [warps](glossary.md#warp), [object event](glossary.md#object-event)
+  and the functions that return its [warp destinations](glossary.md#warp-destination), warps, [object event](glossary.md#object-event)
   templates, [map events](glossary.md#map-event) and warp regions.
 - The import table (`map/import/<map>.s`) holds the main-image functions
-  the overlay calls. EWRAM is out of `bl` range of the ROM, so each call goes
-  through a stub holding the address of the function's far-call entry, never
-  the function itself; an overlay therefore depends only on positions in the
-  far-call tables.
+  the overlay calls. The overlay runs from EWRAM, at addresses from
+  `0x02000000`, and the cartridge starts at `0x08000000`, beyond the 4 MB a
+  `bl` reaches, so each call goes through a stub holding a full address.
+  That address is the function's far-call entry, never the function itself,
+  so an overlay depends only on positions in the far-call tables, which stay
+  put while a bank's code moves.
 
 [System](src/system/README.md#how-an-overlay-reaches-the-rest-of-the-game)
-describes both tables and how `Resource_LoadCode` restores the overlay's
-branches as it unpacks it.
+describes both tables, and how `Resource_LoadCode` rewrites the overlay's
+calls as it unpacks it.
 
 ## Sound cues
 
@@ -173,7 +205,9 @@ are controls rather than sounds.
 A fanfare doesn't stop the music. The music's volume drops to 0 while it keeps
 playing, the fanfare plays on player 0, and once that player stops the music
 fades back in over 64 frames, so the code that asked for the fanfare doesn't
-have to track it. The driver is Nintendo's MusicPlayer2000.
+have to track it: opening a chest is the one call above. The driver
+underneath is Nintendo's MusicPlayer2000, the sound library many Game Boy
+Advance games ship ([pret](glossary.md#pret)'s decompilations call it m4a).
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -204,8 +238,9 @@ through them.
 
 ## Limits
 
-- The frame loop, its tasks and the VBlank work share 512 bytes of stack, and
-  a task must not call `WaitFrames`.
+- The frame loop, its tasks and the VBlank work share the 512 bytes of stack
+  between `Ram_FrameWaitStackTop` and the heap's end, and a task must not call
+  `WaitFrames`.
 - 20 scheduled tasks at a time.
 - An overlay has the 32 KB of the overlay area, and a bank the space up to
   the next bank's fixed start.
@@ -216,3 +251,7 @@ through them.
 - XXX: likely Camelot linked each bank on its own against the others'
   tables, because fixed starts and tables are what that would need; the ROM
   shows only the result.
+- XXX (no evidence): why every bank calls the runtime bank's functions
+  directly, when it reaches every other bank through its table; the ROM shows
+  only the direct calls, and only Camelot's build could say how the runtime
+  was linked.

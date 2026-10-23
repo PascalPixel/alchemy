@@ -878,6 +878,11 @@ through the shared machinery. Each part's first lines say what it holds
 Each function's small constant vectors are `static` variables inside it, and
 they sit in the ROM in the order of the functions that use them.
 
+Functions are named `BattleAnim_` unless they act on one thing the engine
+names elsewhere, which keeps its own prefix. Helpers private to one part start
+with their family's name, like the `CastingImpact_` ones in
+`casting_impact.c`.
+
 ## How animations fit with the rest of the game
 
 The battle decides everything that matters to the rules before an animation
@@ -902,24 +907,6 @@ same blitter builder also serves the battle's star field and
 - There are two blitter slots, and each combination of canvas size, mirroring,
   clip and mode needs its own blitter; a picture's size is passed with each
   call.
-
-## Files
-
-| File | What it holds |
-| --- | --- |
-| [`battle_anim.c`](battle_anim.c) | the compiled object: includes `battle_anim_internal.h`, then every part in ROM order |
-| [`battle_anim_internal.h`](battle_anim_internal.h) | the includes, macros and helpers every part shares |
-| `parts/*.c` | the animations, in 66 parts |
-| [`battle_anim_table.c`](battle_anim_table.c) | the animations' tables in the order the code uses them (picture cells, sizes, offsets, frame lists) and the handler table |
-| [`battle_anim_bits.c`](battle_anim_bits.c) | `gBattleAnim_BitOperands` |
-| [`battle_anim_composite.s`](battle_anim_composite.s), [`battle_anim_composite_color.s`](battle_anim_composite_color.s) | the template and fragments blitters are built from |
-
-The headers are in `unit/battle_anim/`: [`battle_anim.h`](../../include/unit/battle_anim/battle_anim.h)
-declares the functions and names the animation kinds, and `battle_anim_table.h`
-declares the tables. `struct BattleAnimArgs` and
-`struct BattleAnimWork` are in `include/battle/`. In
-`games/tbs/objects.tsv` the rows from `battle_anim` on place the animation code, the
-template, the tables, the colour fragments and the bit operands, in that order.
 
 ## Words used here
 
@@ -953,24 +940,6 @@ The same locals have the same names in every handler:
 | `draw` | the `BlitterPair` it draws with |
 | `frame` | the frame counter |
 | `cell` | a picture's index or offset |
-
-## Function prefixes
-
-Functions are named `BattleAnim_` unless they act on one thing the engine names
-elsewhere, which keeps its own prefix. Helpers private to one part start with
-their family's name, like the `CastingImpact_` ones in `casting_impact.c`.
-Where a site keeps an unusual spelling to match, [Matching](../MATCHING.md)
-lists it.
-
-| Prefix | What it acts on |
-| --- | --- |
-| `BattleAnim_` | the animations, their entry points, the canvas, blitters and pictures |
-| `BattleCamera_` | the battle camera: its shake and its turn in two phases |
-| `Palette_`, `Graphics_`, `Display_`, `Resource_` | the engine's palettes, graphics, display and resources |
-| `Particle_`, `ScreenPoint_`, `Projection_` | a particle, and a screen point an animation works out |
-| `BattleUnit_` | a unit's height and place on screen |
-| `ObjectGroup_` | an actor's parts, their animation and their colour timers (`work->actorTimers`) |
-| `CastingImpact_` and other family names | helpers private to one part |
 
 ## Notes for contributors
 

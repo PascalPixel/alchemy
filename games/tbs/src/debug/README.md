@@ -208,6 +208,18 @@ speaker.
 | `0x0` | east | the item shop's lines | the Warrior's item shop's lines |
 | `0x4` | south | the Sanctum's lines | no row in English; `MsgValeComeOnHurry` elsewhere |
 
+## Design
+
+The palette editor's swatch, `swatch.png`, belongs to no room:
+`overworld/swatch.s` places it in the [main image](../../glossary.md#main-image)
+as `gDebug_PaletteSwatchTiles` for `PaletteEditor_Run`, which opens with L on
+the Start menu in debug mode.
+
+Each room's functions take the room's prefix, except the
+initialize and warp region entries, which keep older names (`MapData_`,
+`Map_`, `CommandTable_`); the other four entries take the room's
+(`TestRoom_GetEvents`).
+
 ## How it fits with the rest of the game
 
 The rooms are maps like any other: the map table names their overlays,
@@ -222,31 +234,6 @@ palette editor that the same debug mode opens is in
 
 - Each room is an overlay in the same 32 KB overlay area as every map.
 - The item browsers cover item numbers 0 to 269.
-
-## Files
-
-| Overlay | Files | What the room holds |
-| --- | --- | --- |
-| `0x3cc` | `rooms.c` | four Djinn, one of each element |
-| `0x3cd` | `level.c`, `level.h` | level changes for the party; item, icon, portrait and ability browsers; emote and Force tests |
-| `0x3ce` | `test.c`, `menu_test.h` | message browsers for every shop, shop and inventory tests, test stock and the name editor |
-| | `entry/<room>.s`, `import/<room>.s` | each room's entry and import tables |
-| | `swatch.png` | the debug palette editor's colour swatches and letters |
-
-`swatch.png` is not part of a room: `overworld/swatch.s` places it in the [main
-image](../../glossary.md#main-image) as `gDebug_PaletteSwatchTiles` for `PaletteEditor_Run`
-(`overworld/overworld/palette_editor.c`), which opens with L on the Start menu in
-debug mode. Link order is in `games/tbs/objects.tsv`; prototypes are in
-`games/tbs/include/unit/debug/`.
-
-## Function prefixes
-
-| Prefix | Room |
-| --- | --- |
-| `TestRooms_` | the Djinn room (`rooms.c`) |
-| `ItemLevel_` | the level and browser room (`level.c`) |
-| `MenuTest_`, `DebugMenu_` | the message and shop test room (`test.c`) and its message helper |
-| `MapData_`, `Map_`, `CommandTable_` | the initialize and warp region entries, which keep older names; the other four entries take the room's prefix (`TestRoom_GetEvents`) |
 
 ## Evidence and open questions
 

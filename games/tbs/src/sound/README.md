@@ -244,6 +244,12 @@ fanfare's music player and the sound-effect music players
 (`gMPlayInfo_Fanfare`, `gMPlayInfo_MenuSE`, `gMPlayInfo_ActionSE`,
 `gMPlayInfo_SE4` to `gMPlayInfo_SE7`), and the song layer in `sound.c`.
 
+`engine.c`, `audio.c` and `tables.c` are compiled with pret's
+[`old_agbcc`](../../glossary.md#the-compilers) (the Makefile's `SOUND_C`), as
+pret builds its MusicPlayer2000 C; the rest with the game's compiler. The
+song layer's code is the sound bank; the driver follows the banks in the
+ROM's tail, with `mixer.s` loaded into IWRAM.
+
 ## How it fits with the rest of the game
 
 Every part of the game plays sound through `Sound_PlaySongFar`: maps name
@@ -260,26 +266,6 @@ are data in `games/tbs/sound`.
   layer's ramps and fanfare silence reach 8.
 - Four sound effects that name `MUSIC_PLAYER_SE_LAST` play at once.
 - Song numbers are 12 bits, 0 to 4,095.
-
-## Files
-
-| File | What it holds |
-| --- | --- |
-| `sound.c` | the song layer: playing a song number, the music's ramps, the fanfare's return to the music, and the audio test |
-| `engine.c` | the driver: the sound hardware, the music players and their tracks, the song commands and the CGB channels |
-| `audio.c` | the driver's library calls: starting, stopping, fading and resuming songs on the music players, and the PCM key-to-frequency step |
-| `tables.c` | the driver's tables: the song command handlers and the frequency tables |
-| `empty_callback.c` | the driver's do-nothing callback |
-| `mixer.s`, `channel_update_entry.s`, `clear_buffer.s`, `umul_high.s` | the driver's handwritten ARM and Thumb routines, each header naming the instruction that shows no compiler wrote it |
-
-`engine.c`, `audio.c` and `tables.c` are compiled with pret's [`old_agbcc`](../../glossary.md#the-compilers)
-(the Makefile's `SOUND_C`), as pret builds its MusicPlayer2000 C; the rest
-with the game's compiler. The song layer's code is the sound bank; the
-driver follows the banks in the ROM's tail, with `mixer.s` loaded into IWRAM.
-The songs and samples are in `games/tbs/sound`, with the music players in
-`games/tbs/sound/music_player_table.s`, and the songs' names in `songs.h` (`MUS_`,
-`SE_`). The unit headers are in `games/tbs/include/unit/sound/`, the
-driver's structures in `games/tbs/include/sound`.
 
 ## Words used here
 
@@ -299,14 +285,6 @@ driver's structures in `games/tbs/include/sound`.
   each music player's signature and lock word (`ID_NUMBER`).
 - **reverb code**: one of the five versions of the IWRAM mixer's last step
   (`enum SoundReverbCode`), copied in when music starts.
-
-## Function prefixes
-
-| Prefix | What it acts on |
-| --- | --- |
-| `Sound_`, `SoundTest_` | the song layer and the audio test (`sound.c`) |
-| `m4a`, `MPlay`, `Sound`, `Cgb`, `ply_` | the driver, under pret's MusicPlayer2000 names: `m4aSongNumStart` and `m4aMPlay` calls, `MPlayStart` and `MPlayMain` on a music player, `SoundInit` and `SoundMain` on the driver's work, `CgbSound` and `CgbModVol` on the CGB channels, `ply_` for a song command |
-| `Mixer_` | Camelot's way from the VBlank into the game's own IWRAM mixer, and the mixer's call helper |
 
 ## Evidence and open questions
 

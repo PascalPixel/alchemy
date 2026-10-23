@@ -282,6 +282,10 @@ counter serves every shop and every way an item leaves the party
 shop from adding its artifacts again. Keeper lines are found by distance from
 the weapon shop's version, so one call site serves every shop type.
 
+Map overlays import these functions by name (`games/tbs/src/map/import/`),
+and the far-call table `system/far_call/SHOP.S` names them with `Far` added,
+so renaming one changes those folders too.
+
 ### Editions
 
 The counters' layout differs by [edition](../../glossary.md#editions) where longer words need room. Each
@@ -330,22 +334,6 @@ pieces serve other screens:
 - Inn row 9, Tolbi's, has a price of 0 and no script opens it: Tolbi's inns are
   always full.
 
-## Files
-
-| File | What it holds |
-| --- | --- |
-| `shop.c` | the shop object, written as parts in `shop/` in ROM order |
-| `shop_internal.h` | the object's includes, the shop actions, shop types and sanctum services, and the values that differ by edition |
-| `shop/*.c` | the parts: [`run.c`](shop/run.c), [`artifacts.c`](shop/artifacts.c), [`buy.c`](shop/buy.c), [`sell.c`](shop/sell.c), [`repair.c`](shop/repair.c), [`cursor.c`](shop/cursor.c), [`sanctum.c`](shop/sanctum.c), [`inn.c`](shop/inn.c) and [`item_picker.c`](shop/item_picker.c) |
-| `shopspr.s` | the hand, gem, arrow, price and quantity [sprite](../../glossary.md#sprite-and-oam) tiles |
-
-`shop.c` includes `shop_internal.h` and then the parts in ROM order, and its
-opening comment says where each counter starts; `head -3 shop/*.c` lists what
-each part holds. Link order is in `games/tbs/objects.tsv`, from `shop`. The
-work block's layout, `struct ShopWork`, is in
-[`include/shop.h`](../../include/shop.h), and the prototypes are in
-`games/tbs/include/unit/shop/shop.h`.
-
 ## Words used here
 
 - **work block**: `struct ShopWork` in heap slot `HEAP_SLOT_MENU`, reached
@@ -367,24 +355,6 @@ work block's layout, `struct ShopWork`, is in
 - **party row**: the members' icons across a window, which the counters
   select and animate (`partyMemberIcons`, `Shop_ChooseMember`).
 - `unk` plus an offset: a field whose meaning is not known.
-
-## Function prefixes
-
-| Prefix | What it acts on |
-| --- | --- |
-| `Shop_` | the shops' screens, and anything every counter shares |
-| `MenuCursor_` | the hand cursor the shops, the naming screen and the option and pause menus share |
-| `QuantityBar_` | the quantity bar the shops and the Item screen colour in |
-| `ItemPicker_` | choosing which member's item to drop when every bag is full |
-| `ShopStock_` | the stock rows |
-| `Sanctum_` | the sanctum's services |
-| `Inn_` | the inn |
-| `BattleUnit_`, `Sound_`, `NodeChain_` | things the engine names elsewhere |
-
-Map [overlays](../../glossary.md#overlay) import these functions by name (`games/tbs/src/map/import/`),
-and the far-call table `system/far_call/SHOP.S` names them with `Far` added,
-so renaming one changes those folders too. [Matching](../MATCHING.md)
-explains the `BUG`, `FAKEMATCH` and other markers in the code.
 
 ## Evidence and open questions
 

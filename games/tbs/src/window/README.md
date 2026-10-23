@@ -396,6 +396,11 @@ form) run from ROM; why is an open question (below). The work block's two
 layouts are one struct whose array sizes come from `tbs_edition.h`, so the
 code that reads it is the same in every edition.
 
+Many of the window functions' names are shared with
+[The Lost Age](../../glossary.md#the-two-games)'s copies of these files and
+with the [far-call](../../glossary.md#far-call) table `system/far_call/WINDOW.S`,
+so renaming one changes other folders too.
+
 ## Limits
 
 - The screen is 30 by 20 tiles; a frame narrower or shorter than 2 tiles, or
@@ -407,34 +412,6 @@ code that reads it is the same in every edition.
 - The text buffer holds 256 codes in Japanese and 512 in the others.
 - The text canvas holds 120 tiles, one canvas window at a time.
 - Text drawn as tiles has 128 tiles, or 256 with `extraTextTiles` set.
-
-## Files
-
-| File | What it holds |
-| --- | --- |
-| `window.c` | the window object, written as parts in `window/`: windows, text printers, the decoder, window sprites, icons, the selection row and the option and pause menus |
-| `screens.c` | the screens built on the window object, written as parts in `screens/`, from the party status window to the debug menus |
-| `glyph_arm.c` | the text canvas renderer, compiled as ARM code and copied to RAM to run |
-| `articles.c` | each edition's articles and possessives, the kana marks and the sprite motion curves |
-| `scales.c` | sprite scales, motion curves and the lookup tables of the window and menu code |
-| `message_speed.c` | the three message speed tables |
-| `windata.s` | glyph widths, kana mark ranges, the party and [Djinni](../../glossary.md#djinn) sprites, the growing bar and the cursor stops |
-| [`keyboard.s`](keyboard.s) | the naming screen's keyboard tilemaps |
-| [`cursor.s`](cursor.s), `cursor_frame.s`, `fixed_block.s`, `slider.s`, `slidpal.s` | sprite tiles and palettes, built from the PNGs beside them or under `../menu` and `../graphics` |
-
-Both objects are written as parts: `window.c` and `screens.c` include
-their private headers (`window_internal.h`, `screens_internal.h`) and
-then their parts in ROM order, and their opening comments say where to start.
-`head -3 window/*.c screens/*.c` lists what each part holds. Link order
-is in `games/tbs/objects.tsv`, from `glyph_arm`.
-
-The prototypes are in `games/tbs/include/unit/window/`; its
-[`window.h`](../../include/unit/window/window.h) also holds what both objects
-use: the tilemap's tiles (`WINDOW_TILE_`), the window flags (`WINDOW_FLAG_`), sprite
-motions (`WINDOW_SPRITE_MOTION_`), message argument kinds (`MESSAGE_ARGUMENT_`) and the text
-canvas's place in VRAM. The work block's layout, `struct WindowWork`, is in
-[`include/window.h`](../../include/window.h), and its offsets for each edition
-in `include/tbs_edition.h`.
 
 ## Words used here
 
@@ -452,41 +429,6 @@ in `include/tbs_edition.h`.
 - **text tile state**: `work->textTileState`, one byte per text tile saying
   whether it is allocated and whether the tilemap still shows it.
 - `unk` plus an offset, such as `unk10`: a field whose meaning is not known.
-
-## Function prefixes
-
-| Prefix | What it acts on |
-| --- | --- |
-| `WindowSystem_` | setting up the window system for the field or for battle, and its per-frame updates |
-| `Window_`, `Win_` | a window's rectangle of the tilemap: frames, fills, dividers, tiles |
-| `Text_`, `Message_`, `MessageArgument_`, `TextPrinter_` | messages and text: decoding, measuring, drawing and typing |
-| `WindowSprite_` | the window sprite pool and a window's sprite list |
-| `MenuArrow_` | the menus' arrow sprites |
-| `Icon_`, `ItemIcon_`, `CommandIcon_`, `Portrait_` | icons and portraits built into sprite tiles |
-| `SelectionScreen_`, `Menu_` | the selection row, and the menus built from command icons |
-| `OptionMenu_`, `PauseMenu_`, `WindowColor_` | the option and pause menus and the window colours |
-| `Save_`, `FileMenu_` | save files and the file menu |
-| `NamingScreen_`, `PartyStatus_`, `ColossoMenu_`, `BattleDjinnMenu_`, `BattleSummonMenu_`, `BattleItemMenu_`, `BattlePsynergyMenu_`, `BattleTarget_` | the screens they name |
-| `Party_` | the joined-party messages and the party's Psynergy list |
-| `MapNamePopup_` | the area name shown near the top of the screen on arrival |
-| `DebugMapSelect_`, `DebugFlagEditor_`, `DebugBrowser_`, `Debug_` | the debug menus |
-| `IconMenu_` | the icon menus' pulsing icon and their position table |
-| `Link_` | the link countdown window and its page arrows |
-| `Color_` | scaling a colour's channels |
-| `Resource_`, `Graphics_`, `Vram_`, `VramCache_` | things the engine names elsewhere: VRAM cache entries, pictures, palettes and video registers |
-| `FieldMessage_` | showing a message window in the field: at an object, centred, or at a window position |
-| `Glyph_` | drawing a font glyph with its outline into a window |
-| `BattleCommandRow_` | the row of battle commands a member chooses from |
-| `BattleSummaryScreen_` | the battle's status screen of a unit, stepping through the members with L and R |
-| `YesNoMenu_` | the yes-or-no menu |
-| `Heading_` | the 64 by 16 headings of the menus (Save, Continue, Copy, Erase, Battle, Link, Pause, Setup), loaded and bobbing |
-| `RenderResource_` | loading one sprite tile of the heading pictures into the VRAM cache |
-
-Many of these names are
-shared with [The Lost Age](../../glossary.md#the-two-games)'s copies of these files and with the [far-call](../../glossary.md#far-call) table
-`system/far_call/WINDOW.S`, so renaming one changes other folders too.
-[Matching](../MATCHING.md) explains the spellings some sites keep and the
-comment markers.
 
 ## Evidence and open questions
 

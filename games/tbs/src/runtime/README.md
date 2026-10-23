@@ -479,6 +479,13 @@ while a write is in progress, and the random choice of sector spreads writes
 across the chip, likely to spread the flash chip's wear, since nothing else
 in the code needs it.
 
+The ROM shows the runtime as one object, so it is compiled once, through
+`runtime.c`; the parts are our cut of it. Overlays reach many of its
+functions through the far-call table `system/far_call/RUNTIME.S`, under names
+ending in `Far`, so renaming one touches other folders too. `math_table.c`
+holds a quarter-wave sine table with the same values as `Trig_SineTable` in
+`trig.s`, the copy `Trig_Sin` reads; nothing reads this one by name.
+
 ## How it fits with the rest of the game
 
 Every other folder runs on the runtime. The field, the battles and the menus
@@ -504,38 +511,6 @@ runtime bank's far-call table
   0 holds.
 - 512 bytes of stack for the frame loop, its tasks and the VBlank work.
 - 16 flash sectors for the three save files' six records.
-
-## Files
-
-| File | What it holds |
-| --- | --- |
-| `runtime.c` | the runtime object: it includes `runtime_internal.h`, then the parts in `runtime/` in ROM order; its opening comment says where each subject starts |
-| `runtime_internal.h` | what the parts share: the object's includes and the one prototype two parts use |
-| `runtime/*.c` | the parts, one family of functions each |
-| `math_table.c` | a quarter-wave sine table with the same values as `Trig_SineTable` in `trig.s`, the copy `Trig_Sin` reads; nothing reads this one by name |
-| `numtext.c` | the hexadecimal digits and the powers of ten that number text uses |
-| `trig.s`, `q16_dot_product.s` | the sine and cosine, and a 16.16 dot product, in assembly; each header gives its evidence: `trig.s` branches on a shift's carry, and `q16_dot_product.s` has a multiply sequence no [compiler](../../glossary.md#the-compilers) pattern emits, which its header notes does not alone prove the whole file handwritten |
-
-The parts are [`decompress.c`](runtime/decompress.c), [`fade.c`](runtime/fade.c),
-[`frame.c`](runtime/frame.c), [`heap.c`](runtime/heap.c),
-[`io_queue.c`](runtime/io_queue.c), [`math.c`](runtime/math.c),
-[`render.c`](runtime/render.c), [`save.c`](runtime/save.c),
-[`scheduler.c`](runtime/scheduler.c), [`serial.c`](runtime/serial.c),
-[`system.c`](runtime/system.c), [`text.c`](runtime/text.c),
-[`transform.c`](runtime/transform.c) and
-[`vram_cache.c`](runtime/vram_cache.c); the second line of each says what it
-holds.
-
-The ROM shows the runtime as one object, so it is compiled once, through
-`runtime.c`. The split into parts is ours, made where one family of functions
-ends and the next begins; each part also includes the private header so that
-its names resolve when it is read on its own. The object's place in the link
-order is in `games/tbs/objects.tsv`, from the `trig` row on.
-
-The prototypes the rest of the game uses are in
-`games/tbs/include/unit/runtime/`. Overlays reach many of these functions
-through the far-call table `games/tbs/src/system/far_call/RUNTIME.S`, under
-names ending in `Far`, so renaming one touches other folders too.
 
 ## Words used here
 
@@ -563,30 +538,6 @@ Frame, VBlank, IWRAM, EWRAM, heap slot, task, sprite and OAM are in the
 - **record**: one save record in one 4 KB flash sector (`save.c`).
 - **payload** and **block**: each VBlank two linked consoles trade a 24-byte
   payload, and bulk data rides on it in 20-byte blocks (`serial.c`).
-
-## Function prefixes
-
-| Prefix | What it acts on |
-| --- | --- |
-| `System_`, `Runtime_`, `Code_` | power-up, interrupts, the heap and code loading |
-| `Input_` | key repeat and the keypad interrupt |
-| `IoWriteQueue_` | the register write queue |
-| `ScreenFade_` | screen fades through the blend registers |
-| `Render_`, `OamMatrix_` | the frame's sprite lists and affine matrices |
-| `VramCache_` | the sprite VRAM cache |
-| `Task_` | tasks |
-| `Math_`, `Vector_` | square roots and polar offsets beside `Random16` and `ArcTan2` |
-| `FixedPoint_` | 16.16 and 8.8 arithmetic: a remainder, a product, a reciprocal and the distance between two positions |
-| `Transform_`, `Projection_` | the 3D transform and projection |
-| `NumberText_`, `DebugText_` | number text and the debug text screen |
-| `ColorBuffer_` | shading a buffer of pixels, keeping a copy |
-| `Save_` | saving |
-| `SerialRuntime_`, `SerialTest_`, `LinkBattle_` | the link cable |
-| `RuntimeDispatch_` | empty far-call exports |
-| `Resource_`, `Palette_`, `Ui_`, `Sound_` | resources, palettes, the interface and sound, whose main code lives in other folders |
-| `String_` | numbers written as text: decimal, hex and the play time |
-
-[Matching](../MATCHING.md) explains the odd spellings and the comment markers.
 
 ## Evidence and open questions
 

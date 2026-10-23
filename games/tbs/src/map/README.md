@@ -390,6 +390,29 @@ its header never call is `UNUSED`, so that a current GCC does not warn there.
 Renaming a function in `common/` renames it in every map that includes the
 header.
 
+## Design
+
+Each overlay is three objects, linked in this order into the overlay area:
+`entry/<map>`, `<map>` and `import/<map>`. The map table, `gMapHeaders` in
+[`field/map_headers.s`](../field/map_headers.s), gives each map its overlay,
+map section, map type and layout, and names it `MapId_<Map>`; several maps may
+share one overlay, and then share its file. A map overlay is never split into
+parts, because its code is laid out by kind (entry points, then handlers,
+then tables), not by map.
+
+A map's functions take its name (`Vault_`, `VaultRevisit_`,
+`ColosseumNavampaMatch_`) and say what the player sees; most functions a map
+event table names are `EventScript_` instead. Shared helpers take their
+family's prefix (`Colosso_`, `MercuryLighthouse_`, `KolimaPalette_`,
+`PushedObject_`, and `FieldEffect_` for the field effects), and some keep
+older descriptive names (`Map_`) until the maps that call them are humanized.
+A run of functions inside one overlay that is about one thing takes that
+thing's name, and a party member's or the leader's part in a script takes
+that character's (`Garet_`, `Mia_`, `Ivan_`, `Leader_`). The spellings some
+sites keep to match (fields reached through `offsetof`, another struct's view
+of an object event, update hooks returning `s32`) are in
+[Matching](../MATCHING.md).
+
 ## How it fits with the rest of the game
 
 `Game_Run` unpacks the overlay into `gOverlayArea` (`Map_LoadOverlay`) and
@@ -415,30 +438,6 @@ is the name the map writes (`MsgVaultWelcomeToVaultTheTownAt`).
 - 256 map temp flags and 256 map-section temp flags, reused by every map and
   map section.
 
-## Files
-
-| File | What it holds |
-| --- | --- |
-| `<map>.c` | one map overlay: its code, then its tables |
-| `<map>.h` | the overlay's own names (object events, flags, structures), where it has any |
-| `entry/<map>.s` | the entry table: six veneers the engine calls |
-| `import/<map>.s` | the import table: the main-image functions the overlay calls |
-| `common/*.h` | code that several overlays carry, each in its own copy |
-
-Each overlay is three objects in `games/tbs/objects.tsv`, linked in this order
-into the overlay area: `entry/<map>`, `<map>` and `import/<map>`; the
-rows' first column is the overlay's resource number. The map table,
-`gMapHeaders` in [`field/map_headers.s`](../field/map_headers.s), gives each
-map its overlay, map section, map type and layout, and names it `MapId_<Map>`;
-several maps may share one overlay, and then share its file. A map overlay
-is never split into parts: its code is laid out by kind, entry points,
-then handlers, then tables, not by map.
-
-The table formats are in `games/tbs/include/map_tables.h`, the script
-commands in `script.h`, and the engine calls they are written over in
-`script_layer.h`, `field_service.h` and `engine_call.h`. Prototypes other files
-see are in `games/tbs/include/unit/map/`.
-
 ## Words used here
 
 - **position**: pixels, x east, y up and z south; the engine keeps them in
@@ -458,36 +457,6 @@ see are in `games/tbs/include/unit/map/`.
   `TASK_PRIORITY_MAP`, run once a frame until removed.
 - **update hook**: an object event's `update`, run each frame with the object
   event.
-
-## Function prefixes
-
-A map's functions take its name (`Vault_`, `VaultRevisit_`,
-`ColosseumNavampaMatch_`) and say what the player sees; most functions a
-map event table names are `EventScript_` instead. Shared helpers take their family's
-prefix (`Colosso_`, `MercuryLighthouse_`, `KolimaPalette_`, `PushedObject_`, and
-`FieldEffect_` for the field effects). Some keep older descriptive names
-(`Map_`) until the maps that call them are humanized. The spellings some sites keep to match (fields reached
-through `offsetof`, another struct's view of an object event, update hooks returning
-`s32`) are in [Matching](../MATCHING.md).
-
-A run of functions inside one overlay that is about one thing takes that
-thing's name, and a party member's or the leader's part in a script takes
-that character's (`Garet_`, `Mia_`, `Ivan_`, `Leader_`):
-
-| Prefix | Overlay | What it acts on |
-| --- | --- | --- |
-| `Pillar_` | `alpine_crossing_lama_temple.c` | the pillar drawn in front of or behind the leader |
-| `Village_`, `Houses_` | `altin.c` | Altin's village outside, and its houses and inn inside |
-| `Beast_`, `Spray_` | `altin.c` | the hopping water beast and its spray |
-| `Water_` | `altin_peak.c` | the water layer flickering away |
-| `Entrance_` | `babi_lighthouse.c` | an unused division |
-| `MapLocalState_` | `colosseum_satrage_match.c`, `crossbone_isle_keys.c` | storing a raised map event's trigger, and an empty hook |
-| `InnWorker_` | `lalivero_interiors.c` | the inn worker's sigh |
-| `Reveal_`, `HeatGauge_`, `Manticore_` | `lamakan_desert.c` | the secrets Reveal shows, the heat gauge and the Manticore |
-| `Ship_`, `ShipGlow_`, `OrbGlow_`, `Ripple_`, `Wave_`, `Curtain_` | `lemurian_ship.c` | the ship's swell and glows, the water's ripple and the closing curtains |
-| `TretPalette_` | `tret_tree_interiors.c` | the map's tint |
-| `FloatingPillar_`, `Rubble_` | `venus_lighthouse.c` | the floating pillars and the rubble particles |
-| `Reunion_`, `WagonChoice_`, `Bunza_` | `west_lunpa_cave.c` | the reunion and the choice to ride Bunza's wagon |
 
 ## Evidence and open questions
 

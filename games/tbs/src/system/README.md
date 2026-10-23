@@ -371,33 +371,6 @@ the flash library in `save/`.
   and overlays calls them by place.
 - The resource directory has 25 spare rows at its end.
 
-## Files
-
-| File | What it holds |
-| --- | --- |
-| `rom_head.s`, `entry.s` | the cartridge header; the entry that sets the CPU modes and stacks, and the sound reverb codes (`IwramSoundReverbCodes`) |
-| `ewram.s`, `iwram.s`, `iwram_hi.s` | the main image's RAM variables, in their order in EWRAM and IWRAM |
-| `runtime.s`, `runtime_irq_table.s`, `sound_mixer*.s`, `runtime_mul_q16_ip.s` | the code copied to IWRAM: the interrupt dispatcher and its handler table, the resident sound mixing code, and the multiplies, divides, square root, word fills, transform and decoder the rest of the game calls |
-| `iwram_entry.s` | the stubs that call the IWRAM code from the ROM |
-| `cpu_set.s`, `sound_get_jump_list.s` | BIOS calls |
-| `heapfree.s` | `FreeHeapSlot` and `Free` |
-| `updfar.s` | three ARM routines that share one literal pool (`ArcTan2FarArm`, `Iwram_SqrtFarArm`, `Iwram_RatioMulQ14FarArm`) |
-| `syspal.s`, `memory/*.png` | the window palette and the basic sprite palettes, built from the PNGs |
-| `overlay.s` | the far-call stub macro, `overlay_veneer` |
-| `overlay.inc` | the head every stub table includes, and the list of stubs an overlay may import |
-| `far_call/*.S` | each bank's far-call table, one stub per export in a fixed order (`stub.inc`) |
-| `overlay/` | `overlays.s` places each overlay's packed stream as a directory resource, `overlay.ld` links each at `gOverlayArea`, and the `ovl_*.s` hold the RAM variables of the overlays that have them |
-| `resource/directory.s` | the resource directory, each row defining its `ResourceId_` name |
-| `resource/*.s`, `resource/metadata_get_record.c`, `resource/colconv*.tsv` | the resource decoders; beside them the OAM build kernel and colour-buffer kernels other code copies into RAM to run, the colour conversion tables, the sprites' shadow and the animation metadata lookup |
-| `save/` | the flash library: the drivers for Atmel, Macronix and SST chips (`FLASH_C`, compiled with [pret](../../glossary.md#pret)'s `old_agbcc`), and the save record signature, `CAMELOT` (`savedata.c`) |
-
-The unit headers are in `games/tbs/include/unit/system/`, the far-call
-prototypes in `games/tbs/include/farcall/`. Link order, overlays included, is
-in `games/tbs/objects.tsv`; `games/tbs/overlays.tsv` gives each overlay's
-`.bss` header. `games/tbs/main.ld` places the main image's sections, and
-`games/tbs/include/ram_buffer.h` names the fixed RAM addresses the code uses
-as constants. [Matching](../MATCHING.md) explains the markers in the code.
-
 ## Words used here
 
 - **bank** and **far call**: the main image is linked in banks (`runtime`,
@@ -412,18 +385,6 @@ as constants. [Matching](../MATCHING.md) explains the markers in the code.
   (`Resource_GetTableEntry`); the id is the `ResourceId_` symbol's value.
 - **resident code**: code, mostly ARM, copied from the ROM into IWRAM at
   power-up (`.iwram_runtime`) or when sound starts (`.iwram_mixer`).
-
-## Function prefixes
-
-| Prefix | What it acts on |
-| --- | --- |
-| `System_` | the cartridge entry |
-| `Iwram` | the resident IWRAM code and its entry stubs (`IwramIrqMain`, `Iwram_Halt`, `IwramMulQ16`) |
-| `Bios_` | the BIOS calls |
-| `Dma_`, `Io_`, `Memory_` | DMA transfers, stops and fills (`system/dma.h`) and single register writes |
-| `Resource_`, `ResourceId_` | the resource decoders and the directory's ids |
-| `Flash_`, `EraseFlash`, `ProgramFlash` | the flash library, named as pret names it |
-| `Runtime_`, `Sound_`, `ColorBuffer_`, `Render_` | things the engine names elsewhere |
 
 ## Evidence and open questions
 

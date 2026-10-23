@@ -233,6 +233,14 @@ the flash library's declarations, which is undefined behaviour (`// UB:`);
 | `gFlash` | `CREDITS_LAST_LINE_POSITION` | the position of the last line drawn |
 | `gFlash_Handler0` | `CREDITS_END_OF_TEXT` | the end-of-text latch |
 
+## Design
+
+Only two parts of the folder have banks of their own: the credits are the
+credits bank and the title intro the title bank ([Source](../README.md)).
+Everything else here is linked beside the code that uses it.
+`Message_FindArm` carries the text window's prefix, though it sits
+beside `Text_DecodeSymbol` in `text/decode_symbol.s`.
+
 ## How it fits with the rest of the game
 
 The title intro and the credits are main-image code the title overlay
@@ -252,33 +260,6 @@ the code that loads them: battle animations, maps, layouts, windows and menus.
   besides the loads: a 300-frame lead, then for each of the 33
   entries a 64-frame fade and a 267-frame hold.
 
-## Files
-
-| File | What it holds |
-| --- | --- |
-| `title/intro.c` | the title intro, the Nintendo and Camelot logos, and the palette fade |
-| `credits/credits.c` | the credits: the battle backgrounds that slide and crossfade, and the scrolling text |
-| `text/numwords.c` | the counted nouns the German message decoder writes after a number |
-| `text/genders.s` | the grammatical gender of each item name, for the German and Italian [editions](../../glossary.md#editions) |
-| `text/decode_symbol.s`, [`render/decode.s`](render/decode.s), `tile/*.s` | handwritten ARM and Thumb decoders, copiers and a dot product, each proven in its header |
-| `battle_anims/` | the battle animations' sheets and masks, loaded by resource id |
-| `ui/` | window tiles, the small font, icons and menu sprites |
-| `font/` | the main text font in each language's version (`gFont_Glyphs`) |
-| `world_map/` | the world map's tiles and palettes and the story frames |
-| `tileset/` | the maps' tilesets and their palettes |
-| `window/` | the naming screen's keyboards, the cursor frame and the main font's glyph widths |
-| `shop/` | the eight frames of the shop cursor, `MenuCursor_FrameA` to `MenuCursor_FrameH` (`ResourceId_MenuCursorFrames`) |
-| `title/` | the title picture, the logos, the "Press Start" prompt and the "To be continued" lettering |
-| `render/labels.s` | the 64-by-16 text headings, each two 32-by-16 sprites |
-| `credits/font.s` | the credits font, with its glyph widths in `credits/glyph_widths.h` |
-| `battle_bg/`, `monster/`, `sprite/`, `colosso/`, `lamakan/`, `lucky_dice/`, `lucky_wheels/`, `sol_sanctum_statue/` | the pictures of the map or screen they name |
-| `animref*.s` | animation slot tables, whose entries point back at their own table |
-
-The unit headers are in `games/tbs/include/unit/graphics/`. The credits are
-the credits bank and the title intro the title bank
-([Source](../README.md)); everything else here is linked where its users
-are, as `games/tbs/objects.tsv` lists.
-
 ## Words used here
 
 - **component**: one of a colour's three five-bit levels, red, green or
@@ -290,20 +271,6 @@ are, as `games/tbs/objects.tsv` lists.
   128 to 255.
 - **tile ring**: the credits' 32 rows of text tiles, 16 on screen at a time,
   reused as the text scrolls.
-
-## Function prefixes
-
-| Prefix | What it acts on |
-| --- | --- |
-| `Title_` | the title intro and the logos |
-| `PaletteFade_`, `Palette_` | the palette fade, and `TitlePaletteFade_BuildColors`, which builds its colours |
-| `Credits_` | the credits |
-| `Graphics_` | tile memory and palettes, as the engine names them elsewhere |
-| `Tile_`, `TileMap_`, `BitDecoder_`, `Render_`, `Text_` | the handwritten decoders, among them `Credits_DecodeBackground`, which unpacks the credits' pictures |
-| `Vector_` | `Vector_DotProduct`, a 16.16 dot product in `tile/dot_product.s` that nothing calls |
-
-`Message_FindArm` carries the text window's prefix, though it sits
-beside `Text_DecodeSymbol` in `text/decode_symbol.s`.
 
 ## Evidence and open questions
 

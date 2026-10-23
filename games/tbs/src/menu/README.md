@@ -298,6 +298,20 @@ Each order is a list of item types, a byte each, in `menudata.c`, named by
 
 ## Design
 
+The ROM keeps three copies of the Djinn arrows, placed by
+`graphics/ui/menuspr.s` (the copy `menu/icons.c` loads, as
+`gMenu_PairSpriteATiles` and `gMenu_PairSpriteBTiles`), `shop/shopspr.s` and
+`window/fixed_block.s`. `keyboard.s` keeps a compressed naming screen keyboard
+tilemap, the same as the Japanese one, that nothing reads.
+
+Some prefixes are older than the parts. `PsynergyMenu_InitializeEntryObjects`
+sets up the party figures for the Item, Psynergy and Djinn screens (through
+`ItemMenu_Initialize`), for the summary screen and, through
+`PsynergyMenu_InitializeEntryObjectsFar`, for the counters. Many of these
+names are shared with [The Lost Age](../../glossary.md#the-two-games)'s copies
+of these files (`games/tla/src/menu`), with the far-call tables and with the
+window folder, so renaming one crosses folders.
+
 ### Editions
 
 Where the [editions](../../glossary.md#editions) lay a screen out differently, such as a column moved over
@@ -311,45 +325,6 @@ the top of its part or file, with a comment on what differs.
 - A member's inventory has `INVENTORY_SLOTS` (15) slots.
 - The title screen, the main menu and the Battle Arena are overlays, loaded into
   the overlay area ([System](../system/README.md)).
-
-## Files
-
-| File | What it holds |
-| --- | --- |
-| `menu.c` | the menu object, written as parts in `menu/` in ROM order |
-| `menu_internal.h` | the includes, macros, flags and types more than one part uses |
-| `menu/*.c` | the parts: one for each screen, and [`common.c`](menu/common.c), [`djinn_figures.c`](menu/djinn_figures.c), [`djinn_preview.c`](menu/djinn_preview.c), [`icons.c`](menu/icons.c) and [`use.c`](menu/use.c) for what the screens share |
-| `menudata.c`, `menustr.s` | the menu object's tables (the cursor's bob, the item sort orders, highlight widths) and its short strings and backdrop tile |
-| `title.c`, [`title.h`](title.h) | the title overlay; `title.h` names the Golden Sun logo the title screen and the main menu share |
-| `main_menu.c`, [`keyboard.s`](keyboard.s) | the main menu overlay: new game, continue, copy, delete, the Battle Arena door and the data transfer, by link or as a password |
-| `battle_arena.c` | the Battle Arena overlay: the link and monster battles, their records and the attendant |
-| `entry/`, `import/` | each overlay's entry [veneers](../../glossary.md#veneer) and the main-image functions it calls |
-| `backdrop.png` | the tile the Djinn screens copy into their backdrop's frame, which the Djinn preview blinks |
-| `cursor_l.png`, `cursor_r.png`, `cursor_spin.png` | the hand cursor pointing each way and the animated cursor, placed by `window/cursor.s` |
-| `slider.png`, `slidpal.png` | the option menu's slider and its colours, placed by `window/slider.s` and `window/slidpal.s` |
-| `djinn/` | the Djinn screen's up and down arrows, and the tile the battle's Djinn menu blinks |
-
-`menu.c` includes `menu_internal.h` and then the parts in ROM order, and
-`head -4 menu/*.c` lists what each part holds. Link order is in
-`games/tbs/objects.tsv`, from `menu/menu` in the [main image](../../glossary.md#main-image) and from
-`menu/entry/title`, `menu/entry/main_menu` and `menu/entry/battle_arena` for the
-overlays, which the object list names by their [resource](../system/README.md#the-resource-directory-and-table-order) numbers: `36f`
-(title), `370` (main menu) and `3cb` (Battle Arena). The prototypes are in
-`games/tbs/include/unit/menu/`: [`menu.h`](../../include/unit/menu/menu.h)
-for the menu object and [`title.h`](../../include/unit/menu/title.h),
-`main_menu.h` and `battle_arena.h` for the overlays. The structs the screens read their
-work through are in the shared headers under `games/tbs/include`, such as
-`item_menu.h`.
-
-Each picture is an indexed PNG that the build encodes beside it: `.gbapal` is
-a palette, and the tile formats name their depth and, for a sprite, its shape
-in pixels: `.4bpp` (`backdrop`, `djinn/blink`), `.8bpp8x16` (`cursor_l`,
-`cursor_r`), `.8bpp16x16` (`cursor_spin`), `.4bpp32x8` (`slider`) and
-`.4bpp16x16` (`djinn/arrowup`, `djinn/arrowdn`). The ROM keeps three copies of
-the Djinn arrows, placed by `graphics/ui/menuspr.s` (the copy `menu/icons.c`
-loads, as `gMenu_PairSpriteATiles` and `gMenu_PairSpriteBTiles`),
-`shop/shopspr.s` and `window/fixed_block.s`. `keyboard.s` keeps a compressed
-naming screen keyboard tilemap, the same as the Japanese one, that nothing reads.
 
 ## Words used here
 
@@ -375,32 +350,6 @@ naming screen keyboard tilemap, the same as the Japanese one, that nothing reads
 - **page arrows**: the two tiles beside a paged list's page numbers
   (`PAGE_ARROW_`), which each screen's loop slides back and forth.
 - `unk` plus an offset, such as `unk180`: a field whose meaning is not known.
-
-## Function prefixes
-
-| Prefix | What it acts on |
-| --- | --- |
-| `Menu_`, `MenuCursor_` | pieces several screens share; holding the field still; the hand cursor in the top window |
-| `PsynergyMenu_` | the Psynergy screen and its entry grid, and, under an older name, the party figures |
-| `ItemMenu_`, `EquipmentMenu_` | the Item screen, its messages and sorting, the equip markers |
-| `SummaryScreen_`, `MemberChooser_` | the summary screen and the member chooser |
-| `DjinnMenu_`, `Djinn_`, `PsynergyList_` | the Djinn screen, its lists and its preview loop |
-| `DjinnFigures_` | the row of four figures the summary and Djinn screens show |
-| `StatusPanel_` | the member panel beside the Item and Psynergy screens: name, class, level, HP and PP |
-| `Item_`, `Ability_` | using an item or Psynergy from the menu |
-| `Title_`, `MainMenu_`, `BattleArena_`, `MapData_` | the three overlays and their map entry functions |
-| `State_` | the Battle Arena's unused empty callback |
-| `Window_`, `Text_`, `Icon_`, `TextPrinter_`, `WindowPalette_`, `Palette_`, `Resource_`, `Render_`, `Task_` | windows, text, icons, palettes, VRAM entries and [tasks](../../glossary.md#task), whose main code is in other folders |
-| `PagedList_` | the equipment pages' item lists: building a page, its page numbers and moving through it |
-
-Some prefixes are older than the parts. `PsynergyMenu_InitializeEntryObjects`
-sets up the party figures for the Item, Psynergy and Djinn screens (through
-`ItemMenu_Initialize`), for the summary screen and, through
-`PsynergyMenu_InitializeEntryObjectsFar`, for the counters. Many of these
-names are shared with [The Lost Age](../../glossary.md#the-two-games)'s copies of these files (`games/tla/src/menu`), with the
-far-call tables and with the window folder, so renaming one crosses folders.
-[Matching](../MATCHING.md) explains the spellings some sites keep and the
-comment markers.
 
 ## Evidence and open questions
 

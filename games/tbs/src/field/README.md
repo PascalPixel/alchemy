@@ -583,6 +583,12 @@ It is a smaller update than the field needs: it covers eight objects of the
 flight, following the ground, floating, and solid objects that refuse to overlap),
 so it could not stand in for the Thumb update.
 
+`field.c` is one object in the ROM; its parts are our cut of it, made where
+one family of functions ends and the next begins. A few functions take the
+prefix of the one thing they act on (`Decompress_Lz`,
+`FieldCamera_FollowLeaderInBounds`), and a name that other folders or The Lost
+Age's copy also use changes only in a rename across all of them.
+
 ## How the field fits with the rest of the game
 
 [Running a map](../overworld/README.md) owns the map loop: it starts the
@@ -602,35 +608,6 @@ guide](../../../tla/src/field/README.md), as differences from this one.
 - `gObjectScript_CommandTable` has 47 entries: 36 commands, then 11 that act
   as `SC_END`. A label must lie within the first 1,024 words of its script.
 - A step can climb 8 pixels and drop 12.
-
-## Files
-
-| File | What it holds |
-| --- | --- |
-| `field.c` | the field object: a guide comment, then `field_internal.h` and the 14 parts under `field/` in ROM order |
-| `field_internal.h` | the parts' includes, and the names more than one part uses; it places no bytes |
-| `field/*.c` | the 14 parts, each one family of functions; `head -3 field/*.c` prints what each holds |
-| `update.c` | `Object_UpdateAll`, an ARM copy of the object update for the first eight objects, which only the unused `Object_RunUpdateAllFromHeap` would run |
-| `vertices.c` | `Transform_UpdateVertices`, the ARM routine that turns the world map's scanline table into `BG2`'s affine values |
-| `object_script.c`, `operand.c` | the scripts the engine starts by itself, `gObjectScript_CommandTable`, and the handlers of the work values |
-| `facing.c` | the facing tables and the small tables the parts read: the order a sprite's tiles dissolve in, the fixed camera's matrix, the wave a floating object bobs on, the idle script, the direction pad's headings, the footprint and dust scripts, and the world map camera's lean for each pad direction |
-| `curve_data.c`, `map_grid_data.c` | the ground height tables, `gMapGrid_TerrainHeightFunctions`, the world map's battle environment table, and two tables nothing reads (`gWorldMap_DirectionOffsets`, `gWorldMap_UnitScale`) |
-| `world_map_resources.c` | `gWorldMap_GraphicsResources`, the world map's two graphics sets |
-| `griddata.c` | the scale the debug sprite viewer draws at |
-| `lucky_dice.c` | the Lucky Dice minigame, with its camera defaults and 8.8 fixed-point helpers |
-| `layouts.tsv` | `gLayouts`: each layout's header, palette, three tilesets and layer data, as resource numbers counted from `ResourceId_Layout001` |
-| `remap0.tsv` to `remap3.tsv` | `gRuntime_ByteRemapTable`, four 256-byte colour remap tables |
-| `map_headers.s` | `gMapHeaders`: each map's overlay, [map section](../../glossary.md#map-section), map type (town or field) and layout; each row also defines the map's `MapId_` |
-| `common/effect/` | the ground particle and sparkle pictures of the field's weather, which [`scripts.s`](../overworld/scripts.s) places |
-
-The headers are in `games/tbs/include/unit/field/`, one for each C file but
-`world_map_resources.c`, whose table `field.h` declares. Link order is in
-`games/tbs/objects.tsv`.
-
-`field.c` is one object in the ROM; the parts are our cut of it, made where
-one family of functions ends and the next begins. They are compiled only
-through `field.c`, and each also includes `field_internal.h` so that it reads
-on its own.
 
 ## Words used here
 
@@ -657,31 +634,6 @@ Because the parts compile as one file, a part's own types, macros and static
 helpers carry its family's name (`ObjectCamera`, `Layout`, `WorldMap`),
 and a part undefines its macros at its end.
 [Matching](../MATCHING.md) lists the sites that keep an unusual spelling.
-
-## Function prefixes
-
-| Prefix | What it covers |
-| --- | --- |
-| `Sprite_`, `Render_` | drawing sprites |
-| `SpriteDissolve_` | dissolving a sprite into or out of view, pixel by pixel |
-| `Anim_`, `SpriteAnim_`, `Sprite_`, `SpriteFrameCache_` | sprites, their anims and the frame caches they draw from |
-| `ObjectSystem_`, `ObjectDispatch_`, `Object_` | keeping and moving objects |
-| `ObjectScript_` | object script commands, and the overlap and wandering tests they run |
-| `Field_` | the configured keys |
-| `MapGrid_`, `TileMap_` | layered maps, their cells and the BG maps built from them |
-| `WorldMap_` | the world map |
-| `WorldMap_GetCollision`, `WorldMap_IsWalkable`, `WorldMap_GetBattleEnvironment` | the ground under a point on the world map; `MapGrid_GetMetatileBehaviorAt`, `MapGrid_SetMetatileBehaviorAt` and `MapGrid_IsWallAt` ask the same of a layered map |
-| `TilesetAnim_`, `BlendScript_`, `PaletteCycle_` | tileset animation, the blend script and palette cycles |
-| `Terrain_` | ground height functions |
-| `Ui_`, `SpriteViewer_` | the debug sprite viewer |
-| `LuckyDice_` | the Lucky Dice minigame |
-| `ObjectCamera_` | a camera hook that returns 1 and nothing calls (`object_camera.c`) |
-| `ResourceTable_` | two empty reserved functions beside the resource table, nothing calls them |
-
-A few functions take the prefix of the one thing they act on
-(`Decompress_Lz`, `FieldCamera_FollowLeaderInBounds`). Names other
-folders or The Lost Age's copy also use change only in a rename across all of
-them.
 
 ## Evidence and open questions
 

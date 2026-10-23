@@ -368,6 +368,12 @@ name from a shorter distance (`REGION_MAP_NAME_RANGE`). The edition block of
 | `REGION_MAP_NAME_RANGE` | 64 in `TBS_PATCH_2` editions, else 100 | the squared distance at which a place's name shows |
 | `WORLD_MAP_NAME_LEFT` | 3 in `TBS_PATCH_2` editions, else 1 | how far left of its marker the name goes |
 
+## Design
+
+Several structures are reached by more than one spelling (the field work, the
+effect scene, the map's view, the palette fade), each site keeping the one it
+matches with; [Matching](../MATCHING.md) lists them.
+
 ## How it fits with the rest of the game
 
 `Game_Run` (`overworld/map.c`) is the game's main loop; [the front
@@ -395,29 +401,6 @@ effect scene's work serves the Djinn joining effects as well as Psynergy.
 - A battle snapshot keeps up to 32 object events.
 - One Halt target at a time.
 
-## Files
-
-| File | What it holds |
-| --- | --- |
-| `overworld.c`, `overworld/*.c` | the field object, in 16 parts: the main loop and map changes, the map loop and its requests, random encounters, a map's object events, its events, items and Psynergy used on the field, the map's treasure spots, the debug palette editor, and the screen transitions and palette fade the field shares with battles |
-| `field_services.c`, `field_services/*.c` | the field Psynergy and script object, in 37 parts: the commands map scripts run, the script camera, jumping and climbing, the field's weather and scanline effects, Djinn joining the party, the effect of each field kind, the field effect sprites and the world map screen |
-| `overworld_internal.h`, `field_services_internal.h` | each object's private header |
-| `lucky_wheels.c` | Lucky Wheels, and an LZ packer nothing calls (`LzPack_PackStream` is [`UNUSED`](../../glossary.md#unused)); linked in `rom_main_12`, where the rest of the folder is in `rom_main_04` |
-| `fxdata.c` | constant tables: object scripts, curves and lookups |
-| `battle_cue.c` | `gEncounter_BattleMusic`, the battle music of each encounter |
-| `zonedata.c` | the world map's encounter rules, and the zone and slot of each Djinni battle |
-| `location_rules.s` | `gBattle_LocationRules`, the encounter zones of maps |
-| `map_rules.s` | the field music and area names of maps (`gMapSec_NameRules`) |
-| `encounter.tsv` | the 104 encounter zones |
-| `scripts.s` | object scripts, the leader's object event template, the screen transition shapes, the weather pictures and `gRegionMap_MapSecMarkers` |
-| `arcspark.s`, `swatch.s`, `mote.png` | the spark pictures, the debug palette editor's swatch (its picture is `../debug/swatch.png`) and the floating motes' picture |
-
-`overworld.c` and `field_services.c` are each one object in the ROM, written
-as parts: the `.c` includes its private header and then its parts in ROM
-order, so a part is compiled only through it. The header places no bytes.
-`head -2 overworld/*.c field_services/*.c` prints what each part holds.
-Prototypes are in `games/tbs/include/unit/overworld/`.
-
 ## Words used here
 
 - **field work**: `struct FieldWork`, the running map's state
@@ -441,41 +424,6 @@ Prototypes are in `games/tbs/include/unit/overworld/`.
   world map screen's markers, one for each place, are another thing.
 - **mode**: `work->mode` is `OBJECT_SYSTEM_LAYOUT` on a town or dungeon map and
   `OBJECT_SYSTEM_WORLD_MAP` on the world map.
-
-## Function prefixes
-
-| Prefix | What it covers |
-| --- | --- |
-| `Map_` | map changes, a map's events and its warp destination |
-| `Field_` | the map loop and its requests |
-| `Encounter_` | random encounters |
-| `Script_`, `FieldScript_` | the commands map scripts run |
-| `Object_`, `ObjectMotion_` | objects and their motion |
-| `TreasureSpot_` | the map's treasure spots |
-| `ItemDisplay_` | a found item's picture, held up over the leader |
-| `Camera_` | the script camera |
-| `Djinn_` | Djinn joining the party and the hop before a Djinni battle |
-| `ScreenTransition_` | the screen transitions between maps: window transitions and dissolves |
-| `WorldMap_` | the world map screen and its markers, and starting and ending a script on the world map |
-| `FieldEffectSprite_` | field effect sprites |
-| `FieldEffect_` | field effects: a field kind's runner is named for its Psynergy (`FieldEffect_RunCatch`), and the small effects map scripts spawn go through `FieldEffect_Spawn` |
-| `PaletteFade_` | the palette fade, which moves the palettes toward target colours |
-| `LuckyWheels_`, `LzPack_` | Lucky Wheels, and the packer beside it |
-| `ObjectEvent_`, `Leader_`, `FacingObject_`, `ObjectVisual_` | the object event table, and the object event commands map scripts call (`object_event_commands.c`): placing, walking, turning and posing an object event or the leader |
-| `ObjectEffect_` | the context effects a Psynergy starts |
-| `ItemGift_` | the message for an item the party has just received |
-| `FadeOverlay_`, `Reveal_`, `FieldMotes_` | the fade overlay's marks beside the object event, a Reveal marker's sparkles and the floating motes |
-| `DisplayState_` | clearing the background bits `ScreenTransition_` turns on |
-| `Warp_` | the leader's arrival and exit animations at a warp (stairs up, stairs down, falling in) |
-| `FieldYesNo_` | a yes-or-no question asked from a map script |
-| `ScanlineEffect_` | the per-scanline wave scroll driven by HBlank DMA, as pret's scanline effects |
-| `Weather_` | rain and lightning over a map |
-| `Speaker_` | a speaking sprite's definition: its voice and idle flags |
-
-Other functions keep the prefixes of the families they belong to elsewhere.
-Several structures are reached by more than one spelling (the field work, the
-effect scene, the map's view, the palette fade), each site keeping the one it
-matches with; [Matching](../MATCHING.md) lists them.
 
 ## Evidence and open questions
 

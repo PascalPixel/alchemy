@@ -303,28 +303,6 @@ units are part of the save file.
 - Levels go up to 99.
 - 128 rare item counters, each 0 to 99.
 
-## Files
-
-| File | What it holds |
-| --- | --- |
-| `game.c` | the object: it includes `game_internal.h`, then the parts in `game/` in ROM order; its opening comment says where each family starts |
-| `game_internal.h` | the object's includes and `Inventory_CompactSlots`, which two parts use |
-| [`game/units.c`](game/units.c) | the party's units and their stats, a new game, the prologue, HP and PP |
-| [`game/inventory.c`](game/inventory.c) | items and inventories: equipping, adding, removing, breaking and counting, and the rare item counters |
-| [`game/levels.c`](game/levels.c) | each unit's actions and Psynergy list, the characters, experience and levelling up |
-| [`game/flags.c`](game/flags.c) | the game flags, read as bits, bytes and nibbles |
-| [`game/party.c`](game/party.c) | enemy units, the active party, coins and counters, and summons |
-| [`game/classes.c`](game/classes.c) | element levels and classes |
-| [`game/battle_calc.c`](game/battle_calc.c) | battle arithmetic: the attack, Psynergy and healing formulas, the element multiplier, the battle's random numbers, the effect rolls and the weapon unleash |
-| [`game/snapshot.c`](game/snapshot.c) | equipping a given item, and the equipment put aside for the Colosso |
-| [`game/djinn.c`](game/djinn.c) | the Djinn: their definitions, setting them, standby and recovery, and counting them |
-| `starting_equipment.c` | the starting items, class and level of the characters who begin a new game equipped: Isaac, Garet, Ivan, Mia and Jenna |
-| `element_curve.s` | `gElement_PowerResistCurve`, the points `Battle_GetElementMultiplier` interpolates between |
-| `*.tsv`, each with the `.s` that places it | the definition tables, listed under [their ids](#how-one-number-finds-a-row-and-its-name) |
-
-The prototypes are in `games/tbs/include/unit/game/`, and the bank's
-far-call table is `games/tbs/src/system/far_call/GAME.S`.
-
 ## Words used here
 
 - **unit id** and **unit**: a unit id is a number, and a unit the
@@ -349,20 +327,6 @@ far-call table is `games/tbs/src/system/far_call/GAME.S`.
   character reaches.
 - **flag**: one of the 4,096 bits of `gGameFlagBytes`, by number; the named
   ones are in `flags.h`.
-
-## Function prefixes
-
-| Prefix | What it acts on |
-| --- | --- |
-| `Unit_` | one unit: stats, HP and PP, Psynergy, levels, elements |
-| `Party_`, `SaveBlock_`, `Game_` | the party and the save block |
-| `Item_`, `Inventory_`, `PartyInventory_`, `InventorySnapshot_`, `ItemCounter_`, `Equipment_` | items: one unit's inventory, the party's, the Colosso's snapshot, and the rare item counters |
-| `Character_`, `Class_`, `Enemy_`, `Summon_`, `SummonDefinition_`, `BattleAction_` | one entry of a definition table |
-| `GameFlag_` | the game flags |
-| `Djinn_`, `DjinnRecovery_` | the Djinn, and their recovery lists |
-| `Battle_`, `BattleTarget_` | the battle arithmetic the battle folder calls |
-| `BattleUnit_` (`BattleUnit_Set`) | filling an enemy unit at the start of a battle |
-| `Runtime_` | `Runtime_CopyBytesDirectional` and `Runtime_GetBuildStampTime`: general helpers that sit in this bank but keep the runtime's prefix, as the rest of the engine names them |
 
 ## Evidence and open questions
 

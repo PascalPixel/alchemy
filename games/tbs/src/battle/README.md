@@ -704,6 +704,12 @@ Only `BattleObject_SpawnObjectsForList` reads it through a copy of the layout,
 `BattleSpriteObject`, whose sprite word is untyped, since only that form
 compiles to the original's instructions ([Matching](../MATCHING.md)).
 
+The ROM holds the battle as one object, and the build compiles it as one;
+the parts are our cut of it, made where one family of functions ends and the
+next begins. A function that acts on one thing the engine names elsewhere
+keeps that thing's prefix (`Transform_`, `Palette_`, `Party_`, `Ability_`,
+`Text_` and others) rather than taking `Battle_`.
+
 ## Limits
 
 - There are 519 abilities. The turn reads `ability_anims.tsv` only up to
@@ -718,31 +724,6 @@ compiles to the original's instructions ([Matching](../MATCHING.md)).
   `minimum4`, `maximum0` to `maximum4`). The encounter zones in
   `../overworld/encounter.tsv` choose among them.
 - The playback queue holds `BATTLE_PLAYBACK_CAPACITY` events.
-
-## Files
-
-| File | What it holds |
-| --- | --- |
-| `battle.c` | the battle object: it includes `battle_internal.h`, then the parts in `battle/` in ROM order |
-| `battle_internal.h` | the private header every part includes: the names two or more parts use |
-| `battle/*.c` | the code, in 24 parts |
-| `battle_data.s`, `battle_vars.s` | the smaller tables and pictures in ROM order, including where the `.tsv` tables below are placed |
-| `battle_calc.s` | the fall-off tables: the share of damage, healing or an added effect's chance a target gets by its distance from the aimed place |
-| `ability_anims.tsv` | each ability's animation id and staging bits (`gAbilityAnimations`) |
-| `ability_staging.tsv` | each ability's staging, where it overrides the turn's choice (`gAbilityStaging`) |
-| `formations.tsv` | the formations |
-| [`sprites.tsv`](sprites.tsv) | each enemy's battle sprite |
-| `presets.tsv` | the debug party presets |
-| `advarrow.s` | the arrow beside a battle message that waits for the player, built from `advarrow.png`: sixteen 8 by 16 frames, of which the code cycles through the first eight, one every four frames |
-| `presentation/` | the opening curtain's tiles and their variants, and the brightness steps of a unit's highlight (`highlight_ramp.s`) |
-| `effect/` | two 32 by 16 sparks that `../overworld/arcspark.s` places for the field Psynergy effects |
-
-The ROM holds the battle as one object, and it is built as one. The split
-into parts is ours, made where one family of functions ends and the next
-begins; the folder's [guide](../README.md) explains how parts are compiled.
-The first lines of the parts, read in the order `battle.c` includes them,
-form a table of contents. The functions are declared in
-[`unit/battle/battle.h`](../../include/unit/battle/battle.h).
 
 ## Words used here
 
@@ -792,47 +773,6 @@ The parts give the same locals the same names: `battle` or `work` for
 `gBattleWork`, `unitId`, `unit` for its `struct Unit`, `battleObject`
 for its `struct BattleObject`, `object` for that object's
 `struct Object`, `record` for one of its sprites, and `plan`.
-
-## Function prefixes
-
-| Prefix | What it acts on |
-| --- | --- |
-| `Battle_` | the battle as a whole: `Battle_Run`, the round's end |
-| `BattleParty_` | the unit lists: who is in the battle and who is still standing |
-| `BattleTurnOrder_` | the round's action list and its turn order |
-| `BattleAI_` | an enemy's choice of action and target |
-| `BattleTurn_` | the turn under way: its ability, announcement and targets |
-| `BattleStaging_` | how a turn is staged around its animation |
-| `BattleAbility_` | what an ability does to each target |
-| `BattleTarget_` | targets an enemy or a confused unit picks |
-| `AutoBattle_` | the auto battle (`FLAG_AUTO_BATTLE`): the round's actions built and played without the command menu or the staging |
-| `BattlePlayback_` | the playback queue and playing it |
-| `BattleObject_` | the battle objects |
-| `BattleMotion_` | their movements |
-| `BattlePlacement_` | where each place stands on the battlefield |
-| `BattleUnit_` | one unit's battle state (its guard, weapon sprite, status flags and turn-end counters) and the lists of a battle's units |
-| `BattleStatusIcon_` | the status icons that cycle over a unit |
-| `BattleFormation_`, `BattleEnemy_` | the formations, and each enemy's level, name letter, defeat and coins |
-| `BattleSprite_` | an enemy's row of the battle sprite table |
-| `BattleFlee_` | running away |
-| `BattleSpoils_` | the items the enemies leave |
-| `BattleSummon_` | which summons the party's standby Djinn make available |
-| `BattleIntro_` | the message that announces the encounter |
-| `BattleBackground_` | the battle background: its picture, display mode and palette |
-| `BattleCamera_` | the battle camera: its views, its turn each frame, its shake, and the perspective plane's zoom it sets |
-| `EnemySprite_` | the enemy sprite slots a unit's battle sprite is loaded into |
-| `ElementGlow_` | a unit's elemental glow: the star field and the other glows |
-| `LinkBattle_` | link battles |
-| `DebugBattle_`, `DebugParty_` | the debug battle menu, its message viewer and the party presets |
-| `BattleTransition_` | the opening transition into a battle and its mosaic fade out |
-| `BattleHighlight_` | which units glow: the acting unit or the targets being chosen stay opaque while the others turn semi-transparent |
-| `BattleDjinn_` | the party's Djinn on standby, counted |
-| `Irq_` | the interrupt handlers the star field installs and removes |
-
-A function that acts on one thing the engine names elsewhere keeps that
-thing's prefix (`Transform_`, `Palette_`, `Party_`, `Ability_`, `Text_` and
-others). [Matching](../MATCHING.md) explains the unusual spellings and the
-[`FAKEMATCH`](../../glossary.md#fakematch) tags.
 
 ## Evidence and open questions
 

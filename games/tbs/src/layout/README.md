@@ -474,6 +474,9 @@ place rather than copying them. XXX: likely because only
 One grid serves all three layers, so every layout takes the same 64 KB of cells,
 and a layer's window can sit anywhere in the grid.
 
+The layout numbers are the order of the directories, not numbers the game
+gives its layouts.
+
 ## Limits
 
 - 128 by 128 cells, for all three layers together.
@@ -482,21 +485,6 @@ and a layer's window can sit anywhere in the grid.
 - 256 shapes a layout, since a cell names its shape in one byte.
 - 16 tileset animation channels (`struct MapGridState`).
 - `TREASURE_SPOT_MAX` (10) chests and Psynergy Stones placed on a map.
-
-## Files
-
-| Path | What it holds |
-| --- | --- |
-| `layout_000/` to `layout_179/` | one layout each: its `layout.s` and the tables it places |
-| `gondowan_passage/`, `venus_entrance/` | two more layouts, Gondowan Passage and Venus Lighthouse's entrance, built like the others |
-| `world/blocks.tsv` | the world map's ground (`Field_PerspectiveDataA`) |
-| `default/` | the world map's default cells, tileset animation and block attributes (`Field_DefaultGridCells` and the tables after it) |
-| `colosso/` | the opponents' recorded paths, with the Colosso lettering placed after them |
-| `world_map.s` | places `world/` and `default/` |
-| `layout.inc` | the `layout_header`, `layout_layer` and `layout_offset` macros every `layout.s` uses |
-
-The layout numbers are the order of the directories, not numbers the game
-gives its layouts.
 
 ## Words used here
 

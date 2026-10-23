@@ -1,7 +1,7 @@
 	.include "games/tbs/include/game/ed_asm.h"
 
-@ Field music: the music of the first rule matching the scene or its group and
-@ the entrance (-1 for any) whose flag (-1 for always) is set.
+@ Field music: the music of the first rule matching the map or its group and
+@ the warp destination (-1 for any) whose flag (-1 for always) is set.
 	.macro map_cue map:req, warpDest:req, flag:req, cue:req
 	.2byte MapId_\map, (\warpDest & 0x7fff) | 0x8000, \flag, \cue
 	.endm
@@ -9,7 +9,8 @@
 	.2byte \group, \warpDest & 0x7fff, \flag, \cue
 	.endm
 
-@ Place names: the name of the scene or its group and the entrance (-1 for any).
+@ Area names: the name of the map or its group and the warp destination (-1
+@ for any).
 	.macro map_name map:req, warpDest:req, name:req
 	.2byte MapId_\map, (\warpDest & 0x7fff) | 0x8000
 	.4byte \name
@@ -19,13 +20,13 @@
 	.4byte \name
 	.endm
 
-@ Defeat return points: the scene and entrance (-1 for any), then the scene and
-@ entrance the party returns to after a defeat there.
+@ Defeat return points: the map and warp destination (-1 for any), then the
+@ map and warp destination the party returns to after a defeat there.
 	.macro return_to map:req, warpDest:req, saved:req, saved_warp_dest:req
 	.2byte MapId_\map, \warpDest, MapId_\saved, \saved_warp_dest
 	.endm
 
-@ A battle backdrop and the scenes that use it.
+@ A battle backdrop and the maps that use it.
 	.macro backdrop resource:req, maps:vararg
 	.2byte ResourceId_\resource, 0x8000
 	.ifnb \maps
@@ -322,7 +323,7 @@ gParty_PairResolveRules:
 	return_to LinkLobby, -1, LinkLobby, 1
 	.2byte -1, -1, -1, -1	@ end
 
-@ A scene not listed takes the last backdrop.
+@ A map not listed takes the last backdrop.
 	.global gBattle_BackdropMaps
 gBattle_BackdropMaps:
 	backdrop ValeStormBackdrop, ValeStorm, Vale, ValeGate, ValeKraden

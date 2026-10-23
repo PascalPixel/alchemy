@@ -1,5 +1,5 @@
 /// @file
-/// Field requests and each step of the leader: exits, encounters, damage.
+/// Field requests and each step of the leader: warps, encounters, damage.
 // Part of object.c.
 
 #include "../object_internal.h"
@@ -17,7 +17,7 @@ struct StepOwner {
 
 /// Clears the field's twelve pending requests (see struct FieldWork).
 ///
-/// Called by Field_RunMap while it sets a scene up.
+/// Called by Field_RunMap while it sets a map up.
 void Field_ClearRequests(void) {
   s16 noRequest;
   struct FieldWork *work;
@@ -37,8 +37,8 @@ void Field_ClearRequests(void) {
   work->event = 0;
 }
 
-/// Returns the sum of the field's twelve pending requests (counting the actor
-/// event request twice): non-zero while any request is pending.
+/// Returns the sum of the field's twelve pending requests (counting the talk
+/// request twice): non-zero while any request is pending.
 ///
 /// Field_RunMap tests it to stop walking and to leave its request loop.
 s32 Field_CountRequests(void) {
@@ -46,10 +46,10 @@ s32 Field_CountRequests(void) {
 
   // BUG: a sum can be 0 with requests pending. Field_ProcessStep raises event
   // FIELD_EVENT_PARTY_FELL (-1) on the frame a member falls to poison, and
-  // the action request is the cell's event code, 1 on a touch event 1's cells
-  // (154 maps have them); together they sum to 0, and both wait until another
-  // request breaks the tie, by which time a later cell's code may have
-  // replaced the action. BUGFIX tests each request instead.
+  // the action request is the cell's metatile behavior, 1 on coord event 1's
+  // cells (154 maps have them); together they sum to 0, and both wait until
+  // another request breaks the tie, by which time a later cell's behavior may
+  // have replaced the action. BUGFIX tests each request instead.
 #ifdef BUGFIX
   return work->action | work->pushTile | work->warp | work->menu |
          work->examine | work->start | (s16)work->talk | work->tile |
@@ -62,8 +62,8 @@ s32 Field_CountRequests(void) {
 #endif
 }
 
-/// Returns the collision code of the map cell 16 pixels ahead of the party
-/// leader (a world map block on the world map), or 0 without a leader.
+/// Returns the metatile behavior of the map cell 16 pixels ahead of the party
+/// leader (a world map metatile on the world map), or 0 without a leader.
 ///
 /// Called by Field_FindItemEvent and FieldEffect_FindMatchingEvent (items.c),
 /// which match an item or Psynergy event to the tile the leader faces.
@@ -91,7 +91,7 @@ s32 Field_GetCollisionAheadOfLeader(void) {
   Vector_AddPolarOffset(0x100000, leader->angle, position.coordinates);
 
   if (work->mode == MODE_WORLD_MAP) {
-    // World map blocks are 32 pixels square, 32 to a row.
+    // World map metatiles are 32 pixels square, 32 to a row.
     u32 tileX;
     u32 tileY;
 
@@ -128,14 +128,14 @@ s32 Field_GetCollisionAheadOfLeader(void) {
   return tile[2];
 }
 
-/// Takes the exit of the first of the scene's exit regions that contains the
+/// Takes the warp of the first of the map's warp regions that contains the
 /// position (x, y, z), in 16.16 pixels, and whose condition holds: records the
-/// region's exit value for Field_RunMap, plays the exit sound and starts
-/// leaving the scene. A region's bounds are whole pixels, its maxima
-/// exclusive; a table whose first minX is -1, or no table, has no exits.
+/// region's warp value for Field_RunMap, plays the warp sound and starts
+/// leaving the map. A region's bounds are whole pixels, its maxima
+/// exclusive; a table whose first minX is -1, or no table, has no warps.
 ///
 /// Called by Field_ProcessStep when the leader steps on a cell with a non-zero
-/// collision code. Sets work->exit and stops the leader.
+/// metatile behavior. Sets work->warp and stops the leader.
 void Field_CheckWarpRegions(s32 positionX, s32 positionY, s32 positionZ) {
   // A do/while or while scan changes register allocation (51 text bytes in
   // tbs-en); keep the sentinel backedge until that form matches.
@@ -185,10 +185,10 @@ void Field_CheckWarpRegions(s32 positionX, s32 positionY, s32 positionZ) {
 }
 
 /// Handles one step of the party leader onto the cell at (x, y, z) of map
-/// layer: records step events and push tiles, takes exits, and while walking
-/// advances the encounter counter, regenerates PP, hurts the party with poison
-/// and hazardous ground, and wears Avoid off. When this hurts the party, the
-/// leader flinches and characters who fall are listed in the field work.
+/// grid layer: records coord events and push tiles, takes warps, and while
+/// walking advances the encounter counter, regenerates PP, hurts the party with
+/// poison and hazardous ground, and wears Avoid off. When this hurts the party,
+/// the leader flinches and characters who fall are listed in the field work.
 ///
 /// Called by Field_RunMap each frame while the party walks (in debug mode,
 /// FLAG_DEBUG_STEPS_OFF skips it), so the counts below advance
@@ -246,7 +246,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
   event = tile->collisionCode;
   work->previousTile = work->currentTile;
   work->currentTile = tile;
-  // Exit regions are checked on any marked cell; the code then picks the
+  // Warp regions are checked on any marked cell; the behavior then picks the
   // request it raises.
   if (event != 0)
     Field_CheckWarpRegions(x, y, z);
@@ -374,7 +374,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
 /// walks).
 ///
 /// Called by Field_ProcessStep as the party walks, by Field_SearchTile for a
-/// Psynergy stone (999, all PP), and by the Vale home scene through
+/// Psynergy stone (999, all PP), and by the Vale home map through
 /// Party_AddPpFar.
 void Party_AddPp(s32 amount, s32 unused) {
   s32 partyCount = Party_CountActiveOwnersFar();
@@ -478,16 +478,16 @@ s32 Party_ApplyPoisonDamage(void) {
   return worstPoison;
 }
 
-/// Starts an event or menu on the world map: ends any colour ratio transition
+/// Starts a script or menu on the world map: ends any colour ratio transition
 /// in progress, pauses camera movement and freezes the perspective view as a
 /// still picture. Elsewhere it does nothing.
 ///
 /// Called by Field_RunMap around the handling of most requests, by the
-/// Djinni effect and by the world map scene; each call is paired with
+/// Djinni effect and by the world map's overlay; each call is paired with
 /// WorldMap_EndScript. Changes the display transition state in
 /// HEAP_SLOT_TRANSITION only when it is running. Both allocations return the
 /// slot's block when it has one; with that slot free, the
-/// world map takes a new, uncleared block there, kept until the scene ends,
+/// world map takes a new, uncleared block there, kept until the map ends,
 /// whose step is then leftover memory.
 void WorldMap_StartScript(void) {
   struct FieldWork *work;

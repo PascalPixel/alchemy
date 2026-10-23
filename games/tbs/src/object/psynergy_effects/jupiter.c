@@ -7,8 +7,8 @@
 /// A Jupiter Djinni joins the party: it bounces three times, spins, leaps out
 /// of sight and bursts into 24 light particles that circle and close in on
 /// the leader, who turns to the camera and plays animation 28. Called by
-/// Djinn_JoinParty for a Jupiter Djinni, which then clears the Djinni's actor
-/// slot; the Djinni's object is released here. Uses all 24 effect slots
+/// Djinn_JoinParty for a Jupiter Djinni, which then clears the Djinni's object
+/// event slot; the Djinni's object is released here. Uses all 24 effect slots
 /// (FieldEffect_InitializeSlots), tints the field palette and fades it back at
 /// the end.
 void Djinn_RunJupiterJoinEffect(s32 djinniId) {

@@ -215,12 +215,12 @@ void DisplayScroll_StepPositionEveryFourFrames(void) {
 /// Crossfades the credits backdrop sequence through alternating tile banks
 /// while the staff names scroll over it, then restores the display for the
 /// following screen. Reached through the scroll far-call table at the end of
-/// the game: Title_Run calls it as ScrollFar_Entry00 at the title scene's
-/// entrance 9, MUS_ENDING playing, before the clear screen. Its waits come to
-/// 11223 frames, about 3 minutes 8 seconds, besides the loads: a 300-frame
-/// lead, then 33 slides of a 64-frame fade and a 267-frame hold, the last a
-/// fade to black. Returns 0 with BG2, BG3 and blending off and the OAM copy
-/// back on; the three tasks it schedules are still scheduled.
+/// the game: Title_Run calls it as ScrollFar_Entry00 at the title map's
+/// warp destination 9, MUS_ENDING playing, before the clear screen. Its waits
+/// come to 11223 frames, about 3 minutes 8 seconds, besides the loads: a
+/// 300-frame lead, then 33 slides of a 64-frame fade and a 267-frame hold, the
+/// last a fade to black. Returns 0 with BG2, BG3 and blending off and the OAM
+/// copy back on; the three tasks it schedules are still scheduled.
 s32 DisplayScroll_RunSlideshow(void) {
   u32 slide;
   s32 alpha;
@@ -1116,7 +1116,7 @@ s32 DisplayScroll_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
   // the next line before clearing the rest of the reused scratch buffer.
   // The buffer comes back at the same address each call (MemFree rewinds the
   // pool), so the last line's ninth row is still there. FLAG_MAP_TEMP_00,
-  // here a line has been drawn, is clear on entering the scene
+  // here a line has been drawn, is clear on entering the map
   // (Map_ResetFlagsOnEnter), so the first line starts from a clean buffer.
   if (!GameFlag_TestFar(FLAG_MAP_TEMP_00)) {
     Iwram_FillWords(linePixels, CREDITS_BUFFER_BYTES, 0);

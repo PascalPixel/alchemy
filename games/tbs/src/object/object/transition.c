@@ -1,5 +1,5 @@
 /// @file
-/// Window transitions and dissolves between scenes.
+/// Window transitions and dissolves between maps.
 // Part of object.c.
 
 #include "../object_internal.h"
@@ -558,7 +558,7 @@ void DisplayTransition_UpdateScanlineTable(void) {
 /// moves it.
 ///
 /// Called by Reveal's effect (WINDOW_TRANSITION_RIPPLE) and, through
-/// DisplayTransition_InitializeBattleEffectStateFar, by three scenes (Altmiller
+/// DisplayTransition_InitializeBattleEffectStateFar, by three maps (Altmiller
 /// Cave, Tret Tree's branch and Babi's palace). Allocates and clears the
 /// transition state in HEAP_SLOT_TRANSITION and adds both window callbacks;
 /// mask 0x3f3f shows every layer in both windows.
@@ -604,8 +604,8 @@ struct DisplayTransitionState *DisplayTransition_AllocateAndClearState(void) {
 /// It returns after one frame while the fade runs on: a caller that must wait
 /// for it, as Field_RunMap does, waits itself.
 ///
-/// Called by Field_RunMap to fade a scene in with work->transition and
-/// work->transitionFrames, and by FieldScript_StartScreenTransition for scene
+/// Called by Field_RunMap to fade a map in with work->transition and
+/// work->transitionFrames, and by FieldScript_StartScreenTransition for map
 /// scripts. Every style but the fades adds a scheduler callback (and the
 /// centre line the HBlank handler, IRQ 1) that runs the transition; every kind
 /// ORs the map's display bits into DISPCNT through the I/O write queue.
@@ -700,10 +700,10 @@ void DisplayTransition_Start(s32 mode, s32 frames) {
 /// Fades the screen out over frames frames, as DisplayTransition_Start fades
 /// it in.
 ///
-/// Called by Field_RunMap as a scene ends, by Field_StartEncounterTransition
+/// Called by Field_RunMap as a map ends, by Field_StartEncounterTransition
 /// before a battle (the flickering centre line, and the
 /// WINDOW_TRANSITION_LEADER_INVERSE window), and by
-/// FieldScript_FinishScreenTransition for scene scripts. The window and
+/// FieldScript_FinishScreenTransition for map scripts. The window and
 /// dissolve kinds run from value 32 to 64, the centre line from 0 to 80. Like
 /// DisplayTransition_Start it does not wait for the fade: Field_RunMap waits
 /// transitionFrames after it.

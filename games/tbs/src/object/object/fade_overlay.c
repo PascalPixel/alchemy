@@ -1,11 +1,11 @@
 /// @file
-/// The fade overlay drawn on the ground beside an actor.
+/// The fade overlay drawn on the ground beside an object event.
 // Part of object.c.
 
 #include "../object_internal.h"
 
 #ifndef UBFIX
-/// The map work in HEAP_SLOT_MAP_GRID, seen as the halfwords of its view
+/// The map grid work in HEAP_SLOT_MAP_GRID, seen as the halfwords of its view
 /// position: the high halves are the view's x and z in whole pixels.
 struct FadeView {
   u8 unk00[228];
@@ -13,12 +13,12 @@ struct FadeView {
 };
 #endif
 
-/// Each frame of the fade overlay: on each of the two cells beside the actor
-/// (left and right of it), where the ground one or two cells south rises above
-/// the actor's floor, draws a semi-transparent 16-pixel-wide sprite of colour 1
-/// at the height of that ground. Registered as a scheduler callback by
-/// FieldEffect_StartFadeOverlay; reads the work in HEAP_SLOT_FADE_OVERLAY and
-/// queues the marks with Runtime_PushSlotEntry.
+/// Each frame of the fade overlay: on each of the two cells beside the object
+/// event (left and right of it), where the ground one or two cells south rises
+/// above the object event's floor, draws a semi-transparent 16-pixel-wide
+/// sprite of colour 1 at the height of that ground. Registered as a scheduler
+/// callback by FieldEffect_StartFadeOverlay; reads the work in
+/// HEAP_SLOT_FADE_OVERLAY and queues the marks with Runtime_PushSlotEntry.
 void FadeOverlay_DrawMarks(void) {
   struct FadeOverlayWork *work = WORK_SLOT(HEAP_SLOT_FADE_OVERLAY);
 #ifdef UBFIX
@@ -28,7 +28,8 @@ void FadeOverlay_DrawMarks(void) {
 #else
   // UB: the legacy halfword overlay aliases the map's s32 coordinates.
   // Named-member high halves keep 0x1da bytes but change load scheduling
-  // from .text+0x6cce in English; the actor's named fields match plainly.
+  // from .text+0x6cce in English; the object event's named fields match
+  // plainly.
   s16 *camera = ((struct FadeView *)WORK_SLOT(HEAP_SLOT_MAP_GRID))->camera;
   s32 cameraX = camera[1];
   s32 cameraZ = camera[3];
@@ -57,9 +58,9 @@ void FadeOverlay_DrawMarks(void) {
   // The first tile of the solid block FieldEffect_StartFadeOverlay loaded (VRAM
   // cache block 94; tiles are 32 bytes).
   tile = gVramBlockCache[94].offset >> 5;
-  // The left cell, 8 pixels left of the actor. The ground is read one and two
-  // cells (16 and 32 pixels) south, the further one counting 16 pixels lower,
-  // and the higher of the two is used.
+  // The left cell, 8 pixels left of the object event. The ground is read one
+  // and two cells (16 and 32 pixels) south, the further one counting 16 pixels
+  // lower, and the higher of the two is used.
   x -= 0x80000;
   height = MapGrid_GetTerrainHeightFar(terrainLayer, x, z + 0x100000) >> 16;
   secondHeight =
@@ -82,7 +83,7 @@ void FadeOverlay_DrawMarks(void) {
     mark->y = screenRow - cameraZ - height + 16;
     Runtime_PushSlotEntry(mark, 0);
   }
-  // The right cell, 8 pixels right of the actor, read the same way.
+  // The right cell, 8 pixels right of the object event, read the same way.
   x += 0x100000;
   height = MapGrid_GetTerrainHeightFar(terrainLayer, x, z + 0x100000) >> 16;
   mark = &work->marks[1];
@@ -107,12 +108,12 @@ void FadeOverlay_DrawMarks(void) {
 /// solid tiles, sets the blending and draws it each frame. Allocates
 /// HEAP_SLOT_FADE_OVERLAY for its work, borrows HEAP_SLOT_TILE_SCRATCH for the
 /// tiles (0x200 bytes of colour 1, VRAM cache block 94) and registers
-/// FadeOverlay_DrawMarks. Called by seven scene overlays (Venus and Mercury
+/// FadeOverlay_DrawMarks. Called by seven map overlays (Venus and Mercury
 /// Lighthouses, Kalay, the tunnel ruins, Crossbone Isle, the ice room by Imil
 /// and Fuchin Falls); Crossbone Isle then switches it on and off by setting the
-/// work's actor. No ☀️ code stops it (FadeOverlay_Suspend has no named caller):
-/// the work and the callback last until the next scene change resets the heap
-/// and the task table (Game_Run).
+/// work's object event. No ☀️ code stops it (FadeOverlay_Suspend has no named
+/// caller): the work and the callback last until the next map change resets the
+/// heap and the task table (Game_Run).
 void FieldEffect_StartFadeOverlay(void *object) {
   struct FadeOverlayWork *work;
   u8 *tiles;

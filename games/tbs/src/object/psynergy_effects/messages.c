@@ -1,5 +1,5 @@
 /// @file
-/// Messages shown at an actor, and the speaker's voice.
+/// Messages shown at an object event, and the speaker's voice.
 // Part of psynergy_effects.c.
 
 #include "../psynergy_effects_internal.h"
@@ -14,10 +14,10 @@ struct WorkPointers {
 };
 #endif
 
-/// The event command "open message": opens the event's current message in a
-/// speech window next to the speaking actor, with the speaker's portrait
+/// The script command "open message": opens the script's current message in a
+/// speech window next to the speaking object event, with the speaker's portrait
 /// beside it when it has one, and moves on to the next message. The low 12
-/// bits of actor are the speaker (0 to 7, a party member, speaks from the
+/// bits of objectEvent are the speaker (0 to 7, a party member, speaks from the
 /// leader); its high bits place the windows: 0x1000 portrait on the left,
 /// 0x2000 on the right, 0x4000 message above the speaker, 0x8000 never above.
 /// Returns the message window once its text is typed out; the caller waits
@@ -252,12 +252,12 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 objectEvent, s32 unused) {
   return handle;
 }
 
-/// The event command "show message": opens the current message at actor
+/// The script command "show message": opens the current message at objectEvent
 /// (UiText_OpenMessageAtObject) and waits until it has been read and its
 /// window has closed; the speaker's portrait is closed once the text is typed
 /// out. The message closes by itself after 600 frames, or at once while
-/// Select, L, R and A are all held. About 70 scenes reach it as
-/// Engine_ScriptShowMessage (Script_ShowMessage, MESSAGE_PUT); the scene event
+/// Select, L, R and A are all held. About 70 maps reach it as
+/// Engine_ScriptShowMessage (Script_ShowMessage, MESSAGE_PUT); the map event
 /// runner (object/events.c), Field_RunEventAction (dispatch.c), Field_UseItem
 /// for an item event that is a message (object/items.c) and the debug menu's
 /// message test call it too.
@@ -270,7 +270,7 @@ void FieldScript_ShowMessageAndWait(s32 objectEvent, s32 flags) {
 
   frames = 0;
   WaitFrames(1);
-  // A party member the scene does not place has its portrait under its
+  // A party member the map does not place has its portrait under its
   // character id, as UiText_OpenMessageAtObject opened it.
   sprite = ObjectTable_ReadActiveValue(objectEvent);
   if (objectEvent <= 7) {
@@ -296,16 +296,16 @@ void FieldScript_ShowMessageAndWait(s32 objectEvent, s32 flags) {
   WaitFrames(1);
 }
 
-/// The event command "show message and wait": shows the message, then waits
+/// The script command "show message and wait": shows the message, then waits
 /// wait frames.
 void FieldScript_ShowMessageThenWait(s32 objectEvent, s32 flags, s32 wait) {
   FieldScript_ShowMessageAndWait(objectEvent, flags);
   FieldScript_WaitFrames(wait);
 }
 
-/// The event command "ask yes or no": opens the question at actor, lets the
-/// leader answer, then shows the next message for yes or the one after it for
-/// no. Returns 0 for yes, 1 for no. Either way the event's message number
+/// The script command "ask yes or no": opens the question at objectEvent, lets
+/// the leader answer, then shows the next message for yes or the one after it
+/// for no. Returns 0 for yes, 1 for no. Either way the script's message number
 /// ends past both answers, so the script goes on with the same message
 /// whatever was chosen.
 s32 FieldScript_AskYesNoAndShowResponse(s32 objectEvent, s32 flags) {
@@ -352,8 +352,8 @@ void FieldScript_ShowSpeakerMessage(s32 speaker) {
 
   speaker &= 0xfff;
 #ifdef UBFIX
-  // Only the actor slots hold actor pointers; ObjectTable_Get's legacy range
-  // also exposes the event fields after them.
+  // Only the object event slots hold object event pointers; ObjectTable_Get's
+  // legacy range also exposes the event fields after them.
   if ((u32)speaker <
       sizeof(state->objectEvents) / sizeof(state->objectEvents[0]))
     object = ObjectTable_Get(speaker);
@@ -368,8 +368,8 @@ void FieldScript_ShowSpeakerMessage(s32 speaker) {
     s32 positionFound = 0;
 
     // Supply the actual speaker position as UiText_OpenMessageAtObject does.
-    // A missing actor or failed projection has no position to open around;
-    // still consume the message, as the fast-forward path does.
+    // A missing object event or failed projection has no position to open
+    // around; still consume the message, as the fast-forward path does.
     if (object != NULL) {
       if (state->mode == MODE_WORLD_MAP)
         positionFound =
@@ -418,7 +418,7 @@ void FieldScript_ForwardShowMessageAtPosition(s32 unused0, s32 unused1, s32 x,
 }
 
 /// Unused: reached only through a bare veneer in OBJECT.S. It would open the
-/// event's message at (x, y), wait for it and advance the message index; its
+/// script's message at (x, y), wait for it and advance the message index; its
 /// units are as unknown as FieldScript_ShowSpeakerMessage's.
 void FieldScript_ShowMessageAtPosition(s32 unused0, s32 unused1, s32 x, s32 y) {
   struct FieldWork *state = (struct FieldWork *)gEventWork;
@@ -445,7 +445,7 @@ void FieldScript_ShowMessageAtPosition(s32 unused0, s32 unused1, s32 x, s32 y) {
   state->message++;
 }
 
-/// Closes the portrait of an actor's sprite, if it has one.
+/// Closes the portrait of an object event's sprite, if it has one.
 void ObjectTable_RunIfActive(s32 objectEvent) {
   s32 sprite;
 
@@ -454,9 +454,9 @@ void ObjectTable_RunIfActive(s32 objectEvent) {
     UiWork_FinalizeEntityMatchingLocalizedIdFar(sprite);
 }
 
-/// The event command "show two messages and wait": two actors speak at once,
-/// each message at its own (x, y) with its portrait at (portraitX, portraitY),
-/// all in tiles. Waits for A, B, L or R, then closes both.
+/// The script command "show two messages and wait": two object events speak at
+/// once, each message at its own (x, y) with its portrait at (portraitX,
+/// portraitY), all in tiles. Waits for A, B, L or R, then closes both.
 void FieldScript_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
                                         s32 firstPortraitX, s32 firstPortraitY,
                                         s32 second, s32 secondX, s32 secondY,
@@ -501,8 +501,8 @@ void FieldScript_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
   WaitFrames(1);
 }
 
-/// Sets the voice of the messages that follow to that of actor's sprite, at
-/// the rate the message speed option picks (gUi_RenderResultValues). With
+/// Sets the voice of the messages that follow to that of objectEvent's sprite,
+/// at the rate the message speed option picks (gUi_RenderResultValues). With
 /// 0x80000000 the messages are silent.
 void Ui_SetMessageVoiceFromObjectEvent(s32 objectEvent) {
   struct UiRenderWork *state = (struct UiRenderWork *)gWindowWork[0];

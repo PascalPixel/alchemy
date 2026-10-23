@@ -174,7 +174,7 @@ void FieldEffect_UpdatePausedObject(union FieldObject *fieldObject) {
 /// Pauses object id, keeping its per-frame update and, if it is animated, its
 /// first animation's param in gGameState. Called by FieldEffect_Run and
 /// FieldEffect_DispatchRequestKind for Halt, which then record the id in
-/// gGameState.pausedObject, and by the Colosso scenes to stop their operators.
+/// gGameState.pausedObject, and by the Colosso maps to stop their operators.
 /// Sets gGameState.pausedUpdate and pausedPose, the object's update and paused
 /// fields, and stops its animation. gGameState keeps one object's state, so
 /// Halt resumes the one it stopped before it stops another; the paused
@@ -203,8 +203,8 @@ void FieldEffect_PauseObject(s32 objectEventId) {
 /// FieldEffect_PauseObject. Called for gGameState.pausedObject by
 /// FieldEffect_Run and FieldEffect_DispatchRequestKind before Halt stops
 /// another object, and by Map_TalkToObjectEvent after talking to the paused
-/// actor. Clears gGameState.pausedUpdate and the object's paused field, and
-/// restarts its animation at speed 16.
+/// object event. Clears gGameState.pausedUpdate and the object's paused field,
+/// and restarts its animation at speed 16.
 void FieldEffect_ResumeObject(s32 objectEventId) {
   struct ObjectEvent *object = ObjectTable_Get(objectEventId);
   if (object != 0) {
@@ -220,10 +220,11 @@ void FieldEffect_ResumeObject(s32 objectEventId) {
   }
 }
 
-/// Returns id, or -1 (no target) when actor id's sprite has flags 0xff in
-/// gFieldEffect_DefinitionTable (FieldEffect_GetFlags): the 20 rows before the
-/// default. Called by FieldEffect_Run on the nearest Halt target, so Halt does
-/// not stop those actors; an unlisted sprite takes the default row's flags 0.
+/// Returns id, or -1 (no target) when object event id's sprite has flags 0xff
+/// in gFieldEffect_DefinitionTable (FieldEffect_GetFlags): the 20 rows before
+/// the default. Called by FieldEffect_Run on the nearest Halt target, so Halt
+/// does not stop those object events; an unlisted sprite takes the default
+/// row's flags 0.
 s32 FieldEffect_FilterObjectIdByFlags(s32 id) {
   if (FieldEffect_GetFlags(id) == 0xff)
     return -1;

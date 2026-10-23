@@ -1,14 +1,16 @@
 /// @file
-/// An actor's screen position, the encounter transition, context effects.
+/// An object event's screen position, the encounter transition, context
+/// effects.
 // Part of psynergy_effects.c.
 
 #include "../psynergy_effects_internal.h"
 
-/// Finds where an actor is on screen: position[0] and position[1] receive its
-/// x and y in pixels, y at the top of its sprite. Returns 0, or -1 if there is
-/// no such actor. Called by the message window code in messages.c to place a
-/// speaker's bubble, and through ObjectEvent_GetScreenPositionFar by the window
-/// frames to open a message window above or below the leader.
+/// Finds where an object event is on screen: position[0] and position[1]
+/// receive its x and y in pixels, y at the top of its sprite. Returns 0, or -1
+/// if there is no such object event. Called by the message window code in
+/// messages.c to place a speaker's bubble, and through
+/// ObjectEvent_GetScreenPositionFar by the window frames to open a message
+/// window above or below the leader.
 s32 ObjectEvent_GetScreenPosition(s32 objectId, s32 *position) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);
 #ifdef UBFIX
@@ -52,9 +54,9 @@ s32 ObjectEvent_GetScreenPosition(s32 objectId, s32 *position) {
 /// Unused: an empty function nothing calls.
 UNUSED void ObjectEffect_ReservedNoOp941DC(void) {}
 
-// UB: no value is returned, and run_scene.c ignores it; as void, the epilogue
+// UB: no value is returned, and run_map.c ignores it; as void, the epilogue
 // changes.
-/// Starts the transition into a random battle: plays the scene's battle cue
+/// Starts the transition into a random battle: plays the map's battle cue
 /// and the encounter sounds, closes the screen and flashes the backdrop white,
 /// fading it to black over 16 frames. Called by Field_RunMap when it handles
 /// work->battle; clears work->transitionActive once the screen is closed.
@@ -73,7 +75,7 @@ s32 Field_StartEncounterTransition(s32 unused) {
   if (work->mode == MODE_WORLD_MAP) {
     // On the world map the flash colours BG palette colour 243 instead, and
     // the screen closes on the flickering centre line (style 4, variant 1);
-    // a field scene closes with WINDOW_TRANSITION_LEADER_INVERSE. Both take
+    // a field map closes with WINDOW_TRANSITION_LEADER_INVERSE. Both take
     // 16 frames.
     Io_Write16(RGB(31, 31, 31), (u16 *)&BG_PLTT_COLOR(15, 3));
     DisplayTransition_Finish(MAP_TRANSITION(4, 1), 16);
@@ -100,7 +102,7 @@ s32 Field_StartEncounterTransition(s32 unused) {
   }
 }
 
-/// Starts the leader's animation for leaving through an exit: centres it on
+/// Starts the leader's animation for leaving through a warp: centres it on
 /// its tile, at the tile's south edge, stops it and plays animation over 18
 /// frames. The leader's sprite gains a second part (metadata 27) for it.
 /// Called by the two ObjectEffect_StartContextEffect functions below.
@@ -132,24 +134,25 @@ void ObjectEffect_PrepareContextEffect(s32 animation) {
   WaitFrames(18);
 }
 
-/// Leaves through an WARP_STYLE_ANIMATED exit (ANIMATION_LEADER_LEAVE);
-/// FLAG_WARP_ARRIVAL_PENDING makes the next scene play the matching arrival
-/// (ObjectEffect_RunPendingFlagEvent). Called by the exit handling in events.c,
-/// after it plays SE_STAIRS_UP.
+/// Leaves through a WARP_STYLE_ANIMATED warp (ANIMATION_LEADER_LEAVE);
+/// FLAG_WARP_ARRIVAL_PENDING makes the next map play the matching arrival
+/// (ObjectEffect_RunPendingFlagEvent). Called by the warp handling in
+/// object/events.c, after it plays SE_STAIRS_UP.
 void ObjectEffect_StartContextEffect26(void) {
   ObjectEffect_PrepareContextEffect(ANIMATION_LEADER_LEAVE);
   GameFlag_SetBitFar(FLAG_WARP_ARRIVAL_PENDING);
 }
 
-/// Leaves through an WARP_STYLE_ANIMATED_ALTERNATE exit
+/// Leaves through a WARP_STYLE_ANIMATED_ALTERNATE warp
 /// (ANIMATION_LEADER_LEAVE_ALTERNATE), recorded in FLAG_WARP_ARRIVAL_ALTERNATE.
-/// Called by the exit handling in events.c, after it plays SE_STAIRS_DOWN.
+/// Called by the warp handling in object/events.c, after it plays
+/// SE_STAIRS_DOWN.
 void ObjectEffect_StartContextEffect25(void) {
   ObjectEffect_PrepareContextEffect(ANIMATION_LEADER_LEAVE_ALTERNATE);
   GameFlag_SetBitFar(FLAG_WARP_ARRIVAL_ALTERNATE);
 }
 
-/// Plays the leader's arrival animation through an exit: centred on its tile
+/// Plays the leader's arrival animation through a warp: centred on its tile
 /// at the tile's north edge, the leader plays animation for 30 frames, loses
 /// the extra sprite part and walks 8 pixels south. Called by
 /// ObjectEffect_RunPendingFlagEvent; frees the sprite part
@@ -184,13 +187,13 @@ void ObjectEffect_EndContextEffect(s32 animation) {
   FieldObject_WaitForMoveFar(leader);
 }
 
-/// Plays the leader's arrival for the way the last scene was left: through an
-/// WARP_STYLE_ANIMATED exit (FLAG_WARP_ARRIVAL_PENDING,
-/// ANIMATION_LEADER_ARRIVE, returns 1) or an WARP_STYLE_ANIMATED_ALTERNATE one
+/// Plays the leader's arrival for the way the last map was left: through a
+/// WARP_STYLE_ANIMATED warp (FLAG_WARP_ARRIVAL_PENDING,
+/// ANIMATION_LEADER_ARRIVE, returns 1) or a WARP_STYLE_ANIMATED_ALTERNATE one
 /// (FLAG_WARP_ARRIVAL_ALTERNATE, ANIMATION_LEADER_ARRIVE_ALTERNATE, returns 2),
 /// or falling in from 160 pixels above (FLAG_ARRIVE_FALLING, returns 3).
 /// Returns 0 when there is nothing to play. Called by Field_RunMap as the
-/// scene fades in, which waits out the fade itself only when this returns 0.
+/// map fades in, which waits out the fade itself only when this returns 0.
 /// Clears the flag it acts on.
 s32 ObjectEffect_RunPendingFlagEvent(void) {
   s32 result = 0;
@@ -215,7 +218,7 @@ s32 ObjectEffect_RunPendingFlagEvent(void) {
         GameFlag_ClearBitFar(flag);
         leaderId = gGameState.selectedObjectEvent;
         leader = ObjectTable_Get(leaderId);
-        // FLAG_ARRIVE_FALLING is set by scenes the party drops out of (the
+        // FLAG_ARRIVE_FALLING is set by maps the party drops out of (the
         // Suhalla storm, a floor giving way in the Tret tree): start 160 pixels
         // up and let gravity bring the leader down to the ground.
         leader->y += 0x00a00000;

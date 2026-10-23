@@ -1,6 +1,6 @@
 # Runtime
 
-![Five frames of a field scene. An event's code does some work in the first frame, then calls WaitFrames to wait three frames, and carries on in the fifth. Meanwhile two tasks run once in every one of the five frames, waiting or not: the windows' task opens, closes and types the text windows, and the map's task scrolls the map's layers with the camera. WaitFrames is what runs them.](https://alchemy.pascalpixel.com/illustrations/runtime/waiting.svg)
+![Five frames on a map. A script's code does some work in the first frame, then calls WaitFrames to wait three frames, and carries on in the fifth. Meanwhile two tasks run once in every one of the five frames, waiting or not: the windows' task opens, closes and types the text windows, and the map's task scrolls the map's layers with the camera. WaitFrames is what runs them.](https://alchemy.pascalpixel.com/illustrations/runtime/waiting.svg)
 
 When a cutscene pauses for half a second, the code that runs it simply stops
 and waits, yet the screen keeps moving: windows still type their text, the map
@@ -23,12 +23,12 @@ IWRAM, are in [System](../system/README.md).
 Start-up takes the console from the moment it is switched on to the title
 screen, and never comes back.
 
-![Start-up, in order. The cartridge's first instruction jumps to System_Entry, which sets up the stacks. System_Initialize then prepares memory: it clears IWRAM, empties the heap and copies the fast routines into IWRAM. It starts the services: the VBlank handler, the sound driver and an empty task table. It waits ten frames, then Game_Run runs one scene after another, starting with the title. Before each scene it drops the last scene's tasks and empties the heap. None of these steps returns.](https://alchemy.pascalpixel.com/illustrations/runtime/start-up.svg)
+![Start-up, in order. The cartridge's first instruction jumps to System_Entry, which sets up the stacks. System_Initialize then prepares memory: it clears IWRAM, empties the heap and copies the fast routines into IWRAM. It starts the services: the VBlank handler, the sound driver and an empty task table. It waits ten frames, then Game_Run runs one map after another, starting with the title. Before each map it drops the last map's tasks and empties the heap. None of these steps returns.](https://alchemy.pascalpixel.com/illustrations/runtime/start-up.svg)
 
 Before the game can show anything, memory has to be put in order and the
 services everything else relies on have to be running: the code that puts
 each frame on screen, the sound, the list of tasks. Start-up does that once,
-then hands over to the loop that runs one scene after another for as long as
+then hands over to the loop that runs one map after another for as long as
 the console is on.
 
 In the code, a few hardware words recur. IWRAM is the console's 32 KB of
@@ -55,7 +55,7 @@ Italian editions (`TBS_PATCH_2`) also install `Iwram_Halt` for the
 cartridge-removed interrupt.
 
 Neither function returns. `Game_Run` (`games/tbs/src/object/object/map.c`)
-runs one scene after another, starting at the title, and before each one it
+runs one map after another, starting at the title, and before each one it
 resets the task table, removes the HBlank and VCount handlers, empties the heap
 and resets the VRAM cache.
 
@@ -208,7 +208,7 @@ main-loop tasks, and code a task may reach tests it before waiting
 
 ## The heap
 
-The heap lends blocks of memory to the rest of the game: a scene's working
+The heap lends blocks of memory to the rest of the game: a map's working
 state, a menu's buffers, a battle effect's pictures.
 
 ![Three pictures of one heap pool, which hands out memory from the bottom up and keeps one mark, the next free address. First, three blocks A, B and C taken in that order, with the mark above C. Second, releasing C moves the mark back to C's start. Third, releasing B while C is still in use moves the mark back to B's start, so C's memory is free too and the next block taken will be put on top of it. Blocks are therefore released in the reverse of the order they were taken.](https://alchemy.pascalpixel.com/illustrations/runtime/heap.svg)
@@ -218,8 +218,8 @@ single mark, the next free address, says where the next one will start.
 Giving a block back moves the mark down to that block's start, which also
 gives back everything taken after it. That makes taking and giving back
 almost free, at the price of one rule: blocks go back in the reverse of the
-order they were taken. Since the whole heap is emptied before each scene, a
-block can never outlive the scene, battle or minigame that took it.
+order they were taken. Since the whole heap is emptied before each map, a
+block can never outlive the map, battle or minigame that took it.
 
 The heap hands out memory from two pools, one in IWRAM from `gIwramHeap` up to
 `Ram_IwramHeapEnd` and one in EWRAM from `gEwramHeap` up to the end of EWRAM.
@@ -243,7 +243,7 @@ pool, and the rule is that blocks are released in the reverse of the order
 they were taken, pool by pool. A block released out of order does not fail at
 once: the later blocks stay in their slots, pointing at memory the next
 allocation hands out again. `Game_Run` empties both pools and clears every
-slot before each scene.
+slot before each map.
 
 That rule is why an effect's transfer callback has to be removed before its
 heap blocks are released, and why `RamCode_Load` copies of code are freed
@@ -270,7 +270,7 @@ The scheduler keeps the list of tasks, the small jobs that have to happen
 every frame whatever the rest of the code is doing, and runs them in a fixed
 order.
 
-![The tasks of a field scene, as the task table holds them. Each task's order says which pass runs it and where in that pass. Every frame, WaitFrames runs the map's task, which scrolls the map's layers, and then the windows' task, which opens, closes and types the windows; the map's has the higher order, so it runs first. In every vertical blank, the VBlank handler runs the task that copies changed window tiles to the screen. While a menu is open, the scene's own tasks, whose code is in its overlay, are suspended: both passes skip them, and they keep their place for when the menu closes. The table has 20 slots, and each scene starts with it empty.](https://alchemy.pascalpixel.com/illustrations/runtime/tasks.svg)
+![The tasks of a map, as the task table holds them. Each task's order says which pass runs it and where in that pass. Every frame, WaitFrames runs the map's task, which scrolls the map grid's layers, and then the windows' task, which opens, closes and types the windows; the map's has the higher order, so it runs first. In every vertical blank, the VBlank handler runs the task that copies changed window tiles to the screen. While a menu is open, the map's own tasks, whose code is in its overlay, are suspended: both passes skip them, and they keep their place for when the menu closes. The table has 20 slots, and each map starts with it empty.](https://alchemy.pascalpixel.com/illustrations/runtime/tasks.svg)
 
 A task is added once and then runs by itself until it is removed. Some
 belong in the frame's work, such as scrolling the map
@@ -302,7 +302,7 @@ removed task's `SCHEDULER_KEY_REMOVED`; both high bytes are odd, and as signed
 halfwords a removed slot sorts first and an empty one last.
 `Scheduler_SuspendOverlayTasks` suspends the tasks whose routine is in EWRAM,
 where overlays run, except those whose flag bit 0 is set; the link lobby and
-the Colosso scenes set it (`Scheduler_SetTaskFlags`) for tasks that must keep
+the Colosso maps set it (`Scheduler_SetTaskFlags`) for tasks that must keep
 running under a menu.
 
 Adding, removing, suspending and resuming disable interrupts, because the
@@ -443,7 +443,7 @@ and when time has to pass it calls `WaitFrames` and carries on from the same
 place. Nothing returns to a main loop between frames. Work that must continue
 while such a function waits is a task, which `WaitFrames` runs however deep
 the waiting function is: window animation, the battle's event playback
-(`BattleEvent_Playback`) and a scene's callbacks are tasks. Most of the
+(`BattleEvent_Playback`) and a map's callbacks are tasks. Most of the
 runtime's shape follows from that choice: the stack switch keeps the stack
 bounded however deep the caller, the scheduler gives tasks a known order, and
 the heap's slots let a task's blocks outlive the call that took them.
@@ -467,8 +467,8 @@ go through the depth slots, `gBgScroll` and the write queue. The other banks
 call the runtime's functions directly, and overlays reach them through the
 runtime bank's far-call table
 ([System](../system/README.md#why-the-program-is-cut-into-banks)), and
-`Game_Run`, which resets the runtime before every scene, is in
-[Running a place](../object/README.md).
+`Game_Run`, which resets the runtime before every map, is in
+[Running a map](../object/README.md).
 
 ## Limits
 
@@ -607,11 +607,11 @@ fourth. It could hold a stack that had run 2,640 bytes into the heap.
 No task waits. A call graph of the tbs-en build's objects, main image and
 overlays, from each function the code hands to the scheduler, each object
 hook and each `SC_CALL` callback, finds nine tasks with a path of calls to
-`WaitFrames`, and none takes it: the scene tasks turn actors with a wait of 0
+`WaitFrames`, and none takes it: the map tasks turn object events with a wait of 0
 (`Engine_ObjectEventFaceDirection`), the world map's lighthouse jitter moves the
 camera with a glide, the slot machine and the link countdown open instant
 windows (`UI_WINDOW_INSTANT`), and battle playback's sprite respawn tests
-`gSchedulerStatus`. The tenth path is the debug scene selector, which only
+`gSchedulerStatus`. The tenth path is the debug map selector, which only
 the unused `DebugMenu_ScheduleMapSelector` would schedule as a task.
 
 - XXX (no evidence): what the five empty exports after the fades

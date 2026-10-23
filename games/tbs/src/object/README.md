@@ -1,28 +1,28 @@
-# Running a place
+# Running a map
 
-![What can stop the walk, in the order the game deals with it. Twelve things can interrupt the walk, and the game checks them from the top of the list down, dealing with the first one it finds and then starting again from the top. Leaving the scene comes first, then an event that something asked for, then a battle. Then the ground: the cell the leader stepped onto, and a ledge or climbing spot pushed against. Then the buttons: A, which becomes talking to someone, searching the spot ahead or the menu; the menu; talking; searching; Psynergy; an item; and Start. When nothing is left, walking resumes.](https://alchemy.pascalpixel.com/illustrations/object/requests.svg)
+![What can stop the walk, in the order the game deals with it. Twelve things can interrupt the walk, and the game checks them from the top of the list down, dealing with the first one it finds and then starting again from the top. Leaving the map comes first, then a script that something asked for, then a battle. Then the ground: the cell the leader stepped onto, and a ledge or climbing spot pushed against. Then the buttons: A, which becomes talking to someone, searching the spot ahead or the menu; the menu; talking; searching; Psynergy; an item; and Start. When nothing is left, walking resumes.](https://alchemy.pascalpixel.com/illustrations/object/requests.svg)
 
 While the party is in a town, a dungeon or on the world map, this code runs
-the place from the moment it loads until the party leaves. It sets the place
+the map from the moment it loads until the party leaves. It sets the map
 up, hands the leader to the player, and deals with whatever stops the walk:
 a doorway, a random battle, the A button, the menu. Around that loop sit the
-things a place needs from one moment to the next: random battles, the people
-a place puts on the map and what they say, items and Psynergy used outside a
+things a map needs from one moment to the next: random battles, the people
+a map puts in it and what they say, items and Psynergy used outside a
 battle, the commands cutscenes are written in, Djinn joining the party, and
 the world map screen R brings up. The slot machine at Tolbi's spring is here
 too, in another bank.
 
 The engine underneath, which moves everything and draws the maps, is
-[Field](../field/README.md); the field objects themselves, the 64 slots for
+[Field](../field/README.md); the object events themselves, the 64 slots for
 everything that moves and the scripts they run, are described there under
 [everything that moves runs a
 script](../field/README.md#everything-that-moves-runs-a-script). What happens
-in each place comes from its own code in [Scenes](../map/README.md).
+in each map comes from its own code in [Maps](../map/README.md).
 [World](../../world.md) gives the whole layer in brief. The folder is named
 `object` after the bank of the program it fills, as each large bank's
 folder is.
 
-## The scene loop handles requests, not events
+## The map loop handles requests, not scripts
 
 While the party walks, the game asks once a frame whether something should
 happen, and when something should, it stops the walk and deals with one
@@ -33,62 +33,62 @@ leaving, one for a battle, one for each button, and so on. Stepping onto a
 doorway, pressing A or a script asking for a battle only raises its flag.
 The game then works down the list in a fixed order, the order in the picture
 above, deals with the first raised flag it finds, and starts again from the
-top. Leaving always comes first, so when an event both asks for a battle and
-takes an exit, the scene simply ends. Raising a flag that is already raised
-changes nothing, and a request an event raises waits until the event has
+top. Leaving always comes first, so when a script both asks for a battle and
+takes a warp, the party simply leaves the map. Raising a flag that is already raised
+changes nothing, and a request a script raises waits until the script has
 finished, so a battle a cutscene asks for starts only after its last line.
 
 In the code, `Field_RunMap` ([`object/run_map.c`](object/run_map.c))
-runs one scene. Before the loop it allocates the field work (`struct
-FieldWork`, the block of memory that holds the running scene's state: its
-actors, its event table and the requests below), loads the map,
-picks the encounter zones, takes the overlay's events, entrance and
-placements, restores the actors after a battle, and calls the scene's
-initialization, which may take an exit at once. Otherwise it fades the scene
-in, shows the area name if the group changed, and gives a Djinni or item left
-pending by the scene before. Then it alternates between walking and handling
+runs one map. Before the loop it allocates the field work (`struct
+FieldWork`, the block of memory that holds the running map's state: its
+object events, its event table and the requests below), loads the layout,
+picks the encounter zones, takes the overlay's events, warp destination and
+object event templates, restores the object events after a battle, and calls
+the map's initialization, which may take a warp at once. Otherwise it fades
+the map in, shows the area name if the map section changed, and gives a
+Djinni or item left pending by the map before. Then it alternates between walking and handling
 requests, as [Field](../field/README.md#the-walk-and-what-interrupts-it)
 describes. These are the request fields, in the order the loop tests them:
 
 | Order | Field | What it asks for |
 | --- | --- | --- |
-| 1 | `exit` | leave the scene; its kind is `Field_RunMap`'s result |
+| 1 | `exit` | leave the map; its kind is `Field_RunMap`'s result |
 | 2 | `event` | run a raised event, or one of the codes below |
 | 3 | `battle` | a random or requested battle against this enemy group |
-| 4 | `action` | a touch event or exit on the cell stepped onto (`MB_EVENT_FIRST` to `MB_EVENT_LAST`) |
+| 4 | `action` | a coord event or warp on the cell stepped onto (`MB_EVENT_FIRST` to `MB_EVENT_LAST`) |
 | 5 | `pushTile` | a ledge, climbing spot or jump the leader pushes against (`Field_RunPushTileEvent`) |
-| 6 | `examine` | the A button: becomes `talk` for an actor ahead with a talk event, else `tile` for a searchable cell ahead, else `menu` |
+| 6 | `examine` | the A button: becomes `talk` for an object event ahead with a talk event, else `tile` for a searchable cell ahead, else `menu` |
 | 7 | `menu` | the main menu |
-| 8 | `talk` | talk to an actor (`Map_TalkToObjectEvent`) |
+| 8 | `talk` | talk to an object event (`Map_TalkToObjectEvent`) |
 | 9 | `tile` | search a cell (`Field_SearchTile`) |
 | 10 | `psynergy` | use Psynergy (`Field_UsePsynergy`) |
 | 11 | `item` | use an item (`Field_UseItem`) |
 | 12 | `start` | the pause menu |
 
-An `event` is either a scene event to run (`Map_RunRaisedEvent`) or a
+An `event` is either a map event to run (`Map_RunRaisedEvent`) or a
 negative code from `enum FieldEventCode` that the loop handles itself:
 `FIELD_EVENT_PARTY_FELL` when characters fell to poison or hazardous ground
 (when no one survives, the party goes back to the last saved point with the
 leader at 1 HP), `FIELD_EVENT_WORLD_MAP_PICTURE` and
 `FIELD_EVENT_WORLD_MAP_ZOOM` for the world map screen (below).
 
-A battle is a way out of the scene, handled as an exit is. The game
-remembers where everyone stood, loads the battle as the next scene, and
-afterwards loads the place again with everyone put back. In the code, the
+A battle is a way out of the map, handled as a warp is. The game
+remembers where everyone stood, loads the battle as the next map, and
+afterwards loads the map again with everyone put back. In the code, the
 `battle` handler calls `ObjectTable_Snapshot`, writes `MAP_BATTLE` as the
-next scene with the enemy group as its entrance, and raises `WARP_NONE`, the
-result that means the next scene is already set. `Map_ReturnFromBattle`
-then loads the field scene again with `FLAG_KEEP_PARTY_POSITION`, and
+next map with the enemy group as its warp destination, and raises
+`WARP_NONE`, the result that means the next map is already set. `Map_ReturnFromBattle`
+then loads the map again with `FLAG_KEEP_PARTY_POSITION`, and
 `Field_RunMap` calls `ObjectTable_Restore`.
 
 The snapshot (`ObjectTableSnapshot` in
 [`object_runtime.h`](../../include/object_runtime.h)) keeps up to
-`OBJECT_SNAPSHOT_CAPACITY` (32) actors in parallel arrays of slots, runtime
+`OBJECT_SNAPSHOT_CAPACITY` (32) object events in parallel arrays of slots, runtime
 copies, animations, sprite flags and priorities, its slot list ending at an
-empty entry. The scene's placements have already made new sprites when the
-restore runs, and each saved actor still points at its old one. So
-`ObjectTable_Restore` keeps each actor's new sprite aside, copies the saved
-actor back, sets the saved animation and sprite flags, gives the saved priority
+empty entry. The map's object event templates have already made new
+sprites when the restore runs, and each saved object event still points at
+its old one. So `ObjectTable_Restore` keeps each object event's new sprite
+aside, copies the saved object event back, sets the saved animation and sprite flags, gives the saved priority
 to the new sprite and puts the new sprite's pointer back.
 
 The requests are fields of the field work, `struct FieldWork`
@@ -101,10 +101,10 @@ engine lends out to whatever runs, under the numbered slot
 | `FIELD_EVENT_PARTY_FELL` | -1 | characters fell to poison or hazardous ground |
 | `FIELD_EVENT_WORLD_MAP_PICTURE` | -888 | R on the world map: the world map screen |
 | `FIELD_EVENT_WORLD_MAP_ZOOM` | -889 | L on the world map: the view zooms out |
-| `MAP_BATTLE` | `0x1fe` | the next scene a battle request writes |
-| `WARP_NONE` | 999 | the exit result that means the next scene is already set |
-| `FLAG_KEEP_PARTY_POSITION` | `0x109` | the next field scene starts where the party was, its actors restored from the snapshot |
-| `OBJECT_SNAPSHOT_CAPACITY` | 32 | actors a battle snapshot keeps |
+| `MAP_BATTLE` | `0x1fe` | the next map a battle request writes |
+| `WARP_NONE` | 999 | the warp result that means the next map is already set |
+| `FLAG_KEEP_PARTY_POSITION` | `0x109` | the next map starts where the party was, its object events restored from the snapshot |
+| `OBJECT_SNAPSHOT_CAPACITY` | 32 | object events a battle snapshot keeps |
 
 ## Random battles
 
@@ -119,7 +119,7 @@ Each kind of ground belongs to a zone, and a zone says how far apart its
 battles are and which enemy groups can appear. A zone's rate is that
 distance: the higher it is, the smaller each step and the longer the walk
 between battles. A party whose average level is above the zone's adds to
-the rate, so a party that has outgrown a place meets its battles less
+the rate, so a party that has outgrown a zone meets its battles less
 often, and with Avoid active meets none there. The step grows with the
 leader's speed, so the counter measures distance walked rather than time. A
 random part of each step is drawn once and kept until the next battle, so
@@ -156,27 +156,27 @@ Sanctum's eruption, and she joins at level 1 with no experience, so the rule
 ends the Sol Sanctum's random battles once she has fought her way to just
 short of level 4 (158 experience). Why is an open question (below).
 
-`Encounter_SelectMapZones` gives a field scene its zones from
-`gBattle_LocationRules` (`location_rules.s`): the first rule for the scene and
-entrance (or any entrance) whose flag is clear gives a first zone, and grounds
+`Encounter_SelectMapZones` gives a map its zones from
+`gBattle_LocationRules` (`location_rules.s`): the first rule for the map and
+warp destination (or any warp destination) whose flag is clear gives a first zone, and grounds
 1 to 7 take consecutive zones from it while ground 0, ordinary ground, has
 none. A rule can instead move the first zone onto ground 0 and leave ground 1
 none, and most rules do. Cells marked `MB_ENCOUNTER_GROUND_1` and
-`MB_ENCOUNTER_GROUND_2` are grounds 1 and 2. A scene no rule matches has
+`MB_ENCOUNTER_GROUND_2` are grounds 1 and 2. A map no rule matches has
 no battles. The world map takes its zone from `gWorldMap_EncounterRules`
 (`zonedata.c`) by the terrain under the leader, which also picks the battle's
 backdrop.
 
 A zone is a row of `encounter.tsv`: `rate` (0 for none), `level`, the enemy
 groups `group0` to `group7` (rows of `games/tbs/src/battle/formatn.tsv`), their
-relative chances `weight0` to `weight7`, and `zone`, the place whose rules
+relative chances `weight0` to `weight7`, and `zone`, the map whose rules
 select it. Zones with rate 0 are fought only by slot, through
 `Field_RequestBattleFromEncounterTable` (the scripted battles, such as
 `ENCOUNTER_ZONE_TOLBI_SHIP`, `ENCOUNTER_ZONE_COLOSSO` and
 `ENCOUNTER_ZONE_SCRIPTED`, and the mimic chests of `ENCOUNTER_ZONE_MIMIC`) or
 `Field_RequestDjinnBattle` (`ENCOUNTER_ZONE_VENUS_DJINN` to
 `ENCOUNTER_ZONE_JUPITER_DJINN`, through `gEncounter_AreaEntryTable`). Both set
-the `battle` request, so the battle starts when the event returns.
+the `battle` request, so the battle starts when the script returns.
 
 `gEncounter_BattleMusic` (`battle_cue.c`) is one list: a song marker (bit 15
 set), then the `(zone << 4) + slot` keys that use it, ended by 0. A key takes
@@ -197,7 +197,7 @@ and the flags in `flags.h`.
 | `ENCOUNTER_ZONE_MIMIC` | 99 | mimic chests, by the chest's slot |
 | `ENCOUNTER_ZONE_VENUS_DJINN` to `ENCOUNTER_ZONE_JUPITER_DJINN` | 100 to 103 | Djinni battles, by `Field_RequestDjinnBattle` |
 | `FLAG_NO_ENCOUNTERS` | `0x160` | no random battles |
-| `FLAG_NO_ENCOUNTERS_IN_MAPSEC` | `0x161` | no random battles in this place |
+| `FLAG_NO_ENCOUNTERS_IN_MAPSEC` | `0x161` | no random battles in this map section |
 | `FLAG_LURE_CAP` | `0x167` | the speed passed to the roll is doubled |
 | `work->encounterThreshold` | 16, in 16.16 fixed point | the steps at which a battle starts |
 
@@ -205,14 +205,14 @@ and the flags in `flags.h`.
 
 When the player uses Move on a stone pillar, the pillar slides; used on a
 blank wall, the same hand appears and nothing moves. What Psynergy does to a
-place is decided by that place's own events, and the effect only draws it.
+map is decided by that map's own events, and the effect only draws it.
 
-![Psynergy on the field, step by step. Isaac uses Move on the stone pillar in Vale. First the game checks Psynergy can be used here and takes the PP. Then it runs the scene's event for before the cast, if the scene has one. Then the effect plays: Move's hand appears, and it pushes the thing ahead only because the scene has an event for Move on that pillar; with no such event the hand pushes at nothing. Last it runs the scene's event for after the cast: in Vale, noting where the pillar now stands and making its new cell solid. The place decides; the effect only draws.](https://alchemy.pascalpixel.com/illustrations/object/psynergy-phases.svg)
+![Psynergy on the field, step by step. Isaac uses Move on the stone pillar in Vale. First the game checks Psynergy can be used here and takes the PP. Then it runs the map's event for before the cast, if the map has one. Then the effect plays: Move's hand appears, and it pushes the thing ahead only because the map has an event for Move on that pillar; with no such event the hand pushes at nothing. Last it runs the map's event for after the cast: in Vale, noting where the pillar now stands and making its new cell solid. The map decides; the effect only draws.](https://alchemy.pascalpixel.com/illustrations/object/psynergy-phases.svg)
 
-A place can have an event for a Psynergy at three moments: before the effect
+A map can have an event for a Psynergy at three moments: before the effect
 plays, after it, and while it acts. The game looks up all three first, runs
 the "before" event, plays the effect, and runs the "after" event. The effect
-aims at the thing ahead only when the place has an event for this Psynergy
+aims at the thing ahead only when the map has an event for this Psynergy
 there, which is how a pillar moves under Move in one spot and nothing
 happens in another. In Vale, the "after" event for Move notes which column
 the pillar now stands in and makes its cell solid.
@@ -225,14 +225,14 @@ the Battle Arena (`FLAG_IN_BATTLE_ARENA`) and Reveal on the world map; Retreat
 refuses where `FLAG_RETREAT_BLOCKED` is set and otherwise asks first and sets
 the `exit` request. Then the user pays the PP.
 
-Next it looks up the scene's Psynergy events for what the leader faces, one for
+Next it looks up the map's Psynergy events for what the leader faces, one for
 each phase: `PSYNERGY_PHASE_BEFORE_CAST`, `PSYNERGY_PHASE_AFTER_CAST` and
 `PSYNERGY_PHASE_EFFECT_ACTS`. It runs the before event, plays the effect, and
 runs the after event. Two flags the before event's script can still change
 decide how the effect plays: `FLAG_PSYNERGY_EFFECT` whether it plays at all
 (an after event whose trigger has bit `0x400` set clears it and plays the
-effect itself, as two of Altin Peak's Mind Read events do), and `FLAG_PSYNERGY_TARGET` whether it plays on the actor ahead.
-`FLAG_PSYNERGY_TARGET` stays set only when the scene has one of the three
+effect itself, as two of Altin Peak's Mind Read events do), and `FLAG_PSYNERGY_TARGET` whether it plays on the object event ahead.
+`FLAG_PSYNERGY_TARGET` stays set only when the map has one of the three
 events. The `PSYNERGY_PHASE_EFFECT_ACTS` event is never run here: it only makes
 the effect aim at a target, and the effects that act on one (Force, Frost,
 Reveal) find it themselves.
@@ -240,9 +240,9 @@ Reveal) find it themselves.
 [`psynergy_effects/dispatch.c`](psynergy_effects/dispatch.c) runs the field
 kind's effect: `FieldEffect_Run` with no target, `FieldEffect_DispatchRequestKind`
 with one. The second clears `scene->enabled` first, which is how the runners
-both share (Force, Frost, Ply, Whirlwind, Catch) tell that a scene event, not
+both share (Force, Frost, Ply, Whirlwind, Catch) tell that a map event, not
 the effect, decides what happens to the target: a stone pillar moves under
-Move because its scene says so. Each field kind's effect is the
+Move because its map says so. Each field kind's effect is the
 part named for it (`psynergy_effects/reveal.c`), and its entry point names the
 abilities that reach it in a reach line, as the [battle
 effects](../effect/README.md) do:
@@ -251,7 +251,7 @@ effects](../effect/README.md) do:
 /// Abilities: Carry (FIELD_KIND_CARRY).
 ```
 
-Halt is dispatched in `dispatch.c` itself: only one actor is held at a time
+Halt is dispatched in `dispatch.c` itself: only one object event is held at a time
 (`gGameState.pausedObject`), so casting it again frees the one held before.
 Mind Read is the one effect that stays up through the after event, since the
 after event is the conversation it reads; `FieldEffect_ClearChildValueOnMismatch`
@@ -259,7 +259,7 @@ ends it.
 
 The field kind is the `type` column of `games/tbs/src/game/actions.tsv`,
 named by `enum FieldKind` (`unit/object/psynergy_effects.h`); the phases are
-`enum PsynergyPhase` (`field_scene.h`), bits 30 to 28 of an event's control
+`enum PsynergyPhase` (`map_tables.h`), bits 30 to 28 of an event's control
 word.
 
 | Name | Value | Meaning |
@@ -269,10 +269,10 @@ word.
 | `PSYNERGY_PHASE_AFTER_END` | 2 | after a Psynergy that runs out by itself has ended, as Cloak fades or Reveal runs out |
 | `PSYNERGY_PHASE_BEFORE_END` | 3 | as `PSYNERGY_PHASE_AFTER_END`, before it |
 | `PSYNERGY_PHASE_EFFECT_ENDS` | 4 | as Reveal's colours come back |
-| `PSYNERGY_PHASE_EFFECT_ACTS` | 5 | run by Force, Frost and Reveal as they act; also aims the effect at the actor ahead |
+| `PSYNERGY_PHASE_EFFECT_ACTS` | 5 | run by Force, Frost and Reveal as they act; also aims the effect at the object event ahead |
 | `PSYNERGY_PHASE_ANY` | 7 | matches every phase |
 | `FLAG_PSYNERGY_EFFECT` | `0x140` | the effect plays |
-| `FLAG_PSYNERGY_TARGET` | `0x141` | the effect plays on the actor ahead |
+| `FLAG_PSYNERGY_TARGET` | `0x141` | the effect plays on the object event ahead |
 | `FLAG_RETREAT_BLOCKED` | `0x144` | Retreat refuses |
 | `FLAG_IN_BATTLE_ARENA` | `0x17e` | all field Psynergy refuses |
 | `FIELD_KIND_MOVE` | 1 | Move |
@@ -320,13 +320,14 @@ marker task releases its window and VRAM before `WorldMap_LoadAreaGraphics`
 restores the field graphics into the same buffer.
 
 `gWorldMap_MapSecMarkers` (`scripts.s`) has a row for each place: its visited
-flag (`FLAG_MAPSEC_VISITED` of the place's group, set on entering the group),
-its marker's picture and its name. Rows belong to the world map's actors in
-order from slot 11 (`WORLD_MAP_FIRST_MAPSEC_OBJ_EVENT`), and each marker is drawn
-where its actor stands, so a place's position on the picture is the position of
-its actor on the world map. A row of zeros is an actor with no marker, and -1
+flag (`FLAG_MAPSEC_VISITED` of the place's map section, set on entering the
+map section), its marker's picture and its name. Rows belong to the world
+map's object events in order from slot 11 (`WORLD_MAP_FIRST_MAPSEC_OBJ_EVENT`), and each marker is drawn
+where its object event stands, so a place's position on the picture is the
+position of its object event on the world map. A row of zeros is an object
+event with no marker, and -1
 ends the table. Markers take sprite entries one after another rather than one
-per actor, so a place not yet visited costs no sprite; the frame comes after
+per object event, so a place not yet visited costs no sprite; the frame comes after
 them and the cursor last.
 
 `TBS_PATCH_2` editions (German, French, Spanish and Italian) also glide the
@@ -336,7 +337,7 @@ name from a shorter distance (`WORLD_MAP_NAME_RANGE`). The edition block of
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `WORLD_MAP_FIRST_MAPSEC_OBJ_EVENT` | 11 | the world map actor the first row of `gWorldMap_MapSecMarkers` belongs to |
+| `WORLD_MAP_FIRST_MAPSEC_OBJ_EVENT` | 11 | the world map object event the first row of `gWorldMap_MapSecMarkers` belongs to |
 | `WORLD_MAP_CURSOR_SNAPS` | 1 in `TBS_PATCH_2` editions, else 0 | the cursor glides onto the nearest place when the d-pad is released |
 | `WORLD_MAP_NAME_RANGE` | 64 in `TBS_PATCH_2` editions, else 100 | the squared distance at which a place's name shows |
 | `WORLD_MAP_NAME_LEFT` | 3 in `TBS_PATCH_2` editions, else 1 | how far left of its marker the name goes |
@@ -344,15 +345,16 @@ name from a shorter distance (`WORLD_MAP_NAME_RANGE`). The edition block of
 ## How it fits with the rest of the game
 
 `Game_Run` (`object/map.c`) is the game's main loop; [the front
-page](../../README.md#the-main-loop) describes it. For a field scene it calls
+page](../../README.md#the-main-loop) describes it. For a map it calls
 `Map_ResetFlagsOnEnter`, loads the overlay (`Map_LoadOverlay`) and runs
 `Field_RunMap`; for a battle or minigame it runs that and calls
-`Map_ReturnFromBattle`. The overlay supplies the scene's tables and
+`Map_ReturnFromBattle`. The overlay supplies the map's tables and
 initialization, and calls back into this folder through its import table for
-the commands of `field_event.h` and `field_service.h`.
+the commands of `script_layer.h` and `field_service.h`.
 
-Entering a new group (the scenes of one place) also resets the encounter and
-hazard step counters, makes the entrance Retreat's destination, and asks for
+Entering a new map section (the maps that share an area name) also resets
+the encounter and hazard step counters, makes the warp destination Retreat's
+destination, and asks for
 the area name to be shown.
 
 The window transitions and colour buffer serve battles as well, and the
@@ -361,26 +363,26 @@ effect scene's work serves the Djinn joining effects as well as Psynergy.
 ## Limits
 
 - 104 encounter zones of eight enemy groups each.
-- 66 actor slots and ten markers in the field work; 24 effect slots in the
+- 66 object event slots and ten markers in the field work; 24 effect slots in the
   effect scene.
-- A battle snapshot keeps up to 32 actors.
+- A battle snapshot keeps up to 32 object events.
 - One Halt target at a time.
 
 ## Files
 
 | File | What it holds |
 | --- | --- |
-| `object.c`, `object/*.c` | the field object, in 16 parts: the main loop and scene changes, the scene loop and its requests, random encounters, a scene's actors, its events, items and Psynergy used on the field, the map's markers, the debug palette editor, and the window transitions and colour buffer the field shares with battles |
-| `psynergy_effects.c`, `psynergy_effects/*.c` | the field Psynergy and event object, in 37 parts: the commands scene scripts run, the event camera, jumping and climbing, the field's weather and wavy backgrounds, Djinn joining the party, the effect of each field kind, the effect slots and the world map screen |
+| `object.c`, `object/*.c` | the field object, in 16 parts: the main loop and map changes, the map loop and its requests, random encounters, a map's object events, its events, items and Psynergy used on the field, the map's markers, the debug palette editor, and the window transitions and colour buffer the field shares with battles |
+| `psynergy_effects.c`, `psynergy_effects/*.c` | the field Psynergy and script object, in 37 parts: the commands map scripts run, the script camera, jumping and climbing, the field's weather and wavy backgrounds, Djinn joining the party, the effect of each field kind, the effect slots and the world map screen |
 | `object_internal.h`, `psynergy_effects_internal.h` | each object's private header |
 | `colorfx.c` | the slot machine, and an LZ packer nothing calls (`LzPack_PackStream` is `UNUSED`); linked in `rom_main_12`, where the rest of the folder is in `rom_main_04` |
 | `fxdata.c` | constant tables: object scripts, curves and lookups |
 | `battle_cue.c` | `gEncounter_BattleMusic`, the battle music of each encounter |
 | `zonedata.c` | the world map's encounter rules, and the zone and slot of each Djinni battle |
-| `location_rules.s` | `gBattle_LocationRules`, the encounter zones of field scenes |
-| `scene_rules.s` | the field music and area names of field scenes (`gMapSec_NameRules`) |
+| `location_rules.s` | `gBattle_LocationRules`, the encounter zones of maps |
+| `map_rules.s` | the field music and area names of maps (`gMapSec_NameRules`) |
 | `encounter.tsv` | the 104 encounter zones |
-| `scripts.s` | object scripts, the leader's placement table, the display transition shapes, the weather pictures and `gWorldMap_MapSecMarkers` |
+| `scripts.s` | object scripts, the leader's object event template, the display transition shapes, the weather pictures and `gWorldMap_MapSecMarkers` |
 | `arcspark.s`, `swatch.s`, `mote.png` | the spark pictures, the debug palette editor's swatch (its picture is `../debug/swatch.png`) and the floating motes' picture |
 
 `object.c` and `psynergy_effects.c` are each one object in the ROM, written
@@ -392,16 +394,17 @@ Prototypes are in `games/tbs/include/unit/object/`.
 ## Words used here
 
 - **field work**: `struct FieldWork` (`field_runtime.h`), the state of the
-  running scene: its actor slots, markers, event table and requests. It is
+  running map: its object event slots, markers, event table and requests. It is
   heap slot `HEAP_SLOT_EVENT`, reached as `gEventWork`; overlays read the same
   block as `struct EventWork`. Local name `work`.
-- **actor**: an object in one of the field work's 66 actor slots. Slots 0 to 7
-  are the party, 8 on the actors the scene places; an actor's id is its slot.
-  Local names `actor`, `object`, `leader`.
+- **object event**: an object in one of the field work's 66 object event
+  slots. Slots 0 to 7 are the party, 8 on the object events the map places; an
+  object event's local id is its slot. Local names `objectEvent`, `actor`,
+  `object`, `leader`.
 - **request**: a field of the field work that something sets to interrupt the
   walk (above).
-- **scene event**: a row of the scene's event table (`struct MapEvent`); its
-  kind says what it answers. [Scenes](../map/README.md#the-tables) gives the
+- **map event**: a row of the map's event table (`struct MapEvent`); its
+  kind says what it answers. [Maps](../map/README.md#the-tables) gives the
   kinds.
 - **field kind**: what an ability does on the field, the `type` column of
   `games/tbs/src/game/actions.tsv`, named by `enum FieldKind`
@@ -412,8 +415,8 @@ Prototypes are in `games/tbs/include/unit/object/`.
   caster and target, and 24 effect slots. It is `HEAP_SLOT_EFFECT`, reached as
   `gEffectWork`. Local name `scene`.
 - **effect slot**: `struct EffectSlot`, one particle an effect moves and draws.
-- **marker**: a chest or Psynergy Stone the map places at one of its marked
-  cells; the field work holds up to ten, apart from the actors.
+- **marker**: a chest or Psynergy Stone the layout places at one of its marked
+  cells; the field work holds up to ten, apart from the object events.
 - **mode**: `work->mode` is `MODE_LAYERED_MAP` on a town or dungeon map and
   `MODE_WORLD_MAP` on the world map.
 
@@ -421,25 +424,25 @@ Prototypes are in `games/tbs/include/unit/object/`.
 
 | Prefix | What it covers |
 | --- | --- |
-| `Map_` | scene changes, a scene's events and its entrance |
-| `Field_` | the scene loop and its requests |
+| `Map_` | map changes, a map's events and its warp destination |
+| `Field_` | the map loop and its requests |
 | `Encounter_` | random encounters |
-| `Event_`, `FieldScript_` | the commands scene scripts run |
-| `Object_`, `ObjectMotion_`, `ObjectTable_` | actors, their motion and the actor table |
+| `Script_`, `FieldScript_` | the commands map scripts run |
+| `Object_`, `ObjectMotion_`, `ObjectTable_` | object events, their motion and the object event table |
 | `Marker_` | the map's markers |
 | `ItemDisplay_` | a found item's picture, held up over the leader |
-| `Camera_` | the event camera |
+| `Camera_` | the script camera |
 | `Djinn_` | Djinn joining the party and the hop before a Djinni battle |
-| `DisplayTransition_` | the window transitions and dissolves between scenes |
-| `WorldMap_` | starting and ending an event or menu on the world map |
+| `DisplayTransition_` | the window transitions and dissolves between maps |
+| `WorldMap_` | starting and ending a script or menu on the world map |
 | `EffectSlot_` | effect slots |
-| `FieldEffect_` | field effects: a field kind's runner is named for its Psynergy (`FieldEffect_RunCatch`), and the small effects scenes spawn go through `FieldEffect_Spawn` |
+| `FieldEffect_` | field effects: a field kind's runner is named for its Psynergy (`FieldEffect_RunCatch`), and the small effects map scripts spawn go through `FieldEffect_Spawn` |
 | `ColorBuffer_` | the colour buffer, which moves the palettes toward target colours |
 | `ReelGame_`, `LzPack_` | the slot machine, and the packer beside it |
-| `ObjectEvent_`, `Leader_`, `Motion_`, `FacingObject_`, `ObjectVisual_` | the actor commands scene scripts call (`actor_commands.c`): placing, walking, turning and posing an actor or the leader |
+| `ObjectEvent_`, `Leader_`, `Motion_`, `FacingObject_`, `ObjectVisual_` | the object event commands map scripts call (`object_event_commands.c`): placing, walking, turning and posing an object event or the leader |
 | `EventObject_`, `ObjectEffect_` | the caster's casting pose and the context effects a Psynergy starts |
 | `ItemGift_` | the message for an item the party has just received |
-| `FadeOverlay_`, `RevealMarker_`, `FieldMotes_` | the fade overlay's marks beside the actor, a Reveal marker's sparkles and the floating motes |
+| `FadeOverlay_`, `RevealMarker_`, `FieldMotes_` | the fade overlay's marks beside the object event, a Reveal marker's sparkles and the floating motes |
 | `DisplayState_` | clearing the background bits `DisplayTransition_` turns on |
 
 Other functions keep the prefixes of the families they belong to elsewhere.
@@ -452,7 +455,7 @@ matches with; [Matching](../MATCHING.md) lists them.
 The field kinds are named from the `type` column of `actions.tsv` and the
 Psynergy the English release gives each; the requests from what the loop does
 with each; the encounter columns from what `Encounter_SelectEnemyGroup`
-computes with them; the zone names in `encounter.tsv` from the places whose
+computes with them; the zone names in `encounter.tsv` from the maps whose
 rules select them.
 
 Random battles stop while Jenna is in the party with more than 130
@@ -463,13 +466,13 @@ the journey begins, because the rule can act nowhere else.
 sum, so a negative event code raised with a positive request can hide both.
 It can happen: `Field_ProcessStep` raises `FIELD_EVENT_PARTY_FELL` (-1) on
 the frame a member falls to poison, and the `action` request is the cell's
-event code, 1 on the cells of a touch event 1, which 154 maps have. Both then
-wait until another request makes the sum non-zero, by which time a later
-cell's code may have replaced the action. It is marked `// BUG:`, and
+metatile behavior, 1 on the cells of coord event 1, which 154 maps have. Both
+then wait until another request makes the sum non-zero, by which time a later
+cell's behavior may have replaced the action. It is marked `// BUG:`, and
 `BUGFIX` tests each request instead.
 
 `Map_ResetFlagsOnEnter` clears flags `0x80` to `0xdf` on every ordinary
-entrance, even within a group: the Djinn's hiding flags
+entry to a map, even within a map section: the Djinn's hiding flags
 (`FLAG_DJINNI_HIDING_0` and the 79 after it), which keep a Djinni that got
 away out of its room until the room is entered again, and 16 more after them
 that nothing else uses.

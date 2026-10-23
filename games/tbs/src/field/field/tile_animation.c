@@ -26,7 +26,7 @@ void TileAnimation_Update(void) {
     u32 tileCount;
     u32 destinationTile;
 
-    // A channel with no script, or paused by a scene, keeps its place.
+    // A channel with no script, or paused by a map script, keeps its place.
     if ((gridState->animations + channelIndex)->start == NULL ||
         (gridState->animations + channelIndex)->paused != 0)
       continue;
@@ -88,7 +88,7 @@ void TileAnimation_Update(void) {
 }
 
 /// Resumes tile animation channel channelIndex by clearing its paused byte.
-/// Scenes and the lobby (menu/lobby.c, channel 5) reach it through
+/// Map scripts and the lobby (menu/lobby.c, channel 5) reach it through
 /// TileAnimation_ResumeChannelFar.
 void TileAnimation_ResumeChannel(u32 channelIndex) {
   struct MapGridState *gridState = gMapGridWork[0];
@@ -98,7 +98,7 @@ void TileAnimation_ResumeChannel(u32 channelIndex) {
 }
 
 /// Pauses tile animation channel channelIndex by setting its paused byte.
-/// Scenes and the lobby (menu/lobby.c, channel 5) reach it through
+/// Map scripts and the lobby (menu/lobby.c, channel 5) reach it through
 /// TileAnimation_PauseChannelFar.
 void TileAnimation_PauseChannel(u32 channelIndex) {
   struct MapGridState *gridState = gMapGridWork[0];
@@ -256,7 +256,7 @@ void DisplayBlend_StartScript(u16 *script) {
     Scheduler_AddOrUpdateCallback(DisplayBlend_RunScript, 0xc80);
 }
 
-/// Suspends the blend script. The lighthouse scenes and Vale's Babi scene
+/// Suspends the blend script. The lighthouse maps and Vale's Babi scene
 /// reach it through DisplayBlend_SuspendScriptFar.
 void DisplayBlend_SuspendScript(void) {
   Scheduler_SuspendTasks(DisplayBlend_RunScript);

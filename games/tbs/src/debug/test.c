@@ -44,7 +44,8 @@ void Engine_AudioPlayCue(s32 cue);
 #define DEBUG_ITEM_ROW_STEP 10  ///< Right and Left move ten numbers.
 #define DEBUG_ITEM_PAGE_STEP 30 ///< R and L move thirty.
 
-/// The placed actors, numbered in the order of gMenuTest_ObjectEventTemplates
+/// The placed object events, numbered in the order of
+/// gMenuTest_ObjectEventTemplates
 /// after its four party rows, which keep their characters' ids. Each is drawn
 /// with the sprite of someone or something in the game and named for it; what
 /// talking to each does is in gMenuTest_Events.
@@ -104,7 +105,7 @@ static __inline__ void DebugMenu_RecalculateParty(void) {
 
 u8 *MenuTest_GetWarpDests(void) { return (u8 *)gMenuTest_WarpDests; }
 
-/// The room has no exit regions: its regions entry returns none.
+/// The room has no warp regions: its regions entry returns none.
 s32 MapData_ReturnZero(void) { return 0; }
 
 u8 *MenuTest_GetWarps(void) { return (u8 *)gMenuTest_Warps; }
@@ -207,8 +208,8 @@ static void DebugMenu_BrowseWarriorItemShopMessages(void) {
 #endif
 
 #if TBS_PATCH_2
-/// Sets the event's message twice, so the second, MsgValeComeOnHurry, is the
-/// one shown, with no speaker (actor -1), and waits until it closes. Talking
+/// Sets the script's message twice, so the second, MsgValeComeOnHurry, is the
+/// one shown, with no speaker (local id -1), and waits until it closes. Talking
 /// to LOCALID_SECOND_FELIX while facing south, in German, Spanish, French and
 /// Italian.
 static void DebugMenu_RunMessageTest(void) {
@@ -237,8 +238,8 @@ static void DebugMenu_TestItemSelection(void) {
 /// Talking to Mia: the name entry screen for Isaac.
 static void DebugMenu_EditIsaacName(void) { NameEntry_EditOwnerName(ISAAC); }
 
-/// Leaves the test actor unchanged when targeted by Psynergy. The event for
-/// Whirlwind, Force and Catch cast at LOCALID_IVY.
+/// Leaves the test object event unchanged when targeted by Psynergy. The event
+/// for Whirlwind, Force and Catch cast at LOCALID_IVY.
 static void DebugMenu_IgnorePsynergy(void) {}
 
 /// Keeps Force from moving LOCALID_IVY: run at phase 1 of Force cast at it,
@@ -852,7 +853,7 @@ static s32 DebugMenu_SelectCharacter(void) {
 /// Forwards the selected owner and shop confirmation status. Talking to
 /// LOCALID_SECOND_DORA in Japanese, English and German: the sanctum's service
 /// menu, with LOCALID_SECOND_DORA as its keeper, since Map_TalkToObjectEvent
-/// passes the actor's id.
+/// passes the object event's id.
 static s32 DebugMenu_ConfirmShopAction(s32 unitId) {
   return Shop_ConfirmAct(unitId);
 }
@@ -883,7 +884,7 @@ struct MapWarpDest gMenuTest_WarpDests[] = {
     {MAP_TABLE_END},
 };
 
-/// No exits: 511 is MAP_WARPS_END's value.
+/// No warps: 511 is MAP_WARPS_END's value.
 u32 gMenuTest_Warps[] = {
     MAP_WARPS_END,
 };
@@ -921,11 +922,11 @@ struct ObjectEventTemplate gMenuTest_ObjectEventTemplates[] = {
 };
 
 /// Who runs what: Garet levels, Jenna equipment, Ivan consumables, Mia
-/// Isaac's name, and the placed actors (enum MenuTestLocalId) the rest. Outside
-/// Japanese, LOCALID_FELIX and LOCALID_SECOND_FELIX run a different browser for
-/// each way the leader faces (bits 15..12 of the control: 0xc north, 0x8 west,
-/// 0x0 east, 0x4 south); in Japanese they open the character selector and the
-/// item browser.
+/// Isaac's name, and the placed object events (enum MenuTestLocalId) the rest.
+/// Outside Japanese, LOCALID_FELIX and LOCALID_SECOND_FELIX run a different
+/// browser for each way the leader faces (bits 15..12 of the control: 0xc
+/// north, 0x8 west, 0x0 east, 0x4 south); in Japanese they open the character
+/// selector and the item browser.
 struct MapEvent gMenuTest_Events[] = {
     {MAP_EVENT_TALK, GARET, CONDITION_ALWAYS,
      EVENT_SCRIPT(DebugMenu_RaisePartyLevels)},

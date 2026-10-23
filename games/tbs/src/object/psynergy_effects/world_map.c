@@ -1,5 +1,6 @@
 /// @file
-/// The world map screen: place markers, the cursor and the place name.
+/// The world map screen: map section markers, the cursor and the map section's
+/// name.
 // Part of psynergy_effects.c.
 
 #include "../psynergy_effects_internal.h"
@@ -12,10 +13,10 @@
 /// 240 by 160.
 #define WORLD_MAP_WORLD_SIZE 4096
 #define WORLD_MAP_X_ORIGIN PIXELS(4096) ///< field x of the picture's left edge
-/// The first ordinary place actor, the first slot with a row of
+/// The first ordinary map section object event, the first slot with a row of
 /// gWorldMap_MapSecMarkers whatever the leader is.
 #define WORLD_MAP_FIRST_MAPSEC_OBJ_EVENT 11
-#define WORLD_MAP_MARKER_CAPACITY 66 ///< one marker per actor slot
+#define WORLD_MAP_MARKER_CAPACITY 66 ///< one marker per object event slot
 /// The cursor's sprite entry, after the markers'.
 #define WORLD_MAP_CURSOR_PART WORLD_MAP_MARKER_CAPACITY
 #define WORLD_MAP_CURSOR_MIN_SPEED PIXELS(1) ///< screen pixels a frame
@@ -61,11 +62,12 @@ struct WorldMapWork {
   union FieldCoordinate cursorX; ///< screen column, 16.16 pixels
   union FieldCoordinate cursorY; ///< screen row, 16.16 pixels
   u8 padding0c[6];               ///< not read by this screen
-  s16 namedMarker; ///< actor whose name is drawn; -1 clears the name
+  s16 namedMarker; ///< object event whose name is drawn; -1 clears the name
   u8 padding14[4]; ///< not read by this screen
   s32 cursorSpeed; ///< 16.16 screen pixels per frame
   struct UiWindow *nameWindow; ///< owned until this screen closes
-  // Packed visible places, then a nearest-place frame; the last is the cursor.
+  // Packed visible map sections, then a nearest-section frame; the last is the
+  // cursor.
 #ifdef UBFIX
   union WorldMapMarkerPart markers[WORLD_MAP_MARKER_CAPACITY + 1];
 #else
@@ -80,8 +82,8 @@ STATIC_ASSERT(WORLD_MAP_MARKER_CAPACITY ==
                   sizeof(((struct FieldWork *)0)->objectEvents[0]));
 
 /// Sets up the world map screen: the marker tiles and their OAM entries, the
-/// cursor where the leader is on the map (or mid-screen when the place is not
-/// on it), and the place-name window.
+/// cursor where the leader is on the map (or mid-screen when the map section is
+/// not on it), and the name window.
 void FieldEffect_SetupResourcesAndWindow(void) {
 #ifdef UBFIX
   union WorldMapMarkerPart *marker;
@@ -172,9 +174,9 @@ void FieldEffect_SetupResourcesAndWindow(void) {
 }
 
 #if TBS_PATCH_2
-/// The cursor snaps to the nearest place when the d-pad is released.
+/// The cursor snaps to the nearest map section when the d-pad is released.
 #define WORLD_MAP_CURSOR_SNAPS 1
-#define WORLD_MAP_NAME_RANGE 64 ///< squared distance that shows a place's name
+#define WORLD_MAP_NAME_RANGE 64 ///< squared distance that shows a marker's name
 #define WORLD_MAP_NAME_LEFT 3   ///< how far left of its marker the name goes
 #else
 #define WORLD_MAP_CURSOR_SNAPS 0
@@ -183,7 +185,7 @@ void FieldEffect_SetupResourcesAndWindow(void) {
 #endif
 
 /// Closes the world map screen: returns its VRAM blocks and removes the
-/// place-name window.
+/// name window.
 void FieldEffect_CleanupResourcesAndWindow(void) {
   struct WorldMapWork *work = (struct WorldMapWork *)gMapGridCellBuffer;
 
@@ -192,9 +194,10 @@ void FieldEffect_CleanupResourcesAndWindow(void) {
   UiWork_FinalizeFar(work->nameWindow, 2);
 }
 
-/// Scheduler callback of the world map screen: shows a marker at each place
-/// whose flag is set, moves the cursor with the d-pad (to the current place
-/// while L or R is held) and shows the name of the marker nearest the cursor.
+/// Scheduler callback of the world map screen: shows a marker at each map
+/// section whose flag is set, moves the cursor with the d-pad (to the current
+/// map section while L or R is held) and shows the name of the marker nearest
+/// the cursor.
 void WorldMap_UpdateMarkers(void) {
   s32 leader;
   const s32 *place;
@@ -244,15 +247,15 @@ void WorldMap_UpdateMarkers(void) {
   blend = gWorldMap_MarkerBlendCycle[(gFrameCount >> 1) &
                                      (WORLD_MAP_MARKER_BLEND_STEPS - 1)];
 
-  // Field_RunMap creates the selected actor before event -888 opens this
-  // screen. No actor task removes it while the marker callback runs.
+  // Field_RunMap creates the selected object event before event -888 opens this
+  // screen. No object event task removes it while the marker callback runs.
   if (!GameFlag_TestFar(FLAG_NOT_ON_WORLD_MAP) &&
       (gKeysHeld & KEYS_SHOULDERS)) {
-    // L or R: the current place.
+    // L or R: the current map section.
     mapSecObjectEvent = ObjectTable_Get(gGameState.selectedObjectEvent);
 #ifdef UBFIX
     // The native null branch leaves this frame's cursor coordinates unset.
-    // A missing selected actor violates the screen's lifetime contract;
+    // A missing selected object event violates the screen's lifetime contract;
     // skipping that frame changes tbs-en from 1088 to 1092 bytes.
     if (mapSecObjectEvent == NULL)
       return;
@@ -290,9 +293,9 @@ void WorldMap_UpdateMarkers(void) {
     cursorY = work->cursorY.part.pixel;
   }
 
-  // Actor 0 consumes no place row. Ordinary rows begin at actor 11; a
-  // selected slot in 1..10 also consumes one. Zero rows reserve actors with
-  // no marker and -1 ends the table. A row is (tile << 16 | flag, scene id).
+  // Local id 0 consumes no marker row. Ordinary rows begin at local id 11; a
+  // selected slot in 1..10 also consumes one. Zero rows reserve object events
+  // with no marker and -1 ends the table. A row is (tile << 16 | flag, map id).
   for (markerIndex = 0; markerIndex < WORLD_MAP_MARKER_CAPACITY;
        markerIndex++) {
     if (markerIndex != leader && markerIndex < WORLD_MAP_FIRST_MAPSEC_OBJ_EVENT)
@@ -350,7 +353,7 @@ void WorldMap_UpdateMarkers(void) {
       nearestX = x;
       nearestY = y;
     }
-    // Blink the current place for eight frames out of sixteen.
+    // Blink the current map section for eight frames out of sixteen.
     if (markerIndex != 0 || (gFrameCount & 15) <= 7)
       Runtime_PushSlotEntry(&WORLD_MAP_MARKER_VIEW(marker++), y);
   }
@@ -506,8 +509,8 @@ void WorldMap_Show(s32 picture) {
   work->camera->movementState = 0;
 }
 
-/// On the world map, shows only the scene actors within 320 pixels sideways,
-/// 600 above and 400 below the camera.
+/// On the world map, shows only the map's object events within 320 pixels
+/// sideways, 600 above and 400 below the camera.
 void Field_UpdateObjectVisibilityBounds(void) {
   struct ObjectRuntime *object;
   s32 x;
@@ -518,7 +521,8 @@ void Field_UpdateObjectVisibilityBounds(void) {
   s32 bottom;
   u32 id;
 
-  // The selected actor lookup has no used result; the bounds follow the camera.
+  // The selected object event lookup has no used result; the bounds follow the
+  // camera.
   ObjectEvent_GetById(gGameState.selectedObjectEvent);
   object = ((struct FieldWork *)gEventWork)->camera;
   x = object->x;

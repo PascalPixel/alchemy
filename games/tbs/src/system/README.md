@@ -1,24 +1,24 @@
 # System
 
-![The console's two kinds of working memory, drawn to scale. EWRAM, 256 KB and slower, holds from the bottom up: the game's variables, flags and save buffer; the overlay, the code of the current place; the map's cells; battle sprite pictures; space to unpack into; the map's blocks, layers and collision; the EWRAM heap; and background tiles at the top. IWRAM, 32 KB and fast, holds the fast routines copied from the cartridge, the variables the engine uses most, the IWRAM heap, the sound mixer's code and the stacks at the top. The program itself, the pictures, maps and music stay on the cartridge, which can only be read.](https://alchemy.pascalpixel.com/illustrations/system/memory-map.svg)
+![The console's two kinds of working memory, drawn to scale. EWRAM, 256 KB and slower, holds from the bottom up: the game's variables, flags and save buffer; the overlay, the code of the current map; the map grid's cells; battle sprite pictures; space to unpack into; the layout's metatiles, layers and shapes; the EWRAM heap; and background tiles at the top. IWRAM, 32 KB and fast, holds the fast routines copied from the cartridge, the variables the engine uses most, the IWRAM heap, the sound mixer's code and the stacks at the top. The program itself, the pictures, maps and music stay on the cartridge, which can only be read.](https://alchemy.pascalpixel.com/illustrations/system/memory-map.svg)
 
-Every place the party visits needs its own code, its own map and its own
+Every map the party visits needs its own code, its own layout and its own
 pictures, and a Game Boy Advance has little room for any of it: 288 KB of
 working memory, against a cartridge that holds the whole game. The system
 folder holds what makes that fit. It lays out which part of memory holds
 what, splits the program into banks that can call one another through fixed
-tables, swaps each place's code in and out of one small area as the party
-moves, and finds every picture, map and piece of code on the cartridge by
+tables, swaps each map's code in and out of one small area as the party
+moves, and finds every picture, layout and piece of code on the cartridge by
 number.
 
 In more detail, the folder holds the cartridge header and `System_Entry`, the
 RAM variables in their fixed order, the resident code copied into IWRAM, the
 far-call tables that join the banks of the main image, the overlays that hold
-each place's code, the resource directory every picture, table and overlay is
+each map's code, the resource directory every picture, table and overlay is
 found through, and the flash library that writes saves. Nearly all of it is
 assembly: code no C compiler emits, each file saying in its header what proves
 it, and tables the linker lays out. [Runtime](../runtime/README.md) builds
-directly on it, and [Scenes](../map/README.md) are the main users of its
+directly on it, and [Maps](../map/README.md) are the main users of its
 overlays.
 
 ## Memory map
@@ -27,8 +27,8 @@ The memory map says where each part of the game's state lives, as the picture
 at the top of this page shows.
 
 The console has two kinds of working memory. EWRAM, 256 KB, is large but
-slower, and holds most of the game's data: its variables, the current place's
-code, the map and the heap. IWRAM, 32 KB, is fast, and holds what has to run
+slower, and holds most of the game's data: its variables, the current map's
+code, the map grid and the heap. IWRAM, 32 KB, is fast, and holds what has to run
 or be read quickly: routines copied from the cartridge at power-on, the
 engine's busiest variables, a second heap and the stacks. Separately, video
 memory (VRAM) holds the tiles and maps the screen is drawn from, and the
@@ -48,11 +48,11 @@ IWRAM variables ([below](#the-addresses-that-never-move)).
 | Starts at | Address | Size | What | Named in |
 | --- | --- | --- | --- | --- |
 | 0 KB | `0x02000000` | 32 KB | the main image's variables: the save buffer, the game flags (`gGameFlagBytes`), the game state (`gGameState`), the sound driver's work and the flash library's | `ewram.s` |
-| 32 KB | `0x02008000` | 32 KB | `gOverlayArea`, the loaded scene or screen overlay | `ewram.s`, `overlay/overlay.ld` |
+| 32 KB | `0x02008000` | 32 KB | `gOverlayArea`, the loaded map or screen overlay | `ewram.s`, `overlay/overlay.ld` |
 | 64 KB | `0x02010000` | 32 KB | `gMapGridCellBuffer`; battle effects also use it for particles | `Ram_MapGridCellBuffer` |
 | 96 KB | `0x02018000` | 16 KB | `gActorSpriteSlots` | `Ram_ActorSpriteSlots` |
 | 112 KB | `0x0201c000` | 16 KB | `gDecodeBuffer` | `Ram_DecodeBuffer` |
-| 128 KB | `0x02020000` | 32 KB | `gMetatiles`, the map's blocks (`games/tbs/src/field/field/map_grid.c`) | `Ram_Metatiles` |
+| 128 KB | `0x02020000` | 32 KB | `gMetatiles`, the layout's metatiles (`games/tbs/src/field/field/map_grid.c`) | `Ram_Metatiles` |
 | 160 KB | `0x02028000` | 16 KB | `gMapGridLayerData` | `ewram.s` |
 | 176 KB | `0x0202c000` | 16 KB | `gMapGridCollision` | `Ram_MapGridCollision` |
 | 192 KB | `0x02030000` | 32 KB | `gEwramHeap`; `heap.c` allocates from it up to `0x02040000`, the end of EWRAM, so past its 32 KB it runs into `gBgTileBuffer` | `ewram.s`, `games/tbs/src/runtime/runtime/heap.c` |
@@ -73,17 +73,17 @@ IWRAM variables ([below](#the-addresses-that-never-move)).
 
 ### Video memory
 
-Video memory holds the pictures the screen is drawn from, and a scene fills
+Video memory holds the pictures the screen is drawn from, and a map fills
 it with its own.
 
-![The console's 96 KB of video memory as a field scene fills it, drawn to scale from the start at the top. The first 8 KB holds the windows' tiles, the frame pieces and letters every text box is built from. Next come the windows' own screen map, then the screen maps of the map's three layers, ground, middle and overhead, which say which tile goes where. The next 48 KB holds the map's three sheets of tiles. The last 32 KB is for sprites: the tiles of the people and things that move, handed out in small blocks as they appear.](https://alchemy.pascalpixel.com/illustrations/system/vram.svg)
+![The console's 96 KB of video memory as a map fills it, drawn to scale from the start at the top. The first 8 KB holds the windows' tiles, the frame pieces and letters every text box is built from. Next come the windows' own screen map, then the screen maps of the layout's three layers, ground, middle and overhead, which say which tile goes where. The next 48 KB holds the layout's three sheets of tiles. The last 32 KB is for sprites: the tiles of the people and things that move, handed out in small blocks as they appear.](https://alchemy.pascalpixel.com/illustrations/system/vram.svg)
 
 The screen is built from tiles, small 8-by-8 pictures. A background layer is
 a sheet of tiles plus a screen map that says which tile goes in each place on
 screen; a sprite draws its own tiles wherever it is put. Video memory is
-split accordingly. In a field scene, the windows' tiles come first, then the
-windows' screen map and the three map layers' screen maps, then the map's
-three sheets of tiles, and the last 32 KB holds the sprites' tiles.
+split accordingly. On a map, the windows' tiles come first, then the
+windows' screen map and the three map grid layers' screen maps, then the
+layout's three sheets of tiles, and the last 32 KB holds the sprites' tiles.
 
 The hardware addresses video memory in fixed blocks (`games/tbs/include/system/io_reg.h`):
 
@@ -94,8 +94,8 @@ The hardware addresses video memory in fixed blocks (`games/tbs/include/system/i
   (`UI_TILEMAP_VRAM`) and its text canvas tiles follow it (`UI_CANVAS_VRAM`,
   [`unit/window/window.h`](../../include/unit/window/window.h)).
   `MapGrid_LoadLayout` puts the ground, middle and overhead layers' maps in
-  screen blocks 5, 6 and 7 and the map's three tile sheets in character blocks
-  1 to 3 ([Maps](../layout/README.md)).
+  screen blocks 5, 6 and 7 and the layout's three tile sheets in character
+  blocks 1 to 3 ([Layouts](../layout/README.md)).
 - Screens that load two pictures in turn split the background in halves: the
   first 32 KB with background colours 0 to 127, the second with colours 128 to
   255 (`Graphics_LoadCharacterBlockAndPalette`,
@@ -154,22 +154,22 @@ other editions' fall on 2 or 4 KB ones.
 
 ## How an overlay reaches the rest of the game
 
-An overlay is one place's code, unpacked into one fixed 32 KB area of EWRAM
+An overlay is one map's code, unpacked into one fixed 32 KB area of EWRAM
 while the party is there, and it meets the rest of the program only through
 two tables of stubs.
 
-![The cartridge holds each place's code packed, as one of 96 overlays: Vale, Vault, Bilibin, Bilibin's houses, Kolima, Imil and the rest. In RAM there is room for one, the 32 KB overlay area. While the party is in Bilibin, Bilibin's overlay is unpacked there. When the party walks into one of Bilibin's houses, the new scene's overlay, the houses', is unpacked into the same area over Bilibin's, which is gone until the party walks back out.](https://alchemy.pascalpixel.com/illustrations/system/overlays.svg)
+![The cartridge holds each map's code packed, as one of 96 overlays: Vale, Vault, Bilibin, Bilibin's houses, Kolima, Imil and the rest. In RAM there is room for one, the 32 KB overlay area. While the party is in Bilibin, Bilibin's overlay is unpacked there. When the party walks into one of Bilibin's houses, the new map's overlay, the houses', is unpacked into the same area over Bilibin's, which is gone until the party walks back out.](https://alchemy.pascalpixel.com/illustrations/system/overlays.svg)
 
 The code for a town's people, its cutscenes and its puzzles is needed only
-while the party is in that town, and all the places' code together would not
-fit in RAM. So each place's code is packed on the cartridge as an overlay, and
-when the party enters a scene, its overlay is unpacked into the overlay area
-over whatever place was there before. Every overlay is built to run at that
+while the party is in that town, and all the maps' code together would not
+fit in RAM. So each map's code is packed on the cartridge as an overlay, and
+when the party enters a map, its overlay is unpacked into the overlay area
+over whatever map's code was there before. Every overlay is built to run at that
 one address, so only one is ever loaded.
 
-There are 96 overlays, placed by `overlay/overlays.s` and listed in the scene
+There are 96 overlays, placed by `overlay/overlays.s` and listed in the map
 table (`field/maps.s`), each a compressed resource unpacked into
-`gOverlayArea`. Some places share one (the three `VaultCave` scenes load the
+`gOverlayArea`. Some maps share one (the three `VaultCave` maps load the
 same overlay), and the title screen and a few other screens that are mostly
 menus are overlays too.
 
@@ -177,13 +177,13 @@ An overlay is linked on its own at the overlay area (`overlay/overlay.ld`),
 after the main image and against its symbols (`-R` in the `Makefile`'s overlay
 rule). It is three objects:
 
-- The entry table (`scene/entry/<place>.s`) opens it: six 8-byte stubs whose
-  words hold the scene's start-up function and the functions that return its
-  entrances, exits, placements, events and regions. The field code reads them
+- The entry table (`map/entry/<map>.s`) opens it: six 8-byte stubs whose
+  words hold the map's start-up function and the functions that return its
+  warp destinations, warps, object event templates, events and regions. The field code reads them
   through `struct MapEntries` (`include/field_runtime.h`), calling
   `gOverlayArea.initialize()`, `gOverlayArea.events()` and so on.
 - The overlay's code and data.
-- The import table (`scene/import/<place>.s`). EWRAM is out of `bl` range of
+- The import table (`map/import/<map>.s`). EWRAM is out of `bl` range of
   the ROM, so the overlay's code makes a short `bl` to a local stub, and the
   stub's word holds the address of the main-image function's far-call entry,
   never the function itself: `Engine_TaskWait` goes to `WaitFramesFar`, which
@@ -200,7 +200,7 @@ all reach `ArcTan2Far`), because different overlays' code calls the same
 routine by different names.
 
 Only one overlay is loaded at a time, since all are linked to the same 32 KB,
-so an overlay never calls another. Code several scenes need is copied into
+so an overlay never calls another. Code several maps need is copied into
 each of them (`games/tbs/src/map/common/`).
 
 `Resource_LoadCode` (`../runtime/runtime/system.c`) unpacks an overlay and
@@ -218,24 +218,24 @@ behind its veneer word:
 
 | Member | Offset | What it returns |
 | --- | --- | --- |
-| `initialize` | `0x04` | runs the scene's start-up |
-| `entrances` | `0x0c` | the scene's entrances (`struct MapWarpDest`) |
-| `exits` | `0x14` | its exits |
-| `placements` | `0x1c` | its placements (`struct ObjectEventTemplate`) |
+| `initialize` | `0x04` | runs the map's start-up |
+| `warpDests` | `0x0c` | the map's warp destinations (`struct MapWarpDest`) |
+| `warps` | `0x14` | its warps |
+| `objectEventTemplates` | `0x1c` | its object event templates (`struct ObjectEventTemplate`) |
 | `events` | `0x24` | its events (`struct MapEvent`) |
-| `regions` | `0x2c` | its exit regions (`struct MapWarpRegion`) |
+| `regions` | `0x2c` | its warp regions (`struct MapWarpRegion`) |
 
 ## The resource directory and table order
 
-Every picture, map, table and overlay on the cartridge is found by its number
+Every picture, layout, table and overlay on the cartridge is found by its number
 in one list, the resource directory, so the list has to keep its order.
 
-![How the game finds Bilibin's code by number. The scene table's row for Bilibin names its overlay by a resource number. That number is a row of the resource directory, a list with one row for every picture, map, table and overlay, in a fixed order. Bilibin's row holds where its packed data starts in the cartridge. The game reads the row, finds the packed data and unpacks it into the overlay area. Because a resource's number is its place in the list, a row added in the middle gives every later resource a new number.](https://alchemy.pascalpixel.com/illustrations/system/resource-directory.svg)
+![How the game finds Bilibin's code by number. The map table's row for Bilibin names its overlay by a resource number. That number is a row of the resource directory, a list with one row for every picture, layout, table and overlay, in a fixed order. Bilibin's row holds where its packed data starts in the cartridge. The game reads the row, finds the packed data and unpacks it into the overlay area. Because a resource's number is its place in the list, a row added in the middle gives every later resource a new number.](https://alchemy.pascalpixel.com/illustrations/system/resource-directory.svg)
 
-When the party enters Bilibin, the scene table does not say where Bilibin's
+When the party enters Bilibin, the map table does not say where Bilibin's
 code is; it gives a number. The number picks a row of the resource
 directory, and the row holds where the packed data starts on the cartridge.
-Pictures, maps and tables are found the same way. A resource's number is
+Pictures, layouts and tables are found the same way. A resource's number is
 simply its place in the list, which keeps the lookup to one step, but it also
 means a row added in the middle renumbers everything after it. The far-call
 tables work the same way: an entry is found by its place.
@@ -259,9 +259,9 @@ after it still shifts.
 
 In the directory, a row added in the middle renumbers every row after it.
 Code that names a resource by its symbol follows, but numbers travel without
-symbols in several places: the scene table (`games/tbs/src/field/maps.s`)
-gives each scene its overlay as a resource number, and the first column of
-`objects.tsv` numbers each overlay's rows the same way. The layered map table
+symbols in several places: the map table (`games/tbs/src/field/maps.s`)
+gives each map its overlay as a resource number, and the first column of
+`objects.tsv` numbers each overlay's rows the same way. The layout table
 (`games/tbs/src/field/layouts.tsv`) holds numbers counted from
 `ResourceId_Layout001` (`MapGrid_LoadLayout`), so the rows after that one keep
 their order. Code also adds to an id to reach the rows after it: the option
@@ -272,7 +272,7 @@ any other.
 
 | Where a number travels without its symbol | Why its rows keep their order |
 | --- | --- |
-| the scene table, `field/maps.s` | each scene names its overlay as a resource number |
+| the map table, `field/maps.s` | each map names its overlay as a resource number |
 | `objects.tsv`'s first column | each overlay's rows are numbered by resource |
 | `field/layouts.tsv` | numbers counted from `ResourceId_Layout001` |
 | `window/window/options.c` | eight frames counted from `ResourceId_ShopCursorFrames` |
@@ -301,7 +301,7 @@ itself, the layout has to keep every one:
 | The cartridge restart entry, `Cart_Restart` | `0x08000000`, the start of the ROM | The soft reset in `WaitFrames` jumps there, and `SerialTest_Run`, a link cable test nothing reaches, sends the first 640 bytes from there over the cable. So the header and `System_Entry` stay at the start of the ROM. |
 | The resident runtime, `.iwram_runtime` (5 KB, copied by `Runtime_InstallIwramAndIrqs`) | `0x03000000`, the start of IWRAM | C calls its routines at their addresses (`IwramSqrt` and the rest), and the ARM code that runs from RAM reaches them as offsets from `IwramIrqMain` (`IWRAM_ENTRY`, `games/tbs/src/field/update.c`). |
 | The overlay area, `gOverlayArea` | `0x02008000`, 32 KB of EWRAM | Every overlay is linked to run there and has to fit. Its first 48 bytes are the entry table, which the field object calls by member. |
-| The map and decode buffers: `Ram_MapGridCellBuffer`, `Ram_ActorSpriteSlots`, `Ram_DecodeBuffer`, `Ram_Metatiles`, `Ram_MapGridCollision`, `Ram_BgTileBuffer` | after the overlay area, as the EWRAM table lists | Code reaches across their boundaries by arithmetic: the map's cells fill 64 KB from the start of `Ram_MapGridCellBuffer`, through the sprite slots and the decode buffer, and the tile animation reads tiles from `Ram_DecodeBuffer` that land in `gMapGridLayerData` ([Maps](../layout/README.md)). So `ewram.s` can't reorder or resize them. |
+| The map and decode buffers: `Ram_MapGridCellBuffer`, `Ram_ActorSpriteSlots`, `Ram_DecodeBuffer`, `Ram_Metatiles`, `Ram_MapGridCollision`, `Ram_BgTileBuffer` | after the overlay area, as the EWRAM table lists | Code reaches across their boundaries by arithmetic: the map grid's cells fill 64 KB from the start of `Ram_MapGridCellBuffer`, through the sprite slots and the decode buffer, and the tile animation reads tiles from `Ram_DecodeBuffer` that land in `gMapGridLayerData` ([Layouts](../layout/README.md)). So `ewram.s` can't reorder or resize them. |
 | The ends of the two heaps | `0x03007800` in IWRAM and `0x02040000`, the end of EWRAM | The allocators test against these numbers (`heap.c`). `gCartridgeResetMarker` sits at the first, and the system stack lives above it. |
 | The sound driver's mixer, `SoundDriver_Mixer` (932 bytes) | `0x03007000`, inside the IWRAM heap's range | `Audio_Initialize` copies 1 KB at once (`SOUND_MIXER_CODE_SIZE`), so the 92 bytes after the mixer in the ROM land just after it. `Sound_LoadPresetParameters` copies its 152-byte presets elsewhere, into the resident code at `IwramSoundPresetCode`. |
 | The frame wait's stack top, `Ram_FrameWaitStackTop` | `0x03007a00` | The 512 bytes between it and the heap's end are what the frame loop, its tasks and the VBlank work always have ([Runtime](../runtime/README.md)). |
@@ -333,11 +333,11 @@ can build from the names while the matching build keeps the numbers.
 
 The system folder is the ground the rest stands on. [Runtime](../runtime/README.md)
 copies the resident code into IWRAM at power-on and allocates from the two
-heaps laid out here. The field code loads each scene's overlay by the number
-the scene table gives it ([Running a place](../object/README.md)), and every
-overlay in [Scenes](../map/README.md), [Menus](../menu/README.md) and
+heaps laid out here. The field code loads each map's overlay by the number
+the map table gives it ([Running a map](../object/README.md)), and every
+overlay in [Maps](../map/README.md), [Menus](../menu/README.md) and
 [Debug rooms](../debug/README.md) is built from the entry and import tables
-described here. Code everywhere loads its pictures and maps through the
+described here. Code everywhere loads its pictures and layouts through the
 resource directory, and [saving](../runtime/README.md#saving) writes through
 the flash library in `save/`.
 
@@ -407,7 +407,7 @@ as constants. [Matching](../MATCHING.md) explains the markers in the code.
   An entry no code calls by name keeps its place in the table, as a stub with
   no `...Far` name.
 - **overlay**: code and data unpacked into the overlay area from one
-  compressed resource when a scene or screen needs it: its entry table, its
+  compressed resource when a map or screen needs it: its entry table, its
   code, and its import table.
 - **resource**: a row of the directory, loaded by its id
   (`Resource_GetTableEntry`); the id is the `ResourceId_` symbol's value.

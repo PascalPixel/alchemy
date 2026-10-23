@@ -1,5 +1,5 @@
 /// @file
-/// Actor scripts: moving, turning and the built-in actions.
+/// Object event scripts: moving, turning and the built-in actions.
 // Part of psynergy_effects.c.
 
 #include "../psynergy_effects_internal.h"
@@ -17,7 +17,7 @@ s32 Object_ClearChildAndCollisionFlags(void *obj) {
 /// action pixels away the object walks (animation 2) toward a point 16 /
 /// action of the way there, so with action 16 it heads for the linked
 /// object itself; closer, it stands (animation 1). Returns 1, so SC_CALL
-/// runs it again every frame until the actor's script is replaced.
+/// runs it again every frame until the object event's script is replaced.
 s32 ObjectMotion_MoveTowardTarget(struct ObjectRuntime *object) {
   s32 step;
   struct ObjectRuntime *target;
@@ -59,7 +59,7 @@ s32 ObjectMotion_MoveTowardTarget(struct ObjectRuntime *object) {
 
 /// Script step of action 6: turns the object toward its linked object, at most
 /// 1/16 turn a frame. Returns 1, so SC_CALL runs it again every frame until
-/// the actor's script is replaced.
+/// the object event's script is replaced.
 s32 ObjectMotion_TurnTowardLinkedTarget(struct ObjectRuntime *object) {
   s16 turnStep;
   u16 currentAngle;
@@ -84,12 +84,12 @@ s32 ObjectMotion_TurnTowardLinkedTarget(struct ObjectRuntime *object) {
   return 1;
 }
 
-/// Starts an actor's action script: an enum MovementType, or any other value
-/// as the script to run itself. The built-in scripts are in scripts.s
-/// (field.h). Reached from a placement's behavior column (object/actors.c),
-/// from Map_TalkToObjectEvent after a talk (object/events.c), from the actor
-/// commands and from Lalivero's interiors
-/// (Engine_ObjectEventSetActionCallback).
+/// Starts an object event's action script: an enum MovementType, or any other
+/// value as the script to run itself. The built-in scripts are in scripts.s
+/// (field.h). Reached from an object event template's behavior column
+/// (object/object_events.c), from Map_TalkToObjectEvent after a talk
+/// (object/events.c), from the object event commands and from Lalivero's
+/// interiors (Engine_ObjectEventSetActionCallback).
 void ObjectMotion_SetActionCallback(struct ObjectRuntime *object, s32 action) {
   switch (action) {
   case MOVEMENT_TYPE_STAND:

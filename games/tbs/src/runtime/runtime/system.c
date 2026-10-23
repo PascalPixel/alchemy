@@ -227,7 +227,7 @@ UNUSED void Code_ResolveLongBranches(u16 *entries, s32 byteLength) {
 /// Decodes the compressed code resource `index` to `destination` and resolves
 /// its long branches there, with a RAM copy of the ARM routine that does what
 /// Code_ResolveLongBranches does; the copy is allocated and freed again.
-/// Called by Map_LoadOverlay for each scene's overlay, and through the
+/// Called by Map_LoadOverlay for each map's overlay, and through the
 /// far-call table.
 void Resource_LoadCode(u32 index, void *destination) {
   void (*patchBranches)(void *, s32);

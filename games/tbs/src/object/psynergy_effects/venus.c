@@ -10,8 +10,8 @@
 /// spiral down onto the leader from 120 pixels above
 /// (FieldEffect_UpdateDescendingOrbitObject) and 8 sparks burst from the
 /// leader. Called by Djinn_JoinParty for a Venus Djinni, which then clears the
-/// Djinni's actor slot. Uses all 24 effect slots, tints the field palette green
-/// and fades it back at the end.
+/// Djinni's object event slot. Uses all 24 effect slots, tints the field
+/// palette green and fades it back at the end.
 void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   struct CaptureObject *leader;
   struct CaptureObject *djinni;

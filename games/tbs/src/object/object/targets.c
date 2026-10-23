@@ -1,5 +1,5 @@
 /// @file
-/// The actor a field action aims at, and the helpers that follow it.
+/// The object event a field action aims at, and the helpers that follow it.
 // Part of object.c.
 
 #include "../object_internal.h"
@@ -25,13 +25,13 @@ s32 Field_GetPsynergyTargetRange(s32 kind) {
   return range;
 }
 
-/// Returns the actor nearest to actor id that it could talk to, or -1: within
-/// 48 pixels of height and 32 pixels of distance and, beyond 11 pixels, within
-/// 0x2fff (about 67 degrees) of the direction it faces. Actors with collision
-/// flag 8 are skipped, and those with flag 4 count as 10/13 as far, so they
-/// can be talked to from up to 41 pixels.
-/// Called with the leader by Field_RunMap for the A button, and by the item
-/// code (items.c) to find whom an item is used on.
+/// Returns the object event nearest to object event id that it could talk to,
+/// or -1: within 48 pixels of height and 32 pixels of distance and, beyond 11
+/// pixels, within 0x2fff (about 67 degrees) of the direction it faces. Object
+/// events with collision flag 8 are skipped, and those with flag 4 count as
+/// 10/13 as far, so they can be talked to from up to 41 pixels. Called with the
+/// leader by Field_RunMap for the A button, and by the item code (items.c) to
+/// find whom an item is used on.
 s32 Field_FindNearbyTalkTarget(s32 id) {
   struct ObjectRuntime *source;
   struct ObjectRuntime *candidate;
@@ -61,8 +61,8 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
       if (candidate == 0 || (candidate->collisionFlags & 8) != 0)
         continue;
 
-      // y is height: an actor more than 48 pixels above or below is out of
-      // reach.
+      // y is height: an object event more than 48 pixels above or below is out
+      // of reach.
       if (candidate->y - source->y >= 0) {
         if (candidate->y - source->y >= 48 << 16)
           continue;
@@ -85,8 +85,8 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
       if (distance >= nearestDistance)
         continue;
 
-      // Close actors count from any side; further ones must be within 0x2fff
-      // (about 67 degrees) of where the actor faces.
+      // Close object events count from any side; further ones must be within
+      // 0x2fff (about 67 degrees) of where the object event faces.
       angle = (u16)ArcTan2(candidate->z - source->z, candidate->x - source->x);
       if (distance > 11) {
         s32 angleDifference = (s16)(angle - source->angle);
@@ -104,12 +104,13 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
   return nearestObjectEvent;
 }
 
-/// Returns the actor nearest in front of actor id that a field Psynergy of the
-/// given kind can reach, or -1. The direction is rounded to a quarter turn and
-/// the distance measured on the ground; kind sets the range, the height
-/// allowed and the width of the cone. Actors with collision flag 0x10 count as
-/// 2/3 as far. Called with the leader by Field_UsePsynergy, by the item code
-/// (items.c) and by the Psynergy dispatch (psynergy_effects/dispatch.c).
+/// Returns the object event nearest in front of object event id that a field
+/// Psynergy of the given kind can reach, or -1. The direction is rounded to a
+/// quarter turn and the distance measured on the ground; kind sets the range,
+/// the height allowed and the width of the cone. Object events with collision
+/// flag 0x10 count as 2/3 as far. Called with the leader by Field_UsePsynergy,
+/// by the item code (items.c) and by the Psynergy dispatch
+/// (psynergy_effects/dispatch.c).
 s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
   struct ObjectRuntime *source;
   struct ObjectRuntime *candidate;
@@ -203,11 +204,11 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
   return nearestObjectEvent;
 }
 
-/// If actor target exists, plays SE_124, gives it animation 4 and, 12 frames
-/// later, shows itemId in front of actor with sparkles. Returns the picture's
-/// encoded actor pointer, or 0 when the target or picture is absent. Called by
-/// two scene overlays: McCoy's palace, when a reward chest opens, and Vault's
-/// interiors, when Ivan finds the Shaman's Rod.
+/// If object event target exists, plays SE_124, gives it animation 4 and, 12
+/// frames later, shows itemId in front of object event with sparkles. Returns
+/// the picture's encoded object event pointer, or 0 when the target or picture
+/// is absent. Called by two map overlays: McCoy's palace, when a reward chest
+/// opens, and Vault's interiors, when Ivan finds the Shaman's Rod.
 s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 objectEvent, s32 target,
                                                s32 itemId) {
   void *targetObjectEvent;
@@ -261,8 +262,8 @@ void Animation_ApplyChildPalette(struct MotionObject *object, s32 palette) {
 
 /// Clears the field's busy flag and, while Reveal is active, ends it: Reveal
 /// used with ACT_PACKED runs its ending events. Called by FieldScript_Start
-/// when an event starts while the field is busy, by Field_RunMap before the
-/// pause menu, and by 30 scene overlays.
+/// when a script starts while the field is busy, by Field_RunMap before the
+/// pause menu, and by 30 map overlays.
 void Field_EndBusyAndReveal(void) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
 

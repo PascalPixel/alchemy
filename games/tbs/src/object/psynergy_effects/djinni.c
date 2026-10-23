@@ -11,11 +11,11 @@ void ObjectMotion_MoveHalfwayTowardTarget(union FieldObject *fieldObject) {
 
 #define DJINNI_CLONE_MAX 8 ///< afterimages of the leaping Djinni
 
-/// A Djinni's battle start: the Djinni (actor id) bounces twice, turns to face
+/// A Djinni's battle start: the Djinni (local id) bounces twice, turns to face
 /// the leader, hops back 16 pixels three times, then leaps 64 pixels at the
 /// party trailing eight afterimages tinted for its element. Only
 /// Field_RequestDjinnBattle calls it, when DJINN_NO_HOP is clear. Nothing
-/// here releases the afterimages: they last until the scene is left for the
+/// here releases the afterimages: they last until the map is left for the
 /// battle.
 void Djinn_RunBattleStartHop(s32 djinniId) {
   struct ObjectEvent *djinni;
@@ -74,7 +74,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   // Afterimages of the same sprite at 15/16 size, each closing half the
   // distance to the one before it every frame, tinted by the Djinni's
   // sprite: the Venus sprite (90) takes param 2, Mars (92) 10, and Mercury
-  // (91) and Jupiter (93) 9 (the scenes' Djinni placements show which
+  // (91) and Jupiter (93) 9 (the maps' Djinni object event templates show which
   // sprite is which element). They share one VRAM cache entry.
   sprite = djinni->sprite->entries[0]->animationId;
   tint = 9;
@@ -129,14 +129,14 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
 
 /// A Djinni joins the party: djinn (0 to 19) of element goes to the member with
 /// the fewest Djinn, or to no one and only its flag while FLAG_DJINN_LESSON
-/// is set. Unless slot is -1, the Djinni's actor slot first plays its
+/// is set. Unless slot is -1, the Djinni's object event slot first plays its
 /// element's capture effect and is freed. Ends with
 /// `<Djinni> joined <member>.`
 ///
 /// Nothing happens when Djinn_AddToLeastLoadedOwner refuses the Djinni: -1
-/// when it was found before, -2 when no member has room; its actor then
+/// when it was found before, -2 when no member has room; its object event then
 /// stays. Called by Djinn_ResolvePendingEvent after a won Djinni battle, by
-/// 13 scenes directly and by the debug rooms.
+/// 13 maps directly and by the debug rooms.
 void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
   struct FieldWork *work;
   s32 owner;
@@ -153,8 +153,8 @@ void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
     FieldScript_Start();
     WorldMap_StartScript();
     if (slot != -1) {
-      // On the world map the actors far from the view are removed while the
-      // effect plays and placed again after it.
+      // On the world map the object events far from the view are removed while
+      // the effect plays and placed again after it.
       if (work->mode == MODE_WORLD_MAP)
         ObjectTable_ClearOutOfBounds();
 
@@ -178,14 +178,15 @@ void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
   }
 }
 
-/// Puts a Djinni's actor back where its battle started from: for a pending
-/// Djinni battle (pendingDjinnEvent 300 to 380, FLAG_KEEP_PARTY_POSITION set,
-/// the battle over) the scene actor placed for that Djinni (condition = its
-/// flag) goes back to its placement, or 32 pixels north of the leader when the
-/// event has DJINN_NO_HOP (0x800) set, and stands (animation 1).
-/// Field_RunMap calls it as it rebuilds the scene, only while an event is
-/// still pending after Djinn_ResolvePendingEvent's first call, that is after
-/// a won battle; the second call then makes this actor join the party.
+/// Puts a Djinni's object event back where its battle started from: for a
+/// pending Djinni battle (pendingDjinnEvent 300 to 380,
+/// FLAG_KEEP_PARTY_POSITION set, the battle over) the map's object event placed
+/// for that Djinni (condition = its flag) goes back to its template's position,
+/// or 32 pixels north of the leader when the event has DJINN_NO_HOP (0x800)
+/// set, and stands (animation 1). Field_RunMap calls it as it rebuilds the map,
+/// only while an event is still pending after Djinn_ResolvePendingEvent's first
+/// call, that is after a won battle; the second call then makes this object
+/// event join the party.
 void ObjectEvent_PlaceMapObjectEvents(void) {
   s32 flags = gGameState.pendingDjinnEvent & 0xf000;
   u32 event = gGameState.pendingDjinnEvent & 0xfff;
@@ -207,8 +208,8 @@ void ObjectEvent_PlaceMapObjectEvents(void) {
         object = ObjectTable_Get(id);
         if (object == NULL)
           continue;
-        // Without DJINN_NO_HOP, back at its placement in a new actor's
-        // ground state: no ground height yet, following the terrain and
+        // Without DJINN_NO_HOP, back at its template's position in a new object
+        // event's ground state: no ground height yet, following the terrain and
         // falling.
         if (flags == 0) {
           object->terrainHeight = flags;
@@ -228,19 +229,19 @@ void ObjectEvent_PlaceMapObjectEvents(void) {
   }
 }
 
-/// Settles a pending Djinni battle as a scene loads, from the battle's result
+/// Settles a pending Djinni battle as a map loads, from the battle's result
 /// in mapChangeReason (the enemies defeated, 999 when the party fled, -1
 /// when it lost). Field_RunMap calls it with shown 0 while it builds the
-/// scene and, while the event is still pending, with shown nonzero once the
-/// scene is on screen.
+/// map and, while the event is still pending, with shown nonzero once the
+/// map is on screen.
 ///
 /// After a won battle the first call leaves the event pending and the second
 /// makes the Djinni join the party, 40 frames in (Djinn_JoinParty).
 /// Otherwise the first call sets the Djinni's FLAG_DJINNI_HIDING_0 flag, which
-/// hides the Djinni's actor until the scene
-/// is entered normally again (object/actors.c), and drops the event. A mimic
-/// chest's event (kind 0x1000, object/events.c) sets the chest's flag when
-/// the battle ended with exactly one enemy defeated, and is dropped.
+/// hides the Djinni's object event until the map
+/// is entered normally again (object/object_events.c), and drops the event. A
+/// mimic chest's event (kind 0x1000, object/events.c) sets the chest's flag
+/// when the battle ended with exactly one enemy defeated, and is dropped.
 void Djinn_ResolvePendingEvent(s32 shown) {
   struct GameState *st = &gGameState;
   s16 *pending = &st->pendingDjinnEvent;
@@ -252,7 +253,7 @@ void Djinn_ResolvePendingEvent(s32 shown) {
       flag &= 0x7ff;
       if (flag < DJINNI_EVENT_0 || flag > DJINNI_EVENT_0 + 80)
         return;
-      // Won: the event waits for the call once the scene is shown.
+      // Won: the event waits for the call once the map is shown.
       if (st->mapChangeReason > 0 && st->mapChangeReason != 999)
         return;
       // DJINNI_EVENT_0 + n less 172 is FLAG_DJINNI_HIDING_0 + n.
@@ -297,7 +298,7 @@ void FieldEffect_UpdateAllSlots(void) { FieldEffect_UpdateEffectSlots(); }
 /// Allocates and clears the effect slots (HEAP_SLOT_EFFECT) and starts their
 /// update callback. The block is a whole effect scene, gEffectWork, the slot
 /// a Psynergy effect's scene also takes. Called by the Djinn joining effects
-/// (jupiter.c, mars.c, venus.c and mercury.c) and Altmiller Cave's scene;
+/// (jupiter.c, mars.c, venus.c and mercury.c) and Altmiller Cave's map script;
 /// each ends with FieldEffect_ClearActiveSlotsAndScheduleUpdates.
 void FieldEffect_InitializeSlots(void) {
   void *work;

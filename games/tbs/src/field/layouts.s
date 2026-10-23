@@ -1,5 +1,5 @@
 	.section .rodata
-@ Layered maps by scene, indexed from ResourceId_Layout001
+@ Layouts, indexed from ResourceId_Layout001
 	.global gLayouts
 gLayouts:
 	.incbin "games/tbs/src/field/layouts.table"

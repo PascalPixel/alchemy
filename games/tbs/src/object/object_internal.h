@@ -101,16 +101,16 @@
 /// The speakers' definitions (fxdata.c), read by FieldEffect_FindDefinition.
 extern struct FieldEffectDefinition gFieldEffect_DefinitionTable[];
 
-/// The exit request whose destination is already in gGameState.scene and
-/// .entrance, so that Map_TakeWarp leaves them as they are. Random battles,
-/// Retreat and the event commands that set a destination
+/// The warp request whose destination is already in gGameState.mapId and
+/// .warpDest, so that Map_TakeWarp leaves them as they are. Random battles,
+/// Retreat and the script commands that set a destination
 /// (FieldScript_SetDestination) raise it, and Field_RunMap returns it when the
-/// whole party falls; Map_TakeWarp also uses it for "no exit found" (scene.c,
-/// run_scene.c).
+/// whole party falls; Map_TakeWarp also uses it for "no warp found" (map.c,
+/// run_map.c).
 #define WARP_NONE 999
 
-/// Scene ids above the field maps, which Game_Run runs without a
-/// map; each returns a result to Map_ReturnFromBattle instead of an exit.
+/// Map ids above the field maps, which Game_Run runs without a
+/// layout; each returns a result to Map_ReturnFromBattle instead of a warp.
 /// A 16.16 position that Vector_AddPolarOffset moves by a distance and a
 /// heading: the routine walks the coordinates as three words, and the callers
 /// read the result by name.
@@ -121,7 +121,7 @@ union PolarOffsetPosition {
 
 STATIC_ASSERT(sizeof(union PolarOffsetPosition) == 12);
 
-/// A scene region's bounds, in pixels, as 16.16 fixed point.
+/// A map region's bounds, in pixels, as 16.16 fixed point.
 #define REGION_FIXED(value) ((s32)((u32)(s32)(value) << 16))
 
 // A field Psynergy or item use, packed into one value (items.c, psynergy.c),

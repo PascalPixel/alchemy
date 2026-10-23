@@ -1,5 +1,5 @@
 /// @file
-/// The view bounds, zoom transitions and objects linked to an actor.
+/// The view bounds, zoom transitions and objects linked to an object event.
 // Part of psynergy_effects.c.
 
 #include "../psynergy_effects_internal.h"
@@ -8,7 +8,7 @@
 /// Bits 2 and 3 are its priority.
 #define SPRITE_ATTR2_HIGH(sprite) (((u8 *)(sprite))[9])
 
-/// The event command "set view bounds": the camera keeps the screen inside
+/// The script command "set view bounds": the camera keeps the screen inside
 /// these map coordinates (Camera_MoveWithinMapBounds).
 void MapGrid_SetViewBounds(s32 minX, s32 minY, s32 maxX, s32 maxY) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
@@ -113,11 +113,11 @@ void FieldScript_WaitForZoomTransition(void) {
   }
 }
 
-// Per-frame update of a riding object: keeps it on the actor it rides (its
-// linked object), raised by the actor's sprite height (its metadata's boxX) and
-// 8 pixels. Its work holds the actor's id.
-// The hook consumer ignores the result. Plain void removes the native zero
-// result and changes its return register (three instructions in tbs-en).
+// Per-frame update of a riding object: keeps it on the object event it rides
+// (its linked object), raised by the object event's sprite height (its
+// metadata's boxX) and 8 pixels. Its work holds the object event's id. The hook
+// consumer ignores the result. Plain void removes the native zero result and
+// changes its return register (three instructions in tbs-en).
 #ifdef UBFIX
 void FieldEffect_CopyLinkedObjectPosition(union FieldObject *fieldObject) {
 #else
@@ -146,11 +146,11 @@ s32 FieldEffect_CopyLinkedObjectPosition(union FieldObject *fieldObject) {
 #endif
 }
 
-/// The event command "actor show emote": shows an emote bubble (object 21)
-/// over an actor, then waits wait frames. The low 4 bits of emote pick the
-/// bubble (enum Emote; EMOTE_LIGHT_BULB also plays SE_110); with
-/// EMOTE_IN_FRONT the bubble takes sprite priority 1, otherwise the actor's.
-/// The bubble rides the actor and frees itself after 46 frames
+/// The script command "object event show emote": shows an emote bubble (object
+/// 21) over an object event, then waits wait frames. The low 4 bits of emote
+/// pick the bubble (enum Emote; EMOTE_LIGHT_BULB also plays SE_110); with
+/// EMOTE_IN_FRONT the bubble takes sprite priority 1, otherwise the object
+/// event's. The bubble rides the object event and frees itself after 46 frames
 /// (gFieldEffect_LinkedObjectScript: 16 frames of squash and stretch, then 30),
 /// whatever wait is.
 void FieldEffect_SpawnLinked(s32 objectEvent, s32 emote, s32 wait) {
@@ -184,7 +184,8 @@ void FieldEffect_SpawnLinked(s32 objectEvent, s32 emote, s32 wait) {
       sprite->flags = 0;
       bubble->linkedObject = target;
 
-      // Replace the bubble's priority bits (2 and 3) with 1 or the actor's.
+      // Replace the bubble's priority bits (2 and 3) with 1 or the object
+      // event's.
       if ((emote & EMOTE_IN_FRONT) != 0) {
         s32 mask = 13;
         u8 attr = SPRITE_ATTR2_HIGH(sprite);
@@ -211,14 +212,14 @@ void FieldEffect_SpawnLinked(s32 objectEvent, s32 emote, s32 wait) {
   }
 }
 
-/// The event command "actor set attached effect", by enum AttachedEffectFlag:
-/// removes the object attached to an actor, attaches one
-/// (SPRITE_ATTACHED_EFFECT, animation 1) or shows a one-off one (animation 2)
-/// that ends by itself (gObjectMotion_WaitScript, 40 frames). The attached
-/// object is kept as the actor's linkedObject, so ATTACHED_EFFECT_ATTACH does
-/// nothing while the actor has one, and ATTACHED_EFFECT_REMOVE releases
-/// whatever it is; a one-off is never recorded there. The leader's step runs
-/// all three for hazard ground (object/step.c).
+/// The script command "object event set attached effect", by enum
+/// AttachedEffectFlag: removes the object attached to an object event, attaches
+/// one (SPRITE_ATTACHED_EFFECT, animation 1) or shows a one-off one (animation
+/// 2) that ends by itself (gObjectMotion_WaitScript, 40 frames). The attached
+/// object is kept as the object event's linkedObject, so ATTACHED_EFFECT_ATTACH
+/// does nothing while the object event has one, and ATTACHED_EFFECT_REMOVE
+/// releases whatever it is; a one-off is never recorded there. The leader's
+/// step runs all three for hazard ground (object/step.c).
 void FieldEffect_ConfigureLinkedObject(s32 objectEvent, s32 flags) {
   struct ObjectEvent *object = ObjectTable_Get(objectEvent);
   struct ObjectEvent *effect;
@@ -276,7 +277,7 @@ void FieldEffect_ConfigureLinkedObject(s32 objectEvent, s32 flags) {
   visual->flags = 0;
   effect->linkedObject = object;
 
-  // Replace the effect's priority bits (2 and 3) with 1 or the actor's.
+  // Replace the effect's priority bits (2 and 3) with 1 or the object event's.
   if (flags & ATTACHED_EFFECT_IN_FRONT) {
     s32 mask = 13;
     u8 attr = SPRITE_ATTR2_HIGH(visual);

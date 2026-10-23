@@ -329,7 +329,7 @@ s32 Curve_GetFirstSampleC(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
 ///
 /// Called each frame by Object_UpdateAllThumb for objects that follow the
 /// terrain, by the player control, and as MapGrid_GetTerrainHeightFar by the
-/// field scene's objects, the Psynergy effects and about ten scene overlays.
+/// field map's objects, the Psynergy effects and about ten map overlays.
 s32 MapGrid_GetTerrainHeight(s32 layer, s32 x, s32 y) {
   struct MapGridState *work = gMapGridWork[0];
   struct MapGridCell *cell;
@@ -384,10 +384,10 @@ s32 MapGrid_GetCellAttributeLowNibble(s32 layer, s32 x, s32 y) {
   return *(Ram_MapGridCollision + heightAttributeIndex * 4) & 15;
 }
 
-/// Returns the collision code of a layer's cell at (x, y) in 16.16 pixels.
+/// Returns the metatile behavior of a layer's cell at (x, y) in 16.16 pixels.
 /// The shift by 20 takes 16.16 pixels straight to 16-pixel cells. Called
 /// through MapGrid_GetMetatileBehaviorAtFar by the Psynergy climbing and by
-/// scenes (Altin Peak, Colosso, Imil, Crossbone Isle).
+/// maps (Altin Peak, Colosso, Imil, Crossbone Isle).
 s32 MapGrid_GetMetatileBehaviorAt(s32 layer, s32 x, s32 y) {
   struct MapGridState *gridState;
   struct MapGridCell *cell;
@@ -404,9 +404,9 @@ s32 MapGrid_GetMetatileBehaviorAt(s32 layer, s32 x, s32 y) {
   return cell->collisionCode;
 }
 
-/// Sets the collision code of a layer's cell at (x, y) in 16.16 pixels.
+/// Sets the metatile behavior of a layer's cell at (x, y) in 16.16 pixels.
 /// Writes the cell in the map's grid; does nothing before the map is set up.
-/// Called through MapGrid_SetMetatileBehaviorAtFar by scenes
+/// Called through MapGrid_SetMetatileBehaviorAtFar by maps
 /// (Colosso, Altin Peak, Crossbone Isle, Venus Lighthouse, Tolbi, Sol
 /// Sanctum).
 void MapGrid_SetMetatileBehaviorAt(u32 layer, s32 x, s32 y, u32 collisionCode) {
@@ -423,16 +423,15 @@ void MapGrid_SetMetatileBehaviorAt(u32 layer, s32 x, s32 y, u32 collisionCode) {
   }
 }
 
-/// Unused: returns the top two bits of the block word of the cell at pixel (x,
-/// y).
-/// Nothing calls it.
+/// Unused: returns the top two bits of the metatile halfword of the cell at
+/// pixel (x, y). Nothing calls it.
 UNUSED s32 MapGrid_GetCellHighFlags(s32 x, s32 y) {
   s32 cellX = x / 16;
   s32 cellY = y / 16;
   struct MapGridCell *cell =
       (struct MapGridCell *)gMapGridCellBuffer + (cellX + cellY * 128);
 
-  // The high byte of the block word; its top two bits are flags.
+  // The high byte of the metatile halfword; its top two bits are flags.
   return ((u8 *)&cell->metatileAndFlags)[1] >> 6;
 }
 

@@ -320,7 +320,7 @@ void Transform_SetLookAt(s32 *eye, s32 *target) {
 }
 
 /// Multiplies the camera at `eye` looking at `target` into gTransform. Called
-/// by the battle and field object cameras.
+/// by the battle and field cameras.
 void Transform_ApplyLookAt(s32 *eye, s32 *target) {
   s32 work[12];
 

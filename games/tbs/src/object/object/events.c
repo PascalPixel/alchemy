@@ -1,16 +1,17 @@
 /// @file
-/// Finding and running a scene's events: talking, touching, searching.
+/// Finding and running a map's events: talking, coord events, bg events.
 // Part of object.c.
 
 #include "../object_internal.h"
 
-/// Returns the placement of actor id in the scene's placement tables, or NULL:
-/// for a party character (0 to 7) the row with its sprite, and for a placed
-/// actor (8 on) the row it was created from, counting the placed rows in order.
+/// Returns the object event template of object event id in the map's object
+/// event template tables, or NULL: for a party character (0 to 7) the row with
+/// its sprite, and for a placed object event (8 on) the row it was created
+/// from, counting the placed rows in order.
 ///
 /// Called by Map_TalkToObjectEvent for the talk facing, and by the field
-/// Psynergy effects that read an actor's placement (Mind Read, the Djinni
-/// effect, the event messages and the view).
+/// Psynergy effects that read an object event's template (Mind Read, the
+/// Djinni effect, the script messages and the view).
 struct ObjectEventTemplate *Map_FindObjectEventTemplate(s32 id) {
   struct ObjectEventTemplate *template;
   s32 tableIndex;
@@ -49,7 +50,7 @@ struct ObjectEventTemplate *Map_FindObjectEventTemplate(s32 id) {
   return NULL;
 #else
 found:
-  // BUG: a missing actor leaves entry NULL if the final table is absent.
+  // BUG: a missing object event leaves entry NULL if the final table is absent.
   if ((s16)template->sprite == -1)
     return NULL;
   return template;
@@ -60,9 +61,9 @@ found:
 /// bit 0x1000 holds while that flag is set, any other while its flag is clear.
 /// The flag is the low 12 bits, since GameFlag_Test ignores bit 12.
 ///
-/// Used for every condition column of a scene's tables: events
-/// (Map_FindEvent, Field_SearchTile), placements
-/// (FieldScript_SpawnObjectTable), exit regions (Field_CheckWarpRegions) and
+/// Used for every condition column of a map's tables: events
+/// (Map_FindEvent, Field_SearchTile), object event templates
+/// (FieldScript_SpawnObjectTable), warp regions (Field_CheckWarpRegions) and
 /// item events.
 s32 GameFlag_IsConditionActive(s32 condition) {
   s32 flagSet;
@@ -77,7 +78,7 @@ s32 GameFlag_IsConditionActive(s32 condition) {
   return flagSet == 0;
 }
 
-/// Returns 1 for a search event (MAP_EVENT_BG) that holds whatever its
+/// Returns 1 for a bg event (MAP_EVENT_BG) that holds whatever its
 /// condition: one with more flags than its kind, unless its result is a mimic
 /// battle (type 0x005 in its top 12 bits).
 ///
@@ -103,13 +104,13 @@ u32 Map_BgEventIgnoresCondition(s32 flags, s32 result) {
   return ignoresCondition;
 }
 
-/// Returns the first of the scene's events of kind for target whose condition
+/// Returns the first of the map's events of kind for target whose condition
 /// holds, or NULL. COORD_EVENT_FLAG_WALKING also needs the leader to have
 /// pushed against it for more than 12 frames (2 with control bit 11);
 /// MAP_EVENT_FLAG_FACING needs the leader to face within an eighth of a turn of
 /// the direction in the top four bits.
 ///
-/// Called by every lookup of a scene's events in this part and by
+/// Called by every lookup of a map's events in this part and by
 /// ObjectEvent_GetTriggerTileAheadOfCurrent. Changes nothing.
 struct EffectDescriptor *Map_FindEvent(s32 kind, s32 target) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
@@ -172,14 +173,15 @@ struct EffectDescriptor *Map_FindEvent(s32 kind, s32 target) {
 /// Unused: runs the loaded overlay's initialize entry; nothing calls it.
 UNUSED void Runtime_CallWorkBlockEntry(void) { gOverlayArea.initialize(); }
 
-/// Returns the talk event of actor id, or 0: for the actor stopped with Halt
+/// Returns the talk event of object event id, or 0: for the object event
+/// stopped with Halt
 /// (gGameState.pausedObject), its MAP_EVENT_TALK_HALTED event if it has one,
 /// the event for talking to it while it is stopped (Crossbone Isle's Bane has
 /// one).
 ///
 /// Called by Field_RunMap for the A button, to choose between talking and
-/// searching, and by the field Psynergy dispatch, which Halts only an actor
-/// with a talk event; both test the result only for non-zero.
+/// searching, and by the field Psynergy dispatch, which Halts only an object
+/// event with a talk event; both test the result only for non-zero.
 s32 Map_FindObjectEventTalkEvent(s32 id) {
   struct EffectDescriptor *talkEvent = Map_FindEvent(MAP_EVENT_TALK, id);
   s32 pausedObjectEvent = gGameState.pausedObject;
@@ -195,16 +197,17 @@ s32 Map_FindObjectEventTalkEvent(s32 id) {
   return (s32)talkEvent;
 }
 
-/// Talks to actor id: shows its event's message or calls its event function,
-/// with the actor stopped and turned as its placement says. For the actor
-/// stopped with Halt, its MAP_EVENT_TALK_HALTED event comes first; without one,
-/// a talk event that is a function gives one of two lines at random instead,
-/// from MsgPonderEllipsis on (dots spoken with pauses). Returns 0 when an event
-/// ran, -1 when there was none or such a line stood in for it; Field_RunMap
-/// ignores the result.
+/// Talks to object event id: shows its event's message or calls its event
+/// function, with the object event stopped and turned as its template says.
+/// For the object event stopped with Halt, its MAP_EVENT_TALK_HALTED event
+/// comes first; without one, a talk event that is a function gives one of two
+/// lines at random instead, from MsgPonderEllipsis on (dots spoken with
+/// pauses). Returns 0 when an event ran, -1 when there was none or such a line
+/// stood in for it; Field_RunMap ignores the result.
 ///
 /// Called by Field_RunMap for its talk request (work->talk). Resumes
-/// the stopped actor and sets gGameState.pausedObject back to -1 afterwards.
+/// the stopped object event and sets gGameState.pausedObject back to -1
+/// afterwards.
 s32 Map_TalkToObjectEvent(s32 id) {
   struct ObjectEventTemplate *template = Map_FindObjectEventTemplate(id);
   s32 result = -1;
@@ -225,8 +228,9 @@ s32 Map_TalkToObjectEvent(s32 id) {
       if (event == 0) {
         return -1;
       }
-      // A function talk event is not run for a stopped actor: it says one of
-      // two lines picked at random from the pair its definition flags choose.
+      // A function talk event is not run for a stopped object event: it says
+      // one of two lines picked at random from the pair its definition flags
+      // choose.
       if (event->result >= 0x10000) {
         s32 definitionFlags = FieldEffect_GetFlags(id);
         u32 random = Random16();
@@ -245,8 +249,8 @@ s32 Map_TalkToObjectEvent(s32 id) {
 
   if (event != 0 && event->result != 0) {
     if (!objectEventPaused) {
-      // Stop the actor; with talk facing 0, 1 or 3, also stop the leader and
-      // link the two.
+      // Stop the object event; with talk facing 0, 1 or 3, also stop the leader
+      // and link the two.
       u8 *movementState = &objectEvent->movementState;
 
       *movementState = 1;
@@ -278,8 +282,8 @@ s32 Map_TalkToObjectEvent(s32 id) {
       ((void (*)(s32))event->result)(id);
     }
     if (!objectEventPaused) {
-      // An actor left idle (script command 16) goes back to what its talk
-      // facing says: following the leader (3) or its old angle (1).
+      // An object event left idle (script command 16) goes back to what its
+      // talk facing says: following the leader (3) or its old angle (1).
       if (objectEvent->script[objectEvent->step] == 16) {
         if ((s8)template->talkFacing == 3) {
           objectEvent->linkedObject =
@@ -302,7 +306,8 @@ s32 Map_TalkToObjectEvent(s32 id) {
     result = 0;
   }
 finish:
-  // Both a normal event and the paused actor's fallback line release the pause.
+  // Both a normal event and the paused object event's fallback line release
+  // the pause.
   if (objectEventPaused) {
     FieldEffect_ResumeObject(gGameState.pausedObject);
     gGameState.pausedObject = -1;
@@ -310,7 +315,7 @@ finish:
   return result;
 }
 
-/// Runs the scene's raised event (MAP_EVENT_RAISED) for value: its message or
+/// Runs the map's raised event (MAP_EVENT_RAISED) for value: its message or
 /// its function. Returns 0 when an event ran, -1 when there was none.
 ///
 /// Called by Field_RunMap for a positive event request (work->event).
@@ -339,15 +344,15 @@ s32 Map_RunRaisedEvent(s32 value) {
   return handled;
 }
 
-/// Runs the touch event (MAP_EVENT_COORD) of what the leader touched, or else
-/// takes its exit (MAP_EVENT_WARP): plays the exit's sound (and effect) and
+/// Runs the coord event (MAP_EVENT_COORD) of what the leader touched, or else
+/// takes its warp (MAP_EVENT_WARP): plays the warp's sound (and effect) and
 /// records where it leads. Returns 0 when something ran, -1 when there was
 /// nothing.
 ///
 /// Called by Field_RunMap for its step request (work->action), which
 /// Field_ProcessStep raises for MB_EVENT_FIRST to MB_EVENT_LAST.
-/// Sets work->exit for an exit, and clears work->blockedSteps after a touch
-/// that needs pushing.
+/// Sets work->warp for a warp, and clears work->blockedSteps after a coord
+/// event that needs pushing.
 s32 Map_RunCoordEventOrWarp(s32 value) {
   struct EffectDescriptor *touch;
   struct EffectDescriptor *warp;
@@ -376,7 +381,7 @@ s32 Map_RunCoordEventOrWarp(s32 value) {
     warp = Map_FindEvent(MAP_EVENT_WARP, value);
     if (warp != 0) {
       // An enum WarpStyle chooses how the leader leaves; the animated styles'
-      // flags make the next scene play the matching arrival.
+      // flags make the next map play the matching arrival.
       warpId = warp->flags & WARP_STYLE_MASK;
       switch (warpId) {
       case WARP_STYLE_NORMAL:
@@ -437,9 +442,9 @@ s32 Field_RunPushTileEvent(s32 collisionCode) {
   return 0;
 }
 
-/// Searches the tile ahead with the given collision code. The fixed search
+/// Searches the tile ahead with the given metatile behavior. The fixed search
 /// spots, MB_JAR to MB_WELL, show their two messages. Otherwise the
-/// scene's search event for the tile runs: a function, a message, or a chest
+/// map's bg event for the tile runs: a function, a message, or a chest
 /// holding a Psynergy Stone, a mimic, coins or an item; with no event, "checked
 /// the ground" and "found nothing".
 ///
@@ -552,7 +557,7 @@ s32 Field_SearchTile(s32 tile) {
               if ((event->control & 0x1ff) == BG_EVENT(BG_EVENT_CHEST))
                 Marker_LaunchMimic(tile);
               // The chest's flag (with 0x1000) waits in pendingDjinnEvent,
-              // which Field_RunMap resolves when the scene is entered again
+              // which Field_RunMap resolves when the map is entered again
               // after the battle.
               if (condition != -1) {
                 condition = gGameState.pendingDjinnEvent = condition | 0x1000;

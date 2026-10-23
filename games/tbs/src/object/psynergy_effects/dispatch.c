@@ -5,12 +5,12 @@
 #include "../psynergy_effects_internal.h"
 
 // The dispatchers use the common effect scene. Individual update hooks use
-// their actor or EffectSlot contract; neither is a scene-script callback.
+// their object event or EffectSlot contract; neither is a map-script callback.
 
 /// Runs one step of the current Psynergy effect: an enum PsynergyEffectStep.
 /// Exported as Field_DispatchTypeHandlerFar; Goma Cave's entrance imports it
 /// and passes PSYNERGY_STEP_ON_TARGET to play Whirlwind on the stump's ivy from
-/// its own event.
+/// its own script.
 void Field_DispatchTypeHandler(s32 kind) {
   if (kind == PSYNERGY_STEP_UNTARGETED)
     FieldEffect_Run();
@@ -27,10 +27,10 @@ void _call_via_r3(s32, s32);
 /// Casts the current Psynergy effect with no target: runs the body of its
 /// kind (scene->fieldKind).
 ///
-/// Called by Field_UsePsynergy when no scene event names a target
+/// Called by Field_UsePsynergy when no map event names a target
 /// (FLAG_PSYNERGY_TARGET clear), by Field_UseItem for an item with a field
 /// action, and by Field_DispatchTypeHandler(PSYNERGY_STEP_UNTARGETED). Halt
-/// also moves gGameState.pausedObject to the actor it stops.
+/// also moves gGameState.pausedObject to the object event it stops.
 void FieldEffect_Run(void) {
   struct FieldEffectWork *effectWork;
   struct FieldWork *runtime;
@@ -118,11 +118,11 @@ void FieldEffect_Run(void) {
 /// Casts the current Psynergy effect on its target (secondObjectId): runs the
 /// handler of its kind.
 ///
-/// Called by Field_UsePsynergy when a scene event names the target
+/// Called by Field_UsePsynergy when a map event names the target
 /// (FLAG_PSYNERGY_TARGET still set after the before event), and by
 /// Field_DispatchTypeHandler(PSYNERGY_STEP_ON_TARGET). Clears scene->enabled
 /// first: that is how the runners FieldEffect_Run shares (Force, Frost, Ply,
-/// Whirlwind, Catch) tell that a scene event decides what happens to the
+/// Whirlwind, Catch) tell that a map event decides what happens to the
 /// target. Halt also moves gGameState.pausedObject to the target.
 void FieldEffect_DispatchRequestKind(void) {
   struct FieldEffectWork *effectWork = *(gWorkSlot + HEAP_SLOT_EFFECT);

@@ -31,11 +31,11 @@ s32 ActionScript_SetByte54(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-/// Waits a frame at a time until a field object has arrived at its target, at
+/// Waits a frame at a time until an object event has arrived at its target, at
 /// most 600 frames (ten seconds), after which it returns with the object still
 /// on its way. It takes void * because callers pass every view of an
 /// object. Called through FieldObject_WaitForMoveFar by the Psynergy effects
-/// and by about 50 scene overlays.
+/// and by about 50 map overlays.
 void FieldObject_WaitForMove(void *fieldObject) {
   s32 waitedFrames;
 
@@ -72,7 +72,7 @@ s32 Object_IsTargetUnset(struct ObjectRuntime *object) {
 
 static __inline__ s32 ObjectMotion_Square(s32 value) { return value * value; }
 
-/// Advances all 64 field objects by one frame, as Object_UpdateAll does for
+/// Advances all 64 object events by one frame, as Object_UpdateAll does for
 /// the eight script objects, with the field's extras: free flight in 3D,
 /// terrain following, floating, and solid objects that refuse to overlap.
 /// ObjectSystem_Initialize schedules it as the per-frame object update in
@@ -416,7 +416,7 @@ void Object_UpdateAllThumb(void) {
 /// Places the object at (x, y, z), in 16.16 pixels, clears its movement target
 /// and stops it. Reached through SC_POSITION and FieldObject_Create, and as
 /// Object_SetPositionAndResetMotionFar from the Psynergy effects and the
-/// field scene's actors.
+/// field map's object events.
 void Object_SetPositionAndResetMotion(struct ObjectRuntime *object, s32 x,
                                       s32 y, s32 z) {
   object->z = z;

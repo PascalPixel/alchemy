@@ -193,7 +193,7 @@ void Animation_InitializeWorkFromMetadata(struct AnimationEntry *layer) {
 /// has four layers already. Called by ResourceObject_Create for a sprite's
 /// first layer, by ObjectDispatch_RegisterChildMetadata and the sprite
 /// viewer, and as ResourceMetadata_RegisterFar by the battle, the Psynergy
-/// effects and the field scene's actors.
+/// effects and the field map's object events.
 s32 ResourceMetadata_Register(struct AnimationObject *sprite, s32 id) {
   s32 layerHandle = (s32)sprite->entries[0];
   s32 freeIndex = 0;
@@ -319,7 +319,7 @@ void Animation_SetWorkEntry(struct AnimationEntry *layer, s32 animation) {
 /// The engine's usual way to change what a sprite plays: called by the
 /// object dispatch and the player control, and as
 /// AnimationObject_SelectAnimationFar by the battle, the shops, the menus,
-/// the battle and Psynergy effects and the scene scripts.
+/// the battle and Psynergy effects and the map scripts.
 s32 AnimationObject_SelectAnimation(struct AnimationObject *sprite,
                                     s32 animation) {
   s32 keepPlace;
@@ -511,7 +511,7 @@ struct AnimationEntry *Animation_AllocateLayer(s32 id) {
 /// Zeroes one animation layer (struct AnimationEntry); does nothing for NULL.
 /// Zeroing kind frees the record for Animation_AllocateLayer. Called by the
 /// layer release functions here and, as ResourceMetadata_ClearRecordFar, by
-/// the Psynergy effects and scene scripts.
+/// the Psynergy effects and map scripts.
 void ResourceMetadata_ClearRecord(struct AnimationEntry *record) {
   if (record != 0) {
     Dma_Fill32(0, record, sizeof(*record));

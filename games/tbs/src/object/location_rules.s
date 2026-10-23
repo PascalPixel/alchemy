@@ -1,5 +1,5 @@
-@ The encounter zones of field scenes (Encounter_SelectMapZones).
-@ {scene, entrance (-1 for any), flag (-1 for always, else the rule holds while
+@ The encounter zones of field maps (Encounter_SelectMapZones).
+@ {map, warp destination (-1 for any), flag (-1 for always, else the rule holds while
 @ the flag is clear), first zone on ground 0 rather than 1, first zone}
 	.macro location map:req, warpDest:req, flag:req, shift:req, zone:req
 	.2byte MapId_\map, \warpDest

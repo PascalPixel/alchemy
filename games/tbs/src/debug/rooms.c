@@ -18,7 +18,8 @@
 #include "flags.h"
 #include "djinn_ids.h"
 
-/// The placed actors, numbered in the order of gTestRooms_ObjectEventTemplates:
+/// The placed object events, numbered in the order of
+/// gTestRooms_ObjectEventTemplates:
 /// the first Djinni of each element, which TestRooms_GiveDjinniForTesting
 /// gives, placed while its flag (FLAG_DJINNI_0 + element * DJINN_PER_ELEMENT)
 /// is clear.
@@ -35,23 +36,23 @@ enum TestRoomsLocalId {
 
 u8 *TestRooms_GetWarpDests(void) { return (u8 *)gTestRooms_WarpDests; }
 
-/// The room has no exit regions: its regions entry returns none.
+/// The room has no warp regions: its regions entry returns none.
 s32 MapData_ReturnZero(void) { return 0; }
 
 u8 *TestRooms_GetWarps(void) { return (u8 *)gTestRooms_Warps; }
 
 /// Places one Djinni of each element in the test room, Flint, Fizz, Forge and
-/// Gust, each placed while its caught flag (the placement's condition) is
-/// clear.
+/// Gust, each placed while its caught flag (the template's condition)
+/// is clear.
 u8 *TestRooms_GetObjectEventTemplates(void) {
   return (u8 *)gTestRooms_ObjectEventTemplates;
 }
 
 /// Grants the first Djinni of an element, then clears its found flag for
-/// testing. Djinn_JoinParty plays the element's capture effect on the actor,
-/// frees its slot and gives the element's first Djinni to the member with the
-/// fewest Djinn; clearing the flag the placement tests lets the room place
-/// the Djinni again on the next entry.
+/// testing. Djinn_JoinParty plays the element's capture effect on the object
+/// event, frees its slot and gives the element's first Djinni to the member
+/// with the fewest Djinn; clearing the flag the template tests lets the room
+/// place the Djinni again on the next entry.
 static __inline__ void TestRooms_GiveDjinniForTesting(s32 objectEventId,
                                                       s32 element) {
   Djinn_JoinParty(objectEventId, element, 0);

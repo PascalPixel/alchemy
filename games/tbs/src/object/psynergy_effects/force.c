@@ -9,7 +9,7 @@
 /// Abilities: Force (FIELD_KIND_FORCE).
 void FieldEffect_RunForceOnTarget(s32 unused) { FieldEffect_RunForce(); }
 
-/// Writes the position 16 pixels above the actor.
+/// Writes the position 16 pixels above the object event.
 static __inline__ void
 FieldEffect_GetPositionAboveObjectEvent(struct ObjectEvent *obj,
                                         struct EffectVector *pos) {
@@ -118,7 +118,7 @@ void FieldEffect_RunForce(void) {
   resourceSlot = sharedAnimation->slot;
 
   // Destination: 56 pixels in front of the caster with scene->enabled set
-  // (no scene event named the target), otherwise the effect's position.
+  // (no map event named the target), otherwise the effect's position.
   // The shot's script waits to arrive and makes the impact
   // (gFieldEffect_BurstParticleObjectScript + 4 is
   // gFieldEffect_HeavyImpactScript); each afterimage follows 3 frames apart and
@@ -157,8 +157,8 @@ void FieldEffect_RunForce(void) {
 
   // Push what was hit 16 pixels, at 1 pixel a frame, if nothing is in the
   // way: the ground there must be within a step (MapGrid_CheckObjectStep 0) and
-  // free of objects. It hops (8 pixels a frame) with childOption; a scene's
-  // childMode leaves it be.
+  // free of objects. It hops (8 pixels a frame) with childOption; a map
+  // script's childMode leaves it be.
   if (target != NULL && effectWork->childMode == 0) {
     if (effectWork->childOption != 0)
       target->velocityY = 8 << 16;

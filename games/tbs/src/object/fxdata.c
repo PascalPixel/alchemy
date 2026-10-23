@@ -354,7 +354,7 @@ const s32 gObjectMotion_VariantScripts[97] = {
     SC_END,
 };
 
-/// A blinking actor's sprite param by frame ((gFrameCount >> 1) & 3,
+/// A blinking object event's sprite param by frame ((gFrameCount >> 1) & 3,
 /// ObjectGroup_ApplyIndexedChildValue): 7 for two frames out of eight.
 const u8 gObjectGroup_BlinkChildValues[4] = {7, 0, 0, 0};
 
@@ -464,7 +464,7 @@ const struct SparkleFrame gFieldEffect_SparkleFrames[32] = {
 /// third word.
 const u32 gFieldEffect_PulseScales[3] = {0x10000, 0xf851, 16};
 
-/// [0] only frees the actor, +1 waits for it to arrive and frees it; +3 is
+/// [0] only frees the object event, +1 waits for it to arrive and frees it; +3 is
 /// gFieldEffect_SourceHoldScript, which follows.
 const s32 gFieldEffect_CommonParticleScript[] = {
     SC_FREE,

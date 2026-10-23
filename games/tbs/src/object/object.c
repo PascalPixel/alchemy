@@ -1,7 +1,7 @@
 /// @file
-/// The field object: the main loop and scene changes, random encounters, a
-/// field scene's actors, the leader's steps and the requests they raise, the
-/// scene's events, using items and Psynergy on the field, the map's markers,
+/// The field object: the main loop and map changes, random encounters, a
+/// field map's object events, the leader's steps and the requests they raise,
+/// the map's events, using items and Psynergy on the field, the map's markers,
 /// and the window transitions and colour buffer that the field and battles
 /// share. object_internal.h holds the includes and the few macros and types
 /// more than one part uses; the code is in the files under object/, included

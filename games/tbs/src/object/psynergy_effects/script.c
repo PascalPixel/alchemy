@@ -1,5 +1,5 @@
 /// @file
-/// Event commands: waits, received items, questions and destinations.
+/// Script commands: waits, received items, questions and destinations.
 // Part of psynergy_effects.c.
 
 #include "../psynergy_effects_internal.h"
@@ -35,11 +35,11 @@ static inline void ItemGift_ShowGotItem(s32 item, s32 flags) {
   UiText_ShowPositionedMessageAndWaitFar(MsgColossoIsaacGotItem, flags);
 }
 
-/// Debug only: while debug mode is on, R makes every event wait
+/// Debug only: while debug mode is on, R makes every script wait
 /// (FieldScript_WaitFrames) end at once and L restores normal waits. Runs as a
-/// scheduler callback for the length of an event (FieldScript_Start). R also
-/// skips the actors' messages, which open nothing while fastForward is set
-/// (UiText_OpenMessageAtObject).
+/// scheduler callback for the length of a script (FieldScript_Start). R also
+/// skips the object events' messages, which open nothing while fastForward is
+/// set (UiText_OpenMessageAtObject).
 void FieldScript_UpdateDebugSkip(void) {
   struct FieldWork *runtime = (struct FieldWork *)gEventWork;
 
@@ -53,10 +53,10 @@ void FieldScript_UpdateDebugSkip(void) {
   }
 }
 
-/// The event command "wait": waits the requested frames, unless debug fast
-/// forward (FieldScript_UpdateDebugSkip) is on. Scene scripts reach it as
-/// Engine_ScriptWait (the WAIT command); this object's actor, message, camera
-/// and climbing commands wait through it too.
+/// The script command "wait": waits the requested frames, unless debug fast
+/// forward (FieldScript_UpdateDebugSkip) is on. Map scripts reach it as
+/// Engine_ScriptWait (the WAIT command); this object's object event, message,
+/// camera and climbing commands wait through it too.
 void FieldScript_WaitFrames(s32 frames) {
   if (((struct FieldWork *)gEventWork)->fastForward == 0 && frames != 0) {
     WaitFrames(frames);
@@ -86,23 +86,23 @@ void Leader_StopMoving(void) {
   ObjectDispatch_SelectAnimationFar(object, 1);
 }
 
-/// The event command "begin event": closes any timed notice, stops the leader,
-/// resets the message and timing state, and starts the debug fast-forward
-/// callback with the leader as the message speaker. Scene scripts reach it as
-/// Engine_ScriptStart (EV_START); the field's item, Psynergy, Djinni, Retreat
-/// and climbing events open with it too. Clears the field work's name window,
-/// fastForward and messageWindow, sets transitionFrames to 16 and the speaker
-/// to the leader.
+/// The script command "begin script": closes any timed notice, stops the
+/// leader, resets the message and timing state, and starts the debug
+/// fast-forward callback with the leader as the message speaker. Map scripts
+/// reach it as Engine_ScriptStart (EV_START); the field's item, Psynergy,
+/// Djinni, Retreat and climbing scripts open with it too. Clears the field
+/// work's name window, fastForward and messageWindow, sets transitionFrames to
+/// 16 and the speaker to the leader.
 void FieldScript_Start(void) {
   struct FieldWork *runtime = (struct FieldWork *)gEventWork;
 
   UiTimedNotice_CloseIfActiveFar();
   Leader_StopMoving();
-  // Keep the event reset's signed halfword read.
+  // Keep the script reset's signed halfword read.
   if ((s16)runtime->busy != 0) {
     Field_EndBusyAndReveal();
   }
-  // Every event starts with no name window and normal waits.
+  // Every script starts with no name window and normal waits.
   runtime->nameMessage = 0;
   runtime->nameWidth = 0;
   runtime->transitionFrames = 0x10;
@@ -111,16 +111,16 @@ void FieldScript_Start(void) {
   runtime->unk1dc = -1;
   runtime->unk1de = -1;
   Scheduler_AddOrUpdateCallback(FieldScript_UpdateDebugSkip, 0xC80);
-  // XXX: flag 0x132 is cleared at every event and nothing in ☀️ names it; the
-  // scene scripts or overlays that set or test 0x132 would settle its meaning.
+  // XXX: flag 0x132 is cleared at every script and nothing in ☀️ names it; the
+  // map scripts or overlays that set or test 0x132 would settle its meaning.
   GameFlag_ClearBitFar(0x132);
   runtime->speaker = gGameState.selectedObjectEvent;
   runtime->messageWindow = 0;
 }
 
-/// Ends an event: stops the debug fast-forward callback, gives the camera back
-/// to the leader and refreshes FLAG_LURE_CAP (GameFlag_RefreshLureCap). Scene
-/// scripts reach it as Engine_ScriptEnd (EV_END), and every event that opens
+/// Ends a script: stops the debug fast-forward callback, gives the camera back
+/// to the leader and refreshes FLAG_LURE_CAP (GameFlag_RefreshLureCap). Map
+/// scripts reach it as Engine_ScriptEnd (EV_END), and every script that opens
 /// with FieldScript_Start closes with it.
 void FieldScript_End(void) {
   Scheduler_RemoveCallback(FieldScript_UpdateDebugSkip);
@@ -135,9 +135,9 @@ UNUSED void FieldScript_NoOpHookA(void) {}
 /// FieldScript_RunObjectHookAndWait calls it.
 void FieldScript_NoOpHook(void) {}
 
-/// Respawns the scene's actors from a placement table and waits one frame for
-/// them to appear. Reached only through an unnamed veneer in the object bank's
-/// far-call table; nothing in ☀️ names it.
+/// Respawns the map's object events from an object event template table and
+/// waits one frame for them to appear. Reached only through an unnamed veneer
+/// in the object bank's far-call table; nothing in ☀️ names it.
 void FieldScript_RunObjectHookAndWait(struct ObjectEventTemplate *table) {
   FieldScript_NoOpHook();
   ObjectTable_ResetForObject(table);
@@ -147,15 +147,15 @@ void FieldScript_RunObjectHookAndWait(struct ObjectEventTemplate *table) {
   ObjectTable_Get(gGameState.selectedObjectEvent);
 }
 
-/// Spawns the actors of a placement table after the last actor in use. Called
-/// by the Kolima, Kalay and Tolbi ship scene scripts to bring actors in during
-/// a scene.
+/// Spawns the object events of an object event template table after the last
+/// object event in use. Called by the Kolima, Kalay and Tolbi ship map scripts
+/// to bring object events in during a scene.
 void FieldScript_CallWithLastActiveObjectId(struct ObjectEventTemplate *table) {
   FieldScript_SpawnObjectTable(table, ObjectTable_FindLastActiveId());
 }
 
-/// Sets the scene's event table, which the field checks as the leader moves:
-/// writes work->events. Altin Peak's scene script calls it as
+/// Sets the map's event table, which the field checks as the leader moves:
+/// writes work->events. Altin Peak's map script calls it as
 /// FieldScript_LoadAreaScript.
 void FieldScript_SetMapEvents(const struct MapEvent *events) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
@@ -165,7 +165,7 @@ void FieldScript_SetMapEvents(const struct MapEvent *events) {
 
 /// Adds unit to the party. With announce nonzero it also shows
 /// `<name> joined your party.` (Party_ShowJoinedMessage, which receives
-/// announce too). Called by six scene scripts as a character joins (Vale,
+/// announce too). Called by six map scripts as a character joins (Vale,
 /// the Vault, Goma Cave and Mercury Lighthouse among them).
 void FieldScript_PrepareObjectAndApplyValue(s32 unit, s32 announce) {
   Unit_GetFar(unit);
@@ -175,7 +175,7 @@ void FieldScript_PrepareObjectAndApplyValue(s32 unit, s32 announce) {
   }
 }
 
-/// Adds two units to the party and announces them together. Vale's scene
+/// Adds two units to the party and announces them together. Vale's map
 /// script calls it twice, as Engine_PartyAddMembers.
 void FieldScript_PrepareTwoObjectsAndApply(s32 first, s32 second) {
   Party_AddActiveOwnerFar(first);
@@ -215,7 +215,7 @@ void FieldScript_ClearInvalidPackedValues(void) {
 
 /// Takes unit out of the party, fully restoring its HP and PP and curing its
 /// poison. If no member left standing has HP, the leader is given 1 HP so the
-/// party is never left all down. Called by the scene scripts where a member
+/// party is never left all down. Called by the map scripts where a member
 /// leaves: Vale in the storm, the Vault, and Sol Sanctum.
 void Party_RemoveOwnerRestored(s32 unit) {
   struct BattleUnit *vitals;
@@ -271,11 +271,11 @@ s32 Party_CheckItemLimit(s32 item) {
   return 0;
 }
 
-/// The event command "give item": gives item to the first party member with
+/// The script command "give item": gives item to the first party member with
 /// room for it and says so. When every bag is full, the player picks an item
 /// to drop to make room, or drops the new item instead (not allowed for an
 /// indispensable one). Returns the member who received the item, or -1 when
-/// it was left behind. Scene scripts reach it as Engine_PartyGiveItem (about
+/// it was left behind. Map scripts reach it as Engine_PartyGiveItem (about
 /// 24 of them); Field_RunMap gives the pending item and the debug test menu
 /// gives items through it. The field work's message is restored afterwards.
 s32 PartyInventory_GiveItem(s32 item, s32 unused) {
@@ -291,8 +291,8 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
   s32 slot;
 
   work = (struct FieldWork *)gEventWork;
-  // The messages below move the event's message on; every return puts it
-  // back, so the scene script continues where it was.
+  // The messages below move the script's message on; every return puts it
+  // back, so the map script continues where it was.
   savedMessage = work->message;
   owner = PartyInventory_AddFar(item);
   if (owner == -1) {
@@ -391,10 +391,10 @@ void Inventory_NoOpCallback(void) {}
 /// An empty function; nothing in ☀️ calls it.
 void Inventory_ReservedNoOp(void) {}
 
-/// Waits, at most 90 frames, for an actor's animation to stop being animation:
-/// the actor has finished a one-off animation such as a nod. Only actors drawn
-/// as an animation object (OBJECT_SPRITE_ONE) are waited for. Called by
-/// FieldScript_AskYesNoWithObjectEventAnimation.
+/// Waits, at most 90 frames, for an object event's animation to stop being
+/// animation: the object event has finished a one-off animation such as a nod.
+/// Only object events drawn as an animation object (OBJECT_SPRITE_ONE) are
+/// waited for. Called by FieldScript_AskYesNoWithObjectEventAnimation.
 void ObjectEvent_WaitForAnimationEnd(s32 objectEvent, s32 animation) {
   struct ObjectRuntime *objectEventObject = ObjectTable_Get(objectEvent);
 
@@ -414,11 +414,11 @@ void ObjectEvent_WaitForAnimationEnd(s32 objectEvent, s32 animation) {
   }
 }
 
-/// The event command "choose yes or no": once the message on screen has been
+/// The script command "choose yes or no": once the message on screen has been
 /// read, asks yes or no below it, or above it when the message windows reach
 /// past row 15 or forceBottom is set. The speaker nods (animation 3) at yes
 /// and shakes its head (animation 4) at no. Returns 0 for yes, 1 for no.
-/// Scene scripts reach it as Engine_ScriptChooseYesNo (about 54 of them); the
+/// Map scripts reach it as Engine_ScriptChooseYesNo (about 54 of them); the
 /// link lobby and FieldScript_AskYesNoAndShowResponse call it too.
 s32 FieldScript_AskYesNoWithObjectEventAnimation(s32 objectEvent,
                                                  s32 forceBottom) {
@@ -479,7 +479,7 @@ s32 Menu_AskYesNo(s32 atBottom) {
 
 /// Teaches unit the Psynergy ability and says so with its jingle, waiting for
 /// the player to read it. The message is `<unit> learned <ability>.` Fuchin
-/// Temple's scene script calls it.
+/// Temple's map script calls it.
 void Party_LearnAbility(s32 unit, s32 ability) {
   // Declared without parameters: unit and ability pass through in r0 and r1.
   Unit_LearnPsynergyFar();
@@ -489,8 +489,8 @@ void Party_LearnAbility(s32 unit, s32 ability) {
   UiText_ShowPositionedMessageAndWaitFar(MsgAbilityLearned, 3);
 }
 
-/// The event command "open screen": starts the event's screen transition and
-/// sets work->transitionActive. Scene scripts reach it as
+/// The script command "open screen": starts the script's screen transition and
+/// sets work->transitionActive. Map scripts reach it as
 /// Engine_ScriptOpenScreen; the inn, the title, cleared-game and link lobby
 /// menus and WorldMap_Show call it too.
 void FieldScript_StartScreenTransition(void) {
@@ -500,8 +500,8 @@ void FieldScript_StartScreenTransition(void) {
   runtime->transitionActive = 1;
 }
 
-/// The event command "close screen": finishes the event's screen transition
-/// and clears work->transitionActive. Scene scripts reach it as
+/// The script command "close screen": finishes the script's screen transition
+/// and clears work->transitionActive. Map scripts reach it as
 /// Engine_ScriptCloseScreen; the inn, the cleared-game menu and
 /// WorldMap_Show call it too.
 void FieldScript_FinishScreenTransition(void) {
@@ -511,24 +511,24 @@ void FieldScript_FinishScreenTransition(void) {
   runtime->transitionActive = 0;
 }
 
-/// The event command "wait for screen": waits as long as the transition runs
-/// (work->transitionFrames). Scene scripts reach it as
+/// The script command "wait for screen": waits as long as the transition runs
+/// (work->transitionFrames). Map scripts reach it as
 /// Engine_ScriptWaitForScreen.
 void FieldScript_WaitTransitionFrames(void) {
   WaitFrames(((struct FieldWork *)gEventWork)->transitionFrames);
 }
 
-/// Makes the event leave for the given entrance of the given scene: raises the
-/// exit request 999 and writes gGameState.scene and entrance. Called by the
-/// title, cleared-game and link lobby menus, the debug battle command and five
-/// scene scripts (the Lemurian ship and the world map among them).
+/// Makes the script leave for the given warp destination of the given map:
+/// raises the warp request 999 and writes gGameState.mapId and warpDest. Called
+/// by the title, cleared-game and link lobby menus, the debug battle command
+/// and five map scripts (the Lemurian ship and the world map among them).
 void FieldScript_SetDestination(s32 mapId, s32 warpDest) {
   ((struct FieldWork *)gEventWork)->warp = 999;
   gGameState.mapId = mapId;
   gGameState.warpDest = warpDest;
 }
 
-/// Makes the event leave and records scene and entrance as the saved
+/// Makes the script leave and records map and warp destination as the saved
 /// destination. Reached only through an unnamed veneer in the object bank's
 /// far-call table; nothing in ☀️ names it.
 void FieldScript_SetSavedDestination(u16 mapId, u16 warpDest) {
@@ -538,8 +538,8 @@ void FieldScript_SetSavedDestination(u16 mapId, u16 warpDest) {
   gGameState.savedWarpDest = warpDest;
 }
 
-/// The event command "request exit": sets the field's exit request (999 leaves
-/// for gGameState's scene and entrance). Scene scripts reach it as
+/// The script command "request warp": sets the field's warp request (999 leaves
+/// for gGameState's mapId and warpDest). Map scripts reach it as
 /// Engine_ScriptRequestWarp (about 61 of them).
 void FieldScript_SetWarpRequest(u16 request) {
   struct FieldWork *state = (struct FieldWork *)gEventWork;

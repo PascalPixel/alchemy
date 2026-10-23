@@ -26,7 +26,7 @@ gMapLocalState:
 	.global gInventorySnapshot
 gInventorySnapshot:
 	.space 0x0000008c
-	@ Slot ids, actor copies and their sprite state: ObjectTableSnapshot.
+	@ Slot ids, object event copies and their sprite state: ObjectTableSnapshot.
 	.global gObjectSnapshots
 gObjectSnapshots:
 	.space 0x00000efc

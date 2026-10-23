@@ -50,9 +50,10 @@
 #define BROWSER_ROW_STEP 10 ///< Right and Left move ten numbers.
 #define BROWSER_PAGE_STEP 30 ///< R and L move thirty.
 
-/// The room's actors, numbering the rows of gItemLevelObjectEventTemplates; the
-/// game names none of them, so each is named for what talking to it opens
-/// (gItemLevelEvents), as a render of each talk shows it.
+/// The room's object events, numbering the rows of
+/// gItemLevelObjectEventTemplates; the game names none of them, so each is
+/// named for what talking to it opens (gItemLevelEvents), as a render of each
+/// talk shows it.
 enum ItemLevelLocalId {
   /// ItemLevel_SelectItem.
   /// ★ Named from what the player sees: `Item No:` over an item's name and
@@ -76,7 +77,7 @@ enum ItemLevelLocalId {
   /// with `B:Return` (its render)
   LOCALID_ABILITY_BROWSER,
   /// ItemLevel_ShowMessageThenEmote.
-  /// ★ Named from what the player sees: a wince over the actor, then its
+  /// ★ Named from what the player sees: a wince over the object event, then its
   /// message (its render)
   LOCALID_FIRST_EMOTE_TESTER,
   /// ItemLevel_ShowEmoteThenMessage.
@@ -87,7 +88,7 @@ enum ItemLevelLocalId {
 
 u8 *ItemLevel_GetWarpDests(void) { return (u8 *)gItemLevelWarpDests; }
 
-/// The room has no exit regions: its regions entry returns none.
+/// The room has no warp regions: its regions entry returns none.
 s32 MapData_ReturnZero(void) { return 0; }
 
 u8 *ItemLevel_GetWarps(void) { return (u8 *)gItemLevelWarps; }
@@ -97,7 +98,7 @@ u8 *ItemLevel_GetObjectEventTemplates(void) {
 }
 
 #if TBS_PATCH_1
-/// Sets the test message before displaying the first emote on the actor
+/// Sets the test message before displaying the first emote on the object event
 /// spoken to, LOCALID_FIRST_EMOTE_TESTER.
 static void ItemLevel_ShowMessageThenEmote(void) {
   Engine_ScriptSetMessage(MsgDebugWontStopYou);
@@ -342,8 +343,8 @@ static void ItemLevel_SelectItem(void) {
 /// Browses ability names and descriptions, skipping unavailable entries. B
 /// closes the sole window created by this browser. Talking to
 /// LOCALID_ABILITY_BROWSER in English and German; in French, Spanish and
-/// Italian the room keeps the function and the actor but no event, and moves
-/// the actor to x 80.
+/// Italian the room keeps the function and the object event but no event, and
+/// moves the object event to x 80.
 UNUSED static void ItemLevel_SelectAbility(void) {
   // Ordinary while scans grow the native function from 0x248 to 0x260; retain
   // the original polling edges.
@@ -459,7 +460,7 @@ UNUSED static void ItemLevel_SelectAbility(void) {
 }
 #endif
 
-/// Unused: requests an exit through TRANSITION_WINDOW over 24 frames; no event
+/// Unused: requests a warp through TRANSITION_WINDOW over 24 frames; no event
 /// row names it.
 UNUSED static void ItemLevel_RequestWarp(void) {
   gEventWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 1);
@@ -467,12 +468,12 @@ UNUSED static void ItemLevel_RequestWarp(void) {
   Engine_ScriptRequestWarp();
 }
 
-/// Starts the window transition and edition-specific actor scale/animation
-/// setup. Returns zero through the exported scene entry. The room's
-/// initialize entry, which Field_RunMap runs on entry and whose result it
-/// ignores: LOCALID_LEVEL_EDITOR is drawn 1.6 times its size (1.7 in Japanese;
-/// 16.16 scales), and outside Japanese the two emote testers start animations
-/// 5 and 2.
+/// Starts the window transition and edition-specific object event
+/// scale/animation setup. Returns zero through the exported map entry. The
+/// room's initialize entry, which Field_RunMap runs on entry and whose result
+/// it ignores: LOCALID_LEVEL_EDITOR is drawn 1.6 times its size (1.7 in
+/// Japanese; 16.16 scales), and outside Japanese the two emote testers start
+/// animations 5 and 2.
 s32 Map_RunLevelRoomSetup(void) {
   gEventWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
   gEventWork->transitionFrames = 24;
@@ -573,14 +574,15 @@ struct MapWarpDest gItemLevelWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-/// No exits: 511 is MAP_WARPS_END's value.
+/// No warps: 511 is MAP_WARPS_END's value.
 u32 gItemLevelWarps[] = {
     MAP_WARPS_END,
 };
 
-/// The room's actors, in the order of enum ItemLevelLocalId: the item, icon and
-/// portrait browsers and the level editor; outside Japanese also the ability
-/// browser (reachable in English and German only) and the two emote testers.
+/// The room's object events, in the order of enum ItemLevelLocalId: the item,
+/// icon and portrait browsers and the level editor; outside Japanese also the
+/// ability browser (reachable in English and German only) and the two emote
+/// testers.
 // clang-format off
 struct ObjectEventTemplate gItemLevelObjectEventTemplates[] = {
     {0x1f4, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(792), 0, PIXELS(864), FACING_SOUTHEAST,

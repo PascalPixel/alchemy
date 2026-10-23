@@ -1,5 +1,5 @@
 /// @file
-/// Running a field scene until the party leaves it, and its entrance.
+/// Running a map until the party leaves it, and its warp destination.
 // Part of object.c.
 
 #include "../object_internal.h"
@@ -14,20 +14,20 @@ struct MenuCtrl {
   u16 wait;
 };
 
-/// Runs the current field scene, which the party entered by entrance, until it
-/// leaves; returns the exit kind it left by, for Map_TakeWarp, or WARP_NONE
-/// when the next scene is already in gGameState: a random battle, a
-/// party that fell outside battle, Retreat or an event's destination. Sets the
-/// scene up (map, actors, encounters, return points), runs its initialization,
-/// fades it in, then runs the field loop: the party walks (Field_ProcessStep
-/// each frame) until a request is made, and then the requests are handled
-/// until none is left.
+/// Runs the current map, which the party entered by warpDest, until it
+/// leaves; returns the warp kind it left by, for Map_TakeWarp, or WARP_NONE
+/// when the next map is already in gGameState: a random battle, a
+/// party that fell outside battle, Retreat or a script's destination. Sets the
+/// map up (layout, object events, encounters, return points), runs its
+/// initialization, fades it in, then runs the field loop: the party walks
+/// (Field_ProcessStep each frame) until a request is made, and then the
+/// requests are handled until none is left.
 ///
-/// Called from Game_Run's main loop for every field scene, which
+/// Called from Game_Run's main loop for every map, which
 /// passes the result to Map_TakeWarp. Allocates the field work in
 /// HEAP_SLOT_EVENT, cleared, and frees it on the way out, with every
-/// block the scene took after it from the same pool; sets gGameState's default,
-/// next and defeat destinations, and clears FLAG_IN_BATTLE and, once the scene
+/// block the map took after it from the same pool; sets gGameState's default,
+/// next and defeat destinations, and clears FLAG_IN_BATTLE and, once the map
 /// has started, FLAG_KEEP_PARTY_POSITION.
 s32 Field_RunMap(s32 warpDest) {
   struct FieldWork *work;
@@ -36,7 +36,7 @@ s32 Field_RunMap(s32 warpDest) {
   s32 result = 0;
   s32 code;
 
-  // Set up the scene.
+  // Set up the map.
   work = Runtime_AllocateBlock(HEAP_SLOT_EVENT, sizeof(struct FieldWork));
   Dma_Fill32(0, work, sizeof(struct FieldWork));
   GameFlag_ClearBitFar(FLAG_IN_BATTLE);
@@ -79,7 +79,7 @@ s32 Field_RunMap(s32 warpDest) {
   Field_PlaceMapMarkers();
   ColorBuffer_Initialize();
   ColorBuffer_SetTarget(0x10000, 0);
-  // The default fade is from the backdrop colour over 16 frames; the scene's
+  // The default fade is from the backdrop colour over 16 frames; the map's
   // initialization may choose another.
   work->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->transitionFrames = 16;
@@ -96,7 +96,7 @@ s32 Field_RunMap(s32 warpDest) {
   }
   work->previousTile = (struct MapGridCell *)Ram_MapGridCellBuffer;
   // A fresh entry (not a return from battle) resets the hazard count to its
-  // defaults (damage 1 every 16 steps), the stopped actor and Cloak.
+  // defaults (damage 1 every 16 steps), the stopped object event and Cloak.
   if (GameFlag_TestFar(FLAG_KEEP_PARTY_POSITION) == 0) {
     Map_SetDefeatReturnPoint();
     gGameState.hazardLimit = 16;
@@ -109,20 +109,20 @@ s32 Field_RunMap(s32 warpDest) {
   work->queuedSound = -1;
   gOverlayArea.initialize();
 
-  // The scene's initialization may already have taken an exit.
+  // The map's initialization may already have taken a warp.
   code = work->warp;
   if (code != 0) {
     result = code;
     work->warp = 0;
   } else {
     GameFlag_ClearBitFar(FLAG_KEEP_PARTY_POSITION);
-    // Fade in, show the place name and give what was left pending.
+    // Fade in, show the area name and give what was left pending.
     if (Field_CountRequests() == 0) {
       if (work->transitionActive == 0) {
         DisplayTransition_Start(work->transition, work->transitionFrames);
         work->transitionActive = 1;
         PLTT_BACKDROP = 0;
-        // An arrival the last scene asked for
+        // An arrival the last map asked for
         // (ObjectEffect_RunPendingFlagEvent) plays through the fade; with none,
         // wait out half of it.
         if (ObjectEffect_RunPendingFlagEvent() == 0)
@@ -216,9 +216,9 @@ s32 Field_RunMap(s32 warpDest) {
           work->busy = 0;
           work->event = 0;
         } else if (work->battle != 0) {
-          // A random encounter: save the actors and go to the battle scene.
+          // A random encounter: save the object events and go to the battle.
           // Field_StartEncounterTransition closes the screen itself and
-          // clears transitionActive, so the scene ends without another fade.
+          // clears transitionActive, so the map ends without another fade.
           Leader_StopMoving();
           ObjectTable_Snapshot();
           gGameState.returnCue = -1;
@@ -238,8 +238,8 @@ s32 Field_RunMap(s32 warpDest) {
           Field_RunPushTileEvent(work->pushTile);
           work->pushTile = 0;
         } else if (work->examine != 0) {
-          // Examine the actor or tile ahead, or open the menu if neither has an
-          // event.
+          // Examine the object event or tile ahead, or open the menu if neither
+          // has an event.
           s32 object;
 
           UiTimedNotice_CloseIfActiveFar();
@@ -249,7 +249,8 @@ s32 Field_RunMap(s32 warpDest) {
             mode = Map_FindObjectEventTalkEvent(object) != 0;
           }
           if (mode != 0) {
-            // 0x1000 keeps actor 0's request non-zero; the handler masks it.
+            // 0x1000 keeps object event 0's request non-zero; the handler
+            // masks it.
             work->talk = object | 0x1000;
             work->menu = 0;
           } else {
@@ -396,21 +397,21 @@ done:
   return result;
 }
 
-/// A field actor (struct ObjectEvent), seen with its position as one vector.
+/// An object event (struct ObjectEvent), seen with its position as one vector.
 struct Object {
   u8 pad0[6];
   u16 angle;                    ///< 1/65536 turns
   struct EffectVector position; ///< 16.16 fixed-point pixels
   u8 pad1[14];
-  u8 kind; ///< ObjectRuntime's terrainId: the map layer of its ground
+  u8 kind; ///< ObjectRuntime's terrainId: the map grid layer of its ground
   u8 pad2[0x2d];
   struct AnimationObject *sprite;
 };
 
-/// Returns the collision code of the map cell 16 pixels ahead of the party
+/// Returns the metatile behavior of the map cell 16 pixels ahead of the party
 /// leader when there is something to search there: a fixed search spot
 /// (MB_JAR to MB_WELL) whose ground is level with the leader or up
-/// to 64 pixels above it, or a code the scene has a search event for. Returns 0
+/// to 64 pixels above it, or a behavior the map has a bg event for. Returns 0
 /// otherwise.
 ///
 /// Called by Field_RunMap for the A button (a non-zero result becomes
@@ -436,7 +437,7 @@ s32 ObjectEvent_GetTriggerTileAheadOfCurrent(void) {
     probePosition.vector.y = leader->position.y;
     probePosition.vector.z = leader->position.z;
     Vector_AddPolarOffset(0x100000, leader->angle, probePosition.coordinates);
-    // World map blocks are 32 pixels square, 32 to a row; map cells 16
+    // World map metatiles are 32 pixels square, 32 to a row; map cells 16
     // pixels square, 128 to a row, four bytes each.
     if (((struct FieldWork *)workBytes)->mode == MODE_WORLD_MAP) {
       cell =
@@ -465,11 +466,11 @@ s32 ObjectEvent_GetTriggerTileAheadOfCurrent(void) {
   return result;
 }
 
-/// Places the party at the entrance it came in by (the first matching entry, or
-/// the scene's first one) unless it keeps its position, and sets the map's
-/// scroll bounds, at least a screen (240 x 160 pixels) wide and tall.
+/// Places the party at the warp destination it came in by (the first matching
+/// entry, or the map's first one) unless it keeps its position, and sets the
+/// map's scroll bounds, at least a screen (240 x 160 pixels) wide and tall.
 ///
-/// Called by Field_RunMap once the scene's events are set. Writes
+/// Called by Field_RunMap once the map's events are set. Writes
 /// gGameState's position, heading and turn, and the map's minX to maxY.
 void Map_ApplyWarpDest(void) {
   struct MapGridScrollWork *grid = gMapGridWork[0];

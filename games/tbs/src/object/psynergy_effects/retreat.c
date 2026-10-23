@@ -101,9 +101,9 @@ void FieldEffect_UpdateRadialLaunch(struct EffectSlot *effect) {
 /// The caster turns south, plays animation 28 with its colours cycling,
 /// spins up for 70 frames (FieldEffect_UpdateSpinAngle), then rises and shrinks
 /// out of sight (FieldEffect_UpdateDescendingObject) as the particles fly. It
-/// is hidden, not released, and the effect opens an event (FieldScript_Start)
-/// it does not end: the Retreat exit raised before it (WARP_RETREAT, by
-/// Field_UsePsynergy or Field_UseItem) then leaves the scene. Called by
+/// is hidden, not released, and the effect opens a script (FieldScript_Start)
+/// it does not end: the Retreat warp raised before it (WARP_RETREAT, by
+/// Field_UsePsynergy or Field_UseItem) then leaves the map. Called by
 /// FieldEffect_Run and FieldEffect_DispatchRequestKind.
 void FieldEffect_RunRetreat(void) {
   struct FieldEffectWork *effectWork = gEffectWork;

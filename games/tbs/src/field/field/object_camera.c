@@ -6,13 +6,13 @@
 
 /// A map cell's word, as the camera reads it.
 struct ObjectCameraTile {
-  u32 block : 12;   ///< the block (metatile) number
+  u32 block : 12;   ///< the metatile number
   u32 layer : 2;    ///< if not 0, the layer of an object standing on it, + 1
   u32 priority : 2; ///< if not 0, the priority of an object standing on it
   u32 unk10 : 16;
 };
 
-/// A field object (one of gObjectSlots' 64, 0x70 bytes), as the cameras read
+/// An object event (one of gObjectSlots' 64, 0x70 bytes), as the cameras read
 /// it.
 struct ObjectCameraObject {
   u32 active; ///< zero for a free slot

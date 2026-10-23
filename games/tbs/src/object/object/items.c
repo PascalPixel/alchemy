@@ -4,16 +4,16 @@
 
 #include "../object_internal.h"
 
-/// The function a scene's item event may name instead of a message, called
+/// The function a map's item event may name instead of a message, called
 /// with the item, its user and its inventory slot; its result is not read.
 typedef s32 (*BattleItemCallback)(s32 item, s32 objectEvent, s32 slot);
 
-/// Returns the scene's item event (MAP_EVENT_ITEM) for item that applies to
+/// Returns the map's item event (MAP_EVENT_ITEM) for item that applies to
 /// what the leader faces, or 0 (item 0 matches any item). The event's trigger
-/// names an actor (MAP_EVENT_ITEM_ON_OBJ_EVENT) or a tile code, and may also
-/// require the leader to face within 0x17ff (about 34 degrees) of a direction.
-/// Called by Field_UseItem, and by FieldEffect_HasTrigger (psynergy.c) to test
-/// whether an item would do anything here.
+/// names an object event (MAP_EVENT_ITEM_ON_OBJ_EVENT) or a metatile behavior,
+/// and may also require the leader to face within 0x17ff (about 34 degrees) of
+/// a direction. Called by Field_UseItem, and by FieldEffect_HasTrigger
+/// (psynergy.c) to test whether an item would do anything here.
 s32 Field_FindItemEvent(s32 item) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
   const struct MapEvent *event = work->events;
@@ -25,11 +25,12 @@ s32 Field_FindItemEvent(s32 item) {
   s32 tileAhead;
 
   item &= 0x1ff;
-  // Query both target forms once; matching events choose actor or tile below.
+  // Query both target forms once; matching events choose object event or tile
+  // below.
   tileAhead = Field_GetCollisionAheadOfLeader();
 
-  // trigger bits: 15..12 facing | 11 facing required | 7..0 actor or tile
-  // code; control bits: 15..8 item | 4 on an actor | 3..0 kind.
+  // trigger bits: 15..12 facing | 11 facing required | 7..0 object event or
+  // tile code; control bits: 15..8 item | 4 on an object event | 3..0 kind.
   while (event->control != -1) {
     s32 eventFacing = event->trigger & 0xf000;
     s16 requiresFacing = event->trigger & 0x0800;
@@ -58,15 +59,15 @@ s32 Field_FindItemEvent(s32 item) {
 
 /// Uses an item on the field. packedItem holds the item (bits 0 to 9) and the
 /// character using it (bits 10 to 13; 15 for the character carrying most of
-/// it); slot is its inventory slot. The scene's item event for what the leader
+/// it); slot is its inventory slot. The map's item event for what the leader
 /// faces runs if there is one; otherwise an item with a field action uses it
-/// (Retreat asks first and leaves the scene). FLAG_NOTHING_HAPPENS still set
+/// (Retreat asks first and leaves the map). FLAG_NOTHING_HAPPENS still set
 /// afterwards says "But nothing happens."; FLAG_ITEM_USED_UP removes the item.
-/// Returns 0 when the scene's event ran or Retreat was declined, else -1, the
+/// Returns 0 when the map's event ran or Retreat was declined, else -1, the
 /// item's own action included; Field_RunMap ignores it.
 /// Called by Field_RunMap for the item request (work->item and
-/// work->itemArgument). Retreat sets gGameState.scene and .entrance to the
-/// Retreat point and raises work->exit.
+/// work->itemArgument). Retreat sets gGameState.mapId and .warpDest to the
+/// Retreat point and raises work->warp.
 s32 Field_UseItem(s32 packedItem, s32 slot) {
   s32 result;
   s32 itemId;
@@ -121,7 +122,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 
   event = (const struct MapEvent *)Field_FindItemEvent(itemId);
   if (event != 0 && event->value != 0) {
-    // The scene's event: a message, or a function. A value below 0x10000 is
+    // The map's event: a message, or a function. A value below 0x10000 is
     // a message number; anything else is a code address. Trigger bit 0x400
     // skips the "uses the item" message.
     GameFlag_ClearBitFar(FLAG_ITEM_USED_UP);
@@ -202,14 +203,14 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
   return result;
 }
 
-/// Returns the scene's Psynergy event (MAP_EVENT_PSYNERGY) for Psynergy of the
-/// given group that applies to what the leader faces, or NULL; stores the actor
-/// the Psynergy would target in *target. eventFlags gives the event's phase and
-/// kind (PSYNERGY_EV_ANY for any phase). The event may apply to any target
-/// (MAP_EVENT_PSYNERGY_IN_AREA), to an actor (MAP_EVENT_PSYNERGY_ON_OBJ_EVENT)
-/// or to a tile code. Called by Field_UsePsynergy for each phase, by
-/// Field_RunPsynergyEvents, and by the Force, Frost and Reveal effects
-/// (psynergy_effects/) for their own phases.
+/// Returns the map's Psynergy event (MAP_EVENT_PSYNERGY) for Psynergy of the
+/// given group that applies to what the leader faces, or NULL; stores the
+/// object event the Psynergy would target in *target. eventFlags gives the
+/// event's phase and kind (PSYNERGY_EV_ANY for any phase). The event may apply
+/// to any target (MAP_EVENT_PSYNERGY_IN_AREA), to an object event
+/// (MAP_EVENT_PSYNERGY_ON_OBJ_EVENT) or to a metatile behavior. Called by
+/// Field_UsePsynergy for each phase, by Field_RunPsynergyEvents, and by the
+/// Force, Frost and Reveal effects (psynergy_effects/) for their own phases.
 void *FieldEffect_FindMatchingEvent(s32 eventFlags, s32 group, void *target) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
   const struct MapEvent *event = work->events;
@@ -253,7 +254,7 @@ void *FieldEffect_FindMatchingEvent(s32 eventFlags, s32 group, void *target) {
   return NULL;
 }
 
-/// Runs the scene's events for Psynergy without paying its PP or showing its
+/// Runs the map's events for Psynergy without paying its PP or showing its
 /// usual effect (PSYNERGY_PHASE_BEFORE_END and PSYNERGY_PHASE_AFTER_END, around
 /// the kind's ending), as for a
 /// Psynergy that ends by itself: packed holds the Psynergy (bits 0 to 9) and

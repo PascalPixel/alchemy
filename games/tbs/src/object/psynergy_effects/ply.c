@@ -141,7 +141,7 @@ void FieldEffect_RunPly(void) {
   }
 
   // The particles share one sprite cache; keep its slot to free at the end.
-  // XXX: last is read with no check that any particle spawned; a scene with
+  // XXX: last is read with no check that any particle spawned; a map with
   // no free object slots would show whether this can be 0.
   resourceSlot = last->slot;
   AudioCommand_PlayFar(SE_130);

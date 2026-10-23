@@ -24,7 +24,7 @@ struct WaveEffectWork {
   u8 counter;   ///< particle spawn cycle (0 to 60)
 };
 
-/// Starts the wave effect of caster x on target y (actor ids): fades the
+/// Starts the wave effect of caster x on target y (local ids): fades the
 /// palettes toward a hue that shifts with the frame counter, and starts its
 /// per-frame update (FieldEffect_UpdateMindReadWave) after 8 frames.
 ///

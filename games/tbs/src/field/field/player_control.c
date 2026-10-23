@@ -61,7 +61,7 @@ UNUSED void ObjectDispatch_SetUpdateValue(void *rawObject, s32 value) {
 /// instead; a shortcut with nothing assigned returns 0, as no key pressed does.
 ///
 /// Called by Field_CheckConfiguredKeys. Sets work->psynergy,
-/// work->item or work->event, which the scene loop (run_scene.c)
+/// work->item or work->event, which the map loop (run_map.c)
 /// acts on.
 u32 Field_RequestShortcut(u32 encodedAssignment) {
   u32 assignmentKind = encodedAssignment >> 14;
@@ -153,8 +153,8 @@ s32 Runtime_CheckRadiusOverlap(s32 *firstPosition, s32 radiusA,
 /// the matching animation and leaving footprints. Also checks the configured
 /// keys. Returns 1.
 ///
-/// Run each frame by gObjectDispatch_PlayerScript, which the scene loop
-/// (run_scene.c) starts on the leader through
+/// Run each frame by gObjectDispatch_PlayerScript, which the map loop
+/// (run_map.c) starts on the leader through
 /// ObjectDispatch_StartPlayerControl when it hands control back on the field.
 /// Sets the leader's speed, target, velocity, angle and action, moves the
 /// objects it pushes, counts gEventWork->blockedSteps and creates the
@@ -537,8 +537,8 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
 /// SC_PLAYER does on the field, and turns the world map camera with the pad.
 /// Shallow water (terrain 6) leaves a ripple and terrain 9 hides the shadow.
 ///
-/// Run each frame by gObjectDispatch_WorldMapScript, which the scene loop
-/// (run_scene.c) starts on the leader through
+/// Run each frame by gObjectDispatch_WorldMapScript, which the map loop
+/// (run_map.c) starts on the leader through
 /// ObjectDispatch_StartWorldMapControl on the world map. Sets the leader's
 /// speed, target, velocity, angle and action, turns the perspective work's
 /// yaw, counts gEventWork->blockedSteps and creates the ripple objects.
@@ -848,7 +848,7 @@ update_object:
 
 /// SC_KEY_COUNT: checks the configured keys (Field_CheckConfiguredKeys).
 /// Returns 1. Run each frame by gObjectDispatch_KeyCheckScript, which the
-/// scene loop starts on the leader in LEADER_MOVEMENT_AIRBORNE, where the pad
+/// map loop starts on the leader in LEADER_MOVEMENT_AIRBORNE, where the pad
 /// does not move it.
 s32 Field_CheckConfiguredKeysAndCount(struct ScriptInterpreter *interpreter) {
   struct ObjectRuntime *object = (struct ObjectRuntime *)interpreter;
@@ -860,10 +860,10 @@ s32 Field_CheckConfiguredKeysAndCount(struct ScriptInterpreter *interpreter) {
 
 /// SC_KEYS: moves an object 8 pixels at a time by the direction pad, with up
 /// and down changing its height (y) rather than its depth. Refuses steps
-/// into an occupied cell, across a change of collision code, or onto ground
+/// into an occupied cell, across a change of metatile behavior, or onto ground
 /// too high (up) or too low (down). Returns 1.
 ///
-/// Run each frame by gObjectDispatch_KeysScript, which the scene loop starts
+/// Run each frame by gObjectDispatch_KeysScript, which the map loop starts
 /// on the leader in LEADER_MOVEMENT_CLIMB. Sets the leader's speed,
 /// angle, target or velocity, and counts gEventWork->blockedSteps.
 s32 Object_MoveByKeys(struct ScriptInterpreter *interpreter) {
@@ -913,7 +913,7 @@ s32 Object_MoveByKeys(struct ScriptInterpreter *interpreter) {
     position.y = object->y - position.z;
     position.z = object->z;
     // The cells (16 pixels, 0x100000) under the object and the step; a step
-    // into a cell with another collision code is refused.
+    // into a cell with another metatile behavior is refused.
     sourceCell = &((struct MapGridCell *)
                        Ram_MapGridCellBuffer)[object->x / 0x100000 +
                                               (position.z / 0x100000) * 128];

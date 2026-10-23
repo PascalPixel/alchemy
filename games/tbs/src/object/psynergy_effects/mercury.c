@@ -12,8 +12,8 @@
 /// plays animation 28 while 24 droplets rain round it, one a frame
 /// (FieldEffect_UpdateRandomTargetParticle); then the colours return. Called
 /// by Djinn_JoinParty for a Mercury Djinni, which then clears the Djinni's
-/// actor slot; the Djinni's object and its afterimages are released here.
-/// Uses all 24 effect slots (FieldEffect_InitializeSlots).
+/// object event slot; the Djinni's object and its afterimages are released
+/// here. Uses all 24 effect slots (FieldEffect_InitializeSlots).
 void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
   struct ObjectEvent *djinni;
   struct ObjectEvent *copy;

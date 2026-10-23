@@ -162,9 +162,9 @@ s32 MapGrid_GetScreenRelativePosition(struct ObjectRuntime *object,
 /// HEAP_SLOT_MENU_CONTROL by name, but Field_RunMap takes HEAP_SLOT_EVENT
 /// from EWRAM before them, so its release of that slot as it returns frees
 /// their memory too; Runtime_InitializeHeap clears the slots at the next
-/// scene change.
+/// map change.
 ///
-/// Called through ObjectSystem_InitializeFar by the field scene runner
+/// Called through ObjectSystem_InitializeFar by the field map runner
 /// (object/object/run_map.c) and the battle's encounter, and directly by
 /// the sprite viewer, each with its enum ObjectSystemMode. Allocates
 /// HEAP_SLOT_MENU_CONTROL for the ObjectSystemWork and HEAP_SLOT_OBJECT_POOL
@@ -227,7 +227,7 @@ void *ObjectDispatch_FindFreeObject(void) {
 /// Clearing the script lets ObjectDispatch_FindFreeObject hand the object out
 /// again. Reached through SC_FREE (ActionScript_FreeObject) and, as
 /// ObjectDispatch_ReleaseFar, from the battle, the Psynergy effects and the
-/// field scene's objects.
+/// field map's objects.
 void ObjectDispatch_Release(struct DispatchObject *object) {
   s32 spritesRemaining;
   void **sprites;
@@ -251,12 +251,12 @@ void ObjectDispatch_Release(struct DispatchObject *object) {
   }
 }
 
-/// Creates a field object at (x, y, z), in 16.16 pixels, or returns 0 when
+/// Creates an object event at (x, y, z), in 16.16 pixels, or returns 0 when
 /// none is free. id / 4096 is its enum ObjectCreateKind and the low 12 bits
 /// the sprite's animation id.
 ///
 /// Called as Object_CreateFar by the battle's placement, the Psynergy
-/// effects, the field scene's actors and markers and the scene scripts, and
+/// effects, the field map's object events and markers and the map scripts, and
 /// directly by the player control for footprints and ripples.
 /// Gives the object gObjectDispatch_DefaultScript (a lone SC_END), its home
 /// position and the default motion values; a group's sprite list is taken from
@@ -345,7 +345,7 @@ struct ObjectRuntime *FieldObject_Create(s32 encodedSprite, s32 x, s32 y,
 /// Sets the script and clears the cursor, the pause, the loop count and the
 /// last flag test. Called by the Start functions below and the player
 /// control, and as ObjectDispatch_InitializeFar by the battle's placement,
-/// the Psynergy effects and the field scene's events.
+/// the Psynergy effects and the field map's scripts.
 void ObjectDispatch_Initialize(struct DispatchObject *object,
                                const s32 *script) {
   if (object != 0) {
@@ -468,27 +468,27 @@ void ObjectDispatch_StartApproachLink(struct DispatchObject *object,
 }
 
 /// Starts an object on the script that runs SC_KEY_COUNT every frame.
-/// The field scene runner (object/object/run_map.c) gives it to the leader
+/// The field map runner (object/object/run_map.c) gives it to the leader
 /// when gGameState.movementMode is 2.
 void ObjectDispatch_StartKeyCheck(struct DispatchObject *object) {
   ObjectDispatch_Initialize(object, gObjectDispatch_KeyCheckScript);
 }
 
 /// Starts an object on the script that moves it by the keys (SC_KEYS).
-/// The field scene runner gives it to the leader when gGameState.movementMode
+/// The field map runner gives it to the leader when gGameState.movementMode
 /// is 1.
 void ObjectDispatch_StartMoveByKeys(struct DispatchObject *object) {
   ObjectDispatch_Initialize(object, gObjectDispatch_KeysScript);
 }
 
 /// Starts an object on the player control script (SC_PLAYER).
-/// The field scene runner's usual choice for the leader on a layered map.
+/// The field map runner's usual choice for the leader on a layered map.
 void ObjectDispatch_StartPlayerControl(struct DispatchObject *object) {
   ObjectDispatch_Initialize(object, gObjectDispatch_PlayerScript);
 }
 
 /// Starts an object on the world map control script (SC_WORLD).
-/// The field scene runner gives it to the leader on the world map.
+/// The field map runner gives it to the leader on the world map.
 void ObjectDispatch_StartWorldMapControl(struct DispatchObject *object) {
   ObjectDispatch_Initialize(object, gObjectDispatch_WorldMapScript);
 }
@@ -501,8 +501,8 @@ void ObjectDispatch_StartIdle(struct DispatchObject *object) {
 /// Starts an object on the camera script (SC_CAMERA). With a leader to
 /// follow, it also gets a speed limit of 4 pixels a frame and an
 /// acceleration of 0.5 (value30 and value34 are those fields). Called through
-/// ObjectDispatch_StartCameraFar by the field scene's actors, the Psynergy
-/// camera and the Colosso and Kolima Forest scenes.
+/// ObjectDispatch_StartCameraFar by the field map's object events, the Psynergy
+/// camera and the Colosso and Kolima Forest maps.
 void ObjectDispatch_StartCamera(struct DispatchObject *object,
                                 s32 linkedObjectHandle) {
   ObjectDispatch_Initialize(object, gObjectDispatch_CameraScript);
@@ -517,8 +517,8 @@ void ObjectDispatch_StartCamera(struct DispatchObject *object,
 /// Waits until the object's script reaches SC_END (0x10), at most 300 frames
 /// (five seconds); it returns as soon as the script idles, and after the
 /// limit whether or not it has.
-/// Called through ObjectDispatch_WaitForValue16Far by the Psynergy actor
-/// commands and by scenes that wait for a scripted move (Colosso, Venus
+/// Called through ObjectDispatch_WaitForValue16Far by the Psynergy object event
+/// commands and by map scripts that wait for a scripted move (Colosso, Venus
 /// Lighthouse, Vale).
 void ObjectDispatch_WaitForValue16(void *rawObject) {
   struct ScriptInterpreter *interpreter = rawObject;
@@ -574,8 +574,8 @@ void Animation_ApplyChildValues(struct DispatchObject *object, u32 param) {
 /// Suspends the object camera updates, starts the palette back to normal and,
 /// a frame later, shows the sprites with BG1-3 hidden, leaving BG0 unchanged.
 /// Called through
-/// ObjectSystem_SuspendProjectionAndShowSpritesFar by scenes (Colosso, the
-/// Tolbi ship, Vale, Venus Lighthouse). The scenes except Colosso pair it
+/// ObjectSystem_SuspendProjectionAndShowSpritesFar by map scripts (Colosso, the
+/// Tolbi ship, Vale, Venus Lighthouse). The scripts except Colosso's pair it
 /// with ObjectSystem_ResumeProjectionAndHideLayers.
 void ObjectSystem_SuspendProjectionAndShowSprites(void) {
   Scheduler_SuspendTasks(ObjectSystem_UpdateCamera);
@@ -590,7 +590,7 @@ void ObjectSystem_SuspendProjectionAndShowSprites(void) {
 
 /// Resumes the object camera updates and hides BG1-3 and the sprites.
 /// Called through ObjectSystem_ResumeProjectionAndHideLayersFar by the same
-/// scenes except Colosso.
+/// scripts except Colosso's.
 void ObjectSystem_ResumeProjectionAndHideLayers(void) {
   Scheduler_ResumeTasks(ObjectSystem_UpdateCamera);
   Scheduler_ResumeTasks(ObjectSystem_UpdateCameraFixed);

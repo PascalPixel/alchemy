@@ -9,8 +9,8 @@
 /// (FieldEffect_UpdatePhasedRadialParticle). The leader turns to the camera
 /// and plays animation 28, the sparks swarm the leader, who pulses for 100
 /// frames, and the sparks vanish. Called by Djinn_JoinParty for a Mars Djinni,
-/// which then clears the Djinni's actor slot. Uses all 24 effect slots, tints
-/// the field palette red and fades it back at the end.
+/// which then clears the Djinni's object event slot. Uses all 24 effect slots,
+/// tints the field palette red and fades it back at the end.
 void Djinn_RunMarsJoinEffect(s32 djinniId) {
   struct EffectVector position;
   s32 scale;

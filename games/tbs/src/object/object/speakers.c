@@ -23,10 +23,10 @@ struct FieldEffectDefinition *FieldEffect_FindDefinition(u32 id) {
   return entry;
 }
 
-/// Returns the sprite id stored by a live actor's animated sprite, or 0 when
-/// that actor has no animated sprite or its sprite-id pointer is absent. The
-/// actor must exist: a NULL from ObjectTable_Get is read through. Called by
-/// FieldEffect_GetFlags.
+/// Returns the sprite id stored by a live object event's animated sprite, or 0
+/// when that object event has no animated sprite or its sprite-id pointer is
+/// absent. The object event must exist: a NULL from ObjectTable_Get is read
+/// through. Called by FieldEffect_GetFlags.
 s32 FieldEffect_GetAnimationValue(s32 id) {
   struct FieldEffectSpeakerObject *object = ObjectTable_Get(id);
 
@@ -53,11 +53,11 @@ s32 FieldEffect_GetResourceId(u32 id) {
   return portraitId + 0x100;
 }
 
-/// Returns the definition flags of actor id's sprite, which choose its line
-/// when it has nothing to say: Map_TalkToObjectEvent picks a Halted actor's
-/// pair of lines with them, and Halt cast with no scene event (FieldEffect_Run)
-/// stops nothing when the nearest actor's flags are 0xff
-/// (FieldEffect_FilterObjectIdByFlags).
+/// Returns the definition flags of object event id's sprite, which choose its
+/// line when it has nothing to say: Map_TalkToObjectEvent picks a Halted object
+/// event's pair of lines with them, and Halt cast with no map event
+/// (FieldEffect_Run) stops nothing when the nearest object event's flags are
+/// 0xff (FieldEffect_FilterObjectIdByFlags).
 s32 FieldEffect_GetFlags(s32 id) {
   return FieldEffect_FindDefinition(FieldEffect_GetAnimationValue(id))->flags;
 }

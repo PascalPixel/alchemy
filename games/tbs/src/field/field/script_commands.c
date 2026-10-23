@@ -61,7 +61,7 @@ s32 ActionScript_WaitForArrival(struct ScriptInterpreter *interpreter) {
 
 /// SC_CALL(fn): calls fn with the object. A non-zero result waits and calls
 /// it again next frame; zero moves on, past the command unless fn moved the
-/// cursor itself. Scene scripts and the field effect scripts of fxdata.c use
+/// cursor itself. Map scripts and the field effect scripts of fxdata.c use
 /// it to run their own per-object steps.
 s32 ActionScript_InvokeCallback(struct ScriptInterpreter *interpreter) {
   s16 initialCursor = interpreter->cursor;
@@ -570,7 +570,7 @@ s32 Object_ApproachLinkedObject(struct ScriptInterpreter *interpreter) {
 /// that no solid object or wall blocks, with clear ground 8 pixels further at
 /// 45 degrees either side, and within limit pixels of home. After seven
 /// failed tries it turns around (turnedBack) and waits for the next frame.
-/// No script in games/tbs names SC_WANDER; scenes use SC_WANDER_HOME.
+/// No script in games/tbs names SC_WANDER; map scripts use SC_WANDER_HOME.
 s32 Object_Wander(struct ScriptInterpreter *interpreter) {
   struct ScriptObjectRuntime *object =
       (struct ScriptObjectRuntime *)interpreter;

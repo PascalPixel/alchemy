@@ -1,4 +1,4 @@
-@ Field actors, movement, map drawing and scene services.
+@ Object events, movement, map drawing and map services.
 @ Ordered 8-byte jumps into this bank. Named exports are callable symbols;
 @ bare veneers preserve entries that have no exported name.
 #include "stub.inc"

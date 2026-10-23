@@ -96,7 +96,7 @@ void AudioCommand_Play(s32 id) {
     gMusicRestoreDelay = MUSIC_RESTORE_DELAY_FRAMES;
   } else {
     // Music: the keep cue, or the music cue last chosen (gAudioSecondaryState),
-    // changes nothing, so a scene may name its music on every entry; a song
+    // changes nothing, so a map may name its music on every entry; a song
     // that has ended is not started again. The three songs below take mixer
     // record 3, the rest record 2 (the README's "The mixer's code is chosen per
     // song").
@@ -321,7 +321,7 @@ void Audio_SetMusicVolumeTargetAndStep(u16 targetVolume, u16 step) {
 
 /// Returns nonzero while a fanfare holds the music: from its start until its
 /// player falls silent and the music begins to fade back in. Polled by the
-/// Colosso scenes, the Djinni-joined messages (window/battle_command/joined.c),
+/// Colosso maps, the Djinni-joined messages (window/battle_command/joined.c),
 /// the message windows' pause skip (window/window/messages.c) and
 /// AudioCommand_WaitForStateByteClear (shop/shop/run.c), which the inn, the
 /// sanctum, the Lemurian ship and Tolbi's spring use.
@@ -352,7 +352,7 @@ void AudioCommand_UpdateToggleMask(u32 command) {
 /// MUS_SILENCE after a fade, else the last music cue. Field_RunMap saves it
 /// as gGameState.returnCue before the pause menu, so the music can be started
 /// again when the party is put back where it was (Game_Run,
-/// object/scene.c).
+/// object/object/map.c).
 s32 AudioCommand_GetSecondaryStateByte(void) { return gAudioSecondaryState; }
 
 /// Waits a frame at a time for fanfare restoration, giving up after 300

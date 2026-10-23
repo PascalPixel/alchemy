@@ -29,7 +29,7 @@ cue. The cue's range picks what happens: below 80 it is music, from 80 to 99 a
 fanfare, and from 100 up a row of the song table, which is how sound effects
 play. A few numbers are controls rather than sounds, such as the one that
 fades the music out. Asking for the music that is already chosen does
-nothing, so a scene can name its music every time the party enters without
+nothing, so a map can name its music every time the party enters without
 restarting it.
 
 Only a cue's low 16 bits count: the low 12 (`AUDIO_CUE_ID_MASK`) are the cue,
@@ -215,7 +215,7 @@ touch it.
 
 ## How it fits with the rest of the game
 
-Every part of the game plays sound through `AudioCommand_PlayFar`: scenes name
+Every part of the game plays sound through `AudioCommand_PlayFar`: maps name
 their music on entry, menus click, battle effects play their impacts. The
 VBlank handler in [Runtime](../runtime/README.md#the-frame-loop) steps the
 music's ramps and enters the mixer every frame, and the mixer's resident code

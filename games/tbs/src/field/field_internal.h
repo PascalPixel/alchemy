@@ -115,7 +115,7 @@ enum {
   FIELD_SPRITE_FOOTPRINT = 25 ///< a footprint, on maps that show them
 };
 
-/// How a layered map's block data is packed: the method byte
+/// How a layout's metatile data is packed: the method byte
 /// TileMap_DecodeStagedBuffer reads before the halfwords.
 enum MetatilePacking {
   METATILE_PACKING_RAW = 0, ///< copied as it is

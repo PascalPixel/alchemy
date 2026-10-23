@@ -35,12 +35,12 @@ struct Effect05State {
   struct Object *target; ///< mainObject: the caster, despite the name
   s32 initialized;       ///< child: the target's object, 0 for none
   u8 reserved18[8];
-  /// enabled: set at the start, cleared when a scene event names the target
+  /// enabled: set at the start, cleared when a map event names the target
   /// (FieldEffect_DispatchRequestKind). Set, 10 particles fall; cleared, 24
   /// drops, or 30 swaying particles in Mercury Lighthouse.
   u8 highArc;
   u8 reserved21[0x13];
-  u8 variant; ///< childOption: set by a scene, the orb stops 80 pixels up
+  u8 variant; ///< childOption: set by a map script, the orb stops 80 pixels up
   u8 reserved35[0x10];
   /// lit: set in two Mercury Lighthouse maps (setup.c), where swaying
   /// particles (SPRITE_PARTICLE) fall rather than splashing drops.

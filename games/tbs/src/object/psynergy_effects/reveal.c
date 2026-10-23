@@ -127,9 +127,9 @@ void FieldEffect_RunReveal(void) {
 }
 
 /// Ends Reveal if it is running: stops its watch, brings the colours back
-/// from black over 30 frames and runs the scene's PSYNERGY_PHASE_EFFECT_ENDS
-/// event. Unless a scene set childOption, the window transition is then reset
-/// at once (no next mode, one frame). Called as Reveal ends
+/// from black over 30 frames and runs the map's PSYNERGY_PHASE_EFFECT_ENDS
+/// event. Unless a map script set childOption, the window transition is then
+/// reset at once (no next mode, one frame). Called as Reveal ends
 /// (FieldScript_RunTypeHandler) and before Mind Read starts its own colours.
 void FieldEffect_EndReveal(void) {
 #ifdef UBFIX

@@ -4,9 +4,9 @@
 
 #include "../psynergy_effects_internal.h"
 
-/// The step code of the cells Cloak can stay hidden on: byte 2 of a cell
-/// (MapGridCell.collisionCode), or of a 4-byte gMetatiles entry on the world
-/// map.
+/// The metatile behavior of the cells Cloak can stay hidden on: byte 2 of a
+/// cell (MapGridCell.collisionCode), or of a 4-byte gMetatiles entry on the
+/// world map.
 #define CLOAK_TILE 0xfb
 /// The Psynergy request that ends Cloak: ACT_PACKED (0x2000, no PP) |
 /// ABILITY_CLOAK (0x92).
@@ -16,7 +16,7 @@
 /// CLOAK_TILE, requests CLOAK_END. On the world map it reads
 /// the 32-pixel gMetatiles, elsewhere the 16-pixel terrain map. Runs once a
 /// frame from FieldEffect_StartCloak, and again from
-/// FieldEffect_ResumeCloakCheck when a scene loads with the leader still
+/// FieldEffect_ResumeCloakCheck when a map loads with the leader still
 /// cloaked.
 void FieldEffect_CheckCloakTile(void) {
 #ifndef UBFIX
@@ -41,7 +41,7 @@ void FieldEffect_CheckCloakTile(void) {
   tile = (u8 *)*(struct MapGridState **)(slot - 76); // gMapGridWork[0]
 #endif
 
-  // Whole blocks or cells, rounded toward zero as a division would be.
+  // Whole metatiles or cells, rounded toward zero as a division would be.
   if (work->mode == MODE_WORLD_MAP) {
     u32 tx;
     u32 ty;
@@ -128,7 +128,7 @@ void FieldEffect_EndCloak(void) {
 }
 
 /// Starts the Cloak tile check if the leader is hidden. Field_RunMap calls
-/// it as a scene loads, since gGameState.cloaked outlives the scene.
+/// it as a map loads, since gGameState.cloaked outlives the map.
 void FieldEffect_ResumeCloakCheck(void) {
   if (gGameState.cloaked != 0) {
     Scheduler_AddOrUpdateCallback(FieldEffect_CheckCloakTile, 0xc80);

@@ -153,7 +153,7 @@ void FieldEffect_CircleAnchor(union FieldObject *fieldObject) {
   }
 }
 
-/// Shrinks a scene-selected Whirlwind target each frame; below half size,
+/// Shrinks an event-selected Whirlwind target each frame; below half size,
 /// moves it to the origin, stops it and removes the update.
 /// The scale falls by 1/512 each frame. From unit scale the strict lower bound
 /// takes 257 updates.
@@ -235,7 +235,7 @@ void FieldEffect_RunWhirlwind(void) {
   ball->scaleY = 0x14ccc; // 1.3 high
   AudioCommand_PlayFar(SE_163);
   WaitFrames(20);
-  // Cleared by FieldEffect_DispatchRequestKind: cast on a target a scene event
+  // Cleared by FieldEffect_DispatchRequestKind: cast on a target a map event
   // names, the target is blown away.
   if (effectWork->enabled == 0) {
     if (target != 0)

@@ -44,7 +44,7 @@ STATIC_ASSERT(offsetof(struct EffectObject, updateHook) == 0x6c);
 /// Keeps the party leader off the markers: a leader within 16 pixels of a
 /// marker cell's centre is moved 20 pixels from that centre, in the direction
 /// it stood, and loses its move target. Only the first marker it stands on
-/// moves it. Called by two scene overlays (Suhalla Desert, Lamakan Desert).
+/// moves it. Called by two map overlays (Suhalla Desert, Lamakan Desert).
 void Marker_MoveLeaderAway(void) {
   struct ObjectRuntime *leader =
       ObjectTable_Get(gGameState.selectedObjectEvent);
@@ -130,21 +130,22 @@ void ItemDisplay_EmitSparkles(union FieldObject *fieldObject) {
 }
 
 /// Shows the picture of item (0 for none) at the centre of the cell 16 pixels
-/// in front of character actor, at a height of 16 pixels whatever the actor's,
+/// in front of character objectEvent, at a height of 16 pixels whatever the
+/// object event's,
 /// with sparkles. While Reveal is active, its marks and sparkles are cleared
-/// first. Returns the picture's actor, or 0 without the actor or a free
-/// object. The picture is object 22, thrown up (velocityY 2 << 16, gravity
-/// 0x4000: it rises for 8 frames) while it grows to full size, its icon drawn
-/// through HEAP_SLOT_GLYPH_TRANSFER, which is released again, and loaded into
-/// VRAM. The caller owns the picture: Field_SearchTile releases it once the
-/// find is told. Called by Field_SearchTile for coins and items found, and by
-/// FieldEffect_PlayCueAndStartEmitterOnTarget.
+/// first. Returns the picture's object event, or 0 without the object event or
+/// a free object. The picture is object 22, thrown up (velocityY 2 << 16,
+/// gravity 0x4000: it rises for 8 frames) while it grows to full size, its icon
+/// drawn through HEAP_SLOT_GLYPH_TRANSFER, which is released again, and loaded
+/// into VRAM. The caller owns the picture: Field_SearchTile releases it once
+/// the find is told. Called by Field_SearchTile for coins and items found, and
+/// by FieldEffect_PlayCueAndStartEmitterOnTarget.
 struct EffectObject *FieldEffect_StartRandomParticleEmitter(s32 objectEvent,
                                                             s32 item) {
   struct EffectObject *picture;
 
   s32 work = (s32)gEventWork;
-  u32 objectEventOffset = (objectEvent * 4) + 0x14; // EventWork's actors[actor]
+  u32 objectEventOffset = (objectEvent * 4) + 0x14; // EventWork's objectEvents
 
   s32 srcZ = (s32)*(struct ObjectEvent **)(work + objectEventOffset);
   union PolarOffsetPosition picturePosition;
@@ -163,10 +164,10 @@ struct EffectObject *FieldEffect_StartRandomParticleEmitter(s32 objectEvent,
   srcZ = (picturePosition.vector.z & 0xfff00000) + (8 << 16);
 
   if (((struct FieldWork *)work)->revealActive != 0) {
-    // Stop both the marker emitters and the sparkle actors they already made.
+    // Stop both the marker emitters and the sparkle objects they already made.
     struct EffectObject *effect = EFFECT_OBJECT_POOL;
 
-    // work now counts the actors left.
+    // work now counts the objects left.
     work = EFFECT_OBJECT_COUNT - 1;
 
     do {
@@ -255,7 +256,7 @@ void ItemDisplay_RaiseAboveLeader(struct ObjectRuntime *object) {
 
 /// Shows a found item's picture: flags bit 0 adds sparkles and bit 1 raises it
 /// above the leader, with waits of 60 and 80 frames around that when both are
-/// set. The leader then returns to animation 1. Scene overlays call it as
+/// set. The leader then returns to animation 1. Map overlays call it as
 /// Engine_ItemShowPicture (six of them).
 void ItemDisplay_ShowPicture(void *object, s32 flags) {
   void *leader;
@@ -284,9 +285,9 @@ void ItemDisplay_ShowPicture(void *object, s32 flags) {
 
 /// Shows the picture of item 36 pixels above the party leader for 80 frames;
 /// flags bit 0 adds sparkles and bit 1 raises it as a found item. Then it
-/// releases the picture and the leader returns to animation 1. Scene overlays
+/// releases the picture and the leader returns to animation 1. Map overlays
 /// call it as Engine_ItemShowFound (41 of them). When no object is free, heap
-/// block 17, taken for the icon, is not released (the scene change's heap
+/// block 17, taken for the icon, is not released (the map change's heap
 /// reset frees it).
 void FieldEffect_StartEffectObject22(s32 item, s32 flags) {
   struct ObjectEvent *leader = ObjectTable_Get(gGameState.selectedObjectEvent);
@@ -395,8 +396,8 @@ s32 Field_IsRevealActive(struct ScriptInterpreter *interpreter) {
 }
 
 /// Reveal: marks with sparkles the hidden things within 8 cells left or right
-/// and 5 up or down of the leader: map places 100 to 239 with no marker actor,
-/// whose search event (MAP_EVENT_BG) gives an item, coins, a Psynergy Stone
+/// and 5 up or down of the leader: marked cells 100 to 239 with no marker
+/// object, whose bg event (MAP_EVENT_BG) gives an item, coins, a Psynergy Stone
 /// or a mimic and whose flag is not yet set. Each mark is an object of sprite
 /// 22 running gFieldEffect_MarkerParticleScript. Called by Reveal's effect
 /// (psynergy_effects/reveal.c).
@@ -410,8 +411,8 @@ void FieldEffect_SpawnNearbyMarkers(void) {
   s32 row;
   s32 id;
 
-  // The map's places: (column, row, id) triples, ended by 0xff, 0xff; the
-  // same list as MapGridMarkers's markers in markers.c.
+  // The layout's marked cells: (column, row, id) triples, ended by 0xff, 0xff;
+  // the same list as MapGridMarkers's markers in markers.c.
   markerData = *(u8 **)(((u8 *)gMapGridWork[0]) + 16);
   objectEvent = ObjectTable_Get(gGameState.selectedObjectEvent);
   leaderColumn = objectEvent->x >> 20;
@@ -447,9 +448,9 @@ void FieldEffect_SpawnNearbyMarkers(void) {
           case FIND_MIMIC:
             if (entry->condition != -1 &&
                 GameFlag_TestFar(entry->condition) == 0) {
-              /* FAKEMATCH(temporary): the spawned marker reuses actor, so the
-               * one pseudo keeps ObjectTable_Get's result in r5; as a variable
-               * of its own, 9 of 163 instructions differ in tbs-en. */
+              /* FAKEMATCH(temporary): the spawned marker reuses objectEvent, so
+               * the one pseudo keeps ObjectTable_Get's result in r5; as a
+               * variable of its own, 9 of 163 instructions differ in tbs-en. */
               objectEvent = (struct ObjectRuntime *)Object_CreateFar(
                   22, (column << 20) + (8 << 16), 0, (row << 20) + (8 << 16));
               if (objectEvent != 0) {

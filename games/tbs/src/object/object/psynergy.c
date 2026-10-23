@@ -8,16 +8,16 @@
 /// user (bits 10 to 13; 15 for character 0) and ACT_PACKED to use it without
 /// paying PP. Checks it can be used here (Reveal not on the world map, Retreat
 /// where it is not blocked, after asking), pays its PP, then plays its effect
-/// between the scene's Psynergy events for what the leader faces:
+/// between the map's Psynergy events for what the leader faces:
 /// PSYNERGY_PHASE_BEFORE_CAST before and PSYNERGY_PHASE_AFTER_CAST after. A
 /// PSYNERGY_PHASE_EFFECT_ACTS event is not run here; it only makes
-/// the effect aim at the actor ahead, and the effects that act on it (Force,
-/// Frost, Reveal) find it themselves. An after event whose trigger has flag
-/// 0x400 plays the effect itself. Called by Field_RunMap for the Psynergy
+/// the effect aim at the object event ahead, and the effects that act on it
+/// (Force, Frost, Reveal) find it themselves. An after event whose trigger has
+/// flag 0x400 plays the effect itself. Called by Field_RunMap for the Psynergy
 /// request (work->psynergy); sets work->resolvingAction while the effect plays.
-/// On the world map, placed actors far from the view are destroyed for the
-/// effect, and all placed actors are placed again afterwards. Returns 0
-/// whatever happens; Field_RunMap ignores it.
+/// On the world map, placed object events far from the view are destroyed for
+/// the effect, and all placed object events are placed again afterwards.
+/// Returns 0 whatever happens; Field_RunMap ignores it.
 s32 Field_UsePsynergy(u32 code) {
   s32 abilityId = ABILITY_ID(code);
   struct FieldWork *work = (struct FieldWork *)gEventWork;
@@ -51,7 +51,7 @@ s32 Field_UsePsynergy(u32 code) {
     return 0;
   }
 
-  // Retreat: ask, then go back to where the party entered this place.
+  // Retreat: ask, then go back to where the party entered this map section.
   if (abilityId == ABILITY_RETREAT) {
     if (GameFlag_TestFar(FLAG_RETREAT_BLOCKED)) {
       PSYNERGY_MESSAGE(userId, ABILITY_RETREAT, MsgDoesNotWorkHere);
@@ -74,7 +74,7 @@ s32 Field_UsePsynergy(u32 code) {
     work->warp = WARP_RETREAT;
     retreat = 1;
   }
-  // A use that pays no PP only runs the scene's ending events.
+  // A use that pays no PP only runs the map's ending events.
   if (code & ACT_PACKED)
     return Field_RunPsynergyEvents(code);
 
@@ -83,8 +83,8 @@ s32 Field_UsePsynergy(u32 code) {
     ppCost = BattleAction_Get(abilityId)->ppCost;
     if (Unit_GetFar(userId)->pp < ppCost) {
       PSYNERGY_MESSAGE(userId, abilityId, MsgNotEnoughPp);
-      // Retreat was already accepted: take its exit back (the scene and
-      // entrance it chose stay in the game state).
+      // Retreat was already accepted: take its warp back (the map and
+      // warp destination it chose stay in the game state).
       if (retreat)
         work->warp = 0;
       return 0;
@@ -92,7 +92,7 @@ s32 Field_UsePsynergy(u32 code) {
     Unit_AddPpFar(userId, -ppCost);
   }
 
-  // Find the scene's events, and choose how the effect plays. The before
+  // Find the map's events, and choose how the effect plays. The before
   // event runs before the two flags are read, so its script can change them.
   before = FieldEffect_FindMatchingEvent(
       PSYNERGY_EV(PSYNERGY_PHASE_BEFORE_CAST), abilityGroup, &target);
@@ -142,7 +142,7 @@ s32 Field_UsePsynergy(u32 code) {
   return 0;
 }
 
-/// Returns whether the scene has a Psynergy event, in any phase, for
+/// Returns whether the map has a Psynergy event, in any phase, for
 /// Psynergy of group and what the leader faces. Exported as
 /// FieldEffect_HasMatchingEvent5Far, which no ☀️ code names.
 s32 FieldEffect_HasMatchingEvent5(s32 group) {
@@ -152,7 +152,7 @@ s32 FieldEffect_HasMatchingEvent5(s32 group) {
   return (u32)((-eventAddress) | eventAddress) >> 31;
 }
 
-/// Returns whether the scene has an event for item and what the leader faces.
+/// Returns whether the map has an event for item and what the leader faces.
 /// Called by the item menu (menu/item.c) through FieldEffect_HasTriggerFar:
 /// such an item closes the menu and is used on the field.
 u32 FieldEffect_HasTrigger(u16 item) {

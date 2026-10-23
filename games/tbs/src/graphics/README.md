@@ -10,7 +10,7 @@ folder also holds the code of the two screens that are mostly pictures, the
 title intro and the credits, and the handwritten decoders that unpack tiles
 and animation frames for the rest of the game. The
 [Battle effects](../effect/README.md) load their sheets from `battle_fx/`, and
-each map's `map.s` in [Maps](../layout/README.md) places its tile set from
+each layout's `layout.s` in [Layouts](../layout/README.md) places its tile set from
 `tileset/`.
 
 ## How a picture is built and placed
@@ -132,7 +132,7 @@ The credits roll over a slideshow of 32 battle backdrops
 (`gDisplayScroll_SlideResources`), each crossfading into the next, and its
 last entry, 0, fades the screen to black.
 `Title_Run` reaches them through the scroll bank as `ScrollFar_Entry00`, at
-the title scene's entrance 9, with `MUS_ENDING` playing, before the clear
+the title map's warp destination 9, with `MUS_ENDING` playing, before the clear
 screen. Their waits come to 11,223 frames: a 300-frame lead, then for each
 of the 33 entries a 64-frame fade and a 267-frame hold.
 
@@ -240,7 +240,7 @@ The title intro and the credits are main-image code the title overlay
 calls through their banks' far-call tables. The decoders are called by the
 code that loads pictures everywhere else, many of them from a copy in a heap
 slot (`RamCode_LoadSlot`), as `Tile_ExpandSlide` is. The pictures belong to
-the code that loads them: effects, scenes, maps, windows and menus.
+the code that loads them: effects, maps, layouts, windows and menus.
 
 ## Limits
 
@@ -269,7 +269,7 @@ the code that loads them: effects, scenes, maps, windows and menus.
 | `title/` | the title picture, the logos, the "Press Start" prompt and the "To be continued" lettering |
 | `render/labels.s` | the 64-by-16 text headings, each two 32-by-16 sprites |
 | `display/credits.s` | the credits font, with its glyph widths in `display/glyph_widths.h` |
-| `backdrop/`, `monster/`, `sprite/`, `colosso/`, `lamakan/`, `lucky_dice/`, `slots/`, `sol_sanctum_statue/` | the pictures of the place or screen they name |
+| `backdrop/`, `monster/`, `sprite/`, `colosso/`, `lamakan/`, `lucky_dice/`, `slots/`, `sol_sanctum_statue/` | the pictures of the map or screen they name |
 | `animref*.s` | animation slot tables, whose entries point back at their own table |
 
 The unit headers are in `games/tbs/include/unit/graphics/`. The credits are
@@ -305,7 +305,7 @@ beside `Text_DecodeSymbol` in `text/decode_symbol.s`.
 
 ## Evidence and open questions
 
-The pictures are named for what they show, from the scenes and effects that
+The pictures are named for what they show, from the maps and effects that
 load them, and the decoders for the format each unpacks, proven in their
 headers. The credits' and the title's functions are named for what they
 draw.

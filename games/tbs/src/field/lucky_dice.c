@@ -26,8 +26,8 @@
 /// Starts the Lucky Dice minigame: leaves only the backdrop on screen, starts
 /// song MUS_009 and plays until the player quits. Returns 0. Reached through
 /// Runtime_BlankDisplayAndRunFar from RunLuckyDice (object/object/map.c),
-/// which saves background palettes 14 and 15 around it and passes an
-/// entrance this function does not take.
+/// which saves background palettes 14 and 15 around it and passes a
+/// warp destination this function does not take.
 s32 Runtime_BlankDisplayAndRun(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
   AudioCommand_PlayFar(MUS_009);

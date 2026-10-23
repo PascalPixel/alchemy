@@ -221,7 +221,7 @@ s32 Scheduler_SuspendOverlayTasks(void) {
 
 /// Stores `mask` as the flags of the task running `callback`; bit 0 keeps it
 /// running while the overlay tasks are suspended. Called by the link lobby
-/// and Colosso scenes for the tasks that must keep running under a menu.
+/// and Colosso maps for the tasks that must keep running under a menu.
 /// Returns its index, or -1.
 s32 Scheduler_SetTaskFlags(SchedulerCallback callback, u32 mask) {
   struct SchedulerTask *task;
@@ -245,7 +245,7 @@ s32 Scheduler_SetTaskFlags(SchedulerCallback callback, u32 mask) {
 
 /// Resumes the task running `callback`, or every task when `callback` is
 /// null, by clearing bit 0 of its order's high byte. Called by the map
-/// animation and field object code. Returns the last index changed, or -1.
+/// animation and object event code. Returns the last index changed, or -1.
 s32 Scheduler_ResumeTasks(SchedulerCallback callback) {
   struct SchedulerTask *task;
   u32 savedInterruptMaster;

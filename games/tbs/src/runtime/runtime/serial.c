@@ -695,8 +695,8 @@ extern const u8 Rom_Start[];
 void SerialTest_Delay(void) {}
 
 /// A link cable test left in the game: it shows a row of tiles, receives blocks
-/// into the map cell buffer and shows them as tiles, and sends a part of the
-/// ROM when A or B is held. It never returns. Nothing in ☀️ reaches it.
+/// into the map grid cell buffer and shows them as tiles, and sends a part of
+/// the ROM when A or B is held. It never returns. Nothing in ☀️ reaches it.
 void SerialTest_Run(void) {
   // An outer receive loop with an inner completion break changes 9 bytes in
   // tbs-en: the key-address load is hoisted and the restart retargeted.

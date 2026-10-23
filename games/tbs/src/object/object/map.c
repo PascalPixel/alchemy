@@ -1,13 +1,13 @@
 /// @file
-/// Scene changes: exits, returns from battle, the main loop, entering.
+/// Map changes: warps, returns from battle, the main loop, entering.
 // Part of object.c.
 
 #include "../object_internal.h"
 
-// The scene overlay's exit table: a header word holding a scene id, then that
-// scene's exits, one packed word each (and a flag word after it when
-// WARP_HAS_FLAG is set). Scene id WARP_TABLE_END ends the exits of a scene and
-// the whole table. MAP_WARP and MAP_WARP_IF (field_scene.h) give an exit
+// The map overlay's warp table: a header word holding a map id, then that
+// map's warps, one packed word each (and a flag word after it when
+// WARP_HAS_FLAG is set). Map id WARP_TABLE_END ends the warps of a map and
+// the whole table. MAP_WARP and MAP_WARP_IF (map_tables.h) give a warp
 // word's bits.
 #define WARP_MAP_MASK 0xfff
 #define WARP_DEST(word) (((word) & 0xff000) >> 12)
@@ -16,14 +16,14 @@
 #define WARP_TABLE_END 0x1ff
 #define WARP_ID_ANY 0xff
 
-/// Chooses the scene and entrance to go to when the party leaves the current
-/// scene. warpId is the kind of exit Field_RunMap ended on; the scene's
-/// exit table gives the first exit of that kind (or of any kind) whose flag, if
-/// it has one, is not set. An exit of kind 0 or the end of the scene's exits
-/// falls back to the scene of its first exit, at entrance 0. Called by
-/// Game_Run with Field_RunMap's result; sets gGameState.scene and
-/// .entrance, and leaves them alone for WARP_NONE, whose destination is set
-/// already, or for a scene with no header in the table.
+/// Chooses the map and warp destination to go to when the party leaves the
+/// current map. warpId is the kind of warp Field_RunMap ended on; the map's
+/// warp table gives the first warp of that kind (or of any kind) whose flag, if
+/// it has one, is not set. A warp of kind 0 or the end of the map's warps
+/// falls back to the map of its first warp, at warp destination 0. Called by
+/// Game_Run with Field_RunMap's result; sets gGameState.mapId and
+/// .warpDest, and leaves them alone for WARP_NONE, whose destination is set
+/// already, or for a map with no header in the table.
 void Map_TakeWarp(s32 warpId) {
   s16 currentMap;
   const u32 *warpTable;
@@ -44,7 +44,7 @@ void Map_TakeWarp(s32 warpId) {
     return;
 
   for (;;) {
-    // Find the header of the current scene: exit words have high bits set.
+    // Find the header of the current map: warp words have high bits set.
     mapId = *warpTable++;
     if (mapId & ~WARP_MAP_MASK)
       continue;
@@ -78,23 +78,23 @@ void Map_TakeWarp(s32 warpId) {
     break;
   }
 
-  // Commit the chosen exit only after a matching scene header was found.
+  // Commit the chosen warp only after a matching map header was found.
   if (nextMap != WARP_NONE) {
     gGameState.mapId = nextMap;
     gGameState.warpDest = nextWarpDest;
   }
 }
 
-/// Chooses where the game continues after a battle or another scene that is
-/// not a field map (see Game_Run). result is that scene's result:
+/// Chooses where the game continues after a battle or anything else that is
+/// not a map (see Game_Run). result is its result:
 /// -1 when the party was defeated, which revives the leader with 1 HP (and,
 /// with FLAG_CHILDHOOD, fully heals Isaac and Garet, characters 0 and 1) and
 /// returns to the defeat point, or to the last saved point when none is set.
-/// Any other result goes to the next scene the event set, or to the default
-/// scene (the field scene the battle or minigame was started from) with the
+/// Any other result goes to the next map the script set, or to the default
+/// map (the map the battle or minigame was started from) with the
 /// party keeping its position (FLAG_KEEP_PARTY_POSITION). Called by
-/// Game_Run after each scene from MAP_BLANK on; stores result in
-/// gGameState.mapChangeReason and sets gGameState.scene and .entrance.
+/// Game_Run after each map from MAP_BLANK on; stores result in
+/// gGameState.mapChangeReason and sets gGameState.mapId and .warpDest.
 void Map_ReturnFromBattle(s32 result) {
   struct BattleUnit *unit;
   s32 i;
@@ -133,7 +133,7 @@ void Map_ReturnFromBattle(s32 result) {
         gGameState.warpDest = gGameState.defaultWarpDest;
     }
   } else {
-    // An explicit event destination overrides the scene's default return.
+    // An explicit script destination overrides the map's default return.
     mapId = gGameState.nextMap;
     warpDest = gGameState.nextWarpDest;
     if (mapId != -1 || warpDest != -1) {
@@ -153,8 +153,8 @@ void Map_ReturnFromBattle(s32 result) {
   }
 }
 
-/// Returns the group scene belongs to. The scenes of one place share a group,
-/// which selects their music, area name and the flags kept while inside it.
+/// Returns the map section mapId belongs to. The maps of one map section share
+/// their music, area name and the flags kept while inside it.
 /// Called by Map_ResolveInteractionResult.
 s32 FieldEffect_GetResourceGroup(s32 mapId) {
   return gField_MapTable[mapId].group;
@@ -206,10 +206,10 @@ static __inline__ s32 RunReelGame(s32 warpDest) {
 }
 
 /// The game's main loop, which never returns. mode, an enum GameRunMode,
-/// chooses the first scene. Each pass resets the
-/// runtime, then either runs a battle or minigame and picks the scene to return
-/// to, or loads a field scene's code, starts its music and runs it until the
-/// party takes an exit. Called with GAME_RUN_TITLE through Game_RunFar by
+/// chooses the first map. Each pass resets the
+/// runtime, then either runs a battle or minigame and picks the map to return
+/// to, or loads a map's code, starts its music and runs it until the
+/// party takes a warp. Called with GAME_RUN_TITLE through Game_RunFar by
 /// System_Initialize at power-on and by Game_Restart.
 void Game_Run(s32 mode) {
   const struct MapRecord *table;
@@ -217,7 +217,7 @@ void Game_Run(s32 mode) {
   s32 warpDest;
 
   table = gField_MapTable;
-  // Choose the first scene before initializing the per-scene runtime.
+  // Choose the first map before initializing the per-map runtime.
   if (gDebugMode && mode == GAME_RUN_DEBUG_VALE) {
     gGameState.mapId = (s32)&MapId_ValeGate;
     gGameState.warpDest = mode;
@@ -235,7 +235,7 @@ void Game_Run(s32 mode) {
   Scheduler_ResetTaskTable();
   Scheduler_ResetTaskTable();
   for (;;) {
-    // FLAG_SKIP_MAP_CHANGE_SOUND skips SE_STOP_SLOT3 for one scene
+    // FLAG_SKIP_MAP_CHANGE_SOUND skips SE_STOP_SLOT3 for one map
     // change, then clears itself.
     if (GameFlag_TestFar(FLAG_SKIP_MAP_CHANGE_SOUND))
       GameFlag_ClearBitFar(FLAG_SKIP_MAP_CHANGE_SOUND);
@@ -244,7 +244,7 @@ void Game_Run(s32 mode) {
     record = &table[gGameState.mapId];
     warpDest = gGameState.warpDest;
 
-    // Stop DMA 0, which a scene may have left running for an HBlank effect.
+    // Stop DMA 0, which a map may have left running for an HBlank effect.
     {
       volatile u16 *dma0 = REG_DMA0;
 
@@ -253,14 +253,14 @@ void Game_Run(s32 mode) {
       dma0[5];
     }
     // Drop the tasks, the HBlank and VCount handlers (IRQs 1 and 2) and every
-    // heap block the last scene, battle or minigame left.
+    // heap block the last map, battle or minigame left.
     Scheduler_ResetTaskTable();
     Runtime_SetIrqHandler(1, 0, 0);
     Runtime_SetIrqHandler(2, 0, 0);
     Runtime_InitializeHeap();
     DebugText_Clear();
     VramCache_Reset();
-    // A battle or minigame returns a result, not an exit: the return scene is
+    // A battle or minigame returns a result, not a warp: the return map is
     // chosen from the game state, and no overlay is loaded.
     if (gGameState.mapId >= MAP_BLANK) {
       switch (gGameState.mapId) {
@@ -281,7 +281,7 @@ void Game_Run(s32 mode) {
       continue;
     }
 
-    // A field scene: set its flags and music, load its code and run it.
+    // A map: set its flags and music, load its code and run it.
     Map_ResetFlagsOnEnter(gGameState.mapId,
                           GameFlag_TestFar(FLAG_KEEP_PARTY_POSITION));
     Map_ResolveInteractionResult();
@@ -295,8 +295,8 @@ void Game_Run(s32 mode) {
         Audio_PlayCueFromEventWork();
     } else if (gGameState.returnCue != -1) {
       // Back where the party was: resume the music saved when the pause menu
-      // last opened (run_scene.c). A random battle and every normal entry set
-      // returnCue to -1, so the scene's own music plays instead.
+      // last opened (run_map.c). A random battle and every normal entry set
+      // returnCue to -1, so the map's own music plays instead.
       AudioCommand_PlayFar(gGameState.returnCue);
     } else {
       Audio_PlayCueFromEventWork();
@@ -307,7 +307,7 @@ void Game_Run(s32 mode) {
   }
 }
 
-/// Loads the current scene's overlay code (its resource) into gOverlayArea.
+/// Loads the current map's overlay code (its resource) into gOverlayArea.
 /// Called by Game_Run before Field_RunMap.
 void Map_LoadOverlay(s32 unused) {
   const struct MapRecord *table;
@@ -318,24 +318,24 @@ void Map_LoadOverlay(s32 unused) {
 
 #define MAP_RECORD(id) (&gField_MapTable[id])
 
-/// Updates the flags and state that last for one scene or one group of scenes,
-/// on entering the current scene. Unless keep is set (the party returns to
-/// where it was, as after a battle), the flags of the last scene are cleared,
-/// and on entering a new group so are the group's flags and step counters, the
-/// location name is shown and the entrance becomes the point Retreat returns
-/// to. Then the group's visited flag (FLAG_MAPSEC_VISITED) is set. Called by
-/// Game_Run before each field scene, with keep from
-/// FLAG_KEEP_PARTY_POSITION; sets gGameState.mapSec and .mapType.
+/// Updates the flags and state that last for one map or one map section, on
+/// entering the current map. Unless keep is set (the party returns to where it
+/// was, as after a battle), the flags of the last map are cleared, and on
+/// entering a new map section so are the map section's flags and step
+/// counters, the location name is shown and the warp destination becomes the
+/// point Retreat returns to. Then the map section's visited flag
+/// (FLAG_MAPSEC_VISITED) is set. Called by Game_Run before each map, with keep
+/// from FLAG_KEEP_PARTY_POSITION; sets gGameState.mapSec and .mapType.
 void Map_ResetFlagsOnEnter(s32 unused, s32 keep) {
   s32 group = MAP_RECORD(gGameState.mapId)->group;
   s32 flag;
 
   if (keep == 0) {
-    // Local puzzle flags expire on every normal scene entrance.
+    // Local puzzle flags expire on every normal entry to a map.
     for (flag = FLAG_MAP_TEMP_FIRST; flag <= FLAG_MAP_TEMP_LAST; flag++)
       GameFlag_ClearBitFar(flag);
     if (group != gGameState.mapSec) {
-      // Group state and Retreat's destination survive moves within a place.
+      // Map section state and Retreat's destination survive moves within it.
       for (flag = FLAG_MAPSEC_TEMP_FIRST; flag <= FLAG_MAPSEC_TEMP_LAST; flag++)
         GameFlag_ClearBitFar(flag);
       GameFlag_SetBitFar(FLAG_SHOW_LOCATION_NAME);
@@ -348,7 +348,7 @@ void Map_ResetFlagsOnEnter(s32 unused, s32 keep) {
       gGameState.retreatMap = gGameState.mapId;
       gGameState.retreatWarpDest = gGameState.warpDest;
     }
-    // The Djinn's hiding flags last for one scene, even within a group, and
+    // The Djinn's hiding flags last for one map, even within a map section, and
     // so do the 16 after them to 0xdf, which nothing else uses.
     for (flag = FLAG_DJINNI_HIDING_0; flag <= 0xdf; flag++)
       GameFlag_ClearBitFar(flag);
@@ -369,9 +369,9 @@ void Map_ResetFlagsOnEnter(s32 unused, s32 keep) {
   GameFlag_RefreshLureCapFar();
 }
 
-/// Starts the current scene's field music, chosen by
+/// Starts the current map's field music, chosen by
 /// Map_ResolveInteractionResult. Called by Game_Run, and by
-/// 34 scene overlays through Audio_PlayCueFromEventWorkFar.
+/// 34 map overlays through Audio_PlayCueFromEventWorkFar.
 void Audio_PlayCueFromEventWork(void) { AudioCommand_PlayFar(gGameState.cue); }
 
 #undef WARP_MAP_MASK

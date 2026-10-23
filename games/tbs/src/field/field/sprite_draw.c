@@ -609,7 +609,7 @@ void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
 /// it does not test them for null.
 /// Called by Animation_ApplyChildValues and, as
 /// ObjectGroup_SetChildValueUnlessFifteenFar, by the Psynergy effects, the
-/// Sanctum and the Altmiller Cave scene.
+/// Sanctum and the Altmiller Cave map.
 void ObjectGroup_SetChildValueUnlessFifteen(void *rawSprite, u32 value) {
   struct AnimationObject *sprite = rawSprite;
   if (sprite != 0) {

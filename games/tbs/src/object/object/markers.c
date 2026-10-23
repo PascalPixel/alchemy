@@ -4,7 +4,7 @@
 
 #include "../object_internal.h"
 
-/// Sets an actor's y and terrainHeight to the map's height at its x and z.
+/// Sets an object's y and terrainHeight to the map's height at its x and z.
 /// Called by Field_PlaceMapMarkers for each marker it places.
 void ObjectMotion_SnapToTerrain(void *object) {
   struct ObjectRuntime *objectEvent = object;
@@ -16,12 +16,12 @@ void ObjectMotion_SnapToTerrain(void *object) {
   objectEvent->terrainHeight = terrainHeight;
 }
 
-/// The map's work (gMapGridWork[0], HEAP_SLOT_MAP_GRID), seen as its marker
-/// list.
+/// The map grid's work (gMapGridWork[0], HEAP_SLOT_MAP_GRID), seen as its
+/// marker list.
 struct MapGridMarkers {
   u8 unk00[0x10];
   /// (column, row, id) triples, ended by 255, 255: a 16-pixel cell and the
-  /// trigger of the scene event there; NULL for a map with none.
+  /// trigger of the map event there; NULL for a map with none.
   u8 *markers;
 };
 
@@ -37,12 +37,12 @@ enum {
 };
 
 /// Places an object at each of the map's markers (ids 100 to 239) that the
-/// scene has an event for, up to ten: a chest for a chest event,
+/// map has an event for, up to ten: a chest for a chest event,
 /// shown open once its flag is set and gone once its mimic was beaten, and a
-/// Psynergy Stone for a search event giving one, until it is
+/// Psynergy Stone for a bg event giving one, until it is
 /// taken. A marker with no such event takes no slot. The objects are kept in
-/// work->markers, not in actor slots. Called by Field_RunMap on scene load;
-/// clears and fills work->markers.
+/// work->markers, not in object event slots. Called by Field_RunMap on map
+/// load; clears and fills work->markers.
 void Field_PlaceMapMarkers(void) {
   u32 id;
   struct MapGridMarkers *grid = gMapGridWork[0];
@@ -177,7 +177,7 @@ s32 Marker_FindSlot(s32 id) {
 /// Unused: an empty function nothing calls.
 UNUSED void Marker_ReservedNoOp(void) {}
 
-/// Gives the actor of marker id animation, plays sound and waits 12 frames.
+/// Gives the object of marker id animation, plays sound and waits 12 frames.
 static __inline__ void SetMarkerAnimationAndPlaySound(s32 id, s32 animation,
                                                       s32 sound) {
   s32 slotIndex;
@@ -246,7 +246,7 @@ void Marker_ShowOpened(s32 id) {
   }
 }
 
-/// Returns the actor of marker id, or NULL when no slot has it. Called by
+/// Returns the object of marker id, or NULL when no slot has it. Called by
 /// Field_SearchTile, and by the world map markers (field_fx.c) to skip a
 /// marker already placed.
 struct ObjectRuntime *Marker_GetObjectEvent(s32 id) {
@@ -259,7 +259,7 @@ struct ObjectRuntime *Marker_GetObjectEvent(s32 id) {
   return marker->object;
 }
 
-/// Hides the actor of marker id by clearing its animationKind:
+/// Hides the object of marker id by clearing its animationKind:
 /// OBJECT_SPRITE_NONE draws no sprite, and the object stays in its slot. Called
 /// by Field_SearchTile once a Psynergy Stone is taken.
 void Marker_Hide(s32 id) {
@@ -276,8 +276,8 @@ void Marker_Hide(s32 id) {
   }
 }
 
-/// Moves the actor of marker id to (x, z) on the ground; -1 keeps the centre
-/// of its cell on that axis. Positions are 16.16. Scene overlays call it as
+/// Moves the object of marker id to (x, z) on the ground; -1 keeps the centre
+/// of its cell on that axis. Positions are 16.16. Map overlays call it as
 /// Engine_MarkerSetPosition.
 void Marker_SetObjectEventPosition(s32 id, s32 x, s32 z) {
   s32 slotIndex;

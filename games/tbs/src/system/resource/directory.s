@@ -11,7 +11,7 @@
 @   group KIND, names...   Consecutive named entries KIND_name.
 @   area SET, count, maps... Maps, then palette and tiles A onward; count is ABCD or -.
 @   recolor NN, maps...    Maps followed by a palette; reuse the preceding tiles.
-@   overlays ID...         Scene overlays in ID order.
+@   overlays ID...         Map overlays in ID order.
 @   unused N               N unused entries.
 	.macro group kind:req, names:vararg
 	.irp n, \names

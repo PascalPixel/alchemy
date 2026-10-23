@@ -18,7 +18,7 @@ void FieldEffect_RunCatchOnTarget(s32 unused) { FieldEffect_RunCatch(); }
 /// Abilities: Catch (FIELD_KIND_CATCH).
 ///
 /// Object 215 is the hand of Move and Carry. The goal is 32 pixels in front
-/// of the caster with scene->enabled (no scene event named the target),
+/// of the caster with scene->enabled (no map event named the target),
 /// otherwise the effect's position, 32 pixels up in both cases. Called by
 /// FieldEffect_Run and FieldEffect_RunCatchOnTarget. Moves the effect scene's
 /// child to (-9, -9) when there is one, and releases object 215 at the end.
@@ -89,7 +89,7 @@ void FieldEffect_RunCatch(void) {
   ObjectDispatch_SelectAnimationFar(object, 5);
   AudioCommand_PlayFar(SE_132);
   // XXX: why the caught object goes to (-9, -9) pixels, just off the map's
-  // corner; the scene code that reads it after Catch would settle it.
+  // corner; the map code that reads it after Catch would settle it.
   if (child != 0)
     Object_SetPositionAndResetMotionFar((struct ObjectRuntime *)child,
                                         -(9 << 16), child->y, -(9 << 16));

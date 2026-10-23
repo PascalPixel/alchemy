@@ -11,12 +11,12 @@
 
 /// Changes the shake without restarting an axis whose argument is negative.
 /// Amplitudes are 16.16 pixels and decay is a 16.16 multiplier per frame.
-/// Scene commands reach it through MapGrid_SetShake and
+/// Script commands reach it through MapGrid_SetShake and
 /// MapGrid_SetScreenShakeFar.
 void MapGrid_SetScreenShake(s32 shakeX, s32 shakeY, s32 shakeDecay) {
   struct MapGridScrollWork *grid;
 
-  // A negative argument leaves that value alone, so a scene can change the
+  // A negative argument leaves that value alone, so a script can change the
   // decay without restarting the shake, or start one axis only. The view
   // updates read the same three words on the world map (PerspectiveWork).
   grid = gMapGridWork[0];
@@ -32,7 +32,7 @@ void MapGrid_SetScreenShake(s32 shakeX, s32 shakeY, s32 shakeDecay) {
 }
 
 /// Waits until both shake amplitudes are below 1/256 pixel, with a 300-frame
-/// limit for a shake whose decay never settles. Scene imports reach it as
+/// limit for a shake whose decay never settles. Map imports reach it as
 /// MapGrid_WaitForShakeToSettleFar; it stops further shake after the wait.
 void MapGrid_WaitForShakeToSettle(void) {
   struct MapGridScrollWork *grid;

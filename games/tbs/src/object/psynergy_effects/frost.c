@@ -82,8 +82,8 @@ void FieldEffect_UpdateOrbitingParticleRight(union FieldObject *fieldObject) {
 ///
 /// Abilities: Frost (FIELD_KIND_FROST).
 ///
-/// The target is the actor in scene->child. With childMode the target is left
-/// as it is and only the particles appear.
+/// The target is the object event in scene->child. With childMode the target is
+/// left as it is and only the particles appear.
 void FieldEffect_RunFrostOnTarget(s32 unused) {
   struct FieldEffectWork *effectWork = gEffectWork;
   struct ObjectEvent *target = effectWork->child;
@@ -103,11 +103,11 @@ void FieldEffect_RunFrostOnTarget(s32 unused) {
 ///
 /// Abilities: Frost (FIELD_KIND_FROST).
 ///
-/// The target's part runs only when a scene event named the target
-/// (FieldEffect_DispatchRequestKind clears enabled) and no scene set
+/// The target's part runs only when a map event named the target
+/// (FieldEffect_DispatchRequestKind clears enabled) and no map script set
 /// childMode: it flashes, takes animation 2 with SE_220 unless childOption
 /// is set, keeps glinting (FieldEffect_UpdateOrbitingParticleMain) and runs
-/// the scene's Frost event. Called by FieldEffect_Run and
+/// the map's Frost event. Called by FieldEffect_Run and
 /// FieldEffect_RunFrostOnTarget.
 void FieldEffect_RunFrost(void) {
   s32 eventTarget;

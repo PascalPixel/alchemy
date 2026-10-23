@@ -8,8 +8,10 @@ back by itself once it has finished. All of that is the sound folder's work.
 The game asks for every sound the same way, with one call and a number, the
 cue; the cue layer (`sound.c`) decides what each number means and keeps the
 music, the fanfares and the sound effects out of each other's way. Under it is
-the driver that plays songs on the hardware: Nintendo's MusicPlayer2000, as
-this game links it.
+the driver that plays songs on the hardware: Nintendo's MusicPlayer2000, the
+sound library many Game Boy Advance games ship, which [pret](../../glossary.md#pret)'s decompilations
+call m4a. In it every sound, a sound effect included, is a song: a header and
+tracks of commands, played on one of the driver's players.
 
 The driver has eight players, each of which plays one song at a time, and
 each kind of sound has players of its own, so a sound effect never stops the
@@ -24,13 +26,19 @@ table or a control.
 
 ![Every sound starts as one call with a cue number, and the number's range decides what it is. Cues below 80 are music, played on the music player; asking for the music already chosen does nothing. Cues from 80 to 99 are fanfares, played on the fanfare player while the music is silenced. Cues from 100 up are rows of the song table, mostly sound effects, each played on the player its row names. Three cues are controls instead of sounds: cue 17 fades the music out, cue 18 keeps the music that is playing, and cue 289 fades out player 3.](https://alchemy.pascalpixel.com/illustrations/sound/cue-ranges.svg)
 
-Code anywhere in the game plays a sound by calling `AudioCommand_Play` with a
-cue. The cue's range picks what happens: below 80 it is music, from 80 to 99 a
+Code anywhere in the game plays a sound by calling `AudioCommand_Play(s32
+id)` with a cue, and it returns nothing. Every caller outside the sound [bank](../../glossary.md#bank) uses its
+[far-call](../../glossary.md#far-call) name, `AudioCommand_PlayFar`, as the field does when a chest
+holds a Psynergy Stone (`Field_SearchTile`):
+
+```c
+AudioCommand_PlayFar(MUS_TREASURE_FOUND);
+```
+
+The cue's range picks what happens: below 80 it is music, from 80 to 99 a
 fanfare, and from 100 up a row of the song table, which is how sound effects
 play. A few numbers are controls rather than sounds, such as the one that
-fades the music out. Asking for the music that is already chosen does
-nothing, so a [map](../../glossary.md#map) can name its music every time the [party](../../glossary.md#the-party) enters without
-restarting it.
+fades the music out.
 
 Only a cue's low 16 bits count: the low 12 (`AUDIO_CUE_ID_MASK`) are the cue,
 0 to 4,095, and the four above them are flags, of which only
@@ -45,30 +53,28 @@ range:
 - From `AUDIO_SONG_FIRST` (100) up, a cue is a row of the song table
   (`gSound_SongTable`), played on the player the row names; sound effects
   such as `SE_SHOP_PURCHASE` and `SE_MENU_CURSOR_MOVE` are rows. A row that
-  names `SOUND_PLAYER_EFFECT_LAST` takes the first idle player counting down
-  to `SOUND_PLAYER_EFFECT_FIRST`, and `SOUND_PLAYER_EFFECT_LAST` again if
-  none is idle, so four such sounds play at once and a fifth cuts off the
-  sound on player 7.
+  names player 7, `SOUND_PLAYER_EFFECT_LAST`, means any free player from 7
+  down to 4 (`SOUND_PLAYER_EFFECT_FIRST`): a floating effect. It takes the
+  first idle one counting down, and player 7 again if none is idle, so four
+  floating effects play at once and a fifth cuts off the one on player 7.
 - From `AUDIO_JINGLE_FIRST` (80) to 99, a cue is a fanfare, such as
   `MUS_TREASURE_FOUND` or `MUS_PUZZLE_SOLVED`, played on the fanfare player.
 - Below 80, a cue is music, played on the music player.
 
 Three cues are controls. `AUDIO_CUE_FADE_BGM` fades the music out over 112
-frames (16 steps 7 frames apart), once until the next music starts, and
-records `MUS_SILENCE`, a song with no tracks, as the music playing, so a
-later cue for the faded music starts it again. `AUDIO_CUE_KEEP_BGM` keeps
+frames (16 steps 7 frames apart); a second fade cue does nothing until new
+music has started. The fade records `MUS_SILENCE`, a song with no tracks, as
+the music chosen, so a later cue for the faded music starts it again. `AUDIO_CUE_KEEP_BGM` keeps
 the music that is playing. `AUDIO_CUE_FADE_SLOT3` fades player 3 out over
 48 frames. The three values are also rows of the song table (17, 18 and 289),
 and those rows never play, since the controls are tested first.
 
-A cue for the music already chosen (`gMusicCue`) does nothing,
-even when that song has ended.
+A cue for the music already chosen, which `gMusicCue` records, does nothing.
+That lets a [map](../../glossary.md#map) name its music every time the [party](../../glossary.md#the-party) enters without
+restarting it, but it also holds when that song has ended: a song that
+doesn't loop plays again only after another music cue or a fade.
 
-`AudioCommand_Play` does all of this, reached from the whole game through
-the sound [bank](../../glossary.md#bank)'s [far-call](../../glossary.md#far-call) table as `AudioCommand_PlayFar`: the program is
-cut into banks, and a call from another bank goes to a jump at the start of
-the sound bank that leads on to the function. It reads the song
-table, `gSound_SongTable` (`games/tbs/sound/songs.s`), whose row holds the
+`AudioCommand_Play` reads the song table, `gSound_SongTable` (`games/tbs/sound/songs.s`), whose row holds the
 song's header and its player, and the players, `gSound_PlayerSlots`
 (`games/tbs/sound/players.s`). The cues are named in
 `audio_engine_symbols.h` and the songs in `songs.h`.
@@ -84,8 +90,8 @@ song's header and its player, and the players, `gSound_PlayerSlots`
 | `AUDIO_CUE_FADE_SLOT3` | `0x121` (289) | fade player 3 out over 48 frames |
 | `SOUND_PLAYER_FANFARE` | 0 | the fanfare player, 4 tracks |
 | `SOUND_PLAYER_MUSIC` | 1 | the music player, 10 tracks |
-| `SOUND_PLAYER_EFFECT_FIRST` | 4 | the lowest player a sound effect on player 7 may take |
-| `SOUND_PLAYER_EFFECT_LAST` | 7 | a sound effect that takes the first idle player from 7 down to 4 |
+| `SOUND_PLAYER_EFFECT_FIRST` | 4 | the lowest player a floating effect may take |
+| `SOUND_PLAYER_EFFECT_LAST` | 7 | named by a row, a floating effect: the first idle player from 7 down to 4 |
 
 ## The fanfare's return to the music
 
@@ -110,18 +116,23 @@ Once a VBlank, `MusicPlayer_StepVolumeAndPitchTowardTargets` (called from
 fanfare player has no track playing and sets the music's target volume back
 to full. The same routine steps the volume, and the combined tempo and
 pitch, towards their targets by a fixed step each VBlank, and stops on the
-target when a step would cross it. Full volume is `MUSIC_UNITY_SCALE`, 1.0
+target when a step would cross it. Nothing in this game moves the tempo and
+pitch target: its setter, `Audio_SetWorkPairB`, is reached only through a
+far-call entry no code names. Full volume is `MUSIC_UNITY_SCALE`, 1.0
 in the ramps' 8.8 fixed point (a number whose low 8 bits are a fraction in
 256ths, so 1.0 is 256), and the usual step `MUSIC_DEFAULT_RAMP_STEP`
 is 4, so a full fade takes 64 frames.
 
+Songs with more than eight tracks are not fully silenced by a fanfare. The
+music commands here select only tracks 0 to 7 (`MUSIC_ALL_TRACKS`, one bit a
+track), though the music player has 10, so tracks 8 and 9 keep their volume
+and pitch through the ramps and under a fanfare. Nine songs use them: music
+6, 22, 28, 29, 40 to 43 (`MUS_040` to `MUS_VENUS_LIGHTHOUSE`) and 74. The
+original game does the same, since this is its code.
+
 The ramps are globals of the cue layer: `gMusicVolume`, `gMusicVolumeTarget`
 and `gMusicVolumeStep`, and `gMusicPitch`, `gMusicPitchTarget` and
-`gMusicPitchStep` for tempo and pitch together. The music commands here
-select only tracks 0 to 7 (`MUSIC_ALL_TRACKS`, one bit a track), though the
-music player has 10. `MUS_006`, `MUS_022`, `MUS_028`, `MUS_029`, `MUS_040`
-to `MUS_VENUS_LIGHTHOUSE` and `MUS_074` use 9 or more, and their tracks 8 and 9 keep
-their volume and pitch through the ramps and under a fanfare.
+`gMusicPitchStep` for tempo and pitch together.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -161,10 +172,13 @@ A VBlank that arrives during a library call therefore skips that frame's
 driver work instead of reading half-changed state, and a library call made
 while the driver isn't ready, or while another call holds the lock, returns
 without doing anything: it is dropped, not delayed.
-`AudioEngine_SuspendDirectSound` adds 10 rather than 1, so a suspended
-driver can be told from a busy one. It suspends only a driver that is free
-or held once, as `AudioEngine_SetMode` holds it around a rate change, and
-`AudioEngine_ResumeDirectSound` takes the 10 off again.
+
+Suspending the driver's DirectSound, the hardware's two channels that play
+recorded samples, uses the same word. `AudioEngine_SuspendDirectSound` adds
+10 rather than 1, so a suspended driver can be told from a busy one, and
+`AudioEngine_ResumeDirectSound` takes the 10 off again. It suspends only a
+driver that is free or held once; `AudioEngine_SetMode` is what holds it
+once, around a change of the mixing rate.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -177,7 +191,7 @@ or held once, as `AudioEngine_SetMode` holds it around a rate change, and
 
 Part of the code that mixes the recorded sounds is swapped each time music
 starts, so a song chooses how much of each frame's sound carries into the
-next.
+next: in effect its echo, which MusicPlayer2000 calls reverb.
 
 Some of the game's sounds are recordings, samples, which the driver mixes in
 software, a frame's worth at a time, into the buffers the hardware plays
@@ -239,9 +253,9 @@ are data in `games/tbs/sound`.
 | `audio.c` | the driver's library calls: starting, stopping, fading and resuming songs on the players, and the PCM key-to-frequency step |
 | `tables.c` | the driver's tables: the song command handlers and the frequency tables |
 | `empty_callback.c` | the driver's do-nothing callback |
-| `mixer.s`, `channel_update_entry.s`, `clear_buffer.s`, `umul_high.s` | the driver's handwritten ARM and Thumb routines, each proven in its header |
+| `mixer.s`, `channel_update_entry.s`, `clear_buffer.s`, `umul_high.s` | the driver's handwritten ARM and Thumb routines, each header naming the instruction that shows no compiler wrote it |
 
-`engine.c`, `audio.c` and `tables.c` are compiled with [pret](../../glossary.md#pret)'s [`old_agbcc`](../../glossary.md#the-compilers)
+`engine.c`, `audio.c` and `tables.c` are compiled with pret's [`old_agbcc`](../../glossary.md#the-compilers)
 (the Makefile's `SOUND_C`), as pret builds its MusicPlayer2000 C; the rest
 with the game's compiler. The cue layer's code is the sound bank; the
 driver follows the banks in the ROM's tail, with `mixer.s` loaded into IWRAM.
@@ -256,9 +270,11 @@ driver's structures in `games/tbs/include/sound`.
   the song table, or a control.
 - **player** and **track**: a player (`struct SoundPlayer`) plays one song,
   whose tracks (`struct SoundTrack`) each run a stream of song commands.
-- **note**: a sound a track starts, on a PCM channel the mixer renders or on
-  one of the four CGB channels, the tone generators built into the hardware
-  (channel 4 is noise).
+- **note**: a sound a track starts, on a PCM channel the mixer renders into
+  DirectSound or on one of the four CGB channels, the tone generators built
+  into the hardware (channel 4 is noise).
+- **floating effect**: a song table row that names player 7, played on the
+  first idle player from 7 down to 4.
 - **ramp**: the music's volume, or its combined tempo and pitch, stepped
   towards a target once a VBlank.
 - **lock**: `work->lock`, the driver's signature and lock word.
@@ -290,7 +306,7 @@ second, `0x630` bytes on). The record then works out what the mix buffer
 starts the next frame with, from this frame's mix and those older samples,
 and stores it. Record 2, which most music uses, keeps a quarter of the mix
 plus an eighth of each buffer's old samples, each channel from its own buffer
-(in the shifts' units: the mix `>> 18`, the old samples `>> 19`). Record 3
+Record 3
 swaps the weights, an eighth of the mix and a quarter of the old samples, so
 more of what has already played carries into the next frame. Record 0 makes
 both channels one value from the two buffers together, record 1 crosses each
@@ -302,7 +318,7 @@ over the title intro, `MUS_ENDING_LOGO` over the Golden Sun logo shown after the
 
 A library call is dropped only when it meets another that holds the lock, and
 library calls all run on the main thread, one after another, except from a
-VBlank [task](../../glossary.md#task). A call graph of the tbs-en build finds one VBlank task that
+VBlank [task](../../glossary.md#task). A call graph of the English edition's build finds one VBlank task that
 reaches the library: `ReelGame_RunFrame`, the slot machine's frame, which
 plays its sounds from the VBlank. Its sounds can be dropped only if the VBlank
 arrives while a main-loop task is inside a library call; while the slot

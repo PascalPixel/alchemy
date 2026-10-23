@@ -13,8 +13,8 @@ The code runs a fight from its opening transition to the spoils: it builds
 the units, gathers each round's actions and sorts them into turns, plans each
 action, stages it, and applies the ability to every target. Three other
 folders share the work. [Battle effects](../effect/README.md) draws the
-animations, `../window` holds the command menu and the party's status
-window, and [Game rules](../game/README.md) holds the ability, item and enemy
+animations, [Windows](../window/README.md) holds the command menu and the
+party's status window, and [Game rules](../game/README.md) holds the ability, item and enemy
 tables and the arithmetic in `game/battle_calc.c`. [Battle](../../battle.md)
 explains a battle as a whole, how it is entered from the field and how the
 rules and the effects run at the same time; this page explains the rules
@@ -22,7 +22,8 @@ underneath.
 
 ## Rounds
 
-A battle is a loop of rounds. In each, every unit chooses an action, the
+A battle is a loop of rounds. In each, every unit (everyone in the fight,
+party member or enemy) chooses an action, the
 actions line up fastest first, and they play one after another, until one
 side has no unit standing or the party gets away.
 [Battle](../../battle.md) opens with a picture of that loop; the picture at
@@ -100,12 +101,10 @@ built (`retry` 0) it draws once and keeps the pick only if it is a guard, so
 that the guard is raised with the party's before anyone acts. At the enemy's
 turn (`retry` 1) it draws again for anything else, and a guard drawn then is
 refused. A pick the enemy cannot use (too little PP, a seal, no target worth
-it) is drawn again, and after 18 failed picks the enemy defends.
-
-The picture below is the game's own evidence for the Gryphon's chances: the
-same moment replayed with every possible roll.
-
-![Two Gryphons against Isaac, Garet, Ivan and Mia, at the moment the first Gryphon casts Bind. Beside the screen, the Gryphon's eight actions from its row of `enemies.tsv`, each in its own colour with its chance under `ACTION_STRATEGY_FALLING` from `gBattleCommand_SelectionWeights` drawn as a bar: Wing Flutter 53 in 256, Tornado 47, Twin Beaks 41, Impact 35, Attack 29, Sonic Slash 23, Bind 17 (the one played) and Ward 11, with the rolls each takes. Below, a strip of the 256 rolls in the colour of the action the game took when `BattleCommand_SelectAutomatic` was run from the same moment with its roll answered with that number: rolls 0 to 52 take Wing Flutter, 53 to 99 Tornado, 100 to 140 Twin Beaks and so on to 245 to 255 for Ward, each span as wide as its chance.](https://alchemy.pascalpixel.com/guides/battle/enemy-actions.png)
+it) is drawn again, and after 18 failed picks the enemy defends. A roll is a
+number from 0 to 255, so a chance of 53 in 256 is the 53 rolls from 0 to 52:
+the Gryphon's first action, Wing Flutter, takes rolls 0 to 52, Tornado 53 to
+99, Twin Beaks 100 to 140, and so on to Ward's 245 to 255.
 
 | Strategy | Value | How the place is picked |
 | --- | --- | --- |
@@ -138,10 +137,7 @@ otherwise the enemies one time in 32; the Djinn tutorial (`FLAG_DJINN_LESSON`)
 always gives the party the first strike. When the party strikes first, no
 enemy acts in that round and running away cannot fail. When the enemies do,
 the party chooses no commands, and two to five enemies, drawn at random, act
-once each. The mode returns to normal at the round's end. The picture
-below opens the same encounter both ways in the game itself.
-
-![The same random encounter with four enemies, the Lizard King, a Harridan and two Stone Soldiers, opened twice, side by side as two columns of moments. Left, the first-strike roll (1 in 16) came up, `Battle_Random` answered 0 in `Battle_RunEncounter`: `Isaac's party attacks first!` with `encounterMode` `BATTLE_ENCOUNTER_PARTY_FIRST`, Ivan's attack as the round's first action, Garet's as its fourth and last, and the second round's command menu with the mode back to `BATTLE_ENCOUNTER_NORMAL`; four party members act and no enemy does. Right, that roll failed and the surprise roll (1 in 32) came up: `Isaac's party was caught by surprise!` with `BATTLE_ENCOUNTER_ENEMIES_FIRST`, a Stone Soldier's Blast as the first action and the Lizard King's Ice Blessing as the third and last, then the second round's command menu; three of the four enemies act and the party chooses no commands.](https://alchemy.pascalpixel.com/guides/battle/first-strikes.png)
+once each. The mode returns to normal at the round's end.
 
 `BattleEscape_CheckSuccess` (`round.c`) gives a 50 percent chance, plus 20
 for each failed try in the battle, plus 5 for each level the party's average
@@ -219,10 +215,11 @@ Attack strikes with the weapon's element, or an enemy's with its own
 
 ### Targets and range
 
-An ability reaches the places of the target side within its range of the aimed
-one, counted in places rather than pixels.
+Each side stands in a line, and a unit's position in that line is its place.
+An ability reaches the places within its range of the aimed one, counted in
+places rather than in distance on the screen.
 
-![Isaac aims Quake at four enemies, Garet, Mia, Ivan and Jenna, and moves the aim right three times, from Mia to Ivan to Jenna and round to Garet. On the left the game marks the aimed one with a large pink marker and its name and each other unit in range with a small one. On the right the same battlefield is drawn from above: the enemies in a line at x -80, from z 45 down to z -69, and Isaac at x 80, z 48; the aimed enemy is ringed in yellow and labelled AIMED, the others in range ringed in orange as STEP 1, and those out of range grey with their steps, 2 or 3.](https://alchemy.pascalpixel.com/guides/battle/battle-places.gif)
+![Who an ability reaches. Reach is counted in places along the enemies' line, not in distance on the screen; Quake reaches the aimed enemy and one place either side. Aimed in the middle of five enemies it hits three. Aimed at the end of the line it hits two: the reach does not go round to the other end. A downed enemy beside the aim is passed over, but its place still counts, so the enemy beyond it is missed. While the player aims, the cursor steps along the line and wraps from the last place to the first.](https://alchemy.pascalpixel.com/illustrations/battle/aim.svg)
 
 `BattlePlan_SetTargets` walks the target side's places outward from the
 aimed one, as far as the ability's `range`: 1 is the aimed unit alone, each
@@ -239,13 +236,13 @@ Seen from above, the battlefield is a plane in pixels.
 `BattleUnit_RefreshPlacement` stands the party at x 80, each member at the z
 of their place in `gBattlePlacement_StepPairs`, and
 `BattlePlacement_LayoutEnemies` lines the enemies up at x -80, each taking
-38 pixels of the line if large and 27 if small. The four characters copied
-onto the enemy side in the recording are large, so they stand 38 pixels
-apart, from z 45 to z -69, off centre because the line starts from an
-estimate of 30 pixels an enemy. Range is counted in places, not pixels:
-Quake's range of 2 reaches one place on either side of the aimed one, so with
-the aim on Jenna, at the end of the line, only Ivan is covered beside her.
-The aim wraps from the last place to the first.
+38 pixels of the line if large and 27 if small. Four large enemies therefore
+stand 38 pixels apart, from z 45 to z -69, off centre because the line
+starts from an estimate of 30 pixels an enemy. Range is counted in places,
+not pixels: Quake's range of 2 reaches one place on either side of the aimed
+one, so with the aim on the last enemy only the one beside it is covered,
+however far apart they stand. The aim wraps from the last place to the
+first.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -265,9 +262,7 @@ are made while the action is planned, before anything is drawn.
 
 The plan makes the rolls the effect must know before it plays: whether a plain
 Attack misses or lands a critical hit, and how many blows a multiple-blow
-ability strikes. The picture below plays each outcome in the game.
-
-![Isaac attacks a copy of Ivan three times, each a row of four moments with what each roll decided and the plan for the target below it, the rolls answered at `Battle_Random`. A miss: no unleash, the hit roll (1 in 32 misses) misses, no critical; `Ivan nimbly dodges the blow!`, and the plan has no blow landing. A critical hit: no unleash, the hit roll lands, the critical roll (1 in 32) comes up; Isaac's blow bursts in light and Ivan takes 110 damage, the plan holding one blow and `CRITICAL_HIT`. A triple blow: wearing the Swift Sword, the unleash roll unleashes Sonic Smash and the extra blows roll (153 in 256) comes up; `Isaac's Swift Sword lets out a howl! Sonic Smash!`, and Ivan takes 281 damage, the plan holding three blows and the effect's variant showing three.](https://alchemy.pascalpixel.com/guides/battle/plan-rolls.png)
+ability strikes.
 
 A plain Attack never misses a target that cannot act (down, asleep, stunned,
 charmed or held by Ground). Otherwise it misses one time in 32, and a deluded
@@ -383,8 +378,9 @@ player sees them. It runs in seven phases, marked in its body:
 ### The ability kind
 
 The ability kind chooses the formula in phase 5. The formulas are in
-[`../game/game/battle_calc.c`](../game/game/battle_calc.c), and the battle
-calls them by their far-call names (`../system/far_call/GAME.S`).
+[`../game/game/battle_calc.c`](../game/game/battle_calc.c), in another part
+of the program, and the battle calls them by their `Far` names, the entries
+of the table of calls between parts (`../system/far_call/GAME.S`).
 
 | Ability kind | What the target takes | What the power is |
 | --- | --- | --- |
@@ -440,10 +436,7 @@ ability with no element (`ELEMENT_NONE`) gets no bonus. Healing uses the
 healer's Power alone: each point above or below 100 moves it one percent,
 from nothing at 0 to double at 200, and an ability with no element heals as
 if at 100. The multipliers are counted in 256ths (`FULL_RATE`), and every
-result rounds down. The picture below plots real calls of
-`Battle_GetElementMultiplier` from two battles against the same line.
-
-![Above, `gElement_PowerResistCurve`'s five points read from the ROM and drawn as the damage multiplier by the actor's Power less the target's Resist, in points from -200 to +200: a cast's line from 0 times to 2 times, and a blow's line, halved, from 0.5 to 1.5 times, both flat past either end, with a key for the lines and marks. On them, where each call of `Battle_GetElementMultiplier` put its target: for Isaac's Quake, Ivan at +52 and 1.26 times, Mia at +51 and 1.25 times, and Isaac's own copy at -30 and 0.85 times on the cast's line; for an attack at Ivan, -8 and 0.98 times on the blow's line. Below, the two battles: Quake, reading `Isaac takes 10 damage.` and `Mia takes 12 damage!`, and the attack, Isaac's Arctic Blade unleashing Blizzard.](https://alchemy.pascalpixel.com/guides/battle/element-multiplier.png)
+result rounds down.
 
 A unit's Power and Resist come from its element levels
 (`gElement_PowerResistByLevel`) or, for an enemy, its element preset, with
@@ -570,8 +563,6 @@ in `BattleTarget_Execute` and the notes on `enum AbilityEffect`
 ([`battle_unit.h`](../../include/battle/battle_unit.h)) give each effect's
 detail; the rules they share are these.
 
-![The four against one Vermin: in the first round Ivan casts Delude and Isaac Impair at the Vermin and Mia casts Guard on Isaac, and in each later round the four defend. Above, the screen as each counter changes other than by counting down, told in words: `Vermin is wrapped in delusion!`, the Vermin deluded for 7 turns; `Vermin's Defense drops by 2!`, its Defense -2 stages for 7 turns; `Isaac's Defense rises by 50!`, +2 stages for 7 turns; `Vermin sees clearly once again!`, its delusion ending early with 5 turns left; and `Isaac's Defense returns to normal!` with `Vermin's Defense returns to normal!`, both back to normal as their turns run out. Below, a table of the counters read from each `BattleUnit` as each of ten rounds starts: the Vermin's Defense -2 stages with 6 turns down to 1, its delusion 6 and 5 turns left then none, and Isaac's Defense +2 stages with 6 turns down to 1, then normal.](https://alchemy.pascalpixel.com/guides/battle/added-effects.png)
-
 - A stat change moves Attack, Defense or Resistance one or two stages,
   between `STAT_STAGE_MIN` and `STAT_STAGE_MAX`, for `STAT_CHANGE_TURNS`.
   A stage is an eighth of Attack or Defense. The number in the message is
@@ -620,7 +611,7 @@ spirit pays for its own attacks: once a target has been dealt with, the
 damage it took may wake it and may feed the haunted actor's evil spirit,
 which takes its share from the actor at the end of its turn.
 
-![Isaac, haunted, casts Quake at copies of Garet, Ivan and Mia, the copy of Ivan asleep since an earlier round with 6 turns of sleep left; `BattleTarget_Execute`'s wake and haunt rolls are answered 0, so both come up. Garet loses 14 HP and, awake, has no wake roll; the evil spirit's share is 3 HP (14 / 4), its total so far 3 HP. Ivan loses 15 HP and the roll wakes him (`Ivan wakes from slumber!`); the total reaches 6 HP. Mia loses 12 HP and the total reaches 9 HP. At the turn's end the spirit takes its 9 HP, `A curse does 9 damage to Isaac!`, his HP falling from 625 to 616.](https://alchemy.pascalpixel.com/guides/battle/after-target.png)
+![After each target. Isaac, haunted by an evil spirit, casts Quake at Garet, Ivan and Mia, and Ivan is asleep; here every roll comes up. A sleeping target that loses HP wakes one time in four, unless it fell asleep this round. One time in four for each target, the evil spirit keeps a quarter of what the target lost, at least 1. Garet loses 14 HP and is awake; the spirit's total is 3 HP. Ivan loses 15 HP and wakes up; the total is 6 HP. Mia loses 12 HP; the total is 9 HP. At the end of Isaac's turn the message reads `A curse does 9 damage to Isaac!`, and his HP falls from 625 to 616.](https://alchemy.pascalpixel.com/illustrations/battle/after-target.svg)
 
 Losing HP or PP wakes a sleeping target one time in four, unless it fell
 asleep this round. A haunted actor, one time in four for each target it took
@@ -680,10 +671,10 @@ is sealed or short of PP.
 
 ### Results nobody reads
 
-Some of the original's functions are declared to return a value and end
-without one, and no caller reads it. The matching build keeps the declared
-type where `void` would change the epilogue, and `UBFIX` gives the `void`
-form; [Matching](../MATCHING.md) explains the rule. `BattleTarget_Execute`,
+Some of the original's functions promise to return a value and end without
+one, and no caller reads it. The source keeps the promised type where
+writing `void` would change the compiled code at the function's end, and
+`UBFIX` gives the `void` form; [Matching](../MATCHING.md) explains the rule. `BattleTarget_Execute`,
 `BattleEvent_DispatchQueued` and `BattleEvent_WaitForReady` are among them.
 
 ### One sprite, several structs
@@ -824,6 +815,22 @@ Abilities and enemies are named from the label columns of their tables,
 `ability` and `enemy`, which follow the English release's text. The formulas
 are named from what `battle_calc.c` computes, and the event kinds from what
 playback does with each.
+
+The chances and counts in the illustrations were checked in a tbs-en build
+with `alchemy-devtools render`, answering `Battle_Random` with chosen
+numbers. Replaying a Gryphon's turn with each of the 256 rolls gave its
+actions in the spans above. One encounter (the Lizard King, a Harridan and
+two Stone Soldiers) opened both as a first strike, where only the four party
+members acted, and as a surprise, where three of the enemies did. Isaac's
+attacks on a copy of Ivan gave a miss (`Ivan nimbly dodges the blow!`), a
+critical hit of 110 and, with the Swift Sword unleashing Sonic Smash, a triple
+blow of 281. Real calls of `Battle_GetElementMultiplier` fell on the line
+drawn: for Quake, Ivan at 52 points ahead and 1.26 times, Mia at 51 and 1.25,
+Isaac's copy at 30 behind and 0.85, and for an attack on Ivan, 8 behind and
+0.98 on the blow's line. Against a Vermin, its delusion ended early with 5
+turns left while both Defense changes ran their 7 turns. The haunt example
+is one such run, with both rolls answered 0, and aiming Quake along four
+large enemies moved the cursor from the last place round to the first.
 
 Bits 0 and 1 of the `flags` column of `actflags.tsv` (`STAGING_ON_DOWNED`,
 `STAGING_OTHER_SIDE`) are read, but no row in either game sets them. The plan

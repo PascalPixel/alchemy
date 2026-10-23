@@ -204,7 +204,7 @@ and includes that list, so every overlay keeps its imports in the same
 relative order. A stub takes the name of the routine it reaches, so an
 overlay calls `WaitFrames` or `ArcTan2` as the main image does. A few keep a
 name of their own, where the maps' calls differ from the routine's prototype
-(`Engine_RandomNext` reaches `Random16`, but the maps read its result as an
+(`Import_RandomNext` reaches `Random16`, but the maps read its result as an
 `int`); `script_layer.h` lists them.
 
 Only one overlay is loaded at a time, since all are linked to the same 32 KB,
@@ -289,7 +289,7 @@ itself, the layout has to keep every one:
 | What | Where | Why it can't move |
 | --- | --- | --- |
 | The cartridge restart entry, `Cart_Restart` | `0x08000000`, the start of the ROM | The soft reset in `WaitFrames` jumps there, and `SerialTest_Run`, a link cable test nothing reaches, sends the first 640 bytes from there over the cable. So the header and `System_Entry` stay at the start of the ROM. |
-| The resident runtime, `.iwram_runtime` (5 KB, copied by `Runtime_InstallIwramAndIrqs`) | `0x03000000`, the start of IWRAM | C calls its routines at their addresses (`IwramSqrt` and the rest), and the ARM code that runs from RAM reaches them as offsets from `IwramIrqMain` (`IWRAM_ENTRY`, `games/tbs/src/field/update.c`). |
+| The resident runtime, `.iwram_runtime` (5 KB, copied by `System_InstallIwramAndIrqs`) | `0x03000000`, the start of IWRAM | C calls its routines at their addresses (`IwramSqrt` and the rest), and the ARM code that runs from RAM reaches them as offsets from `IwramIrqMain` (`IWRAM_ENTRY`, `games/tbs/src/field/update.c`). |
 | The overlay area, `gOverlayArea` | `0x02008000`, 32 KB of EWRAM | Every overlay is linked to run there and has to fit. Its first 48 bytes are the entry table, which the field's code calls by member. |
 | The map and decode buffers: `Ram_MapGridCellBuffer`, `Ram_EnemySpriteSlots`, `Ram_DecodeBuffer`, `Ram_Metatiles`, `Ram_MapGridShapes`, `Ram_BgTileBuffer` | after the overlay area, as the EWRAM table lists | Code reaches across their boundaries by arithmetic: the map grid's [cells](../../glossary.md#cell) fill 64 KB from the start of `Ram_MapGridCellBuffer`, through the sprite slots and the decode buffer, and the tileset animation reads tiles from `Ram_DecodeBuffer` that land in `gMapGridLayerData` ([Layouts](../layout/README.md)). So `ewram.s` can't reorder or resize them. |
 | The ends of the two heaps | `0x03007800` in IWRAM and `0x02040000`, the end of EWRAM | The allocators test against these numbers (`heap.c`). `gCartridgeResetMarker` sits at the first, and the system stack lives above it. |
@@ -304,7 +304,7 @@ Both heaps can grow into the memory above them, and in play both do, without
 harm that anyone has seen.
 
 The allocators test only against the heap's end, and so does
-`Runtime_GetRemainingIwram`, which `Battle_Run` calls around every
+`Heap_GetRemainingIwram`, which `Battle_Run` calls around every
 action and then ignores. So nothing stops a heap running into the buffers
 above its own space. The marks below come from the English edition played in
 libmgba, an emulator library, with the heap's next address read at every
@@ -414,8 +414,8 @@ to its symbol in each edition its `#if` selects.
   build stamp (row 2), and from row 3 every bank's far-call table but the
   runtime's, the sound and resource tables twice each. The build stamp is read
   through its row (`System_CopyBuildStamp`, `game/game/units.c`), but the named far-call rows are
-  only passed to stubs that do nothing (`RuntimeDispatch_NoOpHook`,
-  `RuntimeDispatch_ReturnZero`), from the title screen, Lucky Dice, Lucky
+  only passed to stubs that do nothing (`Stub_NoOpHook`,
+  `Stub_ReturnZero`), from the title screen, Lucky Dice, Lucky
   Wheels and the sprite viewer. Those calls look like a leftover of loading
   banks as resources (the comment in `menu/title.c` suggests as much), but
   The Lost Age's stubs are empty too, and nothing in either ROM loads a bank

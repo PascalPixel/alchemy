@@ -315,9 +315,9 @@ s32 BattleObject_UpdatePose(s32 unitId) {
     pose = POSE_ENEMY_DOWN - pose;
   }
 
-  ObjectDispatch_SelectAnimationFar(BattleObject_Get(unitId)->object, pose);
-  ObjectDispatch_SetAnimationSpeedFar(
-      (struct Object *)BattleObject_Get(unitId)->object, (unitId & 3) + 14);
+  Object_SelectAnimationFar(BattleObject_Get(unitId)->object, pose);
+  Object_SetAnimationSpeedFar((struct Object *)BattleObject_Get(unitId)->object,
+                              (unitId & 3) + 14);
 }
 
 /// Releases every sprite unitId's object holds and leaves it with none,
@@ -580,7 +580,7 @@ void *BattleObject_DestroyAll(void) {
     }
     battleObject = BattleObject_Get(unitId);
     if ((battleObject != NULL) && (battleObject->active != 0)) {
-      ObjectDispatch_ReleaseFar((struct Object *)battleObject->object);
+      Object_ReleaseFar((struct Object *)battleObject->object);
       battleObject->object = NULL;
       battleObject->active = 0;
     }

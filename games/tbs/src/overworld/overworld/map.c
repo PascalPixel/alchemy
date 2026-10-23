@@ -253,8 +253,8 @@ void Game_Run(s32 mode) {
     // Drop the tasks, the HBlank and VCount handlers (IRQs 1 and 2) and every
     // heap block the last map, battle or minigame left.
     Task_ResetAll();
-    Runtime_SetIrqHandler(1, 0, 0);
-    Runtime_SetIrqHandler(2, 0, 0);
+    Irq_SetHandler(1, 0, 0);
+    Irq_SetHandler(2, 0, 0);
     InitHeap();
     DebugText_Clear();
     VramCache_Reset();

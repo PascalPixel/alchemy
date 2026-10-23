@@ -359,20 +359,20 @@ static s32 Kalay_UpdateTouristFidget(struct Object *interpreter) {
   u32 nextTimer;
 
   if ((s16)objectEvent->work == 0) {
-    action = (u32)(Engine_RandomNext() * 8) >> 0x10;
+    action = (u32)(Import_RandomNext() * 8) >> 0x10;
     switch (action) {
     case 0:
-      ObjectDispatch_SelectAnimation(objectEvent, 3);
+      Object_SelectAnimation(objectEvent, 3);
       break;
     case 1:
-      ObjectDispatch_SelectAnimation(objectEvent, 4);
+      Object_SelectAnimation(objectEvent, 4);
       break;
     case 3:
     case 4:
-      objectEvent->facing += (u32)(Engine_RandomNext() << 0xF) >> 0x10;
+      objectEvent->facing += (u32)(Import_RandomNext() << 0xF) >> 0x10;
       break;
     }
-    nextTimer = (u32)(Engine_RandomNext() * 0x50) >> 0x10;
+    nextTimer = (u32)(Import_RandomNext() * 0x50) >> 0x10;
     objectEvent->work = nextTimer;
   }
   if ((s16)objectEvent->work != 0) {
@@ -445,7 +445,7 @@ static void Kalay_SearchWell(void) {
 /// is caught (FLAG_KALAY_TUNNEL_ENTRANCE_NUT_CAUGHT).
 static void Kalay_CatchTunnelEntranceNut(void) {
   FieldScript_Start();
-  Engine_ObjectEventSetPosition(LOCALID_TUNNEL_ENTRANCE_NUT, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_TUNNEL_ENTRANCE_NUT, 0, 0);
   GameFlag_Set(FLAG_KALAY_TUNNEL_ENTRANCE_NUT_CAUGHT);
   FieldEffect_StartEffectObject22(ITEM_NUT, 3);
   PartyInventory_GiveItem(ITEM_NUT, 0);
@@ -611,10 +611,10 @@ static void Kalay_OpenDoorAndExit(void) {
   ObjectMotion_SetSpeedParameters(LOCALID_PARTY_LEADER, PIXELS(1) / 2,
                                   PIXELS(1) / 4);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
   ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 2, -8);
   FieldScript_WaitFrames(10);
-  Engine_ScriptRequestWarp(*trigger);
+  Import_ScriptRequestWarp(*trigger);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_End();
@@ -636,10 +636,10 @@ static void Kalay_EnterPalace(void) {
   Kalay_AnimatePalaceDoor();
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
   ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0, -8);
   FieldScript_WaitFrames(10);
-  Engine_ScriptRequestWarp(HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE);
+  Import_ScriptRequestWarp(HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_End();
@@ -752,7 +752,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     ObjectMotion_SetVarCbAndRefresh(LOCALID_FIRST_TOURIST + 1, 2);
     ObjectEvent_FaceDirection(LOCALID_FIRST_TOURIST + 1,
                               FACING_NORTHWEST + FACING_STEP, 10);
-    Engine_ObjectEventSetAnimation(LOCALID_FIRST_TOURIST + 1, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_FIRST_TOURIST + 1, ANIM_NOD);
     Script_ShowMessageAndWait(LOCALID_FIRST_TOURIST + 1, 0, 10);
     ObjectEvent_SetAttachedEffect(LOCALID_FIRST_TOURIST + 5,
                                   ATTACHED_EFFECT_IN_FRONT |
@@ -766,13 +766,13 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Script_ShowMessageAndWait(LOCALID_FIRST_TOURIST + 4, 0, 10);
     ObjectEvent_FaceDirection(LOCALID_FIRST_TOURIST + 4, FACING_WEST, 10);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_FIRST_TOURIST + 4, 2);
-    Engine_ObjectEventSetAnimation(LOCALID_FIRST_TOURIST + 4, ANIM_SHAKE_HEAD);
+    Import_ObjectEventSetAnimation(LOCALID_FIRST_TOURIST + 4, ANIM_SHAKE_HEAD);
     Script_ShowMessageAndWait(LOCALID_FIRST_TOURIST + 4, 0, 10);
     ObjectEvent_FaceDirection(LOCALID_FIRST_TOURIST + 4,
                               FACING_NORTHWEST + FACING_STEP, 0);
     ObjectEvent_FaceDirection(LOCALID_FIRST_TOURIST + 5,
                               FACING_SOUTH + FACING_STEP, 20);
-    Engine_ObjectEventSetAnimation(LOCALID_FIRST_TOURIST + 4, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_FIRST_TOURIST + 4, ANIM_NOD);
     ObjectMotion_SetAnimationAndWait(LOCALID_FIRST_TOURIST + 5, ANIM_NOD);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_HEAD_GUIDE, 2);
     ObjectEvent_SetAttachedEffect(LOCALID_HEAD_GUIDE, ATTACHED_EFFECT_IN_FRONT |
@@ -807,7 +807,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Script_ShowMessageAndWait(LOCALID_OURANOS, 0, 10);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_FIRST_TOURIST + 6, 1);
     Script_ShowMessageAndWait(LOCALID_FIRST_TOURIST + 6, 0, 10);
-    Engine_ObjectEventSetAnimation(LOCALID_FIRST_TOURIST + 6, ANIM_SHAKE_HEAD);
+    Import_ObjectEventSetAnimation(LOCALID_FIRST_TOURIST + 6, ANIM_SHAKE_HEAD);
     Script_ShowMessageAndWait(LOCALID_FIRST_TOURIST + 6, 0, 10);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_SECOND_GUIDE, 2);
     ObjectEvent_ShowEmote(LOCALID_SECOND_GUIDE, EMOTE_IN_FRONT | EMOTE_WINCE,
@@ -971,7 +971,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     FieldScript_SetMessageId(message);
     Script_ShowMessageAndWait(LOCALID_OURANOS, 0, 10);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_FIRST_TOURIST + 6, 1);
-    Engine_ObjectEventSetAnimation(LOCALID_FIRST_TOURIST + 6, ANIM_SHAKE_HEAD);
+    Import_ObjectEventSetAnimation(LOCALID_FIRST_TOURIST + 6, ANIM_SHAKE_HEAD);
     Script_ShowMessageAndWait(LOCALID_FIRST_TOURIST + 6, 0, 10);
     ObjectEvent_ShowEmote(LOCALID_OURANOS, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
     ObjectEvent_ShowEmote(LOCALID_HEAD_GUIDE, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN,
@@ -1044,13 +1044,13 @@ static void Kalay_WatchTourGroupDeparture(void) {
                               FACING_SOUTH + FACING_STEP, 0);
     ObjectEvent_FaceDirection(LOCALID_OURANOS, FACING_NORTHWEST + FACING_STEP,
                               4);
-    Engine_ObjectEventSetAnimation(LOCALID_FIRST_TOURIST, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_FIRST_TOURIST, ANIM_NOD);
     ObjectMotion_SetAnimationAndWait(LOCALID_FIRST_TOURIST + 1, ANIM_NOD);
-    Engine_ObjectEventSetAnimation(LOCALID_FIRST_TOURIST + 2, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_FIRST_TOURIST + 2, ANIM_NOD);
     ObjectMotion_SetAnimationAndWait(LOCALID_FIRST_TOURIST + 3, ANIM_NOD);
-    Engine_ObjectEventSetAnimation(LOCALID_FIRST_TOURIST + 5, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_FIRST_TOURIST + 5, ANIM_NOD);
     ObjectMotion_SetAnimationAndWait(LOCALID_FIRST_TOURIST + 4, ANIM_NOD);
-    Engine_ObjectEventSetAnimation(LOCALID_FIRST_TOURIST + 6, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_FIRST_TOURIST + 6, ANIM_NOD);
     ObjectMotion_SetAnimationAndWait(LOCALID_OURANOS, ANIM_NOD);
     ObjectMotion_Launch(LOCALID_HEAD_GUIDE, 2, 40);
     Script_ShowMessageAndWait(LOCALID_HEAD_GUIDE, 0, 10);
@@ -1187,7 +1187,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     GameFlag_Set(FLAG_KALAY_COLOSSO_TOUR_LEFT);
   } else {
     Script_PlaySong(SE_MAP_EXIT);
-    Engine_ScriptRequestWarp(work->coordEvent);
+    Import_ScriptRequestWarp(work->coordEvent);
     FieldScript_FinishScreenTransition();
     FieldScript_WaitTransitionFrames();
   }
@@ -1243,7 +1243,7 @@ static void Kalay_DisableLeaderAutomaticPriority(void) {
 static void Kalay_CatchTownNut(void) {
   Task_Remove(Kalay_UpdateNutOrbit);
   WaitFrames(1);
-  Engine_ObjectEventSetPosition(LOCALID_TOWN_NUT, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_TOWN_NUT, 0, 0);
   GameFlag_Set(FLAG_KALAY_TOWN_NUT_CAUGHT);
   FieldEffect_StartEffectObject22(ITEM_NUT, 3);
   PartyInventory_GiveItem(ITEM_NUT, 0);
@@ -1297,10 +1297,10 @@ static void Kalay_PrepareTown(void) {
   }
   // The second guide shares the first's sprite, drawn with its green and blue
   // swapped to tell them apart.
-  ObjectGroup_ConfigureChildValue(LOCALID_SECOND_GUIDE, SPRITE_COLOR_RBG);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_SECOND_GUIDE, SPRITE_COLOR_RBG);
   found = GameFlag_Get(FLAG_KALAY_TOWN_NUT_CAUGHT);
   if (found != 0) {
-    Engine_ObjectEventSetPosition(LOCALID_TOWN_NUT, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_TOWN_NUT, 0, 0);
   } else {
     nut = (OrbitingMapObject *)ObjectEvent_GetById(LOCALID_TOWN_NUT);
     sprite = nut->sprite;
@@ -1469,7 +1469,7 @@ static void Kalay_PrepareTunnel(void) {
     if (GameFlag_Get(FLAG_TUNNEL_PUDDLE_FROZEN) != 0) {
       ObjectEvent_Get(LOCALID_PUDDLE);
       column = 9;
-      Engine_ObjectEventSetAnimation(LOCALID_PUDDLE, PUDDLE_ANIMATION_FROZEN);
+      Import_ObjectEventSetAnimation(LOCALID_PUDDLE, PUDDLE_ANIMATION_FROZEN);
       MapGrid_CopyCellAttributes(0, 0, 1, 1, column, 14);
       MapGrid_CopyCellAttributes(0, 0, 1, 1, column, 45);
       {
@@ -1590,7 +1590,7 @@ static void Kalay_StartTouristFidgeting(s32 localId) {
 
   objectEvent = ObjectEvent_GetById(localId);
   objectEvent->timer = localId;
-  random = Engine_RandomNext();
+  random = Import_RandomNext();
   objectEvent->work = (random * 5) >> 12;
   ObjectEvent_SetScript(objectEvent, gKalay_TouristFidgetScript);
 }
@@ -1673,7 +1673,7 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
       ~OBJ_EVENT_FACES_MOTION;
   ObjectEvent_WalkTo(LOCALID_PALACE_GUARD, 184, 232);
   ObjectEvent_WalkToAndWait(LOCALID_SECOND_PALACE_GUARD, 198, 232);
-  Engine_ObjectEventSetAnimation(LOCALID_PALACE_GUARD, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_PALACE_GUARD, ANIM_STAND);
   FieldScript_WaitFrames(20);
   ObjectEvent_Get(LOCALID_PALACE_GUARD)->steeringFlags |=
       OBJ_EVENT_FACES_MOTION;
@@ -1815,7 +1815,7 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
       ~OBJ_EVENT_FACES_MOTION;
   ObjectEvent_WalkTo(LOCALID_PALACE_GUARD, 168, 232);
   ObjectEvent_WalkToAndWait(LOCALID_SECOND_PALACE_GUARD, 212, 232);
-  Engine_ObjectEventSetAnimation(LOCALID_PALACE_GUARD, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_PALACE_GUARD, ANIM_STAND);
   FieldScript_WaitFrames(20);
   ObjectEvent_Get(LOCALID_PALACE_GUARD)->steeringFlags |=
       OBJ_EVENT_FACES_MOTION;
@@ -1830,7 +1830,7 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(6) / 5, PIXELS(3) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 192, 222);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, 0, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_PALACE_GUARD, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PALACE_GUARD, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_SECOND_PALACE_GUARD, ANIM_NOD);
   ObjectEvent_WalkTo(LOCALID_PALACE_GUARD, 184, 232);
   ObjectEvent_WalkToAndWait(LOCALID_SECOND_PALACE_GUARD, 198, 232);
@@ -1843,7 +1843,7 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Engine_ScriptRequestWarp(HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE_LAYANAS_ROOM);
+  Import_ScriptRequestWarp(HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE_LAYANAS_ROOM);
   FieldScript_End();
 }
 
@@ -1883,7 +1883,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(300), 1);
   ObjectEvent_SetSpeed(LOCALID_WAGON, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_WAGON, 440, 300);
-  Engine_ObjectEventSetAnimation(LOCALID_WAGON, 0);
+  Import_ObjectEventSetAnimation(LOCALID_WAGON, 0);
   Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
   FieldScript_WaitFrames(40);
   ObjectEvent_SetSpeed(LOCALID_BUNZA, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -1943,8 +1943,8 @@ static void Kalay_HammetReturnsToPalace(void) {
   ObjectEvent_WalkTo(LOCALID_GARET, 378, 310);
   ObjectEvent_WalkTo(LOCALID_IVAN, 400, 288);
   ObjectEvent_WalkToAndWait(LOCALID_MIA, 410, 308);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
-  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_STAND);
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTH, 40);
@@ -1993,9 +1993,9 @@ static void Kalay_HammetReturnsToPalace(void) {
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHEAST, 0);
   ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_SOUTHEAST, 0);
   ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHWEST, 20);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
   FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
@@ -2012,7 +2012,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   ObjectMotion_SetVariantCallback(LOCALID_IVAN, 2);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 2, 0, 10);
   ObjectEvent_FaceDirection(LOCALID_BUNZA, FACING_SOUTHEAST + FACING_STEP, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_BUNZA, ANIM_SHAKE_HEAD);
+  Import_ObjectEventSetAnimation(LOCALID_BUNZA, ANIM_SHAKE_HEAD);
   Script_ShowMessageAndWait(LOCALID_BUNZA, 0, 10);
   ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 3, 0, 10);
@@ -2023,7 +2023,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   Script_ShowMessageAndWait(LOCALID_GARET, 0, 10);
   ObjectEvent_FaceDirection(LOCALID_BUNZA, FACING_SOUTH + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_HAMMET, FACING_SOUTH + FACING_STEP, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_BUNZA, ANIM_SHAKE_HEAD);
+  Import_ObjectEventSetAnimation(LOCALID_BUNZA, ANIM_SHAKE_HEAD);
   Script_ShowMessageAndWait(LOCALID_BUNZA, 0, 10);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 0);
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHEAST, 40);
@@ -2039,7 +2039,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   ObjectEvent_FaceDirection(LOCALID_HAMMET, FACING_SOUTHEAST + FACING_STEP, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_HAMMET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_HAMMET, ANIM_NOD);
   Script_OpenMessage(LOCALID_HAMMET, 0);
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHEAST, 0);
   ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_SOUTHWEST, 0);
@@ -2059,8 +2059,8 @@ static void Kalay_HammetReturnsToPalace(void) {
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTH, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
   FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_TUNNEL_GUARD,
@@ -2111,9 +2111,9 @@ static void Kalay_HammetReturnsToPalace(void) {
   FieldScript_WaitFrames(40);
   ObjectMotion_SetAnimationAndWait(LOCALID_BUNZA, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
   ObjectEvent_WalkToAndWait(LOCALID_BUNZA, 420, 282);
   ObjectEvent_WalkToAndWait(LOCALID_BUNZA, 420, 312);
@@ -2146,7 +2146,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   work->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Engine_ScriptRequestWarp(KALAY_TUNNEL_ENTRANCE_TO_WORLD_MAP_SOUTH);
+  Import_ScriptRequestWarp(KALAY_TUNNEL_ENTRANCE_TO_WORLD_MAP_SOUTH);
   FieldScript_End();
 }
 
@@ -2181,7 +2181,7 @@ static void Kalay_PushTunnelStatue(void) {
     SET_POSITION(target, statue->x.fixed + (moveStep & -0x10000),
                  statue->y.fixed, statue->z.fixed + (moveStep << 16));
     if (FieldObject_CheckMovementCollision(statue, target) <= 0) {
-      ObjectDispatch_SelectAnimation(leader, ANIM_PUSH);
+      Object_SelectAnimation(leader, ANIM_PUSH);
       pushSpeed = PIXELS(1) / 5;
       WaitFrames(15);
       Sound_PlaySong(SE_PUSH);
@@ -2197,7 +2197,7 @@ static void Kalay_PushTunnelStatue(void) {
       statue->z.fixed = target->z;
       statue->velocityX = stoppedVelocity;
       statue->velocityZ = stoppedVelocity;
-      ObjectDispatch_SelectAnimation(leader, ANIM_STAND);
+      Object_SelectAnimation(leader, ANIM_STAND);
       Kalay_UpdateTunnelPassages();
     }
   }
@@ -2344,7 +2344,7 @@ static void Kalay_UpdateTunnelParticle(struct Object *interpreter) {
   lifetime = &particle->timer;
   remainingFrames = *lifetime;
   if (remainingFrames == 0) {
-    ObjectDispatch_Release((struct Object *)particle);
+    Object_Release((struct Object *)particle);
   } else if (remainingFrames == 1) {
     particle->velocityX = 0;
     particle->velocityY = 0;
@@ -2414,7 +2414,7 @@ static void Kalay_SpawnTunnelParticle(s32 x, s32 height, s32 z) {
   u8 *spriteBytes;
 
   depth = z;
-  random = Engine_RandomNext();
+  random = Import_RandomNext();
   particle = ObjectEvent_Create(
       SPRITE_DUST_PUFF, (x - PIXELS(8)),
       (((((u32)(random << 3) >> 16) << 16) + height) + PIXELS(16)), depth);
@@ -2424,7 +2424,7 @@ static void Kalay_SpawnTunnelParticle(s32 x, s32 height, s32 z) {
     spriteBytes = (u8 *)particle->sprite;
     attributeMask -= 13;
     spriteBytes[9] = ((spriteBytes[9] & attributeMask) | 8);
-    ObjectGroup_SetChildValue(particle, SPRITE_COLOR_BLUE_TINT);
+    ObjectEvent_SetSpriteColor(particle, SPRITE_COLOR_BLUE_TINT);
     ObjectEvent_SetSpriteFlags(particle, 0);
     random = Random_Next();
     particle->velocityX = ((((u32)(random << 1) >> 16) - 1) << 16);
@@ -2438,7 +2438,7 @@ static void Kalay_SpawnTunnelParticle(s32 x, s32 height, s32 z) {
       *target = shown;
       particle->frozen = 1;
     }
-    ObjectDispatch_SelectAnimation(particle, 1);
+    Object_SelectAnimation(particle, 1);
     ObjectEvent_SetScript(particle, gKalay_TunnelParticleScript);
   }
 }
@@ -2457,9 +2457,9 @@ static void Kalay_UpdateNutOrbit(void) {
   effect->x = effect->orbitCenterX + Trig_Cos(effect->orbitAngle) * 2;
   effect->y = effect->orbitCenterY + offset;
   sprite->rotation = Trig_Cos(effect->orbitAngle + 0x8000) >> 3;
-  first = Engine_RandomNext();
+  first = Import_RandomNext();
   effect->orbitAngle += ((u32)(first << 9) >> 16) +
-                        ((u32)(Engine_RandomNext() << 9) >> 16) + 0x400;
+                        ((u32)(Import_RandomNext() << 9) >> 16) + 0x400;
 }
 
 /// Frost on the puddle in the Kalay Tunnel sinks it into the floor. The puddle

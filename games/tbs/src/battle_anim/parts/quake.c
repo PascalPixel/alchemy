@@ -172,8 +172,8 @@ void BattleAnim_RunQuake(struct BattleAnimArgs *effect) {
             object->gravity = 0xab85;
           }
           if (object->y < 0)
-            ObjectGroup_UpdateMembers(work->effect->targets[member], 0,
-                                      POSE_DAMAGE, -1, 0);
+            BattleAnim_TintBattler(work->effect->targets[member], 0,
+                                   POSE_DAMAGE, -1, 0);
         }
       }
     }
@@ -187,8 +187,8 @@ void BattleAnim_RunQuake(struct BattleAnimArgs *effect) {
       state = &work->particles[member];
       if (state->variant == 0 && object->y <= 0 && object->velocityY < 0) {
         state->variant = 1;
-        ObjectGroup_UpdateMembers(work->effect->targets[member],
-                                  SPRITE_COLOR_WHITE, POSE_DAMAGE, member, 5);
+        BattleAnim_TintBattler(work->effect->targets[member],
+                               SPRITE_COLOR_WHITE, POSE_DAMAGE, member, 5);
       }
     }
     // Shake ranges of 2, 4 or 8 pixels, by variant, centred on the view.

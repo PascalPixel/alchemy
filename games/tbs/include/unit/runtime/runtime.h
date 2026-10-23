@@ -8,7 +8,7 @@
 struct AffineTransform;
 
 void System_Initialize(void);
-void Runtime_IdleForever(void);
+void System_IdleForever(void);
 /// The cartridge's language, from its header (System_GetLanguage).
 enum CartridgeLanguage {
   CARTRIDGE_LANGUAGE_ENGLISH,
@@ -18,20 +18,20 @@ enum CartridgeLanguage {
   CARTRIDGE_LANGUAGE_ITALIAN
 };
 s32 System_GetLanguage(void);
-void RuntimeDispatch_ReservedNoOpA(void);
-void RuntimeDispatch_ReservedNoOpB(void);
-void RuntimeDispatch_ReservedNoOpC(void);
-void RuntimeDispatch_ReservedNoOpD(void);
-void RuntimeDispatch_ReservedNoOpE(void);
-s32 RuntimeDispatch_ReturnZero(s32 unused0, const u8 *unused1);
+void Stub_ReservedNoOpA(void);
+void Stub_ReservedNoOpB(void);
+void Stub_ReservedNoOpC(void);
+void Stub_ReservedNoOpD(void);
+void Stub_ReservedNoOpE(void);
+s32 Stub_ReturnZero(s32 unused0, const u8 *unused1);
 void System_CopyBuildStamp(void);
-void RuntimeDispatch_NoOpHook(s32 unused);
+void Stub_NoOpHook(s32 unused);
 void *Resource_GetTableEntry(s32 index);
 void Code_ResolveLongBranches(u16 *entries, s32 byteLength);
 void Overlay_Load(u32 index, void *destination);
-void Runtime_IgnoreInterrupt(void);
-void Runtime_InstallIwramAndIrqs(void);
-void Runtime_SetIrqHandler(u32 irq, s32 vcount, InterruptHandler handler);
+void Irq_Ignore(void);
+void System_InstallIwramAndIrqs(void);
+void Irq_SetHandler(u32 irq, s32 vcount, InterruptHandler handler);
 void WaitFrames(s32 frames);
 void Input_ResetKeyRepeat(void);
 void Input_UpdateKeyRepeatAndDirection(void);
@@ -47,8 +47,8 @@ void ScreenFade_FromWhite(s32 frames);
 s32 Decompress_Type01(const void *source, void *destination);
 s32 Decompress_Type2(const void *source, void *destination);
 s32 Decompress_ByteLz(const void *source, void *destination);
-void SerialRuntime_WaitForSend(void);
-void SerialRuntime_WaitForReceive(void);
+void Serial_WaitForSend(void);
+void Serial_WaitForReceive(void);
 
 void IoWriteQueue_FlushPending(void);
 
@@ -106,13 +106,13 @@ void Window_LoadGraphics(void);
 void Palette_LoadBasicSpriteColors(void);
 
 void InitHeap(void);
-s32 Runtime_GetRemainingIwram(void);
-s32 Runtime_GetRemainingEwram(void);
+s32 Heap_GetRemainingIwram(void);
+s32 Heap_GetRemainingEwram(void);
 void *AllocHeapSlot(s32 kind, s32 size);
 void *AllocHeapSlotEwram(s32 kind, s32 size);
 void *Alloc(s32 size);
 void *AllocEwram(s32 size);
-void Runtime_ReservedNoOp(void);
+void Heap_ReservedNoOp(void);
 
 void Transform_Reset(void);
 void Transform_Push(void);
@@ -164,23 +164,23 @@ u32 Save_GetLatestCounter(s32 recordId);
 s32 Save_LoadFileSummaries(void);
 u32 Save_ReleaseWork(void);
 
-void SerialRuntime_Initialize(void);
-void SerialRuntime_EnableTransferTimer(void);
-void SerialRuntime_DisableTransfer(void);
-s32 SerialRuntime_PollAndTransfer(void *send, void *receive);
-s32 SerialRuntime_PollStatus(void);
-s32 SerialRuntime_ExchangePayloads(void *send, void *receive);
-void SerialRuntime_PrepareSendPacket(void *payload);
-u8 SerialRuntime_CollectReceivedPayloads(void *payload);
-void SerialRuntime_HandleTransferInterrupt(void);
-void SerialRuntime_RemoveIrqHandlers(void);
-u32 SerialRuntime_WaitForStatusMask(s32 mask);
-s32 SerialRuntime_StartSend(void *source, s32 size);
-s32 SerialRuntime_StartReceive(void *destination);
-void SerialRuntime_WaitForTransfers(void);
-s32 SerialRuntime_GetActiveTransfers(void);
+void Serial_Initialize(void);
+void Serial_EnableTransferTimer(void);
+void Serial_DisableTransfer(void);
+s32 Serial_PollAndTransfer(void *send, void *receive);
+s32 Serial_PollStatus(void);
+s32 Serial_ExchangePayloads(void *send, void *receive);
+void Serial_PrepareSendPacket(void *payload);
+u8 Serial_CollectReceivedPayloads(void *payload);
+void Serial_HandleTransferInterrupt(void);
+void Serial_RemoveIrqHandlers(void);
+u32 Serial_WaitForStatusMask(s32 mask);
+s32 Serial_StartSend(void *source, s32 size);
+s32 Serial_StartReceive(void *destination);
+void Serial_WaitForTransfers(void);
+s32 Serial_GetActiveTransfers(void);
 void LinkBattle_ResetTransferState(void);
-void SerialRuntime_StepBlockTransfer(void);
+void Serial_StepBlockTransfer(void);
 void SerialTest_Delay(void);
 void SerialTest_Run(void);
 

@@ -225,17 +225,17 @@ s32 ObjectScript_ToggleFlagAndTest(struct Object *interpreter) {
 
 /// SC_ANIMATION(v): switches the object's sprites to animation v.
 s32 ObjectScript_SetAnimation(struct Object *interpreter) {
-  ObjectDispatch_SelectAnimation(
-      interpreter, interpreter->script[interpreter->scriptCursor + 1]);
+  Object_SelectAnimation(interpreter,
+                         interpreter->script[interpreter->scriptCursor + 1]);
   interpreter->scriptCursor += 2;
   return 1;
 }
 
-/// SC_FREE: releases the object through ObjectDispatch_Release, which
+/// SC_FREE: releases the object through Object_Release, which
 /// releases its sprites and zeroes its slot. Returns 0: with its script now
 /// null, the update loop skips the rest of the object's frame.
 s32 ObjectScript_FreeObject(struct Object *interpreter) {
-  ObjectDispatch_Release(interpreter);
+  Object_Release(interpreter);
   return 0;
 }
 
@@ -268,8 +268,8 @@ s32 ObjectScript_CheckOverlap(struct Object *object, s32 *values) {
        objectIndex++, candidate++, collisionFlags += sizeof(*candidate)) {
     if (candidate->script != NULL && (OBJ_EVENT_SOLID & *collisionFlags) &&
         candidate != object) {
-      if (Runtime_CheckRadiusOverlap(&candidate->x, candidate->radius - 2,
-                                     values, object->radius - 2) >= 0)
+      if (Field_CheckSpheresOverlap(&candidate->x, candidate->radius - 2,
+                                    values, object->radius - 2) >= 0)
         return -1;
     }
   }
@@ -290,8 +290,8 @@ struct Object *ObjectScript_FindOverlappingEntry(struct Object *object,
        objectIndex++, candidate++, collisionFlags += sizeof(*candidate)) {
     if (candidate->script != NULL && (OBJ_EVENT_SOLID & *collisionFlags) &&
         candidate != object) {
-      if (Runtime_CheckRadiusOverlap(&candidate->x, candidate->radius - 2,
-                                     values, object->radius - 2) >= 0)
+      if (Field_CheckSpheresOverlap(&candidate->x, candidate->radius - 2,
+                                    values, object->radius - 2) >= 0)
         return candidate;
     }
   }
@@ -395,8 +395,8 @@ s32 ObjectScript_ApplyLocalOffsetPosition(struct Object *interpreter) {
 /// at most its speed limit, and a quarter of a large height difference; when
 /// action is set it jumps there at once.
 ///
-/// Run each frame by gObjectDispatch_CameraScript, which
-/// ObjectDispatch_StartCamera starts. Clears the camera's flags and target,
+/// Run each frame by gObject_CameraScript, which
+/// Object_StartCamera starts. Clears the camera's flags and target,
 /// moves its position, and counts its step.
 s32 FieldCamera_FollowLeaderInBounds(struct Object *interpreter) {
   struct Object *cameraObject = interpreter;
@@ -502,8 +502,8 @@ s32 _call_via_r3(s32, s32, s32, s32);
 /// pixels away it walks to 16 pixels short of it (animation 2) and runs on;
 /// within 16 it stands (animation 1) and waits for the next frame.
 ///
-/// Run each frame by gObjectDispatch_ApproachLinkScript, which
-/// ObjectDispatch_StartApproachLink starts. Copies the linked object's speed
+/// Run each frame by gObject_ApproachLinkScript, which
+/// Object_StartApproachLink starts. Copies the linked object's speed
 /// limit and acceleration, and sets the move target.
 s32 Object_ApproachLinkedObject(struct Object *interpreter) {
   struct Object *object = interpreter;
@@ -543,11 +543,11 @@ s32 Object_ApproachLinkedObject(struct Object *interpreter) {
     moveZ = dz * remainingDistance / distancePixels;
     Object_SetMoveTarget(object, object->x + moveX, object->y,
                          object->z + moveZ);
-    ObjectDispatch_SelectAnimation(object, 2);
+    Object_SelectAnimation(object, 2);
     object->scriptCursor = (object->scriptCursor + 1);
     return 1;
   }
-  ObjectDispatch_SelectAnimation(object, 1);
+  Object_SelectAnimation(object, 1);
   return 0;
 }
 

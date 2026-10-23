@@ -60,7 +60,7 @@ enum BattleType {
 /// new game sets its defaults (SaveBlock_InitializeDefaults), and the field,
 /// battle, menus and maps read and write it directly.
 struct SaveBlock {
-  /// Runtime_GetBuildStampTime's value when the game was last saved; its low
+  /// BuildStamp_GetTime's value when the game was last saved; its low
   /// half goes into the file's summary.
   u32 buildStamp;
   u32 playTime; ///< frames, copied from gPlayTimeFrames when saving
@@ -183,8 +183,8 @@ struct SaveBlock {
   /// reports, 3 cleared on choosing a monster battle; the others not named by
   /// TBS code.
   u16 linkTallies[8];
-  u8 unusedAfterTallies[4]; ///< no code names it
-  u32 startStamp;           ///< Runtime_GetBuildStampTime's value at a new game
+  u8 unusedAfterTallies[4];    ///< no code names it
+  u32 startStamp;              ///< BuildStamp_GetTime's value at a new game
   u8 unusedAfterStartStamp[4]; ///< no code names it
   struct Unit units[8];        ///< the characters
 };

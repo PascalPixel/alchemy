@@ -604,9 +604,9 @@ static void BabiPalace_OfferCloakBall(void) {
     FieldScript_WaitFrames(30);
     ObjectMotion_ArmCallback(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
     FieldScript_WaitFrames(30);
-    Engine_ObjectEventSetPosition(LOCALID_CLOAK_BALL, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_CLOAK_BALL, 0, 0);
     FieldEffect_StartEffectObject22(ITEM_CLOAK_BALL, 3);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
     PartyInventory_GiveItem(ITEM_CLOAK_BALL, 0);
     GameFlag_Set(FLAG_BABI_PALACE_CLOAK_BALL);
   }

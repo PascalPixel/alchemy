@@ -281,7 +281,7 @@ static void EventScript_HideRevealedPath(void) {
 /// out: it goes out for good.
 static void EventScript_DouseRapierRoomFire(void) {
   FieldScript_Start();
-  Engine_ObjectEventSetPosition(LOCALID_RAPIER_ROOM_FIRE, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_RAPIER_ROOM_FIRE, 0, 0);
   GameFlag_Set(FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED);
   FieldScript_End();
 }
@@ -310,7 +310,7 @@ static void EventScript_DouseIceRoomFire(void) {
 /// back into a puddle.
 static inline void BilibinCave_MeltFrostBack(s32 localId) {
   FieldScript_Start();
-  ObjectGroup_ConfigureChildValue(localId, 0);
+  ObjectEvent_ConfigureSpriteColor(localId, 0);
   FieldScript_WaitFrames(40);
   Sound_PlaySong(SE_HIDDEN_PASSAGE_OPEN);
   ObjectMotion_SetAnimationAndWait(localId, PUDDLE_ANIMATION_MELT);
@@ -434,7 +434,7 @@ static void BilibinCave_RestoreEntrance(void) {
   if (GameFlag_Get(FLAG_MAPSEC_TEMP_05) != 0) {
 
     MapGrid_CopyCellAttributes(31, 0, 1, 1, 8, 13);
-    Engine_ObjectEventSetAnimation(LOCALID_SPROUT, 0);
+    Import_ObjectEventSetAnimation(LOCALID_SPROUT, 0);
   }
 }
 
@@ -445,13 +445,13 @@ static void BilibinCave_RestoreRapierRoom(void) {
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
 
-  Engine_ObjectEventSetAnimation(LOCALID_RAPIER_ROOM_WEST_TORCH,
+  Import_ObjectEventSetAnimation(LOCALID_RAPIER_ROOM_WEST_TORCH,
                                  TORCH_ANIMATION_UNLIT);
-  Engine_ObjectEventSetAnimation(LOCALID_RAPIER_ROOM_EAST_TORCH,
+  Import_ObjectEventSetAnimation(LOCALID_RAPIER_ROOM_EAST_TORCH,
                                  TORCH_ANIMATION_LIT);
 
   if (GameFlag_Get(FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED) != 0) {
-    Engine_ObjectEventSetPosition(LOCALID_RAPIER_ROOM_FIRE, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_RAPIER_ROOM_FIRE, 0, 0);
   } else {
     ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_RAPIER_ROOM_FIRE),
                                0);
@@ -483,30 +483,30 @@ static void BilibinCave_RestoreIceRoom(void) {
   BilibinCave_ClearObjectEventSpriteFlags(LOCALID_FIRST_LOW_ICE + 1);
   BilibinCave_ClearObjectEventSpriteFlags(LOCALID_FIRST_LOW_ICE + 2);
   BilibinCave_ClearObjectEventSpriteFlags(LOCALID_FIRST_LOW_ICE + 3);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_ICE_PILLAR,
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_ICE_PILLAR,
                                  PUDDLE_ANIMATION_PILLAR);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_ICE_PILLAR + 1,
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_ICE_PILLAR + 1,
                                  PUDDLE_ANIMATION_PILLAR);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_ICE_PILLAR + 2,
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_ICE_PILLAR + 2,
                                  PUDDLE_ANIMATION_PILLAR);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_ICE_PILLAR + 3,
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_ICE_PILLAR + 3,
                                  PUDDLE_ANIMATION_PILLAR);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_ICE_PILLAR + 4,
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_ICE_PILLAR + 4,
                                  PUDDLE_ANIMATION_PILLAR);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_LOW_ICE,
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_LOW_ICE,
                                  PUDDLE_ANIMATION_LOW_ICE);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_LOW_ICE + 1,
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_LOW_ICE + 1,
                                  PUDDLE_ANIMATION_LOW_ICE);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_LOW_ICE + 2,
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_LOW_ICE + 2,
                                  PUDDLE_ANIMATION_LOW_ICE);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_LOW_ICE + 3,
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_LOW_ICE + 3,
                                  PUDDLE_ANIMATION_LOW_ICE);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_TORCH, TORCH_ANIMATION_LIT);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_TORCH + 1, TORCH_ANIMATION_LIT);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_TORCH + 2, TORCH_ANIMATION_LIT);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_TORCH + 3, TORCH_ANIMATION_LIT);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_TORCH + 4, TORCH_ANIMATION_LIT);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_TORCH + 5, TORCH_ANIMATION_LIT);
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_TORCH, TORCH_ANIMATION_LIT);
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_TORCH + 1, TORCH_ANIMATION_LIT);
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_TORCH + 2, TORCH_ANIMATION_LIT);
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_TORCH + 3, TORCH_ANIMATION_LIT);
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_TORCH + 4, TORCH_ANIMATION_LIT);
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_TORCH + 5, TORCH_ANIMATION_LIT);
   BilibinCave_EmptyObjectEventSetupHook(LOCALID_FIRST_ICE_PILLAR);
   BilibinCave_EmptyObjectEventSetupHook(LOCALID_FIRST_ICE_PILLAR + 1);
   BilibinCave_EmptyObjectEventSetupHook(LOCALID_FIRST_ICE_PILLAR + 2);
@@ -526,7 +526,7 @@ static void BilibinCave_RestoreIceRoom(void) {
   // priority.
   if (GameFlag_Get(FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED) != 0) {
     ObjectEvent_SetPosition(LOCALID_ICE_ROOM_FIRE, 0, 0);
-    Engine_ObjectEventSetAnimation(LOCALID_FIRST_PUDDLE,
+    Import_ObjectEventSetAnimation(LOCALID_FIRST_PUDDLE,
                                    PUDDLE_ANIMATION_PILLAR);
     ObjectEvent_Get(LOCALID_FIRST_PUDDLE)->motionFlags = 0;
     ObjectEvent_Get(LOCALID_FIRST_PUDDLE)->y.fixed = -PIXELS(4);
@@ -535,25 +535,25 @@ static void BilibinCave_RestoreIceRoom(void) {
     ObjectMotion_SetActionVariant(LOCALID_FIRST_PUDDLE, 2);
     MapGrid_CopyCellAttributes(0, 0, 1, 1, 18, 14);
   } else {
-    Engine_ObjectEventSetAnimation(LOCALID_ICE_ROOM_FIRE, 2);
+    Import_ObjectEventSetAnimation(LOCALID_ICE_ROOM_FIRE, 2);
     objectEvent = ObjectEvent_Get(LOCALID_ICE_ROOM_FIRE);
     ObjectEvent_SetSpriteFlags(objectEvent, 0);
-    Engine_ObjectEventSetAnimation(LOCALID_FIRST_PUDDLE,
+    Import_ObjectEventSetAnimation(LOCALID_FIRST_PUDDLE,
                                    PUDDLE_ANIMATION_PUDDLE);
   }
   // Rebuild the Frost target and return moved object events to their saved
   // cells.
-  Engine_ObjectEventSetAnimation(LOCALID_SECOND_PUDDLE,
+  Import_ObjectEventSetAnimation(LOCALID_SECOND_PUDDLE,
                                  PUDDLE_ANIMATION_PUDDLE);
   if (GameFlag_Get(FLAG_MAPSEC_TEMP_02) != 0) {
     destinationCellX = 36;
-    Engine_ObjectEventSetAnimation(LOCALID_THIRD_PUDDLE,
+    Import_ObjectEventSetAnimation(LOCALID_THIRD_PUDDLE,
                                    PUDDLE_ANIMATION_PUDDLE);
     MapGrid_CopyCellAttributes(0, 1, 1, 1, destinationCellX, 22);
     MapGrid_CopyCellAttributes(0, 2, 1, 1, destinationCellX, 24);
   } else {
     destinationCellX = 36;
-    Engine_ObjectEventSetAnimation(LOCALID_THIRD_PUDDLE,
+    Import_ObjectEventSetAnimation(LOCALID_THIRD_PUDDLE,
                                    PUDDLE_ANIMATION_PILLAR);
     MapGrid_CopyCellAttributes(1, 1, 1, 1, destinationCellX, 22);
     MapGrid_CopyCellAttributes(1, 2, 1, 1, destinationCellX, 24);
@@ -613,7 +613,7 @@ static void EventScript_PushObjectEventAhead(void) {
   if (FieldObject_CheckMovementCollision(target, &destination) > 0)
     return;
 
-  ObjectDispatch_SelectAnimation(leader, 8);
+  Object_SelectAnimation(leader, 8);
   WaitFrames(15);
   Sound_PlaySong(SE_PUSH);
 
@@ -635,7 +635,7 @@ static void EventScript_PushObjectEventAhead(void) {
 
   // Resume the leader and refresh the mechanism affected by the moved object
   // event.
-  ObjectDispatch_SelectAnimation(leader, ANIM_STAND);
+  Object_SelectAnimation(leader, ANIM_STAND);
   BilibinCave_UpdateThirdPuddleFromTorches();
 }
 

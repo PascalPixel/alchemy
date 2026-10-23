@@ -12,12 +12,12 @@
 	.set import.ObjectEvent_DestroyById, 1
 	.set import.ObjectMotion_SetSpeedParameters, 1
 	.set import.ObjectMotion_CenterOnColumn, 1
-	.set import.Engine_ObjectEventSetAnimation, 1
-	.set import.ObjectGroup_ConfigureChildValue, 1
+	.set import.Import_ObjectEventSetAnimation, 1
+	.set import.ObjectEvent_ConfigureSpriteColor, 1
 	.set import.FieldScript_SetMessageId, 1
 	.set import.FieldScript_ShowMessageAndWait, 1
 	.set import.FieldScript_AskYesNoAndShowResponse, 1
-	.set import.Engine_ScriptRequestWarp, 1
+	.set import.Import_ScriptRequestWarp, 1
 	.set import.FieldScript_FinishScreenTransition, 1
 	.set import.FieldScript_WaitTransitionFrames, 1
 	.set import.Sanctum_Run, 1

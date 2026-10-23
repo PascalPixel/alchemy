@@ -1,5 +1,5 @@
-#ifndef GUARD_TBS_EDITION_H
-#define GUARD_TBS_EDITION_H
+#ifndef ALCHEMY_TBS_EDITION_H
+#define ALCHEMY_TBS_EDITION_H
 
 /// @file
 /// Values that differ by patch level or language, chosen once for their code.

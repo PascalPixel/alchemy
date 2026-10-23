@@ -1,5 +1,5 @@
-#ifndef GUARD_PRESET_TABLE_H
-#define GUARD_PRESET_TABLE_H
+#ifndef ALCHEMY_PRESET_TABLE_H
+#define ALCHEMY_PRESET_TABLE_H
 
 /// @file
 /// EnemyElementPreset, a row of an enemy's element presets.

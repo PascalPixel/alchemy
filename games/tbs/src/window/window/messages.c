@@ -113,7 +113,7 @@ done:
 
 /// Zeroes the word at p unless it is already 0, and returns p. Nothing calls
 /// it.
-s32 *Runtime_ClearWordIfSet(s32 *p) {
+s32 *Memory_ClearWordIfSet(s32 *p) {
   if (*p != 0) {
     *p = 0;
   }

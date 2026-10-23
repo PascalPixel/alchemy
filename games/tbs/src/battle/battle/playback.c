@@ -186,8 +186,8 @@ void BattlePlayback_Run(void) {
             if (events->pendingSong > 0)
               Sound_PlaySongFar(events->pendingSong);
             events->actorId = events->queue.operands[eventIndex];
-            ObjectDispatch_SelectAnimationFar(
-                BattleObject_Get(events->actorId)->object, POSE_DAMAGE);
+            Object_SelectAnimationFar(BattleObject_Get(events->actorId)->object,
+                                      POSE_DAMAGE);
             events->phase = PLAY_HIT;
             events->timer = 0;
             break;

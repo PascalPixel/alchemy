@@ -270,7 +270,7 @@ static void BabiLighthouse_LandWithParticles(void) {
   Sound_PlaySong(SE_188);
   ObjectEvent_SetAttachedEffect(
       LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
   MapGrid_SetShake(0x50000, 0x50000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
   MapGrid_WaitForShakeToSettle();
@@ -308,8 +308,8 @@ static void BabiLighthouse_FallToWarp(s32 warp) {
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   leader->velocityY = -0x50000;
   ObjectEvent_WaitUntilIdle(ObjectEvent_Get(LOCALID_PARTY_LEADER));
-  ObjectEvent_SetChildValue(LOCALID_PARTY_LEADER, 15);
-  Engine_ScriptRequestWarp(warp);
+  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, 15);
+  Import_ScriptRequestWarp(warp);
   FieldScript_End();
 }
 
@@ -437,7 +437,7 @@ static void BabiLighthouse_JumpIntoPit(void) {
 static void BabiLighthouse_DropFromWestRoomEastPit(void) {
   FieldScript_Start();
   BabiLighthouse_JumpIntoPit();
-  Engine_ScriptRequestWarp(
+  Import_ScriptRequestWarp(
       BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_PIT_EAST);
   FieldScript_End();
 }
@@ -448,7 +448,7 @@ static void BabiLighthouse_DropFromEastRoomPit(void) {
   FieldScript_Start();
   ObjectEvent_PrepareObject(PIXELS(464), 0, PIXELS(290), PIT_MASK);
   BabiLighthouse_JumpIntoPit();
-  Engine_ScriptRequestWarp(BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_PIT);
+  Import_ScriptRequestWarp(BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_PIT);
   FieldScript_End();
 }
 
@@ -460,7 +460,7 @@ static void BabiLighthouse_DropFromWestRoomSouthwestPit(void) {
   ObjectEvent_PrepareObject(PIXELS(143), 0, PIXELS(290), PIT_MASK);
   ObjectEvent_PrepareObject(PIXELS(121), 0, PIXELS(286), SPRITE_CAPPED_PILLAR);
   BabiLighthouse_JumpIntoPit();
-  Engine_ScriptRequestWarp(
+  Import_ScriptRequestWarp(
       BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_PIT_SOUTHWEST);
   FieldScript_End();
 }
@@ -470,7 +470,7 @@ static void BabiLighthouse_DropFromWestRoomSouthwestPit(void) {
 static void BabiLighthouse_DropFromWestRoomNorthwestPit(void) {
   FieldScript_Start();
   BabiLighthouse_JumpIntoPit();
-  Engine_ScriptRequestWarp(
+  Import_ScriptRequestWarp(
       BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_PIT_NORTHWEST);
   FieldScript_End();
 }
@@ -478,7 +478,7 @@ static void BabiLighthouse_DropFromWestRoomNorthwestPit(void) {
 /// Searching the locked door in BabiLighthouseLuff. "It seems to be locked."
 static void BabiLighthouse_InspectLockedDoor(void) {
   FieldScript_Start();
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   FieldMessage_Show(MsgBabiSeemsLocked, 1);
   FieldScript_End();
 }
@@ -488,7 +488,7 @@ static void BabiLighthouse_InspectLockedDoor(void) {
 static inline void BabiLighthouse_WalkBackToLeader(s32 localId) {
   struct ObjectEvent *leader;
 
-  Engine_ObjectEventSetAnimation(localId, ANIM_WALK);
+  Import_ObjectEventSetAnimation(localId, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0) {
     ObjectEvent_SetDestination(localId, leader->x.part.pixel,
@@ -724,13 +724,13 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   FieldScript_WaitFrames(10);
   ObjectEvent_LinkPair(LOCALID_DOUBTING_THE_DOOR, LOCALID_WORRIED_FOR_SHEBA,
                        50);
-  Engine_ObjectEventSetAnimation(LOCALID_DOUBTING_THE_DOOR, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_DOUBTING_THE_DOOR, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_WORRIED_FOR_SHEBA, ANIM_NOD);
   FieldScript_WaitFrames(30);
   ObjectEvent_FaceDirection(LOCALID_DOUBTING_THE_DOOR, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(LOCALID_WORRIED_FOR_SHEBA, FACING_SOUTH, 0);
   FieldScript_WaitFrames(20);
-  Engine_ObjectEventSetAnimation(LOCALID_DOUBTING_THE_DOOR, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_DOUBTING_THE_DOOR, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_WORRIED_FOR_SHEBA, ANIM_NOD);
   FieldScript_WaitFrames(30);
   ObjectEvent_SetSpeed(LOCALID_DOUBTING_THE_DOOR, 0x10000, 0x8000);
@@ -741,7 +741,7 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   ObjectEvent_WalkByAndWait(LOCALID_WORRIED_FOR_SHEBA, 16, 0);
   ObjectEvent_WalkTo(LOCALID_WORRIED_FOR_SHEBA, 344, 312);
   ObjectEvent_WalkToAndWait(LOCALID_DOUBTING_THE_DOOR, 344, 336);
-  Engine_ObjectEventSetAnimation(LOCALID_WORRIED_FOR_SHEBA, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_WORRIED_FOR_SHEBA, ANIM_STAND);
   ObjectEvent_FaceDirection(LOCALID_DOUBTING_THE_DOOR, FACING_WEST, 0);
   ObjectEvent_FaceDirection(LOCALID_WORRIED_FOR_SHEBA, FACING_WEST, 0);
   FieldScript_WaitFrames(10);
@@ -865,7 +865,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   ObjectEvent_FaceDirection(LOCALID_WORRIED_FOR_SHEBA, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(LOCALID_DOUBTING_THE_DOOR, FACING_NORTH, 0);
   FieldScript_WaitFrames(30);
-  Engine_ObjectEventSetAnimation(LOCALID_DOUBTING_THE_DOOR, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_DOUBTING_THE_DOOR, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_WORRIED_FOR_SHEBA, ANIM_NOD);
   FieldScript_WaitFrames(30);
   ObjectEvent_FaceDirection(LOCALID_WORRIED_FOR_SHEBA, FACING_WEST, 0);
@@ -1031,9 +1031,9 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_GARET, 0);
   ObjectEvent_LinkPair(LOCALID_MIA, LOCALID_IVAN, 0);
   FieldScript_WaitFrames(30);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
   FieldScript_WaitFrames(30);
   // The companions walk back into the leader.
@@ -1364,8 +1364,8 @@ s32 BabiLighthouse_SetupMap(void) {
   } else if (mapCopy == (s32)&MapId_BabiLighthouseEntry) {
     // Set up the movable ledge pillars and the staggered object event
     // animations.
-    ObjectEvent_SetChildValue(LOCALID_LEFT_PILLAR, 6);
-    ObjectEvent_SetChildValue(LOCALID_RIGHT_PILLAR, 6);
+    ObjectEvent_SetSpriteColorById(LOCALID_LEFT_PILLAR, 6);
+    ObjectEvent_SetSpriteColorById(LOCALID_RIGHT_PILLAR, 6);
 #if TBS_PATCH_2
     ((union FieldObject *)ObjectEvent_GetById(LOCALID_LEFT_PILLAR))
         ->objectEvent.update = BabiLighthouse_MatchLeaderPriority;
@@ -1382,7 +1382,7 @@ s32 BabiLighthouse_SetupMap(void) {
     objectEvent->y.fixed =
         ObjectEvent_GetById(LOCALID_RIGHT_PILLAR)->groundHeight;
     if (GameFlag_Get(FLAG_GROWTH_PASSAGE_OPEN) != 0) {
-      Engine_ObjectEventSetAnimation(LOCALID_PLANT, 4);
+      Import_ObjectEventSetAnimation(LOCALID_PLANT, 4);
       ObjectEvent_GetById(LOCALID_PLANT)->collisionFlags = 0xfe;
       BabiLighthouse_OpenGrowthPassage();
     }
@@ -1396,7 +1396,7 @@ s32 BabiLighthouse_SetupMap(void) {
     zero = 0;
     placedObjectEvent->sprite->flags = zero;
     placedObjectEvent->sprite->rotation = 0xc000;
-    Engine_ObjectEventSetAnimation(LOCALID_FALLEN_SOLDIER_NO_MATCH, 0);
+    Import_ObjectEventSetAnimation(LOCALID_FALLEN_SOLDIER_NO_MATCH, 0);
     placedObjectEvent = ObjectEvent_GetById(LOCALID_FALLEN_STRONGMAN_ONLY_TWO);
     placedObjectEvent->collisionFlags = zero;
     placedObjectEvent->priorityFlags = zero;
@@ -1404,7 +1404,7 @@ s32 BabiLighthouse_SetupMap(void) {
     placedObjectEvent->sprite->image.priority = 3;
     placedObjectEvent->sprite->flags = zero;
     placedObjectEvent->sprite->rotation = 0x4000;
-    Engine_ObjectEventSetAnimation(LOCALID_FALLEN_STRONGMAN_ONLY_TWO, 0);
+    Import_ObjectEventSetAnimation(LOCALID_FALLEN_STRONGMAN_ONLY_TWO, 0);
     placedObjectEvent =
         ObjectEvent_GetById(LOCALID_FALLEN_SOLDIER_KICKED_ASIDE);
     placedObjectEvent->collisionFlags = zero;
@@ -1413,7 +1413,7 @@ s32 BabiLighthouse_SetupMap(void) {
     placedObjectEvent->sprite->image.priority = 3;
     placedObjectEvent->sprite->flags = zero;
     placedObjectEvent->sprite->rotation = 0x8000;
-    Engine_ObjectEventSetAnimation(LOCALID_FALLEN_SOLDIER_KICKED_ASIDE, 0);
+    Import_ObjectEventSetAnimation(LOCALID_FALLEN_SOLDIER_KICKED_ASIDE, 0);
     placedObjectEvent = ObjectEvent_GetById(LOCALID_FALLEN_MAN_SCORCHED_GROUND);
     placedObjectEvent->collisionFlags = zero;
     placedObjectEvent->priorityFlags = zero;
@@ -1421,7 +1421,7 @@ s32 BabiLighthouse_SetupMap(void) {
     placedObjectEvent->sprite->image.priority = 3;
     placedObjectEvent->sprite->flags = zero;
     placedObjectEvent->sprite->rotation = 0x8000;
-    Engine_ObjectEventSetAnimation(LOCALID_FALLEN_MAN_SCORCHED_GROUND, 0);
+    Import_ObjectEventSetAnimation(LOCALID_FALLEN_MAN_SCORCHED_GROUND, 0);
   } else if (mapCopy == (s32)&MapId_BabiLighthouseLuff) {
     // Match the arrival effect and fall to the warp destination used in this
     // room.
@@ -1520,7 +1520,7 @@ s32 BabiLighthouse_SetupMap(void) {
       }
     }
   } else {
-    Engine_ObjectEventSetAnimation(LOCALID_ROAD_PILLAR, 2);
+    Import_ObjectEventSetAnimation(LOCALID_ROAD_PILLAR, 2);
   }
   return 0;
 }

@@ -35,7 +35,7 @@ static __inline__ void System_SoftReset(void) {
 /// interrupts disabled. Called by System_Initialize, the link cable and save
 /// code for their timer and serial interrupts, and the battle transitions for
 /// their HBlank and VCount effects.
-void Runtime_SetIrqHandler(u32 irq, s32 vcount, InterruptHandler handler) {
+void Irq_SetHandler(u32 irq, s32 vcount, InterruptHandler handler) {
   if (irq <= IRQ_GAMEPAK) {
     u32 ime;
     u32 bit;
@@ -66,7 +66,7 @@ void Runtime_SetIrqHandler(u32 irq, s32 vcount, InterruptHandler handler) {
     if (handler != 0)
       gIrqHandlers[irq] = handler;
     else
-      gIrqHandlers[irq] = Runtime_IgnoreInterrupt;
+      gIrqHandlers[irq] = Irq_Ignore;
     IRQ_UNLOCK(ime);
   }
 }
@@ -204,7 +204,7 @@ void WaitFrames(s32 frames) {
     gPlayTimeFrames++;
     Input_UpdateKeyRepeatAndDirection();
     if (gSerialExchangeActive) {
-      SerialRuntime_PollStatus();
+      Serial_PollStatus();
       if (gSerialWork.mode)
         gSerialWork.transferEnabled = 1;
     }
@@ -387,9 +387,9 @@ void System_VBlankHandler(void) {
   }
   if (gSerialExchangeActive != 0) {
     u16 *status = (u16 *)&gLinkStatus;
-    *status = SerialRuntime_ExchangePayloads((void *)&gSerialTransfer,
-                                             gSerialPeerPayloads);
-    SerialRuntime_StepBlockTransfer();
+    *status =
+        Serial_ExchangePayloads((void *)&gSerialTransfer, gSerialPeerPayloads);
+    Serial_StepBlockTransfer();
   }
   Sound_UpdateBgmRampsFar();
   ScreenFade_Update();

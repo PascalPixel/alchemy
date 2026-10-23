@@ -61,8 +61,8 @@ void FieldEffect_SpawnRandomAngleTriplet(union FieldObject *fieldObject) {
 
   if (particle->y <= particle->altitude) {
     particle->phase = phase;
-    ObjectDispatch_InitializeFar((struct Object *)particle,
-                                 gFieldEffect_CommonParticleScript);
+    Object_InitializeFar((struct Object *)particle,
+                         gFieldEffect_CommonParticleScript);
     p = NULL;
     particle->callback = NULL;
 
@@ -84,8 +84,8 @@ void FieldEffect_SpawnRandomAngleTriplet(union FieldObject *fieldObject) {
       pp = &p->phase;
       phase2 = 6;
       *pp = phase2;
-      ObjectDispatch_InitializeFar((struct Object *)p,
-                                   gFieldEffect_CommonParticleScript);
+      Object_InitializeFar((struct Object *)p,
+                           gFieldEffect_CommonParticleScript);
     }
   }
 }
@@ -101,8 +101,8 @@ void FieldEffect_UpdateDriftingFallObject(union FieldObject *fieldObject) {
   drift = Random16();
   particle->x += drift - Random16();
   if (particle->y <= particle->groundHeight) {
-    ObjectDispatch_InitializeFar((struct Object *)particle,
-                                 gFieldEffect_CommonParticleScript);
+    Object_InitializeFar((struct Object *)particle,
+                         gFieldEffect_CommonParticleScript);
   }
 }
 
@@ -233,7 +233,7 @@ void FieldEffect_RunDouse(void) {
         particle->callback = FieldEffect_UpdateDriftingFallObject;
         particle->flag = 0;
         particle->sprite->mode = 2;
-        ObjectDispatch_SelectAnimationFar(particle, 8);
+        Object_SelectAnimationFar(particle, 8);
         Anim_ApplyChildValuesFar((struct Object *)particle, SPRITE_COLOR_WHITE);
       }
       WaitFrames(6);
@@ -270,6 +270,6 @@ void FieldEffect_RunDouse(void) {
     WaitFrames(1);
     step++;
   } while (step < steps);
-  ObjectDispatch_ReleaseFar((struct Object *)lightOrb);
+  Object_ReleaseFar((struct Object *)lightOrb);
   FieldEffect_FadeFromEffectColor();
 }

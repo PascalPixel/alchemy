@@ -4,11 +4,11 @@
 	.set import.Math_RemainderUnsigned, 1
 	.set import.WaitFrames, 1
 	.set import.Task_Add, 1
-	.set import.Engine_RandomNext, 1
+	.set import.Import_RandomNext, 1
 	.set import.Vector_AddPolarOffset, 1
 	.set import.IoWriteQueue_Store16, 1
-	.set import.ObjectDispatch_SelectAnimation, 1
-	.set import.ObjectDispatch_Initialize, 1
+	.set import.Object_SelectAnimation, 1
+	.set import.Object_Initialize, 1
 	.set import.Object_CreateField, 1
 	.set import.MapGrid_CenterOnFollowedPoint, 1
 	.set import.Object_SetMoveTarget, 1
@@ -16,7 +16,7 @@
 	.set import.MapGrid_CopyMetatileCellsRect, 1
 	.set import.MapGrid_CopyCellAttributeRect, 1
 	.set import.MapGrid_CheckCollision, 1
-	.set import.ObjectDispatch_SetSingleChildFlags, 1
+	.set import.Object_SetSpriteFlags, 1
 	.set import.MapGrid_SetScreenShake, 1
 	.set import.MapGrid_WaitForShakeToSettle, 1
 	.set import.FieldMessage_Show, 1
@@ -27,8 +27,8 @@
 	.set import.FieldScript_Start, 1
 	.set import.FieldScript_End, 1
 	.set import.ObjectEvent_GetById, 1
-	.set import.Engine_ObjectEventSetPosition, 1
-	.set import.Engine_ObjectEventSetAnimation, 1
+	.set import.Import_ObjectEventSetPosition, 1
+	.set import.Import_ObjectEventSetAnimation, 1
 	.set import.ObjectMotion_SetActionVariant, 1
 	.set import.Sound_PlaySong, 1
 	.include "games/tbs/src/system/overlay.inc"

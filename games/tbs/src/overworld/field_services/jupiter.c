@@ -46,7 +46,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   position.y = djinni->y;
   position.z = djinni->z;
   Camera_WorldToScreen(&position);
-  ObjectDispatch_ReleaseFar((struct Object *)djinni);
+  Object_ReleaseFar((struct Object *)djinni);
   Sound_PlaySongFar(SE_164);
   effect = effectWork->sprites;
   remainingParticles = 23;
@@ -69,8 +69,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   WaitFrames(60);
   ObjectMotion_ArmCallback(gSaveBlock.leaderLocalId, 0x4000, 0);
   WaitFrames(20);
-  ObjectDispatch_SelectAnimationFar(
-      ObjectEvent_GetById(gSaveBlock.leaderLocalId), 28);
+  Object_SelectAnimationFar(ObjectEvent_GetById(gSaveBlock.leaderLocalId), 28);
   WaitFrames(40);
   Sound_PlaySongFar(SE_164);
   WaitFrames(100);

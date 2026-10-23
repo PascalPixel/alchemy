@@ -8,7 +8,7 @@
 /// flags, so nothing collides with it. Returns 0, so SC_CALL moves on at
 /// once (gMovementType_ResetActionScript then ends).
 s32 Object_ClearChildAndCollisionFlags(void *obj) {
-  ObjectDispatch_SetSingleChildFlagsFar(obj, 0);
+  Object_SetSpriteFlagsFar(obj, 0);
   ((struct Object *)obj)->collisionFlags = 0;
   return 0;
 }
@@ -49,9 +49,9 @@ s32 ObjectMotion_MoveTowardTarget(struct Object *object) {
       newX = object->x + (s32)((u32)pixelsX << 20) / step;
       newZ = object->z + (s32)((u32)pixelsZ << 20) / step;
       Object_SetMoveTargetFar(object, newX, object->y, newZ);
-      ObjectDispatch_SelectAnimationFar(object, 2);
+      Object_SelectAnimationFar(object, 2);
     } else {
-      ObjectDispatch_SelectAnimationFar(object, 1);
+      Object_SelectAnimationFar(object, 1);
     }
   }
   return 1;
@@ -118,7 +118,7 @@ void ObjectEvent_SetMovementType(struct Object *object, s32 action) {
   default:
     break;
   }
-  ObjectDispatch_InitializeFar((struct Object *)object, (const s32 *)action);
+  Object_InitializeFar((struct Object *)object, (const s32 *)action);
 }
 
 /// Finds the nearest animated object to self within 40 pixels and 48 pixels of

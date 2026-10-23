@@ -629,7 +629,7 @@ static void EventScript_DemonstratePsynergy(void) {
     Task_Remove(ValeGate_UpdateShowingStrongmanPsynergy);
     WaitFrames(1);
     Map_EndCutscenePsynergy();
-    ObjectGroup_ConfigureChildValue(LOCALID_STRONGMAN_SHOWING_PSYNERGY, 0);
+    ObjectEvent_ConfigureSpriteColor(LOCALID_STRONGMAN_SHOWING_PSYNERGY, 0);
     FieldScript_WaitFrames(40);
     FieldScript_SetMessageId(MsgValeBeholdPowerPsynergy);
     FieldScript_ShowMessageAndWait(LOCALID_STRONGMAN_SHOWING_PSYNERGY, 0);
@@ -680,7 +680,7 @@ static void EventScript_AskAboutJourney(void) {
 /// reach it.
 static void EventScript_TalkAboutFallenStone(void) {
   FieldScript_Start();
-  Engine_ObjectEventSetAnimation(LOCALID_HUT_OWNER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_HUT_OWNER, ANIM_STAND);
   ObjectMotion_SetAngleToward(LOCALID_HUT_OWNER, LOCALID_PARTY_LEADER, 20);
   ObjectMotion_SetAngleToward(LOCALID_HUT_OWNER, LOCALID_FALLEN_STONE_SPOT, 40);
   FieldScript_SetMessageId(MsgValeTheStoneFellOnThe);
@@ -744,8 +744,8 @@ static void EventScript_BoyLiftsSmallRock(void) {
   Task_Remove(ValeGate_UpdateSmallRockPalette);
   WaitFrames(1);
   Script_PlaySong(SE_161);
-  ObjectEvent_SetChildValue(LOCALID_STORM_ROCK_LIFTING_BOY, 0);
-  ObjectEvent_SetChildValue(LOCALID_STORM_SMALL_ROCK, 0);
+  ObjectEvent_SetSpriteColorById(LOCALID_STORM_ROCK_LIFTING_BOY, 0);
+  ObjectEvent_SetSpriteColorById(LOCALID_STORM_SMALL_ROCK, 0);
   FieldScript_WaitFrames(40);
   Map_EndCutscenePsynergy();
   ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_STORM_ROCK_LIFTING_BOY,
@@ -805,7 +805,7 @@ static void EventScript_PsynergyStoneIsGone(void) {
   objectEvent->targetX = OBJ_EVENT_NO_TARGET;
   objectEvent->targetY = OBJ_EVENT_NO_TARGET;
   objectEvent->targetZ = OBJ_EVENT_NO_TARGET;
-  Engine_ObjectEventSetAnimation(LOCALID_AFTER_KALAY_HUT_OWNER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_AFTER_KALAY_HUT_OWNER, ANIM_STAND);
   ObjectMotion_EnableActionAndResetMotion(LOCALID_AFTER_KALAY_HUT_OWNER);
   FieldEffect_SpawnLinked(LOCALID_AFTER_KALAY_HUT_OWNER,
                           EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
@@ -965,18 +965,18 @@ s32 ValeGate_Initialize(void) {
   s32 verticalScale;
 
   if (GameFlag_Get((FLAG_VALE_FIRST_IVY_BLOWN_AWAY)) != 0) {
-    Engine_ObjectEventSetPosition(LOCALID_FIRST_IVY, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_FIRST_IVY, 0, 0);
   }
   if (GameFlag_Get((FLAG_VALE_SECOND_IVY_BLOWN_AWAY)) != 0) {
-    Engine_ObjectEventSetPosition(LOCALID_SECOND_IVY, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_SECOND_IVY, 0, 0);
   }
   if (GameFlag_Get((FLAG_VALE_THIRD_IVY_BLOWN_AWAY)) != 0) {
-    Engine_ObjectEventSetPosition(LOCALID_THIRD_IVY, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_THIRD_IVY, 0, 0);
   }
   switch (gSaveBlock.warpDest) {
   case VALE_GATE_DEBUG_CHILDHOOD:
     GameFlag_Set(FLAG_CHILDHOOD);
-    Engine_ScriptRequestWarp(VALE_GATE_TO_VALE_INTERIORS_INN_SOUTHEAST);
+    Import_ScriptRequestWarp(VALE_GATE_TO_VALE_INTERIORS_INN_SOUTHEAST);
     return 0;
   case VALE_GATE_DEBUG_STORY_FLAGS:
     ValeGate_SetProgressFlagsAndExit();
@@ -1004,8 +1004,8 @@ s32 ValeGate_Initialize(void) {
       MapGrid_CopyCellAttributes(21, 38, 1, 1, 18, 41);
       flag = GameFlag_Get(FLAG_VALE_STORM_SENT_TO_AID_ELDERS);
       if (flag != 0) {
-        Engine_ObjectEventSetPosition(LOCALID_STORM_FIRST_AIDE, 0, 0);
-        Engine_ObjectEventSetPosition(LOCALID_STORM_SECOND_AIDE, 0, 0);
+        Import_ObjectEventSetPosition(LOCALID_STORM_FIRST_AIDE, 0, 0);
+        Import_ObjectEventSetPosition(LOCALID_STORM_SECOND_AIDE, 0, 0);
         Object_SetTargetAndCallback(LOCALID_STORM_GARETS_GRANDFATHER,
                                     OBJ_EVENT_LINK_KEEP_MOTION |
                                         LOCALID_PARTY_LEADER,
@@ -1032,7 +1032,7 @@ s32 ValeGate_Initialize(void) {
         objectEvent = ObjectEvent_GetById(LOCALID_STORM_SMALL_ROCK_SHADOW);
         objectEvent->scaleX = 3 * Q16_ONE / 5;
         objectEvent->scaleY = 3 * Q16_ONE / 5;
-        Engine_ObjectEventSetAnimation(LOCALID_STORM_ROCK_DEFLECTING_YOUNG_MAN,
+        Import_ObjectEventSetAnimation(LOCALID_STORM_ROCK_DEFLECTING_YOUNG_MAN,
                                        5);
       } else {
         if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
@@ -1052,8 +1052,8 @@ s32 ValeGate_Initialize(void) {
 #else
       if (GameFlag_Get(FLAG_VALE_STORM_SENT_TO_AID_ELDERS) != 0) {
 #endif
-        Engine_ObjectEventSetPosition(LOCALID_STORM_JENNA, 0, 0);
-        Engine_ObjectEventSetPosition(LOCALID_STORM_CHARGED_UP_STRONGMAN, 0, 0);
+        Import_ObjectEventSetPosition(LOCALID_STORM_JENNA, 0, 0);
+        Import_ObjectEventSetPosition(LOCALID_STORM_CHARGED_UP_STRONGMAN, 0, 0);
       }
       if (gSaveBlock.warpDest == VALE_GATE_AFTER_TRAVELERS_BATTLE) {
         EventScript_TravelersLeaveAfterBattle();
@@ -1078,14 +1078,14 @@ s32 ValeGate_Initialize(void) {
 static inline void ValeGate_RejoinParty(s32 localId) {
   struct ObjectEvent *leader;
 
-  Engine_ObjectEventSetAnimation(localId, ANIM_WALK);
+  Import_ObjectEventSetAnimation(localId, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
     ObjectMotion_ResetAndSetPosition(localId, leader->x.part.pixel,
                                      leader->z.part.pixel);
   }
   ObjectMotion_CommitCurrentPositionAndActivate(localId);
-  Engine_ObjectEventSetPosition(localId, 0, 0);
+  Import_ObjectEventSetPosition(localId, 0, 0);
 }
 
 /// The mayor sends help to the elders and the boys back to the river. In Vale's
@@ -1121,7 +1121,7 @@ static void EventScript_SentToAidElders(void) {
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 179, 789);
     leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     if (leader != NULL) {
-      Engine_ObjectEventSetPosition(LOCALID_STORM_GARET, leader->x.fixed,
+      Import_ObjectEventSetPosition(LOCALID_STORM_GARET, leader->x.fixed,
                                     leader->z.fixed);
     }
     ObjectEvent_WalkToAndWait(LOCALID_STORM_GARET, 179, 804);
@@ -1130,7 +1130,7 @@ static void EventScript_SentToAidElders(void) {
     ObjectMotion_ArmCallback(LOCALID_STORM_GARET, FACING_EAST, 0);
     // The two aides will not let the Boulder destroy the village and go to
     // help; Garet's grandfather counts on them.
-    Engine_ObjectEventSetAnimation(LOCALID_STORM_FIRST_AIDE, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_STORM_FIRST_AIDE, ANIM_NOD);
     ObjectMotion_SetAnimationAndWait(LOCALID_STORM_SECOND_AIDE, ANIM_NOD);
     ObjectEvent_LinkPair(LOCALID_STORM_FIRST_AIDE, LOCALID_STORM_SECOND_AIDE,
                          0);
@@ -1138,7 +1138,7 @@ static void EventScript_SentToAidElders(void) {
     ObjectMotion_SetVariantCallback(LOCALID_STORM_FIRST_AIDE, 1);
     FieldScript_ShowMessageThenWait(
         SPEAKER_WINDOW_ABOVE | LOCALID_STORM_FIRST_AIDE, 0, 10);
-    Engine_ObjectEventSetAnimation(LOCALID_STORM_SECOND_AIDE, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_STORM_SECOND_AIDE, ANIM_NOD);
     FieldScript_ShowMessageThenWait(LOCALID_STORM_SECOND_AIDE, 0, 10);
     ObjectMotion_ArmCallback(LOCALID_STORM_FIRST_AIDE, FACING_EAST, 0);
     ObjectEvent_FaceDirection(LOCALID_STORM_SECOND_AIDE,
@@ -1179,7 +1179,7 @@ static void EventScript_SentToAidElders(void) {
     ValeGate_FaceDirectionAndWait(LOCALID_STORM_JENNA, FACING_SOUTHWEST, 20);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_STORM_JENNA, 2);
     EventScript_SayThenWait(LOCALID_STORM_JENNA, 10);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
     ObjectMotion_SetAnimationAndWait(LOCALID_STORM_GARET, ANIM_NOD);
     FieldScript_WaitFrames(20);
     // Garet's grandfather asks whether Jenna told them about Felix. Yes: good
@@ -1190,10 +1190,10 @@ static void EventScript_SentToAidElders(void) {
     if (FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER, 0) ==
         1) {
       skipReply = 1;
-      Engine_ObjectEventSetAnimation(LOCALID_STORM_GARETS_GRANDFATHER,
+      Import_ObjectEventSetAnimation(LOCALID_STORM_GARETS_GRANDFATHER,
                                      ANIM_SHAKE_HEAD);
     } else {
-      Engine_ObjectEventSetAnimation(LOCALID_STORM_GARETS_GRANDFATHER,
+      Import_ObjectEventSetAnimation(LOCALID_STORM_GARETS_GRANDFATHER,
                                      ANIM_NOD);
       gFieldWork->message++;
     }
@@ -1298,7 +1298,7 @@ static void EventScript_MeetSurvivingTravelers(void) {
   FieldScript_StartScreenTransition();
   Sound_PlaySong(SONG_FADE_OUT_BGM);
   Weather_ResumeLightning();
-  Engine_ObjectEventSetPosition(LOCALID_FIRST_TRAVELER, PIXELS(105),
+  Import_ObjectEventSetPosition(LOCALID_FIRST_TRAVELER, PIXELS(105),
                                 PIXELS(267));
   WaitFrames(1);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(6) / 5, PIXELS(3) / 5);
@@ -1320,7 +1320,7 @@ static void EventScript_MeetSurvivingTravelers(void) {
   ObjectMotion_ArmCallback(LOCALID_FIRST_TRAVELER, FACING_NORTH + FACING_STEP,
                            0);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_SECOND_TRAVELER);
-  Engine_ObjectEventSetAnimation(LOCALID_SECOND_TRAVELER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_SECOND_TRAVELER, ANIM_STAND);
   ValeGate_FaceDirectionAndWait(LOCALID_SECOND_TRAVELER,
                                 FACING_SOUTHWEST + FACING_STEP, 10);
   ObjectMotion_SetAnimationAndWait(LOCALID_FIRST_TRAVELER, ANIM_NOD);
@@ -1369,7 +1369,7 @@ static void ValeGate_FightTravelers(void) {
 
   // Garet, still out of sight, calls Isaac to wait; the travelers turn and
   // look down at Isaac.
-  ObjectGroup_ConfigureChildValue(LOCALID_STORM_GARET, 15);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_STORM_GARET, 15);
   objectEvent = ObjectEvent_GetById(LOCALID_STORM_GARET);
   ObjectEvent_SetSpriteFlags(objectEvent, 0);
   ObjectEvent_SetPosition(LOCALID_STORM_GARET, 0, PIXELS(331));
@@ -1379,7 +1379,7 @@ static void ValeGate_FightTravelers(void) {
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   ObjectEvent_ShowEmote(LOCALID_SECOND_TRAVELER,
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  Engine_ObjectEventSetPosition(LOCALID_STORM_GARET, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_STORM_GARET, 0, 0);
   ObjectEvent_FaceDirection(LOCALID_FIRST_TRAVELER, FACING_SOUTH + FACING_STEP,
                             0);
   southSouthwestFacing = FACING_SOUTH + FACING_STEP;
@@ -1400,14 +1400,14 @@ static void ValeGate_FightTravelers(void) {
   FieldScript_WaitFrames(10);
   ObjectMotion_ResetAndSetPositionInMode2(LOCALID_SECOND_TRAVELER, 124, 329);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_FIRST_TRAVELER);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_TRAVELER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_TRAVELER, ANIM_STAND);
   ObjectMotion_ArmCallback(LOCALID_FIRST_TRAVELER, southSouthwestFacing, 0);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_SECOND_TRAVELER);
-  Engine_ObjectEventSetAnimation(LOCALID_SECOND_TRAVELER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_SECOND_TRAVELER, ANIM_STAND);
   ObjectMotion_ArmCallback(LOCALID_SECOND_TRAVELER, southSouthwestFacing, 0);
   // Garet runs in from the west. The first traveler asks whether Isaac was
   // eavesdropping; whatever he answers, Garet thinks they look scary.
-  ObjectGroup_ConfigureChildValue(LOCALID_STORM_GARET, 0);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_STORM_GARET, 0);
   objectEvent = ObjectEvent_GetById(LOCALID_STORM_GARET);
   ObjectEvent_SetSpriteFlags(objectEvent, 1);
   ObjectEvent_SetPosition(LOCALID_STORM_GARET, 0, PIXELS(331));
@@ -1436,7 +1436,7 @@ static void ValeGate_FightTravelers(void) {
   ObjectMotion_EnableActionAndResetMotion(LOCALID_PARTY_LEADER);
   ObjectMotion_ArmCallback(LOCALID_FIRST_TRAVELER, FACING_EAST, 0);
   ValeGate_FaceDirectionAndWait(LOCALID_SECOND_TRAVELER, westFacing, 15);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_TRAVELER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_TRAVELER, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_SECOND_TRAVELER, ANIM_NOD);
   ObjectMotion_ArmCallback(LOCALID_FIRST_TRAVELER, southSouthwestFacing, 0);
   ValeGate_FaceDirectionAndWait(LOCALID_SECOND_TRAVELER, southSouthwestFacing,
@@ -1506,12 +1506,12 @@ static void EventScript_TravelersLeaveAfterBattle(void) {
   ObjectEvent_SetPosition(LOCALID_SECOND_TRAVELER, PIXELS(112), PIXELS(360));
   ObjectEvent_FaceDirection(LOCALID_FIRST_TRAVELER, FACING_WEST, 0);
   ObjectEvent_FaceDirection(LOCALID_SECOND_TRAVELER, FACING_WEST, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 16);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 16);
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   objectEvent->scaleX = -Q16_ONE;
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   ObjectEvent_SetSpriteFlags(objectEvent, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_STORM_GARET, 7);
+  Import_ObjectEventSetAnimation(LOCALID_STORM_GARET, 7);
   objectEvent = ObjectEvent_GetById(LOCALID_STORM_GARET);
   objectEvent->sprite->rotation = 0x1555;
   objectEvent = ObjectEvent_GetById(LOCALID_STORM_GARET);
@@ -1566,7 +1566,7 @@ static void EventScript_TravelersLeaveAfterBattle(void) {
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   GameFlag_Clear(FLAG_VALE_STORM);
-  Engine_ScriptRequestWarp(VALE_GATE_TO_TITLE);
+  Import_ScriptRequestWarp(VALE_GATE_TO_TITLE);
   FieldScript_End();
 }
 
@@ -1646,7 +1646,7 @@ static void EventScript_DepartForQuest(void) {
   ObjectEvent_WalkToAndWait(LOCALID_FAREWELL_FIRST_CHILD, 168, 618);
   ValeGate_FaceDirectionAndWait(LOCALID_FAREWELL_FIRST_CHILD,
                                 FACING_NORTHEAST + FACING_STEP, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_FAREWELL_FIRST_CHILD, ANIM_SHAKE_HEAD);
+  Import_ObjectEventSetAnimation(LOCALID_FAREWELL_FIRST_CHILD, ANIM_SHAKE_HEAD);
   EventScript_SayThenWait(LOCALID_FAREWELL_FIRST_CHILD, 20);
   ValeGate_FaceDirectionAndWait(LOCALID_FAREWELL_SECOND_CHILD,
                                 FACING_SOUTHWEST + FACING_STEP, 10);
@@ -1656,7 +1656,7 @@ static void EventScript_DepartForQuest(void) {
   ObjectEvent_SetSpeed(LOCALID_FAREWELL_DOG, PIXELS(12) / 5, PIXELS(6) / 5);
   ObjectEvent_SetPosition(LOCALID_FAREWELL_DOG, PIXELS(110), PIXELS(744));
   WaitFrames(2);
-  Engine_ObjectEventSetAnimation(LOCALID_FAREWELL_DOG, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_FAREWELL_DOG, ANIM_NOD);
   ObjectEvent_SetActionScript(LOCALID_FAREWELL_DOG,
                               gValeGate_FarewellDogActions);
   FieldScript_WaitFrames(40);
@@ -1740,7 +1740,7 @@ static void EventScript_DepartForQuest(void) {
     struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_FAREWELL_DOG);
 
     if (objectEvent != NULL) {
-      Engine_ObjectEventSetPosition(LOCALID_FAREWELL_CAT, objectEvent->x.fixed,
+      Import_ObjectEventSetPosition(LOCALID_FAREWELL_CAT, objectEvent->x.fixed,
                                     objectEvent->z.fixed);
     }
   }
@@ -1751,11 +1751,11 @@ static void EventScript_DepartForQuest(void) {
   ObjectMotion_SetActionVariant(LOCALID_FAREWELL_DOG, 2);
   ObjectMotion_SetActionVariant(LOCALID_FAREWELL_CAT, 2);
   ObjectEvent_SetSpeed(LOCALID_FAREWELL_CAT, PIXELS(18) / 5, PIXELS(9) / 5);
-  Engine_ObjectEventSetAnimation(LOCALID_FAREWELL_CAT, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_FAREWELL_CAT, ANIM_WALK);
   chaseActions = gValeGate_FarewellChaseActions;
   ObjectEvent_SetActionScript(LOCALID_FAREWELL_CAT, chaseActions);
   FieldScript_WaitFrames(20);
-  Engine_ObjectEventSetAnimation(LOCALID_FAREWELL_DOG, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_FAREWELL_DOG, ANIM_NOD);
   ObjectEvent_SetSpeed(LOCALID_FAREWELL_DOG, PIXELS(24) / 5, PIXELS(12) / 5);
   ObjectEvent_RunActionScriptAndWait(LOCALID_FAREWELL_DOG, chaseActions);
   FieldScript_WaitFrames(60);
@@ -1771,7 +1771,7 @@ static void EventScript_DepartForQuest(void) {
                                 FACING_EAST + FACING_STEP, 10);
   ObjectMotion_SetAnimationAndWait(LOCALID_FAREWELL_FIRST_CHILD, ANIM_NOD);
   EventScript_SayThenWait(LOCALID_FAREWELL_FIRST_CHILD, 20);
-  Engine_ObjectEventSetAnimation(LOCALID_FAREWELL_SECOND_CHILD, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_FAREWELL_SECOND_CHILD, ANIM_NOD);
   FieldScript_WaitFrames(10);
   ObjectMotion_SetAnimationAndWait(LOCALID_FAREWELL_FIRST_CHILD, ANIM_NOD);
   FieldScript_WaitFrames(20);
@@ -1800,7 +1800,7 @@ static void EventScript_DepartForQuest(void) {
   ValeGate_FaceDirectionAndWait(LOCALID_PARTY_LEADER, FACING_NORTH, 10);
   ValeGate_FaceDirectionAndWait(LOCALID_GARET, FACING_NORTHWEST + FACING_STEP,
                                 10);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(10);
   ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
   FieldScript_WaitFrames(40);
@@ -1885,27 +1885,27 @@ static void EventScript_DepartForQuest(void) {
   ObjectMotion_SetAnimationAndWait(LOCALID_FAREWELL_GARETS_MOTHER, ANIM_NOD);
   FieldScript_ShowMessageAndWait(LOCALID_FAREWELL_GARETS_MOTHER, 0);
   ObjectMotion_ArmCallback(LOCALID_GARET, FACING_NORTH + FACING_STEP, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_FAREWELL_GARETS_MOTHER,
+  Import_ObjectEventSetAnimation(LOCALID_FAREWELL_GARETS_MOTHER,
                                  ANIM_SHAKE_HEAD);
   FieldScript_ShowMessageAndWait(LOCALID_FAREWELL_GARETS_MOTHER, 0);
   ObjectMotion_SetVariantCallback(LOCALID_FAREWELL_GARETS_MOTHER, 3);
   FieldScript_ShowMessageAndWait(LOCALID_FAREWELL_GARETS_MOTHER, 0);
   ObjectMotion_SetAnimationAndWait(LOCALID_FAREWELL_GARETS_SISTER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_FAREWELL_GARETS_FATHER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_FAREWELL_GARETS_BROTHER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_FAREWELL_GARETS_FATHER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_FAREWELL_GARETS_BROTHER, ANIM_NOD);
   FieldScript_WaitFrames(10);
-  Engine_ObjectEventSetAnimation(LOCALID_FAREWELL_FIRST_CROWD_VILLAGER + 4,
+  Import_ObjectEventSetAnimation(LOCALID_FAREWELL_FIRST_CROWD_VILLAGER + 4,
                                  ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_FAREWELL_GARETS_MOTHER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_FAREWELL_FIRST_CROWD_VILLAGER + 7,
-                                 ANIM_NOD);
-  FieldScript_WaitFrames(10);
-  Engine_ObjectEventSetAnimation(LOCALID_FAREWELL_FIRST_CROWD_VILLAGER + 8,
+  Import_ObjectEventSetAnimation(LOCALID_FAREWELL_GARETS_MOTHER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_FAREWELL_FIRST_CROWD_VILLAGER + 7,
                                  ANIM_NOD);
   FieldScript_WaitFrames(10);
-  Engine_ObjectEventSetAnimation(LOCALID_FAREWELL_FIRST_CROWD_VILLAGER + 5,
+  Import_ObjectEventSetAnimation(LOCALID_FAREWELL_FIRST_CROWD_VILLAGER + 8,
                                  ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_FAREWELL_FIRST_CROWD_VILLAGER,
+  FieldScript_WaitFrames(10);
+  Import_ObjectEventSetAnimation(LOCALID_FAREWELL_FIRST_CROWD_VILLAGER + 5,
+                                 ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_FAREWELL_FIRST_CROWD_VILLAGER,
                                  ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_FAREWELL_FIRST_CROWD_VILLAGER + 1,
                                    ANIM_NOD);
@@ -1924,34 +1924,34 @@ static void EventScript_DepartForQuest(void) {
   ValeGate_FaceDirectionAndWait(LOCALID_FAREWELL_GARETS_GRANDFATHER,
                                 FACING_SOUTH + FACING_STEP, 10);
   // The crowd nods in three waves, then all jump together: "Farewell!"
-  Engine_ObjectEventSetAnimation(LOCALID_FAREWELL_FIRST_CHILD, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_FAREWELL_MAN_AWAITING_DORA, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_FAREWELL_GARETS_BROTHER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_FAREWELL_FIRST_CROWD_VILLAGER,
+  Import_ObjectEventSetAnimation(LOCALID_FAREWELL_FIRST_CHILD, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_FAREWELL_MAN_AWAITING_DORA, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_FAREWELL_GARETS_BROTHER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_FAREWELL_FIRST_CROWD_VILLAGER,
                                  ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_FAREWELL_FIRST_CROWD_VILLAGER + 3,
+  Import_ObjectEventSetAnimation(LOCALID_FAREWELL_FIRST_CROWD_VILLAGER + 3,
                                  ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_FAREWELL_FIRST_CROWD_VILLAGER + 6,
+  Import_ObjectEventSetAnimation(LOCALID_FAREWELL_FIRST_CROWD_VILLAGER + 6,
                                  ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_FAREWELL_FIRST_CROWD_VILLAGER + 9,
-                                 ANIM_NOD);
-  FieldScript_WaitFrames(10);
-  Engine_ObjectEventSetAnimation(LOCALID_FAREWELL_SECOND_CHILD, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_FAREWELL_GARETS_GRANDFATHER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_FAREWELL_GARETS_MOTHER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_FAREWELL_FIRST_CROWD_VILLAGER + 1,
-                                 ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_FAREWELL_FIRST_CROWD_VILLAGER + 4,
-                                 ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_FAREWELL_FIRST_CROWD_VILLAGER + 7,
+  Import_ObjectEventSetAnimation(LOCALID_FAREWELL_FIRST_CROWD_VILLAGER + 9,
                                  ANIM_NOD);
   FieldScript_WaitFrames(10);
-  Engine_ObjectEventSetAnimation(LOCALID_FAREWELL_GREAT_HEALER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_FAREWELL_GARETS_SISTER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_FAREWELL_GARETS_FATHER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_FAREWELL_FIRST_CROWD_VILLAGER + 2,
+  Import_ObjectEventSetAnimation(LOCALID_FAREWELL_SECOND_CHILD, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_FAREWELL_GARETS_GRANDFATHER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_FAREWELL_GARETS_MOTHER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_FAREWELL_FIRST_CROWD_VILLAGER + 1,
                                  ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_FAREWELL_FIRST_CROWD_VILLAGER + 5,
+  Import_ObjectEventSetAnimation(LOCALID_FAREWELL_FIRST_CROWD_VILLAGER + 4,
+                                 ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_FAREWELL_FIRST_CROWD_VILLAGER + 7,
+                                 ANIM_NOD);
+  FieldScript_WaitFrames(10);
+  Import_ObjectEventSetAnimation(LOCALID_FAREWELL_GREAT_HEALER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_FAREWELL_GARETS_SISTER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_FAREWELL_GARETS_FATHER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_FAREWELL_FIRST_CROWD_VILLAGER + 2,
+                                 ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_FAREWELL_FIRST_CROWD_VILLAGER + 5,
                                  ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_FAREWELL_FIRST_CROWD_VILLAGER + 8,
                                    ANIM_NOD);
@@ -2006,7 +2006,7 @@ static void EventScript_DepartForQuest(void) {
   FieldScript_WaitTransitionFrames();
   ObjectMotion_EnableActionAndResetMotion(LOCALID_PARTY_LEADER);
   ObjectMotion_EnableActionAndResetMotion(LOCALID_GARET);
-  Engine_ScriptRequestWarp(VALE_GATE_TO_WORLD_MAP);
+  Import_ScriptRequestWarp(VALE_GATE_TO_WORLD_MAP);
   FieldScript_End();
 }
 
@@ -2199,7 +2199,7 @@ static void ValeGate_SetProgressFlagsAndExit(void) {
   GameFlag_Set(FLAG_TRET_DEFEATED);
   GameFlag_Set(FLAG_KOLIMA_CURSE_LIFTED);
 #endif
-  Engine_ScriptRequestWarp(VALE_GATE_TO_BILIBIN);
+  Import_ScriptRequestWarp(VALE_GATE_TO_BILIBIN);
 }
 
 // clang-format off

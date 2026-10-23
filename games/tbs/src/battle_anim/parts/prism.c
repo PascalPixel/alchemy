@@ -157,8 +157,8 @@ void BattleAnim_RunPrism(struct BattleAnimArgs *effect) {
             work->shakeFrames = 8;
             Sound_PlaySongFar(SE_144);
             ANIM_FOR_EACH_TARGET(j, work->effect)
-            ObjectGroup_UpdateMembers(work->effect->targets[j],
-                                      SPRITE_COLOR_WHITE, POSE_DAMAGE, j, 4);
+            BattleAnim_TintBattler(work->effect->targets[j], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, j, 4);
           }
         }
       }

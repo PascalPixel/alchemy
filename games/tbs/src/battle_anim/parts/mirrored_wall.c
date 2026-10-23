@@ -143,11 +143,11 @@ void BattleAnim_RunMirroredWall(struct BattleAnimArgs *effect, s32 mode) {
     // Recovery, red otherwise.
     if (frame == 0) {
       if (mode == MIRRORED_WALL_RECOVERY)
-        ObjectGroup_UpdateMembers(work->effect->targets[0], SPRITE_COLOR_WHITE,
-                                  -1, 0, 32);
+        BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_WHITE, -1,
+                               0, 32);
       else
-        ObjectGroup_UpdateMembers(work->effect->targets[0],
-                                  SPRITE_COLOR_RED_TINT, -1, 0, 32);
+        BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_RED_TINT,
+                               -1, 0, 32);
     }
     if (frame == 24)
       ANIM_SHOW_DAMAGE(0);

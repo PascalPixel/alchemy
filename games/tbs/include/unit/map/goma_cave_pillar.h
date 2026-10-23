@@ -15,7 +15,7 @@ extern s32 gGomaCavePillar_WitnessFrames;
 extern s32 gPushedObject_DirectionSteps[];
 extern u32 gPushedObject_FootprintKinds[];
 extern s32 gPushedObject_FootprintBounds[];
-extern struct EffectScripts gGomaCavePillar_FragmentScripts;
+extern struct EffectDurationScripts gGomaCavePillar_FragmentScripts;
 extern s32 gGomaCavePillar_FragmentScriptShort[];
 extern s32 gGomaCavePillar_FragmentScriptMedium[];
 extern s32 gGomaCavePillar_FragmentScriptLong[];

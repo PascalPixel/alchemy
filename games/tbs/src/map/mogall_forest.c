@@ -329,10 +329,10 @@ static s32 MogallForest_TryJumpLeaderTo(struct FieldPosition *position) {
     s32 jumpMotionFlags;
 
     FieldScript_Start();
-    ObjectDispatch_SelectAnimation(leader, ANIM_LEADER_SPRING);
+    Object_SelectAnimation(leader, ANIM_LEADER_SPRING);
     WaitFrames(6);
     Sound_PlaySong(SE_JUMP);
-    ObjectDispatch_SelectAnimation(leader, ANIM_LEADER_LEAP);
+    Object_SelectAnimation(leader, ANIM_LEADER_LEAP);
     leader->speed = PIXELS(3);
     leader->acceleration = PIXELS(2);
     leader->velocityY = PIXELS(4);
@@ -343,7 +343,7 @@ static s32 MogallForest_TryJumpLeaderTo(struct FieldPosition *position) {
     ObjectMotion_SetPositionAndCommit(LOCALID_PARTY_LEADER,
                                       (s16)((u32)position->x >> 16),
                                       (s16)((u32)position->z >> 16));
-    ObjectDispatch_SelectAnimation(leader, ANIM_LEADER_SPRING);
+    Object_SelectAnimation(leader, ANIM_LEADER_SPRING);
     ObjectEvent_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
     *motionFlags = savedMotionFlags;
     FieldScript_End();
@@ -355,7 +355,7 @@ static s32 MogallForest_TryJumpLeaderTo(struct FieldPosition *position) {
 /// Script command: draws the object event in the colour mode its timer holds.
 static s32 MogallForest_CopyTimerToChild(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
-  ObjectGroup_SetChildValue(objectEvent, objectEvent->timer);
+  ObjectEvent_SetSpriteColor(objectEvent, objectEvent->timer);
   return 0;
 }
 
@@ -429,7 +429,7 @@ static void MogallForest_ApeComesOut(s32 localId, s32 color) {
   FieldCamera_WaitForArrival();
   FieldScript_WaitFrames(30);
   MogallForest_SpawnPuffRing(localId);
-  ObjectGroup_ConfigureChildValue(localId, color);
+  ObjectEvent_ConfigureSpriteColor(localId, color);
 }
 
 /// The ape turns to the leader, hops and gestures down the way to go.
@@ -490,14 +490,14 @@ static void MogallForest_FirstArea_PushLog(void) {
     if (probe.objectEventSlot == LOCALID_FIRST_AREA_RIVER_LOG &&
         (probe.position.z >> 20) == 26) {
       GameFlag_Set(FLAG_FIRST_AREA_LOG_ROLLED);
-      Engine_ObjectEventSetAnimation(LOCALID_FIRST_AREA_RIVER_LOG,
+      Import_ObjectEventSetAnimation(LOCALID_FIRST_AREA_RIVER_LOG,
                                      MOGALL_FOREST_LOG_ROLLING);
       ObjectEvent_SetSpeed(LOCALID_FIRST_AREA_RIVER_LOG, PIXELS(1) / 4,
                            PIXELS(1) / 2);
       ObjectMotion_OffsetPositionAndResetMotion(LOCALID_FIRST_AREA_RIVER_LOG, 0,
                                                 -16);
       FieldScript_WaitFrames(45);
-      Engine_ObjectEventSetAnimation(LOCALID_FIRST_AREA_RIVER_LOG,
+      Import_ObjectEventSetAnimation(LOCALID_FIRST_AREA_RIVER_LOG,
                                      MOGALL_FOREST_LOG_FALLING_IN);
       Sound_PlaySong(SE_240);
       ObjectMotion_SetActionVariant(LOCALID_FIRST_AREA_RIVER_LOG, 1);
@@ -547,7 +547,7 @@ static void MogallForest_FirstArea_JumpSouth(void) {
   if (MogallForest_TryJumpLeaderTo(&position) != 0) {
     FieldScript_Start();
     *motionFlags = 0;
-    Engine_ObjectEventSetAnimation(LOCALID_FIRST_AREA_RIVER_LOG,
+    Import_ObjectEventSetAnimation(LOCALID_FIRST_AREA_RIVER_LOG,
                                    MOGALL_FOREST_LOG_STEPPED_ON);
     objectEvent->y.fixed += -PIXELS(1);
     objectEvent->groundHeight += -PIXELS(1);
@@ -569,7 +569,7 @@ static void MogallForest_FirstArea_JumpSouth(void) {
 /// "The broken sign reads: North: Fuchin Temple / South: Mogall Prairie..."
 static void MogallForest_ReadBrokenSign(void) {
   FieldScript_Start();
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   FieldMessage_Show(MSGNO(MsgMogallForestBrokenSign), 1);
   FieldScript_End();
 }
@@ -612,8 +612,8 @@ static void MogallForest_FirstArea_NorthApeShowsWay(void) {
   FieldScript_WaitFrames(10);
 
   GameFlag_Set(FLAG_FIRST_AREA_NORTH_APE_OUT);
-  Engine_ObjectEventSetPosition(LOCALID_FIRST_AREA_NORTH_APE_STUMP, 0, 0);
-  Engine_ObjectEventSetPosition(LOCALID_FIRST_AREA_NORTH_APE, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_FIRST_AREA_NORTH_APE_STUMP, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_FIRST_AREA_NORTH_APE, 0, 0);
 
   FieldScript_End();
 }
@@ -654,7 +654,7 @@ static void MogallForest_FirstArea_ApeAttacks(void) {
 
   FieldScript_WaitFrames(10);
   GameFlag_Set(FLAG_FIRST_AREA_ATTACKING_APE_OUT);
-  Engine_ObjectEventSetPosition(LOCALID_FIRST_AREA_ATTACKING_APE_STUMP, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_FIRST_AREA_ATTACKING_APE_STUMP, 0, 0);
 
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
 
@@ -702,7 +702,7 @@ static void MogallForest_FirstArea_EastApeShowsWay(void) {
   FieldScript_WaitFrames(6);
 
   GameFlag_Set(FLAG_FIRST_AREA_EAST_APE_OUT);
-  Engine_ObjectEventSetPosition(LOCALID_FIRST_AREA_EAST_APE_STUMP, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_FIRST_AREA_EAST_APE_STUMP, 0, 0);
 
   FieldScript_End();
 }
@@ -711,7 +711,7 @@ static void MogallForest_FirstArea_EastApeShowsWay(void) {
 /// brings it to the party. Sets FLAG_MOGALL_FOREST_NUT_CAUGHT.
 static void MogallForest_CatchNut(void) {
   FieldScript_Start();
-  Engine_ObjectEventSetPosition(LOCALID_NUT, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_NUT, 0, 0);
   GameFlag_Set(FLAG_MOGALL_FOREST_NUT_CAUGHT);
   FieldEffect_StartEffectObject22(ITEM_NUT, 3);
   PartyInventory_GiveItem(ITEM_NUT, 0);
@@ -744,12 +744,12 @@ static void MogallForest_SecondArea_PushLog(void) {
 
       attributes = 0;
       GameFlag_Set(FLAG_SECOND_AREA_LOG_ROLLED);
-      Engine_ObjectEventSetAnimation(LOCALID_SECOND_AREA_RIVER_LOG,
+      Import_ObjectEventSetAnimation(LOCALID_SECOND_AREA_RIVER_LOG,
                                      MOGALL_FOREST_LOG_ROLLING);
       ObjectMotion_OffsetPositionAndResetMotion(LOCALID_SECOND_AREA_RIVER_LOG,
                                                 -16, 6);
       FieldScript_WaitFrames(30);
-      Engine_ObjectEventSetAnimation(LOCALID_SECOND_AREA_RIVER_LOG,
+      Import_ObjectEventSetAnimation(LOCALID_SECOND_AREA_RIVER_LOG,
                                      MOGALL_FOREST_LOG_FALLING_IN);
       Sound_PlaySong(SE_240);
 
@@ -837,9 +837,9 @@ static void MogallForest_SecondArea_NorthApeShowsWay(void) {
   ObjectMotion_SetAngleToward(LOCALID_PARTY_LEADER,
                               LOCALID_SECOND_AREA_NORTH_APE, 0);
   FieldScript_WaitFrames(6);
-  Engine_ObjectEventSetPosition(LOCALID_SECOND_AREA_NORTH_APE, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_SECOND_AREA_NORTH_APE, 0, 0);
   GameFlag_Set(FLAG_SECOND_AREA_NORTH_APE_OUT);
-  Engine_ObjectEventSetPosition(LOCALID_SECOND_AREA_NORTH_APE_STUMP, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_SECOND_AREA_NORTH_APE_STUMP, 0, 0);
   FieldScript_End();
 }
 
@@ -887,9 +887,9 @@ static void MogallForest_SecondArea_EastApeShowsWay(void) {
                               LOCALID_SECOND_AREA_EAST_APE, 0);
   FieldScript_WaitFrames(6);
 
-  Engine_ObjectEventSetPosition(LOCALID_SECOND_AREA_EAST_APE, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_SECOND_AREA_EAST_APE, 0, 0);
   GameFlag_Set(FLAG_SECOND_AREA_EAST_APE_OUT);
-  Engine_ObjectEventSetPosition(LOCALID_SECOND_AREA_EAST_APE_STUMP, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_SECOND_AREA_EAST_APE_STUMP, 0, 0);
 
   FieldScript_End();
 }
@@ -905,7 +905,8 @@ static void MogallForest_SecondArea_SouthApeHidesAgain(void) {
                                 PIXELS(38) / 5);
   FieldScript_WaitFrames(2);
   MogallForest_SpawnPuffRing(LOCALID_SECOND_AREA_SOUTH_APE);
-  ObjectEvent_SetChildValue(LOCALID_SECOND_AREA_SOUTH_APE, SPRITE_COLOR_HIDDEN);
+  ObjectEvent_SetSpriteColorById(LOCALID_SECOND_AREA_SOUTH_APE,
+                                 SPRITE_COLOR_HIDDEN);
   creature = ObjectEvent_Get(LOCALID_SECOND_AREA_SOUTH_APE);
   ObjectEvent_SetSpriteFlags(creature, 0);
   FieldScript_WaitFrames(30);
@@ -960,10 +961,10 @@ static void MogallForest_SecondArea_SouthApeShowsWay(void) {
   FieldScript_WaitFrames(6);
 
   FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 1);
-  Engine_ObjectEventSetPosition(LOCALID_SECOND_AREA_SOUTH_APE, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_SECOND_AREA_SOUTH_APE, 0, 0);
   FieldScript_WaitFrames(30);
   GameFlag_Set(FLAG_SECOND_AREA_SOUTH_APE_OUT);
-  Engine_ObjectEventSetPosition(LOCALID_SECOND_AREA_SOUTH_APE_STUMP, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_SECOND_AREA_SOUTH_APE_STUMP, 0, 0);
 
   FieldScript_End();
 }
@@ -1001,11 +1002,11 @@ static void MogallForest_ThirdArea_PushLog(void) {
         FieldScript_End();
         return;
       }
-      Engine_ObjectEventSetAnimation(probe.objectEventSlot,
+      Import_ObjectEventSetAnimation(probe.objectEventSlot,
                                      MOGALL_FOREST_LOG_ROLLING);
       ObjectMotion_OffsetPositionAndResetMotion(probe.objectEventSlot, 18, 6);
       FieldScript_WaitFrames(30);
-      Engine_ObjectEventSetAnimation(probe.objectEventSlot,
+      Import_ObjectEventSetAnimation(probe.objectEventSlot,
                                      MOGALL_FOREST_LOG_FALLING_IN);
       Sound_PlaySong(SE_240);
       ObjectEvent_Get(probe.objectEventSlot)->priorityFlags =
@@ -1039,7 +1040,7 @@ static void MogallForest_ThirdArea_JumpWest(void) {
     FieldScript_Start();
 
     *motionFlags = 0;
-    Engine_ObjectEventSetAnimation(LOCALID_THIRD_AREA_SOUTH_RIVER_LOG,
+    Import_ObjectEventSetAnimation(LOCALID_THIRD_AREA_SOUTH_RIVER_LOG,
                                    MOGALL_FOREST_LOG_STEPPED_ON);
 
     leader->y.fixed += -PIXELS(1);
@@ -1197,10 +1198,10 @@ static void MogallForest_ThirdArea_MiddleApeShowsWay(void) {
   FieldScript_WaitFrames(6);
 
   FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 1);
-  Engine_ObjectEventSetPosition(LOCALID_THIRD_AREA_MIDDLE_APE, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_THIRD_AREA_MIDDLE_APE, 0, 0);
   FieldScript_WaitFrames(30);
   GameFlag_Set(FLAG_THIRD_AREA_MIDDLE_APE_OUT);
-  Engine_ObjectEventSetPosition(LOCALID_THIRD_AREA_MIDDLE_APE_STUMP, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_THIRD_AREA_MIDDLE_APE_STUMP, 0, 0);
 
   FieldScript_End();
 }
@@ -1244,10 +1245,10 @@ static void MogallForest_ThirdArea_WestApeShowsWay(void) {
   FieldScript_WaitFrames(6);
 
   FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 1);
-  Engine_ObjectEventSetPosition(LOCALID_THIRD_AREA_WEST_APE, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_THIRD_AREA_WEST_APE, 0, 0);
   FieldScript_WaitFrames(30);
   GameFlag_Set(FLAG_THIRD_AREA_WEST_APE_OUT);
-  Engine_ObjectEventSetPosition(LOCALID_THIRD_AREA_WEST_APE_STUMP, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_THIRD_AREA_WEST_APE_STUMP, 0, 0);
 
   FieldScript_End();
 }
@@ -1263,7 +1264,8 @@ static void MogallForest_ThirdArea_EastApeHidesAgain(void) {
   MogallForest_HopObjectEventTo(LOCALID_THIRD_AREA_EAST_APE, 744, 504,
                                 PIXELS(9));
   MogallForest_SpawnPuffRing(LOCALID_THIRD_AREA_EAST_APE);
-  ObjectEvent_SetChildValue(LOCALID_THIRD_AREA_EAST_APE, SPRITE_COLOR_HIDDEN);
+  ObjectEvent_SetSpriteColorById(LOCALID_THIRD_AREA_EAST_APE,
+                                 SPRITE_COLOR_HIDDEN);
   creature = ObjectEvent_Get(LOCALID_THIRD_AREA_EAST_APE);
   ObjectEvent_SetSpriteFlags(creature, 0);
   FieldScript_WaitFrames(30);
@@ -1318,7 +1320,7 @@ static void MogallForest_ThirdArea_EastApeShowsWay(void) {
   FieldScript_WaitFrames(6);
 
   FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 1);
-  Engine_ObjectEventSetPosition(LOCALID_THIRD_AREA_EAST_APE, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_THIRD_AREA_EAST_APE, 0, 0);
   FieldScript_WaitFrames(30);
   GameFlag_Set(FLAG_THIRD_AREA_EAST_APE_OUT);
 
@@ -1386,8 +1388,8 @@ static void MogallForest_KillerApeAttacks(void) {
   objectEvent = ObjectEvent_GetById(LOCALID_THIRD_AREA_EAST_APE);
   FieldScript_Start();
   // Shake the hiding place twice before the creature appears.
-  ObjectGroup_ConfigureChildValue(LOCALID_THIRD_AREA_EAST_APE,
-                                  SPRITE_COLOR_HIDDEN);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_THIRD_AREA_EAST_APE,
+                                   SPRITE_COLOR_HIDDEN);
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_THIRD_AREA_EAST_APE),
                              0);
   ObjectEvent_SetPosition(LOCALID_THIRD_AREA_EAST_APE, PIXELS(136),
@@ -1411,8 +1413,8 @@ static void MogallForest_KillerApeAttacks(void) {
   MogallForest_SpawnPuffRing(LOCALID_THIRD_AREA_EAST_APE);
   objectEvent->scaleX = 6 * Q16_ONE / 5;
   objectEvent->scaleY = 6 * Q16_ONE / 5;
-  ObjectGroup_ConfigureChildValue(LOCALID_THIRD_AREA_EAST_APE,
-                                  SPRITE_COLOR_BRG);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_THIRD_AREA_EAST_APE,
+                                   SPRITE_COLOR_BRG);
   MogallForest_HopObjectEventTo(LOCALID_THIRD_AREA_EAST_APE, 136, 392,
                                 PIXELS(15));
   FieldScript_WaitFrames(15);
@@ -1499,8 +1501,8 @@ s32 MogallForest_Initialize(void) {
       if (Script_GetFlag(FLAG_MOGALL_FOREST_FIRST_APE_SEEN) == 0) {
         FieldScript_Start();
         WaitFrames(1);
-        ObjectGroup_ConfigureChildValue(LOCALID_FIRST_AREA_NORTH_APE,
-                                        SPRITE_COLOR_GRB);
+        ObjectEvent_ConfigureSpriteColor(LOCALID_FIRST_AREA_NORTH_APE,
+                                         SPRITE_COLOR_GRB);
         ObjectEvent_SetPosition(LOCALID_FIRST_AREA_NORTH_APE, PIXELS(92),
                                 PIXELS(120));
         ObjectEvent_FaceDirection(LOCALID_FIRST_AREA_NORTH_APE,
@@ -1519,8 +1521,8 @@ s32 MogallForest_Initialize(void) {
         MogallForest_HopObjectEventTo(LOCALID_FIRST_AREA_NORTH_APE, 136, 116,
                                       PIXELS(7));
         MogallForest_SpawnPuffRing(LOCALID_FIRST_AREA_NORTH_APE);
-        ObjectGroup_ConfigureChildValue(LOCALID_FIRST_AREA_NORTH_APE,
-                                        SPRITE_COLOR_HIDDEN);
+        ObjectEvent_ConfigureSpriteColor(LOCALID_FIRST_AREA_NORTH_APE,
+                                         SPRITE_COLOR_HIDDEN);
         ObjectEvent_SetSpriteFlags(
             ObjectEvent_GetById(LOCALID_FIRST_AREA_NORTH_APE), 0);
         GameFlag_Set(FLAG_MOGALL_FOREST_FIRST_APE_SEEN);
@@ -1533,8 +1535,8 @@ s32 MogallForest_Initialize(void) {
       if (GameFlag_Get(FLAG_FIRST_AREA_NORTH_APE_OUT) != 0) {
         break;
       }
-      ObjectGroup_ConfigureChildValue(LOCALID_FIRST_AREA_NORTH_APE,
-                                      SPRITE_COLOR_HIDDEN);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_FIRST_AREA_NORTH_APE,
+                                       SPRITE_COLOR_HIDDEN);
       ObjectEvent_SetPosition(LOCALID_FIRST_AREA_NORTH_APE, PIXELS(136),
                               PIXELS(116));
       break;
@@ -1544,7 +1546,7 @@ s32 MogallForest_Initialize(void) {
     case MOGALL_FOREST_SIGN_FROM_MOGALL_FOREST_QUARTZ:
       objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
       if (objectEvent != 0) {
-        Engine_ObjectEventSetPosition(LOCALID_NUT, objectEvent->x.fixed,
+        Import_ObjectEventSetPosition(LOCALID_NUT, objectEvent->x.fixed,
                                       objectEvent->z.fixed);
       }
       objectEvent = ObjectEvent_GetById(LOCALID_NUT);
@@ -1554,14 +1556,14 @@ s32 MogallForest_Initialize(void) {
         objectEvent->y.fixed = PIXELS(32);
       }
       WaitFrames(1);
-      Engine_ObjectEventSetPosition(LOCALID_NUT, PIXELS(632), PIXELS(440));
+      Import_ObjectEventSetPosition(LOCALID_NUT, PIXELS(632), PIXELS(440));
       if (GameFlag_Get(FLAG_MOGALL_FOREST_NUT_CAUGHT) == 0) {
         Map_FloatNut(LOCALID_NUT);
       }
-      ObjectGroup_ConfigureChildValue(LOCALID_FIRST_AREA_ATTACKING_APE,
-                                      SPRITE_COLOR_HIDDEN);
-      ObjectGroup_ConfigureChildValue(LOCALID_FIRST_AREA_EAST_APE,
-                                      SPRITE_COLOR_HIDDEN);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_FIRST_AREA_ATTACKING_APE,
+                                       SPRITE_COLOR_HIDDEN);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_FIRST_AREA_EAST_APE,
+                                       SPRITE_COLOR_HIDDEN);
       ObjectEvent_SetSpriteFlags(
           ObjectEvent_GetById(LOCALID_FIRST_AREA_ATTACKING_APE), 0);
       ObjectEvent_SetSpriteFlags(
@@ -1574,7 +1576,7 @@ s32 MogallForest_Initialize(void) {
       WaitFrames(1);
       ObjectEvent_SetPosition(LOCALID_FIRST_AREA_RIVER_LOG, PIXELS(528),
                               PIXELS(408));
-      Engine_ObjectEventSetAnimation(LOCALID_FIRST_AREA_RIVER_LOG,
+      Import_ObjectEventSetAnimation(LOCALID_FIRST_AREA_RIVER_LOG,
                                      MOGALL_FOREST_LOG_IN_RIVER);
       MapGrid_CopyCellAttributes(38, 27, 4, 2, 31, 25);
       ObjectEvent_GetById(LOCALID_FIRST_AREA_RIVER_LOG)->priorityFlags =
@@ -1590,16 +1592,16 @@ s32 MogallForest_Initialize(void) {
     case MOGALL_FOREST_QUARTZ_STUMPS_FROM_POND:
     case MOGALL_FOREST_QUARTZ_STUMPS_FROM_NORTHEAST_CLEARING:
       if (GameFlag_Get(FLAG_SECOND_AREA_NORTH_APE_OUT) == 0) {
-        ObjectGroup_ConfigureChildValue(LOCALID_SECOND_AREA_NORTH_APE,
-                                        SPRITE_COLOR_HIDDEN);
+        ObjectEvent_ConfigureSpriteColor(LOCALID_SECOND_AREA_NORTH_APE,
+                                         SPRITE_COLOR_HIDDEN);
         ObjectEvent_SetSpriteFlags(
             ObjectEvent_GetById(LOCALID_SECOND_AREA_NORTH_APE), 0);
       }
       if (GameFlag_Get(FLAG_SECOND_AREA_EAST_APE_OUT) != 0) {
         break;
       }
-      ObjectGroup_ConfigureChildValue(LOCALID_SECOND_AREA_EAST_APE,
-                                      SPRITE_COLOR_HIDDEN);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_SECOND_AREA_EAST_APE,
+                                       SPRITE_COLOR_HIDDEN);
       ObjectEvent_SetSpriteFlags(
           ObjectEvent_GetById(LOCALID_SECOND_AREA_EAST_APE), 0);
       break;
@@ -1617,7 +1619,7 @@ s32 MogallForest_Initialize(void) {
         WaitFrames(1);
         ObjectEvent_SetPosition(LOCALID_SECOND_AREA_RIVER_LOG, PIXELS(552),
                                 PIXELS(510));
-        Engine_ObjectEventSetAnimation(LOCALID_SECOND_AREA_RIVER_LOG,
+        Import_ObjectEventSetAnimation(LOCALID_SECOND_AREA_RIVER_LOG,
                                        MOGALL_FOREST_LOG_IN_RIVER);
         ObjectEvent_GetById(LOCALID_SECOND_AREA_RIVER_LOG)->priorityFlags =
             OBJ_EVENT_PRIORITY_UNDERFOOT;
@@ -1634,15 +1636,15 @@ s32 MogallForest_Initialize(void) {
       PushedObject_FillGridAttributeRectangle(2, column, fixedZ >> 20, 1, 1,
                                               MB_WALL);
       WaitFrames(1);
-      ObjectGroup_ConfigureChildValue(LOCALID_SECOND_AREA_ROCK,
-                                      SPRITE_COLOR_GREY);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_SECOND_AREA_ROCK,
+                                       SPRITE_COLOR_GREY);
       ObjectEvent_GetById(LOCALID_SECOND_AREA_LOG)->collisionFlags |=
           OBJ_EVENT_NOT_TARGETED;
       if (GameFlag_Get(FLAG_SECOND_AREA_SOUTH_APE_OUT) != 0) {
         break;
       }
-      ObjectGroup_ConfigureChildValue(LOCALID_SECOND_AREA_SOUTH_APE,
-                                      SPRITE_COLOR_HIDDEN);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_SECOND_AREA_SOUTH_APE,
+                                       SPRITE_COLOR_HIDDEN);
       ObjectEvent_SetSpriteFlags(
           ObjectEvent_GetById(LOCALID_SECOND_AREA_SOUTH_APE), 0);
       if (GameFlag_Get(FLAG_SECOND_AREA_SOUTH_APE_MOVED) == 0) {
@@ -1665,16 +1667,16 @@ s32 MogallForest_Initialize(void) {
     case MOGALL_FOREST_KILLER_APE_STUMPS_FROM_RIVER:
       WaitFrames(1);
       if (GameFlag_Get(FLAG_THIRD_AREA_ATTACKING_APE_OUT) == 0) {
-        ObjectGroup_ConfigureChildValue(LOCALID_THIRD_AREA_ATTACKING_APE,
-                                        SPRITE_COLOR_HIDDEN);
+        ObjectEvent_ConfigureSpriteColor(LOCALID_THIRD_AREA_ATTACKING_APE,
+                                         SPRITE_COLOR_HIDDEN);
         ObjectEvent_SetSpriteFlags(
             ObjectEvent_GetById(LOCALID_THIRD_AREA_ATTACKING_APE), 0);
         ObjectEvent_SetSpriteFlags(
             ObjectEvent_GetById(LOCALID_THIRD_AREA_ATTACKING_APE_STUMP), 0);
       }
       if (GameFlag_Get(FLAG_THIRD_AREA_MIDDLE_APE_OUT) == 0) {
-        ObjectGroup_ConfigureChildValue(LOCALID_THIRD_AREA_MIDDLE_APE,
-                                        SPRITE_COLOR_HIDDEN);
+        ObjectEvent_ConfigureSpriteColor(LOCALID_THIRD_AREA_MIDDLE_APE,
+                                         SPRITE_COLOR_HIDDEN);
         ObjectEvent_SetSpriteFlags(
             ObjectEvent_GetById(LOCALID_THIRD_AREA_MIDDLE_APE), 0);
         ObjectEvent_SetSpriteFlags(
@@ -1683,8 +1685,8 @@ s32 MogallForest_Initialize(void) {
       if (GameFlag_Get(FLAG_THIRD_AREA_WEST_APE_OUT) != 0) {
         break;
       }
-      ObjectGroup_ConfigureChildValue(LOCALID_THIRD_AREA_WEST_APE,
-                                      SPRITE_COLOR_HIDDEN);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_THIRD_AREA_WEST_APE,
+                                       SPRITE_COLOR_HIDDEN);
       ObjectEvent_SetSpriteFlags(
           ObjectEvent_GetById(LOCALID_THIRD_AREA_WEST_APE), 0);
       ObjectEvent_SetSpriteFlags(
@@ -1697,8 +1699,8 @@ s32 MogallForest_Initialize(void) {
       column >>= 20;
       PushedObject_FillGridAttributeRectangle(2, column, fixedZ >> 20, 1, 1,
                                               MB_WALL);
-      ObjectGroup_ConfigureChildValue(LOCALID_THIRD_AREA_NORTH_ROCK,
-                                      SPRITE_COLOR_GREY);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_THIRD_AREA_NORTH_ROCK,
+                                       SPRITE_COLOR_GREY);
       WaitFrames(1);
       ObjectEvent_GetById(LOCALID_THIRD_AREA_LOG)->collisionFlags |=
           OBJ_EVENT_NOT_TARGETED;
@@ -1719,9 +1721,9 @@ s32 MogallForest_Initialize(void) {
         Map_RedrawObjectEventFootprint(LOCALID_THIRD_AREA_NORTH_RIVER_LOG);
       } else {
         WaitFrames(1);
-        Engine_ObjectEventSetAnimation(LOCALID_THIRD_AREA_NORTH_RIVER_LOG,
+        Import_ObjectEventSetAnimation(LOCALID_THIRD_AREA_NORTH_RIVER_LOG,
                                        MOGALL_FOREST_LOG_IN_RIVER);
-        Engine_ObjectEventSetPosition(LOCALID_THIRD_AREA_NORTH_RIVER_LOG,
+        Import_ObjectEventSetPosition(LOCALID_THIRD_AREA_NORTH_RIVER_LOG,
                                       PIXELS(698), PIXELS(398));
         ObjectEvent_GetById(LOCALID_THIRD_AREA_NORTH_RIVER_LOG)
             ->priorityFlags |= OBJ_EVENT_PRIORITY_UNDERFOOT;
@@ -1736,9 +1738,9 @@ s32 MogallForest_Initialize(void) {
         Map_RedrawObjectEventFootprint(LOCALID_THIRD_AREA_SOUTH_RIVER_LOG);
       } else {
         WaitFrames(1);
-        Engine_ObjectEventSetAnimation(LOCALID_THIRD_AREA_SOUTH_RIVER_LOG,
+        Import_ObjectEventSetAnimation(LOCALID_THIRD_AREA_SOUTH_RIVER_LOG,
                                        MOGALL_FOREST_LOG_IN_RIVER);
-        Engine_ObjectEventSetPosition(LOCALID_THIRD_AREA_SOUTH_RIVER_LOG,
+        Import_ObjectEventSetPosition(LOCALID_THIRD_AREA_SOUTH_RIVER_LOG,
                                       PIXELS(666), PIXELS(550));
         ObjectEvent_GetById(LOCALID_THIRD_AREA_SOUTH_RIVER_LOG)->priorityFlags =
             OBJ_EVENT_PRIORITY_UNDERFOOT;
@@ -1749,14 +1751,14 @@ s32 MogallForest_Initialize(void) {
       column >>= 20;
       PushedObject_FillGridAttributeRectangle(2, column, fixedZ >> 20, 1, 1,
                                               MB_WALL);
-      ObjectGroup_ConfigureChildValue(LOCALID_THIRD_AREA_SOUTH_ROCK,
-                                      SPRITE_COLOR_GREY);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_THIRD_AREA_SOUTH_ROCK,
+                                       SPRITE_COLOR_GREY);
       WaitFrames(1);
       ObjectEvent_GetById(LOCALID_THIRD_AREA_NORTH_RIVER_LOG)->collisionFlags |=
           OBJ_EVENT_NOT_TARGETED;
       if (GameFlag_Get(FLAG_THIRD_AREA_EAST_APE_OUT) == 0) {
-        ObjectGroup_ConfigureChildValue(LOCALID_THIRD_AREA_EAST_APE,
-                                        SPRITE_COLOR_HIDDEN);
+        ObjectEvent_ConfigureSpriteColor(LOCALID_THIRD_AREA_EAST_APE,
+                                         SPRITE_COLOR_HIDDEN);
         ObjectEvent_SetSpriteFlags(
             ObjectEvent_GetById(LOCALID_THIRD_AREA_EAST_APE), 0);
         if (GameFlag_Get(FLAG_THIRD_AREA_EAST_APE_MOVED) != 0) {
@@ -1767,7 +1769,7 @@ s32 MogallForest_Initialize(void) {
         }
 #if TBS_PATCH_2
       } else {
-        Engine_ObjectEventSetPosition(LOCALID_THIRD_AREA_EAST_APE, 0, 0);
+        Import_ObjectEventSetPosition(LOCALID_THIRD_AREA_EAST_APE, 0, 0);
 #endif
       }
       MogallForest_ThirdArea_UpdateSouthRock();

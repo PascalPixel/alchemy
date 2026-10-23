@@ -97,7 +97,7 @@ void FieldEffect_WanderAroundAnchor(union FieldObject *fieldObject) {
     effect->turnFrames = ((Random16() << 4) >> 16) + 8; // 8 to 23 frames
   }
   if (++effect->swirlFrames == WHIRLWIND_WANDER_FRAMES)
-    ObjectDispatch_InitializeFar(effect, gFieldEffect_CommonParticleScript);
+    Object_InitializeFar(effect, gFieldEffect_CommonParticleScript);
 }
 
 /// Per-frame update: circles the anchor at 8 pixels; after 121 frames it
@@ -195,7 +195,7 @@ void FieldEffect_RunWhirlwind(void) {
     return;
   }
   FieldEffect_FadeToEffectColor();
-  ObjectDispatch_SelectAnimationFar(ball, 2);
+  Object_SelectAnimationFar(ball, 2);
   do {
     s32 scale;
     ball->x.fixed = from.x + step * (to.x - from.x) / WHIRLWIND_TRAVEL_FRAMES;
@@ -243,12 +243,12 @@ void FieldEffect_RunWhirlwind(void) {
     WaitFrames(20);
     WaitFrames(120);
   }
-  ObjectDispatch_SelectAnimationFar(ball, 1);
+  Object_SelectAnimationFar(ball, 1);
   WaitFrames(30);
   Sound_PlaySongFar(SE_136);
   WaitFrames(20);
   // Every particle has left its orbit by now. Its wandering callback no
   // longer reads the anchor, so the orb can be released independently.
-  ObjectDispatch_ReleaseFar((struct Object *)ball);
+  Object_ReleaseFar((struct Object *)ball);
   FieldEffect_FadeFromEffectColor();
 }

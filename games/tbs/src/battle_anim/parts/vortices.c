@@ -141,7 +141,7 @@ void BattleAnim_RunFroth(struct BattleAnimArgs *effect) {
           point->variant = 0;
           point->x = screenPosition.x;
           point->y = screenPosition.y + (Random16() & 31) - 16;
-          ObjectGroup_UpdateMembers(
+          BattleAnim_TintBattler(
               work->effect->targets[i % work->effect->targetCount],
               SPRITE_COLOR_WHITE, POSE_DAMAGE, i % work->effect->targetCount,
               4);
@@ -306,8 +306,8 @@ void BattleAnim_RunWhirlwind(struct BattleAnimArgs *effect) {
     ANIM_FOR_EACH_TARGET(j, work->effect) {
       for (i = 0; i != 7; i++) {
         if (frame == i * 8 + j * 3 + 16) {
-          ObjectGroup_UpdateMembers(work->effect->targets[j],
-                                    SPRITE_COLOR_WHITE, POSE_DAMAGE, j, 4);
+          BattleAnim_TintBattler(work->effect->targets[j], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, j, 4);
           BattleMotion_ApplyKnockbackFar(work->effect->targets[j],
                                          KNOCKBACK_BOUNCE);
         }

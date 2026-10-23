@@ -218,7 +218,7 @@ s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 localId, s32 target,
   emitter = 0;
   if (targetObjectEvent != 0) {
     Sound_PlaySongFar(SE_124);
-    ObjectDispatch_SelectAnimationFar(targetObjectEvent, 4);
+    Object_SelectAnimationFar(targetObjectEvent, 4);
     WaitFrames(12);
     emitter = (s32)FieldEffect_StartRandomParticleEmitter(localId, itemId);
   }

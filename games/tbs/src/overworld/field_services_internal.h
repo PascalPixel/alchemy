@@ -143,7 +143,7 @@ static __inline__ void FieldEffect_UpdateEffectSlots(void) {
     ((struct Object *)obj)->facing = ((struct Object *)obj)->facing + 0x2000;  \
     ((struct Object *)obj)->scaleX = scale;                                    \
     if (scale < 0x3000) {                                                      \
-      ObjectDispatch_ReleaseFar(obj);                                          \
+      Object_ReleaseFar(obj);                                                  \
     }                                                                          \
   }
 
@@ -170,9 +170,9 @@ FieldEffect_InitializeFallingFragment(struct Object *fragment) {
   if (fragment != NULL) {
     fragment->motionFlags = OBJ_EVENT_FALLS;
     fragment->gravity = 0x1999;
-    ObjectDispatch_SelectAnimationFar(fragment, 0);
+    Object_SelectAnimationFar(fragment, 0);
     fragment->wait = 12;
-    ObjectDispatch_InitializeFar(fragment, gFieldEffect_CommonParticleScript);
+    Object_InitializeFar(fragment, gFieldEffect_CommonParticleScript);
   }
 }
 
@@ -219,8 +219,8 @@ FieldEffect_InitializeFallingFragment(struct Object *fragment) {
       obj =                                                                    \
           (struct Object *)Object_Spawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);  \
       if (obj != 0) {                                                          \
-        ObjectDispatch_InitializeFar((struct Object *)obj,                     \
-                                     gFieldEffect_FragmentScript);             \
+        Object_InitializeFar((struct Object *)obj,                             \
+                             gFieldEffect_FragmentScript);                     \
         obj->speedLimit = Random16() + 0x20000;                                \
         obj->acceleration = 0x20000;                                           \
         obj->motionFlags = 0;                                                  \
@@ -230,8 +230,8 @@ FieldEffect_InitializeFallingFragment(struct Object *fragment) {
       }                                                                        \
     }                                                                          \
                                                                                \
-    ObjectDispatch_ReleaseFar((struct Object *)pair[0]);                       \
-    ObjectDispatch_ReleaseFar((struct Object *)pair[1]);                       \
+    Object_ReleaseFar((struct Object *)pair[0]);                               \
+    Object_ReleaseFar((struct Object *)pair[1]);                               \
     FieldEffect_FadeFromEffectColor();                                         \
   }
 

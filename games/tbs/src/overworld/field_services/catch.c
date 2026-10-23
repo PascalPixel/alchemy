@@ -58,7 +58,7 @@ void FieldEffect_RunCatch(void) {
   object->facing = objectEvent->facing;
   object->speedLimit = 0x14ccc;
   object->motionFlags = 0;
-  ObjectDispatch_SelectAnimationFar(object, 5);
+  Object_SelectAnimationFar(object, 5);
   Anim_ApplyChildValuesFar((struct Object *)object, SPRITE_COLOR_GRB);
 
   // Reach out to the goal: steps 0 to 10 of an 11-step loop, a tenth of the
@@ -77,7 +77,7 @@ void FieldEffect_RunCatch(void) {
     step++;
   } while (step < steps);
   WaitFrames(10);
-  ObjectDispatch_SelectAnimationFar(object, 6);
+  Object_SelectAnimationFar(object, 6);
   WaitFrames(15);
 
   // Press down 2 pixels a frame for 10 frames.
@@ -85,7 +85,7 @@ void FieldEffect_RunCatch(void) {
     object->y -= 2 << 16;
     WaitFrames(1);
   }
-  ObjectDispatch_SelectAnimationFar(object, 5);
+  Object_SelectAnimationFar(object, 5);
   Sound_PlaySongFar(SE_132);
   // XXX: why the caught object goes to (-9, -9) pixels, just off the map's
   // corner; the map code that reads it after Catch would settle it.
@@ -116,6 +116,6 @@ void FieldEffect_RunCatch(void) {
     WaitFrames(1);
     step++;
   } while (step < steps);
-  ObjectDispatch_ReleaseFar((struct Object *)object);
+  Object_ReleaseFar((struct Object *)object);
   FieldEffect_FadeFromEffectColor();
 }

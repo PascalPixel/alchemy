@@ -21,7 +21,7 @@
 #define OBJECT_SPEED(no, s, a) ObjectEvent_SetSpeed((no), (s), (a))
 #define OBJECT_DIR(no, d, t) ObjectEvent_FaceDirection((no), (d), (t))
 #define OBJECT_FACE(no, to, t) ObjectMotion_SetAngleToward((no), (to), (t))
-#define OBJECT_ANIMATION(no, m) Engine_ObjectEventSetAnimation((no), (m))
+#define OBJECT_ANIMATION(no, m) Import_ObjectEventSetAnimation((no), (m))
 #define OBJECT_EMOTE(no, e, t) ObjectEvent_ShowEmote((no), (e), (t))
 
 /// Gets an object by index as the same union FieldObject passed to update

@@ -3,16 +3,16 @@
 	.set import.WaitFrames, 1
 	.set import.Task_Add, 1
 	.set import.Task_Remove, 1
-	.set import.Engine_RandomNext, 1
-	.set import.ObjectDispatch_SelectAnimation, 1
-	.set import.ObjectDispatch_Release, 1
+	.set import.Import_RandomNext, 1
+	.set import.Object_SelectAnimation, 1
+	.set import.Object_Release, 1
 	.set import.MapGrid_CenterOnFollowedPoint, 1
 	.set import.Object_SetMoveTarget, 1
 	.set import.Object_WaitForMove, 1
 	.set import.MapGrid_CopyMetatileCellsRect, 1
 	.set import.MapGrid_CopyCellAttributeRect, 1
 	.set import.MapGrid_CheckCollision, 1
-	.set import.ObjectDispatch_SetSingleChildFlags, 1
+	.set import.Object_SetSpriteFlags, 1
 	.set import.MapGrid_SetScreenShake, 1
 	.set import.MapGrid_SetShownLayers, 1
 	.set import.FieldMessage_Show, 1
@@ -35,15 +35,15 @@
 	.set import.ObjectMotion_SetPositionAndReset, 1
 	.set import.ObjectMotion_OffsetPositionAndResetMotion, 1
 	.set import.ObjectMotion_CommitCurrentPositionAndActivate, 1
-	.set import.Engine_ObjectEventSetPosition, 1
-	.set import.Engine_ObjectEventSetAnimation, 1
+	.set import.Import_ObjectEventSetPosition, 1
+	.set import.Import_ObjectEventSetAnimation, 1
 	.set import.ObjectMotion_SetAnimationAndWait, 1
 	.set import.ObjectMotion_Launch, 1
 	.set import.ObjectMotion_SetVariantCallback, 1
 	.set import.ObjectMotion_SetVarCbAndRefresh, 1
 	.set import.ObjectMotion_SetAngleToward, 1
 	.set import.ObjectEvent_LinkPair, 1
-	.set import.ObjectGroup_ConfigureChildValue, 1
+	.set import.ObjectEvent_ConfigureSpriteColor, 1
 	.set import.FieldScript_SetMessageId, 1
 	.set import.FieldMessage_ShowAtObject, 1
 	.set import.FieldScript_ShowMessageAndWait, 1
@@ -58,7 +58,7 @@
 	.set import.FieldCamera_WaitForArrival, 1
 	.set import.ObjectEvent_PlaceCurrentWithinCameraBounds, 1
 	.set import.FieldCamera_GetScriptObject, 1
-	.set import.Engine_ScriptRequestWarp, 1
+	.set import.Import_ScriptRequestWarp, 1
 	.set import.Field_RequestBattleFromEncounterTable, 1
 	.set import.FieldScript_SetNextDestination, 1
 	.set import.FieldScript_StartScreenTransition, 1

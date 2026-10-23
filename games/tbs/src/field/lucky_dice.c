@@ -328,7 +328,7 @@ void LuckyDice_Run(void) {
   diceWork = AllocHeapSlotEwram(HEAP_SLOT_BATTLE_ANIM, sizeof(*diceWork));
   sprites = AllocHeapSlotEwram(HEAP_SLOT_LUCKY_DICE_SPRITES, 0x618);
   camera = AllocHeapSlotEwram(HEAP_SLOT_CAMERA, sizeof(*camera));
-  RuntimeDispatch_NoOpHook((s32)&ResourceId_BattleAnimFarCalls);
+  Stub_NoOpHook((s32)&ResourceId_BattleAnimFarCalls);
   Camera_ResetViewDefaults();
   Task_ResetAll();
   gOamCopyEnabled = 0;

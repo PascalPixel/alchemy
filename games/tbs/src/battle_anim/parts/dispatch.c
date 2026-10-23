@@ -249,7 +249,7 @@ void BattleAnim_SetupBlendedDisplay(void) {
 /// animation: the pose each group switches to (enum BattlePose), or -1 for
 ///            none.
 /// timerSlot: the actor timer (gBattleAnimWork's actorTimers) to set, or -1;
-///            ObjectGroup_TickMemberTimers restores the battler's palette
+///            BattleAnim_TickBattlerTints restores the battler's palette
 ///            when it runs out.
 /// timerFrames: the frames that timer counts.
 /// The parts and animations of a battler that is fading out stay as they are,
@@ -258,8 +258,8 @@ void BattleAnim_SetupBlendedDisplay(void) {
 /// Called throughout the animations, most often through
 /// ANIM_STRIKE_TARGET when a hit lands. Writes work->actorTimers[timerSlot]
 /// and each part's param and frame (0xff restarts it).
-void ObjectGroup_UpdateMembers(s32 actorId, s32 palette, s32 animation,
-                               s32 timerSlot, s32 timerFrames) {
+void BattleAnim_TintBattler(s32 actorId, s32 palette, s32 animation,
+                            s32 timerSlot, s32 timerFrames) {
   struct BattleObject *slot;
   struct Sprite *group;
   struct BattleAnimWork *work;

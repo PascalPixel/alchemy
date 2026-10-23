@@ -425,7 +425,7 @@ s32 Save_LoadFileSummaries(void) {
 /// screens after every save operation. It returns no value, whatever its
 /// declaration says; no caller reads one.
 u32 Save_ReleaseWork(void) {
-  Runtime_SetIrqHandler(IRQ_TIMER2, 0, NULL);
+  Irq_SetHandler(IRQ_TIMER2, 0, NULL);
   FreeHeapSlot(HEAP_SLOT_SAVE);
   // UB: nothing is returned, and no caller reads the result
 #ifdef UBFIX

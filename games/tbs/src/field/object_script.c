@@ -11,55 +11,55 @@
 
 /// The script Object_CreateField gives every new object: it does nothing and
 /// returns to the idle script.
-const s32 gObjectDispatch_DefaultScript[] = {
+const s32 gObject_DefaultScript[] = {
     SC_END,
 };
 
-/// Runs SC_KEY_COUNT every frame; started by ObjectDispatch_StartKeyCheck.
+/// Runs SC_KEY_COUNT every frame; started by Object_StartKeyCheck.
 /// This and the scripts below each repeat one command every frame.
-const s32 gObjectDispatch_KeyCheckScript[] = {
+const s32 gObject_KeyCheckScript[] = {
     SC_KEY_COUNT,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/// Started by ObjectDispatch_StartMoveByKeys.
-const s32 gObjectDispatch_KeysScript[] = {
+/// Started by Object_StartMoveByKeys.
+const s32 gObject_KeysScript[] = {
     SC_KEYS,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/// Started by ObjectDispatch_StartPlayerControl.
-const s32 gObjectDispatch_PlayerScript[] = {
+/// Started by Object_StartPlayerControl.
+const s32 gObject_PlayerScript[] = {
     SC_PLAYER,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/// Started by ObjectDispatch_StartWorldMapControl.
-const s32 gObjectDispatch_WorldMapScript[] = {
+/// Started by Object_StartWorldMapControl.
+const s32 gObject_WorldMapScript[] = {
     SC_WORLD,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/// Started by ObjectDispatch_StartCamera.
-const s32 gObjectDispatch_CameraScript[] = {
+/// Started by Object_StartCamera.
+const s32 gObject_CameraScript[] = {
     SC_CAMERA,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/// Started by ObjectDispatch_StartApproachLink.
-const s32 gObjectDispatch_ApproachLinkScript[] = {
+/// Started by Object_StartApproachLink.
+const s32 gObject_ApproachLinkScript[] = {
     SC_APPROACH_LINK,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/// The idle script ObjectDispatch_StartIdle gives an object.
-const s32 gObjectDispatch_EndScript[] = {
+/// The idle script Object_StartIdle gives an object.
+const s32 gObject_EndScript[] = {
     SC_END,
 };
 

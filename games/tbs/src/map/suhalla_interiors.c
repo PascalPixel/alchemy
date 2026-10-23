@@ -237,7 +237,7 @@ static void EventScript_LeaveByWarp(void) {
   struct FieldWork *state = gFieldWork;
   s16 *touchedTrigger = (s16 *)&state->coordEvent;
 
-  Engine_ScriptRequestWarp(*touchedTrigger);
+  Import_ScriptRequestWarp(*touchedTrigger);
   Sound_PlaySong(SE_MAP_EXIT);
 }
 

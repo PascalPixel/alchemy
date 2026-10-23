@@ -236,7 +236,7 @@ static void EventScript_LeaveThroughDoor(void) {
     ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 3, -16);
   }
   WAIT(16);
-  Engine_ScriptRequestWarp(work->coordEvent);
+  Import_ScriptRequestWarp(work->coordEvent);
   // Restore the layer entries before returning control to the field engine.
   TilesetAnim_Pause(1);
   TilesetAnim_Pause(2);
@@ -284,9 +284,9 @@ static void HammetPalace_SetUpWarpDest(void) {
         HammetPalace_HammetsHomecoming();
       }
     } else {
-      Engine_ObjectEventSetPosition(LOCALID_HAMMET, 0, 0);
+      Import_ObjectEventSetPosition(LOCALID_HAMMET, 0, 0);
       if (GameFlag_Get(FLAG_MAPSEC_TEMP_21) != 0) {
-        Engine_ObjectEventSetPosition(LOCALID_LAYANA, waitingX, waitingZ);
+        Import_ObjectEventSetPosition(LOCALID_LAYANA, waitingX, waitingZ);
         objectEvent = ObjectEvent_GetById(LOCALID_LAYANA);
         facing = FACING_NORTH + FACING_STEP;
         objectEvent->facing = facing;
@@ -307,7 +307,7 @@ static void HammetPalace_SetUpWarpDest(void) {
     break;
 
   case HAMMET_PALACE_LAYANAS_ROOM_FROM_HAMMET_PALACE_GROUNDS:
-    Engine_ObjectEventSetPosition(LOCALID_HAMMET, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_HAMMET, 0, 0);
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       HammetPalace_IvanReportsToLayana();
     }

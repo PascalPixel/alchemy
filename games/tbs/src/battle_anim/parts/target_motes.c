@@ -345,9 +345,8 @@ void BattleAnim_RunTargetMotes(struct BattleAnimArgs *effect, u32 mode) {
 
         if (delay > 31)
           delay = 31;
-        ObjectGroup_UpdateMembers(work->effect->targets[member],
-                                  SPRITE_COLOR_WHITE, POSE_DAMAGE, member,
-                                  delay);
+        BattleAnim_TintBattler(work->effect->targets[member],
+                               SPRITE_COLOR_WHITE, POSE_DAMAGE, member, delay);
       }
     }
     BattleCamera_Shake(16, 16);
@@ -437,8 +436,8 @@ void BattleAnim_RunSleep(struct BattleAnimArgs *effect) {
       SET_VECTOR(anchor, target->x, 160 << 14, target->z);
       Transform_ApplyPosition(anchor);
       if (frame == targetIndex * 16 + 64)
-        ObjectGroup_UpdateMembers(work->effect->targets[targetIndex], 0,
-                                  POSE_DAMAGE, -1, 0);
+        BattleAnim_TintBattler(work->effect->targets[targetIndex], 0,
+                               POSE_DAMAGE, -1, 0);
     }
     current = sheep;
     for (particleIndex = 0; particleIndex != SLEEP_SHEEP;

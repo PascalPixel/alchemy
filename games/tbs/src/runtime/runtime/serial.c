@@ -7,7 +7,7 @@
 // The link cable. Two consoles trade a 24-byte payload each VBlank in
 // multiplayer mode; the parent clocks the transfers from timer 3, a halfword
 // at a time. Bulk data rides on that exchange in 20-byte blocks (the
-// BeginTransfer functions and SerialRuntime_StepBlockTransfer).
+// BeginTransfer functions and Serial_StepBlockTransfer).
 
 enum {
   /// A packet: sequence, missing mask, checksum and the 24-byte payload.
@@ -28,7 +28,7 @@ enum {
 /// gSerialExchangeActive, which starts the per-frame exchange. Called by the
 /// Battle Arena, the file menu's link transfer and the link test, and through
 /// the far-call table.
-void SerialRuntime_Initialize(void) {
+void Serial_Initialize(void) {
   u32 interruptEnable;
   volatile u16 *ime;
   s32 index;
@@ -40,8 +40,8 @@ void SerialRuntime_Initialize(void) {
   IME_SAVE((ime = &REG_IME), interruptEnable);
   IME_DISABLE(ime);
   // Replace both interrupt handlers before configuring multiplayer transfers.
-  Runtime_SetIrqHandler(IRQ_SERIAL, 0, SerialRuntime_HandleTransferInterrupt);
-  Runtime_SetIrqHandler(IRQ_TIMER3, 0, SerialRuntime_HandleTransferInterrupt);
+  Irq_SetHandler(IRQ_SERIAL, 0, Serial_HandleTransferInterrupt);
+  Irq_SetHandler(IRQ_TIMER3, 0, Serial_HandleTransferInterrupt);
   REG_IME = 0;
   REG_IE &= (u16)~(INTR_FLAG_SERIAL | INTR_FLAG_TIMER3);
   if ((REG_IF & INTR_FLAG_SERIAL) != 0)
@@ -82,7 +82,7 @@ void SerialRuntime_Initialize(void) {
 /// Lets the timer start transfers again once a link mode is set, by setting
 /// gSerialWork.transferEnabled. Nothing in ☀️ calls it; WaitFrames does the
 /// same inline.
-void SerialRuntime_EnableTransferTimer(void) {
+void Serial_EnableTransferTimer(void) {
   struct SerialWork *state = &gSerialWork;
 
   if (state->mode != 0)
@@ -91,7 +91,7 @@ void SerialRuntime_EnableTransferTimer(void) {
 
 /// Disables the serial and timer 3 interrupts, stops the transfer timer and
 /// clears gSerialWork.transferEnabled. Nothing in ☀️ calls it.
-void SerialRuntime_DisableTransfer(void) {
+void Serial_DisableTransfer(void) {
   struct SerialWork *state;
 
   REG_IME = 0;
@@ -106,12 +106,12 @@ void SerialRuntime_DisableTransfer(void) {
 }
 
 /// Looks for the link partner and, once connected, does one exchange (as
-/// SerialRuntime_ExchangePayloads). When SIOCNT shows the parent's id with
+/// Serial_ExchangePayloads). When SIOCNT shows the parent's id with
 /// SIO_MULTI_SD set and SIO_MULTI_SI and SIO_START clear, and no packet is
 /// being sent, this console arms timer 3 to clock the transfers and so acts as
 /// the parent. Called by the Tret tree branch scene for its own exchange.
-/// Returns the link status (see SerialRuntime_ExchangePayloads).
-s32 SerialRuntime_PollAndTransfer(void *send, void *receive) {
+/// Returns the link status (see Serial_ExchangePayloads).
+s32 Serial_PollAndTransfer(void *send, void *receive) {
   volatile u32 *siocnt;
   u32 control;
   s32 status;
@@ -151,8 +151,8 @@ s32 SerialRuntime_PollAndTransfer(void *send, void *receive) {
   }
     // Fall through.
   case SERIAL_PHASE_CONNECTED:
-    SerialRuntime_CollectReceivedPayloads(receive);
-    SerialRuntime_PrepareSendPacket(send);
+    Serial_CollectReceivedPayloads(receive);
+    Serial_PrepareSendPacket(send);
     break;
   }
 
@@ -160,16 +160,16 @@ s32 SerialRuntime_PollAndTransfer(void *send, void *receive) {
   status = gSerialWork.currentMask | (gSerialWork.receivedMask << 8);
   if (gSerialWork.mode == SERIAL_MODE_CLOCKING)
     status |= LINK_STATUS_CLOCKING;
-  result = SerialRuntime_AddParentFlag(status);
+  result = Serial_AddParentFlag(status);
   if (((control << 26) >> 30) > 1)
     result |= LINK_STATUS_EXTRA_CONSOLE;
   return result;
 }
 
-/// As SerialRuntime_PollAndTransfer, without exchanging data: WaitFrames calls
+/// As Serial_PollAndTransfer, without exchanging data: WaitFrames calls
 /// it once a frame while gSerialExchangeActive is set, and the VBlank handler
 /// does the exchange.
-s32 SerialRuntime_PollStatus(void) {
+s32 Serial_PollStatus(void) {
   volatile u32 *siocnt;
   u32 control;
   s32 status;
@@ -205,7 +205,7 @@ s32 SerialRuntime_PollStatus(void) {
   status = gSerialWork.currentMask | (gSerialWork.receivedMask << 8);
   if (gSerialWork.mode == SERIAL_MODE_CLOCKING)
     status |= LINK_STATUS_CLOCKING;
-  result = SerialRuntime_AddParentFlag(status);
+  result = Serial_AddParentFlag(status);
   if (((control << 26) >> 30) > 1)
     result |= LINK_STATUS_EXTRA_CONSOLE;
   return result;
@@ -222,8 +222,8 @@ s32 SerialRuntime_PollStatus(void) {
 ///                  (isParent)
 ///   0x2000       : SIOCNT's multiplayer id is 2 or more
 /// So LINK_STATUS_HEARD_BOTH is what the block transfer and
-/// SerialRuntime_WaitForStatusMask(LINK_STATUS_HEARD_BOTH) wait for.
-s32 SerialRuntime_ExchangePayloads(void *send, void *receive) {
+/// Serial_WaitForStatusMask(LINK_STATUS_HEARD_BOTH) wait for.
+s32 Serial_ExchangePayloads(void *send, void *receive) {
   volatile u32 *siocnt;
   u32 control;
   s32 status;
@@ -232,14 +232,14 @@ s32 SerialRuntime_ExchangePayloads(void *send, void *receive) {
   siocnt = &REG_SIOCNT;
   control = *siocnt;
   if (gSerialWork.phase == SERIAL_PHASE_CONNECTED) {
-    SerialRuntime_CollectReceivedPayloads(receive);
-    SerialRuntime_PrepareSendPacket(send);
+    Serial_CollectReceivedPayloads(receive);
+    Serial_PrepareSendPacket(send);
     gSerialWork.sequence++;
   }
   status = gSerialWork.currentMask | (gSerialWork.receivedMask << 8);
   if (gSerialWork.mode == SERIAL_MODE_CLOCKING)
     status |= LINK_STATUS_CLOCKING;
-  result = SerialRuntime_AddParentFlag(status);
+  result = Serial_AddParentFlag(status);
   // SIOCNT bits 4 and 5, the multiplayer id
   if (((control << 26) >> 30) > 1)
     result |= LINK_STATUS_EXTRA_CONSOLE;
@@ -251,7 +251,7 @@ s32 SerialRuntime_ExchangePayloads(void *send, void *receive) {
 /// payload. The checksum is the complement of the sum of the first 28 bytes
 /// as halfwords. Then restarts the send position and the timer. Called by
 /// both exchanges.
-void SerialRuntime_PrepareSendPacket(void *payload) {
+void Serial_PrepareSendPacket(void *payload) {
   /* FAKEMATCH(volatile): sr is volatile, so sendBuffer[0] is loaded again for
    * the checksum; as a plain pointer, 4 of 48 instructions differ in
    * tbs-en. */
@@ -307,7 +307,7 @@ void SerialRuntime_PrepareSendPacket(void *payload) {
 /// console), and records the consoles heard from in currentMask and
 /// receivedMask. Called by both exchanges. Returns the mask of consoles heard
 /// from this frame.
-u8 SerialRuntime_CollectReceivedPayloads(void *payload) {
+u8 Serial_CollectReceivedPayloads(void *payload) {
   u8 flags[8];
   s32 i;
   u32 k;
@@ -350,11 +350,11 @@ u8 SerialRuntime_CollectReceivedPayloads(void *payload) {
   return gSerialWork.currentMask;
 }
 
-/// The serial and timer 3 interrupt, installed by SerialRuntime_Initialize:
+/// The serial and timer 3 interrupt, installed by Serial_Initialize:
 /// each one moves a halfword. It sends the next halfword of the outgoing
 /// packet (0xfefe between packets) and stores the halfword received from each
 /// console; a console's fourteenth halfword completes its packet.
-void SerialRuntime_HandleTransferInterrupt(void) {
+void Serial_HandleTransferInterrupt(void) {
   // The receive channels share one backedge; a do/while for each adds 50 bytes
   // in tbs-en.
   struct SerialWork *sendState;
@@ -446,16 +446,16 @@ receive_loop:
 /// Clears gSerialExchangeActive, which stops the per-frame exchange, and
 /// removes the link interrupt handlers. Called when the Battle Arena, the file
 /// menu's transfer or a link battle ends.
-void SerialRuntime_RemoveIrqHandlers(void) {
+void Serial_RemoveIrqHandlers(void) {
   gSerialExchangeActive = 0;
-  Runtime_SetIrqHandler(IRQ_SERIAL, 0, 0);
-  Runtime_SetIrqHandler(IRQ_TIMER3, 0, 0);
+  Irq_SetHandler(IRQ_SERIAL, 0, 0);
+  Irq_SetHandler(IRQ_TIMER3, 0, 0);
 }
 
 /// Waits a frame at a time until every status bit in `mask` is set in
 /// gLinkStatus, then returns this console's multiplayer id. Called by the
 /// link test and through the far-call table.
-u32 SerialRuntime_WaitForStatusMask(s32 mask) {
+u32 Serial_WaitForStatusMask(s32 mask) {
   if ((mask & gLinkStatus) != mask) {
     do {
       WaitFrames(1);
@@ -466,7 +466,7 @@ u32 SerialRuntime_WaitForStatusMask(s32 mask) {
 
 /// Starts sending `size` bytes from `source` to the partner in 20-byte blocks:
 /// sets the send source, size and block sequence that
-/// SerialRuntime_StepBlockTransfer works from. Called by the link battle,
+/// Serial_StepBlockTransfer works from. Called by the link battle,
 /// the Battle Arena and the file menu's transfer. Returns -1 when a send is
 /// already running, 0 otherwise.
 ///
@@ -474,7 +474,7 @@ u32 SerialRuntime_WaitForStatusMask(s32 mask) {
 /// only when it reaches exactly 0. `source` is read a block each VBlank, and
 /// may be resent from after a rewind, so it must stay unchanged until
 /// gSerialSendSource is 0 again.
-s32 SerialRuntime_StartSend(void *source, s32 size) {
+s32 Serial_StartSend(void *source, s32 size) {
   struct SerialTransferState *state = &gSerialTransfer;
   u32 savedInterruptMaster;
 
@@ -492,11 +492,11 @@ s32 SerialRuntime_StartSend(void *source, s32 size) {
 
 /// Starts receiving the partner's blocks into `destination`: sets the receive
 /// destination and clears the received size. Called by the same code as
-/// SerialRuntime_StartSend. Returns -1 when a receive is already running, 0
+/// Serial_StartSend. Returns -1 when a receive is already running, 0
 /// otherwise. Each block is stored whole, so `destination` needs room for
 /// the partner's whole send; the receive ends at the partner's last block,
 /// whatever the room.
-s32 SerialRuntime_StartReceive(void *destination) {
+s32 Serial_StartReceive(void *destination) {
   struct SerialTransferState *state = &gSerialTransfer;
   u32 savedInterruptMaster;
 
@@ -526,12 +526,12 @@ s32 SerialRuntime_StartReceive(void *destination) {
     }                                                                          \
   }
 
-SERIAL_DEFINE_WAIT(SerialRuntime_WaitForSend, gSerialSendSource)
-SERIAL_DEFINE_WAIT(SerialRuntime_WaitForReceive, gSerialReceiveDestination)
+SERIAL_DEFINE_WAIT(Serial_WaitForSend, gSerialSendSource)
+SERIAL_DEFINE_WAIT(Serial_WaitForReceive, gSerialReceiveDestination)
 
 /// Waits until both the send and the receive have finished, giving up after
 /// 600000 frames. Reached through the far-call table.
-void SerialRuntime_WaitForTransfers(void) {
+void Serial_WaitForTransfers(void) {
   u32 count;
 
   count = 0;
@@ -545,7 +545,7 @@ void SerialRuntime_WaitForTransfers(void) {
 
 /// Returns bit 0 while a send runs and bit 1 while a receive runs. The link
 /// battle and the Battle Arena poll it between frames.
-s32 SerialRuntime_GetActiveTransfers(void) {
+s32 Serial_GetActiveTransfers(void) {
   s32 flags;
 
   flags = 0;
@@ -558,7 +558,7 @@ s32 SerialRuntime_GetActiveTransfers(void) {
   return flags;
 }
 
-void LinkBattle_ResetTransferState(void) { SerialRuntime_ResetTransferState(); }
+void LinkBattle_ResetTransferState(void) { Serial_ResetTransferState(); }
 
 struct SerialHalfword {
   u16 v;
@@ -570,7 +570,7 @@ struct SerialHalfword {
 /// acknowledgement behind its own count it rewinds and sends the missed
 /// blocks again. A finished send or receive clears gSerialSendSource or
 /// gSerialReceiveDestination.
-void SerialRuntime_StepBlockTransfer(void) {
+void Serial_StepBlockTransfer(void) {
   /* FAKEMATCH(volatile): gSerialSendSize and gSerialBlockSequence are volatile
    * (serial_runtime.h), so each access is its own load or store; as plain
    * globals, 99 of 257 instructions differ in tbs-en. */
@@ -707,7 +707,7 @@ void SerialTest_Run(void) {
   s32 tick;
 
   Sound_PlaySongFar(MUS_003);
-  SerialRuntime_Initialize();
+  Serial_Initialize();
   // Row 16, columns 0 to 19: tiles 0x80 to 0x93 in palette 15, the 20 tiles
   // at 0x06001000 that the received 640 bytes are copied to
   n = 19;
@@ -720,15 +720,15 @@ void SerialTest_Run(void) {
     value--;
   } while (n >= 0);
   Cpu_Fill32(0, gMapGridCellBuffer, 0x400);
-  SerialRuntime_WaitForStatusMask(LINK_STATUS_HEARD_BOTH);
+  Serial_WaitForStatusMask(LINK_STATUS_HEARD_BOTH);
 restart:
-  SerialRuntime_StartReceive(gMapGridCellBuffer);
+  Serial_StartReceive(gMapGridCellBuffer);
   for (;;) {
     // 0x280 bytes: 32 blocks, 20 tiles
     if (gKeysHeld & KEY_A)
-      SerialRuntime_StartSend((void *)Cart_Restart, 0x280);
+      Serial_StartSend((void *)Cart_Restart, 0x280);
     if (gKeysHeld & KEY_B)
-      SerialRuntime_StartSend((void *)(Rom_Start + 0x1000), 0x280);
+      Serial_StartSend((void *)(Rom_Start + 0x1000), 0x280);
     if (gKeysHeld & KEY_START) {
       tick = 9999;
       do {

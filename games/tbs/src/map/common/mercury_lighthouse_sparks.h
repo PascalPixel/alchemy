@@ -27,7 +27,7 @@ static s32 MercuryLighthouse_TrailSparks(union FieldObject *fieldObject) {
   options.startScaleX = 0xcccc;
   options.startScaleY = 0xcccc;
   options.priority = 0;
-  velocityY = -((((u32)Engine_RandomNext() * 8) >> 16) * 0x3333);
+  velocityY = -((((u32)Import_RandomNext() * 8) >> 16) * 0x3333);
   FieldEffect_Spawn(
       objectEvent->x.fixed + ((8 - (gFrameCount & 15)) << 16),
       objectEvent->y.fixed + 0x1a0000, objectEvent->z.fixed, 0, velocityY, 0,

@@ -2,18 +2,18 @@
 	.set overlay_imports, 1
 	.set import.__divsi3, 1
 	.set import.WaitFrames, 1
-	.set import.Engine_RandomNext, 1
+	.set import.Import_RandomNext, 1
 	.set import.Trig_Sin, 1
 	.set import.Trig_Cos, 1
 	.set import.AllocHeapSlot, 1
 	.set import.FreeHeapSlot, 1
 	.set import.VramCache_Load, 1
-	.set import.ObjectDispatch_SelectAnimation, 1
+	.set import.Object_SelectAnimation, 1
 	.set import.Object_SetMoveTarget, 1
 	.set import.Object_WaitForMove, 1
 	.set import.MapGrid_CopyCellAttributeRect, 1
 	.set import.MapGrid_CheckCollision, 1
-	.set import.ObjectDispatch_SetSingleChildFlags, 1
+	.set import.Object_SetSpriteFlags, 1
 	.set import.Icon_DrawItem, 1
 	.set import.GameFlag_Get, 1
 	.set import.GameFlag_Set, 1
@@ -25,8 +25,8 @@
 	.set import.ObjectMotion_SetSpeedParameters, 1
 	.set import.ObjectMotion_OffsetPositionAndResetMotion, 1
 	.set import.ObjectMotion_CommitCurrentPositionAndActivate, 1
-	.set import.Engine_ObjectEventSetPosition, 1
-	.set import.Engine_ObjectEventSetAnimation, 1
+	.set import.Import_ObjectEventSetPosition, 1
+	.set import.Import_ObjectEventSetAnimation, 1
 	.set import.PaletteFade_SetTarget, 1
 	.set import.PaletteFade_SetSource, 1
 	.set import.FieldEffect_StartEffectObject22, 1

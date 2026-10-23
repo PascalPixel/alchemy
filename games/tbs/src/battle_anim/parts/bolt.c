@@ -89,8 +89,8 @@ void BattleAnim_RunBolt(struct BattleAnimArgs *effect) {
       if (frame == start + 1)
         work->shakeFrames = 4;
       if (frame == start + 4) {
-        ObjectGroup_UpdateMembers(work->effect->targets[i], SPRITE_COLOR_WHITE,
-                                  POSE_DAMAGE, i, 6);
+        BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_WHITE,
+                               POSE_DAMAGE, i, 6);
         BattleMotion_ApplyKnockbackFar(work->effect->targets[i],
                                        KNOCKBACK_BOUNCE);
       }

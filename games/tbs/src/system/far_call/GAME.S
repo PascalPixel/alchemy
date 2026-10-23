@@ -100,7 +100,7 @@ FarCall_GameTable:
 	export PartyInventory_DiscardFar, PartyInventory_Discard
 	export GameFlag_RefreshLureCapFar, GameFlag_RefreshLureCap
 	export Equipment_GetUnleashRateBonusFar, Equipment_GetUnleashRateBonus
-	export Runtime_GetBuildStampTimeFar, Runtime_GetBuildStampTime
+	export BuildStamp_GetTimeFar, BuildStamp_GetTime
 	export PartyInventory_CountFreeSlotsFar, PartyInventory_CountFreeSlots
 	export InventorySnapshot_SaveFar, InventorySnapshot_Save
 	export InventorySnapshot_RestoreFar, InventorySnapshot_Restore

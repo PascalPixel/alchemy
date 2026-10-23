@@ -451,7 +451,7 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
   }
   // Stop the acting unit, saving its motion for after the gathering, and
   // place the Djinni 80 pixels overhead.
-  ObjectDispatch_SetAnimationSpeedFar((struct Object *)casterActor, 0);
+  Object_SetAnimationSpeedFar((struct Object *)casterActor, 0);
   position = &djinnPos;
   SET_POSITION(position, casterActor->x, casterActor->y + 0x500000,
                casterActor->z);
@@ -578,7 +578,7 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
       mode == CASTING_IMPACT_IMPACT_UNUSED_MYSTIC_FLAME ||
       mode == CASTING_IMPACT_IMPACT_UNUSED_COMETS) {
     CastingImpact_EndPrelude(work, canvas);
-    ObjectDispatch_SelectAnimationFar(casterActor, POSE_CAST);
+    Object_SelectAnimationFar(casterActor, POSE_CAST);
     if (mode == CASTING_IMPACT_IMPACT_UNUSED_ICE_CHIPS) {
       BattleAnim_RunProjectileVolley(effect, PROJECTILE_VOLLEY_BLIZZARD);
     }
@@ -591,7 +591,7 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
     BattleAnim_RunProjectileVolley(effect, PROJECTILE_VOLLEY_IMPACT_COMETS);
     return;
   }
-  ObjectDispatch_SetAnimationSpeedFar((struct Object *)casterActor, 16);
+  Object_SetAnimationSpeedFar((struct Object *)casterActor, 16);
   SET_VELOCITY(casterActor, savedVelocityX, savedVelocityY, savedVelocityZ);
   casterActor->acceleration = savedAcceleration;
   casterActor->gravity = savedVerticalStrength;
@@ -868,11 +868,11 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
       // across and in depth (a 256th of the distance under 0x1000); only the
       // first 32 are drawn.
       if (frame == 50) {
-        ObjectGroup_UpdateMembers(work->effect->user, SPRITE_COLOR_WHITE, -1,
-                                  -1, 0);
+        BattleAnim_TintBattler(work->effect->user, SPRITE_COLOR_WHITE, -1, -1,
+                               0);
       }
       if (frame == 79) {
-        ObjectGroup_UpdateMembers(work->effect->user, 0, -1, -1, 0);
+        BattleAnim_TintBattler(work->effect->user, 0, -1, -1, 0);
       }
       if (frame == 12) {
         particle = CASTING_IMPACT_IMPACT_PARTICLES;
@@ -1278,8 +1278,8 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
             step->x -= 6;
             if (step->x < 0 && ((i & 7) == 0 || i == 63)) {
               Sound_PlaySongFar(SE_IMPACT);
-              ObjectGroup_UpdateMembers(work->effect->targets[0],
-                                        SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 4);
+              BattleAnim_TintBattler(work->effect->targets[0],
+                                     SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 4);
             }
           }
         }
@@ -1416,12 +1416,12 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
       }
     }
     if (frame == 6) {
-      ObjectGroup_UpdateMembers(work->effect->targets[0], SPRITE_COLOR_WHITE,
-                                POSE_DAMAGE, 0, 4);
+      BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_WHITE,
+                             POSE_DAMAGE, 0, 4);
     }
     if (frame == 14) {
-      ObjectGroup_UpdateMembers(work->effect->targets[0], SPRITE_COLOR_WHITE,
-                                POSE_DAMAGE, 0, 4);
+      BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_WHITE,
+                             POSE_DAMAGE, 0, 4);
     }
     BattleCamera_Shake(8, 8);
     ANIM_END_FRAME(work);

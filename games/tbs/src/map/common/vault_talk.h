@@ -12,7 +12,7 @@ static void Vault_ShowThought(s32 localId) {
 
   *paused = 1;
   FieldScript_Start();
-  Engine_ObjectEventSetAnimation(localId, ANIM_STAND);
+  Import_ObjectEventSetAnimation(localId, ANIM_STAND);
   FieldScript_WaitFrames(2);
   FieldScript_ShowMessageAndWait(localId, 0);
   FieldScript_End();

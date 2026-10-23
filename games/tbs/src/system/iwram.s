@@ -258,8 +258,8 @@ gBattleAnimWork:
 	.global gBattleEntryTimer
 gBattleEntryTimer:
 	.space 0x00000008
-	.global gBattleViewWork
-gBattleViewWork:
+	.global gBattleBackgroundWork
+gBattleBackgroundWork:
 	.space 0x0000001c
 	.global gSaveWork
 gSaveWork:

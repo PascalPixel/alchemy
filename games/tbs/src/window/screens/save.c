@@ -170,7 +170,7 @@ u32 Save_BuildFileSummary(void) {
 
   // The summary's 16-byte header comes before the save buffer.
   summary = (struct SaveFileSummary *)((u32)gSaveBuffer - 16);
-  gSaveBlock.buildStamp = Runtime_GetBuildStampTimeFar(0);
+  gSaveBlock.buildStamp = BuildStamp_GetTimeFar(0);
   gSaveBlock.playTime = gPlayTimeFrames;
   // A second copy of the play time, 256 bytes from gMapLocalState: past its
   // 0x78 bytes, in gInventorySnapshot's last word. gMapLocalState opens the
@@ -894,7 +894,7 @@ s32 FileMenu_SelectFile(s32 selectedFile, s32 menuMode) {
   djinnWindow = NULL;
   summaryDirty = 1;
   work = *(gHeapSlots + HEAP_SLOT_WINDOW);
-  buildStamp = Runtime_GetBuildStampTimeFar();
+  buildStamp = BuildStamp_GetTimeFar();
   // Start on the first file the mode allows.
   // BUG: when none is, the jump to done returns FILE_MENU_NO_FILE without
   // releasing spriteWork's HEAP_SLOT_MENU block.

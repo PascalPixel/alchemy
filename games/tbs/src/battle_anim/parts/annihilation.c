@@ -169,11 +169,11 @@ void BattleAnim_RunAnnihilation(struct BattleAnimArgs *effect) {
     }
     // The target glows red on frames 6 and 14.
     if (frame == 6)
-      ObjectGroup_UpdateMembers(work->effect->targets[0], SPRITE_COLOR_RED_TINT,
-                                -1, -1, 0);
+      BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_RED_TINT,
+                             -1, -1, 0);
     if (frame == 14)
-      ObjectGroup_UpdateMembers(work->effect->targets[0], SPRITE_COLOR_RED_TINT,
-                                -1, -1, 0);
+      BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_RED_TINT,
+                             -1, -1, 0);
     BattleCamera_Shake(16, 16);
     ANIM_END_FRAME(work);
   }

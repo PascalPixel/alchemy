@@ -101,7 +101,7 @@ void FieldEffect_EndCloak(void) {
 
   Sound_PlaySongFar(SE_CAST);
   Task_Remove(FieldEffect_CheckCloakTile);
-  ObjectDispatch_SelectAnimationFar(object, 0);
+  Object_SelectAnimationFar(object, 0);
   object->update = 0;
 
   for (i = 0; i < 5; ++i) {
@@ -154,7 +154,7 @@ void FieldEffect_StartCloak(void) {
   void (*check)(void);
 
   Sound_PlaySongFar(SE_130);
-  ObjectDispatch_SelectAnimationFar(leader, 0);
+  Object_SelectAnimationFar(leader, 0);
   leader->update = 0;
   n = 0;
   do {

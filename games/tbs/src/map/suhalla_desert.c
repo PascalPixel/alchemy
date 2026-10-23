@@ -271,7 +271,7 @@ static void SuhallaDesert_CatchInStorm(s32 stormId) {
     FieldScript_Start();
     ObjectEvent_SetAttachedEffect(leaderLocalId, ATTACHED_EFFECT_IN_FRONT |
                                                      ATTACHED_EFFECT_ATTACH);
-    Engine_ObjectEventSetAnimation(leaderLocalId, ANIM_LEADER_LOOK_AROUND);
+    Import_ObjectEventSetAnimation(leaderLocalId, ANIM_LEADER_LOOK_AROUND);
     storm = ObjectEvent_GetById(stormIdCopy);
     if (storm != 0) {
       ObjectEvent_SetDestination(leaderLocalId, storm->x.part.pixel,
@@ -380,7 +380,7 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
     leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     if ((s32)leader != 0) {
-      Engine_ObjectEventSetPosition(LOCALID_IODEM, leader->x.fixed,
+      Import_ObjectEventSetPosition(LOCALID_IODEM, leader->x.fixed,
                                     leader->z.fixed);
     }
 #ifdef BUGFIX
@@ -400,7 +400,7 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
     FieldScript_WaitFrames(1);
     ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags |=
         OBJ_EVENT_FACES_MOTION;
-    Engine_ObjectEventSetAnimation(LOCALID_IODEM, ANIM_STAND);
+    Import_ObjectEventSetAnimation(LOCALID_IODEM, ANIM_STAND);
     ObjectMotion_ArmCallback(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
     FieldScript_SetMessageId(MsgSuhallaSandstorm);
     ObjectEvent_ShowEmote(LOCALID_IODEM, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
@@ -417,14 +417,14 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
     ObjectMotion_SetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
     FieldScript_ShowMessageAndWait(LOCALID_IODEM, 0);
     ObjectEvent_SetSpeed(LOCALID_IODEM, PIXELS(1), PIXELS(1) / 2);
-    Engine_ObjectEventSetAnimation(LOCALID_IODEM, ANIM_WALK);
+    Import_ObjectEventSetAnimation(LOCALID_IODEM, ANIM_WALK);
     leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     if ((s32)leader != 0) {
       ObjectMotion_ResetAndSetPosition(LOCALID_IODEM, leader->x.part.pixel,
                                        leader->z.part.pixel);
     }
     ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_IODEM);
-    Engine_ObjectEventSetPosition(LOCALID_IODEM, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_IODEM, 0, 0);
   }
   FieldScript_End();
 }
@@ -513,7 +513,7 @@ static void EventScript_IodemAsksWhetherToPressOn(void) {
     ObjectEvent_WalkToAndWait(LOCALID_IODEM, 440, 1256);
     Script_ShowMessage(LOCALID_IODEM, 0);
     ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
-    Engine_ObjectEventSetAnimation(LOCALID_IODEM, ANIM_WALK);
+    Import_ObjectEventSetAnimation(LOCALID_IODEM, ANIM_WALK);
     leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
     if (leader != 0) {
       ObjectEvent_SetDestination(LOCALID_IODEM, leader->x.part.pixel,
@@ -574,7 +574,7 @@ static s32 SuhallaDesert_ChaseLeader(struct Object *interpreter) {
   if (sparkFrame == 0) {
     options.startScaleX = 4 * Q16_ONE / 5;
     options.startScaleY = 4 * Q16_ONE / 5;
-    options.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
+    options.spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
     FieldEffect_Spawn(objectEvent->x.fixed, objectEvent->y.fixed,
                       objectEvent->z.fixed, 0, sparkFrame, sparkFrame,
                       EFFECT_USE_SPIN | EFFECT_USE_START_SCALE |
@@ -636,7 +636,7 @@ static void EventScript_DouseStorm(s32 unused, s32 stormId) {
       if (stormId == LOCALID_CHASING_STORM) {
         Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 6);
         ObjectMotion_EnableActionAndResetMotion(LOCALID_CHASING_STORM);
-        Engine_ObjectEventSetPosition(LOCALID_CHASING_STORM, 0, 0);
+        Import_ObjectEventSetPosition(LOCALID_CHASING_STORM, 0, 0);
       }
     }
   }
@@ -663,7 +663,7 @@ static void EventScript_StormCarriesPartyAway(void) {
   Sound_PlaySong(SE_219);
   // BUG: the native passes a local id where the sprite helper needs a pointer.
 #ifdef BUGFIX
-  ObjectDispatch_SetSingleChildFlags(selectedObjectEvent, 0);
+  Object_SetSpriteFlags(selectedObjectEvent, 0);
 #else
   ObjectEvent_SetSpriteFlags((struct ObjectEvent *)gSaveBlock.leaderLocalId, 0);
 #endif

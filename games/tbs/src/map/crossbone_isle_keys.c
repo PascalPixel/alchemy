@@ -361,7 +361,7 @@ static void EventScript_BaneSecondEscape(void) {
       spinningDjinni = ObjectEvent_GetById(LOCALID_BANE);
       spinningDjinni->sprite->rotation = 0xf800;
       spinningDjinni->facing = 0;
-      ObjectDispatch_SetAnimationSpeed((struct Object *)spinningDjinni, 0);
+      Object_SetAnimationSpeed((struct Object *)spinningDjinni, 0);
       ObjectEvent_SetScript(spinningDjinni,
                             gCrossboneIsleKeys_BaneSquashScript);
       SCRIPT_END();
@@ -383,7 +383,7 @@ static void EventScript_BaneLastEscape(void) {
     // Restore the sprite before the last jump and winding escape path.
     djinni = ObjectEvent_GetById(LOCALID_BANE);
     djinni->sprite->rotation = 0;
-    ObjectDispatch_SetAnimationSpeed((struct Object *)djinni, 16);
+    Object_SetAnimationSpeed((struct Object *)djinni, 16);
     SE(SE_JUMP);
     djinni = ObjectEvent_GetById(LOCALID_BANE);
     djinni->velocityY = PIXELS(8);
@@ -615,7 +615,7 @@ static void EventScript_ShowRedKey(void) {
 
   MapGrid_CopyCells(25, 45, 1, 2, 25, 48);
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_RED_KEY) == 0)
-    Engine_ObjectEventSetPosition(keyLocalId, x, z);
+    Import_ObjectEventSetPosition(keyLocalId, x, z);
   WAIT(1);
 }
 
@@ -633,7 +633,7 @@ static inline void CrossboneIsleKeys_CollectKey(s32 localId, s32 itemId,
   FieldEffect_StartEffectObject22(itemId, 3);
   OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_STAND);
   PartyInventory_GiveItem(itemId, 0);
-  Engine_ObjectEventSetPosition(localId, 0, 0);
+  Import_ObjectEventSetPosition(localId, 0, 0);
   GameFlag_Set(collectedFlag);
 }
 
@@ -1451,7 +1451,7 @@ static void CrossboneIsleKeys_InitializeBane(void) {
       OBJECT_POSITION_SET(LOCALID_BANE, 888, 664);
       djinni = ObjectEvent_GetById(LOCALID_BANE);
       djinni->sprite->rotation = 0;
-      ObjectDispatch_SetAnimationSpeed((struct Object *)djinni, 16);
+      Object_SetAnimationSpeed((struct Object *)djinni, 16);
     } else if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE) != 0) {
       OBJECT_POSITION_SET(LOCALID_BANE, 584, 680);
     } else {

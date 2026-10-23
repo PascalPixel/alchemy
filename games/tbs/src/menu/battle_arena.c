@@ -274,7 +274,7 @@ u8 *BattleArena_GetWarpDests(void) { return (u8 *)gBattleArenaWarpDests; }
 s32 MapData_ReturnZero(void) { return 0; }
 
 /// Restarts the link with interrupts locked: removes the serial and timer 3
-/// handlers, then runs SerialRuntime_Initialize. Called when no partner
+/// handlers, then runs Serial_Initialize. Called when no partner
 /// answers the attendant and after a linked battle broke off. The original
 /// s32 entry produces no defined result; its callers ignore it.
 static s32 BattleArena_InitializeSerial(void) {
@@ -284,8 +284,8 @@ static s32 BattleArena_InitializeSerial(void) {
   // result.
 
   IRQ_LOCK(savedIrqState);
-  SerialRuntime_RemoveIrqHandlers();
-  SerialRuntime_Initialize();
+  Serial_RemoveIrqHandlers();
+  Serial_Initialize();
   IRQ_UNLOCK(savedIrqState);
 #ifdef UBFIX
   return 0;
@@ -539,7 +539,7 @@ wait1:
     }
   }
 test1:
-  if (SerialRuntime_GetActiveTransfers() != 0) {
+  if (Serial_GetActiveTransfers() != 0) {
     goto wait1;
   }
   if (gSerialReceivedSize != size) {
@@ -587,7 +587,7 @@ next:
   // The partner's members become this battle's enemies 0x80 to 0x82.
   record = (u8 *)Unit_Get(slot + 128);
   tries = 0;
-  if ((transferResult = SerialRuntime_StartReceive(record)) == -1) {
+  if ((transferResult = Serial_StartReceive(record)) == -1) {
     goto failed;
   }
   goto test1;
@@ -606,7 +606,7 @@ wait2:
     }
   }
 test2:
-  if (SerialRuntime_GetActiveTransfers() != 0) {
+  if (Serial_GetActiveTransfers() != 0) {
     goto wait2;
   }
   if (gSerialReceivedSize != LOBBY_RECOVERY_RECORD_BYTES) {
@@ -621,8 +621,7 @@ second:
   size = LOBBY_RECOVERY_RECORD_BYTES;
   heap = AllocEwram(size);
   tries = 0;
-  if ((transferResult =
-           SerialRuntime_StartReceive(Djinn_GetRecoveryTable(1))) != -1) {
+  if ((transferResult = Serial_StartReceive(Djinn_GetRecoveryTable(1))) != -1) {
     goto test2;
   }
 failed:
@@ -714,14 +713,14 @@ static s32 BattleArena_SendPartyRecords(void) {
       // As a u8, i - 128 is 0x80 + i: this member's unit on the partner's
       // side.
       slotMap[memberIds[i]] = i - 128;
-      transferResult = SerialRuntime_StartSend(heap, size);
+      transferResult = Serial_StartSend(heap, size);
       tries = 0;
       if (transferResult == -1) {
         result = transferResult;
         goto done;
       }
     } while (0);
-    while (SerialRuntime_GetActiveTransfers() != 0) {
+    while (Serial_GetActiveTransfers() != 0) {
       WaitFrames(1);
       if (--timeout < 0 ||
           (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
@@ -751,7 +750,7 @@ wait:
     }
   }
 test:
-  if (SerialRuntime_GetActiveTransfers() != 0) {
+  if (Serial_GetActiveTransfers() != 0) {
     goto wait;
   }
   WaitFrames(2);
@@ -760,7 +759,7 @@ next:
   // Pad to three records with the last copy marked absent (side 0).
   if (i <= 2) {
     heap[0x12a] = tries = 0;
-    if ((transferResult = SerialRuntime_StartSend(heap, size)) != -1) {
+    if ((transferResult = Serial_StartSend(heap, size)) != -1) {
       goto test;
     }
     result = transferResult;
@@ -794,7 +793,7 @@ next:
         j--;
       }
     }
-    if ((transferResult = SerialRuntime_StartSend(heap, size)) == -1) {
+    if ((transferResult = Serial_StartSend(heap, size)) == -1) {
       result = transferResult;
       goto done;
     }
@@ -809,7 +808,7 @@ next:
       }
     }
   test3:
-    if (SerialRuntime_GetActiveTransfers() != 0) {
+    if (Serial_GetActiveTransfers() != 0) {
       goto wait3;
     }
     WaitFrames(1);
@@ -862,7 +861,7 @@ static s32 BattleArena_ExchangePartyRecords(void) {
 check:
   if (receivedMemberCount < 0) {
   fail:
-    SerialRuntime_ResetTransferState();
+    Serial_ResetTransferState();
   }
   return result;
 }
@@ -1330,7 +1329,7 @@ static s32 BattleArena_TalkByProgress(s32 localId) {
 /// Coord event 1, the way out: stops the link, loads the normal reverb code and
 /// goes back to the main menu (its warp destination MAIN_MENU_FROM_SANCTUM).
 static s32 BattleArena_LeaveArena(void) {
-  SerialRuntime_RemoveIrqHandlers();
+  Serial_RemoveIrqHandlers();
   Sound_LoadReverbCode(SOUND_REVERB_NORMAL);
   FieldScript_SetDestination((s32)&MapId_MainMenu, MAIN_MENU_FROM_SANCTUM);
 #ifdef UBFIX
@@ -1670,7 +1669,7 @@ s32 BattleArena_RunRoundResult(void) {
     // FLAG_LINK_BATTLE_ARRANGED and reset the monster level. Idle sleep is
     // turned off here, with a note when it was on.
   } else {
-    SerialRuntime_Initialize();
+    Serial_Initialize();
     GameFlag_Clear(FLAG_LINK_BATTLE_ARRANGED);
     FieldGameFlag_SetByte(FLAG_MONSTER_BATTLE_WINS, -1);
     if (gSaveBlock.idleSleepEnabled != 0) {

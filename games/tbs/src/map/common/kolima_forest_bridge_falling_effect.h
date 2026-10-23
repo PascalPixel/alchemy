@@ -60,11 +60,11 @@ void Kolima_UpdateCurseDust(void) {
       Sound_PlaySong(SE_246);
     if (gFallingEffectState != KOLIMA_DUST_CENTRED)
       x = origin[0] +
-          (((u32)Engine_RandomNext() * gFallingEffectWidth >> 16) << 8) +
+          (((u32)Import_RandomNext() * gFallingEffectWidth >> 16) << 8) +
           gFallingEffectOffset;
     else
-      x = origin[0] + (Engine_RandomNext() << 8) - PIXELS(128);
-    z = origin[2] + (Engine_RandomNext() << 8) - PIXELS(128);
+      x = origin[0] + (Import_RandomNext() << 8) - PIXELS(128);
+    z = origin[2] + (Import_RandomNext() << 8) - PIXELS(128);
     objectEvent->motionFlags = 0;
     objectEvent->y.fixed = PIXELS(160);
     sprite = objectEvent->sprite;
@@ -75,7 +75,7 @@ void Kolima_UpdateCurseDust(void) {
     sprite->flags = 0;
     objectEvent->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
     sprite->image.priority = 1;
-    ObjectDispatch_SelectAnimation(objectEvent, 1);
+    Object_SelectAnimation(objectEvent, 1);
     ObjectEvent_SetScript(objectEvent, gFallingEffectScript);
   }
 }

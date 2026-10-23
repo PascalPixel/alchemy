@@ -9,21 +9,21 @@
 	.set import.VramCache_FreeEntry, 1
 	.set import.VramCache_Load, 1
 	.set import.Sprite_StartAnim, 1
-	.set import.ObjectDispatch_Initialize, 1
+	.set import.Object_Initialize, 1
 	.set import.Object_CreateField, 1
-	.set import.ObjectDispatch_Release, 1
+	.set import.Object_Release, 1
 	.set import.MapGrid_CenterOnFollowedPoint, 1
-	.set import.ObjectDispatch_WaitForValue16, 1
+	.set import.Object_WaitForValue16, 1
 	.set import.MapGrid_CopyMetatileIndicesRect, 1
 	.set import.TilesetAnim_Resume, 1
 	.set import.TilesetAnim_Pause, 1
 	.set import.BlendScript_Suspend, 1
 	.set import.MapGrid_CopyCellAttributeRect, 1
-	.set import.ObjectDispatch_SetSingleChildFlags, 1
+	.set import.Object_SetSpriteFlags, 1
 	.set import.MapGrid_SetScreenShake, 1
 	.set import.ObjectSystem_SuspendProjectionAndShowSprites, 1
 	.set import.ObjectSystem_ResumeProjectionAndHideLayers, 1
-	.set import.ObjectDispatch_RegisterChildMetadata, 1
+	.set import.Object_RegisterSpriteMetadata, 1
 	.set import.Anim_ApplyChildValues, 1
 	.set import.FieldMessage_Show, 1
 	.set import.FieldMessage_ShowCentered, 1
@@ -45,15 +45,15 @@
 	.set import.ObjectMotion_SetPositionAndCommit, 1
 	.set import.ObjectMotion_ResetAndSetPositionInMode2, 1
 	.set import.ObjectMotion_SetPositionAndReset, 1
-	.set import.Engine_ObjectEventSetPosition, 1
-	.set import.Engine_ObjectEventSetAnimation, 1
+	.set import.Import_ObjectEventSetPosition, 1
+	.set import.Import_ObjectEventSetAnimation, 1
 	.set import.ObjectMotion_SetAnimationAndWait, 1
 	.set import.ObjectMotion_Launch, 1
 	.set import.ObjectMotion_SetVariantCallback, 1
 	.set import.ObjectMotion_SetVarCbAndRefresh, 1
 	.set import.ObjectMotion_SetAngleToward, 1
 	.set import.ObjectEvent_LinkPair, 1
-	.set import.ObjectGroup_ConfigureChildValue, 1
+	.set import.ObjectEvent_ConfigureSpriteColor, 1
 	.set import.ObjectEvent_SetTargetAndCallback, 1
 	.set import.FieldScript_SetMessageId, 1
 	.set import.FieldMessage_ShowAtObject, 1
@@ -69,7 +69,7 @@
 	.set import.FieldCamera_SetSpeedParameters, 1
 	.set import.FieldCamera_MoveWithinMapBounds, 1
 	.set import.FieldCamera_WaitForArrival, 1
-	.set import.Engine_ScriptRequestWarp, 1
+	.set import.Import_ScriptRequestWarp, 1
 	.set import.Weather_StartLightning, 1
 	.set import.Weather_StopLightning, 1
 	.set import.Weather_LastLightning, 1

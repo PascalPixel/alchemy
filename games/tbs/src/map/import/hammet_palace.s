@@ -22,8 +22,8 @@
 	.set import.ObjectMotion_SetPositionAndReset, 1
 	.set import.ObjectMotion_CenterOnColumn, 1
 	.set import.ObjectMotion_OffsetPositionAndResetMotion, 1
-	.set import.Engine_ObjectEventSetPosition, 1
-	.set import.Engine_ObjectEventSetAnimation, 1
+	.set import.Import_ObjectEventSetPosition, 1
+	.set import.Import_ObjectEventSetAnimation, 1
 	.set import.ObjectMotion_SetAnimationAndWait, 1
 	.set import.ObjectMotion_SetVariantCallback, 1
 	.set import.ObjectMotion_SetVarCbAndRefresh, 1
@@ -37,7 +37,7 @@
 	.set import.FieldEffect_ConfigureLinkedObject, 1
 	.set import.FieldCamera_SetSpeedParameters, 1
 	.set import.FieldCamera_MoveWithinMapBounds, 1
-	.set import.Engine_ScriptRequestWarp, 1
+	.set import.Import_ScriptRequestWarp, 1
 	.set import.PaletteFade_SetTarget, 1
 	.set import.PaletteFade_SetSource, 1
 	.set import.PaletteFade_StartInterpolation, 1

@@ -68,7 +68,7 @@ void BattleAnim_RunNeptune(struct BattleAnimArgs *effect) {
   s32 formationVelocityX;
   s32 formationVelocityZ;
   s32 savedBg1ScrollX;
-  struct BattleViewWork *view;
+  struct BattleBackgroundWork *view;
   s32 j;
   s32 emittedSparks;
   s32 sparkOriginX;
@@ -101,7 +101,7 @@ void BattleAnim_RunNeptune(struct BattleAnimArgs *effect) {
   // BG2's scale per frame: one texel a pixel until the VCount line (0 here),
   // twice the width from it down.
   Task_Add(BattleAnim_ResetBg2Pa, ANIM_CALLBACK_ORDER);
-  Runtime_SetIrqHandler(IRQ_VCOUNT, 0, BattleAnim_SetBg2AffineScaleHalf);
+  Irq_SetHandler(IRQ_VCOUNT, 0, BattleAnim_SetBg2AffineScaleHalf);
   work->transferMode = CANVAS_COPY;
   Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
   // Setup: wipe the battle away and close window 0 (its edge opens over the
@@ -130,8 +130,8 @@ void BattleAnim_RunNeptune(struct BattleAnimArgs *effect) {
   formationVelocityX = -0x40000;
   formationVelocityZ = -0x80000;
   savedBg1ScrollX = gBgScroll[1].x;
-  view =
-      (struct BattleViewWork *)CANVAS_SLOT(cache, HEAP_SLOT_BATTLE_BACKGROUND);
+  view = (struct BattleBackgroundWork *)CANVAS_SLOT(
+      cache, HEAP_SLOT_BATTLE_BACKGROUND);
   ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   // The scene owns BG1's scroll until the second stage.
   view->busy = 1;
@@ -271,7 +271,7 @@ void BattleAnim_RunNeptune(struct BattleAnimArgs *effect) {
     // Frame 152: only the lines from 96 down stay stretched, and the battle
     // battle background's colours darken over 24 frames.
     if (frame == 152) {
-      Runtime_SetIrqHandler(IRQ_VCOUNT, 96, BattleAnim_SetBg2AffineScaleHalf);
+      Irq_SetHandler(IRQ_VCOUNT, 96, BattleAnim_SetBg2AffineScaleHalf);
       work->fadeFrames = 24;
       work->fadeStep = 0;
     }
@@ -474,7 +474,7 @@ void BattleAnim_RunNeptune(struct BattleAnimArgs *effect) {
   // when there is one, otherwise onto a random x from 32 to 63.
   gBgScroll[1].x = savedBg1ScrollX;
   view->busy = 0;
-  Runtime_SetIrqHandler(IRQ_VCOUNT, 0, 0);
+  Irq_SetHandler(IRQ_VCOUNT, 0, 0);
   BattleAnim_SetupBlendedDisplay();
   Task_Remove(BattleAnim_ResetBg2Pa);
   REG_WIN0H = WIN_RANGE(0, 240);
@@ -559,8 +559,8 @@ void BattleAnim_RunNeptune(struct BattleAnimArgs *effect) {
     // Target i flashes and reels on frame 16i + 8, as its column lands.
     ANIM_FOR_EACH_TARGET(i, work->effect) {
       if (frame == i * 16 + 8) {
-        ObjectGroup_UpdateMembers(work->effect->targets[i], SPRITE_COLOR_WHITE,
-                                  POSE_DAMAGE, i, 8);
+        BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_WHITE,
+                               POSE_DAMAGE, i, 8);
         BattleMotion_ApplyKnockbackFar(work->effect->targets[i],
                                        KNOCKBACK_LEAP);
       }

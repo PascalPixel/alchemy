@@ -22,10 +22,10 @@ static void MercuryLighthouse_ArriveWithSparks(void) {
     FieldScript_Start();
     FieldCamera_MoveTo(-1, -1, -1, 0);
     objectEvent->motionFlags = 0;
-    Engine_ObjectEventSetPosition(0, objectEvent->x.part.pixel << 16,
+    Import_ObjectEventSetPosition(0, objectEvent->x.part.pixel << 16,
                                   (objectEvent->z.part.pixel << 16) +
                                       -0x100000);
-    ObjectEvent_SetChildValue(LOCALID_PARTY_LEADER, 15);
+    ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, 15);
     record = ObjectEvent_Get(LOCALID_PARTY_LEADER);
     ObjectEvent_SetSpriteFlags(record, 0);
     FieldScript_StartScreenTransition();
@@ -39,7 +39,7 @@ static void MercuryLighthouse_ArriveWithSparks(void) {
 #endif
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x6666, 0x3333);
     ObjectEvent_WalkByAndWait(LOCALID_PARTY_LEADER, 0, 8);
-    ObjectEvent_SetChildValue(LOCALID_PARTY_LEADER, 0);
+    ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, 0);
     record = ObjectEvent_Get(LOCALID_PARTY_LEADER);
     ObjectEvent_SetSpriteFlags(record, SPRITE_FLAG_SHADOW);
     sprite = objectEvent->sprite;

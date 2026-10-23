@@ -275,10 +275,10 @@ static s32 TunnelRuins_HopLeaderTo(struct FieldPosition *target) {
   if (FieldObject_CheckMovementCollision(objectEvent, &adjacentTile) != 1 &&
       FieldObject_CheckMovementCollision(objectEvent, target) == 0) {
     SCRIPT_START();
-    ObjectDispatch_SelectAnimation(objectEvent, ANIM_LEADER_SPRING);
+    Object_SelectAnimation(objectEvent, ANIM_LEADER_SPRING);
     WaitFrames(6);
     Sound_PlaySong(SE_JUMP);
-    ObjectDispatch_SelectAnimation(objectEvent, ANIM_LEADER_LEAP);
+    Object_SelectAnimation(objectEvent, ANIM_LEADER_LEAP);
 
     objectEvent->speed = PIXELS(3);
     objectEvent->acceleration = PIXELS(2);
@@ -289,7 +289,7 @@ static s32 TunnelRuins_HopLeaderTo(struct FieldPosition *target) {
     ObjectMotion_SetPositionAndCommit(LOCALID_PARTY_LEADER,
                                       TunnelRuins_GetLandingPixel(target->x),
                                       TunnelRuins_GetLandingPixel(target->z));
-    ObjectDispatch_SelectAnimation(objectEvent, ANIM_LEADER_SPRING);
+    Object_SelectAnimation(objectEvent, ANIM_LEADER_SPRING);
     ObjectEvent_SetSpriteFlags(objectEvent, 1);
     WaitFrames(6);
 
@@ -379,9 +379,9 @@ static s32 TunnelRuins_SplashDousedPillar(union FieldObject *fieldObject) {
   s32 z;
 
   if (gFrameCount & 2)
-    ObjectDispatch_SelectAnimation(objectEvent, 1);
+    Object_SelectAnimation(objectEvent, 1);
   else
-    ObjectDispatch_SelectAnimation(objectEvent, 2);
+    Object_SelectAnimation(objectEvent, 2);
   if (gFrameCount & 3)
 #ifdef UBFIX
     return;
@@ -392,9 +392,9 @@ static s32 TunnelRuins_SplashDousedPillar(union FieldObject *fieldObject) {
   options.startScaleY = 3 * Q16_ONE / 10;
   options.palette = 5;
   x = objectEvent->x.fixed +
-      ((((u32)(Engine_RandomNext() * 7) >> 16) - 3) << 16);
+      ((((u32)(Import_RandomNext() * 7) >> 16) - 3) << 16);
   z = objectEvent->z.fixed +
-      ((((u32)(Engine_RandomNext() * 7) >> 16) - 3) << 16);
+      ((((u32)(Import_RandomNext() * 7) >> 16) - 3) << 16);
   FieldEffect_Spawn(x, objectEvent->y.fixed + PIXELS(16), z, 0, 0, 0,
                     EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE |
                         EFFECT_SCRIPT_MEDIUM,
@@ -476,9 +476,9 @@ static void EventScript_HopDownStep(void) {
   u32 i;
 
   SCRIPT_START();
-  ObjectDispatch_SelectAnimation(leader, ANIM_LEADER_SPRING);
+  Object_SelectAnimation(leader, ANIM_LEADER_SPRING);
   ObjectMotion_WaitForAnimationChange(0);
-  ObjectDispatch_SelectAnimation(leader, 1);
+  Object_SelectAnimation(leader, 1);
   ObjectEvent_SetSpriteFlags(leader, 0);
   leader->motionFlags |= OBJ_EVENT_FALLS;
   Sound_PlaySong(SE_JUMP);
@@ -495,11 +495,11 @@ static void EventScript_HopDownStep(void) {
     leader->targetY = leader->y.fixed;
     WaitFrames(1);
     if (i & 1) {
-      s32 horizontalRoll = (u32)Engine_RandomNext() % 10 - 5;
+      s32 horizontalRoll = (u32)Import_RandomNext() % 10 - 5;
       s32 velocityX = horizontalRoll * 0x3332;
       s32 velocityZ;
 
-      velocityZ = (u32)Engine_RandomNext() % 10 * -0x1999 - 0x7ffd;
+      velocityZ = (u32)Import_RandomNext() % 10 * -0x1999 - 0x7ffd;
       FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
                         velocityX, 0, velocityZ,
                         EFFECT_USE_UPDATE | EFFECT_SCRIPT_MEDIUM, &options);
@@ -757,7 +757,7 @@ static void EventScript_SinkNorthwestPillar(void) {
       ObjectEvent_Get(LOCALID_NORTHWEST_SINKING_PILLAR)->y.fixed -= PIXELS(1);
       randomX = Random_Next();
       randomX = ((((u32)(randomX << 4) >> 16) << 16) + PIXELS(736));
-      randomZ = Engine_RandomNext();
+      randomZ = Import_RandomNext();
       FieldEffect_Spawn(
           randomX, 0,
           ((((u32)(((randomZ << 3) + randomZ) << 1) >> 16) << 16) +
@@ -799,7 +799,7 @@ static void EventScript_FreezeNorthwestPillarPuddle(void) {
   u8 *flags;
 
   OBJECT_ANIMATION(LOCALID_NORTHWEST_PILLAR_PUDDLE, 1);
-  ObjectGroup_ConfigureChildValue(LOCALID_NORTHWEST_PILLAR_PUDDLE, 0);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_NORTHWEST_PILLAR_PUDDLE, 0);
   OBJECT_ANIMATION(LOCALID_NORTHWEST_PILLAR_PUDDLE, 2);
   flags = &ObjectEvent_GetById(LOCALID_NORTHWEST_PILLAR_PUDDLE)->priorityFlags;
   *flags &= ~OBJ_EVENT_PRIORITY_UNDERFOOT;
@@ -838,9 +838,9 @@ static void EventScript_SinkSoutheastPillar(void) {
       for (i = 0; i < 16; i++) {
         WaitFrames(3);
         ObjectEvent_Get(LOCALID_SOUTHEAST_SINKING_PILLAR)->y.fixed -= PIXELS(1);
-        randomX = Engine_RandomNext();
+        randomX = Import_RandomNext();
         effectX = ((((u32)(randomX << 4) >> 16) << 16) + PIXELS(768));
-        randomZ = Engine_RandomNext();
+        randomZ = Import_RandomNext();
         effectZ = ((((u32)(((randomZ << 3) + randomZ) << 1) >> 16) << 16) +
                    PIXELS(224));
         FieldEffect_Spawn(effectX, 0, effectZ, 0, 0, 0,
@@ -900,7 +900,7 @@ static void EventScript_FreezeSoutheastPillarPuddle(void) {
   u8 *flags;
 
   OBJECT_ANIMATION(LOCALID_SOUTHEAST_PILLAR_PUDDLE, 1);
-  ObjectGroup_ConfigureChildValue(LOCALID_SOUTHEAST_PILLAR_PUDDLE, 0);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_SOUTHEAST_PILLAR_PUDDLE, 0);
   OBJECT_ANIMATION(LOCALID_SOUTHEAST_PILLAR_PUDDLE, 2);
   flags = &ObjectEvent_GetById(LOCALID_SOUTHEAST_PILLAR_PUDDLE)->priorityFlags;
   *flags &= ~OBJ_EVENT_PRIORITY_UNDERFOOT;
@@ -973,7 +973,7 @@ static void EventScript_FreezeDousePuddle(void) {
   SCRIPT_START();
   ObjectMotion_SetActionVariant(LOCALID_DOUSE_PUDDLE, 1);
   OBJECT_ANIMATION(LOCALID_DOUSE_PUDDLE, 1);
-  ObjectGroup_ConfigureChildValue(LOCALID_DOUSE_PUDDLE, 0);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_DOUSE_PUDDLE, 0);
   OBJECT_ANIMATION(LOCALID_DOUSE_PUDDLE, 2);
 
   {
@@ -1610,8 +1610,8 @@ s32 TunnelRuins_Initialize(void) {
           ObjectEvent_GetById(LOCALID_NORTHWEST_PILLAR_PUDDLE), 0);
       ObjectEvent_SetSpriteFlags(
           ObjectEvent_GetById(LOCALID_SOUTHEAST_PILLAR_PUDDLE), 0);
-      ObjectGroup_ConfigureChildValue(LOCALID_NORTHWEST_PILLAR_PUDDLE, 15);
-      ObjectGroup_ConfigureChildValue(LOCALID_SOUTHEAST_PILLAR_PUDDLE, 15);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_NORTHWEST_PILLAR_PUDDLE, 15);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_SOUTHEAST_PILLAR_PUDDLE, 15);
       if (GameFlag_Get(FLAG_TUNNEL_RUINS_NORTHWEST_PILLAR_IN_FLOOR)) {
         MapGrid_CopyCellsTo(59, 8, 49, 8, 1, 3);
         MapGrid_CopyCellAttributes(51, 8, 1, 1, 49, 8);
@@ -1625,7 +1625,7 @@ s32 TunnelRuins_Initialize(void) {
         OBJECT_POSITION_SET(LOCALID_NORTHWEST_PILLAR_PUDDLE, 744, 136);
       }
       if (GameFlag_Get(FLAG_MAP_TEMP_00)) {
-        ObjectGroup_ConfigureChildValue(LOCALID_NORTHWEST_PILLAR_PUDDLE, 0);
+        ObjectEvent_ConfigureSpriteColor(LOCALID_NORTHWEST_PILLAR_PUDDLE, 0);
         OBJECT_ANIMATION(LOCALID_NORTHWEST_PILLAR_PUDDLE, 5);
       }
       if (Script_GetFlag(FLAG_MAP_TEMP_02))
@@ -1640,12 +1640,12 @@ s32 TunnelRuins_Initialize(void) {
         OBJECT_POSITION_SET(LOCALID_SOUTHEAST_SINKING_PILLAR, 776, 232);
         ObjectEvent_GetById(LOCALID_SOUTHEAST_SINKING_PILLAR)->y.fixed =
             -PIXELS(16);
-        Engine_ObjectEventSetPosition(LOCALID_SOUTHEAST_PILLAR_PUDDLE,
+        Import_ObjectEventSetPosition(LOCALID_SOUTHEAST_PILLAR_PUDDLE,
                                       PIXELS(776), PIXELS(232));
         GameFlag_Set(FLAG_MAP_TEMP_02);
       }
       if (GameFlag_Get(FLAG_MAP_TEMP_01)) {
-        ObjectGroup_ConfigureChildValue(LOCALID_SOUTHEAST_PILLAR_PUDDLE, 0);
+        ObjectEvent_ConfigureSpriteColor(LOCALID_SOUTHEAST_PILLAR_PUDDLE, 0);
         OBJECT_ANIMATION(LOCALID_SOUTHEAST_PILLAR_PUDDLE, 5);
       }
       break;
@@ -1684,8 +1684,8 @@ s32 TunnelRuins_Initialize(void) {
           BABI_LIGHTHOUSE_ENTRY_FROM_ROAD_TO_BABI_LIGHTHOUSE;
       gSaveBlock.retreatMap = (s32)&MapId_BabiLighthouseEntry;
       GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
-      ObjectGroup_ConfigureChildValue(LOCALID_EAST_PILLAR_A, 6);
-      ObjectGroup_ConfigureChildValue(LOCALID_EAST_PILLAR_B, 6);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_EAST_PILLAR_A, 6);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_EAST_PILLAR_B, 6);
       if (GameFlag_Get(FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST))
         OBJECT_POSITION_SET(LOCALID_EAST_PILLAR_A, 728, 312);
       if (GameFlag_Get(FLAG_TUNNEL_RUINS_EAST_PILLAR_B_PUSHED_WEST))
@@ -1698,12 +1698,12 @@ s32 TunnelRuins_Initialize(void) {
       ObjectEvent_GetById(LOCALID_DOUSE_PILLAR)->motionFlags = 0;
       ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_DOUSE_PILLAR), 0);
       ObjectMotion_SetActionVariant(LOCALID_DOUSE_PUDDLE, 1);
-      ObjectGroup_ConfigureChildValue(LOCALID_DOUSE_PUDDLE, 15);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_DOUSE_PUDDLE, 15);
       ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_DOUSE_PUDDLE), 0);
       ObjectEvent_GetById(LOCALID_DOUSE_PUDDLE)->motionFlags = 0;
       if (!GameFlag_Get(FLAG_MAP_TEMP_04))
         break;
-      ObjectGroup_ConfigureChildValue(LOCALID_DOUSE_PUDDLE, 0);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_DOUSE_PUDDLE, 0);
       OBJECT_ANIMATION(LOCALID_DOUSE_PUDDLE, 5);
       MapGrid_CopyCellAttributeRect(
           26, 8, 1, 1, ObjectEvent_GetById(LOCALID_DOUSE_PUDDLE)->x.fixed >> 20,
@@ -1762,7 +1762,7 @@ s32 TunnelRuins_Initialize(void) {
             UPDATE_RIDE_STONE_BELOW;
         ObjectEvent_GetById(LOCALID_MIDDLE_CARRY_STONE)->priorityFlags |=
             OBJ_EVENT_PRIORITY_UNDERFOOT;
-        Engine_ObjectEventSetPosition(LOCALID_EAST_CARRY_STONE, PIXELS(136),
+        Import_ObjectEventSetPosition(LOCALID_EAST_CARRY_STONE, PIXELS(136),
                                       PIXELS(152));
         ObjectEvent_GetById(LOCALID_EAST_CARRY_STONE)->timer =
             LOCALID_BALANCE_WEST;
@@ -1814,11 +1814,11 @@ s32 TunnelRuins_Initialize(void) {
           ~OBJ_EVENT_FOLLOWS_TERRAIN;
       ObjectEvent_GetById(LOCALID_LADY_STATUE_SOUTH)->motionFlags &=
           ~OBJ_EVENT_FOLLOWS_TERRAIN;
-      ObjectGroup_ConfigureChildValue(LOCALID_LADY_STATUE_NORTHWEST, 4);
-      ObjectGroup_ConfigureChildValue(LOCALID_LADY_STATUE_NORTHEAST, 1);
-      ObjectGroup_ConfigureChildValue(LOCALID_LADY_STATUE_SOUTHWEST, 4);
-      ObjectGroup_ConfigureChildValue(LOCALID_LADY_STATUE_SOUTHEAST, 10);
-      ObjectGroup_ConfigureChildValue(LOCALID_LADY_STATUE_SOUTH, 0);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_LADY_STATUE_NORTHWEST, 4);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_LADY_STATUE_NORTHEAST, 1);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_LADY_STATUE_SOUTHWEST, 4);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_LADY_STATUE_SOUTHEAST, 10);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_LADY_STATUE_SOUTH, 0);
       OBJECT_ANIMATION(LOCALID_LADY_STATUE_NORTHWEST, 2);
       OBJECT_ANIMATION(LOCALID_LADY_STATUE_SOUTH, 2);
       MapGrid_CopyCellAttributeRect(

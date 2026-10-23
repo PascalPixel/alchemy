@@ -471,7 +471,7 @@ static void EventScript_OpenDoorAndLeave(void) {
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (warpIndex == BILIBIN_TO_SANCTUM - BILIBIN_TO_INN) {
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
     ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0, -4);
   } else {
     ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 3, -16);
@@ -482,7 +482,7 @@ static void EventScript_OpenDoorAndLeave(void) {
     ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, 2);
   }
   FieldScript_WaitFrames(16);
-  Engine_ScriptRequestWarp(warpIndex + BILIBIN_TO_INN);
+  Import_ScriptRequestWarp(warpIndex + BILIBIN_TO_INN);
   FieldScript_End();
 }
 
@@ -511,7 +511,7 @@ static void EventScript_PullJillFromRiver(void) {
     leader->scaleX = -Q16_ONE;
     ObjectEvent_SetAttachedEffect(
         LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_STRIDE);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_STRIDE);
     ObjectEvent_MoveToAndWait(LOCALID_JILL_TREE, 111, 196);
     leader->scaleX = Q16_ONE;
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 128, 185);
@@ -519,7 +519,7 @@ static void EventScript_PullJillFromRiver(void) {
     leader->scaleX = -Q16_ONE;
     ObjectEvent_SetAttachedEffect(
         LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_STRIDE);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_STRIDE);
     ObjectEvent_MoveToAndWait(LOCALID_JILL_TREE, 121, 190);
     leader->scaleX = Q16_ONE;
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 141, 189);
@@ -527,7 +527,7 @@ static void EventScript_PullJillFromRiver(void) {
     leader->scaleX = -Q16_ONE;
     ObjectEvent_SetAttachedEffect(
         LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_STRIDE);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_STRIDE);
     ObjectEvent_MoveToAndWait(LOCALID_JILL_TREE, 132, 186);
     leader->scaleX = Q16_ONE;
     ObjectEvent_Get(LOCALID_PARTY_LEADER)->steeringFlags |=
@@ -617,7 +617,7 @@ static void EventScript_JillGivesHardNut(void) {
                             FACING_SOUTHEAST + FACING_STEP, 10);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_JILL, 1);
   Script_ShowMessageAndWait(LOCALID_JILL, 0, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_GANG_MEMBER_EAST, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GANG_MEMBER_EAST, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_GANG_MEMBER_WEST, ANIM_NOD);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(LOCALID_JILL, 0);
@@ -635,7 +635,7 @@ static void EventScript_JillGivesHardNut(void) {
   FieldEffect_StartEffectObject22(ITEM_HARD_NUT, 3);
   PartyInventory_GiveItem(ITEM_HARD_NUT, 0);
   ObjectMotion_SetAnimationAndWait(LOCALID_JILL, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   ObjectEvent_SetSpeed(LOCALID_JILL, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_GetById(LOCALID_JILL)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
@@ -650,8 +650,8 @@ static void EventScript_JillGivesHardNut(void) {
   FieldScript_WaitFrames(20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_GANG_MEMBER_EAST, 2);
   Script_ShowMessageAndWait(LOCALID_GANG_MEMBER_EAST, 0, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_GANG_MEMBER_EAST, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GANG_MEMBER_WEST, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GANG_MEMBER_EAST, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GANG_MEMBER_WEST, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_JILL, ANIM_NOD);
   // From now on the three turn to face the leader wherever he goes.
   Object_SetTargetAndCallback(LOCALID_GANG_MEMBER_EAST,
@@ -692,7 +692,7 @@ static void Bilibin_RestoreVillageObjectEvents(void) {
   s16 warpDest;
 
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
-    Engine_ObjectEventSetPosition(LOCALID_TREE_MAN, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_TREE_MAN, 0, 0);
     ObjectEvent_FaceDirection(LOCALID_OLD_MAN_ASKS_ABOUT_SOUTHEAST,
                               FACING_SOUTHEAST + FACING_STEP, 0);
     ObjectEvent_FaceDirection(LOCALID_OLD_WOMAN_ROAD_BLOCKED,
@@ -794,7 +794,7 @@ static void Bilibin_RestoreRiverObjectEvents(void) {
     MapGrid_CopyCellAttributes(26, 15, 1, 3, 10, 15);
     if (GameFlag_Get(FLAG_BILIBIN_JILL_GIFT_RECEIVED) == 0) {
       if (GameFlag_Get(FLAG_BILIBIN_JILL_RESCUED) == 0) {
-        Engine_ObjectEventSetPosition(LOCALID_JILL, 0, 0);
+        Import_ObjectEventSetPosition(LOCALID_JILL, 0, 0);
         ObjectEvent_FaceDirection(LOCALID_GANG_MEMBER_EAST,
                                   FACING_NORTH + FACING_STEP, 0);
         ObjectEvent_FaceDirection(LOCALID_GANG_MEMBER_WEST,
@@ -922,7 +922,7 @@ static void EventScript_PushStatueOrCrates(void) {
         pushed->z.fixed + (gBilibin_FacingCellSteps[direction] << 16);
     if (FieldObject_CheckMovementCollision(pushed, &destination) <= 0) {
       // The leader leans on it, then both move together.
-      ObjectDispatch_SelectAnimation(leader, ANIM_PUSH);
+      Object_SelectAnimation(leader, ANIM_PUSH);
       WaitFrames(15);
       Sound_PlaySong(SE_PUSH);
       pushed->speed = PIXELS(1) / 5;
@@ -936,7 +936,7 @@ static void EventScript_PushStatueOrCrates(void) {
       pushed->z.fixed = destination.z;
       pushed->velocityX = 0;
       pushed->velocityZ = 0;
-      ObjectDispatch_SelectAnimation(leader, ANIM_STAND);
+      Object_SelectAnimation(leader, ANIM_STAND);
       // Each map derives its metatile behaviors from this same moved object
       // event.
       if (gSaveBlock.mapId == (s32)&MapId_BilibinBarricade)

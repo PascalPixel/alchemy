@@ -228,7 +228,7 @@ static s32 Xian_UpdateCarrierTracking(struct ObjectEvent *objectEvent,
 
   // This route uses paused/timer as its tracking latch and mode.
   if (objectEvent->paused == 1 && objectEvent->timer == 0) {
-    ObjectDispatch_SelectAnimation(objectEvent, 1);
+    Object_SelectAnimation(objectEvent, 1);
     return 1;
   }
 
@@ -247,17 +247,17 @@ static s32 Xian_UpdateCarrierTracking(struct ObjectEvent *objectEvent,
     if (targetHeading == currentHeading || nextHeading == currentHeading ||
         previousHeading == currentHeading || forceTracking != 0) {
       objectEvent->paused = 1;
-      ObjectDispatch_SelectAnimation(objectEvent, 1);
+      Object_SelectAnimation(objectEvent, 1);
       isTracking = 1;
       objectEvent->timer = isTracking;
     } else {
       objectEvent->paused = 0;
-      ObjectDispatch_SelectAnimation(objectEvent, 2);
+      Object_SelectAnimation(objectEvent, 2);
       objectEvent->timer = 0;
     }
   } else {
     objectEvent->paused = 0;
-    ObjectDispatch_SelectAnimation(objectEvent, 2);
+    Object_SelectAnimation(objectEvent, 2);
     objectEvent->timer = 0;
   }
 
@@ -420,7 +420,7 @@ static void Xian_TalkToWaterCarrier(void) {
   carrier->targetZ = OBJ_EVENT_NO_TARGET;
   ObjectEvent_SetBuiltinAction(LOCALID_WOMAN_CARRYING_WATER,
                                OBJ_EVENT_ACTION_IDLE);
-  Engine_ObjectEventSetAnimation(LOCALID_WOMAN_CARRYING_WATER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_WOMAN_CARRYING_WATER, ANIM_STAND);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_WOMAN_CARRYING_WATER, 2);
   FieldScript_WaitFrames(10);
   Script_PlaySong(SE_228);
@@ -471,10 +471,10 @@ static void Xian_TalkToWaterCarrier(void) {
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 10);
     ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags &=
         ~OBJ_EVENT_FACES_MOTION;
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
     ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0, 16);
     ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   }
   ObjectEvent_SetSpeed(LOCALID_WOMAN_CARRYING_WATER, 0xcccc, 0x6666);
   carrier = ObjectEvent_GetById(LOCALID_WOMAN_CARRYING_WATER);
@@ -555,7 +555,7 @@ static void Xian_TalkToKungFuStudent(void) {
     leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     FieldVector_AddPolarOffset(-PIXELS(8), leader->facing,
                                (struct FieldPosition *)stepBackOffset);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
     ObjectMotion_OffsetPositionAndResetMotion(LOCALID_PARTY_LEADER,
                                               stepBackOffset[0] / 0x10000,
                                               stepBackOffset[2] / 0x10000);
@@ -654,10 +654,10 @@ static void Xian_JumpOverSpilledWater(void) {
                                landing);
     if (FieldObject_CheckMovementCollision(leader, landing) == 0) {
       FieldScript_Start();
-      ObjectDispatch_SelectAnimation(leader, ANIM_LEADER_SPRING);
+      Object_SelectAnimation(leader, ANIM_LEADER_SPRING);
       WaitFrames(6);
       Sound_PlaySong(SE_JUMP);
-      ObjectDispatch_SelectAnimation(leader, ANIM_LEADER_LEAP);
+      Object_SelectAnimation(leader, ANIM_LEADER_LEAP);
       leader->speed = PIXELS(3);
       leader->acceleration = PIXELS(2);
       leader->velocityY = PIXELS(4);
@@ -665,7 +665,7 @@ static void Xian_JumpOverSpilledWater(void) {
       ObjectEvent_SetSpriteFlags(leader, 0);
       ObjectMotion_SetPositionAndCommit(LOCALID_PARTY_LEADER, landing->x >> 16,
                                         landing->z >> 16);
-      ObjectDispatch_SelectAnimation(leader, ANIM_LEADER_SPRING);
+      Object_SelectAnimation(leader, ANIM_LEADER_SPRING);
       ObjectEvent_SetSpriteFlags(leader, 1);
       leader->motionFlags = savedMotionFlags;
       FieldScript_End();
@@ -679,13 +679,13 @@ static void Xian_WalkThroughExit(s32 warpNumber) {
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x8000, 0x4000);
   if (warpNumber == XIAN_TO_SANCTUM) {
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
     ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0, -16);
   } else {
     ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 2, -16);
   }
   gFieldWork->transitionFrames = 16;
-  Engine_ScriptRequestWarp(warpNumber);
+  Import_ScriptRequestWarp(warpNumber);
 }
 
 /// Walking north into one of Xian's doors: it opens and the party goes in. Each
@@ -754,7 +754,7 @@ static void Xian_StrikeTrainingTreeWithForce(void) {
                     EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
   Task_Remove(rotationCallback);
   ObjectEvent_GetById(LOCALID_TRAINING_TREE)->sprite->rotation = 0x8000;
-  Engine_ObjectEventSetPosition(LOCALID_FORCE_TARGET, PIXELS(168), PIXELS(312));
+  Import_ObjectEventSetPosition(LOCALID_FORCE_TARGET, PIXELS(168), PIXELS(312));
   FieldScript_WaitFrames(20);
   ObjectMotion_SetAngleToward(LOCALID_KUNG_FU_STUDENT, LOCALID_TRAINING_TREE,
                               0);
@@ -837,13 +837,13 @@ s32 Xian_Initialize(void) {
     ObjectEvent_SetPosition(LOCALID_KUNG_FU_STUDENT, PIXELS(146), PIXELS(312));
     ObjectMotion_ArmCallback(LOCALID_KUNG_FU_STUDENT, FACING_EAST, 0);
     if (GameFlag_Get(FLAG_FEIZHI_WENT_TO_HSU)) {
-      Engine_ObjectEventSetPosition(LOCALID_FEIZHI, 0, 0);
+      Import_ObjectEventSetPosition(LOCALID_FEIZHI, 0, 0);
     }
   }
   // Gone once she has found the road blocked (Alpine Crossing's
   // FLAG_FEIZHI_SAW_ROCKSLIDE).
   if (GameFlag_Get(FLAG_FEIZHI_SAW_ROCKSLIDE)) {
-    Engine_ObjectEventSetPosition(LOCALID_FEIZHI, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_FEIZHI, 0, 0);
   }
   // Set the three crates up as ObjectEvent_CreateConfiguredObject sets up
   // its objects: still, not solid, never a target and hidden.
@@ -854,7 +854,7 @@ s32 Xian_Initialize(void) {
     objectEvent->motionFlags = 0;
     objectEvent->collisionFlags = OBJ_EVENT_NOT_TARGETED;
     ObjectEvent_SetSpriteFlags(objectEvent, 0);
-    ObjectGroup_SetChildValue(objectEvent, SPRITE_COLOR_HIDDEN);
+    ObjectEvent_SetSpriteColor(objectEvent, SPRITE_COLOR_HIDDEN);
     objectEvent->priorityFlags =
         (objectEvent->priorityFlags & ~OBJ_EVENT_PRIORITY_AUTOMATIC) |
         OBJ_EVENT_PRIORITY_UNDERFOOT;
@@ -865,7 +865,7 @@ s32 Xian_Initialize(void) {
   }
   // Restore the frozen puddle and callbacks when re-entering the village.
   if (GameFlag_Get(FLAG_MAP_TEMP_01)) {
-    Engine_ObjectEventSetAnimation(LOCALID_SPILLED_WATER,
+    Import_ObjectEventSetAnimation(LOCALID_SPILLED_WATER,
                                    PUDDLE_ANIMATION_FROZEN);
     {
       s32 puddleX = ObjectEvent_GetById(LOCALID_SPILLED_WATER)->x.fixed;
@@ -877,8 +877,8 @@ s32 Xian_Initialize(void) {
     FieldScheduler_AddCallback(Xian_UpdateFrozenPuddleLayer, TASK_PRIORITY_MAP);
   }
   // The water carrier's sprite is drawn with its green and blue swapped.
-  ObjectGroup_ConfigureChildValue(LOCALID_WOMAN_CARRYING_WATER,
-                                  SPRITE_COLOR_RBG);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_WOMAN_CARRYING_WATER,
+                                   SPRITE_COLOR_RBG);
   ObjectEvent_GetById(LOCALID_WOMAN_CARRYING_WATER)->update =
       XIAN_WATER_CARRIER_UPDATE;
   objectEvent = ObjectEvent_GetById(LOCALID_TRAINING_TREE);

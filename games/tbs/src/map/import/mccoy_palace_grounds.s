@@ -1,7 +1,7 @@
 @ C2: aligned 8-byte veneers: overlay_veneer emits ldr r4, bx r4 and a target word.
 	.set overlay_imports, 1
 	.set import.WaitFrames, 1
-	.set import.Engine_RandomNext, 1
+	.set import.Import_RandomNext, 1
 	.set import.ArcTan2, 1
 	.set import.Trig_Sin, 1
 	.set import.Trig_Cos, 1
@@ -10,7 +10,7 @@
 	.set import.VramCache_Load, 1
 	.set import.MapGrid_CenterOnFollowedPoint, 1
 	.set import.MapGrid_PlayMetatileCopySequence, 1
-	.set import.ObjectDispatch_SetSingleChildFlags, 1
+	.set import.Object_SetSpriteFlags, 1
 	.set import.FieldMessage_Show, 1
 	.set import.Icon_DrawItem, 1
 	.set import.GameFlag_Get, 1
@@ -27,8 +27,8 @@
 	.set import.ObjectMotion_SetPositionAndReset, 1
 	.set import.ObjectMotion_CenterOnColumn, 1
 	.set import.ObjectMotion_CommitCurrentPositionAndActivate, 1
-	.set import.Engine_ObjectEventSetPosition, 1
-	.set import.Engine_ObjectEventSetAnimation, 1
+	.set import.Import_ObjectEventSetPosition, 1
+	.set import.Import_ObjectEventSetAnimation, 1
 	.set import.ObjectMotion_SetAnimationAndWait, 1
 	.set import.ObjectMotion_SetVariantCallback, 1
 	.set import.ObjectMotion_SetVarCbAndRefresh, 1
@@ -43,7 +43,7 @@
 	.set import.FieldEffect_ConfigureLinkedObject, 1
 	.set import.FieldCamera_SetSpeedParameters, 1
 	.set import.FieldCamera_MoveWithinMapBounds, 1
-	.set import.Engine_ScriptRequestWarp, 1
+	.set import.Import_ScriptRequestWarp, 1
 	.set import.FieldScript_StartScreenTransition, 1
 	.set import.FieldScript_FinishScreenTransition, 1
 	.set import.FieldScript_WaitTransitionFrames, 1

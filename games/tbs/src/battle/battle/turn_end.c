@@ -356,9 +356,9 @@ s32 Battle_ProcessRoundEnd(void) {
             PUSH_MESSAGE(MsgDjinnSet);
             BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, unitId);
             Sound_PlaySongFar(SE_212);
-            ObjectDispatch_SelectAnimationFar(BattleObject_Get(unitId)->object,
-                                              POSE_CAST);
-            ObjectDispatch_SetAnimationSpeedFar(
+            Object_SelectAnimationFar(BattleObject_Get(unitId)->object,
+                                      POSE_CAST);
+            Object_SetAnimationSpeedFar(
                 (struct Object *)BattleObject_Get(unitId)->object, 32);
             element = expiredEntry->element;
             Djinn_SetFar(unitId, element, expiredEntry->index);
@@ -644,9 +644,8 @@ s32 BattleUnit_ProcessTurnEnd(struct BattleTurn *plan) {
         PUSH_MESSAGE(MsgEarthPowerUp + i);
         BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, unitId);
         Sound_PlaySongFar(SE_212);
-        ObjectDispatch_SelectAnimationFar(BattleObject_Get(unitId)->object,
-                                          POSE_CAST);
-        ObjectDispatch_SetAnimationSpeedFar(
+        Object_SelectAnimationFar(BattleObject_Get(unitId)->object, POSE_CAST);
+        Object_SetAnimationSpeedFar(
             (struct Object *)BattleObject_Get(unitId)->object, 32);
         // The pillar of each element whose power rose, its strength the most
         // Djinn of one element the summon used, less one.

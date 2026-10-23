@@ -4,16 +4,16 @@
 
 #include "../field_internal.h"
 
-/// Remaps byteCount bytes in place through gRuntime_ByteRemapTable. Called
-/// through Runtime_RemapBytesByTableFar by CommandIcon_Load, which
+/// Remaps byteCount bytes in place through gSpriteColorRemapTables. Called
+/// through SpriteColor_RemapPixelsFar by CommandIcon_Load, which
 /// remaps the colours of a command icon's first 768 bytes.
-void Runtime_RemapBytesByTable(u8 *bytes, s32 byteCount) {
+void SpriteColor_RemapPixels(u8 *bytes, s32 byteCount) {
   s32 remaining;
   u8 *cursor;
   u8 *remapTable;
 
   cursor = bytes;
-  remapTable = gRuntime_ByteRemapTable;
+  remapTable = gSpriteColorRemapTables;
   remaining = byteCount - 1;
   if (remaining != -1) {
     do {

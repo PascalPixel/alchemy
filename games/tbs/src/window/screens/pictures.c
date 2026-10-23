@@ -77,7 +77,7 @@ void CommandIcon_Load(s32 icon, s32 slot, s32 remap) {
   if (slot < VRAM_CACHE_ENTRY_COUNT) {
     Decompress_ByteLz((void *)((u32)offsetTable + offsetTable[icon]), buffer);
     if (remap != 0)
-      Runtime_RemapBytesByTableFar(buffer, 768);
+      SpriteColor_RemapPixelsFar(buffer, 768);
     VramCache_Load(slot, size, buffer);
     FreeHeapSlot(HEAP_SLOT_TILE_SCRATCH);
   }
@@ -558,5 +558,5 @@ UNUSED void Graphics_InstallBg1VCountHandler(void) {
   do {
     address = (u32)Graphics_SetBg1Priority0;
   } while (0);
-  Runtime_SetIrqHandler(2, 136, (InterruptHandler)address);
+  Irq_SetHandler(2, 136, (InterruptHandler)address);
 }

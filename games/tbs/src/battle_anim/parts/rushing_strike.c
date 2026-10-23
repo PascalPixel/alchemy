@@ -183,8 +183,8 @@ void BattleAnim_RunRushingStrike(struct BattleAnimArgs *effect, s32 mode) {
       draw[1](canvas, work->sheet, screen.x / 2 - 16, screen.y - 16, 40, 32);
     }
     if (frame == RUSHING_STRIKE_FRAME) {
-      ObjectGroup_UpdateMembers(work->effect->targets[0], SPRITE_COLOR_WHITE,
-                                POSE_DAMAGE, 0, 8);
+      BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_WHITE,
+                             POSE_DAMAGE, 0, 8);
       BattleMotion_ApplyKnockbackFar(work->effect->targets[0], KNOCKBACK_HURL);
       ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       work->shakeFrames = 8;

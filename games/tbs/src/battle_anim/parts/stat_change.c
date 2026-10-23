@@ -266,8 +266,8 @@ void BattleAnim_RunStatBoost(struct BattleAnimArgs *effect, u32 mode) {
       SET_VECTOR(point, object->x, height, object->z);
       Transform_ApplyPosition(point);
       if (frame == member * 8 + 48)
-        ObjectGroup_UpdateMembers(work->effect->targets[member],
-                                  SPRITE_COLOR_WHITE, -1, member, 16);
+        BattleAnim_TintBattler(work->effect->targets[member],
+                               SPRITE_COLOR_WHITE, -1, member, 16);
 
       // Turn the flares and move them 2 pixels a frame towards the centre
       // (distance is half the distance in pixels, the root's 8.8 >> 9); flare

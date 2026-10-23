@@ -47,7 +47,7 @@ function, in order:
 2. clears IWRAM up to `Ram_IwramHeapEnd`, leaving the stacks above it alone,
    and empties the heap (`InitHeap`);
 3. copies the resident runtime into IWRAM and points the interrupt vector at
-   its dispatcher (`Runtime_InstallIwramAndIrqs`);
+   its dispatcher (`System_InstallIwramAndIrqs`);
 4. copies the build stamp and loads the window graphics;
 5. installs `System_VBlankHandler`, arms the soft-reset keys, starts the
    sound driver, and empties the sprite VRAM cache and the task table;
@@ -437,11 +437,11 @@ once more. Link battles, the Battle Arena and the main menu's
 transfer use it.
 
 While the link is up, the VBlank handler trades a 24-byte payload with the
-partner (`SerialRuntime_ExchangePayloads`) in multiplayer mode, the parent
+partner (`Serial_ExchangePayloads`) in multiplayer mode, the parent
 console clocking the transfer from timer 3 a halfword at a time. Bulk data
 rides on the exchange in 20-byte blocks, one each way per VBlank
-(`SerialRuntime_StepBlockTransfer`, started by `SerialRuntime_StartSend` and
-`SerialRuntime_StartReceive`). The receiver stores a block only when its
+(`Serial_StepBlockTransfer`, started by `Serial_StartSend` and
+`Serial_StartReceive`). The receiver stores a block only when its
 sequence number is the one it expects; a block out of step makes it ask for
 the one it expects, and a sender that sees the request goes back to that
 block and sends the rest again, so a send's source must stay unchanged until
@@ -578,6 +578,6 @@ windows (`WINDOW_FLAG_INSTANT`), and battle playback's sprite respawn tests
 the unused `DebugMapSelect_Schedule` would add as a task.
 
 - XXX (no evidence): what the five empty exports after the screen fades
-  (`RuntimeDispatch_ReservedNoOpA` to `E`) were for; they are empty in both
+  (`Stub_ReservedNoOpA` to `E`) were for; they are empty in both
   games, nothing calls them, and each is reached only through a bare veneer,
   so no code shows what they were to do.

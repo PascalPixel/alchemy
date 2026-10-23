@@ -4,20 +4,20 @@
 	.set import.WaitFrames, 1
 	.set import.Task_Add, 1
 	.set import.Task_Remove, 1
-	.set import.Engine_RandomNext, 1
+	.set import.Import_RandomNext, 1
 	.set import.Vector_AddPolarOffset, 1
-	.set import.Runtime_SetIrqHandler, 1
+	.set import.Irq_SetHandler, 1
 	.set import.AllocHeapSlotEwram, 1
-	.set import.ObjectDispatch_SelectAnimation, 1
+	.set import.Object_SelectAnimation, 1
 	.set import.Object_CreateField, 1
-	.set import.ObjectDispatch_StartCamera, 1
+	.set import.Object_StartCamera, 1
 	.set import.MapGrid_CenterOnFollowedPoint, 1
 	.set import.Object_SetMoveTarget, 1
 	.set import.Object_WaitForMove, 1
 	.set import.MapGrid_GetTerrainHeight, 1
 	.set import.MapGrid_CopyMetatileCellsRect, 1
 	.set import.MapGrid_CopyCellAttributeRect, 1
-	.set import.ObjectDispatch_SetSingleChildFlags, 1
+	.set import.Object_SetSpriteFlags, 1
 	.set import.FieldMessage_Show, 1
 	.set import.GameFlag_Get, 1
 	.set import.FieldScript_WaitFrames, 1
@@ -28,8 +28,8 @@
 	.set import.ObjectMotion_ResetAndSetPosition, 1
 	.set import.ObjectMotion_OffsetPositionAndResetMotion, 1
 	.set import.ObjectMotion_CommitCurrentPositionAndActivate, 1
-	.set import.Engine_ObjectEventSetPosition, 1
-	.set import.Engine_ObjectEventSetAnimation, 1
+	.set import.Import_ObjectEventSetPosition, 1
+	.set import.Import_ObjectEventSetAnimation, 1
 	.set import.FieldCamera_SetSpeedParameters, 1
 	.set import.FieldCamera_MoveWithinMapBounds, 1
 	.set import.FieldCamera_WaitForArrival, 1

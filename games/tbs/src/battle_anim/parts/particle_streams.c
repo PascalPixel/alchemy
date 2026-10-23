@@ -180,7 +180,7 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *effect, s32 mode) {
     // 0.57 pixels a frame lost each frame.
     animation->velocityY = 0xa0000;
     animation->gravity = 0x91eb;
-    ObjectGroup_UpdateMembers(work->effect->user, -1, POSE_LEAP, -1, 0);
+    BattleAnim_TintBattler(work->effect->user, -1, POSE_LEAP, -1, 0);
     Sound_PlaySongFar(SE_145);
     direction = work->effect->side == 1 ? mode : -1;
   } else {
@@ -307,7 +307,7 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *effect, s32 mode) {
     // One pointer serves both slot reads: two separate reads of gHeapSlots
     // make the function 0xe48 bytes long, where tbs-en's is 0xe38.
     void **slots = &gHeapSlots[HEAP_SLOT_BATTLE_BACKGROUND];
-    struct BattleViewWork *view = slots[0];
+    struct BattleBackgroundWork *view = slots[0];
 
     gBgScroll[1].x = 0;
     gBgScroll[1].y = 32;

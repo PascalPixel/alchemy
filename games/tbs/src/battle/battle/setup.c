@@ -8,26 +8,27 @@
 /// Runs each frame of a battle. In a link battle it first checks the link:
 /// a connection lost for more than LINK_MAX_MISSED_FRAMES frames, or a
 /// console whose link number changed, pauses the battle. Then it turns the
-/// camera a sixteenth of the way toward gBattleViewWork's targetYaw, places the
-/// camera at its position (or at the one it follows) with its yaw, pitch and
-/// distance, and, unless its flag holds the background, refreshes the
+/// camera a sixteenth of the way toward gBattleBackgroundWork's targetYaw,
+/// places the camera at its position (or at the one it follows) with its yaw,
+/// pitch and distance, and, unless its flag holds the background, refreshes the
 /// background's perspective. Runs as a task that
 /// Battle_Run adds with priority 0xc7f: in the main-loop pass, after
 /// the tasks of priority 0xc80 (the objects' camera, the sprite priorities and
 /// playback). Changes battle->linkMisses and linkPaused,
-/// the camera's yaw and gBattleViewWork's frame count, the transform state,
-/// and through BattleCamera_SetRange the background's affine page.
+/// the camera's yaw and gBattleBackgroundWork's frame count, the transform
+/// state, and through BattleCamera_SetRange the background's affine page.
 void BattleCamera_Update(void) {
   // UB: indexing past scalar gCameraWork reaches other heap slots. Named
   // slots add four bytes in the native EN trial (0xf8 to 0xfc).
 #ifdef UBFIX
   struct BattleCamera *camera = gCameraWork;
-  struct BattleViewWork *view = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
+  struct BattleBackgroundWork *view =
+      HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
   struct BattleWork *battle = gBattleWork;
 #else
   void **slot = (void **)&gCameraWork;
   struct BattleCamera *camera = slot[0];
-  struct BattleViewWork *view =
+  struct BattleBackgroundWork *view =
       slot[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_CAMERA];
   struct BattleWork *battle = slot[HEAP_SLOT_BATTLE - HEAP_SLOT_CAMERA];
 #endif

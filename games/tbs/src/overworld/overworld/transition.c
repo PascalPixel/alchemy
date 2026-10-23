@@ -675,14 +675,14 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
     WaitFrames(1);
     if (variant == 0) {
       Task_Add(ScreenTransition_Update, 0xc80);
-      Runtime_SetIrqHandler(1, 0, ScreenTransition_UpdateScanline);
+      Irq_SetHandler(1, 0, ScreenTransition_UpdateScanline);
       state->start = 80;
       state->end = 0;
       state->duration = frames;
       state->step = 0;
     } else {
       Task_Add(ScreenTransition_UpdateFromCentre, 0xc80);
-      Runtime_SetIrqHandler(1, 0, ScreenTransition_UpdateScanline);
+      Irq_SetHandler(1, 0, ScreenTransition_UpdateScanline);
       state->start = 80;
       state->end = 0;
       state->duration = frames;
@@ -755,14 +755,14 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
         ScreenTransition_AllocateAndClearState();
     if (variant == 0) {
       Task_Add(ScreenTransition_Update, 0xc80);
-      Runtime_SetIrqHandler(1, 0, ScreenTransition_UpdateScanline);
+      Irq_SetHandler(1, 0, ScreenTransition_UpdateScanline);
       state->start = 0;
       state->end = 80;
       state->duration = frames;
       state->step = 0;
     } else {
       Task_Add(ScreenTransition_UpdateFromCentre, 0xc80);
-      Runtime_SetIrqHandler(1, 0, ScreenTransition_UpdateScanline);
+      Irq_SetHandler(1, 0, ScreenTransition_UpdateScanline);
       state->start = 0;
       state->end = 80;
       state->duration = frames;
@@ -814,7 +814,7 @@ void ScreenTransition_Update(void) {
     if (*step >= *duration) {
       *duration = 0;
       Task_Remove(ScreenTransition_Update);
-      Runtime_SetIrqHandler(1, 0, 0);
+      Irq_SetHandler(1, 0, 0);
       return;
     } else {
       s32 delta = state->end - state->start;
@@ -854,7 +854,7 @@ void ScreenTransition_UpdateFromCentre(void) {
     if (*step >= *duration) {
       *duration = 0;
       Task_Remove(ScreenTransition_UpdateFromCentre);
-      Runtime_SetIrqHandler(1, 0, 0);
+      Irq_SetHandler(1, 0, 0);
       return;
     } else {
       s32 delta = state->end - state->start;

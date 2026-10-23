@@ -11,7 +11,7 @@
 	.set import.MapGrid_CenterOnFollowedPoint, 1
 	.set import.MapGrid_CopyMetatileIndicesRect, 1
 	.set import.MapGrid_CopyCellAttributeRect, 1
-	.set import.ObjectDispatch_SetSingleChildFlags, 1
+	.set import.Object_SetSpriteFlags, 1
 	.set import.MapGrid_SetScreenShake, 1
 	.set import.MapGrid_SetMetatileBehaviorAt, 1
 	.set import.FieldMessage_Show, 1
@@ -29,8 +29,8 @@
 	.set import.ObjectMotion_ResetAndSetPositionInMode2, 1
 	.set import.ObjectMotion_SetPositionAndReset, 1
 	.set import.ObjectMotion_CommitCurrentPositionAndActivate, 1
-	.set import.Engine_ObjectEventSetPosition, 1
-	.set import.Engine_ObjectEventSetAnimation, 1
+	.set import.Import_ObjectEventSetPosition, 1
+	.set import.Import_ObjectEventSetAnimation, 1
 	.set import.ObjectMotion_SetAnimationAndWait, 1
 	.set import.ObjectMotion_Launch, 1
 	.set import.ObjectMotion_SetVarCbAndRefresh, 1
@@ -46,7 +46,7 @@
 	.set import.FieldCamera_SetSpeedParameters, 1
 	.set import.FieldCamera_MoveWithinMapBounds, 1
 	.set import.FieldCamera_WaitForArrival, 1
-	.set import.Engine_ScriptRequestWarp, 1
+	.set import.Import_ScriptRequestWarp, 1
 	.set import.Field_TryJumpForward, 1
 	.set import.FieldEffect_InitializeSparkles, 1
 	.set import.FieldScript_StartScreenTransition, 1

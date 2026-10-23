@@ -8,7 +8,7 @@ struct SpeakerDefinition;
 struct Object;
 struct ScreenTransitionState;
 struct ObjectEventDouseView;
-struct EffectDescriptor;
+struct MapEventView;
 struct FieldEffectSprite;
 struct EffectVector;
 struct ObjectEvent;
@@ -129,7 +129,7 @@ void FieldEffect_RunLift(void);
 void FieldEffect_RunCarry(void);
 
 /// One of the map's events (the same 12 bytes as struct MapEvent).
-struct EffectDescriptor {
+struct MapEventView {
   s32 flags; ///< the low 4 bits are the kind (MapEventKind; 7 talks to
              ///< the object event the party stopped)
   u8 value;  ///< the target (a local id or a metatile behavior)
@@ -179,8 +179,8 @@ void PaletteEditor_Run(void);
 struct ObjectEventTemplate *Map_FindObjectEventTemplate(s32 id);
 s32 GameFlag_IsConditionActive(s32 condition);
 u32 Map_BgEventIgnoresCondition(s32 flags, s32 result);
-struct EffectDescriptor *Map_FindEvent(s32 kind, s32 target);
-void Runtime_CallWorkBlockEntry(void);
+struct MapEventView *Map_FindEvent(s32 kind, s32 target);
+void Overlay_CallInitialize(void);
 s32 Map_FindObjectEventTalkEvent(s32 id);
 s32 Map_TalkToObjectEvent(s32 id);
 s32 Map_RunRaisedEvent(s32 value);

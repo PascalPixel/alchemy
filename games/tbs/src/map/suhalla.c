@@ -183,7 +183,7 @@ static void EventScript_EnterDoor(void) {
   // Walk through the opening while the warp transition counts down.
   ObjectEvent_WalkBy(LOCALID_PARTY_LEADER, 0, -16);
   gFieldWork->transitionFrames = 16;
-  Engine_ScriptRequestWarp(warpTrigger);
+  Import_ScriptRequestWarp(warpTrigger);
 }
 
 /// The same through the wide door of SUHALLA_TO_SANCTUM, into Suhalla Sanctum.
@@ -197,7 +197,7 @@ static void EventScript_EnterWideDoor(void) {
   MapGrid_AnimateCells(gSuhallaWideDoorOpenSteps, cellX, cellZ);
   ObjectEvent_WalkBy(LOCALID_PARTY_LEADER, 0, -16);
   gFieldWork->transitionFrames = 16;
-  Engine_ScriptRequestWarp(warpTrigger);
+  Import_ScriptRequestWarp(warpTrigger);
 }
 
 /// Suhalla's doors, people, treasure and sprout, before or after Babi's
@@ -226,7 +226,7 @@ s32 Map_Initialize(void) {
 
   if (GameFlag_Get(FLAG_MAP_TEMP_01) != 0) {
     EventScript_GrowSprout();
-    Engine_ObjectEventSetAnimation(LOCALID_SPROUT, SPROUT_ANIMATION_GROWN);
+    Import_ObjectEventSetAnimation(LOCALID_SPROUT, SPROUT_ANIMATION_GROWN);
   }
   return 0;
 }

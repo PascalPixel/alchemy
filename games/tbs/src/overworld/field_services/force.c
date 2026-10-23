@@ -81,7 +81,7 @@ void FieldEffect_RunForce(void) {
   projectile->speed = 4 << 16;
   projectile->acceleration = 4 << 16;
   projectile->motionFlags = 0;
-  ObjectDispatch_SelectAnimationFar(projectile, 5);
+  Object_SelectAnimationFar(projectile, 5);
   Anim_ApplyChildValuesFar((struct Object *)projectile, SPRITE_COLOR_BGR);
   scale = projectile->scaleX;
   if (scale < 0x10000) {
@@ -107,7 +107,7 @@ void FieldEffect_RunForce(void) {
       copy->speed = 4 << 16;
       copy->acceleration = 4 << 16;
       copy->motionFlags = 0;
-      ObjectDispatch_SelectAnimationFar(copy, 5);
+      Object_SelectAnimationFar(copy, 5);
       Anim_ApplyChildValuesFar((struct Object *)copy, SPRITE_COLOR_RBG);
       sharedAnimation = Sprite_ShareVramCacheEntry(
           (struct Sprite *)copy->sprite, sharedAnimation);
@@ -133,15 +133,15 @@ void FieldEffect_RunForce(void) {
     pos.z = effectWork->z;
   }
   Object_SetMoveTargetFar((struct Object *)projectile, pos.x, pos.y, pos.z);
-  ObjectDispatch_InitializeFar((struct Object *)projectile,
-                               gFieldEffect_BurstParticleObjectScript + 4);
+  Object_InitializeFar((struct Object *)projectile,
+                       gFieldEffect_BurstParticleObjectScript + 4);
   for (i = 0; i < 3; i++) {
     copy = copies[i];
     if (copy != NULL) {
       WaitFrames(3);
       Object_SetMoveTargetFar((struct Object *)copy, pos.x, pos.y, pos.z);
-      ObjectDispatch_InitializeFar((struct Object *)copy,
-                                   gFieldEffect_CommonParticleScript + 1);
+      Object_InitializeFar((struct Object *)copy,
+                           gFieldEffect_CommonParticleScript + 1);
     }
   }
 

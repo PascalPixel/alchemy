@@ -156,7 +156,7 @@ UNUSED static void TolbiInteriors_ExitThroughWindow(void) {
 
   work->transition = MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   work->transitionFrames = 24;
-  Engine_ScriptRequestWarp();
+  Import_ScriptRequestWarp();
 }
 
 /// In Tolbi, walking into one of the four doors at metatile behaviors 14 to 17:
@@ -187,8 +187,8 @@ static void TolbiInteriors_EnterDoor(void) {
   ObjectMotion_SetSpeedParameters(LOCALID_PARTY_LEADER, PIXELS(1) / 2,
                                   PIXELS(1) / 4);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
-  Engine_ScriptRequestWarp(*trigger);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
+  Import_ScriptRequestWarp(*trigger);
 }
 
 /// In Tolbi after Colosso, entering the northeast guest room
@@ -206,9 +206,9 @@ static void TolbiInteriors_WatchWomanHideMedal(void) {
   FieldScript_WaitFrames(40);
   sparkle = ObjectEvent_Create(SPRITE_PARTICLE, PIXELS(600), 0, PIXELS(824));
   ObjectEvent_SetSpriteFlags(sparkle, 0);
-  ObjectDispatch_SelectAnimation(sparkle, 6);
+  Object_SelectAnimation(sparkle, 6);
   FieldScript_WaitFrames(10);
-  ObjectDispatch_SelectAnimation(sparkle, 1);
+  Object_SelectAnimation(sparkle, 1);
   FieldScript_WaitFrames(40);
   ObjectEvent_Release(sparkle);
   FieldScript_WaitFrames(2);
@@ -359,9 +359,9 @@ s32 TolbiInteriors_ApplyEntryState(void) {
     }
     // Once the docks' confrontation (the refund) is seen, these two have left.
     if (GameFlag_Get(FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED) != 0) {
-      Engine_ObjectEventSetPosition(LOCALID_TOLBI_INTERIORS_FELLOW_PASSENGER, 0,
+      Import_ObjectEventSetPosition(LOCALID_TOLBI_INTERIORS_FELLOW_PASSENGER, 0,
                                     0);
-      Engine_ObjectEventSetPosition(LOCALID_TOLBI_INTERIORS_COLOSSO_FAN, 0, 0);
+      Import_ObjectEventSetPosition(LOCALID_TOLBI_INTERIORS_COLOSSO_FAN, 0, 0);
     }
   }
   return 0;

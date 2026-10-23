@@ -38,17 +38,17 @@
 	import WaitFrames, WaitFramesFar
 	import Task_Add, Task_AddFar
 	import Task_Remove, Task_RemoveFar
-	import Engine_RandomNext, Random16Far
+	import Import_RandomNext, Random16Far
 	import ArcTan2, ArcTan2Far
 	import FixedSqrt, FixedSqrtFar
 	import Trig_Sin, Trig_SinFar
 	import Trig_Cos, Trig_CosFar
 	import Vector_AddPolarOffset, Vector_AddPolarOffsetFar
-	import Runtime_SetIrqHandler, Runtime_SetIrqHandlerFar
+	import Irq_SetHandler, Irq_SetHandlerFar
 	import AllocHeapSlot, AllocHeapSlotFar
 	import AllocHeapSlotEwram, AllocHeapSlotEwramFar
 	import FreeHeapSlot, FreeHeapSlotFar
-	import Alloc, Runtime_BumpAllocateFar
+	import Alloc, AllocFar
 	import AllocEwram, AllocEwramFar
 	import Free, Sys_FreeFar
 	import Decompress_ByteLz, Decompress_ByteLzFar
@@ -61,32 +61,32 @@
 	import Oam_AddSpriteAtDepth, Oam_AddSpriteAtDepthFar
 	import Window_LoadGraphics, Window_LoadGraphicsFar
 	import Resource_GetTableEntry, Resource_GetTableEntryFar
-	import RuntimeDispatch_NoOpHook, RuntimeDispatch_NoOpHookFar
+	import Stub_NoOpHook, Stub_NoOpHookFar
 	import ScreenFade_ToBlack, ScreenFade_ToBlackFar
 	import ScreenFade_Wait, ScreenFade_WaitFar
-	import SerialRuntime_Initialize, SerialRuntime_InitializeFar
-	import SerialRuntime_PollAndTransfer, SerialRuntime_PollAndTransferFar
+	import Serial_Initialize, Serial_InitializeFar
+	import Serial_PollAndTransfer, Serial_PollAndTransferFar
 	import IoWriteQueue_Store16, IoWriteQueue_Store16Far
 	import IoWriteQueue_Store32, IoWriteQueue_Store32Far
-	import SerialRuntime_RemoveIrqHandlers, SerialRuntime_RemoveIrqHandlersFar
+	import Serial_RemoveIrqHandlers, Serial_RemoveIrqHandlersFar
 	import Sound_LoadReverbCode, Sound_LoadReverbCodeFar
-	import SerialRuntime_StartSend, SerialRuntime_StartSendFar
-	import SerialRuntime_StartReceive, SerialRuntime_StartReceiveFar
-	import SerialRuntime_GetActiveTransfers, SerialRuntime_GetActiveTransfersFar
+	import Serial_StartSend, Serial_StartSendFar
+	import Serial_StartReceive, Serial_StartReceiveFar
+	import Serial_GetActiveTransfers, Serial_GetActiveTransfersFar
 	import Task_SetFlags, Task_SetFlagsFar
 @ Field bank (far_call/FIELD.S)
 	import Sprite_StartAnim, Sprite_StartAnimFar
 	import Sprite_AddAnim, Sprite_AddAnimFar
 	import SpriteAnim_Clear, SpriteAnim_ClearFar
-	import ObjectDispatch_SelectAnimation, ObjectDispatch_SelectAnimationFar
-	import ObjectDispatch_SetAnimationSpeed, ObjectDispatch_SetAnimationSpeedFar
-	import ObjectDispatch_Initialize, ObjectDispatch_InitializeFar
+	import Object_SelectAnimation, Object_SelectAnimationFar
+	import Object_SetAnimationSpeed, Object_SetAnimationSpeedFar
+	import Object_Initialize, Object_InitializeFar
 	import Object_CreateField, Object_CreateFar
-	import ObjectDispatch_Release, ObjectDispatch_ReleaseFar
-	import ObjectDispatch_StartCamera, ObjectDispatch_StartCameraFar
+	import Object_Release, Object_ReleaseFar
+	import Object_StartCamera, Object_StartCameraFar
 	import MapGrid_CenterOnFollowedPoint, MapGrid_CenterOnFollowedPointFar
-	import ObjectDispatch_StartIdle, ObjectDispatch_StartIdleFar
-	import ObjectDispatch_WaitForValue16, ObjectDispatch_WaitForValue16Far
+	import Object_StartIdle, Object_StartIdleFar
+	import Object_WaitForValue16, Object_WaitForValue16Far
 	import Object_SetMoveTarget, Object_SetMoveTargetFar
 	import Object_WaitForMove, Object_WaitForMoveFar
 	import WorldMap_LoadDefaultCellsAndUpdateBlock, WorldMap_LoadDefaultCellsAndUpdateBlockFar
@@ -103,13 +103,13 @@
 	import MapGrid_CopyCellIndexRect, MapGrid_CopyCellIndexRectFar
 	import WorldMap_SetWindowCellTile, WorldMap_SetWindowCellTileFar
 	import MapGrid_CheckCollision, MapGrid_CheckCollisionFar
-	import ObjectDispatch_SetSingleChildFlags, ObjectDispatch_SetSingleChildFlagsFar
-	import ObjectDispatch_SetChildBlendMode, ObjectDispatch_SetChildBlendModeFar
+	import Object_SetSpriteFlags, Object_SetSpriteFlagsFar
+	import Object_SetSpriteBlendMode, Object_SetSpriteBlendModeFar
 	import MapGrid_SetScreenShake, MapGrid_SetScreenShakeFar
 	import MapGrid_WaitForShakeToSettle, MapGrid_WaitForShakeToSettleFar
 	import ObjectSystem_SuspendProjectionAndShowSprites, ObjectSystem_SuspendProjectionAndShowSpritesFar
 	import ObjectSystem_ResumeProjectionAndHideLayers, ObjectSystem_ResumeProjectionAndHideLayersFar
-	import ObjectDispatch_RegisterChildMetadata, ObjectDispatch_RegisterChildMetadataFar
+	import Object_RegisterSpriteMetadata, Object_RegisterSpriteMetadataFar
 	import WorldMap_StartStillView, WorldMap_StartStillViewFar
 	import WorldMap_LoadAreaGraphics, WorldMap_LoadAreaGraphicsFar
 	import Anim_ApplyChildValues, Anim_ApplyChildValuesFar
@@ -180,7 +180,7 @@
 	import SaveBlock_InitializeDefaults, SaveBlock_InitializeDefaultsFar
 	import GameFlag_Get, GameFlag_GetFar
 	import GameFlag_Set, GameFlag_SetFar
-	import Engine_GameFlagSet, GameFlag_SetFar
+	import Import_GameFlagSet, GameFlag_SetFar
 	import GameFlag_Clear, GameFlag_ClearFar
 	import GameFlag_GetByte, GameFlag_GetByteFar
 	import GameFlag_SetByte, GameFlag_SetByteFar
@@ -208,7 +208,7 @@
 	import Party_GetAverageLevel, Party_GetAverageLevelFar
 	import PartyInventory_CountItem, PartyInventory_CountItemFar
 	import PartyInventory_Discard, PartyInventory_DiscardFar
-	import Runtime_GetBuildStampTime, Runtime_GetBuildStampTimeFar
+	import BuildStamp_GetTime, BuildStamp_GetTimeFar
 	import PartyInventory_CountFreeSlots, PartyInventory_CountFreeSlotsFar
 	import InventorySnapshot_Save, InventorySnapshot_SaveFar
 	import InventorySnapshot_Restore, InventorySnapshot_RestoreFar
@@ -239,8 +239,8 @@
 	import ObjectMotion_CenterOnColumn, ObjectMotion_CenterOnColumnFar
 	import ObjectMotion_OffsetPositionAndResetMotion, ObjectMotion_OffsetPositionAndResetMotionFar
 	import ObjectMotion_CommitCurrentPositionAndActivate, ObjectMotion_CommitCurrentPositionAndActivateFar
-	import Engine_ObjectEventSetPosition, ObjectMotion_SetHorizontalPositionWithTerrainFar
-	import Engine_ObjectEventSetAnimation, ObjectEvent_SetModeByIdFar
+	import Import_ObjectEventSetPosition, ObjectMotion_SetHorizontalPositionWithTerrainFar
+	import Import_ObjectEventSetAnimation, ObjectEvent_SetModeByIdFar
 	import ObjectEvent_SetActionById, ObjectEvent_SetActionByIdFar
 	import ObjectMotion_SetAnimationAndWait, ObjectMotion_SetAnimationAndWaitFar
 	import ObjectMotion_WaitForAnimationChange, ObjectMotion_WaitForAnimationChangeFar
@@ -250,8 +250,8 @@
 	import ObjectEvent_JumpDownLedge, ObjectEvent_JumpDownLedgeFar
 	import ObjectMotion_SetAngleToward, ObjectMotion_SetAngleTowardFar
 	import ObjectEvent_LinkPair, ObjectEvent_LinkPairFar
-	import ObjectGroup_ConfigureChildValue, ObjectGroup_ConfigureChildValueFar
-	import ObjectGroup_SetChildValue, ObjectGroup_SetChildValueFar
+	import ObjectEvent_ConfigureSpriteColor, ObjectEvent_ConfigureSpriteColorFar
+	import ObjectEvent_SetSpriteColor, ObjectEvent_SetSpriteColorFar
 	import ObjectEvent_SetTargetAndCallback, ObjectEvent_SetTargetAndCallbackFar
 	import FieldScript_SetMessageId, FieldScript_SetMessageIdFar
 	import FieldMessage_ShowAtObject, FieldMessage_ShowAtObjectFar
@@ -259,12 +259,12 @@
 	import FieldScript_ShowMessageThenWait, FieldScript_ShowMessageThenWaitFar
 	import FieldScript_AskYesNoAndShowResponse, FieldScript_AskYesNoAndShowResponseFar
 	import ObjectMotion_ArmCallback, ObjectMotion_ArmCallbackFar
-	import Engine_ScriptShowTwoMessagesAndWait, FieldScript_ShowTwoMessagesAndWaitFar
+	import Import_ScriptShowTwoMessagesAndWait, FieldScript_ShowTwoMessagesAndWaitFar
 	import Message_SetVoiceFromObjectEvent, Message_SetVoiceFromObjectEventFar
 	import ObjectMotion_SetActionVariant, ObjectMotion_SetActionVariantFar
 	import FieldEffect_SpawnLinked, FieldEffect_SpawnLinkedFar
 	import FieldEffect_ConfigureLinkedObject, FieldEffect_ConfigureLinkedObjectFar
-	import ObjectVisual_CopyAttributes, ObjectVisual_CopyAttributesFar
+	import ObjectEvent_CopyGraphics, ObjectEvent_CopyGraphicsFar
 	import FieldCamera_FollowObjectEvent, FieldCamera_FollowObjectEventFar
 	import FieldCamera_SetSpeedParameters, FieldCamera_SetSpeedParametersFar
 	import FieldCamera_MoveWithinMapBounds, FieldCamera_MoveWithinMapBoundsFar
@@ -273,7 +273,7 @@
 	import FieldCamera_GetScriptObject, FieldCamera_GetScriptObjectFar
 	import MapGrid_SetViewBounds, MapGrid_SetViewBoundsFar
 	import FieldScript_SetDestination, FieldScript_SetDestinationFar
-	import Engine_ScriptRequestWarp, FieldScript_SetWarpRequestFar
+	import Import_ScriptRequestWarp, FieldScript_SetWarpRequestFar
 	import Field_RequestBattleFromEncounterTable, Field_RequestBattleFromEncounterTableFar
 	import Field_RequestDjinnBattle, Field_RequestDjinnBattleFar
 	import FieldScript_SetNextDestination, FieldScript_SetNextDestinationFar

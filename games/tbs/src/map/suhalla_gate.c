@@ -189,7 +189,7 @@ s32 Map_Initialize(void) {
   mapId = gSaveBlock.mapId;
   if (mapId == (s32)&MapId_SuhallaGateCheckpoint) {
     if (GameFlag_Get(FLAG_SUHALLA_GATE_SOLDIER_VANISHED))
-      Engine_ObjectEventSetPosition(LOCALID_VANISHING_SOLDIER, 0, 0);
+      Import_ObjectEventSetPosition(LOCALID_VANISHING_SOLDIER, 0, 0);
 #if TBS_PATCH_3
     else if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO))
       MapGrid_CopyCellAttributes(0, 0, 2, 1, 29, 18);
@@ -221,15 +221,15 @@ s32 Map_Initialize(void) {
     if (gSaveBlock.warpDest == SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_EAST)
       GameFlag_Set(FLAG_SUHALLA_GATE_ENTERED_FROM_EAST);
   } else if (mapId == (s32)&MapId_SuhallaGateDew) {
-    Engine_ObjectEventSetAnimation(LOCALID_FIRST_SPROUT,
+    Import_ObjectEventSetAnimation(LOCALID_FIRST_SPROUT,
                                    SPROUT_ANIMATION_GROWN);
-    Engine_ObjectEventSetAnimation(LOCALID_FIRST_SPROUT + 1,
+    Import_ObjectEventSetAnimation(LOCALID_FIRST_SPROUT + 1,
                                    SPROUT_ANIMATION_GROWN);
-    Engine_ObjectEventSetAnimation(LOCALID_FIRST_SPROUT + 2,
+    Import_ObjectEventSetAnimation(LOCALID_FIRST_SPROUT + 2,
                                    SPROUT_ANIMATION_HALF_GROWN);
-    Engine_ObjectEventSetAnimation(LOCALID_FIRST_SPROUT + 3,
+    Import_ObjectEventSetAnimation(LOCALID_FIRST_SPROUT + 3,
                                    SPROUT_ANIMATION_GROWN);
-    Engine_ObjectEventSetAnimation(LOCALID_FIRST_SPROUT + 4,
+    Import_ObjectEventSetAnimation(LOCALID_FIRST_SPROUT + 4,
                                    SPROUT_ANIMATION_HALF_GROWN);
     // UB: the map places only object events up to LOCALID_DEW, so there is no
     // object event 15 and ObjectEvent_GetById returns NULL (watched in tbs-en
@@ -259,7 +259,7 @@ static void EventScript_EnterHouse(void) {
   MapGrid_CopyCellsTo(68, 36, 71, 8, cellSize, cellSize);
   WaitFrames(4);
   ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 3, -16);
-  Engine_ScriptRequestWarp(warpTrigger);
+  Import_ScriptRequestWarp(warpTrigger);
 }
 
 /// The party leaves the checkpoint for the world map. In SuhallaGateCheckpoint
@@ -272,7 +272,7 @@ static void EventScript_LeaveForWorldMap(void) {
   Sound_PlaySong(SE_MAP_EXIT);
   GameFlag_Clear(FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH);
   GameFlag_Clear(FLAG_SUHALLA_GATE_ENTERED_FROM_EAST);
-  Engine_ScriptRequestWarp(warpTrigger);
+  Import_ScriptRequestWarp(warpTrigger);
 }
 
 /// In Suhalla Gate (MapId_SuhallaGateCheckpoint) before Babi's audience, each
@@ -286,7 +286,7 @@ static void EventScript_GuardsBlockPassage(void) {
   ObjectEvent_WalkToAndWait(LOCALID_EAST_GUARD, 152, 384);
   ObjectEvent_FaceDirection(LOCALID_WEST_GUARD, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(LOCALID_EAST_GUARD, FACING_SOUTH, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_WEST_GUARD, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_WEST_GUARD, ANIM_STAND);
   MapGrid_CopyCellAttributes(6, 27, 1, 1, 7, 27);
 #if TBS_PATCH_3
   MapGrid_CopyCellAttributes(11, 26, 1, 1, 7, 26);
@@ -398,7 +398,7 @@ static void EventScript_IodemQuestionsGuards(void) {
   Script_ShowMessageAndWait(LOCALID_IODEM, 0, 20);
   ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_SOUTH + FACING_STEP, 10);
   Script_ShowMessageAndWait(LOCALID_IODEM, 0, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_IODEM, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_IODEM, ANIM_WALK);
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   if (leader != 0) {
     ObjectEvent_SetDestination(LOCALID_IODEM, leader->x.part.pixel,
@@ -469,11 +469,11 @@ static void EventScript_SoldierVanishes(void) {
   beat = 0;
   // Six slow blinks are followed by twelve fast ones.
   do {
-    ObjectEvent_SetChildValue(LOCALID_VANISHING_SOLDIER, 0);
+    ObjectEvent_SetSpriteColorById(LOCALID_VANISHING_SOLDIER, 0);
     ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_VANISHING_SOLDIER), 1);
     WaitFrames(4);
 
-    ObjectEvent_SetChildValue(LOCALID_VANISHING_SOLDIER, 15);
+    ObjectEvent_SetSpriteColorById(LOCALID_VANISHING_SOLDIER, 15);
     ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_VANISHING_SOLDIER), 0);
     beat++;
     WaitFrames(4);
@@ -481,11 +481,11 @@ static void EventScript_SoldierVanishes(void) {
 
   beat = 0;
   do {
-    ObjectEvent_SetChildValue(LOCALID_VANISHING_SOLDIER, 0);
+    ObjectEvent_SetSpriteColorById(LOCALID_VANISHING_SOLDIER, 0);
     ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_VANISHING_SOLDIER), 1);
     WaitFrames(2);
 
-    ObjectEvent_SetChildValue(LOCALID_VANISHING_SOLDIER, 15);
+    ObjectEvent_SetSpriteColorById(LOCALID_VANISHING_SOLDIER, 15);
     ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_VANISHING_SOLDIER), 0);
     beat++;
     WaitFrames(2);

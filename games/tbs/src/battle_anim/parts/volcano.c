@@ -170,8 +170,8 @@ void BattleAnim_RunVolcano(struct BattleAnimArgs *effect) {
         if (frame == gVolcano_StartFrames[pillar]) {
           work->shakeFrames = 2;
           ANIM_FOR_EACH_TARGET(i, work->effect) {
-            ObjectGroup_UpdateMembers(work->effect->targets[i],
-                                      SPRITE_COLOR_RED_TINT, POSE_DAMAGE, i, 8);
+            BattleAnim_TintBattler(work->effect->targets[i],
+                                   SPRITE_COLOR_RED_TINT, POSE_DAMAGE, i, 8);
             BattleMotion_ApplyKnockbackFar(work->effect->targets[i],
                                            KNOCKBACK_HOP);
           }

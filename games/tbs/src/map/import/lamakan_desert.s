@@ -3,7 +3,7 @@
 	.set import.__divsi3, 1
 	.set import.WaitFrames, 1
 	.set import.Task_Add, 1
-	.set import.Engine_RandomNext, 1
+	.set import.Import_RandomNext, 1
 	.set import.Vector_AddPolarOffset, 1
 	.set import.Alloc, 1
 	.set import.Free, 1
@@ -13,8 +13,8 @@
 	.set import.VramCache_FindFreeEntry, 1
 	.set import.Oam_AddSpriteAtDepth, 1
 	.set import.IoWriteQueue_Store32, 1
-	.set import.ObjectDispatch_SelectAnimation, 1
-	.set import.ObjectDispatch_Initialize, 1
+	.set import.Object_SelectAnimation, 1
+	.set import.Object_Initialize, 1
 	.set import.Object_CreateField, 1
 	.set import.Object_SetMoveTarget, 1
 	.set import.Object_WaitForMove, 1
@@ -22,8 +22,8 @@
 	.set import.MapGrid_CopyCellAttributeRect, 1
 	.set import.MapGrid_CopyCellIndexRect, 1
 	.set import.MapGrid_CheckCollision, 1
-	.set import.ObjectDispatch_SetSingleChildFlags, 1
-	.set import.ObjectDispatch_SetChildBlendMode, 1
+	.set import.Object_SetSpriteFlags, 1
+	.set import.Object_SetSpriteBlendMode, 1
 	.set import.GameFlag_Get, 1
 	.set import.GameFlag_Set, 1
 	.set import.GameFlag_Clear, 1
@@ -36,18 +36,18 @@
 	.set import.ObjectMotion_SetPositionAndReset, 1
 	.set import.ObjectMotion_OffsetPositionAndResetMotion, 1
 	.set import.ObjectMotion_CommitCurrentPositionAndActivate, 1
-	.set import.Engine_ObjectEventSetPosition, 1
-	.set import.Engine_ObjectEventSetAnimation, 1
+	.set import.Import_ObjectEventSetPosition, 1
+	.set import.Import_ObjectEventSetAnimation, 1
 	.set import.ObjectEvent_SetActionById, 1
 	.set import.ObjectMotion_SetVariantCallback, 1
 	.set import.ObjectMotion_SetVarCbAndRefresh, 1
 	.set import.ObjectMotion_SetAngleToward, 1
-	.set import.ObjectGroup_SetChildValue, 1
+	.set import.ObjectEvent_SetSpriteColor, 1
 	.set import.FieldScript_SetMessageId, 1
 	.set import.FieldScript_ShowMessageAndWait, 1
 	.set import.FieldEffect_SpawnLinked, 1
 	.set import.FieldEffect_ConfigureLinkedObject, 1
-	.set import.Engine_ScriptRequestWarp, 1
+	.set import.Import_ScriptRequestWarp, 1
 	.set import.Field_RequestBattleFromEncounterTable, 1
 	.set import.FieldScript_SetNextDestination, 1
 	.set import.ScanlineEffect_InitWave, 1

@@ -2,12 +2,12 @@
 	.set overlay_imports, 1
 	.set import.__divsi3, 1
 	.set import.WaitFrames, 1
-	.set import.ObjectDispatch_SelectAnimation, 1
+	.set import.Object_SelectAnimation, 1
 	.set import.Object_SetMoveTarget, 1
 	.set import.Object_WaitForMove, 1
 	.set import.MapGrid_CopyCellAttributeRect, 1
 	.set import.MapGrid_CheckCollision, 1
-	.set import.ObjectDispatch_SetSingleChildFlags, 1
+	.set import.Object_SetSpriteFlags, 1
 	.set import.GameFlag_Get, 1
 	.set import.GameFlag_Set, 1
 	.set import.FieldScript_WaitFrames, 1
@@ -18,7 +18,7 @@
 	.set import.ObjectMotion_SetPositionAndCommit, 1
 	.set import.ObjectMotion_OffsetPositionAndResetMotion, 1
 	.set import.ObjectMotion_CommitCurrentPositionAndActivate, 1
-	.set import.Engine_ObjectEventSetAnimation, 1
+	.set import.Import_ObjectEventSetAnimation, 1
 	.set import.PaletteFade_SetTarget, 1
 	.set import.PaletteFade_SetSource, 1
 	.set import.Map_PlayQueuedMusic, 1

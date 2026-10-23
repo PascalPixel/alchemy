@@ -94,7 +94,7 @@ void FieldEffect_RunHalt(void) {
   effectWork->y = caster->y;
   orb = (struct Object *)Object_Spawn(250, 0, 0, 0);
   step = 0;
-  ObjectDispatch_SelectAnimationFar(orb, 0);
+  Object_SelectAnimationFar(orb, 0);
   if (orb == 0)
     return;
 
@@ -126,7 +126,7 @@ void FieldEffect_RunHalt(void) {
   // Three low tones and a high one, 10 frames apart, as the orb changes to
   // its second animation.
   WaitFrames(5);
-  ObjectDispatch_SelectAnimationFar(orb, 1);
+  Object_SelectAnimationFar(orb, 1);
   Sound_PlaySongFar(SE_TRIPLE_TONE_LOW);
   WaitFrames(10);
   Sound_PlaySongFar(SE_TRIPLE_TONE_LOW);
@@ -154,7 +154,7 @@ void FieldEffect_RunHalt(void) {
   pos.y = orb->y + (8 << 16);
   pos.z = orb->z;
   WaitFrames(8);
-  ObjectDispatch_ReleaseFar((struct Object *)orb);
+  Object_ReleaseFar((struct Object *)orb);
   WaitFrames(4);
   WaitFrames(30);
   FieldEffect_FadeFromEffectColor();
@@ -195,7 +195,7 @@ void FieldEffect_PauseObject(s32 localId) {
     }
     objectEvent->update = FieldEffect_UpdatePausedObject;
     objectEvent->paused = 1;
-    ObjectDispatch_SetAnimationSpeedFar((struct Object *)objectEvent, 0);
+    Object_SetAnimationSpeedFar((struct Object *)objectEvent, 0);
   }
 }
 
@@ -215,7 +215,7 @@ void FieldEffect_ResumeObject(s32 localId) {
       Anim_ApplyChildValuesFar((struct Object *)objectEvent, state->pausedPose);
     }
     objectEvent->paused = 0;
-    ObjectDispatch_SetAnimationSpeedFar((struct Object *)objectEvent, 16);
+    Object_SetAnimationSpeedFar((struct Object *)objectEvent, 16);
   }
 }
 

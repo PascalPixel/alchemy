@@ -1,11 +1,11 @@
 @ C2: aligned 8-byte veneers: overlay_veneer emits ldr r4, bx r4 and a target word.
 	.set overlay_imports, 1
-	.set import.ObjectDispatch_SelectAnimation, 1
+	.set import.Object_SelectAnimation, 1
 	.set import.Object_CreateField, 1
-	.set import.ObjectDispatch_Release, 1
+	.set import.Object_Release, 1
 	.set import.MapGrid_PlayMetatileCopySequence, 1
 	.set import.MapGrid_CopyCellAttributeRect, 1
-	.set import.ObjectDispatch_SetSingleChildFlags, 1
+	.set import.Object_SetSpriteFlags, 1
 	.set import.GameFlag_Get, 1
 	.set import.GameFlag_Set, 1
 	.set import.FieldScript_WaitFrames, 1
@@ -15,8 +15,8 @@
 	.set import.ObjectEvent_GetById, 1
 	.set import.ObjectMotion_SetSpeedParameters, 1
 	.set import.ObjectMotion_SetPositionAndReset, 1
-	.set import.Engine_ObjectEventSetPosition, 1
-	.set import.Engine_ObjectEventSetAnimation, 1
+	.set import.Import_ObjectEventSetPosition, 1
+	.set import.Import_ObjectEventSetAnimation, 1
 	.set import.ObjectMotion_SetAnimationAndWait, 1
 	.set import.ObjectMotion_Launch, 1
 	.set import.ObjectMotion_SetVarCbAndRefresh, 1
@@ -25,7 +25,7 @@
 	.set import.FieldScript_ShowMessageAndWait, 1
 	.set import.ObjectMotion_ArmCallback, 1
 	.set import.FieldEffect_SpawnLinked, 1
-	.set import.Engine_ScriptRequestWarp, 1
+	.set import.Import_ScriptRequestWarp, 1
 	.set import.FieldScript_StartScreenTransition, 1
 	.set import.ObjectMotion_CommitPositionAndActivate, 1
 	.set import.Shop_Run, 1

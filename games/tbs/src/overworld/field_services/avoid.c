@@ -140,11 +140,9 @@ void FieldEffect_RunAvoid(void) {
   // Back to the caster's own look: outlined while Cloak is on, else with its
   // shadow.
   if (gSaveBlock.cloaked != 0)
-    ObjectDispatch_SetSingleChildFlagsFar((struct Object *)object,
-                                          SPRITE_FLAG_OUTLINED);
+    Object_SetSpriteFlagsFar((struct Object *)object, SPRITE_FLAG_OUTLINED);
   else
-    ObjectDispatch_SetSingleChildFlagsFar((struct Object *)object,
-                                          SPRITE_FLAG_SHADOW);
+    Object_SetSpriteFlagsFar((struct Object *)object, SPRITE_FLAG_SHADOW);
   Anim_ApplyChildValuesFar((struct Object *)object, SPRITE_COLOR_NORMAL);
   VramCache_FreeEntry(effectWork->arcTileSlot);
   FieldMessage_ShowFar(MsgMonstersAttackLess, 1);

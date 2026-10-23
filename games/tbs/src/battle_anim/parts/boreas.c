@@ -493,8 +493,8 @@ void BattleAnim_RunBoreas(struct BattleAnimArgs *effect) {
     // Target i takes a blue tint and its damage pose on frame 32 + 8i.
     ANIM_FOR_EACH_TARGET(i, work->effect) {
       if (frame == i * 8 + 32) {
-        ObjectGroup_UpdateMembers(work->effect->targets[i],
-                                  SPRITE_COLOR_BLUE_TINT, POSE_DAMAGE, -1, 0);
+        BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_BLUE_TINT,
+                               POSE_DAMAGE, -1, 0);
       }
     }
 

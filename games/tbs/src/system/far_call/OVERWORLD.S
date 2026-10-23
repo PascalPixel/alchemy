@@ -47,8 +47,8 @@ FarCall_OverworldTable:
 	export ObjectEvent_JumpDownLedgeFar, ObjectEvent_JumpDownLedge
 	export ObjectMotion_SetAngleTowardFar, ObjectMotion_SetAngleToward
 	export ObjectEvent_LinkPairFar, ObjectEvent_LinkPair
-	export ObjectGroup_ConfigureChildValueFar, ObjectGroup_ConfigureChildValue
-	export ObjectGroup_SetChildValueFar, ObjectGroup_SetChildValue
+	export ObjectEvent_ConfigureSpriteColorFar, ObjectEvent_ConfigureSpriteColor
+	export ObjectEvent_SetSpriteColorFar, ObjectEvent_SetSpriteColor
 	export ObjectEvent_SetTargetAndCallbackFar, ObjectEvent_SetTargetAndCallback
 	export FieldScript_SetMessageIdFar, FieldScript_SetMessageId
 	export FieldMessage_ShowAtObjectFar, FieldMessage_ShowAtObject
@@ -67,7 +67,7 @@ FarCall_OverworldTable:
 	export ObjectMotion_SetActionVariantFar, ObjectMotion_SetActionVariant
 	export FieldEffect_SpawnLinkedFar, FieldEffect_SpawnLinked
 	export FieldEffect_ConfigureLinkedObjectFar, FieldEffect_ConfigureLinkedObject
-	export ObjectVisual_CopyAttributesFar, ObjectVisual_CopyAttributes
+	export ObjectEvent_CopyGraphicsFar, ObjectEvent_CopyGraphics
 	export FieldCamera_FollowObjectEventFar, FieldCamera_FollowObjectEvent
 	export FieldCamera_SetSpeedParametersFar, FieldCamera_SetSpeedParameters
 	export FieldCamera_MoveWithinMapBoundsFar, FieldCamera_MoveWithinMapBounds

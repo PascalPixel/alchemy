@@ -15,7 +15,7 @@
 // gSpeakerDefinitions, gFieldEffect_GroundParticleFrames,
 // gFieldEffect_PulseScales, gFieldEffect_CyclePatternWords and
 // gFieldEffect_RandomChildValues, graphics.h's gScreenTransition_NoiseWidths
-// and gScreenTransition_EdgeOffsets, field.h's gObjectGroup_BlinkChildValues
+// and gScreenTransition_EdgeOffsets, field.h's gObjectEvent_BlinkSpriteColors
 // and overworld.c's three gColorBuffer_ChannelCurve tables. All are defined
 // const all the same: in rom_main_04 .data follows scripts.o, and these tables
 // would move. So this file includes none of those headers.
@@ -356,8 +356,8 @@ const s32 gObjectMotion_VariantScripts[97] = {
 };
 
 /// A blinking object event's sprite param by frame ((gFrameCount >> 1) & 3,
-/// ObjectGroup_ApplyIndexedChildValue): 7 for two frames out of eight.
-const u8 gObjectGroup_BlinkChildValues[4] = {7, 0, 0, 0};
+/// ObjectEvent_UpdateBlink): 7 for two frames out of eight.
+const u8 gObjectEvent_BlinkSpriteColors[4] = {7, 0, 0, 0};
 
 /// Sine times 4096, 256 steps to a turn.
 const s16 gScanlineEffect_WaveSine[256] = {

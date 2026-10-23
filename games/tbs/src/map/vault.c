@@ -236,7 +236,7 @@ static void EventScript_IvanStaysBehind(void) {
   work = gFieldWork;
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) != 0 ||
       GameFlag_Get(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) == 0) {
-    Engine_ScriptRequestWarp(work->coordEvent -
+    Import_ScriptRequestWarp(work->coordEvent -
                              (MB_VAULT_SOUTH_GATE - VAULT_TO_WORLD_MAP_SOUTH));
     return;
   }
@@ -270,7 +270,7 @@ static void EventScript_IvanStaysBehind(void) {
     WaitFrames(20);
   }
   Party_RemoveMemberRestored(IVAN);
-  Engine_ScriptRequestWarp(work->coordEvent -
+  Import_ScriptRequestWarp(work->coordEvent -
                            (MB_VAULT_SOUTH_GATE - VAULT_TO_WORLD_MAP_SOUTH));
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
@@ -327,7 +327,7 @@ static void EventScript_AskAboutFleeingTravelers(void) {
 
   FieldScript_Start();
   FieldScript_SetMessageId(MsgVaultThoseTravelersLeftInBig);
-  Engine_ObjectEventSetAnimation(LOCALID_OLD_WOMAN_ON_THE_TRAVELERS,
+  Import_ObjectEventSetAnimation(LOCALID_OLD_WOMAN_ON_THE_TRAVELERS,
                                  ANIM_STAND);
   Vault_FaceObjectEventAndWait(LOCALID_OLD_WOMAN_ON_THE_TRAVELERS,
                                LOCALID_PARTY_LEADER, 2);
@@ -384,7 +384,7 @@ static void EventScript_StrongmanOnWatchSuspectsOutsiders(void) {
 static void EventScript_TalkToDog(void) {
   FieldScript_Start();
   FieldScript_SetMessageId(MsgVaultRuffRrruff);
-  Engine_ObjectEventSetAnimation(LOCALID_VAULT_DOG, 0);
+  Import_ObjectEventSetAnimation(LOCALID_VAULT_DOG, 0);
   Vault_FaceObjectEventAndWait(LOCALID_VAULT_DOG, LOCALID_PARTY_LEADER, 2);
   FieldScript_ShowMessageAndWait(LOCALID_VAULT_DOG, 0);
   FieldScript_End();
@@ -400,7 +400,7 @@ static void EventScript_PityIvan(void) {
   objectEvent->timer |= 2;
   FieldScript_Start();
   FieldScript_SetMessageId(MsgVaultPoorGuyLeft);
-  Engine_ObjectEventSetAnimation(LOCALID_BOY_ROUND_THE_WELL, 0);
+  Import_ObjectEventSetAnimation(LOCALID_BOY_ROUND_THE_WELL, 0);
   Vault_FaceObjectEventAndWait(LOCALID_BOY_ROUND_THE_WELL, LOCALID_PARTY_LEADER,
                                2);
   Vault_ShowMessageAndWait(LOCALID_BOY_ROUND_THE_WELL, 10);
@@ -420,7 +420,7 @@ static void EventScript_TalkOfHammetsCaravan(void) {
   objectEvent->timer |= 2;
   FieldScript_Start();
   FieldScript_SetMessageId(MsgVaultMasterHammetsCaravan);
-  Engine_ObjectEventSetAnimation(LOCALID_GIRL_ROUND_THE_WELL, 0);
+  Import_ObjectEventSetAnimation(LOCALID_GIRL_ROUND_THE_WELL, 0);
   Vault_FaceObjectEventAndWait(LOCALID_GIRL_ROUND_THE_WELL,
                                LOCALID_PARTY_LEADER, 2);
   Vault_ShowMessageAndWait(LOCALID_GIRL_ROUND_THE_WELL, 10);
@@ -448,7 +448,7 @@ static void EventScript_LookForRoofer(void) {
 /// Stops an object event, faces the leader and shows the current message.
 static void Vault_ShowStandingObjectEventMessage(s32 localId) {
   FieldScript_Start();
-  Engine_ObjectEventSetAnimation(localId, ANIM_STAND);
+  Import_ObjectEventSetAnimation(localId, ANIM_STAND);
   Vault_FaceObjectEventAndWait(localId, LOCALID_PARTY_LEADER, 2);
   FieldScript_ShowMessageAndWait(localId, 0);
   FieldScript_End();
@@ -514,7 +514,7 @@ static void EventScript_AskWhetherIvanWentToLunpa(void) {
   FieldScript_SetMessageId(MsgVaultDidntGoLunpa);
   if (GameFlag_Get(FLAG_IN_PARTY(IVAN)) != 0)
     ++gFieldWork->message;
-  Engine_ObjectEventSetAnimation(LOCALID_BOY_ROUND_THE_WELL, 0);
+  Import_ObjectEventSetAnimation(LOCALID_BOY_ROUND_THE_WELL, 0);
   Vault_FaceObjectEventAndWait(LOCALID_BOY_ROUND_THE_WELL, LOCALID_PARTY_LEADER,
                                2);
   Vault_ShowMessageAndWait(LOCALID_BOY_ROUND_THE_WELL, 10);
@@ -534,7 +534,7 @@ static void EventScript_ThankForCapturingThieves(void) {
   objectEvent->timer |= 2;
   FieldScript_Start();
   FieldScript_SetMessageId(MsgVaultEveryoneGratefulCaptured);
-  Engine_ObjectEventSetAnimation(LOCALID_GIRL_ROUND_THE_WELL, 0);
+  Import_ObjectEventSetAnimation(LOCALID_GIRL_ROUND_THE_WELL, 0);
   Vault_FaceObjectEventAndWait(LOCALID_GIRL_ROUND_THE_WELL,
                                LOCALID_PARTY_LEADER, 2);
   Vault_ShowMessageAndWait(LOCALID_GIRL_ROUND_THE_WELL, 10);
@@ -551,7 +551,7 @@ static void EventScript_ThankForCapturingThieves(void) {
 static void EventScript_AskAboutPrisoners(void) {
   FieldScript_Start();
   FieldScript_SetMessageId(MsgVaultThoseMenCapturedTheyreIn);
-  Engine_ObjectEventSetAnimation(LOCALID_STRONGMAN_ON_WATCH, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_STRONGMAN_ON_WATCH, ANIM_STAND);
   Vault_FaceObjectEventAndWait(LOCALID_STRONGMAN_ON_WATCH, LOCALID_PARTY_LEADER,
                                2);
   Vault_AskYesNoAndShowReply(LOCALID_STRONGMAN_ON_WATCH);
@@ -575,10 +575,10 @@ static void EventScript_AskWhoCapturedThieves(void) {
 static void EventScript_TalkToDogAfterCapture(void) {
   FieldScript_Start();
   FieldScript_SetMessageId(MsgVaultRuffRrruff2);
-  Engine_ObjectEventSetAnimation(LOCALID_VAULT_DOG, 0);
+  Import_ObjectEventSetAnimation(LOCALID_VAULT_DOG, 0);
   Vault_FaceObjectEventAndWait(LOCALID_VAULT_DOG, LOCALID_PARTY_LEADER, 2);
   FieldScript_ShowMessageAndWait(LOCALID_VAULT_DOG, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_VAULT_DOG, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_VAULT_DOG, ANIM_STAND);
   if (PartyInventory_FindMember(ITEM_BONE) != -1 &&
       GameFlag_Get(FLAG_VAULT_DOG_SHOWN_PASSAGE) == 0) {
     u16 *menuRequest = &gFieldWork->menu;
@@ -683,7 +683,7 @@ static void EventScript_ReadDogMind(void) {
   FieldScript_Start();
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
     FieldScript_SetMessageId(MsgVaultStealingInMidstVolcanicEruption);
-    Engine_ObjectEventSetAnimation(LOCALID_VAULT_DOG, 0);
+    Import_ObjectEventSetAnimation(LOCALID_VAULT_DOG, 0);
     FieldScript_WaitFrames(2);
   } else if (GameFlag_Get(FLAG_VAULT_DOG_SHOWN_PASSAGE) != 0) {
     FieldScript_SetMessageId(MsgVaultCarefulSearchWillRevealPassage);
@@ -711,7 +711,7 @@ static void Vault_WalkThroughExit(s32 x, s32 y, s32 continuation) {
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, x, y);
   gFieldWork->transitionFrames = 16;
-  Engine_ScriptRequestWarp(continuation);
+  Import_ScriptRequestWarp(continuation);
 }
 
 /// The door of the gem owner's house opens and the party walks in.
@@ -813,7 +813,7 @@ static void Vault_JumpObjectEventToAndWait(s32 localId, s32 x, s32 z,
   objectEvent->velocityY = verticalSpeed;
   ObjectEvent_SetSpriteFlags(objectEvent, 0);
   ObjectMotion_SetPositionAndCommit(localId, x, z);
-  Engine_ObjectEventSetPosition(localId, x << 16, z << 16);
+  Import_ObjectEventSetPosition(localId, x << 16, z << 16);
   for (frames = 60; frames != 0; --frames) {
     WaitFrames(1);
     if ((objectEvent->velocityY >> 16) == 0)
@@ -885,7 +885,7 @@ s32 Map_Initialize(void) {
   // Once the party has reached Kalay (FLAG_KALAY_REACHED), the town is its
   // later map, MapId_VaultRevisit (vault_revisit.c).
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
-    Engine_ScriptRequestWarp(VAULT_TO_VAULT_REVISIT);
+    Import_ScriptRequestWarp(VAULT_TO_VAULT_REVISIT);
   }
   // Keep the bridge deck after a battle, and restore the two children's
   // proximity callbacks.
@@ -938,7 +938,7 @@ s32 Map_Initialize(void) {
           FieldScript_Start();
           objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
           if (objectEvent != 0) {
-            Engine_ObjectEventSetPosition(LOCALID_IVAN, objectEvent->x.fixed,
+            Import_ObjectEventSetPosition(LOCALID_IVAN, objectEvent->x.fixed,
                                           objectEvent->z.fixed);
           }
           if (gSaveBlock.warpDest == VAULT_FROM_WORLD_MAP_SOUTH) {
@@ -955,7 +955,7 @@ s32 Map_Initialize(void) {
           FieldScript_ShowMessageThenWait(LOCALID_IVAN, 0, 20);
           ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
           ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
-          Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_WALK);
+          Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_WALK);
           objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
           if (objectEvent != 0) {
             ObjectMotion_ResetAndSetPosition(LOCALID_IVAN,
@@ -963,7 +963,7 @@ s32 Map_Initialize(void) {
                                              objectEvent->z.part.pixel);
           }
           ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_IVAN);
-          Engine_ObjectEventSetPosition(LOCALID_IVAN, 0, 0);
+          Import_ObjectEventSetPosition(LOCALID_IVAN, 0, 0);
           FieldScript_PrepareObjectAndApplyValue(IVAN, 0);
           FieldScript_End();
         }
@@ -989,7 +989,7 @@ s32 Map_Initialize(void) {
           FieldScript_ShowMessageThenWait(LOCALID_IVAN, 0, 20);
           ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
           ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
-          Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_WALK);
+          Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_WALK);
           objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
           if (objectEvent != 0) {
             ObjectMotion_ResetAndSetPosition(LOCALID_IVAN,
@@ -997,7 +997,7 @@ s32 Map_Initialize(void) {
                                              objectEvent->z.part.pixel);
           }
           ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_IVAN);
-          Engine_ObjectEventSetPosition(LOCALID_IVAN, 0, 0);
+          Import_ObjectEventSetPosition(LOCALID_IVAN, 0, 0);
           FieldScript_PrepareObjectAndApplyValue(IVAN, 0);
           FieldScript_End();
         }
@@ -1007,7 +1007,7 @@ s32 Map_Initialize(void) {
   } else {
     if (gSaveBlock.warpDest == VAULT_FROM_VAULT_INTERIORS_WEST) {
       if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) != 0) {
-        Engine_ObjectEventSetPosition(LOCALID_YOUNG_MAN_FIXING_THE_ROOF, 0, 0);
+        Import_ObjectEventSetPosition(LOCALID_YOUNG_MAN_FIXING_THE_ROOF, 0, 0);
       }
     }
   }
@@ -1068,8 +1068,8 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
   if (anchor == NULL)
     return;
   // Pick a small offset around the anchor and create the drifting sprite there.
-  x = Engine_RandomNext();
-  z = Engine_RandomNext();
+  x = Import_RandomNext();
+  z = Import_RandomNext();
   x <<= 3;
   x = (u32)x >> 16;
   z <<= 3;
@@ -1091,13 +1091,13 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
   if (effect == NULL)
     return;
   sprite = effect->sprite;
-  switch (Engine_RandomNext() & 1) {
+  switch (Import_RandomNext() & 1) {
   case 1:
-    ObjectDispatch_SelectAnimation(effect, 3);
+    Object_SelectAnimation(effect, 3);
     ObjectEvent_SetScript(effect, gVault_DriftScriptA);
     break;
   default:
-    ObjectDispatch_SelectAnimation(effect, 2);
+    Object_SelectAnimation(effect, 2);
     ObjectEvent_SetScript(effect, gVault_DriftScriptB);
     break;
   }
@@ -1112,7 +1112,7 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
     s32 driftMultiplier;
     s32 directionBias;
 
-    driftMultiplier = (u32)Engine_RandomNext() % 10 + 5;
+    driftMultiplier = (u32)Import_RandomNext() % 10 + 5;
     /* FAKEMATCH(temporary): the coordinate local x holds the direction mask;
      * as the literal 1, 47 of 141 instructions differ in tbs-en. */
     x = 1;
@@ -1122,16 +1122,16 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
     driftMultiplier += directionBias;
     effect->acceleration =
         (2 * VAULT_DRIFT_RATE * flags - VAULT_DRIFT_RATE) * driftMultiplier;
-    driftMultiplier = (u32)Engine_RandomNext() % 15 - 7;
+    driftMultiplier = (u32)Import_RandomNext() % 15 - 7;
     effect->speed = VAULT_DRIFT_RATE * driftMultiplier;
     effect->timer = zero;
   } else {
     s32 driftMultiplier;
 
-    driftMultiplier = (u32)Engine_RandomNext() % 10 + 8;
+    driftMultiplier = (u32)Import_RandomNext() % 10 + 8;
     effect->speed =
         (2 * VAULT_DRIFT_RATE * flags - VAULT_DRIFT_RATE) * driftMultiplier;
-    driftMultiplier = (u32)Engine_RandomNext() % 14 + 1;
+    driftMultiplier = (u32)Import_RandomNext() % 14 + 1;
     effect->acceleration = VAULT_DRIFT_RATE * driftMultiplier;
     effect->timer = 1;
   }

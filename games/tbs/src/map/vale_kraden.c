@@ -170,8 +170,8 @@ const struct MapEvent *ValeKraden_GetEvents(void) {
 
 /// Finishes the party's nod together before the next line of dialogue.
 static __inline__ void ValeKraden_NodTogether(void) {
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_JENNA, ANIM_NOD);
 }
 
@@ -186,7 +186,7 @@ static __inline__ void ValeKraden_FacePartySouth(void) {
 static __inline__ void ValeKraden_WalkTowardLeader(s32 companionId) {
   struct ObjectEvent *leader;
 
-  Engine_ObjectEventSetAnimation(companionId, ANIM_WALK);
+  Import_ObjectEventSetAnimation(companionId, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
     ObjectEvent_SetDestination(companionId, leader->x.part.pixel,
@@ -248,7 +248,7 @@ static void EventScript_KradenPlansSanctumVisit(void) {
     FieldScript_SetMessageId(MsgValeKradenOhIsaac);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 1);
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 232, 264);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
     ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_KRADEN, 20);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 2);
     Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 10);
@@ -262,9 +262,9 @@ static void EventScript_KradenPlansSanctumVisit(void) {
     ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(1) / 2, PIXELS(1) / 4);
     ObjectEvent_WalkTo(LOCALID_JENNA, 248, 264);
     ObjectEvent_WalkToAndWait(LOCALID_GARET, 216, 264);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
-    Engine_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_STAND);
-    Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+    Import_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_STAND);
+    Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
     FieldScript_WaitFrames(4);
     // Jenna sees something is bothering Kraden; he hedges.
     ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_NORTHWEST + FACING_STEP, 0);
@@ -284,7 +284,7 @@ static void EventScript_KradenPlansSanctumVisit(void) {
     Script_ShowMessageAndWait(LOCALID_GARET, 0, 10);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 2);
     ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTH + FACING_STEP, 10);
-    Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_NOD);
     Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 8);
     // Jenna asks whether they wanted something from him; it seems so.
     ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_SOUTHEAST + FACING_STEP,
@@ -349,9 +349,9 @@ static void EventScript_KradenPlansSanctumVisit(void) {
     ObjectEvent_FaceObjectEvent(LOCALID_KRADEN, LOCALID_JENNA, 10);
     ValeKraden_NodTogether();
     FieldScript_WaitFrames(10);
-    Engine_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_STAND);
-    Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
+    Import_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_STAND);
+    Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
     ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH, 0);
     ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_SOUTH, 16);
@@ -438,11 +438,11 @@ static void EventScript_KradenPlansSanctumVisit(void) {
       ObjectMotion_Launch(LOCALID_JENNA, 2, 20);
       Script_ShowMessageAndWait(LOCALID_JENNA, 0, 10);
     } else {
-      Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-      Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+      Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+      Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
       ObjectMotion_SetAnimationAndWait(LOCALID_JENNA, ANIM_NOD);
       FieldScript_WaitFrames(8);
-      Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
+      Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
       gFieldWork->message++;
     }
     // Kraden: then it is decided.
@@ -455,7 +455,7 @@ static void EventScript_KradenPlansSanctumVisit(void) {
                               10);
     ValeKraden_NodTogether();
     FieldScript_WaitFrames(10);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
     FieldScript_WaitFrames(20);
     // Kraden makes Isaac the leader; Garet and Jenna squabble over who would
     // be nervous.
@@ -503,7 +503,7 @@ static void EventScript_KradenPlansSanctumVisit(void) {
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
     FieldScript_FinishScreenTransition();
     FieldScript_WaitTransitionFrames();
-    Engine_ScriptRequestWarp(VALE_KRADEN_TO_VALE_INTERIORS_INN_MYTHRIL_BAG);
+    Import_ScriptRequestWarp(VALE_KRADEN_TO_VALE_INTERIORS_INN_MYTHRIL_BAG);
     FieldScript_End();
   }
 }
@@ -549,15 +549,15 @@ static void EventScript_KradenSetsOff(void) {
   // Isaac nods to Garet, then to Jenna.
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_EAST, 0);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
   FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 0);
   ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_WEST, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
   ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetSpeed(LOCALID_JENNA, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
@@ -571,9 +571,9 @@ static void EventScript_KradenSetsOff(void) {
   ObjectEvent_SetPosition(LOCALID_JENNA, 0, 0);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_KRADEN);
   ObjectEvent_SetPosition(LOCALID_KRADEN, 0, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
-  Engine_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_STAND);
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
   ObjectEvent_SetPosition(LOCALID_SATUROS, 0, 0);
   ObjectEvent_SetPosition(LOCALID_MENARDI, 0, 0);
   GameFlag_Set(FLAG_SANCTUM_VISIT_PLANNED);
@@ -594,7 +594,7 @@ static void EventScript_EnterCottage(void) {
     MapGrid_PlayMetatileCopySequence(gValeKraden_GateCells, 43, 8);
   }
   ObjectMotion_ResetAndSetPositionInMode2(LOCALID_PARTY_LEADER, 229, 217);
-  Engine_ScriptRequestWarp(VALE_KRADEN_TO_VALE_INTERIORS_INN_NORTH);
+  Import_ScriptRequestWarp(VALE_KRADEN_TO_VALE_INTERIORS_INN_NORTH);
 }
 
 /// In Vale on the way to Kraden's cottage, walking past the two strangers:
@@ -640,9 +640,9 @@ static void EventScript_MeetSaturosAndMenardi(void) {
   ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   ObjectEvent_WalkTo(LOCALID_JENNA, 376, 328);
   ObjectEvent_WalkToAndWait(LOCALID_GARET, 408, 328);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_JENNA, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, 0);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
+  Import_ObjectEventSetAnimation(LOCALID_JENNA, 0);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, 0);
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_WEST, 0);
   ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_EAST, 20);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
@@ -660,7 +660,7 @@ static void EventScript_MeetSaturosAndMenardi(void) {
   // Saturos and Menardi talk of the elders and of using Kraden, stubborn
   // and cunning as he is.
   ObjectMotion_SetAnimationAndWait(LOCALID_SATUROS, ANIM_SHAKE_HEAD);
-  Engine_ObjectEventSetAnimation(LOCALID_SATUROS, ANIM_SHAKE_HEAD);
+  Import_ObjectEventSetAnimation(LOCALID_SATUROS, ANIM_SHAKE_HEAD);
   Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 20);
   ObjectEvent_FaceDirection(LOCALID_MENARDI, FACING_EAST, 10);
   Script_ShowMessageAndWait(LOCALID_MENARDI, 0, 10);
@@ -694,8 +694,8 @@ static void EventScript_MeetSaturosAndMenardi(void) {
   FieldCamera_MoveTo(PIXELS(393), -1, PIXELS(339), 1);
   ObjectEvent_WalkTo(LOCALID_SATUROS, 392, 360);
   ObjectEvent_WalkToAndWait(LOCALID_MENARDI, 376, 360);
-  Engine_ObjectEventSetAnimation(LOCALID_SATUROS, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_MENARDI, 0);
+  Import_ObjectEventSetAnimation(LOCALID_SATUROS, 0);
+  Import_ObjectEventSetAnimation(LOCALID_MENARDI, 0);
   ObjectEvent_FaceDirection(LOCALID_SATUROS, FACING_NORTH + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_MENARDI, FACING_NORTH + FACING_STEP, 30);
   // Saturos demands what they are doing; Garet throws it back; Menardi asks
@@ -799,15 +799,15 @@ static void EventScript_MeetSaturosAndMenardi(void) {
   objectEvent->steeringFlags =
       OBJ_EVENT_FACES_MOTION | objectEvent->steeringFlags;
 
-  Engine_ObjectEventSetAnimation(LOCALID_SATUROS, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_MENARDI, 0);
+  Import_ObjectEventSetAnimation(LOCALID_SATUROS, 0);
+  Import_ObjectEventSetAnimation(LOCALID_MENARDI, 0);
   FieldScript_WaitFrames(20);
   // Garet: let's go. The village music returns and Garet and Jenna walk back
   // into Isaac; the strangers keep turning to watch him.
   ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
   Script_ShowMessageAndWait(LOCALID_GARET, 0, 10);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, 1, 20);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
   Script_PlaySong(SONG_FADE_OUT_BGM);
 
@@ -850,16 +850,16 @@ static void EventScript_OverhearKraden(void) {
       s32 x = leader->x.part.pixel;
       s32 z = leader->z.part.pixel;
 
-      Engine_ObjectEventSetPosition(LOCALID_JENNA, x * Q16_ONE, z * Q16_ONE);
-      Engine_ObjectEventSetPosition(LOCALID_GARET, x * Q16_ONE, z * Q16_ONE);
+      Import_ObjectEventSetPosition(LOCALID_JENNA, x * Q16_ONE, z * Q16_ONE);
+      Import_ObjectEventSetPosition(LOCALID_GARET, x * Q16_ONE, z * Q16_ONE);
     }
     ObjectEvent_SetSpeed(LOCALID_JENNA, PIXELS(4) / 5, PIXELS(2) / 5);
     ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
     ObjectEvent_WalkTo(LOCALID_JENNA, 296, 328);
     ObjectEvent_WalkToAndWait(LOCALID_GARET, 280, 328);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
-    Engine_ObjectEventSetAnimation(LOCALID_JENNA, 0);
-    Engine_ObjectEventSetAnimation(LOCALID_GARET, 0);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
+    Import_ObjectEventSetAnimation(LOCALID_JENNA, 0);
+    Import_ObjectEventSetAnimation(LOCALID_GARET, 0);
     ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_NORTHWEST + FACING_STEP, 0);
     ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHWEST + FACING_STEP, 0);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER,
@@ -902,22 +902,22 @@ static void EventScript_OverhearKraden(void) {
     // The camera returns to Isaac, and Garet and Jenna walk back into him.
     FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 1);
     FieldCamera_WaitForArrival();
-    Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
+    Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
     leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     if (leader != 0) {
       ObjectMotion_ResetAndSetPosition(LOCALID_GARET, leader->x.part.pixel,
                                        leader->z.part.pixel);
     }
     ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
-    Engine_ObjectEventSetPosition(LOCALID_GARET, 0, 0);
-    Engine_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_WALK);
+    Import_ObjectEventSetPosition(LOCALID_GARET, 0, 0);
+    Import_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_WALK);
     leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     if (leader != 0) {
       ObjectMotion_ResetAndSetPosition(LOCALID_JENNA, leader->x.part.pixel,
                                        leader->z.part.pixel);
     }
     ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_JENNA);
-    Engine_ObjectEventSetPosition(LOCALID_JENNA, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_JENNA, 0, 0);
     GameFlag_Set(FLAG_KRADEN_WONDERED_ABOUT_STRANGERS);
     FieldScript_End();
   }
@@ -950,11 +950,11 @@ s32 ValeKraden_Initialize(void) {
     Weather_StartRain();
     Weather_StartLightning();
     FieldScript_Start();
-    Engine_ObjectEventSetPosition(LOCALID_BOY_BY_THE_FENCE, 0, 0);
-    Engine_ObjectEventSetPosition(LOCALID_KRADEN, 0, 0);
-    Engine_ObjectEventSetPosition(LOCALID_SATUROS, 0, 0);
-    Engine_ObjectEventSetPosition(LOCALID_MENARDI, 0, 0);
-    Engine_ObjectEventSetPosition(LOCALID_JENNA, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_BOY_BY_THE_FENCE, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_KRADEN, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_SATUROS, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_MENARDI, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_JENNA, 0, 0);
     {
       struct ObjectEvent *objectEvent =
           ObjectEvent_GetById(LOCALID_FENCE_BOULDER);
@@ -964,7 +964,7 @@ s32 ValeKraden_Initialize(void) {
     ObjectEvent_SetPosition(LOCALID_ROCKSLIDE_SURVIVOR, PIXELS(83),
                             PIXELS(265));
     ObjectMotion_SetPositionAndReset(LOCALID_ROCKSLIDE_SURVIVOR, 83, 273);
-    Engine_ObjectEventSetAnimation(LOCALID_ROCKSLIDE_SURVIVOR, 5);
+    Import_ObjectEventSetAnimation(LOCALID_ROCKSLIDE_SURVIVOR, 5);
     objectEvent = ObjectEvent_GetById(LOCALID_ROCKSLIDE_SURVIVOR);
     {
       s32 collisionRadius = 12;
@@ -974,7 +974,7 @@ s32 ValeKraden_Initialize(void) {
     ObjectEvent_SetActionScript(LOCALID_ROCKSLIDE_SURVIVOR,
                                 gValeKraden_RockslideSurvivorSquashes);
     if (GameFlag_Get(FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED) != 0) {
-      Engine_ObjectEventSetPosition(LOCALID_ROCKSLIDE_SURVIVOR, 0, 0);
+      Import_ObjectEventSetPosition(LOCALID_ROCKSLIDE_SURVIVOR, 0, 0);
     }
     debrisRow = 21;
     FieldScript_End();
@@ -986,10 +986,10 @@ s32 ValeKraden_Initialize(void) {
     MapGrid_CopyCellAttributes(9, 24, 1, 1, 23, 20);
     MapGrid_CopyCellAttributes(9, 24, 1, 1, 24, 20);
   } else {
-    Engine_ObjectEventSetPosition(LOCALID_WEST_ROCK, 0, 0);
-    Engine_ObjectEventSetPosition(LOCALID_EAST_ROCK, 0, 0);
-    Engine_ObjectEventSetPosition(LOCALID_GARET, 0, 0);
-    Engine_ObjectEventSetPosition(LOCALID_ROCKSLIDE_SURVIVOR, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_WEST_ROCK, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_EAST_ROCK, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_GARET, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_ROCKSLIDE_SURVIVOR, 0, 0);
     FieldScript_Start();
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       if (gSaveBlock.warpDest == VALE_KRADEN_FROM_VALE_INTERIORS_INN_SOUTH) {
@@ -997,9 +997,9 @@ s32 ValeKraden_Initialize(void) {
       }
     }
     if (GameFlag_Get(FLAG_SANCTUM_VISIT_PLANNED) != 0) {
-      Engine_ObjectEventSetPosition(LOCALID_KRADEN, 0, 0);
-      Engine_ObjectEventSetPosition(LOCALID_SATUROS, 0, 0);
-      Engine_ObjectEventSetPosition(LOCALID_MENARDI, 0, 0);
+      Import_ObjectEventSetPosition(LOCALID_KRADEN, 0, 0);
+      Import_ObjectEventSetPosition(LOCALID_SATUROS, 0, 0);
+      Import_ObjectEventSetPosition(LOCALID_MENARDI, 0, 0);
     } else {
       if (GameFlag_Get(FLAG_MET_SATUROS_AND_MENARDI) != 0) {
         ObjectEvent_SetPosition(LOCALID_SATUROS, PIXELS(392), PIXELS(376));
@@ -1057,7 +1057,7 @@ static void EventScript_TalkToRockslideSurvivor(void) {
       ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHWEST, 0);
       leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
       if (leader != 0) {
-        Engine_ObjectEventSetPosition(LOCALID_GARET, leader->x.fixed,
+        Import_ObjectEventSetPosition(LOCALID_GARET, leader->x.fixed,
                                       leader->z.fixed);
       }
       ObjectEvent_WalkToAndWait(LOCALID_GARET, 110, 279);
@@ -1082,13 +1082,13 @@ static void EventScript_TalkToRockslideSurvivor(void) {
         FieldScript_ShowMessageThenWait(LOCALID_ROCKSLIDE_SURVIVOR, 0, 40);
         ObjectMotion_SetAngleToward(LOCALID_ROCKSLIDE_SURVIVOR,
                                     LOCALID_PARTY_LEADER, 0);
-        Engine_ObjectEventSetAnimation(LOCALID_ROCKSLIDE_SURVIVOR, ANIM_STAND);
+        Import_ObjectEventSetAnimation(LOCALID_ROCKSLIDE_SURVIVOR, ANIM_STAND);
         ObjectMotion_Launch(LOCALID_ROCKSLIDE_SURVIVOR, 4, 40);
-        Engine_ObjectEventSetAnimation(LOCALID_ROCKSLIDE_SURVIVOR, 6);
+        Import_ObjectEventSetAnimation(LOCALID_ROCKSLIDE_SURVIVOR, 6);
         ObjectEvent_ShowEmote(LOCALID_ROCKSLIDE_SURVIVOR,
                               EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
         FieldScript_ShowMessageThenWait(LOCALID_ROCKSLIDE_SURVIVOR, 0, 10);
-        Engine_ObjectEventSetAnimation(LOCALID_ROCKSLIDE_SURVIVOR, ANIM_STAND);
+        Import_ObjectEventSetAnimation(LOCALID_ROCKSLIDE_SURVIVOR, ANIM_STAND);
         FieldScript_WaitFrames(10);
         ObjectMotion_SetAnimationAndWait(LOCALID_ROCKSLIDE_SURVIVOR, ANIM_NOD);
         FieldScript_ShowMessageThenWait(LOCALID_ROCKSLIDE_SURVIVOR, 0, 10);
@@ -1116,14 +1116,14 @@ static void EventScript_TalkToRockslideSurvivor(void) {
         GameFlag_Set(FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED);
       }
       // Garet walks back into Isaac.
-      Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
+      Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
       leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
       if (leader != 0) {
         ObjectMotion_ResetAndSetPosition(LOCALID_GARET, leader->x.part.pixel,
                                          leader->z.part.pixel);
       }
       ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
-      Engine_ObjectEventSetPosition(LOCALID_GARET, 0, 0);
+      Import_ObjectEventSetPosition(LOCALID_GARET, 0, 0);
       FieldScript_End();
     }
   }

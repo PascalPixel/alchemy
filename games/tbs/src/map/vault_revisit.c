@@ -180,7 +180,7 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
 /// Stands the object event still while showing the message already selected.
 static void VaultRevisit_ShowStandingObjectEventMessage(s32 localId) {
   FieldScript_Start();
-  Engine_ObjectEventSetAnimation(localId, ANIM_STAND);
+  Import_ObjectEventSetAnimation(localId, ANIM_STAND);
   FieldScript_ShowMessageAndWait(localId, 0);
   FieldScript_End();
 }
@@ -244,7 +244,7 @@ static void EventScript_GreetWarriorGuy(void) {
   FieldScript_Start();
   text = MsgVaultWarriorGuy;
   FieldScript_SetMessageId(text);
-  Engine_ObjectEventSetAnimation(LOCALID_BOY_ROUND_THE_WELL, 0);
+  Import_ObjectEventSetAnimation(LOCALID_BOY_ROUND_THE_WELL, 0);
   ObjectEvent_LinkPair(LOCALID_BOY_ROUND_THE_WELL, LOCALID_PARTY_LEADER, 2);
   if (Script_GetFlag(FLAG_WARRIOR_GUY_GREETED) == 0) {
     ObjectEvent_ShowEmote(LOCALID_BOY_ROUND_THE_WELL,
@@ -272,7 +272,7 @@ static void EventScript_WishEldersWereBrave(void) {
   objectEvent->timer |= VAULT_PROXIMITY_REACTION_PAUSED;
   FieldScript_Start();
   FieldScript_SetMessageId(MsgVaultWishVaultsElders);
-  Engine_ObjectEventSetAnimation(LOCALID_GIRL_ROUND_THE_WELL, 0);
+  Import_ObjectEventSetAnimation(LOCALID_GIRL_ROUND_THE_WELL, 0);
   ObjectEvent_LinkPair(LOCALID_GIRL_ROUND_THE_WELL, LOCALID_PARTY_LEADER, 2);
   FieldScript_ShowMessageThenWait(LOCALID_GIRL_ROUND_THE_WELL, 0, 10);
   objectEvent->facing = originalFacing;
@@ -390,7 +390,7 @@ static void EventScript_ReadMindOnJailKey(void) {
   if (requestHeard == 0) {
     FieldScript_Start();
     ObjectEvent_Get(LOCALID_STRONGMAN_ON_WATCH)->paused = 1;
-    Engine_ObjectEventSetAnimation(LOCALID_STRONGMAN_ON_WATCH, ANIM_STAND);
+    Import_ObjectEventSetAnimation(LOCALID_STRONGMAN_ON_WATCH, ANIM_STAND);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_STRONGMAN_ON_WATCH, 1);
     FieldScript_WaitFrames(20);
     FieldScript_SetMessageId(MsgVaultGuysCheckJail);
@@ -426,7 +426,7 @@ static void VaultRevisit_JumpObjectEventToAndWait(int localId, int x, int z,
   jumpingObjectEvent->velocityY = velocityY;
   ObjectEvent_SetSpriteFlags(jumpingObjectEvent, 0);
   ObjectMotion_SetPositionAndCommit(localId, x, z);
-  Engine_ObjectEventSetPosition(localId, x << 16, z << 16);
+  Import_ObjectEventSetPosition(localId, x << 16, z << 16);
   for (frames = 60; frames != 0; --frames) {
     WaitFrames(1);
     if ((s16)((u32)jumpingObjectEvent->velocityY >> 16) == 0)
@@ -467,7 +467,7 @@ static void Vault_WalkThroughExit(s32 x, s32 z, s32 warpNumber) {
   ObjectEvent_SetSpeed(leaderId, PIXELS(1) / 2, PIXELS(1) / 4);
   ObjectEvent_WalkTo(leaderId, x, z);
   gFieldWork->transitionFrames = 16;
-  Engine_ScriptRequestWarp(warpNumber);
+  Import_ScriptRequestWarp(warpNumber);
 }
 
 /// The door of the gem owner's house opens and the party walks in.
@@ -626,11 +626,11 @@ static void EventScript_RevealPassage(void) {
 static void EventScript_TalkToDog(void) {
   FieldScript_Start();
   FieldScript_SetMessageId(MsgVaultRuffRrruff2);
-  Engine_ObjectEventSetAnimation(LOCALID_VAULT_DOG, 0);
+  Import_ObjectEventSetAnimation(LOCALID_VAULT_DOG, 0);
   ObjectEvent_LinkPair(LOCALID_VAULT_DOG, LOCALID_PARTY_LEADER, 0);
   FieldScript_WaitFrames(2);
   FieldScript_ShowMessageAndWait(LOCALID_VAULT_DOG, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_VAULT_DOG, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_VAULT_DOG, ANIM_STAND);
 
   if (PartyInventory_FindMember(ITEM_BONE) != -1 &&
       GameFlag_Get(FLAG_VAULT_DOG_SHOWN_PASSAGE) == 0) {

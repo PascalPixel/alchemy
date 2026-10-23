@@ -182,7 +182,7 @@ static void EventScript_TakeTouchedWarp(void) {
 
   SE(SE_MAP_EXIT);
   touchedWarp = &state->coordEvent;
-  Engine_ScriptRequestWarp(*touchedWarp);
+  Import_ScriptRequestWarp(*touchedWarp);
 }
 
 /// Selects the same mask and window parameters for Reveal and map entry.
@@ -228,7 +228,7 @@ static void UNUSED TretTreeBranch_ExchangeInputPacket(void) {
 
   header[0] = gKeysHeld;
   header[1] = gKeysRepeat;
-  SerialRuntime_PollAndTransfer(header, sTransferData);
+  Serial_PollAndTransfer(header, sTransferData);
 }
 
 /// Initializes the backdrop transition and installs BG3's scanline scroll
@@ -289,7 +289,7 @@ static void TretTreeBranch_UpdateBg3ScrollSplit(void) {
 /// Runs the BG3 scroll selection at every HBlank, updating the split each
 /// frame.
 static void TretTreeBranch_StartBg3Split(void) {
-  Runtime_SetIrqHandler(IRQ_HBLANK, 0, TretTreeBranch_ApplyBg3ScrollAtScanline);
+  Irq_SetHandler(IRQ_HBLANK, 0, TretTreeBranch_ApplyBg3ScrollAtScanline);
   FieldScheduler_AddCallback(TretTreeBranch_UpdateBg3ScrollSplit,
                              TASK_PRIORITY_MAP);
 }

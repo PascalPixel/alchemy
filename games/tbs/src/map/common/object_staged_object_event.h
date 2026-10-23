@@ -122,7 +122,7 @@ UNUSED static void PushedObject_AdvancePair(void) {
   if (next->riseCounter != 0)
     return;
 
-  ObjectDispatch_SelectAnimation(lead, 8);
+  Object_SelectAnimation(lead, 8);
   rate = 0x3333;
   WaitFrames(15);
   Sound_PlaySong(SE_PUSH);
@@ -144,7 +144,7 @@ UNUSED static void PushedObject_AdvancePair(void) {
   lead->velocityZ = 0;
   lead->x.fixed = lead->x.part.pixel << 16;
   lead->z.fixed = lead->z.part.pixel << 16;
-  ObjectDispatch_SelectAnimation(lead, 1);
+  Object_SelectAnimation(lead, 1);
 }
 
 /// Sets the metatile behavior of a width by height rectangle of cells, from
@@ -461,7 +461,7 @@ UNUSED static void ObjectEvent_MoveAndRedraw(struct PushedObjectProbe probe) {
                                           horizontalExtent, verticalExtent,
                                           MB_NORMAL);
   ObjectMotion_SetSpeedParameters(0, 0x8000, 0x1999);
-  Engine_ObjectEventSetAnimation(0, ANIM_PUSH);
+  Import_ObjectEventSetAnimation(0, ANIM_PUSH);
   FieldScript_WaitFrames(15);
 
   {
@@ -487,15 +487,15 @@ UNUSED static void ObjectEvent_MoveAndRedraw(struct PushedObjectProbe probe) {
 #endif
   FieldScript_WaitFrames(4);
   if ((u32)(direction - 6) <= 7)
-    ObjectDispatch_SelectAnimation(objectEvent, 3);
+    Object_SelectAnimation(objectEvent, 3);
   else
-    ObjectDispatch_SelectAnimation(objectEvent, 2);
+    Object_SelectAnimation(objectEvent, 2);
 
   Sound_PlaySong(SE_HEAVY_MOVE);
   Object_SetPosition(objectEvent, probe.position.x, probe.position.y,
                      probe.position.z);
   ObjectMotion_CommitCurrentPositionAndActivate(0);
-  Engine_ObjectEventSetAnimation(0, 2);
+  Import_ObjectEventSetAnimation(0, 2);
   ObjectEvent_SetSpeed(0, 0x4ccc, 0x1999);
 
   {
@@ -507,7 +507,7 @@ UNUSED static void ObjectEvent_MoveAndRedraw(struct PushedObjectProbe probe) {
     probe.callback();
 
   ObjectMotion_CommitCurrentPositionAndActivate(0);
-  Engine_ObjectEventSetAnimation(0, 1);
+  Import_ObjectEventSetAnimation(0, 1);
   ObjectEvent_GetById(0)->update = NULL;
   Object_WaitForMove(objectEvent);
   Sound_PlaySong(SE_STOP_SLOT3);
@@ -517,7 +517,7 @@ UNUSED static void ObjectEvent_MoveAndRedraw(struct PushedObjectProbe probe) {
   objectEvent->z.fixed = probe.position.z;
   objectEvent->velocityX = 0;
   objectEvent->velocityZ = 0;
-  ObjectDispatch_SelectAnimation(objectEvent, 1);
+  Object_SelectAnimation(objectEvent, 1);
 
   {
     u8 *table = (u8 *)gPushedObject_FootprintBounds;

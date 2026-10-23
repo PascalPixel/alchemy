@@ -411,7 +411,7 @@ static void ValeInteriorsInn_CloseScreenAndExit(s32 warpNumber) {
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Engine_ScriptRequestWarp(warpNumber);
+  Import_ScriptRequestWarp(warpNumber);
 }
 
 // The warps in Vale: stepping on the metatile behavior of the same number in
@@ -517,12 +517,12 @@ s32 ValeInteriorsInn_Initialize(void) {
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   } else {
     if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
-      Engine_ObjectEventSetPosition(LOCALID_YOUNG_SMITH, 0, 0);
-      Engine_ObjectEventSetPosition(LOCALID_YOUNG_SMITHS_MOTHER, 0, 0);
-      Engine_ObjectEventSetPosition(LOCALID_INNKEEPER, 0, 0);
-      Engine_ObjectEventSetPosition(LOCALID_YOUNG_MAN_SAW_MASK, 0, 0);
-      Engine_ObjectEventSetPosition(LOCALID_INN_WORKER, 0, 0);
-      Engine_ObjectEventSetPosition(LOCALID_MASKED_MAN, 0, 0);
+      Import_ObjectEventSetPosition(LOCALID_YOUNG_SMITH, 0, 0);
+      Import_ObjectEventSetPosition(LOCALID_YOUNG_SMITHS_MOTHER, 0, 0);
+      Import_ObjectEventSetPosition(LOCALID_INNKEEPER, 0, 0);
+      Import_ObjectEventSetPosition(LOCALID_YOUNG_MAN_SAW_MASK, 0, 0);
+      Import_ObjectEventSetPosition(LOCALID_INN_WORKER, 0, 0);
+      Import_ObjectEventSetPosition(LOCALID_MASKED_MAN, 0, 0);
     } else {
       ValeInteriorsInn_RestoreRoomPatch();
     }
@@ -541,7 +541,7 @@ s32 ValeInteriorsInn_Initialize(void) {
           TilesetAnim_Resume(11);
           objectEvent = ObjectEvent_GetById(LOCALID_DORA);
           ObjectEvent_SetSpriteFlags(objectEvent, 0);
-          Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIM_DORA_IN_BED);
+          Import_ObjectEventSetAnimation(LOCALID_DORA, ANIM_DORA_IN_BED);
         }
       }
     } else {
@@ -611,21 +611,21 @@ static void EventScript_DoraWakesIsaac(void) {
   sprite = ObjectEvent_GetById(LOCALID_TUNIC)->sprite;
   // Present the bedside conversation before revealing the wider storm scene.
   FieldScript_Start();
-  Engine_ObjectEventSetPosition(LOCALID_YOUNG_SMITH, 0, 0);
-  Engine_ObjectEventSetPosition(LOCALID_YOUNG_SMITHS_MOTHER, 0, 0);
-  Engine_ObjectEventSetPosition(LOCALID_INNKEEPER, 0, 0);
-  Engine_ObjectEventSetPosition(LOCALID_YOUNG_MAN_SAW_MASK, 0, 0);
-  Engine_ObjectEventSetPosition(LOCALID_INN_WORKER, 0, 0);
-  Engine_ObjectEventSetPosition(LOCALID_MASKED_MAN, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_YOUNG_SMITH, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_YOUNG_SMITHS_MOTHER, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_INNKEEPER, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_YOUNG_MAN_SAW_MASK, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_INN_WORKER, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_MASKED_MAN, 0, 0);
   // Isaac lies asleep in bed; his tunic is set beside him.
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER), 0);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_ISAAC_ASLEEP);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_ISAAC_ASLEEP);
   sprite->rotation = 1365;
   ObjectEvent_GetById(LOCALID_TUNIC)->motionFlags = 0;
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_TUNIC), 0);
-  Engine_ObjectEventSetPosition(LOCALID_TUNIC, PIXELS(576), PIXELS(650));
+  Import_ObjectEventSetPosition(LOCALID_TUNIC, PIXELS(576), PIXELS(650));
   TilesetAnim_Resume(7);
-  Engine_ObjectEventSetPosition(LOCALID_DORA, PIXELS(534), PIXELS(688));
+  Import_ObjectEventSetPosition(LOCALID_DORA, PIXELS(534), PIXELS(688));
   ObjectSystem_SuspendProjectionAndShowSprites();
   // On a dark screen, Dora's voice: "Isaac, wake up!" "Please, dear, wake up!"
   Message_SetVoiceFromObjectEvent(LOCALID_DORA);
@@ -676,7 +676,7 @@ static void EventScript_DoraWakesIsaac(void) {
   FieldScript_WaitFrames(20);
   TilesetAnim_Resume(8);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_ISAAC_GET_UP);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_ISAAC_GET_UP);
   ObjectEvent_MoveToAndWait(LOCALID_PARTY_LEADER, 557, 679);
   TilesetAnim_Pause(8);
   TilesetAnim_Resume(9);
@@ -706,13 +706,13 @@ static void EventScript_DoraWakesIsaac(void) {
   ObjectEvent_GetById(LOCALID_DORA)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
   FieldScript_WaitFrames(10);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_DORA, 2);
-  ObjectDispatch_RegisterChildMetadata(
+  Object_RegisterSpriteMetadata(
       (struct Object *)ObjectEvent_GetById(LOCALID_PARTY_LEADER), SPRITE_TUNIC);
   GameFlag_Set(FLAG_ISAAC_WEARS_TUNIC);
   Sound_PlaySong(SE_RECOVERY);
-  ObjectGroup_ConfigureChildValue(LOCALID_PARTY_LEADER, 7);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, 7);
   FieldScript_WaitFrames(10);
-  ObjectGroup_ConfigureChildValue(LOCALID_PARTY_LEADER, 0);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, 0);
   FieldScript_WaitFrames(20);
   ObjectEvent_GetById(LOCALID_DORA)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
   ObjectEvent_WalkToAndWait(LOCALID_DORA, 534, 688);
@@ -730,8 +730,8 @@ static void EventScript_DoraWakesIsaac(void) {
   ObjectEvent_RefreshSelectorById(LOCALID_DORA);
   ObjectEvent_WalkToAndWait(LOCALID_DORA, 419, 661);
   ObjectEvent_WalkToAndWait(LOCALID_DORA, 408, 661);
-  Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIM_STAND);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_DORA, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   ObjectEvent_FaceDirection(LOCALID_DORA, FACING_SOUTH, 10);
   // "Have you got everything you need?" Yes: "Good for you, Isaac."; no: "I'm
   // sorry, but we don't have time..."
@@ -741,7 +741,7 @@ static void EventScript_DoraWakesIsaac(void) {
   }
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | LOCALID_DORA, 0, 20);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_DORA, ANIM_NOD);
   FieldScript_WaitFrames(20);
   ObjectEvent_SetActionScript(LOCALID_DORA, gValeInteriorsInn_DoraLeavesScript);
@@ -752,7 +752,7 @@ static void EventScript_DoraWakesIsaac(void) {
   (*eventSlot)->transitionFrames = 16;
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Engine_ScriptRequestWarp(
+  Import_ScriptRequestWarp(
       VALE_INTERIORS_INN_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA);
 }
 
@@ -779,14 +779,14 @@ static void EventScript_HurryToThePlaza(void) {
   sprite = objectEvent->sprite;
   FieldScript_Start();
   // The villagers stay out of sight; LOCALID_FLAME starts shaking.
-  Engine_ObjectEventSetPosition(LOCALID_YOUNG_SMITH, 0, 0);
-  Engine_ObjectEventSetPosition(LOCALID_YOUNG_SMITHS_MOTHER, 0, 0);
-  Engine_ObjectEventSetPosition(LOCALID_INNKEEPER, 0, 0);
-  Engine_ObjectEventSetPosition(LOCALID_YOUNG_MAN_SAW_MASK, 0, 0);
-  Engine_ObjectEventSetPosition(LOCALID_INN_WORKER, 0, 0);
-  Engine_ObjectEventSetPosition(LOCALID_MASKED_MAN, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_YOUNG_SMITH, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_YOUNG_SMITHS_MOTHER, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_INNKEEPER, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_YOUNG_MAN_SAW_MASK, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_INN_WORKER, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_MASKED_MAN, 0, 0);
   ObjectEvent_SetPosition(LOCALID_DORA, PIXELS(431), PIXELS(391));
-  Engine_ObjectEventSetPosition(LOCALID_FLAME, PIXELS(463), PIXELS(404));
+  Import_ObjectEventSetPosition(LOCALID_FLAME, PIXELS(463), PIXELS(404));
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_FLAME), 0);
   objectEvent->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   objectEvent->motionFlags = 0;
@@ -841,7 +841,7 @@ static void EventScript_HurryToThePlaza(void) {
   FieldScript_WaitFrames(20);
   // They nod, Kyle runs back down, and the two turn back (SE_234).
   ObjectEvent_FaceDirection(LOCALID_DORA, FACING_WEST, 20);
-  Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_DORA, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_KYLE, ANIM_NOD);
   ObjectMotion_ResetAndSetPositionInMode2(LOCALID_KYLE, 415, 589);
@@ -873,7 +873,7 @@ ramp:
   }
   // Dora and Isaac look back, startled, then nod to each other.
   ObjectEvent_RefreshSelectorById(LOCALID_PARTY_LEADER);
-  Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_DORA, ANIM_STAND);
   ObjectMotion_SetVariantCallback(LOCALID_DORA, 2);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_PARTY_LEADER, 2);
   FieldScript_WaitFrames(10);
@@ -884,9 +884,9 @@ ramp:
   FieldEffect_ConfigureLinkedObject(
       LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldScript_WaitFrames(80);
-  Engine_ObjectEventSetPosition(LOCALID_KYLE, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_KYLE, 0, 0);
   ObjectEvent_LinkPair(LOCALID_DORA, LOCALID_PARTY_LEADER, 20);
-  Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_DORA, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(40);
   FieldCamera_SetSpeedParameters(PIXELS(4) / 5, PIXELS(1) / 10);
@@ -899,7 +899,7 @@ ramp:
   ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transitionFrames = 32;
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Engine_ScriptRequestWarp(VALE_INTERIORS_INN_TO_VALE_STORM_WITH_DORA);
+  Import_ScriptRequestWarp(VALE_INTERIORS_INN_TO_VALE_STORM_WITH_DORA);
 }
 
 /// Vale's innkeeper offers a room from behind the counter; elsewhere talks of
@@ -1006,7 +1006,7 @@ static void EventScript_VisitSickDora(void) {
   ObjectMotion_ResetAndSetPosition(LOCALID_DORA, 584, 406);
   TilesetAnim_Pause(11);
   TilesetAnim_Resume(12);
-  Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIM_DORA_HEAD_BOWED);
+  Import_ObjectEventSetAnimation(LOCALID_DORA, ANIM_DORA_HEAD_BOWED);
   FieldScript_WaitFrames(80);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_DORA, 2);
   FieldScript_WaitFrames(40);
@@ -1018,7 +1018,7 @@ static void EventScript_VisitSickDora(void) {
                         60);
   ObjectMotion_SetAnimationAndWait(LOCALID_DORA, ANIM_DORA_HEAD_SWAYING);
   ObjectEvent_ShowEmote(LOCALID_DORA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIM_DORA_HEAD_TURNED);
+  Import_ObjectEventSetAnimation(LOCALID_DORA, ANIM_DORA_HEAD_TURNED);
   FieldScript_WaitFrames(40);
   // "You haven't, have you?" "Have you forgotten your promise, Isaac?"
   FieldScript_ShowMessageThenWait(LOCALID_DORA, 0, 40);
@@ -1028,7 +1028,7 @@ static void EventScript_VisitSickDora(void) {
   ObjectMotion_SetAnimationAndWait(LOCALID_DORA, ANIM_DORA_HEAD_BOWED);
   FieldScript_WaitFrames(20);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIM_DORA_HEAD_SWAYING);
+  Import_ObjectEventSetAnimation(LOCALID_DORA, ANIM_DORA_HEAD_SWAYING);
   // "You promised you wouldn't come back until your quest was complete,
   // right?" Either reply has its own answer; she is less surprised when Mind
   // Read has told Isaac of her illness.
@@ -1078,7 +1078,7 @@ static void EventScript_VisitSickDora(void) {
       ~OBJ_EVENT_FACES_MOTION;
   ObjectEvent_SetDestination(LOCALID_PARTY_LEADER, 558, 388);
   ObjectEvent_SetSpeed(LOCALID_DORA, PIXELS(6) / 5, PIXELS(3) / 5);
-  Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIM_DORA_STRAIGHTEN);
+  Import_ObjectEventSetAnimation(LOCALID_DORA, ANIM_DORA_STRAIGHTEN);
   ObjectMotion_SetPositionAndCommit(LOCALID_DORA, 586, 400);
   FieldScript_WaitFrames(40);
   ObjectEvent_WalkToAndWait(LOCALID_DORA, 580, 382);
@@ -1182,16 +1182,16 @@ static void EventScript_ShowMythrilBag(void) {
   ObjectEvent_WalkToAndWait(LOCALID_KRADEN, 326, 185);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTH, 10);
   ObjectEvent_SetScript(objectEvent, gValeInteriorsInn_MythrilBagRisesScript);
-  ObjectDispatch_WaitForValue16(objectEvent);
+  Object_WaitForValue16(objectEvent);
   ObjectEvent_SetScript(objectEvent, gValeInteriorsInn_MythrilBagWobblesScript);
-  ObjectDispatch_WaitForValue16(objectEvent);
+  Object_WaitForValue16(objectEvent);
   FieldScript_WaitFrames(20);
   ObjectEvent_Release(objectEvent);
   ObjectMotion_Launch(LOCALID_KRADEN, 2, 20);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_EAST, 40);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Engine_ScriptRequestWarp(VALE_INTERIORS_INN_TO_VALE_KRADEN_SOUTH);
+  Import_ScriptRequestWarp(VALE_INTERIORS_INN_TO_VALE_KRADEN_SOUTH);
 }
 
 /// Unused: an update hook that flashes between two palettes and gives off a

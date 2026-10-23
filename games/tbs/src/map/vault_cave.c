@@ -386,7 +386,7 @@ static void VaultCave_PushPillarAhead(void) {
   if (FieldObject_CheckMovementCollision(pillar, &destination) > 0) {
     return;
   }
-  ObjectDispatch_SelectAnimation(leader, ANIM_PUSH);
+  Object_SelectAnimation(leader, ANIM_PUSH);
   WaitFrames(15);
   Sound_PlaySong(SE_238);
   pillar->speed = 0x3333;
@@ -405,7 +405,7 @@ static void VaultCave_PushPillarAhead(void) {
   leader->velocityZ = 0;
   leader->targetX = OBJ_EVENT_NO_TARGET;
   leader->targetZ = OBJ_EVENT_NO_TARGET;
-  ObjectDispatch_SelectAnimation(leader, ANIM_STAND);
+  Object_SelectAnimation(leader, ANIM_STAND);
 }
 
 /// Whirlwind blows the ivy away.
@@ -845,7 +845,7 @@ static void VaultCave_UpdateTimedFallingObjects(void) {
     // A water drop landing on either movable pillar restarts at the top.
     if (VaultCave_ResetFallingObjectAtObjectEventCell(
             LOCALID_NORTHERN_PILLAR) != 0) {
-      Engine_ObjectEventSetAnimation(LOCALID_NORTHERN_PILLAR, 1);
+      Import_ObjectEventSetAnimation(LOCALID_NORTHERN_PILLAR, 1);
       if (Script_GetFlag(FLAG_NORTH_PILLAR_STRUCK) == 0) {
         GameFlag_Set(FLAG_NORTH_PILLAR_STRUCK);
         Script_PlaySong(SE_204);
@@ -874,7 +874,7 @@ static void VaultCave_UpdateFrostControlledFallingObjects(void) {
     // Preserve one random selection per 64 frames.
     if ((++gVaultCave_TickCounter & 63) == 0) {
       selectedIndex = &gVaultCave_TickValue;
-      stateValue = Engine_RandomNext();
+      stateValue = Import_RandomNext();
       stateValue = Math_RemainderUnsigned(stateValue, 6);
       *selectedIndex = stateValue;
       fallingObjectEvent =
@@ -940,9 +940,9 @@ static void VaultCave_SpawnPuffs(struct ObjectEvent *source) {
     puff->scaleX = 0x8ccc;
     puff->motionFlags = OBJ_EVENT_FALLS;
     puff->velocityY = -0x10000;
-    puff->speed = Engine_RandomNext() + 0xcccc;
+    puff->speed = Import_RandomNext() + 0xcccc;
     puff->collisionFlags = 1;
-    VaultCave_OffsetObjectEventRadially(puff, 0x200000, Engine_RandomNext());
+    VaultCave_OffsetObjectEventRadially(puff, 0x200000, Import_RandomNext());
     {
       u16 *timer = &puff->wait;
       s32 frames = 8;
@@ -1048,27 +1048,27 @@ s32 Map_Initialize(void) {
     case VAULT_CAVE_VAMBRACE_FROST_ROOM_FROM_CHEST:
       VaultCave_StartFrostControlledFalls();
       if (GameFlag_Get(FLAG_WEST_UPPER_FROZEN) != 0) {
-        Engine_ObjectEventSetAnimation(LOCALID_WEST_UPPER_PUDDLE, 5);
+        Import_ObjectEventSetAnimation(LOCALID_WEST_UPPER_PUDDLE, 5);
         EventScript_FreezeWestUpperPuddle();
       }
       if (GameFlag_Get(FLAG_WEST_LOWER_FROZEN) != 0) {
-        Engine_ObjectEventSetAnimation(LOCALID_WEST_LOWER_PUDDLE, 5);
+        Import_ObjectEventSetAnimation(LOCALID_WEST_LOWER_PUDDLE, 5);
         EventScript_FreezeWestLowerPuddle();
       }
       if (GameFlag_Get(FLAG_INNER_WEST_LOWER_FROZEN) != 0) {
-        Engine_ObjectEventSetAnimation(LOCALID_INNER_WEST_LOWER_PUDDLE, 5);
+        Import_ObjectEventSetAnimation(LOCALID_INNER_WEST_LOWER_PUDDLE, 5);
         EventScript_FreezeInnerWestLowerPuddle();
       }
       if (GameFlag_Get(FLAG_EAST_UPPER_FROZEN) != 0) {
-        Engine_ObjectEventSetAnimation(LOCALID_EAST_UPPER_PUDDLE, 5);
+        Import_ObjectEventSetAnimation(LOCALID_EAST_UPPER_PUDDLE, 5);
         EventScript_FreezeEastUpperPuddle();
       }
       if (GameFlag_Get(FLAG_EAST_LOWER_FROZEN) != 0) {
-        Engine_ObjectEventSetAnimation(LOCALID_EAST_LOWER_PUDDLE, 5);
+        Import_ObjectEventSetAnimation(LOCALID_EAST_LOWER_PUDDLE, 5);
         EventScript_FreezeEastLowerPuddle();
       }
       if (GameFlag_Get(FLAG_FAR_EAST_FROZEN) != 0) {
-        Engine_ObjectEventSetAnimation(LOCALID_FAR_EAST_PUDDLE, 5);
+        Import_ObjectEventSetAnimation(LOCALID_FAR_EAST_PUDDLE, 5);
         EventScript_FreezeFarEastPuddle();
       }
       FieldScheduler_AddCallback(VaultCave_UpdatePuddlePriorities,
@@ -1085,17 +1085,17 @@ s32 Map_Initialize(void) {
           ->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
       break;
     }
-    Engine_ObjectEventSetAnimation(LOCALID_PILLAR_EAST_OF_SOUTHERN_SWITCH, 2);
-    Engine_ObjectEventSetAnimation(LOCALID_SOUTHERN_PILLAR, 2);
+    Import_ObjectEventSetAnimation(LOCALID_PILLAR_EAST_OF_SOUTHERN_SWITCH, 2);
+    Import_ObjectEventSetAnimation(LOCALID_SOUTHERN_PILLAR, 2);
     ObjectEvent_SetSpriteFlags(
         ObjectEvent_GetById(LOCALID_PILLAR_EAST_OF_SOUTHERN_SWITCH), 0);
     ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_SOUTHERN_PILLAR), 0);
     ObjectEvent_GetById(LOCALID_SOUTHERN_PILLAR)->collisionFlags = 1;
   }
   if (gSaveBlock.mapId == (s32)&MapId_VaultCaveMouth) {
-    Engine_ObjectEventSetAnimation(LOCALID_PILLAR_EAST_OF_NORTHERN_SWITCH, 2);
+    Import_ObjectEventSetAnimation(LOCALID_PILLAR_EAST_OF_NORTHERN_SWITCH, 2);
     if (GameFlag_Get(FLAG_NORTH_PILLAR_STRUCK) == 0) {
-      Engine_ObjectEventSetAnimation(LOCALID_NORTHERN_PILLAR, 2);
+      Import_ObjectEventSetAnimation(LOCALID_NORTHERN_PILLAR, 2);
     }
     ObjectEvent_SetSpriteFlags(
         ObjectEvent_GetById(LOCALID_PILLAR_EAST_OF_NORTHERN_SWITCH), 0);

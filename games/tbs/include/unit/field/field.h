@@ -202,8 +202,8 @@ s32 SpriteAnim_SumCommandLengths(s32 id, u32 animation, s32 frameCount);
 void SpriteDissolve_Step(u8 *obj, u32 pos);
 void SpriteDissolve_Run(u8 *sprite);
 void SpriteDissolve_RunMany(u8 **sprites, s32 count);
-void ObjectDispatch_SelectAnimation(void *raw, s32 no);
-void ObjectDispatch_SetAnimationSpeed(struct Object *object, s32 val);
+void Object_SelectAnimation(void *raw, s32 no);
+void Object_SetAnimationSpeed(struct Object *object, s32 val);
 s32 ObjectScript_SetFlagAndTest(struct Object *interpreter);
 s32 ObjectScript_ClearFlagAndTest(struct Object *interpreter);
 void ObjectScript_SetOrCompareAddress(struct ScriptOperands *state,
@@ -284,33 +284,31 @@ s32 MapGrid_GetScreenRelativePosition(struct Object *object,
 void ObjectSystem_Initialize(s32 controlMode);
 void ResourceTable_ReservedNoOpC0C4(void);
 void ResourceTable_ReservedNoOp2(void);
-void *ObjectDispatch_FindFreeObject(void);
-void ObjectDispatch_Release(struct Object *object);
+void *Object_FindFree(void);
+void Object_Release(struct Object *object);
 struct Object *Object_CreateField(s32 encodedSprite, s32 x, s32 y, s32 z);
-void ObjectDispatch_Initialize(struct Object *object, const s32 *script);
-void ObjectDispatch_SetAnimationAndSpeed(struct Object *object, s32 animation,
-                                         s32 step);
-void ObjectDispatch_SetChildRotation(struct Object *object, u32 rotation);
+void Object_Initialize(struct Object *object, const s32 *script);
+void Object_SetAnimationAndSpeed(struct Object *object, s32 animation,
+                                 s32 step);
+void Object_SetSpriteRotation(struct Object *object, u32 rotation);
 void Anim_SetIndexAndInitializeObjects(void *rawDispatchObject,
                                        s32 animationId);
-void ObjectDispatch_RegisterChildMetadata(struct Object *object,
-                                          s32 animationId);
-void ObjectDispatch_StartApproachLink(struct Object *object,
-                                      s32 linkedObjectHandle);
-void ObjectDispatch_StartKeyCheck(struct Object *object);
-void ObjectDispatch_StartMoveByKeys(struct Object *object);
-void ObjectDispatch_StartPlayerControl(struct Object *object);
-void ObjectDispatch_StartWorldMapControl(struct Object *object);
-void ObjectDispatch_StartIdle(struct Object *object);
-void ObjectDispatch_StartCamera(struct Object *object, s32 linkedObjectHandle);
-void ObjectDispatch_WaitForValue16(void *rawObject);
-void ObjectDispatch_SetSingleChildFlags(struct Object *object, u32 flags);
-void ObjectDispatch_SetChildBlendMode(struct Object *object, u32 mode);
-void ObjectDispatch_SetChildFixedScale(struct Object *object, u32 fixedScale);
+void Object_RegisterSpriteMetadata(struct Object *object, s32 animationId);
+void Object_StartApproachLink(struct Object *object, s32 linkedObjectHandle);
+void Object_StartKeyCheck(struct Object *object);
+void Object_StartMoveByKeys(struct Object *object);
+void Object_StartPlayerControl(struct Object *object);
+void Object_StartWorldMapControl(struct Object *object);
+void Object_StartIdle(struct Object *object);
+void Object_StartCamera(struct Object *object, s32 linkedObjectHandle);
+void Object_WaitForValue16(void *rawObject);
+void Object_SetSpriteFlags(struct Object *object, u32 flags);
+void Object_SetSpriteBlendMode(struct Object *object, u32 mode);
+void Object_SetSpriteScale(struct Object *object, u32 fixedScale);
 void Anim_ApplyChildValues(struct Object *object, u32 param);
 void ObjectSystem_SuspendProjectionAndShowSprites(void);
 void ObjectSystem_ResumeProjectionAndHideLayers(void);
-s32 ObjectDispatch_ReturnTrue(void);
+s32 Object_ReturnTrue(void);
 void ObjectSystem_PlaceSprites(void);
 s32 ObjectCamera_ReturnTrue(void);
 void ObjectSystem_ProjectSprites(void);
@@ -365,17 +363,17 @@ s32 ObjectScript_ApplyOperandSet(struct Object *interpreter);
 s32 ObjectScript_ApplyOperandAdd(struct Object *interpreter);
 s32 ObjectScript_ApplyOperandCompare(struct Object *interpreter);
 
-void ObjectDispatch_SetUpdateValue(void *rawObject, s32 value);
+void Object_SetUpdateValue(void *rawObject, s32 value);
 u32 Field_RequestShortcut(u32 encodedAssignment);
 s32 Field_CheckConfiguredKeys(void);
-s32 Runtime_CheckRadiusOverlap(s32 *firstPosition, s32 radiusA,
-                               s32 *secondPosition, s32 radiusB);
+s32 Field_CheckSpheresOverlap(s32 *firstPosition, s32 radiusA,
+                              s32 *secondPosition, s32 radiusB);
 s32 Object_UpdateLeaderControl(struct Object *interpreter);
 s32 Object_MoveOnWorldMap(struct Object *interpreter);
 s32 Field_CheckConfiguredKeysAndCount(struct Object *interpreter);
 s32 Object_MoveByKeys(struct Object *interpreter);
 
-void Runtime_RemapBytesByTable(u8 *bytes, s32 byteCount);
+void SpriteColor_RemapPixels(u8 *bytes, s32 byteCount);
 void TileMap_DecodeStagedBuffer(s32 size);
 void TileMap_NumberPlaceholderMetatiles(void);
 void TileMap_ConvertBuffer(void);

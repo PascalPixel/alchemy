@@ -555,7 +555,7 @@ menu_top:;
     Script_SetFlag(FLAG_KEEP_PARTY_POSITION);
     state = &gSaveBlock;
     WindowColor_Apply(state->windowColor[0], state->windowColor[1]);
-    if (state->buildStamp != Runtime_GetBuildStampTime()) {
+    if (state->buildStamp != BuildStamp_GetTime()) {
       state->mapId = state->savedMap;
       state->warpDest = state->savedWarpDest;
       GameFlag_Clear(FLAG_KEEP_PARTY_POSITION);
@@ -654,7 +654,7 @@ menu_top:;
       Text_DrawMessage(linkMessage, (struct Window *)v6, 0, 4);
       Text_DrawMessage((linkMessage + 1), (struct Window *)v6, 0, 16);
       Text_DrawMessage((linkMessage + 3), (struct Window *)v6, 0, 36);
-      SerialRuntime_Initialize();
+      Serial_Initialize();
       WaitFrames(10);
       {
         u16 *sync = (u16 *)gSerialTransfer.payload;
@@ -708,7 +708,7 @@ menu_top:;
 
       Text_DrawMessage(MsgClearSendingData, (struct Window *)v6, 0, 4);
       WaitFrames(10);
-      SerialRuntime_StartSend(gSaveBuffer, 0x1004);
+      Serial_StartSend(gSaveBuffer, 0x1004);
       WaitFrames(10);
       // Wait for the send to finish, at most 600000 frames (about 2.8
       // hours); ten frames in a row without both consoles is an error.
@@ -739,7 +739,7 @@ menu_top:;
         } while ((gKeysPressed & v5) == 0);
       }
       WaitFrames(10);
-      SerialRuntime_RemoveIrqHandlers();
+      Serial_RemoveIrqHandlers();
       WaitFrames(10);
 #if TBS_PATCH_4
       Window_Close((struct Window *)v6, 2);

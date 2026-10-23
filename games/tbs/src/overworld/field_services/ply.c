@@ -44,8 +44,8 @@ void FieldEffect_UpdateShrinkingOrbitObject(union FieldObject *fieldObject) {
       particle->y.fixed = pos.y;
       particle->z.fixed = pos.z;
     } else {
-      ObjectDispatch_InitializeFar((struct Object *)particle,
-                                   gFieldEffect_CommonParticleScript);
+      Object_InitializeFar((struct Object *)particle,
+                           gFieldEffect_CommonParticleScript);
     }
   }
 }
@@ -88,8 +88,8 @@ void FieldEffect_RunSparkEmitter(union FieldObject *fieldObject) {
       spark->targetX = spark->x;
       Anim_ApplyChildValuesFar((struct Object *)spark, SPRITE_COLOR_BLUE_TINT);
       spark->wait = 72;
-      ObjectDispatch_InitializeFar((struct Object *)spark,
-                                   gFieldEffect_CommonParticleScript);
+      Object_InitializeFar((struct Object *)spark,
+                           gFieldEffect_CommonParticleScript);
     }
   }
 }
@@ -205,7 +205,7 @@ void FieldEffect_RunPly(void) {
     ObjectMotion_SetTargetPositionFromMagnitudeAngle((struct Object *)target,
                                                      0xc00000, 0xe800);
     Object_WaitForMoveFar(target);
-    ObjectDispatch_ReleaseFar((struct Object *)target);
+    Object_ReleaseFar((struct Object *)target);
   }
   // 0x60 is the VRAM cache's entry count, the value VramCache_FindFreeEntry
   // returns for no entry.

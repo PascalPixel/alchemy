@@ -49,9 +49,9 @@ void Colosso_FadeInWarrior(s32 id, s32 x, s32 z) {
   objectEvent->priorityFlags |= OBJ_EVENT_PRIORITY_AUTOMATIC;
   objectEvent->facing = FACING_SOUTH;
   ObjectEvent_SetSpriteFlags(objectEvent, 3);
-  ObjectDispatch_SelectAnimation(objectEvent, 0);
-  ObjectDispatch_SelectAnimation(objectEvent, 1);
-  Engine_ObjectEventSetPosition(id, x << 16, z << 16);
+  Object_SelectAnimation(objectEvent, 0);
+  Object_SelectAnimation(objectEvent, 1);
+  Import_ObjectEventSetPosition(id, x << 16, z << 16);
   ObjectMotion_SetAngleToward(0, 0x4000, 0);
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT,
                       BLDCNT_TGT2_BG0 | BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 |
@@ -93,10 +93,10 @@ void Colosso_RestoreWarrior(s32 id) {
   objectEvent = ObjectEvent_GetById(id);
   if (gSaveBlock.movementMode == 1) {
     gSaveBlock.movementMode = 0;
-    Engine_ObjectEventSetAnimation(id, 1);
+    Import_ObjectEventSetAnimation(id, 1);
   } else {
     ObjectEvent_FaceDirection(id, FACING_SOUTH, 30);
-    Engine_ObjectEventSetAnimation(id, 3);
+    Import_ObjectEventSetAnimation(id, 3);
     FieldScript_WaitFrames(30);
   }
   zero = 0;
@@ -120,8 +120,8 @@ void Colosso_RestoreWarrior(s32 id) {
   objectEvent->y.fixed = zero;
   ((struct Object *)objectEvent)->groundHeight = zero;
   ObjectEvent_SetSpriteFlags(objectEvent, SPRITE_FLAG_SHADOW);
-  ObjectDispatch_SelectAnimation(objectEvent, 0);
-  ObjectDispatch_SelectAnimation(objectEvent, 1);
+  Object_SelectAnimation(objectEvent, 0);
+  Object_SelectAnimation(objectEvent, 1);
   WaitFrames(1);
 }
 
@@ -129,7 +129,7 @@ void Colosso_RestoreWarrior(s32 id) {
 void ObjectEvent_ResetMotionFields(s32 localId) {
   struct ObjectEvent *o = ObjectEvent_GetById(localId);
 
-  ObjectDispatch_StartIdle((struct Object *)o);
+  Object_StartIdle((struct Object *)o);
   o->velocityX = 0;
   o->velocityZ = 0;
   o->targetX = OBJ_EVENT_NO_TARGET;
@@ -262,8 +262,8 @@ void Colosso_WalkObjectEventTo(s32 localId, s32 x, s32 z) {
     objectEvent->speed = speed;
     objectEvent->acceleration = speed >> 1;
     objectEvent->paused = zero;
-    ObjectDispatch_StartIdle((struct Object *)objectEvent);
-    ObjectDispatch_SelectAnimation(objectEvent, 5);
+    Object_StartIdle((struct Object *)objectEvent);
+    Object_SelectAnimation(objectEvent, 5);
     Object_SetMoveTarget((struct Object *)objectEvent, x << 16,
                          objectEvent->y.fixed, z << 16);
   }
@@ -281,11 +281,11 @@ void Colosso_WalkObjectEventToAndStand(s32 localId, s32 x, s32 z) {
     objectEvent->speed = speed;
     objectEvent->acceleration = speed >> 1;
     objectEvent->paused = zero;
-    ObjectDispatch_StartIdle((struct Object *)objectEvent);
-    ObjectDispatch_SelectAnimation(objectEvent, 5);
+    Object_StartIdle((struct Object *)objectEvent);
+    Object_SelectAnimation(objectEvent, 5);
     Object_SetMoveTarget((struct Object *)objectEvent, x << 16,
                          objectEvent->y.fixed, z << 16);
     Object_WaitForMove(objectEvent);
-    ObjectDispatch_SelectAnimation(objectEvent, 1);
+    Object_SelectAnimation(objectEvent, 1);
   }
 }

@@ -93,8 +93,8 @@ void BattleAnim_RunBreak(struct BattleAnimArgs *effect) {
       offset = member * DRAIN_ICE_SHARDS_PER_TARGET * sizeof(struct Particle);
       if (frame == member * 20) {
         Sound_PlaySongFar(SE_143);
-        ObjectGroup_UpdateMembers(work->effect->targets[member],
-                                  SPRITE_COLOR_WHITE, -1, member, 20);
+        BattleAnim_TintBattler(work->effect->targets[member],
+                               SPRITE_COLOR_WHITE, -1, member, 20);
       }
       // A shard falls with one of four gravities by its index (1/8 to 1/2
       // pixel a frame per frame, gDrain_Gravities) and goes out once it
@@ -215,14 +215,13 @@ void BattleAnim_RunDrain(struct BattleAnimArgs *effect) {
       ANIM_SHOW_DAMAGE(SE_IMPACT);
     ANIM_VIEW_FROM_CAMERA(camera);
     if (frame == 40)
-      ObjectGroup_UpdateMembers(work->effect->user, SPRITE_COLOR_WHITE, -1, -1,
-                                0);
+      BattleAnim_TintBattler(work->effect->user, SPRITE_COLOR_WHITE, -1, -1, 0);
     if (frame == work->effect->targetCount * 20 + 52)
-      ObjectGroup_UpdateMembers(work->effect->user, 0, -1, -1, 0);
+      BattleAnim_TintBattler(work->effect->user, 0, -1, -1, 0);
     ANIM_FOR_EACH_TARGET(member, work->effect) {
       if (frame == member * 20)
-        ObjectGroup_UpdateMembers(work->effect->targets[member],
-                                  SPRITE_COLOR_WHITE, POSE_DAMAGE, member, 42);
+        BattleAnim_TintBattler(work->effect->targets[member],
+                               SPRITE_COLOR_WHITE, POSE_DAMAGE, member, 42);
       if (frame > member * 20) {
         for (i = 0; i != DRAIN_DRAWN; i++) {
           struct Particle *mote =

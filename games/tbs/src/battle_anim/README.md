@@ -1025,7 +1025,7 @@ each.
 
 The work block holds no unknown fields. `unused7788` and `padding` (before the
 word-aligned `bg2x`) are never read or written in either game; `imageTail` is
-the end of `imageStorage`; and a `BattleCanvasOrigin`'s `queued` word is set
+the end of `imageStorage`; and a `BattleBg2Origin`'s `queued` word is set
 once its coordinates are queued, but the queue copies only `x` and `y` and
 nothing reads it. A particle's `variant` is each family's own, and each family
 says what it holds where it launches its particles.

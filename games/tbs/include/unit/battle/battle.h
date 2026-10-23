@@ -67,7 +67,7 @@ s32 BattleUnit_TickSleep(s32 unitId);
 #define DEFINE_ADJUST_CAMERA(name)                                             \
   void name(void) {                                                            \
     struct BattleCamera *cam = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);              \
-    struct BattleViewWork *view =                                              \
+    struct BattleBackgroundWork *view =                                        \
         HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);                          \
                                                                                \
     if ((gKeysHeld & KEY_L) != 0) {                                            \
@@ -326,7 +326,7 @@ void BattleBackground_FadeAlphaIn(void);
 void BattleBackground_SetBlendControl(void);
 void BattleTransition_InitializeEntries(struct BattleTransitionEntry *entries);
 s32 BattleBackground_DivideBy16(s32 value);
-s32 Runtime_AdjustDebugValueWithButtons(s32 selectedValue);
+s32 Battle_AdjustDebugValue(s32 selectedValue);
 void BattleHighlight_SetSpriteMode(s32 actorId, s32 mode);
 void BattleHighlight_SetOtherSpriteModes(s32 selectedUnitId);
 void BattleHighlight_ClearAllSpriteModes(void);

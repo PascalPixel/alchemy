@@ -436,8 +436,8 @@ void BattleAnim_RunCybele(struct BattleAnimArgs *effect) {
         object->gravity = 0xab85;
       }
       if (frame == i * 5 + 302) {
-        ObjectGroup_UpdateMembers(work->effect->targets[i], SPRITE_COLOR_WHITE,
-                                  -1, i, 8);
+        BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_WHITE, -1,
+                               i, 8);
         Sound_PlaySongFar(SE_HEAVY_IMPACT);
         work->shakeFrames = 8;
       }

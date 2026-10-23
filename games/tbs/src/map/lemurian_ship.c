@@ -129,7 +129,7 @@ const struct ObjectEventTemplate *LemurianShip_GetObjectEventTemplates(void) {
 /// colour. Reached by stepping on metatile behavior 1 (gLemurianShipEvents);
 /// takes LEMURIAN_SHIP_TO_LALIVERO_FARANS_HOUSE.
 static void EventScript_LeaveTheShip(void) {
-  Engine_ScriptRequestWarp(gFieldWork->coordEvent);
+  Import_ScriptRequestWarp(gFieldWork->coordEvent);
   Io_Write16(0, &PLTT_BACKDROP);
 }
 
@@ -177,13 +177,13 @@ static void Spray_Update(union FieldObject *fieldObject) {
     s32 drift;
 
     drop->timer--;
-    drift = Engine_RandomNext();
-    drift -= Engine_RandomNext();
+    drift = Import_RandomNext();
+    drift -= Import_RandomNext();
     drop->x.fixed += drift;
     drop->y.fixed += 0xcccc;
   } else if ((s16)drop->work != 0) {
     drop->work = 0;
-    ObjectDispatch_SelectAnimation(drop, 1);
+    Object_SelectAnimation(drop, 1);
     drop->wait = 20;
     ObjectEvent_SetScript(drop, gSprayFallScript);
   }
@@ -279,7 +279,7 @@ static void Ship_UpdateSwell(void) {
       objectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
       objectEvent->sprite->image.priority = 2;
       ObjectEvent_SetSpriteFlags(objectEvent, OBJECT_BLEND_NORMAL);
-      ObjectDispatch_SelectAnimation(objectEvent, 0);
+      Object_SelectAnimation(objectEvent, 0);
     }
   }
 }
@@ -370,8 +370,8 @@ static void LemurianShip_SetSail(void) {
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH, 0);
   ObjectMotion_ArmCallback(LOCALID_IVAN, FACING_SOUTH, 0);
   FieldScript_WaitFrames(60);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
   FieldScript_WaitFrames(60);
   // The first question, Garet's: will the journey be over once they find
@@ -501,8 +501,8 @@ static void LemurianShip_SetSail(void) {
   FieldScript_ShowMessageAndWait(LOCALID_MIA, 0);
   Sound_PlaySong(SONG_FADE_OUT_BGM);
   FieldScript_WaitFrames(10);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
   FieldScript_WaitFrames(40);
   // Everyone boards by their own scripts, hopping up onto the deck (SE_153
@@ -541,9 +541,9 @@ static void LemurianShip_SetSail(void) {
   ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_WEST, 0);
   ObjectMotion_ArmCallback(LOCALID_MIA, FACING_WEST, 0);
   FieldScript_WaitFrames(40);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
   FieldScript_WaitFrames(30);
   // The ship sails east and the curtains close: the sea's layer scrolls
@@ -921,7 +921,7 @@ static void Curtain_Close(void) {
 static void Curtain_Start(void) {
   u8 *tiles;
 
-  tiles = Runtime_CallAlternatePool(AllocEwram, 0x100);
+  tiles = Heap_CallAlternatePool(AllocEwram, 0x100);
   sCurtainVramSlot = VramCache_FindFreeEntry();
   Dma_Fill32(0x11111111, tiles, 0x100);
   VramCache_Load(sCurtainVramSlot, 0x100, tiles);

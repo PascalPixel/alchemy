@@ -103,7 +103,8 @@ union FieldObject {
 /// map/common/effect_spawn.h): a script number in the low bits and which of
 /// struct EffectOptions' fields to use.
 enum EffectSpawnFlags {
-  /// An EffectScript, picking one of gEffectScripts; the object's mode is this
+  /// An EffectDuration, picking one of gEffectScripts; the object's mode is
+  /// this
   /// plus 1.
   EFFECT_SCRIPT_MASK = 0x0f,
   EFFECT_USE_PALETTE = 0x10000,  ///< options.palette, as its group child value
@@ -122,7 +123,7 @@ enum EffectSpawnFlags {
 /// The scripts EFFECT_SCRIPT_MASK picks from gEffectScripts, in a map's
 /// spawner and the resident one alike: each holds the effect for a while, then
 /// frees it.
-enum EffectScript {
+enum EffectDuration {
   EFFECT_SCRIPT_SHORT =
       0, ///< 22 one-frame repeats in a map, 24 frames resident
   EFFECT_SCRIPT_MEDIUM = 1, ///< 44 repeats in a map, 46 frames resident
@@ -132,7 +133,7 @@ enum EffectScript {
 /// The three scripts a map's own effect spawner picks from by
 /// EFFECT_SCRIPT_MASK, wrapped so that the spawner can copy them into its frame
 /// whole.
-struct EffectScripts {
+struct EffectDurationScripts {
   const s32 *script[3];
 };
 
@@ -140,7 +141,7 @@ struct EffectScripts {
 /// (or EFFECT_SCALE_TO_TARGET) is set.
 struct EffectOptions {
   s32 priority;      ///< the sprite's priority
-  s32 palette;       ///< passed to ObjectGroup_SetChildValue
+  s32 palette;       ///< passed to ObjectEvent_SetSpriteColor
   s32 startScaleX;   ///< 16.16 fixed point, 0x10000 full size
   s32 startScaleY;   ///< 16.16 fixed point, 0x10000 full size
   s32 targetScaleX;  ///< 16.16 fixed point, 0x10000 full size

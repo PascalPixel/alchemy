@@ -370,8 +370,8 @@ void BattleAnim_RunTitanBlade(struct BattleAnimArgs *effect) {
     // Frame 68: every target flashes and recoils.
     if (frame == 68) {
       ANIM_FOR_EACH_TARGET(i, work->effect) {
-        ObjectGroup_UpdateMembers(work->effect->targets[i], SPRITE_COLOR_WHITE,
-                                  POSE_DAMAGE, i, 16);
+        BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_WHITE,
+                               POSE_DAMAGE, i, 16);
         BattleMotion_ApplyKnockbackFar(work->effect->targets[i],
                                        KNOCKBACK_JOLT);
       }

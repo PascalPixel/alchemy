@@ -20,15 +20,15 @@ struct ScreenPoint;
 extern s32 gIwram_Data1;
 /// The second IWRAM word the scrolling camera's setup clears; also unread.
 extern s32 gIwram_Data2;
-extern const s32 gObjectDispatch_DefaultScript[];
+extern const s32 gObject_DefaultScript[];
 extern const u8 gWorldMap_BattleEnvironments[];
 /// The size of Render_DecodeFrame, copied to HEAP_SLOT_FRAME_SCRATCH; an
 /// address equal to the size (constants.ld).
 extern u8 Render_DecodeFrameCodeSize[];
 /// Four 256-byte colour tables (remap0 to remap3), indexed by pixel: the
 /// SpriteColorMode tables after gSpriteColorTables' five, the
-/// first also remapping the command icons (Runtime_RemapBytesByTable).
-extern u8 gRuntime_ByteRemapTable[];
+/// first also remapping the command icons (SpriteColor_RemapPixels).
+extern u8 gSpriteColorRemapTables[];
 
 struct AbilityListEntry;
 struct BattleAnimArgs;
@@ -62,7 +62,7 @@ struct PathRecorder {
   s16 localId;   ///< the local id moved along the path
   u16 pathIndex; ///< the next halfword of ColossoRaceWork.path, x then z
   /// Frames the object event has not moved; from 3 it stands
-  /// (ObjectDispatch_SelectAnimation 1).
+  /// (Object_SelectAnimation 1).
   s16 still;
 };
 /// A Venus Lighthouse switch or pillar socket's map cell.
@@ -166,7 +166,7 @@ extern u16 gVaultInteriors_StopTimer;
 /// (constants.ld). Only the unused Object_RunUpdateAllFromHeap reads it, to
 /// copy the routine to the heap and run it once.
 extern u8 Object_UpdateAllCodeSize[];
-extern u8 gObjectGroup_BlinkChildValues[];
+extern u8 gObjectEvent_BlinkSpriteColors[];
 // The object motion scripts: actions 1 to 7, which
 // ObjectEvent_SetMovementType starts by number, and two turning scripts
 // with no action number.

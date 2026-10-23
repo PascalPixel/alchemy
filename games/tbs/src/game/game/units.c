@@ -121,8 +121,8 @@ const u8 *Enemy_GetDefinition(s32 selector) {
 
 /// Copies `count` bytes from `first` to `second` when `direction` is set, and
 /// from `second` to `first` otherwise.
-void Runtime_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
-                                  s32 direction) {
+void Memory_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
+                                 s32 direction) {
   s32 index;
 
   if (direction != 0) {
@@ -491,7 +491,7 @@ void GameFlag_RefreshLureCap(void) {
 /// SaveBlock_InitializeDefaults stores it as a new game's start stamp, and the
 /// file menu (FileMenu_SelectFile, Save_BuildFileSummary) and the main
 /// menu compare saves with it.
-u32 Runtime_GetBuildStampTime(void) {
+u32 BuildStamp_GetTime(void) {
   u8 *digits;
   s32 hourTens;
   s32 hourUnits;
@@ -598,7 +598,7 @@ void SaveBlock_InitializeDefaults(void) {
   gSaveBlock.windowColor[0] = 0;
   gSaveBlock.windowColor[1] = 8;
   gSaveBlock.buildStamp = 0;
-  gSaveBlock.startStamp = Runtime_GetBuildStampTime();
+  gSaveBlock.startStamp = BuildStamp_GetTime();
   gPlayTimeFrames = 0;
   gSaveBlock.playTime = 0;
   gIdleSleepEnabled = 0;

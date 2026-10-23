@@ -341,8 +341,8 @@ void BattleAnim_RunGaia(struct BattleAnimArgs *effect) {
       ANIM_FOR_EACH_TARGET(i, work->effect) {
         if (frame > 85) {
           if (frame % 12 == 0)
-            ObjectGroup_UpdateMembers(work->effect->targets[i],
-                                      SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 6);
+            BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, i, 6);
           if ((frame & 3) == 0)
             BattleMotion_ApplyKnockbackFar(work->effect->targets[i],
                                            KNOCKBACK_SKID);

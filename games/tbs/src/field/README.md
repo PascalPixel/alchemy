@@ -263,10 +263,10 @@ in the order `Sprite_ComposeFrame` uses.
 An anim can also be recoloured as it is drawn: its colour mode
 (`SpriteAnim.colorMode`, `enum SpriteColorMode`) either picks one of nine
 256-byte tables that map each pixel to another colour (the five
-`gSpriteColorTables`, then the four of `gRuntime_ByteRemapTable`,
+`gSpriteColorTables`, then the four of `gSpriteColorRemapTables`,
 which lie one after another), or paints every drawn pixel one colour. The
 first remap table also recolours the menus' command icons
-(`Runtime_RemapBytesByTable`).
+(`SpriteColor_RemapPixels`).
 
 A sprite is a `struct Sprite`, and each of its anims a
 `struct SpriteAnim`; the four remap tables are `remap0.tsv` to
@@ -553,7 +553,7 @@ reader does, as [Matching](../MATCHING.md#views-of-one-struct) explains:
 | View | Reader | What differs |
 | --- | --- | --- |
 | `ScriptOperands` (`include/field/action_script.h`) | `SC_SET`, `SC_ADD`, `SC_CMP` | every field at the width its operand handler reads, unsigned |
-| `ScriptMotionObject` (`include/script_motion.h`) | `Object_UpdateAll` (`update.c`) | ARM code built with GCC 2.95.2, which cannot read `Object`'s anonymous unions |
+| `ObjectArmView` (`include/script_motion.h`) | `Object_UpdateAll` (`update.c`) | ARM code built with GCC 2.95.2, which cannot read `Object`'s anonymous unions |
 | `BattleSpriteObject` (`include/battle/motobj.h`) | `BattleObject_SpawnObjectsForList` | the sprite word untyped |
 
 The update hook at offset 0x6c takes a `union FieldObject *`, through

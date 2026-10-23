@@ -377,7 +377,7 @@ void BattleAnim_RunRingAndSparkSequence(struct BattleAnimArgs *effect) {
       SET_VELOCITY(mote, Random16() & 0xffff, Random16() & 0xffff,
                    Random16() & 0xffff);
     }
-    ObjectDispatch_SetAnimationSpeedFar((struct Object *)object, 0);
+    Object_SetAnimationSpeedFar((struct Object *)object, 0);
     velocityX = object->velocityX;
     velocityY = object->velocityY;
     velocityZ = object->velocityZ;
@@ -423,7 +423,7 @@ void BattleAnim_RunRingAndSparkSequence(struct BattleAnimArgs *effect) {
       ANIM_PRESENT_FRAME(work);
     }
     Task_Remove(Palette_StepFadeTransfer);
-    ObjectDispatch_SetAnimationSpeedFar((struct Object *)object, 16);
+    Object_SetAnimationSpeedFar((struct Object *)object, 16);
     SET_VELOCITY(object, velocityX, velocityY, velocityZ);
     object->acceleration = acceleration;
     object->gravity = strength;

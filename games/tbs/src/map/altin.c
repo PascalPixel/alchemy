@@ -393,7 +393,7 @@ static void Altin_TalkToThirstyOldWoman(void) {
     FieldScript_SetMessageId(MsgAltinOnesWhoDefeatedWaterBeasts);
     Script_AskYesNo(LOCALID_THIRSTY_OLD_WOMAN, 0);
   } else {
-    Engine_ObjectEventSetAnimation(LOCALID_THIRSTY_OLD_WOMAN, ANIM_SHAKE_HEAD);
+    Import_ObjectEventSetAnimation(LOCALID_THIRSTY_OLD_WOMAN, ANIM_SHAKE_HEAD);
     FieldScript_SetMessageId(MsgAltinWeCantDrinkWaterMonsters);
     Script_ShowMessageAndWait(LOCALID_THIRSTY_OLD_WOMAN, 0, 10);
     if (GameFlag_Get(FLAG_ALTIN_WATER_BEAST_LEFT) == 0) {
@@ -652,7 +652,7 @@ static void Altin_EnterDoor(void) {
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x8000, 0x4000);
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
   if (doorIndex == DOOR_STRAIGHT_IN) {
     ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 2, 0);
   } else {
@@ -664,7 +664,7 @@ static void Altin_EnterDoor(void) {
     }
   }
   FieldScript_WaitFrames(10);
-  Engine_ScriptRequestWarp(work->coordEvent);
+  Import_ScriptRequestWarp(work->coordEvent);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_End();
@@ -680,7 +680,7 @@ static void Altin_WalkThroughDoorway(void) {
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
   Script_PlaySong(SE_MAP_EXIT);
   ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 2, -16);
-  Engine_ScriptRequestWarp(work->coordEvent);
+  Import_ScriptRequestWarp(work->coordEvent);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_End();
@@ -701,7 +701,7 @@ static void Beast_Hop(union FieldObject *fieldObject) {
       MapGrid_SetShake(-1, -1, 0xe666);
   }
   if (beast->velocityY == 0) {
-    ObjectDispatch_SelectAnimation(beast, 1);
+    Object_SelectAnimation(beast, 1);
     beast->y.fixed += -0x18000;
     if (beast->y.fixed < beast->groundHeight) {
       if (fieldObject->effect.countdown != 0) {
@@ -719,7 +719,7 @@ static void Beast_Hop(union FieldObject *fieldObject) {
   if (beast->timer == 0) {
     Script_PlaySong(SE_JUMP);
     fieldObject->effect.countdown = 1;
-    ObjectDispatch_SelectAnimation(beast, 2);
+    Object_SelectAnimation(beast, 2);
     beast->velocityY = 0x30000;
   }
   if (++beast->timer == WATER_BEAST_HOP_PERIOD)
@@ -744,7 +744,7 @@ static void Beast_HopAway(void) {
   FieldScript_WaitFrames(4);
   MapGrid_SetShake(-1, -1, 0xe666);
   FieldScript_WaitFrames(40);
-  Engine_ObjectEventSetAnimation(LOCALID_WATER_BEAST, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_WATER_BEAST, ANIM_STAND);
 }
 
 /// After Move: remembers whether the pillar now stands in map column 22, the
@@ -827,8 +827,8 @@ static void Altin_ApplyWaterLevel(void) {
     ObjectEvent_DestroyById(LOCALID_WATER_BEAST);
   } else {
     Map_QueueMusic(SE_170);
-    ObjectEvent_SetChildValue(LOCALID_WATER_BEAST, SPRITE_COLOR_RBG);
-    Engine_ObjectEventSetAnimation(LOCALID_WATER_BEAST,
+    ObjectEvent_SetSpriteColorById(LOCALID_WATER_BEAST, SPRITE_COLOR_RBG);
+    Import_ObjectEventSetAnimation(LOCALID_WATER_BEAST,
                                    WATER_BEAST_ANIMATION_SPIT);
     FieldScheduler_AddCallback(Beast_SpawnSpray, TASK_PRIORITY_MAP);
   }
@@ -842,9 +842,9 @@ static void Altin_ApplyWaterLevel(void) {
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_STONE_STATUE), 0);
   // Hide the three crates, which stay solid, and draw them under the object
   // events.
-  ObjectEvent_SetChildValue(LOCALID_FIRST_CRATE, SPRITE_COLOR_HIDDEN);
-  ObjectGroup_ConfigureChildValue(LOCALID_SECOND_CRATE, SPRITE_COLOR_HIDDEN);
-  ObjectEvent_SetChildValue(LOCALID_THIRD_CRATE, SPRITE_COLOR_HIDDEN);
+  ObjectEvent_SetSpriteColorById(LOCALID_FIRST_CRATE, SPRITE_COLOR_HIDDEN);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_SECOND_CRATE, SPRITE_COLOR_HIDDEN);
+  ObjectEvent_SetSpriteColorById(LOCALID_THIRD_CRATE, SPRITE_COLOR_HIDDEN);
   ObjectEvent_GetById(LOCALID_FIRST_CRATE)->collisionFlags |=
       OBJ_EVENT_NOT_TARGETED;
   ObjectEvent_GetById(LOCALID_SECOND_CRATE)->collisionFlags |=
@@ -913,7 +913,7 @@ static void AltinInteriors_PlaceSheltering(void) {
 static void Spray_Initialize(struct ObjectEvent *spray) {
   spray->motionFlags = 0;
   spray->sprite->image.priority = 1;
-  ObjectGroup_SetChildValue(spray, SPRITE_COLOR_BGR);
+  ObjectEvent_SetSpriteColor(spray, SPRITE_COLOR_BGR);
   ObjectEvent_SetSpriteFlags(spray, 0);
   spray->scaleX = WATER_SPRAY_START_SCALE;
   spray->scaleY = WATER_SPRAY_START_SCALE;
@@ -925,9 +925,9 @@ static void Spray_Initialize(struct ObjectEvent *spray) {
 static void Spray_Drift(union FieldObject *fieldObject) {
   struct ObjectEvent *spray = &fieldObject->objectEvent;
   spray->x.fixed += WATER_SPRAY_LATERAL_STEP(
-      spray->timer, (s16)((s32)(((u32)Engine_RandomNext() * 2) >> 16) - 1));
+      spray->timer, (s16)((s32)(((u32)Import_RandomNext() * 2) >> 16) - 1));
   if (spray->timer <= 3) {
-    spray->z.fixed += -(((u32)Engine_RandomNext() * 0x8000) >> 16) - 0x10000;
+    spray->z.fixed += -(((u32)Import_RandomNext() * 0x8000) >> 16) - 0x10000;
     spray->scaleX += 0x2666;
     spray->scaleY += -0xa3d;
   } else {
@@ -935,12 +935,12 @@ static void Spray_Drift(union FieldObject *fieldObject) {
     spray->scaleX += 0x7ae;
     spray->scaleY += 0x7ae;
   }
-  if (((u32)Engine_RandomNext() * spray->timer) >> 16 == 0)
-    ObjectGroup_SetChildValue(spray, SPRITE_COLOR_WHITE);
+  if (((u32)Import_RandomNext() * spray->timer) >> 16 == 0)
+    ObjectEvent_SetSpriteColor(spray, SPRITE_COLOR_WHITE);
   if (spray->timer != 0)
     spray->timer--;
   else
-    spray->timer = (((u32)Engine_RandomNext() * 5) >> 16) * 2 + 2;
+    spray->timer = (((u32)Import_RandomNext() * 5) >> 16) * 2 + 2;
   if (--fieldObject->effect.countdown == 0) {
     spray->update = 0;
     ObjectEvent_Release(spray);
@@ -960,7 +960,7 @@ static void Beast_SpawnSpray(void) {
       spray->effect.countdown = WATER_SPRAY_LIFETIME;
       Spray_Initialize(&spray->objectEvent);
       spray->objectEvent.update = Spray_Drift;
-      ObjectDispatch_SelectAnimation(&spray->objectEvent, 1);
+      Object_SelectAnimation(&spray->objectEvent, 1);
     }
   }
 }
@@ -973,7 +973,7 @@ static void Altin_ScareOffBeast(void) {
   FieldCamera_MoveTo(PIXELS(63), -1, PIXELS(450), 1);
   FieldCamera_WaitForArrival();
   FieldScript_WaitFrames(30);
-  Engine_ObjectEventSetAnimation(LOCALID_WATER_BEAST, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_WATER_BEAST, ANIM_STAND);
   // The spitting stops: its sound and its spray end.
   Map_QueueMusic(-1);
   Task_Remove(Beast_SpawnSpray);

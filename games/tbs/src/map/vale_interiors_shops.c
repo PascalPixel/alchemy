@@ -338,7 +338,7 @@ static void ValeInteriorsShops_RequestWindowWarp(s32 warpNumber) {
   gFieldWork->transitionFrames = 16;
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Engine_ScriptRequestWarp(warpNumber);
+  Import_ScriptRequestWarp(warpNumber);
 }
 
 // The rooms' doors: stepping on a door's cell, whose metatile behavior is its
@@ -412,21 +412,21 @@ s32 ValeInteriorsShops_Initialize(void) {
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   // On the stormy night every resident is out, and lightning flashes outside.
   if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
-    Engine_ObjectEventSetPosition(LOCALID_GARETS_GRANDFATHER, 0, 0);
-    Engine_ObjectEventSetPosition(LOCALID_GARETS_GRANDMOTHER, 0, 0);
-    Engine_ObjectEventSetPosition(LOCALID_GARETS_FATHER, 0, 0);
-    Engine_ObjectEventSetPosition(LOCALID_GARETS_MOTHER, 0, 0);
-    Engine_ObjectEventSetPosition(LOCALID_JENNAS_GRANDFATHER, 0, 0);
-    Engine_ObjectEventSetPosition(LOCALID_JENNAS_GRANDMOTHER, 0, 0);
-    Engine_ObjectEventSetPosition(LOCALID_WOMAN_ON_THE_SPITTING_IMAGE, 0, 0);
-    Engine_ObjectEventSetPosition(LOCALID_MAN_ON_KRADENS_STUDIES, 0, 0);
-    Engine_ObjectEventSetPosition(LOCALID_WOMAN_ON_VISITORS_IN_TOWN, 0, 0);
-    Engine_ObjectEventSetPosition(LOCALID_YOUNG_MAN_DREAMING_OF_LEAVING, 0, 0);
-    Engine_ObjectEventSetPosition(LOCALID_WOMAN_ON_PERMISSION_TO_LEAVE, 0, 0);
-    Engine_ObjectEventSetPosition(LOCALID_STRONGMAN_SCARING_VISITORS, 0, 0);
-    Engine_ObjectEventSetPosition(LOCALID_ITEM_MERCHANT, 0, 0);
-    Engine_ObjectEventSetPosition(LOCALID_WEAPON_MERCHANT, 0, 0);
-    Engine_ObjectEventSetPosition(LOCALID_ARMOR_MERCHANT, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_GARETS_GRANDFATHER, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_GARETS_GRANDMOTHER, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_GARETS_FATHER, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_GARETS_MOTHER, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_JENNAS_GRANDFATHER, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_JENNAS_GRANDMOTHER, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_WOMAN_ON_THE_SPITTING_IMAGE, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_MAN_ON_KRADENS_STUDIES, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_WOMAN_ON_VISITORS_IN_TOWN, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_YOUNG_MAN_DREAMING_OF_LEAVING, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_WOMAN_ON_PERMISSION_TO_LEAVE, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_STRONGMAN_SCARING_VISITORS, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_ITEM_MERCHANT, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_WEAPON_MERCHANT, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_ARMOR_MERCHANT, 0, 0);
     Weather_StartLightning();
     (*(struct LightningWork **)((u8 *)eventSlot + Ram_LightningWorkOffset))
         ->loud = 1;
@@ -448,11 +448,11 @@ s32 ValeInteriorsShops_Initialize(void) {
   // Once Jenna is taken, her grandmother lies sick in bed.
   if (gSaveBlock.warpDest == VALE_INTERIORS_SHOPS_FROM_VALE_NORTH) {
     if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
-      Engine_ObjectEventSetPosition(LOCALID_JENNAS_GRANDMOTHER, PIXELS(454),
+      Import_ObjectEventSetPosition(LOCALID_JENNAS_GRANDMOTHER, PIXELS(454),
                                     PIXELS(150));
       objectEvent = ObjectEvent_GetById(LOCALID_JENNAS_GRANDMOTHER);
       ObjectEvent_SetSpriteFlags(objectEvent, 0);
-      Engine_ObjectEventSetAnimation(LOCALID_JENNAS_GRANDMOTHER,
+      Import_ObjectEventSetAnimation(LOCALID_JENNAS_GRANDMOTHER,
                                      ANIM_GRANDMOTHER_IN_BED);
       TilesetAnim_Resume(4);
     }
@@ -551,9 +551,9 @@ static void EventScript_TalkToItemMerchant(void) {
 
 /// Garet's grandparents and father nod.
 static inline void ValeInteriorsShops_FamilyNods(void) {
-  Engine_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARETS_GRANDMOTHER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARETS_FATHER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARETS_GRANDMOTHER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARETS_FATHER, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_GARETS_GRANDMOTHER, ANIM_NOD);
 }
 
@@ -591,7 +591,7 @@ static void EventScript_GaretComesHome(void) {
   ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(2) / 5, PIXELS(1) / 5);
   ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(2) / 5, PIXELS(1) / 5);
   ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(2) / 5, PIXELS(1) / 5);
-  Engine_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER,
+  Import_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER,
                                  ANIM_GRANDFATHER_ASLEEP);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 808, 508);
   sleepZ = ObjectEvent_Get(LOCALID_FIRST_SLEEP_Z);
@@ -611,7 +611,7 @@ static void EventScript_GaretComesHome(void) {
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   objectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   if (objectEvent != NULL) {
     ObjectEvent_SetPosition(LOCALID_GARET, objectEvent->x.fixed,
@@ -630,8 +630,8 @@ static void EventScript_GaretComesHome(void) {
   ObjectEvent_WalkTo(LOCALID_GARET, 792, 512);
   ObjectEvent_WalkTo(LOCALID_IVAN, 824, 504);
   ObjectEvent_WalkToAndWait(LOCALID_MIA, 818, 524);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
-  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_STAND);
   FieldScript_WaitFrames(10);
   Object_SetTargetAndCallback(
       LOCALID_PARTY_LEADER, OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_GARETS_FATHER,
@@ -696,7 +696,7 @@ static void EventScript_GaretComesHome(void) {
   ObjectMotion_SetVariantCallback(LOCALID_GARETS_FATHER, 2);
   ObjectEvent_ShowEmote(LOCALID_GARETS_FATHER, EMOTE_IN_FRONT | EMOTE_WINCE,
                         20);
-  Engine_ObjectEventSetAnimation(LOCALID_GARETS_FATHER, ANIM_SHAKE_HEAD);
+  Import_ObjectEventSetAnimation(LOCALID_GARETS_FATHER, ANIM_SHAKE_HEAD);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT |
                                 LOCALID_GARETS_FATHER,
                             0, 10);
@@ -723,7 +723,7 @@ static void EventScript_GaretComesHome(void) {
   FieldScript_WaitFrames(40);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_GARETS_GRANDMOTHER,
                             0, 40);
-  Engine_ObjectEventSetAnimation(LOCALID_GARETS_MOTHER, ANIM_STILL);
+  Import_ObjectEventSetAnimation(LOCALID_GARETS_MOTHER, ANIM_STILL);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_GARETS_MOTHER, 2);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_GARETS_MOTHER, 0,
                             10);
@@ -743,7 +743,7 @@ static void EventScript_GaretComesHome(void) {
   ObjectEvent_FaceDirection(LOCALID_GARETS_GRANDMOTHER,
                             FACING_NORTH + FACING_STEP, 10);
   ObjectMotion_Launch(LOCALID_GARETS_GRANDMOTHER, 2, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_GARETS_GRANDMOTHER, ANIM_SHAKE_HEAD);
+  Import_ObjectEventSetAnimation(LOCALID_GARETS_GRANDMOTHER, ANIM_SHAKE_HEAD);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_GARETS_GRANDMOTHER,
                             0, 10);
   ObjectEvent_ShowEmote(LOCALID_GARETS_MOTHER, EMOTE_IN_FRONT | EMOTE_QUESTION,
@@ -843,9 +843,9 @@ static void EventScript_GaretComesHome(void) {
   ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
   ObjectEvent_FaceDirection(LOCALID_GARETS_GRANDMOTHER,
                             FACING_EAST + FACING_STEP, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_GARETS_MOTHER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARETS_FATHER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARETS_GRANDMOTHER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARETS_MOTHER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARETS_FATHER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARETS_GRANDMOTHER, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_GARETS_GRANDFATHER, ANIM_NOD);
   FieldScript_WaitFrames(20);
   // Garet introduces his new friends.
@@ -855,7 +855,7 @@ static void EventScript_GaretComesHome(void) {
   Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_GARET, 0, 20);
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST + FACING_STEP, 10);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 40);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
   FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 20);
@@ -902,21 +902,21 @@ static void EventScript_GaretComesHome(void) {
   ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHEAST + FACING_STEP, 40);
   ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_WEST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTH + FACING_STEP, 20);
-  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
   FieldScript_WaitFrames(20);
   // His father: enough chit-chat, relax and enjoy your stay.
   ObjectMotion_SetVarCbAndRefresh(LOCALID_GARETS_FATHER, 1);
   FieldScript_WaitFrames(20);
-  Engine_ObjectEventSetAnimation(LOCALID_GARETS_FATHER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARETS_FATHER, ANIM_NOD);
   Script_ShowMessageAndWait(LOCALID_GARETS_FATHER, 0, 20);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHWEST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTH + FACING_STEP, 40);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
   FieldScript_WaitFrames(20);
   ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(1), PIXELS(1) / 2);
@@ -963,7 +963,7 @@ static void ValeInteriorsShops_SpawnSleepZ(void) {
   }
   origin = ObjectEvent_GetById(LOCALID_GARETS_GRANDFATHER);
   if (origin != NULL) {
-    Engine_ObjectEventSetPosition(localId, origin->x.fixed, origin->z.fixed);
+    Import_ObjectEventSetPosition(localId, origin->x.fixed, origin->z.fixed);
   }
   // Restart this sprite above the origin with a small scale and 8.8 motion.
   objectEvent->scaleX = 2 * Q16_ONE / 5;

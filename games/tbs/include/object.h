@@ -126,7 +126,7 @@ struct Object {
   /// The object its action script follows or faces.
   struct Object *linkedObject;
   /// The update hook (ObjectEvent.update), which the unused
-  /// ObjectDispatch_SetUpdateValue sets as a word.
+  /// Object_SetUpdateValue sets as a word.
   void (*update)(union FieldObject *fieldObject);
 };
 

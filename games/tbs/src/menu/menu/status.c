@@ -1112,7 +1112,7 @@ void SummaryScreen_DrawStatusAilments(struct Window *window, s32 memberId,
 
 #if TBS_PATCH_1
 /// Spins for 256 loop passes (international editions only). Nothing calls it.
-void Runtime_RunBusyWaitDelay(void) {
+void Menu_BusyWait(void) {
   s32 count = 0xff;
 
   // Written with goto (MATCHING.md): as a do-while loop, the loop optimizer

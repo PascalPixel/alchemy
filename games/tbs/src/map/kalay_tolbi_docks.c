@@ -682,7 +682,7 @@ static void KalayTolbiDocks_OpenDoorAndLeave(void) {
     }
   }
   FieldScript_WaitFrames(16);
-  Engine_ScriptRequestWarp(TOLBI_DOCKS_TO_KALAY_TOLBI_DOCKS_INTERIORS);
+  Import_ScriptRequestWarp(TOLBI_DOCKS_TO_KALAY_TOLBI_DOCKS_INTERIORS);
   FieldScript_End();
 }
 
@@ -742,8 +742,8 @@ static void KalayTolbiDocks_PrepareTolbiDocks(void) {
 
   KalayTolbiDocks_UpdateCrateCells();
   if (Script_GetFlag(FLAG_COLOSSO_OVER)) {
-    ObjectGroup_ConfigureChildValue(LOCALID_SECOND_TOUR_GUIDE,
-                                    SPRITE_COLOR_RBG);
+    ObjectEvent_ConfigureSpriteColor(LOCALID_SECOND_TOUR_GUIDE,
+                                     SPRITE_COLOR_RBG);
   }
   if (gSaveBlock.warpDest == TOLBI_DOCKS_FROM_KALAY_TOLBI_DOCKS_INTERIORS) {
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
@@ -897,7 +897,7 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
   FieldScript_WaitFrames(30);
   ObjectEvent_SetSpeed(LOCALID_GARET, 0x13333, 0x9999);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
   // Garet rejoins the leader and the man wanders again from where he stands.
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (objectEvent != 0) {
@@ -977,7 +977,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   ObjectEvent_SetSpeed(LOCALID_TOUR_GUIDE, 0x26666, 0x13333);
   ObjectEvent_WalkByAndWait(LOCALID_TOUR_GUIDE, 16, 0);
   FieldScript_WaitFrames(10);
-  Engine_ObjectEventSetAnimation(LOCALID_ANGRY_YOUNG_MAN, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_ANGRY_YOUNG_MAN, ANIM_STAND);
   ObjectEvent_GetById(LOCALID_ANGRY_YOUNG_MAN)->steeringFlags |=
       OBJ_EVENT_FACES_MOTION;
   ObjectEvent_SetAttachedEffect(LOCALID_TOUR_GUIDE, ATTACHED_EFFECT_IN_FRONT |

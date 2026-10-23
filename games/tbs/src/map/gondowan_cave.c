@@ -301,7 +301,7 @@ static void EventScript_IodemRejoins(void) {
                                        leader->z.part.pixel);
   }
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_IODEM);
-  Engine_ObjectEventSetPosition(LOCALID_IODEM, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_IODEM, 0, 0);
   WAIT(20);
   GameFlag_Set(FLAG_IODEM_FOLLOWING_PARTY);
   SCRIPT_END();
@@ -363,7 +363,7 @@ static void EventScript_LeaveToWorldMapEast(void) {
     GameFlag_Set(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED);
     GameFlag_Set(0x9a4);
   }
-  Engine_ScriptRequestWarp(work->coordEvent);
+  Import_ScriptRequestWarp(work->coordEvent);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   SCRIPT_END();
@@ -507,7 +507,7 @@ static UNUSED void GondowanCave_UnusedMapCallback(void) {}
 /// Lift on the boulder in GondowanCave also takes away the
 /// invisible object event beside it.
 static void EventScript_LiftBoulder(void) {
-  Engine_ObjectEventSetPosition(LOCALID_BOULDER_GAP, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_BOULDER_GAP, 0, 0);
 }
 
 /// Sets up the map as the party enters. Gondowan Passage blocks Retreat and

@@ -59,7 +59,7 @@ void Palette_UpdatePulseBrightness(void) {
 /// background's perspective to match. Called by
 /// Battle_GatherActions, and through its far stub by
 /// Battle_CollectPartyCommands and UpdateLinkSessionCountdown. Writes the
-/// camera, gBattleViewWork's targetYaw and flag (left 1, so the camera
+/// camera, gBattleBackgroundWork's targetYaw and flag (left 1, so the camera
 /// callback leaves the background alone), gProjection and the background's
 /// affine page.
 void BattleCamera_SetCommandView(s32 verticalOffset) {
@@ -67,11 +67,12 @@ void BattleCamera_SetCommandView(s32 verticalOffset) {
   // slots add four bytes in the native EN trial (0xd8 to 0xdc).
 #ifdef UBFIX
   struct BattleCamera *camera = gCameraWork;
-  struct BattleViewWork *view = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
+  struct BattleBackgroundWork *view =
+      HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
 #else
   void **slots = (void **)&gCameraWork;
   struct BattleCamera *camera = slots[0];
-  struct BattleViewWork *view =
+  struct BattleBackgroundWork *view =
       slots[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_CAMERA];
 #endif
   struct FixedPointPosition eyeOffset;
@@ -415,13 +416,13 @@ s32 Battle_AppendLinkedActions(struct BattleAction *actions, s32 count) {
   s32 LinkBattle_SendActions(void) {
     s32 timeout;
     s32 disconnected;
-    s32 status = SerialRuntime_StartSend(state, LINK_PACKET_BYTES);
+    s32 status = Serial_StartSend(state, LINK_PACKET_BYTES);
 
     disconnected = 0;
     timeout = LINK_TRANSFER_TIMEOUT;
     if (status == -1)
       return status;
-    while (SerialRuntime_GetActiveTransfers()) {
+    while (Serial_GetActiveTransfers()) {
       WaitFrames(1);
       if (--timeout < 0)
         return -1;
@@ -433,10 +434,10 @@ s32 Battle_AppendLinkedActions(struct BattleAction *actions, s32 count) {
       }
     }
     if (allocationSize) {
-      status = SerialRuntime_StartSend(actions, allocationSize);
+      status = Serial_StartSend(actions, allocationSize);
       if (status == -1)
         return status;
-      while (SerialRuntime_GetActiveTransfers()) {
+      while (Serial_GetActiveTransfers()) {
         WaitFrames(1);
         if (--timeout < 0)
           return -1;
@@ -458,13 +459,13 @@ s32 Battle_AppendLinkedActions(struct BattleAction *actions, s32 count) {
     // (serial_runtime.h), so every read here loads it again.
     s32 timeout;
     s32 disconnected;
-    s32 status = SerialRuntime_StartReceive(state);
+    s32 status = Serial_StartReceive(state);
 
     disconnected = 0;
     timeout = LINK_TRANSFER_TIMEOUT;
     if (status == -1)
       return status;
-    while (SerialRuntime_GetActiveTransfers()) {
+    while (Serial_GetActiveTransfers()) {
       if (gSerialReceivedSize > LINK_PACKET_BYTES)
         return -1;
       WaitFrames(1);
@@ -481,10 +482,10 @@ s32 Battle_AppendLinkedActions(struct BattleAction *actions, s32 count) {
       return -1;
     result = state->count;
     if (state->count) {
-      status = SerialRuntime_StartReceive(actions + count);
+      status = Serial_StartReceive(actions + count);
       if (status == -1)
         return status;
-      while (SerialRuntime_GetActiveTransfers()) {
+      while (Serial_GetActiveTransfers()) {
         if (gSerialReceivedSize > LINK_ACTIONS_BYTES(result))
           return -1;
         WaitFrames(1);
@@ -556,7 +557,7 @@ s32 Battle_AppendLinkedActions(struct BattleAction *actions, s32 count) {
 
 fail:
   LinkBattle_ResetTransferState();
-  SerialRuntime_RemoveIrqHandlers();
+  Serial_RemoveIrqHandlers();
   Free(state);
   return -1;
 }
@@ -710,7 +711,7 @@ finish:
   // The battle view again, turned toward the party's turn.
   GameFlag_ClearFar(FLAG_CHOOSING_COMMANDS);
   BattleCamera_SetDefaultView();
-  gBattleViewWork->targetYaw = YAW_PARTY_TURN;
+  gBattleBackgroundWork->targetYaw = YAW_PARTY_TURN;
   return count;
 }
 

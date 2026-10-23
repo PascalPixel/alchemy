@@ -1,6 +1,6 @@
 #include "mem.h"
-#ifndef GUARD_VALE_H
-#define GUARD_VALE_H
+#ifndef ALCHEMY_VALE_H
+#define ALCHEMY_VALE_H
 
 #include "types.h"
 #include "task.h"

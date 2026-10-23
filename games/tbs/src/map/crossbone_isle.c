@@ -342,7 +342,7 @@ const struct MapEvent *Map_GetEvents(void) {
 /// (FLAG_CROSSBONE_ISLE_NUT_CAUGHT).
 static void EventScript_CatchNut(void) {
   SCRIPT_START();
-  Engine_ObjectEventSetPosition(LOCALID_ISLE_NUT, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_ISLE_NUT, 0, 0);
   GameFlag_Set(FLAG_CROSSBONE_ISLE_NUT_CAUGHT);
   FieldEffect_StartEffectObject22(ITEM_NUT, 3);
   PartyInventory_GiveItem(ITEM_NUT, 0);
@@ -397,7 +397,7 @@ s32 Map_Initialize(void) {
       objectEvent = ObjectEvent_Get(LOCALID_FIRST_PLANT);
       if (objectEvent != 0) {
         objectEvent->collisionFlags = 0;
-        ObjectDispatch_SelectAnimation(objectEvent, 4);
+        Object_SelectAnimation(objectEvent, 4);
         ObjectEvent_SetSpriteFlags(objectEvent, 0);
       }
       Field_SetMetatileBehaviorAt(0, PIXELS(304), PIXELS(368), MB_CLIMB);
@@ -406,7 +406,7 @@ s32 Map_Initialize(void) {
       objectEvent = ObjectEvent_Get(LOCALID_FIRST_PLANT + 1);
       if (objectEvent != 0) {
         objectEvent->collisionFlags = 0;
-        ObjectDispatch_SelectAnimation(objectEvent, 4);
+        Object_SelectAnimation(objectEvent, 4);
         ObjectEvent_SetSpriteFlags(objectEvent, 0);
       }
       Field_SetMetatileBehaviorAt(0, PIXELS(80), PIXELS(368), MB_CLIMB);
@@ -415,7 +415,7 @@ s32 Map_Initialize(void) {
       objectEvent = ObjectEvent_Get(LOCALID_FIRST_PLANT + 2);
       if (objectEvent != 0) {
         objectEvent->collisionFlags = 0;
-        ObjectDispatch_SelectAnimation(objectEvent, 4);
+        Object_SelectAnimation(objectEvent, 4);
         ObjectEvent_SetSpriteFlags(objectEvent, 0);
       }
       Field_SetMetatileBehaviorAt(0, PIXELS(96), PIXELS(336), MB_CLIMB);
@@ -424,7 +424,7 @@ s32 Map_Initialize(void) {
       objectEvent = ObjectEvent_Get(LOCALID_FIRST_PLANT + 3);
       if (objectEvent != 0) {
         objectEvent->collisionFlags = 0;
-        ObjectDispatch_SelectAnimation(objectEvent, 4);
+        Object_SelectAnimation(objectEvent, 4);
         ObjectEvent_SetSpriteFlags(objectEvent, 0);
       }
       Field_SetMetatileBehaviorAt(0, PIXELS(144), PIXELS(320), MB_CLIMB);
@@ -548,7 +548,7 @@ static void EventScript_PushPillar(void) {
 static void EventScript_OpenWestDoor(void) {
   MapGrid_PlayMetatileCopySequence(gCrossboneIsle_EntranceCells, 37, 7);
   Sound_PlaySong(SE_183);
-  Engine_ScriptRequestWarp(CORRIDOR_TO_SIDE_ROOM_WEST);
+  Import_ScriptRequestWarp(CORRIDOR_TO_SIDE_ROOM_WEST);
 }
 
 /// Walking north into a corridor room's east door in Crossbone Isle Cave (coord
@@ -606,7 +606,7 @@ static void EventScript_OpenEastDoor(void) {
   } else {
     MapGrid_PlayMetatileCopySequence(gCrossboneIsle_EntranceCells, 44, 7);
     Sound_PlaySong(SE_183);
-    Engine_ScriptRequestWarp(CORRIDOR_TO_SIDE_ROOM_EAST);
+    Import_ScriptRequestWarp(CORRIDOR_TO_SIDE_ROOM_EAST);
   }
 }
 
@@ -623,7 +623,7 @@ static void CrossboneIsle_OpenEastDoorAfterBattle(void) {
   WAIT(30);
   MapGrid_AnimateCells(gCrossboneIsle_EntranceCells, 44, 7);
   ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 3, -16);
-  Engine_ScriptRequestWarp(CORRIDOR_TO_SIDE_ROOM_EAST);
+  Import_ScriptRequestWarp(CORRIDOR_TO_SIDE_ROOM_EAST);
   SCRIPT_END();
 }
 
@@ -795,7 +795,7 @@ static void CrossboneIsle_MoveSelectedObjectEventAndLog(s32 localId,
                        selectedObjectEvent->y.fixed, fixedZ);
   }
   // Position the log on the same cell-center grid as the selected object event.
-  ObjectDispatch_SelectAnimation(selectedObjectEvent, 27);
+  Object_SelectAnimation(selectedObjectEvent, 27);
   {
     fixedX = ((logObjectEvent->x.fixed + (xOffset * PIXELS(1))) & 0xFFF00000) +
              PIXELS(8);
@@ -808,9 +808,9 @@ static void CrossboneIsle_MoveSelectedObjectEventAndLog(s32 localId,
   }
   // The log's mode depends on which side of the grid it moves toward.
   if (xOffset < 0 || zOffset < 0) {
-    ObjectDispatch_SelectAnimation(logObjectEvent, 4);
+    Object_SelectAnimation(logObjectEvent, 4);
   } else {
-    ObjectDispatch_SelectAnimation(logObjectEvent, 3);
+    Object_SelectAnimation(logObjectEvent, 3);
   }
   Sound_PlaySong(SE_226);
   Object_WaitForMove(selectedObjectEvent);
@@ -976,10 +976,10 @@ static s32 CrossboneIsle_TryHop(struct ObjectEvent *objectEvent,
     s32 movingFlags;
 
     SCRIPT_START();
-    ObjectDispatch_SelectAnimation(objectEvent, 6);
+    Object_SelectAnimation(objectEvent, 6);
     WaitFrames(6);
     Sound_PlaySong(SE_JUMP);
-    ObjectDispatch_SelectAnimation(objectEvent, 7);
+    Object_SelectAnimation(objectEvent, 7);
     objectEvent->speed = PIXELS(3);
     objectEvent->acceleration = PIXELS(2);
     objectEvent->velocityY = PIXELS(4);
@@ -997,7 +997,7 @@ static s32 CrossboneIsle_TryHop(struct ObjectEvent *objectEvent,
       ObjectMotion_SetPositionAndCommit(
           LOCALID_PARTY_LEADER, pixelCoordinates[1], pixelCoordinates[5]);
     }
-    ObjectDispatch_SelectAnimation(objectEvent, 6);
+    Object_SelectAnimation(objectEvent, 6);
     ObjectEvent_SetSpriteFlags(objectEvent, SPRITE_FLAG_SHADOW);
     *motionFlags = (u8)savedMotionFlags;
     SCRIPT_END();

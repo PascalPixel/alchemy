@@ -49,7 +49,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   djinni->timer = 0;
   WaitFrames(80);
   djinni->update = FieldEffect_ShrinkObjectAndDestroySlow;
-  ObjectDispatch_SelectAnimationFar(djinni, 3);
+  Object_SelectAnimationFar(djinni, 3);
 
   // The sparks start where the Djinni is on screen.
   position.x = djinni->x.fixed;
@@ -78,8 +78,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   WaitFrames(60);
   ObjectMotion_ArmCallback(gSaveBlock.leaderLocalId, 0x4000, 0);
   WaitFrames(20);
-  ObjectDispatch_SelectAnimationFar(
-      ObjectEvent_GetById(gSaveBlock.leaderLocalId), 28);
+  Object_SelectAnimationFar(ObjectEvent_GetById(gSaveBlock.leaderLocalId), 28);
 
   // Every spark still in use stops its fountain. The cursor walks
   // the slots' state bytes; a slot's active flag is 5 bytes after its state.
@@ -164,7 +163,7 @@ void FieldEffect_UpdateDescendingOrbitObject(union FieldObject *fieldObject) {
   y = mote->y + 0xFFFF0000;
   mote->y = y;
   if (y < leader->y + 0x140000)
-    ObjectDispatch_ReleaseFar((struct Object *)mote);
+    Object_ReleaseFar((struct Object *)mote);
 }
 
 /// Field effect sprite callback of a Venus Djinni's particles: each starts on

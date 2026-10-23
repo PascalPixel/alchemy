@@ -302,7 +302,7 @@ static void EventScript_TalkAboutGoldenStatue(void) {
     FieldScript_SetMessageId(MsgSanctumPolishedGoldStatueReturnedUs);
   }
 
-  Engine_ObjectEventSetAnimation(LOCALID_SANCTUM_MEMBER, 1);
+  Import_ObjectEventSetAnimation(LOCALID_SANCTUM_MEMBER, 1);
   ObjectEvent_LinkPair(LOCALID_SANCTUM_MEMBER, LOCALID_PARTY_LEADER, 0);
   FieldScript_WaitFrames(2);
   FieldScript_ShowMessageAndWait(LOCALID_SANCTUM_MEMBER, 0);
@@ -327,7 +327,7 @@ static void EventScript_ReadMindAboutGoldenStatue(void) {
   }
 
   ObjectMotion_EnableActionAndResetMotion(LOCALID_SANCTUM_MEMBER);
-  Engine_ObjectEventSetAnimation(LOCALID_SANCTUM_MEMBER, 1);
+  Import_ObjectEventSetAnimation(LOCALID_SANCTUM_MEMBER, 1);
   FieldScript_WaitFrames(2);
   FieldScript_ShowMessageAndWait(LOCALID_SANCTUM_MEMBER, 0);
   ObjectEvent_SetBuiltinAction(LOCALID_SANCTUM_MEMBER, 2);
@@ -389,7 +389,7 @@ static void EventScript_ReconsiderQuest(void) {
         Sound_PlaySong(MUS_086);
         Sound_WaitForSong();
         GameFlag_Set(FLAG_SANCTUM_QUEST_ACCEPTED);
-        Engine_ScriptRequestWarp(SANCTUM_TO_VALE_GATE);
+        Import_ScriptRequestWarp(SANCTUM_TO_VALE_GATE);
       }
     }
   }
@@ -517,13 +517,13 @@ static void EventScript_LeaveAfterRefusing(void) {
   struct PaletteFade *paletteWork;
 
   FieldScript_Start();
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_DORA, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_HEALER, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_WEST_HEALER, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_EAST_HEALER, 0);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, 0);
+  Import_ObjectEventSetAnimation(LOCALID_DORA, 0);
+  Import_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 0);
+  Import_ObjectEventSetAnimation(LOCALID_HEALER, 0);
+  Import_ObjectEventSetAnimation(LOCALID_WEST_HEALER, 0);
+  Import_ObjectEventSetAnimation(LOCALID_EAST_HEALER, 0);
   PaletteFade_SetTarget(PALETTE_TINT_SEPIA, PALETTES_ALL);
   PaletteFade_StartInterpolation(120);
   FieldScript_WaitFrames(180);
@@ -546,10 +546,10 @@ static void EventScript_LeaveAfterRefusing(void) {
   FieldScript_WaitFrames(60);
   if (Sanctum_ChooseRestartOption() == 0) {
     FieldScript_End();
-    Engine_ScriptRequestWarp(SANCTUM_TO_QUEST_RESTART);
+    Import_ScriptRequestWarp(SANCTUM_TO_QUEST_RESTART);
   } else {
     FieldScript_End();
-    Engine_ScriptRequestWarp(SANCTUM_TO_MAIN_MENU);
+    Import_ScriptRequestWarp(SANCTUM_TO_MAIN_MENU);
   }
 }
 
@@ -577,11 +577,11 @@ static s32 Sanctum_MatchLeaderPriority(union FieldObject *fieldObject) {
 /// Has Isaac, Garet, Dora, the Mayor and the two healers nod, waiting for the
 /// last of them.
 static inline void Sanctum_NodAll(void) {
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_DORA, 3);
-  Engine_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 3);
-  Engine_ObjectEventSetAnimation(LOCALID_WEST_HEALER, 3);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_DORA, 3);
+  Import_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 3);
+  Import_ObjectEventSetAnimation(LOCALID_WEST_HEALER, 3);
   ObjectMotion_SetAnimationAndWait(LOCALID_EAST_HEALER, 3);
 }
 
@@ -647,8 +647,8 @@ static void Sanctum_RequestQuestAcceptance(void) {
     PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
     PaletteFade_StartInterpolation(60);
     FieldScript_WaitFrames(100);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
-    Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+    Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
     FieldScript_WaitFrames(30);
     ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER,
                                 LOCALID_GARETS_GRANDFATHER, 0);
@@ -670,7 +670,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     FieldScript_SetMessageId(MsgSanctumWeHadIdeaTrueSanctum);
     Script_ShowMessage(LOCALID_GARETS_GRANDFATHER, 0);
     FieldScript_WaitFrames(10);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
     ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
     FieldScript_WaitFrames(30);
     ObjectMotion_SetAnimationAndWait(LOCALID_GARETS_GRANDFATHER, 3);
@@ -716,11 +716,11 @@ static void Sanctum_RequestQuestAcceptance(void) {
       Script_ShowMessage(LOCALID_WEST_HEALER, 0);
     }
     FieldScript_WaitFrames(20);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-    Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-    Engine_ObjectEventSetAnimation(LOCALID_DORA, 3);
-    Engine_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 3);
-    Engine_ObjectEventSetAnimation(LOCALID_WEST_HEALER, 3);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_DORA, 3);
+    Import_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 3);
+    Import_ObjectEventSetAnimation(LOCALID_WEST_HEALER, 3);
     ObjectMotion_SetAnimationAndWait(LOCALID_EAST_HEALER, 3);
     FieldScript_WaitFrames(30);
     ObjectEvent_ShowEmote(LOCALID_GARETS_GRANDFATHER,
@@ -840,8 +840,8 @@ static void Sanctum_RequestQuestAcceptance(void) {
     FieldScript_WaitFrames(20);
     FieldScript_WaitFrames(40);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_HEALER, 2);
-    Engine_ObjectEventSetAnimation(LOCALID_HEALER, 0);
-    ObjectEvent_SetChildValue(LOCALID_HEALER, 0x100);
+    Import_ObjectEventSetAnimation(LOCALID_HEALER, 0);
+    ObjectEvent_SetSpriteColorById(LOCALID_HEALER, 0x100);
     Sanctum_ShowHealerAfterimage();
     Script_PlaySong(SE_196);
     Sanctum_SpawnOrbitingEffect(LOCALID_HEALER, 0x1200);
@@ -858,11 +858,11 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Sanctum_SpawnOrbitingEffect(LOCALID_HEALER, 0x1200);
     FieldScript_WaitFrames(96);
     FieldScript_WaitFrames(32);
-    ObjectEvent_SetChildValue(LOCALID_HEALER, 0);
+    ObjectEvent_SetSpriteColorById(LOCALID_HEALER, 0);
     FieldScript_WaitFrames(30);
     // Return to the gathering and finish the departure conversation.
     Sanctum_HideHealerAfterimage();
-    Engine_ObjectEventSetAnimation(LOCALID_HEALER, 1);
+    Import_ObjectEventSetAnimation(LOCALID_HEALER, 1);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_HEALER, 2);
     FieldScript_WaitFrames(20);
     Script_ShowMessage(LOCALID_HEALER, 0);
@@ -896,26 +896,26 @@ static void Sanctum_RequestQuestAcceptance(void) {
     FieldScript_WaitFrames(30);
     ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_GARET, 0);
     FieldScript_WaitFrames(20);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-    Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
     ObjectEvent_LinkPair(LOCALID_WEST_HEALER, LOCALID_EAST_HEALER, 0);
     FieldScript_WaitFrames(20);
-    Engine_ObjectEventSetAnimation(LOCALID_WEST_HEALER, 3);
-    Engine_ObjectEventSetAnimation(LOCALID_EAST_HEALER, 3);
+    Import_ObjectEventSetAnimation(LOCALID_WEST_HEALER, 3);
+    Import_ObjectEventSetAnimation(LOCALID_EAST_HEALER, 3);
     ObjectMotion_WaitForAnimationChange(LOCALID_EAST_HEALER);
     FieldScript_WaitFrames(30);
     ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_DORA, 0);
     ObjectEvent_LinkPair(LOCALID_GARET, LOCALID_GARETS_GRANDFATHER, 0);
     FieldScript_WaitFrames(20);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-    Engine_ObjectEventSetAnimation(LOCALID_DORA, 3);
-    Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-    Engine_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 3);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_DORA, 3);
+    Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 3);
     ObjectMotion_WaitForAnimationChange(LOCALID_GARETS_GRANDFATHER);
     FieldScript_WaitFrames(60);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_HEALER, 2);
-    Engine_ObjectEventSetAnimation(LOCALID_HEALER, 0);
-    ObjectEvent_SetChildValue(LOCALID_HEALER, 0x100);
+    Import_ObjectEventSetAnimation(LOCALID_HEALER, 0);
+    ObjectEvent_SetSpriteColorById(LOCALID_HEALER, 0x100);
     Sanctum_ShowHealerAfterimage();
     Script_PlaySong(SE_196);
     Sanctum_SpawnOrbitingEffect(LOCALID_HEALER, 0x1200);
@@ -943,10 +943,10 @@ static void Sanctum_RequestQuestAcceptance(void) {
     FieldScript_WaitFrames(32);
     Sanctum_SpawnOrbitingEffect(LOCALID_HEALER, 0x1200);
     FieldScript_WaitFrames(128);
-    ObjectEvent_SetChildValue(LOCALID_HEALER, 0);
+    ObjectEvent_SetSpriteColorById(LOCALID_HEALER, 0);
     FieldScript_WaitFrames(30);
     Sanctum_HideHealerAfterimage();
-    Engine_ObjectEventSetAnimation(LOCALID_HEALER, 1);
+    Import_ObjectEventSetAnimation(LOCALID_HEALER, 1);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_HEALER, 2);
     FieldScript_WaitFrames(30);
     ObjectEvent_ShowEmote(LOCALID_GARETS_GRANDFATHER,
@@ -1000,12 +1000,12 @@ static void Sanctum_RequestQuestAcceptance(void) {
     FieldScript_WaitFrames(20);
     Script_ShowMessage(LOCALID_HEALER, 0);
     FieldScript_WaitFrames(20);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-    Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-    Engine_ObjectEventSetAnimation(LOCALID_DORA, 3);
-    Engine_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 3);
-    Engine_ObjectEventSetAnimation(LOCALID_WEST_HEALER, 3);
-    Engine_ObjectEventSetAnimation(LOCALID_EAST_HEALER, 3);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_DORA, 3);
+    Import_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 3);
+    Import_ObjectEventSetAnimation(LOCALID_WEST_HEALER, 3);
+    Import_ObjectEventSetAnimation(LOCALID_EAST_HEALER, 3);
     ObjectMotion_WaitForAnimationChange(LOCALID_EAST_HEALER);
     FieldScript_WaitFrames(20);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_GARETS_GRANDFATHER, 1);
@@ -1170,7 +1170,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Script_PlaySong(MUS_086);
     Sound_WaitForSong();
     GameFlag_Set(FLAG_SANCTUM_QUEST_ACCEPTED);
-    Engine_ScriptRequestWarp(SANCTUM_TO_VALE_GATE);
+    Import_ScriptRequestWarp(SANCTUM_TO_VALE_GATE);
   } else {
     FieldScript_WaitFrames(30);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_GARETS_GRANDFATHER, 1);
@@ -1220,12 +1220,12 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   ObjectEvent_FaceObjectEvent(LOCALID_EAST_HEALER, LOCALID_PARTY_LEADER, 0);
   ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_DORA, 0);
   FieldScript_WaitFrames(10);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_DORA, 3);
   FieldScript_WaitFrames(60);
-  Engine_ObjectEventSetAnimation(LOCALID_HEALER, 3);
-  Engine_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 3);
-  Engine_ObjectEventSetAnimation(LOCALID_WEST_HEALER, 3);
+  Import_ObjectEventSetAnimation(LOCALID_HEALER, 3);
+  Import_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 3);
+  Import_ObjectEventSetAnimation(LOCALID_WEST_HEALER, 3);
   ObjectMotion_SetAnimationAndWait(LOCALID_EAST_HEALER, 3);
   FieldScript_WaitFrames(50);
   ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_HEALER, 0);
@@ -1280,7 +1280,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Script_PlaySong(SE_STOP_SLOT3);
   FieldScript_WaitFrames(30);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_HEALER, 2);
-  Engine_ObjectEventSetAnimation(LOCALID_HEALER, 0);
+  Import_ObjectEventSetAnimation(LOCALID_HEALER, 0);
   Sanctum_ShowHealerAfterimage();
   ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_WISE_ONE, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_WISE_ONE, 0);
@@ -1300,7 +1300,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   FieldScript_WaitFrames(40);
   Script_ShowMessage(LOCALID_WISE_ONE, 0);
   FieldScript_WaitFrames(60);
-  ObjectGroup_ConfigureChildValue(LOCALID_WISE_ONE, 0x100);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_WISE_ONE, 0x100);
   Script_PlaySong(SONG_FADE_OUT_BGM);
   Script_PlaySong(SE_308);
   // Shrink the Wise One amid sparks before restoring the room.
@@ -1313,7 +1313,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
     wiseOne->scaleY += -Q16_ONE / 100;
   }
   Script_PlaySong(SE_STOP_SLOT3);
-  ObjectEvent_SetChildValue(LOCALID_WISE_ONE, 0);
+  ObjectEvent_SetSpriteColorById(LOCALID_WISE_ONE, 0);
   ObjectEvent_SetPosition(LOCALID_WISE_ONE, 0, 0);
   FieldScript_WaitFrames(40);
   FieldCamera_MoveTo(PIXELS(192), -1, PIXELS(160), 1);
@@ -1322,7 +1322,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   PaletteFade_StartInterpolation(60);
   FieldScript_WaitFrames(120);
   Sanctum_HideHealerAfterimage();
-  Engine_ObjectEventSetAnimation(LOCALID_HEALER, 1);
+  Import_ObjectEventSetAnimation(LOCALID_HEALER, 1);
   Script_PlaySong(MUS_002);
   FieldScript_WaitFrames(60);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_HEALER, 2);
@@ -1347,7 +1347,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   FieldScript_WaitFrames(20);
   ObjectMotion_SetAnimationAndWait(LOCALID_HEALER, 3);
   FieldScript_WaitFrames(20);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
   FieldScript_WaitFrames(20);
   ObjectEvent_FaceObjectEvent(LOCALID_HEALER, LOCALID_PARTY_LEADER, 0);
@@ -1515,7 +1515,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   FieldScript_WaitFrames(20);
   Script_ShowMessage(LOCALID_EAST_HEALER, 0);
   FieldScript_WaitFrames(20);
-  Engine_ObjectEventSetAnimation(LOCALID_WEST_HEALER, 3);
+  Import_ObjectEventSetAnimation(LOCALID_WEST_HEALER, 3);
   ObjectMotion_SetAnimationAndWait(LOCALID_EAST_HEALER, 3);
   FieldScript_WaitFrames(20);
   ObjectEvent_WalkTo(LOCALID_WEST_HEALER, 200, 0x110);
@@ -1534,7 +1534,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   FieldScript_WaitFrames(20);
   Script_ShowMessage(LOCALID_GARETS_GRANDFATHER, 0);
   FieldScript_WaitFrames(30);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(LOCALID_DORA, 0);
@@ -1584,9 +1584,9 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   FieldScript_WaitFrames(20);
   ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_DORA, 0);
   FieldScript_WaitFrames(30);
-  Engine_ObjectEventSetAnimation(LOCALID_DORA, 3);
+  Import_ObjectEventSetAnimation(LOCALID_DORA, 3);
   FieldScript_WaitFrames(30);
-  Engine_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 3);
+  Import_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 3);
 }
 
 /// Copies the healer into the afterimage object event.
@@ -1598,10 +1598,10 @@ static void Sanctum_ShowHealerAfterimage(void) {
 
   objectEvent = ObjectEvent_GetById(LOCALID_HEALER);
   if (objectEvent != 0) {
-    Engine_ObjectEventSetPosition(LOCALID_HEALER_AFTERIMAGE,
+    Import_ObjectEventSetPosition(LOCALID_HEALER_AFTERIMAGE,
                                   objectEvent->x.fixed, objectEvent->z.fixed);
   }
-  Engine_ObjectEventSetAnimation(LOCALID_HEALER_AFTERIMAGE, 0);
+  Import_ObjectEventSetAnimation(LOCALID_HEALER_AFTERIMAGE, 0);
   afterimage = ObjectEvent_GetById(LOCALID_HEALER_AFTERIMAGE);
   objectEvent = ObjectEvent_GetById(LOCALID_HEALER);
   afterimage->facing = objectEvent->facing;
@@ -1627,7 +1627,7 @@ static void Sanctum_ShowHealerAfterimage(void) {
 static void Sanctum_HideHealerAfterimage(void) {
   struct ObjectEvent *state = ObjectEvent_GetById(LOCALID_HEALER_AFTERIMAGE);
   state->update = 0;
-  Engine_ObjectEventSetPosition(LOCALID_HEALER_AFTERIMAGE, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_HEALER_AFTERIMAGE, 0, 0);
 }
 
 /// Cycles the afterimage through four offsets from the healer.
@@ -1731,13 +1731,13 @@ static s32 Sanctum_ChooseRestartOption(void) {
   s32 text;
   s32 choice;
 
-  Engine_ObjectEventSetPosition(LOCALID_HEALER, 0, 0);
-  Engine_ObjectEventSetPosition(LOCALID_WEST_HEALER, 0, 0);
-  Engine_ObjectEventSetPosition(LOCALID_EAST_HEALER, 0, 0);
-  Engine_ObjectEventSetPosition(LOCALID_GARET, 0, 0);
-  Engine_ObjectEventSetPosition(LOCALID_DORA, 0, 0);
-  Engine_ObjectEventSetPosition(LOCALID_GARETS_GRANDFATHER, 0, 0);
-  Engine_ObjectEventSetPosition(LOCALID_PARTY_LEADER, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_HEALER, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_WEST_HEALER, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_EAST_HEALER, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_GARET, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_DORA, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_GARETS_GRANDFATHER, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_PARTY_LEADER, 0, 0);
   PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   PaletteFade_StartInterpolation(1);
   FieldScript_WaitFrames(1);
@@ -1789,7 +1789,7 @@ static void Sanctum_ReenactSolSanctum(void) {
   FieldScript_WaitFrames(1);
   ObjectEvent_GetById(LOCALID_GARET)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags |=
       OBJ_EVENT_FACES_MOTION;
   ObjectEvent_GetById(LOCALID_GARET)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
@@ -1812,23 +1812,23 @@ static void Sanctum_ReenactSolSanctum(void) {
   FieldScript_WaitFrames(10);
   ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
   FieldScript_WaitFrames(15);
-  Engine_ObjectEventSetAnimation(LOCALID_DORA, 3);
-  Engine_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 3);
-  Engine_ObjectEventSetAnimation(LOCALID_HEALER, 3);
-  Engine_ObjectEventSetAnimation(LOCALID_WEST_HEALER, 3);
+  Import_ObjectEventSetAnimation(LOCALID_DORA, 3);
+  Import_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 3);
+  Import_ObjectEventSetAnimation(LOCALID_HEALER, 3);
+  Import_ObjectEventSetAnimation(LOCALID_WEST_HEALER, 3);
   ObjectMotion_SetAnimationAndWait(LOCALID_EAST_HEALER, 3);
   FieldScript_WaitFrames(20);
   ObjectMotion_SetAngleToward(LOCALID_PARTY_LEADER, LOCALID_GARETS_GRANDFATHER,
                               0);
   ObjectMotion_SetAngleToward(LOCALID_GARET, LOCALID_GARETS_GRANDFATHER, 0);
   FieldScript_WaitFrames(10);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
   FieldScript_WaitFrames(20);
   ObjectMotion_SetAngleToward(LOCALID_PARTY_LEADER, LOCALID_DORA, 0);
   ObjectMotion_SetAngleToward(LOCALID_GARET, LOCALID_DORA, 0);
   FieldScript_WaitFrames(10);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
   FieldScript_WaitFrames(20);
   ObjectMotion_ArmCallback(LOCALID_PARTY_LEADER, FACING_EAST, 0);
@@ -1909,7 +1909,7 @@ static void Sanctum_ReenactSolSanctum(void) {
   FieldEffect_SpawnLinked(LOCALID_HEALER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                           0);
   FieldScript_WaitFrames(60);
-  Engine_ObjectEventSetAnimation(LOCALID_HEALER, 0);
+  Import_ObjectEventSetAnimation(LOCALID_HEALER, 0);
   FieldEffect_SpawnLinked(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE,
                           0);
   FieldScript_WaitFrames(60);
@@ -1938,7 +1938,7 @@ static void Sanctum_ReenactSolSanctum(void) {
   ObjectMotion_SetAngleToward(LOCALID_PARTY_LEADER, LOCALID_DORA, 0);
   ObjectMotion_SetAngleToward(LOCALID_GARET, LOCALID_GARETS_GRANDFATHER, 0);
   FieldScript_WaitFrames(10);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_SHAKE_HEAD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_SHAKE_HEAD);
   ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(10);
   ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 1);
@@ -2001,21 +2001,21 @@ static void Sanctum_ReenactSolSanctum(void) {
   ObjectMotion_SetAngleToward(LOCALID_PARTY_LEADER, LOCALID_DORA, 0);
   ObjectMotion_SetAngleToward(LOCALID_GARET, LOCALID_GARETS_GRANDFATHER, 0);
   FieldScript_WaitFrames(20);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
   FieldScript_WaitFrames(10);
-  Engine_ObjectEventSetAnimation(LOCALID_DORA, 3);
+  Import_ObjectEventSetAnimation(LOCALID_DORA, 3);
   ObjectMotion_SetAnimationAndWait(LOCALID_GARETS_GRANDFATHER, 3);
   FieldScript_WaitFrames(30);
   ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_GARET, 0);
   FieldScript_WaitFrames(20);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
   FieldScript_WaitFrames(10);
   ObjectMotion_ArmCallback(LOCALID_GARET, FACING_EAST, 0);
   FieldScript_WaitFrames(10);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
   FieldScript_WaitFrames(60);
 }
 
@@ -2093,20 +2093,20 @@ static void Sanctum_SpawnObjectEventSpark(s32 id) {
   objectEvent = ObjectEvent_GetById(id);
   if (objectEvent == 0)
     return;
-  randomOffset = Math_RemainderUnsigned(Engine_RandomNext(), 20);
+  randomOffset = Math_RemainderUnsigned(Import_RandomNext(), 20);
   x = objectEvent->x.fixed;
   x += randomOffset << 16;
   x += -PIXELS(10);
   spark = ObjectEvent_Create(
       0x11e, x,
-      objectEvent->y.fixed + ((Engine_RandomNext() & 15) << 16) + -PIXELS(8),
+      objectEvent->y.fixed + ((Import_RandomNext() & 15) << 16) + -PIXELS(8),
       objectEvent->z.fixed);
   if (spark == 0)
     return;
   sprite = spark->sprite;
   spark->motionFlags = 0;
-  spark->timer = Math_RemainderUnsigned(Engine_RandomNext(), 10) + 5;
-  spark->work = Math_RemainderUnsigned(Engine_RandomNext(), 60) + 30;
+  spark->timer = Math_RemainderUnsigned(Import_RandomNext(), 10) + 5;
+  spark->work = Math_RemainderUnsigned(Import_RandomNext(), 60) + 30;
   spark->update = Sanctum_UpdateRisingSpark;
   sprite->flags = 0;
   sprite->image.priority = objectEvent->sprite->image.priority;

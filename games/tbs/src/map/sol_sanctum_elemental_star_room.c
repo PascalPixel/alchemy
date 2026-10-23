@@ -524,13 +524,13 @@ static void SolSanctumElementalStarRoom_RevealSaturosAndMenardi(void) {
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
                         0);
   ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_SHAKE_HEAD);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(6) / 5, PIXELS(3) / 5);
   ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 265, 453);
   ObjectEvent_WalkToAndWait(LOCALID_GARET, 282, 469);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHEAST, 0);
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHEAST, 40);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER,
@@ -563,10 +563,10 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   u8 zero;
 
   Sound_PlaySong(MUS_061);
-  Engine_ObjectEventSetAnimation(LOCALID_SATUROS, ANIM_SHAKE_HEAD);
+  Import_ObjectEventSetAnimation(LOCALID_SATUROS, ANIM_SHAKE_HEAD);
   FieldScript_SetMessageId(MsgSolSanctumLooksLikeTheyveSpottedUs);
   SolSanctumElementalStarRoom_ShowMessageAndWait(LOCALID_SATUROS, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_MENARDI, ANIM_SHAKE_HEAD);
+  Import_ObjectEventSetAnimation(LOCALID_MENARDI, ANIM_SHAKE_HEAD);
   SolSanctumElementalStarRoom_ShowMessageAndWait(LOCALID_MENARDI, 30);
   ObjectEvent_ShowEmote(LOCALID_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   ObjectMotion_Launch(LOCALID_KRADEN, 4, 10);
@@ -585,7 +585,7 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   ObjectEvent_ShowEmote(LOCALID_JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   SolSanctumElementalStarRoom_ShowMessageAndWait(LOCALID_JENNA, 20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 2);
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_SHAKE_HEAD);
+  Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_SHAKE_HEAD);
   SolSanctumElementalStarRoom_ShowMessageAndWait(LOCALID_KRADEN, 10);
   felix = ObjectEvent_GetById(LOCALID_FELIX_MASKED);
   shadow = ObjectEvent_GetById(LOCALID_PLATFORM_SHADOW);
@@ -596,7 +596,7 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   felix->scaleY = Q16_ONE / 10;
   shadow->scaleX = Q16_ONE / 10;
   shadow->scaleY = Q16_ONE / 10;
-  ObjectEvent_SetChildValue(LOCALID_FELIX_MASKED, 0x100);
+  ObjectEvent_SetSpriteColorById(LOCALID_FELIX_MASKED, 0x100);
   ObjectEvent_SetPosition(LOCALID_FELIX_MASKED, PIXELS(471), PIXELS(290));
   motionFlags = &felix->motionFlags;
   *motionFlags = zero;
@@ -612,7 +612,7 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
   FieldCamera_MoveTo(PIXELS(471), -1, PIXELS(309), 1);
   FieldCamera_WaitForArrival();
-  Engine_ObjectEventSetPosition(LOCALID_PLATFORM_SHADOW, PIXELS(471),
+  Import_ObjectEventSetPosition(LOCALID_PLATFORM_SHADOW, PIXELS(471),
                                 PIXELS(290));
   Script_PlaySong(SE_190);
   ObjectMotion_SetActionVariant(LOCALID_FELIX_MASKED, 2);
@@ -633,7 +633,7 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   *motionFlags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
   FieldScript_WaitFrames(30);
   *spriteFlags = 1;
-  Engine_ObjectEventSetPosition(LOCALID_PLATFORM_SHADOW, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_PLATFORM_SHADOW, 0, 0);
   ObjectMotion_SetActionVariant(LOCALID_FELIX_MASKED, 1);
   {
     u8 *flags = &ObjectEvent_GetById(LOCALID_FELIX_MASKED)->priorityFlags;
@@ -645,7 +645,7 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
     i |= *flags;
     *flags = i;
   }
-  ObjectGroup_ConfigureChildValue(LOCALID_FELIX_MASKED, 0);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_FELIX_MASKED, 0);
   ObjectEvent_SetSpeed(LOCALID_FELIX_MASKED, PIXELS(1) / 2, PIXELS(1) / 4);
   ObjectEvent_WalkToAndWait(LOCALID_FELIX_MASKED, 471, 306);
   FieldScript_WaitFrames(40);
@@ -713,7 +713,7 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   SolSanctumElementalStarRoom_ShowMessageAndWait(LOCALID_SATUROS, 20);
   ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_SOUTHEAST, 0);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTHEAST + FACING_STEP, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_SHAKE_HEAD);
+  Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_SHAKE_HEAD);
   SolSanctumElementalStarRoom_ShowMessageAndWait(
       SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_ABOVE | LOCALID_KRADEN, 40);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_MENARDI, 1);
@@ -745,7 +745,7 @@ static void SolSanctumElementalStarRoom_OfferHostageGuarantee(void) {
   FieldScript_WaitFrames(40);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_SATUROS, 1);
   ObjectEvent_FaceDirection(LOCALID_SATUROS, FACING_WEST, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_SATUROS, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_SATUROS, ANIM_NOD);
   SolSanctumElementalStarRoom_ShowMessageAndWait(LOCALID_SATUROS, 10);
   ObjectEvent_FaceDirection(LOCALID_MENARDI, FACING_EAST, 10);
   ObjectMotion_SetAnimationAndWait(LOCALID_MENARDI, ANIM_NOD);
@@ -875,7 +875,7 @@ static void SolSanctumElementalStarRoom_UnmaskFelix(void) {
   FieldScript_WaitFrames(10);
   SolSanctumElementalStarRoom_ShowMessageAndWait(LOCALID_SATUROS, 10);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_MENARDI, 1);
-  Engine_ObjectEventSetAnimation(LOCALID_MENARDI, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_MENARDI, ANIM_NOD);
   SolSanctumElementalStarRoom_ShowMessageAndWait(LOCALID_MENARDI, 80);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_FELIX, 2);
   SolSanctumElementalStarRoom_ShowMessageAndWait(LOCALID_FELIX, 40);
@@ -894,7 +894,7 @@ static void SolSanctumElementalStarRoom_UnmaskFelix(void) {
   FieldScript_WaitFrames(4);
   SolSanctumElementalStarRoom_ShowMessageAndWait(LOCALID_JENNA, 20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_SATUROS, 1);
-  Engine_ObjectEventSetAnimation(LOCALID_SATUROS, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_SATUROS, ANIM_NOD);
   SolSanctumElementalStarRoom_ShowMessageAndWait(LOCALID_SATUROS, 10);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_MENARDI, 1);
   SolSanctumElementalStarRoom_ShowMessageAndWait(LOCALID_MENARDI, 10);
@@ -924,7 +924,7 @@ static void SolSanctumElementalStarRoom_UnmaskFelix(void) {
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 244, 478);
   ObjectEvent_WalkToAndWait(LOCALID_GARET, 260, 490);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER,
                             FACING_SOUTHEAST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHWEST + FACING_STEP, 20);
@@ -1002,21 +1002,21 @@ static void SolSanctumElementalStarRoom_UnmaskFelix(void) {
   objectEvent->acceleration = PIXELS(2);
   Script_PlaySong(SE_HIGH_JUMP);
   objectEvent->velocityY = PIXELS(6);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, 7);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, 7);
   ObjectEvent_MoveToAndWait(LOCALID_GARET, 312, 470);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
   FieldScript_WaitFrames(30);
   Script_PlaySong(SE_HIGH_JUMP);
   objectEvent->velocityY = PIXELS(6);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, 7);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, 7);
   ObjectEvent_MoveToAndWait(LOCALID_GARET, 342, 470);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
   FieldScript_WaitFrames(30);
   Script_PlaySong(SE_HIGH_JUMP);
   objectEvent->velocityY = PIXELS(6);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, 7);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, 7);
   ObjectEvent_MoveToAndWait(LOCALID_GARET, 376, 470);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
 }
 
 /// Alex appears, takes the three stars from Garet and demands the last one;
@@ -1032,7 +1032,7 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
   alex = ObjectEvent_Get(LOCALID_ALEX);
   ObjectEvent_SetSpriteFlags(alex, 0);
-  ObjectEvent_SetChildValue(LOCALID_ALEX, 15);
+  ObjectEvent_SetSpriteColorById(LOCALID_ALEX, 15);
   ObjectEvent_SetPosition(LOCALID_ALEX, PIXELS(392), PIXELS(454));
   SolSanctumElementalStarRoom_AnimateAlexReappearing();
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH + FACING_STEP, 10);
@@ -1077,7 +1077,7 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   ObjectMotion_SetAnimationAndWait(LOCALID_ALEX, ANIM_NOD);
   FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_NORTH, 20);
-  ObjectEvent_SetChildValue(LOCALID_ALEX, 0x100);
+  ObjectEvent_SetSpriteColorById(LOCALID_ALEX, 0x100);
   alex = ObjectEvent_Get(LOCALID_ALEX);
   ObjectEvent_SetSpriteFlags(alex, 0);
   objectEvent = ObjectEvent_GetById(LOCALID_ALEX);
@@ -1144,7 +1144,7 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   ObjectEvent_SetSpeed(LOCALID_ALEX, PIXELS(12) / 5, PIXELS(6) / 5);
   Object_SetPosition(objectEvent, PIXELS(460), 0, PIXELS(360));
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_ALEX);
-  ObjectEvent_SetChildValue(LOCALID_ALEX, 0);
+  ObjectEvent_SetSpriteColorById(LOCALID_ALEX, 0);
   alex = ObjectEvent_Get(LOCALID_ALEX);
   ObjectEvent_SetSpriteFlags(alex, SPRITE_FLAG_SHADOW);
   FieldScript_WaitFrames(30);
@@ -1160,21 +1160,21 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   objectEvent->acceleration = PIXELS(2);
   Script_PlaySong(SE_HIGH_JUMP);
   objectEvent->velocityY = PIXELS(6);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, 7);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, 7);
   ObjectEvent_MoveToAndWait(LOCALID_GARET, 342, 470);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
   FieldScript_WaitFrames(30);
   Script_PlaySong(SE_HIGH_JUMP);
   objectEvent->velocityY = PIXELS(6);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, 7);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, 7);
   ObjectEvent_MoveToAndWait(LOCALID_GARET, 312, 470);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
   FieldScript_WaitFrames(30);
   Script_PlaySong(SE_HIGH_JUMP);
   objectEvent->velocityY = PIXELS(6);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, 7);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, 7);
   ObjectEvent_MoveToAndWait(LOCALID_GARET, 278, 480);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
   FieldScript_WaitFrames(30);
   FieldCamera_SetSpeed(PIXELS(1) / 2, PIXELS(1) / 16);
   FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 1);
@@ -1186,7 +1186,7 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
   {
     struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
 
@@ -1330,7 +1330,7 @@ static void EventScript_TakeMarsStar(void) {
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Engine_ScriptRequestWarp(
+  Import_ScriptRequestWarp(
       SOL_SANCTUM_ELEMENTAL_STAR_ROOM_TO_SOL_SANCTUM_ERUPTION);
 }
 
@@ -1468,7 +1468,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   *leaderSprite = 0;
   rising->scaleX = Q16_ONE / 10;
   rising->scaleY = Q16_ONE / 10;
-  ObjectEvent_SetChildValue(LOCALID_PARTY_LEADER, 0x100);
+  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, 0x100);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(471), PIXELS(290));
   leaderMotion = &rising->motionFlags;
   *leaderMotion = 0;
@@ -1507,13 +1507,13 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
     objectEvent->priorityFlags = flags;
   }
   // Finish Isaac's arrival and let the companions inspect the room.
-  ObjectEvent_SetChildValue(LOCALID_PARTY_LEADER, 0);
+  ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, 0);
   {
     s32 shown = 1;
 
     *leaderSprite = shown;
   }
-  Engine_ObjectEventSetPosition(LOCALID_PLATFORM_SHADOW, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_PLATFORM_SHADOW, 0, 0);
   FieldCamera_WaitForArrival();
   FieldScript_WaitFrames(20);
   FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 1);
@@ -1535,7 +1535,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   ObjectEvent_SetSpeed(LOCALID_JENNA, PIXELS(1) / 2, PIXELS(1) / 4);
   ObjectEvent_WalkTo(LOCALID_JENNA, 453, 302);
   ObjectEvent_WalkToAndWait(LOCALID_GARET, 489, 302);
-  Engine_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_STAND);
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_SOUTHWEST, 10);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER,
@@ -1563,11 +1563,11 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   ObjectEvent_WalkTo(LOCALID_JENNA, 431, 338);
   ObjectEvent_WalkTo(LOCALID_GARET, 511, 338);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_JENNA);
-  Engine_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_STAND);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(3) / 10, PIXELS(3) / 20);
   ObjectEvent_SetSpeed(LOCALID_JENNA, PIXELS(3) / 10, PIXELS(3) / 20);
   ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(3) / 10, PIXELS(3) / 20);
@@ -1601,7 +1601,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   rising->scaleY = Q16_ONE / 10;
   shadow->scaleX = Q16_ONE / 10;
   shadow->scaleY = Q16_ONE / 10;
-  ObjectEvent_SetChildValue(LOCALID_KRADEN, 0x100);
+  ObjectEvent_SetSpriteColorById(LOCALID_KRADEN, 0x100);
   ObjectEvent_SetPosition(LOCALID_KRADEN, PIXELS(471), PIXELS(290));
   kradenMotion = &rising->motionFlags;
   *kradenMotion = zero;
@@ -1643,7 +1643,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
     s32 flags = 1 | objectEvent->priorityFlags;
     objectEvent->priorityFlags = flags;
   }
-  ObjectEvent_SetChildValue(LOCALID_KRADEN, 0);
+  ObjectEvent_SetSpriteColorById(LOCALID_KRADEN, 0);
   {
     s32 shown = 1;
 
@@ -1707,8 +1707,8 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   ObjectEvent_ShowEmote(LOCALID_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIM_SHAKE_HEAD);
   SolSanctumElementalStarRoom_ShowMessageAndWait(kradenSpeaker, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(20);
   ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIM_NOD);
@@ -1852,7 +1852,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   ObjectEvent_ShowEmote(LOCALID_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_NORTH, 20);
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_SHAKE_HEAD);
+  Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_SHAKE_HEAD);
   Script_OpenMessage(SPEAKER_WINDOW_BELOW | LOCALID_KRADEN, 0);
   if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 1) {
     gFieldWork->message++;
@@ -1892,7 +1892,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   SolSanctumElementalStarRoom_ShowMessageAndWait(
       SPEAKER_WINDOW_BELOW | LOCALID_KRADEN, 40);
   FieldScript_SetMessageId(MsgSolSanctumTheStarsHaveEnormousPower);
-  Engine_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_SHAKE_HEAD);
+  Import_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_SHAKE_HEAD);
   SolSanctumElementalStarRoom_ShowMessageAndWait(LOCALID_JENNA, 10);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_NORTHWEST + FACING_STEP, 10);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 1);
@@ -2091,7 +2091,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIM_NOD);
   FieldScript_WaitFrames(10);
   SolSanctumElementalStarRoom_ShowMessageAndWait(kradenMessageSpeaker, 30);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 0);
@@ -2101,7 +2101,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(10);
   ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(1), PIXELS(1) / 2);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
     ObjectEvent_SetDestination(LOCALID_GARET, leader->x.part.pixel,
@@ -2225,7 +2225,7 @@ static s32 SolSanctumElementalStarRoom_PresentStar(s32 item, s32 x, s32 y,
   Inventory_Discard(member, slot);
   Inventory_AddItem(member, item);
   ObjectEvent_Release(objectEvent);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   return member;
 }
 
@@ -2279,13 +2279,13 @@ static void SolSanctumElementalStarRoom_AnimateAlexReappearing(void) {
   for (frame = 0; frame <= 31; frame++) {
     FieldScript_WaitFrames(1);
     if (!(frame & 1)) {
-      xOffset = (((u32)Engine_RandomNext() * 24) >> 16) << 16;
+      xOffset = (((u32)Import_RandomNext() * 24) >> 16) << 16;
       x = alex->x.fixed;
       x += xOffset;
       x += -PIXELS(12);
       FieldEffect_Spawn(x,
                         alex->y.fixed +
-                            ((((u32)Engine_RandomNext() << 5) >> 16) << 16) +
+                            ((((u32)Import_RandomNext() << 5) >> 16) << 16) +
                             PIXELS(32),
                         alex->z.fixed, 0, -PIXELS(4), 0,
                         EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
@@ -2293,9 +2293,9 @@ static void SolSanctumElementalStarRoom_AnimateAlexReappearing(void) {
                         options);
     }
     if (frame == 20)
-      ObjectGroup_ConfigureChildValue(LOCALID_ALEX, 0x100);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_ALEX, 0x100);
   }
-  ObjectGroup_ConfigureChildValue(LOCALID_ALEX, 0);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_ALEX, 0);
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_ALEX),
                              SPRITE_FLAG_SHADOW);
 }

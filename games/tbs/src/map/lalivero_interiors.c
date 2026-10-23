@@ -398,7 +398,7 @@ static void EventScript_LeaveBuilding(void) {
   struct FieldWork *work = gFieldWork;
   s16 *trigger = (s16 *)&work->coordEvent;
 
-  Engine_ScriptRequestWarp(*trigger);
+  Import_ScriptRequestWarp(*trigger);
   Sound_PlaySong(SE_MAP_EXIT);
 }
 
@@ -694,9 +694,9 @@ static void EventScript_ReportToFaran(void) {
   FieldScript_WaitFrames(30);
   FieldScript_ShowMessageAndWait(LOCALID_FARAN, 0);
   FieldScript_WaitFrames(20);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
   FieldScript_WaitFrames(30);
   FieldScript_WaitFrames(10);
@@ -722,15 +722,15 @@ static void EventScript_ReportToFaran(void) {
   FieldScript_WaitFrames(30);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(10);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
   FieldScript_WaitFrames(30);
   // The others walk back into the leader.
   ObjectEvent_SetSpeed(LOCALID_GARET, 0x13333, 0x9999);
   ObjectEvent_SetSpeed(LOCALID_MIA, 0x13333, 0x9999);
   ObjectEvent_SetSpeed(LOCALID_IVAN, 0x13333, 0x9999);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
     ObjectMotion_ResetAndSetPosition(LOCALID_GARET, leader->x.part.pixel,
@@ -738,7 +738,7 @@ static void EventScript_ReportToFaran(void) {
   }
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
   ObjectEvent_SetPosition(LOCALID_GARET, 0, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
     ObjectMotion_ResetAndSetPosition(LOCALID_MIA, leader->x.part.pixel,
@@ -746,14 +746,14 @@ static void EventScript_ReportToFaran(void) {
   }
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_MIA);
   ObjectEvent_SetPosition(LOCALID_MIA, 0, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
     ObjectMotion_ResetAndSetPosition(LOCALID_IVAN, leader->x.part.pixel,
                                      leader->z.part.pixel);
   }
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_IVAN);
-  Engine_ObjectEventSetPosition(LOCALID_IVAN, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_IVAN, 0, 0);
   FieldScript_WaitFrames(10);
   FieldScript_End();
 }
@@ -853,7 +853,7 @@ s32 Map_Initialize(void) {
     objectEvent->collisionFlags |= OBJ_EVENT_NEAR_TALK;
     objectEvent->priorityFlags = 0;
     objectEvent->sprite->image.priority = 2;
-    Engine_ObjectEventSetAnimation(LOCALID_NAPPING_WORKER,
+    Import_ObjectEventSetAnimation(LOCALID_NAPPING_WORKER,
                                    ANIM_WORKER_LIE_ASLEEP);
     warpDest = gSaveBlock.warpDest;
     if (warpDest == LALIVERO_SHOPS_SANCTUM) {

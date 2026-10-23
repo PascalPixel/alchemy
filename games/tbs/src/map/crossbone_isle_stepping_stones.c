@@ -297,7 +297,7 @@ static s32 CrossboneIsleSteppingStones_DrawRaisedFootprint(s32 localId) {
   cellZ = probe.position.z;
   MapGrid_CopyCellAttributes(2, 2, width, depth, cellX, cellZ);
 
-  ObjectDispatch_SelectAnimation(objectEvent, 4);
+  Object_SelectAnimation(objectEvent, 4);
   mask = 2;
   objectEvent->priorityFlags |= mask;
 
@@ -346,7 +346,7 @@ static s32 CrossboneIsleSteppingStones_RestoreGroundFootprint(s32 localId) {
         0, probe.position.x, probe.position.z, width, depth, MB_WALL);
   }
 
-  ObjectDispatch_SelectAnimation(objectEvent, 1);
+  Object_SelectAnimation(objectEvent, 1);
   objectEvent->priorityFlags &= ~OBJ_EVENT_PRIORITY_UNDERFOOT;
 
   return 1;
@@ -512,11 +512,11 @@ UNUSED static void CrossboneIsleSteppingStones_SpawnUnusedLeaderParticle(void) {
     settings->palette = 10;
     settings->startScaleX = 7 * Q16_ONE / 10;
     settings->startScaleY = 7 * Q16_ONE / 10;
-    drawX = Engine_RandomNext();
+    drawX = Import_RandomNext();
     x = leader->x.fixed + ((((u32)((drawX << 4) + drawX) >> 16) - 8) << 16);
-    drawZ = Engine_RandomNext();
+    drawZ = Import_RandomNext();
     z = leader->z.fixed + ((((u32)((drawZ << 4) + drawZ) >> 16) - 8) << 16);
-    drawY = Engine_RandomNext();
+    drawY = Import_RandomNext();
     velocityY = Math_Divide(
         (((u32)((drawY << 2) + drawY) >> 16) << 16) + PIXELS(3), 10);
     FieldEffect_Spawn(x, leader->y.fixed, z, 0, velocityY, cycleFrame,
@@ -580,10 +580,10 @@ static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
     if (PushedObject_FindAtTile(position, leader) == 0 &&
         FieldObject_CheckMovementCollision(leader, position) == 0) {
       SCRIPT_START();
-      ObjectDispatch_SelectAnimation(leader, 6);
+      Object_SelectAnimation(leader, 6);
       WaitFrames(6);
       Sound_PlaySong(SE_JUMP);
-      ObjectDispatch_SelectAnimation(leader, 7);
+      Object_SelectAnimation(leader, 7);
       leader->speed = PIXELS(3);
       leader->acceleration = PIXELS(2);
       leader->velocityY = PIXELS(4);
@@ -591,7 +591,7 @@ static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
       ObjectEvent_SetSpriteFlags(leader, 0);
       ObjectMotion_SetPositionAndCommit(LOCALID_PARTY_LEADER, position->x >> 16,
                                         position->z >> 16);
-      ObjectDispatch_SelectAnimation(leader, 6);
+      Object_SelectAnimation(leader, 6);
       ObjectEvent_SetSpriteFlags(leader, 1);
       *flags = savedMotionFlags;
       SCRIPT_END();
@@ -628,7 +628,7 @@ static void CrossboneIsleSteppingStones_UpdateDampedParticle(
 static s32
 CrossboneIsleSteppingStones_SetChildValueFromTimer(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
-  ObjectGroup_SetChildValue(objectEvent, objectEvent->timer & 15);
+  ObjectEvent_SetSpriteColor(objectEvent, objectEvent->timer & 15);
   return 0;
 }
 
@@ -728,7 +728,7 @@ static void CrossboneIsleSteppingStones_JitterBackgroundScroll(void) {
   volatile u32 *reg = (volatile u32 *)&REG_BG1HOFS;
 
   if (line == 227 || line <= 46) {
-    if ((u32)(Engine_RandomNext() * 100) >> 16 < sShakeChance) {
+    if ((u32)(Import_RandomNext() * 100) >> 16 < sShakeChance) {
       src = ((u32 *)sShakenScroll);
     }
   }
@@ -782,8 +782,7 @@ static void CrossboneIsleSteppingStones_AnimateWaterLevel(void) {
   FieldScheduler_AddCallback(CrossboneIsleSteppingStones_PrepareWaterScroll,
                              0xc80);
   WaitFrames(1);
-  Runtime_SetIrqHandler(1, 0,
-                        CrossboneIsleSteppingStones_JitterBackgroundScroll);
+  Irq_SetHandler(1, 0, CrossboneIsleSteppingStones_JitterBackgroundScroll);
   Sound_PlaySong(SE_WATER_LEVEL);
   sShakeChance = 0;
   do {
@@ -799,7 +798,7 @@ static void CrossboneIsleSteppingStones_AnimateWaterLevel(void) {
     MapGrid_CopyCellsTo(32, 64, 64, 0, 32, 32);
   }
   WaitFrames(1);
-  Runtime_SetIrqHandler(1, 0, 0);
+  Irq_SetHandler(1, 0, 0);
   WaitFrames(1);
   Task_Remove(CrossboneIsleSteppingStones_PrepareWaterScroll);
   MapGrid_CenterOnFollowedPoint();
@@ -1324,16 +1323,16 @@ static void CrossboneIsleSteppingStones_SpawnFrostParticle(void) {
   settings->startScaleY = Q16_ONE / 2;
   settings->targetScaleX = 8 * Q16_ONE / 5;
   settings->targetScaleY = 8 * Q16_ONE / 5;
-  draw = Engine_RandomNext();
+  draw = Import_RandomNext();
   mask = 0x0ffff000;
   mask &= draw;
   settings->rotation = mask;
   settings->update = CrossboneIsleSteppingStones_UpdateDampedParticle;
 
-  draw = Engine_RandomNext();
+  draw = Import_RandomNext();
   velocityX = -(((draw * 5) >> 16) * PIXELS(1) + PIXELS(6));
   velocityX /= 2;
-  draw = Engine_RandomNext();
+  draw = Import_RandomNext();
   velocityY = -(((draw * 5) >> 16) * PIXELS(1) + PIXELS(5));
 
   FieldEffect_Spawn(
@@ -1376,12 +1375,12 @@ CrossboneIsleSteppingStones_SpawnThawParticle(union FieldObject *fieldObject) {
   settings->startScaleY = 7 * Q16_ONE / 10;
 
   x = objectEvent->x.fixed +
-      (((((u32)Engine_RandomNext() * 17) >> 16) - 8) << 16);
-  y = objectEvent->y.fixed + ((((u32)Engine_RandomNext() * 17) >> 16) << 16);
+      (((((u32)Import_RandomNext() * 17) >> 16) - 8) << 16);
+  y = objectEvent->y.fixed + ((((u32)Import_RandomNext() * 17) >> 16) << 16);
   z = objectEvent->z.fixed +
-      (((((u32)Engine_RandomNext() * 17) >> 16) - 8) << 16);
+      (((((u32)Import_RandomNext() * 17) >> 16) - 8) << 16);
   scale = Math_Divide(
-      (((u32)Engine_RandomNext() * 5) >> 16) * PIXELS(1) + PIXELS(3), 10);
+      (((u32)Import_RandomNext() * 5) >> 16) * PIXELS(1) + PIXELS(3), 10);
 
   FieldEffect_Spawn(x, y, z, 0, scale, phase,
                     EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE |
@@ -1428,7 +1427,7 @@ static void EventScript_FreezeThirdPuddle(void) {
           (void (*)(union FieldObject *))set;
       MapGrid_CopyCellAttributes(17, 13, 1, 1, 18, 13);
       GameFlag_Clear(FIRST_FROZEN_PUDDLE_FLAG + 1);
-      ObjectGroup_ConfigureChildValue(LOCALID_SECOND_PUDDLE, 0);
+      ObjectEvent_ConfigureSpriteColor(LOCALID_SECOND_PUDDLE, 0);
       ObjectEvent_SetBuiltinAction(LOCALID_SECOND_PUDDLE,
                                    OBJ_EVENT_ACTION_IDLE);
     } else {
@@ -1539,7 +1538,7 @@ static void CrossboneIsleSteppingStones_RestoreFlaggedPillar(s32 localId) {
   objectEvent = ObjectEvent_GetById(localId);
   if (GameFlag_Get(FIRST_FROZEN_PUDDLE_FLAG + localId - LOCALID_FIRST_PUDDLE) !=
       0) {
-    ObjectDispatch_SelectAnimation(objectEvent, 5);
+    Object_SelectAnimation(objectEvent, 5);
 #ifdef UBFIX
     objectEvent->update =
         CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority;
@@ -1678,7 +1677,7 @@ s32 Map_Initialize(void) {
     // Restore CrossboneIsleDragonStatue's moved pillar, frozen puddles, and
     // raised pillar pair.
     OBJECT_ANIMATION(LOCALID_SINKING_BOULDER, 2);
-    ObjectGroup_ConfigureChildValue(LOCALID_SINKING_BOULDER, 6);
+    ObjectEvent_ConfigureSpriteColor(LOCALID_SINKING_BOULDER, 6);
     Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG);
     Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 1);
 #if TBS_PATCH_1

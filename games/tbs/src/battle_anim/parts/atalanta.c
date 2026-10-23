@@ -52,7 +52,7 @@ void BattleAnim_RunAtalanta(struct BattleAnimArgs *effect) {
   struct ScreenPoint target;
   BlitterPair draw;
   void **slots;
-  struct BattleViewWork *view;
+  struct BattleBackgroundWork *view;
   void *canvas;
   struct BattleAnimWork *work;
   s8 *path;
@@ -365,9 +365,9 @@ void BattleAnim_RunAtalanta(struct BattleAnimArgs *effect) {
             Sound_PlaySongFar(SE_HEAVY_IMPACT);
             member = i % 6;
             if (member < work->effect->targetCount) {
-              ObjectGroup_UpdateMembers(work->effect->targets[member],
-                                        SPRITE_COLOR_WHITE, POSE_DAMAGE, member,
-                                        8);
+              BattleAnim_TintBattler(work->effect->targets[member],
+                                     SPRITE_COLOR_WHITE, POSE_DAMAGE, member,
+                                     8);
               BattleMotion_ApplyKnockbackFar(work->effect->targets[member],
                                              KNOCKBACK_HOP);
             }

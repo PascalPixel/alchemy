@@ -247,7 +247,7 @@ void GameFlag_RefreshLureCapFar(void);
 s32 Equipment_GetUnleashRateBonusFar(struct Unit *owner);
 /// Returns the build stamp's time packed into a halfword, which a new game
 /// keeps as its start stamp and the save screens compare.
-u32 Runtime_GetBuildStampTimeFar();
+u32 BuildStamp_GetTimeFar();
 /// Returns how many inventory slots are free across the party, which caps the
 /// prizes of the Tolbi spring game and the lucky wheels.
 s32 PartyInventory_CountFreeSlotsFar(void);

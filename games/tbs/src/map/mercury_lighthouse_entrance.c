@@ -256,7 +256,7 @@ MercuryLighthouseEntrance_GetObjectEventTemplates(void) {
 /// at the center of all..."
 static void MercuryLighthouseEntrance_ReadHeartInscription(void) {
   FieldScript_Start();
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   FieldMessage_Show(MsgMercuryWhoHonorsHeart, 1);
   FieldScript_End();
 }
@@ -335,7 +335,7 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
       Sound_PlaySong(SE_246);
       sparkX = 208 - ((u32)(Random_Next() << 4) >> 16);
       sparkZ = 560 - ((u32)(Random_Next() << 4) >> 16);
-      speedRoll = ((u32)(Engine_RandomNext() << 2) >> 16);
+      speedRoll = ((u32)(Import_RandomNext() << 2) >> 16);
       velocityY =
           Math_Divide((((speedRoll << 4) - speedRoll) << 16) + 0x3c0000, 100);
       FieldEffect_Spawn(sparkX << 16, 0, sparkZ << 16, 0, velocityY, velocityZ,
@@ -364,7 +364,7 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
 /// map again at MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_AFTER_LIZARD_MAN, where
 /// Mia goes in if she has not yet.
 static void MercuryLighthouseEntrance_ReturnToDoorway(void) {
-  Engine_ScriptRequestWarp(
+  Import_ScriptRequestWarp(
       MERCURY_LIGHTHOUSE_ENTRANCE_TO_SIX_STATUES_AFTER_LIZARD_MAN);
 }
 
@@ -457,7 +457,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
   case MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR:
     // Until Mia has gone in, arriving here plays the Lizard Man scene.
     if (!GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_ENTERED_BY_MIA))
-      Engine_ScriptRequestWarp(
+      Import_ScriptRequestWarp(
           MERCURY_LIGHTHOUSE_ENTRANCE_TO_SIX_STATUES_BEFORE_LIZARD_MAN);
     // Both doorway warp destinations mirror the east side's statues.
     // Fall through.
@@ -530,7 +530,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
     ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER,
                                   ATTACHED_EFFECT_IN_FRONT |
                                       ATTACHED_EFFECT_ATTACH);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
+    Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
     MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
     MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
     MapGrid_WaitForShakeToSettle();
@@ -544,7 +544,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
       PaletteFade_ApplyTarget(PALETTE_TINT_WARM, 1);
       PaletteFade_StartInterpolation(30);
       FieldScript_WaitTransitionFrames();
-      Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+      Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
       FieldScript_WaitFrames(30);
       FieldMessage_ShowCentered(MsgMercuryWhoHonorsHeart, 0, 0);
       PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
@@ -562,7 +562,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
     Map_QueueMusic(SE_170);
     break;
   case MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_PIPE:
-    ObjectEvent_SetChildValue(LOCALID_PARTY_LEADER, 15);
+    ObjectEvent_SetSpriteColorById(LOCALID_PARTY_LEADER, 15);
     ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_PARTY_LEADER), 0);
     FieldScript_Start();
     MapGrid_CenterOnFollowedPoint();
@@ -571,7 +571,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
     FieldScript_StartScreenTransition();
     FieldScript_WaitTransitionFrames();
     FieldScript_WaitFrames(120);
-    Engine_ScriptRequestWarp(
+    Import_ScriptRequestWarp(
         MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_LOWER_PIPE);
     FieldScript_End();
     break;

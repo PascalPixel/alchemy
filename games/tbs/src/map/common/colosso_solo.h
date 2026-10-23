@@ -54,7 +54,7 @@ void Colosso_PlaceFriendsAtCheeringSpots(void) {
     x += 0x80000;
     y <<= 20;
     y += 0x80000;
-    Engine_ObjectEventSetPosition(LOCALID_GARET, x, y);
+    Import_ObjectEventSetPosition(LOCALID_GARET, x, y);
   }
   {
     s32 x =
@@ -65,7 +65,7 @@ void Colosso_PlaceFriendsAtCheeringSpots(void) {
     x += 0x80000;
     y <<= 20;
     y += 0x80000;
-    Engine_ObjectEventSetPosition(LOCALID_IVAN, x, y);
+    Import_ObjectEventSetPosition(LOCALID_IVAN, x, y);
   }
   {
     s32 x =
@@ -76,7 +76,7 @@ void Colosso_PlaceFriendsAtCheeringSpots(void) {
     x += 0x80000;
     y <<= 20;
     y += 0x80000;
-    Engine_ObjectEventSetPosition(LOCALID_MIA, x, y);
+    Import_ObjectEventSetPosition(LOCALID_MIA, x, y);
   }
 }
 
@@ -201,7 +201,7 @@ static void Colosso_TakePlaceForMatch(void) {
   }
   supporterId++;
   if (supporterId > MIA) {
-    Engine_ScriptRequestWarp(10);
+    Import_ScriptRequestWarp(10);
     GameFlag_Set(FLAG_KEEP_MUSIC);
   } else {
     Colosso_ControlCharacterAlone(supporterId);
@@ -251,7 +251,7 @@ void Colosso_AskDoneCheering(s32 id) {
                           objectEvent->z.fixed >> 20);
     slot++;
     if (slot > MIA) {
-      Engine_ScriptRequestWarp(10);
+      Import_ScriptRequestWarp(10);
       GameFlag_Set(FLAG_KEEP_MUSIC);
     } else {
       Colosso_ControlCharacterAlone(slot);
@@ -292,7 +292,7 @@ static void Colosso_AskReadyToRace(s32 localId) {
       ObjectMotion_SetPositionAndReset(LOCALID_PARTY_LEADER, x, z + 32);
       FieldScript_FinishScreenTransition();
       FieldScript_WaitTransitionFrames();
-      Engine_ScriptRequestWarp(11);
+      Import_ScriptRequestWarp(11);
     }
   } else {
     FieldScript_SetMessageId(MsgColossoWaitShouldntDecideWhereBest);
@@ -466,14 +466,14 @@ L_main:
   besideX = guideX + 16;
   ObjectMotion_SetPositionAndReset(0, besideX, frontZ);
   ObjectEvent_LinkPair(friendId, LOCALID_PARTY_LEADER, 30);
-  Engine_ObjectEventSetAnimation(friendId, 3);
+  Import_ObjectEventSetAnimation(friendId, 3);
   behindZ = frontZ - 32;
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, 3);
   ObjectEvent_WalkToAndWait(guide, guideX, behindZ);
   ObjectMotion_ResetAndSetPositionInMode2(guide, besideX, behindZ);
   ObjectEvent_LinkObjectAndSetCallback(0, friendId);
   ObjectEvent_WalkToAndWait(friendId, guideX, behindZ);
-  Engine_ObjectEventSetAnimation(guide, 1);
+  Import_ObjectEventSetAnimation(guide, 1);
   ObjectEvent_FaceDirection(guide, FACING_WEST, 0);
   ObjectEvent_WalkToAndWait(friendId, guideX, guideZ - 48);
   ObjectEvent_WalkToAndWait(guide, guideX, behindZ);

@@ -2,14 +2,14 @@
 	.set overlay_imports, 1
 	.set import.Math_RemainderUnsigned, 1
 	.set import.WaitFrames, 1
-	.set import.Engine_RandomNext, 1
+	.set import.Import_RandomNext, 1
 	.set import.ArcTan2, 1
 	.set import.Trig_Sin, 1
 	.set import.Trig_Cos, 1
 	.set import.AllocHeapSlot, 1
 	.set import.FreeHeapSlot, 1
 	.set import.VramCache_Load, 1
-	.set import.ObjectDispatch_Initialize, 1
+	.set import.Object_Initialize, 1
 	.set import.Object_CreateField, 1
 	.set import.MapGrid_CopyMetatileIndicesRect, 1
 	.set import.MapGrid_CopyCellAttributeRect, 1
@@ -41,8 +41,8 @@
 	.set import.ObjectMotion_ResetAndSetPositionInMode2, 1
 	.set import.ObjectMotion_SetPositionAndReset, 1
 	.set import.ObjectMotion_CommitCurrentPositionAndActivate, 1
-	.set import.Engine_ObjectEventSetPosition, 1
-	.set import.Engine_ObjectEventSetAnimation, 1
+	.set import.Import_ObjectEventSetPosition, 1
+	.set import.Import_ObjectEventSetAnimation, 1
 	.set import.ObjectMotion_SetAnimationAndWait, 1
 	.set import.ObjectMotion_WaitForAnimationChange, 1
 	.set import.ObjectMotion_Launch, 1
@@ -50,19 +50,19 @@
 	.set import.ObjectMotion_SetVarCbAndRefresh, 1
 	.set import.ObjectMotion_SetAngleToward, 1
 	.set import.ObjectEvent_LinkPair, 1
-	.set import.ObjectGroup_ConfigureChildValue, 1
+	.set import.ObjectEvent_ConfigureSpriteColor, 1
 	.set import.FieldScript_SetMessageId, 1
 	.set import.FieldMessage_ShowAtObject, 1
 	.set import.FieldScript_ShowMessageAndWait, 1
 	.set import.ObjectMotion_ArmCallback, 1
-	.set import.Engine_ScriptShowTwoMessagesAndWait, 1
+	.set import.Import_ScriptShowTwoMessagesAndWait, 1
 	.set import.FieldEffect_SpawnLinked, 1
 	.set import.FieldEffect_ConfigureLinkedObject, 1
 	.set import.FieldCamera_SetSpeedParameters, 1
 	.set import.FieldCamera_MoveWithinMapBounds, 1
 	.set import.FieldCamera_WaitForArrival, 1
 	.set import.ObjectEvent_PlaceCurrentWithinCameraBounds, 1
-	.set import.Engine_ScriptRequestWarp, 1
+	.set import.Import_ScriptRequestWarp, 1
 	.set import.PaletteFade_SetTarget, 1
 	.set import.PaletteFade_StartInterpolation, 1
 	.set import.FieldScript_StartScreenTransition, 1

@@ -23,7 +23,7 @@ void InitHeap(void) {
 /// Returns the IWRAM bytes left to allocate, up to gCartridgeResetMarker
 /// (0x03007800), the same end the allocators test. Battle_Run calls
 /// it around each action and ignores the result.
-s32 Runtime_GetRemainingIwram(void) {
+s32 Heap_GetRemainingIwram(void) {
   union HeapState *work = (union HeapState *)gHeapSlots;
 
   return (s32)(*(u8 (*)[]) & gCartridgeResetMarker) - (s32)work->heap.nextIwram;
@@ -31,7 +31,7 @@ s32 Runtime_GetRemainingIwram(void) {
 
 /// Returns the EWRAM bytes left to allocate, up to the end of EWRAM.
 /// Battle_Run calls it around each action and ignores the result.
-s32 Runtime_GetRemainingEwram(void) {
+s32 Heap_GetRemainingEwram(void) {
   union HeapState *work = (union HeapState *)gHeapSlots;
 
   return 0x02040000 - (s32)work->heap.nextEwram;
@@ -171,4 +171,4 @@ void *AllocEwram(s32 size) {
 
 /// Unused: reserved empty memory export; nothing calls it. XXX: what it was for
 /// is not known; a caller of the same export in ⚓️ would settle it.
-UNUSED void Runtime_ReservedNoOp(void) {}
+UNUSED void Heap_ReservedNoOp(void) {}

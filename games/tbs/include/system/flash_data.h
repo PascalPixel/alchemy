@@ -1,5 +1,5 @@
-#ifndef GUARD_FLASH_DATA_H
-#define GUARD_FLASH_DATA_H
+#ifndef ALCHEMY_FLASH_DATA_H
+#define ALCHEMY_FLASH_DATA_H
 
 /// @file
 /// The flash chips: sector size and count, and each chip type's routines.

@@ -175,7 +175,7 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
 /// The object event stands still and says the selected message.
 static void VaultInteriorsRevisit_ShowStandingObjectEventDialogue(s32 localId) {
   FieldScript_Start();
-  Engine_ObjectEventSetAnimation(localId, ANIM_STAND);
+  Import_ObjectEventSetAnimation(localId, ANIM_STAND);
   FieldScript_ShowMessageAndWait(localId, 0);
   FieldScript_End();
 }
@@ -220,7 +220,7 @@ static void EventScript_WelcomeIsaacBack(void) {
   FieldScript_Start();
   FieldScript_SetMessageId(MsgVaultIsaacYouveComeBackVault);
   ObjectEvent_LinkPair(LOCALID_MAYOR, LOCALID_PARTY_LEADER, 2);
-  Engine_ObjectEventSetAnimation(LOCALID_MAYOR, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_MAYOR, ANIM_STAND);
   Script_ShowMessageAndWait(LOCALID_MAYOR, 0, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_MAYOR, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);

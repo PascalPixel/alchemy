@@ -197,8 +197,8 @@ void BattleAnim_RunEruption(struct BattleAnimArgs *effect, s32 mode) {
     if (mode == ERUPTION_BLAST) {
       ANIM_FOR_EACH_TARGET(i, work->effect) {
         if (frame == i + 6) {
-          ObjectGroup_UpdateMembers(work->effect->targets[i],
-                                    SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 10);
+          BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, i, 10);
           BattleMotion_ApplyKnockbackFar(work->effect->targets[i],
                                          KNOCKBACK_LEAP);
         }
@@ -206,8 +206,8 @@ void BattleAnim_RunEruption(struct BattleAnimArgs *effect, s32 mode) {
     } else {
       ANIM_FOR_EACH_TARGET(i, work->effect) {
         if (frame == i + 6)
-          ObjectGroup_UpdateMembers(work->effect->targets[i],
-                                    SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 10);
+          BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, i, 10);
       }
     }
     if (frame == 2)

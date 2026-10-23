@@ -319,8 +319,8 @@ void BattleAnim_RunTargetStrike(struct BattleAnimArgs *effect, s32 mode) {
               TARGET_STRIKE_SPARKS[i].variant = (Random16() & 15) + 15;
           } else {
             work->shakeFrames = 4;
-            ObjectGroup_UpdateMembers(work->effect->targets[0],
-                                      SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 8);
+            BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, 0, 8);
             for (i = 0; i != 32; i++) {
               struct Particle *step =
                   &TARGET_STRIKE_SPARKS[frame /
@@ -390,8 +390,8 @@ void BattleAnim_RunTargetStrike(struct BattleAnimArgs *effect, s32 mode) {
         // though column hits are four images apart, so a three-hit column's
         // second and third hits light the same group; a capture of Acid Bite
         // would show whether the third hit throws anything new.
-        ObjectGroup_UpdateMembers(work->effect->targets[0], SPRITE_COLOR_WHITE,
-                                  POSE_DAMAGE, 0, 8);
+        BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_WHITE,
+                               POSE_DAMAGE, 0, 8);
         work->shakeFrames = 4;
         if (frame > (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_HITS) * 4 - 4) *
                         TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_IMAGE_FRAMES))
@@ -498,10 +498,10 @@ void BattleAnim_RunTargetStrike(struct BattleAnimArgs *effect, s32 mode) {
         if (mode == TARGET_STRIKE_STYLE_MARS_ADDITIVE_DRAIN_COLUMNS)
           size = 8;
         if (frame == 55)
-          ObjectGroup_UpdateMembers(work->effect->user, SPRITE_COLOR_WHITE, -1,
-                                    -1, 0);
+          BattleAnim_TintBattler(work->effect->user, SPRITE_COLOR_WHITE, -1, -1,
+                                 0);
         if (frame == 90)
-          ObjectGroup_UpdateMembers(work->effect->user, 0, -1, -1, 0);
+          BattleAnim_TintBattler(work->effect->user, 0, -1, -1, 0);
         for (i = 0; i != 64; i++) {
           struct Particle *step = &PARTICLES[i];
 

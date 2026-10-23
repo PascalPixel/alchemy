@@ -198,7 +198,7 @@ enum KolimaBridgeLocalId {
 static s32 Kolima_ApplyPendingPose(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   if (gKolima_PendingPose != 0) {
-    ObjectDispatch_SelectAnimation(objectEvent, 2);
+    Object_SelectAnimation(objectEvent, 2);
     gKolima_PendingPose = 0;
   }
   return 1;
@@ -209,14 +209,14 @@ static s32 Kolima_ApplyPendingPose(struct Object *interpreter) {
 /// 1200 the timer starts over.
 static s32 Kolima_UpdateTimedAppearance(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
-  s32 randomValue = Engine_RandomNext();
+  s32 randomValue = Import_RandomNext();
   s32 scaledRandom = randomValue * 100;
   s32 appearanceTimer = (u16)objectEvent->timer + ((u32)scaledRandom >> 16);
   objectEvent->timer = appearanceTimer;
   if ((s16)appearanceTimer > 1000) {
-    ObjectGroup_SetChildValue(objectEvent, 7);
+    ObjectEvent_SetSpriteColor(objectEvent, 7);
   } else {
-    ObjectGroup_SetChildValue(objectEvent, 10);
+    ObjectEvent_SetSpriteColor(objectEvent, 10);
   }
   if ((s16)objectEvent->timer > 1200) {
     objectEvent->timer = 0;
@@ -353,10 +353,10 @@ const struct MapEvent *Kolima_GetEvents(void) {
 static void Kolima_WalkThroughExit(s32 warpNumber) {
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
   ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0, -8);
   gFieldWork->transitionFrames = 16;
-  Engine_ScriptRequestWarp(warpNumber);
+  Import_ScriptRequestWarp(warpNumber);
 }
 
 /// Kolima: walking into one of the five doorways into the houses and shops,
@@ -393,7 +393,7 @@ static void Kolima_EnterDoor(void) {
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
     ObjectMotion_OffsetPositionAndResetMotion(LOCALID_PARTY_LEADER, 0, 8);
     gFieldWork->transitionFrames = 16;
-    Engine_ScriptRequestWarp(KOLIMA_TO_HOUSE_NORTH);
+    Import_ScriptRequestWarp(KOLIMA_TO_HOUSE_NORTH);
     FieldScript_End();
     return;
   }
@@ -431,7 +431,7 @@ static void Kolima_LowerBridge(void) {
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHEAST, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  Engine_ObjectEventSetAnimation(LOCALID_BRIDGE_VILLAGER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_BRIDGE_VILLAGER, ANIM_NOD);
   FieldScript_ShowMessageAndWait(LOCALID_BRIDGE_VILLAGER, 0);
   ObjectEvent_FaceDirection(LOCALID_BRIDGE_VILLAGER, FACING_WEST + FACING_STEP,
                             20);
@@ -469,7 +469,7 @@ static void Kolima_LowerBridge(void) {
       ObjectEvent_SetSpriteFlags(debris, 0);
       debris->sprite->image.priority = 0;
       {
-        u16 delay = (((u32)(Engine_RandomNext() * 40)) >> 16) + 40;
+        u16 delay = (((u32)(Import_RandomNext() * 40)) >> 16) + 40;
 
         debris->timer = delay;
       }
@@ -478,7 +478,7 @@ static void Kolima_LowerBridge(void) {
       if (debrisIndex & 1) {
         debris->velocityX = -((s32)(((debrisIndex & 3) << 16) + 0x10000) >> 1);
       }
-      ObjectDispatch_SelectAnimation(debris, 1);
+      Object_SelectAnimation(debris, 1);
       ObjectEvent_SetScript(debris, gKolima_DebrisScript);
     }
   }
@@ -610,9 +610,9 @@ static void Kolima_FinishReadingThoughts(void) {
 
 /// Gives the four companions the same nod, waiting on the final object event.
 static __inline__ void Kolima_NodTogether(void) {
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
 }
 
@@ -729,9 +729,9 @@ static void Kolima_WitnessForestCurse(void) {
     ObjectEvent_FaceObjectEvent(LOCALID_MIA, LOCALID_IVAN, 0);
   }
   FieldScript_WaitFrames(30);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
   if (*partyLayout != 0) {
-    Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
   }
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(20);
@@ -776,13 +776,13 @@ static void Kolima_WitnessForestCurse(void) {
     ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
     FieldScript_WaitFrames(60);
     Kolima_ShowMessageAndWait(LOCALID_MIA, 20);
-    Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
   } else {
     gFieldWork->message++;
   }
   ObjectEvent_FaceObjectEvent(LOCALID_IVAN, LOCALID_PARTY_LEADER, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
   FieldScript_WaitFrames(20);
   ObjectEvent_SetAttachedEffect(LOCALID_GARET, ATTACHED_EFFECT_IN_FRONT |
@@ -793,7 +793,7 @@ static void Kolima_WitnessForestCurse(void) {
   Script_OpenMessage(LOCALID_GARET, 0);
   if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
     FieldScript_WaitFrames(20);
-    Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
   } else {
     ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_SHAKE_HEAD);
     gFieldWork->message++;
@@ -876,7 +876,7 @@ static void Kolima_WitnessForestCurse(void) {
     ObjectEvent_SetActionScript(LOCALID_MIA, gKolima_PartyRestoreScaleActions);
     objectEvent = ObjectEvent_GetById(LOCALID_MIA);
     ObjectEvent_SetSpriteFlags(objectEvent, 0);
-    Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_COLLAPSE);
+    Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_COLLAPSE);
     FieldScript_WaitFrames(10);
   }
   stagingValue = 128;
@@ -889,7 +889,7 @@ static void Kolima_WitnessForestCurse(void) {
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER, restoreScaleActions);
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   ObjectEvent_SetSpriteFlags(objectEvent, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_COLLAPSE);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_COLLAPSE);
   FieldScript_WaitFrames(20);
   objectEvent = ObjectEvent_GetById(LOCALID_GARET);
   objectEvent->velocityY = (stagingValue << 10);
@@ -899,7 +899,7 @@ static void Kolima_WitnessForestCurse(void) {
   ObjectEvent_SetActionScript(LOCALID_GARET, restoreScaleActions);
   objectEvent = ObjectEvent_GetById(LOCALID_GARET);
   ObjectEvent_SetSpriteFlags(objectEvent, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_COLLAPSE);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_COLLAPSE);
   FieldScript_WaitFrames(40);
   objectEvent = ObjectEvent_GetById(LOCALID_IVAN);
   objectEvent->velocityY = (stagingValue << 10);
@@ -907,7 +907,7 @@ static void Kolima_WitnessForestCurse(void) {
   ObjectEvent_SetActionScript(LOCALID_IVAN, restoreScaleActions);
   objectEvent = ObjectEvent_GetById(LOCALID_IVAN);
   ObjectEvent_SetSpriteFlags(objectEvent, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_COLLAPSE);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_COLLAPSE);
   gKolima_EffectActive = 0;
   FieldScript_WaitFrames(160);
   Task_Remove(Kolima_SpawnCurseSparkle);
@@ -1062,7 +1062,7 @@ static void Kolima_WitnessForestCurse(void) {
   objectEvent = ObjectEvent_GetById(LOCALID_GARET);
   ObjectEvent_SetSpriteFlags(objectEvent, 1);
   ObjectMotion_Launch(LOCALID_GARET, 6, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
   Kolima_FaceObjectEventAndWait(LOCALID_GARET, FACING_SOUTH, 60);
   Kolima_ShowMessageAndWait(LOCALID_GARET, 20);
   ObjectMotion_SetVariantCallback(LOCALID_GARET, 2);
@@ -1094,7 +1094,7 @@ static void Kolima_WitnessForestCurse(void) {
     ObjectEvent_SetSpriteFlags(objectEvent, 1);
     ObjectMotion_Launch(LOCALID_MIA, 4, 0);
     ObjectEvent_SetDestinationOffset(LOCALID_MIA, -2, 0);
-    Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_STAND);
+    Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_STAND);
     Kolima_FaceObjectEventAndWait(LOCALID_MIA, FACING_NORTHEAST, 60);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 2);
     FieldScript_WaitFrames(20);
@@ -1119,7 +1119,7 @@ static void Kolima_WitnessForestCurse(void) {
   objectEvent = ObjectEvent_GetById(LOCALID_IVAN);
   ObjectEvent_SetSpriteFlags(objectEvent, 1);
   ObjectMotion_Launch(LOCALID_IVAN, 4, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_STAND);
   ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTH, 0);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_PARTY_LEADER, 2);
   FieldScript_WaitFrames(10);
@@ -1128,7 +1128,7 @@ static void Kolima_WitnessForestCurse(void) {
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   ObjectEvent_SetSpriteFlags(objectEvent, 1);
   ObjectMotion_Launch(LOCALID_PARTY_LEADER, 4, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   Kolima_FaceObjectEventAndWait(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 60);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
                         0);
@@ -1142,18 +1142,18 @@ static void Kolima_WitnessForestCurse(void) {
   ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTH, 0);
   ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
   Kolima_ShowMessageAndWait(LOCALID_IVAN, 20);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
   FieldScript_WaitFrames(20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 1);
   FieldScript_WaitFrames(20);
   Script_OpenMessage(LOCALID_IVAN, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
   ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHEAST, 0);
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST, 0);
   if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
-    Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
     ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
     gFieldWork->message++;
   } else {
@@ -1172,14 +1172,14 @@ static void Kolima_WitnessForestCurse(void) {
     ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 2);
     Kolima_FaceObjectEventAndWait(LOCALID_MIA, 0, 20);
     Kolima_FaceObjectEventAndWait(LOCALID_MIA, FACING_SOUTHEAST, 10);
-    Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_SHAKE_HEAD);
+    Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_SHAKE_HEAD);
     Kolima_ShowMessageAndWait(LOCALID_MIA, 10);
   } else {
     gFieldWork->message++;
   }
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST, 0);
   Kolima_FaceObjectEventAndWait(LOCALID_PARTY_LEADER, FACING_NORTHWEST, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
   stagingValue = 128;
   FieldScript_WaitFrames(20);
@@ -1209,7 +1209,7 @@ static void Kolima_WitnessForestCurse(void) {
                                                    ATTACHED_EFFECT_ONCE);
   FieldScript_WaitFrames(40);
   Kolima_ShowMessageAndWait(LOCALID_GARET, 20);
-  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
   Kolima_ShowMessageAndWait(LOCALID_IVAN, 10);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
   Kolima_FaceObjectEventAndWait(LOCALID_GARET, FACING_SOUTHEAST, 10);
@@ -1326,9 +1326,9 @@ static void Kolima_WitnessForestCurse(void) {
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTH, 0);
   Kolima_FaceObjectEventAndWait(LOCALID_MIA, FACING_NORTH, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_SHAKE_HEAD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_SHAKE_HEAD);
-  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_SHAKE_HEAD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_SHAKE_HEAD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_SHAKE_HEAD);
+  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_SHAKE_HEAD);
   ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(60);
   Kolima_ShowMessageAndWait(LOCALID_LAUREL, 10);
@@ -1436,7 +1436,7 @@ static void Kolima_WitnessForestCurse(void) {
       ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
       Kolima_ShowMessageAndWait(LOCALID_IVAN, 20);
     }
-    Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
     ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
     ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
   } else {
@@ -1447,7 +1447,7 @@ static void Kolima_WitnessForestCurse(void) {
     Kolima_ShowMessageAndWait(LOCALID_GARET, 10);
     ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH, 0);
     Kolima_FaceObjectEventAndWait(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 20);
-    Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+    Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
     ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
     FieldScript_WaitFrames(10);
     ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_SHAKE_HEAD);
@@ -1497,7 +1497,7 @@ static void Kolima_WitnessForestCurse(void) {
       ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
       ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
       FieldScript_WaitFrames(20);
-      Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
+      Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
       ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
     } else {
       ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
@@ -1525,7 +1525,7 @@ static void Kolima_WitnessForestCurse(void) {
       Kolima_ShowMessageAndWait(LOCALID_IVAN, 40);
       if (gKolima_MiaInParty != 0) {
         Kolima_FaceObjectEventAndWait(LOCALID_MIA, FACING_SOUTHEAST, 20);
-        Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_SHAKE_HEAD);
+        Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_SHAKE_HEAD);
         Kolima_ShowMessageAndWait(LOCALID_MIA, 40);
       } else {
         gFieldWork->message++;
@@ -1544,7 +1544,7 @@ static void Kolima_WitnessForestCurse(void) {
   ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
   ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(6) / 5, PIXELS(3) / 5);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (objectEvent != NULL) {
     ObjectEvent_SetDestination(LOCALID_GARET, objectEvent->x.part.pixel,
@@ -1552,7 +1552,7 @@ static void Kolima_WitnessForestCurse(void) {
   }
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
   ObjectEvent_SetPosition(LOCALID_GARET, 0, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_WALK);
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (objectEvent != NULL) {
     ObjectEvent_SetDestination(LOCALID_IVAN, objectEvent->x.part.pixel,
@@ -1563,7 +1563,7 @@ static void Kolima_WitnessForestCurse(void) {
   ObjectEvent_SetPosition(LOCALID_TRET, 0, 0);
   ObjectEvent_SetPosition(LOCALID_LAUREL, 0, 0);
   if (gKolima_MiaInParty != 0) {
-    Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_WALK);
+    Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_WALK);
     objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     if (objectEvent != NULL) {
       ObjectEvent_SetDestination(LOCALID_MIA, objectEvent->x.part.pixel,
@@ -1625,7 +1625,7 @@ static void Kolima_SpawnCurseSparkle(void) {
   sparkle->speed = PIXELS(8);
   sparkle->acceleration = PIXELS(8);
   sparkle->motionFlags = framePhase;
-  ObjectDispatch_SelectAnimation(sparkle, 2);
+  Object_SelectAnimation(sparkle, 2);
   Object_SetPosition(sparkle, targetX, 0, targetZ);
   ObjectEvent_SetScript(sparkle, gKolima_GoldenRingsScript);
 }
@@ -1684,14 +1684,14 @@ s32 gKolima_EffectActive __attribute__((section(".bss")));
 /// needs the man who is a tree until then.
 static void Kolima_RestoreBridgeState(void) {
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
-    Engine_ObjectEventSetPosition(LOCALID_BRIDGE_VILLAGER, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_BRIDGE_VILLAGER, 0, 0);
     {
       MapGrid_CopyCellAttributes(9, 17, 5, 1, 9, 18);
     }
     MapGrid_CenterOnFollowedPoint();
     WaitFrames(1);
   } else {
-    Engine_ObjectEventSetPosition(LOCALID_BRIDGE_VILLAGER_AS_TREE, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_BRIDGE_VILLAGER_AS_TREE, 0, 0);
   }
   if (GameFlag_Get(FLAG_KOLIMA_BRIDGE_LOWERED) != 0) {
     {

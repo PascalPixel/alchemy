@@ -250,8 +250,8 @@ void FieldEffect_SetCallbackWhenTargetUnset(union FieldObject *fieldObject) {
   {
     targetY = object->targetY;
     if ((targetY == targetX) && (object->targetZ == targetY)) {
-      ObjectDispatch_InitializeFar((struct Object *)object,
-                                   gFieldEffect_UntargetedObjectScript);
+      Object_InitializeFar((struct Object *)object,
+                           gFieldEffect_UntargetedObjectScript);
     }
   }
 }

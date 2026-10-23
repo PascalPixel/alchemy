@@ -94,8 +94,7 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
     return;
   FieldEffect_FadeToEffectColor();
   user->linkedObject = target;
-  ObjectDispatch_InitializeFar((struct Object *)user,
-                               gFieldEffect_SourceHoldScript);
+  Object_InitializeFar((struct Object *)user, gFieldEffect_SourceHoldScript);
   pusher = FieldEffect_StartItemBreak(user);
   if (pusher == NULL) {
     FieldEffect_FadeFromEffectColor();
@@ -117,7 +116,7 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
   pusher->speed = 4 << 16;
   pusher->acceleration = 0x8000;
   pusher->motionFlags = OBJ_EVENT_FLOATS;
-  target->update = ObjectGroup_ApplyRandomChildValues;
+  target->update = Object_CycleSpriteColors;
   target->speed = 0x6666;
   target->acceleration = 0x3333;
   target->steeringFlags = moved;
@@ -137,7 +136,7 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
       Vector_AddPolarOffset(16 << 16, angle, &position);
       Object_SetMoveTargetFar((struct Object *)pusher, position.x, position.y,
                               position.z);
-      ObjectDispatch_SelectAnimationFar(pusher, 1);
+      Object_SelectAnimationFar(pusher, 1);
       SET_VELOCITY(pusher, 0, 0, 0);
       continue;
     }
@@ -164,7 +163,7 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
     // level ground or a drop does not.
     if (MapGrid_CheckCollisionFar((struct Object *)target,
                                   (struct FieldPosition *)&position) > 0) {
-      ObjectDispatch_SelectAnimationFar(pusher, 4);
+      Object_SelectAnimationFar(pusher, 4);
       if ((gFrameCount & 15) == 0)
         Sound_PlaySongFar(SE_MENU_ERROR);
       continue;
@@ -173,7 +172,7 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
         (struct Object *)target, (s32 *)candidate);
     if (hit != NULL) {
       if (hit != user) {
-        ObjectDispatch_SelectAnimationFar(pusher, 4);
+        Object_SelectAnimationFar(pusher, 4);
         if ((gFrameCount & 15) == 0)
           Sound_PlaySongFar(SE_MENU_ERROR);
         continue;
@@ -186,7 +185,7 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
       cellZ = user->z.fixed & MOVE_CELL_MASK;
       if (cellX == (candidate->x & MOVE_CELL_MASK) &&
           cellZ == (candidate->z & MOVE_CELL_MASK)) {
-        ObjectDispatch_SelectAnimationFar(pusher, 4);
+        Object_SelectAnimationFar(pusher, 4);
         if ((gFrameCount & 15) == 0)
           Sound_PlaySongFar(SE_MENU_ERROR);
         continue;
@@ -196,7 +195,7 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
         // The caster can be pushed only onto flat ground.
         if (MapGrid_GetCellAttributeLowNibbleFar(user->layer, beyond.x,
                                                  beyond.z) != TERRAIN_FLAT) {
-          ObjectDispatch_SelectAnimationFar(pusher, 4);
+          Object_SelectAnimationFar(pusher, 4);
           if ((gFrameCount & 15) == 0)
             Sound_PlaySongFar(SE_MENU_ERROR);
           continue;
@@ -212,7 +211,7 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
     Sound_PlaySongFar(SE_175);
     x = position.x;
     z = position.z;
-    ObjectDispatch_SelectAnimationFar(
+    Object_SelectAnimationFar(
         pusher, gFieldEffect_QuadrantModes[(u16)(angle - direction) >> 14]);
     WaitFrames(15);
     target->paused = 0;
@@ -244,8 +243,7 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
 
   // Restore the target's colours, script and update, and remove the hand.
   Anim_ApplyChildValuesFar((struct Object *)target, effectWork->savedPalette);
-  ObjectDispatch_InitializeFar((struct Object *)target,
-                               effectWork->savedScript);
+  Object_InitializeFar((struct Object *)target, effectWork->savedScript);
   target->update = effectWork->savedCallback;
   FieldEffect_StopCasterHook();
   if (moved == 1)
@@ -327,7 +325,7 @@ void FieldEffect_RunMove(void) {
   object = FieldEffect_StartItemBreak(object);
   FieldEffect_SnapScaleToFull(object);
   if (object != 0) {
-    ObjectDispatch_SelectAnimationFar(object, 4);
+    Object_SelectAnimationFar(object, 4);
     WaitFrames(30);
   }
   FieldEffect_FadeFromEffectColor();
@@ -360,7 +358,7 @@ void *FieldEffect_StartItemBreak(void *object) {
   parent->speedLimit = 2 << 16;
   parent->acceleration = 2 << 16;
   parent->motionFlags = 0;
-  ObjectDispatch_SelectAnimationFar(parent, 3);
+  Object_SelectAnimationFar(parent, 3);
   ObjectMotion_SetTargetPositionFromMagnitudeAngle((struct Object *)parent,
                                                    16 << 16, angle);
 
@@ -370,8 +368,7 @@ void *FieldEffect_StartItemBreak(void *object) {
     child = (struct Object *)Object_Spawn(SPRITE_SPARKLE, source->x,
                                           source->y + (16 << 16), source->z);
     if (child != 0) {
-      ObjectDispatch_InitializeFar((struct Object *)child,
-                                   gFieldEffect_FragmentScript);
+      Object_InitializeFar((struct Object *)child, gFieldEffect_FragmentScript);
       speed = Random16() + 0x10000;
       child->acceleration = 1 << 16;
       child->speedLimit = speed;
@@ -441,8 +438,7 @@ void UpdateRisingParticleBurst(void *object) {
        * uses, 24 of 93 instructions differ in tbs-en. */
       s32 unit = 0x10000;
 
-      ObjectDispatch_InitializeFar((struct Object *)child,
-                                   gFieldEffect_FragmentScript);
+      Object_InitializeFar((struct Object *)child, gFieldEffect_FragmentScript);
       speed = Random16();
       child->acceleration = unit;
       child->speedLimit = speed + unit;
@@ -457,7 +453,7 @@ void UpdateRisingParticleBurst(void *object) {
     }
   }
   Sound_PlaySongFar(SE_131);
-  ObjectDispatch_ReleaseFar((struct Object *)src);
+  Object_ReleaseFar((struct Object *)src);
 }
 
 #undef MOVE_CELL_MASK

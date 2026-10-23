@@ -159,8 +159,8 @@ void BattleAnim_RunPlasma(struct BattleAnimArgs *effect) {
         ANIM_FOR_EACH_TARGET(k, work->effect) {
           BattleMotion_ApplyKnockbackFar(work->effect->targets[k],
                                          KNOCKBACK_HOP);
-          ObjectGroup_UpdateMembers(work->effect->targets[k],
-                                    SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 8);
+          BattleAnim_TintBattler(work->effect->targets[k], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, k, 8);
         }
       }
     }
@@ -466,8 +466,8 @@ void BattleAnim_RunSparkGroups(struct BattleAnimArgs *effect, s32 mode) {
       }
       ANIM_FOR_EACH_TARGET(j, work->effect) {
         if (frame == start + 6) {
-          ObjectGroup_UpdateMembers(work->effect->targets[j],
-                                    SPRITE_COLOR_WHITE, POSE_DAMAGE, j, 10);
+          BattleAnim_TintBattler(work->effect->targets[j], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, j, 10);
           BattleMotion_ApplyKnockbackFar(work->effect->targets[j],
                                          KNOCKBACK_HURL);
         }

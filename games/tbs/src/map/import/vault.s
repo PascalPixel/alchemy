@@ -3,16 +3,16 @@
 	.set import.__divsi3, 1
 	.set import.__umodsi3, 1
 	.set import.WaitFrames, 1
-	.set import.Engine_RandomNext, 1
+	.set import.Import_RandomNext, 1
 	.set import.ArcTan2, 1
-	.set import.ObjectDispatch_SelectAnimation, 1
-	.set import.ObjectDispatch_Initialize, 1
+	.set import.Object_SelectAnimation, 1
+	.set import.Object_Initialize, 1
 	.set import.Object_CreateField, 1
 	.set import.MapGrid_PlayMetatileCopySequence, 1
 	.set import.MapGrid_CopyMetatileIndicesRect, 1
 	.set import.MapGrid_CopyCellAttributeRect, 1
-	.set import.ObjectDispatch_SetSingleChildFlags, 1
-	.set import.ObjectDispatch_SetChildBlendMode, 1
+	.set import.Object_SetSpriteFlags, 1
+	.set import.Object_SetSpriteBlendMode, 1
 	.set import.FieldMessage_Show, 1
 	.set import.Unit_Get, 1
 	.set import.Unit_Calculate, 1
@@ -35,13 +35,13 @@
 	.set import.ObjectMotion_ResetAndSetPositionInMode2, 1
 	.set import.ObjectMotion_SetPositionAndReset, 1
 	.set import.ObjectMotion_CommitCurrentPositionAndActivate, 1
-	.set import.Engine_ObjectEventSetPosition, 1
-	.set import.Engine_ObjectEventSetAnimation, 1
+	.set import.Import_ObjectEventSetPosition, 1
+	.set import.Import_ObjectEventSetAnimation, 1
 	.set import.ObjectMotion_SetAnimationAndWait, 1
 	.set import.ObjectMotion_Launch, 1
 	.set import.ObjectMotion_SetVarCbAndRefresh, 1
 	.set import.ObjectEvent_LinkPair, 1
-	.set import.ObjectGroup_SetChildValue, 1
+	.set import.ObjectEvent_SetSpriteColor, 1
 	.set import.FieldScript_SetMessageId, 1
 	.set import.FieldMessage_ShowAtObject, 1
 	.set import.FieldScript_ShowMessageAndWait, 1
@@ -52,7 +52,7 @@
 	.set import.FieldCamera_SetSpeedParameters, 1
 	.set import.FieldCamera_MoveWithinMapBounds, 1
 	.set import.FieldCamera_WaitForArrival, 1
-	.set import.Engine_ScriptRequestWarp, 1
+	.set import.Import_ScriptRequestWarp, 1
 	.set import.FieldScript_StartScreenTransition, 1
 	.set import.FieldScript_FinishScreenTransition, 1
 	.set import.FieldScript_WaitTransitionFrames, 1

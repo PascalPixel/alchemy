@@ -55,7 +55,7 @@ void ObjectMotion_EnableActionAndResetMotion(u32 objectId) {
   if (object != NULL) {
     enabled = 1;
     object->steeringFlags = enabled | object->steeringFlags;
-    ObjectDispatch_StartIdleFar((struct Object *)object);
+    Object_StartIdleFar((struct Object *)object);
   }
 }
 
@@ -78,7 +78,7 @@ void ObjectEvent_RefreshSelectorById(u32 objectId) {
   struct Object *object = ObjectEvent_GetByLocalId(objectId);
 
   if (object != NULL)
-    ObjectDispatch_WaitForValue16Far(object);
+    Object_WaitForValue16Far(object);
 }
 
 /// Starts a built-in action or supplied script, as
@@ -93,7 +93,7 @@ void ObjectEvent_SetActionCallbackAndRefreshById(u32 objectId, s32 action) {
     value |= object->steeringFlags;
     object->steeringFlags = value;
     ObjectEvent_SetMovementType(object, action);
-    ObjectDispatch_WaitForValue16Far(object);
+    Object_WaitForValue16Far(object);
   }
 }
 
@@ -107,7 +107,7 @@ void ObjectMotion_ResetAndSetPosition(u32 objectId, s32 x, s32 z) {
 
   if (object != NULL) {
     object->paused = 0;
-    ObjectDispatch_StartIdleFar((struct Object *)object);
+    Object_StartIdleFar((struct Object *)object);
     Object_SetMoveTargetFar(object, x << 16, object->y, z << 16);
   }
 }
@@ -121,7 +121,7 @@ void ObjectMotion_SetPositionAndCommit(u32 objectId, s32 x, s32 z) {
 
   if (object != NULL) {
     object->paused = 0;
-    ObjectDispatch_StartIdleFar((struct Object *)object);
+    Object_StartIdleFar((struct Object *)object);
     Object_SetMoveTargetFar(object, x << 16, object->y, z << 16);
     Object_WaitForMoveFar(object);
   }
@@ -135,8 +135,8 @@ void ObjectMotion_ResetAndSetPositionInMode2(u32 objectId, s32 x, s32 z) {
 
   if (object != NULL) {
     object->paused = 0;
-    ObjectDispatch_StartIdleFar((struct Object *)object);
-    ObjectDispatch_SelectAnimationFar(object, 2);
+    Object_StartIdleFar((struct Object *)object);
+    Object_SelectAnimationFar(object, 2);
     Object_SetMoveTargetFar(object, x << 16, object->y, z << 16);
   }
 }
@@ -150,11 +150,11 @@ void ObjectMotion_SetPositionAndReset(u32 objectId, s32 x, s32 z) {
 
   if (object != NULL) {
     object->paused = 0;
-    ObjectDispatch_StartIdleFar((struct Object *)object);
-    ObjectDispatch_SelectAnimationFar(object, 2);
+    Object_StartIdleFar((struct Object *)object);
+    Object_SelectAnimationFar(object, 2);
     Object_SetMoveTargetFar(object, x << 16, object->y, z << 16);
     Object_WaitForMoveFar(object);
-    ObjectDispatch_SelectAnimationFar(object, 1);
+    Object_SelectAnimationFar(object, 1);
   }
 }
 
@@ -182,8 +182,8 @@ void ObjectMotion_CenterOnColumn(u32 objectId, s32 priority, s32 zOffset) {
     columnX *= 16;
     offsetInColumn = pixelX - columnX;
     object->paused = 0;
-    ObjectDispatch_StartIdleFar((struct Object *)object);
-    ObjectDispatch_SelectAnimationFar(object, 2);
+    Object_StartIdleFar((struct Object *)object);
+    Object_SelectAnimationFar(object, 2);
     Object_SetMoveTargetFar(object, object->x + ((8 - offsetInColumn) << 16),
                             object->y, object->z);
     Object_WaitForMoveFar(object);
@@ -203,7 +203,7 @@ void ObjectMotion_OffsetPositionAndResetMotion(u32 objectId, s32 xOffset,
 
   if (object != NULL) {
     object->paused = 0;
-    ObjectDispatch_StartIdleFar((struct Object *)object);
+    Object_StartIdleFar((struct Object *)object);
     Object_SetMoveTargetFar(object, object->x + (xOffset << 16), object->y,
                             object->z + (zOffset << 16));
   }
@@ -218,8 +218,8 @@ void ObjectMotion_OffsetPositionAndReset(u32 objectId, s32 xOffset,
 
   if (object != NULL) {
     object->paused = 0;
-    ObjectDispatch_StartIdleFar((struct Object *)object);
-    ObjectDispatch_SelectAnimationFar(object, 2);
+    Object_StartIdleFar((struct Object *)object);
+    Object_SelectAnimationFar(object, 2);
     Object_SetMoveTargetFar(object, object->x + (xOffset << 16), object->y,
                             object->z + (zOffset << 16));
   }
@@ -235,7 +235,7 @@ void ObjectMotion_CommitPositionAndActivate(u32 objectId, s32 xOffset,
   ObjectMotion_OffsetPositionAndReset(objectId, xOffset, zOffset);
   if (object != NULL) {
     Object_WaitForMoveFar(object);
-    ObjectDispatch_SelectAnimationFar(object, 1);
+    Object_SelectAnimationFar(object, 1);
   }
 }
 
@@ -256,10 +256,10 @@ void ObjectMotion_LaunchFromFocusedObject(u32 objectId, s32 xOffset,
       ObjectMotion_SetHorizontalPositionWithTerrain(objectId, leader->x,
                                                     leader->z);
     object->paused = 0;
-    ObjectDispatch_SelectAnimationFar(object, 2);
+    Object_SelectAnimationFar(object, 2);
     ObjectMotion_OffsetPositionAndResetMotion(objectId, xOffset, zOffset);
-    ObjectDispatch_InitializeFar((struct Object *)object,
-                                 (const s32 *)&gObjectMotion_LaunchScript);
+    Object_InitializeFar((struct Object *)object,
+                         (const s32 *)&gObjectMotion_LaunchScript);
     object->action = action;
   }
 }
@@ -273,7 +273,7 @@ void ObjectMotion_CommitCurrentPositionAndActivate(u32 objectId) {
 
   if (object != NULL) {
     Object_WaitForMoveFar(object);
-    ObjectDispatch_SelectAnimationFar(object, 1);
+    Object_SelectAnimationFar(object, 1);
   }
 }
 
@@ -281,7 +281,7 @@ void ObjectMotion_CommitCurrentPositionAndActivate(u32 objectId) {
 /// z), 16.16 pixels, at rest. An object event that follows the ground
 /// (OBJ_EVENT_FOLLOWS_TERRAIN) keeps its height above the ground at the new
 /// place. Clears its velocity and targets. Map scripts reach it as
-/// Engine_ObjectEventSetPosition (OBJECT_POSITION_SET,
+/// Import_ObjectEventSetPosition (OBJECT_POSITION_SET,
 /// ObjectEvent_SetPosition); ObjectMotion_LaunchFromFocusedObject calls it too.
 void ObjectMotion_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z) {
   struct Object *object;
@@ -292,7 +292,7 @@ void ObjectMotion_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z) {
 
   object = ObjectEvent_GetByLocalId(objectId);
   if (object != NULL) {
-    ObjectDispatch_StartIdleFar((struct Object *)object);
+    Object_StartIdleFar((struct Object *)object);
     SET_VELOCITY(object, 0, 0, 0);
     object->targetY = OBJ_EVENT_NO_TARGET;
     object->targetX = OBJ_EVENT_NO_TARGET;
@@ -339,7 +339,7 @@ void ObjectMotion_SetPositionWithTerrain(u32 objectId, s32 x, s32 y, s32 z) {
 
   object = ObjectEvent_GetByLocalId(objectId);
   if (object != NULL) {
-    ObjectDispatch_StartIdleFar((struct Object *)object);
+    Object_StartIdleFar((struct Object *)object);
     SET_VELOCITY(object, 0, 0, 0);
     object->targetY = OBJ_EVENT_NO_TARGET;
     object->targetX = OBJ_EVENT_NO_TARGET;
@@ -365,14 +365,14 @@ void ObjectMotion_SetPositionWithTerrain(u32 objectId, s32 x, s32 y, s32 z) {
 
 /// The script command "set object event animation" (1 stands, 2 walks, 3 nods,
 /// 4 shakes the head and so on). Map scripts reach it as
-/// Engine_ObjectEventSetAnimation (OBJECT_ANIMATION, ObjectEvent_SetAnimation);
+/// Import_ObjectEventSetAnimation (OBJECT_ANIMATION, ObjectEvent_SetAnimation);
 /// FieldScript_AskYesNoWithObjectEventAnimation and
 /// ObjectMotion_SetAnimationAndWait call it too.
 void ObjectEvent_SetModeById(u32 objectId, s32 animation) {
   struct Object *object = ObjectEvent_GetByLocalId(objectId);
 
   if (object != NULL)
-    ObjectDispatch_SelectAnimationFar(object, animation);
+    Object_SelectAnimationFar(object, animation);
 }
 
 /// Sets the animation timer steps of each of an object event's sprites
@@ -382,7 +382,7 @@ void ObjectEvent_SetActionById(u32 objectId, s32 steps) {
   struct Object *object = ObjectEvent_GetByLocalId(objectId);
 
   if (object != NULL)
-    ObjectDispatch_SetAnimationSpeedFar((struct Object *)object, steps);
+    Object_SetAnimationSpeedFar((struct Object *)object, steps);
 }
 
 /// Waits, at most 90 frames, for an object event's animation to change. Only an
@@ -464,7 +464,7 @@ void ObjectMotion_SetVariantCallback(u32 objectId, s32 count) {
       count = 3;
     }
     // Each count is 32 words of the script; start that many from its end.
-    ObjectDispatch_InitializeFar(
+    Object_InitializeFar(
         (struct Object *)object,
         (const s32 *)(gObjectMotion_VariantScripts + ((3 - count) << 7)));
   }
@@ -514,7 +514,7 @@ void FieldEffect_UpdateParticleLinearMotion(union FieldObject *fieldObject) {
 /// Kicks up a dust puff (SPRITE_DUST_PUFF) where source stands: it flies off
 /// toward the back at 0.5 to 1.4 pixels a frame and sideways at up to 1.4, with
 /// one of two animations. A nonzero param is given to its sprite parts
-/// (ObjectGroup_SetChildValue). Only ObjectEvent_JumpDownLedge calls it.
+/// (ObjectEvent_SetSpriteColor). Only ObjectEvent_JumpDownLedge calls it.
 void FieldEffect_SpawnBurstParticle(struct ObjectEvent *source, s32 param) {
   struct ObjectEvent *objectEvent;
   struct Sprite *child;
@@ -526,21 +526,19 @@ void FieldEffect_SpawnBurstParticle(struct ObjectEvent *source, s32 param) {
     child = objectEvent->sprite;
     switch (Random16() & 1) {
     case 1:
-      ObjectDispatch_SelectAnimationFar(objectEvent, 2);
-      ObjectDispatch_InitializeFar(
-          (struct Object *)objectEvent,
-          (const s32 *)gFieldEffect_BurstParticleScriptA);
+      Object_SelectAnimationFar(objectEvent, 2);
+      Object_InitializeFar((struct Object *)objectEvent,
+                           (const s32 *)gFieldEffect_BurstParticleScriptA);
       break;
     default:
-      ObjectDispatch_SelectAnimationFar(objectEvent, 1);
-      ObjectDispatch_InitializeFar(
-          (struct Object *)objectEvent,
-          (const s32 *)gFieldEffect_BurstParticleScriptB);
+      Object_SelectAnimationFar(objectEvent, 1);
+      Object_InitializeFar((struct Object *)objectEvent,
+                           (const s32 *)gFieldEffect_BurstParticleScriptB);
       break;
     }
 
     if (param != 0)
-      ObjectGroup_SetChildValue(objectEvent, param);
+      ObjectEvent_SetSpriteColor(objectEvent, param);
 
     // speed and acceleration hold the puff's x and z velocity, in steps of
     // 0x1999 (0.1 pixel): z is -0.5 to -1.4, x -1.4 to 1.4 in steps of 0.2.
@@ -576,12 +574,12 @@ void ObjectEvent_JumpDownLedge(s32 localId, s32 pose, s32 param) {
   startZ = object->z;
   if (object != 0) {
     Sound_PlaySongFar(SONG_FADE_OUT_ACTION_SE);
-    ObjectDispatch_SelectAnimationFar(object, pose);
+    Object_SelectAnimationFar(object, pose);
     WaitFrames(10);
 
     // Hop up and forward 12 pixels.
     objectFlags = &object->motionFlags;
-    ObjectDispatch_SelectAnimationFar(object, 1);
+    Object_SelectAnimationFar(object, 1);
     {
       u8 flags = 2;
       flags |= *objectFlags;
@@ -710,7 +708,7 @@ void ObjectEvent_DestroyById(s32 index) {
 #endif
 
   if (object != 0) {
-    ObjectDispatch_ReleaseFar(object);
+    Object_ReleaseFar(object);
 #ifdef UBFIX
     // The getter accepts slots through 191, including non-object-event storage.
     // Copy the pointer representation without extending the object event array.
@@ -726,12 +724,12 @@ void ObjectEvent_DestroyById(s32 index) {
 UNUSED void ObjectEvent_DestroyNoOp(void) {}
 
 /// The script command "set object event sprite param": gives every sprite part
-/// of the object event param (ObjectGroup_SetChildValue). With bit 0x100 set
-/// the object event blinks instead (ObjectGroup_ApplyIndexedChildValue, every
+/// of the object event param (ObjectEvent_SetSpriteColor). With bit 0x100 set
+/// the object event blinks instead (ObjectEvent_UpdateBlink, every
 /// frame); any other param also ends a blink, clearing the object event's hook.
 /// Map scripts reach it
-/// (ObjectEvent_SetChildValue).
-void ObjectGroup_ConfigureChildValue(s32 objectId, s32 param) {
+/// (ObjectEvent_SetSpriteColorById).
+void ObjectEvent_ConfigureSpriteColor(s32 objectId, s32 param) {
   s32 blink;
   struct Object *object;
 
@@ -739,18 +737,18 @@ void ObjectGroup_ConfigureChildValue(s32 objectId, s32 param) {
   if (object != NULL) {
     blink = 0x100 & param;
     if (blink != 0) {
-      ((struct Object *)object)->update = ObjectGroup_ApplyIndexedChildValue;
+      ((struct Object *)object)->update = ObjectEvent_UpdateBlink;
       return;
     }
     ((struct Object *)object)->update = NULL;
-    ObjectGroup_SetChildValue((struct ObjectEvent *)object, param);
+    ObjectEvent_SetSpriteColor((struct ObjectEvent *)object, param);
   }
 }
 
 /// Per-frame hook of a blinking object event: sets its sprite parts' param from
-/// gObjectGroup_BlinkChildValues (7 for two frames out of eight, otherwise 0).
-/// ObjectGroup_ConfigureChildValue installs it.
-void ObjectGroup_ApplyIndexedChildValue(union FieldObject *fieldObject) {
+/// gObjectEvent_BlinkSpriteColors (7 for two frames out of eight, otherwise 0).
+/// ObjectEvent_ConfigureSpriteColor installs it.
+void ObjectEvent_UpdateBlink(union FieldObject *fieldObject) {
   struct Object *object = (struct Object *)fieldObject;
 
   if ((object->spriteStorageKind & 0xf) == 1) {
@@ -759,7 +757,7 @@ void ObjectGroup_ApplyIndexedChildValue(union FieldObject *fieldObject) {
     u8 partCount;
 
     // The table's four entries each last two frames.
-    param = gObjectGroup_BlinkChildValues[(gFrameCount >> 1) & 3];
+    param = gObjectEvent_BlinkSpriteColors[(gFrameCount >> 1) & 3];
     container = object->sprite;
     partCount = container->count;
     if (partCount != 0) {
@@ -779,9 +777,9 @@ void ObjectGroup_ApplyIndexedChildValue(union FieldObject *fieldObject) {
 
 /// Sets the param byte of every animated part of an object event's sprite. Map
 /// scripts set 0 or 15, and alternate the two to make an object event flash.
-/// Marks the sprite dirty. Called by ObjectGroup_ConfigureChildValue,
+/// Marks the sprite dirty. Called by ObjectEvent_ConfigureSpriteColor,
 /// FieldEffect_SpawnBurstParticle and about 40 map script sites.
-void ObjectGroup_SetChildValue(struct ObjectEvent *objectEvent, s32 param) {
+void ObjectEvent_SetSpriteColor(struct ObjectEvent *objectEvent, s32 param) {
   struct Object *object = (struct Object *)objectEvent;
 
   if ((object->spriteStorageKind & 0xf) == 1) {
@@ -823,7 +821,7 @@ void ObjectEvent_SetTargetAndCallback(u32 objectId, s32 targetId,
       follower->speedLimit = target->speedLimit;
       follower->collisionFlags = 0;
     }
-    ObjectDispatch_InitializeFar((struct Object *)follower, script);
+    Object_InitializeFar((struct Object *)follower, script);
   }
 }
 
@@ -860,8 +858,8 @@ void ObjectEvent_ResetTargetAndSetMode1(u32 objectId) {
     object->targetX = OBJ_EVENT_NO_TARGET;
     object->targetY = OBJ_EVENT_NO_TARGET;
     object->targetZ = OBJ_EVENT_NO_TARGET;
-    ObjectDispatch_StartIdleFar((struct Object *)object);
-    ObjectDispatch_SelectAnimationFar(object, 1);
+    Object_StartIdleFar((struct Object *)object);
+    Object_SelectAnimationFar(object, 1);
   }
 }
 
@@ -876,8 +874,8 @@ void ObjectMotion_ArmCallback(s32 objectId, s32 angle, s32 wait) {
 
   if (object != NULL) {
     object->action = angle;
-    ObjectDispatch_InitializeFar((struct Object *)object,
-                                 (const s32 *)gObjectMotion_StepAngleScript);
+    Object_InitializeFar((struct Object *)object,
+                         (const s32 *)gObjectMotion_StepAngleScript);
     FieldScript_WaitFrames(wait);
   }
 }
@@ -902,7 +900,7 @@ void ObjectMotion_SetActionVariant(s32 objectId, s32 priority) {
 /// Makes the target object event's sprite show the source object event's
 /// graphics (its VRAM block and tile). Neither object event is checked for
 /// NULL. Called by the Tolbi ship deck's map script.
-void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId) {
+void ObjectEvent_CopyGraphics(u32 targetId, u32 sourceId) {
   struct Object *object;
   struct Sprite *sprite;
   u8 vramBlock;
@@ -920,7 +918,7 @@ void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId) {
 }
 
 /// Unused: an empty function nothing calls.
-UNUSED void ObjectVisual_ReservedNoOp(void) {}
+UNUSED void ObjectEvent_ReservedNoOp(void) {}
 
 /// The script command "set message": the number of the script's next message,
 /// written to work->message. Map scripts reach it (MESSAGE_SET); the field's

@@ -47,13 +47,12 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   Sound_PlaySongFar(SE_140);
   MapGrid_SetScreenShakeFar(0x14ccc, 0x14ccc, 0x10000);
   djinni->update = FieldEffect_ShrinkObjectAndDestroyFast;
-  ObjectDispatch_SelectAnimationFar(djinni, 3);
+  Object_SelectAnimationFar(djinni, 3);
   // The leader turns to face the camera (angle 0x4000).
   WaitFrames(90);
   ObjectMotion_ArmCallback(gSaveBlock.leaderLocalId, 0x4000, 0);
   WaitFrames(20);
-  ObjectDispatch_SelectAnimationFar(
-      ObjectEvent_GetById(gSaveBlock.leaderLocalId), 28);
+  Object_SelectAnimationFar(ObjectEvent_GetById(gSaveBlock.leaderLocalId), 28);
   WaitFrames(30);
   MapGrid_SetScreenShakeFar(0x19999, 0x19999, 0x10000);
 
@@ -118,7 +117,7 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
       djinni->orbitAngle = (remaining << 16) / 24;
       djinni->update = FieldEffect_UpdateDescendingOrbitObject;
       djinni->motionFlags = 0;
-      ObjectDispatch_SelectAnimationFar(djinni, 7);
+      Object_SelectAnimationFar(djinni, 7);
       Anim_ApplyChildValuesFar((struct Object *)djinni,
                                SPRITE_COLOR_GREEN_TINT);
     }
@@ -150,8 +149,8 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
                                                      0x200000, Random16());
     Anim_ApplyChildValuesFar((struct Object *)djinni, SPRITE_COLOR_GREEN_TINT);
     djinni->wait = 8;
-    ObjectDispatch_InitializeFar((struct Object *)djinni,
-                                 gFieldEffect_CommonParticleScript);
+    Object_InitializeFar((struct Object *)djinni,
+                         gFieldEffect_CommonParticleScript);
   }
 
   WaitFrames(15);

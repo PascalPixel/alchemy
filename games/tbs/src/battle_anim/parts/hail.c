@@ -136,8 +136,8 @@ void BattleAnim_RunHail(struct BattleAnimArgs *effect) {
     if (frame == 8) {
       work->shakeFrames = frame;
       ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-      ObjectGroup_UpdateMembers(work->effect->targets[0], SPRITE_COLOR_WHITE,
-                                POSE_DAMAGE, 0, 16);
+      BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_WHITE,
+                             POSE_DAMAGE, 0, 16);
       BattleMotion_ApplyKnockbackFar(work->effect->targets[0],
                                      KNOCKBACK_LAUNCH);
     }

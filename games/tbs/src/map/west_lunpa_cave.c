@@ -122,7 +122,7 @@ static void Gate_DrawPropped(void) {
   struct ObjectEvent *pillar;
 
   pillar = ObjectEvent_Get(LOCALID_GATE_PUDDLE);
-  Engine_ObjectEventSetAnimation(LOCALID_GATE_PUDDLE, PUDDLE_ANIMATION_FROZEN);
+  Import_ObjectEventSetAnimation(LOCALID_GATE_PUDDLE, PUDDLE_ANIMATION_FROZEN);
   if (pillar != NULL) {
     ObjectEvent_SetSpriteFlags(pillar, 0);
     pillar->priorityFlags = OBJ_EVENT_PRIORITY_AUTOMATIC;
@@ -259,7 +259,7 @@ static void EventScript_HammetFindsBunza(void) {
     ObjectEvent_SetSpeed(LOCALID_BUNZA, PIXELS(3) / 2, PIXELS(3) / 4);
     ObjectEvent_WalkTo(LOCALID_BUNZA, 184, 400);
     ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_BUNZA);
-    Engine_ObjectEventSetAnimation(LOCALID_BUNZA, ANIM_STAND);
+    Import_ObjectEventSetAnimation(LOCALID_BUNZA, ANIM_STAND);
     ObjectEvent_FaceDirection(LOCALID_BUNZA, FACING_SOUTH - FACING_STEP, 0);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_PARTY_LEADER, 1);
     FieldScript_WaitFrames(30);
@@ -339,10 +339,10 @@ static void EventScript_HammetFindsBunza(void) {
     ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 0);
     ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTH, 0);
     ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTH, 0);
-    Engine_ObjectEventSetAnimation(LOCALID_HAMMET, ANIM_WALK);
+    Import_ObjectEventSetAnimation(LOCALID_HAMMET, ANIM_WALK);
     ObjectEvent_WalkBy(LOCALID_HAMMET, 0, -16);
     ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_HAMMET);
-    Engine_ObjectEventSetAnimation(LOCALID_HAMMET, ANIM_STAND);
+    Import_ObjectEventSetAnimation(LOCALID_HAMMET, ANIM_STAND);
     FieldScript_SetMessageId(recognition + RECOGNITION_HAMMET_NAMES_BUNZA);
     Script_ShowMessage(LOCALID_HAMMET, 0);
     ObjectEvent_ShowEmote(LOCALID_BUNZA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
@@ -390,7 +390,7 @@ static void Reunion_Converse(void) {
   ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_WEST, 0);
   ObjectEvent_FaceDirection(LOCALID_HAMMET, FACING_WEST, 0);
   ObjectEvent_FaceDirection(LOCALID_BUNZA, FACING_EAST, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_BUNZA, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_BUNZA, ANIM_STAND);
   FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 0);
   WaitFrames(1);
   MapGrid_CenterOnFollowedPoint();
@@ -430,9 +430,9 @@ static void Reunion_Converse(void) {
   FieldScript_SetMessageId(reunion + REUNION_HAMMET_THANKS_PARTY);
   Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_HAMMET, 0);
   FieldScript_WaitFrames(30);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
   FieldScript_WaitFrames(120);
   ObjectEvent_FaceDirection(LOCALID_HAMMET, FACING_SOUTH - FACING_STEP, 0);
   FieldScript_WaitFrames(30);
@@ -581,7 +581,7 @@ static void Reunion_Converse(void) {
   Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_IVAN, 0);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_BUNZA);
   ObjectEvent_FaceDirection(LOCALID_BUNZA, FACING_SOUTH - FACING_STEP, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_BUNZA, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_BUNZA, ANIM_STAND);
   ObjectMotion_SetAnimationAndWait(LOCALID_BUNZA, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
   FieldScript_SetMessageId(reunion + REUNION_BUNZA_WARNS_OF_SEARCH);
@@ -656,14 +656,14 @@ static void Reunion_Converse(void) {
   Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_BUNZA, 0);
   ObjectEvent_LinkPair(LOCALID_HAMMET, LOCALID_IVAN, 0);
   FieldScript_WaitFrames(60);
-  Engine_ObjectEventSetAnimation(LOCALID_HAMMET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_HAMMET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
   FieldScript_WaitFrames(60);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
   ObjectEvent_FaceObjectEvent(LOCALID_BUNZA, LOCALID_PARTY_LEADER, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_BUNZA, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_BUNZA, ANIM_NOD);
   FieldScript_WaitFrames(60);
   WagonChoice_Run();
 }
@@ -847,22 +847,22 @@ static void Party_StaysBehind(void) {
   ObjectEvent_FaceDirection(LOCALID_BUNZA, FACING_SOUTH - FACING_STEP, 0);
   FieldScript_WaitFrames(20);
   ObjectMotion_SetAnimationAndWait(LOCALID_BUNZA, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
   FieldScript_WaitFrames(60);
   ObjectEvent_SetDestinationOffset(LOCALID_HAMMET, -16, 0);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_HAMMET);
-  Engine_ObjectEventSetAnimation(LOCALID_HAMMET, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_HAMMET, ANIM_STAND);
   FieldScript_WaitFrames(40);
   ObjectMotion_SetAnimationAndWait(LOCALID_HAMMET, ANIM_NOD);
   ObjectEvent_FaceDirection(LOCALID_HAMMET, FACING_SOUTH + FACING_STEP, 0);
   FieldScript_WaitFrames(30);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
   ObjectEvent_WalkTo(LOCALID_BUNZA, 156, 528);
   FieldScript_WaitFrames(20);
   ObjectEvent_WalkTo(LOCALID_HAMMET, 164, 528);
@@ -901,7 +901,7 @@ static void Party_StaysBehind(void) {
 
   // Merge the companions back into the leader and restore player camera
   // control.
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
     ObjectEvent_SetDestination(LOCALID_GARET, leader->x.part.pixel,
@@ -909,7 +909,7 @@ static void Party_StaysBehind(void) {
   }
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
   ObjectEvent_SetPosition(LOCALID_GARET, 0, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_WALK);
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
     ObjectEvent_SetDestination(LOCALID_IVAN, leader->x.part.pixel,
@@ -917,7 +917,7 @@ static void Party_StaysBehind(void) {
   }
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_IVAN);
   ObjectEvent_SetPosition(LOCALID_IVAN, 0, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_WALK);
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
     ObjectEvent_SetDestination(LOCALID_MIA, leader->x.part.pixel,
@@ -956,22 +956,22 @@ static void Party_RidesWagon(void) {
   Script_ShowMessage(LOCALID_BUNZA, 0);
   ObjectMotion_SetAnimationAndWait(LOCALID_HAMMET, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
   FieldScript_WaitFrames(80);
   ObjectEvent_SetDestinationOffset(LOCALID_HAMMET, -16, 0);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_HAMMET);
-  Engine_ObjectEventSetAnimation(LOCALID_HAMMET, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_HAMMET, ANIM_STAND);
   FieldScript_WaitFrames(40);
   ObjectMotion_SetAnimationAndWait(LOCALID_HAMMET, ANIM_NOD);
   ObjectEvent_FaceDirection(LOCALID_HAMMET, FACING_SOUTH + FACING_STEP, 0);
   FieldScript_WaitFrames(30);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
   ObjectEvent_WalkTo(LOCALID_BUNZA, 152, 528);
   FieldScript_WaitFrames(20);
   ObjectEvent_WalkTo(LOCALID_HAMMET, 160, 528);
@@ -993,7 +993,7 @@ static void Party_RidesWagon(void) {
   ObjectEvent_SetPosition(LOCALID_HAMMET, 0, 0);
   ObjectEvent_SetPosition(LOCALID_BUNZA, 0, 0);
 
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
     ObjectEvent_SetDestination(LOCALID_GARET, leader->x.part.pixel,
@@ -1001,7 +1001,7 @@ static void Party_RidesWagon(void) {
   }
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
   ObjectEvent_SetPosition(LOCALID_GARET, 0, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_WALK);
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
     ObjectEvent_SetDestination(LOCALID_IVAN, leader->x.part.pixel,
@@ -1009,7 +1009,7 @@ static void Party_RidesWagon(void) {
   }
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_IVAN);
   ObjectEvent_SetPosition(LOCALID_IVAN, 0, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_WALK);
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
     ObjectEvent_SetDestination(LOCALID_MIA, leader->x.part.pixel,
@@ -1024,7 +1024,7 @@ static void Party_RidesWagon(void) {
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 168, 640);
   FieldScript_WaitFrames(60);
   FieldScript_FinishScreenTransition();
-  Engine_ScriptRequestWarp(WEST_LUNPA_CAVE_BY_WAGON);
+  Import_ScriptRequestWarp(WEST_LUNPA_CAVE_BY_WAGON);
 }
 
 /// Restores the gate and frozen puddles from the persistent puzzle flags.
@@ -1047,11 +1047,11 @@ s32 Map_Initialize(void) {
       Gate_DrawPropped();
     }
     if (GameFlag_Get(FLAG_MAP_TEMP_03) != 0) {
-      Engine_ObjectEventSetAnimation(LOCALID_NORTH_PUDDLE,
+      Import_ObjectEventSetAnimation(LOCALID_NORTH_PUDDLE,
                                      PUDDLE_ANIMATION_FROZEN);
     }
     if (GameFlag_Get(FLAG_MAP_TEMP_04) != 0) {
-      Engine_ObjectEventSetAnimation(LOCALID_SOUTH_PUDDLE,
+      Import_ObjectEventSetAnimation(LOCALID_SOUTH_PUDDLE,
                                      PUDDLE_ANIMATION_FROZEN);
     }
   }

@@ -6,7 +6,7 @@
 	.set import.Task_Remove, 1
 	.set import.ArcTan2, 1
 	.set import.TilesetAnim_Resume, 1
-	.set import.ObjectDispatch_SetSingleChildFlags, 1
+	.set import.Object_SetSpriteFlags, 1
 	.set import.FieldMessage_Show, 1
 	.set import.GameFlag_Get, 1
 	.set import.GameFlag_Set, 1
@@ -24,8 +24,8 @@
 	.set import.ObjectMotion_ResetAndSetPositionInMode2, 1
 	.set import.ObjectMotion_SetPositionAndReset, 1
 	.set import.ObjectMotion_CommitCurrentPositionAndActivate, 1
-	.set import.Engine_ObjectEventSetPosition, 1
-	.set import.Engine_ObjectEventSetAnimation, 1
+	.set import.Import_ObjectEventSetPosition, 1
+	.set import.Import_ObjectEventSetAnimation, 1
 	.set import.ObjectMotion_SetAnimationAndWait, 1
 	.set import.ObjectMotion_Launch, 1
 	.set import.ObjectMotion_SetVariantCallback, 1
@@ -38,14 +38,14 @@
 	.set import.FieldScript_ShowMessageThenWait, 1
 	.set import.FieldScript_AskYesNoAndShowResponse, 1
 	.set import.ObjectMotion_ArmCallback, 1
-	.set import.Engine_ScriptShowTwoMessagesAndWait, 1
+	.set import.Import_ScriptShowTwoMessagesAndWait, 1
 	.set import.ObjectMotion_SetActionVariant, 1
 	.set import.FieldEffect_SpawnLinked, 1
 	.set import.FieldCamera_SetSpeedParameters, 1
 	.set import.FieldCamera_MoveWithinMapBounds, 1
 	.set import.FieldCamera_WaitForArrival, 1
 	.set import.FieldCamera_GetScriptObject, 1
-	.set import.Engine_ScriptRequestWarp, 1
+	.set import.Import_ScriptRequestWarp, 1
 	.set import.Weather_StartLightning, 1
 	.set import.Weather_StopLightning, 1
 	.set import.Weather_LastLightning, 1

@@ -1,5 +1,5 @@
-#ifndef GUARD_EDITION_H
-#define GUARD_EDITION_H
+#ifndef ALCHEMY_EDITION_H
+#define ALCHEMY_EDITION_H
 
 /// @file
 /// The edition's language, for C to compare (LANGUAGE == LANGUAGE_GERMAN).

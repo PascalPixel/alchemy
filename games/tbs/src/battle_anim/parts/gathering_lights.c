@@ -137,8 +137,8 @@ void BattleAnim_RunGatheringLights(struct BattleAnimArgs *effect, s32 mode) {
           Sound_PlaySongFar(SE_IMPACT);
       }
       if (frame == k * 20 + 70)
-        ObjectGroup_UpdateMembers(work->effect->targets[k], SPRITE_COLOR_WHITE,
-                                  POSE_DAMAGE, k, 26);
+        BattleAnim_TintBattler(work->effect->targets[k], SPRITE_COLOR_WHITE,
+                               POSE_DAMAGE, k, 26);
       if (frame > k * 20) {
         for (i = 0; i != gGatheringLights_Counts[mode][GATHERING_LIGHTS_COUNT];
              i++) {

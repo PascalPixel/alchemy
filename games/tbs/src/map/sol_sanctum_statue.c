@@ -261,12 +261,12 @@ const struct MapEvent *SolSanctumStatue_GetEvents(void) {
 static s32 SolSanctumStatue_SelectStoryWarp(void) {
   if (GameFlag_Get(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED) != 0) {
     if (GameFlag_Get(FLAG_SOL_SANCTUM_KRADEN_SAID_FOUND_SOMETHING) == 0) {
-      Engine_ScriptRequestWarp(
+      Import_ScriptRequestWarp(
           SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED);
       return 1;
     }
   } else if (GameFlag_Get(FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN) == 0) {
-    Engine_ScriptRequestWarp(
+    Import_ScriptRequestWarp(
         SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_TRIGGERED);
     return 1;
   }
@@ -423,8 +423,8 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH, 0);
   FieldScript_WaitFrames(40);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(20);
   ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIM_NOD);
@@ -446,7 +446,7 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   // Rejoin the companions to the leader and restore normal field control.
   ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_SetSpeed(LOCALID_JENNA, PIXELS(1), PIXELS(1) / 2);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
     ObjectEvent_SetDestination(LOCALID_GARET, leader->x.part.pixel,
@@ -454,7 +454,7 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   }
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
   ObjectEvent_SetPosition(LOCALID_GARET, 0, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_WALK);
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
     ObjectEvent_SetDestination(LOCALID_JENNA, leader->x.part.pixel,
@@ -489,7 +489,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(20);
-  Engine_ObjectEventSetPosition(LOCALID_KRADEN, PIXELS(576), PIXELS(296));
+  Import_ObjectEventSetPosition(LOCALID_KRADEN, PIXELS(576), PIXELS(296));
   FieldScript_WaitFrames(1);
   // Kraden, from the south: "Wait, Isaac!" Jenna: "What's wrong, Kraden?"
   FieldScript_SetMessageId(MsgSolSanctumWait);
@@ -524,8 +524,8 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   // Kraden: "This is a most interesting mechanism you've found, Isaac."
   ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIM_NOD);
   EventScript_SayThenWait(LOCALID_KRADEN, 6);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(40);
   // Kraden: "But this is clearly... some kind of trap." All three start.
@@ -557,7 +557,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   FieldCamera_MoveTo(PIXELS(288), -1, PIXELS(171), 1);
   FieldCamera_WaitForArrival();
   FieldScript_WaitFrames(80);
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
   FieldCamera_MoveTo(PIXELS(574), -1, PIXELS(180), 1);
   FieldScript_WaitFrames(20);
   ObjectMotion_ArmCallback(LOCALID_KRADEN, FACING_EAST, 0);
@@ -644,7 +644,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIM_NOD);
   FieldCamera_MoveTo(PIXELS(576), -1, PIXELS(215), 1);
   ObjectEvent_WalkToAndWait(LOCALID_KRADEN, 574, 323);
-  Engine_ObjectEventSetPosition(LOCALID_KRADEN, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_KRADEN, 0, 0);
   // Leave Isaac in control after Jenna and Garet rejoin him.
   FieldCamera_SetSpeed(PIXELS(18) / 5, PIXELS(9) / 20);
   FieldCamera_MoveWithinMapBounds(PIXELS(576), -1, PIXELS(136), 1);
@@ -654,26 +654,26 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   FieldScript_WaitFrames(10);
   // Jenna: "let's see if we can't figure this out ourselves."
   EventScript_SayThenWait(LOCALID_JENNA, 6);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_JENNA, ANIM_NOD);
   ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_SetSpeed(LOCALID_JENNA, PIXELS(1), PIXELS(1) / 2);
-  Engine_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0) {
     ObjectMotion_ResetAndSetPosition(LOCALID_JENNA, leader->x.part.pixel,
                                      leader->z.part.pixel);
   }
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_JENNA);
-  Engine_ObjectEventSetPosition(LOCALID_JENNA, 0, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
+  Import_ObjectEventSetPosition(LOCALID_JENNA, 0, 0);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0) {
     ObjectMotion_ResetAndSetPosition(LOCALID_GARET, leader->x.part.pixel,
                                      leader->z.part.pixel);
   }
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
-  Engine_ObjectEventSetPosition(LOCALID_GARET, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_GARET, 0, 0);
   GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   work = gFieldWork;
   work->transition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
@@ -1174,7 +1174,7 @@ static void EventScript_CenterStatueMoved(void) {
         statue->y.fixed = 0;
         statue->z.fixed = 0;
         SET_VELOCITY(statue, 0, 0, 0);
-        Engine_ObjectEventSetPosition(LOCALID_CENTER_STATUE, 0, 0);
+        Import_ObjectEventSetPosition(LOCALID_CENTER_STATUE, 0, 0);
         MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
         FieldScript_WaitFrames(10);
         Sound_PlaySong(SE_RUMBLE);
@@ -1226,13 +1226,13 @@ static void EventScript_PushCenterStatueNorth(void) {
       ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
       ObjectEvent_GetById(LOCALID_CENTER_STATUE)->steeringFlags &=
           ~OBJ_EVENT_FACES_MOTION;
-      Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_PUSH);
+      Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_PUSH);
       movingObjectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
       ObjectEvent_SetDestination(LOCALID_PARTY_LEADER,
                                  movingObjectEvent->x.part.pixel, 136);
       ObjectEvent_SetDestination(LOCALID_CENTER_STATUE, 288, 120);
       ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_CENTER_STATUE);
-      Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+      Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
       FieldScript_End();
     }
   }
@@ -1347,14 +1347,14 @@ static void SolSanctumStatue_PushStatue(s32 statueId, s32 statueColumn,
   ObjectMotion_SetSpeedParameters(LOCALID_PARTY_LEADER, PIXELS(1) / 5,
                                   PIXELS(1) / 10);
   ObjectEvent_GetById(statueId)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_PUSH);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_PUSH);
   ObjectMotion_ResetAndSetPosition(
       LOCALID_PARTY_LEADER, (leaderColumn << 4) + 8, (leaderRow << 4) + 8);
   statueX = statueColumn << 4;
   statueZ = statueRow << 4;
   ObjectMotion_ResetAndSetPosition(statueId, statueX + 8, statueZ + 8);
   ObjectMotion_CommitCurrentPositionAndActivate(statueId);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   FieldScript_End();
 }
 
@@ -1659,7 +1659,7 @@ static void SolSanctumStatue_OpenSeal(void) {
           SolSanctumStatue_RunSealOpenedSequence();
         }
       } else if (GameFlag_Get(FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN)) {
-        Engine_ScriptRequestWarp(
+        Import_ScriptRequestWarp(
             SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_LIGHTS_SHOWN);
         warpResult = 1;
       }

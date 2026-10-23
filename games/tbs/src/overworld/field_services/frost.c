@@ -26,8 +26,8 @@ void FieldEffect_UpdateOrbitingParticleFade(union FieldObject *fieldObject) {
     particle->scaleY -= 0x1000;
     particle->scaleX = scale;
     if (scale <= 0x1000)
-      ObjectDispatch_InitializeFar((struct Object *)particle,
-                                   gFieldEffect_CommonParticleScript);
+      Object_InitializeFar((struct Object *)particle,
+                           gFieldEffect_CommonParticleScript);
   }
 }
 
@@ -177,7 +177,7 @@ void FieldEffect_RunFrost(void) {
 
     if (effectWork->childOption == 0) {
       Sound_PlaySongFar(SE_220);
-      ObjectDispatch_SelectAnimationFar(target, 2);
+      Object_SelectAnimationFar(target, 2);
     }
 
     target->update = FieldEffect_UpdateOrbitingParticleMain;

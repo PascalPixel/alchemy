@@ -352,7 +352,7 @@ void WindowSprite_UpdateAll(void);
 void Message_DecodeRawUnbounded(s32 message, u16 *buf);
 s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity);
 void Message_DecodeRaw(s32 message, u16 *text, s32 capacity);
-s32 *Runtime_ClearWordIfSet(s32 *p);
+s32 *Memory_ClearWordIfSet(s32 *p);
 void Window_CloseAll(s32 unused);
 void Window_StepSwellEffect(struct TextPrinter *printer);
 void MessageArgument_ClearAll(void);

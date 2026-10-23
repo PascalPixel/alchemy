@@ -18,14 +18,14 @@ FarCall_RuntimeTable:
 	export Trig_SinFar, Trig_Sin
 	export Trig_CosFar, Trig_Cos
 	export Vector_AddPolarOffsetFar, Vector_AddPolarOffset
-	export Runtime_SetIrqHandlerFar, Runtime_SetIrqHandler
+	export Irq_SetHandlerFar, Irq_SetHandler
 	overlay_veneer InitHeap
 	export AllocHeapSlotFar, AllocHeapSlot
 	export AllocHeapSlotEwramFar, AllocHeapSlotEwram
 	export FreeHeapSlotFar, FreeHeapSlot
-	overlay_veneer Runtime_GetRemainingIwram
-	overlay_veneer Runtime_GetRemainingEwram
-	export Runtime_BumpAllocateFar, Alloc
+	overlay_veneer Heap_GetRemainingIwram
+	overlay_veneer Heap_GetRemainingEwram
+	export AllocFar, Alloc
 	export AllocEwramFar, AllocEwram
 	export Sys_FreeFar, Free
 	overlay_veneer DebugText_Print
@@ -61,9 +61,9 @@ FarCall_RuntimeTable:
 	overlay_veneer Projection_SetFieldOfView
 	overlay_veneer Projection_Set
 	overlay_veneer System_CopyBuildStamp
-	overlay_veneer RuntimeDispatch_ReturnZero
+	overlay_veneer Stub_ReturnZero
 	export Resource_GetTableEntryFar, Resource_GetTableEntry
-	export RuntimeDispatch_NoOpHookFar, RuntimeDispatch_NoOpHook
+	export Stub_NoOpHookFar, Stub_NoOpHook
 	overlay_veneer Overlay_Load
 	export ScreenFade_ToBlackFar, ScreenFade_ToBlack
 	overlay_veneer ScreenFade_FromBlack
@@ -71,13 +71,13 @@ FarCall_RuntimeTable:
 	overlay_veneer ScreenFade_FromWhite
 	overlay_veneer ScreenFade_Start
 	export ScreenFade_WaitFar, ScreenFade_Wait
-	overlay_veneer RuntimeDispatch_ReservedNoOpA
-	overlay_veneer RuntimeDispatch_ReservedNoOpB
-	overlay_veneer RuntimeDispatch_ReservedNoOpC
-	overlay_veneer RuntimeDispatch_ReservedNoOpD
-	overlay_veneer RuntimeDispatch_ReservedNoOpE
-	export SerialRuntime_InitializeFar, SerialRuntime_Initialize
-	export SerialRuntime_PollAndTransferFar, SerialRuntime_PollAndTransfer
+	overlay_veneer Stub_ReservedNoOpA
+	overlay_veneer Stub_ReservedNoOpB
+	overlay_veneer Stub_ReservedNoOpC
+	overlay_veneer Stub_ReservedNoOpD
+	overlay_veneer Stub_ReservedNoOpE
+	export Serial_InitializeFar, Serial_Initialize
+	export Serial_PollAndTransferFar, Serial_PollAndTransfer
 	overlay_veneer IoWriteQueue_Store8
 	export IoWriteQueue_Store16Far, IoWriteQueue_Store16
 	export IoWriteQueue_Store32Far, IoWriteQueue_Store32
@@ -89,14 +89,14 @@ FarCall_RuntimeTable:
 	overlay_veneer IoWriteQueue_ClearBits32
 	overlay_veneer Input_ResetKeyRepeat
 	overlay_veneer Transform_ApplyLookAt
-	overlay_veneer SerialRuntime_WaitForStatusMask
-	export SerialRuntime_RemoveIrqHandlersFar, SerialRuntime_RemoveIrqHandlers
+	overlay_veneer Serial_WaitForStatusMask
+	export Serial_RemoveIrqHandlersFar, Serial_RemoveIrqHandlers
 	export Sound_LoadReverbCodeFar, Sound_LoadReverbCode
-	export SerialRuntime_StartSendFar, SerialRuntime_StartSend
-	export SerialRuntime_StartReceiveFar, SerialRuntime_StartReceive
-	overlay_veneer SerialRuntime_WaitForSend
-	overlay_veneer SerialRuntime_WaitForReceive
-	overlay_veneer SerialRuntime_WaitForTransfers
-	export SerialRuntime_GetActiveTransfersFar, SerialRuntime_GetActiveTransfers
-	overlay_veneer SerialRuntime_StepBlockTransfer
+	export Serial_StartSendFar, Serial_StartSend
+	export Serial_StartReceiveFar, Serial_StartReceive
+	overlay_veneer Serial_WaitForSend
+	overlay_veneer Serial_WaitForReceive
+	overlay_veneer Serial_WaitForTransfers
+	export Serial_GetActiveTransfersFar, Serial_GetActiveTransfers
+	overlay_veneer Serial_StepBlockTransfer
 	export Task_SetFlagsFar, Task_SetFlags

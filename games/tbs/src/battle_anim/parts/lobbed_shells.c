@@ -221,8 +221,8 @@ void BattleAnim_RunLobbedShells(struct BattleAnimArgs *effect, s32 mode) {
           struct Particle *shot = &PARTICLES[k * LOBBED_SHELLS_SLOTS];
 
           if (frame == k * 8 + 17) {
-            ObjectGroup_UpdateMembers(work->effect->targets[k],
-                                      SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 16);
+            BattleAnim_TintBattler(work->effect->targets[k], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, k, 16);
             ANIM_SHOW_DAMAGE(SE_IMPACT);
           }
           /* FAKEMATCH(one-pass): an empty one-pass block ends the CSE block

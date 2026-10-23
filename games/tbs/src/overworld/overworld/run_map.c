@@ -150,7 +150,7 @@ s32 Map_Run(s32 warpDest) {
       // Note where the leader is, for the requests to use.
       GameFlag_SetFar(FLAG_FIELD_HANDLING_REQUESTS);
       objectEvent = work->objectEvents[gSaveBlock.leaderLocalId];
-      ObjectDispatch_StartIdleFar((struct Object *)objectEvent);
+      Object_StartIdleFar((struct Object *)objectEvent);
       gSaveBlock.x = objectEvent->x.fixed;
       gSaveBlock.y = 0;
       gSaveBlock.z = objectEvent->z.fixed;
@@ -175,7 +175,7 @@ s32 Map_Run(s32 warpDest) {
             Leader_StopMoving();
             WorldMap_StartScript();
             for (i = 0; i < work->fallenCount; i++) {
-              ObjectDispatch_SelectAnimationFar(objectEvent, 22);
+              Object_SelectAnimationFar(objectEvent, 22);
               MessageArgument_PushFar(work->fallenOwners[i], 1);
               FieldMessage_ShowFar(MsgFieldStrengthExhausted, 1);
             }
@@ -185,11 +185,11 @@ s32 Map_Run(s32 warpDest) {
 
               if (gSaveBlock.leaderLocalId == 0) {
                 if (GameFlag_GetFar(FLAG_CHILDHOOD) != 0)
-                  ObjectDispatch_SelectAnimationFar(objectEvent, 21);
+                  Object_SelectAnimationFar(objectEvent, 21);
                 else
-                  ObjectDispatch_SelectAnimationFar(objectEvent, 37);
+                  Object_SelectAnimationFar(objectEvent, 37);
               } else {
-                ObjectDispatch_SelectAnimationFar(objectEvent, 19);
+                Object_SelectAnimationFar(objectEvent, 19);
               }
               Sound_PlaySongFar(MUS_DEFEAT);
               FieldMessage_ShowFar(MsgFieldPartyAnnihilated, 1);
@@ -365,13 +365,13 @@ s32 Map_Run(s32 warpDest) {
       objectEvent = work->objectEvents[gSaveBlock.leaderLocalId];
       if (objectEvent != NULL) {
         if (gSaveBlock.movementMode == LEADER_MOVEMENT_AIRBORNE)
-          ObjectDispatch_StartKeyCheckFar((struct Object *)objectEvent);
+          Object_StartKeyCheckFar((struct Object *)objectEvent);
         else if (gSaveBlock.movementMode == LEADER_MOVEMENT_CLIMB)
-          ObjectDispatch_StartMoveByKeysFar((struct Object *)objectEvent);
+          Object_StartMoveByKeysFar((struct Object *)objectEvent);
         else if (work->mode == OBJECT_SYSTEM_WORLD_MAP)
-          ObjectDispatch_StartWorldMapControlFar((struct Object *)objectEvent);
+          Object_StartWorldMapControlFar((struct Object *)objectEvent);
         else
-          ObjectDispatch_StartPlayerControlFar((struct Object *)objectEvent);
+          Object_StartPlayerControlFar((struct Object *)objectEvent);
       }
       do {
         WaitFrames(1);

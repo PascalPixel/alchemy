@@ -40,7 +40,7 @@ static inline void ObjectEvent_RunRepeatedMotion(s32 localId, s32 repeats) {
 
 /// Switches an object event to an ObjectEventAnimation, such as ANIM_NOD.
 static inline void ObjectEvent_SetAnimation(s32 localId, s32 animation) {
-  Engine_ObjectEventSetAnimation(localId, animation);
+  Import_ObjectEventSetAnimation(localId, animation);
 }
 
 /// Plays an object event's animation through before the script goes on.
@@ -103,7 +103,7 @@ static inline void Script_OpenScreen(void) {
 
 /// Sends the party out of the room by one of its warps, as a door would.
 static inline void Script_RequestWarp(s32 warp) {
-  Engine_ScriptRequestWarp(warp);
+  Import_ScriptRequestWarp(warp);
 }
 
 /// Picks the line of dialogue the script's next message shows.

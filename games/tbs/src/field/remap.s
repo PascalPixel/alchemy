@@ -1,6 +1,6 @@
 	.section .rodata
-	.global gRuntime_ByteRemapTable
-gRuntime_ByteRemapTable:
+	.global gSpriteColorRemapTables
+gSpriteColorRemapTables:
 	.incbin "games/tbs/src/field/remap0.table"
 	.incbin "games/tbs/src/field/remap1.table"
 	.incbin "games/tbs/src/field/remap2.table"

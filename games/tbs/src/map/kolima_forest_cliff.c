@@ -82,12 +82,12 @@ static void KolimaForestCliff_PushLog(void) {
     if (result.objectEventSlot == LOCALID_RIVER_LOG &&
         (result.position.x >> 20) == 12) {
       struct ObjectEvent *objectEvent;
-      Engine_ObjectEventSetAnimation(LOCALID_RIVER_LOG,
+      Import_ObjectEventSetAnimation(LOCALID_RIVER_LOG,
                                      LOG_ANIMATION_ROLL_WEST);
       ObjectMotion_OffsetPositionAndResetMotion(LOCALID_RIVER_LOG, -18, 6);
       FieldScript_WaitFrames(30);
       Sound_PlaySong(SE_240);
-      Engine_ObjectEventSetAnimation(LOCALID_RIVER_LOG, LOG_ANIMATION_DROP_IN);
+      Import_ObjectEventSetAnimation(LOCALID_RIVER_LOG, LOG_ANIMATION_DROP_IN);
       ObjectEvent_GetById(LOCALID_RIVER_LOG)->priorityFlags =
           OBJ_EVENT_PRIORITY_UNDERFOOT;
       MapGrid_CopyCellAttributes(32, 20, 2, 4, 11, 16);

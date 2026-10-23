@@ -89,7 +89,7 @@ void BattleAnim_RunThor(struct BattleAnimArgs *effect) {
   s32 position[3];
   s32 scale[3];
   void **slots;
-  struct BattleViewWork *view;
+  struct BattleBackgroundWork *view;
   struct BattleAnimWork *work;
   void *canvas;
   u8 *sprites;
@@ -454,8 +454,8 @@ void BattleAnim_RunThor(struct BattleAnimArgs *effect) {
       // The pillar strikes every target on frame 10.
       if (frame == 10) {
         ANIM_FOR_EACH_TARGET(i, work->effect) {
-          ObjectGroup_UpdateMembers(work->effect->targets[i],
-                                    SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 8);
+          BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, i, 8);
           BattleMotion_ApplyKnockbackFar(work->effect->targets[i],
                                          KNOCKBACK_HURL);
         }
@@ -491,9 +491,9 @@ void BattleAnim_RunThor(struct BattleAnimArgs *effect) {
                                  Random16() & 0xffff, 16);
               work->shakeFrames = 8;
               ANIM_FOR_EACH_TARGET(j, work->effect) {
-                ObjectGroup_UpdateMembers(work->effect->targets[j],
-                                          gThor_TargetPalettes[Random16() & 3],
-                                          POSE_DAMAGE, j, 4);
+                BattleAnim_TintBattler(work->effect->targets[j],
+                                       gThor_TargetPalettes[Random16() & 3],
+                                       POSE_DAMAGE, j, 4);
                 BattleMotion_ApplyKnockbackFar(work->effect->targets[j],
                                                KNOCKBACK_HURL);
               }

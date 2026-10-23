@@ -117,7 +117,7 @@ s32 Title_Run(void) {
   // XXX: likely left from loading the palette far-call bank, because the
   // argument names that bank and the logo and intro calls below go through
   // it.
-  RuntimeDispatch_NoOpHook((s32)&ResourceId_TitleFarCalls);
+  Stub_NoOpHook((s32)&ResourceId_TitleFarCalls);
   if (gSaveBlock.warpDest == 2) {
     for (;;) {
       Sound_PlaySong(MUS_SILENCE);

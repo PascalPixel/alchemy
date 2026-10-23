@@ -87,9 +87,10 @@ DEFINE_ADJUST_CAMERA(BattleCamera_AdjustByShoulderKeys)
 /// a defeated target is replaced by a living unit of its side first.
 /// Returns 1 when the party got away, 0 otherwise. Called by
 /// Battle_Run for each action under FLAG_AUTO_BATTLE. Turns the
-/// camera to the actor's side (gBattleViewWork) and rewrites action->target.
+/// camera to the actor's side (gBattleBackgroundWork) and rewrites
+/// action->target.
 s32 AutoBattle_RunAction(struct BattleAction *action) {
-  struct BattleViewWork *view;
+  struct BattleBackgroundWork *view;
   s32 actorId;
   s32 yaw;
   struct Unit *actor;
@@ -100,7 +101,7 @@ s32 AutoBattle_RunAction(struct BattleAction *action) {
     return -1;
 
   action->target = BattleAbility_ReplaceDefeated(action);
-  view = gBattleViewWork;
+  view = gBattleBackgroundWork;
   // Here any unit id above 4 counts as an enemy, Jenna's 5 included
   // (character_ids.h).
   if (action->unitId > 4)
@@ -127,7 +128,7 @@ s32 AutoBattle_RunAction(struct BattleAction *action) {
     break;
   case COMMAND_ATTACK:
   default: {
-    struct BattleViewWork *view = gBattleViewWork;
+    struct BattleBackgroundWork *view = gBattleBackgroundWork;
     view->flag = 0;
     AutoBattle_RunAttackOrItem(action);
     view->flag = 0;
@@ -236,7 +237,7 @@ s32 AutoBattle_RunPsynergy(struct BattleAction *action) {
   }
 
   {
-    struct BattleViewWork *view = gBattleViewWork;
+    struct BattleBackgroundWork *view = gBattleBackgroundWork;
     // An enemy caster turns the camera to YAW_BEHIND_ENEMIES, not
     // YAW_ENEMY_TURN.
     view->targetYaw = action->unitId > 4 ? YAW_BEHIND_ENEMIES : YAW_PARTY_TURN;
@@ -259,7 +260,7 @@ s32 AutoBattle_RunPsynergy(struct BattleAction *action) {
 
   for (index = 0; index != sideCount; index++) {
     if (index + sideStart == actorId) {
-      ObjectDispatch_SelectAnimationFar(actorRecord, POSE_CAST);
+      Object_SelectAnimationFar(actorRecord, POSE_CAST);
     }
   }
 
@@ -338,11 +339,11 @@ s32 AutoBattle_RunApproachAttack(struct BattleAction *input) {
   struct BattleStagingWork work;
 
   // A short wait when the camera already faces the party's turn.
-  if (gBattleViewWork->targetYaw == YAW_PARTY_TURN) {
-    gBattleViewWork->targetYaw = YAW_PARTY_TURN;
+  if (gBattleBackgroundWork->targetYaw == YAW_PARTY_TURN) {
+    gBattleBackgroundWork->targetYaw = YAW_PARTY_TURN;
     WaitFrames(10);
   } else {
-    gBattleViewWork->targetYaw = YAW_PARTY_TURN;
+    gBattleBackgroundWork->targetYaw = YAW_PARTY_TURN;
     WaitFrames(30);
   }
 
@@ -362,7 +363,7 @@ s32 AutoBattle_RunApproachAttack(struct BattleAction *input) {
   MessageArgument_PushFar(work.effect.user, MESSAGE_ARGUMENT_ACTOR);
   BattleMessage_ShowAndWaitFar(MsgActorAttacks);
   BattleMotion_ApproachTarget(work.effect.user, work.effect.targets[0], 13, 0);
-  ObjectDispatch_SetAnimationSpeedFar(
+  Object_SetAnimationSpeedFar(
       (struct Object *)BattleObject_Get(work.effect.user)->object, 16);
   BattleObject_Get(work.effect.targets[0]);
 
@@ -388,7 +389,7 @@ s32 AutoBattle_RunApproachAttack(struct BattleAction *input) {
 /// and Psynergy.
 s32 AutoBattle_RunAttackOrItem(struct BattleAction *action) {
   struct BattleStagingWork work;
-  struct BattleViewWork *view = gBattleViewWork;
+  struct BattleBackgroundWork *view = gBattleBackgroundWork;
   struct Object *object;
   s32 targetYaw;
   s32 targetIndex;
@@ -422,8 +423,8 @@ s32 AutoBattle_RunAttackOrItem(struct BattleAction *action) {
   // The actor raises its hand (POSE_CAST); then only the first living unit of
   // the target's side takes the effect.
   object = BattleObject_Get(work.effect.user)->object;
-  ObjectDispatch_SelectAnimationFar(object, POSE_CAST);
-  ObjectDispatch_SetAnimationSpeedFar((struct Object *)object, 16);
+  Object_SelectAnimationFar(object, POSE_CAST);
+  Object_SetAnimationSpeedFar((struct Object *)object, 16);
   if ((u16)action->target <= ALLY_MAX) {
     work.effect.side = ANIM_SIDE_PARTY;
     BattleUnit_ListLiving(BATTLE_SIDES_PARTY, work.effect.targets);
@@ -459,7 +460,7 @@ s32 AutoBattle_RunAttackOrItem(struct BattleAction *action) {
     BattleAnim_RunElementPillarFar(&work.effect);
     work.effect.kind = 0;
     BattleAnim_RunTableEffectFar(&work.effect);
-    ObjectDispatch_SelectAnimationFar(object, POSE_STANDING);
+    Object_SelectAnimationFar(object, POSE_STANDING);
   } while (0);
   for (targetIndex = 0; targetIndex != work.effect.targetCount; targetIndex++)
     BattleMotion_ReturnToSpot(work.effect.targets[targetIndex]);
@@ -494,7 +495,7 @@ void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
 
   // The damage pose, and the status window with names and HP only.
   battleObject = BattleObject_Get(unitId);
-  ObjectDispatch_SelectAnimationFar(battleObject->object, POSE_DAMAGE);
+  Object_SelectAnimationFar(battleObject->object, POSE_DAMAGE);
   PartyStatus_DrawFar(PARTY_STATUS_HP_ONLY);
   MessageArgument_ClearAllFar();
 
@@ -525,7 +526,7 @@ void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
   }
 
   battleObject = BattleObject_Get(unitId);
-  ObjectDispatch_SelectAnimationFar(battleObject->object, POSE_STANDING);
+  Object_SelectAnimationFar(battleObject->object, POSE_STANDING);
 }
 
 /// For a unit whose HP has run out: plays its falling animation to the last

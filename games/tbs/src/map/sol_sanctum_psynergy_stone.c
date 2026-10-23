@@ -67,7 +67,7 @@ s32 Map_Initialize(void) {
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
 
-  Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
+  Import_GameFlagSet(FLAG_RETREAT_BLOCKED);
   if (GameFlag_Get(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
     Map_QueueMusic(SE_RUMBLE);
     MapGrid_SetScreenShake(shakeX, shakeY, decay);

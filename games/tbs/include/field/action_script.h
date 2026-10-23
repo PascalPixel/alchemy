@@ -57,7 +57,7 @@ struct ScriptOperands {
   u8 repeatCount;       ///< SW_REPEAT, SC_LOOP's count
   u16 wait;             ///< SW_WAIT, compared as signed
   u8 refused;           ///< Object.refused; no work value
-  u8 frozen;            ///< ScriptMotionObject.frozen; no work value
+  u8 frozen;            ///< ObjectArmView.frozen; no work value
   u8 mapByte62;         ///< work value 0x27, kept by map code
   u8 mapByte63;         ///< work value 0x28, kept by map code
   s16 actionParameter;  ///< work value 0x23, what its action script reads

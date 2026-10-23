@@ -92,9 +92,9 @@ void BattleAnim_RunHelmSplitter(struct BattleAnimArgs *effect) {
     object->gravity = 0xdeb8;
     object->bounce = 0;
     object->steeringFlags = 1;
-    ObjectDispatch_StartIdleFar((struct Object *)object);
+    Object_StartIdleFar((struct Object *)object);
     Object_SetMoveTargetFar((struct Object *)object, x, 0, z);
-    ObjectDispatch_SelectAnimationFar(object, POSE_LEAP);
+    Object_SelectAnimationFar(object, POSE_LEAP);
   }
 
   // Play the swirl and impact, then let the sparks bounce and fade.
@@ -131,8 +131,8 @@ void BattleAnim_RunHelmSplitter(struct BattleAnimArgs *effect) {
     // vertical part doubled.
     if (frame == HELM_SPLITTER_STRIKE_FRAME) {
       ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-      ObjectGroup_UpdateMembers(work->effect->targets[0], SPRITE_COLOR_WHITE,
-                                POSE_DAMAGE, 0, 8);
+      BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_WHITE,
+                             POSE_DAMAGE, 0, 8);
       BattleMotion_ApplyKnockbackFar(work->effect->targets[0],
                                      KNOCKBACK_BOUNCE);
       work->shakeFrames = 4;

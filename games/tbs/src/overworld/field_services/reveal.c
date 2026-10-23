@@ -7,7 +7,7 @@
 /// Gives every live object of the 64 whose first sprite layer shows sprite 200
 /// the sprite param value, and marks it to be redrawn. Reveal sets 6 as it
 /// starts and 0 as it ends.
-void ObjectDispatch_ApplyValueToKind200Children(s32 value) {
+void Object_SetRevealSpriteColor(s32 value) {
   struct Object *object = gObjects;
   s32 remainingObjectEvents = 63;
 
@@ -87,7 +87,7 @@ void FieldEffect_RunReveal(void) {
   s32 frame;
 
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
-  ObjectDispatch_ApplyValueToKind200Children(6);
+  Object_SetRevealSpriteColor(6);
   ScreenTransition_InitializeBattleEffectState(8);
   state = HEAP_SLOT_BLOCK(HEAP_SLOT_SCREEN_TRANSITION);
   target = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
@@ -156,7 +156,7 @@ void FieldEffect_EndReveal(void) {
     zero = 0;
     state->revealActive = zero;
     state->revealFrames = zero;
-    ObjectDispatch_ApplyValueToKind200Children(0);
+    Object_SetRevealSpriteColor(0);
 
     PaletteFade_SetTarget(PALETTE_TINT_NONE, 1);
     PaletteFade_StartInterpolation(1);

@@ -40,7 +40,7 @@ typedef void (*InterruptHandler)(void);
 extern InterruptHandler gIrqHandlers[IRQ_COUNT];
 
 /// The handlers installed at power-on, copied into gIrqHandlers.
-extern const u32 gRuntime_IrqHandlers[IRQ_COUNT];
+extern const u32 gDefaultIrqHandlers[IRQ_COUNT];
 
 /// The interrupt dispatcher at the start of the IWRAM-resident code, whose
 /// other routines are reached at fixed offsets from it (iwram_call.h).

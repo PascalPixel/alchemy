@@ -233,7 +233,7 @@ void MercuryLighthouse_ChargeLights(void) {
     MercuryLighthouse_SpawnSparkPair();
     WaitFrames(30);
     pillar->spriteStorageKind = 1;
-    ObjectDispatch_SelectAnimation(pillar, 5 - step);
+    Object_SelectAnimation(pillar, 5 - step);
   }
   state->levels = 3;
   state->targetX = (pillar->x.fixed & -0x100000) + 0x80000;
@@ -263,7 +263,7 @@ void MercuryLighthouse_LoseLights(void) {
   if (target != 0) {
     target->timer = 0;
     ObjectEvent_SetScript(target, gMercuryLighthouse_ScaleCounterScript);
-    ObjectDispatch_SelectAnimation(target, 7);
+    Object_SelectAnimation(target, 7);
     state->pillar = NULL;
   }
 }
@@ -322,7 +322,7 @@ void MercuryLighthouse_HopAcrossPool(void) {
   if (obj != NULL) {
     obj->timer = 0;
     ObjectEvent_SetScript(obj, gMercuryLighthouse_ScaleCounterScript);
-    ObjectDispatch_SelectAnimation(obj, 7);
+    Object_SelectAnimation(obj, 7);
     state->stepEffect = NULL;
   }
   if (to->behavior == state->poolBehavior && state->levels != 0) {
@@ -353,20 +353,20 @@ void MercuryLighthouse_HopAcrossPool(void) {
       state->pillar = NULL;
       GameFlag_Clear(FLAG_NO_ENCOUNTERS_IN_MAPSEC);
     } else if (state->pillar != NULL) {
-      ObjectDispatch_SelectAnimation(state->pillar, 6 - n);
+      Object_SelectAnimation(state->pillar, 6 - n);
     }
   }
-  ObjectDispatch_SelectAnimation(objectEvent, 6);
+  Object_SelectAnimation(objectEvent, 6);
   WaitFrames(3);
   Sound_PlaySong(SE_JUMP);
-  ObjectDispatch_SelectAnimation(objectEvent, 7);
+  Object_SelectAnimation(objectEvent, 7);
   objectEvent->speed = 0x30000;
   objectEvent->acceleration = 0x20000;
   objectEvent->velocityY = 0x40000;
   *flags &= 0x7e;
   ObjectEvent_SetSpriteFlags(objectEvent, 0);
   ObjectMotion_SetPositionAndCommit(0, pos[0].part.pixel, pos[2].part.pixel);
-  ObjectDispatch_SelectAnimation(objectEvent, 6);
+  Object_SelectAnimation(objectEvent, 6);
   WaitFrames(2);
   if (to->behavior != state->poolBehavior)
     ObjectEvent_SetSpriteFlags(objectEvent, SPRITE_FLAG_SHADOW);
@@ -375,7 +375,7 @@ void MercuryLighthouse_HopAcrossPool(void) {
   WaitFrames(1);
   *flags = saved;
   if (to->behavior == state->poolBehavior && state->stepEffect == NULL) {
-    ObjectDispatch_SelectAnimation(objectEvent, 18);
+    Object_SelectAnimation(objectEvent, 18);
     Sound_PlaySong(SE_WATER_MOVE);
     for (i = 0;; i++) {
       if ((i & 15) == 0)
@@ -409,7 +409,7 @@ void MercuryLighthouse_RippleAroundLeader(void) {
     state->rippleTimer--;
   } else {
     MercuryLighthouse_SpawnRipple(point);
-    state->rippleTimer = ((u32)(Engine_RandomNext() * 30) >> 16) + 10;
+    state->rippleTimer = ((u32)(Import_RandomNext() * 30) >> 16) + 10;
   }
 }
 

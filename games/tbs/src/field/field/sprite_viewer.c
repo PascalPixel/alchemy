@@ -41,7 +41,7 @@ struct UiSpriteViewerLayer {
 /// the other modes turns an anim on or off. Pressing Start toggles the shadows;
 /// B turns the ring when it is rebuilt with Start held. Select starts over; it
 /// passes a far-call resource set (the alternate one unless B is held) to
-/// RuntimeDispatch_ReturnZero, a stub that ignores it.
+/// Stub_ReturnZero, a stub that ignores it.
 ///
 /// It has a bare veneer in the field far-call table, and no caller names it.
 /// Takes HEAP_SLOT_BATTLE for the ring of ten positions and runs
@@ -372,16 +372,16 @@ next:
       }
     }
 
-    // RuntimeDispatch_ReturnZero ignores its arguments, so the resource set
+    // Stub_ReturnZero ignores its arguments, so the resource set
     // chosen here changes nothing in this build.
     if ((*repeatedKeys & KEY_SELECT) != 0) {
       Task_ResetAll();
       if ((*heldKeys & KEY_B) != 0) {
-        RuntimeDispatch_ReturnZero((s32)&ResourceId_ResourceFarCalls,
-                                   FarCall_ResourceTable);
+        Stub_ReturnZero((s32)&ResourceId_ResourceFarCalls,
+                        FarCall_ResourceTable);
       } else {
-        RuntimeDispatch_ReturnZero((s32)&ResourceId_ResourceFarCallsAlternate,
-                                   FarCall_ResourceTable);
+        Stub_ReturnZero((s32)&ResourceId_ResourceFarCallsAlternate,
+                        FarCall_ResourceTable);
       }
       goto restart;
     }

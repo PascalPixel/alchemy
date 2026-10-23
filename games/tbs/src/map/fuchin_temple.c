@@ -818,7 +818,7 @@ static void FuchinTemple_StudentExplainsChiRules(s32 mode) {
   FuchinTemple_StudentWalksAroundTree();
   ObjectMotion_SetVarCbAndRefresh(LOCALID_TREE_STUDENT, 3);
   OBJECT_POSITION_SET(LOCALID_TRAINING_TREE, 232, 168);
-  Engine_ObjectEventSetPosition(LOCALID_TRAINING_TREE_TARGET, PIXELS(232),
+  Import_ObjectEventSetPosition(LOCALID_TRAINING_TREE_TARGET, PIXELS(232),
                                 PIXELS(168));
   ObjectEvent_GetById(LOCALID_TRAINING_TREE)->y.fixed = 0xc0000;
   ObjectEvent_GetById(LOCALID_TRAINING_TREE)->targetY = OBJ_EVENT_NO_TARGET;
@@ -865,7 +865,7 @@ static void FuchinTemple_StudentsSeeTreeFall(void) {
   FuchinTemple_StudentWalksAroundTree();
   ObjectMotion_SetVarCbAndRefresh(LOCALID_TREE_STUDENT, 3);
   OBJECT_POSITION_SET(LOCALID_TRAINING_TREE, 232, 168);
-  Engine_ObjectEventSetPosition(LOCALID_TRAINING_TREE_TARGET, PIXELS(232),
+  Import_ObjectEventSetPosition(LOCALID_TRAINING_TREE_TARGET, PIXELS(232),
                                 PIXELS(168));
   tree = ObjectEvent_GetById(LOCALID_TRAINING_TREE);
   tree->y.fixed = 0xc0000;
@@ -1519,7 +1519,7 @@ static void EventScript_OpenLockedDoor(void) {
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 306, 248);
     OBJECT_WALK(LOCALID_PARTY_LEADER, 304, 216);
     WAIT(20);
-    Engine_ScriptRequestWarp(FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL_TO_HOUSE);
+    Import_ScriptRequestWarp(FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL_TO_HOUSE);
     SCRIPT_END();
   }
 }
@@ -1581,14 +1581,14 @@ static void FuchinTemple_SpawnGrottoEntryParticle(void) {
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
 
   options.palette = SPRITE_COLOR_WHITE;
-  paletteDraw = (u32)(Engine_RandomNext() * 7) >> 16;
+  paletteDraw = (u32)(Import_RandomNext() * 7) >> 16;
   if ((paletteDraw & 7) == 0)
     options.palette = SPRITE_COLOR_BRG;
 
   options.startScaleX = 0xb333;
   options.startScaleY = 0xcccc;
 
-  fallSpeed = ((u32)(Engine_RandomNext() * 8) >> 16) * 13107;
+  fallSpeed = ((u32)(Import_RandomNext() * 8) >> 16) * 13107;
 
   FieldEffect_Spawn(leader->x.fixed + ((8 - (gFrameCount & 15)) << 16),
                     leader->y.fixed + (192 << 13), leader->z.fixed, 0,
@@ -1596,9 +1596,9 @@ static void FuchinTemple_SpawnGrottoEntryParticle(void) {
                     &options);
 
   if ((gFrameCount & 1) != 0)
-    ObjectGroup_ConfigureChildValue(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
+    ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   else
-    ObjectGroup_ConfigureChildValue(LOCALID_PARTY_LEADER, SPRITE_COLOR_GRB);
+    ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, SPRITE_COLOR_GRB);
 }
 
 /// Unused: hops the leader one map cell north; nothing calls it.
@@ -1649,12 +1649,12 @@ static void EventScript_EnterWaterfallGrotto(void) {
   OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_WALK);
   ObjectMotion_OffsetPositionAndResetMotion(LOCALID_PARTY_LEADER, 0, -6);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
-  ObjectGroup_ConfigureChildValue(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   ObjectEvent_SetSpriteFlags(leader, 0);
   Task_Remove(particleTask);
   FieldScript_WaitTransitionFrames();
-  Engine_ScriptRequestWarp(FUCHIN_TEMPLE_GROUNDS_TO_FUCHIN_FALLS_CAVE_ENTRANCE);
+  Import_ScriptRequestWarp(FUCHIN_TEMPLE_GROUNDS_TO_FUCHIN_FALLS_CAVE_ENTRANCE);
   SCRIPT_END();
 }
 
@@ -1664,7 +1664,7 @@ static void EventScript_EnterWaterfallGrotto(void) {
 /// FuchinTempleGrounds.
 static void EventScript_LeaveTemple(void) {
   Sound_PlaySong(SE_MAP_EXIT);
-  Engine_ScriptRequestWarp(FUCHIN_TEMPLE_INTERIORS_TO_FUCHIN_TEMPLE_GROUNDS);
+  Import_ScriptRequestWarp(FUCHIN_TEMPLE_INTERIORS_TO_FUCHIN_TEMPLE_GROUNDS);
 }
 
 /// Walking north into the temple door at Fuchin Temple (FuchinTempleGrounds,
@@ -1679,7 +1679,7 @@ static void EventScript_EnterTemple(void) {
   OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_WALK);
   ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0, -16);
   WAIT(16);
-  Engine_ScriptRequestWarp(FUCHIN_TEMPLE_GROUNDS_TO_FUCHIN_TEMPLE_INTERIORS);
+  Import_ScriptRequestWarp(FUCHIN_TEMPLE_GROUNDS_TO_FUCHIN_TEMPLE_INTERIORS);
   SCRIPT_END();
 }
 
@@ -2403,9 +2403,9 @@ s32 Map_Initialize(void) {
         trainingTree->scaleY = 0x8000;
         trainingTree->sprite->rotation = 0x8000;
         if (GameFlag_Get(FLAG_FEIZHI_WENT_TO_HSU)) {
-          Engine_ObjectEventSetPosition(LOCALID_FEH, PIXELS(248), PIXELS(208));
+          Import_ObjectEventSetPosition(LOCALID_FEH, PIXELS(248), PIXELS(208));
           if (!GameFlag_Get(FLAG_FEH_SAW_KI)) {
-            Engine_ObjectEventSetPosition(LOCALID_MESSENGER_STUDENT,
+            Import_ObjectEventSetPosition(LOCALID_MESSENGER_STUDENT,
                                           PIXELS(256), PIXELS(240));
             ObjectEvent_GetById(LOCALID_FEH)->update = FuchinTemple_FaceLeader;
             ObjectEvent_GetById(LOCALID_PROUD_STUDENT)->update =
@@ -2443,8 +2443,8 @@ s32 Map_Initialize(void) {
       if (!GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED)) {
         FuchinTemple_RunHamasRevealLesson();
       } else if (!GameFlag_Get(FLAG_HSU_RESCUED)) {
-        Engine_ObjectEventSetPosition(LOCALID_HAMA, 0, 0);
-        Engine_ObjectEventSetPosition(LOCALID_HAMAS_BOY_MONK, 0, 0);
+        Import_ObjectEventSetPosition(LOCALID_HAMA, 0, 0);
+        Import_ObjectEventSetPosition(LOCALID_HAMAS_BOY_MONK, 0, 0);
       }
     }
   } else {
@@ -2521,11 +2521,11 @@ static void FuchinTemple_SpawnNyunpasParticles(void) {
 static void
 FuchinTemple_AlternateLessonChildEffect(union FieldObject *fieldObject) {
   if ((*(u32 *)&gFrameCount >> 1) & 1) {
-    ObjectGroup_SetChildValue((struct ObjectEvent *)fieldObject,
-                              SPRITE_COLOR_RED_TINT);
+    ObjectEvent_SetSpriteColor((struct ObjectEvent *)fieldObject,
+                               SPRITE_COLOR_RED_TINT);
   } else {
-    ObjectGroup_SetChildValue((struct ObjectEvent *)fieldObject,
-                              SPRITE_COLOR_BLUE_TINT);
+    ObjectEvent_SetSpriteColor((struct ObjectEvent *)fieldObject,
+                               SPRITE_COLOR_BLUE_TINT);
   }
 }
 
@@ -2561,11 +2561,11 @@ static void FuchinTemple_AnimateRevealLesson(void) {
       Sound_PlaySong(SE_246);
     }
     particleX = hama->x.fixed +
-                ((((u32)(Engine_RandomNext() * 3) << 4) >> 16) << 16) +
+                ((((u32)(Import_RandomNext() * 3) << 4) >> 16) << 16) +
                 0xfff40000;
     particleY = hama->y.fixed +
-                ((((u32)Engine_RandomNext() << 5) >> 16) << 16) + 0xfff00000;
-    riseSpeed = ((((u32)Engine_RandomNext() << 2) >> 16) << 15) + (128 << 8);
+                ((((u32)Import_RandomNext() << 5) >> 16) << 16) + 0xfff00000;
+    riseSpeed = ((((u32)Import_RandomNext() << 2) >> 16) << 15) + (128 << 8);
     FieldEffect_Spawn(
         particleX, particleY, hama->z.fixed, 0, riseSpeed, 0,
         EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);
@@ -2579,8 +2579,8 @@ static void FuchinTemple_AnimateRevealLesson(void) {
   WAIT(40);
   ObjectEvent_GetById(LOCALID_HAMA)->update = NULL;
   ObjectEvent_GetById(LOCALID_IVAN)->update = NULL;
-  ObjectGroup_ConfigureChildValue(LOCALID_HAMA, SPRITE_COLOR_NORMAL);
-  ObjectGroup_ConfigureChildValue(LOCALID_IVAN, SPRITE_COLOR_NORMAL);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_HAMA, SPRITE_COLOR_NORMAL);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_IVAN, SPRITE_COLOR_NORMAL);
 }
 
 s32 gShortEffectScript[] = {

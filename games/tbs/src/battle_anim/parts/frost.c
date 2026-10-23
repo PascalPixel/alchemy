@@ -101,8 +101,8 @@ void BattleAnim_RunFrost(struct BattleAnimArgs *effect) {
       Sound_PlaySongFar(SE_136);
     ANIM_FOR_EACH_TARGET(i, work->effect) {
       if (frame == i * 4 + 40)
-        ObjectGroup_UpdateMembers(work->effect->targets[i],
-                                  SPRITE_COLOR_BLUE_TINT, POSE_DAMAGE, -1, 0);
+        BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_BLUE_TINT,
+                               POSE_DAMAGE, -1, 0);
     }
 
     // Motes: mote i appears at frame i and, from 16 frames later, turns a

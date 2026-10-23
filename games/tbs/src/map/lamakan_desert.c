@@ -219,7 +219,7 @@ static s32 Leader_SpraySand(union FieldObject *fieldObject) {
   }
   params.startScaleX = 0xcccc;
   params.startScaleY = 0xcccc;
-  params.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
+  params.spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
   FieldEffect_Spawn(
       objectEvent->x.fixed, objectEvent->y.fixed, objectEvent->z.fixed, 0,
       phase, phase,
@@ -292,7 +292,7 @@ static void LamakanDesert_LeaveForTheWorldMap(void) {
     }
   }
   Script_PlaySong(SE_MAP_EXIT);
-  Engine_ScriptRequestWarp(LAMAKAN_DESERT_CAVE_TO_WORLD_MAP);
+  Import_ScriptRequestWarp(LAMAKAN_DESERT_CAVE_TO_WORLD_MAP);
   FieldScript_End();
 }
 
@@ -359,12 +359,12 @@ static s32 Reveal_HideSecrets(void) {
     MapGrid_CopyCells(9, 120, 3, 1, 44, 5);
     MapGrid_CopyCellAttributes(9, 0, 3, 3, 9, 6);
   }
-  Engine_ObjectEventSetPosition(LOCALID_MANTICORE, 0, 0);
-  Engine_ObjectEventSetPosition(LOCALID_FIRST_PIT, 0, 0);
-  Engine_ObjectEventSetPosition(LOCALID_FIRST_PIT + 1, 0, 0);
-  Engine_ObjectEventSetPosition(LOCALID_FIRST_PIT + 2, 0, 0);
-  Engine_ObjectEventSetPosition(LOCALID_LAST_PIT, 0, 0);
-  Engine_ObjectEventSetPosition(LOCALID_SMOG, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_MANTICORE, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_FIRST_PIT, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_FIRST_PIT + 1, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_FIRST_PIT + 2, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_LAST_PIT, 0, 0);
+  Import_ObjectEventSetPosition(LOCALID_SMOG, 0, 0);
   // Hide the treasure spots independently of the object event templates.
   markerId = 100;
   do {
@@ -478,7 +478,7 @@ static void LamakanDesert_ComplainAboutHeat(s32 mark) {
 
   quarter = mark;
   for (tries = 0; tries <= 2; tries++) {
-    random = Engine_RandomNext();
+    random = Import_RandomNext();
     member = (u32)((random << 1) + random) >> 16; // 0 to 2
     flag = member + FLAG_GARET_COMPLAINED;
     alreadySpoke = GameFlag_Get(flag);
@@ -716,7 +716,7 @@ static void HeatGauge_CountStep(void) {
     params.startScaleX = 0x8000;
     params.startScaleY = 0x8000;
     dx = 0;
-    params.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
+    params.spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
     if (objectEvent->facing != 0 && objectEvent->facing != 0x8000) {
       z = objectEvent->z.fixed;
       dx = 0x20000 - ((((z >> 20) & 1) * 5) << 16);
@@ -736,10 +736,10 @@ static void HeatGauge_CountStep(void) {
     gFrameCount;
     params.startScaleX = 0xcccc;
     params.startScaleY = 0xcccc;
-    params.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
+    params.spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
     FieldEffect_Spawn(objectEvent->x.fixed, objectEvent->y.fixed + 0x20000,
                       objectEvent->z.fixed, 0,
-                      ((u32)(Engine_RandomNext() * 5) >> 16) * 0x1999, phase,
+                      ((u32)(Import_RandomNext() * 5) >> 16) * 0x1999, phase,
                       EFFECT_USE_SPIN | EFFECT_USE_START_SCALE |
                           EFFECT_SCRIPT_MEDIUM,
                       &params);
@@ -786,7 +786,7 @@ static void LamakanDesert_FallIntoPit(void) {
       }
     }
   }
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   // Face the pit, then reverse the walking direction while being pulled in.
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags &=
       ~OBJ_EVENT_FACES_MOTION;
@@ -801,7 +801,7 @@ static void LamakanDesert_FallIntoPit(void) {
   objectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   record = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   objectEvent->facing = (record->facing + 0x8000) & -0x1000;
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_RUN);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_RUN);
   ObjectEvent_SetActionById(LOCALID_PARTY_LEADER, 24);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x1999, 0xccc);
   record = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -856,11 +856,11 @@ static void LamakanDesert_SlideDownDune(void) {
   hit = FieldObject_CheckMovementCollision(objectEvent, &probePosition);
   phase = gFrameCount & 4;
   if (phase == 0) {
-    params.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
-    x = objectEvent->x.fixed + (((u32)(Engine_RandomNext() * 12) >> 16) << 16) -
+    params.spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
+    x = objectEvent->x.fixed + (((u32)(Import_RandomNext() * 12) >> 16) << 16) -
         0x60000;
     FieldEffect_Spawn(x, objectEvent->y.fixed, objectEvent->z.fixed, 0, phase,
-                      ((u32)(Engine_RandomNext() * 5) >> 16) * 0x1999 + 0x7ffd,
+                      ((u32)(Import_RandomNext() * 5) >> 16) * 0x1999 + 0x7ffd,
                       EFFECT_USE_SPIN, &params);
   }
   if (hit < 0) {
@@ -869,12 +869,12 @@ static void LamakanDesert_SlideDownDune(void) {
                                           ATTACHED_EFFECT_ONCE);
     Object_SetPosition(objectEvent, objectEvent->x.fixed, objectEvent->y.fixed,
                        objectEvent->z.fixed + 0x80000);
-    ObjectDispatch_SelectAnimation(objectEvent, ANIM_LEADER_LEAP);
+    Object_SelectAnimation(objectEvent, ANIM_LEADER_LEAP);
     Object_WaitForMove(objectEvent);
     do {
       WaitFrames(1);
     } while (objectEvent->y.fixed != objectEvent->groundHeight);
-    ObjectDispatch_SelectAnimation(objectEvent, ANIM_LEADER_SPRING);
+    Object_SelectAnimation(objectEvent, ANIM_LEADER_SPRING);
     WaitFrames(3);
     return;
   }
@@ -936,7 +936,7 @@ static void LamakanDesert_MeetManticore(void) {
       record->targetX = OBJ_EVENT_NO_TARGET;
       record = ObjectEvent_Get(LOCALID_PARTY_LEADER);
       record->targetZ = OBJ_EVENT_NO_TARGET;
-      Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+      Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
       ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_MANTICORE, 0);
       FieldScript_WaitFrames(40);
       ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
@@ -953,7 +953,7 @@ static void LamakanDesert_MeetManticore(void) {
       record = ObjectEvent_Get(LOCALID_PARTY_LEADER);
       FieldVector_AddPolarOffset(-0x100000, record->facing, &backwardOffset);
       ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x20000, 0x10000);
-      Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
+      Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
       ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER,
                                        backwardOffset.x / 0x10000,
                                        backwardOffset.z / 0x10000);
@@ -1028,9 +1028,9 @@ s32 LamakanDesert_Initialize(s32 a0, s32 a1) {
 /// calls it.
 static UNUSED void Manticore_UnusedReturn(void) {
   ObjectEvent_SetSpeed(LOCALID_MANTICORE, 0x8000, 0x4000);
-  Engine_ObjectEventSetAnimation(LOCALID_MANTICORE, 1);
+  Import_ObjectEventSetAnimation(LOCALID_MANTICORE, 1);
   ObjectEvent_WalkToAndWait(LOCALID_MANTICORE, 168, 96);
-  Engine_ObjectEventSetAnimation(LOCALID_MANTICORE, 2);
+  Import_ObjectEventSetAnimation(LOCALID_MANTICORE, 2);
 }
 
 /// Every frame: draws the heat gauge down the screen's left edge, 8 pixels

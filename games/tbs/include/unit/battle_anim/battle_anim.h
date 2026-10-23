@@ -327,7 +327,7 @@ void BattleAnim_ApplyWindowBlendRegisters(void);
 void Display_ApplyBg2Reference(void);
 void Palette_StepFadeTransfer(void);
 void BattleAnim_ClearActorTimers(void);
-void ObjectGroup_TickMemberTimers(void);
+void BattleAnim_TickBattlerTints(void);
 void BattleAnim_StartCanvasLayer(s32 bgControl);
 void BattleAnim_OpenCanvasLayer(s32 bgControl);
 void BattleAnim_StartTiledCanvas(s32 bgControl);
@@ -435,8 +435,8 @@ void BattleAnim_RunTableEffect(struct BattleAnimArgs *effect);
 void BattleAnim_BuildWindowEdgeTable(void);
 void BattleAnim_SelectLivingTargets(struct BattleAnimArgs *effect);
 void BattleAnim_SetupBlendedDisplay(void);
-void ObjectGroup_UpdateMembers(s32 actorId, s32 palette, s32 animation,
-                               s32 timerSlot, s32 timerFrames);
+void BattleAnim_TintBattler(s32 actorId, s32 palette, s32 animation,
+                            s32 timerSlot, s32 timerFrames);
 void BattleAnim_InitializeTilemapAndFlushQueue(void);
 
 // cybele.c

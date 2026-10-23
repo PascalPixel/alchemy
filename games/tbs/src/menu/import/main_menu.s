@@ -11,9 +11,9 @@
 	.set import.Window_LoadGraphics, 1
 	.set import.Resource_GetTableEntry, 1
 	.set import.ScreenFade_ToBlack, 1
-	.set import.SerialRuntime_Initialize, 1
-	.set import.SerialRuntime_RemoveIrqHandlers, 1
-	.set import.SerialRuntime_StartSend, 1
+	.set import.Serial_Initialize, 1
+	.set import.Serial_RemoveIrqHandlers, 1
+	.set import.Serial_StartSend, 1
 	.set import.Window_Create, 1
 	.set import.Window_Close, 1
 	.set import.FieldMessage_Show, 1
@@ -46,7 +46,7 @@
 	.set import.Party_AddMember, 1
 	.set import.Party_RemoveMember, 1
 	.set import.Party_StartChildhood, 1
-	.set import.Runtime_GetBuildStampTime, 1
+	.set import.BuildStamp_GetTime, 1
 	.set import.InventorySnapshot_Restore, 1
 	.set import.FieldScript_WaitFrames, 1
 	.set import.ObjectEvent_GetById, 1

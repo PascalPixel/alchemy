@@ -912,29 +912,29 @@ static void FuchinFallsCave_ArcticBladeRoom_MoveThirdLogWest(void) {
 /// Touching the first log's coord event cell in Fuchin Falls Cave plays its two
 /// rolling animations.
 static void FuchinFallsCave_AnimateFirstLog(void) {
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_LOG, 1);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_LOG, 2);
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_LOG, 1);
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_LOG, 2);
 }
 
 /// Touching the second log's coord event cell in Fuchin Falls Cave plays its
 /// two rolling animations.
 static void FuchinFallsCave_AnimateSecondLog(void) {
-  Engine_ObjectEventSetAnimation(LOCALID_SECOND_LOG, 1);
-  Engine_ObjectEventSetAnimation(LOCALID_SECOND_LOG, 2);
+  Import_ObjectEventSetAnimation(LOCALID_SECOND_LOG, 1);
+  Import_ObjectEventSetAnimation(LOCALID_SECOND_LOG, 2);
 }
 
 /// Touching the third log's coord event cell in Fuchin Falls Cave plays its two
 /// rolling animations.
 static void FuchinFallsCave_AnimateThirdLog(void) {
-  Engine_ObjectEventSetAnimation(LOCALID_THIRD_LOG, 1);
-  Engine_ObjectEventSetAnimation(LOCALID_THIRD_LOG, 2);
+  Import_ObjectEventSetAnimation(LOCALID_THIRD_LOG, 1);
+  Import_ObjectEventSetAnimation(LOCALID_THIRD_LOG, 2);
 }
 
 /// Touching the fourth log's coord event cell in Fuchin Falls Cave (third
 /// room) plays its two rolling animations.
 static void FuchinFallsCave_AnimateFourthLog(void) {
-  Engine_ObjectEventSetAnimation(LOCALID_FOURTH_LOG, 1);
-  Engine_ObjectEventSetAnimation(LOCALID_FOURTH_LOG, 2);
+  Import_ObjectEventSetAnimation(LOCALID_FOURTH_LOG, 1);
+  Import_ObjectEventSetAnimation(LOCALID_FOURTH_LOG, 2);
 }
 
 /// Creates a stationary object event at sprite priority 1, drawn hidden
@@ -948,7 +948,7 @@ FuchinFallsCave_CreateForegroundObjectEvent(s32 x, s32 y, s32 z,
     objectEvent->sprite->image.priority = 1;
     objectEvent->motionFlags = 0;
     ObjectEvent_SetSpriteFlags(objectEvent, 0);
-    ObjectGroup_SetChildValue(objectEvent, SPRITE_COLOR_HIDDEN);
+    ObjectEvent_SetSpriteColor(objectEvent, SPRITE_COLOR_HIDDEN);
     objectEvent->priorityFlags |= OBJ_EVENT_PRIORITY_UNDERFOOT;
     return objectEvent;
   }
@@ -993,7 +993,7 @@ static void Imil_LeaveFallsCave(void) {
   Sound_PlaySong(SE_MAP_EXIT);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Engine_ScriptRequestWarp(IMIL_FALLS_CAVE_TO_IMIL);
+  Import_ScriptRequestWarp(IMIL_FALLS_CAVE_TO_IMIL);
 }
 
 /// Stepping onto the ice in Imil Falls Cave (metatile behavior 10) slides
@@ -1414,8 +1414,8 @@ static void ImilFuchinFalls_PrepareRoom(void) {
     objectEvent->motionFlags = value;
     objectEvent->y.fixed = value;
     ObjectMotion_SetActionVariant(LOCALID_BLANK_DRAGON_ROOM_CRATE, 1);
-    ObjectEvent_SetChildValue(LOCALID_BLANK_DRAGON_ROOM_CRATE,
-                              SPRITE_COLOR_HIDDEN);
+    ObjectEvent_SetSpriteColorById(LOCALID_BLANK_DRAGON_ROOM_CRATE,
+                                   SPRITE_COLOR_HIDDEN);
     switch (gSaveBlock.warpDest) {
     case FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ORB_OF_FORCE_EAST:
     case FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ORB_OF_FORCE_WEST:
@@ -1505,9 +1505,9 @@ static void ImilFuchinFalls_HopBy(s32 dx, s32 dz) {
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(5) / 2, PIXELS(5) / 4);
   ObjectMotion_OffsetPositionAndResetMotion(LOCALID_PARTY_LEADER, dx, dz);
   ObjectMotion_Launch(LOCALID_PARTY_LEADER, 4, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_LEAP);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_LEAP);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_SPRING);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_SPRING);
   FieldScript_End();
 }
 
@@ -1570,7 +1570,7 @@ static void FuchinFallsCave_UpdateDustMotion(union FieldObject *raw) {
 /// looping.
 static s32 FuchinFallsCave_SetDustPalette(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
-  ObjectGroup_SetChildValue(objectEvent, SPRITE_COLOR_HIDDEN);
+  ObjectEvent_SetSpriteColor(objectEvent, SPRITE_COLOR_HIDDEN);
   return 0;
 }
 
@@ -1594,8 +1594,8 @@ void ImilFuchinFalls_SpawnDust(s32 x, s32 y, s32 z, s32 velocityX,
   if (effect == 0)
     return;
   sprite = effect->sprite;
-  ObjectDispatch_SelectAnimation((struct ObjectEvent *)effect,
-                                 (flags + 1) & EFFECT_SCRIPT_MASK);
+  Object_SelectAnimation((struct ObjectEvent *)effect,
+                         (flags + 1) & EFFECT_SCRIPT_MASK);
   ObjectEvent_SetScript((struct ObjectEvent *)effect,
                         scripts[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
@@ -1610,7 +1610,7 @@ void ImilFuchinFalls_SpawnDust(s32 x, s32 y, s32 z, s32 velocityX,
   if ((flags & 0xffff0000) == 0 || extra == 0)
     return;
   if (flags & EFFECT_USE_PALETTE)
-    ObjectGroup_SetChildValue((struct ObjectEvent *)effect, extra->palette);
+    ObjectEvent_SetSpriteColor((struct ObjectEvent *)effect, extra->palette);
   if (flags & EFFECT_USE_PRIORITY) {
     effect->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
     sprite->image.priority = extra->priority;
@@ -1648,8 +1648,8 @@ static void ImilFuchinFalls_BlowCaveMouthDust(void) {
   options.targetScaleY = 9 * Q16_ONE / 5;
   if ((gFrameCount & 7) == 0)
     Sound_PlaySong(SE_136);
-  velocityX = -PIXELS(1) - ((((u32)Engine_RandomNext() << 1) >> 16) << 16);
-  velocityY = -((((u32)Engine_RandomNext() * 3) >> 16) * (PIXELS(1) / 5));
+  velocityX = -PIXELS(1) - ((((u32)Import_RandomNext() << 1) >> 16) << 16);
+  velocityY = -((((u32)Import_RandomNext() * 3) >> 16) * (PIXELS(1) / 5));
   ImilFuchinFalls_SpawnDust(
       PIXELS(308), PIXELS(64), PIXELS(222), velocityX, velocityY, framePhase,
       1 | EFFECT_USE_PALETTE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET,
@@ -1784,7 +1784,7 @@ static void Imil_TurnSkaterTowardHeldDirection(union FieldObject *fieldObject) {
   objectEvent->steeringFlags = 0;
   direction = gImilFuchinFalls_KeyHeadings[(gKeysHeld >> 4) & 15];
   if (direction == -1) {
-    ObjectDispatch_SelectAnimation(objectEvent, 9);
+    Object_SelectAnimation(objectEvent, 9);
     return;
   }
   facing = objectEvent->facing;
@@ -1794,9 +1794,9 @@ static void Imil_TurnSkaterTowardHeldDirection(union FieldObject *fieldObject) {
   if (direction < -0x1000)
     direction = -0x1000;
   objectEvent->facing = facing + direction;
-  ObjectDispatch_SelectAnimation(objectEvent, 2);
-  ObjectDispatch_SetAnimationSpeed((struct Object *)objectEvent,
-                                   IMIL_SLIDE_ANIMATION_STEP);
+  Object_SelectAnimation(objectEvent, 2);
+  Object_SetAnimationSpeed((struct Object *)objectEvent,
+                           IMIL_SLIDE_ANIMATION_STEP);
 }
 
 /// Slides along Imil Falls Cave's ice until terrain or a metatile behavior
@@ -1846,9 +1846,9 @@ static void Imil_SlideObjectEventAcrossIce(void) {
     objectEvent->timer = 0;
     Object_SetPosition(objectEvent, x, objectEvent->y.fixed, z);
 
-    ObjectDispatch_SelectAnimation(objectEvent, 2);
-    ObjectDispatch_SetAnimationSpeed((struct Object *)objectEvent,
-                                     IMIL_SLIDE_ANIMATION_STEP);
+    Object_SelectAnimation(objectEvent, 2);
+    Object_SetAnimationSpeed((struct Object *)objectEvent,
+                             IMIL_SLIDE_ANIMATION_STEP);
     Object_WaitForMove(objectEvent);
     objectEvent->update = Imil_TurnSkaterTowardHeldDirection;
 

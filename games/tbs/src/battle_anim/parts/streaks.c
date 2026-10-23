@@ -244,8 +244,8 @@ void BattleAnim_RunStreakVolley(struct BattleAnimArgs *effect, s32 mode) {
               struck->x += 0x8000;
             else
               struck->x -= 0x8000;
-            ObjectGroup_UpdateMembers(work->effect->targets[k], -1, POSE_DAMAGE,
-                                      -1, 0);
+            BattleAnim_TintBattler(work->effect->targets[k], -1, POSE_DAMAGE,
+                                   -1, 0);
           }
 
           // The hit: the first streak plays the hit sound and flashes the
@@ -256,12 +256,12 @@ void BattleAnim_RunStreakVolley(struct BattleAnimArgs *effect, s32 mode) {
               Sound_PlaySongFar(SE_IMPACT);
               if (k == 0) // the first hit lets the battle show the damage
                 ANIM_SHOW_DAMAGE(-1);
-              ObjectGroup_UpdateMembers(work->effect->targets[k],
-                                        SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 8);
+              BattleAnim_TintBattler(work->effect->targets[k],
+                                     SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 8);
             }
             if (frame == k * STREAKS_TARGET_DELAY + 40)
-              ObjectGroup_UpdateMembers(work->effect->targets[k],
-                                        SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 8);
+              BattleAnim_TintBattler(work->effect->targets[k],
+                                     SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 8);
           }
           // The style's recoil motion, with a camera shake.
           if (STREAKS_VALUE(mode, STREAKS_MOTION) != -1 &&
@@ -424,8 +424,8 @@ void BattleAnim_RunMoteFountain(struct BattleAnimArgs *effect, s32 mode) {
       ANIM_FOR_EACH_TARGET(i, work->effect) {
         if (frame == i * 8 + 48) {
           ANIM_SHOW_DAMAGE(-1);
-          ObjectGroup_UpdateMembers(work->effect->targets[i],
-                                    SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 8);
+          BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, i, 8);
         }
       }
     } else {
@@ -433,8 +433,8 @@ void BattleAnim_RunMoteFountain(struct BattleAnimArgs *effect, s32 mode) {
         if (frame == i * 8 + 48) {
           Sound_PlaySongFar(SE_RECOVERY);
           ANIM_SHOW_DAMAGE(-1);
-          ObjectGroup_UpdateMembers(work->effect->targets[i],
-                                    SPRITE_COLOR_WHITE, -1, i, 8);
+          BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_WHITE,
+                                 -1, i, 8);
         }
       }
     }

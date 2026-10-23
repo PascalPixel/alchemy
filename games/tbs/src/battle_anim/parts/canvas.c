@@ -9,7 +9,7 @@
 // the canvas, its transfer modes and the two BG1 paths.
 //
 // A reaction may start one of the eight actor timers in the animation's work
-// block; ObjectGroup_TickMemberTimers counts them down each frame and gives
+// block; BattleAnim_TickBattlerTints counts them down each frame and gives
 // the battler its own palette back when one runs out. The timers are indexed
 // like effect->actors, so timer n belongs to actor n.
 
@@ -269,14 +269,14 @@ void BattleAnim_ClearActorTimers(void) {
   Iwram_ClearWords(work->actorTimers, sizeof work->actorTimers);
 }
 
-/// Counts down each target's flash timer, which ObjectGroup_UpdateMembers
+/// Counts down each target's flash timer, which BattleAnim_TintBattler
 /// starts; when one runs out, the target gets its own palette back. Timer n
 /// belongs to effect->actors[n].
 ///
 /// Called once a frame by nearly every animation, most through
 /// ANIM_END_FRAME. Changes work->actorTimers and, through
-/// ObjectGroup_UpdateMembers, the colour of a target whose timer ends.
-void ObjectGroup_TickMemberTimers(void) {
+/// BattleAnim_TintBattler, the colour of a target whose timer ends.
+void BattleAnim_TickBattlerTints(void) {
   struct BattleAnimWork *work;
   s32 actorIndex;
 
@@ -286,8 +286,7 @@ void ObjectGroup_TickMemberTimers(void) {
     if (work->actorTimers[actorIndex] != 0) {
       if ((work->actorTimers[actorIndex] = work->actorTimers[actorIndex] - 1) ==
           0) {
-        ObjectGroup_UpdateMembers(work->effect->targets[actorIndex], 0, -1, -1,
-                                  0);
+        BattleAnim_TintBattler(work->effect->targets[actorIndex], 0, -1, -1, 0);
       }
     }
     actorIndex += 1;
@@ -319,7 +318,8 @@ void BattleAnim_StartCanvasLayer(s32 bgControl) {
   struct BattleAnimWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
   struct BattleWork *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
   void *canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  struct BattleViewWork *display = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
+  struct BattleBackgroundWork *display =
+      HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
   s32 row;
   s32 column;
   s32 offset;
@@ -399,7 +399,8 @@ void BattleAnim_OpenCanvasLayer(s32 bgControl) {
   struct BattleAnimWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
   struct BattleWork *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
   void *canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  struct BattleViewWork *display = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
+  struct BattleBackgroundWork *display =
+      HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
   s32 row;
   s32 column;
   s32 offset;
@@ -544,9 +545,9 @@ void BattleAnim_HideBg1AndRestoreBackdrop(void) {
   struct BattleWork *battle;
   s32 *flag;
 
-  flag =
-      &((struct BattleViewWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND))
-           ->secondMode;
+  flag = &((struct BattleBackgroundWork *)HEAP_SLOT_BLOCK(
+               HEAP_SLOT_BATTLE_BACKGROUND))
+              ->secondMode;
   battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
   *flag = BATTLE_BACKGROUND_FIXED;
   IoWriteQueue_Store16((u32)&REG_DISPCNT, DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP |
@@ -577,12 +578,13 @@ void BattleAnim_SetupCanvasTileMap(void) {
 #ifdef UBFIX
   void *canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   struct BattleWork *screen = gBattleWork;
-  struct BattleViewWork *layer = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
+  struct BattleBackgroundWork *layer =
+      HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
 #else
   u8 **cells = (u8 **)&gBattleWork;
   void *canvas = cells[31];
   struct BattleWork *screen = (struct BattleWork *)cells[0];
-  struct BattleViewWork *layer = (struct BattleViewWork *)cells[35];
+  struct BattleBackgroundWork *layer = (struct BattleBackgroundWork *)cells[35];
 #endif
   s32 row;
   s32 column;

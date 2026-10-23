@@ -142,17 +142,17 @@ void ObjectEvent_TurnPairToFaceEachOther(struct Object *first,
                                          struct Object *second);
 void ObjectEvent_DestroyById(s32 index);
 void ObjectEvent_DestroyNoOp(void);
-void ObjectGroup_ConfigureChildValue(s32 objectId, s32 param);
-void ObjectGroup_ApplyIndexedChildValue(union FieldObject *fieldObject);
-void ObjectGroup_SetChildValue(struct ObjectEvent *objectEvent, s32 param);
+void ObjectEvent_ConfigureSpriteColor(s32 objectId, s32 param);
+void ObjectEvent_UpdateBlink(union FieldObject *fieldObject);
+void ObjectEvent_SetSpriteColor(struct ObjectEvent *objectEvent, s32 param);
 void ObjectEvent_SetTargetAndCallback(u32 objectId, s32 targetId,
                                       const void *script);
 s32 ObjectMotion_StepAngle(struct Object *object);
 void ObjectEvent_ResetTargetAndSetMode1(u32 objectId);
 void ObjectMotion_ArmCallback(s32 objectId, s32 angle, s32 wait);
 void ObjectMotion_SetActionVariant(s32 objectId, s32 priority);
-void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId);
-void ObjectVisual_ReservedNoOp(void);
+void ObjectEvent_CopyGraphics(u32 targetId, u32 sourceId);
+void ObjectEvent_ReservedNoOp(void);
 
 struct Window;
 
@@ -303,15 +303,14 @@ void FieldEffect_DispatchRequestKind(void);
 void FieldEffect_FinishMindRead(void);
 void FieldScript_RunTypeHandler(void);
 s32 Field_RunEventAction(const void *event, s32 param, s32 target);
-void ObjectGroup_ApplyRandomChildValues(union FieldObject *fieldObject);
+void Object_CycleSpriteColors(union FieldObject *fieldObject);
 void ObjectMotion_SetTargetPositionFromMagnitudeAngle(struct Object *object,
                                                       s32 magnitude, s32 angle);
 s32 VramCache_CountFreeBlocks(void);
 struct Sprite *Sprite_ShareVramCacheEntry(struct Sprite *sourceSprite,
                                           struct Sprite *sharedSprite);
 struct Object *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void ObjectGroup_SetActionForOthers(struct Object *except, s32 state,
-                                    s32 value);
+void ObjectEvent_SetOthersPaused(struct Object *except, s32 state, s32 value);
 void FieldEffect_UpdateScaledArcObjectA(union FieldObject *fieldObject);
 void FieldEffect_UpdateScaledArcObjectB(union FieldObject *fieldObject);
 void FieldEffect_SpawnScaledArcObjects(struct ObjectEvent *linked);
@@ -349,7 +348,7 @@ void FieldEffect_RunMove(void);
 void *FieldEffect_StartItemBreak(void *object);
 void FieldEffect_SnapScaleToFull(struct Object *object);
 void UpdateRisingParticleBurst(void *object);
-void ObjectDispatch_ApplyValueToKind200Children(s32 value);
+void Object_SetRevealSpriteColor(s32 value);
 void FieldEffect_WatchLeaderDistance(void);
 void FieldEffect_RunReveal(void);
 void FieldEffect_EndReveal(void);

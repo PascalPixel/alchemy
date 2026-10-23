@@ -255,8 +255,8 @@ void BattleAnim_RunBurstSequence(struct BattleAnimArgs *effect, s32 mode) {
         // A flash row fills the canvas with level 47.
         if (gBurstSequence_Records[mode][BURST_SEQUENCE_FLASH] == 1)
           Iwram_FillWords(canvas, CANVAS_BYTES, 0x2f2f2f2f);
-        ObjectGroup_UpdateMembers(work->effect->targets[0], SPRITE_COLOR_WHITE,
-                                  POSE_DAMAGE, 0, 4);
+        BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_WHITE,
+                               POSE_DAMAGE, 0, 4);
         if (i == bursts - 1) {
           BattleMotion_ApplyKnockbackFar(work->effect->targets[0],
                                          KNOCKBACK_HURL);

@@ -19,8 +19,8 @@ void FieldEffect_UpdateScaledArcObjectA(union FieldObject *fieldObject) {
   anchor = arc->linkedObject;
   frame = ++arc->timer;
   if (frame > 31) {
-    ObjectDispatch_InitializeFar((struct Object *)arc,
-                                 gFieldEffect_CommonParticleScript);
+    Object_InitializeFar((struct Object *)arc,
+                         gFieldEffect_CommonParticleScript);
     return;
   }
   scale = Trig_Sin(frame << 10);
@@ -42,8 +42,8 @@ void FieldEffect_UpdateScaledArcObjectB(union FieldObject *fieldObject) {
   anchor = arc->linkedObject;
   frame = ++arc->timer;
   if (frame > 31) {
-    ObjectDispatch_InitializeFar((struct Object *)arc,
-                                 gFieldEffect_CommonParticleScript);
+    Object_InitializeFar((struct Object *)arc,
+                         gFieldEffect_CommonParticleScript);
     return;
   }
   scale = Trig_Sin(frame << 10);

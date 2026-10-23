@@ -21,7 +21,7 @@ struct MapSecNameRule;
 /// Battlefield (x, y) pixel pairs by place: 0 to 3 the party's column at x 80,
 /// 32 pixels apart, and 5 to 10 a column at x -80, 20 apart (battle_data.s).
 extern const s8 gBattlePlacement_StepPairs[];
-/// Read as a halfword by ObjectGroup_SetActionForOthers: the local id of the
+/// Read as a halfword by ObjectEvent_SetOthersPaused: the local id of the
 /// player's object, which it leaves alone.
 extern u8 gPlayerObjectId[];
 /// Each weapon's kind: bits 15..9 the kind, which indexes the
@@ -42,10 +42,10 @@ struct BattleSideOrder;
 struct BattleLocationRule;
 struct BattleObject;
 struct BattleTurn;
-struct BattleViewWork;
+struct BattleBackgroundWork;
 struct BattleSummonState;
 struct Unit;
-struct EffectDescriptor;
+struct MapEventView;
 struct FieldEffectSprite;
 struct EnemyDefinition;
 struct ObjectEvent;
@@ -167,7 +167,7 @@ extern u32 gRandomSeed;
 /// The HEAP_SLOT_BATTLE_BACKGROUND heap slot: the camera's turn, which
 /// staging.c, auto_battle.c and round.c set for each action, and the
 /// background's display mode.
-extern struct BattleViewWork *gBattleViewWork;
+extern struct BattleBackgroundWork *gBattleBackgroundWork;
 #endif
 /// SC_FACE_LINK every frame, forever: the script of an object event told to
 /// keep facing its linked object.

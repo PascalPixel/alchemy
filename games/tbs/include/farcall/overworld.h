@@ -125,10 +125,10 @@ void ObjectMotion_SetAngleTowardFar(s32 firstId, s32 second_id, s32 wait);
 void ObjectEvent_LinkPairFar(s32 firstId, s32 second_id, s32 wait);
 /// Gives every sprite part of an object event a param, or with bit 8 set makes
 /// the object event blink until another param is given.
-void ObjectGroup_ConfigureChildValueFar(s32 objectId, s32 value);
+void ObjectEvent_ConfigureSpriteColorFar(s32 objectId, s32 value);
 /// Sets the param byte of every animated part of an object event's sprite; maps
 /// flash an object event by alternating 0 and 15.
-void ObjectGroup_SetChildValueFar(struct ObjectEvent *objectEvent, s32 value);
+void ObjectEvent_SetSpriteColorFar(struct ObjectEvent *objectEvent, s32 value);
 /// Links an object event to a target and starts a script on it; unless
 /// OBJ_EVENT_LINK_KEEP_MOTION is set it trails 40 pixels behind, fast enough to
 /// keep up and unable to block the target.
@@ -172,7 +172,7 @@ void FieldEffect_SpawnLinkedFar(s32 id, s32 mode, s32 wait);
 void FieldEffect_ConfigureLinkedObjectFar(s32 id, s32 flags);
 /// Makes the target object event's sprite show the source object event's
 /// graphics; neither is checked for NULL. The Tolbi ship deck uses it.
-void ObjectVisual_CopyAttributesFar(u32 targetId, u32 sourceId);
+void ObjectEvent_CopyGraphicsFar(u32 targetId, u32 sourceId);
 /// Makes the camera follow an object event; unless flag is set it jumps there
 /// at once and the map is redrawn around it.
 void FieldCamera_FollowObjectEventFar(s32 id, s32 flag);

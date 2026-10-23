@@ -303,10 +303,10 @@ static void LamaTemple_EnterHamasRoom(void) {
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0xcccc, 0x6666);
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
   ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0, -16);
   FieldScript_WaitFrames(16);
-  Engine_ScriptRequestWarp(LAMA_TEMPLE_TO_FUCHIN_TEMPLE_INTERIORS_HAMAS_ROOM);
+  Import_ScriptRequestWarp(LAMA_TEMPLE_TO_FUCHIN_TEMPLE_INTERIORS_HAMAS_ROOM);
 }
 
 /// Hama's farewell, once the party has freed Hsu and been brought back to Lama
@@ -337,9 +337,9 @@ static void LamaTemple_RunHamasFarewell(void) {
   FieldScript_WaitFrames(20);
   FieldScript_SetMessageId(MsgMountainAdeptsLetMeThankAgain);
   Script_ShowMessageAndWait(LOCALID_TEMPLE_HAMA, 0, 20);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
   FieldScript_WaitFrames(20);
   ObjectMotion_SetAnimationAndWait(LOCALID_TEMPLE_HAMA, ANIM_SHAKE_HEAD);
@@ -412,9 +412,9 @@ static void LamaTemple_RunHamasFarewell(void) {
   ObjectMotion_SetVarCbAndRefresh(LOCALID_TEMPLE_HAMA, 2);
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_TEMPLE_HAMA, 0, 20);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
   FieldScript_WaitFrames(20);
   ObjectMotion_SetAnimationAndWait(LOCALID_TEMPLE_HAMA, ANIM_NOD);
@@ -493,8 +493,8 @@ static void LamaTemple_RunHamasFarewell(void) {
   ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_IVAN, 0, 20);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
   FieldScript_WaitFrames(20);
 
@@ -517,7 +517,7 @@ static void LamaTemple_RunHamasFarewell(void) {
 static void LamaTemple_ReadWallWriting(void) {
 
   FieldScript_Start();
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   FieldMessage_Show(MsgMountainHeWhoHasPowerSee, 1);
   FieldScript_End();
 }
@@ -686,7 +686,7 @@ static void AlpineCrossing_HamaReachesHsu(void) {
                                                     ATTACHED_EFFECT_ONCE);
   FieldScript_WaitFrames(60);
   ObjectEvent_FaceDirection(LOCALID_FEIZHI, FACING_NORTHWEST + FACING_STEP, 20);
-  Engine_ObjectEventSetAnimation(LOCALID_HSU, ANIM_HSU_STRUGGLE);
+  Import_ObjectEventSetAnimation(LOCALID_HSU, ANIM_HSU_STRUGGLE);
   FieldScript_End();
   GameFlag_Set(FLAG_HAMA_REACHED_HSU);
 }
@@ -735,8 +735,8 @@ static void AlpineCrossing_LiftBoulder(void) {
   ObjectEvent_SetSpeed(LOCALID_FEIZHI, 0x3333, 0x1999);
 
   // The first heave: two tugs draw Hsu halfway out.
-  Engine_ObjectEventSetAnimation(LOCALID_HAMA, ANIM_HAMA_PULL);
-  Engine_ObjectEventSetAnimation(LOCALID_FEIZHI, ANIM_FEIZHI_PULL);
+  Import_ObjectEventSetAnimation(LOCALID_HAMA, ANIM_HAMA_PULL);
+  Import_ObjectEventSetAnimation(LOCALID_FEIZHI, ANIM_FEIZHI_PULL);
   FieldScript_WaitFrames(20);
   Script_PlaySong(SE_125);
   ObjectEvent_SetDestinationOffset(LOCALID_HAMA, 2, 0);
@@ -744,8 +744,8 @@ static void AlpineCrossing_LiftBoulder(void) {
   ObjectEvent_SetDestinationOffset(LOCALID_FEIZHI, 2, 0);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_FEIZHI);
   FieldScript_WaitFrames(30);
-  Engine_ObjectEventSetAnimation(LOCALID_HAMA, ANIM_HAMA_PULL);
-  Engine_ObjectEventSetAnimation(LOCALID_FEIZHI, ANIM_FEIZHI_PULL);
+  Import_ObjectEventSetAnimation(LOCALID_HAMA, ANIM_HAMA_PULL);
+  Import_ObjectEventSetAnimation(LOCALID_FEIZHI, ANIM_FEIZHI_PULL);
   FieldScript_WaitFrames(20);
   Script_PlaySong(SE_125);
   ObjectEvent_SetDestinationOffset(LOCALID_HAMA, 4, 0);
@@ -753,8 +753,8 @@ static void AlpineCrossing_LiftBoulder(void) {
   ObjectEvent_SetDestinationOffset(LOCALID_FEIZHI, 4, 0);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_FEIZHI);
   ObjectMotion_EnableActionAndResetMotion(LOCALID_HSU);
-  Engine_ObjectEventSetAnimation(LOCALID_HAMA, ANIM_STAND);
-  Engine_ObjectEventSetAnimation(LOCALID_FEIZHI, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_HAMA, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_FEIZHI, ANIM_STAND);
   FieldScript_WaitFrames(50);
   ObjectMotion_Launch(LOCALID_FEIZHI, 2, 0);
   FieldScript_WaitFrames(20);
@@ -767,8 +767,8 @@ static void AlpineCrossing_LiftBoulder(void) {
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
 
   // The second heave pulls Hsu free.
-  Engine_ObjectEventSetAnimation(LOCALID_HAMA, ANIM_HAMA_PULL);
-  Engine_ObjectEventSetAnimation(LOCALID_FEIZHI, ANIM_FEIZHI_PULL);
+  Import_ObjectEventSetAnimation(LOCALID_HAMA, ANIM_HAMA_PULL);
+  Import_ObjectEventSetAnimation(LOCALID_FEIZHI, ANIM_FEIZHI_PULL);
   FieldScript_WaitFrames(20);
   Script_PlaySong(SE_125);
   ObjectEvent_SetDestinationOffset(LOCALID_HAMA, 2, 0);
@@ -776,8 +776,8 @@ static void AlpineCrossing_LiftBoulder(void) {
   ObjectEvent_SetDestinationOffset(LOCALID_FEIZHI, 2, 0);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_FEIZHI);
   FieldScript_WaitFrames(30);
-  Engine_ObjectEventSetAnimation(LOCALID_HAMA, ANIM_HAMA_PULL);
-  Engine_ObjectEventSetAnimation(LOCALID_FEIZHI, ANIM_FEIZHI_PULL);
+  Import_ObjectEventSetAnimation(LOCALID_HAMA, ANIM_HAMA_PULL);
+  Import_ObjectEventSetAnimation(LOCALID_FEIZHI, ANIM_FEIZHI_PULL);
   FieldScript_WaitFrames(20);
   Script_PlaySong(SE_125);
   ObjectEvent_SetDestinationOffset(LOCALID_HAMA, 4, 0);
@@ -785,8 +785,8 @@ static void AlpineCrossing_LiftBoulder(void) {
   ObjectEvent_SetDestinationOffset(LOCALID_FEIZHI, 4, 0);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_FEIZHI);
   FieldScript_WaitFrames(40);
-  Engine_ObjectEventSetAnimation(LOCALID_HAMA, ANIM_STAND);
-  Engine_ObjectEventSetAnimation(LOCALID_FEIZHI, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_HAMA, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_FEIZHI, ANIM_STAND);
   ObjectMotion_Launch(LOCALID_FEIZHI, 2, 0);
   FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_FEIZHI, FACING_NORTH + FACING_STEP, 20);
@@ -801,7 +801,7 @@ static void AlpineCrossing_LiftBoulder(void) {
   ObjectEvent_SetSpeed(LOCALID_FEIZHI, 0xcccc, 0x6666);
   ObjectEvent_WalkToAndWait(LOCALID_FEIZHI, 168, 296);
   ObjectEvent_FaceDirection(LOCALID_FEIZHI, FACING_NORTH + FACING_STEP, 20);
-  Engine_ObjectEventSetAnimation(LOCALID_FEIZHI, ANIM_FEIZHI_CROUCH);
+  Import_ObjectEventSetAnimation(LOCALID_FEIZHI, ANIM_FEIZHI_CROUCH);
   ObjectMotion_SetAnimationAndWait(LOCALID_HAMA, ANIM_NOD);
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
@@ -817,14 +817,14 @@ static void AlpineCrossing_LiftBoulder(void) {
   GameFlag_Set(FLAG_HSU_RESCUED);
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
-  Engine_ScriptRequestWarp(ALPINE_CROSSING_TO_LAMA_TEMPLE);
+  Import_ScriptRequestWarp(ALPINE_CROSSING_TO_LAMA_TEMPLE);
 }
 
 /// Searching the signpost at the Alpine Crossing.
 /// "North: Altin Mine. West: Lama Temple."
 static void AlpineCrossing_ReadSignpost(void) {
   FieldScript_Start();
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   FieldMessage_Show(MsgMountainNorthAltinMineWestLama, 1);
   FieldScript_End();
 }
@@ -933,10 +933,10 @@ s32 Map_Initialize(void) {
     // meditate and the mossy rock stands; the rock's own cell attributes are
     // saved at (21, 73) for Reveal to restore.
     Map_QueueMusic(SE_169);
-    Engine_ObjectEventSetAnimation(LOCALID_MEDITATING_MONK, ANIM_MONK_MEDITATE);
-    Engine_ObjectEventSetAnimation(LOCALID_MONK_SENSING_ANXIETY,
+    Import_ObjectEventSetAnimation(LOCALID_MEDITATING_MONK, ANIM_MONK_MEDITATE);
+    Import_ObjectEventSetAnimation(LOCALID_MONK_SENSING_ANXIETY,
                                    ANIM_MONK_MEDITATE);
-    Engine_ObjectEventSetAnimation(LOCALID_PASSAGE_ROCK,
+    Import_ObjectEventSetAnimation(LOCALID_PASSAGE_ROCK,
                                    TURNING_ROCK_ANIMATION_MOSSY);
     MapGrid_CopyCellAttributes(21, 9, 1, 1, 21, 73);
     LamaTemple_ShowFalseWall();
@@ -957,12 +957,12 @@ s32 Map_Initialize(void) {
     ObjectEvent_GetById(LOCALID_WATER_FOR_FROST)->priorityFlags |=
         OBJ_EVENT_PRIORITY_UNDERFOOT;
     if (GameFlag_Get(FLAG_PUDDLE_FROZEN)) {
-      Engine_ObjectEventSetAnimation(LOCALID_WATER_FOR_FROST,
+      Import_ObjectEventSetAnimation(LOCALID_WATER_FOR_FROST,
                                      PUDDLE_ANIMATION_FROZEN);
       AlpineCrossing_FreezePuddle();
     }
     if (GameFlag_Get(FLAG_SPROUT_GROWN)) {
-      Engine_ObjectEventSetAnimation(LOCALID_PLANT, SPROUT_ANIMATION_GROWN);
+      Import_ObjectEventSetAnimation(LOCALID_PLANT, SPROUT_ANIMATION_GROWN);
       AlpineCrossing_GrowSprout();
     }
     if (gSaveBlock.warpDest ==
@@ -976,7 +976,7 @@ s32 Map_Initialize(void) {
     if (!GameFlag_Get(FLAG_FEIZHI_WENT_TO_HSU) &&
         !GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED) &&
         !GameFlag_Get(FLAG_HSU_RESCUED)) {
-      Engine_ObjectEventSetPosition(LOCALID_FEIZHI, 0, 0);
+      Import_ObjectEventSetPosition(LOCALID_FEIZHI, 0, 0);
     }
 
     // Arriving from the north after Hama's lesson, before the party has freed
@@ -984,10 +984,10 @@ s32 Map_Initialize(void) {
     if (!Script_GetFlag(FLAG_HSU_RESCUED) &&
         GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED) &&
         gSaveBlock.warpDest == ALPINE_CROSSING_FROM_WORLD_MAP_NORTH) {
-      Engine_ObjectEventSetPosition(LOCALID_BOULDER, 0, 0);
+      Import_ObjectEventSetPosition(LOCALID_BOULDER, 0, 0);
       GameFlag_Set(FLAG_HSU_RESCUED);
       GameFlag_Set(FLAG_HSU_RESCUED_WITHOUT_PARTY);
-      Engine_ObjectEventSetPosition(LOCALID_FEIZHI, 0, 0);
+      Import_ObjectEventSetPosition(LOCALID_FEIZHI, 0, 0);
     }
 
     // Once Hsu is free, the cleared rocks open the road.
@@ -1002,8 +1002,8 @@ s32 Map_Initialize(void) {
     // by him, and the workers from Xian have not come yet.
     if (GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED) &&
         !GameFlag_Get(FLAG_HSU_RESCUED)) {
-      Engine_ObjectEventSetPosition(LOCALID_FIRST_WORKER, 0, 0);
-      Engine_ObjectEventSetPosition(LOCALID_SECOND_WORKER, 0, 0);
+      Import_ObjectEventSetPosition(LOCALID_FIRST_WORKER, 0, 0);
+      Import_ObjectEventSetPosition(LOCALID_SECOND_WORKER, 0, 0);
       ObjectEvent_SetPosition(LOCALID_HAMA, PIXELS(192), PIXELS(264));
       ObjectEvent_SetPosition(LOCALID_HSU, PIXELS(164), PIXELS(280));
       ObjectEvent_SetPosition(LOCALID_FEIZHI, PIXELS(184), PIXELS(304));

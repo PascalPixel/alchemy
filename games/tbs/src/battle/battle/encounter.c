@@ -39,7 +39,7 @@ s32 Battle_Run(s32 enemyGroup) {
   s32 *focus;
   struct BattleWork *battle;
   u8 *enemyUnits;
-  struct BattleViewWork *view;
+  struct BattleBackgroundWork *view;
   struct BattleMessageWork *display;
   s32 enemyCount;
   u8 *enemyUnitDestination;
@@ -231,11 +231,11 @@ s32 Battle_Run(s32 enemyGroup) {
     if (GameFlag_GetFar(FLAG_AUTO_BATTLE) == 0) {
       // XXX: likely free-memory probes left from debugging, because no
       // caller here reads their results.
-      Runtime_GetRemainingIwram();
-      Runtime_GetRemainingEwram();
+      Heap_GetRemainingIwram();
+      Heap_GetRemainingEwram();
       actionCount = Battle_GatherActions(battle->actions);
-      Runtime_GetRemainingIwram();
-      Runtime_GetRemainingEwram();
+      Heap_GetRemainingIwram();
+      Heap_GetRemainingEwram();
     } else {
       actionCount = AutoBattle_BuildActions(battle->actions);
     }
@@ -248,8 +248,8 @@ s32 Battle_Run(s32 enemyGroup) {
     // first action waits 10 frames facing the party first.
     for (i = 0; i < actionCount; i++) {
       actingUnit = battle->actions[i].unitId;
-      Runtime_GetRemainingIwram();
-      Runtime_GetRemainingEwram();
+      Heap_GetRemainingIwram();
+      Heap_GetRemainingEwram();
       if (GameFlag_GetFar(FLAG_AUTO_BATTLE) == 0) {
         if (BattleStaging_DispatchAction(&battle->actions[i],
                                          i == 0 ? 10 : 0) == 1)
@@ -258,8 +258,8 @@ s32 Battle_Run(s32 enemyGroup) {
         if (AutoBattle_RunAction(&battle->actions[i]) == 1)
           goto fled;
       }
-      Runtime_GetRemainingIwram();
-      Runtime_GetRemainingEwram();
+      Heap_GetRemainingIwram();
+      Heap_GetRemainingEwram();
       if (BattleUnit_ListLiving(BATTLE_SIDES_PARTY, 0) == 0)
         goto party_lost;
       if (BattleUnit_ListLiving(BATTLE_SIDES_ENEMIES, 0) == 0) {

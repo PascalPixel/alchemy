@@ -213,7 +213,7 @@ void FieldEffect_StartCast(void) {
   caster = effectWork->mainObject;
   ability = (s16)effectWork->action;
   announcedAbility = ability;
-  ObjectDispatch_SelectAnimationFar(caster, 0x14);
+  Object_SelectAnimationFar(caster, 0x14);
   caster->targetX = caster->x.fixed;
   caster->targetY = caster->y.fixed;
   caster->targetZ = caster->z.fixed;
@@ -223,7 +223,7 @@ void FieldEffect_StartCast(void) {
     caster->update = FieldEffect_FlickerObjectAndTick;
   }
   if (effectWork->active != 0) {
-    ObjectGroup_SetActionForOthers((struct Object *)caster, 1, 0);
+    ObjectEvent_SetOthersPaused((struct Object *)caster, 1, 0);
     MessageArgument_PushFar(announcedAbility, 4);
     // The mode branches currently show the same message. Merging them shrinks
     // the native English function by 32 bytes, so keep this existing form.
@@ -232,13 +232,13 @@ void FieldEffect_StartCast(void) {
     } else {
       FieldMessage_ShowFar(MsgAbilityAnnounce, effectWork->messageMode);
     }
-    ObjectGroup_SetActionForOthers((struct Object *)caster, 0, 0x10);
+    ObjectEvent_SetOthersPaused((struct Object *)caster, 0, 0x10);
   }
   if (GameFlag_GetFar(0x140) != 0) {
     if (effectWork->visible != 0) {
       caster->update = FieldEffect_CycleObjectValueByCounter;
     }
-    ObjectDispatch_SelectAnimationFar(caster, 0x15);
+    Object_SelectAnimationFar(caster, 0x15);
   } else {
     FieldEffect_StopCasterHook();
   }

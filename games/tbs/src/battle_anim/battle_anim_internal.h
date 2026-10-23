@@ -143,8 +143,8 @@ static inline void Dma_Stop(volatile u16 *channel) {
 /// frames, counted by actor timer `i`, and is knocked back by `motion`, an enum
 /// BattleKnockback (BattleMotion_ApplyKnockbackFar).
 #define ANIM_STRIKE_TARGET(effect, i, frames, motion)                          \
-  (ObjectGroup_UpdateMembers((effect)->targets[i], SPRITE_COLOR_WHITE,         \
-                             POSE_DAMAGE, i, frames),                          \
+  (BattleAnim_TintBattler((effect)->targets[i], SPRITE_COLOR_WHITE,            \
+                          POSE_DAMAGE, i, frames),                             \
    BattleMotion_ApplyKnockbackFar((effect)->targets[i], motion))
 
 // The canvas life cycle, shared by every canvas animation. The statement macros
@@ -190,9 +190,9 @@ static inline void Dma_Stop(volatile u16 *channel) {
 #define ANIM_PRESENT_FRAME(work) ((work)->transferPending = 1, WaitFrames(1))
 
 /// The usual end of an animation frame: counts down the targets' flash timers
-/// (ObjectGroup_TickMemberTimers), then presents the canvas.
+/// (BattleAnim_TickBattlerTints), then presents the canvas.
 #define ANIM_END_FRAME(work)                                                   \
-  (ObjectGroup_TickMemberTimers(), ANIM_PRESENT_FRAME(work))
+  (BattleAnim_TickBattlerTints(), ANIM_PRESENT_FRAME(work))
 
 /// Frees the two blitters, the alternate first.
 #define ANIM_RELEASE_BLITTERS()                                                \

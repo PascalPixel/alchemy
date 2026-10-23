@@ -112,9 +112,9 @@ u32 Map_BgEventIgnoresCondition(s32 flags, s32 result) {
 ///
 /// Called by every lookup of a map's events in this part and by
 /// ObjectEvent_GetTriggerTileAheadOfCurrent. Changes nothing.
-struct EffectDescriptor *Map_FindEvent(s32 kind, s32 target) {
+struct MapEventView *Map_FindEvent(s32 kind, s32 target) {
   struct FieldWork *work = gFieldWork;
-  struct EffectDescriptor *event = (struct EffectDescriptor *)work->events;
+  struct MapEventView *event = (struct MapEventView *)work->events;
   s32 flags;
   u32 facing =
       ((struct ObjectEvent *)ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId))
@@ -171,7 +171,7 @@ struct EffectDescriptor *Map_FindEvent(s32 kind, s32 target) {
 }
 
 /// Unused: runs the loaded overlay's initialize entry; nothing calls it.
-UNUSED void Runtime_CallWorkBlockEntry(void) { gOverlayArea.initialize(); }
+UNUSED void Overlay_CallInitialize(void) { gOverlayArea.initialize(); }
 
 /// Returns the talk event of object event id, or 0: for the object event
 /// stopped with Halt
@@ -183,11 +183,11 @@ UNUSED void Runtime_CallWorkBlockEntry(void) { gOverlayArea.initialize(); }
 /// searching, and by the field Psynergy dispatch, which Halts only an object
 /// event with a talk event; both test the result only for non-zero.
 s32 Map_FindObjectEventTalkEvent(s32 id) {
-  struct EffectDescriptor *talkEvent = Map_FindEvent(MAP_EVENT_TALK, id);
+  struct MapEventView *talkEvent = Map_FindEvent(MAP_EVENT_TALK, id);
   s32 pausedLocalId = gSaveBlock.pausedObject;
 
   if (pausedLocalId == id) {
-    struct EffectDescriptor *pausedEvent =
+    struct MapEventView *pausedEvent =
         Map_FindEvent(MAP_EVENT_TALK_HALTED, pausedLocalId);
 
     if (pausedEvent != 0) {
@@ -212,7 +212,7 @@ s32 Map_TalkToObjectEvent(s32 id) {
   struct ObjectEventTemplate *template = Map_FindObjectEventTemplate(id);
   s32 result = -1;
   struct Object *objectEvent = (struct Object *)ObjectEvent_GetById(id);
-  struct EffectDescriptor *event;
+  struct MapEventView *event;
   s32 objectEventPaused = 0;
   u32 savedAngle;
   u32 talkFacing;
@@ -253,7 +253,7 @@ s32 Map_TalkToObjectEvent(s32 id) {
       u8 *movementState = &objectEvent->paused;
 
       *movementState = 1;
-      ObjectDispatch_SetAnimationSpeedFar((struct Object *)objectEvent, 0);
+      Object_SetAnimationSpeedFar((struct Object *)objectEvent, 0);
       savedAngle = objectEvent->facing;
       talkFacing = (u8)template->talkFacing << 24;
       if (talkFacing <= (1 << 24) || talkFacing == (3 << 24)) {
@@ -290,13 +290,12 @@ s32 Map_TalkToObjectEvent(s32 id) {
                                       (s32)gObjectMotion_LinkedActionScript);
         } else if ((s8)template->talkFacing == 1) {
           objectEvent->action = savedAngle;
-          ObjectDispatch_InitializeFar(
-              (struct Object *)objectEvent,
-              (const s32 *)gObjectMotion_StepAngleScript);
+          Object_InitializeFar((struct Object *)objectEvent,
+                               (const s32 *)gObjectMotion_StepAngleScript);
         }
       }
       objectEvent->paused = 0;
-      ObjectDispatch_SetAnimationSpeedFar((struct Object *)objectEvent, 16);
+      Object_SetAnimationSpeedFar((struct Object *)objectEvent, 16);
     }
     result = 0;
   }
@@ -317,7 +316,7 @@ finish:
 s32 Map_RunRaisedEvent(s32 value) {
   s32 result;
   s32 handled;
-  struct EffectDescriptor *event;
+  struct MapEventView *event;
 
   event = Map_FindEvent(MAP_EVENT_RAISED, value);
   handled = -1;
@@ -349,8 +348,8 @@ s32 Map_RunRaisedEvent(s32 value) {
 /// Sets work->warp for a warp, and clears work->blockedSteps after a coord
 /// event that needs pushing.
 s32 Map_RunCoordEventOrWarp(s32 value) {
-  struct EffectDescriptor *touch;
-  struct EffectDescriptor *warp;
+  struct MapEventView *touch;
+  struct MapEventView *warp;
   s32 warpId;
   s32 handled;
   struct FieldWork *work;
@@ -536,7 +535,7 @@ s32 Field_SearchCell(s32 tile) {
               Sound_PlaySongFar(SE_RECOVERY);
               FieldMessage_ShowFar(MsgGotPsynergyStone + 1, 1);
               PartyStatus_CloseFar();
-              ObjectDispatch_SelectAnimationFar(object, 2);
+              Object_SelectAnimationFar(object, 2);
               Sound_PlaySongFar(SE_246);
               FieldScript_WaitFrames(30);
               FieldMessage_ShowFar(MsgGotPsynergyStone + 2, 1);
@@ -582,7 +581,7 @@ s32 Field_SearchCell(s32 tile) {
               Party_AdjustCoinsFar((u16)event->value);
               if (condition != -1)
                 GameFlag_SetFar(condition);
-              ObjectDispatch_ReleaseFar(object);
+              Object_ReleaseFar(object);
             } else {
               // An item, which stays in the chest when nobody can carry it.
               void *object;
@@ -615,7 +614,7 @@ s32 Field_SearchCell(s32 tile) {
                 }
                 if (condition != -1)
                   GameFlag_SetFar(condition);
-                ObjectDispatch_ReleaseFar(object);
+                Object_ReleaseFar(object);
               }
             }
           } else {

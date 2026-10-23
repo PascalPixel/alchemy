@@ -9,43 +9,43 @@
 
 /// An eight-byte runtime entry contains the ldr/bx instructions and a target
 /// word. Entries this routine does not call keep their target word opaque.
-struct RuntimeUnusedEntry {
+struct FarCallVeneer {
   u32 stub;
   u32 target;
 };
 
 /// A runtime table entry whose two-argument target this routine calls, the
 /// arctangent.
-struct RuntimeMathBinaryEntry {
+struct FarCallAtan2Veneer {
   u32 stub;
   s32 (*target)(s32 x, s32 y);
 };
 
 /// A runtime table entry whose one-argument target this routine calls, the
 /// sine or the cosine.
-struct RuntimeMathUnaryEntry {
+struct FarCallTrigVeneer {
   u32 stub;
   s32 (*target)(s32 angle);
 };
 
 /// The runtime table's prefix through Trig_Cos, in its assembly order. This
 /// routine runs from a RAM copy and calls the target words, not the ROM stubs.
-struct RuntimeMathTable {
-  struct RuntimeUnusedEntry preceding[8];
-  struct RuntimeMathBinaryEntry atan2;
-  struct RuntimeUnusedEntry squareRoots[2];
-  struct RuntimeMathUnaryEntry sin;
-  struct RuntimeMathUnaryEntry cos;
+struct FarCallRuntimeTrigView {
+  struct FarCallVeneer preceding[8];
+  struct FarCallAtan2Veneer atan2;
+  struct FarCallVeneer squareRoots[2];
+  struct FarCallTrigVeneer sin;
+  struct FarCallTrigVeneer cos;
 };
 
-STATIC_ASSERT(sizeof(struct RuntimeUnusedEntry) == 8);
-STATIC_ASSERT(sizeof(struct RuntimeMathBinaryEntry) == 8);
-STATIC_ASSERT(sizeof(struct RuntimeMathUnaryEntry) == 8);
-STATIC_ASSERT(offsetof(struct RuntimeMathTable, atan2) == 64);
-STATIC_ASSERT(offsetof(struct RuntimeMathTable, sin) == 88);
-STATIC_ASSERT(offsetof(struct RuntimeMathTable, cos) == 96);
+STATIC_ASSERT(sizeof(struct FarCallVeneer) == 8);
+STATIC_ASSERT(sizeof(struct FarCallAtan2Veneer) == 8);
+STATIC_ASSERT(sizeof(struct FarCallTrigVeneer) == 8);
+STATIC_ASSERT(offsetof(struct FarCallRuntimeTrigView, atan2) == 64);
+STATIC_ASSERT(offsetof(struct FarCallRuntimeTrigView, sin) == 88);
+STATIC_ASSERT(offsetof(struct FarCallRuntimeTrigView, cos) == 96);
 
-extern const struct RuntimeMathTable FarCall_RuntimeTable;
+extern const struct FarCallRuntimeTrigView FarCall_RuntimeTable;
 /// The yaw, in 1/65536 turns, that the cached rotation terms in each
 /// ScanVertex were computed for.
 extern u32 gScanlineAngle;

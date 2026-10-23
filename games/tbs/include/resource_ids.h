@@ -10,16 +10,16 @@
 
 /// Twelve ASCII digits, yymmddhhmmss, and a newline, different in each
 /// edition. System_CopyBuildStamp copies it into gBuildStamp, and
-/// Runtime_GetBuildStampTime turns its time into the number saves compare.
+/// BuildStamp_GetTime turns its time into the number saves compare.
 extern char ResourceId_BuildStamp;
 /// The row of FarCall_TitleTable. The title screen hands it to
-/// RuntimeDispatch_NoOpHook, which ignores it.
+/// Stub_NoOpHook, which ignores it.
 extern char ResourceId_TitleFarCalls;
 /// The row of FarCall_BattleAnimTable. Lucky Dice and Lucky Wheels hand it to
-/// RuntimeDispatch_NoOpHook as they start.
+/// Stub_NoOpHook as they start.
 extern char ResourceId_BattleAnimFarCalls;
 /// The row of FarCall_ResourceTable, which the sprite viewer passes to
-/// RuntimeDispatch_ReturnZero when Select is pressed with B held.
+/// Stub_ReturnZero when Select is pressed with B held.
 extern char ResourceId_ResourceFarCalls;
 /// A second row that also holds FarCall_ResourceTable; the sprite viewer
 /// passes it when Select is pressed without B.

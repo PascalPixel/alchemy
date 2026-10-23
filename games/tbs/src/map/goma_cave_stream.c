@@ -141,7 +141,7 @@ s32 Map_Initialize(void) {
       ObjectEvent_GetById(LOCALID_STUMP)->collisionFlags |=
           OBJ_EVENT_NEAR_PSYNERGY;
       if (GameFlag_Get(FLAG_GOMA_CAVE_STREAM_STUMP_MOVED) != 0) {
-        Engine_ObjectEventSetPosition(LOCALID_STUMP, PIXELS(346), PIXELS(292));
+        Import_ObjectEventSetPosition(LOCALID_STUMP, PIXELS(346), PIXELS(292));
         stump = ObjectEvent_GetById(LOCALID_STUMP);
         ObjectEvent_SetSpriteFlags(stump, 0);
         ObjectEvent_GetById(LOCALID_STUMP)->priorityFlags |=

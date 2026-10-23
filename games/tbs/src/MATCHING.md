@@ -217,7 +217,7 @@ code matches only through it. [An object](../glossary.md#object)'s 112 bytes
 are `struct Object` almost everywhere, but `BattleObject_SpawnObjectsForList`
 reads them as `BattleSpriteObject`, with the sprite word untyped; `update.c`,
 ARM code built with GCC 2.95.2, which cannot read `Object`'s anonymous
-unions, keeps `ScriptMotionObject`; and the operand handlers of `SC_SET`,
+unions, keeps `ObjectArmView`; and the operand handlers of `SC_SET`,
 `SC_ADD` and `SC_CMP` keep `ScriptOperands`. The window sprites
 (`struct WindowSpriteCellView`), the selection records (`struct GlyphCursor`), the
 menu cursors (`union MenuCursorRef`) and each menu screen's work
@@ -228,7 +228,7 @@ load moves.
 
 ### Macros and their expansions
 
-- A macro and its expansion can compile differently. `SerialRuntime_Initialize`
+- A macro and its expansion can compile differently. `Serial_Initialize`
   writes `IRQ_LOCK` out as its steps, with the IME pointer set inside the
   save; as `IRQ_LOCK`, 1 of 123 instructions differs. Other sites keep
   arithmetic on `BLEND_ALPHA` rather than its `|` form, its operands written
@@ -292,7 +292,7 @@ load moves.
   another order. Helpers in Colosso and in `MapId_KolimaForestFloodgate` are
   called ahead of their definitions, with the correct declarations in their
   unit headers under `UBFIX`, and `script_layer.h` gathers the engine routines
-  the maps call that way (`Engine_GameFlagSet`).
+  the maps call that way (`Import_GameFlagSet`).
 - Code with no function type is called through a cast function pointer. Code
   copied to RAM is called through one too, or through `_call_via_r3`, the
   compiler library's call through r3, with the code's address as its fourth

@@ -251,14 +251,14 @@ void BattleAnim_RunNereid(struct BattleAnimArgs *effect) {
               struct Object *object =
                   GetBattleObjectSlotFar(work->effect->targets[k])->object;
 
-              ObjectGroup_UpdateMembers(work->effect->targets[k],
-                                        SPRITE_COLOR_WHITE, POSE_DAMAGE, -1, 0);
+              BattleAnim_TintBattler(work->effect->targets[k],
+                                     SPRITE_COLOR_WHITE, POSE_DAMAGE, -1, 0);
               object->velocityY = 0x48000;
               object->gravity = 0xab85;
             }
             if (phase == 6)
-              ObjectGroup_UpdateMembers(work->effect->targets[k], 0,
-                                        POSE_DAMAGE, -1, 0);
+              BattleAnim_TintBattler(work->effect->targets[k], 0, POSE_DAMAGE,
+                                     -1, 0);
           }
         }
       }

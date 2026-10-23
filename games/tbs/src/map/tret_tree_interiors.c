@@ -407,18 +407,18 @@ static void EventScript_FightTret(void) {
   ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, 2);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
-    Engine_ObjectEventSetPosition(LOCALID_GARET, leader->x.fixed,
+    Import_ObjectEventSetPosition(LOCALID_GARET, leader->x.fixed,
                                   leader->z.fixed);
   }
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
-    Engine_ObjectEventSetPosition(LOCALID_IVAN, leader->x.fixed,
+    Import_ObjectEventSetPosition(LOCALID_IVAN, leader->x.fixed,
                                   leader->z.fixed);
   }
   if (hasMia != 0) {
     leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     if (leader != NULL) {
-      Engine_ObjectEventSetPosition(LOCALID_MIA, leader->x.fixed,
+      Import_ObjectEventSetPosition(LOCALID_MIA, leader->x.fixed,
                                     leader->z.fixed);
     }
     ObjectEvent_SetActionScript(LOCALID_MIA,
@@ -750,13 +750,13 @@ s32 TretTreeInteriors_EnterRoom(void) {
     tretSpeaker->motionFlags = 0;
     tretSpeaker->y.fixed = -PIXELS(10);
   }
-  ObjectGroup_ConfigureChildValue(LOCALID_SECOND_TRET, 15);
+  ObjectEvent_ConfigureSpriteColor(LOCALID_SECOND_TRET, 15);
   TretTreeInteriors_PlayGesture(TRET_GESTURE_CLOSE_EYES);
   if (gSaveBlock.warpDest != TRET_TREE_INTERIORS_AFTER_FIGHT_TRET)
     FieldScheduler_AddCallback(TretPalette_UpdateMapTint, TASK_PRIORITY_MAP);
   if (GameFlag_Get(FLAG_TRET_DEFEATED)) {
-    Engine_ObjectEventSetPosition(LOCALID_SECOND_TRET, 0, 0);
-    Engine_ObjectEventSetPosition(LOCALID_TRET, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_SECOND_TRET, 0, 0);
+    Import_ObjectEventSetPosition(LOCALID_TRET, 0, 0);
   }
   if (Script_GetFlag(FLAG_KEEP_PARTY_POSITION))
     TretTreeInteriors_ApplyFlaggedMapPatches();
@@ -885,7 +885,7 @@ static void TretPalette_UpdateMapTint(void) {
       blue = 0;
     *destinationColors++ = (blue << 10) | (green << 5) | red;
   }
-  gTretTreeInteriors_TintIndex += (Engine_RandomNext() & 7) * 3;
+  gTretTreeInteriors_TintIndex += (Import_RandomNext() & 7) * 3;
   if (gTretTreeInteriors_TintSteps[gTretTreeInteriors_TintIndex] ==
       TRET_TINT_END)
     gTretTreeInteriors_TintIndex = 0;
@@ -1024,7 +1024,7 @@ static void TretTreeInteriors_SpawnSwirlSparks(void) {
         spark->motionFlags = 0;
         spark->sprite->image.priority = 0;
         ObjectEvent_SetSpriteFlags(spark, 0);
-        ObjectDispatch_SelectAnimation(spark, 1);
+        Object_SelectAnimation(spark, 1);
         spark->timer = 0;
         spark->work = ((360 / (u32)(6 - wave) * sparkIndex) << 16) / 360;
         spark->targetX = sSparkOrigin.x;

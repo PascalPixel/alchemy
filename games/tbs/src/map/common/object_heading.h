@@ -14,8 +14,8 @@ static s32 Map_LookAboutRandomly(struct Object *interpreter) {
   s32 amount;
 
   if (loaded == 0) {
-    objectEvent->facing += (u32)(Engine_RandomNext() << 15) >> 16;
-    amount = (u32)(Engine_RandomNext() * 80) >> 16;
+    objectEvent->facing += (u32)(Import_RandomNext() << 15) >> 16;
+    amount = (u32)(Import_RandomNext() * 80) >> 16;
     objectEvent->work = amount;
     if (amount == 0) {
       goto done;

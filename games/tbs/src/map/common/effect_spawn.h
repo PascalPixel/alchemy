@@ -78,8 +78,8 @@ static inline void FieldEffect_InitializeMotion(struct FieldEffect *effect,
     if ((flags & EFFECT_OPTION_MASK) == 0 || options == 0)                     \
       return;                                                                  \
     if ((flags & EFFECT_USE_PALETTE) != 0)                                     \
-      ObjectGroup_SetChildValue((struct ObjectEvent *)effect,                  \
-                                options->palette);                             \
+      ObjectEvent_SetSpriteColor((struct ObjectEvent *)effect,                 \
+                                 options->palette);                            \
     if ((flags & EFFECT_USE_PRIORITY) != 0) {                                  \
       effect->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;                  \
       sprite->image.priority = options->priority;                              \
@@ -117,9 +117,9 @@ static inline void FieldEffect_InitializeMotion(struct FieldEffect *effect,
 #ifdef EFFECT_SPAWN_RESIDENT
 /// The resident version uses far calls to the engine.
 EFFECT_SPAWN(FieldEffect_SpawnResident, Object_CreateFar,
-             ObjectDispatch_SelectAnimationFar, ObjectDispatch_InitializeFar)
+             Object_SelectAnimationFar, Object_InitializeFar)
 #else
 /// Each overlay includes its own copy of this version.
-EFFECT_SPAWN(FieldEffect_Spawn, ObjectEvent_Create,
-             ObjectDispatch_SelectAnimation, ObjectEvent_SetScript)
+EFFECT_SPAWN(FieldEffect_Spawn, ObjectEvent_Create, Object_SelectAnimation,
+             ObjectEvent_SetScript)
 #endif

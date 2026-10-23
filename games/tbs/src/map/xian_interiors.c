@@ -317,7 +317,7 @@ s32 XianInteriors_Initialize(void) {
   } else if (warpDest ==
              XIAN_INTERIORS_FROM_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL) {
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
-    Engine_ObjectEventSetAnimation(LOCALID_HSU, ANIM_HSU_IN_BED);
+    Import_ObjectEventSetAnimation(LOCALID_HSU, ANIM_HSU_IN_BED);
   }
   return 0;
 }

@@ -244,9 +244,8 @@ void BattleAnim_RunGrowingColumns(struct BattleAnimArgs *effect, s32 mode) {
                   if (!(i & 1)) {
                     Sound_PlaySongFar(SE_IMPACT);
                   }
-                  ObjectGroup_UpdateMembers(work->effect->targets[n],
-                                            SPRITE_COLOR_WHITE, POSE_DAMAGE, n,
-                                            3);
+                  BattleAnim_TintBattler(work->effect->targets[n],
+                                         SPRITE_COLOR_WHITE, POSE_DAMAGE, n, 3);
                 }
                 n++;
               } while (n != work->effect->targetCount);
@@ -386,8 +385,8 @@ void BattleAnim_RunVine(struct BattleAnimArgs *effect) {
     if (frame == 32) {
       Sound_PlaySongFar(SE_143);
       ANIM_FOR_EACH_TARGET(i, work->effect)
-      ObjectGroup_UpdateMembers(work->effect->targets[i], SPRITE_COLOR_WHITE,
-                                POSE_DAMAGE, i, 16);
+      BattleAnim_TintBattler(work->effect->targets[i], SPRITE_COLOR_WHITE,
+                             POSE_DAMAGE, i, 16);
     }
     i = 0;
     column = work->particles;
@@ -565,8 +564,8 @@ void BattleAnim_RunThorn(struct BattleAnimArgs *effect) {
       ANIM_FOR_EACH_TARGET(j, work->effect) {
         if (frame == start + 4) {
           Sound_PlaySongFar(SE_132);
-          ObjectGroup_UpdateMembers(work->effect->targets[j],
-                                    SPRITE_COLOR_WHITE, POSE_DAMAGE, j, 3);
+          BattleAnim_TintBattler(work->effect->targets[j], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, j, 3);
         }
       }
     }

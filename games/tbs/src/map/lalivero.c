@@ -256,7 +256,7 @@ static void EventScript_EnterDoor(void) {
   }
   FieldScript_WaitFrames(10);
   gFieldWork->transitionFrames = 16;
-  Engine_ScriptRequestWarp(door);
+  Import_ScriptRequestWarp(door);
 }
 
 /// Lalivero: a doorway with no door (coord events 8 and 11); leave by the
@@ -267,7 +267,7 @@ static void EventScript_TakeTouchedWarp(void) {
   s32 warp = *trigger;
 
   work->transitionFrames = 16;
-  Engine_ScriptRequestWarp(warp);
+  Import_ScriptRequestWarp(warp);
 }
 
 /// Lalivero, the first visit, arriving from the world map: the party and Iodem
@@ -285,8 +285,8 @@ static void EventScript_WatchWoundedSoldiers(void) {
   // The party walks in from the south; the two soldiers lie on the ground.
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(248), PIXELS(424));
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_WEST_SOLDIER, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_EAST_SOLDIER, 0);
+  Import_ObjectEventSetAnimation(LOCALID_WEST_SOLDIER, 0);
+  Import_ObjectEventSetAnimation(LOCALID_EAST_SOLDIER, 0);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(20);
@@ -320,7 +320,7 @@ static void EventScript_WatchWoundedSoldiers(void) {
   ObjectMotion_SetVarCbAndRefresh(LOCALID_IODEM, 2);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(LOCALID_IODEM, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_WEST_SOLDIER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_WEST_SOLDIER, ANIM_STAND);
   FieldScript_WaitFrames(20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_WEST_SOLDIER, 2);
   FieldScript_WaitFrames(30);
@@ -336,7 +336,7 @@ static void EventScript_WatchWoundedSoldiers(void) {
   FieldScript_WaitFrames(10);
   ObjectEvent_FaceObjectEvent(LOCALID_IODEM, LOCALID_EAST_SOLDIER, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_EAST_SOLDIER, 30);
-  Engine_ObjectEventSetAnimation(LOCALID_EAST_SOLDIER, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_EAST_SOLDIER, ANIM_STAND);
   FieldScript_WaitFrames(10);
   ObjectEvent_ShowEmote(LOCALID_IODEM, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
   Script_ShowMessage(LOCALID_IODEM, 0);
@@ -456,7 +456,7 @@ static void EventScript_WatchWoundedSoldiers(void) {
   FieldScript_WaitFrames(30);
   // Iodem walks back into the leader.
   ObjectEvent_SetSpeed(LOCALID_IODEM, 0x13333, 0x9999);
-  Engine_ObjectEventSetAnimation(LOCALID_IODEM, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_IODEM, ANIM_WALK);
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   if (leader != 0) {
     ObjectEvent_SetDestination(LOCALID_IODEM, leader->x.part.pixel,
@@ -512,10 +512,10 @@ static void EventScript_IodemGivesBlackOrb(void) {
   ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
   Script_ShowMessage(LOCALID_IVAN, 0);
   FieldScript_WaitFrames(10);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(40);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
   FieldScript_WaitFrames(30);
   // The party lines up facing Iodem's door.
@@ -523,8 +523,8 @@ static void EventScript_IodemGivesBlackOrb(void) {
   ObjectEvent_WalkBy(LOCALID_IVAN, 0, -16);
   ObjectEvent_WalkBy(LOCALID_MIA, 0, -8);
   ObjectEvent_WalkByAndWait(LOCALID_PARTY_LEADER, 0, -16);
-  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_STAND);
-  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_STAND);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_STAND);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTH, 0);
@@ -556,9 +556,9 @@ static void EventScript_IodemGivesBlackOrb(void) {
   FieldScript_WaitFrames(20);
   Script_ShowMessage(LOCALID_IODEM, 0);
   FieldScript_WaitFrames(10);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
   FieldScript_WaitFrames(40);
   ObjectEvent_WalkByAndWait(LOCALID_IODEM, 16, 0);
@@ -698,9 +698,9 @@ static void EventScript_IodemGivesBlackOrb(void) {
   FieldScript_WaitFrames(30);
   Script_ShowMessage(LOCALID_IODEM, 0);
   FieldScript_WaitFrames(20);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
   FieldScript_WaitFrames(50);
   FieldScript_WaitFrames(10);
@@ -735,16 +735,16 @@ static void EventScript_IodemGivesBlackOrb(void) {
   FieldScript_WaitFrames(30);
   Script_ShowMessage(LOCALID_IVAN, 0);
   FieldScript_WaitFrames(10);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(40);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
   FieldScript_WaitFrames(30);
   ObjectEvent_SetSpeed(LOCALID_GARET, 0x13333, 0x9999);
   ObjectEvent_SetSpeed(LOCALID_MIA, 0x13333, 0x9999);
   ObjectEvent_SetSpeed(LOCALID_IVAN, 0x13333, 0x9999);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0) {
     ObjectEvent_SetDestination(LOCALID_GARET, leader->x.part.pixel,
@@ -752,7 +752,7 @@ static void EventScript_IodemGivesBlackOrb(void) {
   }
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
   ObjectEvent_SetPosition(LOCALID_GARET, 0, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_MIA, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0) {
     ObjectEvent_SetDestination(LOCALID_MIA, leader->x.part.pixel,
@@ -760,7 +760,7 @@ static void EventScript_IodemGivesBlackOrb(void) {
   }
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_MIA);
   ObjectEvent_SetPosition(LOCALID_MIA, 0, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_WALK);
+  Import_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0) {
     ObjectEvent_SetDestination(LOCALID_IVAN, leader->x.part.pixel,
@@ -854,13 +854,13 @@ s32 Lalivero_Initialize(void) {
   gFieldWork->transitionFrames = 24;
 
   // The three plants stand in animation 3 and block nothing.
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_PLANT, 3);
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_PLANT, 3);
   ObjectEvent_Get(LOCALID_FIRST_PLANT)->collisionFlags = 0;
   ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_FIRST_PLANT), 0);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_PLANT + 1, 3);
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_PLANT + 1, 3);
   ObjectEvent_Get(LOCALID_FIRST_PLANT + 1)->collisionFlags = 0;
   ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_FIRST_PLANT + 1), 0);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_PLANT + 2, 3);
+  Import_ObjectEventSetAnimation(LOCALID_FIRST_PLANT + 2, 3);
   ObjectEvent_Get(LOCALID_FIRST_PLANT + 2)->collisionFlags = 0;
   ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_FIRST_PLANT + 2), 0);
   ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_BLACK_ORB), 0);

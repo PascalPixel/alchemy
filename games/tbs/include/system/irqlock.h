@@ -11,7 +11,7 @@
 // pointer's low halfword (0x0208, bit 0 clear) back through it. Each step is a
 // do { } while (0) statement macro, the shape the lock sites match through;
 // the two restores' wrappers are devices, since a plain restore matches at
-// some sites. SerialRuntime_Initialize writes IRQ_LOCK out (see its comment).
+// some sites. Serial_Initialize writes IRQ_LOCK out (see its comment).
 
 /// Saves the original IME value in saved.
 #define IME_SAVE(ime, saved)                                                   \

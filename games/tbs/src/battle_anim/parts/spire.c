@@ -138,8 +138,8 @@ void BattleAnim_RunSpire(struct BattleAnimArgs *effect) {
       }
       if (frame == gSpire_DropFrames[i] + SPIRE_FALL_FRAMES) {
         ANIM_FOR_EACH_TARGET(j, work->effect)
-        ObjectGroup_UpdateMembers(work->effect->targets[j], SPRITE_COLOR_WHITE,
-                                  POSE_DAMAGE, j, 8);
+        BattleAnim_TintBattler(work->effect->targets[j], SPRITE_COLOR_WHITE,
+                               POSE_DAMAGE, j, 8);
       }
     }
     BattleCamera_Shake(2, 4);

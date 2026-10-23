@@ -337,7 +337,7 @@ enum WorldMapCaravanActor {
   /// A blank actor (SPRITE_BLANK) that the falling rock is held above as it
   /// drops (WorldMap_UpdateFallingRock); it grows from a tenth of its size as
   /// it moves (gCaravanRockGuideScript).
-  ACTOR_FALLING_ROCK_GUIDE = ACTOR_CARAVAN_FIRST_WAGON + 4,
+  ACTOR_BLANK_ROCK_GUIDE = ACTOR_CARAVAN_FIRST_WAGON + 4,
   /// Drawn as the rocks in sol_sanctum_eruption.c; it lands by the caravan
   /// and shatters.
   /// ★ Named from the game: "being smashed by falling rocks here"
@@ -1199,10 +1199,10 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Camera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   Camera_MoveTo(PIXELS(5608), -1, PIXELS(1736), 1);
   Engine_CameraWaitForMove();
-  Actor_SetPosition(ACTOR_FALLING_ROCK_GUIDE, PIXELS(5544), PIXELS(1704));
+  Actor_SetPosition(ACTOR_BLANK_ROCK_GUIDE, PIXELS(5544), PIXELS(1704));
   Engine_TaskWait(1);
-  Actor_SetSpeed(ACTOR_FALLING_ROCK_GUIDE, PIXELS(3) / 10, PIXELS(3) / 20);
-  Actor_SetActionScript(ACTOR_FALLING_ROCK_GUIDE, gCaravanRockGuideScript);
+  Actor_SetSpeed(ACTOR_BLANK_ROCK_GUIDE, PIXELS(3) / 10, PIXELS(3) / 20);
+  Actor_SetActionScript(ACTOR_BLANK_ROCK_GUIDE, gCaravanRockGuideScript);
   Engine_EventWait(160);
   // The falling rock drops from 64 pixels up, and bounces as it lands.
   actor->gravity = PIXELS(1) / 10;
@@ -1223,7 +1223,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   } while (actor->timer == 0);
   spriteActor = Actor_Get(ACTOR_FALLING_ROCK);
   Engine_ActorSetSpriteFlags(spriteActor, 0);
-  spriteActor = Actor_Get(ACTOR_FALLING_ROCK_GUIDE);
+  spriteActor = Actor_Get(ACTOR_BLANK_ROCK_GUIDE);
   Engine_ActorSetSpriteFlags(spriteActor, 0);
   Engine_EventWait(10);
   spriteActor = Actor_Get(ACTOR_CARAVAN_MAN);
@@ -1246,7 +1246,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Engine_EventWait(60);
   Engine_TaskRemoveCallback(WorldMap_UpdateFallingRock);
   Engine_TaskWait(1);
-  Actor_SetPosition(ACTOR_FALLING_ROCK_GUIDE, 0, 0);
+  Actor_SetPosition(ACTOR_BLANK_ROCK_GUIDE, 0, 0);
   Actor_SetPosition(ACTOR_FALLING_ROCK, 0, 0);
   Actor_FaceDirection(ACTOR_CARAVAN_HAMMET, FACING_WEST, 10);
   Engine_ActorJump(ACTOR_CARAVAN_HAMMET, 4, 40);
@@ -1382,7 +1382,7 @@ static void WorldMap_UpdateFallingRock(void) {
   struct FieldActor *guide;
 
   actor = Object_GetById(ACTOR_FALLING_ROCK);
-  guide = Object_GetById(ACTOR_FALLING_ROCK_GUIDE);
+  guide = Object_GetById(ACTOR_BLANK_ROCK_GUIDE);
   actor->x.fixed = guide->x.fixed;
   actor->z.fixed = guide->z.fixed;
   if (actor->y.fixed < PIXELS(10)) {

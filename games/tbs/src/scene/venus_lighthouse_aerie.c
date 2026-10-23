@@ -21,7 +21,7 @@
 ///   FLAG_AERIE_FIRST_BATTLE_BEGUN).
 /// - After it (VENUS_LIGHTHOUSE_AERIE_AFTER_FIRST_BATTLE,
 ///   VenusLighthouseAerie_CombineSaturosAndMenardi): Saturos throws the Venus
-///   Star into the beacon (ACTOR_STAR_CARRIER), Felix and Sheba leave, and
+///   Star into the beacon (ACTOR_VENUS_STAR_SHADOW), Felix and Sheba leave, and
 ///   Saturos and Menardi fuse. Party_RestorePpOfLitElements refills the PP of
 ///   the party's Adepts whose lighthouses are lit, and the second battle
 ///   follows (slot 0, FLAG_AERIE_SECOND_BATTLE_BEGUN).
@@ -1348,7 +1348,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   struct FieldActor *menardi;
   struct FieldActor *saturos;
   union FieldObject *star = NULL;
-  struct FieldActor *starCarrier;
+  struct FieldActor *starShadow;
   struct AnimationObject *sprite;
   u8 *iconPixels;
   // Reuse the dialogue answer word for the later radial burst directions.
@@ -1541,16 +1541,16 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
     Vram_Load(sprite->slot, 128, iconPixels + 0x400);
     Heap_Release(17);
   }
-  Actor_SetSpritePriority(ACTOR_STAR_CARRIER, 1);
-  starCarrier = Actor_Get(ACTOR_STAR_CARRIER);
-  starCarrier->x.fixed = actor->x.fixed;
-  starCarrier->y.fixed = PIXELS(32);
-  starCarrier->z.fixed = actor->z.fixed;
-  starCarrier->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-  starCarrier->speed = PIXELS(8) / 5;
-  starCarrier->acceleration = PIXELS(4) / 5;
-  starCarrier->scaleX = 3 * Q16_ONE / 4;
-  starCarrier->scaleY = 3 * Q16_ONE / 4;
+  Actor_SetSpritePriority(ACTOR_VENUS_STAR_SHADOW, 1);
+  starShadow = Actor_Get(ACTOR_VENUS_STAR_SHADOW);
+  starShadow->x.fixed = actor->x.fixed;
+  starShadow->y.fixed = PIXELS(32);
+  starShadow->z.fixed = actor->z.fixed;
+  starShadow->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+  starShadow->speed = PIXELS(8) / 5;
+  starShadow->acceleration = PIXELS(4) / 5;
+  starShadow->scaleX = 3 * Q16_ONE / 4;
+  starShadow->scaleY = 3 * Q16_ONE / 4;
   if (star != NULL) {
     star->actor.motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     star->effect.velocity.y = PIXELS(3) / 5;
@@ -1558,8 +1558,8 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
     star->actor.velocityY = PIXELS(8);
     FieldObject_SetPosition(&star->actor, PIXELS(308), PIXELS(32), PIXELS(164));
   }
-  Actor_MoveToAndWait(ACTOR_STAR_CARRIER, 308, 164);
-  Actor_SetPosition(ACTOR_STAR_CARRIER, 0, 0);
+  Actor_MoveToAndWait(ACTOR_VENUS_STAR_SHADOW, 308, 164);
+  Actor_SetPosition(ACTOR_VENUS_STAR_SHADOW, 0, 0);
   Actor_SetSpritePriority(ACTOR_FELIX, 0);
   if (star != NULL) {
     Event_PlayCue(SE_STAR_BOUNCE);
@@ -1910,7 +1910,7 @@ VenusLighthouseAerie_UpdateUpperOrbit(union FieldObject *fieldObject) {
 static void
 VenusLighthouseAerie_UpdateRisingOrbit(union FieldObject *fieldObject) {
   struct FieldActor *actor = &fieldObject->actor;
-  struct FieldActor *anchor = Object_GetById(ACTOR_PARTICLE_SOURCE);
+  struct FieldActor *anchor = Object_GetById(ACTOR_BEACON_ORB);
   s32 angle = (u16)actor->timer;
   s32 cosine;
   s32 sine;
@@ -2130,10 +2130,10 @@ static void VenusLighthouseAerie_StageShebasFall(void) {
   actor->x.fixed += PIXELS(16);
   VenusLighthouseAerie_StopActorMotion(actor);
   Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
-  Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_PARTICLE_SOURCE), 0);
-  Object_GetById(ACTOR_PARTICLE_SOURCE)->motionFlags = ACTOR_FLOATS;
-  Actor_SetChildValue(ACTOR_PARTICLE_SOURCE, SPRITE_COLOR_GBR);
-  Actor_Get(ACTOR_PARTICLE_SOURCE)->y.fixed = PIXELS(40);
+  Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_BEACON_ORB), 0);
+  Object_GetById(ACTOR_BEACON_ORB)->motionFlags = ACTOR_FLOATS;
+  Actor_SetChildValue(ACTOR_BEACON_ORB, SPRITE_COLOR_GBR);
+  Actor_Get(ACTOR_BEACON_ORB)->y.fixed = PIXELS(40);
   FieldScheduler_AddCallback(VenusLighthouseAerie_SpawnSideOrbitParticles,
                              TASK_PRIORITY_SCENE);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
@@ -2557,10 +2557,10 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   actor->riseCounter = 0;
   actor->riseEnabled = 1;
   actor->riseBaseY = actor->y.fixed;
-  Object_GetById(ACTOR_PARTICLE_SOURCE)->motionFlags = 0;
-  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTICLE_SOURCE), 0);
-  Engine_ActorSetChildValue(ACTOR_PARTICLE_SOURCE, SPRITE_COLOR_WHITE);
-  Engine_ActorSetSpritePriority(ACTOR_PARTICLE_SOURCE, 2);
+  Object_GetById(ACTOR_BEACON_ORB)->motionFlags = 0;
+  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_BEACON_ORB), 0);
+  Engine_ActorSetChildValue(ACTOR_BEACON_ORB, SPRITE_COLOR_WHITE);
+  Engine_ActorSetSpritePriority(ACTOR_BEACON_ORB, 2);
   sTransitionStep = 0;
   sTransitionTimer = 240;
   FieldScheduler_AddCallback(VenusLighthouseAerie_UpdateBeaconRise,
@@ -2647,8 +2647,8 @@ static void VenusLighthouseAerie_RestorePartyOnBrokenAerie(void) {
 
   Actor_Get(ACTOR_FELIX)->riseCounter = 0;
   Actor_Get(SHEBA)->riseCounter = 0;
-  Actor_Get(ACTOR_PARTICLE_SOURCE)->motionFlags |= 4;
-  Actor_SetChildValue(ACTOR_PARTICLE_SOURCE, SPRITE_COLOR_GBR);
+  Actor_Get(ACTOR_BEACON_ORB)->motionFlags |= 4;
+  Actor_SetChildValue(ACTOR_BEACON_ORB, SPRITE_COLOR_GBR);
   FieldScheduler_AddCallback(VenusLighthouseAerie_SpawnSideOrbitParticles,
                              TASK_PRIORITY_SCENE);
   gEventWork->transitionFrames = 1;
@@ -2883,7 +2883,7 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   actor->z.fixed -= PIXELS(18);
   actor->work = 0;
   VenusLighthouseAerie_StopActorMotion(actor);
-  Object_GetById(ACTOR_PARTICLE_SOURCE)->y.fixed = PIXELS(56);
+  Object_GetById(ACTOR_BEACON_ORB)->y.fixed = PIXELS(56);
   Camera_MoveTo(PIXELS(338), PIXELS(32), PIXELS(180), 0);
   Engine_MapRedraw();
   Engine_TaskWait(1);
@@ -3023,7 +3023,7 @@ static void VenusLighthouseAerie_UpdateBeaconRise(void) {
   u32 randomHeight;
   s32 angle;
 
-  center = Actor_Get(ACTOR_PARTICLE_SOURCE);
+  center = Actor_Get(ACTOR_BEACON_ORB);
   spawnParticles = 0;
   switch (sTransitionStep) {
   case 0:
@@ -3048,7 +3048,7 @@ static void VenusLighthouseAerie_UpdateBeaconRise(void) {
     center->scaleX = Q16_ONE;
     center->scaleY = Q16_ONE;
     VenusLighthouseAerie_StopActorMotion(center);
-    Actor_SetActionScript(ACTOR_PARTICLE_SOURCE,
+    Actor_SetActionScript(ACTOR_BEACON_ORB,
                           gVenusLighthouseAerie_RiseActionScript);
     break;
   case 25:
@@ -3099,7 +3099,7 @@ static void VenusLighthouseAerie_UpdateBeaconRise(void) {
     Engine_ColorBufferInterpolate(12);
     break;
   case 48:
-    Engine_ActorStop(ACTOR_PARTICLE_SOURCE);
+    Engine_ActorStop(ACTOR_BEACON_ORB);
     GameFlag_Set(FLAG_SCENE_TEMP_37);
     break;
   }
@@ -3165,16 +3165,16 @@ static void VenusLighthouseAerie_SpawnSideOrbitParticles(void) {
   drift = (u32)(Random_Next() * 48) >> 16 << 16;
   if ((s16)(map->viewY >> 16) <= 129) {
     if (gFrameCount & 1) {
-      Actor_SetPosition(ACTOR_PARTICLE_SOURCE, PIXELS(304), PIXELS(164));
-      Actor_Get(ACTOR_PARTICLE_SOURCE)->scaleX = Q16_ONE;
-      Actor_Get(ACTOR_PARTICLE_SOURCE)->scaleY = Q16_ONE;
+      Actor_SetPosition(ACTOR_BEACON_ORB, PIXELS(304), PIXELS(164));
+      Actor_Get(ACTOR_BEACON_ORB)->scaleX = Q16_ONE;
+      Actor_Get(ACTOR_BEACON_ORB)->scaleY = Q16_ONE;
     } else {
-      Actor_SetPosition(ACTOR_PARTICLE_SOURCE, PIXELS(304), PIXELS(171));
-      Actor_Get(ACTOR_PARTICLE_SOURCE)->scaleX = 13 * Q16_ONE / 10;
-      Actor_Get(ACTOR_PARTICLE_SOURCE)->scaleY = 13 * Q16_ONE / 10;
+      Actor_SetPosition(ACTOR_BEACON_ORB, PIXELS(304), PIXELS(171));
+      Actor_Get(ACTOR_BEACON_ORB)->scaleX = 13 * Q16_ONE / 10;
+      Actor_Get(ACTOR_BEACON_ORB)->scaleY = 13 * Q16_ONE / 10;
     }
   } else {
-    Actor_SetPosition(ACTOR_PARTICLE_SOURCE, 0, 0);
+    Actor_SetPosition(ACTOR_BEACON_ORB, 0, 0);
   }
   if (center == 0)
     return;

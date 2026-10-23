@@ -163,6 +163,8 @@ enum TolbiShipMastEnsembleActor {
   /// its shadow, which grows from a tenth of its size where
   /// ACTOR_LANDING_MONSTER drops, then follows the monster away
   /// (tolbi_ship_deck.c's SEA_FALLING_MONSTER_SHADOW does the same).
+  /// ★ Named from what the player sees: a black shadow that grows on the
+  /// crow's nest where the monster lands (its render)
   ACTOR_LANDING_MONSTER_SHADOW
 };
 

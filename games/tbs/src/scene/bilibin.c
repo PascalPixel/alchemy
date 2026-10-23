@@ -233,7 +233,7 @@ enum BilibinBarricadeActor {
   ACTOR_JILL,
   /// Unused: a blank actor (SPRITE_BLANK_32) placed at the map's origin; no
   /// code or event row addresses it, so it never shows or answers anything.
-  ACTOR_UNUSED_BLANK,
+  ACTOR_BLANK_AT_ORIGIN,
   /// The invisible actor (SPRITE_BLANK) that stands where the middle tree lies
   /// pushed down and answers for it.
   /// ★ Named from the game: "Oh, it looks like she is okay."

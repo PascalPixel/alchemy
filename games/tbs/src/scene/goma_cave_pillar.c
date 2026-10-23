@@ -112,10 +112,14 @@ enum GomaCavePillarActor {
   /// Sinks into the floor in its place.
   /// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
   ACTOR_EAST_PILLAR,
-  /// The stump's shadow while it teeters at the edge: a crate's outline drawn
-  /// solid black (SPRITE_COLOR_BLACK) and translucent, kept in the room's
-  /// corner until then and put back there once the stump has fallen.
-  ACTOR_STUMP_SHADOW,
+  /// Hides the stump where it drops behind the floor in front of the ledge: a
+  /// crate drawn solid black (SPRITE_COLOR_BLACK) and translucent at sprite
+  /// priority 2, behind the floor, and ahead of the stump in the sprite list,
+  /// so where it covers the stump the player sees the floor. Moved away in a
+  /// render of the fall, the stump shows over the floor instead. It waits in
+  /// the room's corner until the stump teeters at the edge, and goes back
+  /// there once the stump has fallen.
+  ACTOR_MASK_FOR_STUMP,
   /// Forge, a Mars Djinni, until it joins the party.
   /// ★ Named from the game: "Forge" (MsgDjinnName)
   ACTOR_FORGE,
@@ -353,15 +357,15 @@ static void Event_PushStumpOver(void) {
   column = stump->x.fixed / PIXELS(16);
   EV_START();
   if (column == 25) {
-    overlayActor = Object_GetById(ACTOR_STUMP_SHADOW);
+    overlayActor = Object_GetById(ACTOR_MASK_FOR_STUMP);
     zero = 0;
     overlayActor->terrainId = 1;
-    spriteActor = Object_GetById(ACTOR_STUMP_SHADOW);
+    spriteActor = Object_GetById(ACTOR_MASK_FOR_STUMP);
     Engine_ActorSetSpriteFlags(spriteActor, 0);
-    Engine_ActorSetChildValue(ACTOR_STUMP_SHADOW, SPRITE_COLOR_BLACK);
-    blendActor = Object_GetById(ACTOR_STUMP_SHADOW);
+    Engine_ActorSetChildValue(ACTOR_MASK_FOR_STUMP, SPRITE_COLOR_BLACK);
+    blendActor = Object_GetById(ACTOR_MASK_FOR_STUMP);
     Engine_ObjectSetBlendMode(blendActor, OBJECT_BLEND_TRANSLUCENT);
-    Engine_ActorSetPosition(ACTOR_STUMP_SHADOW, PIXELS(414), PIXELS(240));
+    Engine_ActorSetPosition(ACTOR_MASK_FOR_STUMP, PIXELS(414), PIXELS(240));
     WAIT(10);
     // Dust falls while the stump rocks on the edge.
     fragmentCallback = GomaCavePillar_SpawnStumpDust;
@@ -413,7 +417,7 @@ static void Event_PushStumpOver(void) {
     Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
     Engine_MapRenderWaitForValues();
     Engine_ActorSetPosition(ACTOR_STUMP, 0, 0);
-    Engine_ActorSetPosition(ACTOR_STUMP_SHADOW, 0, 0);
+    Engine_ActorSetPosition(ACTOR_MASK_FOR_STUMP, 0, 0);
     Engine_GameFlagSet(FLAG_GOMA_CAVE_STUMP_FELL);
     Map_CopyCellAttributes(21, 45, 4, 2, 21, 11);
   }

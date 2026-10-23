@@ -151,7 +151,7 @@ enum ImilFuchinFallsActor {
   /// entry ImilFuchinFalls_PrepareRoom stills it at floor height and draws it
   /// at sprite priority 1 in SPRITE_COLOR_HIDDEN, as those are drawn, so
   /// every pixel is transparent and the player never sees it.
-  ACTOR_DRAGON_ROOM_FOREGROUND = ACTOR_FIRST_PLACED
+  ACTOR_BLANK_DRAGON_ROOM_CRATE = ACTOR_FIRST_PLACED
 };
 
 enum {
@@ -1392,12 +1392,12 @@ static void ImilFuchinFalls_PrepareRoom(void) {
     }
   } else if (gGameState.scene == (s32)&SceneId_FuchinFallsCaveDragonStatue) {
     value = 0;
-    actor = Actor_Get(ACTOR_DRAGON_ROOM_FOREGROUND);
+    actor = Actor_Get(ACTOR_BLANK_DRAGON_ROOM_CRATE);
     gImilFuchinFalls_TrackLeader = value;
     actor->motionFlags = value;
     actor->y.fixed = value;
-    Engine_ActorSetSpritePriority(ACTOR_DRAGON_ROOM_FOREGROUND, 1);
-    Actor_SetChildValue(ACTOR_DRAGON_ROOM_FOREGROUND, SPRITE_COLOR_HIDDEN);
+    Engine_ActorSetSpritePriority(ACTOR_BLANK_DRAGON_ROOM_CRATE, 1);
+    Actor_SetChildValue(ACTOR_BLANK_DRAGON_ROOM_CRATE, SPRITE_COLOR_HIDDEN);
     switch (gGameState.entrance) {
     case FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ORB_OF_FORCE_EAST:
     case FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ORB_OF_FORCE_WEST:

@@ -152,11 +152,11 @@ enum {
 /// LamakanDesertManticore one pit and LamakanDesertSmog all four pits and Smog;
 /// LamakanDesertCave places none.
 enum {
-  MANTICORE = LOCALID_FIRST_PLACED, ///< talking to it starts its battle
-  /// The first of the Ant Lions' pits Reveal shows, up to LAST_PIT.
-  FIRST_PIT = MANTICORE + 1,
-  LAST_PIT = FIRST_PIT + 3,
-  SMOG = LAST_PIT + 1 ///< Smog, a Jupiter Djinni
+  LOCALID_MANTICORE = LOCALID_FIRST_PLACED, ///< talking to it starts its battle
+  /// The first of the Ant Lions' pits Reveal shows, up to LOCALID_LAST_PIT.
+  LOCALID_FIRST_PIT = LOCALID_MANTICORE + 1,
+  LOCALID_LAST_PIT = LOCALID_FIRST_PIT + 3,
+  LOCALID_SMOG = LOCALID_LAST_PIT + 1 ///< Smog, a Jupiter Djinni
 };
 
 /// The desert's two Psynergy Stones, map-section temp flags: each is back once
@@ -176,7 +176,7 @@ enum {
 /// LamakanDesertSmog: talking to Smog, whom Reveal uncovers, adds the
 /// Jupiter Djinni to the party.
 static void LamakanDesert_TalkToSmog(void) {
-  Djinn_JoinParty(SMOG, ELEMENT_JUPITER, DJINNI_INDEX(DJINNI_SMOG));
+  Djinn_JoinParty(LOCALID_SMOG, ELEMENT_JUPITER, DJINNI_INDEX(DJINNI_SMOG));
 }
 
 #include "common/object_waitdown.h"
@@ -347,12 +347,12 @@ static s32 Reveal_HideSecrets(void) {
     MapGrid_CopyCells(9, 120, 3, 1, 44, 5);
     MapGrid_CopyCellAttributes(9, 0, 3, 3, 9, 6);
   }
-  Engine_ObjectEventSetPosition(MANTICORE, 0, 0);
-  Engine_ObjectEventSetPosition(FIRST_PIT, 0, 0);
-  Engine_ObjectEventSetPosition(FIRST_PIT + 1, 0, 0);
-  Engine_ObjectEventSetPosition(FIRST_PIT + 2, 0, 0);
-  Engine_ObjectEventSetPosition(LAST_PIT, 0, 0);
-  Engine_ObjectEventSetPosition(SMOG, 0, 0);
+  Engine_ObjectEventSetPosition(LOCALID_MANTICORE, 0, 0);
+  Engine_ObjectEventSetPosition(LOCALID_FIRST_PIT, 0, 0);
+  Engine_ObjectEventSetPosition(LOCALID_FIRST_PIT + 1, 0, 0);
+  Engine_ObjectEventSetPosition(LOCALID_FIRST_PIT + 2, 0, 0);
+  Engine_ObjectEventSetPosition(LOCALID_LAST_PIT, 0, 0);
+  Engine_ObjectEventSetPosition(LOCALID_SMOG, 0, 0);
   // Hide the searchable markers independently of the object event templates.
   markerId = 100;
   do {
@@ -389,7 +389,7 @@ static s32 Reveal_ShowSecrets(void) {
     MapGrid_CopyCells(76, 126, 4, 2, 16, 42);
     MapGrid_CopyCells(80, 126, 4, 2, 36, 44);
     MapGrid_CopyCells(84, 126, 4, 2, 14, 55);
-    ObjectEvent_SetPosition(FIRST_PIT, PIXELS(400), PIXELS(364));
+    ObjectEvent_SetPosition(LOCALID_FIRST_PIT, PIXELS(400), PIXELS(364));
   } else if (gGameState.mapId == (s32)&MapId_LamakanDesertSmog) {
     MapGrid_CopyCells(64, 126, 4, 2, 42, 5);
     MapGrid_CopyCells(68, 126, 4, 2, 20, 11);
@@ -409,11 +409,11 @@ static s32 Reveal_ShowSecrets(void) {
     MapGrid_CopyCells(108, 126, 4, 2, 6, 46);
     MapGrid_CopyCells(112, 126, 4, 2, 27, 55);
     MapGrid_CopyCells(116, 126, 4, 2, 43, 56);
-    ObjectEvent_SetPosition(FIRST_PIT, PIXELS(352), PIXELS(204));
-    ObjectEvent_SetPosition(FIRST_PIT + 1, PIXELS(736), PIXELS(396));
-    ObjectEvent_SetPosition(FIRST_PIT + 2, PIXELS(144), PIXELS(380));
-    ObjectEvent_SetPosition(LAST_PIT, PIXELS(576), PIXELS(716));
-    ObjectEvent_SetPosition(SMOG, PIXELS(648), PIXELS(408));
+    ObjectEvent_SetPosition(LOCALID_FIRST_PIT, PIXELS(352), PIXELS(204));
+    ObjectEvent_SetPosition(LOCALID_FIRST_PIT + 1, PIXELS(736), PIXELS(396));
+    ObjectEvent_SetPosition(LOCALID_FIRST_PIT + 2, PIXELS(144), PIXELS(380));
+    ObjectEvent_SetPosition(LOCALID_LAST_PIT, PIXELS(576), PIXELS(716));
+    ObjectEvent_SetPosition(LOCALID_SMOG, PIXELS(648), PIXELS(408));
   } else if (gGameState.mapId == (s32)&MapId_LamakanDesertManticore) {
     MapGrid_CopyCells(64, 124, 4, 4, 8, 14);
     MapGrid_CopyCells(68, 124, 4, 4, 6, 18);
@@ -423,8 +423,8 @@ static s32 Reveal_ShowSecrets(void) {
     MapGrid_CopyCells(5, 121, 5, 7, 43, 32);
     MapGrid_CopyCells(0, 120, 3, 1, 9, 5);
     MapGrid_CopyCells(3, 120, 3, 1, 44, 5);
-    ObjectEvent_SetPosition(MANTICORE, PIXELS(168), PIXELS(92));
-    ObjectEvent_SetPosition(FIRST_PIT, PIXELS(128), PIXELS(316));
+    ObjectEvent_SetPosition(LOCALID_MANTICORE, PIXELS(168), PIXELS(92));
+    ObjectEvent_SetPosition(LOCALID_FIRST_PIT, PIXELS(128), PIXELS(316));
     MapGrid_CopyCellAttributes(6, 0, 3, 3, 9, 6);
     if (Engine_GameFlagIsSet(FLAG_LAMAKAN_MANTICORE_BEATEN) == 0) {
       MapGrid_CopyCells(0, 119, 3, 1, 9, 5);
@@ -443,7 +443,7 @@ static s32 Reveal_ShowSecrets(void) {
 /// Manticore starts its battle, which returns the party to
 /// LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE.
 static void LamakanDesert_FightManticore(void) {
-  Engine_ObjectEventRunRepeatedMotion(MANTICORE, 2);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_MANTICORE, 2);
   FieldScript_SetNextDestination(
       (s32)&MapId_LamakanDesertManticore,
       LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE);
@@ -748,11 +748,11 @@ static void LamakanDesert_FallIntoPit(void) {
   s32 dz;
 
   target = ObjectEvent_Get(gGameState.selectedLocalId);
-  best = FIRST_PIT;
+  best = LOCALID_FIRST_PIT;
   GameFlag_Set(FLAG_DESERT_EVENT_RUNNING);
   min = 0x100000;
   // Select the closest live pit using Manhattan distance in whole pixels.
-  for (id = FIRST_PIT; id <= LAST_PIT; id++) {
+  for (id = LOCALID_FIRST_PIT; id <= LOCALID_LAST_PIT; id++) {
     struct ObjectEvent *other = ObjectEvent_Get(id);
 
     if (other != 0) {
@@ -926,7 +926,7 @@ static void LamakanDesert_MeetManticore(void) {
       record = ObjectEvent_Get(LOCALID_PARTY_LEADER);
       record->targetZ = OBJ_EVENT_NO_TARGET;
       Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
-      ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, MANTICORE, 0);
+      ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_MANTICORE, 0);
       Engine_ScriptWait(40);
       Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 2);
       ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER,
@@ -952,12 +952,12 @@ static void LamakanDesert_MeetManticore(void) {
           OBJ_EVENT_FACES_MOTION;
       Engine_ScriptWait(30);
       Script_PlayCue(SE_148);
-      Engine_ObjectEventRunRepeatedMotion(MANTICORE, 2);
+      Engine_ObjectEventRunRepeatedMotion(LOCALID_MANTICORE, 2);
       Engine_ScriptWait(20);
-      ObjectEvent_SetSpeed(MANTICORE, 0x28000, 0x14000);
-      ObjectEvent_WalkToAndWait(MANTICORE, 168, 104);
-      ObjectEvent_SetSpeed(MANTICORE, 0x8000, 0x4000);
-      ObjectEvent_WalkToAndWait(MANTICORE, 168, 92);
+      ObjectEvent_SetSpeed(LOCALID_MANTICORE, 0x28000, 0x14000);
+      ObjectEvent_WalkToAndWait(LOCALID_MANTICORE, 168, 104);
+      ObjectEvent_SetSpeed(LOCALID_MANTICORE, 0x8000, 0x4000);
+      ObjectEvent_WalkToAndWait(LOCALID_MANTICORE, 168, 92);
       *revealFrames = holdFrames;
       HeatGauge_SetHeld(0);
     }
@@ -1016,10 +1016,10 @@ s32 LamakanDesert_Initialize(s32 a0, s32 a1) {
 /// Unused: the Manticore walks back to its spot (168, 96) and settles. Nothing
 /// calls it.
 static UNUSED void Manticore_UnusedReturn(void) {
-  ObjectEvent_SetSpeed(MANTICORE, 0x8000, 0x4000);
-  Engine_ObjectEventSetAnimation(MANTICORE, 1);
-  ObjectEvent_WalkToAndWait(MANTICORE, 168, 96);
-  Engine_ObjectEventSetAnimation(MANTICORE, 2);
+  ObjectEvent_SetSpeed(LOCALID_MANTICORE, 0x8000, 0x4000);
+  Engine_ObjectEventSetAnimation(LOCALID_MANTICORE, 1);
+  ObjectEvent_WalkToAndWait(LOCALID_MANTICORE, 168, 96);
+  Engine_ObjectEventSetAnimation(LOCALID_MANTICORE, 2);
 }
 
 /// Every frame: draws the heat gauge down the screen's left edge, 8 pixels
@@ -1348,8 +1348,8 @@ struct MapEvent gLamakanDesertEvents[] = {
     { MAP_EVENT_COORD, LAMAKAN_DESERT_CELL_PIT, FLAG_DESERT_EVENT_RUNNING, EVENT_SCRIPT(LamakanDesert_FallIntoPit) },
     { MAP_EVENT_COORD, LAMAKAN_DESERT_CELL_SLOPE, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_SlideDownDune) },
     { MAP_EVENT_COORD, 40, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_MeetManticore) },
-    { MAP_EVENT_TALK, MANTICORE, FLAG_LAMAKAN_MANTICORE_BEATEN, EVENT_SCRIPT(LamakanDesert_FightManticore) },
-    { MAP_EVENT_TALK, SMOG, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_TalkToSmog) },
+    { MAP_EVENT_TALK, LOCALID_MANTICORE, FLAG_LAMAKAN_MANTICORE_BEATEN, EVENT_SCRIPT(LamakanDesert_FightManticore) },
+    { MAP_EVENT_TALK, LOCALID_SMOG, CONDITION_ALWAYS, EVENT_SCRIPT(LamakanDesert_TalkToSmog) },
     { BG_EVENT(BG_EVENT_CHEST), 100, FLAG_LAMAKAN_DESERT_VULCAN_AXE, FIND_ITEM(ITEM_VULCAN_AXE) },
     { BG_EVENT(BG_EVENT_UNNAMED), 101, FLAG_LAMAKAN_DESERT_FIRST_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
     { BG_EVENT(BG_EVENT_CHEST), 102, FLAG_LAMAKAN_DESERT_LUCKY_PEPPER, FIND_ITEM(ITEM_LUCKY_PEPPER) },

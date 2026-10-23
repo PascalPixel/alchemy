@@ -25,92 +25,92 @@
 /// what their sprites show and what they say or, under Mind Read, think
 /// during the festival.
 enum TolbiLocalId {
-  TOLBI_SPROUT = 8,
-  TOLBI_PUDDLE = 9,
+  LOCALID_TOLBI_SPROUT = 8,
+  LOCALID_TOLBI_PUDDLE = 9,
   /// A young man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR).
   /// ★ Named from the game: "This festival only happens once a year, so I'm
   /// really excited." (MsgTolbiTolbisAlwaysReallyBustlingDuringColosso)
-  TOLBI_EXCITED_YOUNG_MAN = 10,
+  LOCALID_TOLBI_EXCITED_YOUNG_MAN = 10,
   /// A woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR).
   /// ★ Named from the game: "If we don't go right now, we won't get good
   /// seats!" (MsgTolbiColossoIsHeldInTheColosseum)
-  TOLBI_HURRYING_WOMAN = 11,
+  LOCALID_TOLBI_HURRYING_WOMAN = 11,
   /// A burly grey-haired man (SPRITE_BURLY_MAN_WITH_GREY_HAIR); after
   /// Colosso he asks whether the party was in the finals
   /// (Tolbi_AskWhetherPartyWasInFinals).
   /// ★ Named from the game: "I'm planning to go watch the finals."
   /// (MsgTolbiTryoutsStartedAtTheColosseumToday)
-  TOLBI_FINALS_FAN = 12,
+  LOCALID_TOLBI_FINALS_FAN = 12,
   /// A woman in a green dress (SPRITE_WOMAN_IN_GREEN_DRESS).
   /// ★ Named from the game: "What if something's happened to our leader?"
   /// (MsgTolbiColossoShouldHaveStartedTodayWhat)
-  TOLBI_WORRIED_WOMAN = 13,
+  LOCALID_TOLBI_WORRIED_WOMAN = 13,
   /// An old man with a cane (SPRITE_OLD_MAN_WITH_CANE), who says he is 65 and
   /// later talks of the Lucky Guess. He copies the leader's sprite priority
   /// every frame (Tolbi_CopyLeaderPriority).
-  TOLBI_OLD_MAN = 14,
+  LOCALID_TOLBI_OLD_MAN = 14,
   /// An old woman (SPRITE_OLD_WOMAN) who asks whether someone can live past
   /// a hundred (Tolbi_AskAboutLivingPastHundred).
   /// ★ Named from the game: "What if Babi is actually a totally different
   /// person now" (MsgTolbiWhatIfBabiIsActuallyA)
-  TOLBI_SUSPICIOUS_OLD_WOMAN = 15,
+  LOCALID_TOLBI_SUSPICIOUS_OLD_WOMAN = 15,
   /// A small boy with fair hair (SPRITE_BOY_WITH_FAIR_HAIR), who runs after
   /// his sister.
   /// ★ Named from the game: "I'm the oldest, so I shouldn't have to share"
   /// (MsgTolbiOldestShouldntShare)
-  TOLBI_OLDER_BROTHER = 16,
+  LOCALID_TOLBI_OLDER_BROTHER = 16,
   /// A little girl with pigtails (SPRITE_GIRL_WITH_PIGTAILS).
   /// ★ Named from the game: "My big brother is being nice to me again!"
   /// (MsgTolbiHaHaHa)
-  TOLBI_YOUNGER_SISTER = 17,
+  LOCALID_TOLBI_YOUNGER_SISTER = 17,
   /// A strongman (SPRITE_STRONGMAN).
   /// ★ Named from the game: "Get your Colosso souvenirs!"
   /// (MsgTolbiGetYourColossoSouvenirsTheyMake)
-  TOLBI_SOUVENIR_SELLER = 18,
+  LOCALID_TOLBI_SOUVENIR_SELLER = 18,
   /// A stout man (SPRITE_STOUT_MAN).
   /// ★ Named from the game: "Get your snacks and drinks"
   /// (MsgTolbiGetYourSnacksAndDrinksBefore)
-  TOLBI_SNACK_VENDOR = 19,
+  LOCALID_TOLBI_SNACK_VENDOR = 19,
   /// A young man with a headband (SPRITE_YOUTH_WITH_HEADBAND).
   /// ★ Named from the game: "I've decided not to fight at Colosso after all."
   /// (MsgTolbiIveDecidedNotToFightAt)
-  TOLBI_WOULD_BE_FIGHTER = 20,
+  LOCALID_TOLBI_WOULD_BE_FIGHTER = 20,
   /// A young man with a headband (SPRITE_YOUTH_WITH_HEADBAND), whom Mind Read
   /// finds thinking of his home.
   /// ★ Named from the game: "Tolbi is not like Xian."
   /// (MsgTolbiTolbiIsNotLikeXianIt)
-  TOLBI_XIAN_VISITOR = 21,
+  LOCALID_TOLBI_XIAN_VISITOR = 21,
   /// A woman with a sword (SPRITE_PERSON_WITH_SWORD), beside a second whose
   /// row has no name.
   /// ★ Named from the game: "Rats! We overslept"
   /// (MsgTolbiRatsWeOversleptAndNowThe)
-  TOLBI_OVERSLEEPER = 22,
+  LOCALID_TOLBI_OVERSLEEPER = 22,
   /// A family at the festival: the father, a burly grey-haired man
   /// (SPRITE_BURLY_MAN_WITH_GREY_HAIR), the mother, a woman in a green dress
   /// (SPRITE_WOMAN_IN_GREEN_DRESS), and their small boy
   /// (SPRITE_BOY_WITH_FAIR_HAIR), who cries for sweets.
   /// ★ Named from the game: "the wife doesn't go in for"
   /// (MsgTolbiChildrenLoveSouvenirs)
-  TOLBI_FATHER = 24,
-  TOLBI_MOTHER = 25,
+  LOCALID_TOLBI_FATHER = 24,
+  LOCALID_TOLBI_MOTHER = 25,
   /// ★ Named from the game: "Mom, you said you were all out of money"
   /// (MsgTolbiMomYouSaidYouWereAll)
-  TOLBI_CRYING_BOY = 26,
+  LOCALID_TOLBI_CRYING_BOY = 26,
   /// A strongman (SPRITE_STRONGMAN) who sleeps under the archway during the
   /// festival; on finals day he sells seats.
   /// ★ Named from the game: "us scalpers" (MsgTolbiTodayIsABigDayFor)
-  TOLBI_SCALPER = 27,
+  LOCALID_TOLBI_SCALPER = 27,
   /// A man carrying a pack (SPRITE_MAN_CARRYING_A_PACK) at the gate of Tolbi
   /// Spring, who lets the party go first.
   /// ★ Named from the game: "Do you want to test your luck at Tolbi Spring?"
   /// (MsgTolbiWantTestLuck)
-  TOLBI_SPRING_VISITOR = 28,
-  TOLBI_SOLDIER_A = 29, ///< Babi's soldiers, searching the town for him
-  TOLBI_SOLDIER_B = 30,
-  TOLBI_EMBER = 31,
+  LOCALID_TOLBI_SPRING_VISITOR = 28,
+  LOCALID_TOLBI_SOLDIER_A = 29, ///< Babi's soldiers, searching the town for him
+  LOCALID_TOLBI_SOLDIER_B = 30,
+  LOCALID_TOLBI_EMBER = 31,
   /// The "Missing Person" poster, placed with Babi's sprite (SPRITE_BABI).
   /// ★ Named from the game: "Missing Person" (MsgTolbiSeenAnyoneWho)
-  TOLBI_MISSING_PERSON_POSTER = 32,
+  LOCALID_TOLBI_MISSING_PERSON_POSTER = 32,
 };
 
 /// The coord events that are more than a door. The doors' own cells carry
@@ -144,7 +144,7 @@ enum TolbiMarker {
 /// The running children keep these flags in ObjectEvent.timer, their map
 /// scratch halfword. Bits: 1 talking | 0 chases the younger sister.
 enum {
-  /// Set on the older brother, who runs after TOLBI_YOUNGER_SISTER.
+  /// Set on the older brother, who runs after LOCALID_TOLBI_YOUNGER_SISTER.
   KID_CHASES_YOUNGER = 1,
   KID_TALKING = 2, ///< set while the party talks to this child
 };

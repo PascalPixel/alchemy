@@ -110,7 +110,8 @@ s32 gTolbiShipMast_SwayX __attribute__((section(".bss")));
 enum TolbiShipMastLocalId {
   /// The ship's lookout, a man in a blue bandana
   /// (SPRITE_MAN_IN_BLUE_BANDANA). He is the crewman who hid the captain's
-  /// anchor charm (KALAY_CREWMAN on deck, QUARTERS_CREWMAN below), in the
+  /// anchor charm (LOCALID_KALAY_CREWMAN on deck, LOCALID_QUARTERS_CREWMAN
+  /// below), in the
   /// same sprite: Mind Read on him at Kalay hears "I was the one who hid the
   /// anchor" (MsgTolbiShipHiddenAnchorDiscovered).
   /// ★ Named from the game: "No, no, I'm the lookout."
@@ -151,8 +152,10 @@ enum TolbiShipMastEnsembleLocalId {
   /// ★ Named from what the player sees: a white bird beating its wings (its
   /// render)
   LOCALID_FIRST_BIRD = LOCALID_LOOKOUT + 1,
-  /// Sean, by the sprite he has in the hold (HOLD_SEAN, tolbi_ship_interiors.c)
-  /// and on deck (SEA_SEAN, tolbi_ship_deck.c). He cries "Monsters!" at the
+  /// Sean, by the sprite he has in the hold (LOCALID_HOLD_SEAN,
+  /// tolbi_ship_interiors.c)
+  /// and on deck (LOCALID_SEA_SEAN, tolbi_ship_deck.c). He cries "Monsters!" at
+  /// the
   /// second attack.
   /// ★ Named from the game: "That'll be me, Ouranos, and Sean on deck"
   /// (MsgTolbiShipOurReplacementNeverArrivedBut)
@@ -164,7 +167,7 @@ enum TolbiShipMastEnsembleLocalId {
   /// The landing monster's shadow: a blank sprite (SPRITE_BLANK) draws only
   /// its shadow, which grows from a tenth of its size where
   /// LOCALID_LANDING_MONSTER drops, then follows the monster away
-  /// (tolbi_ship_deck.c's SEA_FALLING_MONSTER_SHADOW does the same).
+  /// (tolbi_ship_deck.c's LOCALID_SEA_FALLING_MONSTER_SHADOW does the same).
   /// ★ Named from what the player sees: a black shadow that grows on the
   /// crow's nest where the monster lands (its render)
   LOCALID_LANDING_MONSTER_SHADOW

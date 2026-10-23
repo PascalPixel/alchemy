@@ -3,13 +3,13 @@
 	.set import.__divsi3, 1
 	.set import.__udivsi3, 1
 	.set import.Engine_TaskWait, 1
-	.set import.Scheduler_AddOrUpdateCallback, 1
+	.set import.Task_Add, 1
 	.set import.Engine_RandomNext, 1
 	.set import.ArcTan2, 1
 	.set import.Engine_MathSin, 1
 	.set import.Engine_MathCos, 1
 	.set import.Engine_HeapAllocate, 1
-	.set import.Runtime_AllocateBlock, 1
+	.set import.AllocHeapSlotEwram, 1
 	.set import.Engine_HeapRelease, 1
 	.set import.Engine_VramLoad, 1
 	.set import.ObjectEvent_SetMode, 1
@@ -26,14 +26,14 @@
 	.set import.Engine_WorkSetValuesIfNonNegative, 1
 	.set import.Engine_MapGridRenderWaitForValues, 1
 	.set import.Engine_MessageShowCentered, 1
-	.set import.UiWork_PushValueSlot, 1
-	.set import.UiText_ShowCenteredMessage, 1
+	.set import.MessageArgument_Push, 1
+	.set import.FieldMessage_ShowCentered, 1
 	.set import.Engine_ItemLoadIcon, 1
 	.set import.Unit_Get, 1
 	.set import.Inventory_AddItem, 1
 	.set import.PartyInventory_Add, 1
 	.set import.Inventory_Find, 1
-	.set import.PartyInventory_FindOwner, 1
+	.set import.PartyInventory_FindMember, 1
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1
 	.set import.Engine_GameFlagClear, 1
@@ -43,7 +43,7 @@
 	.set import.Engine_ScriptWait, 1
 	.set import.Engine_ScriptStart, 1
 	.set import.Engine_ScriptEnd, 1
-	.set import.Party_RemoveOwnerRestored, 1
+	.set import.Party_RemoveMemberRestored, 1
 	.set import.Engine_ScriptChooseYesNo, 1
 	.set import.ObjectEvent_GetById, 1
 	.set import.Engine_ObjectEventSetSpeed, 1
@@ -87,6 +87,6 @@
 	.set import.Engine_ScriptWaitForScreen, 1
 	.set import.Engine_ItemShowPicture, 1
 	.set import.Engine_ItemShowFound, 1
-	.set import.Shop_PickUnitItem, 1
+	.set import.ItemPicker_Run, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

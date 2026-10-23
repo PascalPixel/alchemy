@@ -1,24 +1,24 @@
 @ C2: aligned 8-byte veneers: overlay_veneer emits ldr r4, bx r4 and a target word.
 	.set overlay_imports, 1
 	.set import.Engine_TaskWait, 1
-	.set import.Scheduler_AddOrUpdateCallback, 1
-	.set import.Scheduler_RemoveCallback, 1
+	.set import.Task_Add, 1
+	.set import.Task_Remove, 1
 	.set import.ArcTan2, 1
-	.set import.Runtime_AllocateHeapBlock, 1
-	.set import.Runtime_ReleaseHeapBlock, 1
+	.set import.AllocHeapSlot, 1
+	.set import.FreeHeapSlot, 1
 	.set import.Engine_VramLoad, 1
-	.set import.ResourceMetadata_ClearRecord, 1
+	.set import.SpriteAnim_Clear, 1
 	.set import.ObjectEvent_SetMode, 1
 	.set import.ObjectDispatch_SetAnimationSpeed, 1
 	.set import.Engine_ObjectSetScript, 1
 	.set import.Engine_ObjectSetPosition, 1
-	.set import.FieldObject_WaitForMove, 1
+	.set import.Object_WaitForMove, 1
 	.set import.Engine_MapGridCopyCells, 1
 	.set import.Engine_MapGridCopyCellAttributes, 1
 	.set import.Object_CheckMovementCollision, 1
 	.set import.Engine_WorkSetValuesIfNonNegative, 1
 	.set import.ItemIcon_LoadTilesFar, 1
-	.set import.PartyInventory_FindOwner, 1
+	.set import.PartyInventory_FindMember, 1
 	.set import.PartyInventory_Remove, 1
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1
@@ -50,6 +50,6 @@
 	.set import.Engine_ItemShowFound, 1
 	.set import.Engine_MarkerSetPosition, 1
 	.set import.Djinn_JoinParty, 1
-	.set import.FieldEffect_PlayQueuedSound, 1
+	.set import.Map_PlayQueuedMusic, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

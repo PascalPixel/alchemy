@@ -290,7 +290,7 @@ static s32 sShakeShift;
 /// The step of gValeStorm_LookAroundScript: the object event faces a random way
 /// every 20 to 39 frames, as everyone looks about once the Boulder has gone by.
 static s32
-ValeStorm_RerollHeadingOnCountdown(struct ScriptInterpreter *interpreter) {
+ValeStorm_RerollHeadingOnCountdown(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   s32 timer = objectEvent->timer;
   s32 countdown = (s16)timer;
@@ -422,7 +422,7 @@ static void EventScript_LeaveToValeInteriorsShopsEast(void) {
 /// VALE_INTERIORS_SHOPS_FROM_VALE_SOUTH).
 static void EventScript_LeaveToValeInteriorsShops(void) {
   if (GameFlag_IsSet(FLAG_MAP_TEMP_06) == 0) {
-    Script_PlayCue(SE_DOOR_OPEN);
+    Script_PlaySong(SE_DOOR_OPEN);
     MapGrid_AnimateCells(gValeStorm_GrandparentsDoorOpens, 45, 39);
   }
   if (GameFlag_IsSet(FLAG_VALE_STORM_BUMPED_INTO_VILLAGER) == 0 &&
@@ -484,7 +484,7 @@ static void EventScript_LeaveToValeInteriorsShopsWest(void) {
 /// EventScript_LeaveToValeInteriorsShopsWest leads to
 /// (VALE_INTERIORS_SHOPS_FROM_VALE_WEST).
 static void EventScript_UnusedLeaveToValeInteriorsShopsWestBySecondDoor(void) {
-  Script_PlayCue(SE_DOOR_OPEN);
+  Script_PlaySong(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gValeStorm_IsaacsDoorOpens, 35, 74);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 102, 1206);
   Engine_ScriptWait(3);
@@ -495,7 +495,7 @@ static void EventScript_UnusedLeaveToValeInteriorsShopsWestBySecondDoor(void) {
 /// Reached by walking north into metatile behavior 12; arrives in another part
 /// of Vale at VALE_INTERIORS_INN_FROM_VALE_STORM_WEST.
 static void EventScript_LeaveToValeInteriorsInnWest(void) {
-  Script_PlayCue(SE_DOOR_OPEN);
+  Script_PlaySong(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gValeStorm_IsaacsDoorOpens, 35, 73);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 102, 1206);
   Engine_ScriptWait(3);
@@ -506,7 +506,7 @@ static void EventScript_LeaveToValeInteriorsInnWest(void) {
 /// Reached by walking north into metatile behavior 13; arrives in another part
 /// of Vale at VALE_INTERIORS_INN_FROM_VALE_STORM_EAST.
 static void EventScript_LeaveToValeInteriorsInnEast(void) {
-  Script_PlayCue(SE_DOOR_OPEN);
+  Script_PlaySong(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gValeStorm_GrandparentsDoorOpens, 38, 72);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 146, 1182);
   Engine_ScriptWait(3);
@@ -516,12 +516,12 @@ static void EventScript_LeaveToValeInteriorsInnEast(void) {
 /// Arriving in Vale on the stormy night: restores the fallen rocks, the river
 /// scene and the Boulder from their flags, starts the storm, and plays the
 /// scene with Dora and Kyle on the first arrival by
-/// VALE_STORM_FROM_VALE_INTERIORS_INN_WITH_DORA. Called by Field_RunMap once
+/// VALE_STORM_FROM_VALE_INTERIORS_INN_WITH_DORA. Called by Map_Run once
 /// the object events are placed. Sets FLAG_VALE_STORM; after a battle
 /// (FLAG_KEEP_PARTY_POSITION) the two doors close again. Garet, until he joins,
 /// is shown struggling with his things.
 s32 ValeStorm_Initialize(void) {
-  FieldEffect_SetQueuedSoundAndPlay(SE_170);
+  Map_QueueMusic(SE_170);
   Engine_ObjectEventSetPosition(LOCALID_FELIX, 0, 0);
   if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
     Engine_GameFlagClear(FLAG_MAP_TEMP_05);
@@ -691,8 +691,8 @@ s32 ValeStorm_Initialize(void) {
   // The lightning starts at once, except before Dora and Kyle's scene.
   if (gGameState.warpDest != VALE_STORM_FROM_VALE_INTERIORS_INN_WITH_DORA ||
       Engine_GameFlagIsSet(FLAG_VALE_STORM_SENT_TO_PLAZA) != 0) {
-    FieldEffect_StartGroundParticles();
-    FieldEffect_StartLightning();
+    Weather_StartRain();
+    Weather_StartLightning();
   }
   if (Engine_GameFlagIsSet(FLAG_MAP_TEMP_10) != 0) {
     EventScript_SetPathCellOverride();
@@ -739,11 +739,11 @@ s32 ValeStorm_Initialize(void) {
     Engine_ObjectEventSetAnimation(LOCALID_GARETS_CHEST, ANIMATION_NOD);
     Engine_ScriptEnd();
   }
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  gEventWork->transitionFrames = 24;
+  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transitionFrames = 24;
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
-  FieldEffect_ResumeLightning();
+  Weather_ResumeLightning();
   return 0;
 }
 
@@ -759,22 +759,22 @@ static void EventScript_DoraSendsIsaacToThePlaza(void) {
   s32 message;
 
   Engine_ScriptStart();
-  FieldEffect_StartGroundParticles();
-  FieldEffect_StartLightning();
-  FieldEffect_LastLightning();
+  Weather_StartRain();
+  Weather_StartLightning();
+  Weather_LastLightning();
   Engine_TaskWait(60);
   // The camera looks down on the door of Isaac's house; Kyle waits outside.
-  Camera_SetSpeed(PIXELS(1) / 4, PIXELS(1) / 32);
-  Camera_MoveTo(PIXELS(316), PIXELS(160), PIXELS(880), 1);
+  FieldCamera_SetSpeed(PIXELS(1) / 4, PIXELS(1) / 32);
+  FieldCamera_MoveTo(PIXELS(316), PIXELS(160), PIXELS(880), 1);
   ObjectEvent_SetPosition(LOCALID_KYLE, PIXELS(294), PIXELS(868));
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, 0, 0);
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  gEventWork->transitionFrames = 16;
+  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transitionFrames = 16;
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
-  FieldEffect_ResumeLightning();
+  Weather_ResumeLightning();
   // Dora and Isaac come out of the door.
-  Script_PlayCue(SE_DOOR_OPEN);
+  Script_PlaySong(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gValeStorm_IsaacsDoorOpens, 50, 44);
   ObjectEvent_SetAttachedEffect(LOCALID_GARET, ATTACHED_EFFECT_IN_FRONT |
                                                    ATTACHED_EFFECT_ATTACH);
@@ -783,7 +783,7 @@ static void EventScript_DoraSendsIsaacToThePlaza(void) {
   ObjectEvent_SetSpeed(LOCALID_KYLE, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetPosition(LOCALID_DORA, PIXELS(342), PIXELS(890));
   ObjectEvent_WalkToAndWait(LOCALID_DORA, 342, 905);
-  FieldEffect_PlayQueuedSound();
+  Map_PlayQueuedMusic();
   ObjectEvent_WalkTo(LOCALID_DORA, 296, 905);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(342), PIXELS(890));
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 342, 890);
@@ -872,7 +872,7 @@ static void EventScript_FirstRockFalls(void) {
   struct ObjectEvent *leader;
   s32 targetHeight;
   s32 walkZ;
-  struct AnimationObject *rockSprite;
+  struct Sprite *rockSprite;
 
   if (GameFlag_IsSet(FLAG_VALE_STORM_FIRST_ROCK_PASSED) != 0) {
   } else {
@@ -900,10 +900,10 @@ static void EventScript_FirstRockFalls(void) {
       rock->priorityFlags |= OBJ_EVENT_PRIORITY_AUTOMATIC;
       Engine_ScriptWait(40);
       // It lands: the rumble on player 3 fades and the shaking dies down.
-      Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
+      Engine_AudioPlayCue(SONG_FADE_OUT_ACTION_SE);
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
       Engine_MapGridWaitForShakeToSettle();
-      FieldEffect_PlayQueuedSound();
+      Map_PlayQueuedMusic();
       Engine_GameFlagSet(FLAG_VALE_STORM_FIRST_ROCK_FELL);
     }
     // The rock now blocks the path.
@@ -975,10 +975,10 @@ static void EventScript_SecondRockFalls(void) {
       ObjectEvent_WalkToAndWait(LOCALID_FIRST_ROCK + 1, 224, 872);
       Engine_ScriptWait(40);
       // It lands: the rumble on player 3 fades and the shaking dies down.
-      Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
+      Engine_AudioPlayCue(SONG_FADE_OUT_ACTION_SE);
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
       Engine_MapGridWaitForShakeToSettle();
-      FieldEffect_PlayQueuedSound();
+      Map_PlayQueuedMusic();
       Engine_GameFlagSet(FLAG_VALE_STORM_SECOND_ROCK_FELL);
     }
     ValeStorm_ApplySecondRockCollision();
@@ -1035,9 +1035,9 @@ static void EventScript_ThirdRockFalls(void) {
       // A rumble, then the rock drops in from the west while Isaac is drawn
       // behind it.
       MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
-      Script_PlayCue(SE_RUMBLE);
+      Script_PlaySong(SE_RUMBLE);
       Engine_TaskWait(40);
-      Script_PlayCue(SE_145);
+      Script_PlaySong(SE_145);
       Engine_ObjectEventSetSpritePriority(LOCALID_PARTY_LEADER, 3);
       ObjectEvent_Get(LOCALID_PARTY_LEADER)->priorityFlags |=
           OBJ_EVENT_PRIORITY_UNDERFOOT;
@@ -1050,10 +1050,10 @@ static void EventScript_ThirdRockFalls(void) {
       ObjectEvent_WalkToAndWait(LOCALID_FIRST_ROCK + 2, 64, 703);
       Engine_ScriptWait(40);
       // It lands: the rumble fades, and Isaac is drawn as before.
-      Script_PlayCue(AUDIO_CUE_FADE_SLOT3);
+      Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
       Engine_MapGridWaitForShakeToSettle();
-      FieldEffect_PlayQueuedSound();
+      Map_PlayQueuedMusic();
       GameFlag_Set(FLAG_VALE_STORM_THIRD_ROCK_FELL);
       Engine_ObjectEventSetSpritePriority(LOCALID_PARTY_LEADER, priority);
       ObjectEvent_Get(LOCALID_PARTY_LEADER)->priorityFlags |=
@@ -1123,10 +1123,10 @@ static void EventScript_FourthRockFalls(void) {
       Engine_ObjectEventWalkToAndWait(LOCALID_FIRST_ROCK + 3, 432, 1147);
       Engine_ScriptWait(40);
       // It lands: the rumble on player 3 fades and the shaking dies down.
-      Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
+      Engine_AudioPlayCue(SONG_FADE_OUT_ACTION_SE);
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
       Engine_MapGridWaitForShakeToSettle();
-      FieldEffect_PlayQueuedSound();
+      Map_PlayQueuedMusic();
       Engine_GameFlagSet(FLAG_VALE_STORM_FOURTH_ROCK_FELL);
     }
     ValeStorm_ApplyFourthRockCollision();
@@ -1181,7 +1181,7 @@ static void ValeStorm_BumpIntoShovingMan(void) {
   Engine_ObjectEventSetAnimation(LOCALID_SHOVING_MAN, ANIMATION_STAND);
   Engine_ObjectEventJump(LOCALID_PARTY_LEADER, 4, 0);
   Engine_ObjectEventFaceEachOther(LOCALID_PARTY_LEADER, LOCALID_SHOVING_MAN, 0);
-  FieldEffect_PlayQueuedSound();
+  Map_PlayQueuedMusic();
   Engine_ScriptWait(30);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_PARTY_LEADER, 2);
   ObjectEvent_ShowEmote(LOCALID_SHOVING_MAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
@@ -1334,8 +1334,8 @@ static void EventScript_UnusedGaretJoinsIsaac(void) {
     ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER,
                           EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
-    Camera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
-    Camera_MoveTo(PIXELS(256), -1, PIXELS(588), 1);
+    FieldCamera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
+    FieldCamera_MoveTo(PIXELS(256), -1, PIXELS(588), 1);
     ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(2), PIXELS(1));
     ObjectEvent_RunActionScriptAndWait(LOCALID_GARET,
                                        gValeStorm_UnusedGaretRunsUpScript);
@@ -1458,8 +1458,8 @@ static void EventScript_WatchBoulderFall(void) {
   struct ObjectEvent *movingObjectEvent;
   s32 *shakeShift;
   struct ObjectEvent *objectEvent;
-  SchedulerCallback updateEffects;
-  SchedulerCallback cycleBoulderPalette;
+  TaskFunc updateEffects;
+  TaskFunc cycleBoulderPalette;
   s32 boulderHeight;
 
   if (GameFlag_IsSet(FLAG_VALE_BOULDER_FELL) == 0) {
@@ -1467,11 +1467,11 @@ static void EventScript_WatchBoulderFall(void) {
     FieldScript_CallWithLastActiveObjectId(gValeStorm_BoulderWatchers);
     Map_StartCutscenePsynergy();
     Engine_TaskWait(1);
-    Script_PlayCue(SE_RUMBLE);
+    Script_PlaySong(SE_RUMBLE);
     MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
     Engine_ScriptWait(30);
     MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
-    Script_PlayCue(SE_145);
+    Script_PlaySong(SE_145);
     Engine_ScriptWait(30);
     objectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
     if (objectEvent != NULL) {
@@ -1490,10 +1490,10 @@ static void EventScript_WatchBoulderFall(void) {
     ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                           30);
     MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
-    Script_PlayCue(SE_145);
+    Script_PlaySong(SE_145);
     Engine_ScriptWait(40);
     MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
-    Script_PlayCue(SE_145);
+    Script_PlaySong(SE_145);
     Engine_ScriptWait(20);
     ObjectEvent_SetAttachedEffect(
         LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1518,8 +1518,8 @@ static void EventScript_WatchBoulderFall(void) {
     Script_ShowMessageAndWait(LOCALID_ELDER_EAST_STAND_IN, 0, 20);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
     ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 20);
-    Camera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
-    Camera_MoveTo(PIXELS(112), -1, PIXELS(331), 1);
+    FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
+    FieldCamera_MoveTo(PIXELS(112), -1, PIXELS(331), 1);
     Engine_CameraWaitForMove();
     for (i = 0; i < 40; i++) {
       ValeStorm_FlashPaletteAndSpawnEffects(
@@ -1549,35 +1549,35 @@ static void EventScript_WatchBoulderFall(void) {
     movingObjectEvent->y.fixed = boulderHeight;
     movingObjectEvent->targetY = boulderHeight;
     ObjectEvent_SetSpeed(LOCALID_BOULDER, PIXELS(4) / 5, PIXELS(2) / 5);
-    Script_PlayCue(SE_145);
+    Script_PlaySong(SE_145);
     ObjectEvent_MoveToAndWait(LOCALID_BOULDER, 114, 333);
     Engine_ObjectEventSetAnimation(LOCALID_BOULDER, ANIMATION_WALK);
     MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
-    Script_PlayCue(SE_145);
+    Script_PlaySong(SE_145);
     *shakeShift = 0;
     ObjectEvent_SetSpeed(LOCALID_BOULDER, PIXELS(2) / 5, PIXELS(1) / 5);
     ObjectEvent_MoveToAndWait(LOCALID_BOULDER, 114, 300);
     Engine_ObjectEventSetAnimation(LOCALID_BOULDER, ANIMATION_WALK);
     MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
-    Script_PlayCue(SE_145);
+    Script_PlaySong(SE_145);
     *shakeShift = 2;
     ObjectEvent_SetSpeed(LOCALID_BOULDER, PIXELS(4) / 5, PIXELS(2) / 5);
     ObjectEvent_MoveToAndWait(LOCALID_BOULDER, 114, 333);
     Engine_ObjectEventSetAnimation(LOCALID_BOULDER, ANIMATION_WALK);
     MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
-    Script_PlayCue(SE_145);
+    Script_PlaySong(SE_145);
     *shakeShift = 0;
     ObjectEvent_SetSpeed(LOCALID_BOULDER, PIXELS(2) / 5, PIXELS(1) / 5);
     ObjectEvent_MoveToAndWait(LOCALID_BOULDER, 114, 300);
     Engine_ObjectEventSetAnimation(LOCALID_BOULDER, ANIMATION_WALK);
     MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
-    Script_PlayCue(SE_145);
+    Script_PlaySong(SE_145);
     *shakeShift = 2;
     ObjectEvent_SetSpeed(LOCALID_BOULDER, PIXELS(4) / 5, PIXELS(2) / 5);
     ObjectEvent_MoveToAndWait(LOCALID_BOULDER, 114, 333);
     Engine_ObjectEventSetAnimation(LOCALID_BOULDER, ANIMATION_WALK);
     MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
-    Script_PlayCue(SE_145);
+    Script_PlaySong(SE_145);
     *shakeShift = 1;
     Engine_ScriptWait(20);
     ObjectEvent_SetAttachedEffect(LOCALID_ELDER_EAST, ATTACHED_EFFECT_IN_FRONT |
@@ -1613,19 +1613,19 @@ static void EventScript_WatchBoulderFall(void) {
                                    ANIMATION_YOUNG_ELDER_CALL_OUT);
     Engine_ScriptWait(10);
     Script_ShowMessageAndWait(LOCALID_ELDER_FAR_WEST, 0, 20);
-    Script_PlayCue(AUDIO_CUE_FADE_SLOT3);
+    Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
     MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
-    Camera_SetSpeed(PIXELS(6), PIXELS(3) / 4);
-    Camera_MoveTo(PIXELS(84), -1, PIXELS(564), 1);
+    FieldCamera_SetSpeed(PIXELS(6), PIXELS(3) / 4);
+    FieldCamera_MoveTo(PIXELS(84), -1, PIXELS(564), 1);
     Engine_CameraWaitForMove();
-    FieldEffect_PlayQueuedSound();
+    Map_PlayQueuedMusic();
     ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_PARTY_LEADER, 0);
     Engine_ScriptWait(20);
     ObjectEvent_SetAttachedEffect(LOCALID_GARET, ATTACHED_EFFECT_IN_FRONT |
                                                      ATTACHED_EFFECT_ONCE);
     Engine_ScriptWait(30);
-    Scheduler_RemoveCallback(updateEffects);
-    Scheduler_RemoveCallback(cycleBoulderPalette);
+    Task_Remove(updateEffects);
+    Task_Remove(cycleBoulderPalette);
     Script_ShowMessage(LOCALID_GARET, 0);
     ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_GARET, 0);
     Engine_ScriptWait(20);
@@ -1658,7 +1658,7 @@ static void EventScript_WatchBoulderFall(void) {
 static void ValeStorm_SetObjectEventFrameMode(struct ObjectEvent *objectEvent,
                                               s32 mode) {
   if ((objectEvent->spriteStorageKind & 0xf) == 1) {
-    struct AnimationObject *animation = objectEvent->sprite;
+    struct Sprite *animation = objectEvent->sprite;
     s32 animationParameter = mode - 1;
     u8 count;
     if (mode == 0) {
@@ -1668,10 +1668,10 @@ static void ValeStorm_SetObjectEventFrameMode(struct ObjectEvent *objectEvent,
     }
     count = animation->count;
     if (count != 0) {
-      struct AnimationEntry **entries = animation->entries;
+      struct SpriteAnim **entries = animation->entries;
       s32 remainingEntries = count;
       do {
-        struct AnimationEntry *entry = *entries++;
+        struct SpriteAnim *entry = *entries++;
         if (entry != NULL && entry->script != NULL) {
           entry->colorMode = animationParameter;
         }
@@ -1781,8 +1781,8 @@ static void EventScript_WatchAttemptToSaveFelix(void) {
   Engine_ScriptWait(40);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH, 20);
-  Camera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
-  Camera_MoveTo(PIXELS(216), -1, PIXELS(1232), 1);
+  FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
+  FieldCamera_MoveTo(PIXELS(216), -1, PIXELS(1232), 1);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(40);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_KYLE, 2);
@@ -1792,8 +1792,8 @@ static void EventScript_WatchAttemptToSaveFelix(void) {
   Engine_ObjectEventSetAnimationAndWait(LOCALID_DORA, ANIMATION_NOD);
   Engine_ScriptShowMessageAndWait(LOCALID_DORA, 0, 10);
   ObjectEvent_FaceDirection(LOCALID_DORA, FACING_SOUTHEAST + FACING_STEP, 10);
-  Camera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
-  Camera_MoveTo(PIXELS(232), -1, PIXELS(1253), 1);
+  FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
+  FieldCamera_MoveTo(PIXELS(232), -1, PIXELS(1253), 1);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(20);
   Engine_AudioPlayCue(SE_HEAVY_IMPACT);
@@ -1802,7 +1802,7 @@ static void EventScript_WatchAttemptToSaveFelix(void) {
   Engine_ScriptWait(10);
   Engine_ObjectEventSetPosition(LOCALID_FELIX, 0, 0);
   Engine_ScriptWait(60);
-  FieldEffect_PlayQueuedSound();
+  Map_PlayQueuedMusic();
   Engine_ObjectEventSetAnimation(LOCALID_KYLE, ANIMATION_STAND);
   {
     struct ObjectEvent *objectEvent;
@@ -1829,8 +1829,8 @@ static void EventScript_WatchAttemptToSaveFelix(void) {
   Engine_ObjectEventStartRepeatedMotion(LOCALID_JENNAS_FATHER, 2);
   Engine_ObjectEventStartRepeatedMotion(LOCALID_JENNAS_MOTHER, 2);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_JENNA, 2);
-  Camera_SetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
-  Camera_MoveTo(PIXELS(216), -1, PIXELS(1232), 1);
+  FieldCamera_SetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
+  FieldCamera_MoveTo(PIXELS(216), -1, PIXELS(1232), 1);
   Engine_CameraWaitForMove();
   ObjectEvent_SetAttachedEffect(LOCALID_JENNA, ATTACHED_EFFECT_IN_FRONT |
                                                    ATTACHED_EFFECT_ONCE);
@@ -1845,7 +1845,7 @@ static void EventScript_WatchAttemptToSaveFelix(void) {
   Engine_ObjectEventJump(LOCALID_JENNA, 2, 0);
   ObjectEvent_SetDestination(LOCALID_JENNA, 227, 1201);
   Engine_ScriptWait(90);
-  Camera_MoveTo(PIXELS(232), -1, PIXELS(1253), 1);
+  FieldCamera_MoveTo(PIXELS(232), -1, PIXELS(1253), 1);
   Engine_CameraWaitForMove();
   Engine_ObjectEventSetPosition(LOCALID_FELIX, PIXELS(243), PIXELS(1277));
   Engine_TaskWait(1);
@@ -1858,7 +1858,7 @@ static void EventScript_WatchAttemptToSaveFelix(void) {
   Engine_ScriptWait(6);
   Engine_ObjectEventSetAnimation(LOCALID_FELIX, ANIMATION_FELIX_CLING);
   Engine_ScriptWait(20);
-  FieldEffect_PlayQueuedSound();
+  Map_PlayQueuedMusic();
   Engine_ScriptWait(20);
   Engine_CameraSetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
   Engine_CameraMoveTo(PIXELS(216), -1, PIXELS(1232), 1);
@@ -1990,21 +1990,21 @@ static void ValeStorm_DoraGoesForHelp(void) {
   Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIMATION_NOD);
   Engine_ObjectEventSetAnimationAndWait(LOCALID_JENNAS_MOTHER, ANIMATION_NOD);
   Engine_ScriptWait(20);
-  Camera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
-  Camera_MoveTo(PIXELS(134), -1, PIXELS(1195), 1);
+  FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
+  FieldCamera_MoveTo(PIXELS(134), -1, PIXELS(1195), 1);
   ObjectEvent_SetSpeed(LOCALID_JENNA, PIXELS(8) / 5, PIXELS(4) / 5);
   ObjectEvent_SetSpeed(LOCALID_DORA, PIXELS(8) / 5, PIXELS(4) / 5);
   ObjectEvent_SetActionScript(LOCALID_JENNA,
                               gValeStorm_JennaRunsIntoRiversideHouse);
   ObjectEvent_RunActionScriptAndWait(LOCALID_DORA,
                                      gValeStorm_DoraRunsIntoRiversideHouse);
-  Script_PlayCue(SE_DOOR_OPEN);
+  Script_PlaySong(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gValeStorm_GrandparentsDoorOpens, 38, 72);
   Engine_ScriptWait(10);
   ObjectEvent_WalkToAndWait(LOCALID_DORA, 149, 1175);
   ObjectEvent_SetPosition(LOCALID_DORA, 0, 0);
   ObjectEvent_WalkToAndWait(LOCALID_JENNAS_MOTHER, 250, 1214);
-  FieldEffect_PlayQueuedSound();
+  Map_PlayQueuedMusic();
   ObjectEvent_FaceDirection(LOCALID_KYLE, FACING_SOUTHEAST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_JENNAS_FATHER,
                             FACING_SOUTHEAST + FACING_STEP, 0);
@@ -2030,25 +2030,25 @@ static void ValeStorm_DoraGoesForHelp(void) {
   ObjectEvent_SetActionScript(LOCALID_JENNAS_MOTHER, script);
   ObjectEvent_RefreshSelectorById(LOCALID_JENNA);
   Engine_ScriptWait(10);
-  Script_PlayCue(SE_159);
+  Script_PlaySong(SE_159);
   MapGrid_AnimateCells(gValeStorm_GrandparentsDoorCloses, 38, 72);
   Engine_ScriptWait(30);
-  FieldEffect_PlayQueuedSound();
-  Camera_MoveTo(PIXELS(112), -1, PIXELS(1225), 1);
-  Script_PlayCue(SE_DOOR_OPEN);
+  Map_PlayQueuedMusic();
+  FieldCamera_MoveTo(PIXELS(112), -1, PIXELS(1225), 1);
+  Script_PlaySong(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gValeStorm_IsaacsDoorOpens, 35, 73);
   Engine_ScriptWait(20);
-  FieldEffect_PlayQueuedSound();
+  Map_PlayQueuedMusic();
   ObjectEvent_SetActionScript(LOCALID_DORA,
                               gValeStorm_DoraComesOutOfRiversideHouse);
   Engine_ScriptWait(20);
   ObjectEvent_SetActionScript(LOCALID_JENNA,
                               gValeStorm_JennaComesOutOfRiversideHouse);
   Engine_ScriptWait(40);
-  Script_PlayCue(SE_159);
+  Script_PlaySong(SE_159);
   MapGrid_AnimateCells(gValeStorm_IsaacsDoorCloses, 35, 73);
   ObjectEvent_RefreshSelectorById(LOCALID_JENNA);
-  FieldEffect_PlayQueuedSound();
+  Map_PlayQueuedMusic();
   Engine_ScriptWait(40);
   northMessage = MsgValeGoLookNorth;
   Engine_ScriptSetMessage(northMessage);
@@ -2061,8 +2061,8 @@ static void ValeStorm_DoraGoesForHelp(void) {
   ObjectEvent_SetActionScript(LOCALID_DORA, gValeStorm_DoraHeadsNorth);
   ObjectEvent_SetActionScript(LOCALID_JENNA, gValeStorm_JennaHeadsForPlaza);
   Engine_ScriptWait(40);
-  Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
-  Camera_MoveTo(PIXELS(105), -1, PIXELS(1086), 1);
+  FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
+  FieldCamera_MoveTo(PIXELS(105), -1, PIXELS(1086), 1);
   ObjectEvent_RefreshSelectorById(LOCALID_DORA);
   ObjectEvent_FaceDirection(LOCALID_DORA, FACING_EAST, 0);
   ObjectEvent_ShowEmote(LOCALID_DORA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
@@ -2170,7 +2170,7 @@ static void EventScript_BoulderSweepsThemAway(void) {
   struct ObjectEvent *leader;
   struct ObjectEvent *objectEvent;
   s32 automaticPriority;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
 
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM_SENT_TO_AID_ELDERS) == 0) {
   } else {
@@ -2227,12 +2227,12 @@ static void EventScript_BoulderSweepsThemAway(void) {
                                       10);
       ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_NORTHWEST, 0);
       Engine_CameraSetSpeed(PIXELS(6) / 5, PIXELS(3) / 20);
-      Camera_MoveTo(PIXELS(101), -1, PIXELS(1197), 1);
+      FieldCamera_MoveTo(PIXELS(101), -1, PIXELS(1197), 1);
       ObjectEvent_SetSpeed(LOCALID_DORA, PIXELS(7) / 5, PIXELS(7) / 10);
       ObjectEvent_SetActionScript(LOCALID_DORA, gValeStorm_DoraRunsToRiver);
       Engine_ScriptWait(60);
       Engine_CameraSetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
-      Camera_MoveTo(PIXELS(187), -1, PIXELS(1328), 1);
+      FieldCamera_MoveTo(PIXELS(187), -1, PIXELS(1328), 1);
       Engine_CameraWaitForMove();
       Engine_ScriptWait(40);
       Engine_ObjectEventRunRepeatedMotion(LOCALID_JENNA, 2);
@@ -2241,7 +2241,7 @@ static void EventScript_BoulderSweepsThemAway(void) {
       Engine_ScriptShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_DORA, 0,
                                       20);
       Engine_CameraSetSpeed(PIXELS(2), PIXELS(1) / 4);
-      Camera_MoveTo(PIXELS(221), -1, PIXELS(1385), 1);
+      FieldCamera_MoveTo(PIXELS(221), -1, PIXELS(1385), 1);
       Engine_ObjectEventFaceObjectEvent(LOCALID_PARTY_LEADER,
                                         LOCALID_EXHAUSTED_STRONGMAN, 0);
       Engine_ObjectEventFaceObjectEvent(LOCALID_GARET,
@@ -2312,7 +2312,7 @@ ValeStorm_PlaceObjectEvent(struct ObjectEvent *objectEvent,
 static __inline__ void ValeStorm_PlayImpactBeat(s32 shakeAmplitude,
                                                 s32 frames) {
   MapGrid_SetShake(shakeAmplitude, shakeAmplitude, Q16_ONE);
-  Script_PlayCue(SE_145);
+  Script_PlaySong(SE_145);
   Script_Wait(frames);
 }
 
@@ -2327,8 +2327,8 @@ static __inline__ void ValeStorm_PlayImpactBeat(s32 shakeAmplitude,
 /// (places/vale-storm/events/EventScript_BoulderSweepsThemAway.gif) shows the
 /// descent.
 static void ValeStorm_ShowBoulderSweepingDownriver(void) {
-  struct AnimationObject *objectEventVisual;
-  struct AnimationObject *groupVisual;
+  struct Sprite *objectEventVisual;
+  struct Sprite *groupVisual;
   struct ObjectEvent *objectEvent;
   struct ObjectEvent *lookingObjectEvent;
   struct ObjectEvent *groupObjectEvent;
@@ -2345,8 +2345,8 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   groupObjectEvent = ObjectEvent_Get(LOCALID_BOULDER_SHADOW);
   objectEventVisual = objectEvent->sprite;
   groupVisual = groupObjectEvent->sprite;
-  Camera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
-  Camera_MoveTo(PIXELS(110), -1, PIXELS(1419), 1);
+  FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
+  FieldCamera_MoveTo(PIXELS(110), -1, PIXELS(1419), 1);
   ObjectEvent_SetSpeed(LOCALID_EXHAUSTED_STRONGMAN, PIXELS(6) / 5,
                        PIXELS(3) / 5);
   ObjectEvent_SetSpeed(LOCALID_JENNA, PIXELS(6) / 5, PIXELS(3) / 5);
@@ -2357,17 +2357,17 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   ObjectEvent_SetActionScript(LOCALID_EXHAUSTED_STRONGMAN, entryActions);
   Script_Wait(10);
   ObjectEvent_SetActionScript(LOCALID_JENNA, entryActions);
-  FieldEffect_LastLightning();
+  Weather_LastLightning();
   Script_Wait(10);
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER, entryActions);
   Script_Wait(10);
-  FieldEffect_StopLightning();
+  Weather_StopLightning();
   ObjectEvent_SetActionScript(LOCALID_GARET, entryActions);
   Script_Wait(128);
   EventScript_ClearPathCellOverride();
-  Camera_MoveTo(PIXELS(174), -1, PIXELS(1428), 1);
+  FieldCamera_MoveTo(PIXELS(174), -1, PIXELS(1428), 1);
   Script_Wait(104);
-  Camera_MoveTo(PIXELS(153), -1, PIXELS(1325), 1);
+  FieldCamera_MoveTo(PIXELS(153), -1, PIXELS(1325), 1);
   ObjectEvent_WalkToAndWait(LOCALID_DORA, 158, 1272);
   ObjectEvent_FaceDirection(LOCALID_DORA, FACING_SOUTHEAST, 0);
   ObjectEvent_RefreshSelectorById(LOCALID_EXHAUSTED_STRONGMAN);
@@ -2416,7 +2416,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   ObjectEvent_SetActionScript(LOCALID_GARET, lookAroundActions);
   ObjectEvent_SetActionScript(LOCALID_EXHAUSTED_STRONGMAN, lookAroundActions);
   Script_Wait(10);
-  Script_PlayCue(AUDIO_CUE_FADE_BGM);
+  Script_PlaySong(SONG_FADE_OUT_BGM);
   ValeStorm_PlayImpactBeat(PIXELS(3), 30);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Script_Wait(120);
@@ -2429,13 +2429,13 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   ValeStorm_PlayImpactBeat(PIXELS(3), 40);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Script_Wait(60);
-  FieldEffect_StopLightning();
+  Weather_StopLightning();
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Script_Wait(1);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
-  Camera_SetSpeed(PIXELS(8), PIXELS(8));
-  Camera_MoveTo(PIXELS(217), -1, PIXELS(1084), 1);
-  ColorBuffer_ApplyTarget(RGB(0, 0, 0), PALETTE_HALVES_BOTH);
+  FieldCamera_SetSpeed(PIXELS(8), PIXELS(8));
+  FieldCamera_MoveTo(PIXELS(217), -1, PIXELS(1084), 1);
+  PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
   Engine_ColorBufferInterpolate(40);
   Task_Wait(40);
   // Stage the boulder and its shadow for the downriver camera shot.
@@ -2452,53 +2452,53 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   objectEvent->motionFlags = stoppedMotion;
   objectEvent->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   objectEventVisual->image.priority = 0;
-  currentObjectEvent = Camera_GetScriptObject();
+  currentObjectEvent = FieldCamera_GetScriptObject();
   currentObjectEvent->targetX = OBJ_EVENT_NO_TARGET;
-  currentObjectEvent = Camera_GetScriptObject();
+  currentObjectEvent = FieldCamera_GetScriptObject();
   currentObjectEvent->targetY = OBJ_EVENT_NO_TARGET;
-  currentObjectEvent = Camera_GetScriptObject();
+  currentObjectEvent = FieldCamera_GetScriptObject();
   currentObjectEvent->targetZ = OBJ_EVENT_NO_TARGET;
-  currentObjectEvent = Camera_GetScriptObject();
+  currentObjectEvent = FieldCamera_GetScriptObject();
   currentObjectEvent->velocityX = stoppedVelocity;
-  currentObjectEvent = Camera_GetScriptObject();
+  currentObjectEvent = FieldCamera_GetScriptObject();
   currentObjectEvent->velocityY = stoppedVelocity;
-  currentObjectEvent = Camera_GetScriptObject();
+  currentObjectEvent = FieldCamera_GetScriptObject();
   currentObjectEvent->velocityZ = stoppedVelocity;
   Task_Wait(1);
-  Camera_MoveTo(PIXELS(247), PIXELS(128), PIXELS(917), 0);
+  FieldCamera_MoveTo(PIXELS(247), PIXELS(128), PIXELS(917), 0);
   Engine_MapGridRedraw();
   Task_Wait(1);
-  ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_WARM, PALETTE_HALF_BG);
-  ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, PALETTE_HALF_OBJ);
+  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   Engine_ColorBufferInterpolate(30);
   Task_Wait(30);
   // Follow the boulder script until its eighth movement phase.
   FieldScheduler_AddCallback(ValeStorm_UpdateBoulderShadow, TASK_PRIORITY_MAP);
   ObjectEvent_SetActionScript(LOCALID_BOULDER,
                               gValeStorm_BoulderRollsDownriver);
-  Camera_SetSpeed(PIXELS(2), PIXELS(3) / 100);
-  Camera_MoveTo(PIXELS(175), PIXELS(96), PIXELS(1086), 1);
+  FieldCamera_SetSpeed(PIXELS(2), PIXELS(3) / 100);
+  FieldCamera_MoveTo(PIXELS(175), PIXELS(96), PIXELS(1086), 1);
   do {
     Task_Wait(1);
   } while ((s16)objectEvent->work != 8);
-  ColorBuffer_ApplyTarget(RGB(0, 0, 0), PALETTE_HALVES_BOTH);
+  PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
   Engine_ColorBufferInterpolate(60);
   Task_Wait(60);
   Engine_MapGridWaitForShakeToSettle();
-  currentObjectEvent = Camera_GetScriptObject();
+  currentObjectEvent = FieldCamera_GetScriptObject();
   currentObjectEvent->targetX = OBJ_EVENT_NO_TARGET;
-  currentObjectEvent = Camera_GetScriptObject();
+  currentObjectEvent = FieldCamera_GetScriptObject();
   currentObjectEvent->targetY = OBJ_EVENT_NO_TARGET;
-  currentObjectEvent = Camera_GetScriptObject();
+  currentObjectEvent = FieldCamera_GetScriptObject();
   currentObjectEvent->targetZ = OBJ_EVENT_NO_TARGET;
   resetValue = 0;
-  currentObjectEvent = Camera_GetScriptObject();
+  currentObjectEvent = FieldCamera_GetScriptObject();
   currentObjectEvent->velocityX = resetValue;
-  currentObjectEvent = Camera_GetScriptObject();
+  currentObjectEvent = FieldCamera_GetScriptObject();
   currentObjectEvent->velocityY = resetValue;
-  currentObjectEvent = Camera_GetScriptObject();
+  currentObjectEvent = FieldCamera_GetScriptObject();
   currentObjectEvent->velocityZ = resetValue;
-  Scheduler_RemoveCallback(ValeStorm_UpdateBoulderShadow);
+  Task_Remove(ValeStorm_UpdateBoulderShadow);
   ObjectEvent_Stop(LOCALID_BOULDER);
   Task_Wait(1);
   ObjectEvent_SetAnimation(LOCALID_BOULDER, ANIMATION_STILL);
@@ -2532,7 +2532,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   ObjectEvent_SetPosition(LOCALID_GARET, PIXELS(169), PIXELS(1384));
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH, 0);
   ObjectEvent_SetAnimation(LOCALID_GARET, ANIMATION_STILL);
-  Camera_MoveTo(PIXELS(166), 0, PIXELS(1337), 0);
+  FieldCamera_MoveTo(PIXELS(166), 0, PIXELS(1337), 0);
   Engine_MapGridRedraw();
   objectEvent->motionFlags = resetValue;
   objectEvent->targetX = OBJ_EVENT_NO_TARGET;
@@ -2540,7 +2540,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   objectEvent->targetZ = OBJ_EVENT_NO_TARGET;
   ValeStorm_FlashLightning();
   ObjectEvent_SetPosition(LOCALID_BOULDER_SHADOW, PIXELS(218), PIXELS(1176));
-  Camera_MoveTo(PIXELS(210), 0, PIXELS(1196), 0);
+  FieldCamera_MoveTo(PIXELS(210), 0, PIXELS(1196), 0);
   Engine_MapGridRedraw();
   groupObjectEvent->scaleX = 2 * Q16_ONE;
   groupObjectEvent->scaleY = 2 * Q16_ONE;
@@ -2587,30 +2587,30 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   ObjectEvent_FaceDirection(LOCALID_JENNAS_FATHER, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(LOCALID_JENNAS_MOTHER, FACING_NORTH, 20);
   GameFlag_Set(FLAG_WEATHER_HELD);
-  TileAnimation_PauseChannel(0);
-  TileAnimation_PauseChannel(1);
-  TileAnimation_PauseChannel(2);
-  TileAnimation_PauseChannel(3);
-  TileAnimation_PauseChannel(4);
-  TileAnimation_PauseChannel(5);
-  ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_WARM, PALETTE_HALF_BG);
-  ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, PALETTE_HALF_OBJ);
+  TilesetAnim_Pause(0);
+  TilesetAnim_Pause(1);
+  TilesetAnim_Pause(2);
+  TilesetAnim_Pause(3);
+  TilesetAnim_Pause(4);
+  TilesetAnim_Pause(5);
+  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   Engine_ColorBufferInterpolate(120);
   Task_Wait(160);
-  ColorBuffer_ApplyTarget(RGB(31, 31, 31), PALETTE_HALF_BG);
-  ColorBuffer_ApplyTarget(RGB(31, 31, 31), PALETTE_HALF_OBJ);
+  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_BG);
+  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_OBJECTS);
   Engine_ColorBufferInterpolate(80);
   Script_Wait(80);
   Script_Wait(100);
-  Scheduler_RemoveCallback(ValeStorm_FlickerBoulderShadow);
+  Task_Remove(ValeStorm_FlickerBoulderShadow);
   groupVisual->scale = groupObjectEvent->scaleX;
   GameFlag_Clear(FLAG_WEATHER_HELD);
-  TileAnimation_ResumeChannel(0);
-  TileAnimation_ResumeChannel(1);
-  TileAnimation_ResumeChannel(2);
-  TileAnimation_ResumeChannel(3);
-  TileAnimation_ResumeChannel(4);
-  TileAnimation_ResumeChannel(5);
+  TilesetAnim_Resume(0);
+  TilesetAnim_Resume(1);
+  TilesetAnim_Resume(2);
+  TilesetAnim_Resume(3);
+  TilesetAnim_Resume(4);
+  TilesetAnim_Resume(5);
   // Restore the riverbank and the idle object event scripts.
   ValeStorm_RebuildRiverbank();
   ObjectEvent_SetPosition(LOCALID_DORA, PIXELS(165), PIXELS(1229));
@@ -2658,7 +2658,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   currentObjectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   currentObjectEvent->facing = FACING_NORTHEAST;
   ObjectEvent_SetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
-  Camera_MoveTo(PIXELS(181), 0, PIXELS(1273), 0);
+  FieldCamera_MoveTo(PIXELS(181), 0, PIXELS(1273), 0);
   Engine_MapGridRedraw();
   ObjectEvent_SetPosition(LOCALID_KYLE, 0, 0);
   ObjectEvent_SetPosition(LOCALID_BOULDER, 0, 0);
@@ -2669,43 +2669,43 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   ObjectEvent_SetPosition(LOCALID_FIRST_ROCK + 6, PIXELS(144), PIXELS(1070));
   ObjectEvent_SetPosition(LOCALID_FIRST_ROCK + 7, PIXELS(276), PIXELS(1270));
   Task_Wait(60);
-  ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_WARM, PALETTE_HALF_BG);
-  ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, PALETTE_HALF_OBJ);
+  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   Engine_ColorBufferInterpolate(80);
   Script_Wait(60);
-  FieldEffect_PlayQueuedSound();
+  Map_PlayQueuedMusic();
   Script_Wait(60);
-  Party_RemoveOwnerRestored(1);
-  FieldEffect_ResumeLightning();
+  Party_RemoveMemberRestored(1);
+  Weather_ResumeLightning();
 }
 
 /// A lightning flash that freezes the picture: holds the rain
-/// (FLAG_WEATHER_HELD) and pauses the map's tile animation channels 0 to 5,
-/// shows the scene in PALETTE_TRANSFORM_WARM for two seconds, fades it to
+/// (FLAG_WEATHER_HELD) and pauses the map's tileset animations 0 to 5,
+/// shows the scene in PALETTE_TINT_WARM for two seconds, fades it to
 /// black, then lets the rain and the animations run again.
 static void ValeStorm_FlashLightning(void) {
   Engine_TaskWait(20);
   GameFlag_Set(FLAG_WEATHER_HELD);
-  TileAnimation_PauseChannel(0);
-  TileAnimation_PauseChannel(1);
-  TileAnimation_PauseChannel(2);
-  TileAnimation_PauseChannel(3);
-  TileAnimation_PauseChannel(4);
-  TileAnimation_PauseChannel(5);
-  ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_WARM, PALETTE_HALF_BG);
-  ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, PALETTE_HALF_OBJ);
+  TilesetAnim_Pause(0);
+  TilesetAnim_Pause(1);
+  TilesetAnim_Pause(2);
+  TilesetAnim_Pause(3);
+  TilesetAnim_Pause(4);
+  TilesetAnim_Pause(5);
+  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   Engine_ColorBufferInterpolate(1);
   Engine_TaskWait(120);
-  ColorBuffer_ApplyTarget(RGB(0, 0, 0), PALETTE_HALVES_BOTH);
+  PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
   Engine_ColorBufferInterpolate(60);
   Engine_TaskWait(60);
   GameFlag_Clear(FLAG_WEATHER_HELD);
-  TileAnimation_ResumeChannel(0);
-  TileAnimation_ResumeChannel(1);
-  TileAnimation_ResumeChannel(2);
-  TileAnimation_ResumeChannel(3);
-  TileAnimation_ResumeChannel(4);
-  TileAnimation_ResumeChannel(5);
+  TilesetAnim_Resume(0);
+  TilesetAnim_Resume(1);
+  TilesetAnim_Resume(2);
+  TilesetAnim_Resume(3);
+  TilesetAnim_Resume(4);
+  TilesetAnim_Resume(5);
 }
 
 /// The callback that keeps LOCALID_BOULDER_SHADOW on the Boulder as it comes
@@ -2715,7 +2715,7 @@ static void ValeStorm_FlashLightning(void) {
 static void ValeStorm_UpdateBoulderShadow(void) {
   struct ObjectEvent *source;
   struct ObjectEvent *shadow;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
   s16 *timer;
 
   source = ObjectEvent_GetById(LOCALID_BOULDER);
@@ -2773,7 +2773,7 @@ static void ValeStorm_UpdateBoulderShadow(void) {
 static void ValeStorm_FlickerBoulderShadow(void) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_BOULDER_SHADOW);
   u32 frame = gFrameCount;
-  struct AnimationObject *sprite = objectEvent->sprite;
+  struct Sprite *sprite = objectEvent->sprite;
 
   if (frame & 1) {
     sprite->offsetY = 2;
@@ -2865,9 +2865,9 @@ static void EventScript_StrongmanTriesToGoForHelp(void) {
 /// meet the strangers on the way (vale_gate.c).
 static void ValeStorm_GaretFollowsIsaac(void) {
   Engine_ScriptStart();
-  Camera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   Engine_ObjectEventStop(LOCALID_GARET);
-  Scheduler_RemoveCallback(ValeStorm_CopyLeaderSpritePriority);
+  Task_Remove(ValeStorm_CopyLeaderSpritePriority);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 480, 1392);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, 0, 0);
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST + FACING_STEP, 20);
@@ -2878,8 +2878,8 @@ static void ValeStorm_GaretFollowsIsaac(void) {
   Script_ShowMessage(SPEAKER_PORTRAIT_LEFT | LOCALID_GARET, 0);
   ObjectEvent_SetPosition(LOCALID_GARET, PIXELS(172), PIXELS(1278));
   Engine_TaskWait(1);
-  Camera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
-  Camera_MoveTo(PIXELS(162), 0, PIXELS(1285), 1);
+  FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
+  FieldCamera_MoveTo(PIXELS(162), 0, PIXELS(1285), 1);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(40);
   Engine_ObjectEventSetAnimationAndWait(LOCALID_GARET, ANIMATION_SHAKE_HEAD);
@@ -2925,9 +2925,8 @@ static void EventScript_FightThirdMonster(void) {
   struct EventWork *state;
 
   Engine_ScriptStart();
-  state = gEventWork;
-  state->startTransition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
+  state = gFieldWork;
+  state->transition = MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   state->transitionFrames = 64;
   Engine_GameFlagSet(FLAG_VALE_STORM_THIRD_MONSTER_FOUGHT);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 2);
@@ -2943,9 +2942,8 @@ static void EventScript_FightFourthMonster(void) {
   struct EventWork *state;
 
   Engine_ScriptStart();
-  state = gEventWork;
-  state->startTransition =
-      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
+  state = gFieldWork;
+  state->transition = MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   state->transitionFrames = 64;
   Engine_GameFlagSet(FLAG_VALE_STORM_FOURTH_MONSTER_FOUGHT);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 3);
@@ -3012,8 +3010,8 @@ static void ValeStorm_CycleObjectPalettes(struct ObjectEvent *objectEvent) {
 static void ValeStorm_SpawnEffectPair(struct ObjectEvent *parent) {
   struct ObjectEvent *pair[2];
   struct ObjectEvent *child;
-  struct AnimationObject *sprite;
-  struct FieldEffectWork *effectWork = gEffectWork;
+  struct Sprite *sprite;
+  struct FieldEffectWork *effectWork = gFieldEffectWork;
   s32 i;
 
   Engine_AudioPlayCue(SE_JUMP);
@@ -3022,7 +3020,7 @@ static void ValeStorm_SpawnEffectPair(struct ObjectEvent *parent) {
                                 parent->z.fixed);
     pair[i] = child;
     if (child != NULL) {
-      child->terrainHeight = parent->terrainHeight;
+      child->groundHeight = parent->groundHeight;
       sprite = child->sprite;
       child->motionFlags = 0;
       child->timer = 0;
@@ -3030,11 +3028,11 @@ static void ValeStorm_SpawnEffectPair(struct ObjectEvent *parent) {
       if (sprite != NULL) {
         Object_InitializeMode(sprite, 0);
         sprite->flags = 0;
-        Resource_ResetEntry(sprite->slot);
+        VramCache_FreeEntry(sprite->slot);
         sprite->slot = effectWork->tileSlot;
         sprite->retainCacheEntry = 1;
         sprite->image.tile =
-            (gVramBlockCache[sprite->slot].offset >> 5) & 0x3ff;
+            (gVramCacheEntries[sprite->slot].offset >> 5) & 0x3ff;
         sprite->image.fullColor = 0;
         sprite->image.shape = 1;
         sprite->image.size = 2;
@@ -3044,14 +3042,14 @@ static void ValeStorm_SpawnEffectPair(struct ObjectEvent *parent) {
   }
   {
     struct ObjectEvent *effect = pair[0];
-    struct AnimationObject *effectSprite = effect->sprite;
+    struct Sprite *effectSprite = effect->sprite;
 
     effect->update = FieldEffect_AnimateVerticalNegative;
     effectSprite->image.priority = parent->sprite->image.priority;
   }
   {
     struct ObjectEvent *effect = pair[1];
-    struct AnimationObject *effectSprite = effect->sprite;
+    struct Sprite *effectSprite = effect->sprite;
 
     effectSprite->image.priority = parent->sprite->image.priority;
     effect->update = FieldEffect_AnimateVerticalPositive;
@@ -3084,10 +3082,10 @@ static void ValeStorm_CycleBoulderPalette(void) {
 /// Keeps Garet and the man who came to help (LOCALID_EXHAUSTED_STRONGMAN) at
 /// the leader's sprite priority while they stand by the river.
 static void ValeStorm_CopyLeaderSpritePriority(void) {
-  struct AnimationObject *sourceSprite;
+  struct Sprite *sourceSprite;
 #if !TBS_PATCH_3
-  struct AnimationObject *targetSprite;
-  struct AnimationObject *secondTargetSprite;
+  struct Sprite *targetSprite;
+  struct Sprite *secondTargetSprite;
 #endif
 
   sourceSprite = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->sprite;
@@ -3443,61 +3441,61 @@ u32 gValeStorm_Warps[] = {
 // clang-format off
 struct ObjectEventTemplate gValeStorm_ObjectEventTemplates[] = {
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_DORA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_KYLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(437), 0, PIXELS(762), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(437), 0, PIXELS(762), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(322), 0, PIXELS(1433), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(322), 0, PIXELS(1433), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(144), 0, PIXELS(1070), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(144), 0, PIXELS(1070), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(276), 0, PIXELS(1270), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(276), 0, PIXELS(1270), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_STOUT_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_CHEST_OF_VALUABLES, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(420), 0, PIXELS(619), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(420), 0, PIXELS(619), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { GARET_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(396), 0, PIXELS(619), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(396), 0, PIXELS(619), FACING_EAST, TALK_FACING_PARTY, 0 },
     { FELIX_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_IN_GREEN_SHIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WOMAN_WITH_PINK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { JENNA_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { 0x120, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gValeStorm_BoulderWatchers[] = {
     { SPRITE_BLANK, CONDITION_ALWAYS, 7,
-        PIXELS(124), 0, PIXELS(375), FACING_NORTHWEST + FACING_STEP, TALK_KEEP_FACING, 0 },
+        PIXELS(124), 0, PIXELS(375), FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(85), 0, PIXELS(361), FACING_NORTH + FACING_STEP, TALK_KEEP_FACING, 0 },
+        PIXELS(85), 0, PIXELS(361), FACING_NORTH + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(135), 0, PIXELS(363), FACING_NORTHWEST + FACING_STEP, TALK_KEEP_FACING, 0 },
+        PIXELS(135), 0, PIXELS(363), FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, 7,
-        PIXELS(100), 0, PIXELS(375), FACING_NORTH + FACING_STEP, TALK_KEEP_FACING, 0 },
+        PIXELS(100), 0, PIXELS(375), FACING_NORTH + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(124), 0, PIXELS(375), FACING_NORTHWEST + FACING_STEP, TALK_KEEP_FACING, 0 },
+        PIXELS(124), 0, PIXELS(375), FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(100), 0, PIXELS(375), FACING_NORTH + FACING_STEP, TALK_KEEP_FACING, 0 },
+        PIXELS(100), 0, PIXELS(375), FACING_NORTH + FACING_STEP, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 // clang-format on
@@ -3587,9 +3585,9 @@ struct MapEvent gValeStorm_Events[] = {
      EVENT_SCRIPT(EventScript_FightThirdMonster)},
     {MAP_EVENT_COORD, 17, FLAG_VALE_STORM_FOURTH_MONSTER_FOUGHT,
      EVENT_SCRIPT(EventScript_FightFourthMonster)},
-    {BG_EVENT(BG_EVENT_UNNAMED), 24, CONDITION_ALWAYS,
+    {BG_EVENT(BG_EVENT_SILENT), 24, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_SearchBrokenDoor)},
-    {BG_EVENT(BG_EVENT_UNNAMED), 19, CONDITION_ALWAYS,
+    {BG_EVENT(BG_EVENT_SILENT), 19, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_SearchValuablesChest)},
     {MAP_EVENTS_END},
 };

@@ -13,14 +13,14 @@
 /// PSYNERGY_PHASE_EFFECT_ACTS event is not run here; it only makes
 /// the effect aim at the object event ahead, and the effects that act on it
 /// (Force, Frost, Reveal) find it themselves. An after event whose trigger has
-/// MAP_EVENT_TRIGGER_OWN_EFFECT plays the effect itself. Called by Field_RunMap
-/// for the Psynergy request (work->psynergy); sets work->resolvingAction while
+/// MAP_EVENT_TRIGGER_OWN_EFFECT plays the effect itself. Called by Map_Run
+/// for the Psynergy request (work->psynergy); sets work->psynergyActing while
 /// the effect plays. On the world map, placed object events far from the view
 /// are destroyed for the effect, and all placed object events are placed again
-/// afterwards. Returns 0 whatever happens; Field_RunMap ignores it.
+/// afterwards. Returns 0 whatever happens; Map_Run ignores it.
 s32 Field_UsePsynergy(u32 code) {
   s32 abilityId = ABILITY_ID(code);
-  struct FieldWork *work = (struct FieldWork *)gEventWork;
+  struct FieldWork *work = (struct FieldWork *)gFieldWork;
   const struct MapEvent *before;
   const struct MapEvent *after;
   const struct MapEvent *during;
@@ -31,10 +31,10 @@ s32 Field_UsePsynergy(u32 code) {
   s32 ppCost;
   s32 declined;
 
-  abilityGroup = BattleAction_Get(abilityId)->type0c;
+  abilityGroup = Ability_Get(abilityId)->fieldPsynergy;
   userId = ACT_UNIT(code);
   // The leader is looked up and the result is not used.
-  ObjectTable_Get(gGameState.selectedLocalId);
+  ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
   retreat = 0;
   Leader_StopMoving();
   GameFlag_ClearBitFar(FLAG_ITEM_USE);
@@ -46,7 +46,7 @@ s32 Field_UsePsynergy(u32 code) {
     PSYNERGY_MESSAGE(userId, abilityId, MsgNothingHappened);
     return 0;
   }
-  if (work->mode == MODE_WORLD_MAP && abilityId == ABILITY_REVEAL) {
+  if (work->mode == OBJECT_SYSTEM_WORLD_MAP && abilityId == ABILITY_REVEAL) {
     PSYNERGY_MESSAGE(userId, ABILITY_REVEAL, MsgNothingHappened);
     return 0;
   }
@@ -57,9 +57,9 @@ s32 Field_UsePsynergy(u32 code) {
       PSYNERGY_MESSAGE(userId, ABILITY_RETREAT, MsgDoesNotWorkHere);
       return 0;
     }
-    UiWork_PushValueSlotFar(ABILITY_RETREAT, 4);
-    UiText_ShowPositionedMessageAndWaitFar(MsgUseAbilityConfirm, 13);
-    declined = Menu_AskYesNo(1); // 0 is yes
+    MessageArgument_PushFar(ABILITY_RETREAT, 4);
+    FieldMessage_ShowFar(MsgUseAbilityConfirm, 13);
+    declined = FieldYesNo_Ask(1); // 0 is yes
     UiWork_FinalizePendingCoreFar();
     if (declined != 0)
       return 0;
@@ -80,7 +80,7 @@ s32 Field_UsePsynergy(u32 code) {
 
   // A party member pays the PP.
   if (userId <= ALLY_MAX) {
-    ppCost = BattleAction_Get(abilityId)->ppCost;
+    ppCost = Ability_Get(abilityId)->ppCost;
     if (Unit_GetFar(userId)->pp < ppCost) {
       PSYNERGY_MESSAGE(userId, abilityId, MsgNotEnoughPp);
       // Retreat was already accepted: take its warp back (the map and
@@ -94,18 +94,18 @@ s32 Field_UsePsynergy(u32 code) {
 
   // Find the map's events, and choose how the effect plays. The before
   // event runs before the two flags are read, so its script can change them.
-  before = FieldEffect_FindMatchingEvent(
-      PSYNERGY_EV(PSYNERGY_PHASE_BEFORE_CAST), abilityGroup, &target);
-  after = FieldEffect_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_AFTER_CAST),
-                                        abilityGroup, &target);
-  during = FieldEffect_FindMatchingEvent(
-      PSYNERGY_EV(PSYNERGY_PHASE_EFFECT_ACTS), abilityGroup, &target);
+  before = Map_FindPsynergyEvent(PSYNERGY_EVENT(PSYNERGY_PHASE_BEFORE_CAST),
+                                 abilityGroup, &target);
+  after = Map_FindPsynergyEvent(PSYNERGY_EVENT(PSYNERGY_PHASE_AFTER_CAST),
+                                abilityGroup, &target);
+  during = Map_FindPsynergyEvent(PSYNERGY_EVENT(PSYNERGY_PHASE_EFFECT_ACTS),
+                                 abilityGroup, &target);
   target = -1;
   GameFlag_SetBitFar(FLAG_PSYNERGY_EFFECT);
   GameFlag_SetBitFar(FLAG_PSYNERGY_TARGET);
   if (before || after || during) {
-    target = Field_FindNearbyPsynergyTarget(gGameState.selectedLocalId,
-                                            abilityGroup);
+    target =
+        Field_FindNearbyPsynergyTarget(gGameState.leaderLocalId, abilityGroup);
     // The after event plays the effect itself.
     if (after && (after->trigger & MAP_EVENT_TRIGGER_OWN_EFFECT)) {
       GameFlag_ClearBitFar(FLAG_PSYNERGY_EFFECT);
@@ -115,12 +115,12 @@ s32 Field_UsePsynergy(u32 code) {
     GameFlag_ClearBitFar(FLAG_PSYNERGY_TARGET);
 
   // Play the effect.
-  if (work->mode == MODE_WORLD_MAP)
-    ObjectTable_ClearOutOfBounds();
+  if (work->mode == OBJECT_SYSTEM_WORLD_MAP)
+    ObjectEvent_ClearOutOfBounds();
   FieldEffect_LoadActionEffectResources(abilityId, 0);
-  work->resolvingAction = 1;
-  FieldEffect_SetupObjectPair(gGameState.selectedLocalId, target);
-  EventObject_Initialize();
+  work->psynergyActing = 1;
+  FieldEffect_SetupObjectPair(gGameState.leaderLocalId, target);
+  FieldEffect_StartCast();
 
   Field_RunEventAction(before, userId, target);
   if (GameFlag_TestFar(FLAG_PSYNERGY_EFFECT)) {
@@ -135,10 +135,10 @@ s32 Field_UsePsynergy(u32 code) {
     FieldEffect_FinishMindRead();
   GameFlag_ClearBitFar(FLAG_PSYNERGY_EFFECT);
   GameFlag_ClearBitFar(FLAG_PSYNERGY_TARGET);
-  work->resolvingAction = 0;
+  work->psynergyActing = 0;
   FieldEffect_End();
-  if (work->mode == MODE_WORLD_MAP)
-    ObjectTable_Respawn();
+  if (work->mode == OBJECT_SYSTEM_WORLD_MAP)
+    ObjectEvent_Respawn();
   return 0;
 }
 
@@ -148,14 +148,14 @@ s32 Field_UsePsynergy(u32 code) {
 s32 FieldEffect_HasMatchingEvent5(s32 group) {
   s32 target;
   s32 eventAddress =
-      (s32)FieldEffect_FindMatchingEvent(PSYNERGY_EV_ANY, (u16)group, &target);
+      (s32)Map_FindPsynergyEvent(PSYNERGY_EV_ANY, (u16)group, &target);
   return (u32)((-eventAddress) | eventAddress) >> 31;
 }
 
 /// Returns whether the map has an event for item and what the leader faces.
-/// Called by the item menu (menu/item.c) through FieldEffect_HasTriggerFar:
+/// Called by the item menu (menu/item.c) through Map_HasPsynergyEventFar:
 /// such an item closes the menu and is used on the field.
-u32 FieldEffect_HasTrigger(u16 item) {
+u32 Map_HasPsynergyEvent(u16 item) {
   s32 eventAddress;
 
   eventAddress = Field_FindItemEvent(item);

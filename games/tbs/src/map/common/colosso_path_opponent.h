@@ -144,7 +144,7 @@ static void Colosso_DrawGauge(void) {
   struct ObjectEvent *objectEvent;
   u32 shape;
 
-  tile = gVramBlockCache[gauge->vramBlock].offset >> 5;
+  tile = gVramCacheEntries[gauge->vramBlock].offset >> 5;
   segments = gauge->segments;
   if (gauge->hold != 0) {
     gauge->level = 2;
@@ -156,7 +156,7 @@ static void Colosso_DrawGauge(void) {
     if (++gauge->level == 1) {
       Dma_Set(gColosso_GaugePalette, (void *)&OBJ_PLTT_COLOR(14, 0),
               (DMA_ENABLE << 16) | 0x10, REG_DMA3);
-      buf = Runtime_CallAlternatePool(Runtime_BumpAllocateAlternatePool, 512);
+      buf = Runtime_CallAlternatePool(AllocEwram, 512);
       FieldResource_DecodeType01(gColosso_GaugeGraphics, buf);
       Engine_VramLoad(gauge->vramBlock, 512, buf);
       Runtime_BumpFree(buf);
@@ -175,33 +175,33 @@ static void Colosso_DrawGauge(void) {
   *dst++ = 0;
   *dst++ = (x << 16) | y | shape;
   *dst++ = tile | 0xe400;
-  Runtime_PushSlotEntry(entry++, 255);
+  Oam_AddSpriteAtDepth(entry++, 255);
   for (i = 0; i < segments; i++) {
     x = 96 - i * 16;
     shape = 0x40000000;
     *dst++ = 0;
     *dst++ = (x << 16) | y | shape;
     *dst++ = (tile + 2) | 0xe400;
-    Runtime_PushSlotEntry(entry++, 255);
+    Oam_AddSpriteAtDepth(entry++, 255);
   }
   x = 112;
   shape = 0x8000;
   *dst++ = 0;
   *dst++ = (x << 16) | y | shape;
   *dst++ = (tile + 6) | 0xe400;
-  Runtime_PushSlotEntry(entry++, 255);
+  Oam_AddSpriteAtDepth(entry++, 255);
   x = 120;
   *dst++ = 0;
   *dst++ = (x << 16) | y | shape | 0x10000000;
   *dst++ = (tile + 6) | 0xe400;
-  Runtime_PushSlotEntry(entry++, 255);
+  Oam_AddSpriteAtDepth(entry++, 255);
   for (i = 0; i < segments; i++) {
     x = 128 + i * 16;
     shape = 0x40000000;
     *dst++ = 0;
     *dst++ = y | (x << 16) | shape | 0x10000000;
     *dst++ = (tile + 2) | 0xe400;
-    Runtime_PushSlotEntry(entry++, 255);
+    Oam_AddSpriteAtDepth(entry++, 255);
   }
   x = width + 128;
   shape = 0x8000;
@@ -211,7 +211,7 @@ static void Colosso_DrawGauge(void) {
   y |= 0x10000000;
   *dst++ = y;
   *dst++ = tile | 0xe400;
-  Runtime_PushSlotEntry(entry++, 255);
+  Oam_AddSpriteAtDepth(entry++, 255);
 
   if ((gFrameCount & 15) > 4) {
     shape = 0x40000000;
@@ -226,7 +226,7 @@ static void Colosso_DrawGauge(void) {
       y |= shape;
       *dst++ = y;
       *dst++ = (tile + 12) | 0xe400;
-      Runtime_PushSlotEntry(entry++, 255);
+      Oam_AddSpriteAtDepth(entry++, 255);
     }
     objectEvent = Engine_ObjectEventLookup(gauge->playerLocalId);
     if (objectEvent != 0) {
@@ -239,7 +239,7 @@ static void Colosso_DrawGauge(void) {
       y |= shape;
       *dst++ = y;
       *dst++ = (tile + 8) | 0xe400;
-      Runtime_PushSlotEntry(entry++, 255);
+      Oam_AddSpriteAtDepth(entry++, 255);
     }
   }
 }

@@ -11,7 +11,7 @@
 /// One sprite of the race gauge's list: a link word, its position and shape
 /// attributes, and its tile.
 struct ColossoGaugeSprite {
-  s32 link; ///< written 0; Runtime_PushSlotEntry links the queue through it
+  s32 link; ///< written 0; Oam_AddSpriteAtDepth links the queue through it
   s32 attr; ///< OAM attributes 0 and 1: y | x << 16 | shape and size bits
   s32 tile; ///< OAM attribute 2: the tile, with palette 14 and priority 1
 };

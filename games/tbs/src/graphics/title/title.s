@@ -5,9 +5,9 @@ Title_IntroGraphicsA:
 	.incbin "games/tbs/src/graphics/title/intro_sun_1.gbapal"
 	.incbin "games/tbs/src/graphics/title/intro_sun.parts.plz"
 	.ifeq EDITION_INTERNATIONAL
-	.byte 0x43	@ PACKER: left in the buffer by Ui_WindowTiles+0x1177
+	.byte 0x43	@ PACKER: left in the buffer by Window_Tiles+0x1177
 	.else
-	.byte 0x44	@ PACKER: left in the buffer by Ui_WindowTiles+0x1177
+	.byte 0x44	@ PACKER: left in the buffer by Window_Tiles+0x1177
 	.endif
 	.global Title_IntroGraphicsB
 Title_IntroGraphicsB:

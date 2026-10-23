@@ -55,9 +55,9 @@ is never returned. The walk stops
 at the table's end marker, and rows after it are never read.
 
 A search of a named thing ([bg event](glossary.md#bg-event) rows for a chest, a jar or an oven,
-everything but `BG_EVENT_UNNAMED`) has to answer even once it is used up, so
+everything but `BG_EVENT_SILENT`) has to answer even once it is used up, so
 that an opened chest can still say it is empty. So the lookup skips the
-condition for these rows, and `Field_SearchTile` tests it afterwards to
+condition for these rows, and `Field_SearchCell` tests it afterwards to
 choose between the find and the empty answer. The one exception is a
 mimic, a chest that turns out to be a monster, which is found only while its
 condition holds; `Map_BgEventIgnoresCondition` decides which rows skip the
@@ -98,7 +98,7 @@ shows `MsgVaultWeDontGetALotOf` under `CONDITION_ALWAYS`. The second runs
 item has its `FIND_ITEM` row first and a `FIND_MESSAGE` row for its dish under
 the same trigger after it. Because a named search skips its condition during
 the lookup, the item row answers every time; once the item is taken,
-`Field_SearchTile` finds its flag set and the leader reports
+`Field_SearchCell` finds its flag set and the leader reports
 `It's pitch dark inside.` Five dish rows are unreachable this way, showing
 three messages:
 
@@ -276,7 +276,7 @@ their events above.
 
 The ten maps at the end of the map table, `TestRoom0` to `TestRoom7`,
 `IncreaseItemAndLevel` and `MenuTest`, are not unused in this sense: the
-debug map selector, `Menu_RunSelection`
+debug map selector, `DebugMapSelect_Run`
 ([debug.c](src/window/battle_command/debug.c)), reaches them, as it reaches
 every map. The selector opens from the Start menu with B held, but only
 while `gDebugMode` is set. XXX: likely the retail game never sets it, because

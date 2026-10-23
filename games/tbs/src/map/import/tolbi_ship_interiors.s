@@ -1,7 +1,7 @@
 @ C2: aligned 8-byte veneers: overlay_veneer emits ldr r4, bx r4 and a target word.
 	.set overlay_imports, 1
 	.set import.Engine_TaskWait, 1
-	.set import.Scheduler_AddOrUpdateCallback, 1
+	.set import.Task_Add, 1
 	.set import.Engine_RandomNext, 1
 	.set import.Engine_HeapAllocate, 1
 	.set import.Engine_HeapRelease, 1
@@ -14,7 +14,7 @@
 	.set import.Object_CheckMovementCollision, 1
 	.set import.Engine_ObjectEventSetSpriteFlags, 1
 	.set import.Engine_WorkSetValuesIfNonNegative, 1
-	.set import.UiText_ShowCenteredMessage, 1
+	.set import.FieldMessage_ShowCentered, 1
 	.set import.Engine_ItemLoadIcon, 1
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1
@@ -55,14 +55,14 @@
 	.set import.Engine_ScriptShowMessageAndWait, 1
 	.set import.Engine_ScriptAskYesNo, 1
 	.set import.Engine_ObjectEventFaceDirection, 1
-	.set import.Ui_SetMessageVoiceFromObjectEvent, 1
+	.set import.Message_SetVoiceFromObjectEvent, 1
 	.set import.Engine_ObjectEventSetSpritePriority, 1
 	.set import.Engine_ObjectEventShowEmote, 1
 	.set import.Engine_ObjectEventSetAttachedEffect, 1
 	.set import.Engine_CameraSetSpeed, 1
 	.set import.Engine_CameraMoveTo, 1
 	.set import.Engine_CameraWaitForMove, 1
-	.set import.Camera_GetScriptObject, 1
+	.set import.FieldCamera_GetScriptObject, 1
 	.set import.Engine_ScriptRequestWarp, 1
 	.set import.Field_RequestBattleFromEncounterTable, 1
 	.set import.FieldScript_SetNextDestination, 1
@@ -70,7 +70,7 @@
 	.set import.Engine_ScriptCloseScreen, 1
 	.set import.Engine_ScriptWaitForScreen, 1
 	.set import.Field_EndBusyAndReveal, 1
-	.set import.Audio_PlayCueFromEventWork, 1
+	.set import.Map_PlayMusic, 1
 	.set import.Engine_SanctumOpen, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

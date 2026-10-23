@@ -1,5 +1,5 @@
 /// @file
-/// The file select overlay: the Golden Sun logo, the start menu (new game,
+/// The main menu overlay: the Golden Sun logo, the start menu (new game,
 /// continue, copy and delete), the door to the Battle Arena and the transfer of
 /// a save's data, by link or as a password.
 
@@ -51,76 +51,76 @@
 #include "title.h"
 
 // Edition-specific text and window layout values.
-// The password buffer: a Gold password is 260 symbols (Clear_EncodePassword),
-// which the Japanese buffer holds exactly. XXX: why the other editions
-// reserve 320 is unknown: nothing in this file writes or reads past 260 in
-// them. ⚓️'s Password Entry buffer, which takes these passwords, is the
-// place to compare.
+// The password buffer: a Gold password is 260 symbols
+// (MainMenu_EncodePassword), which the Japanese buffer holds exactly. XXX: why
+// the other editions reserve 320 is unknown: nothing in this file writes or
+// reads past 260 in them. ⚓️'s Password Entry buffer, which takes these
+// passwords, is the place to compare.
 #if LANGUAGE != LANGUAGE_JAPANESE
-#define CLEAR_PASSWORD_BUFFER_SIZE 320
+#define MAIN_MENU_PASSWORD_BUFFER_SIZE 320
 #else
-#define CLEAR_PASSWORD_BUFFER_SIZE 260
+#define MAIN_MENU_PASSWORD_BUFFER_SIZE 260
 #endif
 
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
-#define CLEAR_LINK_WINDOW_X 4
-#define CLEAR_LINK_WINDOW_WIDTH 22
+#define MAIN_MENU_LINK_WINDOW_X 4
+#define MAIN_MENU_LINK_WINDOW_WIDTH 22
 #else
-#define CLEAR_LINK_WINDOW_X 6
-#define CLEAR_LINK_WINDOW_WIDTH 18
+#define MAIN_MENU_LINK_WINDOW_X 6
+#define MAIN_MENU_LINK_WINDOW_WIDTH 18
 #endif
 
 // The first letter of the greeting a cable transfer waits for, before V, T
-// and S (SaveMenu_Run).
+// and S (MainMenu_Run).
 #if (LANGUAGE == LANGUAGE_GERMAN)
-#define CLEAR_LINK_LANGUAGE_TAG 'E'
+#define MAIN_MENU_LINK_LANGUAGE_TAG 'E'
 #elif (LANGUAGE == LANGUAGE_FRENCH)
-#define CLEAR_LINK_LANGUAGE_TAG 'F'
+#define MAIN_MENU_LINK_LANGUAGE_TAG 'F'
 #elif (LANGUAGE == LANGUAGE_SPANISH)
-#define CLEAR_LINK_LANGUAGE_TAG 'S'
+#define MAIN_MENU_LINK_LANGUAGE_TAG 'S'
 #elif (LANGUAGE == LANGUAGE_ITALIAN)
-#define CLEAR_LINK_LANGUAGE_TAG 'I'
+#define MAIN_MENU_LINK_LANGUAGE_TAG 'I'
 #elif (LANGUAGE == LANGUAGE_JAPANESE)
-#define CLEAR_LINK_LANGUAGE_TAG 'C'
+#define MAIN_MENU_LINK_LANGUAGE_TAG 'C'
 #else
-#define CLEAR_LINK_LANGUAGE_TAG 'U'
+#define MAIN_MENU_LINK_LANGUAGE_TAG 'U'
 #endif
 
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
-#define CLEAR_LINK_ERROR_WINDOW_X 4
-#define CLEAR_LINK_ERROR_WINDOW_WIDTH 22
+#define MAIN_MENU_LINK_ERROR_WINDOW_X 4
+#define MAIN_MENU_LINK_ERROR_WINDOW_WIDTH 22
 #else
-#define CLEAR_LINK_ERROR_WINDOW_X 5
-#define CLEAR_LINK_ERROR_WINDOW_WIDTH 20
+#define MAIN_MENU_LINK_ERROR_WINDOW_X 5
+#define MAIN_MENU_LINK_ERROR_WINDOW_WIDTH 20
 #endif
 
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||         \
     (LANGUAGE == LANGUAGE_ITALIAN)
-#define CLEAR_HELP_WINDOW_X 8
-#define CLEAR_HELP_WINDOW_WIDTH 13
+#define MAIN_MENU_HELP_WINDOW_X 8
+#define MAIN_MENU_HELP_WINDOW_WIDTH 13
 #else
-#define CLEAR_HELP_WINDOW_X 10
-#define CLEAR_HELP_WINDOW_WIDTH 10
+#define MAIN_MENU_HELP_WINDOW_X 10
+#define MAIN_MENU_HELP_WINDOW_WIDTH 10
 #endif
 
 #if LANGUAGE != LANGUAGE_JAPANESE
-#define CLEAR_PAGE_LABEL_X 80
+#define MAIN_MENU_PAGE_LABEL_X 80
 #else
-#define CLEAR_PAGE_LABEL_X 0
+#define MAIN_MENU_PAGE_LABEL_X 0
 #endif
 
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
-#define CLEAR_MESSAGE_WINDOW_X 0
-#define CLEAR_MESSAGE_WINDOW_WIDTH 30
+#define MAIN_MENU_MESSAGE_WINDOW_X 0
+#define MAIN_MENU_MESSAGE_WINDOW_WIDTH 30
 #elif (LANGUAGE == LANGUAGE_JAPANESE)
-#define CLEAR_MESSAGE_WINDOW_X 3
-#define CLEAR_MESSAGE_WINDOW_WIDTH 24
+#define MAIN_MENU_MESSAGE_WINDOW_X 3
+#define MAIN_MENU_MESSAGE_WINDOW_WIDTH 24
 #else
-#define CLEAR_MESSAGE_WINDOW_X 1
-#define CLEAR_MESSAGE_WINDOW_WIDTH 28
+#define MAIN_MENU_MESSAGE_WINDOW_X 1
+#define MAIN_MENU_MESSAGE_WINDOW_WIDTH 28
 #endif
 
 #define PASSWORD_SYMBOLS_PER_PAGE 50 ///< five rows of ten
@@ -129,33 +129,33 @@
 /// Whether a key of the extra code is still held. UB: the flag is a word the
 /// code reads and writes as its low halfword; UBFIX uses the word.
 #ifdef UBFIX
-#define CLEAR_EXTRA_CODE_HELD gClear_ExtraCodeHeld
+#define MAIN_MENU_EXTRA_CODE_HELD gMainMenu_ExtraCodeHeld
 #else
-#define CLEAR_EXTRA_CODE_HELD (*(s16 *)&gClear_ExtraCodeHeld)
+#define MAIN_MENU_EXTRA_CODE_HELD (*(s16 *)&gMainMenu_ExtraCodeHeld)
 #endif
 
-static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out);
-static s32 Clear_EncodePassword(u8 *data, s32 size, u8 *out);
-static u16 Clear_CalculatePasswordCrc16(u32 byteCount, u8 *data);
+static s32 MainMenu_PackPasswordData(s32 unused, s32 mode, u8 *out);
+static s32 MainMenu_EncodePassword(u8 *data, s32 size, u8 *out);
+static u16 MainMenu_CalculatePasswordCrc16(u32 byteCount, u8 *data);
 
-/// The file select overlay's map tables, for the map loader: one warp
+/// The main menu overlay's map tables, for the map loader: one warp
 /// destination, the warp, and no object event templates or map events.
-u8 *Clear_GetWarpDests(void) { return (u8 *)gClear_WarpDests; }
+u8 *MainMenu_GetWarpDests(void) { return (u8 *)gMainMenu_WarpDests; }
 
-/// The warp regions entry: the file select screen has no warp boxes.
+/// The warp regions entry: the main menu has no warp boxes.
 s32 MapData_ReturnZero(void) { return 0; }
 
-u8 *Clear_GetWarps(void) { return (u8 *)gClear_Warps; }
+u8 *MainMenu_GetWarps(void) { return (u8 *)gMainMenu_Warps; }
 
-u8 *Clear_GetObjectEventTemplates(void) {
-  return (u8 *)gClear_ObjectEventTemplates;
+u8 *MainMenu_GetObjectEventTemplates(void) {
+  return (u8 *)gMainMenu_ObjectEventTemplates;
 }
 
-u8 *Clear_GetEvents(void) { return (u8 *)gClear_Events; }
+u8 *MainMenu_GetEvents(void) { return (u8 *)gMainMenu_Events; }
 
 /// Loads the Golden Sun logo onto BG2 as Title_LoadBackground (title.c) does,
-/// and stops the leader's motion. SaveMenu_Run calls it first.
-static void Clear_LoadBackground(void) {
+/// and stops the leader's motion. MainMenu_Run calls it first.
+static void MainMenu_LoadBackground(void) {
   u8 *resource;
   s32 resourceId;
   u16 *tilemap;
@@ -198,21 +198,21 @@ static void Clear_LoadBackground(void) {
   {
     struct ObjectEvent *leader;
 
-    leader = ObjectEvent_GetById(gGameState.selectedLocalId);
+    leader = ObjectEvent_GetById(gGameState.leaderLocalId);
     leader->motionFlags = 0;
   }
 }
 
-/// The scheduler callback that fades BG0 and the sprites in over the logo:
+/// The task that fades BG0 and the sprites in over the logo:
 /// their weight rises by a sixteenth every two frames, and the callback
-/// removes itself at full weight, 32 frames on. SaveMenu_Run schedules it
+/// removes itself at full weight, 32 frames on. MainMenu_Run schedules it
 /// once, when there is no save file to choose.
-static void Clear_UpdateBlend(void) {
+static void MainMenu_UpdateBlend(void) {
   s32 frame;
   s32 level;
 
-  frame = *(u16 *)&gClear_BlendFrame + 1;
-  *(u16 *)&gClear_BlendFrame = frame;
+  frame = *(u16 *)&gMainMenu_BlendFrame + 1;
+  *(u16 *)&gMainMenu_BlendFrame = frame;
   level = (u16)frame >> 1;
   // Blend BG0 and the sprites over the other layers, level sixteenths of
   // the way in.
@@ -224,20 +224,20 @@ static void Clear_UpdateBlend(void) {
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA,
                       BLEND_ALPHA((u16)level, 16 - (u16)level), 0x20000);
   if ((u16)level > 15)
-    Engine_TaskRemoveCallback(Clear_UpdateBlend);
+    Engine_TaskRemoveCallback(MainMenu_UpdateBlend);
 }
 
 // clang-format off
-/// The first hidden code, entered on the file select screen and ended by 0:
+/// The first hidden code, entered on the main menu and ended by 0:
 /// Select three times. With it a new game names Garet, Ivan and Mia as well
-/// as Isaac (SaveMenu_Run).
-const u16 gClear_CodeSequence[] = {
+/// as Isaac (MainMenu_Run).
+const u16 gMainMenu_CodeSequence[] = {
     KEY_SELECT, KEY_SELECT, KEY_SELECT, 0,
 };
 
 /// The second, longer code: with it a new game also names Felix, Jenna and
 /// Sheba.
-const u16 gClear_ExtraCodeSequence[] = {
+const u16 gMainMenu_ExtraCodeSequence[] = {
     KEY_UP, KEY_DOWN, KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_LEFT, KEY_RIGHT,
     KEY_UP, KEY_RIGHT, KEY_DOWN, KEY_LEFT, KEY_UP, KEY_SELECT, 0,
 };
@@ -247,59 +247,60 @@ const u16 gClear_ExtraCodeSequence[] = {
 // view makes the second key an out-of-bounds access. Direct array reads also
 // reorder both native held-key stores (same 0xf8-byte function extent).
 #ifdef UBFIX
-#define CLEAR_SEQUENCE_KEYS(sequence) (sequence)
+#define MAIN_MENU_SEQUENCE_KEYS(sequence) (sequence)
 #else
-#define CLEAR_SEQUENCE_KEYS(sequence)                                          \
+#define MAIN_MENU_SEQUENCE_KEYS(sequence)                                      \
   (((struct { u16 key[1]; } *)(sequence))->key)
 #endif
 
-/// The scheduler callback that follows the two hidden codes each frame while
-/// the file select screen runs. Each key must be held alone and then every
+/// The task that follows the two hidden codes each frame while
+/// the main menu runs. Each key must be held alone and then every
 /// key released; any other key starts that code over. A finished code sets
 /// its unlocked flag, which stays set, and plays SE_110.
-static void Clear_CheckButtonCodes(void) {
-  if (gClear_CodeUnlocked == 0) {
-    if (gClear_CodeHeld != 0) {
+static void MainMenu_CheckButtonCodes(void) {
+  if (gMainMenu_CodeUnlocked == 0) {
+    if (gMainMenu_CodeHeld != 0) {
       if (gKeysHeld == 0)
-        gClear_CodeHeld = 0;
+        gMainMenu_CodeHeld = 0;
     } else if (gKeysHeld != 0) {
-      if (gKeysHeld ==
-          CLEAR_SEQUENCE_KEYS(gClear_CodeSequence)[gClear_CodeProgress]) {
-        gClear_CodeProgress++;
-        gClear_CodeHeld = 1;
-        if (CLEAR_SEQUENCE_KEYS(gClear_CodeSequence)[gClear_CodeProgress] ==
-            0) {
-          gClear_CodeUnlocked = 1;
+      if (gKeysHeld == MAIN_MENU_SEQUENCE_KEYS(
+                           gMainMenu_CodeSequence)[gMainMenu_CodeProgress]) {
+        gMainMenu_CodeProgress++;
+        gMainMenu_CodeHeld = 1;
+        if (MAIN_MENU_SEQUENCE_KEYS(
+                gMainMenu_CodeSequence)[gMainMenu_CodeProgress] == 0) {
+          gMainMenu_CodeUnlocked = 1;
           Engine_AudioPlayCue(SE_110);
         }
       } else {
-        gClear_CodeProgress = 0;
+        gMainMenu_CodeProgress = 0;
       }
     }
   }
-  if (gClear_ExtraCodeUnlocked == 0) {
-    if (CLEAR_EXTRA_CODE_HELD != 0) {
+  if (gMainMenu_ExtraCodeUnlocked == 0) {
+    if (MAIN_MENU_EXTRA_CODE_HELD != 0) {
       if (gKeysHeld == 0)
-        CLEAR_EXTRA_CODE_HELD = 0;
+        MAIN_MENU_EXTRA_CODE_HELD = 0;
     } else if (gKeysHeld != 0) {
       if (gKeysHeld ==
-          CLEAR_SEQUENCE_KEYS(
-              gClear_ExtraCodeSequence)[gClear_ExtraCodeProgress]) {
-        gClear_ExtraCodeProgress++;
-        CLEAR_EXTRA_CODE_HELD = 1;
-        if (CLEAR_SEQUENCE_KEYS(
-                gClear_ExtraCodeSequence)[gClear_ExtraCodeProgress] == 0) {
-          gClear_ExtraCodeUnlocked = 1;
+          MAIN_MENU_SEQUENCE_KEYS(
+              gMainMenu_ExtraCodeSequence)[gMainMenu_ExtraCodeProgress]) {
+        gMainMenu_ExtraCodeProgress++;
+        MAIN_MENU_EXTRA_CODE_HELD = 1;
+        if (MAIN_MENU_SEQUENCE_KEYS(
+                gMainMenu_ExtraCodeSequence)[gMainMenu_ExtraCodeProgress] ==
+            0) {
+          gMainMenu_ExtraCodeUnlocked = 1;
           Engine_AudioPlayCue(SE_110);
         }
       } else {
-        gClear_ExtraCodeProgress = 0;
+        gMainMenu_ExtraCodeProgress = 0;
       }
     }
   }
 }
 
-#undef CLEAR_SEQUENCE_KEYS
+#undef MAIN_MENU_SEQUENCE_KEYS
 
 /// Converts a six-bit password symbol to the edition's one- or two-byte glyph.
 /// Writes the glyph, a second byte (Japanese's voiced mark, else 0) and a
@@ -308,7 +309,7 @@ static void Clear_CheckButtonCodes(void) {
 /// uses hiragana, the last 18 with the voiced mark. XXX: likely to keep
 /// look-alikes apart, because each character left out resembles another (I,
 /// l and 1; O, o and 0).
-static void Clear_NameEntryCharacter(s32 cell, u8 *text) {
+static void MainMenu_NamingScreenCharacter(s32 cell, u8 *text) {
   text[1] = 0;
   text[2] = 0;
 #if (LANGUAGE != LANGUAGE_JAPANESE)
@@ -369,7 +370,7 @@ static void Clear_NameEntryCharacter(s32 cell, u8 *text) {
 /// otherwise. It may not when it was saved where a map script blocked
 /// Retreat (FLAG_RETREAT_BLOCKED), except in towns (MAP_TYPE_TOWN), which block
 /// it by themselves, and on the world map.
-static s32 Clear_GetSaveRecoveryBlockMask(void) {
+static s32 MainMenu_GetSaveRecoveryBlockMask(void) {
   s32 mapDifference;
 
   if (Engine_GameFlagIsSet(FLAG_RETREAT_BLOCKED) == 0) {
@@ -388,7 +389,7 @@ static s32 Clear_GetSaveRecoveryBlockMask(void) {
 /// against the loaded game's.
 struct SaveMenuMapLocalState {
   u8 mapAndInventory[0x100]; ///< gMapLocalState, then gInventorySnapshot
-  /// The play time in frames, which SaveState_BuildSummaryHeader copies here
+  /// The play time in frames, which Save_BuildFileSummary copies here
   /// when saving.
   s32 word100;
 };
@@ -396,26 +397,26 @@ struct SaveMenuMapLocalState {
 /// A console's link payload as the cable transfer reads it from
 /// gLinkPeerSignatures.
 struct SaveLinkGreeting {
-  /// The greeting SaveMenu_Run waits for: CLEAR_LINK_LANGUAGE_TAG, then V, T
-  /// and S. SaveMenu_Run sets every console's to "0000" before it waits.
+  /// The greeting MainMenu_Run waits for: MAIN_MENU_LINK_LANGUAGE_TAG, then V,
+  /// T and S. MainMenu_Run sets every console's to "0000" before it waits.
   u16 code[4];
   u8 reserved[16]; ///< the rest of the 24 bytes; not read
 };
 
-/// The compiler library's signed division, which SaveMenu_Run calls by name
+/// The compiler library's signed division, which MainMenu_Run calls by name
 /// at one site (its FAKEMATCH tag).
 s32 __divsi3(s32, s32);
 
-/// The overlay's initialize entry: the file select screen. At warp destination
+/// The overlay's initialize entry: the main menu. At warp destination
 /// 2, after the credits, it offers to save the cleared game and goes on to the
 /// world map. Otherwise it loops on the start menu until the player starts a
 /// new game, continues a file or enters the Battle Arena; copying, erasing
 /// and sending a cleared file's data, by cable or as a password, come back to
 /// the menu. Returns 0 once a destination is set.
-s32 SaveMenu_Run(void) {
+s32 MainMenu_Run(void) {
   s32 pageCount;
   s32 encodedSize;
-  struct UiWindow *pageWindow;
+  struct Window *pageWindow;
   // Keep encoded integer handles: the earlier typed-window split changes
   // four native bytes. Integer windowHandle/passwordColumn and peerIndex/
   // requiredLinkMask split plainly without changing the output.
@@ -437,16 +438,16 @@ s32 SaveMenu_Run(void) {
   s32 passwordHeadingMessage;
   s32 pageIndex;
   s32 blendStarted;
-  struct UiWindow *helpWindow;
-  struct UiWindow *headingWindow;
+  struct Window *helpWindow;
+  struct Window *headingWindow;
   u8 saveData[200];
-  u8 password[CLEAR_PASSWORD_BUFFER_SIZE];
+  u8 password[MAIN_MENU_PASSWORD_BUFFER_SIZE];
   u8 glyph[4];
 
   blendStarted = 0;
-  Clear_LoadBackground();
-  FieldScheduler_AddCallback(Clear_CheckButtonCodes, 0xc80);
-  gEventWork->startTransition = blendStarted;
+  MainMenu_LoadBackground();
+  FieldScheduler_AddCallback(MainMenu_CheckButtonCodes, 0xc80);
+  gFieldWork->transition = blendStarted;
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
   // Warp destination 2, after the credits (Title_Run): save the cleared game,
@@ -454,24 +455,24 @@ s32 SaveMenu_Run(void) {
   // again.
   if (gGameState.warpDest == 2) {
   L_ask:
-    UiText_ShowPositionedMessageAndWait(MsgSaveAdventureQuestion, 5);
-    v7 = Menu_AskYesNo(1);
+    FieldMessage_Show(MsgSaveAdventureQuestion, 5);
+    v7 = FieldYesNo_Ask(1);
     UiWork_FinalizePendingCore();
     if (v7 == 0) {
-      UiText_ShowPositionedMessageAndWait(MsgSaveAdventureQuestion + 1, 1);
-      // Marks the file cleared (SaveSummary's sendFlag): its data can be
+      FieldMessage_Show(MsgSaveAdventureQuestion + 1, 1);
+      // Marks the file cleared (SaveFileSummary's sendFlag): its data can be
       // sent, and the message says it cannot be continued.
       gGameState.sendFlag = 1;
-      v7 = SaveMenu_WriteSelectedSlot();
+      v7 = Save_ToChosenFile();
       if (v7 == -1) {
         goto L_ask;
       }
     }
     Engine_ScriptWait(60);
     Engine_ScriptCloseScreen();
-    Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
+    Engine_AudioPlayCue(SONG_FADE_OUT_BGM);
     Engine_ScriptWait(0x12c);
-    FieldScript_SetDestination((s32)&MapId_WorldMap, WORLD_MAP_FROM_CLEAR);
+    FieldScript_SetDestination((s32)&MapId_WorldMap, WORLD_MAP_FROM_MAIN_MENU);
     return 0;
   }
   gSleepDisabled = blendStarted;
@@ -481,29 +482,29 @@ s32 SaveMenu_Run(void) {
   // continue, 101 of 920 instructions differ in tbs-en, and with this menu as
   // for (;;), 462.
 menu_top:;
-  v6 = SaveState_ScanRecordFlags();
+  v6 = Save_ScanRecordFlags();
   // No backup memory: in debug mode, say so and turn idle sleep on.
   if (v6 < 0) {
     if (gDebugMode != 0) {
       gGameState.idleSleepEnabled = 1;
       gIdleSleepEnabled = 1;
-      UiText_ShowCenteredMessage(MsgNoBackupMemory, CENTERED_MESSAGE_WINDOW, 8);
+      FieldMessage_ShowCentered(MsgNoBackupMemory, CENTERED_MESSAGE_WINDOW, 8);
     }
   }
   // No save file: fade the menu layers in, once, and start a new game.
   if (v6 == 0) {
     if (blendStarted == 0) {
       Engine_TaskWait(30);
-      FieldScheduler_AddCallback(Clear_UpdateBlend, 0xc80);
+      FieldScheduler_AddCallback(MainMenu_UpdateBlend, 0xc80);
       Engine_TaskWait(1);
       blendStarted = 1;
     }
   }
-  // The start menu's choices (gMenu_SaveSlotActionByPosition): 0 New Game,
+  // The start menu's choices (gFileMenu_ActionByPosition): 0 New Game,
   // 1 Continue, 2 Copy, 3 Erase, 4 Battle and 5 Send; any other shows the
   // menu again.
   if (v6 > 0) {
-    v6 = Menu_SelectSaveSlotAction();
+    v6 = FileMenu_SelectAction();
   } else {
     v6 = 0;
   }
@@ -512,12 +513,12 @@ menu_top:;
     // Isaac alone, with the first code to Mia, with the second to Sheba. B on
     // the first name goes back to the menu.
     GameState_InitializeDefaults();
-    PaletteGlow_Update(gGameState.paletteGlow[0], gGameState.paletteGlow[1]);
+    WindowColor_Apply(gGameState.windowColor[0], gGameState.windowColor[1]);
     v5 = 1;
     v7 = 0;
     for (;;) {
       Engine_TaskWait(6);
-      v6 = NameEntry_EditOwnerName(v7);
+      v6 = NamingScreen_EditMemberName(v7);
       if (v6 == -1) {
         if (v7 == 0) {
           goto menu_top;
@@ -525,10 +526,10 @@ menu_top:;
         v7--;
         continue;
       }
-      if (gClear_CodeUnlocked != 0) {
+      if (gMainMenu_CodeUnlocked != 0) {
         v5 = 4;
       }
-      if (gClear_ExtraCodeUnlocked != 0) {
+      if (gMainMenu_ExtraCodeUnlocked != 0) {
         v5 = 7;
       }
       if (++v7 >= v5) {
@@ -549,20 +550,20 @@ menu_top:;
   if (v6 == 1) {
     struct GameState *state;
 
-    v6 = SaveState_LoadRecordIntoWork(1);
+    v6 = Save_LoadRecordIntoWork(1);
     if (v6 == -1) {
       goto menu_top;
     }
     GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
     state = &gGameState;
-    PaletteGlow_Update(state->paletteGlow[0], state->paletteGlow[1]);
+    WindowColor_Apply(state->windowColor[0], state->windowColor[1]);
     if (state->buildStamp != Runtime_GetBuildStampTime()) {
       state->mapId = state->savedMap;
       state->warpDest = state->savedWarpDest;
       GameFlag_ClearBit(FLAG_KEEP_PARTY_POSITION);
     } else if ((gKeysHeld & (KEY_L | KEY_START)) == (KEY_L | KEY_START)) {
-      if (Clear_GetSaveRecoveryBlockMask() != 0) {
-        UiText_ShowPositionedMessageAndWait(MsgSaveRecoveryFailed, 9);
+      if (MainMenu_GetSaveRecoveryBlockMask() != 0) {
+        FieldMessage_Show(MsgSaveRecoveryFailed, 9);
         goto menu_top;
       }
       state->mapId = state->savedMap;
@@ -571,18 +572,18 @@ menu_top:;
       Engine_GameFlagSet(0x13e);
     } else if (state->playTime !=
                ((struct SaveMenuMapLocalState *)gMapLocalState)->word100) {
-      UiText_ShowPositionedMessageAndWait(MsgSaveDataCorrupted, 9);
-      UiText_ShowPositionedMessageAndWait(MsgSaveDataCorrupted + 1, 13);
-      if (Menu_RunConfirmSelection(1, 0, 0, CONFIRM_YES) != CONFIRM_YES) {
+      FieldMessage_Show(MsgSaveDataCorrupted, 9);
+      FieldMessage_Show(MsgSaveDataCorrupted + 1, 13);
+      if (YesNoMenu_Run(1, 0, 0, YES) != YES) {
         UiWork_FinalizePendingCore();
         goto menu_top;
       }
       UiWork_FinalizePendingCore();
-      if (Clear_GetSaveRecoveryBlockMask() != 0) {
+      if (MainMenu_GetSaveRecoveryBlockMask() != 0) {
         // MsgSaveRecoveryFailed, spelled as MsgSaveDataCorrupted + 2: the ROM
         // adds 2 to the register holding the earlier message's number, and by
         // name 108 of 921 instructions differ in tbs-en.
-        UiText_ShowPositionedMessageAndWait(MsgSaveDataCorrupted + 2, 9);
+        FieldMessage_Show(MsgSaveDataCorrupted + 2, 9);
         goto menu_top;
       }
       state->mapId = state->savedMap;
@@ -594,39 +595,40 @@ menu_top:;
     goto leave;
   }
   if (v6 == 2) {
-    SaveState_CopySlotPair();
+    Save_CopyFile();
     goto menu_top;
   }
   if (v6 == 3) {
-    SaveState_DeleteSelectedSlot();
+    Save_EraseSelectedFile();
     goto menu_top;
   }
   // Battle: go to the Battle Arena with a file. One saved while the Colosso
   // held the party's equipment gets it back, and its party is reset to Isaac,
   // Garet, Ivan and Mia, in order.
   if (v6 == 4) {
-    v6 = SaveState_LoadRecordIntoWork(4);
+    v6 = Save_LoadRecordIntoWork(4);
     if (v6 == -1) {
       goto menu_top;
     }
-    gGameState.selectedLocalId = 0;
+    gGameState.leaderLocalId = 0;
     if (GameFlag_IsSet(FLAG_COLOSSO_HOLDS_EQUIPMENT) != 0) {
       InventorySnapshot_Restore();
-      Party_RemoveActiveOwner(0);
-      Party_RemoveActiveOwner(1);
-      Party_RemoveActiveOwner(2);
-      Party_RemoveActiveOwner(3);
-      Party_AddActiveOwner(0);
-      Party_AddActiveOwner(1);
-      Party_AddActiveOwner(2);
-      Party_AddActiveOwner(3);
+      Party_RemoveMember(0);
+      Party_RemoveMember(1);
+      Party_RemoveMember(2);
+      Party_RemoveMember(3);
+      Party_AddMember(0);
+      Party_AddMember(1);
+      Party_AddMember(2);
+      Party_AddMember(3);
     }
-    PaletteGlow_Update(gGameState.paletteGlow[0], gGameState.paletteGlow[1]);
+    WindowColor_Apply(gGameState.windowColor[0], gGameState.windowColor[1]);
     GameFlag_ClearBit(FLAG_KEEP_PARTY_POSITION);
     GameFlag_ClearBit(FLAG_MENU_OPEN);
     Engine_GameFlagSet(FLAG_IN_BATTLE_ARENA);
     gSleepDisabled = 1;
-    FieldScript_SetDestination((s32)&MapId_LinkLobby, LINK_LOBBY_FROM_CLEAR);
+    FieldScript_SetDestination((s32)&MapId_BattleArena,
+                               BATTLE_ARENA_FROM_MAIN_MENU);
     goto leave;
   } else {
     if (v6 != 5) {
@@ -634,26 +636,26 @@ menu_top:;
     }
     // Send: choose a cleared file, then Password (0) or Cable (1).
   link_load:;
-    v6 = SaveState_LoadRecordIntoWork(5);
+    v6 = Save_LoadRecordIntoWork(5);
     if (v6 == -1) {
       goto menu_top;
     }
-    PaletteGlow_Update(gGameState.paletteGlow[0], gGameState.paletteGlow[1]);
+    WindowColor_Apply(gGameState.windowColor[0], gGameState.windowColor[1]);
   link_select:;
-    v6 = Menu_SelectResourceLayout(RESOURCE_LAYOUT_TRANSFER_METHOD);
+    v6 = IconMenu_ChooseSendOption(RESOURCE_LAYOUT_TRANSFER_METHOD);
     if (v6 == -1) {
       goto link_load;
     }
     // Link transfer waits for the other game's edition-specific greeting in
     // the partner's payload (struct SaveLinkGreeting); B gives up.
     if (v6 == TRANSFER_METHOD_CABLE) {
-      v6 = (s32)UiWindow_Create(CLEAR_LINK_WINDOW_X, 5, CLEAR_LINK_WINDOW_WIDTH,
-                                8, 2);
+      v6 = (s32)Window_Create(MAIN_MENU_LINK_WINDOW_X, 5,
+                              MAIN_MENU_LINK_WINDOW_WIDTH, 8, 2);
       linkMessage = MsgClearSaveLabel;
 
-      UiText_DrawResource(linkMessage, (struct UiWindow *)v6, 0, 4);
-      UiText_DrawResource((linkMessage + 1), (struct UiWindow *)v6, 0, 16);
-      UiText_DrawResource((linkMessage + 3), (struct UiWindow *)v6, 0, 36);
+      Text_DrawMessage(linkMessage, (struct Window *)v6, 0, 4);
+      Text_DrawMessage((linkMessage + 1), (struct Window *)v6, 0, 16);
+      Text_DrawMessage((linkMessage + 3), (struct Window *)v6, 0, 36);
       SerialRuntime_Initialize();
       Engine_TaskWait(10);
       {
@@ -686,7 +688,7 @@ menu_top:;
           u16 *received =
               ((struct SaveLinkGreeting *)gLinkPeerSignatures)[peer].code;
 
-          if (received[0] == CLEAR_LINK_LANGUAGE_TAG) {
+          if (received[0] == MAIN_MENU_LINK_LANGUAGE_TAG) {
             if (received[1] == 'V') {
               if (received[2] == 'T') {
                 if (received[3] == 'S') {
@@ -699,14 +701,14 @@ menu_top:;
         }
         Engine_TaskWait(1);
       }
-      UiWork_Finalize((struct UiWindow *)v6, 2);
+      Window_Close((struct Window *)v6, 2);
       if (v7 == 0) {
         goto link_select;
       }
-      v6 = (s32)UiWindow_Create(CLEAR_LINK_ERROR_WINDOW_X, 10,
-                                CLEAR_LINK_ERROR_WINDOW_WIDTH, 4, 2);
+      v6 = (s32)Window_Create(MAIN_MENU_LINK_ERROR_WINDOW_X, 10,
+                              MAIN_MENU_LINK_ERROR_WINDOW_WIDTH, 4, 2);
 
-      UiText_DrawResource(MsgClearSendingData, (struct UiWindow *)v6, 0, 4);
+      Text_DrawMessage(MsgClearSendingData, (struct Window *)v6, 0, 4);
       Engine_TaskWait(10);
       SerialRuntime_StartSend(gSaveBuffer, 0x1004);
       Engine_TaskWait(10);
@@ -730,9 +732,8 @@ menu_top:;
         Engine_TaskWait(1);
       }
       if (linkConnectionOk == 0) {
-        RenderOutput_PrepareForRedraw((struct UiWindow *)v6);
-        UiText_DrawResource(MsgClearCommunicationError, (struct UiWindow *)v6,
-                            0, 4);
+        WindowSprite_PrepareForRedraw((struct Window *)v6);
+        Text_DrawMessage(MsgClearCommunicationError, (struct Window *)v6, 0, 4);
         // Wait for A: v5 is KEY_A here.
         v5 = 1;
         do {
@@ -743,11 +744,11 @@ menu_top:;
       SerialRuntime_RemoveIrqHandlers();
       Engine_TaskWait(10);
 #if TBS_PATCH_4
-      UiWork_Finalize((struct UiWindow *)v6, 2);
+      Window_Close((struct Window *)v6, 2);
       Engine_TaskWait(1);
 #else
-      RenderOutput_PrepareForRedraw((struct UiWindow *)v6);
-      UiWork_Finalize((struct UiWindow *)v6, 2);
+      WindowSprite_PrepareForRedraw((struct Window *)v6);
+      Window_Close((struct Window *)v6, 2);
 #endif
       goto menu_top;
     }
@@ -756,7 +757,7 @@ menu_top:;
     // The level is Gold, Silver or Bronze (enum PasswordLevel): 260, 61 or 16
     // symbols, shown 50 to a page.
     page_select:;
-      v6 = Menu_SelectResourceLayout(RESOURCE_LAYOUT_PASSWORD_LEVEL);
+      v6 = IconMenu_ChooseSendOption(RESOURCE_LAYOUT_PASSWORD_LEVEL);
 
       if (v6 == -1) {
         goto link_select;
@@ -765,53 +766,53 @@ menu_top:;
         u8 *data = saveData;
         s16 sum;
 
-        encodedSize = Clear_PackPasswordData(0, v6, data);
-        sum = Clear_CalculatePasswordCrc16(encodedSize, data);
+        encodedSize = MainMenu_PackPasswordData(0, v6, data);
+        sum = MainMenu_CalculatePasswordCrc16(encodedSize, data);
         saveData[encodedSize] = (u16)sum >> 8;
         saveData[encodedSize + 1] = sum;
         encodedSize += 2;
-        encodedSize = Clear_EncodePassword(data, encodedSize, password);
+        encodedSize = MainMenu_EncodePassword(data, encodedSize, password);
       }
       v6 = 2;
-      Ui_LoadWindowGraphics();
-      pageWindow = UiWindow_Create(5, 4, 20, 12, v6);
+      Window_LoadGraphics();
+      pageWindow = Window_Create(5, 4, 20, 12, v6);
       pageIndex = 0;
       pageCount = ((encodedSize / PASSWORD_SYMBOLS_PER_PAGE) + 1);
-      windowHandle = (s32)UiWindow_Create(CLEAR_HELP_WINDOW_X, 0,
-                                          CLEAR_HELP_WINDOW_WIDTH, 4, v6);
+      windowHandle = (s32)Window_Create(MAIN_MENU_HELP_WINDOW_X, 0,
+                                        MAIN_MENU_HELP_WINDOW_WIDTH, 4, v6);
       passwordHeadingMessage = MsgClearPasswordLabel;
-      headingWindow = (struct UiWindow *)windowHandle;
-      UiText_DrawResource(passwordHeadingMessage, headingWindow, 6, 4);
+      headingWindow = (struct Window *)windowHandle;
+      Text_DrawMessage(passwordHeadingMessage, headingWindow, 6, 4);
       v7 = 1;
       // The help line below: B alone for one page, with Left and Right for
       // more (the two messages before MsgClearPasswordLabel).
       if (pageCount == 1) {
-        windowHandle = (s32)UiWindow_Create(5, 16, 20, 3, v6);
-        helpWindow = (struct UiWindow *)windowHandle;
-        UiText_DrawCharacterAtOffset(passwordHeadingMessage - 2, helpWindow,
-                                     CLEAR_PAGE_LABEL_X, 0);
+        windowHandle = (s32)Window_Create(5, 16, 20, 3, v6);
+        helpWindow = (struct Window *)windowHandle;
+        Text_DrawMessageAsTiles(passwordHeadingMessage - 2, helpWindow,
+                                MAIN_MENU_PAGE_LABEL_X, 0);
       } else {
-        windowHandle = (s32)UiWindow_Create(CLEAR_MESSAGE_WINDOW_X, 16,
-                                            CLEAR_MESSAGE_WINDOW_WIDTH, 3, v6);
-        helpWindow = (struct UiWindow *)windowHandle;
-        UiText_DrawCharacterAtOffset(passwordHeadingMessage - 1, helpWindow, 0,
-                                     0);
+        windowHandle =
+            (s32)Window_Create(MAIN_MENU_MESSAGE_WINDOW_X, 16,
+                               MAIN_MENU_MESSAGE_WINDOW_WIDTH, 3, v6);
+        helpWindow = (struct Window *)windowHandle;
+        Text_DrawMessageAsTiles(passwordHeadingMessage - 1, helpWindow, 0, 0);
       }
       // Copy the font's ten digit tiles to tiles 0x300 to 0x313 in two
       // colourings, for the page numbers.
       Graphics_ExpandVramTilesByColorTable((u16 *)0x06006000);
-      RenderOutput_PrepareForRedraw(pageWindow);
+      WindowSprite_PrepareForRedraw(pageWindow);
       // A turns the page, and on the last returns to the menu; Left and Right
       // turn back and forth, wrapping round; B goes back to the level choice.
       // v7 is 1 when the page must be drawn again.
       for (;;) {
-        Link_DrawShiftedTilePair(UI_PAGE_ARROW_VRAM);
+        Link_DrawShiftedTilePair(PAGE_ARROW_VRAM);
         if ((gKeysPressed & KEY_B) != 0) {
           Engine_AudioPlayCue(SE_MENU_CANCEL);
-          RenderOutput_PrepareForRedraw(pageWindow);
-          UiWork_Finalize(pageWindow, 2);
-          UiWork_Finalize(helpWindow, 2);
-          UiWork_Finalize(headingWindow, 2);
+          WindowSprite_PrepareForRedraw(pageWindow);
+          Window_Close(pageWindow, 2);
+          Window_Close(helpWindow, 2);
+          Window_Close(headingWindow, 2);
           goto page_select;
         }
         if ((gKeysPressed & KEY_A) != 0) {
@@ -819,10 +820,10 @@ menu_top:;
           v7 = 1;
           if (pageIndex == pageCount) {
             Engine_AudioPlayCue(SE_MENU_CONFIRM);
-            RenderOutput_PrepareForRedraw(pageWindow);
-            UiWork_Finalize(pageWindow, 2);
-            UiWork_Finalize(helpWindow, 2);
-            UiWork_Finalize(headingWindow, 2);
+            WindowSprite_PrepareForRedraw(pageWindow);
+            Window_Close(pageWindow, 2);
+            Window_Close(helpWindow, 2);
+            Window_Close(headingWindow, 2);
             Engine_TaskWait(1);
             goto menu_top;
           }
@@ -850,11 +851,11 @@ menu_top:;
         if (v7 != 1) {
           v5 = passwordHeadingMessage;
         } else {
-          RenderOutput_PrepareForRedraw(pageWindow);
+          WindowSprite_PrepareForRedraw(pageWindow);
           v7 = 0;
           v5 = 2;
           do {
-            UiWindow_DrawDividerLine(pageWindow, 0, v5, 18, v5);
+            Window_DrawDividerLine(pageWindow, 0, v5, 18, v5);
             v5 = (v5 + 2);
             v7 = (v7 + 1);
           } while (v7 != 4);
@@ -870,18 +871,17 @@ menu_top:;
                 if (v7 == pageIndex) {
                   tileValue = v7 + 0xf30b;
                 }
-                UiWindow_SetTilemapEntry(pageWindow, tileValue,
-                                         v7 + 18 - pageCount, -1, v6);
+                Window_SetTilemapEntry(pageWindow, tileValue,
+                                       v7 + 18 - pageCount, -1, v6);
                 v7 = (v7 + 1);
               } while (v7 != pageCount);
             }
             v5 = 0;
-            UiWindow_SetTilemapEntry(pageWindow, UI_PAGE_ARROW_LEFT,
-                                     (17 - (s32)pageCount), -1, 0);
-            UiWindow_SetTilemapEntry(pageWindow, UI_PAGE_ARROW_RIGHT, 18, -1,
-                                     0);
-            UiRender_MarkRow((struct UiRenderWork *)gWindowWork[0],
-                             ((struct UiWindow *)pageWindow)->y);
+            Window_SetTilemapEntry(pageWindow, PAGE_ARROW_LEFT,
+                                   (17 - (s32)pageCount), -1, 0);
+            Window_SetTilemapEntry(pageWindow, PAGE_ARROW_RIGHT, 18, -1, 0);
+            Window_MarkTilemapRow((struct WindowWork *)gWindowWork[0],
+                                  ((struct Window *)pageWindow)->y);
           }
           // Each page holds 50 symbols in five rows, split into two groups.
           // Rows are 16 pixels apart; the second five of a row sit 10 pixels
@@ -897,8 +897,8 @@ menu_top:;
              * glyph's address as the ROM does; without it, 98 of 921
              * instructions differ in tbs-en. */
             do {
-              Clear_NameEntryCharacter(password[v7] & PASSWORD_SYMBOL_MASK,
-                                       glyph);
+              MainMenu_NamingScreenCharacter(
+                  password[v7] & PASSWORD_SYMBOL_MASK, glyph);
             } while (0);
             passwordColumn = (v7 % 10);
             if (passwordColumn > 4) {
@@ -906,8 +906,8 @@ menu_top:;
 
               glyphColumn = (pageGlyphIndex % 10);
               row = (pageGlyphIndex / 10);
-              UiText_DrawString(glyph, pageWindow, glyphColumn * 12 + 18,
-                                (row << 4) + 2);
+              Text_DrawString(glyph, pageWindow, glyphColumn * 12 + 18,
+                              (row << 4) + 2);
             } else {
               s32 row;
 
@@ -916,8 +916,8 @@ menu_top:;
                * __divsi3; as pageGlyphIndex / 10, 45 of 921 instructions
                * differ in tbs-en. */
               row = __divsi3(pageGlyphIndex, 10);
-              UiText_DrawString(glyph, pageWindow, glyphColumn * 12 + 8,
-                                (row << 4) + 2);
+              Text_DrawString(glyph, pageWindow, glyphColumn * 12 + 8,
+                              (row << 4) + 2);
             }
           }
           v7 = 0;
@@ -929,9 +929,9 @@ menu_top:;
     goto menu_top;
   }
 leave:;
-  gEventWork->requestedWarp = 0x3e7;
+  gFieldWork->warp = 0x3e7;
   Engine_ScriptWait(30);
-  Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
+  Engine_AudioPlayCue(SONG_FADE_OUT_BGM);
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
   Engine_ScriptWait(60);
@@ -940,7 +940,7 @@ leave:;
 
 /// UNUSED: decodes tiles and maps a 16-by-eight window region in VRAM and
 /// shadow.
-UNUSED static void SaveMenu_FillTileGrid(struct UiWindow *window,
+UNUSED static void FileMenu_FillTileGrid(struct Window *window,
                                          const void *compressedTiles) {
   u16 *shadow;
   u16 *vram;
@@ -949,8 +949,8 @@ UNUSED static void SaveMenu_FillTileGrid(struct UiWindow *window,
   s32 col;
   s32 offset;
 
-  shadow = ((struct UiRenderWork *)gWindowWork[0])->tilemap;
-  decodedTiles = Runtime_BumpAllocateAlternatePool(0x300);
+  shadow = ((struct WindowWork *)gWindowWork[0])->tilemap;
+  decodedTiles = AllocEwram(0x300);
   FieldResource_DecodeType01(compressedTiles, decodedTiles);
   offset = (window->y * 32 + window->x) * 2;
   vram = (u16 *)(0x06002000 + offset);
@@ -970,9 +970,9 @@ UNUSED static void SaveMenu_FillTileGrid(struct UiWindow *window,
 
 /// UNUSED: fills a 16-by-eight region with palette 15 tiles beginning at
 /// tile 32.
-UNUSED static void SaveMenu_FillTileBlock(const struct UiWindow *window) {
-  s16 *mirror = ((struct UiRenderWork *)gWindowWork[0])->tilemap;
-  s16 *buffer = Runtime_BumpAllocateAlternatePool(0x300);
+UNUSED static void FileMenu_FillTileBlock(const struct Window *window) {
+  s16 *mirror = ((struct WindowWork *)gWindowWork[0])->tilemap;
+  s16 *buffer = AllocEwram(0x300);
   s16 *vram;
   s32 cell;
   s32 row;
@@ -1006,12 +1006,12 @@ UNUSED static void SaveMenu_FillTileBlock(const struct UiWindow *window) {
 }
 
 /// A party member's base stats, which the password clamps and packs: struct
-/// BattleUnit's from baseHp to baseLuck, at the same offsets.
+/// Unit's from baseHp to baseLuck, at the same offsets.
 struct PasswordStats {
   s16 baseHp;      ///< clamped to 0 to 1999; 11 bits in the password
   s16 basePp;      ///< clamped to 0 to 1999; 11 bits
-  s16 hpGauge;     ///< BattleUnit's; not read here
-  s16 ppGauge;     ///< BattleUnit's; not read here
+  s16 hpGauge;     ///< Unit's; not read here
+  s16 ppGauge;     ///< Unit's; not read here
   u16 baseAttack;  ///< clamped to 999; 10 bits
   u16 baseDefense; ///< clamped to 999; 10 bits
   u16 baseAgility; ///< clamped to 999; 10 bits
@@ -1019,17 +1019,17 @@ struct PasswordStats {
 };
 
 /// A party member as the password reads them: their level, base stats,
-/// inventory and Djinn. A view of struct BattleUnit at its offsets;
-/// Clear_PackPasswordData's opening note says why it is kept.
+/// inventory and Djinn. A view of struct Unit at its offsets;
+/// MainMenu_PackPasswordData's opening note says why it is kept.
 struct PasswordOwner {
-  u8 name[0x0f]; ///< BattleUnit's; not read here
+  u8 name[0x0f]; ///< Unit's; not read here
   u8 level;      ///< clamped to 1 to 99; 7 bits
   struct PasswordStats stats;
-  u8 regenToActions[0xb8]; ///< BattleUnit's baseHpRegen to actionSlots
+  u8 regenToActions[0xb8]; ///< Unit's baseHpRegen to psynergy
   /// bits: 15..11 quantity | 10 broken | 9 equipped | 8..0 item
   u16 inventory[15];
-  u8 padding[2];         ///< BattleUnit's paddingBeforeDjinn
-  u32 djinnAvailable[4]; ///< the Djinn held, a bit per Djinni, by element
+  u8 padding[2];    ///< Unit's paddingBeforeDjinn
+  u32 djinnHeld[4]; ///< the Djinn held, a bit per Djinni, by element
 };
 
 /// Packs the four heroes' data for a password of level mode (enum
@@ -1038,18 +1038,18 @@ struct PasswordOwner {
 /// each member's base stats and level in place first, and returns the byte
 /// count. Bytes 0 to 2 and the high half of 3 hold the four levels, 7 bits
 /// each from the lowest bit; the low half of 3 and bytes 4 to 6 the Djinn
-/// held, 7 bits an element; byte 7 the story flags of gClear_PasswordFlags.
+/// held, 7 bits an element; byte 7 the story flags of gMainMenu_PasswordFlags.
 /// Silver and Bronze keep in byte 8 which Psynergy items the party carries.
 /// Gold and Silver add the base stats, 60 bits a member, high bits first,
 /// from byte 8 (Gold) or 9 (Silver). Gold alone adds the 60 inventory slots'
 /// items, 9 bits each from byte 39, with a spare bit after every seventh;
 /// from the low half of byte 107, the 5-bit quantity fields of the 23
-/// gClear_PasswordStackItems for each member; and the coins in bytes 165 to
+/// gMainMenu_PasswordStackItems for each member; and the coins in bytes 165 to
 /// 167.
-static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
-  // A direct BattleUnit owner plus the real member table shrinks the native
+static s32 MainMenu_PackPasswordData(s32 unused, s32 mode, u8 *out) {
+  // A direct Unit owner plus the real member table shrinks the native
   // function from 0x400 to 0x3f4. The private view remains pending owner
-  // reconciliation; its fields below follow BattleUnit's actual base stats.
+  // reconciliation; its fields below follow Unit's actual base stats.
   s32 length;
   u32 levelBits;
   u32 djinnBits;
@@ -1089,14 +1089,14 @@ static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
 
   // Preserve the selected story flags and four heroes' transfer data.
   for (i = 0; i != 6; i++) {
-    if (Engine_GameFlagIsSet(((const u16 *)gClear_PasswordFlags)[i])) {
+    if (Engine_GameFlagIsSet(((const u16 *)gMainMenu_PasswordFlags)[i])) {
       flagBits |= 1 << i;
     }
   }
 
   for (i = 0; i != 4; i++) {
     struct PasswordOwner *owner = (struct PasswordOwner *)Unit_Get(
-        ((const struct { s32 id[4]; } *)gClear_PasswordMembers)->id[i]);
+        ((const struct { s32 id[4]; } *)gMainMenu_PasswordMembers)->id[i]);
     struct PasswordStats *stats = &owner->stats;
 
     if (stats->baseHp > 1999) {
@@ -1137,15 +1137,15 @@ static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
     }
     levelBits |= owner->level << (i * 7);
     for (j = 0; j != 4; j++) {
-      djinnBits += owner->djinnAvailable[j] << (j * 7);
+      djinnBits += owner->djinnHeld[j] << (j * 7);
     }
-    // Which of the eight Psynergy items (gClear_PasswordKeyItems) any member
+    // Which of the eight Psynergy items (gMainMenu_PasswordKeyItems) any member
     // carries.
     for (j = 0; j != 15; j++) {
       u16 item = owner->inventory[j] & 0x1ff;
 
       for (k = 0; k != 8; k++) {
-        if (item == ((const u16 *)gClear_PasswordKeyItems)[k]) {
+        if (item == ((const u16 *)gMainMenu_PasswordKeyItems)[k]) {
           keyItemBits |= 1 << k;
         }
       }
@@ -1158,7 +1158,7 @@ static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
     bitOffset = 0;
     for (i = 0; i != 4; i++) {
       struct PasswordOwner *owner = (struct PasswordOwner *)Unit_Get(
-          ((const struct { s32 id[4]; } *)gClear_PasswordMembers)->id[i]);
+          ((const struct { s32 id[4]; } *)gMainMenu_PasswordMembers)->id[i]);
 
       for (n = 0; n != 15; n++) {
         u16 item;
@@ -1181,7 +1181,7 @@ static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
     bitOffset = -1;
     for (i = 0; i != 4; i++) {
       struct PasswordOwner *owner = (struct PasswordOwner *)Unit_Get(
-          ((const struct { s32 id[4]; } *)gClear_PasswordMembers)->id[i]);
+          ((const struct { s32 id[4]; } *)gMainMenu_PasswordMembers)->id[i]);
       s32 m;
 
       for (m = 0; m != 23; m++) {
@@ -1190,7 +1190,7 @@ static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
         j = 0;
         for (n = 0; n != 15; n++) {
           if ((owner->inventory[n] & 0x1ff) ==
-              ((const u16 *)gClear_PasswordStackItems)[m]) {
+              ((const u16 *)gMainMenu_PasswordStackItems)[m]) {
             j = (owner->inventory[n] & 0xf800) >> 11;
           }
         }
@@ -1263,7 +1263,7 @@ static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
 /// cuts the bits into six-bit symbols, high bits first, adds a check symbol
 /// after every nine (their sum, mod 64; a shorter last group gets none), and
 /// then adds each symbol's position, mod 64.
-static s32 Clear_EncodePassword(u8 *data, s32 size, u8 *out) {
+static s32 MainMenu_EncodePassword(u8 *data, s32 size, u8 *out) {
   s32 xorKey;
   s32 symbolCount;
   s32 i;
@@ -1317,7 +1317,7 @@ static s32 Clear_EncodePassword(u8 *data, s32 size, u8 *out) {
 /// its complemented low 16 bits. 0xFFFFEFDF is -0x1021, CRC-16-CCITT's
 /// polynomial, subtracted where that CRC XORs it; bits above 15 never reach
 /// the result, since carries and borrows only move up.
-static u16 Clear_CalculatePasswordCrc16(u32 byteCount, u8 *data) {
+static u16 MainMenu_CalculatePasswordCrc16(u32 byteCount, u8 *data) {
   u32 crc;
   u32 byteIndex;
   u32 bitIndex;
@@ -1343,47 +1343,47 @@ static u16 Clear_CalculatePasswordCrc16(u32 byteCount, u8 *data) {
   return ~crc;
 }
 
-struct MapWarpDest gClear_WarpDests[] = {
+struct MapWarpDest gMainMenu_WarpDests[] = {
     {0, CONDITION_ALWAYS, 0, 0, 0, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {MAP_TABLE_END},
 };
 
-u32 gClear_Warps[] = {
+u32 gMainMenu_Warps[] = {
     MAP_WARPS_END,
 };
 
-struct ObjectEventTemplate gClear_ObjectEventTemplates[] = {
+struct ObjectEventTemplate gMainMenu_ObjectEventTemplates[] = {
     {MAP_TABLE_END},
 };
 
-struct MapEvent gClear_Events[] = {
+struct MapEvent gMainMenu_Events[] = {
     {MAP_EVENTS_END},
 };
 
-/// Frames since Clear_UpdateBlend began; the blend level is half of it.
-s16 gClear_BlendFrame = 0;
+/// Frames since MainMenu_UpdateBlend began; the blend level is half of it.
+s16 gMainMenu_BlendFrame = 0;
 
-/// Set once gClear_CodeSequence has been entered; nothing here clears it.
-s16 gClear_CodeUnlocked = 0;
+/// Set once gMainMenu_CodeSequence has been entered; nothing here clears it.
+s16 gMainMenu_CodeUnlocked = 0;
 
-/// Set once gClear_ExtraCodeSequence has been entered.
-s16 gClear_ExtraCodeUnlocked = 0;
+/// Set once gMainMenu_ExtraCodeSequence has been entered.
+s16 gMainMenu_ExtraCodeUnlocked = 0;
 
-/// The index in gClear_CodeSequence of the key to press next.
-s16 gClear_CodeProgress = 0;
+/// The index in gMainMenu_CodeSequence of the key to press next.
+s16 gMainMenu_CodeProgress = 0;
 
-/// The index in gClear_ExtraCodeSequence of the key to press next.
-s16 gClear_ExtraCodeProgress = 0;
+/// The index in gMainMenu_ExtraCodeSequence of the key to press next.
+s16 gMainMenu_ExtraCodeProgress = 0;
 
 /// Set while the first code's last correct key is still held.
-s16 gClear_CodeHeld = 0;
+s16 gMainMenu_CodeHeld = 0;
 
-/// The same for the second code, read through CLEAR_EXTRA_CODE_HELD.
-s32 gClear_ExtraCodeHeld = 0;
+/// The same for the second code, read through MAIN_MENU_EXTRA_CODE_HELD.
+s32 gMainMenu_ExtraCodeHeld = 0;
 
 // clang-format off
 /// The members the password packs: Isaac, Garet, Ivan and Mia.
-u32 gClear_PasswordMembers[] = {
+u32 gMainMenu_PasswordMembers[] = {
     0, 1, 2, 3,
 };
 
@@ -1391,13 +1391,13 @@ u32 gClear_PasswordMembers[] = {
 /// 0 to 5: FLAG_DODONPA_LOCKED_UP, FLAG_WON_COLOSSO,
 /// FLAG_HSU_RESCUED_WITHOUT_PARTY, FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED,
 /// FLAG_VISITED_SICK_DORA and FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES.
-u32 gClear_PasswordFlags[] = {
+u32 gMainMenu_PasswordFlags[] = {
     0x9510941, 0x8d108b3, 0x868081e,
 };
 
 /// The eight Psynergy items, ITEM_ORB_OF_FORCE to ITEM_CATCH_BEADS (as
 /// halfwords in pairs), which Silver and Bronze record in byte 8.
-u32 gClear_PasswordKeyItems[] = {
+u32 gMainMenu_PasswordKeyItems[] = {
     0xc900c8, 0xcb00ca, 0xcd00cc, 0xcf00ce,
 };
 
@@ -1406,7 +1406,7 @@ u32 gClear_PasswordKeyItems[] = {
 /// Bread, Cookie, Apple, Hard Nut, Mint, Lucky Pepper, Smoke Bomb, Sleep
 /// Bomb, Game Ticket, Lucky Medal, Sacred Feather, Oil Drop, Weasel's Claw,
 /// Bramble Seed and Crystal Powder.
-u16 gClear_PasswordStackItems[] = {
+u16 gMainMenu_PasswordStackItems[] = {
     180, 181, 182, 183, 186, 187, 188, 189,
     191, 192, 193, 194, 195, 196, 226, 227,
     228, 229, 236, 238, 239, 240, 241,

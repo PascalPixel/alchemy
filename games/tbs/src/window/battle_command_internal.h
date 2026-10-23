@@ -99,16 +99,15 @@
 // The menu object calls these window functions with no prototype in scope, as
 // its bytes need (unit/window/window.h says why for each); a current GCC gets
 // them here.
-void RenderOutput_AppendToList(struct RenderOutputList *list,
-                               struct RenderOutput *node);
-struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window,
-                                                s32 entry, s32 x, s32 y,
-                                                u16 *spacing, s32 flags);
-void UiText_RenderWideStringInWindow(s16 *text, struct UiWindow *window, s32 x,
-                                     s32 y);
-void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode);
-void UiText_DrawPrefixedNumberAtOffset(s32 value, const struct UiWindow *work,
-                                       s32 offsetX, s32 offsetY, s32 variant);
+void WindowSprite_AppendToList(struct WindowSpriteList *list,
+                               struct WindowSprite *node);
+struct TextPrinter *TextPrinter_Add(struct Window *window, s32 entry, s32 x,
+                                    s32 y, u16 *spacing, s32 flags);
+void Text_DrawWideStringInWindow(s16 *text, struct Window *window, s32 x,
+                                 s32 y);
+void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode);
+void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *work,
+                                     s32 offsetX, s32 offsetY, s32 variant);
 #endif
 
 // Edition-specific text and window layout values: places and widths in
@@ -147,7 +146,7 @@ void UiText_DrawPrefixedNumberAtOffset(s32 value, const struct UiWindow *work,
 #define PSYNERGY_COST_SECOND_TILE 0xf01e
 #endif
 
-// The status screen's level label, after the member's name, in pixels.
+// The summary screen's level label, after the member's name, in pixels.
 #if (LANGUAGE == LANGUAGE_FRENCH)
 #define OWNER_STATUS_LEVEL_X 51
 #else
@@ -210,7 +209,7 @@ void UiText_DrawPrefixedNumberAtOffset(s32 value, const struct UiWindow *work,
 #define BATTLE_ITEM_WINDOW_WIDTH 15
 #endif
 
-// The password level menu (Menu_SelectResourceLayout,
+// The password level menu (IconMenu_ChooseSendOption,
 // RESOURCE_LAYOUT_PASSWORD_LEVEL): its heading window ("Password Selection")
 // and, outside the Japanese edition, the explanation window under it.
 #if (LANGUAGE == LANGUAGE_ENGLISH) || (LANGUAGE == LANGUAGE_GERMAN) ||         \
@@ -236,7 +235,7 @@ void UiText_DrawPrefixedNumberAtOffset(s32 value, const struct UiWindow *work,
 #define RESOURCE_MODE1_WINDOW_WIDTH 25
 #endif
 
-// The transfer method menu (Menu_SelectResourceLayout,
+// The transfer method menu (IconMenu_ChooseSendOption,
 // RESOURCE_LAYOUT_TRANSFER_METHOD): its heading window ("Transfer Method"), the
 // heading's x in it in pixels, and the help window.
 #if (LANGUAGE == LANGUAGE_ENGLISH) || (LANGUAGE == LANGUAGE_GERMAN)
@@ -287,29 +286,29 @@ void UiText_DrawPrefixedNumberAtOffset(s32 value, const struct UiWindow *work,
 #define ENTRY19_COMMAND_LABEL_WIDTH 8
 #endif
 
-/// OAM attribute bits a sprite output is created with: the size field of
+/// OAM attribute bits a window sprite is created with: the size field of
 /// attribute 1 (bits 30-31 of the first word). A square sprite of size 1 is
 /// 16x16 pixels, of size 2 32x32.
 #define OUTPUT_SIZE_16X16 0x40000000
 #define OUTPUT_SIZE_32X32 0x80000000
 
-// The two portrait slots of the UI work (UiRenderWork.resourceIds and
-// outputIds), and their palette.
+// The two portrait slots of the UI work (WindowWork.portraitPictures and
+// portraitSprites), and their palette.
 #define PORTRAIT_SLOT_COUNT 2
 #define PORTRAIT_PALETTE 14 ///< OBJ palette of slot 0; slot 1 uses 15
-/// resourceIds value of a free slot, as UiWork_ClearPortraitSlots writes it.
+/// portraitPictures value of a free slot, as Portrait_ClearSlots writes it.
 #define PORTRAIT_SLOT_EMPTY 999
 
 // The battle menus' message buffers, in halfwords, and the copier that fills
-// them: the Japanese edition decodes the message (UiText_DecodeMessage), the
-// others copy its text (UiText_CopyMessageString). The callers' buffers hold
+// them: the Japanese edition decodes the message (Message_DecodeRaw), the
+// others copy its text (Message_CopyExpanded). The callers' buffers hold
 // 64 halfwords either way.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define BATTLE_MENU_MESSAGE_CAPACITY 52
-#define BATTLE_MENU_MESSAGE_COPY UiText_CopyMessageString
+#define BATTLE_MENU_MESSAGE_COPY Message_CopyExpanded
 #else
 #define BATTLE_MENU_MESSAGE_CAPACITY 32
-#define BATTLE_MENU_MESSAGE_COPY UiText_DecodeMessage
+#define BATTLE_MENU_MESSAGE_COPY Message_DecodeRaw
 #endif
 
 /// Tiles the battle lists draw over their window's top edge: the page numbers
@@ -328,7 +327,7 @@ enum {
   LIST_TILE_PAGES_RIGHT = 0xf335 ///< Right arrow, tile 0x335
 };
 
-/// The two battle command rows Menu_RunCommandRow runs.
+/// The two battle command rows BattleCommandRow_Run runs.
 enum CommandRowMode {
   COMMAND_ROW_PARTY = 0, ///< the start of a round: Fight, Flee and Status
   COMMAND_ROW_MEMBER = 1 ///< a member's commands; any mode but 0 is this row
@@ -343,17 +342,17 @@ enum BattleTargetHint {
   /// Cures poison (ABILITY_EFFECT_CURE_POISON): starts on a poisoned member.
   TARGET_HINT_CURE_POISON = 3,
   /// Cures what Restore cures (ABILITY_EFFECT_RESTORE): starts on a member
-  /// who has one of those ailments, and lists them.
+  /// who has one of those statuses, and lists them.
   TARGET_HINT_RESTORE = 4,
   /// Revives (Battle_IsReviveEffectFar): starts on a downed member.
   TARGET_HINT_REVIVE = 5,
-  /// Cures Restore's ailments, poison and the evil spirit, as Tonic does
+  /// Cures Restore's statuses, poison and the evil spirit, as Tonic does
   /// (ABILITY_EFFECT_CURE_ALL).
   TARGET_HINT_CURE_ALL = 6,
   TARGET_HINT_SET_DJINNI = 7 ///< setting a Djinni: "Set Djinni"
 };
 
-#define BATTLE_OK 0x80 ///< BattleAct.flags: usable in battle
+#define BATTLE_OK 0x80 ///< AbilityDefinition.flags: usable in battle
 
 /// One icon of the command row (struct SelectionWork): its sprite, where it
 /// stands and the command it stands for. pictures.c loads it, command_row.c
@@ -373,13 +372,14 @@ struct SelectionEntry {
 
 /// The command row's work block: the icons' shared palette, up to six icons,
 /// the label window, the pulsing icon's transform and the selection.
-/// Menu_RunCommandRow takes it from the alternate pool and frees it on return.
+/// BattleCommandRow_Run takes it from the EWRAM pool and frees it on
+/// return.
 struct SelectionWork {
   /// BG palette slots for the icons' 256-colour pixels, filled as each icon
-  /// is loaded (UiText_LoadRemappedGlyph).
+  /// is loaded (Text_LoadRemappedGlyph).
   struct GlyphPalette palette;
   struct SelectionEntry entries[6];
-  struct UiWindow *window; ///< shows the selected command's name
+  struct Window *window; ///< shows the selected command's name
   s32 iconCount;
   /// The selected icon's scale, 8.8 fixed point: it pulses between 304 and
   /// 336 (1.19 and 1.31 times) every 16 frames.
@@ -389,14 +389,14 @@ struct SelectionWork {
   /// shows, -1 before the first is drawn.
   s32 affineIndex, selectedIndex, drawnIndex;
   /// The commands in row order, ended by -1 when fewer than six (see
-  /// Menu_RunCommandRow for the kinds).
+  /// BattleCommandRow_Run for the kinds).
   s32 commandKinds[6];
 };
 
 // The Djinn menu's blinking tile, and where each element's Djinn count sits in
 // the party status window, in tiles, to blink while the Djinni under the
 // cursor is of that element, on standby and ready to summon (windata.s).
-/// The arrow tile Battle_SelectAbility copies to BG tiles 0x328 and 0x329 each
+/// The arrow tile BattleDjinnMenu_Run copies to BG tiles 0x328 and 0x329 each
 /// frame: 0x328 blinks (four frames shown, four blank), 0x329 stays. The
 /// Djinn preview draws one of them, flipped, between the old and new class:
 /// the blinking one when the class changes.

@@ -15,27 +15,27 @@ enum {
 
 /// Steps the screen fade once a frame, called by System_VBlankHandler: sets
 /// BLDCNT to brighten or darken the chosen layers, moves BLDY one step from
-/// the start level to the target level and counts gBlendFramesLeft down; at
-/// the end it clears gBlendDuration, which Fade_Wait waits on. While
-/// gBlendDuration is 0 it writes nothing, leaving BLDCNT and BLDY as they were
-/// last written.
-void Fade_Update(void) {
-  if (gBlendDuration != 0) {
+/// the start level to the target level and counts gScreenFadeFramesLeft down;
+/// at the end it clears gScreenFadeFrames, which ScreenFade_Wait waits on.
+/// While gScreenFadeFrames is 0 it writes nothing, leaving BLDCNT and BLDY as
+/// they were last written.
+void ScreenFade_Update(void) {
+  if (gScreenFadeFrames != 0) {
     {
       volatile u16 *blendControl;
       u32 control;
 
-      if (gBlendBrighten != 0) {
-        control = gBlendLayers | FADE_BRIGHTEN;
+      if (gScreenFadeToWhite != 0) {
+        control = gScreenFadeLayers | FADE_BRIGHTEN;
         blendControl = &REG_BLDCNT;
       } else {
-        control = gBlendLayers | FADE_DARKEN;
+        control = gScreenFadeLayers | FADE_DARKEN;
         blendControl = &REG_BLDCNT;
       }
       *blendControl = control;
     }
     {
-      u8 *remaining = &gBlendFramesLeft;
+      u8 *remaining = &gScreenFadeFramesLeft;
       s32 delta;
       s32 level;
       s32 step;
@@ -43,52 +43,52 @@ void Fade_Update(void) {
       // level = target + (start - target) * remaining / duration: BLDY moves
       // in a straight line and reaches the target as remaining reaches 0
       (*remaining)--;
-      level = gBlendTargetLevel;
-      delta = gBlendStartLevel - gBlendTargetLevel;
+      level = gScreenFadeTargetLevel;
+      delta = gScreenFadeStartLevel - gScreenFadeTargetLevel;
       step = *remaining;
       /* FAKEMATCH(wrapper): the division as a call to __divsi3, which clobbers
        * memory, so the zero test reloads *remaining; as delta * step /
-       * gBlendDuration, 8 of 46 instructions differ in tbs-en. */
-      level += __divsi3(delta * step, gBlendDuration);
+       * gScreenFadeFrames, 8 of 46 instructions differ in tbs-en. */
+      level += __divsi3(delta * step, gScreenFadeFrames);
       REG_BLDY = level;
       if (*remaining == 0)
-        gBlendDuration = 0;
+        gScreenFadeFrames = 0;
     }
   }
 }
 
-// Screen fades. Fade_Update moves the fade one step each VBlank.
+// Screen fades. ScreenFade_Update moves the fade one step each VBlank.
 // The brightness (BLDY) runs from 0, the picture as drawn, to 16, all white
 // or all black.
-//   gBlendBrighten   : 0 fades toward black, 1 toward white
-//   gBlendLayers     : the BLDCNT layers the fade covers
-//   gBlendFramesLeft : frames until the fade ends
+//   gScreenFadeToWhite   : 0 fades toward black, 1 toward white
+//   gScreenFadeLayers     : the BLDCNT layers the fade covers
+//   gScreenFadeFramesLeft : frames until the fade ends
 
 /// Fades BG1 to BG3, the sprites and the backdrop (0x3e) from the current
 /// target brightness to `level` over `frames` frames.
 #define FADE_DEFINE_BLEND(name, brighten, level)                               \
   void name(s32 frames) {                                                      \
-    gBlendBrighten = brighten;                                                 \
-    gBlendLayers = FADE_GAME_LAYERS;                                           \
-    gBlendStartLevel = gBlendTargetLevel;                                      \
-    gBlendTargetLevel = level;                                                 \
-    gBlendDuration = frames;                                                   \
-    gBlendFramesLeft = gBlendDuration;                                         \
+    gScreenFadeToWhite = brighten;                                             \
+    gScreenFadeLayers = FADE_GAME_LAYERS;                                      \
+    gScreenFadeStartLevel = gScreenFadeTargetLevel;                            \
+    gScreenFadeTargetLevel = level;                                            \
+    gScreenFadeFrames = frames;                                                \
+    gScreenFadeFramesLeft = gScreenFadeFrames;                                 \
   }
 
 /// Fades out to black.
-FADE_DEFINE_BLEND(Fade_ToBlack, 0, FADE_LEVEL_MAX)
+FADE_DEFINE_BLEND(ScreenFade_ToBlack, 0, FADE_LEVEL_MAX)
 
 /// Fades in from black.
-FADE_DEFINE_BLEND(Fade_FromBlack, 0, 0)
+FADE_DEFINE_BLEND(ScreenFade_FromBlack, 0, 0)
 
 /// Fades out to white.
-FADE_DEFINE_BLEND(Fade_ToWhite, 1, FADE_LEVEL_MAX)
+FADE_DEFINE_BLEND(ScreenFade_ToWhite, 1, FADE_LEVEL_MAX)
 
 /// Fades in from white.
-FADE_DEFINE_BLEND(Fade_FromWhite, 1, 0)
+FADE_DEFINE_BLEND(ScreenFade_FromWhite, 1, 0)
 
-/// Starts a fade of any layers by setting the gBlend globals Fade_Update
+/// Starts a fade of any layers by setting the gBlend globals ScreenFade_Update
 /// steps. Reached through the far-call table.
 ///   bright : 0 toward black, 1 toward white
 ///   layer  : the BLDCNT layers to fade (low six bits)
@@ -96,25 +96,25 @@ FADE_DEFINE_BLEND(Fade_FromWhite, 1, 0)
 ///   target : the brightness to end at
 ///   frames : how long the fade takes; with 0 nothing is written, but
 ///            `target` still becomes the current target
-void Fade_Start(s8 bright, s32 layer, u32 start, s32 target, s32 frames) {
-  gBlendBrighten = bright;
-  gBlendLayers = layer & FADE_LAYER_MASK;
+void ScreenFade_Start(s8 bright, s32 layer, u32 start, s32 target, s32 frames) {
+  gScreenFadeToWhite = bright;
+  gScreenFadeLayers = layer & FADE_LAYER_MASK;
   if (start > FADE_LEVEL_MAX) {
-    gBlendStartLevel = gBlendTargetLevel;
+    gScreenFadeStartLevel = gScreenFadeTargetLevel;
   } else {
-    gBlendStartLevel = start;
+    gScreenFadeStartLevel = start;
   }
-  gBlendTargetLevel = target;
-  gBlendFramesLeft = (gBlendDuration = frames);
+  gScreenFadeTargetLevel = target;
+  gScreenFadeFramesLeft = (gScreenFadeFrames = frames);
 }
 
 /// Waits a frame at a time until the running fade has finished. Called by the
 /// title screen and the battle, and through the far-call table.
-void Fade_Wait(void) {
-  if (gBlendDuration != 0) {
+void ScreenFade_Wait(void) {
+  if (gScreenFadeFrames != 0) {
     do {
       WaitFrames(1);
-    } while (gBlendDuration != 0);
+    } while (gScreenFadeFrames != 0);
   }
 }
 

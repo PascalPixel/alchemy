@@ -1,6 +1,6 @@
 	.section .rodata
-	.global BattleEffect_YellowSparkSheet
-BattleEffect_YellowSparkSheet:
+	.global BattleAnim_YellowSparkSheet
+BattleAnim_YellowSparkSheet:
 	.incbin "games/tbs/src/graphics/battle_fx/yellow_spark_00.gbapal"
 	.incbin "games/tbs/src/graphics/battle_fx/yellow_spark.parts.lz"
-	.byte 0x17, 0x6e, 0xa0	@ PACKER: left in the buffer by BattleEffect_VioletLightningSheetA+0x2fd
+	.byte 0x17, 0x6e, 0xa0	@ PACKER: left in the buffer by BattleAnim_VioletLightningSheetA+0x2fd

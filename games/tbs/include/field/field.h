@@ -13,7 +13,7 @@
 #include "farcall.h"
 
 struct DispatchObject;
-struct EffectPosition;
+struct ScreenPoint;
 
 /// An IWRAM word the scrolling camera's setup clears; nothing in the tree
 /// reads it (see ObjectSystem_Initialize's XXX).
@@ -21,23 +21,23 @@ extern s32 gIwram_Data1;
 /// The second IWRAM word the scrolling camera's setup clears; also unread.
 extern s32 gIwram_Data2;
 extern const s32 gObjectDispatch_DefaultScript[];
-extern const u8 gWorldMap_TerrainBehaviorTable[];
+extern const u8 gWorldMap_BattleEnvironments[];
 /// The size of Render_DecodeFrame, copied to HEAP_SLOT_FRAME_SCRATCH; an
 /// address equal to the size (constants.ld).
 extern u8 Render_DecodeFrameCodeSize[];
 /// Four 256-byte colour tables (remap0 to remap3), indexed by pixel: the
-/// SpriteColorMode tables after gResourceSlot_ConversionTables' five, the
+/// SpriteColorMode tables after gSpriteColorTables' five, the
 /// first also remapping the command icons (Runtime_RemapBytesByTable).
 extern u8 gRuntime_ByteRemapTable[];
 
 struct AbilityListEntry;
-struct BattleEffectArgument;
-struct BattleUnit;
+struct BattleAnimArgs;
+struct Unit;
 struct BurstParticle;
 struct DispatchObject;
 struct FieldEffectObject;
-struct EffectPosition;
-struct EffectStep;
+struct ScreenPoint;
+struct Particle;
 struct FacingObject;
 struct ObjectEvent;
 struct FieldPosition;
@@ -47,7 +47,7 @@ struct MapGridCell;
 struct MenuSprite;
 struct ModeRecord;
 struct MotionObject;
-struct ObjectRuntime;
+struct Object;
 struct FieldRecord;
 struct MapWarpDest;
 struct MapEntry;
@@ -134,7 +134,7 @@ extern u32 gWorldMap_GraphicsResources[][6];
 extern const u8 gObjectMotion_WaitScript[];
 /// The sparkles' 16 by 16 tiles, packed (FieldEffect_InitializeSparkles).
 extern const u8 gFieldEffect_SparkleTiles[];
-extern const u8 gField_TileMessageOffsets[];
+extern const u8 gField_BgEventMessageOffsets[];
 /// The motes of light's 16 by 16 tiles, packed (FieldMotes_Start).
 extern const u8 gFieldEffect_MoteTiles[];
 extern s32 gFourObjectMotion_ResourceIds[];
@@ -147,9 +147,9 @@ struct FloodgateLog;
 extern struct FloodgateLog *gKolimaForestFloodgateRecords;
 /// The short log's place in gMapLocalState's first halfword: 1 west, 0 east.
 extern u16 *gKolimaForestFloodgateReturned;
-#ifndef OWN_gObjectSlots
-/// Work slot 5: the 64 field objects, 0x70 bytes each.
-extern struct ObjectRuntime *gObjectSlots;
+#ifndef OWN_gObjects
+/// Heap slot 5: the 64 objects, 0x70 bytes each.
+extern struct Object *gObjects;
 #endif
 /// The world map camera's yaw the scanline parameters were built for; the
 /// vertex update rebuilds them when it changes.
@@ -190,7 +190,7 @@ extern s32 gColosso_WarriorStartZ;
 /// The race gauge's 16 colours, loaded as OBJ palette 14 (Colosso_DrawGauge).
 extern u16 gColosso_GaugePalette[];
 /// The blinking pointer's sprite part: the queue link and attributes 0 to 2.
-extern s32 gColosso_MarkerOam[3];
+extern s32 gColosso_PointerOam[3];
 // The lettering's three eases (Colosso_UpdateLettering): each value goes from
 // Start to Target over Duration frames, Step counting them; Duration 0 holds
 // Target. Blend is the lettering's BLDALPHA weight out of 16, Scale its size
@@ -217,28 +217,28 @@ extern u16 gVaultInteriors_StopTimer;
 extern u8 Object_UpdateAllCodeSize[];
 extern u8 gObjectGroup_BlinkChildValues[];
 // The object motion scripts: actions 1 to 7, which
-// ObjectMotion_SetActionCallback starts by number, and two turning scripts
+// ObjectEvent_SetMovementType starts by number, and two turning scripts
 // with no action number.
 /// Action 1: a lone SC_END.
-extern const u8 gObjectMotion_ActionKind1Script[];
+extern const u8 gMovementType_StandScript[];
 /// Action 2: wanders within 16 pixels of home (SC_WANDER_HOME) at half a
 /// pixel a frame.
-extern const u8 gObjectMotion_ActionKind2Script[];
+extern const u8 gMovementType_WanderScript[];
 /// Action 3: the same within 8 pixels of home.
-extern const u8 gObjectMotion_ActionKind3Script[];
+extern const u8 gMovementType_WanderNearScript[];
 /// Action 4: wanders within 6 pixels of home at 0.4 pixels a frame.
-extern const u8 gObjectMotion_ActionKind4Script[];
+extern const u8 gMovementType_WanderCloseScript[];
 /// Waits to arrive, then turns by ObjectMotion_StepAngle until it faces the
-/// kept angle (Motion_LaunchFromFocusedObject).
+/// kept angle (ObjectMotion_LaunchFromFocusedObject).
 extern u8 gObjectMotion_LaunchScript;
 /// Action 5: ObjectMotion_MoveTowardTarget every frame, forever.
-extern const u8 gObjectMotion_MoveTowardTargetScript[];
+extern const u8 gMovementType_FollowLinkedScript[];
 /// Action 7: Object_ClearChildAndCollisionFlags once, then SC_END.
-extern const u8 gObjectMotion_ResetActionScript[];
+extern const u8 gMovementType_ResetActionScript[];
 /// Turns by ObjectMotion_StepAngle until it faces the kept angle, then SC_END.
 extern const u8 gObjectMotion_StepAngleScript[];
 /// Action 6: turns toward the leader every frame, forever.
-extern const u8 gObjectMotion_TurnTowardLinkedScript[];
+extern const u8 gMovementType_FaceLeaderScript[];
 extern const u8 gObjectMotion_VariantScripts[];
 // Lamakan Desert's heat gauge (HeatGauge_Start and HeatGauge_Draw).
 /// The gauge's tiles, packed (type 01).
@@ -263,16 +263,16 @@ extern struct MenuSprite gHeatGauge_Sprites[];
 /// HEAP_SLOT_FRAME_SCRATCH.
 extern u8 Render_DecodeFrame[];
 #endif
-/// The statue map's three scrolling strips, packed (Resource_DecodeByteLz).
+/// The statue map's three scrolling strips, packed (Decompress_ByteLz).
 extern u8 gSolSanctumStatue_SpriteRowsGraphics[];
 /// The six large things' sprite animations, which pick their footprints in
-/// gStagedObjectEvent_FootprintBounds; each map with them defines its own.
-extern u32 gStagedObjectEvent_FootprintKinds[];
-/// The tilemap row drawer, run from a copy in HEAP_SLOT_TEMP_RENDERER.
+/// gPushedObject_FootprintBounds; each map with them defines its own.
+extern u32 gPushedObject_FootprintKinds[];
+/// The tilemap row drawer, run from a copy in HEAP_SLOT_RAM_CODE_TEMP.
 extern const u8 TileMap_DrawRows[];
 /// The size of TileMap_DrawRows (decode.s).
 extern u8 TileMap_DrawRowsCodeSize[];
-/// The size of Transform_UpdateVertices, copied to work slot 46; an address
+/// The size of Transform_UpdateVertices, copied to heap slot 46; an address
 /// equal to the size (constants.ld).
 extern u8 Transform_UpdateVerticesSize;
 extern const s32 gWorldMap_FootprintActions[6];
@@ -295,7 +295,7 @@ s32 Math_Atan2(s32 dy, s32 dx);
 void Object_Destroy(struct DispatchObject *work);
 #endif
 void ObjectEventTemplate_ClipToView(struct ObjectEventTemplate *templates);
-void MapTable_Prepare(struct ObjectEventTemplate *templates);
+void ObjectEventTemplate_Prepare(struct ObjectEventTemplate *templates);
 
 // The field effects' scripts and tables (object/fxdata.c, scripts.s and
 // arcspark.s).
@@ -322,12 +322,12 @@ extern const s32 gFieldEffect_UntargetedObjectScript[];
 /// bits a pixel; FieldEffect_LoadActionEffectResources loads it.
 extern const u8 gFieldEffect_SparkTiles[];
 extern const u8 gFieldEffect_QuadrantModes[];
-/// The eight tints (PALETTE_TRANSFORM_TINT and an RGB555 colour) a field
+/// The eight tints (PALETTE_TINT_CUSTOM and an RGB555 colour) a field
 /// Psynergy effect fades the palettes toward, picked by the frame counter or
 /// by the FLAG_PSYNERGY_TINT flags (FieldEffect_FadeToEffectColor).
 extern const s32 gFieldEffect_TargetColors[];
 extern s16 gFieldEffect_GroundParticleFrames[];
-/// The ground particles' 16 by 16 tiles, packed (Resource_DecodeByteLz).
+/// The ground particles' 16 by 16 tiles, packed (Decompress_ByteLz).
 extern const u8 gFieldEffect_GroundParticleTiles[];
 extern const s32 gFieldEffect_RisingPulseScript[];
 

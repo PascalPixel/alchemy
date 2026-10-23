@@ -6,10 +6,10 @@
 /// enemy side.
 void *Djinn_GetRecoveryTableFar(s32 arg0);
 #ifndef OWN_Unit_GetFar
-/// Returns the unit record of a playable character or of an enemy in the
+/// Returns the unit of a playable character or of an enemy in the
 /// current battle, or NULL for anything else; nearly every bank reads units
 /// this way.
-struct BattleUnit *Unit_GetFar(u32 owner);
+struct Unit *Unit_GetFar(u32 owner);
 #endif
 /// Works a unit's stats out again from its base stats, equipment, set Djinn,
 /// class and battle stat levels, keeping its HP and PP at the same fraction.
@@ -30,7 +30,7 @@ s32 PartyInventory_AddFar(s32 item_id);
 s32 Inventory_FindFar(s32 owner, s32 item_id);
 /// Returns who carries the item, asking the selected character first, or -1;
 /// scripts use it to find a key item.
-s32 PartyInventory_FindOwnerFar(s32 item_id);
+s32 PartyInventory_FindMemberFar(s32 item_id);
 /// Takes one of the item from whoever carries it first, as a script uses up a
 /// key item; always returns 0.
 s32 PartyInventory_RemoveFar(s32 item_id);
@@ -49,16 +49,16 @@ s32 Inventory_BreakFar(s32 owner, s32 slot);
 s32 Inventory_RepairFar(s32 owner, s32 slot);
 /// Returns the id of the unit's equipped item of `type`, or 0; the battle draws
 /// a member's weapon from it.
-s32 Inventory_GetEquippedItemFar(struct BattleUnit *inv, s32 type);
+s32 Inventory_GetEquippedItemFar(struct Unit *inv, s32 type);
 /// Returns the definition of an ability by its low 14 bits, the first for an id
-/// past the table (BattleAction_GetDirect); every bank reads abilities so.
-struct BattleAct *BattleAction_Get(s32 actionId);
+/// past the table (Ability_GetDirect); every bank reads abilities so.
+struct AbilityDefinition *Ability_Get(s32 actionId);
 /// Teaches a character an action for good and rebuilds its list, returning the
 /// action's place there, or -1 when the list is full.
 s32 Unit_LearnPsynergyFar();
 /// Returns 1 when the action is in the unit's action list; scripts check a
 /// member's Psynergy with it.
-s32 Unit_KnowsActionFar(s32 owner, s32 value);
+s32 Unit_KnowsPsynergyFar(s32 owner, s32 value);
 /// Clears the game state and sets a new game's defaults: Isaac alone in the
 /// party, the standard buttons, the message speed and the play time clock.
 void GameState_InitializeDefaultsFar(void);
@@ -88,27 +88,27 @@ s32 Unit_AddHpFar(s32 owner, s32 delta);
 s16 Unit_AddPpFar(s32 owner, s32 delta);
 /// Recomputes the unit's HP and PP gauges from its current HP and PP, after
 /// something writes them directly, so Unit_Calculate keeps the same fractions.
-void Unit_UpdateRatiosFar(s32 owner_id);
+void Unit_RecalculateGaugesFar(s32 owner_id);
 /// Sets the unit's HP, kept between 0 and its maximum, and updates its gauges.
-void Unit_SetHpFar(struct BattleUnit *unit, s32 hp);
+void Unit_SetHpFar(struct Unit *unit, s32 hp);
 /// Fills an enemy battle unit from an enemy's definition: stats, name with its
 /// suffix letter, items, rewards and elements. Returns 0 for an id out of
 /// range, 1 otherwise.
 s32 BattleUnit_SetFar(s32 unitId, s32 enemyId, s32 suffix);
 /// Returns the size of the party, counted from its FLAG_IN_PARTY flags.
-s32 Party_CountActiveOwnersFar(void);
+s32 Party_CountMembersFar(void);
 /// Adds a character to the end of the party when one joins, setting its flag,
 /// and returns the party size.
-s32 Party_AddActiveOwnerFar(s32 value);
+s32 Party_AddMemberFar(s32 value);
 /// Writes the party members to `owners`, ended by BATTLE_UNIT_LIST_END, and
 /// returns how many there are; every screen that lists the party starts here.
-s32 Party_ListActiveOwnersFar(s16 *owners);
+s32 Party_ListMembersFar(s16 *owners);
 /// Rolls whether a character's weapon unleashes on an Attack, returning its
 /// unleash action or 1 for a plain attack.
-s32 RollWeaponUnleashFar(struct BattleUnit *owner);
+s32 RollWeaponUnleashFar(struct Unit *owner);
 /// Takes a character out of the party when one leaves, clearing its flag and
 /// closing the gap, and returns the party size.
-s32 Party_RemoveActiveOwnerFar(s32 value);
+s32 Party_RemoveMemberFar(s32 value);
 /// Returns the element the unit attacks with: an enemy's from its kind, a
 /// character's from its weapon, ELEMENT_NONE for none.
 s32 Item_GetEquippedElementFar(s32 id);
@@ -134,13 +134,13 @@ const u8 *Enemy_GetDefinitionFar(s32 selector);
 s32 Battle_RandomFar(void);
 /// Gives a unit a Djinni, returning -1 when it has it already or holds ten of
 /// that element.
-s32 Djinn_AddToOwnerFar(s32 owner, s32 index, s32 bit);
+s32 Djinn_GiveFar(s32 owner, s32 index, s32 bit);
 /// Sets a ready Djinni on the unit and works out its class again; returns 1
 /// when it was set.
-s32 Djinn_ActivateFar(s32 owner, s32 index, s32 bit);
+s32 Djinn_SetFar(s32 owner, s32 index, s32 bit);
 /// Takes a set Djinni off the unit and works out its class again; returns 1
 /// when it had been set.
-u32 Djinn_DeactivateFar(s32 owner, s32 index, s32 bit);
+u32 Djinn_PutOnStandbyFar(s32 owner, s32 index, s32 bit);
 /// Takes a Djinni off its side's standby and recovery list; returns 1 when it
 /// was there.
 s32 DjinnRecovery_RemoveFar(s32 owner, s32 index, s32 bit);
@@ -161,19 +161,19 @@ s32 Djinn_GetAbilityIdFar(u32 group, u32 index);
 /// Raises a character a level at a time up to `lv`, then recomputes its stats.
 void Unit_LevelUpToFar(s32 unit, s32 lv);
 /// Returns the unit's whole element level in one element, 0 for ELEMENT_NONE;
-/// the status screens show it.
+/// the summary screens show it.
 s32 Unit_GetElementLevelFar(s32 owner, s32 index);
 /// Returns 1 when the Djinni is set on the unit.
-u32 Djinn_IsActiveFar(s32 owner, s32 index, s32 bit);
+u32 Djinn_IsSetFar(s32 owner, s32 index, s32 bit);
 /// Returns 1 when the unit holds the Djinni and it can be set: not set already,
 /// not recovering and not held by a summon.
-s32 Djinn_IsReadyFar(s32 owner, s32 index, s32 bit);
+s32 Djinn_CanSetFar(s32 owner, s32 index, s32 bit);
 /// Returns whether the character's class may equip the item, 0 for any unit
-/// past the eight characters (Item_CanOwnerEquipDirect).
-s32 Item_CanOwnerEquip(s32 unit, s32 item);
+/// past the eight characters (Item_CanUnitEquipDirect).
+s32 Item_CanUnitEquip(s32 unit, s32 item);
 /// Returns 1 for anything but a weapon or armor, and for those whether the
 /// character can equip it; the buy screen greys out members with it.
-s32 Item_IsCompatibleWithOwnerFar(s32 unit, s32 item);
+s32 Item_IsCompatibleWithUnitFar(s32 unit, s32 item);
 /// Returns the slot of the unit's equipped item of `type`, or -1.
 s32 Inventory_FindEquippedFar(s32 owner, s32 type);
 /// Adds `amount` to the party's coins, kept between 0 and 999999, and returns
@@ -208,7 +208,7 @@ void Party_EndChildhoodFar(void);
 /// Gives a newly found Djinni to the member holding the fewest Djinn with room
 /// in its element and returns who got it: -1 when it was found before, -2 when
 /// nobody has room.
-s32 Djinn_AddToLeastLoadedOwnerFar(s32 element, s32 djinn);
+s32 Djinn_GiveToPartyFar(s32 element, s32 djinn);
 /// Returns how many Djinn of an element the party holds, or of all four for -1.
 s32 Party_SumDjinnCountsFar(s32 index);
 /// Adds `amount` to the shop credit purchases build up and Game Tickets spend,
@@ -234,7 +234,7 @@ u32 Party_GetAverageLevelFar(void);
 /// Counts the unit's matching unstackable items, or the quantity in its first
 /// matching stack.
 s32 Inventory_CountItemFar(s32 owner, s32 item_id);
-/// Counts the item across the whole party, as the slot machine counts Game
+/// Counts the item across the whole party, as Lucky Wheels counts Game
 /// Tickets.
 s32 PartyInventory_CountItemFar(s32 item_id);
 /// Discards one of the item from whoever carries it first, as a script takes
@@ -244,7 +244,7 @@ s32 PartyInventory_DiscardFar(s32 item_id);
 /// otherwise, so the encounter rate follows the cap.
 void GameFlag_RefreshLureCapFar(void);
 /// Returns the unleash chance, in percent, that a unit's equipment adds.
-s32 Equipment_GetUnleashRateBonusFar(struct BattleUnit *owner);
+s32 Equipment_GetUnleashRateBonusFar(struct Unit *owner);
 /// Returns the build stamp's time packed into a halfword, which a new game
 /// keeps as its start stamp and the save screens compare.
 u32 Runtime_GetBuildStampTimeFar();

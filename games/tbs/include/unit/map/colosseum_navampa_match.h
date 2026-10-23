@@ -21,7 +21,7 @@ extern const s16 gColossoLetteringScriptLose[];
 extern char gColossoHexChars[20];
 extern s32 gColossoRandomEffect[];
 extern s32 gColossoLinkedEffect[];
-extern u32 gStagedObjectEvent_DirectionSteps[];
+extern u32 gPushedObject_DirectionSteps[];
 extern struct MapWarpDest gColosseumNavampaMatchWarpDests[];
 extern u32 gColosseumNavampaMatchWarps[];
 extern struct ObjectEventTemplate gColosseumNavampaMatchObjectEventTemplates[];

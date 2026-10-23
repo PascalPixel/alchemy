@@ -6,16 +6,16 @@
 
 /// Decompresses the halfword LZ stream at `source` to `destination`, with a
 /// copy of the ARM decoder on the stack. Called by the palette editor.
-void Resource_DecompressHalfwords(const void *source, void *destination) {
-  u32 words = (u32)Resource_DecompressHalfwordsCodeSize >> 2;
+void Decompress_Halfwords(const void *source, void *destination) {
+  u32 words = (u32)Decompress_HalfwordsCodeSize >> 2;
   u32 routine[words];
-  Dma_Set(Resource_DecodeHalfwordLz, routine, DMA_COPY_WORDS(words), REG_DMA3);
+  Dma_Set(Decompress_HalfwordLz, routine, DMA_COPY_WORDS(words), REG_DMA3);
   ((void (*)(const void *, void *))routine)(source, destination);
 }
 
 /// Each decoder copies its ARM routine `code` to RAM, runs it and frees the
-/// copy, and returns the number of bytes it decoded. The copy is a MemAlloc
-/// block, IWRAM when it fits, and MemFree puts the pool's next address back
+/// copy, and returns the number of bytes it decoded. The copy is a Alloc
+/// block, IWRAM when it fits, and Free puts the pool's next address back
 /// where it was.
 #define RESOURCE_DEFINE_DECODE(name, code, bytes)                              \
   s32 name(const void *source, void *destination) {                            \
@@ -24,19 +24,19 @@ void Resource_DecompressHalfwords(const void *source, void *destination) {
                                                                                \
     RamCode_Load(routine, code, bytes);                                        \
     result = routine(source, destination);                                     \
-    MemFree(routine);                                                          \
+    Free(routine);                                                             \
     return result;                                                             \
   }
 
 /// Decodes a type-01 resource and returns its unpacked byte count.
-RESOURCE_DEFINE_DECODE(Resource_DecodeType01, Resource_DecodeType01Arm,
-                       Resource_DecodeType01CodeSize)
+RESOURCE_DEFINE_DECODE(Decompress_Type01, Decompress_Type01Arm,
+                       Decompress_Type01CodeSize)
 /// Decodes a type-02 resource and returns its unpacked byte count.
-RESOURCE_DEFINE_DECODE(Resource_DecodeType2, Resource_Decode2,
-                       Resource_Decode2CodeSize)
+RESOURCE_DEFINE_DECODE(Decompress_Type2, Decompress_Type2Commands,
+                       Decompress_Type2CommandsCodeSize)
 /// Decodes a byte-oriented LZ resource and returns its unpacked byte count.
-RESOURCE_DEFINE_DECODE(Resource_DecodeByteLz, Resource_DecodeByteLzArm,
-                       Resource_DecodeByteLzCodeSize)
+RESOURCE_DEFINE_DECODE(Decompress_ByteLz, Decompress_ByteLzArm,
+                       Decompress_ByteLzCodeSize)
 
 // Shading of 8-bit pixel buffers whose values are steps 0 to 63 of a colour
 // ramp. Each function copies `bytes` of `buffer` to `backup`, then shades the
@@ -46,77 +46,77 @@ RESOURCE_DEFINE_DECODE(Resource_DecodeByteLz, Resource_DecodeByteLzArm,
 // can change: not all zero, or not all at the limit already.
 
 /// Raises every pixel by `amount`, stopping at 63.
-void ColorBuffer_BackupAndBrighten(u8 *buffer, u32 amount, u8 *backup,
+void PaletteFade_BackupAndBrighten(u8 *buffer, u32 amount, u8 *backup,
                                    u32 bytes) {
-  u32 words = (u32)ColorBuffer_BackupAndBrightenCodeSize >> 2;
+  u32 words = (u32)PaletteFade_BackupAndBrightenCodeSize >> 2;
   u32 routine[words];
-  Dma_Set(ColorBuffer_BrightenKernel, routine, DMA_COPY_WORDS(words), REG_DMA3);
+  Dma_Set(PaletteFade_BrightenKernel, routine, DMA_COPY_WORDS(words), REG_DMA3);
   ((void (*)(u8 *, u32, u8 *, u32))routine)(buffer, amount, backup, bytes);
 }
 
 /// Lowers every pixel by `amount`, stopping at 0.
-void ColorBuffer_BackupAndDarken(u8 *buffer, u32 amount, u8 *backup,
+void PaletteFade_BackupAndDarken(u8 *buffer, u32 amount, u8 *backup,
                                  u32 bytes) {
-  u32 words = (u32)ColorBuffer_BackupAndDarkenCodeSize >> 2;
+  u32 words = (u32)PaletteFade_BackupAndDarkenCodeSize >> 2;
   u32 routine[words];
-  Dma_Set(ColorBuffer_DarkenKernel, routine, DMA_COPY_WORDS(words), REG_DMA3);
+  Dma_Set(PaletteFade_DarkenKernel, routine, DMA_COPY_WORDS(words), REG_DMA3);
   ((void (*)(u8 *, u32, u8 *, u32))routine)(buffer, amount, backup, bytes);
 }
 
 /// Scales every pixel to three quarters.
-void ColorBuffer_BackupAndScaleThreeQuarters(u8 *buffer, u8 *backup,
+void PaletteFade_BackupAndScaleThreeQuarters(u8 *buffer, u8 *backup,
                                              u32 bytes) {
-  u32 words = (u32)ColorBuffer_BackupAndScaleThreeQuartersCodeSize >> 2;
+  u32 words = (u32)PaletteFade_BackupAndScaleThreeQuartersCodeSize >> 2;
   u32 routine[words];
-  Dma_Set(ColorBuffer_ScaleThreeQuartersKernel, routine, DMA_COPY_WORDS(words),
+  Dma_Set(PaletteFade_ScaleThreeQuartersKernel, routine, DMA_COPY_WORDS(words),
           REG_DMA3);
   ((void (*)(u8 *, u8 *, u32))routine)(buffer, backup, bytes);
 }
 
-/// Halves every pixel. Called by the battle effect canvas's transfers.
-void ColorBuffer_BackupAndHalve(u8 *buffer, u8 *backup, u32 bytes) {
-  u32 words = (u32)ColorBuffer_BackupAndHalveCodeSize >> 2;
+/// Halves every pixel. Called by the battle animation canvas's transfers.
+void PaletteFade_BackupAndHalve(u8 *buffer, u8 *backup, u32 bytes) {
+  u32 words = (u32)PaletteFade_BackupAndHalveCodeSize >> 2;
   u32 routine[words];
-  Dma_Set(ColorBuffer_HalveKernel, routine, DMA_COPY_WORDS(words), REG_DMA3);
+  Dma_Set(PaletteFade_HalveKernel, routine, DMA_COPY_WORDS(words), REG_DMA3);
   ((void (*)(u8 *, u8 *, u32))routine)(buffer, backup, bytes);
 }
 
-/// As ColorBuffer_BackupAndBrighten, skipping groups already all at 63.
-void ColorBuffer_BackupAndBrightenPartial(u8 *buffer, u32 amount, u8 *backup,
+/// As PaletteFade_BackupAndBrighten, skipping groups already all at 63.
+void PaletteFade_BackupAndBrightenPartial(u8 *buffer, u32 amount, u8 *backup,
                                           u32 bytes) {
-  u32 words = (u32)ColorBuffer_BackupAndBrightenPartialCodeSize >> 2;
+  u32 words = (u32)PaletteFade_BackupAndBrightenPartialCodeSize >> 2;
   u32 routine[words];
-  Dma_Set(ColorBuffer_BrightenPartialKernel, routine, DMA_COPY_WORDS(words),
+  Dma_Set(PaletteFade_BrightenPartialKernel, routine, DMA_COPY_WORDS(words),
           REG_DMA3);
   ((void (*)(u8 *, u32, u8 *, u32))routine)(buffer, amount, backup, bytes);
 }
 
-/// As ColorBuffer_BackupAndDarken, skipping groups already all at 0.
-void ColorBuffer_BackupAndDarkenPartial(u8 *buffer, u32 amount, u8 *backup,
+/// As PaletteFade_BackupAndDarken, skipping groups already all at 0.
+void PaletteFade_BackupAndDarkenPartial(u8 *buffer, u32 amount, u8 *backup,
                                         u32 bytes) {
-  u32 words = (u32)ColorBuffer_BackupAndDarkenPartialCodeSize >> 2;
+  u32 words = (u32)PaletteFade_BackupAndDarkenPartialCodeSize >> 2;
   u32 routine[words];
-  Dma_Set(ColorBuffer_DarkenPartialKernel, routine, DMA_COPY_WORDS(words),
+  Dma_Set(PaletteFade_DarkenPartialKernel, routine, DMA_COPY_WORDS(words),
           REG_DMA3);
   ((void (*)(u8 *, u32, u8 *, u32))routine)(buffer, amount, backup, bytes);
 }
 
 /// Scales every pixel to three quarters, skipping all-zero groups.
-void ColorBuffer_BackupAndScaleNonzeroThreeQuarters(u8 *buffer, u8 *backup,
+void PaletteFade_BackupAndScaleNonzeroThreeQuarters(u8 *buffer, u8 *backup,
                                                     u32 bytes) {
-  u32 words = (u32)ColorBuffer_BackupAndScaleNonzeroThreeQuartersCodeSize >> 2;
+  u32 words = (u32)PaletteFade_BackupAndScaleNonzeroThreeQuartersCodeSize >> 2;
   u32 routine[words];
-  Dma_Set(ColorBuffer_ScaleNonzeroThreeQuartersKernel, routine,
+  Dma_Set(PaletteFade_ScaleNonzeroThreeQuartersKernel, routine,
           DMA_COPY_WORDS(words), REG_DMA3);
   ((void (*)(u8 *, u8 *, u32))routine)(buffer, backup, bytes);
 }
 
-/// Halves every pixel, skipping all-zero groups. Called by the slot reels'
-/// canvas transfer.
-void ColorBuffer_BackupAndHalveNonzero(u8 *buffer, u8 *backup, u32 bytes) {
-  u32 words = (u32)ColorBuffer_BackupAndHalveNonzeroCodeSize >> 2;
+/// Halves every pixel, skipping all-zero groups. Called by the Lucky Wheels
+/// wheels' canvas transfer.
+void PaletteFade_BackupAndHalveNonzero(u8 *buffer, u8 *backup, u32 bytes) {
+  u32 words = (u32)PaletteFade_BackupAndHalveNonzeroCodeSize >> 2;
   u32 routine[words];
-  Dma_Set(ColorBuffer_HalveNonzeroKernel, routine, DMA_COPY_WORDS(words),
+  Dma_Set(PaletteFade_HalveNonzeroKernel, routine, DMA_COPY_WORDS(words),
           REG_DMA3);
   ((void (*)(u8 *, u8 *, u32))routine)(buffer, backup, bytes);
 }

@@ -9,8 +9,8 @@
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1
 	.set import.Engine_GameFlagClear, 1
-	.set import.Party_AddActiveOwner, 1
-	.set import.Party_RemoveActiveOwner, 1
+	.set import.Party_AddMember, 1
+	.set import.Party_RemoveMember, 1
 	.set import.InventorySnapshot_Take, 1
 	.set import.Engine_ScriptWait, 1
 	.set import.Engine_ScriptStart, 1

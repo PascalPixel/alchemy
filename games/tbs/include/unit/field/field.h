@@ -5,14 +5,14 @@
 
 #include "types.h"
 
-struct AnimationEntry;
-struct AnimationObject;
+struct SpriteAnim;
+struct Sprite;
 struct DispatchObject;
 struct FieldPosition;
 struct WorldMapAffinePair;
 struct WorldMapScanline;
-struct ObjectRuntime;
-struct ScriptInterpreter;
+struct Object;
+struct ObjectScriptContext;
 struct ScriptObjectEntry;
 struct ScriptObjectRuntime;
 struct ScriptOperands;
@@ -22,20 +22,20 @@ struct WorldPosition;
 /// the objects and which update moves them.
 enum ObjectSystemMode {
   /// A town, a dungeon or the sprite viewer: the scrolling camera.
-  MODE_LAYERED_MAP = 2,
+  OBJECT_SYSTEM_LAYOUT = 2,
   /// The world map: the fixed camera, which projects 3D points onto the
   /// screen.
-  MODE_WORLD_MAP = 3,
+  OBJECT_SYSTEM_WORLD_MAP = 3,
   /// A battle: the fixed camera, and the battle's own motion update.
-  MODE_BATTLE = 4
+  OBJECT_SYSTEM_BATTLE = 4
 };
 
-/// AnimationEntry.kind: the facing table a layer's frames follow
-/// (Sprite_ComposeAnimationFrame, facing.c). Each cuts the facing angle into
+/// SpriteAnim.kind: the facing table a sprite anim's frames follow
+/// (Sprite_ComposeFrame, facing.c). Each cuts the facing angle into
 /// sectors and gives each sector a frame and whether it is mirrored.
 enum AnimationFacingKind {
   /// The script's own frame whatever the facing; zero also marks a free
-  /// layer record.
+  /// sprite anim.
   ANIMATION_FACING_NONE = 0,
   ANIMATION_FACING_ONE_FRAME =
       1, ///< 8 sectors: one frame, mirrored to the left
@@ -53,7 +53,7 @@ enum AnimationFacingKind {
   /// way.
   ANIMATION_FACING_FRONT_BACK_SWAPPED = 22,
   /// Ringed as eight facings by the sprite viewer, but with no facing table:
-  /// Sprite_ComposeAnimationFrame draws it as ANIMATION_FACING_NONE.
+  /// Sprite_ComposeFrame draws it as ANIMATION_FACING_NONE.
   /// XXX: likely an older eight-direction kind, because the viewer still
   /// lists it; a sprite of this kind would settle it.
   ANIMATION_FACING_EIGHT_NO_TABLE = 44,
@@ -61,22 +61,22 @@ enum AnimationFacingKind {
   ANIMATION_FACING_EIGHT_FRAMES_MIRRORED = 88
 };
 
-/// AnimationEntry.mode, from the metadata's frameCodec: how a layer's frames
+/// SpriteAnim.mode, from the metadata's frameCodec: how a sprite anim's frames
 /// are stored. Any other value is raw, for the frame decoder.
 enum SpriteFrameCodec {
   SPRITE_FRAME_RAW = 0,
-  SPRITE_FRAME_TYPE01 = 1, ///< Resource_DecodeType01's format
+  SPRITE_FRAME_TYPE01 = 1, ///< Decompress_Type01's format
   SPRITE_FRAME_LZ = 3      ///< LZ-compressed
 };
 
-/// AnimationObject.flags.
-enum AnimationObjectFlag {
+/// Sprite.flags.
+enum SpriteFlag {
   SPRITE_FLAG_SHADOW = 1 << 0, ///< its shadow is drawn; set when created
   /// Drawn as an outline, in ObjectSystemWork's edge and fill colours.
   SPRITE_FLAG_OUTLINED = 1 << 1
 };
 
-/// ObjectRuntime.animationKind (DispatchObject.kind), its low four bits: what
+/// Object.animationKind (DispatchObject.kind), its low four bits: what
 /// the object's animation pointer holds.
 enum ObjectSpriteKind {
   OBJECT_SPRITE_NONE = 0, ///< nothing drawn
@@ -84,7 +84,7 @@ enum ObjectSpriteKind {
   OBJECT_SPRITE_GROUP = 2 ///< a list of up to four sprites, empty ones null
 };
 
-/// FieldObject_Create's id / 4096: what sprites the object is made with.
+/// Object_CreateField's id / 4096: what sprites the object is made with.
 enum ObjectCreateKind {
   OBJECT_CREATE_ONE_SPRITE = 0, ///< the id's sprite (OBJECT_SPRITE_ONE)
   /// The sprites of the id and id + 1 (OBJECT_SPRITE_GROUP).
@@ -94,12 +94,12 @@ enum ObjectCreateKind {
   OBJECT_CREATE_NO_SPRITE = 8
 };
 
-/// The world map's collision values (GetWorldMapCollision), 1 to 15; each
-/// indexes a row of gWorldMap_TerrainBehaviorTable. Values not named here
+/// The world map's collision values (WorldMap_GetCollision), 1 to 15; each
+/// indexes a row of gWorldMap_BattleEnvironments. Values not named here
 /// are walkable or not only by their range.
 enum WorldMapCollision {
   /// The party walks only on WORLD_MAP_COLLISION_WALKABLE_FIRST to
-  /// WORLD_MAP_COLLISION_WALKABLE_LAST (CheckWorldMapWalkable).
+  /// WORLD_MAP_COLLISION_WALKABLE_LAST (WorldMap_IsWalkable).
   WORLD_MAP_COLLISION_WALKABLE_FIRST = 5,
   /// Shallow water: a ripple follows the leader as it walks.
   WORLD_MAP_COLLISION_SHALLOW_WATER = 6,
@@ -111,31 +111,31 @@ enum WorldMapCollision {
   WORLD_MAP_COLLISION_WALKABLE_LAST = 12
 };
 
-/// A world map terrain behaviour (gWorldMap_TerrainBehaviorTable,
-/// GetWorldMapTerrainBehavior): what its ground means for battles, named by
-/// the battle backdrop Battle_SelectTerrainBackdrop gives it.
-enum WorldMapTerrainBehavior {
-  WORLD_MAP_TERRAIN_NONE = 0,      ///< Sol Sanctum's backdrop
-  WORLD_MAP_TERRAIN_GRASSLAND = 1, ///< ResourceId_GrasslandBackdrop
+/// A world map battle environment (gWorldMap_BattleEnvironments,
+/// WorldMap_GetBattleEnvironment): what its ground means for battles, named by
+/// the battle background BattleBackground_SelectForEnvironment gives it.
+enum BattleEnvironment {
+  BATTLE_ENVIRONMENT_NONE = 0,      ///< Sol Sanctum's background
+  BATTLE_ENVIRONMENT_GRASSLAND = 1, ///< ResourceId_GrasslandBackdrop
   /// ResourceId_ForestBackdrop; encounters take a region's forest zone.
-  WORLD_MAP_TERRAIN_FOREST = 2,
-  WORLD_MAP_TERRAIN_DESERT = 3,    ///< ResourceId_DesertBackdrop
-  WORLD_MAP_TERRAIN_BEACH = 4,     ///< ResourceId_BeachBackdrop
-  WORLD_MAP_TERRAIN_SNOWFIELD = 5, ///< ResourceId_SnowfieldBackdrop
+  BATTLE_ENVIRONMENT_FOREST = 2,
+  BATTLE_ENVIRONMENT_DESERT = 3,    ///< ResourceId_DesertBackdrop
+  BATTLE_ENVIRONMENT_BEACH = 4,     ///< ResourceId_BeachBackdrop
+  BATTLE_ENVIRONMENT_SNOWFIELD = 5, ///< ResourceId_SnowfieldBackdrop
   /// ResourceId_SnowfieldBackdrop, for the snowfield's forest.
-  WORLD_MAP_TERRAIN_SNOW_FOREST = 6,
+  BATTLE_ENVIRONMENT_SNOW_FOREST = 6,
   /// ResourceId_BeachBackdrop, for shallow water
   /// (WORLD_MAP_COLLISION_SHALLOW_WATER).
-  WORLD_MAP_TERRAIN_SHALLOWS = 7
+  BATTLE_ENVIRONMENT_SHALLOWS = 7
 };
 
-/// A world map cell's terrain kind (bits 30..24 of its block word): the
-/// region it belongs to, which picks its encounter zones
+/// A world map cell's encounter region (bits 30..24 of its block word),
+/// which picks its encounter zones
 /// (gWorldMap_EncounterRules). Only the snowfield changes anything else.
-enum WorldMapRegion {
+enum WorldMapEncounterRegion {
   /// Takes the second world map graphics set (WorldMap_LoadGraphics) and the
-  /// snowfield's terrain behaviours (GetWorldMapTerrainBehavior).
-  WORLD_MAP_REGION_SNOWFIELD = 21
+  /// snowfield's battle environments (WorldMap_GetBattleEnvironment).
+  WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD = 21
 };
 
 /// A map cell's terrain kind: the low four bits of its shape's first byte,
@@ -153,13 +153,13 @@ enum TerrainKind {
   TERRAIN_BEND_SUM_DIAGONAL = 5,
   /// Three samples, bending on the diagonal x = y.
   TERRAIN_BEND_DIFFERENCE_DIAGONAL = 6,
-  /// A raised or sunken rounded square (gCurve_LerpWeightTable).
+  /// A raised or sunken rounded square (gTerrain_LerpWeightTable).
   TERRAIN_ROUNDED_SQUARE = 7,
   TERRAIN_STEP_X = 8,  ///< the first sample for x below 8, then the second
   TERRAIN_STEP_Y = 9,  ///< the first sample for y below 8, then the second
   TERRAIN_BEND_X = 10, ///< three samples along x, bending at the middle
   TERRAIN_BEND_Y = 11, ///< three samples along y, read unsigned
-  /// The sample gCurve_SampleIndexTable picks for each pixel.
+  /// The sample gTerrain_SampleIndexTable picks for each pixel.
   TERRAIN_SAMPLE_TABLE = 12,
   /// As TERRAIN_SAMPLE_TABLE, mirrored left to right.
   TERRAIN_SAMPLE_TABLE_MIRRORED = 13,
@@ -168,135 +168,130 @@ enum TerrainKind {
   TERRAIN_KIND_COUNT = 16
 };
 
-/// What MapGrid_CheckObjectStep says of a step to a position.
-enum MapGridStepCheck {
-  MAPGRID_STEP_TOO_LOW = -1, ///< the ground there is more than 12 pixels lower
-  MAPGRID_STEP_OPEN = 0,     ///< the object can step there
-  MAPGRID_STEP_TOO_HIGH = 1, ///< the ground there is more than 8 pixels higher
-  MAPGRID_STEP_WALL = 2      ///< the cell there is a wall (MB_WALL)
+/// What MapGrid_CheckCollision says of a step to a position.
+enum Collision {
+  COLLISION_TOO_LOW = -1,  ///< the ground there is more than 12 pixels lower
+  COLLISION_NONE = 0,      ///< the object can step there
+  COLLISION_TOO_HIGH = 1,  ///< the ground there is more than 8 pixels higher
+  COLLISION_IMPASSABLE = 2 ///< the cell there is a wall (MB_WALL)
 };
 
-u8 *Resource_DecompressLz(const u8 *source, u8 *destination);
-s32 Sprite_ComposeAnimationFrame(struct AnimationObject *animation, u16 dir);
-void Render_PlaceSpritePartPair(struct AnimationObject *sprite, s32 screenX,
-                                s32 height, s32 screenY, s32 groundHeight,
-                                s32 *scale);
-void Render_ApplyProjectedPlacement(struct AnimationObject *sprite,
+u8 *Decompress_Lz(const u8 *source, u8 *destination);
+s32 Sprite_ComposeFrame(struct Sprite *animation, u16 dir);
+void Render_PlaceSpritePartPair(struct Sprite *sprite, s32 screenX, s32 height,
+                                s32 screenY, s32 groundHeight, s32 *scale);
+void Render_ApplyProjectedPlacement(struct Sprite *sprite,
                                     const struct SpritePlacement *position,
                                     const struct SpriteScale *scale,
                                     s32 facing);
-void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
-                                 s32 *scale, s32 facing, s32 depth);
-void ObjectGroup_SetChildValueUnlessFifteen(void *rawSprite, u32 value);
-s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant);
-s32 Animation_LookupValueByKey(s32 tag);
-s32 Animation_InitializeObjects(struct AnimationObject *sprite);
-void Animation_InitializeWorkFromMetadata(struct AnimationEntry *layer);
-s32 ResourceMetadata_Register(struct AnimationObject *sprite, s32 id);
-void ResourceMetadata_Unregister(struct AnimationObject *sprite, s32 layer);
-void ResourceMetadata_ReleaseSlot(struct AnimationObject *sprite, u32 index);
-void Animation_SetWorkEntry(struct AnimationEntry *layer, s32 animation);
-s32 AnimationObject_SelectAnimation(struct AnimationObject *sprite,
-                                    s32 animation);
-s32 AnimationObject_SetActiveFrameTimers(struct AnimationObject *sprite,
-                                         s32 frames);
-void AnimationObject_SetActiveTimerSteps(struct AnimationObject *sprite,
-                                         s32 step);
+void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
+                                 s32 facing, s32 depth);
+void Sprite_SetAnimColorModes(void *rawSprite, u32 value);
+s32 SpriteFrameCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant);
+s32 SpriteFrameCache_FindByTag(s32 tag);
+s32 Sprite_ResetAnims(struct Sprite *sprite);
+void SpriteAnim_Reset(struct SpriteAnim *layer);
+s32 Sprite_AddAnim(struct Sprite *sprite, s32 id);
+void Sprite_RemoveAnim(struct Sprite *sprite, s32 layer);
+void Sprite_RemoveAnimAt(struct Sprite *sprite, u32 index);
+void SpriteAnim_Start(struct SpriteAnim *layer, s32 animation);
+s32 Sprite_StartAnim(struct Sprite *sprite, s32 animation);
+s32 Sprite_SetAnimTimers(struct Sprite *sprite, s32 frames);
+void Sprite_SetAnimSpeed(struct Sprite *sprite, s32 step);
 void ObjectSystem_Configure(s32 mode);
-struct AnimationEntry *Animation_AllocateLayer(s32 id);
-void ResourceMetadata_ClearRecord(struct AnimationEntry *record);
-struct AnimationObject *ResourceObject_Create(s32 id);
-void ResourceObject_Release(struct AnimationObject *sprite);
-s32 ResourceMetadata_SumCommandLengths(s32 id, u32 animation, s32 frameCount);
+struct SpriteAnim *SpriteAnim_Alloc(s32 id);
+void SpriteAnim_Clear(struct SpriteAnim *record);
+struct Sprite *Sprite_Create(s32 id);
+void Sprite_Destroy(struct Sprite *sprite);
+s32 SpriteAnim_SumCommandLengths(s32 id, u32 animation, s32 frameCount);
 void SpriteDissolve_Step(u8 *obj, u32 pos);
 void SpriteDissolve_Run(u8 *sprite);
 void SpriteDissolve_RunMany(u8 **sprites, s32 count);
 void ObjectDispatch_SelectAnimation(void *raw, s32 no);
 void ObjectDispatch_SetAnimationSpeed(struct DispatchObject *object, s32 val);
-s32 ActionScript_SetFlagAndTest(struct ScriptInterpreter *interpreter);
-s32 ActionScript_ClearFlagAndTest(struct ScriptInterpreter *interpreter);
-void ActionScript_SetOrCompareAddress(struct ScriptOperands *state,
+s32 ObjectScript_SetFlagAndTest(struct ObjectScriptContext *interpreter);
+s32 ObjectScript_ClearFlagAndTest(struct ObjectScriptContext *interpreter);
+void ObjectScript_SetOrCompareAddress(struct ScriptOperands *state,
                                       s32 operation, s32 value);
-void ActionScript_SetOrCompareUnsignedHalfword(struct ScriptOperands *state,
+void ObjectScript_SetOrCompareUnsignedHalfword(struct ScriptOperands *state,
                                                s32 operation, s32 value);
-void ActionScript_SetOrCompareX(struct ScriptOperands *state, s32 operation,
+void ObjectScript_SetOrCompareX(struct ScriptOperands *state, s32 operation,
                                 s32 value);
-void ActionScript_SetOrCompareY(struct ScriptOperands *state, s32 operation,
+void ObjectScript_SetOrCompareY(struct ScriptOperands *state, s32 operation,
                                 s32 value);
-void ActionScript_SetOrCompareZ(struct ScriptOperands *state, s32 operation,
+void ObjectScript_SetOrCompareZ(struct ScriptOperands *state, s32 operation,
                                 s32 value);
-void ActionScript_SetOrCompareScaleX(struct ScriptOperands *state,
+void ObjectScript_SetOrCompareScaleX(struct ScriptOperands *state,
                                      s32 operation, s32 value);
-void ActionScript_SetOrCompareScaleY(struct ScriptOperands *state,
+void ObjectScript_SetOrCompareScaleY(struct ScriptOperands *state,
                                      s32 operation, s32 value);
-void ActionScript_SetOrCompareVelocityX(struct ScriptOperands *state,
+void ObjectScript_SetOrCompareVelocityX(struct ScriptOperands *state,
                                         s32 operation, s32 value);
-void ActionScript_SetOrCompareVelocityY(struct ScriptOperands *state,
+void ObjectScript_SetOrCompareVelocityY(struct ScriptOperands *state,
                                         s32 operation, s32 value);
-void ActionScript_SetOrCompareVelocityZ(struct ScriptOperands *state,
+void ObjectScript_SetOrCompareVelocityZ(struct ScriptOperands *state,
                                         s32 operation, s32 value);
-void ActionScript_SetOrCompareSpeedLimit(struct ScriptOperands *state,
+void ObjectScript_SetOrCompareSpeedLimit(struct ScriptOperands *state,
                                          s32 operation, s32 value);
-void ActionScript_SetOrCompareAcceleration(struct ScriptOperands *state,
+void ObjectScript_SetOrCompareAcceleration(struct ScriptOperands *state,
                                            s32 operation, s32 value);
-void ActionScript_SetOrCompareTargetX(struct ScriptOperands *state,
+void ObjectScript_SetOrCompareTargetX(struct ScriptOperands *state,
                                       s32 operation, s32 value);
-void ActionScript_SetOrCompareTargetY(struct ScriptOperands *state,
+void ObjectScript_SetOrCompareTargetY(struct ScriptOperands *state,
                                       s32 operation, s32 value);
-void ActionScript_SetOrCompareTargetZ(struct ScriptOperands *state,
+void ObjectScript_SetOrCompareTargetZ(struct ScriptOperands *state,
                                       s32 operation, s32 value);
-void ActionScript_SetOrCompareVerticalMotion(struct ScriptOperands *state,
+void ObjectScript_SetOrCompareVerticalMotion(struct ScriptOperands *state,
                                              s32 operation, s32 value);
-void ActionScript_SetOrCompareGravity(struct ScriptOperands *state,
+void ObjectScript_SetOrCompareGravity(struct ScriptOperands *state,
                                       s32 operation, s32 value);
-void ActionScript_SetOrCompareTerrainHeight(struct ScriptOperands *state,
+void ObjectScript_SetOrCompareTerrainHeight(struct ScriptOperands *state,
                                             s32 operation, s32 value);
-void ActionScript_SetOrCompareWord4c(struct ScriptOperands *state,
+void ObjectScript_SetOrCompareWord4c(struct ScriptOperands *state,
                                      s32 operation, s32 value);
-void ActionScript_SetOrCompareAddress50(struct ScriptOperands *state,
+void ObjectScript_SetOrCompareAddress50(struct ScriptOperands *state,
                                         s32 operation, s32 value);
-void ActionScript_SetOrCompareByte54(struct ScriptOperands *state,
+void ObjectScript_SetOrCompareByte54(struct ScriptOperands *state,
                                      s32 operation, s32 value);
-void ActionScript_SetOrCompareMotionFlags(struct ScriptOperands *state,
+void ObjectScript_SetOrCompareMotionFlags(struct ScriptOperands *state,
                                           s32 operation, s32 value);
-void ActionScript_SetOrCompareArrivalAxis(struct ScriptOperands *state,
+void ObjectScript_SetOrCompareArrivalAxis(struct ScriptOperands *state,
                                           s32 operation, s32 value);
-void ActionScript_SetOrCompareComparisonResult(struct ScriptOperands *state,
+void ObjectScript_SetOrCompareComparisonResult(struct ScriptOperands *state,
                                                s32 operation, s32 value);
-void ActionScript_SetOrCompareSnapToTarget(struct ScriptOperands *state,
+void ObjectScript_SetOrCompareSnapToTarget(struct ScriptOperands *state,
                                            s32 operation, s32 value);
-void ActionScript_SetOrCompareCollisionFlags(struct ScriptOperands *state,
+void ObjectScript_SetOrCompareCollisionFlags(struct ScriptOperands *state,
                                              s32 operation, s32 value);
-void ActionScript_SetOrCompareSteeringFlags(struct ScriptOperands *state,
+void ObjectScript_SetOrCompareSteeringFlags(struct ScriptOperands *state,
                                             s32 operation, s32 value);
-void ActionScript_SetOrComparePaused(struct ScriptOperands *state,
+void ObjectScript_SetOrComparePaused(struct ScriptOperands *state,
                                      s32 operation, s32 value);
-void ActionScript_SetOrCompareRepeatCount(struct ScriptOperands *work,
+void ObjectScript_SetOrCompareRepeatCount(struct ScriptOperands *work,
                                           s32 operation, s32 value);
-void ActionScript_SetOrCompareSignedHalfword64(struct ScriptOperands *work,
+void ObjectScript_SetOrCompareSignedHalfword64(struct ScriptOperands *work,
                                                s32 operation, s32 value);
-void ActionScript_SetOrCompareSignedHalfword66(struct ScriptOperands *work,
+void ObjectScript_SetOrCompareSignedHalfword66(struct ScriptOperands *work,
                                                s32 operation, s32 value);
-void ActionScript_SetOrCompareWord68(struct ScriptOperands *work, s32 operation,
+void ObjectScript_SetOrCompareWord68(struct ScriptOperands *work, s32 operation,
                                      s32 value);
-void ActionScript_SetOrCompareUpdateAddress(struct ScriptOperands *work,
+void ObjectScript_SetOrCompareUpdateAddress(struct ScriptOperands *work,
                                             s32 operation, s32 value);
-void ActionScript_SetOrCompareByte62(struct ScriptOperands *work, s32 operation,
+void ObjectScript_SetOrCompareByte62(struct ScriptOperands *work, s32 operation,
                                      s32 value);
-void ActionScript_SetOrCompareByte63(struct ScriptOperands *work, s32 operation,
+void ObjectScript_SetOrCompareByte63(struct ScriptOperands *work, s32 operation,
                                      s32 value);
-void Ui_SetGridColumnColorMode(s32 slot, s32 value);
-void Ui_SetGridColumnPriority(s32 slot, s32 value);
+void SpriteViewer_SetGridColumnColorMode(s32 slot, s32 value);
+void SpriteViewer_SetGridColumnPriority(s32 slot, s32 value);
 
-s32 MapGrid_GetScreenRelativePosition(struct ObjectRuntime *object,
+s32 MapGrid_GetScreenRelativePosition(struct Object *object,
                                       s32 *screenPosition);
 void ObjectSystem_Initialize(s32 controlMode);
 void ResourceTable_ReservedNoOpC0C4(void);
 void ResourceTable_ReservedNoOp2(void);
 void *ObjectDispatch_FindFreeObject(void);
 void ObjectDispatch_Release(struct DispatchObject *object);
-struct ObjectRuntime *FieldObject_Create(s32 encodedSprite, s32 x, s32 y,
-                                         s32 z);
+struct Object *Object_CreateField(s32 encodedSprite, s32 x, s32 y, s32 z);
 void ObjectDispatch_Initialize(struct DispatchObject *object,
                                const s32 *script);
 void ObjectDispatch_SetAnimationAndSpeed(struct DispatchObject *object,
@@ -326,74 +321,75 @@ void Animation_ApplyChildValues(struct DispatchObject *object, u32 param);
 void ObjectSystem_SuspendProjectionAndShowSprites(void);
 void ObjectSystem_ResumeProjectionAndHideLayers(void);
 s32 ObjectDispatch_ReturnTrue(void);
-void ObjectSystem_UpdateCamera(void);
+void ObjectSystem_PlaceSprites(void);
 s32 ObjectCamera_ReturnTrue(void);
-void ObjectSystem_UpdateCameraFixed(void);
+void ObjectSystem_ProjectSprites(void);
 
-s32 ActionScript_SetBase(struct ScriptInterpreter *interpreter);
-s32 ActionScript_ClearByte54(struct ScriptInterpreter *interpreter);
-s32 ActionScript_SetByte54(struct ScriptInterpreter *interpreter);
-void FieldObject_WaitForMove(void *fieldObject);
-s32 Object_IsTargetUnset(struct ObjectRuntime *object);
+s32 ObjectScript_SetBase(struct ObjectScriptContext *interpreter);
+s32 ObjectScript_ClearByte54(struct ObjectScriptContext *interpreter);
+s32 ObjectScript_SetByte54(struct ObjectScriptContext *interpreter);
+void Object_WaitForMove(void *fieldObject);
+s32 Object_IsTargetUnset(struct Object *object);
 void Object_UpdateAllThumb(void);
-void Object_SetPositionAndResetMotion(struct ObjectRuntime *object, s32 x,
-                                      s32 y, s32 z);
-void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
+void Object_SetPositionAndResetMotion(struct Object *object, s32 x, s32 y,
+                                      s32 z);
+void Object_SetMoveTarget(struct Object *object, s32 x, s32 y, s32 z);
 void Object_RunUpdateAllFromHeap(void);
 void Object_UpdateAllMotion(void);
-s32 ActionScript_Wait(struct ScriptInterpreter *interpreter);
-s32 ActionScript_WaitForArrival(struct ScriptInterpreter *interpreter);
-s32 ActionScript_InvokeCallback(struct ScriptInterpreter *interpreter);
-s32 ActionScript_FindLabel(struct ScriptInterpreter *interpreter, u32 labelKey);
-s32 ActionScript_RepeatOrJump(struct ScriptInterpreter *interpreter);
-s32 ActionScript_JumpToLabel(struct ScriptInterpreter *interpreter);
-s32 ActionScript_JumpIfTrue(struct ScriptInterpreter *interpreter);
-s32 ActionScript_JumpIfFalse(struct ScriptInterpreter *interpreter);
-s32 ActionScript_End(struct ScriptInterpreter *interpreter);
-s32 ActionScript_TestFlag(struct ScriptInterpreter *interpreter);
-s32 ActionScript_ToggleFlagAndTest(struct ScriptInterpreter *interpreter);
-s32 ActionScript_SetAnimation(struct ScriptInterpreter *interpreter);
-s32 ActionScript_FreeObject(struct ScriptInterpreter *interpreter);
-s32 ActionScript_Nop(struct ScriptInterpreter *interpreter);
-s32 ActionScript_PlaySound(struct ScriptInterpreter *interpreter);
-s32 ScriptObject_CheckOverlap(struct ScriptObjectEntry *object, s32 *values);
+s32 ObjectScript_Wait(struct ObjectScriptContext *interpreter);
+s32 ObjectScript_WaitForArrival(struct ObjectScriptContext *interpreter);
+s32 ObjectScript_InvokeCallback(struct ObjectScriptContext *interpreter);
+s32 ObjectScript_FindLabel(struct ObjectScriptContext *interpreter,
+                           u32 labelKey);
+s32 ObjectScript_RepeatOrJump(struct ObjectScriptContext *interpreter);
+s32 ObjectScript_JumpToLabel(struct ObjectScriptContext *interpreter);
+s32 ObjectScript_JumpIfTrue(struct ObjectScriptContext *interpreter);
+s32 ObjectScript_JumpIfFalse(struct ObjectScriptContext *interpreter);
+s32 ObjectScript_End(struct ObjectScriptContext *interpreter);
+s32 ObjectScript_TestFlag(struct ObjectScriptContext *interpreter);
+s32 ObjectScript_ToggleFlagAndTest(struct ObjectScriptContext *interpreter);
+s32 ObjectScript_SetAnimation(struct ObjectScriptContext *interpreter);
+s32 ObjectScript_FreeObject(struct ObjectScriptContext *interpreter);
+s32 ObjectScript_Nop(struct ObjectScriptContext *interpreter);
+s32 ObjectScript_PlaySound(struct ObjectScriptContext *interpreter);
+s32 ObjectScript_CheckOverlap(struct ScriptObjectEntry *object, s32 *values);
 struct ScriptObjectEntry *
-ScriptObject_FindOverlappingEntry(struct ScriptObjectEntry *object,
+ObjectScript_FindOverlappingEntry(struct ScriptObjectEntry *object,
                                   s32 *values);
-s32 ActionScript_SetPositionAndResetMotion(
-    struct ScriptInterpreter *interpreter);
-s32 ActionScript_ApplyAbsolutePosition(struct ScriptInterpreter *interpreter);
-s32 ActionScript_ApplyRelativePosition(struct ScriptInterpreter *interpreter);
-s32 ActionScript_StoreAngleToLinkedObject(
-    struct ScriptInterpreter *interpreter);
-s32 ActionScript_ApplyLinkedObjectPosition(
-    struct ScriptInterpreter *interpreter);
-s32 ActionScript_ApplyLocalOffsetPosition(
-    struct ScriptInterpreter *interpreter);
-s32 Camera_FollowLeaderInBounds(struct ScriptInterpreter *interpreter);
-s32 Object_ApproachLinkedObject(struct ScriptInterpreter *interpreter);
-s32 Object_Wander(struct ScriptInterpreter *interpreter);
-s32 ScriptObject_WanderNearHome(struct ScriptInterpreter *interpreter);
+s32 ObjectScript_SetPositionAndResetMotion(
+    struct ObjectScriptContext *interpreter);
+s32 ObjectScript_ApplyAbsolutePosition(struct ObjectScriptContext *interpreter);
+s32 ObjectScript_ApplyRelativePosition(struct ObjectScriptContext *interpreter);
+s32 ObjectScript_StoreAngleToLinkedObject(
+    struct ObjectScriptContext *interpreter);
+s32 ObjectScript_ApplyLinkedObjectPosition(
+    struct ObjectScriptContext *interpreter);
+s32 ObjectScript_ApplyLocalOffsetPosition(
+    struct ObjectScriptContext *interpreter);
+s32 FieldCamera_FollowLeaderInBounds(struct ObjectScriptContext *interpreter);
+s32 Object_ApproachLinkedObject(struct ObjectScriptContext *interpreter);
+s32 Object_Wander(struct ObjectScriptContext *interpreter);
+s32 ObjectScript_WanderNearHome(struct ObjectScriptContext *interpreter);
 
-void ActionScript_SetOrCompareCursor(struct ScriptOperands *operands,
+void ObjectScript_SetOrCompareCursor(struct ScriptOperands *operands,
                                      s32 operation, s32 value);
-void ActionScript_SetOrCompareRadius(struct ScriptOperands *state,
+void ObjectScript_SetOrCompareRadius(struct ScriptOperands *state,
                                      s32 operation, s32 value);
-void ActionScript_SetOrCompareHalfword5e(struct ScriptOperands *work,
+void ObjectScript_SetOrCompareHalfword5e(struct ScriptOperands *work,
                                          s32 operation, s32 value);
-s32 ActionScript_ApplyOperandSet(struct ScriptInterpreter *interpreter);
-s32 ActionScript_ApplyOperandAdd(struct ScriptInterpreter *interpreter);
-s32 ActionScript_ApplyOperandCompare(struct ScriptInterpreter *interpreter);
+s32 ObjectScript_ApplyOperandSet(struct ObjectScriptContext *interpreter);
+s32 ObjectScript_ApplyOperandAdd(struct ObjectScriptContext *interpreter);
+s32 ObjectScript_ApplyOperandCompare(struct ObjectScriptContext *interpreter);
 
 void ObjectDispatch_SetUpdateValue(void *rawObject, s32 value);
 u32 Field_RequestShortcut(u32 encodedAssignment);
 s32 Field_CheckConfiguredKeys(void);
 s32 Runtime_CheckRadiusOverlap(s32 *firstPosition, s32 radiusA,
                                s32 *secondPosition, s32 radiusB);
-s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter);
-s32 Object_MoveOnWorldMap(struct ScriptInterpreter *interpreter);
-s32 Field_CheckConfiguredKeysAndCount(struct ScriptInterpreter *interpreter);
-s32 Object_MoveByKeys(struct ScriptInterpreter *interpreter);
+s32 Object_UpdateLeaderControl(struct ObjectScriptContext *interpreter);
+s32 Object_MoveOnWorldMap(struct ObjectScriptContext *interpreter);
+s32 Field_CheckConfiguredKeysAndCount(struct ObjectScriptContext *interpreter);
+s32 Object_MoveByKeys(struct ObjectScriptContext *interpreter);
 
 void Runtime_RemapBytesByTable(u8 *bytes, s32 byteCount);
 void TileMap_DecodeStagedBuffer(s32 size);
@@ -436,55 +432,56 @@ void WorldMap_StartStillView(void);
 void WorldMap_ShowBg1FromBuffer(void);
 void WorldMap_LoadAreaGraphics(void);
 void WorldMap_LoadDefaultCellsAndUpdateBlock(void);
-void TileAnimation_Update(void);
-void TileAnimation_ResumeChannel(u32 channelIndex);
-void TileAnimation_PauseChannel(u32 channelIndex);
-void TileAnimation_StartChannels(const u16 *script);
-void TileAnimation_Suspend(void);
-void TileAnimation_Resume(void);
-void DisplayBlend_RunScript(void);
-void DisplayBlend_StartScript(u16 *script);
-void DisplayBlend_SuspendScript(void);
-void DisplayBlend_ResumeScript(void);
+void TilesetAnim_Update(void);
+void TilesetAnim_Resume(u32 channelIndex);
+void TilesetAnim_Pause(u32 channelIndex);
+void TilesetAnim_StartAll(const u16 *script);
+void TilesetAnim_SuspendAll(void);
+void TilesetAnim_ResumeAll(void);
+void BlendScript_Run(void);
+void BlendScript_Start(u16 *script);
+void BlendScript_Suspend(void);
+void BlendScript_Resume(void);
 
-void PaletteQueue_Initialize(void);
-s32 PaletteQueue_Add(s16 paletteBank, s16 firstColor, s16 delay,
+void PaletteCycle_Initialize(void);
+s32 PaletteCycle_Add(s16 paletteBank, s16 firstColor, s16 delay,
                      s16 colorCount);
-void PaletteQueue_Stop(void);
-void PaletteQueue_Start(void);
-void PaletteQueue_StepCycles(void);
+void PaletteCycle_Stop(void);
+void PaletteCycle_Start(void);
+void PaletteCycle_Step(void);
 
-s32 Curve_GetFirstSampleA(const u8 *heightBytes, s32 pixelX, s32 pixelY);
-s32 Curve_LerpTwoSamples(const u8 *heightBytes, s32 pixelX, s32 pixelY);
-s32 Curve_LerpTwoSamplesB(const u8 *heightBytes, s32 pixelX, s32 pixelY);
-s32 Curve_StepAtSummedPosition(const u8 *heightBytes, s32 x, s32 y);
-s32 Curve_StepAtDifferencePosition(const u8 *heightBytes, s32 x, s32 y);
-s32 Curve_LerpThreeSamplesByRatio(const u8 *heightBytes, s32 x, s32 y);
-s32 Curve_LerpThreeSamplesAtDifference(const u8 *heightBytes, s32 x, s32 y);
-s32 Curve_LerpTwoSamplesByTable(const u8 *heightBytes, s32 x, s32 y);
-s32 Curve_StepAtHalf(const u8 *heightBytes, s32 pixelX, s32 pixelY);
-s32 Curve_StepAtHalfB(const u8 *heightBytes, s32 pixelX, s32 pixelY);
-s32 Curve_LerpThreeSamplesAtHalf(const u8 *heightBytes, s32 pixelX, s32 pixelY);
-s32 Curve_LerpThreeSamplesAtHalfB(const u8 *heightBytes, s32 pixelX,
-                                  s32 pixelY);
-s32 Curve_LookupSampleByTable(const u8 *heightBytes, s32 pixelX, s32 pixelY);
-s32 Curve_LookupSampleByTableReversed(const u8 *heightBytes, s32 pixelX,
-                                      s32 pixelY);
-s32 Curve_GetFirstSampleB(const u8 *heightBytes, s32 pixelX, s32 pixelY);
-s32 Curve_GetFirstSampleC(const u8 *heightBytes, s32 pixelX, s32 pixelY);
+s32 Terrain_GetFirstSampleA(const u8 *heightBytes, s32 pixelX, s32 pixelY);
+s32 Terrain_LerpTwoSamples(const u8 *heightBytes, s32 pixelX, s32 pixelY);
+s32 Terrain_LerpTwoSamplesB(const u8 *heightBytes, s32 pixelX, s32 pixelY);
+s32 Terrain_StepAtSummedPosition(const u8 *heightBytes, s32 x, s32 y);
+s32 Terrain_StepAtDifferencePosition(const u8 *heightBytes, s32 x, s32 y);
+s32 Terrain_LerpThreeSamplesByRatio(const u8 *heightBytes, s32 x, s32 y);
+s32 Terrain_LerpThreeSamplesAtDifference(const u8 *heightBytes, s32 x, s32 y);
+s32 Terrain_LerpTwoSamplesByTable(const u8 *heightBytes, s32 x, s32 y);
+s32 Terrain_StepAtHalf(const u8 *heightBytes, s32 pixelX, s32 pixelY);
+s32 Terrain_StepAtHalfB(const u8 *heightBytes, s32 pixelX, s32 pixelY);
+s32 Terrain_LerpThreeSamplesAtHalf(const u8 *heightBytes, s32 pixelX,
+                                   s32 pixelY);
+s32 Terrain_LerpThreeSamplesAtHalfB(const u8 *heightBytes, s32 pixelX,
+                                    s32 pixelY);
+s32 Terrain_LookupSampleByTable(const u8 *heightBytes, s32 pixelX, s32 pixelY);
+s32 Terrain_LookupSampleByTableReversed(const u8 *heightBytes, s32 pixelX,
+                                        s32 pixelY);
+s32 Terrain_GetFirstSampleB(const u8 *heightBytes, s32 pixelX, s32 pixelY);
+s32 Terrain_GetFirstSampleC(const u8 *heightBytes, s32 pixelX, s32 pixelY);
 
 s32 MapGrid_GetTerrainHeight(s32 layer, s32 x, s32 y);
 s32 MapGrid_GetCellAttributeLowNibble(s32 layer, s32 x, s32 y);
 s32 MapGrid_GetMetatileBehaviorAt(s32 layer, s32 x, s32 y);
 void MapGrid_SetMetatileBehaviorAt(u32 layer, s32 x, s32 y, u32 collisionCode);
 s32 MapGrid_GetCellHighFlags(s32 x, s32 y);
-s32 MapGrid_CheckObjectStep(struct ObjectRuntime *object,
-                            struct FieldPosition *position);
+s32 MapGrid_CheckCollision(struct Object *object,
+                           struct FieldPosition *position);
 s32 MapGrid_IsWallAt(struct WorldPosition *position);
-s32 GetWorldMapCollision(struct WorldPosition *position);
-s32 CheckWorldMapWalkable(s32 unused, struct WorldPosition *position);
-s32 GetWorldMapTerrainBehavior(struct WorldPosition *position,
-                               s32 *terrainKind);
+s32 WorldMap_GetCollision(struct WorldPosition *position);
+s32 WorldMap_IsWalkable(s32 unused, struct WorldPosition *position);
+s32 WorldMap_GetBattleEnvironment(struct WorldPosition *position,
+                                  s32 *terrainKind);
 void MapGrid_SetScreenShake(s32 shakeX, s32 shakeY, s32 shakeDecay);
 void MapGrid_WaitForShakeToSettle(void);
 void TileMap_DrawRowsFromRam(const struct WorldMapAffinePair *lines,
@@ -492,12 +489,12 @@ void TileMap_DrawRowsFromRam(const struct WorldMapAffinePair *lines,
 void WorldMap_BuildScanlineTable(s32 depth, s32 *position,
                                  struct WorldMapScanline *scanline);
 
-void Ui_RunIconMonitor(void);
-s32 Ui_FindNextSpriteWithImage(s32 spriteId, s32 direction);
+void SpriteViewer_Run(void);
+s32 SpriteViewer_FindNextSpriteWithImage(s32 spriteId, s32 direction);
 void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
                                  struct SpritePlacement *positions);
 void Ui_FillGridColumnFromMetadata(s32 layerIndex, s32 animationIndex);
-void Ui_SetGridColumnNumber(s32 layerIndex, s32 spriteId);
+void SpriteViewer_SetGridColumnNumber(s32 layerIndex, s32 spriteId);
 void Battle_PlaceActorsByFormationKind(void);
 
 #endif

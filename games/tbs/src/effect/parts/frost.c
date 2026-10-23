@@ -15,10 +15,10 @@ enum {
 /// frames from frame 36; at the burst frame the motes spread and rise, chips
 /// fly up and smoke rises over the heights they span.
 ///
-/// Abilities: Frost, Tundra, Glacier (BATTLE_EFFECT_FROST).
+/// Abilities: Frost, Tundra, Glacier (BATTLE_ANIM_FROST).
 ///
 /// The targets take a blue tint 4 frames apart from frame 40, the battle shows
-/// the damage 11 frames after the burst, and the effect ends 75 frames after
+/// the damage 11 frames after the burst, and the animation ends 75 frames after
 /// it.
 ///
 /// work->particles holds the 64 motes (angle, height and radius in x, y and
@@ -32,10 +32,10 @@ enum {
 ///         the burst frame (gFrost_Timings): 32 motes, 8 columns and frame
 ///         85 for Frost, 48, 12 and 97 for Tundra, 64, 19 and 109 for
 ///         Glacier.
-void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
+void BattleAnim_RunFrost(struct BattleAnimArgs *effect) {
   void **slots;
   void **cursor;
-  struct BattleEffectWork *work;
+  struct BattleAnimWork *work;
   void *canvas;
   s32 frame;
   u8 *puffSheet;
@@ -44,36 +44,36 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
   s32 lowest;
   s32 highest;
   s32 xyz[3];
-  struct EffectPosition screen;
+  struct ScreenPoint screen;
   s32 point[3];
   BlitterPair pair;
-  struct EffectStep *mote;
+  struct Particle *mote;
   s32 i;
 
-  slots = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
+  slots = &gHeapSlots[HEAP_SLOT_BATTLE_ANIM];
   cursor = slots;
-  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
-  puffSheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  ANIM_GET_WORK_AND_CANVAS(cursor, work, canvas);
+  puffSheet = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
-  EFFECT_START_NARROW_CANVAS(1);
+  ANIM_START_NARROW_CANVAS(1);
   Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, puffSheet, 0, 0);
   /* FAKEMATCH(temporary): the motes, columns, chips and puffs draw through a
    * pointer to the pair, the columns' second picture through the pair itself;
    * as pair[1] everywhere, 36 of 782 instructions differ in tbs-en. */
-  BattleEffect_FetchRectangleBlitters(0, draw = pair);
+  BattleAnim_FetchRectangleBlitters(0, draw = pair);
 
   // Motes: x holds the angle, z the radius (56 to 119), y the vertical
   // offset (-64 to -33 pixels, positive downwards on the canvas).
   for (i = 0; i != 64; i++) {
-    struct EffectStep *seed = &work->particles[i];
+    struct Particle *seed = &work->particles[i];
 
     seed->x = Random16() & 0xffff;
     seed->z = (Random16() & 63) + 56;
     seed->y = ((Random16() & 31) - 64) << 16;
   }
 
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
   // On side 1 the canvas moves 112 pixels right, over the party.
   if (work->effect->side == 1)
     REG_BG2X = -0x7000;
@@ -86,22 +86,22 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
     lowest = 120 << 16;
     highest = 0;
     if (frame == gFrost_Timings[work->effect->variant][FROST_FRAME] + 11)
-      EFFECT_SHOW_DAMAGE(SE_132);
+      ANIM_SHOW_DAMAGE(SE_132);
     // The motes turn about (0, 0, 512), not about a target. That point is
     // behind the eye, so they are never projected (see the motes below).
     SET_VECTOR(point, 0, 0, 512 << 16);
-    Render_ResetTransformState();
+    Transform_Reset();
     Transform_ApplyPosition(point);
     // A chime every 4 frames while the columns spring up.
     if (frame >= 36 && frame < 64 && (frame & 3) == 0)
-      AudioCommand_PlayFar(SE_ICE);
+      Sound_PlaySongFar(SE_ICE);
     // Frame 85 is Frost's burst; Tundra and Glacier play this sound 12 and 24
     // frames before theirs.
     if (frame == 85)
-      AudioCommand_PlayFar(SE_136);
-    EFFECT_FOR_EACH_TARGET(i, work->effect) {
+      Sound_PlaySongFar(SE_136);
+    ANIM_FOR_EACH_TARGET(i, work->effect) {
       if (frame == i * 4 + 40)
-        ObjectGroup_UpdateMembers(work->effect->actors[i],
+        ObjectGroup_UpdateMembers(work->effect->targets[i],
                                   SPRITE_COLOR_BLUE_TINT, POSE_DAMAGE, -1, 0);
     }
 
@@ -112,7 +112,7 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
     // their heights is kept; none is drawn from 35 frames after it. A mote
     // is drawn only while y is between -48 and 48 - i / 2, so they go out at
     // staggered rows as they sink. The point lies behind the eye
-    // (Render_ProjectPoint looks down -z), so the projection is skipped and
+    // (Transform_ProjectPoint looks down -z), so the projection is skipped and
     // position keeps the translated point in 16.16, with no perspective: y
     // grows down the canvas, and x is halved (>> 17) as on the wide canvas,
     // though this canvas is shown at its own width, so the spiral's
@@ -128,13 +128,13 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
 
           mote = &work->particles[i];
           if (mote->y < (48 - i / 2) << 16 && mote->y > -(48 << 16)) {
-            struct EffectPosition *position;
+            struct ScreenPoint *position;
             u32 width;
             u32 height;
 
             SET_VECTOR(xyz, mote->z * Trig_Sin(mote->x), mote->y,
                        mote->z * Trig_Cos(mote->x));
-            EffectPosition_ProjectPoint(xyz, position = &screen);
+            Projection_Point(xyz, position = &screen);
             position->x = (position->x >> 17) + 64;
             position->y = Q_16_16_TO_INT(position->y) + 60;
             // UB: width is assigned in one argument and read in another.
@@ -223,10 +223,10 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
     // pixels a frame, for 16 to 31 frames each (24 of them are drawn).
     // XXX: velocityX is never set here, so a chip drifts by whatever its
     // PARTICLES slot last held; whether that is ever nonzero in play needs a
-    // run after another effect.
+    // run after another animation.
     if (frame == gFrost_Timings[work->effect->variant][FROST_FRAME]) {
       for (i = 0; i != 32; i++) {
-        struct EffectStep *chip = &PARTICLES[i];
+        struct Particle *chip = &PARTICLES[i];
 
         SET_POSITION(chip, (Random16() & 127) << 16,
                      ((Random16() & 15) + 80) << 16,
@@ -239,7 +239,7 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
       // The first 24 chips, drawn while they last; every one, live or not,
       // widens the range of heights the smoke rises over.
       for (i = 0; i != 24; i++) {
-        struct EffectStep *chip = &PARTICLES[i];
+        struct Particle *chip = &PARTICLES[i];
 
         if (chip->variant >= 0) {
           s32 cell = i % 8;
@@ -268,7 +268,7 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
     // 3 to 18 frames before its first picture (variant 20 to 35).
     if (frame == gFrost_Timings[work->effect->variant][FROST_FRAME]) {
       for (i = 0; i != 32; i++) {
-        struct EffectStep *puff = &work->particles[i];
+        struct Particle *puff = &work->particles[i];
 
         puff->velocityX = (Random16() & 127) << 16;
         if (highest == lowest)
@@ -287,22 +287,22 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
           (frame - gFrost_Timings[work->effect->variant][FROST_FRAME]) / 2;
 
       for (i = 0; i != 32; i++) {
-        struct EffectStep *puff = &work->particles[i];
+        struct Particle *puff = &work->particles[i];
 
         if (puff->variant >= 0 && puff->variant <= 17) {
           s32 cell = (17 - puff->variant) / 2;
           u32 size;
 
 #ifdef UBFIX
-          size = gBattleEffect_PuffSizes[cell];
-          draw[1](canvas, puffSheet + gBattleEffect_PuffCells[cell],
+          size = gBattleAnim_PuffSizes[cell];
+          draw[1](canvas, puffSheet + gBattleAnim_PuffCells[cell],
                   Q_16_16_TO_INT(puff->velocityX) - (size >> 1),
                   Q_16_16_TO_INT(puff->velocityY) - (size >> 1) - rise, size,
                   size);
 #else
-          draw[1](canvas, puffSheet + gBattleEffect_PuffCells[cell],
+          draw[1](canvas, puffSheet + gBattleAnim_PuffCells[cell],
                   Q_16_16_TO_INT(puff->velocityX) -
-                      ((size = gBattleEffect_PuffSizes[cell]) >> 1),
+                      ((size = gBattleAnim_PuffSizes[cell]) >> 1),
                   Q_16_16_TO_INT(puff->velocityY) - (size >> 1) - rise, size,
                   size);
 #endif
@@ -316,10 +316,10 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
         }
       }
     }
-    EFFECT_PRESENT_FRAME(work);
+    ANIM_PRESENT_FRAME(work);
   }
 
-  EFFECT_RELEASE_BLITTERS();
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
-  BattleEffect_EndCanvasLayer();
+  ANIM_RELEASE_BLITTERS();
+  Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);
+  BattleAnim_EndCanvasLayer();
 }

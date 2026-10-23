@@ -6,10 +6,10 @@
 
 /// Opens a message at (x, y), waits for its text to finish, and returns its
 /// window so the caller can hold it open for a separate prompt.
-struct UiWindow *UiText_ShowMessageAndWaitComplete(s32 message, s32 x, s32 y) {
-  struct UiWindow *result;
+struct Window *Message_ShowAndWait(s32 message, s32 x, s32 y) {
+  struct Window *result;
 
-  result = UiText_OpenMessageWindow(message, x, y, 1);
+  result = Message_OpenWindow(message, x, y, 1);
   while (UiWork_IsComplete() == 0)
     WaitFrames(1);
   return result;
@@ -26,7 +26,7 @@ struct UiWindow *UiText_ShowMessageAndWaitComplete(s32 message, s32 x, s32 y) {
 /// Runs a battle command row: the commands as icons along the bottom of the
 /// screen, the selected one pulsing as a sprite and named in a window, until
 /// a command is chosen. Returns the command chosen (enum CommandIcon), -1 when
-/// B cancels, or -2 when L or R asks for the status screen; the last two in a
+/// B cancels, or -2 when L or R asks for the summary screen; the last two in a
 /// member's row only. When the link battle's time runs out the row takes its
 /// first command. Battle_CollectPartyCommands runs both rows.
 ///
@@ -37,9 +37,9 @@ struct UiWindow *UiText_ShowMessageAndWaitComplete(s32 message, s32 x, s32 y) {
 /// Item and Defend. Each row remembers its choice in
 /// BattleMenuWork.commandSelection. While the Djinn tutorial runs, the row
 /// presses the keys for the player.
-s32 Menu_RunCommandRow(s32 mode) {
+s32 BattleCommandRow_Run(s32 mode) {
   u8 party[4];
-  struct UiRenderWork *work;
+  struct WindowWork *work;
   struct SelectionWork *selectionUi;
   struct BattleMenuWork *navigation;
   s32 stripDirty, tradeCount, pulseScale, command;
@@ -48,20 +48,20 @@ s32 Menu_RunCommandRow(s32 mode) {
   s32 iconSlot;
   s32 i, kindCount;
 
-  work = UI_WORK;
+  work = WINDOW_WORK;
   // One 1 KB entry for the selected icon's 32x32, 256-colour sprite.
   iconSlot = VramCache_AllocEntry(0x400);
   stripDirty = 1;
   tradeCount = 0;
-  selectionUi = Runtime_BumpAllocateAlternatePool(sizeof(*selectionUi));
+  selectionUi = AllocEwram(sizeof(*selectionUi));
   // No icon colour placed yet; the shared palette starts at BG entry 1.
   for (i = 255; i >= 0; i--)
     selectionUi->palette.slot[i] = 255;
   selectionUi->palette.count = 1;
   if (mode == COMMAND_ROW_PARTY)
-    selectionUi->window = UiWindow_Create(20, 17, 10, 3, 6);
+    selectionUi->window = Window_Create(20, 17, 10, 3, 6);
   else
-    selectionUi->window = UiWindow_Create(WINDOW_X, 17, 30 - WINDOW_X, 3, 6);
+    selectionUi->window = Window_Create(WINDOW_X, 17, 30 - WINDOW_X, 3, 6);
   selectionUi->drawnIndex = -1;
   // The commands, as listed above. tradeCount counts the party's standby
   // Djinn.
@@ -71,14 +71,14 @@ s32 Menu_RunCommandRow(s32 mode) {
     selectionUi->commandKinds[kindCount++] = COMMAND_ICON_FLEE;
     selectionUi->commandKinds[kindCount++] = COMMAND_ICON_STATUS;
     selectionUi->commandKinds[kindCount] = -1;
-    selectionUi->selectedIndex = gLinkCountdownWork->commandSelection[0];
+    selectionUi->selectedIndex = gBattleMenuWork->commandSelection[0];
   } else {
-    selectionUi->selectedIndex = gLinkCountdownWork->commandSelection[1];
+    selectionUi->selectedIndex = gBattleMenuWork->commandSelection[1];
     kindCount = 0;
     selectionUi->commandKinds[kindCount++] = COMMAND_ICON_ATTACK;
     selectionUi->commandKinds[kindCount++] = COMMAND_ICON_PSYNERGY;
     if (*((s32 *)Djinn_GetRecoveryTableFar(0)) != 0) {
-      BattleParty_CountStandbyDjinnFar(0, party);
+      BattleDjinn_CountStandbyFar(0, party);
       for (i = 0; i <= 3; i++)
         tradeCount += party[i];
       selectionUi->commandKinds[kindCount++] = COMMAND_ICON_DJINN;
@@ -97,8 +97,8 @@ s32 Menu_RunCommandRow(s32 mode) {
     selectionUi->entries[entryIndex].resource = iconSlot;
     if (selectionUi->commandKinds[entryIndex] == -1)
       break;
-    UiText_DrawCharacter(selectionUi, entryIndex,
-                         selectionUi->commandKinds[entryIndex]);
+    Text_DrawCharacter(selectionUi, entryIndex,
+                       selectionUi->commandKinds[entryIndex]);
   }
   selectionUi->iconCount = entryIndex;
   selectionUi->affine.scaleX = 320;
@@ -119,24 +119,24 @@ s32 Menu_RunCommandRow(s32 mode) {
   }
   // BG1 shows the icons: behind the other layers above line 136, in front
   // from there down (Graphics_SetBg1Priority3).
-  Scheduler_AddOrUpdateCallback(Graphics_SetBg1Priority3, 0x480);
+  Task_Add(Graphics_SetBg1Priority3, 0x480);
   Runtime_SetIrqHandler(2, 136, Graphics_SetBg1Priority0);
 
   for (;;) {
     // 304 to 336 in 8.8 (1.19 to 1.31 times), over 16 frames.
-    pulseScale = gUi_BounceScales[(gFrameCount * 2) & 31];
+    pulseScale = gWindowSprite_BounceScales[(gFrameCount * 2) & 31];
     pulseScale = (pulseScale - 256) / 4 + 304;
     selectionUi->affine.scaleY = selectionUi->affine.scaleX = pulseScale;
     // Scrolled up 32 pixels, BG1's map rows 21 to 23 show on rows 17 to 19.
     gBgScroll[1].x = 0;
     gBgScroll[1].y = 32;
     // Draw the strip once, six panels of 3x3 tiles ending at the name
-    // window: the panels left empty as UI_TILE(0x7f) in the UI tilemap,
+    // window: the panels left empty as WINDOW_TILE(0x7f) in the UI tilemap,
     // then each icon's top-left 3x3 tiles in BG1's map (screen block 31 at
     // 0x0600f800), the UI tilemap cleared to 0 over them.
     if (stripDirty != 0) {
       stripDirty = 0;
-      work->menuBusy = 1;
+      work->holdTilemapUpload = 1;
       if (mode != COMMAND_ROW_PARTY) {
         s32 panel;
         s32 count;
@@ -145,7 +145,7 @@ s32 Menu_RunCommandRow(s32 mode) {
             s32 col;
             for (col = 0; col <= 2; col++)
               *(work->tilemap + (entryIndex + 17) * 32 + panel * 3 + WINDOW_X -
-                18 + (col & 3)) = UI_TILE(0x7f);
+                18 + (col & 3)) = WINDOW_TILE(0x7f);
           }
         }
         for (panel = 0; panel < selectionUi->iconCount; panel++) {
@@ -180,7 +180,7 @@ s32 Menu_RunCommandRow(s32 mode) {
             s32 col;
             for (col = 0; col <= 2; col++)
               *(work->tilemap + (entryIndex + 17) * 32 + panel * 3 + 2 +
-                (col & 3)) = UI_TILE(0x7f);
+                (col & 3)) = WINDOW_TILE(0x7f);
           }
         }
         for (panel = 0; panel < selectionUi->iconCount; panel++) {
@@ -215,18 +215,17 @@ s32 Menu_RunCommandRow(s32 mode) {
     // The selection moved: name the new command and load its icon into the
     // sprite's entry.
     if (selectionUi->drawnIndex != selectionUi->selectedIndex) {
-      RenderOutput_PrepareForRedraw(selectionUi->window);
-      UiText_DrawCharacterAtOffset(
+      WindowSprite_PrepareForRedraw(selectionUi->window);
+      Text_DrawMessageAsTiles(
           selectionUi->entries[selectionUi->selectedIndex].kind +
               MsgCommandName,
           selectionUi->window, 0, 0);
       selectionUi->drawnIndex = selectionUi->selectedIndex;
-      UiText_DrawCharacter(
-          selectionUi, selectionUi->selectedIndex,
-          selectionUi->commandKinds[selectionUi->selectedIndex]);
+      Text_DrawCharacter(selectionUi, selectionUi->selectedIndex,
+                         selectionUi->commandKinds[selectionUi->selectedIndex]);
     }
     selectionUi->affineIndex =
-        AffineMatrix_BuildForEffect(&selectionUi->affine);
+        OamMatrix_AllocFromTransform(&selectionUi->affine);
     // Only the selected icon is drawn as a sprite: double-size affine (mode
     // 3), on layer 0xf1, moved with the pulse. The others are BG1 tiles.
     for (entryIndex = 0; entryIndex < selectionUi->iconCount; entryIndex++) {
@@ -236,7 +235,7 @@ s32 Menu_RunCommandRow(s32 mode) {
         entry->sprite.oam.f.affine = 3;
         entry->sprite.oam.f.x = entry->positionX + pulseScale * 7 / 512 - 14;
         entry->sprite.oam.f.y = entry->positionY + pulseScale * 3 / 256 - 20;
-        Runtime_PushSlotEntry(entry, 0xf1);
+        Oam_AddSpriteAtDepth(entry, 0xf1);
       } else {
         entry->sprite.oam.f.x = entry->positionX;
         entry->sprite.oam.f.y = entry->positionY;
@@ -251,7 +250,7 @@ s32 Menu_RunCommandRow(s32 mode) {
     // and takes it on the next press. Other members take Attack.
     keys = gKeysPressed;
     repeat = gKeysRepeat;
-    navigation = gLinkCountdownWork;
+    navigation = gBattleMenuWork;
     if (navigation->tutorialStep != 0) {
       keys = repeat = 0;
       if (navigation->tutorialDelay == 0) {
@@ -267,15 +266,14 @@ s32 Menu_RunCommandRow(s32 mode) {
           if (kind == COMMAND_ICON_SUMMON ||
               (tradeCount == 0 && kind == COMMAND_ICON_DJINN)) {
             if (navigation->tutorialStep == 1) {
-              struct UiWindow *message;
+              struct Window *message;
               if (kind == COMMAND_ICON_DJINN)
-                message = UiText_ShowMessageAndWaitComplete(
-                    MsgDjinnTutorialUnleashCommand, 15, 8);
+                message =
+                    Message_ShowAndWait(MsgDjinnTutorialUnleashCommand, 15, 8);
               else if (kind == COMMAND_ICON_SUMMON)
-                message = UiText_ShowMessageAndWaitComplete(
-                    MsgDjinnTutorialSummon, 15, 8);
-              BattlePresentation_WaitForPromptAtFar(102, 155);
-              UiWork_Finalize(message, 1);
+                message = Message_ShowAndWait(MsgDjinnTutorialSummon, 15, 8);
+              BattleMessage_WaitForAdvanceAtFar(102, 155);
+              Window_Close(message, 1);
               navigation->tutorialStep++;
               navigation->tutorialDelay = 45;
             } else {
@@ -303,20 +301,20 @@ s32 Menu_RunCommandRow(s32 mode) {
       break;
     }
     if (mode != COMMAND_ROW_PARTY && (keys & KEY_B)) {
-      AudioCommand_PlayFar(SE_MENU_CANCEL);
+      Sound_PlaySongFar(SE_MENU_CANCEL);
       command = -1;
       break;
     }
     if (repeat & (KEY_DOWN | KEY_RIGHT)) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       selectionUi->selectedIndex =
           (selectionUi->selectedIndex + 1) % selectionUi->iconCount;
     } else if (repeat & (KEY_UP | KEY_LEFT)) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       selectionUi->selectedIndex =
           (selectionUi->selectedIndex + selectionUi->iconCount - 1) %
           selectionUi->iconCount;
-    } else if (gLinkCountdownWork->timer == 0) {
+    } else if (gBattleMenuWork->timer == 0) {
       // The link battle's time is up.
       command = selectionUi->commandKinds[0];
       break;
@@ -325,19 +323,19 @@ s32 Menu_RunCommandRow(s32 mode) {
     IoWriteQueue_Store16((u32)&REG_DISPCNT,
                          DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                              DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON);
-    work->menuBusy = 0;
+    work->holdTilemapUpload = 0;
     WaitFrames(1);
   }
   if (mode != COMMAND_ROW_PARTY)
-    gLinkCountdownWork->commandSelection[1] = selectionUi->selectedIndex;
+    gBattleMenuWork->commandSelection[1] = selectionUi->selectedIndex;
   else
-    gLinkCountdownWork->commandSelection[0] = selectionUi->selectedIndex;
+    gBattleMenuWork->commandSelection[0] = selectionUi->selectedIndex;
   // Every icon names the same entry, so it is released once per icon.
   for (entryIndex = 0; entryIndex < selectionUi->iconCount; entryIndex++)
-    Resource_ResetEntry(selectionUi->entries[entryIndex].resource);
-  work->menuBusy = 1;
-  UiWork_Finalize(selectionUi->window, 1);
-  // Cover the strip again: seven panels of UI_TILE(0x7f) from column 5.
+    VramCache_FreeEntry(selectionUi->entries[entryIndex].resource);
+  work->holdTilemapUpload = 1;
+  Window_Close(selectionUi->window, 1);
+  // Cover the strip again: seven panels of WINDOW_TILE(0x7f) from column 5.
   {
     s32 panel;
     for (panel = 0; panel <= 6; panel++) {
@@ -348,21 +346,21 @@ s32 Menu_RunCommandRow(s32 mode) {
          * tbs-en. */
         for (col = 0; col <= 2; col++)
           *(volatile u16 *)(work->tilemap + (entryIndex + 17) * 32 + panel * 3 +
-                            5 + (col & 3)) = UI_TILE(0x7f);
+                            5 + (col & 3)) = WINDOW_TILE(0x7f);
       }
     }
   }
   // Restore the normal BG1 handler after clearing the command strip.
   work->dirty = 1;
   WaitFrames(1);
-  Scheduler_RemoveCallback(Graphics_SetBg1Priority3);
+  Task_Remove(Graphics_SetBg1Priority3);
   Runtime_SetIrqHandler(2, 0, 0);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG2_ON | DISPCNT_OBJ_ON,
                       0x20000);
-  MemFree(selectionUi);
-  work->menuBusy = 0;
+  Free(selectionUi);
+  work->holdTilemapUpload = 0;
   WaitFrames(1);
   return command;
 }
@@ -371,10 +369,10 @@ s32 Menu_RunCommandRow(s32 mode) {
 /// at screen tile (x, y) to palette 15 or 14 by bit 12, keeping the rest of
 /// each entry: the menus' row highlight. `paletteBit` is the palette number,
 /// of which only the low bit counts (15 plain, 14 highlighted). Clipped as
-/// UiWindow_SetTileAttributeBitRect clips; each row changed is marked for
+/// Window_SetTextTileBitRect clips; each row changed is marked for
 /// upload.
 void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 paletteBit) {
-  struct UiRenderWork *work = UI_WORK;
+  struct WindowWork *work = WINDOW_WORK;
 
   paletteBit &= 1;
   paletteBit <<= 12;
@@ -409,7 +407,7 @@ void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 paletteBit) {
         } while (remaining != 0);
       }
 
-      UiRender_MarkRow(work, y);
+      Window_MarkTilemapRow(work, y);
       height--;
       y++;
     } while (height != 0);
@@ -422,13 +420,13 @@ void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 paletteBit) {
 /// skipped. The window is right-aligned on the 30-tile row, so its member
 /// columns start at column 29 - 6 * members (the Djinn column, when shown,
 /// lies left of them). Returns 0. Battle_CollectPartyCommands calls it.
-s32 BattleLayout_HighlightPartyPanels(u16 *ids) {
+s32 PartyStatus_HighlightMembers(u16 *ids) {
   struct BattleWork *battle = gBattleWork;
   s32 count;
   s32 i;
   s32 j;
 
-  count = BattleParty_ListActorIdsFar(1, 0);
+  count = BattleUnits_ListIdsFar(1, 0);
   Ui_SetRectHighlight(29 - count * 6, 0, 25, 5, 15);
   i = 0;
   // The loop over ids is written with goto (MATCHING.md): as

@@ -29,12 +29,12 @@ void MercuryLighthouse_RestoreLights(s32 region,
                                      struct MercuryLighthouseLights *st) {
   struct ObjectEvent *objectEvent;
   struct ObjectEvent *obj;
-  struct AnimationObject *animation;
+  struct Sprite *animation;
   struct MapGridCell *cell;
   s32 z;
   s32 flag;
 
-  *(struct MercuryLighthouseLights **)Runtime_AllocateBlock(
+  *(struct MercuryLighthouseLights **)AllocHeapSlotEwram(
       HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS, sizeof(st)) = st;
   flag = Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION);
   if (flag == 0) {
@@ -42,7 +42,7 @@ void MercuryLighthouse_RestoreLights(s32 region,
     st->terrainCode = region;
     return;
   }
-  objectEvent = Engine_ObjectEventLookup(gGameState.selectedLocalId);
+  objectEvent = Engine_ObjectEventLookup(gGameState.leaderLocalId);
   z = objectEvent->z.fixed;
   cell = (struct MapGridCell *)Ram_MapGridCellBuffer + ((z / 0x100000) << 7) +
          objectEvent->x.fixed / 0x100000;
@@ -50,14 +50,14 @@ void MercuryLighthouse_RestoreLights(s32 region,
     obj = Engine_ObjectCreate(26, objectEvent->x.fixed,
                               objectEvent->y.fixed + 0x180000, z);
     if (obj != 0) {
-      obj->terrainHeight = objectEvent->terrainHeight;
+      obj->groundHeight = objectEvent->groundHeight;
       animation = obj->sprite;
       Engine_ObjectSetScript(obj, gMercuryLighthouse_PillarScript);
       obj->linkedObject = objectEvent;
       obj->motionFlags = 4;
       obj->y.fixed += -0x8000;
       if (animation != 0) {
-        AnimationObject_SelectAnimation(animation, 6 - st->levels);
+        Sprite_StartAnim(animation, 6 - st->levels);
         animation->flags = 0;
         animation->image.priority = 1;
       }
@@ -66,12 +66,12 @@ void MercuryLighthouse_RestoreLights(s32 region,
   } else {
     st->pillar = 0;
   }
-  if (cell->collisionCode == region && st->stepEffect != 0) {
+  if (cell->behavior == region && st->stepEffect != 0) {
     obj = Engine_ObjectCreate(26, objectEvent->x.fixed, objectEvent->y.fixed,
                               objectEvent->z.fixed);
     if (obj == 0)
       return;
-    obj->terrainHeight = objectEvent->terrainHeight;
+    obj->groundHeight = objectEvent->groundHeight;
     animation = obj->sprite;
     Engine_ObjectSetScript(obj, gMercuryLighthouse_RampScript);
     obj->motionFlags = 0;
@@ -79,7 +79,7 @@ void MercuryLighthouse_RestoreLights(s32 region,
     obj->priorityFlags = 2;
     obj->speed = 0x40000;
     if (animation != 0) {
-      AnimationObject_SelectAnimation(animation, 6);
+      Sprite_StartAnim(animation, 6);
       animation->flags = 0;
     }
     st->stepEffect = obj;

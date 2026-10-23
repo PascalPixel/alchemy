@@ -20,13 +20,13 @@ struct Resource388Runtime {
 };
 
 /// A view of an object that nothing in TBS reads. XXX: likely struct
-/// ObjectRuntime, because 0x23 and 0x59 are its priority and collision flags.
+/// Object, because 0x23 and 0x59 are its priority and collision flags.
 struct Resource388SlotView {
-  u8 beforePriority[0x23]; ///< ObjectRuntime's fields before priorityFlags
-  s8 priorityFlags;        ///< at ObjectRuntime.priorityFlags's offset
-  /// ObjectRuntime's fields from velocityX to snapToTarget.
+  u8 beforePriority[0x23]; ///< Object's fields before priorityFlags
+  s8 priorityFlags;        ///< at Object.priorityFlags's offset
+  /// Object's fields from velocityX to snapToTarget.
   u8 beforeCollision[0x35];
-  s8 collisionFlags; ///< at ObjectRuntime.collisionFlags's offset
+  s8 collisionFlags; ///< at Object.collisionFlags's offset
 };
 
 STATIC_ASSERT(offsetof(struct Resource388Runtime, setupRequest1c0) == 0x1c0);

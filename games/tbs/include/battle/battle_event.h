@@ -2,62 +2,63 @@
 #define ALCHEMY_BATTLE_EVENT_H
 
 /// @file
-/// The battle event queue: the events BattleEvent_Push queues and the playback
-/// phases that play them.
+/// The playback queue: the commands BattlePlayback_Push queues and the
+/// playback phases that play them.
 
 #include "edition.h"
 #include "static_assert.h"
 
-enum { BATTLE_EVENT_CAPACITY = 64 };
+enum { BATTLE_PLAYBACK_CAPACITY = 64 };
 
-/// BattleEventState.phase: how far BattleEvent_Playback has got through the
-/// plan's targets. Its message phases (PLAY_MESSAGE and the like) are
+/// BattlePlaybackWork.phase: how far BattlePlayback_Run has got through the
+/// turn's targets. Its message phases (PLAY_MESSAGE and the like) are
 /// private to playback.c.
 enum BattlePlaybackPhase {
-  BATTLE_PLAYBACK_IDLE = 0,           ///< paused until the effect resumes it
-  BATTLE_PLAYBACK_RESOLVE_TARGET = 1, ///< resolves the next target's events
-  BATTLE_PLAYBACK_DISPATCH = 2,       ///< plays the queued events in order
-  BATTLE_PLAYBACK_READY = 4           ///< every target has been played
+  BATTLE_PLAYBACK_PHASE_IDLE = 0, ///< paused until the animation resumes it
+  BATTLE_PLAYBACK_PHASE_RESOLVE_TARGET =
+      1,                              ///< resolves the next target's commands
+  BATTLE_PLAYBACK_PHASE_DISPATCH = 2, ///< plays the queued commands in order
+  BATTLE_PLAYBACK_PHASE_READY = 4     ///< every target has been played
 };
 
-/// The battle event queue: up to 64 events, each an opcode (enum
-/// BattleEventOpcode) and one operand, in the order they play. It lives in
-/// BattleWork.events.queue: BattleEvent_Push appends to it and playback reads
-/// it.
-struct BattleEventQueue {
-  u8 opcodes[BATTLE_EVENT_CAPACITY]; ///< enum BattleEventOpcode
-  /// Each event's operand: a unit, item or ability id, a number, a message or
+/// The playback queue: up to 64 commands, each an opcode (enum
+/// BattlePlaybackCommand) and one operand, in the order they play. It lives in
+/// BattleWork.playback.queue: BattlePlayback_Push appends to it and playback
+/// reads it.
+struct BattlePlaybackQueue {
+  u8 opcodes[BATTLE_PLAYBACK_CAPACITY]; ///< enum BattlePlaybackCommand
+  /// Each command's operand: a unit, item or ability id, a number, a message or
   /// a sound.
-  u32 operands[BATTLE_EVENT_CAPACITY];
+  u32 operands[BATTLE_PLAYBACK_CAPACITY];
   s32 targetIndex; ///< the plan's next target to resolve
-  s32 count;       ///< events queued
+  s32 count;       ///< commands queued
 };
 
-STATIC_ASSERT(sizeof(struct BattleEventQueue) == 0x148);
-STATIC_ASSERT(offsetof(struct BattleEventQueue, operands) == 0x040);
-STATIC_ASSERT(offsetof(struct BattleEventQueue, targetIndex) == 0x140);
-STATIC_ASSERT(offsetof(struct BattleEventQueue, count) == 0x144);
+STATIC_ASSERT(sizeof(struct BattlePlaybackQueue) == 0x148);
+STATIC_ASSERT(offsetof(struct BattlePlaybackQueue, operands) == 0x040);
+STATIC_ASSERT(offsetof(struct BattlePlaybackQueue, targetIndex) == 0x140);
+STATIC_ASSERT(offsetof(struct BattlePlaybackQueue, count) == 0x144);
 
-/// The battle events BattleEvent_Push queues, each with one operand, for
-/// BattleEvent_Playback (or BattleEvent_DispatchQueued) to play in order. The
+/// The playback commands BattlePlayback_Push queues, each with one operand, for
+/// BattlePlayback_Run (or BattlePlayback_RunAll) to play in order. The
 /// names, numbers and messages build what the player reads: the arguments
 /// first, then the message that shows them.
-enum BattleEventOpcode {
-  BATTLE_EVENT_UNIT_NAME = 0,       ///< a unit's name for the next message
-  BATTLE_EVENT_NUMBER = 1,          ///< a number for the next message
-  BATTLE_EVENT_ITEM_NAME = 2,       ///< an item's name for the next message
-  BATTLE_EVENT_ABILITY_NAME = 3,    ///< an ability's name for the next message
-  BATTLE_EVENT_MESSAGE = 4,         ///< a message, waiting for the player
-  BATTLE_EVENT_MESSAGE_NO_WAIT = 5, ///< a message, going straight on
-  BATTLE_EVENT_MARK = 6,            ///< sets gBattleDisplayWork->marked
-  BATTLE_EVENT_CLEAR_ARGUMENTS = 7, ///< forgets the names and numbers pushed
-  BATTLE_EVENT_HIT = 8,             ///< the unit flinches and flashes
-  BATTLE_EVENT_DEFEAT = 9,          ///< the unit falls; an enemy fades out
-  BATTLE_EVENT_DRAW_STATUS = 10,    ///< redraws the party's status
-  BATTLE_EVENT_REFRESH_UNIT = 11,   ///< the unit's status icons, colour, pose
-  BATTLE_EVENT_REMOVE_UNIT = 12,    ///< an enemy leaves the battle
-  BATTLE_EVENT_DJINN_BONUS = 13,    ///< later defeats give the Djinn bonus
-  BATTLE_EVENT_SOUND = 14           ///< plays a sound
+enum BattlePlaybackCommand {
+  PLAYBACK_UNIT_NAME = 0,       ///< a unit's name for the next message
+  PLAYBACK_NUMBER = 1,          ///< a number for the next message
+  PLAYBACK_ITEM_NAME = 2,       ///< an item's name for the next message
+  PLAYBACK_ABILITY_NAME = 3,    ///< an ability's name for the next message
+  PLAYBACK_MESSAGE = 4,         ///< a message, waiting for the player
+  PLAYBACK_MESSAGE_NO_WAIT = 5, ///< a message, going straight on
+  PLAYBACK_MARK = 6,            ///< sets gBattleMessageWork->marked
+  PLAYBACK_CLEAR_ARGUMENTS = 7, ///< forgets the names and numbers pushed
+  PLAYBACK_HIT = 8,             ///< the unit flinches and flashes
+  PLAYBACK_DEFEAT = 9,          ///< the unit falls; an enemy fades out
+  PLAYBACK_DRAW_STATUS = 10,    ///< redraws the party's status
+  PLAYBACK_REFRESH_UNIT = 11,   ///< the unit's status icons, colour, pose
+  PLAYBACK_REMOVE_UNIT = 12,    ///< an enemy leaves the battle
+  PLAYBACK_DJINN_BONUS = 13,    ///< later defeats give the Djinn bonus
+  PLAYBACK_SOUND = 14           ///< plays a sound
 };
 
 #endif

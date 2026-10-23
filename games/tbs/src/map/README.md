@@ -42,7 +42,7 @@ fixed order at the start of every overlay, `entry/<map>.s`. Each entry is an
 ```
 
 Six of them make 48 bytes, and the offsets in the table below are those of
-the address words, 4 bytes into each veneer. `Field_RunMap` calls
+the address words, 4 bytes into each veneer. `Map_Run` calls
 `Map_GetEvents`, then places the party at its warp destination
 (`Map_ApplyWarpDest`), creates the object events from the object event
 templates and calls `Map_Initialize`. `Field_ProcessStep` reads the regions
@@ -118,7 +118,7 @@ it lands after it falls, and only one of the two appears.
 The party takes slots 0 to 7, the leader the one the player moves
 (`LOCALID_PARTY_LEADER`), and the table's rows take the slots from
 `LOCALID_FIRST_PLACED` in order: local id `LOCALID_FIRST_PLACED + n` is always row n
-(`FieldScript_SpawnObjectTable`). A row whose sprite is one of the party's
+(`FieldScript_SpawnObjectEventTemplates`). A row whose sprite is one of the party's
 characters (sprites 0 to 7) takes that character's own slot instead. Each map names its object events in
 an enum in row order (`LOCALID_FALLEN_STATUE = LOCALID_FIRST_PLACED`).
 
@@ -145,7 +145,7 @@ These are four rows of Vale's table on the day the story begins
   EVENT_SCRIPT(EventScript_EnterIsaacsHouse) },
 { PSYNERGY_ON_OBJ_EVENT(ABILITY_CATCH), LOCALID_NUT, FLAG_VALE_NUT_CAUGHT,
   EVENT_SCRIPT(EventScript_CatchNut) },
-{ BG_EVENT(BG_EVENT_UNNAMED), 24, CONDITION_ALWAYS,
+{ BG_EVENT(BG_EVENT_SILENT), 24, CONDITION_ALWAYS,
   EVENT_SCRIPT(EventScript_SearchTheLockedDoor) },
 ```
 
@@ -254,12 +254,12 @@ one that always fits is never reached, as the cook's second row shows.
 
 `Map_FindEvent` returns the first row whose kind, trigger and condition
 fit. A bg event on a named target, which is every target but
-`BG_EVENT_UNNAMED` and says what the leader checks (a chest, a jar), is the
+`BG_EVENT_SILENT` and says what the leader checks (a chest, a jar), is the
 one exception, so that an opened chest still answers:
 
 1. `Map_FindEvent` returns it whatever its condition, unless it finds a
    mimic.
-2. `Field_SearchTile` shows the target's checking line (`MsgTileChecked`
+2. `Field_SearchCell` shows the target's checking line (`MsgTileChecked`
    plus the target, "checked the chest...").
 3. Only then does it test the condition: an unopened chest gives what it
    holds and sets its flag, and an opened one adds the result line, "but
@@ -271,7 +271,7 @@ such case.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `BG_EVENT_UNNAMED` | 0 | a bg event that shows nothing as the leader checks |
+| `BG_EVENT_SILENT` | 0 | a bg event that shows nothing as the leader checks |
 | `BG_EVENT_CHEST` | 1 | the first named target; target n shows `MsgTileChecked` + n |
 
 ## Scripts
@@ -304,23 +304,23 @@ walker arrives.
 /// LunpaFortressUpperFloor, raised when the patrolling pair spots the leader:
 /// the first stops and stares, and the second throws the party out.
 static void EventScript_PatrolPairThrowsPartyOut(void) {
-  EV_START();
+  SCRIPT_START();
   Engine_ObjectEventStop(LOCALID_UPPER_FLOOR_FIRST_PATROL);
   Engine_ObjectEventSetDestinationOffset(LOCALID_UPPER_FLOOR_FIRST_PATROL, 0, 0);
-  OBJECT_MODE(LOCALID_UPPER_FLOOR_FIRST_PATROL, 0);
+  OBJECT_ANIMATION(LOCALID_UPPER_FLOOR_FIRST_PATROL, 0);
   OBJECT_FACE(LOCALID_UPPER_FLOOR_FIRST_PATROL, LOCALID_PARTY_LEADER, 0);
   Engine_ObjectEventShowEmote(LOCALID_UPPER_FLOOR_FIRST_PATROL,
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   LunpaFortress_GuardThrowsPartyOut(LOCALID_UPPER_FLOOR_SECOND_PATROL);
-  EV_END();
+  SCRIPT_END();
 }
 ```
 
-`EV_START` stops the leader and makes it the speaker, and `EV_END` returns the
+`SCRIPT_START` stops the leader and makes it the speaker, and `SCRIPT_END` returns the
 camera to it. `WAIT(n)` waits `n` frames, about 59.73 a second.
 `MESSAGE_SET` chooses a message and `MESSAGE_PUT` shows it spoken by an object event.
-`OBJECT_POSITION_SET`, `OBJECT_WALK`, `OBJECT_SPEED`, `OBJECT_DIR`, `OBJECT_FACE` and `OBJECT_MODE`
-move, turn and animate object events by local id (`OBJECT_MODE` takes an `enum
+`OBJECT_POSITION_SET`, `OBJECT_WALK`, `OBJECT_SPEED`, `OBJECT_DIR`, `OBJECT_FACE` and `OBJECT_ANIMATION`
+move, turn and animate object events by local id (`OBJECT_ANIMATION` takes an `enum
 ObjectEventAnimation` such as `ANIMATION_NOD`). `FLAG_CHECK` and `FLAG_SET` test and set
 game flags, and `SE(n)` plays a sound from `songs.h`. Callbacks are added with
 `FieldScheduler_AddCallback` at `TASK_PRIORITY_MAP`.
@@ -384,7 +384,7 @@ place it twice.
 | `sol_sanctum_*.h` | Sol Sanctum's rooms | the Elemental Star room's floating lights, the corridor's and maze's entry |
 | `vale.h`, `world_map_linked_effects.h` | Vale's gate and storm; Vale and the world map | the storm's door warps; the particles around a glowing object event |
 | `effect_*.h` | many | `FieldEffect_Spawn` and the small effects it places, cutscene Psynergy |
-| `object_*.h` | many | object events: staged object events, lookups by cell and distance, turning and waiting |
+| `object_*.h` | many | object events: pushed objects, lookups by cell and distance, turning and waiting |
 | `map_grid_panel.h`, `scroll_initialize_hblank_dma.h` | Crossbone Isle's stepping stones and Kolima Forest's floodgate; the Lemurian ship | a stretch of the layout drawn straight into the background's tile map; the water's ripple |
 
 A header named after one map may be shared further: `colosso_item_icon.h`
@@ -396,7 +396,7 @@ header.
 ## How it fits with the rest of the game
 
 `Game_Run` unpacks the overlay into `gOverlayArea` (`Map_LoadOverlay`) and
-`Field_RunMap` calls its entries; [Engine](../../engine.md#overlays)
+`Map_Run` calls its entries; [Engine](../../engine.md#overlays)
 describes the entry and import tables and how the overlay is loaded. The map
 table and how maps depend on the story are on [the front
 page](../../README.md#the-map-table-and-map-sections). The layouts the maps are
@@ -431,7 +431,7 @@ is the name the map writes (`MsgVaultWelcomeToVaultTheTownAt`).
 Each overlay is three objects in `games/tbs/objects.tsv`, linked in this order
 into the overlay area: `entry/<map>`, `<map>` and `import/<map>`; the
 rows' first column is the overlay's resource number. The map table,
-`gField_MapTable` in [`field/maps.s`](../field/maps.s), gives each
+`gMapHeaders` in [`field/maps.s`](../field/maps.s), gives each
 map its overlay, map section, map type and layout, and names it `MapId_<Map>`;
 several maps may share one overlay, and then share its file. A map overlay
 is never split into parts: its code is laid out by kind, entry points,
@@ -467,9 +467,9 @@ see are in `games/tbs/include/unit/map/`.
 A map's functions take its name (`Vault_`, `VaultRevisit_`,
 `ColosseumNavampaMatch_`) and say what the player sees; most functions a
 map event table names are `EventScript_` instead. Shared helpers take their family's
-prefix (`Colosso_`, `MercuryLighthouse_`, `KolimaPalette_`, `StagedObjectEvent_`, and
+prefix (`Colosso_`, `MercuryLighthouse_`, `KolimaPalette_`, `PushedObject_`, and
 `FieldEffect_` for the field effects). Some keep older descriptive names
-(`MapObjectEvent_`, `OverlayObject_`, `Map_`) until the maps that call
+(`ObjectEvent_RampWords24And28Over16Frames`, `Map_`) until the maps that call
 them are humanized. The spellings some sites keep to match (fields reached
 through `offsetof`, another struct's view of an object event, update hooks returning
 `s32`) are in [Matching](../MATCHING.md).
@@ -500,8 +500,8 @@ room the game leaves unnamed, what the player sees there; its functions
 are named for what the player sees; its messages are linker symbols made from
 their English text. Overlay numbers are their rows of the resource directory.
 
-Many functions in `common/` keep older descriptive names (`MapObjectEvent_`,
-`OverlayObject_`, `Map_`); each takes its name with the maps that
+Many functions in `common/` keep older descriptive names
+(`ObjectEvent_SetFlagBitByRelativeDepth`, `Map_`); each takes its name with the maps that
 call it, as those maps are humanized. A sound without a proven name keeps
 its number (`SE_188`), as `songs.h` says.
 

@@ -403,7 +403,7 @@ static void KalayTolbiDocks_TalkToWomanWithAMessage(void) {
       Script_ShowMessage(LOCALID_WOMAN_WITH_A_MESSAGE, 0);
       GameFlag_Set(FLAG_KALAY_DOCKS_CARRYING_MESSAGE);
     } else {
-      gEventWork->message++;
+      gFieldWork->message++;
       Script_ShowMessage(LOCALID_WOMAN_WITH_A_MESSAGE, 0);
     }
   } else {
@@ -478,13 +478,13 @@ static void KalayTolbiDocks_TalkToTicketTaker(void) {
     Script_ShowMessage(LOCALID_CHECKING_TICKETS, 0);
     // Hand over the actual inventory ticket before walking past the gate.
     if (GameFlag_IsSet(FLAG_KALAY_DOCKS_TICKET_BOUGHT) != 0) {
-      ticketOwner = PartyInventory_FindOwner(ITEM_BOAT_TICKET);
+      ticketOwner = PartyInventory_FindMember(ITEM_BOAT_TICKET);
       ticketSlot = Inventory_Find(ticketOwner, ITEM_BOAT_TICKET);
       Engine_ObjectEventSetAnimationAndWait(LOCALID_CHECKING_TICKETS,
                                             ANIMATION_NOD);
       ObjectEvent_WalkToAndWait(LOCALID_CHECKING_TICKETS, 88, 1288);
       ObjectEvent_FaceDirection(LOCALID_CHECKING_TICKETS, FACING_SOUTH, 0);
-      gEventWork->message++;
+      gFieldWork->message++;
       Script_ShowMessage(LOCALID_CHECKING_TICKETS, 0);
       Inventory_Discard(ticketOwner, ticketSlot);
       GameFlag_Set(FLAG_KALAY_DOCKS_TICKET_HANDED_OVER);
@@ -527,7 +527,7 @@ static void KalayTolbiDocks_TalkToDockWorker(void) {
 /// enough coins the seller refuses; otherwise the party gets its ticket and
 /// pays (sets FLAG_KALAY_DOCKS_TICKET_BOUGHT).
 static void KalayTolbiDocks_TalkToTicketSeller(void) {
-  struct UiWindow *coinsWindow;
+  struct Window *coinsWindow;
   struct GameState *state;
   s32 ticketPrice;
 
@@ -549,47 +549,47 @@ static void KalayTolbiDocks_TalkToTicketSeller(void) {
     if (Engine_ScriptChooseYesNo(0, 0) == 1) {
       Script_ShowMessageAndWait(LOCALID_SELLING_TICKETS, 0, 10);
     } else {
-      gEventWork->message++;
-      UiWork_PushValueSlot(ticketPrice, 5);
+      gFieldWork->message++;
+      MessageArgument_Push(ticketPrice, 5);
       Script_OpenMessage(LOCALID_SELLING_TICKETS, 0);
       // Keep the balance visible while the player confirms the purchase.
-      coinsWindow = UiWindow_Create(TICKET_COUNTER_WINDOW_X, 8,
-                                    TICKET_COUNTER_WIDTH, 4, 2);
+      coinsWindow =
+          Window_Create(TICKET_COUNTER_WINDOW_X, 8, TICKET_COUNTER_WIDTH, 4, 2);
 #if TBS_PATCH_1
-      UiText_DrawCharacterAtOffset(MSGNO(MsgYourCoins), coinsWindow, 0, 0);
+      Text_DrawMessageAsTiles(MSGNO(MsgYourCoins), coinsWindow, 0, 0);
 #else
       coinLabel = MSGNO(MsgYourCoins);
-      UiText_DrawCharacterAtOffset(coinLabel, coinsWindow, 0, 0);
+      Text_DrawMessageAsTiles(coinLabel, coinsWindow, 0, 0);
 #endif
       state = &gGameState;
 #if LANGUAGE == LANGUAGE_JAPANESE
       coinLabel += MSGNO(MsgCoins) - MSGNO(MsgYourCoins);
 #endif
-      UiText_DrawNumberInWindow(state->coins, 6, coinsWindow, TICKET_COUNTER_X,
-                                8);
+      Text_DrawNumberInWindow(state->coins, 6, coinsWindow, TICKET_COUNTER_X,
+                              8);
 #if LANGUAGE == LANGUAGE_JAPANESE
-      UiText_DrawCharacterAtOffset(coinLabel, coinsWindow, 48, 8);
+      Text_DrawMessageAsTiles(coinLabel, coinsWindow, 48, 8);
 #endif
       if (Engine_ScriptChooseYesNo(-1, 0) == 1) {
-        UiWork_Finalize(coinsWindow, 2);
+        Window_Close(coinsWindow, 2);
         Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER,
                                               ANIMATION_SHAKE_HEAD);
         Engine_ScriptWait(10);
         Script_ShowMessage(LOCALID_SELLING_TICKETS, 0);
       } else if ((u32)ticketPrice > (u32)state->coins) {
-        UiWork_Finalize(coinsWindow, 2);
+        Window_Close(coinsWindow, 2);
         Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER,
                                               ANIMATION_NOD);
         Engine_ScriptWait(10);
-        gEventWork->message++;
-        Script_PlayCue(SE_MENU_CANCEL);
+        gFieldWork->message++;
+        Script_PlaySong(SE_MENU_CANCEL);
         Script_ShowMessage(LOCALID_SELLING_TICKETS, 0);
       } else {
-        UiWork_Finalize(coinsWindow, 2);
+        Window_Close(coinsWindow, 2);
         Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER,
                                               ANIMATION_NOD);
         Engine_ScriptWait(10);
-        gEventWork->message += 3;
+        gFieldWork->message += 3;
         Script_ShowMessage(LOCALID_SELLING_TICKETS, 0);
         // Complete both inventory and coin changes only after confirmation.
         Engine_PartyGiveItem(ITEM_BOAT_TICKET, 0);
@@ -652,7 +652,7 @@ static void KalayTolbiDocks_TalkToWaitingDaughter(void) {
         GameFlag_Set(FLAG_TOLBI_DOCKS_MESSAGE_DELIVERED);
       } else {
         Engine_ScriptWait(10);
-        gEventWork->message++;
+        gFieldWork->message++;
         Script_ShowMessage(LOCALID_WAITING_DAUGHTER, 0);
         Engine_ScriptWait(10);
         ObjectEvent_FaceDirection(LOCALID_WAITING_DAUGHTER, FACING_EAST, 0);
@@ -673,7 +673,7 @@ static void KalayTolbiDocks_TalkToWaitingDaughter(void) {
 /// KALAY_DOCKS_TO_KALAY_TOLBI_DOCKS_INTERIORS by the same number.
 static void KalayTolbiDocks_OpenDoorAndLeave(void) {
   Engine_ScriptStart();
-  Script_PlayCue(SE_DOOR_OPEN);
+  Script_PlaySong(SE_DOOR_OPEN);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x8000, 0x4000);
   Engine_ObjectEventSetSpritePriority(LOCALID_PARTY_LEADER, 3);
   if (gGameState.mapId == (s32)&MapId_KalayDocks) {
@@ -791,7 +791,7 @@ static void KalayTolbiDocks_PrepareTolbiDocks(void) {
 /// The building between the docks opens with a window transition and no area
 /// name.
 static void KalayTolbiDocks_PrepareInterior(void) {
-  gEventWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
 }
@@ -854,14 +854,14 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   ObjectEvent_SetSpeed(GARET, 0x19999, 0xcccc);
   ObjectEvent_WalkToAndWait(GARET, 232, 1424);
   ObjectEvent_FaceDirection(GARET, FACING_WEST, 0);
-  Camera_MoveTo(PIXELS(184), -1, PIXELS(1440), 1);
+  FieldCamera_MoveTo(PIXELS(184), -1, PIXELS(1440), 1);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(10);
   Engine_ObjectEventJump(GARET, 6, 15);
   Engine_ObjectEventJump(GARET, 6, 40);
   Script_ShowMessage(GARET, 0);
   Engine_ScriptWait(20);
-  Camera_MoveTo(PIXELS(264), -1, PIXELS(1448), 1);
+  FieldCamera_MoveTo(PIXELS(264), -1, PIXELS(1448), 1);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(20);
   ObjectEvent_ShowEmote(LOCALID_YOUNG_MAN_ASKING_ABOUT_TOLBI,
@@ -944,7 +944,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   objectEvent->priorityFlags = 0;
   ((u8 *)objectEvent->sprite)[9] |= 12;
   ((u8 *)objectEvent->sprite)[21] |= 12;
-  Camera_MoveTo(PIXELS(232), -1, PIXELS(304), 1);
+  FieldCamera_MoveTo(PIXELS(232), -1, PIXELS(304), 1);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x10000, 0x8000);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 216, 272);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHEAST, 0);
@@ -978,7 +978,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   ObjectEvent_GetById(LOCALID_ANGRY_YOUNG_MAN)->steeringFlags &=
       ~OBJ_EVENT_FACES_MOTION;
   ObjectEvent_WalkBy(LOCALID_ANGRY_YOUNG_MAN, -16, 0);
-  Script_PlayCue(SE_HIGH_JUMP);
+  Script_PlaySong(SE_HIGH_JUMP);
   ObjectEvent_SetSpeed(LOCALID_TOUR_GUIDE, 0x26666, 0x13333);
   ObjectEvent_WalkByAndWait(LOCALID_TOUR_GUIDE, 16, 0);
   Engine_ScriptWait(10);
@@ -988,16 +988,16 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   ObjectEvent_SetAttachedEffect(LOCALID_TOUR_GUIDE, ATTACHED_EFFECT_IN_FRONT |
                                                         ATTACHED_EFFECT_ONCE);
   Engine_ObjectEventStartRepeatedMotion(LOCALID_TOUR_GUIDE, 2);
-  Script_PlayCue(SE_155);
+  Script_PlaySong(SE_155);
   Engine_ScriptWait(10);
-  Script_PlayCue(SE_155);
+  Script_PlaySong(SE_155);
   Engine_ScriptWait(10);
-  Script_PlayCue(SE_155);
+  Script_PlaySong(SE_155);
   Engine_ScriptWait(10);
   Engine_ScriptWait(20);
   ObjectEvent_SetSpeed(LOCALID_TOUR_GUIDE, 0x6666, 0x3333);
   Engine_ObjectEventJump(LOCALID_TOUR_GUIDE, 6, 0);
-  Script_PlayCue(SE_159);
+  Script_PlaySong(SE_159);
   ObjectEvent_WalkByAndWait(LOCALID_TOUR_GUIDE, -8, 0);
   Engine_ScriptWait(20);
   Script_ShowMessage(LOCALID_ANGRY_YOUNG_MAN, 0);
@@ -1086,7 +1086,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   ObjectEvent_WalkByAndWait(LOCALID_ANGRY_YOUNG_MAN, 8, 0);
   Engine_ObjectEventJump(LOCALID_ANGRY_YOUNG_MAN, 6, 0);
   ObjectEvent_WalkByAndWait(LOCALID_ANGRY_YOUNG_MAN, 24, 0);
-  Script_PlayCue(SE_IMPACT);
+  Script_PlaySong(SE_IMPACT);
   Engine_ObjectEventJump(LOCALID_BODYGUARD, 6, 0);
   // The passenger bounces off the spinning bodyguard and lands on his back.
   ObjectEvent_SetActionScript(LOCALID_BODYGUARD,
@@ -1105,7 +1105,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   ObjectEvent_FaceDirection(LOCALID_ANGRY_YOUNG_MAN, FACING_SOUTH, 0);
   ObjectEvent_GetById(LOCALID_ANGRY_YOUNG_MAN)->steeringFlags |=
       OBJ_EVENT_FACES_MOTION;
-  Script_PlayCue(SE_159);
+  Script_PlaySong(SE_159);
   Engine_ScriptWait(20);
   ObjectEvent_ShowEmote(LOCALID_STRANDED_WOMAN, EMOTE_IN_FRONT | EMOTE_WINCE,
                         50);
@@ -1240,133 +1240,133 @@ struct ObjectEventTemplate gKalayTolbiDocks_NoObjectEventTemplates[] = {
 // clang-format off
 struct ObjectEventTemplate gKalayTolbiDocks_TolbiObjectEventTemplates[] = {
     { SPRITE_MAN_IN_YELLOW_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(408), 0, PIXELS(280), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(408), 0, PIXELS(280), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_MAN_IN_GREEN_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(392), 0, PIXELS(344), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(392), 0, PIXELS(344), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(216), 0, PIXELS(264), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(216), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(296), 0, PIXELS(344), FACING_EAST, TALK_KEEP_FACING, 0 },
+        PIXELS(296), 0, PIXELS(344), FACING_EAST, TALK_FACING_KEEP, 0 },
     { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(296), 0, PIXELS(216), FACING_SOUTHEAST, TALK_FACE_PARTY, 0 },
+        PIXELS(296), 0, PIXELS(216), FACING_SOUTHEAST, TALK_FACING_PARTY, 0 },
     { SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(280), 0, PIXELS(248), FACING_SOUTHEAST, TALK_FACE_PARTY, 0 },
+        PIXELS(280), 0, PIXELS(248), FACING_SOUTHEAST, TALK_FACING_PARTY, 0 },
     { SPRITE_CRATES, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(136), 0, PIXELS(190), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(136), 0, PIXELS(190), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_CRATES, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(152), 0, PIXELS(190), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(152), 0, PIXELS(190), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gKalayTolbiDocks_TolbiObjectEventTemplatesStranded[] = {
     { SPRITE_MAN_IN_YELLOW_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(408), 0, PIXELS(296), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(408), 0, PIXELS(296), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_MAN_IN_GREEN_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(408), 0, PIXELS(344), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(408), 0, PIXELS(344), FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(224), 0, PIXELS(304), FACING_EAST, TALK_KEEP_FACING, 0 },
+        PIXELS(224), 0, PIXELS(304), FACING_EAST, TALK_FACING_KEEP, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(216), 0, PIXELS(320), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(216), 0, PIXELS(320), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(256), 0, PIXELS(264), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(256), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(272), 0, PIXELS(304), FACING_WEST, TALK_KEEP_FACING, 0 },
+        PIXELS(272), 0, PIXELS(304), FACING_WEST, TALK_FACING_KEEP, 0 },
     { SPRITE_CRATES, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(136), 0, PIXELS(190), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(136), 0, PIXELS(190), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_CRATES, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(152), 0, PIXELS(190), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(152), 0, PIXELS(190), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(280), 0, PIXELS(288), FACING_WEST, TALK_KEEP_FACING, 0 },
+        PIXELS(280), 0, PIXELS(288), FACING_WEST, TALK_FACING_KEEP, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(280), 0, PIXELS(248), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(280), 0, PIXELS(248), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gKalayTolbiDocks_KalayObjectEventTemplates[] = {
     { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(-64), 0, PIXELS(-64), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(-64), 0, PIXELS(-64), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(248), 0, PIXELS(1408), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(248), 0, PIXELS(1408), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(296), 0, PIXELS(1224), FACING_NORTHWEST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(296), 0, PIXELS(1224), FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(248), 0, PIXELS(1304), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(248), 0, PIXELS(1304), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(200), 0, PIXELS(1336), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(200), 0, PIXELS(1336), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_MAN_IN_RED_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(88), 0, PIXELS(1288), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(88), 0, PIXELS(1288), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_IN_BLUE_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(120), 0, PIXELS(1368), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(120), 0, PIXELS(1368), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { VENUS_DJINNI, 0x35, MOVEMENT_TYPE_STAND,
-        PIXELS(272), 0, PIXELS(1144), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(272), 0, PIXELS(1144), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gKalayTolbiDocks_KalayObjectEventTemplatesShipGone[] = {
     { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(-64), 0, PIXELS(-64), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(-64), 0, PIXELS(-64), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(-64), 0, PIXELS(-64), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(-64), 0, PIXELS(-64), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(-64), 0, PIXELS(-64), FACING_NORTHWEST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(-64), 0, PIXELS(-64), FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(-64), 0, PIXELS(-64), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(-64), 0, PIXELS(-64), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(-64), 0, PIXELS(-64), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(-64), 0, PIXELS(-64), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_MAN_IN_RED_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(200), 0, PIXELS(1352), FACING_EAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(200), 0, PIXELS(1352), FACING_EAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_IN_BLUE_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(216), 0, PIXELS(1288), FACING_WEST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(216), 0, PIXELS(1288), FACING_WEST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { VENUS_DJINNI, 0x35, MOVEMENT_TYPE_STAND,
-        PIXELS(272), 0, PIXELS(1144), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(272), 0, PIXELS(1144), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gKalayTolbiDocks_InteriorObjectEventTemplates[] = {
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(152), 0, PIXELS(152), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(152), 0, PIXELS(152), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(72), 0, PIXELS(200), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(72), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(192), 0, PIXELS(216), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(192), 0, PIXELS(216), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(488), 0, PIXELS(208), FACING_SOUTHWEST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(488), 0, PIXELS(208), FACING_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(392), 0, PIXELS(168), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(392), 0, PIXELS(168), FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(408), 0, PIXELS(168), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(408), 0, PIXELS(168), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gKalayTolbiDocks_InteriorObjectEventTemplatesShipGone[] = {
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(152), 0, PIXELS(152), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(152), 0, PIXELS(152), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(-64), 0, PIXELS(-64), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(-64), 0, PIXELS(-64), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(-64), 0, PIXELS(-64), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(-64), 0, PIXELS(-64), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(488), 0, PIXELS(208), FACING_SOUTHWEST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(488), 0, PIXELS(208), FACING_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(392), 0, PIXELS(168), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(392), 0, PIXELS(168), FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(408), 0, PIXELS(168), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(408), 0, PIXELS(168), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gKalayTolbiDocks_InteriorObjectEventTemplatesStranded[] = {
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(152), 0, PIXELS(152), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(152), 0, PIXELS(152), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(-64), 0, PIXELS(-64), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(-64), 0, PIXELS(-64), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(-64), 0, PIXELS(-64), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(-64), 0, PIXELS(-64), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(488), 0, PIXELS(208), FACING_SOUTHWEST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(488), 0, PIXELS(208), FACING_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(456), 0, PIXELS(200), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(456), 0, PIXELS(200), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(408), 0, PIXELS(184), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(408), 0, PIXELS(184), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };
 

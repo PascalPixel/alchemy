@@ -6,15 +6,15 @@
 
 /// End of the effect: switches the caster's display flags between 3 and 1 on
 /// a 5-frame cycle, so its outline (bit 1) blinks beside its shadow (bit 0).
-/// FieldEffect_RunAvoid schedules it (order 0xc80) for its last 70 frames and
-/// removes it again.
+/// FieldEffect_RunAvoid adds it as a task (priority 0xc80) for its last 70
+/// frames and removes it again.
 void FieldEffect_BlinkAvoidCaster(void) {
   struct ArcEffectObject *caster;
-  struct AnimationObject *rec;
-  struct AnimationEntry *entry;
+  struct Sprite *rec;
+  struct SpriteAnim *entry;
   s32 phase;
 
-  caster = ObjectTable_Get(gGameState.selectedLocalId);
+  caster = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
   rec = caster->records;
   entry = rec->entries[0];
   phase = gFrameCount % 5;
@@ -41,8 +41,8 @@ void FieldEffect_UpdatePairedArcSpawner(union FieldObject *fieldObject) {
   phase = caster->phase;
   elapsedFrames = caster->step++;
 
-  // MapId_Clear is the world map's map (Field_RunMap).
-  if (gGameState.layoutId == (s32)&MapId_Clear) {
+  // MapId_MainMenu is the world map's map (Map_Run).
+  if (gGameState.layoutId == (s32)&MapId_MainMenu) {
     if (elapsedFrames % 7 == 0)
       FieldEffect_SpawnDescendingArcParticles((struct ObjectEvent *)caster);
   } else if (elapsedFrames % 5 == 0) {
@@ -62,18 +62,18 @@ void FieldEffect_UpdatePairedArcSpawner(union FieldObject *fieldObject) {
 void FieldScript_ShowStatusMessage(void) {
   gGameState.avoidDistance = 0;
   if (gGameState.avoidByItem == 0) {
-    UiWork_PushValueSlotFar(ABILITY_AVOID, 4);
-    UiText_ShowPositionedMessageAndWaitFar(MsgAbilityWoreOff, 1);
+    MessageArgument_PushFar(ABILITY_AVOID, 4);
+    FieldMessage_ShowFar(MsgAbilityWoreOff, 1);
     return;
   }
-  UiWork_PushValueSlotFar(ITEM_SACRED_FEATHER, 2);
-  UiText_ShowPositionedMessageAndWaitFar(MsgItemWoreOff, 1);
+  MessageArgument_PushFar(ITEM_SACRED_FEATHER, 2);
+  FieldMessage_ShowFar(MsgItemWoreOff, 1);
 }
 
 /// The caster spins and flashes, then blinks, and encounters are kept away
 /// until Avoid wears off.
 ///
-/// Abilities: Avoid (FIELD_KIND_AVOID).
+/// Abilities: Avoid (FIELD_PSYNERGY_AVOID).
 ///
 /// Using the Sacred Feather plays it too, since the item's field action is
 /// Avoid.
@@ -89,18 +89,18 @@ void FieldScript_ShowStatusMessage(void) {
 void FieldEffect_RunAvoid(void) {
   struct FieldEffectWork *effectWork;
   struct ArcEffectObject *object;
-  struct AnimationObject *group;
-  struct AnimationEntry *entry;
+  struct Sprite *group;
+  struct SpriteAnim *entry;
   u32 angle;
   s32 slot;
   s32 count;
 
-  effectWork = gEffectWork;
+  effectWork = gFieldEffectWork;
   object = effectWork->mainObject;
   group = object->records;
   entry = group->entries[0];
   angle = object->angle;
-  slot = Resource_FindFreeEntry();
+  slot = VramCache_FindFreeEntry();
   {
     s16 *tileSlot = &effectWork->arcTileSlot;
     s32 zero = 0;
@@ -116,7 +116,7 @@ void FieldEffect_RunAvoid(void) {
     object->phase = zero;
     object->step = zero;
   }
-  AudioCommand_PlayFar(SE_140);
+  Sound_PlaySongFar(SE_140);
   WaitFrames(15);
   object->phase = 1;
   WaitFrames(10);
@@ -132,11 +132,11 @@ void FieldEffect_RunAvoid(void) {
   }
   object->callback = NULL;
   object->angle = angle;
-  Scheduler_AddOrUpdateCallback(FieldEffect_BlinkAvoidCaster, 0xc80);
+  Task_Add(FieldEffect_BlinkAvoidCaster, 0xc80);
   WaitFrames(15);
-  AudioCommand_PlayFar(SE_174);
+  Sound_PlaySongFar(SE_174);
   WaitFrames(55);
-  Scheduler_RemoveCallback(FieldEffect_BlinkAvoidCaster);
+  Task_Remove(FieldEffect_BlinkAvoidCaster);
   // Back to the caster's own look: outlined while Cloak is on, else with its
   // shadow.
   if (gGameState.cloaked != 0)
@@ -147,6 +147,6 @@ void FieldEffect_RunAvoid(void) {
                                           SPRITE_FLAG_SHADOW);
   Animation_ApplyChildValuesFar((struct DispatchObject *)object,
                                 SPRITE_COLOR_NORMAL);
-  Resource_ResetEntry(effectWork->arcTileSlot);
-  UiText_ShowPositionedMessageAndWaitFar(MsgMonstersAttackLess, 1);
+  VramCache_FreeEntry(effectWork->arcTileSlot);
+  FieldMessage_ShowFar(MsgMonstersAttackLess, 1);
 }

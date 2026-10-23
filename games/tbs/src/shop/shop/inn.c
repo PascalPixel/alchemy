@@ -27,7 +27,7 @@ static const s8 sInnPricesPerGuest[12] = {
 /// Returns the night's price: the inn's price per guest times the party
 /// members still standing. Called by Inn_CheckIn.
 s32 Inn_RoomPrice(s32 innId) {
-  struct ShopRuntime *shop = gMenuWork;
+  struct ShopWork *shop = gMenuWork;
   s32 guestCount = 0;
   s32 pricePerGuest = sInnPricesPerGuest[innId];
   s32 memberIndex;
@@ -46,13 +46,13 @@ s32 Inn_RoomPrice(s32 innId) {
 /// sInnPricesPerGuest, 0 to 11, which nothing checks; `objectId` is the
 /// innkeeper, whose portrait the lines show.
 s32 Inn_CheckIn(s32 innId, s32 objectId) {
-  struct InnRuntimeState *state;
+  struct InnWork *state;
   struct ObjectEvent *innkeeper;
-  struct UiWindow *innkeeperWindow;
+  struct Window *innkeeperWindow;
   s32 roomPrice;
   s32 messageBase;
 
-  Shop_InitializeCursorWork();
+  Shop_InitializeWork();
   state = gMenuWork;
   state->active = 1;
   // Xian's inn has lines of its own, as far past the other inns' as the
@@ -62,44 +62,42 @@ s32 Inn_CheckIn(s32 innId, s32 objectId) {
 
   innkeeper = ObjectEvent_GetByIdFar(objectId);
   state->resourceId =
-      ((struct AnimationObject *)innkeeper->sprite)->entries[0]->animationId;
-  innkeeperWindow =
-      UiWindow_CreateWithSideObjectFar(state->resourceId, 0, 0, 0);
+      ((struct Sprite *)innkeeper->sprite)->entries[0]->animationId;
+  innkeeperWindow = Portrait_OpenWindowFar(state->resourceId, 0, 0, 0);
 
   roomPrice = Inn_RoomPrice(innId);
-  UiWork_PushValueSlotFar(roomPrice, MESSAGE_ARGUMENT_NUMBER);
+  MessageArgument_PushFar(roomPrice, MESSAGE_ARGUMENT_NUMBER);
   messageBase = MsgInnWelcome;
-  UiMessage_ShowAndWait(messageBase);
+  Shop_ShowKeeperMessage(messageBase);
   state->window =
-      UiWindow_CreateFar(0, 16, SHOP_MONEY_WINDOW_WIDTH, 4, UI_WINDOW_INSTANT);
+      Window_CreateFar(0, 16, SHOP_MONEY_WINDOW_WIDTH, 4, WINDOW_FLAG_INSTANT);
   Shop_DrawMoney();
 
-  if (UiMessage_ShowChoice(0) != 0) {
-    UiMessage_ShowAndWait(messageBase +
-                          (INN_MESSAGE_GOODBYE - INN_MESSAGE_WELCOME));
-    UiWork_FinalizeFar(state->window, 2);
+  if (Shop_AskYesNo(0) != 0) {
+    Shop_ShowKeeperMessage(messageBase +
+                           (INN_MESSAGE_GOODBYE - INN_MESSAGE_WELCOME));
+    Window_CloseFar(state->window, 2);
   } else if (roomPrice > (u32)gGameState.coins) {
-    UiMessage_ShowAndWait(messageBase +
-                          (INN_MESSAGE_NOT_ENOUGH_COINS - INN_MESSAGE_WELCOME));
-    UiWork_FinalizeFar(state->window, 2);
+    Shop_ShowKeeperMessage(
+        messageBase + (INN_MESSAGE_NOT_ENOUGH_COINS - INN_MESSAGE_WELCOME));
+    Window_CloseFar(state->window, 2);
   } else {
-    UiWork_FinalizeFar(state->window, 2);
-    UiMessage_ShowAndWait(messageBase +
-                          (INN_MESSAGE_STAY_COMPLETE - INN_MESSAGE_WELCOME));
-    UiWork_FinalizeFar(innkeeperWindow, 2);
+    Window_CloseFar(state->window, 2);
+    Shop_ShowKeeperMessage(messageBase +
+                           (INN_MESSAGE_STAY_COMPLETE - INN_MESSAGE_WELCOME));
+    Window_CloseFar(innkeeperWindow, 2);
     Inn_PlaySleep(roomPrice);
 
     innkeeper = ObjectEvent_GetByIdFar(objectId);
     state->resourceId =
-        ((struct AnimationObject *)innkeeper->sprite)->entries[0]->animationId;
-    innkeeperWindow =
-        UiWindow_CreateWithSideObjectFar(state->resourceId, 0, 0, 0);
-    UiMessage_ShowAndWait(messageBase +
-                          (INN_MESSAGE_REST_COMPLETE - INN_MESSAGE_WELCOME));
+        ((struct Sprite *)innkeeper->sprite)->entries[0]->animationId;
+    innkeeperWindow = Portrait_OpenWindowFar(state->resourceId, 0, 0, 0);
+    Shop_ShowKeeperMessage(messageBase +
+                           (INN_MESSAGE_REST_COMPLETE - INN_MESSAGE_WELCOME));
   }
 
-  UiWork_FinalizeFar(innkeeperWindow, 2);
-  Shop_ReleaseCursorWork();
+  Window_CloseFar(innkeeperWindow, 2);
+  Shop_ReleaseWork();
   return 0;
 }
 
@@ -111,10 +109,10 @@ void Inn_PlaySleep(s32 roomPrice) {
   s16 partyMemberIds[8];
   s32 memberCount;
   s32 memberIndex;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   struct FieldWork *work;
 
-  memberCount = Party_ListActiveOwnersFar(partyMemberIds);
+  memberCount = Party_ListMembersFar(partyMemberIds);
   // Charge once and restore only party members who are alive.
   Party_AdjustCoinsFar(-roomPrice);
 
@@ -123,24 +121,24 @@ void Inn_PlaySleep(s32 roomPrice) {
     if (unit->hp != 0) {
       unit->hp = unit->hpMax;
       unit->pp = unit->ppMax;
-      Unit_UpdateRatiosFar(partyMemberIds[memberIndex]);
+      Unit_RecalculateGaugesFar(partyMemberIds[memberIndex]);
     }
   }
 
   // Sleep between the two screen-transition halves and the rest sound.
   // The night's fades take 60 frames each; the 16 set at the end is what
   // the field's transitions take again afterward
-  work = (struct FieldWork *)gEventWork;
+  work = (struct FieldWork *)gFieldWork;
   work->transition = 0x209;
   work->transitionFrames = 60;
   WaitFrames(20);
   FieldScript_FinishScreenTransitionFar();
   FieldScript_WaitTransitionFramesFar();
-  AudioCommand_PlayFar(MUS_086);
-  AudioCommand_WaitForStateByteClear();
+  Sound_PlaySongFar(MUS_086);
+  Sound_WaitForFanfare();
   WaitFrames(10);
   FieldScript_StartScreenTransitionFar();
   FieldScript_WaitTransitionFramesFar();
   WaitFrames(30);
-  ((struct FieldWork *)gEventWork)->transitionFrames = 16;
+  ((struct FieldWork *)gFieldWork)->transitionFrames = 16;
 }

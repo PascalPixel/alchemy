@@ -3,11 +3,11 @@
 	.set import.__divsi3, 1
 	.set import.__modsi3, 1
 	.set import.Engine_TaskWait, 1
-	.set import.Scheduler_AddOrUpdateCallback, 1
+	.set import.Task_Add, 1
 	.set import.Engine_TaskRemoveCallback, 1
-	.set import.Runtime_AllocateBlock, 1
-	.set import.Runtime_ReleaseHeapBlock, 1
-	.set import.Runtime_BumpAllocateAlternatePool, 1
+	.set import.AllocHeapSlotEwram, 1
+	.set import.FreeHeapSlot, 1
+	.set import.AllocEwram, 1
 	.set import.Runtime_BumpFree, 1
 	.set import.SerialRuntime_Initialize, 1
 	.set import.SerialRuntime_RemoveIrqHandlers, 1
@@ -15,22 +15,22 @@
 	.set import.SerialRuntime_StartSend, 1
 	.set import.SerialRuntime_StartReceive, 1
 	.set import.SerialRuntime_GetActiveTransfers, 1
-	.set import.Scheduler_SetTaskFlags, 1
+	.set import.Task_SetFlags, 1
 	.set import.Engine_MapGridRedraw, 1
 	.set import.Engine_MapGridCopyCellsTo, 1
-	.set import.TileAnimation_ResumeChannel, 1
-	.set import.TileAnimation_PauseChannel, 1
+	.set import.TilesetAnim_Resume, 1
+	.set import.TilesetAnim_Pause, 1
 	.set import.Engine_MapGridCopyCellAttributes, 1
 	.set import.Engine_DebugCreateWindow, 1
-	.set import.UiWork_Finalize, 1
-	.set import.Ui_AdjustValueWithoutLimit, 1
-	.set import.UiText_OpenMessageWindow, 1
+	.set import.Window_Close, 1
+	.set import.Message_DecodeRawUnbounded, 1
+	.set import.Message_OpenWindow, 1
 	.set import.UiWork_IsComplete, 1
-	.set import.RenderOutput_PrepareForRedraw, 1
-	.set import.UiText_DrawNumber, 1
-	.set import.UiWork_ClearValueNameTables, 1
-	.set import.UiText_DrawQuantity, 1
-	.set import.SaveState_ProcessSelectedSlot, 1
+	.set import.WindowSprite_PrepareForRedraw, 1
+	.set import.Text_DrawNumber, 1
+	.set import.MessageArgument_ClearAll, 1
+	.set import.Text_DrawQuantity, 1
+	.set import.Save_ProcessSelectedFile, 1
 	.set import.Djinn_GetRecoveryTable, 1
 	.set import.Unit_Get, 1
 	.set import.Engine_GameFlagIsSet, 1
@@ -38,7 +38,7 @@
 	.set import.Engine_GameFlagClear, 1
 	.set import.GameFlag_GetByte, 1
 	.set import.GameFlag_SetByte, 1
-	.set import.Party_CountActiveOwners, 1
+	.set import.Party_CountMembers, 1
 	.set import.Party_RestoreHpPp, 1
 	.set import.Engine_ScriptStart, 1
 	.set import.Engine_ScriptEnd, 1

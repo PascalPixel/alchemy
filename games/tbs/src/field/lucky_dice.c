@@ -30,7 +30,7 @@
 /// warp destination this function does not take.
 s32 LuckyDice_Start(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
-  AudioCommand_PlayFar(MUS_009);
+  Sound_PlaySongFar(MUS_009);
   LuckyDice_Run();
   return 0;
 }
@@ -56,7 +56,7 @@ void Camera_ResetViewDefaults(void) {
   camera->unk18 = 0;
 
   // The eye sits `distance` behind the target along the camera's view.
-  Render_ResetTransformState();
+  Transform_Reset();
   Transform_ApplyPosition(&camera->focus[0]);
   Transform_ApplyYaw((s16)camera->yaw);
   Transform_ApplyPitch((s16)camera->pitch);
@@ -181,11 +181,11 @@ UNUSED s16 FixedPoint_Reciprocal(s16 value) { return 0x10000 / value; }
 /// The used prefix of Lucky Dice's 0x618-byte work block (heap slot 45):
 /// its sprites and windows. The allocation extends beyond these members.
 struct LuckyDiceSprites {
-  u8 filler[200];                  ///< Lucky Dice never touches these bytes
-  struct OamShadow oam[128];       ///< copied to OAM each frame
-  struct UiWindow *coinsWindow;    ///< the player's coins
-  struct UiWindow *winningsWindow; ///< the winnings of the last throw
-  struct UiWindow *helpWindow;     ///< the Throw and Quit buttons
+  u8 filler[200];                ///< Lucky Dice never touches these bytes
+  struct OamShadow oam[128];     ///< copied to OAM each frame
+  struct Window *coinsWindow;    ///< the player's coins
+  struct Window *winningsWindow; ///< the winnings of the last throw
+  struct Window *helpWindow;     ///< the Throw and Quit buttons
 };
 
 #include "keystate.h"
@@ -207,8 +207,8 @@ enum LuckyDiceState {
 /// Copies count RGB555 colours from source to destination with each channel
 /// multiplied by scale (16.16: 0 is black, 0x10000 unchanged), for fades.
 /// Returns 0. Called only by LuckyDice_Run, to fade both palettes in and out.
-s32 Graphics_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
-                               s32 count) {
+s32 LuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
+                                s32 count) {
   s32 remaining;
   u32 redMask;
   u32 greenMask;
@@ -249,7 +249,7 @@ s32 Graphics_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
 /// times when it matches one of the two lucky numbers shown at the top),
 /// three of a kind 3 times, two pairs twice and one pair the bet back.
 /// Called by LuckyDice_Start. Takes the bet from and pays the
-/// winnings into gGameState.coins, resets the scheduler's task table, and
+/// winnings into gGameState.coins, resets the task table, and
 /// frees the five heap slots it allocates before it returns.
 void LuckyDice_Run(void) {
   u16 bgPalette[256];
@@ -281,7 +281,7 @@ void LuckyDice_Run(void) {
   UNUSED s32 matchedNumbers[2]; // written, never read
 #endif
   u16 *spritePalette;
-  struct BattleEffectWork *diceWork;
+  struct BattleAnimWork *diceWork;
   /* FAKEMATCH(volatile): the OAM shadow it builds is struct OamShadow, whose
    * words are volatile (oambuf.h); as plain u32 words, 1550 of 2046
    * instructions differ in tbs-en. */
@@ -298,10 +298,10 @@ void LuckyDice_Run(void) {
   // It persists across frames to clear the same numeric field afterward.
   s32 digits;
   s32 spriteCount;
-  struct EffectStep *rollingDie;
-  struct EffectStep *otherDie;
+  struct Particle *rollingDie;
+  struct Particle *otherDie;
   s32 resetDice; // put the dice back at the throwing line
-  struct UiWindow *window;
+  struct Window *window;
   s32 index;
   s32 otherIndex;
   s32 rollAngle; // a die's roll angle: 0x400 per face tile, 0xc00 per face
@@ -324,14 +324,14 @@ void LuckyDice_Run(void) {
   s16 affineScale;
 
   // Allocate the screen's work blocks and reset the camera and tasks.
-  Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_SHEET, 0x60e);
-  spritePalette = Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, 0x200);
-  diceWork = Runtime_AllocateBlock(HEAP_SLOT_BATTLE_EFFECT, sizeof(*diceWork));
-  sprites = Runtime_AllocateBlock(HEAP_SLOT_LUCKY_DICE_SPRITES, 0x618);
-  camera = Runtime_AllocateBlock(HEAP_SLOT_CAMERA, sizeof(*camera));
+  AllocHeapSlot(HEAP_SLOT_BATTLE_SHEET, 0x60e);
+  spritePalette = AllocHeapSlot(HEAP_SLOT_BATTLE_CANVAS, 0x200);
+  diceWork = AllocHeapSlotEwram(HEAP_SLOT_BATTLE_ANIM, sizeof(*diceWork));
+  sprites = AllocHeapSlotEwram(HEAP_SLOT_LUCKY_DICE_SPRITES, 0x618);
+  camera = AllocHeapSlotEwram(HEAP_SLOT_CAMERA, sizeof(*camera));
   RuntimeDispatch_NoOpHook((s32)&ResourceId_EffectFarCalls);
   Camera_ResetViewDefaults();
-  Scheduler_ResetTaskTable();
+  Task_ResetAll();
   gOamCopyEnabled = 0;
 
   // Fill BG1's map (screen block 6) with a 30-tile-wide picture, then load
@@ -354,9 +354,9 @@ void LuckyDice_Run(void) {
   // UB: Value2 passes integers to the decoder's two pointer parameters.
   // Plain typed calls add four bytes to LuckyDice_Run in tbs-en.
 #ifdef UBFIX
-  Resource_DecodeType01((const void *)resourceAddress, Ram_MapGridCellBuffer);
+  Decompress_Type01((const void *)resourceAddress, Ram_MapGridCellBuffer);
 #else
-  Value2(Resource_DecodeType01, resourceAddress, (s32)Ram_MapGridCellBuffer);
+  Value2(Decompress_Type01, resourceAddress, (s32)Ram_MapGridCellBuffer);
 #endif
   Dma_Set(Ram_MapGridCellBuffer, BG_SCREEN_BLOCK(8),
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x2580, REG_DMA3);
@@ -368,14 +368,14 @@ void LuckyDice_Run(void) {
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x80, REG_DMA3);
   resourceAddress += 0x200;
 #ifdef UBFIX
-  Resource_DecodeType01((const void *)resourceAddress, Ram_MapGridCellBuffer);
+  Decompress_Type01((const void *)resourceAddress, Ram_MapGridCellBuffer);
 #else
-  Value2(Resource_DecodeType01, resourceAddress, (s32)Ram_MapGridCellBuffer);
+  Value2(Decompress_Type01, resourceAddress, (s32)Ram_MapGridCellBuffer);
 #endif
   Dma_Set(Ram_MapGridCellBuffer, (void *)OBJ_VRAM0,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x1f00, REG_DMA3);
-  Graphics_ScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT, 0, 256);
-  Graphics_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT, 0, 256);
+  LuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT, 0, 256);
+  LuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT, 0, 256);
 
   // Show the board on BG1, sprites and windows, with the board blended.
   REG_BG1CNT = BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
@@ -434,28 +434,27 @@ void LuckyDice_Run(void) {
 
   // Open the coins window and the Throw / Quit help.
   UiWork_InitializeWithResourceCountersFar();
-  window = UiWindow_CreateFar(DICE_COIN_X, 0, DICE_COIN_W, 3, 6);
+  window = Window_CreateFar(DICE_COIN_X, 0, DICE_COIN_W, 3, 6);
   sprites->coinsWindow = window;
-  UiText_DrawCharacterAtOffsetFar(MsgLuckyDiceCoins, window, DICE_LABEL_X, 0);
-  UiText_DrawNumberInWindowFar(gGameState.coins, 6, sprites->coinsWindow, 0, 0);
-  window = UiWindow_CreateFar(DICE_HELP_X, 16, DICE_HELP_W, 4, 6);
+  Text_DrawMessageAsTilesFar(MsgLuckyDiceCoins, window, DICE_LABEL_X, 0);
+  Text_DrawNumberInWindowFar(gGameState.coins, 6, sprites->coinsWindow, 0, 0);
+  window = Window_CreateFar(DICE_HELP_X, 16, DICE_HELP_W, 4, 6);
   sprites->helpWindow = window;
   // MsgLuckyDiceThrow and MsgLuckyDiceQuit, by their offset from the coins
   // label: written by name, they would share literals the native keeps apart.
-  UiText_DrawCharacterAtOffsetFar(MsgLuckyDiceCoins + 10, window, 0, 0);
-  UiText_DrawCharacterAtOffsetFar(MsgLuckyDiceCoins + 11, sprites->helpWindow,
-                                  0, 8);
+  Text_DrawMessageAsTilesFar(MsgLuckyDiceCoins + 10, window, 0, 0);
+  Text_DrawMessageAsTilesFar(MsgLuckyDiceCoins + 11, sprites->helpWindow, 0, 8);
 
   frame = 0;
   for (;;) {
     resetDice = 0;
     // Fade in over the first 16 frames.
     if (frame <= 16) {
-      Graphics_ScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT, frame << 12,
-                                 256);
-      Graphics_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT, frame << 12, 256);
+      LuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT, frame << 12,
+                                  256);
+      LuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT, frame << 12, 256);
     }
-    Render_ResetTransformState();
+    Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->focus);
 
     // The fixed sprites: the board frame and the two lucky numbers.
@@ -486,7 +485,7 @@ void LuckyDice_Run(void) {
     if (state == LUCKY_DICE_RESULT || state == LUCKY_DICE_PAYOUT) {
       for (index = 0; index != DICE_RESULT_COUNT; index++) {
         if (resultTimer == index * 5) {
-          AudioCommand_PlayFar(SE_LUCKY_DICE_NUMBER);
+          Sound_PlaySongFar(SE_LUCKY_DICE_NUMBER);
         }
         if (resultTimer >= index * 5) {
           sprites->oam[spriteCount].attr01 =
@@ -528,22 +527,22 @@ void LuckyDice_Run(void) {
         } else {
           digits = 5;
         }
-        window = UiWindow_CreateFar(DICE_WIN_X - digits / 2, 16,
-                                    digits + DICE_WIN_W, 3, 6);
+        window = Window_CreateFar(DICE_WIN_X - digits / 2, 16,
+                                  digits + DICE_WIN_W, 3, 6);
         sprites->winningsWindow = window;
-        UiText_DrawCharacterAtOffsetFar(MsgLuckyDiceWinnings, window, 0, 0);
+        Text_DrawMessageAsTilesFar(MsgLuckyDiceWinnings, window, 0, 0);
         // "Coins" after the number (MsgLuckyDiceCoins, one before).
-        UiText_DrawCharacterAtOffsetFar(MsgLuckyDiceWinnings - 1,
-                                        sprites->winningsWindow,
-                                        digits * 8 + DICE_WIN_LABEL_X, 0);
-        UiText_DrawNumberInWindowFar(winnings, digits, sprites->winningsWindow,
-                                     DICE_WIN_NUMBER_X, 0);
+        Text_DrawMessageAsTilesFar(MsgLuckyDiceWinnings - 1,
+                                   sprites->winningsWindow,
+                                   digits * 8 + DICE_WIN_LABEL_X, 0);
+        Text_DrawNumberInWindowFar(winnings, digits, sprites->winningsWindow,
+                                   DICE_WIN_NUMBER_X, 0);
       }
       if (payoutTimer > 0) {
         payoutTimer--;
       }
       if (resultTimer > 19 && (gKeysRepeat & KEY_A)) {
-        AudioCommand_PlayFar(SE_MENU_CONFIRM);
+        Sound_PlaySongFar(SE_MENU_CONFIRM);
         if (winnings > 0) {
           state = LUCKY_DICE_PAYOUT;
           payoutTimer = 0;
@@ -551,11 +550,11 @@ void LuckyDice_Run(void) {
           resetDice = 1;
           state = LUCKY_DICE_AIM;
 #if LANGUAGE != LANGUAGE_JAPANESE
-          window = UiWindow_CreateFar(DICE_HELP_X, 16, DICE_HELP_W, 4, 6);
+          window = Window_CreateFar(DICE_HELP_X, 16, DICE_HELP_W, 4, 6);
           sprites->helpWindow = window;
-          UiText_DrawCharacterAtOffsetFar(MsgLuckyDiceThrow, window, 0, 0);
-          UiText_DrawCharacterAtOffsetFar(MsgLuckyDiceThrow + 1,
-                                          sprites->helpWindow, 0, 8);
+          Text_DrawMessageAsTilesFar(MsgLuckyDiceThrow, window, 0, 0);
+          Text_DrawMessageAsTilesFar(MsgLuckyDiceThrow + 1, sprites->helpWindow,
+                                     0, 8);
 #endif
         }
       }
@@ -565,18 +564,18 @@ void LuckyDice_Run(void) {
       // window and aim again.
       if (payoutTimer == 0) {
         winnings = 0;
-        UiText_DrawNumberInWindowFar(0, digits, sprites->winningsWindow, 40, 0);
-        UiText_DrawNumberInWindowFar(gGameState.coins, 6, sprites->coinsWindow,
-                                     0, 0);
+        Text_DrawNumberInWindowFar(0, digits, sprites->winningsWindow, 40, 0);
+        Text_DrawNumberInWindowFar(gGameState.coins, 6, sprites->coinsWindow, 0,
+                                   0);
       }
       if (payoutTimer == 15) {
         state = LUCKY_DICE_AIM;
-        UiWork_FinalizeFar(sprites->winningsWindow, 1);
-        window = UiWindow_CreateFar(DICE_HELP_X, 16, DICE_HELP_W, 4, 6);
+        Window_CloseFar(sprites->winningsWindow, 1);
+        window = Window_CreateFar(DICE_HELP_X, 16, DICE_HELP_W, 4, 6);
         sprites->helpWindow = window;
-        UiText_DrawCharacterAtOffsetFar(MsgLuckyDiceThrow, window, 0, 0);
-        UiText_DrawCharacterAtOffsetFar(MsgLuckyDiceThrow + 1,
-                                        sprites->helpWindow, 0, 8);
+        Text_DrawMessageAsTilesFar(MsgLuckyDiceThrow, window, 0, 0);
+        Text_DrawMessageAsTilesFar(MsgLuckyDiceThrow + 1, sprites->helpWindow,
+                                   0, 8);
         resetDice = 1;
       }
       payoutTimer++;
@@ -609,25 +608,25 @@ void LuckyDice_Run(void) {
       }
       if (gGameState.coins <
           (u32)(Party_GetAverageLevelFar() * DICE_BET_PER_LEVEL)) {
-        UiWork_FinalizeFar(sprites->helpWindow, 1);
+        Window_CloseFar(sprites->helpWindow, 1);
         break;
       }
       if (gKeysRepeat & KEY_B) {
-        AudioCommand_PlayFar(SE_MENU_CANCEL);
-        UiWork_FinalizeFar(sprites->helpWindow, 1);
+        Sound_PlaySongFar(SE_MENU_CANCEL);
+        Window_CloseFar(sprites->helpWindow, 1);
         break;
       }
       if (gKeysRepeat & KEY_A) {
-        AudioCommand_PlayFar(SE_LUCKY_DICE_THROW);
-        UiWork_FinalizeFar(sprites->helpWindow, 1);
+        Sound_PlaySongFar(SE_LUCKY_DICE_THROW);
+        Window_CloseFar(sprites->helpWindow, 1);
         state = LUCKY_DICE_ROLL;
         bet = Party_GetAverageLevelFar() * DICE_BET_PER_LEVEL;
         if ((u32)bet > gGameState.coins) {
           bet = gGameState.coins;
         }
         Party_AdjustCoinsFar(-bet);
-        UiText_DrawNumberInWindowFar(gGameState.coins, 6, sprites->coinsWindow,
-                                     0, 0);
+        Text_DrawNumberInWindowFar(gGameState.coins, 6, sprites->coinsWindow, 0,
+                                   0);
         for (index = 0; index != DICE_COUNT; index++) {
           rollingDie = &diceWork->particles[index];
           // DEAD: never true with DICE_COUNT 2; a third die would start
@@ -680,9 +679,9 @@ void LuckyDice_Run(void) {
       s32 dieY;
 
       rollingDie = &diceWork->particles[drawOrder[index]];
-      // Projection reads the record's three coordinate words directly.
+      // Projection reads the die's three coordinate words directly.
       // Copying them to an array grows native EN from 0x1274 to 0x1294 bytes.
-      Render_ProjectPoint(rollingDie, screen);
+      Transform_ProjectPoint(rollingDie, screen);
       // Depth is clamped to 350..650; the nearer, the larger the die.
       if (screen[2] < 0x15e) {
         screen[2] = 0x15e;
@@ -711,7 +710,7 @@ void LuckyDice_Run(void) {
     // While aiming, a marker under each die.
     if (state == LUCKY_DICE_AIM) {
       for (index = 0; index != DICE_COUNT; index++) {
-        Render_ProjectPoint(&diceWork->particles[index], screen);
+        Transform_ProjectPoint(&diceWork->particles[index], screen);
         x = screen[0] - 0x800 / (spriteDepth[drawOrder[index]] / 2 + 128);
         y = screen[1] + 0x300 / (spriteDepth[drawOrder[index]] / 2 + 128);
         sprites->oam[spriteCount].attr01 =
@@ -731,7 +730,7 @@ void LuckyDice_Run(void) {
       // Each die's shadow on the board below it.
       SET_VECTOR(groundPoint, diceWork->particles[index].x, 0,
                  diceWork->particles[index].z);
-      Render_ProjectPoint(groundPoint, screen);
+      Transform_ProjectPoint(groundPoint, screen);
       // A shadow shrinks as its die rises.
       if (screen[2] < 0x15e) {
         screen[2] = 0x15e;
@@ -901,9 +900,9 @@ void LuckyDice_Run(void) {
           } else {
             winnings = bet * 5;
           }
-          UiText_DrawNumberInWindowFar(gGameState.coins, 6,
-                                       sprites->coinsWindow, 0, 0);
-          AudioCommand_PlayFar(MUS_FANFARE_LARGE);
+          Text_DrawNumberInWindowFar(gGameState.coins, 6, sprites->coinsWindow,
+                                     0, 0);
+          Sound_PlaySongFar(MUS_FANFARE_LARGE);
         } else {
           pairCount = 0;
           for (index = 0; index != 3; index++) {
@@ -917,25 +916,25 @@ void LuckyDice_Run(void) {
           }
           if (pairCount == 1) {
             winnings = bet;
-            UiText_DrawNumberInWindowFar(gGameState.coins, 6,
-                                         sprites->coinsWindow, 0, 0);
+            Text_DrawNumberInWindowFar(gGameState.coins, 6,
+                                       sprites->coinsWindow, 0, 0);
             resultKind = 3;
           }
           if (pairCount == 2) {
             winnings = bet * 2;
-            UiText_DrawNumberInWindowFar(gGameState.coins, 6,
-                                         sprites->coinsWindow, 0, 0);
+            Text_DrawNumberInWindowFar(gGameState.coins, 6,
+                                       sprites->coinsWindow, 0, 0);
             flashTimer[Random16() & 1] = 60;
             resultKind = 2;
-            AudioCommand_PlayFar(MUS_FANFARE_SMALL);
+            Sound_PlaySongFar(MUS_FANFARE_SMALL);
           }
           if (pairCount == 3) {
             winnings = bet * 3;
-            UiText_DrawNumberInWindowFar(gGameState.coins, 6,
-                                         sprites->coinsWindow, 0, 0);
+            Text_DrawNumberInWindowFar(gGameState.coins, 6,
+                                       sprites->coinsWindow, 0, 0);
             flashTimer[Random16() & 1] = 60;
             resultKind = 1;
-            AudioCommand_PlayFar(MUS_FANFARE_MEDIUM);
+            Sound_PlaySongFar(MUS_FANFARE_MEDIUM);
           }
         }
       }
@@ -972,13 +971,13 @@ void LuckyDice_Run(void) {
   // Fade out over 17 frames and free the work blocks.
   for (index = 0; index != 17; index++) {
     scale = 0x10000 - (index << 12);
-    Graphics_ScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT, scale, 256);
-    Graphics_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT, scale, 256);
+    LuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT, scale, 256);
+    LuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT, scale, 256);
     WaitFrames(1);
   }
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_CAMERA);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_LUCKY_DICE_SPRITES);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_CANVAS);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_EFFECT);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_SHEET);
+  FreeHeapSlot(HEAP_SLOT_CAMERA);
+  FreeHeapSlot(HEAP_SLOT_LUCKY_DICE_SPRITES);
+  FreeHeapSlot(HEAP_SLOT_BATTLE_CANVAS);
+  FreeHeapSlot(HEAP_SLOT_BATTLE_ANIM);
+  FreeHeapSlot(HEAP_SLOT_BATTLE_SHEET);
 }

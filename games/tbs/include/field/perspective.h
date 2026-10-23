@@ -9,13 +9,13 @@
 
 /// The world map's perspective view: the followed position, screen shake,
 /// view position, window, pitch and yaw, tile ids and zoom. Heap slot 8.
-struct PerspectiveWork {
+struct WorldMapView {
   s32 *origin; ///< the followed point, as in MapGridScrollWork
   s32 shakeX, shakeY, shakeDecay; ///< the screen shake, as in MapGridScrollWork
   u8 *script;                     ///< NULL at load
   u16 fade;    ///< MapGridScrollWork's flags: REG_DISPCNT bits, 0x1f00 at load
   u8 fadeStep; ///< MapGridScrollWork's wideTiles, 0x80 at load
-  /// As MapGridScrollWork: footprints, tile animations and blend script.
+  /// As MapGridScrollWork: footprints, tileset animations and blend script.
   u8 animationsAndBlend[0xe4 - 0x17];
   s32 viewX;  ///< 16.16 fixed-point pixels
   s32 viewY;  ///< 16.16 fixed-point pixels
@@ -23,7 +23,7 @@ struct PerspectiveWork {
   s32 scaleY; ///< 0x400000 at load
   s32 limitX; ///< 0x1fe00000 at load
   s32 limitY; ///< 0x1fe00000 at load
-  /// Set by WorldMap_StartStillView while BG1 shows the drawn map; the tile
+  /// Set by WorldMap_StartStillView while BG1 shows the drawn map; the tileset
   /// animations are then neither suspended nor resumed.
   s8 animationActive;
   u8 unused[3]; ///< no code names it
@@ -58,17 +58,17 @@ struct PerspectiveWork {
   s16 zoomTransitionStep;   ///< frames of the transition done
 };
 
-STATIC_ASSERT(sizeof(struct PerspectiveWork) == 0x35c);
-STATIC_ASSERT(offsetof(struct PerspectiveWork, viewX) == 0xe4);
-STATIC_ASSERT(offsetof(struct PerspectiveWork, pitch) == 0x118);
-STATIC_ASSERT(offsetof(struct PerspectiveWork, animationActive) == 0xfc);
-STATIC_ASSERT(offsetof(struct PerspectiveWork, resources) == 0x11c);
-STATIC_ASSERT(offsetof(struct PerspectiveWork, tileIds) == 0x138);
-STATIC_ASSERT(offsetof(struct PerspectiveWork, quarterTiles) == 0x338);
-STATIC_ASSERT(offsetof(struct PerspectiveWork, farPlane) == 0x348);
-STATIC_ASSERT(offsetof(struct PerspectiveWork, zoom) == 0x354);
-STATIC_ASSERT(offsetof(struct PerspectiveWork, previousZoom) == 0x350);
-STATIC_ASSERT(offsetof(struct PerspectiveWork, zoomTransitionFrames) == 0x358);
-STATIC_ASSERT(offsetof(struct PerspectiveWork, zoomTransitionStep) == 0x35a);
+STATIC_ASSERT(sizeof(struct WorldMapView) == 0x35c);
+STATIC_ASSERT(offsetof(struct WorldMapView, viewX) == 0xe4);
+STATIC_ASSERT(offsetof(struct WorldMapView, pitch) == 0x118);
+STATIC_ASSERT(offsetof(struct WorldMapView, animationActive) == 0xfc);
+STATIC_ASSERT(offsetof(struct WorldMapView, resources) == 0x11c);
+STATIC_ASSERT(offsetof(struct WorldMapView, tileIds) == 0x138);
+STATIC_ASSERT(offsetof(struct WorldMapView, quarterTiles) == 0x338);
+STATIC_ASSERT(offsetof(struct WorldMapView, farPlane) == 0x348);
+STATIC_ASSERT(offsetof(struct WorldMapView, zoom) == 0x354);
+STATIC_ASSERT(offsetof(struct WorldMapView, previousZoom) == 0x350);
+STATIC_ASSERT(offsetof(struct WorldMapView, zoomTransitionFrames) == 0x358);
+STATIC_ASSERT(offsetof(struct WorldMapView, zoomTransitionStep) == 0x35a);
 
 #endif

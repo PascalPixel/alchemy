@@ -6,7 +6,7 @@
 
 /// Runs Catch cast on a target, through FieldEffect_RunCatch.
 ///
-/// Abilities: Catch (FIELD_KIND_CATCH).
+/// Abilities: Catch (FIELD_PSYNERGY_CATCH).
 ///
 /// Called by FieldEffect_DispatchRequestKind; the target is ignored.
 void FieldEffect_RunCatchOnTarget(s32 unused) { FieldEffect_RunCatch(); }
@@ -15,7 +15,7 @@ void FieldEffect_RunCatchOnTarget(s32 unused) { FieldEffect_RunCatch(); }
 /// growing from a quarter to full size, presses down 20 pixels moving child to
 /// (-9, -9), rises 19.5 pixels and shrinks back.
 ///
-/// Abilities: Catch (FIELD_KIND_CATCH).
+/// Abilities: Catch (FIELD_PSYNERGY_CATCH).
 ///
 /// Object 215 is the hand of Move and Carry. The goal is 32 pixels in front
 /// of the caster with scene->enabled (no map event named the target),
@@ -23,7 +23,7 @@ void FieldEffect_RunCatchOnTarget(s32 unused) { FieldEffect_RunCatch(); }
 /// FieldEffect_Run and FieldEffect_RunCatchOnTarget. Moves the effect scene's
 /// child to (-9, -9) when there is one, and releases object 215 at the end.
 void FieldEffect_RunCatch(void) {
-  struct FieldEffectWork *effectWork = gEffectWork;
+  struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct MotionObject *objectEvent = effectWork->mainObject;
   struct MotionObject *child = effectWork->child;
   struct MotionObject *object;
@@ -54,7 +54,7 @@ void FieldEffect_RunCatch(void) {
   if (object == 0)
     return;
   FieldEffect_FadeToEffectColor();
-  AudioCommand_PlayFar(SE_ITEM_BREAK);
+  Sound_PlaySongFar(SE_ITEM_BREAK);
   object->angle = objectEvent->angle;
   object->speedLimit = 0x14ccc;
   object->motionFlags = 0;
@@ -87,12 +87,12 @@ void FieldEffect_RunCatch(void) {
     WaitFrames(1);
   }
   ObjectDispatch_SelectAnimationFar(object, 5);
-  AudioCommand_PlayFar(SE_132);
+  Sound_PlaySongFar(SE_132);
   // XXX: why the caught object goes to (-9, -9) pixels, just off the map's
   // corner; the map code that reads it after Catch would settle it.
   if (child != 0)
-    Object_SetPositionAndResetMotionFar((struct ObjectRuntime *)child,
-                                        -(9 << 16), child->y, -(9 << 16));
+    Object_SetPositionAndResetMotionFar((struct Object *)child, -(9 << 16),
+                                        child->y, -(9 << 16));
   WaitFrames(20);
 
   // Rise 1.5 pixels a frame for 13 frames.
@@ -101,7 +101,7 @@ void FieldEffect_RunCatch(void) {
     WaitFrames(1);
   }
   WaitFrames(10);
-  AudioCommand_PlayFar(SE_MENU_ERROR);
+  Sound_PlaySongFar(SE_MENU_ERROR);
 
   // Shrink back to the caster.
   step = 0;

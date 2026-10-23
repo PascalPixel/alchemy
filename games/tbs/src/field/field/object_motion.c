@@ -5,7 +5,7 @@
 #include "../field_internal.h"
 
 /// SC_BASE: restarts the script at the next word, and returns 1 to run on.
-s32 ActionScript_SetBase(struct ScriptInterpreter *interpreter) {
+s32 ObjectScript_SetBase(struct ObjectScriptContext *interpreter) {
   s32 zero;
 
   // The word after the command becomes the script's start.
@@ -15,28 +15,28 @@ s32 ActionScript_SetBase(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-/// SC_B54_OFF: clears spriteStorageKind, hiding the sprites, and moves on to
-/// the next command.
-s32 ActionScript_ClearByte54(struct ScriptInterpreter *interpreter) {
+/// SC_HIDE_SPRITES: clears spriteStorageKind, hiding the sprites, and moves on
+/// to the next command.
+s32 ObjectScript_ClearByte54(struct ObjectScriptContext *interpreter) {
   interpreter->spriteStorageKind = OBJECT_SPRITE_NONE;
   interpreter->cursor++;
   return 1;
 }
 
-/// SC_B54_ON: sets spriteStorageKind to OBJECT_SPRITE_ONE, one sprite drawn,
-/// and moves on to the next command.
-s32 ActionScript_SetByte54(struct ScriptInterpreter *interpreter) {
+/// SC_SHOW_SPRITE: sets spriteStorageKind to OBJECT_SPRITE_ONE, one sprite
+/// drawn, and moves on to the next command.
+s32 ObjectScript_SetByte54(struct ObjectScriptContext *interpreter) {
   interpreter->spriteStorageKind = OBJECT_SPRITE_ONE;
   interpreter->cursor++;
   return 1;
 }
 
-/// Waits a frame at a time until an object event has arrived at its target, at
+/// Waits a frame at a time until an object has arrived at its target, at
 /// most 600 frames (ten seconds), after which it returns with the object still
 /// on its way. It takes void * because callers pass every view of an
-/// object. Called through FieldObject_WaitForMoveFar by the Psynergy effects
+/// object. Called through Object_WaitForMoveFar by the Psynergy effects
 /// and by about 50 map overlays.
-void FieldObject_WaitForMove(void *fieldObject) {
+void Object_WaitForMove(void *fieldObject) {
   s32 waitedFrames;
 
   waitedFrames = 0;
@@ -48,9 +48,9 @@ void FieldObject_WaitForMove(void *fieldObject) {
 
 /// Returns 1 when the object has no movement target: none of its target
 /// coordinates set, or for an object moved by the ground (any motion flag)
-/// neither its target x nor z. Called by FieldObject_WaitForMove and SC_SYNC
-/// (ActionScript_WaitForArrival).
-s32 Object_IsTargetUnset(struct ObjectRuntime *object) {
+/// neither its target x nor z. Called by Object_WaitForMove and SC_SYNC
+/// (ObjectScript_WaitForArrival).
+s32 Object_IsTargetUnset(struct Object *object) {
   s32 first;
   s32 second;
 
@@ -72,10 +72,10 @@ s32 Object_IsTargetUnset(struct ObjectRuntime *object) {
 
 static __inline__ s32 ObjectMotion_Square(s32 value) { return value * value; }
 
-/// Advances all 64 object events by one frame, as Object_UpdateAll does for
+/// Advances all 64 objects by one frame, as Object_UpdateAll does for
 /// the eight script objects, with the field's extras: free flight in 3D,
-/// terrain following, floating, and solid objects that refuse to overlap.
-/// ObjectSystem_Initialize schedules it as the per-frame object update in
+/// following the ground, floating, and solid objects that refuse to overlap.
+/// ObjectSystem_Initialize adds it as the task that updates the objects in
 /// every mode but the battle's (4). Writes each live object's position,
 /// velocity, target, wait and facing.
 void Object_UpdateAllThumb(void) {
@@ -107,8 +107,8 @@ void Object_UpdateAllThumb(void) {
   u32 command;
   u32 phase;
 
-  object = (struct ScriptMotionObject *)gObjectSlots;
-  for (objectsRemaining = FIELD_OBJECT_COUNT - 1; objectsRemaining >= 0;
+  object = (struct ScriptMotionObject *)gObjects;
+  for (objectsRemaining = OBJECT_COUNT - 1; objectsRemaining >= 0;
        objectsRemaining--, object++) {
     arrivedAtTarget = 0;
 
@@ -139,8 +139,8 @@ void Object_UpdateAllThumb(void) {
         command = script->word[(s16)object->scriptCursor];
 #endif
         if (command <= 63) {
-          if (gScriptObject_CommandTable[command](
-                  (struct ScriptInterpreter *)object) == 0)
+          if (gObjectScript_CommandTable[command](
+                  (struct ObjectScriptContext *)object) == 0)
             break;
         } else {
           object->scriptCursor++;
@@ -260,7 +260,7 @@ void Object_UpdateAllThumb(void) {
           }
         }
 
-        // Follow the terrain: take the ground height where the object is
+        // Follow the ground: take the ground height where the object is
         // going and move with its change, unless the object is 4 or more
         // pixels above the ground. Unless bit 4 is set, a climb or drop also
         // slows it, by three times the change (at most half its
@@ -269,8 +269,8 @@ void Object_UpdateAllThumb(void) {
           velocityX = x + object->velocityX;
           velocityZ = z + object->velocityZ;
           ground =
-              MapGrid_GetTerrainHeight(object->terrainId, velocityX, velocityZ);
-          velocityY = ground - object->terrainHeight;
+              MapGrid_GetTerrainHeight(object->layer, velocityX, velocityZ);
+          velocityY = ground - object->groundHeight;
           if (ground - y > -0x40000)
             y += velocityY;
           if (velocityY < 0)
@@ -295,12 +295,12 @@ void Object_UpdateAllThumb(void) {
                            Iwram_MulQ16(dy, ratio), Iwram_MulQ16(dz, ratio));
             }
           }
-          object->terrainHeight = ground;
+          object->groundHeight = ground;
         }
 
         // Gravity, and a bounce that loses energy on landing.
         if ((object->motionFlags & OBJ_EVENT_FALLS) != 0) {
-          ground = object->terrainHeight;
+          ground = object->groundHeight;
           if (y > ground) {
             object->velocityY -= object->gravity;
           } else if (object->velocityY < 0) {
@@ -343,7 +343,7 @@ void Object_UpdateAllThumb(void) {
     // it after 60.
     if ((object->collisionFlags & OBJ_EVENT_BLOCKED_BY_SOLID) != 0) {
       SET_VECTOR(pos, x, y, z);
-      if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)object, pos) !=
+      if (ObjectScript_CheckOverlap((struct ScriptObjectEntry *)object, pos) !=
           0) {
         object->refused++;
         continue;
@@ -414,11 +414,11 @@ void Object_UpdateAllThumb(void) {
 }
 
 /// Places the object at (x, y, z), in 16.16 pixels, clears its movement target
-/// and stops it. Reached through SC_POSITION and FieldObject_Create, and as
+/// and stops it. Reached through SC_POSITION and Object_CreateField, and as
 /// Object_SetPositionAndResetMotionFar from the Psynergy effects and the
 /// field map's object events.
-void Object_SetPositionAndResetMotion(struct ObjectRuntime *object, s32 x,
-                                      s32 y, s32 z) {
+void Object_SetPositionAndResetMotion(struct Object *object, s32 x, s32 y,
+                                      s32 z) {
   object->z = z;
   object->targetX = TARGET_UNSET;
   object->targetY = TARGET_UNSET;
@@ -438,7 +438,7 @@ void Object_SetPositionAndResetMotion(struct ObjectRuntime *object, s32 x,
 /// Reached through SC_MOVE and the other move commands, the player control,
 /// and as Object_SetMoveTargetFar from the battle's motion, the battle
 /// effects and the Psynergy effects. Sets the target and arrivalAxis.
-void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z) {
+void Object_SetMoveTarget(struct Object *object, s32 x, s32 y, s32 z) {
   s32 dx;
   s32 distance;
   s32 dz;
@@ -517,14 +517,14 @@ UNUSED void Object_RunUpdateAllFromHeap(void) {
 
   RamCode_Load(updateObjects, Object_UpdateAll, Object_UpdateAllCodeSize);
   updateObjects();
-  MemFree(updateObjects);
+  Free(updateObjects);
 }
 
 /// Advances the first 14 objects' motion by one frame, without running their
 /// scripts: steering towards a target or braking, gravity and bouncing,
 /// arrival, and turning to face the direction of travel.
-/// ObjectSystem_Initialize schedules it in place of Object_UpdateAllThumb in
-/// MODE_BATTLE.
+/// ObjectSystem_Initialize adds it as a task in place of Object_UpdateAllThumb
+/// in OBJECT_SYSTEM_BATTLE.
 void Object_UpdateAllMotion(void) {
   struct ScriptMotionObject *object;
   s32 objectsRemaining;
@@ -541,7 +541,7 @@ void Object_UpdateAllMotion(void) {
 
   // Fourteen objects, as many as the battle has units (UNIT_MAX in
   // battle/battle/objects.c).
-  object = (struct ScriptMotionObject *)gObjectSlots;
+  object = (struct ScriptMotionObject *)gObjects;
   for (objectsRemaining = 13; objectsRemaining >= 0;
        objectsRemaining--, object++) {
     if (object->script == 0)
@@ -560,7 +560,7 @@ void Object_UpdateAllMotion(void) {
       arrivedAtTarget = 0;
 #endif
       // Steer in the XZ plane as Object_UpdateAllThumb does on the ground,
-      // or brake; this loop has no free flight, terrain or floating.
+      // or brake; this loop has no free flight, ground following or floating.
       if (object->targetX != TARGET_UNSET) {
         dx = (object->targetX - x) / 65536;
         dz = (object->targetZ - z) / 65536;
@@ -615,10 +615,10 @@ void Object_UpdateAllMotion(void) {
       }
       // Gravity, and a bounce that loses energy on landing.
       if (object->motionFlags & OBJ_EVENT_FALLS) {
-        if (y > object->terrainHeight) {
+        if (y > object->groundHeight) {
           object->velocityY -= object->gravity;
         } else if (object->velocityY < 0) {
-          y = object->terrainHeight;
+          y = object->groundHeight;
           object->velocityY =
               -Iwram_MulQ16(object->velocityY, object->vertical.bounce);
           if ((object->velocityY < 0 ? -object->velocityY

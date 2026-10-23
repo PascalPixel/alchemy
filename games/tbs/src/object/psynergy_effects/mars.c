@@ -6,11 +6,11 @@
 
 /// A Mars Djinni joins the party: it turns to the camera, bounces three times,
 /// spins ever faster and shrinks away in a fountain of 24 sparks
-/// (FieldEffect_UpdatePhasedRadialParticle). The leader turns to the camera
-/// and plays animation 28, the sparks swarm the leader, who pulses for 100
-/// frames, and the sparks vanish. Called by Djinn_JoinParty for a Mars Djinni,
-/// which then clears the Djinni's object event slot. Uses all 24 effect slots,
-/// tints the field palette red and fades it back at the end.
+/// (FieldEffect_UpdatePhasedRadialParticle). The leader turns to the camera and
+/// plays animation 28, the sparks swarm the leader, who pulses for 100 frames,
+/// and the sparks vanish. Called by Djinn_JoinParty for a Mars Djinni, which
+/// then clears the Djinni's object event slot. Uses all 24 field effect
+/// sprites, tints the field palette red and fades it back at the end.
 void Djinn_RunMarsJoinEffect(s32 djinniId) {
   struct EffectVector position;
   s32 scale;
@@ -18,17 +18,17 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   struct ObjectEvent *djinni;
   struct FieldEffectWork *effectWork;
   struct ObjectEvent *leader;
-  struct EffectSlot *effect;
+  struct FieldEffectSprite *effect;
   s8 *slotState;
 
   djinni = ObjectEvent_GetById(djinniId);
-  leader = ObjectEvent_GetById(gGameState.selectedLocalId);
+  leader = ObjectEvent_GetById(gGameState.leaderLocalId);
   if (djinni == NULL)
     return;
 
   FieldEffect_InitializeSlots();
-  effectWork = gEffectWork;
-  // Tint the screen red: PALETTE_TRANSFORM_TINT | RGB(16, 4, 4), the form
+  effectWork = gFieldEffectWork;
+  // Tint the screen red: PALETTE_TINT_CUSTOM | RGB(16, 4, 4), the form
   // mercury.c spells out for its blue.
   Shop_SaveAndTintFieldPaletteFar(0x201090);
   WaitFrames(30);
@@ -36,15 +36,15 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   // note on each.
   ObjectMotion_ArmCallback(djinniId, 0x4000, 0);
   WaitFrames(20);
-  AudioCommand_PlayFar(SE_173);
-  Motion_SetVarCbAndRefresh(djinniId, 1);
-  AudioCommand_PlayFar(SE_174);
-  Motion_SetVarCbAndRefresh(djinniId, 1);
-  AudioCommand_PlayFar(SE_175);
-  Motion_SetVarCbAndRefresh(djinniId, 1);
+  Sound_PlaySongFar(SE_173);
+  ObjectMotion_SetVarCbAndRefresh(djinniId, 1);
+  Sound_PlaySongFar(SE_174);
+  ObjectMotion_SetVarCbAndRefresh(djinniId, 1);
+  Sound_PlaySongFar(SE_175);
+  ObjectMotion_SetVarCbAndRefresh(djinniId, 1);
   // Spin up for 80 frames, then spin and shrink away.
   WaitFrames(20);
-  AudioCommand_PlayFar(SE_140);
+  Sound_PlaySongFar(SE_140);
   djinni->update = FieldEffect_AdvanceAngleWithRamp;
   djinni->timer = 0;
   WaitFrames(80);
@@ -57,15 +57,16 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   position.z = djinni->z.fixed;
   Camera_WorldToScreen(&position);
 
-  // One spark a frame into each of the 24 effect slots.
-  effect = effectWork->effects;
+  // One spark a frame into each of the 24 field effect sprites.
+  effect = effectWork->sprites;
   remaining = 23;
   do {
-    EffectSlot_Initialize(effect, SPRITE_PARTICLE, position.x, position.z);
-    EffectSlot_SetCallback(effect, FieldEffect_UpdatePhasedRadialParticle);
-    EffectSlot_SetObjectMode(effect, 7);
-    ObjectGroup_SetChildValueUnlessFifteenFar(effect->object,
-                                              SPRITE_COLOR_RED_TINT);
+    FieldEffectSprite_Initialize(effect, SPRITE_PARTICLE, position.x,
+                                 position.z);
+    FieldEffectSprite_SetCallback(effect,
+                                  FieldEffect_UpdatePhasedRadialParticle);
+    FieldEffectSprite_SetObjectMode(effect, 7);
+    Sprite_SetAnimColorModesFar(effect->object, SPRITE_COLOR_RED_TINT);
     scale = Random16() / 3 + 0x10000; // 1.0 to 1.33
     effect->scaleY = scale;
     effect->scaleX = scale;
@@ -75,10 +76,10 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   } while (remaining >= 0);
 
   WaitFrames(60);
-  ObjectMotion_ArmCallback(gGameState.selectedLocalId, 0x4000, 0);
+  ObjectMotion_ArmCallback(gGameState.leaderLocalId, 0x4000, 0);
   WaitFrames(20);
   ObjectDispatch_SelectAnimationFar(
-      ObjectEvent_GetById(gGameState.selectedLocalId), 28);
+      ObjectEvent_GetById(gGameState.leaderLocalId), 28);
 
   // Every spark still in use stops its fountain. The cursor walks
   // the slots' state bytes; a slot's active flag is 5 bytes after its state.
@@ -87,13 +88,13 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
 
     WaitFrames(20);
     nextState = MARS_SPARK_STOPPING;
-    slotState = &effectWork->effects[0].state;
+    slotState = &effectWork->sprites[0].state;
     remaining = 23;
     do {
       if (slotState[5] != 0)
         slotState[0] = nextState;
       remaining--;
-      slotState += sizeof(struct EffectSlot);
+      slotState += sizeof(struct FieldEffectSprite);
     } while (remaining >= 0);
   }
 
@@ -110,14 +111,14 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
 
     slotState = (s8 *)effectWork;
     nextState = MARS_SPARK_LEAVING;
-    slotState += offsetof(struct FieldEffectWork, effects) +
-                 offsetof(struct EffectSlot, state);
+    slotState += offsetof(struct FieldEffectWork, sprites) +
+                 offsetof(struct FieldEffectSprite, state);
     remaining = 23;
     do {
       if (slotState[5] != 0)
         slotState[0] = nextState;
       remaining--;
-      slotState += sizeof(struct EffectSlot);
+      slotState += sizeof(struct FieldEffectSprite);
     } while (remaining >= 0);
   }
 
@@ -128,7 +129,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   leader->update = (void *)effect;
   leader->scaleX = 0x10000;
   leader->scaleY = 0x10000;
-  // Fade the palette back from the tint and free the effect slots.
+  // Fade the palette back from the tint and free the field effect sprites.
   WaitFrames(30);
   Shop_RestoreFieldPaletteFar();
   FieldEffect_ClearActiveSlotsAndScheduleUpdates();
@@ -152,7 +153,7 @@ void FieldEffect_UpdateDescendingOrbitObject(union FieldObject *fieldObject) {
   s32 y;
 
   leader = (struct DescendingOrbitObject *)ObjectEvent_GetById(
-      gGameState.selectedLocalId);
+      gGameState.leaderLocalId);
   timer = mote->timer - 1;
   mote->timer = timer;
   frames = mote->timer;
@@ -168,20 +169,20 @@ void FieldEffect_UpdateDescendingOrbitObject(union FieldObject *fieldObject) {
     ObjectDispatch_ReleaseFar((struct DispatchObject *)mote);
 }
 
-/// Effect slot callback of a Venus Djinni's particles: each starts on screen
-/// at a random point 10 to 20 pixels round the leader and flies 120 pixels up
-/// the screen, over and over, until it is set to VENUS_PARTICLE_LAST_RISE and
-/// freed once it arrives. Set by FieldEffect_RunVenusDjinnCapture in venus.c; a
-/// particle that starts on an odd frame plays SE_144. It speeds up by 1 pixel a
-/// frame to at most 5, straight at its target.
-void FieldEffect_UpdateRadialSpread(struct EffectSlot *effect) {
+/// Field effect sprite callback of a Venus Djinni's particles: each starts on
+/// screen at a random point 10 to 20 pixels round the leader and flies 120
+/// pixels up the screen, over and over, until it is set to
+/// VENUS_PARTICLE_LAST_RISE and freed once it arrives. Set by
+/// FieldEffect_RunVenusDjinnCapture in venus.c; a particle that starts on an
+/// odd frame plays SE_144. It speeds up by 1 pixel a frame to at most 5,
+/// straight at its target.
+void FieldEffect_UpdateRadialSpread(struct FieldEffectSprite *effect) {
   struct EffectVector position;
-  struct ObjectRuntime *source;
+  struct Object *source;
   s32 state;
   u32 random;
 
-  source =
-      (struct ObjectRuntime *)ObjectEvent_GetById(gGameState.selectedLocalId);
+  source = (struct Object *)ObjectEvent_GetById(gGameState.leaderLocalId);
   state = effect->state;
 
   if (state == VENUS_PARTICLE_AIM) {
@@ -209,12 +210,12 @@ void FieldEffect_UpdateRadialSpread(struct EffectSlot *effect) {
     effect->state++;
 
     if ((gFrameTick & 1) != 0)
-      AudioCommand_PlayFar(SE_144);
+      Sound_PlaySongFar(SE_144);
   } else if (state == VENUS_PARTICLE_RISING) {
-    if (EffectSlot_HasPendingTarget(effect) == 0)
+    if (FieldEffectSprite_HasPendingTarget(effect) == 0)
       effect->state--;
   } else if (state == VENUS_PARTICLE_LAST_RISE) {
-    if (EffectSlot_HasPendingTarget(effect) == 0)
+    if (FieldEffectSprite_HasPendingTarget(effect) == 0)
       FieldEffect_ClearOwnedSlot(effect);
   }
 }

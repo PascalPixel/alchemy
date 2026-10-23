@@ -1,44 +1,44 @@
 /// @file
 /// Everything drawn over the battle while an ability plays comes from this one
-/// object. effect_internal.h holds what every effect shares (includes, macros
-/// and the frame-loop helpers); the effects are in the files under
+/// object. effect_internal.h holds what every animation shares (includes,
+/// macros and the frame-loop helpers); the animations are in the files under
 /// parts/, included here in the order their code has in the ROM. That order
 /// mixes families, Djinn, summons and shared machinery, and each part is one
 /// run of it, named for what it holds. Camelot's own files are not
 /// recoverable: the ROM shows one object, and these parts are ours, cut where
 /// one family ends and the next begins.
 ///
-/// To find the effect a move plays, search for the move's English name: each
+/// To find the animation a move plays, search for the move's English name: each
 /// handler's reach line, the paragraph of its comment that starts
-/// "Abilities:", lists the abilities that reach it and the effect each one
-/// selects, and each row of gBattleEffect_EffectHandlers (effect_table.c) gives
-/// an effect kind's enumerator, the part that defines its handler and, where
+/// "Abilities:", lists the abilities that reach it and the animation each one
+/// selects, and each row of gBattleAnim_Handlers (effect_table.c) gives
+/// an animation kind's enumerator, the part that defines its handler and, where
 /// an ability selects it, the first one that does. README.md gives the words
 /// and prefixes the parts use, and ../MATCHING.md the spellings some sites
 /// keep to match. The shared machinery is in these parts:
 ///
-///   Entry points    dispatch.c: BattleEffect_RunTableEffect,
-///                   BattleEffect_RunSummonEffect; positions.c:
-///                   BattleEffect_DispatchByIdRange
-///   Canvas          canvas.c: BattleEffect_StartCanvasLayer,
-///                   BattleEffect_EndCanvasLayer, BattleEffect_WipeCanvas,
-///                   BattleEffect_ProcessPendingGraphicsTransfer
-///   Blitters        blitter.c: BattleEffect_BuildBlitter; mirrored_wall.c:
-///                   BattleEffect_FetchRectangleBlitters
-///   Motion          positions.c: EffectStep_AdvanceWithGravity2D and 3D,
+///   Entry points    dispatch.c: BattleAnim_RunTableEffect,
+///                   BattleAnim_RunSummonEffect; positions.c:
+///                   BattleAnim_DispatchByIdRange
+///   Canvas          canvas.c: BattleAnim_StartCanvasLayer,
+///                   BattleAnim_EndCanvasLayer, BattleAnim_WipeCanvas,
+///                   BattleAnim_ProcessPendingGraphicsTransfer
+///   Blitters        blitter.c: BattleAnim_BuildBlitter; mirrored_wall.c:
+///                   BattleAnim_FetchRectangleBlitters
+///   Motion          positions.c: Particle_AdvanceWithGravity2D and 3D,
 ///                   BattleUnit_ProjectToScreen; hail.c: Camera_ApplyShake
-///   Targets         dispatch.c: BattleEffect_SelectLivingTargets;
-///                   helm_splitter.c: BattleEffect_PlaceFormationObjects
+///   Targets         dispatch.c: BattleAnim_SelectLivingTargets;
+///                   helm_splitter.c: BattleAnim_PlaceFormationObjects
 ///
-/// While an effect plays, its entry point owns the sheet
-/// (HEAP_SLOT_BATTLE_SHEET), the work block (HEAP_SLOT_BATTLE_EFFECT) and the
+/// While an animation plays, its entry point owns the sheet
+/// (HEAP_SLOT_BATTLE_SHEET), the work block (HEAP_SLOT_BATTLE_ANIM) and the
 /// canvas (HEAP_SLOT_BATTLE_CANVAS): each of the three entry points allocates
 /// them before the handler runs and releases them after it returns, so a
 /// handler removes every callback that reads them before it returns. The two
 /// blitter slots and gMapGridCellBuffer (PARTICLES) belong to the handler for
 /// as long as it runs; it frees the blitters itself before it returns.
 ///
-/// README.md in this folder explains the ideas: how a move picks its effect,
+/// README.md in this folder explains the ideas: how a move picks its animation,
 /// the frame loop, the canvas, particles, blitters and pictures.
 
 #include "effect_internal.h"

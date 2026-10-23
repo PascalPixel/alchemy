@@ -294,7 +294,7 @@ static void EventScript_AskAboutJailbreak(void) {
                                   LOCALID_PARTY_LEADER, 2);
   Engine_ScriptOpenMessage(LOCALID_STRONGMAN_ON_WATCH, 0);
   if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) != 0) {
-    gEventWork->message += 1;
+    gFieldWork->message += 1;
   }
   Engine_ScriptShowMessage(LOCALID_STRONGMAN_ON_WATCH, 0);
   Engine_GameFlagSet(FLAG_ASKED_ABOUT_JAIL);
@@ -402,7 +402,7 @@ static void EventScript_ReadMindOnJailKey(void) {
                                     LOCALID_PARTY_LEADER, 2);
     Script_OpenMessage(LOCALID_STRONGMAN_ON_WATCH, 0);
     if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) != 0) {
-      gEventWork->message++;
+      gFieldWork->message++;
     }
     Script_ShowMessage(LOCALID_STRONGMAN_ON_WATCH, 0);
     ObjectEvent_Get(LOCALID_STRONGMAN_ON_WATCH)->paused = requestHeard;
@@ -445,7 +445,7 @@ static void VaultRevisit_JumpObjectEventToAndWait(int localId, int x, int z,
 /// (408, 120), and sets FLAG_VAULT_SAP_CALLED_BY_BELL.
 static void EventScript_RingBell(void) {
   Engine_ScriptStart();
-  Script_PlayCue(SE_100);
+  Script_PlaySong(SE_100);
   Engine_ScriptWait(40);
   if (GameFlag_IsSet(FLAG_VAULT_SAP_CALLED_BY_BELL) == 0) {
     ObjectEvent_SetAttachedEffect(LOCALID_SAP, ATTACHED_EFFECT_IN_FRONT |
@@ -470,7 +470,7 @@ static void Vault_WalkThroughExit(s32 x, s32 z, s32 warpNumber) {
 
   ObjectEvent_SetSpeed(leaderId, PIXELS(1) / 2, PIXELS(1) / 4);
   ObjectEvent_WalkTo(leaderId, x, z);
-  gEventWork->transitionFrames = 16;
+  gFieldWork->transitionFrames = 16;
   Engine_ScriptRequestWarp(warpNumber);
 }
 
@@ -511,7 +511,7 @@ static void EventScript_EnterInn(void) {
 /// cells at (23, 12), is replaced so he can pass.
 static void EventScript_EnterItemShop(void) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  struct AnimationObject *sprite = objectEvent->sprite;
+  struct Sprite *sprite = objectEvent->sprite;
 
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapGridAnimateCells(gVaultRevisit_ItemShopDoorCells, 54, 13);
@@ -527,7 +527,7 @@ static void EventScript_EnterItemShop(void) {
 /// shop's.
 static void EventScript_EnterWeaponAndArmorShop(void) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  struct AnimationObject *sprite = objectEvent->sprite;
+  struct Sprite *sprite = objectEvent->sprite;
 
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapGridAnimateCells(gVaultRevisit_WeaponAndArmorShopDoorCells, 49, 10);
@@ -558,7 +558,7 @@ static void EventScript_EnterMayorsHouse(void) {
 /// VAULT_JAIL_FROM_VAULT_REVISIT, where the lone prisoner sits.
 static void EventScript_EnterJail(void) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  struct AnimationObject *sprite = objectEvent->sprite;
+  struct Sprite *sprite = objectEvent->sprite;
 
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapGridAnimateCells(gVaultRevisit_JailDoorCells, 35, 9);
@@ -634,9 +634,9 @@ static void EventScript_TalkToDog(void) {
   Engine_ScriptShowMessage(LOCALID_VAULT_DOG, 0);
   Engine_ObjectEventSetAnimation(LOCALID_VAULT_DOG, ANIMATION_STAND);
 
-  if (PartyInventory_FindOwner(ITEM_BONE) != -1 &&
+  if (PartyInventory_FindMember(ITEM_BONE) != -1 &&
       Engine_GameFlagIsSet(FLAG_VAULT_DOG_SHOWN_PASSAGE) == 0) {
-    gEventWork->requestedMenu = 1;
+    gFieldWork->menu = 1;
   }
 
   Engine_ScriptEnd();
@@ -675,7 +675,8 @@ static inline s32 VaultRevisit_ShouldKeepBellDjinniPosition(void) {
 /// called and has not joined, it stands by the bell. Coming out of Vault
 /// Sanctum (VAULT_REVISIT_FROM_SANCTUM) clears FLAG_SHOW_LOCATION_NAME, and
 /// coming up from Vault Cave (VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE) clears
-/// FLAG_WARP_ARRIVAL_PENDING, so the leader's arrival animation does not play.
+/// FLAG_WARP_ARRIVAL_STAIRS_UP, so the leader's arrival animation does not
+/// play.
 s32 Map_Initialize(void) {
 
   struct ObjectEvent *objectEvent;
@@ -685,7 +686,7 @@ s32 Map_Initialize(void) {
   if (Engine_GameFlagIsSet(FLAG_MAP_TEMP_00))
     MapGrid_CopyCellAttributes(55, 26, 4, 2, 23, 26);
   // A still object on the well that shows nothing (an open question).
-  OverlayObject_CreateConfiguredObject(PIXELS(128), 0, PIXELS(420), 223);
+  ObjectEvent_CreateConfiguredObject(PIXELS(128), 0, PIXELS(420), 223);
   MapGrid_CopyCellsTo(45, 41, 8, 45, 3, 3);
   Engine_TaskWait(1);
   // Resume the two walking villagers' proximity reactions.
@@ -724,7 +725,7 @@ s32 Map_Initialize(void) {
   if (gGameState.warpDest == VAULT_REVISIT_FROM_SANCTUM)
     Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
   if (gGameState.warpDest == VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE)
-    Engine_GameFlagClear(FLAG_WARP_ARRIVAL_PENDING);
+    Engine_GameFlagClear(FLAG_WARP_ARRIVAL_STAIRS_UP);
   return 0;
 }
 
@@ -867,33 +868,33 @@ u32 gVaultRevisit_Warps[] = {
 // clang-format off
 struct ObjectEventTemplate gVaultRevisit_ObjectEventTemplates[] = {
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(381), 0, PIXELS(342), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(381), 0, PIXELS(342), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(280), 0, PIXELS(396), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(280), 0, PIXELS(396), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(264), 0, PIXELS(150), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(264), 0, PIXELS(150), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(244), 0, PIXELS(204), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(244), 0, PIXELS(204), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(124), 0, PIXELS(196), FACING_SOUTHEAST, TALK_FACE_PARTY, 0 },
+        PIXELS(124), 0, PIXELS(196), FACING_SOUTHEAST, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(244), 0, PIXELS(300), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(244), 0, PIXELS(300), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, (s32)gVaultRevisit_BoyRoundTheWellScript,
-        PIXELS(132), 0, PIXELS(380), FACING_WEST, TALK_KEEP_FACING, 0 },
+        PIXELS(132), 0, PIXELS(380), FACING_WEST, TALK_FACING_KEEP, 0 },
     { SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, (s32)gVaultRevisit_GirlRoundTheWellScript,
-        PIXELS(132), 0, PIXELS(420), FACING_EAST, TALK_KEEP_FACING, 0 },
+        PIXELS(132), 0, PIXELS(420), FACING_EAST, TALK_FACING_KEEP, 0 },
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(332), 0, PIXELS(412), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(332), 0, PIXELS(412), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(92), 0, PIXELS(296), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(92), 0, PIXELS(296), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_DOG, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(216), 0, PIXELS(440), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(216), 0, PIXELS(440), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(152), 0, PIXELS(296), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(152), 0, PIXELS(296), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { 0x5a, 0x34, MOVEMENT_TYPE_STAND,
-        PIXELS(344), 0, PIXELS(96), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(344), 0, PIXELS(96), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };
 
@@ -953,7 +954,7 @@ struct MapEvent gVaultRevisit_Events[] = {
     { MAP_EVENT_TALK, LOCALID_VAULT_DOG, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToDog) },
     { MAP_EVENT_TALK, LOCALID_YOUNG_MAN_FIXING_THE_ROOF, CONDITION_ALWAYS, MSGNO(MsgVaultThereYouSeeTheRoofRepairs) },
     { MAP_EVENT_TALK, LOCALID_SAP, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToVenusDjinni) },
-    { BG_EVENT(BG_EVENT_UNNAMED), VAULT_CELL_BELL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RingBell) },
+    { BG_EVENT(BG_EVENT_SILENT), VAULT_CELL_BELL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RingBell) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | LOCALID_WELCOMING_YOUNG_MAN, FLAG_WELCOMING_YOUNG_MAN_RECOGNIZED_PARTY, EVENT_SCRIPT(EventScript_ReadMindAndRecognizeThiefCatchers) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WELCOMING_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgVaultICantBelieveTheyreHereWhat) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WOMAN_ON_THE_FIXED_BRIDGE, CONDITION_ALWAYS, MSGNO(MsgVaultWhenThoseGuysFromKalayCame) },
@@ -971,7 +972,7 @@ struct MapEvent gVaultRevisit_Events[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_VAULT_DOG, IF_FLAG_SET(FLAG_VAULT_DOG_SHOWN_PASSAGE), MSGNO(MsgVaultCarefulSearchWillRevealPassage) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_VAULT_DOG, CONDITION_ALWAYS, MSGNO(MsgVaultIfYouBringMeSomeBones) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_YOUNG_MAN_FIXING_THE_ROOF, CONDITION_ALWAYS, MSGNO(MsgVaultThatsTheLastOfTheRoof) },
-    { BG_EVENT(BG_EVENT_UNNAMED), VAULT_CELL_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PeerIntoWell) },
+    { BG_EVENT(BG_EVENT_SILENT), VAULT_CELL_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PeerIntoWell) },
     { BG_EVENT(BG_EVENT_WOODEN_BOX), VAULT_CELL_WOODEN_BOX, FLAG_VAULT_BOX_NUT, FIND_ITEM(ITEM_NUT) },
     { USE_ITEM_ON_OBJ_EVENT(ITEM_BONE), LOCALID_VAULT_DOG, FLAG_VAULT_DOG_SHOWN_PASSAGE, EVENT_SCRIPT(EventScript_GiveBoneToDog) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RevealPassage) },

@@ -2,7 +2,7 @@
 	.set overlay_imports, 1
 	.set import.__umodsi3, 1
 	.set import.Engine_TaskWait, 1
-	.set import.Scheduler_AddOrUpdateCallback, 1
+	.set import.Task_Add, 1
 	.set import.Engine_TaskRemoveCallback, 1
 	.set import.Engine_RandomNext, 1
 	.set import.ArcTan2, 1
@@ -10,15 +10,15 @@
 	.set import.Engine_MathCos, 1
 	.set import.Vector_AddPolarOffset, 1
 	.set import.Runtime_SetIrqHandler, 1
-	.set import.ResourceMetadata_Register, 1
-	.set import.ResourceMetadata_ClearRecord, 1
+	.set import.Sprite_AddAnim, 1
+	.set import.SpriteAnim_Clear, 1
 	.set import.ObjectEvent_SetMode, 1
 	.set import.Engine_ObjectSetScript, 1
 	.set import.Engine_ObjectCreate, 1
 	.set import.Engine_ObjectDispatchRelease, 1
 	.set import.Engine_MapGridRedraw, 1
 	.set import.Engine_ObjectSetPosition, 1
-	.set import.FieldObject_WaitForMove, 1
+	.set import.Object_WaitForMove, 1
 	.set import.Engine_MapGridCopyCellsTo, 1
 	.set import.MapGrid_GetTerrainHeight, 1
 	.set import.MapGrid_GetMetatileBehaviorAt, 1
@@ -68,7 +68,7 @@
 	.set import.Engine_CameraSetSpeed, 1
 	.set import.Engine_CameraMoveTo, 1
 	.set import.Engine_CameraWaitForMove, 1
-	.set import.Camera_GetScriptObject, 1
+	.set import.FieldCamera_GetScriptObject, 1
 	.set import.Field_RequestBattleFromEncounterTable, 1
 	.set import.Field_RequestDjinnBattle, 1
 	.set import.FieldScript_SetNextDestination, 1
@@ -83,8 +83,8 @@
 	.set import.FieldEffect_End, 1
 	.set import.Engine_PsynergyRaiseHands, 1
 	.set import.Field_EndBusyAndReveal, 1
-	.set import.Audio_PlayCueFromEventWork, 1
-	.set import.FieldEffect_SetQueuedSoundAndPlay, 1
-	.set import.FieldEffect_PlayQueuedSound, 1
+	.set import.Map_PlayMusic, 1
+	.set import.Map_QueueMusic, 1
+	.set import.Map_PlayQueuedMusic, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

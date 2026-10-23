@@ -1,8 +1,8 @@
 @ C2: aligned 8-byte veneers: overlay_veneer emits ldr r4, bx r4 and a target word.
 	.set overlay_imports, 1
 	.set import.Engine_TaskWait, 1
-	.set import.Scheduler_AddOrUpdateCallback, 1
-	.set import.Scheduler_RemoveCallback, 1
+	.set import.Task_Add, 1
+	.set import.Task_Remove, 1
 	.set import.Engine_RandomNext, 1
 	.set import.Engine_MathSin, 1
 	.set import.Engine_MathCos, 1
@@ -15,14 +15,14 @@
 	.set import.Object_Destroy, 1
 	.set import.Engine_MapGridRedraw, 1
 	.set import.Engine_ObjectSetPosition, 1
-	.set import.FieldObject_WaitForMove, 1
+	.set import.Object_WaitForMove, 1
 	.set import.Engine_MapGridAnimateCells, 1
 	.set import.Engine_MapGridCopyCellsTo, 1
 	.set import.Engine_MapGridCopyCellAttributes, 1
 	.set import.Object_CheckMovementCollision, 1
 	.set import.Engine_ObjectEventSetSpriteFlags, 1
 	.set import.Engine_MessageShowCentered, 1
-	.set import.UiText_ShowCenteredMessage, 1
+	.set import.FieldMessage_ShowCentered, 1
 	.set import.Engine_ItemLoadIcon, 1
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1
@@ -59,23 +59,23 @@
 	.set import.Engine_ScriptShowMessageAndWait, 1
 	.set import.Engine_ScriptAskYesNo, 1
 	.set import.Engine_ObjectEventFaceDirection, 1
-	.set import.Ui_SetMessageVoiceFromObjectEvent, 1
+	.set import.Message_SetVoiceFromObjectEvent, 1
 	.set import.Engine_ObjectEventSetSpritePriority, 1
 	.set import.Engine_ObjectEventShowEmote, 1
 	.set import.Engine_ObjectEventSetAttachedEffect, 1
 	.set import.Engine_CameraSetSpeed, 1
 	.set import.Engine_CameraMoveTo, 1
-	.set import.Camera_GetScriptObject, 1
+	.set import.FieldCamera_GetScriptObject, 1
 	.set import.Engine_ScriptRequestWarp, 1
 	.set import.Engine_ScriptOpenScreen, 1
 	.set import.Engine_ScriptCloseScreen, 1
 	.set import.Engine_ScriptWaitForScreen, 1
 	.set import.Engine_ItemShowFound, 1
 	.set import.FieldEffect_StartFadeOverlay, 1
-	.set import.Audio_PlayCueFromEventWork, 1
+	.set import.Map_PlayMusic, 1
 	.set import.Djinn_JoinParty, 1
-	.set import.FieldEffect_SetQueuedSoundAndPlay, 1
-	.set import.FieldEffect_PlayQueuedSound, 1
+	.set import.Map_QueueMusic, 1
+	.set import.Map_PlayQueuedMusic, 1
 	.set import.Engine_ShopOpen, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

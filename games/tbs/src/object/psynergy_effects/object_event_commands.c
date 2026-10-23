@@ -6,9 +6,9 @@
 
 /// Returns an object event, or NULL if it does not exist. Map scripts reach it
 /// through ObjectEvent_Get and OBJECT_GET; it is the far-callable form of
-/// ObjectTable_Get that the other banks use.
+/// ObjectEvent_GetByLocalId that the other banks use.
 struct ObjectEvent *ObjectEvent_GetById(s32 localId) {
-  struct ObjectEvent *objectEvent = ObjectTable_Get(localId);
+  struct ObjectEvent *objectEvent = ObjectEvent_GetByLocalId(localId);
 
   if (objectEvent == NULL)
     return NULL;
@@ -21,7 +21,7 @@ struct ObjectEvent *ObjectEvent_GetById(s32 localId) {
 /// (OBJECT_SPEED, ObjectEvent_SetSpeed).
 void ObjectMotion_SetSpeedParameters(u32 objectId, s32 speedLimit,
                                      s32 acceleration) {
-  struct ObjectRuntime *object = ObjectTable_Get(objectId);
+  struct Object *object = ObjectEvent_GetByLocalId(objectId);
 
   if (object != NULL) {
     object->acceleration = acceleration;
@@ -29,19 +29,19 @@ void ObjectMotion_SetSpeedParameters(u32 objectId, s32 speedLimit,
   }
 }
 
-/// Gives an object event an action script (ObjectMotion_SetActionCallback) and
+/// Gives an object event an action script (ObjectEvent_SetMovementType) and
 /// makes it face where it moves: sets OBJ_EVENT_FACES_MOTION, bit 0 of its
 /// actionFlags. Map scripts reach it as
 /// Engine_ObjectEventEnableActionCallback (ObjectEvent_SetActionScript and
 /// ObjectEvent_SetBuiltinAction).
 void ObjectMotion_EnableActionAndSetCallback(u32 objectId, s32 action) {
-  struct ObjectRuntime *object = ObjectTable_Get(objectId);
+  struct Object *object = ObjectEvent_GetByLocalId(objectId);
 
   if (object != NULL) {
     s32 value = 1;
     value |= object->actionFlags;
     object->actionFlags = value;
-    ObjectMotion_SetActionCallback(object, action);
+    ObjectEvent_SetMovementType(object, action);
   }
 }
 
@@ -50,7 +50,7 @@ void ObjectMotion_EnableActionAndSetCallback(u32 objectId, s32 action) {
 /// OBJ_EVENT_FACES_MOTION, bit 0 of its actionFlags. Map scripts reach it as
 /// Engine_ObjectEventStop (ObjectEvent_Stop), about 22 of them.
 void ObjectMotion_EnableActionAndResetMotion(u32 objectId) {
-  struct ObjectRuntime *object = ObjectTable_Get(objectId);
+  struct Object *object = ObjectEvent_GetByLocalId(objectId);
   u8 enabled;
 
   if (object != NULL) {
@@ -64,21 +64,19 @@ void ObjectMotion_EnableActionAndResetMotion(u32 objectId) {
 /// linkedObject. Called by the Colosso log's script, and by Altmiller
 /// Cave's as Engine_ObjectEventFollow.
 void ObjectEvent_LinkObjectAndSetCallback(u32 objectId, u32 linkedObjectId) {
-  struct ObjectRuntime *object = ObjectTable_Get(objectId);
+  struct Object *object = ObjectEvent_GetByLocalId(objectId);
 
   if (object != NULL) {
-    object->linkedObject =
-        (struct ObjectRuntime *)ObjectEvent_GetById(linkedObjectId);
-    ObjectMotion_SetActionCallback(object,
-                                   (s32)gObjectMotion_LinkedActionScript);
+    object->linkedObject = (struct Object *)ObjectEvent_GetById(linkedObjectId);
+    ObjectEvent_SetMovementType(object, (s32)gObjectMotion_LinkedActionScript);
   }
 }
 
 /// Waits, at most 300 frames, for an object event's script to reach its end
-/// (command 0x10). Called by Motion_SetVarCbAndRefresh, the climbing scripts
-/// and about 28 map scripts.
+/// (command 0x10). Called by ObjectMotion_SetVarCbAndRefresh, the climbing
+/// scripts and about 28 map scripts.
 void ObjectEvent_RefreshSelectorById(u32 objectId) {
-  struct ObjectRuntime *object = ObjectTable_Get(objectId);
+  struct Object *object = ObjectEvent_GetByLocalId(objectId);
 
   if (object != NULL)
     ObjectDispatch_WaitForValue16Far(object);
@@ -89,13 +87,13 @@ void ObjectEvent_RefreshSelectorById(u32 objectId) {
 /// for its script to end. Map script calls use
 /// ObjectEvent_RunActionScriptAndWait.
 void ObjectEvent_SetActionCallbackAndRefreshById(u32 objectId, s32 action) {
-  struct ObjectRuntime *object = ObjectTable_Get(objectId);
+  struct Object *object = ObjectEvent_GetByLocalId(objectId);
 
   if (object != NULL) {
     s32 value = 1;
     value |= object->actionFlags;
     object->actionFlags = value;
-    ObjectMotion_SetActionCallback(object, action);
+    ObjectEvent_SetMovementType(object, action);
     ObjectDispatch_WaitForValue16Far(object);
   }
 }
@@ -106,7 +104,7 @@ void ObjectEvent_SetActionCallbackAndRefreshById(u32 objectId, s32 action) {
 /// commands here do. Map scripts reach it as Engine_ObjectEventSetDestination
 /// (ObjectEvent_SetDestination).
 void ObjectMotion_ResetAndSetPosition(u32 objectId, s32 x, s32 z) {
-  struct ObjectRuntime *object = ObjectTable_Get(objectId);
+  struct Object *object = ObjectEvent_GetByLocalId(objectId);
 
   if (object != NULL) {
     object->movementState = 0;
@@ -121,22 +119,22 @@ void ObjectMotion_ResetAndSetPosition(u32 objectId, s32 x, s32 z) {
 /// Engine_ObjectEventMoveToAndWait (ObjectEvent_MoveToAndWait); the climbing
 /// scripts call it too.
 void ObjectMotion_SetPositionAndCommit(u32 objectId, s32 x, s32 z) {
-  struct ObjectRuntime *object = ObjectTable_Get(objectId);
+  struct Object *object = ObjectEvent_GetByLocalId(objectId);
 
   if (object != NULL) {
     object->movementState = 0;
     ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
     Object_SetMoveTargetFar(object, x << 16, object->y, z << 16);
-    FieldObject_WaitForMoveFar(object);
+    Object_WaitForMoveFar(object);
   }
 }
 
 /// The script command "walk object event to": the object event walks (animation
 /// 2) toward (x, z), in pixels. Map scripts reach it as
-/// Engine_ObjectEventWalkTo (OBJECT_WALK, ObjectEvent_WalkTo); the link lobby
+/// Engine_ObjectEventWalkTo (OBJECT_WALK, ObjectEvent_WalkTo); the Battle Arena
 /// calls it too.
 void ObjectMotion_ResetAndSetPositionInMode2(u32 objectId, s32 x, s32 z) {
-  struct ObjectRuntime *object = ObjectTable_Get(objectId);
+  struct Object *object = ObjectEvent_GetByLocalId(objectId);
 
   if (object != NULL) {
     object->movementState = 0;
@@ -151,14 +149,14 @@ void ObjectMotion_ResetAndSetPositionInMode2(u32 objectId, s32 x, s32 z) {
 /// 1). Map scripts reach it as Engine_ObjectEventWalkToAndWait
 /// (ObjectEvent_WalkToAndWait).
 void ObjectMotion_SetPositionAndReset(u32 objectId, s32 x, s32 z) {
-  struct ObjectRuntime *object = ObjectTable_Get(objectId);
+  struct Object *object = ObjectEvent_GetByLocalId(objectId);
 
   if (object != NULL) {
     object->movementState = 0;
     ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
     ObjectDispatch_SelectAnimationFar(object, 2);
     Object_SetMoveTargetFar(object, x << 16, object->y, z << 16);
-    FieldObject_WaitForMoveFar(object);
+    Object_WaitForMoveFar(object);
     ObjectDispatch_SelectAnimationFar(object, 1);
   }
 }
@@ -168,12 +166,12 @@ void ObjectMotion_SetPositionAndReset(u32 objectId, s32 x, s32 z) {
 /// priority (ObjectMotion_SetActionVariant), then sends it zOffset pixels along
 /// z. Kalay's interiors reach it as Engine_ObjectEventCenterAndWalk.
 void ObjectMotion_CenterOnColumn(u32 objectId, s32 priority, s32 zOffset) {
-  struct ObjectRuntime *object;
+  struct Object *object;
   s16 pixelX;
   s32 columnX;
   s16 offsetInColumn;
 
-  object = ObjectTable_Get(objectId);
+  object = ObjectEvent_GetByLocalId(objectId);
   if (object != NULL) {
     // The column's left edge, from a division by 16 that rounds toward zero
     // (left of x = 0 it finds the edge to the right); its middle is 8 pixels
@@ -191,7 +189,7 @@ void ObjectMotion_CenterOnColumn(u32 objectId, s32 priority, s32 zOffset) {
     ObjectDispatch_SelectAnimationFar(object, 2);
     Object_SetMoveTargetFar(object, object->x + ((8 - offsetInColumn) << 16),
                             object->y, object->z);
-    FieldObject_WaitForMoveFar(object);
+    Object_WaitForMoveFar(object);
     ObjectMotion_SetActionVariant(objectId, priority);
     Object_SetMoveTargetFar(object, object->x, object->y,
                             object->z + (zOffset << 16));
@@ -201,11 +199,11 @@ void ObjectMotion_CenterOnColumn(u32 objectId, s32 priority, s32 zOffset) {
 /// The script command "set object event destination offset": the object event
 /// heads (xOffset, zOffset) pixels from where it stands. Map scripts reach it
 /// as Engine_ObjectEventSetDestinationOffset
-/// (ObjectEvent_SetDestinationOffset); Motion_LaunchFromFocusedObject calls it
-/// too.
+/// (ObjectEvent_SetDestinationOffset); ObjectMotion_LaunchFromFocusedObject
+/// calls it too.
 void ObjectMotion_OffsetPositionAndResetMotion(u32 objectId, s32 xOffset,
                                                s32 zOffset) {
-  struct ObjectRuntime *object = ObjectTable_Get(objectId);
+  struct Object *object = ObjectEvent_GetByLocalId(objectId);
 
   if (object != NULL) {
     object->movementState = 0;
@@ -220,7 +218,7 @@ void ObjectMotion_OffsetPositionAndResetMotion(u32 objectId, s32 xOffset,
 /// (ObjectEvent_WalkBy); ObjectMotion_CommitPositionAndActivate calls it too.
 void ObjectMotion_OffsetPositionAndReset(u32 objectId, s32 xOffset,
                                          s32 zOffset) {
-  struct ObjectRuntime *object = ObjectTable_Get(objectId);
+  struct Object *object = ObjectEvent_GetByLocalId(objectId);
 
   if (object != NULL) {
     object->movementState = 0;
@@ -236,11 +234,11 @@ void ObjectMotion_OffsetPositionAndReset(u32 objectId, s32 xOffset,
 /// (ObjectEvent_WalkByAndWait); the Lemurian ship calls it by name.
 void ObjectMotion_CommitPositionAndActivate(u32 objectId, s32 xOffset,
                                             s32 zOffset) {
-  struct ObjectRuntime *object = ObjectTable_Get(objectId);
+  struct Object *object = ObjectEvent_GetByLocalId(objectId);
 
   ObjectMotion_OffsetPositionAndReset(objectId, xOffset, zOffset);
   if (object != NULL) {
-    FieldObject_WaitForMoveFar(object);
+    Object_WaitForMoveFar(object);
     ObjectDispatch_SelectAnimationFar(object, 1);
   }
 }
@@ -249,16 +247,15 @@ void ObjectMotion_CommitPositionAndActivate(u32 objectId, s32 xOffset,
 /// pixels away at speed 0.6 and acceleration 0.3, through the launch script;
 /// the object event then takes action action. Called by the Lemurian ship, Babi
 /// Lighthouse and Lalivero map scripts.
-void Motion_LaunchFromFocusedObject(u32 objectId, s32 xOffset, s32 zOffset,
-                                    s32 action) {
-  struct ObjectRuntime *object = ObjectTable_Get(objectId);
+void ObjectMotion_LaunchFromFocusedObject(u32 objectId, s32 xOffset,
+                                          s32 zOffset, s32 action) {
+  struct Object *object = ObjectEvent_GetByLocalId(objectId);
 
   if (object != NULL) {
-    struct ObjectRuntime *leader;
+    struct Object *leader;
 
     ObjectMotion_SetSpeedParameters(objectId, 0x9999, 0x4CCC);
-    leader =
-        (struct ObjectRuntime *)ObjectEvent_GetById(gGameState.selectedLocalId);
+    leader = (struct Object *)ObjectEvent_GetById(gGameState.leaderLocalId);
     if (leader != NULL)
       ObjectMotion_SetHorizontalPositionWithTerrain(objectId, leader->x,
                                                     leader->z);
@@ -273,31 +270,31 @@ void Motion_LaunchFromFocusedObject(u32 objectId, s32 xOffset, s32 zOffset,
 
 /// The script command "wait for object event": waits (at most 600 frames) for
 /// the object event to arrive and stands it still. Map scripts reach it as
-/// Engine_ObjectEventWaitForMove (ObjectEvent_WaitForMove); the link lobby and
-/// the climbing scripts call it too.
+/// Engine_ObjectEventWaitForMove (ObjectEvent_WaitForMove); the Battle Arena
+/// and the climbing scripts call it too.
 void ObjectMotion_CommitCurrentPositionAndActivate(u32 objectId) {
-  struct ObjectRuntime *object = ObjectTable_Get(objectId);
+  struct Object *object = ObjectEvent_GetByLocalId(objectId);
 
   if (object != NULL) {
-    FieldObject_WaitForMoveFar(object);
+    Object_WaitForMoveFar(object);
     ObjectDispatch_SelectAnimationFar(object, 1);
   }
 }
 
 /// The script command "set object event position": puts the object event at (x,
 /// z), 16.16 pixels, at rest. An object event that follows the ground
-/// (OBJ_EVENT_FOLLOWS_TERRAIN) keeps its height above the terrain at the new
+/// (OBJ_EVENT_FOLLOWS_TERRAIN) keeps its height above the ground at the new
 /// place. Clears its velocity and targets. Map scripts reach it as
 /// Engine_ObjectEventSetPosition (OBJECT_POSITION_SET,
-/// ObjectEvent_SetPosition); Motion_LaunchFromFocusedObject calls it too.
+/// ObjectEvent_SetPosition); ObjectMotion_LaunchFromFocusedObject calls it too.
 void ObjectMotion_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z) {
-  struct ObjectRuntime *object;
-  s32 terrainHeight;
+  struct Object *object;
+  s32 groundHeight;
   s32 tileX;
   s32 tileZ;
   s32 terrainId;
 
-  object = ObjectTable_Get(objectId);
+  object = ObjectEvent_GetByLocalId(objectId);
   if (object != NULL) {
     ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
     SET_VELOCITY(object, 0, 0, 0);
@@ -315,7 +312,7 @@ void ObjectMotion_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z) {
     // makes the same call; a map script placing an object event this way on
     // raised ground would show what the game does.
     if (1 & object->flags) {
-      terrainId = object->terrainId;
+      terrainId = object->layer;
       tileX = x;
       if (tileX < 0) {
         tileX += 0xFFFF;
@@ -326,25 +323,25 @@ void ObjectMotion_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z) {
         tileZ += 0xFFFF;
       }
       tileZ >>= 0x10;
-      terrainHeight = MapGrid_GetTerrainHeightFar(terrainId, tileX, tileZ)
-                      << 0x10;
-      object->y = (object->y - object->terrainHeight) + terrainHeight;
-      object->terrainHeight = terrainHeight;
+      groundHeight = MapGrid_GetTerrainHeightFar(terrainId, tileX, tileZ)
+                     << 0x10;
+      object->y = (object->y - object->groundHeight) + groundHeight;
+      object->groundHeight = groundHeight;
     }
   }
 }
 
 /// Puts the object event at (x, y, z), 16.16 pixels, at rest; an object event
-/// that follows the ground (OBJ_EVENT_FOLLOWS_TERRAIN) is raised by the terrain
+/// that follows the ground (OBJ_EVENT_FOLLOWS_TERRAIN) is raised by the ground
 /// height there, read as ObjectMotion_SetHorizontalPositionWithTerrain reads it
 /// (see the XXX there). Nothing in ☀️ calls it.
 void ObjectMotion_SetPositionWithTerrain(u32 objectId, s32 x, s32 y, s32 z) {
-  struct ObjectRuntime *object;
-  s32 terrainHeight;
+  struct Object *object;
+  s32 groundHeight;
   s32 tileX;
   s32 tileZ;
 
-  object = ObjectTable_Get(objectId);
+  object = ObjectEvent_GetByLocalId(objectId);
   if (object != NULL) {
     ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
     SET_VELOCITY(object, 0, 0, 0);
@@ -352,7 +349,7 @@ void ObjectMotion_SetPositionWithTerrain(u32 objectId, s32 x, s32 y, s32 z) {
     object->targetX = OBJ_EVENT_NO_TARGET;
     SET_POSITION(object, x, y, z);
     if (1 & object->flags) {
-      s32 terrainId = object->terrainId;
+      s32 terrainId = object->layer;
       tileX = x;
       if (tileX < 0) {
         tileX += 0xFFFF;
@@ -362,50 +359,50 @@ void ObjectMotion_SetPositionWithTerrain(u32 objectId, s32 x, s32 y, s32 z) {
       if (tileZ < 0) {
         tileZ += 0xFFFF;
       }
-      terrainHeight =
+      groundHeight =
           MapGrid_GetTerrainHeightFar(terrainId, tileX, tileZ >> 0x10) << 0x10;
-      object->y = (object->y - object->terrainHeight) + terrainHeight;
-      object->terrainHeight = terrainHeight;
+      object->y = (object->y - object->groundHeight) + groundHeight;
+      object->groundHeight = groundHeight;
     }
   }
 }
 
 /// The script command "set object event animation" (1 stands, 2 walks, 3 nods,
 /// 4 shakes the head and so on). Map scripts reach it as
-/// Engine_ObjectEventSetAnimation (OBJECT_MODE, ObjectEvent_SetAnimation);
+/// Engine_ObjectEventSetAnimation (OBJECT_ANIMATION, ObjectEvent_SetAnimation);
 /// FieldScript_AskYesNoWithObjectEventAnimation and
-/// Motion_SetModeAndWaitAnimation call it too.
+/// ObjectMotion_SetAnimationAndWait call it too.
 void ObjectEvent_SetModeById(u32 objectId, s32 animation) {
-  struct ObjectRuntime *object = ObjectTable_Get(objectId);
+  struct Object *object = ObjectEvent_GetByLocalId(objectId);
 
   if (object != NULL)
     ObjectDispatch_SelectAnimationFar(object, animation);
 }
 
 /// Sets the animation timer steps of each of an object event's sprites
-/// (AnimationObject_SetActiveTimerSteps). Called by the Tolbi ship and
+/// (Sprite_SetAnimSpeed). Called by the Tolbi ship and
 /// Lamakan Desert map scripts.
 void ObjectEvent_SetActionById(u32 objectId, s32 steps) {
-  struct ObjectRuntime *object = ObjectTable_Get(objectId);
+  struct Object *object = ObjectEvent_GetByLocalId(objectId);
 
   if (object != NULL)
     ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)object, steps);
 }
 
 /// Waits, at most 90 frames, for an object event's animation to change. Only an
-/// object event drawn as an animation object (OBJECT_SPRITE_ONE) is waited for.
-/// Called by Motion_SetModeAndWaitAnimation, a few map scripts and the debug
+/// object event drawn as a sprite (OBJECT_SPRITE_ONE) is waited for.
+/// Called by ObjectMotion_SetAnimationAndWait, a few map scripts and the debug
 /// level screen.
 void ObjectMotion_WaitForAnimationChange(u32 objectId) {
-  struct ObjectRuntime *object;
-  struct AnimationObject *sprite;
+  struct Object *object;
+  struct Sprite *sprite;
   /* FAKEMATCH(volatile): saved lives in a 4-byte frame, stored once and
    * loaded again for each compare, as the bytes have it; as a plain s32, 29
    * of 31 instructions differ in tbs-en. */
   volatile s32 saved;
   s32 elapsedFrames;
 
-  object = ObjectTable_Get(objectId);
+  object = ObjectEvent_GetByLocalId(objectId);
   if (object != NULL && object->animationKind == OBJECT_SPRITE_ONE) {
     sprite = object->animation;
     saved = sprite->lastNo;
@@ -421,7 +418,7 @@ void ObjectMotion_WaitForAnimationChange(u32 objectId) {
 /// The script command "set object event animation and wait": plays the
 /// animation and waits for it to end. Map scripts reach it as
 /// Engine_ObjectEventSetAnimationAndWait (ObjectEvent_SetAnimationAndWait).
-void Motion_SetModeAndWaitAnimation(u32 objectId, s32 animation) {
+void ObjectMotion_SetAnimationAndWait(u32 objectId, s32 animation) {
   ObjectEvent_SetModeById(objectId, animation);
   ObjectMotion_WaitForAnimationChange(objectId);
 }
@@ -437,12 +434,12 @@ void ObjectMotion_NoOp(void) {}
 /// Engine_ObjectEventJump (ObjectEvent_Jump), about 40 of them; the scenes of
 /// Djinn joining the party (djinni.c and the four element parts) call it too.
 void ObjectMotion_Launch(u32 objectId, s32 speed, s32 frames) {
-  struct ObjectRuntime *object;
+  struct Object *object;
   u8 *objectFlags;
   s32 updatedFlags;
   s32 verticalVelocity;
 
-  object = ObjectTable_Get(objectId);
+  object = ObjectEvent_GetByLocalId(objectId);
   if (object != NULL) {
     objectFlags = &object->flags;
     updatedFlags = *objectFlags | OBJ_EVENT_FALLS;
@@ -450,9 +447,9 @@ void ObjectMotion_Launch(u32 objectId, s32 speed, s32 frames) {
     *objectFlags = updatedFlags;
     object->velocityY = verticalVelocity;
     if (speed > 5) {
-      AudioCommand_PlayFar(SE_HIGH_JUMP);
+      Sound_PlaySongFar(SE_HIGH_JUMP);
     } else {
-      AudioCommand_PlayFar(SE_JUMP);
+      Sound_PlaySongFar(SE_JUMP);
     }
     FieldScript_WaitFrames(frames);
   }
@@ -463,9 +460,9 @@ void ObjectMotion_Launch(u32 objectId, s32 speed, s32 frames) {
 /// scripts reach it as Engine_ObjectEventStartRepeatedMotion
 /// (ObjectEvent_StartRepeatedMotion).
 void ObjectMotion_SetVariantCallback(u32 objectId, s32 count) {
-  struct ObjectRuntime *object;
+  struct Object *object;
 
-  object = ObjectTable_Get(objectId);
+  object = ObjectEvent_GetByLocalId(objectId);
   if (object != NULL && count > 0) {
     if (count > 3) {
       count = 3;
@@ -481,7 +478,7 @@ void ObjectMotion_SetVariantCallback(u32 objectId, s32 count) {
 /// ObjectMotion_SetVariantCallback, then waits for it to end. Map scripts reach
 /// it as Engine_ObjectEventRunRepeatedMotion (ObjectEvent_RunRepeatedMotion);
 /// the scenes of Djinn joining the party call it too.
-void Motion_SetVarCbAndRefresh(u32 objectId, s32 count) {
+void ObjectMotion_SetVarCbAndRefresh(u32 objectId, s32 count) {
   ObjectMotion_SetVariantCallback(objectId, count);
   ObjectEvent_RefreshSelectorById(objectId);
 }
@@ -524,7 +521,7 @@ void FieldEffect_UpdateParticleLinearMotion(union FieldObject *fieldObject) {
 /// (ObjectGroup_SetChildValue). Only ObjectEvent_JumpDownLedge calls it.
 void FieldEffect_SpawnBurstParticle(struct ObjectEvent *source, s32 param) {
   struct ObjectEvent *objectEvent;
-  struct AnimationObject *child;
+  struct Sprite *child;
   s32 speed;
 
   objectEvent = (struct ObjectEvent *)Object_CreateFar(
@@ -570,19 +567,19 @@ void FieldEffect_SpawnBurstParticle(struct ObjectEvent *source, s32 param) {
 /// past FACING_SOUTH) while sinking 28 pixels with a dust puff every other
 /// frame (none when param is -1), then jumps on to 16 pixels south of where it
 /// started and lands. The landing plays the queued sound
-/// (FieldEffect_PlayQueuedSound). Called by Field_RunPushTileEvent for a ledge
+/// (Map_PlayQueuedMusic). Called by Field_RunPushCellEvent for a ledge
 /// (MB_LEDGE) with pose 6 and param 0, and by seven maps through
 /// FieldObjectEvent_JumpDownLedge; Mercury Lighthouse passes -1.
 void ObjectEvent_JumpDownLedge(s32 localId, s32 pose, s32 param) {
   s32 nextY;
   s32 startZ;
-  struct ObjectRuntime *object;
+  struct Object *object;
   u8 *objectFlags;
 
-  object = (struct ObjectRuntime *)ObjectEvent_GetById(localId);
+  object = (struct Object *)ObjectEvent_GetById(localId);
   startZ = object->z;
   if (object != 0) {
-    AudioCommand_PlayFar(AUDIO_CUE_FADE_SLOT3);
+    Sound_PlaySongFar(SONG_FADE_OUT_ACTION_SE);
     ObjectDispatch_SelectAnimationFar(object, pose);
     WaitFrames(10);
 
@@ -599,8 +596,8 @@ void ObjectEvent_JumpDownLedge(s32 localId, s32 pose, s32 param) {
     WaitFrames(6);
 
     // Turn and sink 2 pixels a frame for 14 frames, raising dust, in free
-    // flight: no motion flags, so no gravity and no terrain.
-    AudioCommand_PlayFar(SE_217);
+    // flight: no motion flags, so it neither falls nor follows the ground.
+    Sound_PlaySongFar(SE_217);
     // From here pose counts frames.
     pose = 0;
     ObjectMotion_ArmCallback(localId, 0x5000, 0);
@@ -617,17 +614,17 @@ void ObjectEvent_JumpDownLedge(s32 localId, s32 pose, s32 param) {
     } while ((u32)pose <= 0xD);
 
     // Jump 16 pixels forward and wait (at most 180 frames) to land, following
-    // the terrain and falling again.
+    // the ground and falling again.
     *objectFlags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
     object->velocityY = 0x30000;
     Object_SetMoveTargetFar(object, object->x, object->y, startZ + 0x100000);
-    FieldObject_WaitForMoveFar(object);
-    for (pose = 0; (u32)pose <= 0xB3 && object->y > object->terrainHeight;
+    Object_WaitForMoveFar(object);
+    for (pose = 0; (u32)pose <= 0xB3 && object->y > object->groundHeight;
          pose++) {
       WaitFrames(1);
     }
     WaitFrames(2);
-    FieldEffect_PlayQueuedSound();
+    Map_PlayQueuedMusic();
   }
 }
 
@@ -635,15 +632,15 @@ void ObjectEvent_JumpDownLedge(s32 localId, s32 pose, s32 param) {
 /// event at once to face the second, then waits wait frames. Writes the first
 /// object event's angle. Map scripts reach it as
 /// Engine_ObjectEventFaceObjectEvent (OBJECT_FACE,
-/// ObjectEvent_FaceObjectEvent); the link lobby calls it too.
+/// ObjectEvent_FaceObjectEvent); the Battle Arena calls it too.
 void ObjectMotion_SetAngleToward(s32 firstId, s32 secondId, s32 wait) {
-  struct ObjectRuntime *first;
-  struct ObjectRuntime *second;
+  struct Object *first;
+  struct Object *second;
 
-  first = ObjectTable_Get(firstId);
-  second = ObjectTable_Get(secondId);
+  first = ObjectEvent_GetByLocalId(firstId);
+  second = ObjectEvent_GetByLocalId(secondId);
   if (first != 0 && second != 0) {
-    first->angle = ArcTan2(second->z - first->z, second->x - first->x);
+    first->facing = ArcTan2(second->z - first->z, second->x - first->x);
     FieldScript_WaitFrames(wait);
   }
 }
@@ -654,8 +651,8 @@ void ObjectMotion_SetAngleToward(s32 firstId, s32 secondId, s32 wait) {
 /// Map_TalkToObjectEvent turns the leader and the object event spoken to with
 /// it.
 void ObjectEvent_LinkPair(s32 firstId, s32 secondId, s32 wait) {
-  void *first = ObjectTable_Get(firstId);
-  void *second = ObjectTable_Get(secondId);
+  void *first = ObjectEvent_GetByLocalId(firstId);
+  void *second = ObjectEvent_GetByLocalId(secondId);
 
   if (first != NULL && second != NULL) {
     FacingObject_TurnPairToFaceEachOther(first, second);
@@ -667,8 +664,8 @@ void ObjectEvent_LinkPair(s32 firstId, s32 secondId, s32 wait) {
 /// until both do (at most 60 frames). Only ObjectEvent_LinkPair calls it.
 void FacingObject_TurnPairToFaceEachOther(struct FacingObject *firstObject,
                                           struct FacingObject *secondObject) {
-  struct ObjectRuntime *first = (struct ObjectRuntime *)firstObject;
-  struct ObjectRuntime *second = (struct ObjectRuntime *)secondObject;
+  struct Object *first = (struct Object *)firstObject;
+  struct Object *second = (struct Object *)secondObject;
   s32 firstTargetAngle;
   s32 secondTargetAngle;
   s32 frame;
@@ -684,23 +681,23 @@ void FacingObject_TurnPairToFaceEachOther(struct FacingObject *firstObject,
     // Each object event that already faces its way takes one off the count;
     // both facing ends the turn early.
     objectEventsTurning = 2;
-    angleDifference = (s16)(firstTargetAngle - first->angle);
+    angleDifference = (s16)(firstTargetAngle - first->facing);
     if (angleDifference != 0) {
       if (angleDifference > 0x1000)
         angleDifference = 0x1000;
       if (angleDifference < -0x1000)
         angleDifference = -0x1000;
-      first->angle += angleDifference;
+      first->facing += angleDifference;
     } else {
       objectEventsTurning = 1;
     }
-    angleDifference = (s16)(secondTargetAngle - second->angle);
+    angleDifference = (s16)(secondTargetAngle - second->facing);
     if (angleDifference != 0) {
       if (angleDifference > 0x1000)
         angleDifference = 0x1000;
       if (angleDifference < -0x1000)
         angleDifference = -0x1000;
-      second->angle += angleDifference;
+      second->facing += angleDifference;
     } else {
       objectEventsTurning--;
     }
@@ -715,7 +712,7 @@ void FacingObject_TurnPairToFaceEachOther(struct FacingObject *firstObject,
 /// commands index by local id.
 struct ObjectSlotTable {
   u8 tablesAndEvents[0x14]; ///< FieldWork's tables and events
-  struct ObjectRuntime *slots[0];
+  struct Object *slots[0];
 };
 
 STATIC_ASSERT(offsetof(struct ObjectSlotTable, slots) == 0x14);
@@ -724,13 +721,13 @@ STATIC_ASSERT(offsetof(struct ObjectSlotTable, slots) == 0x14);
 /// The script command "destroy object event": releases the object event and
 /// frees its slot, writing NULL to its place in the field work's object event
 /// table. Map scripts reach it as Engine_ObjectEventDestroy (about 14 of them).
-void ObjectTable_DestroyById(s32 index) {
-  void *object = ObjectTable_Get(index);
+void ObjectEvent_DestroyById(s32 index) {
+  void *object = ObjectEvent_GetByLocalId(index);
 #ifdef UBFIX
-  struct FieldWork *table = (struct FieldWork *)gEventWork;
-  struct ObjectRuntime *empty = NULL;
+  struct FieldWork *table = (struct FieldWork *)gFieldWork;
+  struct Object *empty = NULL;
 #else
-  struct ObjectSlotTable *table = (struct ObjectSlotTable *)gEventWork;
+  struct ObjectSlotTable *table = (struct ObjectSlotTable *)gFieldWork;
 #endif
 
   if (object != 0) {
@@ -746,7 +743,7 @@ void ObjectTable_DestroyById(s32 index) {
 }
 
 /// Unused: an empty function nothing calls.
-UNUSED void ObjectTable_DestroyNoOp(void) {}
+UNUSED void ObjectEvent_DestroyNoOp(void) {}
 
 /// The script command "set object event sprite param": gives every sprite part
 /// of the object event param (ObjectGroup_SetChildValue). With bit 0x100 set
@@ -758,7 +755,7 @@ void ObjectGroup_ConfigureChildValue(s32 objectId, s32 param) {
   s32 blink;
   struct DispatchObject *object;
 
-  object = ObjectTable_Get(objectId);
+  object = ObjectEvent_GetByLocalId(objectId);
   if (object != NULL) {
     blink = 0x100 & param;
     if (blink != 0) {
@@ -779,7 +776,7 @@ void ObjectGroup_ApplyIndexedChildValue(union FieldObject *fieldObject) {
 
   if ((object->kind & 0xf) == 1) {
     u8 param;
-    struct AnimationObject *container;
+    struct Sprite *container;
     u8 partCount;
 
     // The table's four entries each last two frames.
@@ -787,10 +784,10 @@ void ObjectGroup_ApplyIndexedChildValue(union FieldObject *fieldObject) {
     container = object->target.child;
     partCount = container->count;
     if (partCount != 0) {
-      struct AnimationEntry **entries = container->entries;
+      struct SpriteAnim **entries = container->entries;
       s32 remaining = partCount;
       do {
-        struct AnimationEntry *entry = *entries++;
+        struct SpriteAnim *entry = *entries++;
         if (entry != 0 && entry->script != 0) {
           entry->colorMode = param;
         }
@@ -809,14 +806,14 @@ void ObjectGroup_SetChildValue(struct ObjectEvent *objectEvent, s32 param) {
   struct DispatchObject *object = (struct DispatchObject *)objectEvent;
 
   if ((object->kind & 0xf) == 1) {
-    struct AnimationObject *container = object->target.child;
+    struct Sprite *container = object->target.child;
     u8 partCount = container->count;
 
     if (partCount != 0) {
-      struct AnimationEntry **entry = container->entries;
+      struct SpriteAnim **entry = container->entries;
       u32 count = partCount;
       do {
-        struct AnimationEntry *part = *entry++;
+        struct SpriteAnim *part = *entry++;
         if (part != NULL && part->script != 0) {
           part->colorMode = param;
         }
@@ -836,8 +833,8 @@ void ObjectGroup_SetChildValue(struct ObjectEvent *objectEvent, s32 param) {
 /// map scripts, among others.
 void ObjectEvent_SetTargetAndCallback(u32 objectId, s32 targetId,
                                       const void *script) {
-  struct ObjectRuntime *follower = ObjectTable_Get(objectId);
-  struct ObjectRuntime *target = ObjectTable_Get(targetId & 0xff);
+  struct Object *follower = ObjectEvent_GetByLocalId(objectId);
+  struct Object *target = ObjectEvent_GetByLocalId(targetId & 0xff);
 
   if (follower != NULL && target != NULL) {
     follower->linkedObject = target;
@@ -856,19 +853,19 @@ void ObjectEvent_SetTargetAndCallback(u32 objectId, s32 targetId,
 /// made, 0 once the object event faces that way: SC_CALL runs it again each
 /// frame while it is nonzero, so the script ends once the turn is done.
 /// gObjectMotion_StepAngleScript and gObjectMotion_LaunchScript run it.
-s32 ObjectMotion_StepAngle(struct ObjectRuntime *object) {
+s32 ObjectMotion_StepAngle(struct Object *object) {
   s32 delta = 0;
 
   if (object != NULL) {
     s32 targetAngle = (u16)object->action;
-    s32 currentAngle = object->angle;
+    s32 currentAngle = object->facing;
     delta = (s16)(targetAngle - currentAngle);
     if (delta != 0) {
       if (delta > 4096)
         delta = 2048;
       if (delta < -4096)
         delta = -2048;
-      object->angle = currentAngle + delta;
+      object->facing = currentAngle + delta;
     }
   }
   return delta;
@@ -878,7 +875,7 @@ s32 ObjectMotion_StepAngle(struct ObjectRuntime *object) {
 /// stands it still. Reached only through an unnamed veneer in the object bank's
 /// far-call table; nothing in ☀️ names it.
 void ObjectEvent_ResetTargetAndSetMode1(u32 objectId) {
-  struct ObjectRuntime *object = ObjectTable_Get(objectId);
+  struct Object *object = ObjectEvent_GetByLocalId(objectId);
 
   if (object != NULL) {
     object->targetX = OBJ_EVENT_NO_TARGET;
@@ -896,7 +893,7 @@ void ObjectEvent_ResetTargetAndSetMode1(u32 objectId) {
 /// ObjectEvent_FaceDirection); the Djinni, Retreat and climbing scripts and
 /// ObjectEvent_JumpDownLedge call it too.
 void ObjectMotion_ArmCallback(s32 objectId, s32 angle, s32 wait) {
-  struct ObjectRuntime *object = ObjectTable_Get(objectId);
+  struct Object *object = ObjectEvent_GetByLocalId(objectId);
 
   if (object != NULL) {
     object->action = angle;
@@ -912,10 +909,10 @@ void ObjectMotion_ArmCallback(s32 objectId, s32 angle, s32 wait) {
 /// Engine_ObjectEventSetSpritePriority (ObjectEvent_SetSpritePriority);
 /// ObjectMotion_CenterOnColumn calls it too.
 void ObjectMotion_SetActionVariant(s32 objectId, s32 priority) {
-  struct ObjectRuntime *object = ObjectTable_Get(objectId);
+  struct Object *object = ObjectEvent_GetByLocalId(objectId);
 
   if (object != NULL && (object->animationKind & 0xF) == OBJECT_SPRITE_ONE) {
-    struct AnimationObject *sprite = object->animation;
+    struct Sprite *sprite = object->animation;
 
     sprite->image.priority = priority;
     sprite->shadow.priority = priority;
@@ -927,17 +924,17 @@ void ObjectMotion_SetActionVariant(s32 objectId, s32 priority) {
 /// graphics (its VRAM block and tile). Neither object event is checked for
 /// NULL. Called by the Tolbi ship deck's map script.
 void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId) {
-  struct ObjectRuntime *object;
-  struct AnimationObject *sprite;
+  struct Object *object;
+  struct Sprite *sprite;
   u8 vramBlock;
   u32 tile;
 
-  object = (struct ObjectRuntime *)ObjectEvent_GetById(sourceId);
+  object = (struct Object *)ObjectEvent_GetById(sourceId);
   sprite = object->animation;
   vramBlock = sprite->slot;
   tile = sprite->image.tile;
 
-  object = (struct ObjectRuntime *)ObjectEvent_GetById(targetId);
+  object = (struct Object *)ObjectEvent_GetById(targetId);
   sprite = object->animation;
   sprite->slot = vramBlock;
   sprite->image.tile = tile;
@@ -951,53 +948,50 @@ UNUSED void ObjectVisual_ReservedNoOp(void) {}
 /// Engine_ScriptSetMessage (MESSAGE_SET); the field's talk, coord event, item
 /// and Psynergy scripts call it too.
 void FieldScript_SetMessageId(s32 message) {
-  ((struct FieldWork *)gEventWork)->message = message;
+  ((struct FieldWork *)gFieldWork)->message = message;
 }
 
 /// Returns the sprite (the first animation's id) of the object event in the low
 /// 12 bits of localId, or -1 if there is no such animated object event. The
 /// message commands (messages.c) call it to find the speaker's portrait and
 /// voice.
-s32 ObjectTable_ReadActiveValue(s32 localId) {
+s32 ObjectEvent_ReadActiveValue(s32 localId) {
 #ifdef UBFIX
-  struct FieldWork *state = (struct FieldWork *)gEventWork;
+  struct FieldWork *state = (struct FieldWork *)gFieldWork;
   s32 sprite = -1;
-  struct ObjectRuntime *entry;
+  struct Object *entry;
 
   localId &= 0x0fff;
   // BUG: the -1 sentinel becomes index 4095, beyond the event work. All
   // indices from 66 to 4095 lie outside the object event table.
   if (localId >= 66)
     return -1;
-  entry = (struct ObjectRuntime *)state->objectEvents[localId];
+  entry = (struct Object *)state->objectEvents[localId];
 #else
-  struct FieldWork *state = (struct FieldWork *)gEventWork;
+  struct FieldWork *state = (struct FieldWork *)gFieldWork;
   s32 sprite = -1;
-  struct ObjectRuntime *entry =
-      (struct ObjectRuntime *)state->objectEvents[localId & 0x0fff];
+  struct Object *entry = (struct Object *)state->objectEvents[localId & 0x0fff];
 #endif
 
   if (entry != 0 && entry->animationKind == OBJECT_SPRITE_ONE)
-    sprite =
-        ((struct AnimationObject *)entry->animation)->entries[0]->animationId;
+    sprite = ((struct Sprite *)entry->animation)->entries[0]->animationId;
   return sprite;
 }
 
 /// Returns the first of the map's object events (8 to 65) showing sprite, or
 /// -1. Reached only through an unnamed veneer in the object bank's far-call
 /// table; nothing in ☀️ names it.
-s32 ObjectTable_FindActiveByValue(s32 sprite) {
-  struct FieldWork *state = (struct FieldWork *)gEventWork;
+s32 ObjectEvent_FindActiveByValue(s32 sprite) {
+  struct FieldWork *state = (struct FieldWork *)gFieldWork;
   s32 result = -1;
   s32 index;
-  struct ObjectRuntime *object;
+  struct Object *object;
 
   for (index = 8; index <= 65; index++) {
-    object = (struct ObjectRuntime *)state->objectEvents[index];
+    object = (struct Object *)state->objectEvents[index];
     if (object != 0 && object->animationKind == OBJECT_SPRITE_ONE &&
-        ((struct AnimationObject *)object->animation)
-                ->entries[0]
-                ->animationId == sprite) {
+        ((struct Sprite *)object->animation)->entries[0]->animationId ==
+            sprite) {
       result = index;
       break;
     }

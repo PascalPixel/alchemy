@@ -9,7 +9,7 @@
 #define SPRITE_ATTR2_HIGH(sprite) (((u8 *)(sprite))[9])
 
 /// The script command "set view bounds": the camera keeps the screen inside
-/// these map coordinates (Camera_MoveWithinMapBounds).
+/// these map coordinates (FieldCamera_MoveWithinMapBounds).
 void MapGrid_SetViewBounds(s32 minX, s32 minY, s32 maxX, s32 maxY) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
 
@@ -19,17 +19,17 @@ void MapGrid_SetViewBounds(s32 minX, s32 minY, s32 maxX, s32 maxY) {
   grid->maxY = maxY;
 }
 
-// Scheduler callback: moves the zoom one step from its previous value toward
+// Task: moves the zoom one step from its previous value toward
 // its target, and removes itself on the last step. It waits while the camera
 // is paused.
-// The scheduler calls void(void). Plain void changes the native return from
+// The task runner calls void(void). Plain void changes the native return from
 // pop {r1}; bx r1 to pop {r0}; bx r0 (two instructions in tbs-en).
 #ifdef UBFIX
 void FieldEffect_StepRatioTransition(void) {
 #else
 s32 FieldEffect_StepRatioTransition(void) {
 #endif
-  struct PerspectiveWork *perspective;
+  struct WorldMapView *perspective;
   s16 *frames;
   s32 *from;
   s16 *step;
@@ -37,8 +37,8 @@ s32 FieldEffect_StepRatioTransition(void) {
   s32 delta;
 
   perspective = gMapGridWork[0];
-  if (((struct FieldWork *)Runtime_AllocateBlock(HEAP_SLOT_EVENT,
-                                                 sizeof(struct FieldWork)))
+  if (((struct FieldWork *)AllocHeapSlotEwram(HEAP_SLOT_FIELD,
+                                              sizeof(struct FieldWork)))
           ->camera->movementState != 0)
     return;
   frames = (s16 *)&perspective->zoomTransitionFrames;
@@ -57,10 +57,9 @@ s32 FieldEffect_StepRatioTransition(void) {
   if (*step == *frames) {
     *frames = 0;
 #ifdef UBFIX
-    Scheduler_RemoveCallback(FieldEffect_StepRatioTransition);
+    Task_Remove(FieldEffect_StepRatioTransition);
 #else
-    Scheduler_RemoveCallback(
-        (SchedulerCallback)FieldEffect_StepRatioTransition);
+    Task_Remove((TaskFunc)FieldEffect_StepRatioTransition);
 #endif
   }
 }
@@ -70,12 +69,12 @@ s32 FieldEffect_StepRatioTransition(void) {
 /// (farPlane times it, FieldEffect_StepRatioTransition): a zoom of 2 halves the
 /// distance. FieldScript_WaitForZoomTransition waits for it.
 void FieldEffect_ScheduleRatioTransition(s32 zoom, s32 frames) {
-  struct PerspectiveWork *perspective = gMapGridWork[0];
+  struct WorldMapView *perspective = gMapGridWork[0];
   s32 inverse;
 
-  if (((struct FieldWork *)Runtime_AllocateBlock(HEAP_SLOT_EVENT,
-                                                 sizeof(struct FieldWork)))
-          ->mode != MODE_WORLD_MAP)
+  if (((struct FieldWork *)AllocHeapSlotEwram(HEAP_SLOT_FIELD,
+                                              sizeof(struct FieldWork)))
+          ->mode != OBJECT_SYSTEM_WORLD_MAP)
     return;
   {
     inverse = Iwram_RatioMulQ14(zoom, 0x10000); // 1 / zoom
@@ -84,13 +83,12 @@ void FieldEffect_ScheduleRatioTransition(s32 zoom, s32 frames) {
   perspective->zoom = inverse;
   perspective->zoomTransitionFrames = frames;
   perspective->zoomTransitionStep = 0;
-  // 0xc94: a main-loop callback (high byte 0xc, as SCHEDULER_KEY_MAIN_LOOP)
+  // 0xc94: a main-loop callback (high byte 0xc, as TASK_PRIORITY_MAIN_LOOP)
   // at priority 0x94.
 #ifdef UBFIX
-  Scheduler_AddOrUpdateCallback(FieldEffect_StepRatioTransition, 0xc94);
+  Task_Add(FieldEffect_StepRatioTransition, 0xc94);
 #else
-  Scheduler_AddOrUpdateCallback(
-      (SchedulerCallback)FieldEffect_StepRatioTransition, 0xc94);
+  Task_Add((TaskFunc)FieldEffect_StepRatioTransition, 0xc94);
 #endif
 }
 
@@ -98,11 +96,11 @@ void FieldEffect_ScheduleRatioTransition(s32 zoom, s32 frames) {
 /// frames).
 void FieldScript_WaitForZoomTransition(void) {
   s32 frames;
-  struct PerspectiveWork *perspective = gMapGridWork[0];
+  struct WorldMapView *perspective = gMapGridWork[0];
 
-  if (((struct FieldWork *)Runtime_AllocateBlock(HEAP_SLOT_EVENT,
-                                                 sizeof(struct FieldWork)))
-          ->mode == MODE_WORLD_MAP) {
+  if (((struct FieldWork *)AllocHeapSlotEwram(HEAP_SLOT_FIELD,
+                                              sizeof(struct FieldWork)))
+          ->mode == OBJECT_SYSTEM_WORLD_MAP) {
     frames = 0;
     if (*(s16 *)&perspective->zoomTransitionFrames != 0) {
       do {
@@ -139,7 +137,7 @@ s32 FieldEffect_CopyLinkedObjectPosition(union FieldObject *fieldObject) {
              ->boxX
          << 16) +
         (8 << 16);
-    objectEvent->terrainHeight = host->terrainHeight;
+    objectEvent->groundHeight = host->groundHeight;
     objectEvent->z.fixed = host->z.fixed;
   }
 #ifndef UBFIX
@@ -158,16 +156,16 @@ void FieldEffect_SpawnLinked(s32 localId, s32 emote, s32 wait) {
   struct ObjectEvent *target;
 
   if ((emote & 0xff) == EMOTE_LIGHT_BULB) {
-    AudioCommand_PlayFar(SE_110);
+    Sound_PlaySongFar(SE_110);
   }
 
-  target = ObjectTable_Get(localId);
+  target = ObjectEvent_GetByLocalId(localId);
   if (target != 0) {
     struct ObjectEvent *bubble = (struct ObjectEvent *)Object_CreateFar(
         21, target->x.fixed, target->y.fixed, target->z.fixed);
 
     if (bubble != 0) {
-      struct AnimationObject *sprite;
+      struct Sprite *sprite;
 
       ObjectDispatch_InitializeFar((struct DispatchObject *)bubble,
                                    gFieldEffect_LinkedObjectScript);
@@ -222,9 +220,9 @@ void FieldEffect_SpawnLinked(s32 localId, s32 emote, s32 wait) {
 /// releases whatever it is; a one-off is never recorded there. The leader's
 /// step runs all three for hazard ground (object/step.c).
 void FieldEffect_ConfigureLinkedObject(s32 localId, s32 flags) {
-  struct ObjectEvent *objectEvent = ObjectTable_Get(localId);
+  struct ObjectEvent *objectEvent = ObjectEvent_GetByLocalId(localId);
   struct ObjectEvent *effect;
-  struct AnimationObject *visual;
+  struct Sprite *visual;
   s32 mode;
 
   effect = 0;

@@ -3,8 +3,8 @@
 	.set import.Engine_TaskWait, 1
 	.set import.Engine_MapGridRedraw, 1
 	.set import.Engine_MapGridCopyCellsTo, 1
-	.set import.TileAnimation_ResumeChannel, 1
-	.set import.TileAnimation_PauseChannel, 1
+	.set import.TilesetAnim_Resume, 1
+	.set import.TilesetAnim_Pause, 1
 	.set import.Engine_MapGridCopyCellAttributes, 1
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1

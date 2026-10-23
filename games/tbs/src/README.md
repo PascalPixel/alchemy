@@ -18,7 +18,7 @@ The folders divide the game by what it does, in the order the cartridge lays
 their banks out.
 
 The field is split four ways. [Field](field/README.md) is the engine under
-every town, dungeon and the world map: the [field objects](../glossary.md#field-object), movement, and
+every town, dungeon and the world map: the [objects](../glossary.md#object), movement, and
 loading, scrolling and drawing the map grid. [Running a map](object/README.md),
 the `object` folder (named after the bank it fills, not after objects), runs
 one map on that engine, from its set-up to the [warp](../glossary.md#warp) the party leaves
@@ -30,15 +30,15 @@ holds the [layouts](../glossary.md#layout) as data.
 
 [Battles](battle/README.md) runs a fight: turn order, the enemies' choices,
 what each ability does to its targets and the spoils.
-[Battle effects](effect/README.md) draws what each ability shows on screen,
-one function for each effect.
+[Battle animations](effect/README.md) draws what each ability shows on screen,
+one function for each animation.
 
 [Windows](window/README.md) draws the framed boxes text appears in, decodes
 the compressed messages and types them out, and holds the screens built from
-windows, among them the battle menus, the save file menu and name entry.
+windows, among them the battle menus, the file menu and the naming screen.
 [Menus](menu/README.md) holds the field menu's Psynergy, [Djinn](../glossary.md#djinn), Item and
-Status screens, and three overlays: the title, the file select screen and the
-Battle Arena's lobby. [Shops](shop/README.md) holds every counter that buys,
+Status screens, and three overlays: the title, the main menu and the
+Battle Arena. [Shops](shop/README.md) holds every counter that buys,
 sells, repairs or heals.
 
 [Game rules](game/README.md) holds the party's state and the rules other
@@ -47,13 +47,13 @@ classes, Djinn and the [game flags](../glossary.md#game-flag), with the `.tsv` t
 item, ability, Djinni, enemy, [summon](../glossary.md#summons) and class.
 
 [Runtime](runtime/README.md) starts the console and runs every [frame](../glossary.md#frame)
-through `WaitFrames`, with the keypad, the [heap](../glossary.md#heap-and-pools), fades, [sprites](../glossary.md#sprite-and-oam), saving and
+through `WaitFrames`, with the keypad, the [heap](../glossary.md#heap-and-pools), screen fades, [sprites](../glossary.md#sprite-and-oam), saving and
 the link cable. [System](system/README.md) holds the memory map, the
 [far-call](../glossary.md#far-call) tables, the overlay stubs, the flash save library and the resource
 directory, the numbered list through which every picture, table and overlay
 is found. [Graphics](graphics/README.md) holds most of the pictures, the
 title intro, the credits and the handwritten decoders. [Sound](sound/README.md)
-holds the cue layer and Nintendo's MusicPlayer2000 driver; the songs and
+holds the song layer and Nintendo's MusicPlayer2000 driver; the songs and
 samples are in [`games/tbs/sound`](../sound). [Debug rooms](debug/README.md)
 holds the three test maps the ROM keeps.
 
@@ -66,7 +66,7 @@ sits in the folder it belongs with.
 address fixed per [edition](../glossary.md#editions) and opening with a far-call table; the
 glossary's [bank](../glossary.md#bank) entry says why. Code in another bank calls a function
 through its table entry, by its name with `Far` added
-(`Battle_RunEncounterFar`); inside a bank, functions call each other
+(`Battle_RunFar`); inside a bank, functions call each other
 directly. Every bank calls the runtime bank's functions directly instead,
 and its table serves only the overlays
 ([Engine](../engine.md#banks-and-far-calls)).
@@ -81,18 +81,18 @@ and its table serves only the overlays
 | `rom_main_05` | menu | the field menu | `menu` |
 | `rom_main_06` | shop | shops and inns | `shop` |
 | `rom_main_07` | battle | battles | `battle` |
-| `rom_main_08` | effect | battle effects | `effect` |
+| `rom_main_08` | effect | battle animations | `effect` |
 | `rom_main_09` | scroll | the credits | `graphics/credits` |
 | `rom_main_10` | palette | the title intro, the logos and the palette fade | `graphics/title` |
 | `rom_main_11` | blank run | Lucky Dice | `field` |
-| `rom_main_12` | blank load | the slot machine | `object` |
-| `rom_main_13` | sound | the cue layer | `sound` |
+| `rom_main_12` | blank load | Lucky Wheels | `object` |
+| `rom_main_13` | sound | the song layer | `sound` |
 
 The place is the bank's name in `objects.tsv` and the linker scripts,
 numbered from 0 in cartridge order. The bank names are the far-call tables'
 (`system/far_call/SCROLL.S` and the rest), given before their code was
 understood, and the small banks' names don't say what they hold: "blank
-run" is Lucky Dice and "blank load" the slot machine.
+run" is Lucky Dice and "blank load" Lucky Wheels.
 
 `graphics`, `layout`, `sound` and `system` don't follow a bank: each gathers
 one kind of thing (pictures, layouts, sound, the memory layout) from wherever
@@ -149,10 +149,10 @@ Each map's people, scripts and cutscenes are code that is needed only while
 the party is there, so it is kept apart from the main image as an overlay,
 packed on the cartridge and unpacked into one 32 KB area of EWRAM when the
 party arrives ([Engine](../engine.md#overlays)). The map table,
-`gField_MapTable` in [field/maps.s](field/maps.s), has 201 maps, and the
+`gMapHeaders` in [field/maps.s](field/maps.s), has 201 maps, and the
 rooms of one dungeon often share one overlay. `Map_LoadOverlay`
 ([object/object/map.c](object/object/map.c)) unpacks the overlay a map's row
-names before `Field_RunMap` runs it; a battle or a minigame is main-image
+names before `Map_Run` runs it; a battle or a minigame is main-image
 code and loads none.
 
 In the source an overlay is three files in its folder:
@@ -173,7 +173,7 @@ describes the tables and how an overlay is packed.
 | Folder | Overlays |
 | --- | --- |
 | `map/` | 90 |
-| `menu/` | 3: the title, the file select screen and the Battle Arena's lobby |
+| `menu/` | 3: the title, the main menu and the Battle Arena |
 | `debug/` | 3: the test rooms |
 
 ## Headers
@@ -257,7 +257,7 @@ is the first C to run; it ends by calling `Game_Run`, which is short enough
 to read whole. [Runtime](runtime/README.md) follows the same path.
 
 To find the code behind something in the game, search for its English name.
-Each effect's comment names the abilities that play it, so searching
+Each animation's comment names the abilities that play it, so searching
 `effect/` for Quake finds [effect/parts/quake.c](effect/parts/quake.c). Each
 place's code is the map named for it. The game's text is in
 [`games/tbs/text`](../text), a PO catalog for each language, where each message

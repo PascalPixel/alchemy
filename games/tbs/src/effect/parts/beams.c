@@ -4,8 +4,8 @@
 
 #include "../effect_internal.h"
 
-/// The beam sequence's pictures, by effect kind: the kinds below 100 that
-/// BattleEffect_DispatchByIdRange sends here. No ability's row selects one; the
+/// The beam sequence's pictures, by animation kind: the kinds below 100 that
+/// BattleAnim_DispatchByIdRange sends here. No ability's row selects one; the
 /// unused BattlePresentation_RunPlainAttack plays an attack's kind, 0 for
 /// Attack.
 enum BeamKind {
@@ -22,28 +22,28 @@ enum BeamKind {
 /// a yellow orb flashes over it and sparks fly off, for 32 frames in all.
 /// effect->kind picks the picture.
 ///
-/// Reached through BattleEffect_DispatchByIdRange for kinds 136 to 199 and,
+/// Reached through BattleAnim_DispatchByIdRange for kinds 136 to 199 and,
 /// through its unsigned test, every kind below 100;
 /// BattlePresentation_RunPlainAttack (battle/staging.c) sends every plain
 /// attack there. Only the kinds of enum BeamKind have pictures. Shows the
-/// canvas on BG1 (BattleEffect_SetupCanvasTileMap), loads palette colours 0 to
+/// canvas on BG1 (BattleAnim_SetupCanvasTileMap), loads palette colours 0 to
 /// 63, scrolls BG1 through gBgScroll[1] and uses work->particles 0 to 63 (only
 /// 0 to 31 fly) and both blitter slots; at the end it removes the transfer
 /// callback, frees the blitters, sets gBgScroll[1].y back to 32 and hides BG1
-/// again (BattleEffect_HideBg1AndRestoreBackdrop).
-void BattleEffect_RunBeamSequence(struct BattleEffectArgument *effect) {
-  struct EffectPosition screenPosition;
-  struct EffectPosition anchor;
-  struct EffectPosition point;
+/// again (BattleAnim_HideBg1AndRestoreBackdrop).
+void BattleAnim_RunBeamSequence(struct BattleAnimArgs *effect) {
+  struct ScreenPoint screenPosition;
+  struct ScreenPoint anchor;
+  struct ScreenPoint point;
   void **heapCache;
   void **cursor;
-  struct BattleEffectWork *work;
+  struct BattleAnimWork *work;
   void *canvas;
   s32 scrollX;
   u8 *sheet;
   struct BattleCamera *camera;
   s32 kind;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   BlitterPair draw;
   DrawRectangle *slots;
   struct MotionObject *target;
@@ -52,17 +52,17 @@ void BattleEffect_RunBeamSequence(struct BattleEffectArgument *effect) {
   s32 frame;
   s32 i;
 
-  heapCache = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
+  heapCache = &gHeapSlots[HEAP_SLOT_BATTLE_ANIM];
   cursor = heapCache;
-  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
-  sheet = EFFECT_SLOT(heapCache, HEAP_SLOT_BATTLE_SHEET);
-  camera = EFFECT_SLOT(heapCache, HEAP_SLOT_CAMERA);
+  ANIM_GET_WORK_AND_CANVAS(cursor, work, canvas);
+  sheet = ANIM_SLOT(heapCache, HEAP_SLOT_BATTLE_SHEET);
+  camera = ANIM_SLOT(heapCache, HEAP_SLOT_CAMERA);
   kind = effect->kind;
   work->effect = effect;
-  unit = Unit_GetFar(effect->actor);
+  unit = Unit_GetFar(effect->user);
   WaitFrames(1);
-  BattleEffect_ConfigureEffectDisplay();
-  BattleEffect_SetupCanvasTileMap();
+  BattleAnim_ConfigureEffectDisplay();
+  BattleAnim_SetupCanvasTileMap();
   REG_BG1CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(0) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(31);
   WaitFrames(1);
@@ -70,38 +70,33 @@ void BattleEffect_RunBeamSequence(struct BattleEffectArgument *effect) {
   // pictures upside down, and side 1 mirrors them.
   if (kind == BEAM_ARC_A_INVERTED) {
     if (work->effect->side == 0) {
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
-                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
-                          COMPOSITE_ADDITIVE);
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, COMPOSITE_MAX);
+      ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
+                        COMPOSITE_ADDITIVE);
+      ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                        ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
     } else {
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
-                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X |
-                              COMPOSITE_FLIP_Y,
-                          COMPOSITE_ADDITIVE);
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X |
-                              COMPOSITE_FLIP_Y,
-                          COMPOSITE_MAX);
+      ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                        ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X | COMPOSITE_FLIP_Y,
+                        COMPOSITE_ADDITIVE);
+      ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                        ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X | COMPOSITE_FLIP_Y,
+                        BLITTER_MAX);
     }
   } else {
     if (work->effect->side == 0) {
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
-                          COMPOSITE_ADDITIVE);
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
-                          COMPOSITE_MAX);
+      ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS,
+                        COMPOSITE_ADDITIVE);
+      ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS, BLITTER_MAX);
     } else {
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
-                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
-                          COMPOSITE_ADDITIVE);
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
+      ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                        COMPOSITE_ADDITIVE);
+      ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                        ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
     }
   }
-  slots = (DrawRectangle *)gWorkSlot;
-  draw[0] = slots[HEAP_SLOT_BLITTER];
-  draw[1] = slots[HEAP_SLOT_BLITTER_ALTERNATE];
+  slots = (DrawRectangle *)gHeapSlots;
+  draw[0] = slots[HEAP_SLOT_RAM_CODE];
+  draw[1] = slots[HEAP_SLOT_RAM_CODE_2];
   WaitFrames(1);
   // The picture, by BeamKind. An enemy user (unit id above 7) takes the small
   // Mars Djinni's palette, a party member the crescent's. The sparks and the
@@ -125,7 +120,7 @@ void BattleEffect_RunBeamSequence(struct BattleEffectArgument *effect) {
       break;
     }
   }
-  if (work->effect->actor > 7)
+  if (work->effect->user > 7)
     Iwram_CopyWords(
         colors, Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet),
         128);
@@ -136,13 +131,13 @@ void BattleEffect_RunBeamSequence(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet,
                              Ram_MapGridCellBuffer, 1, 0);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
   REG_BG1CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(0) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(31);
   // Scroll BG1 so the first target falls at canvas x 96 on side 0 and 32 on
   // side 1, as far as a scroll held between -128 and 0 allows; anchor
   // becomes the target's position on the canvas.
-  EffectPosition_ProjectSprite(work->effect->actors[0], &anchor);
+  Projection_Sprite(work->effect->targets[0], &anchor);
   if (work->effect->side == 0)
     scrollX = 96 - anchor.x;
   else
@@ -159,10 +154,10 @@ void BattleEffect_RunBeamSequence(struct BattleEffectArgument *effect) {
   // centre of the field at random speeds, mostly rising; variant is a
   // spark's life in moves, 16 to 79, so the later sparks are larger and last
   // longer. Only the first 32 fly (see the frame loop).
-  target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
-  half = BattleUnit_GetEffectHeightFar(work->effect->actors[0]) / 2;
+  target = GetBattleObjectSlotFar(work->effect->targets[0])->object;
+  half = BattleUnit_GetEffectHeightFar(work->effect->targets[0]) / 2;
   for (i = 0; i != 64; i++) {
-    struct EffectStep *spark = &work->particles[i];
+    struct Particle *spark = &work->particles[i];
 
     SET_POSITION(spark, target->x, target->y + half, target->z);
     SET_VELOCITY(spark, (Random16() & 255) << 10,
@@ -180,19 +175,18 @@ void BattleEffect_RunBeamSequence(struct BattleEffectArgument *effect) {
     // user's class is flagged in the summon table and SE_IMPACT otherwise. On
     // frame 4 the target takes KNOCKBACK_NUDGE.
     if (frame == 5) {
-      if (BattleClass_HasHeavyImpactFar(unit->classId))
-        EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
+      if (BattleSprite_HasHeavyImpactFar(unit->id))
+        ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       else
-        EFFECT_SHOW_DAMAGE(SE_IMPACT);
+        ANIM_SHOW_DAMAGE(SE_IMPACT);
     }
     if (frame == 4)
-      BattleMotion_ApplyVariantMotionFar(work->effect->actors[0],
-                                         KNOCKBACK_NUDGE);
+      BattleMotion_ApplyKnockbackFar(work->effect->targets[0], KNOCKBACK_NUDGE);
     // The picture plays from the user, to its left on side 0 and its right
     // on side 1: the wave's six 48x16 cells backwards and the arc's six
     // 48x72 cells, two frames each; the beam image grows through its six
     // cells, three frames each.
-    EffectPosition_ProjectScaledBattler(work->effect->actor, &screenPosition);
+    Projection_ScaledUnit(work->effect->user, &screenPosition);
     screenPosition.y += 16;
     if (kind == BEAM_WAVE) {
       if (frame <= 11) {
@@ -236,7 +230,7 @@ void BattleEffect_RunBeamSequence(struct BattleEffectArgument *effect) {
     if (frame >= 4 && frame <= 15)
       draw[0](canvas, Ram_MapGridCellBuffer + (frame - 4) / 2 * (40 * 48),
               anchor.x - 16, anchor.y - 24, 40, 48);
-    EFFECT_VIEW_FROM_CAMERA(camera);
+    ANIM_VIEW_FROM_CAMERA(camera);
     // From frame 4 the sparks fly. Only the first 32 move: each is drawn
     // and moved twice a frame, so it flies at double speed and its life
     // runs out twice as fast. Even ones add, odd ones take the brighter
@@ -244,28 +238,28 @@ void BattleEffect_RunBeamSequence(struct BattleEffectArgument *effect) {
     if (frame >= 4 && frame <= 31) {
       for (i = 0; i != 64; i++) {
         s32 pair = i / 2;
-        struct EffectStep *spark = &work->particles[pair];
+        struct Particle *spark = &work->particles[pair];
         s32 size = spark->variant;
 
         if (size > 0) {
-          Render_ProjectPoint(&spark->x, EffectPosition_Coordinates(&point));
+          Transform_ProjectPoint(&spark->x, ScreenPoint_Coordinates(&point));
           point.x += scrollX;
           size >>= 3;
           size += 2;
-          EFFECT_DRAW_FLARE(draw[pair & 1], canvas, sheet, point.x, point.y,
-                            size);
-          EffectStep_AdvanceWithGravity3D(spark, 60, -0x400);
+          ANIM_DRAW_FLARE(draw[pair & 1], canvas, sheet, point.x, point.y,
+                          size);
+          Particle_AdvanceWithGravity3D(spark, 60, -0x400);
           spark->variant--;
         }
       }
     }
-    EFFECT_PRESENT_FRAME(work);
+    ANIM_PRESENT_FRAME(work);
   }
 
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
-  EFFECT_RELEASE_BLITTERS();
+  Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);
+  ANIM_RELEASE_BLITTERS();
   gBgScroll[1].y = 32;
-  BattleEffect_HideBg1AndRestoreBackdrop();
+  BattleAnim_HideBg1AndRestoreBackdrop();
 }
 
 /// Plays the selected ring-and-spark strike, restoring the user motion after
@@ -274,8 +268,8 @@ void BattleEffect_RunBeamSequence(struct BattleEffectArgument *effect) {
 /// over the canvas and sparks fly from the first target for 32 frames, and
 /// the background palette fades back in.
 ///
-/// Reached through BattleEffect_DispatchByIdRange for kinds 200 and up, which
-/// BattlePresentation_RunAttack (battle/staging.c) makes by adding 200 to the
+/// Reached through BattleAnim_DispatchByIdRange for kinds 200 and up, which
+/// BattleStaging_RunAttack (battle/staging.c) makes by adding 200 to the
 /// kind of a critical hit; so the gathering always plays. Shows the canvas on
 /// BG1, keeps the battle's transition centred between the user and the first
 /// target while it loads, scrolls BG1 through gBgScroll[1] and uses
@@ -284,14 +278,14 @@ void BattleEffect_RunBeamSequence(struct BattleEffectArgument *effect) {
 /// stops the user's motion, and restores both after. At the end it removes
 /// the transfer callback, frees the blitters, sets gBgScroll[1].y back to 32,
 /// steps the background palette level from 6 back to 0 and hides BG1 again.
-void BattleEffect_RunRingAndSparkSequence(struct BattleEffectArgument *effect) {
-  struct EffectPosition screenPosition;
-  struct EffectPosition anchor;
-  struct EffectPosition point;
-  struct EffectPosition spot;
+void BattleAnim_RunRingAndSparkSequence(struct BattleAnimArgs *effect) {
+  struct ScreenPoint screenPosition;
+  struct ScreenPoint anchor;
+  struct ScreenPoint point;
+  struct ScreenPoint spot;
   void **heapCache;
   void **cursor;
-  struct BattleEffectWork *work;
+  struct BattleAnimWork *work;
   void *canvas;
   s32 scrollX;
   u8 *sheet;
@@ -313,13 +307,13 @@ void BattleEffect_RunRingAndSparkSequence(struct BattleEffectArgument *effect) {
   s32 frame;
   s32 i;
 
-  heapCache = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
+  heapCache = &gHeapSlots[HEAP_SLOT_BATTLE_ANIM];
   cursor = heapCache;
-  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
-  sheet = EFFECT_SLOT(heapCache, HEAP_SLOT_BATTLE_SHEET);
-  camera = EFFECT_SLOT(heapCache, HEAP_SLOT_CAMERA);
+  ANIM_GET_WORK_AND_CANVAS(cursor, work, canvas);
+  sheet = ANIM_SLOT(heapCache, HEAP_SLOT_BATTLE_SHEET);
+  camera = ANIM_SLOT(heapCache, HEAP_SLOT_CAMERA);
   // DEAD: the test is never true, as only kinds 200 and up reach this
-  // runner (BattleEffect_DispatchByIdRange), so big stays 1; the ROM keeps it.
+  // runner (BattleAnim_DispatchByIdRange), so big stays 1; the ROM keeps it.
   big = 1;
   if (effect->kind <= 199)
     big = 0;
@@ -329,49 +323,45 @@ void BattleEffect_RunRingAndSparkSequence(struct BattleEffectArgument *effect) {
   // burst goes to the image storage and the crescent to the map grid cell
   // buffer; an enemy user (unit id above 7) also takes the small Mars
   // Djinni's palette.
-  BattlePresentation_SetupTransitionAtPairMidpointFar(effect->actor,
-                                                      effect->firstTarget, 130);
+  BattleCamera_SetViewAtPairMidpointFar(effect->user, effect->firstTarget, 130);
   WaitFrames(1);
-  BattleEffect_SetupCanvasTileMap();
+  BattleAnim_SetupCanvasTileMap();
   REG_BG1CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(0) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(31);
   if (work->effect->side == 0) {
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
-                        COMPOSITE_ADDITIVE);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
-                        COMPOSITE_MAX);
+    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_ADDITIVE);
+    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS, BLITTER_MAX);
   } else {
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
-                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
-                        COMPOSITE_ADDITIVE);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
+    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                      COMPOSITE_ADDITIVE);
+    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                      BLITTER_MAX);
   }
-  slots = (DrawRectangle *)gWorkSlot;
-  draw[0] = slots[HEAP_SLOT_BLITTER];
-  draw[1] = slots[HEAP_SLOT_BLITTER_ALTERNATE];
-  BattlePresentation_SetupTransitionAtPairMidpointFar(
-      work->effect->actor, work->effect->firstTarget, 130);
+  slots = (DrawRectangle *)gHeapSlots;
+  draw[0] = slots[HEAP_SLOT_RAM_CODE];
+  draw[1] = slots[HEAP_SLOT_RAM_CODE_2];
+  BattleCamera_SetViewAtPairMidpointFar(work->effect->user,
+                                        work->effect->firstTarget, 130);
   WaitFrames(1);
   Resource_LoadAndDecompress((s32)&ResourceId_StarBurstSheet,
                              work->imageStorage, 1, 0);
-  BattlePresentation_SetupTransitionAtPairMidpointFar(
-      work->effect->actor, work->effect->firstTarget, 130);
+  BattleCamera_SetViewAtPairMidpointFar(work->effect->user,
+                                        work->effect->firstTarget, 130);
   WaitFrames(1);
   Resource_LoadAndDecompress((s32)&ResourceId_CrescentSheet,
                              Ram_MapGridCellBuffer, 1, 1);
-  if (work->effect->actor > 7)
+  if (work->effect->user > 7)
     Iwram_CopyWords(
         colors, Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet),
         128);
-  BattlePresentation_SetupTransitionAtPairMidpointFar(
-      work->effect->actor, work->effect->firstTarget, 130);
+  BattleCamera_SetViewAtPairMidpointFar(work->effect->user,
+                                        work->effect->firstTarget, 130);
   WaitFrames(1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
-  BattlePresentation_SetupTransitionAtPairMidpointFar(
-      work->effect->actor, work->effect->firstTarget, 130);
+  BattleCamera_SetViewAtPairMidpointFar(work->effect->user,
+                                        work->effect->firstTarget, 130);
   WaitFrames(1);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
 
   // The gathering: 64 motes, each in its own random rotation around the
   // user, close in 4 a frame, mote i from frame i / 4, while the palette
@@ -379,9 +369,9 @@ void BattleEffect_RunRingAndSparkSequence(struct BattleEffectArgument *effect) {
   // velocities, acceleration and vertical strength are saved, zeroed and
   // restored after.
   if (big == 1) {
-    object = GetBattleObjectSlotFar(work->effect->actor)->object;
+    object = GetBattleObjectSlotFar(work->effect->user)->object;
     for (i = 0; i != 64; i++) {
-      struct EffectStep *mote = &work->particles[i];
+      struct Particle *mote = &work->particles[i];
 
       SET_POSITION(mote, (Random16() & 63) + 16, 0, 0);
       SET_VELOCITY(mote, Random16() & 0xffff, Random16() & 0xffff,
@@ -396,7 +386,7 @@ void BattleEffect_RunRingAndSparkSequence(struct BattleEffectArgument *effect) {
     SET_VELOCITY(object, 0, 0, 0);
     object->acceleration = 0;
     object->verticalMotionStrength = 0;
-    EffectPosition_ProjectScaledBattler(work->effect->actor, &screenPosition);
+    Projection_ScaledUnit(work->effect->user, &screenPosition);
     // BG1 scrolls so the user stands at canvas x 64, where the motes are
     // centred.
     scrollX = 64 - screenPosition.x;
@@ -404,36 +394,35 @@ void BattleEffect_RunRingAndSparkSequence(struct BattleEffectArgument *effect) {
     gBgScroll[1].y = 80;
     work->fadeFrames = 24;
     work->fadeStep = 0;
-    Scheduler_AddOrUpdateCallback(Palette_StepFadeTransfer,
-                                  EFFECT_PLAYBACK_ORDER);
-    AudioCommand_PlayFar(SE_212);
+    Task_Add(Palette_StepFadeTransfer, ANIM_PLAYBACK_ORDER);
+    Sound_PlaySongFar(SE_212);
     for (frame = 0; frame != 32; frame++) {
-      BattlePresentation_SetupTransitionAtPairMidpointFar(
-          work->effect->actor, work->effect->firstTarget, 130);
+      BattleCamera_SetViewAtPairMidpointFar(work->effect->user,
+                                            work->effect->firstTarget, 130);
       for (i = 0; i != 64; i++) {
-        struct EffectStep *mote = &work->particles[i];
+        struct Particle *mote = &work->particles[i];
 
         if (mote->x >= 0 && frame >= i / 4) {
           s32 size = (i & 1) + 5;
 
-          Render_ResetTransformState();
+          Transform_Reset();
           Transform_ApplyRoll(mote->velocityZ);
           Transform_ApplyPitch(mote->velocityX);
           Transform_ApplyYaw(mote->velocityY);
-          EffectPosition_ProjectPoint(&mote->x, &point);
+          Projection_Point(&mote->x, &point);
           point.x += 64;
           point.y = point.y + screenPosition.y + 24;
           // DEAD: the depth is clamped to -60..60 and moved to 0..120 but
           // never read; the ROM keeps the clamp.
           CLAMP(point.depth, -60, 60);
           point.depth += 60;
-          EFFECT_DRAW_FLARE(draw[0], canvas, sheet, point.x, point.y, size);
+          ANIM_DRAW_FLARE(draw[0], canvas, sheet, point.x, point.y, size);
           mote->x -= 4;
         }
       }
-      EFFECT_PRESENT_FRAME(work);
+      ANIM_PRESENT_FRAME(work);
     }
-    Scheduler_RemoveCallback(Palette_StepFadeTransfer);
+    Task_Remove(Palette_StepFadeTransfer);
     ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)object, 16);
     SET_VELOCITY(object, velocityX, velocityY, velocityZ);
     object->acceleration = acceleration;
@@ -446,10 +435,10 @@ void BattleEffect_RunRingAndSparkSequence(struct BattleEffectArgument *effect) {
   // turned around once more).
   Iwram_ClearWords(canvas, canvasBytes);
   Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), canvasBytes);
-  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   REG_BG1CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(0) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(31);
-  EffectPosition_ProjectScaledBattler(work->effect->actors[0], &anchor);
+  Projection_ScaledUnit(work->effect->targets[0], &anchor);
   if (work->effect->side == 0)
     scrollX = 32 - anchor.x;
   else
@@ -461,10 +450,10 @@ void BattleEffect_RunRingAndSparkSequence(struct BattleEffectArgument *effect) {
   anchor.x += scrollX;
   gBgScroll[1].y = 80;
   gBgScroll[1].x = scrollX;
-  target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
-  half = BattleUnit_GetEffectHeightFar(work->effect->actors[0]) / 2;
+  target = GetBattleObjectSlotFar(work->effect->targets[0])->object;
+  half = BattleUnit_GetEffectHeightFar(work->effect->targets[0]) / 2;
   for (i = 0; i != 64; i++) {
-    struct EffectStep *spark = &work->particles[i];
+    struct Particle *spark = &work->particles[i];
 
     SET_POSITION(spark, target->x, target->y + half, target->z);
     SET_VELOCITY(spark, (Random16() & 255) << 10, (Random16() & 255) << 10,
@@ -476,11 +465,10 @@ void BattleEffect_RunRingAndSparkSequence(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != 32; frame++) {
     if (frame == 5)
-      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
+      ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     if (frame == 4)
-      BattleMotion_ApplyVariantMotionFar(work->effect->actors[0],
-                                         KNOCKBACK_NUDGE);
-    EffectPosition_ProjectScaledBattler(work->effect->actor, &screenPosition);
+      BattleMotion_ApplyKnockbackFar(work->effect->targets[0], KNOCKBACK_NUDGE);
+    Projection_ScaledUnit(work->effect->user, &screenPosition);
     screenPosition.y += 16;
     // The rings: two frames each of the two star burst cells, then of the
     // two crescent cells.
@@ -492,38 +480,37 @@ void BattleEffect_RunRingAndSparkSequence(struct BattleEffectArgument *effect) {
       draw[0](canvas, Ram_MapGridCellBuffer, 0, 0, 120, 120);
     else if (frame <= 7)
       draw[0](canvas, Ram_MapGridCellBuffer + (120 * 120), 0, 0, 120, 120);
-    EFFECT_VIEW_FROM_CAMERA(camera);
+    ANIM_VIEW_FROM_CAMERA(camera);
     // From frame 4 the sparks fly, as in the beam sequence: only the first
     // 32 move, each drawn and moved twice a frame.
     if (frame >= 4 && frame <= 31) {
       for (i = 0; i != 64; i++) {
         s32 pair = i / 2;
-        struct EffectStep *spark = &work->particles[pair];
+        struct Particle *spark = &work->particles[pair];
         s32 size = spark->variant;
 
         if (size > 0) {
-          EffectPosition_ProjectPoint(&spark->x, &spot);
+          Projection_Point(&spark->x, &spot);
           spot.x += scrollX;
           size >>= 3;
           size += 2;
           spot.y += 16;
-          EFFECT_DRAW_FLARE(draw[pair & 1], canvas, sheet, spot.x, spot.y,
-                            size);
-          EffectStep_AdvanceWithGravity3D(spark, 60, -0x400);
+          ANIM_DRAW_FLARE(draw[pair & 1], canvas, sheet, spot.x, spot.y, size);
+          Particle_AdvanceWithGravity3D(spark, 60, -0x400);
           spark->variant--;
         }
       }
     }
-    EFFECT_PRESENT_FRAME(work);
+    ANIM_PRESENT_FRAME(work);
   }
 
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
-  EFFECT_RELEASE_BLITTERS();
+  Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);
+  ANIM_RELEASE_BLITTERS();
   gBgScroll[1].y = 32;
   // Fade the background palette back in over 7 frames.
   for (frame = 0, background = &gBattleWork->background; frame != 7; frame++) {
-    BattlePresentation_SetPaletteLevelFar(*background, 6 - frame);
+    BattleBackground_SetPaletteLevelFar(*background, 6 - frame);
     WaitFrames(1);
   }
-  BattleEffect_HideBg1AndRestoreBackdrop();
+  BattleAnim_HideBg1AndRestoreBackdrop();
 }

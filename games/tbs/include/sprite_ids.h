@@ -2,7 +2,7 @@
 #define ALCHEMY_SPRITE_IDS_H
 
 /// @file
-/// Sprite numbers of field objects, named where the code shows what they are.
+/// Sprite numbers of objects, named where the code shows what they are.
 /// The characters' and Djinn's sprites are in character_ids.h. A sprite's
 /// picture is graphics/sprite/spr_<number>.png, its number in decimal.
 

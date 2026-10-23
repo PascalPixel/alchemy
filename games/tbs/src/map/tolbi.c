@@ -149,9 +149,9 @@ static s32 Tolbi_UpdateKid(union FieldObject *fieldObject) {
 #endif
   struct ObjectEvent *self = &fieldObject->objectEvent;
   u8 **workAreas = gWindowWork;
-  struct UiRenderWork *ui = (struct UiRenderWork *)workAreas[0];
+  struct WindowWork *ui = (struct WindowWork *)workAreas[0];
   struct FieldWork *work =
-      (struct FieldWork *)workAreas[HEAP_SLOT_EVENT - HEAP_SLOT_WINDOW];
+      (struct FieldWork *)workAreas[HEAP_SLOT_FIELD - HEAP_SLOT_WINDOW];
   u16 *kidFlags = (u16 *)&self->timer;
   s32 force = 0;
   s32 range = 18;
@@ -173,7 +173,7 @@ static s32 Tolbi_UpdateKid(union FieldObject *fieldObject) {
 
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
 
-  if ((s16)work->talk != 0 || ui->mode != 0) {
+  if ((s16)work->talk != 0 || ui->mindRead != 0) {
     range = 26;
     if ((*kidFlags & KID_TALKING) != 0) {
       force = 1;
@@ -217,14 +217,14 @@ static void Tolbi_GrowSprout(void) {
 /// moves into place.
 static void Tolbi_RevealHiddenChest(void) {
   MapGrid_CopyCellAttributes(3, 32, 1, 1, 3, 26);
-  Marker_SetPosition(TOLBI_HIDDEN_CHEST, PIXELS(56), PIXELS(424));
+  TreasureSpot_SetPosition(TOLBI_HIDDEN_CHEST, PIXELS(56), PIXELS(424));
 }
 
 /// When Reveal wears off, the chest's cell is covered again and the chest
 /// moves out of sight.
 static void Tolbi_HideRevealedChest(void) {
   MapGrid_CopyCellAttributes(2, 25, 1, 1, 3, 26);
-  Marker_SetPosition(TOLBI_HIDDEN_CHEST, -1, -1);
+  TreasureSpot_SetPosition(TOLBI_HIDDEN_CHEST, -1, -1);
 }
 
 /// The first sign at Tolbi Spring: face away and toss a coin in.
@@ -242,7 +242,7 @@ static void Tolbi_ReadLuckyMedalSign(void) {
 /// Talking to the older brother, or reading his mind. He stops running while
 /// he speaks, then turns back the way he was going.
 static void Tolbi_TalkToOlderBrother(void) {
-  struct EventWork *work = gEventWork;
+  struct EventWork *work = gFieldWork;
   struct ObjectEvent *kid;
   s16 facing;
   s32 msg;
@@ -251,7 +251,7 @@ static void Tolbi_TalkToOlderBrother(void) {
   facing = kid->facing;
   Engine_ScriptStart();
   kid->timer |= KID_TALKING;
-  if (work->psynergyRequest == 0) {
+  if (work->psynergy == 0) {
     if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
       msg = MsgTolbiYayEasyRun;
     } else if (Engine_GameFlagIsSet(FLAG_BABI_SAVED) != 0) {
@@ -281,7 +281,7 @@ static void Tolbi_TalkToOlderBrother(void) {
 
 /// Talking to the younger sister, or reading her mind, as above.
 static void Tolbi_TalkToYoungerSister(void) {
-  struct EventWork *work = gEventWork;
+  struct EventWork *work = gFieldWork;
   struct ObjectEvent *kid;
   s16 facing;
   s32 msg;
@@ -290,7 +290,7 @@ static void Tolbi_TalkToYoungerSister(void) {
   facing = kid->facing;
   Engine_ScriptStart();
   kid->timer |= KID_TALKING;
-  if (work->psynergyRequest == 0) {
+  if (work->psynergy == 0) {
     if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
       msg = MsgTolbiHaHaHa;
     } else if (Engine_GameFlagIsSet(FLAG_BABI_SAVED) != 0) {
@@ -411,7 +411,7 @@ static void Tolbi_TalkToSnackVendor(void) {
 /// (except at TOLBI_TO_WEAPON_AND_ARMOR_SHOP) and the map changes through the
 /// door's warp, numbered as its metatile behavior.
 static void Tolbi_EnterDoor(void) {
-  struct EventWork *work = gEventWork;
+  struct EventWork *work = gFieldWork;
   u32 localId;
   s32 door;
 
@@ -422,7 +422,7 @@ static void Tolbi_EnterDoor(void) {
       objectEvent->motionFlags = 0;
     }
   }
-  door = work->touchedTrigger - 1;
+  door = work->coordEvent - 1;
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gTolbiDoors[door].steps, gTolbiDoors[door].x,
                        gTolbiDoors[door].y);
@@ -433,7 +433,7 @@ static void Tolbi_EnterDoor(void) {
     ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 2, -8);
     Engine_ScriptWait(10);
   }
-  Engine_ScriptRequestWarp(work->touchedTrigger);
+  Engine_ScriptRequestWarp(work->coordEvent);
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
   Engine_ScriptEnd();
@@ -461,7 +461,7 @@ s32 Tolbi_ApplyEntryState(s32 unused) {
   void (*kidUpdate)(union FieldObject *);
   s32 clearFlags;
 
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 
   // The two children run their loop south-east of the fountain.
   ObjectEvent_SetPosition(LOCALID_TOLBI_OLDER_BROTHER, PIXELS(352),
@@ -538,7 +538,7 @@ static void Tolbi_TalkToSpringVisitor(void) {
   Script_OpenMessage(LOCALID_TOLBI_SPRING_VISITOR, 0);
   if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
     // Yes: "I'll give you the chance to go first."
-    gEventWork->message++;
+    gFieldWork->message++;
     Engine_ScriptShowMessage(LOCALID_TOLBI_SPRING_VISITOR, 0);
     ObjectEvent_SetSpeed(LOCALID_TOLBI_SPRING_VISITOR, PIXELS(1),
                          PIXELS(1) / 2);
@@ -562,7 +562,7 @@ static void Tolbi_EnterSpring(void) {
 
 /// Leaves by the warp numbered as the metatile behavior the party walked into.
 static void Tolbi_RequestTouchedWarp(void) {
-  s16 *trigger = &gEventWork->touchedTrigger;
+  s16 *trigger = &gFieldWork->coordEvent;
 
   Engine_ScriptRequestWarp(*trigger);
 }
@@ -575,7 +575,7 @@ static void Tolbi_MeetSearchingSoldiers(void) {
   s32 firstMsg;
 
   Engine_ScriptStart();
-  Camera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   ObjectEvent_SetSpeed(LOCALID_TOLBI_SOLDIER_A, PIXELS(1), PIXELS(1) / 2);
   Engine_ObjectEventSetSpeed(LOCALID_TOLBI_SOLDIER_B, PIXELS(1), PIXELS(1) / 2);
   firstMsg = MsgTolbiSeenAnyoneWho;
@@ -615,9 +615,9 @@ static void Tolbi_MeetSearchingSoldiers(void) {
   // becomes the speaker so that answering closes that portrait window.
   Script_OpenMessage(LOCALID_TOLBI_SOLDIER_A, 0);
   Engine_ScriptWait(25);
-  UiWindow_CreateWithSideObject(SPRITE_BABI, 0, 12, 7);
-  UiText_OpenMessageWindow((firstMsg + 3), 11, 12, 2);
-  gEventWork->speaker = LOCALID_TOLBI_MISSING_PERSON_POSTER;
+  Portrait_OpenWindow(SPRITE_BABI, 0, 12, 7);
+  Message_OpenWindow((firstMsg + 3), 11, 12, 2);
+  gFieldWork->speaker = LOCALID_TOLBI_MISSING_PERSON_POSTER;
   if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
     // Yes: "Babi must be nearby!!!" They nod and run east.
     Engine_ScriptWait(20);
@@ -664,7 +664,7 @@ static void Tolbi_MeetSearchingSoldiers(void) {
     Engine_ScriptWait(20);
     Engine_ObjectEventFaceDirection(LOCALID_TOLBI_SOLDIER_A, FACING_EAST, 0);
     Engine_ScriptWait(30);
-    gEventWork->message += 1;
+    gFieldWork->message += 1;
     Engine_ScriptShowMessage(LOCALID_TOLBI_SOLDIER_A, 0);
     Engine_ScriptWait(20);
     ObjectEvent_FaceDirection(LOCALID_TOLBI_SOLDIER_A, FACING_SOUTH, 0);
@@ -825,56 +825,56 @@ u32 gTolbiWarps[] = {
 // clang-format off
 struct ObjectEventTemplate gTolbiObjectEventTemplates[] = {
     { SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(552), 0, PIXELS(288), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(552), 0, PIXELS(288), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(552), 0, PIXELS(264), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(552), 0, PIXELS(264), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(264), 0, PIXELS(264), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(264), 0, PIXELS(264), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(208), 0, PIXELS(312), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(208), 0, PIXELS(312), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(360), 0, PIXELS(224), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(360), 0, PIXELS(224), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(136), 0, PIXELS(216), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(136), 0, PIXELS(216), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(152), 0, PIXELS(304), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(152), 0, PIXELS(304), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(24), 0, PIXELS(456), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(24), 0, PIXELS(456), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, (s32)gTolbiOlderBrotherRun,
-        PIXELS(344), 0, PIXELS(328), FACING_EAST, TALK_KEEP_FACING, 0 },
+        PIXELS(344), 0, PIXELS(328), FACING_EAST, TALK_FACING_KEEP, 0 },
     { SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, (s32)gTolbiYoungerSisterRun,
-        PIXELS(376), 0, PIXELS(328), FACING_WEST, TALK_KEEP_FACING, 0 },
+        PIXELS(376), 0, PIXELS(328), FACING_WEST, TALK_FACING_KEEP, 0 },
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(248), 0, PIXELS(200), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(248), 0, PIXELS(200), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_STOUT_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(360), 0, PIXELS(200), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(360), 0, PIXELS(200), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_YOUTH_WITH_HEADBAND, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(400), 0, PIXELS(432), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(400), 0, PIXELS(432), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUTH_WITH_HEADBAND, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(344), 0, PIXELS(120), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(344), 0, PIXELS(120), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_PERSON_WITH_SWORD, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(184), 0, PIXELS(472), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(184), 0, PIXELS(472), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_PERSON_WITH_SWORD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(-64), 0, PIXELS(-64), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(-64), 0, PIXELS(-64), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(256), 0, PIXELS(168), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(256), 0, PIXELS(168), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(280), 0, PIXELS(184), FACING_NORTH + FACING_STEP, TALK_KEEP_FACING, 0 },
+        PIXELS(280), 0, PIXELS(184), FACING_NORTH + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(272), 0, PIXELS(168), FACING_SOUTH + FACING_STEP, TALK_KEEP_FACING, 0 },
+        PIXELS(272), 0, PIXELS(168), FACING_SOUTH + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, (s32)gTolbiMirroredObjectEvent,
-        PIXELS(312), 0, PIXELS(120), FACING_NORTHWEST + FACING_STEP, TALK_KEEP_FACING, 0 },
+        PIXELS(312), 0, PIXELS(120), FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(302), 0, PIXELS(296), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(302), 0, PIXELS(296), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(-9), 0, PIXELS(488), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(-9), 0, PIXELS(488), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(-9), 0, PIXELS(488), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(-9), 0, PIXELS(488), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     // Ember, until its Djinni flag is set: twenty flags to an element.
     { MARS_DJINNI, FLAG_DJINNI(DJINNI_EMBER), MOVEMENT_TYPE_STAND,
-        PIXELS(584), 0, PIXELS(136), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(584), 0, PIXELS(136), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_BABI, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(-9), 0, PIXELS(488), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(-9), 0, PIXELS(488), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { MAP_TABLE_END },
 };
 
@@ -935,8 +935,8 @@ struct MapEvent gTolbiEventsFestival[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_SCALPER, CONDITION_ALWAYS, MSGNO(MsgTolbiIveBeenGuardingOurSpotBut) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_SPRING_VISITOR, CONDITION_ALWAYS, MSGNO(MsgTolbiIKeepLosingCoinsButI) },
     { MAP_EVENT_TALK, LOCALID_TOLBI_EMBER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_JoinEmber) },
-    { BG_EVENT(BG_EVENT_UNNAMED), TOLBI_SPRING_SIGN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_ReadSpringSign) },
-    { BG_EVENT(BG_EVENT_UNNAMED), TOLBI_LUCKY_MEDAL_SIGN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_ReadLuckyMedalSign) },
+    { BG_EVENT(BG_EVENT_SILENT), TOLBI_SPRING_SIGN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_ReadSpringSign) },
+    { BG_EVENT(BG_EVENT_SILENT), TOLBI_LUCKY_MEDAL_SIGN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_ReadLuckyMedalSign) },
     { BG_EVENT(BG_EVENT_BARREL), TOLBI_BARREL, FLAG_TOLBI_BARREL_COINS, FIND_COINS(9) },
 // The international editions find the jar only when the party faces north.
     { TOLBI_JAR_SEARCH_KIND, TOLBI_JAR, FLAG_TOLBI_JAR_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
@@ -1005,8 +1005,8 @@ struct MapEvent gTolbiEventsFinalsDay[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_SCALPER, CONDITION_ALWAYS, MSGNO(MsgTolbiTodayIsABigDayFor) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_SPRING_VISITOR, CONDITION_ALWAYS, MSGNO(MsgTolbiIKeepLosingCoinsButI) },
     { MAP_EVENT_TALK, LOCALID_TOLBI_EMBER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_JoinEmber) },
-    { BG_EVENT(BG_EVENT_UNNAMED), TOLBI_SPRING_SIGN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_ReadSpringSign) },
-    { BG_EVENT(BG_EVENT_UNNAMED), TOLBI_LUCKY_MEDAL_SIGN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_ReadLuckyMedalSign) },
+    { BG_EVENT(BG_EVENT_SILENT), TOLBI_SPRING_SIGN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_ReadSpringSign) },
+    { BG_EVENT(BG_EVENT_SILENT), TOLBI_LUCKY_MEDAL_SIGN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_ReadLuckyMedalSign) },
     { BG_EVENT(BG_EVENT_BARREL), TOLBI_BARREL, FLAG_TOLBI_BARREL_COINS, FIND_COINS(9) },
     { BG_EVENT(BG_EVENT_JAR), TOLBI_JAR, FLAG_TOLBI_JAR_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { BG_EVENT(BG_EVENT_CHEST), TOLBI_HIDDEN_CHEST, FLAG_TOLBI_CHEST_POWER_BREAD, FIND_ITEM(ITEM_POWER_BREAD) },
@@ -1058,8 +1058,8 @@ struct MapEvent gTolbiEventsAfterColosso[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_SNACK_VENDOR, CONDITION_ALWAYS, MSGNO(MsgTolbiHowCanWeGetHomeIf) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_SPRING_VISITOR, CONDITION_ALWAYS, MSGNO(MsgTolbiIKeepLosingCoinsButI) },
     { MAP_EVENT_TALK, LOCALID_TOLBI_EMBER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_JoinEmber) },
-    { BG_EVENT(BG_EVENT_UNNAMED), TOLBI_SPRING_SIGN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_ReadSpringSign) },
-    { BG_EVENT(BG_EVENT_UNNAMED), TOLBI_LUCKY_MEDAL_SIGN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_ReadLuckyMedalSign) },
+    { BG_EVENT(BG_EVENT_SILENT), TOLBI_SPRING_SIGN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_ReadSpringSign) },
+    { BG_EVENT(BG_EVENT_SILENT), TOLBI_LUCKY_MEDAL_SIGN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_ReadLuckyMedalSign) },
     { BG_EVENT(BG_EVENT_BARREL), TOLBI_BARREL, FLAG_TOLBI_BARREL_COINS, FIND_COINS(9) },
     { BG_EVENT(BG_EVENT_JAR), TOLBI_JAR, FLAG_TOLBI_JAR_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { BG_EVENT(BG_EVENT_CHEST), TOLBI_HIDDEN_CHEST, FLAG_TOLBI_CHEST_POWER_BREAD, FIND_ITEM(ITEM_POWER_BREAD) },

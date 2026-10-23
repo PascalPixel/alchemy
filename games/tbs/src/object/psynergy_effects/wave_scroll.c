@@ -1,22 +1,22 @@
 /// @file
-/// The wavy background: scanline scroll offsets fed by HBlank DMA.
+/// The scanline effect: scanline scroll offsets fed by HBlank DMA.
 // Part of psynergy_effects.c.
 
 #include "../psynergy_effects_internal.h"
 
-/// Scheduler callback for the wavy background: restarts DMA 0 each frame to
+/// Task for the scanline effect: restarts DMA 0 each frame to
 /// copy the current page's BG1 to BG3 scroll offsets into the scroll registers
 /// one scanline at a time. The first line is written directly; the DMA writes
 /// three words at each HBlank from then on.
-void DisplayScroll_ArmHBlankDma(void) {
+void ScanlineEffect_ArmDma(void) {
   volatile u16 *dma;
-  struct DisplayScrollWork *state;
+  struct ScanlineEffectWork *state;
   u32 *source;
   u16 status;
   u32 control;
   volatile u32 *destination;
 
-  state = gHBlankScrollWork;
+  state = gScanlineEffect;
   source = (u32 *)state->rows[state->page];
 
   dma = REG_DMA0;
@@ -38,13 +38,13 @@ void DisplayScroll_ArmHBlankDma(void) {
   Dma_Set(source, (void *)destination, control, (volatile u32 *)dma);
 }
 
-/// Scheduler callback for the wavy background: fills the hidden page with each
+/// Task for the scanline effect: fills the hidden page with each
 /// scanline's BG3, BG2 and BG1 offsets, the scroll plus a sine wave for x and
 /// for y (an axis with no step stays flat), then shows that page. All three
-/// layers take the same wave; DisplayScroll_ArmHBlankDma feeds the shown page
+/// layers take the same wave; ScanlineEffect_ArmDma feeds the shown page
 /// to the scroll registers from the next frame.
-void DisplayScroll_BuildAndSwapHBlankPage(void) {
-  struct DisplayScrollWork *work = gHBlankScrollWork;
+void ScanlineEffect_BuildPage(void) {
+  struct ScanlineEffectWork *work = gScanlineEffect;
   s32 x3 = (s16)gBgScroll[3].x;
   s32 y3 = (s16)gBgScroll[3].y;
   s32 x2 = (s16)gBgScroll[2].x;
@@ -76,7 +76,7 @@ void DisplayScroll_BuildAndSwapHBlankPage(void) {
     // 4096 * ampX / 0x10000 / 256 pixels: 16 for an ampX of 0x10000.
     amplitude = work->ampX;
     for (scanline = 0; scanline != 160; scanline++) {
-      wave = Iwram_MulQ16(gDisplayScroll_WaveSine[(phase >> 16) & 255],
+      wave = Iwram_MulQ16(gScanlineEffect_WaveSine[(phase >> 16) & 255],
                           amplitude) /
              256;
       *row = a + wave;
@@ -104,7 +104,7 @@ void DisplayScroll_BuildAndSwapHBlankPage(void) {
 
     amplitude = work->ampY;
     for (scanline = 0; scanline != 160; scanline++) {
-      wave = Iwram_MulQ16(gDisplayScroll_WaveSine[(phase >> 16) & 255],
+      wave = Iwram_MulQ16(gScanlineEffect_WaveSine[(phase >> 16) & 255],
                           amplitude) /
              256;
       *row = a + wave;
@@ -120,15 +120,15 @@ void DisplayScroll_BuildAndSwapHBlankPage(void) {
   work->page ^= 1;
 }
 
-// The shared source that starts the wavy background, at its place in the ROM.
+// The shared source that starts the scanline effect, at its place in the ROM.
 #include "../../map/common/scroll_initialize_hblank_dma.h"
 
-/// Stops the wavy background: removes its two callbacks and stops DMA 0.
-void DisplayScroll_DisarmHBlankDma(void) {
+/// Stops the scanline effect: removes its two callbacks and stops DMA 0.
+void ScanlineEffect_Stop(void) {
   volatile u16 *dma0;
 
-  Scheduler_RemoveCallback(DisplayScroll_ArmHBlankDma);
-  Scheduler_RemoveCallback(DisplayScroll_BuildAndSwapHBlankPage);
+  Task_Remove(ScanlineEffect_ArmDma);
+  Task_Remove(ScanlineEffect_BuildPage);
   dma0 = REG_DMA0;
   dma0[5] = (u16)~DMA_START_TIMING_DRQ_REPEAT & dma0[5];
   dma0[5] = (u16)~DMA_ENABLE & dma0[5];

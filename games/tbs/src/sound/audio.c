@@ -122,7 +122,7 @@ void MusicPlayer_StartFadeOut(struct SoundPlayer *player, u16 speed) {
 
 /// Copies the RAM mixer to IWRAM, initializes the PCM and CGB paths and
 /// configures every player from gSound_PlayerSlots. Called by
-/// Audio_InitializeRuntimeDefaults at power-on.
+/// Sound_Initialize at power-on.
 void Audio_Initialize(void) {
   s32 playerIndex;
 
@@ -149,7 +149,7 @@ void Audio_Initialize(void) {
 void AudioEngine_RunMixer(void) { AudioEngine_RunMixerTick(); }
 
 /// Starts the song on the player selected by its song-table entry. Called by
-/// AudioCommand_Play for music and fanfares; it starts sound effects (cues
+/// Sound_PlaySong for music and fanfares; it starts sound effects (songs
 /// from 100) itself, so that those naming player 7 can take a free player
 /// from 7 down to 4.
 void Audio_PlaySound(u16 songId) {
@@ -215,7 +215,7 @@ UNUSED void Audio_ResumeSound(u16 songId) {
     Audio_ResumePlayer(player);
 }
 
-/// Unused: stops every player. Only AudioCommand_StopAllPlayers calls it, and
+/// Unused: stops every player. Only Sound_StopAllMusicPlayers calls it, and
 /// only a bare far-call veneer, which no ☀️ code names, leads there.
 UNUSED void Audio_StopAllPlayers(void) {
   s32 playerIndex;
@@ -229,7 +229,7 @@ UNUSED void MusicPlayer_Resume(struct SoundPlayer *player) {
   Audio_ResumePlayer(player);
 }
 
-/// Unused: resumes every player. Only AudioCommand_ResumeAllPlayers calls it,
+/// Unused: resumes every player. Only Sound_ResumeAllMusicPlayers calls it,
 /// and only a bare far-call veneer, which no ☀️ code names, leads there.
 UNUSED void Audio_ResumeAllPlayers(void) {
   s32 playerIndex;
@@ -238,8 +238,8 @@ UNUSED void Audio_ResumeAllPlayers(void) {
     Audio_ResumePlayer(gSound_PlayerSlots[playerIndex].player);
 }
 
-/// Begins the standard stop-and-clear fade. Called by AudioCommand_Play's fade
-/// cues.
+/// Begins the standard stop-and-clear fade. Called by Sound_PlaySong's fade
+/// controls.
 void MusicPlayer_FadeOut(struct SoundPlayer *player, u16 speed) {
   MusicPlayer_StartFadeOut(player, speed);
 }
@@ -282,7 +282,7 @@ UNUSED void MusicPlayer_ResetActiveTracks(struct SoundPlayer *player) {
 }
 
 /// Resets the CGB sound hardware, installs the CGB-aware command handlers and
-/// callbacks in the sound work, and clears the four channel records `notes`.
+/// callbacks in the sound work, and clears the four channels' `notes`.
 /// Called by Audio_Initialize. The hardware reset happens even when the
 /// driver's lock is held; the rest is then skipped.
 void CgbAudio_Initialize(struct CgbNote *notes) {

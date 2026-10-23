@@ -6,7 +6,7 @@
 
 #include "window.h"
 
-extern struct EventWork *gEventWork;
+extern struct EventWork *gFieldWork;
 #include "global_cells.h"
 
 void Engine_ObjectEventSetAnimation();

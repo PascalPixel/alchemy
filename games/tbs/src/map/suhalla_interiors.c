@@ -232,8 +232,8 @@ static void EventScript_AskIfBlownHere(s32 localId) {
 /// The doors of Suhalla and Suhalla Sanctum, and the doors between the inn and
 /// its guest rooms: the party leaves by the touched warp.
 static void EventScript_LeaveByWarp(void) {
-  struct EventWork *state = gEventWork;
-  s16 *touchedTrigger = (s16 *)&state->touchedTrigger;
+  struct EventWork *state = gFieldWork;
+  s16 *touchedTrigger = (s16 *)&state->coordEvent;
 
   Engine_ScriptRequestWarp(*touchedTrigger);
   Engine_AudioPlayCue(SE_MAP_EXIT);
@@ -252,15 +252,15 @@ static void EventScript_IodemQuestionsWoundedSoldiers(void) {
   struct ObjectEvent *leader;
   GameFlag_Set(FLAG_IODEM_MET_WOUNDED_SOLDIERS);
   if (GameFlag_IsSet(FLAG_BABI_LIGHTHOUSE_IODEM_ARRIVED) == 0) {
-    Script_PlayCue(MUS_030);
+    Script_PlaySong(MUS_030);
     Script_Start();
     // Frame the speakers and bring the leader over before the dialogue.
-    Camera_MoveTo(PIXELS(368), -1, PIXELS(104), 1);
+    FieldCamera_MoveTo(PIXELS(368), -1, PIXELS(104), 1);
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 368, 160);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
     FieldMotion_LaunchFromFocusedObject(LOCALID_IODEM, 0, -16, FACING_NORTH);
     ObjectEvent_WaitForMove(LOCALID_IODEM);
-    Camera_WaitForMove();
+    FieldCamera_WaitForMove();
     Script_SetMessage(MsgSuhallaIodem);
     Script_Wait(10);
     ObjectEvent_RunRepeatedMotion(LOCALID_SOLDIER_SOUTH, 2);
@@ -494,10 +494,10 @@ static void EventScript_IodemQuestionsWoundedSoldiers(void) {
     if (Script_ChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
       Script_Wait(20);
       Script_ShowMessage(LOCALID_IODEM, 0);
-      gEventWork->message++;
+      gFieldWork->message++;
     } else {
       Script_Wait(10);
-      gEventWork->message++;
+      gFieldWork->message++;
       Script_ShowMessage(LOCALID_IODEM, 0);
     }
     Script_Wait(10);
@@ -512,7 +512,7 @@ static void EventScript_IodemQuestionsWoundedSoldiers(void) {
     Script_Wait(20);
     ObjectEvent_SetAnimationAndWait(LOCALID_IODEM, ANIMATION_NOD);
     Script_Wait(30);
-    Script_PlayCue(MUS_030);
+    Script_PlaySong(MUS_030);
     ObjectEvent_SetSpeed(LOCALID_IODEM, PIXELS(6) / 5, PIXELS(3) / 5);
     ObjectEvent_SetAnimation(LOCALID_IODEM, ANIMATION_WALK);
     // Iodem walks into the leader and is hidden: he travels in the party.
@@ -525,7 +525,7 @@ static void EventScript_IodemQuestionsWoundedSoldiers(void) {
     ObjectEvent_SetPosition(LOCALID_IODEM, 0, 0);
     Script_Wait(10);
     // Back to the map section's own music.
-    Audio_PlayCueFromEventWork();
+    Map_PlayMusic();
     Script_End();
   }
 }
@@ -547,9 +547,9 @@ s32 Map_Initialize(void) {
   struct ObjectEvent *objectEvent;
   if (gGameState.warpDest == SUHALLA_INTERIORS_AFTER_BABI_SPOKE)
     Engine_GameFlagSet(FLAG_BABI_SPOKE_AFTER_COLOSSO);
-  gEventWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  gEventWork->transitionFrames = 24;
+  gFieldWork->transitionFrames = 24;
   // Nearer to talk to, across their counters.
   ObjectEvent_GetById(LOCALID_MERCHANT)->collisionFlags |= OBJ_EVENT_NEAR_TALK;
   ObjectEvent_GetById(LOCALID_INNKEEPER)->collisionFlags |= OBJ_EVENT_NEAR_TALK;
@@ -623,59 +623,59 @@ u32 gSuhallaInteriorsWarps[] = {
 
 struct ObjectEventTemplate gSuhallaInteriorsObjectEventTemplates[] = {
     { SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(368), 0, PIXELS(192), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(368), 0, PIXELS(192), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(328), 0, PIXELS(80), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(328), 0, PIXELS(80), FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(56), 0, PIXELS(120), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(56), 0, PIXELS(120), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(160), 0, PIXELS(104), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(160), 0, PIXELS(104), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_PONYTAIL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(568), 0, PIXELS(96), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(568), 0, PIXELS(96), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_WITH_DARK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(272), 0, PIXELS(392), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(272), 0, PIXELS(392), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_IN_PINK_APRON, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(224), 0, PIXELS(344), FACING_NORTHEAST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(224), 0, PIXELS(344), FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(-64), 0, PIXELS(-64), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(-64), 0, PIXELS(-64), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(-64), 0, PIXELS(-64), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(-64), 0, PIXELS(-64), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_STOUT_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(-64), 0, PIXELS(-64), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(-64), 0, PIXELS(-64), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(432), 0, PIXELS(600), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(432), 0, PIXELS(600), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gSuhallaInteriorsObjectEventTemplatesAfterAudience[] = {
     { SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(400), 0, PIXELS(184), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(400), 0, PIXELS(184), FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(416), 0, PIXELS(184), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(416), 0, PIXELS(184), FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(56), 0, PIXELS(120), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(56), 0, PIXELS(120), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(160), 0, PIXELS(104), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(160), 0, PIXELS(104), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_PONYTAIL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(568), 0, PIXELS(96), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(568), 0, PIXELS(96), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_WITH_DARK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(272), 0, PIXELS(392), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(272), 0, PIXELS(392), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_IN_PINK_APRON, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(224), 0, PIXELS(344), FACING_NORTHEAST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(224), 0, PIXELS(344), FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(688), 0, PIXELS(384), FACING_SOUTHEAST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(688), 0, PIXELS(384), FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(712), 0, PIXELS(408), FACING_NORTHWEST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(712), 0, PIXELS(408), FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_STOUT_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(136), 0, PIXELS(616), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(136), 0, PIXELS(616), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(432), 0, PIXELS(600), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(432), 0, PIXELS(600), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_IODEM, FLAG_IODEM_MET_WOUNDED_SOLDIERS, MOVEMENT_TYPE_STAND,
-        PIXELS(-64), 0, PIXELS(-64), FACING_EAST, TALK_KEEP_FACING, 0 },
+        PIXELS(-64), 0, PIXELS(-64), FACING_EAST, TALK_FACING_KEEP, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(416), 0, PIXELS(136), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(416), 0, PIXELS(136), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(416), 0, PIXELS(80), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(416), 0, PIXELS(80), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 

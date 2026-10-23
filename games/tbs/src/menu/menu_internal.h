@@ -77,18 +77,18 @@ extern u8 IwramCopyWords[];
 
 s32 _call_via_r3(void *, void *, s32, void *);
 
-/// BattleAct.flags: where an ability or item can be used, as the Psynergy
-/// list says ("Usable in the field", "Usable in battle"). The same values as
-/// enum BattleActionUse (battle_unit.h), which these macros shadow here.
-#define ACTION_USABLE_IN_FIELD 0x40
-#define ACTION_USABLE_IN_BATTLE 0x80
+/// AbilityDefinition.flags: where an ability or item can be used, as the
+/// Psynergy list says ("Usable in the field", "Usable in battle"). The same
+/// values as enum AbilityUse (battle_unit.h), which these macros shadow here.
+#define ABILITY_USABLE_IN_FIELD 0x40
+#define ABILITY_USABLE_IN_BATTLE 0x80
 
 /// Game flags of the menus. Start was pressed: every menu screen unwinds and
 /// the whole menu closes. Menu_CancelSoundReset clears it and
 /// Menu_CancelSoundTick sets it.
 #define FLAG_MENU_START_PRESSED 0x150
 /// The info window holds a message the next selection must not draw over.
-/// InventoryMenu_ShowModalMessage sets it; the next chooser that would draw
+/// ItemMenu_ShowMessage sets it; the next chooser that would draw
 /// into the info window clears it instead (see the BUG in
 /// PsynergyMenu_DrawDetailPage).
 #define FLAG_MENU_INFO_KEPT 0x151
@@ -97,7 +97,7 @@ s32 _call_via_r3(void *, void *, s32, void *);
 /// ABILITY_RANGE_ALL. It is no unit's id: Ability_ApplyToTargets starts
 /// from unit 0 in its place, and visits every member because of the range, not
 /// this id. The Item screen never passes it: a whole-party item is used with
-/// the work's paneOwner[1] as it stands (ItemMenu_Use), and its range alone
+/// the work's sideMember[1] as it stands (ItemMenu_Use), and its range alone
 /// reaches every member.
 #define MENU_TARGET_WHOLE_PARTY 9
 
@@ -130,14 +130,14 @@ enum ItemUseResult {
   ITEM_USE_RESULT_DEFENSE_UP = 21  ///< "Your Defense increased!"
 };
 
-/// CharacterMenuState.page: which screen the member row belongs to.
-enum CharacterMenuPage {
-  CHARACTER_MENU_PAGE_STATUS = 0, ///< the Status menu (StatusMenu_Run)
-  /// The member chooser (Menu_OpenCharacterSelector).
-  CHARACTER_MENU_PAGE_CHOOSER = 3
+/// SummaryScreenWork.page: which screen the member row belongs to.
+enum SummaryScreenPage {
+  SUMMARY_SCREEN_PAGE_STATUS = 0, ///< the Status menu (SummaryScreen_Run)
+  /// The member chooser (MemberChooser_Open).
+  SUMMARY_SCREEN_PAGE_CHOOSER = 3
 };
 
-/// PsynergyMenuState.mode: what choosing a Psynergy does.
+/// PsynergyMenuWork.mode: what choosing a Psynergy does.
 enum PsynergyMenuMode {
   PSYNERGY_MODE_USE = 0,   ///< use it
   PSYNERGY_MODE_SET_L = 1, ///< make it the L shortcut
@@ -158,11 +158,11 @@ enum PsynergyListMode {
 
 /// How the item menu can use an item (Item_ClassifyUseMode).
 enum ItemUseMode {
-  /// It cannot be used here: it has no action, it is equipment the owner
+  /// It cannot be used here: it has no action, it is equipment the member
   /// cannot wear or that teaches Psynergy, or its action is usable only in
   /// battle.
   ITEM_USE_MODE_UNUSABLE = -1,
-  /// It works on the field (FieldEffect_HasTriggerFar), or its action is usable
+  /// It works on the field (Map_HasPsynergyEventFar), or its action is usable
   /// neither in the field nor in battle, and is used once the menu closes.
   ITEM_USE_MODE_FROM_FIELD = 0,
   ITEM_USE_MODE_CHOOSE_MEMBER = 1, ///< choose a party member to use it on
@@ -182,7 +182,7 @@ enum ItemTargetMode {
 /// Inventory icons occupy five columns in the fifteen-slot list.
 #define MENU_ITEM_GRID_COLUMNS 5
 
-/// What Menu_DrawOwnerStatusPanel shows below the name and ailments: the low
+/// What StatusPanel_Draw shows below the name and statuses: the low
 /// byte of its mode.
 enum StatusPanelKind {
   STATUS_PANEL_EXPERIENCE = 0, ///< class, HP, PP and experience
@@ -193,31 +193,31 @@ enum StatusPanelKind {
   STATUS_PANEL_CLASS = 6, ///< class, HP and PP
   STATUS_PANEL_STATS = 8, ///< Attack, Defense, Agility and Luck
 };
-/// The panel kind in Menu_DrawOwnerStatusPanel's mode; the bits above it are
+/// The panel kind in StatusPanel_Draw's mode; the bits above it are
 /// STATUS_PANEL_LOWER_ONLY.
 #define STATUS_PANEL_KIND_MASK 0xff
-/// Keeps the open window, the name and the ailments, and redraws only the
+/// Keeps the open window, the name and the statuses, and redraws only the
 /// part below them.
 #define STATUS_PANEL_LOWER_ONLY 0x100
 
 // The information pane's text: outside Japanese it is drawn character by
 // character into the window's tiles, so clearing it redraws the empty frame;
-// the Japanese edition decodes it into the text canvas (UiText_DrawResource),
-// so clearing it releases the canvas's render outputs. Both follow the text
+// the Japanese edition decodes it into the text canvas (Text_DrawMessage),
+// so clearing it releases the canvas's window sprites. Both follow the text
 // system, so the test is on the language.
 #if LANGUAGE != LANGUAGE_JAPANESE
-#define MENU_RESET_INFO_WINDOW RenderOutput_RedrawSavedRectFar
-#define MENU_DRAW_INFO_TEXT UiText_DrawCharacterAtOffsetFar
+#define MENU_RESET_DESCRIPTION_WINDOW WindowSprite_RedrawSavedRectFar
+#define MENU_DRAW_DESCRIPTION Text_DrawMessageAsTilesFar
 #else
-#define MENU_RESET_INFO_WINDOW RenderOutput_ClearListFar
-#define MENU_DRAW_INFO_TEXT UiText_DrawResourceFar
+#define MENU_RESET_DESCRIPTION_WINDOW WindowSprite_ClearListFar
+#define MENU_DRAW_DESCRIPTION Text_DrawMessageFar
 #endif
 
 // Status labels use the Latin font's pixel positions or the Japanese tile grid.
 #if LANGUAGE == LANGUAGE_JAPANESE
-#define MENU_DRAW_STATUS_LABEL UiText_DrawStringInWindowFar
+#define MENU_DRAW_STATUS_LABEL Text_DrawStringInWindowFar
 #else
-#define MENU_DRAW_STATUS_LABEL UiText_DrawStringAtOffsetFar
+#define MENU_DRAW_STATUS_LABEL Text_DrawStringAtOffsetFar
 #endif
 
 // Text colours of the status panel's numbers.
@@ -225,11 +225,11 @@ enum StatusPanelKind {
 #define TEXT_COLOR_NO_HP 2   ///< HP 0
 #define TEXT_COLOR_NORMAL 15 ///< the window text's default colour
 
-/// RenderOutput.active as the menu sets it: shown, or hidden but kept.
-#define ICON_SHOWN 1   ///< UI_SPRITE_STILL
-#define ICON_HIDDEN 13 ///< UI_SPRITE_HIDDEN
+/// WindowSprite.motion as the menu sets it: shown, or hidden but kept.
+#define ICON_SHOWN 1   ///< WINDOW_SPRITE_MOTION_STILL
+#define ICON_HIDDEN 13 ///< WINDOW_SPRITE_MOTION_HIDDEN
 
-/// RenderOutput_CreateFar's sprite attributes for the menu's 16x16 icons:
+/// WindowSprite_CreateFar's sprite attributes for the menu's 16x16 icons:
 /// OAM attribute 0 in the low half (shape square) and attribute 1 in the high
 /// half (size 1).
 #define ICON_SPRITE_16X16 0x40000000
@@ -246,7 +246,7 @@ enum DjinnPreviewMode {
   DJINN_PREVIEW_ADD = 4        ///< the other's Djinni is added, set if it was
 };
 
-/// OwnerAction_RunCompareLoop's pages for a give or trade, which R cycles; the
+/// PsynergyList_RunCompareLoop's pages for a give or trade, which R cycles; the
 /// first two also index its per-member page counts.
 enum DjinnComparePage {
   DJINN_COMPARE_PAGE_GIVER = 0,    ///< the giver's stats and Psynergy
@@ -280,7 +280,7 @@ enum DjinnMenuResult {
 /// DjinnMenuBackdrop.tutorialStep: where the Djinn tutorial is. Each lesson's
 /// steps follow its first in order, each waiting, showing a message or
 /// pressing a key for the player (DjinnMenu_SelectDjinn,
-/// OwnerAction_RunCompareLoop); the flags that pick the lesson are
+/// PsynergyList_RunCompareLoop); the flags that pick the lesson are
 /// FLAG_DJINN_LESSON_PART_A and _PART_B (DjinnMenu_Run).
 enum DjinnTutorialStep {
   DJINN_TUTORIAL_OFF = 0,
@@ -304,14 +304,14 @@ enum DjinnSelectMode {
 /// elements follow it in order.
 #define DJINN_ELEMENT_TILE 0x5001
 
-/// A Djinn list entry's owner, element and index (DJINN_ENTRY_OWNER,
+/// A Djinn list entry's member, element and index (DJINN_ENTRY_MEMBER,
 /// _ELEMENT and _INDEX), shifted down.
-#define DJINN_OWNER(v) (((v) & 0xf00) >> 8)
+#define DJINN_MEMBER(v) (((v) & 0xf00) >> 8)
 #define DJINN_ELEMENT(v) (((v) & 0xe0) >> 5)
 #define DJINN_NUMBER(v) ((v) & 0x1f)
 
 /// The preview loop's four operations, as its confirmation text describes them
-/// (OwnerAction_RunCompareLoop's mode). Trade and Give, the first two, have
+/// (PsynergyList_RunCompareLoop's mode). Trade and Give, the first two, have
 /// two members and the paged previews; Standby and Set one member.
 enum DjinnCompareOperation {
   DJINN_COMPARE_TRADE = 0,

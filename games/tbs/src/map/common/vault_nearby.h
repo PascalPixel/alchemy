@@ -47,7 +47,8 @@ static s32 Vault_UpdateWalkingVillager(union FieldObject *fieldObject) {
 
   player = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
 
-  if (*(s16 *)(workspace + 376) != 0 || scene[RENDER_MODE_OFFSET] != 0) {
+  if (*(s16 *)(workspace + 376) != 0 ||
+      scene[WINDOW_WORK_MIND_READ_OFFSET] != 0) {
     range = 26;
     if ((*flags & 2) != 0) {
       force = 1;

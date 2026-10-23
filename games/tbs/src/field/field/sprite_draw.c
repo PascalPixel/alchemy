@@ -1,34 +1,34 @@
 /// @file
-/// Drawing sprites: composing their layers and placing them on screen.
+/// Drawing sprites: composing their anims and placing them on screen.
 // Part of field.c.
 
 #include "../field_internal.h"
 
-/// Draws one layer's frame into a sprite's pixel buffer (Render_DecodeFrame,
+/// Draws one anim's frame into a sprite's pixel buffer (Render_DecodeFrame,
 /// run from RAM).
 typedef void (*SpriteDrawFn)(const void *src, void *dst, s32 param);
 /// Uploads a finished sprite buffer to sprite VRAM (Tile_CopyStrided).
 typedef void (*SpriteUploadFn)(const void *src, u32 w, u32 h, void *vram);
 
-/// Advances a sprite's animation layers by one frame, picks each layer's frame
+/// Advances a sprite's anims by one frame, picks each anim's frame
 /// for the facing dir, and when any frame changed redraws the sprite: the
-/// layers composed by priority into one pixel buffer, an optional outline,
-/// and the result uploaded to the sprite's VRAM tiles. Returns 1 when layer
+/// anims composed by priority into one pixel buffer, an optional outline,
+/// and the result uploaded to the sprite's VRAM tiles. Returns 1 when anim
 /// 0's frame for this facing is drawn mirrored.
 ///
 /// Called for each sprite drawn, every frame, by Render_ApplyProjectedPlacement
-/// and Render_PlaceProjectedSprite. Writes the layers' script position,
+/// and Render_PlaceProjectedSprite. Writes the anims' script position,
 /// timer and frame, the sprite's dirty flag and tile, its tiles in OBJ VRAM,
 /// and the ObjectSystemWork's count of bytes composed; takes heap slot
 /// HEAP_SLOT_FRAME_SCRATCH for the decoder when no caller holds it, and frees
 /// it again.
-s32 Sprite_ComposeAnimationFrame(struct AnimationObject *animation, u16 dir) {
+s32 Sprite_ComposeFrame(struct Sprite *animation, u16 dir) {
   s32 mirrored;
   u32 size;
   struct ObjectSystemWork *system;
   SpriteDrawFn decodeFrame;
   s32 decoderWasLoaded;
-  struct AnimationEntry *layer;
+  struct SpriteAnim *layer;
   void *code;
   u8 *pixels;
   u8 *unpacked;
@@ -46,36 +46,36 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *animation, u16 dir) {
   // The object system's work and the frame decoder sit in the heap slot
   // table; load the decoder into RAM for this call if no one else has.
   mirrored = 0;
-  system = gMenuCtrlWork;
+  system = gObjectSystemWork;
   decoderWasLoaded = 1;
-  // UB: gMenuCtrlWork is one pointer, not an array reaching the decoder cell.
-  // The native form derives both cell addresses from this one base; using
-  // WORK_SLOT directly changes allocation and adds a literal-pool entry.
+  // UB: gObjectSystemWork is one pointer, not an array reaching the decoder
+  // cell. The native form derives both cell addresses from this one base; using
+  // HEAP_SLOT_BLOCK directly changes allocation and adds a literal-pool entry.
 #ifdef UBFIX
-  decodeFrame = (SpriteDrawFn)WORK_SLOT(HEAP_SLOT_FRAME_SCRATCH);
+  decodeFrame = (SpriteDrawFn)HEAP_SLOT_BLOCK(HEAP_SLOT_FRAME_SCRATCH);
 #else
-  decodeFrame =
-      (SpriteDrawFn)(*(void *(*)[]) & gMenuCtrlWork)[HEAP_SLOT_FRAME_SCRATCH -
-                                                     HEAP_SLOT_MENU_CONTROL];
+  decodeFrame = (SpriteDrawFn)(*(void *(*)[]) &
+                               gObjectSystemWork)[HEAP_SLOT_FRAME_SCRATCH -
+                                                  HEAP_SLOT_OBJECT_SYSTEM];
 #endif
   if (decodeFrame == 0) {
-    code = Runtime_AllocateHeapBlock(HEAP_SLOT_FRAME_SCRATCH,
-                                     (s32)Render_DecodeFrameCodeSize);
+    code =
+        AllocHeapSlot(HEAP_SLOT_FRAME_SCRATCH, (s32)Render_DecodeFrameCodeSize);
     Dma_Set(Render_DecodeFrame, code,
             (((u32)gRender_DecodeFrameBuffer - (u32)Render_DecodeFrame) >> 2) |
                 (DMA_ENABLE | DMA_32BIT) << 16,
             REG_DMA3);
 #ifdef UBFIX
-    decodeFrame = (SpriteDrawFn)WORK_SLOT(HEAP_SLOT_FRAME_SCRATCH);
+    decodeFrame = (SpriteDrawFn)HEAP_SLOT_BLOCK(HEAP_SLOT_FRAME_SCRATCH);
 #else
-    decodeFrame =
-        (SpriteDrawFn)(*(void *(*)[]) & gMenuCtrlWork)[HEAP_SLOT_FRAME_SCRATCH -
-                                                       HEAP_SLOT_MENU_CONTROL];
+    decodeFrame = (SpriteDrawFn)(*(void *(*)[]) &
+                                 gObjectSystemWork)[HEAP_SLOT_FRAME_SCRATCH -
+                                                    HEAP_SLOT_OBJECT_SYSTEM];
 #endif
     decoderWasLoaded = 0;
   }
 
-  // Step each layer's script: read commands until one shows a frame for a
+  // Step each anim's script: read commands until one shows a frame for a
   // while, else count the current frame's time down.
   for (i = 0; i < animation->count; i++) {
     layer = animation->entries[i];
@@ -92,34 +92,34 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *animation, u16 dir) {
       frame = layer->script[layer->scriptOffset++];
       arg = layer->script[layer->scriptOffset++];
       switch (frame) {
-      case ANIMATION_COMMAND_PLAY:
-        Animation_SetWorkEntry(layer, arg);
+      case ANIMCMD_PLAY:
+        SpriteAnim_Start(layer, arg);
         animation->lastNo = arg;
         break;
-      case ANIMATION_COMMAND_JUMP:
+      case ANIMCMD_JUMP:
         layer->scriptOffset = arg;
         break;
-      case ANIMATION_COMMAND_WAIT:
+      case ANIMCMD_WAIT:
         layer->timer += arg << 4;
         break;
-      case ANIMATION_COMMAND_HOLD:
+      case ANIMCMD_HOLD:
         layer->scriptOffset -= 2;
         goto framed;
-      case ANIMATION_COMMAND_SET_KIND:
+      case ANIMCMD_SET_KIND:
         layer->kind = arg;
         break;
-      case ANIMATION_COMMAND_BLANK:
+      case ANIMCMD_BLANK:
         layer->frameBase = 255;
         frame = 255;
         layer->timer += arg << 4;
         goto select_direction;
-      case ANIMATION_COMMAND_END:
+      case ANIMCMD_END:
         layer->frameBase = 255;
         layer->script = 0;
         frame = 255;
-        // XXX: ending any layer lowers the sprite's layer count, so the last
-        // layer stops being stepped and drawn even when another one ended; a
-        // sprite whose layer other than the last ends would show whether that
+        // XXX: ending any anim lowers the sprite's anim count, so the last
+        // anim stops being stepped and drawn even when another one ended; a
+        // sprite whose anim other than the last ends would show whether that
         // is a bug.
         animation->count--;
         goto select_direction;
@@ -141,13 +141,13 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *animation, u16 dir) {
       }
       goto read_command;
     }
-    // Time is left on this frame: count it down by the layer's step (16, the
+    // Time is left on this frame: count it down by the anim's step (16, the
     // normal speed, takes a frame off each frame).
     layer->timer = layer->timer - layer->step;
   framed:
     frame = layer->frameBase;
   select_direction:
-    // The facing table of the layer's kind gives an offset from the base
+    // The facing table of the anim's kind gives an offset from the base
     // frame (low three bits) and whether to mirror it (bit 7).
     switch (layer->kind) {
     case ANIMATION_FACING_ONE_FRAME:
@@ -197,10 +197,10 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *animation, u16 dir) {
 
   if (animation->dirty != 0) {
     size = animation->width * animation->height;
-    pixels = MemAlloc(size);
+    pixels = Alloc(size);
     Iwram_ClearWords(pixels, size);
 
-    // Sort the visible layers by priority (0-3), then by index, with an
+    // Sort the visible anims by priority (0-3), then by index, with an
     // insertion sort on keys of (priority << 8) | index.
     drawCount = -1;
     for (i = animation->count - 1; i >= 0; i--) {
@@ -240,20 +240,19 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *animation, u16 dir) {
     }
     drawCount++;
 
-    // Draw the layers in that order, each by its codec. LZ frames are
-    // unpacked first, or drawn through a scratch buffer when the layer has a
+    // Draw the anims in that order, each by its codec. LZ frames are
+    // unpacked first, or drawn through a scratch buffer when the anim has a
     // draw parameter.
     for (i = 0; i < drawCount; i++) {
       layer = animation->entries[*(u8 *)&drawOrder[i]];
       if (layer->mode == SPRITE_FRAME_TYPE01) {
-        Resource_DecodeType01(layer->frames[layer->frame], pixels);
+        Decompress_Type01(layer->frames[layer->frame], pixels);
       } else if (layer->mode == SPRITE_FRAME_LZ) {
         if (layer->colorMode != 0) {
-          unpacked = MemAlloc(0x400);
-          decodeFrame(
-              Resource_DecompressLz(layer->frames[layer->frame], unpacked),
-              pixels, layer->colorMode);
-          MemFree(unpacked);
+          unpacked = Alloc(0x400);
+          decodeFrame(Decompress_Lz(layer->frames[layer->frame], unpacked),
+                      pixels, layer->colorMode);
+          Free(unpacked);
         } else {
           decoded = Iwram_Decompress(layer->frames[layer->frame], pixels);
           if (decoded != 0) {
@@ -276,7 +275,7 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *animation, u16 dir) {
       u8 *src;
       u8 *dst;
 
-      inside = MemAlloc(size);
+      inside = Alloc(size);
       w = animation->width;
       h = animation->height;
       edge = system->edge;
@@ -306,7 +305,7 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *animation, u16 dir) {
         dst++;
         src++;
       }
-      MemFree(inside);
+      Free(inside);
     }
 
     // Upload the pixels to the sprite's tiles in VRAM.
@@ -314,17 +313,17 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *animation, u16 dir) {
     tile = VramCache_Load(animation->slot, size, 0);
     {
       void *vram = (void *)(OBJ_VRAM0 + (tile << 5));
-      ((SpriteUploadFn)gWorkSlot[HEAP_SLOT_FRAME_UPLOADER])(
+      ((SpriteUploadFn)gHeapSlots[HEAP_SLOT_FRAME_UPLOADER])(
           pixels, animation->width, animation->height, vram);
     }
     animation->image.tile = tile;
     animation->dirty = 0;
     system->used += size;
-    MemFree(pixels);
+    Free(pixels);
   }
 
   if (decoderWasLoaded == 0) {
-    Runtime_ReleaseHeapBlock(HEAP_SLOT_FRAME_SCRATCH);
+    FreeHeapSlot(HEAP_SLOT_FRAME_SCRATCH);
   }
   return mirrored;
 }
@@ -334,9 +333,8 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *animation, u16 dir) {
 /// groundHeight. scale is the sprite's (x, y) scale (16.16); above 1.0 both
 /// parts use the double-size affine mode. It has a bare veneer in the field
 /// far-call table, and no caller names it.
-void Render_PlaceSpritePartPair(struct AnimationObject *sprite, s32 screenX,
-                                s32 height, s32 screenY, s32 groundHeight,
-                                s32 *scale) {
+void Render_PlaceSpritePartPair(struct Sprite *sprite, s32 screenX, s32 height,
+                                s32 screenY, s32 groundHeight, s32 *scale) {
   u32 halfWidth = sprite->width >> 1;
   u32 halfHeight = sprite->height >> 1;
   s32 marginX = 8;
@@ -383,10 +381,10 @@ void Render_PlaceSpritePartPair(struct AnimationObject *sprite, s32 screenX,
 /// has one) and then the image in a draw slot by depth; an object 100 pixels
 /// or more below the ground takes slot 1 instead, its shadow slot 0.
 ///
-/// Called by ObjectSystem_UpdateCamera for each one-sprite object on a
+/// Called by ObjectSystem_PlaceSprites for each one-sprite object on a
 /// layered map, by the sprite viewer, and as Object_ApplyProjectedPlacementFar
-/// by the battle effects, the Psynergy effects and the menus.
-void Render_ApplyProjectedPlacement(struct AnimationObject *sprite,
+/// by the battle animations, the Psynergy effects and the menus.
+void Render_ApplyProjectedPlacement(struct Sprite *sprite,
                                     const struct SpritePlacement *position,
                                     const struct SpriteScale *scale,
                                     s32 facing) {
@@ -417,7 +415,7 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite,
   struct AnimationSpritePart *part;
 
   // Reuse an untransformed sprite when mirroring, scale and rotation allow it.
-  flip = Sprite_ComposeAnimationFrame(sprite, facing);
+  flip = Sprite_ComposeFrame(sprite, facing);
   if (flip == 0 && scaleX == 0x10000 && scaleY == scaleX &&
       sprite->rotation == 0) {
     affine = 0;
@@ -429,7 +427,7 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite,
     effect.scaleY = scaleY >> 8;
     if (flip != 0)
       effect.scaleX = -effect.scaleX;
-    matrix = AffineMatrix_BuildForEffect(&effect);
+    matrix = OamMatrix_AllocFromTransform(&effect);
   }
   if (scaleX > 0x10000 || scaleY > 0x10000) {
     affine = 3;
@@ -455,7 +453,7 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite,
       part->affineIndex = matrix;
       part->x = (screenX >> 16) - shadowHalfWidth;
       part->y = y;
-      Runtime_PushSlotEntry(part, depth);
+      Oam_AddSpriteAtDepth(part, depth);
     }
   }
   x = (screenX >> 16) - halfWidth + ((sprite->offsetX * scaleX + 0xffff) >> 16);
@@ -469,7 +467,7 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite,
     part->y = y;
     part->affine = affine;
     part->affineIndex = matrix;
-    Runtime_PushSlotEntry(part, slot);
+    Oam_AddSpriteAtDepth(part, slot);
   }
 }
 
@@ -480,11 +478,11 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite,
 /// slot. A sprite off screen gives up its VRAM cache entry unless
 /// retainCacheEntry holds it.
 ///
-/// Called by ObjectSystem_UpdateCameraFixed for each object on the world map
+/// Called by ObjectSystem_ProjectSprites for each object on the world map
 /// and in the battle; while a menu suspends projection
 /// (ObjectSystemWork.suspended) every sprite is treated as off screen.
-void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
-                                 s32 *scale, s32 facing, s32 depth) {
+void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
+                                 s32 facing, s32 depth) {
   s32 flip;
   u32 halfHeight;
   u32 size;
@@ -503,8 +501,8 @@ void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
 
   // Project first, then discard sprites beyond the padded screen bounds.
   affine = 1;
-  if (gMenuCtrlWork->suspended == 0) {
-    z = Render_ProjectPoint(point, screen);
+  if (gObjectSystemWork->suspended == 0) {
+    z = Transform_ProjectPoint(point, screen);
     if (screen[2] != 0 && screen[0] >= -32 && screen[0] <= 272 &&
         screen[1] >= -32 && screen[1] <= 208) {
       if (sprite->useOwnScale)
@@ -514,7 +512,7 @@ void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
       halfWidth = sprite->width >> 1;
       halfHeight = sprite->height >> 1;
       size = 8;
-      flip = Sprite_ComposeAnimationFrame(sprite, facing);
+      flip = Sprite_ComposeFrame(sprite, facing);
       // Round the perspective scale to the nearest 1/32 (0x800) before
       // combining it with the sprite's own scale.
       roundedScale = (z + 0x400) & -0x800;
@@ -547,7 +545,7 @@ void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
           offsetX = -offsetX;
         }
         effect.scaleY = scaleY >> 8;
-        z = AffineMatrix_BuildForEffect(&effect);
+        z = OamMatrix_AllocFromTransform(&effect);
       } else if (flip != 0) {
         // A plain sprite has no matrix: 8 in the matrix field is OAM's
         // horizontal flip bit.
@@ -570,9 +568,9 @@ void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
         slot = (0x200 - screen[2]) / 2 + 128;
         if (slot <= 0)
           slot = 1;
-        Runtime_PushSlotEntry(sprite, slot);
+        Oam_AddSpriteAtDepth(sprite, slot);
       } else {
-        Runtime_PushSlotEntry(sprite, depth);
+        Oam_AddSpriteAtDepth(sprite, depth);
       }
       // Project the ground point separately so jumping does not lift the
       // shadow.
@@ -580,16 +578,16 @@ void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
         struct AnimationSpritePart *shadow;
 
         SET_VECTOR(ground, point[0], 0, point[2]);
-        Render_ProjectPoint(ground, screen);
+        Transform_ProjectPoint(ground, screen);
         shadow = &sprite->shadow;
         shadow->x = screen[0] - size;
         shadow->y = screen[1] - (size >> 1) + 2;
         shadow->affine = affine;
         shadow->affineIndex = z;
         if (depth == 0)
-          Runtime_PushSlotEntry(shadow, 0);
+          Oam_AddSpriteAtDepth(shadow, 0);
         else
-          Runtime_PushSlotEntry(shadow, depth);
+          Oam_AddSpriteAtDepth(shadow, depth);
       }
       return;
     }
@@ -603,23 +601,23 @@ void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
   }
 }
 
-/// Sets the colour mode (SpriteColorMode) of each of a sprite's layers to
-/// value, except layers drawn hidden (SPRITE_COLOR_HIDDEN), and marks the
-/// sprite for redrawing. The sprite's first count layers must all be present:
+/// Sets the colour mode (SpriteColorMode) of each of a sprite's anims to
+/// value, except anims drawn hidden (SPRITE_COLOR_HIDDEN), and marks the
+/// sprite for redrawing. The sprite's first count anims must all be present:
 /// it does not test them for null.
 /// Called by Animation_ApplyChildValues and, as
-/// ObjectGroup_SetChildValueUnlessFifteenFar, by the Psynergy effects, the
+/// Sprite_SetAnimColorModesFar, by the Psynergy effects, the
 /// Sanctum and the Altmiller Cave map.
-void ObjectGroup_SetChildValueUnlessFifteen(void *rawSprite, u32 value) {
-  struct AnimationObject *sprite = rawSprite;
+void Sprite_SetAnimColorModes(void *rawSprite, u32 value) {
+  struct Sprite *sprite = rawSprite;
   if (sprite != 0) {
     u32 count = sprite->count;
 
     if (count != 0) {
-      struct AnimationEntry **entry = sprite->entries;
+      struct SpriteAnim **entry = sprite->entries;
       u32 remaining = count;
       do {
-        struct AnimationEntry *layer = *entry++;
+        struct SpriteAnim *layer = *entry++;
         if (layer->colorMode != SPRITE_COLOR_HIDDEN)
           layer->colorMode = value;
         remaining--;

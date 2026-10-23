@@ -12,10 +12,10 @@ Attack would be with another sword, and a battle what a blow does.
 [Battles](../battle/README.md) follows an ability from these tables to its
 damage.
 
-Two words run through the page. A character's record, with its stats, HP
-and [PP](../../glossary.md#psynergy-and-pp), items and Djinn, is a unit, a
-`struct BattleUnit`; the same struct holds each enemy in a battle. The
-number that picks a unit is its owner: `ISAAC` (0) to `PIERS` (7) for the
+Two words run through the page. A character's stats, HP
+and [PP](../../glossary.md#psynergy-and-pp), items and Djinn make up a unit, a
+`struct Unit`; the same struct holds each enemy in a battle. The
+number that picks a unit is its unit id: `ISAAC` (0) to `PIERS` (7) for the
 eight characters of both games, and from `FIRST_ENEMY_UNIT` (128) for the
 current battle's enemies.
 
@@ -79,7 +79,7 @@ name the ids the code uses.
 | Table | One row per | Placed as |
 | --- | --- | --- |
 | `items.tsv` | item (324) | `gItem_DefinitionTable` (`item_table.s`) |
-| `actions.tsv` | ability (519) | `gBattleAction_DefinitionTable` (`actions.s`) |
+| `actions.tsv` | ability (519) | `gAbilityDefinitions` (`actions.s`) |
 | `djinn.tsv` | Djinni, `DJINN_PER_ELEMENT` (20) to an [element](../../glossary.md#the-four-elements), Venus, Mercury, Mars, Jupiter (80) | `gDjinn_DefinitionTable` (`djinn_table.s`) |
 | `enemies.tsv` | enemy (165) | `gEnemy_Definitions` (`enemies.s`) |
 | `summons.tsv` | summon (16) | `gSummon_DefinitionTable` (`summons.s`) |
@@ -117,16 +117,16 @@ element 4, `ELEMENT_NONE`; every other column is 0.
 | `type` | `enum ItemType`: `ITEM_TYPE_NONE` for anything that isn't equipment, then weapons, armor, shields, helms, boots, `ITEM_TYPE_PSYNERGY`, rings and shirts; a unit equips one of each type except [Psynergy](../../glossary.md#psynergy-and-pp) items |
 | `flags` | `enum ItemFlags`: `ITEM_CURSED`, `ITEM_CANNOT_UNEQUIP`, `ITEM_RARE`, `ITEM_INDISPENSABLE` and `ITEM_STACKABLE` |
 | `equip_mask` | one bit per character who can equip it, bit 0 for Isaac: the Long Sword's `0x13` is Isaac, Garet and Felix |
-| `icon` | its menu icon (`gUiIcon_ItemIconPointers`) |
+| `icon` | its menu icon (`gItemIcons`) |
 | `primary_bonus`, `secondary_bonus` | Attack and Defense added while equipped |
 | `unleash_action`, `unleash_chance` | the ability a weapon unleashes, at `unleash_chance` steps of 5 percent (`RollWeaponUnleash`) |
 | `use_type` | what using it costs: `ITEM_USE_CONSUMED`, `ITEM_USE_MAY_BREAK` (one time in eight), `ITEM_USE_EMPTIES` (leaves an Empty Bottle), or `ITEM_USE_FREE` |
 | `element` | a weapon's attack element, `ELEMENT_NONE` for none |
-| `effect0_kind`, `effect0_amount` to `effect3_` | up to four effects while equipped, `enum ItemEffectKind` (`ITEM_EFFECT_ADD_HP`, `ITEM_EFFECT_SCALE_ATTACK` and the rest), which `Unit_Calculate` applies |
+| `effect0_kind`, `effect0_amount` to `effect3_` | up to four effects while equipped, `enum EquipEffectKind` (`EQUIP_EFFECT_ADD_HP`, `EQUIP_EFFECT_SCALE_ATTACK` and the rest), which `Unit_Calculate` applies |
 | `action_id` | the ability the item uses |
 
 `action_id` and `unleash_action` are rows of `actions.tsv`. Used in battle,
-the item command plans its `action_id` (`BattleCommand_BuildPlan`,
+the item command builds a turn from its `action_id` (`BattleTurn_Build`,
 [battle/battle/plan.c](../battle/battle/plan.c)), and
 [Battles](../battle/README.md#how-an-ability-resolves) follows that ability
 to its effect. An item whose `use_type` is `ITEM_USE_TEACHES` is never used:
@@ -178,7 +178,7 @@ that asks which item a slot holds masks it with `INVENTORY_ITEM_ID_MASK` first, 
 the same item equipped, broken or stacked is a different halfword. Three
 Herbs, item 180, hold 2 in the count part; an equipped Long Sword, item 1,
 holds 0 there and has the equipped bit set. The slots
-are `BattleUnit.inventory`; `enum InventoryEncoding` in `item.h` names their
+are `Unit.inventory`; `enum InventoryEncoding` in `item.h` names their
 parts, and [game/inventory.c](game/inventory.c) reads and writes them.
 
 | Name | Value | Meaning |
@@ -205,14 +205,14 @@ is that same calculation, run on Isaac for a moment and then undone.
 ![On the Item screen, the hand picks Isaac's Machete and points at Remove, and the status panel shows his Attack falling from 24 to 17](https://alchemy.pascalpixel.com/guides/game/items.gif)
 
 In the code, each character's stats, HP, PP, items and Djinn are kept in a
-unit, a `struct BattleUnit`. `Unit_Calculate` ([game/units.c](game/units.c))
+unit, a `struct Unit`. `Unit_Calculate` ([game/units.c](game/units.c))
 works a unit's stats out again from its base stats, equipment, set Djinn, class and battle stat levels,
 clamps each and writes them back, keeping current HP and PP at the same
 fraction of their maximums. It runs after anything that changes an input:
 equipping, setting a Djinni, levelling up, a class change.
 
 A menu that previews a change uses the same path. To show Attack without the
-Machete, `Menu_DrawOwnerStatusPanel`
+Machete, `StatusPanel_Draw`
 ([menu/menu/common.c](../menu/menu/common.c))
 copies the unit to the [heap](../../glossary.md#heap-and-pools), changes the real unit's equipment, lets
 `Unit_Calculate` run, draws the new numbers against the copy and restores the
@@ -260,7 +260,7 @@ the party enters a map, and a map section's, cleared when it enters another
 
 Flags `FLAG_DJINN_FIRST` (48) to 127 are the Djinn's found flags, Djinni n of
 element e being flag `FLAG_DJINN_FIRST` + 20 × e + n. The save summary counts
-how many are set (`SaveState_BuildSummaryHeader`), and the title screen
+how many are set (`Save_BuildFileSummary`), and the title screen
 offers its Battle command only when some save file has found a Djinni
 (`gTitleExtraOptionEnabled`).
 
@@ -298,9 +298,9 @@ and selling or discarding one puts it back (`Item_AdjustCounter`,
 Code in the other banks calls this one's functions by their far-call names,
 and a map's [overlay](../../glossary.md#overlay) through the list of
 outside functions it was built with (its [import table](../../glossary.md#entry-table-and-import-table)); some code reads
-`gGameState`, the record of the game in progress, directly, as the save
+`gGameState`, the state of the game in progress, directly, as the save
 summary does. The battle folder reads `actions.tsv` through
-`struct BattleAct` beside its own `actflags.tsv` and `actstat.tsv`, which
+`struct AbilityDefinition` beside its own `actflags.tsv` and `actstat.tsv`, which
 choose how an ability is drawn ([Battle](../../battle.md)). The flags and the
 units are part of the save file.
 
@@ -339,11 +339,11 @@ far-call table is `games/tbs/src/system/far_call/GAME.S`.
 
 ## Words used here
 
-- **owner** and **unit**: an owner is a number, and a unit the
-  `struct BattleUnit` `Unit_Get(owner)` returns, as the opening says. The
-  characters' units are kept in `gGameState.owners` (`character_ids.h`).
-- **party**: the characters travelling together. `FLAG_IN_PARTY(owner)`
-  says who is in it and `gGameState.activeOwners` lists them in order.
+- **unit id** and **unit**: a unit id is a number, and a unit the
+  `struct Unit` `Unit_Get` returns for it, as the opening says. The
+  characters' units are kept in `gGameState.units` (`character_ids.h`).
+- **party**: the characters travelling together. `FLAG_IN_PARTY(character)`
+  says who is in it and `gGameState.party` lists them in order.
 - **inventory entry**: one of a unit's `INVENTORY_SLOTS` (15) halfwords,
   holding an item, its state and its count.
 - **ability**: a row of `actions.tsv`. Psynergy, a Djinni's and a summon's
@@ -381,14 +381,14 @@ far-call table is `games/tbs/src/system/far_call/GAME.S`.
 The label columns are the English names from `games/tbs/text/en.po`, by the
 message each row's id reaches. The columns are named from what the code reads
 in them, and the item effect kinds from what `Unit_Calculate` does with each. Flags
-48 to 127 are the Djinn's found flags because `Djinn_AddToLeastLoadedOwner`
+48 to 127 are the Djinn's found flags because `Djinn_GiveToParty`
 sets flag `FLAG_DJINN_FIRST` + 20 × element + index when a Djinni joins.
 
 The tables keep no unknown columns. `chars.tsv`'s first twenty words
 (`CharacterDefinition.reserved`) and `summons.tsv`'s two bytes after the
 ability (`SummonDefinition.reserved`) are 0 in every row and read by no code.
 The last byte of `classes.tsv`, `weak_effect3`, is the fourth weak effect,
-which `BattleTarget_IsWeakToEffect` stops short of; it too is 0 in every row,
+which `BattleAbility_IsWeakToEffect` stops short of; it too is 0 in every row,
 as is the enemies' fourth (`EnemyDefinition.weakEffects`).
 
 Rows 269 to 323 of `items.tsv` are 55 copies of one row: a weapon only Isaac

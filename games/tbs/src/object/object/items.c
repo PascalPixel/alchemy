@@ -12,35 +12,36 @@ typedef s32 (*BattleItemCallback)(s32 item, s32 localId, s32 slot);
 /// what the leader faces, or 0 (item 0 matches any item). The event's trigger
 /// names an object event (MAP_EVENT_ITEM_ON_OBJ_EVENT) or a metatile behavior,
 /// and may also require the leader to face within 0x17ff (about 34 degrees) of
-/// a direction. Called by Field_UseItem, and by FieldEffect_HasTrigger
+/// a direction. Called by Field_UseItem, and by Map_HasPsynergyEvent
 /// (psynergy.c) to test whether an item would do anything here.
 s32 Field_FindItemEvent(s32 item) {
-  struct FieldWork *work = (struct FieldWork *)gEventWork;
+  struct FieldWork *work = (struct FieldWork *)gFieldWork;
   const struct MapEvent *event = work->events;
-  s32 facing =
-      ((struct MotionObject *)ObjectTable_Get(gGameState.selectedLocalId))
-          ->angle;
-  s32 objectEventAhead = Field_FindNearbyTalkTarget(gGameState.selectedLocalId);
+  s32 facing = ((struct MotionObject *)ObjectEvent_GetByLocalId(
+                    gGameState.leaderLocalId))
+                   ->angle;
+  s32 objectEventAhead = Field_FindNearbyTalkTarget(gGameState.leaderLocalId);
   s32 tileAhead;
 
   item &= 0x1ff;
-  // Query both target forms once; matching events choose object event or tile
+  // Query both target forms once; matching events choose object event or cell
   // below.
   tileAhead = Field_GetCollisionAheadOfLeader();
 
   // trigger bits: 15..12 facing | 11 facing required | 7..0 object event or
-  // tile code; control bits: 15..8 item | 4 on an object event | 3..0 kind.
-  while (event->control != -1) {
+  // metatile behavior; control bits: 15..8 item | 4 on an object event | 3..0
+  // kind.
+  while (event->kind != -1) {
     s32 eventFacing = event->trigger & 0xf000;
     s16 requiresFacing = event->trigger & 0x0800;
     s32 eventTarget = event->trigger & 0xff;
 
-    if ((event->control & 0x0f) == MAP_EVENT_ITEM &&
+    if ((event->kind & 0x0f) == MAP_EVENT_ITEM &&
         GameFlag_IsConditionActive(event->condition) != 0 &&
         (requiresFacing == 0 ||
          (u16)(eventFacing - facing + 0x17ff) <= 0x2ffe)) {
-      u32 flags = event->control;
-      s32 eventItem = ((const u8 *)&event->control)[1];
+      u32 flags = event->kind;
+      s32 eventItem = ((const u8 *)&event->kind)[1];
 
       if (item == 0 || eventItem == item) {
         if ((flags & MAP_EVENT_ITEM_ON_OBJ_EVENT) != 0) {
@@ -63,15 +64,15 @@ s32 Field_FindItemEvent(s32 item) {
 /// (Retreat asks first and leaves the map). FLAG_NOTHING_HAPPENS still set
 /// afterwards says "But nothing happens."; FLAG_ITEM_USED_UP removes the item.
 /// Returns 0 when the map's event ran or Retreat was declined, else -1, the
-/// item's own action included; Field_RunMap ignores it.
-/// Called by Field_RunMap for the item request (work->item and
+/// item's own action included; Map_Run ignores it.
+/// Called by Map_Run for the item request (work->item and
 /// work->itemArgument). Retreat sets gGameState.mapId and .warpDest to the
 /// Retreat point and raises work->warp.
 s32 Field_UseItem(s32 packedItem, s32 slot) {
   s32 result;
   s32 itemId;
   s32 localId;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   const struct MapEvent *event;
   s32 inventorySlot;
   s32 partyIndex;
@@ -88,12 +89,12 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
   // it ends the use at once.
   {
     mostMatchingSlots = 0;
-    partyCount = Party_CountActiveOwnersFar();
+    partyCount = Party_CountMembersFar();
 
     if (localId == 15) {
       localId = 0;
       for (partyIndex = 0; partyIndex < partyCount; partyIndex++) {
-        unit = Unit_GetFar(gGameState.activeOwners[partyIndex]);
+        unit = Unit_GetFar(gGameState.party[partyIndex]);
         matchingSlots = 0;
         for (inventorySlot = 0; inventorySlot < 15; inventorySlot++) {
           if ((unit->inventory[inventorySlot] & 0x1ff) == itemId)
@@ -102,7 +103,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 
         if (mostMatchingSlots < matchingSlots) {
           mostMatchingSlots = matchingSlots;
-          localId = gGameState.activeOwners[partyIndex];
+          localId = gGameState.party[partyIndex];
         }
       }
     } else {
@@ -114,7 +115,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     }
 
     if (mostMatchingSlots == 0) {
-      UiText_ShowPositionedMessageAndWaitFar(MsgNothingHappens, 1);
+      FieldMessage_ShowFar(MsgNothingHappens, 1);
       return -1;
     }
   }
@@ -127,13 +128,12 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     GameFlag_ClearBitFar(FLAG_ITEM_USED_UP);
     GameFlag_ClearBitFar(FLAG_NOTHING_HAPPENS);
     if (!(event->trigger & 0x400)) {
-      UiWork_PushValueSlotFar(localId, 1);
-      UiWork_PushValueSlotFar(itemId, 2);
-      UiText_ShowPositionedMessageAndWaitFar(MsgActorUsesItem, 1);
+      MessageArgument_PushFar(localId, 1);
+      MessageArgument_PushFar(itemId, 2);
+      FieldMessage_ShowFar(MsgActorUsesItem, 1);
     }
     if ((s32)event->value < 0x10000) {
-      s32 nearbyLocalId =
-          Field_FindNearbyTalkTarget(gGameState.selectedLocalId);
+      s32 nearbyLocalId = Field_FindNearbyTalkTarget(gGameState.leaderLocalId);
       FieldScript_Start();
       FieldScript_SetMessageId(event->value);
       FieldScript_ShowMessageAndWait(nearbyLocalId, 0);
@@ -149,8 +149,8 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 
     GameFlag_ClearBitFar(FLAG_ITEM_USED_UP);
     GameFlag_SetBitFar(FLAG_NOTHING_HAPPENS);
-    actionId = Item_GetDirectFar(itemId)->actionId;
-    work = (struct FieldWork *)gEventWork;
+    actionId = Item_GetDirectFar(itemId)->abilityId;
+    work = (struct FieldWork *)gFieldWork;
 
     if (actionId != 0) {
       GameFlag_SetBitFar(FLAG_ITEM_USE);
@@ -158,12 +158,12 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 
       if (actionId == ABILITY_RETREAT &&
           !GameFlag_TestFar(FLAG_RETREAT_BLOCKED)) {
-        UiWork_PushValueSlotFar(itemId, 2);
-        UiText_ShowPositionedMessageAndWaitFar(MsgUseItemQuestion, 13);
+        MessageArgument_PushFar(itemId, 2);
+        FieldMessage_ShowFar(MsgUseItemQuestion, 13);
         /* FAKEMATCH(temporary): the answer kept in partyIndex, which ranks it
          * higher in global allocation (r6, as the bytes have it); as a local
          * of its own, 109 of 253 instructions differ in tbs-en. */
-        partyIndex = Menu_AskYesNo(1);
+        partyIndex = FieldYesNo_Ask(1);
         UiWork_FinalizePendingCoreFar();
         if (partyIndex != 0)
           return 0;
@@ -173,9 +173,9 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
         work->warp = WARP_RETREAT;
       }
 
-      UiWork_PushValueSlotFar(localId, 1);
-      UiWork_PushValueSlotFar(itemId, 2);
-      UiText_ShowPositionedMessageAndWaitFar(MsgActorUsesItem, 1);
+      MessageArgument_PushFar(localId, 1);
+      MessageArgument_PushFar(itemId, 2);
+      FieldMessage_ShowFar(MsgActorUsesItem, 1);
       // UB: this routine returns void; call it through its declared type.
 #ifdef UBFIX
       FieldEffect_LoadActionEffectResources(actionId, 0);
@@ -185,9 +185,9 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
        * void prototype, 2 of 253 instructions differ in tbs-en. */
       ((s32 (*)(s32, s32))FieldEffect_LoadActionEffectResources)(actionId, 0);
 #endif
-      work->resolvingAction = 1;
+      work->psynergyActing = 1;
       FieldEffect_Run();
-      work->resolvingAction = 0;
+      work->psynergyActing = 0;
       FieldEffect_End();
 
       if (Item_GetDirectFar(itemId)->useType & 1)
@@ -196,7 +196,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
   }
 
   if (GameFlag_TestFar(FLAG_NOTHING_HAPPENS))
-    UiText_ShowPositionedMessageAndWaitFar(MsgNothingHappens, 1);
+    FieldMessage_ShowFar(MsgNothingHappens, 1);
   if (GameFlag_TestFar(FLAG_ITEM_USED_UP))
     Inventory_RemoveFar(localId, slot);
   return result;
@@ -210,14 +210,14 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 /// (MAP_EVENT_PSYNERGY_ON_OBJ_EVENT) or to a metatile behavior. Called by
 /// Field_UsePsynergy for each phase, by Field_RunPsynergyEvents, and by the
 /// Force, Frost and Reveal effects (psynergy_effects/) for their own phases.
-void *FieldEffect_FindMatchingEvent(s32 eventFlags, s32 group, void *target) {
-  struct FieldWork *work = (struct FieldWork *)gEventWork;
+void *Map_FindPsynergyEvent(s32 eventFlags, s32 group, void *target) {
+  struct FieldWork *work = (struct FieldWork *)gFieldWork;
   const struct MapEvent *event = work->events;
-  s32 facing =
-      ((struct MotionObject *)ObjectTable_Get(gGameState.selectedLocalId))
-          ->angle;
+  s32 facing = ((struct MotionObject *)ObjectEvent_GetByLocalId(
+                    gGameState.leaderLocalId))
+                   ->angle;
   s32 objectEventAhead =
-      Field_FindNearbyPsynergyTarget(gGameState.selectedLocalId, group);
+      Field_FindNearbyPsynergyTarget(gGameState.leaderLocalId, group);
   s32 tileAhead;
   s32 anyPhase = 0;
 
@@ -227,21 +227,22 @@ void *FieldEffect_FindMatchingEvent(s32 eventFlags, s32 group, void *target) {
   if (eventFlags == PSYNERGY_EV_ANY)
     anyPhase = 1;
 
-  while (event->control != -1) {
+  while (event->kind != -1) {
     s32 eventFacing = event->trigger & 0xf000;
     s16 requiresFacing = event->trigger & 0x0800;
     s32 eventTarget = event->trigger & 0xff;
 
-    if ((event->control & 0x0f) == MAP_EVENT_PSYNERGY &&
+    if ((event->kind & 0x0f) == MAP_EVENT_PSYNERGY &&
         GameFlag_IsConditionActive(event->condition) != 0 &&
         (requiresFacing == 0 ||
          (u16)(eventFacing - facing + 0x17ff) <= 0x2ffe) &&
-        BattleAction_Get(((const u8 *)&event->control)[1])->type0c == group &&
-        (anyPhase || (event->control & 0x7000000f) == eventFlags)) {
-      // Any Psynergy of the same field kind (type0c) as the event's matches.
-      if ((event->control & MAP_EVENT_PSYNERGY_IN_AREA) != 0)
+        Ability_Get(((const u8 *)&event->kind)[1])->fieldPsynergy == group &&
+        (anyPhase || (event->kind & 0x7000000f) == eventFlags)) {
+      // Any Psynergy of the same field kind (fieldPsynergy) as the event's
+      // matches.
+      if ((event->kind & MAP_EVENT_PSYNERGY_IN_AREA) != 0)
         return (void *)event;
-      if ((event->control & MAP_EVENT_PSYNERGY_ON_OBJ_EVENT) != 0) {
+      if ((event->kind & MAP_EVENT_PSYNERGY_ON_OBJ_EVENT) != 0) {
         if (eventTarget == objectEventAhead)
           return (void *)event;
       } else if (eventTarget == tileAhead) {
@@ -269,15 +270,15 @@ s32 Field_RunPsynergyEvents(s32 packed) {
 
   abilityId = packed & 0x3FF;
   userId = ((u32)packed >> 10) & 0xF;
-  group = BattleAction_Get(abilityId)->type0c;
+  group = Ability_Get(abilityId)->fieldPsynergy;
   // The leader is looked up and the result is not used.
-  ObjectTable_Get(gGameState.selectedLocalId);
-  beforeEvent = FieldEffect_FindMatchingEvent(
-      PSYNERGY_EV(PSYNERGY_PHASE_BEFORE_END), group, &target);
-  afterEvent = FieldEffect_FindMatchingEvent(
-      PSYNERGY_EV(PSYNERGY_PHASE_AFTER_END), group, &target);
+  ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
+  beforeEvent = Map_FindPsynergyEvent(PSYNERGY_EVENT(PSYNERGY_PHASE_BEFORE_END),
+                                      group, &target);
+  afterEvent = Map_FindPsynergyEvent(PSYNERGY_EVENT(PSYNERGY_PHASE_AFTER_END),
+                                     group, &target);
   FieldEffect_LoadActionEffectResources(abilityId, 0);
-  FieldEffect_SetupObjectPair(gGameState.selectedLocalId, target);
+  FieldEffect_SetupObjectPair(gGameState.leaderLocalId, target);
   Field_RunEventAction(beforeEvent, userId, target);
   FieldScript_RunTypeHandler();
   FieldEffect_StopCasterHook();

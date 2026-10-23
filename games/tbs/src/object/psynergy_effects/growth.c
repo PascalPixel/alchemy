@@ -39,7 +39,7 @@ struct BurstParticleVisual {
 
 /// A particle's sprite, seen as its two parts' attributes, which Growth copies
 /// from the first to the second: the image and the shadow
-/// (AnimationObject.image and shadow).
+/// (Sprite.image and shadow).
 struct BurstParticleVisualGroup {
   struct BurstParticleVisual primary;
   struct BurstParticleVisual child;
@@ -49,7 +49,7 @@ struct BurstParticleVisualGroup {
 /// to points round the target, which then takes the sprite priority of the
 /// ground under it.
 ///
-/// Abilities: Growth (FIELD_KIND_GROWTH).
+/// Abilities: Growth (FIELD_PSYNERGY_GROWTH).
 ///
 /// The target plays animation 2, stops being solid,
 /// loses its shadow and is depth-sorted as if 320 pixels higher
@@ -57,7 +57,7 @@ struct BurstParticleVisualGroup {
 void FieldEffect_RunGrowthOnTarget(s32 unused) {
   struct ObjectEvent *target;
 
-  target = ((struct FieldEffectWork *)gEffectWork)->child;
+  target = ((struct FieldEffectWork *)gFieldEffectWork)->child;
   if (target != NULL) {
     FieldEffect_SpawnBurstParticleField();
     ObjectDispatch_SelectAnimationFar(target, 2);
@@ -65,7 +65,7 @@ void FieldEffect_RunGrowthOnTarget(s32 unused) {
     ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)target, 0);
     target->priorityFlags |= OBJ_EVENT_PRIORITY_UNDERFOOT;
     WaitFrames(10);
-    AudioCommand_PlayFar(SE_RECOVERY);
+    Sound_PlaySongFar(SE_RECOVERY);
     WaitFrames(40);
     FieldEffect_FadeFromEffectColor();
   }
@@ -75,18 +75,18 @@ void FieldEffect_RunGrowthOnTarget(s32 unused) {
 /// caster, and then five falling objects appear 4 to 10 pixels round the
 /// effect's position.
 ///
-/// Abilities: Growth (FIELD_KIND_GROWTH).
+/// Abilities: Growth (FIELD_PSYNERGY_GROWTH).
 ///
 /// The objects (217) appear 2 or 3 frames apart and each lasts 60 frames
 /// (gFieldEffect_BurstParticleObjectScript).
 void FieldEffect_RunGrowth(void) {
-  struct FieldEffectWork *effectWork = gEffectWork;
+  struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct BurstParticleVector pos;
   struct BurstParticleVector *p;
   s32 remainingObjects;
 
   FieldEffect_SpawnBurstParticleField();
-  AudioCommand_PlayFar(SE_HEAVY_IMPACT);
+  Sound_PlaySongFar(SE_HEAVY_IMPACT);
   p = &pos;
   remainingObjects = GROWTH_FALL_LAST;
   do {
@@ -123,7 +123,7 @@ void FieldEffect_SpawnBurstParticleField(void) {
   s32 pos[3];
   s32 particleIndex;
 
-  effectWork = gEffectWork;
+  effectWork = gFieldEffectWork;
   caster = effectWork->mainObject;
   FieldEffect_FadeToEffectColor();
 
@@ -180,10 +180,10 @@ void FieldEffect_SpawnBurstParticleField(void) {
         Vector_AddPolarOffset(0xe0000, effectWork->angle, pos);
       radius = Random16() * 6 + 0x40000;
       Vector_AddPolarOffset(radius, Random16(), pos);
-      Object_SetMoveTargetFar((struct ObjectRuntime *)particle, pos[0], pos[1],
+      Object_SetMoveTargetFar((struct Object *)particle, pos[0], pos[1],
                               pos[2]);
     }
-    AudioCommand_PlayFar(SE_131);
+    Sound_PlaySongFar(SE_131);
     WaitFrames(2);
   }
   WaitFrames(8);

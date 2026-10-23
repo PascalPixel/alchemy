@@ -49,7 +49,7 @@
 /// The rock puzzle keeps the rounds matched in gMapLocalState byte 0 and its
 /// state and the light at the top in struct RockPuzzle after it. Turning the
 /// leftmost rock and then the rightmost brings out the ring of five lights; the
-/// ring spins (AltmillerCave_SpinLights, a scheduler task) and stops with one
+/// ring spins (AltmillerCave_SpinLights, a task) and stops with one
 /// light at the top, and turning that light's rock spins it on to a different
 /// light. A wrong rock puts the lights away. The third match bursts the wall
 /// (AltmillerCave_ReleaseWallBurst). Coming up to the rocks from the pillar
@@ -369,7 +369,7 @@ static void AltmillerCave_SetFadeLevel(s32 level) {
   struct FieldWork *work;
   u8 *fade = &gMapLocalState[4];
 
-  work = (struct FieldWork *)gEventWork;
+  work = (struct FieldWork *)gFieldWork;
   *fade = level;
   if (work->revealActive == 0) {
     AltmillerCave_ApplyFadeBlend();
@@ -413,22 +413,22 @@ static void AltmillerCave_DarkenToLevel5(void) {
 /// Darkens the cave on entry: AltmillerCaveEntrance by its levels, the other
 /// dark rooms evenly.
 static void AltmillerCave_InitializeDarkness(void) {
-  u8 **workCells = (u8 **)&gEventWork;
-  struct DisplayTransitionState *state;
+  u8 **workCells = (u8 **)&gFieldWork;
+  struct ScreenTransitionState *state;
 
   {
     struct EventWork *work = (struct EventWork *)*workCells;
-    work->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    work->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     work->transitionFrames = 24;
   }
   Engine_TaskWait(1);
-  DisplayTransition_InitializeBattleEffectState(WINDOW_TRANSITION_LEADER_LOW);
-  // UB: the fourth following pointer cell lies past scalar gEventWork.
+  ScreenTransition_InitializeBattleEffectState(WINDOW_TRANSITION_LEADER_LOW);
+  // UB: the fourth following pointer cell lies past scalar gFieldWork.
   // Its named load adds eight bytes in the native EN trial (0x98 to 0xa0).
 #ifdef UBFIX
-  state = gDisplayTransition;
+  state = gScreenTransitionWork;
 #else
-  state = (struct DisplayTransitionState *)workCells[4];
+  state = (struct ScreenTransitionState *)workCells[4];
 #endif
   {
     u16 *slot = &state->value;
@@ -489,7 +489,8 @@ static void AltmillerCave_StartReveal(void) {
 /// Reveal's light ends: the cave darkens again and AltmillerCaveDraught's rocks
 /// lose their colors.
 static void AltmillerCave_EndReveal(void) {
-  struct FieldEffectWork *effectWork = (struct FieldEffectWork *)gEffectWork;
+  struct FieldEffectWork *effectWork =
+      (struct FieldEffectWork *)gFieldEffectWork;
 
   if (Engine_GameFlagIsSet(FLAG_DARK) != 0) {
     AltmillerCave_InitializeDarkness();
@@ -511,7 +512,7 @@ static void AltmillerCave_StartRetreat(void) {
   struct ObjectEvent *original;
   struct ObjectEvent *replacement;
 
-  effectWork = (struct FieldEffectWork *)gEffectWork;
+  effectWork = (struct FieldEffectWork *)gFieldEffectWork;
   original = effectWork->mainObject;
   Engine_ObjectEventFaceDirection(effectWork->firstObjectId, FACING_SOUTH, 0);
   Animation_ApplyChildValues((struct DispatchObject *)original, 0);
@@ -536,7 +537,7 @@ static void AltmillerCave_UpdateMovedObstacle(void) {
 
   if (objectEvent->x.fixed >> 20 == 30 && objectEvent->z.fixed >> 20 == 20) {
     objectEvent->motionFlags = 2;
-    objectEvent->terrainHeight = 0;
+    objectEvent->groundHeight = 0;
     objectEvent->priorityFlags = 2;
     MapGrid_CopyCellAttributes(30, 20, 1, 1, 32, 20);
 #if TBS_PATCH_1
@@ -547,14 +548,15 @@ static void AltmillerCave_UpdateMovedObstacle(void) {
 
 /// Walking east into AltmillerCaveSquall's pillar pushes it a cell.
 static void AltmillerCave_AdvanceObstacleAndCheckPassage(void) {
-  StagedObjectEvent_AdvancePair();
+  PushedObject_AdvancePair();
   AltmillerCave_UpdateMovedObstacle();
 }
 
 /// Frost's first phase on AltmillerCaveSquall's puddle: notes whether its place
 /// is blocked, which keeps it from freezing.
 static void AltmillerCave_CheckFrostTargetCollision(void) {
-  struct FieldEffectWork *effectWork = (struct FieldEffectWork *)gEffectWork;
+  struct FieldEffectWork *effectWork =
+      (struct FieldEffectWork *)gFieldEffectWork;
   struct ObjectEvent *target = ObjectEvent_GetById(LOCALID_SQUALL_ROOM_PUDDLE);
   struct FieldPosition position;
 
@@ -570,7 +572,8 @@ static void AltmillerCave_CheckFrostTargetCollision(void) {
 /// Frost on AltmillerCaveSquall's puddle, unless blocked: it freezes and its
 /// cell takes the frozen attributes kept at (76, 16).
 static void AltmillerCave_FreezePuddle(void) {
-  struct FieldEffectWork *effectWork = (struct FieldEffectWork *)gEffectWork;
+  struct FieldEffectWork *effectWork =
+      (struct FieldEffectWork *)gFieldEffectWork;
   struct ObjectEvent *puddle = ObjectEvent_GetById(LOCALID_SQUALL_ROOM_PUDDLE);
   s32 blocked;
 
@@ -590,7 +593,7 @@ static void AltmillerCave_FreezePuddle(void) {
 /// hops 32 pixels over it, if the landing is clear.
 static void AltmillerCave_HopSelectedObjectEvent(void) {
   struct ObjectEvent *objectEvent =
-      ObjectEvent_GetById(gGameState.selectedLocalId);
+      ObjectEvent_GetById(gGameState.leaderLocalId);
   s32 motionFlags = objectEvent->motionFlags;
   union {
     struct FieldPosition position;
@@ -631,11 +634,11 @@ static void AltmillerCave_HopSelectedObjectEvent(void) {
 
 /// Walking into one of the three obstacles pushes it, if there is room.
 static void AltmillerCave_MoveStagedObjectEventToClearPosition(void) {
-  struct StagedObjectEventProbe probe;
+  struct PushedObjectProbe probe;
 
   Engine_ScriptStart();
-  if (StagedObjectEvent_FindClearPosition(&probe) != 0) {
-    MapObjectEvent_MoveAndRedraw(probe);
+  if (PushedObject_FindClearPosition(&probe) != 0) {
+    ObjectEvent_MoveAndRedraw(probe);
   }
   Engine_ScriptEnd();
 }
@@ -682,7 +685,7 @@ static void AltmillerCave_PlaceLights(s32 angle) {
   } while (i < LIGHT_COUNT);
 }
 
-/// Scheduler task that spins the ring of lights: it speeds up, coasts, slows
+/// Task that spins the ring of lights: it speeds up, coasts, slows
 /// and stops with the chosen light at the top, which then pulses; a click
 /// (SE_135) sounds for each fifth of a turn.
 static void AltmillerCave_SpinLights(void) {
@@ -773,23 +776,23 @@ static void AltmillerCave_TurnRock(s32 rock) {
   if (state == PUZZLE_START) {
     if (rock == LOCALID_BLUE_ROCK) {
       state = PUZZLE_LEFT_ROCK_TURNED;
-      Script_PlayCue(SE_110);
+      Script_PlaySong(SE_110);
     } else {
-      Script_PlayCue(SE_MENU_ERROR);
+      Script_PlaySong(SE_MENU_ERROR);
     }
     gMapLocalState[0] = 0;
   } else if (state == PUZZLE_LEFT_ROCK_TURNED) {
     if (rock == LOCALID_BLUE_ROCK) {
-      Script_PlayCue(SE_110);
+      Script_PlaySong(SE_110);
     } else if (rock == LOCALID_RED_ROCK) {
       // The lights grow in one by one, each with SE_151.
       state = PUZZLE_LIGHTS_SHOWN;
-      Script_PlayCue(SE_110);
+      Script_PlaySong(SE_110);
       Task_Wait(30);
       angle = gAltmillerCave_LightWheel->angle;
       for (i = 0; i < LIGHT_COUNT; i++) {
         AltmillerCave_PlaceLight(LOCALID_FIRST_LIGHT + i, PIXELS(24), angle);
-        Script_PlayCue(SE_151);
+        Script_PlaySong(SE_151);
         objectEvent = ObjectEvent_Get(LOCALID_FIRST_LIGHT + i);
         objectEvent->scaleX = 0;
         scale = 2 * Q16_ONE / 5;
@@ -804,18 +807,18 @@ static void AltmillerCave_TurnRock(s32 rock) {
       Task_Wait(30);
       correctRock = 1;
     } else {
-      Script_PlayCue(SE_MENU_ERROR);
+      Script_PlaySong(SE_MENU_ERROR);
       state = PUZZLE_START;
     }
   } else if (state == PUZZLE_LIGHTS_SHOWN) {
     if (rock != LOCALID_FIRST_ROCK + chosenLight) {
       // The wrong rock: the lights shrink away.
       state = PUZZLE_START;
-      Script_PlayCue(SE_MENU_ERROR);
+      Script_PlaySong(SE_MENU_ERROR);
       Task_Wait(30);
       for (i = 0; i < LIGHT_COUNT; i++) {
         objectEvent = ObjectEvent_Get(LOCALID_FIRST_LIGHT + i);
-        Script_PlayCue(SE_151);
+        Script_PlaySong(SE_151);
         for (scale = objectEvent->scaleX; objectEvent->scaleX > 2 * Q16_ONE / 5;
              scale -= 3 * Q16_ONE / 64) {
           objectEvent->scaleY = scale;
@@ -825,7 +828,7 @@ static void AltmillerCave_TurnRock(s32 rock) {
         ObjectEvent_SetPosition(LOCALID_FIRST_LIGHT + i, 0, 0);
       }
     } else {
-      Script_PlayCue(SE_110);
+      Script_PlaySong(SE_110);
       correctRock = 1;
       Task_Wait(30);
     }
@@ -848,7 +851,7 @@ static void AltmillerCave_TurnRock(s32 rock) {
         Task_Wait(1);
       }
       Task_Wait(10);
-      Script_PlayCue(SE_110);
+      Script_PlaySong(SE_110);
     } else {
       // The third light matched: the ground shakes, the ring spirals in to
       // nothing, and the wall bursts.
@@ -862,7 +865,7 @@ static void AltmillerCave_TurnRock(s32 rock) {
       Engine_ScriptWait(20);
       MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
       gAltmillerCave_LightWheel->phase = WHEEL_STOPPED;
-      Script_PlayCue(SE_190);
+      Script_PlaySong(SE_190);
       radius = PIXELS(24);
       angle = gAltmillerCave_LightWheel->angle;
       do {
@@ -881,7 +884,7 @@ static void AltmillerCave_TurnRock(s32 rock) {
         ObjectEvent_SetPosition(LOCALID_FIRST_LIGHT + i, 0, 0);
       }
       AltmillerCave_ReleaseWallBurst();
-      Script_PlayCue(MUS_PUZZLE_SOLVED);
+      Script_PlaySong(MUS_PUZZLE_SOLVED);
     }
     Engine_TaskRemoveCallback(AltmillerCave_SpinLights);
   }
@@ -905,7 +908,7 @@ static __inline__ void AltmillerCave_FacePartyNorth(void) {
 /// and he invites the party to Colosso's finals; Garet asks whether they
 /// should take part.
 static void AltmillerCave_RestoreBabiAndInviteParty(void) {
-  struct DisplayTransitionState *state;
+  struct ScreenTransitionState *state;
   struct ObjectEvent *objectEvent;
   struct ObjectEvent *leader;
   s32 i;
@@ -926,7 +929,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   Engine_ScriptWait(50);
   Engine_ScriptWait(10);
-  Camera_MoveTo(PIXELS(264), -1, PIXELS(200), 1);
+  FieldCamera_MoveTo(PIXELS(264), -1, PIXELS(200), 1);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 264, 208);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
@@ -952,7 +955,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Engine_ScriptWait(30);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_INVISIBLE_BABI, 2);
   Engine_ScriptWait(60);
-  Script_PlayCue(AUDIO_CUE_FADE_BGM);
+  Script_PlaySong(SONG_FADE_OUT_BGM);
   objectEvent->sprite->rotation = 0;
   Engine_ObjectEventJump(LOCALID_INVISIBLE_BABI, 10, 70);
   // Flicker between sprite priorities before replacing invisible Babi.
@@ -973,7 +976,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
     ObjectEvent_SetPosition(LOCALID_BABI, PIXELS(x), PIXELS(z));
   }
   objectEvent->sprite->flags = 0;
-  Script_PlayCue(MUS_030);
+  Script_PlaySong(MUS_030);
   ObjectEvent_SetSpeed(LOCALID_BABI, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_WalkByAndWait(LOCALID_BABI, 32, 32);
   ObjectEvent_FaceDirection(LOCALID_BABI, FACING_SOUTH, 0);
@@ -1219,7 +1222,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0);
   // The cave brightens as two men from Tolbi arrive: "Babi!" The light
   // widens to fill the screen and BG1 fades out.
-  state = gDisplayTransition;
+  state = gScreenTransitionWork;
   {
     u16 *slot = &state->value;
     s32 value = ALTMILLER_CAVE_LIGHT_FULL;
@@ -1283,7 +1286,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Engine_ObjectEventStop(IVAN);
   AltmillerCave_FacePartyNorth();
   ObjectEvent_FaceDirection(LOCALID_BABI, FACING_WEST, 0);
-  Camera_MoveTo(PIXELS(248), -1, PIXELS(216), 1);
+  FieldCamera_MoveTo(PIXELS(248), -1, PIXELS(216), 1);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(20);
   Engine_ScriptWait(10);
@@ -1485,7 +1488,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   ObjectEvent_FaceDirection(MIA, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(IVAN, FACING_SOUTH, 0);
   Engine_ScriptWait(20);
-  Camera_MoveTo(PIXELS(248), -1, PIXELS(248), 1);
+  FieldCamera_MoveTo(PIXELS(248), -1, PIXELS(248), 1);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(20);
   ObjectEvent_FaceDirection(LOCALID_BABI, FACING_NORTH, 0);
@@ -1671,7 +1674,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
     Engine_ScriptWait(30);
     ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 70);
   }
-  Script_PlayCue(AUDIO_CUE_FADE_BGM);
+  Script_PlaySong(SONG_FADE_OUT_BGM);
   ObjectEvent_SetSpeed(GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   ObjectEvent_SetSpeed(IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
   ObjectEvent_SetSpeed(MIA, PIXELS(6) / 5, PIXELS(3) / 5);
@@ -1698,7 +1701,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   }
   Engine_ObjectEventWaitForMove(MIA);
   ObjectEvent_SetPosition(MIA, 0, 0);
-  Audio_PlayCueFromEventWork();
+  Map_PlayMusic();
   Engine_ScriptEnd();
 }
 
@@ -1720,7 +1723,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Engine_ScriptWait(20);
   Engine_ScriptShowMessage(LOCALID_INVISIBLE_BABI, 0);
   Engine_ScriptWait(10);
-  Camera_MoveTo(PIXELS(248), -1, PIXELS(184), 1);
+  FieldCamera_MoveTo(PIXELS(248), -1, PIXELS(184), 1);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 248, 192);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
@@ -1960,7 +1963,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
   Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
   Engine_ScriptWait(30);
-  Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
+  Engine_AudioPlayCue(SONG_FADE_OUT_BGM);
   ObjectEvent_SetSpeed(GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   ObjectEvent_SetSpeed(IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
   ObjectEvent_SetSpeed(MIA, PIXELS(6) / 5, PIXELS(3) / 5);
@@ -1988,7 +1991,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   }
   Engine_ObjectEventWaitForMove(MIA);
   ObjectEvent_SetPosition(MIA, 0, 0);
-  Audio_PlayCueFromEventWork();
+  Map_PlayMusic();
   Engine_ScriptEnd();
 }
 
@@ -2227,15 +2230,16 @@ s32 AltmillerCave_Initialize(void) {
   if (Engine_GameFlagIsSet(FLAG_DARK)) {
     AltmillerCave_InitializeDarkness();
   } else {
-    gEventWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
-    gEventWork->transitionFrames = 24;
+    gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
+    gFieldWork->transitionFrames = 24;
   }
   return 0;
 }
 
 /// Update callback of a piece of the burst wall: it flies off to a random
 /// point 120 pixels away, with a crash every fourth frame as they start.
-static void AltmillerCave_UpdateWallFragment(struct EffectSlot *fragment) {
+static void
+AltmillerCave_UpdateWallFragment(struct FieldEffectSprite *fragment) {
   s32 position[3];
   s32 x;
   s32 z;
@@ -2261,13 +2265,13 @@ static void AltmillerCave_UpdateWallFragment(struct EffectSlot *fragment) {
     if ((gFrameTick & 3) == 0)
       Engine_AudioPlayCue(SE_HEAVY_IMPACT);
   } else if (currentPhase == 1) {
-    if (EffectSlot_HasPendingTarget(fragment) == 0) {
+    if (FieldEffectSprite_HasPendingTarget(fragment) == 0) {
       s32 nextPhase = *phase;
       nextPhase--;
       *phase = nextPhase;
     }
   } else if (currentPhase == 2) {
-    if (EffectSlot_HasPendingTarget(fragment) == 0)
+    if (FieldEffectSprite_HasPendingTarget(fragment) == 0)
       FieldEffect_ClearOwnedSlot(fragment);
   }
 }
@@ -2277,25 +2281,26 @@ static void AltmillerCave_UpdateWallFragment(struct EffectSlot *fragment) {
 static void AltmillerCave_ReleaseWallBurst(void) {
   struct FieldEffectWork *effectWork;
   struct EffectVector position;
-  struct EffectSlot *fragment;
+  struct FieldEffectSprite *fragment;
   s32 fragmentIndex;
 
   FieldEffect_InitializeSlots();
-  effectWork = (struct FieldEffectWork *)gEffectWork;
+  effectWork = (struct FieldEffectWork *)gFieldEffectWork;
   Shop_SaveAndTintFieldPalette(0x202108);
   position.x = PIXELS(504);
   position.y = PIXELS(24);
   position.z = PIXELS(144);
   Camera_WorldToScreen(&position);
-  fragment = effectWork->effects;
+  fragment = effectWork->sprites;
   for (fragmentIndex = 23; fragmentIndex >= 0; fragmentIndex--) {
     s32 scale;
 
-    EffectSlot_Initialize(fragment, SPRITE_PARTICLE, position.x, position.z);
-    EffectSlot_SetCallback(fragment, AltmillerCave_UpdateWallFragment);
-    EffectSlot_SetObjectMode(fragment, 7);
-    ObjectGroup_SetChildValueUnlessFifteen(
-        fragment->object, (u32)(Engine_RandomNext() * 7) >> 16);
+    FieldEffectSprite_Initialize(fragment, SPRITE_PARTICLE, position.x,
+                                 position.z);
+    FieldEffectSprite_SetCallback(fragment, AltmillerCave_UpdateWallFragment);
+    FieldEffectSprite_SetObjectMode(fragment, 7);
+    Sprite_SetAnimColorModes(fragment->object,
+                             (u32)(Engine_RandomNext() * 7) >> 16);
     scale = Math_DivideUnsigned(Engine_RandomNext(), 3) + 3 * Q16_ONE / 2;
     fragment->scaleY = scale;
     fragment->scaleX = scale;
@@ -2310,16 +2315,16 @@ static void AltmillerCave_ReleaseWallBurst(void) {
   Engine_TaskWait(30);
   {
     s32 mode = 2;
-    // Walk the state bytes within the complete slot array representation.
+    // Walk the state bytes within the complete field effect sprite array.
     u8 *stateCursor =
-        (u8 *)&effectWork->effects + offsetof(struct EffectSlot, state);
+        (u8 *)&effectWork->sprites + offsetof(struct FieldEffectSprite, state);
 
     for (fragmentIndex = 23; fragmentIndex >= 0; fragmentIndex--) {
-      if (((s8 *)stateCursor)[offsetof(struct EffectSlot, active) -
-                              offsetof(struct EffectSlot, state)] != 0) {
+      if (((s8 *)stateCursor)[offsetof(struct FieldEffectSprite, active) -
+                              offsetof(struct FieldEffectSprite, state)] != 0) {
         *stateCursor = mode;
       }
-      stateCursor += sizeof(struct EffectSlot);
+      stateCursor += sizeof(struct FieldEffectSprite);
     }
   }
   Engine_MapGridWaitForShakeToSettle();
@@ -2330,7 +2335,7 @@ static void AltmillerCave_ReleaseWallBurst(void) {
 /// Pixel step by direction: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(dx, dz) (((u32)(dx) << 16) | ((dz) & 0xffff))
 
-s32 gStagedObjectEvent_DirectionSteps[] = {
+s32 gPushedObject_DirectionSteps[] = {
     DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),
@@ -2339,11 +2344,11 @@ s32 gStagedObjectEvent_DirectionSteps[] = {
     DIRECTION_STEP(16, 0),
 };
 
-u32 gStagedObjectEvent_FootprintKinds[] = {
+u32 gPushedObject_FootprintKinds[] = {
     207, 205, 228, 229, 298, 297,
 };
 
-s32 gStagedObjectEvent_FootprintBounds[] = {
+s32 gPushedObject_FootprintBounds[] = {
     -32, -8,  32, 8,  -8,  -32, 8,  32, -32, -16, 32, 0,
     -8,  -32, 8,  32, -32, -8,  32, 8,  -8,  -32, 8,  32,
 };
@@ -2448,71 +2453,71 @@ struct ObjectEventTemplate gAltmillerCave_ObjectEventTemplatesOther[] = {
 
 struct ObjectEventTemplate gAltmillerCave_BabiObjectEventTemplates[] = {
     {GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST,
-     TALK_FACE_PARTY, 0},
+     TALK_FACING_PARTY, 0},
     {IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST,
-     TALK_FACE_PARTY, 0},
+     TALK_FACING_PARTY, 0},
     {MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST,
-     TALK_FACE_PARTY, 0},
+     TALK_FACING_PARTY, 0},
     {SPRITE_INVISIBLE_BABI, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(232),
-     0, PIXELS(160), FACING_SOUTH, TALK_KEEP_FACING, 0},
+     0, PIXELS(160), FACING_SOUTH, TALK_FACING_KEEP, 0},
     {SPRITE_BABI, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -PIXELS(64), 0,
-     -PIXELS(64), FACING_SOUTH, TALK_KEEP_FACING, 0},
+     -PIXELS(64), FACING_SOUTH, TALK_FACING_KEEP, 0},
     {SPRITE_SOLDIER_WITH_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-     -PIXELS(64), 0, -PIXELS(64), FACING_NORTH, TALK_KEEP_FACING, 0},
+     -PIXELS(64), 0, -PIXELS(64), FACING_NORTH, TALK_FACING_KEEP, 0},
     {SPRITE_SOLDIER_WITH_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-     -PIXELS(64), 0, -PIXELS(64), FACING_NORTH, TALK_KEEP_FACING, 0},
+     -PIXELS(64), 0, -PIXELS(64), FACING_NORTH, TALK_FACING_KEEP, 0},
     {MAP_TABLE_END},
 };
 
 struct ObjectEventTemplate gAltmillerCave_SquallObjectEventTemplates[] = {
     {SPRITE_FALLEN_COLUMN_NORTH_SOUTH, CONDITION_ALWAYS,
      MOVEMENT_TYPE_RESET_ACTION, PIXELS(328), 0, PIXELS(256), FACING_SOUTH,
-     TALK_KEEP_FACING, 0},
+     TALK_FACING_KEEP, 0},
     {SPRITE_FALLEN_COLUMN_WEST_EAST, CONDITION_ALWAYS,
      MOVEMENT_TYPE_RESET_ACTION, PIXELS(352), 0, PIXELS(296), FACING_SOUTH,
-     TALK_KEEP_FACING, 0},
+     TALK_FACING_KEEP, 0},
     {SPRITE_FALLEN_COLUMN_WEST_EAST, CONDITION_ALWAYS,
      MOVEMENT_TYPE_RESET_ACTION, PIXELS(368), 0, PIXELS(200), FACING_SOUTH,
-     TALK_KEEP_FACING, 0},
+     TALK_FACING_KEEP, 0},
     {SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(376), 0,
-     PIXELS(280), FACING_SOUTH, TALK_KEEP_FACING, 0},
+     PIXELS(280), FACING_SOUTH, TALK_FACING_KEEP, 0},
     {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(472), 0,
-     PIXELS(328), FACING_SOUTH, TALK_KEEP_FACING, 0},
+     PIXELS(328), FACING_SOUTH, TALK_FACING_KEEP, 0},
     {JUPITER_DJINNI, FLAG_DJINNI(DJINNI_SQUALL), MOVEMENT_TYPE_STAND,
-     PIXELS(264), 0, PIXELS(200), FACING_SOUTHWEST, TALK_FACE_PARTY, 0},
+     PIXELS(264), 0, PIXELS(200), FACING_SOUTHWEST, TALK_FACING_PARTY, 0},
     {MAP_TABLE_END},
 };
 
 struct ObjectEventTemplate gAltmillerCave_DraughtObjectEventTemplates[] = {
     {SPRITE_FALLEN_COLUMN_NORTH_SOUTH, CONDITION_ALWAYS,
      MOVEMENT_TYPE_RESET_ACTION, PIXELS(392), 0, PIXELS(416), FACING_SOUTH,
-     TALK_KEEP_FACING, 0},
+     TALK_FACING_KEEP, 0},
     {SPRITE_FALLEN_COLUMN_WEST_EAST, CONDITION_ALWAYS,
      MOVEMENT_TYPE_RESET_ACTION, PIXELS(416), 0, PIXELS(456), FACING_SOUTH,
-     TALK_KEEP_FACING, 0},
+     TALK_FACING_KEEP, 0},
     {SPRITE_FALLEN_COLUMN_NORTH_SOUTH, CONDITION_ALWAYS,
      MOVEMENT_TYPE_RESET_ACTION, PIXELS(456), 0, PIXELS(480), FACING_SOUTH,
-     TALK_KEEP_FACING, 0},
+     TALK_FACING_KEEP, 0},
     {SPRITE_LIGHT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(488),
-     PIXELS(8), PIXELS(1752), FACING_SOUTH, TALK_FACE_PARTY, 0},
+     PIXELS(8), PIXELS(1752), FACING_SOUTH, TALK_FACING_PARTY, 0},
     {SPRITE_LIGHT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(472),
-     PIXELS(40), PIXELS(1752), FACING_SOUTH, TALK_FACE_PARTY, 0},
+     PIXELS(40), PIXELS(1752), FACING_SOUTH, TALK_FACING_PARTY, 0},
     {SPRITE_LIGHT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(504),
-     PIXELS(56), PIXELS(1752), FACING_SOUTH, TALK_FACE_PARTY, 0},
+     PIXELS(56), PIXELS(1752), FACING_SOUTH, TALK_FACING_PARTY, 0},
     {SPRITE_LIGHT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(536),
-     PIXELS(40), PIXELS(1752), FACING_SOUTH, TALK_FACE_PARTY, 0},
+     PIXELS(40), PIXELS(1752), FACING_SOUTH, TALK_FACING_PARTY, 0},
     {SPRITE_LIGHT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(520),
-     PIXELS(8), PIXELS(1752), FACING_SOUTH, TALK_FACE_PARTY, 0},
+     PIXELS(8), PIXELS(1752), FACING_SOUTH, TALK_FACING_PARTY, 0},
     {SPRITE_TURNING_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(440), 0,
-     PIXELS(190), FACING_SOUTH, TALK_FACE_PARTY, 0},
+     PIXELS(190), FACING_SOUTH, TALK_FACING_PARTY, 0},
     {SPRITE_TURNING_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(472), 0,
-     PIXELS(174), FACING_SOUTH, TALK_FACE_PARTY, 0},
+     PIXELS(174), FACING_SOUTH, TALK_FACING_PARTY, 0},
     {SPRITE_TURNING_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(504), 0,
-     PIXELS(174), FACING_SOUTH, TALK_FACE_PARTY, 0},
+     PIXELS(174), FACING_SOUTH, TALK_FACING_PARTY, 0},
     {SPRITE_TURNING_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(536), 0,
-     PIXELS(174), FACING_SOUTH, TALK_FACE_PARTY, 0},
+     PIXELS(174), FACING_SOUTH, TALK_FACING_PARTY, 0},
     {SPRITE_TURNING_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(568), 0,
-     PIXELS(190), FACING_SOUTH, TALK_FACE_PARTY, 0},
+     PIXELS(190), FACING_SOUTH, TALK_FACING_PARTY, 0},
     {MAP_TABLE_END},
 };
 
@@ -2583,7 +2588,7 @@ struct MapEvent gAltmillerCave_EventsOther[] = {
     {MAP_EVENT_WARP, 1, CONDITION_ALWAYS, ALTMILLER_CAVE_ENTRANCE_TO_WORLD_MAP},
     {MAP_EVENT_WARP, 2, CONDITION_ALWAYS, ALTMILLER_CAVE_ENTRANCE_TO_TORCH_CHAMBER},
     {MAP_EVENT_WARP, 3, CONDITION_ALWAYS, ALTMILLER_CAVE_ENTRANCE_TORCH_CHAMBER_TO_PASSAGE},
-    {MAP_EVENT_WARP | WARP_STYLE_ANIMATED_ALTERNATE, 4, CONDITION_ALWAYS, ALTMILLER_CAVE_ENTRANCE_TO_ALTMILLER_CAVE_BABI},
+    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 4, CONDITION_ALWAYS, ALTMILLER_CAVE_ENTRANCE_TO_ALTMILLER_CAVE_BABI},
     {MAP_EVENT_COORD, 60, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_DarkenToLevel0)},
     {MAP_EVENT_COORD, 61, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_DarkenToLevel1)},
     {MAP_EVENT_COORD, 62, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_DarkenToLevel2)},
@@ -2599,8 +2604,8 @@ struct MapEvent gAltmillerCave_EventsOther[] = {
 };
 
 struct MapEvent gAltmillerCave_BabiEvents[] = {
-    {MAP_EVENT_WARP | WARP_STYLE_ANIMATED, 10, CONDITION_ALWAYS, ALTMILLER_CAVE_BABI_TO_ALTMILLER_CAVE_ENTRANCE},
-    {MAP_EVENT_WARP | WARP_STYLE_ANIMATED_ALTERNATE, 11, CONDITION_ALWAYS, ALTMILLER_CAVE_BABI_TO_ALTMILLER_CAVE_VIAL_CHEST},
+    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 10, CONDITION_ALWAYS, ALTMILLER_CAVE_BABI_TO_ALTMILLER_CAVE_ENTRANCE},
+    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 11, CONDITION_ALWAYS, ALTMILLER_CAVE_BABI_TO_ALTMILLER_CAVE_VIAL_CHEST},
     {MAP_EVENT_TALK, LOCALID_INVISIBLE_BABI, FLAG_MET_INVISIBLE_BABI, EVENT_SCRIPT(AltmillerCave_MeetInvisibleBabi)},
     {MAP_EVENT_TALK, LOCALID_INVISIBLE_BABI, FLAG_ALTMILLER_CAVE_MYSTIC_DRAUGHT, EVENT_SCRIPT(AltmillerCave_RepeatRockOrder)},
     {MAP_EVENT_TALK, LOCALID_INVISIBLE_BABI, FLAG_BABI_SAVED, EVENT_SCRIPT(AltmillerCave_RestoreBabiAndInviteParty)},
@@ -2618,8 +2623,8 @@ struct MapEvent gAltmillerCave_BabiEvents[] = {
 };
 
 struct MapEvent gAltmillerCave_VialChestEvents[] = {
-    {MAP_EVENT_WARP | WARP_STYLE_ANIMATED, 20, CONDITION_ALWAYS, ALTMILLER_CAVE_VIAL_CHEST_TO_ALTMILLER_CAVE_BABI},
-    {MAP_EVENT_WARP | WARP_STYLE_ANIMATED_ALTERNATE, 21, CONDITION_ALWAYS, ALTMILLER_CAVE_VIAL_CHEST_TO_ALTMILLER_CAVE_SQUALL},
+    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 20, CONDITION_ALWAYS, ALTMILLER_CAVE_VIAL_CHEST_TO_ALTMILLER_CAVE_BABI},
+    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 21, CONDITION_ALWAYS, ALTMILLER_CAVE_VIAL_CHEST_TO_ALTMILLER_CAVE_SQUALL},
     {PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS,
         EVENT_SCRIPT(AltmillerCave_EndReveal)},
     {PSYNERGY_IN_AREA(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST), 0, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_StartRetreat)},
@@ -2628,8 +2633,8 @@ struct MapEvent gAltmillerCave_VialChestEvents[] = {
 };
 
 struct MapEvent gAltmillerCave_SquallEvents[] = {
-    {MAP_EVENT_WARP | WARP_STYLE_ANIMATED, 30, CONDITION_ALWAYS, ALTMILLER_CAVE_SQUALL_TO_ALTMILLER_CAVE_VIAL_CHEST},
-    {MAP_EVENT_WARP | WARP_STYLE_ANIMATED_ALTERNATE, 31, CONDITION_ALWAYS, ALTMILLER_CAVE_SQUALL_TO_ALTMILLER_CAVE_COOKIE_CHEST},
+    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 30, CONDITION_ALWAYS, ALTMILLER_CAVE_SQUALL_TO_ALTMILLER_CAVE_VIAL_CHEST},
+    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 31, CONDITION_ALWAYS, ALTMILLER_CAVE_SQUALL_TO_ALTMILLER_CAVE_COOKIE_CHEST},
     {COORD_EVENT_WALKING_INTO(FACING_SOUTH), 72, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AltmillerCave_HopSelectedObjectEvent)},
     {COORD_EVENT_WALKING_INTO(FACING_WEST), 73, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AltmillerCave_HopSelectedObjectEvent)},
     {COORD_EVENT_WALKING_INTO(FACING_NORTH), 74, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AltmillerCave_HopSelectedObjectEvent)},
@@ -2644,8 +2649,8 @@ struct MapEvent gAltmillerCave_SquallEvents[] = {
 };
 
 struct MapEvent gAltmillerCave_CookieChestEvents[] = {
-    {MAP_EVENT_WARP | WARP_STYLE_ANIMATED, 40, CONDITION_ALWAYS, ALTMILLER_CAVE_COOKIE_CHEST_TO_ALTMILLER_CAVE_SQUALL},
-    {MAP_EVENT_WARP | WARP_STYLE_ANIMATED_ALTERNATE, 41, CONDITION_ALWAYS, ALTMILLER_CAVE_COOKIE_CHEST_TO_ALTMILLER_CAVE_DRAUGHT},
+    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 40, CONDITION_ALWAYS, ALTMILLER_CAVE_COOKIE_CHEST_TO_ALTMILLER_CAVE_SQUALL},
+    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 41, CONDITION_ALWAYS, ALTMILLER_CAVE_COOKIE_CHEST_TO_ALTMILLER_CAVE_DRAUGHT},
     {PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS,
         EVENT_SCRIPT(AltmillerCave_EndReveal)},
     {PSYNERGY_IN_AREA(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST), 0, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_StartRetreat)},
@@ -2655,7 +2660,7 @@ struct MapEvent gAltmillerCave_CookieChestEvents[] = {
 // clang-format on
 
 struct MapEvent gAltmillerCave_DraughtEvents[] = {
-    {MAP_EVENT_WARP | WARP_STYLE_ANIMATED, 50, CONDITION_ALWAYS,
+    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 50, CONDITION_ALWAYS,
      ALTMILLER_CAVE_DRAUGHT_TO_ALTMILLER_CAVE_COOKIE_CHEST},
     {MAP_EVENT_WARP, 51, CONDITION_ALWAYS, ALTMILLER_CAVE_DRAUGHT_TO_ROCKS},
     {MAP_EVENT_WARP, 52, CONDITION_ALWAYS,

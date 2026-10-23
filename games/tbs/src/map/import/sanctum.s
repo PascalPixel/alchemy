@@ -6,22 +6,22 @@
 	.set import.CalculateFacingAngle, 1
 	.set import.Engine_MathSin, 1
 	.set import.Engine_MathCos, 1
-	.set import.Runtime_AllocateHeapBlock, 1
-	.set import.Runtime_ReleaseHeapBlock, 1
+	.set import.AllocHeapSlot, 1
+	.set import.FreeHeapSlot, 1
 	.set import.Engine_VramLoad, 1
 	.set import.Engine_ObjectSetScript, 1
 	.set import.Engine_ObjectCreate, 1
 	.set import.Engine_MapGridCopyCellsTo, 1
 	.set import.Engine_MapGridCopyCellAttributes, 1
-	.set import.UiWindow_Create, 1
-	.set import.UiWork_Finalize, 1
-	.set import.UiText_DrawResource, 1
-	.set import.UiText_ShowCenteredMessage, 1
-	.set import.UiTextResource_Initialize, 1
-	.set import.UiTextResource_SetPosition, 1
-	.set import.UiTextResource_Release, 1
+	.set import.Window_Create, 1
+	.set import.Window_Close, 1
+	.set import.Text_DrawMessage, 1
+	.set import.FieldMessage_ShowCentered, 1
+	.set import.MenuArrow_Create, 1
+	.set import.MenuArrow_SetPosition, 1
+	.set import.MenuArrow_Release, 1
 	.set import.Ui_PrepareTransferForItem, 1
-	.set import.SaveState_CountRecordsExcludingFlagged, 1
+	.set import.Save_CountRecordsExcludingFlagged, 1
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1
 	.set import.Engine_GameFlagClear, 1
@@ -69,5 +69,5 @@
 	.set import.Engine_ScriptWaitForScreen, 1
 	.set import.Engine_SanctumOpen, 1
 	.set import.Engine_AudioPlayCue, 1
-	.set import.AudioCommand_WaitForCompletion, 1
+	.set import.Sound_WaitForSong, 1
 	.include "games/tbs/src/system/overlay.inc"

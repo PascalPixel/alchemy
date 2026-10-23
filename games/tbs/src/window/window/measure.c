@@ -10,15 +10,15 @@
 #endif
 
 /// Sizes a window for decoded text no and moves (*px, *py) so the window fits
-/// on the screen. flags: bit 0 measures every page (UiText_MeasureAllPages)
+/// on the screen. flags: bit 0 measures every page (Text_MeasureAllPages)
 /// rather than the first; bit 1 takes the size in *pw and *ph as given, in
 /// tiles, instead of measuring. Measuring returns the size in tiles in *pw and
 /// *ph and fills spacing with each line's extra character gap. An empty text
 /// (size 0 by 0) leaves the position as it was. Under Mind Read (Japanese and
 /// English) the window is 2 tiles wider and kept off the screen's last column.
-void UiWindow_FitOnScreen(s32 entryIndex, s32 *windowX, s32 *windowY,
-                          u32 *windowWidth, u32 *windowHeight, u16 *spacing,
-                          u32 flags) {
+void Window_FitOnScreen(s32 entryIndex, s32 *windowX, s32 *windowY,
+                        u32 *windowWidth, u32 *windowHeight, u16 *spacing,
+                        u32 flags) {
 #if !defined(FIT_FIXED_LIMIT)
   u8 *base;
 #endif
@@ -39,10 +39,9 @@ void UiWindow_FitOnScreen(s32 entryIndex, s32 *windowX, s32 *windowY,
 
   if (!(flags & 2)) {
     if (flags & 1)
-      UiText_MeasureAllPages(entryIndex, windowWidth, windowHeight, spacing);
+      Text_MeasureAllPages(entryIndex, windowWidth, windowHeight, spacing);
     else
-      UiText_MeasureEntryDimensions(entryIndex, windowWidth, windowHeight,
-                                    spacing);
+      Text_MeasureDecoded(entryIndex, windowWidth, windowHeight, spacing);
   }
 
   if (*windowWidth == 0 && *windowHeight == 0)
@@ -56,7 +55,7 @@ void UiWindow_FitOnScreen(s32 entryIndex, s32 *windowX, s32 *windowY,
     *windowWidth = (*windowWidth + 19) >> 3;
     *windowHeight = (*windowHeight + 15) >> 3;
 #if !defined(FIT_FIXED_LIMIT)
-    if (((struct UiRenderWork *)base)->mode != 0) {
+    if (((struct WindowWork *)base)->mindRead != 0) {
       *windowWidth += 2;
       rightLimit = 29;
     }
@@ -97,26 +96,25 @@ void UiWindow_FitOnScreen(s32 entryIndex, s32 *windowX, s32 *windowY,
 /// Decodes message and returns its text's width and height in pixels. The
 /// argument table is left as it is (clear 0), so the message can be decoded
 /// again to be shown.
-void UiText_MeasureResourceEntries(s32 message, s32 *x, s32 *y) {
-  UiText_MeasureEntryDimensions(UiText_BuildRenderEntries(message, 0), (u32 *)x,
-                                (u32 *)y, 0);
+void Text_MeasureMessage(s32 message, s32 *x, s32 *y) {
+  Text_MeasureDecoded(Message_Decode(message, 0), (u32 *)x, (u32 *)y, 0);
 }
 
-DEFINE_GET_RESOURCE_DIMENSIONS(UiText_GetResourceDimensions, 0)
-DEFINE_GET_RESOURCE_DIMENSIONS(UiText_GetResourceDimensionsAlt, 1)
+DEFINE_GET_RESOURCE_DIMENSIONS(Text_GetMessageSize, 0)
+DEFINE_GET_RESOURCE_DIMENSIONS(Text_GetMessageSizeAlt, 1)
 
 /// Measures decoded text from entryIndex to its first page's end: returns the
 /// width of the longest line and the height (15 pixels a line) in pixels. With
 /// spacing set, fills one entry per line with the extra gap between characters,
 /// in 1/256 pixel, that spreads the line to fill the window. spacing, when
 /// non-NULL, has room for four line entries. A page of more than four lines
-/// keeps measuring into the fourth. It sets UiRenderWork.outline to each
+/// keeps measuring into the fourth. It sets WindowWork.outline to each
 /// TEXT_OUTLINE operand it passes and leaves it at the last, the style the
-/// next glyphs are drawn in unless the style is reset first (UiWindow_Create
+/// next glyphs are drawn in unless the style is reset first (Window_Create
 /// resets it).
-void UiText_MeasureEntryDimensions(s32 entryIndex, u32 *outWidth,
-                                   u32 *outHeight, u16 *spacing) {
-  struct UiRenderWork *work;
+void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
+                         u16 *spacing) {
+  struct WindowWork *work;
   u32 lines;
   u32 width;
   u32 height;
@@ -133,7 +131,7 @@ void UiText_MeasureEntryDimensions(s32 entryIndex, u32 *outWidth,
   s32 trailing;
 #endif
 
-  work = UI_WORK;
+  work = WINDOW_WORK;
 #if (LANGUAGE == LANGUAGE_JAPANESE)
   trailing = 0;
 #endif
@@ -143,13 +141,13 @@ void UiText_MeasureEntryDimensions(s32 entryIndex, u32 *outWidth,
   lineWidth = 0;
   count = 0;
   for (;;) {
-    code = work->entries[entryIndex];
-    entryIndex = (entryIndex + 1) & RENDER_ENTRY_MASK;
+    code = work->textBuffer[entryIndex];
+    entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
     // A character adds its width. Spaces (in Japanese every character) are
     // counted as the points the line can be stretched at. A space is
-    // UI_SPRITE_SPACE_WIDTH pixels. Style 1 (outlined) draws a glyph a pixel
-    // wider. XXX: style 5 (spinning) is counted a pixel wider too, though
-    // UiText_RenderGlyphPair widens only style 1. No message in the six
+    // WINDOW_SPRITE_SPACE_WIDTH pixels. Style 1 (outlined) draws a glyph a
+    // pixel wider. XXX: style 5 (spinning) is counted a pixel wider too, though
+    // Text_DrawGlyphPair widens only style 1. No message in the six
     // catalogs uses style 5 ({text_effect:6}), so none shows whether the pixel
     // is meant; a use of the style would settle it.
     if (code > 31) {
@@ -158,7 +156,7 @@ void UiText_MeasureEntryDimensions(s32 entryIndex, u32 *outWidth,
         lineWidth += 5;
         count++;
       } else {
-        glyph = gUiText_Glyphs[code - 32].width;
+        glyph = gFont_Glyphs[code - 32].width;
         style = work->outline;
         if (style == 1 || style == 5)
           glyph++;
@@ -182,7 +180,7 @@ void UiText_MeasureEntryDimensions(s32 entryIndex, u32 *outWidth,
             trailing = 0;
           glyph = 10;
           if (code <= 0xff)
-            glyph = gUiText_Glyphs[code - 32].width;
+            glyph = gFont_Glyphs[code - 32].width;
           style = work->outline;
           if (style == 1 || style == 5)
             glyph++;
@@ -220,24 +218,24 @@ void UiText_MeasureEntryDimensions(s32 entryIndex, u32 *outWidth,
 #if TBS_PATCH_3
     case TEXT_PAGE:
       // The French, Spanish and Italian releases end the style at a page
-      // break, as their channels do (UiWork_StepChannelScript).
+      // break, as their printers do (TextPrinter_Step).
       work->outline = TEXT_STYLE_PLAIN;
       goto done;
 #endif
     case 14:
     case 28:
-      entryIndex = (entryIndex + 1) & RENDER_ENTRY_MASK;
+      entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
       // Skip the second operand too.
       // Fall through.
-    case TEXT_COLOUR:
+    case TEXT_COLOR:
     case TEXT_LINE_SPACING:
     case TEXT_WINDOW_STATE:
     case 17:
-      entryIndex = (entryIndex + 1) & RENDER_ENTRY_MASK;
+      entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
       break;
     case TEXT_OUTLINE:
-      work->outline = work->entries[entryIndex];
-      entryIndex = (entryIndex + 1) & RENDER_ENTRY_MASK;
+      work->outline = work->textBuffer[entryIndex];
+      entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
       break;
     }
   }
@@ -252,14 +250,14 @@ done:
   if (width < lineWidth)
     width = lineWidth;
 #if !TBS_PATCH_2
-  if (work->mode)
+  if (work->mindRead)
     width = width + 2;
 #endif
   *outWidth = width;
   *outHeight = height;
   // Each line's extra gap between characters, in 1/256 pixel, to spread it
   // across the window's inner width: the window's width in tiles, as
-  // UiWindow_FitOnScreen makes it, less the frame, in pixels, and 4 pixels of
+  // Window_FitOnScreen makes it, less the frame, in pixels, and 4 pixels of
   // margin. Outside Japanese a gap over 12 pixels (0xc00) falls back to 2; in
   // Japanese one over 8 is dropped and the rest held to at most 1.
   width = (width + 19) >> 3;
@@ -293,20 +291,20 @@ done:
 
 /// Measures decoded text from start over all its pages: the width of the first
 /// page's longest line and the height of its tallest page, in pixels, with each
-/// line's extra character gap in spacing as UiText_MeasureEntryDimensions.
+/// line's extra character gap in spacing as Text_MeasureDecoded.
 /// The text must fit 16 page-height slots; this routine does not clamp the page
-/// count. Unlike UiText_MeasureEntryDimensions it puts no ceiling on the gaps
+/// count. Unlike Text_MeasureDecoded it puts no ceiling on the gaps
 /// outside Japanese, and a page break restarts neither the line count nor the
 /// line's width, so the gaps past the first page do not fit their lines; its
-/// one caller, UiWindow_FitOnScreen with flags bit 0, is reached only from
-/// UiText_GetResourceDimensionsAlt, which passes no spacing. It changes
-/// UiRenderWork.outline as UiText_MeasureEntryDimensions does.
-void UiText_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
-                            u16 *spacing) {
+/// one caller, Window_FitOnScreen with flags bit 0, is reached only from
+/// Text_GetMessageSizeAlt, which passes no spacing. It changes
+/// WindowWork.outline as Text_MeasureDecoded does.
+void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
+                          u16 *spacing) {
   u32 pageHeights[16];
   u16 lineSpacingCounts[4];
   u16 lineWidths[4];
-  struct UiRenderWork *work;
+  struct WindowWork *work;
   u32 maxWidth;
   u32 line;
   u32 width;
@@ -323,7 +321,7 @@ void UiText_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
 
   trailing = 0;
 #endif
-  work = UI_WORK;
+  work = WINDOW_WORK;
   pageHeights[0] = 15;
   pageHeights[1] = 15;
   pageHeights[2] = 15;
@@ -346,15 +344,15 @@ void UiText_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
   count = 0;
   page = 0;
   for (;;) {
-    code = work->entries[entryIndex];
-    entryIndex = (entryIndex + 1) & RENDER_ENTRY_MASK;
+    code = work->textBuffer[entryIndex];
+    entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
     if (code >= 32) {
 #if (LANGUAGE != LANGUAGE_JAPANESE)
       if (code == 32) {
         width += 5;
         count++;
       } else {
-        glyph = gUiText_Glyphs[code - 32].width;
+        glyph = gFont_Glyphs[code - 32].width;
         outline = work->outline;
         if (outline == TEXT_STYLE_OUTLINED || outline == TEXT_STYLE_SPIN)
           glyph++;
@@ -375,7 +373,7 @@ void UiText_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
             trailing = 0;
           glyph = 10;
           if (code <= 0xff)
-            glyph = gUiText_Glyphs[code - 32].width;
+            glyph = gFont_Glyphs[code - 32].width;
           outline = work->outline;
           if (outline == TEXT_STYLE_OUTLINED || outline == TEXT_STYLE_SPIN)
             glyph++;
@@ -432,25 +430,25 @@ void UiText_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
       break;
     case 14:
     case 28:
-      entryIndex = (entryIndex + 1) & RENDER_ENTRY_MASK;
+      entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
       // Skip the second operand too.
       // Fall through.
-    case TEXT_COLOUR:
+    case TEXT_COLOR:
     case TEXT_LINE_SPACING:
     case TEXT_WINDOW_STATE:
     case 17:
-      entryIndex = (entryIndex + 1) & RENDER_ENTRY_MASK;
+      entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
       break;
     case TEXT_OUTLINE:
-      work->outline = work->entries[entryIndex];
-      entryIndex = (entryIndex + 1) & RENDER_ENTRY_MASK;
+      work->outline = work->textBuffer[entryIndex];
+      entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
       break;
     }
   }
 done:
   // Under Mind Read the pages measure 2 pixels wider in Japanese, English,
   // Spanish and Italian, a set no patch level selects: TBS_PATCH_2 drops
-  // Mind Read's padding from the first-page measure, UiWindow_FitOnScreen and
+  // Mind Read's padding from the first-page measure, Window_FitOnScreen and
   // the pen (typing.c) in German, French, Spanish and Italian alike.
   // XXX: likely Spanish and Italian put the widening back here rather than
   // keeping an older copy, because this function has the French outline
@@ -458,7 +456,7 @@ done:
   // Spanish or Italian recording of a Mind Read message over several pages
   // would show whether the wider window was meant.
 #if !(LANGUAGE == LANGUAGE_GERMAN) && !(LANGUAGE == LANGUAGE_FRENCH)
-  if (work->mode != 0)
+  if (work->mindRead != 0)
     maxWidth += 2;
 #endif
   for (pageIndex = 0; pageIndex < page; pageIndex++) {

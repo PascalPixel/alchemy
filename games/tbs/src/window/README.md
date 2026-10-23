@@ -11,8 +11,8 @@ them out over several [frames](../../glossary.md#frame) and moves the small pict
 letters, icons, portraits and the page arrow.
 
 It also builds the screens that are made directly from windows: the rows of
-command icons, the option and system menus, the [party](../../glossary.md#the-party) status window, the
-save file menu, name entry, the status screen, the battle menus and the
+command icons, the option and pause menus, the [party](../../glossary.md#the-party) status window, the
+file menu, the naming screen, the summary screen, the battle menus and the
 debug menus. [Menus, windows and shops](../../menus.md#windows) gives the
 whole layer in brief. The field menu's four screens are in
 [Menus](../menu/README.md), and the shop counters in
@@ -23,62 +23,63 @@ whole layer in brief. The field menu's four screens are in
 Everything the window system keeps between frames lives in one block of
 memory, set up with each [map](../../glossary.md#map) and gone at the next.
 
-![Everything the window system keeps is in one block of memory, set up with each map. In it: the windows' tilemap, a picture of the screen 32 tiles wide and 20 tall that every window is drawn into; 8 window slots, 12 in the Japanese edition; 3 typists, each typing one message into one window; 64 sprites that windows carry, such as letters, icons, portraits and the page arrow; the ring of unpacked messages, 512 codes, 256 in Japanese; 8 blanks for names and numbers a message will fill in; and 2 portrait slots, one holding Garet's sister's portrait and the other empty.](https://alchemy.pascalpixel.com/illustrations/window/work-block.svg)
+![Everything the window system keeps is in one block of memory, set up with each map. In it: the windows' tilemap, a picture of the screen 32 tiles wide and 20 tall that every window is drawn into; 8 window slots, 12 in the Japanese edition; 3 text printers, each typing one message into one window; 64 sprites that windows carry, such as letters, icons, portraits and the page arrow; the text buffer, a ring of unpacked messages, 512 codes, 256 in Japanese; 8 blanks for names and numbers a message will fill in; and 2 portrait slots, one holding Garet's sister's portrait and the other empty.](https://alchemy.pascalpixel.com/illustrations/window/work-block.svg)
 
 The block holds the picture of the screen that every window is drawn into,
-a slot for each window that can be open, three typists (one per message
-being typed), the pool of small [sprites](../../glossary.md#sprite-and-oam) the windows carry, the ring of
-unpacked messages and the blanks a message fills in. Because all of it is in
+a slot for each window that can be open, three text printers (one per
+message being typed), the pool of small [sprites](../../glossary.md#sprite-and-oam) the windows carry, the text
+buffer of unpacked messages and the blanks a message fills in. Because all of it is in
 one place, the code that reads it is the same in every [edition](../../glossary.md#editions) even though
 the Japanese edition has more window slots and a shorter ring.
 
-In the code the block is `struct UiRenderWork`, borrowed from the [heap](../../glossary.md#heap-and-pools) under
+In the code the block is `struct WindowWork`, borrowed from the [heap](../../glossary.md#heap-and-pools) under
 the [heap slot](../../glossary.md#heap-slot) `HEAP_SLOT_WINDOW` by `UiWork_InitializeWithResourceCounters`
 for the field and by `UiWork_Initialize` for battle; it lasts until the next
-map change and is reached as `UI_WORK`. In order it holds:
+map change and is reached as `WINDOW_WORK`. In order it holds:
 
 - `tilemap`: the windows' tilemap, 32 by 20 tiles, uploaded to video memory
   during [VBlank](../../glossary.md#frame) in 4-row bands marked in `dirty`;
 - `windows`: the window slots, `WINDOW_COUNT` of them;
-- `channels`: the three message channels (the typists);
-- `outputs` and `freeOutputs`: the pool of `UI_OUTPUT_COUNT` (64) render
-  outputs, the sprites windows carry, and the list of those no window holds;
-- `tileAttributes`, `tileCursor` and `alt`: the text tiles' bookkeeping
+- `printers`: the three text printers;
+- `sprites` and `freeSprites`: the pool of `WINDOW_SPRITE_COUNT` (64) window
+  sprites, the sprites windows carry, and the list of those no window holds;
+- `textTileState`, `nextTextTile` and `extraTextTiles`: the text tiles'
+  bookkeeping
   ([Drawing text](#drawing-text));
-- `mode`, `menuState` and the current channel's style, copied in to draw;
-- `entries`: the decoded-text ring;
-- `values` and `names`: the eight message arguments and their
+- `mindRead`, `battleMode` and the current printer's style, copied in to draw;
+- `textBuffer`: the text buffer, a ring of decoded text;
+- `argumentValues` and `argumentKinds`: the eight message arguments and their
   `MESSAGE_ARGUMENT_` kinds;
-- `resourceIds` and `outputIds`: the two portrait slots;
-- `speakerVoiceSound` and the flags for halting speech.
+- `portraitPictures` and `portraitSprites`: the two portrait slots;
+- `voiceSound` and the flags for halting speech.
 
 Its size differs by edition. The Japanese edition has 12 window slots and a
 ring of 256 codes; the others have 8 slots and 512 codes. A window slot is 36
 bytes and a code 2, so dropping four slots saves 144 bytes while the longer
-ring costs 512, and the block grows from `RENDER_WORK_SIZE` 4,492 bytes to
+ring costs 512, and the block grows from `WINDOW_WORK_SIZE` 4,492 bytes to
 4,860. `include/tbs_edition.h` gives every field's offset in each layout, and
 `STATIC_ASSERT`s in `include/window.h` check the struct against them.
 
-Despite its name, `menuState` says where the windows are, not what a menu
+Despite its name, `battleMode` says where the windows are, not what a menu
 is doing:
 
-| `menuState` | Set by | Meaning |
+| `battleMode` | Set by | Meaning |
 | --- | --- | --- |
 | 0 | the field setup, which clears the block | on the field |
 | 1 | `UiWork_Initialize` | in battle: typing is faster, and cleared rows near the bottom keep the battle's tile |
-| 2 | `UiText_PrepareMessageWork`, while it decodes | a battle message is being decoded |
+| 2 | `BattleMessage_Open`, while it decodes | a battle message is being decoded |
 
-`mode` is set while Mind Read, the Psynergy that shows what a person is
+`mindRead` is set while Mind Read, the Psynergy that shows what a person is
 thinking, shows someone's thoughts ([Drawing text](#drawing-text)).
 
 | Name | Value | Meaning |
 | --- | --- | --- |
 | `HEAP_SLOT_WINDOW` | 15 | the heap slot that holds the work block |
-| `RENDER_WORK_SIZE` | `0x118C` (4,492) in Japanese, `0x12FC` (4,860) in the others | the work block's size in bytes |
+| `WINDOW_WORK_SIZE` | `0x118C` (4,492) in Japanese, `0x12FC` (4,860) in the others | the work block's size in bytes |
 | `WINDOW_COUNT` | 12 in Japanese, 8 in the others | window slots |
-| `UI_OUTPUT_COUNT` | 64 | render outputs in the pool |
-| `RENDER_ENTRY_MASK` | `0xFF` in Japanese, `0x1FF` in the others | the decoded-text ring's index mask: 256 or 512 codes |
-| `UI_ARGUMENT_SLOT_COUNT` | 8 | message arguments at a time |
+| `WINDOW_SPRITE_COUNT` | 64 | window sprites in the pool |
+| `TEXT_BUFFER_MASK` | `0xFF` in Japanese, `0x1FF` in the others | the text buffer's index mask: 256 or 512 codes |
+| `MESSAGE_ARGUMENT_COUNT` | 8 | message arguments at a time |
 
 ## Windows
 
@@ -104,25 +105,25 @@ window, in front of everything. Taken apart, a message in Vale shows the split:
 A message window sizes itself to its text: it is measured first, then
 placed so that it fits on the screen.
 
-In the code, `UiWindow_Create(x, y, width, height, flags)` takes the first
+In the code, `Window_Create(x, y, width, height, flags)` takes the first
 free slot, or returns `NULL` when none is free, and places the window at tile
 (x, y), `width` by `height` tiles. The tilemap is 32 tiles wide because the
 console's background layers are, but the screen's 240 pixels show only 30 of
 them, so windows are placed on a screen of 30 by 20 tiles. Offsets inside a
 window are pixels from its interior's top left. Unless the window has
-`UI_WINDOW_INSTANT`, `UiWork_ProcessDirectWork` zooms it open over
-`UI_WINDOW_OPEN_FRAMES` (8), drawing its frame at (8 − frame) / 8 of its size
-about its centre, and closed over `UI_WINDOW_CLOSE_FRAMES` (4); the slot is
-freed only once the close has finished. `UiWork_Finalize(window, instant)`
+`WINDOW_FLAG_INSTANT`, `UiWork_ProcessDirectWork` zooms it open over
+`WINDOW_OPEN_FRAMES` (8), drawing its frame at (8 − frame) / 8 of its size
+about its centre, and closed over `WINDOW_CLOSE_FRAMES` (4); the slot is
+freed only once the close has finished. `Window_Close(window, instant)`
 starts closing that one window and returns without waiting.
 
-`UiWindow_DrawFrame` writes the frame into the tilemap and draws nothing for a
+`Window_DrawFrame` writes the frame into the tilemap and draws nothing for a
 width or height below 2 or above 30. Nothing checks that a window stays within
-the tilemap's 20 rows; the caller keeps it there. While `mode` is set every
-corner is the one round tile (`UI_TILE_FRAME_ROUND_CORNER`), flipped to fit.
+the tilemap's 20 rows; the caller keeps it there. While `mindRead` is set every
+corner is the one round tile (`WINDOW_TILE_FRAME_ROUND_CORNER`), flipped to fit.
 
-`UiWindow_FitOnScreen` (`window/measure.c`) measures a message and moves its
-window so that it fits on the screen. While `mode` is set the fitted window
+`Window_FitOnScreen` (`window/measure.c`) measures a message and moves its
+window so that it fits on the screen. While `mindRead` is set the fitted window
 is 2 tiles wider; which of the measuring routines add those tiles differs by
 edition, and in Japanese and English the text also starts 8 pixels further
 in.
@@ -133,21 +134,21 @@ The battle [summon](../../glossary.md#summons) list, for one, is `SUMMON_MENU_WI
 at `SUMMON_MENU_WINDOW_X` 13 in the international editions, and 14 tiles wide at 16 in
 Japanese, so both end at the screen's right edge.
 
-The window flags (`struct UiWindow.flags`) are in
+The window flags (`struct Window.flags`) are in
 [`window.h`](../../include/unit/window/window.h), the zoom's lengths in
 `window_internal.h`.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `UI_WINDOW_OPEN` | `0x1` | the window slot is in use |
-| `UI_WINDOW_INSTANT` | `0x2` | opens and closes at once, with no zoom |
-| `UI_WINDOW_TEXT_CANVAS` | `0x8` | text is drawn into the text canvas ([Drawing text](#drawing-text)) |
-| `UI_WINDOW_FRAMED_CANVAS` | `0x20` | the canvas has a frame and a filled background |
-| `UI_WINDOW_OUTLINED_TEXT` | `0x40` | the canvas text gets an outline |
-| `UI_WINDOW_ANCHOR_BOTTOM` | `0x80` | when a new page resizes the window, its bottom edge stays put |
-| `UI_WINDOW_FIXED_X` | `0x100` | when a new page resizes the window, its left edge stays put |
-| `UI_WINDOW_OPEN_FRAMES` | 8 | frames a window takes to zoom open |
-| `UI_WINDOW_CLOSE_FRAMES` | 4 | frames a window takes to zoom closed |
+| `WINDOW_FLAG_OPEN` | `0x1` | the window slot is in use |
+| `WINDOW_FLAG_INSTANT` | `0x2` | opens and closes at once, with no zoom |
+| `WINDOW_FLAG_TEXT_CANVAS` | `0x8` | text is drawn into the text canvas ([Drawing text](#drawing-text)) |
+| `WINDOW_FLAG_FRAMED_CANVAS` | `0x20` | the canvas has a frame and a filled background |
+| `WINDOW_FLAG_OUTLINED_TEXT` | `0x40` | the canvas text gets an outline |
+| `WINDOW_FLAG_ANCHOR_BOTTOM` | `0x80` | when a new page resizes the window, its bottom edge stays put |
+| `WINDOW_FLAG_FIXED_X` | `0x100` | when a new page resizes the window, its left edge stays put |
+| `WINDOW_OPEN_FRAMES` | 8 | frames a window takes to zoom open |
+| `WINDOW_CLOSE_FRAMES` | 4 | frames a window takes to zoom closed |
 | `SUMMON_MENU_WINDOW_X`, `SUMMON_MENU_WINDOW_WIDTH` | 13 and 17 tiles; 16 and 14 in Japanese | the battle summon list's place and width |
 
 ## Decoding a message
@@ -164,15 +165,15 @@ member's name, a number, the name of an item or a [Psynergy](../../glossary.md#p
 as the message is unpacked, with "a" or "an" and the other small words each
 language puts in front of a name. The marks that say where a line or a page
 ends, where to pause and which colour to use are kept as they are, for the
-typist to act on later. All the slow work happens here, once, so typing the
+text printer to act on later. All the slow work happens here, once, so typing the
 message afterwards costs almost nothing a frame.
 
 The game's text is stored as numbered messages. Their text is in the PO
 catalogs under `games/tbs/text`, one per language, which the build's
 `ags-text` turns into the packed messages and a header naming each one; the
-code writes a message by that linker symbol (`MsgGameSaved`). `UiText_BuildRenderEntries`
+code writes a message by that linker symbol (`MsgGameSaved`). `Message_Decode`
 ([`window/decode.c`](window/decode.c)) decodes a whole message at once into
-the ring.
+the text buffer.
 
 Messages are Huffman-coded: common symbols get short codes and rare ones
 long codes, read one bit at a time down a tree of choices. There is a
@@ -184,18 +185,18 @@ instructions in `graphics/text/decode_symbol.s`; the decoder copies it into heap
 runs it from there one symbol at a time and releases the slot at the end.
 
 An argument code takes its value from the argument table, which callers fill
-with `UiWork_PushValueSlot(value, kind)`: a name, a number, or an item or
+with `MessageArgument_Push(value, kind)`: a name, a number, or an item or
 ability name, by its `MESSAGE_ARGUMENT_` kind. Each language's articles,
 possessives and endings come from `articles.c`, chosen by the article class
 an item or name carries. Style codes (colours, pauses, page breaks) are
-copied into the ring unchanged, with their operands, for the channel to run. A control code in the catalogs
+copied into the text buffer unchanged, with their operands, for the text printer to run. A control code in the catalogs
 is written in braces: `{end_wait}`, at the end of
 `Your game was saved.{end_wait}`, is `MESSAGE_END_WAIT`, kept as
 `TEXT_WAIT_KEY`, which waits for a button and closes the window. The
 message in the picture is `MsgValeYouGuysAreSoLuckyGaret`, whose name blank
 is `{actor_name:2}`.
 
-While a battle message is decoded `menuState` is 2, and the Japanese decoder
+While a battle message is decoded `battleMode` is 2, and the Japanese decoder
 then sets names off with spaces and style codes and doubles each space.
 
 The stored control codes are an enum in `window/decode.c`; an operand is
@@ -207,16 +208,17 @@ stored one above its value.
 | `MESSAGE_PAGE_BREAK` | 1 | `TEXT_PAGE` |
 | `MESSAGE_END_WAIT` | 2 | `TEXT_WAIT_KEY`: a button closes the window |
 | `MESSAGE_LINE_BREAK` | 3 | `TEXT_NEWLINE` |
-| `MESSAGE_TEXT_COLOR` | 8 | `TEXT_COLOUR`, with its operand |
+| `MESSAGE_TEXT_COLOR` | 8 | `TEXT_COLOR`, with its operand |
 | `MESSAGE_TEXT_EFFECT` | 9 | `TEXT_OUTLINE`, with its operand: the style of sprite text |
 | `MESSAGE_LINE_SPACING` | 10 | `TEXT_LINE_SPACING`, with its operand |
 | `MESSAGE_LOCALIZED_WORD` | 13 | German: a counted noun; Italian: a gender ending; Spanish and French: the plural suffix |
 | `MESSAGE_WINDOW_EFFECT` | 15 | `TEXT_WINDOW_STATE`, with its operand: the window effect to run |
-| `MESSAGE_PROTAGONIST_NAME` | 16 | the letters of the leader's name (`gGameState.selectedLocalId`) |
+| `MESSAGE_PROTAGONIST_NAME` | 16 | the letters of the leader's name (`gGameState.leaderLocalId`) |
 
-## The decoded-text ring
+## The text buffer
 
-Unpacked messages wait in a ring until a typist has typed them.
+Unpacked messages wait in a ring, the text buffer, until a text printer has
+typed them.
 
 ![Unpacked messages are written into a ring of 512 letter codes, 256 in the Japanese edition, one after another round the ring. Each ends with an end mark and is known only by where it starts. Nothing reserves a message's place: once writing comes round the ring again, the newest message runs on over the oldest. A message stays readable until then.](https://alchemy.pascalpixel.com/illustrations/window/ring.svg)
 
@@ -227,22 +229,22 @@ windows can show text at once without anyone setting room aside, and a
 message stays readable until enough later text has been unpacked to run over
 it.
 
-`work->entries` is a ring of 16-bit codes whose index wraps through
-`RENDER_ENTRY_MASK`, the ring's size less one. A message is written at `work->count`, ends with 0, and
-is known only by the index it starts at, which `UiText_BuildRenderEntries`
+`work->textBuffer` is a ring of 16-bit codes whose index wraps through
+`TEXT_BUFFER_MASK`, the ring's size less one. A message is written at `work->textBufferEnd`, ends with 0, and
+is known only by the index it starts at, which `Message_Decode`
 returns; asking for message -1 returns the last message's start again. A
 message longer than the ring is cut at the ring's length; none in the game is
 ([Evidence and open questions](#evidence-and-open-questions)).
 
 ## Typing
 
-A typist (a message channel) types an unpacked message into its window a
+A text printer types an unpacked message into its window a
 little each frame and acts on the marks it meets: a new line, a new page, a
 pause, a colour.
 
 ![Isaac talks to Garet's sister in Vale: a message window zooms open at the top of the screen beside her portrait, `You guys are so lucky, Garet.` is typed out with a bobbing arrow at its end, the window narrows to fit `I wish I could go with you.`, and it closes.](https://alchemy.pascalpixel.com/guides/window/talk.gif)
 
-Each frame the typist puts on one more letter cell, as the picture at the top
+Each frame the text printer puts on one more letter cell, as the picture at the top
 of this page shows. A cell is a sprite 16 pixels wide, and in the
 international editions two narrow letters that fit in one cell together are typed
 as one, so "Yo" appears on the first frame. How many cells come a frame is
@@ -253,62 +255,62 @@ text comes about a word at a time. Battle text is typed faster still, 8
 cells a frame, and 13 after a frame that ran late, so a battle keeps moving.
 Every few cells the speaker's voice blip plays.
 
-At a page break the typist shows the arrow and waits for a button; then the
+At a page break the text printer shows the arrow and waits for a button; then the
 window is cleared, refitted to the next page's text, and typing goes on. At
 the end the window either stays open or, with the closing mark, waits for a
 button and closes.
 
-In the code a channel (`struct UiChannelSlot`) holds its window, the pen
+In the code a text printer (`struct TextPrinter`) holds its window, the pen
 position in 1/256 pixels, the index of its next code, the countdowns for
 pauses and for the wait after each character, and its style.
-`UiText_QueueRenderEntries` takes a free channel and returns `NULL` when all
-three are busy; the channel stays taken until its window closes.
-`UiText_StartBattleMessage` also reuses a channel whose window has finished,
+`TextPrinter_Add` takes a free text printer and returns `NULL` when all
+three are busy; the printer stays taken until its window closes.
+`BattleMessage_Continue` also reuses a text printer whose window has finished,
 continuing below its last line and scrolling once both lines are used.
 
-`UiWork_ProcessAll` is the window system's [task](../../glossary.md#task). Both setups schedule it in
+`UiWork_ProcessAll` is the window system's [task](../../glossary.md#task). Both setups add it in
 the main loop's pass, and it runs every frame: the windows' zoom
-(`UiWork_ProcessDirectWork`), then the channels, then the render outputs
+(`UiWork_ProcessDirectWork`), then the text printers, then the window sprites
 (`UiWork_AnimateSpriteSlots`). Code that shows a message waits on its window
-while the task types it. `UiText_OpenMessageWindow` (`window/frames.c`) is the
+while the task types it. `Message_OpenWindow` (`window/frames.c`) is the
 whole path for one message, and a caller then waits a frame at a time
-(simplified, with the shop's wait from `UiMessage_ShowAndWait`):
+(simplified, with the shop's wait from `Shop_ShowKeeperMessage`):
 
 ```c
-entry = UiText_BuildRenderEntries(message, 1);   // decode into the ring
-UiWindow_FitOnScreen(entry, &x, &y, &width, &height, bounds, 0);
-window = UiWindow_Create(x, y, width, height, flags);  // NULL: no free slot
-UiText_QueueRenderEntries(window, entry, 0, 0, bounds, 0); // take a channel
+entry = Message_Decode(message, 1);   // decode into the ring
+Window_FitOnScreen(entry, &x, &y, &width, &height, bounds, 0);
+window = Window_Create(x, y, width, height, flags);  // NULL: no free slot
+TextPrinter_Add(window, entry, 0, 0, bounds, 0); // take a text printer
 
-while (UiWork_IsCompleteFar() == 0)   // every channel has typed its text
+while (UiWork_IsCompleteFar() == 0)   // every printer has typed its text
   WaitFrames(1);
 ```
 
-`UiWork_StepChannelScript` types one frame's share of a channel. Outside
-battle the share is `gUiText_SpeedSteps` for the player's message speed, and
-a space or a control code ends it; after each character the channel waits
-`gUiText_SpeedDelays` frames while no button is held. Two characters whose
+`TextPrinter_Step` types one frame's share of a text printer. Outside
+battle the share is `gMessageSpeed_Steps` for the player's message speed, and
+a space or a control code ends it; after each character the printer waits
+`gMessageSpeed_Delays` frames while no button is held. Two characters whose
 glyph widths add up to 15 pixels or less are drawn as one pair, the second in
 the code's high byte (14 in Spanish with an outline), except in a text canvas
-and in Japanese. In battle (`menuState` nonzero) the share grows with how
+and in Japanese. In battle (`battleMode` nonzero) the share grows with how
 many VBlanks the last frame took (`gLagFramesShown`, 1 for a frame on time):
 
 ```
 share = 3 + 5 × min(VBlanks, 2)    → 8 on time, 13 after a late frame
 ``` The speaker's voice blip plays every
-`gUiText_SpeedCueGaps` characters, and is one of four sounds from
-`speakerVoiceSound`, chosen by the character's code.
+`gMessageSpeed_VoiceGaps` characters, and is one of four sounds from
+`voiceSound`, chosen by the character's code.
 
 The speed tables are in `text_speed.c`, indexed by
 `gGameState.messageSpeed`, 0 to 2 from slowest to fastest; the codes a
-channel runs are in `window_internal.h`, and codes from `TEXT_SPACE` up are
+text printer runs are in `window_internal.h`, and codes from `TEXT_SPACE` up are
 characters.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `gUiText_SpeedSteps` | 1, 1, 10 | characters typed each frame |
-| `gUiText_SpeedDelays` | 4, 0, 0 | frames waited after each character while no button is held |
-| `gUiText_SpeedCueGaps` | 1, 3, 10 | characters between two voice blips |
+| `gMessageSpeed_Steps` | 1, 1, 10 | characters typed each frame |
+| `gMessageSpeed_Delays` | 4, 0, 0 | frames waited after each character while no button is held |
+| `gMessageSpeed_VoiceGaps` | 1, 3, 10 | characters between two voice blips |
 | `TEXT_END` | 0 | the text ends; the window stays open |
 | `TEXT_PAGE` | 1 | wait for a button, then clear the window for a new page |
 | `TEXT_WAIT_KEY` | 2 | wait for a button, then close the window |
@@ -316,8 +318,8 @@ characters.
 | `TEXT_PAUSE_LONG` | 4 | a 60-frame pause |
 | `TEXT_PAUSE_SHORT` | 5 | a 20-frame pause a button can cut short |
 | `TEXT_PAUSE_LONGEST` | 6 | a 120-frame pause a button can cut short |
-| `TEXT_COLOURS_RESET` | 7 | colour 15, style 0 and line spacing 10 again |
-| `TEXT_COLOUR`, `TEXT_OUTLINE`, `TEXT_LINE_SPACING` | 8, 9, 10 | the next entry is the colour, the style or the line spacing |
+| `TEXT_COLORS_RESET` | 7 | colour 15, style 0 and line spacing 10 again |
+| `TEXT_COLOR`, `TEXT_OUTLINE`, `TEXT_LINE_SPACING` | 8, 9, 10 | the next entry is the colour, the style or the line spacing |
 | `TEXT_WINDOW_STATE` | 15 | the next entry is the window effect to run |
 | `TEXT_END_ALT` | 30 | ends the text as `TEXT_END` does |
 | `TEXT_SPACE` | 32 | the first character code |
@@ -338,46 +340,46 @@ tilemap itself, from a set of tiles kept for text.
 
 ![Isaac casts Mind Read on Garet's sister in Vale: the field tints red, then gold and green, as her thought `Gee, I wish I could see new lands, too.` is typed into a round-cornered window beside her portrait.](https://alchemy.pascalpixel.com/abilities/mind-read.gif)
 
-While `mode` is set, as under Mind Read, the window has round corners, the
+While `mindRead` is set, as under Mind Read, the window has round corners, the
 text is drawn in colour 8 with no shadow, and a button press latched before
 a page's wait is dropped.
 
-The canvas (`UI_WINDOW_TEXT_CANVAS`) draws into bitmap tiles at
-`UI_CANVAS_VRAM`, through `glyph_arm.c`. It is 120 tiles from
-`UI_CANVAS_FIRST_TILE`, enough for the interior of a full-width window six
-tiles tall, and its tiles run down columns; `UiText_PrepareMessageWork` opens
+The canvas (`WINDOW_FLAG_TEXT_CANVAS`) draws into bitmap tiles at
+`TEXT_CANVAS_VRAM`, through `glyph_arm.c`. It is 120 tiles from
+`TEXT_CANVAS_FIRST_TILE`, enough for the interior of a full-width window six
+tiles tall, and its tiles run down columns; `BattleMessage_Open` opens
 it as a frameless window over the bottom rows for battle messages. Every canvas window maps the
 same tiles. Canvas lines are 13 pixels apart, and from the second line on the
 canvas scrolls up instead.
 
-Text drawn as tiles (`UiText_DrawResource`, `UiText_DrawCharacterAtOffset`)
-takes tiles `0x80` to `0xFF`, and `0x200` to `0x27F` as well while `alt` is
-set. `UiWork_SetAltFlagAndClearTable` sets it while the field menu's Djinn, Item,
-Psynergy and Status screens and the battle's Djinn menu are open, which need
+Text drawn as tiles (`Text_DrawMessage`, `Text_DrawMessageAsTiles`)
+takes tiles `0x80` to `0xFF`, and `0x200` to `0x27F` as well while
+`extraTextTiles` is set. `Text_UseExtraTiles` sets it while the field menu's Djinn, Item,
+Psynergy and summary screens and the battle's Djinn menu are open, which need
 more text tiles, and clears it as they close. Its lines are 15 pixels apart. A tile's attribute has bit 0 once
-allocated and bit 1 while the tilemap shows it, so `UiText_RenderStringTiles`
+allocated and bit 1 while the tilemap shows it, so `Text_DrawStringAsTiles`
 can reuse the tiles a string already has and take only free ones.
 
 | Way | Chosen by | Where it draws | Line spacing |
 | --- | --- | --- | --- |
-| text canvas | `UI_WINDOW_TEXT_CANVAS` | 120 tiles from `UI_CANVAS_FIRST_TILE` (`0x128`), at `UI_CANVAS_VRAM` (`0x06002500`) | 13 pixels |
-| sprites | a typed message without the canvas flag | one 16 by 16 render output a cell: a character, or two narrow ones in the international editions | 15 pixels |
-| tilemap tiles | text drawn all at once | tiles `0x80` to `0xFF`, and `0x200` to `0x27F` with `alt` set | 15 pixels |
+| text canvas | `WINDOW_FLAG_TEXT_CANVAS` | 120 tiles from `TEXT_CANVAS_FIRST_TILE` (`0x128`), at `TEXT_CANVAS_VRAM` (`0x06002500`) | 13 pixels |
+| sprites | a typed message without the canvas flag | one 16 by 16 window sprite a cell: a character, or two narrow ones in the international editions | 15 pixels |
+| tilemap tiles | text drawn all at once | tiles `0x80` to `0xFF`, and `0x200` to `0x27F` with `extraTextTiles` set | 15 pixels |
 
-## Render outputs
+## Window sprites
 
-A render output is one sprite a window carries: a cell of text, an icon, a
+A window sprite is one sprite a window carries: a cell of text, an icon, a
 portrait or the page arrow. It moves with its window and goes when the
 window closes.
 
-Each window keeps a list of its outputs, taken from the pool's free list and
+Each window keeps a list of its sprites, taken from the pool's free list and
 returned when the window closes. `UiWork_AnimateSpriteSlots` moves each
-output every frame by its `UI_SPRITE_` motion and queues it for drawing. An
-output's picture occupies an entry of the VRAM cache, loaded into a free one
-(`Resource_FindFreeEntry`, `VramCache_Load`) and freed by
-`Resource_ResetEntry`. The two portrait slots record which picture each shows
-(`resourceIds`, 999 when free) and its cache entry. In Japanese, a character
-that finds no free output closes its window.
+sprite every frame by its `UI_SPRITE_` motion and queues it for drawing. A
+window sprite's picture occupies an entry of the VRAM cache, loaded into a free one
+(`VramCache_FindFreeEntry`, `VramCache_Load`) and freed by
+`VramCache_FreeEntry`. The two portrait slots record which picture each shows
+(`portraitPictures`, 999 when free) and its cache entry. In Japanese, a character
+that finds no free window sprite closes its window.
 
 ## The area name
 
@@ -386,16 +388,16 @@ top of the screen for a moment.
 
 ![The party arriving in Bilibin: a small window with the town's name appears at once, centred across the screen and in its top half, with no zoom. It stays for 90 frames, a second and a half, counting down by one each frame, and closes when the count reaches zero. The name comes from the table of area names.](https://alchemy.pascalpixel.com/illustrations/window/area-name.svg)
 
-`UiTimedNotice_Create` shows the area's name, from
+`MapNamePopup_Show` shows the area's name, from
 `MapSec_GetNameIndexFar`, drawn as tiles in a window centred across the
-screen and in its top 10 rows, opened with `UI_WINDOW_INSTANT`. It keeps the
-window and a countdown of `UI_AREA_NOTICE_FRAMES` (90) in two fields of the event work
-(`gEventWork`, the running map's state), and
-`UiTimedNotice_Tick`, a main-loop task, closes it when the countdown ends.
+screen and in its top 10 rows, opened with `WINDOW_FLAG_INSTANT`. It keeps the
+window and a countdown of `MAP_NAME_POPUP_FRAMES` (90) in two fields of the event work
+(`gFieldWork`, the running map's state), and
+`MapNamePopup_Update`, a main-loop task, closes it when the countdown ends.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `UI_AREA_NOTICE_FRAMES` | 90 | frames the area's name shows |
+| `MAP_NAME_POPUP_FRAMES` | 90 | frames the area's name shows |
 
 ## Design
 
@@ -413,25 +415,25 @@ code that reads it is the same in every edition.
 - The screen is 30 by 20 tiles; a frame narrower or shorter than 2 tiles, or
   wider or taller than 30, is not drawn.
 - Twelve window slots in Japanese and eight in the international editions.
-- Three message channels and 64 render outputs.
-- Eight message arguments at a time (`UI_ARGUMENT_SLOT_COUNT`); a ninth is
-  dropped (`UiWork_PushValueSlot`).
-- The decoded-text ring holds 256 codes in Japanese and 512 in the others.
+- Three text printers and 64 window sprites.
+- Eight message arguments at a time (`MESSAGE_ARGUMENT_COUNT`); a ninth is
+  dropped (`MessageArgument_Push`).
+- The text buffer holds 256 codes in Japanese and 512 in the others.
 - The text canvas holds 120 tiles, one canvas window at a time.
-- Text drawn as tiles has 128 tiles, or 256 with `alt` set.
+- Text drawn as tiles has 128 tiles, or 256 with `extraTextTiles` set.
 
 ## Files
 
 | File | What it holds |
 | --- | --- |
-| `window.c` | the window object, written as parts in `window/`: windows, message channels, the decoder, render outputs, icons, the selection row and the option and system menus |
+| `window.c` | the window object, written as parts in `window/`: windows, text printers, the decoder, window sprites, icons, the selection row and the option and pause menus |
 | `battle_command.c` | the screens built on the window object, written as parts in `battle_command/`, from the party status window to the debug menus |
 | `glyph_arm.c` | the text canvas renderer, compiled as ARM code and copied to RAM to run |
 | `articles.c` | each edition's articles and possessives, the kana marks and the sprite motion curves |
 | `scales.c` | sprite scales, motion curves and the lookup tables of the window and menu code |
 | `text_speed.c` | the three message speed tables |
 | `windata.s` | glyph widths, kana mark ranges, the party and [Djinni](../../glossary.md#djinn) sprites, the growing bar and the cursor stops |
-| [`keyboard.s`](keyboard.s) | the name entry screen's keyboard tilemaps |
+| [`keyboard.s`](keyboard.s) | the naming screen's keyboard tilemaps |
 | [`cursor.s`](cursor.s), `cursor_frame.s`, `fixed_block.s`, `slider.s`, `slidpal.s` | sprite tiles and palettes, built from the PNGs beside them or under `../menu` and `../graphics` |
 
 Both objects are written as parts: `window.c` and `battle_command.c` include
@@ -444,24 +446,24 @@ The prototypes are in `games/tbs/include/unit/window/`; its
 [`window.h`](../../include/unit/window/window.h) also holds what both objects
 use: the tilemap's tiles (`UI_TILE_`), the window flags (`UI_WINDOW_`), sprite
 motions (`UI_SPRITE_`), message argument kinds (`MESSAGE_ARGUMENT_`) and the text
-canvas's place in VRAM. The work block's layout, `struct UiRenderWork`, is in
+canvas's place in VRAM. The work block's layout, `struct WindowWork`, is in
 [`include/window.h`](../../include/window.h), and its offsets for each edition
 in `include/tbs_edition.h`.
 
 ## Words used here
 
-- **work block**: `struct UiRenderWork`, heap slot `HEAP_SLOT_WINDOW`, reached
-  as `UI_WORK`. It holds all of the window system's state.
-- **window**: a `struct UiWindow` slot, one framed rectangle of the shared
+- **work block**: `struct WindowWork`, heap slot `HEAP_SLOT_WINDOW`, reached
+  as `WINDOW_WORK`. It holds all of the window system's state.
+- **window**: a `struct Window` slot, one framed rectangle of the shared
   tilemap.
-- **text canvas**: a window with `UI_WINDOW_TEXT_CANVAS`, whose text is drawn
+- **text canvas**: a window with `WINDOW_FLAG_TEXT_CANVAS`, whose text is drawn
   into bitmap tiles rather than placed as sprites or tilemap tiles.
-- **decoded text**: a message after decoding, as 16-bit codes in the ring
-  `work->entries`.
-- **channel**: a `struct UiChannelSlot`, which types decoded text into one
-  window and runs its control codes (`TEXT_`); the pictures call it a typist.
-- **render output**: a `struct RenderOutput`, one sprite a window carries.
-- **tile attributes**: `work->tileAttributes`, one byte per text tile saying
+- **decoded text**: a message after decoding, as 16-bit codes in the text
+  buffer, the ring `work->textBuffer`.
+- **text printer**: a `struct TextPrinter`, which types decoded text into one
+  window and runs its control codes (`TEXT_`).
+- **window sprite**: a `struct WindowSprite`, one sprite a window carries.
+- **text tile state**: `work->textTileState`, one byte per text tile saying
   whether it is allocated and whether the tilemap still shows it.
 - `unk` plus an offset, such as `unk10`: a field whose meaning is not known.
 
@@ -470,23 +472,23 @@ in `include/tbs_edition.h`.
 | Prefix | What it acts on |
 | --- | --- |
 | `UiWork_` | the work block and its per-frame updates |
-| `UiWindow_` | a window's rectangle of the tilemap: frames, fills, dividers, tiles |
-| `UiText_`, `UiTextResource_` | messages and text: decoding, measuring, drawing, and text placed as a resource |
-| `RenderOutput_` | the render output pool and a window's output list |
-| `UiIcon_`, `ItemIcon_`, `UiGlyph_` | icons built into sprite tiles |
+| `Window_`, `Win_` | a window's rectangle of the tilemap: frames, fills, dividers, tiles |
+| `Text_`, `Message_`, `MessageArgument_`, `TextPrinter_` | messages and text: decoding, measuring, drawing and typing |
+| `WindowSprite_` | the window sprite pool and a window's sprite list |
+| `MenuArrow_` | the menus' arrow sprites |
+| `Icon_`, `ItemIcon_`, `CommandIcon_`, `UiGlyph_`, `Portrait_` | icons and portraits built into sprite tiles |
 | `SelectionScreen_`, `Menu_` | the selection row, and the menus built from command icons |
-| `OptionMenu_`, `SystemMenu_`, `WindowColor_`, `PaletteGlow_` | the option and system menus and the window colours |
-| `SaveState_`, `SaveMenu_` | save files and the save file menu |
-| `NameEntry_`, `PartyStatus_`, `PartyTalkMenu_`, `DjinnMenu_`, `SummonMenu_`, `ItemList_`, `BattleMenu_`, `BattleTarget_` | the screens they name |
+| `OptionMenu_`, `PauseMenu_`, `WindowColor_` | the option and pause menus and the window colours |
+| `Save_`, `FileMenu_` | save files and the file menu |
+| `NamingScreen_`, `PartyStatus_`, `ColossoMenu_`, `BattleDjinnMenu_`, `BattleSummonMenu_`, `BattleItemMenu_`, `BattlePsynergyMenu_`, `BattleTarget_` | the screens they name |
 | `Party_` | the joined-party messages and the party's Psynergy list |
-| `UiTimedNotice_` | the area name shown near the top of the screen on arrival |
-| `DebugMenu_` | the debug menus |
-| `BattleLayout_` | the party status window's highlighted columns while commands are chosen |
-| `AffineEffect_`, `ResourceMenu_` | the command icon menus' pulsing icon and their position table |
+| `MapNamePopup_` | the area name shown near the top of the screen on arrival |
+| `DebugMapSelect_`, `DebugFlagEditor_`, `DebugBrowser_`, `Debug_` | the debug menus |
+| `IconMenu_` | the icon menus' pulsing icon and their position table |
 | `Link_` | the link countdown window and its page arrows |
 | `Color_` | scaling a colour's channels |
 | `UiRender_` | an empty function nothing calls |
-| `Resource_`, `RenderResource_`, `Graphics_`, `GraphicsPalette_`, `Vram_` | things the engine names elsewhere: VRAM cache entries, pictures, palettes and video registers |
+| `Resource_`, `Graphics_`, `Vram_`, `VramCache_` | things the engine names elsewhere: VRAM cache entries, pictures, palettes and video registers |
 
 The `Ui_` functions that remain have no family yet. Many of these names are
 shared with [The Lost Age](../../glossary.md#the-two-games)'s copies of these files and with the [far-call](../../glossary.md#far-call) table
@@ -496,18 +498,18 @@ comment markers.
 
 ## Evidence and open questions
 
-Windows, channels and render outputs are named from how their structs are
-used, the control codes from what the decoder and the channel do with each,
+Windows, text printers and window sprites are named from how their structs
+are used, the control codes from what the decoder and the printer do with each,
 and the screens from the English release's text they show. Messages are
 named by their linker symbols, made from their English text. The typing
 picture's frames come from the English glyph widths (`graphics/font/text.tsv`)
-and the pairing rule in `UiWork_StepChannelScript`, and agree with a
+and the pairing rule in `TextPrinter_Step`, and agree with a
 recording of the window opening (`guides/window/window-open.png`), whose
 first typed frame shows "Yo".
 
 [XXX](../../glossary.md#xxx): likely the canvas renderer and the tree walker are ARM code run from
 RAM for speed, because ARM code fetched from the cartridge's 16-bit bus is
-slow; nothing in the code says so. XXX: the likely reason the ring was
+slow; nothing in the code says so. XXX: the likely reason the text buffer was
 doubled in the international editions is their longer text; the bytes show only the
 change.
 
@@ -516,13 +518,13 @@ start, but no message is that long. Counting each control code and line break
 as one code, before the arguments are filled in, the longest message of each
 edition's text is the Lucky Dice rules, at 200 of the Japanese ring's 256
 codes and at most 446 (Italian) of the others' 512. The two bytes before the
-argument table, `padding` in `struct UiRenderWork`, align `values` to a word
+argument table, `padding` in `struct WindowWork`, align `argumentValues` to a word
 in every edition, and nothing reads them.
 
-- XXX (no evidence): why there are three channels, and why the international
+- XXX (no evidence): why there are three text printers, and why the international
   editions gave up four windows when they doubled the ring; the code shows
   only the counts each edition uses, and only Camelot's sources could say how
   they were chosen.
-- XXX: what `UiRenderWork.unknownAfterLineSpacing` holds; `UiWork_ResetCounters`
+- XXX: what `WindowWork.unknownAfterLineSpacing` holds; `UiWork_ResetCounters`
   sets it to 1 beside the text style and no C reads it, so a read in the
   glyph assembly or a text control code that changes it would settle it.

@@ -96,7 +96,7 @@ enum MenuTestLocalId {
 
 /// Recalculates the four heroes after a debug inventory or stat change.
 /// Preserve the original Isaac, Garet, Mia, Ivan order.
-static __inline__ void DebugMenu_RecalculateParty(void) {
+static __inline__ void MenuTest_RecalculateParty(void) {
   Unit_Calculate(ISAAC);
   Unit_Calculate(GARET);
   Unit_Calculate(MIA);
@@ -118,7 +118,7 @@ u8 *MenuTest_GetObjectEventTemplates(void) {
 /// Finishes pending UI work, displays a message, and waits one final frame.
 static void MenuTest_ShowMessageAndWait(s32 messageId) {
   UiWork_FinalizePendingCore();
-  UiText_OpenMessageWindow(messageId, 5, 0, 0x22);
+  Message_OpenWindow(messageId, 5, 0, 0x22);
   while (UiWork_IsComplete() == 0) {
     Engine_TaskWait(1);
   }
@@ -130,18 +130,18 @@ static void MenuTest_ShowMessageAndWait(s32 messageId) {
 /// back, and any other held key shows the same message again. Ends after
 /// messageCount have been shown, whichever way the player went. The message
 /// speed is left at 2.
-static void DebugMenu_BrowseMessageRange(s32 messageId, s32 messageCount) {
-  struct UiWindow *window;
+static void MenuTest_BrowseMessageRange(s32 messageId, s32 messageCount) {
+  struct Window *window;
   s32 messageIndex;
 
   gGameState.messageSpeed = 2;
-  window = UiWindow_CreateWithSideObject(125, 0, 0, 0);
+  window = Portrait_OpenWindow(125, 0, 0, 0);
   for (messageIndex = 0; messageIndex < messageCount; messageIndex++) {
     // Supply sample name, item and number substitutions before each message:
     // Garet, the Virtuous Armlet and 123456.
-    UiWork_PushValueSlot(GARET, 1);
-    UiWork_PushValueSlot(ITEM_VIRTUOUS_ARMLET, 2);
-    UiWork_PushValueSlot(0x1e240, 5);
+    MessageArgument_Push(GARET, 1);
+    MessageArgument_Push(ITEM_VIRTUOUS_ARMLET, 2);
+    MessageArgument_Push(0x1e240, 5);
     MenuTest_ShowMessageAndWait(messageId);
     for (;;) {
       if ((gKeysHeld & KEY_B) != 0) {
@@ -171,39 +171,39 @@ end:
 // LOCALID_SECOND_FELIX while the leader faces a given way (gMenuTest_Events).
 // Each runs for the weapon shop's 43 messages; the Sanctum's count is its own,
 // also 43.
-static void DebugMenu_BrowseWeaponShopMessages(void) {
-  DebugMenu_BrowseMessageRange(MsgWeaponShopWelcome,
-                               MsgArmorShopWelcome - MsgWeaponShopWelcome);
+static void MenuTest_BrowseWeaponShopMessages(void) {
+  MenuTest_BrowseMessageRange(MsgWeaponShopWelcome,
+                              MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
-static void DebugMenu_BrowseArmorShopMessages(void) {
-  DebugMenu_BrowseMessageRange(MsgArmorShopWelcome,
-                               MsgArmorShopWelcome - MsgWeaponShopWelcome);
+static void MenuTest_BrowseArmorShopMessages(void) {
+  MenuTest_BrowseMessageRange(MsgArmorShopWelcome,
+                              MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
-static void DebugMenu_BrowseItemShopMessages(void) {
-  DebugMenu_BrowseMessageRange(MsgItemShopWelcome,
-                               MsgArmorShopWelcome - MsgWeaponShopWelcome);
+static void MenuTest_BrowseItemShopMessages(void) {
+  MenuTest_BrowseMessageRange(MsgItemShopWelcome,
+                              MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
-static void DebugMenu_BrowseSanctumMessages(void) {
-  DebugMenu_BrowseMessageRange(MsgSanctumWelcome,
-                               MsgWarriorShopWelcome - MsgSanctumWelcome);
+static void MenuTest_BrowseSanctumMessages(void) {
+  MenuTest_BrowseMessageRange(MsgSanctumWelcome,
+                              MsgWarriorShopWelcome - MsgSanctumWelcome);
 }
 
-static void DebugMenu_BrowseWarriorShopMessages(void) {
-  DebugMenu_BrowseMessageRange(MsgWarriorShopWelcome,
-                               MsgArmorShopWelcome - MsgWeaponShopWelcome);
+static void MenuTest_BrowseWarriorShopMessages(void) {
+  MenuTest_BrowseMessageRange(MsgWarriorShopWelcome,
+                              MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
-static void DebugMenu_BrowseWarriorArmorShopMessages(void) {
-  DebugMenu_BrowseMessageRange(MsgWarriorArmorShopWelcome,
-                               MsgArmorShopWelcome - MsgWeaponShopWelcome);
+static void MenuTest_BrowseWarriorArmorShopMessages(void) {
+  MenuTest_BrowseMessageRange(MsgWarriorArmorShopWelcome,
+                              MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
-static void DebugMenu_BrowseWarriorItemShopMessages(void) {
-  DebugMenu_BrowseMessageRange(MsgWarriorItemShopWelcome,
-                               MsgArmorShopWelcome - MsgWeaponShopWelcome);
+static void MenuTest_BrowseWarriorItemShopMessages(void) {
+  MenuTest_BrowseMessageRange(MsgWarriorItemShopWelcome,
+                              MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 #endif
 
@@ -212,47 +212,47 @@ static void DebugMenu_BrowseWarriorItemShopMessages(void) {
 /// one shown, with no speaker (local id -1), and waits until it closes. Talking
 /// to LOCALID_SECOND_FELIX while facing south, in German, Spanish, French and
 /// Italian.
-static void DebugMenu_RunMessageTest(void) {
+static void MenuTest_RunMessageTest(void) {
   Engine_ScriptSetMessage(MSGNO(MsgBattleAdditionalPsynergyHelp));
   Engine_ScriptSetMessage(MSGNO(MsgValeComeOnHurry));
   FieldScript_ShowMessageAndWait(-1, 0);
 }
 #endif
 
-/// Runs the shop test's preset inventory, money and ailment setup. Talking
+/// Runs the shop test's preset inventory, money and status setup. Talking
 /// to LOCALID_ARMOR_MERCHANT: the debug shop, with 200000 coins, broken
 /// equipment and afflicted members (Shop_OpenDebugShop).
 static void DebugMenu_RunPresetShop(void) { Shop_OpenDebugShop(1); }
 
 /// Unused: an empty function nothing calls.
-UNUSED static void DebugMenu_NoOp(void) {}
+UNUSED static void MenuTest_NoOp(void) {}
 
-/// Opens the shop inventory selector and discards its selected owner and slot.
+/// Opens the shop inventory selector and discards its selected member and slot.
 /// Talking to LOCALID_KRADEN: the picker a full party drops an item with.
-static void DebugMenu_TestItemSelection(void) {
+static void MenuTest_TestItemSelection(void) {
   s32 selectedOwner;
   s32 selectedSlot;
-  Shop_PickUnitItem(&selectedOwner, &selectedSlot);
+  ItemPicker_Run(&selectedOwner, &selectedSlot);
 }
 
-/// Talking to Mia: the name entry screen for Isaac.
-static void DebugMenu_EditIsaacName(void) { NameEntry_EditOwnerName(ISAAC); }
+/// Talking to Mia: the naming screen for Isaac.
+static void MenuTest_EditIsaacName(void) { NamingScreen_EditMemberName(ISAAC); }
 
 /// Leaves the test object event unchanged when targeted by Psynergy. The event
 /// for Whirlwind, Force and Catch cast at LOCALID_IVY.
-static void DebugMenu_IgnorePsynergy(void) {}
+static void MenuTest_IgnorePsynergy(void) {}
 
 /// Keeps Force from moving LOCALID_IVY: run at phase 1 of Force cast at it,
 /// this sets the effect's childMode, and Force's shot then leaves its target
 /// where it is (object/psynergy_effects/force.c).
-static void DebugMenu_EnableEffectChildMode(void) {
-  ((struct FieldEffectWork *)gEffectWork)->childMode = 1;
+static void MenuTest_EnableEffectChildMode(void) {
+  ((struct FieldEffectWork *)gFieldEffectWork)->childMode = 1;
 }
 
 #if TBS_PATCH_3
 /// Gives a Nut through the ordinary party gift and full-inventory dialogue.
 /// Talking to LOCALID_SECOND_DORA in French only.
-UNUSED static void DebugMenu_GiveItemToParty(void) {
+UNUSED static void MenuTest_GiveItemToParty(void) {
   PartyInventory_GiveItem(ITEM_NUT, 0);
 }
 #endif
@@ -265,27 +265,27 @@ s32 MenuTest_GetEvents(void) { return (s32)gMenuTest_Events; }
 /// Unit_LevelUpTo only raises a level, and entering the room has already set
 /// them to 30 (Isaac to 50 outside Japanese), so the first talks change
 /// nothing.
-static void DebugMenu_RaisePartyLevels(void) {
+static void MenuTest_RaisePartyLevels(void) {
   s32 *targetLevel;
 
-  UiText_ShowPositionedMessageAndWait(MsgDebugWentLevel, 1);
+  FieldMessage_Show(MsgDebugWentLevel, 1);
   targetLevel = &gMenuTest_SlotOffsets;
   Unit_LevelUpTo(ISAAC, *targetLevel);
   Unit_LevelUpTo(GARET, *targetLevel);
   Unit_LevelUpTo(MIA, *targetLevel);
   Unit_LevelUpTo(IVAN, *targetLevel);
   *targetLevel += 10;
-  DebugMenu_RecalculateParty();
+  MenuTest_RecalculateParty();
 }
 
 /// Attempts each consumable grant in order, including calls after a bag fills.
 /// Talking to Ivan: `You got an item!`. The numbered items are 180 the Herb,
 /// 183 the Potion, 186 the Psy Crystal, 192 the Cookie and 236 the Sacred
 /// Feather (MsgItemName + the number).
-static void DebugMenu_GiveConsumableTestStock(void) {
+static void MenuTest_GiveConsumableTestStock(void) {
   // A repeated-grant loop shrinks this native function from 0x626 to 0x12c;
   // retain the individual calls and their original insertion order.
-  UiText_ShowPositionedMessageAndWait(MsgDebugGotItem, 1);
+  FieldMessage_Show(MsgDebugGotItem, 1);
   Inventory_AddItem(ISAAC, ITEM_ANTIDOTE);
   Inventory_AddItem(ISAAC, ITEM_ANTIDOTE);
   Inventory_AddItem(ISAAC, ITEM_ANTIDOTE);
@@ -477,7 +477,7 @@ static void DebugMenu_GiveConsumableTestStock(void) {
   Inventory_AddItem(MIA, ITEM_LUCKY_PEPPER);
   Inventory_AddItem(MIA, ITEM_LUCKY_PEPPER);
   Inventory_AddItem(MIA, ITEM_LUCKY_PEPPER);
-  DebugMenu_RecalculateParty();
+  MenuTest_RecalculateParty();
 }
 
 /// Grants and sets test Djinn. Talking to LOCALID_DORA: `You got a Djinni!`,
@@ -487,7 +487,7 @@ static void DebugMenu_GiveConsumableTestStock(void) {
 /// buffer, so the loop's only lasting effect is gMenuTest_FillLetter, which
 /// nothing else reads either. The call the string presumably fed is gone from
 /// every edition.
-static void DebugMenu_GivePartyDjinn(void) {
+static void MenuTest_GivePartyDjinn(void) {
   /* FAKEMATCH(dead): the Japanese loop's buffer, unread outside
    * Japanese, for the frame's 256 bytes; as declared inside the #if, 2 of 232
    * instructions differ in tbs-en. */
@@ -510,76 +510,76 @@ static void DebugMenu_GivePartyDjinn(void) {
   }
 #endif
   // Add and set each element in separate passes, preserving recovery updates.
-  UiText_ShowPositionedMessageAndWait(MsgDebugGotDjinni, 1);
-  Djinn_AddToOwner(ISAAC, ELEMENT_VENUS, 0);
-  Djinn_AddToOwner(ISAAC, ELEMENT_VENUS, 1);
-  Djinn_AddToOwner(ISAAC, ELEMENT_VENUS, 2);
-  Djinn_AddToOwner(ISAAC, ELEMENT_VENUS, 3);
-  Djinn_AddToOwner(ISAAC, ELEMENT_VENUS, 4);
-  Djinn_AddToOwner(ISAAC, ELEMENT_VENUS, 5);
-  Djinn_AddToOwner(ISAAC, ELEMENT_VENUS, 6);
-  Djinn_Activate(ISAAC, ELEMENT_VENUS, 0);
-  Djinn_Activate(ISAAC, ELEMENT_VENUS, 1);
-  Djinn_Activate(ISAAC, ELEMENT_VENUS, 2);
-  Djinn_Activate(ISAAC, ELEMENT_VENUS, 3);
-  Djinn_Activate(ISAAC, ELEMENT_VENUS, 4);
-  Djinn_Activate(ISAAC, ELEMENT_VENUS, 5);
-  Djinn_Activate(ISAAC, ELEMENT_VENUS, 6);
-  Djinn_AddToOwner(GARET, ELEMENT_MARS, 0);
-  Djinn_AddToOwner(GARET, ELEMENT_MARS, 1);
-  Djinn_AddToOwner(GARET, ELEMENT_MARS, 2);
-  Djinn_AddToOwner(GARET, ELEMENT_MARS, 3);
-  Djinn_AddToOwner(GARET, ELEMENT_MARS, 4);
-  Djinn_AddToOwner(GARET, ELEMENT_MARS, 5);
-  Djinn_AddToOwner(GARET, ELEMENT_MARS, 6);
-  Djinn_Activate(GARET, ELEMENT_MARS, 0);
-  Djinn_Activate(GARET, ELEMENT_MARS, 1);
-  Djinn_Activate(GARET, ELEMENT_MARS, 2);
-  Djinn_Activate(GARET, ELEMENT_MARS, 3);
-  Djinn_Activate(GARET, ELEMENT_MARS, 4);
-  Djinn_Activate(GARET, ELEMENT_MARS, 5);
-  Djinn_Activate(GARET, ELEMENT_MARS, 6);
-  Djinn_AddToOwner(MIA, ELEMENT_MERCURY, 0);
-  Djinn_AddToOwner(MIA, ELEMENT_MERCURY, 1);
-  Djinn_AddToOwner(MIA, ELEMENT_MERCURY, 2);
-  Djinn_AddToOwner(MIA, ELEMENT_MERCURY, 3);
-  Djinn_AddToOwner(MIA, ELEMENT_MERCURY, 4);
-  Djinn_AddToOwner(MIA, ELEMENT_MERCURY, 5);
-  Djinn_AddToOwner(MIA, ELEMENT_MERCURY, 6);
-  Djinn_Activate(MIA, ELEMENT_MERCURY, 0);
-  Djinn_Activate(MIA, ELEMENT_MERCURY, 1);
-  Djinn_Activate(MIA, ELEMENT_MERCURY, 2);
-  Djinn_Activate(MIA, ELEMENT_MERCURY, 3);
-  Djinn_Activate(MIA, ELEMENT_MERCURY, 4);
-  Djinn_Activate(MIA, ELEMENT_MERCURY, 5);
-  Djinn_Activate(MIA, ELEMENT_MERCURY, 6);
-  Djinn_AddToOwner(IVAN, ELEMENT_JUPITER, 0);
-  Djinn_AddToOwner(IVAN, ELEMENT_JUPITER, 1);
-  Djinn_AddToOwner(IVAN, ELEMENT_JUPITER, 2);
-  Djinn_AddToOwner(IVAN, ELEMENT_JUPITER, 3);
-  Djinn_AddToOwner(IVAN, ELEMENT_JUPITER, 4);
-  Djinn_AddToOwner(IVAN, ELEMENT_JUPITER, 5);
-  Djinn_Activate(IVAN, ELEMENT_JUPITER, 0);
-  Djinn_Activate(IVAN, ELEMENT_JUPITER, 1);
-  Djinn_Activate(IVAN, ELEMENT_JUPITER, 2);
-  Djinn_Activate(IVAN, ELEMENT_JUPITER, 3);
-  Djinn_Activate(IVAN, ELEMENT_JUPITER, 4);
-  Djinn_Activate(IVAN, ELEMENT_JUPITER, 5);
-  DebugMenu_RecalculateParty();
+  FieldMessage_Show(MsgDebugGotDjinni, 1);
+  Djinn_Give(ISAAC, ELEMENT_VENUS, 0);
+  Djinn_Give(ISAAC, ELEMENT_VENUS, 1);
+  Djinn_Give(ISAAC, ELEMENT_VENUS, 2);
+  Djinn_Give(ISAAC, ELEMENT_VENUS, 3);
+  Djinn_Give(ISAAC, ELEMENT_VENUS, 4);
+  Djinn_Give(ISAAC, ELEMENT_VENUS, 5);
+  Djinn_Give(ISAAC, ELEMENT_VENUS, 6);
+  Djinn_Set(ISAAC, ELEMENT_VENUS, 0);
+  Djinn_Set(ISAAC, ELEMENT_VENUS, 1);
+  Djinn_Set(ISAAC, ELEMENT_VENUS, 2);
+  Djinn_Set(ISAAC, ELEMENT_VENUS, 3);
+  Djinn_Set(ISAAC, ELEMENT_VENUS, 4);
+  Djinn_Set(ISAAC, ELEMENT_VENUS, 5);
+  Djinn_Set(ISAAC, ELEMENT_VENUS, 6);
+  Djinn_Give(GARET, ELEMENT_MARS, 0);
+  Djinn_Give(GARET, ELEMENT_MARS, 1);
+  Djinn_Give(GARET, ELEMENT_MARS, 2);
+  Djinn_Give(GARET, ELEMENT_MARS, 3);
+  Djinn_Give(GARET, ELEMENT_MARS, 4);
+  Djinn_Give(GARET, ELEMENT_MARS, 5);
+  Djinn_Give(GARET, ELEMENT_MARS, 6);
+  Djinn_Set(GARET, ELEMENT_MARS, 0);
+  Djinn_Set(GARET, ELEMENT_MARS, 1);
+  Djinn_Set(GARET, ELEMENT_MARS, 2);
+  Djinn_Set(GARET, ELEMENT_MARS, 3);
+  Djinn_Set(GARET, ELEMENT_MARS, 4);
+  Djinn_Set(GARET, ELEMENT_MARS, 5);
+  Djinn_Set(GARET, ELEMENT_MARS, 6);
+  Djinn_Give(MIA, ELEMENT_MERCURY, 0);
+  Djinn_Give(MIA, ELEMENT_MERCURY, 1);
+  Djinn_Give(MIA, ELEMENT_MERCURY, 2);
+  Djinn_Give(MIA, ELEMENT_MERCURY, 3);
+  Djinn_Give(MIA, ELEMENT_MERCURY, 4);
+  Djinn_Give(MIA, ELEMENT_MERCURY, 5);
+  Djinn_Give(MIA, ELEMENT_MERCURY, 6);
+  Djinn_Set(MIA, ELEMENT_MERCURY, 0);
+  Djinn_Set(MIA, ELEMENT_MERCURY, 1);
+  Djinn_Set(MIA, ELEMENT_MERCURY, 2);
+  Djinn_Set(MIA, ELEMENT_MERCURY, 3);
+  Djinn_Set(MIA, ELEMENT_MERCURY, 4);
+  Djinn_Set(MIA, ELEMENT_MERCURY, 5);
+  Djinn_Set(MIA, ELEMENT_MERCURY, 6);
+  Djinn_Give(IVAN, ELEMENT_JUPITER, 0);
+  Djinn_Give(IVAN, ELEMENT_JUPITER, 1);
+  Djinn_Give(IVAN, ELEMENT_JUPITER, 2);
+  Djinn_Give(IVAN, ELEMENT_JUPITER, 3);
+  Djinn_Give(IVAN, ELEMENT_JUPITER, 4);
+  Djinn_Give(IVAN, ELEMENT_JUPITER, 5);
+  Djinn_Set(IVAN, ELEMENT_JUPITER, 0);
+  Djinn_Set(IVAN, ELEMENT_JUPITER, 1);
+  Djinn_Set(IVAN, ELEMENT_JUPITER, 2);
+  Djinn_Set(IVAN, ELEMENT_JUPITER, 3);
+  Djinn_Set(IVAN, ELEMENT_JUPITER, 4);
+  Djinn_Set(IVAN, ELEMENT_JUPITER, 5);
+  MenuTest_RecalculateParty();
 }
 
 /// Reduces HP and PP, then poisons and haunts Isaac and binds and venoms Garet.
 /// Talking to LOCALID_SATUROS: `The body is being torn apart.` Isaac is
-/// poisoned and haunted, Garet given deadly poison. Garet's restraint is set to
+/// poisoned and haunted, Garet given deadly poison. Garet's curse is set to
 /// 1 too, but the closing Unit_Calculate clears the curse bits again unless he
 /// wears cursed equipment (game/game/units.c).
-static void DebugMenu_DamageAndAfflictParty(void) {
-  // Named BattleUnit stores change address setup and store ordering in the
+static void MenuTest_DamageAndAfflictParty(void) {
+  // Named Unit stores change address setup and store ordering in the
   // native build; retain the byte cursor for poison (0x131), haunt (0x140) and
-  // restraint (0x130).
+  // curse (0x130).
   u8 *record;
 
-  UiText_ShowPositionedMessageAndWait(MsgDebugBodyTornApart, 1);
+  FieldMessage_Show(MsgDebugBodyTornApart, 1);
   FieldUnit_AddHp(ISAAC, -100);
   FieldUnit_AddHp(GARET, -100);
   FieldUnit_AddHp(IVAN, -33);
@@ -594,15 +594,15 @@ static void DebugMenu_DamageAndAfflictParty(void) {
   *record = 1;
   record = (u8 *)Unit_Get(GARET);
   record[0x130] = 1;
-  record[0x131] = POISON_DEADLY;
-  DebugMenu_RecalculateParty();
+  record[0x131] = POISON_VENOM;
+  MenuTest_RecalculateParty();
 }
 
-/// Adds the test equipment in each owner's original inventory order. Talking
+/// Adds the test equipment in each member's original inventory order. Talking
 /// to Jenna: `You got sturdy equipment!`, then weapons and armor for each of
 /// the four, from the Gaia Blade to the Glittering Tiara.
-static void DebugMenu_GiveEquipmentTestStock(void) {
-  UiText_ShowPositionedMessageAndWait(MsgDebugGotSturdyEquipment, 1);
+static void MenuTest_GiveEquipmentTestStock(void) {
+  FieldMessage_Show(MsgDebugGotSturdyEquipment, 1);
   Inventory_AddItem(ISAAC, ITEM_SPIKED_ARMOR);
   Inventory_AddItem(ISAAC, ITEM_ASURAS_ARMOR);
   Inventory_AddItem(ISAAC, ITEM_EARTH_SHIELD);
@@ -637,15 +637,15 @@ static void DebugMenu_GiveEquipmentTestStock(void) {
   Inventory_AddItem(MIA, ITEM_VAMBRACE);
   Inventory_AddItem(MIA, ITEM_GUARDIAN_ARMLET);
   Inventory_AddItem(MIA, ITEM_GLITTERING_TIARA);
-  DebugMenu_RecalculateParty();
+  MenuTest_RecalculateParty();
 }
 
 /// Browses item definitions and gives the selected item while party bags allow
-/// it. Talking to LOCALID_SECOND_FELIX in Japanese (DebugMenu_OpenItemBrowser).
+/// it. Talking to LOCALID_SECOND_FELIX in Japanese (MenuTest_OpenItemBrowser).
 /// Unlike the level room's browser it stops on every number, iconless ones too.
-static void DebugMenu_SelectItem(void) {
-  struct UiWindow *window;
-  struct UiWindow *details;
+static void MenuTest_SelectItem(void) {
+  struct Window *window;
+  struct Window *details;
   s32 selectedItemId;
   s32 redraw;
   s32 definitionId;
@@ -671,19 +671,18 @@ static void DebugMenu_SelectItem(void) {
       selectedItemId = (selectedItemId + DEBUG_ITEM_COUNT) % itemCount;
       Engine_DebugRedrawWindow(window);
       Engine_DebugClearWindow(window);
-      UiText_DrawStringInWindow(gDebugItemPrompt, window, 0, 0);
-      UiText_DrawNumberAtOffset(selectedItemId, 0, window, 80, 0);
+      Text_DrawStringInWindow(gDebugItemPrompt, window, 0, 0);
+      Text_DrawNumberAtOffset(selectedItemId, 0, window, 80, 0);
       if (PartyInventory_HasSpace()) {
-        UiText_DrawStringInWindow(gDebugItemCapacityLabel, window, 0, 32);
+        Text_DrawStringInWindow(gDebugItemCapacityLabel, window, 0, 32);
         definitionId = selectedItemId & 0x1ff;
         Engine_DebugGetItem(definitionId);
-        UiText_DrawCharacterAtOffset(definitionId + MsgItemName, window, 120,
-                                     0);
-        UiText_DrawResource(definitionId + MsgItemPlainName, window, 0, 16);
+        Text_DrawMessageAsTiles(definitionId + MsgItemName, window, 120, 0);
+        Text_DrawMessage(definitionId + MsgItemPlainName, window, 0, 16);
         Engine_DebugRedrawWindow(details);
         Engine_DebugDrawItemDetails(details, selectedItemId);
       } else {
-        UiText_DrawStringInWindow(gDebugItemFullLabel, window, 0, 32);
+        Text_DrawStringInWindow(gDebugItemFullLabel, window, 0, 32);
       }
     }
     // These are independent tests: a single frame can add and move the cursor.
@@ -736,16 +735,16 @@ static void DebugMenu_SelectItem(void) {
   Engine_DebugFinalizeWindow(details, 1);
 }
 
-UNUSED static void DebugMenu_OpenItemBrowser(void) { DebugMenu_SelectItem(); }
+UNUSED static void MenuTest_OpenItemBrowser(void) { MenuTest_SelectItem(); }
 
 /// Adds the original treasure test stock, retaining duplicate tickets and
 /// medals. Talking to LOCALID_MENARDI: `You got treasure!`. Among the items
 /// are the Orb of Force, Douse Drop, Frost Jewel, Lifting Gem, Halt Gem and
 /// Catch Beads, the four Elemental Stars and the Mythril Bag.
-static void DebugMenu_GiveTreasureTestStock(void) {
+static void MenuTest_GiveTreasureTestStock(void) {
   // Sharing the duplicate grants through a counted loop shrinks this function
   // from 0x194 to 0x120; retain the original calls.
-  UiText_ShowPositionedMessageAndWait(MsgDebugGotTreasure, 1);
+  FieldMessage_Show(MsgDebugGotTreasure, 1);
   Inventory_AddItem(ISAAC, ITEM_HERMES_WATER);
   Inventory_AddItem(ISAAC, ITEM_HALT_GEM);
   Inventory_AddItem(ISAAC, ITEM_VENUS_STAR);
@@ -790,21 +789,21 @@ static void DebugMenu_GiveTreasureTestStock(void) {
   Inventory_AddItem(MIA, ITEM_LIFTING_GEM);
   Inventory_AddItem(MIA, ITEM_HALT_GEM);
   Inventory_AddItem(MIA, ITEM_CATCH_BEADS);
-  DebugMenu_RecalculateParty();
+  MenuTest_RecalculateParty();
 }
 
 /// Sets the debug party, stock counters and levels; returns zero. The room's
-/// initialize entry, which Field_RunMap runs on every entry and whose
+/// initialize entry, which Map_Run runs on every entry and whose
 /// result it ignores: so each visit adds to the shops' stock again, but
 /// Unit_LevelUpTo only raises, so a later visit changes no level unless a
 /// member is below 30 (Isaac 50 outside Japanese).
-s32 CommandTable_ConfigureCommandList(void) {
+s32 MenuTest_Initialize(void) {
   // Assemble the test party before adding stock and setting levels: Jenna
   // leaves, Garet, Mia and Ivan join.
-  Party_RemoveActiveOwner(JENNA);
-  Party_AddActiveOwner(GARET);
-  Party_AddActiveOwner(MIA);
-  Party_AddActiveOwner(IVAN);
+  Party_RemoveMember(JENNA);
+  Party_AddMember(GARET);
+  Party_AddMember(MIA);
+  Party_AddMember(IVAN);
   // Populate the original shop counters, retaining repeated increments: how
   // many of each rare item the shops may sell, here three Shamshirs, two
   // Silver Blades, a Masamune and eight rare pieces of armor.
@@ -833,34 +832,32 @@ s32 CommandTable_ConfigureCommandList(void) {
   Unit_LevelUpTo(GARET, 30);
   Unit_LevelUpTo(MIA, 30);
   Unit_LevelUpTo(IVAN, 30);
-  DebugMenu_RecalculateParty();
+  MenuTest_RecalculateParty();
   return 0;
 }
 
 /// Returns the icon browser's status to the event dispatcher. Talking to
 /// LOCALID_IVY.
-static s32 DebugMenu_OpenIconBrowser(void) { return DebugMenu_BrowseIcons(); }
+static s32 MenuTest_OpenIconBrowser(void) { return DebugBrowser_Icons(); }
 
 #if !TBS_PATCH_1
 /// Returns the Japanese character selector's status. Talking to LOCALID_FELIX
 /// in Japanese: the party member chooser, whose choice nothing uses.
-static s32 DebugMenu_SelectCharacter(void) {
-  return Menu_OpenCharacterSelector();
-}
+static s32 MenuTest_SelectCharacter(void) { return MemberChooser_Open(); }
 #endif
 
 #if !TBS_PATCH_3
-/// Forwards the selected owner and shop confirmation status. Talking to
+/// Forwards the selected member and shop confirmation status. Talking to
 /// LOCALID_SECOND_DORA in Japanese, English and German: the sanctum's service
 /// menu, with LOCALID_SECOND_DORA as its keeper, since Map_TalkToObjectEvent
 /// passes the object event's id.
-static s32 DebugMenu_ConfirmShopAction(s32 unitId) {
-  return Shop_ConfirmAct(unitId);
+static s32 MenuTest_ConfirmShopAction(s32 unitId) {
+  return Sanctum_Run(unitId);
 }
 #endif
 
 /// Eight rows of seven words that nothing reads by name, the same 56 words as
-/// the Djinn room's gTestRooms_WarpDestsHead (rooms.c), which says why their
+/// the Djinn room's gTestRoom_WarpDestsHead (rooms.c), which says why their
 /// meaning is unknown.
 u32 gDebugItemPromptHead[] = {
     0x500050, 0, 80,  0x500000, 0x10003, 2, 0,
@@ -891,33 +888,33 @@ u32 gMenuTest_Warps[] = {
 
 struct ObjectEventTemplate gMenuTest_ObjectEventTemplates[] = {
     {GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(40), 0, PIXELS(48),
-     FACING_SOUTHEAST, TALK_FACE_PARTY, 0},
+     FACING_SOUTHEAST, TALK_FACING_PARTY, 0},
     {JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(40), 0, PIXELS(80),
-     FACING_SOUTHEAST, TALK_FACE_PARTY, 0},
+     FACING_SOUTHEAST, TALK_FACING_PARTY, 0},
     {IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(40), 0, PIXELS(112),
-     FACING_SOUTHEAST, TALK_FACE_PARTY, 0},
+     FACING_SOUTHEAST, TALK_FACING_PARTY, 0},
     {MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(40), 0, PIXELS(144),
-     FACING_SOUTHEAST, TALK_FACE_PARTY, 0},
+     FACING_SOUTHEAST, TALK_FACING_PARTY, 0},
     {0x1e, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(80), 0, PIXELS(48),
-     FACING_SOUTHEAST, TALK_FACE_PARTY, 0},
+     FACING_SOUTHEAST, TALK_FACING_PARTY, 0},
     {0x1f, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(80), 0, PIXELS(80),
-     FACING_SOUTHEAST, TALK_FACE_PARTY, 0},
+     FACING_SOUTHEAST, TALK_FACING_PARTY, 0},
     {0x20, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(80), 0, PIXELS(112),
-     FACING_SOUTHEAST, TALK_FACE_PARTY, 0},
+     FACING_SOUTHEAST, TALK_FACING_PARTY, 0},
     {0x21, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(80), 0, PIXELS(144),
-     FACING_SOUTHEAST, TALK_FACE_PARTY, 0},
+     FACING_SOUTHEAST, TALK_FACING_PARTY, 0},
     {0x7d, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(120), 0, PIXELS(48),
-     FACING_SOUTHEAST, TALK_FACE_PARTY, 0},
+     FACING_SOUTHEAST, TALK_FACING_PARTY, 0},
     {0x1f, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(120), 0, PIXELS(80),
-     FACING_SOUTHEAST, TALK_FACE_PARTY, 0},
+     FACING_SOUTHEAST, TALK_FACING_PARTY, 0},
     {0x20, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(120), 0, PIXELS(112),
-     FACING_SOUTHEAST, TALK_FACE_PARTY, 0},
+     FACING_SOUTHEAST, TALK_FACING_PARTY, 0},
     {0xf8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(120), 0, PIXELS(144),
-     FACING_SOUTHEAST, TALK_FACE_PARTY, 0},
+     FACING_SOUTHEAST, TALK_FACING_PARTY, 0},
     {0x23, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(160), 0, PIXELS(48),
-     FACING_SOUTHEAST, TALK_FACE_PARTY, 0},
+     FACING_SOUTHEAST, TALK_FACING_PARTY, 0},
     {0x23, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(160), 0, PIXELS(80),
-     FACING_SOUTHEAST, TALK_FACE_PARTY, 0},
+     FACING_SOUTHEAST, TALK_FACING_PARTY, 0},
     {MAP_TABLE_END},
 };
 
@@ -929,78 +926,78 @@ struct ObjectEventTemplate gMenuTest_ObjectEventTemplates[] = {
 /// selector and the item browser.
 struct MapEvent gMenuTest_Events[] = {
     {MAP_EVENT_TALK, GARET, CONDITION_ALWAYS,
-     EVENT_SCRIPT(DebugMenu_RaisePartyLevels)},
+     EVENT_SCRIPT(MenuTest_RaisePartyLevels)},
     {MAP_EVENT_TALK, JENNA, CONDITION_ALWAYS,
-     EVENT_SCRIPT(DebugMenu_GiveEquipmentTestStock)},
+     EVENT_SCRIPT(MenuTest_GiveEquipmentTestStock)},
     {MAP_EVENT_TALK, IVAN, CONDITION_ALWAYS,
-     EVENT_SCRIPT(DebugMenu_GiveConsumableTestStock)},
+     EVENT_SCRIPT(MenuTest_GiveConsumableTestStock)},
     {MAP_EVENT_TALK, MIA, CONDITION_ALWAYS,
-     EVENT_SCRIPT(DebugMenu_EditIsaacName)},
+     EVENT_SCRIPT(MenuTest_EditIsaacName)},
     {MAP_EVENT_TALK, LOCALID_KRADEN, CONDITION_ALWAYS,
-     EVENT_SCRIPT(DebugMenu_TestItemSelection)},
+     EVENT_SCRIPT(MenuTest_TestItemSelection)},
     {MAP_EVENT_TALK, LOCALID_DORA, CONDITION_ALWAYS,
-     EVENT_SCRIPT(DebugMenu_GivePartyDjinn)},
+     EVENT_SCRIPT(MenuTest_GivePartyDjinn)},
     {MAP_EVENT_TALK, LOCALID_SATUROS, CONDITION_ALWAYS,
-     EVENT_SCRIPT(DebugMenu_DamageAndAfflictParty)},
+     EVENT_SCRIPT(MenuTest_DamageAndAfflictParty)},
     {MAP_EVENT_TALK, LOCALID_MENARDI, CONDITION_ALWAYS,
-     EVENT_SCRIPT(DebugMenu_GiveTreasureTestStock)},
+     EVENT_SCRIPT(MenuTest_GiveTreasureTestStock)},
     {MAP_EVENT_TALK, LOCALID_ARMOR_MERCHANT, CONDITION_ALWAYS,
      EVENT_SCRIPT(DebugMenu_RunPresetShop)},
 #if TBS_PATCH_3 && !TBS_PATCH_4
     {MAP_EVENT_TALK, LOCALID_SECOND_DORA, CONDITION_ALWAYS,
-     EVENT_SCRIPT(DebugMenu_GiveItemToParty)},
+     EVENT_SCRIPT(MenuTest_GiveItemToParty)},
 #elif TBS_PATCH_4
     {MAP_EVENT_TALK, LOCALID_SECOND_DORA, CONDITION_ALWAYS,
      MSGNO(MsgTolbiTolbiShipThenTheyAreDangerous)},
 #else
     {MAP_EVENT_TALK, LOCALID_SECOND_DORA, CONDITION_ALWAYS,
-     EVENT_SCRIPT(DebugMenu_ConfirmShopAction)},
+     EVENT_SCRIPT(MenuTest_ConfirmShopAction)},
 #endif
     {MAP_EVENT_TALK, LOCALID_SECOND_SATUROS, CONDITION_ALWAYS,
      MSGNO(MsgValeKyleAbleStop)},
     {MAP_EVENT_TALK, LOCALID_IVY, CONDITION_ALWAYS,
-     EVENT_SCRIPT(DebugMenu_OpenIconBrowser)},
+     EVENT_SCRIPT(MenuTest_OpenIconBrowser)},
 #if !TBS_PATCH_1
     {MAP_EVENT_TALK, LOCALID_FELIX, CONDITION_ALWAYS,
-     EVENT_SCRIPT(DebugMenu_SelectCharacter)},
+     EVENT_SCRIPT(MenuTest_SelectCharacter)},
     {MAP_EVENT_TALK, LOCALID_SECOND_FELIX, CONDITION_ALWAYS,
-     EVENT_SCRIPT(DebugMenu_OpenItemBrowser)},
+     EVENT_SCRIPT(MenuTest_OpenItemBrowser)},
 #else
     {0xc400, LOCALID_FELIX, CONDITION_ALWAYS,
-     EVENT_SCRIPT(DebugMenu_BrowseWeaponShopMessages)},
+     EVENT_SCRIPT(MenuTest_BrowseWeaponShopMessages)},
     {0x8400, LOCALID_FELIX, CONDITION_ALWAYS,
-     EVENT_SCRIPT(DebugMenu_BrowseArmorShopMessages)},
+     EVENT_SCRIPT(MenuTest_BrowseArmorShopMessages)},
     {0x400, LOCALID_FELIX, CONDITION_ALWAYS,
-     EVENT_SCRIPT(DebugMenu_BrowseItemShopMessages)},
+     EVENT_SCRIPT(MenuTest_BrowseItemShopMessages)},
     {0x4400, LOCALID_FELIX, CONDITION_ALWAYS,
-     EVENT_SCRIPT(DebugMenu_BrowseSanctumMessages)},
+     EVENT_SCRIPT(MenuTest_BrowseSanctumMessages)},
     {0xc400, LOCALID_SECOND_FELIX, CONDITION_ALWAYS,
-     EVENT_SCRIPT(DebugMenu_BrowseWarriorShopMessages)},
+     EVENT_SCRIPT(MenuTest_BrowseWarriorShopMessages)},
     {0x8400, LOCALID_SECOND_FELIX, CONDITION_ALWAYS,
-     EVENT_SCRIPT(DebugMenu_BrowseWarriorArmorShopMessages)},
+     EVENT_SCRIPT(MenuTest_BrowseWarriorArmorShopMessages)},
     {0x400, LOCALID_SECOND_FELIX, CONDITION_ALWAYS,
-     EVENT_SCRIPT(DebugMenu_BrowseWarriorItemShopMessages)},
+     EVENT_SCRIPT(MenuTest_BrowseWarriorItemShopMessages)},
 #if TBS_PATCH_2
     {0x4400, LOCALID_SECOND_FELIX, CONDITION_ALWAYS,
-     EVENT_SCRIPT(DebugMenu_RunMessageTest)},
+     EVENT_SCRIPT(MenuTest_RunMessageTest)},
 #endif
 #endif
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_WHIRLWIND), LOCALID_IVY, CONDITION_ALWAYS,
-     EVENT_SCRIPT(DebugMenu_IgnorePsynergy)},
+     EVENT_SCRIPT(MenuTest_IgnorePsynergy)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_FORCE), LOCALID_IVY, CONDITION_ALWAYS,
-     EVENT_SCRIPT(DebugMenu_IgnorePsynergy)},
+     EVENT_SCRIPT(MenuTest_IgnorePsynergy)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_CATCH), LOCALID_IVY, CONDITION_ALWAYS,
-     EVENT_SCRIPT(DebugMenu_IgnorePsynergy)},
+     EVENT_SCRIPT(MenuTest_IgnorePsynergy)},
     {PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_FORCE, PSYNERGY_PHASE_BEFORE_CAST),
      LOCALID_IVY, CONDITION_ALWAYS,
-     EVENT_SCRIPT(DebugMenu_EnableEffectChildMode)},
+     EVENT_SCRIPT(MenuTest_EnableEffectChildMode)},
     {MAP_EVENTS_END},
 };
 
-/// The level DebugMenu_RaisePartyLevels levels the four to next: 10 at first,
+/// The level MenuTest_RaisePartyLevels levels the four to next: 10 at first,
 /// ten more after each use.
 s32 gMenuTest_SlotOffsets = 10;
 
-/// One less than the character the Japanese loop of DebugMenu_GivePartyDjinn
+/// One less than the character the Japanese loop of MenuTest_GivePartyDjinn
 /// fills with: 65 at first, so 'B', one more each pass, back to 65 after 96.
 s32 gMenuTest_FillLetter = 65;

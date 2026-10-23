@@ -2,37 +2,40 @@
 #define ALCHEMY_EFFECT_SLOT_H
 
 /// @file
-/// Effect slots: the particles Psynergy effects move and draw.
+/// Field effect sprites: the particles Psynergy effects move and draw.
 
 #include "edition.h"
 #include "types.h"
 #include "static_assert.h"
 
-/// EffectSlot.targetX and targetZ while the slot has no target, at rest.
-#define EFFECT_NO_TARGET ((s32)0x80000000)
+/// FieldEffectSprite.targetX and targetZ while the sprite has no target, at
+/// rest.
+#define FIELD_EFFECT_SPRITE_NO_TARGET ((s32)0x80000000)
 
-struct EffectSlot;
-/// An effect slot's per-frame routine (EffectSlot.callback).
-typedef void (*EffectCallback)(struct EffectSlot *);
+struct FieldEffectSprite;
+/// A field effect sprite's per-frame routine (FieldEffectSprite.callback).
+typedef void (*EffectCallback)(struct FieldEffectSprite *);
 
 /// A particle a Psynergy effect moves and draws: its sprite, its position and
 /// target, its speed, scale and heading, and its per-frame callback. The 24 are
-/// FieldEffectWork.effects, in the HEAP_SLOT_EFFECT work slot.
-struct EffectSlot {
-  void *object;     ///< the slot's sprite, released with the slot
-  s32 x;            ///< 16.16 fixed-point pixels
-  s32 z;            ///< 16.16 fixed-point pixels
-  s32 targetX;      ///< 16.16 fixed-point pixels; EFFECT_NO_TARGET at rest
-  s32 targetZ;      ///< 16.16 fixed-point pixels; EFFECT_NO_TARGET at rest
-  s32 originX;      ///< 16.16 fixed-point pixels; where the slot started
-  s32 originZ;      ///< 16.16 fixed-point pixels; where the slot started
-  s32 speed;        ///< 16.16 fixed-point pixels per frame
-  s32 speedMax;     ///< 16.16 fixed-point pixels per frame
-  s32 acceleration; ///< 16.16 fixed-point pixels per frame, each frame
-  s32 scaleX;       ///< 16.16 fixed point, 0x10000 full size
-  s32 scaleY;       ///< 16.16 fixed point, 0x10000 full size
-  u16 heading;      ///< 1/65536 turns
-  s16 turnStepMax;  ///< 1/65536 turns a frame
+/// FieldEffectWork.sprites, in the HEAP_SLOT_FIELD_EFFECT heap slot.
+struct FieldEffectSprite {
+  void *object; ///< the object it draws, released with it
+  s32 x;        ///< 16.16 fixed-point pixels
+  s32 z;        ///< 16.16 fixed-point pixels
+  s32 targetX;  ///< 16.16 fixed-point pixels; FIELD_EFFECT_SPRITE_NO_TARGET at
+                ///< rest
+  s32 targetZ;  ///< 16.16 fixed-point pixels; FIELD_EFFECT_SPRITE_NO_TARGET at
+                ///< rest
+  s32 originX;  ///< 16.16 fixed-point pixels; where the sprite started
+  s32 originZ;  ///< 16.16 fixed-point pixels; where the sprite started
+  s32 speed;    ///< 16.16 fixed-point pixels per frame
+  s32 speedMax; ///< 16.16 fixed-point pixels per frame
+  s32 acceleration;        ///< 16.16 fixed-point pixels per frame, each frame
+  s32 scaleX;              ///< 16.16 fixed point, 0x10000 full size
+  s32 scaleY;              ///< 16.16 fixed point, 0x10000 full size
+  u16 heading;             ///< 1/65536 turns
+  s16 turnStepMax;         ///< 1/65536 turns a frame
   EffectCallback callback; ///< run each frame once callbackDelay is 0
   u16 age;                 ///< frames
   s16 callbackDelay;       ///< frames
@@ -43,16 +46,17 @@ struct EffectSlot {
   /// Nonzero turns the heading toward the target by at most turnStepMax a
   /// frame; zero faces the target at once.
   s8 turnStepLimited;
-  s8 updateMotion; ///< nonzero: EffectSlot_UpdateMotion moves it each frame
+  s8 updateMotion; ///< nonzero: FieldEffectSprite_UpdateMotion moves it each
+                   ///< frame
   s8 render;       ///< nonzero: drawn each frame
-  s8 active;       ///< nonzero while the slot is in use
+  s8 active;       ///< nonzero while the sprite is in use
   u8 randomValue;  ///< random when filled; not read by name in TBS
-  /// bits: 2 z also lifts the sprite (set when the slot is filled)
+  /// bits: 2 z also lifts the sprite (set when it is filled)
   u8 flags;
 };
 
-STATIC_ASSERT(sizeof(struct EffectSlot) == 0x48);
-STATIC_ASSERT(offsetof(struct EffectSlot, orbitRadius) == 0x3c);
-STATIC_ASSERT(offsetof(struct EffectSlot, state) == 0x40);
+STATIC_ASSERT(sizeof(struct FieldEffectSprite) == 0x48);
+STATIC_ASSERT(offsetof(struct FieldEffectSprite, orbitRadius) == 0x3c);
+STATIC_ASSERT(offsetof(struct FieldEffectSprite, state) == 0x40);
 
 #endif

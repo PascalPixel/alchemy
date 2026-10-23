@@ -9,7 +9,7 @@
 	.set import.Engine_ObjectCreate, 1
 	.set import.Engine_MapGridRedraw, 1
 	.set import.Engine_ObjectSetPosition, 1
-	.set import.FieldObject_WaitForMove, 1
+	.set import.Object_WaitForMove, 1
 	.set import.Engine_MapGridCopyCellsTo, 1
 	.set import.MapGrid_GetTerrainHeight, 1
 	.set import.Engine_MapGridCopyCellAttributes, 1
@@ -63,9 +63,9 @@
 	.set import.Engine_ScriptCloseScreen, 1
 	.set import.Engine_ScriptWaitForScreen, 1
 	.set import.Field_EndBusyAndReveal, 1
-	.set import.Motion_LaunchFromFocusedObject, 1
+	.set import.ObjectMotion_LaunchFromFocusedObject, 1
 	.set import.Engine_ObjectEventWalkBy, 1
 	.set import.Engine_ObjectEventWalkByAndWait, 1
-	.set import.FieldEffect_PlayQueuedSound, 1
+	.set import.Map_PlayQueuedMusic, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

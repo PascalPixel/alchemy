@@ -2,8 +2,8 @@
 	.set overlay_imports, 1
 	.set import.__umodsi3, 1
 	.set import.Engine_TaskWait, 1
-	.set import.Scheduler_AddOrUpdateCallback, 1
-	.set import.Scheduler_RemoveCallback, 1
+	.set import.Task_Add, 1
+	.set import.Task_Remove, 1
 	.set import.Engine_RandomNext, 1
 	.set import.ArcTan2, 1
 	.set import.Engine_MathSin, 1
@@ -11,16 +11,16 @@
 	.set import.Vector_AddPolarOffset, 1
 	.set import.Engine_HeapAllocate, 1
 	.set import.Engine_HeapRelease, 1
-	.set import.Resource_ResetEntry, 1
+	.set import.VramCache_FreeEntry, 1
 	.set import.Engine_VramLoad, 1
-	.set import.AnimationObject_SelectAnimation, 1
+	.set import.Sprite_StartAnim, 1
 	.set import.ObjectEvent_SetMode, 1
 	.set import.Engine_ObjectSetScript, 1
 	.set import.Engine_ObjectCreate, 1
 	.set import.Engine_ObjectDispatchRelease, 1
 	.set import.Engine_MapGridRedraw, 1
 	.set import.Engine_ObjectSetPosition, 1
-	.set import.FieldObject_WaitForMove, 1
+	.set import.Object_WaitForMove, 1
 	.set import.Engine_MapGridAnimateCells, 1
 	.set import.Engine_MapGridCopyCellsTo, 1
 	.set import.Engine_MapGridCopyCellAttributes, 1
@@ -32,9 +32,9 @@
 	.set import.ObjectSystem_ResumeProjectionAndHideLayers, 1
 	.set import.Engine_ObjectSetPartPalettes, 1
 	.set import.Engine_MessageShowCentered, 1
-	.set import.UiText_ShowCenteredMessage, 1
+	.set import.FieldMessage_ShowCentered, 1
 	.set import.Engine_ItemLoadIcon, 1
-	.set import.PaletteGlow_Update, 1
+	.set import.WindowColor_Apply, 1
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1
 	.set import.Engine_GameFlagClear, 1
@@ -86,8 +86,8 @@
 	.set import.Engine_ItemShowFound, 1
 	.set import.Engine_PsynergyStart, 1
 	.set import.FieldEffect_End, 1
-	.set import.Audio_PlayCueFromEventWork, 1
-	.set import.FieldEffect_SetQueuedSoundAndPlay, 1
-	.set import.FieldEffect_PlayQueuedSound, 1
+	.set import.Map_PlayMusic, 1
+	.set import.Map_QueueMusic, 1
+	.set import.Map_PlayQueuedMusic, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

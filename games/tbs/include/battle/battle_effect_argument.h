@@ -2,52 +2,52 @@
 #define ALCHEMY_BATTLE_EFFECT_ARGUMENT_H
 
 /// @file
-/// BattleEffectArgument, the command an effect's caller, dispatcher and
-/// handlers share, and the macros that define effect kinds.
+/// BattleAnimArgs, the command an animation's caller, dispatcher and
+/// handlers share, and the macros that define animation kinds.
 
 #include "types.h"
 #include "static_assert.h"
 
-/// BattleEffectArgument.side: the side the targets are on.
-enum BattleEffectSide { EFFECT_SIDE_ENEMIES, EFFECT_SIDE_PARTY };
+/// BattleAnimArgs.side: the side the targets are on.
+enum BattleAnimSide { ANIM_SIDE_ENEMIES, ANIM_SIDE_PARTY };
 
-/// What a critical hit adds to an attack's effect kind:
-/// BattlePresentation_RunAttack plays the critical version of the blow. Only
+/// What a critical hit adds to an attack's animation kind:
+/// BattleStaging_RunAttack plays the critical version of the blow. Only
 /// plain attacks score critical hits, and their kinds are 1 to 5, all
 /// dispatched by id range, so it reaches kinds 201 to 205: the ring and spark
 /// scene, the same for each.
-#define EFFECT_KIND_CRITICAL_OFFSET 200
+#define ANIM_ID_CRITICAL_OFFSET 200
 
-/// The command shared by an effect's caller, dispatcher and handlers.
-struct BattleEffectArgument {
+/// The command shared by an animation's caller, dispatcher and handlers.
+struct BattleAnimArgs {
   s32 kind;        ///< handler table index; a critical hit adds
-                   ///< EFFECT_KIND_CRITICAL_OFFSET
-  s32 side;        ///< enum BattleEffectSide
-  s32 actor;       ///< the user's unit id
+                   ///< ANIM_ID_CRITICAL_OFFSET
+  s32 side;        ///< enum BattleAnimSide
+  s32 user;        ///< the user's unit id
   s32 firstTarget; ///< the action's first target, standing or not
   s32 range;       ///< forwarded action range, otherwise initialized to 1
-  s32 count;       ///< targets in actors, at least 1
+  s32 targetCount; ///< targets in actors, at least 1
   s32 variant;     ///< the ability's size, from 0 (Quake, then Earthquake)
-  s32 prelude;     ///< 1 plays a prelude: in some effects a Djinni appears
+  s32 prelude;     ///< 1 plays a prelude: in some animations a Djinni appears
   s32 unused;      ///< no code names it
-  s16 actors[8];   ///< the targets' unit ids, count of them
+  s16 targets[8];  ///< the targets' unit ids, count of them
 };
 
-STATIC_ASSERT(sizeof(struct BattleEffectArgument) == 0x34);
-STATIC_ASSERT(offsetof(struct BattleEffectArgument, count) == 0x14);
-STATIC_ASSERT(offsetof(struct BattleEffectArgument, actors) == 0x24);
+STATIC_ASSERT(sizeof(struct BattleAnimArgs) == 0x34);
+STATIC_ASSERT(offsetof(struct BattleAnimArgs, targetCount) == 0x14);
+STATIC_ASSERT(offsetof(struct BattleAnimArgs, targets) == 0x24);
 
-/// Defines the battle effect kind `name` as a call of a shared runner with one
-/// fixed argument, its style or variant. The strike, volley, shower, mote and
-/// stat-change families each have one runner and a kind like this for each
+/// Defines the battle animation kind `name` as a call of a shared runner with
+/// one fixed argument, its style or variant. The strike, volley, shower, mote
+/// and stat-change families each have one runner and a kind like this for each
 /// ability that uses it.
 #define DEFINE_EFFECT_KIND(name, runner, arg)                                  \
-  void name(struct BattleEffectArgument *effect) { runner(effect, arg); }
+  void name(struct BattleAnimArgs *effect) { runner(effect, arg); }
 
-/// Loops `i` over the effect's targets, effect->actors[0] to
+/// Loops `i` over the animation's targets, effect->actors[0] to
 /// effect->actors[effect->count - 1]: the loops that flash, shake, strike or
 /// aim at each target in turn.
-#define EFFECT_FOR_EACH_TARGET(i, effect)                                      \
-  for ((i) = 0; (i) != (effect)->count; (i)++)
+#define ANIM_FOR_EACH_TARGET(i, effect)                                        \
+  for ((i) = 0; (i) != (effect)->targetCount; (i)++)
 
 #endif

@@ -148,7 +148,7 @@ enum { ANIMATION_SPRAWLED = 19 };
 
 enum { PILLAR_TOP_HEIGHT = PIXELS(16), CELL_SIZE = PIXELS(16) };
 
-enum { MARKER_PSYNERGY_STONE = 102 };
+enum { TREASURE_SPOT_PSYNERGY_STONE = 102 };
 
 extern struct MapGridCellAnimation gLunpaDoors[];
 

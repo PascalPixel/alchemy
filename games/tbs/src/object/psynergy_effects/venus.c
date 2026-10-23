@@ -4,57 +4,57 @@
 
 #include "../psynergy_effects_internal.h"
 
-/// A Venus Djinni joins the party: it hops twice, spins and leaps, then
-/// shrinks away; the leader turns to the camera and plays animation 28 while
-/// 24 particles rise round it (FieldEffect_UpdateRadialSpread). Then 24 motes
+/// A Venus Djinni joins the party: it hops twice, spins and leaps, then shrinks
+/// away; the leader turns to the camera and plays animation 28 while 24
+/// particles rise round it (FieldEffect_UpdateRadialSpread). Then 24 motes
 /// spiral down onto the leader from 120 pixels above
 /// (FieldEffect_UpdateDescendingOrbitObject) and 8 sparks burst from the
 /// leader. Called by Djinn_JoinParty for a Venus Djinni, which then clears the
-/// Djinni's object event slot. Uses all 24 effect slots, tints the field
-/// palette green and fades it back at the end.
+/// Djinni's object event slot. Uses all 24 field effect sprites, tints the
+/// field palette green and fades it back at the end.
 void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   struct CaptureObject *leader;
   struct CaptureObject *djinni;
   struct FieldEffectWork *effectWork;
-  struct EffectSlot *effect;
+  struct FieldEffectSprite *effect;
   s8 *slotState;
   s32 remaining;
   s32 scale;
   struct EffectVector position;
 
   leader =
-      (struct CaptureObject *)ObjectEvent_GetById(gGameState.selectedLocalId);
+      (struct CaptureObject *)ObjectEvent_GetById(gGameState.leaderLocalId);
   djinni = (struct CaptureObject *)ObjectEvent_GetById(djinniId);
   if (djinni == NULL)
     return;
 
   FieldEffect_InitializeSlots();
-  effectWork = gEffectWork;
-  // Tint the screen green: PALETTE_TRANSFORM_TINT | RGB(4, 16, 4), the form
+  effectWork = gFieldEffectWork;
+  // Tint the screen green: PALETTE_TINT_CUSTOM | RGB(4, 16, 4), the form
   // mercury.c spells out for its blue.
   Shop_SaveAndTintFieldPaletteFar(0x201204);
   WaitFrames(30);
   // Unpause the Djinni (CaptureObject.visible is ObjectEvent.paused).
   djinni->visible = 0;
-  AudioCommand_PlayFar(SE_JUMP);
+  Sound_PlaySongFar(SE_JUMP);
   ObjectMotion_Launch(djinniId, 4, 15);
-  AudioCommand_PlayFar(SE_JUMP);
+  Sound_PlaySongFar(SE_JUMP);
   ObjectMotion_Launch(djinniId, 4, 15);
   // Spin and leap, then shrink away while the screen shakes (1.3 pixels).
   WaitFrames(30);
   djinni->callback = FieldEffect_AdvanceSpinAngle;
-  AudioCommand_PlayFar(SE_HIGH_JUMP);
+  Sound_PlaySongFar(SE_HIGH_JUMP);
   ObjectMotion_Launch(djinniId, 8, 22);
-  AudioCommand_PlayFar(SE_140);
+  Sound_PlaySongFar(SE_140);
   MapGrid_SetScreenShakeFar(0x14ccc, 0x14ccc, 0x10000);
   djinni->callback = FieldEffect_ShrinkObjectAndDestroyFast;
   ObjectDispatch_SelectAnimationFar(djinni, 3);
   // The leader turns to face the camera (angle 0x4000).
   WaitFrames(90);
-  ObjectMotion_ArmCallback(gGameState.selectedLocalId, 0x4000, 0);
+  ObjectMotion_ArmCallback(gGameState.leaderLocalId, 0x4000, 0);
   WaitFrames(20);
   ObjectDispatch_SelectAnimationFar(
-      ObjectEvent_GetById(gGameState.selectedLocalId), 28);
+      ObjectEvent_GetById(gGameState.leaderLocalId), 28);
   WaitFrames(30);
   MapGrid_SetScreenShakeFar(0x19999, 0x19999, 0x10000);
 
@@ -63,15 +63,15 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   position.z = djinni->z;
   Camera_WorldToScreen(&position);
 
-  // One rising particle a frame into each of the 24 effect slots.
-  effect = effectWork->effects;
+  // One rising particle a frame into each of the 24 field effect sprites.
+  effect = effectWork->sprites;
   remaining = 23;
   do {
-    EffectSlot_Initialize(effect, SPRITE_PARTICLE, position.x, position.z);
-    EffectSlot_SetCallback(effect, FieldEffect_UpdateRadialSpread);
-    EffectSlot_SetObjectMode(effect, 7);
-    ObjectGroup_SetChildValueUnlessFifteenFar(effect->object,
-                                              SPRITE_COLOR_GREEN_TINT);
+    FieldEffectSprite_Initialize(effect, SPRITE_PARTICLE, position.x,
+                                 position.z);
+    FieldEffectSprite_SetCallback(effect, FieldEffect_UpdateRadialSpread);
+    FieldEffectSprite_SetObjectMode(effect, 7);
+    Sprite_SetAnimColorModesFar(effect->object, SPRITE_COLOR_GREEN_TINT);
     effect->scaleX = 0x8000;
     effect->scaleY = Random16() + 0x18000;
     remaining--;
@@ -88,14 +88,14 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
 
     nextState = VENUS_PARTICLE_LAST_RISE;
     slotState = (s8 *)effectWork;
-    slotState += offsetof(struct FieldEffectWork, effects) +
-                 offsetof(struct EffectSlot, state);
+    slotState += offsetof(struct FieldEffectWork, sprites) +
+                 offsetof(struct FieldEffectSprite, state);
     remaining = 23;
     do {
       if (slotState[5] != 0)
         slotState[0] = nextState;
       remaining--;
-      slotState += sizeof(struct EffectSlot);
+      slotState += sizeof(struct FieldEffectSprite);
     } while (remaining >= 0);
   }
 
@@ -126,9 +126,9 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   }
 
   WaitFrames(100);
-  AudioCommand_PlayFar(SE_STOP_SLOT3);
+  Sound_PlaySongFar(SE_STOP_SLOT3);
   WaitFrames(1);
-  AudioCommand_PlayFar(SE_151);
+  Sound_PlaySongFar(SE_151);
   position.x = leader->x;
   position.y = leader->y + 0x120000;
   position.z = leader->z;
@@ -147,8 +147,8 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
     djinni->gravity = 0x50000;
     djinni->baseY = djinni->y;
     djinni->speed = Random16() + 0x16666;
-    Motion_SetTargetPositionFromMagnitudeAngle((struct ObjectRuntime *)djinni,
-                                               0x200000, Random16());
+    ObjectMotion_SetTargetPositionFromMagnitudeAngle((struct Object *)djinni,
+                                                     0x200000, Random16());
     Animation_ApplyChildValuesFar((struct DispatchObject *)djinni,
                                   SPRITE_COLOR_GREEN_TINT);
     djinni->lifetime = 8;
@@ -161,21 +161,20 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   FieldEffect_ClearActiveSlotsAndScheduleUpdates();
 }
 
-/// Effect slot callback of a Mercury Djinni's droplets: each falls from 100
-/// pixels above (on screen) to a random point 2 to 8 pixels round a spot 15
-/// to 20 pixels over the leader, at 3 to 6 pixels a frame, and
-/// where it lands splashes 12 pixels in a random direction, at half size,
-/// with SE_143. It then falls again 6 frames later, until
-/// FieldEffect_RunMercuryDjinnCapture sets MERCURY_DROPLET_LAST_FALL: its next
-/// splash is its last (enum MercuryDropletState).
-void FieldEffect_UpdateRandomTargetParticle(struct EffectSlot *effect) {
-  struct ObjectRuntime *source;
+/// Field effect sprite callback of a Mercury Djinni's droplets: each falls from
+/// 100 pixels above (on screen) to a random point 2 to 8 pixels round a spot 15
+/// to 20 pixels over the leader, at 3 to 6 pixels a frame, and where it lands
+/// splashes 12 pixels in a random direction, at half size, with SE_143. It then
+/// falls again 6 frames later, until FieldEffect_RunMercuryDjinnCapture sets
+/// MERCURY_DROPLET_LAST_FALL: its next splash is its last (enum
+/// MercuryDropletState).
+void FieldEffect_UpdateRandomTargetParticle(struct FieldEffectSprite *effect) {
+  struct Object *source;
   struct EffectVector position;
   s8 *statePointer;
   s32 state;
 
-  source =
-      (struct ObjectRuntime *)ObjectEvent_GetById(gGameState.selectedLocalId);
+  source = (struct Object *)ObjectEvent_GetById(gGameState.leaderLocalId);
   statePointer = &effect->state;
   state = *statePointer;
 
@@ -199,7 +198,7 @@ void FieldEffect_UpdateRandomTargetParticle(struct EffectSlot *effect) {
     (*statePointer)++;
   } else if ((u8)(effect->state - MERCURY_DROPLET_FALLING) <=
              MERCURY_DROPLET_LAST_FALL - MERCURY_DROPLET_FALLING) {
-    if (EffectSlot_HasPendingTarget(effect) == 0) {
+    if (FieldEffectSprite_HasPendingTarget(effect) == 0) {
       position.x = effect->x;
       position.z = effect->z;
       Vector_AddPolarOffset(0xc0000, Random16(), &position);
@@ -211,7 +210,7 @@ void FieldEffect_UpdateRandomTargetParticle(struct EffectSlot *effect) {
       effect->speedMax = Random16() + 0x23333;
       effect->scaleX = 0x8000;
       effect->scaleY = 0x8000;
-      AudioCommand_PlayFar(SE_143);
+      Sound_PlaySongFar(SE_143);
 
       if (*statePointer == MERCURY_DROPLET_FALLING)
         (*statePointer)--;

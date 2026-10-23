@@ -309,7 +309,7 @@ enum TolbiShipDeckCell {
 
 /// An action-script call: shows the object event's sprite. Returns 0 to end the
 /// call.
-static s32 TolbiShipDeck_ShowSprite(struct ScriptInterpreter *interpreter) {
+static s32 TolbiShipDeck_ShowSprite(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *a = (struct ObjectEvent *)interpreter;
   Engine_ObjectEventSetSpriteFlags(a, 1);
   return 0;
@@ -327,15 +327,14 @@ static s32 TolbiShipDeck_ShowSprite(struct ScriptInterpreter *interpreter) {
 /// returns to its side. riseEnabled picks which side it returns to.
 /// Returns 1 to keep running.
 static s32
-TolbiShipDeck_HoverAndDiveAtOuranos(struct ScriptInterpreter *interpreter) {
+TolbiShipDeck_HoverAndDiveAtOuranos(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   if (objectEvent->riseCounter != 0) {
     switch (objectEvent->riseCounter) {
     case 1:
       objectEvent->speed = PIXELS(4);
       objectEvent->acceleration = PIXELS(2);
-      FieldObject_SetPosition(objectEvent, PIXELS(268), PIXELS(20),
-                              PIXELS(692));
+      Object_SetPosition(objectEvent, PIXELS(268), PIXELS(20), PIXELS(692));
       objectEvent->riseCounter++;
       break;
     case 2:
@@ -346,7 +345,7 @@ TolbiShipDeck_HoverAndDiveAtOuranos(struct ScriptInterpreter *interpreter) {
           objectEvent->targetY == objectEvent->targetX &&
           objectEvent->targetZ == objectEvent->targetY) {
         objectEvent->riseCounter++;
-        Script_PlayCue(SE_146);
+        Script_PlaySong(SE_146);
         if (objectEvent->riseEnabled != 0)
           ObjectEvent_FaceDirection(LOCALID_SEA_OURANOS,
                                     FACING_NORTH + FACING_STEP, 0);
@@ -367,9 +366,9 @@ TolbiShipDeck_HoverAndDiveAtOuranos(struct ScriptInterpreter *interpreter) {
       break;
     case 5:
       if (objectEvent->riseEnabled != 0)
-        FieldObject_SetPosition(objectEvent, PIXELS(282), 0, PIXELS(658));
+        Object_SetPosition(objectEvent, PIXELS(282), 0, PIXELS(658));
       else
-        FieldObject_SetPosition(objectEvent, PIXELS(254), 0, PIXELS(668));
+        Object_SetPosition(objectEvent, PIXELS(254), 0, PIXELS(668));
       objectEvent->riseCounter++;
       break;
     case 6:
@@ -425,15 +424,14 @@ TolbiShipDeck_HoverAndDiveAtOuranos(struct ScriptInterpreter *interpreter) {
 
 /// The same for the monster that dives at Sean.
 static s32
-TolbiShipDeck_HoverAndDiveAtSean(struct ScriptInterpreter *interpreter) {
+TolbiShipDeck_HoverAndDiveAtSean(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   if (objectEvent->riseCounter != 0) {
     switch (objectEvent->riseCounter) {
     case 1:
       objectEvent->speed = PIXELS(4);
       objectEvent->acceleration = PIXELS(2);
-      FieldObject_SetPosition(objectEvent, PIXELS(256), PIXELS(20),
-                              PIXELS(640));
+      Object_SetPosition(objectEvent, PIXELS(256), PIXELS(20), PIXELS(640));
       objectEvent->riseCounter++;
       break;
     case 2:
@@ -444,7 +442,7 @@ TolbiShipDeck_HoverAndDiveAtSean(struct ScriptInterpreter *interpreter) {
           objectEvent->targetY == objectEvent->targetX &&
           objectEvent->targetZ == objectEvent->targetY) {
         objectEvent->riseCounter++;
-        Script_PlayCue(SE_146);
+        Script_PlaySong(SE_146);
         if (objectEvent->riseEnabled != 0)
           ObjectEvent_FaceDirection(LOCALID_SEA_SEAN,
                                     FACING_NORTH + FACING_STEP, 0);
@@ -465,9 +463,9 @@ TolbiShipDeck_HoverAndDiveAtSean(struct ScriptInterpreter *interpreter) {
       break;
     case 5:
       if (objectEvent->riseEnabled != 0)
-        FieldObject_SetPosition(objectEvent, PIXELS(264), 0, PIXELS(600));
+        Object_SetPosition(objectEvent, PIXELS(264), 0, PIXELS(600));
       else
-        FieldObject_SetPosition(objectEvent, PIXELS(242), 0, PIXELS(604));
+        Object_SetPosition(objectEvent, PIXELS(242), 0, PIXELS(604));
       objectEvent->riseCounter++;
       break;
     case 6:
@@ -543,7 +541,7 @@ static s32 sOarDepth[8];
 /// Bobs the object event between 4 and 12 pixels high by a random amount
 /// each frame; the object event's work halfword says which way it is going.
 /// Returns 1.
-static s32 TolbiShipDeck_Bob(struct ScriptInterpreter *interpreter) {
+static s32 TolbiShipDeck_Bob(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   s16 *flag = (s16 *)&objectEvent->work;
   s32 val;
@@ -573,7 +571,7 @@ done:
 
 /// Now and then (two chances in 32) turns the object event to look
 /// north-northeast or north-northwest. Returns 1.
-static s32 TolbiShipDeck_LookAround(struct ScriptInterpreter *interpreter) {
+static s32 TolbiShipDeck_LookAround(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   u32 roll = ((u32)(Engine_RandomNext() << 5)) >> 16;
 
@@ -588,7 +586,8 @@ static s32 TolbiShipDeck_LookAround(struct ScriptInterpreter *interpreter) {
 /// to him, he turns and jumps back (sometimes with an emote), and it lands on
 /// one of two spots chosen by riseEnabled. The object event's timer holds the
 /// step. Returns 1.
-static s32 TolbiShipDeck_LeapAtOuranos(struct ScriptInterpreter *interpreter) {
+static s32
+TolbiShipDeck_LeapAtOuranos(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   switch (objectEvent->timer) {
   case 0:
@@ -603,7 +602,7 @@ static s32 TolbiShipDeck_LeapAtOuranos(struct ScriptInterpreter *interpreter) {
     objectEvent->velocityY = PIXELS(4);
     objectEvent->speed = PIXELS(4);
     objectEvent->acceleration = PIXELS(2);
-    FieldObject_SetPosition(objectEvent, PIXELS(264), 0, PIXELS(662));
+    Object_SetPosition(objectEvent, PIXELS(264), 0, PIXELS(662));
     objectEvent->timer++;
     break;
   case 3:
@@ -640,9 +639,9 @@ static s32 TolbiShipDeck_LeapAtOuranos(struct ScriptInterpreter *interpreter) {
     objectEvent->speed = PIXELS(2);
     objectEvent->acceleration = PIXELS(1);
     if (objectEvent->riseEnabled != 0) {
-      FieldObject_SetPosition(objectEvent, PIXELS(252), 0, PIXELS(646));
+      Object_SetPosition(objectEvent, PIXELS(252), 0, PIXELS(646));
     } else {
-      FieldObject_SetPosition(objectEvent, PIXELS(256), 0, PIXELS(686));
+      Object_SetPosition(objectEvent, PIXELS(256), 0, PIXELS(686));
     }
     break;
   case 7:
@@ -663,7 +662,7 @@ static s32 TolbiShipDeck_LeapAtOuranos(struct ScriptInterpreter *interpreter) {
 }
 
 /// The same for the monster that leaps at Sean.
-static s32 TolbiShipDeck_LeapAtSean(struct ScriptInterpreter *interpreter) {
+static s32 TolbiShipDeck_LeapAtSean(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   switch (objectEvent->timer) {
   case 0:
@@ -678,7 +677,7 @@ static s32 TolbiShipDeck_LeapAtSean(struct ScriptInterpreter *interpreter) {
     objectEvent->velocityY = PIXELS(4);
     objectEvent->speed = PIXELS(4);
     objectEvent->acceleration = PIXELS(2);
-    FieldObject_SetPosition(objectEvent, PIXELS(176), 0, PIXELS(696));
+    Object_SetPosition(objectEvent, PIXELS(176), 0, PIXELS(696));
     objectEvent->timer++;
     break;
   case 3:
@@ -714,9 +713,9 @@ static s32 TolbiShipDeck_LeapAtSean(struct ScriptInterpreter *interpreter) {
     objectEvent->speed = PIXELS(2);
     objectEvent->acceleration = PIXELS(1);
     if (objectEvent->riseEnabled != 0) {
-      FieldObject_SetPosition(objectEvent, PIXELS(184), 0, PIXELS(672));
+      Object_SetPosition(objectEvent, PIXELS(184), 0, PIXELS(672));
     } else {
-      FieldObject_SetPosition(objectEvent, PIXELS(202), 0, PIXELS(692));
+      Object_SetPosition(objectEvent, PIXELS(202), 0, PIXELS(692));
     }
     break;
   case 7:
@@ -738,7 +737,7 @@ static s32 TolbiShipDeck_LeapAtSean(struct ScriptInterpreter *interpreter) {
 
 /// Makes the object event hop at random, one frame in 40 on average. Returns 1.
 static s32 TolbiShipDeck_RandomlyStartObjectEventHop(
-    struct ScriptInterpreter *interpreter) {
+    struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   if ((((u32)(Engine_RandomNext() * 40)) >> 16) == 0)
     objectEvent->velocityY = PIXELS(4);
@@ -758,7 +757,7 @@ static void TolbiShipDeck_ShrinkToNormalSize(union FieldObject *fieldObject) {
 /// Turns the object event east, northeast-by-north or southeast-by-south at
 /// random intervals of 80 to 160 frames. riseCounter counts down the wait.
 /// Returns 1.
-static s32 TolbiShipDeck_IdleTurn(struct ScriptInterpreter *interpreter) {
+static s32 TolbiShipDeck_IdleTurn(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   if (objectEvent->riseCounter != 0) {
     objectEvent->riseCounter--;
@@ -912,7 +911,7 @@ static void TolbiShipDeck_AskHeadedForColosso(void) {
 /// Opens the first door to below deck, once a visit.
 static void TolbiShipDeck_OpenFirstDoor(void) {
   if (GameFlag_IsSet(FLAG_MAP_TEMP_71) == 0) {
-    Script_PlayCue(SE_DOOR_OPEN);
+    Script_PlaySong(SE_DOOR_OPEN);
     MapGrid_CopyCellsTo(30, 94, 13, 94, 1, 3);
     GameFlag_Set(FLAG_MAP_TEMP_71);
   }
@@ -921,7 +920,7 @@ static void TolbiShipDeck_OpenFirstDoor(void) {
 /// Opens the second door to below deck, once a visit.
 static void TolbiShipDeck_OpenSecondDoor(void) {
   if (GameFlag_IsSet(FLAG_MAP_TEMP_72) == 0) {
-    Script_PlayCue(SE_DOOR_OPEN);
+    Script_PlaySong(SE_DOOR_OPEN);
     MapGrid_CopyCellsTo(30, 108, 13, 108, 1, 2);
     GameFlag_Set(FLAG_MAP_TEMP_72);
   }
@@ -936,10 +935,10 @@ static void TolbiShipDeck_GoBelow(void) {
   s32 throughDoor;
   struct EventWork *work;
 
-  work = gEventWork;
+  work = gFieldWork;
   Engine_ScriptStart();
   throughDoor = 0;
-  switch (work->touchedTrigger) {
+  switch (work->coordEvent) {
   case TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_PASSENGER_HOLD:
     throughDoor = 1;
     TolbiShipDeck_OpenFirstDoor();
@@ -956,7 +955,7 @@ static void TolbiShipDeck_GoBelow(void) {
   } else {
     Engine_AudioPlayCue(SE_MAP_EXIT);
   }
-  Engine_ScriptRequestWarp(work->touchedTrigger);
+  Engine_ScriptRequestWarp(work->coordEvent);
 }
 
 #if TBS_PATCH_2
@@ -988,8 +987,8 @@ static void TolbiShipDeck_WatchCrewDecideToSail(void) {
     Field_EndBusyAndReveal();
     ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_KALAY_CREWMAN,
                                 10);
-    Camera_SetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
-    Camera_MoveTo(PIXELS(190), -1, PIXELS(708), 1);
+    FieldCamera_SetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
+    FieldCamera_MoveTo(PIXELS(190), -1, PIXELS(708), 1);
     Engine_CameraWaitForMove();
     Engine_ScriptWait(40);
     Engine_ObjectEventRunRepeatedMotion(LOCALID_KALAY_CAPTAIN, 1);
@@ -1068,8 +1067,8 @@ static void TolbiShipDeck_WatchCrewDecideToSail(void) {
     Engine_ScriptWait(40);
     Engine_ObjectEventSetAnimationAndWait(LOCALID_KALAY_CAPTAIN, 3);
     TolbiShipDeck_Say(SPEAKER(LOCALID_KALAY_CAPTAIN, 4));
-    Camera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
-    Camera_MoveTo(PIXELS(182), -1, PIXELS(760), 1);
+    FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
+    FieldCamera_MoveTo(PIXELS(182), -1, PIXELS(760), 1);
     ObjectEvent_SetSpeed(LOCALID_KALAY_KAJA, PIXELS(4) / 5, PIXELS(2) / 5);
     ObjectEvent_SetActionScript(LOCALID_KALAY_KAJA,
                                 gTolbiShipDeck_KajaLeavesActions);
@@ -1087,8 +1086,8 @@ static void TolbiShipDeck_WatchCrewDecideToSail(void) {
     Engine_ObjectEventJump(LOCALID_KALAY_CREWMAN, 4, 0);
     ObjectEvent_FaceDirection(LOCALID_KALAY_CREWMAN,
                               FACING_SOUTHEAST + FACING_STEP, 40);
-    Camera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
-    Camera_MoveTo(PIXELS(216), -1, PIXELS(790), 1);
+    FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
+    FieldCamera_MoveTo(PIXELS(216), -1, PIXELS(790), 1);
     {
       struct ObjectEvent *record = ObjectEvent_GetById(LOCALID_KALAY_CREWMAN);
       record->priorityFlags =
@@ -1217,8 +1216,8 @@ static void TolbiShipDeck_CatchCrewmanFromWest(void) {
 /// The start both of those share: the camera pans to the door, which opens, and
 /// the crewman steps out and denies everything. Records the confrontation.
 static void TolbiShipDeck_ConfrontCrewman(void) {
-  Camera_SetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
-  Camera_MoveTo(PIXELS(216), -1, PIXELS(824), 1);
+  FieldCamera_SetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
+  FieldCamera_MoveTo(PIXELS(216), -1, PIXELS(824), 1);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(20);
   TolbiShipDeck_OpenSecondDoor();
@@ -1250,8 +1249,7 @@ s32 TolbiShipDeck_Initialize(void) {
       &((struct MapGridScrollWork *)base[0])->layers[MAPGRID_LAYER_GROUND];
 
   Engine_GameFlagClear(FLAG_WORLD_MAP_LEFT);
-  ((struct EventWork *)base[HEAP_SLOT_EVENT - HEAP_SLOT_MAP_GRID])
-      ->startTransition =
+  ((struct EventWork *)base[HEAP_SLOT_FIELD - HEAP_SLOT_MAP_GRID])->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   layer->speedY = 0;
   sSwayAngleX = (u16)Engine_RandomNext();
@@ -1551,7 +1549,7 @@ static void TolbiShipDeck_DepartFromKalay(void) {
   struct ObjectEvent *record;
 
   Engine_ScriptStart();
-  Camera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
   ObjectEvent_SetPosition(LOCALID_KALAY_CREWMAN, 0, 0);
   ObjectEvent_SetPosition(LOCALID_KALAY_CAPTAIN, 0, 0);
@@ -1566,7 +1564,7 @@ static void TolbiShipDeck_DepartFromKalay(void) {
   ObjectEvent_SetPosition(LOCALID_KALAY_CREW_MEMBER, PIXELS(232), PIXELS(650));
   record = ObjectEvent_GetById(LOCALID_KALAY_CREW_MEMBER);
   record->facing = FACING_NORTHWEST + FACING_STEP;
-  Camera_MoveTo(PIXELS(232), -1, PIXELS(636), 0);
+  FieldCamera_MoveTo(PIXELS(232), -1, PIXELS(636), 0);
   Engine_MapGridRedraw();
   Engine_TaskWait(1);
   TolbiShipDeck_AnnouncePreparationsReady(LOCALID_KALAY_KAJA,
@@ -1611,7 +1609,7 @@ static void TolbiShipDeck_DepartWithParty(void) {
 /// of the voyage. "Preparations... Ready!"
 static void TolbiShipDeck_AnnouncePreparationsReady(s32 messenger,
                                                     s32 crewMember) {
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
   Engine_ScriptWait(20);
@@ -1630,7 +1628,7 @@ static void TolbiShipDeck_AnnouncePreparationsReady(s32 messenger,
   Engine_ObjectEventStartRepeatedMotion(crewMember, 2);
   Engine_ScriptSetMessage(MsgTolbiShipPreparationsReady);
   Script_ShowMessageAndWait(crewMember, 0, 20);
-  gEventWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
@@ -1647,7 +1645,7 @@ static void TolbiShipDeck_SightSeaMonsters(void) {
   Engine_ObjectEventSetChildValue(LOCALID_PARTY_LEADER, 15);
   Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER),
                                    0);
-  gEventWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
@@ -1682,7 +1680,7 @@ static void TolbiShipDeck_MonstersBoard(void) {
   Engine_ObjectEventSetChildValue(LOCALID_PARTY_LEADER, 15);
   Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER),
                                    0);
-  gEventWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Engine_ScriptOpenScreen();
   ObjectEvent_SetSpeed(LOCALID_SEA_OURANOS, PIXELS(8) / 5, PIXELS(4) / 5);
@@ -1733,8 +1731,8 @@ static void TolbiShipDeck_MonstersBoard(void) {
   Engine_ScriptWaitForScreen();
   Engine_ScriptWait(10);
   ObjectSystem_SuspendProjectionAndShowSprites();
-  Ui_SetMessageVoiceFromObjectEvent(LOCALID_SEA_OURANOS);
-  UiText_ShowCenteredMessage(MsgTolbiShipArrgh, 1, 0);
+  Message_SetVoiceFromObjectEvent(LOCALID_SEA_OURANOS);
+  FieldMessage_ShowCentered(MsgTolbiShipArrgh, 1, 0);
   ObjectSystem_ResumeProjectionAndHideLayers();
   Engine_ScriptRequestWarp(
       TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_FIRST_ATTACK);
@@ -1795,7 +1793,7 @@ static void TolbiShipDeck_MonstersAttackCrew(void) {
   ObjectEvent_SetActionScript(LOCALID_SEA_FIRST_HOVERING_MONSTER + 3,
                               gTolbiShipDeck_HoverAndDiveAtOuranosActions);
   Engine_ObjectEventSetPosition(LOCALID_SEA_KAJA, 0, 0);
-  gEventWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
@@ -1809,8 +1807,8 @@ static void TolbiShipDeck_MonstersAttackCrew(void) {
   ObjectEvent_SetSpeed(LOCALID_SEA_SECOND_ATTACK_MONSTER + 1, PIXELS(8) / 5,
                        PIXELS(4) / 5);
   ObjectEvent_SetDestination(LOCALID_SEA_SECOND_ATTACK_MONSTER + 1, 172, 0x284);
-  FieldObject_MotionSetPositionAndCommit(LOCALID_SEA_SECOND_ATTACK_MONSTER, 200,
-                                         0x294);
+  Object_MotionSetPositionAndCommit(LOCALID_SEA_SECOND_ATTACK_MONSTER, 200,
+                                    0x294);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4), PIXELS(2));
   ObjectEvent_SetDestination(LOCALID_PARTY_LEADER, 174, 0x26c);
   Engine_ObjectMotionSetPositionAndCommit(LOCALID_SEA_SECOND_ATTACK_MONSTER,
@@ -1860,8 +1858,8 @@ static void TolbiShipDeck_MonstersAttackCrew(void) {
   Engine_ObjectEventStop(LOCALID_SEA_FIRST_HOVERING_MONSTER + 3);
   Engine_ScriptWait(10);
   ObjectSystem_SuspendProjectionAndShowSprites();
-  Ui_SetMessageVoiceFromObjectEvent(LOCALID_SEA_OURANOS);
-  UiText_ShowCenteredMessage(MsgTolbiShipArrgh, 1, 0);
+  Message_SetVoiceFromObjectEvent(LOCALID_SEA_OURANOS);
+  FieldMessage_ShowCentered(MsgTolbiShipArrgh, 1, 0);
   ObjectSystem_ResumeProjectionAndHideLayers();
   Engine_ScriptRequestWarp(
       TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_SECOND_ATTACK);
@@ -1927,7 +1925,7 @@ static void TolbiShipDeck_MonsterLandsOnDeck(void) {
   Engine_ObjectEventSetChildValue(LOCALID_SEA_FIRST_LEAPING_MONSTER + 3, 3);
   Engine_ObjectEventSetChildValue(LOCALID_SEA_THIRD_ATTACK_MONSTER, 3);
   Engine_ObjectEventSetChildValue(LOCALID_SEA_THIRD_ATTACK_MONSTER + 1, 3);
-  gEventWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
@@ -1965,10 +1963,10 @@ static void TolbiShipDeck_MonsterLandsOnDeck(void) {
   ObjectEvent_SetDestination(LOCALID_PARTY_LEADER, 216, 0x264);
   ObjectEvent_SetSpeed(LOCALID_SEA_THIRD_ATTACK_MONSTER + 2, PIXELS(8) / 5,
                        PIXELS(4) / 5);
-  FieldObject_MotionSetPositionAndCommit(LOCALID_SEA_THIRD_ATTACK_MONSTER + 2,
-                                         196, 0x258);
-  FieldObject_MotionSetPositionAndCommit(LOCALID_SEA_THIRD_ATTACK_MONSTER + 2,
-                                         216, 0x258);
+  Object_MotionSetPositionAndCommit(LOCALID_SEA_THIRD_ATTACK_MONSTER + 2, 196,
+                                    0x258);
+  Object_MotionSetPositionAndCommit(LOCALID_SEA_THIRD_ATTACK_MONSTER + 2, 216,
+                                    0x258);
   Engine_ObjectEventStop(LOCALID_SEA_THIRD_ATTACK_MONSTER);
   Engine_TaskWait(1);
   ObjectEvent_SetSpeed(LOCALID_SEA_THIRD_ATTACK_MONSTER, PIXELS(8) / 5,
@@ -1998,8 +1996,8 @@ static void TolbiShipDeck_MonsterLandsOnDeck(void) {
   Engine_ObjectEventStop(LOCALID_SEA_THIRD_ATTACK_MONSTER + 1);
   Engine_ScriptWait(10);
   ObjectSystem_SuspendProjectionAndShowSprites();
-  Ui_SetMessageVoiceFromObjectEvent(LOCALID_SEA_OURANOS);
-  UiText_ShowCenteredMessage(MsgTolbiShipArrgh, 1, 0);
+  Message_SetVoiceFromObjectEvent(LOCALID_SEA_OURANOS);
+  FieldMessage_ShowCentered(MsgTolbiShipArrgh, 1, 0);
   ObjectSystem_ResumeProjectionAndHideLayers();
   Engine_ScriptRequestWarp(
       TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_THIRD_ATTACK);
@@ -2022,7 +2020,7 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   Engine_ObjectEventSetPosition(LOCALID_PARTY_LEADER, 0, 0);
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   objectEvent->facing = FACING_SOUTH;
-  gEventWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
@@ -2117,7 +2115,7 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   Engine_ScriptWait(20);
   gGameState.savedMap = (s32)&MapId_TolbiShipInteriors;
   gGameState.savedWarpDest = TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_AFTER_DEFEAT;
-  Battle_SetStart(BATTLE_START_SCRIPTED);
+  Battle_SetType(BATTLE_TYPE_SCRIPTED);
   FieldScript_SetNextDestination((s32)&MapId_TolbiShipDeck,
                                  TOLBI_SHIP_DECK_AFTER_JUMP_INTO_KRAKEN_BATTLE);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_TOLBI_SHIP, 3);
@@ -2147,7 +2145,7 @@ static void TolbiShipDeck_ThankForKraken(void) {
   ObjectEvent_SetSpeed(LOCALID_SEA_OURANOS, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetActionScript(LOCALID_SEA_OURANOS,
                               gTolbiShipDeck_OuranosPatrolsActions);
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
   Engine_ScriptWait(20);
@@ -2174,7 +2172,7 @@ static void TolbiShipDeck_ThankForKraken(void) {
   Engine_ScriptWait(10);
   ObjectEvent_WalkToAndWait(LOCALID_SEA_KAJA, 216, 0x244);
   ObjectEvent_SetPosition(LOCALID_SEA_KAJA, 0, 0);
-  gEventWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   GameFlag_Set(FLAG_TOLBI_SHIP_KRAKEN_DEFEATED);
   GameFlag_Clear(FLAG_TOLBI_SHIP_KRAKEN_ON_DECK);
@@ -2206,10 +2204,10 @@ static void TolbiShipDeck_SightLand(void) {
   // UB: a u32 lvalue aliases the pointer, which keeps the facing stores ahead
   // of its load; the defined build reads it directly.
 #ifdef UBFIX
-  gEventWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
 #else
-  ((struct EventWork *)*(u32 *)&gEventWork)->startTransition =
+  ((struct EventWork *)*(u32 *)&gFieldWork)->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
 #endif
   Engine_ScriptOpenScreen();
@@ -2689,7 +2687,7 @@ static void TolbiShipDeck_AdvanceStroke(s32 localId, s32 slot) {
 /// oar's tilt (its sprite's rotation) and depth follow the angle.
 static void TolbiShipDeck_SwingOar(s32 id, s32 slot, s32 flags) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(id);
-  struct AnimationObject *sprite = objectEvent->sprite;
+  struct Sprite *sprite = objectEvent->sprite;
   s32 sine;
 
   if ((flags & 2) == 0) {
@@ -2851,7 +2849,7 @@ static void TolbiShipDeck_SightIsland(void) {
   ObjectEvent_SetChildValue(LOCALID_PARTY_LEADER, 15);
   Engine_ObjectEventSetSpriteFlags(ObjectEvent_Get(LOCALID_PARTY_LEADER), 0);
   Engine_TaskWait(1);
-  gEventWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
@@ -3034,7 +3032,7 @@ static void TolbiShipDeck_ReturnFromIsland(void) {
     Engine_ScriptEnd();
     return;
   }
-  gEventWork->message++;
+  gFieldWork->message++;
   Script_AskYesNo(SPEAKER(LOCALID_SEA_SEAN, 2), 0);
   TolbiShipDeck_OpenFirstDoor();
   ObjectEvent_SetPosition(LOCALID_ANCHOR_TOUR_GUIDE, PIXELS(216), PIXELS(588));
@@ -3094,7 +3092,7 @@ static void TolbiShipDeck_ReturnFromIsland(void) {
   TolbiShipDeck_Turn(LOCALID_PARTY_LEADER, FACING_NORTHEAST);
   Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
   Engine_ObjectEventSetAnimationAndWait(LOCALID_SEA_KAJA, 3);
-  gEventWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
@@ -3106,7 +3104,7 @@ static void TolbiShipDeck_ReturnFromIsland(void) {
 static void TolbiShipDeck_PlaceLeaderOnDeck(void) {
   struct ObjectEvent *record;
 
-  Camera_MoveTo(PIXELS(232), -1, PIXELS(676), 0);
+  FieldCamera_MoveTo(PIXELS(232), -1, PIXELS(676), 0);
   Engine_MapGridRedraw();
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(232), PIXELS(676));
   record = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -3390,31 +3388,31 @@ const u32 gTolbiShipDeckWarps[] = {
 
 const struct ObjectEventTemplate gTolbiShipDeckObjectEventTemplates[] = {
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(132), 0, PIXELS(632), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, 0 },
+        PIXELS(132), 0, PIXELS(632), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(132), 0, PIXELS(664), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(132), 0, PIXELS(664), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(132), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(132), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(132), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(132), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(300), 0, PIXELS(632), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(300), 0, PIXELS(632), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(300), 0, PIXELS(664), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(300), 0, PIXELS(664), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(300), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(300), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(300), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(300), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_MAN_IN_BLUE_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(266), 0, PIXELS(703), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(266), 0, PIXELS(703), FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { MAP_TABLE_END },
 };
 
@@ -3426,245 +3424,245 @@ struct ObjectEventTemplate gTolbiShipDeckObjectEventTemplatesWaiting[] = {
 const struct ObjectEventTemplate gTolbiShipDeckObjectEventTemplatesWaiting[] = {
 #endif
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(132), 0, PIXELS(632), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, 0 },
+        PIXELS(132), 0, PIXELS(632), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(132), 0, PIXELS(664), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(132), 0, PIXELS(664), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(132), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(132), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(132), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(132), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(300), 0, PIXELS(632), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(300), 0, PIXELS(632), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(300), 0, PIXELS(664), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(300), 0, PIXELS(664), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(300), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(300), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(300), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(300), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_MAN_IN_BLUE_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(183), 0, PIXELS(720), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(183), 0, PIXELS(720), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_MAN_IN_YELLOW_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(256), 0, PIXELS(712), FACING_NORTHWEST + FACING_STEP, TALK_KEEP_FACING, 0 },
+        PIXELS(256), 0, PIXELS(712), FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_MAN_WITH_WHITE_BEARD_IN_GREEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(198), 0, PIXELS(706), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(198), 0, PIXELS(706), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_KAJA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(172), 0, PIXELS(706), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(172), 0, PIXELS(706), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(248), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, 0 },
+        PIXELS(248), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_CHEF, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(230), 0, PIXELS(602), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(230), 0, PIXELS(602), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_WOMAN_IN_GREEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(236), 0, PIXELS(621), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(236), 0, PIXELS(621), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(182), 0, PIXELS(556), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(182), 0, PIXELS(556), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { MAP_TABLE_END },
 };
 
 const struct ObjectEventTemplate gTolbiShipDeckObjectEventTemplatesRowing[] = {
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(216), 0, PIXELS(657), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, 0 },
+        PIXELS(216), 0, PIXELS(657), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(216), 0, PIXELS(657), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, 0 },
+        PIXELS(216), 0, PIXELS(657), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(216), 0, PIXELS(657), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, 0 },
+        PIXELS(216), 0, PIXELS(657), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(216), 0, PIXELS(657), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, 0 },
+        PIXELS(216), 0, PIXELS(657), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(132), 0, PIXELS(632), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(132), 0, PIXELS(632), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(132), 0, PIXELS(664), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(132), 0, PIXELS(664), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(132), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(132), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(132), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(132), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(300), 0, PIXELS(632), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(300), 0, PIXELS(632), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(300), 0, PIXELS(664), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(300), 0, PIXELS(664), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(300), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(300), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(300), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(300), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { MAP_TABLE_END },
 };
 
 const struct ObjectEventTemplate gTolbiShipDeckObjectEventTemplatesAtSea[] = {
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(132), 0, PIXELS(632), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, 0 },
+        PIXELS(132), 0, PIXELS(632), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(132), 0, PIXELS(664), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(132), 0, PIXELS(664), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(132), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(132), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(132), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(132), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(300), 0, PIXELS(632), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(300), 0, PIXELS(632), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(300), 0, PIXELS(664), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(300), 0, PIXELS(664), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(300), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(300), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(300), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(300), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { MAP_TABLE_END },
 };
 
 const struct ObjectEventTemplate gTolbiShipDeck_CrewObjectEventTemplates[] = {
     { SPRITE_KAJA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(192), 0, PIXELS(512), FACING_NORTHWEST + FACING_STEP, TALK_KEEP_FACING, 0 },
+        PIXELS(192), 0, PIXELS(512), FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_YOUNG_MAN_WITH_RED_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(168), 0, PIXELS(634), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(168), 0, PIXELS(634), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BLUE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(212), 0, PIXELS(521), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(212), 0, PIXELS(521), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_IN_YELLOW_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_NORTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };
 
 const struct ObjectEventTemplate gTolbiShipDeck_TourGuideObjectEventTemplates[] = {
     { SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH + FACING_STEP, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH + FACING_STEP, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
 const struct ObjectEventTemplate gTolbiShipDeck_MonstersBoardObjectEventTemplates[] = {
     { SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { MAP_TABLE_END },
 };
 
 const struct ObjectEventTemplate gTolbiShipDeck_SecondAttackObjectEventTemplates[] = {
     { SPRITE_PINK_WINGED_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_PINK_WINGED_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_PINK_WINGED_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_PINK_WINGED_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_PINK_WINGED_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_PINK_WINGED_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LIZARD_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SPLASH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
 const struct ObjectEventTemplate gTolbiShipDeck_ThirdAttackObjectEventTemplates[] = {
     { SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_BLUE_WINGED_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
 const struct ObjectEventTemplate gTolbiShipDeck_KrakenObjectEventTemplates[] = {
     { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0 },
     { IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0 },
     { MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0 },
     { SPRITE_KAJA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTHWEST + FACING_STEP, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_YOUNG_MAN_WITH_RED_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(178), 0, PIXELS(642), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(178), 0, PIXELS(642), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BLUE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(182), 0, PIXELS(534), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(182), 0, PIXELS(534), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_IN_YELLOW_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_NORTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_KRAKEN, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(216), 0, PIXELS(540), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(216), 0, PIXELS(540), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(216), 0, PIXELS(640), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(216), 0, PIXELS(640), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };
 
 const struct ObjectEventTemplate gTolbiShipDeckObjectEventTemplatesArrived[] = {
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(132), 0, PIXELS(632), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, 0 },
+        PIXELS(132), 0, PIXELS(632), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(132), 0, PIXELS(664), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(132), 0, PIXELS(664), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(132), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(132), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(132), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(132), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(300), 0, PIXELS(632), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(300), 0, PIXELS(632), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(300), 0, PIXELS(664), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(300), 0, PIXELS(664), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(300), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(300), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(300), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(300), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_KAJA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(188), 0, PIXELS(512), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(188), 0, PIXELS(512), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_IN_BLUE_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(162), 0, PIXELS(634), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(162), 0, PIXELS(634), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_MAN_IN_YELLOW_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(162), 0, PIXELS(676), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(162), 0, PIXELS(676), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_CHEF, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_WOMAN_IN_GREEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_PERSON_WITH_SWORD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };
 

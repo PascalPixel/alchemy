@@ -17,8 +17,8 @@ enum {
 /// FLAG_CHILDHOOD gives Isaac and Garet ISAAC_CHILD and GARET_CHILD, and
 /// FLAG_ISAAC_WEARS_TUNIC gives grown Isaac sprite 0x11.
 ///
-/// Called by FieldScript_SpawnObjectTable for every object event template, and
-/// by PsynergyMenu_InitializeEntryObjects (through
+/// Called by FieldScript_SpawnObjectEventTemplates for every object event
+/// template, and by PsynergyMenu_InitializeEntryObjects (through
 /// Party_RemapCharacterIdByFlagsFar) for the party's figures.
 s32 Party_RemapCharacterIdByFlags(s32 character) {
   s32 sprite;
@@ -43,7 +43,7 @@ s32 Party_RemapCharacterIdByFlags(s32 character) {
 /// Returns the sprite of character as Party_RemapCharacterIdByFlags would with
 /// FLAG_CHILDHOOD set to childhood (as recorded in a save file's summary).
 ///
-/// Called by SaveMenu_ShowPartySprites through
+/// Called by FileMenu_ShowPartySprites through
 /// Party_RemapCharacterIdIfEnabledFar. Save summaries omit the tunic flag,
 /// so this never gives sprite 0x11.
 s32 Party_RemapCharacterIdIfEnabled(s32 character, s32 childhood) {
@@ -77,14 +77,15 @@ extern const struct ObjectEventTemplate gField_DefaultObjectEventTemplates[2];
 /// party keeps its position. The table is kept by address, so it must last as
 /// long as the map (the overlay's own tables do).
 ///
-/// Called by ObjectTable_ResetForObject (the leader, then the map's table),
-/// ObjectTable_Respawn and FieldScript_CallWithLastActiveObjectId. Records
+/// Called by ObjectEvent_ResetForObject (the leader, then the map's table),
+/// ObjectEvent_Respawn and FieldScript_CallWithLastActiveObjectId. Records
 /// the table in work->tables and each object event in work->objectEvents.
-void FieldScript_SpawnObjectTable(struct ObjectEventTemplate *entry, s32 slot) {
+void FieldScript_SpawnObjectEventTemplates(struct ObjectEventTemplate *entry,
+                                           s32 slot) {
   struct FieldWork *work;
-  struct ObjectRuntime *object;
-  struct ObjectRuntime *previous;
-  struct AnimationObject *sprite;
+  struct Object *object;
+  struct Object *previous;
+  struct Sprite *sprite;
   s32 tableIndex;
   s32 objectEventIndex;
   s32 spriteId;
@@ -92,7 +93,7 @@ void FieldScript_SpawnObjectTable(struct ObjectEventTemplate *entry, s32 slot) {
   u8 spriteSlot;
   u16 templateSprite;
 
-  work = (struct FieldWork *)gEventWork;
+  work = (struct FieldWork *)gFieldWork;
   // Remember the table once, before consuming slots for its object event
   // templates.
   for (tableIndex = 0; tableIndex < 4; tableIndex++) {
@@ -116,15 +117,15 @@ void FieldScript_SpawnObjectTable(struct ObjectEventTemplate *entry, s32 slot) {
     condition = entry->condition;
     if (!GameFlag_IsConditionActive(condition))
       continue;
-    // Djinn_ResolvePendingEvent hides a Djinni after a loss or escape.
+    // Djinn_ResolvePendingEvent hides a Djinni after the party loses or flees.
     // Map_ResetFlagsOnEnter clears these temporary flags on a normal entry.
     if ((u32)(condition - FLAG_DJINN_FIRST) <=
             OBJ_EVENT_DJINNI_FLAG_COUNT - 1 &&
-        work->mode != MODE_WORLD_MAP &&
+        work->mode != OBJECT_SYSTEM_WORLD_MAP &&
         !GameFlag_IsConditionActive(condition + OBJ_EVENT_DJINNI_FLAG_COUNT))
       continue;
     spriteId = Party_RemapCharacterIdByFlags(entry->sprite);
-    object = ObjectTable_Get(objectEventIndex);
+    object = ObjectEvent_GetByLocalId(objectEventIndex);
     if (object == 0) {
       object = Object_CreateFar(spriteId, entry->x, entry->y, entry->z);
       // OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE: share the previous object
@@ -132,7 +133,7 @@ void FieldScript_SpawnObjectTable(struct ObjectEventTemplate *entry, s32 slot) {
       // VRAM cache entry, its own entry is freed, and both are marked to keep
       // the shared entry when either is released.
       if (entry->flags & OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE) {
-        previous = ObjectTable_Get(objectEventIndex - 1);
+        previous = ObjectEvent_GetByLocalId(objectEventIndex - 1);
         if (previous->animationKind == OBJECT_SPRITE_ONE &&
             object->animationKind == OBJECT_SPRITE_ONE) {
           sprite = previous->animation;
@@ -140,7 +141,7 @@ void FieldScript_SpawnObjectTable(struct ObjectEventTemplate *entry, s32 slot) {
           spriteSlot = sprite->slot;
           sprite = object->animation;
           sprite->retainCacheEntry = 1;
-          Resource_ResetEntry(sprite->slot);
+          VramCache_FreeEntry(sprite->slot);
           sprite->slot = spriteSlot;
         }
       }
@@ -163,24 +164,24 @@ void FieldScript_SpawnObjectTable(struct ObjectEventTemplate *entry, s32 slot) {
       if (object->animationKind == OBJECT_SPRITE_ONE &&
           (sprite = object->animation) != 0)
         sprite->lastNo = ((u32)(Random16()) % (u32)30);
-      object->angle = entry->facing;
+      object->facing = entry->facing;
       // Solid.
       object->collisionFlags = 1;
-      ObjectMotion_SetActionCallback(object, entry->behavior);
+      ObjectEvent_SetMovementType(object, entry->movement);
       ObjectDispatch_SelectAnimationFar(object, 1);
       ((struct ScriptObjectRuntime *)object)->homeX = object->x / 0x10000;
       ((struct ScriptObjectRuntime *)object)->homeZ = object->z / 0x10000;
       // An object event template with a height is lifted half a pixel more and
-      // takes motion flags 4, floating: it neither follows the terrain nor
+      // takes motion flags 4, floating: it neither follows the ground nor
       // falls. Outside the world map every height is then counted from the
-      // terrain below.
+      // ground below.
       if (object->y != 0) {
         object->flags = 4;
         object->y += 0x8000;
       }
-      if (work->mode == MODE_WORLD_MAP) {
+      if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
         // World-map object event templates use single sprites and do not follow
-        // the terrain. While the tunic flag is set, all keep their native
+        // the ground. While the tunic flag is set, all keep their native
         // scale; otherwise they draw at 3/4 size.
         object->flags &= 0xfe;
         if (!GameFlag_TestFar(FLAG_ISAAC_WEARS_TUNIC)) {
@@ -194,9 +195,9 @@ void FieldScript_SpawnObjectTable(struct ObjectEventTemplate *entry, s32 slot) {
             sprite->scale = Iwram_MulQ16(sprite->scale, 3 * Q16_ONE / 4);
         }
       } else {
-        object->terrainHeight =
+        object->groundHeight =
             MapGrid_GetTerrainHeightFar(0, object->x, object->z);
-        object->y += object->terrainHeight;
+        object->y += object->groundHeight;
       }
       object->priorityFlags = OBJ_EVENT_PRIORITY_AUTOMATIC;
     }
@@ -207,9 +208,9 @@ void FieldScript_SpawnObjectTable(struct ObjectEventTemplate *entry, s32 slot) {
 /// Destroys the object event in slot objectEventIndex, if there is one, and
 /// empties the slot. No caller names it; its far-call veneer has no exported
 /// name.
-void ObjectTable_DestroyAtIndex(s32 objectEventIndex) {
-  struct FieldWork *work = (struct FieldWork *)gEventWork;
-  void *object = ObjectTable_Get(objectEventIndex);
+void ObjectEvent_DestroyAtIndex(s32 objectEventIndex) {
+  struct FieldWork *work = (struct FieldWork *)gFieldWork;
+  void *object = ObjectEvent_GetByLocalId(objectEventIndex);
 
   if (object != NULL) {
     ObjectDispatch_ReleaseFar(object);
@@ -235,24 +236,24 @@ void ObjectTable_DestroyAtIndex(s32 objectEventIndex) {
 /// (MB_CLIMB) is raised by the ground height of the cell north of it less 32
 /// pixels, and starts climbing (LEADER_MOVEMENT_CLIMB).
 ///
-/// Called by Field_RunMap on entering a map, and by
+/// Called by Map_Run on entering a map, and by
 /// FieldScript_RunObjectHookAndWait.
 /// Empties every object event slot and table first, without destroying the
 /// object events in them; sets work->camera, the map's origin and
 /// gGameState.movementMode.
-void ObjectTable_ResetForObject(struct ObjectEventTemplate *table) {
+void ObjectEvent_ResetForObject(struct ObjectEventTemplate *table) {
   struct FieldWork *work;
   struct ObjectEventTemplate *entry;
-  struct ObjectRuntime *object;
-  struct ObjectRuntime *camera;
+  struct Object *object;
+  struct Object *camera;
   struct MapGridCell *cell;
   struct MapGridCell *above;
   s32 leader;
   s32 pos;
   s32 height;
 
-  work = (struct FieldWork *)gEventWork;
-  leader = gGameState.selectedLocalId;
+  work = (struct FieldWork *)gFieldWork;
+  leader = gGameState.leaderLocalId;
   // Build the leader's temporary object event template before the map's placed
   // object events. The two-row table, the leader's row and an end row, lives in
   // the event work at 0x200 (FieldWork's leaderTemplates) and lasts with it.
@@ -261,29 +262,29 @@ void ObjectTable_ResetForObject(struct ObjectEventTemplate *table) {
   entry[1] = gField_DefaultObjectEventTemplates[1];
   for (pos = 0; pos < 4; pos++)
     work->tables[pos] = 0;
-  ObjectTable_ClearAll();
+  ObjectEvent_ClearAll();
   entry->condition = -1;
   entry->sprite = leader;
   SET_POSITION(entry, gGameState.x, 0, gGameState.z);
   entry->facing = gGameState.heading;
-  FieldScript_SpawnObjectTable(entry, leader);
-  FieldScript_SpawnObjectTable(table, LOCALID_FIRST_PLACED);
+  FieldScript_SpawnObjectEventTemplates(entry, leader);
+  FieldScript_SpawnObjectEventTemplates(table, LOCALID_FIRST_PLACED);
 
-  object = (struct ObjectRuntime *)work->objectEvents[leader];
-  // gGameState.turn keeps the leader's map grid layer (Field_RunMap saves its
-  // terrainId there). Its cell: 16 pixels square, 128 to a row, so above is
+  object = (struct Object *)work->objectEvents[leader];
+  // gGameState.turn keeps the leader's map grid layer (Map_Run saves its
+  // layer there). Its cell: 16 pixels square, 128 to a row, so above is
   // the cell north of it.
-  object->terrainId = gGameState.turn;
+  object->layer = gGameState.turn;
   pos = (object->x / 0x100000) + (object->z / 0x100000) * 128;
   cell = &MAPGRID_CELLS[pos];
   above = &MAPGRID_CELLS[pos - 128];
-  if (gGameState.y != 0 && cell->collisionCode == MB_CLIMB &&
-      above->collisionCode == MB_CLIMB) {
+  if (gGameState.y != 0 && cell->behavior == MB_CLIMB &&
+      above->behavior == MB_CLIMB) {
     gGameState.movementMode = LEADER_MOVEMENT_CLIMB;
     height = MapGrid_GetTerrainHeightFar(0, object->x, object->z - 0x100000) -
              0x200000;
     object->y += height;
-    object->terrainHeight = object->y;
+    object->groundHeight = object->y;
     object->flags = 0;
     ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object, 0);
     ObjectDispatch_SelectAnimationFar(object, 12);
@@ -295,12 +296,11 @@ void ObjectTable_ResetForObject(struct ObjectEventTemplate *table) {
   // the map scrolls by the camera's position. It takes no sprite.
   camera = Object_CreateFar(OBJECT_CREATE_NO_SPRITE << 12, object->x, object->y,
                             object->z);
-  camera->terrainHeight = object->terrainHeight;
+  camera->groundHeight = object->groundHeight;
   ObjectDispatch_StartCameraFar((struct DispatchObject *)camera, (s32)object);
-  if (work->mode == MODE_WORLD_MAP) {
-    struct AnimationEntry *meta =
-        (struct AnimationEntry *)ResourceMetadata_RegisterFar(object->animation,
-                                                              23);
+  if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
+    struct SpriteAnim *meta =
+        (struct SpriteAnim *)Sprite_AddAnimFar(object->animation, 23);
     meta->colorMode = SPRITE_COLOR_HIDDEN;
     meta->priority = 9;
   }
@@ -312,10 +312,10 @@ void ObjectTable_ResetForObject(struct ObjectEventTemplate *table) {
 /// or -1 when the last slot is occupied. Earlier holes are not reused by this
 /// append scan.
 ///
-/// Called by ObjectTable_Respawn and FieldScript_CallWithLastActiveObjectId
-/// to choose where FieldScript_SpawnObjectTable starts.
-s32 ObjectTable_FindLastActiveId(void) {
-  struct FieldWork *work = (struct FieldWork *)gEventWork;
+/// Called by ObjectEvent_Respawn and FieldScript_CallWithLastActiveObjectId
+/// to choose where FieldScript_SpawnObjectEventTemplates starts.
+s32 ObjectEvent_FindLastActiveId(void) {
+  struct FieldWork *work = (struct FieldWork *)gFieldWork;
   s32 lastObjectEventIndex = LOCALID_FIRST_PLACED - 1;
   s32 objectEventIndex = LOCALID_FIRST_PLACED;
   struct ObjectEvent **slot = &work->objectEvents[LOCALID_FIRST_PLACED];
@@ -337,8 +337,8 @@ s32 ObjectTable_FindLastActiveId(void) {
 
 /// Unused: returns the address of object event slot index in the event work.
 /// Nothing calls it.
-UNUSED void *ObjectTable_GetSlotAddress(u32 objectEventIndex) {
-  return (u8 *)gEventWork + 0x14 + objectEventIndex * sizeof(void *);
+UNUSED void *ObjectEvent_GetSlotAddress(u32 objectEventIndex) {
+  return (u8 *)gFieldWork + 0x14 + objectEventIndex * sizeof(void *);
 }
 
 // Object events and the view: object event template conditions from the map's
@@ -388,11 +388,11 @@ void Map_AssignViewFlags(struct ObjectEventTemplate *entry) {
 /// at (0, 0) stay.
 ///
 /// Called on the world map before an effect plays, by Field_UsePsynergy and
-/// Djinn_JoinParty; empties the slots it frees. ObjectTable_Respawn
+/// Djinn_JoinParty; empties the slots it frees. ObjectEvent_Respawn
 /// brings the object events back afterwards.
-void ObjectTable_ClearOutOfBounds(void) {
-  struct FieldWork *work = (struct FieldWork *)gEventWork;
-  struct ObjectRuntime *camera;
+void ObjectEvent_ClearOutOfBounds(void) {
+  struct FieldWork *work = (struct FieldWork *)gFieldWork;
+  struct Object *camera;
   s32 centerX;
   s32 centerZ;
   s32 left;
@@ -452,8 +452,8 @@ void ObjectTable_ClearOutOfBounds(void) {
 /// Called on the world map after an effect, by Field_UsePsynergy and
 /// Djinn_JoinParty. Clears work->tables 1 to 3 before the table is spawned
 /// again.
-void ObjectTable_Respawn(void) {
-  struct FieldWork *work = (struct FieldWork *)gEventWork;
+void ObjectEvent_Respawn(void) {
+  struct FieldWork *work = (struct FieldWork *)gFieldWork;
   struct ObjectEventTemplate *templates;
   s32 slotIndex;
 
@@ -462,7 +462,7 @@ void ObjectTable_Respawn(void) {
         work->objectEvents[LOCALID_FIRST_PLACED + slotIndex];
 
     if (objectEvent != 0) {
-      // As in ObjectTable_ClearOutOfBounds: free the sprite and its
+      // As in ObjectEvent_ClearOutOfBounds: free the sprite and its
       // VRAM cache entry with the object event.
       objectEvent->spriteStorageKind = OBJECT_SPRITE_ONE;
       objectEvent->sprite->retainCacheEntry = 0;
@@ -475,20 +475,21 @@ void ObjectTable_Respawn(void) {
   work->tables[2] = 0;
   work->tables[3] = 0;
   if (templates != 0)
-    FieldScript_SpawnObjectTable(templates, ObjectTable_FindLastActiveId());
+    FieldScript_SpawnObjectEventTemplates(templates,
+                                          ObjectEvent_FindLastActiveId());
 }
 
 /// Empties all the object event slots, without destroying the object events.
 ///
-/// Called by ObjectTable_ResetForObject.
-void ObjectTable_ClearAll(void) {
+/// Called by ObjectEvent_ResetForObject.
+void ObjectEvent_ClearAll(void) {
   struct FieldWork *work;
   struct ObjectEvent *emptyObjectEvent;
   s32 objectEventIndex;
 
   emptyObjectEvent = NULL;
   objectEventIndex = OBJ_EVENT_SLOT_COUNT - 1;
-  work = (struct FieldWork *)gEventWork;
+  work = (struct FieldWork *)gFieldWork;
   do {
     work->objectEvents[objectEventIndex] = emptyObjectEvent;
     objectEventIndex--;
@@ -500,9 +501,10 @@ void ObjectTable_ClearAll(void) {
 /// the event work; larger ones give NULL.
 ///
 /// The field's object event lookup: called across the object folder and,
-/// through ObjectTable_GetFar (Engine_ObjectEventLookup), by map overlays.
-void *ObjectTable_Get(u32 objectEventIndex) {
-  u8 *workBytes = (u8 *)gEventWork;
+/// through ObjectEvent_GetByLocalIdFar (Engine_ObjectEventLookup), by map
+/// overlays.
+void *ObjectEvent_GetByLocalId(u32 objectEventIndex) {
+  u8 *workBytes = (u8 *)gFieldWork;
   u32 slotOffset;
 #ifdef UBFIX
   void *object;
@@ -521,44 +523,44 @@ void *ObjectTable_Get(u32 objectEventIndex) {
 }
 
 /// Saves up to 32 object events (only the party's 8 on the world map) into
-/// gObjectSnapshots, with each one's slot, animation, sprite flags and
-/// priority, so that ObjectTable_Restore can put them back.
+/// gObjectEventSnapshot, with each one's slot, animation, sprite flags and
+/// priority, so that ObjectEvent_Restore can put them back.
 ///
-/// Called by Field_RunMap before a random battle, by the save menu through
-/// SaveState_CaptureObjectTableFar, and by two maps (Tolbi's spring and the
+/// Called by Map_Run before a random battle, by saving the game through
+/// Save_CaptureObjectEventsFar, and by two maps (Tolbi's spring and the
 /// Venus Lighthouse aerie).
-void ObjectTable_Snapshot(void) {
+void ObjectEvent_Snapshot(void) {
   struct FieldWork *work;
-  struct ObjectRuntime *snapshot = gObjectSnapshots.objectEvents;
-  u8 *animations = gObjectSnapshots.animations;
-  u8 *spriteFlags = gObjectSnapshots.spriteFlags;
-  u8 *priorities = gObjectSnapshots.priorities;
-  u8 *indices = gObjectSnapshots.slots;
+  struct Object *snapshot = gObjectEventSnapshot.objectEvents;
+  u8 *animations = gObjectEventSnapshot.animations;
+  u8 *spriteFlags = gObjectEventSnapshot.spriteFlags;
+  u8 *priorities = gObjectEventSnapshot.priorities;
+  u8 *indices = gObjectEventSnapshot.slots;
   u32 savedCount = 0;
   s32 objectEventLimit =
       sizeof(work->objectEvents) / sizeof(work->objectEvents[0]);
-  struct ObjectRuntime *object;
+  struct Object *object;
   s32 objectEventIndex;
   u32 animation;
   u32 spriteFlagBits;
   u32 priority;
 
-  work = (struct FieldWork *)gEventWork;
-  if (work->mode == MODE_WORLD_MAP)
+  work = (struct FieldWork *)gFieldWork;
+  if (work->mode == OBJECT_SYSTEM_WORLD_MAP)
     objectEventLimit = LOCALID_FIRST_PLACED;
   // Keep each object event and its three sprite-state bytes at matching save
   // indices.
   for (objectEventIndex = 0; objectEventIndex < objectEventLimit;
        objectEventIndex++) {
-    object = ObjectTable_Get(objectEventIndex);
+    object = ObjectEvent_GetByLocalId(objectEventIndex);
     if (object == NULL)
       continue;
     *indices++ = objectEventIndex;
     Dma_Set(object, snapshot,
-            (DMA_ENABLE | DMA_32BIT) << 16 | (sizeof(struct ObjectRuntime) / 4),
+            (DMA_ENABLE | DMA_32BIT) << 16 | (sizeof(struct Object) / 4),
             REG_DMA3);
     if (object->animationKind == OBJECT_SPRITE_ONE) {
-      struct AnimationObject *sprite = object->animation;
+      struct Sprite *sprite = object->animation;
       animation = sprite->lastNo;
       spriteFlagBits = sprite->flags;
       priority = sprite->image.priority;
@@ -572,44 +574,44 @@ void ObjectTable_Snapshot(void) {
     *priorities++ = priority;
     savedCount++;
     snapshot++;
-    if (savedCount > OBJECT_SNAPSHOT_CAPACITY - 1)
+    if (savedCount > OBJECT_EVENT_SNAPSHOT_CAPACITY - 1)
       break;
   }
   for (objectEventIndex = savedCount;
-       objectEventIndex < OBJECT_SNAPSHOT_CAPACITY; objectEventIndex++)
-    *indices++ = OBJECT_SNAPSHOT_EMPTY;
+       objectEventIndex < OBJECT_EVENT_SNAPSHOT_CAPACITY; objectEventIndex++)
+    *indices++ = OBJECT_EVENT_SNAPSHOT_EMPTY;
 }
 
-/// Puts back the object events ObjectTable_Snapshot saved, and moves the camera
+/// Puts back the object events ObjectEvent_Snapshot saved, and moves the camera
 /// to the party leader's height.
 ///
-/// Called by Field_RunMap when the party keeps its position
+/// Called by Map_Run when the party keeps its position
 /// (FLAG_KEEP_PARTY_POSITION), and by the Venus Lighthouse aerie map through
-/// ObjectTable_RestoreFar. Only object events whose slots are filled again are
+/// ObjectEvent_RestoreFar. Only object events whose slots are filled again are
 /// restored; the leader is set idle.
-void ObjectTable_Restore(void) {
-  struct ObjectRuntime *snapshot = gObjectSnapshots.objectEvents;
-  u8 *indices = gObjectSnapshots.slots;
-  u8 *animations = gObjectSnapshots.animations;
-  u8 *spriteFlags = gObjectSnapshots.spriteFlags;
-  u8 *priorities = gObjectSnapshots.priorities;
+void ObjectEvent_Restore(void) {
+  struct Object *snapshot = gObjectEventSnapshot.objectEvents;
+  u8 *indices = gObjectEventSnapshot.slots;
+  u8 *animations = gObjectEventSnapshot.animations;
+  u8 *spriteFlags = gObjectEventSnapshot.spriteFlags;
+  u8 *priorities = gObjectEventSnapshot.priorities;
   s32 restoredCount;
-  struct ObjectRuntime *object;
-  struct AnimationObject *sprite;
-  struct ObjectRuntime *camera;
+  struct Object *object;
+  struct Sprite *sprite;
+  struct Object *camera;
   s32 *cameraPosition;
   s32 objectEventIndex;
   s32 animation;
   s32 priority;
   s32 y;
-  s32 *leaderId = &gGameState.selectedLocalId;
-  struct EventWork **fieldWork = &gEventWork;
+  s32 *leaderId = &gGameState.leaderLocalId;
+  struct EventWork **fieldWork = &gFieldWork;
   struct MapGridScrollWork **grid = (struct MapGridScrollWork **)gMapGridWork;
 
   restoredCount = 0;
   objectEventIndex = *indices++;
-  while (objectEventIndex != OBJECT_SNAPSHOT_EMPTY) {
-    object = ObjectTable_Get(objectEventIndex);
+  while (objectEventIndex != OBJECT_EVENT_SNAPSHOT_EMPTY) {
+    object = ObjectEvent_GetByLocalId(objectEventIndex);
     if (object != NULL) {
       // The copy also brings back the sprite pointer saved with the object
       // event. The animation and sprite flags below are set through that
@@ -617,8 +619,7 @@ void ObjectTable_Restore(void) {
       // which is then put back.
       sprite = object->animation;
       Dma_Set(snapshot, object,
-              (DMA_ENABLE | DMA_32BIT) << 16 |
-                  (sizeof(struct ObjectRuntime) / 4),
+              (DMA_ENABLE | DMA_32BIT) << 16 | (sizeof(struct Object) / 4),
               REG_DMA3);
       animation = *animations;
       if (animation != 0)
@@ -634,7 +635,7 @@ void ObjectTable_Restore(void) {
         camera = ((struct FieldWork *)*fieldWork)->camera;
         cameraPosition = (*grid)->origin;
         y = object->y;
-        camera->terrainHeight = y;
+        camera->groundHeight = y;
         camera->y = y;
         cameraPosition[1] = y;
         ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
@@ -645,7 +646,7 @@ void ObjectTable_Restore(void) {
     spriteFlags++;
     priorities++;
     restoredCount++;
-    if (restoredCount > OBJECT_SNAPSHOT_CAPACITY - 1)
+    if (restoredCount > OBJECT_EVENT_SNAPSHOT_CAPACITY - 1)
       break;
     objectEventIndex = *indices++;
   }

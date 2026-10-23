@@ -14,25 +14,25 @@ struct ItemDefinition *Item_GetDirect(s32 item) {
 /// Returns whether the character can equip `item`: bit classId of the item's
 /// equipMask. Units past the eight characters cannot. Inventory_Equip checks
 /// it first.
-s32 Item_CanOwnerEquipDirect(s32 owner, s32 item) {
-  struct BattleUnit *unit = Unit_Get(owner);
+s32 Item_CanUnitEquipDirect(s32 owner, s32 item) {
+  struct Unit *unit = Unit_Get(owner);
   struct ItemDefinition *itemDefinition = Item_GetDirect(item);
   s32 equipMask = itemDefinition->equipMask;
 
-  if (unit->classId >= 8) {
+  if (unit->id >= 8) {
     return 0;
   }
-  return (equipMask >> unit->classId) & 1;
+  return (equipMask >> unit->id) & 1;
 }
 
 /// Returns 1 for an item that is not a weapon or armor, and for those whether
 /// the character can equip it. The shop's buy screen calls it to grey out the
 /// members who could not use an item.
-s32 Item_IsCompatibleWithOwner(s32 unit, s32 item) {
+s32 Item_IsCompatibleWithUnit(s32 unit, s32 item) {
   if (Item_GetEquipmentGroup(item) == EQUIPMENT_GROUP_NONE) {
     return 1;
   }
-  return Item_CanOwnerEquipDirect(unit, item);
+  return Item_CanUnitEquipDirect(unit, item);
 }
 
 /// Returns what kind of thing an item is, an enum EquipmentGroup. Called by
@@ -79,7 +79,7 @@ s32 Inventory_GetQuantity(s32 owner, s32 slot) {
 /// kept closed up, so this is how many items the unit carries. Called by the
 /// shops before they add an item and to lay out their item grids.
 s32 Inventory_Count(s32 owner) {
-  struct BattleUnit *unit = Unit_Get(owner);
+  struct Unit *unit = Unit_Get(owner);
   s32 count = 0;
 
   if (unit->inventory[count] != 0) {
@@ -101,9 +101,9 @@ s32 PartyInventory_HasSpace(void) {
   s32 ownerIndex;
   s16 *ownerCursor;
 
-  if (Inventory_Count(gGameState.selectedLocalId) != INVENTORY_SLOTS)
+  if (Inventory_Count(gGameState.leaderLocalId) != INVENTORY_SLOTS)
     return 1;
-  ownerCount = Party_ListActiveOwners(owners);
+  ownerCount = Party_ListMembers(owners);
   ownerCursor = owners;
   ownerIndex = 0;
   if (ownerIndex < ownerCount) {
@@ -120,7 +120,7 @@ s32 PartyInventory_HasSpace(void) {
 /// spring game and the lucky wheels to cap what the player can win.
 s32 PartyInventory_CountFreeSlots(void) {
   s16 owners[10];
-  s32 ownerCount = Party_ListActiveOwners(owners);
+  s32 ownerCount = Party_ListMembers(owners);
   s32 freeSlots = 0;
   s16 *ownerCursor = owners;
 
@@ -141,7 +141,7 @@ s32 PartyInventory_CountFreeSlots(void) {
 /// there was no room. Called by the shops, the new game set-up, the debug
 /// presets and PartyInventory_Add.
 s32 Inventory_AddItem(s32 owner, s32 itemId) {
-  struct BattleUnit *unit = Unit_Get(owner);
+  struct Unit *unit = Unit_Get(owner);
   struct ItemDefinition *item = Item_GetDirect(itemId);
   s32 slot;
 
@@ -192,7 +192,7 @@ s32 PartyInventory_Add(s32 itemId) {
   s32 ownerIndex;
   s16 *ownerCursor;
 
-  ownerCount = Party_ListActiveOwners(owners);
+  ownerCount = Party_ListMembers(owners);
   ownerCursor = owners;
   ownerIndex = 0;
   if (ownerIndex < ownerCount) {
@@ -210,7 +210,7 @@ s32 PartyInventory_Add(s32 itemId) {
 /// Returns the first slot holding `itemId` (any quantity, equipped or not),
 /// or -1. Called by the shops and the scripts that check for an item.
 s32 Inventory_Find(s32 owner, s32 itemId) {
-  struct BattleUnit *inv = Unit_Get(owner);
+  struct Unit *inv = Unit_Get(owner);
   s32 slot = 0;
   u16 *entry = inv->inventory;
 
@@ -226,16 +226,16 @@ s32 Inventory_Find(s32 owner, s32 itemId) {
 /// Returns who carries `itemId`, asking the selected character first, or -1.
 /// Called by the scripts that need a key item, such as the Mercury Lighthouse's
 /// Hermes' Water and Kolima's Tret.
-s32 PartyInventory_FindOwner(s32 itemId) {
+s32 PartyInventory_FindMember(s32 itemId) {
   s16 owners[10];
   s32 ownerCount;
   s32 ownerIndex;
   s16 *ownerCursor;
   s16 owner;
 
-  if (Inventory_Find(gGameState.selectedLocalId, itemId) != -1)
-    return gGameState.selectedLocalId;
-  ownerCount = Party_ListActiveOwners(owners);
+  if (Inventory_Find(gGameState.leaderLocalId, itemId) != -1)
+    return gGameState.leaderLocalId;
+  ownerCount = Party_ListMembers(owners);
   ownerCursor = owners;
   ownerIndex = 0;
   if (ownerIndex < ownerCount) {
@@ -255,13 +255,13 @@ s32 PartyInventory_FindOwner(s32 itemId) {
 /// when the item it would replace is cursed on. Called by the item menu, the
 /// shop's equip prompt, the new game set-up and the debug presets.
 s32 Inventory_Equip(s32 owner, s32 slot) {
-  struct BattleUnit *unit = Unit_Get(owner);
+  struct Unit *unit = Unit_Get(owner);
   u32 inventoryEntry = unit->inventory[slot];
   struct ItemDefinition *item;
   u8 type;
   s32 equippedSlot;
 
-  if (Item_CanOwnerEquipDirect(owner, inventoryEntry) == 0)
+  if (Item_CanUnitEquipDirect(owner, inventoryEntry) == 0)
     return -1;
   if (inventoryEntry & INVENTORY_EQUIPPED)
     return 0;
@@ -294,7 +294,7 @@ s32 Inventory_Equip(s32 owner, s32 slot) {
 /// shops to compare what is worn and to repair it, and by the battle sprites
 /// to draw the member's weapon.
 s32 Inventory_FindEquipped(s32 owner, s32 type) {
-  struct BattleUnit *base = Unit_Get(owner);
+  struct Unit *base = Unit_Get(owner);
   s32 index;
   struct ItemDefinition *item;
 
@@ -312,7 +312,7 @@ s32 Inventory_FindEquipped(s32 owner, s32 type) {
 
 /// Returns the definition of the unit's equipped item of `type`, or NULL.
 /// Nothing calls it by name.
-struct ItemDefinition *Inventory_GetEquippedDefinition(struct BattleUnit *unit,
+struct ItemDefinition *Inventory_GetEquippedDefinition(struct Unit *unit,
                                                        s32 type) {
   s32 slot;
   struct ItemDefinition *item;
@@ -329,8 +329,8 @@ struct ItemDefinition *Inventory_GetEquippedDefinition(struct BattleUnit *unit,
 }
 
 /// Returns the id of the unit's equipped item of `type`, or 0. Called by
-/// BattleObject_Make to draw a member's weapon, and by the battle plan.
-s32 Inventory_GetEquippedItem(struct BattleUnit *unit, s32 type) {
+/// BattleObject_Make to draw a member's weapon, and by BattleTurn_Build.
+s32 Inventory_GetEquippedItem(struct Unit *unit, s32 type) {
   s32 slot;
 
   for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
@@ -353,7 +353,7 @@ s32 Inventory_GetEquippedItem(struct BattleUnit *unit, s32 type) {
 /// Psynergy stays listed until something rebuilds it. Called by using an item
 /// in the field or in battle, by the shops and by Inventory_Discard.
 s32 Inventory_Remove(s32 owner, s32 slot) {
-  struct BattleUnit *unit = Unit_Get(owner);
+  struct Unit *unit = Unit_Get(owner);
   u16 item = unit->inventory[slot];
   s32 result = INVENTORY_REMOVE_EMPTY_SLOT;
 
@@ -389,7 +389,7 @@ s32 Inventory_Discard(s32 owner, s32 slot) {
 /// empty, -4 the item is indispensable, -3 it is equipped and cursed on.
 /// Called by the shop's item picker before it lets an item go.
 s32 Inventory_CheckDiscard(s32 owner, s32 slot) {
-  struct BattleUnit *unit = Unit_Get(owner);
+  struct Unit *unit = Unit_Get(owner);
   s32 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
   struct ItemDefinition *item = Item_GetDirect(itemId);
 
@@ -407,10 +407,10 @@ s32 Inventory_CheckDiscard(s32 owner, s32 slot) {
 }
 
 /// Removes one `itemId` from whoever carries it first; always returns 0.
-/// Called by the scripts that use up a key item, the slot machine's Game
+/// Called by the scripts that use up a key item, the Lucky Wheels' Game
 /// Tickets and the field shortcut that uses an item.
 s32 PartyInventory_Remove(s32 itemId) {
-  s32 owner = PartyInventory_FindOwner(itemId);
+  s32 owner = PartyInventory_FindMember(itemId);
 
   if (owner == -1)
     return 0;
@@ -422,7 +422,7 @@ s32 PartyInventory_Remove(s32 itemId) {
 /// does; always returns 0. Called by the scripts that take an item back, such
 /// as the Vault dog's bone and the Black Orb.
 s32 PartyInventory_Discard(s32 itemId) {
-  s32 owner = PartyInventory_FindOwner(itemId);
+  s32 owner = PartyInventory_FindMember(itemId);
 
   if (owner == -1)
     return 0;
@@ -433,7 +433,7 @@ s32 PartyInventory_Discard(s32 itemId) {
 /// Marks the item in `slot` broken; returns -1 for an empty slot. Called when
 /// a used item breaks, in battle or from the item menu.
 s32 Inventory_Break(s32 owner, s32 slot) {
-  struct BattleUnit *inv = Unit_Get(owner);
+  struct Unit *inv = Unit_Get(owner);
   if (inv->inventory[slot] == 0) {
     return -1;
   }
@@ -444,7 +444,7 @@ s32 Inventory_Break(s32 owner, s32 slot) {
 /// Clears the broken mark of the item in `slot`; returns -1 for an empty
 /// slot. Called by the shop's repair.
 s32 Inventory_Repair(s32 owner, s32 slot) {
-  struct BattleUnit *inv = Unit_Get(owner);
+  struct Unit *inv = Unit_Get(owner);
   if (inv->inventory[slot] == 0) {
     return -1;
   }
@@ -455,7 +455,7 @@ s32 Inventory_Repair(s32 owner, s32 slot) {
 /// Returns how the action an item performs when used picks its targets. Only
 /// GAME.S's bare veneer reaches it; nothing calls it by name.
 u8 Item_GetTargetMode(s32 itemId) {
-  return BattleAction_GetDirect(Item_GetDirect(itemId)->actionId)->targetMode;
+  return Ability_GetDirect(Item_GetDirect(itemId)->abilityId)->targetMode;
 }
 
 /// Adds `delta` to rare item counter `index`, kept between 0 and 99, and
@@ -505,7 +505,7 @@ s32 Item_AdjustCounter(s32 itemId, s32 delta) {
 /// stack. Called by PartyInventory_CountItem and by the scripts that give an
 /// item, to keep stacks under their limit.
 s32 Inventory_CountItem(s32 owner, s32 itemId) {
-  struct BattleUnit *unit = Unit_Get(owner);
+  struct Unit *unit = Unit_Get(owner);
   s32 count = 0;
   s32 itemIdOnly = itemId & INVENTORY_ITEM_ID_MASK;
   s32 slot = 0;
@@ -525,12 +525,12 @@ s32 Inventory_CountItem(s32 owner, s32 itemId) {
   return count;
 }
 
-/// Counts `itemId` across the party. Called by the slot machine (Game
+/// Counts `itemId` across the party. Called by Lucky Wheels (Game
 /// Tickets) and the Tolbi spring game.
 s32 PartyInventory_CountItem(s32 itemId) {
   u16 owners[16];
   s32 itemCount = 0;
-  s32 ownerCount = Party_ListActiveOwners(owners);
+  s32 ownerCount = Party_ListMembers(owners);
 
   if (itemCount < ownerCount) {
     u16 *ownerCursor = owners;

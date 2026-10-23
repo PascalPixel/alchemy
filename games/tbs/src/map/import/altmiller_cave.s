@@ -4,14 +4,14 @@
 	.set import.__modsi3, 1
 	.set import.Math_DivideUnsigned, 1
 	.set import.Engine_TaskWait, 1
-	.set import.Scheduler_AddOrUpdateCallback, 1
+	.set import.Task_Add, 1
 	.set import.Engine_TaskRemoveCallback, 1
 	.set import.Engine_RandomNext, 1
 	.set import.Vector_AddPolarOffset, 1
 	.set import.ObjectEvent_SetMode, 1
 	.set import.Engine_ObjectCreate, 1
 	.set import.Engine_ObjectSetPosition, 1
-	.set import.FieldObject_WaitForMove, 1
+	.set import.Object_WaitForMove, 1
 	.set import.Engine_MapGridCopyCellAttributes, 1
 	.set import.Engine_MapGridCopyCellsLayered, 1
 	.set import.Object_CheckMovementCollision, 1
@@ -19,7 +19,7 @@
 	.set import.Engine_WorkSetValuesIfNonNegative, 1
 	.set import.Engine_MapGridWaitForShakeToSettle, 1
 	.set import.Animation_ApplyChildValues, 1
-	.set import.ObjectGroup_SetChildValueUnlessFifteen, 1
+	.set import.Sprite_SetAnimColorModes, 1
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1
 	.set import.Engine_GameFlagClear, 1
@@ -58,27 +58,27 @@
 	.set import.Engine_CameraWaitForMove, 1
 	.set import.Engine_CameraMoveToObjectEvent, 1
 	.set import.Field_RequestDjinnBattle, 1
-	.set import.DisplayTransition_InitializeBattleEffectState, 1
+	.set import.ScreenTransition_InitializeBattleEffectState, 1
 	.set import.Engine_PsynergyPlayEffect, 1
 	.set import.Engine_PsynergyStart, 1
 	.set import.Engine_PsynergySetTarget, 1
 	.set import.Engine_PsynergyLowerHands, 1
 	.set import.Engine_PsynergyRaiseHands, 1
 	.set import.Field_EndBusyAndReveal, 1
-	.set import.Audio_PlayCueFromEventWork, 1
-	.set import.EffectSlot_HasPendingTarget, 1
-	.set import.EffectSlot_SetObjectMode, 1
-	.set import.EffectSlot_SetCallback, 1
-	.set import.EffectSlot_Initialize, 1
+	.set import.Map_PlayMusic, 1
+	.set import.FieldEffectSprite_HasPendingTarget, 1
+	.set import.FieldEffectSprite_SetObjectMode, 1
+	.set import.FieldEffectSprite_SetCallback, 1
+	.set import.FieldEffectSprite_Initialize, 1
 	.set import.FieldEffect_ClearOwnedSlot, 1
 	.set import.Camera_WorldToScreen, 1
 	.set import.FieldEffect_InitializeSlots, 1
 	.set import.FieldEffect_ClearActiveSlotsAndScheduleUpdates, 1
-	.set import.Motion_LaunchFromFocusedObject, 1
+	.set import.ObjectMotion_LaunchFromFocusedObject, 1
 	.set import.Engine_ObjectEventWalkBy, 1
 	.set import.Engine_ObjectEventWalkByAndWait, 1
 	.set import.Engine_ObjectEventFollow, 1
-	.set import.FieldEffect_PlayQueuedSound, 1
+	.set import.Map_PlayQueuedMusic, 1
 	.set import.Shop_SaveAndTintFieldPalette, 1
 	.set import.Shop_RestoreFieldPalette, 1
 	.set import.Engine_AudioPlayCue, 1

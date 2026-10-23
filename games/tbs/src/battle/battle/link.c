@@ -18,7 +18,7 @@
 /// What a link battle sends of each party member, and of the Djinn recovery
 /// list, in bytes.
 enum LinkPartyPacketSize {
-  /// A struct BattleUnit (BATTLE_UNIT_SIZE, 332 bytes) and the 8 after it.
+  /// A struct Unit (BATTLE_UNIT_SIZE, 332 bytes) and the 8 after it.
   LINK_PARTY_UNIT_BYTES = 340,
   /// A struct DjinnRecoveryTable (268 bytes) and the 52 after it.
   LINK_PARTY_OFFER_BYTES = 320
@@ -35,17 +35,17 @@ enum LinkPartyPacketSize {
 s32 LinkBattle_ReceiveParty(void) {
   u16 label[24];
   void *buffer;
-  struct BattleUnit *opponent;
+  struct Unit *opponent;
   s32 memberCount;
   s32 partySlot;
   s32 labelLength;
   s32 i;
 
   // The block is only freed: each member is received straight into its
-  // enemy unit, as in the link lobby's twin of this function
-  // (LinkLobby_ReceivePartyRecords, menu/lobby.c). XXX: likely left from a
+  // enemy unit, as in the Battle Arena's twin of this function
+  // (BattleArena_ReceivePartyRecords, menu/lobby.c). XXX: likely left from a
   // receive into a buffer, because LinkBattle_SendParty does send from one.
-  buffer = Runtime_BumpAllocateAlternatePool(LINK_PARTY_UNIT_BYTES);
+  buffer = AllocEwram(LINK_PARTY_UNIT_BYTES);
   memberCount = 0;
   partySlot = 0;
   while (partySlot < LINK_PARTY_SIZE) {
@@ -61,7 +61,7 @@ s32 LinkBattle_ReceiveParty(void) {
 
     // Measure the label (at most NAME_LIMIT + 1 characters), shift the name
     // right to make room for it, then write it in; the name's end is cut.
-    Ui_AdjustValueWithoutLimitFar(MsgEnemyLabel, label);
+    Message_DecodeRawUnboundedFar(MsgEnemyLabel, label);
     i = 0;
     if (label[i] != 0) {
       do {
@@ -85,23 +85,23 @@ s32 LinkBattle_ReceiveParty(void) {
     opponent->name[UNIT_NAME_LENGTH] = 0;
     partySlot += 1;
   }
-  MemFree(buffer);
+  Free(buffer);
 
   // The recovery packet follows all three party places.
-  buffer = Runtime_BumpAllocateAlternatePool(LINK_PARTY_OFFER_BYTES);
+  buffer = AllocEwram(LINK_PARTY_OFFER_BYTES);
   if (SerialRuntime_StartReceive(
           Djinn_GetRecoveryTableFar(DJINN_RECOVERY_OPPONENT)) != -1) {
     SerialRuntime_WaitForReceive();
     WaitFrames(2);
   }
-  MemFree(buffer);
+  Free(buffer);
   return memberCount;
 }
 
 /// Link battle: sends the party, one member at a time and three places in
 /// all (an empty place has side 0), then the Djinn recovery list with each
-/// owner given the unit id the opponent knows them by. Records that id of
-/// each member in gBattleWork->ownerSlots (0xff for none). Nothing in the
+/// unit given the id the opponent knows it by. Records that id of
+/// each member in gBattleWork->opponentSlots (0xff for none). Nothing in the
 /// source calls it.
 #ifdef UBFIX
 void LinkBattle_SendParty(void) {
@@ -119,19 +119,19 @@ s32 LinkBattle_SendParty(void) {
   u16 owners[8];
 
   size = LINK_PARTY_UNIT_BYTES;
-  buffer = (u8 *)Runtime_BumpAllocateAlternatePool(size);
+  buffer = (u8 *)AllocEwram(size);
   noSlot = 0xff;
   battle = gBattleWork;
   for (i = 7; i >= 0; i--)
-    battle->ownerSlots[i] = noSlot;
+    battle->opponentSlots[i] = noSlot;
 
   // The members, each marked as the opponent's.
-  count = BattleParty_PrepareActiveOwners(owners);
+  count = BattleParty_PrepareMembers(owners);
   for (i = 0; i < count; i++) {
     Iwram_CopyWords(buffer, Unit_GetFar(owners[i]), size);
-    ((struct BattleUnit *)buffer)->side = BATTLE_UNIT_PARTY;
+    ((struct Unit *)buffer)->side = BATTLE_SIDE_PARTY;
     // FIRST_ENEMY_UNIT + i, in a byte.
-    battle->ownerSlots[owners[i]] = i - FIRST_ENEMY_UNIT;
+    battle->opponentSlots[owners[i]] = i - FIRST_ENEMY_UNIT;
     if (SerialRuntime_StartSend(buffer, LINK_PARTY_UNIT_BYTES) == -1)
       break;
     SerialRuntime_WaitForSend();
@@ -139,17 +139,17 @@ s32 LinkBattle_SendParty(void) {
   }
   // Empty places up to three.
   for (; i < LINK_PARTY_SIZE; i++) {
-    ((struct BattleUnit *)buffer)->side = BATTLE_UNIT_ABSENT;
+    ((struct Unit *)buffer)->side = BATTLE_SIDE_NONE;
     if (SerialRuntime_StartSend(buffer, LINK_PARTY_UNIT_BYTES) == -1)
       break;
     SerialRuntime_WaitForSend();
     WaitFrames(2);
   }
 
-  // The Djinn recovery list, its owners renumbered for the opponent.
+  // The Djinn recovery list, its units renumbered for the opponent.
   size = LINK_PARTY_OFFER_BYTES;
-  MemFree(buffer);
-  buffer = (u8 *)Runtime_BumpAllocateAlternatePool(size);
+  Free(buffer);
+  buffer = (u8 *)AllocEwram(size);
   /* FAKEMATCH(one-pass): the copy in a one-pass loop, a scheduling barrier
    * that keeps the list pointer's copy ahead of the count's load; as the plain
    * call, 1 of 152 instructions differ in tbs-en. */
@@ -159,13 +159,13 @@ s32 LinkBattle_SendParty(void) {
   } while (0);
   list = &((struct DjinnRecoveryTable *)buffer)->list;
   for (j = 0; j < list->count; j++)
-    list->entries[j].unitId = battle->ownerSlots[list->entries[j].unitId];
+    list->entries[j].unitId = battle->opponentSlots[list->entries[j].unitId];
   if (SerialRuntime_StartSend(buffer, LINK_PARTY_OFFER_BYTES) != -1) {
     SerialRuntime_WaitForSend();
     WaitFrames(1);
     WaitFrames(2);
   }
-  MemFree(buffer);
+  Free(buffer);
 }
 
 /// Copies the low bytes of a name's first four characters and a terminator,
@@ -210,16 +210,16 @@ UNUSED u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unused0, u32 unused1,
 /// waits up to 30 frames for it to show the same. Returns 0 once both do (or
 /// outside a link battle), and -1 if the battle is paused, the link is lost
 /// for more than LINK_MAX_MISSED_FRAMES frames or the signatures never meet.
-/// Called by BattlePresentation_BuildActions. Writes the first eight bytes
+/// Called by Battle_GatherActions. Writes the first eight bytes
 /// of gSerialTransfer.payload.
-s32 BattlePresentation_WaitSync(void) {
+s32 LinkBattle_WaitSync(void) {
   struct BattleWork *battle = gBattleWork;
   u16 *peer;
   u16 *signature;
   s32 missed = 0;
   s32 i;
 
-  if (battle->twoSided != 0) {
+  if (battle->isLink != 0) {
     u32 other = battle->linkSide ^ 1;
 
     // gLinkPeerSignatures[other]: a peer's payload holds four bytes before
@@ -258,9 +258,9 @@ s32 BattlePresentation_WaitSync(void) {
 /// shows a different earlier step. Returns -1 if the battle is paused, the
 /// link is lost for more than LINK_MAX_MISSED_FRAMES frames, or the steps
 /// disagree; 0 once in step, or outside a link battle. Called by
-/// Battle_RunEncounter. Writes the first sixteen bytes of
+/// Battle_Run. Writes the first sixteen bytes of
 /// gSerialTransfer.payload.
-s32 BattlePresentation_SyncTurn(void) {
+s32 LinkBattle_SyncTurn(void) {
   struct BattleWork *battle = gBattleWork;
   u16 *peer;
   u16 *signature;
@@ -269,7 +269,7 @@ s32 BattlePresentation_SyncTurn(void) {
    * instruction touches; without it, 8 of 232 instructions differ in tbs-en. */
   UNUSED u16 spare[10];
 
-  if (battle->twoSided != 0) {
+  if (battle->isLink != 0) {
     peer = gLinkPeerSignatures[battle->linkSide ^ 1];
     signature = (u16 *)gSerialTransfer.payload;
     if (battle->linkPaused != 0)
@@ -371,29 +371,29 @@ s32 BattlePresentation_SyncTurn(void) {
 
 /// Records, for each party member, the unit id the link opponent knows them
 /// by (FIRST_ENEMY_UNIT plus their place in the party), in
-/// gBattleWork->ownerSlots. Called by Battle_RunEncounter as a link battle
+/// gBattleWork->opponentSlots. Called by Battle_Run as a link battle
 /// is set up.
 #ifdef UBFIX
-void BattleParty_AssignMemberSlots(void) {
+void BattleParty_AssignOpponentSlots(void) {
 #else
-s32 BattleParty_AssignMemberSlots(void) {
+s32 BattleParty_AssignOpponentSlots(void) {
 #endif
   u16 activeMembers[8];
   struct BattleWork *battleState = gBattleWork;
-  s32 partySize = BattleParty_PrepareActiveOwners(activeMembers);
+  s32 partySize = BattleParty_PrepareMembers(activeMembers);
   s32 memberSlot;
   s32 unitId;
 
   for (memberSlot = 0; memberSlot < partySize; memberSlot++) {
     unitId = activeMembers[memberSlot];
     // FIRST_ENEMY_UNIT + memberSlot, in a byte.
-    battleState->ownerSlots[unitId] = memberSlot - FIRST_ENEMY_UNIT;
+    battleState->opponentSlots[unitId] = memberSlot - FIRST_ENEMY_UNIT;
   }
 }
 
 /// Clears the first 16 bytes of the link transfer's payload, the eight
-/// signature halfwords BattlePresentation_WaitSync and
-/// BattlePresentation_SyncTurn write. Called by Battle_RunEncounter on each way
+/// signature halfwords LinkBattle_WaitSync and
+/// LinkBattle_SyncTurn write. Called by Battle_Run on each way
 /// out of the battle but fleeing.
 s32 Battle_ClearSerialTransferPayload(void) {
   return Iwram_ClearWords(gSerialTransfer.payload, 16);

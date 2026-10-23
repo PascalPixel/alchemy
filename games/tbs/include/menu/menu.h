@@ -8,9 +8,9 @@
 #include "edition.h"
 #include "farcall.h"
 
-/// The status screen highlight's width in tiles on each ailment row: Down,
+/// The summary screen highlight's width in tiles on each status row: Down,
 /// Poison, Venom, Curse and Haunt.
-extern u8 gCharacterMenu_CursorWidths[];
+extern u8 gSummaryScreen_CursorWidths[];
 extern u8 gMenu_ListOrderItemsFirst[];
 extern u8 gMenu_ListOrderEquippedThenItems[];
 extern u8 gMenu_ListOrderEquippedThenEquipment[];
@@ -21,29 +21,29 @@ extern u8 gMenu_MinusSignString;
 extern u8 gMenu_PlusSignString;
 /// The field menu's command by icon position plus one, a row of 6 with the
 /// Djinn icon and one without: 1 Psynergy, 2 Djinn, 3 Item, 4 Status
-/// (Menu_SelectTopEntry).
-extern s8 gMenu_TopEntryCommandByPosition[];
+/// (FieldMenu_SelectCommand).
+extern s8 gFieldMenu_CommandByPosition[];
 /// The inverse: each command's icon position plus one, in the same two rows.
-extern s8 gMenu_TopEntryPositionByCommand[];
+extern s8 gFieldMenu_PositionByCommand[];
 /// The price digits 0 to 9, 32 bytes each (digits.4bpp), copied into a price
 /// sprite's tiles (Shop_CopyGlyphs).
 extern u8 gShop_GlyphBytes[];
 /// The level label of a save summary: `L`; `Nv.` in Spanish, `Niv` in French.
-extern u8 gStatusMenu_LevelLetterString[];
+extern u8 gSummaryScreen_LevelLetterString[];
 
-struct AnimationObject;
-struct BattleAct;
+struct Sprite;
+struct AbilityDefinition;
 struct DjinnListTable;
-struct EffectSlot;
-struct MenuResult;
+struct FieldEffectSprite;
+struct PagedList;
 struct ObjectSystemWork;
-struct OwnerActionSlot;
+struct PsynergyEntry;
 struct PlacementDescriptor;
 struct RenderInput;
-struct RenderOutput;
-struct SelectionScreen;
-struct ShopCursor;
-struct UiWindow;
+struct WindowSprite;
+struct SelectionScreenWork;
+struct MenuCursor;
+struct Window;
 struct Work;
 
 /// A background's horizontal and vertical scroll offsets.
@@ -66,19 +66,19 @@ extern const u8 gMenu_QuantityTiles[];
 extern const char gDjinnMenu_TextLevel[];
 /// `/`, between the Djinn menu's numbers.
 extern const char gDjinnMenu_TextSlash[];
-#ifndef OWN_gMenuCtrlWork
-/// Work slot 6: the object system's work (struct ObjectSystemWork).
-extern struct ObjectSystemWork *gMenuCtrlWork;
+#ifndef OWN_gObjectSystemWork
+/// Heap slot 6: the object system's work (struct ObjectSystemWork).
+extern struct ObjectSystemWork *gObjectSystemWork;
 #endif
-/// The number text buffer: NumberText_FormatHex writes eight digits and
-/// NumberText_FormatDecimal eleven characters, right-aligned, each with a
+/// The number text buffer: String_FormatHex writes eight digits and
+/// String_FormatDecimal eleven characters, right-aligned, each with a
 /// terminator. The debug text printers and the Djinn preview's numbers
-/// (UiText_FormatNumberToHalfwords) read it.
-extern u8 gNumberTextBuffer[];
-/// Work slot 18: the selection screen while it runs.
-extern struct SelectionScreen *gResQueueWork;
+/// (String_FormatNumberToHalfwords) read it.
+extern u8 gNumberBuffer[];
+/// Heap slot 18: the selection screen while it runs.
+extern struct SelectionScreenWork *gSelectionScreenWork;
 #ifndef OWN_gTitleExtraOptionEnabled
-/// Read as a halfword: nonzero offers Battle on the title menu, when a file
+/// Read as a halfword: nonzero offers Battle on the main menu, when a file
 /// has any of game flags 48 to 127 set.
 extern u8 gTitleExtraOptionEnabled[];
 #endif
@@ -104,11 +104,11 @@ extern const u8 gMenu_HexDigitsString[];
 /// Italian.
 extern const u8 gMenu_HpString[];
 #ifndef OWN_Menu_LvString
-/// The status screen's level label: `Lv`; `Nv.` in Spanish, `Niv` in French.
+/// The summary screen's level label: `Lv`; `Nv.` in Spanish, `Niv` in French.
 extern const u8 gMenu_LvString[];
 #endif
 /// The four Djinn sprites, one per element from Venus (90 to 93), that
-/// SaveMenu_ShowDjinnSprites shows in a row.
+/// FileMenu_ShowDjinnSprites shows in a row.
 extern const s32 gMenu_PartySpriteResourceIds[4];
 /// `.`, the decimal point of an item's stat multiplier (`x1.2`).
 extern u8 gMenu_PointString[];
@@ -116,8 +116,8 @@ extern u8 gMenu_PointString[];
 extern const u8 gMenu_PpString[];
 /// The title menu's action by icon position, a row of 6 for each layout:
 /// 0 New Game, 1 Continue, 2 Copy, 3 Erase, 4 Battle, 5 Send.
-extern s8 gMenu_SaveSlotActionByPosition[];
-/// Frames Menu_SelectResource waits at each icon on its way, by icons still to
+extern s8 gFileMenu_ActionByPosition[];
+/// Frames IconMenu_AnimateTo waits at each icon on its way, by icons still to
 /// go.
 extern u8 gMenu_SelectionStepDelays[];
 /// `L:`, the Japanese Psynergy menu's first shortcut label.
@@ -139,8 +139,8 @@ extern s8 gOptionMenu_SpeechFrames[];
 extern s8 gOptionMenu_SpeedFrames[];
 /// The status panel's level label: `Lv`; `Nv.` in Spanish, `Niv` in French.
 extern u8 gUi_LvString[];
-extern u8 gUiMenu_CursorBobX[];
-extern u8 gUiMenu_CursorBobY[];
+extern u8 gMenuCursor_BobX[];
+extern u8 gMenuCursor_BobY[];
 /// A debug window's title: `ENERGY`.
 extern u8 gWorkspace_EnergyTitle[];
 /// A debug window's title: `ITEM`.
@@ -152,19 +152,19 @@ extern u8 gWorkspace_PageLabel[];
 extern u8 gWorkspace_RangeDash[];
 /// A debug window's title: `STATUS`.
 extern u8 gWorkspace_StatusTitle[];
-/// The option screen's slider colours (slidpal).
-extern const u16 gWorkspaceOptions_SliderPalette[];
-/// The option screen's slider, 32 by 8 (slider.4bpp32x8).
-extern const u8 gWorkspaceOptions_SliderTiles[];
+/// The option menu's slider colours (slidpal).
+extern const u16 gOptionMenu_SliderPalette[];
+/// The option menu's slider, 32 by 8 (slider.4bpp32x8).
+extern const u8 gOptionMenu_SliderTiles[];
 #ifndef OWN_Ability_GetData
-struct BattleAct *Ability_GetData(s32 actionId);
+struct AbilityDefinition *Ability_GetData(s32 actionId);
 #endif
 s32 Item_FindSlot(s32 unitId, s32 item_id);
-s32 PaletteFar_Entry00(s32 mode);
-void PaletteFar_Entry20(s32 mode);
-void ScrollFar_Entry00(s32 mode);
-void UiText_DrawAt(s32, s32, s32, s32);
-void UiWindow_Clear(s32 window);
-void UiWindow_Commit(s32 window);
+s32 TitleFar_Entry00(s32 mode);
+void TitleFar_Entry20(s32 mode);
+void CreditsFar_Entry00(s32 mode);
+void Text_DrawAt(s32, s32, s32, s32);
+void Window_Clear(s32 window);
+void Window_Commit(s32 window);
 
 #endif

@@ -195,7 +195,7 @@ enum KolimaBridgeLocalId {
 };
 
 /// Applies the deferred pose change requested by the falling-effect script.
-static s32 Kolima_ApplyPendingPose(struct ScriptInterpreter *interpreter) {
+static s32 Kolima_ApplyPendingPose(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   if (gKolima_PendingPose != 0) {
     ObjectEvent_SetMode(objectEvent, 2);
@@ -207,7 +207,8 @@ static s32 Kolima_ApplyPendingPose(struct ScriptInterpreter *interpreter) {
 /// Each frame of a sparkle on Kolima's ground: its timer runs on at random, and
 /// it shows its bright frame (7) past 1000 and its dim one (10) before; at
 /// 1200 the timer starts over.
-static s32 Kolima_UpdateTimedAppearance(struct ScriptInterpreter *interpreter) {
+static s32
+Kolima_UpdateTimedAppearance(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   s32 randomValue = Engine_RandomNext();
   s32 scaledRandom = randomValue * 100;
@@ -244,15 +245,15 @@ Kolima_InitializeCursedVillagers(struct ObjectEventTemplate *templates) {
     if ((villagerIndex - 6) <= 1) {
       villager->sprite = alternateTreeSprite;
     }
-    villager->talkFacing = TALK_KEEP_FACING;
-    villager->behavior = MOVEMENT_TYPE_STAND;
+    villager->talkFacing = TALK_FACING_KEEP;
+    villager->movement = MOVEMENT_TYPE_STAND;
     villager++;
   }
 }
 
 /// Each frame of a piece of Kolima Bridge as it falls: it moves, grows, and is
 /// released when its timer runs out.
-static s32 Kolima_UpdateFallingDebris(struct ScriptInterpreter *interpreter) {
+static s32 Kolima_UpdateFallingDebris(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *debris = (struct ObjectEvent *)interpreter;
   debris->x.fixed += debris->velocityX;
   debris->z.fixed += debris->velocityZ;
@@ -355,7 +356,7 @@ static void Kolima_WalkThroughExit(s32 warpNumber) {
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
   ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0, -8);
-  gEventWork->transitionFrames = 16;
+  gFieldWork->transitionFrames = 16;
   Engine_ScriptRequestWarp(warpNumber);
 }
 
@@ -365,13 +366,13 @@ static void Kolima_WalkThroughExit(s32 warpNumber) {
 /// north open their door (gKolima_DoorCells) and the leader walks in, while
 /// KOLIMA_TO_HOUSE_NORTH, entered walking south, has no door to draw.
 static void Kolima_EnterDoor(void) {
-  struct EventWork *work = gEventWork;
+  struct EventWork *work = gFieldWork;
   s32 x = 0;
   s32 y = 0;
 
   Engine_ScriptStart();
   Engine_AudioPlayCue(SE_DOOR_OPEN);
-  switch (work->touchedTrigger) {
+  switch (work->coordEvent) {
   case KOLIMA_TO_INN:
     x = 71;
     y = 9;
@@ -392,13 +393,13 @@ static void Kolima_EnterDoor(void) {
     ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
     Engine_ObjectEventSetDestinationOffset(LOCALID_PARTY_LEADER, 0, 8);
-    gEventWork->transitionFrames = 16;
+    gFieldWork->transitionFrames = 16;
     Engine_ScriptRequestWarp(KOLIMA_TO_HOUSE_NORTH);
     Engine_ScriptEnd();
     return;
   }
   Engine_MapGridAnimateCells(gKolima_DoorCells, x, y);
-  Kolima_WalkThroughExit(work->touchedTrigger);
+  Kolima_WalkThroughExit(work->coordEvent);
   Engine_ScriptEnd();
 }
 
@@ -415,8 +416,8 @@ static void Kolima_LowerBridge(void) {
   u32 debrisIndex;
 
   Engine_ScriptStart();
-  Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
-  Camera_MoveTo(PIXELS(168), 0, PIXELS(246), 1);
+  FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
+  FieldCamera_MoveTo(PIXELS(168), 0, PIXELS(246), 1);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(20);
   ObjectEvent_ShowEmote(LOCALID_BRIDGE_VILLAGER,
@@ -425,7 +426,7 @@ static void Kolima_LowerBridge(void) {
   Engine_ScriptSetMessage(MsgKolimaGoingCrossBridge);
   Engine_ScriptShowMessage(LOCALID_BRIDGE_VILLAGER, 0);
   Engine_CameraSetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
-  Camera_MoveTo(PIXELS(168), 0, PIXELS(234), 1);
+  FieldCamera_MoveTo(PIXELS(168), 0, PIXELS(234), 1);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 174, 0x116);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHEAST, 20);
@@ -490,10 +491,9 @@ static void Kolima_LowerBridge(void) {
   Engine_ScriptWait(20);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   // From now on the villager turns to keep facing the leader.
-  FieldObject_SetTargetAndCallback(LOCALID_BRIDGE_VILLAGER,
-                                   OBJ_EVENT_LINK_KEEP_MOTION |
-                                       LOCALID_PARTY_LEADER,
-                                   gKolima_FaceLeaderScript);
+  Object_SetTargetAndCallback(LOCALID_BRIDGE_VILLAGER,
+                              OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_PARTY_LEADER,
+                              gKolima_FaceLeaderScript);
   Engine_ScriptWait(60);
   Engine_ObjectEventShowEmote(LOCALID_PARTY_LEADER,
                               EMOTE_IN_FRONT | EMOTE_WINCE, 60);
@@ -522,7 +522,7 @@ s32 Kolima_Initialize(void) {
   }
 
   if (mapId == (s32)&MapId_KolimaTunnel) {
-    gEventWork->startTransition =
+    gFieldWork->transition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
     return 0;
   }
@@ -664,7 +664,7 @@ static void Kolima_WitnessForestCurse(void) {
   Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
   objectEvent = ObjectEvent_GetById(LOCALID_GARET_PSYNERGY_FIELD);
   Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
-  Camera_MoveTo(PIXELS(104), -1, PIXELS(256), 0);
+  FieldCamera_MoveTo(PIXELS(104), -1, PIXELS(256), 0);
   Engine_MapGridRedraw();
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(23), PIXELS(247));
   Engine_TaskWait(1);
@@ -779,7 +779,7 @@ static void Kolima_WitnessForestCurse(void) {
     Kolima_ShowMessageAndWait(MIA, 20);
     Engine_ObjectEventSetAnimation(MIA, ANIMATION_NOD);
   } else {
-    gEventWork->message++;
+    gFieldWork->message++;
   }
   ObjectEvent_FaceObjectEvent(IVAN, LOCALID_PARTY_LEADER, 0);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
@@ -797,7 +797,7 @@ static void Kolima_WitnessForestCurse(void) {
     Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
   } else {
     Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
-    gEventWork->message++;
+    gFieldWork->message++;
   }
   Kolima_ShowMessageAndWait(GARET, 40);
   Kolima_FaceObjectEventAndWait(IVAN, FACING_SOUTHEAST, 40);
@@ -835,17 +835,17 @@ static void Kolima_WitnessForestCurse(void) {
   ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 0);
   Kolima_FaceObjectEventAndWait(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 20);
   Kolima_FaceObjectEventAndWait(IVAN, FACING_NORTH, 10);
-  Script_PlayCue(AUDIO_CUE_FADE_BGM);
-  Script_PlayCue(SE_206);
-  ColorBuffer_ApplyTarget(0x7fff, 0);
+  Script_PlaySong(SONG_FADE_OUT_BGM);
+  Script_PlaySong(SE_206);
+  PaletteFade_ApplyTarget(0x7fff, 0);
   Engine_ColorBufferInterpolate(1);
   Engine_TaskWait(1);
   // The falling sparkles threaten to turn the party into trees as well.
   gKolima_EffectActive = 1;
   FieldScheduler_AddCallback(Kolima_SpawnCurseSparkle, TASK_PRIORITY_MAP);
   Engine_TaskWait(20);
-  ColorBuffer_ApplyTarget(0x405210, 1);
-  ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 2);
+  PaletteFade_ApplyTarget(0x405210, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 2);
   Engine_ColorBufferInterpolate(120);
   Engine_TaskWait(60);
   squashActions = gKolima_PartySquashActions;
@@ -863,7 +863,7 @@ static void Kolima_WitnessForestCurse(void) {
     Engine_ScriptWait(40);
     Kolima_ShowMessageAndWait(MIA, 40);
   } else {
-    gEventWork->message++;
+    gFieldWork->message++;
   }
   Engine_ScriptWait(20);
   if (gKolima_MiaInParty != 0) {
@@ -911,7 +911,7 @@ static void Kolima_WitnessForestCurse(void) {
   Engine_ScriptWait(160);
   Engine_TaskRemoveCallback(Kolima_SpawnCurseSparkle);
   Engine_ScriptWait(120);
-  ColorBuffer_ApplyTarget(0x406218, 1);
+  PaletteFade_ApplyTarget(0x406218, 1);
   Engine_ColorBufferInterpolate(60);
   Engine_TaskWait(60);
   // Bring the falling curtain over the party and reveal their protective
@@ -922,7 +922,7 @@ static void Kolima_WitnessForestCurse(void) {
   *firstCurtainState = KOLIMA_DUST_CLOSING;
   FieldScheduler_AddCallback(Kolima_UpdateCurseDust, TASK_PRIORITY_MAP);
   Engine_ScriptWait(180);
-  Script_PlayCue(MUS_021);
+  Script_PlaySong(MUS_021);
   Kolima_ShowMessageAndWait(GARET, 80);
   Kolima_ShowMessageAndWait(IVAN, 40);
   ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
@@ -958,7 +958,7 @@ static void Kolima_WitnessForestCurse(void) {
                                            ATTACHED_EFFECT_ONCE);
     Kolima_ShowMessageAndWait(MIA, 10);
   } else {
-    gEventWork->message++;
+    gFieldWork->message++;
   }
   mapState = (s32 *)&gFallingEffectState;
   *mapState = KOLIMA_DUST_DRIFTING;
@@ -974,7 +974,7 @@ static void Kolima_WitnessForestCurse(void) {
   gKolima_PendingPose = stagingValue;
   FieldScheduler_AddCallback(Kolima_AlternateProtectiveFieldHeights,
                              TASK_PRIORITY_MAP);
-  Script_PlayCue(SE_220);
+  Script_PlaySong(SE_220);
   ObjectEvent_GetById(LOCALID_LEADER_PSYNERGY_FIELD)->priorityFlags &= 254;
   Engine_ObjectEventSetSpritePriority(LOCALID_LEADER_PSYNERGY_FIELD, 2);
   ObjectEvent_SetPosition(LOCALID_LEADER_PSYNERGY_FIELD, PIXELS(120),
@@ -1006,8 +1006,8 @@ static void Kolima_WitnessForestCurse(void) {
   Engine_ScriptWait(300);
   Engine_TaskRemoveCallback(Kolima_UpdateCurseDust);
   Engine_ScriptWait(120);
-  Script_PlayCue(AUDIO_CUE_FADE_BGM);
-  ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 1);
+  Script_PlaySong(SONG_FADE_OUT_BGM);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
   Engine_ColorBufferInterpolate(60);
   Engine_TaskWait(60);
   Engine_ObjectEventStop(LOCALID_LEADER_PSYNERGY_FIELD);
@@ -1034,7 +1034,7 @@ static void Kolima_WitnessForestCurse(void) {
   ObjectEvent_SetPosition(LOCALID_LAUREL, PIXELS(87), PIXELS(139));
   Engine_TaskWait(1);
   if (Engine_ScriptChooseYesNo(LOCALID_TRET, 0) == 1) {
-    gEventWork->message++;
+    gFieldWork->message++;
   }
   Engine_ObjectEventRunRepeatedMotion(LOCALID_PARTY_LEADER, 1);
   Engine_ScriptWait(20);
@@ -1097,7 +1097,7 @@ static void Kolima_WitnessForestCurse(void) {
     Engine_ScriptWait(20);
     Kolima_ShowMessageAndWait(MIA, 20);
   } else {
-    gEventWork->message++;
+    gFieldWork->message++;
   }
   Engine_ObjectEventJump(GARET, 2, 0);
   Kolima_FaceObjectEventAndWait(GARET, FACING_SOUTH, 20);
@@ -1152,7 +1152,7 @@ static void Kolima_WitnessForestCurse(void) {
   if (Engine_ScriptChooseYesNo(0, 0) == 0) {
     Engine_ObjectEventSetAnimation(IVAN, ANIMATION_NOD);
     Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_NOD);
-    gEventWork->message++;
+    gFieldWork->message++;
   } else {
     Engine_ObjectEventRunRepeatedMotion(GARET, 2);
     Kolima_FaceObjectEventAndWait(GARET, FACING_SOUTHEAST, 10);
@@ -1172,7 +1172,7 @@ static void Kolima_WitnessForestCurse(void) {
     Engine_ObjectEventSetAnimation(MIA, ANIMATION_SHAKE_HEAD);
     Kolima_ShowMessageAndWait(MIA, 10);
   } else {
-    gEventWork->message++;
+    gFieldWork->message++;
   }
   ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST, 0);
   Kolima_FaceObjectEventAndWait(LOCALID_PARTY_LEADER, FACING_NORTHWEST, 10);
@@ -1218,11 +1218,11 @@ static void Kolima_WitnessForestCurse(void) {
     Engine_ScriptWait(20);
     Engine_ObjectEventRunRepeatedMotion(GARET, 2);
     Engine_ScriptWait(40);
-    gEventWork->message++;
+    gFieldWork->message++;
   }
   Script_ShowMessage(GARET, 0);
-  Script_PlayCue(MUS_021);
-  ColorBuffer_ApplyTarget(0x406218, 1);
+  Script_PlaySong(MUS_021);
+  PaletteFade_ApplyTarget(0x406218, 1);
   Engine_ColorBufferInterpolate(60);
   Engine_TaskWait(60);
   gFallingEffectWidth = 0;
@@ -1254,7 +1254,7 @@ static void Kolima_WitnessForestCurse(void) {
   Engine_ObjectEventSetSpritePriority(IVAN, 3);
   Engine_ObjectEventSetSpritePriority(MIA, 3);
   *secondCurtainState = KOLIMA_DUST_CLOSING_WIDE;
-  Script_PlayCue(SE_220);
+  Script_PlaySong(SE_220);
   ObjectEvent_SetPosition(LOCALID_LEADER_PSYNERGY_FIELD, PIXELS(120),
                           PIXELS(248));
   growFieldActions = gKolima_ProtectiveFieldGrowActions;
@@ -1372,7 +1372,7 @@ static void Kolima_WitnessForestCurse(void) {
   Script_ShowMessage(LOCALID_TRET, 0);
   Engine_TaskRemoveCallback(Kolima_UpdateCurseDust);
   Engine_ScriptWait(80);
-  ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
   Engine_ColorBufferInterpolate(60);
   Engine_TaskWait(80);
   Engine_ObjectEventStop(LOCALID_LEADER_PSYNERGY_FIELD);
@@ -1460,7 +1460,7 @@ static void Kolima_WitnessForestCurse(void) {
         Engine_ObjectEventStartRepeatedMotion(MIA, 3);
         Kolima_ShowMessageAndWait(MIA, 20);
       } else {
-        gEventWork->message++;
+        gFieldWork->message++;
       }
       ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER,
                                     ATTACHED_EFFECT_IN_FRONT |
@@ -1478,7 +1478,7 @@ static void Kolima_WitnessForestCurse(void) {
         Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
         Kolima_ShowMessageAndWait(MIA, 10);
       } else {
-        gEventWork->message++;
+        gFieldWork->message++;
       }
       Engine_ScriptWait(60);
       Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
@@ -1508,7 +1508,7 @@ static void Kolima_WitnessForestCurse(void) {
         Engine_ObjectEventStartRepeatedMotion(MIA, 1);
         Kolima_ShowMessageAndWait(MIA, 20);
       } else {
-        gEventWork->message++;
+        gFieldWork->message++;
       }
       ObjectEvent_SetAttachedEffect(GARET, ATTACHED_EFFECT_IN_FRONT |
                                                ATTACHED_EFFECT_ONCE);
@@ -1526,7 +1526,7 @@ static void Kolima_WitnessForestCurse(void) {
         Engine_ObjectEventSetAnimation(MIA, ANIMATION_SHAKE_HEAD);
         Kolima_ShowMessageAndWait(MIA, 40);
       } else {
-        gEventWork->message++;
+        gFieldWork->message++;
       }
       Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
       Engine_ScriptWait(20);
@@ -1538,7 +1538,7 @@ static void Kolima_WitnessForestCurse(void) {
     }
   }
   // Reunite the party and remember that the first visit has played.
-  Script_PlayCue(AUDIO_CUE_FADE_BGM);
+  Script_PlaySong(SONG_FADE_OUT_BGM);
   ObjectEvent_SetSpeed(GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   ObjectEvent_SetSpeed(IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
   ObjectEvent_SetSpeed(MIA, PIXELS(6) / 5, PIXELS(3) / 5);
@@ -1571,7 +1571,7 @@ static void Kolima_WitnessForestCurse(void) {
     ObjectEvent_SetPosition(MIA, 0, 0);
   }
   GameFlag_Set(FLAG_KOLIMA_CURSE_WITNESSED);
-  Audio_PlayCueFromEventWork();
+  Map_PlayMusic();
   Engine_ScriptEnd();
 }
 
@@ -1594,7 +1594,7 @@ static void Kolima_FaceObjectEventAndWait(s32 localId, s32 facing,
 /// Spawns a moving curse sparkle every eighth frame.
 static void Kolima_SpawnCurseSparkle(void) {
   struct ObjectEvent *sparkle;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
   s32 framePhase;
   s32 priorityFlags;
   s32 spawnX = PIXELS(98);
@@ -1631,7 +1631,7 @@ static void Kolima_SpawnCurseSparkle(void) {
 #include "common/kolima_blink.h"
 
 /// Triggers a temporary pose when an effect enters the party's occupied area.
-static s32 Kolima_TriggerRegionScript(struct ScriptInterpreter *interpreter) {
+static s32 Kolima_TriggerRegionScript(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   if (gKolima_MiaInParty != 0) {
     if ((objectEvent->x.fixed > PIXELS(59) &&
@@ -1878,51 +1878,51 @@ struct ObjectEventTemplate gKolimaTunnelObjectEventTemplates[] = {
 /// it joins (its Djinni flag, 0x31).
 struct ObjectEventTemplate gKolimaObjectEventTemplates[] = {
     { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(104), 0, PIXELS(192), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(104), 0, PIXELS(192), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(104), 0, PIXELS(312), FACING_WEST, TALK_FACE_PARTY, 0 },
+        PIXELS(104), 0, PIXELS(312), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(168), 0, PIXELS(360), FACING_WEST, TALK_FACE_PARTY, 0 },
+        PIXELS(168), 0, PIXELS(360), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(344), 0, PIXELS(280), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(344), 0, PIXELS(280), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(248), 0, PIXELS(392), FACING_SOUTH, 3, 0 },
     { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(248), 0, PIXELS(184), FACING_WEST, TALK_FACE_PARTY, 0 },
+        PIXELS(248), 0, PIXELS(184), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(216), 0, PIXELS(264), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(216), 0, PIXELS(264), FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(248), 0, PIXELS(264), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(248), 0, PIXELS(264), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(232), 0, PIXELS(136), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(232), 0, PIXELS(136), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_TRET, FLAG_KOLIMA_CURSE_WITNESSED, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_LAUREL, FLAG_KOLIMA_CURSE_WITNESSED, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_PSYNERGY_FIELD, FLAG_KOLIMA_CURSE_WITNESSED, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_PSYNERGY_FIELD, FLAG_KOLIMA_CURSE_WITNESSED, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_PSYNERGY_FIELD, FLAG_KOLIMA_CURSE_WITNESSED, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_PSYNERGY_FIELD, FLAG_KOLIMA_CURSE_WITNESSED, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, MOVEMENT_TYPE_STAND,
-        PIXELS(24), 0, PIXELS(232), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(24), 0, PIXELS(232), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, MOVEMENT_TYPE_STAND,
-        PIXELS(120), 0, PIXELS(296), FACING_SOUTH, TALK_FACE_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(120), 0, PIXELS(296), FACING_SOUTH, TALK_FACING_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, MOVEMENT_TYPE_STAND,
-        PIXELS(152), 0, PIXELS(280), FACING_SOUTH, TALK_FACE_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(152), 0, PIXELS(280), FACING_SOUTH, TALK_FACING_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, MOVEMENT_TYPE_STAND,
-        PIXELS(40), 0, PIXELS(328), FACING_SOUTH, TALK_FACE_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(40), 0, PIXELS(328), FACING_SOUTH, TALK_FACING_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { VENUS_DJINNI, 0x31, MOVEMENT_TYPE_STAND,
-        PIXELS(328), 0, PIXELS(360), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(328), 0, PIXELS(360), FACING_EAST, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };
 
@@ -1930,15 +1930,15 @@ struct ObjectEventTemplate gKolimaObjectEventTemplates[] = {
 /// and kept while it lasts.
 struct ObjectEventTemplate gKolima_EntryScript[] = {
     { SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, 7,
-        PIXELS(120), 0, PIXELS(424), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(120), 0, PIXELS(424), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, 7,
-        PIXELS(296), 0, PIXELS(376), FACING_SOUTH, TALK_FACE_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(296), 0, PIXELS(376), FACING_SOUTH, TALK_FACING_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, 7,
-        PIXELS(440), 0, PIXELS(344), FACING_SOUTH, TALK_FACE_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(440), 0, PIXELS(344), FACING_SOUTH, TALK_FACING_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, 7,
-        PIXELS(296), 0, PIXELS(232), FACING_SOUTH, TALK_FACE_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(296), 0, PIXELS(232), FACING_SOUTH, TALK_FACING_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, 7,
-        PIXELS(152), 0, PIXELS(184), FACING_SOUTH, TALK_FACE_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(152), 0, PIXELS(184), FACING_SOUTH, TALK_FACING_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { MAP_TABLE_END },
 };
 
@@ -1949,7 +1949,7 @@ struct ObjectEventTemplate gKolimaBridgeObjectEventTemplates[] = {
     { SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(234), 0, PIXELS(200), FACING_SOUTH + FACING_STEP, 3, 0 },
     { SPRITE_TREE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(234), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(234), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 

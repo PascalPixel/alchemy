@@ -6,25 +6,25 @@
 
 /// Decodes message into text (a u16 string) with no length limit: text must
 /// have room for the whole message and its terminator.
-void Ui_AdjustValueWithoutLimit(s32 message, u16 *text) {
-  UiText_DecodeMessage(message, text, 0x7fffffff);
+void Message_DecodeRawUnbounded(s32 message, u16 *text) {
+  Message_DecodeRaw(message, text, 0x7fffffff);
 }
 
 /// Decodes message into destination as a zero-terminated string of at most
 /// capacity entries, and returns its length.
 /// capacity counts halfwords including the terminator and must be at least 1.
-/// Unlike UiText_DecodeMessage it goes through the ring of decoded text, from
+/// Unlike Message_DecodeRaw it goes through the ring of decoded text, from
 /// its start, so names and numbers are written out, and it uses up the
 /// message arguments; whatever decoded text the ring held is overwritten.
-s32 UiText_CopyMessageString(s32 message, u16 *destination, u32 capacity) {
-  struct UiRenderWork *work;
+s32 Message_CopyExpanded(s32 message, u16 *destination, u32 capacity) {
+  struct WindowWork *work;
   u32 count;
 
-  work = UI_WORK;
-  work->count = 0;
-  UiText_BuildRenderEntries(message, 1);
-  for (count = 0;
-       count < capacity - 1 && (destination[count] = work->entries[count]) != 0;
+  work = WINDOW_WORK;
+  work->textBufferEnd = 0;
+  Message_Decode(message, 1);
+  for (count = 0; count < capacity - 1 &&
+                  (destination[count] = work->textBuffer[count]) != 0;
        count++) {
   }
   destination[count] = 0;
@@ -40,25 +40,25 @@ s32 UiText_CopyMessageString(s32 message, u16 *destination, u32 capacity) {
 /// at most capacity entries, keeping style codes with their operands. Names
 /// and numbers stay as their codes: nothing is written out. capacity includes
 /// the terminating halfword; the unbounded wrapper,
-/// Ui_AdjustValueWithoutLimit, supplies 0x7fffffff.
-void UiText_DecodeMessage(s32 message, u16 *text, s32 capacity) {
-  struct TextReader reader;
+/// Message_DecodeRawUnbounded, supplies 0x7fffffff.
+void Message_DecodeRaw(s32 message, u16 *text, s32 capacity) {
+  struct MessageReader reader;
   void *original;
-  s32 (*decode)(struct TextReader *);
+  s32 (*decode)(struct MessageReader *);
   u32 value;
 #if !defined(DECODE_EUROPEAN)
   u16 delta;
 #endif
 
   // The decoder may already be in slot 50 (TEXT_WORK_BLOCK), as it is while
-  // UiText_BuildRenderEntries decodes the names this is called for; then it
+  // Message_Decode decodes the names this is called for; then it
   // is borrowed, and freed only if loaded here.
-  original = ((union HeapState *)&gWorkSlot)->slots[50];
+  original = ((union HeapState *)&gHeapSlots)->slots[50];
   if (original == NULL)
     RamCode_LoadSlot(50, Text_DecodeSymbol, Text_DecodeSymbolCodeSize);
-  decode =
-      (s32 (*)(struct TextReader *))((union HeapState *)&gWorkSlot)->slots[50];
-  UiText_LookupMessage(&reader, message);
+  decode = (s32 (*)(struct MessageReader *))((union HeapState *)&gHeapSlots)
+               ->slots[50];
+  Message_Find(&reader, message);
 #if !defined(DECODE_EUROPEAN)
   delta = 0xffff;
 #endif
@@ -107,7 +107,7 @@ void UiText_DecodeMessage(s32 message, u16 *text, s32 capacity) {
   }
 done:
   if (original == NULL)
-    Runtime_ReleaseHeapBlock(TEXT_WORK_BLOCK);
+    FreeHeapSlot(TEXT_WORK_BLOCK);
   *text = 0;
 }
 
@@ -120,49 +120,49 @@ s32 *Runtime_ClearWordIfSet(s32 *p) {
   return p;
 }
 
-// Closing the message channels' windows, and the message argument table.
+// Closing the text printers' windows, and the message argument table.
 
-/// Closes every window: first the message channels' windows, waiting until
+/// Closes every window: first the text printers' windows, waiting until
 /// they have closed, then the windows opened directly, which it does not wait
 /// for. Channel references are cleared only after their windows finish
 /// closing. Reached from the debug message viewer (DebugBattle_ViewMessages,
 /// battle/battle/debug.c).
 void UiWork_DrainPending(s32 unused) {
-  struct UiRenderWork *uw;
-  struct UiChannelSlot *ch;
-  struct UiWindow *win;
+  struct WindowWork *uw;
+  struct TextPrinter *ch;
+  struct Window *win;
   u32 done;
-  struct UiWindow *work;
-  struct UiWindow *poll_work;
+  struct Window *work;
+  struct Window *poll_work;
   s32 i;
   u16 flag;
 
-  uw = UI_WORK;
-  ch = uw->channels;
+  uw = WINDOW_WORK;
+  ch = uw->printers;
   win = uw->windows;
   i = 0;
   do {
-    work = ch->work;
+    work = ch->window;
     if (work != 0 && work->flags != 0)
-      UiWork_Finalize(work, 0);
+      Window_Close(work, 0);
     i++;
     ch++;
   } while (i != 3);
 
-  // Free each channel whose window has closed; while one is still closing,
+  // Free each printer whose window has closed; while one is still closing,
   // wait a frame.
   for (;;) {
     done = 1;
-    ch = uw->channels;
+    ch = uw->printers;
     i = 0;
     do {
-      poll_work = ch->work;
+      poll_work = ch->window;
       if (poll_work != 0) {
         if (poll_work->frame == 0 && poll_work->duration == 0) {
           flag = poll_work->flags;
-          // flag is 0 here: the channel is set free.
+          // flag is 0 here: the printer is set free.
           if (flag == 0)
-            ch->work = (struct UiWindow *)(u32)flag;
+            ch->window = (struct Window *)(u32)flag;
           else
             done = 0;
         } else {
@@ -183,69 +183,69 @@ void UiWork_DrainPending(s32 unused) {
     if (i == WINDOW_COUNT)
       break;
     if (win->flags != 0)
-      UiWork_Finalize(win, 0);
+      Window_Close(win, 0);
     win++;
     i++;
   }
 }
 
-/// Steps a channel's window effect (UI_WINDOW_EFFECT_SWELL): the frame is drawn
-/// a tile bigger on every side until the countdown ends, then back to normal.
-/// Any other effect is left set and does nothing, so the channel types no more
-/// text. UiWork_ProcessRenderChannels calls it in place of typing while the
+/// Steps a text printer's window effect (WINDOW_EFFECT_SWELL): the frame is
+/// drawn a tile bigger on every side until the countdown ends, then back to
+/// normal. Any other effect is left set and does nothing, so the printer types
+/// no more text. TextPrinter_RunAll calls it in place of typing while the
 /// window has an effect.
-void UiWindow_StepSwellEffect(struct UiChannelSlot *channel) {
-  struct UiWindow *window = channel->work;
+void Window_StepSwellEffect(struct TextPrinter *channel) {
+  struct Window *window = channel->window;
   s32 effect = window->effect;
   s32 x = window->x;
   s32 y = window->y;
   s32 width = window->width;
   s32 height = window->height;
 
-  if (effect != UI_WINDOW_EFFECT_SWELL)
+  if (effect != WINDOW_EFFECT_SWELL)
     return;
 
-  UiWindow_DrawFrame(x - 1, y - 1, width + 2, height + 2);
+  Window_DrawFrame(x - 1, y - 1, width + 2, height + 2);
   channel->countdown--;
   if (channel->countdown != 0)
     return;
 
-  channel->work->effect = 0;
-  UiWindow_EraseBorderRect(x - 1, y - 1, width + 2, height + 2);
-  UiWindow_DrawFrame(x, y, width, height);
+  channel->window->effect = 0;
+  Window_EraseBorderRect(x - 1, y - 1, width + 2, height + 2);
+  Window_DrawFrame(x, y, width, height);
 }
 
 /// Empties the table of message arguments.
-void UiWork_ClearValueNameTables(void) {
+void MessageArgument_ClearAll(void) {
   s32 no;
-  struct UiRenderWork *work;
+  struct WindowWork *work;
 
-  work = UI_WORK;
+  work = WINDOW_WORK;
   no = 0;
 
   do {
-    work->values[no] = 0;
-    work->names[no] = MESSAGE_ARGUMENT_NONE;
+    work->argumentValues[no] = 0;
+    work->argumentKinds[no] = MESSAGE_ARGUMENT_NONE;
     no++;
-  } while (no != UI_ARGUMENT_SLOT_COUNT);
+  } while (no != MESSAGE_ARGUMENT_COUNT);
 }
 
 /// Adds a message argument of kind (MESSAGE_ARGUMENT_) with value to the first
 /// free place of the argument table; when all eight are in use it is dropped.
 /// MESSAGE_ARGUMENT_NONE marks an empty place. Callers push a message's
 /// arguments before decoding it. The decoder reads each argument code's value
-/// from the first slot of its kind (UiText_LookupArgument); told to clear, it
+/// from the first slot of its kind (MessageArgument_Lookup); told to clear, it
 /// removes each as it reads it, so arguments of one kind are taken in the order
 /// they were pushed, and it empties the table at the end.
-void UiWork_PushValueSlot(u32 value, u32 kind) {
-  struct UiRenderWork *work = UI_WORK;
+void MessageArgument_Push(u32 value, u32 kind) {
+  struct WindowWork *work = WINDOW_WORK;
   u32 no = 0;
-  u32 limit = UI_ARGUMENT_SLOT_COUNT;
+  u32 limit = MESSAGE_ARGUMENT_COUNT;
 
   do {
-    if (work->names[no] == MESSAGE_ARGUMENT_NONE) {
-      work->values[no] = value;
-      work->names[no] = kind;
+    if (work->argumentKinds[no] == MESSAGE_ARGUMENT_NONE) {
+      work->argumentValues[no] = value;
+      work->argumentKinds[no] = kind;
       break;
     }
     no++;
@@ -256,17 +256,17 @@ void UiWork_PushValueSlot(u32 value, u32 kind) {
 /// or 0 when there is none. With clear set the argument is removed from the
 /// table. Repeated kinds are allowed: only the first matching slot is read or
 /// consumed.
-u32 UiText_LookupArgument(u32 kind, u32 clear) {
-  struct UiRenderWork *work = UI_WORK;
+u32 MessageArgument_Lookup(u32 kind, u32 clear) {
+  struct WindowWork *work = WINDOW_WORK;
   u32 i;
   u32 value = 0;
 
-  for (i = 0; i < UI_ARGUMENT_SLOT_COUNT; i++) {
-    if (work->names[i] == kind) {
-      value = work->values[i];
+  for (i = 0; i < MESSAGE_ARGUMENT_COUNT; i++) {
+    if (work->argumentKinds[i] == kind) {
+      value = work->argumentValues[i];
       if (clear != 0) {
-        work->values[i] = 0;
-        work->names[i] = MESSAGE_ARGUMENT_NONE;
+        work->argumentValues[i] = 0;
+        work->argumentKinds[i] = MESSAGE_ARGUMENT_NONE;
       }
       break;
     }
@@ -274,18 +274,18 @@ u32 UiText_LookupArgument(u32 kind, u32 clear) {
   return value;
 }
 
-/// Ends a channel's pause early: when the message waits on a sound that has
-/// finished (busy), or while A, B, L or R is held. Clears the countdown and
+/// Ends a text printer's pause early: when the message waits on a sound that
+/// has finished (busy), or while A, B, L or R is held. Clears the countdown and
 /// returns 1 if it ended.
 /// This path uses held keys; dismissal below uses newly pressed keys instead.
-/// UiWork_StepChannelScript asks it each frame of a short or longest pause;
+/// TextPrinter_Step asks it each frame of a short or longest pause;
 /// the long pause cannot be cut short.
-s32 UiText_CheckPauseSkipped(struct UiChannelSlot *channel) {
-  struct UiRenderWork *work = UI_WORK;
+s32 Text_CheckPauseSkipped(struct TextPrinter *channel) {
+  struct WindowWork *work = WINDOW_WORK;
   s32 cancelKeys = 0;
   s32 zero;
 
-  if (work->busy != 0 && AudioCommand_GetStateByteFar() == 0)
+  if (work->waitingForSound != 0 && Sound_GetBgmRestoreDelayFar() == 0)
     cancelKeys = 1;
   zero = 0;
   if (gKeysHeld & (KEY_A | KEY_B | KEYS_SHOULDERS))
@@ -297,22 +297,22 @@ s32 UiText_CheckPauseSkipped(struct UiChannelSlot *channel) {
   return zero;
 }
 
-/// As UiText_CheckPauseSkipped, but on a newly pressed button: the latched
-/// presses while UiRenderWork.mode is set. Returns 1 when the player has
+/// As Text_CheckPauseSkipped, but on a newly pressed button: the latched
+/// presses while WindowWork.mindRead is set. Returns 1 when the player has
 /// dismissed the text.
 /// Mode chooses latched presses rather than changing which buttons dismiss
 /// text.
-s32 UiText_CheckTextDismissed(struct UiChannelSlot *channel) {
-  struct UiRenderWork *work = UI_WORK;
+s32 Text_CheckTextDismissed(struct TextPrinter *channel) {
+  struct WindowWork *work = WINDOW_WORK;
   s32 pressedKeys;
   s32 cancelKeys = 0;
   u8 zero;
 
-  if (work->busy != 0 && AudioCommand_GetStateByteFar() == 0)
+  if (work->waitingForSound != 0 && Sound_GetBgmRestoreDelayFar() == 0)
     cancelKeys = 1;
   pressedKeys = gKeysPressed;
   zero = 0;
-  if (work->mode != zero)
+  if (work->mindRead != zero)
     pressedKeys = gKeysPressedLatch;
   if (pressedKeys & (KEY_A | KEY_B | KEYS_SHOULDERS))
     cancelKeys = 1;
@@ -323,21 +323,21 @@ s32 UiText_CheckTextDismissed(struct UiChannelSlot *channel) {
   return 0;
 }
 
-/// Closes each message channel's window whose text has ended, then waits ten
+/// Closes each text printer's window whose text has ended, then waits ten
 /// frames. It does not wait for the zooms to finish, and leaves windows still
 /// typing open.
 void UiWork_FinalizePendingCore(void) {
   s32 i;
-  struct UiChannelSlot *ch;
-  struct UiWindow *work;
+  struct TextPrinter *ch;
+  struct Window *work;
 
-  ch = UI_WORK->channels;
+  ch = WINDOW_WORK->printers;
   i = 0;
   do {
-    work = ch->work;
+    work = ch->window;
     if (work != NULL && work->frame == 0 && work->duration == 0 &&
         work->flags != 0 && work->state != 0) {
-      UiWork_Finalize(work, UI_WINDOW_INSTANT & work->flags);
+      Window_Close(work, WINDOW_FLAG_INSTANT & work->flags);
     }
     i++;
     ch++;
@@ -349,49 +349,48 @@ void UiWork_FinalizePendingCore(void) {
 /// tiles lower) and waits until it is typed out, then closes it, in the window
 /// mode (enum CenteredMessageMode) gives.
 /// The speaker's voice blips are reset afterwards.
-void UiText_ShowCenteredMessage(s32 message, s32 mode, s32 yOffset) {
-  struct UiRenderWork *work;
-  struct UiWindow *messageWindow;
+void FieldMessage_ShowCentered(s32 message, s32 mode, s32 yOffset) {
+  struct WindowWork *work;
+  struct Window *messageWindow;
   s32 x;
   s32 y;
   s32 width;
   s32 height;
   s32 entryIndex;
 
-  work = UI_WORK;
+  work = WINDOW_WORK;
   x = 8;
   y = 8;
   // the window starts as NULL, though every path that reads it assigns it
   // first; the same zero is the style argument below
   messageWindow = NULL;
-  entryIndex = UiText_BuildRenderEntries(message, 1);
-  if (work->entries[entryIndex] != 0) {
-    UiText_GetResourceDimensions(message, &x, &y, (u32 *)&width,
-                                 (u32 *)&height);
+  entryIndex = Message_Decode(message, 1);
+  if (work->textBuffer[entryIndex] != 0) {
+    Text_GetMessageSize(message, &x, &y, (u32 *)&width, (u32 *)&height);
     x = (30 - width) >> 1;
     y = ((15 - height) >> 1) + yOffset;
-    // Flags 2 is UI_WINDOW_INSTANT; mode is CENTERED_MESSAGE_BARE in the second
-    // branch.
+    // Flags 2 is WINDOW_FLAG_INSTANT; mode is CENTERED_MESSAGE_BARE in the
+    // second branch.
     if (mode != CENTERED_MESSAGE_BARE)
-      messageWindow = UiWindow_Create(x, y, width, height, 0);
+      messageWindow = Window_Create(x, y, width, height, 0);
     else {
-      messageWindow = UiWindow_Create(x, y, 0, 0, 2);
+      messageWindow = Window_Create(x, y, 0, 0, 2);
       messageWindow->width = mode;
       messageWindow->height = mode;
     }
-    if (UiText_QueueRenderEntries(messageWindow, entryIndex, 0, 0, 0, 0) == 0)
-      UiWork_Finalize(messageWindow, 1);
+    if (TextPrinter_Add(messageWindow, entryIndex, 0, 0, 0, 0) == 0)
+      Window_Close(messageWindow, 1);
     else {
       while (UiWork_IsComplete() == 0)
         WaitFrames(1);
       if (mode != CENTERED_MESSAGE_BARE) {
-        UiWork_Finalize(messageWindow, 0);
+        Window_Close(messageWindow, 0);
         while (UiWork_IsIdle(messageWindow) == 0)
           WaitFrames(1);
       } else
-        UiWork_Finalize(messageWindow, 1);
-      work->speakerVoiceSound = 0;
-      work->speakerVoiceCountdown = 0;
+        Window_Close(messageWindow, 1);
+      work->voiceSound = 0;
+      work->voiceCountdown = 0;
     }
   }
 }
@@ -399,20 +398,18 @@ void UiText_ShowCenteredMessage(s32 message, s32 mode, s32 yOffset) {
 /// Decodes message and empties the argument table; returns where its
 /// decoded text starts. The Djinn and party join messages
 /// (battle_command/joined.c) use it.
-s32 UiText_BuildRenderEntriesMode1(s32 message) {
-  return UiText_BuildRenderEntries(message, 1);
-}
+s32 Message_DecodeMode1(s32 message) { return Message_Decode(message, 1); }
 
 /// Points reader at the start of message (its compressed bits and first
 /// context), running the ARM lookup routine from a RAM copy, which it frees
 /// before returning.
 /// The RAM routine initializes reader state; symbols are decoded separately.
-void UiText_LookupMessage(struct TextReader *reader, s32 message) {
-  void (*routine)(struct TextReader *, s32);
+void Message_Find(struct MessageReader *reader, s32 message) {
+  void (*routine)(struct MessageReader *, s32);
 
-  RamCode_Load(routine, UiText_LookupMessageArm, UiText_LookupMessageCodeSize);
+  RamCode_Load(routine, Message_FindArm, Message_FindCodeSize);
   routine(reader, message);
-  MemFree(routine);
+  Free(routine);
 }
 
 /// Decodes the next symbol of a message. Messages are Huffman coded with one
@@ -422,7 +419,7 @@ void UiText_LookupMessage(struct TextReader *reader, s32 message) {
 /// Tree traversal consumes bytes; reader->words retains that byte position
 /// between calls.
 /// Nothing calls it.
-UNUSED s32 UiText_DecodeSymbol(struct TextReader *reader) {
+UNUSED s32 Text_DecodeSymbolInC(struct MessageReader *reader) {
   u32 code;
   u32 contextBank;
   const u8 *base;
@@ -514,19 +511,19 @@ UNUSED s32 UiText_DecodeSymbol(struct TextReader *reader) {
 
 /// Marks both portrait slots free (UI_PALETTE_SLOT_FREE). Only the field's
 /// setup calls it.
-void UiWork_ClearPortraitSlots(void) {
-  struct UiRenderWork *work = UI_WORK;
+void Portrait_ClearSlots(void) {
+  struct WindowWork *work = WINDOW_WORK;
   s32 index = 0;
 
   do {
-    work->resourceIds[index] = UI_PALETTE_SLOT_FREE;
+    work->portraitPictures[index] = UI_PALETTE_SLOT_FREE;
     index++;
   } while (index != 2);
 }
 
 /// Returns the portrait of a character (ids below 20) or another speaker's
 /// sprite (128 and up for those), or -1 when it has none.
-s32 UiText_GetSpeakerPortrait(u32 value) {
+s32 Portrait_GetForSpeaker(u32 value) {
   s32 result = -1;
   s32 portraitIndex = 0;
 
@@ -570,26 +567,26 @@ s32 UiText_GetSpeakerPortrait(u32 value) {
 /// The window opens at once, 5 by 5 tiles, or 6 by 5 under Mind Read with the
 /// portrait 4 pixels further right. The portrait takes the second portrait
 /// slot if it is free, else the first; with both taken the window stays
-/// empty. It is the window's first render output, which
-/// UiWork_FinalizeEntityMatchingLocalizedId looks for.
-struct UiWindow *UiWindow_CreateWithSideObject(s32 speaker, s32 portraitOption,
-                                               s32 x, s32 y) {
-  struct UiWindow *window;
+/// empty. It is the window's first window sprite, which
+/// Portrait_CloseWindow looks for.
+struct Window *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x,
+                                   s32 y) {
+  struct Window *window;
   s32 negativeFour;
   s32 offset;
   void *work;
 
   work = gWindowWork[0];
-  if (UiText_GetSpeakerPortrait(speaker) == -1) {
+  if (Portrait_GetForSpeaker(speaker) == -1) {
     return 0;
   }
   negativeFour = -4;
   offset = negativeFour;
-  if (((struct UiRenderWork *)work)->mode != 0) {
-    window = UiWindow_Create(x, y, 6, 5, 2);
+  if (((struct WindowWork *)work)->mindRead != 0) {
+    window = Window_Create(x, y, 6, 5, 2);
     offset = 0;
   } else {
-    window = UiWindow_Create(x, y, 5, 5, 2);
+    window = Window_Create(x, y, 5, 5, 2);
   }
   if (window != 0) {
     CreateSideObject(speaker, portraitOption, -1, window, offset, negativeFour);
@@ -598,44 +595,44 @@ struct UiWindow *UiWindow_CreateWithSideObject(s32 speaker, s32 portraitOption,
 }
 
 /// Closes the portrait window showing speaker entry, if one is open, at once.
-/// resourceIds selects the portrait slot, then outputIds identifies its render
-/// output, found as the first output of some window.
-void UiWork_FinalizeEntityMatchingLocalizedId(u32 speaker) {
-  struct UiRenderWork *state;
-  struct UiWindow *window;
+/// portraitPictures selects the portrait slot, then portraitSprites identifies
+/// its window sprite, found as the first sprite of some window.
+void Portrait_CloseWindow(u32 speaker) {
+  struct WindowWork *state;
+  struct Window *window;
   s32 resourceId;
   s32 portraitSlot;
   s32 windowIndex;
-  struct RenderOutput *portraitOutput;
+  struct WindowSprite *portraitOutput;
 
-  state = UI_WORK;
+  state = WINDOW_WORK;
   window = state->windows;
-  resourceId = UiText_GetSpeakerPortrait(speaker);
+  resourceId = Portrait_GetForSpeaker(speaker);
   if (resourceId == -1)
     return;
 
-  if (state->resourceIds[1] == resourceId) {
+  if (state->portraitPictures[1] == resourceId) {
     portraitSlot = 1;
-  } else if (state->resourceIds[0] == resourceId) {
+  } else if (state->portraitPictures[0] == resourceId) {
     portraitSlot = 0;
   } else {
     return;
   }
 
-  resourceId = state->outputIds[portraitSlot];
+  resourceId = state->portraitSprites[portraitSlot];
 
   for (windowIndex = 0; windowIndex != WINDOW_COUNT; windowIndex++, window++) {
-    portraitOutput = window->output.head;
+    portraitOutput = window->sprites.head;
 #ifdef UBFIX
-    // UiWindow_Create and the closing update leave empty heads NULL. Skip
+    // Window_Create and the closing update leave empty heads NULL. Skip
     // them before reading kind: dereferencing that NULL pointer is undefined.
     // The plain guard adds four bytes to the native English object.
     if (portraitOutput == NULL)
       continue;
 #endif
-    if ((u8)portraitOutput->kind == RENDER_OUTPUT_PORTRAIT &&
+    if ((u8)portraitOutput->kind == WINDOW_SPRITE_PORTRAIT &&
         (u8)portraitOutput->index == resourceId) {
-      UiWork_Finalize(window, 2);
+      Window_Close(window, 2);
       return;
     }
   }

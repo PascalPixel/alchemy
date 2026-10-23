@@ -2,8 +2,8 @@
 	.ifdef TBS_EDITION_DE
 	.space 0x00000010
 	.endif
-	.global gRenderSlotHeads
-gRenderSlotHeads:
+	.global gOamDepthLists
+gOamDepthLists:
 	.space 0x00000400
 	.global gFrameTick
 gFrameTick:
@@ -11,17 +11,17 @@ gFrameTick:
 	.global gSavedStackSize
 gSavedStackSize:
 	.space 0x0000000c
-	.global gResourceBlockOwners
-gResourceBlockOwners:
+	.global gVramCacheBlockOwners
+gVramCacheBlockOwners:
 	.space 0x00000200
-	.global gSchedulerStatus
-gSchedulerStatus:
+	.global gTaskStatus
+gTaskStatus:
 	.space 0x00000010
-	.global gSchedulerTaskTable
-gSchedulerTaskTable:
+	.global gTasks
+gTasks:
 	.space 0x000000a0
-	.global gBlendFramesLeft
-gBlendFramesLeft:
+	.global gScreenFadeFramesLeft
+gScreenFadeFramesLeft:
 	.space 0x00000004
 	.global gDebugTextEnabled
 gDebugTextEnabled:
@@ -32,8 +32,8 @@ gBgScroll:
 	.global gKeysHeld
 gKeysHeld:
 	.space 0x00000004
-	.global gBlendStartLevel
-gBlendStartLevel:
+	.global gScreenFadeStartLevel
+gScreenFadeStartLevel:
 	.space 0x00000004
 	.global gCpuLoadTimer
 gCpuLoadTimer:
@@ -53,8 +53,8 @@ gKeyRepeatTimer:
 	.global gKeysRepeat
 gKeysRepeat:
 	.space 0x0000000c
-	.global gVramBlockCache
-gVramBlockCache:
+	.global gVramCacheEntries
+gVramCacheEntries:
 	.space 0x00000180
 	.global gDecodeFillByte
 gDecodeFillByte:
@@ -62,8 +62,8 @@ gDecodeFillByte:
 	.global gKeysPressed
 gKeysPressed:
 	.space 0x00000004
-	.global gBlendDuration
-gBlendDuration:
+	.global gScreenFadeFrames
+gScreenFadeFrames:
 	.space 0x00000004
 	.global gPlayTimeFrames
 gPlayTimeFrames:
@@ -74,8 +74,8 @@ gSleepDisabled:
 	.global gCpuLoadPeak
 gCpuLoadPeak:
 	.space 0x00000004
-	.global gBlendTargetLevel
-gBlendTargetLevel:
+	.global gScreenFadeTargetLevel
+gScreenFadeTargetLevel:
 	.space 0x00000008
 	.global gSerialExchangeActive
 gSerialExchangeActive:
@@ -104,8 +104,8 @@ gLagFrameCount:
 	.global gLagFramesShown
 gLagFramesShown:
 	.space 0x00000004
-	.global gBlendBrighten
-gBlendBrighten:
+	.global gScreenFadeToWhite
+gScreenFadeToWhite:
 	.space 0x0000000c
 	.global gProjection
 gProjection:
@@ -113,14 +113,14 @@ gProjection:
 	.global gKeysHeldLast
 gKeysHeldLast:
 	.space 0x00000004
-	.global gBlendLayers
-gBlendLayers:
+	.global gScreenFadeLayers
+gScreenFadeLayers:
 	.space 0x00000004
-	.global gVBlankHook
-gVBlankHook:
+	.global gVBlankCallback
+gVBlankCallback:
 	.space 0x00000004
-	.global gSpriteAffineCount
-gSpriteAffineCount:
+	.global gOamMatrixCount
+gOamMatrixCount:
 	.space 0x00000004
 	.global gKeysDirection
 gKeysDirection:
@@ -153,15 +153,15 @@ gVBlankDone:
 	.global gTransformStackTop
 gTransformStackTop:
 	.space 0x00000008
-	.global gSchedulerReady
-gSchedulerReady:
+	.global gTasksReady
+gTasksReady:
 	.ifdef TBS_EDITION_DE
 	.space 0x00000004
 	.else
 	.space 0x0000000c
 	.endif
-	.global gSpriteAffineMatrices
-gSpriteAffineMatrices:
+	.global gOamMatrices
+gOamMatrices:
 	.space 0x00000100
 	.global gFrameCount
 gFrameCount:
@@ -171,24 +171,24 @@ gFrameCount:
 	.global gFrameRenderPending
 gFrameRenderPending:
 	.space 0x0000000c
-	.global gWorkSlot
-gWorkSlot:
-	.global gWorkSlot
-	.type gWorkSlot, %object
-	.size gWorkSlot, 0x100
-gWorkSlot:
+	.global gHeapSlots
+gHeapSlots:
+	.global gHeapSlots
+	.type gHeapSlots, %object
+	.size gHeapSlots, 0x100
+gHeapSlots:
 	.space 0x0000000c
-	.global gAnimationObjects
-gAnimationObjects:
+	.global gSpriteAnims
+gSpriteAnims:
 	.space 0x00000004
-	.global gSpriteObjects
-gSpriteObjects:
+	.global gSprites
+gSprites:
 	.space 0x00000004
-	.global gObjectSlots
-gObjectSlots:
+	.global gObjects
+gObjects:
 	.space 0x00000004
-	.global gMenuCtrlWork
-gMenuCtrlWork:
+	.global gObjectSystemWork
+gObjectSystemWork:
 	.space 0x00000004
 	.global gTileAnimationPages
 gTileAnimationPages:
@@ -213,73 +213,73 @@ gPartyStatusWork:
 	.global gGlyphWork
 gGlyphWork:
 	.space 0x00000004
-	.global gResQueueWork
-gResQueueWork:
+	.global gSelectionScreenWork
+gSelectionScreenWork:
 	.space 0x00000004
 	.global gSelectionWorkspace
 gSelectionWorkspace:
 	.space 0x00000004
-	.global gSelectionWork
-gSelectionWork:
+	.global gOptionMenuWork
+gOptionMenuWork:
 	.space 0x00000008
 	.global gBattleBgEffectWork
 gBattleBgEffectWork:
 	.space 0x00000014
-	.global gEventWork
-gEventWork:
+	.global gFieldWork
+gFieldWork:
 	.space 0x00000004
-	.global gPaletteWork
-gPaletteWork:
+	.global gPaletteCycleWork
+gPaletteCycleWork:
 	.space 0x00000004
 	.global gParticleWork
 gParticleWork:
 	.space 0x00000004
-	.global gFieldBlendWork
-gFieldBlendWork:
+	.global gLightningWork
+gLightningWork:
 	.space 0x00000004
-	.global gDisplayTransition
-gDisplayTransition:
+	.global gScreenTransitionWork
+gScreenTransitionWork:
 	.space 0x00000004
-	.global gPaletteBufferWork
-gPaletteBufferWork:
+	.global gPaletteFadeWork
+gPaletteFadeWork:
 	.space 0x00000008
-	.global gHBlankScrollWork
-gHBlankScrollWork:
+	.global gScanlineEffect
+gScanlineEffect:
 	.space 0x00000008
 	.global gObjectEventEffectWork
 gObjectEventEffectWork:
 	.space 0x00000004
-	.global gBattleDisplayWork
-gBattleDisplayWork:
+	.global gBattleMessageWork
+gBattleMessageWork:
 	.space 0x00000008
-	.global gBattleEffectWork
-gBattleEffectWork:
+	.global gBattleAnimWork
+gBattleAnimWork:
 	.space 0x0000000c
-	.global gDisp
-gDisp:
+	.global gBattleEntryTimer
+gBattleEntryTimer:
 	.space 0x00000008
-	.global gTransitionWork
-gTransitionWork:
+	.global gBattleViewWork
+gBattleViewWork:
 	.space 0x0000001c
-	.global gSaveWorkspace
-gSaveWorkspace:
+	.global gSaveWork
+gSaveWork:
 	.space 0x0000000c
-	.global gBattleOwnerStates
-gBattleOwnerStates:
+	.global gEnemyUnits
+gEnemyUnits:
 	.space 0x00000004
 	.global gMenuWork
 gMenuWork:
 	.space 0x00000004
-	.global gEffectWork
-gEffectWork:
-	.global gEffectWork
-gEffectWork:
+	.global gFieldEffectWork
+gFieldEffectWork:
+	.global gFieldEffectWork
+gFieldEffectWork:
 	.space 0x00000004
-	.global gLinkCountdownWork
-gLinkCountdownWork:
+	.global gBattleMenuWork
+gBattleMenuWork:
 	.space 0x00000004
-	.global gMenuSelectWork
-gMenuSelectWork:
+	.global gIconMenuWork
+gIconMenuWork:
 	.space 0x00000004
 	.global gColossoWork
 gColossoWork:
@@ -299,14 +299,14 @@ gScanlineAngle:
 	.global gLinkStatus
 gLinkStatus:
 	.space 0x0000000c
-	.global gNumberTextBuffer
-gNumberTextBuffer:
+	.global gNumberBuffer
+gNumberBuffer:
 	.space 0x00000008
-	.global gNumberTextHexEnd
-gNumberTextHexEnd:
+	.global gNumberBufferHexEnd
+gNumberBufferHexEnd:
 	.space 0x00000002
-	.global gNumberTextDecimalEnd
-gNumberTextDecimalEnd:
+	.global gNumberBufferDecimalEnd
+gNumberBufferDecimalEnd:
 	.ifdef TBS_EDITION_DE
 	.space 0x00000076
 	.else

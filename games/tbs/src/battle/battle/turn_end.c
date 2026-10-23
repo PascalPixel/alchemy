@@ -11,7 +11,7 @@
 /// counter near its end recover sooner; a chance above 100 always ends it.
 /// Called by the turn-end Tick functions below, each with its own bias.
 s32 BattleUnit_RollCounterEarlyEnd(s32 unitId, s32 turns, s32 bias) {
-  struct BattleUnit *unit = Unit_GetFar(unitId);
+  struct Unit *unit = Unit_GetFar(unitId);
 
   if (turns <= 5) {
     // 0x28f is 65536 / 100 rounded down, scaling the percentage to a 16-bit
@@ -27,8 +27,8 @@ s32 BattleUnit_RollCounterEarlyEnd(s32 unitId, s32 turns, s32 bias) {
 /// Clears attackStage when the turns run out, and clears attackStage and
 /// attackTurns when a lowered Attack recovers early (bias 30). Called by
 /// Battle_ProcessRoundEnd, which then shows `MsgAtkNormal`.
-s32 BattleUnit_TickAttackModifier(s32 unitId) {
-  struct BattleUnit *unit = Unit_GetFar(unitId);
+s32 BattleUnit_TickAttackStage(s32 unitId) {
+  struct Unit *unit = Unit_GetFar(unitId);
 
   if (unit->attackTurns != 0) {
     s32 cleared;
@@ -49,12 +49,12 @@ s32 BattleUnit_TickAttackModifier(s32 unitId) {
   return 0;
 }
 
-/// Defines a stat change's turn-end tick, as BattleUnit_TickAttackModifier is
+/// Defines a stat change's turn-end tick, as BattleUnit_TickAttackStage is
 /// with bias 20: clears `level` and returns 1 when `counter` runs out, or
 /// clears both when a lowered stat recovers early.
 #define DEFINE_TICK_MODIFIER(name, counter, level)                             \
   s32 name(s32 unitId) {                                                       \
-    struct BattleUnit *state = Unit_GetFar(unitId);                            \
+    struct Unit *state = Unit_GetFar(unitId);                                  \
                                                                                \
     if (state->counter != 0) {                                                 \
       state->counter--;                                                        \
@@ -74,17 +74,17 @@ s32 BattleUnit_TickAttackModifier(s32 unitId) {
 
 /// Counts down a Defense change; Battle_ProcessRoundEnd shows `MsgDefNormal`
 /// when it returns 1.
-DEFINE_TICK_MODIFIER(BattleUnit_TickDefenseModifier, defenseTurns, defenseStage)
+DEFINE_TICK_MODIFIER(BattleUnit_TickDefenseStage, defenseTurns, defenseStage)
 /// Counts down a Resistance change; Battle_ProcessRoundEnd shows
 /// `MsgResNormal` when it returns 1.
-DEFINE_TICK_MODIFIER(BattleUnit_TickResistanceModifier, resistanceTurns,
+DEFINE_TICK_MODIFIER(BattleUnit_TickResistanceStage, resistanceTurns,
                      resistanceStage)
 
 /// Defines a status's turn-end tick: returns 1 when `counter` runs out, or
 /// clears it and returns 1 when the status ends early at `bias`.
 #define DEFINE_TICK_STATUS(name, counter, bias)                                \
   s32 name(s32 unitId) {                                                       \
-    struct BattleUnit *state = Unit_GetFar(unitId);                            \
+    struct Unit *state = Unit_GetFar(unitId);                                  \
     if (state->counter != 0) {                                                 \
       state->counter--;                                                        \
       if (state->counter == 0)                                                 \
@@ -104,8 +104,8 @@ DEFINE_TICK_STATUS(BattleUnit_TickDelusion, delusion, 30)
 /// Counts down confusion, which may end early at bias 60;
 /// Battle_ProcessRoundEnd shows `MsgConscious` when it returns 1.
 s32 BattleUnit_TickConfusion(s32 unitId) {
-  struct BattleUnit *unit = Unit_GetFar(unitId);
-  // XXX: BattleUnit.confusion is declared s8 but counted down here as a u8,
+  struct Unit *unit = Unit_GetFar(unitId);
+  // XXX: Unit.confusion is declared s8 but counted down here as a u8,
   // unlike the statuses DEFINE_TICK_STATUS ticks; a read that sign-extends it
   // elsewhere would settle its type.
   if ((u8)unit->confusion != 0) {
@@ -130,7 +130,7 @@ DEFINE_TICK_STATUS(BattleUnit_TickStun, stun, 40)
 /// shows `MsgWakes` when it returns 1.
 DEFINE_TICK_STATUS(BattleUnit_TickSleep, sleep, 50)
 
-/// Counts down both seals packed in BattleUnit.psySeal and returns 1 when the
+/// Counts down both seals packed in Unit.psySeal and returns 1 when the
 /// last ends.
 /// Luff's seal counts down by 8 above the low three bits and Bind's by 1 in
 /// them (PSY_SEAL_LUFF, PSY_SEAL_BIND); only Bind's, once Luff's is gone, may
@@ -141,7 +141,7 @@ s32 Battle_AdvanceCounterAndCheckChance(s32 unitId) {
   u8 remaining;
   s32 turns;
   s32 sealCounter;
-  struct BattleUnit *unit;
+  struct Unit *unit;
 
   unit = Unit_GetFar(unitId);
   sealCounter = unit->psySeal;
@@ -170,10 +170,10 @@ s32 Battle_AdvanceCounterAndCheckChance(s32 unitId) {
   return 0;
 }
 
-/// Counts down BattleUnit.refrain and returns 1 when it runs out; it never
+/// Counts down Unit.regenerate and returns 1 when it runs out; it never
 /// ends early. Battle_ProcessRoundEnd then shows `MsgRefrainEnd`.
-s32 BattleUnit_TickRefrain(s32 unitId) {
-  u8 *turns = &Unit_GetFar(unitId)->refrain;
+s32 BattleUnit_TickRegenerate(s32 unitId) {
+  u8 *turns = &Unit_GetFar(unitId)->regenerate;
   if (*turns != 0) {
     (*turns)--;
     if (*turns == 0) {
@@ -199,8 +199,8 @@ s32 BattleUnit_TickReflect(s32 unitId) {
 /// Counts down an Agility change, clearing agilityStage and returning 1 when
 /// it runs out; unlike the other stats it never ends early.
 /// Battle_ProcessRoundEnd then shows `MsgAgiNormal`.
-s32 BattleUnit_TickAgilityModifier(s32 unitId) {
-  struct BattleUnit *unit = Unit_GetFar(unitId);
+s32 BattleUnit_TickAgilityStage(s32 unitId) {
+  struct Unit *unit = Unit_GetFar(unitId);
   u8 *turns = &unit->agilityTurns;
   if (*turns != 0) {
     (*turns)--;
@@ -214,10 +214,10 @@ s32 BattleUnit_TickAgilityModifier(s32 unitId) {
 
 /// Brings the party's recovering Djinn one turn nearer, setting each whose
 /// turns reach 0, and returns 1 when any was set.
-/// A Djinni counts down only while its owner has HP; one that is set is taken
-/// off the party's recovery list and its owner's stats worked out again
+/// A Djinni counts down only while its unit has HP; one that is set is taken
+/// off the party's recovery list and its unit's stats worked out again
 /// (Unit_Calculate). Called once at the end of every battle by
-/// Battle_RunEncounter, and outside battle by Field_ProcessStep as the party
+/// Battle_Run, and outside battle by Field_ProcessStep as the party
 /// walks, by the Djinn menu's tutorial and by DjinnRecovery_TickTwenty.
 s32 DjinnRecovery_Tick(void) {
   struct DjinnRecoveryList *list;
@@ -252,7 +252,7 @@ s32 DjinnRecovery_Tick(void) {
       if (expiredEntry->turns == 0) {
         u8 id = expiredEntry->unitId;
 
-        Djinn_ActivateFar(id, expiredEntry->element, expiredEntry->index);
+        Djinn_SetFar(id, expiredEntry->element, expiredEntry->index);
         DjinnRecovery_RemoveFar(id, expiredEntry->element, expiredEntry->index);
         Unit_CalculateFar(id);
         removed = 1;
@@ -267,7 +267,7 @@ s32 DjinnRecovery_Tick(void) {
 
 /// Runs DjinnRecovery_Tick twenty times, which sets every recovering Djinni
 /// of a party member with HP; those on standby stay so. Returns 0.
-/// Called by the link lobby when it restores the party, and by Vault's scene
+/// Called by the Battle Arena when it restores the party, and by Vault's scene
 /// before Ivan hands back Isaac's Djinni.
 s32 DjinnRecovery_TickTwenty(void) {
   s32 turns;
@@ -280,22 +280,22 @@ s32 DjinnRecovery_TickTwenty(void) {
   return 0;
 }
 
-/// Does nothing; Battle_RunEncounter calls it at the end of each round and of
+/// Does nothing; Battle_Run calls it at the end of each round and of
 /// the battle.
 void Battle_ReservedNoOpF674(void) {}
 
 /// The order the two sides' units take their round-end effects in, as
-/// gBattleParty_RoundEndGroupOrder gives it. Battle_ProcessRoundEnd copies it
+/// gBattleParty_RoundEndSideOrder gives it. Battle_ProcessRoundEnd copies it
 /// to its stack, and the link child swaps the copy's two sides.
-struct BattleGroupOrder {
-  s32 group[2]; ///< enum BattleSideMask: the party, then the enemies
+struct BattleSideOrder {
+  s32 group[2]; ///< enum BattleSides: the party, then the enemies
 };
 
 /// Ends a round: sets recovered Djinn, then gives each unit its regeneration
 /// and counts down its stat changes and statuses, showing each that ends.
-/// Called by Battle_RunEncounter once every unit has acted. Changes HP, PP,
-/// BattleUnit.ready, the Djinn recovery lists and the counters the Tick
-/// functions clear, and puts the background back in BATTLE_BACKGROUND_PLANE.
+/// Called by Battle_Run once every unit has acted. Changes HP, PP,
+/// Unit.ready, the Djinn recovery lists and the counters the Tick
+/// functions clear, and puts the background back in BATTLE_BACKGROUND_ZOOMED.
 #ifdef UBFIX
 void Battle_ProcessRoundEnd(void) {
 #else
@@ -311,9 +311,9 @@ s32 Battle_ProcessRoundEnd(void) {
   struct DjinnRecoveryEntry *expiredEntry;
 
   // Djinn recovery: the party's list, and in a link battle the opponent's
-  // too. Only a Djinni whose owner is on the field with HP counts down.
+  // too. Only a Djinni whose unit is on the field with HP counts down.
   battle = gBattleWork;
-  sideCount = (battle->twoSided != 0) + 1;
+  sideCount = (battle->isLink != 0) + 1;
   for (side = 0; side < sideCount; side++) {
     list =
         &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(side))->list;
@@ -331,9 +331,9 @@ s32 Battle_ProcessRoundEnd(void) {
       } while (recoveryIndex < list->count);
     }
     // Set each recovered Djinni, as DjinnRecovery_Tick does, with its
-    // message, the owner's POSE_CAST and its element's effect. As there, the
+    // message, the unit's POSE_CAST and its element's animation. As there, the
     // cursor stays on a removed entry; it would stay for ever on one whose
-    // owner is off the field, but only an owner on the field counts down to 0
+    // unit is off the field, but only a unit on the field counts down to 0
     // above.
     recoveryIndex = 0;
     if (recoveryIndex < list->count) {
@@ -344,29 +344,29 @@ s32 Battle_ProcessRoundEnd(void) {
           s32 element;
 
           if (BattleObject_Get(unitId) != 0) {
-            BattleEvent_Reset();
-            BattleEvent_SchedulePhase(30);
-            BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, unitId);
+            BattlePlayback_Reset();
+            BattlePlayback_SchedulePhase(30);
+            BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);
             // The Djinni's own ability, which names it (ABILITY_DJINNI_FIRST).
-            BattleEvent_Push(BATTLE_EVENT_ABILITY_NAME,
-                             expiredEntry->element * DJINN_PER_ELEMENT +
-                                 expiredEntry->index + ABILITY_DJINNI_FIRST);
-            BattleEvent_Push(BATTLE_EVENT_SOUND, SE_175);
-            BattleEvent_Push(BATTLE_EVENT_DRAW_STATUS, 0);
+            BattlePlayback_Push(PLAYBACK_ABILITY_NAME,
+                                expiredEntry->element * DJINN_PER_ELEMENT +
+                                    expiredEntry->index + ABILITY_DJINNI_FIRST);
+            BattlePlayback_Push(PLAYBACK_SOUND, SE_175);
+            BattlePlayback_Push(PLAYBACK_DRAW_STATUS, 0);
             PUSH_MESSAGE(MsgDjinnSet);
-            BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, unitId);
-            AudioCommand_PlayFar(SE_212);
+            BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, unitId);
+            Sound_PlaySongFar(SE_212);
             ObjectDispatch_SelectAnimationFar(BattleObject_Get(unitId)->object,
                                               POSE_CAST);
             ObjectDispatch_SetAnimationSpeedFar(
                 (struct DispatchObject *)BattleObject_Get(unitId)->object, 32);
             element = expiredEntry->element;
-            Djinn_ActivateFar(unitId, element, expiredEntry->index);
+            Djinn_SetFar(unitId, element, expiredEntry->index);
             DjinnRecovery_RemoveFar(unitId, expiredEntry->element,
                                     expiredEntry->index);
             Unit_CalculateFar(unitId);
             ElementGlow_Play(unitId, element, GLOW_BURST, 0);
-            BattleEvent_WaitForReady();
+            BattlePlayback_WaitForReady();
           }
         } else {
           expiredEntry++;
@@ -377,11 +377,11 @@ s32 Battle_ProcessRoundEnd(void) {
   }
   // Fade 0 leaves the palette as it is: this only puts the perspective
   // plane back and rebuilds its map.
-  BattlePresentation_ConfigurePaletteFade(BATTLE_BACKGROUND_PLANE,
+  BattlePresentation_ConfigurePaletteFade(BATTLE_BACKGROUND_ZOOMED,
                                           gBattleWork->background, 0);
   {
     s32 *groupList;
-    struct BattleGroupOrder order = gBattleParty_RoundEndGroupOrder;
+    struct BattleSideOrder order = gBattleParty_RoundEndSideOrder;
     u16 unitIds[14];
     s32 group;
     s32 unitIndex;
@@ -389,18 +389,18 @@ s32 Battle_ProcessRoundEnd(void) {
     // Each unit's regeneration and counters, the party's first. The link
     // child takes the enemies first, so both consoles go through the
     // parent's units first and show the same messages in the same order.
-    if (battle->twoSided != 0 && battle->linkSide != 0) {
-      order.group[0] = BATTLE_SIDE_ENEMIES;
-      order.group[1] = BATTLE_SIDE_PARTY;
+    if (battle->isLink != 0 && battle->linkSide != 0) {
+      order.group[0] = BATTLE_SIDES_ENEMIES;
+      order.group[1] = BATTLE_SIDES_PARTY;
     }
     groupList = order.group;
     for (group = 0; group <= 1; group++) {
-      count = BattleParty_ListActorIds(groupList[group], unitIds);
+      count = BattleUnits_ListIds(groupList[group], unitIds);
       for (unitIndex = 0; unitIndex < count; unitIndex++) {
         s32 hpAmount;
         s32 ppAmount;
         s32 unitId = unitIds[unitIndex];
-        struct BattleUnit *unit = Unit_GetFar(unitId);
+        struct Unit *unit = Unit_GetFar(unitId);
 
         if (unit->ready != 0) {
           unit->ready--;
@@ -413,15 +413,15 @@ s32 Battle_ProcessRoundEnd(void) {
               hpAmount = unit->hpMax - unit->hp;
             }
             Unit_AddHpFar(unitId, hpAmount);
-            UiWork_PushValueSlotFar(unitId, VALUE_UNIT_NAME);
-            UiWork_PushValueSlotFar(hpAmount, VALUE_NUMBER);
+            MessageArgument_PushFar(unitId, VALUE_UNIT_NAME);
+            MessageArgument_PushFar(hpAmount, VALUE_NUMBER);
             if (unit->hp == unit->hpMax) {
-              UiText_ShowMessageAndWaitCoreFar(MsgHpFull);
+              BattleMessage_ShowAndWaitFar(MsgHpFull);
             } else {
-              UiText_ShowMessageAndWaitCoreFar(MsgHpRecover);
+              BattleMessage_ShowAndWaitFar(MsgHpRecover);
             }
-            AudioCommand_PlayFar(SE_175);
-            BattlePresentation_WaitForAdvance();
+            Sound_PlaySongFar(SE_175);
+            BattleMessage_WaitForAdvance();
           }
           if (unit->ppRegen != 0 && unit->pp != unit->ppMax) {
             ppAmount = unit->ppRegen;
@@ -429,92 +429,92 @@ s32 Battle_ProcessRoundEnd(void) {
               ppAmount = unit->ppMax - unit->pp;
             }
             Unit_AddPpFar(unitId, ppAmount);
-            UiWork_PushValueSlotFar(unitId, VALUE_UNIT_NAME);
-            UiWork_PushValueSlotFar(ppAmount, VALUE_NUMBER);
+            MessageArgument_PushFar(unitId, VALUE_UNIT_NAME);
+            MessageArgument_PushFar(ppAmount, VALUE_NUMBER);
             if (unit->pp == unit->ppMax) {
-              UiText_ShowMessageAndWaitCoreFar(MsgPpFull);
+              BattleMessage_ShowAndWaitFar(MsgPpFull);
             } else {
-              UiText_ShowMessageAndWaitCoreFar(MsgPpRecover);
+              BattleMessage_ShowAndWaitFar(MsgPpRecover);
             }
-            AudioCommand_PlayFar(SE_175);
-            BattlePresentation_WaitForAdvance();
+            Sound_PlaySongFar(SE_175);
+            BattleMessage_WaitForAdvance();
           }
         }
         // Each counter that ends rebuilds the unit's status icons and shows
         // its message; the end of stun or sleep also sets the unit standing.
-        if (BattleUnit_TickAgilityModifier(unitId) != 0) {
+        if (BattleUnit_TickAgilityStage(unitId) != 0) {
           BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
-          UiWork_PushValueSlotFar(unitId, VALUE_UNIT_NAME);
-          UiText_ShowMessageAndWaitCoreFar(MsgAgiNormal);
-          BattlePresentation_WaitForAdvance();
+          MessageArgument_PushFar(unitId, VALUE_UNIT_NAME);
+          BattleMessage_ShowAndWaitFar(MsgAgiNormal);
+          BattleMessage_WaitForAdvance();
         }
-        if (BattleUnit_TickAttackModifier(unitId) != 0) {
+        if (BattleUnit_TickAttackStage(unitId) != 0) {
           BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
-          UiWork_PushValueSlotFar(unitId, VALUE_UNIT_NAME);
-          UiText_ShowMessageAndWaitCoreFar(MsgAtkNormal);
-          BattlePresentation_WaitForAdvance();
+          MessageArgument_PushFar(unitId, VALUE_UNIT_NAME);
+          BattleMessage_ShowAndWaitFar(MsgAtkNormal);
+          BattleMessage_WaitForAdvance();
         }
-        if (BattleUnit_TickDefenseModifier(unitId) != 0) {
+        if (BattleUnit_TickDefenseStage(unitId) != 0) {
           BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
-          UiWork_PushValueSlotFar(unitId, VALUE_UNIT_NAME);
-          UiText_ShowMessageAndWaitCoreFar(MsgDefNormal);
-          BattlePresentation_WaitForAdvance();
+          MessageArgument_PushFar(unitId, VALUE_UNIT_NAME);
+          BattleMessage_ShowAndWaitFar(MsgDefNormal);
+          BattleMessage_WaitForAdvance();
         }
-        if (BattleUnit_TickResistanceModifier(unitId) != 0) {
+        if (BattleUnit_TickResistanceStage(unitId) != 0) {
           BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
-          UiWork_PushValueSlotFar(unitId, VALUE_UNIT_NAME);
-          UiText_ShowMessageAndWaitCoreFar(MsgResNormal);
-          BattlePresentation_WaitForAdvance();
+          MessageArgument_PushFar(unitId, VALUE_UNIT_NAME);
+          BattleMessage_ShowAndWaitFar(MsgResNormal);
+          BattleMessage_WaitForAdvance();
         }
         if (BattleUnit_TickDelusion(unitId) != 0) {
           BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
-          UiWork_PushValueSlotFar(unitId, VALUE_UNIT_NAME);
-          UiText_ShowMessageAndWaitCoreFar(MsgCureDelusion);
-          BattlePresentation_WaitForAdvance();
+          MessageArgument_PushFar(unitId, VALUE_UNIT_NAME);
+          BattleMessage_ShowAndWaitFar(MsgCureDelusion);
+          BattleMessage_WaitForAdvance();
         }
         if (BattleUnit_TickConfusion(unitId) != 0) {
           BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
-          UiWork_PushValueSlotFar(unitId, VALUE_UNIT_NAME);
-          UiText_ShowMessageAndWaitCoreFar(MsgConscious);
-          BattlePresentation_WaitForAdvance();
+          MessageArgument_PushFar(unitId, VALUE_UNIT_NAME);
+          BattleMessage_ShowAndWaitFar(MsgConscious);
+          BattleMessage_WaitForAdvance();
         }
         if (BattleUnit_TickCharm(unitId) != 0) {
           BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
-          UiWork_PushValueSlotFar(unitId, VALUE_UNIT_NAME);
-          UiText_ShowMessageAndWaitCoreFar(MsgConscious2);
-          BattlePresentation_WaitForAdvance();
+          MessageArgument_PushFar(unitId, VALUE_UNIT_NAME);
+          BattleMessage_ShowAndWaitFar(MsgConscious2);
+          BattleMessage_WaitForAdvance();
         }
         if (BattleUnit_TickStun(unitId) != 0) {
           BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
-          UiWork_PushValueSlotFar(unitId, VALUE_UNIT_NAME);
+          MessageArgument_PushFar(unitId, VALUE_UNIT_NAME);
           BattlePresentation_SetActorModeAndAction(unitId);
-          UiText_ShowMessageAndWaitCoreFar(MsgCureStun);
-          BattlePresentation_WaitForAdvance();
+          BattleMessage_ShowAndWaitFar(MsgCureStun);
+          BattleMessage_WaitForAdvance();
         }
         if (BattleUnit_TickSleep(unitId) != 0) {
           BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
-          UiWork_PushValueSlotFar(unitId, VALUE_UNIT_NAME);
+          MessageArgument_PushFar(unitId, VALUE_UNIT_NAME);
           BattlePresentation_SetActorModeAndAction(unitId);
-          UiText_ShowMessageAndWaitCoreFar(MsgWakes);
-          BattlePresentation_WaitForAdvance();
+          BattleMessage_ShowAndWaitFar(MsgWakes);
+          BattleMessage_WaitForAdvance();
         }
         if (Battle_AdvanceCounterAndCheckChance(unitId) != 0) {
           BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
-          UiWork_PushValueSlotFar(unitId, VALUE_UNIT_NAME);
-          UiText_ShowMessageAndWaitCoreFar(MsgCureSeal);
-          BattlePresentation_WaitForAdvance();
+          MessageArgument_PushFar(unitId, VALUE_UNIT_NAME);
+          BattleMessage_ShowAndWaitFar(MsgCureSeal);
+          BattleMessage_WaitForAdvance();
         }
-        if (BattleUnit_TickRefrain(unitId) != 0) {
+        if (BattleUnit_TickRegenerate(unitId) != 0) {
           BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
-          UiWork_PushValueSlotFar(unitId, VALUE_UNIT_NAME);
-          UiText_ShowMessageAndWaitCoreFar(MsgRefrainEnd);
-          BattlePresentation_WaitForAdvance();
+          MessageArgument_PushFar(unitId, VALUE_UNIT_NAME);
+          BattleMessage_ShowAndWaitFar(MsgRefrainEnd);
+          BattleMessage_WaitForAdvance();
         }
         if (BattleUnit_TickReflect(unitId) != 0) {
           BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
-          UiWork_PushValueSlotFar(unitId, VALUE_UNIT_NAME);
-          UiText_ShowMessageAndWaitCoreFar(MsgReflectEnd);
-          BattlePresentation_WaitForAdvance();
+          MessageArgument_PushFar(unitId, VALUE_UNIT_NAME);
+          BattleMessage_ShowAndWaitFar(MsgReflectEnd);
+          BattleMessage_WaitForAdvance();
         }
       }
     }
@@ -524,18 +524,18 @@ s32 Battle_ProcessRoundEnd(void) {
 /// Ends one unit's turn: its Djinn on standby are taken off its set, the Djinn
 /// a summon used begin to recover, and the actor takes its summon's power
 /// boost, the haunt's damage, poison and the Grim Reaper.
-/// Called by BattlePresentation_DispatchAction after every action, with the
-/// action's plan. Changes the side's Djinn recovery list, the actor's
-/// elementLevels, HP and grimReaper, and works out its stats again
+/// Called by BattleStaging_DispatchAction after every action, with the
+/// action's turn. Changes the side's Djinn recovery list, the actor's
+/// summonBoost, HP and grimReaper, and works out its stats again
 /// (Unit_Calculate); the messages are queued and played at once
-/// (BattleEvent_DispatchQueued).
+/// (BattlePlayback_RunAll).
 #ifdef UBFIX
-void BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
+void BattleUnit_ProcessTurnEnd(struct BattleTurn *plan) {
 #else
-s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
+s32 BattleUnit_ProcessTurnEnd(struct BattleTurn *plan) {
 #endif
   s32 unitId;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   s32 battleContinues;
   s32 counts[ELEMENT_COUNT];
   struct DjinnRecoveryList *list;
@@ -543,7 +543,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
   s32 recoveryTurn;
 
   // Take the actor's standby Djinn (DJINN_RECOVERY_AFTER_BATTLE, as an
-  // unleashed Djinni is left by BattleCommand_BuildPlan) off its set. The table
+  // unleashed Djinni is left by BattleTurn_Build) off its set. The table
   // is the opponent's for an enemy unit id.
   unitId = plan->actorId;
   battleContinues = 0;
@@ -555,12 +555,12 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
        strongestElement++) {
     if (list->entries[strongestElement].unitId == unitId &&
         list->entries[strongestElement].turns == DJINN_RECOVERY_AFTER_BATTLE) {
-      Djinn_DeactivateFar(unitId, list->entries[strongestElement].element,
-                          list->entries[strongestElement].index);
+      Djinn_PutOnStandbyFar(unitId, list->entries[strongestElement].element,
+                            list->entries[strongestElement].index);
     }
   }
-  if (BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, 0) != 0 &&
-      BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, 0) != 0) {
+  if (BattleUnits_ListLiving(BATTLE_SIDES_PARTY, 0) != 0 &&
+      BattleUnits_ListLiving(BATTLE_SIDES_ENEMIES, 0) != 0) {
     battleContinues = 1;
   }
   {
@@ -571,8 +571,8 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
                     (unitId < 0 || unitId > ALLY_MAX)))
                    ->list;
     // The Djinn a summon used (DJINN_RECOVERY_SUMMONED, from
-    // BattleCommand_BuildPlan), owner by owner: they recover one a turn, after
-    // the last the owner already has recovering and no sooner than in 2 turns.
+    // BattleTurn_Build), unit by unit: they recover one a turn, after
+    // the last the unit already has recovering and no sooner than in 2 turns.
     // counts gathers how many of each element the summon used.
     for (i = 0; i < ELEMENT_COUNT; i++) {
       counts[i] = 0;
@@ -610,15 +610,15 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
     }
   }
   if (battleContinues != 0) {
-    struct BattleUnit *before;
+    struct Unit *before;
     s32 mostOfOneElement;
     s32 i;
     // The summon's boost: the element it used most Djinn of rises to that
-    // many levels (elementLevels), and each element's power that Unit_Calculate
+    // many levels (summonBoost), and each element's power that Unit_Calculate
     // then raises is announced against a copy taken before.
     mostOfOneElement = 0;
-    before = Runtime_BumpAllocateAlternatePool(sizeof(struct BattleUnit));
-    Iwram_CopyWords(before, unit, sizeof(struct BattleUnit));
+    before = AllocEwram(sizeof(struct Unit));
+    Iwram_CopyWords(before, unit, sizeof(struct Unit));
     strongestElement = -1;
     for (i = 0; i < ELEMENT_COUNT; i++) {
       if (counts[i] > mostOfOneElement) {
@@ -627,23 +627,23 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
       }
     }
     if (strongestElement >= 0 &&
-        unit->elementLevels[strongestElement] < mostOfOneElement) {
-      unit->elementLevels[strongestElement] = mostOfOneElement;
+        unit->summonBoost[strongestElement] < mostOfOneElement) {
+      unit->summonBoost[strongestElement] = mostOfOneElement;
     }
     Unit_CalculateFar(unitId);
     for (i = 0; i < ELEMENT_COUNT; i++) {
       s32 gain = unit->element[i].power - before->element[i].power;
 
       if (gain > 0) {
-        BattleEvent_Reset();
-        BattleEvent_SchedulePhase(25);
-        BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, unitId);
-        BattleEvent_Push(BATTLE_EVENT_NUMBER, gain);
-        BattleEvent_Push(BATTLE_EVENT_SOUND, SE_175);
+        BattlePlayback_Reset();
+        BattlePlayback_SchedulePhase(25);
+        BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);
+        BattlePlayback_Push(PLAYBACK_NUMBER, gain);
+        BattlePlayback_Push(PLAYBACK_SOUND, SE_175);
         // MsgEarthPowerUp and the next three, in enum Element order.
         PUSH_MESSAGE(MsgEarthPowerUp + i);
-        BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, unitId);
-        AudioCommand_PlayFar(SE_212);
+        BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, unitId);
+        Sound_PlaySongFar(SE_212);
         ObjectDispatch_SelectAnimationFar(BattleObject_Get(unitId)->object,
                                           POSE_CAST);
         ObjectDispatch_SetAnimationSpeedFar(
@@ -651,26 +651,26 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
         // The pillar of each element whose power rose, its strength the most
         // Djinn of one element the summon used, less one.
         ElementGlow_Play(unitId, i, GLOW_PILLAR, mostOfOneElement - 1);
-        BattleEvent_WaitForReady();
+        BattlePlayback_WaitForReady();
       }
     }
-    MemFree(before);
+    Free(before);
   }
   // Damage at the turn's end, each queue played at once: the haunting
-  // spirit's (the shares of its damage BattleTarget_Execute gathered),
+  // spirit's (the shares of its damage BattleAbility_ApplyToTarget gathered),
   // poison's, then the Grim Reaper's countdown.
   if (battleContinues != 0) {
     s8 *poison;
-    BattleEvent_Reset();
+    BattlePlayback_Reset();
     if (plan->hauntDamage != 0) {
-      BattleEvent_Push(BATTLE_EVENT_HIT, unitId);
-      BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, unitId);
-      BattleEvent_Push(BATTLE_EVENT_NUMBER, plan->hauntDamage);
+      BattlePlayback_Push(PLAYBACK_HIT, unitId);
+      BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);
+      BattlePlayback_Push(PLAYBACK_NUMBER, plan->hauntDamage);
       PUSH_MESSAGE(MsgCurseDamage);
       if (Unit_AddHpFar(unitId, -plan->hauntDamage) == 0) {
         s32 text;
-        BattleEvent_Push(BATTLE_EVENT_DEFEAT, unitId);
-        BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, unitId);
+        BattlePlayback_Push(PLAYBACK_DEFEAT, unitId);
+        BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);
         if (unitId >= 0 && unitId <= ALLY_MAX) {
           text = MsgGoesDown;
         } else {
@@ -678,31 +678,31 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
         }
         PUSH_MESSAGE(text);
       } else {
-        BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, unitId);
+        BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, unitId);
       }
     }
-    BattleEvent_DispatchQueued();
-    BattleEvent_Reset();
+    BattlePlayback_RunAll();
+    BattlePlayback_Reset();
     poison = &unit->poison;
-    // A tenth of the maximum HP, a fifth for deadly poison (POISON_DEADLY).
+    // A tenth of the maximum HP, a fifth for deadly poison (POISON_VENOM).
     if (*poison != 0) {
       s32 damage = unit->hpMax * *poison / 10;
       struct BattleWork *state = gBattleWork;
-      BattleEvent_Push(BATTLE_EVENT_HIT, unitId);
-      BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, unitId);
-      BattleEvent_Push(BATTLE_EVENT_NUMBER, damage);
+      BattlePlayback_Push(PLAYBACK_HIT, unitId);
+      BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);
+      BattlePlayback_Push(PLAYBACK_NUMBER, damage);
       PUSH_MESSAGE(MsgPoisonDamage);
-      // DEAD: *poison is nonzero here, so the hit's cue is always
+      // DEAD: *poison is nonzero here, so the hit's sound is always
       // SE_HEAVY_IMPACT; the compare and both stores are in the ROM.
       if (*poison != 0) {
-        state->events.pendingCue = SE_HEAVY_IMPACT;
+        state->playback.pendingSong = SE_HEAVY_IMPACT;
       } else {
-        state->events.pendingCue = SE_IMPACT;
+        state->playback.pendingSong = SE_IMPACT;
       }
       if (Unit_AddHpFar(unitId, -damage) == 0) {
         s32 text;
-        BattleEvent_Push(BATTLE_EVENT_DEFEAT, unitId);
-        BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, unitId);
+        BattlePlayback_Push(PLAYBACK_DEFEAT, unitId);
+        BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);
         if (unitId >= 0 && unitId <= ALLY_MAX) {
           text = MsgGoesDown;
         } else {
@@ -710,21 +710,21 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
         }
         PUSH_MESSAGE(text);
       } else {
-        BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, unitId);
+        BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, unitId);
       }
     }
-    BattleEvent_DispatchQueued();
-    BattleEvent_Reset();
+    BattlePlayback_RunAll();
+    BattlePlayback_Reset();
     // At 0 the Reaper takes far more HP than any unit has. The downed
     // message is MsgGoesDown or MsgStrengthExhausted, three either side of
     // MsgReaperCalls (see Matching on message offsets).
     if (unit->grimReaper != 0) {
       if (--unit->grimReaper == 0 && Unit_AddHpFar(unitId, 0xc0000000) == 0) {
-        BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, unitId);
+        BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);
         PUSH_MESSAGE(MsgReaperCalls);
-        BattleEvent_Push(BATTLE_EVENT_HIT, unitId);
-        BattleEvent_Push(BATTLE_EVENT_DEFEAT, unitId);
-        BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, unitId);
+        BattlePlayback_Push(PLAYBACK_HIT, unitId);
+        BattlePlayback_Push(PLAYBACK_DEFEAT, unitId);
+        BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);
         if (unitId >= 0 && unitId <= ALLY_MAX) {
           PUSH_MESSAGE(MsgReaperCalls - 3);
         } else {
@@ -732,7 +732,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
         }
       }
     }
-    BattleEvent_DispatchQueued();
+    BattlePlayback_RunAll();
   }
   Unit_CalculateFar(unitId);
 }

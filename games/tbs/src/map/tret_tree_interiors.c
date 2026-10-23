@@ -192,14 +192,14 @@ static void TretTreeInteriors_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
                                            s32 sourceRow, s32 warpDest) {
   s32 destinationColumn;
   s32 destinationRow;
-  s32 selectedLocalId;
+  s32 leaderLocalId;
   struct ObjectEvent *objectEvent;
   s32 spinFrame;
 
   destinationColumn = (gGameState.x >> 20) + 64;
   destinationRow = gGameState.z >> 20;
-  selectedLocalId = gGameState.selectedLocalId;
-  objectEvent = ObjectEvent_GetById(selectedLocalId);
+  leaderLocalId = gGameState.leaderLocalId;
+  objectEvent = ObjectEvent_GetById(leaderLocalId);
   if (warpDest == *sLastCocoon)
     return;
   *sLastCocoon = warpDest;
@@ -209,27 +209,27 @@ static void TretTreeInteriors_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
     FLAG_SET(cocoonFlag);
     return;
   }
-  // On the next touch, replace the tile and spin the object event into the
+  // On the next touch, replace the cell and spin the object event into the
   // fall.
   *sLastCocoon = -1;
   MapGrid_CopyCells(sourceColumn, sourceRow + 1, 1, 1, destinationColumn,
                     destinationRow);
   SE(SE_206);
-  EV_START();
+  SCRIPT_START();
   FieldScript_SetDestination((s32)&MapId_TretTreeInteriors, warpDest);
-  OBJECT_MODE(selectedLocalId, ANIMATION_LEADER_SPIN_AWAY);
-  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(selectedLocalId), 0);
-  ObjectEvent_SetAttachedEffect(selectedLocalId, ATTACHED_EFFECT_IN_FRONT |
-                                                     ATTACHED_EFFECT_ATTACH);
+  OBJECT_ANIMATION(leaderLocalId, ANIMATION_LEADER_SPIN_AWAY);
+  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(leaderLocalId), 0);
+  ObjectEvent_SetAttachedEffect(leaderLocalId, ATTACHED_EFFECT_IN_FRONT |
+                                                   ATTACHED_EFFECT_ATTACH);
   WAIT(30);
-  Camera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   objectEvent->motionFlags = OBJ_EVENT_FALLS;
-  objectEvent->terrainHeight = -PIXELS(160);
+  objectEvent->groundHeight = -PIXELS(160);
   objectEvent->gravity = PIXELS(1) / 2;
   SE(SE_204);
   WAIT(3);
-  objectEvent->terrainId = 2;
-  Engine_ObjectEventSetSpritePriority(selectedLocalId, 3);
+  objectEvent->layer = 2;
+  Engine_ObjectEventSetSpritePriority(leaderLocalId, 3);
   for (spinFrame = COCOON_FALL_SPIN_FRAMES - 1; spinFrame >= 0; spinFrame--) {
 
     objectEvent->facing += 2 * FACING_STEP;
@@ -390,8 +390,8 @@ static void EventScript_FightTret(void) {
   struct ObjectEvent *leader;
 
   hasMia = FLAG_CHECK(FLAG_IN_PARTY(MIA));
-  EV_START();
-  SE(AUDIO_CUE_FADE_BGM);
+  SCRIPT_START();
+  SE(SONG_FADE_OUT_BGM);
   MESSAGE_SET(MsgTretHmHrooom);
   Engine_ScriptShowMessageAndWait(SPEAKER(LOCALID_SECOND_TRET), 0, 20);
   SE(MUS_029);
@@ -429,9 +429,9 @@ static void EventScript_FightTret(void) {
   OBJECT_DIR(GARET, FACING_NORTH, 0);
   OBJECT_DIR(MIA, FACING_NORTH, 0);
   OBJECT_DIR(IVAN, FACING_NORTH, 40);
-  OBJECT_MODE(LOCALID_TRET, TRET_FACE_TURNING_WRATHFUL);
+  OBJECT_ANIMATION(LOCALID_TRET, TRET_FACE_TURNING_WRATHFUL);
   WAIT(10);
-  OBJECT_MODE(LOCALID_TRET, TRET_FACE_WRATHFUL_CLOSED);
+  OBJECT_ANIMATION(LOCALID_TRET, TRET_FACE_WRATHFUL_CLOSED);
   WAIT(20);
   TretTreeInteriors_PlayGesture(TRET_GESTURE_WRATHFUL_OPEN_EYES);
   Script_ShowMessage(SPEAKER(LOCALID_TRET), 0);
@@ -461,15 +461,15 @@ static void EventScript_FightTret(void) {
   WAIT(40);
   TretTreeInteriors_PlayGesture(TRET_GESTURE_WRATHFUL_BLINK);
   MESSAGE_PUT(SPEAKER(LOCALID_TRET), 0);
-  gEventWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-  gEventWork->transitionFrames = 64;
-  Battle_SetStart(BATTLE_START_SCRIPTED);
+  gFieldWork->transitionFrames = 64;
+  Battle_SetType(BATTLE_TYPE_SCRIPTED);
   FieldScript_SetNextDestination((s32)&MapId_TretTreeInteriors,
                                  TRET_TREE_INTERIORS_AFTER_FIGHT_TRET);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY,
                                         0);
-  EV_END();
+  SCRIPT_END();
 }
 
 /// After the battle with Tret, in Tret Tree: a passage opens in his room, and
@@ -483,7 +483,7 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   s32 hasMia;
   struct ObjectEvent *partyObjectEvent;
   s32 openingColumn;
-  SchedulerCallback sparkTask;
+  TaskFunc sparkTask;
   const s32 *actions;
 
   // Restore the party positions before opening the post-battle conversation.
@@ -493,9 +493,9 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->priorityFlags &=
       ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   Engine_ObjectEventSetSpritePriority(LOCALID_PARTY_LEADER, 2);
-  PartyInventory_FindOwner(ITEM_HERMES_WATER);
-  SE(AUDIO_CUE_FADE_BGM);
-  EV_START();
+  PartyInventory_FindMember(ITEM_HERMES_WATER);
+  SE(SONG_FADE_OUT_BGM);
+  SCRIPT_START();
   OBJECT_SPEED(LOCALID_PARTY_LEADER, 0xcccc, 0x6666);
   OBJECT_SPEED(GARET, 0xcccc, 0x6666);
   OBJECT_SPEED(IVAN, 0xcccc, 0x6666);
@@ -516,13 +516,13 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   }
   TretTreeInteriors_PlayGesture(TRET_GESTURE_CLOSE_EYES);
   Engine_TaskWait(10);
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  gEventWork->transitionFrames = 48;
+  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transitionFrames = 48;
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
   WAIT(20);
-  Camera_SetSpeed(0x13333, 0x2666);
-  Camera_MoveTo(PIXELS(168), -1, PIXELS(152), 1);
+  FieldCamera_SetSpeed(0x13333, 0x2666);
+  FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(152), 1);
   Engine_CameraWaitForMove();
   WAIT(10);
   // Open the passage in Tret's room before continuing the conversation.
@@ -545,7 +545,7 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   Engine_ObjectEventStartRepeatedMotion(MIA, 2);
   Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
   WAIT(20);
-  Camera_MoveTo(PIXELS(168), -1, PIXELS(90), 1);
+  FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(90), 1);
   Engine_CameraWaitForMove();
   WAIT(40);
   TretTreeInteriors_PlayGesture(TRET_GESTURE_OPEN_EYES);
@@ -560,9 +560,9 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   Script_ShowMessage(SPEAKER(LOCALID_SECOND_TRET), 0);
   WAIT(40);
   Script_ShowMessageAndWait(SPEAKER(LOCALID_SECOND_TRET), 0, 20);
-  OBJECT_MODE(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  OBJECT_MODE(GARET, ANIMATION_NOD);
-  OBJECT_MODE(MIA, ANIMATION_NOD);
+  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  OBJECT_ANIMATION(GARET, ANIMATION_NOD);
+  OBJECT_ANIMATION(MIA, ANIMATION_NOD);
   Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
   WAIT(20);
   Script_ShowMessageAndWait(SPEAKER(LOCALID_SECOND_TRET), 0, 20);
@@ -605,11 +605,11 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   OBJECT_DIR(IVAN, FACING_NORTHWEST, 0);
   if (Engine_ScriptChooseYesNo(0, 0) != 0) {
     OBJECT_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
-    OBJECT_MODE(GARET, ANIMATION_SHAKE_HEAD);
+    OBJECT_ANIMATION(GARET, ANIMATION_SHAKE_HEAD);
     MESSAGE_SET(MsgTretDoingNowsNot);
     Script_ShowMessage(SPEAKER(GARET), 0);
     OBJECT_EMOTE(IVAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 10);
-    OBJECT_MODE(IVAN, ANIMATION_NOD);
+    OBJECT_ANIMATION(IVAN, ANIMATION_NOD);
     Script_ShowMessage(SPEAKER(IVAN), 0);
   }
   WAIT(20);
@@ -621,8 +621,8 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   WAIT(20);
   // Tret tries to release the people of Kolima: the colours shift and sparks
   // swirl out from his face, then fade.
-  ColorBuffer_ApplySource(0x10000, 0);
-  ColorBuffer_ApplyTarget(0x406218, 1);
+  PaletteFade_ApplySource(0x10000, 0);
+  PaletteFade_ApplyTarget(0x406218, 1);
   Engine_ColorBufferInterpolate(20);
   Engine_TaskWait(40);
   Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 2);
@@ -643,7 +643,7 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   Task_AddCallback(sparkTask, TASK_PRIORITY_MAP);
   WAIT(220);
   Engine_TaskRemoveCallback(sparkTask);
-  ColorBuffer_ApplyTarget(0x10000, 1);
+  PaletteFade_ApplyTarget(0x10000, 1);
   Engine_ColorBufferInterpolate(20);
   Engine_TaskWait(40);
   TretTreeInteriors_PlayGesture(TRET_GESTURE_BLINK);
@@ -672,9 +672,9 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
     Engine_ObjectEventRunRepeatedMotion(MIA, 1);
     Engine_ScriptShowMessageAndWait(SPEAKER(MIA), 0, 10);
   }
-  OBJECT_MODE(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  OBJECT_MODE(GARET, ANIMATION_NOD);
-  OBJECT_MODE(MIA, ANIMATION_NOD);
+  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  OBJECT_ANIMATION(GARET, ANIMATION_NOD);
+  OBJECT_ANIMATION(MIA, ANIMATION_NOD);
   Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
   actions = gTretTreeInteriors_RejoinLeaderActions;
   ObjectEvent_SetActionScript(GARET, actions);
@@ -687,7 +687,7 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
       OBJ_EVENT_PRIORITY_AUTOMATIC;
   FLAG_SET(FLAG_TRET_DEFEATED);
   FieldScheduler_AddCallback(TretPalette_UpdateMapTint, TASK_PRIORITY_MAP);
-  EV_END();
+  SCRIPT_END();
 }
 
 /// Sets the map grid by FLAG_TRET_DEFEATED: the passage in Tret's room closed
@@ -729,7 +729,7 @@ s32 TretTreeInteriors_EnterRoom(void) {
   struct MapGridLayerScroll *layer;
   struct FieldWork *work;
   s32 warpDest;
-  s32 selectedLocalId;
+  s32 leaderLocalId;
 
   tret = ObjectEvent_GetById(LOCALID_TRET);
   // Point the cocoon latch at the map state and save the palette first.
@@ -753,7 +753,7 @@ s32 TretTreeInteriors_EnterRoom(void) {
   }
   if (FLAG_CHECK(FLAG_KEEP_PARTY_POSITION))
     TretTreeInteriors_ApplyFlaggedMapPatches();
-  grid = WORK_SLOT(8);
+  grid = HEAP_SLOT_BLOCK(8);
   // Match the first layer's parallax offset and scale to the room bounds.
   layer = &grid->layers[0];
   layer->offsetX += Iwram_MulQ16(grid->minX + PIXELS(160), 0x1999);
@@ -768,34 +768,34 @@ s32 TretTreeInteriors_EnterRoom(void) {
   FLAG_SET(FLAG_MAP_TEMP_13);
   Engine_TaskWait(1);
   TretTreeInteriors_ApplyPostBattleState(0);
-  work = WORK_SLOT(HEAP_SLOT_EVENT);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
   work->transition = MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   warpDest = gGameState.warpDest;
-  selectedLocalId = gGameState.selectedLocalId;
-  objectEvent = ObjectEvent_GetById(selectedLocalId);
+  leaderLocalId = gGameState.leaderLocalId;
+  objectEvent = ObjectEvent_GetById(leaderLocalId);
   // Warp destinations 20, 30, 40 and 50: the leader falls on through the room,
   // to the warp destination numbered ten lower. Warp destination 10: the leader
   // lands in a cloud of dust in front of Tret.
   // TRET_TREE_INTERIORS_AFTER_FIGHT_TRET: back from the battle with Tret.
   if (warpDest == 50 || warpDest == 40 || warpDest == 30 || warpDest == 20) {
     Engine_ScriptOpenScreen();
-    OBJECT_MODE(selectedLocalId, ANIMATION_LEADER_SPIN_AWAY);
-    Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(selectedLocalId), 0);
-    ObjectEvent_SetAttachedEffect(selectedLocalId, ATTACHED_EFFECT_IN_FRONT |
-                                                       ATTACHED_EFFECT_ATTACH);
-    Camera_MoveTo(-1, -1, -1, 0);
+    OBJECT_ANIMATION(leaderLocalId, ANIMATION_LEADER_SPIN_AWAY);
+    Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(leaderLocalId), 0);
+    ObjectEvent_SetAttachedEffect(leaderLocalId, ATTACHED_EFFECT_IN_FRONT |
+                                                     ATTACHED_EFFECT_ATTACH);
+    FieldCamera_MoveTo(-1, -1, -1, 0);
     objectEvent->motionFlags = OBJ_EVENT_FALLS;
     objectEvent->y.fixed = PIXELS(100);
-    objectEvent->terrainHeight = -PIXELS(160);
+    objectEvent->groundHeight = -PIXELS(160);
     objectEvent->gravity = PIXELS(1) / 2;
     SE(SE_204);
     FieldScript_SetDestination((s32)&MapId_TretTreeInteriors, warpDest - 10);
     WAIT(20);
-    objectEvent->terrainId = 2;
-    Engine_ObjectEventSetSpritePriority(selectedLocalId, 3);
+    objectEvent->layer = 2;
+    Engine_ObjectEventSetSpritePriority(leaderLocalId, 3);
     WAIT(2);
     Engine_ObjectEventSetAttachedEffect(
-        selectedLocalId, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
+        leaderLocalId, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
     WAIT(8);
   } else if (warpDest == 10) {
     if (!FLAG_CHECK(FLAG_KEEP_PARTY_POSITION))
@@ -808,7 +808,7 @@ s32 TretTreeInteriors_EnterRoom(void) {
 
 /// Saves background palettes 0 to 13 as the base for Tret's map tint.
 static void TretPalette_SaveMapColors(void) {
-  Dma_Set((const void *)BG_PLTT, gPaletteBufferWork->palette,
+  Dma_Set((const void *)BG_PLTT, gPaletteFadeWork->palette,
           (DMA_ENABLE | DMA_32BIT) << 16 | 112, REG_DMA3);
 }
 
@@ -826,10 +826,10 @@ static void TretPalette_UpdateMapTint(void) {
   s32 blue;
   u32 color;
   struct FieldWork *work;
-  struct ColorBuffer *paletteWork;
+  struct PaletteFade *paletteWork;
 
-  work = WORK_SLOT(HEAP_SLOT_EVENT);
-  paletteWork = WORK_SLOT(HEAP_SLOT_PALETTE_BUFFER);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
+  paletteWork = HEAP_SLOT_BLOCK(HEAP_SLOT_PALETTE_FADE);
   sourceColors = paletteWork->palette;
   if (work->psynergy != 0)
     return;
@@ -886,70 +886,70 @@ static void TretPalette_UpdateMapTint(void) {
 static void TretTreeInteriors_PlayGesture(s32 gesture) {
   switch (gesture) {
   case TRET_GESTURE_CLOSE_EYES:
-    OBJECT_MODE(LOCALID_TRET, TRET_FACE_OPEN);
+    OBJECT_ANIMATION(LOCALID_TRET, TRET_FACE_OPEN);
     Engine_TaskWait(6);
-    OBJECT_MODE(LOCALID_TRET, TRET_FACE_CLOSED);
+    OBJECT_ANIMATION(LOCALID_TRET, TRET_FACE_CLOSED);
     break;
   case TRET_GESTURE_OPEN_EYES:
-    OBJECT_MODE(LOCALID_TRET, TRET_FACE_OPEN);
+    OBJECT_ANIMATION(LOCALID_TRET, TRET_FACE_OPEN);
     break;
   case TRET_GESTURE_LOOK_LEFT:
-    OBJECT_MODE(LOCALID_TRET, TRET_FACE_OPEN);
+    OBJECT_ANIMATION(LOCALID_TRET, TRET_FACE_OPEN);
     Engine_TaskWait(6);
-    OBJECT_MODE(LOCALID_TRET, TRET_FACE_LOOK_LEFT);
+    OBJECT_ANIMATION(LOCALID_TRET, TRET_FACE_LOOK_LEFT);
     break;
   case TRET_GESTURE_LOOK_RIGHT:
-    OBJECT_MODE(LOCALID_TRET, TRET_FACE_OPEN);
+    OBJECT_ANIMATION(LOCALID_TRET, TRET_FACE_OPEN);
     Engine_TaskWait(6);
-    OBJECT_MODE(LOCALID_TRET, TRET_FACE_LOOK_RIGHT);
+    OBJECT_ANIMATION(LOCALID_TRET, TRET_FACE_LOOK_RIGHT);
     break;
   case TRET_GESTURE_BLINK:
-    OBJECT_MODE(LOCALID_TRET, TRET_FACE_OPEN);
+    OBJECT_ANIMATION(LOCALID_TRET, TRET_FACE_OPEN);
     Engine_TaskWait(6);
-    OBJECT_MODE(LOCALID_TRET, TRET_FACE_CLOSED);
+    OBJECT_ANIMATION(LOCALID_TRET, TRET_FACE_CLOSED);
     Engine_TaskWait(6);
-    OBJECT_MODE(LOCALID_TRET, TRET_FACE_OPEN);
+    OBJECT_ANIMATION(LOCALID_TRET, TRET_FACE_OPEN);
     Engine_TaskWait(6);
-    OBJECT_MODE(LOCALID_TRET, TRET_FACE_CLOSED);
+    OBJECT_ANIMATION(LOCALID_TRET, TRET_FACE_CLOSED);
     Engine_TaskWait(6);
-    OBJECT_MODE(LOCALID_TRET, TRET_FACE_OPEN);
+    OBJECT_ANIMATION(LOCALID_TRET, TRET_FACE_OPEN);
     break;
   case TRET_GESTURE_HALF_CLOSE_EYES:
-    OBJECT_MODE(LOCALID_TRET, TRET_FACE_OPEN);
+    OBJECT_ANIMATION(LOCALID_TRET, TRET_FACE_OPEN);
     Engine_TaskWait(6);
-    OBJECT_MODE(LOCALID_TRET, TRET_FACE_HALF_CLOSED);
+    OBJECT_ANIMATION(LOCALID_TRET, TRET_FACE_HALF_CLOSED);
     break;
   case TRET_GESTURE_WRATHFUL_CLOSE_EYES:
-    OBJECT_MODE(LOCALID_TRET, TRET_FACE_WRATHFUL_OPEN);
+    OBJECT_ANIMATION(LOCALID_TRET, TRET_FACE_WRATHFUL_OPEN);
     Engine_TaskWait(6);
-    OBJECT_MODE(LOCALID_TRET, TRET_FACE_WRATHFUL_CLOSED);
+    OBJECT_ANIMATION(LOCALID_TRET, TRET_FACE_WRATHFUL_CLOSED);
     break;
   case TRET_GESTURE_WRATHFUL_OPEN_EYES:
-    OBJECT_MODE(LOCALID_TRET, TRET_FACE_WRATHFUL_OPEN);
+    OBJECT_ANIMATION(LOCALID_TRET, TRET_FACE_WRATHFUL_OPEN);
     break;
   case TRET_GESTURE_WRATHFUL_LOOK_RIGHT:
-    OBJECT_MODE(LOCALID_TRET, TRET_FACE_WRATHFUL_OPEN);
+    OBJECT_ANIMATION(LOCALID_TRET, TRET_FACE_WRATHFUL_OPEN);
     Engine_TaskWait(6);
-    OBJECT_MODE(LOCALID_TRET, TRET_FACE_WRATHFUL_LOOK_RIGHT);
+    OBJECT_ANIMATION(LOCALID_TRET, TRET_FACE_WRATHFUL_LOOK_RIGHT);
     break;
   case TRET_GESTURE_WRATHFUL_LOOK_LEFT:
-    OBJECT_MODE(LOCALID_TRET, TRET_FACE_WRATHFUL_OPEN);
+    OBJECT_ANIMATION(LOCALID_TRET, TRET_FACE_WRATHFUL_OPEN);
     Engine_TaskWait(6);
-    OBJECT_MODE(LOCALID_TRET, TRET_FACE_WRATHFUL_LOOK_LEFT);
+    OBJECT_ANIMATION(LOCALID_TRET, TRET_FACE_WRATHFUL_LOOK_LEFT);
     break;
   case TRET_GESTURE_WRATHFUL_BLINK:
-    OBJECT_MODE(LOCALID_TRET, TRET_FACE_WRATHFUL_OPEN);
+    OBJECT_ANIMATION(LOCALID_TRET, TRET_FACE_WRATHFUL_OPEN);
     Engine_TaskWait(6);
-    OBJECT_MODE(LOCALID_TRET, TRET_FACE_WRATHFUL_CLOSED);
+    OBJECT_ANIMATION(LOCALID_TRET, TRET_FACE_WRATHFUL_CLOSED);
     Engine_TaskWait(6);
-    OBJECT_MODE(LOCALID_TRET, TRET_FACE_WRATHFUL_OPEN);
+    OBJECT_ANIMATION(LOCALID_TRET, TRET_FACE_WRATHFUL_OPEN);
     Engine_TaskWait(6);
-    OBJECT_MODE(LOCALID_TRET, TRET_FACE_WRATHFUL_CLOSED);
+    OBJECT_ANIMATION(LOCALID_TRET, TRET_FACE_WRATHFUL_CLOSED);
     Engine_TaskWait(6);
-    OBJECT_MODE(LOCALID_TRET, TRET_FACE_WRATHFUL_OPEN);
+    OBJECT_ANIMATION(LOCALID_TRET, TRET_FACE_WRATHFUL_OPEN);
     break;
   case TRET_GESTURE_WRATHFUL_STARE:
-    OBJECT_MODE(LOCALID_TRET, TRET_FACE_WRATHFUL_OPEN);
+    OBJECT_ANIMATION(LOCALID_TRET, TRET_FACE_WRATHFUL_OPEN);
     break;
   }
   Engine_TaskWait(12);
@@ -981,7 +981,7 @@ static void TretTreeInteriors_UpdateSwirlSpark(union FieldObject *fieldObject) {
     }
     spark->timer++;
   } else {
-    Resource_ResetEntry(spark->sprite->slot);
+    VramCache_FreeEntry(spark->sprite->slot);
     Engine_ObjectDispatchRelease(spark);
   }
 }
@@ -1011,7 +1011,7 @@ static void TretTreeInteriors_SpawnSwirlSparks(void) {
                                   sSparkOrigin.y, sSparkOrigin.z);
       if (spark != 0) {
         previousResourceEntry =
-            Sprite_ShareVramCache(spark->sprite, previousResourceEntry);
+            Sprite_ShareVramCacheEntry(spark->sprite, previousResourceEntry);
         spark->motionFlags = 0;
         spark->sprite->image.priority = 0;
         Engine_ObjectEventSetSpriteFlags(spark, 0);
@@ -1028,7 +1028,7 @@ static void TretTreeInteriors_SpawnSwirlSparks(void) {
     // Each wave also plays the closing sound.
     // fall through
   case 44:
-    SE(AUDIO_CUE_FADE_SLOT3);
+    SE(SONG_FADE_OUT_ACTION_SE);
     break;
   }
   if (++sSparkFrame > 120) {
@@ -1073,8 +1073,8 @@ static void TretTreeInteriors_RunLandingDustScene(void) {
   s32 velocityX;
   s32 velocityZ;
 
-  EV_START();
-  Camera_MoveTo(-1, -1, -1, 0);
+  SCRIPT_START();
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   Engine_MapGridRedraw();
   Engine_TaskWait(1);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->y.fixed = PIXELS(130);
@@ -1112,7 +1112,7 @@ static void TretTreeInteriors_RunLandingDustScene(void) {
   SE(SE_188);
   ObjectEvent_SetAttachedEffect(
       LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  OBJECT_MODE(LOCALID_PARTY_LEADER, 22);
+  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, 22);
   MapGrid_SetShake(0x50000, 0x50000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
   Engine_MapGridWaitForShakeToSettle();
@@ -1120,7 +1120,7 @@ static void TretTreeInteriors_RunLandingDustScene(void) {
       LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->gravity = 0x10000;
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->bounce = 0x4000;
-  EV_END();
+  SCRIPT_END();
 }
 
 s32 gShortEffectScript[] = {
@@ -1371,15 +1371,15 @@ u32 gTretTreeInteriorsWarps[] = {
 
 struct ObjectEventTemplate gTretTreeInteriorsObjectEventTemplates[] = {
     { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0 },
     { IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0 },
     { MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0 },
     { SPRITE_TRET, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(168), 0, PIXELS(48), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(168), 0, PIXELS(48), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_TRET_RAISED, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(168), 0, PIXELS(48), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(168), 0, PIXELS(48), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 // clang-format on
@@ -1499,7 +1499,7 @@ struct MapEvent gTretTreeInteriorsEvents[] = {
      CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_CastReveal)},
     {BG_EVENT(BG_EVENT_CHEST), 100, 0xf5b, FIND_ITEM(ITEM_HEALING_RING)},
     {BG_EVENT(BG_EVENT_CHEST), 101, 0xf5c, FIND_ITEM(ITEM_NUT)},
-    {BG_EVENT(BG_EVENT_UNNAMED), 102, 0x350, FIND_PSYNERGY_STONE},
+    {BG_EVENT(BG_EVENT_SILENT), 102, 0x350, FIND_PSYNERGY_STONE},
     {MAP_EVENTS_END},
 };
 

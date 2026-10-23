@@ -65,7 +65,7 @@ s32 Map_Initialize(void) {
   s32 shakeY = PIXELS(1);
   s32 decay = Q16_ONE;
 
-  gEventWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
 
   Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
@@ -99,7 +99,7 @@ struct ObjectEventTemplate gSolSanctumPsynergyStoneObjectEventTemplates[] = {
 struct MapEvent gSolSanctumPsynergyStoneEvents[] = {
     {MAP_EVENT_WARP, 1, CONDITION_ALWAYS,
      SOL_SANCTUM_PSYNERGY_STONE_TO_SOL_SANCTUM_STATUE},
-    {BG_EVENT(BG_EVENT_UNNAMED), 100, FLAG_SOL_SANCTUM_PSYNERGY_STONE_TAKEN,
+    {BG_EVENT(BG_EVENT_SILENT), 100, FLAG_SOL_SANCTUM_PSYNERGY_STONE_TAKEN,
      FIND_PSYNERGY_STONE},
     {MAP_EVENTS_END},
 };

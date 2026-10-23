@@ -3,25 +3,25 @@
 	.set import.__divsi3, 1
 	.set import.__umodsi3, 1
 	.set import.Engine_TaskWait, 1
-	.set import.Scheduler_AddOrUpdateCallback, 1
+	.set import.Task_Add, 1
 	.set import.Engine_TaskRemoveCallback, 1
 	.set import.Engine_RandomNext, 1
 	.set import.FixedSqrt, 1
 	.set import.Engine_MathSin, 1
 	.set import.Vector_AddPolarOffset, 1
-	.set import.Runtime_AllocateBlock, 1
-	.set import.AnimationObject_SelectAnimation, 1
+	.set import.AllocHeapSlotEwram, 1
+	.set import.Sprite_StartAnim, 1
 	.set import.ObjectEvent_SetMode, 1
 	.set import.Engine_ObjectSetScript, 1
 	.set import.Engine_ObjectCreate, 1
 	.set import.Engine_ObjectDispatchRelease, 1
 	.set import.Engine_MapGridRedraw, 1
 	.set import.Engine_ObjectSetPosition, 1
-	.set import.FieldObject_WaitForMove, 1
+	.set import.Object_WaitForMove, 1
 	.set import.Engine_MapGridAnimateCells, 1
 	.set import.Engine_MapGridCopyCellsTo, 1
-	.set import.DisplayBlend_ResumeScript, 1
-	.set import.DisplayBlend_SuspendScript, 1
+	.set import.BlendScript_Resume, 1
+	.set import.BlendScript_Suspend, 1
 	.set import.Engine_MapGridCopyCellAttributes, 1
 	.set import.Object_CheckMovementCollision, 1
 	.set import.Engine_ObjectEventSetSpriteFlags, 1
@@ -29,17 +29,17 @@
 	.set import.Engine_WorkSetValuesIfNonNegative, 1
 	.set import.Engine_MapGridRenderWaitForValues, 1
 	.set import.Engine_MessageShowCentered, 1
-	.set import.UiWork_PushValueSlot, 1
-	.set import.UiText_ShowCenteredMessage, 1
+	.set import.MessageArgument_Push, 1
+	.set import.FieldMessage_ShowCentered, 1
 	.set import.Unit_Get, 1
 	.set import.Unit_Calculate, 1
 	.set import.Inventory_Find, 1
-	.set import.PartyInventory_FindOwner, 1
+	.set import.PartyInventory_FindMember, 1
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1
 	.set import.Engine_GameFlagClear, 1
-	.set import.Djinn_AddToOwner, 1
-	.set import.Djinn_Activate, 1
+	.set import.Djinn_Give, 1
+	.set import.Djinn_Set, 1
 	.set import.Engine_ScriptWait, 1
 	.set import.Engine_ScriptStart, 1
 	.set import.Engine_ScriptEnd, 1
@@ -93,7 +93,7 @@
 	.set import.Engine_PsynergyLowerHands, 1
 	.set import.Engine_PsynergyRaiseHands, 1
 	.set import.Engine_ObjectEventWalkByAndWait, 1
-	.set import.FieldEffect_SetQueuedSoundAndPlay, 1
-	.set import.FieldEffect_PlayQueuedSound, 1
+	.set import.Map_QueueMusic, 1
+	.set import.Map_PlayQueuedMusic, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

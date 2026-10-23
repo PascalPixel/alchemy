@@ -153,9 +153,9 @@ static void EventScript_FreezeGatePuddle(void) {
     pillar->priorityFlags = OBJ_EVENT_PRIORITY_AUTOMATIC;
   }
   if (GameFlag_IsSet(FLAG_MAP_TEMP_02) == 0) {
-    Script_PlayCue(SE_GATE_MOVE);
+    Script_PlaySong(SE_GATE_MOVE);
     Gate_DrawPropped();
-    Script_PlayCue(MUS_PUZZLE_SOLVED);
+    Script_PlaySong(MUS_PUZZLE_SOLVED);
     GameFlag_Set(FLAG_MAP_TEMP_02);
   }
 }
@@ -199,7 +199,7 @@ static void EventScript_FlipLoweringSwitch(void) {
   if (GameFlag_IsSet(FLAG_MAP_TEMP_01) == 0) {
     if (GameFlag_IsSet(FLAG_MAP_TEMP_00) == 0) {
       Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
-      Script_PlayCue(SE_GATE_MOVE);
+      Script_PlaySong(SE_GATE_MOVE);
       Gate_Lower();
       GameFlag_Set(FLAG_MAP_TEMP_01);
       GameFlag_Clear(FLAG_MAP_TEMP_02);
@@ -229,7 +229,7 @@ static void EventScript_FlipRaisingSwitch(void) {
   if (GameFlag_IsSet(FLAG_MAP_TEMP_00) == 0) {
     if (GameFlag_IsSet(FLAG_MAP_TEMP_02) == 0) {
       Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
-      Script_PlayCue(SE_GATE_MOVE);
+      Script_PlaySong(SE_GATE_MOVE);
       Gate_Raise();
       GameFlag_Set(FLAG_MAP_TEMP_02);
       GameFlag_Clear(FLAG_MAP_TEMP_01);
@@ -263,8 +263,8 @@ static void EventScript_HammetFindsBunza(void) {
     ObjectEvent_FaceDirection(LOCALID_BUNZA, FACING_SOUTH - FACING_STEP, 0);
     Engine_ObjectEventRunRepeatedMotion(LOCALID_PARTY_LEADER, 1);
     Engine_ScriptWait(30);
-    Camera_SetSpeed(PIXELS(1) / 2, PIXELS(1) / 16);
-    Camera_MoveTo(PIXELS(192), -1, PIXELS(432), 1);
+    FieldCamera_SetSpeed(PIXELS(1) / 2, PIXELS(1) / 16);
+    FieldCamera_MoveTo(PIXELS(192), -1, PIXELS(432), 1);
     leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
     if (leader != NULL) {
       ObjectEvent_SetPosition(LOCALID_HAMMET, leader->x.fixed, leader->z.fixed);
@@ -1017,7 +1017,7 @@ static void Party_RidesWagon(void) {
 
 /// Restores the gate and frozen puddles from the persistent puzzle flags.
 s32 Map_Initialize(void) {
-  gEventWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gGameState.mapId == (s32)&MapId_WestLunpaCave) {
     Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_UNUSED_PUDDLE),
@@ -1072,18 +1072,18 @@ const struct ObjectEventTemplate gCaveNoObjectEventTemplates[] = {
 };
 
 const struct ObjectEventTemplate gCaveObjectEventTemplates[] = {
-    { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+    { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-      PIXELS(136), 0, PIXELS(520), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+      PIXELS(136), 0, PIXELS(520), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-      PIXELS(344), 0, PIXELS(248), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+      PIXELS(344), 0, PIXELS(248), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-      PIXELS(424), 0, PIXELS(136), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { SPRITE_BUNZA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { SPRITE_HAMMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_WEST, TALK_KEEP_FACING, 0 },
-    { IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
-    { MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
-    { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
+      PIXELS(424), 0, PIXELS(136), FACING_SOUTH, TALK_FACING_PARTY, 0 },
+    { SPRITE_BUNZA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
+    { SPRITE_HAMMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_WEST, TALK_FACING_KEEP, 0 },
+    { IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
+    { MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
+    { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
@@ -1097,9 +1097,9 @@ const struct MapEvent gCaveEvents[] = {
     { MAP_EVENT_WARP, TRIGGER_LUNPA_PASSAGE, CONDITION_ALWAYS, WEST_LUNPA_CAVE_TO_LUNPA },
     { MAP_EVENT_COORD, TRIGGER_BUNZA_HIDING_PLACE, FLAG_LUNPA_CAVE_REUNION_SEEN,
       EVENT_SCRIPT(EventScript_HammetFindsBunza) },
-    { BG_EVENT(BG_EVENT_UNNAMED), TRIGGER_LOWERING_SWITCH, CONDITION_ALWAYS,
+    { BG_EVENT(BG_EVENT_SILENT), TRIGGER_LOWERING_SWITCH, CONDITION_ALWAYS,
       EVENT_SCRIPT(EventScript_FlipLoweringSwitch) },
-    { BG_EVENT(BG_EVENT_UNNAMED), TRIGGER_RAISING_SWITCH, CONDITION_ALWAYS,
+    { BG_EVENT(BG_EVENT_SILENT), TRIGGER_RAISING_SWITCH, CONDITION_ALWAYS,
       EVENT_SCRIPT(EventScript_FlipRaisingSwitch) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_UNUSED_PUDDLE, CONDITION_ALWAYS,
       EVENT_SCRIPT(EventScript_UnusedFreezePuddle) },

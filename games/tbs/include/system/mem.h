@@ -7,9 +7,9 @@
 #include "edition.h"
 #include "types.h"
 
-void Runtime_ReleaseHeapBlock(s32 slot);
+void FreeHeapSlot(s32 slot);
 void Runtime_BumpFree(void *buffer);
-void MemFree(void *buffer);
+void Free(void *buffer);
 void Runtime_FillFreeHeapWords(u32 value);
 
 static __inline__ void *Runtime_CallAlternatePool(void *(*allocate)(s32),

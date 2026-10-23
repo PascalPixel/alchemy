@@ -1,5 +1,5 @@
 /// @file
-/// The link battle timer and the no-escape check.
+/// The link battle timer and the no-flee check.
 // Part of battle_command.c.
 
 #include "../battle_command_internal.h"
@@ -20,7 +20,7 @@ struct LinkSignature {
   u8 padding010[8];
 };
 
-/// A scheduler callback while the party's commands are chosen
+/// A task while the party's commands are chosen
 /// (Battle_CollectPartyCommands): eases the battle scene a third of the way
 /// to BattleMenuWork.targetViewOffset each frame (a pixel at least), draws
 /// the sprites of BattleMenuWork.icons that are shown (the chosen command's
@@ -30,7 +30,7 @@ struct LinkSignature {
 /// each whole second; at 0 the menus end as if cancelled, or take their
 /// first command. A paused link sets the timer to 0 at once.
 void UpdateLinkSessionCountdown(void) {
-  struct BattleMenuWork *state = gLinkCountdownWork;
+  struct BattleMenuWork *state = gBattleMenuWork;
   struct BattleWork *runtime;
   struct MenuSprite *entry;
   u8 *active;
@@ -66,7 +66,7 @@ void UpdateLinkSessionCountdown(void) {
     i = 2;
     do {
       if (*active++ != 0)
-        Runtime_PushSlotEntry(entry, 240);
+        Oam_AddSpriteAtDepth(entry, 240);
       i--;
       entry++;
     } while (i >= 0);
@@ -107,7 +107,7 @@ void UpdateLinkSessionCountdown(void) {
     if (timer < 0)
       return;
 
-    // The window opens the first frame the status screen is not up.
+    // The window opens the first frame the summary screen is not up.
   timer_ready:
     if (state->timerWindow == 0 && state->timerHidden == 0) {
       state->timerWindow = (s32)Link_CreateCountdownLabelWindow();
@@ -125,31 +125,31 @@ void UpdateLinkSessionCountdown(void) {
     // Round remaining frames upward so zero appears only after time expires.
     seconds = (timer + FRAMES_PER_SECOND - 1) / FRAMES_PER_SECOND;
     if (seconds != 0 && seconds * FRAMES_PER_SECOND == timer)
-      AudioCommand_PlayFar(SE_TRIPLE_TONE_LOW);
+      Sound_PlaySongFar(SE_TRIPLE_TONE_LOW);
 
     if (state->timerWindow != 0)
-      UiText_DrawNumberInWindow(seconds, 2,
-                                (struct UiWindow *)state->timerWindow, 16, 8);
+      Text_DrawNumberInWindow(seconds, 2, (struct Window *)state->timerWindow,
+                              16, 8);
   }
 }
 
-/// Tests whether the party may not run from this battle: battle starts 3 and
+/// Tests whether the party may not run from this battle: battle types 3 and
 /// 4 (the battles a script starts, and link battles; see
-/// BATTLE_START_NO_ESCAPE in battle/battle/round.c) and a party once
+/// BATTLE_TYPE_NO_ESCAPE in battle/battle/round.c) and a party once
 /// challenged (BattleWork.challengeFlag). When it may not, shows "This is no
 /// time to be running away!" until A or B is pressed or the link battle's
 /// time runs out, and returns 1; else returns 0. The Flee command asks it
 /// (Battle_CollectPartyCommands).
-s32 UiText_ShowLocalizedMessageAndWait(void) {
+s32 Message_ShowLocalizedAndWait(void) {
   s16 buffer[64];
-  struct UiWindow *work;
+  struct Window *work;
   s32 result;
   struct BattleWork *battle;
   s32 mode;
 
   battle = gBattleWork;
-  mode = gGameState.battleStart;
-  if (gGameState.battleStart == 2 || mode <= 2 || (result = 1, mode > 4)) {
+  mode = gGameState.battleType;
+  if (gGameState.battleType == 2 || mode <= 2 || (result = 1, mode > 4)) {
     result = 0;
   }
   if (result == 0) {
@@ -158,16 +158,16 @@ s32 UiText_ShowLocalizedMessageAndWait(void) {
     }
   }
   if (result != 0) {
-    work = UiWindow_Create(0, 7, 30, 4, 42);
+    work = Window_Create(0, 7, 30, 4, 42);
     Ui_FillVramBlockPattern();
     BATTLE_MENU_MESSAGE_COPY(MsgNoTimeToRun, buffer,
                              BATTLE_MENU_MESSAGE_CAPACITY);
-    UiText_RenderWideStringAtOffset(buffer, work, 0, 4);
+    Text_DrawWideStringAtOffset(buffer, work, 0, 4);
     do {
       WaitFrames(1);
     } while ((gKeysPressed & (KEY_A | KEY_B)) == 0 &&
-             gLinkCountdownWork->timer != 0);
-    UiWork_Finalize(work, 1);
+             gBattleMenuWork->timer != 0);
+    Window_Close(work, 1);
   }
   return result;
 }

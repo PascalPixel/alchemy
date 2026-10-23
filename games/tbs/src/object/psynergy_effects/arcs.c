@@ -54,8 +54,8 @@ void FieldEffect_UpdateScaledArcObjectB(union FieldObject *fieldObject) {
   arc->z.fixed = anchor->z.fixed - (0x10000 - scale) * 5 + 0x100000;
 }
 
-/// A sprite (struct AnimationObject) as the arcs set it up: its image's three
-/// OAM attributes and its bookkeeping; the notes give the AnimationObject
+/// A sprite (struct Sprite) as the arcs set it up: its image's three
+/// OAM attributes and its bookkeeping; the notes give the Sprite
 /// fields at the same offsets.
 struct ArcSprite {
   u8 pad00[4];
@@ -83,7 +83,7 @@ struct ArcSprite {
   u8 pad1e[8];
   u8 flags; ///< bit 0 draws its shadow; the arcs clear it
   u8 pad27;
-  struct AnimationEntry *child; ///< entries[0], its first layer
+  struct SpriteAnim *child; ///< entries[0], its first layer
 };
 
 /// Spawns the two swelling arcs (object 26) on an object, A and B (B upside
@@ -93,7 +93,7 @@ struct ArcSprite {
 /// FieldEffect_End waits for the last to end (at most 30
 /// frames).
 void FieldEffect_SpawnScaledArcObjects(struct ObjectEvent *linked) {
-  struct FieldEffectWork *effectWork = gEffectWork;
+  struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct ObjectEvent *source = effectWork->mainObject;
   struct ObjectEvent *arcs[2];
   struct ObjectEvent *arc;
@@ -106,7 +106,7 @@ void FieldEffect_SpawnScaledArcObjects(struct ObjectEvent *linked) {
     arcs[arcIndex] = arc;
     if (arc == 0)
       continue;
-    arc->terrainHeight = linked->terrainHeight;
+    arc->groundHeight = linked->groundHeight;
     sprite = (struct ArcSprite *)arc->sprite;
     arc->motionFlags = 0;
     arc->timer = 0;
@@ -115,12 +115,12 @@ void FieldEffect_SpawnScaledArcObjects(struct ObjectEvent *linked) {
     if (sprite == 0)
       continue;
     // A wide 16-colour sprite drawn from the effect's tiles.
-    AnimationObject_SelectAnimationFar((struct AnimationObject *)sprite, 0);
+    Sprite_StartAnimFar((struct Sprite *)sprite, 0);
     sprite->flags = 0;
-    Resource_ResetEntry(sprite->slot);
+    VramCache_FreeEntry(sprite->slot);
     sprite->slot = effectWork->tileSlot;
     sprite->active = 1;
-    sprite->tile = (gVramBlockCache[sprite->slot].offset >> 5) & 0x3ff;
+    sprite->tile = (gVramCacheEntries[sprite->slot].offset >> 5) & 0x3ff;
     sprite->color = 0;
     sprite->shape = 1;
     sprite->size = 2;
@@ -137,7 +137,7 @@ void FieldEffect_SpawnScaledArcObjects(struct ObjectEvent *linked) {
 }
 
 /// Per-frame update: flashes an object between sprite param 7 and 0 every 2
-/// frames and spawns the swelling arcs on it every 16. EventObject_Initialize
+/// frames and spawns the swelling arcs on it every 16. FieldEffect_StartCast
 /// gives it to the caster as a cast starts with a flash (scene->visible).
 void FieldEffect_FlickerObjectAndTick(union FieldObject *fieldObject) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
@@ -155,7 +155,7 @@ void FieldEffect_FlickerObjectAndTick(union FieldObject *fieldObject) {
 
 /// Per-frame update: cycles an object through sprite params 0 to 5, one step
 /// every 2 frames, and spawns the swelling arcs on it every 16.
-/// EventObject_Initialize gives it to the caster in place of the flicker
+/// FieldEffect_StartCast gives it to the caster in place of the flicker
 /// while flag 0x140 is set.
 void FieldEffect_CycleObjectValueByCounter(union FieldObject *fieldObject) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;

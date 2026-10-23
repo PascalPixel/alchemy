@@ -5,18 +5,18 @@
 	.global FarCall_SoundTable
 FarCall_SoundTable:
 	export AudioEngine_RunMixerFar, AudioEngine_RunMixer
-	export Audio_InitializeRuntimeDefaultsFar, Audio_InitializeRuntimeDefaults
-	export AudioCommand_PlayFar, AudioCommand_Play
-	export MusicPlayer_StepVolumeAndPitchTowardTargetsFar, MusicPlayer_StepVolumeAndPitchTowardTargets
-	export MusicCommand_SetPitchAndUpdateFrequencyFar, MusicCommand_SetPitchAndUpdateFrequency
-	overlay_veneer MusicCommand_SetPitch
-	overlay_veneer Audio_SetWorkPairB
-	overlay_veneer MusicCommand_SetVolume
-	overlay_veneer Audio_SetMusicVolumeTargetAndStep
-	export AudioCommand_GetStateByteFar, AudioCommand_GetStateByte
-	overlay_veneer AudioTest_RunParameterController
-	overlay_veneer AudioCommand_StopAllPlayers
-	overlay_veneer AudioCommand_ResumeAllPlayers
-	overlay_veneer AudioCommand_UpdateToggleMask
-	export AudioCommand_GetMusicCueFar, AudioCommand_GetMusicCue
-	export AudioCommand_WaitForCompletionFar, AudioCommand_WaitForCompletion
+	export Sound_InitializeFar, Sound_Initialize
+	export Sound_PlaySongFar, Sound_PlaySong
+	export Sound_UpdateBgmRampsFar, Sound_UpdateBgmRamps
+	export Sound_SetBgmTempoFar, Sound_SetBgmTempo
+	overlay_veneer Sound_SetBgmPitch
+	overlay_veneer Sound_SetBgmTempoPitchTarget
+	overlay_veneer Sound_SetBgmVolume
+	overlay_veneer Sound_SetBgmVolumeTarget
+	export Sound_GetBgmRestoreDelayFar, Sound_GetBgmRestoreDelay
+	overlay_veneer SoundTest_Run
+	overlay_veneer Sound_StopAllMusicPlayers
+	overlay_veneer Sound_ResumeAllMusicPlayers
+	overlay_veneer Sound_UpdateCommandMask
+	export Sound_GetCurrentBgmFar, Sound_GetCurrentBgm
+	export Sound_WaitForSongFar, Sound_WaitForSong

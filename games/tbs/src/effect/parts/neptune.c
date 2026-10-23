@@ -5,14 +5,14 @@
 #include "../effect_internal.h"
 
 /// Sets BG2's horizontal scale back to one texel a pixel, for the lines above
-/// Graphics_SetBg2AffineScaleHalf's interrupt. BattleEffect_RunNeptune
-/// schedules it as a frame callback for its first stage.
-void Graphics_ResetBg2Pa(void) { REG_BG2PA = Q_8_8(1); }
+/// BattleAnim_SetBg2AffineScaleHalf's interrupt. BattleAnim_RunNeptune
+/// adds it as a task for its first stage.
+void BattleAnim_ResetBg2Pa(void) { REG_BG2PA = Q_8_8(1); }
 
 /// Stretches BG2 to twice its width from the current line down.
-/// BattleEffect_RunNeptune installs it as the VCount interrupt handler, on line
+/// BattleAnim_RunNeptune installs it as the VCount interrupt handler, on line
 /// 0 and from frame 152 on line 96, for its first stage.
-void Graphics_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
+void BattleAnim_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 
 #define NEPTUNE_FLAME_GROUND 112   ///< where the blue flames throw sparks
 #define NEPTUNE_OBJECTS 8          ///< objects in the formation
@@ -28,7 +28,7 @@ void Graphics_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 /// gathers a ring of flares into a burst of light, then five blue flame columns
 /// drop onto the targets, throwing sparks.
 ///
-/// Abilities: Neptune (SUMMON_EFFECT_NEPTUNE).
+/// Abilities: Neptune (SUMMON_ANIM_NEPTUNE).
 ///
 /// The scene runs in two stages. The first (244 frames; A or B ends it after
 /// frame 16) places NEPTUNE_OBJECTS objects at one and a half times their
@@ -40,11 +40,11 @@ void Graphics_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 /// reaches the ground (NEPTUNE_FLAME_GROUND). The battle shows the damage on
 /// its frame 96.
 ///
-/// Reached through BattleEffect_RunSummonEffect, whose sheet slot holds the
+/// Reached through BattleAnim_RunSummonEffect, whose sheet slot holds the
 /// mote sheet here. The first stage projects with gProjection.centerY at 240
 /// and holds BG1's scroll from the battle camera; the second gives BG1's x
 /// back, removes the scale callback and interrupt, and
-/// BattleEffect_SetupBlendedDisplay puts the centre back at 120, which its
+/// BattleAnim_SetupBlendedDisplay puts the centre back at 120, which its
 /// Camera_ApplyShake then moves while the screen shakes. The formation's
 /// objects are released before the scene returns.
 ///
@@ -56,10 +56,10 @@ void Graphics_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 /// The window's edge step, noise and scanline table use the map grid cell
 /// buffer's first 450 bytes on frames 0 to 15, over spray particles 0 to 16,
 /// which are already launched.
-void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
+void BattleAnim_RunNeptune(struct BattleAnimArgs *effect) {
   static struct SpriteScale unitScale = {{{0x18000, 0x18000}}};
   struct SpritePlacement pos;
-  struct EffectPosition targetPosition;
+  struct ScreenPoint targetPosition;
   void *canvas;
   u8 *particleSheet;
   s32 windowEdgeStep;
@@ -73,48 +73,47 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   s32 emittedSparks;
   s32 sparkOriginX;
   u32 *cache;
-  struct BattleEffectWork *work;
+  struct BattleAnimWork *work;
   s32 frame;
   s32 t;
   s32 i;
   s32 n;
   s32 s;
-  struct EffectStep *flareSeed;
-  struct EffectStep *flare;
-  struct EffectStep *burstSeed;
-  struct EffectStep *flameColumn;
+  struct Particle *flareSeed;
+  struct Particle *flare;
+  struct Particle *burstSeed;
+  struct Particle *flameColumn;
   DrawRectangle blit[2];
   struct SpriteScale scale;
   s32 ground = NEPTUNE_FLAME_GROUND;
 
-  cache = (u32 *)&gWorkSlot[HEAP_SLOT_BATTLE_CANVAS];
+  cache = (u32 *)&gHeapSlots[HEAP_SLOT_BATTLE_CANVAS];
   canvas = (void *)cache[0];
-  work = (struct BattleEffectWork *)CANVAS_SLOT(cache, HEAP_SLOT_BATTLE_EFFECT);
+  work = (struct BattleAnimWork *)CANVAS_SLOT(cache, HEAP_SLOT_BATTLE_ANIM);
   particleSheet = (u8 *)CANVAS_SLOT(cache, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
-  BattleEffect_StartCanvasLayer(0);
-  BattleEffect_ConfigureEffectDisplay();
+  BattleAnim_StartCanvasLayer(0);
+  BattleAnim_ConfigureEffectDisplay();
   // The backdrop and colour 1, which the wipe fills the canvas with, are
   // black.
   PLTT_BACKDROP = 0;
   *(u16 *)&BG_PLTT[1] = 0;
   // BG2's scale per frame: one texel a pixel until the VCount line (0 here),
   // twice the width from it down.
-  Scheduler_AddOrUpdateCallback(Graphics_ResetBg2Pa, EFFECT_CALLBACK_ORDER);
-  Runtime_SetIrqHandler(IRQ_VCOUNT, 0, Graphics_SetBg2AffineScaleHalf);
+  Task_Add(BattleAnim_ResetBg2Pa, ANIM_CALLBACK_ORDER);
+  Runtime_SetIrqHandler(IRQ_VCOUNT, 0, BattleAnim_SetBg2AffineScaleHalf);
   work->transferMode = CANVAS_COPY;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
   // Setup: wipe the battle away and close window 0 (its edge opens over the
-  // first 16 frames), swap in the dusk backdrop and load the pictures.
-  REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_CLR;
-  BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
+  // first 16 frames), swap in the dusk battle background and load the pictures.
+  REG_WININ = ANIM_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_CLR;
+  BattleAnim_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   REG_WIN0H = WIN_RANGE(240, 240);
-  BattleEffect_SelectLivingTargets(work->effect);
-  BattleEffect_SpawnObjects(NEPTUNE_OBJECTS, 0x17a, 1);
+  BattleAnim_SelectLivingTargets(work->effect);
+  BattleAnim_SpawnObjects(NEPTUNE_OBJECTS, 0x17a, 1);
   gProjection.centerY = 240;
   WaitFrames(1);
-  BattleBackground_LoadFar(BATTLE_BACKGROUND_FLAT,
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                            (s32)&ResourceId_DuskCloudsBackdrop, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, particleSheet,
                              0, 0);
@@ -122,7 +121,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD,
                              work->sheet + NEPTUNE_FLARE_SHEET, 0, 0);
-  EFFECT_SHOW_WIDE_CANVAS(16);
+  ANIM_SHOW_WIDE_CANVAS(16);
   // The formation starts at x 280, 200 deep, and flies in at 4 pixels a
   // frame across and 8 forward (16.16), slowing as it comes.
   windowEdgeStep = 1;
@@ -133,15 +132,13 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   savedBg1ScrollX = gBgScroll[1].x;
   view = (struct BattleBackgroundView *)CANVAS_SLOT(
       cache, HEAP_SLOT_BATTLE_BACKGROUND);
-  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   // The scene owns BG1's scroll until the second stage.
   view->busy = 1;
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
-                      COMPOSITE_ADDITIVE);
-  blit[0] = (DrawRectangle)CANVAS_SLOT(cache, HEAP_SLOT_BLITTER);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
-                      COMPOSITE_MAX);
-  blit[1] = (DrawRectangle)CANVAS_SLOT(cache, HEAP_SLOT_BLITTER_ALTERNATE);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_ADDITIVE);
+  blit[0] = (DrawRectangle)CANVAS_SLOT(cache, HEAP_SLOT_RAM_CODE);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+  blit[1] = (DrawRectangle)CANVAS_SLOT(cache, HEAP_SLOT_RAM_CODE_2);
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
 
@@ -180,16 +177,16 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
     // converge (152 to 239), the beam of lines reaches the burst (from 176)
     // and the burst breaks into light (from 222).
     if (frame == 24) {
-      AudioCommand_PlayFar(SE_162);
+      Sound_PlaySongFar(SE_162);
     }
     if (frame == 76) {
-      AudioCommand_PlayFar(SE_164);
+      Sound_PlaySongFar(SE_164);
     }
     if (frame == 154) {
-      AudioCommand_PlayFar(SE_142);
+      Sound_PlaySongFar(SE_142);
     }
     if (frame == 222) {
-      AudioCommand_PlayFar(SE_145);
+      Sound_PlaySongFar(SE_145);
     }
     // Over the first 16 frames the window's right edge sweeps open by a
     // growing step, ragged by 128 random offsets: frame 1 starts the
@@ -203,13 +200,12 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
           noise[k] = Random16() & 63;
         }
         *phase = 0;
-        Scheduler_AddOrUpdateCallback(BattleEffect_BuildWindowEdgeTable,
-                                      EFFECT_CALLBACK_ORDER);
+        Task_Add(BattleAnim_BuildWindowEdgeTable, ANIM_CALLBACK_ORDER);
       }
       *phase += windowEdgeStep;
       windowEdgeStep += 3;
       if (frame == 15) {
-        Scheduler_RemoveCallback(BattleEffect_BuildWindowEdgeTable);
+        Task_Remove(BattleAnim_BuildWindowEdgeTable);
       }
     }
 
@@ -273,9 +269,9 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
       }
     }
     // Frame 152: only the lines from 96 down stay stretched, and the battle
-    // backdrop's colours darken over 24 frames.
+    // battle background's colours darken over 24 frames.
     if (frame == 152) {
-      Runtime_SetIrqHandler(IRQ_VCOUNT, 96, Graphics_SetBg2AffineScaleHalf);
+      Runtime_SetIrqHandler(IRQ_VCOUNT, 96, BattleAnim_SetBg2AffineScaleHalf);
       work->fadeFrames = 24;
       work->fadeStep = 0;
     }
@@ -291,7 +287,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
           s32 r = (i & 3) + 5;
           s = r * 2;
           blit[0](canvas,
-                  work->sheet + gBattleEffect_FlareCells[r - 1] +
+                  work->sheet + gBattleAnim_FlareCells[r - 1] +
                       NEPTUNE_FLARE_SHEET,
                   fx - r, fy - r, s, s);
           flare->x += flare->velocityX;
@@ -330,7 +326,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
       for (i = 0; i != 64; i++) {
         // Two more burst points start each frame, as the smallest flare; one
         // that leaves the top restarts.
-        u16 *cells = gBattleEffect_FlareCells;
+        u16 *cells = gBattleAnim_FlareCells;
         s32 r = 1;
         if (frame >= i / 2 + 222) {
           blit[0](canvas, work->sheet + cells[r - 1] + NEPTUNE_FLARE_SHEET,
@@ -376,8 +372,8 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
         if (i & 1) {
           d = -d;
         }
-        BattleEffect_DrawClippedCanvasLine(d + 48, 0, d / 2 + 111,
-                                           63 - (d + 1) / 2, w);
+        BattleAnim_DrawClippedCanvasLine(d + 48, 0, d / 2 + 111,
+                                         63 - (d + 1) / 2, w);
       }
     }
 
@@ -390,8 +386,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
         z = 4;
       }
       blit[1](canvas,
-              work->sheet + gBattleEffect_FlareCells[z - 1] +
-                  NEPTUNE_FLARE_SHEET,
+              work->sheet + gBattleAnim_FlareCells[z - 1] + NEPTUNE_FLARE_SHEET,
               108 - z, 60 - z, z * 2, z * 2);
     }
     if (frame >= 192 && frame < 200) {
@@ -401,8 +396,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
         z = 6;
       }
       blit[1](canvas,
-              work->sheet + gBattleEffect_FlareCells[z - 1] +
-                  NEPTUNE_FLARE_SHEET,
+              work->sheet + gBattleAnim_FlareCells[z - 1] + NEPTUNE_FLARE_SHEET,
               108 - z, 60 - z, z * 2, z * 2);
     }
     if (frame > 199) {
@@ -413,8 +407,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
         z = 8;
       }
       blit[1](canvas,
-              work->sheet + gBattleEffect_FlareCells[z - 1] +
-                  NEPTUNE_FLARE_SHEET,
+              work->sheet + gBattleAnim_FlareCells[z - 1] + NEPTUNE_FLARE_SHEET,
               108 - z, 60 - z, z * 2, z * 2);
       if (frame <= 213) {
         z = u / 4 + 1;
@@ -422,7 +415,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
           z = 4;
         }
         blit[1](canvas,
-                work->sheet + gBattleEffect_FlareCells[z - 1] +
+                work->sheet + gBattleAnim_FlareCells[z - 1] +
                     NEPTUNE_FLARE_SHEET,
                 100 - z, 52 - z, z * 2, z * 2);
       }
@@ -454,11 +447,11 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
       for (i = 0; i != NEPTUNE_PARTICLES; i++) {
         if (PARTICLES[i].variant >= 0) {
           s32 k = i % 3 + 2;
-          EFFECT_DRAW_MOTE(draw, canvas, particleSheet,
-                           Q_16_16_TO_INT(PARTICLES[i].x),
-                           Q_16_16_TO_INT(PARTICLES[i].y), k);
-          EffectStep_AdvanceWithGravity2D(&PARTICLES[i], 62,
-                                          gNeptune_Gravity[i & 3]);
+          ANIM_DRAW_MOTE(draw, canvas, particleSheet,
+                         Q_16_16_TO_INT(PARTICLES[i].x),
+                         Q_16_16_TO_INT(PARTICLES[i].y), k);
+          Particle_AdvanceWithGravity2D(&PARTICLES[i], 62,
+                                        gNeptune_Gravity[i & 3]);
           PARTICLES[i].variant++;
           if (PARTICLES[i].velocityY > 0 &&
               Q_16_16_TO_INT(PARTICLES[i].y) > 104) {
@@ -472,20 +465,20 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
       blit[1](canvas, work->sheet, i * 32 + ((frame / 4) & 31) - 32, 88, 32,
               32);
     }
-    EFFECT_PRESENT_FRAME(work);
+    ANIM_PRESENT_FRAME(work);
   } while (++frame != 244 && (frame <= 16 || !(gKeysRepeat & (KEY_A | KEY_B))));
 
-  // The second stage: restore the backdrop, the scale callbacks and the
-  // display, free the spray as sparks (variant 0), and aim the five flame
+  // The second stage: restore the battle background, the scale callbacks and
+  // the display, free the spray as sparks (variant 0), and aim the five flame
   // columns: column i drops onto target i's x (halved for the wide canvas)
   // when there is one, otherwise onto a random x from 32 to 63.
   gBgScroll[1].x = savedBg1ScrollX;
   view->busy = 0;
   Runtime_SetIrqHandler(IRQ_VCOUNT, 0, 0);
-  BattleEffect_SetupBlendedDisplay();
-  Scheduler_RemoveCallback(Graphics_ResetBg2Pa);
+  BattleAnim_SetupBlendedDisplay();
+  Task_Remove(BattleAnim_ResetBg2Pa);
   REG_WIN0H = WIN_RANGE(0, 240);
-  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   for (i = 0; i != NEPTUNE_PARTICLES; i++) {
     PARTICLES[i].variant = 0;
   }
@@ -494,14 +487,13 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
     work->particles[i].y = 0;
     work->particles[i].variant = 0;
   }
-  EFFECT_FOR_EACH_TARGET(i, work->effect) {
-    EffectPosition_ProjectScaledBattler(work->effect->actors[i],
-                                        &targetPosition);
+  ANIM_FOR_EACH_TARGET(i, work->effect) {
+    Projection_ScaledUnit(work->effect->targets[i], &targetPosition);
     work->particles[i].x = targetPosition.x / 2;
   }
   Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, work->sheet, 1,
                              1);
-  AudioCommand_PlayFar(AUDIO_CUE_FADE_SLOT3);
+  Sound_PlaySongFar(SONG_FADE_OUT_ACTION_SE);
   REG_BG2PA = Q_8_8(0.5);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
@@ -511,12 +503,12 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
     // on frame 16i + 7, at y 112 (NEPTUNE_FLAME_GROUND); the battle shows
     // the damage on frame 96.
     if (frame == 96) {
-      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
+      ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }
     for (i = 0; i != 5; i++) {
       flameColumn = &work->particles[i];
       if (frame == i * 16 + 7) {
-        AudioCommand_PlayFar(SE_CAST);
+        Sound_PlaySongFar(SE_CAST);
       }
       // A column, a scrolling shaft over a head, falls 16 pixels a frame.
       // Once on the ground it counts its frames there, shakes the screen for
@@ -563,12 +555,12 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
       }
     }
     // Target i flashes and reels on frame 16i + 8, as its column lands.
-    EFFECT_FOR_EACH_TARGET(i, work->effect) {
+    ANIM_FOR_EACH_TARGET(i, work->effect) {
       if (frame == i * 16 + 8) {
-        ObjectGroup_UpdateMembers(work->effect->actors[i], SPRITE_COLOR_WHITE,
+        ObjectGroup_UpdateMembers(work->effect->targets[i], SPRITE_COLOR_WHITE,
                                   POSE_DAMAGE, i, 8);
-        BattleMotion_ApplyVariantMotionFar(work->effect->actors[i],
-                                           KNOCKBACK_LEAP);
+        BattleMotion_ApplyKnockbackFar(work->effect->targets[i],
+                                       KNOCKBACK_LEAP);
       }
     }
     for (i = 0; i != NEPTUNE_PARTICLES; i++) {
@@ -579,26 +571,26 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
         // speed below y 120; one off the canvas is not drawn. A spark's mote
         // shrinks from size 6 or 7 down to 3 as its life runs out.
         PARTICLES[i].variant--;
-        EffectStep_AdvanceWithGravity2D(&PARTICLES[i], 60, 0x4000);
+        Particle_AdvanceWithGravity2D(&PARTICLES[i], 60, 0x4000);
         y = PARTICLES[i].y >> 16;
         if (y > 120) {
           PARTICLES[i].velocityY = -PARTICLES[i].velocityY / 2;
         } else if (PARTICLES[i].x >= 0 && (x = PARTICLES[i].x >> 16) <= 126 &&
                    PARTICLES[i].y >= 0) {
           s32 k = PARTICLES[i].variant / 8 + 3;
-          EFFECT_DRAW_MOTE(blit[i & 1], canvas, particleSheet, x, y, k);
+          ANIM_DRAW_MOTE(blit[i & 1], canvas, particleSheet, x, y, k);
         }
       }
     }
     Camera_ApplyShake(4, 8);
-    EFFECT_END_FRAME(work);
+    ANIM_END_FRAME(work);
   } while (++frame != 144);
 
   // The finish: release the formation's objects, then the canvas.
   for (i = 0; i != NEPTUNE_OBJECTS; i++) {
-    ResourceObject_ReleaseFar(work->animations[i]);
+    Sprite_DestroyFar(work->animations[i]);
   }
-  EFFECT_FINISH_CANVAS();
+  ANIM_FINISH_CANVAS();
 }
 
 #undef NEPTUNE_FLAME_GROUND

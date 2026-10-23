@@ -9,7 +9,7 @@
 
 union FieldObject;
 
-/// A field object as its object script commands see it: the script and its
+/// An object as its object script commands see it: the script and its
 /// place, position, motion toward a target, and the home it wanders around.
 struct ScriptObjectRuntime {
   const s32 *script; ///< null when the object is free
@@ -18,17 +18,17 @@ struct ScriptObjectRuntime {
   /// SC_WANDER_HOME wander around, and where SC_FACE_LINK stores the angle to
   /// the linked object.
   u16 scriptValue;
-  s32 x;             ///< 16.16 fixed-point pixels
-  s32 y;             ///< 16.16 fixed-point pixels
-  s32 z;             ///< 16.16 fixed-point pixels
-  s32 terrainHeight; ///< 16.16 fixed-point pixels
+  s32 x;            ///< 16.16 fixed-point pixels
+  s32 y;            ///< 16.16 fixed-point pixels
+  s32 z;            ///< 16.16 fixed-point pixels
+  s32 groundHeight; ///< 16.16 fixed-point pixels
   /// ObjectEvent's scales and radius; not named here.
   ///@{
   s32 scaleX;
   s32 scaleY;
   u16 radius;
   ///@}
-  u8 terrainId;     ///< the map layer its ground height is read from
+  u8 layer;         ///< the map layer its ground height is read from
   u8 priorityFlags; ///< ObjectEvent's; not named here
   s32 velocityX;    ///< 16.16 fixed-point pixels per frame
   s32 velocityY;    ///< 16.16 fixed-point pixels per frame
@@ -72,7 +72,7 @@ struct ScriptObjectRuntime {
   /// frozen flag and two bytes map code uses.
   void *callback;
   /// Its home, in pixels: where it was created or placed. The bytes are
-  /// ObjectRuntime's action and footprintSide too.
+  /// Object's action and footprintSide too.
   ///@{
   s16 homeX;
   s16 homeZ;

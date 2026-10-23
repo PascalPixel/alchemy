@@ -216,7 +216,7 @@ static void EventScript_RevealSecrets(void) {
     if (cellX == 7 && cellZ == 16) {
       ObjectEvent_WalkByAndWait(LOCALID_PARTY_LEADER, 0, 16);
     }
-    Marker_SetPosition(MARKER_PSYNERGY_STONE, -1, -1);
+    TreasureSpot_SetPosition(TREASURE_SPOT_PSYNERGY_STONE, -1, -1);
     MapGrid_CopyCellAttributes(28, 31, 1, 1, 7, 16);
   }
   MapGrid_CopyCells(47, 4, 1, 1, 46, 4);
@@ -259,7 +259,7 @@ static void EventScript_HideSecrets(void) {
   MapGrid_CopyCellAttributes(37, 37, 3, 3, 13, 3);
   MapGrid_CopyCellAttributes(37, 37, 1, 1, 14, 2);
   MapGrid_CopyCellAttributes(8, 16, 1, 1, 7, 16);
-  Marker_SetPosition(MARKER_PSYNERGY_STONE, 0, 0);
+  TreasureSpot_SetPosition(TREASURE_SPOT_PSYNERGY_STONE, 0, 0);
   MapGrid_CopyCells(32, 42, 3, 2, 1, 15);
   GameFlag_Clear(FLAG_MAP_TEMP_00);
   Engine_ObjectEventSetAnimation(LOCALID_HIDDEN_PUDDLE, ANIMATION_STAND);
@@ -318,10 +318,10 @@ static void EventScript_TalkToEastGuard(void) {
     Engine_ScriptSetMessage(MsgLunpaEastGuardAsksIfFrom);
     Engine_ScriptOpenMessage(LOCALID_EAST_GUARD, 0);
     if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
-      gEventWork->message++;
+      gFieldWork->message++;
       Engine_ScriptOpenMessage(LOCALID_EAST_GUARD, 0);
       if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 1) {
-        gEventWork->message++;
+        gFieldWork->message++;
       }
     }
     Engine_ScriptShowMessage(LOCALID_EAST_GUARD, 0);
@@ -446,7 +446,7 @@ static void EventScript_ReadLeftGuardsThoughts(void) {
       GameFlag_IsSet(FLAG_LUNPA_CAVE_REUNION_SEEN) == 0) {
     recognizedHammet = GameFlag_IsSet(FLAG_LUNPA_GATE_GUARD_SAW_HAMMET);
     if (recognizedHammet == 0) {
-      ((struct FieldWork *)gEventWork)->psynergy = recognizedHammet;
+      ((struct FieldWork *)gFieldWork)->psynergy = recognizedHammet;
       Engine_PsynergyCancel();
       ObjectEvent_FaceObjectEvent(LOCALID_LEFT_GUARD, LOCALID_PARTY_LEADER, 0);
       ObjectEvent_ShowEmote(LOCALID_LEFT_GUARD, EMOTE_IN_FRONT | EMOTE_QUESTION,
@@ -482,7 +482,7 @@ static void Lunpa_WatchForFortressApproach(void) {
 
   if (GameFlag_IsSet(FLAG_MAP_TEMP_43) == 0 && leaderRow == 10) {
     GameFlag_Set(FLAG_MAP_TEMP_43);
-    ((struct FieldWork *)gEventWork)->action = TRIGGER_FORTRESS_APPROACH;
+    ((struct FieldWork *)gFieldWork)->coordEvent = TRIGGER_FORTRESS_APPROACH;
   }
 }
 
@@ -512,7 +512,7 @@ static void EventScript_EnterDoor(void) {
   u32 localId;
   s32 doorIndex;
 
-  work = (struct FieldWork *)gEventWork;
+  work = (struct FieldWork *)gFieldWork;
   Engine_ScriptStart();
   // Freeze placed object events before opening the selected door and crossing
   // it.
@@ -523,8 +523,8 @@ static void EventScript_EnterDoor(void) {
       placedObjectEvent->motionFlags = 0;
     }
   }
-  Script_PlayCue(SE_DOOR_OPEN);
-  doorIndex = work->action - TRIGGER_FIRST_HOME_DOOR;
+  Script_PlaySong(SE_DOOR_OPEN);
+  doorIndex = work->coordEvent - TRIGGER_FIRST_HOME_DOOR;
   MapGrid_AnimateCells(gLunpaDoors[doorIndex].steps, gLunpaDoors[doorIndex].x,
                        gLunpaDoors[doorIndex].y);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
@@ -534,7 +534,7 @@ static void EventScript_EnterDoor(void) {
     ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 2, -8);
     Engine_ScriptWait(10);
   }
-  Engine_ScriptRequestWarp(work->action);
+  Engine_ScriptRequestWarp(work->coordEvent);
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
   Engine_ScriptEnd();
@@ -564,7 +564,7 @@ static void EventScript_EnterFortress(void) {
   ObjectEvent_Get(LOCALID_PARTY_LEADER)->motionFlags = 0;
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
   ObjectEvent_WalkBy(LOCALID_PARTY_LEADER, 0, -8);
-  Script_PlayCue(SE_DOOR_OPEN);
+  Script_PlaySong(SE_DOOR_OPEN);
   MapGrid_CopyCells(53, 4, 2, 2, 41, 4);
   Engine_ScriptWait(10);
   MapGrid_CopyCells(53, 6, 2, 2, 41, 4);
@@ -577,7 +577,7 @@ static void EventScript_EnterFortress(void) {
 
 static void UNUSED Lunpa_CheckAhead(void) { Engine_LeaderCheckAhead(); }
 
-/// Unused: plays the treasure jingle for Reveal uncovering something, until
+/// Unused: plays the treasure fanfare for Reveal uncovering something, until
 /// FLAG_MAP_TEMP_01 is set; nothing calls it.
 UNUSED static void Lunpa_PlayRevealCue(void) {
   if (Engine_GameFlagIsSet(FLAG_MAP_TEMP_01) == 0) {
@@ -596,7 +596,7 @@ static void EventScript_PressHiddenSwitch(void) {
   }
   // Open the passage over five map frames, then remember its final state.
   ObjectEvent_SetPosition(LOCALID_SWITCH_SPARKLE, 0, 0);
-  Script_PlayCue(SE_HIDDEN_PASSAGE_OPEN);
+  Script_PlaySong(SE_HIDDEN_PASSAGE_OPEN);
   Engine_TaskWait(1);
   Lunpa_DrawHiddenPassageFrame(32, 45);
   Engine_TaskWait(10);
@@ -729,7 +729,7 @@ static void EventScript_CloakFades(void) {
   struct ObjectEvent *leader;
 
 #if TBS_PATCH_1
-  work = (struct FieldWork *)gEventWork;
+  work = (struct FieldWork *)gFieldWork;
 #endif
   Engine_GameFlagClear(FLAG_MAP_TEMP_41);
   Engine_GameFlagClear(FLAG_MAP_TEMP_40);
@@ -738,7 +738,7 @@ static void EventScript_CloakFades(void) {
       leader->z.fixed > PIXELS(160) && leader->z.fixed < PIXELS(248)) {
     Engine_TaskRemoveCallback(Lunpa_WatchForUncloakedParty);
 #if TBS_PATCH_1
-    work->event = TRIGGER_PARTY_SPOTTED;
+    work->raisedEvent = TRIGGER_PARTY_SPOTTED;
 #else
     EventScript_GuardsCatchParty();
 #endif
@@ -753,13 +753,13 @@ static void Lunpa_WatchForUncloakedParty(void) {
   struct FieldWork *work;
   struct ObjectEvent *leader;
 
-  work = (struct FieldWork *)gEventWork;
+  work = (struct FieldWork *)gFieldWork;
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (gGameState.cloaked == 0 &&
       (u32)(leader->x.fixed - PIXELS(144)) <= PIXELS(32) &&
       leader->z.fixed >= PIXELS(168) && leader->z.fixed < PIXELS(176)) {
     Engine_TaskRemoveCallback(Lunpa_WatchForUncloakedParty);
-    work->event = TRIGGER_PARTY_SPOTTED;
+    work->raisedEvent = TRIGGER_PARTY_SPOTTED;
   }
 }
 
@@ -811,18 +811,18 @@ static void EventScript_GuardsThrowLeaderOut(void) {
   ObjectEvent_SetDestination(LOCALID_PARTY_LEADER, 160, 296);
   FieldScheduler_AddCallback(Lunpa_KickUpLeaderDust, TASK_PRIORITY_MAP);
   Engine_ScriptWait(1);
-  Script_PlayCue(SE_SCUFFLE);
+  Script_PlaySong(SE_SCUFFLE);
   Engine_ScriptWait(20);
   Engine_ObjectEventSetSpritePriority(LOCALID_LEFT_GUARD, 3);
   Engine_ObjectEventSetSpritePriority(LOCALID_RIGHT_GUARD, 3);
-  Script_PlayCue(SE_SCUFFLE);
+  Script_PlaySong(SE_SCUFFLE);
   Engine_ScriptWait(30);
   ObjectEvent_Get(LOCALID_LEFT_GUARD)->priorityFlags |=
       OBJ_EVENT_PRIORITY_AUTOMATIC;
   ObjectEvent_Get(LOCALID_RIGHT_GUARD)->priorityFlags |=
       OBJ_EVENT_PRIORITY_AUTOMATIC;
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_SHAKE_HEAD);
-  Script_PlayCue(SE_SCUFFLE);
+  Script_PlaySong(SE_SCUFFLE);
   Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
   Engine_ObjectEventSetAnimation(LOCALID_LEFT_GUARD, ANIMATION_STAND);
   Engine_ObjectEventSetAnimation(LOCALID_RIGHT_GUARD, ANIMATION_STAND);
@@ -837,7 +837,7 @@ static void EventScript_GuardsThrowLeaderOut(void) {
   }
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_SPRAWLED);
-  Script_PlayCue(SE_LANDING_THUD);
+  Script_PlaySong(SE_LANDING_THUD);
   ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
                                                           ATTACHED_EFFECT_ONCE);
   FieldScheduler_AddCallback(Lunpa_KickUpLeaderDust, TASK_PRIORITY_MAP);
@@ -912,7 +912,7 @@ s32 Map_Initialize(void) {
   struct ObjectEvent *puddle;
 
   if (gGameState.mapId == (s32)&MapId_Lunpa) {
-    ((struct FieldWork *)gEventWork)->transition =
+    ((struct FieldWork *)gFieldWork)->transition =
         MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     EventScript_HideSecrets();
     if (Engine_GameFlagIsSet(FLAG_LUNPA_NUT_CAUGHT) == 0) {
@@ -926,7 +926,7 @@ s32 Map_Initialize(void) {
   }
   // Restore the gate's arrival cutscene and active detection tasks separately.
   if (gGameState.mapId == (s32)&MapId_LunpaFortressGates) {
-    ((struct FieldWork *)gEventWork)->transition =
+    ((struct FieldWork *)gFieldWork)->transition =
         MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     gGameState.retreatWarpDest = GATE_RETREAT_WARP_DEST;
     if (gGameState.warpDest == LUNPA_FORTRESS_GATES_AFTER_CAUGHT &&
@@ -1032,40 +1032,40 @@ u32 gGateWarps[] = {
 // clang-format off
 struct ObjectEventTemplate gLunpaObjectEventTemplates[] = {
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-      PIXELS(520), 0, PIXELS(520), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+      PIXELS(520), 0, PIXELS(520), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-      PIXELS(112), 0, PIXELS(168), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+      PIXELS(112), 0, PIXELS(168), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-      PIXELS(280), 0, PIXELS(352), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+      PIXELS(280), 0, PIXELS(352), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_STOUT_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-      PIXELS(120), 0, PIXELS(312), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+      PIXELS(120), 0, PIXELS(312), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-      PIXELS(136), 0, PIXELS(328), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+      PIXELS(136), 0, PIXELS(328), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-      PIXELS(368), 0, PIXELS(256), FACING_WEST, TALK_FACE_PARTY, 0 },
+      PIXELS(368), 0, PIXELS(256), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-      PIXELS(280), 0, PIXELS(200), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+      PIXELS(280), 0, PIXELS(200), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-      PIXELS(216), 0, PIXELS(40), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+      PIXELS(216), 0, PIXELS(40), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-      PIXELS(152), 0, PIXELS(184), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+      PIXELS(152), 0, PIXELS(184), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-      PIXELS(192), 0, PIXELS(448), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+      PIXELS(192), 0, PIXELS(448), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-      PIXELS(256), 0, PIXELS(448), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+      PIXELS(256), 0, PIXELS(448), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_SPARKLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-      PIXELS(520), 0, PIXELS(520), FACING_SOUTH + FACING_STEP, TALK_KEEP_FACING, 0 },
+      PIXELS(520), 0, PIXELS(520), FACING_SOUTH + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_BLANK, FLAG_LUNPA_NUT_CAUGHT, MOVEMENT_TYPE_RESET_ACTION,
-      PIXELS(120), 0, PIXELS(472), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+      PIXELS(120), 0, PIXELS(472), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END, CONDITION_ALWAYS },
 };
 
 struct ObjectEventTemplate gGateObjectEventTemplates[] = {
     { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-      PIXELS(144), 0, PIXELS(200), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+      PIXELS(144), 0, PIXELS(200), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-      PIXELS(176), 0, PIXELS(200), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+      PIXELS(176), 0, PIXELS(200), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
+    { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 // clang-format on
@@ -1102,9 +1102,9 @@ struct ObjectEventTemplate gGateObjectEventTemplates[] = {
        CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RevealSecrets)},             \
       {PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0,        \
        CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HideSecrets)},               \
-      {BG_EVENT(BG_EVENT_UNNAMED), TRIGGER_HIDDEN_SWITCH, FLAG_MAP_TEMP_01,    \
+      {BG_EVENT(BG_EVENT_SILENT), TRIGGER_HIDDEN_SWITCH, FLAG_MAP_TEMP_01,     \
        EVENT_SCRIPT(EventScript_PressHiddenSwitch)},                           \
-      {BG_EVENT(BG_EVENT_UNNAMED), TRIGGER_PSYNERGY_STONE,                     \
+      {BG_EVENT(BG_EVENT_SILENT), TRIGGER_PSYNERGY_STONE,                      \
        FLAG_LUNPA_PSYNERGY_STONE, FIND_PSYNERGY_STONE},                        \
       {BG_EVENT(BG_EVENT_GRAVE), TRIGGER_GRAVE_SLEEP_BOMB,                     \
        FLAG_LUNPA_GRAVE_SLEEP_BOMB, FIND_ITEM(ITEM_SLEEP_BOMB)},               \
@@ -1112,7 +1112,7 @@ struct ObjectEventTemplate gGateObjectEventTemplates[] = {
        FIND_ITEM(ITEM_NUT)},                                                   \
       {PSYNERGY_ON_OBJ_EVENT(ABILITY_CATCH), LOCALID_FLOATING_NUT,             \
        FLAG_LUNPA_NUT_CAUGHT, EVENT_SCRIPT(EventScript_CatchFloatingNut)},     \
-      {BG_EVENT(BG_EVENT_UNNAMED), TRIGGER_WELL, CONDITION_ALWAYS,             \
+      {BG_EVENT(BG_EVENT_SILENT), TRIGGER_WELL, CONDITION_ALWAYS,              \
        EVENT_SCRIPT(EventScript_SearchWell)},                                  \
   {                                                                            \
     MAP_EVENTS_END                                                             \
@@ -1218,7 +1218,7 @@ struct MapEvent gGateEvents[] = {
     TALK(LOCALID_RIGHT_GUARD, EVENT_SCRIPT(EventScript_TalkToRightGuard)),
     MIND_READ(LOCALID_LEFT_GUARD, EVENT_SCRIPT(EventScript_ReadLeftGuardsThoughts)),
     MIND_READ(LOCALID_RIGHT_GUARD, EVENT_SCRIPT(EventScript_ReadRightGuardsThoughts)),
-    { BG_EVENT(BG_EVENT_UNNAMED), TRIGGER_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchWell) },
+    { BG_EVENT(BG_EVENT_SILENT), TRIGGER_WELL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchWell) },
     { MAP_EVENTS_END },
 };
 // clang-format on

@@ -36,14 +36,14 @@ STATIC_ASSERT(offsetof(struct FontGlyph, rows) == 2);
 STATIC_ASSERT(sizeof(struct FontGlyph) == (2 + FONT_GLYPH_ROWS * 2));
 
 /// The main font, from character code 32: its glyphs in code order.
-extern const struct FontGlyph gUiText_Glyphs[];
+extern const struct FontGlyph gFont_Glyphs[];
 
-/// The buffers an icon (command, item, Psynergy or condition) or a portrait is
-/// decoded through, in HEAP_SLOT_GLYPH_TRANSFER for one build: UiIcon_Decode
+/// The buffers an icon (command, item, Psynergy or status) or a portrait is
+/// decoded through, in HEAP_SLOT_GLYPH_TRANSFER for one build: Icon_Decode
 /// unpacks encoded into input, then expands input into tiles.
 typedef struct {
   /// The icon unpacked by Tile_Decompress4bpp; a 256-colour command icon
-  /// (ResourceId_CommandIcons) is unpacked here by Resource_DecodeByteLz and
+  /// (ResourceId_CommandIcons) is unpacked here by Decompress_ByteLz and
   /// used as it is.
   u8 input[0x400];
   u8 tiles[0x200]; ///< the icon as sprite tiles, ready for VRAM

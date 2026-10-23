@@ -10,7 +10,7 @@
 
 /// A palette cycle: a run of up to 16 background palette colours, saved and
 /// rotated by one colour every delay + 1 frames.
-struct PaletteSnapshot {
+struct PaletteCycle {
   u16 *source;    ///< the first colour of the run, in BG palette RAM
   u16 position;   ///< colours rotated so far, 0 to count - 1
   u16 timer;      ///< frames until the next rotation
@@ -21,18 +21,18 @@ struct PaletteSnapshot {
 
 /// The palette cycling queue (HEAP_SLOT_PALETTE_CYCLES): four cycles and how
 /// many are in use.
-struct PaletteSnapshotWork {
-  struct PaletteSnapshot entries[4];
-  /// Cycles in use, 0 to 4; PaletteQueue_StepCycles masks four to none.
+struct PaletteCycleWork {
+  struct PaletteCycle entries[4];
+  /// Cycles in use, 0 to 4; PaletteCycle_Step masks four to none.
   u16 count;
 };
 
-STATIC_ASSERT(sizeof(struct PaletteSnapshot) == 0x2c);
-STATIC_ASSERT(offsetof(struct PaletteSnapshot, position) == 4);
-STATIC_ASSERT(offsetof(struct PaletteSnapshot, timer) == 6);
-STATIC_ASSERT(offsetof(struct PaletteSnapshot, delay) == 8);
-STATIC_ASSERT(offsetof(struct PaletteSnapshot, colors) == 0xc);
-STATIC_ASSERT(sizeof(struct PaletteSnapshotWork) == 0xb4);
-STATIC_ASSERT(offsetof(struct PaletteSnapshotWork, count) == 0xb0);
+STATIC_ASSERT(sizeof(struct PaletteCycle) == 0x2c);
+STATIC_ASSERT(offsetof(struct PaletteCycle, position) == 4);
+STATIC_ASSERT(offsetof(struct PaletteCycle, timer) == 6);
+STATIC_ASSERT(offsetof(struct PaletteCycle, delay) == 8);
+STATIC_ASSERT(offsetof(struct PaletteCycle, colors) == 0xc);
+STATIC_ASSERT(sizeof(struct PaletteCycleWork) == 0xb4);
+STATIC_ASSERT(offsetof(struct PaletteCycleWork, count) == 0xb0);
 
 #endif

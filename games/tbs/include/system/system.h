@@ -50,12 +50,12 @@ extern u8 gFlashTimeoutFlag;
 #endif
 /// The timer, 0 to 3, the flash library times its operations with.
 extern u8 gFlashTimerNum;
-/// gNumberTextBuffer + 10, the decimal form's units digit (the form ends at
+/// gNumberBuffer + 10, the decimal form's units digit (the form ends at
 /// + 11); DebugText_PrintDecimal starts n characters before it, so it prints
 /// n + 1.
-extern u8 gNumberTextDecimalEnd[];
-/// The end of the hexadecimal form in gNumberTextBuffer.
-extern u8 gNumberTextHexEnd[];
+extern u8 gNumberBufferDecimalEnd[];
+/// The end of the hexadecimal form in gNumberBuffer.
+extern u8 gNumberBufferHexEnd[];
 /// The link battle timer's heading: `TIME`; `TMPO.` in Spanish, `TEMPS` in
 /// French.
 extern u8 gLink_TimeLabelString[];
@@ -64,10 +64,10 @@ extern void *Resource_DirectoryTable[];
 /// The size of Resource_PatchThumbBranch (decode_01.s).
 extern u8 Resource_PatchThumbBranchCodeSize[];
 /// The first five 256-byte colour tables of SpriteColorMode, indexed by pixel.
-extern u8 gResourceSlot_ConversionTables[][256];
+extern u8 gSpriteColorTables[][256];
 /// The window font's 16 colours, loaded as BG palette 15
-/// (Ui_LoadWindowGraphics).
-extern const u16 gUi_WindowPalette[];
+/// (Window_LoadGraphics).
+extern const u16 gWindow_Palette[];
 #ifndef OWN_CountRemainingErasedFlashBytes
 s32 CountRemainingErasedFlashBytes(u8 *ptr);
 #endif
@@ -76,8 +76,8 @@ s32 RunFlashEraseVerifier(u8 *, u8 *);
 void StartFlashTimer(u8 index);
 #endif
 
-struct AnimationEntry;
-struct AnimationObject;
+struct SpriteAnim;
+struct Sprite;
 struct SelectionNode;
 struct T;
 
@@ -101,12 +101,12 @@ struct S {
 extern u8 IwramSoundPresetCode[];
 #ifndef OWN_Flash_Handler0
 /// The chip's program routine (FlashSetupInfo.handlers[0]), which
-/// SaveState_WriteWorkspaceSlot calls.
+/// Save_WriteSector calls.
 extern u32 gFlash_Handler0;
 #endif
-/// HEAP_SLOT_ANIMATION_LAYERS: the animation layer records (struct
-/// AnimationEntry) that Animation_AllocateLayer takes from.
-extern struct AnimationEntry *gAnimationObjects[];
+/// HEAP_SLOT_SPRITE_ANIMS: the sprite anims (struct
+/// SpriteAnim) that SpriteAnim_Alloc takes from.
+extern struct SpriteAnim *gSpriteAnims[];
 /// Where the debug text writes next on its 32 by 20 screen in BG0.
 extern u16 *gDebugTextCursor;
 /// Nonzero lets DebugText_Print write; the power-on set-up and the credits
@@ -123,61 +123,61 @@ extern u8 gSaveBuffer[];
 extern s16 gSaveSlot;
 /// The five sound presets' mixer code, SOUND_PRESET_SIZE bytes each.
 extern u8 IwramCodeRecords[];
-/// The size of Render_BuildOamListKernel (decode_byte_lz.s).
+/// The size of Oam_BuildBufferKernel (decode_byte_lz.s).
 extern u8 LoadedRuntime_Size[];
 /// No code in the tree defines or reads it.
 extern const u16 gMath_ArcTanTable[];
 /// The sprites' shadow, 16 by 8 at 256 colours, loaded into VRAM cache entry
 /// 93.
 extern const u8 gObject_ShadowTiles[];
-/// The ARM OAM list builder, run from a heap copy by Render_BuildOamList.
-extern const u8 Render_BuildOamListKernel[];
+/// The ARM OAM list builder, run from a heap copy by Oam_BuildBuffer.
+extern const u8 Oam_BuildBufferKernel[];
 /// The ARM register-write executor, run from a stack copy by
 /// IoWriteQueue_FlushPending.
 extern const u8 Resource_ExecuteTransfer[];
 /// The ARM routine that resolves a loaded overlay's long branches, run from a
-/// heap copy by Resource_LoadCode.
+/// heap copy by Overlay_Load.
 extern const u8 Resource_PatchThumbBranch[];
 /// The game code's last letter in the cartridge header: `J` in Japanese, `E`,
 /// `D`, `F`, `S` or `I` (System_GetLanguage).
 extern const u8 gRom_LanguageCode;
-// The pixel fragments BattleEffect_BuildBlitter copies into its blitters, from
+// The pixel fragments BattleAnim_BuildBlitter copies into its blitters, from
 // battle_effect_composite.s: Forward reads the picture left to right and
 // Reverse right to left. None of them runs where it is.
 /// Max, four pixels (one canvas word), right to left; a full cell's row takes
 /// it twice.
-extern const u32 BattleEffect_Max4Reverse[];
+extern const u32 BattleAnim_Max4Reverse[];
 /// Max, four pixels (one canvas word), left to right; a full cell's row takes
 /// it twice.
-extern const u32 BattleEffect_Max4Forward[];
+extern const u32 BattleAnim_Max4Forward[];
 /// Max, one pixel, right to left.
-extern const u32 BattleEffect_MaxReverse[];
+extern const u32 BattleAnim_MaxReverse[];
 /// Max, one pixel, left to right.
-extern const u32 BattleEffect_MaxForward[];
+extern const u32 BattleAnim_MaxForward[];
 /// Additive, four pixels added a word at a time, right to left; a full cell's
 /// row takes it twice.
-extern const u32 BattleEffect_ColorReverse[];
+extern const u32 BattleAnim_ColorReverse[];
 /// Additive, four pixels added a word at a time, left to right; a full cell's
 /// row takes it twice.
-extern const u32 BattleEffect_ColorForward[];
+extern const u32 BattleAnim_ColorForward[];
 /// Additive, one pixel, right to left.
-extern const u32 BattleEffect_AdditiveReverse[];
+extern const u32 BattleAnim_AdditiveReverse[];
 /// Additive, one pixel, left to right.
-extern const u32 BattleEffect_AdditiveForward[];
+extern const u32 BattleAnim_AdditiveForward[];
 /// Sets 0x40 in every byte of sl, which caps an additive word's pixels at 63.
-extern const u32 BattleEffect_Mask[];
+extern const u32 BattleAnim_Mask[];
 /// Transparent, a full cell's eight pixels, right to left.
-extern const u32 BattleEffect_Transparent8Reverse[];
+extern const u32 BattleAnim_Transparent8Reverse[];
 /// Transparent, a full cell's eight pixels, left to right.
-extern const u32 BattleEffect_Transparent8Forward[];
+extern const u32 BattleAnim_Transparent8Forward[];
 /// Transparent, one pixel, right to left.
-extern const u32 BattleEffect_TransparentReverse[];
+extern const u32 BattleAnim_TransparentReverse[];
 /// Transparent, one pixel, left to right.
-extern const u32 BattleEffect_TransparentForward[];
+extern const u32 BattleAnim_TransparentForward[];
 /// Copy, one pixel, right to left.
-extern const u32 BattleEffect_CopyReverse[];
+extern const u32 BattleAnim_CopyReverse[];
 /// Copy, one pixel, left to right.
-extern const u32 BattleEffect_CopyForward[];
+extern const u32 BattleAnim_CopyForward[];
 /// The basic sprite palettes 0 to 13, 224 colours
 /// (Palette_LoadBasicSpriteColors).
 extern const u8 gSystem_BasicColorPalette[];

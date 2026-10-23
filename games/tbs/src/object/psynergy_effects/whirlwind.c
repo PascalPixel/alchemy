@@ -30,13 +30,13 @@ struct WhirlwindOrbit {
   s32 x;     ///< 16.16 pixels
   s32 y;     ///< 16.16 pixels
   s32 z;     ///< 16.16 pixels
-  /// ObjectEvent's terrainHeight to velocityX; not named through this view.
+  /// ObjectEvent's groundHeight to velocityX; not named through this view.
   ///@{
-  s32 terrainHeight;
+  s32 groundHeight;
   s32 scaleX;
   s32 scaleY;
   u16 radius;
-  u8 terrainId;
+  u8 layer;
   u8 priorityFlags;
   s32 velocityX;
   ///@}
@@ -206,8 +206,7 @@ void FieldEffect_ShrinkObjectScaleUntilHalf(union FieldObject *fieldObject) {
   object->scaleY = scale;
   object->scaleX = scale;
   if (scale < WHIRLWIND_TARGET_MIN_SCALE) {
-    Object_SetPositionAndResetMotionFar((struct ObjectRuntime *)object, 0, 0,
-                                        0);
+    Object_SetPositionAndResetMotionFar((struct Object *)object, 0, 0, 0);
     ((struct ScriptMotionObject *)object)->hook = 0;
   }
 }
@@ -215,7 +214,7 @@ void FieldEffect_ShrinkObjectScaleUntilHalf(union FieldObject *fieldObject) {
 /// Runs Whirlwind cast on a target, using the target already stored in the
 /// effect scene.
 ///
-/// Abilities: Whirlwind, Gale (FIELD_KIND_WHIRLWIND).
+/// Abilities: Whirlwind, Gale (FIELD_PSYNERGY_WHIRLWIND).
 ///
 /// FieldEffect_DispatchRequestKind passes an argument this adapter ignores; the
 /// shared runner reads scene->child instead.
@@ -226,7 +225,7 @@ void FieldEffect_RunWhirlwindOnTarget(s32 unused) {
 /// An orb is carried from the caster to 4 pixels above the effect's position
 /// over 10 frames, growing from 0.25.
 ///
-/// Abilities: Whirlwind, Gale (FIELD_KIND_WHIRLWIND).
+/// Abilities: Whirlwind, Gale (FIELD_PSYNERGY_WHIRLWIND).
 ///
 /// Without scene->enabled the target shrinks, and 16 particles appear round the
 /// orb, one every 6 frames, and circle it.
@@ -235,7 +234,7 @@ void FieldEffect_RunWhirlwindOnTarget(s32 unused) {
 /// palettes to an effect colour and back, and gives the target its shrinking
 /// update; the orb is released at the end, the particles finish on their own.
 void FieldEffect_RunWhirlwind(void) {
-  struct FieldEffectWork *effectWork = gEffectWork;
+  struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct ObjectEvent *src = effectWork->mainObject;
   struct ObjectEvent *target = effectWork->child;
   struct EffectVector pos;
@@ -274,7 +273,7 @@ void FieldEffect_RunWhirlwind(void) {
   } while (step < steps);
   ball->scaleX = 0x1b333; // 1.7 wide
   ball->scaleY = 0x14ccc; // 1.3 high
-  AudioCommand_PlayFar(SE_163);
+  Sound_PlaySongFar(SE_163);
   WaitFrames(20);
   // Cleared by FieldEffect_DispatchRequestKind: cast on a target a map event
   // names, the target is blown away.
@@ -309,7 +308,7 @@ void FieldEffect_RunWhirlwind(void) {
   }
   ObjectDispatch_SelectAnimationFar(ball, 1);
   WaitFrames(30);
-  AudioCommand_PlayFar(SE_136);
+  Sound_PlaySongFar(SE_136);
   WaitFrames(20);
   // Every particle has left its orbit by now. Its wandering callback no
   // longer reads the anchor, so the orb can be released independently.

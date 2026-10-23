@@ -371,7 +371,7 @@ static void EventScript_ExamineTreeMan(void) {
   Engine_ScriptStart();
   Engine_ScriptSetMessage(MsgBilibinItsTreeButAlmostLooks);
   if (GameFlag_IsSet(FLAG_MAPSEC_TEMP_01) != 0) {
-    gEventWork->message++;
+    gFieldWork->message++;
   }
   Script_ShowMessage(LOCALID_TREE_MAN, 0);
   GameFlag_Set(FLAG_MAPSEC_TEMP_01);
@@ -445,7 +445,7 @@ static void EventScript_OpenDoorAndLeave(void) {
   s32 row;
   struct EventWork *work;
 
-  work = gEventWork;
+  work = gFieldWork;
   Engine_ScriptStart();
   // Freeze placed object events before the warp cells start animating.
   for (objectEventSlot = LOCALID_FIRST_PLACED;
@@ -455,9 +455,9 @@ static void EventScript_OpenDoorAndLeave(void) {
       objectEvent->motionFlags = 0;
     }
   }
-  warpIndex = (((u16)work->touchedTrigger - BILIBIN_TO_INN) << 16) >> 16;
+  warpIndex = (((u16)work->coordEvent - BILIBIN_TO_INN) << 16) >> 16;
   if (warpIndex == BILIBIN_TO_SANCTUM - BILIBIN_TO_INN) {
-    Script_PlayCue(SE_188);
+    Script_PlaySong(SE_188);
   } else {
     Engine_AudioPlayCue(SE_DOOR_OPEN);
   }
@@ -470,7 +470,7 @@ static void EventScript_OpenDoorAndLeave(void) {
   Engine_MapGridAnimateCells(gBilibin_DoorSteps[warpIndex], column, row);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (warpIndex == BILIBIN_TO_SANCTUM - BILIBIN_TO_INN) {
     Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
     ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0, -4);
@@ -574,8 +574,8 @@ static void EventScript_JillGivesHardNut(void) {
   Engine_ScriptStart();
   // The camera moves over to the three; the friend nearer the leader speaks
   // first.
-  Camera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
-  Camera_MoveTo(PIXELS(263), -1, PIXELS(173), 1);
+  FieldCamera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
+  FieldCamera_MoveTo(PIXELS(263), -1, PIXELS(173), 1);
   Engine_CameraWaitForMove();
   eastMember = ObjectEvent_Get(LOCALID_GANG_MEMBER_EAST);
   if (eastMember->x.fixed > leader->x.fixed) {
@@ -637,7 +637,7 @@ static void EventScript_JillGivesHardNut(void) {
   Script_ShowMessageAndWait(LOCALID_JILL, 0, 10);
   // Show the named gift before adding it to the party's inventory.
   Engine_MessageShowCentered(MsgBilibinJillGaveIsaacSpecialGift, 1);
-  gEventWork->message++;
+  gFieldWork->message++;
   Engine_ItemShowFound(ITEM_HARD_NUT, 3);
   Engine_PartyGiveItem(ITEM_HARD_NUT, 0);
   Engine_ObjectEventSetAnimationAndWait(LOCALID_JILL, ANIMATION_NOD);
@@ -660,17 +660,15 @@ static void EventScript_JillGivesHardNut(void) {
   Engine_ObjectEventSetAnimation(LOCALID_GANG_MEMBER_WEST, ANIMATION_NOD);
   Engine_ObjectEventSetAnimationAndWait(LOCALID_JILL, ANIMATION_NOD);
   // From now on the three turn to face the leader wherever he goes.
-  FieldObject_SetTargetAndCallback(LOCALID_GANG_MEMBER_EAST,
-                                   OBJ_EVENT_LINK_KEEP_MOTION |
-                                       LOCALID_PARTY_LEADER,
-                                   gBilibin_FaceLeaderScript);
-  FieldObject_SetTargetAndCallback(LOCALID_GANG_MEMBER_WEST,
-                                   OBJ_EVENT_LINK_KEEP_MOTION |
-                                       LOCALID_PARTY_LEADER,
-                                   gBilibin_FaceLeaderScript);
-  FieldObject_SetTargetAndCallback(
-      LOCALID_JILL, OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_PARTY_LEADER,
-      gBilibin_FaceLeaderScript);
+  Object_SetTargetAndCallback(LOCALID_GANG_MEMBER_EAST,
+                              OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_PARTY_LEADER,
+                              gBilibin_FaceLeaderScript);
+  Object_SetTargetAndCallback(LOCALID_GANG_MEMBER_WEST,
+                              OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_PARTY_LEADER,
+                              gBilibin_FaceLeaderScript);
+  Object_SetTargetAndCallback(LOCALID_JILL,
+                              OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_PARTY_LEADER,
+                              gBilibin_FaceLeaderScript);
   GameFlag_Set(FLAG_BILIBIN_JILL_GIFT_RECEIVED);
   Engine_ScriptEnd();
 }
@@ -679,7 +677,7 @@ static void EventScript_JillGivesHardNut(void) {
 /// Bilibin Treasury: its object events by story flags, its metatile behaviors
 /// and its opening transition.
 s32 Bilibin_Initialize(void) {
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (gGameState.mapId == (s32)&MapId_Bilibin) {
     Bilibin_RestoreVillageObjectEvents();
   } else if (gGameState.mapId == (s32)&MapId_BilibinBarricade) {
@@ -887,7 +885,7 @@ static void Bilibin_UpdateCratesCells(void) {
 static void Bilibin_SetUpTreasury(void) {
   struct ObjectEvent *leader;
 
-  gEventWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   Bilibin_UpdateTreasuryStatueCells();
   if (gGameState.warpDest == BILIBIN_TREASURY_UPPER_FROM_LOWER ||
@@ -917,11 +915,11 @@ static void EventScript_PushStatueOrCrates(void) {
 
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   direction = leader->facing >> 12;
-  pushed = MapObjectEvent_FindAtCell(
+  pushed = ObjectEvent_FindAtCell(
       (leader->x.part.pixel + (gBilibin_FacingCellSteps[direction] >> 16)) >> 4,
       (leader->z.part.pixel + (s16)gBilibin_FacingCellSteps[direction]) >> 4);
   if (pushed != NULL) {
-    pushed->terrainId = 2;
+    pushed->layer = 2;
     destination.x =
         pushed->x.fixed + (gBilibin_FacingCellSteps[direction] & -0x10000);
     destination.y = pushed->y.fixed;
@@ -940,7 +938,7 @@ static void EventScript_PushStatueOrCrates(void) {
       leader->acceleration = PIXELS(1) / 5;
       Engine_ObjectSetPosition(leader, destination.x, destination.y,
                                destination.z);
-      FieldObject_WaitForMove(pushed);
+      Object_WaitForMove(pushed);
       pushed->x.fixed = destination.x;
       pushed->z.fixed = destination.z;
       pushed->velocityX = 0;
@@ -964,7 +962,7 @@ static void EventScript_PushStatueOrCrates(void) {
 static void Bilibin_UpdateWadingRipples(void) {
   struct ObjectEvent *objectEvent;
 
-  objectEvent = ObjectEvent_GetById(gGameState.selectedLocalId);
+  objectEvent = ObjectEvent_GetById(gGameState.leaderLocalId);
   if (objectEvent->x.fixed < PIXELS(142)) {
     if (objectEvent->y.fixed < PIXELS(8)) {
       if (gBilibin_RippleTimer.frames == 0)
@@ -981,7 +979,7 @@ static void Bilibin_UpdateWadingRipples(void) {
 /// wader, which frees itself after 30 frames.
 static void Bilibin_SpawnRipple(struct ObjectEvent *objectEvent) {
   struct ObjectEvent *effect;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
 
   effect = Engine_ObjectCreate(SPRITE_RIPPLE, objectEvent->x.fixed,
                                objectEvent->y.fixed, objectEvent->z.fixed);
@@ -991,12 +989,12 @@ static void Bilibin_SpawnRipple(struct ObjectEvent *objectEvent) {
   sprite = effect->sprite;
   Engine_ObjectSetScript(effect, gBilibin_RippleScript);
   effect->motionFlags = 0;
-  effect->terrainId = 1;
+  effect->layer = 1;
   effect->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
   if (sprite == NULL)
     return;
 
-  AnimationObject_SelectAnimation(sprite, 2);
+  Sprite_StartAnim(sprite, 2);
   sprite->flags = 0;
   sprite->image.objectMode = 1;
   sprite->image.priority = 3;
@@ -1121,63 +1119,63 @@ struct ObjectEventTemplate gBilibinObjectEventTemplatesOther[] = {
 
 struct ObjectEventTemplate gBilibinObjectEventTemplates[] = {
     { SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(40), 0, PIXELS(140), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(40), 0, PIXELS(140), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_TREE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(256), 0, PIXELS(440), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(256), 0, PIXELS(440), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(264), 0, PIXELS(328), FACING_SOUTHWEST, TALK_FACE_PARTY, 0 },
+        PIXELS(264), 0, PIXELS(328), FACING_SOUTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(312), 0, PIXELS(240), FACING_NORTHEAST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(312), 0, PIXELS(240), FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(176), 0, PIXELS(328), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(176), 0, PIXELS(328), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(128), 0, PIXELS(224), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(128), 0, PIXELS(224), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(176), 0, PIXELS(96), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(176), 0, PIXELS(96), FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(192), 0, PIXELS(96), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(192), 0, PIXELS(96), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(208), 0, PIXELS(200), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(208), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(192), 0, PIXELS(208), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(192), 0, PIXELS(208), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(232), 0, PIXELS(296), FACING_SOUTHWEST, TALK_FACE_PARTY, 0 },
+        PIXELS(232), 0, PIXELS(296), FACING_SOUTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_WITH_PICKAXE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(392), 0, PIXELS(360), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(392), 0, PIXELS(360), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_GOLDEN_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(264), 0, PIXELS(216), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(264), 0, PIXELS(216), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(264), 0, PIXELS(432), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(264), 0, PIXELS(432), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gBilibinBarricadeObjectEventTemplates[] = {
     { SPRITE_CRATES, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(136), 0, PIXELS(300), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(136), 0, PIXELS(300), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_TREE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(272), 0, PIXELS(154), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, 0 },
+        PIXELS(272), 0, PIXELS(154), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_TREE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(272), 0, PIXELS(154), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, 0 },
+        PIXELS(272), 0, PIXELS(154), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_TREE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(272), 0, PIXELS(154), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, 0 },
+        PIXELS(272), 0, PIXELS(154), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(282), 0, PIXELS(170), FACING_WEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(282), 0, PIXELS(170), FACING_WEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(246), 0, PIXELS(170), FACING_SOUTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(246), 0, PIXELS(170), FACING_SOUTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(262), 0, PIXELS(156), FACING_WEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(262), 0, PIXELS(156), FACING_WEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_BLANK_32, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gBilibinTreasuryObjectEventTemplates[] = {
     { SPRITE_GOLDEN_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(232), 0, PIXELS(100), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(232), 0, PIXELS(100), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { JUPITER_DJINNI, FLAG_DJINNI(DJINNI_GUST), MOVEMENT_TYPE_STAND,
-        PIXELS(328), 0, PIXELS(152), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(328), 0, PIXELS(152), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };
 
@@ -1246,7 +1244,7 @@ struct MapEvent gBilibinEvents[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_WHIRLWIND), LOCALID_IVY, CONDITION_ALWAYS, 0 },
     { BG_EVENT(BG_EVENT_JAR), 100, 0xf50, FIND_ITEM(ITEM_HERB) },
     { BG_EVENT(BG_EVENT_JAR), 101, 0xf51, FIND_COINS(5) },
-    { BG_EVENT(BG_EVENT_UNNAMED), 90, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_InspectWell) },
+    { BG_EVENT(BG_EVENT_SILENT), 90, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_InspectWell) },
     { MAP_EVENTS_END },
 };
 
@@ -1275,8 +1273,8 @@ struct MapEvent gBilibinBarricadeEvents[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_GANG_MEMBER_WEST, FLAG_BILIBIN_JILL_RESCUED, MSGNO(MsgBilibinWhatACruelWorldWeJust) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_GANG_MEMBER_WEST, CONDITION_ALWAYS, MSGNO(MsgBilibinWellItWasntMyIdeaTo) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_JILL, CONDITION_ALWAYS, MSGNO(MsgBilibinThesePersimmonsAreJustLikeMy) },
-    { BG_EVENT(BG_EVENT_UNNAMED), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadRestrictedAreaSign) },
-    { BG_EVENT(BG_EVENT_UNNAMED), 30, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgFieldDoorTightlyLocked)) },
+    { BG_EVENT(BG_EVENT_SILENT), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadRestrictedAreaSign) },
+    { BG_EVENT(BG_EVENT_SILENT), 30, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgFieldDoorTightlyLocked)) },
     { MAP_EVENT_COORD, 13, FLAG_BILIBIN_JILL_GIFT_RECEIVED, EVENT_SCRIPT(EventScript_JillGivesHardNut) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_JILL_TREE, FLAG_BILIBIN_JILL_RESCUED, EVENT_SCRIPT(EventScript_PullJillFromRiver) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_CheckAhead) },
@@ -1290,7 +1288,7 @@ struct MapEvent gBilibinBarricadeEvents[] = {
 struct MapEvent gBilibinTreasuryEvents[] = {
     { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, BILIBIN_TREASURY_TO_BILIBIN_SOUTH },
     { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, BILIBIN_TREASURY_LOWER_TO_UPPER },
-    { BG_EVENT(BG_EVENT_UNNAMED), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadWarehouseSign) },
+    { BG_EVENT(BG_EVENT_SILENT), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadWarehouseSign) },
     { MAP_EVENT_TALK, LOCALID_GUST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_GustJoins) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_TREASURY_STATUE, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_UpdateTreasuryStatueCells) },
     { COORD_EVENT_WALKING_INTO(FACING_SOUTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushStatueOrCrates) },

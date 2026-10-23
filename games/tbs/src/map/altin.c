@@ -313,10 +313,10 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
     if (Engine_GameFlagIsSet(FLAG_HYDROS_STATUES_DEFEATED)) {
       gAltin_ObjectEventTemplates[LOCALID_WOMAN_WATER_LUCK -
                                   LOCALID_FIRST_PLACED]
-          .talkFacing = TALK_FACE_PARTY;
+          .talkFacing = TALK_FACING_PARTY;
       gAltin_ObjectEventTemplates[LOCALID_THIRSTY_OLD_WOMAN -
                                   LOCALID_FIRST_PLACED]
-          .talkFacing = TALK_FACE_PARTY;
+          .talkFacing = TALK_FACING_PARTY;
     }
     return gAltin_ObjectEventTemplates;
   }
@@ -324,12 +324,12 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
     if (Engine_GameFlagIsSet(FLAG_ALTIN_MINE_FIRST_DRAIN))
       gAltinInteriors_ObjectEventTemplates[LOCALID_ROOM_ONE_SECOND_GUEST -
                                            LOCALID_FIRST_PLACED]
-          .talkFacing = TALK_FACE_PARTY_AND_BACK;
+          .talkFacing = TALK_FACING_PARTY_AND_BACK;
     if (Engine_GameFlagIsSet(FLAG_ALTIN_MINE_SECOND_DRAIN) ||
         Engine_GameFlagIsSet(FLAG_ALTIN_MINE_THIRD_DRAIN))
       gAltinInteriors_ObjectEventTemplates[LOCALID_ROOM_TWO_SECOND_GUEST -
                                            LOCALID_FIRST_PLACED]
-          .talkFacing = TALK_FACE_PARTY_AND_BACK;
+          .talkFacing = TALK_FACING_PARTY_AND_BACK;
     Map_PrepareObjectEvents(gAltinInteriors_ObjectEventTemplates);
     return gAltinInteriors_ObjectEventTemplates;
   }
@@ -397,9 +397,9 @@ static void Altin_TalkToThirstyOldWoman(void) {
     if (GameFlag_IsSet(FLAG_ALTIN_WATER_BEAST_LEFT) == 0) {
       beast = ObjectEvent_GetById(LOCALID_WATER_BEAST);
 
-      Camera_GetScriptObject()->motionFlags = 0;
-      Camera_SetSpeed(0x10000, 0x2000);
-      Camera_MoveTo(beast->x.fixed, beast->y.fixed, beast->z.fixed, 1);
+      FieldCamera_GetScriptObject()->motionFlags = 0;
+      FieldCamera_SetSpeed(0x10000, 0x2000);
+      FieldCamera_MoveTo(beast->x.fixed, beast->y.fixed, beast->z.fixed, 1);
       // BUG: FACING_SOUTH's value is passed as a local id. No object event has
       // it, so the leader does not turn south toward the beast.
 #ifdef BUGFIX
@@ -412,7 +412,7 @@ static void Altin_TalkToThirstyOldWoman(void) {
       Engine_CameraWaitForMove();
       Engine_ScriptWait(120);
       leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-      Camera_MoveTo(leader->x.fixed, leader->y.fixed, leader->z.fixed, 1);
+      FieldCamera_MoveTo(leader->x.fixed, leader->y.fixed, leader->z.fixed, 1);
       Engine_CameraWaitForMove();
     }
     Engine_ObjectEventSetAnimationAndWait(LOCALID_THIRSTY_OLD_WOMAN,
@@ -605,7 +605,7 @@ static void Altin_EnterDoor(void) {
   s32 row;
   s32 rightColumn;
 
-  work = gEventWork;
+  work = gFieldWork;
   Engine_ScriptStart();
   for (localId = LOCALID_FIRST_PLACED; localId <= LOCALID_LAST_SLOT;
        localId++) {
@@ -618,15 +618,14 @@ static void Altin_EnterDoor(void) {
   // The bytes read the entry through byte offsets and sign-extend the door
   // number by shifts; indexing the structs loads the fields differently.
   doorBytes = (u8 *)gAltin_Doors;
-  doorIndex =
-      ((*(u16 *)&work->touchedTrigger - FIRST_DOOR_TRIGGER) << 16) >> 16;
+  doorIndex = ((*(u16 *)&work->coordEvent - FIRST_DOOR_TRIGGER) << 16) >> 16;
   doorByteOffset = doorIndex << 3;
   coordinatesByteOffset = doorByteOffset + 4;
   column = *(s16 *)(doorBytes + coordinatesByteOffset);
   row = *(s16 *)(doorBytes + coordinatesByteOffset + 2);
   if (doorIndex == DOOR_SANCTUM) {
     // The Sanctum's door slides open with SE_188, as Bilibin's does.
-    Script_PlayCue(SE_188);
+    Script_PlaySong(SE_188);
     MapGrid_CopyCellsTo(42, 33, column, row, 2, 2);
     rightColumn = column + 2;
     MapGrid_CopyCellsTo(42, 35, rightColumn, row, 2, 2);
@@ -635,7 +634,7 @@ static void Altin_EnterDoor(void) {
     MapGrid_CopyCellsTo(40, 35, rightColumn, row, 2, 2);
     Engine_ScriptWait(4);
   } else {
-    Script_PlayCue(SE_DOOR_OPEN);
+    Script_PlaySong(SE_DOOR_OPEN);
     // The north door's row in gAltin_Doors plays its opening at
     // (39, 17), outside the village's camera box; its house stands at
     // (8, 17), above where the party comes back out
@@ -649,7 +648,7 @@ static void Altin_EnterDoor(void) {
 
   // Walk the leader through.
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x8000, 0x4000);
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
   if (doorIndex == DOOR_STRAIGHT_IN) {
@@ -663,7 +662,7 @@ static void Altin_EnterDoor(void) {
     }
   }
   Engine_ScriptWait(10);
-  Engine_ScriptRequestWarp(work->touchedTrigger);
+  Engine_ScriptRequestWarp(work->coordEvent);
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
   Engine_ScriptEnd();
@@ -674,12 +673,12 @@ static void Altin_EnterDoor(void) {
 static void Altin_WalkThroughDoorway(void) {
   struct EventWork *work;
 
-  work = gEventWork;
+  work = gFieldWork;
   Engine_ScriptStart();
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
-  Script_PlayCue(SE_MAP_EXIT);
+  Script_PlaySong(SE_MAP_EXIT);
   ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 2, -16);
-  Engine_ScriptRequestWarp(work->touchedTrigger);
+  Engine_ScriptRequestWarp(work->coordEvent);
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
   Engine_ScriptEnd();
@@ -702,21 +701,21 @@ static void Beast_Hop(union FieldObject *fieldObject) {
   if (beast->velocityY == 0) {
     ObjectEvent_SetMode(beast, 1);
     beast->y.fixed += -0x18000;
-    if (beast->y.fixed < beast->terrainHeight) {
+    if (beast->y.fixed < beast->groundHeight) {
       if (fieldObject->effect.countdown != 0) {
-        Script_PlayCue(SE_SPLASH);
+        Script_PlaySong(SE_SPLASH);
         fieldObject->effect.countdown = 0;
         beast->work = 4;
         MapGrid_SetShake(0, 0x10000, 0x10000);
       }
-      beast->y.fixed = beast->terrainHeight;
+      beast->y.fixed = beast->groundHeight;
     }
     beast->paused = 1;
   } else {
     beast->paused = 0;
   }
   if (beast->timer == 0) {
-    Script_PlayCue(SE_JUMP);
+    Script_PlaySong(SE_JUMP);
     fieldObject->effect.countdown = 1;
     ObjectEvent_SetMode(beast, 2);
     beast->velocityY = 0x30000;
@@ -737,7 +736,7 @@ static void Beast_HopAway(void) {
   ObjectEvent_SetSpeed(LOCALID_WATER_BEAST, 0x13333, 0x9999);
   ObjectEvent_MoveToAndWait(LOCALID_WATER_BEAST, 28, 460);
   ObjectEvent_MoveToAndWait(LOCALID_WATER_BEAST, 24, 448);
-  Script_PlayCue(SE_SPLASH);
+  Script_PlaySong(SE_SPLASH);
   Engine_ObjectEventDestroy(LOCALID_WATER_BEAST);
   MapGrid_SetShake(0, 0x10000, 0x10000);
   Engine_ScriptWait(4);
@@ -825,7 +824,7 @@ static void Altin_ApplyWaterLevel(void) {
   if (GameFlag_IsSet(FLAG_ALTIN_WATER_BEAST_LEFT) != 0) {
     Engine_ObjectEventDestroy(LOCALID_WATER_BEAST);
   } else {
-    FieldEffect_SetQueuedSoundAndPlay(SE_170);
+    Map_QueueMusic(SE_170);
     ObjectEvent_SetChildValue(LOCALID_WATER_BEAST, SPRITE_COLOR_RBG);
     Engine_ObjectEventSetAnimation(LOCALID_WATER_BEAST,
                                    WATER_BEAST_ANIMATION_SPIT);
@@ -863,7 +862,7 @@ static void Altin_ApplyWaterLevel(void) {
   // Redraw at the leader after the map and object state are ready.
   Engine_TaskWait(1);
   Engine_ScriptStart();
-  Camera_MoveTo(leader->x.fixed, leader->y.fixed, leader->z.fixed, 0);
+  FieldCamera_MoveTo(leader->x.fixed, leader->y.fixed, leader->z.fixed, 0);
   Engine_MapGridRedraw();
   Engine_ScriptEnd();
   Engine_TaskWait(1);
@@ -947,7 +946,7 @@ static void Spray_Drift(union FieldObject *fieldObject) {
   }
 }
 
-/// Scheduler task while the water beast spits: every fourth frame a spray
+/// Task while the water beast spits: every fourth frame a spray
 /// particle starts from its spout, living 20 frames.
 static void Beast_SpawnSpray(void) {
   union FieldObject *spray;
@@ -969,13 +968,13 @@ static void Beast_SpawnSpray(void) {
 /// stops spitting, turns to the party, cries out and hops away into the flood.
 static void Altin_ScareOffBeast(void) {
   Engine_ScriptStart();
-  Camera_SetSpeed(0x6666, 0xccc);
-  Camera_MoveTo(PIXELS(63), -1, PIXELS(450), 1);
+  FieldCamera_SetSpeed(0x6666, 0xccc);
+  FieldCamera_MoveTo(PIXELS(63), -1, PIXELS(450), 1);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(30);
   Engine_ObjectEventSetAnimation(LOCALID_WATER_BEAST, ANIMATION_STAND);
   // The spitting stops: its sound and its spray end.
-  FieldEffect_SetQueuedSoundAndPlay(-1);
+  Map_QueueMusic(-1);
   Engine_TaskRemoveCallback(Beast_SpawnSpray);
   Engine_ScriptWait(20);
   ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_WATER_BEAST, 0);
@@ -983,7 +982,7 @@ static void Altin_ScareOffBeast(void) {
   ObjectEvent_FaceDirection(LOCALID_WATER_BEAST, FACING_EAST, 20);
   ObjectEvent_FaceDirection(LOCALID_WATER_BEAST, FACING_NORTH + FACING_STEP,
                             40);
-  Script_PlayCue(SE_147);
+  Script_PlaySong(SE_147);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_WATER_BEAST, 2);
   Engine_ScriptWait(20);
   ObjectEvent_FaceDirection(LOCALID_WATER_BEAST, FACING_NORTHWEST + FACING_STEP,
@@ -1146,46 +1145,49 @@ struct ObjectEventTemplate gAltin_NoObjectEventTemplates[] = {
 struct ObjectEventTemplate gAltin_ObjectEventTemplates[] = {
     {SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
      PIXELS(440), 0, PIXELS(200), FACING_SOUTH + FACING_STEP,
-     TALK_FACE_PARTY_AND_BACK, 0},
+     TALK_FACING_PARTY_AND_BACK, 0},
     {SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(408), 0,
-     PIXELS(216), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0},
+     PIXELS(216), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0},
     {SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-     PIXELS(310), 0, PIXELS(217), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY,
+     PIXELS(310), 0, PIXELS(217), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY,
      0},
     {SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-     PIXELS(246), 0, PIXELS(186), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY,
+     PIXELS(246), 0, PIXELS(186), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY,
      0},
     {SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR,
-     PIXELS(58), 0, PIXELS(206), FACING_EAST + FACING_STEP, TALK_FACE_PARTY, 0},
+     PIXELS(58), 0, PIXELS(206), FACING_EAST + FACING_STEP, TALK_FACING_PARTY,
+     0},
     {SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
      PIXELS(104), 0, PIXELS(286), FACING_EAST + FACING_STEP,
-     TALK_FACE_PARTY_AND_BACK, 0},
+     TALK_FACING_PARTY_AND_BACK, 0},
     {SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(41), 0,
-     PIXELS(441), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0},
+     PIXELS(441), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK,
+     0},
     {SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
      PIXELS(176), 0, PIXELS(296), FACING_SOUTHEAST + FACING_STEP,
-     TALK_FACE_PARTY, 0},
+     TALK_FACING_PARTY, 0},
     {SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-     PIXELS(136), 0, PIXELS(461), FACING_EAST + FACING_STEP, TALK_FACE_PARTY,
+     PIXELS(136), 0, PIXELS(461), FACING_EAST + FACING_STEP, TALK_FACING_PARTY,
      0},
     {SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-     PIXELS(350), 0, PIXELS(286), FACING_NORTH, TALK_FACE_PARTY, 0},
+     PIXELS(350), 0, PIXELS(286), FACING_NORTH, TALK_FACING_PARTY, 0},
     {SPRITE_WATER_BEAST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(60), 0,
-     PIXELS(474), FACING_SOUTHEAST, TALK_FACE_PARTY, 0},
+     PIXELS(474), FACING_SOUTHEAST, TALK_FACING_PARTY, 0},
     {SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(344), 0,
-     PIXELS(168), FACING_SOUTH, TALK_FACE_PARTY, 0},
+     PIXELS(168), FACING_SOUTH, TALK_FACING_PARTY, 0},
     {SPRITE_YOUNG_MAN_IN_GREEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-     PIXELS(88), 0, PIXELS(397), FACING_EAST + FACING_STEP, TALK_FACE_PARTY, 0},
+     PIXELS(88), 0, PIXELS(397), FACING_EAST + FACING_STEP, TALK_FACING_PARTY,
+     0},
     {SPRITE_WOMAN_WITH_PONYTAIL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-     PIXELS(422), 0, PIXELS(208), FACING_EAST + FACING_STEP, TALK_FACE_PARTY,
+     PIXELS(422), 0, PIXELS(208), FACING_EAST + FACING_STEP, TALK_FACING_PARTY,
      0},
     {SPRITE_CRATE, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION, PIXELS(452), 0,
-     PIXELS(216), FACING_SOUTH, TALK_KEEP_FACING, 0},
+     PIXELS(216), FACING_SOUTH, TALK_FACING_KEEP, 0},
     {SPRITE_CRATE, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION, PIXELS(332), 0,
-     PIXELS(360), FACING_SOUTH, TALK_KEEP_FACING,
+     PIXELS(360), FACING_SOUTH, TALK_FACING_KEEP,
      OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE},
     {SPRITE_CRATE, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION, PIXELS(332), 0,
-     PIXELS(396), FACING_SOUTH, TALK_KEEP_FACING,
+     PIXELS(396), FACING_SOUTH, TALK_FACING_KEEP,
      OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE},
     {MAP_TABLE_END},
 };
@@ -1193,31 +1195,31 @@ struct ObjectEventTemplate gAltin_ObjectEventTemplates[] = {
 // clang-format off
 struct ObjectEventTemplate gAltinInteriors_ObjectEventTemplates[] = {
     {SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(104), 0, PIXELS(120), FACING_EAST + FACING_STEP,
-        TALK_FACE_PARTY, 0},
+        TALK_FACING_PARTY, 0},
     {SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(105), 0, PIXELS(233), FACING_SOUTH + FACING_STEP,
-        TALK_FACE_PARTY, 0},
-    {SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(456), 0, PIXELS(182), FACING_WEST + FACING_STEP, TALK_FACE_PARTY_THEN_WATCH,
+        TALK_FACING_PARTY, 0},
+    {SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(456), 0, PIXELS(182), FACING_WEST + FACING_STEP, TALK_FACING_PARTY_THEN_WATCH,
         0},
     {SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(376), 0, PIXELS(120),
-        FACING_SOUTHWEST + FACING_STEP, TALK_FACE_PARTY, 0},
+        FACING_SOUTHWEST + FACING_STEP, TALK_FACING_PARTY, 0},
     {SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, 0x0, MOVEMENT_TYPE_STAND, PIXELS(690), 0, PIXELS(128), FACING_SOUTHWEST + FACING_STEP,
-        TALK_FACE_PARTY_AND_BACK, 0},
+        TALK_FACING_PARTY_AND_BACK, 0},
     {SPRITE_WOMAN_WITH_FAIR_HAIR, 0x0, MOVEMENT_TYPE_STAND, PIXELS(669), 0, PIXELS(128), FACING_EAST + FACING_STEP,
-        TALK_FACE_PARTY_AND_BACK, 0},
-    {SPRITE_GIRL_WITH_PIGTAILS, 0x0, MOVEMENT_TYPE_STAND, PIXELS(604), 0, PIXELS(145), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_THEN_WATCH, 0},
+        TALK_FACING_PARTY_AND_BACK, 0},
+    {SPRITE_GIRL_WITH_PIGTAILS, 0x0, MOVEMENT_TYPE_STAND, PIXELS(604), 0, PIXELS(145), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_THEN_WATCH, 0},
     {SPRITE_BALD_MAN_IN_RED, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(263), 0, PIXELS(436), FACING_SOUTH + FACING_STEP,
-        TALK_FACE_PARTY, 0},
+        TALK_FACING_PARTY, 0},
     {SPRITE_WOMAN_WITH_PONYTAIL, 0x0, MOVEMENT_TYPE_STAND, PIXELS(520), 0, PIXELS(454), FACING_SOUTH + FACING_STEP,
-        TALK_FACE_PARTY, 0},
+        TALK_FACING_PARTY, 0},
     {SPRITE_YOUNG_MAN_IN_GREEN, 0x0, MOVEMENT_TYPE_STAND, PIXELS(743), 0, PIXELS(454), FACING_SOUTHEAST + FACING_STEP,
-        TALK_FACE_PARTY, 0},
+        TALK_FACING_PARTY, 0},
     {SPRITE_MAN_WITH_DARK_HAIR, 0x0, MOVEMENT_TYPE_STAND, PIXELS(103), 0, PIXELS(744), FACING_SOUTHEAST + FACING_STEP,
-        TALK_FACE_PARTY, 0},
-    {SPRITE_WOMAN_IN_PINK_APRON, 0x0, MOVEMENT_TYPE_WANDER_NEAR, PIXELS(228), 0, PIXELS(756), FACING_SOUTHWEST + FACING_STEP, TALK_FACE_PARTY, 0},
+        TALK_FACING_PARTY, 0},
+    {SPRITE_WOMAN_IN_PINK_APRON, 0x0, MOVEMENT_TYPE_WANDER_NEAR, PIXELS(228), 0, PIXELS(756), FACING_SOUTHWEST + FACING_STEP, TALK_FACING_PARTY, 0},
     {SPRITE_COOK, 0x0, (s32)gAltinInteriors_CookScript, PIXELS(350), 0, PIXELS(746),
-        FACING_SOUTHWEST + FACING_STEP, TALK_FACE_PARTY, 0},
+        FACING_SOUTHWEST + FACING_STEP, TALK_FACING_PARTY, 0},
     {SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, 0x0, MOVEMENT_TYPE_STAND, PIXELS(646), 0, PIXELS(734), FACING_SOUTHEAST + FACING_STEP,
-        TALK_FACE_PARTY, 0},
+        TALK_FACING_PARTY, 0},
     {MAP_TABLE_END},
 };
 

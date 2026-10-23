@@ -9,9 +9,9 @@
 
 /// Writes `value` as eight hexadecimal digits to the number buffer. Called by
 /// DebugText_PrintHex.
-void NumberText_FormatHex(u32 value) {
-  u8 *buffer = gNumberTextBuffer;
-  const u8 *digits = gText_HexDigits;
+void String_FormatHex(u32 value) {
+  u8 *buffer = gNumberBuffer;
+  const u8 *digits = gString_HexDigits;
   s32 index = 7;
 
   do {
@@ -21,7 +21,7 @@ void NumberText_FormatHex(u32 value) {
   } while (index >= 0);
 
   {
-    u8 *terminator = gNumberTextBuffer;
+    u8 *terminator = gNumberBuffer;
     terminator[8] = 0;
   }
 }
@@ -29,7 +29,7 @@ void NumberText_FormatHex(u32 value) {
 /// Writes `number` to the number buffer as eleven characters: spaces, a sign
 /// (a space or '-') and its decimal digits, right-aligned. Called by
 /// DebugText_PrintDecimal and the Djinn preview's number text.
-void NumberText_FormatDecimal(s32 number) {
+void String_FormatDecimal(s32 number) {
   u32 *placeValues;
   s8 *output;
   s32 placesLeft;
@@ -44,9 +44,9 @@ void NumberText_FormatDecimal(s32 number) {
 
   digit = number;
   magnitude = digit;
-  placeValues = (u32 *)gText_PowersOfTen;
+  placeValues = (u32 *)gString_PowersOfTen;
   sign = ' ';
-  output = gNumberTextBuffer;
+  output = gNumberBuffer;
   if (number < 0) {
 #ifdef UBFIX
     magnitude = 0U - magnitude;
@@ -152,8 +152,8 @@ void DebugText_PrintHex(u32 value, s32 digits) {
   if ((n - 1) > 7U) {
     n = 8;
   }
-  NumberText_FormatHex(value);
-  DebugText_Print((const u8 *)(((u32)&gNumberTextHexEnd) - n));
+  String_FormatHex(value);
+  DebugText_Print((const u8 *)(((u32)&gNumberBufferHexEnd) - n));
 }
 
 /// Prints the last `digits` characters of `value` in signed decimal (1 to 10;
@@ -167,8 +167,8 @@ void DebugText_PrintDecimal(s32 value, s32 digits) {
   if ((n - 1) > 9U) {
     n = 10;
   }
-  NumberText_FormatDecimal(value);
-  DebugText_Print((const u8 *)(((u32)&gNumberTextDecimalEnd) - n));
+  String_FormatDecimal(value);
+  DebugText_Print((const u8 *)(((u32)&gNumberBufferDecimalEnd) - n));
 }
 
 /// Blanks the debug text screen, homes the cursor and points BG0 at it.
@@ -183,11 +183,11 @@ void DebugText_Clear(void) {
 /// palette into BG palette 15 with its gradient colours, and the basic sprite
 /// palettes. Called by System_Initialize and by the modes that replace those
 /// graphics and must put them back (the debug battle, the palette editor).
-void Ui_LoadWindowGraphics(void) {
+void Window_LoadGraphics(void) {
   // 0x800 words: 8 KB, 256 tiles of 4 bits a pixel
   Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowTiles),
           BG_CHAR_BLOCK(0), DMA_COPY_WORDS(0x800), REG_DMA3);
-  Dma_Set(gUi_WindowPalette, (void *)&BG_PLTT_COLOR(15, 0),
+  Dma_Set(gWindow_Palette, (void *)&BG_PLTT_COLOR(15, 0),
           DMA_ENABLE << 16 | 0x10, REG_DMA3);
   Io_Write16(0, &PLTT_BACKDROP);
   Io_Write16(RGB(0, 12, 16), &BG_PLTT_COLOR(15, 4));
@@ -203,7 +203,7 @@ void Ui_LoadWindowGraphics(void) {
 }
 
 /// Loads the basic sprite palettes (palettes 0 to 13). Called by
-/// Ui_LoadWindowGraphics and the object event setup.
+/// Window_LoadGraphics and the object event setup.
 void Palette_LoadBasicSpriteColors(void) {
   Dma_Set(gSystem_BasicColorPalette, (void *)OBJ_PLTT, DMA_ENABLE << 16 | 0xe0,
           REG_DMA3);

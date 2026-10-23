@@ -5,7 +5,7 @@
 /// Game flags, named where their meaning is shown.
 
 /// Set while `character` (character_ids.h) is in the party
-/// (Party_AddActiveOwner).
+/// (Party_AddMember).
 /// ★ Named from the game: "joined your party." (MsgJoinedParty)
 #define FLAG_IN_PARTY(character) (character)
 /// The prologue: Isaac and Garet are children. It ends with the caption
@@ -45,14 +45,14 @@
 /// Set as a battle starts, cleared as a field map starts.
 #define FLAG_IN_BATTLE 0x103
 /// Set while the field loop handles its requests, and cleared while the party
-/// walks (Field_RunMap); the deserts' heat gauges and the Colosso's wall
+/// walks (Map_Run); the deserts' heat gauges and the Colosso's wall
 /// test it.
 #define FLAG_FIELD_HANDLING_REQUESTS 0x104
 /// Set while the field menu is open; maps hold their moving object events
 /// still.
 #define FLAG_MENU_OPEN 0x106
 /// While set, opening the field menu or the pause menu, or pressing a shortcut,
-/// raises FIELD_EVENT_MENUS_RAISED instead (Field_RunMap,
+/// raises FIELD_RAISED_EVENT_MENUS instead (Map_Run,
 /// Field_RequestShortcut); Vault's inn sets it while the party corners the
 /// suspects.
 #define FLAG_MENUS_RAISE_EVENT 0x107
@@ -80,14 +80,14 @@
 /// As FLAG_KEEP_MUSIC, for as long as it is set.
 #define FLAG_KEEP_MUSIC_HELD 0x11b
 #define FLAG_WORLD_MAP_LEFT 0x11c ///< the current map is not the world map
-/// The leader left through an WARP_STYLE_ANIMATED warp; the next map plays
-/// the leader's arrival (ObjectEffect_RunPendingFlagEvent), unless its setup
+/// The leader left through an WARP_STYLE_STAIRS_UP warp; the next map plays
+/// the leader's arrival (Warp_PlayArrival), unless its setup
 /// clears this first.
-#define FLAG_WARP_ARRIVAL_PENDING 0x120
-/// As FLAG_WARP_ARRIVAL_PENDING, for an WARP_STYLE_ANIMATED_ALTERNATE warp.
-#define FLAG_WARP_ARRIVAL_ALTERNATE 0x121
+#define FLAG_WARP_ARRIVAL_STAIRS_UP 0x120
+/// As FLAG_WARP_ARRIVAL_STAIRS_UP, for an WARP_STYLE_STAIRS_DOWN warp.
+#define FLAG_WARP_ARRIVAL_STAIRS_DOWN 0x121
 /// The leader falls into the next map from 160 pixels above
-/// (ObjectEffect_RunPendingFlagEvent), as when the world map's airborne
+/// (Warp_PlayArrival), as when the world map's airborne
 /// travel ends.
 #define FLAG_ARRIVE_FALLING 0x122
 /// The party is in a town (MAP_TYPE_TOWN); the map loader sets and
@@ -114,15 +114,15 @@
 /// ★ Named from the game: "Retreat" (MsgAbilityName)
 #define FLAG_RETREAT_BLOCKED 0x144
 #define FLAG_ITEM_USE 0x145 ///< the Psynergy comes from an item
-/// No random encounters while set (Encounter_SelectEnemyGroup), unless flag
-/// 0x15f is set; debug warp destinations set it.
+/// No random encounters while set (Encounter_CountStepsAndSelectFormation),
+/// unless flag 0x15f is set; debug warp destinations set it.
 #define FLAG_NO_ENCOUNTERS 0x160
 /// No random battles until the party enters another map section: Venus
 /// Lighthouse sets it on its Reveal path, the world map's debug warp
 /// destination too, and Map_ResetFlagsOnEnter clears it with a new map section.
 #define FLAG_NO_ENCOUNTERS_IN_MAPSEC 0x161
 #define FLAG_DEBUG_BATTLE 0x162 ///< set before every debug battle
-/// In debug mode, steps on the field are not processed (Field_RunMap) and
+/// In debug mode, steps on the field are not processed (Map_Run) and
 /// the world map's places do not react to the leader; debug warp destinations
 /// set it.
 #define FLAG_DEBUG_STEPS_OFF 0x163
@@ -130,18 +130,18 @@
 /// ★ Named from the game: "Lure Cap" (MsgItemName)
 #define FLAG_LURE_CAP 0x167
 /// Auto battle: every living unit, party and enemies, makes a plain attack
-/// each round with no command menu (BattlePresentation_BuildSortedUnitEntries).
+/// each round with no command menu (Battle_BuildSortedUnitActions).
 /// The debug battle menu sets it, and clears it again for its chooser.
 #define FLAG_AUTO_BATTLE 0x16a
 #define FLAG_CHOOSING_COMMANDS 0x16b ///< set while the commands are chosen
-/// The next battle is a link battle (Battle_RunEncounter); the Battle Arena
+/// The next battle is a link battle (Battle_Run); the Battle Arena
 /// sets it, and every normal map entry (not a return keeping the party's
 /// position) clears it.
 /// ★ Named from the game: "Test your skills in Linked Battles"
 /// (MsgFieldWelcomeToBattleArenaWherePeople)
 #define FLAG_LINK_BATTLE 0x16c
 /// In debug mode, with it set, holding R as an action is planned defeats every
-/// enemy, and R with Select the party (BattleCommand_BuildPlan); that is its
+/// enemy, and R with Select the party (BattleTurn_Build); that is its
 /// only reader. Vale Gate's debug story preset sets it, and so do the
 /// Colosseum's escorts as they swap Mia in for Jenna. XXX: likely a debug
 /// switch at the Colosseum too, because Jenna is never in the party there in
@@ -156,7 +156,7 @@
 #define FLAG_DEBUG_RESOURCE_BEEP 350
 /// Encounters are rolled even where FLAG_NO_ENCOUNTERS,
 /// FLAG_NO_ENCOUNTERS_IN_MAPSEC, a zone of 0 or Cloak would stop them
-/// (Encounter_SelectEnemyGroup).
+/// (Encounter_CountStepsAndSelectFormation).
 #define FLAG_IGNORE_ENCOUNTER_CHECKS 351
 /// Flint's lesson on Djinn, after he joins on the world map: in its battle the
 /// party strikes first, two of Flint's messages follow each round, and no
@@ -188,18 +188,18 @@
 /// (MsgFieldWelcomeToBattleArenaWherePeople)
 #define FLAG_MONSTER_BATTLE 0x173
 /// Set when the cleared game's menu goes to the Battle Arena: there Psynergy
-/// has no effect and the system menu offers only Change settings.
+/// has no effect and the pause menu offers only Change settings.
 /// ★ Named from the game: "Welcome to Battle Arena"
 /// (MsgFieldWelcomeToBattleArenaWherePeople)
 #define FLAG_IN_BATTLE_ARENA 0x17e
-/// Holds the field's palette blend still (ColorBuffer_Update), while a
+/// Holds the field's palette blend still (PaletteFade_Update), while a
 /// menu is open (Menu_SuspendFieldTasks).
 #define FLAG_PALETTE_BLEND_HELD 0x152
 /// Holds the field's weather still, its particles and its next burst, while a
 /// menu is open (Menu_SuspendFieldTasks).
 #define FLAG_WEATHER_HELD 0x166
 /// With it set, holding B on the field walks the leader at 4 pixels a frame
-/// (FieldObject_UpdatePlayerControl). No ☀️ code sets it.
+/// (Object_UpdateLeaderControl). No ☀️ code sets it.
 #define FLAG_FAST_WALK 0x17f
 /// The map sections the party has visited, one flag for each, set by
 /// Map_ResetFlagsOnEnter as the party enters the section; the world map screen
@@ -211,7 +211,7 @@
 #define FLAG_MAP_TEMP_LAST 0x2ff ///< the last of the map's 256 flags
 /// A map section's flags, kept while the party moves between the maps of one
 /// section and cleared when it enters another. Each section uses the numbers
-/// for its own, so the maps name them; the next two are the link lobby's.
+/// for its own, so the maps name them; the next two are the Battle Arena's.
 #define FLAG_MAPSEC_TEMP_FIRST 0x300
 #define FLAG_MAPSEC_TEMP_LAST 0x3ff ///< the last of the map section's 256 flags
 // Byte flags, read and written eight at a time.
@@ -231,8 +231,8 @@
 #define FLAG_COLOSSO_HOLDS_EQUIPMENT 0x952
 /// The next field map starts where the party was, as after a battle: the
 /// map's flags are not reset, the object events come back from their snapshot,
-/// and the music saved in gGameState.returnCue resumes if there is one (a
-/// random battle clears it, so the map's own music plays). Field_RunMap clears
+/// and the music saved in gGameState.returnMusic resumes if there is one (a
+/// random battle clears it, so the map's own music plays). Map_Run clears
 /// it once the map starts.
 #define FLAG_KEEP_PARTY_POSITION 0x109
 /// The map shows its map section's name once it is on screen; entering a new

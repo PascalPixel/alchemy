@@ -18,7 +18,7 @@ s32 VenusLighthouse_Initialize(void);
 extern s32 gShortEffectScript[];
 extern s32 gMediumEffectScript[];
 extern s32 gLongEffectScript[];
-extern u32 gStagedObjectEvent_DirectionSteps[];
+extern u32 gPushedObject_DirectionSteps[];
 extern struct SwitchCell gVenusThirdFloorSockets[];
 extern u32 gVenusBalancePlatformHeights[];
 extern struct SwitchCell gVenusFourthFloorSockets[];

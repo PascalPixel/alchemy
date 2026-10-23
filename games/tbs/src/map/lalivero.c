@@ -74,7 +74,7 @@ enum { ENTRANCE_FROM_AERIE = 90, ENTRANCE_FROM_AERIE_QUIETLY = 91 };
 /// gLaliveroObjectEventTemplates. gLaliveroObjectEventTemplatesAfterLighthouse,
 /// for the later visit, places the same people in the same rows, then the sign
 /// and the Black Orb; its rows for Garet, Ivan and Mia take their own local ids
-/// (FieldScript_SpawnObjectTable).
+/// (FieldScript_SpawnObjectEventTemplates).
 enum LaliveroLocalId {
   /// Tolbi's soldiers, lying beaten in the street on the first visit. "Uhhnn...
   /// We were taken by surprise..."; later "Ha ha! I thought they had done me in
@@ -241,7 +241,7 @@ static void EventScript_WharfGuardLetsPartyThrough(void) {
 /// doorway, the door (or the Sanctum's gate) swings open, the leader steps in
 /// and the warp of the touched coord event is taken.
 static void EventScript_EnterDoor(void) {
-  s32 door = gEventWork->touchedTrigger;
+  s32 door = gFieldWork->coordEvent;
   s32 x = gLaliveroDoorCells[door][0];
   s32 y = gLaliveroDoorCells[door][1];
 
@@ -255,15 +255,15 @@ static void EventScript_EnterDoor(void) {
     ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 2, -16);
   }
   Engine_ScriptWait(10);
-  gEventWork->transitionFrames = 16;
+  gFieldWork->transitionFrames = 16;
   Engine_ScriptRequestWarp(door);
 }
 
 /// Lalivero: a doorway with no door (coord events 8 and 11); leave by the
 /// touched coord event's warp.
 static void EventScript_TakeTouchedWarp(void) {
-  struct EventWork *work = gEventWork;
-  s16 *trigger = (s16 *)&work->touchedTrigger;
+  struct EventWork *work = gFieldWork;
+  s16 *trigger = (s16 *)&work->coordEvent;
   s32 warp = *trigger;
 
   work->transitionFrames = 16;
@@ -487,7 +487,7 @@ static void EventScript_IodemGivesBlackOrb(void) {
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 0);
   FieldMotion_LaunchFromFocusedObject(GARET, -32, 0, FACING_EAST);
   FieldMotion_LaunchFromFocusedObject(MIA, -16, 16, FACING_NORTHEAST);
-  Motion_LaunchFromFocusedObject(IVAN, 0, 16, FACING_NORTH);
+  ObjectMotion_LaunchFromFocusedObject(IVAN, 0, 16, FACING_NORTH);
   Engine_ObjectEventWaitForMove(GARET);
   Engine_ScriptWait(30);
   Script_OpenMessage(GARET, 0);
@@ -499,12 +499,12 @@ static void EventScript_IodemGivesBlackOrb(void) {
     Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
     Engine_ScriptWait(20);
     Script_ShowMessage(MIA, 0);
-    gEventWork->message += 1;
+    gFieldWork->message += 1;
   } else {
     Engine_ScriptWait(20);
     Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
     Engine_ScriptWait(20);
-    gEventWork->message += 1;
+    gFieldWork->message += 1;
     Script_ShowMessage(MIA, 0);
   }
   Engine_ScriptWait(10);
@@ -536,7 +536,7 @@ static void EventScript_IodemGivesBlackOrb(void) {
   ObjectEvent_GetById(LOCALID_IODEM)->motionFlags = OBJ_EVENT_FALLS;
   Engine_ObjectEventSetSpritePriority(LOCALID_IODEM, 2);
   MapGrid_CopyCellsLayered(34, 0, 1, 2, 4, 18);
-  Script_PlayCue(SE_DOOR_OPEN);
+  Script_PlaySong(SE_DOOR_OPEN);
   Engine_ScriptWait(20);
   ObjectEvent_SetPosition(LOCALID_IODEM, PIXELS(72), PIXELS(312));
 #if TBS_PATCH_2
@@ -551,7 +551,7 @@ static void EventScript_IodemGivesBlackOrb(void) {
 #endif
   // The door shuts.
   Engine_MapGridCopyCellsLayered(32, 0, 1, 2, 4, 18);
-  Script_PlayCue(SE_159);
+  Script_PlaySong(SE_159);
   Engine_ScriptWait(20);
   Script_ShowMessage(LOCALID_IODEM, 0);
   Engine_ScriptWait(10);
@@ -618,12 +618,12 @@ static void EventScript_IodemGivesBlackOrb(void) {
     Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIMATION_SHAKE_HEAD);
     Engine_ScriptWait(20);
     Script_ShowMessage(LOCALID_IODEM, 0);
-    gEventWork->message += 1;
+    gFieldWork->message += 1;
   } else {
     Engine_ScriptWait(20);
     Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIMATION_SHAKE_HEAD);
     Engine_ScriptWait(20);
-    gEventWork->message += 1;
+    gFieldWork->message += 1;
     Script_ShowMessage(LOCALID_IODEM, 0);
   }
   Engine_ScriptWait(10);
@@ -680,7 +680,7 @@ static void EventScript_IodemGivesBlackOrb(void) {
   ObjectEvent_WalkByAndWait(LOCALID_IODEM, 0, 16);
   Engine_ScriptWait(30);
   ObjectEvent_SetPosition(LOCALID_BLACK_ORB, 0, 0);
-  gEventWork->message += 1;
+  gFieldWork->message += 1;
   Engine_PartyGiveItem(ITEM_BLACK_ORB, 0);
   Engine_ScriptWait(10);
   ObjectEvent_Get(LOCALID_IODEM)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
@@ -709,14 +709,14 @@ static void EventScript_IodemGivesBlackOrb(void) {
   ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_NORTH, 0);
   Engine_ScriptWait(20);
   MapGrid_CopyCellsLayered(34, 0, 1, 2, 4, 18);
-  Script_PlayCue(SE_DOOR_OPEN);
+  Script_PlaySong(SE_DOOR_OPEN);
   Engine_ScriptWait(10);
   ObjectEvent_WalkByAndWait(LOCALID_IODEM, 0, -16);
   ObjectEvent_SetPosition(LOCALID_IODEM, 0, 0);
   Engine_ScriptWait(10);
   // The door shuts.
   Engine_MapGridCopyCellsLayered(32, 0, 1, 2, 4, 18);
-  Script_PlayCue(SE_159);
+  Script_PlaySong(SE_159);
   Engine_ScriptWait(50);
   // The others are eager to sail, then walk back into the leader.
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
@@ -836,7 +836,7 @@ const struct MapEvent *Lalivero_GetEvents(void) {
 /// the north exit after Venus Lighthouse.
 s32 Lalivero_Initialize(void) {
   union FieldObject *fieldObject;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
   GlyphTransfer *icon;
 
   // Coming back from the lighthouse switches the town to its later state.
@@ -847,8 +847,8 @@ s32 Lalivero_Initialize(void) {
   if (gGameState.warpDest == ENTRANCE_FROM_AERIE_QUIETLY) {
     GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED);
   }
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  gEventWork->transitionFrames = 24;
+  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transitionFrames = 24;
 
   // The three plants stand in animation 3 and block nothing.
   Engine_ObjectEventSetAnimation(LOCALID_FIRST_PLANT, 3);
@@ -1030,83 +1030,83 @@ u32 gLaliveroWarps[] = {
 // clang-format off
 struct ObjectEventTemplate gLaliveroObjectEventTemplates[] = {
     { SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(224), 0, PIXELS(392), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(224), 0, PIXELS(392), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(288), 0, PIXELS(392), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(288), 0, PIXELS(392), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, (s32)gLalivero_CryingScript,
-        PIXELS(248), 0, PIXELS(96), FACING_NORTH, TALK_FACE_PARTY, 0 },
+        PIXELS(248), 0, PIXELS(96), FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(312), 0, PIXELS(280), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(312), 0, PIXELS(280), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_IN_WHITE_TURBAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(304), 0, PIXELS(200), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(304), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(136), 0, PIXELS(296), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(136), 0, PIXELS(296), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(440), 0, PIXELS(296), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(440), 0, PIXELS(296), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(408), 0, PIXELS(168), FACING_WEST, TALK_FACE_PARTY, 0 },
+        PIXELS(408), 0, PIXELS(168), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(200), 0, PIXELS(184), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(200), 0, PIXELS(184), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(248), 0, PIXELS(280), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(248), 0, PIXELS(280), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(72), 0, PIXELS(184), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(72), 0, PIXELS(184), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(152), 0, PIXELS(160), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(152), 0, PIXELS(160), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(344), 0, PIXELS(128), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(344), 0, PIXELS(128), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(440), 0, PIXELS(400), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(440), 0, PIXELS(400), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_IODEM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(-64), 0, PIXELS(-64), FACING_EAST, TALK_KEEP_FACING, 0 },
+        PIXELS(-64), 0, PIXELS(-64), FACING_EAST, TALK_FACING_KEEP, 0 },
     { MARS_DJINNI, FLAG_DJINNI(DJINNI_TORCH), MOVEMENT_TYPE_STAND,
-        PIXELS(200), 0, PIXELS(136), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(200), 0, PIXELS(136), FACING_EAST, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gLaliveroObjectEventTemplatesAfterLighthouse[] = {
     { SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(216), 0, PIXELS(376), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(216), 0, PIXELS(376), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(280), 0, PIXELS(376), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(280), 0, PIXELS(376), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(248), 0, PIXELS(112), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(248), 0, PIXELS(112), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(312), 0, PIXELS(296), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(312), 0, PIXELS(296), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_IN_WHITE_TURBAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(304), 0, PIXELS(200), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(304), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(136), 0, PIXELS(296), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(136), 0, PIXELS(296), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(440), 0, PIXELS(296), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(440), 0, PIXELS(296), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(408), 0, PIXELS(168), FACING_WEST, TALK_FACE_PARTY, 0 },
+        PIXELS(408), 0, PIXELS(168), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(200), 0, PIXELS(184), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(200), 0, PIXELS(184), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(248), 0, PIXELS(232), FACING_WEST, TALK_FACE_PARTY, 0 },
+        PIXELS(248), 0, PIXELS(232), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(72), 0, PIXELS(184), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(72), 0, PIXELS(184), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(152), 0, PIXELS(160), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(152), 0, PIXELS(160), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(344), 0, PIXELS(128), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(344), 0, PIXELS(128), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(440), 0, PIXELS(400), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(440), 0, PIXELS(400), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_IODEM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(-64), 0, PIXELS(-64), FACING_EAST, TALK_KEEP_FACING, 0 },
+        PIXELS(-64), 0, PIXELS(-64), FACING_EAST, TALK_FACING_KEEP, 0 },
     { MARS_DJINNI, FLAG_DJINNI(DJINNI_TORCH), MOVEMENT_TYPE_STAND,
-        PIXELS(200), 0, PIXELS(136), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(200), 0, PIXELS(136), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_SIGNPOST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(248), 0, PIXELS(80), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(248), 0, PIXELS(80), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(-64), 0, PIXELS(-64), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(-64), 0, PIXELS(-64), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };
 

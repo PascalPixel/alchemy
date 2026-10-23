@@ -1,6 +1,6 @@
 /// @file
 /// The field object: the engine of the field and the world map. It draws and
-/// animates sprites, keeps the 64 object events and runs their scripts, moves
+/// animates sprites, keeps the 64 objects and runs their scripts, moves
 /// the player by the keys, loads, draws and scrolls the maps, and answers what
 /// the ground is like under a point. field_internal.h holds what the parts
 /// share; the parts under field/ are included here in the order their code has
@@ -11,20 +11,20 @@
 /// README.md in this folder gives the words, prefixes and spellings the parts
 /// use. Where to start:
 ///
-///   Sprites         sprite_draw.c: Sprite_ComposeAnimationFrame,
+///   Sprites         sprite_draw.c: Sprite_ComposeFrame,
 ///                   Render_PlaceProjectedSprite; animation.c:
-///                   ResourceObject_Create, AnimationObject_SelectAnimation
-///   Objects         objects.c: FieldObject_Create, ObjectSystem_Initialize;
+///                   Sprite_Create, Sprite_StartAnim
+///   Objects         objects.c: Object_CreateField, ObjectSystem_Initialize;
 ///                   object_motion.c: Object_UpdateAllThumb,
 ///                   Object_SetMoveTarget
 ///   Object scripts  script_commands.c (the SC_ commands of objcmd.h);
-///                   player_control.c: FieldObject_UpdatePlayerControl
+///                   player_control.c: Object_UpdateLeaderControl
 ///   Maps            map_layers.c: MapGrid_LoadLayout,
 ///                   MapGrid_UpdateLayerScroll; world_map.c:
 ///                   WorldMap_InitializePerspective, WorldMap_UpdateView
 ///   Ground          terrain.c: MapGrid_GetTerrainHeight,
-///   MapGrid_CheckObjectStep,
-///                   GetWorldMapCollision
+///                   MapGrid_CheckCollision,
+///                   WorldMap_GetCollision
 
 #include "field_internal.h"
 

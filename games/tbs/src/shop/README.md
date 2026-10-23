@@ -37,27 +37,27 @@ setting up its windows and the hand, it is one loop over the counter's four
 actions (`shop/run.c`, simplified):
 
 ```c
-UiMessage_ShowAndWait(MsgWeaponShopWelcome);
+Shop_ShowKeeperMessage(MsgWeaponShopWelcome);
 while (1) {
   action = Menu_SelectShopCommandFar(action);
   if (action == SHOP_ACTION_BUY) {
     shop->stockCount = ShopStock_CopyItems(stockRow, shop->stockItemIds);
-    UiMessage_ShowAndWait(MsgWhatWouldYouLike);
+    Shop_ShowKeeperMessage(MsgWhatWouldYouLike);
     Shop_SelectBuy();
   } else if (action == SHOP_ACTION_SELL) {
-    UiMessage_ShowAndWait(MsgWhatToSell);
-    Shop_PickUnit();
+    Shop_ShowKeeperMessage(MsgWhatToSell);
+    Shop_ChooseMember();
   } else if (action == SHOP_ACTION_ARTIFACTS) {
     /* Shop_ListAvailableArtifacts, then Shop_SelectBuy */
   } else if (action == SHOP_ACTION_REPAIR) {
-    UiMessage_ShowAndWait(MsgFixDamaged);
-    Shop_SelectUnit();
+    Shop_ShowKeeperMessage(MsgFixDamaged);
+    Shop_RunRepairMemberChoice();
   } else {
     break;   /* the player leaves */
   }
-  UiMessage_ShowAndWait(MsgAnythingElse);
+  Shop_ShowKeeperMessage(MsgAnythingElse);
 }
-UiMessage_ShowAndWait(MsgShopFarewell);
+Shop_ShowKeeperMessage(MsgShopFarewell);
 ```
 
 A stock row
@@ -70,7 +70,7 @@ shop, in the picture, is row 7.
 
 The keepers' lines are written once for each shop type, each set in the
 same order, and the code names only the weapon shop's (`MsgWeaponShopWelcome`
-and the lines after it). `UiMessage_ShowAndWait` moves the line into the
+and the lines after it). `Shop_ShowKeeperMessage` moves the line into the
 shop's own set by the distance between the two sets' welcomes:
 
 ```c
@@ -198,26 +198,26 @@ but a member who doesn't need the service is refused with a line, and the
 choice comes round again while anyone is left who does. Reviving and
 removing a curse cost more for a higher-level member.
 
-`Shop_CanServe` tests the member and `Shop_ServicePrice` sets the fee. A
-curse is the member's restraint bits (`BattleUnit.restraint`, `enum
-RestraintFlag`): bound, which costs a member one action in four in battle,
+`Sanctum_NeedsService` tests the member and `Sanctum_ServicePrice` sets the fee. A
+curse is the member's curse bits (`Unit.curse`, `enum
+CurseFlag`): bound, which costs a member one action in four in battle,
 and a cursed item worn. `BattleUnit_ResetStateByMode` applies the service:
 full HP for a revive, poison or the haunting cleared, or every cursed item
-taken off, after which `Unit_Calculate` rebuilds the restraint bits from what
+taken off, after which `Unit_Calculate` rebuilds the curse bits from what
 is still equipped. Since `Unit_Calculate` sets those bits only for a cursed
-item worn, and nothing sets `RESTRAINT_KEEP_BOUND`, a member the sanctum
+item worn, and nothing sets `CURSE_KEEP_BOUND`, a member the sanctum
 accepts for removing a curse always has a cursed item to take off. Each
 service's lines are a run in
 the same order from `MsgReviveService`, `MsgCurePoisonService`,
 `MsgExorcismService` and `MsgRemoveCurseService`. The services are
 `enum SanctumService` in `shop_internal.h`.
 
-| Service | Value | For a member who | Fee (`Shop_ServicePrice`) |
+| Service | Value | For a member who | Fee (`Sanctum_ServicePrice`) |
 | --- | --- | --- | --- |
 | `SANCTUM_SERVICE_REVIVE` | 0 | is down (HP 0) | 20 coins a level |
 | `SANCTUM_SERVICE_CURE_POISON` | 1 | is poisoned or deadly poisoned | 10 coins |
-| `SANCTUM_SERVICE_EXORCISE` | 2 | is haunted | 50 coins |
-| `SANCTUM_SERVICE_REMOVE_CURSE` | 3 | wears a cursed item (any restraint bit set) | 10 coins a level |
+| `SANCTUM_SERVICE_REPEL_EVIL` | 2 | is haunted | 50 coins |
+| `SANCTUM_SERVICE_REMOVE_CURSE` | 3 | wears a cursed item (any curse bit set) | 10 coins a level |
 
 ## Inns
 
@@ -267,7 +267,7 @@ the bag, the items after it move up, and the new item takes the last place.
 An item the story needs can't be dropped, and nor can a cursed item being
 worn.
 
-`Shop_PickUnitItem` runs the picker. `PartyInventory_GiveItem`, the script
+`ItemPicker_Run` runs the picker. `PartyInventory_GiveItem`, the script
 command that gives an item, opens it when every bag is full, as do the
 Elemental Star room when it gives the four Mythril Bags and the debug test.
 `Shop_SelectUse` refuses an indispensable item with a message and an
@@ -284,8 +284,8 @@ while walking, so a counter and the field menu are never open together.
 ![The menu screens and the shop counters share one block of memory, 2,672 bytes. Whichever is open takes the block as it opens and gives it back as it closes, and reads it in its own way: the Item screen as its windows and the items listed, the Psynergy screen as the Psynergy listed, a shop as its stock and cursor. Over time the block passes from one to the next, never held by two at once, which is why a shop and the field menu are never open together.](https://alchemy.pascalpixel.com/illustrations/menu/menu-work.svg)
 
 Every counter and the item picker take the menu's [heap](../../glossary.md#heap-and-pools) block, under the
-[heap slot](../../glossary.md#heap-slot) `HEAP_SLOT_MENU`, as `struct ShopRuntime` with
-`Shop_InitializeCursorWork` and give it back with `Shop_ReleaseCursorWork`;
+[heap slot](../../glossary.md#heap-slot) `HEAP_SLOT_MENU`, as `struct ShopWork` with
+`Shop_InitializeWork` and give it back with `Shop_ReleaseWork`;
 the struct is in [`include/shop.h`](../../include/shop.h).
 [Menus](../menu/README.md#the-menu-work) describes the block.
 
@@ -314,7 +314,7 @@ tiles, text positions in pixels.
 | `SHOP_PRICE_NUMBER_X` | `0x20` | `0x20` | `0x20` | `0x18` | `0x20` | `0x20` |
 | `SHOP_PRICE_LABEL_X` | `0x48` | `0x48` | `0x48` | `0x40` | `0x50` | `0x48` |
 | `SHOP_MONEY_WINDOW_WIDTH` | 11 | 12 | 12 | 12 | 12 | 12 |
-| `SHOP_USE_WINDOW_X`, `_WIDTH` | 16, 14 | 14, 16 | 14, 16 | 14, 16 | 14, 16 | 14, 16 |
+| `ITEM_PICKER_WINDOW_X`, `_WIDTH` | 16, 14 | 14, 16 | 14, 16 | 14, 16 | 14, 16 | 14, 16 |
 | `SANCTUM_PRICE_WINDOW_X`, `_WIDTH` | 1, 23 | 1, 23 | 0, 30 | 1, 25 | 1, 23 | 1, 23 |
 | `SHOP_QUANTITY_CURSOR_X` | 128 | 128 | 120 | 120 | 128 | 128 |
 | `SHOP_ITEM_NOTE_X` | 8 | 0 | 0 | 0 | 0 | 0 |
@@ -326,9 +326,9 @@ Maps open the counters through their [import tables](../../glossary.md#entry-tab
 program through the shop [bank](../../glossary.md#bank)'s [far-call](../../glossary.md#far-call) table. Some of the shop's
 pieces serve other screens:
 
-- `ShopCursor_Advance` also moves the cursors of the option, name entry and
-  save menus and the choice of who joins the party.
-- The Item screen draws its quantity bar with `Shop_FillSelector`.
+- `MenuCursor_Advance` also moves the cursors of the option menu, the naming
+  screen, the file menu and the choice of who joins the party.
+- The Item screen draws its quantity bar with `QuantityBar_Fill`.
 - `Shop_SaveAndTintFieldPalette`, which saves the field's colours and fades
   them over 16 [frames](../../glossary.md#frame), also runs before a [Djinni](../../glossary.md#djinn) joins the party and before
   the wall in Altmiller Cave bursts.
@@ -357,13 +357,13 @@ pieces serve other screens:
 `shop.c` includes `shop_internal.h` and then the parts in ROM order, and its
 opening comment says where each counter starts; `head -3 shop/*.c` lists what
 each part holds. Link order is in `games/tbs/objects.tsv`, from `shop`. The
-work block's layout, `struct ShopRuntime`, is in
+work block's layout, `struct ShopWork`, is in
 [`include/shop.h`](../../include/shop.h), and the prototypes are in
 `games/tbs/include/unit/shop/shop.h`.
 
 ## Words used here
 
-- **work block**: `struct ShopRuntime` in heap slot `HEAP_SLOT_MENU`, reached
+- **work block**: `struct ShopWork` in heap slot `HEAP_SLOT_MENU`, reached
   as `gMenuWork` while a counter is open.
 - **stock row**: a row of `sStockTable` in [`shop/artifacts.c`](shop/artifacts.c),
   one per shop, with its columns named by `SHOP_STOCK_`.
@@ -378,9 +378,9 @@ work block's layout, `struct ShopRuntime`, is in
   Buy, Sell, Artifacts or Repair.
 - **service**: what a sanctum does for one member (`enum SanctumService`).
 - **cursor duration**: `shop->mode`, the frames the hand cursor's next glide
-  takes (`Shop_PlaceCursor`, `Shop_SetCursor`, `ShopCursor_Advance`).
+  takes (`MenuCursor_Place`, `MenuCursor_Set`, `MenuCursor_Advance`).
 - **party row**: the members' icons across a window, which the counters
-  select and animate (`partyMemberIcons`, `Shop_PickUnit`).
+  select and animate (`partyMemberIcons`, `Shop_ChooseMember`).
 - `unk` plus an offset: a field whose meaning is not known.
 
 ## Function prefixes

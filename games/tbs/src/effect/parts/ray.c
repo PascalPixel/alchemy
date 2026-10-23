@@ -12,7 +12,7 @@
 /// Four bolts close in, turning towards the centre for 16 frames and
 /// scattering sparks from their roots; the sparks fly on until frame 64.
 ///
-/// Abilities: Ray, Storm Ray, Destruct Ray (BATTLE_EFFECT_RAY).
+/// Abilities: Ray, Storm Ray, Destruct Ray (BATTLE_ANIM_RAY).
 ///
 /// The targets flash white 4 frames apart from frame 4. Writes REG_BG2PA and
 /// REG_BG2X, sets work->shakeFrames over the first 16 frames.
@@ -21,10 +21,10 @@
 ///         draws every bolt with the maximum blend, the others alternate it
 ///         with additive. The variant also sets the sparks each bolt throws
 ///         a frame (gRay_Sparks).
-void BattleEffect_RunRay(struct BattleEffectArgument *effect) {
+void BattleAnim_RunRay(struct BattleAnimArgs *effect) {
   void **slots;
   void **cursor;
-  struct BattleEffectWork *work;
+  struct BattleAnimWork *work;
   void *canvas;
   s32 frame;
   u8 *sheet;
@@ -33,30 +33,29 @@ void BattleEffect_RunRay(struct BattleEffectArgument *effect) {
   BlitterPair draw;
   s32 i;
 
-  slots = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
+  slots = &gHeapSlots[HEAP_SLOT_BATTLE_ANIM];
   cursor = slots;
-  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
+  ANIM_GET_WORK_AND_CANVAS(cursor, work, canvas);
   // The motes for the sparks are in the battle sheet's slot.
-  sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  sheet = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
-  BattleEffect_StartTiledCanvas(1);
+  BattleAnim_StartTiledCanvas(1);
   // Destruct Ray stretches the canvas across the screen; the others show it
   // at its own width over the targets' half (on side 1, moved 128 pixels).
   // BG2X is 20.8: Destruct Ray's canvas moves 16 texels towards the targets.
-  if (work->effect->variant == EFFECT_VARIANT_STRONGEST)
+  if (work->effect->variant == ANIM_VARIANT_STRONGEST)
     REG_BG2PA = Q_8_8(0.5);
   else
     REG_BG2PA = Q_8_8(1);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-  draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
-                      COMPOSITE_ADDITIVE);
-  draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+  draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                    COMPOSITE_ADDITIVE);
+  draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
                              work->sheet + RAY_CELLS, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-  if (work->effect->variant == EFFECT_VARIANT_STRONGEST) {
+  if (work->effect->variant == ANIM_VARIANT_STRONGEST) {
     if (work->effect->side == 1)
       REG_BG2X = -0x1000;
     else
@@ -71,7 +70,7 @@ void BattleEffect_RunRay(struct BattleEffectArgument *effect) {
   // but the two random numbers each spark takes here still advance the
   // sequence.
   for (i = 0; i != RAY_SPARK_COUNT; i++) {
-    struct EffectStep *spark = &PARTICLES[i];
+    struct Particle *spark = &PARTICLES[i];
     s32 speed;
     s32 angle;
 
@@ -82,12 +81,12 @@ void BattleEffect_RunRay(struct BattleEffectArgument *effect) {
     spark->variant = 0;
   }
 
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
-  AudioCommand_PlayFar(SE_ITEM_BREAK);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  Sound_PlaySongFar(SE_ITEM_BREAK);
 
   for (frame = 0; frame != 64; frame++) {
     if (frame == 20)
-      EFFECT_SHOW_DAMAGE(SE_IMPACT);
+      ANIM_SHOW_DAMAGE(SE_IMPACT);
     // The bolts, over the first 16 frames.
     if (frame < 16) {
       // Fill the canvas with level 16, not 0, on frames 2, 7 and 12.
@@ -106,7 +105,7 @@ void BattleEffect_RunRay(struct BattleEffectArgument *effect) {
         angle = ((frame << 11) + 0x4000) * bolt;
         x = (((32 - frame) * Trig_Sin(angle)) >> 16) + 64;
         y = -(((Trig_Cos(angle) * 8)) >> 16) - 8;
-        if (work->effect->variant == EFFECT_VARIANT_BASIC)
+        if (work->effect->variant == ANIM_VARIANT_BASIC)
           draw[0](canvas,
                   work->sheet + (Random16() & 3) * LIGHTNING_BOLT_CELL_BYTES +
                       RAY_CELLS,
@@ -123,7 +122,7 @@ void BattleEffect_RunRay(struct BattleEffectArgument *effect) {
         // 8), each living 32 to 39 frames. They leave upwards, in the upper
         // half circle, at up to 1.25 pixels a frame across and 10 up.
         for (i = 0; i != RAY_SPARK_COUNT; i++) {
-          struct EffectStep *spark = &PARTICLES[i];
+          struct Particle *spark = &PARTICLES[i];
 
           if (spark->variant == 0) {
             s32 speed;
@@ -150,11 +149,11 @@ void BattleEffect_RunRay(struct BattleEffectArgument *effect) {
     // gravity is negative, 1/32 pixel a frame upwards each frame, so the
     // sparks keep rising, and they keep 60/64 of their speed.
     for (i = 0; i != RAY_SPARK_COUNT; i++) {
-      struct EffectStep *spark = &PARTICLES[i];
+      struct Particle *spark = &PARTICLES[i];
 
       if (spark->variant > 0) {
         spark->variant--;
-        EffectStep_AdvanceWithGravity2D(spark, 60, -0x800);
+        Particle_AdvanceWithGravity2D(spark, 60, -0x800);
         if (spark->y > 0x780000) {
           spark->velocityY = -spark->velocityY / 2;
         } else if (spark->x >= 0 && spark->x < 0x7f0000 && spark->y >= 0) {
@@ -162,7 +161,7 @@ void BattleEffect_RunRay(struct BattleEffectArgument *effect) {
           s32 y = spark->y >> 16;
           s32 size = spark->variant / 8 + 1;
 
-          EFFECT_DRAW_MOTE(draw[0], canvas, sheet, x, y, size);
+          ANIM_DRAW_MOTE(draw[0], canvas, sheet, x, y, size);
         }
       }
     }
@@ -170,17 +169,17 @@ void BattleEffect_RunRay(struct BattleEffectArgument *effect) {
     // The targets are hit 4 frames apart. The bound of 96 is past the last
     // frame (63), so it never limits.
     if (frame >= 4 && frame < 96) {
-      EFFECT_FOR_EACH_TARGET(i, work->effect) {
+      ANIM_FOR_EACH_TARGET(i, work->effect) {
         if (frame == i * 4 + 4)
-          ObjectGroup_UpdateMembers(work->effect->actors[i], SPRITE_COLOR_WHITE,
-                                    POSE_DAMAGE, i, 10);
+          ObjectGroup_UpdateMembers(work->effect->targets[i],
+                                    SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 10);
       }
     }
     Camera_ApplyShake(2, 4);
-    EFFECT_END_FRAME(work);
+    ANIM_END_FRAME(work);
   }
 
-  EFFECT_FINISH_CANVAS();
+  ANIM_FINISH_CANVAS();
 }
 
 #undef RAY_SPARK_COUNT

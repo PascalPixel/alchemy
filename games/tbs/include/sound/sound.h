@@ -63,14 +63,14 @@ void Sound_Mixer(void);
 /// The build stamp System_CopyBuildStamp copies to IWRAM at power-on: twelve
 /// digits and a zero word, at the bottom of the frame-wait stack.
 extern s32 gBuildStamp[];
-/// Nonzero once AUDIO_CUE_FADE_BGM has started the music's fade; further fade
-/// cues are ignored until the next music clears it.
-extern u8 gMusicFadeRequested;
-/// Cleared by the audio test, AudioTest_RunParameterController (reached only
+/// Nonzero once SONG_FADE_OUT_BGM has started the music's fade; further fade
+/// songs are ignored until the next music clears it.
+extern u8 gBgmFadeRequested;
+/// Cleared by the audio test, SoundTest_Run (reached only
 /// through a sound far-call veneer), which restarts a 20-frame timer when it
 /// finds it set; no other code names it (see the XXX there).
 extern s32 gSoundClipFlag;
-/// An EWRAM byte Audio_InitializeRuntimeDefaults clears and nothing else
+/// An EWRAM byte Sound_Initialize clears and nothing else
 /// names.
 extern u8 gEwram_Data1;
 void Audio_Initialize(void);

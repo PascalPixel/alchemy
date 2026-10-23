@@ -58,10 +58,10 @@ waits runs as a task the scheduler calls every frame.
 When a cutscene pauses, the code that runs it simply waits; the screen keeps
 moving because a short list of jobs, the tasks, runs once every frame
 whatever that code is doing. There is no main loop that calls each part of
-the game once a frame. A menu screen, a cutscene or a battle effect is an
+the game once a frame. A menu screen, a cutscene or a battle animation is an
 ordinary function with a loop of its own, and when time has to pass it calls
 `WaitFrames(n)`, which runs `n` frames itself and then returns. The Camelot
-logo at power-on is such a loop (`Title_ShowAnimatedSplash`, simplified):
+logo at power-on is such a loop (`Title_ShowCamelotLogo`, simplified):
 
 ```c
 for (i = 0; i < 120; i++) {
@@ -75,24 +75,24 @@ for (i = 0; i < 120; i++) {
 ```
 
 A task is a `void (*)(void)` routine, added once with an order and run every
-frame until it is removed (`Scheduler_RemoveCallback`) or the next map
-empties the table. A battle adds its camera this way (`Battle_RunEncounter`):
+frame until it is removed (`Task_Remove`) or the next map
+empties the table. A battle adds its camera this way (`Battle_Run`):
 
 ```c
-Scheduler_AddOrUpdateCallback(BattlePresentation_UpdateCamera, 0xc7f);
+Task_Add(BattleCamera_Update, 0xc7f);
 ```
 
 The order's high byte picks the pass that runs the task, `0x0c` for the
-frame's work (`SCHEDULER_KEY_MAIN_LOOP`) and `0x04` for the vertical blank
-(`SCHEDULER_KEY_VBLANK`), and its low byte ranks it within the pass, higher
-first: at `0x7f` the camera moves only after the battle's event playback
-and sprites, added at `0x80`, have run. Window animation, battle event playback
-(`BattleEvent_Playback`) and a map's callbacks are tasks too.
+frame's work (`TASK_PRIORITY_MAIN_LOOP`) and `0x04` for the vertical blank
+(`TASK_PRIORITY_VBLANK`), and its low byte ranks it within the pass, higher
+first: at `0x7f` the camera moves only after the battle's playback
+and sprites, added at `0x80`, have run. Window animation, battle playback
+(`BattlePlayback_Run`) and a map's callbacks are tasks too.
 
 Each frame, `WaitFrames`:
 
 1. runs the main-loop tasks;
-2. builds the frame's [sprite](glossary.md#sprite-and-oam) list (`Render_BuildOamList`);
+2. builds the frame's [sprite](glossary.md#sprite-and-oam) list (`Oam_BuildBuffer`);
 3. halts the CPU until VBlank.
 
 The VBlank handler then copies the sprite list, the layers' scroll positions
@@ -109,13 +109,13 @@ caller's saved stack. Nothing guards against it, and no task does.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `SCHEDULER_KEY_MAIN_LOOP` | `0xc80` | order of a task in the frame's work, ranked in the middle |
-| `SCHEDULER_KEY_VBLANK` | `0x480` | order of a task in the vertical blank, ranked in the middle |
+| `TASK_PRIORITY_MAIN_LOOP` | `0xc80` | order of a task in the frame's work, ranked in the middle |
+| `TASK_PRIORITY_VBLANK` | `0x480` | order of a task in the vertical blank, ranked in the middle |
 | `Ram_FrameWaitStackTop` | `0x03007a00` | the stack line `WaitFrames` runs its frames from, 512 bytes above the heap's end |
 
 [Runtime](src/runtime/README.md#the-frame-loop) has the frame's order,
 [the stack switch](src/runtime/README.md#the-stack-switch-in-waitframes) and
-[the task scheduler](src/runtime/README.md#the-task-scheduler).
+[the task runner](src/runtime/README.md#the-task-runner).
 
 ## Banks and far calls
 
@@ -123,7 +123,7 @@ The [main image](glossary.md#main-image)'s code is laid out in banks at fixed ad
 from one bank to another goes through an 8-byte jump in the callee's far-call
 table.
 
-![Two banks of the program as they lie in the cartridge, each starting at a fixed address. The sound bank starts with its far-call table, one short entry for each of its functions that other banks call, followed by its code and then empty room up to the next fixed start. A function in the field bank that plays a sound calls the table's entry, AudioCommand_PlayFar, which jumps on to AudioCommand_Play wherever it lies in the sound bank. If the sound bank's code changes size, AudioCommand_Play moves, but the table entry stays where it is, so nothing in the field bank changes.](https://alchemy.pascalpixel.com/illustrations/system/far-calls.svg)
+![Two banks of the program as they lie in the cartridge, each starting at a fixed address. The sound bank starts with its far-call table, one short entry for each of its functions that other banks call, followed by its code and then empty room up to the next fixed start. A function in the field bank that plays a sound calls the table's entry, Sound_PlaySongFar, which jumps on to Sound_PlaySong wherever it lies in the sound bank. If the sound bank's code changes size, Sound_PlaySong moves, but the table entry stays where it is, so nothing in the field bank changes.](https://alchemy.pascalpixel.com/illustrations/system/far-calls.svg)
 
 The program is cut into banks so that one bank's code can change size without
 moving anything another bank depends on. Each bank starts at a fixed address
@@ -138,10 +138,10 @@ the table entry, named after the function with `Far` added, rather than the
 function's own address:
 
 ```c
-AudioCommand_PlayFar(MUS_TREASURE_FOUND); // the field opens a chest
+Sound_PlaySongFar(MUS_TREASURE_FOUND); // the field opens a chest
 ```
 
-goes to the sound bank's table, whose entry jumps on to `AudioCommand_Play`.
+goes to the sound bank's table, whose entry jumps on to `Sound_PlaySong`.
 The runtime bank is the exception: every bank calls its functions directly,
 and its table (`WaitFramesFar` for `WaitFrames`) serves only the overlays.
 Why the runtime alone may be called directly is an open question (below).
@@ -182,24 +182,24 @@ An overlay and the main image meet at two tables, each in a fixed order:
   put while a bank's code moves.
 
 [System](src/system/README.md#how-an-overlay-reaches-the-rest-of-the-game)
-describes both tables, and how `Resource_LoadCode` rewrites the overlay's
+describes both tables, and how `Overlay_Load` rewrites the overlay's
 calls as it unpacks it.
 
-## Sound cues
+## Songs
 
-Every sound is played by `AudioCommand_Play` with a cue number, whose range
+Every sound is played by `Sound_PlaySong` with a song number, whose range
 decides whether it is music, a fanfare or a sound from the song table.
 
-![Every sound starts as one call with a cue number, and the number's range decides what it is. Cues below 80 are music, played on the music player; asking for the music already chosen does nothing. Cues from 80 to 99 are fanfares, played on the fanfare player while the music is silenced. Cues from 100 up are rows of the song table, mostly sound effects, each played on the player its row names. Three cues are controls instead of sounds: cue 17 fades the music out, cue 18 keeps the music that is playing, and cue 289 fades out player 3.](https://alchemy.pascalpixel.com/illustrations/sound/cue-ranges.svg)
+![Every sound starts as one call with a song number, and the number's range decides what it is. Songs below 80 are music, played on the music player; asking for the music already chosen does nothing. Songs from 80 to 99 are fanfares, played on the fanfare player while the music is silenced. Songs from 100 up are rows of the song table, mostly sound effects, each played on the player its row names. Three song numbers are controls instead of sounds: song 17 fades the music out, song 18 keeps the music that is playing, and song 289 fades out player 3.](https://alchemy.pascalpixel.com/illustrations/sound/cue-ranges.svg)
 
 The game asks for every sound the same way, with one number, and the number
 says what kind of sound it is. The sound driver has eight players, and each
 kind of sound has players of its own, so a sound effect never stops the
 music.
 
-Below 80 a cue is music; from 80 to 99 (`AUDIO_JINGLE_FIRST`) a fanfare;
-from 100 (`AUDIO_SONG_FIRST`) an entry of the song table, played on the
-player its row names, which is how sound effects play. Cues 17, 18 and 289
+Below 80 a song is music; from 80 to 99 (`SONG_FANFARE_FIRST`) a fanfare;
+from 100 (`SONG_SE_FIRST`) an entry of the song table, played on the
+player its row names, which is how sound effects play. Songs 17, 18 and 289
 are controls rather than sounds.
 
 A fanfare doesn't stop the music. The music's volume drops to 0 while it keeps
@@ -211,13 +211,13 @@ Advance games ship ([pret](glossary.md#pret)'s decompilations call it m4a).
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `AUDIO_CUE_FADE_BGM` | 17 | fade the music out over 112 frames |
-| `AUDIO_CUE_KEEP_BGM` | 18 | keep the music that is playing |
-| `AUDIO_JINGLE_FIRST` | 80 | first fanfare cue; below it, music |
-| `AUDIO_SONG_FIRST` | 100 | first cue that is a song table row |
-| `AUDIO_CUE_FADE_SLOT3` | `0x121` (289) | fade player 3 out over 48 frames |
+| `SONG_FADE_OUT_BGM` | 17 | fade the music out over 112 frames |
+| `SONG_KEEP_BGM` | 18 | keep the music that is playing |
+| `SONG_FANFARE_FIRST` | 80 | first fanfare; below it, music |
+| `SONG_SE_FIRST` | 100 | first song that is a song table row |
+| `SONG_FADE_OUT_ACTION_SE` | `0x121` (289) | fade player 3 out over 48 frames |
 
-[Sound](src/sound/README.md#what-a-cue-number-means) covers the players,
+[Sound](src/sound/README.md#what-a-song-number-means) covers the players,
 [the fanfare's return](src/sound/README.md#the-fanfares-return-to-the-music)
 and [the driver's lock](src/sound/README.md#the-drivers-lock).
 
@@ -241,10 +241,10 @@ through them.
 - The frame loop, its tasks and the VBlank work share the 512 bytes of stack
   between `Ram_FrameWaitStackTop` and the heap's end, and a task must not call
   `WaitFrames`.
-- 20 scheduled tasks at a time.
+- 20 tasks at a time.
 - An overlay has the 32 KB of the overlay area, and a bank the space up to
   the next bank's fixed start.
-- Eight sound players; cues are 12 bits, 0 to 4,095.
+- Eight sound players; song numbers are 12 bits, 0 to 4,095.
 
 ## Open questions
 

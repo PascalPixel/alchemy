@@ -11,7 +11,7 @@
 	.set import.Engine_ScriptWait, 1
 	.set import.Engine_ScriptStart, 1
 	.set import.Engine_ScriptEnd, 1
-	.set import.MapTable_Prepare, 1
+	.set import.ObjectEventTemplate_Prepare, 1
 	.set import.ObjectEvent_GetById, 1
 	.set import.Engine_ObjectEventSetAnimation, 1
 	.set import.Engine_ObjectEventFaceObjectEvent, 1

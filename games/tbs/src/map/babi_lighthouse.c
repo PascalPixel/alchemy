@@ -195,7 +195,7 @@ enum {
   FLAG_BEYOND_DOOR = 0x301
 };
 
-/// What OverlayObject_PrepareObject places at the far edge of a pit: a crate
+/// What ObjectEvent_PrepareObject places at the far edge of a pit: a crate
 /// drawn solid black (SPRITE_COLOR_BLACK) and translucent in front of the
 /// object events, which shows the background through the leader where they
 /// overlap, so that he vanishes below the edge as he drops over it. ★ Named
@@ -239,7 +239,7 @@ static void BabiLighthouse_LandWithParticles(void) {
 
   // Start above the room with movement disabled until the fall begins.
   Engine_ScriptStart();
-  Camera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   Engine_MapGridRedraw();
   Engine_TaskWait(1);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->y.fixed = PIXELS(130);
@@ -291,7 +291,7 @@ static void BabiLighthouse_FallToWarp(s32 warp) {
 
   // Start above the room with movement disabled until the fall begins.
   Engine_ScriptStart();
-  Camera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   Engine_MapGridRedraw();
   Engine_TaskWait(1);
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
@@ -310,7 +310,7 @@ static void BabiLighthouse_FallToWarp(s32 warp) {
       OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   leader->velocityY = -0x50000;
-  OverlayObject_WaitUntilIdle(ObjectEvent_Get(LOCALID_PARTY_LEADER));
+  ObjectEvent_WaitUntilIdle(ObjectEvent_Get(LOCALID_PARTY_LEADER));
   ObjectEvent_SetChildValue(LOCALID_PARTY_LEADER, 15);
   Engine_ScriptRequestWarp(warp);
   Engine_ScriptEnd();
@@ -396,7 +396,7 @@ static void BabiLighthouse_JumpFromLedge(void) {
 /// Walking into one of the pillars at the Babi Lighthouse Entry pushes it.
 static void BabiLighthouse_PushLedgePillar(void) {
   Engine_ScriptStart();
-  StagedObjectEvent_AdvancePair();
+  PushedObject_AdvancePair();
   BabiLighthouse_JumpFromLedge();
   Engine_ScriptEnd();
 }
@@ -429,7 +429,7 @@ static void BabiLighthouse_PushLedgePillarOrClimbDown(void) {
 /// The leader jumps down into the pit ahead (FieldObjectEvent_JumpDownLedge),
 /// and the screen closes behind him.
 static void BabiLighthouse_JumpIntoPit(void) {
-  Camera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   FieldObjectEvent_JumpDownLedge(LOCALID_PARTY_LEADER, 6, 0);
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
@@ -449,7 +449,7 @@ static void BabiLighthouse_DropFromWestRoomEastPit(void) {
 /// is placed by it, and the leader jumps in and drops into the south room.
 static void BabiLighthouse_DropFromEastRoomPit(void) {
   Engine_ScriptStart();
-  OverlayObject_PrepareObject(PIXELS(464), 0, PIXELS(290), PIT_MASK);
+  ObjectEvent_PrepareObject(PIXELS(464), 0, PIXELS(290), PIT_MASK);
   BabiLighthouse_JumpIntoPit();
   Engine_ScriptRequestWarp(BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_PIT);
   Engine_ScriptEnd();
@@ -460,9 +460,8 @@ static void BabiLighthouse_DropFromEastRoomPit(void) {
 /// and drops into the east room.
 static void BabiLighthouse_DropFromWestRoomSouthwestPit(void) {
   Engine_ScriptStart();
-  OverlayObject_PrepareObject(PIXELS(143), 0, PIXELS(290), PIT_MASK);
-  OverlayObject_PrepareObject(PIXELS(121), 0, PIXELS(286),
-                              SPRITE_CAPPED_PILLAR);
+  ObjectEvent_PrepareObject(PIXELS(143), 0, PIXELS(290), PIT_MASK);
+  ObjectEvent_PrepareObject(PIXELS(121), 0, PIXELS(286), SPRITE_CAPPED_PILLAR);
   BabiLighthouse_JumpIntoPit();
   Engine_ScriptRequestWarp(
       BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_PIT_SOUTHWEST);
@@ -525,8 +524,8 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   Engine_ScriptWait(20);
   Script_ShowMessage(LOCALID_FARAN, 0);
   Engine_ScriptWait(10);
-  Camera_SetSpeed(0x30000, 0x6000);
-  Camera_MoveTo(PIXELS(280), -1, PIXELS(288), 1);
+  FieldCamera_SetSpeed(0x30000, 0x6000);
+  FieldCamera_MoveTo(PIXELS(280), -1, PIXELS(288), 1);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(20);
   Engine_ObjectEventSetAnimationAndWait(LOCALID_WITNESS, ANIMATION_NOD);
@@ -589,7 +588,7 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   ObjectEvent_FaceDirection(LOCALID_FARAN, FACING_SOUTH, 0);
   Engine_ScriptWait(30);
   Script_ShowMessage(LOCALID_FARAN, 0);
-  Camera_MoveTo(PIXELS(280), -1, PIXELS(320), 1);
+  FieldCamera_MoveTo(PIXELS(280), -1, PIXELS(320), 1);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(20);
   // The party learns where the kidnappers went and is asked to pursue them.
@@ -622,14 +621,14 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
     Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIMATION_NOD);
     Engine_ScriptWait(30);
     Script_ShowMessage(LOCALID_IODEM, 0);
-    gEventWork->message++;
+    gFieldWork->message++;
   } else {
     Engine_ScriptWait(30);
     ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_WEST, 0);
     Engine_ScriptWait(30);
     Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIMATION_SHAKE_HEAD);
     Engine_ScriptWait(20);
-    gEventWork->message++;
+    gFieldWork->message++;
     Script_ShowMessage(LOCALID_IODEM, 0);
   }
   Engine_ScriptWait(10);
@@ -665,12 +664,12 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
     Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIMATION_SHAKE_HEAD);
     Engine_ScriptWait(20);
     Script_ShowMessage(LOCALID_FARAN, 0);
-    gEventWork->message++;
+    gFieldWork->message++;
   } else {
     Engine_ScriptWait(30);
     Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIMATION_SHAKE_HEAD);
     Engine_ScriptWait(20);
-    gEventWork->message++;
+    gFieldWork->message++;
     Script_ShowMessage(LOCALID_FARAN, 0);
   }
   Engine_ScriptWait(10);
@@ -707,12 +706,12 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
     Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIMATION_NOD);
     Engine_ScriptWait(30);
     Script_ShowMessage(LOCALID_IODEM, 0);
-    gEventWork->message++;
+    gFieldWork->message++;
   } else {
     Engine_ScriptWait(30);
     Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIMATION_SHAKE_HEAD);
     Engine_ScriptWait(20);
-    gEventWork->message++;
+    gFieldWork->message++;
     Script_ShowMessage(LOCALID_IODEM, 0);
   }
   Engine_ScriptWait(10);
@@ -786,13 +785,13 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 296, 312);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 0);
   Engine_ScriptWait(10);
-  Motion_LaunchFromFocusedObject(GARET, 0, 16, FACING_EAST);
+  ObjectMotion_LaunchFromFocusedObject(GARET, 0, 16, FACING_EAST);
   FieldMotion_LaunchFromFocusedObject(IVAN, -16, -8, FACING_EAST);
-  Motion_LaunchFromFocusedObject(MIA, -16, 24, FACING_EAST);
+  ObjectMotion_LaunchFromFocusedObject(MIA, -16, 24, FACING_EAST);
   Engine_ObjectEventWaitForMove(MIA);
   Engine_ScriptWait(20);
-  Camera_SetSpeed(0x30000, 0x6000);
-  Camera_MoveTo(PIXELS(280), -1, PIXELS(328), 1);
+  FieldCamera_SetSpeed(0x30000, 0x6000);
+  FieldCamera_MoveTo(PIXELS(280), -1, PIXELS(328), 1);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(10);
   Engine_ScriptWait(10);
@@ -884,7 +883,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   // enters.
   BabiLighthouse_CloseTruthDoor();
   GameFlag_Clear(FLAG_BEYOND_DOOR);
-  Camera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   Engine_ScriptStart();
   ObjectEvent_ShowEmote(LOCALID_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Script_ShowMessage(LOCALID_IODEM, 0);
@@ -906,7 +905,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   ObjectEvent_ShowEmote(LOCALID_WORRIED_FOR_SHEBA,
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   ObjectEvent_ShowEmote(LOCALID_FARAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 70);
-  Camera_MoveTo(PIXELS(280), -1, PIXELS(312), 1);
+  FieldCamera_MoveTo(PIXELS(280), -1, PIXELS(312), 1);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(10);
   ObjectEvent_ShowEmote(LOCALID_DOUBTING_THE_DOOR, EMOTE_IN_FRONT | EMOTE_WINCE,
@@ -954,12 +953,12 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
     Engine_ObjectEventRunRepeatedMotion(LOCALID_FARAN, 2);
     Engine_ScriptWait(20);
     Script_ShowMessage(LOCALID_FARAN, 0);
-    gEventWork->message++;
+    gFieldWork->message++;
   } else {
     Engine_ScriptWait(30);
     Engine_ObjectEventRunRepeatedMotion(LOCALID_FARAN, 2);
     Engine_ScriptWait(20);
-    gEventWork->message++;
+    gFieldWork->message++;
     Script_ShowMessage(LOCALID_FARAN, 0);
   }
   Engine_ScriptWait(10);
@@ -995,14 +994,14 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
     Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIMATION_NOD);
     Engine_ScriptWait(30);
     Script_ShowMessage(LOCALID_IODEM, 0);
-    gEventWork->message++;
+    gFieldWork->message++;
   } else {
     Engine_ScriptWait(30);
     ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_SOUTHEAST, 0);
     Engine_ScriptWait(20);
     Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIMATION_SHAKE_HEAD);
     Engine_ScriptWait(20);
-    gEventWork->message++;
+    gFieldWork->message++;
     Script_ShowMessage(LOCALID_IODEM, 0);
   }
   Engine_ScriptWait(10);
@@ -1120,7 +1119,7 @@ static void BabiLighthouse_CloseTruthDoor(void) {
 /// door opens; otherwise it reads an inscription. "The truth of this door is
 /// open to those seeing with their true heart."
 static void BabiLighthouse_InspectTruthDoorSwitch(void) {
-  struct FieldWork *work = (struct FieldWork *)gEventWork;
+  struct FieldWork *work = (struct FieldWork *)gFieldWork;
 
   Engine_ScriptStart();
   if (work->revealActive != 0) {
@@ -1141,14 +1140,13 @@ static void BabiLighthouse_InspectTruthDoorSwitch(void) {
   Engine_ScriptEnd();
 }
 
-/// Finds the staged object event one direction-table step ahead, including
-/// terrain height.
+/// Finds the pushed object one direction-table step ahead, including
+/// ground height.
 static struct ObjectEvent *
 BabiLighthouse_FindObjectEventAhead(struct ObjectEvent *objectEvent) {
   struct FieldPosition position;
   struct FieldPosition *target = &position;
-  s32 directionStep =
-      gStagedObjectEvent_DirectionSteps[objectEvent->facing >> 12];
+  s32 directionStep = gPushedObject_DirectionSteps[objectEvent->facing >> 12];
 
   {
     s32 x = objectEvent->x.fixed;
@@ -1160,15 +1158,15 @@ BabiLighthouse_FindObjectEventAhead(struct ObjectEvent *objectEvent) {
     target->z = z;
   }
   target->y =
-      MapGrid_GetTerrainHeight(objectEvent->terrainId, target->x, target->z);
-  return StagedObjectEvent_FindAtTile(target, objectEvent);
+      MapGrid_GetTerrainHeight(objectEvent->layer, target->x, target->z);
+  return PushedObject_FindAtTile(target, objectEvent);
 }
 
 /// Before Carry is cast on the Road to Babi Lighthouse's pillar: sets the
 /// effect's childOption, so that once Carry lets go the effect waits for the
 /// pillar to bounce up and land, and rings it with dust (carry.c).
 static void BabiLighthouse_LandCarriedPillarInDust(void) {
-  ((struct FieldEffectWork *)gEffectWork)->childOption = 1;
+  ((struct FieldEffectWork *)gFieldEffectWork)->childOption = 1;
 }
 
 /// After Move or Carry on the pillar on the Road to Babi Lighthouse: in its
@@ -1182,7 +1180,7 @@ static void BabiLighthouse_UpdateMovedPillar(void) {
 
     if (row == 12) {
       pillar->motionFlags = OBJ_EVENT_FALLS;
-      pillar->terrainHeight = PIXELS(48);
+      pillar->groundHeight = PIXELS(48);
       pillar->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
       {
         s32 targetColumn = column, targetRow = row;
@@ -1194,7 +1192,7 @@ static void BabiLighthouse_UpdateMovedPillar(void) {
 }
 
 /// Walking into the pillar on the Road to Babi Lighthouse: the leader pushes it
-/// (StagedObjectEvent_AdvancePair) when it stands within 8 pixels of his
+/// (PushedObject_AdvancePair) when it stands within 8 pixels of his
 /// height.
 static void BabiLighthouse_PushRoadPillar(void) {
   // Trial: inverting the empty success arm changes two branch instructions
@@ -1220,7 +1218,7 @@ static void BabiLighthouse_PushRoadPillar(void) {
     return;
   }
 
-  StagedObjectEvent_AdvancePair();
+  PushedObject_AdvancePair();
 }
 
 /// Walking into the climbable cells by the Road to Babi Lighthouse's pillar:
@@ -1300,7 +1298,7 @@ static void BabiLighthouse_RedrawLedgePillarCells(void) {
 /// later): each is drawn in front of the leader when nearer the screen, and
 /// on its layer otherwise.
 static void BabiLighthouse_MatchLeaderPriority(union FieldObject *fieldObject) {
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
   struct ObjectEvent *objectEvent;
   s32 priority;
 
@@ -1349,7 +1347,7 @@ s32 BabiLighthouse_SetupMap(void) {
   u8 zero;
 
   Engine_TaskWait(1);
-  gEventWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   state = &gGameState;
   mapId = state->mapId;
@@ -1387,7 +1385,7 @@ s32 BabiLighthouse_SetupMap(void) {
     BabiLighthouse_RedrawLedgePillarCells();
     objectEvent = ObjectEvent_GetById(LOCALID_RIGHT_PILLAR);
     objectEvent->y.fixed =
-        ObjectEvent_GetById(LOCALID_RIGHT_PILLAR)->terrainHeight;
+        ObjectEvent_GetById(LOCALID_RIGHT_PILLAR)->groundHeight;
     if (GameFlag_IsSet(FLAG_GROWTH_PASSAGE_OPEN) != 0) {
       Engine_ObjectEventSetAnimation(LOCALID_PLANT, 4);
       ObjectEvent_GetById(LOCALID_PLANT)->collisionFlags = 0xfe;
@@ -1435,7 +1433,7 @@ s32 BabiLighthouse_SetupMap(void) {
     switch (state->warpDest) {
     case BABI_LIGHTHOUSE_LUFF_FROM_BABI_LIGHTHOUSE_STONE_DOOR_WEST:
       GameFlag_Set(FLAG_BABI_LIGHTHOUSE_BACK_FROM_STONE_DOOR);
-      // Both warp destinations restore the same remembered tile changes.
+      // Both warp destinations restore the same remembered cell changes.
       // fall through
     case BABI_LIGHTHOUSE_LUFF_LOCKED_DOOR_ROOM_FROM_SOUTH_ROOM:
       if (GameFlag_IsSet(FLAG_BABI_LIGHTHOUSE_BACK_FROM_STONE_DOOR) != 0) {
@@ -1444,19 +1442,19 @@ s32 BabiLighthouse_SetupMap(void) {
       }
       break;
     case BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_WEST_ROOM_PIT_SOUTHWEST:
-      OverlayObject_PrepareObject(PIXELS(440), 0, PIXELS(290), PIT_MASK);
+      ObjectEvent_PrepareObject(PIXELS(440), 0, PIXELS(290), PIT_MASK);
       MapGrid_CopyCellAttributes(22, 13, 1, 1, 27, 13);
       BabiLighthouse_FallToWarp(
           BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_FALL_SOUTH);
       break;
     case BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_WEST_ROOM_PIT_NORTHWEST:
-      OverlayObject_PrepareObject(PIXELS(448), 0, PIXELS(290), PIT_MASK);
+      ObjectEvent_PrepareObject(PIXELS(448), 0, PIXELS(290), PIT_MASK);
       MapGrid_CopyCellAttributes(22, 12, 1, 1, 28, 10);
       BabiLighthouse_FallToWarp(
           BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_FALL_NORTH);
       break;
     case BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_EAST_ROOM_FALL_NORTH:
-      OverlayObject_PrepareObject(PIXELS(232), 0, PIXELS(594), PIT_MASK);
+      ObjectEvent_PrepareObject(PIXELS(232), 0, PIXELS(594), PIT_MASK);
       MapGrid_CopyCellAttributes(22, 12, 1, 1, 14, 33);
       BabiLighthouse_FallToWarp(
           BABI_LIGHTHOUSE_LUFF_TO_BABI_LIGHTHOUSE_STONE_DOOR_EAST);
@@ -1535,7 +1533,7 @@ s32 BabiLighthouse_SetupMap(void) {
 /// Pixel step by direction: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
-s32 gStagedObjectEvent_DirectionSteps[] = {
+s32 gPushedObject_DirectionSteps[] = {
     DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),
@@ -1544,11 +1542,11 @@ s32 gStagedObjectEvent_DirectionSteps[] = {
     DIRECTION_STEP(16, 0),
 };
 
-u32 gStagedObjectEvent_FootprintKinds[] = {
+u32 gPushedObject_FootprintKinds[] = {
     207, 205, 228, 229, 298, 297,
 };
 
-s32 gStagedObjectEvent_FootprintBounds[] = {
+s32 gPushedObject_FootprintBounds[] = {
     -32, -8,  32, 8,  -8,  -32, 8,  32, -32, -16, 32, 0,
     -8,  -32, 8,  32, -32, -8,  32, 8,  -8,  -32, 8,  32,
 };
@@ -1792,64 +1790,64 @@ struct ObjectEventTemplate gBabiLighthouse_NoObjectEventTemplates[] = {
 
 struct ObjectEventTemplate gBabiLighthouse_EntryObjectEventTemplates[] = {
     {SPRITE_CAPPED_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-     PIXELS(88), 0, PIXELS(328), FACING_SOUTH, TALK_KEEP_FACING, 0},
+     PIXELS(88), 0, PIXELS(328), FACING_SOUTH, TALK_FACING_KEEP, 0},
     {SPRITE_CAPPED_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-     PIXELS(296), 0, PIXELS(328), FACING_SOUTH, TALK_KEEP_FACING,
+     PIXELS(296), 0, PIXELS(328), FACING_SOUTH, TALK_FACING_KEEP,
      OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE},
     {SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(296), 0,
-     PIXELS(130), FACING_SOUTH, TALK_FACE_PARTY, 0},
+     PIXELS(130), FACING_SOUTH, TALK_FACING_PARTY, 0},
     {SPRITE_SOLDIER, CONDITION_ALWAYS, (s32)gBabiLighthouse_TrembleScript,
-     PIXELS(176), 0, PIXELS(360), FACING_SOUTH, TALK_KEEP_FACING, 0},
+     PIXELS(176), 0, PIXELS(360), FACING_SOUTH, TALK_FACING_KEEP, 0},
     {SPRITE_STRONGMAN, CONDITION_ALWAYS, (s32)gBabiLighthouse_TrembleScript,
-     PIXELS(240), 0, PIXELS(240), FACING_SOUTH, TALK_KEEP_FACING, 0},
+     PIXELS(240), 0, PIXELS(240), FACING_SOUTH, TALK_FACING_KEEP, 0},
     {SPRITE_SOLDIER, CONDITION_ALWAYS, (s32)gBabiLighthouse_TrembleScript,
-     PIXELS(216), 0, PIXELS(280), FACING_SOUTH, TALK_KEEP_FACING, 0},
+     PIXELS(216), 0, PIXELS(280), FACING_SOUTH, TALK_FACING_KEEP, 0},
     {SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS,
      (s32)gBabiLighthouse_TrembleScript, PIXELS(184), 0, PIXELS(248),
-     FACING_SOUTH, TALK_KEEP_FACING, 0},
+     FACING_SOUTH, TALK_FACING_KEEP, 0},
     {MAP_TABLE_END},
 };
 
 struct ObjectEventTemplate gBabiLighthouse_LuffObjectEventTemplates[] = {
     {JUPITER_DJINNI, FLAG_DJINNI(DJINNI_LUFF), MOVEMENT_TYPE_STAND, PIXELS(472),
-     0, PIXELS(184), FACING_SOUTHEAST, TALK_FACE_PARTY, 0},
+     0, PIXELS(184), FACING_SOUTHEAST, TALK_FACING_PARTY, 0},
     {MAP_TABLE_END},
 };
 
 // clang-format off
 struct ObjectEventTemplate gBabiLighthouse_StoneDoorObjectEventTemplates[] = {
     {GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(-64), 0, PIXELS(-64), FACING_EAST,
-        TALK_FACE_PARTY, 0},
-    {IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(-64), 0, PIXELS(-64), FACING_EAST, TALK_FACE_PARTY,
+        TALK_FACING_PARTY, 0},
+    {IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(-64), 0, PIXELS(-64), FACING_EAST, TALK_FACING_PARTY,
         0},
     {MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(-64), 0, PIXELS(-64), FACING_EAST,
-        TALK_FACE_PARTY, 0},
-    {SPRITE_STONE_DOOR_HALF, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION, PIXELS(296), 0, PIXELS(240), FACING_WEST, TALK_KEEP_FACING, 0},
-    {SPRITE_STONE_DOOR_HALF, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION, PIXELS(312), 0, PIXELS(240), FACING_EAST, TALK_KEEP_FACING, 0},
+        TALK_FACING_PARTY, 0},
+    {SPRITE_STONE_DOOR_HALF, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION, PIXELS(296), 0, PIXELS(240), FACING_WEST, TALK_FACING_KEEP, 0},
+    {SPRITE_STONE_DOOR_HALF, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION, PIXELS(312), 0, PIXELS(240), FACING_EAST, TALK_FACING_KEEP, 0},
     {SPRITE_IODEM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(312), 0, PIXELS(352), FACING_NORTH,
-        TALK_FACE_PARTY_AND_BACK, 0},
+        TALK_FACING_PARTY_AND_BACK, 0},
     {SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(328), 0, PIXELS(328), FACING_WEST,
-        TALK_FACE_PARTY_AND_BACK, 0},
+        TALK_FACING_PARTY_AND_BACK, 0},
     {SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(344), 0, PIXELS(336), FACING_WEST,
-        TALK_FACE_PARTY_AND_BACK, 0},
+        TALK_FACING_PARTY_AND_BACK, 0},
     {SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(344), 0, PIXELS(312), FACING_WEST,
-        TALK_FACE_PARTY_AND_BACK, 0},
+        TALK_FACING_PARTY_AND_BACK, 0},
     {SPRITE_FARAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(328), 0, PIXELS(312), FACING_WEST,
-        TALK_FACE_PARTY_AND_BACK, 0},
+        TALK_FACING_PARTY_AND_BACK, 0},
     {MAP_TABLE_END},
 };
 
 struct ObjectEventTemplate gBabiLighthouse_RoadObjectEventTemplates[] = {
     {SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, PIXELS(128), 0, PIXELS(264), FACING_WEST,
-        TALK_FACE_PARTY, 0},
-    {SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, PIXELS(96), 0, PIXELS(184), FACING_EAST, TALK_FACE_PARTY,
+        TALK_FACING_PARTY, 0},
+    {SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, PIXELS(96), 0, PIXELS(184), FACING_EAST, TALK_FACING_PARTY,
         0},
-    {SPRITE_MAN_WITH_PICKAXE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(184), 0, PIXELS(200), FACING_WEST, TALK_FACE_PARTY,
+    {SPRITE_MAN_WITH_PICKAXE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(184), 0, PIXELS(200), FACING_WEST, TALK_FACING_PARTY,
         0},
     {SPRITE_MAN_WITH_PICKAXE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(232), 0, PIXELS(184), FACING_SOUTH,
-        TALK_FACE_PARTY, 0},
+        TALK_FACING_PARTY, 0},
     {SPRITE_SPIRAL_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(376), 0, PIXELS(216), FACING_SOUTH,
-        TALK_FACE_PARTY, 0},
+        TALK_FACING_PARTY, 0},
     {MAP_TABLE_END},
 };
 
@@ -1878,28 +1876,28 @@ struct MapEvent gBabiLighthouse_EntryEvents[] = {
 };
 
 struct MapEvent gBabiLighthouse_LuffEvents[] = {
-    {MAP_EVENT_WARP | WARP_STYLE_ANIMATED_ALTERNATE, 5, CONDITION_ALWAYS, BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_STEPS},
+    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 5, CONDITION_ALWAYS, BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_STEPS},
     {MAP_EVENT_WARP, 6, CONDITION_ALWAYS, BABI_LIGHTHOUSE_LUFF_TO_BABI_LIGHTHOUSE_ENTRY_EAST},
-    {MAP_EVENT_WARP | WARP_STYLE_ANIMATED, 1, CONDITION_ALWAYS, BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_WEST_ROOM_STEPS},
-    {MAP_EVENT_WARP | WARP_STYLE_ANIMATED_ALTERNATE, 2, CONDITION_ALWAYS, BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_WEST_STEPS},
-    {MAP_EVENT_WARP | WARP_STYLE_ANIMATED_ALTERNATE, 3, CONDITION_ALWAYS, BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_EAST_STEPS},
+    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_WEST_ROOM_STEPS},
+    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_WEST_STEPS},
+    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 3, CONDITION_ALWAYS, BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_EAST_STEPS},
     {MAP_EVENT_WARP, 4, CONDITION_ALWAYS, BABI_LIGHTHOUSE_LUFF_TO_BABI_LIGHTHOUSE_ENTRY_WEST},
-    {MAP_EVENT_WARP | WARP_STYLE_ANIMATED, 7, CONDITION_ALWAYS, BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_TO_EAST_ROOM_WEST_STEPS},
-    {MAP_EVENT_WARP | WARP_STYLE_ANIMATED, 8, CONDITION_ALWAYS, BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_TO_EAST_ROOM_EAST_STEPS},
-    {MAP_EVENT_WARP | WARP_STYLE_ANIMATED_ALTERNATE, 9, CONDITION_ALWAYS, BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_TO_LOCKED_DOOR_ROOM},
-    {MAP_EVENT_WARP | WARP_STYLE_ANIMATED, 10, CONDITION_ALWAYS, BABI_LIGHTHOUSE_LUFF_LOCKED_DOOR_ROOM_TO_SOUTH_ROOM},
+    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 7, CONDITION_ALWAYS, BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_TO_EAST_ROOM_WEST_STEPS},
+    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 8, CONDITION_ALWAYS, BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_TO_EAST_ROOM_EAST_STEPS},
+    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 9, CONDITION_ALWAYS, BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_TO_LOCKED_DOOR_ROOM},
+    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 10, CONDITION_ALWAYS, BABI_LIGHTHOUSE_LUFF_LOCKED_DOOR_ROOM_TO_SOUTH_ROOM},
     {MAP_EVENT_WARP, 11, CONDITION_ALWAYS, BABI_LIGHTHOUSE_LUFF_TO_BABI_LIGHTHOUSE_STONE_DOOR_WEST},
     {COORD_EVENT_WALKING_INTO(FACING_SOUTH), 25, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_DropFromWestRoomEastPit)},
     {COORD_EVENT_WALKING_INTO(FACING_SOUTH), 26, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_DropFromEastRoomPit)},
     {COORD_EVENT_WALKING_INTO(FACING_SOUTH), 27, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_DropFromWestRoomSouthwestPit)},
     {COORD_EVENT_WALKING_INTO(FACING_SOUTH), 28, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_DropFromWestRoomNorthwestPit)},
     {MAP_EVENT_TALK, LOCALID_LUFF, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_StartDjinnBattle)},
-    {BG_EVENT(BG_EVENT_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_InspectLockedDoor)},
+    {BG_EVENT(BG_EVENT_SILENT), 20, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_InspectLockedDoor)},
     {MAP_EVENTS_END},
 };
 
 struct MapEvent gBabiLighthouse_StoneDoorEvents[] = {
-    {MAP_EVENT_WARP | WARP_STYLE_ANIMATED_ALTERNATE, 1, CONDITION_ALWAYS, BABI_LIGHTHOUSE_STONE_DOOR_TO_TUNNEL_RUINS_GREAT_STATUE},
+    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, BABI_LIGHTHOUSE_STONE_DOOR_TO_TUNNEL_RUINS_GREAT_STATUE},
     {MAP_EVENT_WARP, 2, CONDITION_ALWAYS, BABI_LIGHTHOUSE_STONE_DOOR_TO_BABI_LIGHTHOUSE_LUFF_WEST},
     {MAP_EVENT_COORD, 10, FLAG_BABI_LIGHTHOUSE_ASKED_TO_FOLLOW, EVENT_SCRIPT(BabiLighthouse_FaranAsksPartyToOpenDoor)},
     {MAP_EVENT_COORD, 20, IF_FLAG_SET(FLAG_BEYOND_DOOR), EVENT_SCRIPT(BabiLighthouse_CloseTruthDoor)},
@@ -1932,7 +1930,7 @@ struct MapEvent gBabiLighthouse_StoneDoorEvents[] = {
         MSGNO(MsgBabiLighthouseThisIsABigWasteOf)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_FARAN, CONDITION_ALWAYS,
         MSGNO(MsgBabiLighthouseIDontWantToHinderActors)},
-    {BG_EVENT(BG_EVENT_UNNAMED), 60, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_InspectTruthDoorSwitch)},
+    {BG_EVENT(BG_EVENT_SILENT), 60, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_InspectTruthDoorSwitch)},
     {PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS,
         EVENT_SCRIPT(BabiLighthouse_ShowTruthDoorSwitch)},
     {PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS,

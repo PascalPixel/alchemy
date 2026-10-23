@@ -17,19 +17,19 @@
 /// shatters in a white flash into a burst of larger pieces and the target is
 /// knocked back, bouncing on frame 120.
 ///
-/// Abilities: Condemn (BATTLE_EFFECT_CONDEMN).
+/// Abilities: Condemn (BATTLE_ANIM_CONDEMN).
 ///
-/// The effect layer ripples throughout.
+/// The animation layer ripples throughout.
 ///
-/// Opens the tiled canvas (BattleEffect_StartTiledCanvas) and adds
-/// BattleEffect_ArmBg2AffineHBlankDma to feed work->bg2xLines to BG2X; decodes
+/// Opens the tiled canvas (BattleAnim_StartTiledCanvas) and adds
+/// BattleAnim_ArmBg2AffineHBlankDma to feed work->bg2xLines to BG2X; decodes
 /// the burst's pieces into Ram_MapGridCellBuffer; moves the target's object;
-/// and reloads the battle backdrop on BG1 before it closes the layer. It never
-/// calls EFFECT_SHOW_DAMAGE, and leaves the flash timers alone.
-void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
+/// and reloads the battle background on BG1 before it closes the layer. It
+/// never calls ANIM_SHOW_DAMAGE, and leaves the flash timers alone.
+void BattleAnim_RunCondemn(struct BattleAnimArgs *effect) {
   void **slots;
   void **cursor;
-  struct BattleEffectWork *work;
+  struct BattleAnimWork *work;
   void *canvas;
   u8 *sheet;
   void *cells;
@@ -37,7 +37,7 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
   struct MotionObject *target;
   /* FAKEMATCH(dead): a second position nothing uses gives the frame its 76
    * bytes; as one position, 2 of 580 instructions differ in tbs-en. */
-  struct EffectPosition position[2];
+  struct ScreenPoint position[2];
   s32 swing[2];
   s32 drawPanel;
   s32 panelColumn;
@@ -45,12 +45,12 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
   s32 zero;
   s32 frame;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
+  ANIM_GET_SLOTS(slots, cursor, work, canvas);
   /* FAKEMATCH(temporary): zero holds the transfer value in sl through the
    * setup calls; as the literal 0, 31 of 580 instructions differ in tbs-en. */
   zero = 0;
   work->effect = effect;
-  BattleEffect_StartTiledCanvas(0);
+  BattleAnim_StartTiledCanvas(0);
   REG_BG2PA = Q_8_8(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
@@ -60,22 +60,20 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
   sheet = Resource_GetTableEntry((s32)&ResourceId_CounterRevealSheet);
   Iwram_CopyWords((void *)BG_PLTT, sheet, 128);
   sheet = sheet + 128;
-  Resource_DecodeType01(sheet, work->sheet);
+  Decompress_Type01(sheet, work->sheet);
   cells = Ram_MapGridCellBuffer;
   sheet = Resource_GetTableEntry((s32)&ResourceId_RedCrescentSheetA);
   sheet = sheet + 128;
-  Resource_DecodeType01(sheet, cells);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
-                      COMPOSITE_TRANSPARENT);
-  draw[0] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
-                      COMPOSITE_TRANSPARENT);
-  draw[1] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
-  Scheduler_AddOrUpdateCallback(BattleEffect_ArmBg2AffineHBlankDma,
-                                EFFECT_CALLBACK_ORDER);
+  Decompress_Type01(sheet, cells);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS,
+                    COMPOSITE_TRANSPARENT);
+  draw[0] = (DrawRectangle)ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                    COMPOSITE_TRANSPARENT);
+  draw[1] = (DrawRectangle)ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
+  Task_Add(BattleAnim_ArmBg2AffineHBlankDma, ANIM_CALLBACK_ORDER);
   // Redraw from blank each frame.
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, zero);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, zero);
   // swing is the point the panel sways about, in 16.16 pixels: the first
   // pass high up on the near side.
   drawPanel = 1;
@@ -101,7 +99,7 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
     screenX = (swing[0] >> 16) + (((Trig_Sin(spin) * 16)) >> 16) + 48;
     screenY = (swing[1] >> 16) + (((Trig_Cos(spin) * 4)) >> 16) + 16;
     if (frame == CONDEMN_BREAK_FRAME) {
-      AudioCommand_PlayFar(SE_HEAVY_IMPACT);
+      Sound_PlaySongFar(SE_HEAVY_IMPACT);
     }
     // Frame 32: the second pass, lower and further across; the panel skips
     // a frame while it moves, and comes back opaque on frame 33.
@@ -120,7 +118,7 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
     }
     // Frame 64: the last pass, on the first target.
     if (frame == 64) {
-      EffectPosition_ProjectScaledBattler(work->effect->actors[0], position);
+      Projection_ScaledUnit(work->effect->targets[0], position);
       if (work->effect->side == 1) {
         swing[0] = (position[0].x - 128) << 16;
       } else {
@@ -227,36 +225,37 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
     // Frame 88: knock the target back, away from the middle of the field,
     // to twice its x at up to 2 pixels a frame.
     if (frame == CONDEMN_BREAK_FRAME) {
-      target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
+      target = GetBattleObjectSlotFar(work->effect->targets[0])->object;
       target->velocityY = 0x10000;
       target->acceleration = 0x20000;
       target->speedLimit = 0x20000;
       target->verticalMotionStrength = 0;
       target->autoFaceMotion = 0;
       target->snapToTarget = 0;
-      Object_SetMoveTargetFar((struct ObjectRuntime *)target, target->x << 1, 0,
+      Object_SetMoveTargetFar((struct Object *)target, target->x << 1, 0,
                               target->z);
-      ObjectGroup_UpdateMembers(work->effect->actors[0], -1, POSE_DAMAGE, -1,
+      ObjectGroup_UpdateMembers(work->effect->targets[0], -1, POSE_DAMAGE, -1,
                                 0);
     }
     // Frame 120: the target, sent up at a pixel a frame with no gravity on
     // frame 88, gets the battle units' usual gravity back (0xab85, as
     // battle/motion.c sets).
     if (frame == CONDEMN_BOUNCE_FRAME) {
-      GetBattleObjectSlotFar(work->effect->actors[0])
+      GetBattleObjectSlotFar(work->effect->targets[0])
           ->object->verticalMotionStrength = 0xAB85;
     }
-    EFFECT_PRESENT_FRAME(work);
+    ANIM_PRESENT_FRAME(work);
   }
-  // Finish: the callbacks, then the battle backdrop reloaded into
+  // Finish: the callbacks, then the battle background reloaded into
   // character blocks 2 and 3, its palettes darkened to level 24.
-  // XXX: why it is reloaded, when nothing in this effect writes those
+  // XXX: why it is reloaded, when nothing in this animation writes those
   // blocks; a VRAM view after the panel breaks would show what it repairs.
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
-  Scheduler_RemoveCallback(BattleEffect_ArmBg2AffineHBlankDma);
-  BattleBackground_LoadFar(BATTLE_BACKGROUND_FLAT, gBattleWork->background, 24);
-  EFFECT_RELEASE_BLITTERS();
-  BattleEffect_EndCanvasLayer();
+  Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleAnim_ArmBg2AffineHBlankDma);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, gBattleWork->background,
+                           24);
+  ANIM_RELEASE_BLITTERS();
+  BattleAnim_EndCanvasLayer();
 }
 
 #undef CONDEMN_FRAMES

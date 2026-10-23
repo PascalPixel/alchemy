@@ -9,7 +9,7 @@
 #include "static_assert.h"
 #include "battle_unit.h"
 
-/// A map's type (MapRecord.mapType, copied to GameState.mapType).
+/// A map's type (MapHeader.mapType, copied to GameState.mapType).
 enum MapType {
   MAP_TYPE_FIELD = 1, ///< every other map: dungeons, the world map
   /// Towns and their interiors, where walking restores no PP, recovers no
@@ -30,24 +30,24 @@ enum HazardMode {
 /// rather than HP.
 #define HAZARD_DAMAGE_PERCENT 0x100
 
-/// gGameState.battleStart: how the next battle starts (Battle_SetStart); it is
-/// set back to BATTLE_START_NORMAL as the battle ends. Any start but that one
-/// stops the opening's first-strike and surprise rolls (Battle_RunEncounter).
-enum BattleStart {
-  BATTLE_START_NORMAL = 0,
+/// gGameState.battleType: how the next battle starts (Battle_SetType); it is
+/// set back to BATTLE_TYPE_NORMAL as the battle ends. Any start but that one
+/// stops the opening's first-strike and surprise rolls (Battle_Run).
+enum BattleType {
+  BATTLE_TYPE_NORMAL = 0,
   /// A battle the party cannot run from: a Mimic's (object/object/events.c)
   /// and the travelers' fight in Vale (ValeGate_FightTravelers,
   /// map/vale_gate.c).
-  BATTLE_START_NO_ESCAPE = 2,
+  BATTLE_TYPE_NO_ESCAPE = 2,
   /// The battles a script starts. Here and in a link battle the command menu
   /// itself refuses to run, with MsgNoTimeToRun ("This is no time to be
   /// running away!"), as it does once the party is challenged
-  /// (UiText_ShowLocalizedMessageAndWait, window/battle_command/link_timer.c).
-  BATTLE_START_SCRIPTED = 3,
-  BATTLE_START_LINK = 4, ///< a link battle (Battle_RunEncounter, menu/lobby.c)
+  /// (Message_ShowLocalizedAndWait, window/battle_command/link_timer.c).
+  BATTLE_TYPE_SCRIPTED = 3,
+  BATTLE_TYPE_LINK = 4, ///< a link battle (Battle_Run, menu/lobby.c)
   /// The debug battle menu's mark (DebugBattle_RunMenu), which no code tests
   /// by value; it still lets the party run.
-  BATTLE_START_DEBUG = 5
+  BATTLE_TYPE_DEBUG = 5
 };
 
 /// The game's state: play time, coins, the map and the leader's position,
@@ -55,7 +55,7 @@ enum BattleStart {
 ///
 /// It is the one gGameState in EWRAM, right after the 0x200 bytes of game
 /// flags; a save file's checksum covers the 968 words from gGameFlagBytes to
-/// the end of this struct (SaveState_BuildSummaryHeader). A new game sets its
+/// the end of this struct (Save_BuildFileSummary). A new game sets its
 /// defaults (GameState_InitializeDefaults), and the field, battle, menus and
 /// maps read and write it directly.
 struct GameState {
@@ -75,17 +75,17 @@ struct GameState {
   u8 djinnRecovery[0x104];
   s32 shopCredit; ///< spent on a Game Ticket; not written by name in TBS
   s8 shopGifts;   ///< indexes the Game Ticket's credit cost
-  /// The slot machine's prize weights, three prizes to each of 4, 8, 16, 32
+  /// Lucky Wheels' prize weights, three prizes to each of 4, 8, 16, 32
   /// and 64 on a new game; not read by name in TBS.
   s8 prizeWeights[0x0f];
   /// Lucky Wheels: 0 to 7 the prize categories won, ended by -1 (-2 once
   /// awarded); 8 on the last variant given of each category.
   s8 wonPrizes[0x10];
   u8 unusedAfterPrizes[0x84]; ///< no code names it
-  /// The map being played: its index in gField_MapTable (a MapId_
+  /// The map being played: its index in gMapHeaders (a MapId_
   /// symbol), or RUN_BATTLE or another number above the field maps.
   s16 mapId;
-  s16 warpDest; ///< the warp destination taken; in RUN_BATTLE, the enemy group
+  s16 warpDest; ///< the warp destination taken; in RUN_BATTLE, the formation
   s16 savedMap; ///< where a defeat returns to without a defeat point
   s16 savedWarpDest;   ///< where a defeat returns to without a defeat point
   s16 defaultMap;      ///< the map being run, kept as it starts
@@ -95,27 +95,28 @@ struct GameState {
   s16 nextWarpDest;   ///< where the script sends the party next; -1 for none
   s16 defeatMap;      ///< where a defeat returns to; -1 for none
   s16 defeatWarpDest; ///< where a defeat returns to; -1 for none
-  s16 special;        ///< the battle backdrop chosen for the map or terrain
+  s16 special;        ///< the battle background chosen for the map or
+                      ///< battle environment
   u8 unusedAfterSpecial[2]; ///< no code names it
-  /// The map record's layout (layoutIndex); the world map's is 1, which the
-  /// code compares as (s32)&MapId_Clear.
+  /// The map header's layout (layoutIndex); the world map's is 1, which the
+  /// code compares as (s32)&MapId_MainMenu.
   s16 layoutId;
   s32 x;                   ///< 16.16 fixed-point pixels
   s32 y;                   ///< 16.16 fixed-point pixels
   s32 z;                   ///< 16.16 fixed-point pixels
   u32 heading;             ///< 1/65536 turns
-  u16 turn;                ///< the leader's terrainId, kept with its position
-  s16 battleCue;           ///< the battle music chosen for the encounter
-  s16 cue;                 ///< the current map's field music
+  u16 turn;                ///< the leader's layer, kept with its position
+  s16 battleMusic;         ///< the battle music chosen for the encounter
+  s16 mapMusic;            ///< the current map's field music
   u8 movementMode;         ///< 1 while the leader is climbing, 0 otherwise
-  u8 paddingAfterMovement; ///< up to the word selectedLocalId starts on
-  s32 selectedLocalId;     ///< the leader: its unit and its object event
-  u8 activeOwners[8];      ///< the party in order
+  u8 paddingAfterMovement; ///< up to the word leaderLocalId starts on
+  s32 leaderLocalId;       ///< the leader: its unit and its object event
+  u8 party[8];             ///< the party in order
   u8 unusedAfterOwners[5]; ///< no code names it
-  u8 paletteGlow[2];       ///< window hue (0 to 23), brightness (0 to 14)
+  u8 windowColor[2];       ///< window hue (0 to 23), brightness (0 to 14)
   u8 unusedAfterGlow[3];   ///< no code names it
   /// The voice sound option: 1, as on a new game, plays each speaker's voice
-  /// sound as their message types (FieldEffect_GetResourceId).
+  /// sound as their message types (Speaker_GetVoice).
   u8 speech;
   /// XXX: 1 on a new game and never read (see the game README).
   u8 unk20b;
@@ -135,7 +136,7 @@ struct GameState {
   u16 secondShortcutKeys; ///< secondShortcut; KEY_R
   u16 dashKeys;           ///< KEY_B
   ///@}
-  s16 returnCue; ///< music playing when the field left; -1 for none
+  s16 returnMusic; ///< music playing when the field left; -1 for none
   /// The shortcuts' assignments. bits: 15..14 kind (0 Psynergy, 1 an item) |
   /// 13..0 which one.
   ///@{
@@ -145,12 +146,12 @@ struct GameState {
   u8 perspectiveMap; ///< set to 1 on the world map; not read by name in TBS
   u8 unusedAfterPerspective[5]; ///< no code names it
   u8 idleSleepEnabled;          ///< the option, saved from gIdleSleepEnabled
-  u8 battleStart;               ///< an enum BattleStart
+  u8 battleType;                ///< an enum BattleType
   /// Hazardous ground (the Lamakan Desert's heat): when hazardSteps reaches
   /// hazardLimit the party takes hazardDamage and the count starts again. A
   /// fresh entry into a map, not a return from battle, resets them to 1 HP
   /// every 16 pixels walked on it; the desert sets 25 percent every 600
-  /// (Field_RunMap, LamakanDesert_Initialize).
+  /// (Map_Run, LamakanDesert_Initialize).
   ///@{
   s16 hazardLimit; ///< pixels walked on hazard cells, or frames, by hazardMode
   s16 hazardMode;  ///< an enum HazardMode
@@ -161,12 +162,12 @@ struct GameState {
   /// The Djinni battle pending (DJINNI_EVENT_0 plus its number, flags in bits
   /// 15 to 11), resolved on returning to the field.
   s16 pendingDjinnEvent;
-  s16 mapChangeReason; ///< the last battle's result; -1 for a defeat
-  s32 encounterSteps;  ///< the encounter count, reset with a new map section
-  u16 pendingItem; ///< given on returning to the field if the party has room
-  s16 mapType;     ///< the current map's variant from its record
-  s16 retreatMap;  ///< where Retreat goes; the map section's first warp
-                   ///< destination
+  s16 runResult;      ///< the last battle's result; -1 for a defeat
+  s32 encounterSteps; ///< the encounter count, reset with a new map section
+  u16 pendingItem;    ///< given on returning to the field if the party has room
+  s16 mapType;        ///< the current map's variant from its header
+  s16 retreatMap;     ///< where Retreat goes; the map section's first warp
+                      ///< destination
   s16 retreatWarpDest;     ///< where Retreat goes; the map section's first warp
                            ///< destination
   s32 avoidDistance;       ///< distance left of Avoid, 16.16 pixels; 0 when off
@@ -177,14 +178,14 @@ struct GameState {
   u8 paddingAfterCloak[2]; ///< up to the word pausedUpdate starts on
   u32 pausedUpdate; ///< Halt: the stopped object's update; not read by name
   u8 unusedAfterHalt[0x50]; ///< no code names it
-  /// The link lobby's tallies: 4 the total wins and 7 the consecutive wins it
+  /// The Battle Arena's tallies: 4 the total wins and 7 the consecutive wins it
   /// reports, 3 cleared on choosing a monster battle; the others not named by
   /// TBS code.
   u16 linkTallies[8];
   u8 unusedAfterTallies[4]; ///< no code names it
   u32 startStamp;           ///< Runtime_GetBuildStampTime's value at a new game
   u8 unusedAfterStartStamp[4]; ///< no code names it
-  struct BattleUnit owners[8]; ///< the characters
+  struct Unit units[8];        ///< the characters
 };
 
 STATIC_ASSERT(offsetof(struct GameState, buildStamp) == 0);
@@ -193,7 +194,7 @@ STATIC_ASSERT(offsetof(struct GameState, idleSleepEnabled) == 0x22a);
 STATIC_ASSERT(offsetof(struct GameState, coins) == 0x10);
 STATIC_ASSERT(offsetof(struct GameState, shopCredit) == 0x118);
 STATIC_ASSERT(offsetof(struct GameState, shopGifts) == 0x11c);
-STATIC_ASSERT(offsetof(struct GameState, owners) == 0x2c0);
+STATIC_ASSERT(offsetof(struct GameState, units) == 0x2c0);
 STATIC_ASSERT(sizeof(struct GameState) == 0xd20);
 STATIC_ASSERT(offsetof(struct GameState, wonPrizes) == 0x12c);
 STATIC_ASSERT(offsetof(struct GameState, mapSec) == 0x1cc);
@@ -203,8 +204,8 @@ STATIC_ASSERT(offsetof(struct GameState, warpDest) == 0x1c2);
 STATIC_ASSERT(offsetof(struct GameState, special) == 0x1d6);
 STATIC_ASSERT(offsetof(struct GameState, x) == 0x1dc);
 STATIC_ASSERT(offsetof(struct GameState, movementMode) == 0x1f2);
-STATIC_ASSERT(offsetof(struct GameState, selectedLocalId) == 0x1f4);
-STATIC_ASSERT(offsetof(struct GameState, activeOwners) == 0x1f8);
+STATIC_ASSERT(offsetof(struct GameState, leaderLocalId) == 0x1f4);
+STATIC_ASSERT(offsetof(struct GameState, party) == 0x1f8);
 STATIC_ASSERT(offsetof(struct GameState, speech) == 0x20a);
 STATIC_ASSERT(offsetof(struct GameState, messageSpeed) == 0x20c);
 STATIC_ASSERT(offsetof(struct GameState, aKeys) == 0x210);
@@ -221,12 +222,12 @@ STATIC_ASSERT(offsetof(struct GameState, startStamp) == 0x2b8);
 extern struct GameState gGameState;
 #endif
 
-/// Sets the battle start type.
+/// Sets the battle type.
 // A statement macro (S2: a layer, 34 sites): written as one, its store stays in
 // place at every use; as a plain assignment, tbs-en differs.
-#define Battle_SetStart(mode)                                                  \
+#define Battle_SetType(mode)                                                   \
   do {                                                                         \
-    gGameState.battleStart = (mode);                                           \
+    gGameState.battleType = (mode);                                            \
   } while (0)
 
 #endif

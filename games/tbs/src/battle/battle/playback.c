@@ -1,5 +1,5 @@
 /// @file
-/// Battle events played over frames, BattleEvent_Playback.
+/// Playback over frames, BattlePlayback_Run.
 // Part of battle.c.
 
 #include "../battle_internal.h"
@@ -18,49 +18,48 @@ void Dma_StopAllThenRunHook(void) {
   _call_via_r0(IwramIrqModeWord);
 }
 
-/// Starts playback of the plan's targets when the effect's blow lands.
-/// Reached as EFFECT_SHOW_DAMAGE(hitSound), through
-/// BattleEvent_StartPhaseFar, from the effects (see the folder README).
+/// Starts playback of the turn's targets when the animation's blow lands.
+/// Reached as ANIM_SHOW_DAMAGE(hitSound), through
+/// BattlePlayback_StartFar, from the battle animations (see the folder README).
 /// Only while playback is idle: sets the phase to
-/// BATTLE_PLAYBACK_RESOLVE_TARGET, and a nonzero cue to pendingCue; a later
-/// call before the reset does nothing.
+/// BATTLE_PLAYBACK_PHASE_RESOLVE_TARGET, and a nonzero cue to pendingSong; a
+/// later call before the reset does nothing.
 /// @param cue the hit's sound (an SE_ id); zero keeps the one set
-void BattleEvent_StartPhase(s32 cue) {
-  struct BattleEventState *events;
+void BattlePlayback_Start(s32 cue) {
+  struct BattlePlaybackWork *events;
 
-  events = &gBattleWork->events;
-  if (events->phase == BATTLE_PLAYBACK_IDLE) {
-    events->phase = BATTLE_PLAYBACK_RESOLVE_TARGET;
+  events = &gBattleWork->playback;
+  if (events->phase == BATTLE_PLAYBACK_PHASE_IDLE) {
+    events->phase = BATTLE_PLAYBACK_PHASE_RESOLVE_TARGET;
     if (cue != 0) {
-      events->pendingCue = cue;
+      events->pendingSong = cue;
     }
   }
 }
 
-/// Empties the event queue and schedules playback of the events queued next,
-/// with no targets to resolve.
-/// Called before a Djinni is set (BattleCommand_BuildPlan) and for the Djinn
-/// the round's and a turn's end show (Battle_ProcessRoundEnd,
-/// BattleUnit_ProcessTurnEnd), each followed by
-/// BattleEvent_WaitForReady. Sets the phase to BATTLE_PLAYBACK_DISPATCH
-/// and gBattleWork->plan's targetCount to 0, so playback goes to
-/// BATTLE_PLAYBACK_READY once the queue is played; adds BattleEvent_Playback as
-/// a scheduler callback and returns its task index (-1 when the task table
-/// is full), which no caller reads.
-/// @param frames the delay before the first event
-s32 BattleEvent_SchedulePhase(s32 frames) {
-  struct BattleEventState *events;
+/// Empties the playback queue and schedules playback of the commands queued
+/// next, with no targets to resolve. Called before a Djinni is set
+/// (BattleTurn_Build) and for the Djinn the round's and a turn's end show
+/// (Battle_ProcessRoundEnd, BattleUnit_ProcessTurnEnd), each followed by
+/// BattlePlayback_WaitForReady. Sets the phase to
+/// BATTLE_PLAYBACK_PHASE_DISPATCH and gBattleWork->turn's targetCount to 0, so
+/// playback goes to BATTLE_PLAYBACK_PHASE_READY once the queue is played; adds
+/// BattlePlayback_Run as a task and returns its task index (-1
+/// when the task table is full), which no caller reads.
+/// @param frames the delay before the first command
+s32 BattlePlayback_SchedulePhase(s32 frames) {
+  struct BattlePlaybackWork *events;
 
-  events = &gBattleWork->events;
+  events = &gBattleWork->playback;
   events->queue.count = 0;
   events->eventIndex = 0;
   events->timer = frames;
-  events->phase = BATTLE_PLAYBACK_DISPATCH;
-  gBattleWork->plan.targetCount = 0;
-  return Scheduler_AddOrUpdateCallback(BattleEvent_Playback, 0xc80);
+  events->phase = BATTLE_PLAYBACK_PHASE_DISPATCH;
+  gBattleWork->turn.targetCount = 0;
+  return Task_Add(BattlePlayback_Run, 0xc80);
 }
 
-// BattleEvent_Playback's waits, in BattleEventState.phase beside the phases
+// BattlePlayback_Run's waits, in BattlePlaybackWork.phase beside the phases
 // battle_event.h names.
 #define PLAY_MESSAGE 3      ///< waits for the message, then for the player
 #define PLAY_ADVANCE 5      ///< shows the arrow and waits for the player
@@ -74,52 +73,51 @@ s32 BattleEvent_SchedulePhase(s32 frames) {
 /// The Djinn bonus's colour cycle lasts 30 frames.
 #define FELLED_FLASH_FRAMES 30
 
-/// Plays the plan's targets one at a time: resolves the next target with
-/// BattleTarget_Execute, then plays the events it queued over the frames that
-/// follow, until every target is done.
-/// Runs each frame as a scheduler callback (main-loop order 0xc80), added by
-/// the staging runners in staging.c and by BattleEvent_SchedulePhase,
-/// and removed by BattleEvent_WaitForReady. Idle until
-/// BattleEvent_StartPhase or the wait starts it. Advances
-/// gBattleWork->events (phase, eventIndex, timer, queue.targetIndex, actorId,
-/// displaySource, displayEntry, flags); plays the sounds, message arguments,
-/// messages, flashes, falls and redraws as BattleEvent_DispatchQueued does,
-/// without waiting. Each pass of its loop handles one phase; a phase that has
-/// to wait for a later frame returns.
-void BattleEvent_Playback(void) {
+/// Plays the turn's targets one at a time: resolves the next target with
+/// BattleAbility_ApplyToTarget, then plays the events it queued over the frames
+/// that follow, until every target is done. Runs each frame as a task
+/// (main-loop priority 0xc80), added by the staging runners in staging.c
+/// and by BattlePlayback_SchedulePhase, and removed by
+/// BattlePlayback_WaitForReady. Idle until BattlePlayback_Start or the wait
+/// starts it. Advances gBattleWork->events (phase, eventIndex, timer,
+/// queue.targetIndex, actorId, arrowResource, arrow, flags); plays the sounds,
+/// message arguments, messages, flashes, falls and redraws as
+/// BattlePlayback_RunAll does, without waiting. Each pass of its loop handles
+/// one phase; a phase that has to wait for a later frame returns.
+void BattlePlayback_Run(void) {
   u16 selection[8];
-  struct AnimationObject *records[4];
+  struct Sprite *records[4];
   struct BattleWork *battle = gBattleWork;
-  struct BattleEventState *events = &battle->events;
+  struct BattlePlaybackWork *events = &battle->playback;
 
   /// Clears a sprite's tiles in OBJ VRAM, at its VRAM cache entry's offset;
   /// the last step of a fallen enemy's dissolve.
-  void BattleSprite_ClearTiles(struct AnimationObject * record, s32 unused) {
-    u8 *tiles = (u8 *)OBJ_VRAM0 + gVramBlockCache[record->slot].offset;
+  void BattleSprite_ClearTiles(struct Sprite * record, s32 unused) {
+    u8 *tiles = (u8 *)OBJ_VRAM0 + gVramCacheEntries[record->slot].offset;
 
     Iwram_ClearWords(tiles, record->width * record->height);
   }
 
-  // Idle until the effect's blow lands; ready once every target is played.
-  if (battle->events.phase == BATTLE_PLAYBACK_IDLE)
+  // Idle until the animation's blow lands; ready once every target is played.
+  if (battle->playback.phase == BATTLE_PLAYBACK_PHASE_IDLE)
     return;
   for (;;) {
-    if (events->phase == BATTLE_PLAYBACK_READY)
+    if (events->phase == BATTLE_PLAYBACK_PHASE_READY)
       return;
-    if (events->phase == BATTLE_PLAYBACK_RESOLVE_TARGET) {
+    if (events->phase == BATTLE_PLAYBACK_PHASE_RESOLVE_TARGET) {
       // Resolve the next target, which queues its events, then play them;
       // with none left, playback is ready.
-      if (events->queue.targetIndex < battle->plan.targetCount) {
+      if (events->queue.targetIndex < battle->turn.targetCount) {
         events->queue.count = 0;
         events->eventIndex = 0;
         events->timer = 0;
-        BattleTarget_Execute(&battle->plan, events->queue.targetIndex);
+        BattleAbility_ApplyToTarget(&battle->turn, events->queue.targetIndex);
         events->queue.targetIndex++;
-        events->phase = BATTLE_PLAYBACK_DISPATCH;
+        events->phase = BATTLE_PLAYBACK_PHASE_DISPATCH;
       } else {
-        events->phase = BATTLE_PLAYBACK_READY;
+        events->phase = BATTLE_PLAYBACK_PHASE_READY;
       }
-    } else if (events->phase == BATTLE_PLAYBACK_DISPATCH) {
+    } else if (events->phase == BATTLE_PLAYBACK_PHASE_DISPATCH) {
       // Play the queued events in order. The timer delays the next one; an
       // event that has to wait (a message, a hit, a fall) changes the phase,
       // which ends the loop, and its phase comes back here when done.
@@ -127,66 +125,66 @@ void BattleEvent_Playback(void) {
         {
           s32 eventIndex = events->eventIndex;
 
-          if (events->phase != BATTLE_PLAYBACK_DISPATCH)
+          if (events->phase != BATTLE_PLAYBACK_PHASE_DISPATCH)
             break;
           if (events->timer != 0) {
             events->timer--;
             return;
           }
           switch (events->queue.opcodes[eventIndex]) {
-          case BATTLE_EVENT_SOUND:
-            AudioCommand_PlayFar(events->queue.operands[eventIndex]);
+          case PLAYBACK_SOUND:
+            Sound_PlaySongFar(events->queue.operands[eventIndex]);
             break;
-          case BATTLE_EVENT_DJINN_BONUS:
-            BattleEvent_GrantDjinnBonus(events,
-                                        events->queue.operands[eventIndex]);
+          case PLAYBACK_DJINN_BONUS:
+            BattlePlayback_GrantDjinnBonus(events,
+                                           events->queue.operands[eventIndex]);
             break;
-          case BATTLE_EVENT_UNIT_NAME:
-            UiWork_PushValueSlotFar(events->queue.operands[eventIndex],
+          case PLAYBACK_UNIT_NAME:
+            MessageArgument_PushFar(events->queue.operands[eventIndex],
                                     VALUE_UNIT_NAME);
             break;
-          case BATTLE_EVENT_NUMBER:
-            UiWork_PushValueSlotFar(events->queue.operands[eventIndex],
+          case PLAYBACK_NUMBER:
+            MessageArgument_PushFar(events->queue.operands[eventIndex],
                                     VALUE_NUMBER);
             break;
-          case BATTLE_EVENT_ITEM_NAME:
-            UiWork_PushValueSlotFar(events->queue.operands[eventIndex] &
+          case PLAYBACK_ITEM_NAME:
+            MessageArgument_PushFar(events->queue.operands[eventIndex] &
                                         INVENTORY_ITEM_ID_MASK,
                                     VALUE_ITEM_NAME);
             break;
-          case BATTLE_EVENT_ABILITY_NAME:
-            UiWork_PushValueSlotFar(events->queue.operands[eventIndex] &
-                                        OWNER_ACTION_ID_MASK,
+          case PLAYBACK_ABILITY_NAME:
+            MessageArgument_PushFar(events->queue.operands[eventIndex] &
+                                        PSYNERGY_ABILITY_MASK,
                                     VALUE_ABILITY_NAME);
             break;
-          case BATTLE_EVENT_MARK:
-            gBattleDisplayWork->marked = 1;
+          case PLAYBACK_MARK:
+            gBattleMessageWork->marked = 1;
             break;
           // A negative message shows nothing and only waits for the player.
           // The key latch is cleared so that only a press after the message
           // goes on.
-          case BATTLE_EVENT_MESSAGE:
+          case PLAYBACK_MESSAGE:
             if ((s32)events->queue.operands[eventIndex] >= 0)
-              UiText_PrepareMessageWorkFar(events->queue.operands[eventIndex]);
+              BattleMessage_OpenFar(events->queue.operands[eventIndex]);
             events->phase = PLAY_MESSAGE;
             gKeysPressedLatch = 0;
             break;
-          case BATTLE_EVENT_MESSAGE_NO_WAIT:
+          case PLAYBACK_MESSAGE_NO_WAIT:
             if ((s32)events->queue.operands[eventIndex] >= 0)
-              UiText_PrepareMessageWorkFar(events->queue.operands[eventIndex]);
+              BattleMessage_OpenFar(events->queue.operands[eventIndex]);
             events->phase = PLAY_MESSAGE_ADD;
             break;
-          case BATTLE_EVENT_CLEAR_ARGUMENTS:
-            UiWork_ClearValueNameTablesFar();
+          case PLAYBACK_CLEAR_ARGUMENTS:
+            MessageArgument_ClearAllFar();
             break;
-          case BATTLE_EVENT_REMOVE_UNIT:
+          case PLAYBACK_REMOVE_UNIT:
             BattleObject_DestroyTemporaryObject(
                 events->queue.operands[eventIndex]);
             break;
           // The hit's sound, then the damage pose and PLAY_HIT's flashes.
-          case BATTLE_EVENT_HIT:
-            if (events->pendingCue > 0)
-              AudioCommand_PlayFar(events->pendingCue);
+          case PLAYBACK_HIT:
+            if (events->pendingSong > 0)
+              Sound_PlaySongFar(events->pendingSong);
             events->actorId = events->queue.operands[eventIndex];
             ObjectDispatch_SelectAnimationFar(
                 BattleObject_Get(events->actorId)->object, POSE_DAMAGE);
@@ -195,9 +193,9 @@ void BattleEvent_Playback(void) {
             break;
           // The spoils are counted and the unit reset; a party member lies
           // down, an enemy keeps its damage pose and falls in PLAY_FELLED.
-          case BATTLE_EVENT_DEFEAT: {
-            struct BattleUnit *unit;
-            struct AnimationObject *record;
+          case PLAYBACK_DEFEAT: {
+            struct Unit *unit;
+            struct Sprite *record;
             s32 recordIndex;
 
             events->actorId = events->queue.operands[eventIndex];
@@ -209,21 +207,21 @@ void BattleEvent_Playback(void) {
                       GetMotionRecord(BattleObject_Get(events->actorId)->object,
                                       recordIndex)) != 0;
                  recordIndex++) {
-              if (unit->side != BATTLE_UNIT_ENEMY)
-                AnimationObject_SelectAnimationFar(record, POSE_PARTY_HELD);
+              if (unit->side != BATTLE_SIDE_ENEMY)
+                Sprite_StartAnimFar(record, POSE_PARTY_HELD);
               else
-                AnimationObject_SelectAnimationFar(record, POSE_ENEMY_DOWN);
+                Sprite_StartAnimFar(record, POSE_ENEMY_DOWN);
             }
-            if (unit->side == BATTLE_UNIT_ENEMY) {
+            if (unit->side == BATTLE_SIDE_ENEMY) {
               events->phase = PLAY_FELLED;
               events->timer = 0;
             }
             break;
           }
-          case BATTLE_EVENT_DRAW_STATUS:
+          case PLAYBACK_DRAW_STATUS:
             PartyStatus_DrawFar(gBattleWork->partyStatus);
             break;
-          case BATTLE_EVENT_REFRESH_UNIT: {
+          case PLAYBACK_REFRESH_UNIT: {
             struct BattleObject *slot;
 
             BattleUnit_BuildStatusFlags(
@@ -242,8 +240,8 @@ void BattleEvent_Playback(void) {
         }
       }
       // The whole queue played: on to the next target.
-      if (events->phase == BATTLE_PLAYBACK_DISPATCH)
-        events->phase = BATTLE_PLAYBACK_RESOLVE_TARGET;
+      if (events->phase == BATTLE_PLAYBACK_PHASE_DISPATCH)
+        events->phase = BATTLE_PLAYBACK_PHASE_RESOLVE_TARGET;
     } else if (events->phase == PLAY_MESSAGE ||
                events->phase == PLAY_MESSAGE_ADD) {
       // Wait until the message finishes appearing. The arrow's resource entry
@@ -251,37 +249,37 @@ void BattleEvent_Playback(void) {
       if (UiWork_IsCompleteFar() == 0)
         return;
       if (events->phase == PLAY_MESSAGE_ADD) {
-        events->phase = BATTLE_PLAYBACK_DISPATCH;
+        events->phase = BATTLE_PLAYBACK_PHASE_DISPATCH;
         events->timer = 0;
       } else {
         events->phase = PLAY_ADVANCE;
-        events->displaySource = -1;
+        events->arrowResource = -1;
         events->timer = gFrameTick;
       }
     } else if (events->phase == PLAY_ADVANCE) {
-      // Show the arrow, as BattlePresentation_WaitForAdvance does, and wait
+      // Show the arrow, as BattleMessage_WaitForAdvance does, and wait
       // for the player: B held or an advance key pressed goes on; after ten
       // ticks, a held advance key does too. The arrow is an 8 by 16,
       // 256-colour sprite (attribute 0 0xa000, which unlike that function's
       // is not semi-transparent) cycling eight frames of
-      // gBattlePresentation_AdvanceArrowTiles, one every four frames, in the
-      // VRAM cache entry BattleWork.promptSlot.
-      struct BattlePromptSprite *prompt = &events->displayEntry;
-      u8 *arrowTiles = gBattlePresentation_AdvanceArrowTiles;
+      // gBattleMessage_AdvanceArrowTiles, one every four frames, in the
+      // VRAM cache entry BattleWork.arrowTiles.
+      struct AdvanceArrowSprite *prompt = &events->arrow;
+      u8 *arrowTiles = gBattleMessage_AdvanceArrowTiles;
       s32 frameTiles = (s32)arrowTiles + ((gFrameCount >> 2) & 7) * 128;
-      struct BattleDisplayWork *display = gBattleDisplayWork;
-      struct UiWindow *window = display->window;
-      struct BattleDisplayOffset *offset = display->offset;
+      struct BattleMessageWork *display = gBattleMessageWork;
+      struct Window *window = display->window;
+      struct BattleMessageOffset *offset = display->offset;
       s32 x = 0;
 
-      if (events->displaySource == -1)
-        events->displaySource = battle->promptSlot;
-      UiWork_ClearValueNameTablesFar();
+      if (events->arrowResource == -1)
+        events->arrowResource = battle->arrowTiles;
+      MessageArgument_ClearAllFar();
       IoWriteQueue_ClearBits16((u32)&REG_WINOUT, 4);
       IoWriteQueue_SetBits16((u32)&REG_WINOUT, 16);
       ((u32 *)prompt)[1] = 0xa000;
       ((u32 *)prompt)[2] = x;
-      prompt->tile = VramCache_Reload(events->displaySource, frameTiles);
+      prompt->tile = VramCache_Reload(events->arrowResource, frameTiles);
       x = window->x * 8 + (offset->x >> 8) + 4;
       prompt->x = x;
       prompt->y = Trig_Sin(gFrameCount << 12) / 32768 + window->y * 8 +
@@ -289,11 +287,11 @@ void BattleEvent_Playback(void) {
       if ((BATTLE_OPTIONS & KEY_B) || (gKeysPressedLatch & KEY_ADVANCE) ||
           ((u32)(gFrameTick - events->timer) > 10 &&
            (BATTLE_OPTIONS & KEY_ADVANCE))) {
-        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
-        events->phase = BATTLE_PLAYBACK_DISPATCH;
+        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        events->phase = BATTLE_PLAYBACK_PHASE_DISPATCH;
         events->timer = 0;
       } else {
-        Runtime_PushSlotEntry(prompt, 240);
+        Oam_AddSpriteAtDepth(prompt, 240);
         return;
       }
     } else if (events->phase == PLAY_HIT) {
@@ -314,12 +312,12 @@ void BattleEvent_Playback(void) {
           BattleMotion_SetRecordChildValues(
               BattleObject_Get(events->actorId)->object, SPRITE_COLOR_WHITE);
         }
-        BattleLayout_HighlightPartyPanelsFar(selection);
+        PartyStatus_HighlightMembersFar(selection);
       }
       events->timer++;
       if (events->timer <= 8)
         return;
-      events->phase = BATTLE_PLAYBACK_DISPATCH;
+      events->phase = BATTLE_PLAYBACK_PHASE_DISPATCH;
       events->timer = 0;
     } else if (events->phase == PLAY_FELLED) {
       // A fallen enemy. Its timer runs: with the Djinn bonus first, from
@@ -333,33 +331,33 @@ void BattleEvent_Playback(void) {
         s32 colorMode = SPRITE_COLOR_GREY;
 
         if (events->timer == 0 && events->flags != 0) {
-          s32 kind = BattleClass_GetDefeatSoundKind(
-              Unit_GetFar(events->actorId)->classId);
+          s32 kind =
+              BattleSprite_GetDefeatSound(Unit_GetFar(events->actorId)->id);
 
           if (kind >= 0) {
             kind--;
             if (kind < 0)
               kind = 0;
-            AudioCommand_PlayFar(SE_146 + kind);
+            Sound_PlaySongFar(SE_146 + kind);
           }
           events->timer = FELLED_FLASH;
         }
         if (events->timer > FELLED_FLASH + FELLED_FLASH_FRAMES - 1)
           events->timer = 0;
         if (events->timer == 0) {
-          s32 kind = BattleClass_GetDefeatSoundKind(
-              Unit_GetFar(events->actorId)->classId);
+          s32 kind =
+              BattleSprite_GetDefeatSound(Unit_GetFar(events->actorId)->id);
 
           if (kind >= 0)
-            AudioCommand_PlayFar(SE_146 + kind);
+            Sound_PlaySongFar(SE_146 + kind);
         }
         if (events->timer >= FELLED_FLASH)
           colorMode = (events->timer - FELLED_FLASH) / 8 % 5 + SPRITE_COLOR_GRB;
         // Recolour every layer's first entry and redraw its frame (255).
         if (colorMode == SPRITE_COLOR_GREY || (events->timer & 7) == 0) {
-          struct AnimationObject *record;
+          struct Sprite *record;
           s32 recordIndex;
-          struct AnimationObject **slot;
+          struct Sprite **slot;
           s32 lastFrameMask;
 
           for (recordIndex = 0, slot = records, lastFrameMask = 0xff;
@@ -367,7 +365,7 @@ void BattleEvent_Playback(void) {
                     GetMotionRecord(BattleObject_Get(events->actorId)->object,
                                     recordIndex)) != 0;
                recordIndex++) {
-            struct AnimationEntry *child;
+            struct SpriteAnim *child;
             u8 previousFrame;
 
             *slot++ = record;
@@ -390,7 +388,7 @@ void BattleEvent_Playback(void) {
         // frame from timer 5 to 36; at 37 the tiles are cleared, the object
         // released, and the queue goes on.
         struct BattleObject *slot;
-        struct AnimationObject *record;
+        struct Sprite *record;
         s32 count;
         s32 step;
         s32 base;
@@ -408,7 +406,7 @@ void BattleEvent_Playback(void) {
           for (recordIndex = 0; recordIndex < count; recordIndex++)
             BattleSprite_ClearTiles(records[recordIndex], 0);
           BattleObject_MarkForRelease(events->actorId);
-          events->phase = BATTLE_PLAYBACK_DISPATCH;
+          events->phase = BATTLE_PLAYBACK_PHASE_DISPATCH;
           events->timer = 0;
           return;
         }
@@ -434,52 +432,52 @@ void BattleEvent_Playback(void) {
   }
 }
 
-/// Stops playback and empties the event queue.
-/// Called when an action is planned (BattleCommand_BuildPlan), after a queue
-/// is played (BattleEvent_DispatchQueued, BattleEvent_WaitForReady), and
-/// before playback is scheduled (BattleCommand_BuildPlan, turn_end.c). Sets
-/// gBattleWork->events' phase to BATTLE_PLAYBACK_IDLE, clears the queue, the
-/// event index, the timer, the target index and the flags (the Djinn bonus),
-/// and sets the hit sound back to SE_HEAVY_IMPACT.
-void BattleEvent_Reset(void) {
-  struct BattleEventState *events;
+/// Stops playback and empties the playback queue.
+/// Called when an action is built into a turn (BattleTurn_Build), after a queue
+/// is played (BattlePlayback_RunAll, BattlePlayback_WaitForReady), and
+/// before playback is scheduled (BattleTurn_Build, turn_end.c). Sets
+/// gBattleWork->events' phase to BATTLE_PLAYBACK_PHASE_IDLE, clears the queue,
+/// the event index, the timer, the target index and the flags (the Djinn
+/// bonus), and sets the hit sound back to SE_HEAVY_IMPACT.
+void BattlePlayback_Reset(void) {
+  struct BattlePlaybackWork *events;
 
-  events = &gBattleWork->events;
-  events->phase = BATTLE_PLAYBACK_IDLE;
+  events = &gBattleWork->playback;
+  events->phase = BATTLE_PLAYBACK_PHASE_IDLE;
   events->queue.count = 0;
   events->eventIndex = 0;
   events->timer = 0;
   events->queue.targetIndex = 0;
-  events->pendingCue = SE_HEAVY_IMPACT;
+  events->pendingSong = SE_HEAVY_IMPACT;
   events->flags = 0;
 }
 
-/// Waits, a frame at a time, until BattleEvent_Playback has played every
-/// target, then removes the callback and resets the events.
-/// Called after the effect by the staging runners in staging.c, and after a
-/// Djinn's effect by BattleCommand_BuildPlan and turn_end.c. Playback still
-/// idle (the effect never called EFFECT_SHOW_DAMAGE) is started here.
+/// Waits, a frame at a time, until BattlePlayback_Run has played every
+/// target, then removes the callback and resets the playback.
+/// Called after the animation by the staging runners in staging.c, and after a
+/// Djinn's animation by BattleTurn_Build and turn_end.c. Playback still
+/// idle (the animation never called ANIM_SHOW_DAMAGE) is started here.
 #ifdef UBFIX
-void BattleEvent_WaitForReady(void) {
+void BattlePlayback_WaitForReady(void) {
 #else
-s32 BattleEvent_WaitForReady(void) {
+s32 BattlePlayback_WaitForReady(void) {
 #endif
   s32 state;
-  struct BattleEventState *events;
+  struct BattlePlaybackWork *events;
 
-  events = &gBattleWork->events;
+  events = &gBattleWork->playback;
   state = events->phase;
-  if (state == BATTLE_PLAYBACK_IDLE) {
-    events->phase = BATTLE_PLAYBACK_RESOLVE_TARGET;
-    state = BATTLE_PLAYBACK_RESOLVE_TARGET;
+  if (state == BATTLE_PLAYBACK_PHASE_IDLE) {
+    events->phase = BATTLE_PLAYBACK_PHASE_RESOLVE_TARGET;
+    state = BATTLE_PLAYBACK_PHASE_RESOLVE_TARGET;
   }
-  if (state != BATTLE_PLAYBACK_READY) {
+  if (state != BATTLE_PLAYBACK_PHASE_READY) {
     do {
       WaitFrames(1U);
-    } while (events->phase != BATTLE_PLAYBACK_READY);
+    } while (events->phase != BATTLE_PLAYBACK_PHASE_READY);
   }
-  Scheduler_RemoveCallback(BattleEvent_Playback);
-  BattleEvent_Reset();
+  Task_Remove(BattlePlayback_Run);
+  BattlePlayback_Reset();
 }
 
 #undef FELLED_FLASH_FRAMES

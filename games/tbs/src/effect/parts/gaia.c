@@ -17,20 +17,20 @@
 /// up through it and the targets are battered, then narrows away again.
 ///
 /// Abilities: Gaia, Mother Gaia, Grand Gaia, Rockfall, Rockslide, Avalanche
-/// (BATTLE_EFFECT_GAIA).
+/// (BATTLE_ANIM_GAIA).
 ///
 /// The wall is symmetric: its left half is drawn, then mirrored for the right.
-/// Its centre is at canvas x 64 + wallX. The rocks are 11 animation objects,
+/// Its centre is at canvas x 64 + wallX. The rocks are 11 sprites,
 /// moved by particles[10] to particles[20].
 ///
 /// effect: the targets; the variant widens the wall: narrowest for Gaia and
 ///         Rockfall, wider for Mother Gaia and Rockslide, widest for Grand
 ///         Gaia and Avalanche.
-void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
+void BattleAnim_RunGaia(struct BattleAnimArgs *effect) {
   static struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
   void **slots;
   void **cursor;
-  struct BattleEffectWork *work;
+  struct BattleAnimWork *work;
   void *canvas;
   BlitterPair draw;
   u8 *sprites;
@@ -47,22 +47,22 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
   s32 j;
   s32 k;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
-  sprites = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  ANIM_GET_SLOTS(slots, cursor, work, canvas);
+  sprites = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
-  BattleEffect_StartCanvasLayer(0);
+  BattleAnim_StartCanvasLayer(0);
 
   // The higher the variant, the wider the wall: BG2 stretches the canvas 1.25
-  // or 1.5 times, or twice as BattleEffect_StartCanvasLayer left it.
-  if (work->effect->variant == EFFECT_VARIANT_BASIC)
+  // or 1.5 times, or twice as BattleAnim_StartCanvasLayer left it.
+  if (work->effect->variant == ANIM_VARIANT_BASIC)
     REG_BG2PA = Q_8_8(0.8);
-  else if (work->effect->variant == EFFECT_VARIANT_STRONGER)
+  else if (work->effect->variant == ANIM_VARIANT_STRONGER)
     REG_BG2PA = Q_8_8(1.0 / 1.5);
   if (work->effect->side == 1) {
     wallX = 8;
-    if (work->effect->variant == EFFECT_VARIANT_BASIC)
+    if (work->effect->variant == ANIM_VARIANT_BASIC)
       rockX = 40;
-    else if (work->effect->variant == EFFECT_VARIANT_STRONGER)
+    else if (work->effect->variant == ANIM_VARIANT_STRONGER)
       rockX = 36;
     else
       rockX = 40;
@@ -132,25 +132,25 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
   // The rock objects, made from resource 390: objects 0 to 3 play animation
   // 0, 4 to 7 animation 1 and 8 to 10 animation 2.
   for (i = 0; i != GAIA_ROCKS; i++) {
-    struct AnimationObject *rock = ResourceObject_CreateFar(390);
+    struct Sprite *rock = Sprite_CreateFar(390);
 
     work->animations[i] = rock;
     if (rock != 0) {
       rock->flags = 0;
-      AnimationObject_SelectAnimationFar(rock, i / 4);
+      Sprite_StartAnimFar(rock, i / 4);
       work->animations[i]->image.priority = 1;
     }
   }
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-  draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
-  draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+  draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                    BLITTER_MAX);
+  draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   // Trails: each transfer keeps 3/4 of every canvas level.
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
   // Rocks: x is the column, y counts down from 128 by z pixels a frame (2
   // to 17, and 8 to 15 for a rock restarted from frame 88), velocityX
@@ -158,7 +158,7 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
   // wait before the rock appears (44 frames for the first, 4 fewer for each
   // after).
   for (i = 0; i != GAIA_ROCKS; i++) {
-    struct EffectStep *rock = &work->particles[10 + i];
+    struct Particle *rock = &work->particles[10 + i];
 
     SET_POSITION(rock, (Random16() & 15) + 88, 128, (Random16() & 15) + 2);
     SET_VELOCITY(rock, i, 1, 0x8000);
@@ -174,7 +174,7 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
   // to 12 pixels a frame, each mote after a random wait of up to 31 frames
   // (its variant). 256 are placed; the frame loop draws 64.
   for (i = 0; i != 256; i++) {
-    struct EffectStep *dust = &PARTICLES[i];
+    struct Particle *dust = &PARTICLES[i];
 
     dust->x = ((Random16() & 63) + wallX + 32) << 16;
     dust->y = ((Random16() & 7) + 96) << 16;
@@ -183,18 +183,18 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
   }
   REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
-  // The screen shakes throughout: 250 frames outlast the effect, and the
+  // The screen shakes throughout: 250 frames outlast the animation, and the
   // ranges given to Camera_ApplyShake below set how hard.
   work->shakeFrames = 250;
   for (frame = 0; frame != GAIA_FRAMES; frame++) {
     if (frame == 0)
-      AudioCommand_PlayFar(SE_212);
+      Sound_PlaySongFar(SE_212);
     if (frame == 40)
-      AudioCommand_PlayFar(SE_RUMBLE);
+      Sound_PlaySongFar(SE_RUMBLE);
     if (frame == 96)
-      AudioCommand_PlayFar(SE_145);
+      Sound_PlaySongFar(SE_145);
     if (frame == 120)
-      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
+      ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 
     // The swelling ground (frames 0 to 81).
     if (frame <= 81) {
@@ -258,13 +258,13 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
     // returns to the foot.
     if (frame > 87) {
       for (i = 0; i != 64; i++) {
-        struct EffectStep *dust = &PARTICLES[i];
+        struct Particle *dust = &PARTICLES[i];
 
         if (dust->variant == 0) {
           s32 size = (i & 3) + 5;
 
-          EFFECT_DRAW_MOTE(draw[0], canvas, sprites, Q_16_16_TO_INT(dust->x),
-                           Q_16_16_TO_INT(dust->y), size);
+          ANIM_DRAW_MOTE(draw[0], canvas, sprites, Q_16_16_TO_INT(dust->x),
+                         Q_16_16_TO_INT(dust->y), size);
           dust->y -= dust->velocityY;
           if (dust->y < 0 && frame <= 159)
             dust->y = 0x600000;
@@ -284,7 +284,7 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
       if (frame > 71)
         rocks = GAIA_ROCKS;
       for (k = 0; k != rocks; k++) {
-        struct EffectStep *rock = &work->particles[10 + k];
+        struct Particle *rock = &work->particles[10 + k];
         s32 slot;
 
         if (rock->variant == 0) {
@@ -318,9 +318,9 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
             } else {
               if (frame > 87) {
                 rock->z = (Random16() & 7) + 8;
-                if (work->effect->variant == EFFECT_VARIANT_BASIC)
+                if (work->effect->variant == ANIM_VARIANT_BASIC)
                   rock->x = Random16() % 96 + 42;
-                else if (work->effect->variant == EFFECT_VARIANT_STRONGER)
+                else if (work->effect->variant == ANIM_VARIANT_STRONGER)
                   rock->x = Random16() % 112 + 34;
                 else
                   rock->x = Random16() % 160 + 10;
@@ -338,14 +338,14 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
     // The targets (frames 86 to 158): a flash every 12 frames and a recoil
     // every 4.
     if (frame <= 158) {
-      EFFECT_FOR_EACH_TARGET(i, work->effect) {
+      ANIM_FOR_EACH_TARGET(i, work->effect) {
         if (frame > 85) {
           if (frame % 12 == 0)
-            ObjectGroup_UpdateMembers(work->effect->actors[i],
+            ObjectGroup_UpdateMembers(work->effect->targets[i],
                                       SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 6);
           if ((frame & 3) == 0)
-            BattleMotion_ApplyVariantMotionFar(work->effect->actors[i],
-                                               KNOCKBACK_SKID);
+            BattleMotion_ApplyKnockbackFar(work->effect->targets[i],
+                                           KNOCKBACK_SKID);
         }
       }
     }
@@ -353,13 +353,13 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
       Camera_ApplyShake(2, 2);
     else
       Camera_ApplyShake(8, 8);
-    EFFECT_END_FRAME(work);
+    ANIM_END_FRAME(work);
   }
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
-  EFFECT_RELEASE_BLITTERS();
+  Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);
+  ANIM_RELEASE_BLITTERS();
   for (i = 0; i != GAIA_ROCKS; i++)
-    ResourceObject_ReleaseFar(work->animations[i]);
-  BattleEffect_EndCanvasLayer();
+    Sprite_DestroyFar(work->animations[i]);
+  BattleAnim_EndCanvasLayer();
 }
 
 #undef GAIA_WALL_TOP_CELLS

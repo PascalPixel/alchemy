@@ -9,7 +9,7 @@
 struct Effect05Object {
   u8 reserved00[8];
   s32 x, y, z;  ///< 16.16 fixed-point pixels
-  s32 altitude; ///< terrainHeight: a drop's height to fall to
+  s32 altitude; ///< groundHeight: a drop's height to fall to
   s32 scaleX, scaleY;
   u8 reserved20[8];
   s32 velocityY; ///< 16.16 fixed-point pixels per frame, up
@@ -27,13 +27,13 @@ struct Effect05Object {
   void (*callback)(union FieldObject *fieldObject); ///< per-frame update
 };
 
-/// The effect scene (struct FieldEffectWork, gEffectWork) as Douse reads it;
-/// the notes give the FieldEffectWork fields at the same offsets.
+/// The effect scene (struct FieldEffectWork, gFieldEffectWork) as Douse reads
+/// it; the notes give the FieldEffectWork fields at the same offsets.
 struct Effect05State {
-  s32 angle;             ///< 1/65536 turns: the way the caster faces
-  s32 x, y, z;           ///< the ground under the orb's destination
-  struct Object *target; ///< mainObject: the caster, despite the name
-  s32 initialized;       ///< child: the target's object, 0 for none
+  s32 angle;                       ///< 1/65536 turns: the way the caster faces
+  s32 x, y, z;                     ///< the ground under the orb's destination
+  struct ObjectVectorView *target; ///< mainObject: the caster, despite the name
+  s32 initialized;                 ///< child: the target's object, 0 for none
   u8 reserved18[8];
   /// enabled: set at the start, cleared when a map event names the target
   /// (FieldEffect_DispatchRequestKind). Set, 10 particles fall; cleared, 24
@@ -78,8 +78,8 @@ void FieldEffect_SpawnRandomAngleTriplet(union FieldObject *fieldObject) {
       p->flag = 2;
       p->velocityY = 1 << 16;
       p->speed = Random16() + 0x13333;
-      Motion_SetTargetPositionFromMagnitudeAngle((struct ObjectRuntime *)p,
-                                                 32 << 16, Random16());
+      ObjectMotion_SetTargetPositionFromMagnitudeAngle((struct Object *)p,
+                                                       32 << 16, Random16());
       pp = &p->phase;
       phase2 = 6;
       *pp = phase2;
@@ -93,13 +93,13 @@ void FieldEffect_SpawnRandomAngleTriplet(union FieldObject *fieldObject) {
 /// falls 0.3 pixels a frame, and is released on reaching its ground height.
 /// Douse's swaying particles in Mercury Lighthouse.
 void FieldEffect_UpdateDriftingFallObject(union FieldObject *fieldObject) {
-  struct ObjectRuntime *particle = (struct ObjectRuntime *)fieldObject;
+  struct Object *particle = (struct Object *)fieldObject;
   s32 drift;
 
   particle->y -= 0x4ccc;
   drift = Random16();
   particle->x += drift - Random16();
-  if (particle->y <= particle->terrainHeight) {
+  if (particle->y <= particle->groundHeight) {
     ObjectDispatch_InitializeFar((struct DispatchObject *)particle,
                                  gFieldEffect_CommonParticleScript);
   }
@@ -107,14 +107,14 @@ void FieldEffect_UpdateDriftingFallObject(union FieldObject *fieldObject) {
 
 /// Runs Douse cast on a target, through FieldEffect_RunDouse.
 ///
-/// Abilities: Douse (FIELD_KIND_DOUSE).
+/// Abilities: Douse (FIELD_PSYNERGY_DOUSE).
 void FieldEffect_RunDouseOnTarget(s32 unused) { FieldEffect_RunDouse(); }
 
 /// An orb rises from 16 pixels above the caster to 32 pixels above the
 /// destination (80 with variant) over 10 frames, growing as it goes, rains
 /// particles, and returns.
 ///
-/// Abilities: Douse (FIELD_KIND_DOUSE).
+/// Abilities: Douse (FIELD_PSYNERGY_DOUSE).
 ///
 /// The destination is the target's position (FieldEffect_SetupObjectPair);
 /// with no target it is 16 pixels in front of the caster, on the ground.
@@ -123,8 +123,8 @@ void FieldEffect_RunDouse(void) {
   struct EffectVector pos;
   struct EffectVector start;
   struct EffectVector end;
-  struct Effect05State *work = gEffectWork;
-  struct Object *target = work->target;
+  struct Effect05State *work = gFieldEffectWork;
+  struct ObjectVectorView *target = work->target;
   struct Effect05Object *lightOrb;
   struct EffectVector *from;
   struct EffectVector *to;
@@ -138,7 +138,7 @@ void FieldEffect_RunDouse(void) {
   if (lightOrb == 0)
     return;
   FieldEffect_FadeToEffectColor();
-  AudioCommand_PlayFar(SE_ITEM_BREAK);
+  Sound_PlaySongFar(SE_ITEM_BREAK);
   // No target: 16 pixels in front of the caster, at the ground's height.
   if (work->initialized == 0) {
     work->x = target->position.x;
@@ -211,7 +211,7 @@ void FieldEffect_RunDouse(void) {
         particle->callback = FieldEffect_SpawnRandomAngleTriplet;
         particle->flag = 2;
       }
-      AudioCommand_PlayFar(SE_132);
+      Sound_PlaySongFar(SE_132);
       WaitFrames(6);
     }
     WaitFrames(10);

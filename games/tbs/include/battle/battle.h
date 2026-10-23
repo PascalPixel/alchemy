@@ -10,13 +10,13 @@
 #include "battle_effect_runtime.h"
 #include "farcall.h"
 
-struct BattleActionRecord;
-struct BattleEffectArgument;
-struct BattlePlan;
-struct BattleUnit;
+struct BattleAction;
+struct BattleAnimArgs;
+struct BattleTurn;
+struct Unit;
 struct DispatchObject;
-struct EffectSlot;
-struct ObjectRuntime;
+struct FieldEffectSprite;
+struct Object;
 struct MapSecNameRule;
 
 /// Battlefield (x, y) pixel pairs by place: 0 to 3 the party's column at x 80,
@@ -31,44 +31,45 @@ extern u8 gPlayerObjectId[];
 extern u16 gResource_SlotAssignments[];
 struct BattleObject;
 
-struct AnimationEntry;
-struct AnimationObject;
+struct SpriteAnim;
+struct Sprite;
 struct ArcEffectObject;
 struct ArcObject;
 struct ArcParticle;
-struct BattleAct;
-struct BattleActionRecord;
-struct BattleEffectArgument;
-struct BattleEventState;
-struct BattleGroupOrder;
+struct AbilityDefinition;
+struct BattleAction;
+struct BattleAnimArgs;
+struct BattlePlaybackWork;
+struct BattleSideOrder;
 struct BattleLocationRule;
 struct BattleObject;
-struct BattlePlan;
+struct BattleTurn;
 struct BattlePresentationTransition;
 struct BattleSummonState;
-struct BattleUnit;
+struct Unit;
 struct DescendingOrbitObject;
 struct EffectDescriptor;
-struct EffectSlot;
+struct FieldEffectSprite;
 struct EnemyDefinition;
 struct ObjectEvent;
-struct FxObject;
+struct BattleAnimObject;
 struct SpriteScale;
 struct ItemBreakFragmentSource;
 struct LinkedCaptureObject;
 struct MotionObject;
-struct ObjectRuntime;
+struct Object;
 struct OrbitEffect;
 struct PolarOffsetOutput;
 struct RockWallHeights;
-struct MapInteractionEntry;
+struct MapMusicRule;
 struct ScriptObjectEntry;
 struct BattleSource;
 struct SparkObject;
 struct TransitionActorList;
 struct WaveEffectWork;
 
-/// The battle camera (struct BattleCamera) as the effects that swing it see it.
+/// The battle camera (struct BattleCamera) as the animations that swing it
+/// see it.
 struct CameraWork {
   u8 eyeToPitch[0x36]; ///< BattleCamera's eye to pitch; not named in this view
   u16 scroll;          ///< the camera's yaw, in 1/65536 turns
@@ -79,7 +80,7 @@ struct EffectVector {
   s32 y; ///< 16.16 fixed-point pixels
   s32 z; ///< 16.16 fixed-point pixels
 };
-/// One of the star field's three rings, moving outward on the effect canvas.
+/// One of the star field's three rings, moving outward on the animation canvas.
 struct Ring {
   s32 x;         ///< 1/1024 canvas pixels
   s32 y;         ///< 1/1024 canvas pixels
@@ -87,7 +88,7 @@ struct Ring {
   s32 velocityY; ///< 1/1024 canvas pixels per frame
   s32 age;       ///< frames
 };
-/// The position an item-break effect spawns its objects and shards from.
+/// The position an item-break animation spawns its objects and shards from.
 struct ScatterPosition {
   s32 x; ///< 16.16 fixed-point pixels
   s32 y; ///< 16.16 fixed-point pixels
@@ -97,35 +98,35 @@ extern u8 gAnimation_ChildPaletteCycle[];
 /// The weights an enemy picks among its eight actions by, one table for each
 /// weighted action strategy (enum EnemyActionStrategy, battle_internal.h):
 /// even, falling by 6, or falling steeply from 113 to 5.
-extern u8 gBattleCommand_SelectionWeights[3][8];
+extern u8 gBattleAI_ActionWeights[3][8];
 /// The knockback's speed gained each frame by variant (enum BattleKnockback),
 /// 16.16 pixels a frame: 1, but 8 for KNOCKBACK_HURL.
-extern s32 gBattleMotion_VariantAcceleration[];
+extern s32 gBattleKnockback_Acceleration[];
 /// The knockback's reach by variant, in percent of the unit's distance from
 /// the centre: 140 to 200, 100 for KNOCKBACK_BOUNCE and KNOCKBACK_JOLT.
-extern s32 gBattleMotion_VariantDistancePercent[];
+extern s32 gBattleKnockback_DistancePercent[];
 /// The knockback's top speed by variant, 16.16 pixels a frame: 4, but 20 for
 /// KNOCKBACK_HURL.
-extern s32 gBattleMotion_VariantSpeedLimit[];
+extern s32 gBattleKnockback_SpeedLimit[];
 /// The knockback's hop by variant, 16.16 pixels a frame upward: 2 to 10.
-extern s32 gBattleMotion_VariantVelocityY[];
+extern s32 gBattleKnockback_VelocityY[];
 /// A fixed formation's places by order, as offsets from the middle place:
 /// 0, -1, 1, -2, 2 and so on out to 4.
 extern s8 gBattleParty_CenterOrderOffsets[];
-/// Round-end effects go to the party (BATTLE_SIDE_PARTY), then the enemies
-/// (BATTLE_SIDE_ENEMIES).
-extern const struct BattleGroupOrder gBattleParty_RoundEndGroupOrder;
+/// Round-end effects go to the party (BATTLE_SIDES_PARTY), then the enemies
+/// (BATTLE_SIDES_ENEMIES).
+extern const struct BattleSideOrder gBattleParty_RoundEndSideOrder;
 /// A lone SC_END: a battle unit's object script, which BattleObject_Make
 /// starts.
 extern const s32 gBattlePresentation_ActorObjectScript[];
 /// The advance arrow beside a battle message: eight 128-byte frames of a
 /// 256-colour sprite, one every four frames.
-extern u8 gBattlePresentation_AdvanceArrowTiles[];
+extern u8 gBattleMessage_AdvanceArrowTiles[];
 /// The battle transition's curtain tiles, 32 bytes (one 4-bit tile) each.
-extern const u8 gBattlePresentation_CurtainTiles[];
+extern const u8 gBattleTransition_CurtainTiles[];
 /// Eight curtain tiles, 32 bytes each, of which the transition copies one at a
 /// time into the curtain's first tile.
-extern const u8 gBattlePresentation_TileVariants[];
+extern const u8 gBattleTransition_CurtainVariants[];
 /// Garet's weapon sprite by weapon kind (BattleUnit_LookupWeaponValueByClass).
 extern u16 gBattleUnit_WeaponAnimationsGaret[];
 /// Ivan's weapon sprite by weapon kind.
@@ -135,7 +136,7 @@ extern u16 gBattleUnit_WeaponAnimationsMia[];
 /// Jenna's weapon sprite by weapon kind; Felix draws none.
 extern u16 gBattleUnit_WeaponAnimationsJenna[];
 /// The size of BitDecoder_DecodeImage, which BattleBackground_Load copies to
-/// HEAP_SLOT_TEMP_RENDERER; constants.ld defines it as an address equal to the
+/// HEAP_SLOT_RAM_CODE_TEMP; constants.ld defines it as an address equal to the
 /// size.
 extern u8 BitDecoder_Size[];
 /// The extra matrix the battle camera's projection applies first while
@@ -143,7 +144,7 @@ extern u8 BitDecoder_Size[];
 extern u8 gCamera_FlagTransformWork[];
 /// Where SparkWork.sheet holds the spark's square picture for each frame of
 /// life left, 0 to 6: byte offsets, a byte a pixel.
-extern s32 gElementGlow_StarWorkOffsets[];
+extern s32 gElementGlow_StarFrameOffsets[];
 /// The spark's width and height in pixels by life left: 1 to 4, 4 from three.
 extern u8 gElementGlow_StarSizes[];
 /// Where SparkWork.sheet holds the ring's four 32 by 32 frames: byte offsets,
@@ -151,35 +152,35 @@ extern u8 gElementGlow_StarSizes[];
 extern s32 gElementGlow_RingFrameOffsets[];
 /// The highlighted units' BLDY lightening: 15 down to 0 once, then the second
 /// sixteen (a pulse up to 8 and back) over and over.
-extern s8 gBattlePresentation_HighlightBlendRamp[];
+extern s8 gBattleHighlight_BlendRamp[];
 /// The 104 encounter zones (encounter.tsv), read as struct EncounterZone rows.
-extern u16 gEncounter_EnemyGroupTable[];
+extern u16 gEncounterZones[];
 #ifndef OWN_gBattleBgFxWork
-/// The HEAP_SLOT_MIND_READ work slot: Mind Read's wave work while its effect
+/// The HEAP_SLOT_MIND_READ heap slot: Mind Read's wave work while its animation
 /// runs.
 extern struct WaveEffectWork *gBattleBgEffectWork;
 #endif
-#ifndef OWN_gBattleFxWork
-/// The work slots from HEAP_SLOT_BATTLE_EFFECT, then the canvas and sheet:
-/// the running battle effect's BattleEffectWork first.
-extern void *gBattleEffectWork[];
+#ifndef OWN_gBattleAnimWork
+/// The heap slots from HEAP_SLOT_BATTLE_ANIM, then the canvas and sheet:
+/// the running battle animation's BattleAnimWork first.
+extern void *gBattleAnimWork[];
 #endif
-#ifndef OWN_gBattleOwnerStates
-/// The HEAP_SLOT_LINK_OWNER_STATES work slot: the six enemy battle units,
+#ifndef OWN_gEnemyUnits
+/// The HEAP_SLOT_ENEMY_UNITS heap slot: the six enemy battle units,
 /// BATTLE_UNIT_SIZE bytes each, that Unit_Get returns for unit ids 128 to 133
 /// during a battle.
-extern u8 *gBattleOwnerStates;
+extern u8 *gEnemyUnits;
 #endif
 #ifndef OWN_gRandomSeed
-/// Random16's seed; the slot machine seeds it with the play time, and a link
+/// Random16's seed; Lucky Wheels seeds it with the play time, and a link
 /// battle's parent sends it as the round's gBattleRandomSeed.
 extern u32 gRandomSeed;
 #endif
-#ifndef OWN_gTransitionWork
-/// The HEAP_SLOT_BATTLE_BACKGROUND work slot as the camera's turn work:
+#ifndef OWN_gBattleViewWork
+/// The HEAP_SLOT_BATTLE_BACKGROUND heap slot as the camera's turn work:
 /// staging.c, auto_battle.c and round.c set its yaw for each action, and
 /// background.c reads the same slot as struct BattleBackgroundView.
-extern struct BattlePresentationTransition *gTransitionWork;
+extern struct BattlePresentationTransition *gBattleViewWork;
 #endif
 /// SC_FACE_LINK every frame, forever: the script of an object event told to
 /// keep facing its linked object.
@@ -190,25 +191,25 @@ extern const u8 gObjectMotion_LinkedActionScript[];
 extern const s16 gParty_PairResolveRules[];
 /// Isaac's weapon sprite by weapon kind (BattleUnit_LookupWeaponValueByClass).
 extern u16 gBattleUnit_WeaponAnimationsIsaac[];
-/// The 20 enemy classes whose defeated flags a monster battle clears before it
+/// The 20 enemies whose defeated flags a monster battle clears before it
 /// picks a formation (BattleFormation_SelectLevelMatchedCandidate).
 extern u16 gBattleFormation_LevelMatchedEnemies[];
-/// Battle backdrops by map: a backdrop word (bit 31 set, resource id below)
-/// and then its maps, ended by 0; a map not listed takes the last backdrop
-/// (Battle_SelectMapBackdrop).
-extern s32 gBattle_BackdropMaps[];
-/// The template BattleEffect_BuildBlitter walks word by word to write a blitter
+/// Battle backgrounds by map: a background word (bit 31 set, resource id below)
+/// and then its maps, ended by 0; a map not listed takes the last background
+/// (BattleBackground_SelectForMap).
+extern s32 gBattleBackground_Maps[];
+/// The template BattleAnim_BuildBlitter walks word by word to write a blitter
 /// (battle_effect_composite.s); none of it runs where it is.
-extern const u32 BattleEffect_Composite[];
+extern const u32 gBlitterTemplate[];
 /// The message voice's rate by message speed option: 1, 3, then 10
-/// (Ui_SetMessageVoiceFromObjectEvent).
+/// (Message_SetVoiceFromObjectEvent).
 extern u8 gUi_RenderResultValues[];
 extern const u16 gWorldMap_CursorDirectionAngles[];
 extern const u8 gWorldMap_MarkerBlendCycle[];
 /// The world map's map section markers, {tile << 16 | flag, map section} for
 /// each map section's local id from 11, ended by -1; a zero row reserves a
 /// local id with no marker.
-extern const s32 gWorldMap_MapSecMarkers[];
+extern const s32 gRegionMap_MapSecMarkers[];
 u32 __udivsi3(u32 numerator, u32 denominator);
 #ifndef OWN__call_via_r0
 void _call_via_r0(u32 routine);
@@ -216,13 +217,13 @@ void _call_via_r0(u32 routine);
 void Animation_ApplyChildArgumentFar(void *, s32);
 void BitDecoder_DecodeImage(void);
 void FarCall_WindowTable(void);
-struct AnimationObject *GetBattleEffectObject(s32 kind);
+struct Sprite *GetBattleEffectObject(s32 kind);
 void ItemIcon_LoadTilesFar(s32 item);
 #ifndef OWN_Object_InitializeMode
-s32 Object_InitializeMode(struct AnimationObject *state, s32 flags);
+s32 Object_InitializeMode(struct Sprite *state, s32 flags);
 #endif
 
-/// BattleMotion_ApplyVariantMotion's knockbacks, the columns of the
+/// BattleMotion_ApplyKnockback's knockbacks, the columns of the
 /// gBattleMotion_Variant* tables in battle_vars.s. Each is named by how far
 /// and how high it sends the unit, as percent of its spot's distance from the
 /// centre and its hop in pixels a frame; all but KNOCKBACK_HURL accelerate by
@@ -242,7 +243,7 @@ enum BattleKnockback {
   KNOCKBACK_JOLT    ///< the spot itself, a hop of 5.5
 };
 
-/// The battle sprites' animations (AnimationObject_SelectAnimation numbers)
+/// The battle sprites' animations (Sprite_StartAnim numbers)
 /// that the battle code picks by name.
 enum BattlePose {
   POSE_ENEMY_HELD = 0, ///< an enemy asleep, stunned or held
@@ -254,12 +255,12 @@ enum BattlePose {
   POSE_ENEMY_DOWN = 5  ///< a downed enemy stays in its damage pose
 };
 
-/// A battle unit's sprites' OBJ mode, as BattlePresentation_SetActorRecordMode
+/// A battle unit's sprites' OBJ mode, as BattleHighlight_SetSpriteMode
 /// sets it: faded units are semi-transparent, and the battle's blends act on
 /// them.
-enum BattleActorMode { ACTOR_OPAQUE, ACTOR_SEMI_TRANSPARENT };
+enum BattleSpriteMode { SPRITE_OPAQUE, SPRITE_SEMI_TRANSPARENT };
 
-/// BattlePresentation_SetActorModes' mode, kept in BattleWork.highlightMode:
+/// BattleHighlight_SetModes' mode, kept in BattleWork.highlightMode:
 /// whether the selected units are highlighted, every other unit faded.
 enum BattleHighlight { HIGHLIGHT_OFF, HIGHLIGHT_SELECTED };
 

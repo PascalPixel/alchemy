@@ -21,16 +21,16 @@
 /// A formation of twelve objects sweeps in among embers and columns of fire,
 /// and explodes.
 ///
-/// Abilities: Nereid (SUMMON_EFFECT_NEREID).
+/// Abilities: Nereid (SUMMON_ANIM_NEREID).
 ///
 /// Pressing A or B during frames 33 to 97 skips to frame 98. A formation of
 /// twelve objects sweeps in from the right; embers burst up on frame 28 and
 /// over frames 32 to 79, fall back under gravity and from frame 80 rise away,
 /// while three columns of fire stream upwards over frames 32 to 79 and the
 /// targets bounce. At the end the formation explodes with
-/// BattleEffect_RunImpactBurst; the battle shows the damage on frame 120.
+/// BattleAnim_RunImpactBurst; the battle shows the damage on frame 120.
 ///
-/// Reached through BattleEffect_RunSummonEffect, whose sheet slot holds the
+/// Reached through BattleAnim_RunSummonEffect, whose sheet slot holds the
 /// mote sheet here. The embers are PARTICLES 0 to 1023, canvas pixels in 16.16,
 /// a variant of -1 marking an idle one. Loads the water spray palette into the
 /// first 64 background colours, sets REG_BLDALPHA, spawns the twelve
@@ -38,22 +38,22 @@
 /// speed and the usual battle gravity at each bounce. Before the impact burst
 /// it removes its transfer callback and frees its blitters, which the burst
 /// builds again, and it closes the canvas layer last.
-void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
+void BattleAnim_RunNereid(struct BattleAnimArgs *effect) {
   BlitterPair draw;
   void **cursor;
   void *canvas;
-  struct BattleEffectWork *work;
+  struct BattleAnimWork *work;
   u8 *graphics;
   u8 *palette;
 
-  cursor = &gWorkSlot[HEAP_SLOT_BATTLE_CANVAS];
+  cursor = &gHeapSlots[HEAP_SLOT_BATTLE_CANVAS];
   canvas = cursor[0];
-  work = cursor[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_CANVAS];
+  work = cursor[HEAP_SLOT_BATTLE_ANIM - HEAP_SLOT_BATTLE_CANVAS];
   graphics = cursor[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_CANVAS];
   work->effect = effect;
-  BattleEffect_StartCanvasLayer(0);
+  BattleAnim_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  BattleEffect_FetchRectangleBlitters(0, draw);
+  BattleAnim_FetchRectangleBlitters(0, draw);
 
   // The band along the bottom from WaterSpray, the columns from FirePillarA
   // (at sheet + 0x6e4). FirePillarA's own palette is skipped, so both are
@@ -61,23 +61,23 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
   palette = Resource_GetTableEntry((s32)&ResourceId_WaterSpraySheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
-  Resource_DecodeType01(palette, work->sheet);
+  Decompress_Type01(palette, work->sheet);
   palette = Resource_GetTableEntry((s32)&ResourceId_FirePillarSheetA);
   palette += 128;
-  Resource_DecodeType01(palette, work->sheet + NEREID_COLUMN_IMAGE);
-  Resource_DecodeType01(
-      Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);
+  Decompress_Type01(palette, work->sheet + NEREID_COLUMN_IMAGE);
+  Decompress_Type01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA),
+                    graphics);
   // Trails keep 75% of each pixel a frame.
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   {
     struct Point2D focus;
     struct Point2D velocity;
     s32 rise;
     s32 frame;
     s32 k;
-    struct EffectStep *point;
-    struct EffectStep *spark;
-    struct EffectStep *sparks;
+    struct Particle *point;
+    struct Particle *spark;
+    struct Particle *sparks;
     s32 *life;
 
     // The formation comes in from (256, 88), heading left at 16 pixels a
@@ -89,7 +89,7 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
     velocity.y = -(4 << 16);
     // work->particles 24 to 39 are given a place and a delay that nothing in
     // the scene reads again.
-    EFFECT_FREE_PARTICLES(k, work->particles, 64);
+    ANIM_FREE_PARTICLES(k, work->particles, 64);
     for (k = 0; k != 16; k++) {
       point = &work->particles[24 + k];
       point->x = Random16() & 127;
@@ -99,18 +99,18 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
     life = &PARTICLES->variant;
     for (k = 0; k != NEREID_EMBERS; k++) {
       *life = -1;
-      life += 7; // sizeof(struct EffectStep) / 4
+      life += 7; // sizeof(struct Particle) / 4
     }
     sparks = PARTICLES;
-    BattleEffect_SelectLivingTargets(work->effect);
+    BattleAnim_SelectLivingTargets(work->effect);
     WaitFrames(1);
-    BattleEffect_SpawnObjects(NEREID_OBJECTS, 380, 2);
+    BattleAnim_SpawnObjects(NEREID_OBJECTS, 380, 2);
 
     for (frame = 0; frame != NEREID_FRAMES; frame++) {
       if ((gKeysRepeat & (KEY_A | KEY_B)) && frame > 32 && frame <= 97)
         frame = 98;
       if (frame == 120)
-        EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
+        ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       // The band rises 2 pixels a frame for the first 16 frames.
       if (frame <= 15)
         rise += 2;
@@ -125,8 +125,8 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
         if (focus.x < 120 << 16)
           velocity.x += 0x8000;
       }
-      BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_NEREID, focus.x,
-                                         focus.y);
+      BattleAnim_PlaceFormationObjects(SUMMON_FORMATION_NEREID, focus.x,
+                                       focus.y);
 
       // Embers burst up from an oval around (32, 96), twice as tall as wide
       // on the canvas and so round on the doubled-width screen, with a random
@@ -169,11 +169,11 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
         }
       }
       if (frame == 0)
-        AudioCommand_PlayFar(SE_164);
+        Sound_PlaySongFar(SE_164);
       if (frame == 32)
-        AudioCommand_PlayFar(SE_145);
+        Sound_PlaySongFar(SE_145);
       if (frame == 80)
-        AudioCommand_PlayFar(SE_144);
+        Sound_PlaySongFar(SE_144);
 
       // The columns: a 104-pixel image scrolling up 16 pixels a frame,
       // drawn twice to wrap round.
@@ -221,9 +221,9 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
             size = 9;
           if (frame > 76)
             size = 10;
-          EFFECT_DRAW_MOTE(draw[spark->velocityY > 0], canvas, graphics,
-                           Q_16_16_TO_INT(spark->x), Q_16_16_TO_INT(spark->y),
-                           size);
+          ANIM_DRAW_MOTE(draw[spark->velocityY > 0], canvas, graphics,
+                         Q_16_16_TO_INT(spark->x), Q_16_16_TO_INT(spark->y),
+                         size);
           spark->x += spark->velocityX;
           spark->y += spark->velocityY;
           if (frame > 80)
@@ -243,36 +243,36 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
       // pixels a frame up under the gravity BattleMotion_ReturnToSpot also
       // gives a unit (0xab85, about 0.67 pixel a frame each frame).
       if (frame <= 79) {
-        EFFECT_FOR_EACH_TARGET(k, work->effect) {
+        ANIM_FOR_EACH_TARGET(k, work->effect) {
           if (frame > 29) {
             s32 phase = frame % 12;
 
             if (phase == 0) {
               struct MotionObject *object =
-                  GetBattleObjectSlotFar(work->effect->actors[k])->object;
+                  GetBattleObjectSlotFar(work->effect->targets[k])->object;
 
-              ObjectGroup_UpdateMembers(work->effect->actors[k],
+              ObjectGroup_UpdateMembers(work->effect->targets[k],
                                         SPRITE_COLOR_WHITE, POSE_DAMAGE, -1, 0);
               object->velocityY = 0x48000;
               object->verticalMotionStrength = 0xab85;
             }
             if (phase == 6)
-              ObjectGroup_UpdateMembers(work->effect->actors[k], 0, POSE_DAMAGE,
-                                        -1, 0);
+              ObjectGroup_UpdateMembers(work->effect->targets[k], 0,
+                                        POSE_DAMAGE, -1, 0);
           }
         }
       }
-      EFFECT_PRESENT_FRAME(work);
+      ANIM_PRESENT_FRAME(work);
     }
 
     // The impact burst builds its own blitters and transfer.
-    Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
-    EFFECT_RELEASE_BLITTERS();
-    BattleEffect_RunImpactBurst(SUMMON_FORMATION_NEREID, focus.x, focus.y);
+    Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);
+    ANIM_RELEASE_BLITTERS();
+    BattleAnim_RunImpactBurst(SUMMON_FORMATION_NEREID, focus.x, focus.y);
     for (k = 0; k != NEREID_OBJECTS; k++)
-      ResourceObject_ReleaseFar(work->animations[k]);
+      Sprite_DestroyFar(work->animations[k]);
   }
-  BattleEffect_EndCanvasLayer();
+  BattleAnim_EndCanvasLayer();
 }
 
 #undef NEREID_FRAMES

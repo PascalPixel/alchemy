@@ -582,10 +582,10 @@ static void EventScript_DemonstratePsynergy(void) {
     // "...with just the two of you?", three or four: the flag numbered for a
     // character is set once that character has joined.
     if (Engine_GameFlagIsSet(FLAG_IN_PARTY(IVAN)) != 0) {
-      gEventWork->message++;
+      gFieldWork->message++;
     }
     if (Engine_GameFlagIsSet(FLAG_IN_PARTY(MIA)) != 0) {
-      gEventWork->message++;
+      gFieldWork->message++;
     }
     Engine_ScriptOpenMessage(LOCALID_STRONGMAN_SHOWING_PSYNERGY, 0);
     if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
@@ -627,8 +627,8 @@ static void EventScript_DemonstratePsynergy(void) {
       Engine_ScriptWait(1);
     }
     // End the display and restore the strongman's ordinary appearance.
-    Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
-    Scheduler_RemoveCallback(ValeGate_UpdateShowingStrongmanPsynergy);
+    Engine_AudioPlayCue(SONG_FADE_OUT_ACTION_SE);
+    Task_Remove(ValeGate_UpdateShowingStrongmanPsynergy);
     Engine_TaskWait(1);
     Map_EndCutscenePsynergy();
     Engine_ObjectEventSetChildValue(LOCALID_STRONGMAN_SHOWING_PSYNERGY, 0);
@@ -655,7 +655,7 @@ static void EventScript_AskAboutJourney(void) {
     if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 1) {
       Engine_ScriptShowMessage(LOCALID_AFTER_KALAY_CURIOUS_OLD_MAN, 0);
     } else {
-      struct EventWork *work = gEventWork;
+      struct EventWork *work = gFieldWork;
 
       work->message++;
       Engine_ScriptAskYesNo(LOCALID_AFTER_KALAY_CURIOUS_OLD_MAN, 0);
@@ -743,10 +743,10 @@ static void EventScript_BoyLiftsSmallRock(void) {
     Engine_TaskWait(1);
   }
   rock->motionFlags = savedMotionFlags;
-  Scheduler_RemoveCallback(ValeGate_UpdateRockLiftingBoyPsynergy);
-  Scheduler_RemoveCallback(ValeGate_UpdateSmallRockPalette);
+  Task_Remove(ValeGate_UpdateRockLiftingBoyPsynergy);
+  Task_Remove(ValeGate_UpdateSmallRockPalette);
   Engine_TaskWait(1);
-  Script_PlayCue(SE_161);
+  Script_PlaySong(SE_161);
   ObjectEvent_SetChildValue(LOCALID_STORM_ROCK_LIFTING_BOY, 0);
   ObjectEvent_SetChildValue(LOCALID_STORM_SMALL_ROCK, 0);
   Engine_ScriptWait(40);
@@ -835,7 +835,7 @@ static void EventScript_PsynergyStoneIsGone(void) {
 /// Opens a door's map grid cells and sends the leader through its threshold.
 static inline void EventScript_OpenDoorAndWalkThrough(s32 cellX, s32 cellZ,
                                                       s32 x, s32 z) {
-  Script_PlayCue(SE_DOOR_OPEN);
+  Script_PlaySong(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gValeGate_DoorOpens, cellX, cellZ);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, x, z);
 }
@@ -858,7 +858,7 @@ static void EventScript_OpenNorthwestDoor(void) {
 /// Reached by walking north into metatile behavior 2 after Kalay; the other
 /// tables have no such door.
 static void EventScript_OpenNortheastDoor(void) {
-  Script_PlayCue(SE_188);
+  Script_PlaySong(SE_188);
   MapGrid_CopyCellsTo(0, 63, 51, 8, 2, 2);
   Engine_TaskWait(10);
   MapGrid_CopyCellsTo(2, 63, 51, 8, 2, 2);
@@ -1003,17 +1003,17 @@ s32 ValeGate_Initialize(void) {
     Engine_TaskWait(1);
   } else {
     if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
-      FieldEffect_StartGroundParticles();
-      FieldEffect_StartLightning();
+      Weather_StartRain();
+      Weather_StartLightning();
       MapGrid_CopyCellAttributes(21, 38, 1, 1, 18, 41);
       flag = Engine_GameFlagIsSet(FLAG_VALE_STORM_SENT_TO_AID_ELDERS);
       if (flag != 0) {
         Engine_ObjectEventSetPosition(LOCALID_STORM_FIRST_AIDE, 0, 0);
         Engine_ObjectEventSetPosition(LOCALID_STORM_SECOND_AIDE, 0, 0);
-        FieldObject_SetTargetAndCallback(LOCALID_STORM_GARETS_GRANDFATHER,
-                                         OBJ_EVENT_LINK_KEEP_MOTION |
-                                             LOCALID_PARTY_LEADER,
-                                         gValeGate_FaceTargetActions);
+        Object_SetTargetAndCallback(LOCALID_STORM_GARETS_GRANDFATHER,
+                                    OBJ_EVENT_LINK_KEEP_MOTION |
+                                        LOCALID_PARTY_LEADER,
+                                    gValeGate_FaceTargetActions);
       }
     } else {
       if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0) {
@@ -1069,7 +1069,7 @@ s32 ValeGate_Initialize(void) {
           if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
             Engine_ScriptOpenScreen();
             Engine_ScriptWaitForScreen();
-            FieldEffect_ResumeLightning();
+            Weather_ResumeLightning();
           }
         }
       }
@@ -1112,9 +1112,9 @@ static void EventScript_SentToAidElders(void) {
     // The camera goes to the villagers by the stone. Garet's grandfather: go
     // aid the elders, the Boulder is too heavy for them.
     Engine_ScriptStart();
-    Camera_SetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
+    FieldCamera_SetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
     Engine_CameraMoveTo(PIXELS(197), -1, PIXELS(768), 1);
-    Camera_WaitForArrival();
+    FieldCamera_WaitForArrival();
     Engine_ScriptSetMessage(MsgValeGoAidElders);
     Engine_ObjectEventRunRepeatedMotion(LOCALID_STORM_GARETS_GRANDFATHER, 2);
     Script_ShowMessageAndWait(
@@ -1200,12 +1200,12 @@ static void EventScript_SentToAidElders(void) {
     } else {
       Engine_ObjectEventSetAnimation(LOCALID_STORM_GARETS_GRANDFATHER,
                                      ANIMATION_NOD);
-      gEventWork->message++;
+      gFieldWork->message++;
     }
     Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_STORM_GARETS_GRANDFATHER,
                        0);
     if (skipReply != 0) {
-      gEventWork->message++;
+      gFieldWork->message++;
     }
     // The rested strongman is all charged up; everyone turns to him.
     speechFlags = SPEAKER_WINDOW_ABOVE;
@@ -1226,10 +1226,10 @@ static void EventScript_SentToAidElders(void) {
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHEAST, 0);
     ValeGate_FaceDirectionAndWait(LOCALID_STORM_GARET, FACING_NORTHEAST, 10);
     Engine_CameraSetSpeed(PIXELS(6) / 5, PIXELS(3) / 20);
-    Camera_MoveTo(PIXELS(215), -1, PIXELS(758), 1);
-    Camera_WaitForArrival();
+    FieldCamera_MoveTo(PIXELS(215), -1, PIXELS(758), 1);
+    FieldCamera_WaitForArrival();
     Engine_CameraSetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
-    Camera_MoveTo(PIXELS(205), -1, PIXELS(778), 1);
+    FieldCamera_MoveTo(PIXELS(205), -1, PIXELS(778), 1);
     // He hops down to them; asked about his Psynergy, he has enough to save
     // Felix, thanks to the Psynergy Stone.
     ObjectEvent_SetActionScript(LOCALID_STORM_CHARGED_UP_STRONGMAN,
@@ -1272,10 +1272,10 @@ static void EventScript_SentToAidElders(void) {
     ValeGate_RejoinParty(LOCALID_STORM_GARET);
     ValeGate_RejoinParty(LOCALID_STORM_JENNA);
     ValeGate_RejoinParty(LOCALID_STORM_CHARGED_UP_STRONGMAN);
-    FieldObject_SetTargetAndCallback(LOCALID_STORM_GARETS_GRANDFATHER,
-                                     OBJ_EVENT_LINK_KEEP_MOTION |
-                                         LOCALID_PARTY_LEADER,
-                                     gValeGate_FaceTargetActions);
+    Object_SetTargetAndCallback(LOCALID_STORM_GARETS_GRANDFATHER,
+                                OBJ_EVENT_LINK_KEEP_MOTION |
+                                    LOCALID_PARTY_LEADER,
+                                gValeGate_FaceTargetActions);
     Engine_GameFlagSet(FLAG_VALE_STORM_SENT_TO_AID_ELDERS);
     Engine_ScriptEnd();
   }
@@ -1290,9 +1290,9 @@ static void EventScript_SentToAidElders(void) {
 static void EventScript_MeetSurvivingTravelers(void) {
   struct ObjectEvent *camera;
 
-  camera = Camera_GetScriptObject();
+  camera = FieldCamera_GetScriptObject();
   Engine_ScriptStart();
-  Camera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
   // The screen opens on the storm at the west path, where Isaac comes in from
   // the river; the music fades out as he walks up and hears the first
@@ -1302,8 +1302,8 @@ static void EventScript_MeetSurvivingTravelers(void) {
   Engine_TaskWait(1);
   FieldScript_PrepareObjectAndApplyValue(1, 0);
   Engine_ScriptOpenScreen();
-  Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
-  FieldEffect_ResumeLightning();
+  Engine_AudioPlayCue(SONG_FADE_OUT_BGM);
+  Weather_ResumeLightning();
   Engine_ObjectEventSetPosition(LOCALID_FIRST_TRAVELER, PIXELS(105),
                                 PIXELS(267));
   Engine_TaskWait(1);
@@ -1315,9 +1315,9 @@ static void EventScript_MeetSurvivingTravelers(void) {
   // traveler walks in.
   Engine_AudioPlayCue(MUS_061);
   camera->motionFlags = 0;
-  Camera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
+  FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
   Engine_CameraMoveTo(PIXELS(109), PIXELS(176), PIXELS(281), 1);
-  Camera_WaitForArrival();
+  FieldCamera_WaitForArrival();
   Engine_ScriptWait(40);
   ObjectEvent_SetPosition(LOCALID_SECOND_TRAVELER, PIXELS(135), PIXELS(177));
   ObjectEvent_SetSpeed(LOCALID_SECOND_TRAVELER, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -1392,7 +1392,7 @@ static void ValeGate_FightTravelers(void) {
                                 40);
   Engine_CameraSetSpeed(PIXELS(3) / 2, PIXELS(3) / 16);
   Engine_CameraMoveTo(PIXELS(89), PIXELS(176), PIXELS(313), 1);
-  Camera_WaitForArrival();
+  FieldCamera_WaitForArrival();
   Engine_ScriptWait(40);
   ObjectEvent_FaceDirection(LOCALID_FIRST_TRAVELER, FACING_NORTHEAST, 0);
   ValeGate_FaceDirectionAndWait(LOCALID_SECOND_TRAVELER,
@@ -1434,9 +1434,9 @@ static void ValeGate_FightTravelers(void) {
   ValeGate_FaceDirectionAndWait(LOCALID_SECOND_TRAVELER, westFacing, 20);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_STORM_GARET, 2);
   EventScript_SayThenWait(SPEAKER_PORTRAIT_LEFT | LOCALID_STORM_GARET, 10);
-  FieldObject_SetTargetAndCallback(
-      LOCALID_PARTY_LEADER, OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_STORM_GARET,
-      gValeGate_FaceTargetActions);
+  Object_SetTargetAndCallback(LOCALID_PARTY_LEADER,
+                              OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_STORM_GARET,
+                              gValeGate_FaceTargetActions);
   ObjectEvent_WalkToAndWait(LOCALID_STORM_GARET, 93, 361);
   ValeGate_FaceDirectionAndWait(LOCALID_STORM_GARET, northNortheastFacing, 40);
   EventScript_SayThenWait(LOCALID_STORM_GARET, 20);
@@ -1474,7 +1474,7 @@ static void ValeGate_FightTravelers(void) {
   ObjectEvent_RunActionScriptAndWait(LOCALID_STORM_GARET,
                                      gValeGate_StormGaretLeapActions);
   // The confrontation continues in battle; both outcomes return here.
-  Battle_SetStart(BATTLE_START_NO_ESCAPE);
+  Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
   {
     const void *message = &MapId_ValeGate;
 
@@ -1501,9 +1501,9 @@ static void EventScript_TravelersLeaveAfterBattle(void) {
 
   // The screen opens on Isaac and Garet lying beaten in the storm, the
   // travelers standing over them.
-  Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
+  Engine_AudioPlayCue(SONG_FADE_OUT_BGM);
   Engine_ScriptStart();
-  Camera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
   Engine_CameraMoveTo(PIXELS(64), PIXELS(144), PIXELS(350), 0);
   Engine_MapGridRedraw();
@@ -1525,12 +1525,12 @@ static void EventScript_TravelersLeaveAfterBattle(void) {
   objectEvent = ObjectEvent_GetById(LOCALID_STORM_GARET);
   Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
   {
-    struct EventWork *work = gEventWork;
+    struct EventWork *work = gFieldWork;
 
-    work->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    work->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   }
   Engine_ScriptOpenScreen();
-  FieldEffect_ResumeLightning();
+  Weather_ResumeLightning();
   Engine_ScriptWaitForScreen();
   Engine_ScriptWait(80);
   ObjectEvent_FaceDirection(LOCALID_FIRST_TRAVELER,
@@ -1561,16 +1561,16 @@ static void EventScript_TravelersLeaveAfterBattle(void) {
   Engine_ScriptWait(40);
   // Three last flashes of lightning, then the storm ends and the screen
   // fades slowly out.
-  FieldEffect_StopLightning();
-  FieldEffect_LastLightning();
+  Weather_StopLightning();
+  Weather_LastLightning();
   Engine_TaskWait(20);
-  FieldEffect_LastLightning();
+  Weather_LastLightning();
   Engine_TaskWait(60);
-  FieldEffect_LastLightning();
+  Weather_LastLightning();
   Engine_TaskWait(20);
-  FieldEffect_StopLightning();
+  Weather_StopLightning();
   Engine_ScriptWait(40);
-  gEventWork->transitionFrames = 120;
+  gFieldWork->transitionFrames = 120;
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
   Engine_GameFlagClear(FLAG_VALE_STORM);
@@ -1598,7 +1598,7 @@ static void EventScript_DepartForQuest(void) {
   Party_RestoreHpPp(1);
   Engine_ScriptStart();
   MapGrid_CopyCellsTo(42, 53, 42, 54, 3, 1);
-  Camera_MoveTo(PIXELS(180), PIXELS(16), PIXELS(618), 0);
+  FieldCamera_MoveTo(PIXELS(180), PIXELS(16), PIXELS(618), 0);
   Engine_MapGridRedraw();
   Engine_TaskWait(1);
   objectEvent = ObjectEvent_GetById(LOCALID_FAREWELL_FIRST_CROWD_VILLAGER + 2);
@@ -1671,12 +1671,12 @@ static void EventScript_DepartForQuest(void) {
                               gValeGate_FarewellDogActions);
   Engine_ScriptWait(40);
   faceActions = gValeGate_FaceTargetActions;
-  FieldObject_SetTargetAndCallback(
-      LOCALID_FAREWELL_FIRST_CHILD,
-      OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_FAREWELL_DOG, faceActions);
-  FieldObject_SetTargetAndCallback(
-      LOCALID_FAREWELL_SECOND_CHILD,
-      OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_FAREWELL_DOG, faceActions);
+  Object_SetTargetAndCallback(LOCALID_FAREWELL_FIRST_CHILD,
+                              OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_FAREWELL_DOG,
+                              faceActions);
+  Object_SetTargetAndCallback(LOCALID_FAREWELL_SECOND_CHILD,
+                              OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_FAREWELL_DOG,
+                              faceActions);
   ObjectEvent_RefreshSelectorById(LOCALID_FAREWELL_DOG);
   Engine_ObjectEventStop(LOCALID_FAREWELL_FIRST_CHILD);
   Engine_ObjectEventStop(LOCALID_FAREWELL_SECOND_CHILD);
@@ -1797,9 +1797,9 @@ static void EventScript_DepartForQuest(void) {
   ObjectEvent_SetActionScript(LOCALID_FAREWELL_FIRST_CHILD,
                               gValeGate_FarewellFirstChildActions);
   Engine_ScriptWait(10);
-  Camera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
-  Camera_GetScriptObject()->motionFlags = 0;
-  Camera_MoveTo(PIXELS(215), PIXELS(16), PIXELS(801), 1);
+  FieldCamera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
+  FieldCamera_GetScriptObject()->motionFlags = 0;
+  FieldCamera_MoveTo(PIXELS(215), PIXELS(16), PIXELS(801), 1);
   Engine_ScriptWait(10);
   ObjectEvent_SetActionScript(LOCALID_FAREWELL_SECOND_CHILD,
                               gValeGate_FarewellSecondChildActions);
@@ -2010,14 +2010,14 @@ static void EventScript_DepartForQuest(void) {
   departureActions = gValeGate_PartyDepartureActions;
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER, departureActions);
   Engine_ScriptWait(20);
-  Camera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
+  FieldCamera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
   Engine_CameraMoveTo(PIXELS(216), PIXELS(16), PIXELS(905), 1);
   Engine_ScriptWait(20);
   ObjectEvent_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetActionScript(GARET, departureActions);
   Engine_ScriptWait(60);
-  work = gEventWork;
-  work->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  work = gFieldWork;
+  work->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->transitionFrames = 60;
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
@@ -2080,8 +2080,8 @@ static void ValeGate_CyclePsynergyPalette(struct ObjectEvent *objectEvent) {
 static void ValeGate_SpawnEffectPair(struct ObjectEvent *parent) {
   struct ObjectEvent *pair[2];
   struct ObjectEvent *child;
-  struct AnimationObject *sprite;
-  struct FieldEffectWork *effectWork = gEffectWork;
+  struct Sprite *sprite;
+  struct FieldEffectWork *effectWork = gFieldEffectWork;
   s32 i;
 
   Engine_AudioPlayCue(SE_131);
@@ -2090,19 +2090,19 @@ static void ValeGate_SpawnEffectPair(struct ObjectEvent *parent) {
                                 parent->z.fixed);
     pair[i] = child;
     if (child != NULL) {
-      child->terrainHeight = parent->terrainHeight;
+      child->groundHeight = parent->groundHeight;
       sprite = child->sprite;
       child->motionFlags = 0;
       child->timer = 0;
       child->linkedObject = parent;
       if (sprite != NULL) {
-        AnimationObject_SelectAnimation(sprite, 0);
+        Sprite_StartAnim(sprite, 0);
         sprite->flags = 0;
-        Resource_ResetEntry(sprite->slot);
+        VramCache_FreeEntry(sprite->slot);
         sprite->slot = effectWork->tileSlot;
         sprite->retainCacheEntry = 1;
         sprite->image.tile =
-            (gVramBlockCache[sprite->slot].offset >> 5) & 0x3ff;
+            (gVramCacheEntries[sprite->slot].offset >> 5) & 0x3ff;
         sprite->image.fullColor = 0;
         sprite->image.shape = 1;
         sprite->image.size = 2;
@@ -2112,14 +2112,14 @@ static void ValeGate_SpawnEffectPair(struct ObjectEvent *parent) {
   }
   {
     struct ObjectEvent *effect = pair[0];
-    struct AnimationObject *effectSprite = effect->sprite;
+    struct Sprite *effectSprite = effect->sprite;
 
     effect->update = FieldEffect_AnimateVerticalNegative;
     effectSprite->image.priority = 2;
   }
   {
     struct ObjectEvent *effect = pair[1];
-    struct AnimationObject *effectSprite = effect->sprite;
+    struct Sprite *effectSprite = effect->sprite;
 
     effectSprite->image.priority = 2;
     effect->update = FieldEffect_AnimateVerticalPositive;
@@ -2532,180 +2532,180 @@ u32 gValeGate_StormWarps[] = {
 
 struct ObjectEventTemplate gValeGate_ObjectEventTemplates[] = {
     { 0xf8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(186), 0, PIXELS(460), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(186), 0, PIXELS(460), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { 0xf8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(252), 0, PIXELS(480), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(252), 0, PIXELS(480), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { 0xf8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(408), 0, PIXELS(560), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(408), 0, PIXELS(560), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, 3,
-        PIXELS(392), 0, PIXELS(712), FACING_NORTH, TALK_FACE_PARTY, 0 },
+        PIXELS(392), 0, PIXELS(712), FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(56), 0, PIXELS(616), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(56), 0, PIXELS(616), FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(104), 0, PIXELS(760), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(104), 0, PIXELS(760), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(88), 0, PIXELS(744), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(88), 0, PIXELS(744), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(168), 0, PIXELS(600), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(168), 0, PIXELS(600), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(184), 0, PIXELS(600), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(184), 0, PIXELS(600), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(312), 0, PIXELS(824), FACING_SOUTHEAST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(312), 0, PIXELS(824), FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(296), 0, PIXELS(568), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(296), 0, PIXELS(568), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_MAN_WITH_WHITE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTHWEST, 3, 0 },
     { SPRITE_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(240), 0, PIXELS(760), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(240), 0, PIXELS(760), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(328), 0, PIXELS(680), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(328), 0, PIXELS(680), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(1608), 0, PIXELS(1608), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(1608), 0, PIXELS(1608), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(370), 0, PIXELS(319), FACING_WEST, TALK_FACE_PARTY, 0 },
+        PIXELS(370), 0, PIXELS(319), FACING_WEST, TALK_FACING_PARTY, 0 },
     { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { JENNA_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTHEAST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_NORTHEAST, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gValeGate_StormObjectEventTemplates[] = {
     { 0xf8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(186), 0, PIXELS(460), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(186), 0, PIXELS(460), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { 0xf8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(252), 0, PIXELS(480), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(252), 0, PIXELS(480), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { 0xf8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(408), 0, PIXELS(560), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(408), 0, PIXELS(560), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, 3,
-        PIXELS(249), 0, PIXELS(628), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(249), 0, PIXELS(628), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(214), 0, PIXELS(635), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(214), 0, PIXELS(635), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(294), 0, PIXELS(670), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(294), 0, PIXELS(670), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, 3,
-        PIXELS(136), 0, PIXELS(678), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(136), 0, PIXELS(678), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(87), 0, PIXELS(744), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(87), 0, PIXELS(744), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(173), 0, PIXELS(568), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(173), 0, PIXELS(568), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(213), 0, PIXELS(771), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(213), 0, PIXELS(771), FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0 },
 #if TBS_PATCH_4
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(198), 0, PIXELS(779), FACING_NORTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(198), 0, PIXELS(779), FACING_NORTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
 #else
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(204), 0, PIXELS(783), FACING_NORTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(204), 0, PIXELS(783), FACING_NORTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
 #endif
     { SPRITE_OLD_MAN_WITH_WHITE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(250), 0, PIXELS(773), FACING_SOUTHWEST, 3, 0 },
     { SPRITE_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(56), 0, PIXELS(729), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(56), 0, PIXELS(729), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(56), 0, PIXELS(729), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(56), 0, PIXELS(729), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(215), 0, PIXELS(709), FACING_NORTH, TALK_FACE_PARTY, 0 },
+        PIXELS(215), 0, PIXELS(709), FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_SATUROS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_MENARDI, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { GARET_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { JENNA_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(234), 0, PIXELS(786), FACING_NORTHEAST, TALK_FACE_PARTY, 0 },
+        PIXELS(234), 0, PIXELS(786), FACING_NORTHEAST, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gValeGate_DepartureObjectEventTemplates[] = {
     { 0xf8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(186), 0, PIXELS(460), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(186), 0, PIXELS(460), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { 0xf8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(252), 0, PIXELS(480), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(252), 0, PIXELS(480), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { 0xf8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(408), 0, PIXELS(560), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(408), 0, PIXELS(560), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(225), 0, PIXELS(814), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(225), 0, PIXELS(814), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(168), 0, PIXELS(607), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(168), 0, PIXELS(607), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(184), 0, PIXELS(607), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(184), 0, PIXELS(607), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(199), 0, PIXELS(781), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(199), 0, PIXELS(781), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(180), 0, PIXELS(790), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(180), 0, PIXELS(790), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_MAN_WITH_WHITE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(216), 0, PIXELS(778), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(216), 0, PIXELS(778), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_ORANGE_PONYTAIL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(262), 0, PIXELS(799), FACING_SOUTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(262), 0, PIXELS(799), FACING_SOUTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_BOY_WITH_ORANGE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(270), 0, PIXELS(814), FACING_SOUTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(270), 0, PIXELS(814), FACING_SOUTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_IN_GREEN_HEADSCARF, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(252), 0, PIXELS(787), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(252), 0, PIXELS(787), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_IN_TEAL_SHIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(234), 0, PIXELS(781), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(234), 0, PIXELS(781), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(268), 0, PIXELS(742), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(268), 0, PIXELS(742), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(286), 0, PIXELS(761), FACING_SOUTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(286), 0, PIXELS(761), FACING_SOUTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(271), 0, PIXELS(778), FACING_SOUTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(271), 0, PIXELS(778), FACING_SOUTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(246), 0, PIXELS(762), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(246), 0, PIXELS(762), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(227), 0, PIXELS(760), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(227), 0, PIXELS(760), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(209), 0, PIXELS(760), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(209), 0, PIXELS(760), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(288), 0, PIXELS(795), FACING_SOUTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(288), 0, PIXELS(795), FACING_SOUTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(161), 0, PIXELS(790), FACING_EAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(161), 0, PIXELS(790), FACING_EAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(171), 0, PIXELS(815), FACING_EAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(171), 0, PIXELS(815), FACING_EAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_STOUT_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(191), 0, PIXELS(758), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(191), 0, PIXELS(758), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_DOG, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_NORTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_CAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_WEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_WEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gValeGate_ObjectEventTemplatesAfterKalay[] = {
     { 0xf8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(186), 0, PIXELS(460), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(186), 0, PIXELS(460), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { 0xf8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(252), 0, PIXELS(480), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(252), 0, PIXELS(480), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { 0xf8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(408), 0, PIXELS(560), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(408), 0, PIXELS(560), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(217), 0, PIXELS(804), FACING_WEST, TALK_FACE_PARTY, 0 },
+        PIXELS(217), 0, PIXELS(804), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(107), 0, PIXELS(765), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(107), 0, PIXELS(765), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(267), 0, PIXELS(744), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(267), 0, PIXELS(744), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(328), 0, PIXELS(681), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(328), 0, PIXELS(681), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, 3,
-        PIXELS(391), 0, PIXELS(716), FACING_NORTH, TALK_FACE_PARTY, 0 },
+        PIXELS(391), 0, PIXELS(716), FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(56), 0, PIXELS(617), FACING_NORTH + FACING_STEP, 3, 0 },
     { SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(166), 0, PIXELS(603), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(166), 0, PIXELS(603), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(176), 0, PIXELS(568), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(176), 0, PIXELS(568), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(315), 0, PIXELS(823), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(315), 0, PIXELS(823), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(287), 0, PIXELS(571), FACING_NORTH, TALK_FACE_PARTY, 0 },
+        PIXELS(287), 0, PIXELS(571), FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(370), 0, PIXELS(319), FACING_WEST, TALK_KEEP_FACING, 0 },
+        PIXELS(370), 0, PIXELS(319), FACING_WEST, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
@@ -2733,7 +2733,7 @@ struct MapEvent gValeGate_Events[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_WHIRLWIND), LOCALID_FIRST_IVY, (FLAG_VALE_FIRST_IVY_BLOWN_AWAY), EVENT_SCRIPT(EventScript_BlowAwayFirstIvy) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_WHIRLWIND), LOCALID_SECOND_IVY, (FLAG_VALE_SECOND_IVY_BLOWN_AWAY), EVENT_SCRIPT(EventScript_BlowAwaySecondIvy) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_WHIRLWIND), LOCALID_THIRD_IVY, (FLAG_VALE_THIRD_IVY_BLOWN_AWAY), EVENT_SCRIPT(EventScript_BlowAwayThirdIvy) },
-    { BG_EVENT(BG_EVENT_UNNAMED), 100, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_UsePsynergyStone) },
+    { BG_EVENT(BG_EVENT_SILENT), 100, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_UsePsynergyStone) },
     { MAP_EVENTS_END },
 };
 
@@ -2753,7 +2753,7 @@ struct MapEvent gValeGate_StormEvents[] = {
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_OpenSoutheastDoor) },
     { MAP_EVENT_COORD, 9, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveThroughWestPassage) },
     { MAP_EVENT_COORD, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SentToAidElders) },
-    { BG_EVENT(BG_EVENT_UNNAMED), 100, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_UsePsynergyStone) },
+    { BG_EVENT(BG_EVENT_SILENT), 100, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_UsePsynergyStone) },
     { MAP_EVENTS_END },
 };
 
@@ -2796,7 +2796,7 @@ struct MapEvent gValeGate_EventsAfterLeaving[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_WHIRLWIND), LOCALID_FIRST_IVY, (FLAG_VALE_FIRST_IVY_BLOWN_AWAY), EVENT_SCRIPT(EventScript_BlowAwayFirstIvy) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_WHIRLWIND), LOCALID_SECOND_IVY, (FLAG_VALE_SECOND_IVY_BLOWN_AWAY), EVENT_SCRIPT(EventScript_BlowAwaySecondIvy) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_WHIRLWIND), LOCALID_THIRD_IVY, (FLAG_VALE_THIRD_IVY_BLOWN_AWAY), EVENT_SCRIPT(EventScript_BlowAwayThirdIvy) },
-    { BG_EVENT(BG_EVENT_UNNAMED), 100, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_UsePsynergyStone) },
+    { BG_EVENT(BG_EVENT_SILENT), 100, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_UsePsynergyStone) },
     { MAP_EVENTS_END },
 };
 
@@ -2837,7 +2837,7 @@ struct MapEvent gValeGate_EventsAfterKalay[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_WHIRLWIND), LOCALID_FIRST_IVY, (FLAG_VALE_FIRST_IVY_BLOWN_AWAY), EVENT_SCRIPT(EventScript_BlowAwayFirstIvy) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_WHIRLWIND), LOCALID_SECOND_IVY, (FLAG_VALE_SECOND_IVY_BLOWN_AWAY), EVENT_SCRIPT(EventScript_BlowAwaySecondIvy) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_WHIRLWIND), LOCALID_THIRD_IVY, (FLAG_VALE_THIRD_IVY_BLOWN_AWAY), EVENT_SCRIPT(EventScript_BlowAwayThirdIvy) },
-    { BG_EVENT(BG_EVENT_UNNAMED), 100, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_UsePsynergyStone) },
+    { BG_EVENT(BG_EVENT_SILENT), 100, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_UsePsynergyStone) },
     { MAP_EVENTS_END },
 };
 

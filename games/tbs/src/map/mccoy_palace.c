@@ -226,16 +226,16 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
     if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
       gMcCoyPalaceObjectEventTemplates[LOCALID_VILLAGER_IN_MILADYS_NIGHTGOWN -
                                        LOCALID_FIRST_PLACED]
-          .talkFacing = TALK_KEEP_FACING;
+          .talkFacing = TALK_FACING_KEEP;
       gMcCoyPalaceObjectEventTemplates[LOCALID_OLD_MAN_PRAISING_THE_WARRIORS -
                                        LOCALID_FIRST_PLACED]
-          .talkFacing = TALK_FACE_PARTY;
+          .talkFacing = TALK_FACING_PARTY;
       gMcCoyPalaceObjectEventTemplates[LOCALID_SOLDIER_WATCHING_KOLIMA -
                                        LOCALID_FIRST_PLACED]
           .talkFacing = 3;
       gMcCoyPalaceObjectEventTemplates[LOCALID_SOLDIER_SHOWING_THE_REWARD -
                                        LOCALID_FIRST_PLACED]
-          .talkFacing = TALK_FACE_PARTY_AND_BACK;
+          .talkFacing = TALK_FACING_PARTY_AND_BACK;
     }
 
     return templates;
@@ -319,7 +319,7 @@ static void EventScript_TalkToSoldierShowingTheReward(void) {
   } else {
     Engine_ScriptSetMessage(MsgBilibinDoThinkTheseBilibinsGreat);
     if (Engine_GameFlagIsSet(0x84d) != 0) {
-      gEventWork->message++;
+      gFieldWork->message++;
     }
   }
 
@@ -369,9 +369,9 @@ static void EventScript_WalkThroughDoor(void) {
   struct EventWork *work;
   s32 hideDoorLayers;
 
-  work = gEventWork;
+  work = gFieldWork;
   hideDoorLayers = 0;
-  if (work->touchedTrigger == 9) {
+  if (work->coordEvent == 9) {
     if (Engine_GameFlagIsSet(FLAG_MCCOYS_DOOR_OPEN) == 0) {
       Engine_AudioPlayCue(SE_188);
       hideDoorLayers = 1;
@@ -381,22 +381,22 @@ static void EventScript_WalkThroughDoor(void) {
     hideDoorLayers = 1;
   }
   if (hideDoorLayers != 0) {
-    TileAnimation_ResumeChannel(1);
-    TileAnimation_ResumeChannel(2);
+    TilesetAnim_Resume(1);
+    TilesetAnim_Resume(2);
   }
   Engine_ScriptStart();
   Engine_ScriptWait(10);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
-  if (work->touchedTrigger == 9)
+  if (work->coordEvent == 9)
     ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0, -16);
   else
     ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 3, -16);
   Engine_ScriptWait(16);
-  Engine_ScriptRequestWarp(work->touchedTrigger);
+  Engine_ScriptRequestWarp(work->coordEvent);
   Engine_ScriptEnd();
-  TileAnimation_PauseChannel(1);
-  TileAnimation_PauseChannel(2);
+  TilesetAnim_Pause(1);
+  TilesetAnim_Pause(2);
 }
 
 /// The chest is empty. "Isaac checked the chest... but it was empty."
@@ -539,7 +539,7 @@ static void EventScript_CaptainSeesPartyOff(void) {
     ObjectEvent_SetSpeed(LOCALID_CAPTAIN, PIXELS(4) / 5, PIXELS(2) / 5);
     ObjectEvent_WalkToAndWait(LOCALID_CAPTAIN, 570, 758);
     ObjectEvent_SetPosition(LOCALID_CAPTAIN, 0, 0);
-    gEventWork->startTransition =
+    gFieldWork->transition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     GameFlag_Set(FLAG_MCCOY_PALACE_PARTY_REWARDED);
     GameFlag_Set(FLAG_PARTY_SEEN_OFF);
@@ -570,10 +570,10 @@ s32 Map_Initialize(void) {
   s32 curseLifted;
   struct ObjectEvent *chest;
 
-  gEventWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  TileAnimation_PauseChannel(1);
-  TileAnimation_PauseChannel(2);
+  TilesetAnim_Pause(1);
+  TilesetAnim_Pause(2);
   Engine_GameFlagSet(FLAG_MCCOY_PALACE_VISITED);
   if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
     Engine_GameFlagClear(FLAG_MCCOYS_DOOR_OPEN);
@@ -664,14 +664,14 @@ static void EventScript_AudienceWithMcCoy(void) {
 
   // Stage the first audience, or place the leader for a return visit.
   Engine_ScriptStart();
-  Camera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
   Engine_ScriptGetViewCenter()->motionFlags = 0;
-  Camera_MoveTo(PIXELS(894), -1, PIXELS(664), 0);
+  FieldCamera_MoveTo(PIXELS(894), -1, PIXELS(664), 0);
   Engine_TaskWait(1);
   Engine_ObjectEventSetPosition(LOCALID_PARTY_LEADER, 0, 0);
   if (GameFlag_IsSet(FLAG_MCCOY_PALACE_JOB_REFUSED) != 0) {
-    Camera_MoveTo(PIXELS(894), -1, PIXELS(698), 0);
+    FieldCamera_MoveTo(PIXELS(894), -1, PIXELS(698), 0);
     ObjectEvent_SetPosition(LOCALID_CAPTAIN, PIXELS(876), PIXELS(634));
     ObjectEvent_FaceDirection(LOCALID_CAPTAIN, FACING_SOUTHEAST + FACING_STEP,
                               0);
@@ -679,19 +679,19 @@ static void EventScript_AudienceWithMcCoy(void) {
   }
   Engine_MapGridRedraw();
   Engine_TaskWait(1);
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  gEventWork->transitionFrames = 40;
+  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transitionFrames = 40;
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
   if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_JOB_REFUSED) == 0) {
     Engine_ScriptWait(80);
     ObjectEvent_SetPosition(LOCALID_CAPTAIN, PIXELS(894), PIXELS(798));
-    Camera_SetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
-    Camera_MoveTo(PIXELS(894), -1, PIXELS(698), 1);
+    FieldCamera_SetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
+    FieldCamera_MoveTo(PIXELS(894), -1, PIXELS(698), 1);
     ObjectEvent_SetSpeed(LOCALID_CAPTAIN, PIXELS(4) / 5, PIXELS(2) / 5);
     ObjectEvent_WalkTo(LOCALID_CAPTAIN, 894, 696);
     Engine_ScriptWait(80);
-    Camera_MoveTo(PIXELS(894), -1, PIXELS(664), 1);
+    FieldCamera_MoveTo(PIXELS(894), -1, PIXELS(664), 1);
     Engine_ObjectEventWaitForMove(LOCALID_CAPTAIN);
     ObjectEvent_WalkToAndWait(LOCALID_CAPTAIN, 842, 696);
     ObjectEvent_WalkToAndWait(LOCALID_CAPTAIN, 842, 636);
@@ -726,7 +726,7 @@ static void EventScript_AudienceWithMcCoy(void) {
                               10);
     ObjectEvent_FaceDirection(LOCALID_LORD_MCCOY, FACING_SOUTH + FACING_STEP,
                               10);
-    Camera_MoveTo(PIXELS(894), -1, PIXELS(698), 1);
+    FieldCamera_MoveTo(PIXELS(894), -1, PIXELS(698), 1);
     ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(894), PIXELS(798));
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 894, 726);
@@ -735,7 +735,7 @@ static void EventScript_AudienceWithMcCoy(void) {
     Engine_ScriptWait(10);
     Engine_ObjectEventRunRepeatedMotion(LOCALID_LORD_MCCOY, 1);
     Engine_ScriptShowMessage(SPEAKER_PORTRAIT_RIGHT | LOCALID_LORD_MCCOY, 0);
-    Camera_MoveTo(PIXELS(894), -1, PIXELS(664), 1);
+    FieldCamera_MoveTo(PIXELS(894), -1, PIXELS(664), 1);
     Engine_ObjectEventWalkToAndWait(LOCALID_PARTY_LEADER, 894, 684);
     objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     if (objectEvent != 0) {
@@ -836,7 +836,7 @@ static void EventScript_AudienceWithMcCoy(void) {
     Engine_GameFlagSet(FLAG_MCCOY_PALACE_JOB_REFUSED);
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 894, 752);
-    gEventWork->transitionFrames = 16;
+    gFieldWork->transitionFrames = 16;
     Engine_ScriptCloseScreen();
     Engine_ScriptWaitForScreen();
     goto leave;
@@ -1080,18 +1080,18 @@ accepted:
   ObjectEvent_FaceDirection(LOCALID_CAPTAIN, FACING_EAST + FACING_STEP, 10);
   Engine_ObjectEventSetAnimationAndWait(LOCALID_CAPTAIN, 3);
   Engine_ScriptWait(20);
-  FieldObject_SetTargetAndCallback(LOCALID_PARTY_LEADER,
-                                   OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_CAPTAIN,
-                                   gPalace_FacingActions);
+  Object_SetTargetAndCallback(LOCALID_PARTY_LEADER,
+                              OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_CAPTAIN,
+                              gPalace_FacingActions);
   // Keep the party looking at the captain while he leaves the audience.
-  FieldObject_SetTargetAndCallback(GARET,
-                                   OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_CAPTAIN,
-                                   gPalace_FacingActions);
-  FieldObject_SetTargetAndCallback(IVAN,
-                                   OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_CAPTAIN,
-                                   gPalace_FacingActions);
-  FieldObject_SetTargetAndCallback(
-      MIA, OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_CAPTAIN, gPalace_FacingActions);
+  Object_SetTargetAndCallback(GARET,
+                              OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_CAPTAIN,
+                              gPalace_FacingActions);
+  Object_SetTargetAndCallback(IVAN,
+                              OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_CAPTAIN,
+                              gPalace_FacingActions);
+  Object_SetTargetAndCallback(MIA, OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_CAPTAIN,
+                              gPalace_FacingActions);
   ObjectEvent_SetSpeed(LOCALID_CAPTAIN, PIXELS(3) / 5, PIXELS(3) / 10);
   ObjectEvent_WalkToAndWait(LOCALID_CAPTAIN, 852, 646);
   ObjectEvent_WalkToAndWait(LOCALID_CAPTAIN, 852, 666);
@@ -1108,9 +1108,9 @@ accepted:
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
   Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
   Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
-  FieldObject_SetTargetAndCallback(
-      LOCALID_CAPTAIN, OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_PARTY_LEADER,
-      gPalace_FacingActions);
+  Object_SetTargetAndCallback(LOCALID_CAPTAIN,
+                              OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_PARTY_LEADER,
+                              gPalace_FacingActions);
   Engine_ObjectEventSetAnimation(GARET, ANIMATION_WALK);
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (objectEvent != 0) {
@@ -1137,7 +1137,7 @@ accepted:
   Engine_ObjectEventSetPosition(MIA, 0, 0);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Engine_ObjectEventWalkToAndWait(LOCALID_PARTY_LEADER, 894, 752);
-  gEventWork->transitionFrames = 16;
+  gFieldWork->transitionFrames = 16;
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
   Engine_GameFlagSet(FLAG_CAPTAIN_SEEING_PARTY_OUT);
@@ -1158,17 +1158,17 @@ static void EventScript_CaptainHintsAtBarricade(void) {
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 256, 660);
   Engine_ScriptWait(20);
-  Camera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   Engine_GameFlagSet(FLAG_MCCOYS_DOOR_OPEN);
-  Script_PlayCue(SE_188);
-  TileAnimation_ResumeChannel(1);
-  TileAnimation_ResumeChannel(2);
+  Script_PlaySong(SE_188);
+  TilesetAnim_Resume(1);
+  TilesetAnim_Resume(2);
   Engine_ObjectEventSetPosition(LOCALID_CAPTAIN, PIXELS(256), PIXELS(632));
   Engine_TaskWait(1);
   ObjectEvent_SetSpeed(LOCALID_CAPTAIN, PIXELS(3) / 5, PIXELS(3) / 10);
   ObjectEvent_WalkToAndWait(LOCALID_CAPTAIN, 256, 644);
-  TileAnimation_PauseChannel(1);
-  TileAnimation_PauseChannel(2);
+  TilesetAnim_Pause(1);
+  TilesetAnim_Pause(2);
   Engine_ScriptWait(20);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_CAPTAIN, 2);
   Engine_ScriptSetMessage(MsgBilibinNameSorryRejected);
@@ -1229,28 +1229,28 @@ static void EventScript_McCoyRewardsParty(void) {
   Engine_ScriptStart();
   // Reveal the approach, then walk the leader and the captain into the
   // audience.
-  Camera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
   viewCenter = Engine_ScriptGetViewCenter();
   advanceAlternateReply = 0;
   viewCenter->motionFlags = advanceAlternateReply;
-  Camera_MoveTo(PIXELS(894), -1, PIXELS(664), 0);
+  FieldCamera_MoveTo(PIXELS(894), -1, PIXELS(664), 0);
   Engine_TaskWait(1);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, 0, 0);
   Engine_MapGridRedraw();
   Engine_TaskWait(1);
 
-  gEventWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
-  gEventWork->transitionFrames = 16;
+  gFieldWork->transitionFrames = 16;
 
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
   Engine_ScriptWait(40);
   ObjectEvent_SetPosition(LOCALID_CAPTAIN, PIXELS(888), PIXELS(798));
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(904), PIXELS(798));
-  Camera_SetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
-  Camera_MoveTo(PIXELS(894), -1, PIXELS(698), 1);
+  FieldCamera_SetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
+  FieldCamera_MoveTo(PIXELS(894), -1, PIXELS(698), 1);
   ObjectEvent_SetSpeed(LOCALID_CAPTAIN, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
   ObjectEvent_WalkTo(LOCALID_CAPTAIN, 888, 720);
@@ -1269,15 +1269,15 @@ static void EventScript_McCoyRewardsParty(void) {
 
   advanceAlternateReply = 1;
   if (GameFlag_IsSet(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) == 0) {
-    gEventWork->message++;
+    gFieldWork->message++;
     advanceAlternateReply = 0;
   }
   Script_ShowMessage(LOCALID_CAPTAIN, 0);
   if (advanceAlternateReply != 0) {
-    gEventWork->message++;
+    gFieldWork->message++;
   }
 
-  Camera_MoveTo(PIXELS(894), -1, PIXELS(664), 1);
+  FieldCamera_MoveTo(PIXELS(894), -1, PIXELS(664), 1);
   ObjectEvent_SetActionScript(LOCALID_CAPTAIN, gPalace_PacingActions);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 894, 684);
 
@@ -1312,24 +1312,24 @@ static void EventScript_McCoyRewardsParty(void) {
 
   advanceAlternateReply = 1;
   if (GameFlag_IsSet(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) == 0) {
-    gEventWork->message++;
+    gFieldWork->message++;
     advanceAlternateReply = 0;
   }
   Engine_ObjectEventRunRepeatedMotion(LOCALID_LORD_MCCOY, 3);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_LORD_MCCOY, 0, 20);
   if (advanceAlternateReply != 0) {
-    gEventWork->message++;
+    gFieldWork->message++;
   }
 
   advanceAlternateReply = 1;
   if (GameFlag_IsSet(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) == 0) {
-    gEventWork->message++;
+    gFieldWork->message++;
     advanceAlternateReply = 0;
   }
   Engine_ObjectEventRunRepeatedMotion(LOCALID_LORD_MCCOY, 1);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_LORD_MCCOY, 0, 10);
   if (advanceAlternateReply != 0) {
-    gEventWork->message++;
+    gFieldWork->message++;
   }
 
   // Let the companions answer McCoy\'s thanks in turn.
@@ -1364,7 +1364,7 @@ static void EventScript_McCoyRewardsParty(void) {
     McCoyPalace_FaceCompanionsForDiscussion();
     advanceAlternateReply = 1;
     if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) != 0) {
-      gEventWork->message++;
+      gFieldWork->message++;
       advanceAlternateReply = 0;
     }
     ObjectEvent_FaceDirection(LOCALID_LORD_MCCOY, FACING_SOUTH + FACING_STEP,
@@ -1374,11 +1374,11 @@ static void EventScript_McCoyRewardsParty(void) {
     Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_LORD_MCCOY, 0,
                               10);
     if (advanceAlternateReply != 0) {
-      gEventWork->message++;
+      gFieldWork->message++;
     }
     ObjectEvent_ShowEmote(LOCALID_LORD_MCCOY, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   } else {
-    gEventWork->message += 4;
+    gFieldWork->message += 4;
   }
 
   Script_OpenMessage(SPEAKER_PORTRAIT_RIGHT | LOCALID_LORD_MCCOY, 0);
@@ -1425,13 +1425,13 @@ static void EventScript_McCoyRewardsParty(void) {
   McCoyPalace_FaceCompanionsForDiscussion();
   advanceAlternateReply = 1;
   if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 1) {
-    gEventWork->message++;
+    gFieldWork->message++;
     advanceAlternateReply = 0;
   }
   McCoyPalace_FaceCompanionsForAudience();
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_LORD_MCCOY, 0, 10);
   if (advanceAlternateReply != 0) {
-    gEventWork->message++;
+    gFieldWork->message++;
   }
 
   ObjectEvent_FaceDirection(LOCALID_LORD_MCCOY, FACING_SOUTHWEST + FACING_STEP,
@@ -1482,9 +1482,9 @@ static void EventScript_McCoyRewardsParty(void) {
   ObjectEvent_SetPosition(MIA, 0, 0);
   Engine_ScriptWait(20);
   ObjectEvent_FaceDirection(LOCALID_LORD_MCCOY, FACING_SOUTH + FACING_STEP, 0);
-  FieldObject_SetTargetAndCallback(LOCALID_PARTY_LEADER,
-                                   OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_CAPTAIN,
-                                   gPalace_FacingActions);
+  Object_SetTargetAndCallback(LOCALID_PARTY_LEADER,
+                              OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_CAPTAIN,
+                              gPalace_FacingActions);
   ObjectEvent_WalkToAndWait(LOCALID_CAPTAIN, 852, 646);
   ObjectEvent_WalkToAndWait(LOCALID_CAPTAIN, 852, 666);
   ObjectEvent_WalkToAndWait(LOCALID_CAPTAIN, 864, 672);
@@ -1515,7 +1515,7 @@ static void EventScript_PresentRewardChests(void) {
   Engine_ScriptStart();
   // Restore the chest-row metatile behavior patches before presenting the
   // reward.
-  Camera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   Engine_ScriptGetViewCenter()->motionFlags = 0;
   Engine_CameraMoveTo(PIXELS(628), -1, PIXELS(748), 0);
   McCoyPalace_OpenRewardChestRow();
@@ -1546,9 +1546,9 @@ static void EventScript_PresentRewardChests(void) {
   ObjectEvent_GetById(LOCALID_WATER_OF_LIFE_CHEST)->y.fixed = -PIXELS(4);
   Engine_MapGridRedraw();
   Engine_TaskWait(1);
-  gEventWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
-  gEventWork->transitionFrames = 16;
+  gFieldWork->transitionFrames = 16;
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
   ObjectEvent_SetSpeed(LOCALID_CAPTAIN, PIXELS(3) / 5, PIXELS(3) / 10);
@@ -1726,65 +1726,65 @@ struct ObjectEventTemplate gMcCoyPalaceNoObjectEventTemplates[] = {
 // clang-format off
 struct ObjectEventTemplate gMcCoyPalaceObjectEventTemplates[] = {
     { SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
-        PIXELS(265), 0, PIXELS(702), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(265), 0, PIXELS(702), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
-        PIXELS(342), 0, PIXELS(632), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(342), 0, PIXELS(632), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
-        PIXELS(360), 0, PIXELS(632), FACING_EAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(360), 0, PIXELS(632), FACING_EAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_IN_VIEW, MOVEMENT_TYPE_WANDER,
-        PIXELS(166), 0, PIXELS(728), FACING_EAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(166), 0, PIXELS(728), FACING_EAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
-        PIXELS(326), 0, PIXELS(378), FACING_SOUTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(326), 0, PIXELS(378), FACING_SOUTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_IN_VIEW, MOVEMENT_TYPE_WANDER,
-        PIXELS(362), 0, PIXELS(142), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(362), 0, PIXELS(142), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
-        PIXELS(296), 0, PIXELS(87), FACING_NORTHWEST + FACING_STEP, TALK_KEEP_FACING, 0 },
+        PIXELS(296), 0, PIXELS(87), FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
-        PIXELS(952), 0, PIXELS(289), FACING_EAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(952), 0, PIXELS(289), FACING_EAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
-        PIXELS(951), 0, PIXELS(438), FACING_SOUTH + FACING_STEP, TALK_KEEP_FACING, 0 },
+        PIXELS(951), 0, PIXELS(438), FACING_SOUTH + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(616), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(616), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_MCCOY, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
-        PIXELS(894), 0, PIXELS(634), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(894), 0, PIXELS(634), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_KEY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTHWEST, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTHWEST, TALK_FACING_KEEP, 0 },
     { IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTHEAST, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTHEAST, TALK_FACING_KEEP, 0 },
     { MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_CHEST, CONDITION_IN_VIEW, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(616), 0, PIXELS(616), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(616), 0, PIXELS(616), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_CHEST, CONDITION_IN_VIEW, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(632), 0, PIXELS(616), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(632), 0, PIXELS(616), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_CHEST, CONDITION_IN_VIEW, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(648), 0, PIXELS(616), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(648), 0, PIXELS(616), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_CHEST, CONDITION_IN_VIEW, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(664), 0, PIXELS(616), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(664), 0, PIXELS(616), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_CHEST, CONDITION_IN_VIEW, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(616), 0, PIXELS(648), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(616), 0, PIXELS(648), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_CHEST, CONDITION_IN_VIEW, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(648), 0, PIXELS(648), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(648), 0, PIXELS(648), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_CHEST, CONDITION_IN_VIEW, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(664), 0, PIXELS(648), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(664), 0, PIXELS(648), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_CHEST, CONDITION_IN_VIEW, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(616), 0, PIXELS(664), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(616), 0, PIXELS(664), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_CHEST, CONDITION_IN_VIEW, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(648), 0, PIXELS(664), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(648), 0, PIXELS(664), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_CHEST, CONDITION_IN_VIEW, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(664), 0, PIXELS(664), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(664), 0, PIXELS(664), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { MAP_TABLE_END },
 };
 
@@ -1869,10 +1869,10 @@ struct MapEvent gMcCoyPalaceEvents[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SOLDIER_SHOWING_THE_REWARD, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadRewardSoldiersThoughts) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_LORD_MCCOY, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinThereIsNothingMoreToTalk) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_LORD_MCCOY, CONDITION_ALWAYS, MSGNO(MsgBilibinButICannaeFiggerOutHow) },
-    { BG_EVENT(BG_EVENT_UNNAMED), 100, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchVialChest) },
-    { BG_EVENT(BG_EVENT_UNNAMED), 101, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchPotionChest) },
-    { BG_EVENT(BG_EVENT_UNNAMED), 102, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchPsyCrystalChest) },
-    { BG_EVENT(BG_EVENT_UNNAMED), 103, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchWaterOfLifeChest) },
+    { BG_EVENT(BG_EVENT_SILENT), 100, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchVialChest) },
+    { BG_EVENT(BG_EVENT_SILENT), 101, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchPotionChest) },
+    { BG_EVENT(BG_EVENT_SILENT), 102, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchPsyCrystalChest) },
+    { BG_EVENT(BG_EVENT_SILENT), 103, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchWaterOfLifeChest) },
     { MAP_EVENT_COORD, 50, FLAG_PARTY_SEEN_OFF, EVENT_SCRIPT(EventScript_CaptainSeesPartyOff) },
     { MAP_EVENT_COORD, 51, FLAG_PARTY_SEEN_OFF, EVENT_SCRIPT(EventScript_CaptainAsksPartyToChoose) },
     { BG_EVENT(BG_EVENT_BARREL), 120, FLAG_MCCOY_PALACE_BARREL_ELIXIR, FIND_ITEM(ITEM_ELIXIR) },

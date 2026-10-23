@@ -22,9 +22,9 @@ void Colosso_StartRaceGauge(s32 playerLocalId, s32 opponentLocalId,
   s32 handle;
   s32 pal;
 
-  work = Runtime_AllocateBlock(HEAP_SLOT_COLOSSO_RACE,
-                               sizeof(struct ColossoRaceWork));
-  handle = (s32)Runtime_BumpAllocateAlternatePool(512);
+  work = AllocHeapSlotEwram(HEAP_SLOT_COLOSSO_RACE,
+                            sizeof(struct ColossoRaceWork));
+  handle = (s32)AllocEwram(512);
 
   work->gauge.playerLocalId = playerLocalId;
   work->gauge.opponentLocalId = opponentLocalId;
@@ -47,7 +47,7 @@ void Colosso_StartRaceGauge(s32 playerLocalId, s32 opponentLocalId,
 
   FieldResource_DecodeType01(gColosso_GaugeGraphics, (void *)handle);
 
-  pal = Resource_FindFreeEntry();
+  pal = VramCache_FindFreeEntry();
   work->gauge.vramBlock = pal;
   Engine_VramLoad((s16)pal, 512, (const void *)handle);
 
@@ -57,8 +57,7 @@ void Colosso_StartRaceGauge(s32 playerLocalId, s32 opponentLocalId,
 #ifdef UBFIX
   FieldScheduler_AddCallback(Colosso_DrawGauge, 0xc76);
 #else
-  FieldScheduler_AddCallback((SchedulerCallback)((s32)Colosso_DrawGauge + 1),
-                             0xc76);
+  FieldScheduler_AddCallback((TaskFunc)((s32)Colosso_DrawGauge + 1), 0xc76);
 #endif
 
   Runtime_BumpFree((void *)handle);

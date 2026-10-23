@@ -1,7 +1,7 @@
 #include "savedata.h"
 #include "types.h"
 
-/// The signature that marks a save record: SaveState_InitializeWorkspace
+/// The signature that marks a save record: Save_InitializeWork
 /// counts a sector as a save only when its first seven bytes match it.
 const u8 gSave_Signature[] = "CAMELOT";
 /// The record header's first eight bytes, with no terminator. The writers

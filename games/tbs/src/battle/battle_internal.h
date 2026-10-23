@@ -119,7 +119,7 @@
   (BGCNT_PRIORITY(3) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31))
 
 // The kinds of argument a message's placeholders take, for
-// UiWork_PushValueSlotFar: a unit's name, an item's, a class's, an
+// MessageArgument_PushFar: a unit's name, an item's, a class's, an
 // ability's, and a number.
 #define VALUE_UNIT_NAME 1
 #define VALUE_ITEM_NAME 2
@@ -148,7 +148,7 @@
 #define DEFEAT_SEVERAL 1
 #define DEFEAT_BY_PARTY_MEMBER 3
 
-/// The game flag of an enemy class the party has defeated, set by
+/// The game flag of an enemy the party has defeated, set by
 /// BattleEnemy_RecordDefeat outside the monster battles; the monster battles
 /// choose only formations of defeated enemies (BattleFormation_AverageLevel).
 #define ENEMY_DEFEATED_FLAG(classId) ((classId) + 0x600)
@@ -168,16 +168,16 @@
 /// the sync or transfer under way (link.c, round.c).
 #define LINK_MAX_MISSED_FRAMES 24
 
-/// BattleWork.battleType, from the enemy formation
+/// BattleWork.layout, from the enemy formation
 /// (BattleFormation_BuildEnemyList): the random formations stand left to right
 /// in the order they were drawn, any other is laid out from the centre.
-#define FORMATION_SHUFFLED 0
-#define FORMATION_INTERLEAVED 1
+#define FORMATION_LAYOUT_SHUFFLED 0
+#define FORMATION_LAYOUT_INTERLEAVED 1
 
 /// The two battle sprites drawn in two parts: the sprite after each is its
-/// second part, which SummonSlot_RegisterActorSprites loads into further
+/// second part, which EnemySprite_LoadIntoSlots loads into further
 /// enemy sprite slots and BattleObject_SpawnObjectsForList shows as the
-/// object's second record.
+/// object's second sprite.
 #define SPRITE_WITH_SECOND_PART_A                                              \
   476 ///< the Kraken's (ENEMY_KRAKEN, sprites.tsv)
 #define SPRITE_WITH_SECOND_PART_B                                              \
@@ -186,82 +186,82 @@
 /// The inventory's weapon slot, for Inventory_FindEquippedFar.
 #define EQUIP_WEAPON 1
 
-// MotionObject.recordStorageKind's low four bits: no sprite, one sprite in
+// MotionObject.spritesKind's low four bits: no sprite, one sprite in
 // records, or records pointing to a table of up to four.
-#define RECORDS_NONE 0
-#define RECORDS_SINGLE 1
-#define RECORDS_TABLE 2
-#define RECORDS_KIND_MASK 15
-#define RECORDS_TABLE_SIZE 4
+#define OBJECT_SPRITES_NONE 0
+#define OBJECT_SPRITES_ONE 1
+#define OBJECT_SPRITES_GROUP 2
+#define OBJECT_SPRITES_KIND_MASK 15
+#define OBJECT_SPRITES_GROUP_SIZE 4
 
-/// BattlePlan.outcome: how BattlePresentation_DispatchAction shows the
-/// action, set by BattleCommand_BuildPlan from the ability
-/// (gBattle_ActionStatus where it gives one).
-enum BattlePlanStaging {
-  PLAN_SHOW_MESSAGES = 1, ///< no animation: each target's events only
-  PLAN_SHOW_ATTACK = 2,   ///< the actor runs up and strikes
-  PLAN_SHOW_CAST = 3,     ///< Psynergy, and Venus, Mercury, Mars, Jupiter
-  PLAN_SHOW_ITEM = 4,     ///< an item
-  PLAN_SHOW_SUMMON = 5,   ///< the larger summons, the actor hidden
-  PLAN_SHOW_DJINNI = 6,   ///< a Djinni with no attack (Granite, Quartz...)
-  PLAN_SHOW_FLEE = 7,     ///< a unit runs
+/// BattleTurn.staging: how BattleStaging_DispatchAction shows the
+/// action, set by BattleTurn_Build from the ability
+/// (gAbilityStaging where it gives one).
+enum BattleStaging {
+  STAGING_MESSAGES = 1, ///< no animation: each target's messages only
+  STAGING_ATTACK = 2,   ///< the actor runs up and strikes
+  STAGING_CAST = 3,     ///< Psynergy, and Venus, Mercury, Mars, Jupiter
+  STAGING_ITEM = 4,     ///< an item
+  STAGING_SUMMON = 5,   ///< the larger summons, the actor hidden
+  STAGING_DJINNI = 6,   ///< a Djinni with no attack (Granite, Quartz...)
+  STAGING_FLEE = 7,     ///< a unit runs
   /// The action plays as a cast, the caster showing its element's streaks in
   /// place of the gathering star field. Where actstat.tsv gives no staging,
   /// it's how an enemy's ability plays when the ability isn't Psynergy
   /// (Ability_IsPsynergy) and its row of actflags.tsv isn't 0; an enemy's
-  /// Psynergy plays as PLAN_SHOW_CAST. actstat.tsv gives it to Slice and to
+  /// Psynergy plays as STAGING_CAST. actstat.tsv gives it to Slice and to
   /// seven weapon unleashes: Blizzard, Drown, Demon Fire, Vorpal Slash, Rapid
   /// Smash, Sonic Smash and Titan Blade.
-  PLAN_SHOW_ENEMY_CAST = 8,
-  PLAN_SHOW_FULL_SCREEN = 9 ///< Gaia, Rockfall, Procne and their kin
+  STAGING_ENEMY_CAST = 8,
+  STAGING_FULL_SCREEN = 9 ///< Gaia, Rockfall, Procne and their kin
 };
 
-// BattlePlan.presentationFlags: the effect kind in the low twelve bits and
-// its strength (a double or triple blow) above them; then how the effect is
+// BattleTurn.animation: the animation kind in the low twelve bits and
+// its strength (a double or triple blow) above them; then how the animation is
 // staged.
-#define STAGING_KIND_MASK 0xfff
-#define STAGING_VARIANT_MASK 0x3000
-#define STAGING_VARIANT_SHIFT 12
-#define STAGING_BY_ID_RANGE 0x4000 ///< BattleEffect_DispatchByIdRangeFar
-#define STAGING_SUMMON 0x8000 ///< BattleEffect_RunSummonEffectFar, actor's view
-#define STAGING_ON_DOWNED 0x10000 ///< shown on downed targets too (revivals)
-/// Plays the effect on the side opposite its targets. Unused: no row of
+#define ANIM_ID_MASK 0xfff
+#define ANIM_VARIANT_MASK 0x3000
+#define ANIM_VARIANT_SHIFT 12
+#define ANIM_BY_ID_RANGE 0x4000 ///< BattleAnim_DispatchByIdRangeFar
+#define ANIM_SUMMON 0x8000      ///< BattleAnim_RunSummonEffectFar, actor's view
+#define ANIM_ON_DOWNED 0x10000  ///< shown on downed targets too (revivals)
+/// Plays the animation on the side opposite its targets. Unused: no row of
 /// actflags.tsv in either game sets it and no code adds it, so the flip in
-/// BattlePresentation_RunUnitTransition never happens.
-#define STAGING_OTHER_SIDE 0x20000
+/// BattleStaging_HideField never happens.
+#define ANIM_OTHER_SIDE 0x20000
 
-/// The effect kind Severe Blow alone has: the status window drops its PP row
+/// The animation kind Severe Blow alone has: the status window drops its PP row
 /// while it plays.
-#define STAGING_KIND_SEVERE_BLOW 0x87
+#define ANIM_ID_SEVERE_BLOW 0x87
 
-/// More of BattlePlan.presentationFlags: the camera takes the other side's
+/// More of BattleTurn.animation: the camera takes the other side's
 /// view (an enemy's cast a view of its own), or turns right round.
-#define STAGING_VIEW_ACROSS 0x40000
-#define STAGING_VIEW_REVERSED 0x80000
+#define ANIM_VIEW_ACROSS 0x40000
+#define ANIM_VIEW_REVERSED 0x80000
 
-/// BattleCommand_BuildPlan's results besides 0, which stages the plan.
-#define PLAN_REPORTED -1  ///< the action failed and its message is shown
-#define PLAN_NO_ACTION -2 ///< nothing to stage or show
+/// BattleTurn_Build's results besides 0, which stages the turn.
+#define TURN_REPORTED -1  ///< the action failed and its message is shown
+#define TURN_NO_ACTION -2 ///< nothing to stage or show
 
-/// BattlePresentation_RunUnitTransition's mode: a summon hides its user too.
-#define TRANSITION_HIDE_ACTOR 1
+/// BattleStaging_HideField's mode: a summon hides its user too.
+#define STAGING_HIDE_ACTOR 1
 
-/// BattlePresentation_RunPsynergyCast's mode: what is cast, which decides the
+/// BattleStaging_RunPsynergyCast's mode: what is cast, which decides the
 /// glow.
 enum BattleCastKind {
   CAST_PSYNERGY = 0, ///< the star field gathers on the caster
-  CAST_DJINNI = 1,   ///< no glow; the effect plays its prelude
+  CAST_DJINNI = 1,   ///< no glow; the animation plays its prelude
   CAST_ENEMY = 2     ///< the element's streaks
 };
 
-/// BattleTarget_SelectForAction's results when it picks no one: the side it
+/// BattleAI_ChooseTarget's results when it picks no one: the side it
 /// may target lists no one, or no one there is worth the ability.
 #define TARGET_PICK_SIDE_EMPTY -2
 #define TARGET_PICK_NONE -1
 
-/// BattleActionRecord.target of a held unit's lost turn (COMMAND_NONE, from
-/// BattlePresentation_BuildOpponentEntries and
-/// BattlePresentation_BuildUnitEntries): as a place code, place 0 of the other
+/// BattleAction.target of a held unit's lost turn (COMMAND_NONE, from
+/// Battle_BuildOpponentActions and
+/// Battle_BuildUnitActions): as a place code, place 0 of the other
 /// side, 0x100 the party's for an enemy and 0x180 the enemies' for a party
 /// member (PLACE_PARTY, PLACE_ENEMY).
 #define TARGET_NONE_ENEMY 0x100
@@ -269,7 +269,7 @@ enum BattleCastKind {
 
 /// The camera's yaw while a party member acts, and while an enemy does, in
 /// 1/65536 turns: an eighth of a turn either side of 0. The camera callback
-/// eases toward it (BattlePresentation_UpdateCamera).
+/// eases toward it (BattleCamera_Update).
 #define YAW_PARTY_TURN 0x2000
 #define YAW_ENEMY_TURN -0x2000
 
@@ -277,7 +277,7 @@ enum BattleCastKind {
 /// cast take in place of YAW_ENEMY_TURN.
 #define YAW_BEHIND_ENEMIES 0x5000
 
-/// REG_BLDCNT: blend the semi-transparent sprites (ACTOR_SEMI_TRANSPARENT)
+/// REG_BLDCNT: blend the semi-transparent sprites (SPRITE_SEMI_TRANSPARENT)
 /// over every layer, to fade them.
 #define BLEND_SPRITES_OVER_ALL (BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL)
 

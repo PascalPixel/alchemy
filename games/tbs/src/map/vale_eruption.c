@@ -20,9 +20,9 @@
 /// and the map's one warp takes the party into the Vale Sanctum
 /// (SANCTUM_FROM_VALE_ERUPTION), where the Great Healer passes on the Wise
 /// One's quest (Sanctum_RequestQuestAcceptance). The tremors are
-/// MapGrid_SetShake calls, each with a flash (FieldEffect_LastLightning) and
+/// MapGrid_SetShake calls, each with a flash (Weather_LastLightning) and
 /// SE_145, over a burst of red flashes on the warm colours
-/// (FieldEffect_StartBufferBlend). The map sets
+/// (Weather_StartLightningFlash). The map sets
 /// FLAG_VALE_RETURNED_FROM_MT_ALEPH but never reads it; Sol Sanctum's entrance
 /// map does (sol_sanctum_entrance.c).
 ///
@@ -123,7 +123,7 @@ const struct MapEvent *ValeEruption_GetEvents(void) {
 
 /// Arriving in Vale during the eruption: plays the return from the mountain
 /// when the party comes by VALE_ERUPTION_FROM_SOL_ENTRANCE. Called by
-/// Field_RunMap once the object events are placed;
+/// Map_Run once the object events are placed;
 /// VALE_ERUPTION_FROM_SOL_ENTRANCE is where Sol Sanctum's approach leads after
 /// the eruption and before the party leaves Vale.
 s32 ValeEruption_Initialize(void) {
@@ -156,31 +156,31 @@ static void EventScript_ReturnFromMtAleph(void) {
   ObjectEvent_WalkToAndWait(LOCALID_GARETS_BROTHER, 256, 500);
   ObjectEvent_FaceDirection(LOCALID_GARETS_BROTHER, FACING_NORTHWEST, 0);
   // A lightning flash, then the screen opens on the villagers below.
-  FieldEffect_StartBufferBlend(PALETTE_TRANSFORM_WARM, PALETTE_TRANSFORM_RED);
-  FieldEffect_LastLightning();
+  Weather_StartLightningFlash(PALETTE_TINT_WARM, PALETTE_TINT_RED);
+  Weather_LastLightning();
   Engine_TaskWait(60);
-  Camera_MoveTo(PIXELS(256), -1, PIXELS(612), 0);
+  FieldCamera_MoveTo(PIXELS(256), -1, PIXELS(612), 0);
   Engine_CameraWaitForMove();
   Engine_MapGridRedraw();
-  work = gEventWork;
-  work->startTransition = 0;
+  work = gFieldWork;
+  work->transition = 0;
   work->transitionFrames = 32;
   Engine_ScriptOpenScreen();
 
   // The camera pans up to the villagers as the ground shakes.
-  Camera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
-  Camera_MoveTo(PIXELS(256), -1, PIXELS(500), 1);
+  FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
+  FieldCamera_MoveTo(PIXELS(256), -1, PIXELS(500), 1);
   Engine_ScriptWait(20);
   MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
-  FieldEffect_LastLightning();
-  Script_PlayCue(SE_145);
+  Weather_LastLightning();
+  Script_PlaySong(SE_145);
   Engine_ScriptWait(30);
-  FieldEffect_LastLightning();
-  Script_PlayCue(SE_145);
+  Weather_LastLightning();
+  Script_PlaySong(SE_145);
   Engine_CameraWaitForMove();
   MapGrid_SetShake(PIXELS(2), PIXELS(3), Q16_ONE);
-  FieldEffect_LastLightning();
-  Script_PlayCue(SE_145);
+  Weather_LastLightning();
+  Script_PlaySong(SE_145);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_MapGridRenderWaitForValues();
   Engine_ScriptWait(60);
@@ -227,8 +227,8 @@ static void EventScript_ReturnFromMtAleph(void) {
   Script_ShowMessage(LOCALID_DORA, 0);
   Engine_ScriptWait(60);
   MapGrid_SetShake(PIXELS(2), PIXELS(3), Q16_ONE);
-  FieldEffect_LastLightning();
-  Script_PlayCue(SE_145);
+  Weather_LastLightning();
+  Script_PlaySong(SE_145);
   Engine_ScriptWait(60);
   Engine_ObjectEventFaceEachOther(LOCALID_GREAT_HEALER,
                                   LOCALID_GARETS_GRANDFATHER, 0);
@@ -248,8 +248,8 @@ static void EventScript_ReturnFromMtAleph(void) {
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   ObjectEvent_SetSpeed(GARET, PIXELS(1) / 2, PIXELS(1) / 4);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(120), PIXELS(258));
-  Camera_SetSpeed(PIXELS(3) / 2, PIXELS(3) / 16);
-  Camera_MoveTo(PIXELS(112), -1, PIXELS(320), 1);
+  FieldCamera_SetSpeed(PIXELS(3) / 2, PIXELS(3) / 16);
+  FieldCamera_MoveTo(PIXELS(112), -1, PIXELS(320), 1);
   Engine_ScriptWait(40);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
   Engine_ObjectEventSetAnimation(GARET, ANIMATION_WALK);
@@ -309,7 +309,7 @@ static void EventScript_ReturnFromMtAleph(void) {
   ObjectEvent_FaceDirection(LOCALID_GARETS_BROTHER, FACING_NORTHWEST, 0);
   ObjectEvent_FaceDirection(LOCALID_GUARD, FACING_NORTHWEST, 0);
   // The camera flies to Dora: "Isaac!" The Great Healer: "You're safe!"
-  Camera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
+  FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
   Engine_CameraMoveToObjectEvent(LOCALID_DORA, 1);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(50);
@@ -326,7 +326,7 @@ static void EventScript_ReturnFromMtAleph(void) {
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER,
                             FACING_SOUTHEAST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 0);
-  Camera_MoveTo(PIXELS(112), -1, PIXELS(320), 1);
+  FieldCamera_MoveTo(PIXELS(112), -1, PIXELS(320), 1);
   Engine_CameraWaitForMove();
   Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 2);
   Engine_ObjectEventStartRepeatedMotion(GARET, 2);
@@ -338,8 +338,8 @@ static void EventScript_ReturnFromMtAleph(void) {
   Engine_ScriptWait(60);
 
   // "Come over here, both of you!" The two walk down to the villagers.
-  Camera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
-  Camera_MoveTo(PIXELS(214), -1, PIXELS(472), 1);
+  FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
+  FieldCamera_MoveTo(PIXELS(214), -1, PIXELS(472), 1);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER,
@@ -459,7 +459,7 @@ static void EventScript_ReturnFromMtAleph(void) {
   ObjectEvent_WalkToAndWait(LOCALID_GREAT_HEALER, 255, 445);
   Engine_ScriptWait(40);
   MapGrid_AnimateCells(gValeEruption_SanctumDoorOpens, 45, 11);
-  Script_PlayCue(SE_188);
+  Script_PlaySong(SE_188);
   Engine_ScriptWait(30);
   ObjectEvent_WalkTo(LOCALID_GREAT_HEALER, 255, 390);
   Engine_ScriptWait(20);
@@ -486,11 +486,11 @@ static void EventScript_ReturnFromMtAleph(void) {
                         0);
   Engine_ScriptWait(40);
   MapGrid_SetShake(PIXELS(2), PIXELS(3), Q16_ONE);
-  FieldEffect_LastLightning();
-  Script_PlayCue(SE_145);
+  Weather_LastLightning();
+  Script_PlaySong(SE_145);
   Engine_ScriptWait(30);
-  work = gEventWork;
-  work->startTransition = 0;
+  work = gFieldWork;
+  work->transition = 0;
   work->transitionFrames = 64;
   Engine_ScriptCloseScreen();
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
@@ -545,31 +545,31 @@ u32 gValeEruption_Warps[] = {
 // clang-format off
 struct ObjectEventTemplate gValeEruption_ObjectEventTemplates[] = {
     { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(104), 0, PIXELS(258), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(104), 0, PIXELS(258), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(265), 0, PIXELS(468), FACING_NORTHWEST, TALK_FACE_PARTY, 0 },
+        PIXELS(265), 0, PIXELS(468), FACING_NORTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_MAN_WITH_WHITE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(246), 0, PIXELS(468), FACING_NORTHWEST, TALK_FACE_PARTY, 0 },
+        PIXELS(246), 0, PIXELS(468), FACING_NORTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_DORA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(246), 0, PIXELS(487), FACING_NORTHWEST, TALK_FACE_PARTY, 0 },
+        PIXELS(246), 0, PIXELS(487), FACING_NORTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_ORANGE_PONYTAIL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(265), 0, PIXELS(477), FACING_NORTHWEST, TALK_FACE_PARTY, 0 },
+        PIXELS(265), 0, PIXELS(477), FACING_NORTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_BOY_WITH_ORANGE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(256), 0, PIXELS(490), FACING_NORTHWEST, TALK_FACE_PARTY, 0 },
+        PIXELS(256), 0, PIXELS(490), FACING_NORTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(265), 0, PIXELS(523), FACING_NORTHWEST, TALK_FACE_PARTY, 0 },
+        PIXELS(265), 0, PIXELS(523), FACING_NORTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(245), 0, PIXELS(532), FACING_NORTHWEST, TALK_FACE_PARTY, 0 },
+        PIXELS(245), 0, PIXELS(532), FACING_NORTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(256), 0, PIXELS(543), FACING_NORTHWEST, TALK_FACE_PARTY, 0 },
+        PIXELS(256), 0, PIXELS(543), FACING_NORTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(283), 0, PIXELS(536), FACING_NORTHWEST, TALK_FACE_PARTY, 0 },
+        PIXELS(283), 0, PIXELS(536), FACING_NORTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(235), 0, PIXELS(552), FACING_NORTHWEST, TALK_FACE_PARTY, 0 },
+        PIXELS(235), 0, PIXELS(552), FACING_NORTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(265), 0, PIXELS(561), FACING_NORTHWEST, TALK_FACE_PARTY, 0 },
+        PIXELS(265), 0, PIXELS(561), FACING_NORTHWEST, TALK_FACING_PARTY, 0 },
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(247), 0, PIXELS(573), FACING_NORTHWEST, TALK_FACE_PARTY, 0 },
+        PIXELS(247), 0, PIXELS(573), FACING_NORTHWEST, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };
 // clang-format on

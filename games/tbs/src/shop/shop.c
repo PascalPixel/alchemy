@@ -3,7 +3,7 @@
 /// and repair, the artifact and Game Ticket counters, the sanctum's healing
 /// services, the inn, and the item picker scripts use.
 ///
-/// Everything lives in one work block, struct ShopRuntime, reached as
+/// Everything lives in one work block, struct ShopWork, reached as
 /// gMenuWork while a counter is open. shop_internal.h holds what every part
 /// shares (includes, the shop actions and the values that differ by edition);
 /// the code is in the files under shop/, included here in the order it has in
@@ -17,7 +17,7 @@
 ///                   Shop_BuySpecialItem
 ///   Sanctum         sanctum.c: Sanctum_RunPartyService
 ///   Inn             inn.c: Inn_CheckIn
-///   Item picker     item_picker.c: Shop_PickUnitItem
+///   Item picker     item_picker.c: ItemPicker_Run
 
 #include "shop_internal.h"
 

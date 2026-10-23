@@ -147,13 +147,13 @@ KolimaInteriors_TurnVillagersIntoTrees(struct ObjectEventTemplate *template) {
   u16 alternateTreeSprite;
 
   villagerIndex = 0;
-  talkFacing = TALK_KEEP_FACING;
+  talkFacing = TALK_FACING_KEEP;
   behavior = MOVEMENT_TYPE_STAND;
   treeSprite = SPRITE_TREE;
   alternateTreeSprite = SPRITE_SMALL_TREE;
   do {
     template->talkFacing = talkFacing;
-    template->behavior = behavior;
+    template->movement = behavior;
     template->sprite = treeSprite;
     // The two residents drawn as SPRITE_BOY_WITH_FAIR_HAIR take the small tree.
     if (villagerIndex ==
@@ -265,11 +265,11 @@ const struct MapEvent *KolimaInteriors_GetEvents(void) {
 /// a window transition, sets the trees' sprites while the curse lasts, and
 /// draws the father's room for the way it is entered.
 s32 KolimaInteriors_Initialize(void) {
-  struct EventWork *work = gEventWork;
+  struct EventWork *work = gFieldWork;
   s32 localId;
   u32 warpDest;
 
-  work->startTransition =
+  work->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
 
   // The residents remain visible as trees, with their sprite flags cleared.
@@ -391,35 +391,35 @@ u32 gKolimaInteriors_Warps[] = {
 // clang-format off
 struct ObjectEventTemplate gKolimaInteriors_ObjectEventTemplates[] = {
     { SPRITE_OLD_MAN_WITH_CANE, 0, MOVEMENT_TYPE_WANDER,
-        PIXELS(166), 0, PIXELS(184), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(166), 0, PIXELS(184), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_WOMAN, 0, MOVEMENT_TYPE_STAND,
         PIXELS(88), 0, PIXELS(144), FACING_EAST, 3, 0 },
     { SPRITE_BURLY_MAN_WITH_GREY_HAIR, 0, MOVEMENT_TYPE_STAND,
-        PIXELS(408), 0, PIXELS(472), FACING_WEST, TALK_FACE_PARTY, 0 },
+        PIXELS(408), 0, PIXELS(472), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_IN_GREEN_DRESS, 0, MOVEMENT_TYPE_STAND,
-        PIXELS(360), 0, PIXELS(440), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(360), 0, PIXELS(440), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_BOY_WITH_FAIR_HAIR, 0, 3,
-        PIXELS(440), 0, PIXELS(456), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(440), 0, PIXELS(456), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_STRONGMAN, 0, MOVEMENT_TYPE_STAND,
-        PIXELS(376), 0, PIXELS(616), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(376), 0, PIXELS(616), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, 0, MOVEMENT_TYPE_STAND,
-        PIXELS(448), 0, PIXELS(680), FACING_WEST, TALK_FACE_PARTY, 0 },
+        PIXELS(448), 0, PIXELS(680), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_BOY_WITH_FAIR_HAIR, 0, MOVEMENT_TYPE_WANDER,
-        PIXELS(424), 0, PIXELS(648), FACING_WEST, TALK_FACE_PARTY, 0 },
+        PIXELS(424), 0, PIXELS(648), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_BALD_MAN_IN_RED, 0, MOVEMENT_TYPE_STAND,
-        PIXELS(624), 0, PIXELS(360), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(624), 0, PIXELS(360), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_YOUNG_MAN_IN_GREEN, 0, MOVEMENT_TYPE_STAND,
-        PIXELS(648), 0, PIXELS(360), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(648), 0, PIXELS(360), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_WOMAN_WITH_PONYTAIL, 0, MOVEMENT_TYPE_STAND,
-        PIXELS(392), 0, PIXELS(136), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(392), 0, PIXELS(136), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_MAN_WITH_DARK_HAIR, 0, MOVEMENT_TYPE_STAND,
-        PIXELS(648), 0, PIXELS(136), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(648), 0, PIXELS(136), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_WOMAN_IN_PINK_APRON, 0, MOVEMENT_TYPE_WANDER,
-        PIXELS(624), 0, PIXELS(200), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(624), 0, PIXELS(200), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_STRONGMAN, 0, MOVEMENT_TYPE_WANDER,
-        PIXELS(120), 0, PIXELS(656), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(120), 0, PIXELS(656), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_CARRYING_A_PACK, 0, MOVEMENT_TYPE_STAND,
-        PIXELS(144), 0, PIXELS(368), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(144), 0, PIXELS(368), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };
 

@@ -324,7 +324,7 @@ static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
     nextShakeChance = (gKolimaForestFloodgate_ShakeChance + 1);
     gKolimaForestFloodgate_ShakeChance += 1;
   } while (nextShakeChance <= 100);
-  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
+  Engine_AudioPlayCue(SONG_FADE_OUT_ACTION_SE);
   if (*gKolimaForestFloodgateLayout == 0) {
     MapGrid_DrawCellPanel(9, 19, 16, 5, *gKolimaForestFloodgateLayout, 9, 19);
     MapGrid_DrawCellPanel(9, 51, 16, 5, 1, 9, 19);
@@ -398,7 +398,7 @@ static void KolimaForestFloodgate_PushShortLogEast(void) {
   Engine_ScriptEnd();
 }
 
-/// Sets up the logs and the river's level on entry. The logs' records come back
+/// Sets up the logs and the river's level on entry. The logs come back
 /// from gMapLocalState, or on a first visit from the defaults with the water
 /// high; the logs are made and the river is drawn at its level. The forest
 /// keeps its cursed colours until the curse is lifted.
@@ -430,7 +430,7 @@ s32 KolimaForestFloodgate_Initialize(void) {
   objectEvent->radius = 8;
   objectEvent->scaleX = 0xc000;
   objectEvent->scaleY = 0xc000;
-  gEventWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0)
     KolimaPalette_Curse(4);
@@ -466,7 +466,7 @@ static void KolimaForestFloodgate_CreateLogs(struct FloodgateLog *entry) {
     // Through an s32 view of y, not y.fixed, the step to the next entry is
     // scheduled before this store.
     *(s32 *)&objectEvent->y += height;
-    objectEvent->terrainHeight = height;
+    objectEvent->groundHeight = height;
   }
 }
 
@@ -525,8 +525,8 @@ static s32 KolimaForestFloodgate_CheckLogFits(s32 x, s32 z, s32 mode) {
     struct MapGridCell *cell =
         &((struct MapGridCell *)gMapGridCellBuffer)[x + (z << 7)];
 
-    if (cell->collisionCode == MB_WALL ||
-        *(u8 *)((cell->attributeB << 2) + (s32)gMapGridCollision) != 0) {
+    if (cell->behavior == MB_WALL ||
+        *(u8 *)((cell->shape << 2) + (s32)gMapGridShapes) != 0) {
       return -1;
     }
     if (mode == 0) {
@@ -594,13 +594,13 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
   Engine_ScriptWait(6);
   objectEvent->speed = PIXELS(1) / 2;
   objectEvent->acceleration = PIXELS(1) / 5;
-  Script_PlayCue(SE_HEAVY_MOVE);
+  Script_PlaySong(SE_HEAVY_MOVE);
   ObjectEvent_SetMode(objectEvent,
                       gKolimaForestFloodgate_PushAnimations[quarter]);
   Engine_ObjectSetPosition(objectEvent, x, 0, z);
   Engine_ScriptWait(6);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
-  work = Runtime_AllocateBlock(HEAP_SLOT_EVENT, sizeof(*work));
+  work = AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(*work));
   ObjectDispatch_StartCamera((struct DispatchObject *)work->camera,
                              (s32)objectEvent);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 3 * PIXELS(1) / 10, PIXELS(1) / 5);
@@ -609,10 +609,10 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
                                    gKolimaForestFloodgate_PushStepZ[quarter]);
   Engine_ScriptWait(24);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
-  FieldObject_WaitForMove(objectEvent);
+  Object_WaitForMove(objectEvent);
   ObjectEvent_SetMode(objectEvent, 1);
-  Script_PlayCue(SE_STOP_SLOT3);
-  Script_PlayCue(SE_HEAVY_STOP);
+  Script_PlaySong(SE_STOP_SLOT3);
+  Script_PlaySong(SE_HEAVY_STOP);
   Engine_ScriptWait(15);
   Engine_ScriptEnd();
 }
@@ -653,11 +653,11 @@ u32 gKolimaForestFloodgateWarps[] = {
 
 struct ObjectEventTemplate gKolimaForestFloodgateObjectEventTemplates[] = {
     { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(104), 0, PIXELS(176), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(104), 0, PIXELS(176), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SPLASH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(256), 0, PIXELS(464), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(256), 0, PIXELS(464), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SIGNPOST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(348), 0, PIXELS(456), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(348), 0, PIXELS(456), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 // clang-format on
@@ -677,7 +677,7 @@ struct MapEvent gKolimaForestFloodgateEvents[] = {
      EVENT_SCRIPT(KolimaForestFloodgate_PushShortLogEast)},
     {MAP_EVENT_TALK, LOCALID_SIGN, CONDITION_ALWAYS,
      MSGNO(MsgKolimaDoNotTouchFloodgate)},
-    {BG_EVENT(BG_EVENT_UNNAMED), CELL_FLOODGATE_SWITCH, CONDITION_ALWAYS,
+    {BG_EVENT(BG_EVENT_SILENT), CELL_FLOODGATE_SWITCH, CONDITION_ALWAYS,
      EVENT_SCRIPT(KolimaForestFloodgate_FlipFloodgateSwitch)},
     {BG_EVENT(BG_EVENT_CHEST), 100, 0xf00, FIND_ITEM(ITEM_FUR_COAT)},
     {MAP_EVENTS_END},

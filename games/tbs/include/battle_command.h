@@ -13,16 +13,16 @@
 
 /// gDebugMode under the battle's name. While it and FLAG_DEBUG_BATTLE_KEYS are
 /// set, holding R as an action is planned defeats every enemy, or with Select
-/// the party (BattleCommand_BuildPlan).
+/// the party (BattleTurn_Build).
 #define BATTLE_AUTO_MODE gDebugMode
 /// gKeysHeld under the battle's name: the keys held this frame.
 #define BATTLE_OPTIONS gKeysHeld
 
-/// Each ability's staging bits (BattlePlan.presentationFlags), by ability id
+/// Each ability's staging bits (BattleTurn.animation), by ability id
 /// 0 to 518 (battle/actflags.tsv).
-extern const u32 gBattle_ActionFlags[];
-/// Each ability's outcome staging (BattlePlan.outcome), 0 for the default, by
+extern const u32 gAbilityAnimations[];
+/// Each ability's outcome staging (BattleTurn.staging), 0 for the default, by
 /// ability id 0 to 517 (battle/actstat.tsv).
-extern const u8 gBattle_ActionStatus[];
+extern const u8 gAbilityStaging[];
 
 #endif

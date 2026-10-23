@@ -28,7 +28,7 @@ u32 gFallingEffectState __attribute__((section(".bss")));
 void Kolima_UpdateCurseDust(void) {
   struct ObjectEvent *objectEvent = NULL;
   s32 *origin;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
   s32 x, z;
 
   switch (gFallingEffectState) {

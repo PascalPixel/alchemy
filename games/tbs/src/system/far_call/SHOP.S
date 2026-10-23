@@ -6,15 +6,15 @@
 FarCall_ShopTable:
 	export Shop_OpenDebugShopFar, Shop_OpenDebugShop
 	export Shop_RunFar, Shop_Run
-	export Shop_ConfirmActFar, Shop_ConfirmAct
+	export Sanctum_RunFar, Sanctum_Run
 	export Inn_CheckInFar, Inn_CheckIn
-	export ShopCursor_AdvanceFar, ShopCursor_Advance
-	export ShopCursor_MoveTowardTargetFar, ShopCursor_MoveTowardTarget
-	export Shop_SetCursorFar, Shop_SetCursor
-	export ShopCursor_SetPositionImmediateFar, ShopCursor_SetPositionImmediate
-	export Shop_FillSelectorFar, Shop_FillSelector
+	export MenuCursor_AdvanceFar, MenuCursor_Advance
+	export MenuCursor_MoveTowardTargetFar, MenuCursor_MoveTowardTarget
+	export MenuCursor_SetFar, MenuCursor_Set
+	export MenuCursor_SetPositionImmediateFar, MenuCursor_SetPositionImmediate
+	export QuantityBar_FillFar, QuantityBar_Fill
 	export Shop_SaveAndTintFieldPaletteFar, Shop_SaveAndTintFieldPalette
 	export Shop_RestoreFieldPaletteFar, Shop_RestoreFieldPalette
-	export Shop_PickUnitItemFar, Shop_PickUnitItem
-	export AudioCommand_WaitForStateByteClearFar, AudioCommand_WaitForStateByteClear
+	export ItemPicker_RunFar, ItemPicker_Run
+	export Sound_WaitForFanfareFar, Sound_WaitForFanfare
 	export Inn_PlaySleepFar, Inn_PlaySleep

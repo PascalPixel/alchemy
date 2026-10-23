@@ -9,10 +9,10 @@ s32 ItemMenu_RunFar(void);
 s32 PsynergyMenu_RunFar(void);
 /// Runs the field menu's Status screen, which puts back the palettes and window
 /// tiles it draws over. -1 reopens the field menu.
-s32 StatusMenu_RunFar(void);
+s32 SummaryScreen_RunFar(void);
 /// Lets the player pick one party member over the field, as Colosso does.
 /// Returns the member's id, or -1 when the player backs out.
-s32 Menu_OpenCharacterSelectorFar(void);
+s32 MemberChooser_OpenFar(void);
 /// Sets out a walking figure for each active party member under a window's
 /// corner; the shops reach it here.
 void PsynergyMenu_InitializeEntryObjectsFar(void *source, s32 originX,
@@ -22,7 +22,7 @@ void PsynergyMenu_InitializeEntryObjectsFar(void *source, s32 originX,
 /// callback.
 void Menu_ReleaseEntryObjectsFar(void);
 /// Shows a menu icon at its stored position, unrotated and unscaled.
-void UiIcon_PrepareObjectFar(struct RenderOutput *object);
+void Icon_PrepareObjectFar(struct WindowSprite *object);
 /// Runs the Djinn screen and the Djinn tutorial. Returns 1, which makes the
 /// field menu open again.
 s32 DjinnMenu_RunFar(void);

@@ -411,7 +411,7 @@ static void TolbiShipInteriors_SwapRowerSelections(s32 firstSeatFlags,
 /// An action-script call: stands the object event still at the origin, with no
 /// velocity and no target. Returns 0.
 static s32
-TolbiShipInteriors_ResetObjectEvent(struct ScriptInterpreter *interpreter) {
+TolbiShipInteriors_ResetObjectEvent(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   ObjectEvent_SetMode(objectEvent, 1);
   objectEvent->x.fixed = 0;
@@ -425,7 +425,7 @@ TolbiShipInteriors_ResetObjectEvent(struct ScriptInterpreter *interpreter) {
 
 /// Bobs the object event between the floor and 8 pixels up by a random amount
 /// each frame. Returns 1.
-static s32 TolbiShipInteriors_Bob(struct ScriptInterpreter *interpreter) {
+static s32 TolbiShipInteriors_Bob(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   s16 verticalMotionDirection;
   s32 descendingY;
@@ -455,7 +455,7 @@ static s32 TolbiShipInteriors_Bob(struct ScriptInterpreter *interpreter) {
 /// Now and then (two chances in 64) turns the object event to face
 /// south-southeast or south-southwest. Returns 1.
 static s32
-TolbiShipInteriors_LookAround(struct ScriptInterpreter *interpreter) {
+TolbiShipInteriors_LookAround(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   u32 choice = (u32)(Engine_RandomNext(objectEvent) << 6) >> 16;
 
@@ -524,7 +524,7 @@ TolbiShipInteriors_PaceCaptainsQuarters(union FieldObject *fieldObject) {
     break;
   case 4:
     ObjectEvent_SetMode(objectEvent, 2);
-    FieldObject_SetPosition(objectEvent, PIXELS(468), PIXELS(32), PIXELS(632));
+    Object_SetPosition(objectEvent, PIXELS(468), PIXELS(32), PIXELS(632));
     objectEvent->riseBaseY = 60;
     objectEvent->work++;
     break;
@@ -548,7 +548,7 @@ TolbiShipInteriors_PaceCaptainsQuarters(union FieldObject *fieldObject) {
     break;
   case 9:
     ObjectEvent_SetMode(objectEvent, 2);
-    FieldObject_SetPosition(objectEvent, PIXELS(480), PIXELS(32), PIXELS(600));
+    Object_SetPosition(objectEvent, PIXELS(480), PIXELS(32), PIXELS(600));
     objectEvent->riseBaseY = 60;
     objectEvent->work++;
     if (captain->paused == 0) {
@@ -602,9 +602,9 @@ static void TolbiShipInteriors_WatchPacer(union FieldObject *fieldObject) {
 
 /// An action-script call: lays the object event flat on the floor, drawn
 /// underfoot at priority 1 with its parts hidden. Returns 1.
-static s32 TolbiShipInteriors_LayFlat(struct ScriptInterpreter *interpreter) {
+static s32 TolbiShipInteriors_LayFlat(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *work = (struct ObjectEvent *)interpreter;
-  struct AnimationObject *sprite = work->sprite;
+  struct Sprite *sprite = work->sprite;
 
   work->collisionFlags = 8;
   Engine_ObjectEventSetSpriteFlags(work, 0);
@@ -653,26 +653,26 @@ TolbiShipInteriors_SelectObjectEventTemplates(void) {
         // Update talkFacing in the object event template rows, preserving their
         // write order.
         templateBytes = (u8 *)gTolbiShipInteriors_HoldObjectEventTemplatesAtSea;
-        TOLBI_SHIP_TALK_FACING(templateBytes, 0) = TALK_KEEP_FACING;
-        TOLBI_SHIP_TALK_FACING(templateBytes, 2) = TALK_KEEP_FACING;
-        TOLBI_SHIP_TALK_FACING(templateBytes, 4) = TALK_KEEP_FACING;
-        TOLBI_SHIP_TALK_FACING(templateBytes, 5) = TALK_KEEP_FACING;
-        TOLBI_SHIP_TALK_FACING(templateBytes, 8) = TALK_KEEP_FACING;
-        TOLBI_SHIP_TALK_FACING(templateBytes, 7) = TALK_KEEP_FACING;
-        TOLBI_SHIP_TALK_FACING(templateBytes, 6) = TALK_FACE_PARTY_AND_BACK;
-        TOLBI_SHIP_TALK_FACING(templateBytes, 3) = TALK_KEEP_FACING;
+        TOLBI_SHIP_TALK_FACING(templateBytes, 0) = TALK_FACING_KEEP;
+        TOLBI_SHIP_TALK_FACING(templateBytes, 2) = TALK_FACING_KEEP;
+        TOLBI_SHIP_TALK_FACING(templateBytes, 4) = TALK_FACING_KEEP;
+        TOLBI_SHIP_TALK_FACING(templateBytes, 5) = TALK_FACING_KEEP;
+        TOLBI_SHIP_TALK_FACING(templateBytes, 8) = TALK_FACING_KEEP;
+        TOLBI_SHIP_TALK_FACING(templateBytes, 7) = TALK_FACING_KEEP;
+        TOLBI_SHIP_TALK_FACING(templateBytes, 6) = TALK_FACING_PARTY_AND_BACK;
+        TOLBI_SHIP_TALK_FACING(templateBytes, 3) = TALK_FACING_KEEP;
       }
       return gTolbiShipInteriors_HoldObjectEventTemplatesAtSea;
     } else if (Engine_GameFlagIsSet(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
       if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0) {
         gTolbiShipInteriors_HoldObjectEventTemplates[0].talkFacing =
-            TALK_KEEP_FACING;
+            TALK_FACING_KEEP;
         gTolbiShipInteriors_HoldObjectEventTemplates[4].talkFacing =
-            TALK_KEEP_FACING;
+            TALK_FACING_KEEP;
         gTolbiShipInteriors_HoldObjectEventTemplates[1].talkFacing =
-            TALK_KEEP_FACING;
+            TALK_FACING_KEEP;
         gTolbiShipInteriors_HoldObjectEventTemplates[3].talkFacing =
-            TALK_KEEP_FACING;
+            TALK_FACING_KEEP;
       }
       return gTolbiShipInteriors_HoldObjectEventTemplates;
     } else {
@@ -693,15 +693,15 @@ TolbiShipInteriors_SelectObjectEventTemplates(void) {
   case TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_SECOND_ATTACK:
   case TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_THIRD_ATTACK:
     templateBytes = (u8 *)gTolbiShipInteriors_RowingDeckObjectEventTemplates;
-    TOLBI_SHIP_TALK_FACING(templateBytes, 0) = TALK_KEEP_FACING;
-    TOLBI_SHIP_TALK_FACING(templateBytes, 1) = TALK_KEEP_FACING;
-    TOLBI_SHIP_TALK_FACING(templateBytes, 3) = TALK_FACE_PARTY_AND_BACK;
-    TOLBI_SHIP_TALK_FACING(templateBytes, 4) = TALK_KEEP_FACING;
-    TOLBI_SHIP_TALK_FACING(templateBytes, 5) = TALK_KEEP_FACING;
-    TOLBI_SHIP_TALK_FACING(templateBytes, 6) = TALK_KEEP_FACING;
-    TOLBI_SHIP_TALK_FACING(templateBytes, 7) = TALK_KEEP_FACING;
-    TOLBI_SHIP_TALK_FACING(templateBytes, 8) = TALK_FACE_PARTY_AND_BACK;
-    TOLBI_SHIP_TALK_FACING(templateBytes, 9) = TALK_KEEP_FACING;
+    TOLBI_SHIP_TALK_FACING(templateBytes, 0) = TALK_FACING_KEEP;
+    TOLBI_SHIP_TALK_FACING(templateBytes, 1) = TALK_FACING_KEEP;
+    TOLBI_SHIP_TALK_FACING(templateBytes, 3) = TALK_FACING_PARTY_AND_BACK;
+    TOLBI_SHIP_TALK_FACING(templateBytes, 4) = TALK_FACING_KEEP;
+    TOLBI_SHIP_TALK_FACING(templateBytes, 5) = TALK_FACING_KEEP;
+    TOLBI_SHIP_TALK_FACING(templateBytes, 6) = TALK_FACING_KEEP;
+    TOLBI_SHIP_TALK_FACING(templateBytes, 7) = TALK_FACING_KEEP;
+    TOLBI_SHIP_TALK_FACING(templateBytes, 8) = TALK_FACING_PARTY_AND_BACK;
+    TOLBI_SHIP_TALK_FACING(templateBytes, 9) = TALK_FACING_KEEP;
     return (const struct ObjectEventTemplate *)templateBytes;
   case TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK:
     if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
@@ -710,12 +710,12 @@ TolbiShipInteriors_SelectObjectEventTemplates(void) {
       if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) != 0) {
         if (GameFlag_IsSet(FLAG_TOLBI_SHIP_AT_ISLAND) != 0) {
           gTolbiShipInteriors_CaptainsQuartersObjectEventTemplatesWarriors[1]
-              .talkFacing = TALK_FACE_PARTY_AND_BACK;
+              .talkFacing = TALK_FACING_PARTY_AND_BACK;
         }
         if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0) {
           if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_AT_ISLAND) == 0) {
             gTolbiShipInteriors_CaptainsQuartersObjectEventTemplatesWarriors[0]
-                .talkFacing = TALK_FACE_PARTY;
+                .talkFacing = TALK_FACING_PARTY;
           }
         }
         return gTolbiShipInteriors_CaptainsQuartersObjectEventTemplatesWarriors;
@@ -843,7 +843,7 @@ static void TolbiShipInteriors_TalkToCaptain(void) {
     Script_ShowMessage(LOCALID_QUARTERS_CAPTAIN, 0);
     if (GameFlag_IsSet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) == 0 &&
         GameFlag_IsSet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_FOUND) != 0) {
-      gEventWork->requestedMenu = 1;
+      gFieldWork->menu = 1;
     }
   } else {
     Engine_ScriptSetMessage(MsgTolbiShipItsTooLateHireMercenaries);
@@ -870,7 +870,7 @@ static void TolbiShipInteriors_TalkToWaitingWarrior(void) {
                               FACING_SOUTHEAST + FACING_STEP);
       Script_ShowMessage(LOCALID_HOLD_WARRIOR, 0);
     } else {
-      gEventWork->message += 2;
+      gFieldWork->message += 2;
       Script_ShowMessage(LOCALID_HOLD_WARRIOR, 0);
       ObjectEvent_FaceDirection(LOCALID_HOLD_WARRIOR,
                                 FACING_SOUTHEAST + FACING_STEP, 0);
@@ -1017,7 +1017,7 @@ static void TolbiShipInteriors_AskStaredAtPassengerToRow(void) {
         GameFlag_Set(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS + PASSENGER_STARED_AT);
       }
     } else {
-      gEventWork->message++;
+      gFieldWork->message++;
       TolbiShipInteriors_Say(LOCALID_SEA_HOLD_STARED_AT_PASSENGER);
     }
   }
@@ -1068,7 +1068,7 @@ static void TolbiShipInteriors_AskSecondGuideToRow(void) {
                      PASSENGER_SECOND_GUIDE);
       }
     } else {
-      gEventWork->message++;
+      gFieldWork->message++;
       TolbiShipInteriors_Say(LOCALID_SEA_HOLD_SECOND_GUIDE);
     }
   }
@@ -1120,7 +1120,7 @@ static struct ObjectEvent *TolbiShipInteriors_FindObjectEventNear(s32 x,
   s32 right;
   s32 bottom;
 
-  work = gEventWork;
+  work = gFieldWork;
   i = LOCALID_FIRST_PLACED;
   left = x - 12;
   right = x + 12;
@@ -1423,7 +1423,7 @@ static void TolbiShipInteriors_AskToRow(s32 speaker, s32 question,
     Engine_GameFlagSet(FLAG_TOLBI_SHIP_ROWER_CHOSEN);
     Engine_GameFlagSet(seatFlag);
   } else {
-    gEventWork->message++;
+    gFieldWork->message++;
     TolbiShipInteriors_Say(speaker);
   }
   Engine_ScriptEnd();
@@ -1478,7 +1478,7 @@ static void TolbiShipInteriors_FightRowingDeckMonsters(void) {
 
   Engine_ScriptStart();
   Field_EndBusyAndReveal();
-  Battle_SetStart(BATTLE_START_SCRIPTED);
+  Battle_SetType(BATTLE_TYPE_SCRIPTED);
   GameFlag_Clear(FLAG_TOLBI_SHIP_MONSTERS_SIGHTED);
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) == 0) {
     FieldScript_SetNextDestination(
@@ -1508,8 +1508,8 @@ static void TolbiShipInteriors_FightRowingDeckMonsters(void) {
 static void TolbiShipInteriors_TurnBackFromStairs(void) {
   if (GameFlag_IsSet(FLAG_TOLBI_SHIP_MONSTERS_BELOWDECKS) != 0) {
     Engine_ScriptStart();
-    Ui_SetMessageVoiceFromObjectEvent(LOCALID_ROWING_CREWMAN);
-    UiText_ShowCenteredMessage(MsgTolbiShipWhereGoingSlay, 1, 8);
+    Message_SetVoiceFromObjectEvent(LOCALID_ROWING_CREWMAN);
+    FieldMessage_ShowCentered(MsgTolbiShipWhereGoingSlay, 1, 8);
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(8) / 5, PIXELS(4) / 5);
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 408, 134);
     TolbiShipInteriors_Turn(LOCALID_PARTY_LEADER, FACING_SOUTH);
@@ -1571,7 +1571,7 @@ static void TolbiShipInteriors_WatchWarriorsStormOff(void) {
   } else {
     Engine_ScriptStart();
     Field_EndBusyAndReveal();
-    Camera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
+    FieldCamera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
     TolbiShipInteriors_MoveCameraAndWait(PIXELS(1463), -1, PIXELS(464),
                                          0x10000014);
     Engine_ObjectEventRunRepeatedMotion(LOCALID_HOLD_OURANOS, 1);
@@ -1718,8 +1718,8 @@ static void TolbiShipInteriors_DiscussLaunchingWithoutAnchor(void) {
 
   // Gather the captain's quarters's attention around the argument about
   // launching.
-  Script_PlayCue(MUS_028);
-  Camera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
+  Script_PlaySong(MUS_028);
+  FieldCamera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
   TolbiShipInteriors_MoveCameraAndWait(PIXELS(456), -1, PIXELS(648),
                                        0x10000014);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_QUARTERS_KAJA, 1);
@@ -1899,7 +1899,7 @@ static void TolbiShipInteriors_DiscussLaunchingWithoutAnchor(void) {
   Engine_ObjectEventSetAnimationAndWait(LOCALID_QUARTERS_CAPTAIN, 3);
   TolbiShipInteriors_Say(LOCALID_QUARTERS_CAPTAIN);
   ObjectEvent_FaceDirection(LOCALID_QUARTERS_CAPTAIN, FACING_WEST, 20);
-  Script_PlayCue(MUS_SILENCE);
+  Script_PlaySong(MUS_SILENCE);
   Engine_ObjectEventStartRepeatedMotion(LOCALID_QUARTERS_CAPTAIN, 2);
   captainSpeech = SPEAKER(LOCALID_QUARTERS_CAPTAIN, 8);
   ObjectEvent_ShowEmote(LOCALID_QUARTERS_CAPTAIN,
@@ -1953,7 +1953,7 @@ static void TolbiShipInteriors_DiscussLaunchingWithoutAnchor(void) {
   ObjectEvent_FaceDirection(LOCALID_QUARTERS_CAPTAIN,
                             FACING_SOUTH + FACING_STEP, 20);
   TolbiShipInteriors_Say(LOCALID_QUARTERS_CAPTAIN);
-  Script_PlayCue(MUS_028);
+  Script_PlaySong(MUS_028);
   Engine_ObjectEventStartRepeatedMotion(LOCALID_QUARTERS_CAPTAIN, 3);
   TolbiShipInteriors_Say(LOCALID_QUARTERS_CAPTAIN);
   ObjectEvent_ShowEmote(LOCALID_QUARTERS_SECOND_GUIDE,
@@ -1991,7 +1991,7 @@ static void TolbiShipInteriors_DiscussLaunchingWithoutAnchor(void) {
                         0);
   ObjectEvent_ShowEmote(LOCALID_QUARTERS_KAJA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
                         60);
-  Camera_SetSpeed(PIXELS(6) / 5, PIXELS(3) / 20);
+  FieldCamera_SetSpeed(PIXELS(6) / 5, PIXELS(3) / 20);
   TolbiShipInteriors_MoveCameraAndWait(PIXELS(464), -1, PIXELS(680),
                                        0x10000000);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_QUARTERS_CREWMAN, 1);
@@ -2017,7 +2017,7 @@ static void TolbiShipInteriors_DiscussLaunchingWithoutAnchor(void) {
                             FACING_SOUTHEAST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_QUARTERS_OURANOS,
                             FACING_NORTHWEST + FACING_STEP, 0);
-  Script_PlayCue(AUDIO_CUE_FADE_BGM);
+  Script_PlaySong(SONG_FADE_OUT_BGM);
   ObjectEvent_SetSpeed(LOCALID_QUARTERS_CREWMAN, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_WalkToAndWait(LOCALID_QUARTERS_CREWMAN, 488, 686);
   ObjectEvent_FaceDirection(LOCALID_QUARTERS_CREWMAN,
@@ -2026,7 +2026,7 @@ static void TolbiShipInteriors_DiscussLaunchingWithoutAnchor(void) {
   Engine_ObjectEventSetAnimation(LOCALID_QUARTERS_SECOND_GUIDE, 1);
   ObjectEvent_FaceDirection(LOCALID_QUARTERS_SECOND_GUIDE,
                             FACING_NORTH + FACING_STEP, 0);
-  Audio_PlayCueFromEventWork();
+  Map_PlayMusic();
   GameFlag_Set(FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL);
 }
 
@@ -2076,9 +2076,9 @@ static void TolbiShipInteriors_ReturnLuckyAnchor(void) {
     ObjectEvent_ShowEmote(LOCALID_QUARTERS_CAPTAIN,
                           EMOTE_IN_FRONT | EMOTE_SMILE, 40);
     TolbiShipInteriors_Say(captainSpeech);
-    gEventWork->message += 2;
+    gFieldWork->message += 2;
   } else {
-    gEventWork->message += 2;
+    gFieldWork->message += 2;
     Engine_ObjectEventRunRepeatedMotion(LOCALID_QUARTERS_KAJA, 1);
     TolbiShipInteriors_Say(SPEAKER(LOCALID_QUARTERS_KAJA, 9));
     Engine_ObjectEventStartRepeatedMotion(LOCALID_QUARTERS_CAPTAIN, 2);
@@ -2086,8 +2086,8 @@ static void TolbiShipInteriors_ReturnLuckyAnchor(void) {
   }
   ObjectEvent_ShowEmote(LOCALID_QUARTERS_SECOND_GUIDE,
                         EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
-  Camera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
-  Camera_MoveTo(PIXELS(472), -1, PIXELS(636), 1);
+  FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
+  FieldCamera_MoveTo(PIXELS(472), -1, PIXELS(636), 1);
   ObjectEvent_SetSpeed(LOCALID_QUARTERS_SECOND_GUIDE, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_WalkToAndWait(LOCALID_QUARTERS_SECOND_GUIDE, 472, 662);
   TolbiShipInteriors_Turn(LOCALID_QUARTERS_SECOND_GUIDE,
@@ -2188,9 +2188,9 @@ static void TolbiShipInteriors_ReturnLuckyAnchor(void) {
     TolbiShipInteriors_Say(seanSpeech);
     Engine_ObjectEventStartRepeatedMotion(LOCALID_QUARTERS_KAJA, 1);
     Script_ShowMessageAndWait(SPEAKER(LOCALID_QUARTERS_KAJA, 9), 0, 40);
-    gEventWork->message += 1;
+    gFieldWork->message += 1;
   } else {
-    gEventWork->message += 3;
+    gFieldWork->message += 3;
     Engine_ObjectEventStartRepeatedMotion(LOCALID_QUARTERS_CAPTAIN, 3);
     Script_ShowMessageAndWait(LOCALID_QUARTERS_CAPTAIN, 0, 40);
   }
@@ -2254,9 +2254,9 @@ static void TolbiShipInteriors_ReturnLuckyAnchor(void) {
   if (Engine_ScriptChooseYesNo(0, 0) == 0) {
     Engine_ObjectEventSetAnimationAndWait(LOCALID_QUARTERS_CAPTAIN, 3);
     TolbiShipInteriors_Say(SPEAKER(LOCALID_QUARTERS_CAPTAIN, 1));
-    gEventWork->message += 1;
+    gFieldWork->message += 1;
   } else {
-    gEventWork->message += 1;
+    gFieldWork->message += 1;
     TolbiShipInteriors_Say(SPEAKER(LOCALID_QUARTERS_CAPTAIN, 1));
   }
   Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
@@ -2316,7 +2316,7 @@ static void TolbiShipInteriors_ReturnLuckyAnchor(void) {
 s32 TolbiShipInteriors_ApplyEntryState(void) {
   Engine_TaskWait(1);
   Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
-  gEventWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   switch (gGameState.warpDest) {
   case TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_FROM_TOLBI_SHIP_DECK:
@@ -2722,7 +2722,7 @@ static void TolbiShipInteriors_AskForReplacementOarsmen(void) {
   mode = 128;
   TolbiShipInteriors_PlaceObjectEvent(LOCALID_PARTY_LEADER, 440, 134,
                                       FACING_WEST);
-  gEventWork->startTransition = (mode << 1);
+  gFieldWork->transition = (mode << 1);
   Engine_ScriptOpenScreen();
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 408, 134);
@@ -2857,7 +2857,7 @@ static void TolbiShipInteriors_CastOff(void) {
   Engine_ObjectEventJump(LOCALID_QUARTERS_CAPTAIN, 4, 20);
   anchorCharm = TolbiShipInteriors_PlaceAnchorCharm();
   Engine_ScriptWait(20);
-  Script_PlayCue(SE_214);
+  Script_PlaySong(SE_214);
   Engine_ObjectSetScript(anchorCharm, gTolbiShipInteriors_AnchorCharmPulse);
   Engine_ScriptWait(40);
   Engine_ObjectEventSetAnimationAndWait(LOCALID_QUARTERS_CAPTAIN, 3);
@@ -2952,7 +2952,7 @@ static void TolbiShipInteriors_ShowRowing(void) {
   Engine_AudioPlayCue(SE_188);
   Engine_ScriptWait(30);
 
-  gEventWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
 
   TolbiShipInteriors_RunSceneCommand(SHIP_CLOSE_SCREEN, 0, 0);
@@ -2997,7 +2997,7 @@ static void TolbiShipInteriors_AskAboutMonsters(void) {
 /// Announces the ship's next turn and returns control to the rowing deck.
 static void TolbiShipInteriors_AnnounceTurn(void) {
   Engine_ScriptStart();
-  Camera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
   TolbiShipInteriors_RunSceneCommand(SHIP_SETUP_CAPTAINS_QUARTERS, 1, 1);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_QUARTERS_CAPTAIN, 1);
@@ -3178,7 +3178,7 @@ static void TolbiShipInteriors_IntroduceReplacementOarsman(s32 seat) {
 static struct ObjectEvent *TolbiShipInteriors_PlaceAnchorCharm(void) {
   s32 set = GameFlag_IsSet(FLAG_MAP_TEMP_00);
   struct ObjectEvent *objectEvent;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
   u8 *buffer;
 
   if (set != 0) {
@@ -3403,7 +3403,7 @@ static void TolbiShipInteriors_RunSceneCommand(s32 step, u32 arg, u32 opt) {
     }
     break;
   case SHIP_OPEN_SCREEN:
-    gEventWork->startTransition =
+    gFieldWork->transition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
     Engine_ScriptOpenScreen();
     if (arg != 0) {
@@ -3526,7 +3526,7 @@ static void TolbiShipInteriors_RunSceneCommand(s32 step, u32 arg, u32 opt) {
     if (opt == 0) {
       break;
     }
-    gEventWork->startTransition =
+    gFieldWork->transition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
     Engine_ScriptOpenScreen();
     Engine_ScriptWaitForScreen();
@@ -3607,10 +3607,10 @@ static void TolbiShipInteriors_RunSceneCommand(s32 step, u32 arg, u32 opt) {
     Engine_ObjectEventDestroy(MIA);
     break;
   case SHIP_RESET_CAMERA:
-    Camera_MoveTo(-1, -1, -1, 0);
+    FieldCamera_MoveTo(-1, -1, -1, 0);
     Engine_TaskWait(1);
     if (arg != 0) {
-      Camera_GetScriptObject()->motionFlags = 0;
+      FieldCamera_GetScriptObject()->motionFlags = 0;
     }
     break;
   case SHIP_PLACE_FOLLOWERS_AND_MONSTERS:
@@ -3758,13 +3758,13 @@ static void TolbiShipInteriors_ReportMonstersBelowdecks(void) {
   ObjectEvent_FaceDirection(IVAN, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(MIA, FACING_SOUTH, 40);
-  Ui_SetMessageVoiceFromObjectEvent(LOCALID_ROWING_FIRST_OARSMAN);
+  Message_SetVoiceFromObjectEvent(LOCALID_ROWING_FIRST_OARSMAN);
   message = MsgTolbiShipMonstersBelowdecks;
-  UiText_ShowCenteredMessage(message, 1, 10);
+  FieldMessage_ShowCentered(message, 1, 10);
   Engine_ScriptWait(10);
   TolbiShipInteriors_RunSceneCommand(SHIP_FACE_PARTY_EAST_AND_WEST, 0, 40);
   TolbiShipInteriors_RunSceneCommand(SHIP_FACE_PARTY, 0x4000, 20);
-  Camera_SetSpeed(PIXELS(18) / 5, PIXELS(9) / 20);
+  FieldCamera_SetSpeed(PIXELS(18) / 5, PIXELS(9) / 20);
   TolbiShipInteriors_MoveCameraAndWait(PIXELS(440), -1, PIXELS(320),
                                        0x10000014);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_ROWING_CREWMAN, 2);
@@ -3811,14 +3811,14 @@ static void TolbiShipInteriors_ReactToMonsterAttack(void) {
   Engine_ScriptSetMessage(MsgTolbiShipHeyAreYouOk);
   TolbiShipInteriors_Say(LOCALID_ROWING_KAJA);
   TolbiShipInteriors_RunSceneCommand(SHIP_FACE_PARTY, 0xc000, 0);
-  Camera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
-  Camera_MoveTo(PIXELS(440), -1, PIXELS(176), 1);
+  FieldCamera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
+  FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(176), 1);
   ObjectEvent_SetSpeed(LOCALID_ROWING_KAJA, PIXELS(8) / 5, PIXELS(4) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_ROWING_KAJA, 408, 134);
   ObjectEvent_WalkToAndWait(LOCALID_ROWING_KAJA, 408, 152);
   ObjectEvent_WalkToAndWait(LOCALID_ROWING_KAJA, 424, 164);
-  Camera_SetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
-  Camera_MoveTo(PIXELS(440), -1, PIXELS(300), 1);
+  FieldCamera_SetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
+  FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(300), 1);
   ObjectEvent_WalkToAndWait(LOCALID_ROWING_KAJA, 424, 222);
   ObjectEvent_WalkToAndWait(LOCALID_ROWING_KAJA, 424, 262);
   ObjectEvent_FaceDirection(LOCALID_ROWING_KAJA, FACING_SOUTHEAST + FACING_STEP,
@@ -3855,7 +3855,7 @@ static void TolbiShipInteriors_ReactToMonsterAttack(void) {
     TolbiShipInteriors_Say(LOCALID_ROWING_KAJA);
   } else {
     Engine_ObjectEventSetAnimationAndWait(LOCALID_ROWING_KAJA, 4);
-    gEventWork->message += 1;
+    gFieldWork->message += 1;
     TolbiShipInteriors_Say(LOCALID_ROWING_KAJA);
     TolbiShipInteriors_RunSceneCommand(SHIP_SHOW_PARTY_EMOTE, 2, 40);
     Engine_ObjectEventRunRepeatedMotion(LOCALID_ROWING_KAJA, 1);
@@ -3867,13 +3867,13 @@ static void TolbiShipInteriors_ReactToMonsterAttack(void) {
   ObjectEvent_SetActionScript(GARET, action);
   ObjectEvent_SetActionScript(IVAN, action);
   ObjectEvent_RunActionScriptAndWait(MIA, action);
-  Camera_SetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
-  Camera_MoveTo(PIXELS(440), -1, PIXELS(176), 1);
+  FieldCamera_SetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
+  FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(176), 1);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 424, 272);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 424, 164);
   Engine_ScriptWait(60);
-  gEventWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   TolbiShipInteriors_RunSceneCommand(SHIP_CLOSE_SCREEN, 0, 0);
   GameFlag_Clear(FLAG_TOLBI_SHIP_MONSTERS_BELOWDECKS);
@@ -3971,17 +3971,17 @@ static void TolbiShipInteriors_NoticeShipRocking(void) {
   TolbiShipInteriors_InstallRowingDeckObjectEvents(16);
   TolbiShipInteriors_MoveCameraAndWait(PIXELS(438), -1, PIXELS(174), 0x1000001);
   TolbiShipInteriors_RunSceneCommand(SHIP_OPEN_SCREEN, 1, 20);
-  Script_PlayCue(MUS_SILENCE);
-  Script_PlayCue(SE_181);
+  Script_PlaySong(MUS_SILENCE);
+  Script_PlaySong(SE_181);
   MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
   Engine_ScriptWait(10);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_ScriptWait(80);
-  Script_PlayCue(SE_181);
+  Script_PlaySong(SE_181);
   MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
   Engine_ScriptWait(10);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
-  Script_PlayCue(MUS_063);
+  Script_PlaySong(MUS_063);
   GameFlag_Set(FLAG_KEEP_MUSIC);
   ObjectEvent_SetAttachedEffect(MIA, ATTACHED_EFFECT_IN_FRONT |
                                          ATTACHED_EFFECT_ONCE);
@@ -4080,7 +4080,7 @@ static void TolbiShipInteriors_NoticeShipRocking(void) {
   Engine_ScriptEnd();
 }
 
-/// Plays the intermittent voyage cue and restores its effect after ten frames.
+/// Now and then plays a rumble with a shake, easing the shake after ten frames.
 static void TolbiShipInteriors_ShakeWhileKrakenAboard(void) {
   s32 value;
   s32 *timer = &gTolbiShipInteriors_ShakeTimer;
@@ -4185,9 +4185,9 @@ static void TolbiShipInteriors_ReachIsland(void) {
   }
   Engine_ObjectEventRunRepeatedMotion(firstRower, 1);
   if (reaction == 1) {
-    gEventWork->message += 1;
+    gFieldWork->message += 1;
   } else if (reaction == 2) {
-    gEventWork->message += 2;
+    gFieldWork->message += 2;
   }
   Engine_ObjectEventStartRepeatedMotion(firstRower, 2);
   TolbiShipInteriors_Say(firstRower);
@@ -4210,11 +4210,11 @@ static void TolbiShipInteriors_ReachIsland(void) {
     reaction = 3;
   }
   if (reaction == 0) {
-    gEventWork->message += 1;
+    gFieldWork->message += 1;
   } else if (reaction == 1) {
-    gEventWork->message += 2;
+    gFieldWork->message += 2;
   } else if (reaction == 2) {
-    gEventWork->message += 3;
+    gFieldWork->message += 3;
   }
   // Send the rowers and party back through their departure scripts.
   TolbiShipInteriors_Turn(firstRower, 0);
@@ -4273,7 +4273,7 @@ static void TolbiShipInteriors_DismissReplacementRowers(void) {
                                       FACING_SOUTH + FACING_STEP);
   TolbiShipInteriors_PlaceObjectEvent(LOCALID_ROWING_KAJA, 408, 142,
                                       FACING_SOUTHEAST + FACING_STEP);
-  gEventWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
@@ -4324,7 +4324,7 @@ static void TolbiShipInteriors_DismissReplacementRowers(void) {
   ObjectEvent_WalkToAndWait(LOCALID_ROWING_KAJA, 408, 132);
   ObjectEvent_WalkToAndWait(LOCALID_ROWING_KAJA, 444, 132);
   ObjectEvent_SetPosition(LOCALID_ROWING_KAJA, 0, 0);
-  gEventWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
@@ -4603,11 +4603,11 @@ struct ObjectEventTemplate gTolbiShipInteriors_ObjectEventTemplatesNone[] = {
 // clang-format off
 struct ObjectEventTemplate gTolbiShipInteriors_CaptainsQuartersObjectEventTemplates[] = {
     { SPRITE_MAN_WITH_WHITE_BEARD_IN_GREEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(446), 0, PIXELS(620), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, 0 },
+        PIXELS(446), 0, PIXELS(620), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_KAJA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(472), 0, PIXELS(626), FACING_WEST, TALK_KEEP_FACING, 0 },
+        PIXELS(472), 0, PIXELS(626), FACING_WEST, TALK_FACING_KEEP, 0 },
     { SPRITE_MAN_IN_BLUE_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(454), 0, PIXELS(640), FACING_NORTHWEST + FACING_STEP, TALK_KEEP_FACING, 0 },
+        PIXELS(454), 0, PIXELS(640), FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
@@ -4615,91 +4615,91 @@ struct ObjectEventTemplate gTolbiShipInteriors_CaptainsQuartersObjectEventTempla
 /// followers.
 struct ObjectEventTemplate gTolbiShipInteriors_CaptainsQuartersObjectEventTemplatesWarriors[] = {
     { SPRITE_MAN_WITH_WHITE_BEARD_IN_GREEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(482), 0, PIXELS(604), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(482), 0, PIXELS(604), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_KAJA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(474), 0, PIXELS(624), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(474), 0, PIXELS(624), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_IN_BLUE_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(464), 0, PIXELS(690), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(464), 0, PIXELS(690), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_RED_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(456), 0, PIXELS(648), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(456), 0, PIXELS(648), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BLUE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(444), 0, PIXELS(628), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(444), 0, PIXELS(628), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(472), 0, PIXELS(660), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(472), 0, PIXELS(660), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0 },
     { IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0 },
     { MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
 /// The captain's quarters once the ship has reached Tolbi.
 struct ObjectEventTemplate gTolbiShipInteriors_CaptainsQuartersObjectEventTemplatesArrived[] = {
     { SPRITE_MAN_WITH_WHITE_BEARD_IN_GREEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(462), 0, PIXELS(612), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(462), 0, PIXELS(612), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };
 
 /// The hold before the party hears of the delay at Kalay.
 struct ObjectEventTemplate gTolbiShipInteriors_HoldObjectEventTemplatesEmpty[] = {
     { 0xf4, CONDITION_ALWAYS, (s32)gTolbiShipInteriors_LieFlatScript,
-        PIXELS(150), 0, PIXELS(528), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(150), 0, PIXELS(528), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
 /// The hold while the ship waits at Kalay, and after it reaches Tolbi.
 struct ObjectEventTemplate gTolbiShipInteriors_HoldObjectEventTemplates[] = {
     { SPRITE_PERSON_WITH_SWORD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(184), 0, PIXELS(504), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(184), 0, PIXELS(504), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(184), 0, PIXELS(540), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(184), 0, PIXELS(540), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(152), 0, PIXELS(540), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(152), 0, PIXELS(540), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(120), 0, PIXELS(520), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(120), 0, PIXELS(520), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(130), 0, PIXELS(456), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(130), 0, PIXELS(456), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_RED_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(142), 0, PIXELS(446), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(142), 0, PIXELS(446), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BLUE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(156), 0, PIXELS(466), FACING_WEST, TALK_FACE_PARTY, 0 },
+        PIXELS(156), 0, PIXELS(466), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(184), 0, PIXELS(586), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(184), 0, PIXELS(586), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_KAJA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_NORTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { 0xf4, CONDITION_ALWAYS, (s32)gTolbiShipInteriors_LieFlatScript,
-        PIXELS(150), 0, PIXELS(528), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(150), 0, PIXELS(528), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
 /// The hold at sea, once the passengers row.
 struct ObjectEventTemplate gTolbiShipInteriors_HoldObjectEventTemplatesAtSea[] = {
     { SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(138), 0, PIXELS(446), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(138), 0, PIXELS(446), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(152), 0, PIXELS(532), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(152), 0, PIXELS(532), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_CHEF, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(182), 0, PIXELS(492), FACING_WEST, TALK_FACE_PARTY, 0 },
+        PIXELS(182), 0, PIXELS(492), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_WOMAN_IN_GREEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(168), 0, PIXELS(492), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(168), 0, PIXELS(492), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(120), 0, PIXELS(480), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(120), 0, PIXELS(480), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_PERSON_WITH_SWORD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(184), 0, PIXELS(526), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(184), 0, PIXELS(526), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(172), 0, PIXELS(448), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(172), 0, PIXELS(448), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(180), 0, PIXELS(464), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(180), 0, PIXELS(464), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(122), 0, PIXELS(516), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(122), 0, PIXELS(516), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(184), 0, PIXELS(586), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(184), 0, PIXELS(586), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_KAJA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_NORTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { 0xf4, CONDITION_ALWAYS, (s32)gTolbiShipInteriors_LieFlatScript,
-        PIXELS(150), 0, PIXELS(528), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(150), 0, PIXELS(528), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
@@ -4708,103 +4708,103 @@ struct ObjectEventTemplate gTolbiShipInteriors_HoldObjectEventTemplatesAtSea[] =
 /// seat, Kaja and the eight oars beside the seats.
 struct ObjectEventTemplate gTolbiShipInteriors_RowingDeckObjectEventTemplates[] = {
     { SPRITE_MAN_IN_GREEN_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(438), 0, PIXELS(152), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(438), 0, PIXELS(152), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_IN_GREEN_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(438), 0, PIXELS(374), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(438), 0, PIXELS(374), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_IN_RED_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(410), 0, PIXELS(172), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(410), 0, PIXELS(172), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_IN_RED_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(470), 0, PIXELS(172), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(470), 0, PIXELS(172), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_IN_RED_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(410), 0, PIXELS(204), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(410), 0, PIXELS(204), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_IN_RED_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(470), 0, PIXELS(204), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(470), 0, PIXELS(204), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_IN_RED_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(410), 0, PIXELS(284), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(410), 0, PIXELS(284), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_IN_RED_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(470), 0, PIXELS(284), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(470), 0, PIXELS(284), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_IN_RED_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(410), 0, PIXELS(314), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(410), 0, PIXELS(314), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_IN_RED_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(470), 0, PIXELS(314), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(470), 0, PIXELS(314), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_CHEF, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_WOMAN_IN_GREEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_PERSON_WITH_SWORD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_KAJA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_RESTING_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(410), 0, PIXELS(174), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(410), 0, PIXELS(174), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_RESTING_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(470), 0, PIXELS(174), FACING_WEST, TALK_FACE_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(470), 0, PIXELS(174), FACING_WEST, TALK_FACING_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_RESTING_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(410), 0, PIXELS(206), FACING_EAST, TALK_FACE_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(410), 0, PIXELS(206), FACING_EAST, TALK_FACING_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_RESTING_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(470), 0, PIXELS(206), FACING_WEST, TALK_FACE_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(470), 0, PIXELS(206), FACING_WEST, TALK_FACING_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_RESTING_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(410), 0, PIXELS(286), FACING_EAST, TALK_FACE_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(410), 0, PIXELS(286), FACING_EAST, TALK_FACING_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_RESTING_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(470), 0, PIXELS(286), FACING_WEST, TALK_FACE_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(470), 0, PIXELS(286), FACING_WEST, TALK_FACING_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_RESTING_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(410), 0, PIXELS(316), FACING_EAST, TALK_FACE_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(410), 0, PIXELS(316), FACING_EAST, TALK_FACING_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_RESTING_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(470), 0, PIXELS(316), FACING_WEST, TALK_FACE_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(470), 0, PIXELS(316), FACING_WEST, TALK_FACING_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { MAP_TABLE_END },
 };
 
 /// The party's followers, placed for a scene.
 struct ObjectEventTemplate gTolbiShipInteriors_PartyFollowerObjectEventTemplates[] = {
     { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0 },
     { IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0 },
     { MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
 /// The monsters of each attack, beside the seats.
 struct ObjectEventTemplate gTolbiShipInteriors_FirstAttackMonsters[] = {
     { SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(474), 0, PIXELS(300), FACING_WEST, TALK_KEEP_FACING, 0 },
+        PIXELS(474), 0, PIXELS(300), FACING_WEST, TALK_FACING_KEEP, 0 },
     { SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(458), 0, PIXELS(310), FACING_WEST, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(458), 0, PIXELS(310), FACING_WEST, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(474), 0, PIXELS(332), FACING_WEST, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(474), 0, PIXELS(332), FACING_WEST, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gTolbiShipInteriors_SecondAttackMonsters[] = {
     { SPRITE_PINK_WINGED_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(474), 0, PIXELS(300), FACING_WEST, TALK_KEEP_FACING, 0 },
+        PIXELS(474), 0, PIXELS(300), FACING_WEST, TALK_FACING_KEEP, 0 },
     { SPRITE_PINK_WINGED_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(474), 0, PIXELS(332), FACING_WEST, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(474), 0, PIXELS(332), FACING_WEST, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_LIZARD_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(458), 0, PIXELS(310), FACING_WEST, TALK_KEEP_FACING, 0 },
+        PIXELS(458), 0, PIXELS(310), FACING_WEST, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gTolbiShipInteriors_ThirdAttackMonsters[] = {
     { SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(474), 0, PIXELS(300), FACING_WEST, TALK_KEEP_FACING, 0 },
+        PIXELS(474), 0, PIXELS(300), FACING_WEST, TALK_FACING_KEEP, 0 },
     { SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(474), 0, PIXELS(332), FACING_WEST, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(474), 0, PIXELS(332), FACING_WEST, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_BLUE_WINGED_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(458), 0, PIXELS(310), FACING_WEST, TALK_KEEP_FACING, 0 },
+        PIXELS(458), 0, PIXELS(310), FACING_WEST, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 

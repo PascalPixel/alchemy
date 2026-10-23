@@ -23,7 +23,7 @@ struct ArticleTable {
 
 #endif
 
-// UiText_AppendArticleName copies a name into the decoded text at pos and
+// Message_AppendArticleName copies a name into the decoded text at pos and
 // returns the position after it. A name may start with an article class
 // ({article_class:N}, MESSAGE_ARTICLE_CLASS and its class), which picks the
 // article written before it. no is the article form the message asks for (its
@@ -33,20 +33,20 @@ struct ArticleTable {
 // capitalised; 0: anything else). With mode set (battle messages) the name is
 // set off with spaces and style codes: a space and line spacing 10 before it,
 // line spacing 8 and a space after. Only the Japanese decoder sets mode
-// (UiRenderWork.menuState bit 1, which UiText_PrepareMessageWork sets while it
+// (WindowWork.battleMode bit 1, which BattleMessage_Open sets while it
 // decodes); the others always pass 0. The write position wraps at 0x1ff, the
-// ring's mask (RENDER_ENTRY_MASK) outside Japanese.
+// ring's mask (TEXT_BUFFER_MASK) outside Japanese.
 
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
 /// The German, Spanish, French and Italian form: forms 0 and 4 take no article,
 /// the others the class's article (in Spanish, form bit 3 asks for the
 /// indefinite article), capitalised at the start of a sentence.
-/// The write position wraps in the decoded-text ring; language grammar remains
+/// The write position wraps in the text buffer; language grammar remains
 /// separate.
-u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
-                             u16 *entries, s32 articleForm, s32 plural,
-                             s32 *suffix) {
+u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
+                              u16 *entries, s32 articleForm, s32 plural,
+                              s32 *suffix) {
   struct ArticleTable table;
 #if (LANGUAGE == LANGUAGE_SPANISH)
   struct ArticleTable indefiniteTable;
@@ -84,9 +84,9 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
       name += 2;
   } else {
     kind = 0;
-    table = gUiText_ArticleTable;
+    table = gArticle_Table;
 #if (LANGUAGE == LANGUAGE_SPANISH)
-    indefiniteTable = gUiText_IndefiniteArticles;
+    indefiniteTable = gArticle_Indefinite;
 #endif
     if (name[0] == 29) {
       kind = name[1];
@@ -143,11 +143,11 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
 /// The English form: form 1 (or 3 with a single item) takes "a" or "an" (by the
 /// name's first letter unless its class says otherwise), and form 2 (or 3 with
 /// several) adds the plural "s" or "es".
-/// The write position wraps in the decoded-text ring; language grammar remains
+/// The write position wraps in the text buffer; language grammar remains
 /// separate.
-u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
-                             u16 *entries, s32 articleForm, s32 plural,
-                             s32 *suffix) {
+u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
+                              u16 *entries, s32 articleForm, s32 plural,
+                              s32 *suffix) {
   struct ArticleTable table;
   s32 kind;
   u16 head;
@@ -166,7 +166,7 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
   }
   if (articleForm == 1 || (articleForm == 3 && plural == 0)) {
     kind = 0;
-    table = gUiText_ArticleTable;
+    table = gArticle_Table;
     head = name[0];
     // The class operand is stored one above its value. A name with no class
     // takes "an" (class 2) before a capital vowel and "a" (class 1) before
@@ -224,16 +224,16 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
 #endif
 
 /// The control codes of a message as stored (the PO catalogs' names), which
-/// UiText_BuildRenderEntries expands into decoded text. Codes it does not
+/// Message_Decode expands into decoded text. Codes it does not
 /// name here are kept as they are; an operand is stored one above its value.
 enum {
   MESSAGE_END = 0,        ///< kept as TEXT_END: the window stays open
   MESSAGE_PAGE_BREAK = 1, ///< kept as TEXT_PAGE
   MESSAGE_END_WAIT = 2,   ///< kept as TEXT_WAIT_KEY: a button closes the window
   MESSAGE_LINE_BREAK = 3, ///< kept as TEXT_NEWLINE
-  MESSAGE_TEXT_COLOR = 8, ///< kept with its operand as TEXT_COLOUR
+  MESSAGE_TEXT_COLOR = 8, ///< kept with its operand as TEXT_COLOR
   /// Kept with its operand as TEXT_OUTLINE: the style of sprite text, 1
-  /// outlined (UiText_RenderGlyphPair), 2 to 5 a motion (UiText_DrawGlyph).
+  /// outlined (Text_DrawGlyphPair), 2 to 5 a motion (Glyph_Draw).
   MESSAGE_TEXT_EFFECT = 9,
   MESSAGE_LINE_SPACING = 10, ///< kept with its operand as TEXT_LINE_SPACING
   /// German: a counted noun; Italian: a gender ending; Spanish and French: the
@@ -241,7 +241,7 @@ enum {
   MESSAGE_LOCALIZED_WORD = 13,
   /// Kept with its operand as TEXT_WINDOW_STATE: the window effect to run.
   MESSAGE_WINDOW_EFFECT = 15,
-  /// The name of the unit gGameState.selectedLocalId names.
+  /// The name of the unit gGameState.leaderLocalId names.
   MESSAGE_PROTAGONIST_NAME = 16,
   MESSAGE_ACTOR_NAME = 17, ///< the name of the unit its operand names
   // The argument codes write out the next message argument of their kind
@@ -270,14 +270,14 @@ enum {
   /// Italian. The Japanese decoder keeps the code as it is.
   MESSAGE_POSSESSIVE_SUFFIX = 27,
   /// The article class of the name it starts, in item and class names, which
-  /// UiText_AppendArticleName reads and drops.
+  /// Message_AppendArticleName reads and drops.
   MESSAGE_ARTICLE_CLASS = 29,
-  /// Kept as TEXT_END_ALT, which the channel ends as it ends TEXT_END.
+  /// Kept as TEXT_END_ALT, which the printer ends as it ends TEXT_END.
   MESSAGE_END_NOW = 30,
 };
 
 /// What the decoding effects of UiWork_SetBusyFlags put between characters.
-/// Halting speech (spacingBefore): a short pause before each decoded code; in
+/// Halting speech (haltingSpeech): a short pause before each decoded code; in
 /// English and Japanese not at a line's start or before a kana mark.
 #define ENTRY_NARROW_GAP TEXT_PAUSE_SHORT
 /// With spacingAfter (English and Japanese): code 222 after a character of
@@ -292,37 +292,37 @@ enum {
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
 #if (LANGUAGE == LANGUAGE_FRENCH)
-extern s8 gUiText_ItemPronoun[];
+extern s8 gLocalizedWord_ItemPronoun[];
 #else
 /// The possessive written before an item's name, chosen by the item's gender
 /// or by number.
 struct ItemPossessiveTable {
   s8 *text[ITEM_POSSESSIVE_TEXT_COUNT];
 };
-extern const struct ItemPossessiveTable gUiText_ItemPossessives;
-extern const s8 gUiText_ItemGenders[];
-extern u8 *gUiText_NumberWords[];
+extern const struct ItemPossessiveTable gLocalizedWord_ItemPossessives;
+extern const s8 gLocalizedWord_ItemGenders[];
+extern u8 *gLocalizedWord_Numbers[];
 #endif
 #endif
 
-/// Decodes message script into the ring of decoded text (UiRenderWork.entries)
+/// Decodes message script into the ring of decoded text (WindowWork.textBuffer)
 /// and returns where it starts; script -1 returns the last message's start
 /// again. Argument codes take their values from the argument table
-/// (UiWork_PushValueSlot), and clear empties the table afterwards. Names,
+/// (MessageArgument_Push), and clear empties the table afterwards. Names,
 /// numbers and articles are written out; style codes are kept with their
-/// operands for the message channel to run.
-/// The message is written at UiRenderWork.count, which it leaves just past
-/// the message's terminator, and is cut at the ring's length. The decoder
+/// operands for the text printer to run.
+/// The message is written at WindowWork.textBufferEnd, which it leaves just
+/// past the message's terminator, and is cut at the ring's length. The decoder
 /// routine is copied into heap slot TEXT_WORK_BLOCK for the call and freed at
 /// its end.
-s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
-  struct UiRenderWork *work = UI_WORK;
+s32 Message_Decode(s32 script, s32 clear) {
+  struct WindowWork *work = WINDOW_WORK;
   u32 code = 0;
 #if (LANGUAGE == LANGUAGE_ENGLISH)
   s32 lineStart = 1;
 #endif
   s32 quote = 0;
-  u32 start = work->count;
+  u32 start = work->textBufferEnd;
   u32 decodedCount = 0;
   s32 plural = 0;
 #if !(LANGUAGE == LANGUAGE_GERMAN) && !(LANGUAGE == LANGUAGE_ITALIAN)
@@ -345,9 +345,9 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
   s8 c8;
   u32 writePosition = start;
 #endif
-  u16 *entry = work->entries;
+  u16 *entry = work->textBuffer;
   s32 overflow = 0;
-  s32 (*decode)(struct TextReader *);
+  s32 (*decode)(struct MessageReader *);
   u32 nextPosition;
   s32 no;
   u32 j;
@@ -368,14 +368,14 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
   u16 *p;
   u16 name[UI_MESSAGE_NAME_HALFWORDS];
   u8 numberBuffer[UI_NUMBER_BUFFER_SIZE];
-  struct TextReader reader;
+  struct MessageReader reader;
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_ITALIAN)
   struct ItemPossessiveTable possessives;
   s32 kind;
 #endif
 
   if (script == -1) {
-    start = work->messageStart;
+    start = work->lastMessageStart;
   } else {
     {
       u32 size;
@@ -387,13 +387,13 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
         size = (u32)Text_DecodeSymbolCodeSize;
       } while (0);
       Dma_Set((const void *)Text_DecodeSymbol,
-              Runtime_AllocateHeapBlock(TEXT_WORK_BLOCK, size),
-              DMA_COPY32(size >> 2), REG_DMA3);
+              AllocHeapSlot(TEXT_WORK_BLOCK, size), DMA_COPY32(size >> 2),
+              REG_DMA3);
     }
     // The decoder runs from a copy in RAM, one symbol at a time.
     decode = (s32 (*)(
-        struct TextReader *))gWindowWork[TEXT_WORK_BLOCK - HEAP_SLOT_WINDOW];
-    UiText_LookupMessage(&reader, script);
+        struct MessageReader *))gWindowWork[TEXT_WORK_BLOCK - HEAP_SLOT_WINDOW];
+    Message_Find(&reader, script);
 
     do {
 #if (LANGUAGE == LANGUAGE_ENGLISH)
@@ -412,7 +412,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
           switch (code) {
           case MESSAGE_ARGUMENT_CLASS_NAME:
             decode(&reader);
-            UiText_LookupArgument(MESSAGE_ARGUMENT_CLASS, clear);
+            MessageArgument_Lookup(MESSAGE_ARGUMENT_CLASS, clear);
             break;
           case MESSAGE_END:
           case MESSAGE_END_WAIT:
@@ -420,17 +420,17 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             running = 0;
             break;
           case MESSAGE_ARGUMENT_SIGNED_NUMBER:
-            UiText_LookupArgument(MESSAGE_ARGUMENT_NUMBER, clear);
+            MessageArgument_Lookup(MESSAGE_ARGUMENT_NUMBER, clear);
             break;
           case MESSAGE_ARGUMENT_ITEM_NAME:
             decode(&reader);
-            UiText_LookupArgument(MESSAGE_ARGUMENT_ITEM, clear);
+            MessageArgument_Lookup(MESSAGE_ARGUMENT_ITEM, clear);
             break;
           case MESSAGE_ARGUMENT_ABILITY_NAME:
-            UiText_LookupArgument(MESSAGE_ARGUMENT_ABILITY, clear);
+            MessageArgument_Lookup(MESSAGE_ARGUMENT_ABILITY, clear);
             break;
           case MESSAGE_ARGUMENT_LOCATION_NAME:
-            UiText_LookupArgument(MESSAGE_ARGUMENT_LOCATION, clear);
+            MessageArgument_Lookup(MESSAGE_ARGUMENT_LOCATION, clear);
             break;
           case MESSAGE_TEXT_COLOR:
           case MESSAGE_TEXT_EFFECT:
@@ -460,13 +460,13 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
         }
       } else {
         // Halting speech pauses before each code.
-        if (work->spacingBefore != 0
+        if (work->haltingSpeech != 0
 #if (LANGUAGE == LANGUAGE_ENGLISH)
             && lineStart == 0 && code != 222 && code != 223
 #endif
         ) {
           entry[writePosition] = ENTRY_NARROW_GAP;
-          writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+          writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
         }
 
 #if (LANGUAGE == LANGUAGE_ENGLISH)
@@ -475,20 +475,20 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             previousCode != 222 && previousCode != 223 && previousCode != 32 &&
             previousCode != 165 && previousCode != 161 && previousCode != 164) {
           entry[writePosition] = ENTRY_WIDE_GAP;
-          writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+          writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
         }
 
 #endif
         // A character. Halting speech breaks off with an ellipsis at the
         // first space or after 11 characters.
         if (code > 31) {
-          if (work->spacingBefore != 0 && (code == 32 || decodedCount > 10)) {
+          if (work->haltingSpeech != 0 && (code == 32 || decodedCount > 10)) {
             entry[writePosition] = '.';
-            writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+            writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
             entry[writePosition] = '.';
-            writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+            writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
             entry[writePosition] = '.';
-            writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+            writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
             overflow = 1;
             if (decodedCount > 10)
               code = 32;
@@ -500,7 +500,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
               code = 142;
           }
           entry[writePosition] = (u16)code;
-          writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+          writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
 #if (LANGUAGE == LANGUAGE_ENGLISH)
           lineStart = 0;
 #else
@@ -533,12 +533,12 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
           case MESSAGE_TEXT_EFFECT:
           case MESSAGE_ARTICLE_CLASS:
             entry[writePosition] = (u16)code;
-            writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+            writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
             entry[writePosition] = decode(&reader) + 0xFFFFU;
-            writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+            writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
             break;
           case MESSAGE_ARGUMENT_SIGNED_NUMBER:
-            value = (s32)UiText_LookupArgument(MESSAGE_ARGUMENT_NUMBER, clear);
+            value = (s32)MessageArgument_Lookup(MESSAGE_ARGUMENT_NUMBER, clear);
             magnitude = value;
             if (value < 0)
 #ifdef UBFIX
@@ -551,20 +551,20 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             plural = 1;
             if (magnitude <= 1)
               plural = 0;
-            numberText = UiText_FormatNumber(numberBuffer, value, 0);
+            numberText = String_FormatNumber(numberBuffer, value, 0);
             i = numberText - numberBuffer;
             while (i != 16 && numberBuffer[i] != 0) {
               entry[writePosition] = numberBuffer[i];
-              writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+              writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
               i++;
             }
             break;
           case MESSAGE_ARGUMENT_CLASS_NAME:
             no = decode(&reader) - 1;
-            argument = UiText_LookupArgument(MESSAGE_ARGUMENT_CLASS, clear);
-            UiText_DecodeMessage(argument + MsgClassName, name,
-                                 UI_MESSAGE_NAME_HALFWORDS);
-            writePosition = UiText_AppendArticleName(
+            argument = MessageArgument_Lookup(MESSAGE_ARGUMENT_CLASS, clear);
+            Message_DecodeRaw(argument + MsgClassName, name,
+                              UI_MESSAGE_NAME_HALFWORDS);
+            writePosition = Message_AppendArticleName(
                 0, name, writePosition, entry, no, plural, &suffix);
             break;
           case MESSAGE_ARGUMENT_ITEM_NAME:
@@ -572,48 +572,48 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
 #if (LANGUAGE == LANGUAGE_SPANISH)
             form = no & 7;
 #endif
-            argument = UiText_LookupArgument(MESSAGE_ARGUMENT_ITEM, clear);
+            argument = MessageArgument_Lookup(MESSAGE_ARGUMENT_ITEM, clear);
             // The argument is an inventory code: its low 9 bits are the item,
-            // a mask that RENDER_ENTRY_MASK's 0x1ff spells here. In German,
+            // a mask that TEXT_BUFFER_MASK's 0x1ff spells here. In German,
             // Spanish, French and Italian, forms 2 and 4, and 3 after a plural
             // number, take the item's plural name.
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
-            argument &= RENDER_ENTRY_MASK;
+            argument &= TEXT_BUFFER_MASK;
 #if (LANGUAGE == LANGUAGE_SPANISH)
             if (form == 2 || (form == 3 && plural != 0) || form == 4)
 #else
             if (no == 2 || (no == 3 && plural != 0) || no == 4)
 #endif
-              UiText_DecodeMessage(argument + MsgItemPluralName, name,
-                                   UI_MESSAGE_NAME_HALFWORDS);
+              Message_DecodeRaw(argument + MsgItemPluralName, name,
+                                UI_MESSAGE_NAME_HALFWORDS);
             else
-              UiText_DecodeMessage(argument + MsgItemName, name,
-                                   UI_MESSAGE_NAME_HALFWORDS);
+              Message_DecodeRaw(argument + MsgItemName, name,
+                                UI_MESSAGE_NAME_HALFWORDS);
 #else
-            UiText_DecodeMessage((argument & RENDER_ENTRY_MASK) + MsgItemName,
-                                 name, 24);
+            Message_DecodeRaw((argument & TEXT_BUFFER_MASK) + MsgItemName, name,
+                              24);
 #endif
-            writePosition = UiText_AppendArticleName(
+            writePosition = Message_AppendArticleName(
                 0, name, writePosition, entry, no, plural, &suffix);
             break;
           case MESSAGE_ARGUMENT_ABILITY_NAME:
-            argument = UiText_LookupArgument(MESSAGE_ARGUMENT_ABILITY, clear);
-            UiText_DecodeMessage(argument + MsgAbilityName, name,
-                                 UI_MESSAGE_NAME_HALFWORDS);
+            argument = MessageArgument_Lookup(MESSAGE_ARGUMENT_ABILITY, clear);
+            Message_DecodeRaw(argument + MsgAbilityName, name,
+                              UI_MESSAGE_NAME_HALFWORDS);
             p = name;
             nextPosition = writePosition;
             while (*p != 0) {
               entry[nextPosition] = *p;
               p++;
-              nextPosition = (nextPosition + 1) & RENDER_ENTRY_MASK;
+              nextPosition = (nextPosition + 1) & TEXT_BUFFER_MASK;
             }
             writePosition = nextPosition;
             break;
           case MESSAGE_ARGUMENT_LOCATION_NAME:
-            UiText_DecodeMessage(
+            Message_DecodeRaw(
                 MapSec_GetNameIndexFar(
-                    UiText_LookupArgument(MESSAGE_ARGUMENT_LOCATION, clear),
+                    MessageArgument_Lookup(MESSAGE_ARGUMENT_LOCATION, clear),
                     1) +
                     MsgDebugEntryName,
                 name, UI_MESSAGE_NAME_HALFWORDS);
@@ -622,13 +622,13 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             while (*p != 0) {
               entry[nextPosition] = *p;
               p++;
-              nextPosition = (nextPosition + 1) & RENDER_ENTRY_MASK;
+              nextPosition = (nextPosition + 1) & TEXT_BUFFER_MASK;
             }
             writePosition = nextPosition;
             break;
           case MESSAGE_PROTAGONIST_NAME:
             // A unit's name is 15 bytes, widened here to codes.
-            nameBytes = Unit_GetFar(gGameState.selectedLocalId)->name;
+            nameBytes = Unit_GetFar(gGameState.leaderLocalId)->name;
             nameOutput = name;
             i = 0;
             do {
@@ -637,12 +637,12 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
               nameBytes++;
               nameOutput++;
             } while (i <= 14);
-            writePosition = UiText_AppendArticleName(0, name, writePosition,
-                                                     entry, 0, 0, &suffix);
+            writePosition = Message_AppendArticleName(0, name, writePosition,
+                                                      entry, 0, 0, &suffix);
             break;
           case MESSAGE_ARGUMENT_ACTOR_NAME:
             no = decode(&reader) - 1;
-            nameBytes = Unit_GetFar(UiText_LookupArgument(
+            nameBytes = Unit_GetFar(MessageArgument_Lookup(
                                         MESSAGE_ARGUMENT_ACTOR, clear))
                             ->name;
             nameOutput = name;
@@ -653,7 +653,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
               nameBytes++;
               nameOutput++;
             } while (j <= 14);
-            writePosition = UiText_AppendArticleName(
+            writePosition = Message_AppendArticleName(
                 0, name, writePosition, entry, no, plural, &suffix);
             break;
           case MESSAGE_ACTOR_NAME:
@@ -667,34 +667,34 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
               nameBytes++;
               nameOutput++;
             } while (j <= 14);
-            writePosition = UiText_AppendArticleName(0, name, writePosition,
-                                                     entry, 0, 0, &suffix);
+            writePosition = Message_AppendArticleName(0, name, writePosition,
+                                                      entry, 0, 0, &suffix);
             break;
           case MESSAGE_BUTTON_ICON:
             argument = ((decode(&reader) - 1) << 1) + 128;
             entry[writePosition] = argument;
-            writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+            writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
             entry[writePosition] = argument + 1;
-            writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+            writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
             break;
           case MESSAGE_EM_DASH:
             entry[writePosition] = TEXT_ARGUMENT_SPACE;
-            writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+            writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
             entry[writePosition] = '-';
-            writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+            writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
             entry[writePosition] = ' ';
-            writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+            writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
 #endif
             break;
 #if (LANGUAGE == LANGUAGE_GERMAN)
           case MESSAGE_LOCALIZED_WORD:
             no = decode(&reader) - 1;
-            nameBytes = gUiText_NumberWords[(no & 7) * 2 + plural];
+            nameBytes = gLocalizedWord_Numbers[(no & 7) * 2 + plural];
             while (*nameBytes != 0) {
               entry[writePosition] = *nameBytes++;
-              writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+              writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
             }
             break;
 #endif
@@ -710,7 +710,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
               entry[writePosition] = 'a';
             else
               entry[writePosition] = 'e';
-            writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+            writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
             break;
 #elif (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH)
           case MESSAGE_LOCALIZED_WORD:
@@ -721,10 +721,10 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             if (plural != 0) {
               if (suffix != 0) {
                 entry[writePosition] = 'e';
-                writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+                writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
               }
               entry[writePosition] = 's';
-              writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+              writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
             }
             break;
 #endif
@@ -733,14 +733,14 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             // The item argument is only looked at (clear 0), so the item's
             // name code after the possessive still takes it.
 #if (LANGUAGE == LANGUAGE_SPANISH)
-            UiText_LookupArgument(MESSAGE_ARGUMENT_ITEM, 0);
-            possessives = gUiText_ItemPossessives;
+            MessageArgument_Lookup(MESSAGE_ARGUMENT_ITEM, 0);
+            possessives = gLocalizedWord_ItemPossessives;
             word = possessives.text[plural];
 #else
-            argument = UiText_LookupArgument(MESSAGE_ARGUMENT_ITEM, 0);
-            argument &= RENDER_ENTRY_MASK;
-            possessives = gUiText_ItemPossessives;
-            kind = gUiText_ItemGenders[argument];
+            argument = MessageArgument_Lookup(MESSAGE_ARGUMENT_ITEM, 0);
+            argument &= TEXT_BUFFER_MASK;
+            possessives = gLocalizedWord_ItemPossessives;
+            kind = gLocalizedWord_ItemGenders[argument];
             word = possessives.text[kind & 3];
 #endif
             // value counts the letters, compared unsigned: with i or j the
@@ -751,21 +751,21 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
               if (value == 0 && suffix == 2)
                 c8 -= 0x20;
               entry[writePosition] = c8;
-              writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+              writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
             }
             break;
 #endif
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_FRENCH)
           case MESSAGE_PLURAL_SUFFIX:
 #if (LANGUAGE == LANGUAGE_GERMAN)
-            argument = UiText_LookupArgument(MESSAGE_ARGUMENT_ITEM, 0);
-            argument &= RENDER_ENTRY_MASK;
-            possessives = gUiText_ItemPossessives;
-            kind = gUiText_ItemGenders[argument];
+            argument = MessageArgument_Lookup(MESSAGE_ARGUMENT_ITEM, 0);
+            argument &= TEXT_BUFFER_MASK;
+            possessives = gLocalizedWord_ItemPossessives;
+            kind = gLocalizedWord_ItemGenders[argument];
             word = possessives.text[kind & 3];
 #else
-            UiText_LookupArgument(MESSAGE_ARGUMENT_ITEM, 0);
-            word = gUiText_ItemPronoun;
+            MessageArgument_Lookup(MESSAGE_ARGUMENT_ITEM, 0);
+            word = gLocalizedWord_ItemPronoun;
 #endif
             for (i = 0; i < 16; i++) {
               if ((c8 = *word++) == 0)
@@ -773,7 +773,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
               if (i == 0 && suffix == 2)
                 c8 -= 0x20;
               entry[writePosition] = c8;
-              writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+              writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
             }
             suffix = 0;
             break;
@@ -784,13 +784,13 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
               entry[writePosition] = '\'';
             else
               entry[writePosition] = 's';
-            writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+            writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
 #elif (LANGUAGE == LANGUAGE_ENGLISH)
             entry[writePosition] = '\'';
-            writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+            writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
             if (suffix == 0) {
               entry[writePosition] = 's';
-              writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+              writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
             }
 #endif
             break;
@@ -805,7 +805,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             // Fall through.
           default:
             entry[writePosition] = (u16)code;
-            writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+            writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
 #if (LANGUAGE == LANGUAGE_ENGLISH)
             if (code == 's' || code == 'S')
               suffix = 1;
@@ -817,22 +817,22 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
         }
       }
       decodedCount++;
-    } while (running != 0 && decodedCount <= RENDER_ENTRY_MASK);
+    } while (running != 0 && decodedCount <= TEXT_BUFFER_MASK);
 
     // The code that ended the message goes in too (TEXT_END, TEXT_WAIT_KEY or
     // TEXT_END_ALT, or the last code of a message cut at the ring's length),
     // then a 0; the next message starts after both.
     entry[writePosition] = (u16)code;
-    writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+    writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
     entry[writePosition] = 0;
-    nextPosition = (writePosition + 1) & RENDER_ENTRY_MASK;
-    work->count = (u16)nextPosition;
-    Runtime_ReleaseHeapBlock(TEXT_WORK_BLOCK);
-    work->messageStart = (u16)start;
+    nextPosition = (writePosition + 1) & TEXT_BUFFER_MASK;
+    work->textBufferEnd = (u16)nextPosition;
+    FreeHeapSlot(TEXT_WORK_BLOCK);
+    work->lastMessageStart = (u16)start;
   }
 
   if (clear != 0)
-    UiWork_ClearValueNameTables();
+    MessageArgument_ClearAll();
 
   return start;
 }
@@ -842,54 +842,55 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 
 /// The Japanese form: Japanese has no articles, so the name is copied as it is.
-/// The write position wraps in the decoded-text ring; language grammar remains
+/// The write position wraps in the text buffer; language grammar remains
 /// separate.
-extern __inline__ u32 UiText_AppendArticleName(s32 mode, u16 *name,
-                                               u32 writePosition, u16 *entries,
-                                               s32 articleForm, s32 plural,
-                                               s32 *suffix) {
+extern __inline__ u32 Message_AppendArticleName(s32 mode, u16 *name,
+                                                u32 writePosition, u16 *entries,
+                                                s32 articleForm, s32 plural,
+                                                s32 *suffix) {
   u16 code;
 
   if (mode != 0) {
     entries[writePosition] = ' ';
-    writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+    writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
     entries[writePosition] = 10;
-    writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+    writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
     entries[writePosition] = 10;
-    writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+    writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
   }
   while (*name != 0) {
     code = *name++;
     entries[writePosition] = code;
-    writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+    writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
   }
   if (mode != 0) {
     entries[writePosition] = 10;
-    writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+    writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
     entries[writePosition] = 8;
-    writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+    writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
     entries[writePosition] = ' ';
-    writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+    writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
   }
   return writePosition;
 }
 
-/// The Japanese UiText_BuildRenderEntries, as above with no articles or
-/// plurals. A battle message (menuState bit 1) has its names set off with
+/// The Japanese Message_Decode, as above with no articles or
+/// plurals. A battle message (battleMode bit 1) has its names set off with
 /// spaces and style codes and each space doubled, and in battle the units of
 /// classes 122 and 125 are named Mystery Man and Mystery Woman.
-/// script -1 reuses messageStart; clear consumes argument slots after decoding.
-s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
-  struct UiRenderWork *work = UI_WORK;
+/// script -1 reuses lastMessageStart; clear consumes argument slots after
+/// decoding.
+s32 Message_Decode(s32 script, s32 clear) {
+  struct WindowWork *work = WINDOW_WORK;
   u32 code = 0;
   s32 lineStart = 1;
-  u32 start = work->count;
+  u32 start = work->textBufferEnd;
   u32 decodedCount = 0;
   s32 running = 1;
   u32 writePosition = start;
-  u16 *entry = work->entries;
-  u8 mode = work->menuState & 2;
-  s32 (*decode)(struct TextReader *);
+  u16 *entry = work->textBuffer;
+  u8 mode = work->battleMode & 2;
+  s32 (*decode)(struct MessageReader *);
   s32 overflow = 0;
   u32 previousCode;
   u32 nextPosition;
@@ -901,13 +902,13 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
   u8 *numberText;
   u8 *nameBytes;
   u16 *nameOutput;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   u16 name[UI_MESSAGE_NAME_HALFWORDS];
   u8 numberBuffer[UI_NUMBER_BUFFER_SIZE];
-  struct TextReader reader;
+  struct MessageReader reader;
 
   if (script == -1) {
-    start = work->messageStart;
+    start = work->lastMessageStart;
   } else {
     {
       u32 size;
@@ -919,13 +920,13 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
         size = (u32)Text_DecodeSymbolCodeSize;
       } while (0);
       Dma_Set((const void *)Text_DecodeSymbol,
-              Runtime_AllocateHeapBlock(TEXT_WORK_BLOCK, size),
-              DMA_COPY32(size >> 2), REG_DMA3);
+              AllocHeapSlot(TEXT_WORK_BLOCK, size), DMA_COPY32(size >> 2),
+              REG_DMA3);
     }
     // The decoder runs from a copy in RAM, one symbol at a time.
     decode = (s32 (*)(
-        struct TextReader *))gWindowWork[TEXT_WORK_BLOCK - HEAP_SLOT_WINDOW];
-    UiText_LookupMessage(&reader, script);
+        struct MessageReader *))gWindowWork[TEXT_WORK_BLOCK - HEAP_SLOT_WINDOW];
+    Message_Find(&reader, script);
     do {
       previousCode = code;
       code = (u32)decode(&reader);
@@ -935,7 +936,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
         if (code < 32) {
           switch (code) {
           case MESSAGE_ARGUMENT_CLASS_NAME:
-            UiText_LookupArgument(MESSAGE_ARGUMENT_CLASS, clear);
+            MessageArgument_Lookup(MESSAGE_ARGUMENT_CLASS, clear);
             break;
           case MESSAGE_END:
           case MESSAGE_END_WAIT:
@@ -947,16 +948,16 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             decode(&reader);
             break;
           case MESSAGE_ARGUMENT_SIGNED_NUMBER:
-            UiText_LookupArgument(MESSAGE_ARGUMENT_NUMBER, clear);
+            MessageArgument_Lookup(MESSAGE_ARGUMENT_NUMBER, clear);
             break;
           case MESSAGE_ARGUMENT_ITEM_NAME:
-            UiText_LookupArgument(MESSAGE_ARGUMENT_ITEM, clear);
+            MessageArgument_Lookup(MESSAGE_ARGUMENT_ITEM, clear);
             break;
           case MESSAGE_ARGUMENT_ABILITY_NAME:
-            UiText_LookupArgument(MESSAGE_ARGUMENT_ABILITY, clear);
+            MessageArgument_Lookup(MESSAGE_ARGUMENT_ABILITY, clear);
             break;
           case MESSAGE_ARGUMENT_LOCATION_NAME:
-            UiText_LookupArgument(MESSAGE_ARGUMENT_LOCATION, clear);
+            MessageArgument_Lookup(MESSAGE_ARGUMENT_LOCATION, clear);
             break;
           case MESSAGE_ACTOR_NAME:
             decode(&reader);
@@ -977,17 +978,17 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
         }
       } else {
         // Halting speech pauses before each character.
-        if (work->spacingBefore != 0 && lineStart == 0 && code != 222 &&
+        if (work->haltingSpeech != 0 && lineStart == 0 && code != 222 &&
             code != 223) {
           entry[writePosition] = 5;
-          writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+          writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
         }
         if (work->spacingAfter != 0 && lineStart == 0 && code != 222 &&
             code != 223 && previousCode <= 256 && previousCode > 127 &&
             previousCode != 222 && previousCode != 223 && previousCode != 32 &&
             previousCode != 165 && previousCode != 161 && previousCode != 164) {
           entry[writePosition] = 222;
-          writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+          writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
         }
         // A character. Halting speech breaks off with an ellipsis at the
         // first space or after 11 characters.
@@ -996,23 +997,23 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
           // of code 165, then code 161.
           if (mode != 0 && code == ' ') {
             entry[writePosition] = code;
-            writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+            writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
           }
-          if (work->spacingBefore != 0 && (code == 32 || decodedCount > 10)) {
+          if (work->haltingSpeech != 0 && (code == 32 || decodedCount > 10)) {
             entry[writePosition] = 165;
-            writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+            writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
             entry[writePosition] = 165;
-            writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+            writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
             entry[writePosition] = 165;
-            writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+            writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
             entry[writePosition] = 161;
-            writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+            writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
             overflow = 1;
             if (decodedCount > 10)
               code = 32;
           }
           entry[writePosition] = (u16)code;
-          writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+          writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
           lineStart = 0;
         } else {
           // A control code: write out names and numbers, and keep style
@@ -1026,53 +1027,53 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
           case MESSAGE_TEXT_COLOR:
           case MESSAGE_TEXT_EFFECT:
             entry[writePosition] = (u16)code;
-            writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+            writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
             entry[writePosition] = decode(&reader) + 0xffffU;
-            writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+            writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
             break;
           case MESSAGE_ARGUMENT_SIGNED_NUMBER:
-            value = UiText_LookupArgument(MESSAGE_ARGUMENT_NUMBER, clear);
-            numberText = UiText_FormatNumber(numberBuffer, value, 0);
+            value = MessageArgument_Lookup(MESSAGE_ARGUMENT_NUMBER, clear);
+            numberText = String_FormatNumber(numberBuffer, value, 0);
             i = numberText - numberBuffer;
             while (i != 16 && numberBuffer[i] != 0) {
               entry[writePosition] = numberBuffer[i];
-              writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+              writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
               i++;
             }
             break;
           case MESSAGE_ARGUMENT_CLASS_NAME:
-            argument = UiText_LookupArgument(MESSAGE_ARGUMENT_CLASS, clear);
-            UiText_DecodeMessage(argument + MsgClassName, name,
-                                 UI_MESSAGE_NAME_HALFWORDS);
-            writePosition = UiText_AppendArticleName(mode, name, writePosition,
-                                                     entry, 0, 0, 0);
+            argument = MessageArgument_Lookup(MESSAGE_ARGUMENT_CLASS, clear);
+            Message_DecodeRaw(argument + MsgClassName, name,
+                              UI_MESSAGE_NAME_HALFWORDS);
+            writePosition = Message_AppendArticleName(mode, name, writePosition,
+                                                      entry, 0, 0, 0);
             break;
           case MESSAGE_ARGUMENT_ITEM_NAME:
-            argument = UiText_LookupArgument(MESSAGE_ARGUMENT_ITEM, clear);
-            UiText_DecodeMessage((argument & 511) + MsgItemName, name,
-                                 UI_MESSAGE_NAME_HALFWORDS);
-            writePosition = UiText_AppendArticleName(mode, name, writePosition,
-                                                     entry, 0, 0, 0);
+            argument = MessageArgument_Lookup(MESSAGE_ARGUMENT_ITEM, clear);
+            Message_DecodeRaw((argument & 511) + MsgItemName, name,
+                              UI_MESSAGE_NAME_HALFWORDS);
+            writePosition = Message_AppendArticleName(mode, name, writePosition,
+                                                      entry, 0, 0, 0);
             break;
           case MESSAGE_ARGUMENT_ABILITY_NAME:
-            argument = UiText_LookupArgument(MESSAGE_ARGUMENT_ABILITY, clear);
-            UiText_DecodeMessage(argument + MsgAbilityName, name,
-                                 UI_MESSAGE_NAME_HALFWORDS);
-            writePosition = UiText_AppendArticleName(mode, name, writePosition,
-                                                     entry, 0, 0, 0);
+            argument = MessageArgument_Lookup(MESSAGE_ARGUMENT_ABILITY, clear);
+            Message_DecodeRaw(argument + MsgAbilityName, name,
+                              UI_MESSAGE_NAME_HALFWORDS);
+            writePosition = Message_AppendArticleName(mode, name, writePosition,
+                                                      entry, 0, 0, 0);
             break;
           case MESSAGE_ARGUMENT_LOCATION_NAME:
-            UiText_DecodeMessage(
+            Message_DecodeRaw(
                 MapSec_GetNameIndexFar(
-                    UiText_LookupArgument(MESSAGE_ARGUMENT_LOCATION, clear),
+                    MessageArgument_Lookup(MESSAGE_ARGUMENT_LOCATION, clear),
                     1) +
                     MsgDebugEntryName,
                 name, UI_MESSAGE_NAME_HALFWORDS);
-            writePosition = UiText_AppendArticleName(mode, name, writePosition,
-                                                     entry, 0, 0, 0);
+            writePosition = Message_AppendArticleName(mode, name, writePosition,
+                                                      entry, 0, 0, 0);
             break;
           case MESSAGE_PROTAGONIST_NAME:
-            nameBytes = Unit_GetFar(gGameState.selectedLocalId)->name;
+            nameBytes = Unit_GetFar(gGameState.leaderLocalId)->name;
             nameOutput = name;
             i = 0;
             do {
@@ -1081,21 +1082,20 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
               nameBytes++;
               nameOutput++;
             } while (i <= 14);
-            writePosition = UiText_AppendArticleName(mode, name, writePosition,
-                                                     entry, 0, 0, 0);
+            writePosition = Message_AppendArticleName(mode, name, writePosition,
+                                                      entry, 0, 0, 0);
             break;
           case MESSAGE_ARGUMENT_ACTOR_NAME:
             unit = Unit_GetFar(
-                UiText_LookupArgument(MESSAGE_ARGUMENT_ACTOR, clear));
+                MessageArgument_Lookup(MESSAGE_ARGUMENT_ACTOR, clear));
             // In battle a unit of class 122 is called Mystery Man and one of
             // class 125 Mystery Woman (MsgMysteryPersonName and the next).
-            if (work->menuState != 0 &&
-                (unit->classId == 122 || unit->classId == 125)) {
+            if (work->battleMode != 0 && (unit->id == 122 || unit->id == 125)) {
               message = MsgMysteryPersonName;
-              if (unit->classId == 125)
+              if (unit->id == 125)
                 message++;
-              UiText_DecodeMessage(message, name, 10);
-              writePosition = UiText_AppendArticleName(
+              Message_DecodeRaw(message, name, 10);
+              writePosition = Message_AppendArticleName(
                   mode, name, writePosition, entry, 0, 0, 0);
             } else {
               nameBytes = unit->name;
@@ -1107,7 +1107,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
                 nameBytes++;
                 nameOutput++;
               } while (j <= 14);
-              writePosition = UiText_AppendArticleName(
+              writePosition = Message_AppendArticleName(
                   mode, name, writePosition, entry, 0, 0, 0);
             }
             break;
@@ -1122,8 +1122,8 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
               nameBytes++;
               nameOutput++;
             } while (j <= 14);
-            writePosition = UiText_AppendArticleName(mode, name, writePosition,
-                                                     entry, 0, 0, 0);
+            writePosition = Message_AppendArticleName(mode, name, writePosition,
+                                                      entry, 0, 0, 0);
             break;
           case -1:
             break;
@@ -1134,23 +1134,23 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             // Fall through.
           default:
             entry[writePosition] = (u16)code;
-            writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+            writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
             break;
           }
         }
       }
       decodedCount++;
-    } while (running != 0 && decodedCount <= RENDER_ENTRY_MASK);
+    } while (running != 0 && decodedCount <= TEXT_BUFFER_MASK);
     entry[writePosition] = (u16)code;
-    writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
+    writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
     entry[writePosition] = 0;
-    nextPosition = (writePosition + 1) & RENDER_ENTRY_MASK;
-    work->count = (u16)nextPosition;
-    Runtime_ReleaseHeapBlock(TEXT_WORK_BLOCK);
-    work->messageStart = (u16)start;
+    nextPosition = (writePosition + 1) & TEXT_BUFFER_MASK;
+    work->textBufferEnd = (u16)nextPosition;
+    FreeHeapSlot(TEXT_WORK_BLOCK);
+    work->lastMessageStart = (u16)start;
   }
   if (clear != 0)
-    UiWork_ClearValueNameTables();
+    MessageArgument_ClearAll();
   return start;
 }
 

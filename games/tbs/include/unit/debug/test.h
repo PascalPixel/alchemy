@@ -9,7 +9,7 @@ s32 MapData_ReturnZero(void);
 u8 *MenuTest_GetWarps(void);
 u8 *MenuTest_GetObjectEventTemplates(void);
 s32 MenuTest_GetEvents(void);
-s32 CommandTable_ConfigureCommandList(void);
+s32 MenuTest_Initialize(void);
 extern u32 gDebugItemPromptHead[];
 extern char gDebugItemPrompt[12];
 extern char gDebugItemCapacityLabel[24];

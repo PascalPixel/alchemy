@@ -26,9 +26,9 @@ gMapLocalState:
 	.global gInventorySnapshot
 gInventorySnapshot:
 	.space 0x0000008c
-	@ Slot ids, object event copies and their sprite state: ObjectTableSnapshot.
-	.global gObjectSnapshots
-gObjectSnapshots:
+	@ Slot ids, object event copies and their sprite state: ObjectEventSnapshot.
+	.global gObjectEventSnapshot
+gObjectEventSnapshot:
 	.space 0x00000efc
 	.global gSleepActive
 gSleepActive:
@@ -63,8 +63,8 @@ gSerialTransfer:
 	.global gSerialReceivedSize
 gSerialReceivedSize:
 	.space 0x00000008
-	.global gSerialRuntime
-gSerialRuntime:
+	.global gSerialWork
+gSerialWork:
 	.space 0x00000160
 	.global gLinkExchangeState
 gLinkExchangeState:
@@ -81,41 +81,41 @@ gSerialReceiveDestination:
 	.global gSavedStack
 gSavedStack:
 	.space 0x00000c50
-	.global gMusicRestoreDelay
-gMusicRestoreDelay:
+	.global gBgmRestoreDelay
+gBgmRestoreDelay:
 	.space 0x00000004
 	.global gEwram_Data1
 gEwram_Data1:
 	.space 0x00000004
-	.global gMusicVolume
-gMusicVolume:
+	.global gBgmVolume
+gBgmVolume:
 	.space 0x00000004
-	.global gMusicPitchStep
-gMusicPitchStep:
+	.global gBgmTempoPitchStep
+gBgmTempoPitchStep:
 	.space 0x00000004
-	.global gMusicVolumeStep
-gMusicVolumeStep:
+	.global gBgmVolumeStep
+gBgmVolumeStep:
 	.space 0x00000004
-	.global gMusicFadeRequested
-gMusicFadeRequested:
+	.global gBgmFadeRequested
+gBgmFadeRequested:
 	.space 0x0000000c
-	.global gMusicPlayerVolumes
-gMusicPlayerVolumes:
+	.global gMusicPlayerLastSong
+gMusicPlayerLastSong:
 	.space 0x00000010
-	.global gMusicPitchTarget
-gMusicPitchTarget:
+	.global gBgmTempoPitchTarget
+gBgmTempoPitchTarget:
 	.space 0x00000004
-	.global gMusicVolumeTarget
-gMusicVolumeTarget:
+	.global gBgmVolumeTarget
+gBgmVolumeTarget:
 	.space 0x00000004
-	.global gMusicPitch
-gMusicPitch:
+	.global gBgmTempoPitch
+gBgmTempoPitch:
 	.space 0x00000004
-	.global gMusicCue
-gMusicCue:
+	.global gCurrentBgm
+gCurrentBgm:
 	.space 0x00000004
-	.global gAudio_CommandMask
-gAudio_CommandMask:
+	.global gSoundCommandMask
+gSoundCommandMask:
 	.space 0x00000010
 	.global gSound_Work
 gSound_Work:
@@ -243,10 +243,10 @@ gMetatiles:
 	.size gMapGridLayerData, 0x4000
 gMapGridLayerData:
 	.space 0x00004000
-	.global gMapGridCollision
-	.type gMapGridCollision, %object
-	.size gMapGridCollision, 0x4000
-gMapGridCollision:
+	.global gMapGridShapes
+	.type gMapGridShapes, %object
+	.size gMapGridShapes, 0x4000
+gMapGridShapes:
 	.space 0x00004000
 	.global gEwramHeap
 gEwramHeap:

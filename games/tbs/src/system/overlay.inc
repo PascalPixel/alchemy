@@ -33,9 +33,9 @@
 	import __umodsi3, IwramUnsignedRemainder
 @ Runtime bank (far_call/RUNTIME.S)
 	import Engine_TaskWait, WaitFramesFar
-	import Scheduler_AddOrUpdateCallback, Scheduler_AddOrUpdateCallbackFar
-	import Engine_TaskRemoveCallback, Scheduler_RemoveCallbackFar
-	import Scheduler_RemoveCallback, Scheduler_RemoveCallbackFar
+	import Task_Add, Task_AddFar
+	import Engine_TaskRemoveCallback, Task_RemoveFar
+	import Task_Remove, Task_RemoveFar
 	import Engine_RandomNext, Random16Far
 	import ArcTan2, ArcTan2Far
 	import CalculateAngleFromCoordinateDelta, ArcTan2Far
@@ -48,31 +48,31 @@
 	import Trig_Cos, Trig_CosFar
 	import Vector_AddPolarOffset, Vector_AddPolarOffsetFar
 	import Runtime_SetIrqHandler, Runtime_SetIrqHandlerFar
-	import AllocateEffectTransfer, Runtime_AllocateHeapBlockFar
-	import Engine_HeapAllocate, Runtime_AllocateHeapBlockFar
-	import Runtime_AllocateHeapBlock, Runtime_AllocateHeapBlockFar
-	import Runtime_AllocateBlock, Runtime_AllocateBlockFar
-	import Engine_HeapRelease, Runtime_ReleaseHeapBlockFar
-	import Runtime_ReleaseHeapBlock, Runtime_ReleaseHeapBlockFar
-	import MemAlloc, Runtime_BumpAllocateFar
-	import Runtime_BumpAllocateAlternatePool, Runtime_BumpAllocateAlternatePoolFar
-	import MemFree, Sys_FreeFar
+	import AllocateEffectTransfer, AllocHeapSlotFar
+	import Engine_HeapAllocate, AllocHeapSlotFar
+	import AllocHeapSlot, AllocHeapSlotFar
+	import AllocHeapSlotEwram, AllocHeapSlotEwramFar
+	import Engine_HeapRelease, FreeHeapSlotFar
+	import FreeHeapSlot, FreeHeapSlotFar
+	import Alloc, Runtime_BumpAllocateFar
+	import AllocEwram, AllocEwramFar
+	import Free, Sys_FreeFar
 	import Runtime_BumpFree, Sys_FreeFar
-	import Resource_DecodeByteLz, Resource_DecodeByteLzFar
-	import Resource_DecodeType01, Resource_DecodeType01Far
-	import Resource_ResetEntry, Resource_ResetEntryFar
+	import Decompress_ByteLz, Decompress_ByteLzFar
+	import Decompress_Type01, Decompress_Type01Far
+	import VramCache_FreeEntry, VramCache_FreeEntryFar
 	import VramCache_ReleaseVram, VramCache_ReleaseVramFar
 	import Engine_VramLoad, VramCache_LoadFar
-	import Resource_FindFreeEntry, Resource_FindFreeEntryFar
-	import AffineMatrix_BuildForEffect, AffineMatrix_BuildForEffectFar
-	import Runtime_PushSlotEntry, Runtime_PushSlotEntryFar
-	import Ui_LoadWindowGraphics, Ui_LoadWindowGraphicsFar
+	import VramCache_FindFreeEntry, VramCache_FindFreeEntryFar
+	import OamMatrix_AllocFromTransform, OamMatrix_AllocFromTransformFar
+	import Oam_AddSpriteAtDepth, Oam_AddSpriteAtDepthFar
+	import Window_LoadGraphics, Window_LoadGraphicsFar
 	import Engine_ResourceGetTableEntry, Resource_GetTableEntryFar
 	import Resource_GetTableEntry, Resource_GetTableEntryFar
 	import RuntimeDispatch_NoOpHook, RuntimeDispatch_NoOpHookFar
-	import Fade_ToBlack, Fade_ToBlackFar
-	import Engine_BlendSetDarkenTarget16, Fade_ToBlackFar
-	import Fade_Wait, Fade_WaitFar
+	import ScreenFade_ToBlack, ScreenFade_ToBlackFar
+	import Engine_BlendSetDarkenTarget16, ScreenFade_ToBlackFar
+	import ScreenFade_Wait, ScreenFade_WaitFar
 	import SerialRuntime_Initialize, SerialRuntime_InitializeFar
 	import SerialRuntime_PollAndTransfer, SerialRuntime_PollAndTransferFar
 	import IoWriteQueue_Store16, IoWriteQueue_Store16Far
@@ -82,12 +82,12 @@
 	import SerialRuntime_StartSend, SerialRuntime_StartSendFar
 	import SerialRuntime_StartReceive, SerialRuntime_StartReceiveFar
 	import SerialRuntime_GetActiveTransfers, SerialRuntime_GetActiveTransfersFar
-	import Scheduler_SetTaskFlags, Scheduler_SetTaskFlagsFar
+	import Task_SetFlags, Task_SetFlagsFar
 @ Field bank (far_call/FIELD.S)
-	import AnimationObject_SelectAnimation, AnimationObject_SelectAnimationFar
-	import Object_InitializeMode, AnimationObject_SelectAnimationFar
-	import ResourceMetadata_Register, ResourceMetadata_RegisterFar
-	import ResourceMetadata_ClearRecord, ResourceMetadata_ClearRecordFar
+	import Sprite_StartAnim, Sprite_StartAnimFar
+	import Object_InitializeMode, Sprite_StartAnimFar
+	import Sprite_AddAnim, Sprite_AddAnimFar
+	import SpriteAnim_Clear, SpriteAnim_ClearFar
 	import ObjectEvent_SetMode, ObjectDispatch_SelectAnimationFar
 	import ObjectDispatch_SetAnimationSpeed, ObjectDispatch_SetAnimationSpeedFar
 	import Engine_ObjectSetScript, ObjectDispatch_InitializeFar
@@ -99,24 +99,24 @@
 	import ObjectDispatch_StartIdle, ObjectDispatch_StartIdleFar
 	import ObjectDispatch_WaitForValue16, ObjectDispatch_WaitForValue16Far
 	import Engine_ObjectSetPosition, Object_SetMoveTargetFar
-	import FieldObject_WaitForMove, FieldObject_WaitForMoveFar
+	import Object_WaitForMove, Object_WaitForMoveFar
 	import WorldMap_LoadDefaultCellsAndUpdateBlock, WorldMap_LoadDefaultCellsAndUpdateBlockFar
 	import Engine_MapGridAnimateCells, MapGrid_PlayMetatileCopySequenceFar
 	import Engine_MapGridCopyCellsTo, MapGrid_CopyMetatileIndicesRectFar
-	import TileAnimation_ResumeChannel, TileAnimation_ResumeChannelFar
-	import TileAnimation_PauseChannel, TileAnimation_PauseChannelFar
-	import DisplayBlend_ResumeScript, DisplayBlend_ResumeScriptFar
-	import DisplayBlend_SuspendScript, DisplayBlend_SuspendScriptFar
+	import TilesetAnim_Resume, TilesetAnim_ResumeFar
+	import TilesetAnim_Pause, TilesetAnim_PauseFar
+	import BlendScript_Resume, BlendScript_ResumeFar
+	import BlendScript_Suspend, BlendScript_SuspendFar
 	import MapGrid_GetTerrainHeight, MapGrid_GetTerrainHeightFar
 	import MapGrid_GetMetatileBehaviorAt, MapGrid_GetMetatileBehaviorAtFar
 	import Engine_MapGridCopyCells, MapGrid_CopyMetatileCellsRectFar
 	import Engine_MapGridCopyCellAttributes, MapGrid_CopyCellAttributeRectFar
 	import Engine_MapGridCopyCellsLayered, MapGrid_CopyCellIndexRectFar
 	import WorldMap_SetWindowCellTile, WorldMap_SetWindowCellTileFar
-	import Object_CheckMovementCollision, MapGrid_CheckObjectStepFar
+	import Object_CheckMovementCollision, MapGrid_CheckCollisionFar
 	import Engine_ObjectEventSetSpriteFlags, ObjectDispatch_SetSingleChildFlagsFar
 	import Engine_ObjectSetBlendMode, ObjectDispatch_SetChildBlendModeFar
-	import OverlayObject_SetValue1, ObjectDispatch_SetChildBlendModeFar
+	import ObjectEvent_SetValue1, ObjectDispatch_SetChildBlendModeFar
 	import RunOverlayObjectCommand1, ObjectDispatch_SetChildBlendModeFar
 	import Engine_WorkSetValuesIfNonNegative, MapGrid_SetScreenShakeFar
 	import Engine_MapGridRenderWaitForValues, MapGrid_WaitForShakeToSettleFar
@@ -129,65 +129,65 @@
 	import WorldMap_LoadAreaGraphics, WorldMap_LoadAreaGraphicsFar
 	import Animation_ApplyChildValues, Animation_ApplyChildValuesFar
 	import Engine_ObjectSetPartPalettes, Animation_ApplyChildValuesFar
-	import ObjectGroup_SetChildValueUnlessFifteen, ObjectGroup_SetChildValueUnlessFifteenFar
+	import Sprite_SetAnimColorModes, Sprite_SetAnimColorModesFar
 	import Engine_MapGridSetShownLayers, MapGrid_SetShownLayersFar
 	import MapGrid_SetMetatileBehaviorAt, MapGrid_SetMetatileBehaviorAtFar
 @ Window bank (far_call/WINDOW.S)
-	import Engine_DebugCreateWindow, UiWindow_CreateFar
-	import UiWindow_Create, UiWindow_CreateFar
-	import Engine_DebugFinalizeWindow, UiWork_FinalizeFar
-	import UiWork_Finalize, UiWork_FinalizeFar
-	import Ui_AdjustValueWithoutLimit, Ui_AdjustValueWithoutLimitFar
-	import UiText_OpenMessageWindow, UiText_OpenMessageWindowFar
-	import Engine_MessageShowCentered, UiText_ShowPositionedMessageAndWaitFar
-	import UiText_ShowPositionedMessageAndWait, UiText_ShowPositionedMessageAndWaitFar
+	import Engine_DebugCreateWindow, Window_CreateFar
+	import Window_Create, Window_CreateFar
+	import Engine_DebugFinalizeWindow, Window_CloseFar
+	import Window_Close, Window_CloseFar
+	import Message_DecodeRawUnbounded, Message_DecodeRawUnboundedFar
+	import Message_OpenWindow, Message_OpenWindowFar
+	import Engine_MessageShowCentered, FieldMessage_ShowFar
+	import FieldMessage_Show, FieldMessage_ShowFar
 	import UiWork_IsComplete, UiWork_IsCompleteFar
-	import RenderOutput_PrepareForRedraw, RenderOutput_PrepareForRedrawFar
-	import UiWindow_DrawDividerLine, UiWindow_DrawDividerLineFar
-	import UiText_DrawResource, UiText_DrawResourceFar
-	import UiText_DrawCharacterAtOffset, UiText_DrawCharacterAtOffsetFar
-	import UiText_DrawString, UiText_DrawStringFar
-	import UiText_DrawStringAtOffset, UiText_DrawStringAtOffsetFar
-	import UiText_DrawStringInWindow, UiText_DrawStringInWindowFar
-	import UiText_DrawNumber, UiText_DrawNumberFar
-	import UiText_DrawNumberAtOffset, UiText_DrawNumberAtOffsetFar
-	import UiText_DrawNumberInWindow, UiText_DrawNumberInWindowFar
-	import UiWindow_CreateWithSideObject, UiWindow_CreateWithSideObjectFar
-	import UiWork_ClearValueNameTables, UiWork_ClearValueNameTablesFar
-	import Engine_UiTextDrawQuantity, UiWork_PushValueSlotFar
-	import UiText_DrawQuantity, UiWork_PushValueSlotFar
-	import UiWork_PushValueSlot, UiWork_PushValueSlotFar
+	import WindowSprite_PrepareForRedraw, WindowSprite_PrepareForRedrawFar
+	import Window_DrawDividerLine, Window_DrawDividerLineFar
+	import Text_DrawMessage, Text_DrawMessageFar
+	import Text_DrawMessageAsTiles, Text_DrawMessageAsTilesFar
+	import Text_DrawString, Text_DrawStringFar
+	import Text_DrawStringAtOffset, Text_DrawStringAtOffsetFar
+	import Text_DrawStringInWindow, Text_DrawStringInWindowFar
+	import Text_DrawNumber, Text_DrawNumberFar
+	import Text_DrawNumberAtOffset, Text_DrawNumberAtOffsetFar
+	import Text_DrawNumberInWindow, Text_DrawNumberInWindowFar
+	import Portrait_OpenWindow, Portrait_OpenWindowFar
+	import MessageArgument_ClearAll, MessageArgument_ClearAllFar
+	import Engine_UiTextDrawQuantity, MessageArgument_PushFar
+	import Text_DrawQuantity, MessageArgument_PushFar
+	import MessageArgument_Push, MessageArgument_PushFar
 	import UiWork_FinalizePendingCore, UiWork_FinalizePendingCoreFar
-	import Menu_SelectSaveSlotAction, Menu_SelectSaveSlotActionFar
-	import Menu_SelectResourceLayout, Menu_SelectResourceLayoutFar
-	import UiText_ShowCenteredMessage, UiText_ShowCenteredMessageFar
-	import UiTextResource_Initialize, UiTextResource_InitializeFar
-	import UiTextResource_SetPosition, UiTextResource_SetPositionFar
-	import UiTextResource_Release, UiTextResource_ReleaseFar
+	import FileMenu_SelectAction, FileMenu_SelectActionFar
+	import IconMenu_ChooseSendOption, IconMenu_ChooseSendOptionFar
+	import FieldMessage_ShowCentered, FieldMessage_ShowCenteredFar
+	import MenuArrow_Create, MenuArrow_CreateFar
+	import MenuArrow_SetPosition, MenuArrow_SetPositionFar
+	import MenuArrow_Release, MenuArrow_ReleaseFar
 	import Engine_ItemLoadIcon, Ui_PrepareTransferForItemFar
 	import ItemIcon_LoadTilesFar, Ui_PrepareTransferForItemFar
 	import Ui_PrepareTransferForItem, Ui_PrepareTransferForItemFar
-	import Engine_DebugRedrawWindow, RenderOutput_RedrawSavedRectFar
-	import RenderOutput_RedrawSavedRect, RenderOutput_RedrawSavedRectFar
-	import Engine_DebugClearWindow, RenderOutput_ClearListFar
-	import UiWindow_SetTilemapEntry, UiWindow_SetTilemapEntryFar
-	import SaveMenu_WriteSelectedSlot, Save_WriteSelectedSlotFar
-	import SaveState_LoadRecordIntoWork, SaveState_LoadRecordIntoWorkFar
-	import SaveState_CopySlotPair, SaveState_CopySlotPairFar
-	import SaveState_DeleteSelectedSlot, SaveState_DeleteSelectedSlotFar
-	import SaveState_ProcessSelectedSlot, SaveState_ProcessSelectedSlotFar
-	import SaveState_ScanRecordFlags, SaveState_ScanRecordFlagsFar
-	import NameEntry_EditOwnerName, NameEntry_EditOwnerNameFar
-	import DebugMenu_BrowseIcons, DebugMenu_BrowseIconsFar
-	import DebugMenu_BrowsePortraits, DebugMenu_BrowsePortraitsFar
-	import PaletteGlow_Update, PaletteGlow_UpdateFar
-	import Menu_RunConfirmSelection, Menu_RunConfirmSelectionFar
+	import Engine_DebugRedrawWindow, WindowSprite_RedrawSavedRectFar
+	import WindowSprite_RedrawSavedRect, WindowSprite_RedrawSavedRectFar
+	import Engine_DebugClearWindow, WindowSprite_ClearListFar
+	import Window_SetTilemapEntry, Window_SetTilemapEntryFar
+	import Save_ToChosenFile, Save_ToChosenFileFar
+	import Save_LoadRecordIntoWork, Save_LoadRecordIntoWorkFar
+	import Save_CopyFile, Save_CopyFileFar
+	import Save_EraseSelectedFile, Save_EraseSelectedFileFar
+	import Save_ProcessSelectedFile, Save_ProcessSelectedFileFar
+	import Save_ScanRecordFlags, Save_ScanRecordFlagsFar
+	import NamingScreen_EditMemberName, NamingScreen_EditMemberNameFar
+	import DebugBrowser_Icons, DebugBrowser_IconsFar
+	import DebugBrowser_Portraits, DebugBrowser_PortraitsFar
+	import WindowColor_Apply, WindowColor_ApplyFar
+	import YesNoMenu_Run, YesNoMenu_RunFar
 	import Menu_SelectCoinsOrMedals, Menu_SelectCoinsOrMedalsFar
-	import PartyTalkMenu_Choose, PartyTalkMenu_ChooseFar
+	import ColossoMenu_Choose, ColossoMenu_ChooseFar
 	import Resource_LoadFixedBlockBIntoFreeSlot, Resource_LoadFixedBlockBIntoFreeSlotFar
 	import Graphics_ExpandVramTilesByColorTable, Graphics_ExpandVramTilesByColorTableFar
 	import Menu_AnimateSelectionToEntry, Menu_AnimateSelectionToEntryFar
-	import SaveState_CountRecordsExcludingFlagged, SaveState_CountRecordsExcludingFlaggedFar
+	import Save_CountRecordsExcludingFlagged, Save_CountRecordsExcludingFlaggedFar
 	import Link_DrawShiftedTilePair, Link_DrawShiftedTilePairFar
 @ Game bank (far_call/GAME.S)
 	import Djinn_GetRecoveryTable, Djinn_GetRecoveryTableFar
@@ -198,11 +198,11 @@
 	import Inventory_AddItem, Inventory_AddItemFar
 	import PartyInventory_Add, PartyInventory_AddFar
 	import Inventory_Find, Inventory_FindFar
-	import Engine_PartyInventoryFindOwner, PartyInventory_FindOwnerFar
-	import PartyInventory_FindOwner, PartyInventory_FindOwnerFar
+	import Engine_PartyInventoryFindOwner, PartyInventory_FindMemberFar
+	import PartyInventory_FindMember, PartyInventory_FindMemberFar
 	import PartyInventory_Remove, PartyInventory_RemoveFar
 	import Inventory_Equip, Inventory_EquipFar
-	import Engine_DebugGetAbility, BattleAction_Get
+	import Engine_DebugGetAbility, Ability_Get
 	import GameState_InitializeDefaults, GameState_InitializeDefaultsFar
 	import Engine_GameFlagIsSet, GameFlag_TestFar
 	import Engine_GameFlagSet, GameFlag_SetBitFar
@@ -212,14 +212,14 @@
 	import GameFlag_SetByte, GameFlag_SetByteFar
 	import Unit_AddHp, Unit_AddHpFar
 	import Unit_AddPp, Unit_AddPpFar
-	import Engine_OwnerRecalculateRatios, Unit_UpdateRatiosFar
-	import GetPartyMemberCount, Party_CountActiveOwnersFar
-	import Party_CountActiveOwners, Party_CountActiveOwnersFar
-	import Party_AddActiveOwner, Party_AddActiveOwnerFar
-	import Party_ListActiveOwners, Party_ListActiveOwnersFar
-	import Party_RemoveActiveOwner, Party_RemoveActiveOwnerFar
-	import Djinn_AddToOwner, Djinn_AddToOwnerFar
-	import Djinn_Activate, Djinn_ActivateFar
+	import Engine_OwnerRecalculateRatios, Unit_RecalculateGaugesFar
+	import GetPartyMemberCount, Party_CountMembersFar
+	import Party_CountMembers, Party_CountMembersFar
+	import Party_AddMember, Party_AddMemberFar
+	import Party_ListMembers, Party_ListMembersFar
+	import Party_RemoveMember, Party_RemoveMemberFar
+	import Djinn_Give, Djinn_GiveFar
+	import Djinn_Set, Djinn_SetFar
 	import DjinnRecovery_AddStandby, DjinnRecovery_AddStandbyFar
 	import Djinn_Transfer, Djinn_TransferFar
 	import Unit_LevelUpTo, Unit_LevelUpToFar
@@ -249,17 +249,17 @@
 	import Map_PrepareObjectEvents, Map_AssignViewFlagsFar
 	import MapEvents_UpdateInView, Map_AssignViewFlagsFar
 	import ObjectEventTemplate_ClipToView, Map_AssignViewFlagsFar
-	import MapTable_Prepare, Map_AssignViewFlagsFar
+	import ObjectEventTemplate_Prepare, Map_AssignViewFlagsFar
 	import FieldScript_LoadAreaScript, FieldScript_SetMapEventsFar
 	import FieldScript_PrepareObjectAndApplyValue, FieldScript_PrepareObjectAndApplyValueFar
 	import Engine_PartyAddMembers, FieldScript_PrepareTwoObjectsAndApplyFar
-	import Party_RemoveOwnerRestored, Party_RemoveOwnerRestoredFar
+	import Party_RemoveMemberRestored, Party_RemoveMemberRestoredFar
 	import Engine_PartyGiveItem, PartyInventory_GiveItemFar
 	import PartyInventory_GiveItem, PartyInventory_GiveItemFar
 	import Engine_ScriptChooseYesNo, FieldScript_AskYesNoWithObjectEventAnimationFar
 	import Party_LearnAbility, Party_LearnAbilityFar
 	import ObjectEvent_GetById, ObjectEvent_GetByIdFar
-	import Engine_ObjectEventDestroy, ObjectTable_DestroyByIdFar
+	import Engine_ObjectEventDestroy, ObjectEvent_DestroyByIdFar
 	import Engine_ObjectEventSetSpeed, ObjectMotion_SetSpeedParametersFar
 	import Engine_ObjectEventEnableActionCallback, ObjectMotion_EnableActionAndSetCallbackFar
 	import ObjectEvent_RefreshSelectorById, ObjectEvent_RefreshSelectorByIdFar
@@ -279,12 +279,12 @@
 	import Engine_ObjectEventSetPosition, ObjectMotion_SetHorizontalPositionWithTerrainFar
 	import Engine_ObjectEventSetAnimation, ObjectEvent_SetModeByIdFar
 	import ObjectEvent_SetActionById, ObjectEvent_SetActionByIdFar
-	import Engine_ObjectEventSetAnimationAndWait, Motion_SetModeAndWaitAnimationFar
+	import Engine_ObjectEventSetAnimationAndWait, ObjectMotion_SetAnimationAndWaitFar
 	import ObjectMotion_WaitForAnimationChange, ObjectMotion_WaitForAnimationChangeFar
 	import Engine_ObjectEventJump, ObjectMotion_LaunchFar
 	import ObjectMotion_Launch, ObjectMotion_LaunchFar
 	import Engine_ObjectEventStartRepeatedMotion, ObjectMotion_SetVariantCallbackFar
-	import Engine_ObjectEventRunRepeatedMotion, Motion_SetVarCbAndRefreshFar
+	import Engine_ObjectEventRunRepeatedMotion, ObjectMotion_SetVarCbAndRefreshFar
 	import ObjectEvent_JumpDownLedge, ObjectEvent_JumpDownLedgeFar
 	import Engine_ObjectEventFaceObjectEvent, ObjectMotion_SetAngleTowardFar
 	import Engine_ObjectEventFaceEachOther, ObjectEvent_LinkPairFar
@@ -293,8 +293,8 @@
 	import ObjectGroup_SetChildValue, ObjectGroup_SetChildValueFar
 	import ObjectEvent_SetTargetAndCallback, ObjectEvent_SetTargetAndCallbackFar
 	import Engine_ScriptSetMessage, FieldScript_SetMessageIdFar
-	import Engine_ScriptOpenMessage, UiText_OpenMessageAtObjectFar
-	import UiText_OpenMessageAtObject, UiText_OpenMessageAtObjectFar
+	import Engine_ScriptOpenMessage, FieldMessage_ShowAtObjectFar
+	import FieldMessage_ShowAtObject, FieldMessage_ShowAtObjectFar
 	import FieldScript_ShowMessageAndWait, FieldScript_ShowMessageAndWaitFar
 	import Engine_ScriptShowMessage, FieldScript_ShowMessageAndWaitFar
 	import FieldScript_ShowMessageThenWait, FieldScript_ShowMessageThenWaitFar
@@ -302,20 +302,20 @@
 	import Engine_ScriptAskYesNo, FieldScript_AskYesNoAndShowResponseFar
 	import Engine_ObjectEventFaceDirection, ObjectMotion_ArmCallbackFar
 	import Engine_ScriptShowTwoMessagesAndWait, FieldScript_ShowTwoMessagesAndWaitFar
-	import Ui_SetMessageVoiceFromObjectEvent, Ui_SetMessageVoiceFromObjectEventFar
+	import Message_SetVoiceFromObjectEvent, Message_SetVoiceFromObjectEventFar
 	import Engine_ObjectEventSetSpritePriority, ObjectMotion_SetActionVariantFar
 	import Engine_ObjectEventShowEmote, FieldEffect_SpawnLinkedFar
 	import Engine_ObjectEventSetAttachedEffect, FieldEffect_ConfigureLinkedObjectFar
 	import ObjectVisual_CopyAttributes, ObjectVisual_CopyAttributesFar
-	import Engine_CameraFollowObjectEvent, Camera_FollowObjectEventFar
-	import Engine_CameraSetSpeed, Camera_SetSpeedParametersFar
-	import Engine_CameraMoveTo, Camera_MoveWithinMapBoundsFar
-	import Camera_WaitForArrival, Camera_WaitForArrivalFar
-	import Engine_CameraWaitForMove, Camera_WaitForArrivalFar
+	import Engine_CameraFollowObjectEvent, FieldCamera_FollowObjectEventFar
+	import Engine_CameraSetSpeed, FieldCamera_SetSpeedParametersFar
+	import Engine_CameraMoveTo, FieldCamera_MoveWithinMapBoundsFar
+	import FieldCamera_WaitForArrival, FieldCamera_WaitForArrivalFar
+	import Engine_CameraWaitForMove, FieldCamera_WaitForArrivalFar
 	import Engine_CameraMoveToObjectEvent, ObjectEvent_PlaceCurrentWithinCameraBoundsFar
 	import ObjectEvent_PlaceCurrentWithinCameraBounds, ObjectEvent_PlaceCurrentWithinCameraBoundsFar
-	import Camera_GetScriptObject, Camera_GetScriptObjectFar
-	import Engine_ScriptGetViewCenter, Camera_GetScriptObjectFar
+	import FieldCamera_GetScriptObject, FieldCamera_GetScriptObjectFar
+	import Engine_ScriptGetViewCenter, FieldCamera_GetScriptObjectFar
 	import MapGrid_SetViewBounds, MapGrid_SetViewBoundsFar
 	import FieldScript_SetDestination, FieldScript_SetDestinationFar
 	import Engine_ScriptRequestWarp, FieldScript_SetWarpRequestFar
@@ -331,33 +331,33 @@
 	import Field_ClimbDown, Field_ClimbDownFar
 	import Field_ClimbUp, Field_ClimbUpFar
 	import Leader_StopMoving, Leader_StopMovingFar
-	import FieldEffect_StartGroundParticles, FieldEffect_StartGroundParticlesFar
-	import FieldEffect_StartLightning, FieldEffect_StartLightningFar
-	import FieldEffect_StopLightning, FieldEffect_StopLightningFar
-	import FieldEffect_LastLightning, FieldEffect_LastLightningFar
-	import FieldEffect_ResumeLightning, FieldEffect_ResumeLightningFar
-	import FieldEffect_StartBufferBlend, FieldEffect_StartBufferBlendFar
+	import Weather_StartRain, Weather_StartRainFar
+	import Weather_StartLightning, Weather_StartLightningFar
+	import Weather_StopLightning, Weather_StopLightningFar
+	import Weather_LastLightning, Weather_LastLightningFar
+	import Weather_ResumeLightning, Weather_ResumeLightningFar
+	import Weather_StartLightningFlash, Weather_StartLightningFlashFar
 	import FieldEffect_InitializeSparkles, FieldEffect_InitializeSparklesFar
 	import InitializeSparkleRecordBuffer, FieldEffect_InitializeSparklesFar
 	import Resource37c_FinalizeSetup, FieldEffect_InitializeSparklesFar
-	import DisplayTransition_InitializeBattleEffectState, DisplayTransition_InitializeBattleEffectStateFar
-	import Engine_ColorBufferApplyTarget, ColorBuffer_SetTargetFar
-	import Engine_ColorBufferApplySource, ColorBuffer_SetSourceFar
-	import Engine_ColorBufferInterpolate, ColorBuffer_StartInterpolationFar
+	import ScreenTransition_InitializeBattleEffectState, ScreenTransition_InitializeBattleEffectStateFar
+	import Engine_ColorBufferApplyTarget, PaletteFade_SetTargetFar
+	import Engine_ColorBufferApplySource, PaletteFade_SetSourceFar
+	import Engine_ColorBufferInterpolate, PaletteFade_StartInterpolationFar
 	import Engine_ScriptOpenScreen, FieldScript_StartScreenTransitionFar
 	import Engine_ScriptCloseScreen, FieldScript_FinishScreenTransitionFar
 	import Engine_ScriptWaitForScreen, FieldScript_WaitTransitionFramesFar
-	import Engine_DisplayScrollStartHBlankDma, DisplayScroll_InitializeHBlankDmaFar
-	import DisplayScroll_DisarmHBlankDma, DisplayScroll_DisarmHBlankDmaFar
+	import Engine_DisplayScrollStartHBlankDma, ScanlineEffect_InitWaveFar
+	import ScanlineEffect_Stop, ScanlineEffect_StopFar
 	import FieldEffect_PlayCueAndStartEmitterOnTarget, FieldEffect_PlayCueAndStartEmitterOnTargetFar
 	import Engine_FieldEffectPlayCueAndStartEmitterOnTarget, FieldEffect_PlayCueAndStartEmitterOnTargetFar
 	import Engine_ItemShowPicture, ItemDisplay_ShowPictureFar
 	import Engine_ItemShowFound, FieldEffect_StartEffectObject22Far
-	import Engine_MarkerSetPosition, Marker_SetObjectEventPositionFar
-	import Marker_MoveLeaderAway, Marker_MoveLeaderAwayFar
+	import Engine_MarkerSetPosition, TreasureSpot_SetObjectEventPositionFar
+	import TreasureSpot_MoveLeaderAway, TreasureSpot_MoveLeaderAwayFar
 	import WorldMap_StartScript, WorldMap_StartScriptFar
 	import WorldMap_EndScript, WorldMap_EndScriptFar
-	import Engine_ObjectEventLookup, ObjectTable_GetFar
+	import Engine_ObjectEventLookup, ObjectEvent_GetByLocalIdFar
 	import FieldEffect_StartFadeOverlay, FieldEffect_StartFadeOverlayFar
 	import Engine_PsynergyPlayEffect, Field_DispatchTypeHandlerFar
 	import Field_DispatchTypeHandler, Field_DispatchTypeHandlerFar
@@ -368,75 +368,75 @@
 	import FieldEffect_StopCasterHook, FieldEffect_StopCasterHookFar
 	import Engine_PsynergyLowerHands, FieldEffect_StopCasterHookFar
 	import FieldEffect_End, FieldEffect_EndFar
-	import Engine_PsynergyRaiseHands, EventObject_InitializeFar
-	import EventObject_Initialize, EventObject_InitializeFar
+	import Engine_PsynergyRaiseHands, FieldEffect_StartCastFar
+	import FieldEffect_StartCast, FieldEffect_StartCastFar
 	import Field_EndBusyAndReveal, Field_EndBusyAndRevealFar
 	import Engine_FieldEndBusyAndReveal, Field_EndBusyAndRevealFar
 	import FieldEffect_StartMindReadWave, FieldEffect_StartMindReadWaveFar
 	import Engine_PsynergyCancel, FieldEffect_FinishWaveAndReleaseHeapBlockFar
 	import Ui_SetBank15PaletteAndClearRenderMode, Ui_SetBank15PaletteAndClearRenderModeFar
-	import Sprite_ShareVramCache, Sprite_ShareVramCacheFar
+	import Sprite_ShareVramCacheEntry, Sprite_ShareVramCacheEntryFar
 	import Party_AddPp, Party_AddPpFar
-	import Menu_AskYesNo, Menu_AskYesNoFar
-	import Audio_PlayCueFromEventWork, Audio_PlayCueFromEventWorkFar
+	import FieldYesNo_Ask, FieldYesNo_AskFar
+	import Map_PlayMusic, Map_PlayMusicFar
 	import Djinn_JoinParty, Djinn_JoinPartyFar
 	import Engine_DjinnJoinParty, Djinn_JoinPartyFar
-	import EffectSlot_HasPendingTarget, EffectSlot_HasPendingTargetFar
-	import EffectSlot_SetObjectMode, EffectSlot_SetObjectModeFar
-	import EffectSlot_SetCallback, EffectSlot_SetCallbackFar
-	import EffectSlot_Initialize, EffectSlot_InitializeFar
+	import FieldEffectSprite_HasPendingTarget, FieldEffectSprite_HasPendingTargetFar
+	import FieldEffectSprite_SetObjectMode, FieldEffectSprite_SetObjectModeFar
+	import FieldEffectSprite_SetCallback, FieldEffectSprite_SetCallbackFar
+	import FieldEffectSprite_Initialize, FieldEffectSprite_InitializeFar
 	import FieldEffect_ClearOwnedSlot, FieldEffect_ClearOwnedSlotFar
 	import Camera_WorldToScreen, Camera_WorldToScreenFar
 	import Engine_ScriptClearInvalidPackedValues, FieldScript_ClearInvalidPackedValuesFar
 	import FieldEffect_InitializeSlots, FieldEffect_InitializeSlotsFar
 	import FieldEffect_ClearActiveSlotsAndScheduleUpdates, FieldEffect_ClearActiveSlotsAndScheduleUpdatesFar
-	import Motion_LaunchFromFocusedObject, Motion_LaunchFromFocusedObjectFar
+	import ObjectMotion_LaunchFromFocusedObject, ObjectMotion_LaunchFromFocusedObjectFar
 	import Engine_ObjectEventWalkBy, ObjectMotion_OffsetPositionAndResetFar
 	import Engine_ObjectEventWalkByAndWait, ObjectMotion_CommitPositionAndActivateFar
 	import ObjectMotion_CommitPositionAndActivate, ObjectMotion_CommitPositionAndActivateFar
 	import Engine_ObjectEventFollow, ObjectEvent_LinkObjectAndSetCallbackFar
 	import ObjectEvent_LinkObjectAndSetCallback, ObjectEvent_LinkObjectAndSetCallbackFar
 	import FieldEffect_PauseObject, FieldEffect_PauseObjectFar
-	import ObjectTable_Snapshot, SaveState_CaptureObjectTableFar
-	import Engine_ObjectEventsRefresh, ObjectTable_RestoreFar
+	import ObjectEvent_Snapshot, Save_CaptureObjectEventsFar
+	import Engine_ObjectEventsRefresh, ObjectEvent_RestoreFar
 	import FieldEffect_ScheduleRatioTransition, FieldEffect_ScheduleRatioTransitionFar
 	import FieldScript_WaitForZoomTransition, FieldScript_WaitForZoomTransitionFar
-	import Engine_ObjectEventSetActionCallback, ObjectMotion_SetActionCallbackFar
-	import FieldEffect_SetQueuedSoundAndPlay, FieldEffect_SetQueuedSoundAndPlayFar
-	import QueueMapSound, FieldEffect_SetQueuedSoundAndPlayFar
-	import Resource37c_QueueSoundCue, FieldEffect_SetQueuedSoundAndPlayFar
-	import FieldEffect_PlayQueuedSound, FieldEffect_PlayQueuedSoundFar
+	import Engine_ObjectEventSetActionCallback, ObjectEvent_SetMovementTypeFar
+	import Map_QueueMusic, Map_QueueMusicFar
+	import QueueMapSound, Map_QueueMusicFar
+	import Resource37c_QueueSoundCue, Map_QueueMusicFar
+	import Map_PlayQueuedMusic, Map_PlayQueuedMusicFar
 @ Menu bank (far_call/MENU.S)
-	import Menu_OpenCharacterSelector, Menu_OpenCharacterSelectorFar
+	import MemberChooser_Open, MemberChooser_OpenFar
 	import DjinnMenu_Open, DjinnMenu_RunFar
 	import Engine_DebugDrawItemDetails, ItemMenu_DrawItemDetailsFar
 @ Shop bank (far_call/SHOP.S)
 	import Shop_OpenDebugShop, Shop_OpenDebugShopFar
 	import Engine_ShopOpen, Shop_RunFar
 	import Shop_Run, Shop_RunFar
-	import Engine_SanctumOpen, Shop_ConfirmActFar
-	import Engine_ShopConfirmAct, Shop_ConfirmActFar
-	import Shop_ConfirmAct, Shop_ConfirmActFar
+	import Engine_SanctumOpen, Sanctum_RunFar
+	import Engine_ShopConfirmAct, Sanctum_RunFar
+	import Sanctum_Run, Sanctum_RunFar
 	import Engine_InnCheckIn, Inn_CheckInFar
 	import Engine_InnOpen, Inn_CheckInFar
 	import Inn_CheckIn, Inn_CheckInFar
 	import Shop_SaveAndTintFieldPalette, Shop_SaveAndTintFieldPaletteFar
 	import Shop_RestoreFieldPalette, Shop_RestoreFieldPaletteFar
-	import Shop_PickUnitItem, Shop_PickUnitItemFar
-	import AudioCommand_WaitForStateByteClear, AudioCommand_WaitForStateByteClearFar
+	import ItemPicker_Run, ItemPicker_RunFar
+	import Sound_WaitForFanfare, Sound_WaitForFanfareFar
 	import Inn_PlaySleep, Inn_PlaySleepFar
 @ Battle bank (far_call/BATTLE.S)
 	import DjinnRecovery_TickTwenty, DjinnRecovery_TickTwentyFar
 	import DebugParty_LoadPreset, DebugParty_LoadPresetFar
 @ Scroll bank (far_call/SCROLL.S)
-	import ScrollFar_Entry00, DisplayScroll_RunSlideshowFar
+	import CreditsFar_Entry00, Credits_RunFar
 @ Palette bank (far_call/PALETTE.S)
-	import PaletteFar_Entry00, Title_ShowIntroFar
-	import Title_ShowSplashScreen, Title_ShowSplashScreenFar
-	import PaletteFar_Entry20, Title_ShowAnimatedSplashFar
+	import TitleFar_Entry00, Title_ShowIntroFar
+	import Title_ShowNintendoLogo, Title_ShowNintendoLogoFar
+	import TitleFar_Entry20, Title_ShowCamelotLogoFar
 @ Sound bank (far_call/SOUND.S)
-	import Engine_AudioPlayCue, AudioCommand_PlayFar
-	import MusicCommand_SetPitchAndUpdateFrequency, MusicCommand_SetPitchAndUpdateFrequencyFar
-	import AudioCommand_GetStateByte, AudioCommand_GetStateByteFar
-	import AudioCommand_WaitForCompletion, AudioCommand_WaitForCompletionFar
+	import Engine_AudioPlayCue, Sound_PlaySongFar
+	import Sound_SetBgmTempo, Sound_SetBgmTempoFar
+	import Sound_GetBgmRestoreDelay, Sound_GetBgmRestoreDelayFar
+	import Sound_WaitForSong, Sound_WaitForSongFar
 	.endif

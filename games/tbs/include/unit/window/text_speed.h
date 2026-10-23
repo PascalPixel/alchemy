@@ -11,14 +11,14 @@ enum MessageSpeed {
   MESSAGE_SPEED_FAST = 2
 };
 
-extern const u8 gUiText_SpeedDelays[3];
-extern const u8 gUiText_SpeedSteps[3];
-extern const u8 gUiText_SpeedCueGaps[3];
+extern const u8 gMessageSpeed_Delays[3];
+extern const u8 gMessageSpeed_Steps[3];
+extern const u8 gMessageSpeed_VoiceGaps[3];
 
 // The German counted nouns of graphics/text/numwords.c come right after these
 // tables and stay their own object: in tbs-de the speed tables start at an odd
-// address, right after genders.o, and in one file with gUiText_NumberWords, a
-// word-aligned pointer table, the object would start at the next word, 3 bytes
-// later. Split evidence for text_speed|numwords.
+// address, right after genders.o, and in one file with gLocalizedWord_Numbers,
+// a word-aligned pointer table, the object would start at the next word, 3
+// bytes later. Split evidence for text_speed|numwords.
 
 #endif

@@ -9,7 +9,7 @@
 /// Nine flames rise one after another, 4 frames apart, along half an ellipse,
 /// over 80 frames.
 ///
-/// Abilities: Flare, Flare Wall, Flare Storm (BATTLE_EFFECT_FLARE).
+/// Abilities: Flare, Flare Wall, Flare Storm (BATTLE_ANIM_FLARE).
 ///
 /// Each target flashes red in turn, 8 frames apart from frame 16. Writes
 /// REG_BLDCNT and REG_BLDALPHA, and ends with the blitter freed, the transfer
@@ -18,10 +18,10 @@
 /// effect: the targets. Flare Wall, the stronger variant, adds a second flame
 ///         16 pixels above each one, and Flare Storm, the strongest, a third
 ///         32 pixels above (and longer trails).
-void BattleEffect_RunFlare(struct BattleEffectArgument *effect) {
+void BattleAnim_RunFlare(struct BattleAnimArgs *effect) {
   u32 *slots;
   u32 *cursor;
-  struct BattleEffectWork *work;
+  struct BattleAnimWork *work;
   void *canvas;
   s32 frame;
   DrawRectangle draw;
@@ -32,31 +32,30 @@ void BattleEffect_RunFlare(struct BattleEffectArgument *effect) {
   s32 originX;
   s32 angle;
   s32 delay;
-  struct EffectStep *arcFlame;
-  struct EffectStep *flame;
+  struct Particle *arcFlame;
+  struct Particle *flame;
 
   // The work, the canvas, and BG1 and BG2 blended at 14:16.
-  slots = (u32 *)&gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
+  slots = (u32 *)&gHeapSlots[HEAP_SLOT_BATTLE_ANIM];
   cursor = slots;
-  work = (struct BattleEffectWork *)*cursor++;
+  work = (struct BattleAnimWork *)*cursor++;
   canvas = (void *)*cursor;
   work->effect = effect;
-  BattleEffect_StartCanvasLayer(0);
+  BattleAnim_StartCanvasLayer(0);
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = BLEND_ALPHA(14, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet, 1,
                              1);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
-                      COMPOSITE_ADDITIVE);
-  draw = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_ADDITIVE);
+  draw = (DrawRectangle)ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE);
 
   // The arc: from -90 to 90 degrees in steps of 22.5, half an ellipse with
   // radii of 32 pixels across and 16 up and down, centred on x 20 (84 on the
   // party's side) and dipping from y 40 at its ends to 56 at its middle.
   // Against enemies (ids from 128) it runs from the left, otherwise from
   // the right.
-  if (work->effect->actors[0] > 127) {
+  if (work->effect->targets[0] > 127) {
     originX = 0;
     direction = 1;
   } else {
@@ -82,25 +81,24 @@ void BattleEffect_RunFlare(struct BattleEffectArgument *effect) {
 
   // Trails keep half of each level, or three quarters for Flare Storm.
   work->transferMode = CANVAS_COPY_AND_FADE;
-  if (work->effect->variant == EFFECT_VARIANT_STRONGEST) {
+  if (work->effect->variant == ANIM_VARIANT_STRONGEST) {
     work->transferValue = 75;
   } else {
     work->transferValue = 50;
   }
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
-  AudioCommand_PlayFar(SE_136);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
+  Sound_PlaySongFar(SE_136);
   frame = 0;
   do {
     // Frame 24 lets the battle show the damage, with SE_IMPACT as the hit
     // sound.
     if (frame == 24) {
-      EFFECT_SHOW_DAMAGE(SE_IMPACT);
+      ANIM_SHOW_DAMAGE(SE_IMPACT);
     }
 
     // Each flame shows six pictures, 4 frames each, and goes out; the last
     // flame (delay -32) is out after frame 55. Each puff cell stands on its
-    // own baseline (gBattleEffect_PuffArcCellBiasY) and is centred across x.
+    // own baseline (gBattleAnim_PuffArcCellBiasY) and is centred across x.
     i = 0;
     flame = work->particles;
     do {
@@ -108,45 +106,43 @@ void BattleEffect_RunFlare(struct BattleEffectArgument *effect) {
         cell = flame->variant / 4;
         // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
-        width = gBattleEffect_PuffArcCellWidths[cell];
-        draw(canvas, work->sheet + gBattleEffect_PuffArcCells[cell],
+        width = gBattleAnim_PuffArcCellWidths[cell];
+        draw(canvas, work->sheet + gBattleAnim_PuffArcCells[cell],
              flame->x - (width >> 1),
-             flame->y + gBattleEffect_PuffArcCellBiasY[cell], width,
-             gBattleEffect_PuffArcCellHeights[cell]);
+             flame->y + gBattleAnim_PuffArcCellBiasY[cell], width,
+             gBattleAnim_PuffArcCellHeights[cell]);
 #else
-        draw(canvas, work->sheet + gBattleEffect_PuffArcCells[cell],
-             flame->x - ((width = gBattleEffect_PuffArcCellWidths[cell]) >> 1),
-             flame->y + gBattleEffect_PuffArcCellBiasY[cell], width,
-             gBattleEffect_PuffArcCellHeights[cell]);
+        draw(canvas, work->sheet + gBattleAnim_PuffArcCells[cell],
+             flame->x - ((width = gBattleAnim_PuffArcCellWidths[cell]) >> 1),
+             flame->y + gBattleAnim_PuffArcCellBiasY[cell], width,
+             gBattleAnim_PuffArcCellHeights[cell]);
 #endif
-        if (work->effect->variant != EFFECT_VARIANT_BASIC) {
+        if (work->effect->variant != ANIM_VARIANT_BASIC) {
 #ifdef UBFIX
-          width = gBattleEffect_PuffArcCellWidths[cell];
-          draw(canvas, work->sheet + gBattleEffect_PuffArcCells[cell],
+          width = gBattleAnim_PuffArcCellWidths[cell];
+          draw(canvas, work->sheet + gBattleAnim_PuffArcCells[cell],
                flame->x - (width >> 1),
-               (flame->y + gBattleEffect_PuffArcCellBiasY[cell]) - 16, width,
-               gBattleEffect_PuffArcCellHeights[cell]);
+               (flame->y + gBattleAnim_PuffArcCellBiasY[cell]) - 16, width,
+               gBattleAnim_PuffArcCellHeights[cell]);
 #else
-          draw(canvas, work->sheet + gBattleEffect_PuffArcCells[cell],
-               flame->x -
-                   ((width = gBattleEffect_PuffArcCellWidths[cell]) >> 1),
-               (flame->y + gBattleEffect_PuffArcCellBiasY[cell]) - 16, width,
-               gBattleEffect_PuffArcCellHeights[cell]);
+          draw(canvas, work->sheet + gBattleAnim_PuffArcCells[cell],
+               flame->x - ((width = gBattleAnim_PuffArcCellWidths[cell]) >> 1),
+               (flame->y + gBattleAnim_PuffArcCellBiasY[cell]) - 16, width,
+               gBattleAnim_PuffArcCellHeights[cell]);
 #endif
         }
-        if (work->effect->variant == EFFECT_VARIANT_STRONGEST) {
+        if (work->effect->variant == ANIM_VARIANT_STRONGEST) {
 #ifdef UBFIX
-          width = gBattleEffect_PuffArcCellWidths[cell];
-          draw(canvas, work->sheet + gBattleEffect_PuffArcCells[cell],
+          width = gBattleAnim_PuffArcCellWidths[cell];
+          draw(canvas, work->sheet + gBattleAnim_PuffArcCells[cell],
                flame->x - (width >> 1),
-               (flame->y + gBattleEffect_PuffArcCellBiasY[cell]) - 32, width,
-               gBattleEffect_PuffArcCellHeights[cell]);
+               (flame->y + gBattleAnim_PuffArcCellBiasY[cell]) - 32, width,
+               gBattleAnim_PuffArcCellHeights[cell]);
 #else
-          draw(canvas, work->sheet + gBattleEffect_PuffArcCells[cell],
-               flame->x -
-                   ((width = gBattleEffect_PuffArcCellWidths[cell]) >> 1),
-               (flame->y + gBattleEffect_PuffArcCellBiasY[cell]) - 32, width,
-               gBattleEffect_PuffArcCellHeights[cell]);
+          draw(canvas, work->sheet + gBattleAnim_PuffArcCells[cell],
+               flame->x - ((width = gBattleAnim_PuffArcCellWidths[cell]) >> 1),
+               (flame->y + gBattleAnim_PuffArcCellBiasY[cell]) - 32, width,
+               gBattleAnim_PuffArcCellHeights[cell]);
 #endif
         }
       }
@@ -157,19 +153,19 @@ void BattleEffect_RunFlare(struct BattleEffectArgument *effect) {
 
     // The targets flash red, 8 frames apart from frame 16.
     i = 0;
-    while (i != work->effect->count) {
+    while (i != work->effect->targetCount) {
       if (frame == (i * 8) + 16) {
-        ObjectGroup_UpdateMembers(work->effect->actors[i],
+        ObjectGroup_UpdateMembers(work->effect->targets[i],
                                   SPRITE_COLOR_RED_TINT, POSE_DAMAGE, i, 12);
       }
       i += 1;
     }
-    EFFECT_END_FRAME(work);
+    ANIM_END_FRAME(work);
     frame += 1;
   } while (frame != 80);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
-  BattleEffect_EndCanvasLayer();
+  FreeHeapSlot(HEAP_SLOT_RAM_CODE);
+  Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);
+  BattleAnim_EndCanvasLayer();
 }
 
 /// Lists the indices within indexRadius of where currentValue sits in values,
@@ -178,8 +174,8 @@ void BattleEffect_RunFlare(struct BattleEffectArgument *effect) {
 ///
 /// Only the first indexRadius * 2 + 1 values are searched, and with no match
 /// the window centres on index 0. Changes nothing but output. Nothing calls it.
-UNUSED s32 BattleEffect_BuildCenteredIndexList(BattleEffectIndexWindow *window,
-                                               s16 *output) {
+UNUSED s32 BattleAnim_BuildCenteredIndexList(BattleAnimIndexWindow *window,
+                                             s16 *output) {
   s32 windowLength = window->indexRadius * 2 + 1;
   s32 outputCount = 0;
   s32 centerIndex = 0;

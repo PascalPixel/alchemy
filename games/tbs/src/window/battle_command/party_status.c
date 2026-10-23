@@ -4,15 +4,15 @@
 
 #include "../battle_command_internal.h"
 
-// UB: the standby counts pass four of UiWindow_PutGlyph's five arguments, so
+// UB: the standby counts pass four of Window_PutGlyph's five arguments, so
 // its mode is whatever the stack slot of the fifth holds; UBFIX passes 0, as
 // the summon lists do.
 #ifdef UBFIX
 #define PARTY_STATUS_PUT_DIGIT(window, glyph, x, y)                            \
-  UiWindow_PutGlyph(window, glyph, x, y, GLYPH_DRAW_CHARACTER)
+  Window_PutGlyph(window, glyph, x, y, GLYPH_DRAW_CHARACTER)
 #else
 #define PARTY_STATUS_PUT_DIGIT(window, glyph, x, y)                            \
-  UiWindow_PutGlyph(window, glyph, x, y)
+  Window_PutGlyph(window, glyph, x, y)
 #endif
 
 // The party status window (enum PartyStatusFlag, ui.h) sits at the top right
@@ -29,28 +29,28 @@
 /// party member (those in battle when a battle is on), plus the Djinn column,
 /// right-aligned on the 30-tile screen row at the top. It is four tiles high
 /// outside battle and three in battle, plus one with the PP row.
-void UiWindow_BuildLayoutBounds(s32 flags) {
-  // UB: slot[-1] steps before the single party-status work slot. Reading
+void PartyStatus_BuildLayoutBounds(s32 flags) {
+  // UB: slot[-1] steps before the single party-status heap slot. Reading
   // the actual owners grows the EN function from 0x68 to 0x6c bytes.
   // Keep the original address formation only in the matching build.
 #ifdef UBFIX
-  struct PartyStatusWindow *layout = WORK_SLOT(HEAP_SLOT_PARTY_STATUS);
-  struct UiRenderWork *work = UI_WORK;
+  struct PartyStatusWindow *layout = HEAP_SLOT_BLOCK(HEAP_SLOT_PARTY_STATUS);
+  struct WindowWork *work = WINDOW_WORK;
 #else
   void **slot = (void **)&gPartyStatusWork;
   struct PartyStatusWindow *layout = *slot;
-  struct UiRenderWork *work = slot[-1];
+  struct WindowWork *work = slot[-1];
 #endif
   s32 height = 4;
   s32 members;
   s32 width;
   s32 x;
 
-  if (work->menuState != 0) {
-    members = BattleParty_PrepareActiveOwnersFar(0);
+  if (work->battleMode != 0) {
+    members = BattleParty_PrepareMembersFar(0);
     height = 3;
   } else {
-    members = Party_CountActiveOwnersFar();
+    members = Party_CountMembersFar();
   }
   if (flags & PARTY_STATUS_SHOW_PP)
     height++;
@@ -73,33 +73,33 @@ void UiWindow_BuildLayoutBounds(s32 flags) {
 
 /// Opens the party status window with `flags` (see PARTY_STATUS_*) in a new
 /// heap block, HEAP_SLOT_PARTY_STATUS, which PartyStatus_Close frees, and draws
-/// it; the tilemap upload is held back (menuBusy) while it is drawn. A battle
-/// opens it with flags 9, which lays it out with the PP row and leaves it
-/// erased until the battle draws it (Battle_RunEncounter); the field opens it
-/// with flags 1 (object/object/events.c).
-void UiWindow_CreateWithLayoutBounds(s32 flags) {
+/// it; the tilemap upload is held back (holdTilemapUpload) while it is drawn. A
+/// battle opens it with flags 9, which lays it out with the PP row and leaves
+/// it erased until the battle draws it (Battle_Run); the field opens it with
+/// flags 1 (object/object/events.c).
+void PartyStatus_CreateWindow(s32 flags) {
   s32 zero;
   struct PartyStatusWindow *layout;
   s8 *busy;
 
-  layout = Runtime_AllocateBlock(HEAP_SLOT_PARTY_STATUS, sizeof(*layout));
-  busy = (s8 *)&UI_WORK->menuBusy;
+  layout = AllocHeapSlotEwram(HEAP_SLOT_PARTY_STATUS, sizeof(*layout));
+  busy = (s8 *)&WINDOW_WORK->holdTilemapUpload;
   zero = 0;
   *busy = 1;
-  UiWindow_BuildLayoutBounds(flags);
+  PartyStatus_BuildLayoutBounds(flags);
   layout->window =
-      UiWindow_Create(layout->x, layout->y, layout->width, layout->height, 6);
+      Window_Create(layout->x, layout->y, layout->width, layout->height, 6);
   PartyStatus_Draw(flags);
   *busy = zero;
 }
 
 /// Draws the vertical lines between the members' columns of the party status
 /// `window`, with their top and bottom joints, at the offsets listed in
-/// gUiWindow_PartyColumnOffsets (shifted right past the Djinn column, whose own
+/// gWindow_PartyColumnOffsets (shifted right past the Djinn column, whose own
 /// line comes first in the list). In battle it also draws the window's bottom
 /// edge.
-void UiWindow_DrawColumnBorders(struct UiWindow *window, u32 flags) {
-  struct UiRenderWork *work = UI_WORK;
+void Window_DrawColumnBorders(struct Window *window, u32 flags) {
+  struct WindowWork *work = WINDOW_WORK;
   s32 first = 1;
   s32 shift = 0;
   u32 lastColumn = window->width - 1;
@@ -116,31 +116,31 @@ void UiWindow_DrawColumnBorders(struct UiWindow *window, u32 flags) {
     first = 0;
   }
   i = first;
-  while (gUiWindow_PartyColumnOffsets[i] >= 0) {
-    column = gUiWindow_PartyColumnOffsets[i] + shift;
+  while (gWindow_PartyColumnOffsets[i] >= 0) {
+    column = gWindow_PartyColumnOffsets[i] + shift;
     if (column < lastColumn) {
       for (row = 0; row != rows; row++) {
         cell = (u16 *)(((window->y + row) * 32 + (window->x + column)) * 2 +
                        (u32)work->tilemap);
         if (row == 0)
-          *cell = UI_TILE_FRAME_TOP_TEE;
+          *cell = WINDOW_TILE_FRAME_TOP_TEE;
         else if (row == rows - 1)
-          *cell = UI_TILE_FRAME_BOTTOM_TEE;
+          *cell = WINDOW_TILE_FRAME_BOTTOM_TEE;
         else
-          *cell = UI_TILE_DIVIDER_VERTICAL;
+          *cell = WINDOW_TILE_DIVIDER_VERTICAL;
       }
     }
     i++;
   }
-  if (work->menuState) {
+  if (work->battleMode) {
     cell = work->tilemap + (window->y + window->height - 1) * 32 + window->x;
     column = 1;
-    *cell++ = UI_TILE_BATTLE_FRAME_BOTTOM_LEFT;
+    *cell++ = WINDOW_TILE_BATTLE_FRAME_BOTTOM_LEFT;
     while (column < lastColumn) {
       column++;
-      *cell++ = UI_TILE_BATTLE_FRAME_BOTTOM;
+      *cell++ = WINDOW_TILE_BATTLE_FRAME_BOTTOM;
     }
-    *cell = UI_TILE_BATTLE_FRAME_BOTTOM_RIGHT;
+    *cell = WINDOW_TILE_BATTLE_FRAME_BOTTOM_RIGHT;
   }
   work->dirty = 1;
 }
@@ -156,14 +156,12 @@ void UiWindow_DrawColumnBorders(struct UiWindow *window, u32 flags) {
 // UBFIX makes it void, which changes the register its epilogue returns
 // through.
 #ifdef UBFIX
-void UiWindow_DrawStatusBarTiles(struct UiWindow *window, s32 x, s32 y,
-                                 s32 length) {
+void PartyStatus_DrawBars(struct Window *window, s32 x, s32 y, s32 length) {
 #else
-s32 UiWindow_DrawStatusBarTiles(struct UiWindow *window, s32 x, s32 y,
-                                s32 length) {
+s32 PartyStatus_DrawBars(struct Window *window, s32 x, s32 y, s32 length) {
 #endif
   s32 i;
-  struct UiRenderWork *work = UI_WORK;
+  struct WindowWork *work = WINDOW_WORK;
   s32 fullLength = length;
   s32 row;
   s32 column;
@@ -173,7 +171,7 @@ s32 UiWindow_DrawStatusBarTiles(struct UiWindow *window, s32 x, s32 y,
   u32 pixels;
   u32 recoloured;
 
-  if (work->menuState == 0) {
+  if (work->battleMode == 0) {
     Dma_Set((const void *)Palette_GetBasicSpriteColors(),
             (void *)&BG_PLTT_COLOR(14, 0), DMA_COPY16(16), REG_DMA3);
     BG_PLTT_COLOR(14, 14) = BG_PLTT_COLOR(15, 4);
@@ -230,20 +228,20 @@ s32 UiWindow_DrawStatusBarTiles(struct UiWindow *window, s32 x, s32 y,
 /// colour 4 at a quarter or less. When the flags change, the window is erased
 /// and laid out again first.
 void PartyStatus_Draw(s32 flags) {
-  // UB: the negative indices leave the single party-status work slot.
+  // UB: the negative indices leave the single party-status heap slot.
   // Named owners grow the EN function from 0x3d4 to 0x3dc bytes. Keep the
   // original address formation and load order in the matching build.
 #ifdef UBFIX
-  struct PartyStatusWindow *layout = WORK_SLOT(HEAP_SLOT_PARTY_STATUS);
+  struct PartyStatusWindow *layout = HEAP_SLOT_BLOCK(HEAP_SLOT_PARTY_STATUS);
   struct BattleWork *battle = gBattleWork;
-  struct UiWindow *window = layout->window;
-  struct UiRenderWork *work = UI_WORK;
+  struct Window *window = layout->window;
+  struct WindowWork *work = WINDOW_WORK;
 #else
   void **slot = (void **)gPartyStatusWork;
   struct PartyStatusWindow *layout = slot[0];
   struct BattleWork *battle = slot[-7];
-  struct UiWindow *window = layout->window;
-  struct UiRenderWork *work = slot[-1];
+  struct Window *window = layout->window;
+  struct WindowWork *work = slot[-1];
 #endif
   s32 x = 0;
   u32 count;
@@ -254,8 +252,8 @@ void PartyStatus_Draw(s32 flags) {
 
   // List the members shown: those fighting in battle, the party otherwise.
   // In battle the window is a row shorter and its text starts a row higher.
-  if (work->menuState != 0) {
-    count = BattleParty_PrepareActiveOwnersFar(0);
+  if (work->battleMode != 0) {
+    count = BattleParty_PrepareMembersFar(0);
     y = -1;
     for (i = 0; i < count; i++) {
       members[i] = battle->partyUnits[i];
@@ -263,9 +261,9 @@ void PartyStatus_Draw(s32 flags) {
         break;
     }
   } else {
-    count = Party_CountActiveOwnersFar();
+    count = Party_CountMembersFar();
     for (i = 0; i < count; i++)
-      members[i] = gGameState.activeOwners[i];
+      members[i] = gGameState.party[i];
     members[i] = 255;
   }
   count = i;
@@ -274,35 +272,33 @@ void PartyStatus_Draw(s32 flags) {
     flags = layout->flags;
   if (!(flags & PARTY_STATUS_SHOW_PP))
     flags &= ~PARTY_STATUS_SHOW_DJINN;
-  if (work->menuState == 0 || BattleParty_CountStandbyDjinnFar(0, 0) == 0)
+  if (work->battleMode == 0 || BattleDjinn_CountStandbyFar(0, 0) == 0)
     flags &= ~PARTY_STATUS_SHOW_DJINN;
   if (flags == PARTY_STATUS_CLOSED) {
-    UiWindow_EraseBorderRect(layout->x, layout->y, layout->width,
-                             layout->height);
+    Window_EraseBorderRect(layout->x, layout->y, layout->width, layout->height);
     return;
   }
 
   // Redraw the frame, laying it out again when the flags changed.
-  work->menuBusy = 1;
+  work->holdTilemapUpload = 1;
   if (layout->flags == flags) {
-    RenderOutput_RedrawSavedRect(window);
-    UiWindow_DrawColumnBorders(window, flags);
+    WindowSprite_RedrawSavedRect(window);
+    Window_DrawColumnBorders(window, flags);
   } else {
-    UiWindow_EraseBorderRect(layout->x, layout->y, layout->width,
-                             layout->height);
-    UiWindow_BuildLayoutBounds(flags);
+    Window_EraseBorderRect(layout->x, layout->y, layout->width, layout->height);
+    PartyStatus_BuildLayoutBounds(flags);
     window->width = layout->width;
     window->height = layout->height;
     window->x = layout->x;
-    UiWindow_DrawFrame(layout->x, layout->y, layout->width, layout->height);
-    UiWindow_DrawColumnBorders(window, flags);
+    Window_DrawFrame(layout->x, layout->y, layout->width, layout->height);
+    Window_DrawColumnBorders(window, flags);
   }
 
   // Each member's column: name, HP and PP, each bar 40 pixels at full.
   if (flags & PARTY_STATUS_SHOW_DJINN)
     x = PARTY_STATUS_DJINN_WIDTH;
   for (i = 0; i != count; i++) {
-    struct BattleUnit *unit = Unit_GetFar(members[i]);
+    struct Unit *unit = Unit_GetFar(members[i]);
     s32 hp = unit->hp;
     s32 hpMax = unit->hpMax;
     s32 barLength;
@@ -315,15 +311,15 @@ void PartyStatus_Draw(s32 flags) {
     else
       UiWork_SetParameterNibble(15);
     // The numbers' tiles take BG palette 14 in the field and 5 in battle
-    // (UiRenderWork.level); the name keeps palette 15.
-    work->level = 14;
-    if (work->menuState != 0)
-      work->level = 5;
-    UiText_DrawPrefixedNumberAtOffset(
+    // (WindowWork.textPalette); the name keeps palette 15.
+    work->textPalette = 14;
+    if (work->battleMode != 0)
+      work->textPalette = 5;
+    Text_DrawPrefixedNumberAtOffset(
         hp, window, (x + i * PARTY_STATUS_COLUMN_WIDTH) * 8, y * 8 + 8, 0);
-    work->level = 15;
-    UiText_DrawStringAtOffset(unit->name, window,
-                              (x + i * PARTY_STATUS_COLUMN_WIDTH) * 8, y * 8);
+    work->textPalette = 15;
+    Text_DrawStringAtOffset(unit->name, window,
+                            (x + i * PARTY_STATUS_COLUMN_WIDTH) * 8, y * 8);
     UiWork_SetParameterNibble(15);
     if (unit->hpMax != 0) {
       // A member with any HP left shows at least one pixel of bar.
@@ -331,61 +327,61 @@ void PartyStatus_Draw(s32 flags) {
       barLength = ((current * 40) / unit->hpMax);
       if (barLength == 0 && current != 0)
         barLength = 1;
-      UiWindow_DrawStatusBarTiles(window, x + i * PARTY_STATUS_COLUMN_WIDTH + 1,
-                                  y + 2, barLength);
+      PartyStatus_DrawBars(window, x + i * PARTY_STATUS_COLUMN_WIDTH + 1, y + 2,
+                           barLength);
     }
     if (flags & PARTY_STATUS_SHOW_PP) {
-      work->level = 14;
-      if (work->menuState != 0)
-        work->level = 5;
-      UiText_DrawPrefixedNumberAtOffset(unit->pp, window,
-                                        (x + i * PARTY_STATUS_COLUMN_WIDTH) * 8,
-                                        y * 8 + 16, 1);
+      work->textPalette = 14;
+      if (work->battleMode != 0)
+        work->textPalette = 5;
+      Text_DrawPrefixedNumberAtOffset(unit->pp, window,
+                                      (x + i * PARTY_STATUS_COLUMN_WIDTH) * 8,
+                                      y * 8 + 16, 1);
       if (unit->ppMax != 0) {
         current = unit->pp;
         barLength = ((current * 40) / unit->ppMax);
         if (barLength == 0 && current != 0)
           barLength = 1;
-        UiWindow_DrawStatusBarTiles(
-            window, x + i * PARTY_STATUS_COLUMN_WIDTH + 1, y + 3, barLength);
+        PartyStatus_DrawBars(window, x + i * PARTY_STATUS_COLUMN_WIDTH + 1,
+                             y + 3, barLength);
       }
     }
   }
-  work->level = 15;
+  work->textPalette = 15;
 
   // The Djinn column: each element's icon and its count of standby Djinn.
-  if (work->menuState != 0 && (flags & PARTY_STATUS_SHOW_DJINN)) {
+  if (work->battleMode != 0 && (flags & PARTY_STATUS_SHOW_DJINN)) {
     s32 row = y;
 
     if (flags & PARTY_STATUS_SHOW_PP)
       row++;
-    BattleParty_CountStandbyDjinnFar(0, standbyDjinn);
-    UiWindow_SetTilemapEntry(window, LIST_TILE_SUMMON_ELEMENT + ELEMENT_VENUS,
-                             0, row, 0);
-    UiWindow_SetTilemapEntry(window, LIST_TILE_SUMMON_ELEMENT + ELEMENT_MERCURY,
-                             2, row, 0);
-    UiWindow_SetTilemapEntry(window, LIST_TILE_SUMMON_ELEMENT + ELEMENT_MARS, 0,
-                             row + 1, 0);
-    UiWindow_SetTilemapEntry(window, LIST_TILE_SUMMON_ELEMENT + ELEMENT_JUPITER,
-                             2, row + 1, 0);
+    BattleDjinn_CountStandbyFar(0, standbyDjinn);
+    Window_SetTilemapEntry(window, LIST_TILE_SUMMON_ELEMENT + ELEMENT_VENUS, 0,
+                           row, 0);
+    Window_SetTilemapEntry(window, LIST_TILE_SUMMON_ELEMENT + ELEMENT_MERCURY,
+                           2, row, 0);
+    Window_SetTilemapEntry(window, LIST_TILE_SUMMON_ELEMENT + ELEMENT_MARS, 0,
+                           row + 1, 0);
+    Window_SetTilemapEntry(window, LIST_TILE_SUMMON_ELEMENT + ELEMENT_JUPITER,
+                           2, row + 1, 0);
     PARTY_STATUS_PUT_DIGIT(window, standbyDjinn[0] + '0', 1, row);
     PARTY_STATUS_PUT_DIGIT(window, standbyDjinn[1] + '0', 3, row);
     PARTY_STATUS_PUT_DIGIT(window, standbyDjinn[2] + '0', 1, row + 1);
     PARTY_STATUS_PUT_DIGIT(window, standbyDjinn[3] + '0', 3, row + 1);
   }
-  work->menuBusy = 0;
+  work->holdTilemapUpload = 0;
 }
 
 /// Closes the party status window and frees its heap block.
 void PartyStatus_Close(void) {
-  // UB: reads the work slot's pointer through an s32 pointer; UBFIX reads
+  // UB: reads the heap slot's pointer through an s32 pointer; UBFIX reads
   // the window through the block's own struct.
 #ifdef UBFIX
-  UiWork_Finalize(((struct PartyStatusWindow *)gWindowWork[1])->window, 1);
+  Window_Close(((struct PartyStatusWindow *)gWindowWork[1])->window, 1);
 #else
-  UiWork_Finalize((struct UiWindow *)**(s32 **)(u32)&gWindowWork[1], 1);
+  Window_Close((struct Window *)**(s32 **)(u32)&gWindowWork[1], 1);
 #endif
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_PARTY_STATUS);
+  FreeHeapSlot(HEAP_SLOT_PARTY_STATUS);
 }
 
 /// Sets (`set` 1) or clears (0) bit 12 of the tilemap entries of the
@@ -399,9 +395,9 @@ void PartyStatus_Close(void) {
 /// 19, the tilemap's last, but one ending on rows 20 to 28 is not cut and
 /// writes past the 20-row tilemap. XXX: likely the column test's 29 repeated
 /// for rows, because the height it then sets uses 20.
-void UiWindow_SetTileAttributeBitRect(const struct UiWindow *window, s32 x,
-                                      s32 y, s32 width, s32 height, u32 set) {
-  struct UiRenderWork *work = UI_WORK;
+void Window_SetTextTileBitRect(const struct Window *window, s32 x, s32 y,
+                               s32 width, s32 height, u32 set) {
+  struct WindowWork *work = WINDOW_WORK;
 
   x += window->x + 1;
   y += window->y + 1;

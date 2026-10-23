@@ -14,7 +14,7 @@
 #include "farcall.h"
 
 /// The battle camera: its eye, the focus it turns about, and its pitch, yaw
-/// and distance. It lives in the HEAP_SLOT_CAMERA work slot.
+/// and distance. It lives in the HEAP_SLOT_CAMERA heap slot.
 struct BattleCamera {
   /// The eye, 16.16 fixed-point pixels: written each frame distance behind
   /// the focus along the turned view.
@@ -37,10 +37,10 @@ STATIC_ASSERT(offsetof(struct BattleCamera, followPosition) == 0x1c);
 STATIC_ASSERT(offsetof(struct BattleCamera, pitch) == 0x34);
 STATIC_ASSERT(offsetof(struct BattleCamera, yaw) == 0x36);
 
-/// The HEAP_SLOT_CAMERA work slot during a battle: the battle camera.
+/// The HEAP_SLOT_CAMERA heap slot during a battle: the battle camera.
 extern struct BattleCamera *gCameraWork;
 
-/// The battle background's work slot as the camera reads it: the yaw the
+/// The battle background's heap slot as the camera reads it: the yaw the
 /// camera eases toward and the frames left to ease it.
 struct BattlePresentationTransition {
   s32 targetYaw;  ///< 1/65536 turns
@@ -55,22 +55,22 @@ struct BattlePresentationTransition {
   s32 unk1c; ///< XXX: cleared when the battle starts and never read
 };
 
-/// A presentation step's stack work: the effect command it builds and runs,
+/// A presentation step's stack work: the animation command it builds and runs,
 /// and the targets' sprite colour modes saved beside it. The
 /// BattlePresentation_Run functions of staging.c and auto_battle.c,
-/// BattlePresentation_RunEntryTransition and ElementGlow_Play
+/// BattleTransition_Run and ElementGlow_Play
 /// keep one as a local.
-struct BattlePresentationWork {
-  struct BattleEffectArgument effect;
-  /// Each target's layers' SpriteColorMode (AnimationEntry.colorMode), all but
-  /// its last layer, saved before the effect; no code reads them back by name.
+struct BattleStagingWork {
+  struct BattleAnimArgs effect;
+  /// Each target's sprite anims' SpriteColorMode (SpriteAnim.colorMode), all
+  /// but its last, saved before the animation; no code reads them back by name.
   u8 savedAnimationParameters[8][4];
 };
 
 STATIC_ASSERT(sizeof(struct BattlePresentationTransition) == 0x20);
 STATIC_ASSERT(offsetof(struct BattlePresentationTransition, active) == 0x10);
-STATIC_ASSERT(sizeof(struct BattlePresentationWork) == 0x54);
-STATIC_ASSERT(offsetof(struct BattlePresentationWork, effect.actors) == 0x24);
+STATIC_ASSERT(sizeof(struct BattleStagingWork) == 0x54);
+STATIC_ASSERT(offsetof(struct BattleStagingWork, effect.targets) == 0x24);
 
 /// BattleBackgroundView.mode and secondMode: how the battle background is
 /// shown.
@@ -78,22 +78,22 @@ enum BattleBackgroundMode {
   /// Not loaded yet: the next load adds BattlePresentation_UpdateHBlankScroll.
   BATTLE_BACKGROUND_NONE,
   /// The flat picture on BG1 (BATTLE_BG1CNT), its scroll following the
-  /// camera, BG2 left to an effect.
-  BATTLE_BACKGROUND_FLAT,
+  /// camera, BG2 left to an animation.
+  BATTLE_BACKGROUND_FIXED,
   /// The picture zoomed and panned on BG2, an affine layer; HBlank DMA sets
   /// each line's BG2CNT to the half of the picture it reads. The code's
   /// "perspective plane" is this plain zoom: the depth is in the picture.
-  BATTLE_BACKGROUND_PLANE
+  BATTLE_BACKGROUND_ZOOMED
 };
 
-/// The battle background's work slot as the background code reads it: its
+/// The battle background's heap slot as the background code reads it: its
 /// display mode.
 struct BattleBackgroundView {
   s32 targetYaw; ///< BattlePresentationTransition's; not named here
   s32 frames;    ///< BattlePresentationTransition's; not named here
   s32 mode;      ///< enum BattleBackgroundMode
-  /// BATTLE_BACKGROUND_FLAT also sets BG1's scroll whatever the mode;
-  /// the effects' canvas layers set it.
+  /// BATTLE_BACKGROUND_FIXED also sets BG1's scroll whatever the mode;
+  /// the animations' canvas layers set it.
   s32 secondMode;
   s32 busy; ///< while set, BattleCamera_SetRange leaves BG1's scroll
 };
@@ -125,7 +125,7 @@ STATIC_ASSERT(sizeof(struct BattleAffineHdma) == 0x2a0);
 STATIC_ASSERT(offsetof(struct BattleAffineHdma, affine) == 0x10);
 STATIC_ASSERT(offsetof(struct BattleAffineHdma, lines) == 0x20);
 
-struct BattlePlan;
-struct BattleEffectArgument;
+struct BattleTurn;
+struct BattleAnimArgs;
 
 #endif

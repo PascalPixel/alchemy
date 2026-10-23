@@ -1,12 +1,12 @@
 /// @file
-/// Effect slots: the particles Psynergy effects move and draw.
+/// Field effect sprites: the particles Psynergy effects move and draw.
 // Part of psynergy_effects.c.
 
 #include "../psynergy_effects_internal.h"
 
-/// Updates one effect slot: counts its age, runs its callback (after any
-/// delay), moves it and draws it.
-void EffectSlot_Update(struct EffectSlot *effect) {
+/// Updates one field effect sprite: counts its age, runs its callback (after
+/// any delay), moves it and draws it.
+void FieldEffectSprite_Update(struct FieldEffectSprite *effect) {
   if (effect->active != 0) {
     effect->age++;
     if (effect->callbackDelay != 0)
@@ -16,20 +16,20 @@ void EffectSlot_Update(struct EffectSlot *effect) {
     // A callback may release its own slot; do not move or draw it afterward.
     if (effect->active != 0) {
       if (effect->updateMotion != 0)
-        EffectSlot_UpdateMotion(effect);
+        FieldEffectSprite_UpdateMotion(effect);
       if (effect->render != 0)
         FieldEffect_DrawScaledObject(effect);
     }
   }
 }
 
-/// Draws an effect slot's sprite at its screen position and scale, when it is
+/// Draws a field effect sprite at its screen position and scale, when it is
 /// near the screen: x from -32 to 272 pixels and z from -32 to 224, both
 /// exclusive. With flag 4 the slot's z also lifts it (0x1fc pixels less z):
 /// it is placed at y 508 pixels and raised back to z, so it shows at the
 /// same point but sorts as if at 508.
-void FieldEffect_DrawScaledObject(struct EffectSlot *object) {
-  struct AnimationObject *sprite;
+void FieldEffect_DrawScaledObject(struct FieldEffectSprite *object) {
+  struct Sprite *sprite;
   s32 offset;
   struct SpriteScale scale;
   struct SpritePlacement position;
@@ -49,10 +49,10 @@ void FieldEffect_DrawScaledObject(struct EffectSlot *object) {
     Object_ApplyProjectedPlacementFar(sprite, &position, &scale, 0);
 }
 
-/// Moves an effect slot toward its target, turning at most turnStepMax a
-/// frame when turnStepLimited is set and speeding up by acceleration to
-/// speedMax. A slot that stops at its target lands on it once within 8 pixels.
-void EffectSlot_UpdateMotion(struct EffectSlot *effect) {
+/// Moves a field effect sprite toward its target, turning at most turnStepMax
+/// a frame when turnStepLimited is set and speeding up by acceleration to
+/// speedMax. One that stops at its target lands on it once within 8 pixels.
+void FieldEffectSprite_UpdateMotion(struct FieldEffectSprite *effect) {
   s32 deltaX;
   s32 deltaZ;
   s32 distance;
@@ -64,7 +64,7 @@ void EffectSlot_UpdateMotion(struct EffectSlot *effect) {
   s32 facing;
   s16 turn;
 
-  if (effect->targetX == EFFECT_NO_TARGET)
+  if (effect->targetX == FIELD_EFFECT_SPRITE_NO_TARGET)
     return;
   deltaX = effect->targetX - effect->x;
   deltaZ = effect->targetZ - effect->z;
@@ -78,7 +78,7 @@ void EffectSlot_UpdateMotion(struct EffectSlot *effect) {
       distance = FixedSqrt(Iwram_MulQ16(deltaX, deltaX) +
                            Iwram_MulQ16(deltaZ, deltaZ));
     if (distance <= 0x80000) {
-      EffectSlot_SetPosition(effect, effect->targetX, effect->targetZ);
+      FieldEffectSprite_SetPosition(effect, effect->targetX, effect->targetZ);
       return;
     }
   }
@@ -107,70 +107,74 @@ void EffectSlot_UpdateMotion(struct EffectSlot *effect) {
   effect->z += Iwram_MulQ16(Trig_Sin(angle), speed);
 }
 
-/// Returns 1 while an effect slot that stops at its target still has one
-/// (it has not arrived), 0 once it has arrived or when it never stops. The
-/// slot callbacks poll it each frame to step their states.
-u32 EffectSlot_HasPendingTarget(struct EffectSlot *effect) {
+/// Returns 1 while a field effect sprite that stops at its target still has
+/// one (it has not arrived), 0 once it has arrived or when it never stops. The
+/// sprites' callbacks poll it each frame to step their states.
+u32 FieldEffectSprite_HasPendingTarget(struct FieldEffectSprite *effect) {
   // A plain != changes the English instructions at the same extent.
   u32 targetX;
 
   if (effect->stopAtTarget == 0) {
     return 0;
   }
-  // (-t | t) >> 31 is 1 for any nonzero t: targetX is not EFFECT_NO_TARGET.
-  targetX = effect->targetX ^ (u32)EFFECT_NO_TARGET;
+  // (-t | t) >> 31 is 1 for any nonzero t: targetX is not
+  // FIELD_EFFECT_SPRITE_NO_TARGET.
+  targetX = effect->targetX ^ (u32)FIELD_EFFECT_SPRITE_NO_TARGET;
   return ((0u - targetX) | targetX) >> 31;
 }
 
-/// Places an effect slot at (x, z), at rest with no target.
-void EffectSlot_SetPosition(struct EffectSlot *effect, s32 x, s32 z) {
-  effect->targetX = EFFECT_NO_TARGET;
-  effect->targetZ = EFFECT_NO_TARGET;
+/// Places a field effect sprite at (x, z), at rest with no target.
+void FieldEffectSprite_SetPosition(struct FieldEffectSprite *effect, s32 x,
+                                   s32 z) {
+  effect->targetX = FIELD_EFFECT_SPRITE_NO_TARGET;
+  effect->targetZ = FIELD_EFFECT_SPRITE_NO_TARGET;
   effect->x = x;
   effect->z = z;
   effect->speed = 0;
 }
 
-/// Sets the animation of an effect slot's sprite.
-void EffectSlot_SetObjectMode(struct EffectSlot *effect, s32 mode) {
-  AnimationObject_SelectAnimationFar(effect->object, mode);
+/// Sets the animation of a field effect sprite.
+void FieldEffectSprite_SetObjectMode(struct FieldEffectSprite *effect,
+                                     s32 mode) {
+  Sprite_StartAnimFar(effect->object, mode);
 }
 
-/// Gives an effect slot its per-frame callback, starting at state 0.
-void EffectSlot_SetCallback(struct EffectSlot *effect,
-                            EffectCallback callback) {
+/// Gives a field effect sprite its per-frame callback, starting at state 0.
+void FieldEffectSprite_SetCallback(struct FieldEffectSprite *effect,
+                                   EffectCallback callback) {
   effect->callback = callback;
   effect->callbackDelay = 0;
   effect->age = 0;
   effect->state = 0;
 }
 
-/// Fills an effect slot with a new sprite of kind at (x, z): stopping at its
-/// target, top speed 2, acceleration and scale 1, drawn, animation 1. The
-/// slot owns the sprite until FieldEffect_ClearOwnedSlot. Its turn is limited
-/// with turnStepMax 0, so it holds heading 0 until its callback clears
+/// Gives a field effect sprite a new sprite of kind at (x, z): stopping at its
+/// target, top speed 2, acceleration and scale 1, drawn, animation 1. The field
+/// effect sprite owns the sprite until FieldEffect_ClearOwnedSlot. Its turn is
+/// limited with turnStepMax 0, so it holds heading 0 until its callback clears
 /// turnStepLimited or gives a step, as the first states of the callbacks that
 /// steer to a target do.
-void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z) {
-  struct AnimationObject *animation;
+void FieldEffectSprite_Initialize(struct FieldEffectSprite *effect, s32 kind,
+                                  s32 x, s32 z) {
+  struct Sprite *animation;
 
   Dma_Fill32(0, effect, sizeof *effect);
-  animation = ResourceObject_CreateFar(kind);
+  animation = Sprite_CreateFar(kind);
   effect->object = animation;
   if (animation != NULL)
     animation->image.priority = 0;
-  EffectSlot_SetPosition(effect, x, z);
+  FieldEffectSprite_SetPosition(effect, x, z);
   effect->scaleX = 0x10000;
   effect->speedMax = 0x20000;
   effect->scaleY = 0x10000;
   effect->acceleration = 0x10000;
   effect->originX = x;
   effect->originZ = z;
-  // BUG: ResourceObject_CreateFar can return NULL, but this and the animation
+  // BUG: Sprite_CreateFar can return NULL, but this and the animation
   // setup below still require a sprite. Callers also immediately use it, so
   // guarding this store alone would not establish allocation-failure recovery.
   {
-    struct AnimationObject *sprite = effect->object;
+    struct Sprite *sprite = effect->object;
     sprite->flags = 0;
   }
   effect->stopAtTarget = 1;
@@ -180,14 +184,14 @@ void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z) {
   effect->active = 1;
   effect->randomValue = Random16();
   effect->flags = 4;
-  EffectSlot_SetObjectMode(effect, 1);
+  FieldEffectSprite_SetObjectMode(effect, 1);
 }
 
-/// Frees an effect slot and its sprite, clearing the slot to zero (inactive).
-/// Slot callbacks call it on their own slot as their last state; the slot
-/// update then neither moves nor draws it.
-void FieldEffect_ClearOwnedSlot(struct EffectSlot *effect) {
+/// Frees a field effect sprite and its sprite, clearing it to zero
+/// (inactive). Its callback calls it as its last state; the update then
+/// neither moves nor draws it.
+void FieldEffect_ClearOwnedSlot(struct FieldEffectSprite *effect) {
   if (effect->object)
-    ResourceObject_ReleaseFar(effect->object);
+    Sprite_DestroyFar(effect->object);
   Dma_Fill32(0, effect, sizeof *effect);
 }

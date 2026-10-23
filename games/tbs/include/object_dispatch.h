@@ -10,7 +10,7 @@
 
 union FieldObject;
 
-/// A field object as the object dispatcher's far calls take it.
+/// An object as the object dispatcher's far calls take it.
 struct DispatchObject {
   u32 value00; ///< the object script's address
   s16 value04; ///< the script cursor, in words
@@ -20,11 +20,11 @@ struct DispatchObject {
   s32 x;
   s32 y;
   s32 z;
-  s32 terrainHeight;
+  s32 groundHeight;
   s32 scaleX;
   s32 scaleY;
   u16 radius;
-  u8 terrainId;
+  u8 layer;
   u8 priorityFlags;
   s32 velocityX;
   s32 velocityY;
@@ -42,8 +42,8 @@ struct DispatchObject {
   s32 riseBaseY;
   ///@}
   union {
-    struct AnimationObject *child; ///< OBJECT_SPRITE_ONE
-    void **children; ///< OBJECT_SPRITE_GROUP: four, empty ones null
+    struct Sprite *child; ///< OBJECT_SPRITE_ONE
+    void **children;      ///< OBJECT_SPRITE_GROUP: four, empty ones null
   } target;
   u8 kind;           ///< low four bits: an OBJECT_SPRITE_ kind
   u8 motionFlags;    ///< ObjectEvent's; not named here
@@ -65,7 +65,7 @@ struct DispatchObject {
   u8 riseEnabled;
   ///@}
   s16 value64;       ///< the action script's parameter; the camera clears it
-  s16 footprintSide; ///< ObjectRuntime's; not named here
+  s16 footprintSide; ///< Object's; not named here
   s32 argument;      ///< the linked object a script approaches or follows
   /// ObjectEvent's update hook; not named here.
   void (*update)(union FieldObject *object);

@@ -102,16 +102,16 @@ const struct ObjectEventTemplate *TretTreeBranch_GetObjectEventTemplates(void) {
 }
 
 /// Moves the leader and camera by signed 16-pixel cell offsets, placing each
-/// at the terrain height of its destination.
+/// at the ground height of its destination.
 static void TretTreeBranch_ShiftLeaderAndCameraByCells(s32 cellOffsetX,
                                                        s32 cellOffsetZ) {
-  struct EventWork *state = gEventWork;
+  struct EventWork *state = gFieldWork;
   struct ObjectEvent *objectEvent;
   s32 offsetX = cellOffsetX;
   s32 offsetZ = cellOffsetZ;
-  s32 terrainHeight;
+  s32 groundHeight;
 
-  objectEvent = ObjectEvent_GetById(gGameState.selectedLocalId);
+  objectEvent = ObjectEvent_GetById(gGameState.leaderLocalId);
   // Multiplication keeps negative cell offsets defined; every caller is within
   // six cells, so the fixed-point result fits in s32.
   offsetX *= PIXELS(16);
@@ -121,20 +121,20 @@ static void TretTreeBranch_ShiftLeaderAndCameraByCells(s32 cellOffsetX,
   if (objectEvent != 0) {
     objectEvent->x.fixed += offsetX;
     objectEvent->z.fixed += offsetZ;
-    terrainHeight = MapGrid_GetTerrainHeight(
-        objectEvent->terrainId, objectEvent->x.fixed, objectEvent->z.fixed);
-    objectEvent->y.fixed = terrainHeight;
-    objectEvent->terrainHeight = terrainHeight;
+    groundHeight = MapGrid_GetTerrainHeight(
+        objectEvent->layer, objectEvent->x.fixed, objectEvent->z.fixed);
+    objectEvent->y.fixed = groundHeight;
+    objectEvent->groundHeight = groundHeight;
   }
 
-  objectEvent = state->viewCenter;
+  objectEvent = state->camera;
   if (objectEvent != 0) {
     objectEvent->x.fixed += offsetX;
     objectEvent->z.fixed += offsetZ;
-    terrainHeight = MapGrid_GetTerrainHeight(
-        objectEvent->terrainId, objectEvent->x.fixed, objectEvent->z.fixed);
-    objectEvent->y.fixed = terrainHeight;
-    objectEvent->terrainHeight = terrainHeight;
+    groundHeight = MapGrid_GetTerrainHeight(
+        objectEvent->layer, objectEvent->x.fixed, objectEvent->z.fixed);
+    objectEvent->y.fixed = groundHeight;
+    objectEvent->groundHeight = groundHeight;
   }
 }
 
@@ -179,17 +179,17 @@ static void EventScript_ShiftNorthSixCells(void) {
 /// leaves by the warp touched, into Tret Tree's other map
 /// (MapId_TretTreeInteriors).
 static void EventScript_TakeTouchedWarp(void) {
-  struct EventWork *state = gEventWork;
+  struct EventWork *state = gFieldWork;
   s16 *touchedWarp;
 
   SE(SE_MAP_EXIT);
-  touchedWarp = &state->touchedTrigger;
+  touchedWarp = &state->coordEvent;
   Engine_ScriptRequestWarp(*touchedWarp);
 }
 
 /// Selects the same mask and window parameters for Reveal and map entry.
 static inline void
-TretTreeBranch_SetRevealWindow(struct DisplayTransitionState *state) {
+TretTreeBranch_SetRevealWindow(struct ScreenTransitionState *state) {
   state->mask = 0x3f3f;
   state->active = 31;
   state->value = 10;
@@ -198,14 +198,14 @@ TretTreeBranch_SetRevealWindow(struct DisplayTransitionState *state) {
 /// Casting Reveal in Tret Tree: the window transition and BG1's blend over the
 /// rest of the screen are set again, as when the map opened.
 static void EventScript_CastReveal(void) {
-  struct DisplayTransitionState *state;
+  struct ScreenTransitionState *state;
 
-  DisplayTransition_InitializeBattleEffectState(9);
+  ScreenTransition_InitializeBattleEffectState(9);
 
   REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = BLEND_ALPHA(4, 12);
 
-  state = gDisplayTransition;
+  state = gScreenTransitionWork;
   TretTreeBranch_SetRevealWindow(state);
 }
 
@@ -216,8 +216,8 @@ const struct MapEvent *TretTreeBranch_GetEvents(void) {
 
 /// Unused script hook: begins and immediately ends a script.
 static void UNUSED TretTreeBranch_RunEmptyEvent(void) {
-  EV_START();
-  EV_END();
+  SCRIPT_START();
+  SCRIPT_END();
 }
 
 static void UNUSED TretTreeBranch_UnusedHookFirst(void) {}
@@ -237,23 +237,23 @@ static void UNUSED TretTreeBranch_ExchangeInputPacket(void) {
 /// split. Returns 0 for the overlay initialization entry point.
 s32 TretTreeBranch_Initialize(void) {
 #ifndef UBFIX
-  u8 **eventSlot = (u8 **)&gEventWork;
+  u8 **eventSlot = (u8 **)&gFieldWork;
 #endif
-  struct DisplayTransitionState *state;
+  struct ScreenTransitionState *state;
 
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 
-  DisplayTransition_InitializeBattleEffectState(9);
+  ScreenTransition_InitializeBattleEffectState(9);
 
   REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = BLEND_ALPHA(4, 12);
 
-  // UB: HEAP_SLOT_TRANSITION lies past scalar gEventWork. Its named load adds
-  // six bytes in the native EN trial (0x6a to 0x70).
+  // UB: HEAP_SLOT_SCREEN_TRANSITION lies past scalar gFieldWork. Its named load
+  // adds six bytes in the native EN trial (0x6a to 0x70).
 #ifdef UBFIX
-  state = gDisplayTransition;
+  state = gScreenTransitionWork;
 #else
-  state = (struct DisplayTransitionState *)eventSlot[4];
+  state = (struct ScreenTransitionState *)eventSlot[4];
 #endif
   TretTreeBranch_SetRevealWindow(state);
 
@@ -348,7 +348,7 @@ u32 gTretTreeBranch_Warps[] = {
 // clang-format off
 struct ObjectEventTemplate gTretTreeBranch_ObjectEventTemplates[] = {
     { JUPITER_DJINNI, FLAG_DJINNI(DJINNI_BREEZE), MOVEMENT_TYPE_STAND,
-        PIXELS(648), 0, PIXELS(88), FACING_WEST, TALK_FACE_PARTY, 0 },
+        PIXELS(648), 0, PIXELS(88), FACING_WEST, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };
 // clang-format on

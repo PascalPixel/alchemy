@@ -2,15 +2,15 @@
 	.set overlay_imports, 1
 	.set import.Math_DivideUnsigned, 1
 	.set import.Engine_TaskWait, 1
-	.set import.Scheduler_AddOrUpdateCallback, 1
+	.set import.Task_Add, 1
 	.set import.Engine_TaskRemoveCallback, 1
 	.set import.Engine_RandomNext, 1
 	.set import.Engine_MathSin, 1
-	.set import.Runtime_AllocateBlock, 1
-	.set import.Runtime_BumpAllocateAlternatePool, 1
+	.set import.AllocHeapSlotEwram, 1
+	.set import.AllocEwram, 1
 	.set import.Engine_VramLoad, 1
-	.set import.Resource_FindFreeEntry, 1
-	.set import.Runtime_PushSlotEntry, 1
+	.set import.VramCache_FindFreeEntry, 1
+	.set import.Oam_AddSpriteAtDepth, 1
 	.set import.ObjectEvent_SetMode, 1
 	.set import.Engine_ObjectSetScript, 1
 	.set import.Engine_ObjectCreate, 1
@@ -34,7 +34,7 @@
 	.set import.Engine_ObjectEventSetAnimationAndWait, 1
 	.set import.Engine_ObjectEventRunRepeatedMotion, 1
 	.set import.Engine_ScriptSetMessage, 1
-	.set import.UiText_OpenMessageAtObject, 1
+	.set import.FieldMessage_ShowAtObject, 1
 	.set import.Engine_ScriptShowMessage, 1
 	.set import.Engine_ObjectEventFaceDirection, 1
 	.set import.Engine_ObjectEventShowEmote, 1
@@ -46,9 +46,9 @@
 	.set import.Engine_ScriptCloseScreen, 1
 	.set import.Engine_ScriptWaitForScreen, 1
 	.set import.Field_EndBusyAndReveal, 1
-	.set import.Motion_LaunchFromFocusedObject, 1
+	.set import.ObjectMotion_LaunchFromFocusedObject, 1
 	.set import.ObjectMotion_CommitPositionAndActivate, 1
-	.set import.AudioCommand_WaitForStateByteClear, 1
+	.set import.Sound_WaitForFanfare, 1
 	.set import.Engine_AudioPlayCue, 1
-	.set import.MusicCommand_SetPitchAndUpdateFrequency, 1
+	.set import.Sound_SetBgmTempo, 1
 	.include "games/tbs/src/system/overlay.inc"

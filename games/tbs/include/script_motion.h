@@ -22,7 +22,7 @@ struct ScriptMotionWords {
 typedef struct ScriptMotionWords ScriptMotionWords;
 #endif
 
-/// A field object as the motion code sees it: its script, position, motion
+/// An object as the motion code sees it: its script, position, motion
 /// toward a target, bounce and gravity, motion flags and wait, and its hook.
 struct ScriptMotionObject {
   const ScriptMotionWords *script; ///< null when the object is free
@@ -31,14 +31,14 @@ struct ScriptMotionObject {
   s32 x;                           ///< 16.16 fixed-point pixels
   s32 y;                           ///< 16.16 fixed-point pixels
   s32 z;                           ///< 16.16 fixed-point pixels
-  s32 terrainHeight;               ///< 16.16 fixed-point pixels
+  s32 groundHeight;                ///< 16.16 fixed-point pixels
   /// ObjectEvent's scales and radius; not named here.
   ///@{
   s32 scaleX;
   s32 scaleY;
   u16 radius;
   ///@}
-  u8 terrainId;     ///< the map layer whose ground height it follows
+  u8 layer;         ///< the map layer whose ground height it follows
   u8 priorityFlags; ///< ObjectEvent's; not named here
   s32 velocityX;    ///< 16.16 fixed-point pixels per frame
   s32 velocityY;    ///< 16.16 fixed-point pixels per frame
@@ -83,7 +83,7 @@ struct ScriptMotionObject {
   s16 wait;   ///< frames left before its script runs again
   u8 refused; ///< frames in a row a solid object refused its move
   u8 frozen;  ///< nonzero skips steering, terrain, gravity and floating
-  /// ObjectEvent's two bytes map code uses and ObjectRuntime's action
+  /// ObjectEvent's two bytes map code uses and Object's action
   /// parameter, footprint side and linked object; not named here.
   ///@{
   u8 riseCounter;

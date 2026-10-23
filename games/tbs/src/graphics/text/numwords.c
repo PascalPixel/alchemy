@@ -13,15 +13,15 @@
 /// or 1.
 /// Words 5 to 7 are empty, and word 7's plural is a null pointer.
 // clang-format off
-const u8 *const gUiText_NumberWords[16] = {
-    gUiText_NumberWord9, gUiText_NumberWord8, // Punkt, Punkte
-    gUiText_NumberWord7, gUiText_NumberWord6, // Münze, Münzen
-    gUiText_NumberWord5, gUiText_NumberWord4, // Runde, Runden
-    gUiText_NumberWord3, gUiText_NumberWord2, // Ticket, Tickets
-    gUiText_NumberWord1, gUiText_NumberWord0, // Kampf, Käpfe (ROM spelling retained: the m is missing)
-    (const u8 *)gUiText_ArticleEmpty, (const u8 *)gUiText_ArticleEmpty,
-    (const u8 *)gUiText_ArticleEmpty, (const u8 *)gUiText_ArticleEmpty,
-    (const u8 *)gUiText_ArticleEmpty, 0,
+const u8 *const gLocalizedWord_Numbers[16] = {
+    gLocalizedWord_Number9, gLocalizedWord_Number8, // Punkt, Punkte
+    gLocalizedWord_Number7, gLocalizedWord_Number6, // Münze, Münzen
+    gLocalizedWord_Number5, gLocalizedWord_Number4, // Runde, Runden
+    gLocalizedWord_Number3, gLocalizedWord_Number2, // Ticket, Tickets
+    gLocalizedWord_Number1, gLocalizedWord_Number0, // Kampf, Käpfe (ROM spelling retained: the m is missing)
+    (const u8 *)gArticle_Empty, (const u8 *)gArticle_Empty,
+    (const u8 *)gArticle_Empty, (const u8 *)gArticle_Empty,
+    (const u8 *)gArticle_Empty, 0,
 };
 // clang-format on
 #endif

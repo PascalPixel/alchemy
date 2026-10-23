@@ -4,7 +4,7 @@
 
 #include "../psynergy_effects_internal.h"
 
-/// Work slot 22 of the wave effect, 0x298 bytes (gBattleBgEffectWork). It lives
+/// Heap slot 22 of the wave effect, 0x298 bytes (gBattleBgEffectWork). It lives
 /// from FieldEffect_StartMindReadWave to
 /// FieldEffect_FinishWaveAndReleaseHeapBlock, after the conversation Mind Read
 /// reads.
@@ -28,7 +28,7 @@ struct WaveEffectWork {
 /// palettes toward a hue that shifts with the frame counter, and starts its
 /// per-frame update (FieldEffect_UpdateMindReadWave) after 8 frames.
 ///
-/// Abilities: Mind Read (FIELD_KIND_MIND_READ).
+/// Abilities: Mind Read (FIELD_PSYNERGY_MIND_READ).
 ///
 /// The effect stays up until FieldEffect_FinishMindRead ends it
 /// after the after event; meanwhile the message windows show thoughts
@@ -36,19 +36,19 @@ struct WaveEffectWork {
 void FieldEffect_StartMindReadWave(s32 x, s32 y) {
   struct WaveEffectWork *work;
 
-  work = Runtime_AllocateBlock(HEAP_SLOT_MIND_READ, 0x298);
+  work = AllocHeapSlotEwram(HEAP_SLOT_MIND_READ, 0x298);
   FieldEffect_FadeToEffectColor();
   Dma_Fill32(0, work, 0x298);
   work->hue = ((u32)(gFrameCount << 1) % (u32)360);
   FieldEffect_AdvanceHueCycle();
-  // 0x200000 is PALETTE_TRANSFORM_TINT: the BG colours tinted by the hue.
-  ColorBuffer_SetTarget(RGB(work->red, work->green, work->blue) | 0x200000, 1);
-  ColorBuffer_StartInterpolation(8);
+  // 0x200000 is PALETTE_TINT_CUSTOM: the BG colours tinted by the hue.
+  PaletteFade_SetTarget(RGB(work->red, work->green, work->blue) | 0x200000, 1);
+  PaletteFade_StartInterpolation(8);
   work->sourceId = x;
   work->targetId = y;
   work->delay = 8;
   Ui_FillBank15PaletteGrey();
-  Scheduler_AddOrUpdateCallback(FieldEffect_UpdateMindReadWave, 0xc80);
+  Task_Add(FieldEffect_UpdateMindReadWave, 0xc80);
 }
 
 /// Stops the wave effect: restores the caster's colours and the palettes and
@@ -58,15 +58,15 @@ void FieldEffect_FinishWaveAndReleaseHeapBlock(void) {
 
   work = *(void **)((u32)&gBattleBgEffectWork);
   Ui_SetBank15PaletteAndClearRenderMode();
-  Scheduler_RemoveCallback(FieldEffect_UpdateMindReadWave);
+  Task_Remove(FieldEffect_UpdateMindReadWave);
   Animation_ApplyChildPalette((struct MotionObject *)ObjectEvent_GetById(
                                   ((struct WaveEffectWork *)work)->sourceId),
                               1);
   FieldEffect_FadeFromEffectColor();
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_MIND_READ);
+  FreeHeapSlot(HEAP_SLOT_MIND_READ);
 }
 
-/// Scheduler callback of the wave effect: once its delay has run out, writes
+/// Task of the wave effect: once its delay has run out, writes
 /// the next page of scanline offsets (a sine wave of 4 pixels either way),
 /// steps the colour fade and the hue, keeps the caster's colours lit, and
 /// every 60 frames sends three particles (object 281) from the target to the
@@ -98,9 +98,9 @@ void FieldEffect_UpdateMindReadWave(void) {
   work->page ^= 1;
   // Every other frame the tint takes the next hue, in one frame.
   if (work->page != 0) {
-    ColorBuffer_SetTarget(RGB(work->red, work->green, work->blue) | 0x200000,
+    PaletteFade_SetTarget(RGB(work->red, work->green, work->blue) | 0x200000,
                           1);
-    ColorBuffer_StartInterpolation(1);
+    PaletteFade_StartInterpolation(1);
     FieldEffect_AdvanceHueCycle();
   }
   Animation_ApplyChildPalette(
@@ -134,14 +134,14 @@ void FieldEffect_UpdateMindReadWave(void) {
         // No shadow or outline, sprite priority 1.
         sprite->palette = 0;
         sprite->mode = 1;
-        Object_SetMoveTargetFar((struct ObjectRuntime *)particle, from.x,
-                                from.y, from.z);
+        Object_SetMoveTargetFar((struct Object *)particle, from.x, from.y,
+                                from.z);
       }
     }
   }
 
   if (work->counter == 0)
-    AudioCommand_PlayFar(SE_130);
+    Sound_PlaySongFar(SE_130);
   if (++work->counter > 60)
     work->counter = 0;
 }
@@ -151,7 +151,7 @@ void FieldEffect_UpdateMindReadWave(void) {
 
 #define MIND_READ_GREY RGB(28, 28, 28)
 
-/// Scheduler callback: restarts the HBlank DMA that writes BG0's horizontal
+/// Task: restarts the HBlank DMA that writes BG0's horizontal
 /// scroll for each scanline from the wave's shown page.
 void FieldEffect_ArmBg0HBlankDma(void) {
   struct WaveEffectWork *work = gBattleBgEffectWork;
@@ -241,7 +241,7 @@ s32 FixedPoint_Remainder(s32 value, s32 divisor) {
 /// axis), frees it: gFieldEffect_UntargetedObjectScript is a lone SC_FREE.
 /// Mind Read's particles end this way at the caster.
 void FieldEffect_SetCallbackWhenTargetUnset(union FieldObject *fieldObject) {
-  struct ObjectRuntime *object = (struct ObjectRuntime *)fieldObject;
+  struct Object *object = (struct Object *)fieldObject;
   s32 targetY;
   s32 targetX;
 
@@ -263,7 +263,7 @@ void Ui_FillBank15PaletteGrey(void) {
 
   // Window mode 1: messages show as thoughts until
   // Ui_SetBank15PaletteAndClearRenderMode clears it.
-  ((struct UiRenderWork *)gWindowWork[0])->mode = 1;
+  ((struct WindowWork *)gWindowWork[0])->mindRead = 1;
   p = &BG_PLTT_COLOR(15, 1);
   *p = MIND_READ_GREY;
   p += 2;
@@ -286,8 +286,8 @@ void Ui_FillBank15PaletteGrey(void) {
   *p = MIND_READ_GREY;
   p += 1;
   *p = MIND_READ_GREY;
-  // 0x480 is SCHEDULER_KEY_VBLANK.
-  Scheduler_AddOrUpdateCallback(FieldEffect_ArmBg0HBlankDma, 0x480);
+  // 0x480 is TASK_PRIORITY_VBLANK.
+  Task_Add(FieldEffect_ArmBg0HBlankDma, 0x480);
 }
 
 /// Stops the BG0 scanline scroll and restores BG palette 15.
@@ -295,14 +295,14 @@ void Ui_SetBank15PaletteAndClearRenderMode(void) {
   void *work;
 
   work = gWindowWork[0];
-  Scheduler_RemoveCallback(FieldEffect_ArmBg0HBlankDma);
+  Task_Remove(FieldEffect_ArmBg0HBlankDma);
   // Palette 15's white, black and two greys.
   BG_PLTT_COLOR(15, 1) = RGB(31, 31, 31);
   BG_PLTT_COLOR(15, 3) = 0;
   BG_PLTT_COLOR(15, 11) = RGB(10, 10, 10);
   BG_PLTT_COLOR(15, 12) = RGB(20, 20, 20);
-  PaletteGlow_UpdateFar(gGameState.paletteGlow[0], gGameState.paletteGlow[1]);
-  ((struct UiRenderWork *)work)->mode = 0;
+  WindowColor_ApplyFar(gGameState.windowColor[0], gGameState.windowColor[1]);
+  ((struct WindowWork *)work)->mindRead = 0;
 }
 
 #undef MIND_READ_GREY

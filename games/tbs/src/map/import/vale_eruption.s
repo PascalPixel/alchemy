@@ -36,8 +36,8 @@
 	.set import.Engine_CameraWaitForMove, 1
 	.set import.Engine_CameraMoveToObjectEvent, 1
 	.set import.Engine_ScriptRequestWarp, 1
-	.set import.FieldEffect_LastLightning, 1
-	.set import.FieldEffect_StartBufferBlend, 1
+	.set import.Weather_LastLightning, 1
+	.set import.Weather_StartLightningFlash, 1
 	.set import.Engine_ScriptOpenScreen, 1
 	.set import.Engine_ScriptCloseScreen, 1
 	.set import.Engine_AudioPlayCue, 1

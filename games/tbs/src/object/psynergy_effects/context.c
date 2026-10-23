@@ -12,7 +12,7 @@
 /// ObjectEvent_GetScreenPositionFar by the window frames to open a message
 /// window above or below the leader.
 s32 ObjectEvent_GetScreenPosition(s32 objectId, s32 *position) {
-  struct ObjectRuntime *object = ObjectTable_Get(objectId);
+  struct Object *object = ObjectEvent_GetByLocalId(objectId);
 #ifdef UBFIX
   struct MapGridScrollWork *grid;
 #else
@@ -43,42 +43,41 @@ s32 ObjectEvent_GetScreenPosition(s32 objectId, s32 *position) {
   *position++ = x / 0x10000;
   *position = z / 0x10000;
   if ((object->animationKind & 15) == OBJECT_SPRITE_ONE)
-    *position -= (s8)Resource_GetMetadataRecordFar(
-                     ((struct AnimationObject *)object->animation)
-                         ->entries[0]
-                         ->animationId)
-                     ->boxX;
+    *position -=
+        (s8)Resource_GetMetadataRecordFar(
+            ((struct Sprite *)object->animation)->entries[0]->animationId)
+            ->boxX;
   return 0;
 }
 
 /// Unused: an empty function nothing calls.
-UNUSED void ObjectEffect_ReservedNoOp941DC(void) {}
+UNUSED void Warp_ReservedNoOp941DC(void) {}
 
 // UB: no value is returned, and run_map.c ignores it; as void, the epilogue
 // changes.
-/// Starts the transition into a random battle: plays the map's battle cue
+/// Starts the transition into a random battle: plays the map's battle music
 /// and the encounter sounds, closes the screen and flashes the backdrop white,
-/// fading it to black over 16 frames. Called by Field_RunMap when it handles
+/// fading it to black over 16 frames. Called by Map_Run when it handles
 /// work->battle; clears work->transitionActive once the screen is closed.
 #ifdef UBFIX
 void Field_StartEncounterTransition(s32 unused) {
 #else
 s32 Field_StartEncounterTransition(s32 unused) {
 #endif
-  struct FieldWork *work = (struct FieldWork *)gEventWork;
+  struct FieldWork *work = (struct FieldWork *)gFieldWork;
   s32 i;
   s32 level;
 
-  AudioCommand_PlayFar(gGameState.battleCue);
-  AudioCommand_PlayFar(SE_STOP_SLOT3);
-  AudioCommand_PlayFar(SE_147);
-  if (work->mode == MODE_WORLD_MAP) {
+  Sound_PlaySongFar(gGameState.battleMusic);
+  Sound_PlaySongFar(SE_STOP_SLOT3);
+  Sound_PlaySongFar(SE_147);
+  if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
     // On the world map the flash colours BG palette colour 243 instead, and
     // the screen closes on the flickering centre line (style 4, variant 1);
     // a field map closes with WINDOW_TRANSITION_LEADER_INVERSE. Both take
     // 16 frames.
     Io_Write16(RGB(31, 31, 31), (u16 *)&BG_PLTT_COLOR(15, 3));
-    DisplayTransition_Finish(MAP_TRANSITION(4, 1), 16);
+    ScreenTransition_Finish(MAP_TRANSITION(4, 1), 16);
     work->transitionActive = 0;
     WaitFrames(16);
     // Step the white down by 2 a frame: 30 to 0 in 16 frames.
@@ -89,7 +88,7 @@ s32 Field_StartEncounterTransition(s32 unused) {
     }
   } else {
     Io_Write16(RGB(31, 31, 31), &PLTT_BACKDROP);
-    DisplayTransition_Finish(
+    ScreenTransition_Finish(
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER_INVERSE),
         16);
     work->transitionActive = 0;
@@ -103,26 +102,26 @@ s32 Field_StartEncounterTransition(s32 unused) {
 }
 
 /// Starts the leader's animation for leaving through a warp: centres it on
-/// its tile, at the tile's south edge, stops it and plays animation over 18
+/// its cell, at the cell's south edge, stops it and plays animation over 18
 /// frames. The leader's sprite gains a second part (metadata 27) for it.
 /// Called by the two ObjectEffect_StartContextEffect functions below.
-void ObjectEffect_PrepareContextEffect(s32 animation) {
+void Warp_PrepareExitAnimation(s32 animation) {
   u32 zero;
   u8 param;
-  struct ObjectRuntime *object;
-  struct AnimationObject *context;
-  struct AnimationEntry *effect;
+  struct Object *object;
+  struct Sprite *context;
+  struct SpriteAnim *effect;
 
-  object = ObjectTable_Get(gGameState.selectedLocalId);
+  object = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
   context = object->animation;
-  effect = (struct AnimationEntry *)ResourceMetadata_RegisterFar(context, 27);
+  effect = (struct SpriteAnim *)Sprite_AddAnimFar(context, 27);
   zero = 0;
   param = SPRITE_COLOR_HIDDEN;
 
   // No shadow as the leader leaves.
   context->flags = zero;
   effect->colorMode = param;
-  // Positions are 16.16 fixed point and tiles 16 pixels: keep the tile and
+  // Positions are 16.16 fixed point and cells 16 pixels: keep the cell and
   // put the leader at its middle in x (8 pixels) and its south edge in z.
   object->x = (object->x & 0xFFF00000) + 0x80000;
   object->z = (object->z & 0xFFF00000) + 0x100000;
@@ -134,37 +133,36 @@ void ObjectEffect_PrepareContextEffect(s32 animation) {
   WaitFrames(18);
 }
 
-/// Leaves through a WARP_STYLE_ANIMATED warp (ANIMATION_LEADER_LEAVE);
-/// FLAG_WARP_ARRIVAL_PENDING makes the next map play the matching arrival
-/// (ObjectEffect_RunPendingFlagEvent). Called by the warp handling in
+/// Leaves through a WARP_STYLE_STAIRS_UP warp (ANIMATION_LEADER_LEAVE);
+/// FLAG_WARP_ARRIVAL_STAIRS_UP makes the next map play the matching arrival
+/// (Warp_PlayArrival). Called by the warp handling in
 /// object/events.c, after it plays SE_STAIRS_UP.
-void ObjectEffect_StartContextEffect26(void) {
-  ObjectEffect_PrepareContextEffect(ANIMATION_LEADER_LEAVE);
-  GameFlag_SetBitFar(FLAG_WARP_ARRIVAL_PENDING);
+void Warp_StartStairsUpExit(void) {
+  Warp_PrepareExitAnimation(ANIMATION_LEADER_LEAVE);
+  GameFlag_SetBitFar(FLAG_WARP_ARRIVAL_STAIRS_UP);
 }
 
-/// Leaves through a WARP_STYLE_ANIMATED_ALTERNATE warp
-/// (ANIMATION_LEADER_LEAVE_ALTERNATE), recorded in FLAG_WARP_ARRIVAL_ALTERNATE.
-/// Called by the warp handling in object/events.c, after it plays
-/// SE_STAIRS_DOWN.
-void ObjectEffect_StartContextEffect25(void) {
-  ObjectEffect_PrepareContextEffect(ANIMATION_LEADER_LEAVE_ALTERNATE);
-  GameFlag_SetBitFar(FLAG_WARP_ARRIVAL_ALTERNATE);
+/// Leaves through a WARP_STYLE_STAIRS_DOWN warp
+/// (ANIMATION_LEADER_LEAVE_ALTERNATE), recorded in
+/// FLAG_WARP_ARRIVAL_STAIRS_DOWN. Called by the warp handling in
+/// object/events.c, after it plays SE_STAIRS_DOWN.
+void Warp_StartStairsDownExit(void) {
+  Warp_PrepareExitAnimation(ANIMATION_LEADER_LEAVE_ALTERNATE);
+  GameFlag_SetBitFar(FLAG_WARP_ARRIVAL_STAIRS_DOWN);
 }
 
-/// Plays the leader's arrival animation through a warp: centred on its tile
-/// at the tile's north edge, the leader plays animation for 30 frames, loses
+/// Plays the leader's arrival animation through a warp: centred on its cell
+/// at the cell's north edge, the leader plays animation for 30 frames, loses
 /// the extra sprite part and walks 8 pixels south. Called by
-/// ObjectEffect_RunPendingFlagEvent; frees the sprite part
-/// ObjectEffect_PrepareContextEffect registered.
-void ObjectEffect_EndContextEffect(s32 animation) {
+/// Warp_PlayArrival; frees the sprite part
+/// Warp_PrepareExitAnimation registered.
+void Warp_EndArrivalAnimation(s32 animation) {
   s32 zero;
   s32 mask;
-  struct ObjectRuntime *leader = ObjectTable_Get(gGameState.selectedLocalId);
-  struct AnimationObject *spriteAnimation = leader->animation;
-  struct AnimationEntry *eff =
-      (struct AnimationEntry *)ResourceMetadata_RegisterFar(spriteAnimation,
-                                                            27);
+  struct Object *leader = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
+  struct Sprite *spriteAnimation = leader->animation;
+  struct SpriteAnim *eff =
+      (struct SpriteAnim *)Sprite_AddAnimFar(spriteAnimation, 27);
 
   zero = 0;
   mask = 0xfff00000;
@@ -177,60 +175,60 @@ void ObjectEffect_EndContextEffect(s32 animation) {
   // Back to one sprite part, with its shadow, walking 8 pixels south at 1
   // pixel a frame.
   spriteAnimation->count = 1;
-  ResourceMetadata_ClearRecordFar(spriteAnimation->entries[1]);
+  SpriteAnim_ClearFar(spriteAnimation->entries[1]);
   spriteAnimation->entries[1] = (void *)zero;
   spriteAnimation->flags = SPRITE_FLAG_SHADOW;
   leader->acceleration = 0x10000;
   leader->speedLimit = 0x10000;
   Object_SetMoveTargetFar(leader, leader->x, leader->y, leader->z + 0x80000);
-  FieldObject_WaitForMoveFar(leader);
+  Object_WaitForMoveFar(leader);
 }
 
 /// Plays the leader's arrival for the way the last map was left: through a
-/// WARP_STYLE_ANIMATED warp (FLAG_WARP_ARRIVAL_PENDING,
-/// ANIMATION_LEADER_ARRIVE, returns 1) or a WARP_STYLE_ANIMATED_ALTERNATE one
-/// (FLAG_WARP_ARRIVAL_ALTERNATE, ANIMATION_LEADER_ARRIVE_ALTERNATE, returns 2),
-/// or falling in from 160 pixels above (FLAG_ARRIVE_FALLING, returns 3).
-/// Returns 0 when there is nothing to play. Called by Field_RunMap as the
+/// WARP_STYLE_STAIRS_UP warp (FLAG_WARP_ARRIVAL_STAIRS_UP,
+/// ANIMATION_LEADER_ARRIVE, returns 1) or a WARP_STYLE_STAIRS_DOWN one
+/// (FLAG_WARP_ARRIVAL_STAIRS_DOWN, ANIMATION_LEADER_ARRIVE_ALTERNATE, returns
+/// 2), or falling in from 160 pixels above (FLAG_ARRIVE_FALLING, returns 3).
+/// Returns 0 when there is nothing to play. Called by Map_Run as the
 /// map fades in, which waits out the fade itself only when this returns 0.
 /// Clears the flag it acts on.
-s32 ObjectEffect_RunPendingFlagEvent(void) {
+s32 Warp_PlayArrival(void) {
   s32 result = 0;
-  s32 flag = FLAG_WARP_ARRIVAL_PENDING;
+  s32 flag = FLAG_WARP_ARRIVAL_STAIRS_UP;
 
   if (GameFlag_TestFar(flag) != 0) {
-    ObjectEffect_EndContextEffect(ANIMATION_LEADER_ARRIVE);
+    Warp_EndArrivalAnimation(ANIMATION_LEADER_ARRIVE);
     GameFlag_ClearBitFar(flag);
     result = 1;
   } else {
-    flag = FLAG_WARP_ARRIVAL_ALTERNATE;
+    flag = FLAG_WARP_ARRIVAL_STAIRS_DOWN;
     if (GameFlag_TestFar(flag) != 0) {
-      ObjectEffect_EndContextEffect(ANIMATION_LEADER_ARRIVE_ALTERNATE);
+      Warp_EndArrivalAnimation(ANIMATION_LEADER_ARRIVE_ALTERNATE);
       GameFlag_ClearBitFar(flag);
       result = 2;
     } else {
       flag = FLAG_ARRIVE_FALLING;
       if (GameFlag_TestFar(flag) != 0) {
         s32 leaderId;
-        struct ObjectRuntime *leader;
+        struct Object *leader;
 
         GameFlag_ClearBitFar(flag);
-        leaderId = gGameState.selectedLocalId;
-        leader = ObjectTable_Get(leaderId);
+        leaderId = gGameState.leaderLocalId;
+        leader = ObjectEvent_GetByLocalId(leaderId);
         // FLAG_ARRIVE_FALLING is set by maps the party drops out of (the
         // Suhalla storm, a floor giving way in the Tret tree): start 160 pixels
         // up and let gravity bring the leader down to the ground.
         leader->y += 0x00a00000;
-        Camera_MoveWithinMapBounds(-1, -1, -1, 0);
+        FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);
         // Until the next frame's fall would reach the ground.
-        while (leader->y + leader->velocityY > leader->terrainHeight) {
+        while (leader->y + leader->velocityY > leader->groundHeight) {
           WaitFrames(1);
         }
-        AudioCommand_PlayFar(SE_159);
-        leader->y = leader->terrainHeight;
+        Sound_PlaySongFar(SE_159);
+        leader->y = leader->groundHeight;
         ObjectDispatch_SelectAnimationFar(leader, 22);
         FieldScript_WaitFrames(15);
-        Camera_FollowObjectEvent(leaderId, 1);
+        FieldCamera_FollowObjectEvent(leaderId, 1);
         result = 3;
       }
     }

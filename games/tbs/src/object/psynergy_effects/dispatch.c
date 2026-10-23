@@ -5,7 +5,8 @@
 #include "../psynergy_effects_internal.h"
 
 // The dispatchers use the common effect scene. Individual update hooks use
-// their object event or EffectSlot contract; neither is a map-script callback.
+// their object event or FieldEffectSprite contract; neither is a map-script
+// callback.
 
 /// Runs one step of the current Psynergy effect: an enum PsynergyEffectStep.
 /// Exported as Field_DispatchTypeHandlerFar; Goma Cave's entrance imports it
@@ -25,7 +26,7 @@ void Field_DispatchTypeHandler(s32 kind) {
 void _call_via_r3(s32, s32);
 
 /// Casts the current Psynergy effect with no target: runs the body of its
-/// kind (scene->fieldKind).
+/// kind (scene->fieldPsynergy).
 ///
 /// Called by Field_UsePsynergy when no map event names a target
 /// (FLAG_PSYNERGY_TARGET clear), by Field_UseItem for an item with a field
@@ -38,43 +39,43 @@ void FieldEffect_Run(void) {
   s32 targetId;
   s32 nearestTargetId;
 
-  effectWork = *(gWorkSlot + HEAP_SLOT_EFFECT);
-  runtime = *(gWorkSlot + HEAP_SLOT_EVENT);
-  kind = effectWork->fieldKind;
+  effectWork = *(gHeapSlots + HEAP_SLOT_FIELD_EFFECT);
+  runtime = *(gHeapSlots + HEAP_SLOT_FIELD);
+  kind = effectWork->fieldPsynergy;
   targetId = effectWork->secondObjectId;
 
   switch (kind) {
-  case FIELD_KIND_MOVE:
+  case FIELD_PSYNERGY_MOVE:
     FieldEffect_RunMove();
     return;
-  case FIELD_KIND_LIFT:
+  case FIELD_PSYNERGY_LIFT:
     FieldEffect_RunLift();
     return;
-  case FIELD_KIND_CARRY:
+  case FIELD_PSYNERGY_CARRY:
     FieldEffect_RunCarry();
     return;
-  case FIELD_KIND_FORCE:
+  case FIELD_PSYNERGY_FORCE:
     FieldEffect_RunForce();
     return;
-  case FIELD_KIND_DOUSE:
+  case FIELD_PSYNERGY_DOUSE:
     FieldEffect_RunDouse();
     return;
-  case FIELD_KIND_WHIRLWIND:
+  case FIELD_PSYNERGY_WHIRLWIND:
     FieldEffect_RunWhirlwind();
     return;
-  case FIELD_KIND_FROST:
+  case FIELD_PSYNERGY_FROST:
     FieldEffect_RunFrost();
     return;
-  case FIELD_KIND_PLY:
+  case FIELD_PSYNERGY_PLY:
     FieldEffect_RunPly();
     return;
-  case FIELD_KIND_GROWTH:
+  case FIELD_PSYNERGY_GROWTH:
     FieldEffect_RunGrowth();
     return;
-  case FIELD_KIND_CATCH:
+  case FIELD_PSYNERGY_CATCH:
     FieldEffect_RunCatch();
     return;
-  case FIELD_KIND_HALT:
+  case FIELD_PSYNERGY_HALT:
     // Free the object stopped before, then stop the nearest one.
     if (gGameState.pausedObject != -1) {
       FieldEffect_ResumeObject(gGameState.pausedObject);
@@ -82,10 +83,10 @@ void FieldEffect_Run(void) {
     }
 
     nearestTargetId =
-        Field_FindNearbyPsynergyTarget(gGameState.selectedLocalId, kind);
+        Field_FindNearbyPsynergyTarget(gGameState.leaderLocalId, kind);
     nearestTargetId = FieldEffect_FilterObjectIdByFlags(nearestTargetId);
     if (Map_FindObjectEventTalkEvent(nearestTargetId) != 0) {
-      FieldEffect_SetupObjectPair(gGameState.selectedLocalId, nearestTargetId);
+      FieldEffect_SetupObjectPair(gGameState.leaderLocalId, nearestTargetId);
       FieldEffect_RunHaltOnTarget(nearestTargetId);
       FieldEffect_PauseObject(nearestTargetId);
       gGameState.pausedObject = nearestTargetId;
@@ -93,22 +94,22 @@ void FieldEffect_Run(void) {
       FieldEffect_RunHalt();
     }
     return;
-  case FIELD_KIND_MIND_READ:
+  case FIELD_PSYNERGY_MIND_READ:
     // The wave and colour effect, stopping a running Reveal first.
     if (runtime->revealActive != 0)
       FieldEffect_EndReveal();
     FieldEffect_StartMindReadWave(effectWork->firstObjectId, targetId);
     return;
-  case FIELD_KIND_REVEAL:
+  case FIELD_PSYNERGY_REVEAL:
     FieldEffect_RunReveal();
     return;
-  case FIELD_KIND_CLOAK:
+  case FIELD_PSYNERGY_CLOAK:
     FieldEffect_StartCloak();
     return;
-  case FIELD_KIND_RETREAT:
+  case FIELD_PSYNERGY_RETREAT:
     FieldEffect_RunRetreat();
     return;
-  case FIELD_KIND_AVOID:
+  case FIELD_PSYNERGY_AVOID:
     FieldEffect_RunAvoid();
     return;
   }
@@ -124,43 +125,43 @@ void FieldEffect_Run(void) {
 /// Whirlwind, Catch) tell that a map event decides what happens to the
 /// target. Halt also moves gGameState.pausedObject to the target.
 void FieldEffect_DispatchRequestKind(void) {
-  struct FieldEffectWork *effectWork = *(gWorkSlot + HEAP_SLOT_EFFECT);
-  struct FieldWork *runtime = *(gWorkSlot + HEAP_SLOT_EVENT);
-  s32 kind = effectWork->fieldKind;
+  struct FieldEffectWork *effectWork = *(gHeapSlots + HEAP_SLOT_FIELD_EFFECT);
+  struct FieldWork *runtime = *(gHeapSlots + HEAP_SLOT_FIELD);
+  s32 kind = effectWork->fieldPsynergy;
   s32 targetId = effectWork->secondObjectId;
 
   effectWork->enabled = 0;
   switch (kind) {
-  case FIELD_KIND_MIND_READ:
+  case FIELD_PSYNERGY_MIND_READ:
     if (runtime->revealActive != 0)
       FieldEffect_EndReveal();
     if (gGameState.pausedObject != effectWork->secondObjectId)
-      ((struct ObjectRuntime *)effectWork->child)->movementState = 1;
+      ((struct Object *)effectWork->child)->movementState = 1;
     FieldEffect_StartMindReadWave(effectWork->firstObjectId, targetId);
     break;
-  case FIELD_KIND_MOVE:
+  case FIELD_PSYNERGY_MOVE:
     // Push the target with the direction keys.
     FieldEffect_SteerPushedTarget(targetId);
     break;
-  case FIELD_KIND_LIFT:
+  case FIELD_PSYNERGY_LIFT:
     FieldEffect_RunLiftOnTarget(targetId);
     break;
-  case FIELD_KIND_CARRY:
+  case FIELD_PSYNERGY_CARRY:
     FieldEffect_SteerLiftedTarget(targetId);
     break;
-  case FIELD_KIND_FORCE:
+  case FIELD_PSYNERGY_FORCE:
     FieldEffect_RunForceOnTarget(targetId);
     break;
-  case FIELD_KIND_DOUSE:
+  case FIELD_PSYNERGY_DOUSE:
     FieldEffect_RunDouseOnTarget(targetId);
     break;
-  case FIELD_KIND_FROST:
+  case FIELD_PSYNERGY_FROST:
     FieldEffect_RunFrostOnTarget(targetId);
     break;
-  case FIELD_KIND_GROWTH:
+  case FIELD_PSYNERGY_GROWTH:
     FieldEffect_RunGrowthOnTarget(targetId);
     break;
-  case FIELD_KIND_HALT:
+  case FIELD_PSYNERGY_HALT:
     if (gGameState.pausedObject != -1) {
       FieldEffect_ResumeObject(gGameState.pausedObject);
       gGameState.pausedObject = -1;
@@ -169,25 +170,25 @@ void FieldEffect_DispatchRequestKind(void) {
     gGameState.pausedObject = targetId;
     FieldEffect_RunHaltOnTarget(targetId);
     break;
-  case FIELD_KIND_PLY:
+  case FIELD_PSYNERGY_PLY:
     FieldEffect_RunPlyOnTarget(targetId);
     break;
-  case FIELD_KIND_WHIRLWIND:
+  case FIELD_PSYNERGY_WHIRLWIND:
     FieldEffect_RunWhirlwindOnTarget(targetId);
     break;
-  case FIELD_KIND_CATCH:
+  case FIELD_PSYNERGY_CATCH:
     FieldEffect_RunCatchOnTarget(targetId);
     break;
-  case FIELD_KIND_REVEAL:
+  case FIELD_PSYNERGY_REVEAL:
     FieldEffect_RunReveal();
     break;
-  case FIELD_KIND_CLOAK:
+  case FIELD_PSYNERGY_CLOAK:
     FieldEffect_StartCloak();
     break;
-  case FIELD_KIND_RETREAT:
+  case FIELD_PSYNERGY_RETREAT:
     FieldEffect_RunRetreat();
     break;
-  case FIELD_KIND_AVOID:
+  case FIELD_PSYNERGY_AVOID:
     FieldEffect_RunAvoid();
     break;
   }
@@ -199,12 +200,12 @@ void FieldEffect_DispatchRequestKind(void) {
 /// Field_DispatchTypeHandler(PSYNERGY_STEP_FINISH): Mind Read is the one kind
 /// whose effect stays up through the after event, the conversation it reads.
 void FieldEffect_FinishMindRead(void) {
-  struct FieldEffectWork *effectWork = gEffectWork;
+  struct FieldEffectWork *effectWork = gFieldEffectWork;
 
-  if (effectWork->fieldKind == FIELD_KIND_MIND_READ) {
+  if (effectWork->fieldPsynergy == FIELD_PSYNERGY_MIND_READ) {
     FieldEffect_FinishWaveAndReleaseHeapBlock();
     if (gGameState.pausedObject != effectWork->secondObjectId) {
-      ((struct ObjectRuntime *)effectWork->child)->movementState = 0;
+      ((struct Object *)effectWork->child)->movementState = 0;
     }
   }
 }
@@ -215,15 +216,15 @@ void FieldEffect_FinishMindRead(void) {
 void FieldScript_RunTypeHandler(void) {
   u32 kind;
 
-  kind = ((struct FieldEffectWork *)gEffectWork)->fieldKind;
+  kind = ((struct FieldEffectWork *)gFieldEffectWork)->fieldPsynergy;
   switch (kind) {
-  case FIELD_KIND_REVEAL:
+  case FIELD_PSYNERGY_REVEAL:
     FieldEffect_EndReveal();
     return;
-  case FIELD_KIND_CLOAK:
+  case FIELD_PSYNERGY_CLOAK:
     FieldEffect_EndCloak();
     return;
-  case FIELD_KIND_AVOID:
+  case FIELD_PSYNERGY_AVOID:
     FieldScript_ShowStatusMessage();
     return;
   }
@@ -257,7 +258,7 @@ s32 Field_RunEventAction(const void *event, s32 param, s32 target) {
     }
     if (GameFlag_TestFar(FLAG_NOTHING_HAPPENS) != 0) {
       FieldScript_Start();
-      UiText_ShowPositionedMessageAndWaitFar(MsgNothingHappens, 1);
+      FieldMessage_ShowFar(MsgNothingHappens, 1);
       FieldScript_End();
     }
   }
@@ -269,13 +270,13 @@ s32 Field_RunEventAction(const void *event, s32 param, s32 target) {
 /// target they hold, Retreat to its caster. A sprite that keeps its VRAM
 /// cache entry (retainCacheEntry) is left alone.
 void ObjectGroup_ApplyRandomChildValues(union FieldObject *fieldObject) {
-  struct ObjectRuntime *owner = (struct ObjectRuntime *)fieldObject;
+  struct Object *owner = (struct Object *)fieldObject;
   s32 kind;
-  struct AnimationObject *animation;
+  struct Sprite *animation;
   s32 initialCount;
   s32 remainingParts;
-  struct AnimationEntry **parts;
-  struct AnimationEntry *spritePart;
+  struct SpriteAnim **parts;
+  struct SpriteAnim *spritePart;
   /* FAKEMATCH(temporary): a pointer local to gFrameCount, volatile as it is
    * declared, read on each pass; as gFrameCount read in the loop, 6 of 46
    * instructions differ in tbs-en. */
@@ -306,8 +307,9 @@ void ObjectGroup_ApplyRandomChildValues(union FieldObject *fieldObject) {
 /// Sends an object toward the point magnitude (16.16 pixels) away from it in
 /// direction angle: sets its move target. Carry, Lift, Douse, Move and the
 /// Djinni's hop into battle throw things this way.
-void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object,
-                                                s32 magnitude, s32 angle) {
+void ObjectMotion_SetTargetPositionFromMagnitudeAngle(struct Object *object,
+                                                      s32 magnitude,
+                                                      s32 angle) {
   s32 pos[3];
 
   if (object != 0) {
@@ -323,7 +325,7 @@ void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object,
 /// FieldEffect_LoadActionEffectResources subtracts this from VRAM_BLOCK_COUNT
 /// to record the blocks already occupied before the effect starts.
 s32 VramCache_CountFreeBlocks(void) {
-  u8 *marker = gResourceBlockOwners;
+  u8 *marker = gVramCacheBlockOwners;
   s32 freeCount = 0;
   s32 remaining = VRAM_BLOCK_COUNT;
 
@@ -343,11 +345,10 @@ s32 VramCache_CountFreeBlocks(void) {
 /// afterimages pass one block along this way. Each sprite retains the entry
 /// so releasing an afterimage cannot free graphics still used by the others.
 /// Sprite teardown leaves the shared entry for the caller to release.
-struct AnimationObject *
-Sprite_ShareVramCache(struct AnimationObject *sourceSprite,
-                      struct AnimationObject *sharedSprite) {
-  struct AnimationObject *shared;
-  struct AnimationObject *sprite;
+struct Sprite *Sprite_ShareVramCacheEntry(struct Sprite *sourceSprite,
+                                          struct Sprite *sharedSprite) {
+  struct Sprite *shared;
+  struct Sprite *sprite;
 
   sprite = sourceSprite;
   shared = NULL;
@@ -355,7 +356,7 @@ Sprite_ShareVramCache(struct AnimationObject *sourceSprite,
     if (sharedSprite == NULL) {
       sprite->retainCacheEntry = 1;
     } else {
-      Resource_ResetEntry(sprite->slot);
+      VramCache_FreeEntry(sprite->slot);
       sprite->slot = sharedSprite->slot;
       sprite->retainCacheEntry = 1;
       sprite = sharedSprite;
@@ -372,9 +373,9 @@ Sprite_ShareVramCache(struct AnimationObject *sourceSprite,
 /// floats (motion flags 4), is depth-sorted as if 320 pixels lower (priority
 /// flag bit 2) and has no shadow; its creator releases it, or its script
 /// frees it.
-struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z) {
-  struct FieldEffectWork *effectWork = gEffectWork;
-  struct ObjectRuntime *object;
+struct Object *Object_Spawn(s32 kind, s32 x, s32 y, s32 z) {
+  struct FieldEffectWork *effectWork = gFieldEffectWork;
+  struct Object *object;
 
   object = Object_CreateFar(kind, x, y, z);
   if (object != NULL) {
@@ -382,11 +383,11 @@ struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z) {
       ObjectDispatch_ReleaseFar((struct DispatchObject *)object);
       return NULL;
     }
-    object->terrainHeight =
-        ((struct ObjectRuntime *)effectWork->mainObject)->terrainHeight;
+    object->groundHeight =
+        ((struct Object *)effectWork->mainObject)->groundHeight;
     object->flags = 4;
     object->priorityFlags = 4;
-    ((struct AnimationObject *)object->animation)->image.priority = 0;
+    ((struct Sprite *)object->animation)->image.priority = 0;
     ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object, 0);
     ObjectDispatch_SelectAnimationFar(object, 1);
   }
@@ -394,19 +395,19 @@ struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z) {
 }
 
 /// Sets the movement state and animation timer steps of every object but the
-/// player's and except. EventObject_Initialize pauses them
+/// player's and except. FieldEffect_StartCast pauses them
 /// (animation speed 0) while an effect plays and lets them go again at
 /// normal speed.
-void ObjectGroup_SetActionForOthers(struct ObjectRuntime *except, s32 state,
+void ObjectGroup_SetActionForOthers(struct Object *except, s32 state,
                                     s32 value) {
   s16 *player;
-  struct ObjectRuntime *object;
+  struct Object *object;
   s32 localId;
 
   localId = 0;
   player = (s16 *)gPlayerObjectId;
   do {
-    object = ObjectTable_Get(localId);
+    object = ObjectEvent_GetByLocalId(localId);
     if (localId != *player && object != NULL && object != except) {
       object->movementState = state;
       ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)object,

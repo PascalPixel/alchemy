@@ -1,5 +1,5 @@
 /// @file
-/// Random encounters, and each map's music, area name and backdrop.
+/// Random encounters, and each map's music, area name and battle background.
 // Part of object.c.
 
 #include "../object_internal.h"
@@ -19,45 +19,45 @@ struct BattleLocationRule {
 
 extern const struct BattleLocationRule gBattle_LocationRules[];
 
-/// The world map's encounter zone for each kind of terrain
-/// (gWorldMap_EncounterRules, zonedata.c), ended by kind -1. Read by
+/// The world map's encounter zone for each encounter region
+/// (gWorldMap_EncounterRules, zonedata.c), ended by region -1. Read by
 /// Encounter_ResolveWorldMapZoneAndBackdrop, first match first.
-typedef struct TerrainRule {
-  s16 kind; ///< the terrain kind of the world map metatile; -1 ends the table
-  /// The terrain's behavior, which also picks the backdrop (1 to 7,
-  /// Battle_SelectTerrainBackdrop), or -1 for any.
+typedef struct WorldMapEncounterRule {
+  s16 kind; ///< the world map metatile's encounter region; -1 ends the table
+  /// The battle environment, which also picks the battle background (1 to 7,
+  /// BattleBackground_SelectForEnvironment), or -1 for any.
   s16 behavior;
   s16 flag; ///< -1, or a flag that turns the rule off once set
   s16 zone; ///< a row of encounter.tsv
-} TerrainRule;
+} WorldMapEncounterRule;
 
-/// The number of enemy groups an encounter zone can hold.
+/// The number of formations an encounter zone can hold.
 enum { ENCOUNTER_GROUP_COUNT = 8 };
 
-/// An encounter zone, a row of encounter.tsv (gEncounter_EnemyGroupTable): its
-/// rate, the level it is made for, and the enemy groups that can appear with
-/// their chances. 28 bytes, the 14 halfwords Encounter_GetEnemyGroupAtSlot
+/// An encounter zone, a row of encounter.tsv (gEncounterZones): its
+/// rate, the level it is made for, and the formations that can appear with
+/// their chances. 28 bytes, the 14 halfwords Encounter_GetFormationAtSlot
 /// counts a zone as.
 struct EncounterZone {
   /// The base encounter rate; 0 for zone 0 (no encounters) and for a zone only
   /// scripted battles, mimics and Djinn use.
   u16 rate;
   u16 level; ///< the party level the zone is made for
-  /// The enemy groups that can appear, rows of battle/formatn.tsv.
+  /// The formations that can appear, rows of battle/formatn.tsv.
   u16 enemies[ENCOUNTER_GROUP_COUNT];
-  u8 weights[ENCOUNTER_GROUP_COUNT]; ///< each group's relative chance
+  u8 weights[ENCOUNTER_GROUP_COUNT]; ///< each formation's relative chance
 };
 
 /// Chooses the current map's encounter zones, one for each kind of ground
-/// the party can stand on (gEventWork->encounterGroups, read by
-/// Encounter_RollTerrain), from the first rule matching the map
+/// the party can stand on (gFieldWork->encounterZones, read by
+/// Encounter_RollLayoutStep), from the first rule matching the map
 /// and warp destination. Ground 0 has none, and grounds 1 to 7 take consecutive
 /// zones from the rule's first one. With useRules 0, or no matching rule, no
 /// ground has encounters. Also resets the random bias and the battle threshold
 /// (the count itself, gGameState.encounterSteps, is reset only when a random
 /// battle starts or a new map section is entered) and chooses the battle
-/// backdrop. Called by Field_RunMap on map load, with useRules 0 on the world
-/// map and 1 in a map; writes work->encounterGroups, encounterBias and
+/// background. Called by Map_Run on map load, with useRules 0 on the world
+/// map and 1 in a map; writes work->encounterZones, encounterBias and
 /// encounterThreshold, and gGameState.special.
 void Encounter_SelectMapZones(s32 useRules) {
   struct FieldWork *work;
@@ -69,10 +69,10 @@ void Encounter_SelectMapZones(s32 useRules) {
   s16 firstZoneOnGround;
   u32 i;
 
-  work = (struct FieldWork *)gEventWork;
+  work = (struct FieldWork *)gFieldWork;
   mapId = gGameState.mapId;
   warpDest = gGameState.warpDest;
-  groundZones = work->encounterGroups;
+  groundZones = work->encounterZones;
   rule = gBattle_LocationRules;
   zone = 0;
   firstZoneOnGround = 0;
@@ -98,25 +98,26 @@ void Encounter_SelectMapZones(s32 useRules) {
       zone++;
   }
   if (firstZoneOnGround != 0) {
-    work->encounterGroups[0] = work->encounterGroups[1];
-    work->encounterGroups[1] = 0;
+    work->encounterZones[0] = work->encounterZones[1];
+    work->encounterZones[1] = 0;
   }
   work->encounterBias = 0;
-  // 16 in 16.16: Encounter_SelectEnemyGroup starts a battle once
+  // 16 in 16.16: Encounter_CountStepsAndSelectFormation starts a battle once
   // gGameState.encounterSteps reaches it.
   work->encounterThreshold = 16 * Q16_ONE;
-  Battle_SelectMapBackdrop();
+  BattleBackground_SelectForMap();
 }
 
-/// Returns the world map encounter zone for the terrain at pos (0 for none),
-/// and chooses the battle backdrop for that terrain (gGameState.special).
-/// Called by Encounter_RollWorldMap on each step, and by
+/// Returns the world map encounter zone for the ground at pos (0 for none), and
+/// chooses the battle background for its battle environment
+/// (gGameState.special). Called by Encounter_RollWorldMap on each step, and by
 /// Field_RequestBattleFromEncounterTable and Field_RequestDjinnBattle on the
-/// world map, which use only the backdrop.
+/// world map, which use only the battle background.
 s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *pos) {
   s32 kind;
-  TerrainRule *rule = (TerrainRule *)gWorldMap_EncounterRules;
-  s32 behavior = GetWorldMapTerrainBehaviorFar(pos, &kind);
+  WorldMapEncounterRule *rule =
+      (WorldMapEncounterRule *)gWorldMap_EncounterRules;
+  s32 behavior = WorldMap_GetBattleEnvironmentFar(pos, &kind);
   s32 zone = 0;
 
   while (rule->kind != -1) {
@@ -128,24 +129,24 @@ s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *pos) {
     }
     rule++;
   }
-  Battle_SelectTerrainBackdrop(behavior);
+  BattleBackground_SelectForEnvironment(behavior);
   return zone;
 }
 
-/// Advances the encounter counter for zone and returns the enemy group to
-/// fight (a row of formatn.tsv), or 0 for no battle. steps (16.16) scales how
-/// far the counter moves; a battle starts once it reaches encounterThreshold.
+/// Advances the encounter counter for zone and returns the formation to fight
+/// (a row of formatn.tsv), or 0 for no battle. steps (16.16) scales how far the
+/// counter moves; a battle starts once it reaches encounterThreshold.
 /// FLAG_NO_ENCOUNTERS, FLAG_NO_ENCOUNTERS_IN_MAPSEC and gGameState.cloaked
 /// (Cloak) prevent battles. FLAG_NO_ENCOUNTERS_IN_MAPSEC is set by Venus
 /// Lighthouse while its Reveal path is shown (the international editions), by
 /// Mercury Lighthouse while the leader carries the pillar's lights and by the
 /// world map's debug warp destination 99, and cleared by every entry that does
 /// not keep the party's position. Flag 351 (0x15f), which no Broken Seal C code
-/// sets, skips the checks and the counting and draws a group at once. Called by
-/// Encounter_RollTerrain and Encounter_RollWorldMap; adds to
+/// sets, skips the checks and the counting and draws a formation at once.
+/// Called by Encounter_RollLayoutStep and Encounter_RollWorldMap; adds to
 /// gGameState.encounterSteps, sets or clears work->encounterBias, and on a
-/// battle sets gGameState.battleCue.
-s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
+/// battle sets gGameState.battleMusic.
+s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
   struct FieldWork *work;
   struct EncounterZone *entry;
   s32 rate;
@@ -157,12 +158,12 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
   s32 pick;
   s32 i;
 
-  work = (struct FieldWork *)gEventWork;
+  work = (struct FieldWork *)gFieldWork;
   // UB: FLAG_IGNORE_ENCOUNTER_CHECKS reaches the draw without setting entry.
   // Hoisting the zone lookup changes native instructions at the same 440-byte
   // size in tbs-en.
 #ifdef UBFIX
-  entry = (struct EncounterZone *)gEncounter_EnemyGroupTable + zone;
+  entry = (struct EncounterZone *)gEncounterZones + zone;
 #endif
   if (GameFlag_TestFar(FLAG_IGNORE_ENCOUNTER_CHECKS) == 0) {
     if (GameFlag_TestFar(FLAG_NO_ENCOUNTERS) != 0 ||
@@ -172,7 +173,7 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
       return 0;
     if (gGameState.cloaked != 0)
       return 0;
-    entry = (struct EncounterZone *)gEncounter_EnemyGroupTable + zone;
+    entry = (struct EncounterZone *)gEncounterZones + zone;
     rate = entry->rate;
     if (rate == 0)
       return 0;
@@ -210,7 +211,7 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
     }
     // The rate and the bias divide the step, so a higher rate (a party above
     // the zone's level) means smaller steps and fewer battles. The counter is
-    // not cleared here: Field_RunMap clears it when it starts the battle.
+    // not cleared here: Map_Run clears it when it starts the battle.
     step =
         Iwram_RatioMulQ14((rate << 20) + ((rate << 4) - 16) * bias, 0x100000);
     total = gGameState.encounterSteps += Iwram_MulQ16(step, steps);
@@ -218,7 +219,7 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
       return 0;
   }
 
-  // Draw one of the eight groups by weight.
+  // Draw one of the eight formations by weight.
   work->encounterBias = 0;
   sum = 0;
   for (i = 0; i < ENCOUNTER_GROUP_COUNT; i++)
@@ -239,58 +240,58 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
     } while (pick >= 0);
   }
   sum = entry->enemies[i];
-  FieldEffect_SelectBattleCue(zone, i);
+  Encounter_SelectBattleMusic(zone, i);
   return sum;
 }
 
 /// Rolls a random battle on the encounter zone of the ground underfoot.
-/// terrain: the ground, an index into work->encounterGroups: 0 for ordinary
+/// terrain: the ground, an index into work->encounterZones: 0 for ordinary
 /// ground, 1 and 2 for MB_ENCOUNTER_GROUND_1 and _2 cells.
-/// steps: the step weight, passed on to Encounter_SelectEnemyGroup.
-/// Returns the enemy group to fight, or 0 for no battle.
+/// steps: the step weight, passed on to Encounter_CountStepsAndSelectFormation.
+/// Returns the formation to fight, or 0 for no battle.
 /// Called by Field_ProcessStep in a map, which stores the result in
 /// work->battle; steps is the leader's speed limit, doubled with FLAG_LURE_CAP.
-s32 Encounter_RollTerrain(u32 terrain, s32 steps) {
+s32 Encounter_RollLayoutStep(u32 terrain, s32 steps) {
   u8 *zone;
 
-  zone = ((struct FieldWork *)gEventWork)->encounterGroups;
-  return Encounter_SelectEnemyGroup(zone[terrain], steps);
+  zone = ((struct FieldWork *)gFieldWork)->encounterZones;
+  return Encounter_CountStepsAndSelectFormation(zone[terrain], steps);
 }
 
-/// Rolls a random battle on the world map, taking the zone from the tile at
-/// pos. Returns the enemy group to fight, or 0 for no battle. Called by
+/// Rolls a random battle on the world map, taking the zone from the cell at
+/// pos. Returns the formation to fight, or 0 for no battle. Called by
 /// Field_ProcessStep on the world map.
 s32 Encounter_RollWorldMap(s32 pos, s32 steps) {
-  return Encounter_SelectEnemyGroup(
+  return Encounter_CountStepsAndSelectFormation(
       Encounter_ResolveWorldMapZoneAndBackdrop((void *)pos), steps);
 }
 
-/// Returns the enemy group in slot (0 to 7) of zone; 14 halfwords make a zone.
+/// Returns the formation in slot (0 to 7) of zone; 14 halfwords make a zone.
 /// Called by Field_RequestBattleFromEncounterTable,
-/// Encounter_GetDjinnEnemyGroup and the map event runner (events.c,
+/// Encounter_GetDjinnFormation and the map event runner (events.c,
 /// ENCOUNTER_ZONE_MIMIC).
-u16 Encounter_GetEnemyGroupAtSlot(s32 zone, s32 slot) {
-  // A zone's halfwords are rate, level, then the eight groups.
-  return gEncounter_EnemyGroupTable[zone * 14 + slot + 2];
+u16 Encounter_GetFormationAtSlot(s32 zone, s32 slot) {
+  // A zone's halfwords are rate, level, then the eight formations.
+  return gEncounterZones[zone * 14 + slot + 2];
 }
 
-/// Returns the enemy group of Djinni battle djinni, which the table gives as
+/// Returns the formation of Djinni battle djinni, which the table gives as
 /// a zone and slot. Called by Field_RequestDjinnBattle.
-s16 Encounter_GetDjinnEnemyGroup(s32 djinni) {
+s16 Encounter_GetDjinnFormation(s32 djinni) {
   u16 *zoneAndSlot;
 
   zoneAndSlot = (u16 *)&gEncounter_AreaEntryTable[djinni * 2];
 #ifdef UBFIX
-  return Encounter_GetEnemyGroupAtSlot(zoneAndSlot[0], zoneAndSlot[1]);
+  return Encounter_GetFormationAtSlot(zoneAndSlot[0], zoneAndSlot[1]);
 #else
   // UB: no return statement; the result of the call is left in r0.
-  Encounter_GetEnemyGroupAtSlot(zoneAndSlot[0], zoneAndSlot[1]);
+  Encounter_GetFormationAtSlot(zoneAndSlot[0], zoneAndSlot[1]);
 #endif
 }
 
-/// A rule choosing a map's field music (gMap_InteractionRuleTable,
+/// A rule choosing a map's field music (gMap_MusicRules,
 /// map_rules.s), ended by id -1.
-struct MapInteractionEntry {
+struct MapMusicRule {
   s16 id;            ///< a map, or a map section
   s16 warpDest : 15; ///< -1 for any warp destination
   u16 idIsMap : 1;   ///< 1 when id is a map, 0 when it is a map section
@@ -298,18 +299,18 @@ struct MapInteractionEntry {
   s16 music;         ///< the song (songs.h's MUS_ numbers)
 };
 
-extern const struct MapInteractionEntry gMap_InteractionRuleTable[];
+extern const struct MapMusicRule gMap_MusicRules[];
 
 /// Chooses the current map's field music (gGameState.cue) from the first rule
 /// matching the map or its map section and the warp destination;
-/// AUDIO_CUE_KEEP_BGM when none does. Called by Game_Run on entering each map,
-/// before Audio_PlayCueFromEventWork plays it.
-void Map_ResolveInteractionResult(void) {
-  s16 music = AUDIO_CUE_KEEP_BGM;
+/// SONG_KEEP_BGM when none does. Called by Game_Run on entering each map,
+/// before Map_PlayMusic plays it.
+void Map_ChooseMusic(void) {
+  s16 music = SONG_KEEP_BGM;
   s16 mapId = gGameState.mapId;
   s16 warpDest = gGameState.warpDest;
   s16 group = gGameState.mapSec;
-  const struct MapInteractionEntry *rule = gMap_InteractionRuleTable;
+  const struct MapMusicRule *rule = gMap_MusicRules;
 
   for (; rule->id != -1; rule++) {
     if (rule->idIsMap) {
@@ -332,7 +333,7 @@ void Map_ResolveInteractionResult(void) {
     break;
   }
 
-  gGameState.cue = music;
+  gGameState.mapMusic = music;
 }
 
 /// A rule naming the map section a map is in (gMapSec_NameRules, map_rules.s),
@@ -353,12 +354,12 @@ extern const struct MapSecNameRule gMapSec_NameRules[];
 /// the map or its map section; 0, the title screen's name, when none does. No
 /// reader treats 0 apart. Called by the save, debug and
 /// location windows through MapSec_GetNameIndexFar, and by
-/// WorldMap_UpdateMarkers; most add it to MsgDebugEntryName for the
+/// RegionMap_UpdateMarkers; most add it to MsgDebugEntryName for the
 /// message. The save stores it as its area (save_state.h).
 s32 MapSec_GetNameIndex(s32 mapId, s32 warpDest) {
   const struct MapSecNameRule *rule = gMapSec_NameRules;
   s32 name = 0;
-  s32 group = FieldEffect_GetResourceGroup(mapId);
+  s32 group = Map_GetMapSec(mapId);
 
   while (rule->id != -1) {
     if (rule->useMapId) {
@@ -385,7 +386,7 @@ s32 MapSec_GetNameIndex(s32 mapId, s32 warpDest) {
 /// and savedWarpDest), from the first rule of gParty_PairResolveRules that
 /// matches the current map and warp destination: {map, warp destination (-1
 /// for any), return map, return warp destination}, ended by map -1. Without a
-/// match the return point stays as it was. Called by Field_RunMap on map load.
+/// match the return point stays as it was. Called by Map_Run on map load.
 void Map_SetDefeatReturnPoint(void) {
   s16 mapId = gGameState.mapId;
   s16 warpDest = gGameState.warpDest;
@@ -401,27 +402,27 @@ void Map_SetDefeatReturnPoint(void) {
   }
 }
 
-/// Returns the battle backdrop chosen for the current map. The battle setup
+/// Returns the battle background chosen for the current map. The battle setup
 /// (battle/encounter.c) reads it through FieldScript_GetSpecialValueFar as the
 /// battle's background.
 s16 FieldScript_GetSpecialValue(void) { return gGameState.special; }
 
-/// Chooses the battle backdrop for the current map. gBattle_BackdropMaps
-/// lists each backdrop (a word with bit 31 set) followed by the maps that
-/// use it, ended by 0; a map takes the backdrop listed last before it, and a
-/// map not listed takes the last backdrop. Called by
+/// Chooses the battle background for the current map. gBattleBackground_Maps
+/// lists each battle background (a word with bit 31 set) followed by the maps
+/// that use it, ended by 0; a map takes the one listed last before it, and a
+/// map not listed takes the last one. Called by
 /// Encounter_SelectMapZones; sets gGameState.special.
-void Battle_SelectMapBackdrop(void) {
+void BattleBackground_SelectForMap(void) {
   s32 target = gGameState.mapId;
-  s32 *table = gBattle_BackdropMaps;
+  s32 *table = gBattleBackground_Maps;
   s32 entry = *table++;
-  // The first map_rules.s word is a backdrop marker. It cannot match the
+  // The first map_rules.s word names a battle background. It cannot match the
   // halfword map id, so the loop sets this before testing any map.
   s32 backdrop;
 
   if (entry != 0 && entry != target) {
     do {
-      // A backdrop marker: bit 31 set, the backdrop's resource id below.
+      // A battle background's word: bit 31 set, its resource id below.
       if (entry & 0x80000000) {
         backdrop = entry & 0xFFFF;
       }
@@ -431,28 +432,28 @@ void Battle_SelectMapBackdrop(void) {
   gGameState.special = backdrop;
 }
 
-/// Chooses the battle backdrop for a world map terrain behavior (enum
-/// WorldMapTerrainBehavior; any other gives Sol Sanctum's) and sets
+/// Chooses the battle background for a world map battle environment (enum
+/// BattleEnvironment; any other gives Sol Sanctum's) and sets
 /// gGameState.special. Called by Encounter_ResolveWorldMapZoneAndBackdrop.
-void Battle_SelectTerrainBackdrop(s32 behavior) {
+void BattleBackground_SelectForEnvironment(s32 behavior) {
   u16 backdrop;
 
   switch (behavior - 1) {
-  case WORLD_MAP_TERRAIN_GRASSLAND - 1:
+  case BATTLE_ENVIRONMENT_GRASSLAND - 1:
     backdrop = (u32)&ResourceId_GrasslandBackdrop;
     break;
-  case WORLD_MAP_TERRAIN_FOREST - 1:
+  case BATTLE_ENVIRONMENT_FOREST - 1:
     backdrop = (u32)&ResourceId_ForestBackdrop;
     break;
-  case WORLD_MAP_TERRAIN_DESERT - 1:
+  case BATTLE_ENVIRONMENT_DESERT - 1:
     backdrop = (u32)&ResourceId_DesertBackdrop;
     break;
-  case WORLD_MAP_TERRAIN_BEACH - 1:
-  case WORLD_MAP_TERRAIN_SHALLOWS - 1:
+  case BATTLE_ENVIRONMENT_BEACH - 1:
+  case BATTLE_ENVIRONMENT_SHALLOWS - 1:
     backdrop = (u32)&ResourceId_BeachBackdrop;
     break;
-  case WORLD_MAP_TERRAIN_SNOWFIELD - 1:
-  case WORLD_MAP_TERRAIN_SNOW_FOREST - 1:
+  case BATTLE_ENVIRONMENT_SNOWFIELD - 1:
+  case BATTLE_ENVIRONMENT_SNOW_FOREST - 1:
     backdrop = (u32)&ResourceId_SnowfieldBackdrop;
     break;
   default:
@@ -462,14 +463,14 @@ void Battle_SelectTerrainBackdrop(s32 behavior) {
   gGameState.special = backdrop;
 }
 
-/// Chooses the battle music for slot of zone (gGameState.battleCue).
+/// Chooses the battle music for slot of zone (gGameState.battleMusic).
 /// gEncounter_BattleMusic lists each song (with bit 15 set) followed by the
 /// (zone << 4) + slot keys that use it, ended by 0; a key takes the song listed
-/// last before it. Link battles always use AUDIO_CUE_KEEP_BGM. Called by
-/// Encounter_SelectEnemyGroup for a random battle, by the battle requests
-/// (Field_RequestBattleFromEncounterTable, Field_RequestDjinnBattle with
-/// zone 0) and by the map event runner (events.c).
-void FieldEffect_SelectBattleCue(s32 zone, s32 slot) {
+/// last before it. Link battles always use SONG_KEEP_BGM. Called by
+/// Encounter_CountStepsAndSelectFormation for a random battle, by the battle
+/// requests (Field_RequestBattleFromEncounterTable, Field_RequestDjinnBattle
+/// with zone 0) and by the map event runner (events.c).
+void Encounter_SelectBattleMusic(s32 zone, s32 slot) {
   u16 key = (zone << 4) + slot;
   const u16 *table = gEncounter_BattleMusic;
   // Encounter keys have bit 15 clear. battle_cue.c starts with a nonzero
@@ -478,7 +479,7 @@ void FieldEffect_SelectBattleCue(s32 zone, s32 slot) {
   u16 value;
 
   if (GameFlag_TestFar(FLAG_LINK_BATTLE)) {
-    music = AUDIO_CUE_KEEP_BGM;
+    music = SONG_KEEP_BGM;
   } else {
     for (;;) {
       value = *table++;
@@ -491,5 +492,5 @@ void FieldEffect_SelectBattleCue(s32 zone, s32 slot) {
         music = value & 0xfff;
     }
   }
-  gGameState.battleCue = music;
+  gGameState.battleMusic = music;
 }

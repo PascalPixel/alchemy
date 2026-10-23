@@ -7,7 +7,7 @@
 /// Gives a unit `itemId` and equips every exactly matching inventory entry.
 /// Called by InventorySnapshot_Save to arm Isaac for the Colosso.
 void Inventory_AddAndEquip(s32 owner, s32 itemId) {
-  struct BattleUnit *unit = Unit_Get(owner);
+  struct Unit *unit = Unit_Get(owner);
   u16 *entry;
   s32 slot;
 
@@ -34,7 +34,7 @@ void Inventory_AddAndEquip(s32 owner, s32 itemId) {
 /// Called by the Colosseum entrance map as Isaac enters the Colosso.
 void InventorySnapshot_Save(void) {
   u16 *save;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   s16 *inventory;
   s32 owner;
   s32 slot;
@@ -65,10 +65,10 @@ void InventorySnapshot_Save(void) {
     *save++ = secondShortcut;
 #ifdef UBFIX
     // Party order is a byte array; pack its two saved halfwords explicitly.
-    save[0] = gGameState.activeOwners[0] | (gGameState.activeOwners[1] << 8);
-    save[1] = gGameState.activeOwners[2] | (gGameState.activeOwners[3] << 8);
+    save[0] = gGameState.party[0] | (gGameState.party[1] << 8);
+    save[1] = gGameState.party[2] | (gGameState.party[3] << 8);
 #else
-    inventory = (s16 *)gGameState.activeOwners;
+    inventory = (s16 *)gGameState.party;
     save[0] = inventory[0];
     save[1] = inventory[1];
 #endif
@@ -80,7 +80,7 @@ void InventorySnapshot_Save(void) {
 
 /// Gives back the inventories, shortcuts and party order InventorySnapshot_Save
 /// put aside, then clears the snapshot and FLAG_COLOSSO_HOLDS_EQUIPMENT. Called
-/// by the Babi palace map after the Colosso, and by the file select screen.
+/// by the Babi palace map after the Colosso, and by the main menu.
 void InventorySnapshot_Restore(void) {
   s32 owner;
   u16 *source = gInventorySnapshot;
@@ -103,14 +103,14 @@ void InventorySnapshot_Restore(void) {
     gGameState.firstShortcut = *source++;
     gGameState.secondShortcut = *source++;
 #ifdef UBFIX
-    gGameState.activeOwners[0] = source[0];
-    gGameState.activeOwners[1] = source[0] >> 8;
-    gGameState.activeOwners[2] = source[1];
-    gGameState.activeOwners[3] = source[1] >> 8;
+    gGameState.party[0] = source[0];
+    gGameState.party[1] = source[0] >> 8;
+    gGameState.party[2] = source[1];
+    gGameState.party[3] = source[1] >> 8;
     source++;
 #else
-    *(u16 *)gGameState.activeOwners = *source++;
-    *(u16 *)((u8 *)gGameState.activeOwners + 2) = *source;
+    *(u16 *)gGameState.party = *source++;
+    *(u16 *)((u8 *)gGameState.party + 2) = *source;
 #endif
     source = gInventorySnapshot;
     *source = 0;

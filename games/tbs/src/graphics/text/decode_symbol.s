@@ -1,6 +1,6 @@
 @ C2: Text_DecodeSymbol:
 @ rrx and conditional rrxs consume the bit reader's shift carry.
-@ C2: UiText_LookupMessageArm:
+@ C2: Message_FindArm:
 @ rrx r3, r3 rotates through carry before the final bit shift.
 .syntax unified
 .text
@@ -101,8 +101,8 @@ Text_DecodeSymbol:
 .syntax unified
 .text
 	.arm
-	.global UiText_LookupMessageArm
-UiText_LookupMessageArm:
+	.global Message_FindArm
+Message_FindArm:
 	lsr	r3, r1, #8
 	ldr	ip, [pc, #80]
 	add	ip, ip, r3, lsl #3
@@ -130,5 +130,5 @@ UiText_LookupMessageArm:
 	stm	r0, {r1, r2, r3}
 	bx	lr
 	.4byte Text_MessageBanks
-	.global UiText_LookupMessageCodeSize
-	.set UiText_LookupMessageCodeSize, . - UiText_LookupMessageArm
+	.global Message_FindCodeSize
+	.set Message_FindCodeSize, . - Message_FindArm

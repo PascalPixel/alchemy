@@ -296,8 +296,8 @@ static void EventScript_BaneFirstEscape(void) {
 
   if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE) == 0) {
     FLAG_SET(FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE);
-    EV_START();
-    Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
+    SCRIPT_START();
+    FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
     Engine_CameraMoveToObjectEvent(LOCALID_BANE, 1);
     Engine_CameraWaitForMove();
     OBJECT_DIR(LOCALID_BANE, FACING_EAST, 20);
@@ -310,7 +310,7 @@ static void EventScript_BaneFirstEscape(void) {
     djinni->velocityY = PIXELS(8);
     ObjectEvent_WalkToAndWait(LOCALID_BANE, 584, 680);
     OBJECT_DIR(LOCALID_BANE, FACING_SOUTH, 20);
-    EV_END();
+    SCRIPT_END();
   }
 }
 
@@ -326,10 +326,10 @@ static void EventScript_BaneSecondEscape(void) {
     escapeComplete = FLAG_CHECK(FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE);
     if (escapeComplete == 0) {
       FLAG_SET(FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE);
-      EV_START();
+      SCRIPT_START();
 
       // Focus on the Djinni before its next jump away.
-      Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
+      FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
       Engine_CameraMoveToObjectEvent(LOCALID_BANE, 1);
       Engine_CameraWaitForMove();
       OBJECT_DIR(LOCALID_BANE, FACING_SOUTH, 20);
@@ -366,7 +366,7 @@ static void EventScript_BaneSecondEscape(void) {
                                        0);
       Engine_ObjectSetScript(spinningDjinni,
                              gCrossboneIsleKeys_BaneSquashScript);
-      EV_END();
+      SCRIPT_END();
     }
   }
 }
@@ -380,7 +380,7 @@ static void EventScript_BaneLastEscape(void) {
   if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE) != 0 &&
       FLAG_CHECK(FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE) == 0) {
     FLAG_SET(FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE);
-    EV_START();
+    SCRIPT_START();
 
     // Restore the sprite before the last jump and winding escape path.
     djinni = ObjectEvent_GetById(LOCALID_BANE);
@@ -421,7 +421,7 @@ static void EventScript_BaneLastEscape(void) {
     djinni->update =
         (void (*)(union FieldObject *))CrossboneIsleKeys_FaceBaneTowardLeader;
 #endif
-    EV_END();
+    SCRIPT_END();
   }
 }
 
@@ -436,10 +436,10 @@ static void EventScript_BaneKeepsAway(void) {
   s32 zByteOffset;
   struct EventWork *work;
 
-  work = gEventWork;
+  work = gFieldWork;
   if (Engine_GameFlagIsSet(FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE) != 0) {
     if (gGameState.pausedObject != LOCALID_BANE) {
-      targetByteOffset = work->touchedTrigger;
+      targetByteOffset = work->coordEvent;
       djinni = ObjectEvent_GetById(LOCALID_BANE);
       leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
       djinni->speed = leader->speed;
@@ -460,9 +460,9 @@ static void EventScript_BaneKeepsAway(void) {
 
 /// Halt on Bane in CrossboneIsleBane: it freezes in place.
 static void EventScript_HaltBane(void) {
-  EV_START();
-  OBJECT_MODE(LOCALID_BANE, 0);
-  EV_END();
+  SCRIPT_START();
+  OBJECT_ANIMATION(LOCALID_BANE, 0);
+  SCRIPT_END();
 }
 
 const struct MapEvent *Map_GetEvents(void) {
@@ -532,7 +532,7 @@ static void EventScript_UseRedKey(void) {
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader->facing == FACING_NORTH) {
     if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_RED_DOOR_OPEN) == 0) {
-      if (PartyInventory_FindOwner(ITEM_RED_KEY) != -1) {
+      if (PartyInventory_FindMember(ITEM_RED_KEY) != -1) {
         FLAG_SET(FLAG_CROSSBONE_ISLE_RED_DOOR_OPEN);
         CrossboneIsleKeys_OpenRedDoor(PASSAGE_PLAY_OPENING);
         PartyInventory_Remove(ITEM_RED_KEY);
@@ -554,7 +554,7 @@ static void CrossboneIsleKeys_UseBlueKey(s32 doorIndex) {
   if (Engine_GameFlagIsSet(flag) != 0) {
     return;
   }
-  if (PartyInventory_FindOwner(ITEM_BLUE_KEY) == -1) {
+  if (PartyInventory_FindMember(ITEM_BLUE_KEY) == -1) {
     return;
   }
   Engine_GameFlagSet(flag);
@@ -582,7 +582,7 @@ static void EventScript_OpenThirdBlueDoor(void) {
   CrossboneIsleKeys_UseBlueKey(2);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader->facing == FACING_SOUTH) {
-    blockedSteps = &gEventWork->blockedSteps;
+    blockedSteps = &gFieldWork->blockedSteps;
     if (*blockedSteps > 12) {
       Engine_LeaderCheckAhead();
       resetSteps = 0;
@@ -601,7 +601,7 @@ static void EventScript_OpenFourthBlueDoor(void) {
   CrossboneIsleKeys_UseBlueKey(3);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader->facing == FACING_SOUTH) {
-    blockedSteps = &gEventWork->blockedSteps;
+    blockedSteps = &gFieldWork->blockedSteps;
     if (*blockedSteps > 12) {
       Engine_LeaderCheckAhead();
       resetSteps = 0;
@@ -611,7 +611,7 @@ static void EventScript_OpenFourthBlueDoor(void) {
 }
 
 /// Reveal in CrossboneIsleKeys: the hidden Red Key appears on its
-/// tile.
+/// cell.
 static void EventScript_ShowRedKey(void) {
   s32 keyLocalId = LOCALID_RED_KEY;
   s32 x = PIXELS(408);
@@ -623,7 +623,7 @@ static void EventScript_ShowRedKey(void) {
   WAIT(1);
 }
 
-/// Reveal wears off in CrossboneIsleKeys: the Red Key's tile is
+/// Reveal wears off in CrossboneIsleKeys: the Red Key's cell is
 /// hidden again.
 static void EventScript_HideRedKey(void) {
   MapGrid_CopyCells(24, 48, 1, 2, 25, 48);
@@ -635,7 +635,7 @@ static void EventScript_HideRedKey(void) {
 static inline void CrossboneIsleKeys_CollectKey(s32 localId, s32 itemId,
                                                 s32 collectedFlag) {
   Engine_ItemShowFound(itemId, 3);
-  OBJECT_MODE(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIMATION_STAND);
   Engine_PartyGiveItem(itemId, 0);
   Engine_ObjectEventSetPosition(localId, 0, 0);
   Engine_GameFlagSet(collectedFlag);
@@ -676,13 +676,13 @@ static void CrossboneIsleKeys_CheckFirstPursuerTrigger(void) {
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   s32 column = leader->x.fixed / PIXELS(16);
   s32 row = leader->z.fixed / PIXELS(16);
-  struct EventWork *work = gEventWork;
+  struct EventWork *work = gFieldWork;
 
   if (!FLAG_CHECK(PURSUER_AFTER_LEADER_FLAG) && gGameState.cloaked == 0 &&
       gGameState.pausedObject != LOCALID_FIRST_STATUE &&
       (u32)(column - 21) <= 2 && row >= 10 && row <= 11) {
     Engine_GameFlagSet(PURSUER_AFTER_LEADER_FLAG);
-    work->raisedTrigger = TRIGGER_FIRST_CHASE;
+    work->raisedEvent = TRIGGER_FIRST_CHASE;
   }
 }
 
@@ -691,7 +691,7 @@ static void CrossboneIsleKeys_CheckFirstPursuerTrigger(void) {
 static void EventScript_DodgeFirstPursuer(void) {
   struct ObjectEvent *leader;
 
-  EV_START();
+  SCRIPT_START();
   OBJECT_SPEED(LOCALID_PARTY_LEADER, PIXELS(19) / 10, PIXELS(19) / 20);
   OBJECT_SPEED(LOCALID_FIRST_STATUE, PIXELS(19) / 10, PIXELS(19) / 20);
   SE(SE_188);
@@ -709,7 +709,7 @@ static void EventScript_DodgeFirstPursuer(void) {
   Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
   ObjectEvent_SetDestination(LOCALID_FIRST_STATUE, 360, 152);
   Engine_ObjectEventWaitForMove(LOCALID_FIRST_STATUE);
-  EV_END();
+  SCRIPT_END();
   GameFlag_Clear(PURSUER_AFTER_LEADER_FLAG);
 }
 
@@ -718,13 +718,13 @@ static void CrossboneIsleKeys_CheckSecondPursuerTrigger(void) {
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   s32 column = leader->x.fixed / PIXELS(16);
   s32 row = leader->z.fixed / PIXELS(16);
-  struct EventWork *work = gEventWork;
+  struct EventWork *work = gFieldWork;
 
   if (FLAG_CHECK(PURSUER_AFTER_LEADER_FLAG) == 0 && gGameState.cloaked == 0 &&
       gGameState.pausedObject != LOCALID_SECOND_STATUE && column == 10 &&
       (u32)(row - 16) <= 2) {
     FLAG_SET(PURSUER_AFTER_LEADER_FLAG);
-    MapLocalState_StoreStep(&work->raisedTrigger, TRIGGER_SECOND_CHASE);
+    MapLocalState_StoreStep(&work->raisedEvent, TRIGGER_SECOND_CHASE);
   }
 }
 
@@ -733,7 +733,7 @@ static void CrossboneIsleKeys_CheckSecondPursuerTrigger(void) {
 static void EventScript_DodgeSecondPursuer(void) {
   struct ObjectEvent *leader;
 
-  EV_START();
+  SCRIPT_START();
   OBJECT_SPEED(LOCALID_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
   OBJECT_SPEED(LOCALID_SECOND_STATUE, PIXELS(17) / 10, PIXELS(17) / 20);
   SE(SE_188);
@@ -751,7 +751,7 @@ static void EventScript_DodgeSecondPursuer(void) {
   Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
   ObjectEvent_SetDestination(LOCALID_SECOND_STATUE, 168, 264);
   Engine_ObjectEventWaitForMove(LOCALID_SECOND_STATUE);
-  EV_END();
+  SCRIPT_END();
   GameFlag_Clear(PURSUER_AFTER_LEADER_FLAG);
 }
 
@@ -803,7 +803,7 @@ static void EventScript_DodgeThirdPursuer(void) {
   struct ObjectEvent *leader;
 
   if (gGameState.pausedObject != LOCALID_THIRD_STATUE) {
-    EV_START();
+    SCRIPT_START();
     OBJECT_SPEED(LOCALID_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
     OBJECT_SPEED(LOCALID_THIRD_STATUE, PIXELS(17) / 10, PIXELS(17) / 20);
     SE(SE_188);
@@ -822,7 +822,7 @@ static void EventScript_DodgeThirdPursuer(void) {
     ObjectEvent_SetDestination(LOCALID_THIRD_STATUE, 264, 360);
     Engine_ObjectEventWaitForMove(LOCALID_THIRD_STATUE);
     WAIT(10);
-    EV_END();
+    SCRIPT_END();
   }
 }
 
@@ -833,7 +833,7 @@ static void EventScript_DodgeFourthPursuer(void) {
   s32 leaderColumn;
 
   if (gGameState.pausedObject != LOCALID_FOURTH_STATUE) {
-    EV_START();
+    SCRIPT_START();
     OBJECT_SPEED(LOCALID_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
     Engine_ObjectEventSetSpeed(LOCALID_FOURTH_STATUE, PIXELS(17) / 10,
                                PIXELS(17) / 20);
@@ -867,7 +867,7 @@ static void EventScript_DodgeFourthPursuer(void) {
     Engine_ObjectEventSetDestination(LOCALID_FOURTH_STATUE, 344, 360);
     Engine_ObjectEventWaitForMove(LOCALID_FOURTH_STATUE);
     WAIT(10);
-    EV_END();
+    SCRIPT_END();
   }
 }
 
@@ -876,14 +876,14 @@ static void CrossboneIsleKeys_CheckFifthPursuerTrigger(void) {
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   s32 column = leader->x.fixed / PIXELS(16);
   s32 row = leader->z.fixed / PIXELS(16);
-  struct EventWork *work = gEventWork;
+  struct EventWork *work = gFieldWork;
   struct GameState *state = &gGameState;
 
   if (state->pausedObject != LOCALID_FIFTH_STATUE &&
       FLAG_CHECK(PURSUER_AFTER_LEADER_FLAG) == 0 && state->cloaked == 0 &&
       column == 19 && (u32)(row - 15) <= 1) {
     FLAG_SET(PURSUER_AFTER_LEADER_FLAG);
-    MapLocalState_StoreStep(&work->raisedTrigger, TRIGGER_FIFTH_CHASE);
+    MapLocalState_StoreStep(&work->raisedEvent, TRIGGER_FIFTH_CHASE);
   }
 }
 
@@ -892,7 +892,7 @@ static void CrossboneIsleKeys_CheckFifthPursuerTrigger(void) {
 static void EventScript_DodgeFifthPursuer(void) {
   struct ObjectEvent *leader;
 
-  EV_START();
+  SCRIPT_START();
   OBJECT_SPEED(LOCALID_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
   OBJECT_SPEED(LOCALID_FIFTH_STATUE, PIXELS(17) / 10, PIXELS(17) / 20);
   SE(SE_188);
@@ -909,7 +909,7 @@ static void EventScript_DodgeFifthPursuer(void) {
   Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
   ObjectEvent_SetDestination(LOCALID_FIFTH_STATUE, 312, 232);
   Engine_ObjectEventWaitForMove(LOCALID_FIFTH_STATUE);
-  EV_END();
+  SCRIPT_END();
   GameFlag_Clear(PURSUER_AFTER_LEADER_FLAG);
 }
 
@@ -1090,7 +1090,7 @@ static void EventScript_PushFirstPillar(void) {
   }
 
   CrossboneIsleKeys_RestoreFirstPillarTerrain();
-  StagedObjectEvent_AdvancePair();
+  PushedObject_AdvancePair();
   EventScript_UpdateFirstPillarTerrain();
 }
 
@@ -1098,7 +1098,7 @@ static void EventScript_PushFirstPillar(void) {
 /// object event is hidden, its bg event takes its place and the ladder cell is
 /// restored.
 static void CrossboneIsleKeys_ReleaseSecondPillarChest(void) {
-  Scheduler_RemoveCallback(CrossboneIsleKeys_FollowSecondPillar);
+  Task_Remove(CrossboneIsleKeys_FollowSecondPillar);
   OBJECT_POSITION_SET(LOCALID_SECOND_PILLAR_CHEST, 0, 0);
   if (FLAG_CHECK(BANE_LOOKED_EAST_FLAG) != 0) {
     MapGrid_CopyCellAttributes(58, 36, 1, 1, 45, 43);
@@ -1124,7 +1124,7 @@ static void EventScript_UpdateSecondPillarTerrain(void) {
 /// Pushing CrossboneIsleBane's second pillar (coord event 52); at the ladder,
 /// the chest on top of it stays there.
 static void EventScript_PushSecondPillar(void) {
-  StagedObjectEvent_AdvancePair();
+  PushedObject_AdvancePair();
   EventScript_UpdateSecondPillarTerrain();
 }
 
@@ -1177,7 +1177,7 @@ static void EventScript_UpdateThirdPillarTerrain(void) {
 /// Pushing CrossboneIsleBane's third pillar (coord event 50).
 static void EventScript_PushThirdPillar(void) {
   CrossboneIsleKeys_RestoreThirdPillarTerrain();
-  StagedObjectEvent_AdvancePair();
+  PushedObject_AdvancePair();
   EventScript_UpdateThirdPillarTerrain();
 }
 
@@ -1226,7 +1226,7 @@ static void EventScript_UpdateFourthPillarTerrain(void) {
 /// Pushing CrossboneIsleBane's fourth pillar (coord event 53).
 static void EventScript_PushFourthPillar(void) {
   CrossboneIsleKeys_RestoreFourthAndFifthPillarTerrain();
-  StagedObjectEvent_AdvancePair();
+  PushedObject_AdvancePair();
   EventScript_UpdateFourthPillarTerrain();
 }
 
@@ -1240,7 +1240,7 @@ static void EventScript_UpdateFifthPillarTerrain(void) {
 /// nothing calls it.
 UNUSED static void CrossboneIsleKeys_MoveFifthPillar(void) {
   CrossboneIsleKeys_RestoreFourthAndFifthPillarTerrain();
-  StagedObjectEvent_AdvancePair();
+  PushedObject_AdvancePair();
   EventScript_UpdateFifthPillarTerrain();
 }
 
@@ -1291,7 +1291,7 @@ static void CrossboneIsleKeys_UpdatePillarPriorities(void) {
 /// of CrossboneIsleKeys, the pursuers of CrossboneIsleStatues,
 /// or the pillars and Bane of CrossboneIsleBane.
 s32 Map_Initialize(void) {
-  gEventWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gGameState.mapId == (s32)&MapId_CrossboneIsleKeys) {
     CrossboneIsleKeys_InitializeKeys();
@@ -1418,9 +1418,9 @@ static void CrossboneIsleKeys_InitializeBane(void) {
                                      TASK_PRIORITY_MAP);
   FieldScheduler_AddCallback(CrossboneIsleKeys_UpdatePillarPriorities,
                              TASK_PRIORITY_MAP);
-  Marker_SetPosition(107, 0, 0);
+  TreasureSpot_SetPosition(107, 0, 0);
   if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_DEMON_AXE) != 0) {
-    OBJECT_MODE(LOCALID_SECOND_PILLAR_CHEST, 2);
+    OBJECT_ANIMATION(LOCALID_SECOND_PILLAR_CHEST, 2);
   }
   EventScript_UpdateFirstPillarTerrain();
   EventScript_UpdateSecondPillarTerrain();
@@ -1435,7 +1435,7 @@ static void CrossboneIsleKeys_InitializeBane(void) {
   CrossboneIsleKeys_RepaintFourthAndFifthPillarCells();
   if (FLAG_CHECK(BANE_PUDDLE_FROZEN_FLAG) != 0) {
     EventScript_FreezePuddle();
-    OBJECT_MODE(LOCALID_PUDDLE, 5);
+    OBJECT_ANIMATION(LOCALID_PUDDLE, 5);
   }
 
   // Restore the surviving Djinni at the last completed escape stage.
@@ -1465,7 +1465,7 @@ static void CrossboneIsleKeys_InitializeBane(void) {
 /// Pixel step by direction: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(dx, dz) (((u32)(dx) << 16) | ((dz) & 0xffff))
 
-s32 gStagedObjectEvent_DirectionSteps[] = {
+s32 gPushedObject_DirectionSteps[] = {
     DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),
@@ -1475,11 +1475,11 @@ s32 gStagedObjectEvent_DirectionSteps[] = {
 };
 
 // clang-format off
-u32 gStagedObjectEvent_FootprintKinds[] = {
+u32 gPushedObject_FootprintKinds[] = {
     207, 205, 228, 229, 298, 297,
 };
 
-s32 gStagedObjectEvent_FootprintBounds[] = {
+s32 gPushedObject_FootprintBounds[] = {
     -32, -8, 32, 8,
     -8, -32, 8, 32,
     -32, -16, 32, 0,
@@ -1573,50 +1573,50 @@ struct ObjectEventTemplate gCrossboneIsleKeysObjectEventTemplatesOther[] = {
 
 struct ObjectEventTemplate gCrossboneIsleKeysRoomObjectEventTemplates[] = {
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(80), 0, PIXELS(1016), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(80), 0, PIXELS(1016), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(80), 0, PIXELS(1016), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(80), 0, PIXELS(1016), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(80), 0, PIXELS(1016), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(80), 0, PIXELS(1016), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(80), 0, PIXELS(1016), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(80), 0, PIXELS(1016), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(80), 0, PIXELS(1016), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(80), 0, PIXELS(1016), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gCrossboneIsleStatuesObjectEventTemplates[] = {
     { SPRITE_LADY_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(360), 0, PIXELS(152), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(360), 0, PIXELS(152), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LADY_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(168), 0, PIXELS(264), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(168), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LADY_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(264), 0, PIXELS(360), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(264), 0, PIXELS(360), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LADY_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(344), 0, PIXELS(360), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(344), 0, PIXELS(360), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LADY_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(312), 0, PIXELS(232), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(312), 0, PIXELS(232), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gCrossboneIsleBaneObjectEventTemplates[] = {
     { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(616), 0, PIXELS(680), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(616), 0, PIXELS(680), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(728), 0, PIXELS(744), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(728), 0, PIXELS(744), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(600), 0, PIXELS(856), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(600), 0, PIXELS(856), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(824), 0, PIXELS(888), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(824), 0, PIXELS(888), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(840), 0, PIXELS(888), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(840), 0, PIXELS(888), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(648), 0, PIXELS(888), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(648), 0, PIXELS(888), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(728), 0, PIXELS(760), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(728), 0, PIXELS(760), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     // Bane, until it is caught
     { VENUS_DJINNI, FLAG_DJINNI(DJINNI_BANE), MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };
 

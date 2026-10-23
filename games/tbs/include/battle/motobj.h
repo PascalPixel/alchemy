@@ -2,7 +2,7 @@
 #define ALCHEMY_MOTION_OBJECT_H
 
 /// @file
-/// MotionObject, an effect object that moves and draws one sprite.
+/// MotionObject, an object that moves and draws one sprite.
 
 #include "types.h"
 #include "static_assert.h"
@@ -12,7 +12,7 @@
 
 union FieldObject;
 
-/// An effect object that moves and draws one sprite: its position, scale,
+/// An object that moves and draws one sprite: its position, scale,
 /// velocity and target, and its per-frame update.
 /// It is one of the object slots Object_CreateFar hands out, the same object
 /// ObjectEvent and ScriptMotionObject describe; the notes name their fields at
@@ -23,20 +23,20 @@ struct MotionObject {
   const s32 *script;
   u16 scriptCursor;
   ///@}
-  u16 angle;         ///< 1/65536 turns
-  s32 x;             ///< 16.16 fixed-point pixels
-  s32 y;             ///< 16.16 fixed-point pixels
-  s32 z;             ///< 16.16 fixed-point pixels
-  s32 terrainHeight; ///< ObjectEvent's: the ground's y
-  s32 scaleX;        ///< 16.16 fixed point, 0x10000 full size
-  s32 scaleY;        ///< 16.16 fixed point, 0x10000 full size
-  u16 height;        ///< half the sprite's box height; ObjectEvent's radius
-  u8 terrainId;      ///< ObjectEvent's; not named through this view
-  u8 priorityFlags;  ///< ObjectEvent's; not named through this view
-  s32 velocityX;     ///< 16.16 fixed-point pixels per frame
-  s32 velocityY;     ///< 16.16 fixed-point pixels per frame
-  s32 velocityZ;     ///< 16.16 fixed-point pixels per frame
-  s32 speedLimit;    ///< 16.16 fixed-point pixels per frame
+  u16 angle;        ///< 1/65536 turns
+  s32 x;            ///< 16.16 fixed-point pixels
+  s32 y;            ///< 16.16 fixed-point pixels
+  s32 z;            ///< 16.16 fixed-point pixels
+  s32 groundHeight; ///< ObjectEvent's: the ground's y
+  s32 scaleX;       ///< 16.16 fixed point, 0x10000 full size
+  s32 scaleY;       ///< 16.16 fixed point, 0x10000 full size
+  u16 height;       ///< half the sprite's box height; ObjectEvent's radius
+  u8 layer;         ///< ObjectEvent's; not named through this view
+  u8 priorityFlags; ///< ObjectEvent's; not named through this view
+  s32 velocityX;    ///< 16.16 fixed-point pixels per frame
+  s32 velocityY;    ///< 16.16 fixed-point pixels per frame
+  s32 velocityZ;    ///< 16.16 fixed-point pixels per frame
+  s32 speedLimit;   ///< 16.16 fixed-point pixels per frame
   /// Horizontal speed gained each frame towards the target, or lost braking
   /// without one, in 16.16 fixed-point pixels per frame.
   s32 acceleration;
@@ -52,9 +52,9 @@ struct MotionObject {
   /// also scales the float.
   s32 verticalMotionStrength;
   s32 riseBaseY; ///< ObjectEvent's; not named through this view
-  void *records; ///< one sprite, or a table of up to four (recordStorageKind)
-  /// bits: 3..0 RECORDS_NONE, RECORDS_SINGLE or RECORDS_TABLE
-  u8 recordStorageKind;
+  void *records; ///< one sprite, or a table of up to four (spritesKind)
+  /// bits: 3..0 OBJECT_SPRITES_NONE, OBJECT_SPRITES_ONE or OBJECT_SPRITES_GROUP
+  u8 spritesKind;
   /// bits: 4 no terrain slowdown | 3 bigger float | 2 floats | 1 falls |
   /// 0 follows terrain
   u8 motionFlags;
@@ -80,19 +80,19 @@ struct MotionObject {
   void (*update)(union FieldObject *fieldObject); ///< run first each frame
 };
 
-/// A sprite of an animation record, as battle objects set its palette and
-/// drawing priority: the start of an AnimationEntry.
+/// A sprite anim, as battle objects set its palette and
+/// drawing priority: the start of a SpriteAnim.
 struct SpriteEntry {
-  /// AnimationEntry's animationId, timer and kind; not named through this
+  /// SpriteAnim's animationId, timer and kind; not named through this
   /// view.
   ///@{
   s16 animationId;
   u16 timer;
   u8 kind;
   ///@}
-  u8 palette; ///< AnimationEntry.colorMode, the SpriteColorMode;
+  u8 palette; ///< SpriteAnim.colorMode, the SpriteColorMode;
               ///< BattleObject.palette
-  /// AnimationEntry.priority: the body and weapon 1, the status icon 3, and
+  /// SpriteAnim.priority: the body and weapon 1, the status icon 3, and
   /// the effect sprite 0, or 9 to hide it while the unit is off the ground.
   u8 priority;
 };
@@ -104,7 +104,7 @@ STATIC_ASSERT(offsetof(struct MotionObject, velocityX) == 0x24);
 STATIC_ASSERT(offsetof(struct MotionObject, targetX) == 0x38);
 STATIC_ASSERT(offsetof(struct MotionObject, motionFlags) == 0x55);
 STATIC_ASSERT(offsetof(struct MotionObject, records) == 0x50);
-STATIC_ASSERT(offsetof(struct MotionObject, recordStorageKind) == 0x54);
+STATIC_ASSERT(offsetof(struct MotionObject, spritesKind) == 0x54);
 STATIC_ASSERT(offsetof(struct MotionObject, update) == 0x6c);
 STATIC_ASSERT(sizeof(struct SpriteEntry) == 0x08);
 STATIC_ASSERT(offsetof(struct SpriteEntry, palette) == 0x05);

@@ -9,10 +9,10 @@
 #include "static_assert.h"
 #include "effect_slot.h"
 
-struct AnimationObject;
+struct Sprite;
 union FieldObject;
 
-/// A field object as Avoid's caster: its facing, its animation records and
+/// An object as Avoid's caster: its facing, its sprite and
 /// the phase and frame count of its per-frame callback.
 struct ArcEffectObject {
   /// ObjectEvent's script and its cursor; not named through this view.
@@ -23,7 +23,7 @@ struct ArcEffectObject {
   u16 angle; ///< 1/65536 turns
   /// ObjectEvent's x to riseBaseY; not named through this view.
   u8 positionToRise[0x48];
-  struct AnimationObject *records; ///< the caster's sprite
+  struct Sprite *records; ///< the caster's sprite
   /// ObjectEvent's spriteStorageKind to riseEnabled; not named through this
   /// view.
   u8 kindToRise[0x10];
@@ -35,11 +35,11 @@ struct ArcEffectObject {
 };
 
 /// The work of a Psynergy effect scene: its caster and target, where it takes
-/// place, the map state it restores and its 24 effect slots.
-/// It is the HEAP_SLOT_EFFECT work slot, read as gEffectWork, cleared when
-/// allocated: FieldEffect_LoadActionEffectResources takes it for a Psynergy or
-/// item use, and FieldEffect_InitializeSlots for the Djinn joining effects and
-/// Altmiller Cave's map. The effect's end releases it.
+/// place, the map state it restores and its 24 field effect sprites.
+/// It is the HEAP_SLOT_FIELD_EFFECT heap slot, read as gFieldEffectWork,
+/// cleared when allocated: FieldEffect_LoadActionEffectResources takes it for a
+/// Psynergy or item use, and FieldEffect_InitializeSlots for the Djinn joining
+/// effects and Altmiller Cave's map. The effect's end releases it.
 struct FieldEffectWork {
   s32 angle;          ///< 1/65536 turns
   s32 x;              ///< 16.16 fixed-point pixels
@@ -50,11 +50,11 @@ struct FieldEffectWork {
   s16 firstObjectId;  ///< the caster's object id
   s16 secondObjectId; ///< the target's object id, -1 for none
   u16 action;         ///< the ability id
-  s16 fieldKind;      ///< the ability's field kind (FIELD_KIND_)
+  s16 fieldPsynergy;  ///< the ability's field kind (FIELD_PSYNERGY_)
   /// Set at the start: Force then aims in front of the caster; cleared once
   /// the target has been dispatched.
   s8 enabled;
-  u8 mode;    ///< where the effect runs; MODE_WORLD_MAP on the world map
+  u8 mode; ///< where the effect runs; OBJECT_SYSTEM_WORLD_MAP on the world map
   s8 visible; ///< set at the start: the caster flashes with a sound
   s8 active;  ///< set at the start: the ability's name is announced
   void (*finishCallback)(void); ///< run, when set, as Ply's effect ends
@@ -82,7 +82,7 @@ struct FieldEffectWork {
   s32 savedShakeY;
   s32 savedShakeDecay;
   ///@}
-  struct EffectSlot effects[24];
+  struct FieldEffectSprite sprites[24];
   u8 unusedAfterSlots[2]; ///< no code names it
   s16 arcTileSlot;        ///< resource entry of Avoid's falling arcs' tiles
   s8 messageMode;         ///< the announcement's box mode: 1, a script adds 8
@@ -95,7 +95,7 @@ STATIC_ASSERT(offsetof(struct FieldEffectWork, action) == 0x1c);
 STATIC_ASSERT(offsetof(struct FieldEffectWork, savedCallback) == 0x38);
 STATIC_ASSERT(offsetof(struct FieldEffectWork, tileSlot) == 0x46);
 STATIC_ASSERT(offsetof(struct FieldEffectWork, savedShakeX) == 0x4c);
-STATIC_ASSERT(offsetof(struct FieldEffectWork, effects) == 0x58);
+STATIC_ASSERT(offsetof(struct FieldEffectWork, sprites) == 0x58);
 STATIC_ASSERT(offsetof(struct FieldEffectWork, arcTileSlot) == 0x71a);
 STATIC_ASSERT(offsetof(struct FieldEffectWork, messageMode) == 0x71c);
 

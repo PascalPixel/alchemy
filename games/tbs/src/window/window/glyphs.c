@@ -4,7 +4,7 @@
 
 #include "../window_internal.h"
 
-// UiText_RenderGlyphPair draws its glyphs into a buffer of one byte per pixel
+// Text_DrawGlyphPair draws its glyphs into a buffer of one byte per pixel
 // (Iwram_ExpandBitRuns writes a glyph's rows there in a colour), in rows 16
 // bytes apart, then packs its top 16 rows into 4bpp tiles. Offset 32 is row 2,
 // column 0, where the glyph goes; 49 (row 3, column 1) takes its shadow, one
@@ -13,17 +13,17 @@
 #if (LANGUAGE != LANGUAGE_JAPANESE)
 /// Draws a character, and a second one when the code carries it in bits 8 to
 /// 15, into a 16x16-pixel cell of four 4bpp tiles at out: in the text colour
-/// over a shadow, or with an outline when UiRenderWork.outline is 1. Returns
+/// over a shadow, or with an outline when WindowWork.outline is 1. Returns
 /// the width of the text drawn in pixels.
 /// The caller supplies 32 words for four tiles, written in a 16x16 sprite's
 /// order: top left, top right, bottom left, bottom right.
-s32 UiText_RenderGlyphPair(s32 code, u32 *out) {
+s32 Text_DrawGlyphPair(s32 code, u32 *out) {
   // 24 rows of 16 pixels, of which the top 16 are packed. Iwram_ExpandBitRuns
   // draws 14 rows here, so a glyph covers rows 2 to 15 and its shadow rows 3
   // to 16; a second character starts width pixels along, and what passes
   // column 15 runs on into the next row.
   u8 pixels[384];
-  struct UiRenderWork *work;
+  struct WindowWork *work;
   const u8 *glyph;
   s32 width;
   s32 colour;
@@ -38,12 +38,12 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out) {
   s32 pixelsLeft;
   u32 tileLine;
 
-  work = UI_WORK;
+  work = WINDOW_WORK;
   secondIndex = (code << 8) >> 16;
   code &= 255;
   Iwram_ClearWords(pixels, 384);
-  // While UiRenderWork.mode is set, the text is colour 8 with no shadow.
-  if (work->mode != 0) {
+  // While WindowWork.mindRead is set, the text is colour 8 with no shadow.
+  if (work->mindRead != 0) {
     shadowColour = 0;
     colour = 8;
   } else {
@@ -51,7 +51,7 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out) {
     colour = work->colour;
   }
   firstIndex = code - 32;
-  glyph = firstIndex * sizeof(struct FontGlyph) + (const u8 *)gUiText_Glyphs;
+  glyph = firstIndex * sizeof(struct FontGlyph) + (const u8 *)gFont_Glyphs;
   width = ((const struct FontGlyph *)glyph)->width;
   glyph = (const u8 *)((const struct FontGlyph *)glyph)->rows;
   // Outlined text is the glyph drawn twice a pixel apart, over its shadow
@@ -72,9 +72,9 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out) {
     // Form only the actual glyph address: &glyphs[-32] is already outside
     // the array before the later byte offset is added. The direct index
     // changes native instruction selection (EN: text grows by 8 bytes).
-    glyph = (const u8 *)&gUiText_Glyphs[(u16)secondIndex - 32];
+    glyph = (const u8 *)&gFont_Glyphs[(u16)secondIndex - 32];
 #else
-    glyph = (const u8 *)&gUiText_Glyphs[-32] + ((u16)secondIndex << 5);
+    glyph = (const u8 *)&gFont_Glyphs[-32] + ((u16)secondIndex << 5);
 #endif
     secondWidth = *(const u16 *)glyph;
     glyph += 2;
@@ -98,13 +98,13 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out) {
 
 #else
 /// Draws a character into a 16x16-pixel cell of four 4bpp tiles at out: in the
-/// text colour over a shadow, or with an outline when UiRenderWork.outline is
+/// text colour over a shadow, or with an outline when WindowWork.outline is
 /// 1, with the kana mark in the code's top two bits above its top right.
 /// Codes from 256 are kanji. Returns the character's width in pixels.
 /// The caller supplies 32 words for four tiles, in a 16x16 sprite's order.
-s32 UiText_RenderGlyphPair(u32 code, u32 *out) {
+s32 Text_DrawGlyphPair(u32 code, u32 *out) {
   u8 pixels[256];
-  struct UiRenderWork *work;
+  struct WindowWork *work;
   const u8 *glyph;
   const u8 *markGlyph;
   s32 width;
@@ -118,26 +118,26 @@ s32 UiText_RenderGlyphPair(u32 code, u32 *out) {
   s32 pixelsLeft;
   u32 tileLine;
 
-  work = UI_WORK;
+  work = WINDOW_WORK;
   markGlyph = 0;
-  markCode = gUiText_MarkGlyphCodes[code >> TEXT_CODE_MARK_SHIFT];
+  markCode = gFont_MarkGlyphCodes[code >> TEXT_CODE_MARK_SHIFT];
   if (markCode != 0)
     markGlyph =
-        (const u8 *)((const struct FontGlyph *)((const u8 *)gUiText_Glyphs +
+        (const u8 *)((const struct FontGlyph *)((const u8 *)gFont_Glyphs +
                                                 (markCode - 32) *
                                                     sizeof(struct FontGlyph)))
             ->rows;
   code &= (1 << TEXT_CODE_MARK_SHIFT) - 1;
   if (code <= 0xff) {
-    glyph = (const u8 *)gUiText_Glyphs + (code - 32) * sizeof(struct FontGlyph);
+    glyph = (const u8 *)gFont_Glyphs + (code - 32) * sizeof(struct FontGlyph);
     width = ((const struct FontGlyph *)glyph)->width;
     glyph = (const u8 *)((const struct FontGlyph *)glyph)->rows;
   } else {
-    glyph = gUiText_KanjiGlyphs + (code - 256) * 24;
+    glyph = gFont_KanjiGlyphs + (code - 256) * 24;
     width = 10;
   }
   Iwram_ClearWords(pixels, 256);
-  if (work->mode != 0) {
+  if (work->mindRead != 0) {
     shadowColour = 0;
     colour = 8;
   } else {
@@ -215,7 +215,7 @@ s32 UiText_RenderGlyphPair(u32 code, u32 *out) {
 /// The main font's glyph n, counted from the space character.
 #define FONT_GLYPH(n)                                                          \
   ((const struct FontGlyph *)((n) * sizeof(struct FontGlyph) +                 \
-                              (const u8 *)gUiText_Glyphs))
+                              (const u8 *)gFont_Glyphs))
 
 /// Returns the width in pixels of a zero-terminated string of 16-bit character
 /// codes: 4 for a space, and for other codes up to 0xff the font width, but
@@ -223,7 +223,7 @@ s32 UiText_RenderGlyphPair(u32 code, u32 *out) {
 /// Spanish, French and Italian count every code up to 0xff but the space as a
 /// flat 10, and codes above it as nothing. Control codes are counted as
 /// characters.
-s32 UiText_GetWideStringWidth(u16 *text) {
+s32 Text_GetWideStringWidth(u16 *text) {
   s32 width;
   u16 *cursor;
   u32 code;
@@ -263,13 +263,13 @@ s32 UiText_GetWideStringWidth(u16 *text) {
 /// window at pixel (x, y), running its colour, outline, line spacing and new
 /// line codes; other control codes are skipped with their arguments. A NULL
 /// text draws the ring of decoded text from its first entry, after writing a
-/// 0 at UiRenderWork.count to end it. Each character is drawn at once, with
-/// no typing. A new line returns to x and goes 15 pixels down. The style
-/// codes change the shared style (UiRenderWork), which stays changed after.
-void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x,
-                                     s32 y) {
+/// 0 at WindowWork.textBufferEnd to end it. Each character is drawn at once,
+/// with no typing. A new line returns to x and goes 15 pixels down. The style
+/// codes change the shared style (WindowWork), which stays changed after.
+void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
+                                 s32 y) {
   u8 *base;
-  struct UiRenderWork *work;
+  struct WindowWork *work;
   u32 code;
 #if (LANGUAGE != LANGUAGE_JAPANESE)
   u32 nextCode;
@@ -277,13 +277,13 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x,
   s16 lineStartX;
 
   base = gWindowWork[0];
-  work = (struct UiRenderWork *)base;
+  work = (struct WindowWork *)base;
   code = 0;
   lineStartX = x;
   if (text == NULL) {
-    text = work->entries;
-    work->entries[work->count] = code;
-    work->count = (work->count + 1) & RENDER_ENTRY_MASK;
+    text = work->textBuffer;
+    work->textBuffer[work->textBufferEnd] = code;
+    work->textBufferEnd = (work->textBufferEnd + 1) & TEXT_BUFFER_MASK;
   }
 #if (LANGUAGE != LANGUAGE_JAPANESE)
   for (;;)
@@ -304,7 +304,7 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x,
     // in decoded text is unknown.
     if (code <= TEXT_END_ALT) {
       switch (code) {
-      case TEXT_COLOUR:
+      case TEXT_COLOR:
         work->colour = *text;
         text++;
         break;
@@ -316,7 +316,7 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x,
         work->lineSpacing = *text;
         text++;
         break;
-      case TEXT_COLOURS_RESET:
+      case TEXT_COLORS_RESET:
         UiWork_ResetCounters();
         break;
       case TEXT_NEWLINE:
@@ -340,14 +340,14 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x,
       }
     } else {
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-      // Pair two narrow characters into one cell, as UiWork_StepChannelScript
+      // Pair two narrow characters into one cell, as TextPrinter_Step
       // does.
-      if ((window->flags & UI_WINDOW_TEXT_CANVAS) == 0) {
+      if ((window->flags & WINDOW_FLAG_TEXT_CANVAS) == 0) {
         nextCode = *text;
 #if (LANGUAGE == LANGUAGE_SPANISH)
         if (code > 32 && nextCode > 32) {
-          s16 width = gUiText_Glyphs[code - 32].width +
-                      gUiText_Glyphs[nextCode - 32].width;
+          s16 width =
+              gFont_Glyphs[code - 32].width + gFont_Glyphs[nextCode - 32].width;
 
           if (work->outline == TEXT_STYLE_OUTLINED) {
             if ((u16)width <= 14) {
@@ -361,8 +361,8 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x,
         }
 #else
         if (code > 32 && nextCode > 32 &&
-            (u16)(gUiText_Glyphs[code - 32].width +
-                  gUiText_Glyphs[nextCode - 32].width) <= 15) {
+            (u16)(gFont_Glyphs[code - 32].width +
+                  gFont_Glyphs[nextCode - 32].width) <= 15) {
           code |= nextCode << 8;
           text++;
         }
@@ -377,7 +377,7 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x,
         text++;
       }
 #endif
-      x += UiText_DrawGlyph(window, code, x, y, GLYPH_DRAW_CHARACTER);
+      x += Glyph_Draw(window, code, x, y, GLYPH_DRAW_CHARACTER);
     }
   }
 }
@@ -385,20 +385,20 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x,
 /// Draws a string of 16-bit character codes straight into the UI tilemap, as
 /// tiles, inside a window at tile (offsetX, offsetY) of its interior, writing
 /// both the work block's copy and VRAM. A NULL buffer draws the decoded text
-/// in UiRenderWork.entries.
+/// in WindowWork.textBuffer.
 /// Nothing calls it.
-UNUSED void UiText_RenderGlyphTileAtWorkOffset(u16 *buffer,
-                                               const struct UiWindow *work,
-                                               s32 offsetX, s32 offsetY) {
-  struct UiRenderWork *canvas = UI_WORK;
+UNUSED void Text_DrawGlyphTileAtWorkOffset(u16 *buffer,
+                                           const struct Window *work,
+                                           s32 offsetX, s32 offsetY) {
+  struct WindowWork *canvas = WINDOW_WORK;
   u32 cell;
 
   if (buffer == NULL) {
-    u16 *counter = &canvas->count;
+    u16 *counter = &canvas->textBufferEnd;
 
-    buffer = canvas->entries;
-    canvas->entries[*counter] = 0;
-    *counter = (*counter + 1) & RENDER_ENTRY_MASK;
+    buffer = canvas->textBuffer;
+    canvas->textBuffer[*counter] = 0;
+    *counter = (*counter + 1) & TEXT_BUFFER_MASK;
   }
 
   cell = ((work->y + offsetY + 1) << 5) + (work->x + offsetX) + 1;
@@ -408,33 +408,33 @@ UNUSED void UiText_RenderGlyphTileAtWorkOffset(u16 *buffer,
     s32 dst;
 
     cell *= 2;
-    dst = (s32)UI_TILEMAP_VRAM + cell;
+    dst = (s32)WINDOW_TILEMAP_VRAM + cell;
     src = (s32)canvas->tilemap + cell;
 
-    UiText_RenderStringTiles(buffer, (u16 *)src, (u16 *)dst,
-                             (s32)UI_TILEMAP_VRAM);
+    Text_DrawStringAsTiles(buffer, (u16 *)src, (u16 *)dst,
+                           (s32)WINDOW_TILEMAP_VRAM);
   }
 }
 
 /// Draws a zero-terminated string of 16-bit character codes into a window's
 /// tilemap at tile (x, y) of its interior, one tile per character, skipping
-/// control codes; a NULL text draws the decoded text in UiRenderWork.entries.
+/// control codes; a NULL text draws the decoded text in WindowWork.textBuffer.
 /// Control operands are skipped, not rendered as glyphs; the input is read
-/// only. The character code is the tile's number (UiWindow_PutGlyph), so only
+/// only. The character code is the tile's number (Window_PutGlyph), so only
 /// codes up to 0xff show. The Djinn preview (battle_command/djinn_preview.c)
 /// draws its numbers this way.
-void UiText_RenderWideStringInWindow(s16 *text, struct UiWindow *window, s32 x,
-                                     s32 y) {
-  struct UiRenderWork *work;
+void Text_DrawWideStringInWindow(s16 *text, struct Window *window, s32 x,
+                                 s32 y) {
+  struct WindowWork *work;
   u16 code;
   s16 lineStartX;
 
-  work = UI_WORK;
+  work = WINDOW_WORK;
   lineStartX = x;
   if (text == NULL) {
-    text = work->entries;
-    work->entries[work->count] = 0;
-    work->count = (work->count + 1) & RENDER_ENTRY_MASK;
+    text = work->textBuffer;
+    work->textBuffer[work->textBufferEnd] = 0;
+    work->textBufferEnd = (work->textBufferEnd + 1) & TEXT_BUFFER_MASK;
   }
   code = *text++;
   if (code != 0)
@@ -451,8 +451,8 @@ void UiText_RenderWideStringInWindow(s16 *text, struct UiWindow *window, s32 x,
           text++;
           // Skip the second operand too.
           // Fall through.
-        case TEXT_COLOURS_RESET:
-        case TEXT_COLOUR:
+        case TEXT_COLORS_RESET:
+        case TEXT_COLOR:
         case TEXT_OUTLINE:
         case TEXT_LINE_SPACING:
         case 11:
@@ -465,7 +465,7 @@ void UiText_RenderWideStringInWindow(s16 *text, struct UiWindow *window, s32 x,
           break;
         }
       } else {
-        UiWindow_PutGlyph(window, code, x, y, GLYPH_DRAW_CHARACTER);
+        Window_PutGlyph(window, code, x, y, GLYPH_DRAW_CHARACTER);
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
         x++;
@@ -486,7 +486,7 @@ void UiText_RenderWideStringInWindow(s16 *text, struct UiWindow *window, s32 x,
 /// another width counts as 12), padded with spaces, and a negative number
 /// shows its magnitude with no sign. A number of more than width digits loses
 /// its leading digits.
-u8 *UiText_FormatNumber(u8 *buffer, s32 input, s32 width) {
+u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width) {
   s32 offset;
   s32 value;
   s32 negative;

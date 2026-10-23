@@ -271,7 +271,7 @@ void MusicPlayer_Initialize(struct SoundPlayer *player,
     return;
   work->lock++;
 
-  // Clear the player record and deactivate the supplied track slots.
+  // Clear the player's state and deactivate the supplied track slots.
   AudioCommand_InvokeSlot35(player);
   player->tracks = tracks;
   player->trackCount = trackCount;
@@ -295,7 +295,7 @@ void MusicPlayer_Initialize(struct SoundPlayer *player,
 
 /// Starts a song when its priority permits, resetting its tracks and tempo.
 /// The song takes the first of the player's tracks, as many as both have;
-/// the player's other tracks are stopped. Called by AudioCommand_Play and the
+/// the player's other tracks are stopped. Called by Sound_PlaySong and the
 /// Audio_PlaySound family; does nothing while the player's lock is held.
 void MusicPlayer_StartSong(struct SoundPlayer *player,
                            const struct SequenceHeader *header) {
@@ -831,7 +831,7 @@ void Cgb_UpdateChannels(void) {
 
 /// Sets the tempo multiplier (0x100 the song's own tempo) and updates the
 /// number of ticks advanced per frame. Called by the music layer's tempo and
-/// pitch ramp and MusicCommand_SetPitchAndUpdateFrequency (sound.c); does
+/// pitch ramp and Sound_SetBgmTempo (sound.c); does
 /// nothing while the player's lock is held.
 void MusicPlayer_SetPitchAndUpdateFrequency(struct SoundPlayer *player,
                                             u16 scale) {

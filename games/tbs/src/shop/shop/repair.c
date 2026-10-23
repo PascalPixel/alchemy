@@ -18,27 +18,27 @@ s32 Shop_RepairPrice(s32 inventoryEntry) {
 
 /// Runs the repair counter's member choice; always returns 0. Called by
 /// Shop_Run for Repair.
-s32 Shop_SelectUnit(void) {
-  Shop_PickUnit();
+s32 Shop_RunRepairMemberChoice(void) {
+  Shop_ChooseMember();
   return 0;
 }
 
 /// Lets the player choose items to repair from the member's grid, one at a
 /// time, with each one's repair price, until B or the inventory is empty.
 /// Returns -1 when cancelled, 0 when the inventory ran out. Called by
-/// Shop_PickUnit.
+/// Shop_ChooseMember.
 s32 Shop_SelectRepair(s32 unitId) {
-  struct ShopRuntime *shop;
+  struct ShopWork *shop;
   s32 inventoryCount;
-  struct UiWindow *descriptionWindow;
-  struct UiWindow *priceWindow;
-  struct BattleUnit *unit;
+  struct Window *descriptionWindow;
+  struct Window *priceWindow;
+  struct Unit *unit;
   s32 slot;
   s32 redraw;
   s32 result;
   s32 itemId;
   s32 repairCost;
-  struct UiWindow *window;
+  struct Window *window;
   s32 x;
   s32 y;
 
@@ -46,12 +46,12 @@ s32 Shop_SelectRepair(s32 unitId) {
   unit = Unit_GetFar(unitId);
   inventoryCount = 1;
   priceWindow =
-      UiWindow_CreateFar(SHOP_LIST_X, 8, SHOP_LIST_WIDTH, 4, UI_WINDOW_INSTANT);
+      Window_CreateFar(SHOP_LIST_X, 8, SHOP_LIST_WIDTH, 4, WINDOW_FLAG_INSTANT);
   slot = 0;
 
   for (;;) {
-    descriptionWindow = UiWindow_CreateFar(0, 5, 30, 3, UI_WINDOW_INSTANT);
-    shop->cursor.anchor->active = UI_SPRITE_HOP_DOWN_LEFT;
+    descriptionWindow = Window_CreateFar(0, 5, 30, 3, WINDOW_FLAG_INSTANT);
+    shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_LEFT;
     shop->mode = 12;
     redraw = 1;
 
@@ -65,7 +65,7 @@ s32 Shop_SelectRepair(s32 unitId) {
         window = shop->itemWindow;
         x = slot % SHOP_INVENTORY_COLUMNS * 16;
         y = slot / SHOP_INVENTORY_COLUMNS * 16 + 8;
-        Shop_PlaceCursor(window, x, y);
+        MenuCursor_Place(window, x, y);
         shop->mode = 3;
         repairCost = Shop_RepairPrice(unit->inventory[slot]);
         Shop_DrawItemPrice(priceWindow, itemId, repairCost,
@@ -73,23 +73,23 @@ s32 Shop_SelectRepair(s32 unitId) {
         Shop_DrawMessage(descriptionWindow, itemId + MsgItemPlainName);
       }
       if ((gKeysPressed & KEY_A) != 0) {
-        AudioCommand_PlayFar(SE_MENU_CONFIRM);
+        Sound_PlaySongFar(SE_MENU_CONFIRM);
         result = 0;
         break;
       }
       if ((gKeysPressed & KEY_B) != 0) {
-        AudioCommand_PlayFar(SE_MENU_CANCEL);
+        Sound_PlaySongFar(SE_MENU_CANCEL);
         result = -1;
         break;
       }
       if ((gKeysRepeat & KEY_LEFT) != 0) {
-        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         slot -= 1;
         slot = (slot + inventoryCount) % inventoryCount;
         redraw = 1;
       }
       if ((gKeysRepeat & KEY_RIGHT) != 0) {
-        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         slot += 1;
         slot = (slot + inventoryCount) % inventoryCount;
         redraw = 1;
@@ -100,7 +100,7 @@ s32 Shop_SelectRepair(s32 unitId) {
           slot += INVENTORY_SLOTS;
         while (slot >= inventoryCount)
           slot -= SHOP_INVENTORY_COLUMNS;
-        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         redraw = 1;
       }
       if ((gKeysRepeat & KEY_DOWN) != 0) {
@@ -109,24 +109,24 @@ s32 Shop_SelectRepair(s32 unitId) {
           slot -= INVENTORY_SLOTS;
         while (slot < 0)
           slot += SHOP_INVENTORY_COLUMNS;
-        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         redraw = 1;
       }
       WaitFrames(1);
     }
 
-    UiWork_FinalizeFar(descriptionWindow, 2);
+    Window_CloseFar(descriptionWindow, 2);
     WaitFrames(1);
     if (result != 0)
       break;
 
     Shop_RepairItem(unitId, slot);
-    UiMessage_ShowAndWait(MsgRepairAnythingElse);
+    Shop_ShowKeeperMessage(MsgRepairAnythingElse);
     if (Inventory_CountFar(unitId) == 0)
       break;
   }
 
-  UiWork_FinalizeFar(priceWindow, 2);
+  Window_CloseFar(priceWindow, 2);
   return result;
 }
 
@@ -136,8 +136,8 @@ s32 Shop_SelectRepair(s32 unitId) {
 /// mended, charges the price and offers to equip it. Called by
 /// Shop_SelectRepair.
 void Shop_RepairItem(s32 unitId, s32 slot) {
-  struct ShopRuntime *shop = gMenuWork;
-  struct BattleUnit *unit = Unit_GetFar(unitId);
+  struct ShopWork *shop = gMenuWork;
+  struct Unit *unit = Unit_GetFar(unitId);
   s32 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
   struct ItemDefinition *item = Item_GetDirectFar(itemId);
   s32 equipped = Inventory_FindEquippedFar(unitId, item->type);
@@ -148,59 +148,59 @@ void Shop_RepairItem(s32 unitId, s32 slot) {
 
   useType = item->useType;
   if (useType != ITEM_USE_MAY_BREAK) {
-    UiWork_PushValueSlotFar(itemId, MESSAGE_ARGUMENT_ITEM);
-    UiMessage_ShowAndRestoreState(MsgCannotRepairKind);
+    MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
+    Shop_ShowKeeperMessageHidingCursor(MsgCannotRepairKind);
     return;
   }
   if (!(unit->inventory[slot] & INVENTORY_BROKEN)) {
-    UiWork_PushValueSlotFar(itemId, MESSAGE_ARGUMENT_ITEM);
-    UiMessage_ShowAndRestoreState(MsgNotDamaged);
+    MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
+    Shop_ShowKeeperMessageHidingCursor(MsgNotDamaged);
     return;
   }
   // useType is ITEM_USE_MAY_BREAK here, so this tests ITEM_CANNOT_UNEQUIP.
   if ((unit->inventory[slot] & INVENTORY_EQUIPPED) && (useType & item->flags)) {
-    UiWork_PushValueSlotFar(itemId, MESSAGE_ARGUMENT_ITEM);
-    UiMessage_ShowAndRestoreState(MsgCursedWontComeOff);
+    MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
+    Shop_ShowKeeperMessageHidingCursor(MsgCursedWontComeOff);
     return;
   }
   if (repairCost > gGameState.coins) {
-    UiMessage_ShowAndRestoreState(MsgNotEnoughMoney);
+    Shop_ShowKeeperMessageHidingCursor(MsgNotEnoughMoney);
     return;
   }
-  UiWork_PushValueSlotFar(itemId, MESSAGE_ARGUMENT_ITEM);
-  UiWork_PushValueSlotFar(repairCost, MESSAGE_ARGUMENT_NUMBER);
+  MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
+  MessageArgument_PushFar(repairCost, MESSAGE_ARGUMENT_NUMBER);
   messageBase = MsgShopRepairConfirm;
-  UiMessage_ShowAndRestoreState(messageBase);
-  if (UiMessage_ShowChoice(0) != 0) {
-    UiMessage_ShowAndRestoreState(messageBase + 1);
+  Shop_ShowKeeperMessageHidingCursor(messageBase);
+  if (Shop_AskYesNo(0) != 0) {
+    Shop_ShowKeeperMessageHidingCursor(messageBase + 1);
     return;
   }
   // Hide the item during the work sequence without compacting its slot.
   savedEntry = unit->inventory[slot];
   unit->inventory[slot] = 0;
-  Shop_DrawUnitGrid(shop->itemWindow, unitId);
-  UiWork_PushValueSlotFar(itemId, MESSAGE_ARGUMENT_ITEM);
-  UiMessage_ShowAndRestoreState(messageBase + 2);
+  Shop_DrawMemberItems(shop->itemWindow, unitId);
+  MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
+  Shop_ShowKeeperMessageHidingCursor(messageBase + 2);
   UiWork_FinalizePendingCoreFar();
   // The hammer blows are 110 frames apart; the item stays hidden throughout,
   // 360 frames (six seconds) from the first wait to the last.
   WaitFrames(10);
-  AudioCommand_PlayFar(SE_100);
+  Sound_PlaySongFar(SE_100);
   WaitFrames(110);
-  AudioCommand_PlayFar(SE_100);
+  Sound_PlaySongFar(SE_100);
   WaitFrames(110);
-  AudioCommand_PlayFar(SE_100);
+  Sound_PlaySongFar(SE_100);
   WaitFrames(110);
-  AudioCommand_PlayFar(SE_MENU_CONFIRM);
+  Sound_PlaySongFar(SE_MENU_CONFIRM);
   WaitFrames(20);
   // Restore the entry, repair it, charge the fee and offer equipment changes.
   unit->inventory[slot] = savedEntry;
   Inventory_RepairFar(unitId, slot);
   Party_AdjustCoinsFar(-repairCost);
   Shop_DrawMoney();
-  Shop_DrawUnitGrid(shop->itemWindow, unitId);
-  UiWork_PushValueSlotFar(itemId, MESSAGE_ARGUMENT_ITEM);
-  UiMessage_ShowAndRestoreState(messageBase + 3);
+  Shop_DrawMemberItems(shop->itemWindow, unitId);
+  MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
+  Shop_ShowKeeperMessageHidingCursor(messageBase + 3);
   if (Shop_ConfirmEquip(unitId, slot))
     Shop_SellOld(unitId, equipped);
 }

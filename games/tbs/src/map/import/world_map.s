@@ -3,27 +3,27 @@
 	.set import.__divsi3, 1
 	.set import.__umodsi3, 1
 	.set import.Engine_TaskWait, 1
-	.set import.Scheduler_AddOrUpdateCallback, 1
+	.set import.Task_Add, 1
 	.set import.Engine_TaskRemoveCallback, 1
 	.set import.Engine_RandomNext, 1
 	.set import.Engine_MathSin, 1
 	.set import.Vector_AddPolarOffset, 1
 	.set import.Engine_HeapAllocate, 1
 	.set import.Engine_HeapRelease, 1
-	.set import.Runtime_BumpAllocateAlternatePool, 1
-	.set import.MemFree, 1
-	.set import.Resource_DecodeType01, 1
-	.set import.Resource_ResetEntry, 1
+	.set import.AllocEwram, 1
+	.set import.Free, 1
+	.set import.Decompress_Type01, 1
+	.set import.VramCache_FreeEntry, 1
 	.set import.Engine_VramLoad, 1
 	.set import.IoWriteQueue_Store16, 1
-	.set import.AnimationObject_SelectAnimation, 1
+	.set import.Sprite_StartAnim, 1
 	.set import.ObjectEvent_SetMode, 1
 	.set import.Engine_ObjectSetScript, 1
 	.set import.Engine_ObjectCreate, 1
 	.set import.Engine_ObjectDispatchRelease, 1
 	.set import.ObjectDispatch_StartIdle, 1
 	.set import.Engine_ObjectSetPosition, 1
-	.set import.FieldObject_WaitForMove, 1
+	.set import.Object_WaitForMove, 1
 	.set import.WorldMap_LoadDefaultCellsAndUpdateBlock, 1
 	.set import.WorldMap_SetWindowCellTile, 1
 	.set import.Engine_ObjectEventSetSpriteFlags, 1
@@ -31,16 +31,16 @@
 	.set import.WorldMap_LoadAreaGraphics, 1
 	.set import.Engine_ObjectSetPartPalettes, 1
 	.set import.Engine_MessageShowCentered, 1
-	.set import.UiWork_PushValueSlot, 1
+	.set import.MessageArgument_Push, 1
 	.set import.Engine_ItemLoadIcon, 1
-	.set import.PaletteGlow_Update, 1
+	.set import.WindowColor_Apply, 1
 	.set import.Menu_AnimateSelectionToEntry, 1
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1
 	.set import.Engine_GameFlagClear, 1
 	.set import.GameFlag_GetByte, 1
 	.set import.GameFlag_SetByte, 1
-	.set import.Djinn_AddToOwner, 1
+	.set import.Djinn_Give, 1
 	.set import.DjinnRecovery_AddStandby, 1
 	.set import.Party_RestoreHpPp, 1
 	.set import.PartyInventory_Discard, 1

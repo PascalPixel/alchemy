@@ -172,7 +172,7 @@ enum {
 /// Clears the scripted object event's sprite flags and completes this script
 /// command.
 static s32 BilibinCave_ClearScriptedObjectEventSpriteFlags(
-    struct ScriptInterpreter *interpreter) {
+    struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
   return 0;
@@ -366,7 +366,7 @@ static void BilibinCave_UpdateThirdPuddleFromTorches(void) {
     if (GameFlag_IsSet(FLAG_MAPSEC_TEMP_02) == 0) {
       Engine_ScriptStart();
       Engine_ScriptWait(40);
-      Script_PlayCue(SE_HIDDEN_PASSAGE_OPEN);
+      Script_PlaySong(SE_HIDDEN_PASSAGE_OPEN);
       destinationCellX = 36;
       Engine_ObjectEventSetAnimationAndWait(LOCALID_THIRD_PUDDLE,
                                             PUDDLE_ANIMATION_MELT);
@@ -379,7 +379,7 @@ static void BilibinCave_UpdateThirdPuddleFromTorches(void) {
     if (GameFlag_IsSet(FLAG_MAPSEC_TEMP_02) != 0) {
       Engine_ScriptStart();
       Engine_ScriptWait(40);
-      Script_PlayCue(SE_220);
+      Script_PlaySong(SE_220);
       destinationCellX = 36;
       Engine_ObjectEventSetAnimationAndWait(LOCALID_THIRD_PUDDLE,
                                             PUDDLE_ANIMATION_FREEZE);
@@ -442,7 +442,7 @@ static void BilibinCave_RestoreEntrance(void) {
 /// fire, gone once Douse has put it out.
 static void BilibinCave_RestoreRapierRoom(void) {
 
-  gEventWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
 
   Engine_ObjectEventSetAnimation(LOCALID_RAPIER_ROOM_WEST_TORCH,
@@ -470,7 +470,7 @@ static void BilibinCave_RestoreIceRoom(void) {
   struct ObjectEvent *objectEvent;
   s32 destinationCellX;
 
-  gEventWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   // Set up the decorative animations before restoring interactive object
   // events.
@@ -588,7 +588,7 @@ static void EventScript_PushObjectEventAhead(void) {
       (leader->x.part.pixel + (gBilibinCave_PushSteps[heading] >> 16)) >> 4;
   nextCellZ =
       (leader->z.part.pixel + (s16)gBilibinCave_PushSteps[heading]) >> 4;
-  target = MapObjectEvent_FindAtCell(nextCellX, nextCellZ);
+  target = ObjectEvent_FindAtCell(nextCellX, nextCellZ);
   if (target == 0)
     return;
 
@@ -596,13 +596,13 @@ static void EventScript_PushObjectEventAhead(void) {
       (target->x.part.pixel + (gBilibinCave_PushSteps[heading] >> 16)) >> 4;
   nextCellZ =
       (target->z.part.pixel + (s16)gBilibinCave_PushSteps[heading]) >> 4;
-  blocker = MapObjectEvent_FindAtCell(nextCellX, nextCellZ);
+  blocker = ObjectEvent_FindAtCell(nextCellX, nextCellZ);
   if (blocker != 0)
     return;
 
   // Check the destination before moving both object events into their push
   // states.
-  target->terrainId = 2;
+  target->layer = 2;
 
   destination.x =
       target->x.fixed + (gBilibinCave_PushSteps[heading] & 0xffff0000);
@@ -626,7 +626,7 @@ static void EventScript_PushObjectEventAhead(void) {
   Engine_ObjectSetPosition(leader, destination.x, destination.y, destination.z);
 
   // Wait for the target's movement before snapping it to the destination.
-  FieldObject_WaitForMove(target);
+  Object_WaitForMove(target);
 
   target->x.fixed = destination.x;
   target->z.fixed = destination.z;
@@ -745,59 +745,59 @@ struct ObjectEventTemplate gBilibinCaveObjectEventTemplatesOther[] = {
 // clang-format off
 struct ObjectEventTemplate gBilibinCaveEntranceObjectEventTemplates[] = {
     { SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(136), 0, PIXELS(208), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(136), 0, PIXELS(208), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gBilibinCaveRapierObjectEventTemplates[] = {
     { SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(840), 0, PIXELS(120), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(840), 0, PIXELS(120), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_FIRE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(856), 0, PIXELS(120), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(856), 0, PIXELS(120), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(872), 0, PIXELS(120), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(872), 0, PIXELS(120), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gBilibinCaveIceObjectEventTemplates[] = {
     { SPRITE_FIRE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(280), 0, PIXELS(232), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(280), 0, PIXELS(232), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(152), 0, PIXELS(264), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(152), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(520), 0, PIXELS(280), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(520), 0, PIXELS(280), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(504), 0, PIXELS(360), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(504), 0, PIXELS(360), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(536), 0, PIXELS(360), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(536), 0, PIXELS(360), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(504), 0, PIXELS(520), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(504), 0, PIXELS(520), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(584), 0, PIXELS(520), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(584), 0, PIXELS(520), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, (s32)gBilibinCave_ClearSpriteScript,
-        PIXELS(296), 0, PIXELS(230), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(296), 0, PIXELS(230), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, (s32)gBilibinCave_ClearSpriteScript,
-        PIXELS(504), 0, PIXELS(280), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(504), 0, PIXELS(280), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, (s32)gBilibinCave_ClearSpriteScript,
-        PIXELS(584), 0, PIXELS(376), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(584), 0, PIXELS(376), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(344), 0, PIXELS(224), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(344), 0, PIXELS(224), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(392), 0, PIXELS(280), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(392), 0, PIXELS(280), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(424), 0, PIXELS(296), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(424), 0, PIXELS(296), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(456), 0, PIXELS(264), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(456), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(328), 0, PIXELS(288), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(328), 0, PIXELS(288), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(200), 0, PIXELS(264), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(200), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(248), 0, PIXELS(264), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(248), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(136), 0, PIXELS(296), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(136), 0, PIXELS(296), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(184), 0, PIXELS(312), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(184), 0, PIXELS(312), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { MAP_TABLE_END },
 };
 

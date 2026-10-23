@@ -50,8 +50,8 @@
 	.set import.FieldEffect_LoadActionEffectResources, 1
 	.set import.FieldEffect_SetupObjectPair, 1
 	.set import.FieldEffect_StopCasterHook, 1
-	.set import.EventObject_Initialize, 1
-	.set import.FieldEffect_SetQueuedSoundAndPlay, 1
-	.set import.FieldEffect_PlayQueuedSound, 1
+	.set import.FieldEffect_StartCast, 1
+	.set import.Map_QueueMusic, 1
+	.set import.Map_PlayQueuedMusic, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

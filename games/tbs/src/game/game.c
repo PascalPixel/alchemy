@@ -17,12 +17,12 @@
 ///                   PartyInventory_Add
 ///   Levels          levels.c: Unit_RefreshPsynergy, Unit_LevelUp
 ///   Flags           flags.c: GameFlag_Test, GameFlag_SetBit
-///   Enemies, party  party.c: BattleUnit_Set, Party_AddActiveOwner,
+///   Enemies, party  party.c: BattleUnit_Set, Party_AddMember,
 ///                   Party_AdjustCoins
 ///   Classes         classes.c: Class_Determine, Unit_UpdateClass
 ///   Battle maths    battle_calc.c: Battle_GetElementMultiplier,
 ///                   Battle_Random
-///   Djinn           djinn.c: Djinn_AddToOwner, Djinn_Activate
+///   Djinn           djinn.c: Djinn_Give, Djinn_Set
 
 #include "game_internal.h"
 

@@ -32,17 +32,17 @@ everyone stood, loads the battle as the next map (under a map number past
 the end of the map table, as [the front page](README.md#the-main-loop)
 explains), and afterwards loads the map again with everyone put back.
 
-In the code, `Field_RunMap` runs one field map: it loads the layout, calls
+In the code, `Map_Run` runs one field map: it loads the layout, calls
 the overlay's entries, then lets the leader walk, calling `Field_ProcessStep`
 once a frame, until `Field_CountRequests` finds a request. The running
 map's state is one block of memory, `struct FieldWork`, and each kind of
 request is one member of it, so at most one of each kind can be waiting. A
 battle request saves the [object events](glossary.md#object-event) with
-`ObjectTable_Snapshot`, sets the next map to `RUN_BATTLE` and sets the warp
+`ObjectEvent_Snapshot`, sets the next map to `RUN_BATTLE` and sets the warp
 the map returns to `WARP_NONE`, which tells the loop the next map is
-already chosen; afterwards `Map_ReturnFromBattle`
+already chosen; afterwards `Map_ReturnFromRun`
 loads the field map again with `FLAG_KEEP_PARTY_POSITION` set, and
-`ObjectTable_Restore` puts the object events back.
+`ObjectEvent_Restore` puts the object events back.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -134,13 +134,13 @@ page](README.md#game-flags) gives the ranges, and
 [Maps](src/map/README.md#state-that-cleans-itself-up) says how a map uses
 them.
 
-## Field objects and their scripts
+## Objects and their scripts
 
 Everything on the field that moves or changes by itself, the party, the
 townspeople, the camera, even the footprints the leader leaves in snow, is a
-[field object](glossary.md#field-object), and each one runs a small script.
+[object](glossary.md#object), and each one runs a small script.
 
-![Three field objects and their scripts. The leader moves by the direction pad, waits one frame and repeats, for good. The camera follows the leader, waits one frame and repeats. A footprint waits 120 frames and then disappears. Each frame every object runs its steps in order until one says to wait, which ends its turn until the next frame. Below, Isaac in Imil's snow as the game draws him, with the footprints his steps left beside him.](https://alchemy.pascalpixel.com/illustrations/field/object-scripts.svg)
+![Three objects and their scripts. The leader moves by the direction pad, waits one frame and repeats, for good. The camera follows the leader, waits one frame and repeats. A footprint waits 120 frames and then disappears. Each frame every object runs its steps in order until one says to wait, which ends its turn until the next frame. Below, Isaac in Imil's snow as the game draws him, with the footprints his steps left beside him.](https://alchemy.pascalpixel.com/illustrations/field/object-scripts.svg)
 
 Every frame each object takes a turn: it runs the steps of its script in
 order until one says to wait. A step that only tests something or jumps
@@ -151,19 +151,19 @@ climbing. A footprint shows an object's whole life: every 18 frames of
 walking, or 12 of running, the leader's control creates one and starts it
 on `gWorldMap_FootprintActions`, the two words `SC_WAIT(120), SC_FREE`.
 
-The objects are the 64 slots of `gObjectSlots`, each 112 bytes. A script is
+The objects are the 64 slots of `gObjects`, each 112 bytes. A script is
 an array of 32-bit words, an `SC_` command from `objcmd.h` and then its
-operands, run through `gScriptObject_CommandTable` by
+operands, run through `gObjectScript_CommandTable` by
 `Object_UpdateAllThumb`. A command that returns 1 has finished and the next
 runs in the same frame; one that returns 0 ends the object's turn. A jump
-stores no offset: `ActionScript_FindLabel` searches the script for the matching
+stores no offset: `ObjectScript_FindLabel` searches the script for the matching
 `SC_LABEL` word, looking through at most the first 1,024 words
 (`SCRIPT_LABEL_SEARCH_WORDS`) and starting the script again from the top
 when it finds none. `SC_END` leaves the object idling on
 `gScript_MainScript`; only `SC_FREE` frees the slot.
 
 Different parts of the code read an object's 112 bytes through different
-structs (`ObjectRuntime`, `ScriptMotionObject`, `ObjectEvent` and others),
+structs (`Object`, `ScriptMotionObject`, `ObjectEvent` and others),
 each naming the fields that part uses. They stay apart because the build
 must reproduce the [original](glossary.md#the-original)'s instructions, and
 reading the same bytes through one merged struct makes the compiler choose
@@ -171,7 +171,7 @@ others; [Matching](src/MATCHING.md) gives the cases.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `FIELD_OBJECT_COUNT` | 64 | the slots of `gObjectSlots` |
+| `OBJECT_COUNT` | 64 | the slots of `gObjects` |
 | `FIELD_SPRITE_FOOTPRINT` | 25 | a footprint's [sprite](glossary.md#sprite-and-oam), on maps that show them |
 
 [Field](src/field/README.md#everything-that-moves-runs-a-script) covers the
@@ -190,9 +190,9 @@ instead of stopping dead.
 On a town or dungeon map the leader walks at `FIELD_WALK_SPEED` and runs at
 `FIELD_RUN_SPEED` while a dash button is held. Each step needs five clear
 checks 8 pixels away: the way the pad points and 22.5 and 45 degrees either
-side. When one fails, `FieldObject_UpdatePlayerControl` tries headings 22.5,
+side. When one fails, `Object_UpdateLeaderControl` tries headings 22.5,
 45 and 67.5 degrees off, nearest first, each with five checks of its own, and
-takes the first that passes. `MapGrid_CheckObjectStep` decides each check from
+takes the first that passes. `MapGrid_CheckCollision` decides each check from
 the cell there. Speeds are in 16.16 fixed point, the engine's way of
 holding fractions of a pixel in a whole number: the upper 16 bits count
 whole pixels and the lower 16 bits sixty-five-thousandths of one, so
@@ -200,10 +200,10 @@ whole pixels and the lower 16 bits sixty-five-thousandths of one, so
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `MAPGRID_STEP_TOO_LOW` | -1 | the ground there is more than 12 pixels lower |
-| `MAPGRID_STEP_OPEN` | 0 | the object can step there |
-| `MAPGRID_STEP_TOO_HIGH` | 1 | the ground there is more than 8 pixels higher |
-| `MAPGRID_STEP_WALL` | 2 | the cell there is a wall (`MB_WALL`) |
+| `COLLISION_TOO_LOW` | -1 | the ground there is more than 12 pixels lower |
+| `COLLISION_NONE` | 0 | the object can step there |
+| `COLLISION_TOO_HIGH` | 1 | the ground there is more than 8 pixels higher |
+| `COLLISION_IMPASSABLE` | 2 | the cell there is a wall (`MB_WALL`) |
 | `FIELD_WALK_SPEED` | `0x10000` | 1 pixel a frame |
 | `FIELD_RUN_SPEED` | `0x18000` | 1.5 pixels a frame, with a dash button held |
 
@@ -246,7 +246,7 @@ above it, where they are not 0, give the map layer and the sprite priority
 an object standing on the cell takes, so the cells behind a house can put
 whoever walks there behind it (see [Map layers](#map-layers)). The third
 byte is the metatile behavior, and the top byte the ground shape, from which
-`MapGrid_GetTerrainHeight` computes the height.
+`MapGrid_GetTerrainHeight` computes the ground height.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -283,7 +283,7 @@ maps give the three layers 3, 2 and 1. A sprite wins a tie with a
 background. The object events placed from a table, the leader's included,
 carry `OBJ_EVENT_PRIORITY_AUTOMATIC`, so each frame their sprites take the
 priority the cell under them sets, and keep their last one where it sets
-none (`ObjectSystem_UpdateCamera`). In Vale:
+none (`ObjectSystem_PlaceSprites`). In Vale:
 
 - on open grass Isaac's sprite is at 2, so he stands in front of the middle
   layer and behind the overhead one;
@@ -357,13 +357,13 @@ As the party walks, a counter fills, faster on some ground than on other,
 and a battle starts when it is full. A party that has outgrown a place meets
 its battles less often there.
 
-![How a random battle starts. Each frame the leader moves, a counter fills by a step, and a battle starts when it is full. Each zone sets how far the party walks between battles: the higher its rate, the smaller the steps. A party above the zone's level adds to the rate, so it meets fewer battles. A random part, drawn again after each battle, varies the gap. There are no battles at all while Cloak is active, on ground with no zone, while a flag turns them off, or with Avoid active where the party's level is above the zone's. When the counter is full, one of the zone's enemy groups is drawn by weight.](https://alchemy.pascalpixel.com/illustrations/object/encounter-roll.svg)
+![How a random battle starts. Each frame the leader moves, a counter fills by a step, and a battle starts when it is full. Each zone sets how far the party walks between battles: the higher its rate, the smaller the steps. A party above the zone's level adds to the rate, so it meets fewer battles. A random part, drawn again after each battle, varies the gap. There are no battles at all while Cloak is active, on ground with no zone, while a flag turns them off, or with Avoid active where the party's level is above the zone's. When the counter is full, one of the zone's formations is drawn by weight.](https://alchemy.pascalpixel.com/illustrations/object/encounter-roll.svg)
 
 Each kind of ground belongs to a zone, and the zone decides how far apart
 its battles are and which enemies can appear. Each frame the leader walks,
-`Encounter_SelectEnemyGroup` adds to the counter, `gGameState.encounterSteps`;
+`Encounter_CountStepsAndSelectFormation` adds to the counter, `gGameState.encounterSteps`;
 despite its name it does both jobs, filling the counter every frame and
-choosing the enemy group once it is full. What it adds:
+choosing the formation once it is full. What it adds:
 
 - grows with the leader's top speed at the moment, so running fills the
   counter faster than walking;
@@ -375,11 +375,11 @@ Each level, up to five, by which the party's average level is above the
 zone's adds 5 to the rate, and with Avoid active (the Psynergy that keeps
 such battles away) a zone the party has outgrown has no battles at all. A
 battle starts when the counter reaches `work->encounterThreshold`, 16 in
-16.16 fixed point, and one of the zone's eight enemy groups is drawn by
+16.16 fixed point, and one of the zone's eight formations is drawn by
 weight. A field map's zones come from the
 first matching rule in `gBattle_LocationRules`, which assigns zones to the
 encounter grounds its cells mark; the world map's come from
-`gWorldMap_EncounterRules`, by the terrain under the leader. Each zone is a
+`gWorldMap_EncounterRules`, by the encounter region under the leader. Each zone is a
 row of `src/object/encounter.tsv`.
 
 [Running a map](src/object/README.md#random-battles) has the roll step by
@@ -399,7 +399,7 @@ and `Field_UsePsynergy` handles it:
 1. It checks the Psynergy can be used there, pays the PP and looks up the
    map's Psynergy events for what the leader faces.
 2. It runs the `PSYNERGY_PHASE_BEFORE_CAST` event.
-3. It plays the effect for the ability's field kind (`enum FieldKind`, from
+3. It plays the effect for the ability's field kind (`enum FieldPsynergy`, from
    the `type` column of `src/game/actions.tsv`, so Move's hand or Frost's
    ice) through `FieldEffect_Run`, or `FieldEffect_DispatchRequestKind` when
    an event names the target. An event in the `PSYNERGY_PHASE_EFFECT_ACTS`
@@ -418,15 +418,15 @@ covers the dispatch, every phase and each field kind's effect.
 
 ## Limits
 
-- 64 field objects, and 64 sprites sharing 64 animation layer records, up to
+- 64 objects, and 64 sprites sharing 64 sprite anims, up to
   four each.
 - 66 object event pointers in the field work, the party's 8 and then 58
-  for the ones the map's object event templates place, though only 64 field
+  for the ones the map's object event templates place, though only 64
   objects exist to fill them.
 - One overlay loaded at a time, in the 32 KB of `gOverlayArea`.
 - 256 map flags and 256 map section flags, each range reused by every map or
   map section.
-- 104 encounter zones of eight enemy groups each.
+- 104 encounter zones of eight formations each.
 - 47 script commands, of which the last 11 act as `SC_END`; a jump finds
   only a label within the first 1,024 words of its script.
 - A battle snapshot keeps up to 32 object events.

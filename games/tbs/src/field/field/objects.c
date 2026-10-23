@@ -1,5 +1,5 @@
 /// @file
-/// Field objects: the object pool, dissolving sprites, starting scripts.
+/// Objects: creating and freeing them, dissolving sprites, starting scripts.
 // Part of field.c.
 
 #include "../field_internal.h"
@@ -7,7 +7,7 @@
 /// One step of dissolving a sprite pixel by pixel. In each 8x8 tile (256
 /// colours) one pixel is cleared, in gSpriteDissolve_PixelOrder's order; each
 /// tile runs one step ahead of the last, and only tiles whose step is 64-127
-/// clear a pixel. obj is the sprite (struct AnimationObject), pos the step
+/// clear a pixel. obj is the sprite (struct Sprite), pos the step
 /// (0-127). Writes the sprite's tiles in OBJ VRAM. Called by the two
 /// functions below and, as render_animated_tile_frameFar, by the battle's
 /// playback (battle/battle/playback.c).
@@ -20,10 +20,10 @@ void SpriteDissolve_Step(u8 *obj, u32 pos) {
   u32 indexMask;
   u8 offsetMask;
 
-  struct AnimationObject *sprite = (struct AnimationObject *)obj;
+  struct Sprite *sprite = (struct Sprite *)obj;
 
   // The sprite's tiles in OBJ VRAM.
-  tile = (u16 *)(OBJ_VRAM0 + gVramBlockCache[sprite->slot].offset);
+  tile = (u16 *)(OBJ_VRAM0 + gVramCacheEntries[sprite->slot].offset);
   tileCount = (sprite->width * sprite->height) / 64;
   i = 0;
 
@@ -120,7 +120,7 @@ void SpriteDissolve_RunMany(u8 **sprites, s32 count) {
 /// which the camera takes off z when it draws the sprite and its shadow. No
 /// code names it: its veneer in the field far-call table
 /// (system/far_call/FIELD.S) is unnamed.
-s32 MapGrid_GetScreenRelativePosition(struct ObjectRuntime *object,
+s32 MapGrid_GetScreenRelativePosition(struct Object *object,
                                       s32 *screenPosition) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
 #ifndef UBFIX
@@ -155,41 +155,42 @@ s32 MapGrid_GetScreenRelativePosition(struct ObjectRuntime *object,
 }
 
 /// Sets up the object system: allocates and zeroes the 64 objects and
-/// registers the per-frame updates. MODE_BATTLE moves objects with
-/// Object_UpdateAllMotion, which runs no scripts; MODE_WORLD_MAP and
-/// MODE_BATTLE use the fixed camera. Both blocks are heap slots, so a later
-/// call gets the same ones back. No code releases HEAP_SLOT_OBJECT_POOL or
-/// HEAP_SLOT_MENU_CONTROL by name, but Field_RunMap takes HEAP_SLOT_EVENT
+/// registers the per-frame updates. OBJECT_SYSTEM_BATTLE moves objects with
+/// Object_UpdateAllMotion, which runs no scripts; OBJECT_SYSTEM_WORLD_MAP and
+/// OBJECT_SYSTEM_BATTLE use the fixed camera. Both blocks are heap slots, so a
+/// later call gets the same ones back. No code releases HEAP_SLOT_OBJECTS or
+/// HEAP_SLOT_OBJECT_SYSTEM by name, but Map_Run takes HEAP_SLOT_FIELD
 /// from EWRAM before them, so its release of that slot as it returns frees
-/// their memory too; Runtime_InitializeHeap clears the slots at the next
+/// their memory too; InitHeap clears the slots at the next
 /// map change.
 ///
 /// Called through ObjectSystem_InitializeFar by the field map runner
 /// (object/object/run_map.c) and the battle's encounter, and directly by
 /// the sprite viewer, each with its enum ObjectSystemMode. Allocates
-/// HEAP_SLOT_MENU_CONTROL for the ObjectSystemWork and HEAP_SLOT_OBJECT_POOL
+/// HEAP_SLOT_OBJECT_SYSTEM for the ObjectSystemWork and HEAP_SLOT_OBJECTS
 /// for the objects, and sets the sprite outline colours.
 void ObjectSystem_Initialize(s32 controlMode) {
   struct ObjectSystemWork *system;
-  struct ObjectRuntime *objectPool;
+  struct Object *objectPool;
   volatile u32 fill;
 
-  system = Runtime_AllocateBlock(HEAP_SLOT_MENU_CONTROL, sizeof(*system));
-  objectPool = Runtime_AllocateBlock(HEAP_SLOT_OBJECT_POOL,
-                                     FIELD_OBJECT_COUNT * sizeof(*objectPool));
+  system = AllocHeapSlotEwram(HEAP_SLOT_OBJECT_SYSTEM, sizeof(*system));
+  objectPool =
+      AllocHeapSlotEwram(HEAP_SLOT_OBJECTS, OBJECT_COUNT * sizeof(*objectPool));
   ObjectSystem_Configure(controlMode);
-  Dma_Fill32Cell(fill, 0, objectPool, FIELD_OBJECT_COUNT * sizeof(*objectPool));
+  Dma_Fill32Cell(fill, 0, objectPool, OBJECT_COUNT * sizeof(*objectPool));
   Dma_Fill32Cell(fill, 0, system, sizeof(*system));
-  // The scheduler runs higher orders first: the objects move (0xc8a) before
-  // the camera follows them (0xc80).
-  if (controlMode == MODE_BATTLE)
-    Scheduler_AddOrUpdateCallback(Object_UpdateAllMotion, 0xc8a);
+  // The task runner runs higher priorities first: the objects move (0xc8a)
+  // before the camera follows them (0xc80).
+  if (controlMode == OBJECT_SYSTEM_BATTLE)
+    Task_Add(Object_UpdateAllMotion, 0xc8a);
   else
-    Scheduler_AddOrUpdateCallback(Object_UpdateAllThumb, 0xc8a);
-  if (controlMode >= MODE_WORLD_MAP && controlMode <= MODE_BATTLE) {
-    Scheduler_AddOrUpdateCallback(ObjectSystem_UpdateCameraFixed, 0xc80);
+    Task_Add(Object_UpdateAllThumb, 0xc8a);
+  if (controlMode >= OBJECT_SYSTEM_WORLD_MAP &&
+      controlMode <= OBJECT_SYSTEM_BATTLE) {
+    Task_Add(ObjectSystem_ProjectSprites, 0xc80);
   } else {
-    Scheduler_AddOrUpdateCallback(ObjectSystem_UpdateCamera, 0xc80);
+    Task_Add(ObjectSystem_PlaceSprites, 0xc80);
     // XXX: nothing in the tree reads these two IWRAM words; code that reads
     // them by address would say what the scrolling camera resets here.
     gIwram_Data2 = 0;
@@ -206,13 +207,13 @@ UNUSED void ResourceTable_ReservedNoOpC0C4(void) {}
 UNUSED void ResourceTable_ReservedNoOp2(void) {}
 
 /// Returns the first of the 64 objects not in use (with no script), or 0.
-/// Called by FieldObject_Create.
+/// Called by Object_CreateField.
 void *ObjectDispatch_FindFreeObject(void) {
-  struct ObjectRuntime *object = gObjectSlots;
+  struct Object *object = gObjects;
   void *freeObject = 0;
   s32 objectIndex = 0;
 
-  while (objectIndex <= FIELD_OBJECT_COUNT - 1) {
+  while (objectIndex <= OBJECT_COUNT - 1) {
     if (object->script == 0) {
       freeObject = object;
       break;
@@ -225,7 +226,7 @@ void *ObjectDispatch_FindFreeObject(void) {
 
 /// Releases an object's sprites and zeroes it, freeing it.
 /// Clearing the script lets ObjectDispatch_FindFreeObject hand the object out
-/// again. Reached through SC_FREE (ActionScript_FreeObject) and, as
+/// again. Reached through SC_FREE (ObjectScript_FreeObject) and, as
 /// ObjectDispatch_ReleaseFar, from the battle, the Psynergy effects and the
 /// field map's objects.
 void ObjectDispatch_Release(struct DispatchObject *object) {
@@ -235,39 +236,38 @@ void ObjectDispatch_Release(struct DispatchObject *object) {
   if (object) {
     switch (object->kind & 15) {
     case OBJECT_SPRITE_ONE:
-      ResourceObject_Release(object->target.child);
+      Sprite_Destroy(object->target.child);
       break;
     case OBJECT_SPRITE_GROUP:
       sprites = object->target.children;
       spritesRemaining = 3;
       do {
-        struct AnimationObject *sprite = *sprites++;
+        struct Sprite *sprite = *sprites++;
         if (sprite)
-          ResourceObject_Release(sprite);
+          Sprite_Destroy(sprite);
       } while (--spritesRemaining >= 0);
       break;
     }
-    Dma_Fill32(0, object, sizeof(struct ObjectRuntime));
+    Dma_Fill32(0, object, sizeof(struct Object));
   }
 }
 
-/// Creates an object event at (x, y, z), in 16.16 pixels, or returns 0 when
+/// Creates an object at (x, y, z), in 16.16 pixels, or returns 0 when
 /// none is free. id / 4096 is its enum ObjectCreateKind and the low 12 bits
 /// the sprite's animation id.
 ///
 /// Called as Object_CreateFar by the battle's placement, the Psynergy
-/// effects, the field map's object events and markers and the map scripts, and
-/// directly by the player control for footprints and ripples.
+/// effects, the field map's object events and treasure spots and the map
+/// scripts, and directly by the player control for footprints and ripples.
 /// Gives the object gObjectDispatch_DefaultScript (a lone SC_END), its home
 /// position and the default motion values; a group's sprite list is taken from
 /// the ObjectSystemWork's group tables.
-struct ObjectRuntime *FieldObject_Create(s32 encodedSprite, s32 x, s32 y,
-                                         s32 z) {
-  struct ObjectRuntime *object;
+struct Object *Object_CreateField(s32 encodedSprite, s32 x, s32 y, s32 z) {
+  struct Object *object;
   struct ObjectEvent *objectEvent;
   struct ScriptMotionObject *motion;
   struct ScriptObjectRuntime *scripted;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
   s32 spriteStorageKind;
   void **spriteSlots;
 
@@ -281,7 +281,7 @@ struct ObjectRuntime *FieldObject_Create(s32 encodedSprite, s32 x, s32 y,
     objectEvent->radius = 16;
     switch (spriteStorageKind) {
     case OBJECT_CREATE_ONE_SPRITE:
-      sprite = ResourceObject_Create(encodedSprite);
+      sprite = Sprite_Create(encodedSprite);
       if (sprite != NULL) {
         object->animationKind = OBJECT_SPRITE_ONE;
         object->animation = sprite;
@@ -297,17 +297,17 @@ struct ObjectRuntime *FieldObject_Create(s32 encodedSprite, s32 x, s32 y,
       // second list overlaps the first and its zeroing clears count. No code
       // in the tree creates a group object to show the intended spacing.
       spriteSlots =
-          (void **)((u32 *)gMenuCtrlWork + gMenuCtrlWork->count++ + 2);
+          (void **)((u32 *)gObjectSystemWork + gObjectSystemWork->count++ + 2);
       object->animationKind = spriteStorageKind;
       object->animation = spriteSlots;
       Dma_Fill32(0, spriteSlots, 0x10);
-      sprite = ResourceObject_Create(encodedSprite);
+      sprite = Sprite_Create(encodedSprite);
       if (sprite != NULL) {
         objectEvent->radius =
             Resource_GetMetadataRecordFar(encodedSprite)->boxY >> 1;
         *spriteSlots++ = sprite;
       }
-      sprite = ResourceObject_Create(encodedSprite + 1);
+      sprite = Sprite_Create(encodedSprite + 1);
       if (sprite != NULL)
         *spriteSlots = sprite;
       break;
@@ -318,7 +318,7 @@ struct ObjectRuntime *FieldObject_Create(s32 encodedSprite, s32 x, s32 y,
     scripted = (struct ScriptObjectRuntime *)object;
     Object_SetPositionAndResetMotion(object, x, y, z);
     // Up to 2 pixels a frame, gaining 1 a frame; unit scale; following the
-    // terrain and falling; turning to face its motion; keeping a quarter of its
+    // ground and falling; turning to face its motion; keeping a quarter of its
     // speed when it bounces; facing down the screen (0x4000, the heading
     // gWorldMap_KeyHeadings gives Down).
     object->script = (s32 *)gObjectDispatch_DefaultScript;
@@ -333,7 +333,7 @@ struct ObjectRuntime *FieldObject_Create(s32 encodedSprite, s32 x, s32 y,
     object->collisionFlags = 0;
     object->actionFlags = OBJ_EVENT_FACES_MOTION;
     objectEvent->riseBaseY = 0;
-    object->angle = 0x4000;
+    object->facing = 0x4000;
     // Its home position, in pixels.
     scripted->homeX = x / 65536;
     scripted->homeZ = z / 65536;
@@ -388,12 +388,11 @@ void ObjectDispatch_Initialize(struct DispatchObject *object,
 
 /// Switches all of an object's sprites to animation value.
 OBJECT_DISPATCH_DEFINE_APPLY(ObjectDispatch_SelectAnimation, void *,
-                             AnimationObject_SelectAnimation)
+                             Sprite_StartAnim)
 
 /// Sets the animation speed (timer step) of all of an object's sprites.
 OBJECT_DISPATCH_DEFINE_APPLY(ObjectDispatch_SetAnimationSpeed,
-                             struct DispatchObject *,
-                             AnimationObject_SetActiveTimerSteps)
+                             struct DispatchObject *, Sprite_SetAnimSpeed)
 
 /// Both of the above: switches all of an object's sprites to animation and
 /// sets their timer step to step.
@@ -406,16 +405,16 @@ void ObjectDispatch_SetAnimationAndSpeed(struct DispatchObject *object,
   if (object != 0) {
     switch (object->kind & 15) {
     case OBJECT_SPRITE_ONE:
-      AnimationObject_SelectAnimation(object->target.child, animation);
-      AnimationObject_SetActiveTimerSteps(object->target.child, step);
+      Sprite_StartAnim(object->target.child, animation);
+      Sprite_SetAnimSpeed(object->target.child, step);
       break;
     case OBJECT_SPRITE_GROUP:
       sprites = object->target.children;
       for (spritesRemaining = 3; spritesRemaining >= 0; spritesRemaining--) {
         sprite = *sprites++;
         if (sprite != 0) {
-          AnimationObject_SelectAnimation(sprite, animation);
-          AnimationObject_SetActiveTimerSteps(sprite, step);
+          Sprite_StartAnim(sprite, animation);
+          Sprite_SetAnimSpeed(sprite, step);
         }
       }
       break;
@@ -430,31 +429,31 @@ void ObjectDispatch_SetChildRotation(struct DispatchObject *object,
     object->target.child->rotation = rotation;
 }
 
-/// Gives a one-sprite object's first layer animation id animationId and
-/// restarts its layers.
+/// Gives a one-sprite object's first anim animation id animationId and
+/// restarts its anims.
 /// A negative animationId does nothing.
 void Animation_SetIndexAndInitializeObjects(void *rawDispatchObject,
                                             s32 animationId) {
   struct DispatchObject *object = rawDispatchObject;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
 
   if (object != NULL && (object->kind & 0xf) == OBJECT_SPRITE_ONE) {
     sprite = object->target.child;
     if (animationId >= 0) {
       sprite->entries[0]->animationId = animationId;
-      Animation_InitializeObjects(sprite);
+      Sprite_ResetAnims(sprite);
     }
   }
 }
 
-/// Adds a layer of animation id animationId to a one-sprite object's sprite.
+/// Adds an anim of animation id animationId to a one-sprite object's sprite.
 /// A negative animationId does nothing.
 void ObjectDispatch_RegisterChildMetadata(struct DispatchObject *object,
                                           s32 animationId) {
   if (object != 0 && (object->kind & 0xf) == OBJECT_SPRITE_ONE) {
-    struct AnimationObject *sprite = object->target.child;
+    struct Sprite *sprite = object->target.child;
     if (animationId >= 0)
-      ResourceMetadata_Register(sprite, animationId);
+      Sprite_AddAnim(sprite, animationId);
   }
 }
 
@@ -521,7 +520,7 @@ void ObjectDispatch_StartCamera(struct DispatchObject *object,
 /// commands and by map scripts that wait for a scripted move (Colosso, Venus
 /// Lighthouse, Vale).
 void ObjectDispatch_WaitForValue16(void *rawObject) {
-  struct ScriptInterpreter *interpreter = rawObject;
+  struct ObjectScriptContext *interpreter = rawObject;
   s32 waitedFrames;
 
   waitedFrames = 0;
@@ -549,7 +548,7 @@ void ObjectDispatch_SetSingleChildFlags(struct DispatchObject *object,
 /// bits, so an object with high kind bits set is left alone.
 void ObjectDispatch_SetChildBlendMode(struct DispatchObject *object, u32 mode) {
   if (object != 0 && object->kind == OBJECT_SPRITE_ONE) {
-    struct AnimationObject *sprite = object->target.child;
+    struct Sprite *sprite = object->target.child;
     sprite->image.objectMode = mode;
   }
 }
@@ -559,16 +558,16 @@ void ObjectDispatch_SetChildBlendMode(struct DispatchObject *object, u32 mode) {
 void ObjectDispatch_SetChildFixedScale(struct DispatchObject *object,
                                        u32 fixedScale) {
   if (object != 0 && object->kind == OBJECT_SPRITE_ONE) {
-    struct AnimationObject *sprite = object->target.child;
+    struct Sprite *sprite = object->target.child;
     sprite->useOwnScale = fixedScale;
   }
 }
 
-/// Sets the colour mode (SpriteColorMode) of a one-sprite object's layers,
-/// except those drawn hidden (see ObjectGroup_SetChildValueUnlessFifteen).
+/// Sets the colour mode (SpriteColorMode) of a one-sprite object's anims,
+/// except those drawn hidden (see Sprite_SetAnimColorModes).
 void Animation_ApplyChildValues(struct DispatchObject *object, u32 param) {
   if (object != NULL && object->kind == OBJECT_SPRITE_ONE)
-    ObjectGroup_SetChildValueUnlessFifteen(object->target.child, param);
+    Sprite_SetAnimColorModes(object->target.child, param);
 }
 
 /// Suspends the object camera updates, starts the palette back to normal and,
@@ -578,10 +577,10 @@ void Animation_ApplyChildValues(struct DispatchObject *object, u32 param) {
 /// Tolbi ship, Vale, Venus Lighthouse). The scripts except Colosso's pair it
 /// with ObjectSystem_ResumeProjectionAndHideLayers.
 void ObjectSystem_SuspendProjectionAndShowSprites(void) {
-  Scheduler_SuspendTasks(ObjectSystem_UpdateCamera);
-  Scheduler_SuspendTasks(ObjectSystem_UpdateCameraFixed);
-  ColorBuffer_SetTargetFar(0x10000, 1);
-  ColorBuffer_StartInterpolationFar(1);
+  Task_SuspendAll(ObjectSystem_PlaceSprites);
+  Task_SuspendAll(ObjectSystem_ProjectSprites);
+  PaletteFade_SetTargetFar(0x10000, 1);
+  PaletteFade_StartInterpolationFar(1);
   WaitFrames(1);
   REG_DISPCNT =
       (REG_DISPCNT & ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON)) |
@@ -592,8 +591,8 @@ void ObjectSystem_SuspendProjectionAndShowSprites(void) {
 /// Called through ObjectSystem_ResumeProjectionAndHideLayersFar by the same
 /// scripts except Colosso's.
 void ObjectSystem_ResumeProjectionAndHideLayers(void) {
-  Scheduler_ResumeTasks(ObjectSystem_UpdateCamera);
-  Scheduler_ResumeTasks(ObjectSystem_UpdateCameraFixed);
+  Task_ResumeAll(ObjectSystem_PlaceSprites);
+  Task_ResumeAll(ObjectSystem_ProjectSprites);
   REG_DISPCNT &=
       ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON | DISPCNT_OBJ_ON);
 }

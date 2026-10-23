@@ -9,7 +9,7 @@
 
 /// In Japanese, the glyphs of character codes from 256: 24 bytes each, drawn
 /// 10 pixels wide.
-extern const u8 gUiText_KanjiGlyphs[];
+extern const u8 gFont_KanjiGlyphs[];
 
 /// The marks a kana is drawn with: their character codes.
 enum TextMarkGlyph {

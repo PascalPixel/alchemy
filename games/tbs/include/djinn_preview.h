@@ -7,10 +7,10 @@
 #include "output.h"
 #include "resource.h"
 
-/// The OAM entry of a render output, as the Djinn preview places its stat
+/// The OAM entry of a window sprite, as the Djinn preview places its stat
 /// arrows (DjinnMenu_DrawStatArrow): from the output's byte 16 on.
 struct PreviewSprite {
-  u32 link; ///< the output's depth-queue link (RenderOutput.link)
+  u32 link; ///< the output's depth-queue link (WindowSprite.link)
   /// OAM attributes 0 and 1, written whole as 0x40000400 first.
   union {
     u32 word;

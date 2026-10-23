@@ -13,7 +13,7 @@
 /// and lands while that object event plays its animation 7; the leader then
 /// dips a pixel twice, its height and its ground height together, and rises
 /// back. Returns 1 after a hop.
-static s32 StagedObjectEvent_RunStepEffect(struct FieldPosition *request) {
+static s32 PushedObject_RunStepEffect(struct FieldPosition *request) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   u8 *flags = &objectEvent->motionFlags;
   u8 saved = *flags;
@@ -39,16 +39,16 @@ static s32 StagedObjectEvent_RunStepEffect(struct FieldPosition *request) {
     *flags = ret;
     Engine_ObjectEventSetAnimation(LOCALID_FIRST_PLACED + 2, 7);
     objectEvent->y.fixed += -PIXELS(1);
-    objectEvent->terrainHeight += -PIXELS(1);
+    objectEvent->groundHeight += -PIXELS(1);
     Engine_TaskWait(2);
     objectEvent->y.fixed += -PIXELS(1);
-    objectEvent->terrainHeight += -PIXELS(1);
+    objectEvent->groundHeight += -PIXELS(1);
     Engine_TaskWait(10);
     objectEvent->y.fixed += PIXELS(1);
-    objectEvent->terrainHeight += PIXELS(1);
+    objectEvent->groundHeight += PIXELS(1);
     Engine_TaskWait(4);
     objectEvent->y.fixed += PIXELS(1);
-    objectEvent->terrainHeight += PIXELS(1);
+    objectEvent->groundHeight += PIXELS(1);
     *flags = saved;
     Engine_ScriptEnd();
     return 1;
@@ -66,7 +66,7 @@ static void KolimaForest_HopEast(void) {
   target.y = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->y.fixed;
   target.z = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->z.fixed;
 #else
-  // gGameState.selectedLocalId
+  // gGameState.leaderLocalId
   s32 off = 500;
   struct ObjectEvent *p =
       ObjectEvent_GetById(*(s32 *)((u8 *)&gGameState + off));
@@ -77,5 +77,5 @@ static void KolimaForest_HopEast(void) {
   target.z = (p->z.fixed & 0xfff00000) + PIXELS(8);
   target.x = base + PIXELS(40);
 #endif
-  StagedObjectEvent_RunStepEffect(&target);
+  PushedObject_RunStepEffect(&target);
 }

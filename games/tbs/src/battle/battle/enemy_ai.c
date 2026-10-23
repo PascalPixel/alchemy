@@ -1,14 +1,14 @@
 /// @file
-/// An enemy's choice of action, BattleCommand_SelectAutomatic.
+/// An enemy's choice of action, BattleAI_ChooseAction.
 // Part of battle.c.
 
 #include "../battle_internal.h"
 
-/// An enemy's memory of its action choice, kept in BattleUnit.rewards (0 in
+/// An enemy's memory of its action choice, kept in Unit.aiActionIndex (0 in
 /// every row of enemies.tsv, so it starts cleared). Only
 /// ACTION_STRATEGY_RANDOM_START and ACTION_STRATEGY_IN_ORDER use it.
 /// bits: 31..4 unused | 3..1 selection | 0 initialized
-struct BattleAutomaticState {
+struct BattleAIState {
   unsigned initialized
       : 1;                 ///< ACTION_STRATEGY_RANDOM_START has drawn its start
   unsigned selection : 3;  ///< the place in its action list, 0 to 7
@@ -18,25 +18,23 @@ struct BattleAutomaticState {
 /// Chooses an enemy's action (a party member's is chosen in the menu): one of
 /// the eight in its definition, picked by its action strategy, with an item
 /// instead where its item mask says so, and a target worth the ability. A
-/// choice that cannot be made (too little PP, sealed, a forbidden escape, no
+/// choice that cannot be made (too little PP, sealed, a forbidden flight, no
 /// worthwhile target) picks again; after 18 tries the enemy defends.
 /// Called with retry 0 for each enemy as the round is built
-/// (BattlePresentation_BuildOpponentEntries), and with retry 1 at its turn
-/// (BattlePresentation_DispatchAction). Writes request's command, parameter,
+/// (Battle_BuildOpponentActions), and with retry 1 at its turn
+/// (BattleStaging_DispatchAction). Writes request's command, parameter,
 /// target and range; ACTION_STRATEGY_RANDOM_START and
 /// ACTION_STRATEGY_IN_ORDER advance the place remembered in
-/// BattleUnit.rewards. Returns nothing.
+/// Unit.aiActionIndex. Returns nothing.
 /// @param retry 0 when the round is built: only a guard is settled now (it
 /// must raise before anyone acts); 1 at the enemy's turn: the rest
 #ifdef UBFIX
-void BattleCommand_SelectAutomatic(struct BattleActionRecord *request,
-                                   s32 retry) {
+void BattleAI_ChooseAction(struct BattleAction *request, s32 retry) {
 #else
-s32 BattleCommand_SelectAutomatic(struct BattleActionRecord *request,
-                                  s32 retry) {
+s32 BattleAI_ChooseAction(struct BattleAction *request, s32 retry) {
 #endif
   u32 selection;
-  struct BattleAutomaticState *selectionMemory;
+  struct BattleAIState *selectionMemory;
   struct EnemyDefinition *enemy;
   s32 itemsAllowed;
   s32 failedChoices;
@@ -51,9 +49,9 @@ s32 BattleCommand_SelectAutomatic(struct BattleActionRecord *request,
   struct ItemDefinition *item;
   s32 useItem;
   s8 strategyKind;
-  struct BattleAct *itemAction;
-  struct BattleAct *ability;
-  struct BattleUnit *unit;
+  struct AbilityDefinition *itemAction;
+  struct AbilityDefinition *ability;
+  struct Unit *unit;
   s32 abilityId;
   s32 flags;
   u8 effect;
@@ -91,13 +89,13 @@ s32 BattleCommand_SelectAutomatic(struct BattleActionRecord *request,
   // enemies.tsv uses either.
   selection = -1U;
   // A party member chooses in the menu.
-  if (unit->classIndex != CLASS_INDEX_ENEMY)
+  if (unit->classId != CLASS_NONE)
     return;
-  if (retry != 0 && request->command != COMMAND_ABILITY)
+  if (retry != 0 && request->command != COMMAND_ENEMY_ABILITY)
     return;
 
-  enemy = (struct EnemyDefinition *)Enemy_GetDefinitionFar(unit->classId);
-  selectionMemory = (struct BattleAutomaticState *)&unit->rewards;
+  enemy = (struct EnemyDefinition *)Enemy_GetDefinitionFar(unit->id);
+  selectionMemory = (struct BattleAIState *)&unit->aiActionIndex;
   actionStrategy = &enemy->actionStrategy;
   itemActionMask = &enemy->itemActions;
 
@@ -108,15 +106,15 @@ select_again:
   // The three weight tables are in battle_data.s.
   case ACTION_STRATEGY_EVEN:
     selection = BattleEnemy_SelectWeightedAction(
-        gBattleCommand_SelectionWeights[ACTION_STRATEGY_EVEN]);
+        gBattleAI_ActionWeights[ACTION_STRATEGY_EVEN]);
     break;
   case ACTION_STRATEGY_FALLING:
     selection = BattleEnemy_SelectWeightedAction(
-        gBattleCommand_SelectionWeights[ACTION_STRATEGY_FALLING]);
+        gBattleAI_ActionWeights[ACTION_STRATEGY_FALLING]);
     break;
   case ACTION_STRATEGY_FIRST_FAVOURED:
     selection = BattleEnemy_SelectWeightedAction(
-        gBattleCommand_SelectionWeights[ACTION_STRATEGY_FIRST_FAVOURED]);
+        gBattleAI_ActionWeights[ACTION_STRATEGY_FIRST_FAVOURED]);
     break;
   case ACTION_STRATEGY_RANDOM_START:
     if (selectionMemory->initialized == 0) {
@@ -143,17 +141,17 @@ select_again:
   // item is refused, later picks take the place's ability instead.
   useItem = (*itemActionMask >> selection) & 1;
   useItem &= itemsAllowed;
-  abilityId = enemy->actions[selection];
-  request->command = COMMAND_ABILITY;
+  abilityId = enemy->abilities[selection];
+  request->command = COMMAND_ENEMY_ABILITY;
   if (useItem != 0 && retry != 0) {
     if (!(INVENTORY_ITEM_ID_MASK & unit->inventory[0])) {
       useItem = 0;
-      if (enemy->targetStrategy == STRATEGY_MOST_HP) {
+      if (enemy->targetStrategy == TARGET_STRATEGY_MOST_HP) {
         request->command = COMMAND_ITEM;
         // XXX: the parameter is the ability Can't Use, yet COMMAND_ITEM
-        // reads its parameter as an inventory slot (BattleCommand_BuildPlan);
-        // a Brigand or Rat Fighter (STRATEGY_MOST_HP, item places) out of
-        // items would show what the player sees.
+        // reads its parameter as an inventory slot (BattleTurn_Build);
+        // a Brigand or Rat Fighter (TARGET_STRATEGY_MOST_HP, item places) out
+        // of items would show what the player sees.
         request->parameter = ABILITY_CANT_USE;
         return;
       }
@@ -161,16 +159,17 @@ select_again:
     if (useItem != 0) {
       item = Item_GetDirectFar(unit->inventory[0]);
       // Only an item that is used up, whose ability's flags are exactly
-      // ABILITY_KIND_HEAL_HP or ABILITY_KIND_EFFECT, with no higher bit set.
+      // ABILITY_FORMULA_HEAL_HP or ABILITY_FORMULA_EFFECT, with no higher bit
+      // set.
       if (item->useType == ITEM_USE_CONSUMED) {
-        itemAction = BattleAction_Get(item->actionId);
-        abilityId = item->actionId;
+        itemAction = Ability_Get(item->abilityId);
+        abilityId = item->abilityId;
         request->command = COMMAND_ITEM;
         flags = itemAction->flags;
         request->parameter = 0;
         switch (flags) {
-        case ABILITY_KIND_HEAL_HP:
-        case ABILITY_KIND_EFFECT:
+        case ABILITY_FORMULA_HEAL_HP:
+        case ABILITY_FORMULA_EFFECT:
           break;
         default:
           useItem = 0;
@@ -185,8 +184,8 @@ select_again:
   }
 
   if (needsChoice != 0) {
-    // A guard or an escape becomes its own command, aimed at the user itself.
-    ability = BattleAction_Get(abilityId);
+    // A guard or a flight becomes its own command, aimed at the user itself.
+    ability = Ability_Get(abilityId);
     effect = ability->effect;
     switch (effect) {
     case ABILITY_EFFECT_DEFEND:
@@ -194,7 +193,7 @@ select_again:
       request->target = Battle_FindTaggedSlotByValue(request->unitId);
       break;
     case ABILITY_EFFECT_TOTAL_DEFENSE:
-      request->command = COMMAND_DEFEND2;
+      request->command = COMMAND_TOTAL_DEFENSE;
       request->target = Battle_FindTaggedSlotByValue(request->unitId);
       break;
     case ABILITY_EFFECT_FLEE:
@@ -208,23 +207,23 @@ select_again:
     if (retry == 0) {
       switch (request->command) {
       case COMMAND_DEFEND:
-      case COMMAND_DEFEND2:
+      case COMMAND_TOTAL_DEFENSE:
         break;
       default:
         goto done;
       }
     }
 
-    // Psynergy: an enemy whose strategy is not STRATEGY_MOST_HP avoids it
-    // without the PP, and with STRATEGY_RANDOM also while sealed.
+    // Psynergy: an enemy whose strategy is not TARGET_STRATEGY_MOST_HP avoids
+    // it without the PP, and with TARGET_STRATEGY_RANDOM also while sealed.
     if (request->command != COMMAND_ITEM &&
         Ability_IsPsynergy(abilityId) != 0) {
       request->command = COMMAND_PSYNERGY;
       request->parameter = abilityId;
       if (ability->ppCost > unit->pp &&
-          enemy->targetStrategy != STRATEGY_MOST_HP)
+          enemy->targetStrategy != TARGET_STRATEGY_MOST_HP)
         goto next_candidate;
-      if (unit->psySeal != 0 && enemy->targetStrategy == STRATEGY_RANDOM)
+      if (unit->psySeal != 0 && enemy->targetStrategy == TARGET_STRATEGY_RANDOM)
         goto next_candidate;
     }
     // A challenged enemy won't flee, and at its turn it no longer chooses a
@@ -232,10 +231,11 @@ select_again:
     command = request->command;
     if (command == COMMAND_FLEE && (u8)unit->challenge != 0)
       goto next_candidate;
-    if (retry != 0 && (command == COMMAND_DEFEND || command == COMMAND_DEFEND2))
+    if (retry != 0 &&
+        (command == COMMAND_DEFEND || command == COMMAND_TOTAL_DEFENSE))
       goto next_candidate;
 
-    if (command == COMMAND_ABILITY) {
+    if (command == COMMAND_ENEMY_ABILITY) {
       request->parameter = abilityId;
       if (abilityId == ABILITY_ATTACK)
         request->command = COMMAND_ATTACK;
@@ -245,32 +245,32 @@ select_again:
     // random place is taken instead, on the actor's own side for both modes
     // (allyIsParty and opponentIsParty both test the actor); with no one worth
     // it (TARGET_PICK_NONE) the enemy picks again. A mode no ability has (3, or
-    // one above TARGET_MODE_SELF) targets the user, but 3 leaves the choice
+    // one above ABILITY_TARGET_SELF) targets the user, but 3 leaves the choice
     // open, so the enemy picks again after it too.
     request->range = ability->range;
     targetMode = ability->targetMode;
     switch (targetMode) {
-    case TARGET_MODE_ALLIES:
-    case TARGET_MODE_SELF:
-      allyTarget = BattleTarget_SelectForAction(request->unitId, ability);
+    case ABILITY_TARGET_ALLIES:
+    case ABILITY_TARGET_SELF:
+      allyTarget = BattleAI_ChooseTarget(request->unitId, ability);
       if (allyTarget == TARGET_PICK_SIDE_EMPTY) {
         allyIsParty = 0;
         if (request->unitId <= (u32)ALLY_MAX)
           allyIsParty = 1;
-        allyTarget = BattleTarget_SelectRandomPosition(allyIsParty);
+        allyTarget = BattleAI_ChooseRandomTarget(allyIsParty);
       }
       if (allyTarget != TARGET_PICK_NONE) {
         request->target = allyTarget;
         needsChoice = 0;
       }
       break;
-    case TARGET_MODE_FOES:
-      opponentTarget = BattleTarget_SelectForAction(request->unitId, ability);
+    case ABILITY_TARGET_FOES:
+      opponentTarget = BattleAI_ChooseTarget(request->unitId, ability);
       if (opponentTarget == TARGET_PICK_SIDE_EMPTY) {
         opponentIsParty = 0;
         if (request->unitId <= (u32)ALLY_MAX)
           opponentIsParty = 1;
-        opponentTarget = BattleTarget_SelectRandomPosition(opponentIsParty);
+        opponentTarget = BattleAI_ChooseRandomTarget(opponentIsParty);
       }
       if (opponentTarget != TARGET_PICK_NONE) {
         request->target = opponentTarget;

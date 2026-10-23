@@ -1,13 +1,13 @@
 @ C2: aligned 8-byte veneers: overlay_veneer emits ldr r4, bx r4 and a target word.
 	.set overlay_imports, 1
 	.set import.Engine_TaskWait, 1
-	.set import.Scheduler_AddOrUpdateCallback, 1
-	.set import.Runtime_AllocateBlock, 1
+	.set import.Task_Add, 1
+	.set import.AllocHeapSlotEwram, 1
 	.set import.Engine_HeapRelease, 1
-	.set import.Resource_DecodeByteLz, 1
+	.set import.Decompress_ByteLz, 1
 	.set import.Engine_VramLoad, 1
-	.set import.Resource_FindFreeEntry, 1
-	.set import.Runtime_PushSlotEntry, 1
+	.set import.VramCache_FindFreeEntry, 1
+	.set import.Oam_AddSpriteAtDepth, 1
 	.set import.Engine_MapGridRedraw, 1
 	.set import.Engine_MapGridCopyCellsTo, 1
 	.set import.Engine_MapGridCopyCellAttributes, 1
@@ -37,7 +37,7 @@
 	.set import.Engine_ObjectEventFaceObjectEvent, 1
 	.set import.Engine_ObjectEventFaceEachOther, 1
 	.set import.Engine_ScriptSetMessage, 1
-	.set import.UiText_OpenMessageAtObject, 1
+	.set import.FieldMessage_ShowAtObject, 1
 	.set import.Engine_ScriptShowMessage, 1
 	.set import.Engine_ObjectEventFaceDirection, 1
 	.set import.Engine_ObjectEventSetSpritePriority, 1
@@ -52,6 +52,6 @@
 	.set import.Engine_ScriptOpenScreen, 1
 	.set import.Engine_ScriptCloseScreen, 1
 	.set import.Engine_ScriptWaitForScreen, 1
-	.set import.FieldEffect_SetQueuedSoundAndPlay, 1
+	.set import.Map_QueueMusic, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

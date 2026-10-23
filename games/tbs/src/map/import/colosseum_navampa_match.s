@@ -3,25 +3,25 @@
 	.set import.__divsi3, 1
 	.set import.__modsi3, 1
 	.set import.Engine_TaskWait, 1
-	.set import.Scheduler_AddOrUpdateCallback, 1
+	.set import.Task_Add, 1
 	.set import.Engine_TaskRemoveCallback, 1
 	.set import.Engine_RandomNext, 1
 	.set import.Math_Atan2, 1
 	.set import.Vector_AddPolarOffset, 1
-	.set import.Runtime_AllocateHeapBlock, 1
-	.set import.Runtime_AllocateBlock, 1
-	.set import.Runtime_ReleaseHeapBlock, 1
-	.set import.Runtime_BumpAllocateAlternatePool, 1
+	.set import.AllocHeapSlot, 1
+	.set import.AllocHeapSlotEwram, 1
+	.set import.FreeHeapSlot, 1
+	.set import.AllocEwram, 1
 	.set import.Runtime_BumpFree, 1
-	.set import.Resource_DecodeType01, 1
-	.set import.Resource_ResetEntry, 1
+	.set import.Decompress_Type01, 1
+	.set import.VramCache_FreeEntry, 1
 	.set import.VramCache_ReleaseVram, 1
 	.set import.Engine_VramLoad, 1
-	.set import.Resource_FindFreeEntry, 1
-	.set import.AffineMatrix_BuildForEffect, 1
-	.set import.Runtime_PushSlotEntry, 1
+	.set import.VramCache_FindFreeEntry, 1
+	.set import.OamMatrix_AllocFromTransform, 1
+	.set import.Oam_AddSpriteAtDepth, 1
 	.set import.Resource_GetTableEntry, 1
-	.set import.ResourceMetadata_ClearRecord, 1
+	.set import.SpriteAnim_Clear, 1
 	.set import.ObjectEvent_SetMode, 1
 	.set import.Engine_ObjectSetScript, 1
 	.set import.Engine_ObjectCreate, 1
@@ -29,9 +29,9 @@
 	.set import.ObjectDispatch_StartIdle, 1
 	.set import.ObjectDispatch_WaitForValue16, 1
 	.set import.Engine_ObjectSetPosition, 1
-	.set import.FieldObject_WaitForMove, 1
-	.set import.TileAnimation_ResumeChannel, 1
-	.set import.TileAnimation_PauseChannel, 1
+	.set import.Object_WaitForMove, 1
+	.set import.TilesetAnim_Resume, 1
+	.set import.TilesetAnim_Pause, 1
 	.set import.MapGrid_GetTerrainHeight, 1
 	.set import.MapGrid_GetMetatileBehaviorAt, 1
 	.set import.Engine_MapGridCopyCellAttributes, 1
@@ -41,9 +41,9 @@
 	.set import.ObjectSystem_SuspendProjectionAndShowSprites, 1
 	.set import.MapGrid_SetMetatileBehaviorAt, 1
 	.set import.Engine_MessageShowCentered, 1
-	.set import.UiWork_PushValueSlot, 1
+	.set import.MessageArgument_Push, 1
 	.set import.ItemIcon_LoadTilesFar, 1
-	.set import.PartyTalkMenu_Choose, 1
+	.set import.ColossoMenu_Choose, 1
 	.set import.Resource_LoadFixedBlockBIntoFreeSlot, 1
 	.set import.Unit_Get, 1
 	.set import.Inventory_AddItem, 1
@@ -54,8 +54,8 @@
 	.set import.GameFlag_GetByte, 1
 	.set import.GameFlag_SetByte, 1
 	.set import.GetPartyMemberCount, 1
-	.set import.Party_AddActiveOwner, 1
-	.set import.Party_RemoveActiveOwner, 1
+	.set import.Party_AddMember, 1
+	.set import.Party_RemoveMember, 1
 	.set import.Party_RestoreHpPp, 1
 	.set import.Engine_ScriptWait, 1
 	.set import.Engine_ScriptStart, 1
@@ -105,11 +105,11 @@
 	.set import.Engine_ScriptWaitForScreen, 1
 	.set import.Engine_ObjectEventLookup, 1
 	.set import.Field_EndBusyAndReveal, 1
-	.set import.Audio_PlayCueFromEventWork, 1
+	.set import.Map_PlayMusic, 1
 	.set import.Engine_ScriptClearInvalidPackedValues, 1
 	.set import.ObjectEvent_LinkObjectAndSetCallback, 1
 	.set import.FieldEffect_PauseObject, 1
-	.set import.Menu_OpenCharacterSelector, 1
+	.set import.MemberChooser_Open, 1
 	.set import.Engine_AudioPlayCue, 1
-	.set import.AudioCommand_GetStateByte, 1
+	.set import.Sound_GetBgmRestoreDelay, 1
 	.include "games/tbs/src/system/overlay.inc"

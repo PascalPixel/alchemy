@@ -5,7 +5,7 @@
 // Babi Lighthouse and Venus Lighthouse.
 
 /// Waits until the object stops rising or falling, a second at most.
-static void OverlayObject_WaitUntilIdle(struct ObjectEvent *objectEvent) {
+static void ObjectEvent_WaitUntilIdle(struct ObjectEvent *objectEvent) {
   s32 cnt;
   s32 busy;
 

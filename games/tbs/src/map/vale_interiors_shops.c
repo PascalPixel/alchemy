@@ -182,7 +182,7 @@ static void ValeInteriorsShops_SpawnSleepZ(void);
 /// timer and work are its x and y steps in signed 8.8 pixels, set by
 /// ValeInteriorsShops_SpawnSleepZ.
 static s32
-ValeInteriorsShops_AdvanceSleepZ(struct ScriptInterpreter *interpreter) {
+ValeInteriorsShops_AdvanceSleepZ(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
 
   objectEvent->x.fixed += (s16)objectEvent->timer * 256;
@@ -281,10 +281,10 @@ static void ValeInteriorsShops_GiveFarewellHerb(void) {
   if (GameFlag_IsSet(FLAG_VALE_FAREWELL_HERB_RECEIVED) != 0) {
     Engine_ScriptSetMessage(MsgValeYouMustSaveJenna);
     Script_ShowMessage(LOCALID_ITEM_MERCHANT, 0);
-    FieldObject_SetTargetAndCallback(LOCALID_ITEM_MERCHANT,
-                                     OBJ_EVENT_LINK_KEEP_MOTION |
-                                         LOCALID_PARTY_LEADER,
-                                     gValeInteriorsShops_FaceTargetScript);
+    Object_SetTargetAndCallback(LOCALID_ITEM_MERCHANT,
+                                OBJ_EVENT_LINK_KEEP_MOTION |
+                                    LOCALID_PARTY_LEADER,
+                                gValeInteriorsShops_FaceTargetScript);
   } else {
     gift = MsgValeThisIsMyFarewellGift;
     Engine_ScriptSetMessage(gift);
@@ -334,11 +334,11 @@ static void EventScript_WorryAboutTravelersHealth(void) {
 /// closes, stopping the lightning first on the stormy night.
 static void ValeInteriorsShops_RequestWindowWarp(s32 warpNumber) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0)
-    FieldEffect_StopLightning();
+    Weather_StopLightning();
   Engine_AudioPlayCue(SE_MAP_EXIT);
-  gEventWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  gEventWork->transitionFrames = 16;
+  gFieldWork->transitionFrames = 16;
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
   Engine_ScriptRequestWarp(warpNumber);
@@ -409,9 +409,9 @@ static void EventScript_LeaveToValeGateNorth(void) {
 /// Vale, Jenna's grandmother lies sick in bed.
 s32 ValeInteriorsShops_Initialize(void) {
   struct ObjectEvent *objectEvent;
-  struct EventWork **eventSlot = &gEventWork;
+  struct EventWork **eventSlot = &gFieldWork;
 
-  (*eventSlot)->startTransition =
+  (*eventSlot)->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   // On the stormy night every resident is out, and lightning flashes outside.
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
@@ -430,14 +430,14 @@ s32 ValeInteriorsShops_Initialize(void) {
     Engine_ObjectEventSetPosition(LOCALID_ITEM_MERCHANT, 0, 0);
     Engine_ObjectEventSetPosition(LOCALID_WEAPON_MERCHANT, 0, 0);
     Engine_ObjectEventSetPosition(LOCALID_ARMOR_MERCHANT, 0, 0);
-    FieldEffect_StartLightning();
-    (*(struct FieldBlendWork **)((u8 *)eventSlot + Ram_FieldBlendWorkOffset))
+    Weather_StartLightning();
+    (*(struct LightningWork **)((u8 *)eventSlot + Ram_LightningWorkOffset))
         ->loud = 1;
-    FieldEffect_LastLightning();
+    Weather_LastLightning();
     Engine_TaskWait(30);
     Engine_ScriptOpenScreen();
     Engine_ScriptWaitForScreen();
-    FieldEffect_ResumeLightning();
+    Weather_ResumeLightning();
   }
   // The returning party gets the household reunion only on its first visit.
   if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED) != 0) {
@@ -457,7 +457,7 @@ s32 ValeInteriorsShops_Initialize(void) {
       Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
       Engine_ObjectEventSetAnimation(LOCALID_JENNAS_GRANDMOTHER,
                                      ANIMATION_GRANDMOTHER_IN_BED);
-      TileAnimation_ResumeChannel(4);
+      TilesetAnim_Resume(4);
     }
   }
   return 0;
@@ -582,13 +582,13 @@ static void EventScript_GaretComesHome(void) {
   struct ObjectEvent *sleepZ;
   struct ObjectEvent *objectEvent;
   s32 motionFlags;
-  SchedulerCallback timedUpdate;
+  TaskFunc timedUpdate;
   const s32 *partyScript;
 
   // The party walks in while Garet's grandfather dozes, sleep drifting up
   // from him.
   Engine_ScriptStart();
-  Camera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
   Engine_ObjectEventSetSpritePriority(MIA, 1);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
@@ -611,7 +611,7 @@ static void EventScript_GaretComesHome(void) {
   timedUpdate = ValeInteriorsShops_SpawnSleepZ;
   FieldScheduler_AddCallback(timedUpdate, TASK_PRIORITY_MAP);
   Engine_TaskWait(1);
-  gEventWork->transitionFrames = 32;
+  gFieldWork->transitionFrames = 32;
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
   Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
@@ -634,25 +634,25 @@ static void EventScript_GaretComesHome(void) {
   Engine_ObjectEventSetAnimation(GARET, ANIMATION_STAND);
   Engine_ObjectEventSetAnimation(IVAN, ANIMATION_STAND);
   Engine_ScriptWait(10);
-  FieldObject_SetTargetAndCallback(
+  Object_SetTargetAndCallback(
       LOCALID_PARTY_LEADER, OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_GARETS_FATHER,
       gValeInteriorsShops_FaceTargetScript);
-  FieldObject_SetTargetAndCallback(
+  Object_SetTargetAndCallback(
       GARET, OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_GARETS_FATHER,
       gValeInteriorsShops_FaceTargetScript);
-  FieldObject_SetTargetAndCallback(
+  Object_SetTargetAndCallback(
       IVAN, OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_GARETS_FATHER,
       gValeInteriorsShops_FaceTargetScript);
-  FieldObject_SetTargetAndCallback(
+  Object_SetTargetAndCallback(
       MIA, OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_GARETS_FATHER,
       gValeInteriorsShops_FaceTargetScript);
   Engine_ScriptWait(300);
-  Camera_GetScriptObject()->motionFlags = motionFlags;
+  FieldCamera_GetScriptObject()->motionFlags = motionFlags;
   // The camera pans slowly up to Garet's parents. His father, pacing, asks
   // whether they should look for Garet; Isaac still does not know about
   // Dora. His mother teases that he misses Garet.
-  Camera_SetSpeed(PIXELS(1) / 10, PIXELS(1) / 80);
-  Camera_MoveTo(PIXELS(786), 0, PIXELS(430), 1);
+  FieldCamera_SetSpeed(PIXELS(1) / 10, PIXELS(1) / 80);
+  FieldCamera_MoveTo(PIXELS(786), 0, PIXELS(430), 1);
   Engine_ScriptWait(240);
   Engine_ObjectEventStop(LOCALID_GARETS_FATHER);
   ObjectEvent_ShowEmote(LOCALID_GARETS_FATHER, EMOTE_IN_FRONT | EMOTE_WINCE,
@@ -764,8 +764,8 @@ static void EventScript_GaretComesHome(void) {
   Script_ShowTwoMessagesAndWait(LOCALID_GARETS_FATHER, 11, 6, 6, 6,
                                 LOCALID_GARETS_MOTHER, 12, 1, 7, 1, 0);
   Engine_ScriptWait(20);
-  Camera_SetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
-  Camera_MoveTo(PIXELS(777), 0, PIXELS(468), 1);
+  FieldCamera_SetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
+  FieldCamera_MoveTo(PIXELS(777), 0, PIXELS(468), 1);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(40);
   Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_NOD);
@@ -780,7 +780,7 @@ static void EventScript_GaretComesHome(void) {
   Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_GARETS_GRANDFATHER,
                             0, 20);
   // The grandfather looks about, then jumps up with Garet's name.
-  Camera_MoveTo(PIXELS(750), 0, PIXELS(451), 1);
+  FieldCamera_MoveTo(PIXELS(750), 0, PIXELS(451), 1);
   Engine_ScriptWait(20);
   ObjectEvent_FaceDirection(LOCALID_GARETS_MOTHER, FACING_SOUTH + FACING_STEP,
                             0);
@@ -822,9 +822,9 @@ static void EventScript_GaretComesHome(void) {
   ObjectEvent_FaceDirection(IVAN, FACING_SOUTHWEST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(MIA, FACING_NORTHWEST + FACING_STEP, 0);
   if (Engine_ScriptChooseYesNo(0, 0) == 1) {
-    gEventWork->message++;
+    gFieldWork->message++;
   }
-  Camera_MoveTo(PIXELS(777), 0, PIXELS(428), 1);
+  FieldCamera_MoveTo(PIXELS(777), 0, PIXELS(428), 1);
   Engine_ScriptWait(20);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_GARETS_FATHER, 2);
   Script_ShowMessage(LOCALID_GARETS_FATHER, 0);
@@ -835,7 +835,7 @@ static void EventScript_GaretComesHome(void) {
   // see him well.
   Engine_ScriptSetMessage(MsgValeYoureLeavingAgainSoon);
   Script_ShowMessage(SPEAKER_PORTRAIT_RIGHT | LOCALID_GARETS_MOTHER, 0);
-  Camera_MoveTo(PIXELS(777), 0, PIXELS(468), 1);
+  FieldCamera_MoveTo(PIXELS(777), 0, PIXELS(468), 1);
   Engine_ScriptWait(20);
   ObjectEvent_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 20);
   Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_NOD);
@@ -893,7 +893,7 @@ static void EventScript_GaretComesHome(void) {
   Script_ShowMessageAndWait(MIA, 0, 20);
   ValeInteriorsShops_FamilyNods();
   Engine_ScriptWait(20);
-  Camera_MoveTo(PIXELS(777), 0, PIXELS(428), 1);
+  FieldCamera_MoveTo(PIXELS(777), 0, PIXELS(428), 1);
   Engine_ScriptWait(20);
   // Garet's mother comes forward and asks them to look after young Garet.
   ObjectEvent_SetSpeed(LOCALID_GARETS_MOTHER, PIXELS(2) / 5, PIXELS(1) / 5);
@@ -904,7 +904,7 @@ static void EventScript_GaretComesHome(void) {
                         40);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_GARETS_MOTHER, 0,
                             20);
-  Camera_MoveTo(PIXELS(777), 0, PIXELS(468), 1);
+  FieldCamera_MoveTo(PIXELS(777), 0, PIXELS(468), 1);
   Engine_ScriptWait(40);
   ObjectEvent_FaceDirection(IVAN, FACING_SOUTHWEST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST + FACING_STEP, 40);
@@ -1108,35 +1108,35 @@ u32 gValeInteriorsShops_StormWarps[] = {
 // clang-format off
 struct ObjectEventTemplate gValeInteriorsShops_ObjectEventTemplates[] = {
     { SPRITE_OLD_MAN_WITH_WHITE_HAIR, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(697), 0, PIXELS(468), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(697), 0, PIXELS(468), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_OLD_WOMAN, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(726), 0, PIXELS(486), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(726), 0, PIXELS(486), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_MAN_IN_TEAL_SHIRT, 0x0, MOVEMENT_TYPE_WANDER,
-        PIXELS(815), 0, PIXELS(386), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(815), 0, PIXELS(386), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_IN_GREEN_HEADSCARF, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(841), 0, PIXELS(455), FACING_NORTH, TALK_FACE_PARTY, 0 },
+        PIXELS(841), 0, PIXELS(455), FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(403), 0, PIXELS(144), FACING_WEST, TALK_FACE_PARTY, 0 },
+        PIXELS(403), 0, PIXELS(144), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_WOMAN, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(331), 0, PIXELS(144), FACING_EAST, TALK_KEEP_FACING, 0 },
+        PIXELS(331), 0, PIXELS(144), FACING_EAST, TALK_FACING_KEEP, 0 },
     { SPRITE_WOMAN_IN_GREEN_DRESS, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(486), 0, PIXELS(136), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(486), 0, PIXELS(136), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_BURLY_MAN_WITH_GREY_HAIR, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(495), 0, PIXELS(453), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(495), 0, PIXELS(453), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_IN_GREEN_DRESS, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(405), 0, PIXELS(421), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(405), 0, PIXELS(421), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, 0x0, MOVEMENT_TYPE_WANDER,
-        PIXELS(99), 0, PIXELS(125), FACING_NORTH, TALK_FACE_PARTY, 0 },
+        PIXELS(99), 0, PIXELS(125), FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(768), 0, PIXELS(768), FACING_WEST, TALK_FACE_PARTY, 0 },
+        PIXELS(768), 0, PIXELS(768), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_STRONGMAN, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(392), 0, PIXELS(697), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(392), 0, PIXELS(697), FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_WOMAN_WITH_PONYTAIL, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(72), 0, PIXELS(424), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(72), 0, PIXELS(424), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_BALD_MAN_IN_RED, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(232), 0, PIXELS(440), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(232), 0, PIXELS(440), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_IN_GREEN, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(264), 0, PIXELS(440), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(264), 0, PIXELS(440), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };
 
@@ -1144,79 +1144,79 @@ struct ObjectEventTemplate gValeInteriorsShops_ObjectEventTemplatesAfterLeaving[
     { SPRITE_OLD_MAN_WITH_WHITE_HAIR, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(697), 0, PIXELS(468), FACING_SOUTHEAST + FACING_STEP, 3, 0 },
     { SPRITE_OLD_WOMAN, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(726), 0, PIXELS(486), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(726), 0, PIXELS(486), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_MAN_IN_TEAL_SHIRT, 0x0, MOVEMENT_TYPE_WANDER,
-        PIXELS(815), 0, PIXELS(386), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(815), 0, PIXELS(386), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_IN_GREEN_HEADSCARF, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(841), 0, PIXELS(455), FACING_NORTH, TALK_FACE_PARTY, 0 },
+        PIXELS(841), 0, PIXELS(455), FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(403), 0, PIXELS(144), FACING_WEST, TALK_FACE_PARTY, 0 },
+        PIXELS(403), 0, PIXELS(144), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_WOMAN, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(456), 0, PIXELS(156), FACING_EAST, TALK_KEEP_FACING, 0 },
+        PIXELS(456), 0, PIXELS(156), FACING_EAST, TALK_FACING_KEEP, 0 },
     { SPRITE_WOMAN_IN_GREEN_DRESS, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(486), 0, PIXELS(118), FACING_NORTH, TALK_FACE_PARTY, 0 },
+        PIXELS(486), 0, PIXELS(118), FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_BURLY_MAN_WITH_GREY_HAIR, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(495), 0, PIXELS(453), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(495), 0, PIXELS(453), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_IN_GREEN_DRESS, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(405), 0, PIXELS(421), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(405), 0, PIXELS(421), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, 0x0, MOVEMENT_TYPE_WANDER,
-        PIXELS(99), 0, PIXELS(125), FACING_NORTH, TALK_FACE_PARTY, 0 },
+        PIXELS(99), 0, PIXELS(125), FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(768), 0, PIXELS(768), FACING_WEST, TALK_FACE_PARTY, 0 },
+        PIXELS(768), 0, PIXELS(768), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_STRONGMAN, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(392), 0, PIXELS(697), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(392), 0, PIXELS(697), FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_WOMAN_WITH_PONYTAIL, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(72), 0, PIXELS(424), FACING_SOUTH, 3, 0 },
     { SPRITE_BALD_MAN_IN_RED, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(232), 0, PIXELS(440), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(232), 0, PIXELS(440), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_IN_GREEN, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(264), 0, PIXELS(440), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(264), 0, PIXELS(440), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gValeInteriorsShops_ObjectEventTemplatesAfterKalay[] = {
     { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_MAN_WITH_WHITE_HAIR, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(697), 0, PIXELS(468), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(697), 0, PIXELS(468), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_WOMAN, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(726), 0, PIXELS(486), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(726), 0, PIXELS(486), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_IN_TEAL_SHIRT, 0x0, (s32)gValeInteriorsShops_FatherPacingScript,
-        PIXELS(819), 0, PIXELS(405), FACING_WEST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(819), 0, PIXELS(405), FACING_WEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_IN_GREEN_HEADSCARF, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(841), 0, PIXELS(370), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(841), 0, PIXELS(370), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(403), 0, PIXELS(144), FACING_WEST, TALK_FACE_PARTY, 0 },
+        PIXELS(403), 0, PIXELS(144), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_WOMAN, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(456), 0, PIXELS(156), FACING_EAST, TALK_FACE_PARTY, 0 },
+        PIXELS(456), 0, PIXELS(156), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_IN_GREEN_DRESS, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(494), 0, PIXELS(112), FACING_NORTH, TALK_FACE_PARTY, 0 },
+        PIXELS(494), 0, PIXELS(112), FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_BURLY_MAN_WITH_GREY_HAIR, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(495), 0, PIXELS(453), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(495), 0, PIXELS(453), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_IN_GREEN_DRESS, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(405), 0, PIXELS(421), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(405), 0, PIXELS(421), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, 0x0, MOVEMENT_TYPE_WANDER,
-        PIXELS(99), 0, PIXELS(125), FACING_NORTH, TALK_FACE_PARTY, 0 },
+        PIXELS(99), 0, PIXELS(125), FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(768), 0, PIXELS(768), FACING_WEST, TALK_FACE_PARTY, 0 },
+        PIXELS(768), 0, PIXELS(768), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_STRONGMAN, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(392), 0, PIXELS(697), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(392), 0, PIXELS(697), FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_WOMAN_WITH_PONYTAIL, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(72), 0, PIXELS(424), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(72), 0, PIXELS(424), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_BALD_MAN_IN_RED, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(232), 0, PIXELS(440), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(232), 0, PIXELS(440), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_IN_GREEN, 0x0, MOVEMENT_TYPE_STAND,
-        PIXELS(264), 0, PIXELS(440), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(264), 0, PIXELS(440), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { 280, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { 280, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACE_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { 280, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACE_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { MAP_TABLE_END },
 };
 

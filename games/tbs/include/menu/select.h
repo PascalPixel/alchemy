@@ -31,8 +31,9 @@ struct SelectionSprite {
 struct SelectionNode {
   struct SelectionNode *previous; ///< the icon before it in its row
   struct SelectionNode *next;     ///< the icon after it in its row
-  u16 base;    ///< the entry's id, as listed in SelectionScreen.bases
-  u16 kind;    ///< the entry's kind, as listed in SelectionScreen.kinds; 0 free
+  u16 base;    ///< the entry's id, as listed in SelectionScreenWork.bases
+  u16 kind;    ///< the entry's kind, as listed in SelectionScreenWork.kinds; 0
+               ///< free
   u16 slot;    ///< VRAM cache slot of its picture
   u16 tile;    ///< first sprite tile of its picture
   s16 x;       ///< screen pixels
@@ -52,14 +53,14 @@ struct SelectionNode {
 
 /// The selection screen (heap block 18): the row of icons the player picks
 /// from, with arrows at each end and a pointing hand over the chosen target.
-struct SelectionScreen {
+struct SelectionScreenWork {
   /// The icons; 14 is the pointing hand, whose picture is loaded at setup.
   struct SelectionNode records[16];
   struct AffineTransform transform; ///< a zooming icon's scale
   struct SelectionNode *head;       ///< the first icon of the row
   struct SelectionNode *path;       ///< the icons chosen so far
-  struct UiWindow *window;          ///< the window naming the chosen entry
-  /// The listed entries, up to 16 (Resource_PushPendingPair).
+  struct Window *window;            ///< the window naming the chosen entry
+  /// The listed entries, up to 16 (SelectionScreen_AddEntry).
   ///@{
   u16 kinds[16];
   u16 bases[16];
@@ -86,10 +87,10 @@ STATIC_ASSERT(sizeof(struct SelectionSprite) == 0x0c);
 STATIC_ASSERT(sizeof(struct SelectionNode) == 0x34);
 STATIC_ASSERT(offsetof(struct SelectionNode, message) == 0x20);
 STATIC_ASSERT(offsetof(struct SelectionNode, sprite) == 0x28);
-STATIC_ASSERT(offsetof(struct SelectionScreen, head) == 0x348);
-STATIC_ASSERT(offsetof(struct SelectionScreen, kinds) == 0x354);
-STATIC_ASSERT(offsetof(struct SelectionScreen, cursorIndex) == 0x39e);
-STATIC_ASSERT(offsetof(struct SelectionScreen, locked) == 0x3b8);
-STATIC_ASSERT(sizeof(struct SelectionScreen) == 0x3e4);
+STATIC_ASSERT(offsetof(struct SelectionScreenWork, head) == 0x348);
+STATIC_ASSERT(offsetof(struct SelectionScreenWork, kinds) == 0x354);
+STATIC_ASSERT(offsetof(struct SelectionScreenWork, cursorIndex) == 0x39e);
+STATIC_ASSERT(offsetof(struct SelectionScreenWork, locked) == 0x3b8);
+STATIC_ASSERT(sizeof(struct SelectionScreenWork) == 0x3e4);
 
 #endif

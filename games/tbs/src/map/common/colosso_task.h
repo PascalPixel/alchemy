@@ -86,9 +86,9 @@ static void Colosso_LoadLettering(s32 id) {
   u8 *buf;
   s32 off;
 
-  buf = Runtime_BumpAllocateAlternatePool(0x1c00 + COLOSSO_PALETTE_BYTES);
+  buf = AllocEwram(0x1c00 + COLOSSO_PALETTE_BYTES);
   if (gColosso_LetteringSlot == -1)
-    gColosso_LetteringSlot = Resource_FindFreeEntry();
+    gColosso_LetteringSlot = VramCache_FindFreeEntry();
   off = gColosso_LetteringPaletteOffsets[id];
   if (id == COLOSSO_PICTURE_WON_LOSE_FOR_LOSS)
     id = COLOSSO_PICTURE_WON_LOSE;
@@ -110,7 +110,7 @@ static void Colosso_UpdateLettering(void) {
   // Each lettering piece is queued as a sprite part written as three words:
   // the queue link, attributes 0 and 1, and attribute 2.
   struct AnimationSpritePart *sprite = (struct AnimationSpritePart *)write;
-  s32 tile = gVramBlockCache[gColosso_LetteringSlot].offset >> 5;
+  s32 tile = gVramCacheEntries[gColosso_LetteringSlot].offset >> 5;
   u32 flags;
   s32 scale, blend, pos;
   s32 matrix, i, x, y, left;
@@ -148,7 +148,7 @@ commands:
         break;
       case COLOSSO_LETTERING_END:
         Engine_TaskRemoveCallback(Colosso_UpdateLettering);
-        Resource_ResetEntry(gColosso_LetteringSlot);
+        VramCache_FreeEntry(gColosso_LetteringSlot);
         return;
       }
     }
@@ -194,7 +194,7 @@ commands:
   work.angle = 0;
   work.scaleX = scale;
   work.scaleY = scale;
-  matrix = (s16)AffineMatrix_BuildForEffect(&work);
+  matrix = (s16)OamMatrix_AllocFromTransform(&work);
   gColosso_LetteringPosition += pos;
   pos = gColosso_LetteringPosition / 256;
   switch (gColosso_LetteringMode) {
@@ -212,7 +212,7 @@ commands:
         *write++ = 0;
         *write++ = (x << 16) | y | flags | attr | 0x700;
         *write++ = 0xf400 | tile;
-        Runtime_PushSlotEntry(sprite++, 236);
+        Oam_AddSpriteAtDepth(sprite++, 236);
       }
       tile += 8;
     }
@@ -232,7 +232,7 @@ commands:
         *write++ = 0;
         *write++ = (x << 16) | y | flags | attr | 0x700;
         *write++ = 0xf400 | (tile + gColosso_LetteringParameter);
-        Runtime_PushSlotEntry(sprite++, 236);
+        Oam_AddSpriteAtDepth(sprite++, 236);
       }
       tile += 8;
     }
@@ -253,7 +253,7 @@ commands:
         *write++ = 0;
         *write++ = (x << 16) | y | flags | attr | 0x700;
         *write++ = 0xf400 | (tile + gColosso_LetteringParameter);
-        Runtime_PushSlotEntry(sprite++, 236);
+        Oam_AddSpriteAtDepth(sprite++, 236);
       }
       tile += 8;
     }
@@ -269,7 +269,7 @@ commands:
       *write++ = 0;
       *write++ = (x << 16) | y | flags | (matrix << 25) | 0x700;
       *write++ = 0xf400 | (tile + gColosso_LetteringParameter);
-      Runtime_PushSlotEntry(sprite, 236);
+      Oam_AddSpriteAtDepth(sprite, 236);
     }
     break;
 #endif
@@ -282,7 +282,7 @@ commands:
       *write++ = 0;
       *write++ = (x << 16) | y | flags | (matrix << 25) | 0x700;
       *write++ = 0xf400 | (tile + gColosso_LetteringParameter);
-      Runtime_PushSlotEntry(sprite, 236);
+      Oam_AddSpriteAtDepth(sprite, 236);
     }
     break;
   }

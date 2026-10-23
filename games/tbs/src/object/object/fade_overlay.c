@@ -16,13 +16,13 @@ struct FadeView {
 /// Each frame of the fade overlay: on each of the two cells beside the object
 /// event (left and right of it), where the ground one or two cells south rises
 /// above the object event's floor, draws a semi-transparent 16-pixel-wide
-/// sprite of colour 1 at the height of that ground. Registered as a scheduler
-/// callback by FieldEffect_StartFadeOverlay; reads the work in
-/// HEAP_SLOT_FADE_OVERLAY and queues the marks with Runtime_PushSlotEntry.
+/// sprite of colour 1 at the height of that ground. Added as a task by
+/// FieldEffect_StartFadeOverlay; reads the work in
+/// HEAP_SLOT_FADE_OVERLAY and queues the marks with Oam_AddSpriteAtDepth.
 void FadeOverlay_DrawMarks(void) {
-  struct FadeOverlayWork *work = WORK_SLOT(HEAP_SLOT_FADE_OVERLAY);
+  struct FadeOverlayWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_FADE_OVERLAY);
 #ifdef UBFIX
-  struct MapGridScrollWork *grid = WORK_SLOT(HEAP_SLOT_MAP_GRID);
+  struct MapGridScrollWork *grid = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
   s32 cameraX = grid->viewX >> 16;
   s32 cameraZ = grid->viewY >> 16;
 #else
@@ -30,7 +30,8 @@ void FadeOverlay_DrawMarks(void) {
   // Named-member high halves keep 0x1da bytes but change load scheduling
   // from .text+0x6cce in English; the object event's named fields match
   // plainly.
-  s16 *camera = ((struct FadeView *)WORK_SLOT(HEAP_SLOT_MAP_GRID))->camera;
+  s16 *camera =
+      ((struct FadeView *)HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID))->camera;
   s32 cameraX = camera[1];
   s32 cameraZ = camera[3];
 #endif
@@ -53,11 +54,11 @@ void FadeOverlay_DrawMarks(void) {
     return;
   x = objectEvent->x.fixed;
   z = objectEvent->z.fixed;
-  terrainFloor = objectEvent->terrainHeight >> 16;
-  terrainLayer = objectEvent->terrainId;
+  terrainFloor = objectEvent->groundHeight >> 16;
+  terrainLayer = objectEvent->layer;
   // The first tile of the solid block FieldEffect_StartFadeOverlay loaded (VRAM
   // cache block 94; tiles are 32 bytes).
-  tile = gVramBlockCache[94].offset >> 5;
+  tile = gVramCacheEntries[94].offset >> 5;
   // The left cell, 8 pixels left of the object event. The ground is read one
   // and two cells (16 and 32 pixels) south, the further one counting 16 pixels
   // lower, and the higher of the two is used.
@@ -81,7 +82,7 @@ void FadeOverlay_DrawMarks(void) {
     mark->x = ((u32)(x >> 16) & 0xfff0) - cameraX;
     screenRow = (z >> 16) & 0xf0;
     mark->y = screenRow - cameraZ - height + 16;
-    Runtime_PushSlotEntry(mark, 0);
+    Oam_AddSpriteAtDepth(mark, 0);
   }
   // The right cell, 8 pixels right of the object event, read the same way.
   x += 0x100000;
@@ -100,7 +101,7 @@ void FadeOverlay_DrawMarks(void) {
     mark->x = ((u32)(x >> 16) & 0xfff0) - cameraX;
     screenRow = (z >> 16) & 0xf0;
     mark->y = screenRow - cameraZ - height + 16;
-    Runtime_PushSlotEntry(mark, 0);
+    Oam_AddSpriteAtDepth(mark, 0);
   }
 }
 
@@ -111,21 +112,21 @@ void FadeOverlay_DrawMarks(void) {
 /// FadeOverlay_DrawMarks. Called by seven map overlays (Venus and Mercury
 /// Lighthouses, Kalay, the tunnel ruins, Crossbone Isle, the ice room by Imil
 /// and Fuchin Falls); Crossbone Isle then switches it on and off by setting the
-/// work's object event. No ☀️ code stops it (FadeOverlay_Suspend has no named
-/// caller): the work and the callback last until the next map change resets the
-/// heap and the task table (Game_Run).
+/// work's object event. No ☀️ code stops it (FadeOverlay_Suspend has no
+/// named caller): the work and the callback last until the next map change
+/// resets the heap and the task table (Game_Run).
 void FieldEffect_StartFadeOverlay(void *object) {
   struct FadeOverlayWork *work;
   u8 *tiles;
   volatile u32 fill;
 
-  work = Runtime_AllocateBlock(HEAP_SLOT_FADE_OVERLAY, sizeof(*work));
+  work = AllocHeapSlotEwram(HEAP_SLOT_FADE_OVERLAY, sizeof(*work));
   // Upload the solid sprite tiles before enabling the drawing callback.
-  tiles = Runtime_AllocateHeapBlock(HEAP_SLOT_TILE_SCRATCH, 0x400);
+  tiles = AllocHeapSlot(HEAP_SLOT_TILE_SCRATCH, 0x400);
   Dma_Fill32Cell(fill, 0x11111111, tiles, 0x200);
   VramCache_Load(94, 0x200, tiles);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_TILE_SCRATCH);
-  Scheduler_AddOrUpdateCallback(FadeOverlay_DrawMarks, 0xc80);
+  FreeHeapSlot(HEAP_SLOT_TILE_SCRATCH);
+  Task_Add(FadeOverlay_DrawMarks, 0xc80);
   Io_Write16(BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 |
                  BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL,
              &REG_BLDCNT);
@@ -134,16 +135,14 @@ void FieldEffect_StartFadeOverlay(void *object) {
   Io_Write16(31, &REG_BLDY);
   Dma_Fill32Cell(fill, 0, work, sizeof(*work));
   if (object == NULL)
-    object = ObjectTable_Get(gGameState.selectedLocalId);
+    object = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
   work->objectEvent = object;
 }
 
 /// Stops drawing the fade overlay, keeping its work. Reached only through a
 /// bare far-call veneer; no ☀️ code names it.
-void FadeOverlay_Suspend(void) {
-  Scheduler_SuspendTasks(FadeOverlay_DrawMarks);
-}
+void FadeOverlay_Suspend(void) { Task_SuspendAll(FadeOverlay_DrawMarks); }
 
 /// Draws the fade overlay again after FadeOverlay_Suspend. Reached only
 /// through a bare far-call veneer.
-void FadeOverlay_Resume(void) { Scheduler_ResumeTasks(FadeOverlay_DrawMarks); }
+void FadeOverlay_Resume(void) { Task_ResumeAll(FadeOverlay_DrawMarks); }

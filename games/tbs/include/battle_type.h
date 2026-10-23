@@ -2,40 +2,40 @@
 #define ALCHEMY_BATTLE_TYPE_H
 
 /// @file
-/// BattlePlan, an action planned for its targets: the hits, criticals and
+/// BattleTurn, an action planned for its targets: the hits, criticals and
 /// multipliers rolled.
 
 #include "static_assert.h"
 #include "battle_unit.h"
 
 enum {
-  /// Targets a plan can hold: as many units as BattleWork.slots holds, 8
+  /// Targets a turn can hold: as many units as BattleWork.objects holds, 8
   /// party places and 6 enemies.
   BATTLE_TARGET_CAPACITY = 14,
-  BATTLE_PLAN_SIZE = 0x64
+  BATTLE_TURN_SIZE = 0x64
 };
 
-/// BattlePlan.targetCritical: the critical hit rolled for each target.
+/// BattleTurn.targetCritical: the critical hit rolled for each target.
 enum BattleCritical {
   CRITICAL_NONE,
   CRITICAL_HIT,   ///< an attack's: a quarter more damage
   CRITICAL_STRONG ///< an ability's (effects 36 to 40): half as much again
 };
 
-/// BattlePlan.targetHit while the hit is still to be rolled, as the ability
-/// lands; BattleCommand_BuildPlan rolls it ahead only for Annihilation.
+/// BattleTurn.targetHit while the hit is still to be rolled, as the ability
+/// lands; BattleTurn_Build rolls it ahead only for Annihilation.
 #define HIT_NOT_ROLLED -1
 
-/// BattlePlan.failure: why a cast plays no effect, which the staging shows.
-enum BattlePlanFailure {
-  PLAN_FAILURE_NONE,
-  PLAN_FAILURE_SEALED, ///< "blocked": the user's Psynergy is sealed
-  PLAN_FAILURE_NO_PP   ///< the user has too little PP
+/// BattleTurn.failure: why a cast plays no animation, which the staging shows.
+enum BattleTurnFailure {
+  TURN_FAILURE_NONE,
+  TURN_FAILURE_SEALED, ///< "blocked": the user's Psynergy is sealed
+  TURN_FAILURE_NO_PP   ///< the user has too little PP
 };
 
-/// One action, as BattleCommand_BuildPlan lays it out for BattleTarget_Execute
+/// One action, as BattleTurn_Build lays it out for BattleAbility_ApplyToTarget
 /// to apply target by target.
-struct BattlePlan {
+struct BattleTurn {
   u8 actorId;                           ///< the acting unit
   s8 targetCount;                       ///< targets in targetIds
   u8 targetIds[BATTLE_TARGET_CAPACITY]; ///< in battlefield order
@@ -49,20 +49,20 @@ struct BattlePlan {
   u8 padding[2]; ///< up to the word abilityId starts on
   s32 abilityId;
   s32 element; ///< enum Element
-  s32 outcome; ///< enum BattlePlanStaging: how the action is shown
-  /// How the effect is staged (STAGING_ in battle_internal.h).
+  s32 staging; ///< enum BattleStaging: how the action is shown
+  /// The animation word: how it is staged (STAGING_ in battle_internal.h).
   /// bits: 19 view reversed | 18 view across | 17 other side | 16 on downed |
-  /// 15 scene | 14 by id range | 13..12 variant | 11..0 effect kind
-  u32 presentationFlags;
-  s32 failure; ///< enum BattlePlanFailure
+  /// 15 scene | 14 by id range | 13..12 variant | 11..0 animation kind
+  u32 animation;
+  s32 failure; ///< enum BattleTurnFailure
   /// The damage the evil spirit deals a haunted actor at the end of its turn.
   u32 hauntDamage;
 };
 
-STATIC_ASSERT(sizeof(struct BattlePlan) == BATTLE_PLAN_SIZE);
-STATIC_ASSERT(offsetof(struct BattlePlan, targetIds) == 0x02);
-STATIC_ASSERT(offsetof(struct BattlePlan, targetMultiplier) == 0x1e);
-STATIC_ASSERT(offsetof(struct BattlePlan, abilityId) == 0x4c);
-STATIC_ASSERT(offsetof(struct BattlePlan, hauntDamage) == 0x60);
+STATIC_ASSERT(sizeof(struct BattleTurn) == BATTLE_TURN_SIZE);
+STATIC_ASSERT(offsetof(struct BattleTurn, targetIds) == 0x02);
+STATIC_ASSERT(offsetof(struct BattleTurn, targetMultiplier) == 0x1e);
+STATIC_ASSERT(offsetof(struct BattleTurn, abilityId) == 0x4c);
+STATIC_ASSERT(offsetof(struct BattleTurn, hauntDamage) == 0x60);
 
 #endif

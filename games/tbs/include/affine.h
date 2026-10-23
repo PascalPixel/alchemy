@@ -19,7 +19,7 @@ struct AffineTransform {
 
 /// One OAM rotation-scaling matrix: pa, pb, pc and pd in 8.8 fixed point, the
 /// inverse of the transform the sprite is drawn with.
-union AffineMatrix {
+union OamMatrix {
   s16 coefficients[4]; ///< pa, pb, pc and pd
   /// pa and pb, then pc and pd, written whole when only the diagonal is set.
   u32 rows[2];
@@ -28,12 +28,12 @@ union AffineMatrix {
 STATIC_ASSERT(sizeof(struct AffineTransform) == 8);
 STATIC_ASSERT(offsetof(struct AffineTransform, scaleY) == 2);
 STATIC_ASSERT(offsetof(struct AffineTransform, angle) == 4);
-STATIC_ASSERT(sizeof(union AffineMatrix) == 8);
+STATIC_ASSERT(sizeof(union OamMatrix) == 8);
 
-/// Matrices handed out this frame (AffineMatrix_BuildForEffect), up to 32;
-/// Render_ResetFrame sets it back to 0 after each VBlank.
-extern u8 gSpriteAffineCount;
+/// Matrices handed out this frame (OamMatrix_AllocFromTransform), up to 32;
+/// Oam_ResetFrame sets it back to 0 after each VBlank.
+extern u8 gOamMatrixCount;
 /// This frame's 32 matrices, copied into OAM with the sprites.
-extern union AffineMatrix gSpriteAffineMatrices[];
+extern union OamMatrix gOamMatrices[];
 
 #endif

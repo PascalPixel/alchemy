@@ -4,28 +4,29 @@
 
 #include "../psynergy_effects_internal.h"
 
-/// Sets up a battle with enemy group slot of encounter table zone. On the
-/// world map the terrain under the leader picks the battle backdrop.
-/// Sets the field work's battle request, which the map loop then handles,
-/// and the battle cue; ENCOUNTER_ZONE_SCRIPTED's first slot also sets
-/// gGameState.special to the Aerie's storm backdrop. About 35 maps reach it
-/// through Field_RequestBattleFromEncounterTableFar, and the lobby calls it
+/// Sets up a battle with the formation in slot of encounter table zone. On
+/// the world map the encounter region and battle environment under the leader
+/// pick the battle background. Sets the field work's battle request, which
+/// the map loop then handles, and the battle music; ENCOUNTER_ZONE_SCRIPTED's
+/// first slot also sets gGameState.special to the Aerie's storm battle
+/// background. About 35 maps reach it through
+/// Field_RequestBattleFromEncounterTableFar, and the Battle Arena calls it
 /// directly. The battle starts only once the script that asked for it has
 /// returned.
 void Field_RequestBattleFromEncounterTable(s32 zoneNo, s32 slotNo) {
   s32 zone = zoneNo;
   s32 slot = slotNo;
-  struct FieldWork *work = (struct FieldWork *)gEventWork;
+  struct FieldWork *work = (struct FieldWork *)gFieldWork;
 
-  work->battle = Encounter_GetEnemyGroupAtSlot(zone, slot);
+  work->battle = Encounter_GetFormationAtSlot(zone, slot);
   if (zone == ENCOUNTER_ZONE_SCRIPTED && slot == 0)
     gGameState.special = (s32)&ResourceId_VenusLighthouseAerieStormBackdrop;
-  if (work->mode == MODE_WORLD_MAP) {
-    struct ObjectRuntime *leader = ObjectTable_Get(gGameState.selectedLocalId);
+  if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
+    struct Object *leader = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
 
     Encounter_ResolveWorldMapZoneAndBackdrop(&leader->x);
   }
-  FieldEffect_SelectBattleCue(zone, slot);
+  Encounter_SelectBattleMusic(zone, slot);
 }
 
 /// Sets up the battle with Djinni number `no`. The low 8 bits of flag are the
@@ -40,7 +41,7 @@ void Field_RequestDjinnBattle(s32 flag, s32 no) {
   struct GameState *state;
   s32 skipHop;
 
-  work = (struct FieldWork *)gEventWork;
+  work = (struct FieldWork *)gFieldWork;
   skipHop = flag & DJINN_NO_HOP;
   flag &= 0xff;
 
@@ -52,19 +53,19 @@ void Field_RequestDjinnBattle(s32 flag, s32 no) {
   // the Djinni back 32 pixels north of the leader, not at its template's
   // position.
   state->pendingDjinnEvent = (no + DJINNI_EVENT_0) | skipHop;
-  work->battle = Encounter_GetDjinnEnemyGroup(no);
-  if (work->mode == MODE_WORLD_MAP) {
-    struct ObjectRuntime *leader = ObjectTable_Get(state->selectedLocalId);
+  work->battle = Encounter_GetDjinnFormation(no);
+  if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
+    struct Object *leader = ObjectEvent_GetByLocalId(state->leaderLocalId);
 
     Encounter_ResolveWorldMapZoneAndBackdrop(&leader->x);
   }
   // Key 0 is no listed encounter, so every Djinni battle takes the music
   // list's last song (battle_cue.c).
-  FieldEffect_SelectBattleCue(0, 0);
+  Encounter_SelectBattleMusic(0, 0);
 }
 
 /// Sets the map and warp destination that the field goes to next
-/// (gGameState.nextMap and nextWarpDest). About 30 maps and the lobby
+/// (gGameState.nextMap and nextWarpDest). About 30 maps and the Battle Arena
 /// reach it through FieldScript_SetNextDestinationFar.
 void FieldScript_SetNextDestination(s32 mapId, s32 warpDest) {
   gGameState.nextMap = mapId;
@@ -73,7 +74,7 @@ void FieldScript_SetNextDestination(s32 mapId, s32 warpDest) {
 
 /// Sets where the party wakes up after losing a battle
 /// (gGameState.defeatMap and defeatWarpDest). The maps before scripted
-/// battles (Colosso, the Vault, Vale, the Aerie) and the lobby reach it
+/// battles (Colosso, the Vault, Vale, the Aerie) and the Battle Arena reach it
 /// through FieldScript_SetDefeatDestinationFar.
 void FieldScript_SetDefeatDestination(s32 mapId, s32 warpDest) {
   gGameState.defeatMap = mapId;
@@ -85,32 +86,32 @@ void FieldScript_SetDefeatDestination(s32 mapId, s32 warpDest) {
 /// so the map loop leaves on its next pass. Only Tolbi's spring reaches it,
 /// through FieldScript_RequestDestinationFar.
 void FieldScript_RequestDestination(u16 mapId, u16 warpDest) {
-  struct FieldWork *work = (struct FieldWork *)gEventWork;
+  struct FieldWork *work = (struct FieldWork *)gFieldWork;
   gGameState.mapId = mapId;
   gGameState.warpDest = warpDest;
   work->warp = 999;
 }
 
-/// Plays SE_STOP_SLOT5, then soundId (AUDIO_CUE_FADE_SLOT3 for -1), and
-/// remembers soundId for FieldEffect_PlayQueuedSound in the field work's
-/// queuedSound; -1 is remembered as none, so it plays AUDIO_CUE_FADE_SLOT3 now
-/// and nothing later. About 30 maps reach it through the far alias, and the
+/// Plays SE_STOP_SLOT5, then soundId (SONG_FADE_OUT_ACTION_SE for -1), and
+/// remembers soundId for Map_PlayQueuedMusic in the field work's
+/// queuedSound; -1 is remembered as none, so it plays SONG_FADE_OUT_ACTION_SE
+/// now and nothing later. About 30 maps reach it through the far alias, and the
 /// ground particles (weather.c) queue SE_170 with it.
-void FieldEffect_SetQueuedSoundAndPlay(s32 soundId) {
-  ((struct FieldWork *)gEventWork)->queuedSound = soundId;
+void Map_QueueMusic(s32 soundId) {
+  ((struct FieldWork *)gFieldWork)->queuedSound = soundId;
   if ((s16)soundId == -1) {
-    soundId = AUDIO_CUE_FADE_SLOT3;
+    soundId = SONG_FADE_OUT_ACTION_SE;
   }
-  AudioCommand_PlayFar(SE_STOP_SLOT5);
-  AudioCommand_PlayFar(soundId);
+  Sound_PlaySongFar(SE_STOP_SLOT5);
+  Sound_PlaySongFar(soundId);
 }
 
-/// Plays the sound FieldEffect_SetQueuedSoundAndPlay remembered, if any. Called
+/// Plays the sound Map_QueueMusic remembered, if any. Called
 /// by maps, by the event runner (object/events.c), by setup.c and by an
 /// object event's landing (object_event_commands.c).
-void FieldEffect_PlayQueuedSound(void) {
-  s16 soundId = ((struct FieldWork *)gEventWork)->queuedSound;
+void Map_PlayQueuedMusic(void) {
+  s16 soundId = ((struct FieldWork *)gFieldWork)->queuedSound;
 
   if (soundId != -1)
-    AudioCommand_PlayFar(soundId);
+    Sound_PlaySongFar(soundId);
 }

@@ -4,101 +4,99 @@
 
 #include "../battle_command_internal.h"
 
-extern const u8 *gRenderResource_PairSourceTable[];
+extern const u8 *gHeadingPictures[];
 
-/// Decompresses picture `picture` of gRenderResource_PairSourceTable, a 64x16
+/// Decompresses picture `picture` of gHeadingPictures, a 64x16
 /// heading (Save, Continue, Copy, Erase, Battle, Link, Pause, Setup) of 512
 /// bytes, into VRAM slot `slot`, through a 1 KB staging block in
 /// HEAP_SLOT_TILE_SCRATCH. The heap block is not freed when `slot` is not a
 /// valid VRAM slot.
-void RenderResource_LoadPair(s32 picture, s32 slot) {
-  void *stagingBuffer = Runtime_AllocateBlock(HEAP_SLOT_TILE_SCRATCH, 0x400);
-  const u8 *resource = gRenderResource_PairSourceTable[picture];
+void Heading_Load(s32 picture, s32 slot) {
+  void *stagingBuffer = AllocHeapSlotEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
+  const u8 *resource = gHeadingPictures[picture];
 
   if (slot < VRAM_CACHE_ENTRY_COUNT) {
-    Resource_DecodeByteLz(resource, stagingBuffer);
+    Decompress_ByteLz(resource, stagingBuffer);
     VramCache_Load(slot, 0x200, stagingBuffer);
-    Runtime_ReleaseHeapBlock(HEAP_SLOT_TILE_SCRATCH);
+    FreeHeapSlot(HEAP_SLOT_TILE_SCRATCH);
   }
 }
 
-/// Shows heading `picture` of gRenderResource_PairSourceTable as two 32x16
+/// Shows heading `picture` of gHeadingPictures as two 32x16
 /// sprites side by side at (x, y) in `window`, on draw layer 253, and
 /// returns the left one (the right one follows it in the window's list).
-/// Returns NULL when no VRAM slot is free. The save file menu shows its
-/// mode's heading this way (SaveMenu_SelectSlot), and window/options.c the
-/// option screen's Setup and the system menu's Pause.
-struct RenderOutput *
-RenderResource_CreatePair(s32 picture, struct UiWindow *window, s32 x, s32 y) {
+/// Returns NULL when no VRAM slot is free. The file menu shows its
+/// mode's heading this way (FileMenu_SelectFile), and window/options.c the
+/// option menu's Setup and the pause menu's Pause.
+struct WindowSprite *Heading_Create(s32 picture, struct Window *window, s32 x,
+                                    s32 y) {
   s32 slot;
-  struct RenderOutput *first;
-  struct RenderOutput *second;
+  struct WindowSprite *first;
+  struct WindowSprite *second;
 
-  slot = Resource_FindFreeEntry();
+  slot = VramCache_FindFreeEntry();
   if (slot >= VRAM_CACHE_ENTRY_COUNT)
     return NULL;
 
   // 0x4000 is the wide shape of attribute 0, which with size 2 is 32x16, 8
-  // tiles. Neither output is checked for NULL.
-  RenderResource_LoadPair(picture, slot);
-  first = RenderOutput_Create(slot, 0x80004000, window, x, y);
+  // tiles. Neither sprite is checked for NULL.
+  Heading_Load(picture, slot);
+  first = WindowSprite_Create(slot, 0x80004000, window, x, y);
   first->sentinel = 0xFD;
-  second = RenderOutput_Create(slot, 0x80004000, window, x + 32, y);
+  second = WindowSprite_Create(slot, 0x80004000, window, x + 32, y);
   second->sentinel = 0xFD;
   // The right half's tiles, after the left half's 8.
   second->oam.index += 8;
   return first;
 }
 
-/// Bobs the two sprites of a pair (see RenderResource_CreatePair) up and down
-/// by gUi_PairBobOffsets, one step every four frames.
-void RenderOutput_BobPair(struct RenderOutput *obj) {
+/// Bobs the two sprites of a pair (see Heading_Create) up and down
+/// by gHeadingBobOffsets, one step every four frames.
+void Heading_Bob(struct WindowSprite *obj) {
   s32 value;
 
-  value = (u8)obj->y + gUi_PairBobOffsets[(gFrameTick >> 2) & 7];
+  value = (u8)obj->y + gHeadingBobOffsets[(gFrameTick >> 2) & 7];
   obj->oam.y = value;
   obj = obj->next;
   /* FAKEMATCH(volatile): gFrameTick read again for the second sprite, as the
    * bytes do; read plainly, CSE reuses the first index and 20 of 22
    * instructions differ in tbs-en. */
   value =
-      (u8)obj->y + gUi_PairBobOffsets[(*(volatile u32 *)&gFrameTick >> 2) & 7];
+      (u8)obj->y + gHeadingBobOffsets[(*(volatile u32 *)&gFrameTick >> 2) & 7];
   obj->oam.y = value;
 }
 
 /// Decompresses command icon `icon` (a 32x32 picture of 256 colours, 1 KB)
 /// into VRAM slot `slot`, remapping its first 768 bytes' colours by table
 /// when `remap` is nonzero.
-void RenderResource_LoadFrame(s32 icon, s32 slot, s32 remap) {
+void CommandIcon_Load(s32 icon, s32 slot, s32 remap) {
   s32 size = 1024;
-  void *buffer = Runtime_AllocateBlock(HEAP_SLOT_TILE_SCRATCH, size);
+  void *buffer = AllocHeapSlotEwram(HEAP_SLOT_TILE_SCRATCH, size);
   u16 *offsetTable = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
 
   if (slot < VRAM_CACHE_ENTRY_COUNT) {
-    Resource_DecodeByteLz((void *)((u32)offsetTable + offsetTable[icon]),
-                          buffer);
+    Decompress_ByteLz((void *)((u32)offsetTable + offsetTable[icon]), buffer);
     if (remap != 0)
       Runtime_RemapBytesByTableFar(buffer, 768);
     VramCache_Load(slot, size, buffer);
-    Runtime_ReleaseHeapBlock(HEAP_SLOT_TILE_SCRATCH);
+    FreeHeapSlot(HEAP_SLOT_TILE_SCRATCH);
   }
 }
 
-/// Shows command icon `icon` (see RenderResource_LoadFrame) as a 32x32
+/// Shows command icon `icon` (see CommandIcon_Load) as a 32x32
 /// 256-colour sprite at (x, y) in `window`, on draw layer 251. Returns NULL
 /// when no VRAM slot is free. The option menu's icons come through here
 /// (window/options.c).
-struct RenderOutput *RenderResource_CreateFrame(s32 icon, s32 remap,
-                                                struct UiWindow *window, s32 x,
-                                                s32 y) {
+struct WindowSprite *CommandIcon_Create(s32 icon, s32 remap,
+                                        struct Window *window, s32 x, s32 y) {
   s32 slot;
-  struct RenderOutput *output;
+  struct WindowSprite *output;
 
-  slot = Resource_FindFreeEntry();
+  slot = VramCache_FindFreeEntry();
   output = NULL;
   if (slot != VRAM_CACHE_ENTRY_COUNT) {
-    RenderResource_LoadFrame(icon, slot, remap);
-    output = RenderOutput_Create(slot, OUTPUT_SIZE_32X32, window, x, y);
+    CommandIcon_Load(icon, slot, remap);
+    output = WindowSprite_Create(slot, OUTPUT_SIZE_32X32, window, x, y);
     output->oam.palette256 = 1;
     output->sentinel = 0xfb;
   }
@@ -106,12 +104,12 @@ struct RenderOutput *RenderResource_CreateFrame(s32 icon, s32 remap,
 }
 
 /// Makes the sprite `obj` pulse: scales it about its centre by
-/// gUi_ObjectPulseScales (in 1/65536, used in 1/256), one step every two
+/// gWindowSprite_PulseScales (in 1/65536, used in 1/256), one step every two
 /// frames, and puts it on draw layer 252. Does nothing when `obj` is NULL.
 /// The option menu pulses its selected icon with it each frame
 /// (window/options.c).
-void Ui_ApplyTableScaleToObject(struct RenderOutput *obj) {
-  s32 scale = gUi_ObjectPulseScales[(gFrameTick >> 1) & 7];
+void Ui_ApplyTableScaleToObject(struct WindowSprite *obj) {
+  s32 scale = gWindowSprite_PulseScales[(gFrameTick >> 1) & 7];
   struct AffineTransform effect;
 
   if (scale < 0)
@@ -122,7 +120,7 @@ void Ui_ApplyTableScaleToObject(struct RenderOutput *obj) {
     effect.scaleX = scale;
     effect.scaleY = scale;
     effect.angle = 0;
-    obj->oam.matrix = AffineMatrix_BuildForEffect(&effect);
+    obj->oam.matrix = OamMatrix_AllocFromTransform(&effect);
     // Affine mode 3 doubles the sprite's box, so it moves up and left by 16
     // pixels (0xfff0 and 0xf0 wrap to -16) to keep its centre.
     obj->oam.affineMode = 3;
@@ -138,13 +136,13 @@ static __inline__ u32 XorWord(u32 word, u32 mask) { return word ^ mask; }
 #define RANGE_PATTERN_COUNT 6
 #define RANGE_PATTERN_PAIR_WORDS 16
 
-// Builds the twelve range icons UiWindow_DrawThreeTileColumn draws, as BG
+// Builds the twelve range icons Window_DrawThreeTileColumn draws, as BG
 // tiles 0x314 to 0x32b (at 0x06006280): icon n is a centre tile and an end
 // tile, filled with colour 4, then marked row by row by XOR with
 // gMenu_BarPatternRows (its colour 5 turns the fill to colour 1). Rows 1 to 7
 // are marked; the first set grows its pattern with the row, the second skips
 // row 1. Battle_CollectPartyCommands builds them as the command menus open.
-// Icon 10's tiles, 0x328 and 0x329, are also where Battle_SelectAbility puts
+// Icon 10's tiles, 0x328 and 0x329, are also where BattleDjinnMenu_Run puts
 // its blinking arrow (gDjinnMenu_BlinkTile).
 // It is declared to return s32 but returns no value, and no caller reads one;
 // UBFIX makes it void, which changes the register its epilogue returns
@@ -196,18 +194,18 @@ s32 Menu_BuildLocalizedPatternTiles(void) {
 // one; UBFIX makes it void, which changes its epilogue and the argument
 // setup of one call in the Djinn preview.
 #ifdef UBFIX
-void UiWindow_DrawThreeTileColumn(struct UiWindow *window, s32 x, s32 y,
-                                  s32 pattern, s32 unused) {
+void Window_DrawThreeTileColumn(struct Window *window, s32 x, s32 y,
+                                s32 pattern, s32 unused) {
 #else
-int UiWindow_DrawThreeTileColumn(struct UiWindow *window, s32 x, s32 y,
-                                 s32 pattern, s32 unused) {
+int Window_DrawThreeTileColumn(struct Window *window, s32 x, s32 y, s32 pattern,
+                               s32 unused) {
 #endif
   s32 patternOffset = pattern * 2;
   s32 rightTile = patternOffset + 0xF315;
 
-  UiWindow_SetTilemapEntry(window, 0x400 | rightTile, x, y, 0);
-  UiWindow_SetTilemapEntry(window, patternOffset + 0xF314, x + 1, y, 0);
-  UiWindow_SetTilemapEntry(window, rightTile, x + 2, y, 0);
+  Window_SetTilemapEntry(window, 0x400 | rightTile, x, y, 0);
+  Window_SetTilemapEntry(window, patternOffset + 0xF314, x + 1, y, 0);
+  Window_SetTilemapEntry(window, rightTile, x + 2, y, 0);
 }
 
 /// Merges two 8x8 4bpp tiles row by row into `output`: `second` moved
@@ -264,7 +262,7 @@ void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output,
 /// tile (0x12). The battle menus call it each frame for tiles 0x334 and
 /// 0x335 (LIST_TILE_PAGES_LEFT); the field menus (menu/menu, by far call)
 /// and the password pages of the title's Send (menu/clear.c) call it for
-/// UI_PAGE_ARROW_VRAM.
+/// PAGE_ARROW_VRAM.
 void Link_DrawShiftedTilePair(s32 offset) {
   s32 phase = (gFrameCount >> 2) & 3;
 
@@ -332,20 +330,20 @@ void Graphics_ExpandVramTilesByColorTable(u16 *dst) {
   } while (bank <= 1);
 }
 
-/// Builds icon `resource` (0 to 31) of gUiIcon_MiscIconPointers, the table
-/// the condition icons come from (Ui_PrepareTransferFromTableEntry), in a
+/// Builds icon `resource` (0 to 31) of gIcon_MiscIconPointers, the table
+/// the status icons come from (Ui_PrepareTransferFromTableEntry), in a
 /// transfer block taken from HEAP_SLOT_GLYPH_TRANSFER, reloads VRAM cache entry
 /// `index` with it and returns the entry's first tile. The heap block is
-/// released before it returns. The status screen loads its condition icons
-/// this way, by condition kind (1 to 18).
+/// released before it returns. The summary screen loads its status icons
+/// this way, by status kind (1 to 18).
 s32 Resource_LoadTableEntryToBuffer(s32 resource, s32 index) {
   s32 result;
   GlyphTransfer *work;
 
-  work = Runtime_AllocateBlock(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*work));
+  work = AllocHeapSlotEwram(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*work));
   Ui_PrepareTransferFromTableEntry(resource);
   result = VramCache_Reload(index, (s32)work->tiles);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_GLYPH_TRANSFER);
+  FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
   return result;
 }
 
@@ -357,10 +355,10 @@ s32 ItemIcon_LoadIntoSlot(s32 resource, s32 index) {
   s32 result;
   GlyphTransfer *work;
 
-  work = Runtime_AllocateBlock(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*work));
+  work = AllocHeapSlotEwram(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*work));
   ItemIcon_Compose(resource, 0x1a);
   result = VramCache_Reload(index, (s32)work->tiles);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_GLYPH_TRANSFER);
+  FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
   return result;
 }
 
@@ -374,20 +372,20 @@ s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index) {
   s32 result;
   GlyphTransfer *work;
 
-  work = Runtime_AllocateBlock(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*work));
+  work = AllocHeapSlotEwram(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*work));
   slot = index;
   Ability_LoadGlyph(resource, 0, &slot, &tile, 1);
   result = VramCache_Reload(index, (s32)work->tiles);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_GLYPH_TRANSFER);
+  FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
   return result;
 }
 
 /// Loads the portrait of character `member` (ISAAC to PIERS, 0 to 7; any
 /// higher value shows Isaac's) into VRAM cache entry `cacheSlot`, in OBJ
 /// palette 14, and returns its first tile. In the prologue, Isaac and Garet
-/// use their childhood portraits. The status screen
+/// use their childhood portraits. The summary screen
 /// and the battle command menus draw the member's portrait with it.
-s32 UiGlyph_LoadPortrait(u32 member, s32 cacheSlot) {
+s32 Portrait_Load(u32 member, s32 cacheSlot) {
   s32 tile;
   s32 slot;
   u32 portrait;
@@ -412,7 +410,7 @@ s32 UiGlyph_LoadPortrait(u32 member, s32 cacheSlot) {
 }
 
 /// Returns gUi_FixedTileBlocks[0], whatever `no` is. The battle's prompt
-/// reads it by far call (BattlePresentation_WaitForPromptAt).
+/// reads it by far call (BattleMessage_WaitForAdvanceAt).
 s32 Ui_GetTableWordZero(s32 no) {
   if (no != 0)
     no = 0;
@@ -421,31 +419,31 @@ s32 Ui_GetTableWordZero(s32 no) {
 
 /// Copies the 4bpp decoder into RAM, calls it with the transfer's encoded
 /// source and byte buffer, then releases the copied code. Its ARM entry reads
-/// the stream through r0 and writes bytes through r1, as UiIcon_Decode does.
+/// the stream through r0 and writes bytes through r1, as Icon_Decode does.
 /// Nothing calls it.
-UNUSED void UiIcon_Decompress(GlyphTransfer *work) {
-  RamCode_LoadSlot(HEAP_SLOT_TEMP_RENDERER, Tile_Decompress4bpp,
+UNUSED void Icon_Decompress(GlyphTransfer *work) {
+  RamCode_LoadSlot(HEAP_SLOT_RAM_CODE_TEMP, Tile_Decompress4bpp,
                    Tile_Decompress4bppCodeSize);
-  ((void (*)(const void *, u8 *))((union HeapState *)gWorkSlot)
-       ->slots[HEAP_SLOT_TEMP_RENDERER])(work->encoded, work->input);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_TEMP_RENDERER);
+  ((void (*)(const void *, u8 *))((union HeapState *)gHeapSlots)
+       ->slots[HEAP_SLOT_RAM_CODE_TEMP])(work->encoded, work->input);
+  FreeHeapSlot(HEAP_SLOT_RAM_CODE_TEMP);
 }
 
 // How the link timer's heading is drawn: Spanish and French at a pixel
-// offset (UiText_DrawStringAtOffset), the others one tile a character
-// (UiText_DrawStringInWindow).
+// offset (Text_DrawStringAtOffset), the others one tile a character
+// (Text_DrawStringInWindow).
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH
-#define LINK_COUNTDOWN_DRAW_HEADING UiText_DrawStringAtOffset
+#define LINK_COUNTDOWN_DRAW_HEADING Text_DrawStringAtOffset
 #else
-#define LINK_COUNTDOWN_DRAW_HEADING UiText_DrawStringInWindow
+#define LINK_COUNTDOWN_DRAW_HEADING Text_DrawStringInWindow
 #endif
 
 /// Opens the link battle timer's window, 6 by 4 tiles at the top left, with
 /// its heading (gLink_TimeLabelString), and returns it; the seconds go under
 /// the heading (UpdateLinkSessionCountdown), which keeps the window in
 /// BattleMenuWork.timerWindow until the commands are chosen.
-struct UiWindow *Link_CreateCountdownLabelWindow(void) {
-  struct UiWindow *win = UiWindow_Create(0, 0, 6, 4, 6);
+struct Window *Link_CreateCountdownLabelWindow(void) {
+  struct Window *win = Window_Create(0, 0, 6, 4, 6);
 
   LINK_COUNTDOWN_DRAW_HEADING(gLink_TimeLabelString, win, 0, 0);
   return win;
@@ -457,17 +455,17 @@ struct UiWindow *Link_CreateCountdownLabelWindow(void) {
 /// is released before it returns. The command row and the chosen command's icon
 /// use it.
 s32 Resource_LoadIndexedIntoBuffer(s32 slotIndex, s32 icon) {
-  GlyphTransfer *buffer = Runtime_AllocateHeapBlock(HEAP_SLOT_GLYPH_TRANSFER,
-                                                    sizeof(GlyphTransfer));
+  GlyphTransfer *buffer =
+      AllocHeapSlot(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
   u16 *offsetTable = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
   u8 **encoded = &buffer->encoded;
   void *target = (void *)((u32)offsetTable + offsetTable[icon]);
   s32 result;
 
   *encoded = target;
-  Resource_DecodeByteLz(target, buffer);
+  Decompress_ByteLz(target, buffer);
   result = VramCache_Reload(slotIndex, (s32)buffer);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_GLYPH_TRANSFER);
+  FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
   return result;
 }
 
@@ -476,10 +474,9 @@ s32 Resource_LoadIndexedIntoBuffer(s32 slotIndex, s32 icon) {
 /// row's icons share `palette`: each colour index first met takes the next
 /// BG palette entry, which gets that index's OBJ palette colour. Past 64
 /// entries every new index takes entry 64, whose colour is not set here.
-/// HEAP_SLOT_GLYPH_TRANSFER holds the decoded icon and a 1 KB MemAlloc block
+/// HEAP_SLOT_GLYPH_TRANSFER holds the decoded icon and a 1 KB Alloc block
 /// the remapped pixels; both are freed before it returns.
-void UiText_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph,
-                              s32 tile) {
+void Text_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph, s32 tile) {
   GlyphTransfer *decoded;
   u8 *font;
   u8 *remapped;
@@ -488,12 +485,11 @@ void UiText_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph,
   s32 i;
   u32 index;
 
-  decoded =
-      Runtime_AllocateHeapBlock(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*decoded));
+  decoded = AllocHeapSlot(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*decoded));
   font = Resource_GetTableEntry((u32)&ResourceId_CommandIcons);
   decoded->encoded = font + ((u16 *)font)[glyph];
-  Resource_DecodeByteLz(decoded->encoded, decoded);
-  remapped = MemAlloc(0x400);
+  Decompress_ByteLz(decoded->encoded, decoded);
+  remapped = Alloc(0x400);
   source = decoded->input;
   destination = remapped;
   for (i = 0; i < 0x400; i++) {
@@ -508,19 +504,19 @@ void UiText_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph,
     *destination++ = palette->slot[index];
   }
   Dma_Set(remapped, BG_CHAR_BLOCK(1) + tile * 64, DMA_COPY32(256), REG_DMA3);
-  MemFree(remapped);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_GLYPH_TRANSFER);
+  Free(remapped);
+  FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
 }
 
 /// Loads the command row's icon `index` as command icon `icon`: as BG1 tiles
-/// from tile index * 16 (UiText_LoadRemappedGlyph), and into the row's
-/// shared VRAM cache entry for its 32x32 sprite, which Menu_RunCommandRow
+/// from tile index * 16 (Text_LoadRemappedGlyph), and into the row's
+/// shared VRAM cache entry for its 32x32 sprite, which BattleCommandRow_Run
 /// shows only for the selected icon. The icon number is also its command
 /// (SelectionEntry.kind), which names its label.
-void UiText_DrawCharacter(struct SelectionWork *work, s32 index, u32 icon) {
+void Text_DrawCharacter(struct SelectionWork *work, s32 index, u32 icon) {
   struct SelectionEntry *entry = &work->entries[index];
 
-  UiText_LoadRemappedGlyph(&work->palette, icon, index * 16);
+  Text_LoadRemappedGlyph(&work->palette, icon, index * 16);
   work->entries[index].kind = icon;
   MenuSprite_Initialize(entry->sprite, 0x80002000);
   entry->sprite.oam.f.tile =
@@ -528,7 +524,7 @@ void UiText_DrawCharacter(struct SelectionWork *work, s32 index, u32 icon) {
 }
 
 /// Puts BG1 behind the other layers (priority 3). The command row runs it as
-/// a scheduler callback each frame, with Graphics_SetBg1Priority0 at line
+/// a task each frame, with Graphics_SetBg1Priority0 at line
 /// 136 (tile row 17, the top of the row's icons), so that BG1 is behind
 /// above the strip and in front from it down.
 void Graphics_SetBg1Priority3(void) {

@@ -53,7 +53,7 @@
 #include "flags.h"
 
 /// What the player chose at a shop's counter, in the order of its menu's
-/// Buy, Sell, Artifacts and Repair, held in shop->partyAction while it runs.
+/// Buy, Sell, Artifacts and Repair, held in shop->action while it runs.
 enum ShopAction {
   SHOP_ACTION_BUY,
   SHOP_ACTION_SELL,
@@ -82,14 +82,14 @@ enum ShopStockRow {
   SHOP_STOCK_ROW_VALE_WEAPONS = 1, ///< Vale's weapon shop
   SHOP_STOCK_ROW_VALE_ARMOR = 2,   ///< Vale's armor shop
   /// Xian's weapon, armor and item shops, the warriors' shops, which greet
-  /// the party with lines of their own (ShopRuntime.warriorShop).
+  /// the party with lines of their own (ShopWork.warriorShop).
   SHOP_STOCK_ROW_XIAN_WEAPONS = 16,
   SHOP_STOCK_ROW_XIAN_ARMOR = 17,
   SHOP_STOCK_ROW_XIAN_ITEMS = 18
 };
 
-/// What a sparkle of the sanctum's burst is doing (EffectSlot.state,
-/// Shop_UpdateBurstSparkle).
+/// What a sparkle of the sanctum's burst is doing (FieldEffectSprite.state,
+/// Sanctum_UpdateBurstSparkle).
 enum SanctumSparkleState {
   /// Placed on a ring around the burst's centre and aimed inside it.
   SANCTUM_SPARKLE_START = 0,
@@ -99,12 +99,12 @@ enum SanctumSparkleState {
 };
 
 /// What the sanctum does for one party member; each kind picks the member's
-/// condition it needs, its fee and its cure (sanctum.c).
+/// status it needs, its fee and its cure (sanctum.c).
 enum SanctumService {
   SANCTUM_SERVICE_REVIVE,      ///< for a downed member (HP 0)
   SANCTUM_SERVICE_CURE_POISON, ///< for poison or deadly poison
-  SANCTUM_SERVICE_EXORCISE,    ///< for a haunted member
-  SANCTUM_SERVICE_REMOVE_CURSE ///< for any restraint bit set
+  SANCTUM_SERVICE_REPEL_EVIL,  ///< for a haunted member
+  SANCTUM_SERVICE_REMOVE_CURSE ///< for any curse bit set
 };
 
 enum {
@@ -148,9 +148,9 @@ enum {
 #define SHOP_PRICE_LABEL_X 0x48
 #endif
 
-// Where the item grid (Shop_DrawUnitGrid, sell.c), shared by the sell, repair
-// and drop screens and the equip prompt, writes MsgNoItems for a member with
-// no items, in pixels.
+// Where the item grid (Shop_DrawMemberItems, sell.c), shared by the sell,
+// repair and drop screens and the equip prompt, writes MsgNoItems for a member
+// with no items, in pixels.
 #if (LANGUAGE == LANGUAGE_ITALIAN)
 #define SHOP_EMPTY_GRID_X 20
 #define SHOP_EMPTY_GRID_Y 12
@@ -161,13 +161,13 @@ enum {
 
 // Outside Japan the coins window is a tile wider, and every counter's item
 // description (Shop_DrawMessage, buy.c) is drawn as tiles
-// (UiText_DrawCharacterAtOffsetFar) rather than into a text canvas.
+// (Text_DrawMessageAsTilesFar) rather than into a text canvas.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define SHOP_MONEY_WINDOW_WIDTH 12
-#define SHOP_DRAW_MESSAGE UiText_DrawCharacterAtOffsetFar
+#define SHOP_DRAW_MESSAGE Text_DrawMessageAsTilesFar
 #else
 #define SHOP_MONEY_WINDOW_WIDTH 11
-#define SHOP_DRAW_MESSAGE UiText_DrawResourceFar
+#define SHOP_DRAW_MESSAGE Text_DrawMessageFar
 #endif
 
 // The sanctum's fee window (sanctum.c), wider for the German and French text.
@@ -185,11 +185,11 @@ enum {
 // The item picker's small window (item_picker.c): two tiles wider, and two
 // further left, outside Japan.
 #if LANGUAGE != LANGUAGE_JAPANESE
-#define SHOP_USE_WINDOW_X 14
-#define SHOP_USE_WINDOW_WIDTH 16
+#define ITEM_PICKER_WINDOW_X 14
+#define ITEM_PICKER_WINDOW_WIDTH 16
 #else
-#define SHOP_USE_WINDOW_X 16
-#define SHOP_USE_WINDOW_WIDTH 14
+#define ITEM_PICKER_WINDOW_X 16
+#define ITEM_PICKER_WINDOW_WIDTH 14
 #endif
 
 // The x of the note below an item's name, in pixels: buy.c and

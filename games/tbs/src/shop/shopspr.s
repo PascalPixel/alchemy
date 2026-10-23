@@ -1,7 +1,7 @@
 	.section .rodata
 	.balign 4
-	.global gShop_HandTiles
-gShop_HandTiles:
+	.global gMenuCursor_HandTiles
+gMenuCursor_HandTiles:
 	.incbin "games/tbs/src/graphics/ui/menuspr/hand.4bpp16x16"
 	.global gShop_GemTiles
 gShop_GemTiles:

@@ -29,24 +29,24 @@
 /// order, five to a page, set ones plain, standby ones in colour 2 and
 /// recovering ones in colour 4 with their turns, the one under the cursor
 /// described above the list with its change preview beside it
-/// (DjinnMenu_ShowChangePreview; holding R shows the Psynergy pages, Left
+/// (BattleDjinnMenu_ShowChangePreview; holding R shows the Psynergy pages, Left
 /// and Right turn them). Returns the chosen Djinni's entry (element << 8 |
 /// number, with DJINN_ENTRY_STANDBY when on standby), or -1 when cancelled,
 /// when the link battle's time runs out, or when the member has no Djinn. A
 /// recovering Djinni, or one an earlier command this round chose
 /// (BattleMenuWork.chosenDjinn), is refused. Battle_CollectPartyCommands runs
 /// it for the Djinn command; the Djinn tutorial presses A every 60 frames.
-s32 Battle_SelectAbility(s32 owner, s32 unused) {
+s32 BattleDjinnMenu_Run(s32 owner, s32 unused) {
   struct CursorSprite cursorStorage;
   u16 messageText[64];
-  struct UiRenderWork *work;
-  struct UiWindow *previewWindow;
+  struct WindowWork *work;
+  struct Window *previewWindow;
   s32 drawnRow;
   s32 cursorSlot;
   u32 *djinnEntries;
   s32 djinnCount;
   s32 drawnFirstEntry;
-  struct UiWindow *messageWindow;
+  struct Window *messageWindow;
   s32 standbyElements;
   s32 preferredRow;
   s32 previewPage;
@@ -54,10 +54,10 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
   s32 alreadySelected;
   s32 previewPages;
   struct BattleMenuWork *navigation;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   struct DjinnRecoveryList *list;
-  struct UiWindow *listWindow;
-  struct UiWindow *iconWindow;
+  struct Window *listWindow;
+  struct Window *iconWindow;
   struct PartyStatusWindow *partyStatus;
   u32 *entryCursor;
   u32 selectedDjinn;
@@ -77,12 +77,12 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
   s32 j;
   struct CursorSprite *sprite;
 
-  work = UI_WORK;
+  work = WINDOW_WORK;
   previewWindow = 0;
   drawnRow = -1;
   cursorSlot = VramCache_AllocEntry(0x80);
   // 84 words: room for 4 elements of 20 Djinn and the end.
-  djinnEntries = Runtime_BumpAllocateAlternatePool(0xa8 * 2);
+  djinnEntries = AllocEwram(0xa8 * 2);
   djinnCount = 0;
   drawnFirstEntry = -1;
   encodedDjinn = 0;
@@ -91,9 +91,9 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
   previewPages = 0;
   redraw = 0;
   alreadySelected = 0;
-  messageWindow = UiWindow_Create(0, 4, 30, 4, 42);
-  UiWork_SetAltFlagAndClearTable(1);
-  listWindow = UiWindow_Create(21, 9, 9, 11, 6);
+  messageWindow = Window_Create(0, 4, 30, 4, 42);
+  Text_UseExtraTiles(1);
+  listWindow = Window_Create(21, 9, 9, 11, 6);
   BATTLE_MENU_GET_CURSOR(firstEntry, selectedRow, preferredRow);
   unit = Unit_GetFar(owner);
 
@@ -102,11 +102,11 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
     for (djinnIndex = 0,
         entryCursor = (u32 *)((djinnCount << 2) + (u32)djinnEntries);
          djinnIndex <= 19; djinnIndex++) {
-      if (unit->djinnActive[element] & (u32)(1 << djinnIndex)) {
+      if (unit->djinnSet[element] & (u32)(1 << djinnIndex)) {
         *entryCursor = (u32)((element << 8) | djinnIndex);
         entryCursor++;
         djinnCount++;
-      } else if (unit->djinnAvailable[element] & (u32)(1 << djinnIndex)) {
+      } else if (unit->djinnHeld[element] & (u32)(1 << djinnIndex)) {
         u32 v;
         s32 k;
         // Owned but not set: look for its recovery in its side's list
@@ -150,24 +150,24 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
         redraw != 0) {
       selectedDjinn = djinnEntries[firstEntry + selectedRow];
       standbyElements = 0;
-      work->menuBusy = 1;
+      work->holdTilemapUpload = 1;
       Ui_SetRectHighlight(listWindow->x + 1, listWindow->y + drawnRow * 2 + 1,
                           listWindow->width - 2, 1, 15);
       if (previewPage != 0) {
-        UiWork_Finalize(messageWindow, 1);
-        messageWindow = UiWindow_Create(0, 4, 30, 4, 42);
+        Window_Close(messageWindow, 1);
+        messageWindow = Window_Create(0, 4, 30, 4, 42);
         Ui_FillVramBlockPattern();
       }
       redraw = 0;
       if (djinnCount != 0) {
         s32 k;
         u32 selected;
-        UiWork_ClearValueNameTables();
+        MessageArgument_ClearAll();
         alreadySelected = 0;
         /* FAKEMATCH(one-pass): a loop that runs once keeps the redraw reload
          * after the selected-entry load, and none of its instructions
          * survive; as k = redraw, 3 of 1201 instructions differ in tbs-en. */
-        selected = gLinkCountdownWork->chosenDjinn[redraw];
+        selected = gBattleMenuWork->chosenDjinn[redraw];
         for (k = redraw; k == redraw;) {
           k = redraw;
           break;
@@ -182,7 +182,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
             k += 1 - alreadySelected;
             if (k > 7)
               break;
-            if ((u32)gLinkCountdownWork->chosenDjinn[k] == selectedDjinn) {
+            if ((u32)gBattleMenuWork->chosenDjinn[k] == selectedDjinn) {
               alreadySelected = 1;
               break;
             }
@@ -192,7 +192,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
           BATTLE_MENU_MESSAGE_COPY(MsgBattleDjinnTwice, messageText,
                                    BATTLE_MENU_MESSAGE_CAPACITY);
           if (previewWindow != 0) {
-            UiWork_Finalize(previewWindow, 1);
+            Window_Close(previewWindow, 1);
             previewWindow = 0;
             previewPage = 0;
           }
@@ -201,7 +201,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
           // (MESSAGE_ARGUMENT_NUMBER), and no preview. A ready one: the preview
           // and "Ready to summon.", its element blinking in the party window.
           if (selectedDjinn & DJINN_ENTRY_RECOVERY_MASK) {
-            UiWork_PushValueSlot(
+            MessageArgument_Push(
                 (s32)((selectedDjinn & DJINN_ENTRY_RECOVERY_MASK) >>
                       DJINN_ENTRY_RECOVERY_SHIFT),
                 MESSAGE_ARGUMENT_NUMBER);
@@ -210,20 +210,20 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
                                          MsgDjinnEffect,
                                      messageText, BATTLE_MENU_MESSAGE_CAPACITY);
             if (previewWindow != 0) {
-              UiWork_Finalize(previewWindow, 1);
+              Window_Close(previewWindow, 1);
               previewWindow = 0;
               previewPage = 0;
             }
           } else {
-            previewWindow = (struct UiWindow *)DjinnMenu_ShowChangePreview(
+            previewWindow = (struct Window *)BattleDjinnMenu_ShowChangePreview(
                 previewWindow, owner, (s32)selectedDjinn, previewPage,
                 &previewPages);
-            UiText_CopyMessageString(MsgBattleSummonStandby, messageText,
-                                     BATTLE_MENU_MESSAGE_CAPACITY);
+            Message_CopyExpanded(MsgBattleSummonStandby, messageText,
+                                 BATTLE_MENU_MESSAGE_CAPACITY);
             standbyElements = 1 << ((selectedDjinn & 0xf00) >> 8);
           }
         } else {
-          previewWindow = (struct UiWindow *)DjinnMenu_ShowChangePreview(
+          previewWindow = (struct Window *)BattleDjinnMenu_ShowChangePreview(
               previewWindow, owner, (s32)selectedDjinn, previewPage,
               &previewPages);
           BATTLE_MENU_MESSAGE_COPY((s32)(((selectedDjinn & 0xf00) >> 8) * 20 +
@@ -235,35 +235,34 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
         BATTLE_MENU_MESSAGE_COPY(MsgBattleNoDjinn, messageText,
                                  BATTLE_MENU_MESSAGE_CAPACITY);
       }
-      work->menuBusy = 0;
+      work->holdTilemapUpload = 0;
       if (previewPage == 0) {
-        work->menuBusy = 1;
-        UiWork_Finalize(messageWindow, 1);
-        messageWindow = UiWindow_Create(0, 4, 30, 4, 42);
-        work->menuBusy = (u8)previewPage;
+        work->holdTilemapUpload = 1;
+        Window_Close(messageWindow, 1);
+        messageWindow = Window_Create(0, 4, 30, 4, 42);
+        work->holdTilemapUpload = (u8)previewPage;
       }
-      UiText_RenderWideStringAtOffset(messageText, messageWindow, 0, 4);
+      Text_DrawWideStringAtOffset(messageText, messageWindow, 0, 4);
       drawnRow = selectedRow;
       if (firstEntry != drawnFirstEntry) {
-        RenderOutput_RedrawSavedRect(listWindow);
+        WindowSprite_RedrawSavedRect(listWindow);
         j = 0;
         while ((encodedDjinn = djinnEntries[firstEntry + j]) !=
                DJINN_ENTRY_END) {
-          UiWindow_SetTilemapEntry(listWindow,
-                                   (s32)((encodedDjinn & 0xf00) >> 8) + 0x5001,
-                                   0, j * 2, 0);
+          Window_SetTilemapEntry(listWindow,
+                                 (s32)((encodedDjinn & 0xf00) >> 8) + 0x5001, 0,
+                                 j * 2, 0);
           if (encodedDjinn & DJINN_ENTRY_RECOVERY_MASK) {
             UiWork_SetParameterNibble(4);
           } else if (encodedDjinn & DJINN_ENTRY_STANDBY) {
             UiWork_SetParameterNibble(2);
           }
-          UiText_DrawCharacterAtOffset(
-              (s32)(((encodedDjinn & 0xf00) >> 8) * 20 +
-                    (encodedDjinn & 0xff)) +
-                  MsgDjinnName,
-              listWindow, 8, j * 16);
+          Text_DrawMessageAsTiles((s32)(((encodedDjinn & 0xf00) >> 8) * 20 +
+                                        (encodedDjinn & 0xff)) +
+                                      MsgDjinnName,
+                                  listWindow, 8, j * 16);
           if (encodedDjinn & DJINN_ENTRY_RECOVERY_MASK) {
-            UiText_DrawNumberAtOffset(
+            Text_DrawNumberAtOffset(
                 (s32)((encodedDjinn & DJINN_ENTRY_RECOVERY_MASK) >>
                       DJINN_ENTRY_RECOVERY_SHIFT),
                 DJINN_RECOVERY_DIGITS, listWindow, DJINN_RECOVERY_X, j * 16);
@@ -283,15 +282,15 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
           if (j == (firstEntry / BATTLE_LIST_ROWS)) {
             tile = j + 0xf30b;
           }
-          UiWindow_SetTilemapEntry(
-              listWindow, tile, listWindow->width - listPages + j - 2, -1, 0);
+          Window_SetTilemapEntry(listWindow, tile,
+                                 listWindow->width - listPages + j - 2, -1, 0);
         }
       }
       Ui_SetRectHighlight(listWindow->x + 1,
                           listWindow->y + selectedRow * 2 + 1,
                           listWindow->width - 2, 1, 14);
       work->dirty = 1;
-      work->menuBusy = 0;
+      work->holdTilemapUpload = 0;
     }
 
     // Each frame: the current page's number lit 12 frames in 16 (steady while
@@ -305,32 +304,32 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
             tile = j + 0xf30b;
           }
         }
-        UiWindow_SetTilemapEntry(
+        Window_SetTilemapEntry(
             listWindow, tile,
             listWindow->width - ((djinnCount + 4) / BATTLE_LIST_ROWS) + j - 2,
             -1, 0);
       }
       if ((gKeysHeld & KEY_R) == 0) {
-        UiWindow_SetTilemapEntry(
+        Window_SetTilemapEntry(
             listWindow, 0xf334,
             listWindow->width - (djinnCount + 4) / BATTLE_LIST_ROWS - 3, -1, 0);
-        UiWindow_SetTilemapEntry(listWindow, 0xf335, listWindow->width - 2, -1,
-                                 0);
+        Window_SetTilemapEntry(listWindow, 0xf335, listWindow->width - 2, -1,
+                               0);
       } else {
-        UiWindow_SetTilemapEntry(
-            listWindow, UI_TILE_FRAME_TOP,
+        Window_SetTilemapEntry(
+            listWindow, WINDOW_TILE_FRAME_TOP,
             listWindow->width - (djinnCount + 4) / BATTLE_LIST_ROWS - 3, -1, 0);
-        UiWindow_SetTilemapEntry(listWindow, UI_TILE_FRAME_TOP_RIGHT,
-                                 listWindow->width - 2, -1, 0);
+        Window_SetTilemapEntry(listWindow, WINDOW_TILE_FRAME_TOP_RIGHT,
+                               listWindow->width - 2, -1, 0);
       }
-      UiRender_MarkRow(work, listWindow->y - 1);
+      Window_MarkTilemapRow(work, listWindow->y - 1);
     }
 
     // Tutorial input replaces live keys but uses the same navigation below.
     pressed = gKeysPressed;
     repeated = gKeysRepeat;
     held = gKeysHeld;
-    navigation = gLinkCountdownWork;
+    navigation = gBattleMenuWork;
     if (navigation->tutorialStep != 0) {
       repeated = 0;
       pressed = 0;
@@ -343,9 +342,9 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
         navigation->tutorialDelay--;
       }
     }
-    navigation = gLinkCountdownWork;
+    navigation = gBattleMenuWork;
     if (navigation->timer == 0 || (pressed & KEY_B)) {
-      AudioCommand_PlayFar(SE_MENU_CANCEL);
+      Sound_PlaySongFar(SE_MENU_CANCEL);
       encodedDjinn = -1;
       break;
     }
@@ -367,15 +366,15 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
           }
         } else if (alreadySelected == 0) {
           Ui_FillVramBlockPattern();
-          UiWork_ClearValueNameTables();
-          UiWork_PushValueSlot((s32)((turns & DJINN_ENTRY_RECOVERY_MASK) >>
+          MessageArgument_ClearAll();
+          MessageArgument_Push((s32)((turns & DJINN_ENTRY_RECOVERY_MASK) >>
                                      DJINN_ENTRY_RECOVERY_SHIFT),
                                MESSAGE_ARGUMENT_NUMBER);
-          UiText_CopyMessageString(MsgBattleDjinnRecovering, messageText,
-                                   BATTLE_MENU_MESSAGE_CAPACITY);
-          UiText_RenderWideStringAtOffset(messageText, messageWindow, 0, 4);
+          Message_CopyExpanded(MsgBattleDjinnRecovering, messageText,
+                               BATTLE_MENU_MESSAGE_CAPACITY);
+          Text_DrawWideStringAtOffset(messageText, messageWindow, 0, 4);
         }
-        AudioCommand_PlayFar(SE_MENU_ERROR);
+        Sound_PlaySongFar(SE_MENU_ERROR);
       } else {
         encodedDjinn = -1;
         break;
@@ -384,7 +383,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
 
     if (djinnCount != 0) {
       if (repeated & KEY_DOWN) {
-        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         selectedRow++;
         if (selectedRow == BATTLE_LIST_ROWS ||
             firstEntry + selectedRow == djinnCount) {
@@ -392,7 +391,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
         }
         preferredRow = selectedRow;
       } else if (repeated & KEY_UP) {
-        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         selectedRow--;
         if (selectedRow < 0) {
           if (firstEntry ==
@@ -412,20 +411,20 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
             if ((gFrameCount & 15) <= 11 && i == previewPage - 1) {
               tile = previewPage - 1 + 0xf30b;
             }
-            UiWindow_SetTilemapEntry(
-                previewWindow, tile,
-                previewWindow->width - previewPages + i - 2, -1, 0);
+            Window_SetTilemapEntry(previewWindow, tile,
+                                   previewWindow->width - previewPages + i - 2,
+                                   -1, 0);
           }
-          UiWindow_SetTilemapEntry(previewWindow, 0xf334,
-                                   previewWindow->width - previewPages - 3, -1,
-                                   0);
-          UiWindow_SetTilemapEntry(previewWindow, 0xf335,
-                                   previewWindow->width - 2, -1, 0);
-          UiRender_MarkRow(work, previewWindow->y);
+          Window_SetTilemapEntry(previewWindow, 0xf334,
+                                 previewWindow->width - previewPages - 3, -1,
+                                 0);
+          Window_SetTilemapEntry(previewWindow, 0xf335,
+                                 previewWindow->width - 2, -1, 0);
+          Window_MarkTilemapRow(work, previewWindow->y);
         }
         if (previewPage == 0 && previewPages != 0) {
           if (previewWindow != 0) {
-            RenderOutput_ClearList(previewWindow);
+            WindowSprite_ClearList(previewWindow);
           }
           previewPage = 1;
           redraw = 1;
@@ -435,14 +434,14 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
           }
           if (previewPage != 0) {
             if (repeated & KEY_RIGHT) {
-              AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+              Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
               previewPage++;
               if (previewPage > previewPages) {
                 previewPage = 1;
               }
               redraw = 1;
             } else if (repeated & KEY_LEFT) {
-              AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+              Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
               previewPage--;
               if (previewPage <= 0) {
                 previewPage = previewPages;
@@ -454,12 +453,12 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
       } else if (previewPage != 0) {
         // R let go: back to the stats page.
         if (previewWindow != 0) {
-          RenderOutput_ClearList(previewWindow);
+          WindowSprite_ClearList(previewWindow);
         }
         previewPage = 0;
         redraw = 1;
       } else if (repeated & KEY_RIGHT) {
-        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         Input_ResetKeyRepeat();
         if (firstEntry + BATTLE_LIST_ROWS >= djinnCount) {
           if (firstEntry != 0) {
@@ -478,7 +477,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
           }
         }
       } else if (repeated & KEY_LEFT) {
-        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         Input_ResetKeyRepeat();
         if (firstEntry != 0) {
           firstEntry -= BATTLE_LIST_ROWS;
@@ -523,7 +522,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
     sprite->x = cursorPos.x + ((gFrameCount & 4) >> 1) - 6;
     sprite->y = cursorPos.y - ((gFrameCount & 4) >> 2) - 8;
     if (djinnCount != 0) {
-      Runtime_PushSlotEntry(sprite, 242);
+      Oam_AddSpriteAtDepth(sprite, 242);
     }
     // In the party status window's Djinn column (PARTY_STATUS_SHOW_DJINN),
     // the element of a ready standby Djinni under the cursor blinks between
@@ -558,13 +557,13 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
                         CURSOR_OWNER->window->y + 1, 4, 4, 15);
   }
   // Restore the party strip before releasing the Djinn menu's resources.
-  Resource_ResetEntry(cursorSlot);
-  UiWork_Finalize(messageWindow, 1);
-  UiWork_Finalize(previewWindow, 1);
-  UiWork_Finalize(listWindow, 1);
-  UiWindow_MarkVisibleTileAttributes();
-  UiWork_SetAltFlagAndClearTable(0);
-  MemFree(djinnEntries);
+  VramCache_FreeEntry(cursorSlot);
+  Window_Close(messageWindow, 1);
+  Window_Close(previewWindow, 1);
+  Window_Close(listWindow, 1);
+  Window_MarkVisibleTextTiles();
+  Text_UseExtraTiles(0);
+  Free(djinnEntries);
   WaitFrames(1);
   return (s32)encodedDjinn;
 }

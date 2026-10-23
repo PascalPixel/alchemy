@@ -8,16 +8,16 @@
 #include "types.h"
 #include "static_assert.h"
 
-/// A field object as the script commands' overlap checks see it.
+/// An object as the script commands' overlap checks see it.
 struct ScriptObjectEntry {
-  void *data;       ///< ObjectRuntime.script; null for a free object
-  u16 scriptCursor; ///< ObjectRuntime's step; not named through this struct
-  u16 facing;       ///< ObjectRuntime's angle; not named through this struct
-  s32 values08[6];  ///< x, y, z, terrainHeight, scaleX and scaleY
-  u16 value20;      ///< ObjectRuntime.radius, in pixels
-  /// ObjectEvent's terrainId to snapToTarget; not named through this struct.
+  void *data;       ///< Object.script; null for a free object
+  u16 scriptCursor; ///< Object's step; not named through this struct
+  u16 facing;       ///< Object's angle; not named through this struct
+  s32 values08[6];  ///< x, y, z, groundHeight, scaleX and scaleY
+  u16 value20;      ///< Object.radius, in pixels
+  /// ObjectEvent's layer to snapToTarget; not named through this struct.
   u8 terrainToSnap[0x37];
-  u8 flags59; ///< ObjectRuntime.collisionFlags: bit 0 solid
+  u8 flags59; ///< Object.collisionFlags: bit 0 solid
   /// ObjectEvent's steeringFlags to its update hook; not named through this
   /// struct.
   u8 steeringToUpdate[0x16];

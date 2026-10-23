@@ -6,7 +6,7 @@
 
 /// Script step of action 7: clears an object's sprite flags and its collision
 /// flags, so nothing collides with it. Returns 0, so SC_CALL moves on at
-/// once (gObjectMotion_ResetActionScript then ends).
+/// once (gMovementType_ResetActionScript then ends).
 s32 Object_ClearChildAndCollisionFlags(void *obj) {
   ObjectDispatch_SetSingleChildFlagsFar(obj, 0);
   ((struct ScriptObjectRuntime *)obj)->flags59 = 0;
@@ -18,9 +18,9 @@ s32 Object_ClearChildAndCollisionFlags(void *obj) {
 /// action of the way there, so with action 16 it heads for the linked
 /// object itself; closer, it stands (animation 1). Returns 1, so SC_CALL
 /// runs it again every frame until the object event's script is replaced.
-s32 ObjectMotion_MoveTowardTarget(struct ObjectRuntime *object) {
+s32 ObjectMotion_MoveTowardTarget(struct Object *object) {
   s32 step;
-  struct ObjectRuntime *target;
+  struct Object *target;
   s32 deltaX;
   s32 deltaZ;
   s32 pixelsX;
@@ -60,25 +60,25 @@ s32 ObjectMotion_MoveTowardTarget(struct ObjectRuntime *object) {
 /// Script step of action 6: turns the object toward its linked object, at most
 /// 1/16 turn a frame. Returns 1, so SC_CALL runs it again every frame until
 /// the object event's script is replaced.
-s32 ObjectMotion_TurnTowardLinkedTarget(struct ObjectRuntime *object) {
+s32 ObjectMotion_TurnTowardLinkedTarget(struct Object *object) {
   s16 turnStep;
   u16 currentAngle;
   s32 targetAngle;
-  struct ObjectRuntime *target;
+  struct Object *target;
 
   target = object->linkedObject;
   if (target != NULL) {
     // Clear OBJ_EVENT_FACES_MOTION, so moving does not turn it away again.
     object->actionFlags &= 0xfe;
     targetAngle = (u16)ArcTan2(target->z - object->z, target->x - object->x);
-    currentAngle = object->angle;
+    currentAngle = object->facing;
     turnStep = targetAngle - currentAngle;
     if (turnStep != 0) {
       if (turnStep > 0x1000)
         turnStep = 0x1000;
       if (turnStep < -0x1000)
         turnStep = -0x1000;
-      object->angle = (currentAngle + turnStep);
+      object->facing = (currentAngle + turnStep);
     }
   }
   return 1;
@@ -90,30 +90,30 @@ s32 ObjectMotion_TurnTowardLinkedTarget(struct ObjectRuntime *object) {
 /// (object/object_events.c), from Map_TalkToObjectEvent after a talk
 /// (object/events.c), from the object event commands and from Lalivero's
 /// interiors (Engine_ObjectEventSetActionCallback).
-void ObjectMotion_SetActionCallback(struct ObjectRuntime *object, s32 action) {
+void ObjectEvent_SetMovementType(struct Object *object, s32 action) {
   switch (action) {
   case MOVEMENT_TYPE_STAND:
-    action = (s32)gObjectMotion_ActionKind1Script;
+    action = (s32)gMovementType_StandScript;
     break;
   case MOVEMENT_TYPE_WANDER:
-    action = (s32)gObjectMotion_ActionKind2Script;
+    action = (s32)gMovementType_WanderScript;
     break;
   case MOVEMENT_TYPE_WANDER_NEAR:
-    action = (s32)gObjectMotion_ActionKind3Script;
+    action = (s32)gMovementType_WanderNearScript;
     break;
   case MOVEMENT_TYPE_WANDER_CLOSE:
-    action = (s32)gObjectMotion_ActionKind4Script;
+    action = (s32)gMovementType_WanderCloseScript;
     break;
   case MOVEMENT_TYPE_FOLLOW_LINKED:
-    action = (s32)gObjectMotion_MoveTowardTargetScript;
+    action = (s32)gMovementType_FollowLinkedScript;
     break;
   case MOVEMENT_TYPE_FACE_LEADER:
     object->linkedObject =
-        (struct ObjectRuntime *)ObjectEvent_GetById(gGameState.selectedLocalId);
-    action = (s32)gObjectMotion_TurnTowardLinkedScript;
+        (struct Object *)ObjectEvent_GetById(gGameState.leaderLocalId);
+    action = (s32)gMovementType_FaceLeaderScript;
     break;
   case MOVEMENT_TYPE_RESET_ACTION:
-    action = (s32)gObjectMotion_ResetActionScript;
+    action = (s32)gMovementType_ResetActionScript;
     break;
   default:
     break;
@@ -129,10 +129,9 @@ void ObjectMotion_SetActionCallback(struct ObjectRuntime *object, s32 action) {
 /// another sprite hides a matching one. Field_TryJumpForward (climbing.c)
 /// asks it for a log, SPRITE_LOG_WEST_EAST or SPRITE_LOG_NORTH_SOUTH, where the
 /// leader lands.
-struct ObjectRuntime *Object_FindNearestFacingTarget(struct ObjectRuntime *self,
-                                                     s32 sprite) {
-  struct ObjectRuntime *entry;
-  struct ObjectRuntime *found;
+struct Object *Object_FindNearestFacingTarget(struct Object *self, s32 sprite) {
+  struct Object *entry;
+  struct Object *found;
   s32 slotIndex;
   s32 nearestDistance;
   s32 heightDifference;
@@ -144,7 +143,7 @@ struct ObjectRuntime *Object_FindNearestFacingTarget(struct ObjectRuntime *self,
 
   found = NULL;
   nearestDistance = 40;
-  entry = gObjectSlots;
+  entry = gObjects;
   for (slotIndex = 0; slotIndex < 64; slotIndex++, entry++) {
     if (entry->script == NULL)
       continue;
@@ -168,7 +167,7 @@ struct ObjectRuntime *Object_FindNearestFacingTarget(struct ObjectRuntime *self,
       continue;
     angle = (u16)ArcTan2(entry->z - self->z, entry->x - self->x);
     if (distance > 23) {
-      angleDifference = (s16)(angle - self->angle);
+      angleDifference = (s16)(angle - self->facing);
       if (angleDifference < -0x2fff)
         continue;
       if (angleDifference > 0x2fff)
@@ -179,8 +178,7 @@ struct ObjectRuntime *Object_FindNearestFacingTarget(struct ObjectRuntime *self,
   }
   if (found == NULL)
     return NULL;
-  if (((struct AnimationObject *)found->animation)->entries[0]->animationId !=
-      sprite)
+  if (((struct Sprite *)found->animation)->entries[0]->animationId != sprite)
     return NULL;
   return found;
 }

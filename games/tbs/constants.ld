@@ -1,11 +1,11 @@
-Resource_Decode2CodeSize = Resource_ExecuteTransfer - Resource_Decode2;
+Decompress_Type2CommandsCodeSize = Resource_ExecuteTransfer - Decompress_Type2Commands;
 Render_DecodeFrameCodeSize = TileMap_DrawRows - Render_DecodeFrame;
 Tile_Decompress4bppCodeSize = Tile_ExpandMasked - Tile_Decompress4bpp;
 Tile_ExpandMaskedCodeSize = Tile_ExpandOpaque - Tile_ExpandMasked;
-Tile_ExpandOpaqueCodeSize = RenderOutput_AcquireFree - Tile_ExpandOpaque;
-Tile_ExpandSlideCodeSize = Graphics_ClearCharacterBlockAndPalette - Tile_ExpandSlide;
-Object_UpdateAllCodeSize = Resource_DecompressLz - Object_UpdateAll;
+Tile_ExpandOpaqueCodeSize = WindowSprite_AcquireFree - Tile_ExpandOpaque;
+Credits_DecodeBackgroundCodeSize = Credits_ClearBuffer - Credits_DecodeBackground;
+Object_UpdateAllCodeSize = Decompress_Lz - Object_UpdateAll;
 Tile_BuildMetatilesCodeSize = Tile_Decompress4bpp - Tile_BuildMetatiles;
 Transform_UpdateVerticesSize = Tile_ConvertMapGrid - Transform_UpdateVertices;
-UiText_DrawGlyphCodeSize = Tile_BuildMetatiles - UiText_DrawGlyphArm;
+Glyph_DrawCodeSize = Tile_BuildMetatiles - Glyph_DrawArm;
 BitDecoder_Size = DebugParty_LoadPreset - BitDecoder_DecodeImage;

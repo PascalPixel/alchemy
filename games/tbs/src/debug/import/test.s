@@ -5,29 +5,29 @@
 	.set import.Engine_DebugCreateWindow, 1
 	.set import.Engine_DebugFinalizeWindow, 1
 	.ifndef TBS_EDITION_JA
-	.set import.UiText_OpenMessageWindow, 1
+	.set import.Message_OpenWindow, 1
 	.endif
-	.set import.UiText_ShowPositionedMessageAndWait, 1
+	.set import.FieldMessage_Show, 1
 	.ifndef TBS_EDITION_JA
 	.set import.UiWork_IsComplete, 1
 	.endif
-	.set import.UiText_DrawResource, 1
-	.set import.UiText_DrawCharacterAtOffset, 1
-	.set import.UiText_DrawStringInWindow, 1
-	.set import.UiText_DrawNumberAtOffset, 1
+	.set import.Text_DrawMessage, 1
+	.set import.Text_DrawMessageAsTiles, 1
+	.set import.Text_DrawStringInWindow, 1
+	.set import.Text_DrawNumberAtOffset, 1
 	.ifndef TBS_EDITION_JA
-	.set import.UiWindow_CreateWithSideObject, 1
+	.set import.Portrait_OpenWindow, 1
 	.endif
 	.ifndef TBS_EDITION_JA
-	.set import.UiWork_PushValueSlot, 1
+	.set import.MessageArgument_Push, 1
 	.endif
 	.ifndef TBS_EDITION_JA
 	.set import.UiWork_FinalizePendingCore, 1
 	.endif
 	.set import.Engine_DebugRedrawWindow, 1
 	.set import.Engine_DebugClearWindow, 1
-	.set import.NameEntry_EditOwnerName, 1
-	.set import.DebugMenu_BrowseIcons, 1
+	.set import.NamingScreen_EditMemberName, 1
+	.set import.DebugBrowser_Icons, 1
 	.set import.Unit_Get, 1
 	.set import.Unit_Calculate, 1
 	.set import.Engine_DebugGetItem, 1
@@ -35,10 +35,10 @@
 	.set import.PartyInventory_Add, 1
 	.set import.Unit_AddHp, 1
 	.set import.Unit_AddPp, 1
-	.set import.Party_AddActiveOwner, 1
-	.set import.Party_RemoveActiveOwner, 1
-	.set import.Djinn_AddToOwner, 1
-	.set import.Djinn_Activate, 1
+	.set import.Party_AddMember, 1
+	.set import.Party_RemoveMember, 1
+	.set import.Djinn_Give, 1
+	.set import.Djinn_Set, 1
 	.set import.Unit_LevelUpTo, 1
 	.set import.Item_AdjustCounter, 1
 	.set import.PartyInventory_HasSpace, 1
@@ -76,19 +76,19 @@
 	.set import.FieldScript_ShowMessageAndWait, 1
 	.endif
 	.ifdef TBS_EDITION_JA
-	.set import.Menu_OpenCharacterSelector, 1
+	.set import.MemberChooser_Open, 1
 	.endif
 	.set import.Engine_DebugDrawItemDetails, 1
 	.set import.Shop_OpenDebugShop, 1
 	.ifdef TBS_EDITION_JA
-	.set import.Shop_ConfirmAct, 1
+	.set import.Sanctum_Run, 1
 	.endif
 	.ifdef TBS_EDITION_EN
-	.set import.Shop_ConfirmAct, 1
+	.set import.Sanctum_Run, 1
 	.endif
 	.ifdef TBS_EDITION_DE
-	.set import.Shop_ConfirmAct, 1
+	.set import.Sanctum_Run, 1
 	.endif
-	.set import.Shop_PickUnitItem, 1
+	.set import.ItemPicker_Run, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

@@ -27,7 +27,7 @@
 
 /// Restores IME from saved.
 /* FAKEMATCH(one-pass): the wrapper; as *(ime) = (saved), 2 and 6 instructions
- * differ in ElementGlow_Play and BattleEffect_RunJudgment, all six ☀️
+ * differ in ElementGlow_Play and BattleAnim_RunJudgment, all six ☀️
  * editions. */
 #define IME_RESTORE(ime, saved)                                                \
   do {                                                                         \
@@ -46,7 +46,7 @@
 /// Restores the IME value saved by IRQ_LOCK.
 /* FAKEMATCH(one-pass): the wrapper keeps the restore apart from the code
  * before it; as REG_IME = saved, 2 instructions differ in 7 of the 8 locking
- * Scheduler_ functions in tbs-en. */
+ * Task_ functions in tbs-en. */
 #define IRQ_UNLOCK(saved)                                                      \
   do {                                                                         \
     REG_IME = saved;                                                           \

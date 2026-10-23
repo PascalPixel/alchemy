@@ -84,17 +84,17 @@ void Colosso_PlaceFriendsAtCheeringSpots(void) {
 /// the camera follows, with full HP and PP and no poison. The gauges are the
 /// battle's (0x4000 full; a character with any HP or PP left shows at least 1).
 void Colosso_ControlCharacterAlone(s32 id) {
-  struct BattleUnit *unit;
+  struct Unit *unit;
   s32 v;
   s32 t;
 
-  Party_RemoveActiveOwner(0);
-  Party_RemoveActiveOwner(1);
-  Party_RemoveActiveOwner(2);
-  Party_RemoveActiveOwner(3);
-  Party_RemoveActiveOwner(5);
-  Party_AddActiveOwner(id);
-  gGameState.selectedLocalId = id;
+  Party_RemoveMember(0);
+  Party_RemoveMember(1);
+  Party_RemoveMember(2);
+  Party_RemoveMember(3);
+  Party_RemoveMember(5);
+  Party_AddMember(id);
+  gGameState.leaderLocalId = id;
   Engine_CameraFollowObjectEvent(id, 0);
   unit = Unit_Get(id);
   unit->hp = unit->hpMax;
@@ -129,12 +129,12 @@ void Colosso_ControlCharacterAlone(s32 id) {
 /// lend a hand): when the Psynergy request names that friend and
 /// FLAG_PSYNERGY_TARGET is set, raise map event 99, Colosso_TakePlaceForMatch.
 void Colosso_RaiseTakePlaceOnPsynergy(void) {
-  struct EventWork *work = gEventWork;
-  s32 selection = gGameState.selectedLocalId;
+  struct EventWork *work = gFieldWork;
+  s32 selection = gGameState.leaderLocalId;
 
-  if (selection != 0 && (work->psynergyRequest >> 10) == selection &&
+  if (selection != 0 && (work->psynergy >> 10) == selection &&
       Engine_GameFlagIsSet(FLAG_PSYNERGY_TARGET) != 0) {
-    u16 *raised = (u16 *)&work->raisedTrigger;
+    u16 *raised = (u16 *)&work->raisedEvent;
     s32 trigger = 99;
 
     *raised = trigger;
@@ -147,10 +147,10 @@ void Colosso_RaiseTakePlaceOnPsynergy(void) {
 /// begin. Please take your places." The next friend then looks around, or,
 /// after Mia, the party leaves for the race.
 static void Colosso_TakePlaceForMatch(void) {
-  struct EventWork *work = gEventWork;
+  struct EventWork *work = gFieldWork;
   s32 speakerId = 8;
   s32 nearestDistance = 0x100000;
-  s32 supporterId = gGameState.selectedLocalId;
+  s32 supporterId = gGameState.leaderLocalId;
   struct ObjectEvent *supporter = ObjectEvent_GetById(supporterId);
   s32 localId;
   s32 *transition;
@@ -184,7 +184,7 @@ static void Colosso_TakePlaceForMatch(void) {
   }
   Engine_ScriptSetMessage(MsgColossoMatchAboutBeginPleaseTake);
   Engine_ScriptShowMessage(speakerId, 0);
-  transition = &work->startTransition;
+  transition = &work->transition;
   *transition = MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   work->transitionFrames = 15;
   Engine_ScriptWait(20);
@@ -224,23 +224,23 @@ void Colosso_AskDoneCheering(s32 id) {
   s32 msg;
   s32 res;
 
-  work = gEventWork;
+  work = gFieldWork;
   // Look up the speaker twice and discard both results (two original calls).
   ObjectEvent_GetById(id);
   ObjectEvent_GetById(id);
-  slot = gGameState.selectedLocalId;
+  slot = gGameState.leaderLocalId;
   objectEvent = ObjectEvent_GetById(slot);
   Engine_ScriptStart();
   msg = MsgColossoCheering;
   Engine_ScriptSetMessage(msg);
   Engine_ScriptOpenMessage(id, 0);
-  gEventWork->choiceMessage = MsgColossoCheeringChoices;
-  gEventWork->choiceWidth = 4;
+  gFieldWork->choiceMessage = MsgColossoCheeringChoices;
+  gFieldWork->choiceWidth = 4;
   res = Engine_ScriptChooseYesNo(slot, 0);
   if (res == 0) {
     Engine_ScriptSetMessage(msg + 1);
     Engine_ScriptShowMessage(id, 0);
-    work->startTransition =
+    work->transition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     work->transitionFrames = 15;
     Engine_ScriptCloseScreen();
@@ -257,7 +257,7 @@ void Colosso_AskDoneCheering(s32 id) {
       Colosso_ControlCharacterAlone(slot);
       Engine_ScriptOpenScreen();
       Engine_ScriptWaitForScreen();
-      work->startTransition = MAP_TRANSITION(TRANSITION_FADE, 0);
+      work->transition = MAP_TRANSITION(TRANSITION_FADE, 0);
     }
   } else {
     Engine_ScriptSetMessage(msg + 2);
@@ -323,7 +323,7 @@ s32 Colosso_GreetAtStage(s32 speaker, s32 warrior) {
   s32 choice;
 
   Field_EndBusyAndReveal();
-  UiWork_PushValueSlot(warrior, MESSAGE_ARGUMENT_NUMBER);
+  MessageArgument_Push(warrior, MESSAGE_ARGUMENT_NUMBER);
   mapId = gGameState.mapId;
   if (mapId == (s32)&MapId_ColosseumAzartMatch) {
     message = MsgColossoStageFirstFinalsMatch;
@@ -338,7 +338,7 @@ s32 Colosso_GreetAtStage(s32 speaker, s32 warrior) {
     return COLOSSO_GUIDE_CHEER;
   }
   if (Engine_GameFlagIsSet(warrior + COLOSSO_STAGE_DESCRIBED) != 0) {
-    choice = PartyTalkMenu_Choose(0);
+    choice = ColossoMenu_Choose(0);
     if (choice == 1) {
       return COLOSSO_GUIDE_CHEER;
     }
@@ -360,7 +360,7 @@ void Colosso_RepeatStageNumber(s32 speaker, s32 warrior) {
   s32 mapId;
   s32 message;
 
-  UiWork_PushValueSlot(warrior, MESSAGE_ARGUMENT_NUMBER);
+  MessageArgument_Push(warrior, MESSAGE_ARGUMENT_NUMBER);
   mapId = gGameState.mapId;
   if (mapId == (s32)&MapId_ColosseumAzartMatch) {
     message = MsgColossoStageFirstFinalsMatch;
@@ -378,7 +378,7 @@ void Colosso_RepeatStageNumber(s32 speaker, s32 warrior) {
 /// cheering at the stage. With Isaac alone, "All right, do your best!"; with
 /// the stage taken, "Unfortunately, we have a full house."; otherwise "Would
 /// you like a friend to cheer for you here?" (taken as yes for
-/// COLOSSO_GUIDE_CHEER) and the party's character menu. The friend chosen is
+/// COLOSSO_GUIDE_CHEER) and a choice of party member. The friend chosen is
 /// led to the stage and leaves the party, and their cell is kept. With
 /// COLOSSO_GUIDE_NOTHING, no or no choice: "If you know who you want to cheer
 /// you on, please let me know!"
@@ -404,7 +404,7 @@ void Colosso_OfferCheeringSpot(s32 mode, s32 guide, s32 stage) {
   if (mode != COLOSSO_GUIDE_NOTHING) {
     memberCount = GetPartyMemberCount();
     for (i = 0; i < memberCount; i++) {
-      members[i] = gGameState.activeOwners[i];
+      members[i] = gGameState.party[i];
     }
     if (memberCount <= 1) {
       Engine_ScriptSetMessage(MsgColossoDoYourBest);
@@ -427,20 +427,20 @@ void Colosso_OfferCheeringSpot(s32 mode, s32 guide, s32 stage) {
     if (answer == 0) {
       if (answer < memberCount) {
         for (i = 0; i < memberCount; i++) {
-          Party_RemoveActiveOwner((s8)members[i]);
+          Party_RemoveMember((s8)members[i]);
         }
       }
       for (i = 0; i < memberCount; i++) {
         if ((s8)members[i] != 0) {
-          Party_AddActiveOwner((s8)members[i]);
+          Party_AddMember((s8)members[i]);
         }
       }
-      friendId = Menu_OpenCharacterSelector();
+      friendId = MemberChooser_Open();
       for (i = 0; i < memberCount; i++) {
-        Party_RemoveActiveOwner((s8)members[i]);
+        Party_RemoveMember((s8)members[i]);
       }
       for (i = 0; i < memberCount; i++) {
-        Party_AddActiveOwner((s8)members[i]);
+        Party_AddMember((s8)members[i]);
       }
       if (friendId != -1) {
         goto L_main;
@@ -451,7 +451,7 @@ void Colosso_OfferCheeringSpot(s32 mode, s32 guide, s32 stage) {
   Script_ShowMessage(guide, 0);
   return;
 L_main:
-  UiWork_PushValueSlot(friendId, MESSAGE_ARGUMENT_ACTOR);
+  MessageArgument_Push(friendId, MESSAGE_ARGUMENT_ACTOR);
   Engine_ScriptSetMessage(MsgColossoIsaacWillCheerForWay);
   Script_ShowMessage(guide, 0);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
@@ -478,7 +478,7 @@ L_main:
   ObjectEvent_WalkToAndWait(friendId, guideX, guideZ - 48);
   ObjectEvent_WalkToAndWait(guide, guideX, behindZ);
   ObjectEvent_WalkToAndWait(guide, guideX, guideZ);
-  Party_RemoveActiveOwner(friendId);
+  Party_RemoveMember(friendId);
   GameFlag_Set(stage + COLOSSO_STAGE_CHEERED);
   objectEvent = ObjectEvent_GetById(friendId);
   column = objectEvent->x.fixed >> 20;

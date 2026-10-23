@@ -3,10 +3,10 @@
 
 #include "types.h"
 
-struct UiWindow;
+struct Window;
 
-s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character, u32 x, u32 y,
-                        const u8 *font);
+s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
+                  const u8 *font);
 void Tile_BuildMetatiles(u16 *scanlineBounds, u16 *frameTiles);
 
 #endif

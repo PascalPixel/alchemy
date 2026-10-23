@@ -140,11 +140,11 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
     if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) != 0)
       gMcCoyPalaceGroundsObjectEventTemplates[LOCALID_EAST_GUARD -
                                               LOCALID_FIRST_PLACED]
-          .talkFacing = TALK_FACE_PARTY_AND_BACK;
+          .talkFacing = TALK_FACING_PARTY_AND_BACK;
     if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) != 0)
       gMcCoyPalaceGroundsObjectEventTemplates[LOCALID_LADY_MCCOY -
                                               LOCALID_FIRST_PLACED]
-          .talkFacing = TALK_FACE_PARTY;
+          .talkFacing = TALK_FACING_PARTY;
     return gMcCoyPalaceGroundsObjectEventTemplates;
   }
   return gMcCoyPalaceGroundsNoObjectEventTemplates;
@@ -241,7 +241,7 @@ static void EventScript_TalkToEastGuard(void) {
     Engine_ScriptSetMessage(MsgBilibinLordOnlyMeet);
     Engine_ScriptOpenMessage(LOCALID_EAST_GUARD, 0);
     if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
-      gEventWork->message++;
+      gFieldWork->message++;
       Engine_ScriptShowMessageAndWait(LOCALID_EAST_GUARD, 0, 10);
       if (ObjectEvent_GetById(LOCALID_PARTY_LEADER)->z.fixed < PIXELS(270)) {
         ObjectEvent_SetSpeed(LOCALID_EAST_GUARD, 0xcccc, 0x6666);
@@ -294,7 +294,7 @@ static void EventScript_TalkToEastGuard(void) {
         Engine_GameFlagSet(FLAG_MCCOY_PALACE_ADMITTED);
       } while (0);
     guard:
-      FieldObject_SetTargetAndCallback(
+      Object_SetTargetAndCallback(
           LOCALID_EAST_GUARD, OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_PARTY_LEADER,
           gGuardWatchesParty);
     } else {
@@ -314,7 +314,7 @@ static void EventScript_EnterPalace(void) {
     McCoyPalaceGrounds_OpenGate();
   }
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x8000, 0x4000);
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
   ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 2, -16);
   Engine_ScriptWait(16);
@@ -325,10 +325,10 @@ static void EventScript_EnterPalace(void) {
 /// Sets up the grounds outside McCoy's Palace: the west worker drawn in
 /// front, and the guards, Lady McCoy and the arrest as the story stands.
 s32 Map_Initialize(void) {
-  struct EventWork *work = gEventWork;
+  struct EventWork *work = gFieldWork;
   struct ObjectEvent *objectEvent;
 
-  work->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  work->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 
   objectEvent = ObjectEvent_GetById(LOCALID_WEST_WORKER);
   objectEvent->priorityFlags = 0;
@@ -357,10 +357,10 @@ static void McCoyPalaceGrounds_RestoreStory(void) {
     if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) == 0) {
       if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
         Engine_ObjectEventSetPosition(LOCALID_WEST_GUARD, 0, 0);
-        FieldObject_SetTargetAndCallback(LOCALID_EAST_GUARD,
-                                         OBJ_EVENT_LINK_KEEP_MOTION |
-                                             LOCALID_PARTY_LEADER,
-                                         gGuardWatchesParty);
+        Object_SetTargetAndCallback(LOCALID_EAST_GUARD,
+                                    OBJ_EVENT_LINK_KEEP_MOTION |
+                                        LOCALID_PARTY_LEADER,
+                                    gGuardWatchesParty);
       }
     }
   }
@@ -382,8 +382,8 @@ static void EventScript_GuardsArrestParty(void) {
 
   // Bring the leader into view before the guards interrupt.
   Engine_ScriptStart();
-  Camera_MoveTo(-1, -1, -1, 0);
-  Camera_MoveTo(PIXELS(320), -1, PIXELS(320), 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(PIXELS(320), -1, PIXELS(320), 0);
   Engine_MapGridRedraw();
   Engine_TaskWait(1);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(320), PIXELS(372));
@@ -466,7 +466,7 @@ static void EventScript_GuardsArrestParty(void) {
   Engine_ObjectEventSetPosition(LOCALID_WEST_GUARD, 0, 0);
   Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
   Engine_ObjectEventSetPosition(LOCALID_PARTY_LEADER, 0, 0);
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 1);
+  gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 1);
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
   Engine_ScriptRequestWarp(MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE_EAST);
@@ -516,20 +516,20 @@ struct ObjectEventTemplate gMcCoyPalaceGroundsNoObjectEventTemplates[] = {
 
 struct ObjectEventTemplate gMcCoyPalaceGroundsObjectEventTemplates[] = {
     { SPRITE_MAN_WITH_PICKAXE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(103), 0, PIXELS(280), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(103), 0, PIXELS(280), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_MAN_WITH_PICKAXE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
-        PIXELS(135), 0, PIXELS(200), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(135), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_PURPLE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(128), 0, PIXELS(327), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(128), 0, PIXELS(327), FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(320), 0, PIXELS(263), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(320), 0, PIXELS(263), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(334), 0, PIXELS(263), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
+        PIXELS(334), 0, PIXELS(263), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_BLANK, FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(216), 0, PIXELS(344), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(216), 0, PIXELS(344), FACING_SOUTH, TALK_FACING_KEEP, 0 },
 #if TBS_PATCH_3
     { SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(132), 0, PIXELS(388), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(132), 0, PIXELS(388), FACING_SOUTH, TALK_FACING_KEEP, 0 },
 #endif
     { MAP_TABLE_END },
 };
@@ -567,7 +567,7 @@ struct MapEvent gMcCoyPalaceGroundsEvents[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_EAST_GUARD, FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY, MSGNO(MsgBilibinLordMccoyWouldNeverHireAnyone) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_EAST_GUARD, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinIDidntThinkTheydLetYou) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_EAST_GUARD, CONDITION_ALWAYS, MSGNO(MsgBilibinDontLeaveIsaacBeMyMentor) },
-    { BG_EVENT(BG_EVENT_UNNAMED), 90, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchWell) },
+    { BG_EVENT(BG_EVENT_SILENT), 90, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchWell) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_CATCH), LOCALID_FLOATING_NUT, FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT, EVENT_SCRIPT(EventScript_CatchFloatingNut) },
     { MAP_EVENTS_END },
 };

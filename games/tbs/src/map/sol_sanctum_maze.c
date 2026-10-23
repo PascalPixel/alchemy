@@ -12,7 +12,7 @@
 /// (common/sol_sanctum_init_zoom.h), is the one MapId_SolSanctumCorridor
 /// shares: once Mt. Aleph has erupted, the room rumbles and shakes.
 ///
-/// The south warp leaves down stairs (WARP_STYLE_ANIMATED_ALTERNATE): walking
+/// The south warp leaves down stairs (WARP_STYLE_STAIRS_DOWN): walking
 /// north into its arch, the leader steps in and sinks out of sight as if down
 /// steps behind it, to SE_STAIRS_DOWN, and comes out walking down from a
 /// doorway in the room of steps (render probe maze-exit).
@@ -82,7 +82,7 @@ struct ObjectEventTemplate gSolSanctumMazeObjectEventTemplates[] = {
 };
 
 struct MapEvent gSolSanctumMazeEvents[] = {
-    {MAP_EVENT_WARP | WARP_STYLE_ANIMATED_ALTERNATE, 1, CONDITION_ALWAYS,
+    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS,
      SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_RELIEFS_SOUTH},
     {MAP_EVENT_WARP, 2, CONDITION_ALWAYS,
      SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_RELIEFS_NORTH},

@@ -1,7 +1,7 @@
 /// @file
 /// The runtime object: what every other part of the game stands on. Power-up
 /// and the interrupt handlers, the frame wait and VBlank, input, the register
-/// write queue, fades, the sprite lists and VRAM cache, the task scheduler,
+/// write queue, fades, the sprite lists and VRAM cache, tasks,
 /// maths, debug text, the heap, the 3D transform, saving and the link cable.
 ///
 /// runtime_internal.h holds what every part shares (its includes); the code
@@ -14,14 +14,14 @@
 ///   Power-up        system.c: System_Initialize
 ///   Frames          frame.c: WaitFrames, System_VBlankHandler,
 ///                   Runtime_SetIrqHandler; scheduler.c:
-///                   Scheduler_AddOrUpdateCallback
-///   Screen          fade.c: Fade_Start; render.c: Render_BuildOamList;
+///                   Task_Add
+///   Screen          fade.c: ScreenFade_Start; render.c: Oam_BuildBuffer;
 ///                   vram_cache.c: VramCache_Load
-///   Memory          heap.c: Runtime_AllocateHeapBlock, MemAlloc
+///   Memory          heap.c: AllocHeapSlot, Alloc
 ///   3D              transform.c: Transform_ApplyRotationTranslation,
-///                   Render_ProjectPoint
-///   Saving          save.c: SaveState_WriteRecord,
-///                   SaveState_ReadRecordPayload
+///                   Transform_ProjectPoint
+///   Saving          save.c: Save_WriteRecord,
+///                   Save_ReadRecord
 ///   Link cable      serial.c: SerialRuntime_Initialize,
 ///                   SerialRuntime_ExchangePayloads
 

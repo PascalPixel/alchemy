@@ -6,10 +6,10 @@
 ///
 /// LemurianShip_SetupMap sinks the ship's two map layers 90 pixels, puts the
 /// two pieces of the gangway and the party at sprite priority 1, and starts the
-/// water's ripple (Ripple_Start), an HBlank DMA of per-line scroll offsets for
-/// BG3 that Reveal stops while it shows the map. Arriving by
-/// LEMURIAN_SHIP_WITH_BLACK_ORB, which only the debug map selector reaches,
-/// first gives the leader the Black Orb.
+/// water's ripple (Ripple_Start), a scanline effect: an HBlank DMA of
+/// per-line scroll offsets for BG3 that Reveal stops while it shows the map.
+/// Arriving by LEMURIAN_SHIP_WITH_BLACK_ORB, which only the debug map selector
+/// reaches, first gives the leader the Black Orb.
 ///
 /// Using the Black Orb at the water's edge (metatile behavior 10) plays
 /// EventScript_RaiseTheShip: the orb glows, spray rises and the ship comes up
@@ -98,7 +98,7 @@ enum {
 #define OBJ_EVENT_SPRITE(objectEvent) ((objectEvent)->sprite)
 #else
 #define OBJ_EVENT_SPRITE(objectEvent)                                          \
-  ((struct AnimationObject *)*(s32 *)&(objectEvent)->sprite)
+  ((struct Sprite *)*(s32 *)&(objectEvent)->sprite)
 #endif
 /// The sprite priority of an object event's picture and of its shadow.
 #define SET_IMAGE_PRIORITY(objectEvent, level)                                 \
@@ -126,7 +126,7 @@ const struct ObjectEventTemplate *LemurianShip_GetObjectEventTemplates(void) {
 /// colour. Reached by stepping on metatile behavior 1 (gLemurianShipEvents);
 /// takes LEMURIAN_SHIP_TO_LALIVERO_FARANS_HOUSE.
 static void EventScript_LeaveTheShip(void) {
-  Engine_ScriptRequestWarp(gEventWork->touchedTrigger);
+  Engine_ScriptRequestWarp(gFieldWork->coordEvent);
   Io_Write16(0, &PLTT_BACKDROP);
 }
 
@@ -138,8 +138,7 @@ static void Ripple_StopForReveal(void) { Ripple_Stop(); }
 /// Starts the two-axis ripple with its original frequencies and amplitudes.
 /// Called by LemurianShip_SetupMap, and reached by Reveal as the spell ends.
 static void Ripple_Start(void) {
-  DisplayScroll_InitializeHBlankDma(0, 0x40000, 0x10000, 0x2000, 0x10000,
-                                    0x8000, 0x4000);
+  ScanlineEffect_InitWave(0, 0x40000, 0x10000, 0x2000, 0x10000, 0x8000, 0x4000);
 }
 
 /// The warp, Reveal and the Black Orb at the water's edge (metatile behavior
@@ -234,25 +233,25 @@ static void Ship_UpdateSwell(void) {
     if (gLeaderDeckY != SHIP_NOT_ON_DECK) {
       objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
       objectEvent->y.fixed = gLeaderDeckY + swell;
-      objectEvent->terrainHeight = gLeaderDeckY + swell;
+      objectEvent->groundHeight = gLeaderDeckY + swell;
       objectEvent->motionFlags = 0;
     }
     if (gGaretDeckY != SHIP_NOT_ON_DECK) {
       objectEvent = ObjectEvent_GetById(GARET);
       objectEvent->y.fixed = gGaretDeckY + swell;
-      objectEvent->terrainHeight = gLeaderDeckY + swell;
+      objectEvent->groundHeight = gLeaderDeckY + swell;
       objectEvent->motionFlags = 0;
     }
     if (gMiaDeckY != SHIP_NOT_ON_DECK) {
       objectEvent = ObjectEvent_GetById(MIA);
       objectEvent->y.fixed = gMiaDeckY + swell;
-      objectEvent->terrainHeight = gLeaderDeckY + swell;
+      objectEvent->groundHeight = gLeaderDeckY + swell;
       objectEvent->motionFlags = 0;
     }
     if (gIvanDeckY != SHIP_NOT_ON_DECK) {
       objectEvent = ObjectEvent_GetById(IVAN);
       objectEvent->y.fixed = gIvanDeckY + swell;
-      objectEvent->terrainHeight = gLeaderDeckY + swell;
+      objectEvent->groundHeight = gLeaderDeckY + swell;
       objectEvent->motionFlags = 0;
     }
     gSwellPhase++;
@@ -286,7 +285,7 @@ static void Ship_UpdateSwell(void) {
 /// the ship.
 /// Called by gLeaderBoardsShip as he steps on deck; the other members'
 /// boarding scripts call their own copies below.
-static s32 Leader_StepOnDeck(struct ScriptInterpreter *interpreter) {
+static s32 Leader_StepOnDeck(struct ObjectScriptContext *interpreter) {
   s32 *deckY;
   struct ObjectEvent *objectEvent;
 
@@ -297,7 +296,7 @@ static s32 Leader_StepOnDeck(struct ScriptInterpreter *interpreter) {
 }
 
 /// Remembers Garet's boarding height for the swell callback.
-static s32 Garet_StepOnDeck(struct ScriptInterpreter *interpreter) {
+static s32 Garet_StepOnDeck(struct ObjectScriptContext *interpreter) {
   s32 *deckY;
   struct ObjectEvent *objectEvent;
 
@@ -308,7 +307,7 @@ static s32 Garet_StepOnDeck(struct ScriptInterpreter *interpreter) {
 }
 
 /// Remembers Mia's boarding height for the swell callback.
-static s32 Mia_StepOnDeck(struct ScriptInterpreter *interpreter) {
+static s32 Mia_StepOnDeck(struct ObjectScriptContext *interpreter) {
   s32 *deckY;
   struct ObjectEvent *objectEvent;
 
@@ -319,7 +318,7 @@ static s32 Mia_StepOnDeck(struct ScriptInterpreter *interpreter) {
 }
 
 /// Remembers Ivan's boarding height for the swell callback.
-static s32 Ivan_StepOnDeck(struct ScriptInterpreter *interpreter) {
+static s32 Ivan_StepOnDeck(struct ObjectScriptContext *interpreter) {
   s32 *deckY;
   struct ObjectEvent *objectEvent;
 
@@ -341,7 +340,7 @@ static void LemurianShip_SetSail(void) {
   struct EventWork *work;
 
   Engine_ScriptStart();
-  Camera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   MapGrid_CopyCellAttributes(18, 0, 3, 1, 18, 12);
   // Garet, Mia and Ivan step out around the leader. Garet: "It looks like
   // it's finally time to leave Gondowan." Ivan and Mia say how much has
@@ -349,7 +348,7 @@ static void LemurianShip_SetSail(void) {
   Engine_ScriptSetMessage(MsgFieldLooksLikeFinally);
   FieldMotion_LaunchFromFocusedObject(GARET, -10, 16, FACING_NORTH);
   FieldMotion_LaunchFromFocusedObject(MIA, 0, 24, FACING_NORTH);
-  Motion_LaunchFromFocusedObject(IVAN, 10, 16, FACING_NORTH);
+  ObjectMotion_LaunchFromFocusedObject(IVAN, 10, 16, FACING_NORTH);
   Engine_ObjectEventWaitForMove(GARET);
   Engine_ScriptWait(50);
   Engine_ObjectEventRunRepeatedMotion(GARET, 2);
@@ -378,16 +377,16 @@ static void LemurianShip_SetSail(void) {
   Engine_ScriptWait(30);
   Engine_ObjectEventFaceDirection(GARET, FACING_NORTHEAST, 0);
   Engine_ScriptWait(20);
-  UiText_OpenMessageAtObject(1, 0);
+  FieldMessage_ShowAtObject(1, 0);
   if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
     Engine_ScriptWait(30);
     ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
     Engine_ScriptShowMessage(GARET, 0);
-    gEventWork->message++;
+    gFieldWork->message++;
   } else {
     Engine_ScriptWait(30);
     ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
-    gEventWork->message++;
+    gFieldWork->message++;
     Engine_ScriptShowMessage(GARET, 0);
   }
   Engine_ScriptWait(10);
@@ -419,7 +418,7 @@ static void LemurianShip_SetSail(void) {
   Engine_ScriptWait(20);
   // The second question, Mia's: must they find Jenna before going to
   // Lemuria? Garet answers either way.
-  UiText_OpenMessageAtObject(3, 0);
+  FieldMessage_ShowAtObject(3, 0);
   if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
     Engine_ScriptWait(20);
     Engine_ObjectEventRunRepeatedMotion(GARET, 2);
@@ -427,14 +426,14 @@ static void LemurianShip_SetSail(void) {
     Engine_ObjectEventFaceDirection(GARET, FACING_NORTHEAST, 0);
     Engine_ScriptWait(20);
     Engine_ScriptShowMessage(GARET, 0);
-    gEventWork->message++;
+    gFieldWork->message++;
   } else {
     Engine_ScriptWait(20);
     Engine_ObjectEventRunRepeatedMotion(GARET, 2);
     Engine_ScriptWait(20);
     Engine_ObjectEventFaceDirection(GARET, FACING_NORTHEAST, 0);
     Engine_ScriptWait(20);
-    gEventWork->message++;
+    gFieldWork->message++;
     Engine_ScriptShowMessage(GARET, 0);
   }
   Engine_ScriptWait(10);
@@ -457,7 +456,7 @@ static void LemurianShip_SetSail(void) {
   Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
   Engine_ScriptWait(20);
   // The third question, Mia's: the seas are rough; will they be all right?
-  UiText_OpenMessageAtObject(3, 0);
+  FieldMessage_ShowAtObject(3, 0);
   ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST, 0);
   ObjectEvent_FaceDirection(MIA, FACING_NORTH, 0);
   Engine_ObjectEventFaceDirection(IVAN, FACING_NORTHWEST, 0);
@@ -467,12 +466,12 @@ static void LemurianShip_SetSail(void) {
     Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
     Engine_ScriptWait(20);
     Engine_ScriptShowMessage(MIA, 0);
-    gEventWork->message++;
+    gFieldWork->message++;
   } else {
     Engine_ScriptWait(30);
     Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
     Engine_ScriptWait(20);
-    gEventWork->message++;
+    gFieldWork->message++;
     Engine_ScriptShowMessage(MIA, 0);
   }
   Engine_ScriptWait(10);
@@ -494,7 +493,7 @@ static void LemurianShip_SetSail(void) {
   Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
   Engine_ScriptWait(20);
   Engine_ScriptShowMessage(MIA, 0);
-  Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
+  Engine_AudioPlayCue(SONG_FADE_OUT_BGM);
   Engine_ScriptWait(10);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
   Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
@@ -508,7 +507,7 @@ static void LemurianShip_SetSail(void) {
   ObjectEvent_SetSpeed(MIA, 0x13333, 0x9999);
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER, gLeaderBoardsShip);
   Engine_ScriptWait(50);
-  Camera_MoveTo(PIXELS(264), -1, PIXELS(200), 1);
+  FieldCamera_MoveTo(PIXELS(264), -1, PIXELS(200), 1);
   ObjectEvent_SetActionScript(GARET, gGaretBoardsShip);
   Engine_ScriptWait(50);
   ObjectEvent_SetActionScript(IVAN, gIvanBoardsShip);
@@ -528,7 +527,7 @@ static void LemurianShip_SetSail(void) {
   Engine_ObjectEventFaceDirection(MIA, FACING_NORTH, 0);
   Engine_ScriptWait(20);
   // On deck, all four turn west together and nod.
-  Camera_MoveTo(PIXELS(216), -1, PIXELS(168), 1);
+  FieldCamera_MoveTo(PIXELS(216), -1, PIXELS(168), 1);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(20);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 0);
@@ -545,7 +544,7 @@ static void LemurianShip_SetSail(void) {
   // faster while the gangway's north piece moves off with the ship, and the
   // camera follows.
   Engine_AudioPlayCue(MUS_ENDING);
-  MusicCommand_SetPitchAndUpdateFrequency(240);
+  Sound_SetBgmTempo(240);
   Curtain_Start();
   Engine_ScriptWait(LEMURIAN_SHIP_DEPARTURE_DELAY_FRAMES);
   grid = gMapGridWork[0];
@@ -563,7 +562,7 @@ static void LemurianShip_SetSail(void) {
   Engine_ScriptWait(300);
   // Fade out to the clear screen.
   work = gMapGridWork[19];
-  work->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  work->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Io_Write16(0, &PLTT_BACKDROP);
   work->transitionFrames = 96;
   Engine_ScriptCloseScreen();
@@ -573,10 +572,10 @@ static void LemurianShip_SetSail(void) {
   FieldScript_SetDestination((s32)&MapId_Title, TITLE_FROM_LEMURIAN_SHIP);
 }
 
-/// The water's ripple, this map's view of the HBlank scroll work
-/// (gHBlankScrollWork, struct DisplayScrollWork): two pages of per-line
+/// The water's ripple, this map's view of the scanline effect's work
+/// (gScanlineEffect, struct ScanlineEffectWork): two pages of per-line
 /// scroll offsets, swapped each frame, built from a sine table. Here a line
-/// is one word, BG3's x and y, where DisplayScrollWork has three.
+/// is one word, BG3's x and y, where ScanlineEffectWork has three.
 struct RippleScrollWork {
   u16 pages[2][0x3c0]; ///< per page: 160 lines of BG3 x, y; the rest unused
   u8 page;             ///< the page the HBlank DMA shows; the other is built
@@ -620,7 +619,7 @@ static void EventScript_RaiseTheShip(void) {
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 312, 232);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   Script_Wait(40);
-  Script_PlayCue(SE_140);
+  Script_PlaySong(SE_140);
   for (i = 0; i <= 15; i++) {
     Io_Write16(RGB(0, i, i * 2), &PLTT_BACKDROP);
     Script_Wait(10);
@@ -634,7 +633,7 @@ static void EventScript_RaiseTheShip(void) {
     u16 bright = BLEND_ALPHA(16, 16);
 
     for (flash = 0; flash < 3; flash++) {
-      Script_PlayCue(SE_212);
+      Script_PlaySong(SE_212);
       REG_BLDALPHA = bright;
       Script_Wait(3);
       Io_Write16(BLEND_ALPHA(16, 8), &REG_BLDALPHA);
@@ -648,7 +647,7 @@ static void EventScript_RaiseTheShip(void) {
   FieldScheduler_AddCallback(Ship_UpdateSwell, TASK_PRIORITY_MAP);
   gSprayActive = 1;
   Script_Wait(20);
-  Script_PlayCue(SE_163);
+  Script_PlaySong(SE_163);
   MapGrid_SetShake(0x10000, 0x10000, 0x10000);
   Script_Wait(60);
   gSprayActive = 1;
@@ -671,10 +670,10 @@ static void EventScript_RaiseTheShip(void) {
   REG_BG2CNT = cnt = (REG_BG2CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
   REG_BG1CNT = cnt = (REG_BG1CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(2);
   gOrbGlowActive = 0;
-  Script_PlayCue(SE_STOP_SLOT3);
+  Script_PlaySong(SE_STOP_SLOT3);
   Task_Wait(1);
   // A flash of white; the swell starts as it clears.
-  Script_PlayCue(SE_145);
+  Script_PlaySong(SE_145);
   Io_Write16(BLDCNT_TGT1_ALL | BLDCNT_EFFECT_LIGHTEN, &REG_BLDCNT);
   for (white = 0; white <= 16; white++) {
     REG_BLDY = white;
@@ -690,8 +689,8 @@ static void EventScript_RaiseTheShip(void) {
     Script_Wait(8);
   }
   FieldScheduler_AddCallback(ShipGlow_CyclePalette, TASK_PRIORITY_MAP);
-  Script_PlayCue(MUS_PUZZLE_SOLVED);
-  AudioCommand_WaitForStateByteClear();
+  Script_PlaySong(MUS_PUZZLE_SOLVED);
+  Sound_WaitForFanfare();
   Script_Wait(20);
   Script_End();
   LemurianShip_SetSail();
@@ -711,7 +710,7 @@ s32 LemurianShip_SetupMap(void) {
   if (gGameState.warpDest == LEMURIAN_SHIP_WITH_BLACK_ORB) {
     Inventory_AddItem(LOCALID_PARTY_LEADER, ITEM_BLACK_ORB);
   }
-  ((struct EventWork *)gMapGridWork[19])->startTransition =
+  ((struct EventWork *)gMapGridWork[19])->transition =
       MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   ObjectEvent_GetById(LOCALID_GANGWAY_NORTH)->collisionFlags = 0;
   ObjectEvent_GetById(LOCALID_GANGWAY_NORTH)->priorityFlags =
@@ -776,15 +775,15 @@ s32 LemurianShip_SetupMap(void) {
 
 /// Arms DMA 0 to copy the shown ripple page, a line each HBlank, into
 /// background 3's scroll registers, writing the first line itself.
-/// Run each frame; DisplayScroll_InitializeHBlankDma adds it and Ripple_Stop
+/// Run each frame; ScanlineEffect_InitWave adds it and Ripple_Stop
 /// removes it.
-void DisplayScroll_ArmHBlankDma(void) {
+void ScanlineEffect_ArmDma(void) {
   struct RippleScrollWork *work;
   u32 *source;
   volatile u16 *dma0;
   volatile u32 *destination;
 
-  work = (struct RippleScrollWork *)gHBlankScrollWork;
+  work = (struct RippleScrollWork *)gScanlineEffect;
   source = (u32 *)work->pages[work->page];
 
   dma0 = REG_DMA0;
@@ -799,9 +798,9 @@ void DisplayScroll_ArmHBlankDma(void) {
 }
 
 /// Builds the other ripple page and swaps it in.
-/// Run each frame; DisplayScroll_InitializeHBlankDma adds it and Ripple_Stop
+/// Run each frame; ScanlineEffect_InitWave adds it and Ripple_Stop
 /// removes it.
-void DisplayScroll_BuildAndSwapHBlankPage(void) {
+void ScanlineEffect_BuildPage(void) {
   struct RippleScrollWork *work;
   u16 *line;
   s32 angle;
@@ -811,7 +810,7 @@ void DisplayScroll_BuildAndSwapHBlankPage(void) {
   u16 y;
   s32 i;
 
-  work = (struct RippleScrollWork *)gHBlankScrollWork;
+  work = (struct RippleScrollWork *)gScanlineEffect;
   y = gBgScroll[3].y;
   line = work->pages[work->page ^ 1];
   step = work->step[0];
@@ -843,8 +842,8 @@ void DisplayScroll_BuildAndSwapHBlankPage(void) {
 static void Ripple_Stop(void) {
   volatile u16 *reg;
 
-  Engine_TaskRemoveCallback(DisplayScroll_ArmHBlankDma);
-  Engine_TaskRemoveCallback(DisplayScroll_BuildAndSwapHBlankPage);
+  Engine_TaskRemoveCallback(ScanlineEffect_ArmDma);
+  Engine_TaskRemoveCallback(ScanlineEffect_BuildPage);
   reg = REG_DMA0;
   reg[5] = ~DMA_START_TIMING_DRQ_REPEAT & reg[5];
   reg[5] = ~DMA_ENABLE & reg[5];
@@ -869,7 +868,7 @@ static void Curtain_Close(void) {
   s32 x;
   u32 i;
 
-  tile = gVramBlockCache[sCurtainVramSlot].offset >> 5;
+  tile = gVramCacheEntries[sCurtainVramSlot].offset >> 5;
   // Each part is written whole as three words: the queue link, attributes 0
   // and 1, and attribute 2.
   // UB: the native word cursor crosses the parts' members. UBFIX builds the
@@ -907,7 +906,7 @@ static void Curtain_Close(void) {
   memcpy(sCurtainSprites, words, sizeof(words));
 #endif
   for (i = 0; i < 24; i++)
-    Runtime_PushSlotEntry(&sCurtainSprites[i], 255);
+    Oam_AddSpriteAtDepth(&sCurtainSprites[i], 255);
 }
 
 /// Fills a 256-byte tile with colour 1 and starts the curtains 48 pixels
@@ -916,8 +915,8 @@ static void Curtain_Close(void) {
 static void Curtain_Start(void) {
   u8 *tiles;
 
-  tiles = Runtime_CallAlternatePool(Runtime_BumpAllocateAlternatePool, 0x100);
-  sCurtainVramSlot = Resource_FindFreeEntry();
+  tiles = Runtime_CallAlternatePool(AllocEwram, 0x100);
+  sCurtainVramSlot = VramCache_FindFreeEntry();
   Dma_Fill32(0x11111111, tiles, 0x100);
   Engine_VramLoad(sCurtainVramSlot, 0x100, tiles);
 
@@ -991,15 +990,15 @@ u32 gLemurianShipWarps[] = {
 
 struct ObjectEventTemplate gLemurianShipObjectEventTemplates[] = {
     {GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST,
-     TALK_FACE_PARTY, 0},
+     TALK_FACING_PARTY, 0},
     {IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST,
-     TALK_FACE_PARTY, 0},
+     TALK_FACING_PARTY, 0},
     {MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST,
-     TALK_FACE_PARTY, 0},
+     TALK_FACING_PARTY, 0},
     {SPRITE_GANGWAY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(312), 0,
-     PIXELS(248), FACING_SOUTH, TALK_KEEP_FACING, 0},
+     PIXELS(248), FACING_SOUTH, TALK_FACING_KEEP, 0},
     {SPRITE_GANGWAY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(312), 0,
-     PIXELS(312), FACING_SOUTH, TALK_KEEP_FACING, 0},
+     PIXELS(312), FACING_SOUTH, TALK_FACING_KEEP, 0},
     {MAP_TABLE_END},
 };
 

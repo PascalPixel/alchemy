@@ -6,7 +6,7 @@
 	.set import.Engine_MathSin, 1
 	.set import.Engine_HeapAllocate, 1
 	.set import.Engine_HeapRelease, 1
-	.set import.Resource_ResetEntry, 1
+	.set import.VramCache_FreeEntry, 1
 	.set import.Engine_VramLoad, 1
 	.set import.Object_InitializeMode, 1
 	.set import.Engine_ObjectSetScript, 1
@@ -15,9 +15,9 @@
 	.set import.Engine_MapGridRedraw, 1
 	.set import.ObjectDispatch_WaitForValue16, 1
 	.set import.Engine_MapGridCopyCellsTo, 1
-	.set import.TileAnimation_ResumeChannel, 1
-	.set import.TileAnimation_PauseChannel, 1
-	.set import.DisplayBlend_SuspendScript, 1
+	.set import.TilesetAnim_Resume, 1
+	.set import.TilesetAnim_Pause, 1
+	.set import.BlendScript_Suspend, 1
 	.set import.Engine_MapGridCopyCellAttributes, 1
 	.set import.Engine_ObjectEventSetSpriteFlags, 1
 	.set import.Engine_WorkSetValuesIfNonNegative, 1
@@ -26,7 +26,7 @@
 	.set import.ObjectDispatch_RegisterChildMetadata, 1
 	.set import.Engine_ObjectSetPartPalettes, 1
 	.set import.Engine_MessageShowCentered, 1
-	.set import.UiText_ShowCenteredMessage, 1
+	.set import.FieldMessage_ShowCentered, 1
 	.set import.Engine_ItemLoadIcon, 1
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1
@@ -61,7 +61,7 @@
 	.set import.Engine_ScriptShowMessageAndWait, 1
 	.set import.Engine_ScriptAskYesNo, 1
 	.set import.Engine_ObjectEventFaceDirection, 1
-	.set import.Ui_SetMessageVoiceFromObjectEvent, 1
+	.set import.Message_SetVoiceFromObjectEvent, 1
 	.set import.Engine_ObjectEventSetSpritePriority, 1
 	.set import.Engine_ObjectEventShowEmote, 1
 	.set import.Engine_ObjectEventSetAttachedEffect, 1
@@ -70,10 +70,10 @@
 	.set import.Engine_CameraMoveTo, 1
 	.set import.Engine_CameraWaitForMove, 1
 	.set import.Engine_ScriptRequestWarp, 1
-	.set import.FieldEffect_StartLightning, 1
-	.set import.FieldEffect_StopLightning, 1
-	.set import.FieldEffect_LastLightning, 1
-	.set import.FieldEffect_ResumeLightning, 1
+	.set import.Weather_StartLightning, 1
+	.set import.Weather_StopLightning, 1
+	.set import.Weather_LastLightning, 1
+	.set import.Weather_ResumeLightning, 1
 	.set import.Engine_ScriptOpenScreen, 1
 	.set import.Engine_ScriptCloseScreen, 1
 	.set import.Engine_ScriptWaitForScreen, 1

@@ -7,7 +7,7 @@
 // - Planet Diver flashes the user, throws it into the air, turns it into a
 //   ball of fire that falls on the target and bursts into 256 chips that
 //   bounce on the ground. The impact chips reuse the map grid buffer that other
-//   effects address as an array of EffectStep records.
+//   animations address as an array of Particles.
 // - The closing skulls (Haunt) gather around each target in turn, eight
 //   skulls scattered in 3D that step towards a point above the target while
 //   the group spins. They take 64 slots of PARTICLES per target, of which 8
@@ -15,20 +15,20 @@
 // - The orbiting spirals circle above each target in turn, four of them a
 //   quarter turn apart.
 //
-// The skulls and spirals ripple the effect layer throughout, through the
+// The skulls and spirals ripple the animation layer throughout, through the
 // HBlank DMA of BG2's affine origin.
 
 // The leap that falls as a ball of fire.
 
-/// One chip of the impact, laid over the same 28-byte records as PARTICLES
-/// but with its velocities in other places than struct EffectStep's.
+/// One chip of the impact, laid over the same 28-byte entries as PARTICLES
+/// but with its velocities in other places than struct Particle's.
 struct ImpactChip {
   s32 x;         ///< canvas position, 16.16 fixed point
   s32 y;         ///< canvas position, 16.16; the ground is y 112
   s32 velocityX; ///< 16.16 pixels a frame, damped to 56/64 each frame
-  s32 unused0c;  ///< an EffectStep's velocityX; never read
+  s32 unused0c;  ///< an Particle's velocityX; never read
   s32 velocityY; ///< 16.16 pixels a frame, with 1/8 pixel of gravity
-  s32 unused14;  ///< an EffectStep's velocityZ; never read
+  s32 unused14;  ///< an Particle's velocityZ; never read
   s32 life;      ///< frames left; 0 is free
 };
 
@@ -42,7 +42,7 @@ struct ImpactChip {
 /// The user flashes and leaps into the air, turns into a ball of fire, falls
 /// onto the first target and bursts into chips that bounce on the ground.
 ///
-/// Abilities: Planet Diver (BATTLE_EFFECT_PLANET_DIVER).
+/// Abilities: Planet Diver (BATTLE_ANIM_PLANET_DIVER).
 ///
 /// The ball falls towards the middle of the field, from whichever side the
 /// user stands on; actors[0] is where it lands, and effect->side picks the
@@ -52,12 +52,12 @@ struct ImpactChip {
 /// flash's sheet and palette are replaced by the fireball's on frame 16. The
 /// sheet slot holds the mote sprites the chips are drawn from, and the chips
 /// themselves live in Ram_MapGridCellBuffer.
-void BattleEffect_RunPlanetDiver(struct BattleEffectArgument *effect) {
-  struct EffectPosition screenPosition;
+void BattleAnim_RunPlanetDiver(struct BattleAnimArgs *effect) {
+  struct ScreenPoint screenPosition;
   BlitterPair draw;
   void **slots;
   void **cursor;
-  struct BattleEffectWork *work;
+  struct BattleAnimWork *work;
   void *canvas;
   u8 *sprites;
   struct MotionObject *target;
@@ -67,30 +67,30 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectArgument *effect) {
   s32 frame;
   s32 i;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
-  sprites = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  ANIM_GET_SLOTS(slots, cursor, work, canvas);
+  sprites = ANIM_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
-  BattleEffect_StartCanvasLayer(0);
-  Resource_DecodeType01(
-      Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), sprites);
+  BattleAnim_StartCanvasLayer(0);
+  Decompress_Type01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA),
+                    sprites);
   // A sheet resource is its palette followed by its packed images.
   palette = Resource_GetTableEntry((s32)&ResourceId_FlashBurstSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
-  Resource_DecodeType01(palette, work->sheet);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-  draw[0] = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
-  draw[1] = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
+  Decompress_Type01(palette, work->sheet);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+  draw[0] = ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                    BLITTER_MAX);
+  draw[1] = ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
   // Trails keep 3/4 a frame.
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
   // Four times as many chips are freed as the burst uses.
   for (i = 0; i != PLANET_DIVER_CLEARED_CHIPS; i++)
     PLANET_DIVER_IMPACT_CHIPS[i].life = 0;
-  actor = GetBattleObjectSlotFar(work->effect->actor)->object;
-  target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
+  actor = GetBattleObjectSlotFar(work->effect->user)->object;
+  target = GetBattleObjectSlotFar(work->effect->targets[0])->object;
   // The ball falls 15 pixels a frame towards the middle of the field.
   if (actor->x > 0)
     dx = -(15 << 16);
@@ -100,12 +100,12 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != PLANET_DIVER_FRAMES; frame++) {
     struct BattleCamera *camera = gCameraWork;
 
-    EFFECT_VIEW_FROM_CAMERA(camera);
+    ANIM_VIEW_FROM_CAMERA(camera);
     // Frame loop. The user's screen position is taken on frame 0 and from
     // frame 18 on, and held in between, so the flash stays where the leap
     // began.
     if (frame > 17 || frame == 0) {
-      EffectPosition_ProjectBattler(work->effect->actor, &screenPosition);
+      Projection_Unit(work->effect->user, &screenPosition);
       screenPosition.x /= 2;
     }
 
@@ -134,12 +134,12 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectArgument *effect) {
       actor->verticalMotionStrength = 0xab85;
       actor->autoFaceMotion = 0;
       actor->snapToTarget = 0;
-      Object_SetMoveTargetFar((struct ObjectRuntime *)actor, actor->x * 3, 0,
+      Object_SetMoveTargetFar((struct Object *)actor, actor->x * 3, 0,
                               actor->z);
       ObjectDispatch_SelectAnimationFar(actor, POSE_LEAP);
       // A 4-frame shake: frame is 4 here.
       work->shakeFrames = frame;
-      AudioCommand_PlayFar(SE_136);
+      Sound_PlaySongFar(SE_136);
     }
     // Frame 16: switch to the fireball images and line the user up with
     // the target's depth.
@@ -147,7 +147,7 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectArgument *effect) {
       palette = Resource_GetTableEntry((s32)&ResourceId_FlameballSheet);
       Iwram_CopyWords((void *)BG_PLTT, palette, 128);
       palette += 128;
-      Resource_DecodeType01(palette, work->sheet);
+      Decompress_Type01(palette, work->sheet);
       actor->verticalMotionStrength = 0;
       actor->velocityX = 0;
       actor->velocityY = 0;
@@ -196,10 +196,10 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectArgument *effect) {
           chip->life = (Random16() & 7) + 32;
         }
         work->shakeFrames = 8;
-        EFFECT_SHOW_DAMAGE(SE_145);
-        BattleMotion_ApplyVariantMotionFar(work->effect->actors[0],
-                                           KNOCKBACK_HURL);
-        ObjectGroup_UpdateMembers(work->effect->actors[0], SPRITE_COLOR_WHITE,
+        ANIM_SHOW_DAMAGE(SE_145);
+        BattleMotion_ApplyKnockbackFar(work->effect->targets[0],
+                                       KNOCKBACK_HURL);
+        ObjectGroup_UpdateMembers(work->effect->targets[0], SPRITE_COLOR_WHITE,
                                   POSE_DAMAGE, 0, 8);
       }
     }
@@ -223,16 +223,16 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectArgument *effect) {
         } else if ((chip->x >= 0 && chip->x < 127 << 16) && chip->y >= 0) {
           s32 size = chip->life / 8 + 1;
 
-          EFFECT_DRAW_MOTE(draw[i & 1], canvas, sprites, (chip->x >> 16),
-                           (chip->y >> 16), size);
+          ANIM_DRAW_MOTE(draw[i & 1], canvas, sprites, (chip->x >> 16),
+                         (chip->y >> 16), size);
         }
       }
     }
     Camera_ApplyShake(16, 16);
-    EFFECT_END_FRAME(work);
+    ANIM_END_FRAME(work);
   }
 
-  EFFECT_FINISH_CANVAS();
+  ANIM_FINISH_CANVAS();
 }
 
 // Closing skulls.
@@ -245,23 +245,23 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectArgument *effect) {
 
 /// Skulls close in on each target in turn.
 ///
-/// Abilities: Haunt (BATTLE_EFFECT_HAUNT).
+/// Abilities: Haunt (BATTLE_ANIM_HAUNT).
 ///
 /// Around each target, 32 frames apart, eight skulls appear one every 4 frames,
 /// scattered up to 64 pixels away, and close in on a point 20 pixels above the
 /// target while the group spins; the target flashes 32 frames into its turn,
-/// and a skull that reaches the centre is no longer drawn. The effect layer
+/// and a skull that reaches the centre is no longer drawn. The animation layer
 /// ripples throughout. PARTICLES holds 64 skulls per target, of which the first
 /// 8 are used.
 ///
-/// Adds BattleEffect_ArmBg2AffineHBlankDma, which feeds the ripple in
+/// Adds BattleAnim_ArmBg2AffineHBlankDma, which feeds the ripple in
 /// work->bg2xLines to BG2X line by line, and removes it before it returns.
-void BattleEffect_RunHaunt(struct BattleEffectArgument *effect) {
-  struct EffectPosition screenPosition;
+void BattleAnim_RunHaunt(struct BattleAnimArgs *effect) {
+  struct ScreenPoint screenPosition;
   s32 point[3];
   void **slots;
   void **cursor;
-  struct BattleEffectWork *work;
+  struct BattleAnimWork *work;
   void *canvas;
   s32 frame;
   BlitterPair draw;
@@ -270,26 +270,24 @@ void BattleEffect_RunHaunt(struct BattleEffectArgument *effect) {
   s32 i;
   s32 k;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
+  ANIM_GET_SLOTS(slots, cursor, work, canvas);
   work->effect = effect;
-  BattleEffect_StartCanvasLayer(0);
+  BattleAnim_StartCanvasLayer(0);
   palette = Resource_GetTableEntry((s32)&ResourceId_SkullSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
-  Resource_DecodeType01(palette, work->sheet);
+  Decompress_Type01(palette, work->sheet);
   // The skulls are drawn in the pink burst's colours, which replace the
   // skull sheet's own.
   palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-  draw[0] = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
-                      COMPOSITE_ADDITIVE);
-  draw[1] = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
-  Scheduler_AddOrUpdateCallback(BattleEffect_ArmBg2AffineHBlankDma,
-                                EFFECT_CALLBACK_ORDER);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+  draw[0] = ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS, COMPOSITE_ADDITIVE);
+  draw[1] = ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
+  Task_Add(BattleAnim_ArmBg2AffineHBlankDma, ANIM_CALLBACK_ORDER);
   // 4 off every pixel each frame.
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, 0x04040404);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, 0x04040404);
 
   // Every skull starts up to 64 pixels from its centre on each axis.
   for (i = 0; i != HAUNT_SCATTERED; i++) {
@@ -297,16 +295,16 @@ void BattleEffect_RunHaunt(struct BattleEffectArgument *effect) {
     PARTICLES[i].y = ((Random16() & 255) - 127) << 15;
     PARTICLES[i].z = ((Random16() & 255) - 127) << 15;
   }
-  AudioCommand_PlayFar(SE_142);
+  Sound_PlaySongFar(SE_142);
 
-  for (frame = 0; frame != work->effect->count * 32 + 96; frame++) {
+  for (frame = 0; frame != work->effect->targetCount * 32 + 96; frame++) {
     s32 *row;
 
     camera = gCameraWork;
     // Frame loop: 32 frames a target, then 96 more. The battle shows the
     // damage on frame 96, whatever the number of targets.
     if (frame == 96)
-      EFFECT_SHOW_DAMAGE(0);
+      ANIM_SHOW_DAMAGE(0);
 
     // Ripple the canvas sideways, line by line: a 16.16 value >> 10 is a
     // quarter of it in BG2X's 20.8, so the sine swings 1.5 texels either
@@ -321,29 +319,29 @@ void BattleEffect_RunHaunt(struct BattleEffectArgument *effect) {
         *row++ = Trig_Sin((frame + i) << 11) * 6 >> 10;
     }
 
-    EFFECT_FOR_EACH_TARGET(k, work->effect) {
+    ANIM_FOR_EACH_TARGET(k, work->effect) {
       struct MotionObject *target =
-          GetBattleObjectSlotFar(work->effect->actors[k])->object;
+          GetBattleObjectSlotFar(work->effect->targets[k])->object;
 
       // Centre on the point 20 pixels above the target and spin the group
       // about it, a full turn every 128 frames; target k's turn starts on
       // frame 32k, its skull i on frame 4 * (8k + i), and it flashes 32
       // frames into its turn.
-      EFFECT_VIEW_FROM_CAMERA(camera);
+      ANIM_VIEW_FROM_CAMERA(camera);
       SET_VECTOR(point, target->x, 20 << 16, target->z);
       Transform_ApplyPosition(point);
       if (frame > k * 32) {
         Transform_ApplyPitch(frame << 9);
         if (frame == k * 32 + 32)
-          ObjectGroup_UpdateMembers(work->effect->actors[k], SPRITE_COLOR_WHITE,
-                                    POSE_DAMAGE, k, 32);
+          ObjectGroup_UpdateMembers(work->effect->targets[k],
+                                    SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 32);
 
         // Each skull steps one pixel nearer the centre a frame (its
         // position less itself over its distance in pixels); skull i takes
         // image i % 3 of three 24x24 images. variant counts its steps but is
         // never read.
         for (i = 0; i != HAUNT_SKULLS; i++) {
-          struct EffectStep *skull = &PARTICLES[k * HAUNT_SLOTS + i];
+          struct Particle *skull = &PARTICLES[k * HAUNT_SLOTS + i];
 
           if (frame > (k * 8 + i) * 4) {
             s32 x = (skull->x >> 8) * (skull->x >> 8);
@@ -352,7 +350,7 @@ void BattleEffect_RunHaunt(struct BattleEffectArgument *effect) {
             s32 dist = Iwram_Sqrt(x + y + z) >> 8;
 
             if (dist != 0) {
-              EffectPosition_ProjectPoint(skull, &screenPosition);
+              Projection_Point(skull, &screenPosition);
               screenPosition.x >>= 1;
               draw[0](canvas, work->sheet + i % 3 * (24 * 24),
                       screenPosition.x - 12, screenPosition.y - 12, 24, 24);
@@ -365,14 +363,14 @@ void BattleEffect_RunHaunt(struct BattleEffectArgument *effect) {
         }
       }
     }
-    EFFECT_END_FRAME(work);
+    ANIM_END_FRAME(work);
   }
 
   // Finish: both callbacks before the blocks they read.
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
-  Scheduler_RemoveCallback(BattleEffect_ArmBg2AffineHBlankDma);
-  EFFECT_RELEASE_BLITTERS();
-  BattleEffect_EndCanvasLayer();
+  Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleAnim_ArmBg2AffineHBlankDma);
+  ANIM_RELEASE_BLITTERS();
+  BattleAnim_EndCanvasLayer();
 }
 
 /// Frames from the start of a target's turn to its end; its spirals show on
@@ -380,46 +378,44 @@ void BattleEffect_RunHaunt(struct BattleEffectArgument *effect) {
 #define ORBITING_SPIRALS_LIFE 60
 
 /// Unused: no row of actflags.tsv in either game names its kind, and the
-/// handler table is reached with no other kind (BattleEffect_RunTableEffect),
+/// handler table is reached with no other kind (BattleAnim_RunTableEffect),
 /// so the player never sees it. Four spirals would circle 40 pixels above each
 /// target in turn, 16 frames apart, for 59 frames each, 16 pixels out from
 /// the centre; each target would take its damage pose 32 frames into its
 /// turn.
 ///
-/// Abilities: none (BATTLE_EFFECT_UNUSED_ORBITING_SPIRALS).
+/// Abilities: none (BATTLE_ANIM_UNUSED_ORBITING_SPIRALS).
 ///
-/// The effect layer ripples throughout, through
-/// BattleEffect_ArmBg2AffineHBlankDma, which it adds and removes. It never lets
+/// The animation layer ripples throughout, through
+/// BattleAnim_ArmBg2AffineHBlankDma, which it adds and removes. It never lets
 /// the battle show damage, and leaves the targets' flash timers alone.
-void BattleEffect_RunUnusedOrbitingSpirals(
-    struct BattleEffectArgument *effect) {
+void BattleAnim_RunUnusedOrbitingSpirals(struct BattleAnimArgs *effect) {
   void **slots;
   void **cursor;
-  struct BattleEffectWork *work;
+  struct BattleAnimWork *work;
   void *canvas;
   void *palette;
   BlitterPair draw;
   s32 point[3];
-  struct EffectPosition screen;
+  struct ScreenPoint screen;
   s32 member;
   s32 offsetX;
   s32 frame;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
+  ANIM_GET_SLOTS(slots, cursor, work, canvas);
   work->effect = effect;
-  EFFECT_START_NARROW_CANVAS(0);
+  ANIM_START_NARROW_CANVAS(0);
   palette = Resource_GetTableEntry((s32)&ResourceId_SpiralSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
-  Resource_DecodeType01((u8 *)palette + 128, work->sheet);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-  draw[0] = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, COMPOSITE_MAX);
-  draw[1] = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
-  Scheduler_AddOrUpdateCallback(BattleEffect_ArmBg2AffineHBlankDma,
-                                EFFECT_CALLBACK_ORDER);
+  Decompress_Type01((u8 *)palette + 128, work->sheet);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+  draw[0] = ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP,
+                    BLITTER_MAX);
+  draw[1] = ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
+  Task_Add(BattleAnim_ArmBg2AffineHBlankDma, ANIM_CALLBACK_ORDER);
   // Trails keep half a frame.
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
   // On the party's side the canvas is scrolled 104 texels (BG2X is 20.8),
   // and the spirals are drawn 112 further left.
   // XXX: the ripple below rewrites BG2X every line with a 112-texel lead,
@@ -431,7 +427,7 @@ void BattleEffect_RunUnusedOrbitingSpirals(
   } else {
     offsetX = 0;
   }
-  for (frame = 0; frame != (work->effect->count * 16) + 48; frame++) {
+  for (frame = 0; frame != (work->effect->targetCount * 16) + 48; frame++) {
     struct BattleCamera *camera;
     s32 *row;
     s32 i;
@@ -458,13 +454,13 @@ void BattleEffect_RunUnusedOrbitingSpirals(
         angle += 1024;
       }
     }
-    EFFECT_VIEW_FROM_CAMERA(camera);
+    ANIM_VIEW_FROM_CAMERA(camera);
     member = 0;
-    if (work->effect->count != 0) {
-      while (member != work->effect->count) {
+    if (work->effect->targetCount != 0) {
+      while (member != work->effect->targetCount) {
         struct MotionObject *object;
 
-        object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
+        object = GetBattleObjectSlotFar(work->effect->targets[member])->object;
         // Target `member` has its turn from frame 16 * member, and takes
         // its damage pose 32 frames in.
         if (frame > member * 16 &&
@@ -472,11 +468,11 @@ void BattleEffect_RunUnusedOrbitingSpirals(
           s32 spin;
 
           if (frame == (member * 16) + 32) {
-            ObjectGroup_UpdateMembers(work->effect->actors[member], 0,
+            ObjectGroup_UpdateMembers(work->effect->targets[member], 0,
                                       POSE_DAMAGE, -1, 0);
           }
           SET_VECTOR(point, object->x, 40 << 16, object->z);
-          EffectPosition_ProjectPoint(point, &screen);
+          Projection_Point(point, &screen);
 
           // The spirals (32x32) a quarter turn apart, circling once every 128
           // frames; each shows its four 1 KB images for 4 frames apiece, and
@@ -499,13 +495,13 @@ void BattleEffect_RunUnusedOrbitingSpirals(
         member++;
       }
     }
-    EFFECT_PRESENT_FRAME(work);
+    ANIM_PRESENT_FRAME(work);
   }
   // Finish: both callbacks before the blocks they read.
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
-  Scheduler_RemoveCallback(BattleEffect_ArmBg2AffineHBlankDma);
-  EFFECT_RELEASE_BLITTERS();
-  BattleEffect_EndCanvasLayer();
+  Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleAnim_ArmBg2AffineHBlankDma);
+  ANIM_RELEASE_BLITTERS();
+  BattleAnim_EndCanvasLayer();
 }
 
 #undef PLANET_DIVER_IMPACT_CHIPS

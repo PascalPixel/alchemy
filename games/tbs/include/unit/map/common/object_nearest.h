@@ -3,6 +3,6 @@
 
 #include "types.h"
 
-s32 MapObjectEvent_FindNearestFloatingPlatform(void);
+s32 ObjectEvent_FindNearestFloatingPlatform(void);
 
 #endif

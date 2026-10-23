@@ -2,7 +2,7 @@
 #define ALCHEMY_EFFECT_INTERNAL_H
 
 /// @file
-/// What every part of the battle effect object shares: its includes, macros
+/// What every part of the battle animation object shares: its includes, macros
 /// and frame-loop helpers. effect.c includes it before the parts, and each
 /// part includes it too, so that a part read on its own still resolves.
 
@@ -63,42 +63,42 @@
 
 // Display, palette and scanline effects.
 //
-// Effects change the screen around their drawing in three ways:
+// Animations change the screen around their drawing in three ways:
 //
 // - Display state: the windows that frame the battle view (lines 16 to
-//   135), the blend and display registers, and the set-up every effect
-//   starts and ends with (BattleEffect_ConfigureEffectDisplay, below).
-// - Per-frame callbacks the runner schedules: background scrolling, the
-//   camera shake and the backdrop palette fades that make the canvas stand
-//   out.
+//   135), the blend and display registers, and the set-up every animation
+//   starts and ends with (BattleAnim_ConfigureEffectDisplay, below).
+// - Per-frame tasks the runner adds: background scrolling, the
+//   camera shake and the battle background's palette fades that make the canvas
+//   stand out.
 // - Per-scanline work: HBlank DMA that feeds a window edge, BG2's affine
 //   reference or a palette row to the hardware line by line
-//   (BattleEffect_ArmWin0HBlankDma, BattleEffect_ArmBg2AffineHBlankDma and
-//   BattleEffect_ArmPaletteHBlankDma), and the tables those transfers read.
+//   (BattleAnim_ArmWin0HBlankDma, BattleAnim_ArmBg2AffineHBlankDma and
+//   BattleAnim_ArmPaletteHBlankDma), and the tables those transfers read.
 //
-// The callbacks read the current effect's work block, so the runner that
-// schedules them must remove them before that block is released.
+// The callbacks read the current animation's work block, so the runner that
+// adds them must remove them before that block is released.
 
-/// The battle screen's display mode while an effect plays: background mode 1
+/// The battle screen's display mode while an animation plays: background mode 1
 /// with BG0 to BG2, sprites and both windows on.
-#define EFFECT_DISPCNT                                                         \
+#define ANIM_DISPCNT                                                           \
   (DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON |     \
    DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON | DISPCNT_WIN1_ON)
 
-/// Window 0, the battle view, shows BG0 to BG2, sprites and blending. Effects
-/// pick window 1's layers themselves.
-#define EFFECT_WIN0_LAYERS                                                     \
+/// Window 0, the battle view, shows BG0 to BG2, sprites and blending.
+/// Animations pick window 1's layers themselves.
+#define ANIM_WIN0_LAYERS                                                       \
   (WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 | WININ_WIN0_OBJ |         \
    WININ_WIN0_CLR)
 
 /// Outside the battle view: BG0 and blending only.
-#define EFFECT_WINOUT (WINOUT_WIN01_BG0 | WINOUT_WIN01_CLR | WINOUT_WINOBJ_ALL)
+#define ANIM_WINOUT (WINOUT_WIN01_BG0 | WINOUT_WIN01_CLR | WINOUT_WINOBJ_ALL)
 
-/// A work slot read through a pointer to the effect's own slot,
-/// gWorkSlot[HEAP_SLOT_BATTLE_EFFECT].
-#define EFFECT_SLOT(slots, slot) ((slots)[(slot) - HEAP_SLOT_BATTLE_EFFECT])
-/// A work slot read through a pointer to the canvas slot,
-/// gWorkSlot[HEAP_SLOT_BATTLE_CANVAS], just after the effect's own.
+/// A heap slot read through a pointer to the animation's own slot,
+/// gHeapSlots[HEAP_SLOT_BATTLE_ANIM].
+#define ANIM_SLOT(slots, slot) ((slots)[(slot) - HEAP_SLOT_BATTLE_ANIM])
+/// A heap slot read through a pointer to the canvas slot,
+/// gHeapSlots[HEAP_SLOT_BATTLE_CANVAS], just after the animation's own.
 #define CANVAS_SLOT(slots, slot) ((slots)[(slot) - HEAP_SLOT_BATTLE_CANVAS])
 
 /// Index of DMAxCNT_H, the control half, in a channel's 16-bit registers.
@@ -118,100 +118,98 @@ static inline void Dma_Stop(volatile u16 *channel) {
 }
 
 /// The work block and canvas occupy adjacent slots, starting at
-/// HEAP_SLOT_BATTLE_EFFECT. A cursor reads them in that order.
-#define EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas)                       \
+/// HEAP_SLOT_BATTLE_ANIM. A cursor reads them in that order.
+#define ANIM_GET_WORK_AND_CANVAS(cursor, work, canvas)                         \
   ((work) = *(cursor)++, (canvas) = *(cursor))
 
-/// Lets EFFECT_SLOT(slots, s) reach any slot: an earlier one such as
-/// HEAP_SLOT_CAMERA, before HEAP_SLOT_BATTLE_EFFECT, sits at a negative index
-/// that is still inside gWorkSlot.
-#define EFFECT_GET_SLOTS(slots, cursor, work, canvas)                          \
-  ((slots) = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT], (cursor) = (slots),          \
-   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas))
+/// Lets ANIM_SLOT(slots, s) reach any slot: an earlier one such as
+/// HEAP_SLOT_CAMERA, before HEAP_SLOT_BATTLE_ANIM, sits at a negative index
+/// that is still inside gHeapSlots.
+#define ANIM_GET_SLOTS(slots, cursor, work, canvas)                            \
+  ((slots) = &gHeapSlots[HEAP_SLOT_BATTLE_ANIM], (cursor) = (slots),           \
+   ANIM_GET_WORK_AND_CANVAS(cursor, work, canvas))
 
 /// Marks particles[0] to particles[count - 1] free: a particle whose variant
-/// is -1 is not drawn or moved until an effect gives it a life.
-#define EFFECT_FREE_PARTICLES(i, particles, count)                             \
+/// is -1 is not drawn or moved until an animation gives it a life.
+#define ANIM_FREE_PARTICLES(i, particles, count)                               \
   for ((i) = 0; (i) != (count); (i)++)                                         \
   (particles)[i].variant = -1
 
 /// Starts a frame's 3D projection from the battle camera: resets the
-/// transform, then looks from camera->eye towards camera->focus. Effects that
-/// place pictures at battle positions do this before projecting them.
-#define EFFECT_VIEW_FROM_CAMERA(camera)                                        \
-  (Render_ResetTransformState(),                                               \
-   Transform_SetLookAt((camera)->eye, (camera)->focus))
+/// transform, then looks from camera->eye towards camera->focus. Animations
+/// that place pictures at battle positions do this before projecting them.
+#define ANIM_VIEW_FROM_CAMERA(camera)                                          \
+  (Transform_Reset(), Transform_SetLookAt((camera)->eye, (camera)->focus))
 
 /// Strikes target `i`: it flashes white in its damage pose for `frames`
 /// frames, counted by actor timer `i`, and is knocked back by `motion`, an enum
-/// BattleKnockback (BattleMotion_ApplyVariantMotionFar).
-#define EFFECT_STRIKE_TARGET(effect, i, frames, motion)                        \
-  (ObjectGroup_UpdateMembers((effect)->actors[i], SPRITE_COLOR_WHITE,          \
+/// BattleKnockback (BattleMotion_ApplyKnockbackFar).
+#define ANIM_STRIKE_TARGET(effect, i, frames, motion)                          \
+  (ObjectGroup_UpdateMembers((effect)->targets[i], SPRITE_COLOR_WHITE,         \
                              POSE_DAMAGE, i, frames),                          \
-   BattleMotion_ApplyVariantMotionFar((effect)->actors[i], motion))
+   BattleMotion_ApplyKnockbackFar((effect)->targets[i], motion))
 
-// The canvas life cycle, shared by every canvas effect. The statement macros
+// The canvas life cycle, shared by every canvas animation. The statement macros
 // are comma expressions, not do { } while (0) blocks: agscc compiles a
-// do-while (0) in an effect's frame loop differently at some sites, and the
+// do-while (0) in an animation's frame loop differently at some sites, and the
 // comma form matches at all of them.
 
 /// Lets the battle show the damage: resumes its paused playback, which plays
 /// hitSound (an SE_ id; 0 keeps the one already queued) as the targets react.
-/// It acts only while the playback is idle (BattleEvent_StartPhase),
+/// It acts only while the playback is idle (BattlePlayback_Start),
 /// so a second use while the damage is showing changes nothing.
-#define EFFECT_SHOW_DAMAGE(hitSound) BattleEvent_StartPhaseFar(hitSound)
+#define ANIM_SHOW_DAMAGE(hitSound) BattlePlayback_StartFar(hitSound)
 
 /// The canvas: 128x128 pixels, one byte each, in its heap slot and in VRAM at
 /// BG_CHAR_BLOCK(1).
 #define CANVAS_BYTES (128 * 128)
 
 /// Opens the canvas layer at the canvas's own width, one texel per pixel,
-/// where BattleEffect_StartCanvasLayer stretches it to twice the width.
-#define EFFECT_START_NARROW_CANVAS(bgControl)                                  \
-  (BattleEffect_StartCanvasLayer(bgControl), REG_BG2PA = Q_8_8(1))
+/// where BattleAnim_StartCanvasLayer stretches it to twice the width.
+#define ANIM_START_NARROW_CANVAS(bgControl)                                    \
+  (BattleAnim_StartCanvasLayer(bgControl), REG_BG2PA = Q_8_8(1))
 
-/// Builds a blitter for the 128x128 canvas (1 << 7 pixels each way) in work
-/// slot `slot`: BattleEffect_BuildBlitter's drawing routine for one clip,
-/// mirror and blend mode. Every canvas effect draws through one or two of
+/// Builds a blitter for the 128x128 canvas (1 << 7 pixels each way) in heap
+/// slot `slot`: BattleAnim_BuildBlitter's drawing routine for one clip,
+/// mirror and blend mode. Every canvas animation draws through one or two of
 /// these.
-#define EFFECT_LOAD_BLITTER(slot, flags, mode)                                 \
-  BattleEffect_BuildBlitter(slot, 7, 7, flags, mode)
+#define ANIM_LOAD_BLITTER(slot, flags, mode)                                   \
+  BattleAnim_BuildBlitter(slot, 7, 7, flags, mode)
 
 /// Sets how the canvas transfer treats what is left in the canvas after each
 /// copy: `mode` with `value` (see enum CanvasTransferMode).
-#define EFFECT_SET_TRANSFER(work, mode, value)                                 \
+#define ANIM_SET_TRANSFER(work, mode, value)                                   \
   ((work)->transferMode = (mode), (work)->transferValue = (value))
 
 /// Sets the transfer, then starts copying the canvas to VRAM once a frame.
-#define EFFECT_START_TRANSFER(work, mode, value)                               \
-  (EFFECT_SET_TRANSFER(work, mode, value),                                     \
-   Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,  \
-                                 EFFECT_CALLBACK_ORDER))
+#define ANIM_START_TRANSFER(work, mode, value)                                 \
+  (ANIM_SET_TRANSFER(work, mode, value),                                       \
+   Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER))
 
-/// Ends a frame of a canvas effect: marks the canvas ready for the transfer
-/// callback, then waits for the next frame. Nearly every effect loop ends so.
-#define EFFECT_PRESENT_FRAME(work) ((work)->transferPending = 1, WaitFrames(1))
+/// Ends a frame of a canvas animation: marks the canvas ready for the transfer
+/// callback, then waits for the next frame. Nearly every animation loop ends
+/// so.
+#define ANIM_PRESENT_FRAME(work) ((work)->transferPending = 1, WaitFrames(1))
 
-/// The usual end of an effect frame: counts down the targets' flash timers
+/// The usual end of an animation frame: counts down the targets' flash timers
 /// (ObjectGroup_TickMemberTimers), then presents the canvas.
-#define EFFECT_END_FRAME(work)                                                 \
-  (ObjectGroup_TickMemberTimers(), EFFECT_PRESENT_FRAME(work))
+#define ANIM_END_FRAME(work)                                                   \
+  (ObjectGroup_TickMemberTimers(), ANIM_PRESENT_FRAME(work))
 
 /// Frees the two blitters, the alternate first.
-#define EFFECT_RELEASE_BLITTERS()                                              \
-  (Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE),                      \
-   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER))
+#define ANIM_RELEASE_BLITTERS()                                                \
+  (FreeHeapSlot(HEAP_SLOT_RAM_CODE_2), FreeHeapSlot(HEAP_SLOT_RAM_CODE))
 
-/// The usual end of a canvas effect: stops the transfer callback before
+/// The usual end of a canvas animation: stops the transfer callback before
 /// freeing what it reads, then the blitters, then the canvas layer.
-#define EFFECT_FINISH_CANVAS()                                                 \
-  (Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer),      \
-   EFFECT_RELEASE_BLITTERS(), BattleEffect_EndCanvasLayer())
+#define ANIM_FINISH_CANVAS()                                                   \
+  (Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer),                     \
+   ANIM_RELEASE_BLITTERS(), BattleAnim_EndCanvasLayer())
 
-/// The same for an effect that drew through one blitter.
-#define EFFECT_FINISH_CANVAS_ONE_BLITTER()                                     \
-  (Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer),      \
-   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER), BattleEffect_EndCanvasLayer())
+/// The same for an animation that drew through one blitter.
+#define ANIM_FINISH_CANVAS_ONE_BLITTER()                                       \
+  (Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer),                     \
+   FreeHeapSlot(HEAP_SLOT_RAM_CODE), BattleAnim_EndCanvasLayer())
 
 /// The bytes of one set of the ten mote cells: 2 * (1 + 4 + ... + 100).
 #define MOTE_SET_BYTES 770
@@ -220,47 +218,47 @@ static inline void Dma_Stop(volatile u16 *channel) {
 /// `size` (size pixels wide, twice that tall) of `sheet` through blitter
 /// `draw`, centred across x and standing on y: the motes, sparks and dust of
 /// 29 parts, from the mote fountain to the summons. `size` is 1 to 10.
-#define EFFECT_DRAW_MOTE(draw, canvas, sheet, x, y, size)                      \
-  (draw)(canvas, (sheet) + gBattleEffect_MoteCells[(size) - 1],                \
+#define ANIM_DRAW_MOTE(draw, canvas, sheet, x, y, size)                        \
+  (draw)(canvas, (sheet) + gBattleAnim_MoteCells[(size) - 1],                  \
          (x) - (size) / 2, (y) - (size), size, (size) * 2)
 
 /// Draws flare cell `size` of `sheet`, a square `size` pixels from its centre
 /// to each edge, centred on (x, y): Douse's sparks and the glowing points of
 /// the element pillar and burst, stat boosts, beams and rings.
-#define EFFECT_DRAW_FLARE(draw, canvas, sheet, x, y, size)                     \
-  (draw)(canvas, (sheet) + gBattleEffect_FlareCells[(size) - 1], (x) - (size), \
+#define ANIM_DRAW_FLARE(draw, canvas, sheet, x, y, size)                       \
+  (draw)(canvas, (sheet) + gBattleAnim_FlareCells[(size) - 1], (x) - (size),   \
          (y) - (size), (size) * 2, (size) * 2)
 
-/// Shows the canvas: the effect display mode, BG2 stretched to twice its width
-/// (the 128-pixel canvas shown 256 pixels wide) and blended over everything
-/// below: `top` sixteenths of the canvas's colour are added to all of what
-/// lies under it, so the canvas brightens what it covers.
-#define EFFECT_SHOW_WIDE_CANVAS(top)                                           \
-  (REG_DISPCNT = EFFECT_DISPCNT, REG_BG2PA = Q_8_8(0.5),                       \
+/// Shows the canvas: the animation display mode, BG2 stretched to twice its
+/// width (the 128-pixel canvas shown 256 pixels wide) and blended over
+/// everything below: `top` sixteenths of the canvas's colour are added to all
+/// of what lies under it, so the canvas brightens what it covers.
+#define ANIM_SHOW_WIDE_CANVAS(top)                                             \
+  (REG_DISPCNT = ANIM_DISPCNT, REG_BG2PA = Q_8_8(0.5),                         \
    REG_BLDALPHA = BLEND_ALPHA(top, 16),                                        \
    REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL)
 
 /// A WIN0H value whose left edge is past its right edge. The hardware then
 /// takes the right edge as 240, so the span is not empty in itself; the
-/// effects write it only on lines outside window 0's vertical range.
+/// animations write it only on lines outside window 0's vertical range.
 #define WINDOW_SPAN_INVERTED WIN_RANGE(1, 0)
 
-/// The scheduler order of every per-frame effect callback
-/// (Scheduler_AddOrUpdateCallback sorts the frame's callbacks by order).
-#define EFFECT_CALLBACK_ORDER 0x480
-/// The order where the battle's own playback runs, which the palette fade and
+/// The task priority of every per-frame animation task
+/// (Task_Add sorts the frame's tasks by priority).
+#define ANIM_CALLBACK_ORDER 0x480
+/// The priority of the battle's own playback, which the palette fade and
 /// the element streaks take.
-#define EFFECT_PLAYBACK_ORDER 0xc80
+#define ANIM_PLAYBACK_ORDER 0xc80
 
-/// Ram_MapGridCellBuffer as the unused Graphics_ConvertBackgroundToBlueRamp
-/// (bind.c) uses it: a working copy of the backdrop's picture, the 0x7800
-/// bytes of BG character block 2.
+/// Ram_MapGridCellBuffer as the unused BattleAnim_ConvertBackgroundToBlueRamp
+/// (bind.c) uses it: a working copy of the battle background's picture, the
+/// 0x7800 bytes of BG character block 2.
 #define BLUE_RAMP_PIXELS Ram_MapGridCellBuffer
 
 /// Caps a colour level at cap, and at 0 from below. Fades draw from darker
 /// copies of a picture built before the first frame, copy i capped at
 /// 64 - 7i.
-#define EFFECT_CAP_LEVEL(level, cap)                                           \
+#define ANIM_CAP_LEVEL(level, cap)                                             \
   {                                                                            \
     if ((level) > (cap))                                                       \
       (level) = (cap);                                                         \
@@ -273,20 +271,20 @@ static inline void Dma_Stop(volatile u16 *channel) {
 
 /// Windows 0 and 1 both cover the battle view: the full width, lines 16 to
 /// 135.
-#define EFFECT_SET_BATTLE_WINDOWS()                                            \
+#define ANIM_SET_BATTLE_WINDOWS()                                              \
   (REG_WIN0H = WIN_RANGE(0, 240), REG_WIN0V = WIN_RANGE(16, 136),              \
    REG_WIN1H = WIN_RANGE(0, 240), REG_WIN1V = WIN_RANGE(16, 136))
 
 /// BG2 shows the canvas from screen line 16 down (BG2Y is -16.0), stretched to
 /// twice its width: the 128x128 canvas across the battle view.
-#define EFFECT_SET_CANVAS_AFFINE()                                             \
+#define ANIM_SET_CANVAS_AFFINE()                                               \
   (REG_BG2X = 0, REG_BG2Y = -0x1000, REG_BG2PA = Q_8_8(0.5), REG_BG2PB = 0,    \
    REG_BG2PC = 0, REG_BG2PD = Q_8_8(1))
 
 /// Writes one row of BG2's map for the canvas: its 16 tiles of row `row` in
 /// order. An affine map has one byte per tile, so they are written two at a
 /// time, eight halfwords from `offset` on.
-#define EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset)                       \
+#define ANIM_WRITE_CANVAS_MAP_ROW(row, column, offset)                         \
   for ((column) = 0; (column) != 8; (column)++, (offset) += 2) {               \
     s32 tileIndex;                                                             \
     s16 pair;                                                                  \
@@ -296,14 +294,14 @@ static inline void Dma_Stop(volatile u16 *channel) {
     *(volatile s16 *)((u8 *)BG_CANVAS_MAP + (offset)) = pair;                  \
   }
 
-/// What BattleEffect_RunDjinniEntrance takes added to its element; the element
+/// What BattleAnim_RunDjinniEntrance takes added to its element; the element
 /// alone plays the 64-frame entrance.
 enum DjinniEntranceLength {
   /// The long entrance: 84 frames instead of 64, ending in a burst of motes.
   DJINNI_ENTRANCE_LONG = ELEMENT_COUNT
 };
 
-/// Where BattleEffect_RunDjinniEntrance's Djinni appears.
+/// Where BattleAnim_RunDjinniEntrance's Djinni appears.
 enum DjinniEntranceAnchor {
   DJINNI_ANCHOR_OVER_TARGET, ///< over the first target
   DJINNI_ANCHOR_TARGET_X,    ///< at the first target's x, at depth 0
@@ -312,7 +310,7 @@ enum DjinniEntranceAnchor {
   DJINNI_ANCHOR_CENTRE       ///< in the centre of the field
 };
 
-/// Where BattleEffect_RunSparkGroups' bursts go off.
+/// Where BattleAnim_RunSparkGroups' bursts go off.
 enum SparkGroupsMode {
   SPARK_GROUPS_NOVA,     ///< at (60, 48); the damage shows on frame 24
   SPARK_GROUPS_DYNAMITE, ///< at (60, 64), orange; the damage shows on frame 2
@@ -320,19 +318,19 @@ enum SparkGroupsMode {
                          ///< sparks rising; the damage shows on frame 2
 };
 
-/// Which way BattleEffect_WipeCanvas sweeps.
+/// Which way BattleAnim_WipeCanvas sweeps.
 enum CanvasWipeDirection {
   CANVAS_WIPE_DOWN,  ///< top to bottom
   CANVAS_WIPE_ACROSS ///< left to right
 };
-/// What BattleEffect_WipeCanvas leaves behind it.
+/// What BattleAnim_WipeCanvas leaves behind it.
 enum CanvasWipeFill {
   CANVAS_WIPE_FILL, ///< colour 1, which its callers make black first
   CANVAS_WIPE_CLEAR ///< colour 0: the canvas cleared
 };
 
-/// The summons' object formations (BattleEffect_PlaceFormationObjects and
-/// BattleEffect_RunImpactBurst), each named for the summon that keeps it.
+/// The summons' object formations (BattleAnim_PlaceFormationObjects and
+/// BattleAnim_RunImpactBurst), each named for the summon that keeps it.
 enum SummonFormation {
   /// ★ Named from the game: "Thor" (MsgDjinnName)
   SUMMON_FORMATION_THOR, ///< nine in a 3x3 grid at 32-pixel spacing
@@ -349,12 +347,12 @@ enum SummonFormation {
 /// picks.
 enum SpinAxis { SPIN_YAW, SPIN_PITCH, SPIN_ROLL, SPIN_PITCH_AND_ROLL };
 
-/// work->cameraPhase, which Camera_ApplyPhasedDelta and the effects that
+/// work->cameraPhase, which Camera_ApplyPhasedDelta and the animations that
 /// turn the camera through it (Fire, Froth) pass between them.
 enum CameraPhase {
   CAMERA_PHASE_IDLE,       ///< nothing marked since the last turn
-  CAMERA_PHASE_FRAME_DONE, ///< the effect has finished a frame: turn the whole
-                           ///< delta
+  CAMERA_PHASE_FRAME_DONE, ///< the animation has finished a frame: turn the
+                           ///< whole delta
   CAMERA_PHASE_HALF_TURNED ///< half a delta turned on an unmarked frame
 };
 

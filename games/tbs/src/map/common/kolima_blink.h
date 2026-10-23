@@ -9,7 +9,7 @@
 
 /// An object script call, each frame of the fall: the speck flickers between
 /// palettes 10 and 7, every second frame.
-static s32 Kolima_FlickerCurseDust(struct ScriptInterpreter *interpreter) {
+static s32 Kolima_FlickerCurseDust(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *speck = (struct ObjectEvent *)interpreter;
   if ((gFrameCount >> 1) & 1) {
     ObjectGroup_SetChildValue(speck, 10);

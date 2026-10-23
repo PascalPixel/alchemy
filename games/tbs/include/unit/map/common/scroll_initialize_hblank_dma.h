@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-void DisplayScroll_InitializeHBlankDma(s32 mode, s32 freqX, s32 stepX, s32 ampX,
-                                       s32 freqY, s32 stepY, s32 ampY);
+void ScanlineEffect_InitWave(s32 mode, s32 freqX, s32 stepX, s32 ampX,
+                             s32 freqY, s32 stepY, s32 ampY);
 
 #endif

@@ -1,17 +1,17 @@
 /// @file
-/// The debug menus (maps, flags, icon browsers) and the system menu's
+/// The debug menus (maps, flags, icon browsers) and the pause menu's
 /// choices.
 // Part of battle_command.c.
 
 #include "../battle_command_internal.h"
 
-/// Schedules the debug map and warp destination selector; 0xc80 is a scheduler
-/// order, not a number of frames to wait. Nothing in the game calls it.
-UNUSED void DebugMenu_ScheduleMapSelector(void) {
+/// Schedules the debug map and warp destination selector; 0xc80 is a task
+/// priority, not a number of frames to wait. Nothing in the game calls it.
+UNUSED void DebugMapSelect_Schedule(void) {
 #ifdef UBFIX
-  Scheduler_AddOrUpdateCallback(Menu_RunSelection, 0xC80);
+  Task_Add(DebugMapSelect_Run, 0xC80);
 #else
-  Scheduler_AddOrUpdateCallback((SchedulerCallback)Menu_RunSelection, 0xC80);
+  Task_Add((TaskFunc)DebugMapSelect_Run, 0xC80);
 #endif
 }
 
@@ -19,47 +19,47 @@ UNUSED void DebugMenu_ScheduleMapSelector(void) {
 /// labels. The first line has the map's name (MsgDebugCategoryName + map) and,
 /// beside it, the area its warp destination leads to (MsgDebugEntryName +
 /// area); the numbers, three digits each, go under them.
-void Menu_DrawSelectionRow(struct UiWindow *work, s32 mapId,
-                           const s16 *warpDest) {
+void DebugMapSelect_DrawRow(struct Window *work, s32 mapId,
+                            const s16 *warpDest) {
   s16 mapIndex = mapId;
   s32 label = MapSec_GetNameIndexFar(mapIndex, *warpDest) + MsgDebugEntryName;
-  RenderOutput_PrepareForRedraw(work);
-  UiText_DrawNumber(mapIndex, 3, work, 0, 14);
-  UiText_DrawNumber(*warpDest, 3, work, MENU_LABEL_X, 14);
-  UiText_DrawString(gMenu_ColonString, work, MENU_TEXT_X, 0);
-  UiText_DrawResource(mapIndex + MsgDebugCategoryName, work, 0, 0);
-  UiText_DrawString(gMenu_ColonString, work, MENU_TEXT_X, 14);
-  UiText_DrawResource(label, work, MENU_LABEL_X, 0);
+  WindowSprite_PrepareForRedraw(work);
+  Text_DrawNumber(mapIndex, 3, work, 0, 14);
+  Text_DrawNumber(*warpDest, 3, work, MENU_LABEL_X, 14);
+  Text_DrawString(gMenu_ColonString, work, MENU_TEXT_X, 0);
+  Text_DrawMessage(mapIndex + MsgDebugCategoryName, work, 0, 0);
+  Text_DrawString(gMenu_ColonString, work, MENU_TEXT_X, 14);
+  Text_DrawMessage(label, work, MENU_LABEL_X, 0);
 }
 
 // The debug map selector: a map and a warp destination number, starting from
-// the map being run (Menu_HandleSelectionRowInput has the keys). A warps
+// the map being run (DebugMapSelect_HandleRowInput has the keys). A warps
 // there (FieldScript_SetDestinationFar), B closes it. The field opens it in
 // debug mode when the Start button's menu (Save your quest, Sleep, Change
 // settings) is opened with B held (object/object/run_map.c).
-// The scheduler and the debug menu's far call ignore this selection result.
+// The task runner and the debug menu's far call ignore this selection result.
 // Plain void removes two result moves (252 to 248 bytes in tbs-en) and
 // reorders FieldScript_SetDestinationFar's argument setup.
 #ifdef UBFIX
-void Menu_RunSelection(void) {
+void DebugMapSelect_Run(void) {
 #else
-s16 Menu_RunSelection(void) {
+s16 DebugMapSelect_Run(void) {
 #endif
   s32 cursorSlot;
   s16 selectedField;
   s16 warpDest;
   struct MenuSprite cursor;
   s16 mapId;
-  struct UiWindow *window;
+  struct Window *window;
   s16 result;
 
   window = 0;
   selectedField = 0;
   mapId = gGameState.defaultMap;
   warpDest = gGameState.defaultWarpDest;
-  window = UiWindow_Create(0, 7, 30, 5, 2);
-  Menu_DrawSelectionRow(window, mapId, &warpDest);
-  UiTextResource_Initialize(&cursor, &cursorSlot);
+  window = Window_Create(0, 7, 30, 5, 2);
+  DebugMapSelect_DrawRow(window, mapId, &warpDest);
+  MenuArrow_Create(&cursor, &cursorSlot);
 
   // Wait for the keys that opened it to be let go.
   while (gKeysHeld != 0)
@@ -67,10 +67,10 @@ s16 Menu_RunSelection(void) {
 
   for (;;) {
     result =
-        Menu_HandleSelectionRowInput(window, mapId, &warpDest, &selectedField);
+        DebugMapSelect_HandleRowInput(window, mapId, &warpDest, &selectedField);
     if (result == -1) {
-      UiTextResource_Release(cursorSlot);
-      UiWork_Finalize(window, 2);
+      MenuArrow_Release(cursorSlot);
+      Window_Close(window, 2);
       FieldScript_SetDestinationFar(mapId, warpDest);
 #ifdef UBFIX
       return;
@@ -79,8 +79,8 @@ s16 Menu_RunSelection(void) {
 #endif
     }
     if (result == -2) {
-      UiTextResource_Release(cursorSlot);
-      UiWork_Finalize(window, 2);
+      MenuArrow_Release(cursorSlot);
+      Window_Close(window, 2);
 #ifdef UBFIX
       return;
 #else
@@ -88,8 +88,8 @@ s16 Menu_RunSelection(void) {
 #endif
     }
 
-    UiTextResource_SetPosition(&cursor, MENU_TEXT_X,
-                               selectedField * 14 + MENU_TEXT_Y);
+    MenuArrow_SetPosition(&cursor, MENU_TEXT_X,
+                          selectedField * 14 + MENU_TEXT_Y);
     mapId = result;
     WaitFrames(1);
   }
@@ -103,8 +103,8 @@ s16 Menu_RunSelection(void) {
 /// R and L step a map by ten, setting the warp destination to 0, and past
 /// either end go to the other (195 + 10 gives 0); they step a warp destination
 /// by ten, wrapping by 99 (95 + 10 gives 6).
-s32 Menu_HandleSelectionRowInput(struct UiWindow *window, s16 mapId,
-                                 s16 *warpDest, s16 *selectedField) {
+s32 DebugMapSelect_HandleRowInput(struct Window *window, s16 mapId,
+                                  s16 *warpDest, s16 *selectedField) {
   if (gKeysRepeat & KEY_A)
     return -1;
   if (gKeysRepeat & KEY_B)
@@ -123,7 +123,7 @@ s32 Menu_HandleSelectionRowInput(struct UiWindow *window, s16 mapId,
     }
     if (mapId > 200)
       mapId = 0;
-    Menu_DrawSelectionRow(window, mapId, warpDest);
+    DebugMapSelect_DrawRow(window, mapId, warpDest);
   } else if (gKeysRepeat & KEY_LEFT) {
     if (*selectedField == 0) {
       mapId--;
@@ -134,7 +134,7 @@ s32 Menu_HandleSelectionRowInput(struct UiWindow *window, s16 mapId,
     }
     if (mapId < 0)
       mapId = 200;
-    Menu_DrawSelectionRow(window, mapId, warpDest);
+    DebugMapSelect_DrawRow(window, mapId, warpDest);
   } else if (gKeysRepeat & KEY_R) {
     if (*selectedField == 0) {
       *warpDest = 0;
@@ -146,7 +146,7 @@ s32 Menu_HandleSelectionRowInput(struct UiWindow *window, s16 mapId,
     }
     if (mapId > 200)
       mapId = 0;
-    Menu_DrawSelectionRow(window, mapId, warpDest);
+    DebugMapSelect_DrawRow(window, mapId, warpDest);
   } else if (gKeysRepeat & KEY_L) {
     if (*selectedField == 0) {
       *warpDest = 0;
@@ -158,50 +158,50 @@ s32 Menu_HandleSelectionRowInput(struct UiWindow *window, s16 mapId,
     }
     if (mapId < 0)
       mapId = 200;
-    Menu_DrawSelectionRow(window, mapId, warpDest);
+    DebugMapSelect_DrawRow(window, mapId, warpDest);
   }
   return mapId;
 }
 
 /// Shows a 16x16 flag grid per page and processes input until closed.
 /// Starts on page 8 and always returns 0. A page is 256 game flags, page 8
-/// flags 0x800 to 0x8ff (Menu_HandleFlagGridInput has the keys). The field
+/// flags 0x800 to 0x8ff (DebugFlagEditor_HandleInput has the keys). The field
 /// opens it in debug mode when the main menu (Psynergy, Djinn, Item, Status)
 /// is opened with B and Select held (object/object/run_map.c).
-s32 Menu_RunSelectionWithCursorObject(void) {
+s32 DebugFlagEditor_Run(void) {
   struct MenuSprite cursorSprite; // Cursor object
   s32 cursor[2];                  // Cursor column and row
   s32 cursorSlot;
   s32 page;
-  struct UiWindow *window;
+  struct Window *window;
   s32 change;
 
   page = 8;
   window = 0;
   cursor[0] = 0;
   cursor[1] = 0;
-  window = UiWindow_Create(1, 0, 28, 20, 2);
-  Menu_DrawFlagBitTable(window, page);
-  UiTextResource_Initialize(&cursorSprite, &cursorSlot);
+  window = Window_Create(1, 0, 28, 20, 2);
+  DebugFlagEditor_DrawTable(window, page);
+  MenuArrow_Create(&cursorSprite, &cursorSlot);
   for (;;) {
     WaitFrames(1);
-    change = Menu_HandleFlagGridInput(window, &page, cursor);
+    change = DebugFlagEditor_HandleInput(window, &page, cursor);
     // B closes the table; a change of flag or page redraws it.
     if (change == -1)
       break;
     if (change == 1)
-      Menu_DrawFlagBitTable(window, page);
-    UiTextResource_SetPosition(&cursorSprite, cursor[0] * 8 + 58,
-                               cursor[1] * 8 + 20);
+      DebugFlagEditor_DrawTable(window, page);
+    MenuArrow_SetPosition(&cursorSprite, cursor[0] * 8 + 58,
+                          cursor[1] * 8 + 20);
   }
-  UiTextResource_Release(cursorSlot);
-  UiWork_Finalize(window, 2);
+  MenuArrow_Release(cursorSlot);
+  Window_Close(window, 2);
   return 0;
 }
 
 /// Writes the lowest count digits of value, up to five, most significant first
 /// as uppercase hexadecimal in out, without a null terminator.
-void Text_FormatHex(u32 value, u32 count, u8 *out) {
+void String_FormatHexDigits(u32 value, u32 count, u8 *out) {
   u8 digits[8];
   u32 i;
 
@@ -224,15 +224,15 @@ void Text_FormatHex(u32 value, u32 count, u8 *out) {
 /// Draws one page of 256 flags as sixteen rows of hexadecimal labels and bits.
 /// Each row: its first flag's number in three hex digits, then its 16 flags
 /// as 0 or 1, lowest first, under a heading of hex digits.
-void Menu_DrawFlagBitTable(struct UiWindow *window, s32 page) {
+void DebugFlagEditor_DrawTable(struct Window *window, s32 page) {
   s32 row;
   s32 y;
   s32 flag;
   char label[5];
   char bits[17];
 
-  RenderOutput_PrepareForRedraw(window);
-  UiText_DrawStringInWindow((u8 *)gMenu_HexDigitsString, window, 48, 0);
+  WindowSprite_PrepareForRedraw(window);
+  Text_DrawStringInWindow((u8 *)gMenu_HexDigitsString, window, 48, 0);
 
   flag = page << 8;
   for (row = 0; row != 16; row++) {
@@ -243,9 +243,9 @@ void Menu_DrawFlagBitTable(struct UiWindow *window, s32 page) {
     for (i = 0; i != 5; i++) {
       label[i] = 0;
     }
-    Text_FormatHex(flag, 3, label);
-    UiText_DrawStringInWindow((u8 *)label, window, 0, y);
-    UiText_DrawStringInWindow((u8 *)gMenu_ColonString, window, 32, y);
+    String_FormatHexDigits(flag, 3, label);
+    Text_DrawStringInWindow((u8 *)label, window, 0, y);
+    Text_DrawStringInWindow((u8 *)gMenu_ColonString, window, 32, y);
 
     for (i = 0; i < 16; i++) {
       s32 set = GameFlag_TestFar(flag);
@@ -253,7 +253,7 @@ void Menu_DrawFlagBitTable(struct UiWindow *window, s32 page) {
       flag++;
     }
     bits[i] = 0;
-    UiText_DrawStringInWindow((u8 *)bits, window, 48, y);
+    Text_DrawStringInWindow((u8 *)bits, window, 48, y);
   }
 }
 
@@ -262,7 +262,7 @@ void Menu_DrawFlagBitTable(struct UiWindow *window, s32 page) {
 /// A toggles flag page * 256 + row * 16 + column; B or Select closes. L and
 /// R turn a page, wrapping 0 to 15; with Start held they jump ten, to the
 /// other end when that passes it (5 - 10 gives 15).
-s32 Menu_HandleFlagGridInput(struct UiWindow *window, s32 *page, s32 *cursor) {
+s32 DebugFlagEditor_HandleInput(struct Window *window, s32 *page, s32 *cursor) {
   s32 *row = &cursor[1];
 
   if (gKeysRepeat & KEY_A) {
@@ -313,34 +313,34 @@ s32 Menu_HandleFlagGridInput(struct UiWindow *window, s32 *page, s32 *cursor) {
 /// Reserved menu entry. Nothing calls it.
 void Menu_ReservedNoOp(void) {}
 
-/// Sets the Djinni's collected flag, then adds it to the specified owner.
+/// Sets the Djinni's collected flag, then adds it to the specified member.
 /// The flag is FLAG_DJINN_FIRST + 20 * element + index. Nothing calls it.
 void Djinn_SetFoundFlagAndAdd(s32 owner, s32 element, s32 index) {
   GameFlag_SetBitFar((element * 0x14) + index + FLAG_DJINN_FIRST);
-  Djinn_AddToOwnerFar(owner, element, index);
+  Djinn_GiveFar(owner, element, index);
 }
 
-/// Handles Save, Sleep and Options from the field workspace. A cancelled save
-/// or options screen reopens the workspace; cancelling the workspace returns
+/// Handles Save, Sleep and Options from the pause menu. A cancelled save
+/// or option menu reopens the pause menu; cancelling the pause menu returns
 /// -1. Sleep shows its message and sets gSleepRequested. Otherwise returns
 /// 0. The field reaches it by far call (object/object/run_map.c).
-s32 Menu_RunWorkspaceResultLoop(void) {
+s32 PauseMenu_Run(void) {
   s32 result;
 
-  result = Menu_RunWorkspaceSelectionLoop();
+  result = PauseMenu_Choose();
   if (result == -1) {
     return -1;
   }
-  if (result == SYSTEM_MENU_SAVE) {
-    if (SaveMenu_WriteSelectedSlot() == -1) {
-      return Menu_RunWorkspaceResultLoop();
+  if (result == PAUSE_MENU_SAVE_QUEST) {
+    if (Save_ToChosenFile() == -1) {
+      return PauseMenu_Run();
     }
-  } else if (result == SYSTEM_MENU_SLEEP) {
-    UiText_ShowPositionedMessageAndWait(MsgSleepMode, 1);
+  } else if (result == PAUSE_MENU_SLEEP) {
+    FieldMessage_Show(MsgSleepMode, 1);
     gSleepRequested = result;
-  } else if (result == SYSTEM_MENU_CHANGE_SETTINGS) {
-    if (Menu_RunWorkspaceOptions() == -1) {
-      return Menu_RunWorkspaceResultLoop();
+  } else if (result == PAUSE_MENU_CHANGE_SETTINGS) {
+    if (OptionMenu_Run() == -1) {
+      return PauseMenu_Run();
     }
   }
   return 0;
@@ -352,12 +352,12 @@ s32 Menu_RunWorkspaceResultLoop(void) {
 /// (item and Psynergy icons page * 32 on; the status patterns are 0 to 31 on
 /// every page, whatever the heading says), A or B closes it. Returns 0. The
 /// debug menus open it (debug/test.c, debug/level.c).
-s32 DebugMenu_BrowseIcons(void) {
+s32 DebugBrowser_Icons(void) {
   s32 redraw;
   s32 tile;
   s32 page;
   s32 mode;
-  struct UiWindow *window;
+  struct Window *window;
   s32 slot;
   s32 base;
   s32 i;
@@ -369,7 +369,7 @@ s32 DebugMenu_BrowseIcons(void) {
   page = 0;
   mode = 0;
   redraw = 1;
-  gMenuCtrlWork->suspended = redraw;
+  gObjectSystemWork->suspended = redraw;
   WaitFrames(1);
 
   while (1) {
@@ -397,42 +397,42 @@ s32 DebugMenu_BrowseIcons(void) {
       redraw = 0;
       page = (page + 8) % 8;
       mode = (mode + 3) % 3;
-      UiWork_Finalize(window, 2);
-      window = UiWindow_Create(10, 0, 18, 12, 2);
+      Window_Close(window, 2);
+      window = Window_Create(10, 0, 18, 12, 2);
       if (mode == 0)
-        UiText_DrawStringInWindow(gWorkspace_ItemTitle, window, 0, 0);
+        Text_DrawStringInWindow(gWorkspace_ItemTitle, window, 0, 0);
       else if (mode == 1)
-        UiText_DrawStringInWindow(gWorkspace_EnergyTitle, window, 0, 0);
+        Text_DrawStringInWindow(gWorkspace_EnergyTitle, window, 0, 0);
       else
-        UiText_DrawStringInWindow(gWorkspace_StatusTitle, window, 0, 0);
-      UiText_DrawStringInWindow(gWorkspace_PageLabel, window, 0, 8);
-      UiText_DrawNumberInWindow(page, 0, window, 40, 8);
+        Text_DrawStringInWindow(gWorkspace_StatusTitle, window, 0, 0);
+      Text_DrawStringInWindow(gWorkspace_PageLabel, window, 0, 8);
+      Text_DrawNumberInWindow(page, 0, window, 40, 8);
       base = page << 5;
-      UiText_DrawNumberInWindow(base, 3, window, 64, 8);
-      UiText_DrawStringInWindow(gWorkspace_RangeDash, window, 88, 8);
-      UiText_DrawNumberInWindow(base + 31, 3, window, 96, 8);
+      Text_DrawNumberInWindow(base, 3, window, 64, 8);
+      Text_DrawStringInWindow(gWorkspace_RangeDash, window, 88, 8);
+      Text_DrawNumberInWindow(base + 31, 3, window, 96, 8);
       for (i = 0; i <= 31; i++) {
         slot = -1;
         row = i / 8;
         x = (i - row * 8) * 16;
         y = row * 16 + 16;
         if (mode == 0) {
-          UiIcon_BuildItemIconTiles(base + i, 1, &slot, &tile, mode);
-          RenderOutput_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
+          Icon_BuildItemIconTiles(base + i, 1, &slot, &tile, mode);
+          WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
         } else if (mode == 1) {
-          UiIcon_BuildAbilityIconTiles(base + i, 1, &slot, &tile, 0);
-          RenderOutput_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
+          Icon_BuildAbilityIconTiles(base + i, 1, &slot, &tile, 0);
+          WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
         } else {
-          slot = Resource_FindFreeEntry();
+          slot = VramCache_FindFreeEntry();
           Ui_BuildPatternToSlot(i, 0, slot);
-          RenderOutput_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
+          WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
         }
       }
     }
     WaitFrames(1);
   }
-  UiWork_Finalize(window, 2);
-  gMenuCtrlWork->suspended = 0;
+  Window_Close(window, 2);
+  gObjectSystemWork->suspended = 0;
   return 0;
 }
 
@@ -449,11 +449,11 @@ s32 DebugMenu_BrowseIcons(void) {
 /// Left and Right step one entry, L and R ten; a sprite map entry's portrait
 /// is its value + 128, shown in the second portrait slot's VRAM. Returns 0.
 /// The debug level menu opens it (debug/level.c).
-s32 DebugMenu_BrowsePortraits(void) {
-  struct UiRenderWork *work;
-  struct UiWindow *portrait;
+s32 DebugBrowser_Portraits(void) {
+  struct WindowWork *work;
+  struct Window *portrait;
   s32 redraw;
-  struct UiWindow *window;
+  struct Window *window;
   s32 characterCount;
   s32 entryCount;
   s32 index;
@@ -464,10 +464,10 @@ s32 DebugMenu_BrowsePortraits(void) {
   s32 cancelKey;
   u32 slotOffset;
 
-  work = UI_WORK;
+  work = WINDOW_WORK;
   redraw = 1;
-  portrait = UiWindow_CreateWithSideObject(0, 0, 10, 5);
-  window = UiWindow_Create(10, 10, 14, 3, 2);
+  portrait = Portrait_OpenWindow(0, 0, 10, 5);
+  window = Window_Create(10, 10, 14, 3, 2);
   index = 0;
   for (i = 0; gPortrait_CharacterMap[i * 2] != -1; i++) {
   }
@@ -480,8 +480,8 @@ s32 DebugMenu_BrowsePortraits(void) {
    * fp; as cancelKey = KEY_B, 7 of 179 instructions differ in tbs-en. */
   cancelKey = ((u32)(u16)characterCount >> 16) | KEY_B;
   /* FAKEMATCH(temporary): the offset defined before the loop keeps its load in
-   * r1; as work->outputIds[1], 3 of 179 instructions differ in tbs-en. */
-  slotOffset = RENDER_SLOT_VALUE_OFFSET + 2;
+   * r1; as work->portraitSprites[1], 3 of 179 instructions differ in tbs-en. */
+  slotOffset = WINDOW_WORK_PORTRAIT_SPRITES_OFFSET + 2;
   while (1) {
     if (gKeysRepeat & KEY_LEFT) {
       redraw = 1;
@@ -506,7 +506,7 @@ s32 DebugMenu_BrowsePortraits(void) {
     if (redraw) {
       redraw = 0;
       index = (index + entryCount) % entryCount;
-      RenderOutput_PrepareForRedraw(window);
+      WindowSprite_PrepareForRedraw(window);
       if (index < characterCount)
         glyph = gPortrait_CharacterMap[index * 2 + 1];
       else
@@ -521,13 +521,13 @@ s32 DebugMenu_BrowsePortraits(void) {
         slot = loadedSlot;
         UiGlyph_LoadEntryWithPalette(glyph, 0, &slot, &tile, palette, 1);
       }
-      UiText_DrawNumberInWindow(index, 2, window, 0, 0);
-      UiText_DrawCharacterAtOffset(index + DEBUG_GLYPH_NAME, window, 24, 0);
+      Text_DrawNumberInWindow(index, 2, window, 0, 0);
+      Text_DrawMessageAsTiles(index + DEBUG_GLYPH_NAME, window, 24, 0);
     }
     WaitFrames(1);
   }
-  UiWork_Finalize(window, 2);
-  UiWork_Finalize(portrait, 2);
+  Window_Close(window, 2);
+  Window_Close(portrait, 2);
   WaitFrames(1);
   return 0;
 }

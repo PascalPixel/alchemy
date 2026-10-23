@@ -30,11 +30,11 @@ s32 Field_GetPsynergyTargetRange(s32 kind) {
 /// pixels, within 0x2fff (about 67 degrees) of the direction it faces. Object
 /// events with collision flag 8 are skipped, and those with flag 4 count as
 /// 10/13 as far, so they can be talked to from up to 41 pixels. Called with the
-/// leader by Field_RunMap for the A button, and by the item code (items.c) to
+/// leader by Map_Run for the A button, and by the item code (items.c) to
 /// find whom an item is used on.
 s32 Field_FindNearbyTalkTarget(s32 id) {
-  struct ObjectRuntime *source;
-  struct ObjectRuntime *candidate;
+  struct Object *source;
+  struct Object *candidate;
   s32 nearestLocalId;
   s32 nearestDistance;
   s32 objectEventIndex;
@@ -50,14 +50,14 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
 
   nearestLocalId = -1;
   nearestDistance = 32;
-  source = ObjectTable_Get(id);
+  source = ObjectEvent_GetByLocalId(id);
   if (source != 0) {
     for (objectEventIndex = 0; objectEventIndex <= OBJECT_LAST;
          objectEventIndex++) {
       if (objectEventIndex == id)
         continue;
 
-      candidate = ObjectTable_Get(objectEventIndex);
+      candidate = ObjectEvent_GetByLocalId(objectEventIndex);
       if (candidate == 0 || (candidate->collisionFlags & 8) != 0)
         continue;
 
@@ -89,7 +89,7 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
       // 0x2fff (about 67 degrees) of where the object event faces.
       angle = (u16)ArcTan2(candidate->z - source->z, candidate->x - source->x);
       if (distance > 11) {
-        s32 angleDifference = (s16)(angle - source->angle);
+        s32 angleDifference = (s16)(angle - source->facing);
 
         if (angleDifference < -0x2fff)
           continue;
@@ -112,8 +112,8 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
 /// by the item code (items.c) and by the Psynergy dispatch
 /// (psynergy_effects/dispatch.c).
 s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
-  struct ObjectRuntime *source;
-  struct ObjectRuntime *candidate;
+  struct Object *source;
+  struct Object *candidate;
   s32 nearestLocalId;
   s32 nearestDistance;
   s32 facingQuadrant;
@@ -128,29 +128,29 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
 
   nearestLocalId = -1;
   nearestDistance = Field_GetPsynergyTargetRange(kind);
-  source = (struct ObjectRuntime *)ObjectTable_Get(id);
+  source = (struct Object *)ObjectEvent_GetByLocalId(id);
   if (source == 0)
     return nearestLocalId;
 
   // The facing rounded to the nearest of the four quarter turns.
-  facingQuadrant = (source->angle + 0x2000) & 0xc000;
+  facingQuadrant = (source->facing + 0x2000) & 0xc000;
   for (objectEventIndex = 0; objectEventIndex <= OBJECT_LAST;
        objectEventIndex++) {
     if (objectEventIndex == id)
       continue;
 
-    candidate = (struct ObjectRuntime *)ObjectTable_Get(objectEventIndex);
+    candidate = (struct Object *)ObjectEvent_GetByLocalId(objectEventIndex);
     if (candidate == 0 || (candidate->collisionFlags & 8) != 0)
       continue;
 
     // The height allowed: 8 pixels, or 48 for Catch, 64 for Douse, 16 for
     // Mind Read.
     heightLimit = 8 << 16;
-    if (kind == FIELD_KIND_CATCH)
+    if (kind == FIELD_PSYNERGY_CATCH)
       heightLimit = 48 << 16;
-    if (kind == FIELD_KIND_DOUSE)
+    if (kind == FIELD_PSYNERGY_DOUSE)
       heightLimit = 64 << 16;
-    if (kind == FIELD_KIND_MIND_READ)
+    if (kind == FIELD_PSYNERGY_MIND_READ)
       heightLimit = 16 << 16;
 
     {
@@ -186,7 +186,7 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
     coneHalfAngle = 0x1800;
     if (distance > 19)
       coneHalfAngle = 0x1000;
-    if (kind == FIELD_KIND_MIND_READ)
+    if (kind == FIELD_PSYNERGY_MIND_READ)
       coneHalfAngle = 0x2000;
 
     if (distance > 11) {
@@ -217,7 +217,7 @@ s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 localId, s32 target,
   targetObjectEvent = ObjectEvent_GetById(target);
   emitter = 0;
   if (targetObjectEvent != 0) {
-    AudioCommand_PlayFar(SE_124);
+    Sound_PlaySongFar(SE_124);
     ObjectDispatch_SelectAnimationFar(targetObjectEvent, 4);
     WaitFrames(12);
     emitter = (s32)FieldEffect_StartRandomParticleEmitter(localId, itemId);
@@ -231,14 +231,14 @@ s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 localId, s32 target,
 /// Mind Read's wave effect (psynergy_effects/mind_read.c) on the caster: each
 /// frame with 0 to cycle its colours, and with 1 (palette 0) when it ends.
 void Animation_ApplyChildPalette(struct MotionObject *object, s32 palette) {
-  struct AnimationObject *sprite;
-  struct AnimationEntry **entrySlot;
-  struct AnimationEntry *entry;
+  struct Sprite *sprite;
+  struct SpriteAnim **entrySlot;
+  struct SpriteAnim *entry;
   s32 remainingParts;
   s32 replacement;
   u8 partCount;
 
-  if ((object->recordStorageKind & 15) == OBJECT_SPRITE_ONE) {
+  if ((object->spritesKind & 15) == OBJECT_SPRITE_ONE) {
     sprite = object->records;
     replacement = palette - 1;
     if (palette == 0)
@@ -262,10 +262,10 @@ void Animation_ApplyChildPalette(struct MotionObject *object, s32 palette) {
 
 /// Clears the field's busy flag and, while Reveal is active, ends it: Reveal
 /// used with ACT_PACKED runs its ending events. Called by FieldScript_Start
-/// when a script starts while the field is busy, by Field_RunMap before the
+/// when a script starts while the field is busy, by Map_Run before the
 /// pause menu, and by 30 map overlays.
 void Field_EndBusyAndReveal(void) {
-  struct FieldWork *work = (struct FieldWork *)gEventWork;
+  struct FieldWork *work = (struct FieldWork *)gFieldWork;
 
   work->busy = 0;
   if (work->revealActive != 0) {

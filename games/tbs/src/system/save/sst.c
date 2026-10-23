@@ -102,7 +102,7 @@ extern u16 gFlashNumRemainingBytes;
 
 /// Erases and verifies a sector with retries, then programs its bytes. The
 /// program routine (gFlash_Handler0) of the SST and unknown chips, which
-/// SaveState_WriteWorkspaceSlot calls with 4 KB at `source`. Returns 0,
+/// Save_WriteSector calls with 4 KB at `source`. Returns 0,
 /// 0x80ff for a sector above 15, the last erase or check error after 81
 /// failed tries (0x8004 for a sector that would not read blank), or 0xc001
 /// for the first byte that did not read back in time.

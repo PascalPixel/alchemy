@@ -10,8 +10,8 @@
 // - The spider web spreads four mirrored quarters of a web over the targets
 //   and fades it in and out.
 
-/// The swirl swipe's modes (BattleEffect_RunSwirlSwipe), each named for the
-/// effect that plays it.
+/// The swirl swipe's modes (BattleAnim_RunSwirlSwipe), each named for the
+/// animation that plays it.
 enum SwirlSwipeMode {
   SWIRL_SWIPE_POISON_BEAT,  ///< lime; the target recoils at once, 48 frames
   SWIRL_SWIPE_SPINNING_BEAT ///< magenta; the target is thrown up, 74 frames
@@ -19,21 +19,21 @@ enum SwirlSwipeMode {
 
 /// A lime swirl sweeps across the first target and knocks it back.
 ///
-/// Abilities: Poison Beat (BATTLE_EFFECT_POISON_BEAT).
-void BattleEffect_RunPoisonBeat(struct BattleEffectArgument *effect) {
-  BattleEffect_RunSwirlSwipe(effect, SWIRL_SWIPE_POISON_BEAT);
+/// Abilities: Poison Beat (BATTLE_ANIM_POISON_BEAT).
+void BattleAnim_RunPoisonBeat(struct BattleAnimArgs *effect) {
+  BattleAnim_RunSwirlSwipe(effect, SWIRL_SWIPE_POISON_BEAT);
 }
 /// A magenta swirl sweeps across the first target and throws it into the air.
 ///
-/// Abilities: Spinning Beat (BATTLE_EFFECT_SPINNING_BEAT).
-void BattleEffect_RunSpinningBeat(struct BattleEffectArgument *effect) {
-  BattleEffect_RunSwirlSwipe(effect, SWIRL_SWIPE_SPINNING_BEAT);
+/// Abilities: Spinning Beat (BATTLE_ANIM_SPINNING_BEAT).
+void BattleAnim_RunSpinningBeat(struct BattleAnimArgs *effect) {
+  BattleAnim_RunSwirlSwipe(effect, SWIRL_SWIPE_SPINNING_BEAT);
 }
 /// A swirl sweeps across the first target from the user's side in six images of
 /// four frames each: the first four from the swirl sheet, the last two from the
 /// tail sheet. The swipe lands on frame 8.
 ///
-/// Called by BattleEffect_RunPoisonBeat and BattleEffect_RunSpinningBeat.
+/// Called by BattleAnim_RunPoisonBeat and BattleAnim_RunSpinningBeat.
 /// Decodes the tail sheet into Ram_MapGridCellBuffer, moves BG2X so the swipe
 /// crosses the target, and sets work->shakeFrames on the hit; Poison Beat loads
 /// its lime colours over the first 64 of the background palette, and the battle
@@ -42,11 +42,11 @@ void BattleEffect_RunSpinningBeat(struct BattleEffectArgument *effect) {
 /// the damage as it lands on frame 65.
 ///
 /// mode: the swipe (enum SwirlSwipeMode).
-void BattleEffect_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
-  struct BattleEffectWork *work;
+void BattleAnim_RunSwirlSwipe(struct BattleAnimArgs *effect, s32 mode) {
+  struct BattleAnimWork *work;
   void *canvas;
   struct MotionObject *object;
-  struct EffectPosition position;
+  struct ScreenPoint position;
   /* FAKEMATCH(dead): the blitter kept in a pair, whose unused second word
    * fills the frame; as one DrawRectangle, 50 of 256 instructions differ in
    * tbs-en. */
@@ -57,18 +57,17 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
   void **slots;
   void **cursor;
 
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
+  ANIM_GET_SLOTS(slots, cursor, work, canvas);
   work->effect = effect;
-  EFFECT_START_NARROW_CANVAS(0);
+  ANIM_START_NARROW_CANVAS(0);
   if (work->effect->side == 1) {
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
-                        COMPOSITE_TRANSPARENT);
-    draw[0] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
+    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS,
+                      COMPOSITE_TRANSPARENT);
+    draw[0] = (DrawRectangle)ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE);
   } else {
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
-                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
-                        COMPOSITE_TRANSPARENT);
-    draw[0] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
+    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                      COMPOSITE_TRANSPARENT);
+    draw[0] = (DrawRectangle)ANIM_SLOT(slots, HEAP_SLOT_RAM_CODE);
   }
   Resource_LoadAndDecompress((s32)&ResourceId_MagentaSwirlSheet, work->sheet, 1,
                              1);
@@ -79,9 +78,9 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
     Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   }
   // Trails keep 3/4 a frame.
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
-  object = GetBattleObjectSlotFar(work->effect->actors[0])->object;
-  EffectPosition_ProjectScaledBattler(work->effect->actors[0], &position);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  object = GetBattleObjectSlotFar(work->effect->targets[0])->object;
+  Projection_ScaledUnit(work->effect->targets[0], &position);
   // Line the canvas up so the swipe crosses the target: the target's x
   // lands at canvas x 16 against the enemies and 112 against the party.
   if (work->effect->side == 0)
@@ -109,12 +108,11 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
     }
     if (frame == 8) {
       if (mode == SWIRL_SWIPE_POISON_BEAT) {
-        EFFECT_SHOW_DAMAGE(SE_IMPACT);
-        BattleMotion_ApplyVariantMotionFar(work->effect->actors[0],
-                                           KNOCKBACK_HOP);
+        ANIM_SHOW_DAMAGE(SE_IMPACT);
+        BattleMotion_ApplyKnockbackFar(work->effect->targets[0], KNOCKBACK_HOP);
       } else {
-        AudioCommand_PlayFar(SE_HEAVY_IMPACT);
-        ObjectGroup_UpdateMembers(work->effect->actors[0], SPRITE_COLOR_WHITE,
+        Sound_PlaySongFar(SE_HEAVY_IMPACT);
+        ObjectGroup_UpdateMembers(work->effect->targets[0], SPRITE_COLOR_WHITE,
                                   POSE_DAMAGE, 0, 4);
       }
       work->shakeFrames = 8;
@@ -131,13 +129,13 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
       }
       if (frame == 65) {
         work->shakeFrames = 4;
-        EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
+        ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       }
     }
     Camera_ApplyShake(8, 8);
-    EFFECT_END_FRAME(work);
+    ANIM_END_FRAME(work);
   }
-  EFFECT_FINISH_CANVAS_ONE_BLITTER();
+  ANIM_FINISH_CANVAS_ONE_BLITTER();
 }
 
 #define SPIDER_WEB_FRAMES 63
@@ -145,18 +143,18 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
 /// A spider web spreads over the targets, drawn as four mirrored 32x32 quarters
 /// around the point between the first and last target.
 ///
-/// Abilities: Spider Web (BATTLE_EFFECT_SPIDER_WEB).
+/// Abilities: Spider Web (BATTLE_ANIM_SPIDER_WEB).
 ///
 /// It fades in over 8 frames; the targets flash on frame 10, the battle shows
 /// the damage on frame 32, and it fades out from frame 54.
 ///
 /// Builds and frees its blitter four times a frame, one for each quarter's
 /// flip.
-void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
-  struct EffectPosition first;
-  struct EffectPosition last;
+void BattleAnim_RunSpiderWeb(struct BattleAnimArgs *effect) {
+  struct ScreenPoint first;
+  struct ScreenPoint last;
   void *canvas;
-  struct BattleEffectWork *work;
+  struct BattleAnimWork *work;
   s32 size;
   s32 transparent;
 
@@ -170,25 +168,25 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
   /* FAKEMATCH(temporary): size and transparent first hold the slot table's
    * and REG_BLDALPHA's addresses; as plain slot reads and REG_BLDALPHA, 19 of
    * 233 instructions differ in tbs-en. */
-  size = (s32)&Ram_WorkSlot[HEAP_SLOT_BATTLE_CANVAS];
+  size = (s32)&Ram_HeapSlots[HEAP_SLOT_BATTLE_CANVAS];
   canvas = *(void **)size;
-  work = *(struct BattleEffectWork **)(size - 4);
+  work = *(struct BattleAnimWork **)(size - 4);
   work->effect = effect;
-  BattleEffect_StartCanvasLayer(2);
+  BattleAnim_StartCanvasLayer(2);
   transparent = (s32)&REG_BLDALPHA;
   REG_BG2PA = Q_8_8(1);
   *(u16 *)transparent = 0x1000; // REG_BLDALPHA: invisible to start with
-  EffectPosition_ProjectScaledBattler(work->effect->actors[0], &first);
-  EffectPosition_ProjectScaledBattler(
-      work->effect->actors[work->effect->count - 1], &last);
+  Projection_ScaledUnit(work->effect->targets[0], &first);
+  Projection_ScaledUnit(work->effect->targets[work->effect->targetCount - 1],
+                        &last);
   // Centre the canvas between the first and last target.
   first.x += (last.x - first.x) / 2;
   REG_BG2X = (64 - first.x) << 8;
   Resource_LoadAndDecompress((s32)&ResourceId_SpiderWebSheet, work->sheet, 1,
                              1);
   // Redraw from blank each frame.
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-  AudioCommand_PlayFar(SE_143);
+  ANIM_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
+  Sound_PlaySongFar(SE_143);
   // transparent is COMPOSITE_TRANSPARENT, and also the 1 that marks each
   // frame's canvas for transfer.
   frame = 0;
@@ -203,26 +201,26 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
       REG_BLDALPHA = BLEND_ALPHA(frame << 1, 16);
     if (frame > 53)
       REG_BLDALPHA = BLEND_ALPHA(0x7c - (frame << 1), 16);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, transparent);
-    EFFECT_BLITTERS[HEAP_SLOT_BLITTER](canvas, work->sheet, 33, 41, size, size);
-    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
-                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, transparent);
-    EFFECT_BLITTERS[HEAP_SLOT_BLITTER](canvas, work->sheet, 64, 41, size, size);
-    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
-                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, transparent);
-    EFFECT_BLITTERS[HEAP_SLOT_BLITTER](canvas, work->sheet, 33, 72, size, size);
-    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
-                        transparent);
-    EFFECT_BLITTERS[HEAP_SLOT_BLITTER](canvas, work->sheet, 64, 72, size, size);
-    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, transparent);
+    ANIM_BLITTERS[HEAP_SLOT_RAM_CODE](canvas, work->sheet, 33, 41, size, size);
+    FreeHeapSlot(HEAP_SLOT_RAM_CODE);
+    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                      transparent);
+    ANIM_BLITTERS[HEAP_SLOT_RAM_CODE](canvas, work->sheet, 64, 41, size, size);
+    FreeHeapSlot(HEAP_SLOT_RAM_CODE);
+    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
+                      transparent);
+    ANIM_BLITTERS[HEAP_SLOT_RAM_CODE](canvas, work->sheet, 33, 72, size, size);
+    FreeHeapSlot(HEAP_SLOT_RAM_CODE);
+    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP,
+                      transparent);
+    ANIM_BLITTERS[HEAP_SLOT_RAM_CODE](canvas, work->sheet, 64, 72, size, size);
+    FreeHeapSlot(HEAP_SLOT_RAM_CODE);
     if (frame == 32)
-      EFFECT_SHOW_DAMAGE(SE_143);
-    EFFECT_FOR_EACH_TARGET(i, work->effect) {
+      ANIM_SHOW_DAMAGE(SE_143);
+    ANIM_FOR_EACH_TARGET(i, work->effect) {
       if (frame == 10)
-        ObjectGroup_UpdateMembers(work->effect->actors[i], SPRITE_COLOR_WHITE,
+        ObjectGroup_UpdateMembers(work->effect->targets[i], SPRITE_COLOR_WHITE,
                                   -1, i, 8);
     }
     ObjectGroup_TickMemberTimers();
@@ -231,8 +229,8 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
     frame++;
   } while (frame != SPIDER_WEB_FRAMES);
   // Finish: the blitter was freed each time it drew.
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
-  BattleEffect_EndCanvasLayer();
+  Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);
+  BattleAnim_EndCanvasLayer();
 }
 
 #undef SPIDER_WEB_FRAMES

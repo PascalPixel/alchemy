@@ -4,24 +4,24 @@
 #include "types.h"
 #include "map_tables.h"
 
-u8 *ItemLevel_GetWarpDests(void);
+u8 *IncreaseItemAndLevel_GetWarpDests(void);
 s32 MapData_ReturnZero(void);
-u8 *ItemLevel_GetWarps(void);
-u8 *ItemLevel_GetObjectEventTemplates(void);
-u8 *ItemLevel_GetEvents(void);
-s32 Map_RunLevelRoomSetup(void);
-extern char gItemLevelLvLabel[4];
-extern char gItemLevelItemPrompt[12];
-extern char gItemLevelItemHelp[24];
-extern char gItemLevelItemFull[20];
-extern char gItemLevelPsyPrompt[8];
-extern char gItemLevelPsyHelp[12];
-extern char gItemLevelGlyphsUpper[28];
-extern char gItemLevelGlyphsLower[28];
-extern char gItemLevelGlyphsMarks[12];
-extern struct MapWarpDest gItemLevelWarpDests[];
-extern u32 gItemLevelWarps[];
-extern struct ObjectEventTemplate gItemLevelObjectEventTemplates[];
-extern struct MapEvent gItemLevelEvents[];
+u8 *IncreaseItemAndLevel_GetWarps(void);
+u8 *IncreaseItemAndLevel_GetObjectEventTemplates(void);
+u8 *IncreaseItemAndLevel_GetEvents(void);
+s32 IncreaseItemAndLevel_Initialize(void);
+extern char gIncreaseItemAndLevel_LvLabel[4];
+extern char gIncreaseItemAndLevel_ItemPrompt[12];
+extern char gIncreaseItemAndLevel_ItemHelp[24];
+extern char gIncreaseItemAndLevel_ItemFull[20];
+extern char gIncreaseItemAndLevel_PsyPrompt[8];
+extern char gIncreaseItemAndLevel_PsyHelp[12];
+extern char gIncreaseItemAndLevel_GlyphsUpper[28];
+extern char gIncreaseItemAndLevel_GlyphsLower[28];
+extern char gIncreaseItemAndLevel_GlyphsMarks[12];
+extern struct MapWarpDest gIncreaseItemAndLevel_WarpDests[];
+extern u32 gIncreaseItemAndLevel_Warps[];
+extern struct ObjectEventTemplate gIncreaseItemAndLevel_ObjectEventTemplates[];
+extern struct MapEvent gIncreaseItemAndLevel_Events[];
 
 #endif

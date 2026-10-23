@@ -31,8 +31,8 @@ const s16 gShop_GiftItemIds[21] = {
 /// shops) reaches the next ticket's cost, and lets the player choose who
 /// takes it. Spends the credit and counts the gift, not coins. Called by
 /// Shop_SelectBuy after each purchase.
-void Shop_BuySpecialItem(struct UiWindow *window, struct UiWindow *itemWindow) {
-  struct ShopRuntime *shop = gMenuWork;
+void Shop_BuySpecialItem(struct Window *window, struct Window *itemWindow) {
+  struct ShopWork *shop = gMenuWork;
   s32 creditCost;
   u32 savedSelectedItem;
   s32 redraw;
@@ -51,11 +51,11 @@ void Shop_BuySpecialItem(struct UiWindow *window, struct UiWindow *itemWindow) {
   if (creditCost > gGameState.shopCredit)
     return;
   shop->selectedItem = ITEM_GAME_TICKET;
-  UiWork_PushValueSlotFar(ITEM_GAME_TICKET, MESSAGE_ARGUMENT_ITEM);
+  MessageArgument_PushFar(ITEM_GAME_TICKET, MESSAGE_ARGUMENT_ITEM);
   messageBase = MsgTokenGift;
-  UiMessage_ShowAndRestoreState(messageBase);
-  UiWork_PushValueSlotFar(shop->selectedItem, MESSAGE_ARGUMENT_ITEM);
-  UiMessage_ShowAndRestoreState(messageBase + 1);
+  Shop_ShowKeeperMessageHidingCursor(messageBase);
+  MessageArgument_PushFar(shop->selectedItem, MESSAGE_ARGUMENT_ITEM);
+  Shop_ShowKeeperMessageHidingCursor(messageBase + 1);
 
   while (1) {
     if (redraw != 0) {
@@ -63,45 +63,45 @@ void Shop_BuySpecialItem(struct UiWindow *window, struct UiWindow *itemWindow) {
       memberIndex =
           (memberIndex + shop->partyMemberCount) % shop->partyMemberCount;
       unitId = shop->partyMemberIds[memberIndex];
-      Shop_PlaceCursor(window, memberIndex * 24 - 12, 0);
+      MenuCursor_Place(window, memberIndex * 24 - 12, 0);
       shop->mode = 3;
       Shop_DrawParty(window, memberIndex, shop->selectedItem);
-      Shop_DrawUnitItem(itemWindow, unitId, shop->selectedItem);
+      Shop_DrawCarriedItem(itemWindow, unitId, shop->selectedItem);
     }
     if ((gKeysPressed & KEY_A) != 0) {
       // Probe capacity before the keeper's confirmation; the gift is committed
       // only after that line finishes.
       slot = Inventory_AddItemFar(unitId, shop->selectedItem);
       if (slot < 0) {
-        AudioCommand_PlayFar(SE_MENU_CANCEL);
-        UiWork_PushValueSlotFar(unitId, MESSAGE_ARGUMENT_ACTOR);
-        UiWork_PushValueSlotFar(shop->selectedItem, MESSAGE_ARGUMENT_ITEM);
+        Sound_PlaySongFar(SE_MENU_CANCEL);
+        MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
+        MessageArgument_PushFar(shop->selectedItem, MESSAGE_ARGUMENT_ITEM);
         if (Inventory_CountFar(unitId) == INVENTORY_SLOTS)
-          UiMessage_ShowAndWait(MsgPackFull);
+          Shop_ShowKeeperMessage(MsgPackFull);
         else
-          UiMessage_ShowAndWait(MsgCannotCarryItem);
+          Shop_ShowKeeperMessage(MsgCannotCarryItem);
         continue;
       }
       Inventory_RemoveFar(unitId, slot);
-      AudioCommand_PlayFar(SE_SHOP_PURCHASE);
-      UiMessage_ShowAndRestoreState(MsgHereYouGo);
+      Sound_PlaySongFar(SE_SHOP_PURCHASE);
+      Shop_ShowKeeperMessageHidingCursor(MsgHereYouGo);
       Inventory_AddItemFar(unitId, shop->selectedItem);
       Party_AdjustShopCreditFar(-creditCost);
       Party_AdjustShopGiftsFar(1);
       break;
     }
     if ((gKeysPressed & KEY_B) != 0) {
-      UiMessage_ShowAndRestoreState(MsgDontWantIt);
-      AudioCommand_PlayFar(SE_MENU_CANCEL);
+      Shop_ShowKeeperMessageHidingCursor(MsgDontWantIt);
+      Sound_PlaySongFar(SE_MENU_CANCEL);
       break;
     }
     if ((gKeysRepeat & KEY_LEFT) != 0) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       memberIndex--;
       redraw = 1;
     }
     if ((gKeysRepeat & KEY_RIGHT) != 0) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       memberIndex++;
       redraw = 1;
     }

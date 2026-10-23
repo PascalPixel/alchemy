@@ -11,17 +11,17 @@
 // object_effect_scripts.h, and object.c declares the colour curves. Some
 // readers declare their table without const: battle.h's
 // gFieldEffect_TargetRangeByMode, gAnimation_ChildPaletteCycle,
-// gFieldEffect_DefinitionTable, gFieldEffect_GroundParticleFrames,
+// gSpeakerDefinitions, gFieldEffect_GroundParticleFrames,
 // gFieldEffect_PulseScales, gFieldEffect_CyclePatternWords and
-// gFieldEffect_RandomChildValues, graphics.h's gDisplayTransition_NoiseWidths
-// and gDisplayTransition_EdgeOffsets, field.h's gObjectGroup_BlinkChildValues
+// gFieldEffect_RandomChildValues, graphics.h's gScreenTransition_NoiseWidths
+// and gScreenTransition_EdgeOffsets, field.h's gObjectGroup_BlinkChildValues
 // and object.c's three gColorBuffer_ChannelCurve tables. All are defined const
 // all the same: in rom_main_04 .data follows scripts.o, and these tables would
 // move. So this file includes none of those headers.
 
-/// The message of each searchable tile code from 242 to 247, as an offset from
-/// MsgTileChecked and MsgTileResult.
-const u8 gField_TileMessageOffsets[6] = {
+/// The message of each searchable metatile behavior from 242 to 247, as an
+/// offset from MsgTileChecked and MsgTileResult.
+const u8 gField_BgEventMessageOffsets[6] = {
     2,  // a jar
     3,  // a barrel
     13, // a wooden box
@@ -124,27 +124,27 @@ const s32 gFieldEffect_MarkerParticleScript[] = {
 };
 
 /// The width of the bars of WINDOW_TRANSITION_BARS, by progress.
-const u8 gDisplayTransition_NoiseWidths[34] = {
+const u8 gScreenTransition_NoiseWidths[34] = {
     0, 1, 2, 2, 2, 2, 3, 3, 4, 4, 5, 6, 7, 8, 9, 11, 13,
     16, 18, 22, 26, 30, 36, 43, 51, 60, 72, 85, 101, 120, 143, 170, 202, 240,
 };
 
 /// The wobble of the circle edge of WINDOW_TRANSITION_RIPPLE.
-const s8 gDisplayTransition_EdgeOffsets[32] = {
+const s8 gScreenTransition_EdgeOffsets[32] = {
     -4, -3, -3, -3, -2, -2, -1, 0, 0, 0, 1, 2, 2, 3, 3, 3,
     4, 3, 3, 3, 2, 2, 1, 0, 0, 0, -1, -2, -2, -3, -3, -3,
 };
 
 /// 0 to 63 shuffled: the order in which the dissolve sets the pixels.
-const u8 gDisplayTransition_DitherTable[64] = {
+const u8 gScreenTransition_DitherTable[64] = {
     0, 12, 35, 3, 29, 39, 6, 7, 50, 59, 4, 11, 18, 40, 46, 31,
     16, 42, 47, 51, 20, 23, 43, 32, 8, 52, 17, 41, 54, 15, 63, 24,
     58, 5, 2, 26, 36, 61, 9, 34, 56, 27, 10, 48, 53, 30, 28, 22,
     62, 45, 19, 60, 57, 49, 25, 55, 38, 14, 44, 13, 33, 37, 1, 21,
 };
 
-/// Colour channel curves of the palette transforms (object/color.c): each
-/// maps a 5-bit channel (0 to 31) to a colour buffer channel, shifted up 10
+/// Colour channel curves of the palette tints (object/color.c): each
+/// maps a 5-bit channel (0 to 31) to a palette fade channel, shifted up 10
 /// bits, so 31 is 0x7c00. All three darken the middle tones: 16 becomes
 /// about 11.4 here (0x2dc3), 12.4 in the Light curve, 12.5 in the Contrast
 /// curve, which also reaches 31 already at 25.
@@ -171,10 +171,10 @@ const u16 gColorBuffer_ChannelCurveContrast[32] = {
 
 /// Speaker definitions: {sprite, voice (0xff for none), idle line flags}.
 /// The voice is the first of four blip sounds less 256: a message plays
-/// sound 256 + voice as it types (FieldEffect_GetResourceId), so the values
-/// step by 4. FieldEffect_FindDefinition compares the first 130 and returns
+/// sound 256 + voice as it types (Speaker_GetVoice), so the values
+/// step by 4. Speaker_FindDefinition compares the first 130 and returns
 /// the last, never compared, as the default.
-const struct FieldEffectDefinition gFieldEffect_DefinitionTable[131] = {
+const struct SpeakerDefinition gSpeakerDefinitions[131] = {
     {0, 16, 0x00},
     {1, 16, 0x00},
     {2, 16, 0x00},
@@ -359,7 +359,7 @@ const s32 gObjectMotion_VariantScripts[97] = {
 const u8 gObjectGroup_BlinkChildValues[4] = {7, 0, 0, 0};
 
 /// Sine times 4096, 256 steps to a turn.
-const s16 gDisplayScroll_WaveSine[256] = {
+const s16 gScanlineEffect_WaveSine[256] = {
     0, 100, 200, 301, 401, 501, 601, 700,
     799, 897, 995, 1092, 1189, 1284, 1379, 1474,
     1567, 1659, 1751, 1841, 1930, 2018, 2105, 2191,
@@ -546,7 +546,7 @@ const s32 gFieldEffect_LongEffectScript[] = {
 const s8 gFieldEffect_RandomChildValues[8] = {0, 0, 1, 2, 3, 4, 5, 6};
 
 /// The world map markers' blend weight in sixteenths, against the picture's
-/// 16 less it ((gFrameCount >> 1) & 31, WorldMap_UpdateMarkers): solid
+/// 16 less it ((gFrameCount >> 1) & 31, RegionMap_UpdateMarkers): solid
 /// for 32 frames, then down to half and back over the next 32.
 const u8 gWorldMap_MarkerBlendCycle[32] = {
     16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,

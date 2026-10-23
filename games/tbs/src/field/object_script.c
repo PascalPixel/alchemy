@@ -1,5 +1,5 @@
 /// @file
-/// Field object scripts: the ones the engine starts itself, and the command
+/// Object scripts: the ones the engine starts itself, and the command
 /// table.
 
 #include "unit/field/object_script.h"
@@ -9,7 +9,7 @@
 #include "objcmd.h"
 #include "types.h"
 
-/// The script FieldObject_Create gives every new object: it does nothing and
+/// The script Object_CreateField gives every new object: it does nothing and
 /// returns to the idle script.
 const s32 gObjectDispatch_DefaultScript[] = {
     SC_END,
@@ -69,52 +69,52 @@ const s32 gObjectDispatch_EndScript[] = {
 /// would call through the data after the table, but every script in the game
 /// is written in objcmd.h's macros, the last SC_KEY_COUNT, and none holds a
 /// word from 0x24 to 63 where a command goes.
-const ScriptCommand gScriptObject_CommandTable[47] = {
-    ActionScript_Wait,                      // 0x00 SC_WAIT
-    ActionScript_WaitForArrival,            // 0x01 SC_SYNC
-    ActionScript_SetPositionAndResetMotion, // 0x02 SC_POSITION
-    ActionScript_ApplyAbsolutePosition,     // 0x03 SC_MOVE
-    ActionScript_ApplyRelativePosition,     // 0x04 SC_MOVE_BY
-    ActionScript_StoreAngleToLinkedObject,  // 0x05 SC_FACE_LINK
-    ActionScript_ApplyLinkedObjectPosition, // 0x06 SC_MOVE_LINK
-    ActionScript_ApplyLocalOffsetPosition,  // 0x07 SC_MOVE_LOCAL
+const ScriptCommand gObjectScript_CommandTable[47] = {
+    ObjectScript_Wait,                      // 0x00 SC_WAIT
+    ObjectScript_WaitForArrival,            // 0x01 SC_SYNC
+    ObjectScript_SetPositionAndResetMotion, // 0x02 SC_POSITION
+    ObjectScript_ApplyAbsolutePosition,     // 0x03 SC_MOVE
+    ObjectScript_ApplyRelativePosition,     // 0x04 SC_MOVE_BY
+    ObjectScript_StoreAngleToLinkedObject,  // 0x05 SC_FACE_LINK
+    ObjectScript_ApplyLinkedObjectPosition, // 0x06 SC_MOVE_LINK
+    ObjectScript_ApplyLocalOffsetPosition,  // 0x07 SC_MOVE_LOCAL
     Object_Wander,                          // 0x08 SC_WANDER
-    ScriptObject_WanderNearHome,            // 0x09 SC_WANDER_HOME
+    ObjectScript_WanderNearHome,            // 0x09 SC_WANDER_HOME
     Object_ApproachLinkedObject,            // 0x0a SC_APPROACH_LINK
-    Camera_FollowLeaderInBounds,            // 0x0b SC_CAMERA
-    ActionScript_RepeatOrJump,              // 0x0c SC_LOOP
-    ActionScript_JumpToLabel,               // 0x0d SC_JUMP
-    ActionScript_JumpIfTrue,                // 0x0e SC_IF
-    ActionScript_JumpIfFalse,               // 0x0f SC_IFNOT
-    ActionScript_End,                       // 0x10 SC_END
-    ActionScript_TestFlag,                  // 0x11 SC_FLAG_CHECK
-    ActionScript_SetFlagAndTest,            // 0x12 SC_FLAG_ON
-    ActionScript_ClearFlagAndTest,          // 0x13 SC_FLAG_OFF
-    ActionScript_ToggleFlagAndTest,         // 0x14 SC_FLAG_REV
-    ActionScript_ApplyOperandSet,           // 0x15 SC_SET
-    ActionScript_ApplyOperandAdd,           // 0x16 SC_ADD
-    ActionScript_ApplyOperandCompare,       // 0x17 SC_CMP
-    FieldObject_UpdatePlayerControl,        // 0x18 SC_PLAYER
+    FieldCamera_FollowLeaderInBounds,       // 0x0b SC_CAMERA
+    ObjectScript_RepeatOrJump,              // 0x0c SC_LOOP
+    ObjectScript_JumpToLabel,               // 0x0d SC_JUMP
+    ObjectScript_JumpIfTrue,                // 0x0e SC_IF
+    ObjectScript_JumpIfFalse,               // 0x0f SC_IFNOT
+    ObjectScript_End,                       // 0x10 SC_END
+    ObjectScript_TestFlag,                  // 0x11 SC_FLAG_CHECK
+    ObjectScript_SetFlagAndTest,            // 0x12 SC_FLAG_ON
+    ObjectScript_ClearFlagAndTest,          // 0x13 SC_FLAG_OFF
+    ObjectScript_ToggleFlagAndTest,         // 0x14 SC_FLAG_REV
+    ObjectScript_ApplyOperandSet,           // 0x15 SC_SET
+    ObjectScript_ApplyOperandAdd,           // 0x16 SC_ADD
+    ObjectScript_ApplyOperandCompare,       // 0x17 SC_CMP
+    Object_UpdateLeaderControl,             // 0x18 SC_PLAYER
     Object_MoveByKeys,                      // 0x19 SC_KEYS
     Object_MoveOnWorldMap,                  // 0x1a SC_WORLD
-    ActionScript_FreeObject,                // 0x1b SC_FREE
-    ActionScript_SetAnimation,              // 0x1c SC_ANIMATION
-    ActionScript_Nop,                       // 0x1d SC_NOP
-    ActionScript_PlaySound,                 // 0x1e SC_SE
-    ActionScript_SetBase,                   // 0x1f SC_BASE
-    ActionScript_ClearByte54,               // 0x20 SC_B54_OFF
-    ActionScript_SetByte54,                 // 0x21 SC_B54_ON
-    ActionScript_InvokeCallback,            // 0x22 SC_CALL
+    ObjectScript_FreeObject,                // 0x1b SC_FREE
+    ObjectScript_SetAnimation,              // 0x1c SC_ANIMATION
+    ObjectScript_Nop,                       // 0x1d SC_NOP
+    ObjectScript_PlaySound,                 // 0x1e SC_SE
+    ObjectScript_SetBase,                   // 0x1f SC_BASE
+    ObjectScript_ClearByte54,               // 0x20 SC_HIDE_SPRITES
+    ObjectScript_SetByte54,                 // 0x21 SC_SHOW_SPRITE
+    ObjectScript_InvokeCallback,            // 0x22 SC_CALL
     Field_CheckConfiguredKeysAndCount,      // 0x23 SC_KEY_COUNT
-    ActionScript_End,                       // 0x24
-    ActionScript_End,                       // 0x25
-    ActionScript_End,                       // 0x26
-    ActionScript_End,                       // 0x27
-    ActionScript_End,                       // 0x28
-    ActionScript_End,                       // 0x29
-    ActionScript_End,                       // 0x2a
-    ActionScript_End,                       // 0x2b
-    ActionScript_End,                       // 0x2c
-    ActionScript_End,                       // 0x2d
-    ActionScript_End,                       // 0x2e
+    ObjectScript_End,                       // 0x24
+    ObjectScript_End,                       // 0x25
+    ObjectScript_End,                       // 0x26
+    ObjectScript_End,                       // 0x27
+    ObjectScript_End,                       // 0x28
+    ObjectScript_End,                       // 0x29
+    ObjectScript_End,                       // 0x2a
+    ObjectScript_End,                       // 0x2b
+    ObjectScript_End,                       // 0x2c
+    ObjectScript_End,                       // 0x2d
+    ObjectScript_End,                       // 0x2e
 };

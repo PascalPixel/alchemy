@@ -12,9 +12,9 @@
 /// reads a big-endian halfword whose low 12 bits are a distance and high 4
 /// bits a length - 2 (or, when 0, the next byte + 16 + 2), and copies that many
 /// bytes from the literals' start minus the distance. A zero halfword ends the
-/// stream. Called only by Sprite_ComposeAnimationFrame, for a codec 3 (LZ)
-/// layer that has a draw parameter, into a 0x400-byte scratch buffer.
-u8 *Resource_DecompressLz(const u8 *source, u8 *destination) {
+/// stream. Called only by Sprite_ComposeFrame, for a codec 3 (LZ)
+/// sprite anim that has a draw parameter, into a 0x400-byte scratch buffer.
+u8 *Decompress_Lz(const u8 *source, u8 *destination) {
   s32 token;
   u32 length;
   u32 control;
@@ -54,8 +54,8 @@ u8 *Resource_DecompressLz(const u8 *source, u8 *destination) {
       }
       length += 2;
       // XXX: a run copies from before the literals' start, not from the
-      // output written so far; a codec 3 layer with a draw parameter would
-      // show whether its streams ever use a copy run.
+      // output written so far; a codec 3 sprite anim with a draw parameter
+      // would show whether its streams ever use a copy run.
       copy = base - (token & 0x0fff);
       while (length != 0) {
         *destination++ = *copy++;

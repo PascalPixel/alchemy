@@ -11,13 +11,13 @@
 //
 // None of these is const: the code that reads them declares them without it.
 
-/// The hand cursor's bobbing offsets in pixels, which UiMenu_PositionCursor
+/// The hand cursor's bobbing offsets in pixels, which MenuCursor_Position
 /// adds to its x at step (gFrameCount >> 1) & 7; the ninth entry is never
 /// read.
-u8 gUiMenu_CursorBobX[9] = {0, 1, 1, 2, 2, 1, 1, 0, 0};
+u8 gMenuCursor_BobX[9] = {0, 1, 1, 2, 2, 1, 1, 0, 0};
 /// The same for y: in the cursor's 8-bit OAM y, 0xff and 0xfe wrap to one
 /// and two pixels up.
-u8 gUiMenu_CursorBobY[9] = {0, 0xff, 0xff, 0xfe, 0xfe, 0xff, 0xff, 0, 0};
+u8 gMenuCursor_BobY[9] = {0, 0xff, 0xff, 0xfe, 0xfe, 0xff, 0xff, 0, 0};
 
 // The item menu's sort orders (enum ListSort, Menu_CopyListOrder): one item
 // type per byte, with LIST_ORDER_EQUIPPED for only the equipped items of that
@@ -74,17 +74,17 @@ s32 gItemMenu_CommandColumnXTable[6] = {
 // clang-format on
 #endif
 
-// The width in tiles of the status screen's highlight on each ailment row
+// The width in tiles of the summary screen's highlight on each status row
 // (Down, Poison, Venom, Curse and Haunt).
 #if (LANGUAGE == LANGUAGE_JAPANESE)
-u8 gCharacterMenu_CursorWidths[5] = {9, 4, 6, 5, 7};
+u8 gSummaryScreen_CursorWidths[5] = {9, 4, 6, 5, 7};
 #elif (LANGUAGE == LANGUAGE_GERMAN)
-u8 gCharacterMenu_CursorWidths[5] = {7, 5, 7, 6, 5};
+u8 gSummaryScreen_CursorWidths[5] = {7, 5, 7, 6, 5};
 #else
-u8 gCharacterMenu_CursorWidths[5] = {6, 7, 7, 6, 6};
+u8 gSummaryScreen_CursorWidths[5] = {6, 7, 7, 6, 6};
 #endif
 
-/// The sprites of the four Djinn FourObjectMotion shows: a Venus, a Mercury,
+/// The sprites of the four Djinn DjinnFigures shows: a Venus, a Mercury,
 /// a Mars and a Jupiter Djinni.
 s32 gFourObjectMotion_ResourceIds[4] = {VENUS_DJINNI, MERCURY_DJINNI,
                                         MARS_DJINNI, JUPITER_DJINNI};

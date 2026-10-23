@@ -132,7 +132,7 @@ const struct MapEvent *Map_GetEvents(void) {
 s32 Map_Initialize(void) {
   struct ObjectEvent *stump;
 
-  gEventWork->startTransition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gGameState.mapId == (s32)&MapId_GomaCaveStream) {
     if (gGameState.warpDest == GOMA_CAVE_STREAM_FROM_VALE_GATE) {
@@ -146,7 +146,7 @@ s32 Map_Initialize(void) {
         Engine_ObjectEventSetSpriteFlags(stump, 0);
         ObjectEvent_GetById(LOCALID_STUMP)->priorityFlags |=
             OBJ_EVENT_PRIORITY_UNDERFOOT;
-        OBJECT_MODE(LOCALID_STUMP, STUMP_ANIMATION_SINK);
+        OBJECT_ANIMATION(LOCALID_STUMP, STUMP_ANIMATION_SINK);
         MapGrid_CopyCellAttributes(19, 74, 9, 3, 19, 17);
       }
     }
@@ -156,7 +156,7 @@ s32 Map_Initialize(void) {
 
 /// The leaping stump's update hook turns its sprite a fixed amount per frame.
 static void GomaCaveStream_SpinStump(union FieldObject *fieldObject) {
-  struct AnimationObject *sprite = fieldObject->objectEvent.sprite;
+  struct Sprite *sprite = fieldObject->objectEvent.sprite;
 
   sprite->rotation -= 0x800;
 }
@@ -185,9 +185,9 @@ static void GomaCaveStream_LeapStump(s32 stumpId) {
   ObjectEvent_SetDestination(stumpId, 376, 288);
   stump->gravity = 4 * PIXELS(1) / 5;
   stump->motionFlags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
-  stump->terrainId = 0;
+  stump->layer = 0;
   Engine_ObjectEventWaitForMove(stumpId);
-  MapObjectEvent_WaitBelowHeight(stump, 0);
+  ObjectEvent_WaitBelowHeight(stump, 0);
   Engine_AudioPlayCue(SE_188);
   MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
   Engine_AudioPlayCue(SE_RUMBLE);
@@ -204,7 +204,7 @@ static void GomaCaveStream_LeapStump(s32 stumpId) {
   stump->velocityY = PIXELS(5);
   ObjectEvent_SetDestination(stumpId, 346, 292);
   Engine_ObjectEventWaitForMove(stumpId);
-  MapObjectEvent_WaitBelowHeight(stump, 0);
+  ObjectEvent_WaitBelowHeight(stump, 0);
   // UB: the native integer store aliases the update pointer. A typed clear
   // swaps this store with the following sprite-pointer load.
 #ifdef UBFIX
@@ -223,7 +223,7 @@ static void GomaCaveStream_LeapStump(s32 stumpId) {
                         EFFECT_SCALE_TO_TARGET,
                     &options);
   Engine_AudioPlayCue(SE_CAST);
-  OBJECT_MODE(stumpId, STUMP_ANIMATION_SPLASH);
+  OBJECT_ANIMATION(stumpId, STUMP_ANIMATION_SPLASH);
   MapGrid_WaitForShakeToSettle();
 }
 
@@ -297,7 +297,7 @@ u32 gGomaCaveStreamAndBridgeWarps[] = {
 // clang-format off
 struct ObjectEventTemplate gGomaCaveStreamObjectEventTemplates[] = {
     { SPRITE_STUMP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(400), 0, PIXELS(288), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(400), 0, PIXELS(288), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 // clang-format on
@@ -310,9 +310,9 @@ struct MapEvent gGomaCaveStreamEvents[] = {
     {MAP_EVENT_WARP, 1, CONDITION_ALWAYS, GOMA_CAVE_STREAM_TO_VALE_GATE},
     {MAP_EVENT_WARP, 5, CONDITION_ALWAYS,
      GOMA_CAVE_STREAM_TO_GOMA_CAVE_ENTRANCE},
-    {MAP_EVENT_WARP | WARP_STYLE_ANIMATED_ALTERNATE, 6, CONDITION_ALWAYS,
+    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 6, CONDITION_ALWAYS,
      GOMA_CAVE_STREAM_TO_GOMA_CAVE_PILLAR_WEST},
-    {MAP_EVENT_WARP | WARP_STYLE_ANIMATED_ALTERNATE, 7, CONDITION_ALWAYS,
+    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 7, CONDITION_ALWAYS,
      GOMA_CAVE_STREAM_TO_GOMA_CAVE_PILLAR_EAST},
     {MAP_EVENT_WARP, 8, CONDITION_ALWAYS, GOMA_CAVE_STREAM_TO_GOMA_CAVE_BRIDGE},
     {BG_EVENT(BG_EVENT_CHEST), 100, 0xf28, FIND_ITEM(ITEM_POWER_BREAD)},

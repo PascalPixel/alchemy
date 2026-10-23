@@ -7,7 +7,7 @@
 #include "types.h"
 #include "static_assert.h"
 
-/// A field object seen as one that turns toward its facing target: its facing,
+/// An object seen as one that turns toward its facing target: its facing,
 /// its ground position and the target.
 struct FacingObject {
   /// ObjectEvent's script and its cursor; not named through this view.
@@ -19,7 +19,7 @@ struct FacingObject {
   s32 positionX; ///< 16.16 fixed-point pixels
   s32 positionY; ///< ObjectEvent's y; not named through this view
   s32 positionZ; ///< 16.16 fixed-point pixels
-  /// ObjectEvent's terrainHeight to collisionFlags; not named through this
+  /// ObjectEvent's groundHeight to collisionFlags; not named through this
   /// view.
   u8 terrainToCollision[0x46];
   /// The steering flags (SW_STEERING); bit 0, turning toward its velocity, is
@@ -36,7 +36,7 @@ struct FacingObject {
   u8 riseCounter;
   u8 riseEnabled;
   ///@}
-  /// ObjectRuntime's action parameter (work value 0x23); not read through
+  /// Object's action parameter (work value 0x23); not read through
   /// this view.
   s16 action;
   /// The linked object (work value 0x25), or null.

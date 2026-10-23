@@ -11,9 +11,9 @@ const struct ObjectEventTemplate *
 KolimaForestCliff_GetObjectEventTemplates(void);
 const struct MapEvent *KolimaForestCliff_GetEvents(void);
 s32 KolimaForestCliff_Initialize(void);
-extern s32 gStagedObjectEvent_DirectionSteps[];
-extern u32 gStagedObjectEvent_FootprintKinds[];
-extern s32 gStagedObjectEvent_FootprintBounds[];
+extern s32 gPushedObject_DirectionSteps[];
+extern u32 gPushedObject_FootprintKinds[];
+extern s32 gPushedObject_FootprintBounds[];
 extern struct MapWarpDest gKolimaForestCliffWarpDests[];
 extern u32 gKolimaForestCliffWarps[];
 extern struct ObjectEventTemplate gKolimaForestCliffObjectEventTemplates[];

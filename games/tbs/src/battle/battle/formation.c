@@ -4,7 +4,7 @@
 
 #include "../battle_internal.h"
 
-/// The rows of gBattleFormation_Records.
+/// The rows of gFormations.
 #define FORMATION_COUNT 380
 
 // How many name letters tell the enemies of one class apart: 26 in Japanese,
@@ -22,7 +22,7 @@
 /// unless flag 0x174 is set), and -3 when it has no member. Called by
 /// BattleFormation_SelectLevelMatchedCandidate for every formation.
 s32 BattleFormation_AverageLevel(s32 recordId) {
-  struct BattleFormationRecord *record;
+  struct Formation *record;
   struct EnemyDefinition *enemy;
   u32 memberIndex;
   s32 enemyId;
@@ -34,7 +34,7 @@ s32 BattleFormation_AverageLevel(s32 recordId) {
 
   enemyCount = 0;
   levelTotal = 0;
-  record = &gBattleFormation_Records[recordId];
+  record = &gFormations[recordId];
   for (memberIndex = 0; memberIndex < 5; memberIndex++) {
     if (record->minimumCounts[memberIndex] != 0)
       break;
@@ -48,12 +48,12 @@ s32 BattleFormation_AverageLevel(s32 recordId) {
       continue;
     enemyId = record->memberIds[memberIndex];
     enemy = (struct EnemyDefinition *)Enemy_GetDefinitionFar(enemyId +
-                                                             ENEMY_CLASS_FIRST);
+                                                             ENEMY_ID_FIRST);
     if (enemy == 0)
       continue;
     // XXX: flag 0x174 makes every enemy eligible; what sets it would name it.
     if (enemy->level > 3 && !GameFlag_TestFar(0x174) &&
-        !GameFlag_TestFar(ENEMY_DEFEATED_FLAG(enemyId + ENEMY_CLASS_FIRST)))
+        !GameFlag_TestFar(ENEMY_DEFEATED_FLAG(enemyId + ENEMY_ID_FIRST)))
       return -2;
     levelTotal += enemy->level;
     enemyCount++;
@@ -63,9 +63,9 @@ s32 BattleFormation_AverageLevel(s32 recordId) {
   return levelTotal / enemyCount;
 }
 
-/// A formation that may be chosen for the party's level: its record and its
+/// A formation that may be chosen for the party's level: its row and its
 /// enemies' average level. BattleFormation_SelectLevelMatchedCandidate keeps
-/// a pool of 32 in a 128-byte alternate-pool block, freed before it returns.
+/// a pool of 32 in a 128-byte EWRAM pool block, freed before it returns.
 struct FormationCandidate {
   s16 recordId; ///< the formation's row
   s16 score;    ///< its average level (BattleFormation_AverageLevel); -1 empty
@@ -73,7 +73,7 @@ struct FormationCandidate {
 
 /// A copy of a unit's base stats, from baseHp to its element stats, kept
 /// while its level is adjusted: BattleEnemy_AdjustLevel takes it from the
-/// alternate pool, reads only the stats it changes, for their 70 percent
+/// EWRAM pool, reads only the stats it changes, for their 70 percent
 /// floors, and frees it before returning.
 struct BattleBaseStats {
   s16 baseHp;
@@ -87,7 +87,7 @@ struct BattleBaseStats {
   u8 actionCount;                                   ///< copied, not read
   u8 hpRegen;                                       ///< copied, not read
   u8 ppRegen;                                       ///< copied, not read
-  u8 unused[2];                                     ///< BattleUnit's baseUnused
+  u8 unused[2];                                     ///< Unit's baseUnused
   struct BattleElementStats element[ELEMENT_COUNT]; ///< the base power is read
 };
 
@@ -103,10 +103,10 @@ struct BattleBaseStats {
 /// bypasses the defeated-enemy check.
 s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
   s32 matchCount = 0;
-  struct FormationCandidate *pool = Runtime_BumpAllocateAlternatePool(128);
+  struct FormationCandidate *pool = AllocEwram(128);
   u16 party[8];
   s32 levelTotal = 0;
-  s32 unitCount = BattleParty_PrepareActiveOwners(party);
+  s32 unitCount = BattleParty_PrepareMembers(party);
   s32 candidateOrUnitIndex;
   s32 poolIndex;
   s32 targetLevel;
@@ -186,7 +186,7 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
     result = 1;
   }
 
-  MemFree(pool);
+  Free(pool);
   return result;
 }
 
@@ -204,12 +204,12 @@ void BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
 s32 BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
 #endif
   struct BattleBaseStats *base;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   s32 value;
   s32 minimumStat;
   s32 element;
 
-  base = Runtime_BumpAllocateAlternatePool(sizeof(struct BattleBaseStats));
+  base = AllocEwram(sizeof(struct BattleBaseStats));
   unit = Unit_GetFar(owner);
   Iwram_CopyWords(base, &unit->baseHp, sizeof(struct BattleBaseStats));
 
@@ -255,7 +255,7 @@ s32 BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
 
   unit->level += levels;
   Unit_CalculateFar(owner);
-  MemFree(base);
+  Free(base);
 }
 
 /// Gives an enemy of the class its name letter, which tells it from others of
@@ -263,14 +263,14 @@ s32 BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
 /// The letters are digits from 1 abroad and the alphabet in Japanese. The
 /// class's first enemy gets ENEMY_NAME_SUFFIX_COUNT, which BattleUnit_SetFar
 /// takes as no letter. Its second gets letter 1 with bit 15 (0x8001), telling
-/// the caller to give the first letter 0 (BattleEnemy_LetterFirstOfClass);
+/// the caller to give the first letter 0 (BattleEnemy_LetterFirstOfKind);
 /// later ones take the next free letter, wrapping. Returns -1 when five classes
 /// are already listed. Called by BattleFormation_BuildEnemyList for each enemy
-/// and by BattleTarget_Execute for an enemy called into the battle. Changes
-/// BattleWork's enemyClasses, the up to five classes listed, and fields that
-/// despite their names hold the letters: summonChannels each class's last
-/// letter given (-1 for none yet), summonMasks its letters in use (bit n for
-/// letter n), and summonCount how many classes are listed.
+/// and by BattleAbility_ApplyToTarget for an enemy called into the battle.
+/// Changes BattleWork's enemyKinds, the up to five classes listed, and fields
+/// that despite their names hold the letters: lastNameLetter each class's last
+/// letter given (-1 for none yet), nameLetterMasks its letters in use (bit n
+/// for letter n), and enemyKindCount how many classes are listed.
 s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 unused) {
   struct BattleWork *battle;
   s32 classCount;
@@ -279,36 +279,37 @@ s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 unused) {
   s32 suffix;
 
   battle = gBattleWork;
-  classCount = battle->summonCount;
+  classCount = battle->enemyKindCount;
   for (classIndex = 0; classIndex < classCount; classIndex++) {
-    if (battle->enemyClasses[classIndex] == classId)
+    if (battle->enemyKinds[classIndex] == classId)
       break;
   }
   if (classIndex != classCount) {
     attempt = 0;
     // The second of its class: letters 0 and 1 both taken.
-    if (battle->summonChannels[classIndex] < 0) {
-      battle->summonChannels[classIndex] = 1;
-      battle->summonMasks[classIndex] = 3;
+    if (battle->lastNameLetter[classIndex] < 0) {
+      battle->lastNameLetter[classIndex] = 1;
+      battle->nameLetterMasks[classIndex] = 3;
       return 0x8001;
     }
     // The next letter after the last given that is free; after 32 tries the
     // last one tried is reused.
     for (; attempt <= 31; attempt++) {
       suffix =
-          (battle->summonChannels[classIndex] + 1) % ENEMY_NAME_SUFFIX_COUNT;
-      battle->summonChannels[classIndex] = suffix;
-      if ((battle->summonMasks[classIndex] & (1 << (s8)suffix)) == 0)
+          (battle->lastNameLetter[classIndex] + 1) % ENEMY_NAME_SUFFIX_COUNT;
+      battle->lastNameLetter[classIndex] = suffix;
+      if ((battle->nameLetterMasks[classIndex] & (1 << (s8)suffix)) == 0)
         break;
     }
-    battle->summonMasks[classIndex] |= 1 << battle->summonChannels[classIndex];
-    return battle->summonChannels[classIndex];
+    battle->nameLetterMasks[classIndex] |=
+        1 << battle->lastNameLetter[classIndex];
+    return battle->lastNameLetter[classIndex];
   }
   if (classCount <= 4) {
-    battle->summonChannels[classCount] = -1;
-    battle->enemyClasses[classCount] = classId;
-    battle->summonMasks[classCount] = 0;
-    battle->summonCount = classCount + 1;
+    battle->lastNameLetter[classCount] = -1;
+    battle->enemyKinds[classCount] = classId;
+    battle->nameLetterMasks[classCount] = 0;
+    battle->enemyKindCount = classCount + 1;
     return ENEMY_NAME_SUFFIX_COUNT;
   }
   return -1;
@@ -317,31 +318,31 @@ s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 unused) {
 /// Frees a departing enemy's name letter for the next of its class, reading
 /// the letter back from the end of its name.
 /// Does nothing for a unit that is not an enemy, a class not listed or one
-/// with no letters given. Clears the letter's bit in BattleWork.summonMasks.
-/// Called by BattleObject_RemoveFromLists.
+/// with no letters given. Clears the letter's bit in
+/// BattleWork.nameLetterMasks. Called by BattleObject_RemoveFromLists.
 #ifdef UBFIX
 void BattleEnemy_ReleaseNameLetter(s32 actorId) {
 #else
 s32 BattleEnemy_ReleaseNameLetter(s32 actorId) {
 #endif
   struct BattleWork *battle = gBattleWork;
-  struct BattleUnit *unit;
-  s32 count = battle->summonCount;
+  struct Unit *unit;
+  s32 count = battle->enemyKindCount;
   s32 index;
   s32 nameLength;
   s32 suffixIndex;
   s32 classId;
 
   unit = Unit_GetFar(actorId);
-  if (unit->classIndex != CLASS_INDEX_ENEMY)
+  if (unit->classId != CLASS_NONE)
     return;
 
-  classId = unit->classId;
+  classId = unit->id;
   for (index = 0; index < count; index++) {
-    if (battle->enemyClasses[index] == classId)
+    if (battle->enemyKinds[index] == classId)
       break;
   }
-  if (index == count || battle->summonMasks[index] == 0)
+  if (index == count || battle->nameLetterMasks[index] == 0)
     return;
 
   for (nameLength = 0; nameLength <= 13; nameLength++) {
@@ -354,19 +355,19 @@ s32 BattleEnemy_ReleaseNameLetter(s32 actorId) {
   suffixIndex = 32;
   if (nameLength > 0)
     suffixIndex = unit->name[nameLength - 1] - LIST_MARKER_CHAR;
-  battle->summonMasks[index] &= ~(1 << suffixIndex);
+  battle->nameLetterMasks[index] &= ~(1 << suffixIndex);
 }
 
 /// Gives the first enemy of the class on the field the first letter (0),
 /// appended to its name, once a second of its class arrives.
-/// Called by BattleFormation_BuildEnemyList and BattleTarget_Execute when
-/// BattleEnemy_ClaimNameLetter returns bit 15. Writes BattleUnit.name.
+/// Called by BattleFormation_BuildEnemyList and BattleAbility_ApplyToTarget
+/// when BattleEnemy_ClaimNameLetter returns bit 15. Writes Unit.name.
 #ifdef UBFIX
-void BattleEnemy_LetterFirstOfClass(s32 classId) {
+void BattleEnemy_LetterFirstOfKind(s32 classId) {
 #else
-s32 BattleEnemy_LetterFirstOfClass(s32 classId) {
+s32 BattleEnemy_LetterFirstOfKind(s32 classId) {
 #endif
-  struct BattleUnit *unit;
+  struct Unit *unit;
   s32 enemyIndex;
   s32 nameIndex;
   s32 terminatorIndex;
@@ -378,11 +379,11 @@ s32 BattleEnemy_LetterFirstOfClass(s32 classId) {
   for (; enemyIndex <= 5; enemyIndex++) {
     unit = Unit_GetFar(enemyIndex + FIRST_ENEMY_UNIT);
     nameByte = unit->side;
-    if (nameByte != BATTLE_UNIT_ENEMY)
+    if (nameByte != BATTLE_SIDE_ENEMY)
       continue;
-    if (unit->classId != classId)
+    if (unit->id != classId)
       continue;
-    // nameByte still holds BATTLE_UNIT_ENEMY here, used as the index after
+    // nameByte still holds BATTLE_SIDE_ENEMY here, used as the index after
     // the letter; nameIndex holds the terminator, 0.
     nameIndex = 0;
     if (unit->name[0] == 0) {
@@ -408,10 +409,10 @@ s32 BattleEnemy_LetterFirstOfClass(s32 classId) {
 /// Returns the class id of a random member of the formation, among those
 /// that may appear (maximum count above 0); formation 1 stands in for an id
 /// out of range.
-/// Called by BattleTarget_Execute when an enemy calls for help.
+/// Called by BattleAbility_ApplyToTarget when an enemy calls for help.
 s32 BattleFormation_GetRandomMember(s32 recordId) {
   s32 choices[5];
-  struct BattleFormationRecord *record;
+  struct Formation *record;
   s32 *choicesBase;
   s32 *choiceCursor;
   u8 *maximumCount;
@@ -424,14 +425,14 @@ s32 BattleFormation_GetRandomMember(s32 recordId) {
     recordId = 1;
 
   choicesBase = choices;
-  record = &gBattleFormation_Records[recordId];
+  record = &gFormations[recordId];
   memberId = record->memberIds;
   maximumCount = record->maximumCounts;
   choiceCursor = choicesBase;
   remainingMembers = 4;
   do {
     if (*maximumCount++ != 0) {
-      *choiceCursor++ = *memberId + ENEMY_CLASS_FIRST;
+      *choiceCursor++ = *memberId + ENEMY_ID_FIRST;
       choiceCount++;
     }
     memberId++;
@@ -445,18 +446,18 @@ s32 BattleFormation_GetRandomMember(s32 recordId) {
 /// there are.
 /// Each member comes its minimum number of times, plus a random number more
 /// up to its maximum while the six sprite slots hold them (a large enemy
-/// takes two). The formation's battle type orders them: shuffled kinds, each
-/// kind together (FORMATION_SHUFFLED), interleaved at random
-/// (FORMATION_INTERLEAVED), or in the record's order. Under
+/// takes two). The formation's layout orders them: shuffled kinds, each
+/// kind together (FORMATION_LAYOUT_SHUFFLED), interleaved at random
+/// (FORMATION_LAYOUT_INTERLEAVED), or in the row's order. Under
 /// FLAG_MONSTER_BATTLE the formation is chosen for the party's level instead,
 /// and each enemy raised to it. An empty or out-of-range formation becomes
-/// formation 1. Called once by Battle_RunEncounter. Fills the enemy units
+/// formation 1. Called once by Battle_Run. Fills the enemy units
 /// from FIRST_ENEMY_UNIT, with their name letters, and sets BattleWork's
 /// battleType, firstDefeated, defeatState and the name-letter lists.
 s32 BattleFormation_BuildEnemyList(s32 recordId) {
-  u16 *enemyClasses;
+  u16 *enemyKinds;
   struct BattleWork *battle;
-  struct BattleFormationRecord *record;
+  struct Formation *record;
   s32 enemyCount;
   s32 levelAdjustment;
   u16 listBuffer[14];
@@ -477,19 +478,19 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
 
   battle = gBattleWork;
   levelAdjustment = 0;
-  battle->summonCount = 0;
-  enemyClasses = listBuffer;
+  battle->enemyKindCount = 0;
+  enemyKinds = listBuffer;
   if (GameFlag_TestFar(FLAG_MONSTER_BATTLE))
     recordId = BattleFormation_SelectLevelMatchedCandidate(&levelAdjustment);
   if (recordId < 0 || recordId >= FORMATION_COUNT)
     recordId = 1;
-  record = &gBattleFormation_Records[recordId];
+  record = &gFormations[recordId];
   for (memberIndex = 0;
        memberIndex <= 4 && record->minimumCounts[memberIndex] == 0;
        memberIndex++)
     ;
   if (memberIndex == 5)
-    record = &gBattleFormation_Records[1];
+    record = &gFormations[1];
 
   // The six sprite slots left once every member's minimum is placed; a
   // large enemy takes two.
@@ -498,8 +499,8 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
   for (memberOrEnemyIndex = 0; memberOrEnemyIndex <= 4; memberOrEnemyIndex++) {
     if (record->minimumCounts[memberOrEnemyIndex] != 0) {
       s32 requiredSlots =
-          2 - (BattleClass_IsSmall(record->memberIds[memberOrEnemyIndex] +
-                                   ENEMY_CLASS_FIRST) != 0);
+          2 - (BattleSprite_IsSmall(record->memberIds[memberOrEnemyIndex] +
+                                    ENEMY_ID_FIRST) != 0);
 
       freeSpriteSlots -=
           requiredSlots * record->minimumCounts[memberOrEnemyIndex];
@@ -518,8 +519,8 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
     additionalRoom = maximum - minimum;
     if (additionalRoom > 0) {
       s32 memberSlots =
-          2 - (BattleClass_IsSmall(record->memberIds[memberOrEnemyIndex] +
-                                   ENEMY_CLASS_FIRST) != 0);
+          2 - (BattleSprite_IsSmall(record->memberIds[memberOrEnemyIndex] +
+                                    ENEMY_ID_FIRST) != 0);
 
       fittingCount = freeSpriteSlots / memberSlots;
       if (fittingCount < additionalRoom)
@@ -537,9 +538,9 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
     changed = 0;
     for (memberOrEnemyIndex = 0; memberOrEnemyIndex <= 4;
          memberOrEnemyIndex++) {
-      classId = record->memberIds[memberOrEnemyIndex] + ENEMY_CLASS_FIRST;
+      classId = record->memberIds[memberOrEnemyIndex] + ENEMY_ID_FIRST;
       if (extraCounts[memberOrEnemyIndex] != 0) {
-        spriteSlots = 2 - (BattleClass_IsSmall(classId) != 0);
+        spriteSlots = 2 - (BattleSprite_IsSmall(classId) != 0);
         if (spriteSlots > freeSpriteSlots) {
           extraCounts[memberOrEnemyIndex] = 0;
         } else {
@@ -553,9 +554,9 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
   } while (changed);
 
   // The list of class ids, in the order the battle type gives, ended by 0.
-  battle->battleType = record->battleType;
-  switch (battle->battleType) {
-  case FORMATION_SHUFFLED:
+  battle->layout = record->layout;
+  switch (battle->layout) {
+  case FORMATION_LAYOUT_SHUFFLED:
     // The members' order shuffled by ten random swaps.
     for (memberOrEnemyIndex = 0; memberOrEnemyIndex <= 4; memberOrEnemyIndex++)
       memberOrder[memberOrEnemyIndex] = memberOrEnemyIndex;
@@ -574,11 +575,10 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
       s32 slot = memberOrder[memberOrEnemyIndex];
 
       for (copyIndex = 0; copyIndex < memberCounts[slot]; copyIndex++)
-        enemyClasses[enemyCount++] =
-            record->memberIds[slot] + ENEMY_CLASS_FIRST;
+        enemyKinds[enemyCount++] = record->memberIds[slot] + ENEMY_ID_FIRST;
     }
     break;
-  case FORMATION_INTERLEAVED:
+  case FORMATION_LAYOUT_INTERLEAVED:
     // Each enemy drawn from a random member with any left.
     for (;;) {
       remainingKinds = 0;
@@ -590,8 +590,8 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
       if (remainingKinds == 0)
         break;
       memberOrCopyIndex = memberOrder[(Random16() * remainingKinds) >> 16];
-      enemyClasses[enemyCount++] =
-          record->memberIds[memberOrCopyIndex] + ENEMY_CLASS_FIRST;
+      enemyKinds[enemyCount++] =
+          record->memberIds[memberOrCopyIndex] + ENEMY_ID_FIRST;
       memberCounts[memberOrCopyIndex]--;
     }
     break;
@@ -601,14 +601,14 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
       copies = memberCounts[memberOrEnemyIndex];
       for (memberOrCopyIndex = 0; memberOrCopyIndex < copies;
            memberOrCopyIndex++)
-        enemyClasses[enemyCount++] =
-            record->memberIds[memberOrEnemyIndex] + ENEMY_CLASS_FIRST;
+        enemyKinds[enemyCount++] =
+            record->memberIds[memberOrEnemyIndex] + ENEMY_ID_FIRST;
     }
     break;
   }
   // No class has fallen yet (a slot past the last), and the enemy units
   // start cleared.
-  enemyClasses[enemyCount] = 0;
+  enemyKinds[enemyCount] = 0;
   battle->firstDefeated = BATTLE_ENEMY_CAPACITY;
   battle->defeatState = DEFEAT_ONE;
   for (memberOrEnemyIndex = FIRST_ENEMY_UNIT;
@@ -617,19 +617,19 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
     Iwram_ClearWords(Unit_GetFar(memberOrEnemyIndex), BATTLE_UNIT_SIZE);
 
   memberOrEnemyIndex = 0;
-  if (enemyClasses[0] == 0)
+  if (enemyKinds[0] == 0)
     goto assigned;
 assign_enemy:
   // Each enemy unit, with its name letter (BattleEnemy_ClaimNameLetter) and,
   // in a monster battle, the level margin.
   {
     s32 suffixCode =
-        BattleEnemy_ClaimNameLetter(enemyClasses[memberOrEnemyIndex], 1);
+        BattleEnemy_ClaimNameLetter(enemyKinds[memberOrEnemyIndex], 1);
 
     if (suffixCode & 0x8000)
-      BattleEnemy_LetterFirstOfClass(enemyClasses[memberOrEnemyIndex]);
+      BattleEnemy_LetterFirstOfKind(enemyKinds[memberOrEnemyIndex]);
     BattleUnit_SetFar(memberOrEnemyIndex + FIRST_ENEMY_UNIT,
-                      enemyClasses[memberOrEnemyIndex], suffixCode & 0x7fff);
+                      enemyKinds[memberOrEnemyIndex], suffixCode & 0x7fff);
     Unit_GetFar(memberOrEnemyIndex + FIRST_ENEMY_UNIT);
     if (levelAdjustment != 0)
       BattleEnemy_AdjustLevel(memberOrEnemyIndex + FIRST_ENEMY_UNIT,
@@ -638,7 +638,7 @@ assign_enemy:
   memberOrEnemyIndex++;
   if (memberOrEnemyIndex > 5)
     goto assigned;
-  if (enemyClasses[memberOrEnemyIndex] != 0)
+  if (enemyKinds[memberOrEnemyIndex] != 0)
     goto assign_enemy;
 assigned:
   return memberOrEnemyIndex;

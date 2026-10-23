@@ -22,15 +22,15 @@ enum BurstShowerMode {
   BURST_SHOWER_MODE_FACES,     ///< demon faces from 16 pixels in front
 };
 
-/// Arms DMA 0 to copy one word of gBattleEffectWork's bg2xLines table into BG2X
+/// Arms DMA 0 to copy one word of gBattleAnimWork's bg2xLines table into BG2X
 /// at each horizontal blank, bending BG2 line by line.
 ///
-/// Runs each frame as a scheduler callback added by the target motes, the
+/// Runs each frame as a task added by the target motes, the
 /// casting impacts, Condemn, the gathering lights, Torch and Planet Diver,
 /// each of which removes it before it returns. Stops DMA 0 and restarts it
 /// from the top of the table.
-void BattleEffect_ArmBg2AffineHBlankDma(void) {
-  struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
+void BattleAnim_ArmBg2AffineHBlankDma(void) {
+  struct BattleAnimWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
   volatile u16 *channel = REG_DMA0;
   Dma_Stop(channel);
   Dma_Set(work->bg2xLines, (void *)&REG_BG2X, DMA_HBLANK_WORD_PER_LINE,
@@ -40,51 +40,51 @@ void BattleEffect_ArmBg2AffineHBlankDma(void) {
 /// The user fires a stream of flash bursts at the targets, one a frame, each
 /// towards a random point near a target.
 ///
-/// Abilities: Fire Blessing (BATTLE_EFFECT_FIRE_BLESSING).
-void BattleEffect_RunFireBlessing(struct BattleEffectArgument *effect) {
-  BattleEffect_RunBurstShower(effect, BURST_SHOWER_MODE_FLASH);
+/// Abilities: Fire Blessing (BATTLE_ANIM_FIRE_BLESSING).
+void BattleAnim_RunFireBlessing(struct BattleAnimArgs *effect) {
+  BattleAnim_RunBurstShower(effect, BURST_SHOWER_MODE_FLASH);
 }
 /// The user fires a stream of bursts at the targets in the water-spray palette.
 ///
-/// Abilities: Water Blessing (BATTLE_EFFECT_WATER_BLESSING).
-void BattleEffect_RunWaterBlessing(struct BattleEffectArgument *effect) {
-  BattleEffect_RunBurstShower(effect, BURST_SHOWER_MODE_SPRAY);
+/// Abilities: Water Blessing (BATTLE_ANIM_WATER_BLESSING).
+void BattleAnim_RunWaterBlessing(struct BattleAnimArgs *effect) {
+  BattleAnim_RunBurstShower(effect, BURST_SHOWER_MODE_SPRAY);
 }
 /// The user fires a stream of grey bursts at the targets, which turn solid
 /// black and stay so.
 ///
-/// Abilities: Dark Blessing (BATTLE_EFFECT_DARK_BLESSING).
-void BattleEffect_RunDarkBlessing(struct BattleEffectArgument *effect) {
-  BattleEffect_RunBurstShower(effect, BURST_SHOWER_MODE_GREY);
+/// Abilities: Dark Blessing (BATTLE_ANIM_DARK_BLESSING).
+void BattleAnim_RunDarkBlessing(struct BattleAnimArgs *effect) {
+  BattleAnim_RunBurstShower(effect, BURST_SHOWER_MODE_GREY);
 }
 /// The user fires a stream of pink bursts at the targets, from 16 pixels
 /// higher than usual.
 ///
-/// Abilities: Dark Blessing, Acid Blessing (BATTLE_EFFECT_ACID_BLESSING).
-void BattleEffect_RunAcidBlessing(struct BattleEffectArgument *effect) {
-  BattleEffect_RunBurstShower(effect, BURST_SHOWER_MODE_PINK);
+/// Abilities: Dark Blessing, Acid Blessing (BATTLE_ANIM_ACID_BLESSING).
+void BattleAnim_RunAcidBlessing(struct BattleAnimArgs *effect) {
+  BattleAnim_RunBurstShower(effect, BURST_SHOWER_MODE_PINK);
 }
 /// Shows violet lightning between the user and targets instead of bursts: a
 /// bolt flickers through three pictures in front of the user, and the targets
 /// flash in turn without being knocked back.
 ///
-/// Abilities: Storm Blessing (BATTLE_EFFECT_STORM_BLESSING).
-void BattleEffect_RunStormBlessing(struct BattleEffectArgument *effect) {
-  BattleEffect_RunBurstShower(effect, BURST_SHOWER_MODE_LIGHTNING);
+/// Abilities: Storm Blessing (BATTLE_ANIM_STORM_BLESSING).
+void BattleAnim_RunStormBlessing(struct BattleAnimArgs *effect) {
+  BattleAnim_RunBurstShower(effect, BURST_SHOWER_MODE_LIGHTNING);
 }
 /// The user fires a stream of demon faces at the targets, from 16 pixels in
 /// front of it.
 ///
-/// Abilities: Evil Blessing (BATTLE_EFFECT_EVIL_BLESSING).
-void BattleEffect_RunEvilBlessing(struct BattleEffectArgument *effect) {
-  BattleEffect_RunBurstShower(effect, BURST_SHOWER_MODE_FACES);
+/// Abilities: Evil Blessing (BATTLE_ANIM_EVIL_BLESSING).
+void BattleAnim_RunEvilBlessing(struct BattleAnimArgs *effect) {
+  BattleAnim_RunBurstShower(effect, BURST_SHOWER_MODE_FACES);
 }
 /// The user fires a stream of Mars-coloured bursts at the targets, from 28
 /// pixels in front of it.
 ///
-/// Abilities: Deadly Gas (BATTLE_EFFECT_DEADLY_GAS).
-void BattleEffect_RunDeadlyGas(struct BattleEffectArgument *effect) {
-  BattleEffect_RunBurstShower(effect, BURST_SHOWER_MODE_DJINNI);
+/// Abilities: Deadly Gas (BATTLE_ANIM_DEADLY_GAS).
+void BattleAnim_RunDeadlyGas(struct BattleAnimArgs *effect) {
+  BattleAnim_RunBurstShower(effect, BURST_SHOWER_MODE_DJINNI);
 }
 #define BURST_SHOWER_FRAMES 64
 
@@ -103,17 +103,16 @@ void BattleEffect_RunDeadlyGas(struct BattleEffectArgument *effect) {
 /// mode: the burst and its palette (enum BurstShowerMode). The grey mode turns
 ///       the targets solid black and keeps them so. BURST_SHOWER_MODE_LIGHTNING
 ///       fires no bursts: a violet lightning bolt stands between the user and
-///       the targets, on a canvas shown at three times its width. No effect
-///       kind in the effect table uses BURST_SHOWER_MODE_ICE.
-void BattleEffect_RunBurstShower(struct BattleEffectArgument *effect,
-                                 s32 mode) {
+///       the targets, on a canvas shown at three times its width. No animation
+///       kind in the animation table uses BURST_SHOWER_MODE_ICE.
+void BattleAnim_RunBurstShower(struct BattleAnimArgs *effect, s32 mode) {
   u32 *slots;
-  struct BattleEffectWork *work;
+  struct BattleAnimWork *work;
   void *canvas;
   u8 *sprites;
   BlitterPair draw;
-  struct EffectPosition origin;
-  struct EffectPosition targetSpots[8];
+  struct ScreenPoint origin;
+  struct ScreenPoint targetSpots[8];
   s32 aim[3];
   u16 *color;
   s32 frame;
@@ -125,24 +124,24 @@ void BattleEffect_RunBurstShower(struct BattleEffectArgument *effect,
   s32 height;
 
   // The slots are read from the canvas's, not the work block's.
-  slots = (u32 *)&gWorkSlot[HEAP_SLOT_BATTLE_CANVAS];
+  slots = (u32 *)&gHeapSlots[HEAP_SLOT_BATTLE_CANVAS];
   canvas = (void *)slots[0];
-  work = (struct BattleEffectWork *)CANVAS_SLOT(slots, HEAP_SLOT_BATTLE_EFFECT);
+  work = (struct BattleAnimWork *)CANVAS_SLOT(slots, HEAP_SLOT_BATTLE_ANIM);
   sprites = (u8 *)CANVAS_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
-  BattleEffect_StartCanvasLayer(0);
+  BattleAnim_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
   // The faces are drawn facing each way by side; the others take the usual
   // pair for the side.
   if (mode == BURST_SHOWER_MODE_FACES) {
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-    draw[0] = (DrawRectangle)CANVAS_SLOT(slots, HEAP_SLOT_BLITTER);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
-    draw[1] = (DrawRectangle)CANVAS_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
+    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+    draw[0] = (DrawRectangle)CANVAS_SLOT(slots, HEAP_SLOT_RAM_CODE);
+    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                      BLITTER_MAX);
+    draw[1] = (DrawRectangle)CANVAS_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
   } else {
-    BattleEffect_FetchRectangleBlitters(work->effect->side, draw);
+    BattleAnim_FetchRectangleBlitters(work->effect->side, draw);
   }
 
   // The pictures and the palette. The tornado sheet is loaded first in every
@@ -194,12 +193,11 @@ void BattleEffect_RunBurstShower(struct BattleEffectArgument *effect,
 
   // The faces leave shorter trails than the bursts.
   if (mode == BURST_SHOWER_MODE_FACES) {
-    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+    ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
   } else {
-    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+    ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   }
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
 
   for (i = 0; i != 64; i++) {
     work->particles[i].variant = -1;
@@ -207,7 +205,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectArgument *effect,
 
   // Where the bursts start: the user, moved for some modes. The lightning's
   // canvas is shown at three times its width, so its x is a third.
-  EffectPosition_ProjectSprite(work->effect->actor, &origin);
+  Projection_Sprite(work->effect->user, &origin);
   if (mode == BURST_SHOWER_MODE_PINK) {
     origin.y -= 16;
   }
@@ -232,26 +230,25 @@ void BattleEffect_RunBurstShower(struct BattleEffectArgument *effect,
 
   // Where each target stands.
   i = 0;
-  while (i != work->effect->count) {
-    EffectPosition_ProjectScaledBattler(work->effect->actors[i],
-                                        &targetSpots[i]);
+  while (i != work->effect->targetCount) {
+    Projection_ScaledUnit(work->effect->targets[i], &targetSpots[i]);
     i += 1;
   }
 
   frame = 0;
   do {
     // The bursts aim at the targets in turn, one a frame.
-    target = frame % work->effect->count;
+    target = frame % work->effect->targetCount;
     if (frame == 4) {
-      AudioCommand_PlayFar(SE_136);
+      Sound_PlaySongFar(SE_136);
     }
     if (mode != BURST_SHOWER_MODE_GREY) {
       if (frame == 24) {
-        EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
+        ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       }
     } else {
       if (frame == 60) {
-        EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
+        ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       }
     }
 
@@ -294,7 +291,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectArgument *effect,
     width = 32;
     height = 64;
     do {
-      struct EffectStep *spark = &work->particles[i];
+      struct Particle *spark = &work->particles[i];
       // A burst shows from its third frame, or its seventh for the faces
       // and the Mars Djinni's bursts.
       if (spark->variant >= 0) {
@@ -336,31 +333,31 @@ void BattleEffect_RunBurstShower(struct BattleEffectArgument *effect,
     // frames whose low three bits are i.
     if (mode == BURST_SHOWER_MODE_LIGHTNING) {
       i = 0;
-      while (i != work->effect->count) {
+      while (i != work->effect->targetCount) {
         // The bolt strikes target i from frame i * 4 + 2 and does not knock
         // it back.
         if ((frame >= (i * 4) + 2) && ((frame & 7) == i)) {
           work->shakeFrames = 8;
-          ObjectGroup_UpdateMembers(work->effect->actors[i], SPRITE_COLOR_WHITE,
-                                    POSE_DAMAGE, i, 4);
+          ObjectGroup_UpdateMembers(work->effect->targets[i],
+                                    SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 4);
         }
         i += 1;
       }
     } else {
       i = 0;
-      while (i != work->effect->count) {
+      while (i != work->effect->targetCount) {
         // The bursts reach target i from frame i * 4 + 16.
         if ((frame >= (i * 4) + 16) && ((frame & 7) == i)) {
           work->shakeFrames = 8;
           if (mode == BURST_SHOWER_MODE_GREY) {
-            ObjectGroup_UpdateMembers(work->effect->actors[i],
+            ObjectGroup_UpdateMembers(work->effect->targets[i],
                                       SPRITE_COLOR_BLACK, POSE_DAMAGE, i, 4);
           } else {
-            ObjectGroup_UpdateMembers(work->effect->actors[i],
+            ObjectGroup_UpdateMembers(work->effect->targets[i],
                                       SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 4);
           }
-          BattleMotion_ApplyVariantMotionFar(work->effect->actors[i],
-                                             KNOCKBACK_HURL);
+          BattleMotion_ApplyKnockbackFar(work->effect->targets[i],
+                                         KNOCKBACK_HURL);
         }
         i += 1;
       }
@@ -372,11 +369,11 @@ void BattleEffect_RunBurstShower(struct BattleEffectArgument *effect,
     if (mode != BURST_SHOWER_MODE_GREY) {
       ObjectGroup_TickMemberTimers();
     }
-    EFFECT_PRESENT_FRAME(work);
+    ANIM_PRESENT_FRAME(work);
     frame += 1;
   } while (frame != BURST_SHOWER_FRAMES);
 
-  EFFECT_FINISH_CANVAS();
+  ANIM_FINISH_CANVAS();
 }
 
 #undef BURST_SHOWER_CELLS

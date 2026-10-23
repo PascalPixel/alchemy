@@ -2,14 +2,14 @@
 #define ALCHEMY_OBJCMD_H
 
 /// @file
-/// Field object scripts: one s32 command word, then its operands, as
-/// gScriptObject_CommandTable runs them. Each macro expands to the words of
+/// Object scripts: one s32 command word, then its operands, as
+/// gObjectScript_CommandTable runs them. Each macro expands to the words of
 /// one command. Coordinates are 16.16 fixed point (PIXELS).
 
 #include "types.h"
 
 #define SC_LABEL(n) (s32)(0x80000000 | (n) << 16) ///< Branch destination
-/// A jump's operand: the label SC_LABEL(n), which ActionScript_FindLabel
+/// A jump's operand: the label SC_LABEL(n), which ObjectScript_FindLabel
 /// matches without bit 30.
 #define SC_TO(n) (s32)(0xc0000000 | (n) << 16)
 #define SC_TOP 0          ///< Script start
@@ -54,14 +54,14 @@
 #define SC_NOP(v) 0x1d, (v)       ///< Skip its operand.
 #define SC_SE(n) 0x1e, (n)        ///< Sound effect
 #define SC_BASE 0x1f              ///< Restart from the next word.
-#define SC_B54_OFF 0x20           ///< Hide the sprites (OBJECT_SPRITE_NONE).
-#define SC_B54_ON 0x21            ///< Show one sprite (OBJECT_SPRITE_ONE).
+#define SC_HIDE_SPRITES 0x20      ///< Hide the sprites (OBJECT_SPRITE_NONE).
+#define SC_SHOW_SPRITE 0x21       ///< Show one sprite (OBJECT_SPRITE_ONE).
 /// Call fn with the object each frame until it returns zero.
 #define SC_CALL(fn) 0x22, (s32)(fn)
 #define SC_KEY_COUNT 0x23 ///< Check the configured keys.
 
 /// Script work values for SC_SET, SC_ADD and SC_CMP
-enum ScriptWork {
+enum ObjectScriptValue {
   SW_SCRIPT = 0x00,
   SW_CURSOR = 0x01,
   SW_FACING = 0x03,

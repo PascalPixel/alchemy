@@ -250,10 +250,10 @@ static void EventScript_EnterHouse(void) {
   s32 warpTrigger;
   s32 cellSize;
 
-  warpTrigger = gEventWork->touchedTrigger;
+  warpTrigger = gFieldWork->coordEvent;
   ObjectEvent_Get(LOCALID_PARTY_LEADER)->motionFlags = 0;
   cellSize = 2;
-  Script_PlayCue(SE_DOOR_OPEN);
+  Script_PlaySong(SE_DOOR_OPEN);
   MapGrid_CopyCellsTo(66, 36, 71, 8, cellSize, cellSize);
   Engine_TaskWait(4);
   MapGrid_CopyCellsTo(68, 36, 71, 8, cellSize, cellSize);
@@ -267,7 +267,7 @@ static void EventScript_EnterHouse(void) {
 /// or the east one (SUHALLA_GATE_CHECKPOINT_TO_WORLD_MAP_EAST), forgetting the
 /// side it came in by.
 static void EventScript_LeaveForWorldMap(void) {
-  s16 warpTrigger = gEventWork->touchedTrigger;
+  s16 warpTrigger = gFieldWork->coordEvent;
 
   Engine_AudioPlayCue(SE_MAP_EXIT);
   Engine_GameFlagClear(FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH);
@@ -369,7 +369,7 @@ static void EventScript_IodemQuestionsGuards(void) {
     Engine_ScriptWait(40);
     Script_ShowMessageAndWait(LOCALID_IODEM, 0, 10);
   } else {
-    gEventWork->message += 1;
+    gFieldWork->message += 1;
   }
   ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_SOUTH + FACING_STEP, 10);
   Script_ShowMessageAndWait(LOCALID_IODEM, 0, 40);
@@ -445,7 +445,7 @@ static void EventScript_TalkToEastGuard(void) {
                                             ANIMATION_SHAKE_HEAD);
       Engine_ScriptShowMessage(LOCALID_EAST_GUARD, 0);
     } else {
-      gEventWork->message += 2;
+      gFieldWork->message += 2;
       Engine_ScriptShowMessage(LOCALID_EAST_GUARD, 0);
     }
   }
@@ -615,46 +615,46 @@ struct ObjectEventTemplate gSuhallaGateObjectEventTemplatesOther[] = {
 // clang-format off
 struct ObjectEventTemplate gSuhallaGateDewObjectEventTemplates[] = {
     { SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(264), 0, PIXELS(400), FACING_SOUTH + FACING_STEP, TALK_KEEP_FACING, 0 },
+        PIXELS(264), 0, PIXELS(400), FACING_SOUTH + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(280), 0, PIXELS(368), FACING_SOUTH + FACING_STEP, TALK_KEEP_FACING, 0 },
+        PIXELS(280), 0, PIXELS(368), FACING_SOUTH + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(472), 0, PIXELS(912), FACING_SOUTH + FACING_STEP, TALK_KEEP_FACING, 0 },
+        PIXELS(472), 0, PIXELS(912), FACING_SOUTH + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(536), 0, PIXELS(912), FACING_SOUTH + FACING_STEP, TALK_KEEP_FACING, 0 },
+        PIXELS(536), 0, PIXELS(912), FACING_SOUTH + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(552), 0, PIXELS(880), FACING_SOUTH + FACING_STEP, TALK_KEEP_FACING, 0 },
+        PIXELS(552), 0, PIXELS(880), FACING_SOUTH + FACING_STEP, TALK_FACING_KEEP, 0 },
     { MERCURY_DJINNI, FLAG_DJINNI(DJINNI_DEW), MOVEMENT_TYPE_STAND,
-        PIXELS(264), 0, PIXELS(888), FACING_SOUTHEAST, TALK_FACE_PARTY, 0 },
+        PIXELS(264), 0, PIXELS(888), FACING_SOUTHEAST, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gSuhallaGateCheckpointObjectEventTemplates[] = {
     { SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(120), 0, PIXELS(384), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(120), 0, PIXELS(384), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(168), 0, PIXELS(384), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+        PIXELS(168), 0, PIXELS(384), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gSuhallaGateCheckpointObjectEventTemplatesAfterAudience[] = {
 #if !TBS_PATCH_3
     { SPRITE_SOLDIER, CONDITION_ALWAYS, (s32)gSuhallaGateWoundedFlipped,
-        PIXELS(136), 0, PIXELS(408), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(136), 0, PIXELS(408), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, (s32)gSuhallaGateWounded,
-        PIXELS(168), 0, PIXELS(424), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(168), 0, PIXELS(424), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, (s32)gSuhallaGateWounded,
-        PIXELS(472), 0, PIXELS(304), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(472), 0, PIXELS(304), FACING_SOUTH, TALK_FACING_PARTY, 0 },
 #else
     { SPRITE_SOLDIER, CONDITION_ALWAYS, (s32)gSuhallaGateWoundedFlippedNoCollision,
-        PIXELS(140), 0, PIXELS(408), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(140), 0, PIXELS(408), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, (s32)gSuhallaGateWoundedNoCollision,
-        PIXELS(164), 0, PIXELS(424), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(164), 0, PIXELS(424), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, (s32)gSuhallaGateWoundedNoCollision,
-        PIXELS(476), 0, PIXELS(300), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(476), 0, PIXELS(300), FACING_SOUTH, TALK_FACING_PARTY, 0 },
 #endif
     { SPRITE_IODEM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
+        0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
@@ -700,11 +700,11 @@ struct MapEvent gSuhallaGateDewEvents[] = {
 
 struct MapEvent gGatewayCaveEvents[] = {
     {MAP_EVENT_WARP, 1, CONDITION_ALWAYS, GATEWAY_CAVE_TO_SUHALLA_GATE_DEW},
-    {MAP_EVENT_WARP | WARP_STYLE_ANIMATED_ALTERNATE, 2, CONDITION_ALWAYS,
+    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS,
      GATEWAY_CAVE_NORTH_TO_SOUTH},
-    {MAP_EVENT_WARP | WARP_STYLE_ANIMATED, 3, CONDITION_ALWAYS,
+    {MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS,
      GATEWAY_CAVE_SOUTH_TO_NORTH},
     {MAP_EVENT_WARP, 4, CONDITION_ALWAYS, GATEWAY_CAVE_TO_WORLD_MAP},
-    {BG_EVENT(BG_EVENT_UNNAMED), 100, FLAG_MAPSEC_TEMP_50, FIND_PSYNERGY_STONE},
+    {BG_EVENT(BG_EVENT_SILENT), 100, FLAG_MAPSEC_TEMP_50, FIND_PSYNERGY_STONE},
     {MAP_EVENTS_END},
 };

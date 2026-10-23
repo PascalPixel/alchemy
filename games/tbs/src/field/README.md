@@ -75,24 +75,24 @@ A random battle is handled as a way out of the map, and the map is loaded
 again afterwards with everyone put back ([Running a
 map](../object/README.md#the-map-loop-handles-requests-not-scripts)).
 
-In the code, `Field_RunMap` ([`object/run_map.c`](../object/object/run_map.c))
+In the code, `Map_Run` ([`object/run_map.c`](../object/object/run_map.c))
 runs one map. Its inner loop is the walk: it waits a frame and calls
 `Field_ProcessStep`, which checks the ground under the leader, until
 `Field_CountRequests` finds a request. The leader's control script reads the
 buttons through `Field_CheckConfiguredKeys`. The requests are fields of
 `struct FieldWork`; [Running a map](../object/README.md#the-map-loop-handles-requests-not-scripts)
 gives each field and how it is handled. A
-[warp](../../glossary.md#warp) is `Field_RunMap`'s result, which `Game_Run` passes to `Map_TakeWarp`
+[warp](../../glossary.md#warp) is `Map_Run`'s result, which `Game_Run` passes to `Map_TakeWarp`
 to load the next map.
 
 ## Everything that moves runs a script
 
-Everything on the field that moves or changes by itself is a [field object](../../glossary.md#field-object),
+Everything on the field that moves or changes by itself is an [object](../../glossary.md#object),
 and each one runs a small script of steps.
 
-![Three field objects and their scripts. The leader moves by the direction pad, waits one frame and repeats, for good. The camera follows the leader, waits one frame and repeats. A footprint waits 120 frames and then disappears. Each frame every object runs its steps in order until one says to wait, which ends its turn until the next frame. Below, Isaac in Imil's snow as the game draws him, with the footprints his steps left beside him.](https://alchemy.pascalpixel.com/illustrations/field/object-scripts.svg)
+![Three objects and their scripts. The leader moves by the direction pad, waits one frame and repeats, for good. The camera follows the leader, waits one frame and repeats. A footprint waits 120 frames and then disappears. Each frame every object runs its steps in order until one says to wait, which ends its turn until the next frame. Below, Isaac in Imil's snow as the game draws him, with the footprints his steps left beside him.](https://alchemy.pascalpixel.com/illustrations/field/object-scripts.svg)
 
-The field objects are the party, the people and things a map places (its
+The objects are the party, the people and things a map places (its
 [object events](../../glossary.md#object-event)), the camera, even the footprints the leader leaves, and there
 are 64 slots for them. Every frame each object takes a turn: it runs its steps in order until
 one says to wait, which ends its turn until a later frame. A step that only
@@ -144,7 +144,7 @@ a map sets to hold an object where it is; a paused object does nothing else
 that frame, neither its script nor its motion. Otherwise, if the object is
 still waiting, the update counts its wait down; if not, the update runs
 commands until one yields. A command word is an index into
-`gScriptObject_CommandTable`, whose entry takes the object and returns 1 or
+`gObjectScript_CommandTable`, whose entry takes the object and returns 1 or
 0:
 
 - 1 means the command has finished and moved past its values, and the next
@@ -159,7 +159,7 @@ commands until one yields. A command word is an index into
 A word above 63 is not a command, and the update steps over it. That is what
 lets a label sit in the list: `SC_LABEL(n)` is a word with its top bit set and
 n in bits 16 up. A jump's target, `SC_TO(n)`, is the same word with bit 30
-also set. `ActionScript_FindLabel` clears bit 30 and searches the first 1,024
+also set. `ObjectScript_FindLabel` clears bit 30 and searches the first 1,024
 words for the result:
 
 ```text
@@ -179,8 +179,8 @@ gives it another script. `SC_FREE` frees the slot. A footprint is an object of
 
 The scripts the engine starts by itself (`object_script.c`) each repeat one
 command: the command, `SC_WAIT(1)`, `SC_LOOP(SC_FOREVER, SC_TOP)`. Most
-command handlers are in `field/script_commands.c`; `SC_BASE`, `SC_B54_OFF`
-and `SC_B54_ON` are at the top of `field/object_motion.c`, and the controls
+command handlers are in `field/script_commands.c`; `SC_BASE`, `SC_HIDE_SPRITES`
+and `SC_SHOW_SPRITE` are at the top of `field/object_motion.c`, and the controls
 (`SC_PLAYER`, `SC_KEYS`, `SC_WORLD`, `SC_KEY_COUNT`) are in
 `field/player_control.c`.
 
@@ -190,15 +190,15 @@ flight in 3D towards its target, following the ground, floating, and solid
 objects refusing to overlap. In a battle, `Object_UpdateAllMotion` replaces
 it; it moves the first 14 objects and runs no scripts.
 
-The objects are the 64 slots of `gObjectSlots`, 112 bytes each, in a block
+The objects are the 64 slots of `gObjects`, 112 bytes each, in a block
 of memory borrowed from the [heap](../../glossary.md#heap-and-pools) under the [heap slot](../../glossary.md#heap-slot)
-`HEAP_SLOT_OBJECT_POOL`, and the
+`HEAP_SLOT_OBJECTS`, and the
 handlers are the rows of
-`gScriptObject_CommandTable` (`object_script.c`).
+`gObjectScript_CommandTable` (`object_script.c`).
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `FIELD_OBJECT_COUNT` | 64 | field objects, the slots of `gObjectSlots` |
+| `OBJECT_COUNT` | 64 | objects, the slots of `gObjects` |
 | `SC_WAIT(n)` | `0x00`, n | end the turn and wait n frames |
 | `SC_SYNC` | `0x01` | wait until the object reaches its target |
 | `SC_CAMERA` | `0x0b` | follow the leader |
@@ -219,29 +219,29 @@ handlers are the rows of
 What the player sees of an object is its [sprite](../../glossary.md#sprite-and-oam), built from up to four
 pictures laid over each other, each playing its own animation.
 
-![Isaac's sprite in a battle is three pictures laid over each other: a dark shadow, drawn first, then his body, then his sword on top. The game combines them into one picture and redraws it whenever any layer moves on to another frame. As he attacks, his body and his sword change frame together, so each pose shows the sword in his hand, while the shadow stays the same.](https://alchemy.pascalpixel.com/illustrations/field/sprite-layers.svg)
+![Isaac's sprite in a battle is three pictures laid over each other: a dark shadow, drawn first, then his body, then his sword on top. The game combines them into one picture and redraws it whenever any of them moves on to another frame. As he attacks, his body and his sword change frame together, so each pose shows the sword in his hand, while the shadow stays the same.](https://alchemy.pascalpixel.com/illustrations/field/sprite-layers.svg)
 
-The game redraws a sprite whenever one of its layers changes frame. In a
-battle, Isaac's body, his sword and the shadow under his feet are three layers
+The game redraws a sprite whenever one of its anims changes frame. In a
+battle, Isaac's body, his sword and the shadow under his feet are three anims
 of one sprite, and as he swings, the body and the sword change frame together.
 
-Each layer of a sprite plays an animation script of byte pairs. A first byte
-below `ANIMATION_COMMAND_END` (239) is a frame to show and the second byte how
-long. The layer's timer counts sixteenths of a frame and loses
-`AnimationEntry.step` each frame, `ANIMATION_NORMAL_STEP` (16) at normal
-speed, so a layer can be made to play slower or faster. From 239 up, the
+Each of a sprite's anims plays an animation script of byte pairs. A first byte
+below `ANIMCMD_END` (239) is a frame to show and the second byte how
+long. The anim's timer counts sixteenths of a frame and loses
+`SpriteAnim.step` each frame, `ANIMATION_NORMAL_STEP` (16) at normal
+speed, so an anim can be made to play slower or faster. From 239 up, the
 first byte is a command (`enum AnimationCommand` in `field_internal.h`):
-`ANIMATION_COMMAND_END`, `ANIMATION_COMMAND_SET_KIND` (choose a facing
-table, below), `ANIMATION_COMMAND_HOLD`, `ANIMATION_COMMAND_WAIT`,
-`ANIMATION_COMMAND_JUMP`, `ANIMATION_COMMAND_PLAY` (switch animation) and
-`ANIMATION_COMMAND_BLANK`. The drawing code skips 242 to 244, 246 to 250 and
+`ANIMCMD_END`, `ANIMCMD_SET_KIND` (choose a facing
+table, below), `ANIMCMD_HOLD`, `ANIMCMD_WAIT`,
+`ANIMCMD_JUMP`, `ANIMCMD_PLAY` (switch animation) and
+`ANIMCMD_BLANK`. The drawing code skips 242 to 244, 246 to 250 and
 252 as unused, and shows 251 as an ordinary frame.
 
-When any layer's frame changes, `Sprite_ComposeAnimationFrame` redraws the
-sprite: it decodes each layer's frame into one pixel buffer in priority order,
+When any anim's frame changes, `Sprite_ComposeFrame` redraws the
+sprite: it decodes each anim's frame into one pixel buffer in priority order,
 adds an outline if asked, and uploads the result to the sprite's tiles in
-video memory. A layer's frames come from the sprite's data on the cartridge,
-or from one of eight resource slots, buffers that hold an animation's frames
+video memory. An anim's frames come from the sprite's data on the cartridge,
+or from one of eight sprite frame caches, buffers that hold an animation's frames
 once they are loaded.
 
 A script names frames as if the sprite always faced one way. A facing table
@@ -249,12 +249,12 @@ turns that into the frame to draw: for each eighth of a turn the sprite can
 face, it gives a number to add to the script's frame and whether to mirror
 the picture (`facing.c`).
 
-Isaac's battle sprite shows how the layers combine.
+Isaac's battle sprite shows how the anims combine.
 `BattleObject_SpawnObjectsForList` (`../battle/battle/objects.c`) gives it
-three layers: his body (`BattleObject.resource`) and his weapon
+three anims: his body (`BattleObject.resource`) and his weapon
 (`BattleObject.overlay`) at priority 1, and the 64 by 64 sprite 510
-(`BattleObject.effect`) at priority 0. The two at priority 1 are drawn in layer
-order, so the weapon lies over the body; the layer at priority 0 is drawn
+(`BattleObject.effect`) at priority 0. The two at priority 1 are drawn in anim
+order, so the weapon lies over the body; the anim at priority 0 is drawn
 first, so its shadow lies under his feet. The body and the weapon play scripts
 with the same frame numbers, so each change of pose changes both and redraws
 the whole buffer. The party is seen from behind in a battle, so the facing
@@ -262,32 +262,32 @@ table adds 1 to each frame a script names: the script of his swing names
 frames 12, 14 and 16, and the sheets' frames 13, 15 and 17 are drawn. The
 picture composes those frames from the sprite sheets themselves (`spr_300.png`,
 `spr_320.png` and `spr_510.png` in [`graphics/sprite`](../graphics/sprite))
-in the order `Sprite_ComposeAnimationFrame` uses.
+in the order `Sprite_ComposeFrame` uses.
 
-A layer can also be recoloured as it is drawn: its colour mode
-(`AnimationEntry.colorMode`, `enum SpriteColorMode`) either picks one of nine
+An anim can also be recoloured as it is drawn: its colour mode
+(`SpriteAnim.colorMode`, `enum SpriteColorMode`) either picks one of nine
 256-byte tables that map each pixel to another colour (the five
-`gResourceSlot_ConversionTables`, then the four of `gRuntime_ByteRemapTable`,
+`gSpriteColorTables`, then the four of `gRuntime_ByteRemapTable`,
 which lie one after another), or paints every drawn pixel one colour. The
 first remap table also recolours the menus' command icons
 (`Runtime_RemapBytesByTable`).
 
-A sprite is a `struct AnimationObject`, and each of its layers a
-`struct AnimationEntry`; the four remap tables are `remap0.tsv` to
+A sprite is a `struct Sprite`, and each of its anims a
+`struct SpriteAnim`; the four remap tables are `remap0.tsv` to
 `remap3.tsv`.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `ANIMATION_OBJECT_COUNT` | 64 | sprites, and the layer records they share |
-| `ANIMATION_LAYER_COUNT` | 4 | layers a sprite composes, `AnimationObject.entries` |
-| `ANIMATION_NORMAL_STEP` | 16 | sixteenths of a frame off a layer's timer each frame: normal speed |
-| `ANIMATION_COMMAND_END` | 239 | blank the layer and stop its script |
-| `ANIMATION_COMMAND_SET_KIND` | 240 | use facing table `arg` |
-| `ANIMATION_COMMAND_HOLD` | 241 | stay on this command and frame for good |
-| `ANIMATION_COMMAND_WAIT` | 245 | keep the current frame `arg` frames longer |
-| `ANIMATION_COMMAND_JUMP` | 253 | continue at script position `arg` |
-| `ANIMATION_COMMAND_PLAY` | 254 | switch to animation `arg` |
-| `ANIMATION_COMMAND_BLANK` | 255 | show nothing for `arg` |
+| `ANIMATION_OBJECT_COUNT` | 64 | sprites, and the sprite anims they share |
+| `ANIMATION_LAYER_COUNT` | 4 | anims a sprite composes, `Sprite.entries` |
+| `ANIMATION_NORMAL_STEP` | 16 | sixteenths of a frame off an anim's timer each frame: normal speed |
+| `ANIMCMD_END` | 239 | blank the anim and stop its script |
+| `ANIMCMD_SET_KIND` | 240 | use facing table `arg` |
+| `ANIMCMD_HOLD` | 241 | stay on this command and frame for good |
+| `ANIMCMD_WAIT` | 245 | keep the current frame `arg` frames longer |
+| `ANIMCMD_JUMP` | 253 | continue at script position `arg` |
+| `ANIMCMD_PLAY` | 254 | switch to animation `arg` |
+| `ANIMCMD_BLANK` | 255 | show nothing for `arg` |
 
 ## Objects move first, then the camera draws them
 
@@ -296,22 +296,22 @@ each one appears on the screen and what it is in front of or behind. Because
 that order never changes, each sprite is drawn where its object has just
 moved to.
 
-The two steps are two [tasks](../../glossary.md#task) of the scheduler, the list of jobs the game runs
+The two steps are two [tasks](../../glossary.md#task), jobs the game runs
 once a frame. `ObjectSystem_Initialize` sets the engine up for one kind of
-map and schedules both: the object update at order 3210 (`0xc8a`) and a camera at
-3200 (`0xc80`). The scheduler runs higher orders first, so objects move before the
+map and adds both: the object update at priority 3210 (`0xc8a`) and a camera at
+3200 (`0xc80`). The task runner runs higher priorities first, so objects move before the
 camera places them.
 
 | Mode | Started by | Object update | Camera |
 | --- | --- | --- | --- |
-| `MODE_LAYERED_MAP` (2) | the field map runner (`object/object/run_map.c`), the debug sprite viewer | `Object_UpdateAllThumb` | `ObjectSystem_UpdateCamera`, which scrolls with the map |
-| `MODE_WORLD_MAP` (3) | the field map runner | `Object_UpdateAllThumb` | `ObjectSystem_UpdateCameraFixed`, which projects 3D points onto the screen |
-| `MODE_BATTLE` (4) | the encounter (`battle/battle/encounter.c`) | `Object_UpdateAllMotion` | `ObjectSystem_UpdateCameraFixed` |
+| `OBJECT_SYSTEM_LAYOUT` (2) | the field map runner (`object/object/run_map.c`), the debug sprite viewer | `Object_UpdateAllThumb` | `ObjectSystem_PlaceSprites`, which scrolls with the map |
+| `OBJECT_SYSTEM_WORLD_MAP` (3) | the field map runner | `Object_UpdateAllThumb` | `ObjectSystem_ProjectSprites`, which projects 3D points onto the screen |
+| `OBJECT_SYSTEM_BATTLE` (4) | the encounter (`battle/battle/encounter.c`) | `Object_UpdateAllMotion` | `ObjectSystem_ProjectSprites` |
 
 The camera places each object's sprite and queues it by depth, and the
 frame's sprite list, the list of every sprite's position and picture that
 the console keeps in its OAM (object attribute memory), is built from that
-queue. The battle effects, the
+queue. The battle animations, the
 Psynergy effects and the menus place their own sprites through the same
 routine, `Object_ApplyProjectedPlacementFar`. While the item, Psynergy,
 Status, [Djinn](../../glossary.md#djinn) or debug menu is open, `ObjectSystemWork.suspended` is set, so
@@ -338,7 +338,7 @@ the party is carried through the air.
 
 Each control sets the leader's `speedLimit` and `acceleration` from the
 speeds named at the top of `field/player_control.c`. On a town or dungeon
-map, `FieldObject_UpdatePlayerControl` walks at `FIELD_WALK_SPEED` (1 pixel a
+map, `Object_UpdateLeaderControl` walks at `FIELD_WALK_SPEED` (1 pixel a
 frame) and runs at `FIELD_RUN_SPEED` (1.5) while a key of
 `gGameState.dashKeys` (B) is held,
 gaining `FIELD_ACCELERATION` (a quarter pixel) a frame. With `FLAG_FAST_WALK`
@@ -361,9 +361,9 @@ edition and [the international editions](../../glossary.md#editions)
 | world map probe | 8 pixels; the step and 30 degrees either side, then up to 67.5 degrees off | 7 pixels; the step and 22.5 and 45 degrees either side, then up to 90 degrees off |
 | R and L on the world map | raise their events while held | raise them once a press |
 
-R raises `FIELD_EVENT_WORLD_MAP_PICTURE`, which opens [the world map
+R raises `FIELD_RAISED_EVENT_REGION_MAP`, which opens [the world map
 screen](../object/README.md#the-world-map-screen), and L
-`FIELD_EVENT_WORLD_MAP_ZOOM`, which zooms the view out.
+`FIELD_RAISED_EVENT_WORLD_MAP_ZOOM`, which zooms the view out.
 
 Speeds are 16.16 fixed-point pixels a frame: the top 16 bits are whole
 pixels and the low 16 bits a fraction, so `0x10000` is one pixel.
@@ -401,15 +401,15 @@ one of `TERRAIN_KIND_COUNT` (16) functions in
 samples (`MapGrid_GetTerrainHeight`).
 
 A town or dungeon has three layers ([below](#towns-and-dungeons-on-screen)),
-each with ground of its own. An object's `terrainId` names the layer whose
+each with ground of its own. An object's `layer` names the layer whose
 ground it follows, so walls and heights can differ from one layer to the
 next.
 
-`MapGrid_CheckObjectStep` (`field/terrain.c`) decides each test: `MAPGRID_STEP_WALL`
-for a cell marked `MB_WALL`, `MAPGRID_STEP_TOO_HIGH` for ground more than 8
-pixels above the object's, `MAPGRID_STEP_TOO_LOW` for ground more than 12 pixels
-below, and `MAPGRID_STEP_OPEN` otherwise. On the world map,
-`CheckWorldMapWalkable` asks `GetWorldMapCollision` instead, which reads a
+`MapGrid_CheckCollision` (`field/terrain.c`) decides each test: `COLLISION_IMPASSABLE`
+for a cell marked `MB_WALL`, `COLLISION_TOO_HIGH` for ground more than 8
+pixels above the object's, `COLLISION_TOO_LOW` for ground more than 12 pixels
+below, and `COLLISION_NONE` otherwise. On the world map,
+`WorldMap_IsWalkable` asks `WorldMap_GetCollision` instead, which reads a
 4-bit collision value from the world map's upper collision layer where it
 has one, else the lower.
 
@@ -420,10 +420,10 @@ describes.
 | Name | Value | Meaning |
 | --- | --- | --- |
 | `TERRAIN_KIND_COUNT` | 16 | ground height functions a shape can pick |
-| `MAPGRID_STEP_TOO_LOW` | -1 | the ground there is more than 12 pixels lower |
-| `MAPGRID_STEP_OPEN` | 0 | the object can step there |
-| `MAPGRID_STEP_TOO_HIGH` | 1 | the ground there is more than 8 pixels higher |
-| `MAPGRID_STEP_WALL` | 2 | the cell there is a wall (`MB_WALL`) |
+| `COLLISION_TOO_LOW` | -1 | the ground there is more than 12 pixels lower |
+| `COLLISION_NONE` | 0 | the object can step there |
+| `COLLISION_TOO_HIGH` | 1 | the ground there is more than 8 pixels higher |
+| `COLLISION_IMPASSABLE` | 2 | the cell there is a wall (`MB_WALL`) |
 
 ## Towns and dungeons on screen
 
@@ -460,11 +460,11 @@ can move at its own rate as the view moves or drift while it stands still.
 into view from the cells and their [metatiles](../../glossary.md#metatile).
 
 Three timed effects run as tasks while a map is shown
-(`field/tile_animation.c`): the tile animation copies tiles into video memory
-on up to 16 channels, the blend script writes the blend registers over time,
+(`field/tile_animation.c`): up to 16 tileset animations copy tiles into video
+memory, the blend script writes the blend registers over time,
 and palette cycles rotate colours. The scripts for the first two come from the
-layout; [Layouts](../layout/README.md#tile-animation-and-blend-scripts) gives their
-format. Only `PaletteQueue_Start` schedules palette cycles, and nothing calls
+layout; [Layouts](../layout/README.md#tileset-animation-and-blend-scripts) gives their
+format. Only `PaletteCycle_Start` schedules palette cycles, and nothing calls
 it, so no palette cycle runs in the game.
 
 The layouts are the rows of `gLayouts` (`layouts.tsv`).
@@ -515,7 +515,7 @@ The ground is unpacked a square at a time around the party
 most one missing square a frame as the party walks. `WorldMap_LoadGraphics`
 chooses between the two graphics sets of `gWorldMap_GraphicsResources` by the
 32-pixel region under the point it is given: the second set where it is
-`WORLD_MAP_REGION_SNOWFIELD`.
+`WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD`.
 
 When a menu or script starts, `WorldMap_StartStillView` draws the current
 frame into ordinary 256-colour tiles on `BG1` with `TileMap_DrawRows`, an ARM
@@ -530,15 +530,15 @@ The world map's graphics sets are `gWorldMap_GraphicsResources`
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `WORLD_MAP_REGION_SNOWFIELD` | 21 | the region whose ground takes the world map's second graphics set |
+| `WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD` | 21 | the region whose ground takes the world map's second graphics set |
 
 ## Design
 
 ### One object, many views
 
 All 64 objects are the same 112 bytes, but each family of code reads them
-through a struct of its own: `ObjectRuntime` (`include/object_runtime.h`),
-`DispatchObject` (`include/object_dispatch.h`), `ScriptInterpreter` and
+through a struct of its own: `Object` (`include/object_runtime.h`),
+`DispatchObject` (`include/object_dispatch.h`), `ObjectScriptContext` and
 `ScriptOperands` (`include/field/action_script.h`), `ScriptMotionObject`
 (`include/script_motion.h`), `ScriptObjectRuntime`
 (`include/field/script_object_runtime.h`), `ScriptObjectEntry`
@@ -546,15 +546,15 @@ through a struct of its own: `ObjectRuntime` (`include/object_runtime.h`),
 Other folders add more, such as the battle's `MotionObject` and the field
 effects' `FieldEffect`. Each view was written from the code that reads it and
 names what that code uses; the bytes it leaves alone keep ObjectEvent's
-names under a "not named here" note. `ScriptInterpreter` is 100 bytes, since
+names under a "not named here" note. `ObjectScriptContext` is 100 bytes, since
 no command reads the last 12.
 
 The views agree on the layout (the script first, then position, velocity and
 target) and differ in names and types where their readers differ. The wait is
-unsigned in `ObjectRuntime` and `ObjectEvent` and signed in
+unsigned in `Object` and `ObjectEvent` and signed in
 `ScriptMotionObject`; the routine run each frame at offset 0x6c is `hook` to
-the scripts, `update` to maps and `ObjectRuntime`. Even
-`gObjectSlots` is declared as an `ObjectRuntime *` in `include/field/field.h`
+the scripts, `update` to maps and `Object`. Even
+`gObjects` is declared as an `Object *` in `include/field/field.h`
 and as a `ScriptMotionObject *` in `update.c`.
 
 The several views come from the [matching](../../glossary.md#matching-decompilation):
@@ -565,7 +565,7 @@ struct, since every view describes the same 112 bytes.
 
 ### Scripts without addresses
 
-A jump stores a label number, not an offset, and `ActionScript_FindLabel` searches
+A jump stores a label number, not an offset, and `ObjectScript_FindLabel` searches
 for it each time. A script is therefore a plain array of words that C
 initializers can write, with no assembler to fix up its branches, at the cost
 of a linear search on every jump and the 1,024-word reach.
@@ -580,7 +580,7 @@ the game is Thumb. `Object_UpdateAll` is an ARM copy of the object update for
 the first eight objects, written for the same treatment, but nothing runs it.
 It is a smaller update than the field needs: it covers eight objects of the
 64, and has none of the field's extras that `Object_UpdateAllThumb` adds (free
-flight, terrain following, floating, and solid objects that refuse to overlap),
+flight, following the ground, floating, and solid objects that refuse to overlap),
 so it could not stand in for the Thumb update.
 
 ## How the field fits with the rest of the game
@@ -591,17 +591,15 @@ handles requests; the engine supplies the objects, scripts and ground checks it
 uses. Overlays reach the engine through their [import tables](../../glossary.md#entry-table-and-import-table)
 (`src/map/import/`): nine import `MapGrid_GetTerrainHeight` and six
 `MapGrid_SetMetatileBehaviorAt`, with which a map rewrites a cell's [metatile behavior](../../glossary.md#metatile-behavior).
-The battle uses the object system in `MODE_BATTLE` for its own sprites. The
+The battle uses the object system in `OBJECT_SYSTEM_BATTLE` for its own sprites. The
 Lost Age's field code is described by [its own
 guide](../../../tla/src/field/README.md), as differences from this one.
 
 ## Limits
 
-- 64 field objects; 64 sprites, sharing 64 animation layer records, up to
-  four each.
-- 8 resource slots for a sprite's frames, 16 tile animation channels and 4
-  palette cycles.
-- `gScriptObject_CommandTable` has 47 entries: 36 commands, then 11 that act
+- 64 objects; 64 sprites, sharing 64 sprite anims, up to four each.
+- 8 sprite frame caches, 16 tileset animations and 4 palette cycles.
+- `gObjectScript_CommandTable` has 47 entries: 36 commands, then 11 that act
   as `SC_END`. A label must lie within the first 1,024 words of its script.
 - A step can climb 8 pixels and drop 12.
 
@@ -614,15 +612,15 @@ guide](../../../tla/src/field/README.md), as differences from this one.
 | `field/*.c` | the 14 parts, each one family of functions; `head -3 field/*.c` prints what each holds |
 | `update.c` | `Object_UpdateAll`, an ARM copy of the object update for the first eight objects, which only the unused `Object_RunUpdateAllFromHeap` would run |
 | `vertices.c` | `Transform_UpdateVertices`, the ARM routine that turns the world map's scanline table into `BG2`'s affine values |
-| `object_script.c`, `operand.c` | the scripts the engine starts by itself, `gScriptObject_CommandTable`, and the handlers of the work values |
+| `object_script.c`, `operand.c` | the scripts the engine starts by itself, `gObjectScript_CommandTable`, and the handlers of the work values |
 | `facing.c` | the facing tables and the small tables the parts read: the order a sprite's tiles dissolve in, the fixed camera's matrix, the wave a floating object bobs on, the idle script, the direction pad's headings, the footprint and dust scripts, and the world map camera's lean for each pad direction |
-| `curve_data.c`, `map_grid_data.c` | the ground height tables, `gMapGrid_TerrainHeightFunctions`, the world map's terrain behaviour table, and two tables nothing reads (`gWorldMap_DirectionOffsets`, `gWorldMap_UnitScale`) |
+| `curve_data.c`, `map_grid_data.c` | the ground height tables, `gMapGrid_TerrainHeightFunctions`, the world map's battle environment table, and two tables nothing reads (`gWorldMap_DirectionOffsets`, `gWorldMap_UnitScale`) |
 | `world_map_resources.c` | `gWorldMap_GraphicsResources`, the world map's two graphics sets |
 | `griddata.c` | the scale the debug sprite viewer draws at |
 | `lucky_dice.c` | the Lucky Dice minigame, with its camera defaults and 8.8 fixed-point helpers |
-| `layouts.tsv` | `gLayouts`: each layout's header, palette, three tile sheets and layer data, as resource numbers counted from `ResourceId_Layout001` |
+| `layouts.tsv` | `gLayouts`: each layout's header, palette, three tilesets and layer data, as resource numbers counted from `ResourceId_Layout001` |
 | `remap0.tsv` to `remap3.tsv` | `gRuntime_ByteRemapTable`, four 256-byte colour remap tables |
-| `maps.s` | `gField_MapTable`: each map's overlay, [map section](../../glossary.md#map-section), map type (town or field) and layout; each row also defines the map's `MapId_` |
+| `maps.s` | `gMapHeaders`: each map's overlay, [map section](../../glossary.md#map-section), map type (town or field) and layout; each row also defines the map's `MapId_` |
 | `common/effect/` | the ground particle and sparkle pictures of the field's weather, which [`scripts.s`](../object/scripts.s) places |
 
 The headers are in `games/tbs/include/unit/field/`, one for each C file but
@@ -636,24 +634,23 @@ on its own.
 
 ## Words used here
 
-- A **field object** is one of the 64 slots of `gObjectSlots`, 112 bytes
-  each, as the [glossary](../../glossary.md#field-object) defines it; a map
+- An **object** is one of the 64 slots of `gObjects`, 112 bytes
+  each, as the [glossary](../../glossary.md#object) defines it; a map
   knows its object events among them by [local id](../../glossary.md#local-id). A slot with no script is free.
-- A **sprite** is one of the 64 `struct AnimationObject`s: an image and a
+- A **sprite** is one of the 64 `struct Sprite`s: an image and a
   shadow, two entries of OAM (the hardware's sprite list), and up to four
-  animation **layers** (`struct AnimationEntry`) composed into one picture.
+  **sprite anims** (`struct SpriteAnim`), animations composed into one picture.
 - An **object script** is a list of 32-bit words: `SC_` commands of
   [`objcmd.h`](../../include/objcmd.h) and their operands. An **animation
-  script** is a list of byte pairs that a sprite layer plays.
+  script** is a list of byte pairs that a sprite anim plays.
 - A map **layer** is one of a town's three backgrounds
-  ([Layouts](../layout/README.md#one-grid-three-layers)); a map's layers
-  have nothing to do with a sprite's.
+  ([Layouts](../layout/README.md#one-grid-three-layers)).
 - Positions are 16.16 fixed-point pixels: x across the map, y up, z down the
   map. Angles are 16-bit fractions of a turn (`FACING_EAST` is 0,
   `FACING_SOUTH` a quarter turn).
 
 In the code, `object` and `interpreter` are the object a command runs on,
-`sprite` and `layer` a sprite and one of its layers, `work` or `gridWork` the
+`sprite` and `layer` a sprite and one of its anims, `work` or `gridWork` the
 map work (`gMapGridWork[0]`), and `perspective` the world map's.
 
 Because the parts compile as one file, a part's own types, macros and static
@@ -667,22 +664,21 @@ and a part undefines its macros at its end.
 | --- | --- |
 | `Sprite_`, `Render_` | drawing sprites |
 | `SpriteDissolve_` | dissolving a sprite into or out of view, pixel by pixel |
-| `Animation_`, `AnimationObject_`, `ResourceMetadata_`, `ResourceObject_`, `ResourceSlot_` | sprites, their layers and the resource slots they draw from |
-| `ObjectSystem_`, `ObjectDispatch_`, `FieldObject_`, `Object_` | keeping and moving objects |
-| `ActionScript_` | object script commands |
+| `Animation_`, `SpriteAnim_`, `Sprite_`, `SpriteFrameCache_` | sprites, their anims and the frame caches they draw from |
+| `ObjectSystem_`, `ObjectDispatch_`, `Object_` | keeping and moving objects |
+| `ObjectScript_` | object script commands, and the overlap and wandering tests they run |
 | `Field_` | the configured keys |
 | `MapGrid_`, `TileMap_` | layered maps, their cells and the BG maps built from them |
 | `WorldMap_` | the world map |
-| `GetWorldMap`, `CheckWorldMap` | the ground under a point on the world map; `MapGrid_GetMetatileBehaviorAt`, `MapGrid_SetMetatileBehaviorAt` and `MapGrid_IsWallAt` ask the same of a layered map |
-| `TileAnimation_`, `DisplayBlend_`, `PaletteQueue_` | tile animation, the blend script and palette cycles |
-| `Curve_` | ground height functions |
+| `WorldMap_GetCollision`, `WorldMap_IsWalkable`, `WorldMap_GetBattleEnvironment` | the ground under a point on the world map; `MapGrid_GetMetatileBehaviorAt`, `MapGrid_SetMetatileBehaviorAt` and `MapGrid_IsWallAt` ask the same of a layered map |
+| `TilesetAnim_`, `BlendScript_`, `PaletteCycle_` | tileset animation, the blend script and palette cycles |
+| `Terrain_` | ground height functions |
 | `Ui_`, `SpriteViewer_` | the debug sprite viewer |
 | `LuckyDice_` | the Lucky Dice minigame |
-| `ScriptObject_` | the overlap and wandering tests object scripts run |
 | `ObjectCamera_` | a camera hook that returns 1 and nothing calls (`object_camera.c`) |
 
 A few functions take the prefix of the one thing they act on
-(`Resource_DecompressLz`, `Camera_FollowLeaderInBounds`). Names other
+(`Decompress_Lz`, `FieldCamera_FollowLeaderInBounds`). Names other
 folders or The Lost Age's copy also use change only in a rename across all of
 them.
 
@@ -700,13 +696,13 @@ command is `SC_KEY_COUNT` (`0x23`), and no script holds a bare word from
 `0x24` to 63, so neither the eleven entries that act as `SC_END` nor the words
 past the table are ever called.
 
-The field maps sampled for a sprite with more than one drawn layer (Vale,
+The field maps sampled for a sprite with more than one drawn anim (Vale,
 Bilibin's item shop and inn, Imil, Goma Cave, Xian, Tolbi and the world map)
-have none: the leader on the world map has a second layer,
+have none: the leader on the world map has a second anim,
 `SPRITE_BLANK_32`, which draws nothing even in a forest, where the player
-control gives it priority 1. The picture of a sprite's layers is therefore of
-a battle unit, whose sprite is the same `struct AnimationObject`
-composed by the same `Sprite_ComposeAnimationFrame`.
+control gives it priority 1. The picture of a sprite's anims is therefore of
+a battle unit, whose sprite is the same `struct Sprite`
+composed by the same `Sprite_ComposeFrame`.
 
 
 - XXX: what `FieldWork`'s `unk1da`, `unk1dc` and `unk1de` hold;

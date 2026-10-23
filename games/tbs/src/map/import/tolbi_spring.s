@@ -3,18 +3,18 @@
 	.set import.__divsi3, 1
 	.set import.__modsi3, 1
 	.set import.Engine_TaskWait, 1
-	.set import.Scheduler_AddOrUpdateCallback, 1
+	.set import.Task_Add, 1
 	.set import.Engine_RandomNext, 1
 	.set import.Engine_MathSin, 1
 	.set import.Engine_MathCos, 1
 	.set import.ObjectEvent_SetMode, 1
 	.set import.ObjectDispatch_SetAnimationSpeed, 1
 	.set import.Engine_MapGridCopyCellsTo, 1
-	.set import.UiWindow_Create, 1
-	.set import.UiWork_Finalize, 1
-	.set import.UiText_DrawCharacterAtOffset, 1
-	.set import.UiText_DrawNumberInWindow, 1
-	.set import.UiWork_PushValueSlot, 1
+	.set import.Window_Create, 1
+	.set import.Window_Close, 1
+	.set import.Text_DrawMessageAsTiles, 1
+	.set import.Text_DrawNumberInWindow, 1
+	.set import.MessageArgument_Push, 1
 	.set import.UiWork_FinalizePendingCore, 1
 	.set import.Menu_SelectCoinsOrMedals, 1
 	.set import.PartyInventory_Remove, 1
@@ -44,7 +44,7 @@
 	.set import.Engine_ScriptWaitForScreen, 1
 	.set import.Engine_ItemShowFound, 1
 	.set import.Field_EndBusyAndReveal, 1
-	.set import.ObjectTable_Snapshot, 1
-	.set import.AudioCommand_WaitForStateByteClear, 1
+	.set import.ObjectEvent_Snapshot, 1
+	.set import.Sound_WaitForFanfare, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

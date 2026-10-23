@@ -3,38 +3,38 @@
 	.set import.__divsi3, 1
 	.set import.__modsi3, 1
 	.set import.Engine_TaskWait, 1
-	.set import.Scheduler_AddOrUpdateCallback, 1
+	.set import.Task_Add, 1
 	.set import.Engine_TaskRemoveCallback, 1
-	.set import.Runtime_BumpAllocateAlternatePool, 1
+	.set import.AllocEwram, 1
 	.set import.Runtime_BumpFree, 1
-	.set import.Resource_DecodeType01, 1
-	.set import.Ui_LoadWindowGraphics, 1
+	.set import.Decompress_Type01, 1
+	.set import.Window_LoadGraphics, 1
 	.set import.Engine_ResourceGetTableEntry, 1
 	.set import.Engine_BlendSetDarkenTarget16, 1
 	.set import.SerialRuntime_Initialize, 1
 	.set import.SerialRuntime_RemoveIrqHandlers, 1
 	.set import.SerialRuntime_StartSend, 1
-	.set import.UiWindow_Create, 1
-	.set import.UiWork_Finalize, 1
-	.set import.UiText_ShowPositionedMessageAndWait, 1
-	.set import.RenderOutput_PrepareForRedraw, 1
-	.set import.UiWindow_DrawDividerLine, 1
-	.set import.UiText_DrawResource, 1
-	.set import.UiText_DrawCharacterAtOffset, 1
-	.set import.UiText_DrawString, 1
+	.set import.Window_Create, 1
+	.set import.Window_Close, 1
+	.set import.FieldMessage_Show, 1
+	.set import.WindowSprite_PrepareForRedraw, 1
+	.set import.Window_DrawDividerLine, 1
+	.set import.Text_DrawMessage, 1
+	.set import.Text_DrawMessageAsTiles, 1
+	.set import.Text_DrawString, 1
 	.set import.UiWork_FinalizePendingCore, 1
-	.set import.Menu_SelectSaveSlotAction, 1
-	.set import.Menu_SelectResourceLayout, 1
-	.set import.UiText_ShowCenteredMessage, 1
-	.set import.UiWindow_SetTilemapEntry, 1
-	.set import.SaveMenu_WriteSelectedSlot, 1
-	.set import.SaveState_LoadRecordIntoWork, 1
-	.set import.SaveState_CopySlotPair, 1
-	.set import.SaveState_DeleteSelectedSlot, 1
-	.set import.SaveState_ScanRecordFlags, 1
-	.set import.NameEntry_EditOwnerName, 1
-	.set import.PaletteGlow_Update, 1
-	.set import.Menu_RunConfirmSelection, 1
+	.set import.FileMenu_SelectAction, 1
+	.set import.IconMenu_ChooseSendOption, 1
+	.set import.FieldMessage_ShowCentered, 1
+	.set import.Window_SetTilemapEntry, 1
+	.set import.Save_ToChosenFile, 1
+	.set import.Save_LoadRecordIntoWork, 1
+	.set import.Save_CopyFile, 1
+	.set import.Save_EraseSelectedFile, 1
+	.set import.Save_ScanRecordFlags, 1
+	.set import.NamingScreen_EditMemberName, 1
+	.set import.WindowColor_Apply, 1
+	.set import.YesNoMenu_Run, 1
 	.set import.Graphics_ExpandVramTilesByColorTable, 1
 	.set import.Link_DrawShiftedTilePair, 1
 	.set import.Unit_Get, 1
@@ -43,8 +43,8 @@
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1
 	.set import.GameFlag_ClearBit, 1
-	.set import.Party_AddActiveOwner, 1
-	.set import.Party_RemoveActiveOwner, 1
+	.set import.Party_AddMember, 1
+	.set import.Party_RemoveMember, 1
 	.set import.Party_StartChildhood, 1
 	.set import.Runtime_GetBuildStampTime, 1
 	.set import.InventorySnapshot_Restore, 1
@@ -54,6 +54,6 @@
 	.set import.Engine_ScriptOpenScreen, 1
 	.set import.Engine_ScriptCloseScreen, 1
 	.set import.Engine_ScriptWaitForScreen, 1
-	.set import.Menu_AskYesNo, 1
+	.set import.FieldYesNo_Ask, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

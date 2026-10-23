@@ -6,7 +6,7 @@
 
 STATIC_ASSERT(sizeof(struct EffectVector) == 0x0c);
 
-/// Scheduler callback while Carry holds its target: drops one particle a
+/// Task while Carry holds its target: drops one particle a
 /// frame round the lifted object, 8 to 24 pixels above it and 0 to 48 pixels
 /// away in a random direction (FieldEffect_InitializeFallingFragment).
 void FieldEffect_SpawnFallingParticles(void) {
@@ -15,7 +15,7 @@ void FieldEffect_SpawnFallingParticles(void) {
   struct ItemBreakFragmentObject *fragment;
   u32 radius;
 
-  liftedObject = ((struct FieldEffectWork *)gEffectWork)->child;
+  liftedObject = ((struct FieldEffectWork *)gFieldEffectWork)->child;
   position.x = liftedObject->x.fixed;
   position.y = liftedObject->y.fixed - Random16() * 16 + (24 << 16);
   position.z = liftedObject->z.fixed;
@@ -30,18 +30,18 @@ void FieldEffect_SpawnFallingParticles(void) {
 
 #define CARRY_SHARD_MAX 20 ///< shards
 
-/// Tests the target's move with its terrain reference raised 16 pixels, so a
+/// Tests the target's move with its ground height raised 16 pixels, so a
 /// carried target passes over ground up to 24 pixels above its own (a step
-/// allows 8). Restores the reference before returning the collision result.
+/// allows 8). Restores the height before returning the collision result.
 static __inline__ s32
 FieldEffect_CheckRaisedTargetCollision(struct ObjectEvent *target,
                                        struct EffectVector *position) {
   s32 collision;
 
-  target->terrainHeight += 16 << 16;
-  collision = MapGrid_CheckObjectStepFar((struct ObjectRuntime *)target,
-                                         (struct FieldPosition *)position);
-  target->terrainHeight -= 16 << 16;
+  target->groundHeight += 16 << 16;
+  collision = MapGrid_CheckCollisionFar((struct Object *)target,
+                                        (struct FieldPosition *)position);
+  target->groundHeight -= 16 << 16;
   return collision;
 }
 
@@ -49,7 +49,7 @@ FieldEffect_CheckRaisedTargetCollision(struct ObjectEvent *target,
 /// ground; the d-pad moves it 16 pixels at a time and A, B, L or R drops it
 /// where it is.
 ///
-/// Abilities: Carry (FIELD_KIND_CARRY).
+/// Abilities: Carry (FIELD_PSYNERGY_CARRY).
 ///
 /// Where the way is blocked a buzzer sounds.
 void FieldEffect_SteerLiftedTarget(s32 targetId) {
@@ -66,7 +66,7 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
   s32 dist;
   struct EffectVector *p;
 
-  effectWork = gEffectWork;
+  effectWork = gFieldEffectWork;
   src = effectWork->mainObject;
   target = effectWork->child;
   if (target == NULL)
@@ -95,12 +95,12 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
   WaitFrames(15);
   SET_POSITION(p, target->x.fixed, target->y.fixed + (16 << 16),
                target->z.fixed);
-  Object_SetMoveTargetFar((struct ObjectRuntime *)objectEvent,
-                          p->x + (16 << 16), p->y, p->z);
-  Object_SetMoveTargetFar((struct ObjectRuntime *)right, p->x - (16 << 16),
-                          p->y, p->z);
-  FieldObject_WaitForMoveFar(objectEvent);
-  FieldObject_WaitForMoveFar(right);
+  Object_SetMoveTargetFar((struct Object *)objectEvent, p->x + (16 << 16), p->y,
+                          p->z);
+  Object_SetMoveTargetFar((struct Object *)right, p->x - (16 << 16), p->y,
+                          p->z);
+  Object_WaitForMoveFar(objectEvent);
+  Object_WaitForMoveFar(right);
   objectEvent->x.fixed = p->x + (16 << 16);
   objectEvent->velocityX = 0;
   right->x.fixed = p->x - (16 << 16);
@@ -109,12 +109,12 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
   // Lift to 24 pixels above the ground, 3/8 pixel a frame, floating (motion
   // flag bit 2) with no shadow and its colours cycling.
   target->update = ObjectGroup_ApplyRandomChildValues;
-  Scheduler_AddOrUpdateCallback(FieldEffect_SpawnFallingParticles, 0xc80);
-  AudioCommand_PlayFar(SE_130);
+  Task_Add(FieldEffect_SpawnFallingParticles, 0xc80);
+  Sound_PlaySongFar(SE_130);
   target->motionFlags = 4;
   ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)target, 0);
   if (hands[0] != NULL && hands[1] != NULL) {
-    while (target->y.fixed - target->terrainHeight <= 24 << 16) {
+    while (target->y.fixed - target->groundHeight <= 24 << 16) {
       objectEvent->y.fixed += 0x6000;
       right->y.fixed += 0x6000;
       target->y.fixed += 0x6000;
@@ -130,7 +130,7 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
   target->speed = 0x6666;
   target->acceleration = 0x3333;
   target->steeringFlags = 0;
-  target->terrainId = 2;
+  target->layer = 2;
 
   //------------------------------------------------------------------
   // Move with the d-pad.
@@ -146,10 +146,10 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
       pos.x = target->x.fixed;
       pos.y = target->y.fixed + (16 << 16);
       pos.z = target->z.fixed;
-      Object_SetMoveTargetFar((struct ObjectRuntime *)hands[0],
-                              pos.x + (16 << 16), pos.y, pos.z);
-      Object_SetMoveTargetFar((struct ObjectRuntime *)hands[1],
-                              pos.x - (16 << 16), pos.y, pos.z);
+      Object_SetMoveTargetFar((struct Object *)hands[0], pos.x + (16 << 16),
+                              pos.y, pos.z);
+      Object_SetMoveTargetFar((struct Object *)hands[1], pos.x - (16 << 16),
+                              pos.y, pos.z);
       ObjectDispatch_SelectAnimationFar(hands[0], 1);
       ObjectDispatch_SelectAnimationFar(hands[1], 1);
       continue;
@@ -160,17 +160,17 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
     pos.y = target->y.fixed + (16 << 16);
     pos.z = target->z.fixed;
     Vector_AddPolarOffset(2 << 16, angle, &pos);
-    Object_SetMoveTargetFar((struct ObjectRuntime *)hands[0],
-                            pos.x + (16 << 16), pos.y, pos.z);
-    Object_SetMoveTargetFar((struct ObjectRuntime *)hands[1],
-                            pos.x - (16 << 16), pos.y, pos.z);
-    FieldObject_WaitForMoveFar(hands[0]);
-    FieldObject_WaitForMoveFar(hands[1]);
+    Object_SetMoveTargetFar((struct Object *)hands[0], pos.x + (16 << 16),
+                            pos.y, pos.z);
+    Object_SetMoveTargetFar((struct Object *)hands[1], pos.x - (16 << 16),
+                            pos.y, pos.z);
+    Object_WaitForMoveFar(hands[0]);
+    Object_WaitForMoveFar(hands[1]);
     pos.x = target->x.fixed;
-    pos.y = target->terrainHeight;
+    pos.y = target->groundHeight;
     pos.z = target->z.fixed;
     Vector_AddPolarOffset(16 << 16, angle, &pos);
-    i = ScriptObject_CheckOverlapFar((struct ScriptObjectEntry *)target,
+    i = ObjectScript_CheckOverlapFar((struct ScriptObjectEntry *)target,
                                      (s32 *)&pos);
     // Both tests jump into the blocked path, which keeps it ahead of the drop
     // path as the ROM lays them out; written as one || test, 407 of 531
@@ -182,7 +182,7 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
       ObjectDispatch_SelectAnimationFar(hands[0], 4);
       ObjectDispatch_SelectAnimationFar(hands[1], 4);
       if ((gFrameCount & 15) == 0)
-        AudioCommand_PlayFar(SE_MENU_ERROR);
+        Sound_PlaySongFar(SE_MENU_ERROR);
       continue;
     }
     // The way is free: move the target there.
@@ -191,28 +191,28 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
       s32 x;
       s32 z;
 
-      AudioCommand_PlayFar(SE_175);
+      Sound_PlaySongFar(SE_175);
       x = p->x;
       z = p->z;
       ObjectDispatch_SelectAnimationFar(hands[0], 4);
       ObjectDispatch_SelectAnimationFar(hands[1], 4);
       WaitFrames(15);
       // i is the overlap test's 0 here: unpause the target and, once it is
-      // on the tile, stop it dead. It moves at 0.2 pixels a frame.
+      // on the cell, stop it dead. It moves at 0.2 pixels a frame.
       target->paused = i;
       target->speed = 0x3333;
       target->acceleration = 0x3333;
-      Object_SetMoveTargetFar((struct ObjectRuntime *)target, p->x, p->y, p->z);
+      Object_SetMoveTargetFar((struct Object *)target, p->x, p->y, p->z);
       hands[0]->speed = 0x3333;
       hands[0]->acceleration = 0x3333;
       second = hands[1];
       second->speed = 0x3333;
       second->acceleration = 0x3333;
-      Object_SetMoveTargetFar((struct ObjectRuntime *)hands[0],
-                              p->x + (16 << 16), p->y, p->z);
-      Object_SetMoveTargetFar((struct ObjectRuntime *)second, p->x - (16 << 16),
+      Object_SetMoveTargetFar((struct Object *)hands[0], p->x + (16 << 16),
                               p->y, p->z);
-      FieldObject_WaitForMoveFar(target);
+      Object_SetMoveTargetFar((struct Object *)second, p->x - (16 << 16), p->y,
+                              p->z);
+      Object_WaitForMoveFar(target);
       target->x.fixed = x;
       target->z.fixed = z;
       target->velocityX = i;
@@ -228,10 +228,10 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
   //------------------------------------------------------------------
   ObjectDispatch_SelectAnimationFar(hands[0], 4);
   ObjectDispatch_SelectAnimationFar(hands[1], 4);
-  Scheduler_RemoveCallback(FieldEffect_SpawnFallingParticles);
-  AudioCommand_PlayFar(SE_135);
+  Task_Remove(FieldEffect_SpawnFallingParticles);
+  Sound_PlaySongFar(SE_135);
   WaitFrames(15);
-  AudioCommand_PlayFar(SE_135);
+  Sound_PlaySongFar(SE_135);
   WaitFrames(15);
   SET_POSITION(p, target->x.fixed, target->y.fixed + (16 << 16),
                target->z.fixed);
@@ -250,17 +250,17 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
         objectEvent->acceleration = 2 << 16;
         objectEvent->motionFlags = 0;
         dist = Random16() * 24 + (8 << 16);
-        Motion_SetTargetPositionFromMagnitudeAngle(
-            (struct ObjectRuntime *)objectEvent, dist, Random16());
+        ObjectMotion_SetTargetPositionFromMagnitudeAngle(
+            (struct Object *)objectEvent, dist, Random16());
       }
     }
   }
-  AudioCommand_PlayFar(SE_131);
+  Sound_PlaySongFar(SE_131);
   ObjectDispatch_ReleaseFar((struct DispatchObject *)hands[0]);
   ObjectDispatch_ReleaseFar((struct DispatchObject *)hands[1]);
 
   // Restore the target's look and motion, and throw it up at 10 pixels a
-  // frame: it falls and follows the terrain again, keeping 0.2 of its speed
+  // frame: it falls and follows the ground again, keeping 0.2 of its speed
   // as it bounces, and reads its ground from the ground layer.
   Animation_ApplyChildValuesFar((struct DispatchObject *)target,
                                 effectWork->savedPalette);
@@ -270,7 +270,7 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
   target->motionFlags = 3;
   target->velocityY = 10 << 16;
   target->bounce = 0x3333;
-  target->terrainId = 0;
+  target->layer = 0;
   src->update = 0;
   Animation_ApplyChildValuesFar((struct DispatchObject *)src,
                                 SPRITE_COLOR_NORMAL);
@@ -293,7 +293,7 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
 /// in front of the caster and 32 pixels to either side, close in 24 pixels and
 /// scatter into shards.
 ///
-/// Abilities: Carry (FIELD_KIND_CARRY).
+/// Abilities: Carry (FIELD_PSYNERGY_CARRY).
 DEFINE_ITEM_BREAK_EFFECT(FieldEffect_RunCarry, FieldEffect_SpawnItemBreakMode1)
 
 /// Spawns a hand (object 215) with the item break sound, in animation 1, and
@@ -306,7 +306,7 @@ struct MotionObject *FieldEffect_SpawnItemBreakMode1(s32 x, s32 y, s32 z,
   struct MotionObject *fragment;
   s32 scale;
 
-  AudioCommand_PlayFar(SE_ITEM_BREAK);
+  Sound_PlaySongFar(SE_ITEM_BREAK);
   fragment = (struct MotionObject *)Object_Spawn(215, x, y, z);
   if (fragment != NULL) {
     fragment->scaleY = 0x4000;

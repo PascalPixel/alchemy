@@ -1,6 +1,6 @@
 /// @file
-/// The scrolling slideshow entry point.
+/// The credits entry point.
 
-/// Plays the ending's credits, about three minutes of crossfading backdrops
+/// Plays the ending's credits, about three minutes of crossfading pictures
 /// under the scrolling staff names. Returns 0.
-s32 DisplayScroll_RunSlideshowFar(void);
+s32 Credits_RunFar(void);

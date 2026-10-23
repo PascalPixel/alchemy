@@ -2,7 +2,7 @@
 	.set overlay_imports, 1
 	.set import.__divsi3, 1
 	.set import.Engine_TaskWait, 1
-	.set import.Scheduler_AddOrUpdateCallback, 1
+	.set import.Task_Add, 1
 	.set import.Engine_TaskRemoveCallback, 1
 	.set import.Engine_RandomNext, 1
 	.set import.ObjectEvent_SetMode, 1
@@ -47,7 +47,7 @@
 	.set import.Engine_ScriptCloseScreen, 1
 	.set import.Engine_ScriptWaitForScreen, 1
 	.set import.Engine_MarkerSetPosition, 1
-	.set import.Marker_MoveLeaderAway, 1
+	.set import.TreasureSpot_MoveLeaderAway, 1
 	.set import.QueueMapSound, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

@@ -2,7 +2,7 @@
 #define ALCHEMY_MAP_IDS_H
 
 /// @file
-/// Map numbers, named after their places, in the order of gField_MapTable
+/// Map numbers, named after their places, in the order of gMapHeaders
 /// (field/maps.s).
 ///
 /// Each MapId_ is an absolute symbol whose value is the map's row in the
@@ -11,8 +11,9 @@
 
 /// ★ Named from the game: "Title screen" (MsgDebugEntryName)
 extern char MapId_Title;
-/// ★ Named from the game: "Clear data" (MsgDebugEntryName)
-extern char MapId_Clear;
+/// The main menu, where the player chooses a file; the debug map list calls
+/// it "Clear data" (MsgDebugEntryName).
+extern char MapId_MainMenu;
 /// ★ Named from its area name: World Map
 extern char MapId_WorldMap;
 /// ★ Named from the game: "I just knew a storm like this would knock it loose!"
@@ -494,7 +495,7 @@ extern char MapId_LemurianShip;
 /// ★ Named from its area name: Tolbi Spring
 extern char MapId_TolbiSpring;
 /// ★ Named from the game: "Lobby" (MsgDebugEntryName)
-extern char MapId_LinkLobby;
+extern char MapId_BattleArena;
 /// ★ Named from the game: "Test 0" (MsgDebugEntryName)
 extern char MapId_TestRoom0;
 /// ★ Named from the game: "Test 1" (MsgDebugEntryName)

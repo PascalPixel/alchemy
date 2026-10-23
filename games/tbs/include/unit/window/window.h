@@ -6,99 +6,106 @@
 #include "glyph.h"
 
 struct AbilityListEntry;
-struct BattleActionRecord;
-struct BattleAct;
+struct BattleAction;
+struct AbilityDefinition;
 struct GlyphPalette;
 struct MenuSprite;
-struct OwnerActionSlot;
-struct UiWindow;
-struct RenderOutput;
-struct RenderOutputList;
-struct SaveSummary;
+struct PsynergyEntry;
+struct Window;
+struct WindowSprite;
+struct WindowSpriteList;
+struct SaveFileSummary;
 struct SelectionNode;
-struct SelectionScreen;
+struct SelectionScreenWork;
 struct SelectionWork;
-struct TextReader;
-struct UiChannelSlot;
-struct WorkspaceWork;
+struct MessageReader;
+struct TextPrinter;
+struct OptionMenuWork;
 
-/// The flags of a UI window (struct UiWindow.flags), which UiWindow_Create
+/// The flags of a UI window (struct Window.flags), which Window_Create
 /// takes as its attributes.
 enum {
-  UI_WINDOW_OPEN = 0x1,    ///< the window slot is in use
-  UI_WINDOW_INSTANT = 0x2, ///< opens and closes at once, with no zoom
-  /// text is drawn into a canvas of bitmap tiles (UiWindow_MapTextCanvasTiles)
-  UI_WINDOW_TEXT_CANVAS = 0x8,
+  WINDOW_FLAG_OPEN = 0x1,    ///< the window slot is in use
+  WINDOW_FLAG_INSTANT = 0x2, ///< opens and closes at once, with no zoom
+  /// text is drawn into a canvas of bitmap tiles (Window_MapTextCanvasTiles)
+  WINDOW_FLAG_TEXT_CANVAS = 0x8,
   /// the canvas has a frame and a filled background; without it the canvas is
   /// transparent and frameless
-  UI_WINDOW_FRAMED_CANVAS = 0x20,
-  UI_WINDOW_OUTLINED_TEXT = 0x40, ///< the canvas text gets an outline
+  WINDOW_FLAG_FRAMED_CANVAS = 0x20,
+  WINDOW_FLAG_OUTLINED_TEXT = 0x40, ///< the canvas text gets an outline
   /// when a new page resizes the window, its bottom edge stays put
-  UI_WINDOW_ANCHOR_BOTTOM = 0x80,
+  WINDOW_FLAG_ANCHOR_BOTTOM = 0x80,
   /// when a new page resizes the window, its left edge stays put
-  UI_WINDOW_FIXED_X = 0x100,
+  WINDOW_FLAG_FIXED_X = 0x100,
 };
 
 // The text canvas tiles in VRAM: 120 4bpp tiles from tile 0x128, enough for
 // the interior of a full-width window six tiles tall. The tiles run down
 // columns, each as tall as the window's interior.
-#define UI_CANVAS_VRAM ((void *)0x06002500)
-#define UI_CANVAS_SIZE 0xf00
-#define UI_CANVAS_FIRST_TILE 0x128
+#define TEXT_CANVAS_VRAM ((void *)0x06002500)
+#define TEXT_CANVAS_SIZE 0xf00
+#define TEXT_CANVAS_FIRST_TILE 0x128
 
 /// The UI tilemap in VRAM (BG screen block 4), which UiWork_UploadDirtyBlocks
 /// copies the work block's tilemap to.
-#define UI_TILEMAP_VRAM ((u8 *)0x06002000)
+#define WINDOW_TILEMAP_VRAM ((u8 *)0x06002000)
 
 /// A tilemap entry of palette 15, the UI palette.
-#define UI_TILE(tile) (0xf000 | (tile))
+#define WINDOW_TILE(tile) (0xf000 | (tile))
 /// Two copies of a tilemap entry, for filling a run of entries a word at a
 /// time.
-#define UI_TILE_PAIR(entry) ((u32)(entry) << 16 | (entry))
+#define WINDOW_TILE_PAIR(entry) ((u32)(entry) << 16 | (entry))
 
 // The two page arrows beside a paged list's page numbers, in the menus and
-// the clear menu: tiles 0x128 and 0x129 of character block 0, which
+// the main menu: tiles 0x128 and 0x129 of character block 0, which
 // Link_DrawShiftedTilePair slides back and forth each frame, and their
 // tilemap entries.
-#define UI_PAGE_ARROW_TILE 0x128
-#define UI_PAGE_ARROW_VRAM                                                     \
-  ((s32)BG_CHAR_BLOCK(0) + UI_PAGE_ARROW_TILE * TILE_SIZE_4BPP)
-#define UI_PAGE_ARROW_LEFT UI_TILE(UI_PAGE_ARROW_TILE)
-#define UI_PAGE_ARROW_RIGHT UI_TILE(UI_PAGE_ARROW_TILE + 1)
+#define PAGE_ARROW_TILE 0x128
+#define PAGE_ARROW_VRAM                                                        \
+  ((s32)BG_CHAR_BLOCK(0) + PAGE_ARROW_TILE * TILE_SIZE_4BPP)
+#define PAGE_ARROW_LEFT WINDOW_TILE(PAGE_ARROW_TILE)
+#define PAGE_ARROW_RIGHT WINDOW_TILE(PAGE_ARROW_TILE + 1)
 
-/// The window frame's tiles. While UiRenderWork.mode is set (a battle effect
-/// sets it while it greys palette 15 and scrolls BG0 by scanline) the corners
-/// are one rounded tile, flipped for each corner.
+/// The window frame's tiles. While WindowWork.mindRead is set (a battle
+/// animation sets it while it greys palette 15 and scrolls BG0 by scanline) the
+/// corners are one rounded tile, flipped for each corner.
 enum {
-  UI_TILE_BLANK = UI_TILE(0x00),
-  UI_TILE_FRAME_TOP_LEFT = UI_TILE(0x10),
-  UI_TILE_FRAME_TOP = UI_TILE(0x11),
-  UI_TILE_FRAME_TOP_RIGHT = UI_TILE(0x12),
-  UI_TILE_FRAME_BOTTOM_LEFT = UI_TILE(0x13),
-  UI_TILE_FRAME_BOTTOM = UI_TILE(0x14),
-  UI_TILE_FRAME_BOTTOM_RIGHT = UI_TILE(0x15),
-  UI_TILE_FRAME_LEFT = UI_TILE(0x16),
-  UI_TILE_FRAME_RIGHT = UI_TILE(0x17),
-  UI_TILE_FRAME_ROUND_CORNER = UI_TILE(0x1c),
-  UI_TILE_WINDOW_FILL = UI_TILE(0x20),
-  // Divider lines (UiWindow_DrawDividerLine) and their joins.
-  UI_TILE_DIVIDER_TEE_DOWN = UI_TILE(0x09), ///< a vertical line leaving below
-  UI_TILE_DIVIDER_TEE_UP = UI_TILE(0x0a),   ///< a vertical line leaving above
+  WINDOW_TILE_BLANK = WINDOW_TILE(0x00),
+  WINDOW_TILE_FRAME_TOP_LEFT = WINDOW_TILE(0x10),
+  WINDOW_TILE_FRAME_TOP = WINDOW_TILE(0x11),
+  WINDOW_TILE_FRAME_TOP_RIGHT = WINDOW_TILE(0x12),
+  WINDOW_TILE_FRAME_BOTTOM_LEFT = WINDOW_TILE(0x13),
+  WINDOW_TILE_FRAME_BOTTOM = WINDOW_TILE(0x14),
+  WINDOW_TILE_FRAME_BOTTOM_RIGHT = WINDOW_TILE(0x15),
+  WINDOW_TILE_FRAME_LEFT = WINDOW_TILE(0x16),
+  WINDOW_TILE_FRAME_RIGHT = WINDOW_TILE(0x17),
+  WINDOW_TILE_FRAME_ROUND_CORNER = WINDOW_TILE(0x1c),
+  WINDOW_TILE_WINDOW_FILL = WINDOW_TILE(0x20),
+  // Divider lines (Window_DrawDividerLine) and their joins.
+  WINDOW_TILE_DIVIDER_TEE_DOWN =
+      WINDOW_TILE(0x09), ///< a vertical line leaving below
+  WINDOW_TILE_DIVIDER_TEE_UP =
+      WINDOW_TILE(0x0a), ///< a vertical line leaving above
   /// a horizontal line leaving right
-  UI_TILE_DIVIDER_TEE_RIGHT = UI_TILE(0x0b),
-  UI_TILE_DIVIDER_TEE_LEFT = UI_TILE(0x0c), ///< a horizontal line leaving left
-  UI_TILE_DIVIDER_CROSS = UI_TILE(0x0d),
-  UI_TILE_DIVIDER_HORIZONTAL = UI_TILE(0x0e),
-  UI_TILE_DIVIDER_VERTICAL = UI_TILE(0x0f),
-  UI_TILE_FRAME_TOP_TEE = UI_TILE(0x18),    ///< the top edge meeting a line
-  UI_TILE_FRAME_BOTTOM_TEE = UI_TILE(0x19), ///< the bottom edge meeting a line
-  UI_TILE_FRAME_LEFT_TEE = UI_TILE(0x1a),   ///< the left edge meeting a line
-  UI_TILE_FRAME_RIGHT_TEE = UI_TILE(0x1b),  ///< the right edge meeting a line
+  WINDOW_TILE_DIVIDER_TEE_RIGHT = WINDOW_TILE(0x0b),
+  WINDOW_TILE_DIVIDER_TEE_LEFT =
+      WINDOW_TILE(0x0c), ///< a horizontal line leaving left
+  WINDOW_TILE_DIVIDER_CROSS = WINDOW_TILE(0x0d),
+  WINDOW_TILE_DIVIDER_HORIZONTAL = WINDOW_TILE(0x0e),
+  WINDOW_TILE_DIVIDER_VERTICAL = WINDOW_TILE(0x0f),
+  WINDOW_TILE_FRAME_TOP_TEE =
+      WINDOW_TILE(0x18), ///< the top edge meeting a line
+  WINDOW_TILE_FRAME_BOTTOM_TEE =
+      WINDOW_TILE(0x19), ///< the bottom edge meeting a line
+  WINDOW_TILE_FRAME_LEFT_TEE =
+      WINDOW_TILE(0x1a), ///< the left edge meeting a line
+  WINDOW_TILE_FRAME_RIGHT_TEE =
+      WINDOW_TILE(0x1b), ///< the right edge meeting a line
   /// In battle, the bottom frame tiles' lower rows, which UiWork_Initialize
   /// copies to tiles 128 to 130.
-  UI_TILE_BATTLE_FRAME_BOTTOM_LEFT = UI_TILE(0x80),
-  UI_TILE_BATTLE_FRAME_BOTTOM = UI_TILE(0x81),
-  UI_TILE_BATTLE_FRAME_BOTTOM_RIGHT = UI_TILE(0x82),
+  WINDOW_TILE_BATTLE_FRAME_BOTTOM_LEFT = WINDOW_TILE(0x80),
+  WINDOW_TILE_BATTLE_FRAME_BOTTOM = WINDOW_TILE(0x81),
+  WINDOW_TILE_BATTLE_FRAME_BOTTOM_RIGHT = WINDOW_TILE(0x82),
 };
 
 /// The tilemap entry flip bits.
@@ -113,26 +120,28 @@ enum {
 /// The DMA control word that copies count halfwords.
 #define DMA_COPY16(count) ((DMA_ENABLE << 16) | (count))
 
-/// How a render output's sprite moves (struct RenderOutput.active), run each
-/// frame by UiWork_AnimateSpriteSlots. 0 is a free output.
+/// How a window sprite moves (struct WindowSprite.motion), run each frame
+/// by UiWork_AnimateSpriteSlots. 0 is a free window sprite.
 enum {
-  UI_SPRITE_STILL = 1,
-  UI_SPRITE_PAGE_ARROW = 2,   ///< the animated next-page arrow, bobbing
-  UI_SPRITE_WOBBLE = 4,       ///< swings along a small arc
-  UI_SPRITE_SHAKE = 5,        ///< jitters by a pixel every other frame
-  UI_SPRITE_POP = 6,          ///< shown at double size, then normal size
-  UI_SPRITE_SPIN = 7,         ///< turns while circling its place
-  UI_SPRITE_PULSE = 8,        ///< shown at 1.25 times, then normal size
-  UI_SPRITE_SWELL = 9,        ///< pulses between 1 and 1.5 times its size
-  UI_SPRITE_SWELL_HALF = 10,  ///< the same at half the scale
-  UI_SPRITE_SHRINK = 11,      ///< shrinks from 1.5 times to its size, once
-  UI_SPRITE_SHRINK_HALF = 12, ///< the same at half the scale
-  UI_SPRITE_HIDDEN = 13,      ///< not drawn
-  UI_SPRITE_HOP_DOWN = 14,    ///< hops down and back
-  UI_SPRITE_HOP_DOWN_2 = 15,  ///< as UI_SPRITE_HOP_DOWN
-  UI_SPRITE_HOP_DOWN_3 = 16,  ///< as UI_SPRITE_HOP_DOWN
-  UI_SPRITE_HOP_UP = 17,
-  UI_SPRITE_HOP_DOWN_LEFT = 18,
+  WINDOW_SPRITE_MOTION_STILL = 1,
+  WINDOW_SPRITE_MOTION_PAGE_ARROW =
+      2,                           ///< the animated next-page arrow, bobbing
+  WINDOW_SPRITE_MOTION_WOBBLE = 4, ///< swings along a small arc
+  WINDOW_SPRITE_MOTION_SHAKE = 5,  ///< jitters by a pixel every other frame
+  WINDOW_SPRITE_MOTION_POP = 6,    ///< shown at double size, then normal size
+  WINDOW_SPRITE_MOTION_SPIN = 7,   ///< turns while circling its place
+  WINDOW_SPRITE_MOTION_PULSE = 8,  ///< shown at 1.25 times, then normal size
+  WINDOW_SPRITE_MOTION_SWELL = 9,  ///< pulses between 1 and 1.5 times its size
+  WINDOW_SPRITE_MOTION_SWELL_HALF = 10, ///< the same at half the scale
+  WINDOW_SPRITE_MOTION_SHRINK =
+      11, ///< shrinks from 1.5 times to its size, once
+  WINDOW_SPRITE_MOTION_SHRINK_HALF = 12, ///< the same at half the scale
+  WINDOW_SPRITE_MOTION_HIDDEN = 13,      ///< not drawn
+  WINDOW_SPRITE_MOTION_HOP_DOWN = 14,    ///< hops down and back
+  WINDOW_SPRITE_MOTION_HOP_DOWN_2 = 15,  ///< as WINDOW_SPRITE_MOTION_HOP_DOWN
+  WINDOW_SPRITE_MOTION_HOP_DOWN_3 = 16,  ///< as WINDOW_SPRITE_MOTION_HOP_DOWN
+  WINDOW_SPRITE_MOTION_HOP_UP = 17,
+  WINDOW_SPRITE_MOTION_HOP_DOWN_LEFT = 18,
 };
 
 /// The command icons (ResourceId_CommandIcons), each drawn with the command
@@ -179,13 +188,13 @@ enum CommandIcon {
   COMMAND_ICON_BRONZE = 48
 };
 
-/// What UiText_DrawGlyph and UiWindow_PutGlyph draw.
+/// What Glyph_Draw and Window_PutGlyph draw.
 enum GlyphDrawMode {
   GLYPH_DRAW_CHARACTER = 0, ///< the character given
   GLYPH_DRAW_PAGE_ARROW = 1 ///< the next-page arrow, in the window's corner
 };
 
-/// The window UiText_ShowCenteredMessage shows its message in.
+/// The window FieldMessage_ShowCentered shows its message in.
 enum CenteredMessageMode {
   /// No frame or size: it opens and closes at once.
   CENTERED_MESSAGE_BARE = 0,
@@ -193,35 +202,36 @@ enum CenteredMessageMode {
   CENTERED_MESSAGE_WINDOW = 1
 };
 
-/// The flags UiText_ShowPositionedMessageAndWait takes. Without
-/// POSITIONED_MESSAGE_LOWER or POSITIONED_MESSAGE_LOWEST the window goes above
+/// The flags FieldMessage_Show takes. Without
+/// FIELD_MESSAGE_LOWER or FIELD_MESSAGE_LOWEST the window goes above
 /// or below the player's character, away from where it stands on screen.
-enum PositionedMessageFlag {
-  POSITIONED_MESSAGE_ZOOM = 1,      ///< the window zooms open and shut
-  POSITIONED_MESSAGE_BUSY = 2,      ///< the window work is busy while it shows
-  POSITIONED_MESSAGE_KEEP_OPEN = 4, ///< the window is left open
-  POSITIONED_MESSAGE_LOWER = 8,     ///< 4 tiles below the top rows' centre
-  POSITIONED_MESSAGE_HOLD_UPLOAD = 0x20, ///< the tilemap upload is held off
-  POSITIONED_MESSAGE_LOWEST = 0x40 ///< 12 tiles below the top rows' centre
+enum FieldMessageFlag {
+  FIELD_MESSAGE_ZOOM = 1, ///< the window zooms open and shut
+  FIELD_MESSAGE_WAITING_FOR_SOUND =
+      2,                            ///< the window work is busy while it shows
+  FIELD_MESSAGE_KEEP_OPEN = 4,      ///< the window is left open
+  FIELD_MESSAGE_LOWER = 8,          ///< 4 tiles below the top rows' centre
+  FIELD_MESSAGE_HOLD_UPLOAD = 0x20, ///< the tilemap upload is held off
+  FIELD_MESSAGE_LOWEST = 0x40       ///< 12 tiles below the top rows' centre
 };
 
-/// The system menu's entries, as Menu_RunWorkspaceSelectionLoop returns them
+/// The pause menu's entries, as PauseMenu_Choose returns them
 /// (counted from Save your quest even when only Change settings shows).
-enum SystemMenuEntry {
-  SYSTEM_MENU_SAVE = 0,
-  SYSTEM_MENU_SLEEP = 1,
-  SYSTEM_MENU_CHANGE_SETTINGS = 2,
+enum PauseMenuEntry {
+  PAUSE_MENU_SAVE_QUEST = 0,
+  PAUSE_MENU_SLEEP = 1,
+  PAUSE_MENU_CHANGE_SETTINGS = 2,
   // The debug entries.
-  SYSTEM_MENU_ROUGH_MENU = 3,
-  SYSTEM_MENU_RECOVERY_TEST = 4,
-  SYSTEM_MENU_RESTART_QUEST = 5
+  PAUSE_MENU_ROUGH_MENU = 3,
+  PAUSE_MENU_RECOVERY_TEST = 4,
+  PAUSE_MENU_RESTART_QUEST = 5
 };
 
 /// The kinds of icon the selection screen lists (SelectionNode.kind) and
 /// Resource_LoadByMode, Resource_LoadByModeIntoSlot and
-/// RenderOutput_CreateFromResource load.
+/// WindowSprite_CreateFromResource load.
 enum IconKind {
-  ICON_KIND_NONE = 0,    ///< a free selection icon record
+  ICON_KIND_NONE = 0,    ///< a free selection icon entry
   ICON_KIND_COMMAND = 1, ///< a command's icon, from its number
   /// An item's icon, with its count above one and its equipped and broken
   /// marks (and the artifact mark where a slot is given).
@@ -235,7 +245,7 @@ enum IconKind {
   ICON_KIND_TABLE_ENTRY = 9
 };
 
-/// The kinds of message argument (UiWork_PushValueSlot), which the message
+/// The kinds of message argument (MessageArgument_Push), which the message
 /// codes such as {argument_item_name} read.
 enum {
   MESSAGE_ARGUMENT_NONE = 0, ///< an empty place in the argument table
@@ -247,226 +257,220 @@ enum {
   MESSAGE_ARGUMENT_LOCATION = 6,
 };
 
-struct RenderOutput *RenderOutput_AcquireFree(void);
-void RenderOutput_ReleaseFree(struct RenderOutput *out);
-void RenderOutput_InitializeFreeList(void);
+struct WindowSprite *WindowSprite_AcquireFree(void);
+void WindowSprite_ReleaseFree(struct WindowSprite *out);
+void WindowSprite_InitializeFreeList(void);
 void UiWork_InitializeWithResourceCounters(void);
 void UiWork_Initialize(s32 loadGlyphTiles);
 void UiWork_UploadDirtyBlocks(void);
-void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
-void UiWindow_DrawOpened(struct UiWindow *window);
-struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
-                                 s32 attrs);
-void UiWindow_WaitZoom(struct UiWindow *window);
-void UiWork_Finalize(struct UiWindow *window, s32 instant);
-void RenderOutput_PrepareForRedraw(struct UiWindow *window);
-void RenderOutput_RedrawSavedRect(struct UiWindow *window);
-void RenderOutput_ClearList(void *outputs);
-void UiWindow_ClearInteriorTiles(const struct UiWindow *window, u32 left,
-                                 u32 top, u32 right, u32 bottom);
-void RenderOutput_UpdateListTail(struct RenderOutputList *list);
-// RenderOutput_AppendToList is called from battle_command.c with no prototype
-// in scope: in one file its definition would come before RenderOutput_Create
-// and DjinnMenu_ShowChangePreview, and RenderOutput_Create changes (2 of 61
-// instructions in tbs-en). Split evidence for window|battle_command.
-void RenderOutput_Release(struct RenderOutput *entry);
-// UiText_QueueRenderEntries is called from battle_command.c with no prototype
+void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
+void Window_DrawOpened(struct Window *window);
+struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs);
+void Window_WaitZoom(struct Window *window);
+void Window_Close(struct Window *window, s32 instant);
+void WindowSprite_PrepareForRedraw(struct Window *window);
+void WindowSprite_RedrawSavedRect(struct Window *window);
+void WindowSprite_ClearList(void *outputs);
+void Window_ClearInteriorTiles(const struct Window *window, u32 left, u32 top,
+                               u32 right, u32 bottom);
+void WindowSprite_UpdateListTail(struct WindowSpriteList *list);
+// WindowSprite_AppendToList is called from battle_command.c with no prototype
+// in scope: in one file its definition would come before WindowSprite_Create
+// and BattleDjinnMenu_ShowChangePreview, and WindowSprite_Create changes (2 of
+// 61 instructions in tbs-en). Split evidence for window|battle_command.
+void WindowSprite_Release(struct WindowSprite *entry);
+// TextPrinter_Add is called from battle_command.c with no prototype
 // in scope: Party_ShowJoinedMessage, Party_ShowPairJoinedMessage and
 // Djinn_ShowJoinedMessage pass five of its six arguments, and in one file,
 // with its definition first, they would not compile. Split evidence for
 // window|battle_command.
-struct UiChannelSlot *UiText_StartBattleMessage(struct UiWindow *window,
-                                                s32 entry, s32 keepPosition);
+struct TextPrinter *BattleMessage_Continue(struct Window *window, s32 entry,
+                                           s32 keepPosition);
 s32 Ui_ClearVramBlock(void);
 s32 Ui_FillVramBlockPattern(void);
-void UiWork_ResetFreeChannel(void);
-void UiText_ApplyChannelStyle(struct UiChannelSlot *channel);
-void UiText_StartCanvasScroll(struct UiChannelSlot *channel);
-void UiText_ScrollCanvasUp(s32 step);
-void UiWork_ProcessRenderChannels(void);
-s32 UiWork_StepChannelScript(struct UiChannelSlot *ch);
+void TextPrinter_ResetFree(void);
+void TextPrinter_ApplyStyle(struct TextPrinter *channel);
+void Text_StartCanvasScroll(struct TextPrinter *channel);
+void Text_ScrollCanvasUp(s32 step);
+void TextPrinter_RunAll(void);
+s32 TextPrinter_Step(struct TextPrinter *ch);
 void UiWork_ProcessDirectWork(void);
-void UiWindow_DrawZoomFrame(void *windowArg, s32 savePosition);
+void Window_DrawZoomFrame(void *windowArg, s32 savePosition);
 u16 *Memory_FillHalfwordsDma(u16 *dst, s32 value, s32 count);
-void UiWindow_DrawFrame(s32 x, s32 y, u32 width, u32 height);
-void UiWindow_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height,
-                                 s32 fullWidth);
+void Window_DrawFrame(s32 x, s32 y, u32 width, u32 height);
+void Window_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height,
+                               s32 fullWidth);
 s32 UiWork_IsComplete(void);
-s32 UiWork_IsIdle(struct UiWindow *window);
+s32 UiWork_IsIdle(struct Window *window);
 void UiWork_ResetCounters();
 void UiWork_InitializeCountersWithResourceAndScheduleRefresh(void);
 void UiWork_InitializeCountersAndScheduleRefresh(s32 loadGlyphTiles);
-void UiWork_FinalizeSharedSlot(void);
-void UiText_PrepareMessageWork(s32 argument);
-void UiText_ShowMessageAndWaitCore(s32 argument);
-s32 UiText_OpenEntryMessage(struct UiWindow *window, s32 argument);
+void BattleMessage_Close(void);
+void BattleMessage_Open(s32 argument);
+void BattleMessage_ShowAndWait(s32 argument);
+s32 Message_OpenDecoded(struct Window *window, s32 argument);
 void UiWork_SetBusyFlags(s32 flags);
-struct UiWindow *UiText_OpenMessageWindow(s32 message, s32 x, s32 y,
-                                          u32 packed);
-void UiText_ShowPositionedMessageAndWait(s32 no, s32 flags);
+struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed);
+void FieldMessage_Show(s32 no, s32 flags);
 void UiWork_ProcessAll(void);
 #if LANGUAGE != LANGUAGE_JAPANESE
-s32 UiText_RenderGlyphPair(s32 code, u32 *out);
+s32 Text_DrawGlyphPair(s32 code, u32 *out);
 #else
-s32 UiText_RenderGlyphPair(u32 code, u32 *out);
+s32 Text_DrawGlyphPair(u32 code, u32 *out);
 #endif
-s32 UiText_GetWideStringWidth(u16 *text);
-void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x,
-                                     s32 y);
-void UiText_RenderGlyphTileAtWorkOffset(u16 *buffer,
-                                        const struct UiWindow *work,
-                                        s32 offsetX, s32 offsetY);
-// UiText_RenderWideStringInWindow is called from battle_command.c with no
+s32 Text_GetWideStringWidth(u16 *text);
+void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
+                                 s32 y);
+void Text_DrawGlyphTileAtWorkOffset(u16 *buffer, const struct Window *work,
+                                    s32 offsetX, s32 offsetY);
+// Text_DrawWideStringInWindow is called from battle_command.c with no
 // prototype in scope: in one file its definition would come before
-// DjinnMenu_ShowChangePreview's 17 calls, and that function changes by 18
+// BattleDjinnMenu_ShowChangePreview's 17 calls, and that function changes by 18
 // bytes in tbs-en. Split evidence for window|battle_command.
-u8 *UiText_FormatNumber(u8 *buffer, s32 input, s32 width);
-u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry, s32 no,
-                             s32 plural, s32 *suffix);
-s32 UiText_BuildRenderEntries(s32 script, s32 clear);
-void UiWindow_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph,
-                          u16 *spacing, u32 flags);
-void UiText_MeasureResourceEntries(s32 no, s32 *x, s32 *y);
-s32 UiText_GetResourceDimensions(s32 no, s32 *x, s32 *y, u32 *width,
-                                 u32 *height);
-s32 UiText_GetResourceDimensionsAlt(s32 no, s32 *x, s32 *y, u32 *width,
-                                    u32 *height);
-void UiText_MeasureEntryDimensions(s32 pos, u32 *out_width, u32 *out_height,
-                                   u16 *spacing);
-void UiText_MeasureAllPages(s32 start, u32 *out_width, u32 *out_height,
-                            u16 *spacing);
-s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y,
-                     s32 mode);
-// UiWindow_PutGlyph is called from battle_command.c with no prototype in
+u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width);
+u32 Message_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry, s32 no,
+                              s32 plural, s32 *suffix);
+s32 Message_Decode(s32 script, s32 clear);
+void Window_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph,
+                        u16 *spacing, u32 flags);
+void Text_MeasureMessage(s32 no, s32 *x, s32 *y);
+s32 Text_GetMessageSize(s32 no, s32 *x, s32 *y, u32 *width, u32 *height);
+s32 Text_GetMessageSizeAlt(s32 no, s32 *x, s32 *y, u32 *width, u32 *height);
+void Text_MeasureDecoded(s32 pos, u32 *out_width, u32 *out_height,
+                         u16 *spacing);
+void Text_MeasureAllPages(s32 start, u32 *out_width, u32 *out_height,
+                          u16 *spacing);
+s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode);
+// Window_PutGlyph is called from battle_command.c with no prototype in
 // scope, as in window.c above its definition: PartyStatus_Draw passes four of
 // its five arguments, and in one file, with its definition first, it would not
 // compile. Split evidence for window|battle_command.
-void UiWindow_SetTilemapEntry(struct UiWindow *window, s32 value, s32 x, s32 y,
-                              u32 mode);
-void RenderOutput_UpdateScaleAnimation(struct RenderOutput *output);
+void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
+                            u32 mode);
+void WindowSprite_UpdateScaleAnimation(struct WindowSprite *output);
 void UiWork_AnimateSpriteSlots(void);
-void Ui_AdjustValueWithoutLimit(s32 message, u16 *buf);
-s32 UiText_CopyMessageString(s32 key, u16 *destination, u32 capacity);
-void UiText_DecodeMessage(s32 message, u16 *text, s32 capacity);
+void Message_DecodeRawUnbounded(s32 message, u16 *buf);
+s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity);
+void Message_DecodeRaw(s32 message, u16 *text, s32 capacity);
 s32 *Runtime_ClearWordIfSet(s32 *p);
 void UiWork_DrainPending(s32 unused);
-void UiWindow_StepSwellEffect(struct UiChannelSlot *ch);
-void UiWork_ClearValueNameTables(void);
-void UiWork_PushValueSlot(u32 value, u32 kind);
-u32 UiText_LookupArgument(u32 kind, u32 clear);
-s32 UiText_CheckPauseSkipped(struct UiChannelSlot *ch);
-s32 UiText_CheckTextDismissed(struct UiChannelSlot *ch);
+void Window_StepSwellEffect(struct TextPrinter *ch);
+void MessageArgument_ClearAll(void);
+void MessageArgument_Push(u32 value, u32 kind);
+u32 MessageArgument_Lookup(u32 kind, u32 clear);
+s32 Text_CheckPauseSkipped(struct TextPrinter *ch);
+s32 Text_CheckTextDismissed(struct TextPrinter *ch);
 void UiWork_FinalizePendingCore(void);
-void UiText_ShowCenteredMessage(s32 message, s32 mode, s32 yOffset);
-s32 UiText_BuildRenderEntriesMode1(s32 arg0);
-void UiText_LookupMessage(struct TextReader *reader, s32 message);
-s32 UiText_DecodeSymbol(struct TextReader *reader);
-void UiWork_ClearPortraitSlots(void);
-s32 UiText_GetSpeakerPortrait(u32 value);
-struct UiWindow *UiWindow_CreateWithSideObject(s32 arg0, s32 arg1, s32 x,
-                                               s32 y);
-void UiWork_FinalizeEntityMatchingLocalizedId(u32 entry);
+void FieldMessage_ShowCentered(s32 message, s32 mode, s32 yOffset);
+s32 Message_DecodeMode1(s32 arg0);
+void Message_Find(struct MessageReader *reader, s32 message);
+s32 Text_DecodeSymbolInC(struct MessageReader *reader);
+void Portrait_ClearSlots(void);
+s32 Portrait_GetForSpeaker(u32 value);
+struct Window *Portrait_OpenWindow(s32 arg0, s32 arg1, s32 x, s32 y);
+void Portrait_CloseWindow(u32 entry);
 
-#define UI_WORK ((struct UiRenderWork *)gWindowWork[0])
+#define WINDOW_WORK ((struct WindowWork *)gWindowWork[0])
 
 #define ACTION_ID_MASK 0x3fff
 
 /// Defines name(no, x, y, width, height): decodes message no and fits a window
-/// for it on the screen near tile (x, y) (UiWindow_FitOnScreen with flags),
+/// for it on the screen near tile (x, y) (Window_FitOnScreen with flags),
 /// returning its place and size in tiles. Returns 0 for an empty message.
 #define DEFINE_GET_RESOURCE_DIMENSIONS(name, flags)                            \
   s32 name(s32 no, s32 *x, s32 *y, u32 *width, u32 *height) {                  \
-    struct UiRenderWork *work;                                                 \
+    struct WindowWork *work;                                                   \
     s32 idx;                                                                   \
                                                                                \
-    work = UI_WORK;                                                            \
-    idx = UiText_BuildRenderEntries(no, 0);                                    \
-    if (work->entries[idx] == 0) {                                             \
+    work = WINDOW_WORK;                                                        \
+    idx = Message_Decode(no, 0);                                               \
+    if (work->textBuffer[idx] == 0) {                                          \
       return 0;                                                                \
     }                                                                          \
-    UiWindow_FitOnScreen(idx, x, y, width, height, 0, flags);                  \
+    Window_FitOnScreen(idx, x, y, width, height, 0, flags);                    \
     return 1;                                                                  \
   }
 
-s32 UiIcon_CountItemIcons(void);
-s32 UiIcon_CountPsynergyIcons(void);
+s32 Icon_CountItemIcons(void);
+s32 Icon_CountPsynergyIcons(void);
 void Ui_BuildPairedPatternsToSlot(s32 no0, s32 no1, s32 *slot, s32 *ret,
                                   s32 flag);
 void Ability_RequestGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile,
                           s32 reuse);
-void UiIcon_BuildItemIconTiles(u32 glyph, s32 with_base, s32 *src, s32 *dst,
-                               s32 reuse);
+void Icon_BuildItemIconTiles(u32 glyph, s32 with_base, s32 *src, s32 *dst,
+                             s32 reuse);
 s32 ItemIcon_Compose(u32 code, u32 layers);
-s32 UiIcon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2);
+s32 Icon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2);
 s32 Ui_BuildPatternToSlot(s32 icon, s32 unused, s32 slot);
 s32 RenderResource_LoadTableEntry(u32 value, s32 unused, u32 slot);
 void Ui_PrepareTransferForItem(s32 code);
 void Ability_LoadGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile,
                        s32 reuse);
-void UiIcon_BuildAbilityIconTiles(u32 glyph, s32 with_base, s32 *src, s32 *dst,
-                                  s32 reuse);
+void Icon_BuildAbilityIconTiles(u32 glyph, s32 with_base, s32 *src, s32 *dst,
+                                s32 reuse);
 void Ui_PrepareTransferFromTableEntry(u32 index);
 void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
                                   s32 palette, s32 reuse);
 void UiGlyph_ReservedNoOp(void);
-void UiIcon_Decode(GlyphTransfer *glyph, s32 outlined);
+void Icon_Decode(GlyphTransfer *glyph, s32 outlined);
 
-void UiGlyph_ResetWorkState(void);
-void Resource_ClearOwnerListAndCounters(void);
-void Resource_PushPendingPair(u32 first, u32 second);
+void SelectionScreen_Create(void);
+void SelectionScreen_Clear(void);
+void SelectionScreen_AddEntry(u32 first, u32 second);
 void SelectionScreen_BuildEntries(u32 unused);
 void UiWork_ReservedNoOp(void);
 struct SelectionNode *SelectionScreen_FindFreeIcon(s32 kind);
-void Resource_ScheduleOwnerResetDelayed(void);
-void Resource_ScheduleOwnerReset(void);
+void SelectionScreen_StartDrawing(void);
+void SelectionScreen_StopDrawing(void);
 void SelectionScreen_Draw(void);
-void SelectionScreen_DrawArrow(struct SelectionScreen *state, s32 index);
-void Menu_OpenSelectionWindow(s32 mode, u32 count);
-void Resource_ResetOwnerEntries(void);
-void Menu_SetNodeCoordinates(u32 first, u32 second);
+void SelectionScreen_DrawArrow(struct SelectionScreenWork *state, s32 index);
+void SelectionScreen_OpenNameWindow(s32 mode, u32 count);
+void SelectionScreen_Close(void);
+void SelectionScreen_SetPosition(u32 first, u32 second);
 void Menu_SetupSelectionBothSides(void);
-void SelectionScreen_SetupArrow(struct SelectionScreen *state, s32 index);
+void SelectionScreen_SetupArrow(struct SelectionScreenWork *state, s32 index);
 struct SelectionNode *
-SelectionScreen_GetCursorNode(struct SelectionScreen *screen);
-s32 Menu_SelectionLoop(s32 mode);
-u32 Menu_WaitForSelectionInput(u32 mode);
-void Menu_MoveSelectionForward(struct SelectionScreen *screen);
-void Menu_MoveSelectionBackward(struct SelectionScreen *screen);
-void Menu_StepRight(struct SelectionScreen *state);
-void Menu_StepLeft(struct SelectionScreen *state);
-void SelectionScreen_RedrawIcon(struct SelectionScreen *state, u32 index);
-void SelectionScreen_HighlightIcon(struct SelectionScreen *state, u32 index);
-void Menu_SendNodeCountList(struct SelectionScreen *screen);
-void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward);
+SelectionScreen_GetCursorNode(struct SelectionScreenWork *screen);
+s32 SelectionScreen_Run(s32 mode);
+u32 SelectionScreen_RunWithSounds(u32 mode);
+void Menu_MoveSelectionForward(struct SelectionScreenWork *screen);
+void Menu_MoveSelectionBackward(struct SelectionScreenWork *screen);
+void SelectionScreen_StepRight(struct SelectionScreenWork *state);
+void SelectionScreen_StepLeft(struct SelectionScreenWork *state);
+void SelectionScreen_RedrawIcon(struct SelectionScreenWork *state, u32 index);
+void SelectionScreen_HighlightIcon(struct SelectionScreenWork *state,
+                                   u32 index);
+void Menu_SendNodeCountList(struct SelectionScreenWork *screen);
+void SelectionScreen_Scroll(struct SelectionScreenWork *screen, s32 forward);
 s32 Resource_LoadByMode(s32 mode, s32 value);
 s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option);
 void SelectionScreen_SetupIcon(u32 kind, s32 base, struct SelectionNode *node,
                                s32 reuse);
-u32 Menu_ConfirmSelection(struct SelectionScreen *screen);
-void UiTextResource_NoOpCallback(void);
-void UiTextResource_NoOpCallbackBank(void);
-void UiTextResource_NoOpCallback1(void);
-void UiTextResource_NoOpCallback2(void);
-void UiTextResource_NoOpCallback3(void);
-void UiTextResource_NoOpCallback4(void);
-void UiTextResource_Initialize(struct MenuSprite *object, s32 *slot);
-void UiTextResource_SetPosition(struct MenuSprite *obj, s32 x, s32 y);
-void UiTextResource_Release(s32 value);
+u32 Menu_ConfirmSelection(struct SelectionScreenWork *screen);
+void MenuArrow_NoOpCallback(void);
+void MenuArrow_NoOpCallbackBank(void);
+void MenuArrow_NoOpCallback1(void);
+void MenuArrow_NoOpCallback2(void);
+void MenuArrow_NoOpCallback3(void);
+void MenuArrow_NoOpCallback4(void);
+void MenuArrow_Create(struct MenuSprite *object, s32 *slot);
+void MenuArrow_SetPosition(struct MenuSprite *obj, s32 x, s32 y);
+void MenuArrow_Release(s32 value);
 void SelectionScreen_LoadLargeIcon(void);
 void Resource_ResetPendingTransfer(void);
-s32 Menu_RunTopSelection(void);
-void UiWindow_OpenMode1AndWaitFrame(void);
+s32 FieldMenu_Run(void);
+void PartyStatus_OpenAndWait(void);
 // The matching build calls this before its void definition and uses the
-// result. Menu_RunTopSelection keeps that form outside UBFIX.
+// result. FieldMenu_Run keeps that form outside UBFIX.
 #ifdef UBFIX
 void UiWork_CloseAndRelease(void);
 #endif
 void SelectionScreen_CreateEmpty(void);
 u32 Menu_RunSelectionForValue(u32 value);
 
-void UiTimedNotice_Create(void);
-void UiTimedNotice_Tick(void);
-void UiTimedNotice_CloseIfActive(void);
+void MapNamePopup_Show(void);
+void MapNamePopup_Update(void);
+void MapNamePopup_Hide(void);
 s32 Item_RemoveFromInventory(s32 unused, s32 itemId);
 s32 Item_ReturnTrue(void);
 void OptionMenu_StepWindowHue(s32 arg0);
@@ -478,60 +482,57 @@ void Menu_RunSelectionHook(void);
 
 void Menu_AllocateSelectionWorkspace(void);
 void Menu_ReleaseSelectionWorkspace(void);
-void GraphicsPalette_ReservedNoOpC9BC(void);
-void GraphicsPalette_ReservedNoOpC9C0(void);
-void GraphicsPalette_ReservedNoOpC9C4(void);
-void OptionMenu_ResetEntries(struct WorkspaceWork *work);
-void WindowColor_CalculateTint(struct WorkspaceWork *work);
-void WindowColor_WritePalette(struct WorkspaceWork *work);
-u16 WindowColor_ScaleTint(struct WorkspaceWork *work, s32 scale_r, s32 scale_g,
+void OptionMenu_ReservedNoOpC9BC(void);
+void OptionMenu_ReservedNoOpC9C0(void);
+void OptionMenu_ReservedNoOpC9C4(void);
+void OptionMenu_ResetEntries(struct OptionMenuWork *work);
+void WindowColor_CalculateTint(struct OptionMenuWork *work);
+void WindowColor_WritePalette(struct OptionMenuWork *work);
+u16 WindowColor_ScaleTint(struct OptionMenuWork *work, s32 scale_r, s32 scale_g,
                           s32 scale_b);
 u16 Color_ScaleComponents(s16 *rgb, s32 red_scale, s32 green_scale,
                           s32 blue_scale);
-void PaletteGlow_Update(s32 phase, s32 brightness);
-void OptionMenu_PreviousRow(struct WorkspaceWork *work);
-void OptionMenu_NextRow(struct WorkspaceWork *work);
-void OptionMenu_LowerSetting(struct WorkspaceWork *work);
-void OptionMenu_RaiseSetting(struct WorkspaceWork *work);
-void GraphicsPalette_SelectionNoOp(void);
+void WindowColor_Apply(s32 phase, s32 brightness);
+void OptionMenu_PreviousRow(struct OptionMenuWork *work);
+void OptionMenu_NextRow(struct OptionMenuWork *work);
+void OptionMenu_LowerSetting(struct OptionMenuWork *work);
+void OptionMenu_RaiseSetting(struct OptionMenuWork *work);
+void OptionMenu_SelectionNoOp(void);
 void OptionMenu_AnimateCursors(void);
 void OptionMenu_InitializeWork(void);
 void OptionMenu_Release(void);
-struct UiWindow *OptionMenu_Open(void);
-s32 Menu_RunWorkspaceOptions(void);
-void SystemMenu_AnimateCursor(void);
-void SystemMenu_Initialize(void);
-void SystemMenu_Release(void);
-struct UiWindow *SystemMenu_Open(void);
-s32 Menu_RunWorkspaceSelectionLoop(void);
+struct Window *OptionMenu_Open(void);
+s32 OptionMenu_Run(void);
+void PauseMenu_AnimateCursor(void);
+void PauseMenu_Initialize(void);
+void PauseMenu_Release(void);
+struct Window *PauseMenu_Open(void);
+s32 PauseMenu_Choose(void);
 
-void UiWindow_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
-                                 u8 *remap);
-s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x);
-// UiWindow_ClearTileAttributesInRect is called before its definition with no
+void Window_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern, u8 *remap);
+s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x);
+// Window_ClearTextTilesInRect is called before its definition with no
 // prototype in scope.
-void UiWindow_MarkVisibleTileAttributes(void);
-void UiWork_SetAltFlagAndClearTable(s32 flag);
+void Window_MarkVisibleTextTiles(void);
+void Text_UseExtraTiles(s32 flag);
 void UiRender_ReservedNoOp(void);
-void UiWindow_DrawDividerLine(struct UiWindow *win, u32 x1, u32 y1, u32 x2,
-                              u32 y2);
+void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2, u32 y2);
 void UiWork_SetParameterNibble(s32 param);
 void UiWork_SetRenderWord(u16 value);
-void UiText_DrawResource(s32 message, struct UiWindow *window, s32 x, s32 y);
-void UiText_DrawCharacterAtOffset(s32 message, const struct UiWindow *window,
-                                  u32 offsetX, u32 offsetY);
-void UiText_DrawString(const u8 *text, struct UiWindow *window, s32 x, s32 y);
-void UiText_DrawStringAtOffset(const u8 *text, const struct UiWindow *work,
-                               s32 offsetX, s32 offsetY);
-void UiText_DrawStringInWindow(const u8 *text, struct UiWindow *window, u32 x,
-                               u32 y);
-void UiText_DrawNumber(s32 value, s32 width, struct UiWindow *window, s32 x,
-                       s32 y);
-void UiText_DrawNumberAtOffset(s32 value, s32 width,
-                               const struct UiWindow *window, s32 x, s32 y);
-void UiText_DrawNumberInWindow(s32 value, s32 width, struct UiWindow *window,
-                               s32 x, s32 y);
-// UiText_DrawPrefixedNumberAtOffset is called from battle_command.c with no
+void Text_DrawMessage(s32 message, struct Window *window, s32 x, s32 y);
+void Text_DrawMessageAsTiles(s32 message, const struct Window *window,
+                             u32 offsetX, u32 offsetY);
+void Text_DrawString(const u8 *text, struct Window *window, s32 x, s32 y);
+void Text_DrawStringAtOffset(const u8 *text, const struct Window *work,
+                             s32 offsetX, s32 offsetY);
+void Text_DrawStringInWindow(const u8 *text, struct Window *window, u32 x,
+                             u32 y);
+void Text_DrawNumber(s32 value, s32 width, struct Window *window, s32 x, s32 y);
+void Text_DrawNumberAtOffset(s32 value, s32 width, const struct Window *window,
+                             s32 x, s32 y);
+void Text_DrawNumberInWindow(s32 value, s32 width, struct Window *window, s32 x,
+                             s32 y);
+// Text_DrawPrefixedNumberAtOffset is called from battle_command.c with no
 // prototype in scope: in one file its definition would come before
 // PartyStatus_Draw, and PartyStatus_Draw changes (2 of 435 instructions in
 // tbs-en). Split evidence for window|battle_command.

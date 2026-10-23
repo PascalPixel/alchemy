@@ -92,14 +92,14 @@ enum SoundDriverLimit {
   /// The PCM notes in SoundWork.pcmNotes; mode changes and
   /// AudioEngine_StopAllChannels clear all 12, though only pcmNoteCount play.
   SOUND_PCM_NOTE_CAPACITY = 12,
-  SOUND_CGB_CHANNEL_COUNT = 4, ///< CGB channels, one per enum CgbChannel
+  SOUND_CGB_CHANNEL_COUNT = 4, ///< CGB channels, one per enum CgbChannelId
   /// Most tracks a player takes; MusicPlayer_Initialize caps its count here,
   /// and the track masks of the MusicPlayer_Set routines are 16 bits.
   SOUND_PLAYER_TRACK_LIMIT = 16
 };
 
 /// The four CGB channels, numbered as the hardware's NR registers are.
-enum CgbChannel {
+enum CgbChannelId {
   CGB_CHANNEL_SQUARE_1 = 1, ///< a square wave with a sweep (NR10 to NR14)
   CGB_CHANNEL_SQUARE_2 = 2, ///< a square wave (NR21 to NR24)
   CGB_CHANNEL_WAVE = 3,     ///< a pattern from wave RAM (NR30 to NR34)
@@ -203,7 +203,7 @@ struct SoundNote {
 /// envelope, its levels and pan, its frequency and its wave.
 struct CgbNote {
   u8 state; ///< CgbNoteState and CgbNotePhase; 0 when the channel is free.
-  /// Its enum CgbChannel at setup, then the voice's kind; bit 3 rounds the
+  /// Its enum CgbChannelId at setup, then the voice's kind; bit 3 rounds the
   /// frequency to the sound bias's resolution on every channel but
   /// CGB_CHANNEL_NOISE.
   u8 kind;
@@ -449,7 +449,7 @@ struct SoundWork {
   void (*tick)(struct SoundPlayer *player);
   struct SoundPlayer *tickPlayer; ///< Passed to tick.
   void (*cgbUpdate)(void);        ///< Run each mixer frame: Cgb_UpdateChannels.
-  void (*cgbMute)(u8 channel);    ///< CgbChannel_Mute, by enum CgbChannel.
+  void (*cgbMute)(u8 channel);    ///< CgbChannel_Mute, by enum CgbChannelId.
   s32 (*cgbFrequency)(u8 kind, u8 key, u8 fine); ///< Cgb_KeyToFrequency.
   SoundCommand *commands;                        ///< gSound_CommandTable.
   /// MusicTrack_HandleNote, run for song bytes from 0xCF up with the byte
@@ -480,7 +480,7 @@ struct PlayerSlot {
 /// that plays it.
 struct SongEntry {
   const struct SequenceHeader *header;
-  /// Index into gSound_PlayerSlots; AudioCommand_Play gives slot 7's songs
+  /// Index into gSound_PlayerSlots; Sound_PlaySong gives slot 7's songs
   /// the first player from 7 down to 4 with no active track, else 7.
   u16 slot;
   u16 slotCopy; ///< The same value as slot in every entry; nothing reads it.

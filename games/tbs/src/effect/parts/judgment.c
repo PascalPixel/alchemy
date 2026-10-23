@@ -1,16 +1,16 @@
 /// @file
 /// The Judgment summon.
 /// The folder README describes its two parts, the gathering and the sweep,
-/// under "Effect families".
+/// under "Animation families".
 
 #include "../effect_internal.h"
 
 /// The bytes of Judgment's work block before its dimmed mote copies.
 #define JUDGMENT_SHEET_BYTES 0x2710
 
-/// Judgment's work block, laid over struct BattleEffectWork from its start.
-/// It is the HEAP_SLOT_BATTLE_EFFECT block BattleEffect_RunSummonEffect lends
-/// the scene and frees after it; only BattleEffect_RunJudgment reads it this
+/// Judgment's work block, laid over struct BattleAnimWork from its start.
+/// It is the HEAP_SLOT_BATTLE_ANIM block BattleAnim_RunSummonEffect lends
+/// the scene and frees after it; only BattleAnim_RunJudgment reads it this
 /// way. The sweep's 120x120 wave picture (14,400 bytes from the block's start)
 /// later overwrites sheet and the dimmed copies up to most of copy 5, which
 /// only the gathering reads.
@@ -56,30 +56,30 @@ struct JudgmentWork {
 /// The battle wipes away to a violet sky where a formation flies forward while
 /// motes gather into it, bursts in a flash and sends out a ring of light.
 ///
-/// Abilities: Judgment (SUMMON_EFFECT_JUDGMENT).
+/// Abilities: Judgment (SUMMON_ANIM_JUDGMENT).
 ///
 /// The scene then cuts to an aerial view where the blast spreads in rings, to a
 /// beach, and to a forest swept by an explosion front, before brightening back
 /// into the battle. The folder README describes both parts.
 ///
-/// Reached through BattleEffect_RunSummonEffect, whose sheet slot holds the
+/// Reached through BattleAnim_RunSummonEffect, whose sheet slot holds the
 /// mote sheet here. The scene projects with gProjection.centerY at 240 until
-/// BattleEffect_SetupBlendedDisplay, on frame 280 of the sweep, puts it back at
+/// BattleAnim_SetupBlendedDisplay, on frame 280 of the sweep, puts it back at
 /// 120, and holds BG1's scroll from the battle camera until that frame too.
 /// It releases its formation and then its debris objects (16 each), and
 /// before it returns removes its transfer callback and closes the canvas
 /// layer.
-void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
+void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
   static struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
   s32 anchor[3];
-  struct EffectPosition projectedPosition;
+  struct ScreenPoint projectedPosition;
   struct SpritePlacement place;
   volatile u32 fill;
   struct SpritePlacement debrisPlace;
   struct SpriteScale pair;
   struct SpriteScale scale;
   void *canvas;
-  struct BattleEffectWork *work;
+  struct BattleAnimWork *work;
   struct BattlePresentationTransition *ctrl;
   DrawRectangle draw[2];
   s32 frame;
@@ -100,45 +100,44 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
   s32 shift;
   s32 i;
   s32 j;
-  struct EffectStep *particle;
+  struct Particle *particle;
   DrawRectangle blit;
   volatile u16 *ime;
 
-  cache = &gWorkSlot[HEAP_SLOT_BATTLE_CANVAS];
+  cache = &gHeapSlots[HEAP_SLOT_BATTLE_CANVAS];
   ime = (u16 *)&REG_IME;
   canvas = cache[0];
-  work = CANVAS_SLOT(cache, HEAP_SLOT_BATTLE_EFFECT);
+  work = CANVAS_SLOT(cache, HEAP_SLOT_BATTLE_ANIM);
   ctrl = CANVAS_SLOT(cache, HEAP_SLOT_BATTLE_BACKGROUND);
   // The sheet slot is one mote set (MOTE_SET_BYTES): the undimmed motes. The
   // dimmed copies are built in the work block.
   ramp = CANVAS_SLOT(cache, HEAP_SLOT_BATTLE_SHEET);
   camera = CANVAS_SLOT(cache, HEAP_SLOT_CAMERA);
   work->effect = effect;
-  EFFECT_START_NARROW_CANVAS(BGCNT_WRAP);
-  BattleEffect_ConfigureEffectDisplay();
+  ANIM_START_NARROW_CANVAS(BGCNT_WRAP);
+  BattleAnim_ConfigureEffectDisplay();
   // The backdrop and colour 1, which the first wipe fills the canvas with,
   // are black.
   PLTT_BACKDROP = 0;
   *(u16 *)&BG_PLTT[1] = 0;
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
-                      COMPOSITE_ADDITIVE);
-  draw[0] = (DrawRectangle)CANVAS_SLOT(cache, HEAP_SLOT_BLITTER);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_ADDITIVE);
+  draw[0] = (DrawRectangle)CANVAS_SLOT(cache, HEAP_SLOT_RAM_CODE);
   work->transferMode = CANVAS_COPY;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
-  // Setup: wipe the battle away, change the backdrop behind it, wipe back.
-  BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
-  BattleEffect_SelectLivingTargets(work->effect);
-  BattleEffect_SpawnObjects(JUDGMENT_FORMATION_OBJECTS, 0x17e, 1);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
+  // Setup: wipe the battle away, change the battle background behind it, wipe
+  // back.
+  BattleAnim_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
+  BattleAnim_SelectLivingTargets(work->effect);
+  BattleAnim_SpawnObjects(JUDGMENT_FORMATION_OBJECTS, 0x17e, 1);
   gProjection.centerY = 240;
   WaitFrames(1);
-  BattleBackground_LoadFar(BATTLE_BACKGROUND_FLAT,
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                            (s32)&ResourceId_VioletSkyBackdrop, 0);
   // The scene owns BG1's scroll until frame 280 of the sweep.
   ctrl->active = 1;
   gBgScroll[1].x = 0;
-  BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_CLEAR);
-  EFFECT_SHOW_WIDE_CANVAS(16);
+  BattleAnim_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_CLEAR);
+  ANIM_SHOW_WIDE_CANVAS(16);
   // The formation starts 64 pixels back and comes forward 8 pixels a frame
   // (16.16); the depth range is kept only by the dead spark stage.
   depth = 0xffc00000;
@@ -160,7 +159,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
     u8 *src = ramp;
     for (j = 0; j != MOTE_SET_BYTES; j++) {
       s32 v = *src++;
-      EFFECT_CAP_LEVEL(v, 64 - i * 7);
+      ANIM_CAP_LEVEL(v, 64 - i * 7);
       ((struct JudgmentWork *)work)->ramp[i][j] = v;
     }
   }
@@ -202,7 +201,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
   }
 
   // Trails keep 50% a frame.
-  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+  ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
 
@@ -214,25 +213,25 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
     /* FAKEMATCH(temporary): slots, set each frame, points the frame > 143
      * draws at the slot table; as the table named at the uses, 285 of 2455
      * instructions differ in tbs-en. */
-    slots = (DrawRectangle *)gWorkSlot;
+    slots = (DrawRectangle *)gHeapSlots;
     if (frame == 143) {
       Iwram_FillWords(canvas, CANVAS_BYTES, 0x2a2a2a2a);
-      AudioCommand_PlayFar(SE_145);
+      Sound_PlaySongFar(SE_145);
     }
     if (frame == 80) {
-      AudioCommand_PlayFar(SE_142);
+      Sound_PlaySongFar(SE_142);
     }
 
     // DEAD: frame starts at 0 and only grows, so the sparks are never drawn;
     // the ROM keeps the test and the stage.
     if (frame < 0) {
-      EFFECT_VIEW_FROM_CAMERA(camera);
+      ANIM_VIEW_FROM_CAMERA(camera);
       for (i = 0; i != 128; i++) {
         s32 z;
         s32 size;
 
-        EffectStep_AdvanceWithGravity3D(&JUDGMENT_SPARKS[i], 60, -0x400);
-        EffectPosition_ProjectPoint(&JUDGMENT_SPARKS[i], &projectedPosition);
+        Particle_AdvanceWithGravity3D(&JUDGMENT_SPARKS[i], 60, -0x400);
+        Projection_Point(&JUDGMENT_SPARKS[i], &projectedPosition);
         projectedPosition.x >>= 1;
         projectedPosition.y -= 120;
         if (projectedPosition.depth < 100) {
@@ -250,8 +249,8 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
         if (maximumDepth < z) {
           maximumDepth = z;
         }
-        EFFECT_DRAW_MOTE(draw[0], canvas, ramp, projectedPosition.x,
-                         projectedPosition.y, size);
+        ANIM_DRAW_MOTE(draw[0], canvas, ramp, projectedPosition.x,
+                       projectedPosition.y, size);
         if (frame == 64) {
           JUDGMENT_SPARKS[i].velocityX +=
               (Trig_Sin(JUDGMENT_SPARKS[i].variant) * 255) >> 3;
@@ -261,7 +260,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       }
     }
 
-    // Frame 72: the backdrop starts its 24-frame fade
+    // Frame 72: the battle background starts its 24-frame fade
     // (Palette_StepFadeTransfer).
     if (frame == 72) {
       work->fadeFrames = 24;
@@ -272,17 +271,17 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
     // 81 + i / 4, mote i spins about the formation's centre on its own axes
     // while its radius shrinks by 2 a frame to nothing, and nearer motes are
     // drawn larger. The radius is a plain integer, at most 87, below the near
-    // depth of the projection BattleEffect_StartCanvasLayer sets (96 in the
-    // same units), so Render_ProjectPoint does not project the rotated point:
-    // its x, its y less 16 and its depth, which grows towards the viewer, are
-    // used as pixels.
+    // depth of the projection BattleAnim_StartCanvasLayer sets (96 in the
+    // same units), so Transform_ProjectPoint does not project the rotated
+    // point: its x, its y less 16 and its depth, which grows towards the
+    // viewer, are used as pixels.
     anchor[2] = 0;
     anchor[1] = 0;
     for (i = 0; i != 64; i++) {
       if (frame > i / 4 + 80 && PARTICLES[i].x > 0) {
         s32 size;
 
-        Render_ResetTransformState();
+        Transform_Reset();
         Transform_ApplyRoll(PARTICLES[i].velocityY);
         Transform_ApplyPitch(PARTICLES[i].velocityX);
         Transform_ApplyYaw(PARTICLES[i].velocityY + (frame << 9));
@@ -291,7 +290,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
         if (PARTICLES[i].x < 0) {
           PARTICLES[i].x = 0;
         }
-        EffectPosition_ProjectPoint(anchor, &projectedPosition);
+        Projection_Point(anchor, &projectedPosition);
         if (projectedPosition.depth < -60) {
           projectedPosition.depth = -60;
         }
@@ -302,8 +301,8 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
         size = projectedPosition.depth / 20 + 2;
         projectedPosition.x += 60;
         projectedPosition.y += 80;
-        EFFECT_DRAW_MOTE(draw[0], canvas, ramp, projectedPosition.x,
-                         projectedPosition.y, size);
+        ANIM_DRAW_MOTE(draw[0], canvas, ramp, projectedPosition.x,
+                       projectedPosition.y, size);
       }
     }
 
@@ -337,12 +336,12 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
 
     if (frame == 72) {
       for (i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
-        AnimationObject_SelectAnimationFar(work->animations[i], i + 16);
+        Sprite_StartAnimFar(work->animations[i], i + 16);
       }
     }
     if (frame == 76) {
       for (i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
-        AnimationObject_SelectAnimationFar(work->animations[i], i + 32);
+        Sprite_StartAnimFar(work->animations[i], i + 32);
       }
     }
 
@@ -363,28 +362,26 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       high = gJudgment_BurstHeights[n];
       cell = gJudgment_BurstCells[n] + JUDGMENT_SHEET_BURST;
 
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
-                          COMPOSITE_MAX);
-      (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(
+      ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+      (((DrawRectangle *)gHeapSlots)[HEAP_SLOT_RAM_CODE_2])(
           canvas, work->sheet + cell, 60 - high, 80 - high * 2, high, high * 2);
-      Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
-      (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(
+      FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
+      ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                        ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
+      (((DrawRectangle *)gHeapSlots)[HEAP_SLOT_RAM_CODE_2])(
           canvas, work->sheet + cell, 60, 80 - high * 2, high, high * 2);
-      Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, COMPOSITE_MAX);
-      (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(
+      FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
+      ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                        ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
+      (((DrawRectangle *)gHeapSlots)[HEAP_SLOT_RAM_CODE_2])(
           canvas, work->sheet + cell, 60 - high, 80, high, high * 2);
-      Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X |
-                              COMPOSITE_FLIP_Y,
-                          COMPOSITE_MAX);
-      (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(
+      FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
+      ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                        ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X | COMPOSITE_FLIP_Y,
+                        BLITTER_MAX);
+      (((DrawRectangle *)gHeapSlots)[HEAP_SLOT_RAM_CODE_2])(
           canvas, work->sheet + cell, 60, 80, high, high * 2);
-      Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+      FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
 
       for (i = 0; i != 6; i++) {
         s32 k = i & 3;
@@ -405,43 +402,40 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       s32 top = (frame << 4) - 2272;
       s32 n;
       s32 r;
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
-                          COMPOSITE_ADDITIVE);
-      (slots[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, work->sheet, 36, top, 24,
-                                           64);
-      Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
-                          COMPOSITE_ADDITIVE);
-      (slots[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, work->sheet, 60, top, 24,
-                                           64);
-      Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+      ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS,
+                        COMPOSITE_ADDITIVE);
+      (slots[HEAP_SLOT_RAM_CODE_2])(canvas, work->sheet, 36, top, 24, 64);
+      FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
+      ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                        ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                        COMPOSITE_ADDITIVE);
+      (slots[HEAP_SLOT_RAM_CODE_2])(canvas, work->sheet, 60, top, 24, 64);
+      FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
 
       n = (frame - 144) / 2;
       r = frame * 10 - 1424;
       work->transferValue = 75;
       if (n <= 6) {
         // The 8x16 mote of dimmed copy n in JudgmentWork's ramp.
-        s32 cell = n * MOTE_SET_BYTES + gBattleEffect_MoteCells[7] +
+        s32 cell = n * MOTE_SET_BYTES + gBattleAnim_MoteCells[7] +
                    JUDGMENT_SHEET_BYTES;
         /* FAKEMATCH(temporary): high holds the mote's height 8, so high / 2
          * is hoisted into fp; as the literals 4, 8 and 16, 331 of 2455
          * instructions differ in tbs-en. */
         s32 high = 8;
-        EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
-                            COMPOSITE_MAX);
-        blit = slots[HEAP_SLOT_BLITTER_ALTERNATE];
+        ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+        blit = slots[HEAP_SLOT_RAM_CODE_2];
         for (i = 0; i != 128; i++) {
           s32 angle = i << 9;
           s32 x = ((r * Trig_Sin(angle)) >> 16) - high / 2;
           s32 y = (r * Trig_Cos(angle)) >> 17;
           blit(canvas, work->sheet + cell, x + 60, y + 72, high, high * 2);
         }
-        Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+        FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
       }
     }
 
-    EFFECT_PRESENT_FRAME(work);
+    ANIM_PRESENT_FRAME(work);
   }
 
   // The sweep's setup: replace the formation with 16 debris objects in three
@@ -450,22 +444,22 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
   Iwram_FillWords(canvas, CANVAS_BYTES, 0);
 
   for (i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
-    ResourceObject_ReleaseFar(work->animations[i]);
+    Sprite_DestroyFar(work->animations[i]);
   }
 
   for (i = 0; i != JUDGMENT_DEBRIS_OBJECTS; i++) {
-    struct AnimationObject *animation = ResourceObject_CreateFar(390);
+    struct Sprite *animation = Sprite_CreateFar(390);
     work->animations[i] = animation;
     if (animation != 0) {
       animation->flags = 0;
-      AnimationObject_SelectAnimationFar(animation, (i % 3));
+      Sprite_StartAnimFar(animation, (i % 3));
       work->animations[i]->image.priority = 0;
     }
   }
 
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-  draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
+  FreeHeapSlot(HEAP_SLOT_RAM_CODE);
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+  draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
   Resource_LoadAndDecompress((s32)&ResourceId_BlueCrescentSheet,
                              work->sheet + JUDGMENT_SHEET_FLARE_A, 1, 1);
 
@@ -482,11 +476,12 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
     }
   }
 
-  // Stop the backdrop fade; the canvas, one texel a pixel, starts 60 pixels
-  // from the left, so the 120-pixel wave picture is centred on the screen.
+  // Stop the battle background fade; the canvas, one texel a pixel, starts 60
+  // pixels from the left, so the 120-pixel wave picture is centred on the
+  // screen.
   work->fadeFrames = 0;
   work->fadeStep = 0;
-  BattleBackground_LoadFar(BATTLE_BACKGROUND_FLAT,
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                            (s32)&ResourceId_AerialViewBackdrop, 0);
   REG_BG2PA = Q_8_8(1);
   REG_BG2X = -0x3c00;
@@ -507,7 +502,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
   ring = 0;
   sx = 8;
   rings = 2;
-  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+  ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
   // Clear the wave picture over the gathering's pictures (shift is still 0).
   fill = shift;
@@ -519,20 +514,20 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
   // shows the damage.
   for (frame = 0; frame != JUDGMENT_SWEEP_FRAMES; frame++) {
     if (frame == 66) {
-      AudioCommand_PlayFar(SE_145);
-      AudioCommand_PlayFar(SE_RUMBLE);
+      Sound_PlaySongFar(SE_145);
+      Sound_PlaySongFar(SE_RUMBLE);
     }
     if (frame == 155) {
-      AudioCommand_PlayFar(SE_162);
+      Sound_PlaySongFar(SE_162);
     }
     if (frame == 217) {
-      AudioCommand_PlayFar(SE_156);
+      Sound_PlaySongFar(SE_156);
     }
     if (frame == 280) {
-      AudioCommand_PlayFar(SE_GATE_MOVE);
+      Sound_PlaySongFar(SE_GATE_MOVE);
     }
     if (frame == 300) {
-      EFFECT_SHOW_DAMAGE(SE_145);
+      ANIM_SHOW_DAMAGE(SE_145);
     }
 
     // A or B jumps to the next part: 150, 214 or 280. The jump to the beach
@@ -570,7 +565,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
     }
 
     if (frame == 66) {
-      // Invert the backdrop's colours, background palettes 6 to 13.
+      // Invert the battle background's colours, background palettes 6 to 13.
       u16 *pal = (u16 *)&BG_PLTT_COLOR(6, 0);
       for (i = 0; i != 128; i++, pal++) {
         *pal ^= 0x7fff;
@@ -583,11 +578,11 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       Dma_Set((const void *)&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
     }
 
-    // Frame 70: undo the inversion, rewriting the backdrop's palette from the
-    // battle's copy with every channel 7 levels darker.
+    // Frame 70: undo the inversion, rewriting the battle background's palette
+    // from the battle's copy with every channel 7 levels darker.
     if (frame == 70) {
       BattlePresentation_ConfigurePaletteFadeFar(
-          BATTLE_BACKGROUND_FLAT, (s32)&ResourceId_AerialViewBackdrop, 7);
+          BATTLE_BACKGROUND_FIXED, (s32)&ResourceId_AerialViewBackdrop, 7);
     }
 
     // Frame 150, the beach: the rings restart from (112, 32), four a frame
@@ -602,7 +597,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       Dma_Set((const void *)&fill, work, JUDGMENT_DMA_FILL_WAVE, REG_DMA3);
       fill = 0x3f3f3f3f;
       Dma_Set((const void *)&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
-      BattleBackground_LoadFar(BATTLE_BACKGROUND_FLAT,
+      BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                                (s32)&ResourceId_BeachBackdrop, 0);
     }
 
@@ -614,7 +609,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       Dma_Set((const void *)&fill, work, JUDGMENT_DMA_FILL_WAVE, REG_DMA3);
       fill = 0x3f3f3f3f;
       Dma_Set((const void *)&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
-      BattleBackground_LoadFar(BATTLE_BACKGROUND_FLAT,
+      BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                                (s32)&ResourceId_ForestBackdrop, 0);
       for (i = 0; i != JUDGMENT_DEBRIS_OBJECTS; i++) {
         particle = &work->particles[i];
@@ -630,7 +625,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       // Back to the battle: blend the canvas over it again, fill the canvas
       // with colour 1 and restart the debris off the right of the screen,
       // where the explosion front now scrolls back from.
-      BattleEffect_SetupBlendedDisplay();
+      BattleAnim_SetupBlendedDisplay();
       fill = 0;
       Dma_Set((const void *)&fill, work, JUDGMENT_DMA_FILL_WAVE, REG_DMA3);
       fill = 0x01010101;
@@ -645,7 +640,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
         particle->z = 0;
       }
       shift = 272;
-      EFFECT_SET_TRANSFER(work, CANVAS_COPY, 0);
+      ANIM_SET_TRANSFER(work, CANVAS_COPY, 0);
     }
 
     // From frame 280 the canvas's palette ramp, background colours 1 to 63,
@@ -690,28 +685,26 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       } else {
         sheet = work->sheet + JUDGMENT_SHEET_FLARE_B;
       }
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
-                          COMPOSITE_MAX);
-      (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(
-          canvas, sheet, 36, top - 24, 24, 24);
-      Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
-      (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(
-          canvas, sheet, 59, top - 24, 24, 24);
-      Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, COMPOSITE_MAX);
-      (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(
-          canvas, sheet, 36, top - 1, 24, 24);
-      Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X |
-                              COMPOSITE_FLIP_Y,
-                          COMPOSITE_MAX);
-      (((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE])(
-          canvas, sheet, 59, top - 1, 24, 24);
-      Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+      ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS, BLITTER_MAX);
+      (((DrawRectangle *)gHeapSlots)[HEAP_SLOT_RAM_CODE_2])(canvas, sheet, 36,
+                                                            top - 24, 24, 24);
+      FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
+      ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                        ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
+      (((DrawRectangle *)gHeapSlots)[HEAP_SLOT_RAM_CODE_2])(canvas, sheet, 59,
+                                                            top - 24, 24, 24);
+      FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
+      ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                        ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
+      (((DrawRectangle *)gHeapSlots)[HEAP_SLOT_RAM_CODE_2])(canvas, sheet, 36,
+                                                            top - 1, 24, 24);
+      FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
+      ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                        ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X | COMPOSITE_FLIP_Y,
+                        BLITTER_MAX);
+      (((DrawRectangle *)gHeapSlots)[HEAP_SLOT_RAM_CODE_2])(canvas, sheet, 59,
+                                                            top - 1, 24, 24);
+      FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
     }
 
     // Frames 64 to 85: the flash plays twice: a small picture, a large one,
@@ -762,8 +755,8 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
         s32 angle = i << 8;
         s32 x = ((Trig_Sin(angle) * r2) >> 16) - (size >> 1);
         s32 y = (Trig_Cos(angle) * r2) >> 17;
-        draw[0](canvas, ramp + gBattleEffect_MoteCells[size - 1], x + 60,
-                y + 50, size, size * 2);
+        draw[0](canvas, ramp + gBattleAnim_MoteCells[size - 1], x + 60, y + 50,
+                size, size * 2);
       }
     }
 
@@ -900,9 +893,9 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       }
     }
 
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
-                        COMPOSITE_ADDITIVE);
-    draw[1] = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+    ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS,
+                      COMPOSITE_ADDITIVE);
+    draw[1] = gHeapSlots[HEAP_SLOT_RAM_CODE_2];
     if (frame > 85) {
       // From frame 86 add the wave picture over the canvas.
       draw[1](canvas, work->sheet, 0, 0, JUDGMENT_WAVE_SIZE,
@@ -916,8 +909,8 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
     // DEAD: never true, as the sweep's last frame is 319; the ROM keeps the
     // test and the targets' reaction.
     if (frame > 319) {
-      EFFECT_FOR_EACH_TARGET(i, work->effect) {
-        ObjectGroup_UpdateMembers(work->effect->actors[i], SPRITE_COLOR_BLACK,
+      ANIM_FOR_EACH_TARGET(i, work->effect) {
+        ObjectGroup_UpdateMembers(work->effect->targets[i], SPRITE_COLOR_BLACK,
                                   POSE_DAMAGE, -1, 0);
       }
     }
@@ -936,7 +929,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
 
     if (frame >= 246 && frame < 280) {
       shift += 8;
-      EFFECT_SET_TRANSFER(work, CANVAS_COPY, 75);
+      ANIM_SET_TRANSFER(work, CANVAS_COPY, 75);
     }
 
     // From frame 214 each live debris object is placed from its particle (x
@@ -1004,10 +997,10 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       }
     }
 
-    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+    FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
 
-    // From frame 64 the backdrop shakes up and down: BG1's vertical scroll
-    // jumps between 30 and 33 pixels.
+    // From frame 64 the battle background shakes up and down: BG1's vertical
+    // scroll jumps between 30 and 33 pixels.
     if (frame > 63) {
       /* FAKEMATCH(temporary): the shake value through an s32 keeps the AND
        * constant an immediate; as a direct store to gBgScroll[1].y, 9 of 2455
@@ -1017,15 +1010,15 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       gBgScroll[1].y = shake;
     }
 
-    EFFECT_PRESENT_FRAME(work);
+    ANIM_PRESENT_FRAME(work);
   }
 
   // The finish: release the debris objects, then the canvas and its blitter.
   for (i = 0; i != JUDGMENT_DEBRIS_OBJECTS; i++) {
-    ResourceObject_ReleaseFar(work->animations[i]);
+    Sprite_DestroyFar(work->animations[i]);
   }
 
-  EFFECT_FINISH_CANVAS_ONE_BLITTER();
+  ANIM_FINISH_CANVAS_ONE_BLITTER();
 }
 
 #undef JUDGMENT_SHEET_BYTES

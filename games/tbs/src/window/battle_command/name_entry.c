@@ -1,17 +1,17 @@
 /// @file
-/// The name entry screen.
+/// The naming screen.
 // Part of battle_command.c.
 
 #include "../battle_command_internal.h"
 
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-/// The international name entry has no voicing marks: where the Japanese
+/// The international naming screen has no voicing marks: where the Japanese
 /// edition checks a mark against the letter before it, this edition keeps a
 /// function that accepts every character. Nothing calls it.
-UNUSED s32 NameEntry_AcceptsMark(s32 mark, s32 letter) { return 1; }
+UNUSED s32 NamingScreen_AcceptsMark(s32 mark, s32 letter) { return 1; }
 #else
 
-// The kana voicing marks of the Japanese name entry, which join the letter
+// The kana voicing marks of the Japanese naming screen, which join the letter
 // before them.
 #define NAME_VOICED_MARK 0xde     ///< dakuten
 #define NAME_SEMIVOICED_MARK 0xdf ///< handakuten
@@ -19,15 +19,15 @@ UNUSED s32 NameEntry_AcceptsMark(s32 mark, s32 letter) { return 1; }
 /// Returns whether `mark` may follow `letter` in a Japanese name: any
 /// character but a voicing mark may, and a voicing mark only after a letter
 /// in its table of ranges (pairs of first and last letter, ended by 0).
-s32 NameEntry_AcceptsMark(s32 mark, s32 letter) {
+s32 NamingScreen_AcceptsMark(s32 mark, s32 letter) {
   const u8 *range;
 
   if (mark < NAME_VOICED_MARK || mark > NAME_SEMIVOICED_MARK)
     return 1;
   if (mark == NAME_VOICED_MARK)
-    range = gNameEntry_VoicedMarkRanges;
+    range = gNamingScreen_VoicedMarkRanges;
   else
-    range = gNameEntry_SemivoicedMarkRanges;
+    range = gNamingScreen_SemivoicedMarkRanges;
   for (; *range != 0; range += 2) {
     if (letter >= range[0] && letter <= range[1])
       return 1;
@@ -37,7 +37,7 @@ s32 NameEntry_AcceptsMark(s32 mark, s32 letter) {
 
 /// Returns how many letters the Japanese name `name` has, not counting the
 /// voicing marks.
-s32 NameEntry_CountLetters(const u8 *name) {
+s32 NamingScreen_CountLetters(const u8 *name) {
   s32 count;
 
   count = 0;
@@ -53,19 +53,18 @@ s32 NameEntry_CountLetters(const u8 *name) {
 /// Decompresses the type-01 tilemap `source` and copies it over `window`'s
 /// rectangle, both into the BG screen block at 0x06002000 and into the UI
 /// tilemap that mirrors it.
-void UiWindow_CopyTilemapRegion(const struct UiWindow *window,
-                                const void *source) {
-  struct UiRenderWork *work = UI_WORK;
+void Window_CopyTilemapRegion(const struct Window *window, const void *source) {
+  struct WindowWork *work = WINDOW_WORK;
   s16 *mirror = (s16 *)work->tilemap;
-  s16 *buffer = Runtime_BumpAllocateAlternatePool(0x300);
+  s16 *buffer = AllocEwram(0x300);
   s16 *input = buffer;
   u32 cell;
   s16 *vram;
   s32 row;
 
-  Resource_DecodeType01(source, buffer);
+  Decompress_Type01(source, buffer);
   cell = window->y * 32 + window->x;
-  vram = (s16 *)UI_TILEMAP_VRAM + cell;
+  vram = (s16 *)WINDOW_TILEMAP_VRAM + cell;
   mirror += cell;
 
   for (row = 0; row < window->height; row++) {
@@ -80,16 +79,16 @@ void UiWindow_CopyTilemapRegion(const struct UiWindow *window,
     vram += 32 - window->width;
     mirror += 32 - window->width;
   }
-  MemFree(buffer);
+  Free(buffer);
 }
 
-/// Like UiWindow_SetTileAttributeBitRect, but ORs all of `palette` into the
+/// Like Window_SetTextTileBitRect, but ORs all of `palette` into the
 /// palette number of each entry (bits 12-15) after clearing only its lowest
 /// bit. On entries of palette 15 or 14 that sets them to `palette`, 15 or
-/// 14: the name entry's key and the Colosso choice under the cursor flash
+/// 14: the naming screen's key and the Colosso choice under the cursor flash
 /// this way.
-void UiWindow_SetTileAttributeRect(const struct UiWindow *window, s32 x, s32 y,
-                                   s32 width, s32 height, u32 palette) {
+void Window_SetTextTileRect(const struct Window *window, s32 x, s32 y,
+                            s32 width, s32 height, u32 palette) {
   u8 *tilemap = gWindowWork[0];
 
   x += window->x + 1;
@@ -126,7 +125,7 @@ void UiWindow_SetTileAttributeRect(const struct UiWindow *window, s32 x, s32 y,
       height--;
       x += 64;
     } while (height != 0);
-    ((struct UiRenderWork *)tilemap)->dirty = 1;
+    ((struct WindowWork *)tilemap)->dirty = 1;
   }
 }
 
@@ -140,7 +139,7 @@ void Resource_CopyFixedBlockA(s32 slot) {
   VramCache_Load(slot, 0x80, gResource_FixedBlockATiles);
 }
 
-// The name entry screen: a keyboard window of letter keys, with a column of
+// The naming screen: a keyboard window of letter keys, with a column of
 // command keys on its right (Delete and End, and in Japanese the keyboard
 // switch), the name above it and the character's portrait.
 #define NAME_COMMAND_COLUMN 18 ///< the keyboard column of the command keys
@@ -150,19 +149,19 @@ void Resource_CopyFixedBlockA(s32 slot) {
 #if LANGUAGE != LANGUAGE_JAPANESE
 /// Puts the string `str` into the UI's text entries and returns its width in
 /// pixels. It overwrites the start of the decoded text ring
-/// (UiRenderWork.entries), so any message decoded there is lost; the name
+/// (WindowWork.textBuffer), so any message decoded there is lost; the name
 /// entry measures the name with it to place its caret.
-s32 UiText_SetRenderString(const u8 *str) {
-  struct UiRenderWork *work;
+s32 Text_SetString(const u8 *str) {
+  struct WindowWork *work;
   u16 *dst;
   s32 count;
   u32 width;
   u32 height;
 
-  work = UI_WORK;
+  work = WINDOW_WORK;
   count = 0;
   if (*str != 0) {
-    dst = work->entries;
+    dst = work->textBuffer;
     do {
       *dst = *str;
       str++;
@@ -170,8 +169,8 @@ s32 UiText_SetRenderString(const u8 *str) {
       count++;
     } while (*str != 0);
   }
-  work->entries[count] = 0;
-  UiText_MeasureEntryDimensions(0, &width, &height, 0);
+  work->textBuffer[count] = 0;
+  Text_MeasureDecoded(0, &width, &height, 0);
   return width;
 }
 
@@ -183,7 +182,7 @@ s32 UiText_SetRenderString(const u8 *str) {
 /// followed in text colour 2 by an underscore for each of the
 /// NAME_MAX_LETTERS places still free: the loop fills the text to 7 bytes,
 /// the name and the two-byte colour code before the underscores.
-void UiText_DrawPaddedLabel(struct UiWindow *window, u8 *name) {
+void Text_DrawPaddedLabel(struct Window *window, u8 *name) {
   u8 text[20];
   s32 length = 0;
 
@@ -205,7 +204,7 @@ void UiText_DrawPaddedLabel(struct UiWindow *window, u8 *name) {
   text[length++] = TEXT_COLOR_COMMAND;
   text[length++] = 15;
   text[length] = 0;
-  UiText_DrawString(text, window, 0, -2);
+  Text_DrawString(text, window, 0, -2);
 }
 
 // The width of the window showing the name, in tiles.
@@ -229,7 +228,7 @@ void UiText_DrawPaddedLabel(struct UiWindow *window, u8 *name) {
 #define NAME_END_KEY_WIDTH 3
 #endif
 
-/// The name entry screen for party member `member`: the player types a name
+/// The naming screen for party member `member`: the player types a name
 /// of up to NAME_MAX_LETTERS letters on the keyboard and ends with End (or
 /// Start, which jumps there). A puts the key under the cursor into the name,
 /// B or Delete removes the last letter, and B on an empty name cancels. Ending
@@ -240,36 +239,37 @@ void UiText_DrawPaddedLabel(struct UiWindow *window, u8 *name) {
 /// The keyboard: letter keys in columns 0 to 16, in groups of five with gaps
 /// at columns 5, 11 and 17, rows 0 to 5; column 18 holds Delete (row 4) and
 /// End (row 5).
-s32 NameEntry_EditOwnerName(s32 member) {
-  struct UiWindow *nameWindow;
+s32 NamingScreen_EditMemberName(s32 member) {
+  struct Window *nameWindow;
   s32 result = 0;
   s32 originalLength = 0;
   s32 letterCount = 0;
   u8 text[NAME_MAX_BYTES + 2];
   u8 *editedName = text + 1;
   u8 *originalName = Unit_GetFar(member)->name;
-  struct UiRenderWork *work = UI_WORK;
+  struct WindowWork *work = WINDOW_WORK;
   s32 textDirty = 1;
   s32 cursorDirty = 1;
-  struct UiWindow *keyboardWindow;
-  union MenuCursor keyCursor;
-  union MenuCursor nameCaret;
+  struct Window *keyboardWindow;
+  union MenuCursorRef keyCursor;
+  union MenuCursorRef nameCaret;
   s32 keyColumn, keyRow, vramSlot;
-  struct RenderOutput *output;
+  struct WindowSprite *output;
   u8 *end;
   u16 *palette;
 
   // The keyboard, the name and the portrait.
-  Ui_LoadWindowGraphics();
-  keyboardWindow = (struct UiWindow *)UiWindow_Create(3, 6, 24, 9, 2);
-  nameWindow = (struct UiWindow *)UiWindow_Create(8, 3, NAME_LABEL_WIDTH, 3, 2);
-  UiWindow_CreateWithSideObject(UiText_GetSpeakerPortrait(member), 0, 3, 1);
-  UiWindow_CopyTilemapRegion(keyboardWindow, gNameEntry_KeyboardTilemap);
+  Window_LoadGraphics();
+  keyboardWindow = (struct Window *)Window_Create(3, 6, 24, 9, 2);
+  nameWindow = (struct Window *)Window_Create(8, 3, NAME_LABEL_WIDTH, 3, 2);
+  Portrait_OpenWindow(Portrait_GetForSpeaker(member), 0, 3, 1);
+  Window_CopyTilemapRegion(keyboardWindow, gNamingScreen_KeyboardTilemap);
 #if NAME_KEY_LABELS
-  UiText_DrawStringInWindow(gNameEntry_DeleteKeyLabel, keyboardWindow, 144, 32);
-  UiText_DrawStringInWindow(gNameEntry_EndKeyLabel, keyboardWindow, 144, 40);
+  Text_DrawStringInWindow(gNamingScreen_DeleteKeyLabel, keyboardWindow, 144,
+                          32);
+  Text_DrawStringInWindow(gNamingScreen_EndKeyLabel, keyboardWindow, 144, 40);
 #endif
-  UiWindow_DrawDividerLine(keyboardWindow, 18, 0, 18, 7);
+  Window_DrawDividerLine(keyboardWindow, 18, 0, 18, 7);
   work->dirty = textDirty;
   // A zero byte before editedName, as in the Japanese entry, where it is the
   // letter before the first; nothing here reads it.
@@ -288,8 +288,8 @@ s32 NameEntry_EditOwnerName(s32 member) {
     }
   }
   editedName[NAME_MAX_BYTES] = 0;
-  UiText_DrawPaddedLabel(nameWindow, originalName);
-  vramSlot = Resource_FindFreeEntry();
+  Text_DrawPaddedLabel(nameWindow, originalName);
+  vramSlot = VramCache_FindFreeEntry();
   // The cursor starts on End. 95 is the last of the VRAM_CACHE_ENTRY_COUNT
   // slots; without a free one a sprite is not made, though the loop below
   // still uses it.
@@ -298,23 +298,23 @@ s32 NameEntry_EditOwnerName(s32 member) {
   if (vramSlot <= 95) {
     VramCache_Load(vramSlot, 128, gResource_FixedBlockBTiles);
     output =
-        RenderOutput_Create(vramSlot, OUTPUT_SIZE_16X16, keyboardWindow, 0, 0);
+        WindowSprite_Create(vramSlot, OUTPUT_SIZE_16X16, keyboardWindow, 0, 0);
     keyCursor.output = output;
-    ShopCursor_SetPositionImmediateFar(&keyCursor.cursor,
+    MenuCursor_SetPositionImmediateFar(&keyCursor.cursor,
                                        keyboardWindow->x * 8 + 140,
                                        keyboardWindow->y * 8 + 52);
   }
-  vramSlot = Resource_FindFreeEntry();
+  vramSlot = VramCache_FindFreeEntry();
   if (vramSlot <= 95) {
     VramCache_Load(vramSlot, 128, gResource_FixedBlockATiles);
     output =
-        RenderOutput_Create(vramSlot, OUTPUT_SIZE_16X16, keyboardWindow, 0, 0);
+        WindowSprite_Create(vramSlot, OUTPUT_SIZE_16X16, keyboardWindow, 0, 0);
     nameCaret.output = output;
     output->sentinel = 255;
     output->oam.priority = 0;
     // The caret stands after the name, at its width in pixels.
-    ShopCursor_SetPositionImmediateFar(
-        &nameCaret.cursor, UiText_SetRenderString(editedName) + 70, 22);
+    MenuCursor_SetPositionImmediateFar(&nameCaret.cursor,
+                                       Text_SetString(editedName) + 70, 22);
   }
   // The key under the cursor flashes between palette 15 and palette 14, a
   // copy of it with colour 4 grey.
@@ -333,35 +333,33 @@ s32 NameEntry_EditOwnerName(s32 member) {
         width = NAME_END_KEY_WIDTH;
     }
     // Flash the key under the cursor, then move the cursor and the caret.
-    UiWindow_SetTileAttributeRect(keyboardWindow, keyColumn, keyRow, width, 1,
-                                  14);
+    Window_SetTextTileRect(keyboardWindow, keyColumn, keyRow, width, 1, 14);
     WaitFrames(1);
-    UiWindow_SetTileAttributeRect(keyboardWindow, keyColumn, keyRow, width, 1,
-                                  15);
+    Window_SetTextTileRect(keyboardWindow, keyColumn, keyRow, width, 1, 15);
     if (cursorDirty) {
       cursorDirty = 0;
-      Shop_SetCursorFar(&keyCursor.cursor,
+      MenuCursor_SetFar(&keyCursor.cursor,
                         (keyboardWindow->x + keyColumn) * 8 - 7,
                         (keyboardWindow->y + keyRow) * 8 + 15, 3);
     }
     if (textDirty) {
       textDirty = 0;
-      Shop_SetCursorFar(&nameCaret.cursor,
-                        UiText_SetRenderString(editedName) + 70, 22, 3);
+      MenuCursor_SetFar(&nameCaret.cursor, Text_SetString(editedName) + 70, 22,
+                        3);
     }
-    ShopCursor_AdvanceFar(&keyCursor.cursor);
-    ShopCursor_MoveTowardTargetFar(&nameCaret.cursor);
+    MenuCursor_AdvanceFar(&keyCursor.cursor);
+    MenuCursor_MoveTowardTargetFar(&nameCaret.cursor);
     {
       u32 frame = (gFrameTick >> 1) & 7;
 
       output = nameCaret.output;
-      output->oam.x = output->x + gNameEntry_CaretWave[frame];
-      output->oam.y = output->y + gNameEntry_CaretWave[(frame + 5) & 7];
+      output->oam.x = output->x + gNamingScreen_CaretWave[frame];
+      output->oam.y = output->y + gNamingScreen_CaretWave[(frame + 5) & 7];
     }
     // The D-pad moves over the keys, skipping the gaps between groups and
     // wrapping around; Start jumps to End.
     if (gKeysRepeat & KEY_UP) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyRow--;
       if (keyColumn != NAME_COMMAND_COLUMN) {
@@ -374,7 +372,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
       }
     }
     if (gKeysRepeat & KEY_DOWN) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyRow++;
       if (keyColumn != NAME_COMMAND_COLUMN) {
@@ -386,7 +384,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
       }
     }
     if (gKeysRepeat & KEY_LEFT) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyColumn--;
       // Left of column 0 wraps to the command column on the rows it has keys,
@@ -400,7 +398,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
       }
     }
     if (gKeysRepeat & KEY_RIGHT) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyColumn++;
       if (keyColumn == 19)
@@ -411,19 +409,19 @@ s32 NameEntry_EditOwnerName(s32 member) {
         keyColumn = 0;
     }
     if (gKeysPressed & KEY_START) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyColumn = NAME_COMMAND_COLUMN;
       keyRow = 5;
     }
     if (gKeysRepeat & KEY_B) {
-      AudioCommand_PlayFar(SE_MENU_CANCEL);
+      Sound_PlaySongFar(SE_MENU_CANCEL);
     remove_character:
       if (letterCount != 0) {
         letterCount--;
         *--end = 0;
-        RenderOutput_PrepareForRedraw(nameWindow);
-        UiText_DrawPaddedLabel(nameWindow, editedName);
+        WindowSprite_PrepareForRedraw(nameWindow);
+        Text_DrawPaddedLabel(nameWindow, editedName);
         textDirty = 1;
         continue;
       }
@@ -433,16 +431,17 @@ s32 NameEntry_EditOwnerName(s32 member) {
     // A: a command key, or a letter.
     if (!(gKeysRepeat & KEY_A))
       continue;
-    AudioCommand_PlayFar(SE_MENU_CONFIRM);
+    Sound_PlaySongFar(SE_MENU_CONFIRM);
     if (keyColumn == NAME_COMMAND_COLUMN) {
       if (keyRow == 5) {
         // End: an empty name shows the old one again for 10 frames, the
-        // caret hidden (UI_SPRITE_HIDDEN), and keeps it; otherwise the 14
-        // name bytes and their terminator are copied over the unit's name.
+        // caret hidden (WINDOW_SPRITE_MOTION_HIDDEN), and keeps it; otherwise
+        // the 14 name bytes and their terminator are copied over the unit's
+        // name.
         if (letterCount == 0) {
-          nameCaret.output->active = 13;
-          RenderOutput_PrepareForRedraw(nameWindow);
-          UiText_DrawPaddedLabel(nameWindow, originalName);
+          nameCaret.output->motion = 13;
+          WindowSprite_PrepareForRedraw(nameWindow);
+          Text_DrawPaddedLabel(nameWindow, originalName);
           WaitFrames(10);
         } else {
           u8 *dst = originalName;
@@ -492,20 +491,20 @@ s32 NameEntry_EditOwnerName(s32 member) {
         keyRow = 5;
         cursorDirty = 1;
       }
-      RenderOutput_PrepareForRedraw(nameWindow);
-      UiText_DrawPaddedLabel(nameWindow, editedName);
+      WindowSprite_PrepareForRedraw(nameWindow);
+      Text_DrawPaddedLabel(nameWindow, editedName);
       textDirty = 1;
     }
   }
-  UiWork_Finalize(keyboardWindow, 2);
-  UiWork_Finalize(nameWindow, 2);
-  UiWork_FinalizeEntityMatchingLocalizedId(member);
+  Window_Close(keyboardWindow, 2);
+  Window_Close(nameWindow, 2);
+  Portrait_CloseWindow(member);
   WaitFrames(1);
   return result;
 }
 #else
 
-/// The name entry screen for party member `member`: the player types a name
+/// The naming screen for party member `member`: the player types a name
 /// of up to NAME_MAX_LETTERS letters on the keyboard and ends with End (or
 /// Start, which jumps there). A puts the key under the cursor into the name,
 /// B or Delete removes the last letter, and B on an empty name cancels. Ending
@@ -515,8 +514,8 @@ s32 NameEntry_EditOwnerName(s32 member) {
 /// The keyboard: letter keys in columns 0 to 16, in groups of five with gaps
 /// at columns 5, 11 and 17, on rows 0 to 4 and 6 to 10; column 18 holds the
 /// keyboard switch (row 0, or Select), Delete (row 8) and End (row 10).
-s32 NameEntry_EditOwnerName(s32 member) {
-  struct UiWindow *nameWindow;
+s32 NamingScreen_EditMemberName(s32 member) {
+  struct Window *nameWindow;
   s32 result = 0;
   s32 keyboard = 0;
   s32 bytes = 0;
@@ -524,27 +523,27 @@ s32 NameEntry_EditOwnerName(s32 member) {
   u8 text[NAME_MAX_BYTES + 2];
   u8 *editedName = text + 1;
   u8 *originalName = Unit_GetFar(member)->name;
-  struct UiRenderWork *work = UI_WORK;
+  struct WindowWork *work = WINDOW_WORK;
   s32 textDirty = 1;
   s32 cursorDirty = 1;
-  struct UiWindow *keyboardWindow;
-  union MenuCursor keyCursor;
-  union MenuCursor nameCaret;
+  struct Window *keyboardWindow;
+  union MenuCursorRef keyCursor;
+  union MenuCursorRef nameCaret;
   s32 keyColumn, keyRow, vramSlot, x;
-  struct RenderOutput *output;
+  struct WindowSprite *output;
   u32 letter;
   u16 *palette;
 
   // The keyboard, the name and the portrait.
-  Ui_LoadWindowGraphics();
-  keyboardWindow = (struct UiWindow *)UiWindow_Create(3, 6, 24, 13, 2);
-  nameWindow = (struct UiWindow *)UiWindow_Create(8, 3, 8, 3, 2);
-  UiWindow_CreateWithSideObject(UiText_GetSpeakerPortrait(member), 0, 3, 1);
-  UiWindow_CopyTilemapRegion(keyboardWindow, gNameEntry_KeyboardTilemap);
-  UiWindow_DrawDividerLine(keyboardWindow, 18, 0, 18, 12);
+  Window_LoadGraphics();
+  keyboardWindow = (struct Window *)Window_Create(3, 6, 24, 13, 2);
+  nameWindow = (struct Window *)Window_Create(8, 3, 8, 3, 2);
+  Portrait_OpenWindow(Portrait_GetForSpeaker(member), 0, 3, 1);
+  Window_CopyTilemapRegion(keyboardWindow, gNamingScreen_KeyboardTilemap);
+  Window_DrawDividerLine(keyboardWindow, 18, 0, 18, 12);
   work->dirty = textDirty;
   // A zero byte before editedName: the letter before the first, which
-  // NameEntry_AcceptsMark reads when a voicing mark is entered first.
+  // NamingScreen_AcceptsMark reads when a voicing mark is entered first.
   text[0] = result;
   {
     s32 i;
@@ -562,30 +561,30 @@ s32 NameEntry_EditOwnerName(s32 member) {
     }
   }
   editedName[NAME_MAX_BYTES] = 0;
-  UiText_DrawString(originalName, nameWindow, 0, 0);
+  Text_DrawString(originalName, nameWindow, 0, 0);
   keyColumn = NAME_COMMAND_COLUMN;
-  vramSlot = Resource_FindFreeEntry();
+  vramSlot = VramCache_FindFreeEntry();
   keyRow = 10;
   if (vramSlot <= 95) {
     VramCache_Load(vramSlot, 128, gResource_FixedBlockBTiles);
     output =
-        RenderOutput_Create(vramSlot, OUTPUT_SIZE_16X16, keyboardWindow, 0, 0);
+        WindowSprite_Create(vramSlot, OUTPUT_SIZE_16X16, keyboardWindow, 0, 0);
     keyCursor.output = output;
-    ShopCursor_SetPositionImmediateFar(&keyCursor.cursor,
+    MenuCursor_SetPositionImmediateFar(&keyCursor.cursor,
                                        keyboardWindow->x * 8 + 140,
                                        keyboardWindow->y * 8 + 92);
   }
-  vramSlot = Resource_FindFreeEntry();
+  vramSlot = VramCache_FindFreeEntry();
   if (vramSlot <= 95) {
     VramCache_Load(vramSlot, 128, gResource_FixedBlockATiles);
     output =
-        RenderOutput_Create(vramSlot, OUTPUT_SIZE_16X16, keyboardWindow, 0, 0);
+        WindowSprite_Create(vramSlot, OUTPUT_SIZE_16X16, keyboardWindow, 0, 0);
     nameCaret.output = output;
     output->sentinel = 255;
     output->oam.priority = 0;
     // The caret stands after the name: its letters are 10 pixels apart.
-    x = 72 + NameEntry_CountLetters(editedName) * 10;
-    ShopCursor_SetPositionImmediateFar(&nameCaret.cursor, x, 22);
+    x = 72 + NamingScreen_CountLetters(editedName) * 10;
+    MenuCursor_SetPositionImmediateFar(&nameCaret.cursor, x, 22);
   }
   // The key under the cursor flashes between palette 15 and palette 14, a
   // copy of it with colour 4 grey.
@@ -605,35 +604,33 @@ s32 NameEntry_EditOwnerName(s32 member) {
         width = 3;
     }
     // Flash the key under the cursor, then move the cursor and the caret.
-    UiWindow_SetTileAttributeRect(keyboardWindow, keyColumn, keyRow, width, 1,
-                                  14);
+    Window_SetTextTileRect(keyboardWindow, keyColumn, keyRow, width, 1, 14);
     WaitFrames(1);
-    UiWindow_SetTileAttributeRect(keyboardWindow, keyColumn, keyRow, width, 1,
-                                  15);
+    Window_SetTextTileRect(keyboardWindow, keyColumn, keyRow, width, 1, 15);
     if (cursorDirty) {
       cursorDirty = 0;
-      Shop_SetCursorFar(&keyCursor.cursor,
+      MenuCursor_SetFar(&keyCursor.cursor,
                         (keyboardWindow->x + keyColumn) * 8 - 7,
                         (keyboardWindow->y + keyRow) * 8 + 15, 3);
     }
     if (textDirty) {
       textDirty = 0;
-      x = 72 + NameEntry_CountLetters(editedName) * 10;
-      Shop_SetCursorFar(&nameCaret.cursor, x, 22, 3);
+      x = 72 + NamingScreen_CountLetters(editedName) * 10;
+      MenuCursor_SetFar(&nameCaret.cursor, x, 22, 3);
     }
-    ShopCursor_AdvanceFar(&keyCursor.cursor);
-    ShopCursor_MoveTowardTargetFar(&nameCaret.cursor);
+    MenuCursor_AdvanceFar(&keyCursor.cursor);
+    MenuCursor_MoveTowardTargetFar(&nameCaret.cursor);
     {
       u32 frame = (gFrameTick >> 1) & 7;
 
       output = nameCaret.output;
-      output->oam.x = output->x + gNameEntry_CaretWave[frame];
-      output->oam.y = output->y + gNameEntry_CaretWave[(frame + 5) & 7];
+      output->oam.x = output->x + gNamingScreen_CaretWave[frame];
+      output->oam.y = output->y + gNamingScreen_CaretWave[(frame + 5) & 7];
     }
     // The D-pad moves over the keys, skipping the gaps between groups and
     // wrapping around; Start jumps to End.
     if (gKeysRepeat & KEY_UP) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyRow--;
       // Letters skip the gap row 5; the command column cycles the switch,
@@ -653,7 +650,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
       }
     }
     if (gKeysRepeat & KEY_DOWN) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyRow++;
       if (keyColumn != NAME_COMMAND_COLUMN) {
@@ -671,7 +668,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
       }
     }
     if (gKeysRepeat & KEY_LEFT) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyColumn--;
       if (keyColumn == -1) {
@@ -684,7 +681,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
       }
     }
     if (gKeysRepeat & KEY_RIGHT) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyColumn++;
       if (keyColumn == 19)
@@ -699,26 +696,26 @@ s32 NameEntry_EditOwnerName(s32 member) {
       }
     }
     if (gKeysPressed & KEY_START) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyColumn = NAME_COMMAND_COLUMN;
       keyRow = 10;
     }
     if (gKeysPressed & KEY_SELECT) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
     change_keyboard:
       keyboard ^= 1;
       if (keyboard)
-        UiWindow_CopyTilemapRegion(keyboardWindow,
-                                   gNameEntry_AlternateKeyboardTilemap);
+        Window_CopyTilemapRegion(keyboardWindow,
+                                 gNamingScreen_AlternateKeyboardTilemap);
       else
-        UiWindow_CopyTilemapRegion(keyboardWindow, gNameEntry_KeyboardTilemap);
-      UiWindow_DrawDividerLine(keyboardWindow, 18, 0, 18, 12);
+        Window_CopyTilemapRegion(keyboardWindow, gNamingScreen_KeyboardTilemap);
+      Window_DrawDividerLine(keyboardWindow, 18, 0, 18, 12);
       work->dirty = 1;
       continue;
     }
     if (gKeysRepeat & KEY_B) {
-      AudioCommand_PlayFar(SE_MENU_CANCEL);
+      Sound_PlaySongFar(SE_MENU_CANCEL);
     remove_character:
       // A letter with a voicing mark goes with its mark.
       if (letterCount != 0) {
@@ -734,21 +731,21 @@ s32 NameEntry_EditOwnerName(s32 member) {
         result = -1;
         break;
       }
-      RenderOutput_PrepareForRedraw(nameWindow);
-      UiText_DrawString(editedName, nameWindow, 0, 0);
+      WindowSprite_PrepareForRedraw(nameWindow);
+      Text_DrawString(editedName, nameWindow, 0, 0);
       textDirty = 1;
       continue;
     }
     // A: a command key, or a letter.
     if (!(gKeysRepeat & KEY_A))
       continue;
-    AudioCommand_PlayFar(SE_MENU_CONFIRM);
+    Sound_PlaySongFar(SE_MENU_CONFIRM);
     if (keyColumn == NAME_COMMAND_COLUMN) {
       if (keyRow == 10) {
         if (letterCount == 0) {
-          nameCaret.output->active = 13;
-          RenderOutput_PrepareForRedraw(nameWindow);
-          UiText_DrawString(originalName, nameWindow, 0, 0);
+          nameCaret.output->motion = 13;
+          WindowSprite_PrepareForRedraw(nameWindow);
+          Text_DrawString(originalName, nameWindow, 0, 0);
           WaitFrames(10);
         } else {
           u8 *dst;
@@ -805,8 +802,8 @@ s32 NameEntry_EditOwnerName(s32 member) {
           (u8)(letter - NAME_VOICED_MARK) > 1)
         continue;
       dst = editedName + bytes;
-      if (!NameEntry_AcceptsMark(letter, editedName[bytes - 1])) {
-        AudioCommand_PlayFar(SE_MENU_CANCEL);
+      if (!NamingScreen_AcceptsMark(letter, editedName[bytes - 1])) {
+        Sound_PlaySongFar(SE_MENU_CANCEL);
         continue;
       }
       *dst = letter;
@@ -820,14 +817,14 @@ s32 NameEntry_EditOwnerName(s32 member) {
         keyRow = 10;
         cursorDirty = 1;
       }
-      RenderOutput_PrepareForRedraw(nameWindow);
-      UiText_DrawString(editedName, nameWindow, 0, 0);
+      WindowSprite_PrepareForRedraw(nameWindow);
+      Text_DrawString(editedName, nameWindow, 0, 0);
       textDirty = 1;
     }
   }
-  UiWork_Finalize(keyboardWindow, 2);
-  UiWork_Finalize(nameWindow, 2);
-  UiWork_FinalizeEntityMatchingLocalizedId(member);
+  Window_Close(keyboardWindow, 2);
+  Window_Close(nameWindow, 2);
+  Portrait_CloseWindow(member);
   WaitFrames(1);
   return result;
 }

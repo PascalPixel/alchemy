@@ -3,17 +3,17 @@
 	.set import.__udivsi3, 1
 	.set import.Math_RemainderUnsigned, 1
 	.set import.Engine_TaskWait, 1
-	.set import.Scheduler_AddOrUpdateCallback, 1
+	.set import.Task_Add, 1
 	.set import.Engine_TaskRemoveCallback, 1
 	.set import.Engine_RandomNext, 1
 	.set import.Engine_MathSin, 1
 	.set import.Engine_MathCos, 1
 	.set import.Engine_HeapAllocate, 1
-	.set import.Runtime_AllocateBlock, 1
+	.set import.AllocHeapSlotEwram, 1
 	.set import.Engine_HeapRelease, 1
-	.set import.Resource_ResetEntry, 1
+	.set import.VramCache_FreeEntry, 1
 	.set import.Engine_VramLoad, 1
-	.set import.AnimationObject_SelectAnimation, 1
+	.set import.Sprite_StartAnim, 1
 	.set import.ObjectEvent_SetMode, 1
 	.set import.Engine_ObjectSetScript, 1
 	.set import.Engine_ObjectCreate, 1
@@ -33,7 +33,7 @@
 	.set import.Engine_GameFlagSet, 1
 	.set import.Engine_ScriptWait, 1
 	.set import.Engine_ScriptStart, 1
-	.set import.Party_RemoveOwnerRestored, 1
+	.set import.Party_RemoveMemberRestored, 1
 	.set import.Engine_ScriptChooseYesNo, 1
 	.set import.ObjectEvent_GetById, 1
 	.set import.Engine_ObjectEventDestroy, 1

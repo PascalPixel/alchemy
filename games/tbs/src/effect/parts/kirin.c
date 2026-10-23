@@ -12,37 +12,37 @@
 /// then sweeps across the targets, each throwing a burst of motes as the row
 /// passes it.
 ///
-/// Abilities: Kirin (SUMMON_EFFECT_KIRIN).
+/// Abilities: Kirin (SUMMON_ANIM_KIRIN).
 ///
 /// The scene runs in two stages. In the sweep (120 frames; A or B ends it
 /// after frame 16), KIRIN_OBJECTS objects ride in on a sine wave while the
-/// backdrop scrolls, a ring of motes opens around them and a trail of fire
-/// follows. In the rise (96 frames) the row slides across the targets; each
-/// target the row passes throws a burst of 32 motes and plays its hit
+/// battle background scrolls, a ring of motes opens around them and a trail of
+/// fire follows. In the rise (96 frames) the row slides across the targets;
+/// each target the row passes throws a burst of 32 motes and plays its hit
 /// reaction, and the fire sheet slides off behind it. The battle shows the
 /// damage at the end.
 ///
-/// Reached through BattleEffect_RunSummonEffect, whose sheet slot holds the
+/// Reached through BattleAnim_RunSummonEffect, whose sheet slot holds the
 /// mote sheet here. The sweep projects with gProjection.centerY at 240 and
 /// holds BG1's scroll from the battle camera; the rise gives BG1's x back and
-/// BattleEffect_SetupBlendedDisplay puts the centre back at 120, which the
+/// BattleAnim_SetupBlendedDisplay puts the centre back at 120, which the
 /// rise's Camera_ApplyShake then moves while the screen shakes. The nine
 /// objects are released before the scene returns.
 ///
 /// work->particles 0 to 47 are the fire trail (x in pixels, y 16.16, variant
 /// the frames before it starts); PARTICLES 32i to 32i + 31 are target i's
 /// burst motes, variant their frames left.
-void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
+void BattleAnim_RunKirin(struct BattleAnimArgs *effect) {
   static struct SpriteScale sweepScale = {{{0x10000, 0x10000}}};
   static struct SpriteScale riseScale = {{{0x10000, 0x10000}}};
   void **cursor;
   struct SpritePlacement place;
-  struct EffectPosition unit;
+  struct ScreenPoint unit;
   u8 jitterRow[16];
   u8 hitRow[14];
   struct SpritePlacement risePlace;
   void *canvas;
-  struct BattleEffectWork *work;
+  struct BattleAnimWork *work;
   DrawRectangle blit;
   u8 *sheet;
   s32 baseX;
@@ -54,13 +54,13 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
   s32 frame;
   s32 i;
 
-  cursor = &gBattleEffectWork[1];
+  cursor = &gBattleAnimWork[1];
   canvas = cursor[0];
-  work = cursor[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_CANVAS];
+  work = cursor[HEAP_SLOT_BATTLE_ANIM - HEAP_SLOT_BATTLE_CANVAS];
   sheet = cursor[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_CANVAS];
   work->effect = effect;
-  BattleEffect_StartCanvasLayer(0);
-  BattleEffect_ConfigureEffectDisplay();
+  BattleAnim_StartCanvasLayer(0);
+  BattleAnim_ConfigureEffectDisplay();
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
   // The backdrop and colour 1, which the first wipe fills the canvas with,
@@ -68,26 +68,25 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
   PLTT_BACKDROP = 0;
   BG_PLTT_COLOR(0, 1) = 0;
   work->transferMode = CANVAS_COPY;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
   // Setup: wipe the battle away from left to right, swap in the forest
-  // backdrop and wipe back. Window 0 narrows to x 0 to 201; right of it only
-  // window 1 applies, which shows no sprites, so the row rides in from
+  // battle background and wipe back. Window 0 narrows to x 0 to 201; right of
+  // it only window 1 applies, which shows no sprites, so the row rides in from
   // behind that edge until the rise opens window 0 again.
-  BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
-  BattleEffect_SpawnObjects(KIRIN_OBJECTS, 0x175, 1);
+  BattleAnim_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
+  BattleAnim_SpawnObjects(KIRIN_OBJECTS, 0x175, 1);
   gProjection.centerY = 240;
-  BattleEffect_SelectLivingTargets(work->effect);
-  REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
+  BattleAnim_SelectLivingTargets(work->effect);
+  REG_WININ = ANIM_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
               WININ_WIN1_BG2 | WININ_WIN1_CLR;
   REG_WIN0H = WIN_RANGE(0, 202);
   WaitFrames(1);
-  BattleBackground_LoadFar(BATTLE_BACKGROUND_FLAT,
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                            (s32)&ResourceId_ForestBackdrop, 0);
-  BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_CLEAR);
+  BattleAnim_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_CLEAR);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FireBlobSheet, work->sheet, 1, 1);
-  EFFECT_SHOW_WIDE_CANVAS(14);
+  ANIM_SHOW_WIDE_CANVAS(14);
 
   baseX = 0;
   grow = 0;
@@ -95,13 +94,13 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
   control = cursor[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_BATTLE_CANVAS];
   shift = 0;
   // Each copy clears the canvas to 0, baseX's value here.
-  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, baseX);
+  ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, baseX);
   // The scene owns BG1's scroll until the rise stage.
   control->busy = 1;
 
   i = 0;
   do {
-    struct EffectStep *fire = &work->particles[i];
+    struct Particle *fire = &work->particles[i];
 
     // 64 fire particles get a delay of 2 to 49 frames; only the first 48 are
     // ever drawn. The places and speeds set here are never used, though their
@@ -116,9 +115,8 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
     i++;
   } while (i != 64);
 
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
-                      COMPOSITE_ADDITIVE);
-  blit = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
+  ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, COMPOSITE_ADDITIVE);
+  blit = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
   // The canvas sits behind the row until frame 28.
   REG_BG2CNT = BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
@@ -127,19 +125,19 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != 120; frame++) {
     wave = 0;
     if (frame == 0) {
-      AudioCommand_PlayFar(SE_136);
+      Sound_PlaySongFar(SE_136);
     }
     if (frame == 26) {
-      AudioCommand_PlayFar(SE_RUMBLE);
+      Sound_PlaySongFar(SE_RUMBLE);
     }
     if (frame == 40) {
-      AudioCommand_PlayFar(SE_CAST);
+      Sound_PlaySongFar(SE_CAST);
     }
     if (frame == 72) {
-      AudioCommand_PlayFar(SE_CAST);
+      Sound_PlaySongFar(SE_CAST);
     }
     if (frame == 104) {
-      AudioCommand_PlayFar(SE_CAST);
+      Sound_PlaySongFar(SE_CAST);
     }
     if ((gKeysRepeat & (KEY_A | KEY_B)) != 0 && frame > 16) {
       break;
@@ -223,12 +221,12 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
         s32 x = ((Trig_Sin(ang) * (grow * 2 + 8)) >> 16) + grow + 96;
         s32 y = ((Trig_Cos(ang) * (grow * 12 + 48)) >> 16) + 64;
 
-        EFFECT_DRAW_MOTE(blit, canvas, sheet, x, y, size);
+        ANIM_DRAW_MOTE(blit, canvas, sheet, x, y, size);
       }
     }
 
     if (frame == 24) {
-      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+      ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
     }
     if (frame == 28) {
       REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
@@ -243,12 +241,12 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
     if (frame > 17) {
       i = 0;
       do {
-        struct EffectStep *fire = &work->particles[i];
+        struct Particle *fire = &work->particles[i];
 
         if (fire->variant == 0) {
           s32 size = i % 3 + 1;
 
-          blit(canvas, sheet + gBattleEffect_MoteCells[size - 1], fire->x,
+          blit(canvas, sheet + gBattleAnim_MoteCells[size - 1], fire->x,
                Q_16_16_TO_INT(fire->y) - size, size, size * 2);
           fire->x += 2;
           fire->y += fire->velocityY;
@@ -292,19 +290,19 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
     } else {
       gBgScroll[1].y = 32;
     }
-    EFFECT_PRESENT_FRAME(work);
+    ANIM_PRESENT_FRAME(work);
   }
 
-  // The rise stage: restore the backdrop and display, put the objects behind
-  // the background, and clear the hit marks and the burst motes.
+  // The rise stage: restore the battle background and display, put the objects
+  // behind the background, and clear the hit marks and the burst motes.
   gBgScroll[1].x = savedX;
   control->busy = 0;
-  BattleEffect_SetupBlendedDisplay();
+  BattleAnim_SetupBlendedDisplay();
   REG_WIN0H = WIN_RANGE(0, 240);
 
   i = 0;
   do {
-    struct AnimationObject *animation = work->animations[i];
+    struct Sprite *animation = work->animations[i];
 
     animation->image.priority = 3;
     i++;
@@ -335,7 +333,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
       i++;
     } while (i != 160 << 1);
 
-    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
+    ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
     REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                  BGCNT_SCREEN_BASE(7);
     REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -378,30 +376,30 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
       // Frame 8: Camera_ApplyShake shakes the screen for 8 frames.
       if (frame == 8) {
         work->shakeFrames = frame;
-        AudioCommand_PlayFar(SE_145);
+        Sound_PlaySongFar(SE_145);
       }
       if (frame == 11) {
-        AudioCommand_PlayFar(SE_145);
+        Sound_PlaySongFar(SE_145);
       }
       if (frame == 46) {
-        AudioCommand_PlayFar(SE_KIRIN);
+        Sound_PlaySongFar(SE_KIRIN);
       }
 
-      EFFECT_FOR_EACH_TARGET(i, work->effect) {
+      ANIM_FOR_EACH_TARGET(i, work->effect) {
         // A target the row passes for the first time throws a burst of 32
         // motes from 16 pixels above its projected point (x halved for the wide
         // canvas), each already four frames along its path, and plays its hit
         // reaction. A mote flies up to 2 pixels a frame across and from 6 up
         // to 2 down, for 8 to 23 frames.
         if (hit[i] == 0) {
-          EffectPosition_ProjectBattler(work->effect->actors[i], &unit);
+          Projection_Unit(work->effect->targets[i], &unit);
           if (unit.x > rowX) {
             s32 k;
 
             hit[i] = 1;
             k = 0;
             do {
-              struct EffectStep *burst = &PARTICLES[i * 32 + k];
+              struct Particle *burst = &PARTICLES[i * 32 + k];
               s32 up;
 
               burst->x = unit.x << 15;
@@ -414,9 +412,9 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
               burst->variant = (Random16() & 15) + 8;
               k++;
             } while (k != 32);
-            BattleMotion_ApplyVariantMotionFar(work->effect->actors[i],
-                                               KNOCKBACK_HOP);
-            AudioCommand_PlayFar(SE_HEAVY_IMPACT);
+            BattleMotion_ApplyKnockbackFar(work->effect->targets[i],
+                                           KNOCKBACK_HOP);
+            Sound_PlaySongFar(SE_HEAVY_IMPACT);
           }
         }
       }
@@ -424,13 +422,13 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
       i = 0;
       do {
         // Each burst mote is drawn and moved until its life runs out.
-        struct EffectStep *burst = &PARTICLES[i];
+        struct Particle *burst = &PARTICLES[i];
 
         if (burst->variant > 0) {
           s32 size = 3;
 
-          EFFECT_DRAW_MOTE(blit, canvas, sheet, Q_16_16_TO_INT(burst->x),
-                           Q_16_16_TO_INT(burst->y), size);
+          ANIM_DRAW_MOTE(blit, canvas, sheet, Q_16_16_TO_INT(burst->x),
+                         Q_16_16_TO_INT(burst->y), size);
           burst->x += burst->velocityX;
           burst->y += burst->velocityY;
           burst->variant--;
@@ -439,7 +437,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
       } while (i != 192);
 
       if (frame == 48) {
-        AudioCommand_PlayFar(SE_136);
+        Sound_PlaySongFar(SE_136);
       }
       // From frame 41 the fire sheet, 16 jittered rows, slides off to the
       // left 12 pixels a frame over a canvas that keeps everything; from
@@ -449,7 +447,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
         s32 slide = (frame - 40) * 12;
         s32 y;
 
-        EFFECT_SET_TRANSFER(work, CANVAS_COPY, 75);
+        ANIM_SET_TRANSFER(work, CANVAS_COPY, 75);
         i = 0;
         y = -8;
         do {
@@ -464,27 +462,27 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
       }
       // Frame 58: every target turns black in its damage pose.
       if (frame == 58) {
-        EFFECT_FOR_EACH_TARGET(i, work->effect) {
-          ObjectGroup_UpdateMembers(work->effect->actors[i], SPRITE_COLOR_BLACK,
-                                    POSE_DAMAGE, -1, 0);
+        ANIM_FOR_EACH_TARGET(i, work->effect) {
+          ObjectGroup_UpdateMembers(work->effect->targets[i],
+                                    SPRITE_COLOR_BLACK, POSE_DAMAGE, -1, 0);
         }
       }
 
       Camera_ApplyShake(8, 8);
-      EFFECT_END_FRAME(work);
+      ANIM_END_FRAME(work);
       frame++;
     } while (frame != 96);
   }
 
   // The finish: the battle shows the damage, then the objects and the
   // canvas are released.
-  EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
+  ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
   i = 0;
   do {
-    ResourceObject_ReleaseFar(work->animations[i]);
+    Sprite_DestroyFar(work->animations[i]);
     i++;
   } while (i != KIRIN_OBJECTS);
-  EFFECT_FINISH_CANVAS_ONE_BLITTER();
+  ANIM_FINISH_CANVAS_ONE_BLITTER();
 }
 
 #undef KIRIN_OBJECTS

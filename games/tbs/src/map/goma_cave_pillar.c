@@ -188,7 +188,7 @@ static void GomaCavePillar_UpdateFragment(union FieldObject *fieldObject) {
 
 /// Applies child value 15 at the end of a fragment's lifetime.
 static s32
-GomaCavePillar_FinishFragment(struct ScriptInterpreter *interpreter) {
+GomaCavePillar_FinishFragment(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   ObjectGroup_SetChildValue(objectEvent, 15);
   return 0;
@@ -202,7 +202,7 @@ static void GomaCavePillar_SpawnFragment(s32 x, s32 y, s32 z, s32 firstRate,
   struct EffectScripts table;
   struct ObjectEvent *leader;
   struct ObjectEvent *fragment;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
   u32 priority;
 
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -262,7 +262,7 @@ static void EventScript_MoveWestPillar(void) {
   if (x < 0)
     x += 0xfffff;
   x >>= 20;
-  EV_START();
+  SCRIPT_START();
   if (x == 20) {
     GomaCavePillar_CopyWestPillarCells(18);
     Engine_GameFlagClear(FLAG_GOMA_CAVE_WEST_PILLAR_MOVED);
@@ -270,7 +270,7 @@ static void EventScript_MoveWestPillar(void) {
     GomaCavePillar_CopyWestPillarCells(24);
     Engine_GameFlagSet(FLAG_GOMA_CAVE_WEST_PILLAR_MOVED);
   }
-  EV_END();
+  SCRIPT_END();
 }
 
 /// While the stump teeters, dust falls from it: one fragment every eighth
@@ -363,11 +363,11 @@ static void EventScript_PushStumpOver(void) {
 
   stump = ObjectEvent_GetById(LOCALID_STUMP);
   column = stump->x.fixed / PIXELS(16);
-  EV_START();
+  SCRIPT_START();
   if (column == 25) {
     overlayObjectEvent = ObjectEvent_GetById(LOCALID_MASK_FOR_STUMP);
     zero = 0;
-    overlayObjectEvent->terrainId = 1;
+    overlayObjectEvent->layer = 1;
     spriteObjectEvent = ObjectEvent_GetById(LOCALID_MASK_FOR_STUMP);
     Engine_ObjectEventSetSpriteFlags(spriteObjectEvent, 0);
     Engine_ObjectEventSetChildValue(LOCALID_MASK_FOR_STUMP, SPRITE_COLOR_BLACK);
@@ -430,7 +430,7 @@ static void EventScript_PushStumpOver(void) {
     Engine_GameFlagSet(FLAG_GOMA_CAVE_STUMP_FELL);
     MapGrid_CopyCellAttributes(21, 45, 4, 2, 21, 11);
   }
-  EV_END();
+  SCRIPT_END();
 }
 
 /// Once the east pillar reaches its place (cell 38, 14), it sinks two pixels
@@ -483,18 +483,18 @@ static void GomaCavePillar_SettleEastPillar(void) {
 /// Move on the east pillar in Goma Cave, until it is in its place
 /// (FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE).
 static void EventScript_MoveEastPillar(void) {
-  EV_START();
+  SCRIPT_START();
   GomaCavePillar_SettleEastPillar();
-  EV_END();
+  SCRIPT_END();
 }
 
 /// Walking into the east pillar in Goma Cave pushes it a step, until it is in
 /// its place.
 static void EventScript_PushEastPillar(void) {
-  EV_START();
-  StagedObjectEvent_AdvancePair();
+  SCRIPT_START();
+  PushedObject_AdvancePair();
   GomaCavePillar_SettleEastPillar();
-  EV_END();
+  SCRIPT_END();
 }
 
 /// Walking west into the gap in Goma Cave (metatile behavior 20): the leader
@@ -517,7 +517,7 @@ static void EventScript_JumpGapWest(void) {
   destination->y = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->y.fixed;
   destination->z = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->z.fixed;
   if (FieldObject_CheckMovementCollision(leader, destination) == 0) {
-    EV_START();
+    SCRIPT_START();
     ObjectEvent_SetMode(leader, ANIMATION_LEADER_SPRING);
     Engine_TaskWait(6);
     Engine_AudioPlayCue(SE_JUMP);
@@ -533,7 +533,7 @@ static void EventScript_JumpGapWest(void) {
     ObjectEvent_SetMode(leader, ANIMATION_LEADER_SPRING);
     Engine_ObjectEventSetSpriteFlags(leader, 1);
     *motionFlags = savedMotionFlags;
-    EV_END();
+    SCRIPT_END();
   }
 #endif
 }
@@ -547,7 +547,7 @@ static void GomaCavePillar_FidgetWhileForgeFights(void) {
   struct EventWork *work;
   s32 frame;
 
-  work = gEventWork;
+  work = gFieldWork;
   frame = ++gGomaCavePillar_WitnessFrames;
   switch (frame) {
   case 60:
@@ -562,11 +562,11 @@ static void GomaCavePillar_FidgetWhileForgeFights(void) {
     Engine_ObjectEventJump(LOCALID_WITNESS, 4, 0);
     break;
   case 480:
-    OBJECT_MODE(LOCALID_WITNESS, ANIMATION_SHAKE_HEAD);
+    OBJECT_ANIMATION(LOCALID_WITNESS, ANIMATION_SHAKE_HEAD);
     break;
   }
   if (gGameState.pendingDjinnEvent == 0)
-    work->raisedTrigger = TRIGGER_FORGE_JOINED;
+    work->raisedEvent = TRIGGER_FORGE_JOINED;
 }
 
 /// Raised in Goma Cave once Forge has joined the party: the man who fought it
@@ -574,7 +574,7 @@ static void GomaCavePillar_FidgetWhileForgeFights(void) {
 /// good.
 static void EventScript_WitnessCheersForgeCaught(void) {
   Engine_TaskRemoveCallback(GomaCavePillar_FidgetWhileForgeFights);
-  EV_START();
+  SCRIPT_START();
   OBJECT_EMOTE(LOCALID_WITNESS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_WITNESS, 2);
   OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_NORTHWEST, 0);
@@ -592,7 +592,7 @@ static void EventScript_WitnessCheersForgeCaught(void) {
   ObjectEvent_GetById(LOCALID_EAST_PILLAR)->priorityFlags |=
       OBJ_EVENT_PRIORITY_UNDERFOOT;
   FLAG_SET(FLAG_GOMA_CAVE_WITNESS_LEFT);
-  EV_END();
+  SCRIPT_END();
 }
 
 /// Sets up the room as the party enters: the pillars and the stump where the
@@ -602,8 +602,8 @@ s32 Map_Initialize(void) {
   struct ObjectEvent *objectEvent;
   struct EventWork *work;
 
-  work = gEventWork;
-  work->startTransition =
+  work = gFieldWork;
+  work->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   work->transitionFrames = 24;
   ObjectEvent_GetById(LOCALID_STUMP)->collisionFlags |= OBJ_EVENT_NEAR_PSYNERGY;
@@ -621,7 +621,7 @@ s32 Map_Initialize(void) {
     OBJECT_POSITION_SET(LOCALID_EAST_PILLAR, 616, 232);
     if (gGameState.warpDest == GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_STREAM_EAST ||
         gGameState.warpDest == GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_EAST) {
-      ObjectEvent_GetById(LOCALID_EAST_PILLAR)->terrainId = 2;
+      ObjectEvent_GetById(LOCALID_EAST_PILLAR)->layer = 2;
       objectEvent = ObjectEvent_GetById(LOCALID_EAST_PILLAR);
       objectEvent->y.fixed--;
       ObjectEvent_GetById(LOCALID_EAST_PILLAR)->priorityFlags |=
@@ -634,7 +634,7 @@ s32 Map_Initialize(void) {
     Engine_ScriptWaitForScreen();
     OBJECT_POSITION_SET(LOCALID_STUMP, 384, 192);
     WAIT(60);
-    ObjectEvent_GetById(LOCALID_STUMP)->terrainId = 2;
+    ObjectEvent_GetById(LOCALID_STUMP)->layer = 2;
     ObjectEvent_MoveToAndWait(LOCALID_STUMP, 408, 192);
     WAIT(60);
     EventScript_PushStumpOver();
@@ -651,7 +651,7 @@ s32 Map_Initialize(void) {
 /// half.
 #define DIRECTION_STEP(dx, dz) (((u32)(dx) << 16) | ((dz) & 0xffff))
 
-s32 gStagedObjectEvent_DirectionSteps[] = {
+s32 gPushedObject_DirectionSteps[] = {
     DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),
@@ -661,11 +661,11 @@ s32 gStagedObjectEvent_DirectionSteps[] = {
 };
 
 // clang-format off
-u32 gStagedObjectEvent_FootprintKinds[] = {
+u32 gPushedObject_FootprintKinds[] = {
     207, 205, 228, 229, 298, 297,
 };
 
-s32 gStagedObjectEvent_FootprintBounds[] = {
+s32 gPushedObject_FootprintBounds[] = {
     -32, -8, 32, 8,
     -8, -32, 8, 32,
     -32, -16, 32, 0,
@@ -728,21 +728,21 @@ u32 gGomaCavePillar_Warps[] = {
 };
 
 struct ObjectEventTemplate gGomaCavePillar_ObjectEventTemplates[] = {
-    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(328), 0, PIXELS(104), FACING_SOUTH, TALK_KEEP_FACING, 0},
-    {SPRITE_STUMP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(384), 0, PIXELS(192), FACING_SOUTH, TALK_KEEP_FACING, 0},
-    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(584), 0, PIXELS(280), FACING_SOUTH, TALK_KEEP_FACING, 0},
-    {SPRITE_CRATE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_KEEP_FACING, 0},
-    {MARS_DJINNI, FLAG_DJINNI(DJINNI_FORGE), MOVEMENT_TYPE_STAND, PIXELS(664), 0, PIXELS(216), FACING_SOUTH, TALK_FACE_PARTY, 0},
-    {SPRITE_MAN_IN_ORANGE, FLAG_GOMA_CAVE_WITNESS_LEFT, MOVEMENT_TYPE_STAND, PIXELS(628), 0, PIXELS(184), FACING_SOUTHEAST, TALK_FACE_PARTY_AND_BACK, 0},
+    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(328), 0, PIXELS(104), FACING_SOUTH, TALK_FACING_KEEP, 0},
+    {SPRITE_STUMP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(384), 0, PIXELS(192), FACING_SOUTH, TALK_FACING_KEEP, 0},
+    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(584), 0, PIXELS(280), FACING_SOUTH, TALK_FACING_KEEP, 0},
+    {SPRITE_CRATE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACING_KEEP, 0},
+    {MARS_DJINNI, FLAG_DJINNI(DJINNI_FORGE), MOVEMENT_TYPE_STAND, PIXELS(664), 0, PIXELS(216), FACING_SOUTH, TALK_FACING_PARTY, 0},
+    {SPRITE_MAN_IN_ORANGE, FLAG_GOMA_CAVE_WITNESS_LEFT, MOVEMENT_TYPE_STAND, PIXELS(628), 0, PIXELS(184), FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0},
     {MAP_TABLE_END},
 };
 
 struct MapEvent gGomaCavePillar_Events[] = {
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED, 5, CONDITION_ALWAYS, GOMA_CAVE_PILLAR_TO_GOMA_CAVE_STREAM_WEST },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED_ALTERNATE, 6, CONDITION_ALWAYS, GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_WEST },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED_ALTERNATE, 7, CONDITION_ALWAYS, GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_SOUTH },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED_ALTERNATE, 8, CONDITION_ALWAYS, GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_EAST },
-    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED, 9, CONDITION_ALWAYS, GOMA_CAVE_PILLAR_TO_GOMA_CAVE_STREAM_EAST },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 5, CONDITION_ALWAYS, GOMA_CAVE_PILLAR_TO_GOMA_CAVE_STREAM_WEST },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 6, CONDITION_ALWAYS, GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_WEST },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 7, CONDITION_ALWAYS, GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_SOUTH },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 8, CONDITION_ALWAYS, GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_EAST },
+    { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 9, CONDITION_ALWAYS, GOMA_CAVE_PILLAR_TO_GOMA_CAVE_STREAM_EAST },
     { MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, LOCALID_EAST_PILLAR, FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE, EVENT_SCRIPT(EventScript_PushEastPillar) },
     { COORD_EVENT_WALKING_INTO(FACING_WEST), 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpGapWest) },
     { MAP_EVENT_TALK, LOCALID_FORGE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_FightForge) },

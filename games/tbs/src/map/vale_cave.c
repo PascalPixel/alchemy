@@ -20,7 +20,7 @@
 ///   with its own warp destinations and camera box; walking south into a
 ///   ledge's cells hops the leader down it (EventScript_HopDownLedge). In the
 ///   first part (VALE_CAVE_KITE_FROM_VALE_CAVE_MOUTH to
-///   VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_WEST) Reveal shows a hidden tile while
+///   VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_WEST) Reveal shows a hidden cell while
 ///   it lasts (EventScript_RevealHiddenTile). In Kite's part
 ///   (VALE_CAVE_KITE_EAST_FROM_WEST to
 ///   VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_EAST), coming near
@@ -227,10 +227,10 @@ ValeCave_WaitForObjectEventLanding(struct ObjectEvent *objectEvent) {
   while (framesRemaining != 0) {
     Engine_TaskWait(1);
     framesRemaining--;
-    if (objectEvent->y.fixed <= objectEvent->terrainHeight)
+    if (objectEvent->y.fixed <= objectEvent->groundHeight)
       break;
   }
-  objectEvent->y.fixed = objectEvent->terrainHeight;
+  objectEvent->y.fixed = objectEvent->groundHeight;
 }
 
 /// Turns Kite to face the party leader each frame.
@@ -305,14 +305,14 @@ const struct ObjectEventTemplate *ValeCave_GetObjectEventTemplates(void) {
   return gValeCave_MouthObjectEventTemplates;
 }
 
-/// In Vale Cave's second room, Reveal ends and the hidden tile is hidden again.
+/// In Vale Cave's second room, Reveal ends and the hidden cell is hidden again.
 ///
 /// Reached by Reveal's PSYNERGY_PHASE_EFFECT_ENDS anywhere in the second room.
 static void EventScript_HideRevealedTile(void) {
   MapGrid_CopyCells(16, 15, 1, 1, 15, 15);
 }
 
-/// In Vale Cave's second room, Reveal shows a hidden tile.
+/// In Vale Cave's second room, Reveal shows a hidden cell.
 ///
 /// Reached by Reveal's PSYNERGY_PHASE_EFFECT_ACTS anywhere in the second room;
 /// copies cell (16, 17) over cell (15, 15) until EventScript_HideRevealedTile
@@ -359,10 +359,10 @@ static void EventScript_MoveWestCratesIntoHole(void) {
     ObjectEvent_MoveToAndWait(LOCALID_PARTY_LEADER, 360, 664);
     Engine_ObjectEventFaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHEAST, 10);
     ObjectEvent_GetById(LOCALID_WEST_CRATES)->x.fixed += PIXELS(2);
-    leftEffect = OverlayObject_PrepareObject(
+    leftEffect = ObjectEvent_PrepareObject(
         ObjectEvent_GetById(LOCALID_WEST_CRATES)->x.fixed, 0,
         ObjectEvent_GetById(LOCALID_WEST_CRATES)->z.fixed + PIXELS(52), 241);
-    rightEffect = OverlayObject_PrepareObject(
+    rightEffect = ObjectEvent_PrepareObject(
         ObjectEvent_GetById(LOCALID_WEST_CRATES)->x.fixed + PIXELS(16), 0,
         ObjectEvent_GetById(LOCALID_WEST_CRATES)->z.fixed + PIXELS(52), 241);
     ObjectEvent_GetById(LOCALID_WEST_CRATES)->motionFlags = 0;
@@ -402,10 +402,10 @@ static void EventScript_MoveEastCratesIntoHole(void) {
 
   Engine_ScriptStart();
   if (ObjectEvent_GetById(LOCALID_EAST_CRATES)->x.fixed >> 20 == 27) {
-    leftEffect = OverlayObject_PrepareObject(
+    leftEffect = ObjectEvent_PrepareObject(
         ObjectEvent_GetById(LOCALID_EAST_CRATES)->x.fixed - PIXELS(8), 0,
         ObjectEvent_GetById(LOCALID_EAST_CRATES)->z.fixed + PIXELS(52), 241);
-    rightEffect = OverlayObject_PrepareObject(
+    rightEffect = ObjectEvent_PrepareObject(
         ObjectEvent_GetById(LOCALID_EAST_CRATES)->x.fixed + PIXELS(8), 0,
         ObjectEvent_GetById(LOCALID_EAST_CRATES)->z.fixed + PIXELS(52), 241);
     // XXX: likely a slip copied from EventScript_MoveWestCratesIntoHole,
@@ -440,7 +440,7 @@ static void EventScript_MoveEastCratesIntoHole(void) {
 /// FLAG_MAP_TEMP_01 is set.
 static void EventScript_PushEastCratesIntoHole(void) {
   Engine_ScriptStart();
-  StagedObjectEvent_AdvancePair();
+  PushedObject_AdvancePair();
   Engine_ScriptEnd();
   EventScript_MoveEastCratesIntoHole();
 }
@@ -506,7 +506,7 @@ static void EventScript_KiteRunsOff(void) {
   if (GameFlag_IsSet(FLAG_MAP_TEMP_00) == 0) {
     GameFlag_Set(FLAG_MAP_TEMP_00);
     Engine_ScriptStart();
-    Camera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
+    FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
     Engine_CameraFollowObjectEvent(LOCALID_KITE, 1);
     Engine_CameraWaitForMove();
     Engine_ScriptWait(60);
@@ -575,11 +575,11 @@ static void EventScript_KiteKeepsAway(void) {
   s32 targetZOffset;
   struct EventWork *work;
 
-  work = gEventWork;
+  work = gFieldWork;
   if (Engine_GameFlagIsSet(FLAG_VALE_CAVE_KITE_BEHIND_LEDGE) != 0) {
     if (gGameState.pausedObject != LOCALID_KITE) {
       // Preserve the speed reads before resolving this route point.
-      routeIndex = work->touchedTrigger;
+      routeIndex = work->coordEvent;
       djinni = ObjectEvent_GetById(LOCALID_KITE);
       leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
       djinni->speed = leader->speed;
@@ -618,11 +618,11 @@ static void EventScript_PushLogOverEdge(void) {
   struct ObjectEvent *movedLog;
   s32 stationaryMotion;
   s32 clearedRows;
-  struct StagedObjectEventProbe probe;
+  struct PushedObjectProbe probe;
 
   Engine_ScriptStart();
-  if (StagedObjectEvent_FindClearPosition(&probe) != 0) {
-    MapObjectEvent_MoveAndRedraw(probe);
+  if (PushedObject_FindClearPosition(&probe) != 0) {
+    ObjectEvent_MoveAndRedraw(probe);
     // At the ledge's edge (column 17) the log slides west and drops.
     if ((probe.position.x >> 20) == 17) {
       Engine_ObjectEventSetAnimation(probe.objectEventSlot, 3);
@@ -649,16 +649,16 @@ static void EventScript_PushLogOverEdge(void) {
       }
       // The cells it held on the ledge, and its landing, become open floor.
       clearedRows = 4;
-      StagedObjectEvent_FillGridAttributeRectangle(
-          0, (probe.position.x >> 20), ((probe.position.z >> 20) - 2), 1,
-          clearedRows, stationaryMotion);
-      StagedObjectEvent_FillGridAttributeRectangle(
-          2, (probe.position.x >> 20), ((probe.position.z >> 20) - 2), 1,
-          clearedRows, stationaryMotion);
-      StagedObjectEvent_FillGridAttributeRectangle(2, 16, 18, 1, 2,
-                                                   stationaryMotion);
-      StagedObjectEvent_FillGridAttributeRectangle(0, 16, 16, 1, clearedRows,
-                                                   stationaryMotion);
+      PushedObject_FillGridAttributeRectangle(0, (probe.position.x >> 20),
+                                              ((probe.position.z >> 20) - 2), 1,
+                                              clearedRows, stationaryMotion);
+      PushedObject_FillGridAttributeRectangle(2, (probe.position.x >> 20),
+                                              ((probe.position.z >> 20) - 2), 1,
+                                              clearedRows, stationaryMotion);
+      PushedObject_FillGridAttributeRectangle(2, 16, 18, 1, 2,
+                                              stationaryMotion);
+      PushedObject_FillGridAttributeRectangle(0, 16, 16, 1, clearedRows,
+                                              stationaryMotion);
       Engine_GameFlagSet(FLAG_MAP_TEMP_03);
       Engine_AudioPlayCue(SE_240);
     }
@@ -683,8 +683,8 @@ static void EventScript_PushLogOffLedge(void) {
   Engine_ScriptWait(15);
   Engine_ObjectEventSetDestinationOffset(LOCALID_PARTY_LEADER, 8, 0);
   Engine_ScriptWait(4);
-  Script_PlayCue(SE_STOP_SLOT3);
-  Script_PlayCue(SE_HEAVY_MOVE);
+  Script_PlaySong(SE_STOP_SLOT3);
+  Script_PlaySong(SE_HEAVY_MOVE);
   ObjectEvent_SetSpeed(LOCALID_WEST_LOG, PIXELS(1) / 2, PIXELS(1) / 10);
   Engine_ObjectEventSetAnimation(LOCALID_WEST_LOG, 2);
   stationaryMotion = 0;
@@ -695,8 +695,8 @@ static void EventScript_PushLogOffLedge(void) {
   Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 1);
   Engine_ObjectEventWaitForMove(LOCALID_WEST_LOG);
-  Script_PlayCue(SE_STOP_SLOT3);
-  Script_PlayCue(SE_HEAVY_STOP);
+  Script_PlaySong(SE_STOP_SLOT3);
+  Script_PlaySong(SE_HEAVY_STOP);
   Engine_ObjectEventSetAnimation(LOCALID_WEST_LOG, 3);
   ObjectEvent_GetById(LOCALID_WEST_LOG)->motionFlags =
       OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
@@ -706,10 +706,10 @@ static void EventScript_PushLogOffLedge(void) {
   Engine_ObjectEventSetSpritePriority(LOCALID_WEST_LOG, 3);
   ObjectEvent_GetById(LOCALID_WEST_LOG)->priorityFlags =
       OBJ_EVENT_PRIORITY_UNDERFOOT;
-  StagedObjectEvent_FillGridAttributeRectangle(0, 12, 16, 1, 4, 0);
-  StagedObjectEvent_FillGridAttributeRectangle(0, 13, 16, 1, 4, 0);
+  PushedObject_FillGridAttributeRectangle(0, 12, 16, 1, 4, 0);
+  PushedObject_FillGridAttributeRectangle(0, 13, 16, 1, 4, 0);
   GameFlag_Set(FLAG_MAP_TEMP_02);
-  Script_PlayCue(SE_240);
+  Script_PlaySong(SE_240);
   Engine_ScriptEnd();
 }
 
@@ -720,11 +720,11 @@ static void EventScript_PushLogOffLedge(void) {
 /// FLAG_MAP_TEMP_05 when it stops on row 20, else FLAG_MAP_TEMP_04, and
 /// then opens the cells above it.
 static void EventScript_PushLogNorth(void) {
-  struct StagedObjectEventProbe probe;
+  struct PushedObjectProbe probe;
 
   Engine_ScriptStart();
-  if (StagedObjectEvent_FindClearPosition(&probe) != 0) {
-    MapObjectEvent_MoveAndRedraw(probe);
+  if (PushedObject_FindClearPosition(&probe) != 0) {
+    ObjectEvent_MoveAndRedraw(probe);
     // Slide into the new cell before replacing the metatile behavior footprint.
     Engine_ObjectEventSetAnimation(LOCALID_SOUTH_LOG, 3);
     ObjectEvent_SetSpeed(LOCALID_SOUTH_LOG, PIXELS(1) / 4, PIXELS(1) / 2);
@@ -738,7 +738,7 @@ static void EventScript_PushLogNorth(void) {
       s32 emptyAttributes = 0;
 
       slidingLog->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
-      StagedObjectEvent_FillGridAttributeRectangle(
+      PushedObject_FillGridAttributeRectangle(
           0, 13, (probe.position.z >> 20) - 1, 4, clearedRows, emptyAttributes);
     }
     if ((probe.position.z >> 20) == 20) {
@@ -778,7 +778,7 @@ const struct MapEvent *ValeCave_GetEvents(void) {
 /// backdrop and clears FLAG_SHOW_LOCATION_NAME, so the area name is not shown
 /// again; the two rooms of Vale Cave open with the window transition.
 s32 ValeCave_Initialize(void) {
-  s32 *request = &gEventWork->startTransition;
+  s32 *request = &gFieldWork->transition;
 
   *request =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
@@ -800,7 +800,7 @@ s32 ValeCave_Initialize(void) {
 /// the warp of the same number (VALE_CAVE_MOUTH_TO_VALE_KRADEN_WEST,
 /// VALE_CAVE_MOUTH_TO_VALE_CAVE_KITE or VALE_CAVE_MOUTH_TO_VALE_KRADEN_EAST).
 static void EventScript_LeaveRoom(void) {
-  s32 warpNumber = gEventWork->touchedTrigger;
+  s32 warpNumber = gFieldWork->coordEvent;
 
   Engine_AudioPlayCue(SE_MAP_EXIT);
   Engine_ScriptRequestWarp(warpNumber);
@@ -829,12 +829,12 @@ static void ValeCave_UpdateRidingLogPassage(void) {
 static void EventScript_RideLogEast(void) {
 
   Engine_AudioPlayCue(SE_WATER_MOVE);
-  MapObjectEvent_PlacePairAtOffset(LOCALID_RIDING_LOG, 112, 0);
-  MapObjectEvent_PlacePairAtOffset(LOCALID_RIDING_LOG, 80, 0);
+  ObjectEvent_PlacePairAtOffset(LOCALID_RIDING_LOG, 112, 0);
+  ObjectEvent_PlacePairAtOffset(LOCALID_RIDING_LOG, 80, 0);
   Engine_GameFlagSet(FLAG_VALE_CAVE_RIDING_LOG_EAST);
   Engine_TaskWait(2);
   ValeCave_UpdateRidingLogPassage();
-  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
+  Engine_AudioPlayCue(SONG_FADE_OUT_ACTION_SE);
 }
 
 /// In Vale Cave's second room, walking west onto the riding log: it carries
@@ -845,12 +845,12 @@ static void EventScript_RideLogEast(void) {
 static void EventScript_RideLogWest(void) {
 
   Engine_AudioPlayCue(SE_WATER_MOVE);
-  MapObjectEvent_PlacePairAtOffset(LOCALID_RIDING_LOG, -112, 0);
-  MapObjectEvent_PlacePairAtOffset(LOCALID_RIDING_LOG, -80, 0);
+  ObjectEvent_PlacePairAtOffset(LOCALID_RIDING_LOG, -112, 0);
+  ObjectEvent_PlacePairAtOffset(LOCALID_RIDING_LOG, -80, 0);
   Engine_GameFlagClear(FLAG_VALE_CAVE_RIDING_LOG_EAST);
   Engine_TaskWait(2);
   ValeCave_UpdateRidingLogPassage();
-  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
+  Engine_AudioPlayCue(SONG_FADE_OUT_ACTION_SE);
 }
 
 /// Centers an object event on a map cell and gives it underfoot priority.
@@ -859,7 +859,7 @@ static void ValeCave_CenterObjectEventOnCell(s32 localId, s32 column, s32 row) {
 
   if (objectEvent != 0) {
     Engine_ObjectEventSetSpritePriority(localId, 3);
-    objectEvent->terrainId = 2;
+    objectEvent->layer = 2;
     objectEvent->priorityFlags |= OBJ_EVENT_PRIORITY_UNDERFOOT;
     objectEvent->x.fixed = (column << 20) + PIXELS(8);
     objectEvent->z.fixed = (row << 20) + PIXELS(8);
@@ -888,7 +888,7 @@ static void ValeCave_ApplyEntryState(void) {
       Engine_ObjectEventSetSpritePriority(LOCALID_SECOND_STANDING_CRATES, 3);
       // A still object of sprite 223 (spr_223.png, a wooden crate) that shows
       // nothing (an open question).
-      OverlayObject_CreateConfiguredObject(PIXELS(120), 0, PIXELS(232), 223);
+      ObjectEvent_CreateConfiguredObject(PIXELS(120), 0, PIXELS(232), 223);
       break;
     case VALE_CAVE_KITE_EAST_FROM_WEST:
     case VALE_CAVE_KITE_EAST_FROM_SOUTH:
@@ -917,8 +917,8 @@ static void ValeCave_ApplyEntryState(void) {
     case VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_SOUTH:
       // The holes' part: a still chest object that shows nothing (an open
       // question), the riding log's passage, and the holes already filled.
-      OverlayObject_CreateConfiguredObject(PIXELS(642), 0, PIXELS(552),
-                                           SPRITE_CHEST);
+      ObjectEvent_CreateConfiguredObject(PIXELS(642), 0, PIXELS(552),
+                                         SPRITE_CHEST);
       MapGrid_CopyCellAttributes(23, 34, 13, 3, 0, 34);
       ValeCave_UpdateRidingLogPassage();
       if (Engine_GameFlagIsSet(FLAG_MAP_TEMP_00) != 0) {
@@ -937,23 +937,23 @@ static void ValeCave_ApplyEntryState(void) {
       // Each log already pushed leaves open floor; else its footprint
       // blocks its cells again.
       if (Engine_GameFlagIsSet(FLAG_MAP_TEMP_02) != 0) {
-        StagedObjectEvent_FillGridAttributeRectangle(0, 12, 16, 1, 4, 0);
-        StagedObjectEvent_FillGridAttributeRectangle(0, 13, 16, 1, 4, 0);
+        PushedObject_FillGridAttributeRectangle(0, 12, 16, 1, 4, 0);
+        PushedObject_FillGridAttributeRectangle(0, 13, 16, 1, 4, 0);
       } else {
         Map_RedrawObjectEventFootprint(LOCALID_WEST_LOG);
       }
       if (Engine_GameFlagIsSet(FLAG_MAP_TEMP_03) != 0) {
-        StagedObjectEvent_FillGridAttributeRectangle(2, 16, 16, 1, 4, 0);
-        StagedObjectEvent_FillGridAttributeRectangle(0, 16, 16, 1, 4, 0);
+        PushedObject_FillGridAttributeRectangle(2, 16, 16, 1, 4, 0);
+        PushedObject_FillGridAttributeRectangle(0, 16, 16, 1, 4, 0);
       } else {
         Map_RedrawObjectEventFootprint(LOCALID_EAST_LOG);
       }
       southLogOnSouthernRow = Engine_GameFlagIsSet(FLAG_MAP_TEMP_05);
       if (southLogOnSouthernRow != 0) {
-        StagedObjectEvent_FillGridAttributeRectangle(0, 13, 19, 4, 2, 0);
+        PushedObject_FillGridAttributeRectangle(0, 13, 19, 4, 2, 0);
       } else if (Engine_GameFlagIsSet(FLAG_MAP_TEMP_04) != 0) {
-        StagedObjectEvent_FillGridAttributeRectangle(0, 13, 15, 4, 2,
-                                                     southLogOnSouthernRow);
+        PushedObject_FillGridAttributeRectangle(0, 13, 15, 4, 2,
+                                                southLogOnSouthernRow);
         MapGrid_CopyCellAttributes(14, 17, 2, 1, 14, 16);
         MapGrid_CopyCellAttributes(14, 13, 1, 1, 14, 15);
       } else {
@@ -1002,7 +1002,7 @@ s32 gValeCave_LongEffectScript[] = {
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 #endif
 
-s32 gStagedObjectEvent_DirectionSteps[] = {
+s32 gPushedObject_DirectionSteps[] = {
     DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),
@@ -1012,11 +1012,11 @@ s32 gStagedObjectEvent_DirectionSteps[] = {
 };
 
 // clang-format off
-u32 gStagedObjectEvent_FootprintKinds[] = {
+u32 gPushedObject_FootprintKinds[] = {
     207, 205, 228, 229, 298, 297,
 };
 
-s32 gStagedObjectEvent_FootprintBounds[] = {
+s32 gPushedObject_FootprintBounds[] = {
     -32, -8, 32, 8,
     -8, -32, 8, 32,
     -32, -16, 32, 0,
@@ -1113,47 +1113,47 @@ u32 gValeCave_Warps[] = {
 
 struct ObjectEventTemplate gValeCave_MouthObjectEventTemplates[] = {
     { SPRITE_CRATES, CONDITION_ALWAYS, 7,
-        PIXELS(232), 0, PIXELS(168), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(232), 0, PIXELS(168), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_CRATES, CONDITION_ALWAYS, 7,
-        PIXELS(232), 0, PIXELS(184), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(232), 0, PIXELS(184), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_CRATES, CONDITION_ALWAYS, 7,
-        PIXELS(248), 0, PIXELS(184), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(248), 0, PIXELS(184), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
-        PIXELS(192), 0, PIXELS(184), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(192), 0, PIXELS(184), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
-        PIXELS(208), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(208), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gValeCave_KiteObjectEventTemplates[] = {
     { JUPITER_DJINNI, FLAG_KITE, MOVEMENT_TYPE_STAND,
-        PIXELS(792), 0, PIXELS(232), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(792), 0, PIXELS(232), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_CRATES, CONDITION_ALWAYS, 7,
-        PIXELS(344), 0, PIXELS(632), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(344), 0, PIXELS(632), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_CRATES, CONDITION_ALWAYS, 7,
-        PIXELS(456), 0, PIXELS(664), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(456), 0, PIXELS(664), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
-        PIXELS(376), 0, PIXELS(576), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(376), 0, PIXELS(576), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_CRATES, CONDITION_ALWAYS, 7,
-        PIXELS(422), 0, PIXELS(206), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(422), 0, PIXELS(206), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_CRATES, CONDITION_ALWAYS, 7,
-        PIXELS(440), 0, PIXELS(206), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(440), 0, PIXELS(206), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
-        PIXELS(384), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(384), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
-        PIXELS(400), 0, PIXELS(216), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(400), 0, PIXELS(216), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gValeCave_LogsObjectEventTemplates[] = {
     { JUPITER_DJINNI, FLAG_KITE, MOVEMENT_TYPE_STAND,
-        PIXELS(792), 0, PIXELS(232), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+        PIXELS(792), 0, PIXELS(232), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
-        PIXELS(200), 0, PIXELS(288), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(200), 0, PIXELS(288), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
-        PIXELS(312), 0, PIXELS(288), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(312), 0, PIXELS(288), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
-        PIXELS(240), 0, PIXELS(360), FACING_SOUTH, TALK_KEEP_FACING, 0 },
+        PIXELS(240), 0, PIXELS(360), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 

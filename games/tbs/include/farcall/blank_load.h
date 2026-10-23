@@ -1,6 +1,6 @@
 /// @file
-/// The reel-game entry point.
+/// The Lucky Wheels entry point.
 
-/// Plays the slot machine, its random numbers seeded with the play time.
+/// Plays Lucky Wheels, its random numbers seeded with the play time.
 /// Returns 0.
-s32 ReelGame_StartFar();
+s32 LuckyWheels_StartFar();

@@ -17,11 +17,11 @@
 #define WARP_ID_ANY 0xff
 
 /// Chooses the map and warp destination to go to when the party leaves the
-/// current map. warpId is the kind of warp Field_RunMap ended on; the map's
+/// current map. warpId is the kind of warp Map_Run ended on; the map's
 /// warp table gives the first warp of that kind (or of any kind) whose flag, if
 /// it has one, is not set. A warp of kind 0 or the end of the map's warps
 /// falls back to the map of its first warp, at warp destination 0. Called by
-/// Game_Run with Field_RunMap's result; sets gGameState.mapId and
+/// Game_Run with Map_Run's result; sets gGameState.mapId and
 /// .warpDest, and leaves them alone for WARP_NONE, whose destination is set
 /// already, or for a map with no header in the table.
 void Map_TakeWarp(s32 warpId) {
@@ -93,18 +93,18 @@ void Map_TakeWarp(s32 warpId) {
 /// Any other result goes to the next map the script set, or to the default
 /// map (the map the battle or minigame was started from) with the
 /// party keeping its position (FLAG_KEEP_PARTY_POSITION). Called by
-/// Game_Run after each map from RUN_BLANK on; stores result in
-/// gGameState.mapChangeReason and sets gGameState.mapId and .warpDest.
-void Map_ReturnFromBattle(s32 result) {
-  struct BattleUnit *unit;
+/// Game_Run after each map from RUN_NONE on; stores result in
+/// gGameState.runResult and sets gGameState.mapId and .warpDest.
+void Map_ReturnFromRun(s32 result) {
+  struct Unit *unit;
   s32 i;
   s32 mapId;
   s32 warpDest;
 
-  gGameState.mapChangeReason = result;
+  gGameState.runResult = result;
   if (result == -1) {
     // Revive the leader before choosing the defeat return point.
-    unit = Unit_GetFar(gGameState.selectedLocalId);
+    unit = Unit_GetFar(gGameState.leaderLocalId);
     if (unit->hp == 0) {
       unit->hp = 1;
       Unit_UpdateGauges(unit);
@@ -155,25 +155,23 @@ void Map_ReturnFromBattle(s32 result) {
 
 /// Returns the map section mapId belongs to. The maps of one map section share
 /// their music, area name and the flags kept while inside it.
-/// Called by Map_ResolveInteractionResult.
-s32 FieldEffect_GetResourceGroup(s32 mapId) {
-  return gField_MapTable[mapId].mapSec;
-}
+/// Called by Map_ChooseMusic.
+s32 Map_GetMapSec(s32 mapId) { return gMapHeaders[mapId].mapSec; }
 
 /// The last two 16-colour background palettes, which the minigame runners save
 /// and restore around a minigame; palette 15 holds the window colours
-/// (PaletteGlow_Update).
+/// (WindowColor_Apply).
 enum {
   MINIGAME_PALETTE_FIRST = 14, ///< BG palette 14
   MINIGAME_PALETTE_BYTES = 64  ///< palettes 14 and 15: 2 x 16 colours x 2 bytes
 };
 
 /// Runs the Lucky Dice minigame, preserving BG palettes 14 and 15 in a 64-byte
-/// MemAlloc copy freed afterwards. Returns the minigame's result, 0, for
-/// Map_ReturnFromBattle.
+/// Alloc copy freed afterwards. Returns the minigame's result, 0, for
+/// Map_ReturnFromRun.
 static __inline__ s32 RunLuckyDice(s32 warpDest) {
   void *palette = (void *)&BG_PLTT_COLOR(MINIGAME_PALETTE_FIRST, 0);
-  void *saved = MemAlloc(MINIGAME_PALETTE_BYTES);
+  void *saved = Alloc(MINIGAME_PALETTE_BYTES);
   s32 result;
 
   Dma_Set(palette, saved,
@@ -183,25 +181,25 @@ static __inline__ s32 RunLuckyDice(s32 warpDest) {
   Dma_Set(saved, palette,
           (DMA_ENABLE | DMA_32BIT) << 16 | (MINIGAME_PALETTE_BYTES / 4),
           REG_DMA3);
-  MemFree(saved);
+  Free(saved);
   return result;
 }
 
-/// Runs the slot machine (Lucky Wheels), preserving BG palettes 14 and 15 as
-/// RunLuckyDice does. Returns ReelGame_Start's result, 0.
-static __inline__ s32 RunReelGame(s32 warpDest) {
+/// Runs Lucky Wheels, preserving BG palettes 14 and 15 as
+/// RunLuckyDice does. Returns LuckyWheels_Start's result, 0.
+static __inline__ s32 RunLuckyWheels(s32 warpDest) {
   void *palette = (void *)&BG_PLTT_COLOR(MINIGAME_PALETTE_FIRST, 0);
-  void *saved = MemAlloc(MINIGAME_PALETTE_BYTES);
+  void *saved = Alloc(MINIGAME_PALETTE_BYTES);
   s32 result;
 
   Dma_Set(palette, saved,
           (DMA_ENABLE | DMA_32BIT) << 16 | (MINIGAME_PALETTE_BYTES / 4),
           REG_DMA3);
-  result = ReelGame_StartFar(warpDest);
+  result = LuckyWheels_StartFar(warpDest);
   Dma_Set(saved, palette,
           (DMA_ENABLE | DMA_32BIT) << 16 | (MINIGAME_PALETTE_BYTES / 4),
           REG_DMA3);
-  MemFree(saved);
+  Free(saved);
   return result;
 }
 
@@ -212,35 +210,35 @@ static __inline__ s32 RunReelGame(s32 warpDest) {
 /// party takes a warp. Called with GAME_RUN_TITLE through Game_RunFar by
 /// System_Initialize at power-on and by Game_Restart.
 void Game_Run(s32 mode) {
-  const struct MapRecord *table;
-  const struct MapRecord *record;
+  const struct MapHeader *table;
+  const struct MapHeader *record;
   s32 warpDest;
 
-  table = gField_MapTable;
+  table = gMapHeaders;
   // Choose the first map before initializing the per-map runtime.
   if (gDebugMode && mode == GAME_RUN_DEBUG_VALE) {
     gGameState.mapId = (s32)&MapId_ValeGate;
     gGameState.warpDest = mode;
-  } else if (gDebugMode && mode == GAME_RUN_DEBUG_CLEAR) {
-    gGameState.mapId = (s32)&MapId_Clear;
-    gGameState.warpDest = CLEAR_FROM_SANCTUM;
+  } else if (gDebugMode && mode == GAME_RUN_DEBUG_MAIN_MENU) {
+    gGameState.mapId = (s32)&MapId_MainMenu;
+    gGameState.warpDest = MAIN_MENU_FROM_SANCTUM;
   } else {
     GameState_InitializeDefaultsFar();
     gGameState.mapId = (s32)&MapId_Title;
     gGameState.warpDest = TITLE_AFTER_RUN;
   }
   // The window colours from the options: hue, then brightness.
-  PaletteGlow_UpdateFar(gGameState.paletteGlow[0], gGameState.paletteGlow[1]);
+  WindowColor_ApplyFar(gGameState.windowColor[0], gGameState.windowColor[1]);
   VramCache_Reset();
-  Scheduler_ResetTaskTable();
-  Scheduler_ResetTaskTable();
+  Task_ResetAll();
+  Task_ResetAll();
   for (;;) {
     // FLAG_SKIP_MAP_CHANGE_SOUND skips SE_STOP_SLOT3 for one map
     // change, then clears itself.
     if (GameFlag_TestFar(FLAG_SKIP_MAP_CHANGE_SOUND))
       GameFlag_ClearBitFar(FLAG_SKIP_MAP_CHANGE_SOUND);
     else
-      AudioCommand_PlayFar(SE_STOP_SLOT3);
+      Sound_PlaySongFar(SE_STOP_SLOT3);
     record = &table[gGameState.mapId];
     warpDest = gGameState.warpDest;
 
@@ -254,37 +252,37 @@ void Game_Run(s32 mode) {
     }
     // Drop the tasks, the HBlank and VCount handlers (IRQs 1 and 2) and every
     // heap block the last map, battle or minigame left.
-    Scheduler_ResetTaskTable();
+    Task_ResetAll();
     Runtime_SetIrqHandler(1, 0, 0);
     Runtime_SetIrqHandler(2, 0, 0);
-    Runtime_InitializeHeap();
+    InitHeap();
     DebugText_Clear();
     VramCache_Reset();
     // A battle or minigame returns a result, not a warp: the return map is
     // chosen from the game state, and no overlay is loaded.
-    if (gGameState.mapId >= RUN_BLANK) {
+    if (gGameState.mapId >= RUN_NONE) {
       switch (gGameState.mapId) {
       case RUN_BATTLE:
-        warpDest = Battle_RunEncounterFar(warpDest);
+        warpDest = Battle_RunFar(warpDest);
         break;
       case RUN_LUCKY_DICE:
         warpDest = RunLuckyDice(warpDest);
         break;
-      case RUN_REEL_GAME:
-        warpDest = RunReelGame(warpDest);
+      case RUN_LUCKY_WHEELS:
+        warpDest = RunLuckyWheels(warpDest);
         break;
-      case RUN_BLANK:
+      case RUN_NONE:
         warpDest = 0;
         break;
       }
-      Map_ReturnFromBattle(warpDest);
+      Map_ReturnFromRun(warpDest);
       continue;
     }
 
     // A map: set its flags and music, load its code and run it.
     Map_ResetFlagsOnEnter(gGameState.mapId,
                           GameFlag_TestFar(FLAG_KEEP_PARTY_POSITION));
-    Map_ResolveInteractionResult();
+    Map_ChooseMusic();
     if (!GameFlag_TestFar(FLAG_KEEP_PARTY_POSITION)) {
       // Either flag keeps the music that is playing: FLAG_KEEP_MUSIC for this
       // one change, FLAG_KEEP_MUSIC_HELD for as long as it stays set.
@@ -292,31 +290,31 @@ void Game_Run(s32 mode) {
           GameFlag_TestFar(FLAG_KEEP_MUSIC_HELD))
         GameFlag_ClearBitFar(FLAG_KEEP_MUSIC);
       else
-        Audio_PlayCueFromEventWork();
-    } else if (gGameState.returnCue != -1) {
+        Map_PlayMusic();
+    } else if (gGameState.returnMusic != -1) {
       // Back where the party was: resume the music saved when the pause menu
       // last opened (run_map.c). A random battle and every normal entry set
-      // returnCue to -1, so the map's own music plays instead.
-      AudioCommand_PlayFar(gGameState.returnCue);
+      // returnMusic to -1, so the map's own music plays instead.
+      Sound_PlaySongFar(gGameState.returnMusic);
     } else {
-      Audio_PlayCueFromEventWork();
+      Map_PlayMusic();
     }
     gGameState.layoutId = record->layoutIndex;
     Map_LoadOverlay(0);
-    Map_TakeWarp(Field_RunMap(warpDest));
+    Map_TakeWarp(Map_Run(warpDest));
   }
 }
 
 /// Loads the current map's overlay code (its resource) into gOverlayArea.
-/// Called by Game_Run before Field_RunMap.
+/// Called by Game_Run before Map_Run.
 void Map_LoadOverlay(s32 unused) {
-  const struct MapRecord *table;
+  const struct MapHeader *table;
 
-  table = gField_MapTable;
-  Resource_LoadCode(table[gGameState.mapId].resourceId, &gOverlayArea);
+  table = gMapHeaders;
+  Overlay_Load(table[gGameState.mapId].resourceId, &gOverlayArea);
 }
 
-#define MAP_RECORD(id) (&gField_MapTable[id])
+#define MAP_HEADER(id) (&gMapHeaders[id])
 
 /// Updates the flags and state that last for one map or one map section, on
 /// entering the current map. Unless keep is set (the party returns to where it
@@ -327,7 +325,7 @@ void Map_LoadOverlay(s32 unused) {
 /// (FLAG_MAPSEC_VISITED) is set. Called by Game_Run before each map, with keep
 /// from FLAG_KEEP_PARTY_POSITION; sets gGameState.mapSec and .mapType.
 void Map_ResetFlagsOnEnter(s32 unused, s32 keep) {
-  s32 mapSec = MAP_RECORD(gGameState.mapId)->mapSec;
+  s32 mapSec = MAP_HEADER(gGameState.mapId)->mapSec;
   s32 flag;
 
   if (keep == 0) {
@@ -355,24 +353,24 @@ void Map_ResetFlagsOnEnter(s32 unused, s32 keep) {
     GameFlag_ClearBitFar(FLAG_LINK_BATTLE);
     GameFlag_ClearBitFar(FLAG_RETREAT_BLOCKED);
     // FLAG_NO_ENCOUNTERS_IN_MAPSEC stops random battles
-    // (Encounter_SelectEnemyGroup).
+    // (Encounter_CountStepsAndSelectFormation).
     GameFlag_ClearBitFar(FLAG_NO_ENCOUNTERS_IN_MAPSEC);
     GameFlag_ClearBitFar(FLAG_IN_TOWN);
     GameFlag_ClearBitFar(FLAG_WORLD_MAP_LEFT);
-    gGameState.returnCue = -1;
+    gGameState.returnMusic = -1;
   }
   gGameState.mapSec = mapSec;
   GameFlag_SetBitFar(FLAG_MAPSEC_VISITED(mapSec & 0x7f));
-  gGameState.mapType = MAP_RECORD(gGameState.mapId)->mapType;
+  gGameState.mapType = MAP_HEADER(gGameState.mapId)->mapType;
   if (gGameState.mapType == MAP_TYPE_TOWN)
     GameFlag_SetBitFar(FLAG_IN_TOWN);
   GameFlag_RefreshLureCapFar();
 }
 
 /// Starts the current map's field music, chosen by
-/// Map_ResolveInteractionResult. Called by Game_Run, and by
-/// 34 map overlays through Audio_PlayCueFromEventWorkFar.
-void Audio_PlayCueFromEventWork(void) { AudioCommand_PlayFar(gGameState.cue); }
+/// Map_ChooseMusic. Called by Game_Run, and by
+/// 34 map overlays through Map_PlayMusicFar.
+void Map_PlayMusic(void) { Sound_PlaySongFar(gGameState.mapMusic); }
 
 #undef WARP_MAP_MASK
 #undef WARP_DEST
@@ -380,4 +378,4 @@ void Audio_PlayCueFromEventWork(void) { AudioCommand_PlayFar(gGameState.cue); }
 #undef WARP_HAS_FLAG
 #undef WARP_TABLE_END
 #undef WARP_ID_ANY
-#undef MAP_RECORD
+#undef MAP_HEADER

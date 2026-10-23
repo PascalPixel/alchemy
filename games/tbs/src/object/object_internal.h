@@ -98,19 +98,19 @@
 #include "ability_ids.h"
 #include "sprite_ids.h"
 
-/// The speakers' definitions (fxdata.c), read by FieldEffect_FindDefinition.
-extern struct FieldEffectDefinition gFieldEffect_DefinitionTable[];
+/// The speakers' definitions (fxdata.c), read by Speaker_FindDefinition.
+extern struct SpeakerDefinition gSpeakerDefinitions[];
 
 /// The warp request whose destination is already in gGameState.mapId and
 /// .warpDest, so that Map_TakeWarp leaves them as they are. Random battles,
 /// Retreat and the script commands that set a destination
-/// (FieldScript_SetDestination) raise it, and Field_RunMap returns it when the
+/// (FieldScript_SetDestination) raise it, and Map_Run returns it when the
 /// whole party falls; Map_TakeWarp also uses it for "no warp found" (map.c,
 /// run_map.c).
 #define WARP_NONE 999
 
 /// Map ids above the field maps, which Game_Run runs without a
-/// layout; each returns a result to Map_ReturnFromBattle instead of a warp.
+/// layout; each returns a result to Map_ReturnFromRun instead of a warp.
 /// A 16.16 position that Vector_AddPolarOffset moves by a distance and a
 /// heading: the routine walks the coordinates as three words, and the callers
 /// read the result by name.
@@ -141,7 +141,7 @@ STATIC_ASSERT(sizeof(union PolarOffsetPosition) == 12);
 
 /// Shows message m with the user's and the Psynergy's names, and waits.
 #define PSYNERGY_MESSAGE(who, act, m)                                          \
-  (UiWork_PushValueSlotFar((who), 1), UiWork_PushValueSlotFar((act), 4),       \
-   UiText_ShowPositionedMessageAndWaitFar((m), 1))
+  (MessageArgument_PushFar((who), 1), MessageArgument_PushFar((act), 4),       \
+   FieldMessage_ShowFar((m), 1))
 
 #endif

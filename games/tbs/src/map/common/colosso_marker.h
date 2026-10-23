@@ -34,16 +34,16 @@
 void Colosso_FadeInWarrior(s32 id, s32 x, s32 z) {
   struct ObjectSystemWork *system;
   struct ObjectEvent *objectEvent;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
   s32 i;
 
-  system = gMenuCtrlWork;
+  system = gObjectSystemWork;
   objectEvent = ObjectEvent_GetById(id);
   system->edge = 1;
   system->fill = 4;
   gColosso_WarriorStartX = objectEvent->x.fixed;
   gColosso_WarriorStartZ = objectEvent->z.fixed;
-  sprite = (struct AnimationObject *)objectEvent->sprite;
+  sprite = (struct Sprite *)objectEvent->sprite;
   gColosso_WarriorStartAngle = objectEvent->facing;
   Engine_ObjectEventSetSpritePriority(id, 2);
   objectEvent->priorityFlags |= OBJ_EVENT_PRIORITY_AUTOMATIC;
@@ -89,7 +89,7 @@ void Colosso_RestoreWarrior(s32 id) {
   s32 zero;
   u8 *control;
 
-  system = gMenuCtrlWork;
+  system = gObjectSystemWork;
   objectEvent = ObjectEvent_GetById(id);
   if (gGameState.movementMode == 1) {
     gGameState.movementMode = 0;
@@ -116,9 +116,9 @@ void Colosso_RestoreWarrior(s32 id) {
   objectEvent->velocityX = zero;
   objectEvent->velocityZ = zero;
   objectEvent->motionFlags = 3;
-  objectEvent->terrainId = 0;
+  objectEvent->layer = 0;
   objectEvent->y.fixed = zero;
-  ((struct ObjectRuntime *)objectEvent)->terrainHeight = zero;
+  ((struct Object *)objectEvent)->groundHeight = zero;
   Engine_ObjectEventSetSpriteFlags(objectEvent, SPRITE_FLAG_SHADOW);
   ObjectEvent_SetMode(objectEvent, 0);
   ObjectEvent_SetMode(objectEvent, 1);
@@ -126,7 +126,7 @@ void Colosso_RestoreWarrior(s32 id) {
 }
 
 /// Stops the object event where it is: no velocity and no destination.
-void OverlayObject_ResetMotionFields(s32 localId) {
+void ObjectEvent_ResetMotionFields(s32 localId) {
   struct ObjectEvent *o = ObjectEvent_GetById(localId);
 
   ObjectDispatch_StartIdle((struct DispatchObject *)o);
@@ -180,8 +180,8 @@ static void Colosso_UpdateMarker(void) {
   s16 *py;
   union MarkerCoordinate *sy;
 
-  oam = gColosso_MarkerOam;
-  tile = gVramBlockCache[gColosso_MarkerSlot].offset >> 5;
+  oam = gColosso_PointerOam;
+  tile = gVramCacheEntries[gColosso_MarkerSlot].offset >> 5;
   steps = &gColosso_MarkerSteps;
   total = *steps;
   if (total != 0) {
@@ -211,7 +211,7 @@ static void Colosso_UpdateMarker(void) {
     *dst++ = 0;
     *dst++ = (y - 8) | ((x - 8) << 16) | size | (gColosso_MarkerPriority << 28);
     *dst = tile | 0x400;
-    Runtime_PushSlotEntry(oam, 255);
+    Oam_AddSpriteAtDepth(oam, 255);
   } else if (gColosso_MarkerBlink > 19) {
     gColosso_MarkerBlink = 0;
   }
@@ -246,7 +246,7 @@ void Colosso_MovePointer(u32 x, u32 y, u32 duration) {
 void Colosso_HidePointer(void) {
 
   Engine_TaskRemoveCallback(Colosso_UpdateMarker);
-  Resource_ResetEntry(gColosso_MarkerSlot);
+  VramCache_FreeEntry(gColosso_MarkerSlot);
   gColosso_MarkerSlot = -1;
 }
 
@@ -285,7 +285,7 @@ void Colosso_WalkObjectEventToAndStand(s32 localId, s32 x, s32 z) {
     ObjectEvent_SetMode(objectEvent, 5);
     Engine_ObjectSetPosition(objectEvent, x << 16, objectEvent->y.fixed,
                              z << 16);
-    FieldObject_WaitForMove(objectEvent);
+    Object_WaitForMove(objectEvent);
     ObjectEvent_SetMode(objectEvent, 1);
   }
 }

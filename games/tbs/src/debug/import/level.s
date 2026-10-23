@@ -2,18 +2,18 @@
 	.set overlay_imports, 1
 	.set import.__modsi3, 1
 	.set import.Engine_TaskWait, 1
-	.set import.UiWindow_Create, 1
-	.set import.UiWork_Finalize, 1
-	.set import.UiText_DrawResource, 1
-	.set import.UiText_DrawCharacterAtOffset, 1
-	.set import.UiText_DrawStringAtOffset, 1
-	.set import.UiText_DrawStringInWindow, 1
-	.set import.UiText_DrawNumberAtOffset, 1
-	.set import.UiText_DrawNumberInWindow, 1
-	.set import.RenderOutput_RedrawSavedRect, 1
+	.set import.Window_Create, 1
+	.set import.Window_Close, 1
+	.set import.Text_DrawMessage, 1
+	.set import.Text_DrawMessageAsTiles, 1
+	.set import.Text_DrawStringAtOffset, 1
+	.set import.Text_DrawStringInWindow, 1
+	.set import.Text_DrawNumberAtOffset, 1
+	.set import.Text_DrawNumberInWindow, 1
+	.set import.WindowSprite_RedrawSavedRect, 1
 	.set import.Engine_DebugClearWindow, 1
-	.set import.DebugMenu_BrowseIcons, 1
-	.set import.DebugMenu_BrowsePortraits, 1
+	.set import.DebugBrowser_Icons, 1
+	.set import.DebugBrowser_Portraits, 1
 	.set import.Unit_Get, 1
 	.set import.Unit_Calculate, 1
 	.set import.Engine_DebugGetItem, 1
@@ -21,7 +21,7 @@
 	.ifndef TBS_EDITION_JA
 	.set import.Engine_DebugGetAbility, 1
 	.endif
-	.set import.Party_ListActiveOwners, 1
+	.set import.Party_ListMembers, 1
 	.set import.Unit_LevelUpTo, 1
 	.set import.PartyInventory_HasSpace, 1
 	.ifdef TBS_EDITION_JA

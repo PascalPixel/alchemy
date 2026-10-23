@@ -2,19 +2,19 @@
 #define ALCHEMY_OBJECT_EVENT_H
 
 /// @file
-/// Field objects and object events, and the map transition styles.
+/// Objects and object events, and the map transition styles.
 
 #include "types.h"
 #include "static_assert.h"
 
 #include "event_work.h"
 
-/// The running field map's work, heap slot HEAP_SLOT_EVENT, as the maps
-/// read it; Field_RunMap takes it and frees it.
-extern struct EventWork *gEventWork;
+/// The running field map's work, heap slot HEAP_SLOT_FIELD, as the maps
+/// read it; Map_Run takes it and frees it.
+extern struct EventWork *gFieldWork;
 
 /// How a map fades in and out: MAP_TRANSITION's high byte, which
-/// DisplayTransition_Start and DisplayTransition_Finish read.
+/// ScreenTransition_Start and ScreenTransition_Finish read.
 enum MapTransitionStyle {
   TRANSITION_FADE = 0,          ///< from or to black
   TRANSITION_BACKDROP_FADE = 1, ///< from or to the backdrop colour
@@ -24,9 +24,9 @@ enum MapTransitionStyle {
   TRANSITION_CENTRE_LINE = 4
 };
 
-/// A map transition as EventWork.startTransition holds it. For
+/// A map transition as EventWork.transition holds it. For
 /// TRANSITION_WINDOW the variant is the window mode, listed at
-/// DisplayTransition_UpdateScanlineTable: 3 a circle at the centre, 9 an
+/// ScreenTransition_UpdateScanlineTable: 3 a circle at the centre, 9 an
 /// ellipse around the leader, and others.
 #define MAP_TRANSITION(style, variant) ((style) << 8 | (variant))
 
@@ -40,12 +40,12 @@ union FieldObject;
 /// toward a target, sprites and an update callback.
 struct ObjectEvent {
   const s32 *script;       ///< the object script it runs; null when it is free
-  u16 scriptCursor;        ///< in words (ObjectRuntime's step)
+  u16 scriptCursor;        ///< in words (Object's step)
   u16 facing;              ///< 1/65536 turns
   union FieldCoordinate x; ///< 16.16 fixed-point pixels
   union FieldCoordinate y; ///< 16.16 fixed-point pixels
   union FieldCoordinate z; ///< 16.16 fixed-point pixels
-  s32 terrainHeight;       ///< 16.16 fixed-point pixels
+  s32 groundHeight;        ///< 16.16 fixed-point pixels
   s32 scaleX;              ///< 16.16 fixed point, 0x10000 full size
   s32 scaleY;              ///< 16.16 fixed point, 0x10000 full size
   /// Collision radius in pixels: 16, or half the sprite metadata's boxY, when
@@ -54,7 +54,7 @@ struct ObjectEvent {
   /// The map layer (0 to 3) its ground height is read from, which the
   /// scrolling camera updates from the cell under it; the fixed camera passes
   /// it as the sprite's draw slot.
-  u8 terrainId;
+  u8 layer;
   /// ObjectEventPriorityFlag bits, read by the scrolling camera.
   u8 priorityFlags;
   s32 velocityX; ///< 16.16 fixed-point pixels per frame
@@ -74,21 +74,22 @@ struct ObjectEvent {
   /// ground, in 16.16 fixed-point pixels per frame (0x10000 when created);
   /// also scales a floating object's bob.
   s32 gravity;
-  /// Zeroed by FieldObject_Create and not read by the engine; map code
+  /// Zeroed by Object_CreateField and not read by the engine; map code
   /// keeps a resting height, a sway or a countdown here.
   s32 riseBaseY;
   union {
-    struct AnimationObject *sprite; ///< OBJECT_SPRITE_ONE
-    void **sprites; ///< OBJECT_SPRITE_GROUP: four, empty ones null
+    struct Sprite *sprite; ///< OBJECT_SPRITE_ONE
+    void **sprites;        ///< OBJECT_SPRITE_GROUP: four, empty ones null
   };
   /// Zero hides sprites; one draws a single sprite, two draws a group.
-  /// The engine reads the low four bits; SC_B54_ON and SC_B54_OFF set 1 and 0.
+  /// The engine reads the low four bits; SC_SHOW_SPRITE and SC_HIDE_SPRITES set
+  /// 1 and 0.
   u8 spriteStorageKind;
   /// ObjectEventMotionFlag bits; none is free flight in 3D, and
   /// OBJ_EVENT_FOLLOWS_TERRAIN and OBJ_EVENT_FALLS are set on creation.
   u8 motionFlags;
   u8 arrivalAxis; ///< the ARRIVAL_AXIS_* watched for arrival
-  /// The object script's last flag test (ScriptInterpreter.conditionResult).
+  /// The object script's last flag test (ObjectScriptContext.conditionResult).
   u8 conditionResult;
   u8 snapToTarget; ///< nonzero lands it exactly on its target on arrival
   /// ObjectEventCollisionFlag bits.
@@ -96,9 +97,9 @@ struct ObjectEvent {
   u8 steeringFlags; ///< ObjectEventSteeringFlag bits
   u8 paused;        ///< nonzero skips its script and motion, not its update
   /// Nonzero keeps its sprite's VRAM cache entry while sprites are suspended
-  /// or it is off screen (ObjectSystem_UpdateCamera).
+  /// or it is off screen (ObjectSystem_PlaceSprites).
   u8 retainSpriteCache;
-  u8 repeatCount; ///< the object script's SC_LOOP count (ScriptInterpreter)
+  u8 repeatCount; ///< the object script's SC_LOOP count (ObjectScriptContext)
   u16 wait;       ///< the object script's wait, in frames (ScriptMotionObject)
   /// Frames a solid object has refused its move (ScriptMotionObject's
   /// refused); SC_SYNC stops waiting after 60.
@@ -123,7 +124,7 @@ struct ObjectEvent {
 STATIC_ASSERT(offsetof(struct ObjectEvent, facing) == 0x06);
 STATIC_ASSERT(offsetof(struct ObjectEvent, x) == 0x08);
 STATIC_ASSERT(offsetof(struct ObjectEvent, z) == 0x10);
-STATIC_ASSERT(offsetof(struct ObjectEvent, terrainHeight) == 0x14);
+STATIC_ASSERT(offsetof(struct ObjectEvent, groundHeight) == 0x14);
 STATIC_ASSERT(offsetof(struct ObjectEvent, scaleY) == 0x1c);
 STATIC_ASSERT(offsetof(struct ObjectEvent, priorityFlags) == 0x23);
 STATIC_ASSERT(offsetof(struct ObjectEvent, motionFlags) == 0x55);

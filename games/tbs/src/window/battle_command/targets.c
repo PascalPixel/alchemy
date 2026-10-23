@@ -5,10 +5,10 @@
 #include "../battle_command_internal.h"
 
 #if LANGUAGE == LANGUAGE_JAPANESE
-#define TARGET_MYSTERY_NAME_COPY UiText_DecodeMessage
+#define TARGET_MYSTERY_NAME_COPY Message_DecodeRaw
 #define TARGET_MYSTERY_NAME_CAPACITY 10
 #else
-#define TARGET_MYSTERY_NAME_COPY UiText_CopyMessageString
+#define TARGET_MYSTERY_NAME_COPY Message_CopyExpanded
 #define TARGET_MYSTERY_NAME_CAPACITY 14
 #endif
 
@@ -26,14 +26,14 @@ struct CursorSlot {
 
 /// Lets the player choose the target of an action of unit `selection`, with
 /// a cursor over the aimed unit and smaller markers on the others its range
-/// covers. `mode` is the action's targetMode: TARGET_MODE_ALLIES the party,
-/// TARGET_MODE_SELF only `selection` itself, anything else the enemies
+/// covers. `mode` is the action's targetMode: ABILITY_TARGET_ALLIES the party,
+/// ABILITY_TARGET_SELF only `selection` itself, anything else the enemies
 /// (battle_internal.h has the names, which this folder cannot see yet).
 /// `spread` is its range: 1 one unit, n the aimed one and n - 1 either side,
 /// ABILITY_RANGE_ALL every one (the cursor does not move); 0 counts as 1.
 /// `kind` (enum BattleTargetHint) is Battle_ClassifyEntryKind's class, or
 /// TARGET_HINT_SET_DJINNI: on a party member it opens a window of what the
-/// action would do (its HP or PP, the ailments it cures, "Set Djinni"), and a
+/// action would do (its HP or PP, the statuses it cures, "Set Djinni"), and a
 /// reviving or curing action not aimed at everyone starts on the first member
 /// who needs it. On an enemy a window across the screen names it.
 ///
@@ -41,30 +41,30 @@ struct CursorSlot {
 /// chosen with A, or -1 when cancelled or when the link battle's time runs
 /// out. While it runs, the battle scene slides (targetViewOffset of
 /// BattleMenuWork: -2 for the party, 16 for the enemies) and the covered
-/// units are marked (BattlePresentation_SetActorModesFar). The Djinn tutorial
+/// units are marked (BattleHighlight_SetModesFar). The Djinn tutorial
 /// presses A every 60 frames.
 s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   u16 candidateIds[8];
   struct SelectionSprite cursorSprites[6];
   struct CursorSlot cursorTracks[6];
-  struct EffectPosition actorPosition;
+  struct ScreenPoint actorPosition;
   u16 spreadActorIds[14];
   u8 spreadTrackIndices[8];
-  struct EffectPosition selectedPosition;
+  struct ScreenPoint selectedPosition;
   u16 targetName[15];
-  struct EffectPosition namePosition;
-  struct EffectPosition markerPosition;
+  struct ScreenPoint namePosition;
+  struct ScreenPoint markerPosition;
   struct AffineTransform effect;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   struct BattleWork *battle;
-  struct UiWindow *window;
+  struct Window *window;
 #if TBS_PATCH_4
-  struct UiWindow *conditionWindow;
+  struct Window *conditionWindow;
 #else
   /* FAKEMATCH(pin): the condition window in r9, where the native keeps it; as
    * an ordinary local it is spilled, the frame shrinks to 320 bytes and 969
    * of 1585 instructions differ in tbs-en. */
-  register struct UiWindow *conditionWindow asm("r9");
+  register struct Window *conditionWindow asm("r9");
 #endif
   s32 targetIndex;
   s32 targetCount;
@@ -90,7 +90,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   struct CursorSlot *track;
   struct SelectionSprite *marker;
   struct SelectionSprite *firstSprite;
-  struct BattleUnit *target;
+  struct Unit *target;
 
   battle = gBattleWork;
   targetCount = 0;
@@ -99,21 +99,21 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
 #if TBS_PATCH_4
   /* FAKEMATCH(dead): a null derived from selection keeps conditionWindow in
    * sl; as conditionWindow = 0, 47 of 1684 instructions differ in tbs-es. */
-  conditionWindow = (struct UiWindow *)((u32)(u16)selection >> 16);
+  conditionWindow = (struct Window *)((u32)(u16)selection >> 16);
 #else
   conditionWindow = 0;
 #endif
   if (spread == 0)
     spread = 1;
   // UB: slot 57 is outside the scalar gBattleWork pointer. Named accesses
-  // add 12 bytes here in EN; using gWorkSlot adds 16 bytes.
+  // add 12 bytes here in EN; using gHeapSlots adds 16 bytes.
 #ifdef UBFIX
-  if (mode == TARGET_MODE_ALLIES || mode == TARGET_MODE_SELF)
-    gLinkCountdownWork->targetViewOffset = -2;
+  if (mode == ABILITY_TARGET_ALLIES || mode == ABILITY_TARGET_SELF)
+    gBattleMenuWork->targetViewOffset = -2;
   else
-    gLinkCountdownWork->targetViewOffset = 16;
+    gBattleMenuWork->targetViewOffset = 16;
 #else
-  if (mode == TARGET_MODE_ALLIES || mode == TARGET_MODE_SELF)
+  if (mode == ABILITY_TARGET_ALLIES || mode == ABILITY_TARGET_SELF)
     ((struct BattleMenuWork **)&gBattleWork)[48]->targetViewOffset = -2;
   else
     ((struct BattleMenuWork **)&gBattleWork)[48]->targetViewOffset = 16;
@@ -122,12 +122,12 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     cursorTracks[i].flags = 0;
   // The candidates: the party, the acting unit alone, or the enemies.
   targetIndex = -1;
-  if (mode == TARGET_MODE_ALLIES) {
+  if (mode == ABILITY_TARGET_ALLIES) {
     for (i = 0; i <= 5 && battle->partyUnits[i] != BATTLE_UNIT_LIST_END; i++) {
       candidateIds[targetCount] = battle->partyUnits[i];
       targetCount++;
     }
-  } else if (mode == TARGET_MODE_SELF) {
+  } else if (mode == ABILITY_TARGET_SELF) {
     candidateIds[0] = (u16)selection;
     targetCount = 1;
   } else {
@@ -142,11 +142,11 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   // Restorative actions prefer an ally who benefits from their effect.
   // Otherwise the cursor starts on the acting unit when it is a
   // candidate.
-  if (mode == TARGET_MODE_ALLIES) {
+  if (mode == ABILITY_TARGET_ALLIES) {
     if (spread != ABILITY_RANGE_ALL && kind != TARGET_HINT_NONE) {
       found = 0;
       for (j = 0; j < targetCount; j++) {
-        struct BattleUnit *candidate;
+        struct Unit *candidate;
 
         if (candidateIds[j] == BATTLE_UNIT_REMOVED)
           continue;
@@ -194,21 +194,21 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   if (targetIndex < 0)
     targetIndex = (targetCount - 1) / 2;
   while (candidateIds[targetIndex] == BATTLE_UNIT_REMOVED ||
-         (GameFlag_TestFar(FLAG_LINK_BATTLE) && mode == TARGET_MODE_FOES &&
+         (GameFlag_TestFar(FLAG_LINK_BATTLE) && mode == ABILITY_TARGET_FOES &&
           Unit_GetFar(candidateIds[targetIndex])->hp == 0)) {
     targetIndex = targetIndex + targetCount - 1;
     targetIndex %= targetCount;
   }
   // Aimed at enemies or itself, the cursor starts at the acting unit (at y
   // 128), stays two frames, then eases to the target.
-  if (mode != TARGET_MODE_ALLIES) {
+  if (mode != ABILITY_TARGET_ALLIES) {
     BattleMotion_ProjectConditionalPositionFar(
-        selection, EffectPosition_Coordinates(&actorPosition));
+        selection, ScreenPoint_Coordinates(&actorPosition));
     cursorTracks[0].flags = 8;
     cursorTracks[0].x = (u8)actorPosition.x;
     cursorTracks[0].y = 0x80;
   }
-  window = UiWindow_Create(0, 12, 30, 4, 74);
+  window = Window_Create(0, 12, 30, 4, 74);
   while (1) {
     firstSprite = cursorSprites;
     drawCursors = 0;
@@ -228,7 +228,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       }
       BattleMotion_ProjectConditionalPositionFar(
           *(u16 *)((u8 *)candidateIds + t),
-          EffectPosition_Coordinates(&selectedPosition));
+          ScreenPoint_Coordinates(&selectedPosition));
     }
     // The cursor: a 16x16, 256-colour sprite of 32 frames (256 bytes each),
     // a frame every four frames, bobbing 2 pixels each way every 16 frames.
@@ -266,7 +266,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     }
     firstSprite->x = selectedPosition.x - 8;
     firstSprite->y = (u8)(selectedPosition.y - 16);
-    Runtime_PushSlotEntry((s32 *)firstSprite, 240);
+    Oam_AddSpriteAtDepth((s32 *)firstSprite, 240);
     // The other markers' scale in 8.8: 176 (0.69 times) beside an aimed one,
     // full size when the action takes every unit.
     if (spread == ABILITY_RANGE_ALL) {
@@ -299,7 +299,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     effect.angle = 0;
     effect.angle = 0;
 #endif
-    matrix = AffineMatrix_BuildForEffect(&effect);
+    matrix = OamMatrix_AllocFromTransform(&effect);
     // The aim moved: list the units the range covers, the aimed one first,
     // mark them, and redraw the window for the aimed one.
     if (redraw & 1) {
@@ -337,7 +337,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
           cursorTracks[i].index = 6;
       }
       spreadActorIds[targetCount] = BATTLE_UNIT_LIST_END;
-      BattlePresentation_SetActorModesFar(spreadActorIds, 1);
+      BattleHighlight_SetModesFar(spreadActorIds, 1);
       // A party member (units 0 to 7): the window of what the action does,
       // placed by the member's tile column (anchor) and kept on screen.
       if (candidateIds[targetIndex] <= 7) {
@@ -345,9 +345,9 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
           unit = Unit_GetFar(candidateIds[targetIndex]);
           BattleMotion_ProjectConditionalPositionFar(
               candidateIds[targetIndex],
-              EffectPosition_Coordinates(&selectedPosition));
+              ScreenPoint_Coordinates(&selectedPosition));
           if (conditionWindow != 0)
-            UiWork_Finalize(conditionWindow, 1);
+            Window_Close(conditionWindow, 1);
           switch (kind) {
           case TARGET_HINT_SET_DJINNI: {
             s32 anchor;
@@ -358,33 +358,32 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             if (System_GetLanguage() == 4) {
               if (anchor + 6 > 29)
                 helpColumn = 20;
-              conditionWindow = UiWindow_Create(helpColumn, 8, 10, 3, 6);
+              conditionWindow = Window_Create(helpColumn, 8, 10, 3, 6);
             } else if (System_GetLanguage() == 3) {
               if (anchor + 7 > 29)
                 helpColumn = 19;
-              conditionWindow = UiWindow_Create(helpColumn, 8, 11, 3, 6);
+              conditionWindow = Window_Create(helpColumn, 8, 11, 3, 6);
             } else {
               if (anchor + 5 > 29)
                 helpColumn = 21;
-              conditionWindow = UiWindow_Create(helpColumn, 8, 9, 3, 6);
+              conditionWindow = Window_Create(helpColumn, 8, 9, 3, 6);
             }
 #elif (LANGUAGE == LANGUAGE_FRENCH)
             if (anchor + 5 > 29)
               helpColumn = 21;
-            conditionWindow = UiWindow_Create(helpColumn, 8, 9, 3, 6);
+            conditionWindow = Window_Create(helpColumn, 8, 9, 3, 6);
 #elif (LANGUAGE == LANGUAGE_JAPANESE)
             if (anchor + 4 > 29)
               helpColumn = 22;
-            conditionWindow = UiWindow_Create(helpColumn, 8, 8, 3, 6);
+            conditionWindow = Window_Create(helpColumn, 8, 8, 3, 6);
 #else
             if (anchor + 4 > 29)
               helpColumn = 22;
-            conditionWindow = UiWindow_Create(helpColumn, 8, 9, 3, 6);
+            conditionWindow = Window_Create(helpColumn, 8, 9, 3, 6);
 #endif
           }
             UiWork_SetParameterNibble(2);
-            UiText_DrawCharacterAtOffset(MsgTargetSetDjinni, conditionWindow, 0,
-                                         0);
+            Text_DrawMessageAsTiles(MsgTargetSetDjinni, conditionWindow, 0, 0);
             UiWork_SetParameterNibble(15);
             break;
           case TARGET_HINT_HP: {
@@ -394,35 +393,35 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             helpColumn = anchor - 7;
             if (anchor + 6 > 29)
               helpColumn = 17;
-            conditionWindow = UiWindow_Create(helpColumn, 8, 13, 3, 6);
+            conditionWindow = Window_Create(helpColumn, 8, 13, 3, 6);
           }
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
             switch (System_GetLanguage()) {
             case CARTRIDGE_LANGUAGE_GERMAN:
-              UiText_DrawStringAtOffset((u8 *)gOwnerStatus_KpString,
-                                        conditionWindow, 0, 0);
+              Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_KpString,
+                                      conditionWindow, 0, 0);
               break;
             case CARTRIDGE_LANGUAGE_FRENCH:
-              UiText_DrawStringAtOffset((u8 *)gOwnerStatus_PvString,
-                                        conditionWindow, 0, 0);
+              Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_PvString,
+                                      conditionWindow, 0, 0);
               break;
             case CARTRIDGE_LANGUAGE_SPANISH:
-              UiText_DrawStringAtOffset((u8 *)gOwnerStatus_PvString,
-                                        conditionWindow, 0, 0);
+              Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_PvString,
+                                      conditionWindow, 0, 0);
               break;
             case CARTRIDGE_LANGUAGE_ITALIAN:
-              UiText_DrawStringAtOffset((u8 *)gOwnerStatus_HpString,
-                                        conditionWindow, 0, 0);
+              Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_HpString,
+                                      conditionWindow, 0, 0);
               break;
             }
 #else
-            UiText_DrawStringAtOffset((u8 *)gOwnerStatus_HpString,
-                                      conditionWindow, 0, 0);
+            Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_HpString,
+                                    conditionWindow, 0, 0);
 #endif
-            UiText_DrawNumberInWindow(unit->hp, 4, conditionWindow, 16, 0);
-            UiText_DrawStringAtOffset((u8 *)gOwnerStatus_SlashString,
-                                      conditionWindow, 48, 0);
-            UiText_DrawNumberInWindow(unit->hpMax, 4, conditionWindow, 56, 0);
+            Text_DrawNumberInWindow(unit->hp, 4, conditionWindow, 16, 0);
+            Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_SlashString,
+                                    conditionWindow, 48, 0);
+            Text_DrawNumberInWindow(unit->hpMax, 4, conditionWindow, 56, 0);
             break;
           case TARGET_HINT_PP: {
             s32 anchor;
@@ -431,14 +430,14 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             helpColumn = anchor - 7;
             if (anchor + 6 > 29)
               helpColumn = 17;
-            conditionWindow = UiWindow_Create(helpColumn, 8, 13, 3, 6);
+            conditionWindow = Window_Create(helpColumn, 8, 13, 3, 6);
           }
-            UiText_DrawStringAtOffset((u8 *)gOwnerStatus_PpString,
-                                      conditionWindow, 0, 0);
-            UiText_DrawNumberInWindow(unit->pp, 4, conditionWindow, 16, 0);
-            UiText_DrawStringAtOffset((u8 *)gOwnerStatus_SlashString,
-                                      conditionWindow, 48, 0);
-            UiText_DrawNumberInWindow(unit->ppMax, 4, conditionWindow, 56, 0);
+            Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_PpString,
+                                    conditionWindow, 0, 0);
+            Text_DrawNumberInWindow(unit->pp, 4, conditionWindow, 16, 0);
+            Text_DrawStringAtOffset((u8 *)gBattleSummaryScreen_SlashString,
+                                    conditionWindow, 48, 0);
+            Text_DrawNumberInWindow(unit->ppMax, 4, conditionWindow, 56, 0);
             break;
           case TARGET_HINT_REVIVE: {
             s32 anchor;
@@ -447,12 +446,11 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             helpColumn = anchor - 7;
             if (anchor + 5 > 29)
               helpColumn = 18;
-            conditionWindow = UiWindow_Create(helpColumn, 8, 12, 3, 6);
+            conditionWindow = Window_Create(helpColumn, 8, 12, 3, 6);
           }
             if (unit->hp != 0)
               goto no_condition;
-            UiText_DrawCharacterAtOffset(MsgTargetDowned, conditionWindow, 0,
-                                         0);
+            Text_DrawMessageAsTiles(MsgTargetDowned, conditionWindow, 0, 0);
             break;
           case TARGET_HINT_CURE_POISON: {
             s32 anchor;
@@ -461,12 +459,11 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             helpColumn = anchor - 7;
             if (anchor + 5 > 29)
               helpColumn = 18;
-            conditionWindow = UiWindow_Create(helpColumn, 8, 12, 3, 6);
+            conditionWindow = Window_Create(helpColumn, 8, 12, 3, 6);
           }
             if (unit->poison == 0)
               goto no_condition;
-            UiText_DrawCharacterAtOffset(MsgTargetCurePoison, conditionWindow,
-                                         0, 0);
+            Text_DrawMessageAsTiles(MsgTargetCurePoison, conditionWindow, 0, 0);
             break;
           case TARGET_HINT_RESTORE:
             count = 0;
@@ -495,49 +492,49 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
                 if (anchor + 10 > 29)
                   helpColumn = 13;
                 conditionWindow =
-                    UiWindow_Create(helpColumn, helpRow, 17, count + 2, 6);
+                    Window_Create(helpColumn, helpRow, 17, count + 2, 6);
               } else {
                 if (anchor + 9 > 29)
                   helpColumn = 14;
                 conditionWindow =
-                    UiWindow_Create(helpColumn, helpRow, 16, count + 2, 6);
+                    Window_Create(helpColumn, helpRow, 16, count + 2, 6);
               }
 #elif (LANGUAGE == LANGUAGE_JAPANESE)
               if (anchor + 7 > 29)
                 helpColumn = 16;
               conditionWindow =
-                  UiWindow_Create(helpColumn, helpRow, 14, count + 2, 6);
+                  Window_Create(helpColumn, helpRow, 14, count + 2, 6);
 #else
               if (anchor + 9 > 29)
                 helpColumn = 14;
               conditionWindow =
-                  UiWindow_Create(helpColumn, helpRow, 16, count + 2, 6);
+                  Window_Create(helpColumn, helpRow, 16, count + 2, 6);
 #endif
             }
             count = 0;
             if (unit->delusion != 0) {
-              UiText_DrawCharacterAtOffset(MsgTargetCureDelusion,
-                                           conditionWindow, 0, 0);
+              Text_DrawMessageAsTiles(MsgTargetCureDelusion, conditionWindow, 0,
+                                      0);
               count = 1;
             }
             if (unit->stun != 0) {
-              UiText_DrawCharacterAtOffset(MsgTargetCureStun, conditionWindow,
-                                           0, count * 8);
+              Text_DrawMessageAsTiles(MsgTargetCureStun, conditionWindow, 0,
+                                      count * 8);
               count++;
             }
             if (unit->sleep != 0) {
-              UiText_DrawCharacterAtOffset(MsgTargetCureSleep, conditionWindow,
-                                           0, count * 8);
+              Text_DrawMessageAsTiles(MsgTargetCureSleep, conditionWindow, 0,
+                                      count * 8);
               count++;
             }
             if (unit->psySeal != 0) {
-              UiText_DrawCharacterAtOffset(MsgTargetCureSeal, conditionWindow,
-                                           0, count * 8);
+              Text_DrawMessageAsTiles(MsgTargetCureSeal, conditionWindow, 0,
+                                      count * 8);
               ++count;
             }
             if (unit->grimReaper != 0) {
-              UiText_DrawCharacterAtOffset(MsgTargetCureCurse, conditionWindow,
-                                           0, count * 8);
+              Text_DrawMessageAsTiles(MsgTargetCureCurse, conditionWindow, 0,
+                                      count * 8);
               count++;
             }
             if (count == 0)
@@ -576,67 +573,66 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
                 if (anchor + 10 > 29)
                   helpColumn = 13;
                 conditionWindow =
-                    UiWindow_Create(helpColumn, helpRow, 17, count + 2, 6);
+                    Window_Create(helpColumn, helpRow, 17, count + 2, 6);
               } else {
                 if (anchor + 9 > 29)
                   helpColumn = 14;
                 conditionWindow =
-                    UiWindow_Create(helpColumn, helpRow, 16, count + 2, 6);
+                    Window_Create(helpColumn, helpRow, 16, count + 2, 6);
               }
 #elif (LANGUAGE == LANGUAGE_JAPANESE)
               if (anchor + 7 > 29)
                 helpColumn = 16;
               conditionWindow =
-                  UiWindow_Create(helpColumn, helpRow, 14, count + 2, 6);
+                  Window_Create(helpColumn, helpRow, 14, count + 2, 6);
 #else
               if (anchor + 9 > 29)
                 helpColumn = 14;
               conditionWindow =
-                  UiWindow_Create(helpColumn, helpRow, 16, count + 2, 6);
+                  Window_Create(helpColumn, helpRow, 16, count + 2, 6);
 #endif
             }
             count = 0;
             if (unit->poison != 0) {
-              UiText_DrawCharacterAtOffset(MsgTargetCurePoison, conditionWindow,
-                                           0, 0);
+              Text_DrawMessageAsTiles(MsgTargetCurePoison, conditionWindow, 0,
+                                      0);
               count = 1;
             }
             if (unit->delusion != 0) {
-              UiText_DrawCharacterAtOffset(MsgTargetCureDelusion,
-                                           conditionWindow, 0, count * 8);
+              Text_DrawMessageAsTiles(MsgTargetCureDelusion, conditionWindow, 0,
+                                      count * 8);
               count++;
             }
             if (unit->stun != 0) {
-              UiText_DrawCharacterAtOffset(MsgTargetCureStun, conditionWindow,
-                                           0, count * 8);
+              Text_DrawMessageAsTiles(MsgTargetCureStun, conditionWindow, 0,
+                                      count * 8);
               count++;
             }
             if (unit->sleep != 0) {
-              UiText_DrawCharacterAtOffset(MsgTargetCureSleep, conditionWindow,
-                                           0, count * 8);
+              Text_DrawMessageAsTiles(MsgTargetCureSleep, conditionWindow, 0,
+                                      count * 8);
               count++;
             }
             if (unit->psySeal != 0) {
-              UiText_DrawCharacterAtOffset(MsgTargetCureSeal, conditionWindow,
-                                           0, count * 8);
+              Text_DrawMessageAsTiles(MsgTargetCureSeal, conditionWindow, 0,
+                                      count * 8);
               count++;
             }
             if (unit->grimReaper != 0) {
-              UiText_DrawCharacterAtOffset(MsgTargetCureCurse, conditionWindow,
-                                           0, count * 8);
+              Text_DrawMessageAsTiles(MsgTargetCureCurse, conditionWindow, 0,
+                                      count * 8);
               count++;
             }
             if (unit->haunt != 0) {
-              UiText_DrawCharacterAtOffset(MsgTargetCureHaunt, conditionWindow,
-                                           0, 8 * count);
+              Text_DrawMessageAsTiles(MsgTargetCureHaunt, conditionWindow, 0,
+                                      8 * count);
               count++;
             }
             if (count != 0)
               break;
           no_condition:
             UiWork_SetParameterNibble(2);
-            UiText_DrawCharacterAtOffset(MsgTargetNoEffect, conditionWindow, 0,
-                                         0);
+            Text_DrawMessageAsTiles(MsgTargetNoEffect, conditionWindow, 0, 0);
             UiWork_SetParameterNibble(15);
             break;
           }
@@ -647,12 +643,11 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         // Woman".
         target = Unit_GetFar(candidateIds[targetIndex]);
         BattleMotion_ProjectConditionalPositionFar(
-            candidateIds[targetIndex],
-            EffectPosition_Coordinates(&namePosition));
+            candidateIds[targetIndex], ScreenPoint_Coordinates(&namePosition));
         namePosition.y += Trig_Sin(gFrameCount << 12) / 32768;
-        if (target->classId == 125 || target->classId == 122) {
+        if (target->id == 125 || target->id == 122) {
           width = MsgMysteryPersonName;
-          if (target->classId == 125)
+          if (target->id == 125)
             width++;
           TARGET_MYSTERY_NAME_COPY(width, targetName,
                                    TARGET_MYSTERY_NAME_CAPACITY);
@@ -664,7 +659,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
           }
           targetName[i] = 0;
         }
-        width = UiText_GetWideStringWidth(targetName);
+        width = Text_GetWideStringWidth(targetName);
         namePosition.x -= width / 2;
         namePosition.x -= 8;
         if (namePosition.x + width > 224)
@@ -672,7 +667,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         if (namePosition.x < 0)
           namePosition.x = 0;
         Ui_ClearVramBlock();
-        UiText_RenderWideStringAtOffset(targetName, window, namePosition.x, 4);
+        Text_DrawWideStringAtOffset(targetName, window, namePosition.x, 4);
       }
       redraw &= ~1;
     }
@@ -681,7 +676,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         marker = &firstSprite[i];
         track = &cursorTracks[spreadTrackIndices[i]];
         BattleMotion_ProjectConditionalPositionFar(
-            spreadActorIds[i], EffectPosition_Coordinates(&markerPosition));
+            spreadActorIds[i], ScreenPoint_Coordinates(&markerPosition));
         markerPosition.y =
             markerPosition.y + Trig_Sin(gFrameCount << 12) / 32768;
         *marker = *firstSprite;
@@ -711,20 +706,20 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         else
           marker->affine = 1;
         marker->matrix = matrix;
-        Runtime_PushSlotEntry((s32 *)marker, 240);
+        Oam_AddSpriteAtDepth((s32 *)marker, 240);
       }
     }
     pressed = gKeysPressed;
     repeated = gKeysRepeat;
-    if (gLinkCountdownWork->tutorialStep) {
+    if (gBattleMenuWork->tutorialStep) {
       repeated = 0;
       pressed = 0;
-      if (gLinkCountdownWork->tutorialDelay == 0) {
-        gLinkCountdownWork->tutorialDelay = 60;
+      if (gBattleMenuWork->tutorialDelay == 0) {
+        gBattleMenuWork->tutorialDelay = 60;
         repeated = 1;
         pressed = 1;
       } else {
-        gLinkCountdownWork->tutorialDelay--;
+        gBattleMenuWork->tutorialDelay--;
       }
     }
     // A: the aimed unit's side and place; the loop ends after this frame.
@@ -754,7 +749,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       targetIndex = result;
     } else if (spread != ABILITY_RANGE_ALL) {
       if (repeated & (KEY_DOWN | KEY_RIGHT)) {
-        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         do {
           targetIndex++;
           targetIndex %= candidateCount;
@@ -762,7 +757,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         redraw |= 1;
       }
       if (repeated & (KEY_UP | KEY_LEFT)) {
-        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         do {
           targetIndex = targetIndex + candidateCount - 1;
           targetIndex %= candidateCount;
@@ -770,8 +765,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         redraw |= 1;
       }
     }
-    if (gLinkCountdownWork->timer == 0 || (pressed & KEY_B)) {
-      AudioCommand_PlayFar(SE_MENU_CANCEL);
+    if (gBattleMenuWork->timer == 0 || (pressed & KEY_B)) {
+      Sound_PlaySongFar(SE_MENU_CANCEL);
       targetIndex = -1;
       break;
     }
@@ -780,12 +775,12 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       break;
   }
   WaitFrames(1);
-  Resource_ResetEntry(cursorSlot);
+  VramCache_FreeEntry(cursorSlot);
   if (conditionWindow != 0)
-    UiWork_Finalize(conditionWindow, 1);
-  UiWork_Finalize(window, 1);
-  BattlePresentation_SetActorModesFar(candidateIds, 0);
-  gLinkCountdownWork->targetViewOffset = 0;
+    Window_Close(conditionWindow, 1);
+  Window_Close(window, 1);
+  BattleHighlight_SetModesFar(candidateIds, 0);
+  gBattleMenuWork->targetViewOffset = 0;
   WaitFrames(1);
   return targetIndex;
 }

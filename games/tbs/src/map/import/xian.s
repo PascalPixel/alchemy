@@ -2,7 +2,7 @@
 	.set overlay_imports, 1
 	.set import.__divsi3, 1
 	.set import.Engine_TaskWait, 1
-	.set import.Scheduler_AddOrUpdateCallback, 1
+	.set import.Task_Add, 1
 	.set import.Engine_TaskRemoveCallback, 1
 	.set import.ArcTan2, 1
 	.set import.Vector_AddPolarOffset, 1
@@ -47,7 +47,7 @@
 	.set import.Engine_ObjectEventShowEmote, 1
 	.set import.Engine_ScriptRequestWarp, 1
 	.set import.Djinn_JoinParty, 1
-	.set import.FieldEffect_SetQueuedSoundAndPlay, 1
-	.set import.FieldEffect_PlayQueuedSound, 1
+	.set import.Map_QueueMusic, 1
+	.set import.Map_PlayQueuedMusic, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

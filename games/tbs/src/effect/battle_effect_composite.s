@@ -1,4 +1,4 @@
-@ The pieces BattleEffect_BuildBlitter (parts/blitter.c) builds canvas blitters
+@ The pieces BattleAnim_BuildBlitter (parts/blitter.c) builds canvas blitters
 @ from.
 @ None of this code runs where it is: the builder copies its words into a
 @ heap block, one routine per canvas size, mirroring, clip and mode.
@@ -10,8 +10,8 @@
 @ right to left; canvas rows stay in tile order. The 8 variants do eight
 @ pixels a pass. For whole cells the additive mode uses the colour fragments
 @ (battle_effect_composite_color.s), which add four pixels a word at a time:
-@ BattleEffect_Mask puts 0x40 in every byte of sl, and a byte that reaches it
-@ becomes 63. BattleEffect_Composite is the template the builder walks: each
+@ BattleAnim_Mask puts 0x40 in every byte of sl, and a byte that reaches it
+@ becomes 63. gBlitterTemplate is the template the builder walks: each
 @ word it rewrites is marked, and parts/blitter.c describes its blocks.
 @
 @ Why assembly:
@@ -21,37 +21,37 @@
 .syntax unified
 .text
 	.arm
-	.global BattleEffect_CopyReverse
-	.global BattleEffect_CopyForward
-	.global BattleEffect_TransparentForward
-	.global BattleEffect_TransparentReverse
-	.global BattleEffect_Transparent8Forward
-	.global BattleEffect_Transparent8Reverse
-	.global BattleEffect_MaxForward
-	.global BattleEffect_MaxReverse
-	.global BattleEffect_Max4Forward
-	.global BattleEffect_Max4Reverse
-	.global BattleEffect_AdditiveForward
-	.global BattleEffect_AdditiveReverse
-	.global BattleEffect_Mask
-	.global BattleEffect_Composite
-BattleEffect_CopyReverse:
+	.global BattleAnim_CopyReverse
+	.global BattleAnim_CopyForward
+	.global BattleAnim_TransparentForward
+	.global BattleAnim_TransparentReverse
+	.global BattleAnim_Transparent8Forward
+	.global BattleAnim_Transparent8Reverse
+	.global BattleAnim_MaxForward
+	.global BattleAnim_MaxReverse
+	.global BattleAnim_Max4Forward
+	.global BattleAnim_Max4Reverse
+	.global BattleAnim_AdditiveForward
+	.global BattleAnim_AdditiveReverse
+	.global BattleAnim_Mask
+	.global gBlitterTemplate
+BattleAnim_CopyReverse:
 	ldrb	r5, [r1], #-1
 	strb	r5, [r9], #1
-BattleEffect_CopyForward:
+BattleAnim_CopyForward:
 	ldrb	r5, [r1], #1
 	strb	r5, [r9], #1
-BattleEffect_TransparentForward:
+BattleAnim_TransparentForward:
 	ldrb	r5, [r1], #1
 	cmp	r5, #0
 	strbne	r5, [r9]
 	add	r9, r9, #1
-BattleEffect_TransparentReverse:
+BattleAnim_TransparentReverse:
 	ldrb	r5, [r1], #-1
 	cmp	r5, #0
 	strbne	r5, [r9]
 	add	r9, r9, #1
-BattleEffect_Transparent8Forward:
+BattleAnim_Transparent8Forward:
 	ldrb	r5, [r1], #1
 	cmp	r5, #0
 	strbne	r5, [r9]
@@ -77,7 +77,7 @@ BattleEffect_Transparent8Forward:
 	cmp	r5, #0
 	strbne	r5, [r9, #7]
 	add	r9, r9, #8
-BattleEffect_Transparent8Reverse:
+BattleAnim_Transparent8Reverse:
 	ldrb	r5, [r1], #-1
 	cmp	r5, #0
 	strbne	r5, [r9]
@@ -103,17 +103,17 @@ BattleEffect_Transparent8Reverse:
 	cmp	r5, #0
 	strbne	r5, [r9, #7]
 	add	r9, r9, #8
-BattleEffect_MaxForward:
+BattleAnim_MaxForward:
 	ldrb	r5, [r1], #1
 	ldrb	r8, [r9], #1
 	cmp	r5, r8
 	strbgt	r5, [r9, #-1]
-BattleEffect_MaxReverse:
+BattleAnim_MaxReverse:
 	ldrb	r5, [r1], #-1
 	ldrb	r8, [r9], #1
 	cmp	r5, r8
 	strbgt	r5, [r9, #-1]
-BattleEffect_Max4Forward:
+BattleAnim_Max4Forward:
 	ldrb	r5, [r1], #1
 	ldr	r8, [r9], #4
 	and	sl, r8, #255
@@ -130,7 +130,7 @@ BattleEffect_Max4Forward:
 	ldrb	r5, [r1], #1
 	cmp	r5, r8, lsr #24
 	strbgt	r5, [r9, #-1]
-BattleEffect_Max4Reverse:
+BattleAnim_Max4Reverse:
 	ldrb	r5, [r1], #-1
 	ldr	r8, [r9], #4
 	and	sl, r8, #255
@@ -147,25 +147,25 @@ BattleEffect_Max4Reverse:
 	ldrb	r5, [r1], #-1
 	cmp	r5, r8, lsr #24
 	strbgt	r5, [r9, #-1]
-BattleEffect_AdditiveForward:
+BattleAnim_AdditiveForward:
 	ldrb	r5, [r1], #1
 	ldrb	r8, [r9], #1
 	add	r5, r5, r8
 	cmp	r5, #63
 	movcs	r5, #63
 	strb	r5, [r9, #-1]
-BattleEffect_AdditiveReverse:
+BattleAnim_AdditiveReverse:
 	ldrb	r5, [r1], #-1
 	ldrb	r8, [r9], #1
 	add	r5, r5, r8
 	cmp	r5, #63
 	movcs	r5, #63
 	strb	r5, [r9, #-1]
-BattleEffect_Mask:
+BattleAnim_Mask:
 	mov	sl, #64
 	orr	sl, sl, sl, lsl #8
 	orr	sl, sl, sl, lsl #16
-BattleEffect_Composite:
+gBlitterTemplate:
 	@ Block 1: prologue (see parts/blitter.c)
 	push	{r5, r6, r7, r8, r9, sl, fp, lr}
 	add	r4, sp, #32

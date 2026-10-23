@@ -20,7 +20,7 @@ enum {
   SAVE_FILE_COUNT = 3,   ///< save files; file n is records n and n + 3
   /// The highest sequence number a write keeps; a copy written past it is
   /// rewritten as 1.
-  SAVE_SEQUENCE_LIMIT = 65000,
+  SAVE_COUNTER_LIMIT = 65000,
   /// Payload bytes summed into the checksum: all 0xff0 but the last eight.
   SAVE_CHECKSUM_BYTES = 0xfe8
 };
@@ -31,19 +31,19 @@ enum {
 /// occupied, recordId and sequence tables: a sector counts as taken when its
 /// signature and checksum are good, and of two copies of a record only the
 /// newer stays taken. Returns 1 when no flash chip answers, 0 otherwise; either
-/// way the caller ends with SaveState_ReleaseWorkspace. Called by the save
+/// way the caller ends with Save_ReleaseWork. Called by the save
 /// screens (window/battle_command/save.c) before every save, load, copy or
-/// delete. The workspace is EWRAM first (Runtime_AllocateBlock) and not cleared
+/// delete. The workspace is EWRAM first (AllocHeapSlotEwram) and not cleared
 /// by the allocator, so it is cleared here; the record and sector-table
-/// functions in this file read it through gSaveWorkspace, the slot's word in
-/// gWorkSlot, and need it allocated.
-s32 SaveState_InitializeWorkspace(void) {
-  struct SaveWorkspace *work;
-  struct SaveSlotHeader headerStorage;
-  struct SaveSlotHeader *header;
+/// functions in this file read it through gSaveWork, the slot's word in
+/// gHeapSlots, and need it allocated.
+s32 Save_InitializeWork(void) {
+  struct SaveWork *work;
+  struct SaveSectorHeader headerStorage;
+  struct SaveSectorHeader *header;
   u32 index;
 
-  work = Runtime_AllocateBlock(HEAP_SLOT_SAVE, sizeof(*work));
+  work = AllocHeapSlotEwram(HEAP_SLOT_SAVE, sizeof(*work));
   Dma_Fill32(0, work, sizeof(*work));
   SetFlashTimerIntr(SAVE_FLASH_TIMER, &gIrqHandlers[IRQ_TIMER2]);
 
@@ -65,17 +65,16 @@ s32 SaveState_InitializeWorkspace(void) {
     work->occupied[index] = 0;
     work->recordId[index] = SAVE_RECORD_NONE;
     work->sequence[index] = 0;
-    status = SaveState_ReadSlotAndCheckChecksum(index);
+    status = Save_ReadSector(index);
     START_DMA(&work->slot, &headerStorage, DMA_COPY_WORDS(4));
     WAIT_DMA();
     header = &headerStorage;
 
     // Not a save sector, or one for no record, or a damaged one: it stays
     // free. A sector with the signature still keeps its sequence number.
-    if (SaveState_CompareBytes(header->signature, (u8 *)gSave_Signature, 7) !=
-        0)
+    if (Save_CompareBytes(header->signature, (u8 *)gSave_Signature, 7) != 0)
       continue;
-    work->sequence[index] = header->sequence;
+    work->sequence[index] = header->counter;
     record = header->recordId;
     id = record;
     if (id >= SAVE_RECORD_NONE)
@@ -91,7 +90,7 @@ s32 SaveState_InitializeWorkspace(void) {
     if (status < index) {
       do {
         if (work->recordId[status] == (u8)record) {
-          if (work->sequence[status] < header->sequence)
+          if (work->sequence[status] < header->counter)
             work->occupied[status] = 0;
           else
             work->occupied[index] = 0;
@@ -105,16 +104,16 @@ s32 SaveState_InitializeWorkspace(void) {
 
 /// Picks the free sector to write record `mode` to, at random. The last free
 /// sector only goes to a record that already has a copy, so replacing a save
-/// always has room. Called by SaveState_WriteRecord. Returns SAVE_SECTOR_COUNT
+/// always has room. Called by Save_WriteRecord. Returns SAVE_SECTOR_COUNT
 /// when there is no sector to use.
-u32 SaveState_SelectWriteSlot(s32 mode) {
+u32 Save_SelectWriteSector(s32 mode) {
   u32 empty[SAVE_SECTOR_COUNT];
   s32 count;
   u32 index;
   u8 *slot;
   u8 value;
 
-  slot = gSaveWorkspace->occupied;
+  slot = gSaveWork->occupied;
   count = 0;
   index = 0;
   do {
@@ -128,7 +127,7 @@ u32 SaveState_SelectWriteSlot(s32 mode) {
   if (count != 0) {
     if (count == 1) {
       index = empty[0];
-      if (SaveState_FindLatestSlot(mode) == SAVE_SECTOR_COUNT) {
+      if (Save_FindLatestSector(mode) == SAVE_SECTOR_COUNT) {
         index = SAVE_SECTOR_COUNT;
       }
     } else {
@@ -141,15 +140,15 @@ u32 SaveState_SelectWriteSlot(s32 mode) {
 
 /// Programs the workspace's sector buffer into flash sector `sector` and
 /// verifies it, through the flash library's routine for this chip. Called by
-/// SaveState_WriteRecord and SaveState_InvalidateSlot. Returns 0 on success
+/// Save_WriteRecord and Save_InvalidateSector. Returns 0 on success
 /// and 1 on failure.
-u32 SaveState_WriteWorkspaceSlot(s32 sector) {
+u32 Save_WriteSector(s32 sector) {
   s32 *param = &gFlash_Handler0;
   s32 result;
-  struct SaveWorkspace *work;
+  struct SaveWork *work;
   s32 value;
 
-  work = gSaveWorkspace;
+  work = gSaveWork;
   value = (u16)sector;
   // The chip's program routine, from gFlash_Handler0, reports an error in
   // its result's low halfword
@@ -162,19 +161,19 @@ u32 SaveState_WriteWorkspaceSlot(s32 sector) {
 }
 
 /// Reads flash sector `index` into the workspace's sector buffer. Called by
-/// SaveState_InitializeWorkspace and SaveState_ReadRecordPayload. Returns 0
+/// Save_InitializeWork and Save_ReadRecord. Returns 0
 /// when the payload matches the header's checksum, and the difference of the
 /// two checksums otherwise.
-s32 SaveState_ReadSlotAndCheckChecksum(s32 index) {
-  struct SaveWorkspace *work;
-  struct SaveSlotHeader header;
+s32 Save_ReadSector(s32 index) {
+  struct SaveWork *work;
+  struct SaveSectorHeader header;
   u32 checksum;
 
-  work = gSaveWorkspace;
+  work = gSaveWork;
   ReadFlash(index, 0, work->slot.bytes, sizeof(work->slot));
   Dma_Set(&work->slot, &header, DMA_COPY_WORDS(4), REG_DMA3);
   WAIT_DMA();
-  checksum = SaveState_ChecksumWorkspace();
+  checksum = Save_ChecksumSector();
   return (u16)checksum - header.checksum;
 }
 
@@ -182,7 +181,7 @@ typedef u16 (*EraseSectorProc)(u16);
 
 /// Unused: erases flash sector `sector` with the flash library's routine for
 /// this chip. Nothing calls it.
-UNUSED u16 SaveState_EraseSlotSector(u16 sector) {
+UNUSED u16 Save_EraseSector(u16 sector) {
   return ((EraseSectorProc)gEraseFlashSector)(sector);
 }
 
@@ -191,17 +190,17 @@ UNUSED u16 SaveState_EraseSlotSector(u16 sector) {
 /// workspace's sector tables. When the sequence passes 65000 it restarts at 1,
 /// written back over the old sector. Called by the save screens. Returns 0 on
 /// success and 1 on failure.
-s32 SaveState_WriteRecord(s32 recordId, void *source) {
-  struct SaveWorkspace *work;
-  struct SaveSlotHeader header;
+s32 Save_WriteRecord(s32 recordId, void *source) {
+  struct SaveWork *work;
+  struct SaveSectorHeader header;
   u32 current;
   u32 slot;
 
-  work = gSaveWorkspace;
+  work = gSaveWork;
   Dma_Fill32(0, &work->slot, sizeof(work->slot));
   WAIT_DMA();
-  current = SaveState_FindLatestSlot(recordId);
-  slot = SaveState_SelectWriteSlot(recordId);
+  current = Save_FindLatestSector(recordId);
+  slot = Save_SelectWriteSector(recordId);
   if (slot >= SAVE_SECTOR_COUNT)
     return 1;
 
@@ -211,35 +210,35 @@ s32 SaveState_WriteRecord(s32 recordId, void *source) {
   START_DMA(gSave_HeaderTemplate, &header, DMA_COPY_WORDS(2));
   WAIT_DMA();
   header.recordId = recordId;
-  header.checksum = SaveState_ChecksumWorkspace();
-  header.sequence = SaveState_GetLatestSequence(recordId) + 1;
+  header.checksum = Save_ChecksumSector();
+  header.counter = Save_GetLatestCounter(recordId) + 1;
   START_DMA(&header, &work->slot.record.header, DMA_COPY_WORDS(4));
   WAIT_DMA();
 
-  if (SaveState_WriteWorkspaceSlot(slot) != 0)
+  if (Save_WriteSector(slot) != 0)
     return 1;
   // A power loss before invalidation leaves two valid copies; the next
   // scan chooses the new one by its higher sequence.
-  if (current < SAVE_SECTOR_COUNT && SaveState_InvalidateSlot(current) != 0)
+  if (current < SAVE_SECTOR_COUNT && Save_InvalidateSector(current) != 0)
     return 1;
 
-  if (header.sequence > SAVE_SEQUENCE_LIMIT) {
+  if (header.counter > SAVE_COUNTER_LIMIT) {
     // Sequence order is ordinary, not modular. Keep the high-sequence copy
     // valid until the old sector has been rewritten and verified as 1, then
     // invalidate the high copy so it cannot win the next scan.
-    header.sequence = 1;
+    header.counter = 1;
     START_DMA(&header, &work->slot.record.header, DMA_COPY_WORDS(4));
     WAIT_DMA();
-    if (SaveState_WriteWorkspaceSlot(current) != 0)
+    if (Save_WriteSector(current) != 0)
       return 1;
-    if (SaveState_InvalidateSlot(slot) != 0)
+    if (Save_InvalidateSector(slot) != 0)
       return 1;
     slot = current;
   }
 
   work->occupied[slot] = 1;
   work->recordId[slot] = recordId;
-  work->sequence[slot] = header.sequence;
+  work->sequence[slot] = header.counter;
   return 0;
 }
 
@@ -248,45 +247,45 @@ s32 SaveState_WriteRecord(s32 recordId, void *source) {
 /// 1 when there is none and 0 otherwise. The checksum result of the read is
 /// ignored: a sector counts as occupied only after the scan's checksum or a
 /// verified write.
-u32 SaveState_ReadRecordPayload(s32 recordId, void *destination) {
-  struct SaveWorkspace *work;
+u32 Save_ReadRecord(s32 recordId, void *destination) {
+  struct SaveWork *work;
   u32 index;
 
-  work = gSaveWorkspace;
-  index = SaveState_FindLatestSlot(recordId);
+  work = gSaveWork;
+  index = Save_FindLatestSector(recordId);
   if (index >= SAVE_SECTOR_COUNT)
     return 1;
-  SaveState_ReadSlotAndCheckChecksum(index);
+  Save_ReadSector(index);
   START_DMA(work->slot.record.payload, destination, DMA_COPY_WORDS(0x3fc));
   WAIT_DMA();
   return 0;
 }
 
-/// Invalidates the current copy of record `recordId`. Called by the save
-/// screen's delete. Returns 0 on success and 1 when there is none or the
-/// write failed.
-u32 SaveState_DeleteRecord(s32 recordId) {
+/// Invalidates the current copy of record `recordId`. Called when the
+/// file menu erases a file. Returns 0 on success and 1 when there is none or
+/// the write failed.
+u32 Save_DeleteRecord(s32 recordId) {
   s32 index;
   s32 deletionResult;
 
-  index = SaveState_FindLatestSlot(recordId);
+  index = Save_FindLatestSector(recordId);
   if ((u32)index >= SAVE_SECTOR_COUNT) {
     return 1U;
   }
-  deletionResult = SaveState_InvalidateSlot(index);
+  deletionResult = Save_InvalidateSector(index);
   return (u32)((0 - deletionResult) | deletionResult) >> 0x1F;
 }
 
 /// Sums the first 0xfe8 payload bytes of the workspace's sector buffer; the
 /// final eight payload bytes are excluded. Called when a sector is read and
 /// before one is written.
-s32 SaveState_ChecksumWorkspace(void) {
-  struct SaveWorkspace *work;
+s32 Save_ChecksumSector(void) {
+  struct SaveWork *work;
   u32 limit;
   u32 offset;
   s32 sum;
 
-  work = gSaveWorkspace;
+  work = gSaveWork;
   limit = SAVE_CHECKSUM_BYTES - 1;
   sum = 0;
   offset = 0;
@@ -306,13 +305,13 @@ s32 SaveState_ChecksumWorkspace(void) {
 
 /// Returns the occupied sector holding the newest copy of record `recordId`,
 /// or SAVE_SECTOR_COUNT. Called by every record operation in this file.
-u32 SaveState_FindLatestSlot(s32 recordId) {
-  struct SaveWorkspace *work;
+u32 Save_FindLatestSector(s32 recordId) {
+  struct SaveWork *work;
   u32 latestSequence;
   u32 latestSlot;
   u32 i;
 
-  work = gSaveWorkspace;
+  work = gSaveWork;
   latestSlot = SAVE_SECTOR_COUNT;
   latestSequence = 0;
   for (i = 0; i < SAVE_SECTOR_COUNT; i++) {
@@ -327,22 +326,22 @@ u32 SaveState_FindLatestSlot(s32 recordId) {
 }
 
 /// Overwrites sector `index` with a header for no record (SAVE_RECORD_NONE) and
-/// clears its occupied entry. Called by SaveState_WriteRecord and
-/// SaveState_DeleteRecord. Returns 0 on success and 1 on failure.
-s32 SaveState_InvalidateSlot(s32 index) {
-  struct SaveWorkspace *work;
-  struct SaveSlotHeader header;
+/// clears its occupied entry. Called by Save_WriteRecord and
+/// Save_DeleteRecord. Returns 0 on success and 1 on failure.
+s32 Save_InvalidateSector(s32 index) {
+  struct SaveWork *work;
+  struct SaveSectorHeader header;
 
-  work = gSaveWorkspace;
+  work = gSaveWork;
   Dma_Fill32(0, &header, sizeof(header));
   WAIT_DMA();
   START_DMA(gSave_HeaderTemplate, &header, DMA_COPY_WORDS(2));
   WAIT_DMA();
   header.recordId = SAVE_RECORD_NONE;
-  header.sequence = 0;
+  header.counter = 0;
   START_DMA(&header, &work->slot.record.header, DMA_COPY_WORDS(4));
   WAIT_DMA();
-  if (SaveState_WriteWorkspaceSlot(index) != 0)
+  if (Save_WriteSector(index) != 0)
     return 1;
   work->occupied[index] = 0;
   work->recordId[index] = SAVE_RECORD_NONE;
@@ -351,8 +350,8 @@ s32 SaveState_InvalidateSlot(s32 index) {
 }
 
 /// Compares `count` bytes, as memcmp does. Called by
-/// SaveState_InitializeWorkspace to check each sector's signature.
-s32 SaveState_CompareBytes(u8 *left, u8 *right, s32 count) {
+/// Save_InitializeWork to check each sector's signature.
+s32 Save_CompareBytes(u8 *left, u8 *right, s32 count) {
   s32 difference = 0;
 
   while (count != 0) {
@@ -367,13 +366,13 @@ s32 SaveState_CompareBytes(u8 *left, u8 *right, s32 count) {
 }
 
 /// Returns the highest sequence number among the copies of record `recordId`.
-/// Called by SaveState_WriteRecord to number the new copy.
-u32 SaveState_GetLatestSequence(s32 recordId) {
-  struct SaveWorkspace *work;
+/// Called by Save_WriteRecord to number the new copy.
+u32 Save_GetLatestCounter(s32 recordId) {
+  struct SaveWork *work;
   u32 latestSequence;
   u32 i;
 
-  work = gSaveWorkspace;
+  work = gSaveWork;
   latestSequence = 0;
   for (i = 0; i < SAVE_SECTOR_COUNT; i++) {
     if (work->occupied[i] != 0 && recordId == work->recordId[i]) {
@@ -385,18 +384,18 @@ u32 SaveState_GetLatestSequence(s32 recordId) {
 }
 
 /// Reads the summary at the start of each of the three save files into the
-/// workspace's summary table for the file select screen, and four bytes from
+/// workspace's summary table for the file menu, and four bytes from
 /// offset 0x110 of each file's second record into its secondRecordPlayTime
 /// (zero when it has none). A file with no first record keeps a cleared
 /// summary, so its level reads 0. Called by the save screens. Returns how many
 /// save files exist.
-s32 SaveState_LoadSummaryRecords(void) {
-  struct SaveWorkspace *work;
-  struct SaveSummary *summary;
+s32 Save_LoadFileSummaries(void) {
+  struct SaveWork *work;
+  struct SaveFileSummary *summary;
   u32 group;
   s32 count;
 
-  work = gSaveWorkspace;
+  work = gSaveWork;
   summary = work->summary;
   count = 0;
   group = 0;
@@ -404,12 +403,12 @@ s32 SaveState_LoadSummaryRecords(void) {
     u32 index;
 
     Dma_Fill32(0, summary, sizeof(*summary));
-    index = SaveState_FindLatestSlot(group);
+    index = Save_FindLatestSector(group);
     if (index < SAVE_SECTOR_COUNT) {
       ReadFlash(index, 0, (u8 *)summary, sizeof(*summary));
       count++;
     }
-    index = SaveState_FindLatestSlot(group + SAVE_FILE_COUNT);
+    index = Save_FindLatestSector(group + SAVE_FILE_COUNT);
     if (index < SAVE_SECTOR_COUNT)
       ReadFlash(index, 0x110, summary->secondRecordPlayTime,
                 sizeof(summary->secondRecordPlayTime));
@@ -425,9 +424,9 @@ s32 SaveState_LoadSummaryRecords(void) {
 /// with every block allocated after it in the same pool. Called by the save
 /// screens after every save operation. It returns no value, whatever its
 /// declaration says; no caller reads one.
-u32 SaveState_ReleaseWorkspace(void) {
+u32 Save_ReleaseWork(void) {
   Runtime_SetIrqHandler(IRQ_TIMER2, 0, NULL);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_SAVE);
+  FreeHeapSlot(HEAP_SLOT_SAVE);
   // UB: nothing is returned, and no caller reads the result
 #ifdef UBFIX
   return 0;

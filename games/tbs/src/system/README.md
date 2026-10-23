@@ -52,12 +52,12 @@ other [editions](../../glossary.md#editions) agree except that German moves thre
 | --- | --- | --- | --- | --- |
 | 0 KB | `0x02000000` | 32 KB | the main image's variables: the save buffer, the [game flags](../../glossary.md#game-flag) (`gGameFlagBytes`), the game state (`gGameState`), the sound driver's work and the flash library's | `ewram.s` |
 | 32 KB | `0x02008000` | 32 KB | `gOverlayArea`, the loaded map or screen overlay | `ewram.s`, `overlay/overlay.ld` |
-| 64 KB | `0x02010000` | 32 KB | `gMapGridCellBuffer`; battle effects also use it for particles | `Ram_MapGridCellBuffer` |
-| 96 KB | `0x02018000` | 16 KB | `gActorSpriteSlots` | `Ram_ActorSpriteSlots` |
+| 64 KB | `0x02010000` | 32 KB | `gMapGridCellBuffer`; battle animations also use it for particles | `Ram_MapGridCellBuffer` |
+| 96 KB | `0x02018000` | 16 KB | `gActorSpriteSlots` | `Ram_EnemySpriteSlots` |
 | 112 KB | `0x0201c000` | 16 KB | `gDecodeBuffer` | `Ram_DecodeBuffer` |
 | 128 KB | `0x02020000` | 32 KB | `gMetatiles`, the layout's [metatiles](../../glossary.md#metatile) (`games/tbs/src/field/field/map_grid.c`) | `Ram_Metatiles` |
 | 160 KB | `0x02028000` | 16 KB | `gMapGridLayerData` | `ewram.s` |
-| 176 KB | `0x0202c000` | 16 KB | `gMapGridCollision` | `Ram_MapGridCollision` |
+| 176 KB | `0x0202c000` | 16 KB | `gMapGridShapes` | `Ram_MapGridShapes` |
 | 192 KB | `0x02030000` | 32 KB | `gEwramHeap`; `heap.c` allocates from it up to `0x02040000`, the end of EWRAM, so past its 32 KB it runs into `gBgTileBuffer` | `ewram.s`, `games/tbs/src/runtime/runtime/heap.c` |
 | 224 KB | `0x02038000` | 32 KB, to the end | `gBgTileBuffer` | `Ram_BgTileBuffer` |
 
@@ -66,7 +66,7 @@ other [editions](../../glossary.md#editions) agree except that German moves thre
 | Starts at | Address | What | Named in |
 | --- | --- | --- | --- |
 | 0 KB | `0x03000000` | the resident runtime, 5 KB copied from the ROM: the dispatcher `IwramIrqMain`, the handler table `gIrqHandlers`, the resident sound mixing code and the small routines the rest of the game calls | `main.ld` (`.iwram_runtime`), `runtime*.s` |
-| 5 KB | `0x03001400` | the main image's IWRAM variables, among them the [heap slots](../../glossary.md#heap-slot) `gWorkSlot` (`0x03001e50`) | `iwram.s`, `Ram_WorkSlot` |
+| 5 KB | `0x03001400` | the main image's IWRAM variables, among them the [heap slots](../../glossary.md#heap-slot) `gHeapSlots` (`0x03001e50`) | `iwram.s`, `Ram_HeapSlots` |
 | 8 KB | `0x03002000` | `gIwramHeap`, which `heap.c` allocates from below `Ram_IwramHeapEnd` | `iwram.s` |
 | 28 KB | `0x03007000` | the sound driver's mixer, `SoundDriver_Mixer`, 932 bytes copied from the ROM by `Audio_Initialize` | `Ram_SoundMixer`, `main.ld` (`.iwram_mixer`), `games/tbs/src/sound/audio.c` |
 | 30 KB | `0x03007800` | `Ram_IwramHeapEnd`, the end of the IWRAM heap, where `gCartridgeResetMarker` sits | `iwram_hi.s` |
@@ -92,16 +92,16 @@ The hardware addresses video memory in fixed blocks (`games/tbs/include/system/i
 
 - Background tiles go in four 16 KB character blocks (`BG_CHAR_BLOCK(n)`) and
   background maps in 2 KB screen blocks (`BG_SCREEN_BLOCK(n)`), sharing the
-  same 64 KB. `Ui_LoadWindowGraphics` copies the window tiles to the start of
+  same 64 KB. `Window_LoadGraphics` copies the window tiles to the start of
   character block 0. The window system's tilemap is screen block 4
-  (`UI_TILEMAP_VRAM`) and its text canvas tiles follow it (`UI_CANVAS_VRAM`,
+  (`WINDOW_TILEMAP_VRAM`) and its text canvas tiles follow it (`TEXT_CANVAS_VRAM`,
   [`unit/window/window.h`](../../include/unit/window/window.h)).
   `MapGrid_LoadLayout` puts the ground, middle and overhead layers' maps in
-  screen blocks 5, 6 and 7 and the layout's three tile sheets in character
+  screen blocks 5, 6 and 7 and the layout's three tilesets in character
   blocks 1 to 3 ([Layouts](../layout/README.md)).
 - Screens that load two pictures in turn split the background in halves: the
   first 32 KB with background colours 0 to 127, the second with colours 128 to
-  255 (`Graphics_LoadCharacterBlockAndPalette`,
+  255 (`Credits_LoadBackground`,
   `games/tbs/src/graphics/credits/credits.c`).
 - Sprite tiles take the last 32 KB (`OBJ_VRAM0`), which the sprite VRAM cache
   hands out as 512 blocks of 64 bytes
@@ -112,7 +112,7 @@ The hardware addresses video memory in fixed blocks (`games/tbs/include/system/i
 The program is linked in banks, each at a fixed place in the cartridge, so
 that one bank's code can change size without disturbing any other.
 
-![Two banks of the program as they lie in the cartridge, each starting at a fixed address. The sound bank starts with its far-call table, one short entry for each of its functions that other banks call, followed by its code and then empty room up to the next fixed start. A function in the field bank that plays a sound calls the table's entry, AudioCommand_PlayFar, which jumps on to AudioCommand_Play wherever it lies in the sound bank. If the sound bank's code changes size, AudioCommand_Play moves, but the table entry stays where it is, so nothing in the field bank changes.](https://alchemy.pascalpixel.com/illustrations/system/far-calls.svg)
+![Two banks of the program as they lie in the cartridge, each starting at a fixed address. The sound bank starts with its far-call table, one short entry for each of its functions that other banks call, followed by its code and then empty room up to the next fixed start. A function in the field bank that plays a sound calls the table's entry, Sound_PlaySongFar, which jumps on to Sound_PlaySong wherever it lies in the sound bank. If the sound bank's code changes size, Sound_PlaySong moves, but the table entry stays where it is, so nothing in the field bank changes.](https://alchemy.pascalpixel.com/illustrations/system/far-calls.svg)
 
 The program the CPU runs straight from the cartridge, the main image, is
 divided into banks: the field, the windows, the battles, the sound and the
@@ -132,7 +132,7 @@ bank's table opens `rom_tail_01`, after the sound code and the music.
 Each bank opens with its far-call table, one 8-byte stub for each function
 another bank calls. A caller in another bank calls the table's entry, by the
 function's `...Far` name, rather than the function's own address:
-`AudioCommand_PlayFar` reaches `AudioCommand_Play`. The runtime bank is the
+`Sound_PlaySongFar` reaches `Sound_PlaySong`. The runtime bank is the
 exception: the other banks call its functions directly, and its table,
 `FarCall_RuntimeTable` (`WaitFramesFar` for `WaitFrames`), which follows the
 cartridge header, serves the overlays. Why the runtime alone is called
@@ -165,7 +165,7 @@ other editions' fall on 2 or 4 KB ones.
 | `overlay_veneer` | `overlay.s` | the 8-byte stub: `ldr r4` of the target, `bx r4` |
 | `far_call/*.S` | first row of each `rom_main_NN` from 01 on | a bank's far-call table, one stub per export (`stub.inc`) |
 | `FarCall_RuntimeTable` | after the cartridge header | the runtime bank's table |
-| `...Far` | each table entry | the name another bank or an overlay calls (`AudioCommand_PlayFar`) |
+| `...Far` | each table entry | the name another bank or an overlay calls (`Sound_PlaySongFar`) |
 
 ## How an overlay reaches the rest of the game
 
@@ -219,7 +219,7 @@ Only one overlay is loaded at a time, since all are linked to the same 32 KB,
 so an overlay never calls another. Code several maps need is copied into
 each of them (`games/tbs/src/map/common/`).
 
-`Resource_LoadCode` (`../runtime/runtime/system.c`) unpacks an overlay and
+`Overlay_Load` (`../runtime/runtime/system.c`) unpacks an overlay and
 runs `Resource_PatchThumbBranch` over it. In the packed stream each `bl` holds
 its target's offset from the start of the overlay, and the patch turns it into
 the offset from the instruction itself, which is what the CPU expects. The
@@ -266,7 +266,7 @@ gives each map its overlay as a resource number, and the first column of
 (`games/tbs/src/field/layouts.tsv`) holds numbers counted from
 `ResourceId_Layout001` (`MapGrid_LoadLayout`), so the rows after that one keep
 their order. Code also adds to an id to reach the rows after it: the option
-menu's marker steps through eight [frames](../../glossary.md#frame) from `ResourceId_ShopCursorFrames`
+menu's marker steps through eight [frames](../../glossary.md#frame) from `ResourceId_MenuCursorFrames`
 (`window/window/options.c`), so a run like that stays together. The directory
 ends with 25 unused rows (`unused 25`), where a row fits without renumbering
 any other.
@@ -276,7 +276,7 @@ any other.
 | the map table, `field/maps.s` | each map names its overlay as a resource number |
 | `objects.tsv`'s first column | each overlay's rows are numbered by resource |
 | `field/layouts.tsv` | numbers counted from `ResourceId_Layout001` |
-| `window/window/options.c` | eight frames counted from `ResourceId_ShopCursorFrames` |
+| `window/window/options.c` | eight frames counted from `ResourceId_MenuCursorFrames` |
 
 ## The addresses that never move
 
@@ -300,13 +300,13 @@ itself, the layout has to keep every one:
 | --- | --- | --- |
 | The cartridge restart entry, `Cart_Restart` | `0x08000000`, the start of the ROM | The soft reset in `WaitFrames` jumps there, and `SerialTest_Run`, a link cable test nothing reaches, sends the first 640 bytes from there over the cable. So the header and `System_Entry` stay at the start of the ROM. |
 | The resident runtime, `.iwram_runtime` (5 KB, copied by `Runtime_InstallIwramAndIrqs`) | `0x03000000`, the start of IWRAM | C calls its routines at their addresses (`IwramSqrt` and the rest), and the ARM code that runs from RAM reaches them as offsets from `IwramIrqMain` (`IWRAM_ENTRY`, `games/tbs/src/field/update.c`). |
-| The overlay area, `gOverlayArea` | `0x02008000`, 32 KB of EWRAM | Every overlay is linked to run there and has to fit. Its first 48 bytes are the entry table, which the field object calls by member. |
-| The map and decode buffers: `Ram_MapGridCellBuffer`, `Ram_ActorSpriteSlots`, `Ram_DecodeBuffer`, `Ram_Metatiles`, `Ram_MapGridCollision`, `Ram_BgTileBuffer` | after the overlay area, as the EWRAM table lists | Code reaches across their boundaries by arithmetic: the map grid's [cells](../../glossary.md#cell) fill 64 KB from the start of `Ram_MapGridCellBuffer`, through the sprite slots and the decode buffer, and the tile animation reads tiles from `Ram_DecodeBuffer` that land in `gMapGridLayerData` ([Layouts](../layout/README.md)). So `ewram.s` can't reorder or resize them. |
+| The overlay area, `gOverlayArea` | `0x02008000`, 32 KB of EWRAM | Every overlay is linked to run there and has to fit. Its first 48 bytes are the entry table, which the field's code calls by member. |
+| The map and decode buffers: `Ram_MapGridCellBuffer`, `Ram_EnemySpriteSlots`, `Ram_DecodeBuffer`, `Ram_Metatiles`, `Ram_MapGridShapes`, `Ram_BgTileBuffer` | after the overlay area, as the EWRAM table lists | Code reaches across their boundaries by arithmetic: the map grid's [cells](../../glossary.md#cell) fill 64 KB from the start of `Ram_MapGridCellBuffer`, through the sprite slots and the decode buffer, and the tileset animation reads tiles from `Ram_DecodeBuffer` that land in `gMapGridLayerData` ([Layouts](../layout/README.md)). So `ewram.s` can't reorder or resize them. |
 | The ends of the two heaps | `0x03007800` in IWRAM and `0x02040000`, the end of EWRAM | The allocators test against these numbers (`heap.c`). `gCartridgeResetMarker` sits at the first, and the system stack lives above it. |
 | The sound driver's mixer, `SoundDriver_Mixer` (932 bytes) | `0x03007000`, inside the IWRAM heap's range | `Audio_Initialize` copies the mixer to that number (`Ram_SoundMixer`), and the driver runs it there. The copy is 1 KB at once (`SOUND_MIXER_CODE_SIZE`), so the 92 bytes after the mixer in the ROM land just after it. |
 | The frame wait's stack top, `Ram_FrameWaitStackTop` | `0x03007a00` | The 512 bytes between it and the heap's end are what the frame loop, its [tasks](../../glossary.md#task) and the VBlank work always have ([Runtime](../runtime/README.md)). |
 | The stacks and the interrupt vector, `gIrqVector` | the top of IWRAM | `System_Entry` sets the system and IRQ stacks there, and the BIOS jumps through `gIrqVector` on an interrupt. |
-| `gBgScroll`, `gVramBlockCache` and `gWorkSlot` (`Ram_WorkSlot`) | among the main image's IWRAM variables | The code reaches them as constants. German moves all three 16 bytes up, so `ram_buffer.h` chooses them per edition. |
+| `gBgScroll`, `gVramCacheEntries` and `gHeapSlots` (`Ram_HeapSlots`) | among the main image's IWRAM variables | The code reaches them as constants. German moves all three 16 bytes up, so `ram_buffer.h` chooses them per edition. |
 
 ## How far the heaps run past their space
 
@@ -314,7 +314,7 @@ Both heaps can grow into the memory above them, and in play both do, without
 harm that anyone has seen.
 
 The allocators test only against the heap's end, and so does
-`Runtime_GetRemainingIwram`, which `Battle_RunEncounter` calls around every
+`Runtime_GetRemainingIwram`, which `Battle_Run` calls around every
 action and then ignores. So nothing stops a heap running into the buffers
 above its own space. The marks below come from the English edition played in
 libmgba, an emulator library, with the heap's next address read at every
@@ -323,8 +323,8 @@ screen, field [Psynergy](../../glossary.md#psynergy-and-pp) cast from the menu a
 talk, the world map and its still picture, the credits and sleep mode.
 
 - In battle the IWRAM heap runs into the sound driver's mixer. With the
-  heap's next address at `0x0300667c`, `Sprite_ComposeAnimationFrame` takes
-  the 4 KB pixel buffer of a 64 by 64 sprite from `MemAlloc`, 1,660 bytes of
+  heap's next address at `0x0300667c`, `Sprite_ComposeFrame` takes
+  the 4 KB pixel buffer of a 64 by 64 sprite from `Alloc`, 1,660 bytes of
   it over `SoundDriver_Mixer`, and clearing the buffer overwrites the mixer
   from its first word. Nothing copies the mixer back, and nothing needs it:
   the VBlank handler mixes through `SoundDriver_EnterMixer` and the resident
@@ -373,7 +373,7 @@ the flash library in `save/`.
 - An overlay has the 32 KB of the overlay area, and a bank the space up to
   the next bank's fixed start.
 - The IWRAM heap ends just below the frame wait's stack and the EWRAM heap at
-  the end of EWRAM; `Runtime_AllocateHeapBlock` takes IWRAM first and EWRAM
+  the end of EWRAM; `AllocHeapSlot` takes IWRAM first and EWRAM
   when IWRAM is full.
 - Nothing keeps either heap out of the buffers above its own space; both
   run past it in play ([below](#how-far-the-heaps-run-past-their-space)).
@@ -385,12 +385,12 @@ the flash library in `save/`.
 
 | File | What it holds |
 | --- | --- |
-| `rom_head.s`, `entry.s` | the cartridge header; the entry that sets the CPU modes and stacks, and the sound preset records (`IwramCodeRecords`) |
+| `rom_head.s`, `entry.s` | the cartridge header; the entry that sets the CPU modes and stacks, and the sound presets (`IwramCodeRecords`) |
 | `ewram.s`, `iwram.s`, `iwram_hi.s` | the main image's RAM variables, in their order in EWRAM and IWRAM |
 | `runtime.s`, `runtime_irq_table.s`, `runtime_mix*.s`, `runtime_mul_q16_ip.s` | the code copied to IWRAM: the interrupt dispatcher and its handler table, the resident sound mixing code, and the multiplies, divides, square root, word fills, transform and decoder the rest of the game calls |
 | `iwram_entry.s` | the stubs that call the IWRAM code from the ROM |
 | `cpu_set.s`, `sound_get_jump_list.s` | BIOS calls |
-| `heapfree.s` | `Runtime_ReleaseHeapBlock` and `MemFree` |
+| `heapfree.s` | `FreeHeapSlot` and `Free` |
 | `updfar.s` | three ARM routines that share one literal pool (`ArcTan2FarArm`, `Iwram_SqrtFarArm`, `Iwram_RatioMulQ14FarArm`) |
 | `syspal.s`, `memory/*.png` | the window palette and the basic sprite palettes, built from the PNGs |
 | `overlay.s` | the far-call stub macro, `overlay_veneer` |
@@ -464,8 +464,8 @@ to its symbol in each edition its `#if` selects.
   runtime's, the sound and resource tables twice each. The build stamp is read
   through its row (`System_CopyBuildStamp`, `game/game/units.c`), but the named far-call rows are
   only passed to stubs that do nothing (`RuntimeDispatch_NoOpHook`,
-  `RuntimeDispatch_ReturnZero`), from the title screen, Lucky Dice, the slot
-  machine and the sprite viewer. Those calls look like a leftover of loading
+  `RuntimeDispatch_ReturnZero`), from the title screen, Lucky Dice, Lucky
+  Wheels and the sprite viewer. Those calls look like a leftover of loading
   banks as resources (the comment in `menu/title.c` suggests as much), but
   The Lost Age's stubs are empty too, and nothing in either ROM loads a bank
   through its row, so only Camelot's sources could say.

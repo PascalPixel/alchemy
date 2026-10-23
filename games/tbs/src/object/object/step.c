@@ -51,9 +51,9 @@ s32 Field_CountRequests(void) {
   // another request breaks the tie, by which time a later cell's behavior may
   // have replaced the action. BUGFIX tests each request instead.
 #ifdef BUGFIX
-  return work->action | work->pushCell | work->warp | work->menu |
-         work->examine | work->start | (s16)work->talk | work->tile |
-         work->battle | work->psynergy | work->item | work->event;
+  return work->coordEvent | work->pushCell | work->warp | work->menu |
+         work->examine | work->start | (s16)work->talk | work->searchCell |
+         work->battle | work->psynergy | work->item | work->raisedEvent;
 #else
   return work->coordEvent + work->pushCell + work->warp + work->menu +
          work->examine + work->start + (s16)work->talk + work->searchCell +

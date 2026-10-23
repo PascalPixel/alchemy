@@ -4,8 +4,8 @@
 	.global gDebug_PartyPresets
 gDebug_PartyPresets:
 	.incbin "games/tbs/src/battle/presets.table"
-	.global gBattlePresentation_ActorObjectScript
-gBattlePresentation_ActorObjectScript:
+	.global gBattleObject_EmptyScript
+gBattleObject_EmptyScript:
 	.4byte 16
 @ Resource id | slot << 9, terminated by 0xffff.
 	.global gResource_SlotAssignments

@@ -11,7 +11,7 @@ FarCall_BattleTable:
 	overlay_veneer BattleBackground_FadeAlphaIn
 	export BattleCamera_SetViewFar, BattleCamera_SetView
 	export BattleCamera_SetViewAtPairMidpointFar, BattleCamera_SetViewAtPairMidpoint
-	export BattlePresentation_ConfigurePaletteFadeFar, BattlePresentation_ConfigurePaletteFade
+	export BattleBackground_SetModeFar, BattleBackground_SetMode
 	export BattleBackground_LoadFar, BattleBackground_Load
 	export BattleBackground_SetPaletteLevelFar, BattleBackground_SetPaletteLevel
 	overlay_veneer BattleSprite_GetAnimHeight

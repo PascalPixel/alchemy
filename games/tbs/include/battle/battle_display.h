@@ -57,9 +57,9 @@ struct BattlePresentationTransition {
 
 /// A presentation step's stack work: the animation command it builds and runs,
 /// and the targets' sprite colour modes saved beside it. The
-/// BattlePresentation_Run functions of staging.c and auto_battle.c,
-/// BattleTransition_Run and ElementGlow_Play
-/// keep one as a local.
+/// BattleStaging_Run and AutoBattle_Run functions of staging.c and
+/// auto_battle.c, BattleTransition_Run and ElementGlow_Play keep one as a
+/// local.
 struct BattleStagingWork {
   struct BattleAnimArgs effect;
   /// Each target's sprite anims' SpriteColorMode (SpriteAnim.colorMode), all
@@ -75,7 +75,7 @@ STATIC_ASSERT(offsetof(struct BattleStagingWork, effect.targets) == 0x24);
 /// BattleBackgroundView.mode and secondMode: how the battle background is
 /// shown.
 enum BattleBackgroundMode {
-  /// Not loaded yet: the next load adds BattlePresentation_UpdateHBlankScroll.
+  /// Not loaded yet: the next load adds BattleBackground_ShowZoomedPage.
   BATTLE_BACKGROUND_NONE,
   /// The flat picture on BG1 (BATTLE_BG1CNT), its scroll following the
   /// camera, BG2 left to an animation.

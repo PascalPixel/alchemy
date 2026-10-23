@@ -377,8 +377,8 @@ s32 Battle_ProcessRoundEnd(void) {
   }
   // Fade 0 leaves the palette as it is: this only puts the perspective
   // plane back and rebuilds its map.
-  BattlePresentation_ConfigurePaletteFade(BATTLE_BACKGROUND_ZOOMED,
-                                          gBattleWork->background, 0);
+  BattleBackground_SetMode(BATTLE_BACKGROUND_ZOOMED, gBattleWork->background,
+                           0);
   {
     s32 *groupList;
     struct BattleSideOrder order = gBattleParty_RoundEndSideOrder;
@@ -487,14 +487,14 @@ s32 Battle_ProcessRoundEnd(void) {
         if (BattleUnit_TickStun(unitId) != 0) {
           BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
           MessageArgument_PushFar(unitId, VALUE_UNIT_NAME);
-          BattlePresentation_SetActorModeAndAction(unitId);
+          BattleObject_UpdatePose(unitId);
           BattleMessage_ShowAndWaitFar(MsgCureStun);
           BattleMessage_WaitForAdvance();
         }
         if (BattleUnit_TickSleep(unitId) != 0) {
           BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
           MessageArgument_PushFar(unitId, VALUE_UNIT_NAME);
-          BattlePresentation_SetActorModeAndAction(unitId);
+          BattleObject_UpdatePose(unitId);
           BattleMessage_ShowAndWaitFar(MsgWakes);
           BattleMessage_WaitForAdvance();
         }

@@ -297,8 +297,8 @@ void BattleAnim_RunProcne(struct BattleAnimArgs *effect) {
 
       BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                                (s32)&ResourceId_VioletSkyBackdrop, 0);
-      BattlePresentation_ConfigurePaletteFadeFar(
-          BATTLE_BACKGROUND_FIXED, (s32)&ResourceId_VioletSkyBackdrop, 8);
+      BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED,
+                                  (s32)&ResourceId_VioletSkyBackdrop, 8);
       BattleAnim_SelectLivingTargets(work->effect);
       BattleAnim_SpawnObjects(9, 376, 2);
 

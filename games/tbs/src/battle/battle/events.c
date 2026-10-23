@@ -321,7 +321,7 @@ u32 BattlePlayback_RunAll(void) {
         BattleUnit_BuildStatusFlags(
             queue->operands[eventIndex],
             BattleObject_Get(queue->operands[eventIndex]));
-        BattlePresentation_SetActorModeAndAction(queue->operands[eventIndex]);
+        BattleObject_UpdatePose(queue->operands[eventIndex]);
         break;
       }
   }

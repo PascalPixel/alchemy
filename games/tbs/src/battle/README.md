@@ -806,7 +806,7 @@ for its `struct BattleObject`, `object` for that object's
 | `BattleStaging_` | how a turn is staged around its animation |
 | `BattleAbility_` | what an ability does to each target |
 | `BattleTarget_` | targets an enemy or a confused unit picks |
-| `BattlePresentation_` | what the battle shows: the staging, the opening transition, the camera, the palettes |
+| `AutoBattle_` | the auto battle (`FLAG_AUTO_BATTLE`): the round's actions built and played without the command menu or the staging |
 | `BattlePlayback_` | the playback queue and playing it |
 | `BattleObject_` | the battle objects |
 | `BattleMotion_` | their movements |

@@ -113,8 +113,8 @@ s32 BattleStaging_DispatchAction(struct BattleAction *request, s32 delay) {
     BattleMotion_ReturnToSpot(unitIds[unitIndex]);
   request->unitId = BATTLE_UNIT_LIST_END;
 finish:
-  BattlePresentation_ConfigurePaletteFade(BATTLE_BACKGROUND_ZOOMED,
-                                          gBattleWork->background, 0);
+  BattleBackground_SetMode(BATTLE_BACKGROUND_ZOOMED, gBattleWork->background,
+                           0);
   return fled;
 }
 
@@ -126,11 +126,11 @@ finish:
 /// prelude (0), kind, variant, actor, actors, firstTarget, count and range
 /// (1); the caller sets its side.
 #ifdef UBFIX
-void BattlePresentation_BuildTargetList(struct BattleTurn *plan,
-                                        struct BattleAnimArgs *effect) {
+void BattleStaging_BuildTargetList(struct BattleTurn *plan,
+                                   struct BattleAnimArgs *effect) {
 #else
-s32 BattlePresentation_BuildTargetList(struct BattleTurn *plan,
-                                       struct BattleAnimArgs *effect) {
+s32 BattleStaging_BuildTargetList(struct BattleTurn *plan,
+                                  struct BattleAnimArgs *effect) {
 #endif
   s16 *outputTarget;
   u32 flags;
@@ -273,7 +273,7 @@ s32 BattleStaging_HideField(struct BattleTurn *plan, s32 mode) {
 
   // The camera: a staged scene turns to the actor's side over 60 frames (an
   // enemy's to YAW_BEHIND_ENEMIES); otherwise the acting side's usual view.
-  BattlePresentation_BuildTargetList(plan, &work.effect);
+  BattleStaging_BuildTargetList(plan, &work.effect);
   actor = plan->actorId;
   target = plan->targetIds[0];
   if (plan->animation & ANIM_SUMMON) {
@@ -511,7 +511,7 @@ s32 BattleStaging_RunAttack(struct BattleTurn *plan, s32 mode) {
   }
 
   BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
-  BattlePresentation_BuildTargetList(plan, &work.effect);
+  BattleStaging_BuildTargetList(plan, &work.effect);
   // Severe Blow drops the status window's PP row while it plays.
   if (work.effect.kind == ANIM_ID_SEVERE_BLOW)
     PartyStatus_DrawFar(gBattleWork->partyStatus & ~PARTY_STATUS_SHOW_PP);
@@ -622,8 +622,7 @@ s32 BattleStaging_RunAttack(struct BattleTurn *plan, s32 mode) {
 /// BattleStaging_RunAttack without the hop height, the windows, the critical
 /// zoom, the dodge message or playback; its playback is played at once after
 /// the animation, and the camera's slower turn waits 20 frames.
-UNUSED s32 BattlePresentation_RunPlainAttack(struct BattleTurn *input,
-                                             s32 flags) {
+UNUSED s32 BattleStaging_RunPlainAttack(struct BattleTurn *input, s32 flags) {
   struct BattleStagingWork work;
   struct BattleTurn *savedInput;
   struct MotionObject *object;
@@ -658,7 +657,7 @@ UNUSED s32 BattlePresentation_RunPlainAttack(struct BattleTurn *input,
   }
 
   BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
-  BattlePresentation_BuildTargetList(savedInput, &work.effect);
+  BattleStaging_BuildTargetList(savedInput, &work.effect);
   Unit_GetFar(work.effect.user);
   Unit_GetFar(savedInput->targetIds[0]);
 
@@ -725,7 +724,7 @@ s32 BattleStaging_RunItem(struct BattleTurn *plan, s32 unused,
     targetYaw = YAW_PARTY_TURN;
   if (transition->targetYaw != targetYaw)
     transition->targetYaw = targetYaw;
-  BattlePresentation_BuildTargetList(plan, &work.effect);
+  BattleStaging_BuildTargetList(plan, &work.effect);
   BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
   object = BattleObject_Get(work.effect.user)->object;
   ObjectDispatch_SelectAnimationFar(object, POSE_CAST);
@@ -919,7 +918,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattleTurn *plan, s32 mode) {
   // The caster raises its hand (POSE_CAST) and glows in its element (its
   // streaks for an enemy's cast); a Djinni does not glow, and its animation
   // plays its prelude instead.
-  BattlePresentation_BuildTargetList(plan, &work.effect);
+  BattleStaging_BuildTargetList(plan, &work.effect);
   isDjinni = mode & CAST_DJINNI;
   if (isDjinni)
     work.effect.prelude = 1;

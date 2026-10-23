@@ -384,8 +384,7 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
   struct ScreenPoint *projectedPosition;
 
   WaitFrames(1);
-  BattlePresentation_ConfigurePaletteFade(BATTLE_BACKGROUND_FIXED,
-                                          battle->background, 0);
+  BattleBackground_SetMode(BATTLE_BACKGROUND_FIXED, battle->background, 0);
   Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
   IoWriteQueue_Store16((u32)&REG_DISPCNT, DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP |
                                               DISPCNT_BG0_ON | DISPCNT_BG1_ON |

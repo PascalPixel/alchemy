@@ -177,7 +177,7 @@ s32 Battle_Run(s32 enemyGroup) {
   PartyStatus_CreateWindowFar(PARTY_STATUS_CLOSED);
   Camera_InitializeDefaultTransform();
   BattleObject_Put();
-  BattlePresentation_InitializeWorkAndResetState();
+  BattleBackground_Init();
   BattleBackground_Load(BATTLE_BACKGROUND_FIXED, battle->background, 0);
   // The camera on the centre at 190 percent, until the opening sets its own
   // zoom (BattleTransition_Run). With the background
@@ -238,7 +238,7 @@ s32 Battle_Run(s32 enemyGroup) {
       Runtime_GetRemainingIwram();
       Runtime_GetRemainingEwram();
     } else {
-      actionCount = Battle_BuildSortedUnitActions(battle->actions);
+      actionCount = AutoBattle_BuildActions(battle->actions);
     }
     battle->arrowTiles = VramCache_AllocEntry(128);
     PartyStatus_DrawFar(battle->partyStatus);
@@ -256,7 +256,7 @@ s32 Battle_Run(s32 enemyGroup) {
                                          i == 0 ? 10 : 0) == 1)
           goto fled;
       } else {
-        if (BattlePresentation_RunAction(&battle->actions[i]) == 1)
+        if (AutoBattle_RunAction(&battle->actions[i]) == 1)
           goto fled;
       }
       Runtime_GetRemainingIwram();
@@ -372,7 +372,7 @@ finished:
   DjinnRecovery_Tick();
   Battle_SetType(BATTLE_TYPE_NORMAL);
   Task_Remove(BattleObject_UpdateSpritePriorities);
-  FreeHeapSlot10();
+  BattleBackground_Free();
   return result;
 }
 

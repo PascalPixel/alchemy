@@ -336,8 +336,7 @@ void BattleAnim_StartCanvasLayer(s32 bgControl) {
   WaitFrames(1);
 
   // Start the background palette fade.
-  BattlePresentation_ConfigurePaletteFadeFar(BATTLE_BACKGROUND_FIXED,
-                                             battle->background, 0);
+  BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED, battle->background, 0);
   work->fadeFrames = 0;
   work->fadeStep = 0;
   Task_Add(Palette_StepFadeTransfer, ANIM_PLAYBACK_ORDER);
@@ -417,8 +416,7 @@ void BattleAnim_OpenCanvasLayer(s32 bgControl) {
                       0x20000);
   gBgScroll[1].y = 32;
   WaitFrames(1);
-  BattlePresentation_ConfigurePaletteFadeFar(BATTLE_BACKGROUND_FIXED,
-                                             battle->background, 128);
+  BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED, battle->background, 128);
   work->fadeFrames = 24;
   work->fadeStep = 0;
   Task_Add(Palette_StepFadeTransfer, ANIM_PLAYBACK_ORDER);
@@ -521,8 +519,7 @@ void BattleAnim_EndCanvasLayer(void) {
   REG_BLDCNT = 0;
   WaitFrames(1);
 
-  BattlePresentation_ConfigurePaletteFadeFar(BATTLE_BACKGROUND_ZOOMED,
-                                             battle->background, 7);
+  BattleBackground_SetModeFar(BATTLE_BACKGROUND_ZOOMED, battle->background, 7);
   WaitFrames(1);
   for (i = 0; i != 8; i++) {
     BattleBackground_SetPaletteLevelFar(battle->background, 21 - i * 3);
@@ -558,8 +555,7 @@ void BattleAnim_HideBg1AndRestoreBackdrop(void) {
                                               DISPCNT_BG0_ON | DISPCNT_BG2_ON |
                                               DISPCNT_OBJ_ON);
   WaitFrames(1);
-  BattlePresentation_ConfigurePaletteFadeFar(BATTLE_BACKGROUND_ZOOMED,
-                                             battle->background, 0);
+  BattleBackground_SetModeFar(BATTLE_BACKGROUND_ZOOMED, battle->background, 0);
   WaitFrames(1);
 }
 
@@ -596,8 +592,7 @@ void BattleAnim_SetupCanvasTileMap(void) {
   s32 byteOffset;
 
   BattleAnim_ClearActorTimers();
-  BattlePresentation_ConfigurePaletteFadeFar(BATTLE_BACKGROUND_ZOOMED,
-                                             screen->background, 0);
+  BattleBackground_SetModeFar(BATTLE_BACKGROUND_ZOOMED, screen->background, 0);
   gBgScroll[1].y = 32;
   layer->secondMode = BATTLE_BACKGROUND_NONE;
   // Blank tile 0xff, then map rows 4 to 11 filled with 0xffff.

@@ -174,14 +174,14 @@ done:
 /// 20 bytes from 0x0600028c. Nothing in the source calls it.
 /// XXX: what the tiles at 0x06000280 are; a caller in another image, or the
 /// picture loaded there, would settle it.
-s32 BattlePresentation_InitializeTilePattern(void) {
+s32 Battle_ShiftVramTiles(void) {
   Dma_Set((const void *)0x06000290, (void *)0x06000280, DMA_COPY_HALFWORDS(8),
           REG_DMA3);
   return Iwram_ClearWords((void *)0x0600028c, 20);
 }
 
 /// Nothing in the source calls it.
-void BattlePresentation_ClearBg0VerticalOffset(void) {
+void Battle_ClearBg0Vofs(void) {
   u32 zero = 0;
 
   REG_BG0VOFS = zero;

@@ -35,7 +35,7 @@ void BattleAnim_CallDoNothing(s32 count) {
 /// Called through BattleAnim_RunSummonEffectFar by
 /// BattleStaging_HideField (battle/staging.c), when the turn's
 /// animation word has ANIM_SUMMON, and by
-/// BattlePresentation_RunPairedUnitTransition (battle/auto_battle.c).
+/// AutoBattle_RunPsynergy (battle/auto_battle.c).
 ///
 /// Each scene is named for the summon whose gAbilityAnimations entry selects
 /// its kind, as the handlers of gBattleAnim_Handlers are;
@@ -105,7 +105,7 @@ void BattleAnim_RunSummonEffect(struct BattleAnimArgs *effect) {
 /// BattleStaging_RunAttack, BattleStaging_RunItem,
 /// BattleStaging_RunPsynergyCast and BattleStaging_HideField
 /// (battle/staging.c, the last when the turn sets neither ANIM_SUMMON nor
-/// ANIM_BY_ID_RANGE), and by BattlePresentation_RunUnitAction
+/// ANIM_BY_ID_RANGE), and by AutoBattle_RunAttackOrItem
 /// (battle/auto_battle.c).
 ///
 /// Sets work->effect before the handler runs, which every handler and

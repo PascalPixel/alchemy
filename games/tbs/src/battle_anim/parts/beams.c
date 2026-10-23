@@ -6,7 +6,7 @@
 
 /// The beam sequence's pictures, by animation kind: the kinds below 100 that
 /// BattleAnim_DispatchByIdRange sends here. No ability's row selects one; the
-/// unused BattlePresentation_RunPlainAttack plays an attack's kind, 0 for
+/// unused BattleStaging_RunPlainAttack plays an attack's kind, 0 for
 /// Attack.
 enum BeamKind {
   BEAM_PLAIN_ATTACK,  ///< blue arc A: Attack's kind
@@ -24,7 +24,7 @@ enum BeamKind {
 ///
 /// Reached through BattleAnim_DispatchByIdRange for kinds 136 to 199 and,
 /// through its unsigned test, every kind below 100;
-/// BattlePresentation_RunPlainAttack (battle/staging.c) sends every plain
+/// BattleStaging_RunPlainAttack (battle/staging.c) sends every plain
 /// attack there. Only the kinds of enum BeamKind have pictures. Shows the
 /// canvas on BG1 (BattleAnim_SetupCanvasTileMap), loads palette colours 0 to
 /// 63, scrolls BG1 through gBgScroll[1] and uses work->particles 0 to 63 (only

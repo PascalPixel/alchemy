@@ -82,16 +82,15 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
 /// canvas layers (canvas.c), and with BATTLE_BACKGROUND_ZOOMED by
 /// BattleStaging_DispatchAction and Battle_ProcessRoundEnd. Sets
 /// BattleBackgroundView.mode (enum BattleBackgroundMode), adds
-/// BattlePresentation_UpdateHBlankScroll when it was BATTLE_BACKGROUND_NONE,
+/// BattleBackground_ShowZoomedPage when it was BATTLE_BACKGROUND_NONE,
 /// and copies the first sprite palette to BG palette 5. unusedResource is not
 /// read.
-void BattlePresentation_ConfigurePaletteFade(s32 mode, s32 unusedResource,
-                                             s32 fade) {
+void BattleBackground_SetMode(s32 mode, s32 unusedResource, s32 fade) {
   struct BattleBackgroundView *transition =
       (struct BattleBackgroundView *)gBattleViewWork;
 
   if (transition->mode == BATTLE_BACKGROUND_NONE) {
-    Task_Add(BattlePresentation_UpdateHBlankScroll, 0x4ff);
+    Task_Add(BattleBackground_ShowZoomedPage, 0x4ff);
   }
   transition->mode = mode;
 
@@ -145,7 +144,7 @@ void BattlePresentation_ConfigurePaletteFade(s32 mode, s32 unusedResource,
 /// (HEAP_SLOT_BATTLE_SCANLINES) cleared, and sets the background's mode to
 /// BATTLE_BACKGROUND_NONE, so the next load adds its scanline callback.
 /// Called once by Battle_Run before BattleBackground_Load.
-void BattlePresentation_InitializeWorkAndResetState(void) {
+void BattleBackground_Init(void) {
   struct BattleAffineHdma *work;
   struct BattleBackgroundView *state;
   work = AllocHeapSlotEwram(HEAP_SLOT_BATTLE_SCANLINES, sizeof *work);
@@ -156,7 +155,7 @@ void BattlePresentation_InitializeWorkAndResetState(void) {
 
 /// Frees the perspective plane's scanline work; called by
 /// Battle_Run as the battle ends.
-void FreeHeapSlot10(void) { FreeHeapSlot(HEAP_SLOT_BATTLE_SCANLINES); }
+void BattleBackground_Free(void) { FreeHeapSlot(HEAP_SLOT_BATTLE_SCANLINES); }
 
 /// The bit decoder BattleBackground_Load copies to RAM and runs.
 typedef void (*BitDecoder)(const u8 *source, void *destination);
@@ -170,7 +169,7 @@ typedef void (*BitDecoder)(const u8 *source, void *destination);
 /// BATTLE_BACKGROUND_FIXED by
 /// Battle_Run as the battle opens, and by the Atalanta and Boreas
 /// animations for their violet sky. Sets BattleBackgroundView.mode, and adds
-/// BattlePresentation_UpdateHBlankScroll when it was BATTLE_BACKGROUND_NONE.
+/// BattleBackground_ShowZoomedPage when it was BATTLE_BACKGROUND_NONE.
 void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
   struct BattleBackgroundView *view =
       HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
@@ -210,7 +209,7 @@ void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
   // Clears BG1's last row, 0x7c0 bytes in, which BuildTilemap leaves.
   Iwram_ClearWords((BG_SCREEN_BLOCK(31) + 0x7c0), 64);
   if (view->mode == BATTLE_BACKGROUND_NONE)
-    Task_Add(BattlePresentation_UpdateHBlankScroll, 0x4ff);
+    Task_Add(BattleBackground_ShowZoomedPage, 0x4ff);
   view->mode = mode;
   if (mode == BATTLE_BACKGROUND_FIXED)
     REG_BG1CNT = BATTLE_BG1CNT;
@@ -488,7 +487,7 @@ void BattleTransition_InitializeEntries(struct BattleTransitionEntry *entries) {
 }
 
 /// Nothing calls it.
-s32 BattlePresentation_DivideBy16(s32 value) { return value / 16; }
+s32 BattleBackground_DivideBy16(s32 value) { return value / 16; }
 
 /// A debug aid: while Start is held, edits BattleWork.debugValue with the
 /// d-pad (1 left and right, 100 up and down) until A takes it as the result;

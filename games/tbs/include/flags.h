@@ -130,7 +130,7 @@
 /// ★ Named from the game: "Lure Cap" (MsgItemName)
 #define FLAG_LURE_CAP 0x167
 /// Auto battle: every living unit, party and enemies, makes a plain attack
-/// each round with no command menu (Battle_BuildSortedUnitActions).
+/// each round with no command menu (AutoBattle_BuildActions).
 /// The debug battle menu sets it, and clears it again for its chooser.
 #define FLAG_AUTO_BATTLE 0x16a
 #define FLAG_CHOOSING_COMMANDS 0x16b ///< set while the commands are chosen

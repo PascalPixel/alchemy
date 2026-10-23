@@ -295,9 +295,9 @@ s32 BattleStatusIcon_Cycle(struct BattleObject *battleObject) {
 /// BattleObject_SpawnObjectsForList, BattlePlayback_RunAll,
 /// BattlePlayback_Run and Battle_ProcessRoundEnd.
 #ifdef UBFIX
-void BattlePresentation_SetActorModeAndAction(s32 unitId) {
+void BattleObject_UpdatePose(s32 unitId) {
 #else
-s32 BattlePresentation_SetActorModeAndAction(s32 unitId) {
+s32 BattleObject_UpdatePose(s32 unitId) {
 #endif
   struct Unit *unit;
   s32 pose;
@@ -464,7 +464,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
         }
       }
     }
-    BattlePresentation_SetActorModeAndAction(unitId);
+    BattleObject_UpdatePose(unitId);
   }
 
   if (refreshPoses) {
@@ -474,7 +474,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
         if (unitIds[unitIndex] != BATTLE_UNIT_REMOVED &&
             (battleObject = BattleObject_Get(spriteId)) != 0 &&
             (object = battleObject->object) != 0)
-          BattlePresentation_SetActorModeAndAction(spriteId);
+          BattleObject_UpdatePose(spriteId);
         unitIndex++;
         if (unitIndex >= UNIT_MAX ||
             (spriteId = unitIds[unitIndex]) == BATTLE_UNIT_LIST_END)

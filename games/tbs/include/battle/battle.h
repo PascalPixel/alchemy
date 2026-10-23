@@ -118,7 +118,7 @@ extern s8 gBattleParty_CenterOrderOffsets[];
 extern const struct BattleSideOrder gBattleParty_RoundEndSideOrder;
 /// A lone SC_END: a battle unit's object script, which BattleObject_Make
 /// starts.
-extern const s32 gBattlePresentation_ActorObjectScript[];
+extern const s32 gBattleObject_EmptyScript[];
 /// The advance arrow beside a battle message: eight 128-byte frames of a
 /// 256-colour sprite, one every four frames.
 extern u8 gBattleMessage_AdvanceArrowTiles[];

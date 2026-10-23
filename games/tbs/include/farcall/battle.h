@@ -15,7 +15,7 @@ void BattleCamera_SetViewFar(s32 x, s32 depth, s32 y, s32 zoom);
 void BattleCamera_SetViewAtPairMidpointFar(s32 a, s32 b, s32 zoom);
 /// Switches the background's display mode and rebuilds its maps; a nonzero
 /// `fade` also darkens or restores its palette.
-void BattlePresentation_ConfigurePaletteFadeFar(s32 mode, s32 value, s32 fade);
+void BattleBackground_SetModeFar(s32 mode, s32 value, s32 fade);
 /// Loads a battle background's picture, palette and maps, its palettes darkened
 /// by `level`, as a battle opens or the Atalanta and Boreas animations show
 /// their violet sky.

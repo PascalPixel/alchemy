@@ -111,7 +111,7 @@ void BattleMotion_SetObjectPosition(struct BattleObject *battleObject) {
 
 /// Sends unitId hopping out to one and a half times its spot's
 /// distance from the centre. Called by BattleStaging_RunAttack and
-/// BattlePresentation_RunPlainAttack.
+/// BattleStaging_RunPlainAttack.
 void BattleMotion_ResetObjectAtScaledAnchor(s32 unitId) {
   u32 scaledX;
   struct BattleObject *battleObject;
@@ -187,8 +187,8 @@ void BattleMotion_ApplyKnockback(s32 unitId, s32 variant) {
 /// Sends unit actorId three quarters of the way to unit targetId, arriving
 /// in travelDivisor frames at a steady speed, leaping up at initialVelocityY
 /// (16.16 pixels a frame), in POSE_LEAP.
-/// Called by BattleStaging_RunAttack, BattlePresentation_RunPlainAttack
-/// and BattlePresentation_RunApproachAction, and through its far stub by the
+/// Called by BattleStaging_RunAttack, BattleStaging_RunPlainAttack
+/// and AutoBattle_RunApproachAttack, and through its far stub by the
 /// Bind, burst scene, Annihilation, target motes and Thrash effects.
 void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelDivisor,
                                  s32 initialVelocityY) {

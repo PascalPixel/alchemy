@@ -20,8 +20,8 @@ void DebugBattle_RunMenu(void);
 void BattleCamera_Update(void);
 void BattleIntro_AnnounceEncounter(s32 enemyCount);
 void BattleUnit_Collect(void);
-s32 BattlePresentation_InitializeTilePattern(void);
-void BattlePresentation_ClearBg0VerticalOffset(void);
+s32 Battle_ShiftVramTiles(void);
+void Battle_ClearBg0Vofs(void);
 void Party_ReservedNoOp5B14(s32 unused);
 #ifdef UBFIX
 void BattleParty_ResetActiveRuntimeFields(void);
@@ -121,9 +121,9 @@ void BattleStatusIcon_Cycle(struct BattleObject *battleObject);
 s32 BattleStatusIcon_Cycle(struct BattleObject *battleObject);
 #endif
 #ifdef UBFIX
-void BattlePresentation_SetActorModeAndAction(s32 unitId);
+void BattleObject_UpdatePose(s32 unitId);
 #else
-s32 BattlePresentation_SetActorModeAndAction(s32 unitId);
+s32 BattleObject_UpdatePose(s32 unitId);
 #endif
 void ReleaseBattleObjectRecords(s32 unitId);
 void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses);
@@ -164,16 +164,16 @@ s32 BattleMotion_ProjectScaledPosition(s32 unitId, s32 *projected);
 s32 BattleMotion_ProjectConditionalPosition(s32 unitId, s32 *projected);
 s32 BattleUnit_GetEffectHeight(s32 unitId);
 
-s32 Battle_BuildSortedUnitActions(struct BattleAction *entries);
-s32 BattlePresentation_RunAction(struct BattleAction *action);
+s32 AutoBattle_BuildActions(struct BattleAction *entries);
+s32 AutoBattle_RunAction(struct BattleAction *action);
 s32 BattleObject_IsValidId(u32 unitId);
 s32 BattleFlee_PlayRun(struct BattleAction *action);
-s32 BattlePresentation_ShowDefendMessage(const struct BattleAction *action);
-s32 BattlePresentation_RunPairedUnitTransition(struct BattleAction *action);
-s32 BattlePresentation_RunApproachAction(struct BattleAction *input);
-s32 BattlePresentation_RunUnitAction(struct BattleAction *action);
-void BattlePresentation_ApplyUnitDamage(u32 unitId, s32 damage, s32 showMessage,
-                                        u8 *context);
+s32 AutoBattle_ShowDefend(const struct BattleAction *action);
+s32 AutoBattle_RunPsynergy(struct BattleAction *action);
+s32 AutoBattle_RunApproachAttack(struct BattleAction *input);
+s32 AutoBattle_RunAttackOrItem(struct BattleAction *action);
+void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
+                            u8 *context);
 void BattleMotion_SetMode5AndActivateSlot(s32 unitId);
 s32 BattleAbility_ReplaceDefeated(const struct BattleAction *action);
 
@@ -193,11 +193,11 @@ void Battle_ReservedNoOp9B2C(void);
 
 s32 BattleStaging_DispatchAction(struct BattleAction *request, s32 delay);
 #ifdef UBFIX
-void BattlePresentation_BuildTargetList(struct BattleTurn *plan,
-                                        struct BattleAnimArgs *effect);
+void BattleStaging_BuildTargetList(struct BattleTurn *plan,
+                                   struct BattleAnimArgs *effect);
 #else
-s32 BattlePresentation_BuildTargetList(struct BattleTurn *plan,
-                                       struct BattleAnimArgs *effect);
+s32 BattleStaging_BuildTargetList(struct BattleTurn *plan,
+                                  struct BattleAnimArgs *effect);
 #endif
 s32 BattleStaging_RunFlee(struct BattleTurn *plan);
 s32 BattleStaging_HideField(struct BattleTurn *plan, s32 mode);
@@ -207,7 +207,7 @@ void BattleStaging_RunActorEntries(struct BattleTurn *plan, s32 unused);
 s32 BattleStaging_RunActorEntries(struct BattleTurn *plan, s32 unused);
 #endif
 s32 BattleStaging_RunAttack(struct BattleTurn *plan, s32 mode);
-s32 BattlePresentation_RunPlainAttack(struct BattleTurn *input, s32 flags);
+s32 BattleStaging_RunPlainAttack(struct BattleTurn *input, s32 flags);
 s32 BattleStaging_RunItem(struct BattleTurn *plan, s32 unused,
                           struct BattleAction *selection);
 #ifdef UBFIX
@@ -302,17 +302,16 @@ s32 BattleUnit_ProcessTurnEnd(struct BattleTurn *plan);
 s32 BattleTransition_RunMosaicFadeOut(void);
 void Graphics_BuildSequentialTileTable(void *tilemap);
 void BattleTransition_BuildTilemap(void *tilemap);
-void BattlePresentation_UpdateHBlankScroll(void);
+void BattleBackground_ShowZoomedPage(void);
 void BattleTransition_UploadTileVariant(void);
 void BattleTransition_AdvanceTimer(void);
 void BattleTransition_DrawRows(void);
-void Graphics_ClearBg0Vofs(void);
+void BattleTransition_ClearBg0Vofs(void);
 void BattleTransition_Run(s32 enemyCount, s32 encounterId);
 void BattleBackground_SetPaletteLevel(s32 unused, s32 level);
-void BattlePresentation_ConfigurePaletteFade(s32 mode, s32 unusedResource,
-                                             s32 fade);
-void BattlePresentation_InitializeWorkAndResetState(void);
-void FreeHeapSlot10(void);
+void BattleBackground_SetMode(s32 mode, s32 unusedResource, s32 fade);
+void BattleBackground_Init(void);
+void BattleBackground_Free(void);
 void BattleBackground_Load(s32 mode, s32 resourceId, s32 level);
 void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
                            s32 scale);
@@ -328,7 +327,7 @@ void BattleBackground_FadeAlphaOut(void);
 void BattleBackground_FadeAlphaIn(void);
 void BattleBackground_SetBlendControl(void);
 void BattleTransition_InitializeEntries(struct BattleTransitionEntry *entries);
-s32 BattlePresentation_DivideBy16(s32 value);
+s32 BattleBackground_DivideBy16(s32 value);
 s32 Runtime_AdjustDebugValueWithButtons(s32 selectedValue);
 void BattleHighlight_SetSpriteMode(s32 actorId, s32 mode);
 void BattleHighlight_SetOtherSpriteModes(s32 selectedUnitId);

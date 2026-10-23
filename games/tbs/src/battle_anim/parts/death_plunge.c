@@ -349,11 +349,11 @@ UNUSED void BattleAnim_RunBladeRain(struct BattleAnimArgs *effect) {
 ///
 /// Called through BattleAnim_RunElementPillarFar by
 /// ElementGlow_Play (GLOW_PILLAR) and four times in a row, one
-/// for each element, by BattlePresentation_RunUnitAction. Allocates and frees
+/// for each element, by AutoBattle_RunAttackOrItem. Allocates and frees
 /// its own work, canvas and sheet slots; loads the element's colours over the
 /// first 64 of the background palette, fills PARTICLES 0 to 127 and moves
 /// BG2X with the unit. Increments effect->variant in place, so
-/// BattlePresentation_RunUnitAction's four calls draw ever larger motes.
+/// AutoBattle_RunAttackOrItem's four calls draw ever larger motes.
 ///
 /// effect->kind    : the element (enum Element), which picks the palette:
 ///                   Venus yellow, Mercury blue, Mars red, others Jupiter
@@ -598,8 +598,7 @@ void BattleAnim_RunShatteringOpening(struct BattleAnimArgs *effect) {
   BattleAnim_ClearActorTimers();
   view->secondMode = BATTLE_BACKGROUND_FIXED;
   gBgScroll[1].y = 32;
-  BattlePresentation_ConfigurePaletteFadeFar(BATTLE_BACKGROUND_FIXED,
-                                             battle->background, 0);
+  BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED, battle->background, 0);
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
   // Aim the camera at the field's centre at 100% zoom, lining the battle
@@ -895,8 +894,7 @@ void BattleAnim_RunShatteringOpening(struct BattleAnimArgs *effect) {
   ObjectGroup_UpdateMembers(work->effect->targets[0], -1, POSE_STANDING, -1, 0);
   gBgScroll[1].x = work->savedBg1X;
   gBgScroll[1].y = 32;
-  BattlePresentation_ConfigurePaletteFadeFar(BATTLE_BACKGROUND_ZOOMED,
-                                             battle->background, 0);
+  BattleBackground_SetModeFar(BATTLE_BACKGROUND_ZOOMED, battle->background, 0);
   WaitFrames(1);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |

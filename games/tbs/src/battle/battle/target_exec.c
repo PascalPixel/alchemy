@@ -345,7 +345,7 @@ s32 BattleAbility_ApplyToTarget(struct BattleTurn *plan, s32 slot) {
       // Ground holds only a target with an entry in this round's action
       // list. BattleStaging_DispatchAction clears each entry once it has
       // played, so a target that has already acted is left alone; the auto
-      // battle's BattlePresentation_RunAction clears none.
+      // battle's AutoBattle_RunAction clears none.
       hit = 0;
       for (i = 0; i < BATTLE_ACTION_CAPACITY; i++) {
         if (battle->actions[i].unitId == targetId) {

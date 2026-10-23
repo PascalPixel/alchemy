@@ -71,7 +71,7 @@ s32 BattleTransition_RunMosaicFadeOut(void) {
 /// The two runs show the background picture's two halves, which the
 /// scanline BG2CNT values (BattleCamera_SetRange) read from character blocks 2
 /// and 3. Called with screen block 7 by BattleBackground_Load and
-/// BattlePresentation_ConfigurePaletteFade.
+/// BattleBackground_SetMode.
 void Graphics_BuildSequentialTileTable(void *tilemap) {
   s32 *destination = tilemap;
   u32 packedIndices;
@@ -102,7 +102,7 @@ void Graphics_BuildSequentialTileTable(void *tilemap) {
 /// In 256 colours from character block 0, tile 0x200 is the start of block 2,
 /// where BattleBackground_Load decodes the picture. Called with screen block
 /// 31 (BATTLE_BG1CNT) by BattleBackground_Load and
-/// BattlePresentation_ConfigurePaletteFade.
+/// BattleBackground_SetMode.
 void BattleTransition_BuildTilemap(void *tilemap) {
   s32 *destination = tilemap;
   s32 entry;
@@ -128,9 +128,9 @@ void BattleTransition_BuildTilemap(void *tilemap) {
 /// rest by HBlank DMA 0, and its affine parameters into BG2PA to BG2Y. Runs
 /// each frame as a task, in the VBlank pass at its highest
 /// priority (0x4ff), added by BattleBackground_Load and
-/// BattlePresentation_ConfigurePaletteFade; BattleCamera_SetRange builds the
+/// BattleBackground_SetMode; BattleCamera_SetRange builds the
 /// pages.
-void BattlePresentation_UpdateHBlankScroll(void) {
+void BattleBackground_ShowZoomedPage(void) {
   struct BattleAffineHdma *scanlines;
   u16 *line;
 
@@ -252,7 +252,7 @@ void BattleTransition_DrawRows(void) {
 /// interrupt fires on.
 /// Installed by BattleTransition_Run as the VCount interrupt's
 /// handler at line 32, while gBgScroll[0].y holds BG0 scrolled.
-void Graphics_ClearBg0Vofs(void) {
+void BattleTransition_ClearBg0Vofs(void) {
   u32 zero = 0;
 
   REG_BG0VOFS = zero;
@@ -368,7 +368,7 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
       *timer = start;
       Task_Add(BattleTransition_AdvanceTimer, 3200);
       Task_Add(BattleTransition_DrawRows, 0x480);
-      Runtime_SetIrqHandler(IRQ_VCOUNT, 32, Graphics_ClearBg0Vofs);
+      Runtime_SetIrqHandler(IRQ_VCOUNT, 32, BattleTransition_ClearBg0Vofs);
       gBgScroll[0].y = 32;
       WaitFrames(1);
       PartyStatus_CreateWindowFar(gBattleWork->partyStatus);
@@ -421,7 +421,7 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
       BattleCamera_SetView(0, 0, 0, 100);
       *timer = start;
     }
-    Runtime_SetIrqHandler(IRQ_VCOUNT, 32, Graphics_ClearBg0Vofs);
+    Runtime_SetIrqHandler(IRQ_VCOUNT, 32, BattleTransition_ClearBg0Vofs);
     WaitFrames(1);
     WaitFrames(20);
     PartyStatus_CreateWindowFar(gBattleWork->partyStatus);

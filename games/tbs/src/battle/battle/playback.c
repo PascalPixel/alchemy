@@ -231,8 +231,7 @@ void BattlePlayback_Run(void) {
             BattleMotion_SetRecordChildValues(
                 slot->object, BattleMotion_GetSlotPalette(
                                   events->queue.operands[eventIndex]));
-            BattlePresentation_SetActorModeAndAction(
-                events->queue.operands[eventIndex]);
+            BattleObject_UpdatePose(events->queue.operands[eventIndex]);
             break;
           }
           }

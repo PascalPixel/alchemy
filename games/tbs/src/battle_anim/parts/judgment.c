@@ -581,8 +581,8 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
     // Frame 70: undo the inversion, rewriting the battle background's palette
     // from the battle's copy with every channel 7 levels darker.
     if (frame == 70) {
-      BattlePresentation_ConfigurePaletteFadeFar(
-          BATTLE_BACKGROUND_FIXED, (s32)&ResourceId_AerialViewBackdrop, 7);
+      BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED,
+                                  (s32)&ResourceId_AerialViewBackdrop, 7);
     }
 
     // Frame 150, the beach: the rings restart from (112, 32), four a frame

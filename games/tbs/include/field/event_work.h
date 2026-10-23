@@ -12,6 +12,7 @@ struct ObjectEventTemplate;
 struct MapEvent;
 struct ObjectEvent;
 struct ObjectRuntime;
+struct MapGridCell;
 
 /// The running map's event work: its object event template and map event
 /// tables, its object events, the triggers and warp it has hit, encounters,
@@ -25,38 +26,70 @@ struct EventWork {
   struct ObjectEvent *objectEvents[8]; ///< the party's characters, ids 0 to 7
   struct ObjectEvent
       *placedObjectEvents[58]; ///< the placed object events, from local id 8
-  u8 unk11c[0x50];             ///< FieldWork's markers; not named by TBS code
+  u8 markers[0x50];            ///< FieldWork's; not named through this view
   s16 touchedTrigger;          ///< the step event a coord event or warp answers
-  u8 unk16e[2];      ///< FieldWork's pushTile request; not named by TBS code
-  u16 requestedWarp; ///< the warp kind taken, which ends the map
+  s16 pushTile;                ///< FieldWork's; not named through this view
+  u16 requestedWarp;           ///< the warp kind taken, which ends the map
   /// FieldWork's menu: 1 opens the main menu once the script ends, so that
   /// the item the place asks for can be used there.
   u16 requestedMenu;
-  u8 unk174[6];      ///< FieldWork's examine, start and talk
+  /// FieldWork's examine, start and talk requests; not named through this view.
+  ///@{
+  s16 examine;
+  s16 start;
+  u16 talk;
+  ///@}
   s16 facingTrigger; ///< the metatile behavior ahead, which a bg event answers
   u16 encounterEnemyGroup; ///< the next battle's enemy group, 0 for none
-  s16 psynergyRequest;   ///< a field Psynergy to use, as owner << 10 | Psynergy
-  u8 unk180[2];          ///< FieldWork's item request; not named by TBS code
-  s16 raisedTrigger;     ///< a raised event for Map_RunRaisedEvent
-  u8 unk184[0x18];       ///< FieldWork's fallen characters and item slot
-  s16 blockedSteps;      ///< frames the leader has pushed against something
-  s16 mode;              ///< an enum ObjectSystemMode
-  u8 encounterGroups[8]; ///< encounter zone for each kind of ground
-  s32 encounterBias;     ///< randomized distance adjustment between battles
+  s16 psynergyRequest; ///< a field Psynergy to use, as owner << 10 | Psynergy
+  s16 item;            ///< FieldWork's; not named through this view
+  s16 raisedTrigger;   ///< a raised event for Map_RunRaisedEvent
+  /// FieldWork's fallen characters and item slot; not named through this view.
+  ///@{
+  s16 fallenCount;
+  s16 survivorCount;
+  s16 fallenOwners[9];
+  s16 itemArgument;
+  ///@}
+  s16 blockedSteps;       ///< frames the leader has pushed against something
+  s16 mode;               ///< an enum ObjectSystemMode
+  u8 encounterGroups[8];  ///< encounter zone for each kind of ground
+  s32 encounterBias;      ///< randomized distance adjustment between battles
   s32 encounterThreshold; ///< encounter steps before a battle
-  u8 unk1b0[0x10];        ///< FieldWork's walking distance and tiles
-  s32 startTransition;    ///< MAP_TRANSITION(style, variant)
-  u8 unk1c4[4];           ///< FieldWork's unk1c4 and transitionActive
-  s32 transitionFrames;   ///< frames
-  u8 unk1cc[0x0c];        ///< FieldWork's fastForward and unk1d0
-  u16 message;            ///< the next message, advanced as each window opens
-  u8 unk1da[6];           ///< FieldWork's unk1da to unk1de
+  /// FieldWork's walking distance and tiles; not named through this view.
+  ///@{
+  s32 walkingDistanceScale;
+  s32 walkingDistance;
+  struct MapGridCell *currentTile;
+  struct MapGridCell *previousTile;
+  ///@}
+  s32 startTransition;          ///< MAP_TRANSITION(style, variant)
+  u16 unused;                   ///< FieldWork's; no code names it
+  u16 transitionActive;         ///< FieldWork's; not named through this view
+  s32 transitionFrames;         ///< frames
+  s32 fastForward;              ///< FieldWork's; not named through this view
+  u8 unusedAfterFastForward[8]; ///< FieldWork's; no code names it
+  u16 message;  ///< the next message, advanced as each window opens
+  u8 unk1da[6]; ///< XXX: FieldWork's unk1da to unk1de (see the field README)
   struct ObjectEvent *viewCenter; ///< the object the map view follows
-  u8 unk1e4[0x10];                ///< not named by TBS code through this view
+  u8 unusedAfterCamera[0x10];     ///< FieldWork's; no code names it
   /// The object event speaking; the yes/no choice closes the portrait window of
   /// its sprite once answered (FieldScript_AskYesNoWithObjectEventAnimation).
   s32 speaker;
-  u8 unk1f8[0xaca]; ///< not named by TBS code through this view
+  /// FieldWork's windows, the leader's templates and the Reveal state; not
+  /// named through this view.
+  ///@{
+  s32 messageWindow;
+  s32 sideWindow;
+  u8 leaderTemplates[0x30];
+  u8 unusedAfterTemplates[0xa86];
+  u16 busy;
+  s16 revealActive;
+  s16 revealFrames;
+  s16 revealCenterX;
+  s16 revealCenterY;
+  s16 effectTimerRunning;
+  ///@}
   /// FieldWork's nameMessage: the first of the two names the yes/no choice
   /// shows in place of Yes and No, 0 for those.
   u16 choiceMessage;

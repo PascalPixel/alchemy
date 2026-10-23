@@ -714,7 +714,7 @@ void FacingObject_TurnPairToFaceEachOther(struct FacingObject *firstObject,
 /// The event work seen as its object event slots, which the object event
 /// commands index by local id.
 struct ObjectSlotTable {
-  u8 unk00[0x14];
+  u8 tablesAndEvents[0x14]; ///< FieldWork's tables and events
   struct ObjectRuntime *slots[0];
 };
 

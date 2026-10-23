@@ -18,20 +18,25 @@ union FieldObject;
 /// ObjectEvent and ScriptMotionObject describe; the notes name their fields at
 /// the same offsets.
 struct MotionObject {
-  u8 unk00[0x06]; ///< ScriptMotionObject's script and scriptCursor
-  u16 angle;      ///< 1/65536 turns
-  s32 x;          ///< 16.16 fixed-point pixels
-  s32 y;          ///< 16.16 fixed-point pixels
-  s32 z;          ///< 16.16 fixed-point pixels
-  u8 unk14[0x04]; ///< ObjectEvent's terrainHeight, the ground's y
-  s32 scaleX;     ///< 16.16 fixed point, 0x10000 full size
-  s32 scaleY;     ///< 16.16 fixed point, 0x10000 full size
-  u16 height;     ///< half the sprite's box height; ObjectEvent's radius
-  u8 unk22[0x02]; ///< ObjectEvent's terrainId and priorityFlags
-  s32 velocityX;  ///< 16.16 fixed-point pixels per frame
-  s32 velocityY;  ///< 16.16 fixed-point pixels per frame
-  s32 velocityZ;  ///< 16.16 fixed-point pixels per frame
-  s32 speedLimit; ///< 16.16 fixed-point pixels per frame
+  /// ScriptMotionObject's script and its cursor; not named through this view.
+  ///@{
+  const s32 *script;
+  u16 scriptCursor;
+  ///@}
+  u16 angle;         ///< 1/65536 turns
+  s32 x;             ///< 16.16 fixed-point pixels
+  s32 y;             ///< 16.16 fixed-point pixels
+  s32 z;             ///< 16.16 fixed-point pixels
+  s32 terrainHeight; ///< ObjectEvent's: the ground's y
+  s32 scaleX;        ///< 16.16 fixed point, 0x10000 full size
+  s32 scaleY;        ///< 16.16 fixed point, 0x10000 full size
+  u16 height;        ///< half the sprite's box height; ObjectEvent's radius
+  u8 terrainId;      ///< ObjectEvent's; not named through this view
+  u8 priorityFlags;  ///< ObjectEvent's; not named through this view
+  s32 velocityX;     ///< 16.16 fixed-point pixels per frame
+  s32 velocityY;     ///< 16.16 fixed-point pixels per frame
+  s32 velocityZ;     ///< 16.16 fixed-point pixels per frame
+  s32 speedLimit;    ///< 16.16 fixed-point pixels per frame
   /// Horizontal speed gained each frame towards the target, or lost braking
   /// without one, in 16.16 fixed-point pixels per frame.
   s32 acceleration;
@@ -46,29 +51,47 @@ struct MotionObject {
   /// motionFlags bit 1, in 16.16 fixed-point pixels per frame; with bit 2, it
   /// also scales the float.
   s32 verticalMotionStrength;
-  u8 unk4c[0x04]; ///< ObjectEvent's riseBaseY
-  void *records;  ///< one sprite, or a table of up to four (recordStorageKind)
+  s32 riseBaseY; ///< ObjectEvent's; not named through this view
+  void *records; ///< one sprite, or a table of up to four (recordStorageKind)
   /// bits: 3..0 RECORDS_NONE, RECORDS_SINGLE or RECORDS_TABLE
   u8 recordStorageKind;
   /// bits: 4 no terrain slowdown | 3 bigger float | 2 floats | 1 falls |
   /// 0 follows terrain
   u8 motionFlags;
-  u8 unk56[0x02];    ///< ScriptMotionObject's arrivalAxis and unk57
-  u8 snapToTarget;   ///< nonzero: lands exactly on the target, else brakes in
-  u8 unk59;          ///< ObjectEvent's collisionFlags; battle units set 3
-  u8 autoFaceMotion; ///< bit 0 turns the object to face where it moves
-  /// ObjectEvent's paused, timer, linkedObject and the bytes between; not
-  /// named by TBS code through this view.
-  u8 unk5b[0x11];
+  u8 arrivalAxis;     ///< ObjectEvent's; not named through this view
+  u8 conditionResult; ///< ObjectEvent's; not named through this view
+  u8 snapToTarget;    ///< nonzero: lands exactly on the target, else brakes in
+  u8 collisionFlags;  ///< ObjectEvent's; battle units set 3
+  u8 autoFaceMotion;  ///< bit 0 turns the object to face where it moves
+  /// ObjectEvent's paused to linkedObject; not named through this view.
+  ///@{
+  u8 paused;
+  u8 retainSpriteCache;
+  u8 repeatCount;
+  u16 wait;
+  u8 refused;
+  u8 frozen;
+  u8 riseCounter;
+  u8 riseEnabled;
+  s16 timer;
+  u16 work;
+  struct MotionObject *linkedObject;
+  ///@}
   void (*update)(union FieldObject *fieldObject); ///< run first each frame
 };
 
 /// A sprite of an animation record, as battle objects set its palette and
 /// drawing priority: the start of an AnimationEntry.
 struct SpriteEntry {
-  u8 unk00[5]; ///< AnimationEntry's animationId, timer and kind
-  u8 palette;  ///< AnimationEntry.colorMode, the SpriteColorMode;
-               ///< BattleObject.palette
+  /// AnimationEntry's animationId, timer and kind; not named through this
+  /// view.
+  ///@{
+  s16 animationId;
+  u16 timer;
+  u8 kind;
+  ///@}
+  u8 palette; ///< AnimationEntry.colorMode, the SpriteColorMode;
+              ///< BattleObject.palette
   /// AnimationEntry.priority: the body and weapon 1, the status icon 3, and
   /// the effect sprite 0, or 9 to hide it while the unit is off the ground.
   u8 priority;

@@ -386,10 +386,10 @@ u32 SaveState_GetLatestSequence(s32 recordId) {
 
 /// Reads the summary at the start of each of the three save files into the
 /// workspace's summary table for the file select screen, and four bytes from
-/// offset 0x110 of each file's second record into its unk38 (zero when it
-/// has none). A file with no first record keeps a cleared summary, so its
-/// level reads 0. Called by the save screens. Returns how many save files
-/// exist.
+/// offset 0x110 of each file's second record into its secondRecordPlayTime
+/// (zero when it has none). A file with no first record keeps a cleared
+/// summary, so its level reads 0. Called by the save screens. Returns how many
+/// save files exist.
 s32 SaveState_LoadSummaryRecords(void) {
   struct SaveWorkspace *work;
   struct SaveSummary *summary;
@@ -411,9 +411,10 @@ s32 SaveState_LoadSummaryRecords(void) {
     }
     index = SaveState_FindLatestSlot(group + SAVE_FILE_COUNT);
     if (index < SAVE_SECTOR_COUNT)
-      ReadFlash(index, 0x110, summary->unk38, sizeof(summary->unk38));
+      ReadFlash(index, 0x110, summary->secondRecordPlayTime,
+                sizeof(summary->secondRecordPlayTime));
     else
-      *(u32 *)summary->unk38 = 0;
+      *(u32 *)summary->secondRecordPlayTime = 0;
     group++;
     summary++;
   } while (group < SAVE_FILE_COUNT);

@@ -30,19 +30,19 @@ struct CharacterDefinition {
   /// Added to ten times the Djinn set in each element to give the
   /// character's element levels (Unit_GetElementLevels).
   u8 elementBonus[4];
-  u8 startingLevel; ///< the level a new game raises the character to
-  u8 unk097;        ///< Padding in chars.tsv.
+  u8 startingLevel;      ///< the level a new game raises the character to
+  u8 paddingBeforeItems; ///< padding in chars.tsv
   /// The starting items, each added and equipped at a new game; the low nine
   /// bits are the item.
   u16 items[13];
-  u8 unk0b2[2]; ///< Padding in chars.tsv.
+  u8 paddingAfterItems[2]; ///< padding in chars.tsv
 };
 
 /// An ability a class teaches, and the level it is learned at.
 struct ClassAbility {
-  u8 ability;  ///< the action taught, 0 for none
-  u8 level;    ///< the level it is taught at
-  u8 unk02[2]; ///< Padding in classes.tsv.
+  u8 ability;    ///< the action taught, 0 for none
+  u8 level;      ///< the level it is taught at
+  u8 padding[2]; ///< padding in classes.tsv
 };
 
 /// A class: its series, the element levels it needs, its stat multipliers and
@@ -60,7 +60,7 @@ struct ClassDefinition {
   u8 def;                            ///< tenths of the base stat
   u8 agi;                            ///< tenths of the base stat
   u8 luck;                           ///< tenths of the base stat
-  u8 unk0e[2];                       ///< Padding in classes.tsv.
+  u8 padding[2];                     ///< padding in classes.tsv
   struct ClassAbility abilities[16]; ///< the Psynergy the class teaches
   /// [0] to [2]: the ability effects the class is weak to
   /// (BattleTarget_IsWeakToEffect); [3] is 0 in every row and not read.
@@ -69,8 +69,8 @@ struct ClassDefinition {
 
 /// A Djinni: its ability and the stat bonuses it gives while set.
 struct DjinnDefinition {
-  u16 abilityId; ///< the action the Djinni unleashes
-  u8 unk02[2];   ///< Reserved in djinn.tsv; not named by any TBS code.
+  u16 abilityId;              ///< the action the Djinni unleashes
+  u8 reservedAfterAbility[2]; ///< reserved in djinn.tsv; no code names it
   /// Added to the base stats while the Djinni is set (Unit_Calculate), before
   /// the class multiplies them.
   ///@{
@@ -81,7 +81,7 @@ struct DjinnDefinition {
   s8 agi;
   s8 luck;
   ///@}
-  u8 unk0a[2]; ///< Reserved in djinn.tsv.
+  u8 reservedAfterStats[2]; ///< reserved in djinn.tsv
 };
 
 /// EnemyDefinition.targetStrategy: a single-target attacker favours the
@@ -118,7 +118,7 @@ enum EnemyActionStrategy {
 struct EnemyDefinition {
   /// The enemy's name: enemies.tsv's name column, 15 bytes, blank in every
   /// row. BattleUnit_Set takes the name from the messages instead.
-  u8 unk00[15];
+  u8 name[15];
   u8 level;
   /// The base stats BattleUnit_Set copies into the unit.
   ///@{
@@ -132,12 +132,12 @@ struct EnemyDefinition {
   u8 hpRegen; ///< HP restored at each round's end (BattleUnit.baseHpRegen)
   u8 ppRegen; ///< PP restored at each round's end (BattleUnit.basePpRegen)
   ///@}
-  u8 unk1e[2];      ///< Reserved in enemies.tsv: 0 in every row.
-  u32 rewards;      ///< 0 in every row; copied to BattleUnit.rewards
-  u8 unk24[4];      ///< Reserved in enemies.tsv: 0 in every row.
-  u16 items[4];     ///< items the enemy carries, 0 for none
-  u8 counts[4];     ///< how many of each item it carries
-  u8 elementPreset; ///< row of gEnemy_ElementPresetTable, 0 to 43
+  u8 reservedBeforeRewards[2]; ///< reserved in enemies.tsv: 0 in every row
+  u32 rewards;                 ///< 0 in every row; copied to BattleUnit.rewards
+  u8 reservedAfterRewards[4];  ///< reserved in enemies.tsv: 0 in every row
+  u16 items[4];                ///< items the enemy carries, 0 for none
+  u8 counts[4];                ///< how many of each item it carries
+  u8 elementPreset;            ///< row of gEnemy_ElementPresetTable, 0 to 43
   /// Whom a single-target attack favours: an enum EnemyTargetStrategy.
   s8 targetStrategy;
   /// How the action is chosen from `actions` (BattleCommand_SelectAutomatic):
@@ -185,7 +185,7 @@ STATIC_ASSERT(sizeof(struct ClassAbility) == 4);
 STATIC_ASSERT(offsetof(struct ClassDefinition, abilities) == 0x10);
 STATIC_ASSERT(sizeof(struct DjinnDefinition) == 0xc);
 STATIC_ASSERT(offsetof(struct DjinnDefinition, abilityId) == 0);
-STATIC_ASSERT(offsetof(struct DjinnDefinition, unk02) == 2);
+STATIC_ASSERT(offsetof(struct DjinnDefinition, reservedAfterAbility) == 2);
 STATIC_ASSERT(offsetof(struct DjinnDefinition, hp) == 4);
 STATIC_ASSERT(sizeof(struct EnemyDefinition) == 0x54);
 STATIC_ASSERT(offsetof(struct EnemyDefinition, rewards) == 0x20);

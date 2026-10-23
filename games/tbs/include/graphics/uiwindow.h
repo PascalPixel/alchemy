@@ -14,7 +14,7 @@ struct UiWindow {
   u16 height;                     ///< tiles
   u16 x;                          ///< tiles
   u16 y;                          ///< tiles
-  u16 unk10; ///< 1 once opened, 0 once freed; not read by name in TBS
+  u16 opened; ///< 1 once opened, 0 once freed; nothing reads it
   /// The effect a message's TEXT_WINDOW_STATE code sets. Only
   /// UI_WINDOW_EFFECT_SWELL is acted on; its channel types nothing more
   /// until the swell ends and clears it.
@@ -58,7 +58,7 @@ struct UiChannelSlot {
   u16 ended;       ///< 1 once a TEXT_END code is reached
   u16 glyphDelay;  ///< frames to wait after a glyph while no button is held
   u16 flags;       ///< nonzero keeps the window's size from page to page
-  u16 unk26;       ///< not named by TBS code
+  u16 unused;      ///< no code names it
 };
 
 STATIC_ASSERT(sizeof(struct UiChannelSlot) == 0x28);

@@ -39,9 +39,8 @@ union FieldObject;
 /// An object event: a person or thing on the field with a position, motion
 /// toward a target, sprites and an update callback.
 struct ObjectEvent {
-  /// The object's script pointer (nonzero while the object is live) and its
-  /// cursor, which ObjectRuntime names script and step.
-  u8 unk00[6];
+  const s32 *script;       ///< the object script it runs; null when it is free
+  u16 scriptCursor;        ///< in words (ObjectRuntime's step)
   u16 facing;              ///< 1/65536 turns
   union FieldCoordinate x; ///< 16.16 fixed-point pixels
   union FieldCoordinate y; ///< 16.16 fixed-point pixels
@@ -88,10 +87,10 @@ struct ObjectEvent {
   /// ObjectEventMotionFlag bits; none is free flight in 3D, and
   /// OBJ_EVENT_FOLLOWS_TERRAIN and OBJ_EVENT_FALLS are set on creation.
   u8 motionFlags;
-  /// The ARRIVAL_AXIS_* watched for arrival, the object script's last flag
-  /// test (ScriptInterpreter.conditionResult), and whether it snaps onto its
-  /// target on arrival: ScriptMotionObject names 0x56 and 0x58.
-  u8 unk56[3];
+  u8 arrivalAxis; ///< the ARRIVAL_AXIS_* watched for arrival
+  /// The object script's last flag test (ScriptInterpreter.conditionResult).
+  u8 conditionResult;
+  u8 snapToTarget; ///< nonzero lands it exactly on its target on arrival
   /// ObjectEventCollisionFlag bits.
   u8 collisionFlags;
   u8 steeringFlags; ///< ObjectEventSteeringFlag bits

@@ -9,6 +9,8 @@
 #include "types.h"
 #include "static_assert.h"
 
+union FieldObject;
+
 /// One of the 64 field objects in the object pool (HEAP_SLOT_OBJECT_POOL): its
 /// script, position, motion toward a target, animation and update callback.
 ///
@@ -23,7 +25,8 @@ struct ObjectRuntime {
   s32 y;       ///< 16.16 fixed-point pixels
   s32 z;       ///< 16.16 fixed-point pixels
   s32 terrainHeight; ///< 16.16 fixed-point pixels
-  u8 unk18[0x08];    ///< the x and y scales, ObjectEvent.scaleX and scaleY
+  s32 scaleX;        ///< 16.16 fixed point, 0x10000 full size
+  s32 scaleY;        ///< 16.16 fixed point, 0x10000 full size
   u16 radius;        ///< collision radius in pixels
   u8 terrainId;      ///< the map layer its ground height is read from
   /// ObjectEvent.priorityFlags: 1 for placed object events, 2 for footprints.
@@ -38,8 +41,13 @@ struct ObjectRuntime {
   s32 targetX; ///< 16.16 fixed-point pixels; 0x80000000 when unset
   s32 targetY; ///< 16.16 fixed-point pixels; 0x80000000 when unset
   s32 targetZ; ///< 16.16 fixed-point pixels; 0x80000000 when unset
-  /// ObjectEvent's bounce and gravity, and a word FieldObject_Create zeroes.
-  u8 unk44[0x0c];
+  /// ObjectEvent's bounce and gravity, and the word FieldObject_Create zeroes
+  /// and map code keeps a resting height in; not named here.
+  ///@{
+  s32 bounce;
+  s32 gravity;
+  s32 riseBaseY;
+  ///@}
   void *animation; ///< its sprite, or its list of four, by animationKind
   /// Low four bits: 0 no sprite, 1 one sprite, 2 a group of up to four.
   u8 animationKind;
@@ -54,11 +62,11 @@ struct ObjectRuntime {
   u8 collisionFlags;
   u8 actionFlags;   ///< ObjectEvent.steeringFlags: bit 0 faces its motion
   u8 movementState; ///< nonzero skips its script and motion (paused)
-  /// Byte 0, when nonzero, keeps its sprite's VRAM cache entry while sprites
-  /// are suspended or it is off screen; byte 1 is the object script's
-  /// SC_LOOP count.
-  u8 unk5c[0x02];
-  u16 wait; ///< the object script's wait, in frames
+  /// Nonzero keeps its sprite's VRAM cache entry while sprites are suspended
+  /// or it is off screen.
+  u8 retainSpriteCache;
+  u8 repeatCount; ///< the object script's SC_LOOP count
+  u16 wait;       ///< the object script's wait, in frames
   /// Not named by TBS code through this struct. Its bytes are the frames a
   /// solid object has refused the object's move and the frozen flag
   /// (ScriptMotionObject's refused and frozen), then two bytes map code
@@ -73,7 +81,7 @@ struct ObjectRuntime {
   struct ObjectRuntime *linkedObject;
   /// The update hook (ObjectEvent.update), which the unused
   /// ObjectDispatch_SetUpdateValue sets as a word.
-  u8 unk6c[0x04];
+  void (*update)(union FieldObject *object);
 };
 
 STATIC_ASSERT(sizeof(struct ObjectRuntime) == 0x70);

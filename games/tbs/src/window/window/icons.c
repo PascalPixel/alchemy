@@ -53,7 +53,7 @@ void Ui_BuildPairedPatternsToSlot(s32 overlayIcon, s32 frameIcon, s32 *slot,
 /// as UiIcon_BuildItemIconTiles.
 void Ability_RequestGlyph(s32 action, s32 withBase, s32 *slot, s32 *tile,
                           s32 reuse) {
-  UiIcon_BuildItemIconTiles(BattleAction_Get(action)->unk04[0], withBase, slot,
+  UiIcon_BuildItemIconTiles(BattleAction_Get(action)->icon, withBase, slot,
                             tile, reuse);
 }
 
@@ -264,8 +264,8 @@ void Ui_PrepareTransferForItem(s32 code) {
 /// UiIcon_BuildAbilityIconTiles.
 void Ability_LoadGlyph(s32 action, s32 withBase, s32 *slot, s32 *tile,
                        s32 reuse) {
-  UiIcon_BuildAbilityIconTiles(BattleAction_Get(action)->unk04[0], withBase,
-                               slot, tile, reuse);
+  UiIcon_BuildAbilityIconTiles(BattleAction_Get(action)->icon, withBase, slot,
+                               tile, reuse);
 }
 
 /// The heap slot UiIcon_Decode copies its decoding routines into, one at a

@@ -255,7 +255,7 @@ void ObjectTable_ResetForObject(struct ObjectEventTemplate *table) {
   leader = gGameState.selectedLocalId;
   // Build the leader's temporary object event template before the map's placed
   // object events. The two-row table, the leader's row and an end row, lives in
-  // the event work at 0x200 (FieldWork's unk200) and lasts with it.
+  // the event work at 0x200 (FieldWork's leaderTemplates) and lasts with it.
   entry = (struct ObjectEventTemplate *)((u8 *)work + 0x200);
   entry[0] = gField_DefaultObjectEventTemplates[0];
   entry[1] = gField_DefaultObjectEventTemplates[1];

@@ -80,10 +80,10 @@
 /// has closed. struct FieldWork (field_runtime.h) names these fields item and
 /// itemArgument.
 struct ItemPickerResult {
-  s32 unk000[0x60]; ///< FieldWork up to its item request
-  u16 chosenItem;   ///< FieldWork.item: owner << 10 | item id
-  u8 unk182[0x18];  ///< FieldWork's raised event and fallen characters
-  u16 chosenSlot;   ///< FieldWork.itemArgument: the owner's inventory slot
+  s32 fieldWorkHead[0x60];  ///< FieldWork up to its item request
+  u16 chosenItem;           ///< FieldWork.item: owner << 10 | item id
+  u8 fieldWorkMiddle[0x18]; ///< FieldWork's raised event and fallen characters
+  u16 chosenSlot; ///< FieldWork.itemArgument: the owner's inventory slot
 };
 
 /// The field menu's Item screen (Menu_RunTopSelection, FIELD_MENU_ITEM): choose
@@ -1025,9 +1025,9 @@ void ItemMenu_Close(void) {
   UiWindow_CloseIfOpen(&menu->infoWindow, 1);
   UiWindow_CloseIfOpen(&menu->equipWindow, 1);
   UiWindow_CloseIfOpen(&menu->listWindow, 1);
-  UiWindow_CloseIfOpen(&menu->unknownWindow38, 1);
+  UiWindow_CloseIfOpen(&menu->unopenedWindow, 1);
   UiWindow_CloseIfOpen(&menu->modalWindow, 1);
-  UiWindow_CloseIfOpen(&menu->unknownWindow40, 1);
+  UiWindow_CloseIfOpen(&menu->secondUnopenedWindow, 1);
 }
 
 /// Lets the player choose a party member in pane (0 or 1), starting from the

@@ -676,7 +676,7 @@ void Menu_InitializeSelectorCursorAndEntries(s32 unused0, s32 unused1,
 
   menu = gMenuWork;
   PsynergyMenu_InitializeEntryObjects(UiMenu_CreateCursor(menu), 2, 2, 8, 0);
-  menu->unknownWindow028 = 0;
+  menu->unopenedWindow = 0;
   menu->statusWindow = 0;
   menu->helpWindow = 0;
   menu->actionWindow = 0;

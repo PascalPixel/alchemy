@@ -8,22 +8,22 @@
 /// a block from EWRAM first (Runtime_BumpAllocateAlternatePool) and frees it
 /// with MemFree before returning; only Unit_Calculate reads it.
 struct StatWork {
-  s32 hp;            ///< maximum HP
-  s32 pp;            ///< maximum PP
-  s32 atk;           ///< Attack, 0 to 999 once clamped
-  s32 def;           ///< Defense, 0 to 999 once clamped
-  s32 agi;           ///< Agility, 0 to 999 once clamped
-  s32 unk14;         ///< never written; a gap between Agility and Luck
-  s32 luck;          ///< Luck, 0 to 99 once clamped
-  s32 turns;         ///< actions a round, 0 to 2
-  s32 hpRegen;       ///< HP regained each round
-  s32 ppRegen;       ///< PP regained each round
-  s32 element[4][2]; ///< [element][0] power and [1] resistance
-  s32 kind;          ///< the item effect being applied
-  s32 unk4c[2];      ///< never written
-  s32 amount;        ///< the amount of the item effect being applied
+  s32 hp;                 ///< maximum HP
+  s32 pp;                 ///< maximum PP
+  s32 atk;                ///< Attack, 0 to 999 once clamped
+  s32 def;                ///< Defense, 0 to 999 once clamped
+  s32 agi;                ///< Agility, 0 to 999 once clamped
+  s32 unused;             ///< never written; a gap between Agility and Luck
+  s32 luck;               ///< Luck, 0 to 99 once clamped
+  s32 turns;              ///< actions a round, 0 to 2
+  s32 hpRegen;            ///< HP regained each round
+  s32 ppRegen;            ///< PP regained each round
+  s32 element[4][2];      ///< [element][0] power and [1] resistance
+  s32 kind;               ///< the item effect being applied
+  s32 unusedAfterKind[2]; ///< never written
+  s32 amount;             ///< the amount of the item effect being applied
   struct ItemDefinition *item; ///< the equipped item being applied
-  s32 unk5c;                   ///< never written
+  s32 unusedAfterItem;         ///< never written
 };
 
 /// The distance between `a` and `b`, |a - b|.
@@ -45,7 +45,7 @@ void *Djinn_GetRecoveryTable(s32 enemySide) {
   if (enemySide != 0) {
     return Unit_Get(0x83);
   }
-  return &gGameState.unk008[4];
+  return &gGameState.summonMask;
 }
 
 /// Returns the average level of the party members, rounded down (0 with no
@@ -534,16 +534,17 @@ u32 Runtime_GetBuildStampTime(void) {
 
 /// A view of EWRAM from gMapLocalState on, which GameState_InitializeDefaults
 /// writes one byte through. gMapLocalState's 0x78 bytes and
-/// gInventorySnapshot's 0x8c come first, so unk104 is the first byte of
-/// gObjectSnapshots.
+/// gInventorySnapshot's 0x8c come first, so firstSnapshotSlot is the first byte
+/// of gObjectSnapshots.
 struct MapLocalStateTail {
-  u8 unk000[0x100]; ///< gMapLocalState, then most of gInventorySnapshot
+  u8 mapAndInventory[0x100]; ///< gMapLocalState, then most of
+                             ///< gInventorySnapshot
   /// gInventorySnapshot's last word, past the 65 halfwords the snapshot
   /// uses; nothing reads or writes it through this view.
   u32 playTime;
   /// gObjectSnapshots.slots[0]: set to 0xff, OBJECT_SNAPSHOT_EMPTY, so a
   /// new game holds no saved object events.
-  u8 unk104;
+  u8 firstSnapshotSlot;
 };
 
 /// Clears the game-state header, the map state with the Colosso's inventory
@@ -570,7 +571,7 @@ void GameState_InitializeDefaults(void) {
   zero = 0;
   START_DMA(&zero, gGameFlagBytes,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 0x80);
-  ((struct MapLocalStateTail *)gMapLocalState)->unk104 = 0xff;
+  ((struct MapLocalStateTail *)gMapLocalState)->firstSnapshotSlot = 0xff;
   zero = 0;
   START_DMA(&zero, gSaveStamp + 0x1c,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 0x298);

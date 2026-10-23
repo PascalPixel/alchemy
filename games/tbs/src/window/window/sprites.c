@@ -8,7 +8,7 @@ typedef s32 (*GlyphRoutine)(struct UiWindow *, u32, u32, u32, const u8 *);
 
 /// A render output's sprite cell: the link and OAM attributes in its 12 bytes
 /// from offset 0x10.
-#define SPRITE_CELL(output) ((struct CursorSprite *)(output)->unk10)
+#define SPRITE_CELL(output) ((struct CursorSprite *)(output)->link)
 
 /// Draws a character of a window's text with its top-left corner at pixel
 /// (x, y) of the window's interior and returns how far the text advances. A
@@ -167,7 +167,7 @@ done:
 }
 
 // The view is a struct of its own for matching: read through a cast of
-// RenderOutput.unk10 instead, UiWork_AnimateSpriteSlots does not match (578
+// RenderOutput.link instead, UiWork_AnimateSpriteSlots does not match (578
 // instructions become 605), and through RenderOutput itself UiWindow_PutGlyph's
 // position stores move.
 
@@ -177,10 +177,10 @@ done:
 struct SpriteOutput {
   struct SpriteOutput *next;
   u8 kind;
-  u8 active; ///< its UI_SPRITE_ motion
-  u16 x;     ///< screen pixels, where the motion is centred
-  u16 y;     ///< screen pixels, where the motion is centred
-  u16 unk0a;
+  u8 active;         ///< its UI_SPRITE_ motion
+  u16 x;             ///< screen pixels, where the motion is centred
+  u16 y;             ///< screen pixels, where the motion is centred
+  u16 unused;        ///< RenderOutput's; no code names it
   u16 animationStep; ///< step of its motion's animation
   u8 index;
   u8 sentinel;              ///< depth slot it is drawn at
@@ -198,7 +198,7 @@ STATIC_ASSERT(offsetof(struct SpriteOutput, animationStep) ==
 STATIC_ASSERT(offsetof(struct SpriteOutput, index) ==
               offsetof(struct RenderOutput, index));
 STATIC_ASSERT(offsetof(struct SpriteOutput, attr) ==
-              offsetof(struct RenderOutput, unk10));
+              offsetof(struct RenderOutput, link));
 
 #if (LANGUAGE != LANGUAGE_JAPANESE)
 

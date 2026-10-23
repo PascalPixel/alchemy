@@ -37,7 +37,7 @@ struct WorldMapAffinePair {
 struct WorldMapFrameWork {
   struct WorldMapScanline scanlines[160];
   struct WorldMapAffinePair pages[2][160];
-  u8 unk3480[4];
+  u8 unused[4]; ///< no code names it
 };
 
 STATIC_ASSERT(sizeof(struct WorldMapScanline) == 20);
@@ -45,7 +45,7 @@ STATIC_ASSERT(offsetof(struct WorldMapScanline, pa) == 16);
 STATIC_ASSERT(sizeof(struct WorldMapAffineLine) == 16);
 STATIC_ASSERT(sizeof(struct WorldMapAffinePair) == 32);
 STATIC_ASSERT(offsetof(struct WorldMapFrameWork, pages) == 0xc80);
-STATIC_ASSERT(offsetof(struct WorldMapFrameWork, unk3480) == 0x3480);
+STATIC_ASSERT(offsetof(struct WorldMapFrameWork, unused) == 0x3480);
 STATIC_ASSERT(sizeof(struct WorldMapFrameWork) == 0x3484);
 
 #endif

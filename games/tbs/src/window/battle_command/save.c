@@ -175,8 +175,9 @@ u32 SaveState_BuildSummaryHeader(void) {
   // 0x78 bytes, in gInventorySnapshot's last word. gMapLocalState opens the
   // save buffer's second half, so this lands at offset 0x110 of the file's
   // second record (after its 16-byte header), which
-  // SaveState_LoadSummaryRecords reads back into SaveSummary.unk38: the file
-  // menu lists a file whose two play times differ as corrupted.
+  // SaveState_LoadSummaryRecords reads back into
+  // SaveSummary.secondRecordPlayTime: the file menu lists a file whose two play
+  // times differ as corrupted.
   {
     u32 *copy = (u32 *)gMapLocalState;
     copy[64] = gPlayTimeFrames;
@@ -204,7 +205,7 @@ u32 SaveState_BuildSummaryHeader(void) {
   summary->party[i] = -1;
   summary->paletteGlow = gGameState.paletteGlow[0];
   summary->paletteGlowSub = gGameState.paletteGlow[1];
-  summary->sendFlag = gGameState.unk20f;
+  summary->sendFlag = gGameState.sendFlag;
   summary->flagCount = 0;
   for (i = 48; i <= 127; i++) {
     if (GameFlag_TestFar(i))
@@ -972,7 +973,7 @@ s32 SaveMenu_SelectSlot(s32 selectedFile, s32 menuMode) {
       // file resumes at GameState.savedMap, not where it was saved
       // (menu/clear.c).
       UiText_DrawResource(MsgSaveContinue, fileList, 10, y);
-    } else if (summary->playTime != *(u32 *)summary->unk38) {
+    } else if (summary->playTime != *(u32 *)summary->secondRecordPlayTime) {
       UiText_DrawResource(MsgSaveCorrupted, fileList, 10, y);
     } else if (menuMode == SAVE_MENU_CLEARED && (s8)summary->sendFlag == 0) {
       UiText_DrawResource(MsgSaveNotCleared, fileList, 10, y);
@@ -1047,7 +1048,8 @@ s32 SaveMenu_SelectSlot(s32 selectedFile, s32 menuMode) {
     } else if (save->summary[i].frames < buildStamp) {
       // Saved by an older build: see the other editions' list above.
       UiText_DrawResource(MsgSaveContinue, fileList, 10, i * 16);
-    } else if (save->summary[i].playTime != *(u32 *)save->summary[i].unk38) {
+    } else if (save->summary[i].playTime !=
+               *(u32 *)save->summary[i].secondRecordPlayTime) {
       UiText_DrawResource(MsgSaveCorrupted, fileList, 10, i * 16);
     } else if (menuMode == SAVE_MENU_CLEARED &&
                (s8)save->summary[i].sendFlag == 0) {

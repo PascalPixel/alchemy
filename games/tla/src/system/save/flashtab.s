@@ -6,4 +6,4 @@ Flash_Version:
 	.align 2
 	.global gFlash_Chips
 gFlash_Chips:
-	.4byte Flash_ChipSst, gFlash_ChipAtmel, Flash_ChipMacronix, Flash_ChipPanasonic, gFlash_ChipUnknown
+	.4byte Flash_ChipSst, gFlash_ChipAtmel, Flash_ChipMacronix, Flash_ChipPanasonic, gFlash_ChipDefault

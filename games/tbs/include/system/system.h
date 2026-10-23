@@ -28,7 +28,7 @@ struct FlashSetupInfo;
 // the chip's routines and type. The credits borrow four of these cells while
 // no flash operation runs (graphics/credits/credits.c).
 extern struct FlashSetupInfo gFlash_ChipAtmel;
-extern const struct FlashSetupInfo gFlash_ChipUnknown;
+extern const struct FlashSetupInfo gFlash_ChipDefault;
 /// The chip's erase-all routine (FlashSetupInfo.handlers[1]).
 extern u32 gFlash_Handler1;
 /// The chip's erase-sector routine (handlers[2]).
@@ -141,8 +141,6 @@ extern const u8 Resource_PatchThumbBranch[];
 /// The game code's last letter in the cartridge header: `J` in Japanese, `E`,
 /// `D`, `F`, `S` or `I` (System_GetLanguage).
 extern const u8 gRom_LanguageCode;
-/// No code in the tree defines or reads it.
-extern u8 gRom_UnknownBytes[];
 // The pixel fragments BattleEffect_BuildBlitter copies into its blitters, from
 // battle_effect_composite.s: Forward reads the picture left to right and
 // Reverse right to left. None of them runs where it is.

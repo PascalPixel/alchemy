@@ -498,3 +498,6 @@ in every edition, and nothing reads them.
   editions gave up four windows when they doubled the ring; the code shows
   only the counts each edition uses, and only Camelot's sources could say how
   they were chosen.
+- XXX: what `UiRenderWork.unknownAfterLineSpacing` holds; `UiWork_ResetCounters`
+  sets it to 1 beside the text style and no C reads it, so a read in the
+  glyph assembly or a text control code that changes it would settle it.

@@ -12,9 +12,10 @@
 /// A view of the window system's work (struct UiRenderWork) that names only
 /// its dirty bits and its menu busy flag.
 struct UiWork {
-  u8 unk000[RENDER_DIRTY_OFFSET]; ///< UiRenderWork up to its dirty bits
-  unsigned dirty : 8;             ///< UiRenderWork.dirty
-  u8 unknownMode[RENDER_MENU_BUSY_OFFSET - RENDER_DIRTY_OFFSET - 1];
+  u8 beforeDirty[RENDER_DIRTY_OFFSET]; ///< UiRenderWork up to its dirty bits
+  unsigned dirty : 8;                  ///< UiRenderWork.dirty
+  /// UiRenderWork's mode and menuState.
+  u8 modeAndMenuState[RENDER_MENU_BUSY_OFFSET - RENDER_DIRTY_OFFSET - 1];
   unsigned menuBusy : 8; ///< UiRenderWork.menuBusy
 };
 
@@ -27,16 +28,16 @@ struct OwnerStatusStatCursor {
   u8 highlightColumn; ///< tiles
   u8 highlightRow;    ///< tiles
   u8 highlightWidth;  ///< tiles
-  u8 unk06[2];        ///< 0 in every row
+  u8 reserved[2];     ///< 0 in every row
 };
 
 /// A cursor stop on the status screen's equipment or conditions: its help
 /// entry and where the cursor points.
 struct OwnerStatusCursor {
-  u8 entry;  ///< the help line shown while the cursor is here
-  u8 column; ///< tiles
-  u8 row;    ///< tiles
-  u8 unk03;  ///< 0 in every row
+  u8 entry;    ///< the help line shown while the cursor is here
+  u8 column;   ///< tiles
+  u8 row;      ///< tiles
+  u8 reserved; ///< 0 in every row
 };
 
 STATIC_ASSERT(sizeof(struct OwnerStatusStatCursor) == 8);

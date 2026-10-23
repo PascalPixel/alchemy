@@ -81,9 +81,9 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
 /// A spinning object: its angle, and at 0x64 the frames its spin has been
 /// speeding up for (FieldEffect_AdvanceAngleWithRamp), read signed.
 struct RampedSpinObject {
-  u8 unk00[6];
+  u8 scriptAndCursor[6]; ///< ObjectEvent's script and its cursor
   u16 angle;
-  u8 unk08[0x5c];
+  u8 positionToRise[0x5c]; ///< ObjectEvent's x to riseEnabled
   s16 rampFrames;
 };
 

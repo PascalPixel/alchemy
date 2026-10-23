@@ -37,7 +37,7 @@ struct SaveSummary {
   u32 coins;
   u8 djinn[4]; ///< the party's Djinn of each element
   s8 party[5]; ///< up to four party members, ended by -1
-  /// Copied from GameState.unk20f, which saving at the end of the game sets;
+  /// Copied from GameState.sendFlag, which saving at the end of the game sets;
   /// the file menu for cleared data lists a file without it as not cleared.
   s8 sendFlag;
   s8 flagCount; ///< how many Djinn flags (FLAG_DJINN_FIRST on) are set
@@ -52,7 +52,7 @@ struct SaveSummary {
   u16 frames;
   /// Filled on reading: the play time from the file's second record. A file
   /// whose playTime differs is listed as corrupted.
-  u8 unk38[4];
+  u8 secondRecordPlayTime[4];
   u32 checksum; ///< the sum of the 968 words from gGameFlagBytes
 };
 
@@ -90,7 +90,7 @@ STATIC_ASSERT(sizeof(struct SaveWorkspace) == 0x1100);
 STATIC_ASSERT(offsetof(struct SaveWorkspace, recordId) == 0x10);
 STATIC_ASSERT(offsetof(struct SaveWorkspace, sequence) == 0x20);
 STATIC_ASSERT(offsetof(struct SaveSummary, flagCount) == 0x32);
-STATIC_ASSERT(offsetof(struct SaveSummary, unk38) == 0x38);
+STATIC_ASSERT(offsetof(struct SaveSummary, secondRecordPlayTime) == 0x38);
 
 /// The save work, heap slot HEAP_SLOT_SAVE under its own name; null between
 /// save operations.

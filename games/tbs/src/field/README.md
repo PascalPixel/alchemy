@@ -468,14 +468,15 @@ through a struct of its own: `ObjectRuntime` (`include/object_runtime.h`),
 (`include/script_object_entry.h`) and `ObjectEvent` (`include/object_event.h`).
 Other folders add more, such as the battle's `MotionObject` and the field
 effects' `FieldEffect`. Each view was written from the code that reads it and
-names only what that code uses: `ScriptInterpreter` is 100 bytes, since no
-command reads the last 12.
+names what that code uses; the bytes it leaves alone keep ObjectEvent's
+names under a "not named here" note. `ScriptInterpreter` is 100 bytes, since
+no command reads the last 12.
 
 The views agree on the layout (the script first, then position, velocity and
 target) and differ in names and types where their readers differ. The wait is
 unsigned in `ObjectRuntime` and `ObjectEvent` and signed in
 `ScriptMotionObject`; the routine run each frame at offset 0x6c is `hook` to
-the scripts, `update` to maps and `unk6c` to `ObjectRuntime`. Even
+the scripts, `update` to maps and `ObjectRuntime`. Even
 `gObjectSlots` is declared as an `ObjectRuntime *` in `include/field/field.h`
 and as a `ScriptMotionObject *` in `update.c`.
 
@@ -630,3 +631,8 @@ control gives it priority 1. The picture of a sprite's layers is therefore of
 a battle unit, whose sprite is the same `struct AnimationObject`
 composed by the same `Sprite_ComposeAnimationFrame`.
 
+
+- XXX: what `FieldWork`'s `unk1da`, `unk1dc` and `unk1de` hold;
+  `FieldScript_Start` sets them to 0xffff, -1 and -1 at each script and no
+  C reads them, so a read in a map overlay's assembly or a watch on them over
+  a script would settle it.

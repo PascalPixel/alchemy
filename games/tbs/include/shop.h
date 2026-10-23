@@ -20,16 +20,21 @@
 /// work: Shop_InitializeCursorWork takes and clears it as a shop, the inn,
 /// the sanctum or the item picker opens, and Shop_ReleaseCursorWork frees it.
 struct ShopRuntime {
-  u8 unk000[0x0c];              ///< not named by TBS code
+  u8 unused[8];      ///< no view of the menu work names it (see menu/README.md)
+  s32 selectedOwner; ///< the menu screens' chosen member; not named here
   struct UiWindow *moneyWindow; ///< the coins window
-  u8 unk010[0x10];              ///< not named by TBS code
+  /// The menu screens' first window and their two panes; not named here.
+  u8 menuPanes[0x10];
   struct UiWindow *itemWindow;
-  u8 unk024[0xf0];                             ///< not named by TBS code
+  /// The menu screens' windows, icons and cursor grid; not named here.
+  u8 menuWindows[0xf0];
   struct AnimationObject *partyMemberIcons[8]; ///< the party row's sprites
   s16 partyMemberX[8];                         ///< pixels
   s16 partyMemberY[8];                         ///< pixels
-  s32 partyMemberScale[8];  ///< 16.16 fixed point, 0x10000 full size
-  u8 unk174[0xf8];          ///< not named by TBS code
+  s32 partyMemberScale[8]; ///< 16.16 fixed point, 0x10000 full size
+  /// The menu screens' choices, entries and party and the row of four
+  /// figures; not named here.
+  u8 menuLists[0xf8];
   s16 stockItemIds[129];    ///< the items on sale, ended by 0
   s16 partyMemberIds[9];    ///< the party in order (Party_ListActiveOwners)
   struct ShopCursor cursor; ///< the hand cursor
@@ -43,9 +48,9 @@ struct ShopRuntime {
   u16 statUpIcon;
   u16 statDownIcon;
   ///@}
-  u16 unk39c;         ///< not named by TBS code
-  u16 selectedItem;   ///< the item being bought, sold or repaired
-  u8 unk3a0[4];       ///< not named by TBS code
+  u16 unusedBeforeSelection;  ///< no view of the menu work names it
+  u16 selectedItem;           ///< the item being bought, sold or repaired
+  u8 unusedAfterSelection[4]; ///< no view of the menu work names it
   u16 keeperResource; ///< the shopkeeper's animation; picks the portrait
   s8 stockCount;
   s8 partyMemberCount;
@@ -54,7 +59,7 @@ struct ShopRuntime {
   s8 partyAction; ///< the counter chosen (enum ShopAction)
   s8 burstMember; ///< the sanctum's member whose pose is randomized; -1 none
   u8 warriorShop; ///< 1 for stock rows 16 to 18, which greet as warriors'
-  u8 unk3ad[3];   ///< not named by TBS code
+  u8 padding[3];  ///< up to the word effects starts on
   struct EffectSlot effects[24]; ///< the sanctum service's particles
 };
 

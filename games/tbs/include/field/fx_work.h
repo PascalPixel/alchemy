@@ -15,13 +15,20 @@ union FieldObject;
 /// A field object as Avoid's caster: its facing, its animation records and
 /// the phase and frame count of its per-frame callback.
 struct ArcEffectObject {
-  u8 unk00[6];                     ///< not named through this view
-  u16 angle;                       ///< 1/65536 turns
-  u8 unk08[0x48];                  ///< not named through this view
+  /// ObjectEvent's script and its cursor; not named through this view.
+  ///@{
+  const s32 *script;
+  u16 scriptCursor;
+  ///@}
+  u16 angle; ///< 1/65536 turns
+  /// ObjectEvent's x to riseBaseY; not named through this view.
+  u8 positionToRise[0x48];
   struct AnimationObject *records; ///< the caster's sprite
-  u8 unk54[0x10];                  ///< not named through this view
-  s16 phase;                       ///< 1 spins the caster 0xc00 a frame
-  s16 step;                        ///< frames since the arcs started
+  /// ObjectEvent's spriteStorageKind to riseEnabled; not named through this
+  /// view.
+  u8 kindToRise[0x10];
+  s16 phase; ///< 1 spins the caster 0xc00 a frame
+  s16 step;  ///< frames since the arcs started
   /// ObjectEvent.linkedObject; no code reads it through this view.
   struct ObjectEvent *linkedObject;
   void (*callback)(union FieldObject *fieldObject); ///< run each frame
@@ -51,24 +58,24 @@ struct FieldEffectWork {
   s8 visible; ///< set at the start: the caster flashes with a sound
   s8 active;  ///< set at the start: the ability's name is announced
   void (*finishCallback)(void); ///< run, when set, as Ply's effect ends
-  u8 unk28[0x0c];               ///< not named by TBS code
+  u8 unusedAfterFinish[0x0c];   ///< no code names it
   /// Set by some maps before an effect; Carry, Frost, Force and Reveal
   /// treat the target differently with it.
   s8 childOption;
   s8 childMode; ///< set by some maps: Frost and Force leave the target be
-  u8 unk36[2];  ///< not named by TBS code
+  u8 paddingAfterChildMode[2]; ///< up to the word savedCallback starts on
   /// The target's update hook and script, saved at the start and restored
   /// when Move or Carry lets it go.
   ///@{
   void (*savedCallback)(union FieldObject *fieldObject);
   const s32 *savedScript;
   ///@}
-  u8 unk40[4];     ///< not named by TBS code
+  u8 unusedAfterSavedScript[4]; ///< no code names it
   u8 savedPalette; ///< the target's first sprite's param, saved likewise
   u8 lit;          ///< set in two Mercury Lighthouse maps; not read by name
   u16 tileSlot;    ///< resource entry holding the spark tiles
-  u16 unk48;       ///< not named by TBS code
-  u16 freeBlocks;  ///< 512 less the free resource blocks at the start
+  u16 unusedAfterTileSlot; ///< no code names it
+  u16 freeBlocks;          ///< 512 less the free resource blocks at the start
   /// The map's shake and its decay, restored when the effect ends.
   ///@{
   s32 savedShakeX;
@@ -76,10 +83,10 @@ struct FieldEffectWork {
   s32 savedShakeDecay;
   ///@}
   struct EffectSlot effects[24];
-  u8 unk718[2];    ///< not named by TBS code
-  s16 arcTileSlot; ///< resource entry of Avoid's falling arcs' tiles
-  s8 messageMode;  ///< the announcement's box mode: 1, a script adds 8
-  u8 unk71d[3];    ///< not named by TBS code
+  u8 unusedAfterSlots[2]; ///< no code names it
+  s16 arcTileSlot;        ///< resource entry of Avoid's falling arcs' tiles
+  s8 messageMode;         ///< the announcement's box mode: 1, a script adds 8
+  u8 paddingAtEnd[3];     ///< up to the struct's word-aligned size
 };
 
 STATIC_ASSERT(sizeof(struct FieldEffectWork) == 0x720);

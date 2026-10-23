@@ -11,7 +11,7 @@
 /// The display transition state as the centre-line transition and the dissolve
 /// read it: the dissolve's tile pixels and the transition's progress.
 struct DisplayTransitionFrame {
-  u8 unk000[0x508]; ///< DisplayTransitionState's pages; not named here
+  u16 pages[2][322]; ///< DisplayTransitionState's; not named here
   /// DisplayTransitionState's solidTile, as 4-bit pixels two a byte: the
   /// dissolve sets two more each frame and copies the tile to BG character
   /// block 0.
@@ -19,8 +19,14 @@ struct DisplayTransitionFrame {
   /// The progress, moved from start to end over duration frames: bit 5 says
   /// whether the dissolve fills or clears, the low 5 bits how far it is.
   u16 value;
-  /// DisplayTransitionState's centreX to unk538; not named here.
-  u8 unk52c[13];
+  /// DisplayTransitionState's centreX to its unused byte; not named here.
+  ///@{
+  s32 centreX;
+  s32 centreY;
+  s16 mask;
+  s16 active;
+  u8 unused;
+  ///@}
   /// DisplayTransitionState's page: the dissolve flips it each frame and
   /// never reads it.
   u8 ditherToggle;
@@ -34,11 +40,19 @@ struct DisplayTransitionFrame {
 /// bits and the lines where the centre-line transition shows and hides the
 /// screen, with the VCount interrupt's copies and phase.
 struct DisplayTransitionWindow {
-  u32 unk000[5]; ///< map work fields no transition names
+  /// The map work's origin, shake and script (PerspectiveWork's); no transition
+  /// names them.
+  ///@{
+  s32 *origin;
+  s32 shakeX, shakeY, shakeDecay;
+  u8 *script;
+  ///@}
   /// Display control bits ORed into DISPCNT; DisplayState_ClearFlags clears
   /// those of backgrounds 1 to 3.
   u16 dispcnt;
-  u8 unk016[0xea]; ///< map work fields no transition names
+  /// The map work's fields from fadeStep to its window rows
+  /// (PerspectiveWork's); no transition names them.
+  u8 viewState[0xea];
   /// scanlines: where the screen is hidden, 200 when it is not
   u16 firstLine;
   /// scanlines: where the screen is shown again, 250 when it is not hidden
@@ -73,7 +87,7 @@ struct DisplayTransitionState {
   s16 mask;
   /// WININ, or WINOUT by mode: 1 when a transition starts.
   s16 active;
-  u8 unk538;   ///< not named by TBS code
+  u8 unused;   ///< no code names it
   u8 page;     ///< the pages entry shown; the next is built in the other
   s8 start;    ///< the value's first step
   s8 end;      ///< the value's last step; 64 hides BG1 to BG3 and sprites

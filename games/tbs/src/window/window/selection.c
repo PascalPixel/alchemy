@@ -29,7 +29,7 @@ void UiGlyph_ResetWorkState(void) {
   work->head = NULL;
   work->path = NULL;
   work->window = NULL;
-  work->unk39a = clear;
+  work->unread = clear;
   work->top = clear;
   // Bit 7: the first list starts from its first entry. Until the list is
   // first cleared the row is drawn 32 pixels lower and takes no input.
@@ -78,7 +78,7 @@ void Resource_ClearOwnerListAndCounters(void) {
 
   screen = gResQueueWork;
   screen->head = NULL;
-  screen->unk39a = 0;
+  screen->unread = 0;
   if (screen->cursorIndex & 0x80) {
     screen->top = 0;
     screen->cursorIndex = 0;
@@ -1257,7 +1257,7 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
   screen->pathTop[nodeIndex] = screen->top;
   screen->pathCursor[nodeIndex] = screen->cursorIndex;
   node->dx = (node->targetX - node->x) >> 1;
-  screen->unk39a = 0;
+  screen->unread = 0;
   screen->cursorIndex |= 0x80;
   WaitFrames(2);
   other = SelectionScreen_FindFreeIcon(SELECTION_ICON_CHOSEN);

@@ -23,7 +23,7 @@ extern u16 gSleepActive;
 struct FlashType;
 struct FlashSetupInfo;
 extern struct FlashSetupInfo gFlash_ChipAtmel;
-extern const struct FlashSetupInfo gFlash_ChipUnknown;
+extern const struct FlashSetupInfo gFlash_ChipDefault;
 extern u32 gFlash_Handler1;
 extern u32 gEraseFlashSector;
 #ifndef OWN_Flash_Handler4

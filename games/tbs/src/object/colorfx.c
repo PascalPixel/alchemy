@@ -321,13 +321,13 @@ struct ReelWork {
   u16 direction;
   u16 pressed;
   u16 repeat;
-  u8 unk0a4[4];
+  u8 unused[4]; ///< no code names it
   s32 timer;
   s32 winningLines[7];
   struct OamShadow oam[128];
   struct UiWindow *window;
   struct UiWindow *subWindow;
-  u8 unk4d0[8];
+  u8 unusedAfterWindows[8]; ///< no code names it
   u16 scanlineOffsets[160];
 #if TBS_PATCH_1
   s32 phase;
@@ -337,7 +337,7 @@ struct ReelWork {
 /// gGameState seen from +12, the base the bytes load: wonPrizes is
 /// gGameState.wonPrizes (through the field itself ReelGame_RunFrame differs 12)
 struct ReelSave {
-  u8 unk000[0x120];
+  u8 beforeWonPrizes[0x120]; ///< gGameState from summonMask to wonPrizes
   s8 wonPrizes[16];
 };
 

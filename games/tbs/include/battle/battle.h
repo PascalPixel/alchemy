@@ -70,8 +70,8 @@ struct WaveEffectWork;
 
 /// The battle camera (struct BattleCamera) as the effects that swing it see it.
 struct CameraWork {
-  u8 unk00[0x36]; ///< BattleCamera's eye to pitch; not named in this view
-  u16 scroll;     ///< the camera's yaw, in 1/65536 turns
+  u8 eyeToPitch[0x36]; ///< BattleCamera's eye to pitch; not named in this view
+  u16 scroll;          ///< the camera's yaw, in 1/65536 turns
 };
 /// A world position, as Camera_WorldToScreen converts it to the screen.
 struct EffectVector {

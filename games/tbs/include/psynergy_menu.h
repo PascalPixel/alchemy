@@ -19,9 +19,9 @@ struct BattleUnit;
 /// and the Psynergy listed for the chosen member. It is the HEAP_SLOT_MENU
 /// block as this menu reads it, from the menu's opening to its closing.
 struct PsynergyMenuState {
-  u8 unk000[8];      ///< not named by TBS code
+  u8 unused[8];      ///< no view of the menu work names it (see menu/README.md)
   s32 selectedOwner; ///< the party member chosen
-  u8 unk00c[4];      ///< not named by TBS code
+  struct UiWindow *moneyWindow; ///< ShopRuntime's; not named here
   struct UiWindow *auxiliaryWindow;
   struct RenderOutput *paneIcon[2]; ///< each pane's cursor
   s8 tabIndex[2];                   ///< each pane's member, in ownerTable
@@ -30,12 +30,16 @@ struct PsynergyMenuState {
   struct UiWindow *statusWindow;
   struct UiWindow *shortcutWindow; ///< the L and R shortcuts
   struct UiWindow *infoWindow;
-  u8 unk030[4]; ///< not named by TBS code
+  struct UiWindow *equipWindow; ///< InventoryMenuState's; not named here
   struct UiWindow *listWindow;
-  u8 unk038[0x0c]; ///< not named by TBS code
+  /// InventoryMenuState's modalWindow and the two windows it never opens;
+  /// not named here.
+  u8 itemWindows[0x0c];
   struct RenderOutput *entryGridCursor;
   struct RenderOutput *entryIcons[32];
-  u8 unk0c8[0x44]; ///< not named by TBS code
+  struct RenderOutput
+      *categoryIcons[8];     ///< InventoryMenuState's; not named here
+  u8 unusedAfterIcons[0x24]; ///< no view of the menu work names it
   struct UiWindow *messageWindow;
   /// The cursor grid: its place and its size.
   ///@{
@@ -47,10 +51,12 @@ struct PsynergyMenuState {
   struct AnimationObject *tabObjects[8]; ///< the party members' figures
   s16 tabX[8];                           ///< screen pixels
   s16 rowPositions[8];                   ///< screen pixels
-  s32 ownerScale[8];  ///< 16.16 fixed point, 0x10000 full size
-  u16 paneRow[2];     ///< each pane's Psynergy row chosen
-  u16 paneAction[2];  ///< each pane's Psynergy chosen, as an owner action entry
-  u8 unk17c[0x4c];    ///< not named by TBS code
+  s32 ownerScale[8]; ///< 16.16 fixed point, 0x10000 full size
+  u16 paneRow[2];    ///< each pane's Psynergy row chosen
+  u16 paneAction[2]; ///< each pane's Psynergy chosen, as an owner action entry
+  struct RenderOutput *cursor; ///< InventoryMenuState's; not named here
+  /// DjinnMenuWork's backdrop pointer at 0x184; no view names the rest.
+  u8 aroundBackdrop[0x48];
   u16 psynergies[32]; ///< the chosen member's Psynergy listed
   u16 ownerTable[8];  ///< the party in order (Party_ListActiveOwners)
   u8 psynergyCount;
@@ -62,12 +68,16 @@ struct PsynergyMenuState {
   /// bits: 1 the list shows the shortcut help | 0 set after a use or a
   /// cancelled target
   u16 flags;
-  u16 skipSlide;   ///< 1 skips the cursor's next slide once
-  u8 unk224[0x18]; ///< not named by TBS code
-  s16 slotY[4];    ///< screen pixels
-  u8 unk244[0x16]; ///< not named by TBS code
+  u16 skipSlide; ///< 1 skips the cursor's next slide once
+  /// FourObjectMotionState's figures and their x; not named here.
+  u8 figureRow[0x18];
+  s16 slotY[4]; ///< screen pixels
+  /// FourObjectMotionState's phases and DjinnMenuWork's pair; not named here.
+  u8 figurePhases[0x16];
   s16 useResult;   ///< the use's result message, after MsgItemUseResult
-  u8 unk25c[4];    ///< not named by TBS code
+  s8 equipPreview; ///< InventoryMenuState's; not named here
+  u8 listMode;     ///< InventoryMenuState's; not named here
+  u8 unusedAfterListMode[2];  ///< no view of the menu work names it
   s8 selectedIndexByOwner[8]; ///< each member's entry chosen last
   u8 mode; ///< 0 to use Psynergy; 1 or 2 to set the L or R shortcut
 };

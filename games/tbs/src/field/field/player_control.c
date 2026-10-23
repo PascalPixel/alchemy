@@ -43,13 +43,13 @@ static __inline__ void Field_StoreHalfword(s16 *address, s32 value) {
   *address = value;
 }
 
-/// Unused: stores value as a word at the object's unk6c.
+/// Unused: stores value as a word in the object's update hook.
 /// Nothing calls it.
 UNUSED void ObjectDispatch_SetUpdateValue(void *rawObject, s32 value) {
   struct ObjectRuntime *object = rawObject;
 
   if (object != NULL)
-    *(s32 *)object->unk6c = value;
+    *(s32 *)&object->update = value;
 }
 
 /// Handles a shortcut key's assignment: its top two bits choose what it

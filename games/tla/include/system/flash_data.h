@@ -31,7 +31,7 @@ struct FlashSetupInfo {
 };
 
 extern const struct FlashType *gFlash;
-extern const struct FlashSetupInfo gFlash_ChipUnknown;
+extern const struct FlashSetupInfo gFlash_ChipDefault;
 extern struct FlashSetupInfo gFlash_ChipAtmel;
 extern struct FlashSetupInfo gFlash_ChipAtmelLayout;
 

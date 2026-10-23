@@ -12,39 +12,65 @@
 /// grows and spins at its rates, run by its script and update hook.
 struct FieldEffect {
   /// ObjectEvent's script pointer, cursor and facing; not named by this view.
-  u8 unk00[8];
-  s32 x;       ///< 16.16 fixed-point pixels
-  s32 y;       ///< 16.16 fixed-point pixels
-  s32 z;       ///< 16.16 fixed-point pixels
-  u8 unk14[4]; ///< ObjectEvent's terrainHeight; not named by this view
-  s32 scaleX;  ///< 16.16 fixed point, 0x10000 full size
-  s32 scaleY;  ///< 16.16 fixed point, 0x10000 full size
-  u8 unk20[3]; ///< ObjectEvent's radius and terrainId; not named by this view
+  ///@{
+  const s32 *script;
+  u16 scriptCursor;
+  u16 facing;
+  ///@}
+  s32 x;             ///< 16.16 fixed-point pixels
+  s32 y;             ///< 16.16 fixed-point pixels
+  s32 z;             ///< 16.16 fixed-point pixels
+  s32 terrainHeight; ///< ObjectEvent's; not named by this view
+  s32 scaleX;        ///< 16.16 fixed point, 0x10000 full size
+  s32 scaleY;        ///< 16.16 fixed point, 0x10000 full size
+  u16 radius;        ///< ObjectEvent's; not named by this view
+  u8 terrainId;      ///< ObjectEvent's; not named by this view
   /// ObjectEventPriorityFlag bits: the spawner clears
   /// OBJ_EVENT_PRIORITY_AUTOMATIC when EFFECT_USE_PRIORITY sets the sprite's
   /// priority.
   u8 priorityFlags;
   /// ObjectEvent's velocityX to velocityZ; effects move by velocity instead.
-  u8 unk24[0x0c];
+  struct Vector3 objectVelocity;
   /// Added to scaleX each frame by the update hooks, in 16.16 fixed point a
   /// frame; zeroed by the spawner.
   s32 scaleRateX;
   s32 scaleRateY; ///< as scaleRateX, for scaleY
-  u8 unk38[0x0c]; ///< ObjectEvent's targetX to targetZ; not named by this view
+  /// ObjectEvent's targetX to targetZ; not named by this view.
+  ///@{
+  s32 targetX;
+  s32 targetY;
+  s32 targetZ;
+  ///@}
   /// Added to x, y and z each frame by the update hooks, in 16.16 fixed-point
   /// pixels per frame; ObjectEvent's bounce, gravity and riseBaseY.
   struct Vector3 velocity;
   struct AnimationObject *sprite; ///< the sprite spin turns
-  u8 unk54;       ///< ObjectEvent's spriteStorageKind; not named by this view
+  u8 spriteStorageKind;           ///< ObjectEvent's; not named by this view
   u8 motionFlags; ///< ObjectEventMotionFlag bits; zeroed by the spawner
-  u8 unk56[3];    ///< ObjectEvent's unk56; not named by this view
+  /// ObjectEvent's arrival axis, last flag test and snap flag; not named by
+  /// this view.
+  ///@{
+  u8 arrivalAxis;
+  u8 conditionResult;
+  u8 snapToTarget;
+  ///@}
   u8 collisionFlags; ///< ObjectEvent's collisionFlags; not named by this view
   /// ObjectEvent's steeringFlags to riseEnabled; not named by this view.
-  u8 unk5a[0x0a];
+  ///@{
+  u8 steeringFlags;
+  u8 paused;
+  u8 retainSpriteCache;
+  u8 repeatCount;
+  u16 wait;
+  u8 refused;
+  u8 frozen;
+  u8 riseCounter;
+  u8 riseEnabled;
+  ///@}
   /// Added to the sprite's rotation each frame by the update hooks, in
   /// 1/65536 turns per frame; Imil's rising effects keep a drift here instead.
   u16 spin;
-  u8 unk66[2]; ///< ObjectEvent's work; not named by this view
+  u16 work; ///< ObjectEvent's; not named by this view
   /// Frames until a map's update hook releases the effect: 20 for Altin
   /// Peak's spray, 60 for Imil's rising effects.
   s32 countdown;

@@ -9,35 +9,36 @@ struct ObjectCameraTile {
   u32 block : 12;   ///< the metatile number
   u32 layer : 2;    ///< if not 0, the layer of an object standing on it, + 1
   u32 priority : 2; ///< if not 0, the priority of an object standing on it
-  u32 unk10 : 16;
+  /// MapGridCell's metatile behavior and collision attribute; not read here.
+  u32 behaviorAndCollision : 16;
 };
 
 /// An object event (one of gObjectSlots' 64, 0x70 bytes), as the cameras read
 /// it.
 struct ObjectCameraObject {
-  u32 active; ///< zero for a free slot
-  u16 unk04;
-  u16 angle;  ///< the sprite's facing, before the camera's angle is added
-  s32 x;      ///< 16.16 fixed-point pixels, across the map
+  u32 active;       ///< zero for a free slot
+  u16 scriptCursor; ///< ObjectEvent's; not named here
+  u16 angle;        ///< the sprite's facing, before the camera's angle is added
+  s32 x;            ///< 16.16 fixed-point pixels, across the map
   s32 y;      ///< 16.16 fixed-point pixels, up; the on-screen test uses z - y
   s32 z;      ///< 16.16 fixed-point pixels, down the map
   s32 height; ///< the ground height under the object, 16.16 pixels
   s32 scaleX; ///< Q16
   s32 scaleY; ///< Q16
-  u8 unk20[2];
+  u16 radius; ///< ObjectEvent's; not named here
   /// The map layer it stands on, which the cell under it may change; the
   /// fixed camera uses it as the draw slot, 0 to sort by distance.
   u8 layer;
   /// bits: 2 sorted as 320 pixels lower | 1 sorted as 320 pixels higher |
   /// 0 priority from cell
   u8 flags;
-  u8 unk24[0x2c];
+  u8 motionToRise[0x2c]; ///< ObjectEvent's velocityX to riseBaseY
   /// A sprite, or for OBJECT_SPRITE_GROUP an array of four sprite pointers.
   void *sprite;
-  u8 kind; ///< enum ObjectSpriteKind in its low four bits
-  u8 unk55[7];
+  u8 kind;              ///< enum ObjectSpriteKind in its low four bits
+  u8 motionToPaused[7]; ///< ObjectEvent's motionFlags to paused
   u8 held; ///< nonzero keeps the sprite and its VRAM off screen or suspended
-  u8 unk5d[0x13];
+  u8 repeatToUpdate[0x13]; ///< ObjectEvent's repeatCount to its update hook
 };
 
 /// A point the fixed camera looks from or at.

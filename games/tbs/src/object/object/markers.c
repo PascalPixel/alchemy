@@ -19,9 +19,14 @@ void ObjectMotion_SnapToTerrain(void *object) {
 /// The map grid's work (gMapGridWork[0], HEAP_SLOT_MAP_GRID), seen as its
 /// marker list.
 struct MapGridMarkers {
-  u8 unk00[0x10];
-  /// (column, row, id) triples, ended by 255, 255: a 16-pixel cell and the
-  /// trigger of the map event there; NULL for a map with none.
+  /// MapGridScrollWork's origin and shake; not named through this view.
+  ///@{
+  s32 *origin;
+  s32 shakeX, shakeY, shakeDecay;
+  ///@}
+  /// MapGridScrollWork's script, read here as (column, row, id) triples, ended
+  /// by 255, 255: a 16-pixel cell and the trigger of the map event there; NULL
+  /// for a map with none.
   u8 *markers;
 };
 
@@ -105,7 +110,7 @@ void Field_PlaceMapMarkers(void) {
               (struct DispatchObject *)markerObjectEvent);
           markerObjectEvent->homeX = markerObjectEvent->x / 0x10000;
           markerObjectEvent->homeZ = markerObjectEvent->z / 0x10000;
-          markerObjectEvent->unk23 = 1;
+          markerObjectEvent->priorityFlags = 1;
           markerObjectEvent->flags59 = 1;
           marker->id = event->trigger;
           marker->object = (struct ObjectRuntime *)markerObjectEvent;
@@ -135,7 +140,7 @@ void Field_PlaceMapMarkers(void) {
           markerObjectEvent->homeX = markerObjectEvent->x / 0x10000;
           markerObjectEvent->homeZ = markerObjectEvent->z / 0x10000;
           markerObjectEvent->flags59 = 1;
-          markerObjectEvent->unk23 = 1;
+          markerObjectEvent->priorityFlags = 1;
           marker->object = (struct ObjectRuntime *)markerObjectEvent;
           marker->id = event->trigger;
           marker->column = markerObjectEvent->x / 0x100000;

@@ -20,13 +20,15 @@ struct BattleCamera {
   /// the focus along the turned view.
   s32 eye[3];
   s32 focus[3]; ///< the focus, 16.16 fixed-point pixels
-  s32 unk18;    ///< cleared beside followPosition; not read by name in TBS
-  s32 *followPosition; ///< when set, followed instead of focus
-  s32 distance;        ///< eye to focus, 16.16 fixed-point pixels
-  u8 unk24[16];        ///< not named by TBS code
-  u16 pitch;           ///< 1/65536 turns
-  u16 yaw;             ///< 1/65536 turns
-  u8 unk38[20];        ///< not named by TBS code
+  /// XXX: cleared beside followPosition and never read (see the battle
+  /// README).
+  s32 unk18;
+  s32 *followPosition;        ///< when set, followed instead of focus
+  s32 distance;               ///< eye to focus, 16.16 fixed-point pixels
+  u8 unusedAfterDistance[16]; ///< no code names it
+  u16 pitch;                  ///< 1/65536 turns
+  u16 yaw;                    ///< 1/65536 turns
+  u8 unusedAfterYaw[20];      ///< no code names it
 };
 
 STATIC_ASSERT(sizeof(struct BattleCamera) == 0x4c);
@@ -41,15 +43,16 @@ extern struct BattleCamera *gCameraWork;
 /// The battle background's work slot as the camera reads it: the yaw the
 /// camera eases toward and the frames left to ease it.
 struct BattlePresentationTransition {
-  s32 targetYaw; ///< 1/65536 turns
-  s32 frames;    ///< frames left to ease the yaw, a sixteenth a frame
-  u8 unk08[8];   ///< BattleBackgroundView's mode and secondMode
-  s32 active;    ///< BattleBackgroundView's busy, at the same offset
+  s32 targetYaw;  ///< 1/65536 turns
+  s32 frames;     ///< frames left to ease the yaw, a sixteenth a frame
+  s32 mode;       ///< BattleBackgroundView's; not named here
+  s32 secondMode; ///< BattleBackgroundView's; not named here
+  s32 active;     ///< BattleBackgroundView's busy, at the same offset
   /// 0 lets the camera update set the background's range each frame; 1 for
   /// a critical hit's zoom and once a round's view is set.
   s32 flag;
-  s32 unk18; ///< cleared when the battle starts; not read by name in TBS
-  s32 unk1c; ///< cleared when the battle starts; not read by name in TBS
+  s32 unk18; ///< XXX: cleared when the battle starts and never read
+  s32 unk1c; ///< XXX: cleared when the battle starts and never read
 };
 
 /// A presentation step's stack work: the effect command it builds and runs,
@@ -84,8 +87,9 @@ enum BattleBackgroundMode {
 /// The battle background's work slot as the background code reads it: its
 /// display mode.
 struct BattleBackgroundView {
-  u8 unk00[8]; ///< BattlePresentationTransition's targetYaw and frames
-  s32 mode;    ///< enum BattleBackgroundMode
+  s32 targetYaw; ///< BattlePresentationTransition's; not named here
+  s32 frames;    ///< BattlePresentationTransition's; not named here
+  s32 mode;      ///< enum BattleBackgroundMode
   /// BATTLE_BACKGROUND_FLAT also sets BG1's scroll whatever the mode;
   /// the effects' canvas layers set it.
   s32 secondMode;
@@ -105,8 +109,8 @@ struct BattleAffine {
 /// pages of per-line BG2CNT values, swapped each frame, and the affine
 /// parameters.
 struct BattleAffineHdma {
-  u32 page;     ///< the page of lines shown; the other one is built
-  u8 unk04[12]; ///< not named by TBS code
+  u32 page;      ///< the page of lines shown; the other one is built
+  u8 unused[12]; ///< no code names it
   struct BattleAffine affine;
   /// Each scanline's BG2CNT, one page per frame: which half of the picture a
   /// line shows, or the plane off, with BGCNT_WRAP at a zoom of 1 or more.

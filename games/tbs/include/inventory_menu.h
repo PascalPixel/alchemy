@@ -20,9 +20,9 @@ struct UiWindow;
 /// party figures, the items listed and the two choices a command makes. The
 /// menu takes the slot as it opens and frees it as it closes.
 struct InventoryMenuState {
-  u8 unk000[8];      ///< not named by TBS code
+  u8 unused[8];      ///< no view of the menu work names it (see menu/README.md)
   s32 selectedOwner; ///< the party member chosen
-  u8 unk00c[4];      ///< not named by TBS code
+  struct UiWindow *moneyWindow; ///< ShopRuntime's; not named here
   struct UiWindow *mainWindow;
   /// The two panes: the member whose items are shown, and the one an item is
   /// given to.
@@ -37,13 +37,13 @@ struct InventoryMenuState {
   struct UiWindow *infoWindow;
   struct UiWindow *equipWindow;
   struct UiWindow *listWindow;
-  struct UiWindow *unknownWindow38; ///< never given a window; only closed
+  struct UiWindow *unopenedWindow; ///< never given a window; only closed
   struct UiWindow *modalWindow;
-  struct UiWindow *unknownWindow40; ///< never given a window; only closed
-  struct RenderOutput *gridCursor;  ///< only prepared by name in TBS
+  struct UiWindow *secondUnopenedWindow; ///< never given a window; only closed
+  struct RenderOutput *gridCursor;       ///< only prepared by name in TBS
   struct RenderOutput *entryIcons[32];
   struct RenderOutput *categoryIcons[8];
-  u8 unk0e8[0x24]; ///< not named by TBS code
+  u8 unusedAfterIcons[0x24]; ///< no view of the menu work names it
   struct UiWindow *messageWindow;
   /// The cursor grid: its place and its size, 1 by 1 at first.
   ///@{
@@ -59,7 +59,8 @@ struct InventoryMenuState {
   u16 selectedSlots[2]; ///< each pane's inventory slot chosen
   u16 selectedItems[2]; ///< each pane's inventory entry chosen
   struct RenderOutput *cursor;
-  u8 unk180[0x48]; ///< not named by TBS code
+  /// DjinnMenuWork's backdrop pointer at 0x184; no view names the rest.
+  u8 aroundBackdrop[0x48];
   u16 items[32];   ///< the inventory entries listed
   u16 ownerIds[8]; ///< the party in order (Party_ListActiveOwners)
   u8 itemCount;
@@ -68,14 +69,17 @@ struct InventoryMenuState {
   struct RenderOutput *selectedItemIcon;
   u16 flags;          ///< 1 while the item's name and command grid are drawn
   s16 completionFlag; ///< set to 1 as item commands end; not read by name
-  u8 unk224[0x36];    ///< not named by TBS code
-  s16 messageOffset;  ///< the item use's result, after MsgItemUseResult
-  s8 equipPreview;    ///< 1 while the stats preview a removal, not an equip
-  u8 listMode;  ///< the command chosen last (ItemMenuCommand); 0xff for none
-  u8 unk25e[2]; ///< not named by TBS code
+  /// FourObjectMotionState's row of four figures and DjinnMenuWork's pair;
+  /// not named here.
+  u8 figureRow[0x36];
+  s16 messageOffset; ///< the item use's result, after MsgItemUseResult
+  s8 equipPreview;   ///< 1 while the stats preview a removal, not an equip
+  u8 listMode; ///< the command chosen last (ItemMenuCommand); 0xff for none
+  u8 unusedAfterListMode[2];  ///< no view of the menu work names it
   s8 selectedIndexByOwner[8]; ///< each member's entry chosen last
-  u8 mode;          ///< not named through this struct; PsynergyMenuState.mode
-  u8 unk269[0x129]; ///< not named by TBS code
+  u8 mode; ///< not named through this struct; PsynergyMenuState.mode
+  u8 shopStock[0x129];  ///< ShopRuntime's stock, party and cursor; not named
+                        ///< here
   s16 resourceSlots[2]; ///< VRAM cache slots of two arrow pictures
 };
 

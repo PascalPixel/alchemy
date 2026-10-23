@@ -15,18 +15,18 @@ struct PerspectiveWork {
   u8 *script;                     ///< NULL at load
   u16 fade;    ///< MapGridScrollWork's flags: REG_DISPCNT bits, 0x1f00 at load
   u8 fadeStep; ///< MapGridScrollWork's wideTiles, 0x80 at load
-  u8 unk017[0xe4 -
-            0x17]; ///< as MapGridScrollWork: tile animations, blend script
-  s32 viewX;       ///< 16.16 fixed-point pixels
-  s32 viewY;       ///< 16.16 fixed-point pixels
-  s32 scaleX;      ///< 0x200000 at load
-  s32 scaleY;      ///< 0x400000 at load
-  s32 limitX;      ///< 0x1fe00000 at load
-  s32 limitY;      ///< 0x1fe00000 at load
+  /// As MapGridScrollWork: footprints, tile animations and blend script.
+  u8 animationsAndBlend[0xe4 - 0x17];
+  s32 viewX;  ///< 16.16 fixed-point pixels
+  s32 viewY;  ///< 16.16 fixed-point pixels
+  s32 scaleX; ///< 0x200000 at load
+  s32 scaleY; ///< 0x400000 at load
+  s32 limitX; ///< 0x1fe00000 at load
+  s32 limitY; ///< 0x1fe00000 at load
   /// Set by WorldMap_StartStillView while BG1 shows the drawn map; the tile
   /// animations are then neither suspended nor resumed.
   s8 animationActive;
-  u8 unk0fd[3]; ///< not named by TBS code
+  u8 unused[3]; ///< no code names it
   /// Screen rows, 0 and 159 at load and 200 and 255 from
   /// WorldMap_StartStillView; each frame copies them to shownTop and
   /// shownBottom and picks BG mode 2 or 0 from them.
@@ -34,18 +34,18 @@ struct PerspectiveWork {
   u16 windowTop;
   u16 windowBottom;
   ///@}
-  u16 shownTop;      ///< windowTop as the frame update last applied it
-  u16 shownBottom;   ///< windowBottom as the frame update last applied it
-  u16 windowPending; ///< cleared by the frame update; not set by name
-  u8 unk10a[6];      ///< not named by TBS code
+  u16 shownTop;            ///< windowTop as the frame update last applied it
+  u16 shownBottom;         ///< windowBottom as the frame update last applied it
+  u16 windowPending;       ///< cleared by the frame update; not set by name
+  u8 unusedAfterWindow[6]; ///< no code names it
   /// The world map's tile offsets (ResourceId_PerspectiveDataA), each tile
   /// LZ-compressed.
   void *tiles;
-  u8 unk114[4];     ///< not named by TBS code
-  u16 pitch;        ///< 1/65536 turns
-  u16 yaw;          ///< 1/65536 turns
-  u32 *resources;   ///< a row of gWorldMap_GraphicsResources, by terrain
-  u8 unk120[0x18];  ///< not named by TBS code
+  u8 unusedAfterTiles[4]; ///< no code names it
+  u16 pitch;              ///< 1/65536 turns
+  u16 yaw;                ///< 1/65536 turns
+  u32 *resources;         ///< a row of gWorldMap_GraphicsResources, by terrain
+  u8 unusedAfterResources[0x18]; ///< no code names it
   u16 tileIds[256]; ///< the world map tile in each of 16 by 16 cells
   /// The tile each quarter of each layer's block buffer shows, so an unchanged
   /// quarter is not decoded again.

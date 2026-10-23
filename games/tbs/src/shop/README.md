@@ -373,12 +373,13 @@ work block's layout, `struct ShopWork`, is in
 | Prefix | What it acts on |
 | --- | --- |
 | `Shop_` | the shops' screens, and anything every counter shares |
-| `ShopCursor_` | the hand cursor |
-| `UiMessage_` | the keepers' messages: show, wait, choose |
+| `MenuCursor_` | the hand cursor the shops, the naming screen and the option and pause menus share |
+| `QuantityBar_` | the quantity bar the shops and the Item screen colour in |
+| `ItemPicker_` | choosing which member's item to drop when every bag is full |
 | `ShopStock_` | the stock rows |
 | `Sanctum_` | the sanctum's services |
 | `Inn_` | the inn |
-| `BattleUnit_`, `AudioCommand_`, `NodeChain_` | things the engine names elsewhere |
+| `BattleUnit_`, `Sound_`, `NodeChain_` | things the engine names elsewhere |
 
 Map [overlays](../../glossary.md#overlay) import these functions by name (`games/tbs/src/map/import/`),
 and the far-call table `system/far_call/SHOP.S` names them with `Far` added,

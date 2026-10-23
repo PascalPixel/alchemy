@@ -974,33 +974,33 @@ s32 gXian_TrainingParticleScript[] = {
 
 /// The doors' opening frames, copied from map cells.
 u16 gXian_HouseDoorOpens[] = {
-    MAPGRID_ANIM_STEP(64, 48, 1, 2, 4),
-    MAPGRID_ANIM_STEP(63, 48, 1, 2, 4),
-    MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(64, 48, 1, 2, 4),
+    MAPGRID_ANIMATION_STEP(63, 48, 1, 2, 4),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
 u16 gXian_NorthHouseDoorOpens[] = {
-    MAPGRID_ANIM_STEP(69, 50, 2, 2, 4),
-    MAPGRID_ANIM_STEP(65, 50, 2, 2, 4),
-    MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(69, 50, 2, 2, 4),
+    MAPGRID_ANIMATION_STEP(65, 50, 2, 2, 4),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
 u16 gXian_InnDoorOpens[] = {
-    MAPGRID_ANIM_STEP(66, 46, 3, 2, 4),
-    MAPGRID_ANIM_STEP(63, 46, 3, 2, 4),
-    MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(66, 46, 3, 2, 4),
+    MAPGRID_ANIMATION_STEP(63, 46, 3, 2, 4),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
 u16 gXian_SanctumDoorOpens[] = {
-    MAPGRID_ANIM_STEP(67, 50, 4, 2, 4),
-    MAPGRID_ANIM_STEP(63, 50, 4, 2, 4),
-    MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(67, 50, 4, 2, 4),
+    MAPGRID_ANIMATION_STEP(63, 50, 4, 2, 4),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
 u16 gXian_SchoolDoorOpens[] = {
-    MAPGRID_ANIM_STEP(66, 44, 3, 2, 4),
-    MAPGRID_ANIM_STEP(63, 44, 3, 2, 4),
-    MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(66, 44, 3, 2, 4),
+    MAPGRID_ANIMATION_STEP(63, 44, 3, 2, 4),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
 struct MapWarpDest gXian_WarpDests[] = {

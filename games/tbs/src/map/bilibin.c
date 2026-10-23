@@ -1028,12 +1028,12 @@ s32 gBilibin_FaceLeaderScript[] = {
 };
 
 /// Unused: the warp destinations for a map other than the three, which never
-/// loads this overlay. Its words read as a MAPGRID_ANIM_STEP list, not as warp
-/// destinations.
+/// loads this overlay. Its words read as a MAPGRID_ANIMATION_STEP list, not as
+/// warp destinations.
 u16 gBilibinWarpDestsOther[] = {
-    MAPGRID_ANIM_STEP(0, 65535, 168, 0, 168),
-    MAPGRID_ANIM_STEP(16384, 0, 65535, 65535, 65535),
-    MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(0, 65535, 168, 0, 168),
+    MAPGRID_ANIMATION_STEP(16384, 0, 65535, 65535, 65535),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
 struct MapWarpDest gBilibinWarpDests[] = {
@@ -1303,31 +1303,31 @@ struct MapEvent gBilibinTreasuryEvents[] = {
 };
 
 u16 gBilibin_SanctumDoorSteps[] = {
-    MAPGRID_ANIM_STEP(37, 33, 4, 2, 5), MAPGRID_ANIM_STEP(33, 33, 4, 2, 5), MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(37, 33, 4, 2, 5), MAPGRID_ANIMATION_STEP(33, 33, 4, 2, 5), MAPGRID_ANIMATION_STEPS_END,
 };
 
 u16 gBilibin_ItemShopDoorSteps[] = {
-    MAPGRID_ANIM_STEP(35, 43, 2, 2, 5), MAPGRID_ANIM_STEP(33, 43, 2, 2, 5), MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(35, 43, 2, 2, 5), MAPGRID_ANIMATION_STEP(33, 43, 2, 2, 5), MAPGRID_ANIMATION_STEPS_END,
 };
 
 u16 gBilibin_WeaponAndArmorShopDoorSteps[] = {
-    MAPGRID_ANIM_STEP(35, 52, 2, 2, 5), MAPGRID_ANIM_STEP(33, 52, 2, 2, 5), MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(35, 52, 2, 2, 5), MAPGRID_ANIMATION_STEP(33, 52, 2, 2, 5), MAPGRID_ANIMATION_STEPS_END,
 };
 
 u16 gBilibin_HouseEastDoorSteps[] = {
-    MAPGRID_ANIM_STEP(35, 54, 2, 2, 5), MAPGRID_ANIM_STEP(33, 54, 2, 2, 5), MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(35, 54, 2, 2, 5), MAPGRID_ANIMATION_STEP(33, 54, 2, 2, 5), MAPGRID_ANIMATION_STEPS_END,
 };
 
 u16 gBilibin_InnDoorSteps[] = {
-    MAPGRID_ANIM_STEP(35, 48, 2, 2, 5), MAPGRID_ANIM_STEP(33, 48, 2, 2, 5), MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(35, 48, 2, 2, 5), MAPGRID_ANIMATION_STEP(33, 48, 2, 2, 5), MAPGRID_ANIMATION_STEPS_END,
 };
 
 u16 gBilibin_HouseWestDoorSteps[] = {
-    MAPGRID_ANIM_STEP(35, 46, 2, 2, 5), MAPGRID_ANIM_STEP(33, 46, 2, 2, 5), MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(35, 46, 2, 2, 5), MAPGRID_ANIMATION_STEP(33, 46, 2, 2, 5), MAPGRID_ANIMATION_STEPS_END,
 };
 
 u16 gBilibin_HouseNorthDoorSteps[] = {
-    MAPGRID_ANIM_STEP(35, 50, 2, 2, 5), MAPGRID_ANIM_STEP(33, 50, 2, 2, 5), MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(35, 50, 2, 2, 5), MAPGRID_ANIMATION_STEP(33, 50, 2, 2, 5), MAPGRID_ANIMATION_STEPS_END,
 };
 
 u16 *gBilibin_DoorSteps[] = {

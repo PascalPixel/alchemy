@@ -1908,17 +1908,17 @@ s32 gTunnelRuins_DouseSplashScript[] = {
 };
 
 u16 gTunnelRuins_DoorOpenSteps[] = {
-    MAPGRID_ANIM_STEP(28, 59, 1, 2, 4),
-    MAPGRID_ANIM_STEP(26, 59, 1, 2, 4),
-    MAPGRID_ANIM_STEP(24, 59, 1, 2, 4),
-    MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(28, 59, 1, 2, 4),
+    MAPGRID_ANIMATION_STEP(26, 59, 1, 2, 4),
+    MAPGRID_ANIMATION_STEP(24, 59, 1, 2, 4),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
 u16 gTunnelRuins_DoorCloseSteps[] = {
-    MAPGRID_ANIM_STEP(26, 59, 1, 2, 4),
-    MAPGRID_ANIM_STEP(28, 59, 1, 2, 4),
-    MAPGRID_ANIM_STEP(30, 59, 1, 2, 4),
-    MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(26, 59, 1, 2, 4),
+    MAPGRID_ANIMATION_STEP(28, 59, 1, 2, 4),
+    MAPGRID_ANIMATION_STEP(30, 59, 1, 2, 4),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
 struct MapWarpDest gTunnelRuinsWarpDestsOther[] = {

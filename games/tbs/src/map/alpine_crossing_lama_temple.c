@@ -1081,15 +1081,15 @@ s32 gAlpineCrossing_HsuStruggle[] = {
 
 /// The door of Hama's room sliding open, and shut again.
 u16 gLamaTemple_DoorOpenCells[] = {
-    MAPGRID_ANIM_STEP(66, 46, 3, 2, 5),
-    MAPGRID_ANIM_STEP(63, 46, 3, 2, 5),
-    MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(66, 46, 3, 2, 5),
+    MAPGRID_ANIMATION_STEP(63, 46, 3, 2, 5),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
 u16 gLamaTemple_DoorCloseCells[] = {
-    MAPGRID_ANIM_STEP(66, 46, 3, 2, 5),
-    MAPGRID_ANIM_STEP(69, 46, 3, 2, 5),
-    MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(66, 46, 3, 2, 5),
+    MAPGRID_ANIMATION_STEP(69, 46, 3, 2, 5),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
 struct MapWarpDest gLamaTemple_WarpDests[] = {

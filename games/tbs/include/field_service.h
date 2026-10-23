@@ -124,10 +124,10 @@ static inline void Script_Wait(s32 frames) { Engine_ScriptWait(frames); }
 static inline void Script_WaitForScreen(void) { Engine_ScriptWaitForScreen(); }
 
 /// Sends an object toward a point, where it coasts to a stop.
-static inline void FieldObject_SetPosition(struct ObjectEvent *object,
+static inline void FieldObject_SetPosition(struct ObjectEvent *objectEvent,
                                            s32 fixed_x, s32 fixed_y,
                                            s32 fixed_z) {
-  Engine_ObjectSetPosition(object, fixed_x, fixed_y, fixed_z);
+  Engine_ObjectSetPosition(objectEvent, fixed_x, fixed_y, fixed_z);
 }
 
 /// Takes a work block for a map from its heap slot, or returns the block the

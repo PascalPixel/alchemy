@@ -2110,7 +2110,7 @@ s32 gEffectScript2[] = {
 };
 
 u16 gCrossboneIsle_EntranceCells[] = {
-    MAPGRID_ANIM_STEP(58, 23, 1, 2, 5), MAPGRID_ANIM_STEP(59, 23, 1, 2, 5), MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(58, 23, 1, 2, 5), MAPGRID_ANIMATION_STEP(59, 23, 1, 2, 5), MAPGRID_ANIMATION_STEPS_END,
 };
 
 const s32 *gEffectScripts[] = {

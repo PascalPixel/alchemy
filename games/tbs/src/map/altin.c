@@ -1425,47 +1425,47 @@ struct MapEvent gAltinHouses_Events[] = {
 /// Sanctum's door (the second) is wider, and Village_EnterDoor redraws it by
 /// hand instead.
 u16 gAltinVillage_SanctumDoorCells[] = {
-    MAPGRID_ANIM_STEP(42, 33, 2, 2, 0),
-    MAPGRID_ANIM_STEP(42, 35, 2, 2, 5),
-    MAPGRID_ANIM_STEP(40, 33, 2, 2, 0),
-    MAPGRID_ANIM_STEP(40, 35, 2, 2, 5),
-    MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(42, 33, 2, 2, 0),
+    MAPGRID_ANIMATION_STEP(42, 35, 2, 2, 5),
+    MAPGRID_ANIMATION_STEP(40, 33, 2, 2, 0),
+    MAPGRID_ANIMATION_STEP(40, 35, 2, 2, 5),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
 u16 gAltinVillage_SouthwestDoorCells[] = {
-    MAPGRID_ANIM_STEP(35, 48, 2, 2, 5),
-    MAPGRID_ANIM_STEP(33, 48, 2, 2, 5),
-    MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(35, 48, 2, 2, 5),
+    MAPGRID_ANIMATION_STEP(33, 48, 2, 2, 5),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
 u16 gAltinVillage_SoutheastDoorCells[] = {
-    MAPGRID_ANIM_STEP(35, 35, 2, 2, 5),
-    MAPGRID_ANIM_STEP(33, 35, 2, 2, 5),
-    MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(35, 35, 2, 2, 5),
+    MAPGRID_ANIMATION_STEP(33, 35, 2, 2, 5),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
 u16 gAltinVillage_EastDoorCells[] = {
-    MAPGRID_ANIM_STEP(35, 46, 2, 2, 5),
-    MAPGRID_ANIM_STEP(33, 46, 2, 2, 5),
-    MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(35, 46, 2, 2, 5),
+    MAPGRID_ANIMATION_STEP(33, 46, 2, 2, 5),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
 u16 gAltinVillage_NorthwestDoorCells[] = {
-    MAPGRID_ANIM_STEP(35, 50, 2, 2, 5),
-    MAPGRID_ANIM_STEP(33, 50, 2, 2, 5),
-    MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(35, 50, 2, 2, 5),
+    MAPGRID_ANIMATION_STEP(33, 50, 2, 2, 5),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
 u16 gAltinVillage_NorthAndWestDoorCells[] = {
-    MAPGRID_ANIM_STEP(35, 33, 2, 2, 5),
-    MAPGRID_ANIM_STEP(33, 33, 2, 2, 5),
-    MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(35, 33, 2, 2, 5),
+    MAPGRID_ANIMATION_STEP(33, 33, 2, 2, 5),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
 u16 gAltinVillage_NortheastDoorCells[] = {
-    MAPGRID_ANIM_STEP(35, 52, 2, 2, 5),
-    MAPGRID_ANIM_STEP(33, 52, 2, 2, 5),
-    MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(35, 52, 2, 2, 5),
+    MAPGRID_ANIMATION_STEP(33, 52, 2, 2, 5),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
 /// Each door coord event's opening picture and cell, from coord event 2.

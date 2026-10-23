@@ -46,7 +46,7 @@ loads the field map again with `FLAG_KEEP_PARTY_POSITION` set, and
 | `FLAG_KEEP_PARTY_POSITION` | 265 (`0x109`) | the next field map starts where the party was |
 
 [Field](src/field/README.md#the-walk-and-what-interrupts-it) explains the
-walk, and [Running a map](src/object/README.md#the-scene-loop-handles-requests-not-events)
+walk, and [Running a map](src/object/README.md#the-map-loop-handles-requests-not-scripts)
 lists all twelve requests in the order they are handled and goes through
 each one.
 

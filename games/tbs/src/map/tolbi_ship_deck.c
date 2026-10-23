@@ -1202,7 +1202,7 @@ static void TolbiShipDeck_ConfrontCrewman(void) {
   GameFlag_Set(FLAG_TOLBI_SHIP_CREWMAN_CAUGHT);
 }
 
-/// Sets up the map on entry: clears FLAG_NOT_ON_WORLD_MAP, sets the
+/// Sets up the map on entry: clears FLAG_WORLD_MAP_LEFT, sets the
 /// transition, starts the deck's sway at a random angle and stops the sea's
 /// scroll, redraws the map grid and applies the voyage's state.
 s32 TolbiShipDeck_Initialize(void) {
@@ -1210,7 +1210,7 @@ s32 TolbiShipDeck_Initialize(void) {
   struct MapGridLayerScroll *layer =
       &((struct MapGridScrollWork *)base[0])->layers[MAPGRID_LAYER_GROUND];
 
-  Engine_GameFlagClear(FLAG_NOT_ON_WORLD_MAP);
+  Engine_GameFlagClear(FLAG_WORLD_MAP_LEFT);
   ((struct EventWork *)base[HEAP_SLOT_EVENT - HEAP_SLOT_MAP_GRID])
       ->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);

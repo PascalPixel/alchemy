@@ -580,7 +580,7 @@ struct MapEvent gValeEruption_Events[] = {
 
 /// The sanctum's door, two cells wide, opening in two steps.
 u16 gValeEruption_SanctumDoorOpens[] = {
-    MAPGRID_ANIM_STEP(0, 98, 2, 2, 2),
-    MAPGRID_ANIM_STEP(2, 98, 2, 2, 2),
-    MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(0, 98, 2, 2, 2),
+    MAPGRID_ANIMATION_STEP(2, 98, 2, 2, 2),
+    MAPGRID_ANIMATION_STEPS_END,
 };

@@ -1329,7 +1329,7 @@ struct MapEvent gValeKraden_EventsAfterKalay[] = {
 // clang-format on
 
 u16 gValeKraden_GateCells[] = {
-    MAPGRID_ANIM_STEP(2, 36, 2, 2, 1),
-    MAPGRID_ANIM_STEP(4, 36, 2, 2, 1),
-    MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(2, 36, 2, 2, 1),
+    MAPGRID_ANIMATION_STEP(4, 36, 2, 2, 1),
+    MAPGRID_ANIMATION_STEPS_END,
 };

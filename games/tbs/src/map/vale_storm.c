@@ -3601,44 +3601,44 @@ struct MapEvent gValeStorm_Events[] = {
 
 /// The Sanctum's door (ValeStorm_UnusedOpenSanctumDoor).
 u16 gValeStorm_SanctumDoorOpens[] = {
-    MAPGRID_ANIM_STEP(0, 98, 2, 2, 2),
-    MAPGRID_ANIM_STEP(2, 98, 2, 2, 2),
-    MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(0, 98, 2, 2, 2),
+    MAPGRID_ANIMATION_STEP(2, 98, 2, 2, 2),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
 /// The door of Isaac's house, and of Garet's and the house by the river.
 u16 gValeStorm_IsaacsDoorOpens[] = {
-    MAPGRID_ANIM_STEP(0, 96, 2, 2, 2),
-    MAPGRID_ANIM_STEP(2, 96, 2, 2, 2),
-    MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(0, 96, 2, 2, 2),
+    MAPGRID_ANIMATION_STEP(2, 96, 2, 2, 2),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
 /// The door of the house of Jenna's grandparents, and two more of the kind.
 u16 gValeStorm_GrandparentsDoorOpens[] = {
-    MAPGRID_ANIM_STEP(4, 98, 2, 2, 2),
-    MAPGRID_ANIM_STEP(6, 98, 2, 2, 2),
-    MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(4, 98, 2, 2, 2),
+    MAPGRID_ANIMATION_STEP(6, 98, 2, 2, 2),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
 /// The door VALE_STORM_TO_VALE_INTERIORS_SHOPS_WEST goes through.
 u16 gValeStorm_WestHouseDoorOpens[] = {
-    MAPGRID_ANIM_STEP(4, 96, 2, 2, 2),
-    MAPGRID_ANIM_STEP(6, 96, 2, 2, 2),
-    MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(4, 96, 2, 2, 2),
+    MAPGRID_ANIMATION_STEP(6, 96, 2, 2, 2),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
 /// Shuts a door of gValeStorm_IsaacsDoorOpens's kind, with the shut picture
 /// of Isaac's door, after Dora and Jenna come out of the house by the river.
 u16 gValeStorm_IsaacsDoorCloses[] = {
-    MAPGRID_ANIM_STEP(0, 96, 2, 2, 2),
-    MAPGRID_ANIM_STEP(50, 44, 2, 2, 2),
-    MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(0, 96, 2, 2, 2),
+    MAPGRID_ANIMATION_STEP(50, 44, 2, 2, 2),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
 /// Shuts a door of gValeStorm_GrandparentsDoorOpens's kind behind Dora and
 /// Jenna as they go into the house by the river.
 u16 gValeStorm_GrandparentsDoorCloses[] = {
-    MAPGRID_ANIM_STEP(4, 98, 2, 2, 2),
-    MAPGRID_ANIM_STEP(44, 108, 2, 2, 2),
-    MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(4, 98, 2, 2, 2),
+    MAPGRID_ANIMATION_STEP(44, 108, 2, 2, 2),
+    MAPGRID_ANIMATION_STEPS_END,
 };

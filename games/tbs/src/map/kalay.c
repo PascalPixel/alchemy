@@ -3087,9 +3087,9 @@ struct MapEvent gKalay_TunnelEvents[] = {
 // clang-format on
 
 u16 gKalay_DoorCellSteps[] = {
-    MAPGRID_ANIM_STEP(35, 33, 1, 2, 5),
-    MAPGRID_ANIM_STEP(37, 33, 1, 2, 5),
-    MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(35, 33, 1, 2, 5),
+    MAPGRID_ANIMATION_STEP(37, 33, 1, 2, 5),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
 struct MapGridCellAnimation gKalay_DoorCells[] = {

@@ -1007,9 +1007,9 @@ struct MapEvent gTolbiInteriorsEventsAfterColosso[] = {
 // clang-format on
 
 u16 gTolbiInteriorsDoorOpening[] = {
-    MAPGRID_ANIM_STEP(2, 123, 1, 2, 6),
-    MAPGRID_ANIM_STEP(4, 123, 1, 2, 6),
-    MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(2, 123, 1, 2, 6),
+    MAPGRID_ANIMATION_STEP(4, 123, 1, 2, 6),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
 struct MapGridCellAnimation gTolbiInteriorsDoors[] = {

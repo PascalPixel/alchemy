@@ -588,6 +588,7 @@ and a part undefines its macros at its end.
 | Prefix | What it covers |
 | --- | --- |
 | `Sprite_`, `Render_` | drawing sprites |
+| `SpriteDissolve_` | dissolving a sprite into or out of view, pixel by pixel |
 | `Animation_`, `AnimationObject_`, `ResourceMetadata_`, `ResourceObject_`, `ResourceSlot_` | sprites, their layers and the resource slots they draw from |
 | `ObjectSystem_`, `ObjectDispatch_`, `FieldObject_`, `Object_` | keeping and moving objects |
 | `ActionScript_` | object script commands |
@@ -595,9 +596,9 @@ and a part undefines its macros at its end.
 | `MapGrid_`, `TileMap_` | layered maps, their cells and the BG maps built from them |
 | `WorldMap_` | the world map |
 | `GetWorldMap`, `CheckWorldMap` | the ground under a point on the world map; `MapGrid_GetMetatileBehaviorAt`, `MapGrid_SetMetatileBehaviorAt` and `MapGrid_IsWallAt` ask the same of a layered map |
-| `MapAnimation_`, `DisplayBlend_`, `PaletteQueue_` | tile animation, the blend script and palette cycles |
+| `TileAnimation_`, `DisplayBlend_`, `PaletteQueue_` | tile animation, the blend script and palette cycles |
 | `Curve_` | ground height functions |
-| `Ui_` | the debug sprite viewer |
+| `Ui_`, `SpriteViewer_` | the debug sprite viewer |
 | `LuckyDice_` | the Lucky Dice minigame |
 | `ScriptObject_` | the overlap and wandering tests object scripts run |
 | `ObjectCamera_` | a camera hook that returns 1 and nothing calls (`object_camera.c`) |

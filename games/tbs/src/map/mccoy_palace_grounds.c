@@ -485,7 +485,7 @@ static void McCoyPalaceGrounds_OpenGate(void) {
 // clang-format off
 /// The gate opening: three steps of cells, 5 frames each.
 u16 gPalaceGateOpenSteps[] = {
-    MAPGRID_ANIM_STEP(34, 25, 1, 3, 5), MAPGRID_ANIM_STEP(35, 25, 1, 3, 5), MAPGRID_ANIM_STEP(36, 25, 1, 3, 5), MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(34, 25, 1, 3, 5), MAPGRID_ANIMATION_STEP(35, 25, 1, 3, 5), MAPGRID_ANIMATION_STEP(36, 25, 1, 3, 5), MAPGRID_ANIMATION_STEPS_END,
 };
 
 /// A guard turns to keep facing the party.

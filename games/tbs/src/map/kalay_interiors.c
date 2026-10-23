@@ -739,9 +739,9 @@ struct MapEvent gKalayInteriors_SanctumEvents[] = {
 // clang-format on
 
 u16 gKalayInteriors_DoorCellSteps[] = {
-    MAPGRID_ANIM_STEP(7, 125, 1, 2, 5),
-    MAPGRID_ANIM_STEP(8, 125, 1, 2, 5),
-    MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(7, 125, 1, 2, 5),
+    MAPGRID_ANIMATION_STEP(8, 125, 1, 2, 5),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
 struct MapGridCellAnimation gKalayInteriors_DoorCells[] = {

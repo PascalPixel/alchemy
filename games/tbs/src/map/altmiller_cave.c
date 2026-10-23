@@ -489,11 +489,11 @@ static void AltmillerCave_StartReveal(void) {
 /// Reveal's light ends: the cave darkens again and AltmillerCaveDraught's rocks
 /// lose their colors.
 static void AltmillerCave_EndReveal(void) {
-  struct FieldEffectWork *work = (struct FieldEffectWork *)gEffectWork;
+  struct FieldEffectWork *effectWork = (struct FieldEffectWork *)gEffectWork;
 
   if (Engine_GameFlagIsSet(FLAG_DARK) != 0) {
     AltmillerCave_InitializeDarkness();
-    work->childOption = 1;
+    effectWork->childOption = 1;
   }
   if (gGameState.mapId == (s32)&MapId_AltmillerCaveDraught) {
     Engine_ObjectEventSetChildValue(LOCALID_BLUE_ROCK, COLOR_NONE);

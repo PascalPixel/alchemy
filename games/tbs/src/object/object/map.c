@@ -358,7 +358,7 @@ void Map_ResetFlagsOnEnter(s32 unused, s32 keep) {
     // (Encounter_SelectEnemyGroup).
     GameFlag_ClearBitFar(FLAG_NO_ENCOUNTERS_IN_MAPSEC);
     GameFlag_ClearBitFar(FLAG_IN_TOWN);
-    GameFlag_ClearBitFar(FLAG_NOT_ON_WORLD_MAP);
+    GameFlag_ClearBitFar(FLAG_WORLD_MAP_LEFT);
     gGameState.returnCue = -1;
   }
   gGameState.mapSec = group;

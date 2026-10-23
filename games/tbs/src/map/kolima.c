@@ -1797,9 +1797,9 @@ s32 gKolima_FaceLeaderScript[] = {
 
 /// A door opening: two frames of a cell column two cells high.
 u16 gKolima_DoorCells[] = {
-    MAPGRID_ANIM_STEP(66, 32, 1, 2, 4),
-    MAPGRID_ANIM_STEP(67, 32, 1, 2, 4),
-    MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(66, 32, 1, 2, 4),
+    MAPGRID_ANIMATION_STEP(67, 32, 1, 2, 4),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
 /// Kolima's warp destinations. No warp leads to warp destinations 2, 10 and 12;

@@ -122,7 +122,7 @@
 /// LunpaFortressGroundFloor's people, numbered in the order of
 /// gLunpaFortressGroundFloorObjectEventTemplates from LOCALID_FIRST_PLACED,
 /// past its first four rows (in a chest's sprite, at the map's origin; see
-/// LOCALID_FIRST_ITEM_DISPLAY).
+/// FIRST_ITEM_DISPLAY_LOCALID).
 enum {
   /// Dodonpa's men, here and upstairs, wear the sprite of a man with a mop
   /// of orange hair (SPRITE_MAN_WITH_ORANGE_HAIR).
@@ -577,11 +577,11 @@ static void EventScript_SearchSealedDoor(void) {
   Engine_MessageShowCentered(MsgFieldDoorTightlyLocked, 1);
 }
 
-/// The four object events from LOCALID_FIRST_ITEM_DISPLAY that the unused item
+/// The four object events from FIRST_ITEM_DISPLAY_LOCALID that the unused item
 /// pickups below show their items on, in a map they do not name. XXX: likely
 /// LunpaFortressGroundFloor's first four rows (in a chest's sprite, at the
 /// map's origin), because nothing else uses them.
-enum { LOCALID_FIRST_ITEM_DISPLAY = LOCALID_FIRST_PLACED };
+enum { FIRST_ITEM_DISPLAY_LOCALID = LOCALID_FIRST_PLACED };
 
 /// Unused: nothing calls this pickup or the three after it. Together they
 /// would set out an Arctic Blade, a Masamune, a Silver Blade and a Shamshir on
@@ -589,7 +589,7 @@ enum { LOCALID_FIRST_ITEM_DISPLAY = LOCALID_FIRST_PLACED };
 /// (FLAG_LUNPA_FORTRESS_ARCTIC_BLADE to FLAG_LUNPA_FORTRESS_SHAMSHIR); this one
 /// takes the Arctic Blade.
 static void UNUSED LunpaFortress_UnusedTakeArcticBlade(void) {
-  if (LunpaFortress_TryCollectDisplayedItem(LOCALID_FIRST_ITEM_DISPLAY,
+  if (LunpaFortress_TryCollectDisplayedItem(FIRST_ITEM_DISPLAY_LOCALID,
                                             ITEM_ARCTIC_BLADE) != 0) {
     Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_ARCTIC_BLADE);
   }
@@ -597,7 +597,7 @@ static void UNUSED LunpaFortress_UnusedTakeArcticBlade(void) {
 
 /// Unused: the Masamune, on the second display object event.
 static void UNUSED LunpaFortress_UnusedTakeMasamune(void) {
-  if (LunpaFortress_TryCollectDisplayedItem(LOCALID_FIRST_ITEM_DISPLAY + 1,
+  if (LunpaFortress_TryCollectDisplayedItem(FIRST_ITEM_DISPLAY_LOCALID + 1,
                                             ITEM_MASAMUNE) != 0) {
     Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_MASAMUNE);
   }
@@ -605,7 +605,7 @@ static void UNUSED LunpaFortress_UnusedTakeMasamune(void) {
 
 /// Unused: the Silver Blade, on the third display object event.
 static void UNUSED LunpaFortress_UnusedTakeSilverBlade(void) {
-  if (LunpaFortress_TryCollectDisplayedItem(LOCALID_FIRST_ITEM_DISPLAY + 2,
+  if (LunpaFortress_TryCollectDisplayedItem(FIRST_ITEM_DISPLAY_LOCALID + 2,
                                             ITEM_SILVER_BLADE) != 0) {
     Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_SILVER_BLADE);
   }
@@ -613,7 +613,7 @@ static void UNUSED LunpaFortress_UnusedTakeSilverBlade(void) {
 
 /// Unused: the Shamshir, on the fourth display object event.
 static void UNUSED LunpaFortress_UnusedTakeShamshir(void) {
-  if (LunpaFortress_TryCollectDisplayedItem(LOCALID_FIRST_ITEM_DISPLAY + 3,
+  if (LunpaFortress_TryCollectDisplayedItem(FIRST_ITEM_DISPLAY_LOCALID + 3,
                                             ITEM_SHAMSHIR) != 0) {
     Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_SHAMSHIR);
   }
@@ -3668,7 +3668,7 @@ struct ObjectEventTemplate gLunpaFortressUnusedWestLunpaCaveObjectEventTemplates
 
 struct ObjectEventTemplate gLunpaFortressGroundFloorObjectEventTemplates[] = {
     // Unused: four chests at the map's origin, the display object events of the
-    // unused sword pickups (LOCALID_FIRST_ITEM_DISPLAY).
+    // unused sword pickups (FIRST_ITEM_DISPLAY_LOCALID).
     { SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

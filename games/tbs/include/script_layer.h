@@ -114,14 +114,15 @@ enum ObjectEventAnimation {
 
 /// One step of a cell animation: copy the width by height cells at sourceX,
 /// sourceY over the destination, then wait frames.
-#define MAPGRID_ANIM_STEP(sourceX, sourceY, width, height, frames)             \
+#define MAPGRID_ANIMATION_STEP(sourceX, sourceY, width, height, frames)        \
   (sourceX), (sourceY), (width), (height), (frames)
-#define MAPGRID_ANIM_STEPS_END 0xffff ///< a source column that ends the steps
+#define MAPGRID_ANIMATION_STEPS_END                                            \
+  0xffff ///< a source column that ends the steps
 
 /// A cell animation, such as a door opening: its steps and the cell they are
 /// copied to (MapGrid_PlayMetatileCopySequence, which blocks until the last).
 struct MapGridCellAnimation {
-  /// MAPGRID_ANIM_STEP records, ended by MAPGRID_ANIM_STEPS_END, for
+  /// MAPGRID_ANIMATION_STEP records, ended by MAPGRID_ANIMATION_STEPS_END, for
   /// MapGrid_PlayMetatileCopySequence.
   const u16 *steps;
   u16 x; ///< destination cell column
@@ -342,7 +343,7 @@ void Engine_ObjectSetPartPalettes(struct ObjectEvent *object, s32 palette);
 /// (Object_SetMoveTarget).
 void Engine_ObjectSetPosition(struct ObjectEvent *object, s32 fixed_x,
                               s32 fixed_y, s32 fixed_z);
-/// Plays a cell animation's MAPGRID_ANIM_STEP records onto the cell at
+/// Plays a cell animation's MAPGRID_ANIMATION_STEP records onto the cell at
 /// (destinationX, destinationY), returning only after the last
 /// (MapGrid_PlayMetatileCopySequence).
 void Engine_MapGridAnimateCells(const u16 *steps, s32 destinationX,

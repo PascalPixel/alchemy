@@ -141,7 +141,7 @@ void FieldEffect_SetupResourcesAndWindow(void) {
 #endif
   }
   MemFree(markerTiles);
-  if (GameFlag_TestFar(FLAG_NOT_ON_WORLD_MAP)) {
+  if (GameFlag_TestFar(FLAG_WORLD_MAP_LEFT)) {
     work->cursorX.fixed = WORLD_MAP_SCREEN_WIDTH << 15;
     work->cursorY.fixed = WORLD_MAP_SCREEN_HEIGHT << 15;
   } else {
@@ -249,8 +249,7 @@ void WorldMap_UpdateMarkers(void) {
 
   // Field_RunMap creates the selected object event before event -888 opens this
   // screen. No object event task removes it while the marker callback runs.
-  if (!GameFlag_TestFar(FLAG_NOT_ON_WORLD_MAP) &&
-      (gKeysHeld & KEYS_SHOULDERS)) {
+  if (!GameFlag_TestFar(FLAG_WORLD_MAP_LEFT) && (gKeysHeld & KEYS_SHOULDERS)) {
     // L or R: the current map section.
     mapSecObjectEvent = ObjectTable_Get(gGameState.selectedObjectEvent);
 #ifdef UBFIX
@@ -301,7 +300,7 @@ void WorldMap_UpdateMarkers(void) {
     if (markerIndex != leader && markerIndex < WORLD_MAP_FIRST_MAPSEC_OBJ_EVENT)
       continue;
     if (markerIndex == 0) {
-      if (GameFlag_TestFar(FLAG_NOT_ON_WORLD_MAP))
+      if (GameFlag_TestFar(FLAG_WORLD_MAP_LEFT))
         continue;
       tile = 0;
       flag = leader;
@@ -487,7 +486,7 @@ void WorldMap_Show(s32 picture) {
   FieldEffect_SetupResourcesAndWindow();
   Scheduler_AddOrUpdateCallback(WorldMap_UpdateMarkers,
                                 SCHEDULER_KEY_MAIN_LOOP);
-  if (GameFlag_TestFar(FLAG_NOT_ON_WORLD_MAP))
+  if (GameFlag_TestFar(FLAG_WORLD_MAP_LEFT))
     UiText_ShowPositionedMessageAndWaitFar(MsgNotOnMap, 1);
   do {
     WaitFrames(1);

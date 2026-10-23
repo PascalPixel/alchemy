@@ -24,18 +24,18 @@
 /// with the icon of item: the icon's tiles, decoded into heap block 17, are
 /// loaded into the sprite's VRAM block and its animation is stopped.
 void Colosso_ShowItemIcon(s32 id, s32 item) {
-  struct ObjectEvent *obj;
+  struct ObjectEvent *objectEvent;
   s32 one;
   struct AnimationObject *spr;
   s32 base;
   s32 tile;
   s32 none;
 
-  obj = ObjectEvent_GetById(id);
-  if (obj != 0) {
-    one = obj->spriteStorageKind;
+  objectEvent = ObjectEvent_GetById(id);
+  if (objectEvent != 0) {
+    one = objectEvent->spriteStorageKind;
     if (one == 1) {
-      spr = (struct AnimationObject *)obj->sprite;
+      spr = (struct AnimationObject *)objectEvent->sprite;
       base = (s32)Runtime_AllocateHeapBlock(17, 0x608);
       none = 0;
       base += 0x400;
@@ -43,7 +43,7 @@ void Colosso_ShowItemIcon(s32 id, s32 item) {
       ItemIcon_LoadTilesFar(item);
       tile = Engine_VramLoad(spr->slot, 128, (const void *)base);
       Runtime_ReleaseHeapBlock(17);
-      obj->retainSpriteCache = one;
+      objectEvent->retainSpriteCache = one;
       ResourceMetadata_ClearRecord(spr->entries[0]);
       spr->entries[0] = (void *)none;
       spr->count = none;

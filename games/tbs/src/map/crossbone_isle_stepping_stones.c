@@ -1772,27 +1772,27 @@ s32 gCrossboneIsleSteppingStones_ActionTable[] = {
 /// The floodgate's switch flipping as EventScript_FlipWaterSwitch closes the
 /// gate, and flipping back as it opens it.
 u16 gCrossboneIsleSteppingStones_SwitchCloseSteps[] = {
-    MAPGRID_ANIM_STEP(76, 34, 1, 2, 4), MAPGRID_ANIM_STEP(77, 34, 1, 2, 4), MAPGRID_ANIM_STEP(78, 34, 1, 2, 4), MAPGRID_ANIM_STEP(79, 34, 1, 2, 4), MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(76, 34, 1, 2, 4), MAPGRID_ANIMATION_STEP(77, 34, 1, 2, 4), MAPGRID_ANIMATION_STEP(78, 34, 1, 2, 4), MAPGRID_ANIMATION_STEP(79, 34, 1, 2, 4), MAPGRID_ANIMATION_STEPS_END,
 };
 
 u16 gCrossboneIsleSteppingStones_SwitchOpenSteps[] = {
-    MAPGRID_ANIM_STEP(79, 34, 1, 2, 4), MAPGRID_ANIM_STEP(78, 34, 1, 2, 4), MAPGRID_ANIM_STEP(77, 34, 1, 2, 4), MAPGRID_ANIM_STEP(76, 34, 1, 2, 4), MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(79, 34, 1, 2, 4), MAPGRID_ANIMATION_STEP(78, 34, 1, 2, 4), MAPGRID_ANIMATION_STEP(77, 34, 1, 2, 4), MAPGRID_ANIMATION_STEP(76, 34, 1, 2, 4), MAPGRID_ANIMATION_STEPS_END,
 };
 
 /// The floodgate closing, and opening again.
 u16 gCrossboneIsleSteppingStones_FloodgateCloseSteps[] = {
-    MAPGRID_ANIM_STEP(67, 34, 2, 5, 6), MAPGRID_ANIM_STEP(69, 34, 2, 5, 6), MAPGRID_ANIM_STEP(71, 34, 2, 5, 6), MAPGRID_ANIM_STEP(73, 34, 2, 5, 6), MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(67, 34, 2, 5, 6), MAPGRID_ANIMATION_STEP(69, 34, 2, 5, 6), MAPGRID_ANIMATION_STEP(71, 34, 2, 5, 6), MAPGRID_ANIMATION_STEP(73, 34, 2, 5, 6), MAPGRID_ANIMATION_STEPS_END,
 };
 
 u16 gCrossboneIsleSteppingStones_FloodgateOpenSteps[] = {
-    MAPGRID_ANIM_STEP(71, 50, 2, 5, 6), MAPGRID_ANIM_STEP(69, 50, 2, 5, 6), MAPGRID_ANIM_STEP(67, 50, 2, 5, 6), MAPGRID_ANIM_STEP(65, 50, 2, 5, 6), MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(71, 50, 2, 5, 6), MAPGRID_ANIMATION_STEP(69, 50, 2, 5, 6), MAPGRID_ANIMATION_STEP(67, 50, 2, 5, 6), MAPGRID_ANIMATION_STEP(65, 50, 2, 5, 6), MAPGRID_ANIMATION_STEPS_END,
 };
 
 /// The two cells at the floodgate's foot as it shuts: three pictures of white
 /// spray splashing up and falling, then the stream bed below the gate, left
 /// almost dry (EventScript_FlipWaterSwitch's render).
 u16 gCrossboneIsleSteppingStones_FloodgateFootSteps[] = {
-    MAPGRID_ANIM_STEP(75, 38, 2, 1, 4), MAPGRID_ANIM_STEP(77, 38, 2, 1, 6), MAPGRID_ANIM_STEP(79, 38, 2, 1, 8), MAPGRID_ANIM_STEP(65, 53, 2, 1, 1), MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(75, 38, 2, 1, 4), MAPGRID_ANIMATION_STEP(77, 38, 2, 1, 6), MAPGRID_ANIMATION_STEP(79, 38, 2, 1, 8), MAPGRID_ANIMATION_STEP(65, 53, 2, 1, 1), MAPGRID_ANIMATION_STEPS_END,
 };
 
 struct MapWarpDest gCrossboneIsleSteppingStonesWarpDestsOther[] = {

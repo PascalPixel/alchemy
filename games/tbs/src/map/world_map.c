@@ -950,7 +950,7 @@ s32 WorldMap_Initialize(void) {
     case WORLD_MAP_FROM_TOLBI_SHIP_DECK_CROSSBONE_ISLE:
     case WORLD_MAP_FROM_CROSSBONE_ISLE:
     case WORLD_MAP_FROM_SUHALLA_DESERT_STORM:
-      Engine_GameFlagSet(FLAG_NOT_ON_WORLD_MAP);
+      Engine_GameFlagSet(FLAG_WORLD_MAP_LEFT);
       if (FieldGameFlag_GetByte(FLAG_MAP_TEMP_F8) != 0) {
         gGameState.movementMode = LEADER_MOVEMENT_AIRBORNE;
         FieldScheduler_AddCallback(WorldMap_UpdateStormTimer,

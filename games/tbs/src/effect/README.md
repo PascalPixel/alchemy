@@ -829,7 +829,7 @@ effect from the plan's `presentationFlags`. The effect only draws, and tells
 the battle when to show the damage it has already worked out. While it draws,
 it borrows from the rest of the game: the heap's slots from
 [Runtime](../runtime/README.md), the map grid's cell buffer (see
-[Maps](../layout/README.md)), and the battle's own background, camera and
+[Layouts](../layout/README.md)), and the battle's own background, camera and
 fighters, which it shakes, tints and moves through the battle's helpers. The
 same blitter builder also serves the battle's star field and
 `object/colorfx.c`.

@@ -3840,27 +3840,27 @@ struct MapEvent gVale_EventsAfterKalay[] = {
 // stormy night's show two.
 
 u16 gVale_SanctumDoorOpens[] = {
-    MAPGRID_ANIM_STEP(0, 98, 2, 2, 2),
-    MAPGRID_ANIM_STEP(2, 98, 2, 2, 2),
-    MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(0, 98, 2, 2, 2),
+    MAPGRID_ANIMATION_STEP(2, 98, 2, 2, 2),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
 u16 gVale_IsaacsDoorOpens[] = {
-    MAPGRID_ANIM_STEP(0, 96, 2, 2, 2),
-    MAPGRID_ANIM_STEP(2, 96, 2, 2, 2),
-    MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(0, 96, 2, 2, 2),
+    MAPGRID_ANIMATION_STEP(2, 96, 2, 2, 2),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
 u16 gVale_GrandparentsDoorOpens[] = {
-    MAPGRID_ANIM_STEP(4, 98, 2, 2, 2),
-    MAPGRID_ANIM_STEP(4, 98, 2, 2, 2),
-    MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(4, 98, 2, 2, 2),
+    MAPGRID_ANIMATION_STEP(4, 98, 2, 2, 2),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
 u16 gVale_WestHouseDoorOpens[] = {
-    MAPGRID_ANIM_STEP(4, 96, 2, 2, 2),
-    MAPGRID_ANIM_STEP(4, 96, 2, 2, 2),
-    MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(4, 96, 2, 2, 2),
+    MAPGRID_ANIMATION_STEP(4, 96, 2, 2, 2),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
 // The man guarding Mt. Aleph drives Isaac back down the path: at the first

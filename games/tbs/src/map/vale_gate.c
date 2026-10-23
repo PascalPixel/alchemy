@@ -2845,6 +2845,6 @@ struct MapEvent gValeGate_EventsAfterKalay[] = {
 };
 
 u16 gValeGate_DoorOpens[] = {
-    MAPGRID_ANIM_STEP(0, 57, 2, 2, 1), MAPGRID_ANIM_STEP(0, 59, 2, 2, 1), MAPGRID_ANIM_STEP(2, 59, 2, 2, 1), MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(0, 57, 2, 2, 1), MAPGRID_ANIMATION_STEP(0, 59, 2, 2, 1), MAPGRID_ANIMATION_STEP(2, 59, 2, 2, 1), MAPGRID_ANIMATION_STEPS_END,
 };
 // clang-format on

@@ -75,7 +75,7 @@
 #define FLAG_KEEP_MUSIC 0x11a
 /// As FLAG_KEEP_MUSIC, for as long as it is set.
 #define FLAG_KEEP_MUSIC_HELD 0x11b
-#define FLAG_NOT_ON_WORLD_MAP 0x11c ///< the current map is not the world map
+#define FLAG_WORLD_MAP_LEFT 0x11c ///< the current map is not the world map
 /// The leader left through an WARP_STYLE_ANIMATED warp; the next map plays
 /// the leader's arrival (ObjectEffect_RunPendingFlagEvent), unless its setup
 /// clears this first.

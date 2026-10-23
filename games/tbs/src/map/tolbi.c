@@ -1052,9 +1052,9 @@ struct MapEvent gTolbiEventsAfterColosso[] = {
 
 /// How a door opens: two frames of cells copied over the closed door.
 u16 gTolbiDoorOpening[] = {
-    MAPGRID_ANIM_STEP(39, 32, 1, 2, 6),
-    MAPGRID_ANIM_STEP(40, 32, 1, 2, 6),
-    MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(39, 32, 1, 2, 6),
+    MAPGRID_ANIMATION_STEP(40, 32, 1, 2, 6),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
 /// The doors, in the order of their metatile behaviors 1 to 9, by map cell.

@@ -2579,7 +2579,7 @@ s32 BabiPalace_ApplyEntryState(void) {
 
 // clang-format off
 u16 gBabiPalace_DoorCells[] = {
-    MAPGRID_ANIM_STEP(25, 28, 1, 3, 5), MAPGRID_ANIM_STEP(26, 28, 1, 3, 5), MAPGRID_ANIM_STEP(27, 28, 1, 3, 5), MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(25, 28, 1, 3, 5), MAPGRID_ANIMATION_STEP(26, 28, 1, 3, 5), MAPGRID_ANIMATION_STEP(27, 28, 1, 3, 5), MAPGRID_ANIMATION_STEPS_END,
 };
 
 s32 gBabiPalace_IndigestionScript[] = {

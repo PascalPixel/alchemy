@@ -1147,15 +1147,15 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
 }
 
 u16 gKalayTolbiDocks_KalayDoorCells[] = {
-    MAPGRID_ANIM_STEP(98, 84, 2, 2, 5),
-    MAPGRID_ANIM_STEP(98, 82, 2, 2, 5),
-    MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(98, 84, 2, 2, 5),
+    MAPGRID_ANIMATION_STEP(98, 82, 2, 2, 5),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
 u16 gKalayTolbiDocks_TolbiDoorCells[] = {
-    MAPGRID_ANIM_STEP(92, 9, 2, 2, 5),
-    MAPGRID_ANIM_STEP(92, 7, 2, 2, 5),
-    MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(92, 9, 2, 2, 5),
+    MAPGRID_ANIMATION_STEP(92, 7, 2, 2, 5),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
 s32 gKalayTolbiDocks_BodyguardSpinScript[] = {

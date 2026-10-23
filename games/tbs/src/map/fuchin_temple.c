@@ -2649,21 +2649,21 @@ s32 gFuchinTemple_HiddenSpriteScript[] = {
 // walks in (EventScript_EnterTemple), and the door Feh and Feizhi come out of
 // in Master Feh's school, opening and closing behind them.
 u16 gFuchinTemple_TempleDoorOpens[] = {
-    MAPGRID_ANIM_STEP(66, 46, 3, 2, 5),
-    MAPGRID_ANIM_STEP(63, 46, 3, 2, 5),
-    MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(66, 46, 3, 2, 5),
+    MAPGRID_ANIMATION_STEP(63, 46, 3, 2, 5),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
 u16 gFuchinTemple_FehsDoorOpens[] = {
-    MAPGRID_ANIM_STEP(62, 19, 2, 2, 5),
-    MAPGRID_ANIM_STEP(64, 19, 2, 2, 5),
-    MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(62, 19, 2, 2, 5),
+    MAPGRID_ANIMATION_STEP(64, 19, 2, 2, 5),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
 u16 gFuchinTemple_FehsDoorCloses[] = {
-    MAPGRID_ANIM_STEP(62, 19, 2, 2, 5),
-    MAPGRID_ANIM_STEP(60, 19, 2, 2, 5),
-    MAPGRID_ANIM_STEPS_END,
+    MAPGRID_ANIMATION_STEP(62, 19, 2, 2, 5),
+    MAPGRID_ANIMATION_STEP(60, 19, 2, 2, 5),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
 struct MapWarpDest gFuchinTempleGroundsWarpDests[] = {

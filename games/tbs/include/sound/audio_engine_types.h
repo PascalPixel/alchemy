@@ -154,29 +154,41 @@ struct SoundNote {
   u8 kind;     ///< The voice's kind; bits 2..0 nonzero for a CGB note.
   u8 outRight; ///< Velocity and track volume to the right, 0 to 255.
   u8 outLeft;  ///< Velocity and track volume to the left, 0 to 255.
-  u8 unk04[2]; ///< The voice's attack (0x04) and decay (0x05).
+  u8 attack;   ///< The voice's attack.
+  u8 decay;    ///< The voice's decay.
   u8 sustain;  ///< The voice's sustain level.
-  /// The voice's release (0x07), the key played (0x08) and the envelope level,
-  /// 0 to 255 (0x09).
-  u8 unk07[3];
+  u8 release;  ///< The voice's release.
+  u8 key;      ///< The key played.
+  u8 level;    ///< The envelope level, 0 to 255.
   /// For a PCM note, the mixer writes the envelope's right level here each
   /// frame; the name comes from CgbNote.peak.
   u8 peak;
-  /// 0x0b left level, 0x0c echo level, 0x0d echo frames, 0x10 gate in ticks,
-  /// 0x11 the song's key, 0x12 velocity, 0x13 priority, 0x14 rhythm pan;
-  /// the mixer keeps a PCM note's samples left in the word at 0x18.
-  u8 unk0b[0x0e];
+  u8 levelLeft;  ///< The envelope's left level, written by the mixer.
+  u8 echoLevel;  ///< After release, the level held.
+  u8 echoLength; ///< Frames the echo lasts.
+  u8 unk0e[2];   ///< XXX: not named by TBS code (see the README).
+  u8 gate;       ///< Ticks until the note is released.
+  u8 songKey;    ///< The key as the song wrote it.
+  u8 velocity;   ///< 0 to 127, from the note command.
+  u8 priority;   ///< A new note of higher priority takes this one's place.
+  u8 rhythmPan;  ///< A rhythm voice's pan.
+  u8 unk15[3];   ///< XXX: not named by TBS code (see the README).
+  /// The low byte of the word at 0x18 in which the mixer keeps a PCM note's
+  /// samples left.
+  u8 samplesLeftLow;
   /// CgbNote.sustainLevel; inside the samples-left word for a PCM note.
   u8 sustainLevel;
-  u8 unk1a;   ///< Inside the samples-left word for a PCM note.
+  u8 trigger; ///< CgbNote.trigger; inside the samples-left word for a PCM note.
   u8 panBits; ///< CgbNote.panBits; inside the samples-left word for a PCM note.
   /// CgbNote.channelBits; for a PCM note, the mixer's fractional sample
   /// position is the word at 0x1c.
   u8 channelBits;
-  /// 0x1d CGB update bits, 0x1e CGB length, 0x1f CGB sweep, 0x20 the word
-  /// frequency, 0x24 the voice's target (the sample), 0x28 the next sample
-  /// byte (mixer).
-  u8 unk1d[0x0f];
+  u8 modified;          ///< CgbNote.modified.
+  u8 length;            ///< CgbNote.length.
+  u8 sweep;             ///< CgbNote.sweep.
+  u32 frequency;        ///< The note's frequency, as in CgbNote.
+  const void *sample;   ///< The voice's target: the sample it plays.
+  const s8 *nextSample; ///< The next sample byte the mixer reads.
   /// The track whose list holds this note; NULL once detached.
   struct SoundTrack *track;
   /// The note started after this one in the track's list (nearer its head);
@@ -184,7 +196,7 @@ struct SoundNote {
   struct SoundNote *previous;
   /// The note started before this one in the track's list; NULL at the end.
   struct SoundNote *next;
-  u8 unk38[8]; ///< Not named by TBS code.
+  u8 unk38[8]; ///< XXX: not named by TBS code (see the README).
 };
 
 /// A note on one of the four CGB channels of the hardware: its state and
@@ -206,12 +218,16 @@ struct CgbNote {
   /// Top of the envelope: (outRight + outLeft) / 16, at most 15 when one
   /// side plays.
   u8 peak;
-  u8 counter;    ///< Frames left in the current envelope step.
-  u8 echoLevel;  ///< After release, the level held is peak * echoLevel / 256.
-  u8 echoLength; ///< Frames the echo lasts.
-  /// 0x10 gate in ticks, 0x11 the song's key, 0x12 velocity, 0x13 priority
-  /// (a new note of higher priority takes the channel), 0x14 rhythm pan.
-  u8 unk0e[0x0b];
+  u8 counter;      ///< Frames left in the current envelope step.
+  u8 echoLevel;    ///< After release, the level held is peak * echoLevel / 256.
+  u8 echoLength;   ///< Frames the echo lasts.
+  u8 unk0e[2];     ///< XXX: not named by TBS code (see the README).
+  u8 gate;         ///< Ticks until the note is released.
+  u8 songKey;      ///< The key as the song wrote it.
+  u8 velocity;     ///< 0 to 127, from the note command.
+  u8 priority;     ///< A new note of higher priority takes the channel.
+  u8 rhythmPan;    ///< A rhythm voice's pan.
+  u8 unk15[4];     ///< XXX: not named by TBS code (see the README).
   u8 sustainLevel; ///< (peak * sustain + 15) / 16.
   u8 trigger;      ///< Value for NRx4: 7 restart, 6 length on, 2..0 frequency.
   u8 panBits;      ///< NR51 bits this note sets: one side or both.
@@ -226,8 +242,10 @@ struct CgbNote {
   /// into NRx1's bits 7..6. CGB_CHANNEL_NOISE: the width, into NR43's bit 3.
   u32 *wave;
   u32 *loadedWave; ///< CGB_CHANNEL_WAVE: the pattern last copied into wave RAM.
-  /// 0x2c track, 0x30 prev and 0x34 next, as in SoundNote.
-  u8 unk2c[0x14];
+  struct SoundTrack *track;   ///< As in SoundNote.
+  struct SoundNote *previous; ///< As in SoundNote.
+  struct SoundNote *next;     ///< As in SoundNote.
+  u8 unk38[8];                ///< XXX: not named by TBS code (see the README).
 };
 
 enum CgbNoteState {
@@ -285,11 +303,14 @@ struct SoundTrack {
   /// SoundTrackFlag. bits: 7 active | 6 reset | 3..2 pitch to update |
   /// 1..0 volume to update.
   u8 flags;
-  /// 0x01 ticks until the next command, 0x02 pattern depth (0 to 3), 0x03
-  /// repeat count, 0x04 gate of the last note in ticks, 0x05 its key, 0x06
-  /// its velocity, 0x07 the last command byte from 0xBD up, which a byte
-  /// below 0x80 repeats.
-  u8 unk01[7];
+  u8 wait;         ///< Ticks until the next command.
+  u8 patternDepth; ///< Patterns entered and not yet left, 0 to 3.
+  u8 repeatCount;  ///< Times the current repeat has run.
+  u8 gate;         ///< The last note's gate in ticks.
+  u8 key;          ///< The last note's key.
+  u8 velocity;     ///< The last note's velocity.
+  /// The last command byte from 0xBD up, which a byte below 0x80 repeats.
+  u8 lastCommand;
   /// Whole semitones of the track's pitch, read as signed and added to each
   /// note's key (a sum below 0 plays key 0).
   u8 pitchHi;
@@ -322,11 +343,11 @@ struct SoundTrack {
   /// 0 to 255, wrapping; the wave is phase over 0 to 63, 128 - phase over 64
   /// to 191 and phase - 256 over 192 to 255, so -64 to 64.
   u8 lfoPhase;
-  /// 0x1b LFO delay in ticks (song command), 0x1c its countdown, reloaded by
-  /// each note, 0x1d track priority added to the player's for its notes.
-  u8 unk1b[3];
-  u8 tailLevel;  ///< Each new note's echo level.
-  u8 tailLength; ///< Each new note's echo length in frames.
+  u8 lfoDelay;        ///< Ticks before the LFO starts, from the song.
+  u8 lfoDelayCounter; ///< lfoDelay's countdown, reloaded by each note.
+  u8 priority;        ///< Added to the player's priority for its notes.
+  u8 tailLevel;       ///< Each new note's echo level.
+  u8 tailLength;      ///< Each new note's echo length in frames.
   /// The notes this track started, newest first, linked through
   /// SoundNote.next; PCM notes from SoundWork.pcmNotes and CGB notes. NULL
   /// ends the list or leaves it empty.
@@ -334,13 +355,14 @@ struct SoundTrack {
   /// Copied from the player's voice table by the voice command, or set a field
   /// at a time by extended commands.
   struct SoundVoice voice;
-  /// Not named by TBS code; zeroed with the first 64 bytes at reset.
+  /// XXX: not named by TBS code; zeroed with the first 64 bytes at reset (see
+  /// the README).
   u8 unk30[0x10];
   /// The next command byte in the song's data, from the header's track
   /// pointer; a track's commands end at a finish command (0xB1).
   const u8 *cursor;
   /// Cursors to return to after each of up to three nested patterns.
-  u8 unk44[0x0c];
+  const u8 *patternReturns[3];
 };
 
 /// A song's header: its track count, priority and mode, its voices, and where
@@ -363,14 +385,14 @@ struct SoundPlayer {
   /// bits: 31 paused | 15..0 tracks active after the last tick. Set to
   /// SOUND_PLAYER_PAUSED alone when no track is left.
   u32 status;
-  u8 trackCount; ///< Tracks this player owns, at most 16.
-  u8 priority;   ///< The song's priority.
-  u8 unk0a;      ///< The last command run: its byte - 0xB1.
+  u8 trackCount;  ///< Tracks this player owns, at most 16.
+  u8 priority;    ///< The song's priority.
+  u8 lastCommand; ///< The last command run: its byte - 0xB1.
   /// Nonzero: a song of lower priority does not replace a playing one. From
   /// gSound_PlayerSlots, 0 for every player.
   u8 checkPriority;
   u32 ticks;      ///< Song ticks played since the song started.
-  u8 unk10[8];    ///< Not named by TBS code.
+  u8 unk10[8];    ///< XXX: not named by TBS code (see the README).
   u8 *workBytes;  ///< gSound_WorkBytes, which the work-byte command uses.
   u16 tempo;      ///< Twice the tempo command's byte; 150 at start.
   u16 tempoScale; ///< 256 plays at the song's tempo.
@@ -383,8 +405,8 @@ struct SoundPlayer {
   /// bits: 8..4 level, 0 to 0x100 in steps of 16 | 1 fade in | 0 pause at the
   /// end (SoundFadeFlag).
   u16 fadeVolume;
-  u8 unk2a[2];                     ///< Not named by TBS code.
-  struct SoundTrack *tracks;       ///< trackCount tracks.
+  u8 unk2a[2];               ///< XXX: not named by TBS code (see the README).
+  struct SoundTrack *tracks; ///< trackCount tracks.
   const struct SoundVoice *voices; ///< The song's voice table.
   /// SOUND_LOCK when free; raised while the player is changed or ticked.
   u32 lock;
@@ -408,7 +430,7 @@ struct SoundWork {
   u8 pcmNoteCount; ///< PCM notes in use, 8 at start (mode bits 11..8).
   u8 volume;       ///< PCM volume 0 to 15, 15 at start (mode bits 15..12).
   u8 rate;         ///< 1 to 12, indexes gSound_FrameLengths (mode bits 19..16).
-  u8 unk09;        ///< Not named by TBS code.
+  u8 unk09;        ///< XXX: not named by TBS code (see the README).
   /// Counts 14 down to 0 once a CGB update; at 0 the envelopes take an extra
   /// step.
   u8 cgbTick;
@@ -416,7 +438,7 @@ struct SoundWork {
   /// Nonzero: the mixer stops taking notes once the scanline passes this
   /// many lines after its start. Sound_MaxLines, 0.
   u8 lineLimit;
-  u8 unk0d[3];      ///< Not named by TBS code.
+  u8 unk0d[3];      ///< XXX: not named by TBS code (see the README).
   u32 frameSamples; ///< Samples mixed a frame, from gSound_FrameLengths.
   u32 outputRate;   ///< Samples a second: frameSamples * 59.7275, rounded.
   /// 2^23 / outputRate, rounded; a note's frequency times it is its step a
@@ -434,10 +456,10 @@ struct SoundWork {
   /// - 0xCF.
   void (*noteOn)(u32 command, struct SoundPlayer *player,
                  struct SoundTrack *track);
-  /// Set to Audio_EmptyCallback by AudioEngine_Initialize; no TBS code reads
-  /// it by name.
-  void (*unk3c)(void);
-  u8 unk40[0x10];                ///< Not named by TBS code.
+  /// The hook pret's MusicPlayer2000 calls ExtVolPit; set to
+  /// Audio_EmptyCallback by AudioEngine_Initialize, and no TBS code calls it.
+  void (*externalVolumePitch)(void);
+  u8 unk40[0x10]; ///< XXX: not named by TBS code (see the README).
   struct SoundNote pcmNotes[12]; ///< pcmNoteCount of them play.
   /// Right (0, DMA 1 to FIFO A) and left (1, DMA 2 to FIFO B) samples,
   /// transferPeriod frames of frameSamples each.
@@ -450,7 +472,7 @@ struct PlayerSlot {
   struct SoundPlayer *player;
   struct SoundTrack *tracks; ///< trackCount tracks for the player.
   u8 trackCount;
-  u8 unk09;          ///< 0 in every entry; not named by TBS code.
+  u8 padding;        ///< 0 in every entry, before the halfword.
   u16 checkPriority; ///< Copied to the player's checkPriority; 0 everywhere.
 };
 
@@ -461,7 +483,7 @@ struct SongEntry {
   /// Index into gSound_PlayerSlots; AudioCommand_Play gives slot 7's songs
   /// the first player from 7 down to 4 with no active track, else 7.
   u16 slot;
-  u16 unk06; ///< The same value as slot in every entry; not named by TBS code.
+  u16 slotCopy; ///< The same value as slot in every entry; nothing reads it.
 };
 
 STATIC_ASSERT(sizeof(struct SoundVoice) == 12);

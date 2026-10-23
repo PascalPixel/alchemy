@@ -93,7 +93,7 @@ void AudioEngine_Initialize(struct SoundWork *work) {
   work->cgbUpdate = Audio_EmptyCallback;
   work->cgbMute = (void (*)(u8))Audio_EmptyCallback;
   work->cgbFrequency = (s32 (*)(u8, u8, u8))Audio_EmptyCallback;
-  work->unk3c = Audio_EmptyCallback;
+  work->externalVolumePitch = Audio_EmptyCallback;
   Sound_LoadCommandTable(gSound_CommandTable);
   work->commands = gSound_CommandTable;
   // Frame length 4 (224 samples, 13379 a second) until Audio_Initialize sets

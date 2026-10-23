@@ -118,11 +118,6 @@ s32 UiText_RenderGlyphPair(u32 code, u32 *out) {
   s32 pixelsLeft;
   u32 tileLine;
 
-  /* FAKEMATCH(one-pass): an empty block keeps the spill of out ahead of the
-   * work-address load; as no block, 2 of 185 instructions differ in tbs-ja,
-   * the only edition with this body. */
-  do {
-  } while (0);
   work = UI_WORK;
   markGlyph = 0;
   markCode = gUiText_MarkGlyphCodes[code >> TEXT_CODE_MARK_SHIFT];

@@ -165,7 +165,7 @@ const s8 *const gUiText_ArticleTable[8] = {
 /// The glyph drawn over a kana for the mark in its code's top two bits: none,
 /// the voiced mark (dakuten) or the semi-voiced mark (handakuten).
 // clang-format off
-const u16 gUiText_MarkGlyphCodes[] = {
+u16 gUiText_MarkGlyphCodes[] __attribute__((section(".rodata"))) = {
     TEXT_MARK_NONE,
     TEXT_MARK_VOICED,
     TEXT_MARK_SEMIVOICED,

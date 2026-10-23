@@ -22,27 +22,30 @@
 ///   lesson on Ki (FuchinTemple_NyunpaTeachesKi, FLAG_NYUNPA_TAUGHT_FORCE).
 ///   Once Mogall Forest has set FLAG_NYUNPA_ENLIGHTENED he sits withered
 ///   (ANIMATION_NYUNPA_WITHERED) and Mind Read hears his last wish.
-/// - Xian (FuchinTempleInteriors, by FUCHIN_TEMPLE_INTERIORS_FROM_XIAN and
-///   FUCHIN_TEMPLE_INTERIORS_FROM_HOUSE), Master Feh's kung fu school; the
-///   area-name rules give the name Xian only at
-///   FUCHIN_TEMPLE_INTERIORS_FROM_XIAN, and Map_Initialize hides the name at
-///   both. Force from the line fells the training tree (EventScript_ForceTree):
-///   the first time, Feizhi and Feh come out and she leaves to find Hsu
-///   (FLAG_FEIZHI_WENT_TO_HSU), which unlocks FUCHIN_TEMPLE_INTERIORS_TO_HOUSE;
-///   Feh then waits to see Isaac's Chi (FLAG_FEH_WAITS_TO_SEE_CHI, or
+/// - Xian (FuchinTempleInteriors, by
+///   FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL_FROM_XIAN and
+///   FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL_FROM_HOUSE), Master Feh's kung fu
+///   school; the area-name rules give the name Xian only at
+///   FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL_FROM_XIAN, and Map_Initialize hides
+///   the name at both. Force from the line fells the training tree
+///   (EventScript_ForceTree): the first time, Feizhi and Feh come out and she
+///   leaves to find Hsu (FLAG_FEIZHI_WENT_TO_HSU), which unlocks
+///   FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL_TO_HOUSE; Feh then waits to see
+///   Isaac's Chi (FLAG_FEH_WAITS_TO_SEE_CHI, or
 ///   FLAG_FEH_CHI_DEMONSTRATION_DECLINED after two refusals) and, seeing the
 ///   tree fall from the line, names it Ki (FLAG_FEH_SAW_KI). Moving the tree
 ///   with Move or by hand only sets FLAG_FEH_SCHOOL_SAW_TREE_FALL. Once Hsu
 ///   is known to be trapped (FLAG_XIAN_HEARD_HSU_TRAPPED),
 ///   Map_GetObjectEventTemplates removes the tree and two students.
-///   FUCHIN_TEMPLE_INTERIORS_TO_XIAN leads out into Xian.
+///   FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL_TO_XIAN leads out into Xian.
 /// - Lama Temple (FuchinTempleInteriors, by
-///   FUCHIN_TEMPLE_INTERIORS_FROM_LAMA_TEMPLE), the room in which Master Hama
-///   meditates. The first visit plays her lesson
+///   FUCHIN_TEMPLE_INTERIORS_HAMAS_ROOM_FROM_LAMA_TEMPLE), the room in which
+///   Master Hama meditates. The first visit plays her lesson
 ///   (FuchinTemple_RunHamasRevealLesson), in which she gives Ivan Reveal and
 ///   leaves with Feizhi to free Hsu, setting FLAG_XIAN_HEARD_HSU_TRAPPED; until
 ///   FLAG_HSU_RESCUED, Hama and the boy monk in her room are away.
-///   FUCHIN_TEMPLE_INTERIORS_TO_LAMA_TEMPLE leads back into Lama Temple.
+///   FUCHIN_TEMPLE_INTERIORS_HAMAS_ROOM_TO_LAMA_TEMPLE leads back into Lama
+///   Temple.
 ///
 /// Open questions:
 ///
@@ -183,9 +186,10 @@ enum FuchinTempleInsideLocalId {
 };
 
 /// The placed object events in Master Hama's room in Lama Temple
-/// (FuchinTempleInteriors by FUCHIN_TEMPLE_INTERIORS_FROM_LAMA_TEMPLE),
-/// numbered in the order of gFuchinTempleObjectEventTemplatesFromLamaTemple;
-/// Garet, Ivan and Mia, placed first, keep their own slots.
+/// (FuchinTempleInteriors by
+/// FUCHIN_TEMPLE_INTERIORS_HAMAS_ROOM_FROM_LAMA_TEMPLE), numbered in the order
+/// of gFuchinTempleObjectEventTemplatesFromLamaTemple; Garet, Ivan and Mia,
+/// placed first, keep their own slots.
 enum HamasRoomLocalId {
   /// ★ Named from the game: "Master Hama is meditating."
   /// (MsgXianMasterHamaMeditatingPleaseExtremely)
@@ -273,7 +277,8 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
   if (gGameState.mapId == (s32)&MapId_FuchinTempleGrounds) {
     return gFuchinTempleGroundsObjectEventTemplates;
   }
-  if (gGameState.warpDest == FUCHIN_TEMPLE_INTERIORS_FROM_LAMA_TEMPLE) {
+  if (gGameState.warpDest ==
+      FUCHIN_TEMPLE_INTERIORS_HAMAS_ROOM_FROM_LAMA_TEMPLE) {
     return gFuchinTempleObjectEventTemplatesFromLamaTemple;
   }
   // Once Hsu is known to be trapped, the tree and two students are gone, and
@@ -1511,8 +1516,8 @@ static void EventScript_StudentAsksAboutAltin(void) {
 
 /// Walking north into the door Feh and Feizhi came out of, in Master Feh's
 /// school in Xian (coord event 3): it is locked until Feizhi has left; then it
-/// opens and Isaac walks through (FUCHIN_TEMPLE_INTERIORS_TO_HOUSE). "It is
-/// locked."
+/// opens and Isaac walks through
+/// (FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL_TO_HOUSE). "It is locked."
 static void EventScript_OpenLockedDoor(void) {
   EV_START();
   if (FLAG_CHECK(FLAG_FEIZHI_WENT_TO_HSU) == 0 &&
@@ -1526,7 +1531,7 @@ static void EventScript_OpenLockedDoor(void) {
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 306, 248);
     OBJECT_WALK(LOCALID_PARTY_LEADER, 304, 216);
     WAIT(20);
-    Engine_ScriptRequestWarp(FUCHIN_TEMPLE_INTERIORS_TO_HOUSE);
+    Engine_ScriptRequestWarp(FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL_TO_HOUSE);
     EV_END();
   }
 }
@@ -1568,7 +1573,8 @@ const struct MapEvent *Map_GetEvents(void) {
   if (gGameState.mapId == (s32)&MapId_FuchinTempleGrounds) {
     return gFuchinTempleGroundsEvents;
   }
-  if (gGameState.warpDest == FUCHIN_TEMPLE_INTERIORS_FROM_LAMA_TEMPLE) {
+  if (gGameState.warpDest ==
+      FUCHIN_TEMPLE_INTERIORS_HAMAS_ROOM_FROM_LAMA_TEMPLE) {
     return gFuchinTempleEventsFromLamaTemple;
   }
   return gFuchinTempleEvents;
@@ -2395,8 +2401,10 @@ s32 Map_Initialize(void) {
           FuchinTemple_NyunpaTeachesKi();
         }
       }
-    } else if (gGameState.warpDest == FUCHIN_TEMPLE_INTERIORS_FROM_XIAN ||
-               gGameState.warpDest == FUCHIN_TEMPLE_INTERIORS_FROM_HOUSE) {
+    } else if (gGameState.warpDest ==
+                   FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL_FROM_XIAN ||
+               gGameState.warpDest ==
+                   FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL_FROM_HOUSE) {
       Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
       heardHsuTrapped = Engine_GameFlagIsSet(FLAG_XIAN_HEARD_HSU_TRAPPED);
       if (heardHsuTrapped == 0) {
@@ -2435,14 +2443,15 @@ s32 Map_Initialize(void) {
         MapGrid_CopyCellAttributes(14, 11, 1, 1, 14, 10);
       }
       // A crate painted solid black and translucent, over the lattice door to
-      // Feh's house (FUCHIN_TEMPLE_INTERIORS_TO_HOUSE). The school's render
-      // is the same with and without it; drawn plain, it covers the door.
+      // Feh's house (FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL_TO_HOUSE). The
+      // school's render is the same with and without it; drawn plain, it covers
+      // the door.
       OverlayObject_PrepareObject(PIXELS(304), PIXELS(24), PIXELS(224),
                                   SPRITE_CRATE);
       OBJECT_MODE(LOCALID_KICKING_STUDENT, ANIMATION_STUDENT_KICKS);
       OBJECT_MODE(LOCALID_PUNCHING_STUDENT, ANIMATION_STUDENT_PUNCHES);
     } else if (gGameState.warpDest ==
-               FUCHIN_TEMPLE_INTERIORS_FROM_LAMA_TEMPLE) {
+               FUCHIN_TEMPLE_INTERIORS_HAMAS_ROOM_FROM_LAMA_TEMPLE) {
       Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
       if (!Engine_GameFlagIsSet(FLAG_XIAN_HEARD_HSU_TRAPPED)) {
         FuchinTemple_RunHamasRevealLesson();
@@ -2684,12 +2693,12 @@ struct MapWarpDest gFuchinTempleWarpDestsOther[] = {
     {0, CONDITION_ALWAYS, 168, 0, 552, FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {FUCHIN_TEMPLE_INTERIORS_FROM_FUCHIN_TEMPLE_GROUNDS, CONDITION_ALWAYS, 168,
      0, 552, FACING_NORTH, 0, 48, 384, 288, 576, 0},
-    {FUCHIN_TEMPLE_INTERIORS_FROM_XIAN, CONDITION_ALWAYS, 256, 0, 264,
-     FACING_NORTH, 0, 48, 80, 368, 288, 0},
-    {FUCHIN_TEMPLE_INTERIORS_FROM_LAMA_TEMPLE, CONDITION_ALWAYS, 472, 0, 552,
-     FACING_NORTH, 0, 352, 384, 592, 576, 0},
-    {FUCHIN_TEMPLE_INTERIORS_FROM_HOUSE, CONDITION_ALWAYS, 304, 0, 248,
-     FACING_SOUTH, 0, 48, 80, 368, 288, 0},
+    {FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL_FROM_XIAN, CONDITION_ALWAYS, 256, 0,
+     264, FACING_NORTH, 0, 48, 80, 368, 288, 0},
+    {FUCHIN_TEMPLE_INTERIORS_HAMAS_ROOM_FROM_LAMA_TEMPLE, CONDITION_ALWAYS, 472,
+     0, 552, FACING_NORTH, 0, 352, 384, 592, 576, 0},
+    {FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL_FROM_HOUSE, CONDITION_ALWAYS, 304, 0,
+     248, FACING_SOUTH, 0, 48, 80, 368, 288, 0},
     {MAP_TABLE_END},
 };
 
@@ -2707,12 +2716,12 @@ u32 gFuchinTempleWarps[] = {
     MAP_WARP(FUCHIN_TEMPLE_INTERIORS_TO_FUCHIN_TEMPLE_GROUNDS,
              FuchinTempleGrounds,
              FUCHIN_TEMPLE_GROUNDS_FROM_FUCHIN_TEMPLE_INTERIORS),
-    MAP_WARP(FUCHIN_TEMPLE_INTERIORS_TO_XIAN, Xian,
-             XIAN_FROM_FUCHIN_TEMPLE_INTERIORS),
-    MAP_WARP(FUCHIN_TEMPLE_INTERIORS_TO_LAMA_TEMPLE, LamaTemple,
-             LAMA_TEMPLE_FROM_FUCHIN_TEMPLE_INTERIORS),
-    MAP_WARP(FUCHIN_TEMPLE_INTERIORS_TO_HOUSE, XianInteriors,
-             XIAN_INTERIORS_FROM_FUCHIN_TEMPLE_INTERIORS),
+    MAP_WARP(FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL_TO_XIAN, Xian,
+             XIAN_FROM_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL),
+    MAP_WARP(FUCHIN_TEMPLE_INTERIORS_HAMAS_ROOM_TO_LAMA_TEMPLE, LamaTemple,
+             LAMA_TEMPLE_FROM_FUCHIN_TEMPLE_INTERIORS_HAMAS_ROOM),
+    MAP_WARP(FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL_TO_HOUSE, XianInteriors,
+             XIAN_INTERIORS_FROM_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL),
     MAP_WARPS_END,
 };
 
@@ -2826,7 +2835,7 @@ struct MapEvent gFuchinTempleGroundsEvents[] = {
 
 struct MapEvent gFuchinTempleEvents[] = {
     { COORD_EVENT_FACING(FACING_SOUTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveTemple) },
-    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, FUCHIN_TEMPLE_INTERIORS_TO_XIAN },
+    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL_TO_XIAN },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_OpenLockedDoor) },
     { MAP_EVENT_TALK, LOCALID_NYUNPA, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTemple) },
     { MAP_EVENT_TALK, LOCALID_NYUNPA, IF_FLAG_SET(FLAG_NYUNPA_TAUGHT_FORCE), MSGNO(MsgFuchinTempleUseThisEnergyToFindThe) },
@@ -2919,7 +2928,7 @@ struct MapEvent gFuchinTempleEvents[] = {
 };
 
 struct MapEvent gFuchinTempleEventsFromLamaTemple[] = {
-    { MAP_EVENT_WARP, 4, CONDITION_ALWAYS, FUCHIN_TEMPLE_INTERIORS_TO_LAMA_TEMPLE },
+    { MAP_EVENT_WARP, 4, CONDITION_ALWAYS, FUCHIN_TEMPLE_INTERIORS_HAMAS_ROOM_TO_LAMA_TEMPLE },
     { MAP_EVENT_TALK, LOCALID_HAMAS_BOY_MONK, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleMasterHamaIsMeditatingAskingFor) },
     { MAP_EVENT_TALK, LOCALID_HAMA, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleTheFutureHoldsManyHardshipsBut) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_HAMAS_BOY_MONK, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleIDoNotThinkMasterHama) },

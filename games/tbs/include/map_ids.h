@@ -277,8 +277,9 @@ extern char MapId_HammetPalaceGrounds;
 extern char MapId_HammetPalace;
 /// ★ Named from its area name: Lunpa
 extern char MapId_Lunpa;
-/// ★ Named from the game: "Gate to Suhalla" (MsgDebugEntryName)
-extern char MapId_LunpaSuhalla;
+/// ★ Named from what the player sees: the inside of Lunpa's homes, shops, inn,
+/// crate room and temple, and the house at Suhalla Gate (its render)
+extern char MapId_LunpaInteriors;
 /// ★ Named from its area name: West Lunpa Cave
 extern char MapId_WestLunpaCave;
 /// ★ Named from its area name: Kalay Docks

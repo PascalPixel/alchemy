@@ -861,9 +861,9 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 3ab	text	games/tbs/src/map/entry/lunpa
 3ab	text	games/tbs/src/map/lunpa
 3ab	text	games/tbs/src/map/import/lunpa
-3ac	text	games/tbs/src/map/entry/lunpa_suhalla
-3ac	text	games/tbs/src/map/lunpa_suhalla
-3ac	text	games/tbs/src/map/import/lunpa_suhalla
+3ac	text	games/tbs/src/map/entry/lunpa_interiors
+3ac	text	games/tbs/src/map/lunpa_interiors
+3ac	text	games/tbs/src/map/import/lunpa_interiors
 3ad	text	games/tbs/src/map/entry/west_lunpa_cave
 3ad	text	games/tbs/src/map/west_lunpa_cave
 3ad	text	games/tbs/src/map/import/west_lunpa_cave

@@ -67,7 +67,7 @@
 ///   the orb does nothing; Iodem takes it back and the party must go on to
 ///   Babi Lighthouse (FLAG_BLACK_ORB_RETURNED). A defeat meanwhile returns to
 ///   WORLD_MAP_AFTER_BLACK_ORB_DEFEAT, which discards the orb and leads on by
-///   WORLD_MAP_TO_LUNPA_SUHALLA.
+///   WORLD_MAP_TO_LUNPA_INTERIORS.
 /// - Venus Lighthouse lit (WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT): the
 ///   lighthouse transition, then back to the Lighthouse Aerie
 ///   (VENUS_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT); after the look back
@@ -871,7 +871,7 @@ s32 WorldMap_Initialize(void) {
   } else if (*warpDest == WORLD_MAP_AFTER_BLACK_ORB_DEFEAT) {
     Engine_ScriptStart();
     PartyInventory_Discard(ITEM_BLACK_ORB);
-    Engine_ScriptRequestWarp(WORLD_MAP_TO_LUNPA_SUHALLA);
+    Engine_ScriptRequestWarp(WORLD_MAP_TO_LUNPA_INTERIORS);
   } else {
     Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
     gEventWork->startTransition = MAP_TRANSITION(TRANSITION_CENTRE_LINE, 0);
@@ -3499,8 +3499,8 @@ u32 gWorldMapWarps[] = {
              TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_WORLD_MAP_ISLAND),
     MAP_WARP(WORLD_MAP_TO_JENNA_AND_KRADEN_ADRIFT, WorldMap,
              WORLD_MAP_JENNA_AND_KRADEN_ADRIFT),
-    MAP_WARP(WORLD_MAP_TO_LUNPA_SUHALLA, LunpaSuhalla,
-             LUNPA_SUHALLA_FROM_SUHALLA_GATE_CHECKPOINT),
+    MAP_WARP(WORLD_MAP_TO_LUNPA_INTERIORS, LunpaInteriors,
+             LUNPA_INTERIORS_FROM_SUHALLA_GATE_CHECKPOINT),
     MAP_WARPS_END,
 };
 

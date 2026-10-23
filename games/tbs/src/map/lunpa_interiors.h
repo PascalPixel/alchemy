@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_LUNPA_SUHALLA_H
-#define ALCHEMY_LUNPA_SUHALLA_H
+#ifndef ALCHEMY_LUNPA_INTERIORS_H
+#define ALCHEMY_LUNPA_INTERIORS_H
 
 #include "types.h"
 #include "text/msg_ids.h"

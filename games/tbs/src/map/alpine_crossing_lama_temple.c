@@ -23,13 +23,13 @@
 /// across his counter; a defeat anywhere here returns the party to
 /// LAMA_TEMPLE_AFTER_DEFEAT, in front of him. Walking north into the sliding
 /// door (LamaTemple_EnterHamasRoom) leads into Hama's room, in
-/// FuchinTempleInteriors (FUCHIN_TEMPLE_INTERIORS_FROM_LAMA_TEMPLE, in
-/// fuchin_temple.c), whose lesson sets FLAG_XIAN_HEARD_HSU_TRAPPED; coming back
-/// out (LAMA_TEMPLE_FROM_FUCHIN_TEMPLE_INTERIORS) the area name is not shown
-/// again. Writing on a wall hints at Reveal, which shows a passage behind a
-/// mossy rock (LamaTemple_RevealPassage); LamaTemple_ShowFalseWall puts the
-/// rock back when Reveal wears off and on entry, the rock cell's own attributes
-/// saved at (21, 73). The temple also holds a Psynergy Stone
+/// FuchinTempleInteriors (FUCHIN_TEMPLE_INTERIORS_HAMAS_ROOM_FROM_LAMA_TEMPLE,
+/// in fuchin_temple.c), whose lesson sets FLAG_XIAN_HEARD_HSU_TRAPPED; coming
+/// back out (LAMA_TEMPLE_FROM_FUCHIN_TEMPLE_INTERIORS_HAMAS_ROOM) the area name
+/// is not shown again. Writing on a wall hints at Reveal, which shows a passage
+/// behind a mossy rock (LamaTemple_RevealPassage); LamaTemple_ShowFalseWall
+/// puts the rock back when Reveal wears off and on entry, the rock cell's own
+/// attributes saved at (21, 73). The temple also holds a Psynergy Stone
 /// (FLAG_LAMA_TEMPLE_PSYNERGY_STONE, a map-section temp flag) and a chest with
 /// Water of Life.
 ///
@@ -287,7 +287,7 @@ static void LamaTemple_TalkToChiMonk(void) {
 
 /// The door of Hama's room slides open for the party leader. Walking north into
 /// it in Lama Temple slides it open and walks the leader through, into the room
-/// (LAMA_TEMPLE_TO_FUCHIN_TEMPLE_INTERIORS).
+/// (LAMA_TEMPLE_TO_FUCHIN_TEMPLE_INTERIORS_HAMAS_ROOM).
 static void LamaTemple_EnterHamasRoom(void) {
   Script_PlayCue(SE_188);
   MapGrid_AnimateCells(gLamaTemple_DoorOpenCells, DOOR_X, DOOR_Y);
@@ -297,7 +297,7 @@ static void LamaTemple_EnterHamasRoom(void) {
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
   ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0, -16);
   Engine_ScriptWait(16);
-  Engine_ScriptRequestWarp(LAMA_TEMPLE_TO_FUCHIN_TEMPLE_INTERIORS);
+  Engine_ScriptRequestWarp(LAMA_TEMPLE_TO_FUCHIN_TEMPLE_INTERIORS_HAMAS_ROOM);
 }
 
 /// Hama's farewell, once the party has freed Hsu and been brought back to Lama
@@ -936,7 +936,7 @@ s32 Map_Initialize(void) {
       Engine_ObjectEventFaceDirection(LOCALID_CHI_MONK, FACING_EAST, 0);
     }
     warpDest = gGameState.warpDest;
-    if (warpDest == LAMA_TEMPLE_FROM_FUCHIN_TEMPLE_INTERIORS) {
+    if (warpDest == LAMA_TEMPLE_FROM_FUCHIN_TEMPLE_INTERIORS_HAMAS_ROOM) {
       Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
     } else if (warpDest == LAMA_TEMPLE_FROM_ALPINE_CROSSING &&
                !Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
@@ -1097,8 +1097,8 @@ struct MapWarpDest gLamaTemple_WarpDests[] = {
      -1, -1, 0},
     {LAMA_TEMPLE_FROM_WORLD_MAP, CONDITION_ALWAYS, 216, 0, 520, FACING_NORTH, 0,
      -1, -1, -1, -1, 0},
-    {LAMA_TEMPLE_FROM_FUCHIN_TEMPLE_INTERIORS, CONDITION_ALWAYS, 136, 0, 168,
-     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {LAMA_TEMPLE_FROM_FUCHIN_TEMPLE_INTERIORS_HAMAS_ROOM, CONDITION_ALWAYS, 136,
+     0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {LAMA_TEMPLE_FROM_ALPINE_CROSSING, CONDITION_ALWAYS, 144, 0, 200,
      FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {LAMA_TEMPLE_AFTER_DEFEAT, CONDITION_ALWAYS, 232, 0, 352, FACING_SOUTH, 0,
@@ -1125,8 +1125,9 @@ struct MapWarpDest gAlpineCrossing_WarpDests[] = {
 u32 gAlpineCrossingLamaTemple_Warps[] = {
     MAP_WARPS(LamaTemple),
     MAP_WARP(LAMA_TEMPLE_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_LAMA_TEMPLE),
-    MAP_WARP(LAMA_TEMPLE_TO_FUCHIN_TEMPLE_INTERIORS, FuchinTempleInteriors,
-             FUCHIN_TEMPLE_INTERIORS_FROM_LAMA_TEMPLE),
+    MAP_WARP(LAMA_TEMPLE_TO_FUCHIN_TEMPLE_INTERIORS_HAMAS_ROOM,
+             FuchinTempleInteriors,
+             FUCHIN_TEMPLE_INTERIORS_HAMAS_ROOM_FROM_LAMA_TEMPLE),
     MAP_WARPS(AlpineCrossing),
     MAP_WARP(ALPINE_CROSSING_TO_WORLD_MAP_EAST, WorldMap,
              WORLD_MAP_FROM_ALPINE_CROSSING_EAST),

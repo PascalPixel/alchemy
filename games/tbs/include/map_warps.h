@@ -108,7 +108,7 @@ enum {
   /// ★ Named from its area name: Suhalla Desert
   WORLD_MAP_FROM_SUHALLA_DESERT_STORM = 77,
   /// Where a defeat returns after Iodem hands over the Black Orb: the orb is
-  /// discarded and WORLD_MAP_TO_LUNPA_SUHALLA leads on.
+  /// discarded and WORLD_MAP_TO_LUNPA_INTERIORS leads on.
   WORLD_MAP_AFTER_BLACK_ORB_DEFEAT = 78,
   WORLD_MAP_JENNA_AND_KRADEN_ADRIFT = 80,
   WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT =
@@ -201,7 +201,7 @@ enum {
   WORLD_MAP_TO_JENNA_AND_KRADEN_ADRIFT =
       111, ///< ★ Named from what the player sees: Jenna and Kraden adrift on an
            ///< island in the ending (its render)
-  WORLD_MAP_TO_LUNPA_SUHALLA = 112,
+  WORLD_MAP_TO_LUNPA_INTERIORS = 112,
 };
 
 /// MapId_ValeStorm's warp destinations.
@@ -1976,16 +1976,20 @@ enum {
 /// MapId_FuchinTempleInteriors's warp destinations.
 enum {
   FUCHIN_TEMPLE_INTERIORS_FROM_FUCHIN_TEMPLE_GROUNDS = 1,
-  FUCHIN_TEMPLE_INTERIORS_FROM_XIAN = 2,
-  FUCHIN_TEMPLE_INTERIORS_FROM_LAMA_TEMPLE = 3,
-  FUCHIN_TEMPLE_INTERIORS_FROM_HOUSE = 4,
+  /// ★ Named from the game: "You warriors should visit Master Feh's school."
+  /// (MsgXianYouWarriorsShouldVisitMasterFehs)
+  FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL_FROM_XIAN = 2,
+  /// ★ Named from the game: "Master Hama is meditating. Please be extremely
+  /// quiet." (MsgXianMasterHamaMeditatingPleaseExtremely)
+  FUCHIN_TEMPLE_INTERIORS_HAMAS_ROOM_FROM_LAMA_TEMPLE = 3,
+  FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL_FROM_HOUSE = 4,
 };
 /// MapId_FuchinTempleInteriors's warps.
 enum {
   FUCHIN_TEMPLE_INTERIORS_TO_FUCHIN_TEMPLE_GROUNDS = 1,
-  FUCHIN_TEMPLE_INTERIORS_TO_XIAN = 2,
-  FUCHIN_TEMPLE_INTERIORS_TO_LAMA_TEMPLE = 3,
-  FUCHIN_TEMPLE_INTERIORS_TO_HOUSE =
+  FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL_TO_XIAN = 2,
+  FUCHIN_TEMPLE_INTERIORS_HAMAS_ROOM_TO_LAMA_TEMPLE = 3,
+  FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL_TO_HOUSE =
       4, ///< ★ Named from what the player sees: the small room with a bed
          ///< behind the door Master Feh and Feizhi come out of (its render)
 };
@@ -2394,7 +2398,7 @@ enum {
   XIAN_FROM_XIAN_INTERIORS_EAST = 7,
   XIAN_FROM_XIAN_INTERIORS_SOUTH = 8,
   XIAN_FROM_XIAN_INTERIORS_WEST = 9,
-  XIAN_FROM_FUCHIN_TEMPLE_INTERIORS = 10,
+  XIAN_FROM_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL = 10,
   XIAN_FROM_SANCTUM_WEST = 11,
 };
 /// MapId_Xian's warps.
@@ -2409,7 +2413,7 @@ enum {
       5, ///< ★ Named from what the player sees: the shop whose sellers stand
          ///< behind one long white counter (its render)
   XIAN_TO_SANCTUM = 6,
-  XIAN_TO_FUCHIN_TEMPLE_INTERIORS = 7,
+  XIAN_TO_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL = 7,
   XIAN_TO_WORLD_MAP = 8,
 };
 
@@ -2429,9 +2433,9 @@ enum {
          ///< behind one long white counter (its render); through
          ///< XIAN_TO_WEAPON_AND_ARMOR_SHOP
   XIAN_INTERIORS_INN_FROM_INN_GUEST_ROOMS = 7, ///< the room holds the inn;
-  XIAN_INTERIORS_FROM_FUCHIN_TEMPLE_INTERIORS =
+  XIAN_INTERIORS_FROM_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL =
       8, ///< the room behind FuchinTempleInteriors's house door; through
-         ///< FUCHIN_TEMPLE_INTERIORS_TO_HOUSE
+         ///< FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL_TO_HOUSE
 };
 /// MapId_XianInteriors's warps.
 enum {
@@ -2444,7 +2448,7 @@ enum {
   XIAN_INTERIORS_INN_TO_INN_GUEST_ROOMS =
       7, ///< ★ Named from what the player sees: the small rooms behind the
          ///< inn's front room, with a bed (its render)
-  XIAN_INTERIORS_TO_FUCHIN_TEMPLE_INTERIORS = 8,
+  XIAN_INTERIORS_TO_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL = 8,
 };
 
 /// MapId_AlpineCrossing's warp destinations.
@@ -2715,7 +2719,7 @@ enum {
 /// MapId_LamaTemple's warp destinations.
 enum {
   LAMA_TEMPLE_FROM_WORLD_MAP = 1,
-  LAMA_TEMPLE_FROM_FUCHIN_TEMPLE_INTERIORS = 2,
+  LAMA_TEMPLE_FROM_FUCHIN_TEMPLE_INTERIORS_HAMAS_ROOM = 2,
   LAMA_TEMPLE_FROM_ALPINE_CROSSING = 3,
   /// In front of the traveling healer, where a party defeated anywhere in Lama
   /// Temple wakes (its return point in object/map_rules.s).
@@ -2724,7 +2728,7 @@ enum {
 /// MapId_LamaTemple's warps.
 enum {
   LAMA_TEMPLE_TO_WORLD_MAP = 1,
-  LAMA_TEMPLE_TO_FUCHIN_TEMPLE_INTERIORS = 2,
+  LAMA_TEMPLE_TO_FUCHIN_TEMPLE_INTERIORS_HAMAS_ROOM = 2,
 };
 
 /// MapId_LamakanDesertEast's warp destinations.
@@ -3254,9 +3258,9 @@ enum {
   LUNPA_TO_VAULT_JAIL = 12,
 };
 
-/// MapId_LunpaSuhalla's warp destinations and warps.
+/// MapId_LunpaInteriors's warp destinations and warps.
 enum {
-  LUNPA_SUHALLA_FROM_SUHALLA_GATE_CHECKPOINT = 10,
+  LUNPA_INTERIORS_FROM_SUHALLA_GATE_CHECKPOINT = 10,
 };
 
 /// MapId_WestLunpaCave's warp destinations.
@@ -5042,7 +5046,7 @@ enum {
 enum {
   SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_SOUTH = 1,
   SUHALLA_GATE_CHECKPOINT_FROM_SUHALLA_GATE_DEW_WEST = 2,
-  SUHALLA_GATE_CHECKPOINT_FROM_LUNPA_SUHALLA = 3,
+  SUHALLA_GATE_CHECKPOINT_FROM_LUNPA_INTERIORS = 3,
   SUHALLA_GATE_CHECKPOINT_FROM_SUHALLA_GATE_DEW_EAST = 4,
   SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_EAST = 5,
 };
@@ -5050,7 +5054,7 @@ enum {
 enum {
   SUHALLA_GATE_CHECKPOINT_TO_WORLD_MAP_SOUTH = 1,
   SUHALLA_GATE_CHECKPOINT_TO_SUHALLA_GATE_DEW_WEST = 2,
-  SUHALLA_GATE_CHECKPOINT_TO_LUNPA_SUHALLA = 3,
+  SUHALLA_GATE_CHECKPOINT_TO_LUNPA_INTERIORS = 3,
   SUHALLA_GATE_CHECKPOINT_TO_SUHALLA_GATE_DEW_EAST = 4,
   SUHALLA_GATE_CHECKPOINT_TO_WORLD_MAP_EAST = 5,
 };

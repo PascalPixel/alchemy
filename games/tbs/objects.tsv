@@ -121,6 +121,8 @@ main	rom_main_07	games/tbs/src/graphics/tile/decode	.text .rodata .text.bit_disp
 main	rom_main_07	games/tbs/src/graphics/tile/decode	.data .text.bit_commands
 main	rom_main_07	games/tbs/src/battle/battle
 main	rom_main_07	games/tbs/src/battle/battle_data
+main	rom_main_07	games/tbs/src/battle/ability_staging
+main	rom_main_07	games/tbs/src/battle/battle_data_tail
 main	rom_main_07	games/tbs/src/battle/advarrow
 main	rom_main_07	games/tbs/src/battle/battle_vars
 main	rom_main_08	games/tbs/src/system/far_call/BATTLE_ANIM

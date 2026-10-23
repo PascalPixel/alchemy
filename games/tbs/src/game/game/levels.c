@@ -20,7 +20,7 @@ struct AbilityDefinition *Ability_GetDirect(s32 actionId) {
 #endif
     entryIndex = 0;
   }
-  return &gAbilityDefinitions[entryIndex];
+  return (struct AbilityDefinition *)&gAbilityDefinitions[entryIndex];
 }
 
 /// Returns 1 when `actionId` is in the unit's action list. Called by the

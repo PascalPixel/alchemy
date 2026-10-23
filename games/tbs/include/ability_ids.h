@@ -5,7 +5,7 @@
 /// Ability numbers, named from the English release.
 
 /// Ability numbers. Each ability's name is the message MsgAbilityName plus its
-/// number, as abilities.tsv's last column gives it.
+/// number, as abilities.c's last column gives it.
 enum AbilityId {
   ABILITY_ATTACK = 0x01,
   ABILITY_GROWTH = 0x0c,
@@ -87,9 +87,9 @@ enum AbilityId {
   ABILITY_SEARCH_FOR_HELP = 0x1fc,
   /// What an enemy with nothing it can use commands.
   ABILITY_CANT_USE = 0x1fd,
-  /// The last row of ability_staging.tsv.
+  /// The last row of gAbilityStaging.
   ABILITY_SEVERE_BLOW = 0x205,
-  /// The last row of abilities.tsv and ability_anims.tsv.
+  /// The last row of abilities.c and gAbilityAnimations.
   ABILITY_THRASH = 0x206
 };
 

@@ -920,7 +920,7 @@ static void AltinPeak_ForceLogOver(void) {
   originX = objectEvent->x.fixed;
   originHeight = objectEvent->y.fixed;
   Script_Start();
-  Script_PlayCue(SE_141);
+  Script_PlayCue(SE_RUMBLE);
   MapGrid_SetShake(PIXELS(2), PIXELS(1), Q16_ONE);
   Script_Wait(10);
   Script_PlayCue(AUDIO_CUE_FADE_SLOT3);
@@ -1184,7 +1184,7 @@ static void AltinPeak_ReadFallingRockSign(void) {
     }
     MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
     Engine_ScriptWait(80);
-    Script_PlayCue(SE_141);
+    Script_PlayCue(SE_RUMBLE);
     MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
     Engine_ScriptWait(40);
     ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
@@ -2473,7 +2473,7 @@ static void AltinPeak_TurnCartRight(struct ObjectEvent *objectEvent) {
     Engine_TaskWait(1);
     turnFrame++;
   }
-  Engine_AudioPlayCue(SE_233);
+  Engine_AudioPlayCue(SE_CART_ROLL);
 }
 
 /// The cart turns a quarter turn left.
@@ -2507,11 +2507,11 @@ static void AltinPeak_TurnCartLeft(struct ObjectEvent *objectEvent) {
     Engine_TaskWait(1);
     turnFrame++;
   }
-  Engine_AudioPlayCue(SE_233);
+  Engine_AudioPlayCue(SE_CART_ROLL);
 }
 
 /// The cart rolls over a marked cell: SE_STOP_SLOT3 plays, and SE_184 and
-/// SE_233 follow as its countdown runs out.
+/// SE_CART_ROLL follow as its countdown runs out.
 static void AltinPeak_StartCartCountdown(struct ObjectEvent *objectEvent) {
   objectEvent->work = 33;
   Engine_AudioPlayCue(SE_STOP_SLOT3);
@@ -2537,7 +2537,7 @@ static void AltinPeak_AdvanceCart(struct ObjectEvent *objectEvent) {
       Engine_AudioPlayCue(SE_184);
     }
     if (*timer == 0) {
-      Engine_AudioPlayCue(SE_233);
+      Engine_AudioPlayCue(SE_CART_ROLL);
     }
   }
   point = &position;
@@ -2619,7 +2619,7 @@ static void AltinPeak_RollCart(s32 id, s32 heading) {
   Engine_ObjectSetPosition(objectEvent, position.x, objectEvent->y.fixed,
                            position.z);
   FieldObject_WaitForMove(objectEvent);
-  Engine_AudioPlayCue(SE_233);
+  Engine_AudioPlayCue(SE_CART_ROLL);
   // The route cells select turns, a countdown cue, and the destination.
   for (;;) {
     switch (MapGrid_GetMetatileBehaviorAt(2, objectEvent->x.fixed,

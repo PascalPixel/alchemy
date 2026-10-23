@@ -880,10 +880,10 @@ static void EventScript_FirstRockFalls(void) {
     if (GameFlag_IsSet(FLAG_VALE_STORM_FIRST_ROCK_FELL) == 0) {
       rock = ObjectEvent_GetById(LOCALID_FIRST_ROCK);
       rockSprite = rock->sprite;
-      // A rumble (SE_141, then SE_145), and the rock bounces down from the
+      // A rumble (SE_RUMBLE, then SE_145), and the rock bounces down from the
       // east.
       MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
-      Engine_AudioPlayCue(SE_141);
+      Engine_AudioPlayCue(SE_RUMBLE);
       Engine_TaskWait(40);
       Engine_AudioPlayCue(SE_145);
       rock->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
@@ -958,7 +958,7 @@ static void EventScript_SecondRockFalls(void) {
       rock = ObjectEvent_GetById(LOCALID_FIRST_ROCK + 1);
       // A rumble, then the rock rolls down the slope from the north-east.
       MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
-      Engine_AudioPlayCue(SE_141);
+      Engine_AudioPlayCue(SE_RUMBLE);
       Engine_TaskWait(40);
       Engine_AudioPlayCue(SE_145);
       ObjectEvent_SetPosition(LOCALID_FIRST_ROCK + 1, PIXELS(381), PIXELS(808));
@@ -1035,7 +1035,7 @@ static void EventScript_ThirdRockFalls(void) {
       // A rumble, then the rock drops in from the west while Isaac is drawn
       // behind it.
       MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
-      Script_PlayCue(SE_141);
+      Script_PlayCue(SE_RUMBLE);
       Engine_TaskWait(40);
       Script_PlayCue(SE_145);
       Engine_ObjectEventSetSpritePriority(LOCALID_PARTY_LEADER, 3);
@@ -1109,7 +1109,7 @@ static void EventScript_FourthRockFalls(void) {
       rock = ObjectEvent_GetById(LOCALID_FIRST_ROCK + 3);
       // A rumble, then the rock rolls in from the east.
       MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
-      Engine_AudioPlayCue(SE_141);
+      Engine_AudioPlayCue(SE_RUMBLE);
       Engine_TaskWait(40);
       Engine_AudioPlayCue(SE_145);
       ObjectEvent_SetPosition(LOCALID_FIRST_ROCK + 3, PIXELS(474),
@@ -1467,7 +1467,7 @@ static void EventScript_WatchBoulderFall(void) {
     FieldScript_CallWithLastActiveObjectId(gValeStorm_BoulderWatchers);
     Map_StartCutscenePsynergy();
     Engine_TaskWait(1);
-    Script_PlayCue(SE_141);
+    Script_PlayCue(SE_RUMBLE);
     MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
     Engine_ScriptWait(30);
     MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);

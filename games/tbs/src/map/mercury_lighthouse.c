@@ -520,7 +520,7 @@ static void MercuryLighthouse_ExitWhenChannelsOpen(void) {
     GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_CHANNELS_OPEN);
     Engine_ScriptWait(30);
     MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
-    Engine_AudioPlayCue(SE_141);
+    Engine_AudioPlayCue(SE_RUMBLE);
     Engine_ScriptWait(60);
     gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Engine_ScriptCloseScreen();
@@ -1662,7 +1662,7 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
     Engine_ColorBufferApplyTarget(PALETTE_TRANSFORM_PLAIN, 0);
     Engine_ColorBufferInterpolate(60);
     Engine_TaskWait(60);
-    Engine_AudioPlayCue(SE_209);
+    Engine_AudioPlayCue(SE_MERCURY_LIGHTHOUSE_DOOR_OPEN);
     MercuryLighthouse_FadePaletteToWhite();
     MapGrid_CopyCellsTo(126, 35, 116, 35, 1, 2);
     Engine_MapGridAnimateCells(gMercuryLighthouse_ColumnCells, 116, 35);
@@ -1884,7 +1884,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     wave = (wave + 1);
   } while ((u32)wave <= 15);
   Engine_ScriptWait(60);
-  Engine_AudioPlayCue(SE_141);
+  Engine_AudioPlayCue(SE_RUMBLE);
   MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
   Engine_ScriptWait(60);
   options->palette = 7;

@@ -1895,7 +1895,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   Engine_ScriptOpenScreen();
   Camera_SetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
   Camera_MoveTo(PIXELS(440), -1, PIXELS(400), 1);
-  Script_PlayCue(SE_141);
+  Script_PlayCue(SE_RUMBLE);
   ObjectEvent_SetSpeed(LOCALID_WAGON, PIXELS(8) / 5, PIXELS(4) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_WAGON, 440, 400);
   Camera_SetSpeed(PIXELS(3) / 4, PIXELS(3) / 32);
@@ -2146,7 +2146,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 439, 312);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 439, 306);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, 0, 0);
-  Script_PlayCue(SE_141);
+  Script_PlayCue(SE_RUMBLE);
   ObjectEvent_SetSpeed(LOCALID_WAGON, PIXELS(4) / 5, PIXELS(2) / 5);
   Camera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   Camera_MoveTo(PIXELS(440), -1, PIXELS(420), 1);

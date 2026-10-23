@@ -194,7 +194,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Engine_ScriptStart();
   sparkles->stopped = 0;
   // Reopen the chamber during the first quake and stage the two groups.
-  Script_PlayCue(SE_141);
+  Script_PlayCue(SE_RUMBLE);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(232), PIXELS(156));
   ObjectEvent_SetPosition(GARET, PIXELS(218), PIXELS(172));
@@ -313,7 +313,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 20);
   SolSanctumEruption_SetMaterializationTint(1, 20, 0);
   sparkles->stopped = 0;
-  Script_PlayCue(SE_141);
+  Script_PlayCue(SE_RUMBLE);
   MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
   Engine_ScriptWait(80);
   sparkles->stopped = 1;
@@ -1498,7 +1498,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   ObjectEvent_FaceDirection(LOCALID_WISE_ONE, FACING_SOUTH, 0);
   Engine_ScriptWait(10);
   SolSanctumEruption_FinishMaterialization();
-  Script_PlayCue(SE_141);
+  Script_PlayCue(SE_RUMBLE);
   Engine_ScriptWait(100);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);

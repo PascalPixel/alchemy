@@ -92,8 +92,8 @@
 /// there; it also plays as Babi meets the party in Altmiller Cave and after the
 /// Colosso, and as Iodem questions the wounded soldiers in Suhalla.
 #define MUS_030 30
-/// Nothing in ☀️ plays it; it is kept for MUSIC_ALL_TRACKS, which names it among
-/// the songs of nine or more tracks.
+/// Unused: nothing in ☀️ plays it; MUSIC_ALL_TRACKS names it among the songs of
+/// nine or more tracks.
 #define MUS_040 40
 /// Field music of the Tolbi-bound ship, and of the world map reached from seven
 /// of its warp destinations.
@@ -147,8 +147,10 @@
 /// the Elemental Star room, at Mercury Lighthouse's aerie and at Venus
 /// Lighthouse; and as the party finds Hammet and frees the roofer in Vault.
 #define MUS_061 61
-/// Plays as the party tries to stop Sheba's fall at Venus Lighthouse's aerie.
-#define MUS_062 62
+/// Plays as Sheba hangs from the edge of Venus Lighthouse's aerie, from
+/// Felix's cry until it fades as she slips
+/// (VenusLighthouseAerie_TryToPreventFall).
+#define MUS_SHEBA_HANGS_ON 62
 /// Field music of Sol Sanctum once Mt. Aleph has erupted
 /// (FLAG_SOL_SANCTUM_ERUPTED) and of the eruption scene; it also plays as the
 /// Tolbi-bound ship rocks and as Saturos and Menardi combine.
@@ -168,10 +170,13 @@
 /// ★ Named from what the player sees: the title screen and its "Press Start"
 /// prompt (its render)
 #define MUS_TITLE 70
-/// The empty song: the debug battle message viewer starts it, so nothing plays.
-#define MUS_071 71
-/// Plays as Sheba falls from Venus Lighthouse's aerie.
-#define MUS_072 72
+/// A row of the song table that holds the empty song (Sound_EmptySong), so
+/// nothing plays; only the debug battle message viewer starts it, to silence
+/// the music.
+#define MUS_EMPTY 71
+/// Plays once Felix has leapt after Sheba from Venus Lighthouse's aerie, as the
+/// party watches and resolves to escape (VenusLighthouseAerie_PlayShebasFall).
+#define MUS_FELIX_LEAPS_AFTER_SHEBA 72
 /// Field music of the Sanctum and of the clear-data map.
 #define MUS_074 74
 /// The music of the Golden Sun logo shown after Jenna and Kraden's closing
@@ -346,10 +351,12 @@
 /// Djinni is caught, as the Lemurian ship rises, and in the Thor and Procne
 /// summons.
 #define SE_140 140
-/// A rumble: Sol Sanctum's rooms after Mt. Aleph erupts, the stumps in Goma
-/// Cave, the Lunpa Fortress trap, Mercury Lighthouse's waterfall passage, and
-/// the Quake, Gaia, Judgment and other battle effects.
-#define SE_141 141
+/// A rumble, mostly as the screen shakes (MapGrid_SetShake): Sol Sanctum's
+/// rooms after the eruption, the stumps in Goma Cave, the Lunpa Fortress
+/// trap, Mercury Lighthouse's waterfall passage, the boulders of the stormy
+/// night, the wagons setting off from Kalay and Hammet's caravan, and the
+/// Quake, Gaia, Judgment and other battle effects.
+#define SE_RUMBLE 141
 /// Plays in the Bind, Drain, Haunt, Sleep, Judgment and Neptune battle effects
 /// and as stats rise, and as a statue is searched in Venus Lighthouse.
 #define SE_142 142
@@ -475,8 +482,10 @@
 /// ★ Named from what the player sees: the leader pushing a statue or pillar
 /// ahead (its render)
 #define SE_PUSH 185
-/// Sol Sanctum's statue opening the seal and shining its beams.
-#define SE_186 186
+/// Sol Sanctum lighting up as its statues are placed: a seal opening
+/// (SolSanctumStatue_OpenSeal), and the left and right beams shining on the
+/// centre statue.
+#define SE_SOL_SANCTUM_LIGHT_UP 186
 /// Sol Sanctum's falling lights, and Venus Lighthouse's aerie flashing white as
 /// the beacon rises.
 #define SE_187 187
@@ -512,8 +521,9 @@
 #define SE_206 206
 /// Bane's second escape on Crossbone Isle.
 #define SE_208 208
-/// Mia's Ply opening Mercury Lighthouse's entrance.
-#define SE_209 209
+/// Mercury Lighthouse's door opening, as the light turns white after Mia casts
+/// Ply on it.
+#define SE_MERCURY_LIGHTHOUSE_DOOR_OPEN 209
 /// A hidden way opening: Frost on Bilibin Cave's puddles, and Lunpa's hidden
 /// switch.
 #define SE_HIDDEN_PASSAGE_OPEN 210
@@ -580,8 +590,9 @@
 /// The water rising or draining at Crossbone Isle and Kolima Forest's
 /// floodgate, and Altin Peak's cart stopping.
 #define SE_232 232
-/// Altin Peak's cart rolling.
-#define SE_233 233
+/// Altin Peak's cart rolling, on player 3: as it sets off, after each turn and
+/// as a countdown runs out; SE_STOP_SLOT3 cuts it.
+#define SE_CART_ROLL 233
 /// Kyle and Dora turning back on the stormy night.
 #define SE_234 234
 /// Each of the countdown's 3, 2 and 1 before a Colosso round, before
@@ -664,8 +675,9 @@
 #define SE_STOP_SLOT3 288
 /// An effect pair spawned in the eruption at Sol Sanctum.
 #define SE_292 292
-/// Played before each queued map sound (FieldEffect_SetQueuedSoundAndPlay).
-#define SE_298 298
+/// A song with no tracks on player 5, which stops what plays there; played
+/// before each queued map sound (FieldEffect_SetQueuedSoundAndPlay).
+#define SE_STOP_SLOT5 298
 /// Tolbi Spring: 50 frames into a toss.
 #define SE_300 300
 /// Tolbi Spring: a tossed coin meeting one of the moving obstacles.

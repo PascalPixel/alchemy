@@ -520,7 +520,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != JUDGMENT_SWEEP_FRAMES; frame++) {
     if (frame == 66) {
       AudioCommand_PlayFar(SE_145);
-      AudioCommand_PlayFar(SE_141);
+      AudioCommand_PlayFar(SE_RUMBLE);
     }
     if (frame == 155) {
       AudioCommand_PlayFar(SE_162);

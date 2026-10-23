@@ -263,7 +263,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
       }
     }
     if (frame == 48)
-      AudioCommand_PlayFar(SE_141);
+      AudioCommand_PlayFar(SE_RUMBLE);
     if (frame == 128)
       AudioCommand_PlayFar(SE_145);
     // Flashes: one a frame, thrown to the left (mirrored by dir), 65 to 110

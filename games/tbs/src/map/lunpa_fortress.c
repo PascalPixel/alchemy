@@ -1681,7 +1681,7 @@ static void LunpaFortress_GatherPartyAroundHammet(void) {
 /// Dodonpa's lever: the room shakes, the floor opens and everyone startles.
 static void LunpaFortress_ActivateLeverTrap(void) {
   MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
-  SE(SE_141);
+  SE(SE_RUMBLE);
   WAIT(80);
   SE(SE_STOP_SLOT3);
   WAIT(5);

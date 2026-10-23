@@ -1521,7 +1521,7 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
     MapGrid_CopyCellAttributes(15, 6, 2, 1, 17, 6);
   } else {
     if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
-      FieldEffect_SetQueuedSoundAndPlay(SE_141);
+      FieldEffect_SetQueuedSoundAndPlay(SE_RUMBLE);
       MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
       InitializeSparkleRecordBuffer();
       MapGrid_CopyCellAttributes(15, 6, 2, 1, 17, 6);
@@ -1633,7 +1633,7 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
       OBJ_EVENT_FACES_MOTION;
   ObjectEvent_GetById(GARET)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
   // Recover from the tremor and bring Garet back into the party.
-  FieldEffect_SetQueuedSoundAndPlay(SE_141);
+  FieldEffect_SetQueuedSoundAndPlay(SE_RUMBLE);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Engine_ScriptWait(40);
   Engine_ObjectEventRunRepeatedMotion(GARET, 2);

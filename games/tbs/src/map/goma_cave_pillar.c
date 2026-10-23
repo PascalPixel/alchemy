@@ -379,7 +379,7 @@ static void EventScript_PushStumpOver(void) {
     // Dust falls while the stump rocks on the edge.
     fragmentCallback = GomaCavePillar_SpawnStumpDust;
     FieldScheduler_AddCallback(fragmentCallback, 3200);
-    Engine_AudioPlayCue(SE_141);
+    Engine_AudioPlayCue(SE_RUMBLE);
     Engine_ObjectEventSetDestinationOffset(LOCALID_STUMP, 1, 0);
     Engine_ObjectEventWaitForMove(LOCALID_STUMP);
     WAIT(10);

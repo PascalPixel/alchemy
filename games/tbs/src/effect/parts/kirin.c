@@ -130,7 +130,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
       AudioCommand_PlayFar(SE_136);
     }
     if (frame == 26) {
-      AudioCommand_PlayFar(SE_141);
+      AudioCommand_PlayFar(SE_RUMBLE);
     }
     if (frame == 40) {
       AudioCommand_PlayFar(SE_CAST);

@@ -1091,7 +1091,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
                        PIXELS(2) / 5);
   ObjectEvent_SetSpeed(LOCALID_CARAVAN_FIRST_WAGON + 3, PIXELS(8) / 5,
                        PIXELS(2) / 5);
-  Script_PlayCue(SE_141);
+  Script_PlayCue(SE_RUMBLE);
   ObjectEvent_SetActionScript(LOCALID_CARAVAN_FIRST_WAGON,
                               gCaravanFirstWagonArrives);
   Engine_ScriptWait(20);
@@ -1126,7 +1126,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   ObjectEvent_FaceDirection(GARET, FACING_NORTHWEST, 60);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 0);
   ObjectEvent_FaceDirection(GARET, FACING_SOUTHWEST, 10);
-  Script_PlayCue(SE_141);
+  Script_PlayCue(SE_RUMBLE);
   ObjectEvent_SetActionScript(LOCALID_CARAVAN_FIRST_WAGON,
                               gCaravanFirstWagonDeparts);
   Engine_ScriptWait(20);
@@ -1309,7 +1309,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   ObjectEvent_WalkToAndWait(LOCALID_CARAVAN_MAN, 5640, 1736);
   ObjectEvent_WalkToAndWait(LOCALID_CARAVAN_MAN, 5640, 1752);
   ObjectEvent_SetPosition(LOCALID_CARAVAN_MAN, 0, 0);
-  Script_PlayCue(SE_141);
+  Script_PlayCue(SE_RUMBLE);
   ObjectEvent_SetActionScript(LOCALID_CARAVAN_FIRST_WAGON,
                               gCaravanFirstWagonReturns);
   ObjectEvent_SetActionScript(LOCALID_CARAVAN_FIRST_WAGON + 1,
@@ -1855,7 +1855,7 @@ static void WorldMap_StepDownFromBunzasWagon(void) {
   Engine_ScriptWait(20);
   ObjectEvent_SetPosition(LOCALID_KALAY_WAGON, PIXELS(5480), PIXELS(2104));
   Engine_TaskWait(1);
-  Script_PlayCue(SE_141);
+  Script_PlayCue(SE_RUMBLE);
   ObjectEvent_SetSpeed(LOCALID_KALAY_WAGON, PIXELS(8) / 5, PIXELS(2) / 5);
   Engine_ObjectEventSetAnimation(LOCALID_KALAY_WAGON, ANIMATION_WALK);
   ObjectEvent_MoveToAndWait(LOCALID_KALAY_WAGON, 5485, 2136);
@@ -1873,7 +1873,7 @@ static void WorldMap_StepDownFromBunzasWagon(void) {
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(2), PIXELS(1));
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 5576, 2168);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 40);
-  Script_PlayCue(SE_141);
+  Script_PlayCue(SE_RUMBLE);
   Engine_ObjectEventSetAnimation(LOCALID_KALAY_WAGON, ANIMATION_WALK);
   ObjectEvent_MoveToAndWait(LOCALID_KALAY_WAGON, 5624, 2168);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHEAST, 0);
@@ -2374,7 +2374,7 @@ static void WorldMap_ShowEndingScene(void) {
 /// FLAG_KEEP_MUSIC.
 static void WorldMap_ShakeVenusLighthouse(void) {
   Engine_ScriptStart();
-  Engine_AudioPlayCue(SE_141);
+  Engine_AudioPlayCue(SE_RUMBLE);
   Engine_ColorBufferApplySource(0, 0);
   Engine_ColorBufferApplyTarget(0, 0);
   Engine_ColorBufferInterpolate(1);
@@ -2857,7 +2857,7 @@ static void WorldMap_PlayLighthouseTransition(s32 palette) {
   WorldMap_LoadAreaGraphics();
   FieldScheduler_AddCallback(WorldMap_JitterTransitionCamera,
                              TASK_PRIORITY_MAP);
-  Engine_AudioPlayCue(SE_141);
+  Engine_AudioPlayCue(SE_RUMBLE);
   gWorldMapBlend = BLEND_ALPHA(0, 13);
   Engine_ScriptWait(4);
   gWorldMapBlend = BLEND_ALPHA(0, 14);

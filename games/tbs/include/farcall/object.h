@@ -416,8 +416,8 @@ s32 MapSec_GetNameIndexFar(s32 mapId, s32 warpDest);
 /// Starts an object event's action script: an enum MovementType, or the script
 /// itself.
 void ObjectMotion_SetActionCallbackFar(struct ObjectRuntime *object, s32 kind);
-/// Plays SE_298 and then sound_id (AUDIO_CUE_FADE_SLOT3 for -1), and remembers
-/// sound_id to play again later.
+/// Plays SE_STOP_SLOT5 and then sound_id (AUDIO_CUE_FADE_SLOT3 for -1), and
+/// remembers sound_id to play again later.
 void FieldEffect_SetQueuedSoundAndPlayFar(s32 sound_id);
 /// Plays the sound FieldEffect_SetQueuedSoundAndPlay remembered, if any.
 void FieldEffect_PlayQueuedSoundFar(void);

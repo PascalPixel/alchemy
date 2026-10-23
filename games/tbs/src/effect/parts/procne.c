@@ -154,7 +154,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
     EFFECT_VIEW_FROM_CAMERA(camera);
 
     if (frame == 16)
-      AudioCommand_PlayFar(SE_141);
+      AudioCommand_PlayFar(SE_RUMBLE);
     if (frame == 256)
       AudioCommand_PlayFar(SE_140);
     if (frame == 334)

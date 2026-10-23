@@ -400,7 +400,7 @@ void BattleEffect_RunVenus(struct BattleEffectArgument *effect) {
     column->y = 104;
   }
   EFFECT_FREE_PARTICLES(i, PARTICLES, DJINN_ATTACKS_MOTE_SLOTS);
-  AudioCommand_PlayFar(SE_141);
+  AudioCommand_PlayFar(SE_RUMBLE);
   frame = 0;
   angle = 0x8000;
   do {

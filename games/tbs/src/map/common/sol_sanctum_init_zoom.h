@@ -7,7 +7,7 @@
 #include "flags.h"
 
 /// The map opens in the window transition over 16 frames. Once Mt. Aleph has
-/// erupted (FLAG_SOL_SANCTUM_ERUPTED), the rooms rumble (SE_141), the map
+/// erupted (FLAG_SOL_SANCTUM_ERUPTED), the rooms rumble (SE_RUMBLE), the map
 /// shakes without end and sparkles start.
 s32 SolSanctumRooms_Initialize(void) {
   struct FieldWork *work;
@@ -21,7 +21,7 @@ s32 SolSanctumRooms_Initialize(void) {
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   work->transitionFrames = 16;
   if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
-    QueueMapSound(SE_141);
+    QueueMapSound(SE_RUMBLE);
     Engine_WorkSetValuesIfNonNegative(shakeX, shakeY, shakeDecay);
     InitializeSparkleRecordBuffer();
   }

@@ -111,7 +111,7 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
   // The screen shakes for 128 frames: all of Quake (80) and Earthquake (112),
   // and all but the last 16 of Quake Sphere (144).
   work->shakeFrames = 128;
-  AudioCommand_PlayFar(SE_141);
+  AudioCommand_PlayFar(SE_RUMBLE);
 
   for (frame = 0;
        frame != gQuake_Timings[work->effect->variant][QUAKE_TIMING_FRAMES];

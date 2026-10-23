@@ -169,7 +169,7 @@ void DebugBattle_ViewMessages(void) {
   }
   unit->name[UNIT_NAME_LENGTH] = 0;
   UiWork_InitializeWithResourceCountersFar();
-  AudioCommand_PlayFar(MUS_071);
+  AudioCommand_PlayFar(MUS_EMPTY);
   for (;;) {
     index = 0;
     {

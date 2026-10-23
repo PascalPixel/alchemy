@@ -121,7 +121,7 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
     rockPoints[i][1] = BOREAS_POINT_Y(i);
   }
 
-  AudioCommand_PlayFar(SE_141);
+  AudioCommand_PlayFar(SE_RUMBLE);
 
   //------------------------------------------------------------------
   // First half: the rocks, the big ice block and the spray (A or B skips

@@ -1732,7 +1732,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   Task_Wait(60);
   Task_AddCallback(VenusLighthouseAerie_SpawnUpperOrbitParticles,
                    TASK_PRIORITY_MAP);
-  Script_PlayCue(SE_141);
+  Script_PlayCue(SE_RUMBLE);
   MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
   ColorBuffer_ApplyTarget(0x4063ff, 0);
   ColorBuffer_Interpolate(120);
@@ -2243,7 +2243,7 @@ static void VenusLighthouseAerie_StageShebasFall(void) {
 static void VenusLighthouseAerie_ShowSaturosAndMenardiFall(void) {
   struct ObjectEvent *objectEvent;
 
-  Script_PlayCue(SE_141);
+  Script_PlayCue(SE_RUMBLE);
   MapGrid_CopyCellAttributes(17, 10, 4, 2, 17, 8);
   ObjectEvent_Get(LOCALID_PARTY_LEADER)->facing = FACING_NORTHWEST;
   ObjectEvent_Get(GARET)->facing = FACING_NORTHWEST;
@@ -2503,7 +2503,7 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   Engine_ColorBufferApplyTarget(0x7fff, 0);
   Engine_ColorBufferInterpolate(24);
   Engine_TaskWait(60);
-  Engine_AudioPlayCue(SE_141);
+  Engine_AudioPlayCue(SE_RUMBLE);
   Engine_GameFlagSet(FLAG_MAP_TEMP_36);
   ObjectEvent_GetById(LOCALID_BEAM_BOTTOM)->y.fixed = -PIXELS(96);
   ObjectEvent_GetById(LOCALID_BEAM_LOWER)->y.fixed = -PIXELS(64);
@@ -2688,7 +2688,7 @@ static void VenusLighthouseAerie_RestorePartyOnBrokenAerie(void) {
 
   Engine_ObjectEventDestroy(LOCALID_SATUROS);
   Engine_ObjectEventDestroy(LOCALID_MENARDI);
-  Script_PlayCue(SE_141);
+  Script_PlayCue(SE_RUMBLE);
   MapGrid_CopyCellAttributes(17, 10, 4, 2, 17, 8);
   MapGrid_CopyCellsTo(102, 4, 74, 4, 18, 23);
   MapGrid_CopyCellsTo(39, 72, 11, 72, 16, 21);
@@ -2762,7 +2762,7 @@ static void VenusLighthouseAerie_RestorePartyOnBrokenAerie(void) {
 static void VenusLighthouseAerie_TryToPreventFall(void) {
   Engine_ScriptSetMessage(MsgVenusNoooo);
   VenusLighthouseAerie_ShowMessage(LOCALID_FELIX);
-  Script_PlayCue(MUS_062);
+  Script_PlayCue(MUS_SHEBA_HANGS_ON);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Camera_SetSpeed(PIXELS(24) / 5, PIXELS(3) / 5);
   Camera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
@@ -2839,7 +2839,7 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
                                      gVenusLighthouseAerie_LeapAction);
   Engine_ScriptWait(120);
   VenusLighthouseAerie_ShowMessage(LOCALID_PARTY_LEADER);
-  Script_PlayCue(MUS_072);
+  Script_PlayCue(MUS_FELIX_LEAPS_AFTER_SHEBA);
   Camera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
   Camera_MoveTo(PIXELS(342), PIXELS(32), PIXELS(212), 1);
   Engine_CameraWaitForMove();
@@ -2958,7 +2958,7 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
                                          ATTACHED_EFFECT_ONCE);
   Engine_ScriptWait(60);
   VenusLighthouseAerie_ShowMessage(MIA);
-  Script_PlayCue(SE_141);
+  Script_PlayCue(SE_RUMBLE);
   MapGrid_SetShake(PIXELS(6), PIXELS(6), Q16_ONE);
   Engine_ScriptWait(40);
   Script_PlayCue(SE_145);

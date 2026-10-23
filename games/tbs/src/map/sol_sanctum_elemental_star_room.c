@@ -194,7 +194,7 @@ static void EventScript_BagVenusStar(void) {
 
   Engine_ScriptStart();
   // Flash the room before revealing the crossings for this star.
-  Engine_AudioPlayCue(SE_141);
+  Engine_AudioPlayCue(SE_RUMBLE);
   for (i = 0; i != 6; i++) {
     Engine_ColorBufferApplyTarget(0x403a52, 1);
     Engine_ColorBufferInterpolate(8);
@@ -296,7 +296,7 @@ static void EventScript_BagMercuryStar(void) {
   s32 message;
 
   Engine_ScriptStart();
-  Script_PlayCue(SE_141);
+  Script_PlayCue(SE_RUMBLE);
   for (i = 0; i != 6; i++) {
     ColorBuffer_ApplyTarget(0x404a4e, 1);
     Engine_ColorBufferInterpolate(8);
@@ -412,7 +412,7 @@ static void SolSanctumElementalStarRoom_BagJupiterStar(void) {
   u32 i;
   s32 itemOwner;
 
-  Script_PlayCue(SE_141);
+  Script_PlayCue(SE_RUMBLE);
   for (i = 0; i != 6; i++) {
     ColorBuffer_ApplyTarget(0x4049d2, 1);
     Engine_ColorBufferInterpolate(8);
@@ -1257,7 +1257,7 @@ static void EventScript_TakeMarsStar(void) {
   struct ObjectEvent *leader;
 
   Engine_ScriptStart();
-  Script_PlayCue(SE_141);
+  Script_PlayCue(SE_RUMBLE);
   for (pass = 0; pass != 6; pass++) {
     ColorBuffer_ApplyTarget(0x4039d2, 1);
     Engine_ColorBufferInterpolate(8);

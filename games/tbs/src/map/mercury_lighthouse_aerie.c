@@ -316,7 +316,7 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
   Engine_TaskWait(1);
   Engine_MapGridRedraw();
   Engine_TaskWait(1);
-  Script_PlayCue(SE_141);
+  Script_PlayCue(SE_RUMBLE);
   MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
   Script_PlayCue(AUDIO_CUE_FADE_SLOT3);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);

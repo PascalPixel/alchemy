@@ -190,7 +190,7 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
     if (frame == 0)
       AudioCommand_PlayFar(SE_212);
     if (frame == 40)
-      AudioCommand_PlayFar(SE_141);
+      AudioCommand_PlayFar(SE_RUMBLE);
     if (frame == 96)
       AudioCommand_PlayFar(SE_145);
     if (frame == 120)

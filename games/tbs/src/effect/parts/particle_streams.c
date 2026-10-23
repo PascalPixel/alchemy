@@ -363,7 +363,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
          * without it, 175 of 1532 instructions differ in tbs-en. */
         asm("" : : : "r6");
         if (frame == 0)
-          AudioCommand_PlayFar(SE_141);
+          AudioCommand_PlayFar(SE_RUMBLE);
         /* FAKEMATCH(barrier): hold's use in an empty asm, which keeps it live
          * across the call; without it, 168 of 1532 instructions differ in
          * tbs-en. */

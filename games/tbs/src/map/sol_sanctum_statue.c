@@ -965,7 +965,7 @@ s32 SolSanctumStatue_Initialize(void) {
     }
   }
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
-    FieldEffect_SetQueuedSoundAndPlay(SE_141);
+    FieldEffect_SetQueuedSoundAndPlay(SE_RUMBLE);
     MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
     InitializeSparkleRecordBuffer();
   }
@@ -1178,7 +1178,7 @@ static void EventScript_CenterStatueMoved(void) {
         Engine_ObjectEventSetPosition(LOCALID_CENTER_STATUE, 0, 0);
         MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
         Engine_ScriptWait(10);
-        Engine_AudioPlayCue(SE_141);
+        Engine_AudioPlayCue(SE_RUMBLE);
         MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
         Engine_ScriptWait(10);
         MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
@@ -1613,7 +1613,7 @@ static void SolSanctumStatue_OpenSeal(void) {
     Engine_CameraSetSpeed(PIXELS(2), PIXELS(1) / 4);
     Engine_CameraMoveTo(PIXELS(576), -1, PIXELS(172), 1);
     Engine_CameraWaitForMove();
-    Engine_AudioPlayCue(SE_186);
+    Engine_AudioPlayCue(SE_SOL_SANCTUM_LIGHT_UP);
     COPY_CELLS(sSealScene.open);
     for (pulse = 0; pulse != 20; pulse++) {
       Engine_AudioPlayCue(SE_246);
@@ -1683,7 +1683,7 @@ static void SolSanctumStatue_ShineLeftBeam(void) {
       Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
       Camera_MoveTo(PIXELS(286), -1, PIXELS(146), 1);
       Engine_CameraWaitForMove();
-      Script_PlayCue(SE_186);
+      Script_PlayCue(SE_SOL_SANCTUM_LIGHT_UP);
       MapGrid_CopyCellsTo(0, 59, 15, 38, 4, 3);
       if (GameFlag_IsSet(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING) != 0) {
         MapGrid_CopyCellsTo(8, 60, 17, 39, 2, 2);
@@ -1708,7 +1708,7 @@ static void SolSanctumStatue_ShineRightBeam(void) {
       Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
       Camera_MoveTo(PIXELS(286), -1, PIXELS(146), 1);
       Engine_CameraWaitForMove();
-      Script_PlayCue(SE_186);
+      Script_PlayCue(SE_SOL_SANCTUM_LIGHT_UP);
       MapGrid_CopyCellsTo(4, 59, 17, 38, 4, 3);
       if (GameFlag_IsSet(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING) != 0) {
         MapGrid_CopyCellsTo(8, 60, 17, 39, 2, 2);

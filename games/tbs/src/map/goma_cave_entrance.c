@@ -568,7 +568,7 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
   MapObjectEvent_WaitBelowHeight(stump, PIXELS(32));
   Engine_AudioPlayCue(SE_188);
   MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
-  Engine_AudioPlayCue(SE_141);
+  Engine_AudioPlayCue(SE_RUMBLE);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   for (i = 0; i <= 16; i++) {
     v = &dir;

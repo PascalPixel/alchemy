@@ -58,7 +58,7 @@ const struct MapEvent *Map_GetEvents(void) {
 }
 
 /// Opens the map with the window transition and blocks Retreat. Once Mt.
-/// Aleph has erupted (FLAG_SOL_SANCTUM_ERUPTED), the room rumbles (SE_141)
+/// Aleph has erupted (FLAG_SOL_SANCTUM_ERUPTED), the room rumbles (SE_RUMBLE)
 /// and shakes gently, as the rest of the sanctum does.
 s32 Map_Initialize(void) {
   s32 shakeX = PIXELS(1);
@@ -70,7 +70,7 @@ s32 Map_Initialize(void) {
 
   Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
   if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
-    Resource37c_QueueSoundCue(SE_141);
+    Resource37c_QueueSoundCue(SE_RUMBLE);
     Engine_WorkSetValuesIfNonNegative(shakeX, shakeY, decay);
     Resource37c_FinalizeSetup();
   }

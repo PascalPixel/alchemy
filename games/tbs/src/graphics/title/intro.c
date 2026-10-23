@@ -181,8 +181,9 @@ void Title_UpdateIntroSprites(void) {
 }
 
 /// Loads the title intro's two scrolling backgrounds and its sprite tiles,
-/// builds their maps and sets the blending and windows. Called by
-/// Title_ShowIntro.
+/// builds their tilemaps and sets the blending and windows. The pictures are
+/// decoded through Ram_MapGridCellBuffer, the map grid's cell buffer, which is
+/// free while no map is loaded. Called by Title_ShowIntro.
 void Title_LoadIntroBackgrounds(void) {
   struct IntroWork *work;
   u8 *resourceData;

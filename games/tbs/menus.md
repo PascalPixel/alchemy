@@ -57,7 +57,7 @@ renderer in `glyph_arm.c`, written in the processor's fast 32-bit ARM
 instructions; its 120 tiles are exactly the battle message window's text
 area. Tilemap text takes tiles from a run of 128, and the work block's `alt`
 adds a second run of 128 while a screen that needs more is open. Each render
-output (`struct WindowSprite`) is moved every frame by its `UI_SPRITE_` motion
+output (`struct WindowSprite`) is moved every frame by its `WINDOW_SPRITE_MOTION_` motion
 (`WindowSprite_UpdateAll`), and its picture holds an entry of the VRAM
 cache, the video memory kept for sprite pictures, until the window code frees
 it with `VramCache_FreeEntry`.

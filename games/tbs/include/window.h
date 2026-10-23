@@ -28,7 +28,7 @@ struct Window {
   /// 0 while a text printer is typing into the window; 1 once its text has
   /// ended or closed the window, which frees the printer for the next text.
   u16 state;
-  u16 flags; ///< UI_WINDOW_ flags; 0 once closing or free
+  u16 flags; ///< WINDOW_FLAG_ flags; 0 once closing or free
   /// The zoom's step: counts down from 7 to 0 while opening, and up from 0 to
   /// duration while closing.
   u16 frame;
@@ -87,6 +87,10 @@ STATIC_ASSERT(offsetof(struct TextPrinter, flags) == 0x24);
 /// glyphs, icons and portraits together.
 enum { WINDOW_SPRITE_COUNT = 64 };
 
+/// WindowWork.portraitPictures of a free portrait slot, as Portrait_ClearSlots
+/// writes it.
+#define PORTRAIT_SLOT_EMPTY 999
+
 /// The window system's work: the windows' tilemap, the windows, the three text
 /// printers, the 64 window sprites, and the decoded message and its arguments.
 ///
@@ -138,8 +142,8 @@ struct WindowWork {
   u32 argumentValues[8];
   u16 argumentKinds[8]; ///< the MESSAGE_ARGUMENT_ kind of each value; 0 for a
                         ///< free slot
-  u16 portraitPictures[2]; ///< picture shown in each portrait slot; 999 when
-                           ///< free
+  u16 portraitPictures[2]; ///< picture shown in each portrait slot;
+                           ///< PORTRAIT_SLOT_EMPTY when free
   u16 portraitSprites[2];  ///< VRAM cache slot of each portrait slot's picture
   u16 voiceSound;          ///< first of four voice blip sounds; 0 for none
   u16 voiceCountdown;      ///< characters until the next voice blip

@@ -24,7 +24,7 @@ struct WindowSprite *WindowSprite_CreateFromTable(s32 table_entry,
                                                   s32 y);
 struct WindowSprite *CreateSideObject(s32 character, s32 unused, s32 side,
                                       struct Window *window, s32 x, s32 y);
-void Ui_LoadCharacterEntryForSlot(u32 side, s32 character, s32 unused);
+void Portrait_Reload(u32 side, s32 character, s32 unused);
 void WindowSprite_SetMotion(struct WindowSprite *out, s32 mode);
 void WindowSprite_SetInvertedSentinel(void *output, s32 priority);
 void Win_FillScanlineSpans(void *spans);
@@ -97,7 +97,7 @@ void Heading_Bob(struct WindowSprite *obj);
 void CommandIcon_Load(s32 icon, s32 slot, s32 remap);
 struct WindowSprite *CommandIcon_Create(s32 icon, s32 remap,
                                         struct Window *window, s32 x, s32 y);
-void Ui_ApplyTableScaleToObject(struct WindowSprite *obj);
+void WindowSprite_Pulse(struct WindowSprite *obj);
 
 struct BattleAction;
 struct AbilityDefinition;
@@ -122,7 +122,7 @@ s32 Resource_LoadTableEntryToBuffer(s32 resource, s32 index);
 s32 ItemIcon_LoadIntoSlot(s32 resource, s32 index);
 s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index);
 s32 Portrait_Load(u32 member, s32 cacheSlot);
-s32 Ui_GetTableWordZero(s32 no);
+s32 WindowSprite_GetPointerTiles(s32 no);
 void Icon_Decompress(GlyphTransfer *work);
 struct Window *Link_CreateCountdownLabelWindow(void);
 s32 Resource_LoadIndexedIntoBuffer(s32 arg0, s32 arg1);
@@ -133,7 +133,7 @@ void Graphics_SetBg1Priority0(void);
 void Graphics_InstallBg1VCountHandler(void);
 struct Window *Message_ShowAndWait(s32 message, s32 x, s32 y);
 s32 BattleCommandRow_Run(s32 mode);
-void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 alt);
+void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 alt);
 s32 PartyStatus_HighlightMembers(u16 *ids);
 #ifdef UBFIX
 void String_FormatNumberToHalfwords(s16 *out, s32 value);
@@ -144,11 +144,11 @@ s32 BattleDjinnMenu_ListChangedDjinn(const struct PsynergyEntry *oldGrid,
                                      const struct PsynergyEntry *newGrid,
                                      u16 *out, s32 *gained, s32 *lost);
 #ifdef UBFIX
-void Ui_CreateOutputFromResourceSlot(struct Window *input, s32 x, s32 y,
-                                     s32 ability);
-#else
-s32 Ui_CreateOutputFromResourceSlot(struct Window *input, s32 x, s32 y,
+void WindowSprite_CreateAbilityIcon(struct Window *input, s32 x, s32 y,
                                     s32 ability);
+#else
+s32 WindowSprite_CreateAbilityIcon(struct Window *input, s32 x, s32 y,
+                                   s32 ability);
 #endif
 struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 owner,
                                                  s32 code, s32 page,

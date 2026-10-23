@@ -98,11 +98,11 @@ s32 BattleDjinnMenu_ListChangedDjinn(const struct PsynergyEntry *oldGrid,
 // UBFIX makes it void, which changes the register its epilogue returns
 // through.
 #ifdef UBFIX
-void Ui_CreateOutputFromResourceSlot(struct Window *window, s32 x, s32 y,
-                                     s32 abilityId) {
-#else
-s32 Ui_CreateOutputFromResourceSlot(struct Window *window, s32 x, s32 y,
+void WindowSprite_CreateAbilityIcon(struct Window *window, s32 x, s32 y,
                                     s32 abilityId) {
+#else
+s32 WindowSprite_CreateAbilityIcon(struct Window *window, s32 x, s32 y,
+                                   s32 abilityId) {
 #endif
   s32 iconSlot;
 
@@ -294,8 +294,8 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 owner,
         rangePattern--;
       Window_DrawThreeTileColumn(win, 16, visibleRow * 2, rangePattern, 0);
 
-      Ui_CreateOutputFromResourceSlot(win, 0, visibleRow * 16 - 4,
-                                      changedAbilities[i] & ACTION_ID_MASK);
+      WindowSprite_CreateAbilityIcon(win, 0, visibleRow * 16 - 4,
+                                     changedAbilities[i] & ACTION_ID_MASK);
       if ((changedAbilities[i] & DJINN_PREVIEW_ABILITY_GAINED) != 0)
         Text_SetColor(4);
       else if ((changedAbilities[i] & DJINN_PREVIEW_ABILITY_LOST) != 0)

@@ -32,7 +32,7 @@ FarCall_WindowTable:
 	export WindowSprite_CreateFar, WindowSprite_Create
 	export WindowSprite_CreateFromResourceFar, WindowSprite_CreateFromResource
 	export SideObject_CreateFar, CreateSideObject
-	export Ui_LoadCharacterEntryForSlotFar, Ui_LoadCharacterEntryForSlot
+	export Portrait_ReloadFar, Portrait_Reload
 	overlay_veneer WindowSprite_SetMotion
 	overlay_veneer WindowSprite_SetInvertedSentinel
 	export Portrait_OpenWindowFar, Portrait_OpenWindow
@@ -125,12 +125,12 @@ FarCall_WindowTable:
 	export YesNoMenu_RunAtFar, YesNoMenu_RunAt
 	export Resource_LoadFixedBlockBIntoFreeSlotFar, Resource_LoadFixedBlockBIntoFreeSlot
 	export Text_MeasureMessageFar, Text_MeasureMessage
-	export Window_SetPaletteBitRectFar, Ui_SetRectHighlight
+	export Window_HighlightRectFar, Window_HighlightRect
 	export Ability_LoadGlyphFar, Ability_LoadGlyph
 	export Graphics_ExpandVramTilesByColorTableFar, Graphics_ExpandVramTilesByColorTable
 	export Text_UseExtraTilesFar, Text_UseExtraTiles
 	export Menu_AnimateSelectionToEntryFar, Menu_AnimateSelectionToEntry
-	export Ui_GetTableWordZeroFar, Ui_GetTableWordZero
+	export WindowSprite_GetPointerTilesFar, WindowSprite_GetPointerTiles
 	export Message_OpenDecodedFar, Message_OpenDecoded
 	export Save_CountRecordsExcludingFlaggedFar, Save_CountRecordsExcludingFlagged
 	export Window_DrawFrameFar, Window_DrawFrame

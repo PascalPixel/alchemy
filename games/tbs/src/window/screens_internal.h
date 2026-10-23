@@ -292,8 +292,6 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *work,
 // portraitSprites), and their palette.
 #define PORTRAIT_SLOT_COUNT 2
 #define PORTRAIT_PALETTE 14 ///< OBJ palette of slot 0; slot 1 uses 15
-/// portraitPictures value of a free slot, as Portrait_ClearSlots writes it.
-#define PORTRAIT_SLOT_EMPTY 999
 
 // The battle menus' message buffers, in halfwords, and the copier that fills
 // them: the Japanese edition decodes the message (Message_DecodeRaw), the

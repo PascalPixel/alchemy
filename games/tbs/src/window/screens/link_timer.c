@@ -159,7 +159,7 @@ s32 Message_ShowLocalizedAndWait(void) {
   }
   if (result != 0) {
     work = Window_Create(0, 7, 30, 4, 42);
-    Ui_FillVramBlockPattern();
+    Text_FillCanvasBackground();
     BATTLE_MENU_MESSAGE_COPY(MsgNoTimeToRun, buffer,
                              BATTLE_MENU_MESSAGE_CAPACITY);
     Text_DrawWideStringAtOffset(buffer, work, 0, 4);

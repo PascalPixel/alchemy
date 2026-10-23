@@ -176,7 +176,7 @@ done:
 struct SpriteOutput {
   struct SpriteOutput *next;
   u8 kind;
-  u8 active;         ///< its UI_SPRITE_ motion
+  u8 active;         ///< its WINDOW_SPRITE_MOTION_ motion
   u16 x;             ///< screen pixels, where the motion is centred
   u16 y;             ///< screen pixels, where the motion is centred
   u16 unused;        ///< WindowSprite's; no code names it
@@ -466,9 +466,10 @@ void WindowSprite_UpdateScaleAnimation(struct WindowSprite *output) {
 }
 
 /// The per-frame sprite update: moves each sprite that an open window carries
-/// by its animation mode (UI_SPRITE_) and queues it for drawing, at its depth
-/// slot (WindowSprite.sentinel). The last step of WindowSystem_Update. While a
-/// window swells (WINDOW_EFFECT_SWELL) all its sprites pulse.
+/// by its animation mode (WINDOW_SPRITE_MOTION_) and queues it for drawing, at
+/// its depth slot (WindowSprite.sentinel). The last step of
+/// WindowSystem_Update. While a window swells (WINDOW_EFFECT_SWELL) all its
+/// sprites pulse.
 void WindowSprite_UpdateAll(void) {
   struct WindowWork *work = WINDOW_WORK;
   struct Window *window = work->windows;

@@ -168,7 +168,7 @@ s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
   struct CursorSprite *prompt;
   s32 tileSlot;
 
-  frameTiles = Ui_GetTableWordZeroFar(0);
+  frameTiles = WindowSprite_GetPointerTilesFar(0);
   position.x = x;
   position.y = y;
   while (!TextPrinter_AllFinishedFar())

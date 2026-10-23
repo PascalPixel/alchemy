@@ -366,8 +366,8 @@ s32 Message_Decode(s32 script, s32 clear) {
   u8 *nameBytes;
   u16 *nameOutput;
   u16 *p;
-  u16 name[UI_MESSAGE_NAME_HALFWORDS];
-  u8 numberBuffer[UI_NUMBER_BUFFER_SIZE];
+  u16 name[MESSAGE_NAME_HALFWORDS];
+  u8 numberBuffer[TEXT_NUMBER_BUFFER_SIZE];
   struct MessageReader reader;
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_ITALIAN)
   struct ItemPossessiveTable possessives;
@@ -563,7 +563,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             no = decode(&reader) - 1;
             argument = MessageArgument_Lookup(MESSAGE_ARGUMENT_CLASS, clear);
             Message_DecodeRaw(argument + MsgClassName, name,
-                              UI_MESSAGE_NAME_HALFWORDS);
+                              MESSAGE_NAME_HALFWORDS);
             writePosition = Message_AppendArticleName(
                 0, name, writePosition, entry, no, plural, &suffix);
             break;
@@ -586,10 +586,10 @@ s32 Message_Decode(s32 script, s32 clear) {
             if (no == 2 || (no == 3 && plural != 0) || no == 4)
 #endif
               Message_DecodeRaw(argument + MsgItemPluralName, name,
-                                UI_MESSAGE_NAME_HALFWORDS);
+                                MESSAGE_NAME_HALFWORDS);
             else
               Message_DecodeRaw(argument + MsgItemName, name,
-                                UI_MESSAGE_NAME_HALFWORDS);
+                                MESSAGE_NAME_HALFWORDS);
 #else
             Message_DecodeRaw((argument & TEXT_BUFFER_MASK) + MsgItemName, name,
                               24);
@@ -600,7 +600,7 @@ s32 Message_Decode(s32 script, s32 clear) {
           case MESSAGE_ARGUMENT_ABILITY_NAME:
             argument = MessageArgument_Lookup(MESSAGE_ARGUMENT_ABILITY, clear);
             Message_DecodeRaw(argument + MsgAbilityName, name,
-                              UI_MESSAGE_NAME_HALFWORDS);
+                              MESSAGE_NAME_HALFWORDS);
             p = name;
             nextPosition = writePosition;
             while (*p != 0) {
@@ -616,7 +616,7 @@ s32 Message_Decode(s32 script, s32 clear) {
                     MessageArgument_Lookup(MESSAGE_ARGUMENT_LOCATION, clear),
                     1) +
                     MsgDebugEntryName,
-                name, UI_MESSAGE_NAME_HALFWORDS);
+                name, MESSAGE_NAME_HALFWORDS);
             p = name;
             nextPosition = writePosition;
             while (*p != 0) {
@@ -903,8 +903,8 @@ s32 Message_Decode(s32 script, s32 clear) {
   u8 *nameBytes;
   u16 *nameOutput;
   struct Unit *unit;
-  u16 name[UI_MESSAGE_NAME_HALFWORDS];
-  u8 numberBuffer[UI_NUMBER_BUFFER_SIZE];
+  u16 name[MESSAGE_NAME_HALFWORDS];
+  u8 numberBuffer[TEXT_NUMBER_BUFFER_SIZE];
   struct MessageReader reader;
 
   if (script == -1) {
@@ -1044,21 +1044,21 @@ s32 Message_Decode(s32 script, s32 clear) {
           case MESSAGE_ARGUMENT_CLASS_NAME:
             argument = MessageArgument_Lookup(MESSAGE_ARGUMENT_CLASS, clear);
             Message_DecodeRaw(argument + MsgClassName, name,
-                              UI_MESSAGE_NAME_HALFWORDS);
+                              MESSAGE_NAME_HALFWORDS);
             writePosition = Message_AppendArticleName(mode, name, writePosition,
                                                       entry, 0, 0, 0);
             break;
           case MESSAGE_ARGUMENT_ITEM_NAME:
             argument = MessageArgument_Lookup(MESSAGE_ARGUMENT_ITEM, clear);
             Message_DecodeRaw((argument & 511) + MsgItemName, name,
-                              UI_MESSAGE_NAME_HALFWORDS);
+                              MESSAGE_NAME_HALFWORDS);
             writePosition = Message_AppendArticleName(mode, name, writePosition,
                                                       entry, 0, 0, 0);
             break;
           case MESSAGE_ARGUMENT_ABILITY_NAME:
             argument = MessageArgument_Lookup(MESSAGE_ARGUMENT_ABILITY, clear);
             Message_DecodeRaw(argument + MsgAbilityName, name,
-                              UI_MESSAGE_NAME_HALFWORDS);
+                              MESSAGE_NAME_HALFWORDS);
             writePosition = Message_AppendArticleName(mode, name, writePosition,
                                                       entry, 0, 0, 0);
             break;
@@ -1068,7 +1068,7 @@ s32 Message_Decode(s32 script, s32 clear) {
                     MessageArgument_Lookup(MESSAGE_ARGUMENT_LOCATION, clear),
                     1) +
                     MsgDebugEntryName,
-                name, UI_MESSAGE_NAME_HALFWORDS);
+                name, MESSAGE_NAME_HALFWORDS);
             writePosition = Message_AppendArticleName(mode, name, writePosition,
                                                       entry, 0, 0, 0);
             break;

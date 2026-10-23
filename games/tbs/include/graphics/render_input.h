@@ -74,7 +74,7 @@ enum WindowSpriteKind {
 struct WindowSprite {
   struct WindowSprite *next; ///< the next sprite in its list
   s8 kind;                   ///< an enum WindowSpriteKind
-  s8 motion;                 ///< its UI_SPRITE_ motion; 0 while free
+  s8 motion;                 ///< its WINDOW_SPRITE_MOTION_ motion; 0 while free
   u16 x;                     ///< screen pixels
   u16 y;                     ///< screen pixels
   u16 unused;                ///< no code names it

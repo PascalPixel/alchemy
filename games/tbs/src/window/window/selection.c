@@ -97,7 +97,7 @@ void SelectionScreen_AddEntry(u32 kind, u32 base) {
   struct SelectionScreenWork *state = gSelectionScreenWork;
   u16 entryCount = state->count;
 
-  if (entryCount != UI_SELECTION_ENTRY_LIMIT) {
+  if (entryCount != SELECTION_SCREEN_ENTRY_LIMIT) {
     state->kinds[entryCount] = kind;
     state->bases[entryCount] = base;
     state->count++;

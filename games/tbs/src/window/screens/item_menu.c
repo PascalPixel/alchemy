@@ -116,9 +116,9 @@ s32 BattleItemMenu_Run(s32 owner, u16 *entries, s32 count) {
   for (;;) {
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
       work->holdTilemapUpload = 1;
-      Ui_SetRectHighlight(window->x + 1, window->y + drawnRow * 2 + 1,
-                          window->width - 2, 1, 15);
-      Ui_FillVramBlockPattern();
+      Window_HighlightRect(window->x + 1, window->y + drawnRow * 2 + 1,
+                           window->width - 2, 1, 15);
+      Text_FillCanvasBackground();
       if (count != 0) {
         if (Item_ClassifyUseAbility(owner, entries[firstEntry + selectedRow]) ==
             2) {
@@ -173,8 +173,8 @@ s32 BattleItemMenu_Run(s32 owner, u16 *entries, s32 count) {
         }
       }
 
-      Ui_SetRectHighlight(window->x + 1, window->y + selectedRow * 2 + 1,
-                          window->width - 2, 1, 14);
+      Window_HighlightRect(window->x + 1, window->y + selectedRow * 2 + 1,
+                           window->width - 2, 1, 14);
       work->dirty = 1;
       work->holdTilemapUpload = 0;
     }
@@ -250,7 +250,7 @@ s32 BattleItemMenu_Run(s32 owner, u16 *entries, s32 count) {
           BATTLE_MENU_MESSAGE_COPY(MsgBattleItemNoEffect, messageText,
                                    BATTLE_MENU_MESSAGE_CAPACITY);
         }
-        Ui_FillVramBlockPattern();
+        Text_FillCanvasBackground();
         Text_DrawWideStringAtOffset(messageText, messageWindow, 0, 4);
       } else {
         result = -1;

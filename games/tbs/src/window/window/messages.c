@@ -509,14 +509,14 @@ UNUSED s32 Text_DecodeSymbolInC(struct MessageReader *reader) {
   return code;
 }
 
-/// Marks both portrait slots free (UI_PALETTE_SLOT_FREE). Only the field's
+/// Marks both portrait slots free (PORTRAIT_SLOT_EMPTY). Only the field's
 /// setup calls it.
 void Portrait_ClearSlots(void) {
   struct WindowWork *work = WINDOW_WORK;
   s32 index = 0;
 
   do {
-    work->portraitPictures[index] = UI_PALETTE_SLOT_FREE;
+    work->portraitPictures[index] = PORTRAIT_SLOT_EMPTY;
     index++;
   } while (index != 2);
 }

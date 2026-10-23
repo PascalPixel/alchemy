@@ -151,12 +151,12 @@ s32 BattleDjinnMenu_Run(s32 owner, s32 unused) {
       selectedDjinn = djinnEntries[firstEntry + selectedRow];
       standbyElements = 0;
       work->holdTilemapUpload = 1;
-      Ui_SetRectHighlight(listWindow->x + 1, listWindow->y + drawnRow * 2 + 1,
-                          listWindow->width - 2, 1, 15);
+      Window_HighlightRect(listWindow->x + 1, listWindow->y + drawnRow * 2 + 1,
+                           listWindow->width - 2, 1, 15);
       if (previewPage != 0) {
         Window_Close(messageWindow, 1);
         messageWindow = Window_Create(0, 4, 30, 4, 42);
-        Ui_FillVramBlockPattern();
+        Text_FillCanvasBackground();
       }
       redraw = 0;
       if (djinnCount != 0) {
@@ -286,9 +286,9 @@ s32 BattleDjinnMenu_Run(s32 owner, s32 unused) {
                                  listWindow->width - listPages + j - 2, -1, 0);
         }
       }
-      Ui_SetRectHighlight(listWindow->x + 1,
-                          listWindow->y + selectedRow * 2 + 1,
-                          listWindow->width - 2, 1, 14);
+      Window_HighlightRect(listWindow->x + 1,
+                           listWindow->y + selectedRow * 2 + 1,
+                           listWindow->width - 2, 1, 14);
       work->dirty = 1;
       work->holdTilemapUpload = 0;
     }
@@ -365,7 +365,7 @@ s32 BattleDjinnMenu_Run(s32 owner, s32 unused) {
             break;
           }
         } else if (alreadySelected == 0) {
-          Ui_FillVramBlockPattern();
+          Text_FillCanvasBackground();
           MessageArgument_ClearAll();
           MessageArgument_Push((s32)((turns & DJINN_ENTRY_RECOVERY_MASK) >>
                                      DJINN_ENTRY_RECOVERY_SHIFT),
@@ -536,9 +536,9 @@ s32 BattleDjinnMenu_Run(s32 owner, s32 unused) {
         if (((1 << i) & standbyElements) == 0) {
           palette = 15;
         }
-        Ui_SetRectHighlight(iconWindow->x + gDjinnMenu_ElementXOffsets[i] + 1,
-                            iconWindow->y + gDjinnMenu_ElementYOffsets[i] + 1,
-                            2, 2, palette);
+        Window_HighlightRect(iconWindow->x + gDjinnMenu_ElementXOffsets[i] + 1,
+                             iconWindow->y + gDjinnMenu_ElementYOffsets[i] + 1,
+                             2, 2, palette);
       }
     }
     if (gFrameCount & 4) {
@@ -553,8 +553,8 @@ s32 BattleDjinnMenu_Run(s32 owner, s32 unused) {
 
   // Leave the Djinn column in palette 15.
   if (CURSOR_OWNER->flags & 2) {
-    Ui_SetRectHighlight(CURSOR_OWNER->window->x + 1,
-                        CURSOR_OWNER->window->y + 1, 4, 4, 15);
+    Window_HighlightRect(CURSOR_OWNER->window->x + 1,
+                         CURSOR_OWNER->window->y + 1, 4, 4, 15);
   }
   // Restore the party strip before releasing the Djinn menu's resources.
   VramCache_FreeEntry(cursorSlot);

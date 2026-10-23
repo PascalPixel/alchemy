@@ -297,8 +297,8 @@ void Window_DrawOpened(struct Window *window) {
 
 /// Opens a window at tile (x, y) of width by height tiles in the first free
 /// window slot, and returns it, or NULL when all slots are in use. attrs takes
-/// the UI_WINDOW_ flags. Unless it is WINDOW_FLAG_INSTANT the window zooms open
-/// over eight frames, and this waits until it is fully open.
+/// the WINDOW_FLAG_ flags. Unless it is WINDOW_FLAG_INSTANT the window zooms
+/// open over eight frames, and this waits until it is fully open.
 struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs) {
   struct Window *slot;
   struct Window *found;
@@ -530,7 +530,7 @@ void WindowSprite_Release(struct WindowSprite *entry) {
     if ((u8)entry->kind == WINDOW_SPRITE_PORTRAIT) {
       u8 *work = gWindowWork[0];
       s32 offset = entry->oam.palette * 2 + WINDOW_WORK_PALETTE_TABLE_OFFSET;
-      *(u16 *)(work + offset) = UI_PALETTE_SLOT_FREE;
+      *(u16 *)(work + offset) = PORTRAIT_SLOT_EMPTY;
     }
   }
   entry->motion = 0;
@@ -569,10 +569,10 @@ struct TextPrinter *TextPrinter_Add(struct Window *window, s32 entry, s32 x,
     found->ended = 0;
     found->flags = flags;
     if (spacing != NULL) {
-      for (i = 0; i < UI_MESSAGE_LINE_COUNT; i++)
+      for (i = 0; i < TEXT_PRINTER_LINE_COUNT; i++)
         found->spacing[i] = *spacing++;
     } else {
-      for (i = 0; i < UI_MESSAGE_LINE_COUNT; i++)
+      for (i = 0; i < TEXT_PRINTER_LINE_COUNT; i++)
         found->spacing[i] = 0;
     }
     found->line = 0;
@@ -636,18 +636,18 @@ struct TextPrinter *BattleMessage_Continue(struct Window *window, s32 entry,
     do {
       index++;
       *spacing++ = zero;
-    } while (index < UI_MESSAGE_LINE_COUNT);
+    } while (index < TEXT_PRINTER_LINE_COUNT);
   }
   return selected;
 }
 
 /// Clears the text canvas to transparent.
-s32 Ui_ClearVramBlock(void) {
+s32 Text_ClearCanvas(void) {
   return Iwram_FillWords(TEXT_CANVAS_VRAM, TEXT_CANVAS_SIZE, 0);
 }
 
 /// Fills the text canvas with the window background colour (4).
-s32 Ui_FillVramBlockPattern(void) {
+s32 Text_FillCanvasBackground(void) {
   return Iwram_FillWords(TEXT_CANVAS_VRAM, TEXT_CANVAS_SIZE,
                          TEXT_CANVAS_BACKGROUND_WORD);
 }
@@ -669,7 +669,7 @@ void TextPrinter_ResetFree(void) {
   }
   if (selection != 0) {
     if (selection->window != 0) {
-      Ui_ClearVramBlock();
+      Text_ClearCanvas();
       selection->y = 0;
     }
     selection->x = 0;

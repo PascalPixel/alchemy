@@ -42,7 +42,7 @@ void Window_CloseIfOpen(struct Window **handle, s32 style);
 void StatusPanel_Draw(struct Window *unused, s32 owner, s32 slot, s32 mode);
 void Text_DrawNumberRightAligned(s32 number, struct Window *window, s32 x,
                                  s32 y);
-void Ui_DrawValuePairRows(struct Unit *unit, struct Window *window);
+void StatusPanel_DrawHpPp(struct Unit *unit, struct Window *window);
 void Text_DrawStatComparison(const struct Unit *after,
                              const struct Unit *before, struct Window *window);
 s32 Icon_CreateWithResource(struct Window *window, s32 unused, s32 x, s32 y);

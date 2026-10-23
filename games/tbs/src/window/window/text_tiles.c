@@ -397,7 +397,7 @@ void Text_UseExtraTiles(s32 allowAlternateTiles) {
 }
 
 /// Nothing calls it.
-UNUSED void UiRender_ReservedNoOp(void) {}
+UNUSED void Window_ReservedNoOp(void) {}
 
 /// Draws a straight divider line inside a window from tile (x1, y1) to
 /// (x2, y2), horizontal or vertical: its ends join the frame or the lines they
@@ -652,7 +652,7 @@ void Text_DrawString(const u8 *text, struct Window *window, s32 x, s32 y) {
   const u8 *input;
 
   input = text;
-  buffer = AllocEwram(UI_BYTE_STRING_BUFFER_SIZE);
+  buffer = AllocEwram(TEXT_WIDE_STRING_BUFFER_SIZE);
   Text_WidenByteString(input, (u16 *)buffer);
   Text_DrawWideStringAtOffset((u16 *)buffer, window, x, y);
   Free(buffer);
@@ -672,7 +672,7 @@ void Text_DrawStringAtOffset(const u8 *text, const struct Window *work,
   s32 dst;
   s32 phase;
 
-  buffer = AllocEwram(UI_BYTE_STRING_BUFFER_SIZE);
+  buffer = AllocEwram(TEXT_WIDE_STRING_BUFFER_SIZE);
   canvas = WINDOW_WORK;
   Text_WidenByteString(text, (u16 *)buffer);
 
@@ -698,7 +698,7 @@ void Text_DrawStringAtOffset(const u8 *text, const struct Window *work,
 /// coordinates.
 void Text_DrawStringInWindow(const u8 *text, struct Window *window, u32 x,
                              u32 y) {
-  u16 *buffer = AllocEwram(UI_BYTE_STRING_BUFFER_SIZE);
+  u16 *buffer = AllocEwram(TEXT_WIDE_STRING_BUFFER_SIZE);
   Text_WidenByteString(text, buffer);
   x >>= 3;
   y >>= 3;
@@ -710,7 +710,7 @@ void Text_DrawStringInWindow(const u8 *text, struct Window *window, u32 x,
 /// pixel (x, y).
 void Text_DrawNumber(s32 value, s32 width, struct Window *window, s32 x,
                      s32 y) {
-  u8 numberText[UI_NUMBER_BUFFER_SIZE];
+  u8 numberText[TEXT_NUMBER_BUFFER_SIZE];
 
   Text_DrawString(String_FormatNumber(numberText, value, width), window, x, y);
 }
@@ -719,7 +719,7 @@ void Text_DrawNumber(s32 value, s32 width, struct Window *window, s32 x,
 /// (x, y) of its interior.
 void Text_DrawNumberAtOffset(s32 value, s32 width, const struct Window *window,
                              s32 x, s32 y) {
-  u8 numberText[UI_NUMBER_BUFFER_SIZE];
+  u8 numberText[TEXT_NUMBER_BUFFER_SIZE];
 
   Text_DrawStringAtOffset(String_FormatNumber(numberText, value, width), window,
                           x, y);
@@ -729,7 +729,7 @@ void Text_DrawNumberAtOffset(s32 value, s32 width, const struct Window *window,
 /// pixel (x, y) of its interior.
 void Text_DrawNumberInWindow(s32 value, s32 width, struct Window *window, s32 x,
                              s32 y) {
-  u8 numberText[UI_NUMBER_BUFFER_SIZE];
+  u8 numberText[TEXT_NUMBER_BUFFER_SIZE];
 
   Text_DrawStringInWindow(String_FormatNumber(numberText, value, width), window,
                           x, y);
@@ -742,7 +742,7 @@ void Text_DrawNumberInWindow(s32 value, s32 width, struct Window *window, s32 x,
 /// to four places with spaces.
 void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *work,
                                      s32 offsetX, s32 offsetY, s32 variant) {
-  u8 formatted[UI_NUMBER_BUFFER_SIZE];
+  u8 formatted[TEXT_NUMBER_BUFFER_SIZE];
   s16 output[8];
   u8 *text;
   s32 index;

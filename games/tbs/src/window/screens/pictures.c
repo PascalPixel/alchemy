@@ -108,7 +108,7 @@ struct WindowSprite *CommandIcon_Create(s32 icon, s32 remap,
 /// frames, and puts it on draw layer 252. Does nothing when `obj` is NULL.
 /// The option menu pulses its selected icon with it each frame
 /// (window/options.c).
-void Ui_ApplyTableScaleToObject(struct WindowSprite *obj) {
+void WindowSprite_Pulse(struct WindowSprite *obj) {
   s32 scale = gWindowSprite_PulseScales[(gFrameTick >> 1) & 7];
   struct AffineTransform effect;
 
@@ -409,12 +409,12 @@ s32 Portrait_Load(u32 member, s32 cacheSlot) {
   return tile;
 }
 
-/// Returns gUi_FixedTileBlocks[0], whatever `no` is. The battle's prompt
+/// Returns gWindowSprite_PointerTiles[0], whatever `no` is. The battle's prompt
 /// reads it by far call (BattleMessage_WaitForAdvanceAt).
-s32 Ui_GetTableWordZero(s32 no) {
+s32 WindowSprite_GetPointerTiles(s32 no) {
   if (no != 0)
     no = 0;
-  return gUi_FixedTileBlocks[no];
+  return gWindowSprite_PointerTiles[no];
 }
 
 /// Copies the 4bpp decoder into RAM, calls it with the transfer's encoded

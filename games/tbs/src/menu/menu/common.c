@@ -181,7 +181,7 @@ void StatusPanel_Draw(struct Window *unused, s32 owner, s32 slot, s32 mode) {
     }
     if (ailmentRows < 2) {
       value = unit->level;
-      MENU_DRAW_STATUS_LABEL(gUi_LvString, window, 40, 16);
+      MENU_DRAW_STATUS_LABEL(gStatusPanel_LevelString, window, 40, 16);
       Text_DrawNumberInWindowFar(value, 4, window, 56, 16);
     }
   }
@@ -199,7 +199,7 @@ void StatusPanel_Draw(struct Window *unused, s32 owner, s32 slot, s32 mode) {
   case STATUS_PANEL_EXPERIENCE:
     value = unit->classId + MsgClassName;
     Text_DrawMessageAsTilesFar(value, window, 0, 32);
-    Ui_DrawValuePairRows(unit, window);
+    StatusPanel_DrawHpPp(unit, window);
     value = unit->experience;
     Text_DrawMessageAsTilesFar(MsgExpLabel, window, 0, 64);
     Text_DrawNumberInWindowFar(value, 8, window, 24, 72);
@@ -207,7 +207,7 @@ void StatusPanel_Draw(struct Window *unused, s32 owner, s32 slot, s32 mode) {
   case STATUS_PANEL_CLASS:
     value = unit->classId + MsgClassName;
     Text_DrawMessageAsTilesFar(value, window, 0, 32);
-    Ui_DrawValuePairRows(unit, window);
+    StatusPanel_DrawHpPp(unit, window);
     break;
   case STATUS_PANEL_EQUIP:
   case STATUS_PANEL_EQUIP + 1: { // draws the same panel
@@ -313,7 +313,7 @@ static inline s32 CountDigitsAtLeastTwo(s32 number) {
 /// allows 8 pixels for each digit, at least two digits wide.
 ///
 /// The international editions draw a character's HP and PP with it
-/// (Ui_DrawValuePairRows). The Japanese editions draw those figures in
+/// (StatusPanel_DrawHpPp). The Japanese editions draw those figures in
 /// four-character fields padded with spaces, which keeps the digits in line
 /// because the Japanese font's space is as wide as a digit (7 pixels). The
 /// Latin font's space is 5 pixels, so here each figure gets a field as wide
@@ -344,7 +344,7 @@ void Text_DrawNumberRightAligned(s32 number, struct Window *window, s32 x,
 /// at pixel row 40 and "PP current/maximum" at row 48. Current HP is drawn in
 /// colour 4 when it is below a quarter of maximum HP and in colour 2 at 0;
 /// then the colour goes back to 15, the default text colour.
-void Ui_DrawValuePairRows(struct Unit *unit, struct Window *window) {
+void StatusPanel_DrawHpPp(struct Unit *unit, struct Window *window) {
   // Each figure in turn, as an s16. Read straight from unit, the figures
   // compile differently.
   s16 value;
@@ -353,8 +353,8 @@ void Ui_DrawValuePairRows(struct Unit *unit, struct Window *window) {
   // The label at the left and a slash at 48. A current figure ends before
   // the slash, at 48, and a maximum at 88, each in a field as wide as its
   // digits.
-  Text_DrawStringAtOffsetFar(gUi_HpString, window, 0, 40);
-  Text_DrawStringInWindowFar((u8 *)gUi_SlashString, window, 48, 40);
+  Text_DrawStringAtOffsetFar(gStatusPanel_HpString, window, 0, 40);
+  Text_DrawStringInWindowFar((u8 *)gStatusPanel_SlashString, window, 48, 40);
   value = unit->hpMax;
   Text_DrawNumberRightAligned(value, window, 88, 40);
   value = unit->hp;
@@ -366,8 +366,8 @@ void Ui_DrawValuePairRows(struct Unit *unit, struct Window *window) {
   }
   Text_DrawNumberRightAligned(value, window, 48, 40);
   Text_SetColorFar(TEXT_COLOR_NORMAL);
-  Text_DrawStringAtOffsetFar(gUi_PpString, window, 0, 48);
-  Text_DrawStringInWindowFar((u8 *)gUi_SlashString, window, 48, 48);
+  Text_DrawStringAtOffsetFar(gStatusPanel_PpString, window, 0, 48);
+  Text_DrawStringInWindowFar((u8 *)gStatusPanel_SlashString, window, 48, 48);
   value = unit->pp;
   Text_DrawNumberRightAligned(value, window, 48, 48);
   value = unit->ppMax;
@@ -378,7 +378,7 @@ void Ui_DrawValuePairRows(struct Unit *unit, struct Window *window) {
   // figure is four characters padded with spaces: the current one drawn
   // from 16 at the font's widths, the maximum from 56 a cell a character,
   // ending at 88.
-  Text_DrawStringInWindowFar((u8 *)gUi_HpRowString, window, 0, 40);
+  Text_DrawStringInWindowFar((u8 *)gStatusPanel_HpRowString, window, 0, 40);
   value = unit->hpMax;
   Text_DrawNumberInWindowFar(value, 4, window, 56, 40);
   value = unit->hp;
@@ -390,7 +390,7 @@ void Ui_DrawValuePairRows(struct Unit *unit, struct Window *window) {
   }
   Text_DrawNumberAtOffsetFar(value, 4, window, 16, 40);
   Text_SetColorFar(TEXT_COLOR_NORMAL);
-  Text_DrawStringInWindowFar((u8 *)gUi_PpRowString, window, 0, 48);
+  Text_DrawStringInWindowFar((u8 *)gStatusPanel_PpRowString, window, 0, 48);
   value = unit->pp;
   Text_DrawNumberAtOffsetFar(value, 4, window, 16, 48);
   value = unit->ppMax;
@@ -495,7 +495,7 @@ void Icon_PrepareObject(struct WindowSprite *object) {
 /// Loads the graphics of character unit into menu entry slot 0. The calling
 /// menu argument is not used.
 void PsynergyMenu_CallIconRoutineWithValue(const void *unused, s32 unit) {
-  Ui_LoadCharacterEntryForSlotFar(0, unit, 0);
+  Portrait_ReloadFar(0, unit, 0);
 }
 
 /// Opens the menu's top-left window (13 by 5 tiles) and puts the hand cursor

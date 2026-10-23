@@ -286,8 +286,8 @@ void WindowSprite_Release(struct WindowSprite *entry);
 // window|battle_command.
 struct TextPrinter *BattleMessage_Continue(struct Window *window, s32 entry,
                                            s32 keepPosition);
-s32 Ui_ClearVramBlock(void);
-s32 Ui_FillVramBlockPattern(void);
+s32 Text_ClearCanvas(void);
+s32 Text_FillCanvasBackground(void);
 void TextPrinter_ResetFree(void);
 void TextPrinter_ApplyStyle(struct TextPrinter *channel);
 void Text_StartCanvasScroll(struct TextPrinter *channel);
@@ -515,7 +515,7 @@ s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x);
 // prototype in scope.
 void Window_MarkVisibleTextTiles(void);
 void Text_UseExtraTiles(s32 flag);
-void UiRender_ReservedNoOp(void);
+void Window_ReservedNoOp(void);
 void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2, u32 y2);
 void Text_SetColor(s32 param);
 void Text_SetStyle(u16 value);

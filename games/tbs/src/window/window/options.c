@@ -300,7 +300,7 @@ void OptionMenu_AnimateCursors(void) {
                  Resource_GetTableEntry(markerResource));
 
   if (selectedOption > 1)
-    Ui_ApplyTableScaleToObject(
+    WindowSprite_Pulse(
         work->frame[selectedOption - 2][work->option[selectedOption]]);
   work->cursorFrame++;
 }
@@ -652,7 +652,7 @@ void PauseMenu_AnimateCursor(void) {
 
   MenuCursor_AdvanceFar(&work->cursor.cursor);
   index = work->page;
-  Ui_ApplyTableScaleToObject(work->icon[index]);
+  WindowSprite_Pulse(work->icon[index]);
 }
 
 /// Allocates the pause menu's work block and starts its per-frame callback.

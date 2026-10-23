@@ -245,8 +245,8 @@ s32 BattleSummaryScreen_Run(u16 *list, s32 listCount, s32 owner) {
       break;
     }
 
-    Ui_SetRectHighlight(statusWindow->x, statusWindow->y, statusWindow->width,
-                        statusWindow->height, 15);
+    Window_HighlightRect(statusWindow->x, statusWindow->y, statusWindow->width,
+                         statusWindow->height, 15);
 
     if (statusCount != 0) {
       if ((u32)cursor.group <= STATUS_CURSOR_COMBAT_STATS) {
@@ -336,9 +336,9 @@ s32 BattleSummaryScreen_Run(u16 *list, s32 listCount, s32 owner) {
       cursor.helpEntry = cursorStop->entry;
       cursor.column = cursorStop->column;
       cursor.row = cursorStop->row;
-      Ui_SetRectHighlight(statusWindow->x + cursorStop->highlightColumn + 1,
-                          statusWindow->y + cursorStop->highlightRow + 1,
-                          cursorStop->highlightWidth, 1, 14);
+      Window_HighlightRect(statusWindow->x + cursorStop->highlightColumn + 1,
+                           statusWindow->y + cursorStop->highlightRow + 1,
+                           cursorStop->highlightWidth, 1, 14);
     } else if (cursor.group == STATUS_CURSOR_COMBAT_STATS) {
       cursor.helpEntry = gBattleSummaryScreen_EquipmentCursors
                              [cursor.groupPositions[cursor.group]]
@@ -411,7 +411,7 @@ s32 BattleSummaryScreen_Run(u16 *list, s32 listCount, s32 owner) {
 #if TBS_PATCH_1
       Window_MarkVisibleTextTiles();
 #endif
-      Ui_FillVramBlockPattern();
+      Text_FillCanvasBackground();
 
       if ((redraw & OWNER_STATUS_REDRAW_ALL) != 0) {
         WindowSprite_RedrawSavedRect(statusWindow);

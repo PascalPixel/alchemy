@@ -194,7 +194,7 @@ struct WindowSprite *CreateSideObject(s32 character, s32 unused, s32 side,
 /// portrait is used, and nothing happens when none does. `unused` is passed on
 /// to the loader, which ignores it. The field menus reload portrait slot 0
 /// with it by far call (menu/menu/common.c).
-void Ui_LoadCharacterEntryForSlot(u32 side, s32 character, s32 unused) {
+void Portrait_Reload(u32 side, s32 character, s32 unused) {
   s32 tile;
   s32 slot;
   u32 icon;

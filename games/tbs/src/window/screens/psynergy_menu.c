@@ -75,9 +75,9 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
   for (;;) {
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
       work->holdTilemapUpload = 1;
-      Ui_SetRectHighlight(window->x + 1, window->y + drawnRow * 2 + 1,
-                          window->width - 2, 1, 15);
-      Ui_FillVramBlockPattern();
+      Window_HighlightRect(window->x + 1, window->y + drawnRow * 2 + 1,
+                           window->width - 2, 1, 15);
+      Text_FillCanvasBackground();
       if (count != 0) {
         BATTLE_MENU_MESSAGE_COPY(
             (actions[firstEntry + selectedRow] & ACTION_ID_MASK) +
@@ -154,8 +154,8 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
         }
       }
 
-      Ui_SetRectHighlight(window->x + 1, window->y + selectedRow * 2 + 1,
-                          window->width - 2, 1, 14);
+      Window_HighlightRect(window->x + 1, window->y + selectedRow * 2 + 1,
+                           window->width - 2, 1, 14);
       work->dirty = 1;
       work->holdTilemapUpload = 0;
     }

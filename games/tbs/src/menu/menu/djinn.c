@@ -673,13 +673,13 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *table) {
 }
 
 /// Sets the palette of a rectangle of window's interior, (x, y) and its size in
-/// tiles from the interior's corner, through Window_SetPaletteBitRectFar.
+/// tiles from the interior's corner, through Window_HighlightRectFar.
 /// Only bit 12 of each map entry changes, so palette 15 and 14 swap (the row
 /// highlight) and so do 5 and 4 (the element icons).
 s32 Window_SetInteriorPaletteBitRect(const struct Window *window, s32 x, s32 y,
                                      s32 width, s32 height, s32 palette) {
-  Window_SetPaletteBitRectFar(window->x + x + 1, window->y + y + 1, width,
-                              height, palette);
+  Window_HighlightRectFar(window->x + x + 1, window->y + y + 1, width, height,
+                          palette);
 #ifdef UBFIX
   return 0;
 #endif

@@ -666,7 +666,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
           namePosition.x = 224 - width;
         if (namePosition.x < 0)
           namePosition.x = 0;
-        Ui_ClearVramBlock();
+        Text_ClearCanvas();
         Text_DrawWideStringAtOffset(targetName, window, namePosition.x, 4);
       }
       redraw &= ~1;

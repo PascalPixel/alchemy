@@ -114,7 +114,7 @@ struct WindowSprite *SideObject_CreateFar(s32 object_kind, s32 position,
                                           s32 arg4, s32 arg5);
 /// Reloads the portrait in slot so it shows character, keeping its sprite, as
 /// the field menus change a portrait already on screen.
-void Ui_LoadCharacterEntryForSlotFar(u32 slot, s32 character, s32 value);
+void Portrait_ReloadFar(u32 slot, s32 character, s32 value);
 /// Opens a portrait window at tile (x, y) for the speaker arg0, at once.
 /// Returns 0 when the speaker has no portrait.
 struct Window *Portrait_OpenWindowFar(s32 arg0, s32 arg1, s32 x, s32 y);
@@ -305,8 +305,8 @@ s32 Resource_LoadFixedBlockBIntoFreeSlotFar(void);
 /// leaving its arguments for the message to be shown.
 void Text_MeasureMessageFar(s32 no, s32 *x, s32 *y);
 /// Switches a rectangle of screen tiles to palette 15, or 14 when alt's low bit
-/// is clear: the menus' row highlight (Ui_SetRectHighlight).
-void Window_SetPaletteBitRectFar(s32 x, s32 y, s32 width, s32 height, s32 alt);
+/// is clear: the menus' row highlight (Window_HighlightRect).
+void Window_HighlightRectFar(s32 x, s32 y, s32 width, s32 height, s32 alt);
 /// Builds the Psynergy icon of a battle action, as Icon_BuildAbilityIconTiles
 /// does.
 void Ability_LoadGlyphFar(s32 action, s32 with_base, s32 *slot, s32 *tile,
@@ -320,8 +320,8 @@ void Text_UseExtraTilesFar(s32 flag);
 /// Opens the field command menu and moves its cursor to a command's icon, as
 /// the world map's scenes show it picking Djinn. Returns the icon's position.
 s32 Menu_AnimateSelectionToEntryFar(s32 arg0, s32 arg1);
-/// Returns the first entry of gUi_FixedTileBlocks, whatever no is.
-s32 Ui_GetTableWordZeroFar(s32 no);
+/// Returns the first entry of gWindowSprite_PointerTiles, whatever no is.
+s32 WindowSprite_GetPointerTilesFar(s32 no);
 /// Types a message into an open window from its top left, without voice blips.
 /// Returns the text printer as an integer, or 0 when nothing could start.
 s32 Message_OpenDecodedFar(struct Window *window, s32 argument);

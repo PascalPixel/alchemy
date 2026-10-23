@@ -797,7 +797,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
     mode = 0;
     if (state->timerWindow == 0 && linkBattle->linkPaused == 0) {
       state->timerWindow = (s32)Window_Create(0, 16, 30, 4, 42);
-      Ui_FillVramBlockPattern();
+      Text_FillCanvasBackground();
       Link_DrawWaitingForOpponent();
     } else {
       state->timerWindow = 0;

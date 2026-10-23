@@ -362,7 +362,7 @@ window closes.
 
 Each window keeps a list of its sprites, taken from the pool's free list and
 returned when the window closes. `WindowSprite_UpdateAll` moves each
-sprite every frame by its `UI_SPRITE_` motion and queues it for drawing. A
+sprite every frame by its `WINDOW_SPRITE_MOTION_` motion and queues it for drawing. A
 window sprite's picture occupies an entry of the VRAM cache, loaded into a free one
 (`VramCache_FindFreeEntry`, `VramCache_Load`) and freed by
 `VramCache_FreeEntry`. The two portrait slots record which picture each shows
@@ -430,8 +430,8 @@ is in `games/tbs/objects.tsv`, from `glyph_arm`.
 
 The prototypes are in `games/tbs/include/unit/window/`; its
 [`window.h`](../../include/unit/window/window.h) also holds what both objects
-use: the tilemap's tiles (`UI_TILE_`), the window flags (`UI_WINDOW_`), sprite
-motions (`UI_SPRITE_`), message argument kinds (`MESSAGE_ARGUMENT_`) and the text
+use: the tilemap's tiles (`WINDOW_TILE_`), the window flags (`WINDOW_FLAG_`), sprite
+motions (`WINDOW_SPRITE_MOTION_`), message argument kinds (`MESSAGE_ARGUMENT_`) and the text
 canvas's place in VRAM. The work block's layout, `struct WindowWork`, is in
 [`include/window.h`](../../include/window.h), and its offsets for each edition
 in `include/tbs_edition.h`.
@@ -473,7 +473,6 @@ in `include/tbs_edition.h`.
 | `IconMenu_` | the icon menus' pulsing icon and their position table |
 | `Link_` | the link countdown window and its page arrows |
 | `Color_` | scaling a colour's channels |
-| `UiRender_` | an empty function nothing calls |
 | `Resource_`, `Graphics_`, `Vram_`, `VramCache_` | things the engine names elsewhere: VRAM cache entries, pictures, palettes and video registers |
 | `FieldMessage_` | showing a message window in the field: at an object, centred, or at a window position |
 | `Glyph_` | drawing a font glyph with its outline into a window |
@@ -483,7 +482,7 @@ in `include/tbs_edition.h`.
 | `Heading_` | the 64 by 16 headings of the menus (Save, Continue, Copy, Erase, Battle, Link, Pause, Setup), loaded and bobbing |
 | `RenderResource_` | loading one sprite tile of the heading pictures into the VRAM cache |
 
-The `Ui_` functions that remain have no family yet. Many of these names are
+Many of these names are
 shared with [The Lost Age](../../glossary.md#the-two-games)'s copies of these files and with the [far-call](../../glossary.md#far-call) table
 `system/far_call/WINDOW.S`, so renaming one changes other folders too.
 [Matching](../MATCHING.md) explains the spellings some sites keep and the

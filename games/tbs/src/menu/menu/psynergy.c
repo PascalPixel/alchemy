@@ -338,55 +338,33 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void) {
 /// from the one chosen last, with each member's Psynergy shown as the cursor
 /// passes. Returns the chosen member's id, or -1 when the player backs out.
 s32 PsynergyMenu_SelectPartySlot(s32 partySlot) {
-  /* FAKEMATCH(temporary): byte offsets held in scalars keep partySlot in its
-   * own register; as menu->paneIcon[partySlot] and the other indexed fields,
-   * 19 of 75 instructions differ in tbs-en. */
   struct PsynergyMenuState *menu = gMenuWork;
-  s32 tabOffset = partySlot + ((u8 *)menu->tabIndex - (u8 *)menu);
-  s32 iconOffset = partySlot * sizeof(menu->paneIcon[0]) +
-                   ((u8 *)menu->paneIcon - (u8 *)menu);
+  s32 ownerIndex = menu->tabIndex[partySlot];
   struct RenderOutput *icon;
-  u8 ownerCount;
-  s32 ownerIndex;
-  s32 ownerOffset;
-  s32 tableOffset;
-  s32 ownerId;
   struct BattleUnit *unit;
   u16 *actions;
-  u8 *counts;
-  s32 actionCount;
   s32 result;
-  s32 iconOffset2;
 
   result = 0;
-  icon = *(struct RenderOutput **)((u8 *)menu + iconOffset);
+  icon = menu->paneIcon[partySlot];
   icon->active = ICON_SHOWN;
   icon->animationStep = result;
   menu->cursorIcon->active = ICON_HIDDEN;
-  counts = (u8 *)menu + ((u8 *)menu->tabCounts - (u8 *)menu->tabIndex);
-  ownerIndex = *(s8 *)((u8 *)menu + tabOffset);
-  ownerCount = menu->ownerCount;
-  counts[tabOffset] = ownerCount;
+  menu->tabCounts[partySlot] = menu->ownerCount;
 
   if (ownerIndex == -1) {
-    *((u8 *)menu + tabOffset) = 0;
-    ownerOffset = 0;
+    menu->tabIndex[partySlot] = 0;
+    ownerIndex = 0;
   } else {
-    ownerOffset = ownerIndex * sizeof(menu->ownerTable[0]);
     UiMenu_SlideCursor(ownerIndex * 24 - 10, 16);
   }
 
-  tableOffset = ownerOffset + ((u8 *)menu->ownerTable - (u8 *)menu);
-  ownerId = *(u16 *)((u8 *)menu + tableOffset);
-  unit = Unit_GetFar(ownerId);
+  unit = Unit_GetFar(menu->ownerTable[ownerIndex]);
   actions = menu->psynergies;
-  actionCount = PsynergyMenu_CollectActions(unit, actions, PSYNERGY_LIST_FIELD);
-  menu->psynergyCount = actionCount;
+  menu->psynergyCount =
+      PsynergyMenu_CollectActions(unit, actions, PSYNERGY_LIST_FIELD);
   result = PsynergyMenu_SelectMember(menu->ownerTable, actions);
-
-  iconOffset2 = partySlot * sizeof(menu->paneIcon[0]) +
-                ((u8 *)menu->paneIcon - (u8 *)menu);
-  icon = *(struct RenderOutput **)((u8 *)menu + iconOffset2);
+  icon = menu->paneIcon[partySlot];
   UiIcon_PrepareObject(icon);
   WaitFrames(1);
   return result;
@@ -874,21 +852,15 @@ void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies) {
 /// PSYNERGY_LIST_ALL.
 s32 PsynergyMenu_CollectActions(struct BattleUnit *unit, u16 *actions,
                                 s32 mode) {
-  /* FAKEMATCH(dead): each entry cleared twice through the byte-offset
-   * pointer, which makes loop.c replace the counter with the pointer as the
-   * ROM does; with a single store, 15 of 129 instructions differ in tbs-en. */
-  s32 clearOffset;
+  s32 clearIndex;
   s32 passCount;
   s32 actionCount;
   s32 slotIndex;
   s32 passIndex;
 
   passCount = (mode != PSYNERGY_LIST_FIELD) ? 4 : 3;
-  for (clearOffset = 62; clearOffset >= 0; clearOffset -= 2) {
-    u16 *q = (u16 *)((u8 *)actions + clearOffset);
-    *q = 0;
-    *q = 0;
-  }
+  for (clearIndex = 0; clearIndex < 32; clearIndex++)
+    actions[clearIndex] = 0;
   actionCount = 0;
 
   // type0c is the Psynergy's field effect. Passes 1 and 2 add nothing.

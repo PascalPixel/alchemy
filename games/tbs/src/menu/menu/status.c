@@ -2159,32 +2159,25 @@ s32 Menu_CreateEightEntryObjects(struct UiWindow *window) {
 /// (CharacterMenu_BuildAvailability) down the left edge from y 88, 16 pixels
 /// apart, beside the ailment labels of CharacterMenu_DrawStatusAilments.
 void ItemMenu_ApplyFlags(const u8 *flags) {
-  /* FAKEMATCH(temporary): y stored through a pointer to the field keeps the
-   * flag index a counter instead of a walking pointer; as entry->y = nextY,
-   * 11 of 33 instructions differ in tbs-en. */
   struct InventoryMenuState *menu;
   struct RenderOutput **slot;
   struct RenderOutput *entry;
   s32 index;
-  s32 nextY;
+  s32 shown;
 
   menu = gMenuWork;
   ItemMenu_ResetCategory();
   index = 0;
   slot = menu->categoryIcons;
-  nextY = 88;
+  shown = 0;
   do {
     entry = *slot++;
     if (entry != 0 && flags[index] != 0) {
       entry->x = 8;
-      {
-        s16 *y = &entry->y;
-
-        *y = nextY;
-      }
+      entry->y = shown * 16 + 88;
       entry->sentinel = 240;
       UiIcon_PrepareObject(entry);
-      nextY += 16;
+      shown++;
     }
     index++;
   } while (index <= 4);

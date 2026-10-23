@@ -1,6 +1,6 @@
 # Menus, windows and shops
 
-![A shop's layers. Bilibin's item shop asking "What would you like?" comes apart into the six sheets the console stacks to draw it, then closes again. The room keeps the map's three layers: the floor and walls on `BG3`, the counter, shelves and furniture on `BG2` with the people as sprites level with it, and a glow of light on `BG1`, blended over the room. Every window is on `BG0`, the one layer they share, and what is drawn into them all at once, the Herb's name and price, the coins and the description, is tiles of that layer too. In front are sprites: the letters of the shopkeeper's question, typed one by one, his portrait, the item icons and the pointing hand.](https://alchemy.pascalpixel.com/illustrations/menus/layers.svg)
+![A shop's layers. Bilibin's item shop comes apart into the sheets the console stacks to draw it: the room on the map's three background layers, every window on `BG0`, the one layer they share, and in front of them, as sprites, the shopkeeper's typed question, his portrait, the item icons and the pointing hand.](https://alchemy.pascalpixel.com/illustrations/menus/layers.svg)
 
 Everything the player reads or chooses outside the [map](glossary.md#map) itself comes in a
 framed box: what people say, the field menu and its screens, the shop and
@@ -9,7 +9,7 @@ inn counters, the battle commands. This layer of the game draws those boxes
 field menu's four screens ([Psynergy](glossary.md#psynergy-and-pp), [Djinn](glossary.md#djinn), Item and Status), and runs the
 counters where the [party](glossary.md#the-party) spends its coins: shops, sanctums and inns.
 
-All the windows share one [background layer](glossary.md#background-layer), in front of the three the map
+All the windows share one [background layer](glossary.md#background-layer), `BG0`, in front of the three the map
 uses, so the map looks the same however many windows are open. Text drawn
 into a window all at once, such as a menu's names and prices, is tiles of that
 layer too; a message's typed letters, icons, portraits and the pointing hand
@@ -22,50 +22,54 @@ icons for as long as it is needed, and zooms shut.
 
 ![A message window opening at the top of the screen in Vale, seen in five moments: first a thin bar, then a bigger box each frame, growing outwards from its centre, until it is full size; only then does the text begin, "Yo". A window takes 8 frames to open and 4 to close, shrinking back towards its centre, and it keeps its place among the window slots until it has closed. A window can also be asked to open and close at once, with no zoom.](https://alchemy.pascalpixel.com/illustrations/window/zoom.svg)
 
-Every window is drawn into one picture of the screen made of tiles, 8-pixel
-squares, which the console shows on the background layer in front of the
-map's three ([Field](src/field/README.md) describes those). The picture is 32
-tiles wide and 20 tall, because the console's background layers are drawn
-32 tiles wide, but the screen shows only 30 of them, its 240 by 160 pixels;
-the last two columns are drawn and never seen, and windows are placed on
-the 30 by 20 that show. A window takes 8 [frames](glossary.md#frame)
-to grow open and 4 to shrink shut, and the code that opened it waits while it
-does. Its letters go on in one of three ways: as sprites riding on the window
-(a message on the field), painted into one shared picture (a battle message),
-or as tiles of the window layer itself (labels and names). The sprites a
-window carries are its render outputs, and they go when it closes.
+Every window is drawn into one tilemap, a grid of 8-pixel tile numbers that
+`BG0` shows. The console's background layers are 32 tiles wide, but the
+screen, 240 by 160 pixels, shows only 30 of those columns and 20 rows. So:
+
+- the tilemap holds 32 by 20 entries, and its last two columns are never
+  seen;
+- windows are placed on the 30 by 20 tiles that show.
+
+A window takes 8 [frames](glossary.md#frame) to grow open and 4 to shrink shut, and the code that
+opened it waits while it does. A window's letters go on in one of three ways:
+
+| Way | Used for | Where the letters are | How many at once |
+| --- | --- | --- | --- |
+| sprites | a message typed on the field | one 16 by 16 sprite a letter cell, riding on the window | 64 sprites for all windows |
+| text canvas | a battle message | one shared picture of 120 tiles across the bottom rows | one window |
+| tilemap tiles | labels, names and prices drawn all at once | tiles of `BG0` itself, from a set kept for text | 128 tiles, 256 while a field menu screen or the battle's Djinn menu is open |
+
+A sprite a window carries, a letter cell, an icon, a portrait or the page
+arrow, is one of its render outputs. It moves with the window and goes when
+the window closes.
 
 All of the window system's state is one block of memory, `struct
-UiRenderWork`, borrowed from the [heap](glossary.md#heap-and-pools) (the memory the engine lends out to
-whatever runs) under the numbered slot `HEAP_SLOT_WINDOW`. It holds the
-tilemap, the grid of tile numbers that is the picture of the screen
-(`work->tilemap`, copied to `UI_TILEMAP_VRAM` in video memory and shown on
-the background layer `BG0`), the window slots, the message channels (the
-typists below), the render outputs (the sprites windows carry) and the
-decoded text. A window is a
+UiRenderWork`, borrowed from the [heap](glossary.md#heap-and-pools) under the [heap slot](glossary.md#heap-slot) `HEAP_SLOT_WINDOW`. It holds
+the tilemap (`work->tilemap`, copied to `UI_TILEMAP_VRAM` in video memory by a
+VBlank [task](glossary.md#task)), the window slots, the message channels (the
+typists below), the render outputs and the decoded text. A window is a
 `struct UiWindow` slot, opened by `UiWindow_Create(x, y, width, height,
-flags)` in the first free slot, with its place and size in 8-pixel tiles on
-the 30 by 20 tile screen. Unless it has `UI_WINDOW_INSTANT`, it zooms open
+flags)` in the first free slot, with its place and size in tiles; it returns
+`NULL` when every slot is taken. Unless it has `UI_WINDOW_INSTANT`, it zooms open
 over `UI_WINDOW_OPEN_FRAMES` and closed over `UI_WINDOW_CLOSE_FRAMES`, and its
 slot stays taken until it has closed. The zoom is stepped by
 `UiWork_ProcessDirectWork`, the first step of `UiWork_ProcessAll`, the window
-system's [task](glossary.md#task), which runs once a frame.
+system's task, which runs once a frame.
 
-The three ways of drawing text are the text canvas (`UI_WINDOW_TEXT_CANVAS`,
-at `UI_CANVAS_VRAM`, drawn by the renderer in `glyph_arm.c`, written in the
-processor's fast 32-bit ARM instructions; 120 tiles,
-exactly the battle message window's text area, so it serves one window at a
-time), one 16 by 16 sprite a letter cell, and tiles of the tilemap itself,
-taken from a run of 128 tiles (256 when the work block's `alt` is set).
-`UiWork_AnimateSpriteSlots` moves each render output (`struct RenderOutput`)
-every frame by its `UI_SPRITE_` motion, and its picture occupies a slot of the
-sprite VRAM cache, the video memory kept for sprite pictures, until
-`Resource_ResetEntry` frees it.
+The text canvas (`UI_WINDOW_TEXT_CANVAS`, at `UI_CANVAS_VRAM`) is drawn by the
+renderer in `glyph_arm.c`, written in the processor's fast 32-bit ARM
+instructions; its 120 tiles are exactly the battle message window's text
+area. Tilemap text takes tiles from a run of 128, and the work block's `alt`
+adds a second run of 128 while a screen that needs more is open. Each render
+output (`struct RenderOutput`) is moved every frame by its `UI_SPRITE_` motion
+(`UiWork_AnimateSpriteSlots`), and its picture holds an entry of the VRAM
+cache, the video memory kept for sprite pictures, until the window code frees
+it with `Resource_ResetEntry`.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `HEAP_SLOT_WINDOW` | 15 | the [heap slot](glossary.md#heap-slot) of the window system's work block |
-| `WINDOW_COUNT` | 12, or 8 | window slots: 12 in the Japanese [edition](glossary.md#editions), 8 in the others |
+| `HEAP_SLOT_WINDOW` | 15 | the heap slot of the window system's work block |
+| `WINDOW_COUNT` | 12, or 8 | window slots: 12 in the Japanese [edition](glossary.md#editions), 8 in the international editions |
 | `UI_WINDOW_OPEN_FRAMES` | 8 | frames a window takes to zoom open |
 | `UI_WINDOW_CLOSE_FRAMES` | 4 | frames a window takes to zoom closed |
 | `UI_OUTPUT_COUNT` | 64 | render outputs at a time |
@@ -79,11 +83,10 @@ battle menus.
 A message is unpacked whole first, and then typed into its window a little
 each frame.
 
-![Garet's sister's line in Vale, "You guys are so lucky, Garet.", typed into its window at the normal message speed. Each frame the window gets one more letter cell: a single letter, or two narrow letters that fit together in one cell 16 pixels wide. On the first frame "Yo" appears, on the second "You", on the fourth "You gu", and on the 18th the whole first page; a space and the line break take a frame each. Then an arrow shows and the window waits for a button before the next page. The player's message speed decides how fast the cells come: at the slow speed one cell and then a pause of 4 frames, which is skipped while a button is held; at the normal speed one cell a frame; at the fast speed up to ten a frame, but a space ends the frame's share, so about a word a frame. Above the frames, the game itself: her window opens, the line is typed into it, and the arrow bobs while the window waits.](https://alchemy.pascalpixel.com/illustrations/window/typing.svg)
+![Garet's sister's line in Vale, "You guys are so lucky, Garet.", typed into its window at the normal message speed, one more letter cell each frame: "Yo" on the first frame, "You" on the second, the whole first page on the 18th. Then an arrow shows and the window waits for a button before the next page.](https://alchemy.pascalpixel.com/illustrations/window/typing.svg)
 
-The cartridge keeps its text squeezed: each letter is a short code chosen by
-the letter before it. Showing a message takes three steps, each done by
-different code:
+The cartridge keeps its text squeezed, each letter a short code. Showing a
+message takes three steps, each done by different code:
 
 1. The whole message is unpacked at once, and its blanks are filled in: a
    member's name, a number, an item's name with "a" or "an" in front.
@@ -93,22 +96,39 @@ different code:
    frame at the normal speed, acting on the marks for a new line, a new page,
    a pause or a colour, with the speaker's voice blip as it goes.
 
+`UiText_OpenMessageWindow` does all of it for one message, and the shop's
+`UiMessage_ShowAndWait` then waits until the typing is done (simplified):
+
+```c
+// UiText_OpenMessageWindow (window/frames.c)
+entry = UiText_BuildRenderEntries(message, 1);   // 1. unpack into the ring
+UiWindow_FitOnScreen(entry, &x, &y, &width, &height, bounds, 0);
+window = UiWindow_Create(x, y, width, height, flags);
+UiText_QueueRenderEntries(window, entry, 0, 0, bounds, 0);  // 3. a typist
+
+// UiMessage_ShowAndWait (shop/run.c)
+while (UiWork_IsCompleteFar() == 0)
+  WaitFrames(1);
+```
+
 `UiText_BuildRenderEntries` decodes the whole message. Messages are stored as
 Huffman codes, which give common letters short codes and rare ones long
-codes, read through a tree of choices, with a separate tree for each previous
-symbol (`Text_MessageContexts`). The routine that walks the trees, in the
-processor's fast 32-bit ARM instructions, is copied into the heap block
-`TEXT_WORK_BLOCK` for the decode and released after it. The
-decoder writes out names, numbers, and item and ability names from the
-argument table (`MESSAGE_ARGUMENT_`, `UiWork_PushValueSlot`), and each
-language's articles and possessives (`articles.c`). Style codes are kept with
-their operands.
+codes, read one bit at a time down a tree of choices. There is a separate
+tree for each previous letter (`Text_MessageContexts`), so the letter just
+decoded chooses the tree for the next. The routine that walks the trees, in
+the processor's fast 32-bit ARM instructions, is copied into the heap block
+`TEXT_WORK_BLOCK`, which the heap takes from IWRAM when it has room, for the
+decode and released after it. The decoder writes out names, numbers, and item
+and ability names from the argument table (`MESSAGE_ARGUMENT_`,
+`UiWork_PushValueSlot`), and each language's articles and possessives
+(`articles.c`). The marks for colours, pauses and pages are copied into the
+ring unchanged, with their operands, for the typist to act on.
 
-The decoded text goes into `work->entries`, a ring of 16-bit codes indexed
-through `RENDER_ENTRY_MASK`. Each message is written after the previous one,
-ends with 0, and is known only by the index it starts at. The ring is 512
-codes, or 256 in the Japanese edition, and a longer message is cut off at the
-ring's length.
+The decoded text goes into `work->entries`, a ring of 16-bit codes whose
+index wraps through `RENDER_ENTRY_MASK`, the ring's size less one. Each
+message is written after the previous one, ends with 0, and is known only by
+the index it starts at. The ring is 512 codes, or 256 in the Japanese edition,
+and a longer message is cut off at the ring's length.
 
 A channel (`struct UiChannelSlot`) runs the control codes (`TEXT_`).
 `UiText_QueueRenderEntries` takes a free channel and returns `NULL` when all
@@ -119,8 +139,10 @@ battle, eight. A message window sizes and places itself to fit its text on
 the screen (`UiWindow_FitOnScreen`).
 
 The text itself is in the PO catalogs under `games/tbs/text`, one per
-language, and the code names each message by its linker symbol
-(`MsgGameSaved`). Why there are three channels is an open question (below).
+language. The build's `ags-text` turns each catalog into the packed messages
+and a header naming each one, and the code names a message by that linker
+symbol (`MsgGameSaved`). Why there are three channels is an open question
+(below).
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -136,7 +158,7 @@ language, and the code names each message by its linker symbol
 The field menu is a row of icons; each opens a screen that runs its own steps
 and then hands control back to the icons, or to the field.
 
-![The field menu is a row of icons: Psynergy, Djinn, Item and Status, with the Djinn icon left out until the first Djinni joins. Choosing one opens that screen, which runs its own steps a frame at a time. Backing out of a screen, or pressing Start, brings the icons back, and the Djinn screen always comes back to them. Choosing Psynergy or an item meant for the field closes the menu instead, and the field uses it, as Move pushes a stone pillar. Backing out of the icons returns to walking. In the game, before the first Djinni joins: three icons, Psynergy, Item and Status, the chosen one raised with its name beside it.](https://alchemy.pascalpixel.com/illustrations/menu/field-menu.svg)
+![The field menu is a row of icons: Psynergy, Djinn, Item and Status. Choosing one opens that screen. Backing out of a screen, or pressing Start, brings the icons back; choosing Psynergy or an item meant for the field closes the menu instead, and the field uses it.](https://alchemy.pascalpixel.com/illustrations/menu/field-menu.svg)
 
 The row has three icons until the first Djinni joins the party, and four
 after. Each screen is an ordinary function with its own loop of steps that
@@ -147,9 +169,12 @@ the player backs out, the screen returns and the icons come up again.
 
 The row of icons is drawn by `Menu_RunTopSelection` in the window code;
 `Menu_SelectTopEntry` leaves out the Djinn icon while the party owns no
-Djinni. `Menu_RunTopSelection` calls the chosen screen through the [far-call](glossary.md#far-call)
-table `system/far_call/MENU.S`: `PsynergyMenu_Run`, `DjinnMenu_Run`,
-`ItemMenu_Run` or `StatusMenu_Run`.
+Djinni. `Menu_RunTopSelection` calls the chosen screen through the menu
+[bank](glossary.md#bank)'s [far-call](glossary.md#far-call) table, `system/far_call/MENU.S`: `PsynergyMenu_Run`, `DjinnMenu_Run`, `ItemMenu_Run`
+or `StatusMenu_Run`. Each screen's result is read in that screen's own case:
+the Psynergy and Item screens return 1 to close the menu and -1 to show the
+icons again, while the Djinn screen always returns 1, which for it means
+"show the icons again" ([Menus](src/menu/README.md#the-screens) has the table).
 
 All four screens keep their state in one block of memory, `HEAP_SLOT_MENU`
 (`MENU_WORK_SIZE`, 2,672 bytes), reached as `gMenuWork`. Each screen reads it
@@ -174,14 +199,16 @@ changes and the map's animated tiles pause too.
 
 ![The field menu pulled apart into its layers. The field menu open in Vale comes apart into the sheets the console stacks to draw it, then closes again. The map keeps its sheets: the ground on `BG3`, the middle layer on `BG2`, Isaac as a sprite and the overhead layer on `BG1`. The menu adds two in front: its windows on `BG0`, with the party's HP and PP and the chosen command's name, and the command icons, sprites in front of the windows.](https://alchemy.pascalpixel.com/illustrations/menu/field-menu-layers.svg)
 
-Every screen sets the object system's `suspended` field (heap slot
-`HEAP_SLOT_MENU_CONTROL`), so the field's sprites that are not held stop being
-drawn and free their VRAM cache entries. `Menu_SuspendFieldTasks` also
+Every screen sets the `suspended` field of the object system's work, so the
+field's sprites that are not held stop being drawn and free their VRAM cache
+entries. That work's heap slot is named `HEAP_SLOT_MENU_CONTROL`, although it
+belongs to the object system that runs the [field objects](glossary.md#field-object); the menus only
+set its one field. `Menu_SuspendFieldTasks` also
 suspends the [overlay](glossary.md#overlay)'s tasks (`Scheduler_SuspendOverlayTasks`) and the map's
 tile animations, and sets `FLAG_PALETTE_BLEND_HELD` and `FLAG_WEATHER_HELD`
 so that the palette blend and the weather stop; `Menu_ResumeFieldTasks`
 undoes all of it. The Djinn and Status screens call it in every edition, the
-Item screen under `TBS_PATCH_1` (every edition but Japanese) and the Psynergy
+Item screen under `TBS_PATCH_1` (the international editions) and the Psynergy
 screen under `TBS_PATCH_2` (German, French, Spanish and Italian), so the
 earlier editions leave the field's tasks running behind those two screens.
 
@@ -193,17 +220,30 @@ is.
 ![On the Psynergy screen, loops sit inside one another: the screen runs its steps in a loop, and the step that asks whom to use the Psynergy on runs a loop of its own, waiting for a button. A small watcher runs every frame beside the screen. When Start is pressed it plays the cancel sound and raises a flag. Every loop checks that flag beside its own buttons and, seeing it, returns as if cancelled, the innermost first, so the loops unwind one after another and the screen closes back to the icons without any of them knowing how deep the player was.](https://alchemy.pascalpixel.com/illustrations/menu/start.svg)
 
 A small watcher runs every frame while the screen is open. When Start is
-pressed it plays the cancel sound and raises a flag, and every loop on the
-screen checks that flag beside its own buttons and returns as if the player
-had backed out. The loops unwind one after another, without any of them
-knowing how deep the player was, and the icons come back.
+pressed it plays the cancel sound and raises a [game flag](glossary.md#game-flag), and every loop on
+the screen checks that flag beside its own buttons and returns as if the
+player had backed out. The loops unwind one after another, without any of
+them knowing how deep the player was, and the icons come back.
 
 Before their command loops, the Item, Psynergy and Status screens call
-`Menu_CancelSoundReset`, which clears `FLAG_MENU_START_PRESSED` and adds
-`Menu_CancelSoundTick` as a main-loop task. When Start is pressed, the task
-plays `SE_MENU_CANCEL`, sets the flag and removes itself. The Djinn screen has
-no watch task: its choosers test Start themselves, play the same sound and
-return `DJINN_RESULT_START`, which ends the screen's loop.
+`Menu_CancelSoundReset`, which clears `FLAG_MENU_START_PRESSED` and adds the
+watcher, `Menu_CancelSoundTick`, as a main-loop task. The whole watcher is
+this (`menu/common.c`):
+
+```c
+void Menu_CancelSoundTick(void) {
+  if (gKeysPressed & KEY_START) {
+    AudioCommand_PlayFar(SE_MENU_CANCEL);
+    GameFlag_SetBitFar(FLAG_MENU_START_PRESSED);
+    Scheduler_RemoveCallback(Menu_CancelSoundTick);
+  }
+}
+```
+
+and each loop tests the flag in its condition, as the Item screen's does:
+`while (done == 0 && GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0)`. The
+Djinn screen has no watcher: its choosers test Start themselves, play the
+same sound and return `DJINN_RESULT_START`, which ends the screen's loop.
 
 ### Psynergy and items used on the field
 
@@ -220,12 +260,13 @@ runs again, it casts the Psynergy at whatever the leader faces, and the
 map's code decides what happens. What Move does to a given stone pillar is
 therefore decided by the map, not the menu ([Maps](src/map/README.md)).
 
-The Psynergy screen writes the field's Psynergy request (`psynergyRequest` in
-the event work, `owner << 10 | Psynergy`), and the Item screen writes the item
-request (`struct ItemPickerResult`) the same way. `Field_RunMap` hands the
-Psynergy request to `Field_UsePsynergy`, which plays the effect between the
-map's Psynergy events (`PSYNERGY_PHASE_BEFORE_CAST` and
-`PSYNERGY_PHASE_AFTER_CAST`).
+The Psynergy screen writes the field's Psynergy request, one word holding
+the caster and the Psynergy ([Menus](src/menu/README.md#the-psynergy-screen)),
+into the event work (`gEventWork`, the running map's state, in the heap slot
+`HEAP_SLOT_EVENT`). The Item screen writes the item request (`struct ItemPickerResult`) the same
+way. `Field_RunMap` hands the Psynergy request to `Field_UsePsynergy`, which
+plays the effect between the map's Psynergy events
+(`PSYNERGY_PHASE_BEFORE_CAST` and `PSYNERGY_PHASE_AFTER_CAST`).
 
 [Menus](src/menu/README.md#the-screens) goes through each screen's steps,
 the status panel and the item sort orders.
@@ -244,23 +285,31 @@ lists it is visited, down when one is bought, and up again when one is sold
 or dropped. Every shop of the item's kind sells it while the counter is above
 zero, so a rare item first found in one town is on sale in the next, and one
 the party gives up comes back. Spending also builds a hidden shop credit that
-earns Game Tickets. A sanctum charges a fee for its service, and an inn a
-price for each member still standing.
+earns Game Tickets, which pay for Tolbi's Lucky Wheels. A sanctum charges a
+fee for its service, and an inn a price for each member still standing.
 
 A map opens a shop with `Shop_Run`, passing its stock row and the keeper
 whose portrait the lines show. The stock row is a row of `sStockTable`: up to
 24 ordinary items, then up to 8 artifacts, then the shop's type (items,
 weapons or armor), with the columns named by `SHOP_STOCK_`. A row number out
-of range opens `SHOP_STOCK_ROW_EMPTY`. Each keeper line exists once for each
-type of shop, in the same order, and the code names the weapon shop's
-version; a shop of another type says the line at the same distance from its
-own welcome.
+of range opens `SHOP_STOCK_ROW_EMPTY`.
+
+The keepers' lines are written once for each type of shop, in the same order
+in each set, and the code names only the weapon shop's. A shop of another
+type adds the distance between the two sets' welcomes (`UiMessage_ShowAndWait`):
+
+```
+line shown = weapon shop's line + (this type's welcome − MsgWeaponShopWelcome)
+```
+
+so an armor shop's `MsgWhatWouldYouLike` is that line plus
+`MsgArmorShopWelcome - MsgWeaponShopWelcome`.
 
 A shop's first visit adds one to the counter (`Item_AdjustCounter`) of each
-artifact in its row and sets `FLAG_SHOP_ARTIFACTS_STOCKED + stockRow`, so a
-later visit adds nothing; buying an artifact takes one off; a rare item the
-party sells, drops or discards goes through `Inventory_Discard`, which adds
-one back.
+artifact in its row and sets the game flag `FLAG_SHOP_ARTIFACTS_STOCKED +
+stockRow`, so a later visit adds nothing; buying an artifact takes one off; a
+rare item the party sells, drops or discards goes through `Inventory_Discard`,
+which adds one back.
 
 Every coin spent buying also adds to `gGameState.shopCredit`. After each
 purchase, once the credit reaches the next Game Ticket's cost
@@ -274,12 +323,12 @@ Every counter, and the item picker that asks which item to drop when the
 party finds one with every bag full, keeps its work in `HEAP_SLOT_MENU` as
 `struct ShopRuntime`, taken by `Shop_InitializeCursorWork` and released by
 `Shop_ReleaseCursorWork`. Maps reach the counters through their [import
-tables](glossary.md#entry-table-and-import-table), and other [banks](glossary.md#bank) through the far-call table
+tables](glossary.md#entry-table-and-import-table), and other banks through the far-call table
 `system/far_call/SHOP.S`.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `FLAG_SHOP_ARTIFACTS_STOCKED` | 1,024 (`0x400`) | the first of the flags, one a stock row, set on a shop's first visit |
+| `FLAG_SHOP_ARTIFACTS_STOCKED` | 1,024 (`0x400`) | the first of 35 game flags, one a stock row, set on a shop's first visit |
 | `HEAP_SLOT_MENU` | 55 | the counter's work, `struct ShopRuntime` |
 
 [Shops](src/shop/README.md#shops) has the prices,
@@ -299,15 +348,14 @@ because only one of them can run at a time; the same arrangement is why a
 counter and the field menu are never open together. Field Psynergy is passed
 back as a request because it needs the field running, the leader facing
 something and the map's events, none of which exist while the menu runs.
-Start is a [game flag](glossary.md#game-flag) rather than a variable, although the task that sets it
-and every test of it are in the menu's own code.
 
 ## Limits
 
 - The screen is 30 by 20 tiles. A window narrower or shorter than 2 tiles,
   or wider or taller than 30, draws no frame, and nothing checks that a
   window stays within the tilemap's 20 rows.
-- Twelve window slots in the Japanese edition and eight in the others.
+- Twelve window slots in the Japanese edition and eight in the international
+  editions; `UiWindow_Create` returns `NULL` when none is free.
 - Three message channels, 64 render outputs and eight message arguments at a
   time; a ninth argument is dropped (`UiWork_PushValueSlot`).
 - The decoded-text ring holds 512 codes, or 256 in Japanese.
@@ -324,4 +372,5 @@ and every test of it are in the menu's own code.
   Item and Psynergy screens, and the English one behind the Psynergy screen,
   is not known.
 - XXX: why Start is a game flag (`FLAG_MENU_START_PRESSED`) rather than a
-  variable; nothing in the ROM needs it to be a flag.
+  variable, when the task that sets it and every test of it are in the menu's
+  own code; nothing in the ROM needs it to be a flag.

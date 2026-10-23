@@ -41,7 +41,11 @@
 /// ENTRANCE_STUMP_FALL, which no exit names and only the debug scene selector
 /// reaches, plays the stump being pushed to the edge and falling.
 ///
-/// Open questions: none.
+/// Open questions:
+/// - XXX (no evidence): why the mask that hides the falling stump is drawn
+///   black and translucent rather than in SPRITE_COLOR_HIDDEN, when either
+///   would hide it the same way behind the floor; nothing in the ROM says,
+///   so only the original source could.
 #include "script.h"
 #include "version.h"
 #include "global_cells.h"

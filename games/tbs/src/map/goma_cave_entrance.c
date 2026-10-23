@@ -92,10 +92,10 @@ enum GomaCaveEntranceLocalId {
   /// sees them.
   /// ★ Named from what the player sees: a large open hand, spr_215.png (its
   /// render)
-  LOCALID_UNUSED_MOVE_HAND_1,
+  LOCALID_UNUSED_FIRST_MOVE_HAND,
   /// ★ Named from what the player sees: a large open hand, spr_215.png (its
   /// render)
-  LOCALID_UNUSED_MOVE_HAND_2,
+  LOCALID_UNUSED_SECOND_MOVE_HAND,
   /// ★ Named from what the player sees: a tree stump, spr_212.png (its render)
   LOCALID_UNUSED_STUMP,
   /// The ivy holding the stump, until Ivan blows it away.

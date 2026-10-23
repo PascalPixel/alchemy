@@ -35,9 +35,9 @@
 ///   Sanctum. While the epidemic lasts the weapon and armor sellers are sick:
 ///   searching their counters pans the camera to them, and they say the shop is
 ///   closed. The item seller's daughter minds that shop for her mother. In the
-///   Sanctum Mia's two apprentices keep her place: one offers healing across
+///   Sanctum Mia's two apprentices keep her place: Justin offers healing across
 ///   the counter, the first time saying he can act as the party's healer
-///   (FLAG_IMIL_APPRENTICE_OFFERED_HEALING), and the other asks whether the
+///   (FLAG_IMIL_JUSTIN_OFFERED_HEALING), and Megan asks whether the
 ///   party has visited the old couple who live near the entrance of town, where
 ///   Mia went (FLAG_IMIL_HEARD_MIA_WENT_TO_COUPLE). In the old couple's house
 ///   (IMIL_INTERIORS_HOUSE_SOUTHWEST) the old man moans for help, and talking
@@ -46,7 +46,7 @@
 ///   stand.
 ///
 ///   Mia's healing is this map's first script. Entering the old
-///   couple's house once the apprentice has told the party where Mia went,
+///   couple's house once Megan has told the party where Mia went,
 ///   before they have met her, finds her at the old man's bedside: she heals
 ///   him with Ply, asks who the party are, and the Mercury Lighthouse flashes.
 ///   `Was that... the lighthouse?` She runs out, and the party follows her
@@ -68,11 +68,6 @@
 /// - XXX (no evidence): what Imil_UpdateCountdownArc and Imil_SwayAndSpark were
 ///   for; nothing in the game gives them to an object event, so neither the ROM
 ///   nor a render shows them in use.
-/// - XXX (no evidence): which apprentice is Megan and which Justin; the boy
-///   (LOCALID_APPRENTICE) and the girl (LOCALID_SECOND_APPRENTICE) speak in
-///   turn, but Mia names them together in every edition ("Megan, Justin...", in
-///   Japanese ムギ and ヒエイ), facing neither, so only the English names'
-///   genders suggest the girl is Megan.
 
 #include "action_script.h"
 #include "animspr.h"
@@ -189,15 +184,16 @@ enum ImilInteriorsLocalId {
   /// ★ Named from the game: "Do you want to see the restaurant menu?"
   /// (MsgImilDoWantSeeRestaurantMenu)
   LOCALID_RESTAURANT_OWNER,
-  /// Mia's apprentices, a small boy who keeps the Sanctum and a little girl.
-  /// Her farewell leaves the village in their hands, "Megan, Justin..."
-  /// (MsgImilMia), without saying which is which; XXX: likely the girl is
-  /// Megan and the boy Justin, as English gives those names.
-  /// ★ Named from the game: "I am just her apprentice." (MsgImilLookingForMia)
-  LOCALID_APPRENTICE,
-  /// ★ Named from the game: "I will be a kind girl, like"
-  /// (MsgImilIWillBeAKindGirl)
-  LOCALID_SECOND_APPRENTICE,
+  /// Mia's apprentices, a small boy who keeps the Sanctum and a little girl
+  /// ("I will be a kind girl", MsgImilIWillBeAKindGirl). Her farewell names
+  /// them together without saying which is which, so each takes the English
+  /// name of the boy's or the girl's gender.
+  /// ★ Named from the game: "OK, I'll leave the village in your hands, Megan,
+  /// Justin..." (MsgImilMia)
+  LOCALID_JUSTIN,
+  /// ★ Named from the game: "OK, I'll leave the village in your hands, Megan,
+  /// Justin..." (MsgImilMia)
+  LOCALID_MEGAN,
   /// A crate in the old couple's house, kept under the party as altin.c keeps
   /// its ground sprites; Vault's crate (vault_interiors.c) uses the same
   /// sprite.
@@ -535,35 +531,35 @@ static void Imil_AskAboutRestaurantMenu(void) {
   Engine_ScriptEnd();
 }
 
-/// Mia's second apprentice asks whether the party has visited the old couple.
-/// The apprentice is in the Imil Sanctum until Saturos is beaten, and the old
+/// Megan asks whether the party has visited the old couple.
+/// She is in the Imil Sanctum until Saturos is beaten, and the old
 /// couple's house is where Mia went (FLAG_IMIL_HEARD_MIA_WENT_TO_COUPLE, and
-/// FLAG_IMIL_MIA_SENT_FOR); once Mia has joined the party, the apprentice says
+/// FLAG_IMIL_MIA_SENT_FOR); once Mia has joined the party, she says
 /// everyone counts on her.
-static void Imil_TalkToSecondApprentice(void) {
+static void Imil_TalkToMegan(void) {
   Engine_ScriptStart();
   if (Engine_GameFlagIsSet(FLAG_IN_PARTY(MIA)) != 0) {
     Engine_ScriptSetMessage(MSGNO(MsgImilEveryoneCountsOnMiaThats));
-    Engine_ScriptShowMessage(LOCALID_SECOND_APPRENTICE, 0);
+    Engine_ScriptShowMessage(LOCALID_MEGAN, 0);
   } else {
     Engine_ScriptSetMessage(MsgImilHaveVisitedOldCoupleWho);
-    Engine_ScriptAskYesNo(LOCALID_SECOND_APPRENTICE, 0);
+    Engine_ScriptAskYesNo(LOCALID_MEGAN, 0);
     Engine_GameFlagSet(FLAG_IMIL_HEARD_MIA_WENT_TO_COUPLE);
     Engine_GameFlagSet(FLAG_IMIL_MIA_SENT_FOR);
   }
   Engine_ScriptEnd();
 }
 
-/// Mind Read on the second apprentice in the Imil Sanctum, until Saturos is
+/// Mind Read on Megan in the Imil Sanctum, until Saturos is
 /// beaten: Mia had a bad feeling, or, once she has joined, they must help her.
-static void Imil_ReadSecondApprenticeMind(void) {
+static void Imil_ReadMegansMind(void) {
   Engine_ScriptStart();
   if (Engine_GameFlagIsSet(FLAG_IN_PARTY(MIA)) != 0) {
     Engine_ScriptSetMessage(MSGNO(MsgImilWeHaveDoWhateverWe));
   } else {
     Engine_ScriptSetMessage(MSGNO(MsgImilMiaWasSayingSheHas));
   }
-  Engine_ScriptShowMessage(LOCALID_SECOND_APPRENTICE, 0);
+  Engine_ScriptShowMessage(LOCALID_MEGAN, 0);
   Engine_ScriptEnd();
 }
 
@@ -607,17 +603,17 @@ static void Imil_ReadOldManInBedMind(void) {
   Engine_ScriptEnd();
 }
 
-/// Mind Read on Mia's apprentice in the Imil Sanctum, until Saturos is beaten:
+/// Mind Read on Justin in the Imil Sanctum, until Saturos is beaten:
 /// he thinks the party are not bad people, or, once Mia has joined, he feels
 /// grown up serving as a healer.
-static void Imil_ReadApprenticeMind(void) {
+static void Imil_ReadJustinsMind(void) {
   Engine_ScriptStart();
   if (Engine_GameFlagIsSet(FLAG_IN_PARTY(MIA)) != 0) {
     Engine_ScriptSetMessage(MSGNO(MsgImilFeelLikeGrownUpWhen));
   } else {
     Engine_ScriptSetMessage(MSGNO(MsgImilTheseFolkOkayTheyDont));
   }
-  Engine_ScriptShowMessage(LOCALID_APPRENTICE, 0);
+  Engine_ScriptShowMessage(LOCALID_JUSTIN, 0);
   Engine_ScriptEnd();
 }
 
@@ -808,35 +804,35 @@ static void Imil_TalkToInnkeeper(void) {
   }
 }
 
-/// Mia's apprentice offers the Sanctum's services across its counter. He does
+/// Justin offers the Sanctum's services across its counter. He does
 /// so when the leader faces north across the counter of the Imil Sanctum, the
 /// first time saying he can act as healer; otherwise he talks of Mia.
-static void Imil_TalkToApprentice(void) {
+static void Imil_TalkToJustin(void) {
   struct ObjectEvent *leader;
 
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (IMIL_FACES_COUNTER_HALFWORD(leader->facing)) {
     Engine_ScriptStart();
-    if (GameFlag_IsSet(FLAG_IMIL_APPRENTICE_OFFERED_HEALING) == 0) {
+    if (GameFlag_IsSet(FLAG_IMIL_JUSTIN_OFFERED_HEALING) == 0) {
       Engine_ScriptSetMessage(MSGNO(MsgImilMayOnlyStudentButCan));
-      Script_ShowMessage(LOCALID_APPRENTICE, 0);
-      GameFlag_Set(FLAG_IMIL_APPRENTICE_OFFERED_HEALING);
+      Script_ShowMessage(LOCALID_JUSTIN, 0);
+      GameFlag_Set(FLAG_IMIL_JUSTIN_OFFERED_HEALING);
     }
     Engine_ScriptEnd();
-    Engine_SanctumOpen(LOCALID_APPRENTICE);
+    Engine_SanctumOpen(LOCALID_JUSTIN);
   } else {
     Engine_ScriptStart();
     if (GameFlag_IsSet(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
       Engine_ScriptSetMessage(MSGNO(MsgImilMiaGoingOnJourneyWith));
-      Script_ShowMessage(LOCALID_APPRENTICE, 0);
+      Script_ShowMessage(LOCALID_JUSTIN, 0);
     } else if (GameFlag_IsSet(FLAG_IN_PARTY(MIA)) != 0) {
       Engine_ScriptSetMessage(MSGNO(MsgImilAmHealerWhileMiaOut));
-      Script_ShowMessage(LOCALID_APPRENTICE, 0);
+      Script_ShowMessage(LOCALID_JUSTIN, 0);
     } else {
       Engine_ScriptSetMessage(MSGNO(MsgImilLookingForMia));
-      (void)Script_AskYesNo(LOCALID_APPRENTICE, 0);
-      ObjectEvent_FaceDirection(LOCALID_APPRENTICE,
-                                FACING_SOUTHEAST + FACING_STEP, 10);
+      (void)Script_AskYesNo(LOCALID_JUSTIN, 0);
+      ObjectEvent_FaceDirection(LOCALID_JUSTIN, FACING_SOUTHEAST + FACING_STEP,
+                                10);
     }
     Engine_ScriptEnd();
   }
@@ -971,15 +967,13 @@ s32 Imil_Initialize(void) {
       }
     } else if (warpDest == IMIL_INTERIORS_FROM_IMIL_EAST_NORTHEAST) {
       if (Engine_GameFlagIsSet(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
-        ObjectEvent_GetById(LOCALID_SECOND_APPRENTICE)->facing =
+        ObjectEvent_GetById(LOCALID_MEGAN)->facing =
             FACING_SOUTHEAST + FACING_STEP;
         if (!Engine_GameFlagIsSet(FLAG_IMIL_MIA_SAID_FAREWELL)) {
-          ObjectEvent_SetPosition(LOCALID_SECOND_APPRENTICE, PIXELS(650),
-                                  PIXELS(161));
+          ObjectEvent_SetPosition(LOCALID_MEGAN, PIXELS(650), PIXELS(161));
           Imil_MiaSaysFarewellToApprentices();
         } else {
-          ObjectEvent_SetPosition(LOCALID_SECOND_APPRENTICE, PIXELS(644),
-                                  PIXELS(166));
+          ObjectEvent_SetPosition(LOCALID_MEGAN, PIXELS(644), PIXELS(166));
         }
       }
     }
@@ -1455,128 +1449,108 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   }
   ObjectEvent_WalkToAndWait(MIA, 673, 183);
   ObjectEvent_FaceDirection(MIA, FACING_NORTH, 0);
-  Engine_ObjectEventStartRepeatedMotion(LOCALID_APPRENTICE, 2);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_SECOND_APPRENTICE, 2);
+  Engine_ObjectEventStartRepeatedMotion(LOCALID_JUSTIN, 2);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_MEGAN, 2);
   Engine_ScriptWait(40);
   Engine_ScriptSetMessage(MSGNO(MsgImilMia));
-  Script_ShowMessageAndWait(LOCALID_APPRENTICE, 0, 10);
+  Script_ShowMessageAndWait(LOCALID_JUSTIN, 0, 10);
   ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST, 40);
   Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
-  ObjectEvent_SetAttachedEffect(LOCALID_SECOND_APPRENTICE,
-                                ATTACHED_EFFECT_IN_FRONT |
-                                    ATTACHED_EFFECT_ONCE);
+  ObjectEvent_SetAttachedEffect(LOCALID_MEGAN, ATTACHED_EFFECT_IN_FRONT |
+                                                   ATTACHED_EFFECT_ONCE);
   Engine_ScriptWait(20);
-  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_SECOND_APPRENTICE, 0,
-                            10);
+  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_MEGAN, 0, 10);
   ObjectEvent_FaceDirection(MIA, FACING_NORTHWEST, 40);
   Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | MIA, 0, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_SECOND_APPRENTICE,
-                                        ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_MEGAN, ANIMATION_NOD);
   Engine_ScriptWait(20);
-  ObjectEvent_SetAttachedEffect(LOCALID_APPRENTICE, ATTACHED_EFFECT_IN_FRONT |
-                                                        ATTACHED_EFFECT_ONCE);
+  ObjectEvent_SetAttachedEffect(LOCALID_JUSTIN, ATTACHED_EFFECT_IN_FRONT |
+                                                    ATTACHED_EFFECT_ONCE);
   Engine_ScriptWait(20);
-  Script_ShowMessageAndWait(LOCALID_APPRENTICE, 0, 10);
+  Script_ShowMessageAndWait(LOCALID_JUSTIN, 0, 10);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHWEST, 0);
   ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST + FACING_STEP, 10);
   ObjectEvent_FaceDirection(MIA, FACING_SOUTHEAST, 40);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(MIA, FACING_NORTH, 40);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_SECOND_APPRENTICE, 2);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_MEGAN, 2);
   Engine_ScriptWait(20);
-  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_SECOND_APPRENTICE, 0,
-                            20);
+  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_MEGAN, 0, 20);
   ObjectEvent_FaceDirection(MIA, FACING_NORTHWEST, 20);
   Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
   Engine_ScriptWait(60);
   ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-  ObjectEvent_ShowEmote(LOCALID_APPRENTICE, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  ObjectEvent_ShowEmote(LOCALID_SECOND_APPRENTICE,
-                        EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_APPRENTICE, 1);
+  ObjectEvent_ShowEmote(LOCALID_JUSTIN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  ObjectEvent_ShowEmote(LOCALID_MEGAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_JUSTIN, 1);
   Engine_ScriptWait(20);
-  Script_ShowMessageAndWait(LOCALID_APPRENTICE, 0, 10);
+  Script_ShowMessageAndWait(LOCALID_JUSTIN, 0, 10);
   ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST, 40);
   ObjectEvent_FaceDirection(MIA, FACING_NORTHWEST, 40);
   ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST, 20);
   ObjectEvent_FaceDirection(MIA, FACING_SOUTHWEST, 80);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | MIA, 0, 20);
-  ObjectEvent_FaceDirection(LOCALID_SECOND_APPRENTICE,
-                            FACING_NORTHEAST + FACING_STEP, 0);
-  ObjectEvent_FaceDirection(LOCALID_APPRENTICE, FACING_SOUTHWEST + FACING_STEP,
-                            40);
-  ObjectEvent_FaceDirection(LOCALID_APPRENTICE, FACING_SOUTH + FACING_STEP, 0);
-  ObjectEvent_FaceDirection(LOCALID_SECOND_APPRENTICE,
-                            FACING_SOUTHEAST + FACING_STEP, 20);
-  ObjectEvent_SetSpeed(LOCALID_SECOND_APPRENTICE, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_FaceDirection(LOCALID_MEGAN, FACING_NORTHEAST + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_JUSTIN, FACING_SOUTHWEST + FACING_STEP, 40);
+  ObjectEvent_FaceDirection(LOCALID_JUSTIN, FACING_SOUTH + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_MEGAN, FACING_SOUTHEAST + FACING_STEP, 20);
+  ObjectEvent_SetSpeed(LOCALID_MEGAN, PIXELS(1), PIXELS(1) / 2);
   // Let the student approach Mia before she rejoins the party.
-  ObjectEvent_GetById(LOCALID_SECOND_APPRENTICE)->steeringFlags &=
-      ~OBJ_EVENT_FACES_MOTION;
-  ObjectEvent_WalkToAndWait(LOCALID_SECOND_APPRENTICE, 656, 166);
+  ObjectEvent_GetById(LOCALID_MEGAN)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
+  ObjectEvent_WalkToAndWait(LOCALID_MEGAN, 656, 166);
   Engine_ScriptWait(1);
-  ObjectEvent_GetById(LOCALID_SECOND_APPRENTICE)->steeringFlags |=
-      OBJ_EVENT_FACES_MOTION;
+  ObjectEvent_GetById(LOCALID_MEGAN)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
   Engine_ScriptWait(20);
-  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_SECOND_APPRENTICE, 0,
-                            10);
+  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_MEGAN, 0, 10);
   Engine_ObjectEventRunRepeatedMotion(MIA, 2);
   Engine_ScriptWait(40);
   ObjectEvent_FaceDirection(MIA, FACING_NORTHWEST, 10);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | MIA, 0, 40);
   ObjectEvent_FaceDirection(MIA, FACING_SOUTHEAST, 20);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | MIA, 0, 10);
-  ObjectEvent_SetAttachedEffect(LOCALID_APPRENTICE, ATTACHED_EFFECT_IN_FRONT |
-                                                        ATTACHED_EFFECT_ONCE);
-  ObjectEvent_SetAttachedEffect(LOCALID_SECOND_APPRENTICE,
-                                ATTACHED_EFFECT_IN_FRONT |
-                                    ATTACHED_EFFECT_ONCE);
+  ObjectEvent_SetAttachedEffect(LOCALID_JUSTIN, ATTACHED_EFFECT_IN_FRONT |
+                                                    ATTACHED_EFFECT_ONCE);
+  ObjectEvent_SetAttachedEffect(LOCALID_MEGAN, ATTACHED_EFFECT_IN_FRONT |
+                                                   ATTACHED_EFFECT_ONCE);
   Engine_ScriptWait(40);
   ObjectEvent_FaceDirection(MIA, FACING_NORTH, 20);
   Engine_ObjectEventSetAnimation(MIA, ANIMATION_SHAKE_HEAD);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | MIA, 0, 20);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_APPRENTICE, 1);
-  Script_ShowMessageAndWait(LOCALID_APPRENTICE, 0, 10);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_JUSTIN, 1);
+  Script_ShowMessageAndWait(LOCALID_JUSTIN, 0, 10);
   ObjectEvent_FaceDirection(MIA, FACING_SOUTHEAST, 40);
   ObjectEvent_FaceDirection(MIA, FACING_NORTH, 20);
   Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
   Engine_ScriptWait(20);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_SECOND_APPRENTICE, 1);
-  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_SECOND_APPRENTICE, 0,
-                            20);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_MEGAN, 1);
+  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_MEGAN, 0, 20);
   Engine_ObjectEventRunRepeatedMotion(MIA, 1);
   Engine_ScriptWait(20);
   ObjectEvent_FaceDirection(MIA, FACING_NORTHWEST, 20);
   Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | MIA, 0, 80);
-  ObjectEvent_ShowEmote(LOCALID_APPRENTICE, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-  ObjectEvent_ShowEmote(LOCALID_SECOND_APPRENTICE,
-                        EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_APPRENTICE,
-                                        ANIMATION_SHAKE_HEAD);
-  Script_ShowMessageAndWait(LOCALID_APPRENTICE, 0, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_SECOND_APPRENTICE,
-                                 ANIMATION_SHAKE_HEAD);
-  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_SECOND_APPRENTICE, 0,
-                            20);
+  ObjectEvent_ShowEmote(LOCALID_JUSTIN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  ObjectEvent_ShowEmote(LOCALID_MEGAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_JUSTIN, ANIMATION_SHAKE_HEAD);
+  Script_ShowMessageAndWait(LOCALID_JUSTIN, 0, 10);
+  Engine_ObjectEventSetAnimation(LOCALID_MEGAN, ANIMATION_SHAKE_HEAD);
+  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_MEGAN, 0, 20);
   ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | MIA, 0, 40);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_APPRENTICE, ANIMATION_NOD);
-  Script_ShowMessageAndWait(LOCALID_APPRENTICE, 0, 10);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_JUSTIN, ANIMATION_NOD);
+  Script_ShowMessageAndWait(LOCALID_JUSTIN, 0, 10);
   ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST, 20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_SECOND_APPRENTICE,
-                                        ANIMATION_NOD);
-  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_SECOND_APPRENTICE, 0,
-                            10);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_MEGAN, ANIMATION_NOD);
+  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_MEGAN, 0, 10);
   ObjectEvent_FaceDirection(MIA, FACING_NORTHWEST, 60);
   ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST, 20);
   ObjectEvent_FaceDirection(MIA, FACING_NORTHWEST, 20);
   ObjectEvent_FaceDirection(MIA, FACING_NORTH, 40);
   Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | MIA, 0, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_APPRENTICE, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_SECOND_APPRENTICE,
-                                        ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_JUSTIN, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_MEGAN, ANIMATION_NOD);
   Engine_ScriptWait(40);
   ObjectEvent_FaceDirection(MIA, FACING_SOUTHEAST, 20);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | MIA, 0, 20);
@@ -1585,18 +1559,17 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Engine_ScriptWait(20);
   ObjectEvent_WalkToAndWait(MIA, 688, 200);
   ObjectEvent_SetPosition(MIA, 0, 0);
-  ObjectEvent_GetById(LOCALID_SECOND_APPRENTICE)->steeringFlags &=
-      ~OBJ_EVENT_FACES_MOTION;
-  ObjectEvent_WalkToAndWait(LOCALID_SECOND_APPRENTICE, 644, 166);
+  ObjectEvent_GetById(LOCALID_MEGAN)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
+  ObjectEvent_WalkToAndWait(LOCALID_MEGAN, 644, 166);
   Engine_ScriptWait(1);
   // Restore the student's steering after the farewell walk. A byte view: as
   // the field, the next gEventWork load moves after the constant.
-  *((u8 *)ObjectEvent_GetById(LOCALID_SECOND_APPRENTICE) +
+  *((u8 *)ObjectEvent_GetById(LOCALID_MEGAN) +
     offsetof(struct ObjectEvent, steeringFlags)) |= OBJ_EVENT_FACES_MOTION;
   gEventWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   GameFlag_Set(FLAG_IMIL_MIA_SAID_FAREWELL);
-  GameFlag_Clear(FLAG_IMIL_APPRENTICE_OFFERED_HEALING);
+  GameFlag_Clear(FLAG_IMIL_JUSTIN_OFFERED_HEALING);
   Engine_ScriptEnd();
 }
 
@@ -2023,9 +1996,9 @@ struct MapEvent gImil_InteriorEvents[] = {
     { MAP_EVENT_TALK, LOCALID_INN_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgImilThankGoodnessTheTownIsBack) },
     { MAP_EVENT_TALK, LOCALID_RESTAURANT_OWNER, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT_SCRIPT(Imil_AskAboutRestaurantMenu) },
     { MAP_EVENT_TALK, LOCALID_RESTAURANT_OWNER, CONDITION_ALWAYS, MSGNO(MsgImilImGladTheBeaconHasBeen) },
-    { MAP_EVENT_TALK, LOCALID_APPRENTICE, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_TalkToApprentice) },
-    { MAP_EVENT_TALK, LOCALID_SECOND_APPRENTICE, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT_SCRIPT(Imil_TalkToSecondApprentice) },
-    { MAP_EVENT_TALK, LOCALID_SECOND_APPRENTICE, CONDITION_ALWAYS, MSGNO(MsgImilIWillBeAKindGirl) },
+    { MAP_EVENT_TALK, LOCALID_JUSTIN, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_TalkToJustin) },
+    { MAP_EVENT_TALK, LOCALID_MEGAN, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT_SCRIPT(Imil_TalkToMegan) },
+    { MAP_EVENT_TALK, LOCALID_MEGAN, CONDITION_ALWAYS, MSGNO(MsgImilIWillBeAKindGirl) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_OLD_WOMAN, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT_SCRIPT(Imil_ReadOldWomanMind) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_OLD_WOMAN, CONDITION_ALWAYS, MSGNO(MsgImilGrandpasAllBetterNowThanksTo) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | LOCALID_OLD_MAN, FLAG_IMIL_MIA_SENT_FOR, EVENT_SCRIPT(Imil_TalkToOldMan) },
@@ -2049,10 +2022,10 @@ struct MapEvent gImil_InteriorEvents[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_INN_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgImilTheyCameToOurVillageAnd) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_RESTAURANT_OWNER, FLAG_SATUROS_BEATEN_AT_MERCURY, MSGNO(MsgImilWeDontGetToEatMany) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_RESTAURANT_OWNER, CONDITION_ALWAYS, MSGNO(MsgImilINeverToldMiaThatI) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_APPRENTICE, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT_SCRIPT(Imil_ReadApprenticeMind) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_APPRENTICE, CONDITION_ALWAYS, MSGNO(MsgImilMiasGoingToDefendTheHonor) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SECOND_APPRENTICE, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT_SCRIPT(Imil_ReadSecondApprenticeMind) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SECOND_APPRENTICE, CONDITION_ALWAYS, MSGNO(MsgImilImSorryMiaButICant) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_JUSTIN, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT_SCRIPT(Imil_ReadJustinsMind) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_JUSTIN, CONDITION_ALWAYS, MSGNO(MsgImilMiasGoingToDefendTheHonor) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MEGAN, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT_SCRIPT(Imil_ReadMegansMind) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MEGAN, CONDITION_ALWAYS, MSGNO(MsgImilImSorryMiaButICant) },
     { BG_EVENT_FACING(FACING_NORTH), TRIGGER_WEAPON_COUNTER, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT_SCRIPT(Imil_TalkToWeaponMerchant) },
     { BG_EVENT_FACING(FACING_NORTH), TRIGGER_ARMOR_COUNTER, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT_SCRIPT(Imil_TalkToArmorMerchant) },
     { BG_EVENT(BG_EVENT_CHEST), 100, 0xf26, FIND_ITEM(ITEM_EMPTY_BOTTLE) },

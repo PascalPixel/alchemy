@@ -711,7 +711,7 @@
 #define FLAG_KALAY_INTERIORS_ELIXIR_BARREL 0xf85
 
 // Imil
-/// Mia's second apprentice told the party Mia went to the old couple's house.
+/// Megan, Mia's apprentice, told the party Mia went to the old couple's house.
 /// ★ Named from the game: "Have you visited the old couple"
 /// (MsgImilHaveVisitedOldCoupleWho)
 #define FLAG_IMIL_HEARD_MIA_WENT_TO_COUPLE 0x82a
@@ -724,10 +724,11 @@
 /// hurried off to fetch her, or her apprentice told the party where she went.
 /// ★ Named from the game: "Please, get" (MsgMercuryOoohHelpMe)
 #define FLAG_IMIL_MIA_SENT_FOR 0x82c
-/// Her apprentice told the party she can act as its healer in the sanctum.
+/// Justin, Mia's apprentice, told the party he can act as its healer in the
+/// sanctum.
 /// ★ Named from the game: "I can act as your healer."
 /// (MsgImilMayOnlyStudentButCan)
-#define FLAG_IMIL_APPRENTICE_OFFERED_HEALING 0x82d
+#define FLAG_IMIL_JUSTIN_OFFERED_HEALING 0x82d
 /// Mia has said farewell to her two apprentices.
 /// ★ Named from the game: "I'll leave the village in your hands"
 /// (MsgImilMia)
@@ -1322,16 +1323,16 @@
 /// ★ Named from the game: "It looks like it's trapped in the ivy."
 /// (MsgGomaNoUsePsynergy)
 #define FLAG_TUNNEL_RUINS_IVY_BLOWN_AWAY 0x970
-/// The first of TunnelRuinsGreatStatue's two sinking pillars has gone down
-/// into the floor on its column, leaving a puddle in its place.
-/// ★ Named from what the player sees: the stone pillar gone into the floor
-/// with a puddle where it stood (its render)
-#define FLAG_TUNNEL_RUINS_PILLAR_A_IN_FLOOR 0x971
-/// As FLAG_TUNNEL_RUINS_PILLAR_A_IN_FLOOR, for the second pillar, which sinks
-/// only after Douse has soaked it.
-/// ★ Named from what the player sees: the second stone pillar gone into the
+/// The north-west of TunnelRuinsGreatStatue's two sinking pillars has gone
+/// down into the floor on its column, leaving a puddle in its place.
+/// ★ Named from what the player sees: the north-west stone pillar gone into the
 /// floor with a puddle where it stood (its render)
-#define FLAG_TUNNEL_RUINS_PILLAR_B_IN_FLOOR 0x972
+#define FLAG_TUNNEL_RUINS_NORTHWEST_PILLAR_IN_FLOOR 0x971
+/// As FLAG_TUNNEL_RUINS_NORTHWEST_PILLAR_IN_FLOOR, for the south-east pillar,
+/// which sinks only after Douse has soaked it.
+/// ★ Named from what the player sees: the south-east stone pillar gone into the
+/// floor with a puddle where it stood (its render)
+#define FLAG_TUNNEL_RUINS_SOUTHEAST_PILLAR_IN_FLOOR 0x972
 /// The first of the two stone pillars in TunnelRuinsLadyStatues' east room is
 /// pushed to the west of its row; the map puts it back there on the next
 /// visit.

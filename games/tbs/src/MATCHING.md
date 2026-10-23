@@ -219,7 +219,7 @@ reads them as `BattleSpriteObject`, with the sprite word untyped; `update.c`,
 ARM code built with GCC 2.95.2, which cannot read `Object`'s anonymous
 unions, keeps `ScriptMotionObject`; and the operand handlers of `SC_SET`,
 `SC_ADD` and `SC_CMP` keep `ScriptOperands`. The window sprites
-(`struct SpriteOutput`), the selection records (`struct GlyphCursor`), the
+(`struct WindowSpriteCellView`), the selection records (`struct GlyphCursor`), the
 menu cursors (`union MenuCursorRef`) and each menu screen's work
 (`ItemMenuWork`, `SummaryScreenWork` and the others) follow the same rule. A
 field's own type is likewise the one every site matches with: `Object.sprite`

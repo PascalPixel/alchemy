@@ -39,7 +39,7 @@ struct PagedList;
 struct ObjectSystemWork;
 struct PsynergyEntry;
 struct PlacementDescriptor;
-struct RenderInput;
+struct GlyphRect;
 struct WindowSprite;
 struct SelectionScreenWork;
 struct MenuCursor;

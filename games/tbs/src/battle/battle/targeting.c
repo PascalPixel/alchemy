@@ -7,7 +7,7 @@
 // Native-only view retained for the measured target-picker form below.
 #ifndef UBFIX
 /// BattleWork's unit lists, read as one array of halfwords.
-struct SlotArray {
+struct BattleWorkUnitListView {
   s16 items[64]; ///< BattleWork from its start; each list at its offset / 2
 };
 #endif
@@ -49,7 +49,7 @@ s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
     positions[count++] = place | sideTag;
   }
 #else
-  struct SlotArray *order;
+  struct BattleWorkUnitListView *order;
   s16 *entry;
   u16 *cursor;
   s32 value;
@@ -59,7 +59,7 @@ s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
   s32 offset;
 
   count = 0;
-  order = (struct SlotArray *)gBattleWork;
+  order = (struct BattleWorkUnitListView *)gBattleWork;
 
   // The party's places whose unit is still standing; then, in the else
   // branch, the enemies' places in use, whether standing or not. Each walk

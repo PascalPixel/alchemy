@@ -52,28 +52,8 @@ struct ObjectEventTemplate;
 struct MapWarpRegion;
 struct SparkleFrame;
 struct Swirl;
-struct TileRun2;
-struct V;
 union FieldObject;
 
-/// An object event seen only as its priority flags at 0x23 (enum
-/// ObjectEventPriorityFlag). No code in the tree uses it.
-struct Flags35 {
-  u8 pad[35];
-  u8 flags;
-};
-/// An object event seen only as the coordinate at 0x08. No code in the tree
-/// uses it.
-struct OverlayObjectEventPosition {
-  u8 pad00[8];
-  s32 depthFixed; ///< 16.16 fixed-point pixels
-};
-/// An object event seen only as its priority flags at 0x23 (enum
-/// ObjectEventPriorityFlag). No code in the tree uses it.
-struct OverlayObjectEventState {
-  u8 pad00[35];
-  u8 flags;
-};
 /// The Colosso opponent's path player, at the start of gMapLocalState: the path
 /// in ColossoRaceWork is played back or recorded by Colosso_UpdatePathOpponent.
 struct PathRecorder {
@@ -85,34 +65,10 @@ struct PathRecorder {
   /// (ObjectDispatch_SelectAnimation 1).
   s16 still;
 };
-/// A placeholder layout no code in the tree uses.
-struct Slot {
-  u16 f00;
-  u16 f02;
-  u16 f04;
-  u16 f06;
-};
 /// A Venus Lighthouse switch or pillar socket's map cell.
 struct SwitchCell {
   u32 x; ///< 16-pixel map cells
   u32 z; ///< 16-pixel map cells
-};
-/// A placeholder layout that only struct S, itself unused, points to.
-struct T {
-  u8 pad00[30];
-  u16 f1e;
-};
-/// A log in Kolima Forest lying across four map cells, from its first cell
-/// across or, when vertical, down. No code in the tree uses it; the bend reads
-/// its logs as struct FloodgateLog (kolima_forest_floodgate.h), of the same 12
-/// bytes.
-struct TileRun {
-  s16 id;
-  s16 x; ///< map cells
-  s16 y; ///< map cells
-  s16 vertical;
-  s16 unused08;
-  s16 unused0a;
 };
 /// Frames left on the water palette's current step (gAltinPeak_PaletteScript).
 extern s16 gAltinPeak_PaletteHold;

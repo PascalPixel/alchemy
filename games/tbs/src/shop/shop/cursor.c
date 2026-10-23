@@ -35,8 +35,8 @@ void QuantityBar_Fill(s32 itemCount, s32 paletteSelector, u8 *tileBuffer) {
   if (itemCount > 0) {
     tileOffset = sSelectorTileOffsets;
     do {
-      struct SelectorRecord *record =
-          (struct SelectorRecord *)(tileBuffer + *tileOffset++);
+      struct TileQuantityBarSegmentView *record =
+          (struct TileQuantityBarSegmentView *)(tileBuffer + *tileOffset++);
       record->values[0] = paletteSelector;
       record->values[4] = paletteSelector;
       record->values[8] = paletteSelector;

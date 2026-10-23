@@ -280,12 +280,12 @@ s32 Credits_Run(void) {
 }
 
 /// One eight-byte OAM entry in the credits' private sprite buffer.
-struct DisplayScrollObject {
+struct CreditsOamEntry {
   u32 attr01; ///< Attribute 0 in the low half, attribute 1 in the high half.
   u32 attr2;  ///< Attribute 2 in the low half; the unused high half stays zero.
 };
 
-STATIC_ASSERT(sizeof(struct DisplayScrollObject) == 8);
+STATIC_ASSERT(sizeof(struct CreditsOamEntry) == 8);
 
 /// Credits scroll position in pixels, in the low half of a flash work cell.
 extern u16 gFlash_Handler3;
@@ -300,7 +300,7 @@ extern u16 gFlash_Handler3;
 // UB: the native casts alias the flash declarations and store a pointer through
 // a declared u16. UBFIX gives these assembler-backed cells their credits views.
 #ifdef UBFIX
-extern struct DisplayScrollObject *gFlashNumRemainingBytes;
+extern struct CreditsOamEntry *gFlashNumRemainingBytes;
 extern s16 gFlash;
 extern s16 gFlash_Handler0;
 
@@ -308,8 +308,7 @@ extern s16 gFlash_Handler0;
 #define CREDITS_LAST_LINE_POSITION gFlash
 #define CREDITS_END_OF_TEXT gFlash_Handler0
 #else
-#define SCROLL_OBJECTS                                                         \
-  (*(struct DisplayScrollObject **)&gFlashNumRemainingBytes)
+#define SCROLL_OBJECTS (*(struct CreditsOamEntry **)&gFlashNumRemainingBytes)
 #define CREDITS_LAST_LINE_POSITION (*(s16 *)&gFlash)
 #define CREDITS_END_OF_TEXT (*(s16 *)&gFlash_Handler0)
 #endif
@@ -1021,7 +1020,7 @@ void Credits_InitTextSprites(void) {
   u32 column;
 
   SCROLL_OBJECTS =
-      AllocEwram(CREDITS_OAM_ENTRIES * sizeof(struct DisplayScrollObject));
+      AllocEwram(CREDITS_OAM_ENTRIES * sizeof(struct CreditsOamEntry));
   // Solid border sprites immediately after the ring mask the partial text
   // rows at the top and bottom of the window.
   Dma_Fill32Cell(dmaFill, 0, (void *)OBJ_VRAM0, CREDITS_RING_BYTES);

@@ -538,7 +538,7 @@ u32 Runtime_GetBuildStampTime(void) {
 /// writes one byte through. gMapLocalState's 0x78 bytes and
 /// gInventorySnapshot's 0x8c come first, so firstSnapshotSlot is the first byte
 /// of gObjectEventSnapshot.
-struct MapLocalStateTail {
+struct MapLocalStateSnapshotView {
   u8 mapAndInventory[0x100]; ///< gMapLocalState, then most of
                              ///< gInventorySnapshot
   /// gInventorySnapshot's last word, past the 65 halfwords the snapshot
@@ -573,7 +573,8 @@ void SaveBlock_InitializeDefaults(void) {
   zero = 0;
   START_DMA(&zero, gGameFlagBytes,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 0x80);
-  ((struct MapLocalStateTail *)gMapLocalState)->firstSnapshotSlot = 0xff;
+  ((struct MapLocalStateSnapshotView *)gMapLocalState)->firstSnapshotSlot =
+      0xff;
   zero = 0;
   START_DMA(&zero, gSaveStamp + 0x1c,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 0x298);

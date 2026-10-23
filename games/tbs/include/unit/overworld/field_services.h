@@ -327,7 +327,7 @@ void FieldEffect_FadeToEffectColor(void);
 void FieldEffect_FadeFromEffectColor(void);
 void Camera_WorldToScreen(struct EffectVector *position);
 
-struct Effect05Object;
+struct ObjectEventDouseView;
 struct OrbitEffect;
 
 void FieldEffect_StartMindReadWave(s32 x, s32 y);

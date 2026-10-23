@@ -120,7 +120,6 @@
 #include "task.h"
 #include "script_layer.h"
 #include "map_tables.h"
-#include "resource_3a8_effect.h"
 #include "call.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"

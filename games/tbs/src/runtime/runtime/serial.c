@@ -560,7 +560,7 @@ s32 SerialRuntime_GetActiveTransfers(void) {
 
 void LinkBattle_ResetTransferState(void) { SerialRuntime_ResetTransferState(); }
 
-struct OneCell {
+struct SerialHalfword {
   u16 v;
 };
 
@@ -581,7 +581,7 @@ void SerialRuntime_StepBlockTransfer(void) {
   /* FAKEMATCH(temporary): the 1 kept in a halfword record, loaded from the
    * pool into r8 at entry; as the constant 1 at both stores, 44 of 257
    * instructions differ in tbs-en. */
-  struct OneCell one;
+  struct SerialHalfword one;
 
   // The partner's payload: of multiplayer ids 0 and 1, the one not ours
   id = ~((REG_SIOCNT << 26) >> 30) & 1;

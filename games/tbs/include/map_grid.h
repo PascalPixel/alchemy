@@ -97,7 +97,7 @@ enum MapGridLayerIndex {
 
 /// The map work in HEAP_SLOT_MAP_GRID (struct MapGridScrollWork), seen as its
 /// tileset animations, blend script and layers' cells.
-struct MapGridState {
+struct MapGridScrollAnimView {
   /// MapGridScrollWork's origin, shake and script; not named through this view.
   ///@{
   s32 *origin;
@@ -130,11 +130,11 @@ struct MapGridState {
 };
 
 STATIC_ASSERT(sizeof(struct TilesetAnim) == 12);
-STATIC_ASSERT(offsetof(struct MapGridState, flags) == 0x14);
-STATIC_ASSERT(offsetof(struct MapGridState, wideTiles) == 0x16);
-STATIC_ASSERT(offsetof(struct MapGridState, animations) == 0x18);
-STATIC_ASSERT(offsetof(struct MapGridState, blend) == 0xd8);
-STATIC_ASSERT(offsetof(struct MapGridState, layers) == 0x130);
+STATIC_ASSERT(offsetof(struct MapGridScrollAnimView, flags) == 0x14);
+STATIC_ASSERT(offsetof(struct MapGridScrollAnimView, wideTiles) == 0x16);
+STATIC_ASSERT(offsetof(struct MapGridScrollAnimView, animations) == 0x18);
+STATIC_ASSERT(offsetof(struct MapGridScrollAnimView, blend) == 0xd8);
+STATIC_ASSERT(offsetof(struct MapGridScrollAnimView, layers) == 0x130);
 
 /// A position on the world map, as its walkability check reads it.
 struct WorldPosition {

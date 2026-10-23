@@ -7,7 +7,7 @@
 struct SpeakerDefinition;
 struct Object;
 struct ScreenTransitionState;
-struct Effect05Object;
+struct ObjectEventDouseView;
 struct EffectDescriptor;
 struct FieldEffectSprite;
 struct EffectVector;

@@ -181,7 +181,7 @@ UNUSED s16 FixedPoint_Reciprocal(s16 value) { return 0x10000 / value; }
 /// its sprites and windows. The allocation extends beyond these members.
 struct LuckyDiceSprites {
   u8 filler[200];                ///< Lucky Dice never touches these bytes
-  struct OamShadow oam[128];     ///< copied to OAM each frame
+  struct OamWords oam[128];      ///< copied to OAM each frame
   struct Window *coinsWindow;    ///< the player's coins
   struct Window *winningsWindow; ///< the winnings of the last throw
   struct Window *helpWindow;     ///< the Throw and Quit buttons
@@ -281,7 +281,7 @@ void LuckyDice_Run(void) {
 #endif
   u16 *spritePalette;
   struct BattleAnimWork *diceWork;
-  /* FAKEMATCH(volatile): the OAM shadow it builds is struct OamShadow, whose
+  /* FAKEMATCH(volatile): the OAM shadow it builds is struct OamWords, whose
    * words are volatile (oambuf.h); as plain u32 words, 1550 of 2046
    * instructions differ in tbs-en. */
   struct LuckyDiceSprites *sprites;

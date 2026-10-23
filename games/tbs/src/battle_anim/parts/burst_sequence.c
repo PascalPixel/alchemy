@@ -70,7 +70,7 @@ void BattleAnim_RunFlyingAttack(struct BattleAnimArgs *effect) {
 }
 
 /// The bytes of a gBurstSequence_Records row, one row a mode.
-enum BurstField {
+enum BurstSequenceColumn {
   BURST_SEQUENCE_ARC_SHEET, ///< the arcs (enum BurstSequenceArcs)
   BURST_SEQUENCE_PALETTE,   ///< whose palette (enum BurstSequencePalette)
   BURST_SEQUENCE_STRIKES,   ///< the strikes

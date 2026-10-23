@@ -43,7 +43,7 @@ void BattleObject_UpdateSpritePriorities(void) {
           record = GetMotionRecord(object, 0);
 
           if (record != 0) {
-            struct SpriteEntry *effect;
+            struct SpriteAnimHeadView *effect;
             s32 effectPriority = 0;
 
             // Off the ground.
@@ -268,7 +268,7 @@ s32 BattleStatusIcon_Cycle(struct BattleObject *battleObject) {
       if (iconAnimation >= 0 && changed != 0) {
         // The handle is stored first and cleared again when registration fails.
         iconHandle = Sprite_AddAnimFar(record, iconAnimation);
-        battleObject->animationEntry = (struct SpriteEntry *)iconHandle;
+        battleObject->animationEntry = (struct SpriteAnimHeadView *)iconHandle;
         if (iconHandle == -1)
           battleObject->animationEntry = 0;
         icon = (struct SpriteAnim *)battleObject->animationEntry;
@@ -366,7 +366,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
   struct BattleObject *battleObject;
   struct BattleSpriteObject *object;
   struct Sprite *record;
-  struct SpriteEntry *entry;
+  struct SpriteAnimHeadView *entry;
   struct Sprite **records;
   s32 spriteId;
   s32 releasedUnitId;
@@ -440,15 +440,17 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
         object->spriteStorageKind = OBJECT_SPRITE_ONE;
         object->sprite = record;
         record->scale = Iwram_MulQ16(record->scale, battleObject->scale);
-        entry = (struct SpriteEntry *)record->entries[0];
+        entry = (struct SpriteAnimHeadView *)record->entries[0];
         entry->priority = 1;
         entry->palette = battleObject->palette;
         if ((spriteId = battleObject->overlay) != 0) {
-          entry = (struct SpriteEntry *)Sprite_AddAnimFar(record, spriteId);
+          entry =
+              (struct SpriteAnimHeadView *)Sprite_AddAnimFar(record, spriteId);
           entry->priority = 1;
         }
         if ((spriteId = battleObject->animation) != 0) {
-          entry = (struct SpriteEntry *)Sprite_AddAnimFar(record, spriteId);
+          entry =
+              (struct SpriteAnimHeadView *)Sprite_AddAnimFar(record, spriteId);
           battleObject->animationEntry = entry;
           SpriteAnim_StartFar((struct SpriteAnim *)entry, 0);
           entry->priority = 3;
@@ -456,7 +458,8 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
         if ((spriteId = battleObject->effect) != 0) {
           if (record->width == 32)
             spriteId = NARROW_EFFECT_SPRITE;
-          entry = (struct SpriteEntry *)Sprite_AddAnimFar(record, spriteId);
+          entry =
+              (struct SpriteAnimHeadView *)Sprite_AddAnimFar(record, spriteId);
           battleObject->effectEntry = entry;
           entry->priority = 0;
           record->flags = 0;

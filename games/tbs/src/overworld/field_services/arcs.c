@@ -57,7 +57,7 @@ void FieldEffect_UpdateScaledArcObjectB(union FieldObject *fieldObject) {
 /// A sprite (struct Sprite) as the arcs set it up: its image's three
 /// OAM attributes and its bookkeeping; the notes give the Sprite
 /// fields at the same offsets.
-struct ArcSprite {
+struct SpriteArcOamView {
   u8 pad00[4];
   u16 y : 8; ///< screen pixels
   u16 affine : 1;
@@ -97,7 +97,7 @@ void FieldEffect_SpawnScaledArcObjects(struct ObjectEvent *linked) {
   struct ObjectEvent *source = effectWork->mainObject;
   struct ObjectEvent *arcs[2];
   struct ObjectEvent *arc;
-  struct ArcSprite *sprite;
+  struct SpriteArcOamView *sprite;
   s32 arcIndex;
 
   for (arcIndex = 0; arcIndex <= 1; arcIndex++) {
@@ -107,7 +107,7 @@ void FieldEffect_SpawnScaledArcObjects(struct ObjectEvent *linked) {
     if (arc == 0)
       continue;
     arc->groundHeight = linked->groundHeight;
-    sprite = (struct ArcSprite *)arc->sprite;
+    sprite = (struct SpriteArcOamView *)arc->sprite;
     arc->motionFlags = 0;
     arc->timer = 0;
     arc->linkedObject = linked;

@@ -7,7 +7,7 @@
 /// The object system's work (struct ObjectSystemWork, gObjectSystemWork in
 /// HEAP_SLOT_OBJECT_SYSTEM), seen as the flag that suspends sprite projection
 /// while the menu opens.
-struct MenuCtrl {
+struct ObjectSystemSuspendView {
   u16 used;     ///< ObjectSystemWork's; not named here
   u8 unused[2]; ///< ObjectSystemWork's; no code names it
   /// ObjectSystemWork's suspended: while nonzero, sprites not held are not
@@ -332,7 +332,8 @@ s32 Map_Run(s32 warpDest) {
               // each) free, sprite drawing stays suspended while the menu
               // runs, and a frame passes so that the field's sprites give
               // their VRAM back before it opens.
-              struct MenuCtrl *ctrl = (struct MenuCtrl *)gObjectSystemWork;
+              struct ObjectSystemSuspendView *ctrl =
+                  (struct ObjectSystemSuspendView *)gObjectSystemWork;
               u8 *owner = gVramCacheBlockOwners;
               s32 free = 0;
               s32 n = 512;
@@ -429,7 +430,8 @@ s32 ObjectEvent_GetTriggerTileAheadOfCurrent(void) {
                             (((probePosition.vector.z / 0x200000) & 31) << 5))
                            << 2);
     } else {
-      // MAPGRID_LAYER_GROUND's cells, MapGridState's layers[0].cells at 0x130.
+      // MAPGRID_LAYER_GROUND's cells, MapGridScrollAnimView's layers[0].cells
+      // at 0x130.
       cells = *(u8 **)(gridBytes + 0x130);
       cell = cells + (((probePosition.vector.x / 0x100000) +
                        ((probePosition.vector.z / 0x100000) << 7))

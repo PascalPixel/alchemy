@@ -781,7 +781,7 @@ const struct MapEvent *Map_GetEvents(void) {
 /// Sets a map up as the party enters: a capture goes on spinning, Reveal's
 /// color is saved, and the first two maps set up their storms.
 s32 Map_Initialize(void) {
-  struct MapGridState *gridState;
+  struct MapGridScrollAnimView *gridState;
 
   gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
   ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =

@@ -441,7 +441,7 @@ void RegionMap_UpdateMarkers(void) {
 /// task stops before map graphics are restored, so neither uses the other's
 /// scratch storage. The picture argument is unused; the resource is fixed.
 void RegionMap_Show(s32 picture) {
-  struct MapGridState *gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
+  struct MapGridScrollAnimView *gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
   struct FieldWork *work =
       AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
   struct ObjectSystemWork *menu = HEAP_SLOT_BLOCK(HEAP_SLOT_OBJECT_SYSTEM);

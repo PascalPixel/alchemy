@@ -6,7 +6,7 @@
 
 /// A ObjectEvent as Douse's orb and drops use it; the notes give the
 /// ObjectEvent fields at the same offsets.
-struct Effect05Object {
+struct ObjectEventDouseView {
   u8 reserved00[8];
   s32 x, y, z;  ///< 16.16 fixed-point pixels
   s32 altitude; ///< groundHeight: a drop's height to fall to
@@ -29,7 +29,7 @@ struct Effect05Object {
 
 /// The effect scene (struct FieldEffectWork, gFieldEffectWork) as Douse reads
 /// it; the notes give the FieldEffectWork fields at the same offsets.
-struct Effect05State {
+struct FieldEffectDouseView {
   s32 angle;             ///< 1/65536 turns: the way the caster faces
   s32 x, y, z;           ///< the ground under the orb's destination
   struct Object *target; ///< mainObject: the caster, despite the name
@@ -51,9 +51,10 @@ struct Effect05State {
 /// frames later and scatters three half-size splashes, which hop toward
 /// points 32 pixels away and are freed after 6 frames.
 void FieldEffect_SpawnRandomAngleTriplet(union FieldObject *fieldObject) {
-  struct Effect05Object *particle = (struct Effect05Object *)fieldObject;
+  struct ObjectEventDouseView *particle =
+      (struct ObjectEventDouseView *)fieldObject;
   s32 i;
-  struct Effect05Object *p;
+  struct ObjectEventDouseView *p;
   s32 phase = 2;
   s32 phase2;
   s16 *pp;
@@ -68,8 +69,8 @@ void FieldEffect_SpawnRandomAngleTriplet(union FieldObject *fieldObject) {
     // Half size, hopping up at a pixel a frame, toward a random point 32 pixels
     // away.
     for (i = 0; i <= 2; i++) {
-      p = (struct Effect05Object *)Object_Spawn(0xf0, particle->x, particle->y,
-                                                particle->z);
+      p = (struct ObjectEventDouseView *)Object_Spawn(0xf0, particle->x,
+                                                      particle->y, particle->z);
       if (p == NULL) {
         break;
       }
@@ -123,18 +124,18 @@ void FieldEffect_RunDouse(void) {
   struct EffectVector pos;
   struct EffectVector start;
   struct EffectVector end;
-  struct Effect05State *work = gFieldEffectWork;
+  struct FieldEffectDouseView *work = gFieldEffectWork;
   struct Object *target = work->target;
-  struct Effect05Object *lightOrb;
+  struct ObjectEventDouseView *lightOrb;
   struct EffectVector *from;
   struct EffectVector *to;
   s32 step;
   s32 steps = 11;
   s32 count;
   s32 y;
-  struct Effect05Object *particle;
+  struct ObjectEventDouseView *particle;
 
-  lightOrb = (struct Effect05Object *)Object_Spawn(0xef, step = 0, 0, 0);
+  lightOrb = (struct ObjectEventDouseView *)Object_Spawn(0xef, step = 0, 0, 0);
   if (lightOrb == 0)
     return;
   FieldEffect_FadeToEffectColor();
@@ -203,8 +204,8 @@ void FieldEffect_RunDouse(void) {
         pos.y = lightOrb->y;
         pos.z = lightOrb->z;
       }
-      particle =
-          (struct Effect05Object *)Object_Spawn(0xf0, pos.x, pos.y, pos.z);
+      particle = (struct ObjectEventDouseView *)Object_Spawn(0xf0, pos.x, pos.y,
+                                                             pos.z);
       if (particle != 0) {
         particle->altitude = pos.y - (32 << 16);
         particle->callback = FieldEffect_SpawnRandomAngleTriplet;
@@ -226,8 +227,8 @@ void FieldEffect_RunDouse(void) {
       pos.y = lightOrb->y;
       pos.z = lightOrb->z;
       Vector_AddPolarOffset(Random16() * 5 + (3 << 16), Random16(), &pos);
-      particle = (struct Effect05Object *)Object_Spawn(SPRITE_PARTICLE, pos.x,
-                                                       pos.y, pos.z);
+      particle = (struct ObjectEventDouseView *)Object_Spawn(
+          SPRITE_PARTICLE, pos.x, pos.y, pos.z);
       if (particle != 0) {
         particle->callback = FieldEffect_UpdateDriftingFallObject;
         particle->flag = 0;

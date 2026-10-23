@@ -84,7 +84,7 @@ struct EffectLaunch;
 struct GlyphPalette;
 struct NumberRow;
 struct PaletteCycleWork;
-struct RenderInput;
+struct GlyphRect;
 struct WindowSprite;
 struct MenuCursor;
 struct TileMask;

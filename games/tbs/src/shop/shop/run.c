@@ -208,7 +208,7 @@ void Sound_WaitForFanfare(void) {
 
 /// Byte view of the six colour writes in a quantity-bar segment, laid over a
 /// 4-bit tile at the segment's byte column (QuantityBar_Fill, cursor.c).
-struct SelectorRecord {
+struct TileQuantityBarSegmentView {
   u8 filler0[4]; ///< the 4 bytes before the segment's byte in row 1, untouched
   /// Rows 1 to 6: index 4n is the segment's byte in row n + 1.
   u8 values[21];
@@ -308,9 +308,9 @@ s32 Sanctum_AskYesNo(s32 choice) {
 
 /// Returns the node `state->count` next links on from `state->node`. Nothing
 /// calls it.
-UNUSED struct NodeChainNode *
-NodeChain_GetNodeAtIndex(struct NodeChainState *state) {
-  struct NodeChainNode *node = state->node;
+UNUSED struct SelectionNodeLinkView *
+NodeChain_GetNodeAtIndex(struct SelectionScreenCursorView *state) {
+  struct SelectionNodeLinkView *node = state->node;
   s32 linkIndex;
 
   for (linkIndex = 0; linkIndex != state->count; ++linkIndex) {

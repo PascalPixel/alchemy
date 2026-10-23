@@ -1122,7 +1122,7 @@ void ply_xcmd(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track) {
 }
 
 /// A word put together from its four bytes, lowest first.
-union PackedWord {
+union WordBytes {
   u32 value;
   struct {
     u32 byte0 : 8;
@@ -1144,7 +1144,7 @@ void ply_xxx(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track) {
 /// (extended command 1).
 void ply_xwave(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track) {
   const u8 *source = track->cursor;
-  union PackedWord targetAddress;
+  union WordBytes targetAddress;
 
   targetAddress.part.byte0 = source[0];
   targetAddress.part.byte1 = source[1];

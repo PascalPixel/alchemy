@@ -21,7 +21,7 @@ struct PreviewSprite {
       unsigned high : 7;  ///< attribute 1's flip and size bits: 16 by 16
     } bits;
   } attributes;
-  union RenderTableValue tile; ///< OAM attribute 2: the arrow's VRAM tile
+  union OamAttr2Word tile; ///< OAM attribute 2: the arrow's VRAM tile
 };
 
 /// The stat arrows a Djinni preview shows beside a stat that would rise or

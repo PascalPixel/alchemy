@@ -542,7 +542,7 @@ static void TolbiSpring_RiseAndFadeIn(void) {
 
   Sound_PlaySong(SE_216);
   // This value belongs to layer 1; its individual field remains unnamed.
-  springLayer += offsetof(struct MapGridState, layers[1]) + 4;
+  springLayer += offsetof(struct MapGridScrollAnimView, layers[1]) + 4;
   for (stepIndex = 0; stepIndex < 16; stepIndex++) {
     *(s32 *)(springLayer + 12) -= PIXELS(1);
     WaitFrames(4);

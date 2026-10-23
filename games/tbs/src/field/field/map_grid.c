@@ -1078,7 +1078,7 @@ void MapGrid_CopyCellIndexRect(s32 sourceX, s32 sourceY, s32 width, s32 height,
 /// REG_DISPCNT) from layerFlags, keeping its other flags. Called by Lunpa
 /// Fortress's map script through MapGrid_SetShownLayersFar.
 void MapGrid_SetShownLayers(u32 layerFlags) {
-  struct MapGridState *gridState = gMapGridWork[0];
+  struct MapGridScrollAnimView *gridState = gMapGridWork[0];
   u32 mask = layerFlags & (DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON);
   u32 flags = gridState->flags;
 

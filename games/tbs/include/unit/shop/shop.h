@@ -5,8 +5,8 @@
 struct Window;
 
 struct FieldEffectSprite;
-struct NodeChainNode;
-struct NodeChainState;
+struct SelectionNodeLinkView;
+struct SelectionScreenCursorView;
 struct WindowSprite;
 struct MenuCursor;
 
@@ -21,7 +21,8 @@ void Shop_ShowKeeperMessage(s32 messageId);
 void Shop_ShowKeeperMessageHidingCursor(s32 messageId);
 s32 Shop_AskYesNo(s32 choice);
 s32 Sanctum_AskYesNo(s32 choice);
-struct NodeChainNode *NodeChain_GetNodeAtIndex(struct NodeChainState *state);
+struct SelectionNodeLinkView *
+NodeChain_GetNodeAtIndex(struct SelectionScreenCursorView *state);
 void QuantityBar_Fill(s32 itemCount, s32 paletteSelector, u8 *tileBuffer);
 void Shop_CopyGlyphs(s32 digit, u8 *tileBuffer, u32 digitPosition);
 struct WindowSprite *Shop_CreatePriceSprite(s32 value, struct Window *window,

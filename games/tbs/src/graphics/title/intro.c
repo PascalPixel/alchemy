@@ -60,7 +60,7 @@ struct IntroWork {
   s32 state; ///< an enum IntroState
   s32 rise;  ///< how far the sprites have risen
   union {
-    struct OamShadow objects[120];
+    struct OamWords objects[120];
     struct {
       u8 introObjects[0x68]; ///< objects[0] to [12], still the intro's
       struct IntroSprite sprites[8];
@@ -118,7 +118,7 @@ const u8 gTitle_PromptBlendLevels[60] = {
 /// sets every other frame so twice as many show, hides the rest and copies the
 /// list to OAM.
 void Title_UpdateIntroSprites(void) {
-  /* FAKEMATCH(volatile): the OAM shadow it builds is struct OamShadow, whose
+  /* FAKEMATCH(volatile): the OAM shadow it builds is struct OamWords, whose
    * words are volatile (oambuf.h); as plain u32 words, 157 of 496
    * instructions differ in tbs-en. */
   struct IntroWork *work;

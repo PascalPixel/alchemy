@@ -168,7 +168,7 @@ void Weather_StartRain(void) {
 }
 
 /// A particle's first word, seen as a value or a link.
-union DustWord {
+union ParticleLinkWord {
   u32 value;
   void *link;
 };
@@ -439,10 +439,10 @@ void FieldEffect_InitializeSparkles(void) {
 
     attr = (u32)sparkle;
     *(u32 *)attr = clear;
-    attr += sizeof(union DustWord);
+    attr += sizeof(union ParticleLinkWord);
     leader = view->origin;
     *(u32 *)attr = 0x40000400;
-    attr += sizeof(union DustWord);
+    attr += sizeof(union ParticleLinkWord);
     *(u32 *)attr = 0xd400;
     attr = leader[0];
     z = leader[2];

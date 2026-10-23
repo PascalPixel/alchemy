@@ -686,7 +686,7 @@ void FileMenu_PlacePartySprites(void) {
 /// (x, y) inside `window`, and starts placing them every frame
 /// (FileMenu_PlaceDjinnSprites). Does nothing when `window` is NULL.
 void FileMenu_ShowDjinnSprites(struct Window *window, s32 x, s32 y) {
-  struct DjinnFiguresWork *menu = gMenuWork;
+  struct ItemMenuFiguresView *menu = gMenuWork;
   s32 i;
 
   if (window != NULL) {
@@ -711,7 +711,7 @@ void FileMenu_ShowDjinnSprites(struct Window *window, s32 x, s32 y) {
 
 /// Stops placing the Djinn sprites of the file menu and releases them.
 void FileMenu_HideDjinnSprites(void) {
-  struct DjinnFiguresWork *menu = gMenuWork;
+  struct ItemMenuFiguresView *menu = gMenuWork;
   s32 i;
 
   Task_Remove(FileMenu_PlaceDjinnSprites);
@@ -726,7 +726,7 @@ void FileMenu_HideDjinnSprites(void) {
 /// A task: draws each Djinn sprite of the file menu at its
 /// place, at scale 1.0, for this frame.
 void FileMenu_PlaceDjinnSprites(void) {
-  struct DjinnFiguresWork *menu = gMenuWork;
+  struct ItemMenuFiguresView *menu = gMenuWork;
   struct SpriteScale scale;
   struct SpritePlacement position;
   s32 index;

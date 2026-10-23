@@ -12,7 +12,7 @@
 
 /// A 16-byte rectangle. In TBS it only reserves stack space in
 /// tbs-ja's glyph renderer; no TBS code reads its fields.
-struct RenderInput {
+struct GlyphRect {
   u8 unused[8]; ///< no code names it
   u16 width;    ///< not named by TBS code
   u16 height;   ///< not named by TBS code
@@ -20,13 +20,13 @@ struct RenderInput {
   u16 y;        ///< not named by TBS code
 };
 
-STATIC_ASSERT(sizeof(struct RenderInput) == 0x10);
-STATIC_ASSERT(offsetof(struct RenderInput, width) == 8);
-STATIC_ASSERT(offsetof(struct RenderInput, x) == 12);
+STATIC_ASSERT(sizeof(struct GlyphRect) == 0x10);
+STATIC_ASSERT(offsetof(struct GlyphRect, width) == 8);
+STATIC_ASSERT(offsetof(struct GlyphRect, x) == 12);
 
 /// A sprite's OAM attribute 2 (tile index, priority and palette) and the
 /// halfword after it, as one word or as fields.
-union RenderTableValue {
+union OamAttr2Word {
   u32 value;
   struct {
     unsigned short index : 10;
@@ -41,7 +41,7 @@ union RenderTableValue {
 };
 
 /// Attributes zero through two copied to OAM, plus the halfword after them.
-struct RenderOam {
+struct OamData {
   u16 y : 8;          ///< screen pixels
   u16 affineMode : 2; ///< 0 plain, 1 affine, 3 affine at double size
   u16 objectMode : 2; ///< an enum ObjMode
@@ -84,7 +84,7 @@ struct WindowSprite {
   /// The depth queue's link: with oam it is the sprite entry queued each
   /// frame, read as struct CursorSprite.
   u8 link[4];
-  struct RenderOam oam;
+  struct OamData oam;
 };
 
 /// A list of window sprites: its first sprite and the link to append after.

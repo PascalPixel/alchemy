@@ -256,11 +256,11 @@ enum BilibinTreasuryLocalId {
 };
 
 /// Counts frames between the ripples, one every 30 frames.
-struct SpawnCounter {
+struct BilibinRippleTimer {
   s16 frames;
 };
 
-struct SpawnCounter gBilibin_RippleTimer;
+struct BilibinRippleTimer gBilibin_RippleTimer;
 
 #include "common/object_facing.h"
 

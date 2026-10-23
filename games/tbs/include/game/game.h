@@ -26,7 +26,7 @@ extern const struct SummonDefinition gSummon_DefinitionTable[];
 
 struct AbilityDefinition;
 struct EnemyDefinition;
-struct PresetValues;
+struct EnemyElementPreset;
 
 /// The 519 abilities by ability id (abilities.tsv).
 extern struct AbilityDefinition gAbilityDefinitions[];
@@ -53,7 +53,7 @@ extern const s16 gElement_PowerResistCurve[5][2];
 extern const struct EnemyDefinition gEnemy_Definitions[];
 /// The enemies' element presets (elempre.tsv): attack element, levels and
 /// base power and resistance.
-extern struct PresetValues gEnemy_ElementPresetTable[];
+extern struct EnemyElementPreset gEnemy_ElementPresetTable[];
 /// The game flags, 4096 bits in 512 bytes, saved with the game: flag n is bit
 /// n & 7 of byte GAME_FLAG_BYTE(n).
 extern u8 gGameFlagBytes[];

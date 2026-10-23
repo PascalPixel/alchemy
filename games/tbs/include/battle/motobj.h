@@ -3,7 +3,8 @@
 
 /// @file
 /// BattleSpriteObject, the view of struct Object one battle function gives a
-/// unit its sprites through, and SpriteEntry, the start of a sprite anim.
+/// unit its sprites through, and SpriteAnimHeadView, the start of a sprite
+/// anim.
 
 #include "types.h"
 #include "static_assert.h"
@@ -67,7 +68,7 @@ struct BattleSpriteObject {
 
 /// A sprite anim, as battle objects set its palette and
 /// drawing priority: the start of a SpriteAnim.
-struct SpriteEntry {
+struct SpriteAnimHeadView {
   /// SpriteAnim's animationId, timer and kind; not named through this
   /// view.
   ///@{
@@ -91,8 +92,8 @@ STATIC_ASSERT(offsetof(struct BattleSpriteObject, motionFlags) == 0x55);
 STATIC_ASSERT(offsetof(struct BattleSpriteObject, sprite) == 0x50);
 STATIC_ASSERT(offsetof(struct BattleSpriteObject, spriteStorageKind) == 0x54);
 STATIC_ASSERT(offsetof(struct BattleSpriteObject, update) == 0x6c);
-STATIC_ASSERT(sizeof(struct SpriteEntry) == 0x08);
-STATIC_ASSERT(offsetof(struct SpriteEntry, palette) == 0x05);
-STATIC_ASSERT(offsetof(struct SpriteEntry, priority) == 0x06);
+STATIC_ASSERT(sizeof(struct SpriteAnimHeadView) == 0x08);
+STATIC_ASSERT(offsetof(struct SpriteAnimHeadView, palette) == 0x05);
+STATIC_ASSERT(offsetof(struct SpriteAnimHeadView, priority) == 0x06);
 
 #endif

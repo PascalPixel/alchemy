@@ -70,7 +70,7 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
 #if (LANGUAGE == LANGUAGE_JAPANESE)
   /* FAKEMATCH(dead): an unused array for the frame's 64 extra bytes; as no
    * array, 3 of 193 instructions differ in tbs-ja. */
-  UNUSED struct RenderInput unusedFrame[4];
+  UNUSED struct GlyphRect unusedFrame[4];
 #endif
 
 #if (LANGUAGE == LANGUAGE_ENGLISH)

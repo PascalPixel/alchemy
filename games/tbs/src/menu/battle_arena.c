@@ -172,7 +172,7 @@ enum BattleArenaLocalId {
 
 /// The words of gBattleArena_SlotValues, by slot: the signature, then the state
 /// a console publishes.
-enum BattleArenaSlot {
+enum LobbySlot {
   LOBBY_SLOT_SIGNATURE = 0,
   LOBBY_SLOT_ASKED = 1,     ///< has asked for a battle
   LOBBY_SLOT_IN_CIRCLE = 2, ///< stands in the circle
@@ -208,7 +208,7 @@ enum LinkTally {
 // clang-format off
 /// The words the Battle Arena publishes in its link payload, by slot; the
 /// partner compares them with its own (BattleArena_PeerSlotMatches), by enum
-/// BattleArenaSlot. The signature is in the first column (gBattleArena_SlotColumns),
+/// LobbySlot. The signature is in the first column (gBattleArena_SlotColumns),
 /// the states in the second. In English and French LOBBY_SLOT_ALONE equals the
 /// signature; elsewhere it is the signature's letters reversed, which the
 /// partner's signature test does not match. XXX: likely meant to hide this
@@ -249,7 +249,7 @@ const s32 gBattleArena_SlotValues[] = {
 /// A console's link payload as the Battle Arena reads it from
 /// gLinkPeerSignatures: values[0] is its signature word and values[1] its state
 /// word (gBattleArena_SlotValues, placed by gBattleArena_SlotColumns).
-struct LinkPeer {
+struct LinkPeerPayload {
   s32 values[6]; ///< the payload's words; only 0 and 1 are read here
 };
 
@@ -333,7 +333,7 @@ static s32 BattleArena_PeerSlotMatches(s32 slot) {
     else
       GameFlag_Clear(FLAG_MAPSEC_TEMP_02);
     {
-      struct LinkPeer *peer = (struct LinkPeer *)
+      struct LinkPeerPayload *peer = (struct LinkPeerPayload *)
           gLinkPeerSignatures[GameFlag_Get(FLAG_MAPSEC_TEMP_02) ^ 1];
 
       if (peer->values[gBattleArena_SlotColumns[slot]] == *expected)

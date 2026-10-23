@@ -11,7 +11,7 @@
 /// DjinnFigures_UpdateAllPositions. The Status menu calls it when the
 /// party has Djinn; DjinnFigures_ClearSlotsAndSchedule releases them.
 void DjinnFigures_InitializeTopRow(void *unused0, s32 unused1) {
-  struct DjinnFiguresWork *state = gMenuWork;
+  struct ItemMenuFiguresView *state = gMenuWork;
   s32 index;
 
   for (index = 0; index < 4; index++) {
@@ -43,7 +43,7 @@ void DjinnFigures_InitializeTopRow(void *unused0, s32 unused1) {
 /// schedule nothing despite their names.
 #define FOUR_OBJECT_MOTION_DEFINE_RELEASE(name, update)                        \
   void name(void) {                                                            \
-    struct DjinnFiguresWork *state = gMenuWork;                                \
+    struct ItemMenuFiguresView *state = gMenuWork;                             \
     s32 index = 0;                                                             \
                                                                                \
     do {                                                                       \
@@ -73,7 +73,7 @@ FOUR_OBJECT_MOTION_DEFINE_RELEASE(DjinnFigures_ClearSlotsAndSchedule,
 /// image stands at (positionsX, positionsY); verticalOrigins, which is the
 /// party figures' memberY, only moves the depth slot.
 void DjinnFigures_UpdateAllPositions(void) {
-  struct DjinnFiguresWork *state = gMenuWork;
+  struct ItemMenuFiguresView *state = gMenuWork;
   s32 index;
   struct SpriteScale scale;
   struct SpritePlacement placement;
@@ -106,7 +106,7 @@ void DjinnFigures_UpdateAllPositions(void) {
 /// DjinnFigures_SetSlotPosition's negative mark (a recovering Djinni)
 /// faces 0x8000 instead of 0x4000.
 void DjinnFigures_UpdateBottomRow(void) {
-  struct DjinnFiguresWork *menu = gMenuWork;
+  struct ItemMenuFiguresView *menu = gMenuWork;
   s32 objectIndex;
   struct SpriteScale scale;
   struct SpritePlacement placement;
@@ -158,7 +158,7 @@ void DjinnFigures_UpdateBottomRow(void) {
 /// below the screen until the Djinn menu moves one. DjinnMenu_Run calls it
 /// and DjinnFigures_ClearSlotsAndScheduleAlt releases them.
 void DjinnFigures_InitializeBottomRow(s32 unused0, s32 unused1) {
-  struct DjinnFiguresWork *state = gMenuWork;
+  struct ItemMenuFiguresView *state = gMenuWork;
   s32 index;
 
   for (index = 0; index < 4; index++) {
@@ -188,7 +188,7 @@ void DjinnFigures_InitializeBottomRow(s32 unused0, s32 unused1) {
 /// nothing to an empty slot. Returns the work offset of positionsY[index]
 /// (0x23c + 2 * index), or index for an empty slot; callers ignore it.
 s32 DjinnFigures_SetSlotPosition(s32 index, s32 x, s32 y, s32 negative) {
-  struct DjinnFiguresWork *state = gMenuWork;
+  struct ItemMenuFiguresView *state = gMenuWork;
 
   if (state->animations[index] != NULL) {
     state->positionsX[index] = x;
@@ -202,7 +202,7 @@ s32 DjinnFigures_SetSlotPosition(s32 index, s32 x, s32 y, s32 negative) {
 /// -phase, otherwise the scale it grows from toward full size. The Djinn
 /// chooser sets 0 after each cursor move, so the figure grows in again.
 s32 DjinnFigures_SetSlotPhase(s32 index, s32 phase) {
-  ((struct DjinnFiguresWork *)gMenuWork)->phases[index] = phase;
+  ((struct ItemMenuFiguresView *)gMenuWork)->phases[index] = phase;
 #ifdef UBFIX
   return 0;
 #endif
@@ -212,7 +212,7 @@ s32 DjinnFigures_SetSlotPhase(s32 index, s32 phase) {
 /// becomes the Djinni figure of element resourceKind
 /// (gFourObjectMotion_ResourceIds) in animation value. Returns 1.
 s32 DjinnFigures_ReplaceSlot(s32 index, s32 resourceKind, s32 value) {
-  struct DjinnFiguresWork *state = gMenuWork;
+  struct ItemMenuFiguresView *state = gMenuWork;
 
   if (state->animations[index] != NULL) {
     Sprite_DestroyFar(state->animations[index]);

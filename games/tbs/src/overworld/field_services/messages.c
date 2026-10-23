@@ -7,7 +7,7 @@
 #ifndef UBFIX
 /// The heap slots from the window work's onward, seen as the window work and,
 /// twelve slots on, the event work in HEAP_SLOT_FIELD.
-struct WorkPointers {
+struct HeapSlotsFromWindowView {
   u8 *window;
   u8 *slotsBetween[11]; ///< the eleven heap slots after the window work's
   struct FieldWork *event;
@@ -50,13 +50,14 @@ struct Window *FieldMessage_ShowAtObject(s32 localId, s32 unused) {
 #endif
 
   win = (struct WindowWork *)gWindowWork[0];
-  // UB: the fabricated WorkPointers aggregate reaches from the window slot
-  // into HEAP_SLOT_FIELD. Its named load adds eight bytes in native EN
-  // (0x344 to 0x34c).
+  // UB: the fabricated HeapSlotsFromWindowView aggregate reaches from the
+  // window slot into HEAP_SLOT_FIELD. Its named load adds eight bytes in native
+  // EN (0x344 to 0x34c).
 #ifdef UBFIX
   work = gFieldWork;
 #else
-  work = (struct FieldWork *)((struct WorkPointers *)gWindowWork)->event;
+  work = (struct FieldWork *)((struct HeapSlotsFromWindowView *)gWindowWork)
+             ->event;
 #endif
   handle = 0;
   portrait = 0;

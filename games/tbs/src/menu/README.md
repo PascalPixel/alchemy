@@ -38,7 +38,7 @@ The block is borrowed from the [heap](../../glossary.md#heap-and-pools) under th
 `MENU_WORK_SIZE` bytes, reached as `gMenuWork`. Each screen reads it through
 its own struct, naming the fields that screen uses: `ItemMenuWork` (the
 Item screen, and the pieces the screens share), `PsynergyMenuWork`,
-`SummaryScreenWork`, `DjinnMenuWork` and `DjinnFiguresWork`. Why they
+`SummaryScreenWork`, `DjinnMenuWork` and `ItemMenuFiguresView`. Why they
 stay separate structs rather than one is a question of [matching](../../glossary.md#matching-decompilation): the code
 has to compile to [the original](../../glossary.md#the-original)'s instructions, and
 [Matching](../MATCHING.md) covers how. The work has room for eight party members
@@ -332,7 +332,7 @@ the top of its part or file, with a comment on what differs.
   reached as `gMenuWork`. Each screen reads it through its own struct:
   `ItemMenuWork` (the Item screen, and the pieces the screens share),
   `PsynergyMenuWork`, `SummaryScreenWork`, `DjinnMenuWork` and
-  `DjinnFiguresWork`.
+  `ItemMenuFiguresView`.
 - **member**: a party member whose items, Psynergy or Djinn a screen shows, by
   character id; `memberIds` lists the party.
 - **side** `[0]` and `[1]`: the two sides of a command, the member and item it

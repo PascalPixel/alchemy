@@ -65,8 +65,8 @@ s32 BattleObject_ResetRuntimeFields(s32 unitId) {
 /// The advance arrow's OAM entry, as plain halfwords: a second view of struct
 /// AdvanceArrowSprite. BattleMessage_WaitForAdvance keeps it on its
 /// stack and rebuilds it each frame before Oam_AddSpriteAtDepth queues it.
-struct AdvanceSprite {
-  struct AdvanceSprite *next; ///< never set here
+struct AdvanceArrowSpriteHalfwordView {
+  struct AdvanceArrowSpriteHalfwordView *next; ///< never set here
   union {
     struct {
       u16 attr0; ///< OAM attribute 0: y in the low byte
@@ -97,8 +97,8 @@ void BattleMessage_WaitForAdvance(void) {
 #else
 s32 BattleMessage_WaitForAdvance(void) {
 #endif
-  struct AdvanceSprite *prompt;
-  struct AdvanceSprite promptStorage;
+  struct AdvanceArrowSpriteHalfwordView *prompt;
+  struct AdvanceArrowSpriteHalfwordView promptStorage;
   s32 frame;
   s32 tileSlot;
   s32 frameTiles;

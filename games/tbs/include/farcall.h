@@ -42,7 +42,7 @@ struct ItemDefinition;
 struct LevelUpResult;
 struct MenuSprite;
 struct PolarOffsetOutput;
-struct RenderInput;
+struct GlyphRect;
 struct WindowSprite;
 struct MapEvent;
 struct ObjectEventTemplate;

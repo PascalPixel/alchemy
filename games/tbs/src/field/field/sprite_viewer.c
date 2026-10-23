@@ -47,7 +47,7 @@ struct UiSpriteViewerLayer {
 /// Takes HEAP_SLOT_BATTLE for the ring of ten positions and runs
 /// Battle_PlaceActorsByFormationKind each frame to draw the copies.
 void SpriteViewer_Run(void) {
-  struct UiSpriteViewerLayer layers[ANIMATION_LAYER_COUNT];
+  struct UiSpriteViewerLayer layers[ANIM_LAYER_COUNT];
   struct AnimationMetadata *spriteMetadata;
   struct Sprite *sprites;
   volatile s32 fillWord;
@@ -91,7 +91,7 @@ void SpriteViewer_Run(void) {
   // All four anims start on the first sprite with an image, animation 1,
   // priority 1; only anim 0 is shown.
   spriteId = SpriteViewer_FindNextSpriteWithImage(-1, 1);
-  for (i = 0; i < ANIMATION_LAYER_COUNT; i++) {
+  for (i = 0; i < ANIM_LAYER_COUNT; i++) {
     layers[i].animationIndex = 1;
     layers[i].priority = 1;
     layers[i].spriteId = spriteId;
@@ -115,11 +115,11 @@ restart:
   VramCache_Reset();
   ObjectSystem_Initialize(OBJECT_SYSTEM_LAYOUT);
   // With no map loaded, the map cell buffer holds anim 0's frames; a
-  // two-part sprite (ANIMATION_FACING_TWO_PART) puts its second part in the
+  // two-part sprite (ANIM_FACING_TWO_PART) puts its second part in the
   // actor sprite buffer, as sprite frame cache 1.
   SpriteFrameCache_Load(0, (u32 *)Ram_MapGridCellBuffer, layers[0].spriteId, 0);
   spriteMetadata = Resource_GetMetadataRecordFar(layers[0].spriteId);
-  if (spriteMetadata->drawKind == ANIMATION_FACING_TWO_PART) {
+  if (spriteMetadata->drawKind == ANIM_FACING_TWO_PART) {
     SpriteFrameCache_Load(1, (u32 *)Ram_EnemySpriteSlots,
                           layers[0].spriteId + 1, 0);
   }
@@ -129,7 +129,7 @@ restart:
   for (i = 0; i < UI_SPRITE_VIEWER_COPY_COUNT; i++) {
     spriteMetadata = Resource_GetMetadataRecordFar(layers[0].spriteId);
     spriteWork.resourceOffset = 0;
-    if (spriteMetadata->drawKind == ANIMATION_FACING_TWO_PART && (i & 1) != 0) {
+    if (spriteMetadata->drawKind == ANIM_FACING_TWO_PART && (i & 1) != 0) {
       spriteWork.resourceOffset = 1;
     }
     spriteWork.sprite =
@@ -149,7 +149,7 @@ restart:
 
   // Priority 8 hides an anim: Sprite_ComposeFrame draws only
   // priorities 0 to 3.
-  for (i = 0; i < ANIMATION_LAYER_COUNT; i++) {
+  for (i = 0; i < ANIM_LAYER_COUNT; i++) {
     if (layers[i].enabled != 0) {
       SpriteViewer_SetGridColumnPriority(i, layers[i].priority);
     } else {
@@ -191,10 +191,10 @@ next:
     } else {
       (void)gKeysRepeat;
       if ((*repeatedKeys & KEY_UP) != 0) {
-        selectedLayer = (selectedLayer - 1) & (ANIMATION_LAYER_COUNT - 1);
+        selectedLayer = (selectedLayer - 1) & (ANIM_LAYER_COUNT - 1);
       }
       if ((gKeysRepeat & KEY_DOWN) != 0) {
-        selectedLayer = (selectedLayer + 1) & (ANIMATION_LAYER_COUNT - 1);
+        selectedLayer = (selectedLayer + 1) & (ANIM_LAYER_COUNT - 1);
       }
       if ((gKeysRepeat & KEY_LEFT) != 0) {
         editMode = (editMode - 1) & (UI_SPRITE_VIEWER_EDIT_COUNT - 1);
@@ -419,7 +419,7 @@ s32 SpriteViewer_FindNextSpriteWithImage(s32 spriteId, s32 direction) {
 
 /// Lays out the sprite viewer's ring around pixel (x, z): one position per
 /// facing of the first sprite's facing kind (6, 8, 10 or 4, or two opposite
-/// pairs for ANIMATION_FACING_TWO_PART), 56 pixels out (40 for a two-part
+/// pairs for ANIM_FACING_TWO_PART), 56 pixels out (40 for a two-part
 /// sprite). B held turns the ring. Called by SpriteViewer_Run when it starts
 /// and while Start moves the ring.
 void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
@@ -441,7 +441,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
   // a quarter of a turn; 0x380000 is 56 pixels. Unused positions of the ten
   // are skipped.
   switch ((u32)facingKind) {
-  case ANIMATION_FACING_THREE_FRAMES:
+  case ANIM_FACING_THREE_FRAMES:
     for (facingIndex = 0; facingIndex < 6; facingIndex++) {
       angle = (u32)angle << 16;
       positions->x = centerX << 16;
@@ -456,10 +456,10 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
     for (; facingIndex < UI_SPRITE_VIEWER_COPY_COUNT; facingIndex++)
       positions++;
     break;
-  case ANIMATION_FACING_FIVE_FRAMES:
-  case ANIMATION_FACING_EIGHT_FRAMES:
-  case ANIMATION_FACING_EIGHT_NO_TABLE:
-  case ANIMATION_FACING_EIGHT_FRAMES_MIRRORED:
+  case ANIM_FACING_FIVE_FRAMES:
+  case ANIM_FACING_EIGHT_FRAMES:
+  case ANIM_FACING_EIGHT_NO_TABLE:
+  case ANIM_FACING_EIGHT_FRAMES_MIRRORED:
     for (facingIndex = 0; facingIndex < 8; facingIndex++) {
       angle = (u32)angle << 16;
       positions->x = centerX << 16;
@@ -474,8 +474,8 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
     for (; facingIndex < UI_SPRITE_VIEWER_COPY_COUNT; facingIndex++)
       positions++;
     break;
-  case ANIMATION_FACING_FOUR_FRAMES:
-  case ANIMATION_FACING_SIX_FRAMES:
+  case ANIM_FACING_FOUR_FRAMES:
+  case ANIM_FACING_SIX_FRAMES:
     for (facingIndex = 0; facingIndex < UI_SPRITE_VIEWER_COPY_COUNT;
          facingIndex++) {
       angle = (u32)angle << 16;
@@ -491,7 +491,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
     break;
   // Two places 40 pixels out, a quarter turn round and then
   // opposite it, each holding both of the sprite's parts.
-  case ANIMATION_FACING_TWO_PART:
+  case ANIM_FACING_TWO_PART:
     initialHeading = angle;
     angle = (s16)(initialHeading + 0x4000);
     facingIndex = 0;
@@ -545,7 +545,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
     struct Sprite *spriteGroup = gSprites;                                     \
     s32 spriteIndex;                                                           \
                                                                                \
-    layerIndex &= ANIMATION_LAYER_COUNT - 1;                                   \
+    layerIndex &= ANIM_LAYER_COUNT - 1;                                        \
     for (spriteIndex = 0; spriteIndex < UI_SPRITE_VIEWER_COPY_COUNT;           \
          spriteIndex++) {                                                      \
       spriteGroup->entries[layerIndex]->field = value;                         \
@@ -570,7 +570,7 @@ void Ui_FillGridColumnFromMetadata(s32 layerIndex, s32 animationIndex) {
   spriteIndex = 0;
   do {
     struct SpriteAnim *entry =
-        spriteGroup->entries[layerIndex & (ANIMATION_LAYER_COUNT - 1)];
+        spriteGroup->entries[layerIndex & (ANIM_LAYER_COUNT - 1)];
     struct AnimationMetadata *metadata;
     s32 initialFrame = 0;
 
@@ -581,8 +581,8 @@ void Ui_FillGridColumnFromMetadata(s32 layerIndex, s32 animationIndex) {
         // speed, with no frame drawn yet.
         entry->kind = metadata->drawKind;
         entry->script = entry->scripts[animationIndex];
-        entry->timer = spriteIndex * ANIMATION_NORMAL_STEP;
-        entry->step = ANIMATION_NORMAL_STEP;
+        entry->timer = spriteIndex * ANIM_NORMAL_STEP;
+        entry->step = ANIM_NORMAL_STEP;
         entry->scriptOffset = initialFrame;
         entry->frameBase = initialFrame;
         entry->frame = 0xff;
@@ -604,7 +604,7 @@ void SpriteViewer_SetGridColumnNumber(s32 layerIndex, s32 spriteId) {
 
   // The ROM looks the metadata up here and drops the result.
   Resource_GetMetadataRecordFar(spriteId);
-  layerIndex &= ANIMATION_LAYER_COUNT - 1;
+  layerIndex &= ANIM_LAYER_COUNT - 1;
   for (spriteIndex = 0; spriteIndex < UI_SPRITE_VIEWER_COPY_COUNT;
        spriteIndex++) {
     struct SpriteAnim *entry = spriteGroup->entries[layerIndex];
@@ -635,28 +635,28 @@ void Battle_PlaceActorsByFormationKind(void) {
   facingPositions = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
 
   switch (facingKind) {
-  case ANIMATION_FACING_THREE_FRAMES:
+  case ANIM_FACING_THREE_FRAMES:
     angle = 0;
     step = 0x2aaa;
     count = 6;
     break;
-  case ANIMATION_FACING_FIVE_FRAMES:
-  case ANIMATION_FACING_EIGHT_FRAMES:
-  case ANIMATION_FACING_EIGHT_NO_TABLE:
-  case ANIMATION_FACING_EIGHT_FRAMES_MIRRORED:
+  case ANIM_FACING_FIVE_FRAMES:
+  case ANIM_FACING_EIGHT_FRAMES:
+  case ANIM_FACING_EIGHT_NO_TABLE:
+  case ANIM_FACING_EIGHT_FRAMES_MIRRORED:
     angle = 0;
     step = 0x2000;
     count = 8;
     break;
-  case ANIMATION_FACING_FOUR_FRAMES:
-  case ANIMATION_FACING_SIX_FRAMES:
+  case ANIM_FACING_FOUR_FRAMES:
+  case ANIM_FACING_SIX_FRAMES:
     angle = 0;
     step = 0x1999;
     count = 10;
     break;
   // The two parts at each place face the same way; the second place faces
   // half a turn from the first.
-  case ANIMATION_FACING_TWO_PART:
+  case ANIM_FACING_TWO_PART:
     angle = 0;
     step = 0;
     pairedFacingStep = 0x8000;

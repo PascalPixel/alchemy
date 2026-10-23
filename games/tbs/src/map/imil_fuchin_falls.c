@@ -1504,9 +1504,9 @@ static void ImilFuchinFalls_HopBy(s32 dx, s32 dz) {
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(5) / 2, PIXELS(5) / 4);
   Engine_ObjectEventSetDestinationOffset(LOCALID_PARTY_LEADER, dx, dz);
   Engine_ObjectEventJump(LOCALID_PARTY_LEADER, 4, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_LEADER_LEAP);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_LEAP);
   Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_LEADER_SPRING);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_SPRING);
   Engine_ScriptEnd();
 }
 

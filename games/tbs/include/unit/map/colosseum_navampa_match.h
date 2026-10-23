@@ -11,7 +11,7 @@ const struct ObjectEventTemplate *
 ColosseumNavampaMatch_GetObjectEventTemplates(void);
 const struct MapEvent *ColosseumNavampaMatch_GetEvents(void);
 s32 ColosseumNavampaMatch_Initialize(void);
-extern const s32 gColosseumNavampaMatch_SidewalkBlockOffBelt[];
+extern const s32 gColosseumNavampaMatch_SidewalkLogOffBelt[];
 extern const s8 gColosseumNavampaMatch_WallWedgePattern[][6];
 extern const u16 gColossoEarlySequenceData[];
 extern const s32 gColossoMapEventEffect[];

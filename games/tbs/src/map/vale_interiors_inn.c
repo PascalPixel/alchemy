@@ -258,17 +258,17 @@ enum ValeInteriorsInnMapSecFlag {
 /// ObjectEventAnimation, as their animation tables and frames under
 /// graphics/sprite draw them.
 enum ValeInteriorsInnAnimation {
-  ANIMATION_DORA_IN_BED = 10, ///< lying down, ill (spr_031.png)
+  ANIM_DORA_IN_BED = 10, ///< lying down, ill (spr_031.png)
   /// Dora seen from behind, her head bowed and turned aside (spr_031.png).
-  ANIMATION_DORA_HEAD_TURNED = 11,
-  ANIMATION_DORA_HEAD_BOWED = 12, ///< seen from behind, her head bowed low
-  /// ANIMATION_DORA_HEAD_TURNED and ANIMATION_DORA_HEAD_BOWED in turn, twice.
-  ANIMATION_DORA_HEAD_SWAYING = 13,
+  ANIM_DORA_HEAD_TURNED = 11,
+  ANIM_DORA_HEAD_BOWED = 12, ///< seen from behind, her head bowed low
+  /// ANIM_DORA_HEAD_TURNED and ANIM_DORA_HEAD_BOWED in turn, twice.
+  ANIM_DORA_HEAD_SWAYING = 13,
   /// Dora straightening, still seen from behind (spr_031.png).
-  ANIMATION_DORA_STRAIGHTEN = 14,
+  ANIM_DORA_STRAIGHTEN = 14,
   /// Young Isaac asleep, only his head on the pillow (spr_018.png).
-  ANIMATION_ISAAC_ASLEEP = 18,
-  ANIMATION_ISAAC_GET_UP = 19 ///< sitting up, then jumping out of bed
+  ANIM_ISAAC_ASLEEP = 18,
+  ANIM_ISAAC_GET_UP = 19 ///< sitting up, then jumping out of bed
 };
 
 // FLAG_MAP_TEMP_03: Dora got out of her sickbed on this visit.
@@ -368,8 +368,7 @@ static void EventScript_AskIsaacHisBusiness(void) {
   ObjectEvent_ShowEmote(LOCALID_MASKED_MAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Engine_ObjectEventStartRepeatedMotion(LOCALID_MASKED_MAN, 1);
   Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_MASKED_MAN,
-                                        ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_MASKED_MAN, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(20);
   Script_OpenMessage(LOCALID_MASKED_MAN, 0);
   if (Engine_ScriptChooseYesNo(0, 0) == 1) {
@@ -543,7 +542,7 @@ s32 ValeInteriorsInn_Initialize(void) {
           TilesetAnim_Resume(11);
           objectEvent = ObjectEvent_GetById(LOCALID_DORA);
           Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
-          Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIMATION_DORA_IN_BED);
+          Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIM_DORA_IN_BED);
         }
       }
     } else {
@@ -620,7 +619,7 @@ static void EventScript_DoraWakesIsaac(void) {
   // Isaac lies asleep in bed; his tunic is set beside him.
   Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER),
                                    0);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_ISAAC_ASLEEP);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_ISAAC_ASLEEP);
   sprite->rotation = 1365;
   ObjectEvent_GetById(LOCALID_TUNIC)->motionFlags = 0;
   Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_TUNIC), 0);
@@ -661,7 +660,7 @@ static void EventScript_DoraWakesIsaac(void) {
   Weather_ResumeLightning();
   // "The Mt. Aleph Boulder is going to fall!" "Come on, Isaac. We have to go
   // now!"
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_DORA, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_DORA, ANIM_SHAKE_HEAD);
   Engine_ScriptSetMessage(firstMessage + 2);
   Script_ShowMessageAndWait(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | LOCALID_DORA, 0, 60);
@@ -677,7 +676,7 @@ static void EventScript_DoraWakesIsaac(void) {
   Engine_ScriptWait(20);
   TilesetAnim_Resume(8);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_ISAAC_GET_UP);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_ISAAC_GET_UP);
   ObjectEvent_MoveToAndWait(LOCALID_PARTY_LEADER, 557, 679);
   TilesetAnim_Pause(8);
   TilesetAnim_Resume(9);
@@ -691,7 +690,7 @@ static void EventScript_DoraWakesIsaac(void) {
   Engine_ObjectEventSetSpritePriority(LOCALID_PARTY_LEADER, 3);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 40);
   // "Isaac! You forgot something!" Catch plays from Dora on the tunic.
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_DORA, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_DORA, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(20);
   Script_ShowMessage(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | LOCALID_DORA, 0);
@@ -733,8 +732,8 @@ static void EventScript_DoraWakesIsaac(void) {
   ObjectEvent_RefreshSelectorById(LOCALID_DORA);
   ObjectEvent_WalkToAndWait(LOCALID_DORA, 419, 661);
   ObjectEvent_WalkToAndWait(LOCALID_DORA, 408, 661);
-  Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIMATION_STAND);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIM_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   ObjectEvent_FaceDirection(LOCALID_DORA, FACING_SOUTH, 10);
   // "Have you got everything you need?" Yes: "Good for you, Isaac."; no: "I'm
   // sorry, but we don't have time..."
@@ -744,8 +743,8 @@ static void EventScript_DoraWakesIsaac(void) {
   }
   Engine_ScriptWait(20);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | LOCALID_DORA, 0, 20);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_DORA, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_DORA, ANIM_NOD);
   Engine_ScriptWait(20);
   ObjectEvent_SetActionScript(LOCALID_DORA, gValeInteriorsInn_DoraLeavesScript);
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER,
@@ -844,9 +843,9 @@ static void EventScript_HurryToThePlaza(void) {
   Engine_ScriptWait(20);
   // They nod, Kyle runs back down, and the two turn back (SE_234).
   ObjectEvent_FaceDirection(LOCALID_DORA, FACING_WEST, 20);
-  Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_KYLE, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_KYLE, ANIM_NOD);
   Engine_ObjectEventWalkTo(LOCALID_KYLE, 415, 589);
   Engine_ScriptWait(10);
   ObjectEvent_SetActionScript(LOCALID_DORA,
@@ -876,7 +875,7 @@ ramp:
   }
   // Dora and Isaac look back, startled, then nod to each other.
   ObjectEvent_RefreshSelectorById(LOCALID_PARTY_LEADER);
-  Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIM_STAND);
   Engine_ObjectEventStartRepeatedMotion(LOCALID_DORA, 2);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_PARTY_LEADER, 2);
   Engine_ScriptWait(10);
@@ -889,8 +888,8 @@ ramp:
   Engine_ScriptWait(80);
   Engine_ObjectEventSetPosition(LOCALID_KYLE, 0, 0);
   Engine_ObjectEventFaceEachOther(LOCALID_DORA, LOCALID_PARTY_LEADER, 20);
-  Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   Engine_ScriptWait(40);
   Engine_CameraSetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
   Engine_CameraFollowObjectEvent(LOCALID_DORA, 1);
@@ -1009,7 +1008,7 @@ static void EventScript_VisitSickDora(void) {
   Engine_ObjectEventSetDestination(LOCALID_DORA, 584, 406);
   TilesetAnim_Pause(11);
   TilesetAnim_Resume(12);
-  Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIMATION_DORA_HEAD_BOWED);
+  Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIM_DORA_HEAD_BOWED);
   Engine_ScriptWait(80);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_DORA, 2);
   Engine_ScriptWait(40);
@@ -1019,21 +1018,19 @@ static void EventScript_VisitSickDora(void) {
   Engine_ScriptShowMessageAndWait(LOCALID_DORA, 0, 40);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
                         60);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_DORA,
-                                        ANIMATION_DORA_HEAD_SWAYING);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_DORA, ANIM_DORA_HEAD_SWAYING);
   ObjectEvent_ShowEmote(LOCALID_DORA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIMATION_DORA_HEAD_TURNED);
+  Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIM_DORA_HEAD_TURNED);
   Engine_ScriptWait(40);
   // "You haven't, have you?" "Have you forgotten your promise, Isaac?"
   Engine_ScriptShowMessageAndWait(LOCALID_DORA, 0, 40);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_DORA, 1);
   Engine_ScriptWait(20);
   Engine_ScriptShowMessageAndWait(LOCALID_DORA, 0, 20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_DORA,
-                                        ANIMATION_DORA_HEAD_BOWED);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_DORA, ANIM_DORA_HEAD_BOWED);
   Engine_ScriptWait(20);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIMATION_DORA_HEAD_SWAYING);
+  Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIM_DORA_HEAD_SWAYING);
   // "You promised you wouldn't come back until your quest was complete,
   // right?" Either reply has its own answer; she is less surprised when Mind
   // Read has told Isaac of her illness.
@@ -1066,8 +1063,7 @@ static void EventScript_VisitSickDora(void) {
   Engine_ScriptShowMessage(LOCALID_DORA, 0);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_DORA, 1);
   Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_DORA,
-                                        ANIMATION_DORA_HEAD_SWAYING);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_DORA, ANIM_DORA_HEAD_SWAYING);
   Engine_ObjectEventStartRepeatedMotion(LOCALID_DORA, 2);
   Engine_ScriptShowMessageAndWait(LOCALID_DORA, 0, 40);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_DORA, 1);
@@ -1084,7 +1080,7 @@ static void EventScript_VisitSickDora(void) {
       ~OBJ_EVENT_FACES_MOTION;
   ObjectEvent_SetDestination(LOCALID_PARTY_LEADER, 558, 388);
   ObjectEvent_SetSpeed(LOCALID_DORA, PIXELS(6) / 5, PIXELS(3) / 5);
-  Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIMATION_DORA_STRAIGHTEN);
+  Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIM_DORA_STRAIGHTEN);
   Engine_ObjectEventMoveToAndWait(LOCALID_DORA, 586, 400);
   Engine_ScriptWait(40);
   ObjectEvent_WalkToAndWait(LOCALID_DORA, 580, 382);
@@ -1103,9 +1099,9 @@ static void EventScript_VisitSickDora(void) {
   ObjectEvent_SetSpeed(LOCALID_DORA, PIXELS(2) / 5, PIXELS(1) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_DORA, 572, 384);
   Engine_ScriptShowMessageAndWait(LOCALID_DORA, 0, 20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_DORA, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_DORA, ANIM_NOD);
   Engine_GameFlagSet(FLAG_VISITED_SICK_DORA);
   Engine_GameFlagSet(FLAG_MAP_TEMP_03);
   Engine_ScriptEnd();

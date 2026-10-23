@@ -224,7 +224,7 @@ of one sprite, and as he swings, the body and the sword change frame together.
 Each of a sprite's anims plays an animation script of byte pairs. A first byte
 below `ANIMCMD_END` (239) is a frame to show and the second byte how
 long. The anim's timer counts sixteenths of a frame and loses
-`SpriteAnim.step` each frame, `ANIMATION_NORMAL_STEP` (16) at normal
+`SpriteAnim.step` each frame, `ANIM_NORMAL_STEP` (16) at normal
 speed, so an anim can be made to play slower or faster. From 239 up, the
 first byte is a command (`enum AnimationCommand` in `field_internal.h`):
 `ANIMCMD_END`, `ANIMCMD_SET_KIND` (choose a facing
@@ -274,9 +274,9 @@ A sprite is a `struct Sprite`, and each of its anims a
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `ANIMATION_OBJECT_COUNT` | 64 | sprites, and the sprite anims they share |
-| `ANIMATION_LAYER_COUNT` | 4 | anims a sprite composes, `Sprite.entries` |
-| `ANIMATION_NORMAL_STEP` | 16 | sixteenths of a frame off an anim's timer each frame: normal speed |
+| `ANIM_OBJECT_COUNT` | 64 | sprites, and the sprite anims they share |
+| `ANIM_LAYER_COUNT` | 4 | anims a sprite composes, `Sprite.entries` |
+| `ANIM_NORMAL_STEP` | 16 | sixteenths of a frame off an anim's timer each frame: normal speed |
 | `ANIMCMD_END` | 239 | blank the anim and stop its script |
 | `ANIMCMD_SET_KIND` | 240 | use facing table `arg` |
 | `ANIMCMD_HOLD` | 241 | stay on this command and frame for good |
@@ -660,7 +660,7 @@ and a part undefines its macros at its end.
 | --- | --- |
 | `Sprite_`, `Render_` | drawing sprites |
 | `SpriteDissolve_` | dissolving a sprite into or out of view, pixel by pixel |
-| `Animation_`, `SpriteAnim_`, `Sprite_`, `SpriteFrameCache_` | sprites, their anims and the frame caches they draw from |
+| `Anim_`, `SpriteAnim_`, `Sprite_`, `SpriteFrameCache_` | sprites, their anims and the frame caches they draw from |
 | `ObjectSystem_`, `ObjectDispatch_`, `Object_` | keeping and moving objects |
 | `ObjectScript_` | object script commands, and the overlap and wandering tests they run |
 | `Field_` | the configured keys |
@@ -672,6 +672,7 @@ and a part undefines its macros at its end.
 | `Ui_`, `SpriteViewer_` | the debug sprite viewer |
 | `LuckyDice_` | the Lucky Dice minigame |
 | `ObjectCamera_` | a camera hook that returns 1 and nothing calls (`object_camera.c`) |
+| `ResourceTable_` | two empty reserved functions beside the resource table, nothing calls them |
 
 A few functions take the prefix of the one thing they act on
 (`Decompress_Lz`, `FieldCamera_FollowLeaderInBounds`). Names other

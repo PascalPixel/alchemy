@@ -262,7 +262,7 @@ static void EventScript_HideSecrets(void) {
   TreasureSpot_SetPosition(TREASURE_SPOT_PSYNERGY_STONE, 0, 0);
   MapGrid_CopyCells(32, 42, 3, 2, 1, 15);
   GameFlag_Clear(FLAG_MAP_TEMP_00);
-  Engine_ObjectEventSetAnimation(LOCALID_HIDDEN_PUDDLE, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_HIDDEN_PUDDLE, ANIM_STAND);
   puddle = ObjectEvent_Get(LOCALID_HIDDEN_PUDDLE);
   puddle->update = NULL;
   Engine_ObjectSetPartPalettes(ObjectEvent_Get(LOCALID_HIDDEN_PUDDLE), 0);
@@ -491,15 +491,15 @@ static void Lunpa_WatchForFortressApproach(void) {
 /// steps back.
 static void EventScript_GaretTurnsLeaderBack(void) {
   Engine_ScriptStart();
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   Engine_ScriptSetMessage(MsgLunpaGaretRefusesToReturn);
   Script_ShowMessage(GARET, 0);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE,
                         100);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
   ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0, 12);
   Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   GameFlag_Clear(FLAG_MAP_TEMP_43);
   Engine_ScriptEnd();
 }
@@ -529,7 +529,7 @@ static void EventScript_EnterDoor(void) {
                        gLunpaDoors[doorIndex].y);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   ObjectEvent_Get(LOCALID_PARTY_LEADER)->motionFlags = 0;
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
   if (doorIndex != DOOR_TEMPLE) {
     ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 2, -8);
     Engine_ScriptWait(10);
@@ -547,7 +547,7 @@ static void EventScript_EnterHiddenPassage(void) {
     if (GameFlag_IsSet(FLAG_MAP_TEMP_01) == 0) {
       ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
       ObjectEvent_Get(LOCALID_PARTY_LEADER)->motionFlags = 0;
-      Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
+      Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
       ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 2, -8);
       Engine_ScriptWait(13);
       Engine_ScriptRequestWarp(LUNPA_TO_VAULT_JAIL);
@@ -562,7 +562,7 @@ static void EventScript_EnterFortress(void) {
   Engine_ScriptStart();
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
   ObjectEvent_Get(LOCALID_PARTY_LEADER)->motionFlags = 0;
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
   ObjectEvent_WalkBy(LOCALID_PARTY_LEADER, 0, -8);
   Script_PlaySong(SE_DOOR_OPEN);
   MapGrid_CopyCells(53, 4, 2, 2, 41, 4);
@@ -681,7 +681,7 @@ static void EventScript_GuardsCatchParty(void) {
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(2), PIXELS(1));
   ObjectEvent_SetSpeed(LOCALID_LEFT_GUARD, PIXELS(2), PIXELS(1));
   ObjectEvent_SetSpeed(LOCALID_RIGHT_GUARD, PIXELS(2), PIXELS(1));
-  Engine_ObjectEventSetAnimation(LOCALID_RIGHT_GUARD, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimation(LOCALID_RIGHT_GUARD, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(35);
   Engine_ScriptSetMessage(warningMessageBase + CATCH_RIGHT_GUARD_WONDERS);
   Script_ShowMessage(LOCALID_RIGHT_GUARD, 0);
@@ -689,7 +689,7 @@ static void EventScript_GuardsCatchParty(void) {
                         30);
   Engine_ScriptSetMessage(warningMessageBase + CATCH_LEFT_GUARD_REFUSES_ENTRY);
   Script_ShowMessage(LOCALID_LEFT_GUARD, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_RIGHT_GUARD, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_RIGHT_GUARD, ANIM_NOD);
   Engine_ScriptWait(25);
   Engine_ScriptSetMessage(warningMessageBase +
                           CATCH_RIGHT_GUARD_SENDS_PARTY_OFF);
@@ -807,7 +807,7 @@ static void EventScript_GuardsThrowLeaderOut(void) {
   ObjectEvent_SetSpeed(LOCALID_RIGHT_GUARD, PIXELS(9) / 5, PIXELS(9) / 10);
   ObjectEvent_WalkTo(LOCALID_LEFT_GUARD, 152, 288);
   ObjectEvent_WalkTo(LOCALID_RIGHT_GUARD, 168, 288);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_SHAKE_HEAD);
   ObjectEvent_SetDestination(LOCALID_PARTY_LEADER, 160, 296);
   FieldScheduler_AddCallback(Lunpa_KickUpLeaderDust, TASK_PRIORITY_MAP);
   Engine_ScriptWait(1);
@@ -821,11 +821,11 @@ static void EventScript_GuardsThrowLeaderOut(void) {
       OBJ_EVENT_PRIORITY_AUTOMATIC;
   ObjectEvent_Get(LOCALID_RIGHT_GUARD)->priorityFlags |=
       OBJ_EVENT_PRIORITY_AUTOMATIC;
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_SHAKE_HEAD);
   Script_PlaySong(SE_SCUFFLE);
   Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
-  Engine_ObjectEventSetAnimation(LOCALID_LEFT_GUARD, ANIMATION_STAND);
-  Engine_ObjectEventSetAnimation(LOCALID_RIGHT_GUARD, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_LEFT_GUARD, ANIM_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_RIGHT_GUARD, ANIM_STAND);
   Engine_TaskRemoveCallback(Lunpa_KickUpLeaderDust);
   // Throw the leader down the steps, then wait for the first landing.
   ObjectEvent_Get(LOCALID_PARTY_LEADER)->motionFlags |= OBJ_EVENT_FALLS;
@@ -836,7 +836,7 @@ static void EventScript_GuardsThrowLeaderOut(void) {
     Engine_ScriptWait(1);
   }
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_SPRAWLED);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_SPRAWLED);
   Script_PlaySong(SE_LANDING_THUD);
   ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
                                                           ATTACHED_EFFECT_ONCE);
@@ -851,7 +851,7 @@ static void EventScript_GuardsThrowLeaderOut(void) {
   ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
                                                           ATTACHED_EFFECT_ONCE);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   Engine_TaskRemoveCallback(Lunpa_KickUpLeaderDust);
   Engine_ScriptWait(50);
   Engine_ScriptSetMessage(MsgLunpaGuardForbidsReturn);
@@ -866,8 +866,8 @@ static void EventScript_GuardsThrowLeaderOut(void) {
   ObjectEvent_WalkTo(LOCALID_RIGHT_GUARD, 176, 200);
   Engine_ObjectEventWaitForMove(LOCALID_LEFT_GUARD);
   Engine_ObjectEventWaitForMove(LOCALID_RIGHT_GUARD);
-  Engine_ObjectEventSetAnimation(LOCALID_LEFT_GUARD, ANIMATION_STAND);
-  Engine_ObjectEventSetAnimation(LOCALID_RIGHT_GUARD, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_LEFT_GUARD, ANIM_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_RIGHT_GUARD, ANIM_STAND);
   Engine_ScriptWait(30);
   ObjectEvent_FaceDirection(LOCALID_LEFT_GUARD, FACING_SOUTHEAST + FACING_STEP,
                             0);
@@ -949,9 +949,9 @@ s32 Map_Initialize(void) {
 #endif
     FieldScheduler_AddCallback(Lunpa_WatchForUncloakedParty, TASK_PRIORITY_MAP);
     // The fortress's puzzles and beaten guards are reset.
-    Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_PLANT_BLOWN_AWAY);
-    Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_PASSAGE_PLANT_BLOWN_AWAY);
-    Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_PLANT_BLOWN_AWAY);
+    Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_IVY_BLOWN_AWAY);
+    Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_PASSAGE_IVY_BLOWN_AWAY);
+    Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_IVY_BLOWN_AWAY);
     Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_FLIPPED);
     Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_FLIPPED);
     Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_CRATES_MOVED);

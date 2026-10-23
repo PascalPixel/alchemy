@@ -194,7 +194,7 @@ void WorldMap_StartStillViewFar(void);
 void WorldMap_LoadAreaGraphicsFar(void);
 /// Sets the colour mode (SpriteColorMode) of a one-sprite object's sprite
 /// anims, except hidden ones.
-void Animation_ApplyChildValuesFar(struct DispatchObject *object, u32 val);
+void Anim_ApplyChildValuesFar(struct DispatchObject *object, u32 val);
 /// Sets every sprite anim of a sprite to colour mode `value`, skipping those
 /// drawn hidden (SPRITE_COLOR_HIDDEN), and marks the sprite for redrawing.
 void Sprite_SetAnimColorModesFar(void *raw_parent, u32 value);

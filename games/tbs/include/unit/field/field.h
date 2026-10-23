@@ -36,29 +36,28 @@ enum ObjectSystemMode {
 enum AnimationFacingKind {
   /// The script's own frame whatever the facing; zero also marks a free
   /// sprite anim.
-  ANIMATION_FACING_NONE = 0,
-  ANIMATION_FACING_ONE_FRAME =
-      1, ///< 8 sectors: one frame, mirrored to the left
-  ANIMATION_FACING_FRONT_BACK = 2,   ///< 8 sectors: a front and a back frame
-  ANIMATION_FACING_THREE_FRAMES = 3, ///< 16 sectors: front, side and back
-  ANIMATION_FACING_FOUR_FRAMES = 4,  ///< 64 sectors
-  ANIMATION_FACING_FIVE_FRAMES = 5,  ///< 16 sectors
-  ANIMATION_FACING_SIX_FRAMES = 6,   ///< 64 sectors
+  ANIM_FACING_NONE = 0,
+  ANIM_FACING_ONE_FRAME = 1,    ///< 8 sectors: one frame, mirrored to the left
+  ANIM_FACING_FRONT_BACK = 2,   ///< 8 sectors: a front and a back frame
+  ANIM_FACING_THREE_FRAMES = 3, ///< 16 sectors: front, side and back
+  ANIM_FACING_FOUR_FRAMES = 4,  ///< 64 sectors
+  ANIM_FACING_FIVE_FRAMES = 5,  ///< 16 sectors
+  ANIM_FACING_SIX_FRAMES = 6,   ///< 64 sectors
   /// 8 sectors centred on the compass directions, a frame for each.
-  ANIMATION_FACING_EIGHT_FRAMES = 8,
-  /// ANIMATION_FACING_FRONT_BACK's table for a sprite drawn in two parts, the
+  ANIM_FACING_EIGHT_FRAMES = 8,
+  /// ANIM_FACING_FRONT_BACK's table for a sprite drawn in two parts, the
   /// second the next sprite id (the sprite viewer).
-  ANIMATION_FACING_TWO_PART = 20,
-  /// As ANIMATION_FACING_FRONT_BACK, with the front frame mirrored the other
+  ANIM_FACING_TWO_PART = 20,
+  /// As ANIM_FACING_FRONT_BACK, with the front frame mirrored the other
   /// way.
-  ANIMATION_FACING_FRONT_BACK_SWAPPED = 22,
+  ANIM_FACING_FRONT_BACK_SWAPPED = 22,
   /// Ringed as eight facings by the sprite viewer, but with no facing table:
-  /// Sprite_ComposeFrame draws it as ANIMATION_FACING_NONE.
+  /// Sprite_ComposeFrame draws it as ANIM_FACING_NONE.
   /// XXX: likely an older eight-direction kind, because the viewer still
   /// lists it; a sprite of this kind would settle it.
-  ANIMATION_FACING_EIGHT_NO_TABLE = 44,
-  /// As ANIMATION_FACING_EIGHT_FRAMES, with three of the frames mirrored.
-  ANIMATION_FACING_EIGHT_FRAMES_MIRRORED = 88
+  ANIM_FACING_EIGHT_NO_TABLE = 44,
+  /// As ANIM_FACING_EIGHT_FRAMES, with three of the frames mirrored.
+  ANIM_FACING_EIGHT_FRAMES_MIRRORED = 88
 };
 
 /// SpriteAnim.mode, from the metadata's frameCodec: how a sprite anim's frames
@@ -298,8 +297,8 @@ void ObjectDispatch_SetAnimationAndSpeed(struct DispatchObject *object,
                                          s32 animation, s32 step);
 void ObjectDispatch_SetChildRotation(struct DispatchObject *object,
                                      u32 rotation);
-void Animation_SetIndexAndInitializeObjects(void *rawDispatchObject,
-                                            s32 animationId);
+void Anim_SetIndexAndInitializeObjects(void *rawDispatchObject,
+                                       s32 animationId);
 void ObjectDispatch_RegisterChildMetadata(struct DispatchObject *object,
                                           s32 animationId);
 void ObjectDispatch_StartApproachLink(struct DispatchObject *object,
@@ -317,7 +316,7 @@ void ObjectDispatch_SetSingleChildFlags(struct DispatchObject *object,
 void ObjectDispatch_SetChildBlendMode(struct DispatchObject *object, u32 mode);
 void ObjectDispatch_SetChildFixedScale(struct DispatchObject *object,
                                        u32 fixedScale);
-void Animation_ApplyChildValues(struct DispatchObject *object, u32 param);
+void Anim_ApplyChildValues(struct DispatchObject *object, u32 param);
 void ObjectSystem_SuspendProjectionAndShowSprites(void);
 void ObjectSystem_ResumeProjectionAndHideLayers(void);
 s32 ObjectDispatch_ReturnTrue(void);

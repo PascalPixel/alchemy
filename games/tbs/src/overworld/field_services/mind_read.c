@@ -59,9 +59,9 @@ void FieldEffect_FinishWaveAndReleaseHeapBlock(void) {
   work = *(void **)((u32)&gBattleBgEffectWork);
   Ui_SetBank15PaletteAndClearRenderMode();
   Task_Remove(FieldEffect_UpdateMindReadWave);
-  Animation_ApplyChildPalette((struct MotionObject *)ObjectEvent_GetById(
-                                  ((struct WaveEffectWork *)work)->sourceId),
-                              1);
+  Anim_ApplyChildPalette((struct MotionObject *)ObjectEvent_GetById(
+                             ((struct WaveEffectWork *)work)->sourceId),
+                         1);
   FieldEffect_FadeFromEffectColor();
   FreeHeapSlot(HEAP_SLOT_MIND_READ);
 }
@@ -103,7 +103,7 @@ void FieldEffect_UpdateMindReadWave(void) {
     PaletteFade_StartInterpolation(1);
     FieldEffect_AdvanceHueCycle();
   }
-  Animation_ApplyChildPalette(
+  Anim_ApplyChildPalette(
       (struct MotionObject *)ObjectEvent_GetById(work->sourceId), 0);
 
   // At steps 0, 8 and 16 of the cycle, a particle from the target to the

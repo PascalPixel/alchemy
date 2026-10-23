@@ -924,18 +924,18 @@
 /// ★ Named from what the player sees: the stack of wooden crates that Move
 /// pushes down into the cave's hole (its render)
 #define FLAG_LUNPA_FORTRESS_CRATES_MOVED 0x943
-/// Whirlwind has blown away the plant that hid the first switch.
-/// ★ Named from what the player sees: a leafy plant on the cave wall, which
+/// Whirlwind has blown away the ivy that hid the first switch.
+/// ★ Named from what the player sees: ivy (SPRITE_IVY) on the cave wall, which
 /// Whirlwind blows away (its render)
-#define FLAG_LUNPA_FORTRESS_FIRST_SWITCH_PLANT_BLOWN_AWAY 0x944
-/// Whirlwind has blown away the plant that hid the passage.
-/// ★ Named from what the player sees: a leafy plant on the cave wall, which
+#define FLAG_LUNPA_FORTRESS_FIRST_SWITCH_IVY_BLOWN_AWAY 0x944
+/// Whirlwind has blown away the ivy that hid the passage.
+/// ★ Named from what the player sees: ivy (SPRITE_IVY) on the cave wall, which
 /// Whirlwind blows away (its render)
-#define FLAG_LUNPA_FORTRESS_PASSAGE_PLANT_BLOWN_AWAY 0x945
-/// Whirlwind has blown away the plant that hid the second switch.
-/// ★ Named from what the player sees: a leafy plant on the cave wall, which
+#define FLAG_LUNPA_FORTRESS_PASSAGE_IVY_BLOWN_AWAY 0x945
+/// Whirlwind has blown away the ivy that hid the second switch.
+/// ★ Named from what the player sees: ivy (SPRITE_IVY) on the cave wall, which
 /// Whirlwind blows away (its render)
-#define FLAG_LUNPA_FORTRESS_SECOND_SWITCH_PLANT_BLOWN_AWAY 0x946
+#define FLAG_LUNPA_FORTRESS_SECOND_SWITCH_IVY_BLOWN_AWAY 0x946
 /// The first switch Reveal shows in the cave wall has been searched.
 /// ★ Named from the game: "flipped the switch." (MsgFieldFlippedSwitch)
 #define FLAG_LUNPA_FORTRESS_FIRST_SWITCH_FLIPPED 0x947

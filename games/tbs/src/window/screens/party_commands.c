@@ -192,7 +192,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       } else {
         selection = BATTLE_SIDES_PARTY;
       }
-      handle = BattleUnits_ListIdsFar(selection, block);
+      handle = BattleUnit_ListIdsFar(selection, block);
       WaitFrames(1);
       BattleSummaryScreen_Run(block, handle, *(u16 *)block);
       Free(block);
@@ -292,7 +292,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         s32 handle;
 
         block = Alloc(12);
-        handle = BattleUnits_ListIdsFar(1, block);
+        handle = BattleUnit_ListIdsFar(1, block);
         state->iconShown[2] = 0;
         WaitFrames(1);
         BattleSummaryScreen_Run(block, handle, actorId);

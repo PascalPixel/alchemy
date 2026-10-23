@@ -39,8 +39,14 @@ enum EnemyId {
   ENEMY_CHIMERA = 110,
   ENEMY_KRAKEN = 121,
   ENEMY_MYSTERY_MAN = 122,
-  ENEMY_SATUROS_MERCURY_LIGHTHOUSE = 123, ///< level 18, alone
-  ENEMY_SATUROS_VENUS_LIGHTHOUSE = 124,   ///< level 38, beside Menardi
+  /// Level 18.
+  /// ★ Named from what the player sees: Saturos, fought alone at Mercury
+  /// Lighthouse (its render)
+  ENEMY_SATUROS_MERCURY_LIGHTHOUSE = 123,
+  /// Level 38.
+  /// ★ Named from what the player sees: Saturos, fought beside Menardi at
+  /// Venus Lighthouse's aerie (its render)
+  ENEMY_SATUROS_VENUS_LIGHTHOUSE = 124,
   ENEMY_MYSTERY_WOMAN = 125,
   ENEMY_MENARDI = 126,
   ENEMY_LIZARD_FIGHTER = 128,
@@ -61,13 +67,29 @@ enum EnemyId {
   ENEMY_TRET = 147,
   ENEMY_FUSION_DRAGON = 148,
   ENEMY_DEADBEARD = 149,
+  /// ★ Named from what the player sees: the Mimic that leaps out of the second
+  /// chest of Mercury Lighthouse's entrance (FIND_MIMIC, slot 0) (its render)
   ENEMY_MIMIC_MERCURY_LIGHTHOUSE = 150,
+  /// ★ Named from what the player sees: the Mimic that leaps out of the chest
+  /// in Fuchin Falls Cave's entrance (FIND_MIMIC, slot 1) (its render)
   ENEMY_MIMIC_FUCHIN_FALLS_CAVE = 151,
+  /// ★ Named from what the player sees: the Mimic that leaps out of the chest
+  /// by Altin Peak's pool (FIND_MIMIC, slot 2) (its render)
   ENEMY_MIMIC_ALTIN_PEAK = 152,
+  /// ★ Named from what the player sees: the Mimic that leaps out of the chest
+  /// in the Vault cave passage's pool room (FIND_MIMIC, slot 3) (its render)
   ENEMY_MIMIC_VAULT_CAVE = 153,
+  /// ★ Named from what the player sees: the Mimic that leaps out of the chest
+  /// on Crossbone Isle's first floor (FIND_MIMIC, slot 4) (its render)
   ENEMY_MIMIC_CROSSBONE_ISLE = 154,
+  /// ★ Named from what the player sees: the Mimic that leaps out of the chest
+  /// in Altmiller Cave (FIND_MIMIC, slot 5) (its render)
   ENEMY_MIMIC_ALTMILLER_CAVE = 155,
+  /// ★ Named from what the player sees: the Mimic that leaps out of a chest in
+  /// Suhalla Desert (FIND_MIMIC, slot 6) (its render)
   ENEMY_MIMIC_SUHALLA_DESERT = 156,
+  /// ★ Named from what the player sees: the Mimic that leaps out of the second
+  /// chest on Crossbone Isle's pirate ship (FIND_MIMIC, slot 7) (its render)
   ENEMY_MIMIC_PIRATE_SHIP = 157,
   /// The Djinn the party fights, each element's in order of level;
   /// BattleUnit_Set puts them on the party's side.

@@ -175,7 +175,7 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
 /// The object event stands still and says the selected message.
 static void VaultInteriorsRevisit_ShowStandingObjectEventDialogue(s32 localId) {
   Engine_ScriptStart();
-  Engine_ObjectEventSetAnimation(localId, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(localId, ANIM_STAND);
   Engine_ScriptShowMessage(localId, 0);
   Engine_ScriptEnd();
 }
@@ -220,9 +220,9 @@ static void EventScript_WelcomeIsaacBack(void) {
   Engine_ScriptStart();
   Engine_ScriptSetMessage(MsgVaultIsaacYouveComeBackVault);
   Engine_ObjectEventFaceEachOther(LOCALID_MAYOR, LOCALID_PARTY_LEADER, 2);
-  Engine_ObjectEventSetAnimation(LOCALID_MAYOR, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_MAYOR, ANIM_STAND);
   Script_ShowMessageAndWait(LOCALID_MAYOR, 0, 20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_MAYOR, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_MAYOR, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(20);
   Script_ShowMessageAndWait(LOCALID_MAYOR, 0, 20);
   ObjectEvent_ShowEmote(LOCALID_MAYOR, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
@@ -282,7 +282,7 @@ static void EventScript_OfferBones(void) {
     // Give the Bone only after the offer is accepted and space is available.
     if (PartyInventory_HasSpace() == 0) {
       Engine_ObjectEventSetAnimationAndWait(LOCALID_GIRL_AT_THE_INN,
-                                            ANIMATION_SHAKE_HEAD);
+                                            ANIM_SHAKE_HEAD);
       Engine_ScriptWait(20);
       Engine_ScriptSetMessage(MsgVaultWowHaveManyThingsArent);
       Script_ShowMessage(LOCALID_GIRL_AT_THE_INN, 0);
@@ -296,8 +296,7 @@ static void EventScript_OfferBones(void) {
     // pose.
     gFieldWork->message++;
     Engine_ScriptWait(20);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_GIRL_AT_THE_INN,
-                                          ANIMATION_NOD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_GIRL_AT_THE_INN, ANIM_NOD);
     Engine_ScriptWait(20);
     Script_ShowMessage(LOCALID_GIRL_AT_THE_INN, 0);
   }

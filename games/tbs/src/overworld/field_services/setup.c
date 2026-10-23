@@ -109,8 +109,7 @@ void FieldEffect_StopCasterHook(void) {
   struct ScriptMotionObject *user = effectWork->mainObject;
 
   user->hook = NULL;
-  Animation_ApplyChildValuesFar((struct DispatchObject *)user,
-                                SPRITE_COLOR_NORMAL);
+  Anim_ApplyChildValuesFar((struct DispatchObject *)user, SPRITE_COLOR_NORMAL);
   WaitFrames(1);
 }
 

@@ -179,8 +179,7 @@ static void EventScript_LeftThiefRegretsEscape(void) {
 /// FLAG_VAULT_THIEVES_JAILED is set.
 static void EventScript_RightThiefRegretsStaying(void) {
   Engine_ScriptStart();
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_RIGHT_THIEF,
-                                        ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_RIGHT_THIEF, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(20);
   Engine_ScriptSetMessage(MsgVaultRightThiefRegretsStaying);
   Engine_ScriptShowMessage(LOCALID_RIGHT_THIEF, 0);

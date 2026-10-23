@@ -67,14 +67,14 @@ s32 Menu_SuspendFieldTasks(void) {
 /// it once the menu work's heap block is allocated, so every window handle and
 /// icon pointer in the work starts as NULL.
 void Window_InitializeWork(s32 unused) {
-  struct ItemMenuWork *work = gMenuWork;
+  struct ItemMenuWork *menu = gMenuWork;
 
-  Dma_Fill32(0, work, MENU_WORK_SIZE);
-  work->sideIndex[0] = -1;
-  work->sideCount[0] = 1;
-  work->sideCount[1] = 1;
-  work->columnCount = 1;
-  work->rowCount = 1;
+  Dma_Fill32(0, menu, MENU_WORK_SIZE);
+  menu->sideIndex[0] = -1;
+  menu->sideCount[0] = 1;
+  menu->sideCount[1] = 1;
+  menu->columnCount = 1;
+  menu->rowCount = 1;
 }
 
 /// Opens the window kept in *handle, or redraws it if it is already open.
@@ -506,21 +506,21 @@ void PsynergyMenu_CallIconRoutineWithValue(const void *unused, s32 unit) {
 /// chooser) pass on to PsynergyMenu_InitializeEntryObjects for the party
 /// figures.
 struct Window *MenuCursor_Create(void *source) {
-  struct PsynergyMenuWork *work = source;
+  struct PsynergyMenuWork *menu = source;
   struct Window *window;
   s32 zero = 0;
   s32 sentinel;
   struct WindowSprite *cursor;
 
-  work->auxiliaryWindow = NULL;
-  Window_UpdateOrCreate(&work->auxiliaryWindow, zero, zero, 13, 5, 2);
-  window = work->auxiliaryWindow;
+  menu->auxiliaryWindow = NULL;
+  Window_UpdateOrCreate(&menu->auxiliaryWindow, zero, zero, 13, 5, 2);
+  window = menu->auxiliaryWindow;
   cursor =
       (struct WindowSprite *)Icon_CreateWithResourceVariant(window, -8, 11);
   cursor->motion = ICON_HIDDEN;
-  work->tabIndex[0] = 255;
-  work->tabIndex[1] = zero;
-  work->paneIcon[0] = cursor;
+  menu->tabIndex[0] = 255;
+  menu->tabIndex[1] = zero;
+  menu->paneIcon[0] = cursor;
   // sentinel is the depth slot an icon is drawn at: the hand at 254, with
   // the glyphs.
   sentinel = 254;
@@ -529,7 +529,7 @@ struct Window *MenuCursor_Create(void *source) {
   // paneIcon[1] gets slot 255. Nothing in TBS stores paneIcon[1], so it is
   // still NULL from Window_InitializeWork and this byte goes to address 0xf,
   // in the BIOS, which ignores writes.
-  work->paneIcon[1]->sentinel = sentinel; // -1
+  menu->paneIcon[1]->sentinel = sentinel; // -1
   return window;
 }
 
@@ -646,13 +646,13 @@ void Menu_UpdateEntryObjectTransforms(void) {
 /// Places the hand cursor at (xOffset, yOffset) inside the menu's top-left
 /// window, bobbing.
 void MenuCursor_Position(s32 xOffset, s32 yOffset) {
-  struct PsynergyMenuWork *work = gMenuWork;
-  struct WindowSprite *cursor = work->paneIcon[0];
+  struct PsynergyMenuWork *menu = gMenuWork;
+  struct WindowSprite *cursor = menu->paneIcon[0];
 
   cursor->oam.x = cursor->x = gMenuCursor_BobX[CURSOR_BOB_STEP()] + xOffset +
-                              (work->auxiliaryWindow)->x * 8 + 8;
+                              (menu->auxiliaryWindow)->x * 8 + 8;
   cursor->oam.y = cursor->y = gMenuCursor_BobY[CURSOR_BOB_STEP()] + yOffset +
-                              (work->auxiliaryWindow)->y * 8 + 8;
+                              (menu->auxiliaryWindow)->y * 8 + 8;
 }
 
 /// Slides the hand cursor from where it is to (x, y) inside the menu's
@@ -661,7 +661,7 @@ void MenuCursor_Position(s32 xOffset, s32 yOffset) {
 /// after skipSlide is set.
 void MenuCursor_Slide(s32 x, s32 y) {
 
-  struct PsynergyMenuWork *work = gMenuWork;
+  struct PsynergyMenuWork *menu = gMenuWork;
   struct WindowSprite *cursor;
   s32 steps;
   s32 startX;
@@ -672,11 +672,11 @@ void MenuCursor_Slide(s32 x, s32 y) {
   s32 stepY;
 
   steps = 2;
-  if (work->skipSlide != 0) {
-    work->skipSlide = 0;
+  if (menu->skipSlide != 0) {
+    menu->skipSlide = 0;
     return;
   }
-  cursor = work->paneIcon[0];
+  cursor = menu->paneIcon[0];
   {
     s32 biasedX = cursor->oam.x + 64;
     s32 biasedY = cursor->oam.y + 64;
@@ -707,10 +707,10 @@ void MenuCursor_Slide(s32 x, s32 y) {
     // 64 - 8 = 56: the bias less the window border.
     fineX += stepX;
     cursor->oam.x = cursor->x =
-        (fineX >> 4) + ((work->auxiliaryWindow)->x << 3) - 56;
+        (fineX >> 4) + ((menu->auxiliaryWindow)->x << 3) - 56;
     fineY += stepY;
     cursor->oam.y = cursor->y =
-        (fineY >> 4) + ((work->auxiliaryWindow)->y << 3) - 56;
+        (fineY >> 4) + ((menu->auxiliaryWindow)->y << 3) - 56;
     steps--;
     if (steps != 0)
       WaitFrames(1);

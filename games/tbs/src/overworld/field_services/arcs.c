@@ -142,11 +142,11 @@ void FieldEffect_SpawnScaledArcObjects(struct ObjectEvent *linked) {
 void FieldEffect_FlickerObjectAndTick(union FieldObject *fieldObject) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   if ((gFrameCount & 2) != 0) {
-    Animation_ApplyChildValuesFar((struct DispatchObject *)objectEvent,
-                                  SPRITE_COLOR_WHITE);
+    Anim_ApplyChildValuesFar((struct DispatchObject *)objectEvent,
+                             SPRITE_COLOR_WHITE);
   } else {
-    Animation_ApplyChildValuesFar((struct DispatchObject *)objectEvent,
-                                  SPRITE_COLOR_NORMAL);
+    Anim_ApplyChildValuesFar((struct DispatchObject *)objectEvent,
+                             SPRITE_COLOR_NORMAL);
   }
   if ((gFrameCount & 15) == 0) {
     FieldEffect_SpawnScaledArcObjects(objectEvent);
@@ -162,8 +162,7 @@ void FieldEffect_CycleObjectValueByCounter(union FieldObject *fieldObject) {
   if ((gFrameCount & 1) != 0) {
     s32 colorIndex = (gFrameCount >> 1) % 6;
 
-    Animation_ApplyChildValuesFar((struct DispatchObject *)objectEvent,
-                                  colorIndex);
+    Anim_ApplyChildValuesFar((struct DispatchObject *)objectEvent, colorIndex);
   }
   if ((gFrameCount & 15) == 0) {
     FieldEffect_SpawnScaledArcObjects(objectEvent);

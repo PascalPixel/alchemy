@@ -421,7 +421,7 @@ enum VenusLighthouseFourthFloorLocalId {
 enum {
   /// The hurt scholars and soldiers lying on the ground (spr_112.tsv and
   /// spr_152.tsv, the same pose).
-  ANIMATION_HURT_LYING = 5,
+  ANIM_HURT_LYING = 5,
   /// A light's sparkle, flickering between its two largest pictures
   /// (spr_284.tsv).
   PARTICLE_ANIMATION_FLICKER = 7
@@ -430,7 +430,7 @@ enum {
 /// An animation timer step for ObjectEvent_SetActionById, in sixteenths of a
 /// frame taken off each frame: 16 plays an animation at its own speed, so 24
 /// plays it half again as fast.
-enum { ANIMATION_STEPS_FAST = 24 };
+enum { ANIM_STEPS_FAST = 24 };
 
 /// The pieces of gold track a SPRITE_SPIRAL_PILLAR can carry, its animations
 /// from 3, each named by the two edges of its cell it joins as the pillar's
@@ -439,13 +439,13 @@ enum { ANIMATION_STEPS_FAST = 24 };
 /// a pillar sunk in a socket carries the track on across it, and a light that
 /// runs onto a piece that does not join the edge it comes in by goes out.
 enum VenusTrack {
-  TRACK_END = 0, ///< ends a list of pieces
-  TRACK_NORTH_SOUTH = 3,
-  TRACK_NORTH_WEST = 4,
-  TRACK_NORTH_EAST = 5,
-  TRACK_WEST_EAST = 6,
-  TRACK_SOUTH_EAST = 7,
-  TRACK_SOUTH_WEST = 8
+  VENUS_TRACK_END = 0, ///< ends a list of pieces
+  VENUS_TRACK_NORTH_SOUTH = 3,
+  VENUS_TRACK_NORTH_WEST = 4,
+  VENUS_TRACK_NORTH_EAST = 5,
+  VENUS_TRACK_WEST_EAST = 6,
+  VENUS_TRACK_SOUTH_EAST = 7,
+  VENUS_TRACK_SOUTH_WEST = 8
 };
 
 /// An object event's timer as gVenusGreyStatueScript and gVenusGreyPillarScript
@@ -526,7 +526,7 @@ enum {
 #include "common/object_findslot.h"
 
 /// Pushing a pillar: the pillar ahead of the leader moves one cell on with him,
-/// leaning into it (ANIMATION_PUSH), when the cell beyond is free, nothing
+/// leaning into it (ANIM_PUSH), when the cell beyond is free, nothing
 /// stands on the pillar, and it is no statue (SW_VENUS_IMMOVABLE).
 static void VenusLighthouse_PushAdjacentPillar(void) {
   struct FieldPosition targetPosition;
@@ -582,7 +582,7 @@ static void VenusLighthouse_PushAdjacentPillar(void) {
     return;
 
   // Move the pillar and leader together, then restore their standing state.
-  ObjectEvent_SetMode(leader, ANIMATION_PUSH);
+  ObjectEvent_SetMode(leader, ANIM_PUSH);
   moveRate = PIXELS(1) / 5;
   Engine_TaskWait(15);
   Engine_AudioPlayCue(SE_PUSH);
@@ -606,7 +606,7 @@ static void VenusLighthouse_PushAdjacentPillar(void) {
   leader->velocityZ = transitionBusy;
   leader->x.fixed = leader->x.part.pixel << 16;
   leader->z.fixed = leader->z.part.pixel << 16;
-  ObjectEvent_SetMode(leader, ANIMATION_STAND);
+  ObjectEvent_SetMode(leader, ANIM_STAND);
 }
 
 /// Unused: fills metatile behaviors in a rectangle of the requested map layer;
@@ -796,7 +796,7 @@ static void EventScript_EnterSparklingPassage(void) {
       (void (*)(union FieldObject *))VenusLighthouse_EmitPassageSparkTrail;
 #endif
   leader->speed = PIXELS(1) / 5;
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
   Engine_ObjectEventSetDestinationOffset(LOCALID_PARTY_LEADER, 0, -6);
   Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
   Engine_ObjectEventSetChildValue(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
@@ -907,8 +907,7 @@ static void VenusLighthouse_LandWithRadialDust(void) {
   Script_PlaySong(SE_188);
   ObjectEvent_SetAttachedEffect(
       LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER,
-                                 ANIMATION_LEADER_LEAN_BACK);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
   MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_MapGridRenderWaitForValues();
@@ -1059,10 +1058,10 @@ static s32 EventScript_JumpAcrossGap(void) {
     if (MapData_FindSlotAtPosition(&landing, leader) == 0 &&
         FieldObject_CheckMovementCollision(leader, &landing) == 0) {
       Engine_ScriptStart();
-      ObjectEvent_SetMode(leader, ANIMATION_LEADER_SPRING);
+      ObjectEvent_SetMode(leader, ANIM_LEADER_SPRING);
       Engine_TaskWait(6);
       Engine_AudioPlayCue(SE_JUMP);
-      ObjectEvent_SetMode(leader, ANIMATION_LEADER_LEAP);
+      ObjectEvent_SetMode(leader, ANIM_LEADER_LEAP);
       leader->speed = PIXELS(3);
       leader->acceleration = PIXELS(2);
       leader->velocityY = PIXELS(4);
@@ -1070,7 +1069,7 @@ static s32 EventScript_JumpAcrossGap(void) {
       Engine_ObjectEventSetSpriteFlags(leader, 0);
       Engine_ObjectEventMoveToAndWait(LOCALID_PARTY_LEADER, landing.x >> 16,
                                       landing.z >> 16);
-      ObjectEvent_SetMode(leader, ANIMATION_LEADER_SPRING);
+      ObjectEvent_SetMode(leader, ANIM_LEADER_SPRING);
       Engine_ObjectEventSetSpriteFlags(leader, 1);
       *motionFlags = savedMotionFlags;
       Engine_ScriptEnd();
@@ -1230,7 +1229,7 @@ static void EventScript_ReadRelief(void) {
   struct EventWork *work = gFieldWork;
 #endif
   Engine_ScriptStart();
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
 #if TBS_PATCH_1 && !TBS_PATCH_2
   message = (s32)MSGNO(MsgVenusThereWordsCarvedIntoRelief);
 #else
@@ -1319,11 +1318,9 @@ static void EventScript_JumpDown(void) {
       (void (*)(union FieldObject *))VenusLighthouse_EmitRisingParticles;
 #endif
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER,
-                                        ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_SHAKE_HEAD);
   ObjectEvent_SetChildValue(LOCALID_PARTY_LEADER, SPRITE_COLOR_NORMAL);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER,
-                                        ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_SHAKE_HEAD);
   leader->update = 0;
   Engine_ScriptEnd();
 }
@@ -1376,7 +1373,7 @@ static void EventScript_SearchStatue(void) {
   work->revealFrames = 0;
   work->busy = 1;
   Engine_ScriptStart();
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   Engine_MessageShowCentered(MsgVenusStatueSpeaksIsaacSoulYe, 1);
   PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
   PaletteFade_ApplyTarget(PALETTE_TINT_PALE, 0);
@@ -1456,7 +1453,7 @@ static void EventScript_MovePillarTowardWall(void) {
       Engine_ObjectEventWalkToAndWait(GARET, garetX, 104);
       Engine_ObjectEventFaceEachOther(GARET, LOCALID_PARTY_LEADER, 0);
       Engine_ScriptWait(20);
-      Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
+      Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
       Engine_ScriptWait(20);
       Engine_ScriptSetMessage(MsgVenusHmmmWeCantPushBlock);
       Engine_ScriptShowMessageAndWait(GARET, 0, 20);
@@ -1467,11 +1464,11 @@ static void EventScript_MovePillarTowardWall(void) {
       Engine_ObjectEventRunRepeatedMotion(GARET, 2);
       Engine_ScriptWait(20);
       Engine_ScriptShowMessageAndWait(GARET, 0, 20);
-      Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-      Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_NOD);
+      Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+      Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_NOD);
       Engine_ScriptWait(30);
       Engine_ObjectEventWalkToAndWait(GARET, garetX, 88);
-      Engine_ObjectEventSetAnimation(GARET, ANIMATION_WALK);
+      Engine_ObjectEventSetAnimation(GARET, ANIM_WALK);
       leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
       if (leader != 0) {
         Engine_ObjectEventSetDestination(GARET, leader->x.part.pixel,
@@ -1599,8 +1596,7 @@ static void EventScript_FallThroughFloor(void) {
   Engine_ObjectEventMoveToAndWait(LOCALID_PARTY_LEADER, leader->x.part.pixel,
                                   552);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER,
-                                 ANIMATION_LEADER_LEAN_BACK);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
   Engine_ScriptWait(30);
   ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
                                                           ATTACHED_EFFECT_ONCE);
@@ -1612,8 +1608,8 @@ static void EventScript_FallThroughFloor(void) {
     leader->facing = facing;
   }
   // The run cycle: his legs kick in the air as he falls.
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_LEADER_RUN);
-  ObjectEvent_SetActionById(LOCALID_PARTY_LEADER, ANIMATION_STEPS_FAST);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_RUN);
+  ObjectEvent_SetActionById(LOCALID_PARTY_LEADER, ANIM_STEPS_FAST);
   Engine_ScriptWait(40);
   // Start the fall only after the approach and descent animation have finished.
   leader->gravity = PIXELS(3) / 5;
@@ -2715,7 +2711,7 @@ const struct MapEvent *VenusLighthouse_GetEvents(void) {
 }
 
 /// Lays one of the scholars or soldiers the wanderers hurt on the ground
-/// (ANIMATION_HURT_LYING), drawn behind the backgrounds' fronts, still and
+/// (ANIM_HURT_LYING), drawn behind the backgrounds' fronts, still and
 /// without the lower two bits of its collision.
 static void VenusLighthouse_LayDownHurtObjectEvent(s32 localId) {
   struct ObjectEvent *objectEvent;
@@ -2727,7 +2723,7 @@ static void VenusLighthouse_LayDownHurtObjectEvent(s32 localId) {
   collisionFlags &= objectEvent->collisionFlags;
   objectEvent->collisionFlags = collisionFlags;
   Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
-  ObjectEvent_SetMode(objectEvent, ANIMATION_HURT_LYING);
+  ObjectEvent_SetMode(objectEvent, ANIM_HURT_LYING);
   Engine_ObjectEventSetSpritePriority(localId, 3);
   {
     s32 priorityFlags = 2;
@@ -3363,12 +3359,12 @@ static void VenusLighthouse_StepObjectEventWithDust(struct Vector3 *direction) {
     Engine_ObjectSetPosition(objectEvent, objectEvent->x.fixed,
                              objectEvent->y.fixed,
                              objectEvent->z.fixed + PIXELS(8));
-    ObjectEvent_SetMode(objectEvent, ANIMATION_LEADER_LEAP);
+    ObjectEvent_SetMode(objectEvent, ANIM_LEADER_LEAP);
     Object_WaitForMove(objectEvent);
     do {
       Engine_TaskWait(1);
     } while (objectEvent->y.fixed != objectEvent->groundHeight);
-    ObjectEvent_SetMode(objectEvent, ANIMATION_LEADER_SPRING);
+    ObjectEvent_SetMode(objectEvent, ANIM_LEADER_SPRING);
     Engine_TaskWait(3);
     return;
   }
@@ -3710,8 +3706,7 @@ static void VenusLighthouse_RaiseLeaderWithSpray(void) {
   Engine_ScriptWait(24);
   ObjectEvent_SetAttachedEffect(
       LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER,
-                                 ANIMATION_LEADER_LEAN_BACK);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
   leader->motionFlags &= ~OBJ_EVENT_FOLLOWS_TERRAIN;
   platform->y.fixed += VENUS_LIGHTHOUSE_FIXED_OFFSET(-3, 16);
   leader->y.fixed += VENUS_LIGHTHOUSE_FIXED_OFFSET(-3, 16);
@@ -3736,7 +3731,7 @@ static void VenusLighthouse_RaiseLeaderWithSpray(void) {
   platform->motionFlags = 0;
   ObjectEvent_SetAttachedEffect(
       LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   Engine_ScriptWait(40);
 #ifdef UBFIX
   leader->update = VenusLighthouse_UpdateRisingSpray;
@@ -3813,12 +3808,12 @@ static s32 VenusLighthouse_RouteLight(struct ObjectScriptContext *interpreter) {
         allowedTracks = gVenusTracksMovingSouth;
       }
     }
-    for (; *allowedTracks != TRACK_END; allowedTracks++) {
+    for (; *allowedTracks != VENUS_TRACK_END; allowedTracks++) {
       if (sprite->lastNo == *allowedTracks) {
         break;
       }
     }
-    if (*allowedTracks == TRACK_END) {
+    if (*allowedTracks == VENUS_TRACK_END) {
       Engine_ObjectSetScript(light, gVenusLightGoesOut);
       return 0;
     }
@@ -3832,7 +3827,7 @@ static s32 VenusLighthouse_RouteLight(struct ObjectScriptContext *interpreter) {
       for (pathIndex = 0;; pathIndex++) {
         trackCursor = gVenusThirdFloorSocketTracks[socket];
         track = *trackCursor;
-        if (track == TRACK_END) {
+        if (track == VENUS_TRACK_END) {
           Engine_ObjectSetScript(light, gVenusLightGoesOut);
           return 0;
         }
@@ -3853,7 +3848,7 @@ static s32 VenusLighthouse_RouteLight(struct ObjectScriptContext *interpreter) {
       for (pathIndex = 0;; pathIndex++) {
         trackCursor = gVenusFourthFloorSocketTracks[socket];
         track = *trackCursor;
-        if (track == TRACK_END) {
+        if (track == VENUS_TRACK_END) {
           Engine_ObjectSetScript(light, gVenusLightGoesOut);
           return 0;
         }
@@ -3935,43 +3930,43 @@ struct SwitchCell gVenusFourthFloorSockets[] = {
 };
 
 /// The pieces of track a light can run onto in each direction, each list ended
-/// by TRACK_END (VenusLighthouse_RouteLight).
+/// by VENUS_TRACK_END (VenusLighthouse_RouteLight).
 u8 gVenusTracksMovingWest[] = {
-    TRACK_NORTH_EAST, TRACK_WEST_EAST, TRACK_SOUTH_EAST, TRACK_END,
+    VENUS_TRACK_NORTH_EAST, VENUS_TRACK_WEST_EAST, VENUS_TRACK_SOUTH_EAST, VENUS_TRACK_END,
 };
 
 u8 gVenusTracksMovingEast[] = {
-    TRACK_NORTH_WEST, TRACK_WEST_EAST, TRACK_SOUTH_WEST, TRACK_END,
+    VENUS_TRACK_NORTH_WEST, VENUS_TRACK_WEST_EAST, VENUS_TRACK_SOUTH_WEST, VENUS_TRACK_END,
 };
 
 u8 gVenusTracksMovingNorth[] = {
-    TRACK_NORTH_SOUTH, TRACK_SOUTH_EAST, TRACK_SOUTH_WEST, TRACK_END,
+    VENUS_TRACK_NORTH_SOUTH, VENUS_TRACK_SOUTH_EAST, VENUS_TRACK_SOUTH_WEST, VENUS_TRACK_END,
 };
 
 u8 gVenusTracksMovingSouth[] = {
-    TRACK_NORTH_SOUTH, TRACK_NORTH_WEST, TRACK_NORTH_EAST, TRACK_END,
+    VENUS_TRACK_NORTH_SOUTH, VENUS_TRACK_NORTH_WEST, VENUS_TRACK_NORTH_EAST, VENUS_TRACK_END,
 };
 
 /// The third floor's sockets' lists of the pieces they route, in the order of
 /// each socket's paths (gVenusThirdFloorSocketTracks points into it).
 u8 gVenusThirdFloorTrackLists[] = {
-    TRACK_WEST_EAST,  TRACK_SOUTH_EAST, TRACK_SOUTH_WEST, TRACK_END, // northwest
-    TRACK_WEST_EAST,  TRACK_SOUTH_EAST, TRACK_SOUTH_WEST, TRACK_END, // northeast
-    TRACK_NORTH_WEST, TRACK_NORTH_EAST, TRACK_WEST_EAST,  TRACK_END, // southwest
-    TRACK_NORTH_WEST, TRACK_NORTH_EAST, TRACK_WEST_EAST,  TRACK_END, // southeast
+    VENUS_TRACK_WEST_EAST,  VENUS_TRACK_SOUTH_EAST, VENUS_TRACK_SOUTH_WEST, VENUS_TRACK_END, // northwest
+    VENUS_TRACK_WEST_EAST,  VENUS_TRACK_SOUTH_EAST, VENUS_TRACK_SOUTH_WEST, VENUS_TRACK_END, // northeast
+    VENUS_TRACK_NORTH_WEST, VENUS_TRACK_NORTH_EAST, VENUS_TRACK_WEST_EAST,  VENUS_TRACK_END, // southwest
+    VENUS_TRACK_NORTH_WEST, VENUS_TRACK_NORTH_EAST, VENUS_TRACK_WEST_EAST,  VENUS_TRACK_END, // southeast
 };
 
 /// The fourth floor's sockets' lists, as gVenusThirdFloorTrackLists; each list
 /// ends where the next begins, and the northeast socket's is empty.
 u8 gVenusFourthFloorTrackLists[] = {
-    TRACK_SOUTH_EAST, TRACK_END, // northwest
-    TRACK_END,                   // northeast
-    TRACK_NORTH_EAST, TRACK_END, // west
-    TRACK_SOUTH_WEST, TRACK_END, // east
-    TRACK_NORTH_EAST, TRACK_END, // far west
-    TRACK_SOUTH_EAST, TRACK_SOUTH_WEST, TRACK_END, // middle
-    TRACK_NORTH_SOUTH, TRACK_END, // southwest
-    TRACK_NORTH_SOUTH, TRACK_END, // southeast
+    VENUS_TRACK_SOUTH_EAST, VENUS_TRACK_END, // northwest
+    VENUS_TRACK_END,                   // northeast
+    VENUS_TRACK_NORTH_EAST, VENUS_TRACK_END, // west
+    VENUS_TRACK_SOUTH_WEST, VENUS_TRACK_END, // east
+    VENUS_TRACK_NORTH_EAST, VENUS_TRACK_END, // far west
+    VENUS_TRACK_SOUTH_EAST, VENUS_TRACK_SOUTH_WEST, VENUS_TRACK_END, // middle
+    VENUS_TRACK_NORTH_SOUTH, VENUS_TRACK_END, // southwest
+    VENUS_TRACK_NORTH_SOUTH, VENUS_TRACK_END, // southeast
 };
 
 const s32 *gEffectScripts[] = {
@@ -4051,32 +4046,32 @@ s32 gVenusSprayScript[] = {
 
 /// The object scripts that give a spiral pillar its piece of track.
 s32 gVenusTrackNorthSouthScript[] = {
-    SC_ANIMATION(TRACK_NORTH_SOUTH),
+    SC_ANIMATION(VENUS_TRACK_NORTH_SOUTH),
     SC_END,
 };
 
 s32 gVenusTrackNorthWestScript[] = {
-    SC_ANIMATION(TRACK_NORTH_WEST),
+    SC_ANIMATION(VENUS_TRACK_NORTH_WEST),
     SC_END,
 };
 
 s32 gVenusTrackNorthEastScript[] = {
-    SC_ANIMATION(TRACK_NORTH_EAST),
+    SC_ANIMATION(VENUS_TRACK_NORTH_EAST),
     SC_END,
 };
 
 s32 gVenusTrackWestEastScript[] = {
-    SC_ANIMATION(TRACK_WEST_EAST),
+    SC_ANIMATION(VENUS_TRACK_WEST_EAST),
     SC_END,
 };
 
 s32 gVenusTrackSouthEastScript[] = {
-    SC_ANIMATION(TRACK_SOUTH_EAST),
+    SC_ANIMATION(VENUS_TRACK_SOUTH_EAST),
     SC_END,
 };
 
 s32 gVenusTrackSouthWestScript[] = {
-    SC_ANIMATION(TRACK_SOUTH_WEST),
+    SC_ANIMATION(VENUS_TRACK_SOUTH_WEST),
     SC_END,
 };
 

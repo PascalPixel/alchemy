@@ -80,7 +80,7 @@ struct ScriptObjectRuntime {
   /// The object SC_FACE_LINK and SC_MOVE_LINK aim at.
   struct ScriptObjectRuntime *linkedObject;
   /// ObjectEvent's update hook; not named here.
-  void (*update)(union FieldObject *object);
+  void (*update)(union FieldObject *fieldObject);
 };
 
 STATIC_ASSERT(sizeof(struct ScriptObjectRuntime) == 0x70);

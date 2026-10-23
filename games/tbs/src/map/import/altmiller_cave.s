@@ -18,7 +18,7 @@
 	.set import.Engine_ObjectEventSetSpriteFlags, 1
 	.set import.Engine_WorkSetValuesIfNonNegative, 1
 	.set import.Engine_MapGridWaitForShakeToSettle, 1
-	.set import.Animation_ApplyChildValues, 1
+	.set import.Anim_ApplyChildValues, 1
 	.set import.Sprite_SetAnimColorModes, 1
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1

@@ -38,7 +38,7 @@ static inline void ObjectEvent_RunRepeatedMotion(s32 localId, s32 repeats) {
   Engine_ObjectEventRunRepeatedMotion(localId, repeats);
 }
 
-/// Switches an object event to an ObjectEventAnimation, such as ANIMATION_NOD.
+/// Switches an object event to an ObjectEventAnimation, such as ANIM_NOD.
 static inline void ObjectEvent_SetAnimation(s32 localId, s32 animation) {
   Engine_ObjectEventSetAnimation(localId, animation);
 }

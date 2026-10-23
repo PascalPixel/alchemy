@@ -80,7 +80,7 @@ struct Object {
   struct Object *linkedObject;
   /// The update hook (ObjectEvent.update), which the unused
   /// ObjectDispatch_SetUpdateValue sets as a word.
-  void (*update)(union FieldObject *object);
+  void (*update)(union FieldObject *fieldObject);
 };
 
 STATIC_ASSERT(sizeof(struct Object) == 0x70);

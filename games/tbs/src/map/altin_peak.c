@@ -460,8 +460,7 @@ static void AltinPeak_RideCart(s32 log) {
   logObjectEvent = ObjectEvent_GetById(LOCALID_CART);
   Field_EndBusyAndReveal();
   Engine_ScriptStart();
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER,
-                                 ANIMATION_LEADER_LEAN_BACK);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
   Engine_ScriptWait(10);
   Engine_AudioPlayCue(SE_JUMP);
   Engine_ObjectEventSetSpeed(LOCALID_PARTY_LEADER, PIXELS(16) / 5,
@@ -470,7 +469,7 @@ static void AltinPeak_RideCart(s32 log) {
   leader->velocityY =
       ((ABS(logObjectEvent->y.fixed - leader->y.fixed) >> 14) << 14) +
       PIXELS(4);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_LEADER_LEAP);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_LEAP);
   Engine_ObjectSetPosition(leader, logObjectEvent->x.fixed,
                            logObjectEvent->y.fixed, logObjectEvent->z.fixed);
   Engine_TaskWait(10);
@@ -895,11 +894,11 @@ static void AltinPeak_PushSpritzRoomPillar(void) {
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
   ObjectEvent_GetById(LOCALID_SPRITZ_ROOM_PILLAR)->steeringFlags &=
       ~OBJ_EVENT_FACES_MOTION;
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_PUSH);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_PUSH);
   ObjectEvent_SetDestination(LOCALID_PARTY_LEADER, 400, 424);
   ObjectEvent_SetDestination(LOCALID_SPRITZ_ROOM_PILLAR, 408, 424);
   Engine_ObjectEventWaitForMove(LOCALID_SPRITZ_ROOM_PILLAR);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   AltinPeak_SettleSpritzRoomPillar();
   Engine_ScriptEnd();
 }
@@ -1000,9 +999,9 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   FieldCamera_MoveTo(PIXELS(784), -1, PIXELS(116), 1);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(2), PIXELS(1));
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_LEADER_SPRING);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_SPRING);
   ObjectEvent_MoveToAndWait(LOCALID_PARTY_LEADER, 792, 140);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 100);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
                         60);
@@ -1104,7 +1103,7 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 854, 584);
   if (GameFlag_IsSet(FLAG_GARET_WATCHING_ROCKS) != 0) {
-    Engine_ObjectEventSetAnimation(GARET, ANIMATION_STAND);
+    Engine_ObjectEventSetAnimation(GARET, ANIM_STAND);
     ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 0);
   }
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 40);
@@ -1120,7 +1119,7 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
     Engine_CameraWaitForMove();
     ObjectEvent_WalkToAndWait(GARET, 840, 552);
     ObjectEvent_WalkToAndWait(GARET, 854, 562);
-    Engine_ObjectEventSetAnimation(GARET, ANIMATION_WALK);
+    Engine_ObjectEventSetAnimation(GARET, ANIM_WALK);
     objectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
     if (objectEvent != NULL) {
       ObjectEvent_SetDestination(GARET, objectEvent->x.part.pixel,
@@ -1162,7 +1161,7 @@ static void AltinPeak_ReadFallingRockSign(void) {
     ObjectEvent_WalkToAndWait(GARET, 800, 140);
     ObjectEvent_FaceDirection(GARET, FACING_NORTH, 20);
     Engine_ScriptSetMessage(message + 1);
-    Engine_ObjectEventSetAnimation(GARET, ANIMATION_SHAKE_HEAD);
+    Engine_ObjectEventSetAnimation(GARET, ANIM_SHAKE_HEAD);
     Engine_ScriptWait(20);
     Script_ShowMessageAndWait(GARET, 0, 10);
     Engine_ObjectEventJump(GARET, 6, 0);
@@ -1215,7 +1214,7 @@ static void AltinPeak_ReadFallingRockSign(void) {
     ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE,
                           0);
     ObjectEvent_MoveToAndWait(GARET, 786, 246);
-    Engine_ObjectEventSetAnimation(GARET, ANIMATION_STAND);
+    Engine_ObjectEventSetAnimation(GARET, ANIM_STAND);
     ObjectEvent_SetPosition(GARET, 0, 0);
     Engine_ScriptWait(40);
     AltinPeak_RunBoulderChase(10);
@@ -1339,7 +1338,7 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   beast->objectEvent.update = 0;
   beast->objectEvent.paused = 0;
   Engine_ScriptWait(16);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_WATER_BEAST, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_FIRST_WATER_BEAST, ANIM_STAND);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
   Engine_ScriptWait(40);
   ObjectEvent_FaceDirection(LOCALID_FIRST_WATER_BEAST,
@@ -1362,7 +1361,7 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   Engine_ObjectEventMoveToAndWait(LOCALID_FIRST_WATER_BEAST, 374, 262);
   beast->objectEvent.update = 0;
   Engine_ScriptWait(16);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_WATER_BEAST, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_FIRST_WATER_BEAST, ANIM_STAND);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
   Engine_ScriptWait(20);
   ObjectEvent_FaceDirection(LOCALID_FIRST_WATER_BEAST,
@@ -1378,7 +1377,7 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   Engine_ScriptWait(10);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
   Engine_ScriptWait(6);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_WATER_BEAST, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_FIRST_WATER_BEAST, ANIM_STAND);
   Engine_ScriptWait(40);
   ObjectEvent_FaceDirection(LOCALID_FIRST_WATER_BEAST,
                             FACING_NORTHWEST + FACING_STEP, 20);
@@ -1390,7 +1389,7 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   beast->objectEvent.update = AltinPeak_UpdateBeastHops;
   ObjectEvent_MoveToAndWait(LOCALID_FIRST_WATER_BEAST, 329, 219);
   beast->objectEvent.update = 0;
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_WATER_BEAST, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_FIRST_WATER_BEAST, ANIM_STAND);
   Engine_ScriptWait(16);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
   Engine_ScriptWait(40);
@@ -1412,7 +1411,7 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   Engine_ObjectEventSetAnimation(LOCALID_FIRST_WATER_BEAST,
                                  WATER_BEAST_ANIMATION_SPIT);
   ObjectEvent_MoveToAndWait(LOCALID_FIRST_WATER_BEAST, 295, 215);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_WATER_BEAST, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_FIRST_WATER_BEAST, ANIM_STAND);
   objectEvent = ObjectEvent_GetById(LOCALID_FIRST_WATER_BEAST);
   Engine_ObjectEventSetSpriteFlags(objectEvent, 1);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
@@ -1423,7 +1422,7 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   Engine_ObjectEventSetAnimation(LOCALID_FIRST_WATER_BEAST,
                                  WATER_BEAST_ANIMATION_SPIT);
   ObjectEvent_MoveToAndWait(LOCALID_FIRST_WATER_BEAST, 260, 215);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_WATER_BEAST, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_FIRST_WATER_BEAST, ANIM_STAND);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
   Engine_ScriptWait(40);
   ObjectEvent_FaceDirection(LOCALID_FIRST_WATER_BEAST,
@@ -1482,7 +1481,7 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
   objectEvent->objectEvent.update = NULL;
   objectEvent->objectEvent.paused = 0;
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_WATER_BEAST, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_FIRST_WATER_BEAST, ANIM_STAND);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
   Engine_ScriptWait(20);
   ObjectEvent_FaceDirection(LOCALID_FIRST_WATER_BEAST,
@@ -1498,7 +1497,7 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
   ObjectEvent_SetAnimation(LOCALID_FIRST_WATER_BEAST,
                            WATER_BEAST_ANIMATION_SPIT);
   Engine_ObjectEventMoveToAndWait(LOCALID_FIRST_WATER_BEAST, 86, 214);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_WATER_BEAST, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_FIRST_WATER_BEAST, ANIM_STAND);
   movingObjectEvent = ObjectEvent_GetById(LOCALID_FIRST_WATER_BEAST);
   Engine_ObjectEventSetSpriteFlags(movingObjectEvent, 1);
   Engine_ScriptWait(10);
@@ -1517,7 +1516,7 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
   ObjectEvent_MoveToAndWait(LOCALID_FIRST_WATER_BEAST, 120, 215);
   objectEvent->objectEvent.update = NULL;
   objectEvent->objectEvent.paused = 0;
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_WATER_BEAST, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_FIRST_WATER_BEAST, ANIM_STAND);
   Engine_ScriptWait(16);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
   Engine_ScriptWait(40);
@@ -2274,16 +2273,16 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHEAST, 0);
   Script_OpenMessage(IVAN, 0);
   if (Engine_ScriptChooseYesNo(0, 0) == 0) {
-    Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_NOD);
   } else {
-    Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
+    Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
     Script_SkipMessages(1);
   }
   Script_ShowMessageAndWait(IVAN, 0, 20);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   Engine_ScriptWait(20);
   Engine_ObjectEventRunRepeatedMotion(MIA, 2);
   Engine_ScriptSetMessage(MsgAltinGuardianStatuesWereCreatedLong);
@@ -2325,20 +2324,20 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
   Script_ShowMessage(IVAN, 0);
   ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST, 0);
   ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 20);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimation(IVAN, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(IVAN, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIM_NOD);
   Engine_ScriptWait(20);
   Engine_ObjectEventRunRepeatedMotion(MIA, 1);
   Script_ShowMessageAndWait(MIA, 0, 20);
   ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST, 0);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 40);
-  Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_NOD);
   Script_ShowMessageAndWait(GARET, 0, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimation(IVAN, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(IVAN, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIM_NOD);
   Engine_ScriptWait(20);
   // Return the companions and save the completed Hydros battle.
   party = gAltinPeak_RejoinScript;
@@ -2771,7 +2770,7 @@ s32 gAltinPeak_LeaderFleePath[] = {
     SC_SET(SW_TIMER, 1),
     SC_MOVE(PIXELS(854), 0, PIXELS(552)),
     SC_SYNC,
-    SC_ANIMATION(ANIMATION_STAND),
+    SC_ANIMATION(ANIM_STAND),
     SC_LABEL(1),
     SC_ADD(SW_FACING, 1024),
     SC_LOOP(24, SC_TO(1)),
@@ -2790,28 +2789,28 @@ s32 gAltinPeak_DebrisScript[] = {
 
 /// Garet, Ivan and Mia step out beside the leader after the Hydros battle.
 s32 gAltinPeak_GaretScript[] = {
-    SC_ANIMATION(ANIMATION_WALK),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(PIXELS(314), 0, PIXELS(126)),
     SC_SYNC,
-    SC_ANIMATION(ANIMATION_STAND),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(10),
     SC_END,
 };
 
 s32 gAltinPeak_IvanScript[] = {
-    SC_ANIMATION(ANIMATION_WALK),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(PIXELS(346), 0, PIXELS(126)),
     SC_SYNC,
-    SC_ANIMATION(ANIMATION_STAND),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(10),
     SC_END,
 };
 
 s32 gAltinPeak_MiaScript[] = {
-    SC_ANIMATION(ANIMATION_WALK),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(PIXELS(328), 0, PIXELS(138)),
     SC_SYNC,
-    SC_ANIMATION(ANIMATION_STAND),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(10),
     SC_END,
 };
@@ -2829,7 +2828,7 @@ s32 gAltinPeak_StatueSinkScript[] = {
 
 /// Garet, Ivan and Mia walk back to the leader and rejoin the party.
 s32 gAltinPeak_RejoinScript[] = {
-    SC_ANIMATION(ANIMATION_WALK),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(PIXELS(328), 0, PIXELS(118)),
     SC_SYNC,
     SC_POSITION(0, 0, 0),

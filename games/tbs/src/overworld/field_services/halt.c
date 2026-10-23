@@ -168,7 +168,7 @@ void FieldEffect_UpdatePausedObject(union FieldObject *fieldObject) {
   void *object = (void *)fieldObject;
   s8 *table = gFieldEffect_RandomChildValues;
   s32 random = Random16();
-  Animation_ApplyChildValuesFar(object, table[(u32)(random * 8) >> 16]);
+  Anim_ApplyChildValuesFar(object, table[(u32)(random * 8) >> 16]);
 }
 
 /// Pauses object id, keeping its per-frame update and, if it is animated, its
@@ -213,8 +213,8 @@ void FieldEffect_ResumeObject(s32 localId) {
       struct GameState *state = &gGameState;
       objectEvent->update = (void (*)(union FieldObject *))state->pausedUpdate;
       state->pausedUpdate = 0;
-      Animation_ApplyChildValuesFar((struct DispatchObject *)objectEvent,
-                                    state->pausedPose);
+      Anim_ApplyChildValuesFar((struct DispatchObject *)objectEvent,
+                               state->pausedPose);
     }
     objectEvent->paused = 0;
     ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)objectEvent,

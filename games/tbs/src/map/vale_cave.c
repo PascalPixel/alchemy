@@ -678,7 +678,7 @@ static void EventScript_PushLogOffLedge(void) {
   Engine_ScriptStart();
   Engine_ScriptWait(10);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 10);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_PUSH);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_PUSH);
   Engine_ScriptWait(15);
   Engine_ObjectEventSetDestinationOffset(LOCALID_PARTY_LEADER, 8, 0);
   Engine_ScriptWait(4);

@@ -584,6 +584,7 @@ Frame, VBlank, IWRAM, EWRAM, heap slot, task, sprite and OAM are in the
 | `SerialRuntime_`, `SerialTest_`, `LinkBattle_` | the link cable |
 | `RuntimeDispatch_` | empty far-call exports |
 | `Resource_`, `Palette_`, `Ui_`, `Sound_` | resources, palettes, the interface and sound, whose main code lives in other folders |
+| `String_` | numbers written as text: decimal, hex and the play time |
 
 [Matching](../MATCHING.md) explains the odd spellings and the comment markers.
 

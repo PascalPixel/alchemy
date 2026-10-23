@@ -329,10 +329,10 @@ static s32 MogallForest_TryJumpLeaderTo(struct FieldPosition *position) {
     s32 jumpMotionFlags;
 
     Engine_ScriptStart();
-    ObjectEvent_SetMode(leader, ANIMATION_LEADER_SPRING);
+    ObjectEvent_SetMode(leader, ANIM_LEADER_SPRING);
     Engine_TaskWait(6);
     Engine_AudioPlayCue(SE_JUMP);
-    ObjectEvent_SetMode(leader, ANIMATION_LEADER_LEAP);
+    ObjectEvent_SetMode(leader, ANIM_LEADER_LEAP);
     leader->speed = PIXELS(3);
     leader->acceleration = PIXELS(2);
     leader->velocityY = PIXELS(4);
@@ -343,7 +343,7 @@ static s32 MogallForest_TryJumpLeaderTo(struct FieldPosition *position) {
     Engine_ObjectEventMoveToAndWait(LOCALID_PARTY_LEADER,
                                     (s16)((u32)position->x >> 16),
                                     (s16)((u32)position->z >> 16));
-    ObjectEvent_SetMode(leader, ANIMATION_LEADER_SPRING);
+    ObjectEvent_SetMode(leader, ANIM_LEADER_SPRING);
     Engine_ObjectEventSetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
     *motionFlags = savedMotionFlags;
     Engine_ScriptEnd();
@@ -570,7 +570,7 @@ static void MogallForest_FirstArea_JumpSouth(void) {
 /// "The broken sign reads: North: Fuchin Temple / South: Mogall Prairie..."
 static void MogallForest_ReadBrokenSign(void) {
   Engine_ScriptStart();
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   Engine_MessageShowCentered(MSGNO(MsgMogallForestBrokenSign), 1);
   Engine_ScriptEnd();
 }

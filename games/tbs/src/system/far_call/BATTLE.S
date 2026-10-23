@@ -22,13 +22,13 @@ FarCall_BattleTable:
 	export BattleMotion_ApproachTargetFar, BattleMotion_ApproachTarget
 	overlay_veneer BattleMotion_InitializeObject
 	export BattleMotion_ApplyKnockbackFar, BattleMotion_ApplyKnockback
-	export BattleUnits_ListIdsFar, BattleUnits_ListIds
+	export BattleUnit_ListIdsFar, BattleUnit_ListIds
 	export GetBattleObjectSlotFar, BattleObject_Get
 	export Battle_RunFar, Battle_Run
 	export BattleMotion_ProjectPositionFar, BattleMotion_ProjectPosition
 	export BattleMotion_ProjectScaledPositionFar, BattleMotion_ProjectScaledPosition
 	export BattleMotion_ProjectConditionalPositionFar, BattleMotion_ProjectConditionalPosition
-	overlay_veneer BattleUnits_ListLiving
+	overlay_veneer BattleUnit_ListLiving
 	export BattleParty_PrepareMembersFar, BattleParty_PrepareMembers
 	export Camera_ConfigureViewFar, Camera_ConfigureView
 	export GetMotionRecordFar, GetMotionRecord

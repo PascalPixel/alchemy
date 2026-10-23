@@ -145,12 +145,12 @@ static void EventScript_ReturnFromMtAleph(void) {
   const s32 *actionScript;
 
   Engine_ScriptStart();
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_VILLAGER, ANIMATION_STILL);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_VILLAGER + 1, ANIMATION_STILL);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_VILLAGER + 2, ANIMATION_STILL);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_VILLAGER + 3, ANIMATION_STILL);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_VILLAGER + 4, ANIMATION_STILL);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_VILLAGER + 5, ANIMATION_STILL);
+  Engine_ObjectEventSetAnimation(LOCALID_FIRST_VILLAGER, ANIM_STILL);
+  Engine_ObjectEventSetAnimation(LOCALID_FIRST_VILLAGER + 1, ANIM_STILL);
+  Engine_ObjectEventSetAnimation(LOCALID_FIRST_VILLAGER + 2, ANIM_STILL);
+  Engine_ObjectEventSetAnimation(LOCALID_FIRST_VILLAGER + 3, ANIM_STILL);
+  Engine_ObjectEventSetAnimation(LOCALID_FIRST_VILLAGER + 4, ANIM_STILL);
+  Engine_ObjectEventSetAnimation(LOCALID_FIRST_VILLAGER + 5, ANIM_STILL);
   ObjectEvent_WalkToAndWait(LOCALID_GARETS_SISTER, 265, 487);
   ObjectEvent_FaceDirection(LOCALID_GARETS_SISTER, FACING_NORTHWEST, 0);
   ObjectEvent_WalkToAndWait(LOCALID_GARETS_BROTHER, 256, 500);
@@ -199,15 +199,14 @@ static void EventScript_ReturnFromMtAleph(void) {
   Engine_ScriptWait(30);
   // Garet's sister doubts he is up there; her brother says someone saw him
   // climb.
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_GARETS_SISTER,
-                                        ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_GARETS_SISTER, ANIM_SHAKE_HEAD);
   Script_ShowMessage(LOCALID_GARETS_SISTER, 0);
   ObjectEvent_FaceDirection(LOCALID_GARETS_GRANDFATHER,
                             FACING_SOUTHEAST + FACING_STEP, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_GARETS_BROTHER, LOCALID_GARETS_SISTER, 0);
   Engine_ScriptWait(30);
   Engine_ObjectEventSetAnimationAndWait(LOCALID_GARETS_BROTHER,
-                                        ANIMATION_SHAKE_HEAD);
+                                        ANIM_SHAKE_HEAD);
   Script_ShowMessage(LOCALID_GARETS_BROTHER, 0);
   // The guard saw them hanging around; Dora says they went to Kraden's house,
   // and the mayor and Dora wonder what Alchemy has to do with the eruption.
@@ -223,7 +222,7 @@ static void EventScript_ReturnFromMtAleph(void) {
   Script_ShowMessage(LOCALID_GARETS_GRANDFATHER, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_DORA, LOCALID_GARETS_GRANDFATHER, 0);
   Engine_ScriptWait(30);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_DORA, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_DORA, ANIM_SHAKE_HEAD);
   Script_ShowMessage(LOCALID_DORA, 0);
   Engine_ScriptWait(60);
   MapGrid_SetShake(PIXELS(2), PIXELS(3), Q16_ONE);
@@ -251,21 +250,21 @@ static void EventScript_ReturnFromMtAleph(void) {
   FieldCamera_SetSpeed(PIXELS(3) / 2, PIXELS(3) / 16);
   FieldCamera_MoveTo(PIXELS(112), -1, PIXELS(320), 1);
   Engine_ScriptWait(40);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_WALK);
   ObjectEvent_SetDestination(LOCALID_PARTY_LEADER, 120, 320);
   ObjectEvent_MoveToAndWait(GARET, 104, 320);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_STAND);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(30);
   ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 0);
   ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Engine_ScriptWait(50);
   ObjectEvent_SetSpeed(GARET, PIXELS(3) / 2, PIXELS(3) / 4);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_WALK);
   ObjectEvent_MoveToAndWait(GARET, 105, 342);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_STAND);
   Engine_ObjectEventRunRepeatedMotion(GARET, 2);
   Script_ShowMessage(GARET, 0);
   Engine_ScriptWait(10);
@@ -277,23 +276,23 @@ static void EventScript_ReturnFromMtAleph(void) {
   Script_OpenMessage(GARET, 0);
   if (Engine_ScriptChooseYesNo(0, 0) == 0) {
     Engine_ScriptWait(60);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-    Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+    Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
     Engine_ScriptWait(50);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-    Engine_ObjectEventSetAnimation(GARET, ANIMATION_WALK);
+    Engine_ObjectEventSetAnimation(GARET, ANIM_WALK);
     ObjectEvent_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
     ObjectEvent_MoveToAndWait(GARET, 103, 320);
-    Engine_ObjectEventSetAnimation(GARET, ANIMATION_STAND);
+    Engine_ObjectEventSetAnimation(GARET, ANIM_STAND);
   } else {
     Engine_ScriptWait(60);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-    Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+    Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
     Engine_ScriptWait(50);
     ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 0);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
+    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
     ObjectEvent_MoveToAndWait(LOCALID_PARTY_LEADER, 120, 340);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   }
 
   // The villagers spot them: "Garet!" "Isaac!" Garet's brother cries "Garet!"
@@ -332,8 +331,8 @@ static void EventScript_ReturnFromMtAleph(void) {
   Engine_ObjectEventStartRepeatedMotion(GARET, 2);
   ObjectEvent_RefreshSelectorById(GARET);
   Engine_ScriptWait(50);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
   ObjectEvent_RefreshSelectorById(GARET);
   Engine_ScriptWait(60);
 
@@ -352,10 +351,10 @@ static void EventScript_ReturnFromMtAleph(void) {
   Engine_CameraWaitForMove();
   ObjectEvent_FaceDirection(LOCALID_GARETS_GRANDFATHER, FACING_WEST, 0);
   ObjectEvent_SetSpeed(LOCALID_GREAT_HEALER, PIXELS(4) / 5, PIXELS(2) / 5);
-  Engine_ObjectEventSetAnimation(LOCALID_GREAT_HEALER, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(LOCALID_GREAT_HEALER, ANIM_WALK);
   ObjectEvent_MoveToAndWait(LOCALID_GREAT_HEALER, 265, 455);
   ObjectEvent_MoveToAndWait(LOCALID_GREAT_HEALER, 246, 455);
-  Engine_ObjectEventSetAnimation(LOCALID_GREAT_HEALER, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_GREAT_HEALER, ANIM_STAND);
   Engine_ScriptWait(30);
 
   // "Where have you been?" "What happened?"
@@ -375,8 +374,8 @@ static void EventScript_ReturnFromMtAleph(void) {
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 0);
   ObjectEvent_FaceDirection(GARET, FACING_EAST, 0);
   Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_SHAKE_HEAD);
-  Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(40);
   // Dora notices who is missing.
   ObjectEvent_ShowEmote(LOCALID_DORA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
@@ -418,8 +417,8 @@ static void EventScript_ReturnFromMtAleph(void) {
   Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 2);
   Engine_ObjectEventRunRepeatedMotion(GARET, 2);
   Engine_ScriptWait(40);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_SHAKE_HEAD);
-  Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(60);
 
   // "This is all very complicated... Come into the sanctum, both of you."
@@ -430,7 +429,7 @@ static void EventScript_ReturnFromMtAleph(void) {
   Engine_ScriptWait(30);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_GREAT_HEALER, 1);
   Engine_ScriptWait(30);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_GREAT_HEALER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_GREAT_HEALER, ANIM_NOD);
   Engine_ScriptWait(30);
   Script_ShowMessage(LOCALID_GREAT_HEALER, 0);
   Engine_ScriptWait(20);
@@ -439,8 +438,7 @@ static void EventScript_ReturnFromMtAleph(void) {
   ObjectEvent_FaceDirection(LOCALID_GARETS_GRANDFATHER,
                             FACING_NORTHWEST + FACING_STEP, 0);
   Engine_ScriptWait(30);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_GARETS_GRANDFATHER,
-                                        ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_GARETS_GRANDFATHER, ANIM_NOD);
   Engine_ScriptWait(50);
   ObjectEvent_FaceDirection(LOCALID_GREAT_HEALER, FACING_WEST, 0);
   Engine_ScriptWait(20);
@@ -450,9 +448,8 @@ static void EventScript_ReturnFromMtAleph(void) {
   Engine_ObjectEventFaceEachOther(LOCALID_GREAT_HEALER,
                                   LOCALID_GARETS_GRANDFATHER, 0);
   Engine_ScriptWait(40);
-  Engine_ObjectEventSetAnimation(LOCALID_GREAT_HEALER, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_GARETS_GRANDFATHER,
-                                        ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_GREAT_HEALER, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_GARETS_GRANDFATHER, ANIM_NOD);
   Engine_ScriptWait(30);
 
   // The sanctum's door opens and everyone files inside.
@@ -470,7 +467,7 @@ static void EventScript_ReturnFromMtAleph(void) {
   ObjectEvent_WalkToAndWait(LOCALID_DORA, 255, 460);
   ObjectEvent_FaceDirection(LOCALID_DORA, FACING_WEST, 0);
   Engine_ScriptWait(40);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_DORA, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_DORA, ANIM_NOD);
   Engine_ScriptWait(30);
   Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 1);
   Engine_ObjectEventRunRepeatedMotion(GARET, 1);

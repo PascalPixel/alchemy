@@ -514,7 +514,7 @@ static void AltmillerCave_StartRetreat(void) {
   effectWork = (struct FieldEffectWork *)gFieldEffectWork;
   original = effectWork->mainObject;
   Engine_ObjectEventFaceDirection(effectWork->firstObjectId, FACING_SOUTH, 0);
-  Animation_ApplyChildValues((struct DispatchObject *)original, 0);
+  Anim_ApplyChildValues((struct DispatchObject *)original, 0);
   Engine_ScriptWait(20);
   replacement = Engine_ObjectCreate(0, original->x.fixed, original->y.fixed,
                                     original->z.fixed);
@@ -612,10 +612,10 @@ static void AltmillerCave_HopSelectedObjectEvent(void) {
   if (FieldObject_CheckMovementCollision(objectEvent, &destination.position) ==
       0) {
     Engine_ScriptStart();
-    ObjectEvent_SetMode(objectEvent, ANIMATION_LEADER_SPRING);
+    ObjectEvent_SetMode(objectEvent, ANIM_LEADER_SPRING);
     Engine_TaskWait(6);
     Engine_AudioPlayCue(SE_JUMP);
-    ObjectEvent_SetMode(objectEvent, ANIMATION_LEADER_LEAP);
+    ObjectEvent_SetMode(objectEvent, ANIM_LEADER_LEAP);
     objectEvent->speed = PIXELS(3);
     objectEvent->acceleration = PIXELS(2);
     objectEvent->velocityY = PIXELS(4);
@@ -624,7 +624,7 @@ static void AltmillerCave_HopSelectedObjectEvent(void) {
     Engine_ObjectMotionSetPositionAndCommit(LOCALID_PARTY_LEADER,
                                             components[0].part.pixel,
                                             components[2].part.pixel);
-    ObjectEvent_SetMode(objectEvent, ANIMATION_LEADER_SPRING);
+    ObjectEvent_SetMode(objectEvent, ANIM_LEADER_SPRING);
     Engine_ObjectEventSetSpriteFlags(objectEvent, 1);
     objectEvent->motionFlags = motionFlags;
     Engine_ScriptEnd();
@@ -994,10 +994,10 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   ObjectEvent_Get(GARET)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
   ObjectEvent_Get(MIA)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
   ObjectEvent_Get(IVAN)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_STAND);
-  Engine_ObjectEventSetAnimation(MIA, ANIMATION_STAND);
-  Engine_ObjectEventSetAnimation(IVAN, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_STAND);
+  Engine_ObjectEventSetAnimation(MIA, ANIM_STAND);
+  Engine_ObjectEventSetAnimation(IVAN, ANIM_STAND);
   Engine_TaskWait(1);
   AltmillerCave_FacePartyNorth();
   Engine_ScriptWait(30);
@@ -1020,14 +1020,14 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   ObjectEvent_FaceObjectEvent(GARET, IVAN, 30);
   ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Script_ShowMessage(GARET, 0);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_BABI, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_BABI, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(30);
   Script_OpenMessage(LOCALID_BABI, 0);
   ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
   if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
     Engine_ScriptWait(10);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_BABI, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_BABI, ANIM_NOD);
     Engine_ScriptWait(30);
     Engine_ScriptSetMessage(MsgAltmillerWouldHaveRevealedMyselfSooner);
     Script_ShowMessage(LOCALID_BABI, 0);
@@ -1054,18 +1054,18 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   AltmillerCave_FacePartyNorth();
   Engine_ScriptWait(30);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_NOD);
   Engine_ScriptWait(30);
   Script_ShowMessage(GARET, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_BABI, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_BABI, ANIM_NOD);
   Engine_ScriptWait(30);
   Script_ShowMessage(LOCALID_BABI, 0);
   Engine_ScriptWait(10);
   ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Script_ShowMessage(IVAN, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_NOD);
   Engine_ScriptWait(30);
   Script_ShowMessage(IVAN, 0);
   Engine_ScriptWait(20);
@@ -1082,7 +1082,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Engine_ScriptWait(150);
   Engine_PsynergyPlayEffect(2);
   Engine_PsynergyLowerHands();
-  Engine_ObjectEventSetAnimation(IVAN, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(IVAN, ANIM_STAND);
   Engine_ScriptWait(10);
   Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
   Engine_ScriptWait(40);
@@ -1115,7 +1115,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   ObjectEvent_ShowEmote(LOCALID_BABI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Script_ShowMessage(LOCALID_BABI, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_NOD);
   Engine_ScriptWait(30);
   Script_ShowMessage(GARET, 0);
   Engine_ScriptWait(10);
@@ -1125,15 +1125,15 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   ObjectEvent_ShowEmote(LOCALID_BABI, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Script_ShowMessage(LOCALID_BABI, 0);
   Engine_ScriptWait(50);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_NOD);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIM_NOD);
   Engine_ScriptWait(10);
   ObjectEvent_FaceDirection(IVAN, FACING_WEST, 0);
   Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_NOD);
   Engine_ScriptWait(30);
   Engine_ScriptWait(10);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_BABI, 2);
@@ -1148,7 +1148,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Engine_ScriptWait(50);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   Engine_ScriptWait(30);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_BABI, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_BABI, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(30);
   Script_ShowMessage(LOCALID_BABI, 0);
   Engine_ScriptWait(10);
@@ -1157,14 +1157,14 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Engine_ScriptWait(10);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_BABI, 2);
   Engine_ScriptWait(30);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_BABI, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_BABI, ANIM_NOD);
   Engine_ScriptWait(30);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(20);
   Script_ShowMessage(GARET, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_BABI, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_BABI, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(30);
   Script_ShowMessage(LOCALID_BABI, 0);
   Engine_ScriptWait(10);
@@ -1213,8 +1213,8 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
   Engine_ScriptWait(30);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_NOD);
   Engine_ScriptWait(30);
   Script_OpenMessage(LOCALID_BABI, 0);
   Engine_ScriptSetMessage(MsgAltmillerBabi);
@@ -1337,7 +1337,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   ObjectEvent_ShowEmote(LOCALID_BABI, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Script_ShowMessage(LOCALID_BABI, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_FIRST_SOLDIER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_FIRST_SOLDIER, ANIM_NOD);
   Engine_ScriptWait(30);
   Script_ShowMessage(LOCALID_FIRST_SOLDIER, 0);
   Engine_ScriptWait(10);
@@ -1369,9 +1369,9 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   ObjectEvent_FaceDirection(LOCALID_FIRST_SOLDIER, FACING_SOUTHEAST, 0);
   ObjectEvent_FaceDirection(LOCALID_SECOND_SOLDIER, FACING_SOUTHEAST, 0);
   Engine_ScriptWait(30);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_FIRST_SOLDIER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_FIRST_SOLDIER, ANIM_NOD);
   Engine_ScriptWait(30);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_SECOND_SOLDIER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_SECOND_SOLDIER, ANIM_NOD);
   Engine_ScriptWait(30);
   Engine_ScriptWait(10);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_SECOND_SOLDIER, 2);
@@ -1383,10 +1383,10 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   AltmillerCave_FacePartyNorth();
   Engine_ScriptWait(30);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimation(MIA, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(MIA, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_NOD);
   Engine_ScriptWait(30);
   Engine_ScriptWait(10);
   ObjectEvent_ShowEmote(LOCALID_SECOND_SOLDIER, EMOTE_IN_FRONT | EMOTE_SMILE,
@@ -1404,10 +1404,10 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   ObjectEvent_ShowEmote(LOCALID_BABI, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Script_ShowMessage(LOCALID_BABI, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_SOLDIER, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_SECOND_SOLDIER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_FIRST_SOLDIER, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_SECOND_SOLDIER, ANIM_NOD);
   Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_BABI, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_BABI, ANIM_NOD);
   Engine_ScriptWait(40);
   Engine_ObjectEventFollow(LOCALID_PARTY_LEADER, LOCALID_BABI);
   Engine_ObjectEventFollow(GARET, LOCALID_BABI);
@@ -1419,8 +1419,8 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   ObjectEvent_WalkBy(LOCALID_SECOND_SOLDIER, 0, 48);
   ObjectEvent_WalkByAndWait(LOCALID_BABI, -16, 0);
   ObjectEvent_WalkByAndWait(LOCALID_BABI, 0, 32);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_SOLDIER, ANIMATION_STAND);
-  Engine_ObjectEventSetAnimation(LOCALID_SECOND_SOLDIER, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_FIRST_SOLDIER, ANIM_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_SECOND_SOLDIER, ANIM_STAND);
   Engine_ObjectEventStop(LOCALID_PARTY_LEADER);
   Engine_ObjectEventStop(GARET);
   Engine_ObjectEventStop(MIA);
@@ -1443,11 +1443,11 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   ObjectEvent_FaceObjectEvent(GARET, LOCALID_BABI, 30);
   Script_ShowMessage(GARET, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_NOD);
   Engine_ScriptWait(30);
   Script_ShowMessage(IVAN, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIM_NOD);
   Engine_ScriptWait(30);
   Script_ShowMessage(MIA, 0);
   Engine_ScriptWait(10);
@@ -1463,7 +1463,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Engine_ScriptWait(20);
   ObjectEvent_FaceDirection(LOCALID_BABI, FACING_SOUTH, 0);
   Engine_ScriptWait(30);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_BABI, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_BABI, ANIM_NOD);
   Engine_ScriptWait(30);
   // Babi and the two men walk back toward the cave entrance.
   ObjectEvent_SetActionScript(LOCALID_SECOND_SOLDIER,
@@ -1503,7 +1503,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Script_ShowMessage(LOCALID_FIRST_SOLDIER, 0);
   Engine_ScriptWait(10);
   Engine_ObjectEventSetAnimationAndWait(LOCALID_SECOND_SOLDIER,
-                                        ANIMATION_SHAKE_HEAD);
+                                        ANIM_SHAKE_HEAD);
   Engine_ScriptWait(30);
   Script_ShowMessage(LOCALID_SECOND_SOLDIER, 0);
   Engine_ScriptWait(20);
@@ -1520,22 +1520,22 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
                               60);
   ObjectEvent_FaceDirection(LOCALID_FIRST_SOLDIER, FACING_WEST, 0);
   Engine_ScriptWait(30);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_FIRST_SOLDIER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_FIRST_SOLDIER, ANIM_NOD);
   Engine_ScriptWait(40);
   ObjectEvent_FaceDirection(LOCALID_BABI, FACING_NORTH, 0);
   Engine_ScriptWait(30);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_BABI, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_BABI, ANIM_NOD);
   Engine_ScriptWait(30);
   Script_ShowMessage(LOCALID_BABI, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_BABI, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_BABI, ANIM_NOD);
   Engine_ScriptWait(30);
   ObjectEvent_FaceDirection(LOCALID_BABI, FACING_EAST, 0);
   Engine_ScriptWait(30);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_BABI, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_BABI, ANIM_NOD);
   Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimation(LOCALID_FIRST_SOLDIER, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_SECOND_SOLDIER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_FIRST_SOLDIER, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_SECOND_SOLDIER, ANIM_NOD);
   Engine_ScriptWait(40);
   ObjectEvent_FaceDirection(LOCALID_FIRST_SOLDIER, FACING_EAST, 0);
   Engine_ScriptWait(20);
@@ -1584,7 +1584,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Engine_ScriptWait(20);
   Script_ShowMessage(GARET, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_NOD);
   Engine_ScriptWait(30);
   Script_ShowMessage(IVAN, 0);
   Engine_ScriptWait(10);
@@ -1612,18 +1612,18 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   // Let Isaac answer the invitation and reunite the party.
   Engine_ScriptSetMessage(MsgAltmillerEitherWayWereStuckHere);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(30);
   Script_ShowMessage(IVAN, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIM_NOD);
   Engine_ScriptWait(30);
   Script_ShowMessage(MIA, 0);
   Engine_ScriptWait(10);
   ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Script_ShowMessage(GARET, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_NOD);
   Engine_ScriptWait(30);
   Script_ShowMessage(IVAN, 0);
   Engine_ScriptWait(10);
@@ -1636,7 +1636,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Script_OpenMessage(GARET, 0);
   if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
     Engine_ScriptWait(10);
-    Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_NOD);
     Engine_ScriptWait(30);
     Engine_ScriptSetMessage(MsgAltmillerGreatItsDecidedJustHave);
     Script_ShowMessage(GARET, 0);
@@ -1647,14 +1647,14 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
     Engine_ScriptWait(30);
     Script_ShowMessage(IVAN, 0);
     Engine_ScriptWait(20);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-    Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
-    Engine_ObjectEventSetAnimation(MIA, ANIMATION_NOD);
-    Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+    Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
+    Engine_ObjectEventSetAnimation(MIA, ANIM_NOD);
+    Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_NOD);
     Engine_ScriptWait(30);
   } else {
     Engine_ScriptWait(10);
-    Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
+    Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
     Engine_ScriptWait(30);
     Engine_ScriptSetMessage(MsgAltmillerDontLetMeDownLike);
     Script_ShowMessage(GARET, 0);
@@ -1665,11 +1665,11 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
     Engine_ScriptWait(30);
     Script_ShowMessage(IVAN, 0);
     Engine_ScriptWait(10);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
     Engine_ScriptWait(20);
-    Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_NOD);
     Engine_ScriptWait(20);
-    Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimationAndWait(MIA, ANIM_NOD);
     Engine_ScriptWait(30);
     ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 70);
   }
@@ -1677,7 +1677,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   ObjectEvent_SetSpeed(GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   ObjectEvent_SetSpeed(IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
   ObjectEvent_SetSpeed(MIA, PIXELS(6) / 5, PIXELS(3) / 5);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_WALK);
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
     ObjectEvent_SetDestination(GARET, leader->x.part.pixel,
@@ -1685,7 +1685,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   }
   Engine_ObjectEventWaitForMove(GARET);
   ObjectEvent_SetPosition(GARET, 0, 0);
-  Engine_ObjectEventSetAnimation(IVAN, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(IVAN, ANIM_WALK);
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
     ObjectEvent_SetDestination(IVAN, leader->x.part.pixel,
@@ -1693,7 +1693,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   }
   Engine_ObjectEventWaitForMove(IVAN);
   ObjectEvent_SetPosition(IVAN, 0, 0);
-  Engine_ObjectEventSetAnimation(MIA, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(MIA, ANIM_WALK);
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
     ObjectEvent_SetDestination(MIA, leader->x.part.pixel, leader->z.part.pixel);
@@ -1764,7 +1764,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Engine_ScriptShowMessage(LOCALID_INVISIBLE_BABI, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(20);
   Engine_ScriptShowMessage(MIA, 0);
   Engine_ScriptWait(10);
@@ -1784,7 +1784,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Script_ShowMessage(LOCALID_INVISIBLE_BABI, 0);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_INVISIBLE_BABI, 2);
   Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(20);
   Engine_ScriptShowMessage(MIA, 0);
   Engine_ScriptWait(30);
@@ -1835,7 +1835,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
     ObjectEvent_WalkByAndWait(GARET, 0, -16);
     Engine_ScriptWait(10);
     Engine_ObjectEventFaceEachOther(GARET, LOCALID_PARTY_LEADER, 30);
-    Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_NOD);
     Engine_ScriptWait(20);
     Engine_ScriptShowMessage(GARET, 0);
   }
@@ -1849,9 +1849,9 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Engine_ScriptWait(10);
   Engine_ObjectEventFaceEachOther(IVAN, LOCALID_PARTY_LEADER, 30);
   Script_ShowMessage(IVAN, 0);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIM_NOD);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIM_NOD);
   Engine_ScriptWait(20);
   ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, MIA, 0);
   ObjectEvent_FaceObjectEvent(GARET, MIA, 0);
@@ -1862,15 +1862,15 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   ObjectEvent_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
   Engine_ObjectEventWalkByAndWait(GARET, 0, 16);
   Engine_ScriptWait(30);
-  Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(30);
   Engine_ObjectEventFaceObjectEvent(GARET, LOCALID_PARTY_LEADER, 0);
   Engine_ScriptWait(20);
   Engine_ScriptShowMessage(GARET, 0);
   Engine_ScriptWait(30);
   Engine_ObjectEventFaceEachOther(MIA, IVAN, 30);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIM_NOD);
   Engine_ScriptWait(30);
   ObjectEvent_SetSpeed(IVAN, PIXELS(1), PIXELS(1) / 2);
   Engine_ObjectEventWalkByAndWait(IVAN, 0, 16);
@@ -1887,7 +1887,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Engine_ScriptShowMessage(LOCALID_INVISIBLE_BABI, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_NOD);
   Engine_ScriptWait(30);
   Engine_ScriptShowMessage(IVAN, 0);
   Engine_ScriptWait(10);
@@ -1895,11 +1895,11 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
                         40);
   Engine_ScriptShowMessage(LOCALID_INVISIBLE_BABI, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_NOD);
   Engine_ScriptWait(30);
   Engine_ScriptShowMessage(LOCALID_INVISIBLE_BABI, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIM_NOD);
   Engine_ScriptWait(30);
   Engine_ScriptShowMessage(LOCALID_INVISIBLE_BABI, 0);
   Engine_ScriptWait(10);
@@ -1949,24 +1949,24 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Engine_ObjectEventRunRepeatedMotion(LOCALID_INVISIBLE_BABI, 2);
   Engine_ScriptWait(20);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(20);
   Engine_ScriptShowMessage(MIA, 0);
   Engine_ScriptWait(10);
   ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, MIA, 40);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   Engine_ScriptWait(30);
   ObjectEvent_FaceObjectEvent(GARET, MIA, 0);
   Engine_ObjectEventFaceObjectEvent(IVAN, MIA, 0);
   Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_NOD);
   Engine_ScriptWait(30);
   Engine_AudioPlayCue(SONG_FADE_OUT_BGM);
   ObjectEvent_SetSpeed(GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   ObjectEvent_SetSpeed(IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
   ObjectEvent_SetSpeed(MIA, PIXELS(6) / 5, PIXELS(3) / 5);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0) {
     Engine_ObjectEventSetDestination(GARET, leader->x.part.pixel,
@@ -1974,7 +1974,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   }
   Engine_ObjectEventWaitForMove(GARET);
   ObjectEvent_SetPosition(GARET, 0, 0);
-  Engine_ObjectEventSetAnimation(IVAN, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(IVAN, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0) {
     Engine_ObjectEventSetDestination(IVAN, leader->x.part.pixel,
@@ -1982,7 +1982,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   }
   Engine_ObjectEventWaitForMove(IVAN);
   ObjectEvent_SetPosition(IVAN, 0, 0);
-  Engine_ObjectEventSetAnimation(MIA, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(MIA, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0) {
     Engine_ObjectEventSetDestination(MIA, leader->x.part.pixel,
@@ -2036,7 +2036,7 @@ static void AltmillerCave_BabiCallsPartyBack(void) {
                                     LOCALID_INVISIBLE_BABI, 0);
   Engine_ScriptWait(30);
   Engine_ScriptShowMessage(LOCALID_INVISIBLE_BABI, 0);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   Engine_ScriptWait(20);
   Engine_ScriptEnd();
 }
@@ -2530,32 +2530,32 @@ u32 gAltmillerCave_PulseScales[] = {
 
 /// The two men from Tolbi walk in to Babi.
 s32 gAltmillerCave_GuardsArrivePath[] = {
-    SC_ANIMATION(ANIMATION_WALK),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE_BY(0, 0, -PIXELS(32)),
     SC_SYNC,
     SC_MOVE_BY(-PIXELS(64), 0, 0),
     SC_SYNC,
     SC_MOVE_BY(0, 0, -PIXELS(64)),
     SC_SYNC,
-    SC_ANIMATION(ANIMATION_STAND),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
 /// Babi and the two men walk out of the room, each by his own path.
 s32 gAltmillerCave_SecondGuardLeavePath[] = {
-    SC_ANIMATION(ANIMATION_WALK),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE_BY(PIXELS(16), 0, 0),
     SC_SYNC,
     SC_MOVE_BY(0, 0, PIXELS(32)),
     SC_SYNC,
     SC_MOVE_BY(PIXELS(48), 0, 0),
     SC_SYNC,
-    SC_ANIMATION(ANIMATION_STAND),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
 s32 gAltmillerCave_FirstGuardLeavePath[] = {
-    SC_ANIMATION(ANIMATION_WALK),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE_BY(0, 0, PIXELS(16)),
     SC_SYNC,
     SC_MOVE_BY(PIXELS(16), 0, 0),
@@ -2564,12 +2564,12 @@ s32 gAltmillerCave_FirstGuardLeavePath[] = {
     SC_SYNC,
     SC_MOVE_BY(PIXELS(32), 0, 0),
     SC_SYNC,
-    SC_ANIMATION(ANIMATION_STAND),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
 s32 gAltmillerCave_BabiLeavePath[] = {
-    SC_ANIMATION(ANIMATION_WALK),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE_BY(0, 0, PIXELS(32)),
     SC_SYNC,
     SC_MOVE_BY(PIXELS(16), 0, 0),
@@ -2578,7 +2578,7 @@ s32 gAltmillerCave_BabiLeavePath[] = {
     SC_SYNC,
     SC_MOVE_BY(PIXELS(16), 0, 0),
     SC_SYNC,
-    SC_ANIMATION(ANIMATION_STAND),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 

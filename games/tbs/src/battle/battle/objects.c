@@ -29,7 +29,7 @@ void BattleObject_UpdateSpritePriorities(void) {
   struct Sprite **records;
 
   // Every unit's status icon.
-  BattleUnits_ListIds(BATTLE_SIDES_BOTH, unitIds);
+  BattleUnit_ListIds(BATTLE_SIDES_BOTH, unitIds);
   unitIndex = 0;
   if (unitIds[unitIndex] != BATTLE_UNIT_LIST_END) {
     for (;;) {
@@ -75,7 +75,7 @@ void BattleObject_UpdateSpritePriorities(void) {
 
   // The party.
   {
-    count = BattleUnits_ListIds(BATTLE_SIDES_PARTY, unitIds);
+    count = BattleUnit_ListIds(BATTLE_SIDES_PARTY, unitIds);
     for (unitIndex = 0; unitIndex < count; unitIndex++) {
       struct BattleObject *slot = BattleObject_Get(unitIds[unitIndex]);
 
@@ -105,7 +105,7 @@ void BattleObject_UpdateSpritePriorities(void) {
 
   // The enemies.
   {
-    count = BattleUnits_ListIds(BATTLE_SIDES_ENEMIES, unitIds);
+    count = BattleUnit_ListIds(BATTLE_SIDES_ENEMIES, unitIds);
     for (unitIndex = 0; unitIndex < count; unitIndex++) {
       struct BattleObject *slot = BattleObject_Get(unitIds[unitIndex]);
 
@@ -357,7 +357,7 @@ void ReleaseBattleObjectRecords(s32 unitId) {
 /// icon and effect; or the two parts of a two-part enemy) unless it has
 /// them, building its status icons and setting its pose. With refreshPoses,
 /// sets every listed unit's pose again afterwards. Called by BattleObject_Put
-/// (refreshing) and BattleUnits_ListAllAndSubmit, by the staging and
+/// (refreshing) and BattleUnit_ListAllAndSubmit, by the staging and
 /// entry transition code, and through its far stub by
 /// BattleAnim_SelectLivingTargets. Writes the objects' sprites, their storage
 /// kind and height, and the battle objects' icon and effect entries.

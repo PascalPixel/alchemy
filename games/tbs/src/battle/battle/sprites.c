@@ -13,17 +13,17 @@
 void BattleObject_Put(void) {
   s16 unitIds[14];
 
-  BattleUnits_ListIds(BATTLE_SIDES_BOTH, unitIds);
+  BattleUnit_ListIds(BATTLE_SIDES_BOTH, unitIds);
   BattleObject_SpawnObjectsForList(unitIds, 1);
 }
 
 /// Readies the sprite of every unit in the battle (releasing those of units
 /// that left), keeping their modes and motions. Called by
 /// BattleStaging_RunAttack.
-void BattleUnits_ListAllAndSubmit(void) {
+void BattleUnit_ListAllAndSubmit(void) {
   s16 unitIds[14];
 
-  BattleUnits_ListIds(BATTLE_SIDES_BOTH, unitIds);
+  BattleUnit_ListIds(BATTLE_SIDES_BOTH, unitIds);
   BattleObject_SpawnObjectsForList(unitIds, 0);
 }
 

@@ -34,7 +34,7 @@ enum BeamKind {
 void BattleAnim_RunBeamSequence(struct BattleAnimArgs *effect) {
   struct ScreenPoint screenPosition;
   struct ScreenPoint anchor;
-  struct ScreenPoint point;
+  struct ScreenPoint screen;
   void **heapCache;
   void **cursor;
   struct BattleAnimWork *work;
@@ -242,11 +242,11 @@ void BattleAnim_RunBeamSequence(struct BattleAnimArgs *effect) {
         s32 size = spark->variant;
 
         if (size > 0) {
-          Transform_ProjectPoint(&spark->x, ScreenPoint_Coordinates(&point));
-          point.x += scrollX;
+          Transform_ProjectPoint(&spark->x, ScreenPoint_Coordinates(&screen));
+          screen.x += scrollX;
           size >>= 3;
           size += 2;
-          ANIM_DRAW_FLARE(draw[pair & 1], canvas, sheet, point.x, point.y,
+          ANIM_DRAW_FLARE(draw[pair & 1], canvas, sheet, screen.x, screen.y,
                           size);
           Particle_AdvanceWithGravity3D(spark, 60, -0x400);
           spark->variant--;
@@ -281,7 +281,7 @@ void BattleAnim_RunBeamSequence(struct BattleAnimArgs *effect) {
 void BattleAnim_RunRingAndSparkSequence(struct BattleAnimArgs *effect) {
   struct ScreenPoint screenPosition;
   struct ScreenPoint anchor;
-  struct ScreenPoint point;
+  struct ScreenPoint screen;
   struct ScreenPoint spot;
   void **heapCache;
   void **cursor;
@@ -409,14 +409,14 @@ void BattleAnim_RunRingAndSparkSequence(struct BattleAnimArgs *effect) {
           Transform_ApplyRoll(mote->velocityZ);
           Transform_ApplyPitch(mote->velocityX);
           Transform_ApplyYaw(mote->velocityY);
-          Projection_Point(&mote->x, &point);
-          point.x += 64;
-          point.y = point.y + screenPosition.y + 24;
+          Projection_Point(&mote->x, &screen);
+          screen.x += 64;
+          screen.y = screen.y + screenPosition.y + 24;
           // DEAD: the depth is clamped to -60..60 and moved to 0..120 but
           // never read; the ROM keeps the clamp.
-          CLAMP(point.depth, -60, 60);
-          point.depth += 60;
-          ANIM_DRAW_FLARE(draw[0], canvas, sheet, point.x, point.y, size);
+          CLAMP(screen.depth, -60, 60);
+          screen.depth += 60;
+          ANIM_DRAW_FLARE(draw[0], canvas, sheet, screen.x, screen.y, size);
           mote->x -= 4;
         }
       }

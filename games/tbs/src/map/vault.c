@@ -260,7 +260,7 @@ static void EventScript_IvanStaysBehind(void) {
   Engine_ScriptSetMessage(MsgVaultLeavingImStillWorriedAbout);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | IVAN,
                             0, 20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   // Return any Djinn before removing Ivan from the party.
   if (Vault_GetIvanVenusDjinnCount() != 0) {
     Engine_ScriptSetMessage(MsgVaultWaitDontWantTakeYour);
@@ -327,7 +327,7 @@ static void EventScript_AskAboutFleeingTravelers(void) {
   Engine_ScriptStart();
   Engine_ScriptSetMessage(MsgVaultThoseTravelersLeftInBig);
   Engine_ObjectEventSetAnimation(LOCALID_OLD_WOMAN_ON_THE_TRAVELERS,
-                                 ANIMATION_STAND);
+                                 ANIM_STAND);
   Vault_FaceObjectEventAndWait(LOCALID_OLD_WOMAN_ON_THE_TRAVELERS,
                                LOCALID_PARTY_LEADER, 2);
   Vault_AskYesNoAndShowReply(LOCALID_OLD_WOMAN_ON_THE_TRAVELERS);
@@ -447,7 +447,7 @@ static void EventScript_LookForRoofer(void) {
 /// Stops an object event, faces the leader and shows the current message.
 static void Vault_ShowStandingObjectEventMessage(s32 localId) {
   Engine_ScriptStart();
-  Engine_ObjectEventSetAnimation(localId, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(localId, ANIM_STAND);
   Vault_FaceObjectEventAndWait(localId, LOCALID_PARTY_LEADER, 2);
   Engine_ScriptShowMessage(localId, 0);
   Engine_ScriptEnd();
@@ -550,7 +550,7 @@ static void EventScript_ThankForCapturingThieves(void) {
 static void EventScript_AskAboutPrisoners(void) {
   Engine_ScriptStart();
   Engine_ScriptSetMessage(MsgVaultThoseMenCapturedTheyreIn);
-  Engine_ObjectEventSetAnimation(LOCALID_STRONGMAN_ON_WATCH, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_STRONGMAN_ON_WATCH, ANIM_STAND);
   Vault_FaceObjectEventAndWait(LOCALID_STRONGMAN_ON_WATCH, LOCALID_PARTY_LEADER,
                                2);
   Vault_AskYesNoAndShowReply(LOCALID_STRONGMAN_ON_WATCH);
@@ -577,7 +577,7 @@ static void EventScript_TalkToDogAfterCapture(void) {
   Engine_ObjectEventSetAnimation(LOCALID_VAULT_DOG, 0);
   Vault_FaceObjectEventAndWait(LOCALID_VAULT_DOG, LOCALID_PARTY_LEADER, 2);
   Engine_ScriptShowMessage(LOCALID_VAULT_DOG, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_VAULT_DOG, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_VAULT_DOG, ANIM_STAND);
   if (PartyInventory_FindMember(ITEM_BONE) != -1 &&
       Engine_GameFlagIsSet(FLAG_VAULT_DOG_SHOWN_PASSAGE) == 0) {
     u16 *menuRequest = &gFieldWork->menu;
@@ -598,7 +598,7 @@ static void EventScript_ThankBeforeDeparture(void) {
   Vault_FaceObjectEventAndWait(LOCALID_YOUNG_MAN_FIXING_THE_ROOF,
                                LOCALID_PARTY_LEADER, 2);
   Engine_ObjectEventSetAnimationAndWait(LOCALID_YOUNG_MAN_FIXING_THE_ROOF,
-                                        ANIMATION_NOD);
+                                        ANIM_NOD);
   Engine_ScriptWait(20);
   Engine_ScriptShowMessage(LOCALID_YOUNG_MAN_FIXING_THE_ROOF, 0);
   Engine_ScriptEnd();
@@ -953,10 +953,9 @@ s32 Map_Initialize(void) {
           Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
           Engine_ScriptSetMessage(MsgVaultWelcomeBackTwo);
           Engine_ScriptShowMessageAndWait(IVAN, 0, 20);
-          Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER,
-                                                ANIMATION_NOD);
+          Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
           ObjectEvent_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
-          Engine_ObjectEventSetAnimation(IVAN, ANIMATION_WALK);
+          Engine_ObjectEventSetAnimation(IVAN, ANIM_WALK);
           objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
           if (objectEvent != 0) {
             Engine_ObjectEventSetDestination(IVAN, objectEvent->x.part.pixel,
@@ -987,10 +986,9 @@ s32 Map_Initialize(void) {
           Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
           Engine_ScriptSetMessage(MsgVaultWelcomeBackTwo);
           Engine_ScriptShowMessageAndWait(IVAN, 0, 20);
-          Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER,
-                                                ANIMATION_NOD);
+          Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
           ObjectEvent_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
-          Engine_ObjectEventSetAnimation(IVAN, ANIMATION_WALK);
+          Engine_ObjectEventSetAnimation(IVAN, ANIM_WALK);
           objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
           if (objectEvent != 0) {
             Engine_ObjectEventSetDestination(IVAN, objectEvent->x.part.pixel,

@@ -5,11 +5,11 @@
 #include "../battle_internal.h"
 
 /// Returns 1 when the unit is in its side's list of units in the battle
-/// (BattleUnits_ListIds), 0 otherwise.
+/// (BattleUnit_ListIds), 0 otherwise.
 /// Called by BattleTurn_Build, for the units holding the standby Djinn a
 /// summon uses.
 /// @param unitId a party member's, up to ALLY_MAX, or an enemy's
-u32 BattleUnits_IsListed(u32 unitId) {
+u32 BattleUnit_IsListed(u32 unitId) {
   u16 list[8];
   s32 side;
   s32 unitCount;
@@ -18,7 +18,7 @@ u32 BattleUnits_IsListed(u32 unitId) {
   side = BATTLE_SIDES_PARTY;
   if (unitId > ALLY_MAX)
     side = BATTLE_SIDES_ENEMIES;
-  unitCount = BattleUnits_ListIds(side, list);
+  unitCount = BattleUnit_ListIds(side, list);
 
   for (unitIndex = 0; unitIndex < unitCount; unitIndex++) {
     if (list[unitIndex] == unitId)
@@ -51,7 +51,7 @@ s32 BattleDjinn_CountStandby(u32 unitId, u8 *counts) {
   sideMask = BATTLE_SIDES_PARTY;
   if (unitId > ALLY_MAX)
     sideMask = BATTLE_SIDES_ENEMIES;
-  unitCount = BattleUnits_ListIds(sideMask, unitIds);
+  unitCount = BattleUnit_ListIds(sideMask, unitIds);
   enemySide = DJINN_RECOVERY_PARTY;
   if (unitId > ALLY_MAX)
     enemySide = DJINN_RECOVERY_OPPONENT;
@@ -593,7 +593,7 @@ s32 BattleTurn_Build(struct BattleAction *request, struct BattleTurn *plan) {
       struct DjinnRecoveryEntry *entry = &list->entries[index];
 
       if (entry->turns == DJINN_RECOVERY_AFTER_BATTLE &&
-          BattleUnits_IsListed(entry->unitId) && counts[entry->element] != 0) {
+          BattleUnit_IsListed(entry->unitId) && counts[entry->element] != 0) {
         entry->turns = DJINN_RECOVERY_SUMMONED;
         counts[entry->element]--;
       }

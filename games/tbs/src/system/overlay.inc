@@ -127,8 +127,8 @@
 	import ObjectDispatch_RegisterChildMetadata, ObjectDispatch_RegisterChildMetadataFar
 	import WorldMap_StartStillView, WorldMap_StartStillViewFar
 	import WorldMap_LoadAreaGraphics, WorldMap_LoadAreaGraphicsFar
-	import Animation_ApplyChildValues, Animation_ApplyChildValuesFar
-	import Engine_ObjectSetPartPalettes, Animation_ApplyChildValuesFar
+	import Anim_ApplyChildValues, Anim_ApplyChildValuesFar
+	import Engine_ObjectSetPartPalettes, Anim_ApplyChildValuesFar
 	import Sprite_SetAnimColorModes, Sprite_SetAnimColorModesFar
 	import Engine_MapGridSetShownLayers, MapGrid_SetShownLayersFar
 	import MapGrid_SetMetatileBehaviorAt, MapGrid_SetMetatileBehaviorAtFar

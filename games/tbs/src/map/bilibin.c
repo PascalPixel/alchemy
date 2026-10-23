@@ -472,7 +472,7 @@ static void EventScript_OpenDoorAndLeave(void) {
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (warpIndex == BILIBIN_TO_SANCTUM - BILIBIN_TO_INN) {
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
+    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
     ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0, -4);
   } else {
     ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 3, -16);
@@ -512,8 +512,7 @@ static void EventScript_PullJillFromRiver(void) {
     leader->scaleX = -Q16_ONE;
     ObjectEvent_SetAttachedEffect(
         LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER,
-                                   ANIMATION_LEADER_STRIDE);
+    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_STRIDE);
     ObjectEvent_MoveToAndWait(LOCALID_JILL_TREE, 111, 196);
     leader->scaleX = Q16_ONE;
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 128, 185);
@@ -521,8 +520,7 @@ static void EventScript_PullJillFromRiver(void) {
     leader->scaleX = -Q16_ONE;
     ObjectEvent_SetAttachedEffect(
         LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER,
-                                   ANIMATION_LEADER_STRIDE);
+    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_STRIDE);
     ObjectEvent_MoveToAndWait(LOCALID_JILL_TREE, 121, 190);
     leader->scaleX = Q16_ONE;
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 141, 189);
@@ -530,8 +528,7 @@ static void EventScript_PullJillFromRiver(void) {
     leader->scaleX = -Q16_ONE;
     ObjectEvent_SetAttachedEffect(
         LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER,
-                                   ANIMATION_LEADER_STRIDE);
+    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_STRIDE);
     ObjectEvent_MoveToAndWait(LOCALID_JILL_TREE, 132, 186);
     leader->scaleX = Q16_ONE;
     ObjectEvent_Get(LOCALID_PARTY_LEADER)->steeringFlags |=
@@ -610,8 +607,7 @@ static void EventScript_JillGivesHardNut(void) {
   ObjectEvent_FaceDirection(LOCALID_GANG_MEMBER_WEST, FACING_EAST, 0);
   ObjectEvent_FaceDirection(LOCALID_JILL, FACING_SOUTHEAST + FACING_STEP, 20);
   ObjectEvent_FaceDirection(LOCALID_GANG_MEMBER_EAST, FACING_WEST, 20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_GANG_MEMBER_EAST,
-                                        ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_GANG_MEMBER_EAST, ANIM_NOD);
   ObjectEvent_SetAttachedEffect(LOCALID_JILL, ATTACHED_EFFECT_IN_FRONT |
                                                   ATTACHED_EFFECT_ONCE);
   Engine_ScriptWait(40);
@@ -622,9 +618,8 @@ static void EventScript_JillGivesHardNut(void) {
                             FACING_SOUTHEAST + FACING_STEP, 10);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_JILL, 1);
   Script_ShowMessageAndWait(LOCALID_JILL, 0, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_GANG_MEMBER_EAST, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_GANG_MEMBER_WEST,
-                                        ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_GANG_MEMBER_EAST, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_GANG_MEMBER_WEST, ANIM_NOD);
   Engine_ScriptWait(20);
   Script_ShowMessage(LOCALID_JILL, 0);
   ObjectEvent_SetSpeed(LOCALID_JILL, PIXELS(3) / 5, PIXELS(3) / 10);
@@ -633,15 +628,15 @@ static void EventScript_JillGivesHardNut(void) {
   Engine_ScriptWait(1);
   ObjectEvent_GetById(LOCALID_JILL)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_JILL, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_JILL, ANIM_NOD);
   Script_ShowMessageAndWait(LOCALID_JILL, 0, 10);
   // Show the named gift before adding it to the party's inventory.
   Engine_MessageShowCentered(MsgBilibinJillGaveIsaacSpecialGift, 1);
   gFieldWork->message++;
   Engine_ItemShowFound(ITEM_HARD_NUT, 3);
   Engine_PartyGiveItem(ITEM_HARD_NUT, 0);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_JILL, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_JILL, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   ObjectEvent_SetSpeed(LOCALID_JILL, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_GetById(LOCALID_JILL)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
@@ -656,9 +651,9 @@ static void EventScript_JillGivesHardNut(void) {
   Engine_ScriptWait(20);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_GANG_MEMBER_EAST, 2);
   Script_ShowMessageAndWait(LOCALID_GANG_MEMBER_EAST, 0, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_GANG_MEMBER_EAST, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GANG_MEMBER_WEST, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_JILL, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_GANG_MEMBER_EAST, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_GANG_MEMBER_WEST, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_JILL, ANIM_NOD);
   // From now on the three turn to face the leader wherever he goes.
   Object_SetTargetAndCallback(LOCALID_GANG_MEMBER_EAST,
                               OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_PARTY_LEADER,
@@ -927,7 +922,7 @@ static void EventScript_PushStatueOrCrates(void) {
         pushed->z.fixed + (gBilibin_FacingCellSteps[direction] << 16);
     if (FieldObject_CheckMovementCollision(pushed, &destination) <= 0) {
       // The leader leans on it, then both move together.
-      ObjectEvent_SetMode(leader, ANIMATION_PUSH);
+      ObjectEvent_SetMode(leader, ANIM_PUSH);
       Engine_TaskWait(15);
       Engine_AudioPlayCue(SE_PUSH);
       pushed->speed = PIXELS(1) / 5;
@@ -943,7 +938,7 @@ static void EventScript_PushStatueOrCrates(void) {
       pushed->z.fixed = destination.z;
       pushed->velocityX = 0;
       pushed->velocityZ = 0;
-      ObjectEvent_SetMode(leader, ANIMATION_STAND);
+      ObjectEvent_SetMode(leader, ANIM_STAND);
       // Each map derives its metatile behaviors from this same moved object
       // event.
       if (gGameState.mapId == (s32)&MapId_BilibinBarricade)

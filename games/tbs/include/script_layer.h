@@ -50,59 +50,59 @@ enum { TASK_PRIORITY_MAP = 3200 };
 /// Engine_ObjectEventSetAnimation.
 enum ObjectEventAnimation {
   /// Standing still: nearly every sprite's first frame held, without the
-  /// blinks and small gestures of ANIMATION_STAND.
-  ANIMATION_STILL = 0,
-  ANIMATION_STAND = 1,
-  ANIMATION_WALK = 2,
-  ANIMATION_NOD = 3,
-  ANIMATION_SHAKE_HEAD = 4,
+  /// blinks and small gestures of ANIM_STAND.
+  ANIM_STILL = 0,
+  ANIM_STAND = 1,
+  ANIM_WALK = 2,
+  ANIM_NOD = 3,
+  ANIM_SHAKE_HEAD = 4,
   /// Running, leaning forward, four frames a step to the walk's six. This and
   /// the leader's other poses below are as Isaac's sprite (spr_000.png) draws
   /// them.
-  ANIMATION_LEADER_RUN = 5,
-  ANIMATION_LEADER_SPRING = 6, ///< leaning back for a moment before a jump
-  ANIMATION_LEADER_LEAP = 7,   ///< in mid-stride, leaning forward
+  ANIM_LEADER_RUN = 5,
+  ANIM_LEADER_SPRING = 6, ///< leaning back for a moment before a jump
+  ANIM_LEADER_LEAP = 7,   ///< in mid-stride, leaning forward
   /// The leader leaning into what it pushes, as maps play it while a statue
   /// or stone pillar slides ahead of it.
-  ANIMATION_PUSH = 8,
-  /// ANIMATION_STAND's idle with more glances to each side, as when a whirlwind
+  ANIM_PUSH = 8,
+  /// ANIM_STAND's idle with more glances to each side, as when a whirlwind
   /// catches the leader.
-  ANIMATION_LEADER_LOOK_AROUND = 9,
-  ANIMATION_LEADER_CLIMB = 10,      ///< climbing a wall, seen from behind
-  ANIMATION_LEADER_CLING = 12,      ///< still on a wall, seen from behind
-  ANIMATION_LEADER_CLIMB_EAST = 14, ///< reaching along a wall as he climbs east
-  ANIMATION_LEADER_CLIMB_WEST = 15, ///< reaching along a wall as he climbs west
-  /// One leg forward, braced, held briefly: the frame ANIMATION_LEADER_LEAP
+  ANIM_LEADER_LOOK_AROUND = 9,
+  ANIM_LEADER_CLIMB = 10,      ///< climbing a wall, seen from behind
+  ANIM_LEADER_CLING = 12,      ///< still on a wall, seen from behind
+  ANIM_LEADER_CLIMB_EAST = 14, ///< reaching along a wall as he climbs east
+  ANIM_LEADER_CLIMB_WEST = 15, ///< reaching along a wall as he climbs west
+  /// One leg forward, braced, held briefly: the frame ANIM_LEADER_LEAP
   /// holds
   /// and the run starts on, as when he lunges into a fight or pulls someone
   /// from a river.
-  ANIMATION_LEADER_STRIDE = 16,
+  ANIM_LEADER_STRIDE = 16,
   /// Holding out a glowing hand, as the party's sprites cast Psynergy
   /// (spr_000.png, spr_001.png).
-  ANIMATION_CAST_PSYNERGY = 17,
+  ANIM_CAST_PSYNERGY = 17,
   /// Sitting waist-deep in water and splashing, as in a Lamakan Desert oasis.
-  ANIMATION_LEADER_BATHE = 18,
+  ANIM_LEADER_BATHE = 18,
   /// Lying collapsed on the ground; every party member's sheet maps this
   /// number to such a pose (spr_000.png to spr_003.png).
-  ANIMATION_COLLAPSE = 19,
-  ANIMATION_LEADER_LEAN_BACK = 22, ///< leaning back, his head thrown back
+  ANIM_COLLAPSE = 19,
+  ANIM_LEADER_LEAN_BACK = 22, ///< leaning back, his head thrown back
   /// The arrivals and leavings of the animated warps (enum WarpStyle), each
   /// four frames of the leader turning: an arrival grows from a small figure
   /// seen side-on to full size facing the player, a leaving turns from his
   /// back to side-on as he shrinks and is then hidden. The alternate pair has
   /// its own drawings of the same turns.
   ///@{
-  ANIMATION_LEADER_ARRIVE_ALTERNATE = 23,
-  ANIMATION_LEADER_ARRIVE = 24,
-  ANIMATION_LEADER_LEAVE_ALTERNATE = 25,
-  ANIMATION_LEADER_LEAVE = 26,
+  ANIM_LEADER_ARRIVE_ALTERNATE = 23,
+  ANIM_LEADER_ARRIVE = 24,
+  ANIM_LEADER_LEAVE_ALTERNATE = 25,
+  ANIM_LEADER_LEAVE = 26,
   ///@}
   /// Spinning round once, then drawn blank (ANIMCMD_BLANK).
-  ANIMATION_LEADER_SPIN_AWAY = 27,
-  ANIMATION_LEADER_ARMS_RAISED = 28, ///< both arms raised over his head
-  /// Held in ANIMATION_LEADER_SPRING's crouch, knees bent, as after a lost
+  ANIM_LEADER_SPIN_AWAY = 27,
+  ANIM_LEADER_ARMS_RAISED = 28, ///< both arms raised over his head
+  /// Held in ANIM_LEADER_SPRING's crouch, knees bent, as after a lost
   /// match.
-  ANIMATION_LEADER_CROUCH = 35
+  ANIM_LEADER_CROUCH = 35
 };
 
 // Speaker bits, above the local id in the low 12 bits of a message command's
@@ -199,11 +199,11 @@ void Engine_ObjectEventSetDestination(s32 localId, s32 x, s32 z);
 /// Sends an object event (dx, dz) pixels from where it stands
 /// (ObjectMotion_OffsetPositionAndResetMotion).
 void Engine_ObjectEventSetDestinationOffset(s32 localId, s32 dx, s32 dz);
-/// Walks an object event toward (x, z), in pixels, in ANIMATION_WALK
+/// Walks an object event toward (x, z), in pixels, in ANIM_WALK
 /// (ObjectMotion_ResetAndSetPositionInMode2).
 void Engine_ObjectEventWalkTo(s32 localId, s32 x, s32 z);
 /// Walks an object event (dx, dz) pixels from where it stands, in
-/// ANIMATION_WALK (ObjectMotion_OffsetPositionAndReset).
+/// ANIM_WALK (ObjectMotion_OffsetPositionAndReset).
 void Engine_ObjectEventWalkBy(s32 localId, s32 dx, s32 dz);
 /// Waits for an object event to arrive, 600 frames at most, and stands it still
 /// (ObjectMotion_CommitCurrentPositionAndActivate).
@@ -337,7 +337,7 @@ void Engine_ObjectSetScript(struct ObjectEvent *objectEvent, const s32 *script);
 /// (ObjectDispatch_SetChildBlendMode).
 void Engine_ObjectSetBlendMode(struct ObjectEvent *objectEvent, s32 mode);
 /// Sets the colour mode (SpriteColorMode) of a one-sprite object's layers,
-/// except those drawn hidden (Animation_ApplyChildValues).
+/// except those drawn hidden (Anim_ApplyChildValues).
 void Engine_ObjectSetPartPalettes(struct ObjectEvent *objectEvent, s32 palette);
 /// Sends an object toward a point in 16.16 pixels, coasting to a stop there
 /// (Object_SetMoveTarget).
@@ -459,7 +459,7 @@ void Engine_ColorBufferInterpolate(s32 frames);
 /// (ObjectMotion_SetPositionAndCommit).
 void Engine_ObjectEventMoveToAndWait(s32 localId, s32 x, s32 z);
 /// Walks an object event to (x, z), in pixels, waits for it to arrive and
-/// stands it in ANIMATION_STAND (ObjectMotion_SetPositionAndReset).
+/// stands it in ANIM_STAND (ObjectMotion_SetPositionAndReset).
 void Engine_ObjectEventWalkToAndWait(s32 localId, s32 x, s32 z);
 /// Throws an object event upward at height pixels per frame with a jump sound,
 /// then waits frames while gravity brings it down (ObjectMotion_Launch).

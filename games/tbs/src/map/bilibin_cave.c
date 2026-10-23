@@ -635,7 +635,7 @@ static void EventScript_PushObjectEventAhead(void) {
 
   // Resume the leader and refresh the mechanism affected by the moved object
   // event.
-  ObjectEvent_SetMode(leader, ANIMATION_STAND);
+  ObjectEvent_SetMode(leader, ANIM_STAND);
   BilibinCave_UpdateThirdPuddleFromTorches();
 }
 

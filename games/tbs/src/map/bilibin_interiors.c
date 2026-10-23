@@ -61,13 +61,15 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 
-/// Bilibin's shops and inn, as Engine_ShopOpen and Engine_InnOpen number them.
+/// Bilibin's shops, as Engine_ShopOpen numbers the shops.
 enum {
-  LOCALID_BILIBIN_WEAPON_SHOP = 7,
-  LOCALID_BILIBIN_ARMOR_SHOP = 8,
-  LOCALID_BILIBIN_ITEM_SHOP = 9,
-  LOCALID_BILIBIN_INN = 2
+  SHOP_BILIBIN_WEAPONS = 7,
+  SHOP_BILIBIN_ARMOR = 8,
+  SHOP_BILIBIN_ITEMS = 9
 };
+
+/// Bilibin's inn, as Engine_InnOpen numbers the inns.
+enum { BILIBIN_INN = 2 };
 
 /// The placed object events, numbered in the order of
 /// gBilibinInteriorsObjectEventTemplates from LOCALID_FIRST_PLACED. Each room's
@@ -191,8 +193,7 @@ static void EventScript_TalkToWeaponMerchant(void) {
   Engine_ScriptStart();
 
   if (FACING_IS_NORTH(leaderFacing)) {
-    Engine_ShopOpen(LOCALID_BILIBIN_WEAPON_SHOP,
-                    LOCALID_BILIBIN_WEAPON_MERCHANT);
+    Engine_ShopOpen(SHOP_BILIBIN_WEAPONS, LOCALID_BILIBIN_WEAPON_MERCHANT);
   } else {
     if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
       Engine_ScriptSetMessage(MsgBilibinThereWasAbleHealerIn);
@@ -215,7 +216,7 @@ static void EventScript_TalkToItemMerchant(void) {
   Engine_ScriptStart();
 
   if (FACING_IS_NORTH(leaderFacing)) {
-    Engine_ShopOpen(LOCALID_BILIBIN_ITEM_SHOP, LOCALID_BILIBIN_ITEM_MERCHANT);
+    Engine_ShopOpen(SHOP_BILIBIN_ITEMS, LOCALID_BILIBIN_ITEM_MERCHANT);
   } else {
     if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
       Engine_ScriptSetMessage(MsgBilibinMustUsedTypesDangerBeing);
@@ -243,7 +244,7 @@ static void EventScript_TalkToArmorMerchant(void) {
   leaderFacing = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing;
   Engine_ScriptStart();
   if (FACING_IS_NORTH(leaderFacing)) {
-    Engine_ShopOpen(LOCALID_BILIBIN_ARMOR_SHOP, LOCALID_BILIBIN_ARMOR_MERCHANT);
+    Engine_ShopOpen(SHOP_BILIBIN_ARMOR, LOCALID_BILIBIN_ARMOR_MERCHANT);
   } else {
     if (GameFlag_IsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
       Engine_ScriptSetMessage(MsgBilibinHaveEverHeardOcean);
@@ -336,7 +337,7 @@ static void EventScript_TalkToInnkeeper(void) {
   Engine_ScriptStart();
 
   if (FACING_IS_NORTH(leaderFacing)) {
-    Engine_InnOpen(LOCALID_BILIBIN_INN, LOCALID_BILIBIN_INNKEEPER);
+    Engine_InnOpen(BILIBIN_INN, LOCALID_BILIBIN_INNKEEPER);
   } else if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
     Engine_ScriptSetMessage(MsgBilibinWasntCurseInKolimaHorrifying);
     Engine_ScriptAskYesNo(LOCALID_BILIBIN_INNKEEPER, 0);

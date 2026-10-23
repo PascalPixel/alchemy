@@ -155,7 +155,7 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *effect, s32 mode) {
   s32 vector[3];
   struct ScreenPoint spot;
   struct ScreenPoint *screenPosition;
-  struct ScreenPoint point;
+  struct ScreenPoint screen;
   struct SpriteScale scale;
   s32 frame;
   s32 i;
@@ -446,11 +446,11 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *effect, s32 mode) {
       // because each result is read back as a 16.16 point and centred by hand;
       // Transform_ProjectPoint leaves the transformed point when it cannot
       // project.
-      point.x = 0;
-      point.y = 0;
-      point.depth = 0x2000000;
+      screen.x = 0;
+      screen.y = 0;
+      screen.depth = 0x2000000;
       Transform_Reset();
-      Transform_ApplyPosition(ScreenPoint_Coordinates(&point));
+      Transform_ApplyPosition(ScreenPoint_Coordinates(&screen));
       Transform_ApplyRoll(0x800);
       Transform_ApplyYaw(frame << 8);
       for (i = 0; i != 7; i++) {
@@ -588,23 +588,23 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *effect, s32 mode) {
       if (ember->y >= 0) {
         s32 size;
 
-        Projection_Point(&ember->x, &point);
-        point.x >>= 1;
-        if (point.depth <= 159)
-          point.depth = 160;
-        if (point.depth > 799)
-          point.depth = 799;
+        Projection_Point(&ember->x, &screen);
+        screen.x >>= 1;
+        if (screen.depth <= 159)
+          screen.depth = 160;
+        if (screen.depth > 799)
+          screen.depth = 799;
         // Mote size 9 at depth 160, one smaller every 64 units further.
         // UB: from depth 736 the size is 0, a picture 0 pixels wide, and its
         // cell is read from gBattleAnim_MoteCells[-1], the last halfword of
         // the blitter template, which ends at the table
         // (BattleAnim_BuildBlitter). No UBFIX form yet.
-        size = 9 - (point.depth - 160) / 64;
+        size = 9 - (screen.depth - 160) / 64;
         draw(canvas,
              work->sheet +
                  (gBattleAnim_MoteCells[size - 1] + (i & 1) * MOTE_SET_BYTES) +
                  PARTICLE_STREAMS_MOTE_CELLS,
-             point.x - size / 2, point.y - size, size, size * 2);
+             screen.x - size / 2, screen.y - size, size, size * 2);
         Particle_AdvanceWithGravity3D(ember, 64, -0x2000);
         if (ember->y <= 0x140000) {
           ember->x = 0;
@@ -640,14 +640,14 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *effect, s32 mode) {
       struct Particle *flash = &PARTICLES[i];
 
       if (i / 3 < elapsed && flash->y >= 0) {
-        Projection_Point(&flash->x, &point);
-        point.x >>= 1;
+        Projection_Point(&flash->x, &screen);
+        screen.x >>= 1;
         if ((u32)flash->variant <= 13) {
           s32 cell = flash->variant / 2;
 
           draw(canvas, work->sheet + gParticleStreams_FlashCells[cell],
-               point.x - gParticleStreams_FlashSizes[cell] / 2,
-               point.y - gParticleStreams_FlashSizes[cell] / 2,
+               screen.x - gParticleStreams_FlashSizes[cell] / 2,
+               screen.y - gParticleStreams_FlashSizes[cell] / 2,
                gParticleStreams_FlashSizes[cell],
                gParticleStreams_FlashSizes[cell]);
         }

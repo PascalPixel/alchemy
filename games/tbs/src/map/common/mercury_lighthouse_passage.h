@@ -19,7 +19,7 @@ static void MercuryLighthouse_LeaveThroughPassage(s32 warp) {
   v->update = (void (*)(union FieldObject *))MercuryLighthouse_TrailSparks;
 #endif
   v->speed = PIXELS(1) / 5;
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
   Engine_ObjectEventSetDestinationOffset(LOCALID_PARTY_LEADER, 0, -6);
   Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
   Engine_ObjectEventSetChildValue(LOCALID_PARTY_LEADER, 15);

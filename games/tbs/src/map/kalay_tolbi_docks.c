@@ -480,8 +480,7 @@ static void KalayTolbiDocks_TalkToTicketTaker(void) {
     if (GameFlag_IsSet(FLAG_KALAY_DOCKS_TICKET_BOUGHT) != 0) {
       ticketOwner = PartyInventory_FindMember(ITEM_BOAT_TICKET);
       ticketSlot = Inventory_Find(ticketOwner, ITEM_BOAT_TICKET);
-      Engine_ObjectEventSetAnimationAndWait(LOCALID_CHECKING_TICKETS,
-                                            ANIMATION_NOD);
+      Engine_ObjectEventSetAnimationAndWait(LOCALID_CHECKING_TICKETS, ANIM_NOD);
       ObjectEvent_WalkToAndWait(LOCALID_CHECKING_TICKETS, 88, 1288);
       ObjectEvent_FaceDirection(LOCALID_CHECKING_TICKETS, FACING_SOUTH, 0);
       gFieldWork->message++;
@@ -573,21 +572,19 @@ static void KalayTolbiDocks_TalkToTicketSeller(void) {
       if (Engine_ScriptChooseYesNo(-1, 0) == 1) {
         Window_Close(coinsWindow, 2);
         Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER,
-                                              ANIMATION_SHAKE_HEAD);
+                                              ANIM_SHAKE_HEAD);
         Engine_ScriptWait(10);
         Script_ShowMessage(LOCALID_SELLING_TICKETS, 0);
       } else if ((u32)ticketPrice > (u32)state->coins) {
         Window_Close(coinsWindow, 2);
-        Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER,
-                                              ANIMATION_NOD);
+        Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
         Engine_ScriptWait(10);
         gFieldWork->message++;
         Script_PlaySong(SE_MENU_CANCEL);
         Script_ShowMessage(LOCALID_SELLING_TICKETS, 0);
       } else {
         Window_Close(coinsWindow, 2);
-        Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER,
-                                              ANIMATION_NOD);
+        Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
         Engine_ScriptWait(10);
         gFieldWork->message += 3;
         Script_ShowMessage(LOCALID_SELLING_TICKETS, 0);
@@ -875,7 +872,7 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   Engine_ScriptWait(20);
   Engine_ScriptWait(10);
   Engine_ObjectEventSetAnimationAndWait(LOCALID_YOUNG_MAN_ASKING_ABOUT_TOLBI,
-                                        ANIMATION_SHAKE_HEAD);
+                                        ANIM_SHAKE_HEAD);
   Engine_ScriptWait(10);
   Script_ShowMessage(LOCALID_YOUNG_MAN_ASKING_ABOUT_TOLBI, 0);
   Engine_ScriptWait(20);
@@ -896,12 +893,12 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   Engine_ScriptWait(30);
   Script_ShowMessage(GARET, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   Engine_ScriptWait(30);
-  Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_NOD);
   Engine_ScriptWait(30);
   ObjectEvent_SetSpeed(GARET, 0x13333, 0x9999);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_WALK);
   // Garet rejoins the leader and the man wanders again from where he stands.
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (objectEvent != 0) {
@@ -964,8 +961,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Engine_ScriptWait(20);
   Script_ShowMessage(LOCALID_STRANDED_WOMAN, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_TOUR_GUIDE,
-                                        ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_TOUR_GUIDE, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(20);
   Engine_ScriptShowMessage(LOCALID_TOUR_GUIDE, 0);
   Engine_ScriptWait(10);
@@ -982,7 +978,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   ObjectEvent_SetSpeed(LOCALID_TOUR_GUIDE, 0x26666, 0x13333);
   ObjectEvent_WalkByAndWait(LOCALID_TOUR_GUIDE, 16, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimation(LOCALID_ANGRY_YOUNG_MAN, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_ANGRY_YOUNG_MAN, ANIM_STAND);
   ObjectEvent_GetById(LOCALID_ANGRY_YOUNG_MAN)->steeringFlags |=
       OBJ_EVENT_FACES_MOTION;
   ObjectEvent_SetAttachedEffect(LOCALID_TOUR_GUIDE, ATTACHED_EFFECT_IN_FRONT |
@@ -1007,8 +1003,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   ObjectEvent_WalkByAndWait(LOCALID_BODYGUARD, -8, 0);
   ObjectEvent_FaceDirection(LOCALID_BODYGUARD, FACING_SOUTH + FACING_STEP, 0);
   Engine_ScriptWait(30);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_BODYGUARD,
-                                        ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_BODYGUARD, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(20);
   Script_ShowMessage(LOCALID_BODYGUARD, 0);
   Engine_ScriptWait(10);
@@ -1066,8 +1061,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Engine_ScriptWait(20);
   Script_ShowMessage(LOCALID_ANGRY_YOUNG_MAN, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_BODYGUARD,
-                                        ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_BODYGUARD, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(20);
   Script_ShowMessage(LOCALID_BODYGUARD, 0);
   Engine_ScriptWait(10);
@@ -1080,7 +1074,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   ObjectEvent_FaceDirection(LOCALID_ANGRY_YOUNG_MAN, FACING_EAST, 0);
   Engine_ScriptWait(20);
   Engine_ObjectEventSetAnimationAndWait(LOCALID_ANGRY_YOUNG_MAN,
-                                        ANIMATION_SHAKE_HEAD);
+                                        ANIM_SHAKE_HEAD);
   Engine_ScriptWait(20);
   ObjectEvent_SetSpeed(LOCALID_ANGRY_YOUNG_MAN, 0x1cccc, 0xe666);
   ObjectEvent_WalkByAndWait(LOCALID_ANGRY_YOUNG_MAN, 8, 0);
@@ -1115,8 +1109,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Engine_ScriptWait(10);
   Script_ShowMessage(LOCALID_STRANDED_WOMAN, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_BODYGUARD,
-                                        ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_BODYGUARD, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(20);
   Script_ShowMessage(LOCALID_BODYGUARD, 0);
   Engine_ScriptWait(20);
@@ -1130,9 +1123,9 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Engine_ScriptWait(10);
   ObjectEvent_FaceDirection(LOCALID_BODYGUARD, FACING_EAST, 0);
   Engine_ScriptWait(40);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_TOUR_GUIDE, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_TOUR_GUIDE, ANIM_NOD);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_TOUR_GUIDE, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_TOUR_GUIDE, ANIM_NOD);
   Engine_ScriptWait(20);
   Engine_ScriptWait(10);
   ObjectEvent_SetSpeed(LOCALID_BODYGUARD, 0x10000, 0x8000);

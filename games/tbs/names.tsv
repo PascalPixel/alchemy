@@ -93,16 +93,19 @@ script (EventScript_, SCRIPT_START/END)	word	pret	pokeemerald event scripts
 FieldScript_ (script commands)	prefix	common	main-image routines map scripts call
 Unit	struct	common	include/battle/battle_unit.h:249 (the character and enemy record; pret splits Pokemon/BattlePokemon)
 unit id	word	common	Unit_Get takes ids 0-7 characters, 128-133 enemies (battle.h:167)
+CLASS_NONE	constant	common	mechanism: Unit.classId of an enemy, which has no class (battle_unit.h), not a class
 party member	word	game	en.po party; pret party (Party_AddMember)
-BattleUnits_	prefix	common	encounter.c:518 lists of the units in a battle
+BattleUnit_ (ListLiving, ListIds, Collect, IsListed)	prefix	common	one family for a unit and for the lists of a battle's units (encounter.c), not BattleUnits_
 BattleSide	enum	pret	pret B_SIDE_PLAYER/B_SIDE_OPPONENT (include/constants/battle.h)
 AbilityDefinition	struct	common	abilities.tsv rows; *Definition form as ItemDefinition
 ability	word	game	the game's Psynergy, Djinn, summons and items all act as abilities; pret's move is the Psynergy Move
 PsynergyEntry	struct	game	game/game/levels.c:51 a learned Psynergy with its class/item origin bits
+PSYNERGY_FROM_CLASS, PSYNERGY_FROM_ITEM	constant	common	mechanism: the marks on a PsynergyEntry saying where it came from (game/game/levels.c), not Psynergy
 AbilityFormula	enum	common	battle_unit.h:59 the formula a power goes through
 ABILITY_EFFECT_	constant	common	keep: an ability's added effect
 AbilityTarget	enum	common	battle_unit.h TargetMode: whom an ability may target
-AbilityUse	enum	common	ability flags bits 6 and 7
+AbilityUse, ABILITY_USABLE_IN_FIELD, ABILITY_USABLE_IN_BATTLE	enum	common	mechanism: ability flags bits 6 and 7, where an ability can be used (battle_unit.h; menu_internal.h repeats them as macros), not abilities
+ABILITY_DJINNI_FIRST	constant	common	mechanism: the first Djinni ability id, a bound in enum AbilityId (ability_ids.h), not the ability Flint
 COMMAND_	constant	game	the battle menu's commands (Attack, Psynergy, Djinn, Summon, Item, Defend, Flee)
 BattleAction	struct	pret	pret struct BattleAction-like chosen action (gChosenActionByBattler)
 BattleTurn	struct	game	a turn is one unit's action within a round (battle.md)
@@ -111,6 +114,7 @@ BattleStaging	enum	common	how an action is shown around its animation (staging.c
 BattleAnim_	prefix	pret	pret battle_anim.c, gBattleAnimArgs
 BattleAnimArgs	struct	pret	pret gBattleAnimArgs
 BattleAnimId	enum	pret	pret battle animation id (gBattleAnims_Moves)
+SummonAnimId, SUMMON_ANIM_	enum	common	mechanism: the summon animations BattleAnim_RunSummonEffect runs, by kind (battle_anim.h), not the summons themselves; anim as pret spells it
 Particle	struct	common	a moving point a battle animation draws
 ScreenPoint	struct	common	a projected point: screen x, y and depth
 canvas	word	common	keep: the battle animation's 8bpp picture
@@ -256,6 +260,7 @@ OamMatrix, gOamMatrices, OamMatrix_	struct	pret	the 32 OAM affine matrices (pret
 Oam_, gOamDepthLists	prefix	pret	building the OAM buffer from 256 depth lists each frame (pret oam buffer)
 Sprite, gSprites, Sprite_	struct	pret	an animated field or battle sprite (pret struct Sprite, gSprites)
 SpriteAnim, gSpriteAnims, SpriteAnim_, ANIMCMD_	struct	pret	one of up to four animations a sprite plays (pret anim, ANIMCMD_)
+ANIM_	prefix	pret	animation constants, field (pret ANIM_STD_*) and battle (pret ANIM_TARGET, gBattleAnimArgs): one spelling, never ANIMATION_
 SpriteFrameCache, SpriteFrameCache_	struct	common	eight tagged buffers of decoded sprite frames; 'resource' is the directory's, 'slot' the arrays'
 gSpriteColorTables	global	common	the SpriteColorMode recolouring tables
 VramCache_, VramCacheEntry, gVramCacheBlockOwners	prefix	common	96 entries of OBJ VRAM blocks; block = memory

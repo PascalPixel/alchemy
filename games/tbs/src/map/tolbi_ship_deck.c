@@ -178,60 +178,84 @@ enum TolbiShipDeckLocalId {
   // At Kalay: gTolbiShipDeckObjectEventTemplates, then
   // gTolbiShipDeckObjectEventTemplatesWaiting.
   /// The crewman, a man in a blue bandana (SPRITE_MAN_IN_BLUE_BANDANA), who
-  /// hid the captain's anchor charm on the mast and denies
-  /// everything. "I didn't do anything..."
+  /// hid the captain's anchor charm on the mast and denies everything.
+  /// ★ Named from the game: "I didn't do anything..."
+  /// (MsgTolbiShipDidntDoAnything)
   LOCALID_KALAY_CREWMAN = LOCALID_FIRST_OAR + 8,
   /// One of the crew, a man in a yellow bandana (SPRITE_MAN_IN_YELLOW_BANDANA),
-  /// who answers the tour guide beside him: "I told you, we're
-  /// leaving soon. We'll set sail when our replacement arrives!" When the ship
-  /// leaves he calls "Preparations... Ready!"
+  /// who answers the tour guide beside him. When the ship leaves he calls
+  /// "Preparations... Ready!" (MsgTolbiShipPreparationsReady).
+  /// ★ Named from the game: "I told you, we're leaving soon. We'll set sail
+  /// when our replacement arrives!" (MsgTolbiShipToldWereLeavingSoonSet)
   LOCALID_KALAY_CREW_MEMBER,
   /// The captain, an old man with a white beard in green
   /// (SPRITE_MAN_WITH_WHITE_BEARD_IN_GREEN).
+  /// ★ Named from the game: "Now we can set sail. Right, Captain?"
+  /// (MsgTolbiShipItsMyLuckyAnchor)
   LOCALID_KALAY_CAPTAIN,
   /// Kaja, a bald man with a beard (SPRITE_KAJA).
+  /// ★ Named from the game: "Say, Kaja, how are the oarsmen doing?"
+  /// (MsgTolbiShipWonderCouldHaveHappened)
   LOCALID_KALAY_KAJA,
   /// The tour group's guide, a man carrying a pack (SPRITE_MAN_CARRYING_A_PACK)
-  /// as on the Tolbi Docks. Mind Read: "I
-  /// just hope we don't have to refund their money at the end of the trip."
+  /// as on the Tolbi Docks. Mind Read: "I just hope we don't have to refund
+  /// their money at the end of the trip."
+  /// ★ Named from the game: "I'm the tour group's guide!"
+  /// (MsgTolbiShipInteriorsNobodyWouldChooseMeAfterAll)
   LOCALID_KALAY_TOUR_GUIDE,
   /// Three of the tour group's passengers, named by what they say first: a
-  /// chef (SPRITE_CHEF), "I wonder what's going on. We've been waiting an
-  /// awfully long time."
+  /// chef (SPRITE_CHEF).
+  /// ★ Named from the game: "I wonder what's going on. We've been waiting an
+  /// awfully long time." (MsgTolbiShipDeckIWonderWhatsGoingOnWeve)
   LOCALID_KALAY_PASSENGER_WAITING_LONG,
-  /// A young woman in green (SPRITE_YOUNG_WOMAN_IN_GREEN). "I wonder if I'm
-  /// the only one here who's going to Tolbi to see Colosso..."
+  /// A young woman in green (SPRITE_YOUNG_WOMAN_IN_GREEN).
+  /// ★ Named from the game: "I wonder if I'm the only one here who's going to
+  /// Tolbi to see Colosso..." (MsgTolbiShipDeckIWonderIfImTheOnly)
   LOCALID_KALAY_PASSENGER_SEEING_COLOSSO,
-  /// A bald, muscular man (SPRITE_BALD_MUSCULAR_MAN). "The Karagol is like a
-  /// humongous lake, surrounded by land."
+  /// A bald, muscular man (SPRITE_BALD_MUSCULAR_MAN).
+  /// ★ Named from the game: "The Karagol is like a humongous lake, surrounded
+  /// by land." (MsgTolbiShipDeckTheKaragolIsLikeAHumongous)
   LOCALID_KALAY_PASSENGER_KARAGOL,
 
   // At sea: gTolbiShipDeck_CrewObjectEventTemplates after the oars, then each
-  // cutscene's
-  // own rows.
+  // cutscene's own rows.
+  /// ★ Named from the game: "Say, Kaja, how are the oarsmen doing?"
+  /// (MsgTolbiShipWonderCouldHaveHappened)
   LOCALID_SEA_KAJA = LOCALID_FIRST_OAR + 8,
+  /// Ouranos, a young man with red hair (SPRITE_YOUNG_MAN_WITH_RED_HAIR).
+  /// ★ Named from the game: "You know, my friend Ouranos here is scared of
+  /// ships." (MsgTolbiShipIfWeArentGoingSet)
   LOCALID_SEA_OURANOS,
+  /// Sean, a young man with blue hair (SPRITE_YOUNG_MAN_WITH_BLUE_HAIR).
+  /// ★ Named from the game: "Well, it's just like Sean said."
+  /// (MsgTolbiShipItsMyLuckyAnchor)
   LOCALID_SEA_SEAN,
-  /// With LOCALID_KALAY_CREW_MEMBER's sprite: "I have a job to do. I can't
-  /// row!"; at anchor, Mind Read hears "I want to be a sailor like Kaja". On
-  /// later departures he calls "Preparations... Ready!"
+  /// With LOCALID_KALAY_CREW_MEMBER's sprite. At anchor, Mind Read hears "I
+  /// want to be a sailor like Kaja"; on later departures he calls
+  /// "Preparations... Ready!"
+  /// ★ Named from the game: "I have a job to do. I can't row!"
+  /// (MsgTolbiShipDeckYouMustFeelAwfullyImportantOrdering)
   LOCALID_SEA_CREW_MEMBER,
   /// TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_MONSTERS_BOARD
   /// (gTolbiShipDeck_MonstersBoardObjectEventTemplates): the first attack's
-  /// three
-  /// monsters, all of
-  /// one sprite, which leap aboard and go below by the first door, where
-  /// gTolbiShipInteriors_FirstAttackMonsters places them.
+  /// three monsters, all of one sprite, which leap aboard and go below by the
+  /// first door, where gTolbiShipInteriors_FirstAttackMonsters places them.
+  /// ★ Named from what the player sees: a jellyfish monster
+  /// (SPRITE_JELLYFISH_MONSTER) leaping onto the deck from the sea (its
+  /// render)
   LOCALID_SEA_FIRST_ATTACK_MONSTER,
   /// TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_SECOND_ATTACK
   /// (gTolbiShipDeck_SecondAttackObjectEventTemplates): four monsters of one
-  /// sprite hover
-  /// by the
-  /// deck, the first two diving at Sean and the others at Ouranos.
+  /// sprite hover by the deck, the first two diving at Sean and the others at
+  /// Ouranos.
+  /// ★ Named from what the player sees: a pink winged monster
+  /// (SPRITE_PINK_WINGED_MONSTER) hovering by the rail (its render)
   LOCALID_SEA_FIRST_HOVERING_MONSTER = LOCALID_SEA_CREW_MEMBER + 1,
   /// Then the second attack's three, two of the hovering monsters' sprite and
   /// one other, as gTolbiShipInteriors_SecondAttackMonsters places them, come
   /// aboard and go below.
+  /// ★ Named from what the player sees: two pink winged monsters and a lizard
+  /// monster (SPRITE_LIZARD_MONSTER) coming aboard (its render)
   LOCALID_SEA_SECOND_ATTACK_MONSTER = LOCALID_SEA_FIRST_HOVERING_MONSTER + 4,
   /// The splash that swells for 24 frames at the rail where the last of them
   /// leaps aboard out of the sea (SPRITE_SPLASH).
@@ -240,57 +264,66 @@ enum TolbiShipDeckLocalId {
   LOCALID_SEA_SPLASH = LOCALID_SEA_SECOND_ATTACK_MONSTER + 3,
   /// TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_THIRD_ATTACK
   /// (gTolbiShipDeck_ThirdAttackObjectEventTemplates): four monsters with the
-  /// first
-  /// attack's
-  /// sprite, that leap at Sean, the first two, and at Ouranos.
+  /// first attack's sprite, that leap at Sean, the first two, and at Ouranos.
+  /// ★ Named from what the player sees: a jellyfish monster leaping at Sean
+  /// across the deck (its render)
   LOCALID_SEA_FIRST_LEAPING_MONSTER = LOCALID_SEA_CREW_MEMBER + 1,
   /// Then the third attack's three, two with the first attack's sprite and one
   /// other, as gTolbiShipInteriors_ThirdAttackMonsters places them, which go
   /// below; the last drops onto the deck.
+  /// ★ Named from what the player sees: two jellyfish monsters and a blue
+  /// winged monster (SPRITE_BLUE_WINGED_MONSTER) going below (its render)
   LOCALID_SEA_THIRD_ATTACK_MONSTER = LOCALID_SEA_FIRST_LEAPING_MONSTER + 4,
   /// The falling monster's shadow, standing in for its own while it drops: a
   /// blank sprite (SPRITE_BLANK) draws only its shadow, which grows from a
   /// tenth of its size where the monster will land and goes the moment the
   /// monster lands and its own shadow is switched on.
+  /// ★ Named from what the player sees: a shadow on the deck growing where the
+  /// falling monster will land (its render)
   LOCALID_SEA_FALLING_MONSTER_SHADOW = LOCALID_SEA_THIRD_ATTACK_MONSTER + 3,
   /// TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_KRAKEN and at anchor
   /// (gTolbiShipDeck_KrakenObjectEventTemplates, after Garet, Ivan and Mia in
-  /// their own
-  /// slots): the Kraken, which the party charges; at anchor the same rows
-  /// place it only for it to be destroyed at once.
+  /// their own slots): the Kraken, which the party charges; at anchor the same
+  /// rows place it only for it to be destroyed at once.
   /// ★ Named from the game: "You did good against that Kraken."
   /// (MsgTolbiShipThankIsaacDidGoodAgainst)
   LOCALID_SEA_KRAKEN = LOCALID_SEA_CREW_MEMBER + 1,
-  /// An invisible object event the camera follows across the deck.
-  LOCALID_SEA_CAMERA_TARGET,
+  /// An invisible object event (SPRITE_BLANK) the camera follows across the
+  /// deck.
+  LOCALID_BLANK_SEA_CAMERA_TARGET,
   /// At anchor, back from the island
-  /// (gTolbiShipDeck_TourGuideObjectEventTemplates): the
-  /// tour guide comes up from below. "The passengers are going stir crazy!"
-  /// Kaja: "Tell our tourists they can enjoy a nice, long break after we
-  /// arrive."
+  /// (gTolbiShipDeck_TourGuideObjectEventTemplates): the tour guide comes up
+  /// from below. Kaja: "Tell our tourists they can enjoy a nice, long break
+  /// after we arrive."
+  /// ★ Named from the game: "The passengers are going stir crazy!"
+  /// (MsgTolbiShipHowWasIsaacDidExplore)
   LOCALID_ANCHOR_TOUR_GUIDE,
 
   // At Tolbi: gTolbiShipDeckObjectEventTemplatesArrived.
-  LOCALID_ARRIVED_KAJA = LOCALID_FIRST_OAR +
-      8, ///< "You lookin' for Sean and Ouranos?"
-  /// A man in a blue bandana (SPRITE_MAN_IN_BLUE_BANDANA). "Are you headed for
-  /// Colosso, too?" Mind Read: "I'm just going to hang out
-  /// in Tolbi and enjoy myself for a while."
+  /// ★ Named from the game: "You lookin' for Sean and Ouranos?"
+  /// (MsgTolbiShipDeckYouLookinForSeanAndOuranos)
+  LOCALID_ARRIVED_KAJA = LOCALID_FIRST_OAR + 8,
+  /// A man in a blue bandana (SPRITE_MAN_IN_BLUE_BANDANA). Mind Read: "I'm
+  /// just going to hang out in Tolbi and enjoy myself for a while."
+  /// ★ Named from the game: "Are you headed for Colosso, too?"
+  /// (MsgTolbiShipHeadedColosso)
   LOCALID_ARRIVED_ASKS_ABOUT_COLOSSO,
-  /// With LOCALID_KALAY_CREW_MEMBER's sprite: "This group that came on our last
-  /// voyage pulled some strange stunts."
+  /// With LOCALID_KALAY_CREW_MEMBER's sprite.
+  /// ★ Named from the game: "This group that came on our last voyage pulled
+  /// some strange stunts." (MsgTolbiShipDeckThisGroupThatCameOnOur)
   LOCALID_ARRIVED_CREW_MEMBER,
   /// The first of the nine passengers who could promise to row, in the order of
   /// each seat's group of flags (FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS and the
   /// others) and of gTolbiShipDeckRowerStrokes: the tour group's two guides,
-  /// the
-  /// chef, the young woman in green, the bald, muscular man, the woman with a
-  /// sword, the young man with brown hair, the woman with fair hair and an old
-  /// man with a cane (SPRITE_OLD_MAN_WITH_CANE): "You make an old man row the
-  /// ship".
+  /// the chef, the young woman in green, the bald, muscular man, the woman
+  /// with a sword, the young man with brown hair, the woman with fair hair and
+  /// an old man with a cane (SPRITE_OLD_MAN_WITH_CANE).
+  /// ★ Named from the game: "I'm the tour group's guide!"
+  /// (MsgTolbiShipInteriorsNobodyWouldChooseMeAfterAll)
   LOCALID_ARRIVED_FIRST_PASSENGER,
-  /// An invisible object event the camera follows as the rowers come up.
-  LOCALID_ARRIVED_CAMERA_TARGET = LOCALID_ARRIVED_FIRST_PASSENGER + 9
+  /// An invisible object event (SPRITE_BLANK) the camera follows as the rowers
+  /// come up.
+  LOCALID_BLANK_ARRIVED_CAMERA_TARGET = LOCALID_ARRIVED_FIRST_PASSENGER + 9
 };
 
 /// The deck's coord events at Kalay, beside the ways below, whose metatile
@@ -2013,7 +2046,7 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   FieldScript_CallWithLastActiveObjectId(
       (struct ObjectEventTemplate *)gTolbiShipDeck_KrakenObjectEventTemplates);
   Engine_TaskWait(1);
-  Engine_CameraFollowObjectEvent(LOCALID_SEA_CAMERA_TARGET, 1);
+  Engine_CameraFollowObjectEvent(LOCALID_BLANK_SEA_CAMERA_TARGET, 1);
   Engine_TaskWait(1);
   Engine_ObjectEventSetAnimation(LOCALID_SEA_OURANOS, 5);
   Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_SEA_OURANOS), 0);
@@ -2041,9 +2074,9 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   MapGrid_SetShake(-1, -1, 0xe666);
   Engine_ScriptWait(10);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 20);
-  ObjectEvent_GetById(LOCALID_SEA_CAMERA_TARGET)->motionFlags = 0;
-  ObjectEvent_SetSpeed(LOCALID_SEA_CAMERA_TARGET, PIXELS(2), PIXELS(1));
-  Engine_ObjectEventSetDestination(LOCALID_SEA_CAMERA_TARGET, 216, 612);
+  ObjectEvent_GetById(LOCALID_BLANK_SEA_CAMERA_TARGET)->motionFlags = 0;
+  ObjectEvent_SetSpeed(LOCALID_BLANK_SEA_CAMERA_TARGET, PIXELS(2), PIXELS(1));
+  Engine_ObjectEventSetDestination(LOCALID_BLANK_SEA_CAMERA_TARGET, 216, 612);
   Engine_AudioPlayCue(SE_149);
   Engine_ObjectEventSetSpritePriority(LOCALID_SEA_SEAN, 2);
   Engine_ObjectEventSetAnimation(LOCALID_SEA_SEAN, 5);
@@ -2059,7 +2092,7 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_SEA_SEAN), 0);
   TolbiShipDeck_Turn(LOCALID_PARTY_LEADER, FACING_NORTHWEST);
   Engine_ObjectEventJump(LOCALID_PARTY_LEADER, 6, 80);
-  ObjectEvent_SetDestination(LOCALID_SEA_CAMERA_TARGET, 232, 564);
+  ObjectEvent_SetDestination(LOCALID_BLANK_SEA_CAMERA_TARGET, 232, 564);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 204, 610);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 208, 598);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 248, 598);
@@ -2085,9 +2118,9 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   ObjectEvent_WalkTo(GARET, 240, 600);
   ObjectEvent_WalkTo(IVAN, 254, 600);
   Engine_ObjectEventWalkToAndWait(MIA, 248, 616);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_STAND);
-  Engine_ObjectEventSetAnimation(IVAN, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_STAND);
+  Engine_ObjectEventSetAnimation(IVAN, ANIM_STAND);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
@@ -2156,14 +2189,14 @@ static void TolbiShipDeck_ThankForKraken(void) {
   Engine_ObjectEventRunRepeatedMotion(LOCALID_SEA_KAJA, 1);
   Engine_ScriptSetMessage(MsgTolbiShipThankIsaacDidGoodAgainst);
   TolbiShipDeck_Say(LOCALID_SEA_KAJA);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   Engine_ScriptWait(40);
   ObjectEvent_FaceDirection(LOCALID_SEA_KAJA, FACING_SOUTH + FACING_STEP, 20);
   ObjectEvent_ShowEmote(LOCALID_SEA_KAJA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Script_ShowMessageAndWait(LOCALID_SEA_KAJA, 0, 40);
   TolbiShipDeck_Turn(LOCALID_SEA_KAJA, FACING_EAST);
   TolbiShipDeck_Say(LOCALID_SEA_KAJA);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   Engine_ObjectEventSetAnimationAndWait(LOCALID_SEA_KAJA, 3);
   ObjectEvent_WalkToAndWait(LOCALID_SEA_KAJA, 182, 0x258);
   ObjectEvent_WalkToAndWait(LOCALID_SEA_KAJA, 216, 0x258);
@@ -2358,13 +2391,13 @@ static void TolbiShipDeck_RowersDisembark(void) {
                                    0);
   record = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (record != 0) {
-    Engine_ObjectEventSetPosition(LOCALID_ARRIVED_CAMERA_TARGET,
+    Engine_ObjectEventSetPosition(LOCALID_BLANK_ARRIVED_CAMERA_TARGET,
                                   record->x.fixed, record->z.fixed);
   }
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
   Engine_ScriptWait(20);
-  Engine_CameraFollowObjectEvent(LOCALID_ARRIVED_CAMERA_TARGET, 1);
+  Engine_CameraFollowObjectEvent(LOCALID_BLANK_ARRIVED_CAMERA_TARGET, 1);
 
   TolbiShipDeck_OpenFirstDoor();
 
@@ -2435,9 +2468,11 @@ static void TolbiShipDeck_RowersDisembark(void) {
   TolbiShipDeck_Say(LOCALID_ARRIVED_KAJA);
   Engine_ObjectEventFaceDirection(LOCALID_PARTY_LEADER, 192 << 8, 0);
 
-  ObjectEvent_GetById(LOCALID_ARRIVED_CAMERA_TARGET)->motionFlags = 0;
-  ObjectEvent_SetSpeed(LOCALID_ARRIVED_CAMERA_TARGET, 128 << 10, 128 << 9);
-  ObjectEvent_SetDestination(LOCALID_ARRIVED_CAMERA_TARGET, 196, 141 << 2);
+  ObjectEvent_GetById(LOCALID_BLANK_ARRIVED_CAMERA_TARGET)->motionFlags = 0;
+  ObjectEvent_SetSpeed(LOCALID_BLANK_ARRIVED_CAMERA_TARGET, 128 << 10,
+                       128 << 9);
+  ObjectEvent_SetDestination(LOCALID_BLANK_ARRIVED_CAMERA_TARGET, 196,
+                             141 << 2);
 
   ObjectEvent_SetSpeed(LOCALID_ARRIVED_KAJA, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_ARRIVED_KAJA, 182, 0x22b);
@@ -2456,7 +2491,7 @@ static void TolbiShipDeck_RowersDisembark(void) {
   ObjectEvent_WalkToAndWait(LOCALID_ARRIVED_KAJA, 188, 512);
   Engine_ObjectEventFaceDirection(LOCALID_ARRIVED_KAJA,
                                   FACING_SOUTHEAST + FACING_STEP, 0);
-  Engine_ObjectEventSetPosition(LOCALID_ARRIVED_CAMERA_TARGET, 0, 0);
+  Engine_ObjectEventSetPosition(LOCALID_BLANK_ARRIVED_CAMERA_TARGET, 0, 0);
 
   Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
   Engine_ScriptEnd();
@@ -2936,8 +2971,8 @@ static void TolbiShipDeck_OfferToScoutIsland(void) {
   ObjectEvent_WalkTo(GARET, 194, 0x280);
   ObjectEvent_WalkTo(IVAN, 198, 0x28e);
   ObjectEvent_WalkToAndWait(MIA, 194, 0x2a0);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_STAND);
-  Engine_ObjectEventSetAnimation(IVAN, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_STAND);
+  Engine_ObjectEventSetAnimation(IVAN, ANIM_STAND);
   Engine_ScriptWait(10);
   ObjectEvent_FaceDirection(GARET, FACING_WEST, 0);
   ObjectEvent_FaceDirection(IVAN, FACING_WEST, 0);
@@ -2952,10 +2987,10 @@ static void TolbiShipDeck_OfferToScoutIsland(void) {
   Engine_ObjectEventRunRepeatedMotion(LOCALID_SEA_SEAN, 1);
   Script_OpenMessage(LOCALID_SEA_SEAN, 0);
   if (Engine_ScriptChooseYesNo(0, 0) == 1) {
-    Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
+    Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
     TolbiShipDeck_Say(IVAN);
     TolbiShipDeck_Turn(MIA, FACING_NORTHWEST);
-    Engine_ObjectEventSetAnimation(MIA, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimation(MIA, ANIM_NOD);
     TolbiShipDeck_Say(MIA);
     TolbiShipDeck_Turn(GARET, FACING_SOUTHWEST);
     Engine_ObjectEventRunRepeatedMotion(GARET, 1);
@@ -3090,7 +3125,7 @@ static void TolbiShipDeck_ReturnFromIsland(void) {
   TolbiShipDeck_Turn(LOCALID_SEA_KAJA, FACING_WEST);
   TolbiShipDeck_Say(SPEAKER(LOCALID_SEA_KAJA, 2));
   TolbiShipDeck_Turn(LOCALID_PARTY_LEADER, FACING_NORTHEAST);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   Engine_ObjectEventSetAnimationAndWait(LOCALID_SEA_KAJA, 3);
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);

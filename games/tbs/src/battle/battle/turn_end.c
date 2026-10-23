@@ -395,7 +395,7 @@ s32 Battle_ProcessRoundEnd(void) {
     }
     groupList = order.group;
     for (group = 0; group <= 1; group++) {
-      count = BattleUnits_ListIds(groupList[group], unitIds);
+      count = BattleUnit_ListIds(groupList[group], unitIds);
       for (unitIndex = 0; unitIndex < count; unitIndex++) {
         s32 hpAmount;
         s32 ppAmount;
@@ -559,8 +559,8 @@ s32 BattleUnit_ProcessTurnEnd(struct BattleTurn *plan) {
                             list->entries[strongestElement].index);
     }
   }
-  if (BattleUnits_ListLiving(BATTLE_SIDES_PARTY, 0) != 0 &&
-      BattleUnits_ListLiving(BATTLE_SIDES_ENEMIES, 0) != 0) {
+  if (BattleUnit_ListLiving(BATTLE_SIDES_PARTY, 0) != 0 &&
+      BattleUnit_ListLiving(BATTLE_SIDES_ENEMIES, 0) != 0) {
     battleContinues = 1;
   }
   {

@@ -68,7 +68,7 @@ struct DispatchObject {
   s16 footprintSide; ///< Object's; not named here
   s32 argument;      ///< the linked object a script approaches or follows
   /// ObjectEvent's update hook; not named here.
-  void (*update)(union FieldObject *object);
+  void (*update)(union FieldObject *fieldObject);
 };
 
 extern const s32 gObjectDispatch_KeyCheckScript[];

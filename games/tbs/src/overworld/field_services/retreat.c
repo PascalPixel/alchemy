@@ -126,8 +126,8 @@ void FieldEffect_RunRetreat(void) {
 
   // Start spinning.
   Sound_PlaySongFar(SE_220);
-  Animation_ApplyChildValuesFar((struct DispatchObject *)objectEvent,
-                                SPRITE_COLOR_NORMAL);
+  Anim_ApplyChildValuesFar((struct DispatchObject *)objectEvent,
+                           SPRITE_COLOR_NORMAL);
   ObjectDispatch_SelectAnimationFar(objectEvent, 3);
   objectEvent->update = FieldEffect_UpdateSpinAngle;
   objectEvent->timer = 0;

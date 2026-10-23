@@ -243,8 +243,8 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
   }
 
   // Restore the target's colours, script and update, and remove the hand.
-  Animation_ApplyChildValuesFar((struct DispatchObject *)target,
-                                effectWork->savedPalette);
+  Anim_ApplyChildValuesFar((struct DispatchObject *)target,
+                           effectWork->savedPalette);
   ObjectDispatch_InitializeFar((struct DispatchObject *)target,
                                effectWork->savedScript);
   target->update = effectWork->savedCallback;

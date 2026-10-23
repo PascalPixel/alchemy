@@ -217,7 +217,7 @@ static void TretTreeInteriors_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
   SE(SE_206);
   SCRIPT_START();
   FieldScript_SetDestination((s32)&MapId_TretTreeInteriors, warpDest);
-  OBJECT_ANIMATION(leaderLocalId, ANIMATION_LEADER_SPIN_AWAY);
+  OBJECT_ANIMATION(leaderLocalId, ANIM_LEADER_SPIN_AWAY);
   Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(leaderLocalId), 0);
   ObjectEvent_SetAttachedEffect(leaderLocalId, ATTACHED_EFFECT_IN_FRONT |
                                                    ATTACHED_EFFECT_ATTACH);
@@ -560,10 +560,10 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   Script_ShowMessage(SPEAKER(LOCALID_SECOND_TRET), 0);
   WAIT(40);
   Script_ShowMessageAndWait(SPEAKER(LOCALID_SECOND_TRET), 0, 20);
-  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  OBJECT_ANIMATION(GARET, ANIMATION_NOD);
-  OBJECT_ANIMATION(MIA, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_NOD);
+  OBJECT_ANIMATION(GARET, ANIM_NOD);
+  OBJECT_ANIMATION(MIA, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_NOD);
   WAIT(20);
   Script_ShowMessageAndWait(SPEAKER(LOCALID_SECOND_TRET), 0, 20);
   TretTreeInteriors_PlayGesture(TRET_GESTURE_CLOSE_EYES);
@@ -583,7 +583,7 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   OBJECT_DIR(GARET, FACING_NORTHEAST, 10);
   OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 10);
   Script_ShowMessageAndWait(SPEAKER(GARET), 0, 10);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
   OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_SOUTHEAST, 0);
   OBJECT_DIR(IVAN, FACING_NORTHWEST, 0);
   Script_ShowMessageAndWait(SPEAKER(IVAN), 0, 20);
@@ -605,11 +605,11 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   OBJECT_DIR(IVAN, FACING_NORTHWEST, 0);
   if (Engine_ScriptChooseYesNo(0, 0) != 0) {
     OBJECT_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
-    OBJECT_ANIMATION(GARET, ANIMATION_SHAKE_HEAD);
+    OBJECT_ANIMATION(GARET, ANIM_SHAKE_HEAD);
     MESSAGE_SET(MsgTretDoingNowsNot);
     Script_ShowMessage(SPEAKER(GARET), 0);
     OBJECT_EMOTE(IVAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 10);
-    OBJECT_ANIMATION(IVAN, ANIMATION_NOD);
+    OBJECT_ANIMATION(IVAN, ANIM_NOD);
     Script_ShowMessage(SPEAKER(IVAN), 0);
   }
   WAIT(20);
@@ -672,10 +672,10 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
     Engine_ObjectEventRunRepeatedMotion(MIA, 1);
     Engine_ScriptShowMessageAndWait(SPEAKER(MIA), 0, 10);
   }
-  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  OBJECT_ANIMATION(GARET, ANIMATION_NOD);
-  OBJECT_ANIMATION(MIA, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_NOD);
+  OBJECT_ANIMATION(GARET, ANIM_NOD);
+  OBJECT_ANIMATION(MIA, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_NOD);
   actions = gTretTreeInteriors_RejoinLeaderActions;
   ObjectEvent_SetActionScript(GARET, actions);
   if (hasMia != 0) {
@@ -779,7 +779,7 @@ s32 TretTreeInteriors_EnterRoom(void) {
   // TRET_TREE_INTERIORS_AFTER_FIGHT_TRET: back from the battle with Tret.
   if (warpDest == 50 || warpDest == 40 || warpDest == 30 || warpDest == 20) {
     Engine_ScriptOpenScreen();
-    OBJECT_ANIMATION(leaderLocalId, ANIMATION_LEADER_SPIN_AWAY);
+    OBJECT_ANIMATION(leaderLocalId, ANIM_LEADER_SPIN_AWAY);
     Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(leaderLocalId), 0);
     ObjectEvent_SetAttachedEffect(leaderLocalId, ATTACHED_EFFECT_IN_FRONT |
                                                      ATTACHED_EFFECT_ATTACH);

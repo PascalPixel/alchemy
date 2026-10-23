@@ -19,7 +19,7 @@ void DebugBattle_ViewMessages(void);
 void DebugBattle_RunMenu(void);
 void BattleCamera_Update(void);
 void BattleIntro_AnnounceEncounter(s32 enemyCount);
-void BattleUnits_Collect(void);
+void BattleUnit_Collect(void);
 s32 BattlePresentation_InitializeTilePattern(void);
 void BattlePresentation_ClearBg0VerticalOffset(void);
 void Party_ReservedNoOp5B14(s32 unused);
@@ -83,10 +83,10 @@ s32 BattleUnit_TickSleep(s32 unitId);
 
 s32 BattleParty_PrepareMembers(u16 *owners);
 s32 BattleEnemy_List(s16 *unitIds);
-s32 BattleUnits_ListLiving(s32 sideMask, u16 *unitIds);
-s32 BattleUnits_ListIds(s32 sideMask, u16 *unitIds);
+s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds);
+s32 BattleUnit_ListIds(s32 sideMask, u16 *unitIds);
 void BattleObject_Put(void);
-void BattleUnits_ListAllAndSubmit(void);
+void BattleUnit_ListAllAndSubmit(void);
 s32 BattleMotion_GetSlotPalette(s32 unitId);
 s32 Enemy_HasSpriteRoom(s32 classId);
 s32 EnemySprite_LoadIntoSlots(s32 unitId);
@@ -274,7 +274,7 @@ void BattlePlayback_WaitForReady(void);
 #else
 s32 BattlePlayback_WaitForReady(void);
 #endif
-u32 BattleUnits_IsListed(u32 unitId);
+u32 BattleUnit_IsListed(u32 unitId);
 s32 BattleDjinn_CountStandby(u32 unitId, u8 *counts);
 s32 BattleTurn_Build(struct BattleAction *request, struct BattleTurn *plan);
 

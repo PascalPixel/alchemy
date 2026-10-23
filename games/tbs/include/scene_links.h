@@ -11,7 +11,7 @@
 /// The entrance a scene's table lists first: Scene_TakeExit sends the party
 /// there when an exit has no row of its own, and the debug menu's scene select
 /// starts there. A scene that gives it a place of its own names it below.
-enum { ENTRANCE_DEFAULT = 0 };
+enum DefaultEntrance { ENTRANCE_DEFAULT = 0 };
 
 /// SceneId_Title's entrances and exits.
 enum {

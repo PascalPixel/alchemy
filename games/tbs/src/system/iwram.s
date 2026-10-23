@@ -222,8 +222,8 @@ gSelectionWorkspace:
 	.global gOptionMenuWork
 gOptionMenuWork:
 	.space 0x00000008
-	.global gBattleBgEffectWork
-gBattleBgEffectWork:
+	.global gMindReadWork
+gMindReadWork:
 	.space 0x00000014
 	.global gFieldWork
 gFieldWork:

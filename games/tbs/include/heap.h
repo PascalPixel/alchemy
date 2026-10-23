@@ -87,7 +87,7 @@ enum HeapSlot {
   HEAP_SLOT_SELECTION_WORKSPACE = 19,
   /// The option menu's work (struct OptionMenuWork, gOptionMenuWork).
   HEAP_SLOT_OPTION_MENU = 20,
-  /// Mind Read's wave work (struct WaveEffectWork).
+  /// Mind Read's wave work (struct MindReadWork, gMindReadWork).
   HEAP_SLOT_MIND_READ = 22,
   /// A field map's struct FieldWork, which maps read as struct EventWork
   /// (gFieldWork); Map_Run takes it and frees it on the way out.

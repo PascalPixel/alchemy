@@ -4,11 +4,11 @@
 
 #include "../field_services_internal.h"
 
-/// Heap slot 22 of the wave effect, 0x298 bytes (gBattleBgEffectWork). It lives
+/// The HEAP_SLOT_MIND_READ heap slot (gMindReadWork), 0x298 bytes. It lives
 /// from FieldEffect_StartMindReadWave to
 /// FieldEffect_FinishWaveAndReleaseHeapBlock, after the conversation Mind Read
 /// reads.
-struct WaveEffectWork {
+struct MindReadWork {
   /// Each scanline's BG0 horizontal scroll in pixels, two pages written in
   /// turn; 160 of each page's 162 are used.
   u16 lines[2][162];
@@ -34,7 +34,7 @@ struct WaveEffectWork {
 /// after the after event; meanwhile the message windows show thoughts
 /// (Ui_FillBank15PaletteGrey sets the window mode).
 void FieldEffect_StartMindReadWave(s32 x, s32 y) {
-  struct WaveEffectWork *work;
+  struct MindReadWork *work;
 
   work = AllocHeapSlotEwram(HEAP_SLOT_MIND_READ, 0x298);
   FieldEffect_FadeToEffectColor();
@@ -56,11 +56,11 @@ void FieldEffect_StartMindReadWave(s32 x, s32 y) {
 void FieldEffect_FinishWaveAndReleaseHeapBlock(void) {
   void *work;
 
-  work = *(void **)((u32)&gBattleBgEffectWork);
+  work = *(void **)((u32)&gMindReadWork);
   Ui_SetBank15PaletteAndClearRenderMode();
   Task_Remove(FieldEffect_UpdateMindReadWave);
   Anim_ApplyChildPalette((struct MotionObject *)ObjectEvent_GetById(
-                             ((struct WaveEffectWork *)work)->sourceId),
+                             ((struct MindReadWork *)work)->sourceId),
                          1);
   FieldEffect_FadeFromEffectColor();
   FreeHeapSlot(HEAP_SLOT_MIND_READ);
@@ -72,7 +72,7 @@ void FieldEffect_FinishWaveAndReleaseHeapBlock(void) {
 /// every 60 frames sends three particles (object 281) from the target to the
 /// caster, with sound 130.
 void FieldEffect_UpdateMindReadWave(void) {
-  struct WaveEffectWork *work = gBattleBgEffectWork;
+  struct MindReadWork *work = gMindReadWork;
   u16 *line;
   u32 scanline;
   struct ObjectEvent *caster;
@@ -154,7 +154,7 @@ void FieldEffect_UpdateMindReadWave(void) {
 /// Task: restarts the HBlank DMA that writes BG0's horizontal
 /// scroll for each scanline from the wave's shown page.
 void FieldEffect_ArmBg0HBlankDma(void) {
-  struct WaveEffectWork *work = gBattleBgEffectWork;
+  struct MindReadWork *work = gMindReadWork;
   if (!work->delay) {
     u16 *line = work->lines[work->page];
     volatile u16 *dma = REG_DMA0;
@@ -170,7 +170,7 @@ void FieldEffect_ArmBg0HBlankDma(void) {
 /// Moves the wave's hue on 4 degrees and works out its colour, each channel
 /// 4 to 11.
 void FieldEffect_AdvanceHueCycle(void) {
-  struct WaveEffectWork *work = gBattleBgEffectWork;
+  struct MindReadWork *work = gMindReadWork;
   s32 r = 0;
   s32 g = 0;
   s32 b = 0;

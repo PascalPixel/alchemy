@@ -66,7 +66,7 @@ struct ScriptObjectEntry;
 struct BattleSource;
 struct SparkObject;
 struct TransitionActorList;
-struct WaveEffectWork;
+struct MindReadWork;
 
 /// A world position, as Camera_WorldToScreen converts it to the screen.
 struct EffectVector {
@@ -149,10 +149,10 @@ extern s32 gElementGlow_RingFrameOffsets[];
 extern s8 gBattleHighlight_BlendRamp[];
 /// The 104 encounter zones (encounter.tsv), read as struct EncounterZone rows.
 extern u16 gEncounterZones[];
-#ifndef OWN_gBattleBgFxWork
+#ifndef OWN_gMindReadWork
 /// The HEAP_SLOT_MIND_READ heap slot: Mind Read's wave work while its animation
 /// runs.
-extern struct WaveEffectWork *gBattleBgEffectWork;
+extern struct MindReadWork *gMindReadWork;
 #endif
 #ifndef OWN_gBattleAnimWork
 /// The heap slots from HEAP_SLOT_BATTLE_ANIM, then the canvas and sheet:

@@ -1,6 +1,6 @@
 # Shops
 
-![Where the party spends coins, a town has three kinds of counter. A shop, for weapons, armor or items, offers four things: Buy, Sell, its rare items (Artifacts) and Repair. A sanctum serves one member at a time: it revives, cures poison, drives out a haunting or takes off cursed equipment, for a fee. An inn charges for each member still standing and gives them back their HP and PP overnight. Each is opened by the scene of its town, when the player talks to the keeper.](https://alchemy.pascalpixel.com/illustrations/shop/counters.svg)
+![Where the party spends coins, a town has three kinds of counter. A shop, for weapons, armor or items, offers four things: Buy, Sell, its rare items (Artifacts) and Repair. A sanctum serves one member at a time: it revives, cures poison, drives out a haunting or takes off cursed equipment, for a fee. An inn charges for each member still standing and gives them back their HP and PP overnight. Each is opened by its town's map script, when the player talks to the keeper.](https://alchemy.pascalpixel.com/illustrations/shop/counters.svg)
 
 In a town the party spends its coins at three kinds of counter. At a shop it
 buys and sells weapons, armor or items, has broken equipment mended, and
@@ -41,7 +41,7 @@ before a Djinni joins the party and before Altmiller's wall bursts.
 A shop sells what one row of a table lists, and offers four things at its
 counter: Buy, Sell, Artifacts and Repair.
 
-![Each shop is one row of the stock table: room for 24 ordinary items, then 8 rare items, then the kind of shop: weapons, armor or items. Bilibin's weapon shop uses five of the ordinary places, for the Long Sword, Broad Sword, Hunter's Sword, Battle Axe and Heavy Mace, one rare place, for the Witch's Wand, and is a weapon shop. Its Buy list shows the five weapons. The table has 35 rows; a town's scene opens its shop by the row number, with the keeper whose face the shop's lines show.](https://alchemy.pascalpixel.com/illustrations/shop/stock-row.svg)
+![Each shop is one row of the stock table: room for 24 ordinary items, then 8 rare items, then the kind of shop: weapons, armor or items. Bilibin's weapon shop uses five of the ordinary places, for the Long Sword, Broad Sword, Hunter's Sword, Battle Axe and Heavy Mace, one rare place, for the Witch's Wand, and is a weapon shop. Its Buy list shows the five weapons. The table has 35 rows; a town's map script opens its shop by the row number, with the keeper whose face the shop's lines show.](https://alchemy.pascalpixel.com/illustrations/shop/stock-row.svg)
 
 Every shop in the game is one row of the stock table. The row lists the
 ordinary items the shop always sells, the rare items it brings to market the

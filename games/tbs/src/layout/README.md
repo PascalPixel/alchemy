@@ -7,70 +7,72 @@ a side, and each of its three layers is a rectangle cut from that grid; the
 layout's header says where each one starts, and the rest of the grid goes
 unused.
 
-The layout data is kept as editable tables: 182 layouts for the towns,
-dungeons and interiors, the world map's ground and default cells, and the
-opponents' recorded paths in the Colosso finals. There is no code here. Each
-[map](../../glossary.md#map)'s row of `gField_MapTable` ([`field/maps.s`](../field/maps.s))
-gives a layout number, which picks a row of `gLayouts`
-([`field/layouts.tsv`](../field/layouts.tsv)): the layout's header, palette,
-three tile sheets and layer data. `MapGrid_LoadLayout`
-([`field/field/map_grid.c`](../field/field/map_grid.c)) loads it, and
-[Field](../field/README.md) describes how the engine draws and scrolls it.
+The `src/layout` folder holds this data as editable tables, and no code:
+182 layouts for the towns, dungeons and interiors, and two more sets of
+data kept beside them because they are packed and placed the same way: the
+world map's ground and the opponents' recorded paths in the Colosso finals. A [map](../../glossary.md#map) names its layout,
+[Field](../field/README.md) draws and scrolls it, and the sections below say
+how each part is stored, built and loaded.
 
 ## Cells
 
-A cell is one 16 by 16 pixel square of a layout, a 32-bit word once
-loaded, which says what is drawn there, what the ground is shaped like and
-what standing on it does.
+A cell is one 16 by 16 pixel square of a layout. Once loaded it is one
+32-bit word that says three things: what is drawn there, what standing on
+it does, and how its ground is shaped.
 
-![The ground seen from the side, with the leader standing on it. A band around the leader's feet reaches 8 pixels up and 12 pixels down. Ground ahead whose height falls inside the band can be stepped onto: a ledge 8 pixels up and a dip 8 pixels down. Ground outside it blocks the leader as a wall would: a rim 32 pixels high, like the ones at the foot of Goma Cave's cliffs, and a drop of 16 pixels. Each cell is 16 pixels wide.](https://alchemy.pascalpixel.com/illustrations/map/step-heights.svg)
+![The ground seen from the side, with the leader, Isaac, standing on it at the same scale. A band around the leader's feet reaches 8 pixels up and 12 pixels down. Ground ahead whose height falls inside the band can be stepped onto: a ledge 8 pixels up and a dip 8 pixels down. Ground outside it blocks the leader as a wall would: a rim 32 pixels high, like the ones at the foot of Goma Cave's cliffs, and a drop of 16 pixels. Each cell is 16 pixels wide.](https://alchemy.pascalpixel.com/illustrations/map/step-heights.svg)
 
-Every cell has a height, and a height can stop the leader just as a wall
-mark does: the leader can step up at most 8 pixels and down at most 12, so a
-sharp rise or drop blocks the way. A cell's word says how its ground is
-shaped as well as what is drawn there and what stepping on it does.
-
-A loaded cell is one word, four bytes. Its first two bytes (a halfword) hold
-the [metatile](../../glossary.md#metatile) number in their low 12 bits and four flag bits above, the layer and priority an object standing
-there takes; its third byte is the [metatile behavior](../../glossary.md#metatile-behavior), and its fourth the
-shape's number in the layout's shape table.
-
-A shape is four bytes, a row of `shapes.tsv`. The low four bits of the first
-pick one of the 16 terrain kinds (flat ground, slopes, steps, ground shaped
-through three heights and others), and the other three are height samples in
-steps of 8 pixels, which the kind's height function interpolates
-(`MapGrid_GetTerrainHeight`, through `gMapGrid_TerrainHeightFunctions`).
-
-The metatile behavior is what walls and [map events](../../glossary.md#map-event) are keyed on. `MB_WALL`
-blocks movement whatever the heights. The behaviors from `MB_EVENT_FIRST`
-to `MB_EVENT_LAST` belong to the map: a [coord event](../../glossary.md#coord-event) fires when the leader
-steps onto or pushes against a cell with its behavior, and a [bg event](../../glossary.md#bg-event) when
-the player presses A facing one. The behaviors above them mean the same on
-every map: `MB_ENCOUNTER_GROUND_1` and `_2` for ground with encounters
-of its own, `MB_JAR` to `MB_WELL` for search spots with shared
-lines, `MB_DESERT_SAND` for the Lamakan Desert's sand, and `MB_LEDGE`,
-`MB_CLIMB` and `MB_JUMP_FORWARD`, which `Field_RunPushTileEvent`
-acts on when the leader pushes against them.
-
-A wall need not be a behavior. `MapGrid_CheckObjectStep` lets an object step at most
-8 pixels up or 12 down, so ground that rises sharply stops the leader as
-surely as `MB_WALL`. Goma Cave has no `MB_WALL` cells at all: a rim of
-ground 32 pixels high runs along the foot of each cliff, some of it cut along
-a cell's diagonal.
-
-Behavior and height belong to a layer: code that asks about the ground
-reads the cell in the window of the layer the object follows, so an object
-stands in one layer at a time ([Field](../field/README.md#how-high-a-step-can-go)).
-
-A cell is `struct MapGridCell` in [`map_grid.h`](../../include/map_grid.h), and its
-behavior an `enum MetatileBehavior`.
+A cell is `struct MapGridCell` in [`map_grid.h`](../../include/map_grid.h):
 
 | Bits of the cell word | Field | Meaning |
 | --- | --- | --- |
 | 0 to 11 | `metatileAndFlags` | the metatile drawn in the cell |
-| 12 to 15 | `metatileAndFlags` | flags: the layer and priority an object standing there takes (15 and 14 read by `MapGrid_GetCellHighFlags`) |
+| 12 to 15 | `metatileAndFlags` | four flag bits ([below](#evidence-and-open-questions)) |
 | 16 to 23 | `collisionCode` | the metatile behavior |
 | 24 to 31 | `attributeB` | the shape, a row of the layout's shape table |
+
+The field names don't say what the fields hold: `collisionCode` is the
+metatile behavior and `attributeB` the shape.
+
+**What is drawn.** A [metatile](../../glossary.md#metatile) is the picture of one cell, 2 by 2 of the
+console's 8-pixel tiles, stored as the four BG map entries that draw them
+(top left, top right, bottom left, bottom right). A cell names its metatile
+by number, a row of the layout's metatile table. Of the four bits above the
+number, the field engine reads none: only an unused helper,
+`MapGrid_GetCellHighFlags`, and Crossbone Isle's stepping stones, which copy
+them with the cell, touch them.
+
+**What standing on it does.** The [metatile behavior](../../glossary.md#metatile-behavior) is what walls and
+[map events](../../glossary.md#map-event) are keyed on. `MB_WALL` blocks movement whatever the heights.
+The behaviors from `MB_EVENT_FIRST` to `MB_EVENT_LAST` belong to the map:
+a [coord event](../../glossary.md#coord-event) runs when the leader steps onto or pushes against a cell
+with its behavior, and a [bg event](../../glossary.md#bg-event) when the player presses A facing one
+([Maps](../map/README.md#which-map-events-a-cell-starts)). The behaviors above them mean
+the same on every map: `MB_ENCOUNTER_GROUND_1` and `_2` for ground with
+random battles of its own, `MB_JAR` to `MB_WELL` for search spots with
+shared lines, `MB_DESERT_SAND` for the Lamakan Desert's sand, and
+`MB_LEDGE`, `MB_CLIMB` and `MB_JUMP_FORWARD`, which `Field_RunPushTileEvent`
+acts on when the leader pushes against them.
+
+**How the ground is shaped.** A shape is four bytes, a row of `shapes.tsv`.
+The low four bits of the first pick one of the 16 terrain kinds (flat
+ground, slopes, steps, ground shaped through three heights and others), and
+the other three are height samples in steps of 8 pixels, which the kind's
+height function interpolates (`MapGrid_GetTerrainHeight`, through
+`gMapGrid_TerrainHeightFunctions`). `MapGrid_CheckObjectStep` lets an object
+step at most 8 pixels up or 12 down, so a sharp rise or drop stops the
+leader as surely as `MB_WALL`. Most of the game's walls are made this way:
+Goma Cave has no `MB_WALL` cells at all, only a rim of ground 32 pixels high
+along the foot of each cliff, some of it cut along a cell's diagonal.
+
+Behavior and height belong to a layer. Each layer is a window onto the grid
+([below](#one-grid-three-layers)), and an object follows one layer, the one
+its `terrainId` names, which a map's code sets. Code that asks about the
+ground at an object's position reads the cell at that position in its
+layer's window, so the three layers can have different walls and heights
+([Field](../field/README.md#how-high-a-step-can-go)).
+
+The behaviors are `enum MetatileBehavior`.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -148,7 +150,7 @@ write them in `layout.inc`.
 
 | Field | Unit | Meaning |
 | --- | --- | --- |
-| `origin[4]` | 8-pixel tiles | the camera's bounds: left, top, right and bottom |
+| `cameraBounds[4]` | 8-pixel tiles | the camera's bounds: left, top, right and bottom |
 | `priority[3]` | | each layer's BG priority, 1 to 3; 0 leaves the layer off |
 | `charBase[3]` | | each layer's BG char block |
 | `reserved` | | 0 in every layout; nothing reads it |
@@ -156,9 +158,9 @@ write them in `layout.inc`.
 | `layers[n].scrollX`, `.scrollY` | sixteenths of the view's motion | the layer's parallax |
 | `layers[n].speedX`, `.speedY` | sixteenths of a pixel a frame | the layer's drift |
 | `layers[n].periodX`, `.periodY` | 8-pixel tiles, less one | where the layer wraps, as a mask: `0x1f` wraps every 32 tiles |
-| `tiles` | bytes from the header | the metatiles |
-| `collision` | bytes from the header | the shapes |
-| `tilemap` | bytes from the header | the cell grid |
+| `metatiles` | bytes from the header | the metatiles |
+| `shapes` | bytes from the header | the shapes |
+| `cells` | bytes from the header | the cell grid |
 | `animation` | bytes from the header | the tile animation script, or 0 for none |
 | `blend` | bytes from the header | the blend script, or 0 for none |
 | `markers` | bytes from the header | the marker list, read in place |
@@ -182,25 +184,37 @@ The name of the file the build asks for says what to make:
   cell the table leaves out.
 - `parts`: the grid, the encodings of the files it lists one after another.
 - `delta0`, `delta1`, `delta2`: the metatiles, halfwords behind a method byte
-  (`enum MetatilePacking`) that `TileMap_DecodeStagedBuffer` undoes. Method 0
-  stores them as they are, 2 XORs each with the one before, and 1 does the
-  same with all the high bytes stored before all the low bytes. Each
-  `layout.s` names the method its stream uses.
+  (`enum MetatilePacking`, in the table below) that
+  `TileMap_DecodeStagedBuffer` undoes. Each `layout.s` names the method its
+  stream uses.
 - `script`: the tile animation and blend scripts below.
 
-The codec `lz` then packs each stream, and the bytes must come out identical.
+The codec `lz` then packs each stream in the format the game's
+`Resource_DecodeType01` unpacks, and the bytes must come out identical.
 Where [the original](../../glossary.md#the-original) stream is followed by stray bytes the packer left in its
 buffer, `layout.s` places them as literal bytes with a `PACKER:` comment naming
 what wrote them. Where Camelot changed a stream after packing it, a
-`_patch.tsv` lists each changed byte: its position, the byte the packer saw,
-the byte that shipped, and the proof. The table holds what shipped, and the
+`_patch.tsv` lists each changed byte. The table holds what shipped, and the
 patch gives the packer the byte it packed, so the packer makes the same
-choices and the stream still decodes to the edited layout. Only Gondowan
+choices and the stream still decodes to the edited layout. The first row of
+Gondowan Passage's grid patch:
+
+```text
+position  pack  ship  proof
+65472     0x02  0x01  literal: 254 of 255 stand-ins reproduce the stream; this is the lowest
+```
+
+The byte at that position shipped as `0x01`. The packer must have seen
+something else there, since `0x01` would pack differently; any of 254 values
+gives the shipped stream, and the patch names the lowest, `0x02`. The proof
+column says how the packed byte was found, and a later row that the packer
+copied from an earlier one says `copy of` that row's position. Only Gondowan
 Passage's grid and Venus Lighthouse's entrance's grid, with its Spanish and
 French versions, have patches.
 
 An edition's own version of a table (`grid_es.tsv`, `markers_ja.tsv`) is
-chosen in `layout.s` with `.ifdef TBS_EDITION_*`, and editions that agree share
+chosen in `layout.s` with `.ifdef` on the edition's name (`TBS_EDITION_ES`),
+and editions that agree share
 one file: Venus Lighthouse's entrance has a French grid and a Spanish one, and
 the Italian edition uses the Spanish. A layout whose whole data differs by
 edition has a block of its `layout.s` for each. A layout that uses another
@@ -211,8 +225,18 @@ layout's table names that layout's file.
 | Name | Value | Form | Meaning |
 | --- | --- | --- | --- |
 | `METATILE_PACKING_RAW` | 0 | `delta0` | the metatiles as they are |
-| `METATILE_PACKING_SPLIT_DELTA` | 1 | `delta1` | all the high bytes, then all the low bytes, each value XORed with the one before |
+| `METATILE_PACKING_SPLIT_DELTA` | 1 | `delta1` | each value XORed with the one before, all the high bytes stored before all the low bytes |
 | `METATILE_PACKING_DELTA` | 2 | `delta2` | each value XORed with the one before |
+
+The two delta methods store each halfword XORed with the one before it, the
+first with 0, so a run of similar values packs well. Split delta then
+stores all the high bytes before all the low bytes. Two halfwords
+`0x0102` and `0x0105` become `0x0102` and `0x0007`, and are stored as:
+
+```text
+METATILE_PACKING_DELTA         02 01 07 00    each halfword, low byte first
+METATILE_PACKING_SPLIT_DELTA   01 00 02 07    the high bytes, then the low bytes
+```
 
 ## Loading a layout
 
@@ -222,33 +246,44 @@ unpacked is the grid, which is stored in three separate pieces and put together 
 word per cell as it loads, so that everything about a cell can be read in
 one go.
 
-![A layout's grid is stored as three whole planes, one after another: what stepping on each cell does (a byte a cell, 16 KB), the shape of each cell's ground (a byte a cell, 16 KB) and the picture drawn in each cell, with the layer an object standing there takes (two bytes a cell, 32 KB). As the layout loads, a routine copied into RAM takes one value from each plane for every cell and puts them together into one four-byte word: the shape at the top, then what stepping does, then the picture. The 128 by 128 words take 64 KB.](https://alchemy.pascalpixel.com/illustrations/map/grid-weave.svg)
+![A layout's grid is stored as three whole planes, one after another: what stepping on each cell does (a byte a cell, 16 KB), the shape of each cell's ground (a byte a cell, 16 KB) and the picture drawn in each cell, with its four flag bits (two bytes a cell, 32 KB). As the layout loads, a routine copied into RAM takes one value from each plane for every cell and puts them together into one four-byte word: the shape at the top, then what stepping does, then the picture. The 128 by 128 words take 64 KB.](https://alchemy.pascalpixel.com/illustrations/map/grid-weave.svg)
 
-`MapGrid_LoadLayout` decodes each part into a fixed buffer in [EWRAM](../../glossary.md#iwram-and-ewram), the
-console's 256 KB of work memory: the
-metatiles into `gMetatiles`, the shapes into `gMapGridCollision`, the grid into
-`Ram_MapGridCellBuffer`, and the two scripts into the space after the shapes. The
-markers are not decoded: the loader keeps a pointer to them in the map grid work.
+Each map's row of `gField_MapTable` ([`field/maps.s`](../field/maps.s))
+gives a layout number, which picks a row of `gLayouts`
+([`field/layouts.tsv`](../field/layouts.tsv)): the layout's header, palette,
+three tile sheets and layer data. `MapGrid_LoadLayout`
+([`field/field/map_grid.c`](../field/field/map_grid.c)) decodes each part
+into a fixed buffer in [EWRAM](../../glossary.md#iwram-and-ewram): the metatiles into `gMetatiles`, the
+shapes into `gMapGridCollision`, the grid into `Ram_MapGridCellBuffer`, and
+the two scripts into the space after the shapes. The markers are not
+decoded: the loader keeps a pointer to them in the map grid work. A `Ram_`
+name is the same buffer as the `g` name after it (`Ram_MapGridCellBuffer` is
+`gMapGridCellBuffer`), written where the code reaches the buffer by its fixed
+address.
 
-The grid is stored as three whole planes: metatile behaviors, then shapes,
-then metatiles (16 KB, 16 KB and 32 KB, since the metatile plane has a
-halfword per cell). `TileMap_ConvertBuffer` then runs `Tile_ConvertMapGrid`, a routine in the
-processor's fast 32-bit ARM instructions copied into RAM, which weaves them into 128 by 128 cell words, 64 KB from the
-start of `Ram_MapGridCellBuffer`, and numbers the placeholder metatiles as it goes.
-The first two planes are saved to a temporary buffer first, since the cell
-words overwrite them.
+The grid is stored as three whole planes, in the order of the table below.
+`TileMap_ConvertBuffer` then runs `Tile_ConvertMapGrid`, a routine in the
+processor's fast 32-bit ARM instructions copied into RAM, which weaves them
+into 128 by 128 cell words, 64 KB from the start of
+`Ram_MapGridCellBuffer`, and numbers the placeholder metatiles as it goes
+([Placeholder metatiles](#placeholder-metatiles)). The first two planes are
+saved to a temporary buffer first, since the cell words overwrite them.
 
 `gMapGridCellBuffer` itself is 32 KB, so the cells run on through
 `gActorSpriteSlots` and `gDecodeBuffer`, and neither can hold anything else
 while a layout is loaded. Only code that reloads the cells afterwards writes
-there: a battle, after which the map's layout is loaded again; the link lobby,
-which leaves the partner's party in `gActorSpriteSlots` for the link battle
-that follows; and the world map's still view, which saves `BG1`'s tiles to
-`gDecodeBuffer` and draws into the cells, which
-`WorldMap_LoadDefaultCellsAndUpdateBlock` then puts back. The debug sprite viewer
-also loads sprites there. The tile animation only reads from
-`Ram_DecodeBuffer`, at offsets that land past it. [System](../system/README.md) has the
-EWRAM layout.
+there:
+
+- a battle, after which the map's layout is loaded again;
+- the link lobby, which leaves the partner's party in `gActorSpriteSlots`
+  for the link battle that follows;
+- the world map's still view, which saves `BG1`'s tiles to `gDecodeBuffer`
+  and draws into the cells, which `WorldMap_LoadDefaultCellsAndUpdateBlock`
+  then puts back;
+- the debug sprite viewer, which loads sprites there.
+
+The tile animation only reads from `Ram_DecodeBuffer`, at offsets that land
+past it. [System](../system/README.md) has the EWRAM layout.
 
 | Plane, in stored order | Size | Values |
 | --- | --- | --- |
@@ -264,7 +299,9 @@ this page shows for Goma Cave. Each layer's origin in the header picks the
 cell its window starts at (half its tile position, since a cell is 2 by 2
 tiles), so a layout lays its layers out side by side or one above
 another: `layout_000`'s start at tiles 0, 60 and 120 across, and Venus Lighthouse's
-entrance puts them at (0, 0), (64, 0) and (0, 68).
+entrance puts them at (0, 0), (64, 0) and (0, 68). A window has no size of
+its own: the camera's bounds in the header stop the view, so a layer shows
+the cells from its origin out as far as the camera can go.
 
 The ground layer shows on `BG3`, the middle layer on `BG2` and the overhead
 layer on `BG1`; [Field](../field/README.md#towns-and-dungeons-on-screen) explains
@@ -341,14 +378,17 @@ next picture, and jumps back to the first after the fourth.
 Both scripts are runs of halfwords, run each frame as [tasks](../../glossary.md#task)
 ([`field/field/tile_animation.c`](../field/field/tile_animation.c)). In the
 tile animation's table, `channel n` (`0xfd00 + n`) starts channel n of the 16 at the next halfword; only the low
-four bits pick the channel, and a marker with bit 7 set starts it paused.
+four bits pick the channel, and a channel word with bit 7 set starts it
+paused.
 Each `frame` is four values: the source tile, how many tiles, the destination
 tile and the frames to wait. `jump n` (`0xfe00 + n`) goes to halfword 2n of
 the channel's script, `stop` (`0xfeff`) halts the channel, and `end`
-(`0xffff`) loops it to its start. A source tile from 1,536 on is copied from
-RAM at `Ram_DecodeBuffer` plus its offset, which lands in `gMapGridLayerData`,
-and a lower one from elsewhere in video memory; the line is 512 for a layout
-whose animations copy 64-byte tiles (`MapGridState.wideTiles`).
+(`0xffff`) loops it to its start. A source tile below a threshold is copied from
+elsewhere in video memory, and one from the threshold on from RAM, at
+`Ram_DecodeBuffer` plus the tile's offset, which lands in
+`gMapGridLayerData`. The threshold is tile 1,536 for 16-colour tiles, 32
+bytes each, and tile 512 for a layout whose animations copy 256-colour
+tiles, 64 bytes each (`MapGridState.wideTiles`).
 
 The blend script changes how the layers blend over time. `control` sets
 `REG_BLDCNT`; `level` sets `REG_BLDALPHA`, or `REG_BLDY` when the control's
@@ -366,7 +406,7 @@ which have no names for them; the names are the tables' (`animation.tsv`,
 | `jump n` | `0xfe00 + n` | continue at halfword 2n of the channel's script |
 | `stop` | `0xfeff` | halt the channel |
 | `end` | `0xffff` | loop back to the channel's start |
-| a source tile from RAM | 1,536 on (512 for 64-byte tiles) | copied from `Ram_DecodeBuffer` plus its offset, rather than from video memory |
+| a source tile from RAM | 1,536 on (512 for 256-colour tiles) | copied from `Ram_DecodeBuffer` plus its offset, rather than from video memory |
 
 ## The world map's data
 
@@ -385,11 +425,20 @@ two ground layers (`WorldMap_WriteLayerCellTile`), and
 party walks.
 
 The ground's data, `world/blocks.tsv` (`Field_PerspectiveDataA`), is one grid
-of 32-bit values in hexadecimal, 512 across and 320 down. The `blocks` form
-cuts it into 640 squares of 16 by 16 values and packs each separately behind
-a table of offsets; a square written all as `-` would be left out with an
-offset of 0, and the world map leaves none out. The second ground layer's
-squares are numbered 320 on from the first's.
+of 32-bit values in hexadecimal, one value for each 32-pixel cell of the
+world map, 512 across and 320 down. The `blocks` form cuts it into squares of
+16 by 16 values, 512 pixels a side, and packs each separately behind a table
+of offsets; a square written all as `-` would be left out with an offset of
+0, and the world map leaves none out. The count works out as:
+
+- 512 / 16 = 32 squares across and 320 / 16 = 20 down, 640 in all;
+- the first 320 are the lower ground layer's and the next 320 the upper's;
+- each layer has 320 stored squares for the world's 256 positions.
+
+Each position starts on the stored square of its own number, 0 to 255. The
+other 64 are alternates: a world map script puts one in a position
+(`WorldMap_SetWindowCellTile`), and the snowfield's graphics set swaps six
+squares (`WorldMap_LoadGraphics`).
 
 The tables in `default/` are the world map's too.
 `WorldMap_InitializePerspective` loads the default cells, block attributes and
@@ -401,8 +450,9 @@ still view ([Field](../field/README.md#the-world-map-in-perspective)).
 | --- | --- |
 | the world | 16 by 16 squares of 512 pixels |
 | the ground's grid | 512 by 320 values, 32 bits each |
-| a square | 16 by 16 values |
-| squares | 640, each packed on its own, 320 for each ground layer |
+| a value | one 32-pixel cell of the world map |
+| a square | 16 by 16 values, 512 pixels a side |
+| squares | 640, each packed on its own, 320 for each ground layer: 256 positions and 64 alternates |
 | unpacked at once | the 2 by 2 squares around the party, in each of two ground layers |
 
 ## The Colosso paths
@@ -434,13 +484,14 @@ Colosso lettering, which differs by edition, is placed after the paths.
 
 ## Design
 
-The grid is stored as whole planes rather than as cell words, which keeps
-each plane's long runs of one value together for the packer; that is an
-inference, since the bytes show only the layout.
+The grid is stored as whole planes rather than as cell words. [XXX](../../glossary.md#xxx): likely
+to keep each plane's long runs of one value together for the packer,
+because a behavior plane is mostly runs of open ground and walls, as
+`layout_003`'s is; the bytes show only the layout.
 
 The markers are the one part stored unpacked, and the loader reads them in
-place rather than copying them, likely because only `Field_PlaceMapMarkers`
-reads them, once as the map loads.
+place rather than copying them. XXX: likely because only
+`Field_PlaceMapMarkers` reads them, once as the map loads.
 
 One grid serves all three layers, so every layout takes the same 64 KB of cells,
 and a layer's window can sit anywhere in the grid.
@@ -471,15 +522,8 @@ gives its layouts.
 
 ## Words used here
 
-- A **cell** is a 16 by 16 pixel square, one 32-bit word once loaded
-  (`struct MapGridCell` in [`map_grid.h`](../../include/map_grid.h)).
-- A **metatile** is the picture of a cell: 2 by 2 of the 8-pixel
-  tiles, stored as the four BG map entries that draw them, top left, top
-  right, bottom left, bottom right.
 - A **shape** is the form of the ground in a cell: a terrain kind and three
   height samples.
-- A **metatile behavior** says what standing on, pushing against or searching a
-  cell does (`enum MetatileBehavior`).
 - A **layer** is one of the layout's three backgrounds, each a window onto the
   one cell grid.
 - A **plane** is one value per cell over the whole 128 by 128 grid.
@@ -495,11 +539,6 @@ called the marker list because that function is the only code that reads the
 pointer the loader stores to it, although `MapGridScrollWork`
 (`include/map_grid_scroll.h`) still names the field `script`.
 
-[XXX](../../glossary.md#xxx): that the grid is stored as planes to keep long runs together for the
-packer is an inference; the bytes show only the layout. XXX: likely the
-markers are stored unpacked because only `Field_PlaceMapMarkers` reads them,
-once as the map loads; nothing else shows why.
-
 The pictures are drawn from the tables themselves: the haze from
 `layout_147`'s header, the shapes from its `shapes.tsv`, the chests from
 `layout_110`'s markers and the chest events of `map/crossbone_isle_keys.c`,
@@ -510,4 +549,13 @@ water and rock are drawings, not the game's metatiles.
 The header's last two bytes (`pad0` and `pad1` in `layout.inc`, `reserved` in
 `struct LayoutHeader`) are 0 in every layout of both games, and nothing
 reads them: the loader is the only code that reads the header.
+
+The [Design](#design) section gives two reasons only as likely: why the
+grid is stored as planes and why the markers are not packed.
+
+- XXX (no evidence): why the grid is stored as planes and the markers
+  unpacked; only Camelot's tools would show what the packing was chosen for.
+- XXX: what the four flag bits above a cell's metatile number mean; the
+  field engine never reads them, so a map whose cells set them, rendered
+  with each bit cleared, would settle it.
 

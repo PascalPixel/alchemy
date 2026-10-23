@@ -183,12 +183,12 @@ enum WorldMapLocalId {
   /// and later Vine.
   /// ★ Named from the game: "The Venus Djinni" (MsgVenusDjinnJoined)
   LOCALID_VENUS_DJINNI = LOCALID_FIRST_PLACED,
-  /// Corona.
-  /// ★ Named from the game: "The Mars Djinni" (MsgVenusDjinnJoined)
-  LOCALID_MARS_DJINNI,
-  /// Hail.
-  /// ★ Named from the game: "The Mercury Djinni" (MsgVenusDjinnJoined)
-  LOCALID_MERCURY_DJINNI,
+  /// The Mars Djinni Corona.
+  /// ★ Named from the game: "Corona" (MsgDjinnName)
+  LOCALID_CORONA,
+  /// The Mercury Djinni Hail.
+  /// ★ Named from the game: "Hail" (MsgDjinnName)
+  LOCALID_HAIL,
   /// Vale, whose warp leads to the town gate (MapId_ValeGate).
   /// ★ Named from the game: "Why's everyone hanging around the town gate?"
   /// (MsgValeWhysEveryoneHanging)
@@ -438,7 +438,7 @@ static void EventScript_MeetVine(void) {
 
 /// Walking near Corona, or talking to him: once a battle is nearly due, Corona
 /// fights.
-/// Reached by talking to LOCALID_MARS_DJINNI, or by walking onto TRIGGER_CORONA
+/// Reached by talking to LOCALID_CORONA, or by walking onto TRIGGER_CORONA
 /// until Corona is caught.
 static void EventScript_MeetCorona(void) {
   struct GameState *state = &gGameState;
@@ -446,14 +446,14 @@ static void EventScript_MeetCorona(void) {
   struct EventWork *work = gEventWork;
 
   if (*steps >= Math_Divide(work->encounterThreshold * 9, 10)) {
-    Field_RequestDjinnBattle(DJINN_NO_HOP | LOCALID_MARS_DJINNI, DJINNI_CORONA);
+    Field_RequestDjinnBattle(DJINN_NO_HOP | LOCALID_CORONA, DJINNI_CORONA);
     work->encounterBias = 0;
   }
 }
 
 /// Walking near Hail, or talking to him: once a battle is nearly due, Hail
 /// fights.
-/// Reached by talking to LOCALID_MERCURY_DJINNI, or by walking onto
+/// Reached by talking to LOCALID_HAIL, or by walking onto
 /// TRIGGER_HAIL until Hail is caught.
 static void EventScript_MeetHail(void) {
   struct GameState *state = &gGameState;
@@ -461,8 +461,7 @@ static void EventScript_MeetHail(void) {
   struct EventWork *work = gEventWork;
 
   if (*steps >= Math_Divide(work->encounterThreshold * 9, 10)) {
-    Field_RequestDjinnBattle(DJINN_NO_HOP | LOCALID_MERCURY_DJINNI,
-                             DJINNI_HAIL);
+    Field_RequestDjinnBattle(DJINN_NO_HOP | LOCALID_HAIL, DJINNI_HAIL);
     work->encounterBias = 0;
   }
 }
@@ -3728,8 +3727,8 @@ struct MapEvent gWorldMapEvents[] = {
     { MAP_EVENT_COORD, TRIGGER_FLINT, FLAG_DJINNI(DJINNI_FLINT), EVENT_SCRIPT(EventScript_MeetFlint) },
     { MAP_EVENT_COORD, TRIGGER_STORM, FLAG_MAP_TEMP_F1, EVENT_SCRIPT(EventScript_WalkIntoStorm) },
     { MAP_EVENT_TALK, LOCALID_VENUS_DJINNI, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MeetVine) },
-    { MAP_EVENT_TALK, LOCALID_MARS_DJINNI, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MeetCorona) },
-    { MAP_EVENT_TALK, LOCALID_MERCURY_DJINNI, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MeetHail) },
+    { MAP_EVENT_TALK, LOCALID_CORONA, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MeetCorona) },
+    { MAP_EVENT_TALK, LOCALID_HAIL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MeetHail) },
     { MAP_EVENT_COORD, TRIGGER_VINE, FLAG_DJINNI(DJINNI_VINE), EVENT_SCRIPT(EventScript_MeetVine) },
     { MAP_EVENT_COORD, TRIGGER_CORONA, FLAG_DJINNI(DJINNI_CORONA), EVENT_SCRIPT(EventScript_MeetCorona) },
     { MAP_EVENT_COORD, TRIGGER_HAIL, FLAG_DJINNI(DJINNI_HAIL), EVENT_SCRIPT(EventScript_MeetHail) },

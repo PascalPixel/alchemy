@@ -19,9 +19,14 @@ void ObjectMotion_SnapToTerrain(void *object) {
 /// The map grid's work (gMapGridWork[0], HEAP_SLOT_MAP_GRID), seen as its
 /// marker list.
 struct MapGridMarkers {
-  u8 unk00[0x10];
-  /// (column, row, id) triples, ended by 255, 255: a 16-pixel cell and the
-  /// trigger of the map event there; NULL for a map with none.
+  /// MapGridScrollWork's origin and shake; not named through this view.
+  ///@{
+  s32 *origin;
+  s32 shakeX, shakeY, shakeDecay;
+  ///@}
+  /// MapGridScrollWork's script, read here as (column, row, id) triples, ended
+  /// by 255, 255: a 16-pixel cell and the trigger of the map event there; NULL
+  /// for a map with none.
   u8 *markers;
 };
 

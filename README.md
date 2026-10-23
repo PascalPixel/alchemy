@@ -1,16 +1,18 @@
 # 🌋 Alchemy
 
-Alchemy is a decompilation of the Game Boy Advance games ☀️ **[Golden Sun: The Broken Seal](games/tbs/README.md)** and ⚓️ **Golden Sun: The Lost Age**. [Camelot](games/tbs/glossary.md#camelot) never released the games’ source code, so Alchemy writes it again: C code that compiles back into exactly the same cartridges. With it, anyone can read how Golden Sun works and change it, and every picture, song and line of dialogue is a file you can open and edit, in all six languages.
+Alchemy is a decompilation of the Game Boy Advance games ☀️ **[Golden Sun: The Broken Seal](games/tbs/README.md)** and ⚓️ **Golden Sun: The Lost Age**. [Camelot](games/tbs/glossary.md#camelot) never released the games’ source code, so Alchemy writes it again: C code that compiles back into exactly the same cartridges. With it, anyone can read how Golden Sun works, see every image, hear every song, and view every line of dialogue.
+
+## Why
 
 Hi, I’m Pascal Pixel! Golden Sun is my favorite game, and I started Alchemy in July 2026 as a hobby, to enjoy making things again after a burnout. I do this by managing AI agents, and it’s not unlike managing human engineers, just without the meetings 😝 Their rules are in [AGENTS.md](AGENTS.md).
 
 ## Progress
 
-The Broken Seal is fully rebuilt from this repository, in all six languages, and I’m now making its code easy to read. The Lost Age builds too, but the parts not yet rewritten still come from your own cartridge dump.
+The Broken Seal is fully rebuilt from this repository, in Japanese, English, German, French, Spanish, and Italian. The Lost Age is in progress, but the parts not yet rewritten still come from your own cartridge dump.
 
 <img src="https://alchemy.pascalpixel.com/PROGRESS_CHART.png" width="838" alt="How much of each game's code and data is rebuilt, day by day since 16 July 2026" />
 
-## Building
+## Build
 
 [INSTALL.md](INSTALL.md) has the commands for Linux, macOS and Windows. Every build is checked against the original cartridges’ hashes in [rom.sha1](rom.sha1).
 

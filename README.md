@@ -2,19 +2,17 @@
 
 Alchemy is a decompilation of the Game Boy Advance games ☀️ **[Golden Sun: The Broken Seal](games/tbs/README.md)** and ⚓️ **Golden Sun: The Lost Age**.
 
-<img src="https://alchemy.pascalpixel.com/places/vale/entrance.png" width="480" alt="Isaac in Vale, his village, as the game shows it" />
-
 ## What is a decompilation?
 
 [Camelot](games/tbs/glossary.md#camelot) wrote Golden Sun as source code, then compiled it into the `0`s and `1`s on the cartridge. They never released that source, so Alchemy writes it again: C code that compiles back into exactly the same `0`s and `1`s.
 
 It’s like working out a cake’s exact recipe by baking new cakes until one tastes identical. It’s mad, but it works!
 
-With the source, anyone can read how Golden Sun really works, from the damage formulas to every cutscene, and change it: rebalance it, translate it, add [maps](games/tbs/glossary.md#map), or build editors and ports on top of it.
-
 ## What’s in it?
 
-The source, not a game to download. Building it gives you back the games exactly as Camelot shipped them, in Japanese, English, German, Spanish, French and Italian. Every picture, song and line of dialogue is Camelot’s own, taken from the cartridge into files you can open and edit: PNGs, MIDI, WAV, and the text as translation catalogues. Remakes, mods and ports can grow from it in projects of their own.
+With the source, anyone can read how Golden Sun really works, from the damage formulas to every cutscene, and change it: rebalance it, translate it, add [maps](games/tbs/glossary.md#map), or build editors and ports on top of it.
+
+Building it gives you back the games exactly as Camelot shipped them, in Japanese, English, German, Spanish, French and Italian. Every picture, song and line of dialogue is as it is on the cartridge, but in files you can open and edit: PNGs, MIDI, WAV, and the text as translation catalogues. 
 
 ## How far along is it?
 
@@ -28,10 +26,6 @@ The Broken Seal is fully rebuilt: every byte of all six language [editions](game
 [The documentation](https://alchemy.pascalpixel.com/) explains how The Broken Seal works underneath, and it takes the game apart to show you. [Its front page](games/tbs/README.md) covers the big picture: how the game moves from one map to the next, and how it remembers how far the story has gone. Four pages go a layer deeper: [the world](games/tbs/world.md) you walk around, [battles](games/tbs/battle.md), [menus, windows and shops](games/tbs/menus.md) and [the engine](games/tbs/engine.md) underneath them all. The places have pages of their own too, with maps of their rooms and recordings of their events, and [the glossary](games/tbs/glossary.md) explains every word the pages share, from Psynergy to far calls.
 
 If you’d rather start in the code, [the source’s own guide](games/tbs/src/README.md) says what lives in which folder, and every folder has a guide of its own.
-
-## How can I help?
-
-The Lost Age is where matching still happens: the code still taken from the cartridge waits in `recon/tla`, as listings and drafts, until C is found that compiles to its exact instructions. [MATCHING.md](games/tbs/src/MATCHING.md) collects the C idioms that make the compiler produce the original instructions, learned on The Broken Seal, and [Alchemy Devtools](https://github.com/PascalPixel/alchemy-devtools) compares a draft with the cartridge and runs a permuter, a tool that tries random rewrites of a function until one matches.
 
 ## Can I build it myself?
 

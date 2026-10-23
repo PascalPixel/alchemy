@@ -42,11 +42,11 @@ enum {
 /// closed is freed here. WindowSystem_Update runs it each frame after the
 /// windows' zooms.
 void TextPrinter_RunAll(void) {
-  struct TextPrinter *channel = WINDOW_WORK->printers;
-  s32 channelNo = 0;
+  struct TextPrinter *printer = WINDOW_WORK->printers;
+  s32 printerIndex = 0;
 
   do {
-    struct Window *current = channel->window;
+    struct Window *current = printer->window;
 
     // A zooming window is left alone until its zoom ends.
     if (current != NULL && current->frame == 0 && current->duration == 0) {
@@ -54,41 +54,41 @@ void TextPrinter_RunAll(void) {
 
       // Flags 0 with no zoom left: the window has closed.
       if (flags == 0) {
-        channel->window = NULL;
+        printer->window = NULL;
       } else {
         s32 pending = current->effect;
         s32 step;
 
         if (pending != 0) {
-          Window_StepSwellEffect(channel);
+          Window_StepSwellEffect(printer);
         } else {
-          step = TextPrinter_Step(channel);
+          step = TextPrinter_Step(printer);
           switch (step) {
           case CHANNEL_STEP_ENDED:
-            channel->window->state = 1;
+            printer->window->state = 1;
             break;
           case CHANNEL_STEP_CLOSE: {
-            struct Window *window = channel->window;
+            struct Window *window = printer->window;
 
             Window_Close(window, window->flags & WINDOW_FLAG_INSTANT);
             // pending is 0 here: it clears the printer.
-            channel->x = pending;
-            channel->y = pending;
-            channel->textIndex = pending;
-            channel->countdown = pending;
-            channel->colour = pending;
-            channel->outline = pending;
-            channel->lineSpacing = pending;
-            channel->window->state = 1;
+            printer->x = pending;
+            printer->y = pending;
+            printer->textIndex = pending;
+            printer->countdown = pending;
+            printer->colour = pending;
+            printer->outline = pending;
+            printer->lineSpacing = pending;
+            printer->window->state = 1;
             break;
           }
           }
         }
       }
     }
-    channelNo++;
-    channel++;
-  } while (channelNo != 3);
+    printerIndex++;
+    printer++;
+  } while (printerIndex != 3);
 }
 
 /// Types one frame's share of a text printer's text: runs control codes (new
@@ -97,7 +97,7 @@ void TextPrinter_RunAll(void) {
 /// speed's glyphs a frame (gMessageSpeed_Steps) outside battle, where a space
 /// or a control code also ends it; in battle it is 8 glyphs, or 13 after a
 /// frame that took two VBlanks or more.
-s32 TextPrinter_Step(struct TextPrinter *channel) {
+s32 TextPrinter_Step(struct TextPrinter *printer) {
   struct WindowWork *work = WINDOW_WORK;
   // The ROM reads gKeysHeld here once and never uses the value.
   u32 keys = gKeysHeld;
@@ -132,40 +132,40 @@ s32 TextPrinter_Step(struct TextPrinter *channel) {
   }
 
   // Finish scrolling the canvas up a line before any more text.
-  if (channel->transition != 0) {
+  if (printer->transition != 0) {
     Text_ScrollCanvasUp(1);
-    channel->transition = (s16)channel->transition - 1;
+    printer->transition = (s16)printer->transition - 1;
     return CHANNEL_STEP_RUNNING;
   }
   // With no button held, wait out the delay after the last glyph.
-  if (gKeysHeld == 0 && channel->glyphDelay != 0) {
-    channel->glyphDelay--;
+  if (gKeysHeld == 0 && printer->glyphDelay != 0) {
+    printer->glyphDelay--;
     return CHANNEL_STEP_RUNNING;
   }
 
   // Run control codes and draw characters until this frame's share is done.
   do {
     code = TEXT_END;
-    if (channel->ended == 0)
-      code = work->textBuffer[channel->textIndex];
+    if (printer->ended == 0)
+      code = work->textBuffer[printer->textIndex];
 
     if (code < TEXT_COMMANDS) {
       switch (code) {
       case TEXT_NEWLINE:
         // Canvas lines are 13 pixels apart, and from the second line on the
         // canvas scrolls up instead; other windows' lines are 15 apart.
-        channel->x = channel->startX;
-        if (channel->window->flags & WINDOW_FLAG_TEXT_CANVAS) {
-          if (channel->y >= 13 << 8) {
-            Text_StartCanvasScroll(channel);
+        printer->x = printer->startX;
+        if (printer->window->flags & WINDOW_FLAG_TEXT_CANVAS) {
+          if (printer->y >= 13 << 8) {
+            Text_StartCanvasScroll(printer);
             glyphsLeft = 1;
           } else {
-            channel->y += 13 << 8;
+            printer->y += 13 << 8;
           }
         } else {
-          channel->y += 15 << 8;
-          if (channel->line <= 2)
-            channel->line++;
+          printer->y += 15 << 8;
+          if (printer->line <= 2)
+            printer->line++;
         }
         break;
 
@@ -174,15 +174,15 @@ s32 TextPrinter_Step(struct TextPrinter *channel) {
         // is set to 919 each frame and counted down once, so it is below 900
         // only on the wait's first frame. Then, under Mind Read, presses
         // latched before the wait are dropped.
-        if (work->mindRead != 0 && channel->countdown < 900)
+        if (work->mindRead != 0 && printer->countdown < 900)
           gKeysPressedLatch = 0;
-        channel->countdown = 919;
-        if (Text_CheckTextDismissed(channel) == 0) {
+        printer->countdown = 919;
+        if (Text_CheckTextDismissed(printer) == 0) {
           // Until the button: show the next-page arrow in the bottom-right
           // corner. Outside Japanese, a window with no size (as
           // FieldMessage_ShowCentered opens with CENTERED_MESSAGE_BARE) shows
           // none.
-          struct Window *pane = channel->window;
+          struct Window *pane = printer->window;
 
 #if TBS_PATCH_1
           if (pane->width == 0 || pane->height == 0 ||
@@ -200,26 +200,26 @@ s32 TextPrinter_Step(struct TextPrinter *channel) {
         // Clear the window, and refit it to the next page's text. A text
         // printer started with flags set keeps the window's size; the frame is
         // drawn again only when text follows the break.
-        window = channel->window;
+        window = printer->window;
         x = window->x;
         y = window->y;
         oldWidth = window->width;
         oldHeight = window->height;
-        entryIndex = channel->textIndex;
+        entryIndex = printer->textIndex;
         work->pageArrowShown = 0;
         WindowSprite_PrepareForRedraw(window);
-        if (channel->flags == 0 && (window->width | window->height) != 0)
+        if (printer->flags == 0 && (window->width | window->height) != 0)
           Window_EraseBorderRect(window->x, window->y, window->width,
                                  window->height);
         entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
         if (work->textBuffer[entryIndex] != 0 &&
             (window->width | window->height) != 0) {
-          if (channel->flags != 0) {
+          if (printer->flags != 0) {
             Window_EraseBorderRect(window->x, window->y, window->width,
                                    window->height);
           } else {
             Window_FitOnScreen(entryIndex, &x, &y, &newWidth, &newHeight,
-                               channel->spacing, 0);
+                               printer->spacing, 0);
             if (window->flags & WINDOW_FLAG_ANCHOR_BOTTOM) {
               if (oldHeight != newHeight)
                 y -= newHeight - oldHeight;
@@ -232,7 +232,7 @@ s32 TextPrinter_Step(struct TextPrinter *channel) {
               // fit it on the screen again at its new size (flags 2).
               x += (s32)(oldWidth - newWidth) / 4;
               Window_FitOnScreen(entryIndex, &x, &y, &newWidth, &newHeight,
-                                 channel->spacing, 2);
+                                 printer->spacing, 2);
             }
             window->x = x;
             window->y = y;
@@ -241,16 +241,16 @@ s32 TextPrinter_Step(struct TextPrinter *channel) {
           }
           Window_DrawFrame(window->x, window->y, window->width, window->height);
         }
-        channel->x = channel->startX;
-        channel->y = 0;
-        channel->line = 0;
+        printer->x = printer->startX;
+        printer->y = 0;
+        printer->line = 0;
         // The French, Spanish and Italian releases also start each page in the
         // default style.
 #if TBS_PATCH_3
-        channel->colour = 15;
-        channel->outline = TEXT_STYLE_PLAIN;
-        channel->lineSpacing = 10;
-        TextPrinter_ApplyStyle(channel);
+        printer->colour = 15;
+        printer->outline = TEXT_STYLE_PLAIN;
+        printer->lineSpacing = 10;
+        TextPrinter_ApplyStyle(printer);
 #endif
         VramCache_FreeEntry(work->glyphResource);
         work->glyphResource = NO_GLYPH_RESOURCE;
@@ -258,71 +258,71 @@ s32 TextPrinter_Step(struct TextPrinter *channel) {
 
       case TEXT_WAIT_KEY:
         // The same hold as a page break's.
-        if (work->mindRead != 0 && channel->countdown < 900)
+        if (work->mindRead != 0 && printer->countdown < 900)
           gKeysPressedLatch = 0;
-        if (Text_CheckTextDismissed(channel) != 0)
+        if (Text_CheckTextDismissed(printer) != 0)
           return CHANNEL_STEP_CLOSE;
-        channel->countdown = 919;
+        printer->countdown = 919;
         break;
 
       case TEXT_PAUSE_SHORT:
-        if (channel->countdown == 0)
-          channel->countdown = 20;
+        if (printer->countdown == 0)
+          printer->countdown = 20;
         work->voiceCountdown = 0;
-        Text_CheckPauseSkipped(channel);
+        Text_CheckPauseSkipped(printer);
         break;
 
       case TEXT_PAUSE_LONGEST:
-        if (channel->countdown == 0)
-          channel->countdown = 120;
+        if (printer->countdown == 0)
+          printer->countdown = 120;
         work->voiceCountdown = 0;
-        Text_CheckPauseSkipped(channel);
+        Text_CheckPauseSkipped(printer);
         break;
 
       case TEXT_PAUSE_LONG:
-        if (channel->countdown == 0)
-          channel->countdown = 60;
+        if (printer->countdown == 0)
+          printer->countdown = 60;
         work->voiceCountdown = 0;
         break;
 
       case TEXT_COLOR:
-        channel->textIndex = (channel->textIndex + 1) & TEXT_BUFFER_MASK;
-        channel->colour = work->textBuffer[channel->textIndex];
-        TextPrinter_ApplyStyle(channel);
+        printer->textIndex = (printer->textIndex + 1) & TEXT_BUFFER_MASK;
+        printer->colour = work->textBuffer[printer->textIndex];
+        TextPrinter_ApplyStyle(printer);
         break;
 
       case TEXT_OUTLINE:
-        channel->textIndex = (channel->textIndex + 1) & TEXT_BUFFER_MASK;
-        channel->outline = work->textBuffer[channel->textIndex];
-        TextPrinter_ApplyStyle(channel);
+        printer->textIndex = (printer->textIndex + 1) & TEXT_BUFFER_MASK;
+        printer->outline = work->textBuffer[printer->textIndex];
+        TextPrinter_ApplyStyle(printer);
         break;
 
       case TEXT_LINE_SPACING:
-        channel->textIndex = (channel->textIndex + 1) & TEXT_BUFFER_MASK;
-        channel->lineSpacing = work->textBuffer[channel->textIndex];
-        TextPrinter_ApplyStyle(channel);
+        printer->textIndex = (printer->textIndex + 1) & TEXT_BUFFER_MASK;
+        printer->lineSpacing = work->textBuffer[printer->textIndex];
+        TextPrinter_ApplyStyle(printer);
         break;
 
       case TEXT_COLORS_RESET:
-        channel->colour = 15;
-        channel->outline = TEXT_STYLE_PLAIN;
-        channel->lineSpacing = 10;
-        TextPrinter_ApplyStyle(channel);
+        printer->colour = 15;
+        printer->outline = TEXT_STYLE_PLAIN;
+        printer->lineSpacing = 10;
+        TextPrinter_ApplyStyle(printer);
         break;
 
       case TEXT_WINDOW_STATE:
         // The effect lasts while the countdown of 10 runs out
         // (Window_StepSwellEffect counts it down); typing then resumes after
         // the operand.
-        channel->textIndex = (channel->textIndex + 1) & TEXT_BUFFER_MASK;
-        channel->window->effect = work->textBuffer[channel->textIndex];
-        channel->countdown = 10;
-        channel->textIndex = (channel->textIndex + 1) & TEXT_BUFFER_MASK;
+        printer->textIndex = (printer->textIndex + 1) & TEXT_BUFFER_MASK;
+        printer->window->effect = work->textBuffer[printer->textIndex];
+        printer->countdown = 10;
+        printer->textIndex = (printer->textIndex + 1) & TEXT_BUFFER_MASK;
         break;
 
       case TEXT_END:
       case TEXT_END_ALT:
-        channel->ended = 1;
+        printer->ended = 1;
         return CHANNEL_STEP_ENDED;
       }
 
@@ -331,10 +331,10 @@ s32 TextPrinter_Step(struct TextPrinter *channel) {
         glyphsLeft = 1;
     } else {
       // A character: draw it at the pen position, rounded to whole pixels.
-      pixelX = (channel->x + 128) / 256;
-      pixelY = (channel->y + 128) / 256;
+      pixelX = (printer->x + 128) / 256;
+      pixelY = (printer->y + 128) / 256;
       voiceGap = gMessageSpeed_VoiceGaps[gGameState.messageSpeed];
-      nextEntryIndex = channel->textIndex;
+      nextEntryIndex = printer->textIndex;
       // Under Mind Read the text starts 8 pixels further in (Japanese and
       // English), in the window Window_FitOnScreen made 2 tiles wider.
 #if !TBS_PATCH_2
@@ -347,10 +347,10 @@ s32 TextPrinter_Step(struct TextPrinter *channel) {
       // A kana mark after the character is drawn with it.
       if (nextCode == TEXT_VOICED_MARK) {
         code |= TEXT_CODE_VOICED;
-        channel->textIndex = (channel->textIndex + 1) & TEXT_BUFFER_MASK;
+        printer->textIndex = (printer->textIndex + 1) & TEXT_BUFFER_MASK;
       } else if (nextCode == TEXT_SEMIVOICED_MARK) {
         code |= TEXT_CODE_SEMIVOICED;
-        channel->textIndex = (channel->textIndex + 1) & TEXT_BUFFER_MASK;
+        printer->textIndex = (printer->textIndex + 1) & TEXT_BUFFER_MASK;
       }
 #endif
 #if (LANGUAGE != LANGUAGE_JAPANESE)
@@ -359,7 +359,7 @@ s32 TextPrinter_Step(struct TextPrinter *channel) {
       // widths at most, and in Spanish 14 with an outline (style 1), which
       // widens each glyph by one.
 #if (LANGUAGE == LANGUAGE_SPANISH)
-      if (!(channel->window->flags & WINDOW_FLAG_TEXT_CANVAS) &&
+      if (!(printer->window->flags & WINDOW_FLAG_TEXT_CANVAS) &&
           code > TEXT_SPACE && nextCode > TEXT_SPACE) {
         s16 pair = gFont_Glyphs[code - TEXT_SPACE].width +
                    gFont_Glyphs[nextCode - TEXT_SPACE].width;
@@ -367,26 +367,26 @@ s32 TextPrinter_Step(struct TextPrinter *channel) {
         if (work->outline == TEXT_STYLE_OUTLINED) {
           if ((u16)pair <= 14) {
             code |= nextCode << 8;
-            channel->textIndex = (channel->textIndex + 1) & TEXT_BUFFER_MASK;
+            printer->textIndex = (printer->textIndex + 1) & TEXT_BUFFER_MASK;
           }
         } else if ((u16)pair <= 15) {
           code |= nextCode << 8;
-          channel->textIndex = (channel->textIndex + 1) & TEXT_BUFFER_MASK;
+          printer->textIndex = (printer->textIndex + 1) & TEXT_BUFFER_MASK;
         }
       }
 #else
-      if (!(channel->window->flags & WINDOW_FLAG_TEXT_CANVAS) &&
+      if (!(printer->window->flags & WINDOW_FLAG_TEXT_CANVAS) &&
           code > TEXT_SPACE && nextCode > TEXT_SPACE &&
           (u16)(gFont_Glyphs[code - TEXT_SPACE].width +
                 gFont_Glyphs[nextCode - TEXT_SPACE].width) <= 15) {
         code |= nextCode << 8;
-        channel->textIndex = (channel->textIndex + 1) & TEXT_BUFFER_MASK;
+        printer->textIndex = (printer->textIndex + 1) & TEXT_BUFFER_MASK;
       }
 #endif
 #endif
-      glyphWidth = Glyph_Draw(channel->window, code, pixelX, pixelY,
+      glyphWidth = Glyph_Draw(printer->window, code, pixelX, pixelY,
                               GLYPH_DRAW_CHARACTER);
-      channel->glyphDelay = gMessageSpeed_Delays[gGameState.messageSpeed];
+      printer->glyphDelay = gMessageSpeed_Delays[gGameState.messageSpeed];
       if (glyphWidth != 0) {
         // The speaker's voice blip (voiceSound, the first of four
         // sounds, one picked by the code's low two bits) every few characters
@@ -404,11 +404,11 @@ s32 TextPrinter_Step(struct TextPrinter *channel) {
         glyphAdvance = glyphWidth << 8;
 #if (LANGUAGE != LANGUAGE_JAPANESE)
         if (code == TEXT_SPACE)
-          glyphAdvance += channel->spacing[channel->line];
+          glyphAdvance += printer->spacing[printer->line];
 #else
-        glyphAdvance += channel->spacing[channel->line];
+        glyphAdvance += printer->spacing[printer->line];
 #endif
-        channel->x += glyphAdvance;
+        printer->x += glyphAdvance;
       }
       // In Japanese a character that advances nothing (Glyph_Draw
       // returns 0, as it does when no window sprite is free) closes the
@@ -423,12 +423,12 @@ s32 TextPrinter_Step(struct TextPrinter *channel) {
     }
 
     // A pause holds the printer on this entry until its countdown ends.
-    if (channel->countdown != 0) {
-      channel->countdown--;
-      if (channel->countdown != 0)
+    if (printer->countdown != 0) {
+      printer->countdown--;
+      if (printer->countdown != 0)
         continue;
     }
-    channel->textIndex = (channel->textIndex + 1) & TEXT_BUFFER_MASK;
+    printer->textIndex = (printer->textIndex + 1) & TEXT_BUFFER_MASK;
   } while (--glyphsLeft != 0);
 
   return CHANNEL_STEP_RUNNING;

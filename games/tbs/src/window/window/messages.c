@@ -124,12 +124,12 @@ s32 *Runtime_ClearWordIfSet(s32 *p) {
 
 /// Closes every window: first the text printers' windows, waiting until
 /// they have closed, then the windows opened directly, which it does not wait
-/// for. Channel references are cleared only after their windows finish
+/// for. A printer lets go of its window only once the window has finished
 /// closing. Reached from the debug message viewer (DebugBattle_ViewMessages,
 /// battle/battle/debug.c).
 void Window_CloseAll(s32 unused) {
   struct WindowWork *uw;
-  struct TextPrinter *ch;
+  struct TextPrinter *printer;
   struct Window *win;
   u32 done;
   struct Window *work;
@@ -138,31 +138,31 @@ void Window_CloseAll(s32 unused) {
   u16 flag;
 
   uw = WINDOW_WORK;
-  ch = uw->printers;
+  printer = uw->printers;
   win = uw->windows;
   i = 0;
   do {
-    work = ch->window;
+    work = printer->window;
     if (work != 0 && work->flags != 0)
       Window_Close(work, 0);
     i++;
-    ch++;
+    printer++;
   } while (i != 3);
 
   // Free each printer whose window has closed; while one is still closing,
   // wait a frame.
   for (;;) {
     done = 1;
-    ch = uw->printers;
+    printer = uw->printers;
     i = 0;
     do {
-      poll_work = ch->window;
+      poll_work = printer->window;
       if (poll_work != 0) {
         if (poll_work->frame == 0 && poll_work->duration == 0) {
           flag = poll_work->flags;
           // flag is 0 here: the printer is set free.
           if (flag == 0)
-            ch->window = (struct Window *)(u32)flag;
+            printer->window = (struct Window *)(u32)flag;
           else
             done = 0;
         } else {
@@ -170,7 +170,7 @@ void Window_CloseAll(s32 unused) {
         }
       }
       i++;
-      ch++;
+      printer++;
     } while (i != 3);
     i = 0;
     if (done)
@@ -194,8 +194,8 @@ void Window_CloseAll(s32 unused) {
 /// normal. Any other effect is left set and does nothing, so the printer types
 /// no more text. TextPrinter_RunAll calls it in place of typing while the
 /// window has an effect.
-void Window_StepSwellEffect(struct TextPrinter *channel) {
-  struct Window *window = channel->window;
+void Window_StepSwellEffect(struct TextPrinter *printer) {
+  struct Window *window = printer->window;
   s32 effect = window->effect;
   s32 x = window->x;
   s32 y = window->y;
@@ -206,11 +206,11 @@ void Window_StepSwellEffect(struct TextPrinter *channel) {
     return;
 
   Window_DrawFrame(x - 1, y - 1, width + 2, height + 2);
-  channel->countdown--;
-  if (channel->countdown != 0)
+  printer->countdown--;
+  if (printer->countdown != 0)
     return;
 
-  channel->window->effect = 0;
+  printer->window->effect = 0;
   Window_EraseBorderRect(x - 1, y - 1, width + 2, height + 2);
   Window_DrawFrame(x, y, width, height);
 }
@@ -280,7 +280,7 @@ u32 MessageArgument_Lookup(u32 kind, u32 clear) {
 /// This path uses held keys; dismissal below uses newly pressed keys instead.
 /// TextPrinter_Step asks it each frame of a short or longest pause;
 /// the long pause cannot be cut short.
-s32 Text_CheckPauseSkipped(struct TextPrinter *channel) {
+s32 Text_CheckPauseSkipped(struct TextPrinter *printer) {
   struct WindowWork *work = WINDOW_WORK;
   s32 cancelKeys = 0;
   s32 zero;
@@ -291,7 +291,7 @@ s32 Text_CheckPauseSkipped(struct TextPrinter *channel) {
   if (gKeysHeld & (KEY_A | KEY_B | KEYS_SHOULDERS))
     cancelKeys = 1;
   if (cancelKeys != zero) {
-    channel->countdown = zero;
+    printer->countdown = zero;
     return 1;
   }
   return zero;
@@ -302,7 +302,7 @@ s32 Text_CheckPauseSkipped(struct TextPrinter *channel) {
 /// dismissed the text.
 /// Mode chooses latched presses rather than changing which buttons dismiss
 /// text.
-s32 Text_CheckTextDismissed(struct TextPrinter *channel) {
+s32 Text_CheckTextDismissed(struct TextPrinter *printer) {
   struct WindowWork *work = WINDOW_WORK;
   s32 pressedKeys;
   s32 cancelKeys = 0;
@@ -317,7 +317,7 @@ s32 Text_CheckTextDismissed(struct TextPrinter *channel) {
   if (pressedKeys & (KEY_A | KEY_B | KEYS_SHOULDERS))
     cancelKeys = 1;
   if (cancelKeys != 0) {
-    channel->countdown = zero;
+    printer->countdown = zero;
     return 1;
   }
   return 0;
@@ -328,19 +328,19 @@ s32 Text_CheckTextDismissed(struct TextPrinter *channel) {
 /// typing open.
 void TextPrinter_CloseFinishedWindows(void) {
   s32 i;
-  struct TextPrinter *ch;
+  struct TextPrinter *printer;
   struct Window *work;
 
-  ch = WINDOW_WORK->printers;
+  printer = WINDOW_WORK->printers;
   i = 0;
   do {
-    work = ch->window;
+    work = printer->window;
     if (work != NULL && work->frame == 0 && work->duration == 0 &&
         work->flags != 0 && work->state != 0) {
       Window_Close(work, WINDOW_FLAG_INSTANT & work->flags);
     }
     i++;
-    ch++;
+    printer++;
   } while (i != 3);
   WaitFrames(10);
 }

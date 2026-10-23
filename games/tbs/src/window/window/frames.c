@@ -231,12 +231,12 @@ void Window_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height,
 /// a time; a window whose text has ended counts as finished though it is still
 /// open.
 s32 TextPrinter_AllFinished(void) {
-  struct TextPrinter *ch;
+  struct TextPrinter *printer;
   s32 i;
 
-  ch = WINDOW_WORK->printers;
-  for (i = 0; i != 3; i++, ch++) {
-    if (ch->window != NULL && ch->window->state == 0)
+  printer = WINDOW_WORK->printers;
+  for (i = 0; i != 3; i++, printer++) {
+    if (printer->window != NULL && printer->window->state == 0)
       return 0;
   }
   return 1;
@@ -334,7 +334,7 @@ void BattleMessage_Close(void) {
 /// when none was free.
 void BattleMessage_Open(s32 argument) {
   s32 entryIndex;
-  struct TextPrinter *channel;
+  struct TextPrinter *printer;
   struct Window *previousWindow;
   struct Window *messageWindow;
   struct WindowWork *state;
@@ -345,7 +345,7 @@ void BattleMessage_Open(s32 argument) {
       gWindowWork[HEAP_SLOT_BATTLE_MESSAGE - HEAP_SLOT_WINDOW];
   // printer starts as NULL, though it is assigned again before it is read; the
   // same zero clears marked below
-  channel = NULL;
+  printer = NULL;
   // battleMode 2 while decoding marks a battle message: the Japanese decoder
   // then sets names off with spaces and style codes, and doubles each space.
   state->battleMode = 2;
@@ -366,13 +366,13 @@ void BattleMessage_Open(s32 argument) {
       messageWindow = previousWindow;
     }
     if (messageWindow != NULL) {
-      channel =
+      printer =
           BattleMessage_Continue(messageWindow, entryIndex, control->marked);
-      control->offset = (struct BattleMessageOffset *)channel;
+      control->offset = (struct BattleMessageOffset *)printer;
       control->marked = 0;
       // With no printer free the window is closed, though control->window
       // still names its slot.
-      if (channel == NULL) {
+      if (printer == NULL) {
         Window_Close(messageWindow, 1);
       }
     }
@@ -396,7 +396,7 @@ void BattleMessage_ShowAndWait(s32 argument) {
 s32 Message_OpenDecoded(struct Window *window, s32 message) {
   struct WindowWork *work = WINDOW_WORK;
   s32 entry;
-  s32 channel = 0;
+  s32 printer = 0;
   /* FAKEMATCH(dead): an unused array for the frame's 8 bytes above the
    * outgoing arguments; as no array, 2 of 42 instructions differ in tbs-en. */
   UNUSED u16 frameReserve[4];
@@ -408,10 +408,10 @@ s32 Message_OpenDecoded(struct Window *window, s32 message) {
     return 0;
   if (window == 0)
     return 0;
-  channel = (s32)TextPrinter_Add(window, entry, 0, 0, 0, 1);
-  if (channel == 0)
+  printer = (s32)TextPrinter_Add(window, entry, 0, 0, 0, 1);
+  if (printer == 0)
     return 0;
-  return channel;
+  return printer;
 }
 
 /// Sets the effects the next message is decoded with

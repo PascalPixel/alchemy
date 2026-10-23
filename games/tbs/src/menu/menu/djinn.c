@@ -754,7 +754,7 @@ s32 DjinnMenu_ShowHelp(void) {
   s32 previous;
   s32 selection;
   struct Window *list;
-  struct TextPrinter *channel;
+  struct TextPrinter *printer;
   s32 message;
   s32 helpIndex;
   s32 listMessage;
@@ -788,7 +788,7 @@ s32 DjinnMenu_ShowHelp(void) {
   do {
     WindowSprite_PrepareForRedrawFar(statusWindow);
     Text_DrawMessageFar(selection + MsgDjinnInfoTopic, statusWindow, 0, 0);
-    channel = (struct TextPrinter *)Message_OpenDecodedFar(
+    printer = (struct TextPrinter *)Message_OpenDecodedFar(
         helpWindow, selection + MsgDjinnInfoText);
     Window_SetInteriorPaletteBitRect(list, 0, previous, 6, 1, 15);
     Window_SetInteriorPaletteBitRect(list, 0, selection, 6, 1, 14);
@@ -826,7 +826,7 @@ s32 DjinnMenu_ShowHelp(void) {
       }
     }
     // Before the next topic: free the page arrow's VRAM slot the text took
-    // (99: none), and stop the text's channel typing.
+    // (99: none), and stop the text's printer typing.
     if (work->glyphResource != 99) {
       VramCache_FreeEntry(work->glyphResource);
       work->glyphResource = 99;
@@ -834,13 +834,13 @@ s32 DjinnMenu_ShowHelp(void) {
     ((struct WindowWork *)gWindowWork[0])->pageArrowShown = 0;
     WindowSprite_PrepareForRedrawFar(helpWindow);
     {
-      struct Window *window = channel->window;
+      struct Window *window = printer->window;
 
       window->frame = 0;
       window->duration = 0;
       window->state = 0;
     }
-    channel->window = NULL;
+    printer->window = NULL;
   } while (result == 0);
   ((struct WindowWork *)gWindowWork[0])->holdTilemapUpload = 1;
   WindowSprite_ClearListFar(statusWindow);

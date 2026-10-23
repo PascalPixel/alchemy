@@ -140,7 +140,7 @@ it back mended.
 A rare item is not stocked by one shop: it has a counter for the whole game,
 and every shop of its kind sells it while that counter is above zero.
 
-![Each rare item has one counter for the whole game. The first time a shop that lists it is opened, its counter goes up by one; buying one takes one off; selling or dropping one puts one back. A shop's Artifacts list is every item of its kind whose counter is above zero. On a new game, Bilibin's weapon shop lists the Witch's Wand alone, which its first visit has just counted. If Vault's weapon shop was opened first, the Magic Rod is already counted, and Bilibin's Artifacts list shows the Magic Rod as well.](https://alchemy.pascalpixel.com/illustrations/shop/artifacts.svg)
+![Each rare item has one counter for the whole game. The first time a shop that lists it is opened, its counter goes up by one; buying one takes one off; selling or dropping one puts one back. A shop's Artifacts list is every item of its kind whose counter is above zero. The party reaches Vault before Bilibin. Vault's weapon shop counts its rare item, the Magic Rod, on its first visit and lists it. Later, Bilibin's weapon shop counts its own, the Witch's Wand, and lists both: the Magic Rod is still counted from Vault unless the party bought it there.](https://alchemy.pascalpixel.com/illustrations/shop/artifacts.svg)
 
 The first time the player opens a shop, each rare item in its row is counted
 once. Buying one takes it off the count; selling or dropping one puts it
@@ -159,10 +159,10 @@ item the party sells, drops or discards goes through `Inventory_Discard`,
 which adds one back. An item that two shops' rows list can therefore be
 bought twice once both shops have been visited.
 
-In the picture, Bilibin's weapon shop is row 7, whose only artifact is the
-Witch's Wand, and Vault's weapon shop is row 4, whose only artifact is the
-Magic Rod. Its second view starts a new game with the counters
-(`gItemCounters`) as a run that opened Vault's weapon shop left them.
+In the picture, Vault's weapon shop is row 4, whose only artifact is the
+Magic Rod, and Bilibin's weapon shop is row 7, whose only artifact is the
+Witch's Wand; the counters are `gItemCounters`. The icons are the items'
+own, from `graphics/ui/menu_icons`, at three times their size.
 
 ## Sanctums
 

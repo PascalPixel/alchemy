@@ -36,7 +36,7 @@ veneer, a tiny piece of code at the start of the called bank that only jumps
 on to the function. A bare veneer, one with no name of its own, has no
 symbol, so no code can branch to it, and the far-call table's own
 directory row is passed only to stubs that do nothing ([System](../system/README.md));
-the retail game therefore never turns debug mode on. [Unused](../../unused.md#debug-scenes) explains why the
+the retail game therefore never turns debug mode on. [Unused](../../unused.md#debug-maps) explains why the
 rooms count as reachable rather than unused.
 
 | Map | Overlay | Room |

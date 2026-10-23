@@ -1,6 +1,6 @@
 # ☀️ The Broken Seal
 
-![The game runs one scene at a time. The whole game is one loop. At power-on the first scene is the title. Each time round, the game first drops everything the last scene left behind. Then it runs the next scene. A place, such as a town, a dungeon or the world map, has its code loaded and runs until the party takes an exit, and the exit names the next scene. A battle or a minigame runs and then sends the party back, most often to where it stood before. Then the loop goes round again. A random battle is a scene like any other: the place ends, and is loaded again after.](https://alchemy.pascalpixel.com/illustrations/front/main-loop.svg)
+![The game runs one scene at a time, in a loop that goes round once for each scene, not once a frame. At power-on the first scene is the title. Each time round, the game first drops everything the last scene left behind. Then it runs the next scene. A place, such as a town, a dungeon or the world map, has its code loaded and runs until the party takes an exit, and the exit names the next scene. A battle or a minigame runs and then sends the party back, most often to where it stood before. Then the loop goes round again. A random battle is a scene like any other: the place ends, and is loaded again after.](https://alchemy.pascalpixel.com/illustrations/front/main-loop.svg)
 
 The Broken Seal plays one scene at a time: a room, a town, a dungeon floor,
 the world map, a battle. When the party walks through a door, the game ends
@@ -12,8 +12,11 @@ one folder for each large bank.
 
 ## The main loop
 
-The whole game is one loop that runs one scene, then the next, for as long as
-the game is on.
+The game runs one scene, then the next, for as long as it is on. This loop
+goes round once for each scene, not once a frame: a scene can last for
+minutes, and while it runs, its own code waits frame by frame and the
+engine keeps the screen moving, as [Engine](engine.md#waiting-and-tasks)
+explains.
 
 Each time round, the game first clears away everything the last scene left
 behind, so nothing one scene set up can leak into the next. Then it runs the
@@ -22,17 +25,28 @@ which scene comes next and where the party arrives. A battle or a minigame is
 a scene too: it runs, and then the game picks the scene to go back to, most
 often the place the battle started from, with everyone where they stood.
 
-`Game_Run`, in [object/scene.c](src/object/object/scene.c), is the game's
-main loop, and it never returns. `System_Initialize` calls it at power-on
+`Game_Run`, in [object/scene.c](src/object/object/scene.c), is this loop of
+scenes, and it never returns. `System_Initialize` calls it at power-on
 with `GAME_RUN_TITLE`, which makes the title (`SceneId_Title`) the first
 scene; the debug start modes begin at Vale's gate or the clear screen
 instead, and only while `gDebugMode` is set. The current scene and the
 entrance the party arrives by are `gGameState.scene` and
 `gGameState.entrance`.
 
-Each pass of the loop stops the DMA channel a scene may have left running
-for an HBlank effect, drops every task and the HBlank and VCount handlers,
-and empties the heap. Then it does one of two things:
+Each pass of the loop first clears away what the last scene left running:
+
+- DMA channel 0, if a scene left it running. A DMA channel is a part of the
+  console that copies memory by itself, and a scene can set one to change a
+  display setting during every HBlank, the short pause after each line of
+  the screen is drawn, for a wave or a tilt.
+- Every task, the functions the engine calls once a frame for a scene (one
+  types out text, another scrolls the map).
+- The HBlank and VCount handlers, functions the hardware calls after each
+  line, or when it reaches one chosen line.
+- The heap, the memory from which scenes borrow blocks for their state; it
+  is emptied, so every block the last scene held is free again.
+
+Then it does one of two things:
 
 - A field scene has its flags updated (`Scene_ResetFlagsOnEnter`), its music
   started unless `FLAG_KEEP_MUSIC` or `FLAG_KEEP_MUSIC_HELD` keeps what is
@@ -50,19 +64,22 @@ and empties the heap. Then it does one of two things:
 
 A random battle is therefore an exit like any other: the field scene sets
 the next scene to `SCENE_BATTLE` and leaves, and the loop loads it again
-afterwards. [Field objects](src/object/README.md) follows a field scene from
-`Field_RunScene` to its exit, including how a battle is chosen from the
+afterwards. [Running a place](src/object/README.md) follows a field scene
+from `Field_RunScene` to its exit, including how a battle is chosen from the
 encounter zones in `encounter.tsv`.
+
+The tables on this page give each value as an ordinary number, with the
+hexadecimal form the source writes it in beside it.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
 | `GAME_RUN_TITLE` | 0 | start at the title, with a fresh game state |
 | `GAME_RUN_DEBUG_VALE` | 1 | in debug mode, start at `SceneId_ValeGate` |
 | `GAME_RUN_DEBUG_CLEAR` | 2 | in debug mode, start at the clear screen |
-| `SCENE_BLANK` | `0x1fb` | the first scene number with no row in the scene table |
-| `SCENE_REEL_GAME` | `0x1fc` | Lucky Wheels at Tolbi's spring |
-| `SCENE_LUCKY_DICE` | `0x1fd` | Lucky Dice at Tolbi's spring |
-| `SCENE_BATTLE` | `0x1fe` | a battle |
+| `SCENE_BLANK` | 507 (`0x1fb`) | the first scene number with no row in the scene table, whose rows are 0 to 200 |
+| `SCENE_REEL_GAME` | 508 (`0x1fc`) | Lucky Wheels at Tolbi's spring |
+| `SCENE_LUCKY_DICE` | 509 (`0x1fd`) | Lucky Dice at Tolbi's spring |
+| `SCENE_BATTLE` | 510 (`0x1fe`) | a battle |
 
 ## Scenes and overlays
 
@@ -74,15 +91,18 @@ its code is unpacked from the cartridge over the last place's.
 The console has little memory, and most of what a place needs (who is there,
 what they say, its cutscenes) matters nowhere else. So each place's code is
 an overlay: a packed piece of code that `Resource_LoadCode` unpacks into
-`gOverlayArea`, 32 KB of EWRAM, when the scene loads, over the one before.
+`gOverlayArea`, 32 KB of EWRAM (the console's larger, slower work memory,
+256 KB in all), when the scene loads, over the one before.
 
-The field engine knows a scene only through the six stubs at the start of
-its overlay (`struct SceneEntries`): its initialization, and the functions
+The field engine knows a scene only through six entry points, short jumps
+at the start of its overlay (`struct SceneEntries`): its initialization, and the functions
 that return its entrances, exits, placements, events and exit regions. They
 are functions rather than pointers to tables so that a scene can return a
 different table as the story moves on. Each overlay also ends in an import
-table of the main-image functions it calls, reached through the far-call
-tables; overlays never call each other, and code several scenes need is
+table of the main program's functions it calls, each reached through the
+jump table at the start of the bank that holds it ([How the code is
+organised](#how-the-code-is-organised) explains banks); overlays never call
+each other, and code several scenes need is
 compiled into each of them from `scene/common/`.
 [Scenes](src/scene/README.md) describes the tables and how to find an event,
 and [Engine](engine.md#overlays) the overlay's two tables.
@@ -185,12 +205,12 @@ code can never run, and its comment opens with `Unused:` and says why.
 | Name | Value | Meaning |
 | --- | --- | --- |
 | `FLAG_DJINNI_0` | 48 | Flint's flag; each Djinni's is this plus its `DjinniId` |
-| `FLAG_KEEP_PARTY_POSITION` | `0x109` | keeps both cleared ranges, and the party where it was |
-| `FLAG_KEEP_MUSIC` | `0x11a` | keeps the music for one scene change |
-| `FLAG_KEEP_MUSIC_HELD` | `0x11b` | keeps the music for as long as it is set |
-| `FLAG_PLACE_VISITED(group)` | `0x180` + group | the place's marker on the world map screen |
-| `FLAG_SCENE_FIRST` to `FLAG_SCENE_LAST` | `0x200` to `0x2ff` | the scene's 256 flags, cleared on every ordinary entrance |
-| `FLAG_PLACE_FIRST` to `FLAG_PLACE_LAST` | `0x300` to `0x3ff` | the place's 256 flags, cleared on entering another group |
+| `FLAG_KEEP_PARTY_POSITION` | 265 (`0x109`) | keeps both cleared ranges, and the party where it was |
+| `FLAG_KEEP_MUSIC` | 282 (`0x11a`) | keeps the music for one scene change |
+| `FLAG_KEEP_MUSIC_HELD` | 283 (`0x11b`) | keeps the music for as long as it is set |
+| `FLAG_PLACE_VISITED(group)` | 384 (`0x180`) + group | the place's marker on the world map screen |
+| `FLAG_SCENE_FIRST` to `FLAG_SCENE_LAST` | 512 to 767 (`0x200` to `0x2ff`) | the scene's 256 flags, cleared on every ordinary entrance |
+| `FLAG_PLACE_FIRST` to `FLAG_PLACE_LAST` | 768 to 1,023 (`0x300` to `0x3ff`) | the place's 256 flags, cleared on entering another group |
 
 [Game rules](src/game/README.md#the-game-flags) gives the layout and the
 calls.
@@ -249,10 +269,11 @@ happens there.
 
 The World Map, [world_map.c](src/scene/world_map.c), is a scene like the
 others but drawn in perspective, on the two background layers the hardware
-can scale and rotate. Only the blocks around the party are in video memory
-at a time; `Map_UpdateCurrentTileBlock` loads the block around the party
-into both layers. The picture below was made by moving that point across the
-whole map and laying each block out flat, one pixel for each pixel of the
+can scale and rotate. The world is stored as a grid of squares, 512 pixels
+on a side, and only the 2 by 2 squares around the party are unpacked at a
+time; `Map_UpdateCurrentTileBlock` unpacks them into both layers. The
+picture below was made by moving that point across the whole map and laying
+each square out flat, one pixel for each pixel of the
 map, so it also shows the squares the map's data leaves blank.
 
 ![The whole world map of The Broken Seal, laid out flat](https://alchemy.pascalpixel.com/story/world.png)
@@ -269,15 +290,19 @@ chosen by the entrance the last scene sent the party to.
 The program on the cartridge is cut into banks, and the source has one
 folder for each large bank, in the order the cartridge holds them.
 
-![The main program, bank by bank. The main program as it lies on the English cartridge, about 1 MB, drawn to scale from start to end and cut into banks. Each large bank has a folder of the source: runtime (start-up, frames and memory), field (moving and drawing), window (windows, fonts and all the game's text, the largest), game (the rules: stats, items), object (running a place), menu, shop, battle, and effect (battle animations). Five small banks follow. A call from one bank into another goes through a table of jumps at the start of the bank it calls, as the object bank starts a battle.](https://alchemy.pascalpixel.com/illustrations/front/banks.svg)
+![The main program, bank by bank. The main program's code as it lies on the English cartridge, about 1 MB, drawn to scale from start to end and cut into fourteen banks. Each large bank has a folder of the source: runtime (start-up, frames and memory), field (moving and drawing), window (windows, fonts and all the game's text, the largest), game (the rules: stats, items), object (running a place), menu, shop, battle, and effect (battle animations). Five small banks follow, the last for sound. Each bank opens with a table of jumps, and a call from another bank, a far call, goes to a jump in that table, which leads on to the function: the object bank starts a battle by calling the battle bank's table.](https://alchemy.pascalpixel.com/illustrations/front/banks.svg)
 
-The main image is the program the processor runs from the cartridge, and
-`main.ld` lays it out in fourteen banks, each at an address fixed per
-edition. Each bank begins with a far-call table of 8-byte jumps, one for
-each function another bank calls, and a caller in another bank uses the
-function's `Far` name: `Game_Run`, in the `object` bank, starts a battle
-with `Battle_RunEncounterFar`. The nine large banks each have a folder, in
-the order the cartridge holds them: `runtime`, `field`, `window`, `game`,
+The main image is the program the processor runs from the cartridge.
+`main.ld` lays out its code in fourteen banks, each starting at an address
+fixed per edition; together they take about 1 MB of the English cartridge,
+and the sound code, the music and the game's packed data follow them. A
+call from one bank into another is a far call. Each bank begins with a
+far-call table, one 8-byte jump for each of its functions that another bank
+calls, and a caller in another bank calls that jump, written as the
+function's name with `Far` added: `Game_Run`, in the `object` bank, starts
+a battle with `Battle_RunEncounterFar`, the jump at the start of the
+`battle` bank that leads to `Battle_RunEncounter`. The nine large banks each
+have a folder, in the order the cartridge holds them: `runtime`, `field`, `window`, `game`,
 `object`, `menu`, `shop`, `battle` and `effect`.
 [System](src/system/README.md#why-the-program-is-cut-into-banks) explains
 why the program is cut into banks. The five small banks' code sits in the

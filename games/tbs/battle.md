@@ -26,16 +26,20 @@ To the rest of the game a battle is one more scene: the field leaves for it
 as it would leave through a doorway, and comes back to the same place
 afterwards.
 
-A random encounter raises a field exit like any other, with `SCENE_BATTLE`
-as the next scene and the enemy group in `gGameState.entrance`. `Game_Run`
-(`src/object/object/scene.c`) resets the task table and the heap as it does
-between any two scenes. Then, instead of loading a place's overlay, it calls
-`Battle_RunEncounterFar(entrance)`, which fights the whole battle before it
-returns. Afterwards `Scene_ReturnFromBattle` reloads the field scene the
+In the code, a random encounter raises a field exit like any other, with
+`SCENE_BATTLE` as the next scene and the enemy group in
+`gGameState.entrance`. `Game_Run` (`src/object/object/scene.c`) clears what
+the last scene left running, as it does between any two scenes: the task
+table, the list of small jobs the game runs once a frame, and the heap, the
+pool of memory a scene borrows from. Then, instead of loading a place's
+overlay (the code for one place, loaded when the party arrives there), it
+calls `Battle_RunEncounterFar(entrance)`, which fights the whole battle
+before it returns; a `Far` name is the one other parts of the program use
+to call into the battle's part. Afterwards `Scene_ReturnFromBattle` reloads the field scene the
 battle started from, with the party where it was, or after a defeat goes to
 the defeat point. The debug battle menu (`DebugBattle_RunMenu`) is the only
-other way in. The battle's code runs from the main image's `battle` bank
-rather than from an overlay.
+other way in. The battle's code is always present, in the `battle` bank of
+the main program, rather than loaded as an overlay.
 
 `Battle_RunEncounter` (`src/battle/battle/encounter.c`) allocates the
 battle's work slots, `gBattleWork` among them, and sets `FLAG_IN_BATTLE`
@@ -75,10 +79,10 @@ it:
 | `src/battle/actstat.tsv` | `gBattle_ActionStatus` | how the battle shows it, where it overrides the default |
 
 Quake is row 3. Its row of `actions.tsv` has element `ELEMENT_VENUS`, range 2,
-a PP cost of 4 and a power of 12, and its `flags` are `0x85`:
-`ACTION_USABLE_IN_BATTLE` plus `ABILITY_KIND_DAMAGE`. The ability kind, the
-low four bits of `flags` (`ABILITY_KIND_MASK`), chooses the formula the
-targets go through. The effect kind in `actflags.tsv` is an unrelated number
+a PP cost of 4 and a power of 12. Its `flags` column holds two things at
+once: `0x85` is `0x80`, `ACTION_USABLE_IN_BATTLE`, plus 5,
+`ABILITY_KIND_DAMAGE`. The ability kind, the low four bits of `flags`
+(`ABILITY_KIND_MASK`), chooses the formula the targets go through. The effect kind in `actflags.tsv` is an unrelated number
 that chooses only the animation, so the arithmetic and the picture can be
 changed independently.
 
@@ -89,8 +93,8 @@ changed independently.
 | `ENEMY_BATTLE_SIZE` | 6 | enemies on the field at most |
 | `ABILITY_KIND_MASK` | 15 | the bits of an ability's `flags` that are its kind |
 
-[Game rules](src/game/README.md#a-rows-id-is-its-position-and-its-name-is-a-message-at-the-same-position)
-has the tables and [the unit stats they feed](src/game/README.md#stats-are-recomputed-whole), and [Battles](src/battle/README.md#the-ability-kind) every
+[Game rules](src/game/README.md#how-one-number-finds-a-row-and-its-name)
+has the tables and [the unit stats they feed](src/game/README.md#why-stats-are-always-worked-out-from-scratch), and [Battles](src/battle/README.md#the-ability-kind) every
 ability kind.
 
 ## Rounds and turns
@@ -124,36 +128,46 @@ and [planning an action](src/battle/README.md#planning-an-action).
 
 ## Resolving an ability
 
-When Quake hits three enemies, the one aimed at takes the most and the ones
-beside it less, and an enemy weak to Venus takes more than one that resists
-it. Every damaging ability works out its number the same way, in a few
-plain steps.
+When Avalanche hits three enemies, the one aimed at takes the most and the
+ones beside it less, and an enemy weak to Venus takes more than one that
+resists it. Every damaging Psynergy works out its number the same way, in a
+few plain steps.
 
 ![How Psynergy damage is worked out, for Isaac's Avalanche at three enemies in a row, aimed at the first. Avalanche's power is 160. Isaac's Venus Power is 20 ahead of each target's Venus Resist, which multiplies it by about 1.1, to 175. The distance keeps 100 percent for the aimed enemy, 80 one place away and 60 two away: 175, 140 and 105. Last, 0 to 3 is added at random: 175 to 178, 140 to 143 and 105 to 108. A defending target takes half, one behind Total Defense a tenth. Every step rounds down.](https://alchemy.pascalpixel.com/illustrations/battle/damage.svg)
 
 An ability's power is the damage the aimed target takes at an even match,
 when the caster's Power in the ability's element equals the target's Resist
-in it. Two things scale it, and a little luck is added:
+in it; Avalanche's is 160. Two things scale it, a little luck is added, and
+a guard can cut the result:
 
 - The element. Each point the caster's Power is ahead of the target's Resist
   adds half a percent, up to double; each point behind takes half a percent
-  off, down to nothing.
+  off, down to nothing. Isaac's Venus Power 20 ahead of each target's Venus
+  Resist makes Avalanche's 160 about 1.1 times as much, 175.
 - The distance. A range counts places in the target side's line-up, and each
   step from the aimed place keeps a smaller share: 80 percent one step away
-  and 60 two steps away for Psynergy damage. Summons and the enemies'
-  unleashed moves have tables of their own.
-- A random 0 to 3 is added at the end, so Quake's power of 12 deals 12 to 15
-  at an even match.
+  and 60 two steps away for Psynergy damage, so 175, 140 and 105. Summons and
+  the enemies' unleashed moves have tables of their own.
+- The luck. A random 0 to 3 is added, so the three take 175 to 178, 140 to
+  143 and 105 to 108.
+- The guard. A target guarding this round, by Defend or the Djinni Granite,
+  takes half of that, and one behind Total Defense or Flash a tenth, so the
+  aimed enemy, defending, would take 87 to 89.
 
-In the code, `BattleTarget_Execute` rolls the added effect
-(`Battle_RollEffectSuccessFar`), then switches on the ability kind to choose
-the formula, then applies the added effect if it landed. The formulas are in
-`src/game/game/battle_calc.c` and are called by their far-call names:
+Every step rounds down.
+
+In the code, `BattleTarget_Execute` rolls the added effect (the extra a
+move may bring besides damage, such as Sleep; `Battle_RollEffectSuccessFar`),
+then switches on the ability kind to choose the formula, then applies the
+added effect if it landed. The formulas are in
+`src/game/game/battle_calc.c`, and the battle calls them by their `Far`
+names:
 `Battle_CalculateAttackDamageFar` for attacks,
 `Battle_CalculatePsynergyPowerFar` for Psynergy damage,
 `Battle_CalculateRecoveryFar` for healing. `Battle_GetElementMultiplier`
-gives the element's share, counted in 256ths (`FULL_RATE`), and the
-fall-off tables are in `src/battle/battle_calc.s`. Every result rounds down.
+gives the element's share, counted in 256ths (`FULL_RATE`): Avalanche's 20
+points ahead give 281 in 256ths. The fall-off tables are in
+`src/battle/battle_calc.s`, and the guard is `REDUCE_BY_GUARD`.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -174,11 +188,15 @@ sprites, each with its own job.
 
 ![A battle in Goma Cave pulled apart into its layers: at the back the cave as the perspective plane on BG2, then the same cave flat on BG1, then the status window and message on BG0, and the party and the enemy as sprites in front](https://alchemy.pascalpixel.com/guides/battle/layers-3d.gif)
 
-The battlefield is `BG2`, an affine plane in perspective
-(`BATTLE_BACKGROUND_PLANE`): `BattleCamera_SetRange` builds a page of
-per-line values, and an HBlank DMA gives every line from 0 to 135 its own
-`BG2CNT` and scale, so the plane stops above the status window and turns with
-the camera's yaw. Outside the time commands are chosen
+The console draws the screen one line at a time, top to bottom, and can
+change a layer's settings in the short pause after each line. The battle
+uses that pause to tilt a flat picture into a floor. The battlefield is
+`BG2`, the layer the hardware can stretch and turn (an affine layer), shown
+in perspective (`BATTLE_BACKGROUND_PLANE`): `BattleCamera_SetRange` works out
+a page of settings, one for each line, and an HBlank DMA (a copy the
+hardware makes by itself in the pause after each line) gives every line from
+0 to 135 its own `BG2CNT` and scale, so the plane stops above the status
+window and turns as the camera turns. Outside the time commands are chosen
 (`FLAG_CHOOSING_COMMANDS`), its top 16 lines are left off. `BG1` holds the
 same picture flat. An effect that needs `BG2` for its canvas switches the
 background to that flat picture (`BATTLE_BACKGROUND_FLAT`), whose horizontal
@@ -211,23 +229,26 @@ ability's `actflags.tsv` row:
 | `BattleEffect_DispatchByIdRange` | `STAGING_BY_ID_RANGE` (`0x4000`) | casting impacts, beam sequences and ring and spark scenes, by the effect kind's range |
 | `BattleEffect_RunSceneEffect` | `STAGING_SCENE` (`0x8000`) | the summons' scenes |
 
-Each entry point takes three heap blocks (the sprite sheet, the work block
-and the canvas), runs the effect to its end and releases them in reverse
-order, since releasing a heap block also releases everything allocated after
-it. An effect must therefore remove every callback that reads those blocks
+Each entry point borrows three blocks of memory from the heap (the sprite
+sheet, the work block and the canvas), runs the effect to its end and gives
+them back in reverse order, since giving a heap block back also frees
+everything borrowed after it. An effect must therefore stop every callback
+(a function the scheduler calls once a frame) that reads those blocks
 before it returns.
 
-Most effects draw into a canvas of 128 by 128 pixels, one byte each, which
-`BG2` shows blended over the battle and stretched to twice its width
-(`BattleEffect_StartCanvasLayer`). An effect copies pictures onto the canvas
-through blitters, ARM routines `BattleEffect_BuildBlitter` assembles at run time
-for one combination of size, mirroring, clipping and blend mode, and moves
-particles over it. It never writes video memory itself: it sets
-`transferPending` and waits, and the callback
+Most effects draw into a canvas, a hidden picture of 128 by 128 pixels, one
+byte each, which `BG2` shows blended over the battle and stretched to twice
+its width (`BattleEffect_StartCanvasLayer`). An effect stamps pictures onto
+the canvas with blitters, small drawing routines that
+`BattleEffect_BuildBlitter` writes while the game runs, each for one
+combination of size, mirroring, clipping and blend mode, and moves particles
+(sparks, embers, chips of rock) over it. It never writes video memory
+itself: it sets `transferPending` and waits, and the callback
 `BattleEffect_ProcessPendingGraphicsTransfer` copies the canvas and then fades,
 clears or keeps the pixels left in it as the work block's transfer mode says.
-Canvas pixels are levels in a palette ramp, so fading them makes trails die
-away without per-particle bookkeeping.
+A canvas pixel holds not a colour but a level, a step on a ramp of colours
+from nothing to the brightest, so lowering every level a little each frame
+makes trails die away without keeping track of each particle.
 
 ![Isaac unleashes Flint at Ivan, and sparks close in on a point above Isaac while he hangs in mid-leap, a streak of light shoots down at Ivan, and a ring of light and a spray of sparks burst over him.](https://alchemy.pascalpixel.com/abilities/flint.gif)
 
@@ -277,8 +298,8 @@ the blow lands.
 An effect is an ordinary function with a loop of its own: it calls
 `WaitFrames` whenever time has to pass and returns only when the animation is
 over. The battle code that called it cannot run until then, so the damage
-has to come from somewhere else: a task, which the scheduler runs once a
-frame alongside the effect.
+has to come from somewhere else: a task, a small job that the scheduler,
+the engine's list of jobs, runs once a frame alongside the effect.
 
 Before it starts the effect, `BattlePresentation_DispatchAction` schedules
 `BattleEvent_Playback` (`src/battle/battle/playback.c`) with
@@ -295,9 +316,9 @@ over the following frames before it moves on.
 The two sides meet at the battle event queue (`struct BattleEventQueue`,
 `BATTLE_EVENT_CAPACITY` events). `BattleTarget_Execute` never draws or waits: it
 changes the target's HP and statuses and pushes events with `BattleEvent_Push` in
-the order the player sees them, a message's arguments before the message,
-since the message takes them from the window system's argument table when it
-is decoded. `BattleEvent_DispatchQueued` plays the same queue straight
+the order the player sees them. The name and number a message fills its
+blanks with go before the message, since the message takes them from the
+window system's argument table as it is written out. `BattleEvent_DispatchQueued` plays the same queue straight
 through, for outcomes shown outside an effect, such as a cast that is sealed
 or short of PP.
 

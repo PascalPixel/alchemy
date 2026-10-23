@@ -988,15 +988,10 @@ static void TretTreeInteriors_SpawnSwirlSparks(void) {
   void *previousResourceEntry;
   s32 wave;
   u32 sparkIndex;
-  s32 *counter;
 
-  counter = &sSparkFrame;
-  frame = *counter;
+  frame = sSparkFrame;
   previousResourceEntry = 0;
-  /* FAKEMATCH(wrapper): the division written as a call to __divsi3, which
-   * keeps the final count's reload in r3; as (s32)frame / 10, 2 of 110
-   * instructions differ in tbs-en. */
-  wave = __divsi3(frame, 10);
+  wave = (s32)frame / 10;
   switch (frame) {
   case 0:
   case 10:
@@ -1029,14 +1024,10 @@ static void TretTreeInteriors_SpawnSwirlSparks(void) {
     // fall through
   case 44:
     SE(AUDIO_CUE_FADE_SLOT3);
-    /* FAKEMATCH(temporary): the counter pointer taken again, so it is dead
-     * across the spark loop; as one pointer taken at the top, 17 of 110
-     * instructions differ in tbs-en. */
-    counter = &sSparkFrame;
     break;
   }
-  if (++*counter > 120) {
-    *counter = 0;
+  if (++sSparkFrame > 120) {
+    sSparkFrame = 0;
   }
 }
 

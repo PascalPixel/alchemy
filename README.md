@@ -2,7 +2,7 @@
 
 Alchemy is a decompilation of the Game Boy Advance games ☀️ **[Golden Sun: The Broken Seal](games/tbs/README.md)** and ⚓️ **Golden Sun: The Lost Age**. It is a [matching decompilation](games/tbs/glossary.md#matching-decompilation): a plain Makefile builds its C and assembly, with [alchemy-gcc](games/tbs/glossary.md#the-compilers) (a GCC of July 2000), GCC 2.95.2, [pret](games/tbs/glossary.md#pret)’s old_agbcc and GNU’s assembler 2.10, back into the exact bytes of each cartridge.
 
-<img src="https://alchemy.pascalpixel.com/illustrations/field/layer-stack.svg" width="480" alt="A screen of Vale pulled apart into the sheets the console stacks to draw it: the ground at the back, then the middle layer, Isaac, and the overhead layer in front" />
+<img src="https://alchemy.pascalpixel.com/illustrations/field/layer-stack.svg" width="480" alt="A screen of Vale, the hero Isaac’s village, pulled apart into the sheets the console stacks to draw it: the ground at the back, then the middle layer, Isaac, and the overhead layer of roofs in front" />
 
 ## What is a decompilation?
 
@@ -18,16 +18,20 @@ The source, not a game to download. Building it gives you back the games exactly
 
 ## How far along is it?
 
-The Broken Seal is fully rebuilt: every byte of all six [editions](games/tbs/glossary.md#editions) comes from this repository, with no cartridge needed to build it. Now I’m making that code a pleasure to read, one place and one system at a time: real names from the game’s own text, comments that say why, and a guide for every folder. The Lost Age builds too and is well on its way, but the parts that aren’t rewritten yet still come from your own cartridge dump.
+The Broken Seal is fully rebuilt: every byte of all six language [editions](games/tbs/glossary.md#editions) comes from this repository, with no cartridge needed to build it. Now I’m making that code a pleasure to read, one place and one system at a time: real names from the game’s own text, comments that say why, and a guide for every folder. The Lost Age builds too and is well on its way, but the parts that aren’t rewritten yet still come from your own cartridge dump; the chart shows how much of each game is rebuilt.
 
 <img src="https://alchemy.pascalpixel.com/PROGRESS_CHART.png" width="838" alt="How much of each game's code and data is rebuilt, day by day since 16 July 2026" />
-<img src="https://alchemy.pascalpixel.com/PROGRESS.png" width="838" alt="A map of the project's files by size" />
+<img src="https://alchemy.pascalpixel.com/PROGRESS.png" width="838" alt="Every file of the project as a box sized by its bytes and grouped by folder, coloured by kind as its legend says: C, drafted C, assembly not yet written as C, headers, pictures, maps, music, sound, tables and translations" />
 
 ## Where do I start reading?
 
-[The documentation](https://alchemy.pascalpixel.com/) explains how The Broken Seal works underneath, and it takes the game apart to show you. [Its front page](games/tbs/README.md) covers the big picture: the loop that runs one map after another, the [map sections](games/tbs/glossary.md#map-section) and their flags. Four pages go a layer deeper: [the world](games/tbs/world.md) you walk around, [battles](games/tbs/battle.md), [menus, windows and shops](games/tbs/menus.md) and [the engine](games/tbs/engine.md) underneath them all. The places have pages of their own too, with maps of their rooms and recordings of their events, and [the glossary](games/tbs/glossary.md) explains every word the pages share, from Psynergy to far calls.
+[The documentation](https://alchemy.pascalpixel.com/) explains how The Broken Seal works underneath, and it takes the game apart to show you. [Its front page](games/tbs/README.md) covers the big picture: how the game moves from one map to the next, and how it remembers how far the story has gone. Four pages go a layer deeper: [the world](games/tbs/world.md) you walk around, [battles](games/tbs/battle.md), [menus, windows and shops](games/tbs/menus.md) and [the engine](games/tbs/engine.md) underneath them all. The places have pages of their own too, with maps of their rooms and recordings of their events, and [the glossary](games/tbs/glossary.md) explains every word the pages share, from Psynergy to far calls.
 
-If you’d rather start in the code, [the source’s own guide](games/tbs/src/README.md) says what lives in which folder, and every folder has a guide of its own. [MATCHING.md](games/tbs/src/MATCHING.md) collects the plain C spellings that compile to the game’s exact instructions, for anyone who wants to help with The Lost Age.
+If you’d rather start in the code, [the source’s own guide](games/tbs/src/README.md) says what lives in which folder, and every folder has a guide of its own.
+
+## How can I help?
+
+The Lost Age is where matching still happens: the code still taken from the cartridge waits in `recon/tla`, as listings and drafts, until C is found that compiles to its exact instructions. [MATCHING.md](games/tbs/src/MATCHING.md) collects the C idioms that make the compiler produce the original instructions, learned on The Broken Seal, and [Alchemy Devtools](https://github.com/PascalPixel/alchemy-devtools) compares a draft with the cartridge and runs a permuter, a tool that tries random rewrites of a function until one matches.
 
 ## Can I build it myself?
 
@@ -56,5 +60,5 @@ Thank you to:
 - Tarpman and Karathan, who worked out the compiler and flags Camelot used.
 - Coaltergeist, for [camelot-gcc](https://github.com/Coaltergeist/camelot-gcc), the compiler Alchemy first built with before alchemy-gcc replaced it.
 - [pret](https://github.com/pret), whose decompilations set the standard Alchemy measures itself against, and whose [agbcc](https://github.com/pret/agbcc) builds the games’ sound and save code.
-- [Simon Lindholm](https://github.com/simonlindholm/decomp-permuter), for the permuter that [Alchemy Devtools](https://github.com/PascalPixel/alchemy-devtools) reimplements in Rust.
+- [Simon Lindholm](https://github.com/simonlindholm/decomp-permuter), for decomp-permuter, which Alchemy Devtools reimplements in Rust.
 - [mGBA](https://mgba.io), whose libmgba plays the builds for every picture and recording in the documentation.

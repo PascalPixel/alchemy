@@ -353,8 +353,7 @@ UNUSED void *ObjectEvent_GetSlotAddress(u32 objectEventIndex) {
 /// Gives each object event template with condition 0 a condition saying whether
 /// it lies within the map's view bounds, so that only those inside appear.
 ///
-/// Called by map overlays through Map_AssignViewFlagsFar, which they import
-/// under four local names (Map_PrepareObjectEvents the most used). Writes the
+/// Called by map overlays through Map_AssignViewFlagsFar. Writes the
 /// object event templates' condition, and clears FLAG_IN_VIEW and sets
 /// FLAG_OUT_OF_VIEW.
 void Map_AssignViewFlags(struct ObjectEventTemplate *entry) {
@@ -501,7 +500,7 @@ void ObjectEvent_ClearAll(void) {
 /// the event work; larger ones give NULL.
 ///
 /// The field's object event lookup: called across the object folder and,
-/// through ObjectEvent_GetByLocalIdFar (Engine_ObjectEventLookup), by map
+/// through ObjectEvent_GetByLocalIdFar, by map
 /// overlays.
 void *ObjectEvent_GetByLocalId(u32 objectEventIndex) {
   u8 *workBytes = (u8 *)gFieldWork;

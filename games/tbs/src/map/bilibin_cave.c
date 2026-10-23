@@ -174,7 +174,7 @@ enum {
 static s32 BilibinCave_ClearScriptedObjectEventSpriteFlags(
     struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
-  Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
+  ObjectEvent_SetSpriteFlags(objectEvent, 0);
   return 0;
 }
 
@@ -280,41 +280,41 @@ static void EventScript_HideRevealedPath(void) {
 /// Douse on the fire in Bilibin Cave (MapId_BilibinCaveRapier), until it is
 /// out: it goes out for good.
 static void EventScript_DouseRapierRoomFire(void) {
-  Engine_ScriptStart();
+  FieldScript_Start();
   Engine_ObjectEventSetPosition(LOCALID_RAPIER_ROOM_FIRE, 0, 0);
   Engine_GameFlagSet(FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Douse on the fire in Bilibin Cave (MapId_BilibinCaveIce), until it is out:
 /// it goes out, and the puddle beside it freezes into a pillar the party can
 /// walk over.
 static void EventScript_DouseIceRoomFire(void) {
-  Engine_ScriptStart();
+  FieldScript_Start();
   ObjectEvent_SetPosition(LOCALID_ICE_ROOM_FIRE, 0, 0);
   GameFlag_Set(FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED);
-  Engine_ScriptWait(40);
+  FieldScript_WaitFrames(40);
   // Match the replacement's drawing priority to its metatile behavior.
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_FIRST_PUDDLE,
-                                        PUDDLE_ANIMATION_FREEZE);
+  ObjectMotion_SetAnimationAndWait(LOCALID_FIRST_PUDDLE,
+                                   PUDDLE_ANIMATION_FREEZE);
   ObjectEvent_Get(LOCALID_FIRST_PUDDLE)->motionFlags = 0;
   ObjectEvent_Get(LOCALID_FIRST_PUDDLE)->priorityFlags |=
       OBJ_EVENT_PRIORITY_UNDERFOOT;
-  Engine_ObjectEventSetSpritePriority(LOCALID_FIRST_PUDDLE, 2);
+  ObjectMotion_SetActionVariant(LOCALID_FIRST_PUDDLE, 2);
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 18, 14);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Frost on a puddle in Bilibin Cave (MapId_BilibinCaveIce) that heat keeps
 /// from freezing: clears the Psynergy's child effect and plays the ice melting
 /// back into a puddle.
 static inline void BilibinCave_MeltFrostBack(s32 localId) {
-  Engine_ScriptStart();
-  Engine_ObjectEventSetChildValue(localId, 0);
-  Engine_ScriptWait(40);
-  Engine_AudioPlayCue(SE_HIDDEN_PASSAGE_OPEN);
-  Engine_ObjectEventSetAnimationAndWait(localId, PUDDLE_ANIMATION_MELT);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  ObjectGroup_ConfigureChildValue(localId, 0);
+  FieldScript_WaitFrames(40);
+  Sound_PlaySong(SE_HIDDEN_PASSAGE_OPEN);
+  ObjectMotion_SetAnimationAndWait(localId, PUDDLE_ANIMATION_MELT);
+  FieldScript_End();
 }
 
 /// Frost on the first puddle in Bilibin Cave (MapId_BilibinCaveIce), while
@@ -364,28 +364,28 @@ static void BilibinCave_UpdateThirdPuddleFromTorches(void) {
   if (GameFlag_IsSet(FLAG_MAPSEC_TEMP_03) != 0 ||
       GameFlag_IsSet(FLAG_MAPSEC_TEMP_04) != 0) {
     if (GameFlag_IsSet(FLAG_MAPSEC_TEMP_02) == 0) {
-      Engine_ScriptStart();
-      Engine_ScriptWait(40);
+      FieldScript_Start();
+      FieldScript_WaitFrames(40);
       Script_PlaySong(SE_HIDDEN_PASSAGE_OPEN);
       destinationCellX = 36;
-      Engine_ObjectEventSetAnimationAndWait(LOCALID_THIRD_PUDDLE,
-                                            PUDDLE_ANIMATION_MELT);
+      ObjectMotion_SetAnimationAndWait(LOCALID_THIRD_PUDDLE,
+                                       PUDDLE_ANIMATION_MELT);
       MapGrid_CopyCellAttributes(0, 1, 1, 1, destinationCellX, 22);
       MapGrid_CopyCellAttributes(0, 2, 1, 1, destinationCellX, 24);
-      Engine_ScriptEnd();
+      FieldScript_End();
     }
     GameFlag_Set(FLAG_MAPSEC_TEMP_02);
   } else {
     if (GameFlag_IsSet(FLAG_MAPSEC_TEMP_02) != 0) {
-      Engine_ScriptStart();
-      Engine_ScriptWait(40);
+      FieldScript_Start();
+      FieldScript_WaitFrames(40);
       Script_PlaySong(SE_220);
       destinationCellX = 36;
-      Engine_ObjectEventSetAnimationAndWait(LOCALID_THIRD_PUDDLE,
-                                            PUDDLE_ANIMATION_FREEZE);
+      ObjectMotion_SetAnimationAndWait(LOCALID_THIRD_PUDDLE,
+                                       PUDDLE_ANIMATION_FREEZE);
       MapGrid_CopyCellAttributes(1, 1, 1, 1, destinationCellX, 22);
       MapGrid_CopyCellAttributes(1, 2, 1, 1, destinationCellX, 24);
-      Engine_ScriptEnd();
+      FieldScript_End();
     }
     GameFlag_Clear(FLAG_MAPSEC_TEMP_02);
   }
@@ -431,7 +431,7 @@ s32 BilibinCave_Initialize(void) {
 
 /// Sets up the Bilibin Cave Entrance: the vine Growth has grown, with its cell.
 static void BilibinCave_RestoreEntrance(void) {
-  if (Engine_GameFlagIsSet(FLAG_MAPSEC_TEMP_05) != 0) {
+  if (GameFlag_Test(FLAG_MAPSEC_TEMP_05) != 0) {
 
     MapGrid_CopyCellAttributes(31, 0, 1, 1, 8, 13);
     Engine_ObjectEventSetAnimation(LOCALID_SPROUT, 0);
@@ -450,18 +450,18 @@ static void BilibinCave_RestoreRapierRoom(void) {
   Engine_ObjectEventSetAnimation(LOCALID_RAPIER_ROOM_EAST_TORCH,
                                  TORCH_ANIMATION_LIT);
 
-  if (Engine_GameFlagIsSet(FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED) != 0) {
+  if (GameFlag_Test(FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED) != 0) {
     Engine_ObjectEventSetPosition(LOCALID_RAPIER_ROOM_FIRE, 0, 0);
   } else {
-    Engine_ObjectEventSetSpriteFlags(
-        ObjectEvent_GetById(LOCALID_RAPIER_ROOM_FIRE), 0);
+    ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_RAPIER_ROOM_FIRE),
+                               0);
   }
 }
 
 /// Clears the drawing flags of an object event used by the cave's animations.
 static inline void BilibinCave_ClearObjectEventSpriteFlags(s32 localId) {
   struct ObjectEvent *objectEvent = ObjectEvent_Get(localId);
-  Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
+  ObjectEvent_SetSpriteFlags(objectEvent, 0);
 }
 
 /// Sets up Bilibin Cave's MapId_BilibinCaveIce: its torches, puddles and
@@ -532,12 +532,12 @@ static void BilibinCave_RestoreIceRoom(void) {
     ObjectEvent_Get(LOCALID_FIRST_PUDDLE)->y.fixed = -PIXELS(4);
     ObjectEvent_Get(LOCALID_FIRST_PUDDLE)->priorityFlags |=
         OBJ_EVENT_PRIORITY_UNDERFOOT;
-    Engine_ObjectEventSetSpritePriority(LOCALID_FIRST_PUDDLE, 2);
+    ObjectMotion_SetActionVariant(LOCALID_FIRST_PUDDLE, 2);
     MapGrid_CopyCellAttributes(0, 0, 1, 1, 18, 14);
   } else {
     Engine_ObjectEventSetAnimation(LOCALID_ICE_ROOM_FIRE, 2);
     objectEvent = ObjectEvent_Get(LOCALID_ICE_ROOM_FIRE);
-    Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
+    ObjectEvent_SetSpriteFlags(objectEvent, 0);
     Engine_ObjectEventSetAnimation(LOCALID_FIRST_PUDDLE,
                                    PUDDLE_ANIMATION_PUDDLE);
   }
@@ -613,17 +613,17 @@ static void EventScript_PushObjectEventAhead(void) {
   if (FieldObject_CheckMovementCollision(target, &destination) > 0)
     return;
 
-  ObjectEvent_SetMode(leader, 8);
-  Engine_TaskWait(15);
-  Engine_AudioPlayCue(SE_PUSH);
+  ObjectDispatch_SelectAnimation(leader, 8);
+  WaitFrames(15);
+  Sound_PlaySong(SE_PUSH);
 
   target->speed = PIXELS(1) / 5;
   target->acceleration = PIXELS(1) / 5;
-  Engine_ObjectSetPosition(target, destination.x, destination.y, destination.z);
+  Object_SetPosition(target, destination.x, destination.y, destination.z);
 
   leader->speed = PIXELS(1) / 5;
   leader->acceleration = PIXELS(1) / 5;
-  Engine_ObjectSetPosition(leader, destination.x, destination.y, destination.z);
+  Object_SetPosition(leader, destination.x, destination.y, destination.z);
 
   // Wait for the target's movement before snapping it to the destination.
   Object_WaitForMove(target);
@@ -635,7 +635,7 @@ static void EventScript_PushObjectEventAhead(void) {
 
   // Resume the leader and refresh the mechanism affected by the moved object
   // event.
-  ObjectEvent_SetMode(leader, ANIMATION_STAND);
+  ObjectDispatch_SelectAnimation(leader, ANIMATION_STAND);
   BilibinCave_UpdateThirdPuddleFromTorches();
 }
 

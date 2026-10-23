@@ -4,11 +4,11 @@
 	.set import.Runtime_SetIrqHandler, 1
 	.set import.SerialRuntime_PollAndTransfer, 1
 	.set import.MapGrid_GetTerrainHeight, 1
-	.set import.Engine_ScriptStart, 1
-	.set import.Engine_ScriptEnd, 1
+	.set import.FieldScript_Start, 1
+	.set import.FieldScript_End, 1
 	.set import.ObjectEvent_GetById, 1
 	.set import.Engine_ScriptRequestWarp, 1
 	.set import.Field_RequestDjinnBattle, 1
 	.set import.ScreenTransition_InitializeBattleEffectState, 1
-	.set import.Engine_AudioPlayCue, 1
+	.set import.Sound_PlaySong, 1
 	.include "games/tbs/src/system/overlay.inc"

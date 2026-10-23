@@ -259,14 +259,13 @@ const struct MapEvent *SolSanctumStatue_GetEvents(void) {
 /// FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN is set. Returns 1 when it requests an
 /// warp, otherwise -1.
 static s32 SolSanctumStatue_SelectStoryWarp(void) {
-  if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED) != 0) {
-    if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_KRADEN_SAID_FOUND_SOMETHING) ==
-        0) {
+  if (GameFlag_Test(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED) != 0) {
+    if (GameFlag_Test(FLAG_SOL_SANCTUM_KRADEN_SAID_FOUND_SOMETHING) == 0) {
       Engine_ScriptRequestWarp(
           SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED);
       return 1;
     }
-  } else if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN) == 0) {
+  } else if (GameFlag_Test(FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN) == 0) {
     Engine_ScriptRequestWarp(
         SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_TRIGGERED);
     return 1;
@@ -283,12 +282,12 @@ static void SolSanctumStatue_OpenCentralHole(void) {
   {
     MapGrid_CopyCellsTo(0, 28, 17, 8, 2, 1);
   }
-  Engine_AudioPlayCue(SE_200);
+  Sound_PlaySong(SE_200);
   for (flash = 0; flash != 22; flash++) {
     MapGrid_CopyCellsTo(10, 61, 17, 40, 2, 1);
-    Engine_ScriptWait(4);
+    FieldScript_WaitFrames(4);
     MapGrid_CopyCellsTo(8, 61, 17, 40, 2, 1);
-    Engine_ScriptWait(4);
+    FieldScript_WaitFrames(4);
   }
   {
     MapGrid_CopyCellsTo(0, 59, 15, 38, 4, 3);
@@ -315,135 +314,135 @@ static void SolSanctumStatue_OpenCentralHole(void) {
 static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   struct ObjectEvent *leader;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   gFieldWork->transitionFrames = 32;
-  Engine_ScriptOpenScreen();
-  Engine_ScriptWaitForScreen();
-  Engine_ScriptWait(20);
+  FieldScript_StartScreenTransition();
+  FieldScript_WaitTransitionFrames();
+  FieldScript_WaitFrames(20);
   ObjectEvent_SetPosition(LOCALID_KRADEN, PIXELS(576), PIXELS(232));
-  Engine_ScriptWait(1);
+  FieldScript_WaitFrames(1);
   // Kraden, from the south: "You found it, Isaac!" Jenna: "Kraden!"
-  Engine_ScriptSetMessage(MsgSolSanctumKradenYouFoundIt);
+  FieldScript_SetMessageId(MsgSolSanctumKradenYouFoundIt);
   EventScript_SayThenWait(LOCALID_KRADEN, 6);
   ObjectEvent_SetPosition(LOCALID_KRADEN, PIXELS(576), PIXELS(280));
   FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
   FieldCamera_MoveTo(PIXELS(574), -1, PIXELS(180), 1);
   ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_WalkToAndWait(LOCALID_KRADEN, 576, 216);
-  Engine_ScriptWait(20);
-  Engine_ObjectEventJump(JENNA, 2, 0);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(20);
+  ObjectMotion_Launch(JENNA, 2, 0);
+  FieldScript_WaitFrames(30);
   EventScript_SayThenWait(JENNA, 6);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_KRADEN, 2);
-  Engine_ScriptWait(6);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 2);
+  FieldScript_WaitFrames(6);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_WEST + FACING_STEP, 0);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   // The camera swings west to the hole at the centre and back.
   FieldCamera_SetSpeed(PIXELS(28) / 5, PIXELS(7) / 10);
   FieldCamera_MoveTo(PIXELS(287), -1, PIXELS(176), 1);
-  Engine_CameraWaitForMove();
-  Engine_ScriptWait(60);
+  FieldCamera_WaitForArrival();
+  FieldScript_WaitFrames(60);
   FieldCamera_MoveTo(PIXELS(574), -1, PIXELS(180), 1);
-  Engine_CameraWaitForMove();
-  Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIMATION_NOD);
-  Engine_ScriptWait(10);
+  FieldCamera_WaitForArrival();
+  FieldScript_WaitFrames(20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIMATION_NOD);
+  FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_NORTH, 0);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   // Kraden hops up to the party: "Excellent work, Isaac!"
-  Engine_ObjectEventJump(LOCALID_KRADEN, 6, 0);
+  ObjectMotion_Launch(LOCALID_KRADEN, 6, 0);
   ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(3), PIXELS(2));
   ObjectEvent_WalkToAndWait(LOCALID_KRADEN, 576, 184);
-  Engine_ScriptWait(40);
+  FieldScript_WaitFrames(40);
   EventScript_SayThenWait(LOCALID_KRADEN, 6);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_WEST, 0);
-  Engine_ScriptWait(40);
+  FieldScript_WaitFrames(40);
   // The screen closes and opens on Kraden by the hole: "Where did that hole
   // come from?" Then back to the party.
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 2);
   gFieldWork->transitionFrames = 16;
-  Engine_ScriptCloseScreen();
-  Engine_ScriptWaitForScreen();
+  FieldScript_FinishScreenTransition();
+  FieldScript_WaitTransitionFrames();
   FieldCamera_MoveTo(PIXELS(287), -1, PIXELS(176), 0);
-  Engine_MapGridRedraw();
-  Engine_TaskWait(1);
-  Engine_ScriptOpenScreen();
-  Engine_ScriptWaitForScreen();
-  Engine_ScriptWait(40);
+  MapGrid_CenterOnFollowedPoint();
+  WaitFrames(1);
+  FieldScript_StartScreenTransition();
+  FieldScript_WaitTransitionFrames();
+  FieldScript_WaitFrames(40);
   ObjectEvent_SetPosition(LOCALID_KRADEN, PIXELS(424), PIXELS(200));
-  Engine_TaskWait(1);
+  WaitFrames(1);
   EventScript_SayThenWait(LOCALID_KRADEN, 20);
-  Engine_ScriptCloseScreen();
-  Engine_ScriptWaitForScreen();
+  FieldScript_FinishScreenTransition();
+  FieldScript_WaitTransitionFrames();
   ObjectEvent_SetPosition(LOCALID_KRADEN, PIXELS(576), PIXELS(184));
   FieldCamera_MoveTo(PIXELS(574), -1, PIXELS(180), 0);
-  Engine_MapGridRedraw();
-  Engine_TaskWait(1);
-  Engine_ScriptOpenScreen();
-  Engine_ScriptWaitForScreen();
-  Engine_ScriptWait(20);
+  MapGrid_CenterOnFollowedPoint();
+  WaitFrames(1);
+  FieldScript_StartScreenTransition();
+  FieldScript_WaitTransitionFrames();
+  FieldScript_WaitFrames(20);
   FieldCamera_SetSpeed(PIXELS(6) / 5, PIXELS(3) / 20);
   FieldCamera_MoveTo(PIXELS(574), -1, PIXELS(157), 1);
-  Engine_CameraWaitForMove();
-  Engine_ScriptWait(20);
+  FieldCamera_WaitForArrival();
+  FieldScript_WaitFrames(20);
   // Garet: two beams shot out of the statues Isaac moved, and the hole
   // appeared. Jenna: Isaac dropped the statue into it.
-  Engine_ObjectEventRunRepeatedMotion(GARET, 2);
+  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
   EventScript_SayThenWait(GARET, 20);
-  Engine_ObjectEventSetAnimationAndWait(JENNA, ANIMATION_NOD);
+  ObjectMotion_SetAnimationAndWait(JENNA, ANIMATION_NOD);
   EventScript_SayThenWait(JENNA, 6);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_KRADEN, 2);
-  Engine_ScriptWait(40);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 2);
+  FieldScript_WaitFrames(40);
   // Kraden: "Good work, everyone!" and "So the statue puzzle was the trap..."
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIMATION_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIMATION_SHAKE_HEAD);
   EventScript_SayThenWait(LOCALID_KRADEN, 80);
   ObjectEvent_ShowEmote(LOCALID_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_NORTH, 0);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(30);
   EventScript_SayThenWait(LOCALID_KRADEN, 20);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
                         0);
   ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   ObjectEvent_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_NORTH, 0);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(30);
   // Kraden: the other statue was there to disarm the trap, and now they
   // should be all right.
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIMATION_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIMATION_SHAKE_HEAD);
   EventScript_SayThenWait(LOCALID_KRADEN, 6);
-  Engine_ObjectEventFaceEachOther(LOCALID_PARTY_LEADER, GARET, 0);
-  Engine_ScriptWait(40);
-  Engine_ObjectEventFaceEachOther(LOCALID_PARTY_LEADER, JENNA, 0);
-  Engine_ScriptWait(40);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIMATION_NOD);
+  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, GARET, 0);
+  FieldScript_WaitFrames(40);
+  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, JENNA, 0);
+  FieldScript_WaitFrames(40);
+  ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIMATION_NOD);
   EventScript_SayThenWait(LOCALID_KRADEN, 6);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(JENNA, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 0);
-  Engine_ScriptWait(40);
+  FieldScript_WaitFrames(40);
   Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
   Engine_ObjectEventSetAnimation(JENNA, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIMATION_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  FieldScript_WaitFrames(20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIMATION_NOD);
   // Kraden: he will observe from the Luna room. He leaves south.
   EventScript_SayThenWait(LOCALID_KRADEN, 6);
   FieldCamera_SetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
   FieldCamera_MoveTo(PIXELS(576), -1, PIXELS(215), 1);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTH, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventJump(LOCALID_KRADEN, 6, 0);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_Launch(LOCALID_KRADEN, 6, 0);
   ObjectEvent_WalkToAndWait(LOCALID_KRADEN, 576, 217);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   ObjectEvent_WalkToAndWait(LOCALID_KRADEN, 576, 321);
   ObjectEvent_SetPosition(LOCALID_KRADEN, 0, 0);
   FieldCamera_SetSpeed(PIXELS(18) / 5, PIXELS(9) / 20);
   FieldCamera_MoveTo(PIXELS(576), -1, PIXELS(136), 1);
-  Engine_CameraWaitForMove();
-  Engine_ScriptWait(20);
+  FieldCamera_WaitForArrival();
+  FieldScript_WaitFrames(20);
   // Rejoin the companions to the leader and restore normal field control.
   ObjectEvent_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_SetSpeed(JENNA, PIXELS(1), PIXELS(1) / 2);
@@ -453,7 +452,7 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
     ObjectEvent_SetDestination(GARET, leader->x.part.pixel,
                                leader->z.part.pixel);
   }
-  Engine_ObjectEventWaitForMove(GARET);
+  ObjectMotion_CommitCurrentPositionAndActivate(GARET);
   ObjectEvent_SetPosition(GARET, 0, 0);
   Engine_ObjectEventSetAnimation(JENNA, ANIMATION_WALK);
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
@@ -461,12 +460,12 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
     ObjectEvent_SetDestination(JENNA, leader->x.part.pixel,
                                leader->z.part.pixel);
   }
-  Engine_ObjectEventWaitForMove(JENNA);
+  ObjectMotion_CommitCurrentPositionAndActivate(JENNA);
   ObjectEvent_SetPosition(JENNA, 0, 0);
   GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
   gFieldWork->transitionFrames = 16;
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Kraden's first visit, a scripted scene: the party's first seal has sent
@@ -483,112 +482,112 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   struct EventWork *work;
   struct ObjectEvent *leader;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   work = gFieldWork;
   work->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->transitionFrames = 32;
-  Engine_ScriptOpenScreen();
-  Engine_ScriptWaitForScreen();
-  Engine_ScriptWait(20);
+  FieldScript_StartScreenTransition();
+  FieldScript_WaitTransitionFrames();
+  FieldScript_WaitFrames(20);
   Engine_ObjectEventSetPosition(LOCALID_KRADEN, PIXELS(576), PIXELS(296));
-  Engine_ScriptWait(1);
+  FieldScript_WaitFrames(1);
   // Kraden, from the south: "Wait, Isaac!" Jenna: "What's wrong, Kraden?"
-  Engine_ScriptSetMessage(MsgSolSanctumWait);
+  FieldScript_SetMessageId(MsgSolSanctumWait);
   EventScript_SayThenWait(LOCALID_KRADEN, 6);
   FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
   FieldCamera_MoveTo(PIXELS(574), -1, PIXELS(180), 1);
   ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_WalkToAndWait(LOCALID_KRADEN, 576, 216);
-  Engine_ScriptWait(20);
-  Engine_ObjectEventJump(JENNA, 2, 0);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(20);
+  ObjectMotion_Launch(JENNA, 2, 0);
+  FieldScript_WaitFrames(30);
   EventScript_SayThenWait(JENNA, 6);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_KRADEN, 2);
-  Engine_ScriptWait(6);
-  Engine_ObjectEventFaceDirection(LOCALID_KRADEN, FACING_WEST + FACING_STEP, 0);
-  Engine_ScriptWait(10);
-  Engine_CameraSetSpeed(PIXELS(28) / 5, PIXELS(7) / 10);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 2);
+  FieldScript_WaitFrames(6);
+  ObjectMotion_ArmCallback(LOCALID_KRADEN, FACING_WEST + FACING_STEP, 0);
+  FieldScript_WaitFrames(10);
+  FieldCamera_SetSpeedParameters(PIXELS(28) / 5, PIXELS(7) / 10);
   FieldCamera_MoveTo(PIXELS(287), -1, PIXELS(176), 1);
-  Engine_CameraWaitForMove();
-  Engine_ScriptWait(60);
+  FieldCamera_WaitForArrival();
+  FieldScript_WaitFrames(60);
   FieldCamera_MoveTo(PIXELS(574), -1, PIXELS(180), 1);
-  Engine_CameraWaitForMove();
-  Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIMATION_NOD);
-  Engine_ScriptWait(10);
+  FieldCamera_WaitForArrival();
+  FieldScript_WaitFrames(20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIMATION_NOD);
+  FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_NORTH, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventJump(LOCALID_KRADEN, 6, 0);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_Launch(LOCALID_KRADEN, 6, 0);
   ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(3), PIXELS(2));
   ObjectEvent_WalkToAndWait(LOCALID_KRADEN, 576, 184);
-  Engine_ScriptWait(40);
+  FieldScript_WaitFrames(40);
   // Kraden: "This is a most interesting mechanism you've found, Isaac."
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIMATION_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIMATION_NOD);
   EventScript_SayThenWait(LOCALID_KRADEN, 6);
   Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
   Engine_ObjectEventSetAnimation(JENNA, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ScriptWait(40);
+  ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  FieldScript_WaitFrames(40);
   // Kraden: "But this is clearly... some kind of trap." All three start.
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_KRADEN, 3);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 3);
   EventScript_SayThenWait(LOCALID_KRADEN, 6);
-  Engine_ObjectEventJump(LOCALID_PARTY_LEADER, 2, 0);
-  Engine_ObjectEventJump(GARET, 2, 0);
-  Engine_ObjectEventJump(JENNA, 2, 0);
-  Engine_ScriptWait(30);
+  ObjectMotion_Launch(LOCALID_PARTY_LEADER, 2, 0);
+  ObjectMotion_Launch(GARET, 2, 0);
+  ObjectMotion_Launch(JENNA, 2, 0);
+  FieldScript_WaitFrames(30);
   // Garet: "This is...a trap?" Kraden: "Go look in the Luna room".
-  Engine_ObjectEventRunRepeatedMotion(GARET, 2);
+  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
   EventScript_SayThenWait(GARET, 6);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_KRADEN, 1);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIMATION_SHAKE_HEAD);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 1);
+  ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIMATION_SHAKE_HEAD);
   EventScript_SayThenWait(LOCALID_KRADEN, 6);
-  Engine_ObjectEventFaceEachOther(LOCALID_PARTY_LEADER, JENNA, 0);
-  Engine_ScriptWait(40);
-  Engine_ObjectEventFaceObjectEvent(LOCALID_KRADEN, LOCALID_PARTY_LEADER, 0);
+  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, JENNA, 0);
+  FieldScript_WaitFrames(40);
+  ObjectMotion_SetAngleToward(LOCALID_KRADEN, LOCALID_PARTY_LEADER, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_KRADEN, JENNA, 0);
-  Engine_ScriptWait(40);
-  Engine_ObjectEventJump(LOCALID_KRADEN, 6, 0);
+  FieldScript_WaitFrames(40);
+  ObjectMotion_Launch(LOCALID_KRADEN, 6, 0);
   ObjectEvent_WalkToAndWait(LOCALID_KRADEN, 576, 216);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_WEST, 0);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(6) / 5, PIXELS(3) / 5);
-  Engine_ObjectEventWalkTo(LOCALID_KRADEN, 432, 200);
-  Engine_ScriptWait(20);
+  ObjectMotion_ResetAndSetPositionInMode2(LOCALID_KRADEN, 432, 200);
+  FieldScript_WaitFrames(20);
   FieldCamera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
   FieldCamera_MoveTo(PIXELS(288), -1, PIXELS(171), 1);
-  Engine_CameraWaitForMove();
-  Engine_ScriptWait(80);
+  FieldCamera_WaitForArrival();
+  FieldScript_WaitFrames(80);
   Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_STAND);
   FieldCamera_MoveTo(PIXELS(574), -1, PIXELS(180), 1);
-  Engine_ScriptWait(20);
-  Engine_ObjectEventFaceDirection(LOCALID_KRADEN, FACING_EAST, 0);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(20);
+  ObjectMotion_ArmCallback(LOCALID_KRADEN, FACING_EAST, 0);
+  FieldScript_WaitFrames(30);
   ObjectEvent_WalkToAndWait(LOCALID_KRADEN, 576, 216);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_NORTH, 0);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(JENNA, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 0);
-  Engine_CameraSetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
-  Engine_CameraMoveTo(PIXELS(574), -1, PIXELS(171), 1);
-  Engine_ObjectEventJump(LOCALID_KRADEN, 6, 0);
+  FieldCamera_SetSpeedParameters(PIXELS(4) / 5, PIXELS(1) / 10);
+  FieldCamera_MoveWithinMapBounds(PIXELS(574), -1, PIXELS(171), 1);
+  ObjectMotion_Launch(LOCALID_KRADEN, 6, 0);
   ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(3), PIXELS(2));
-  Engine_ObjectEventWalkToAndWait(LOCALID_KRADEN, 576, 184);
-  Engine_ScriptWait(80);
+  ObjectMotion_SetPositionAndReset(LOCALID_KRADEN, 576, 184);
+  FieldScript_WaitFrames(80);
   // Kraden: they are looking in the right place, but moving one statue
   // springs the trap. Jenna: why would anyone put a trap here?
   EventScript_SayThenWait(LOCALID_KRADEN, 6);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIMATION_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIMATION_SHAKE_HEAD);
   EventScript_SayThenWait(LOCALID_KRADEN, 20);
-  Engine_ObjectEventShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Engine_ScriptWait(40);
-  Engine_ObjectEventRunRepeatedMotion(JENNA, 2);
+  FieldEffect_SpawnLinked(JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  FieldScript_WaitFrames(40);
+  ObjectMotion_SetVarCbAndRefresh(JENNA, 2);
   EventScript_SayThenWait(JENNA, 6);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIMATION_NOD);
-  Engine_ObjectEventFaceDirection(LOCALID_KRADEN, FACING_WEST, 0);
-  Engine_ScriptWait(40);
-  Engine_ObjectEventFaceDirection(LOCALID_KRADEN, FACING_NORTH, 0);
-  Engine_ScriptWait(30);
+  ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIMATION_NOD);
+  ObjectMotion_ArmCallback(LOCALID_KRADEN, FACING_WEST, 0);
+  FieldScript_WaitFrames(40);
+  ObjectMotion_ArmCallback(LOCALID_KRADEN, FACING_NORTH, 0);
+  FieldScript_WaitFrames(30);
   // Kraden: they have hidden something very important, perhaps the key to
   // Alchemy itself.
   EventScript_SayThenWait(LOCALID_KRADEN, 6);
@@ -596,90 +595,90 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
                         0);
   ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   ObjectEvent_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Engine_ScriptWait(60);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIMATION_SHAKE_HEAD);
+  FieldScript_WaitFrames(60);
+  ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIMATION_SHAKE_HEAD);
   EventScript_SayThenWait(LOCALID_KRADEN, 6);
-  Engine_ObjectEventFaceEachOther(GARET, LOCALID_PARTY_LEADER, 0);
-  Engine_ScriptWait(40);
-  Engine_ObjectEventFaceEachOther(JENNA, LOCALID_PARTY_LEADER, 0);
-  Engine_ScriptWait(40);
+  ObjectEvent_LinkPair(GARET, LOCALID_PARTY_LEADER, 0);
+  FieldScript_WaitFrames(40);
+  ObjectEvent_LinkPair(JENNA, LOCALID_PARTY_LEADER, 0);
+  FieldScript_WaitFrames(40);
   // Kraden: "Should I tell you more?" Either answer, he thinks they would not
   // understand yet.
   FieldMessage_ShowAtObject(LOCALID_KRADEN, 0);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(JENNA, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 0);
-  if (Engine_ScriptChooseYesNo(0, 0) == 0) {
-    Engine_ScriptSetMessage(MsgSolSanctumHonestlyDoubtUnderstand);
+  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
+    FieldScript_SetMessageId(MsgSolSanctumHonestlyDoubtUnderstand);
   } else {
-    Engine_ScriptSetMessage(MsgSolSanctumHmphWellTold);
+    FieldScript_SetMessageId(MsgSolSanctumHmphWellTold);
   }
   EventScript_SayThenWait(LOCALID_KRADEN, 6);
   // Kraden: "We must try to find a solution to this mystery." Garet:
   // "Sheesh... Another mystery?" Kraden will keep checking the Luna room.
-  Engine_ScriptSetMessage(MsgSolSanctumTryFindSolution);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_KRADEN, 2);
+  FieldScript_SetMessageId(MsgSolSanctumTryFindSolution);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 2);
   EventScript_SayThenWait(LOCALID_KRADEN, 6);
-  Engine_ObjectEventShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Engine_ScriptWait(60);
+  FieldEffect_SpawnLinked(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  FieldScript_WaitFrames(60);
   EventScript_SayThenWait(GARET, 6);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIMATION_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIMATION_NOD);
   EventScript_SayThenWait(LOCALID_KRADEN, 6);
-  Engine_ObjectEventFaceDirection(LOCALID_KRADEN, FACING_SOUTH, 0);
-  Engine_ScriptWait(20);
-  Engine_ObjectEventJump(LOCALID_KRADEN, 6, 0);
+  ObjectMotion_ArmCallback(LOCALID_KRADEN, FACING_SOUTH, 0);
+  FieldScript_WaitFrames(20);
+  ObjectMotion_Launch(LOCALID_KRADEN, 6, 0);
   ObjectEvent_WalkToAndWait(LOCALID_KRADEN, 576, 216);
-  Engine_ScriptWait(40);
-  Engine_CameraSetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
+  FieldScript_WaitFrames(40);
+  FieldCamera_SetSpeedParameters(PIXELS(4) / 5, PIXELS(1) / 10);
   FieldCamera_MoveTo(PIXELS(574), -1, PIXELS(191), 1);
   ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(1), PIXELS(1) / 2);
-  Engine_ObjectEventWalkToAndWait(LOCALID_KRADEN, 576, 232);
-  Engine_ScriptWait(40);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_KRADEN, 2);
-  Engine_ScriptWait(40);
+  ObjectMotion_SetPositionAndReset(LOCALID_KRADEN, 576, 232);
+  FieldScript_WaitFrames(40);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 2);
+  FieldScript_WaitFrames(40);
   // Kraden, leaving: his intuition says the light is the key to the secret.
   EventScript_SayThenWait(LOCALID_KRADEN, 6);
-  Engine_ObjectEventFaceDirection(LOCALID_KRADEN, FACING_NORTH, 0);
-  Engine_ScriptWait(30);
+  ObjectMotion_ArmCallback(LOCALID_KRADEN, FACING_NORTH, 0);
+  FieldScript_WaitFrames(30);
   EventScript_SayThenWait(LOCALID_KRADEN, 6);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIMATION_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIMATION_NOD);
   FieldCamera_MoveTo(PIXELS(576), -1, PIXELS(215), 1);
   ObjectEvent_WalkToAndWait(LOCALID_KRADEN, 574, 323);
   Engine_ObjectEventSetPosition(LOCALID_KRADEN, 0, 0);
   // Leave Isaac in control after Jenna and Garet rejoin him.
   FieldCamera_SetSpeed(PIXELS(18) / 5, PIXELS(9) / 20);
-  Engine_CameraMoveTo(PIXELS(576), -1, PIXELS(136), 1);
-  Engine_CameraWaitForMove();
-  Engine_ScriptWait(20);
-  Engine_ObjectEventFaceDirection(JENNA, FACING_EAST, 0);
-  Engine_ScriptWait(10);
+  FieldCamera_MoveWithinMapBounds(PIXELS(576), -1, PIXELS(136), 1);
+  FieldCamera_WaitForArrival();
+  FieldScript_WaitFrames(20);
+  ObjectMotion_ArmCallback(JENNA, FACING_EAST, 0);
+  FieldScript_WaitFrames(10);
   // Jenna: "let's see if we can't figure this out ourselves."
   EventScript_SayThenWait(JENNA, 6);
   Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(JENNA, ANIMATION_NOD);
+  ObjectMotion_SetAnimationAndWait(JENNA, ANIMATION_NOD);
   ObjectEvent_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_SetSpeed(JENNA, PIXELS(1), PIXELS(1) / 2);
   Engine_ObjectEventSetAnimation(JENNA, ANIMATION_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0) {
-    Engine_ObjectEventSetDestination(JENNA, leader->x.part.pixel,
+    ObjectMotion_ResetAndSetPosition(JENNA, leader->x.part.pixel,
                                      leader->z.part.pixel);
   }
-  Engine_ObjectEventWaitForMove(JENNA);
+  ObjectMotion_CommitCurrentPositionAndActivate(JENNA);
   Engine_ObjectEventSetPosition(JENNA, 0, 0);
   Engine_ObjectEventSetAnimation(GARET, ANIMATION_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0) {
-    Engine_ObjectEventSetDestination(GARET, leader->x.part.pixel,
+    ObjectMotion_ResetAndSetPosition(GARET, leader->x.part.pixel,
                                      leader->z.part.pixel);
   }
-  Engine_ObjectEventWaitForMove(GARET);
+  ObjectMotion_CommitCurrentPositionAndActivate(GARET);
   Engine_ObjectEventSetPosition(GARET, 0, 0);
   GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   work = gFieldWork;
   work->transition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
   work->transitionFrames = 16;
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Pans the camera away from the leader while a patch of the floor flashes
@@ -700,64 +699,64 @@ static void SolSanctumStatue_RunSealOpenedSequence(void) {
   if (leader->z.fixed < PIXELS(179)) {
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 575, 132);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
-    Engine_ScriptWait(30);
+    FieldScript_WaitFrames(30);
     savedOrigin = grid->origin;
     SET_VECTOR(cameraPosition, leader->x.fixed, leader->y.fixed,
                leader->z.fixed);
     grid->origin = cameraPosition;
     for (frame = 0; frame != 30; frame++) {
       cameraPosition[2] += PIXELS(1);
-      Engine_ScriptWait(1);
+      FieldScript_WaitFrames(1);
     }
-    Engine_ScriptWait(40);
+    FieldScript_WaitFrames(40);
     approachSide = 1;
   } else {
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 577, 222);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-    Engine_ScriptWait(30);
+    FieldScript_WaitFrames(30);
     SET_VECTOR(cameraPosition, leader->x.fixed, leader->y.fixed,
                leader->z.fixed);
     savedOrigin = grid->origin;
     grid->origin = cameraPosition;
     for (frame = 0; frame != 30; frame++) {
       cameraPosition[2] -= PIXELS(1);
-      Engine_ScriptWait(1);
+      FieldScript_WaitFrames(1);
     }
-    Engine_ScriptWait(40);
+    FieldScript_WaitFrames(40);
     approachSide = 2;
   }
   // Flash progressively faster before uncovering the stairway.
   for (frame = 0; frame != 6; frame++) {
     MapGrid_CopyCellsTo(2, 28, 34, 10, 4, 2);
-    Engine_ScriptWait(8);
+    FieldScript_WaitFrames(8);
     MapGrid_CopyCellsTo(2, 30, 34, 10, 4, 2);
-    Engine_ScriptWait(8);
+    FieldScript_WaitFrames(8);
   }
   for (frame = 0; frame != 10; frame++) {
     MapGrid_CopyCellsTo(2, 28, 34, 10, 4, 2);
-    Engine_ScriptWait(4);
+    FieldScript_WaitFrames(4);
     MapGrid_CopyCellsTo(2, 30, 34, 10, 4, 2);
-    Engine_ScriptWait(4);
+    FieldScript_WaitFrames(4);
   }
   for (frame = 0; frame != 12; frame++) {
     MapGrid_CopyCellsTo(2, 28, 34, 10, 4, 2);
-    Engine_ScriptWait(2);
+    FieldScript_WaitFrames(2);
     MapGrid_CopyCellsTo(2, 30, 34, 10, 4, 2);
-    Engine_ScriptWait(2);
+    FieldScript_WaitFrames(2);
   }
   MapGrid_CopyCellsTo(2, 28, 34, 10, 4, 2);
   MapGrid_CopyCellsTo(8, 55, 32, 40, 8, 4);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   // Reverse the pan before restoring the caller's camera target.
   if (approachSide == 1) {
     for (frame = 0; frame != 30; frame++) {
       cameraPosition[2] -= PIXELS(1);
-      Engine_ScriptWait(1);
+      FieldScript_WaitFrames(1);
     }
   } else if (approachSide == 2) {
     for (frame = 0; frame != 30; frame++) {
       cameraPosition[2] += PIXELS(1);
-      Engine_ScriptWait(1);
+      FieldScript_WaitFrames(1);
     }
   }
   grid->origin = savedOrigin;
@@ -820,7 +819,7 @@ static void SolSanctumStatue_UpdateScrollingSprites(void) {
 static void EventScript_JumpNorth(void) {
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader->facing == FACING_NORTH) {
-    Engine_LeaderCheckAhead();
+    Field_TryJumpForward();
   }
 }
 
@@ -828,7 +827,7 @@ static void EventScript_JumpNorth(void) {
 static void EventScript_JumpSouth(void) {
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader->facing == FACING_SOUTH) {
-    Engine_LeaderCheckAhead();
+    Field_TryJumpForward();
   }
 }
 
@@ -838,12 +837,12 @@ static void EventScript_JumpSouth(void) {
 /// Nothing calls it; the player moves the statue there with Move instead.
 UNUSED static void SolSanctumStatue_UnusedMoveNorthwestStatue(void) {
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN) == 0) {
-    Engine_ScriptStart();
+    FieldScript_Start();
     ObjectEvent_GetById(LOCALID_NORTHWEST_STATUE);
     ObjectEvent_SetSpeed(LOCALID_NORTHWEST_STATUE, PIXELS(1) / 5,
                          PIXELS(1) / 10);
     ObjectEvent_WalkToAndWait(LOCALID_NORTHWEST_STATUE, 504, 152);
-    Engine_ScriptEnd();
+    FieldScript_End();
   }
 }
 
@@ -871,10 +870,10 @@ s32 SolSanctumStatue_Initialize(void) {
 
     centerEffect->priorityFlags = flags;
   }
-  Engine_ObjectEventSetSpriteFlags(
-      ObjectEvent_GetById(LOCALID_MOVED_CENTER_STATUE), 0);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_MOVED_CENTER_STATUE),
+                             0);
   ObjectEvent_GetById(LOCALID_MOVED_CENTER_STATUE)->priorityFlags &= 254;
-  Engine_ObjectEventSetSpritePriority(LOCALID_MOVED_CENTER_STATUE, 1);
+  ObjectMotion_SetActionVariant(LOCALID_MOVED_CENTER_STATUE, 1);
   // Only warp destinations 3 and 4 keep Jenna and Garet staged for their
   // conversations.
   if ((u16)(gGameState.warpDest - 3) > 1) {
@@ -967,7 +966,7 @@ s32 SolSanctumStatue_Initialize(void) {
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
     Map_QueueMusic(SE_RUMBLE);
     MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
-    InitializeSparkleRecordBuffer();
+    FieldEffect_InitializeSparkles();
   }
   return 0;
 }
@@ -984,7 +983,7 @@ static void SolSanctumStatue_InitializeScrollingSprites(void) {
   spriteWords = sScrollingSprites.words;
   pixels = AllocHeapSlotEwram(14, 1024);
   Decompress_ByteLz(gSolSanctumStatue_SpriteRowsGraphics, pixels);
-  tile = Engine_VramLoad(VramCache_FindFreeEntry(), 128, pixels);
+  tile = VramCache_Load(VramCache_FindFreeEntry(), 128, pixels);
   for (column = 0; column < SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT; column++) {
     s32 *attributeWords = spriteWords;
 
@@ -993,7 +992,7 @@ static void SolSanctumStatue_InitializeScrollingSprites(void) {
     spriteWords += 3;
     *attributeWords = tile | 0xac00;
   }
-  tile = Engine_VramLoad(VramCache_FindFreeEntry(), 128, pixels + 128);
+  tile = VramCache_Load(VramCache_FindFreeEntry(), 128, pixels + 128);
   for (column = 0; column < SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT; column++) {
     s32 *attributeWords = spriteWords;
 
@@ -1002,7 +1001,7 @@ static void SolSanctumStatue_InitializeScrollingSprites(void) {
     spriteWords += 3;
     *attributeWords = tile | 0xdc00;
   }
-  tile = Engine_VramLoad(VramCache_FindFreeEntry(), 128, pixels + 256);
+  tile = VramCache_Load(VramCache_FindFreeEntry(), 128, pixels + 256);
   for (column = 0; column < SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT; column++) {
     s32 *attributeWords = spriteWords;
 
@@ -1011,7 +1010,7 @@ static void SolSanctumStatue_InitializeScrollingSprites(void) {
     spriteWords += 3;
     *attributeWords = tile | 0xc00;
   }
-  Engine_HeapRelease(14);
+  FreeHeapSlot(14);
   {
     s32 priority = 3200;
 
@@ -1140,9 +1139,9 @@ static void EventScript_CenterStatueMoved(void) {
   Field_SetMetatileBehaviorAt(2, PIXELS(288), PIXELS(128), 0);
   if (statue != NULL) {
     statueZ = statue->z.fixed;
-    Engine_ScriptStart();
+    FieldScript_Start();
     if ((statueZ >> 20) == 8) {
-      if (Engine_GameFlagIsSet(FLAG_MAP_TEMP_07) == 0) {
+      if (GameFlag_Test(FLAG_MAP_TEMP_07) == 0) {
         leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
         if ((u32)(leader->z.fixed >> 19) <= 17) {
           ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 289, 158);
@@ -1150,22 +1149,22 @@ static void EventScript_CenterStatueMoved(void) {
           leader->facing = FACING_NORTH;
         }
       }
-      if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING) != 0 &&
-          Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING) != 0) {
+      if (GameFlag_Test(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING) != 0 &&
+          GameFlag_Test(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING) != 0) {
         Engine_GameFlagSet(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED);
         // The statue slides south into the hole; LOCALID_MOVED_CENTER_STATUE
         // stands in for it there and the room shakes hard, then settles.
         FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
         FieldCamera_MoveTo(PIXELS(286), -1, PIXELS(146), 1);
-        Engine_CameraWaitForMove();
+        FieldCamera_WaitForArrival();
         ObjectEvent_GetById(LOCALID_CENTER_STATUE)->steeringFlags &=
             ~OBJ_EVENT_FACES_MOTION;
         ObjectEvent_SetSpeed(LOCALID_CENTER_STATUE, PIXELS(3), PIXELS(1));
         statue->motionFlags = 0;
-        Engine_ObjectEventSetSpritePriority(LOCALID_CENTER_STATUE, 3);
-        Engine_AudioPlayCue(SE_189);
-        Engine_ObjectEventSetDestination(LOCALID_CENTER_STATUE, 288, 178);
-        Engine_ScriptWait(8);
+        ObjectMotion_SetActionVariant(LOCALID_CENTER_STATUE, 3);
+        Sound_PlaySong(SE_189);
+        ObjectMotion_ResetAndSetPosition(LOCALID_CENTER_STATUE, 288, 178);
+        FieldScript_WaitFrames(8);
         ObjectEvent_SetPosition(LOCALID_MOVED_CENTER_STATUE, PIXELS(288),
                                 PIXELS(178));
         statue->targetX = OBJ_EVENT_NO_TARGET;
@@ -1177,37 +1176,37 @@ static void EventScript_CenterStatueMoved(void) {
         SET_VELOCITY(statue, 0, 0, 0);
         Engine_ObjectEventSetPosition(LOCALID_CENTER_STATUE, 0, 0);
         MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
-        Engine_ScriptWait(10);
-        Engine_AudioPlayCue(SE_RUMBLE);
+        FieldScript_WaitFrames(10);
+        Sound_PlaySong(SE_RUMBLE);
         MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
-        Engine_ScriptWait(10);
+        FieldScript_WaitFrames(10);
         MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
-        Engine_ScriptWait(35);
+        FieldScript_WaitFrames(35);
         MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
-        Engine_ScriptWait(20);
+        FieldScript_WaitFrames(20);
         MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
-        Engine_ScriptWait(30);
+        FieldScript_WaitFrames(30);
         MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
-        Engine_ScriptWait(40);
-        Engine_AudioPlayCue(SONG_FADE_OUT_ACTION_SE);
+        FieldScript_WaitFrames(40);
+        Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
         MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
-        Engine_ScriptWait(10);
+        FieldScript_WaitFrames(10);
         MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
-        Engine_ScriptWait(60);
-        Engine_AudioPlayCue(SE_188);
-        if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN) != 0 &&
-            Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN) != 0 &&
-            Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN) != 0 &&
-            Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN) != 0) {
+        FieldScript_WaitFrames(60);
+        Sound_PlaySong(SE_188);
+        if (GameFlag_Test(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN) != 0 &&
+            GameFlag_Test(FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN) != 0 &&
+            GameFlag_Test(FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN) != 0 &&
+            GameFlag_Test(FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN) != 0) {
           Engine_GameFlagSet(FLAG_SOL_SANCTUM_ALL_SEALS_OPEN);
         }
-        Engine_ScriptWait(40);
-        Engine_MessageShowCentered(MsgSolSanctumSomethingClicked, 1);
+        FieldScript_WaitFrames(40);
+        FieldMessage_Show(MsgSolSanctumSomethingClicked, 1);
         MapGrid_CopyCellAttributes(0, 1, 2, 1, 17, 8);
         MapGrid_CopyCellAttributes(17, 9, 2, 1, 17, 7);
       }
     }
-    Engine_ScriptEnd();
+    FieldScript_End();
   }
 }
 
@@ -1220,7 +1219,7 @@ static void EventScript_PushCenterStatueNorth(void) {
   movingObjectEvent = ObjectEvent_GetById(LOCALID_CENTER_STATUE);
   if (movingObjectEvent != 0) {
     if ((movingObjectEvent->z.fixed >> 20) == 8) {
-      Engine_ScriptStart();
+      FieldScript_Start();
       Script_PlaySong(SE_PUSH);
       ObjectEvent_SetSpeed(LOCALID_CENTER_STATUE, PIXELS(1) / 5,
                            PIXELS(1) / 10);
@@ -1232,9 +1231,9 @@ static void EventScript_PushCenterStatueNorth(void) {
       ObjectEvent_SetDestination(LOCALID_PARTY_LEADER,
                                  movingObjectEvent->x.part.pixel, 136);
       ObjectEvent_SetDestination(LOCALID_CENTER_STATUE, 288, 120);
-      Engine_ObjectEventWaitForMove(LOCALID_CENTER_STATUE);
+      ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_CENTER_STATUE);
       Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
-      Engine_ScriptEnd();
+      FieldScript_End();
     }
   }
 }
@@ -1342,21 +1341,21 @@ static void SolSanctumStatue_PushStatue(s32 statueId, s32 statueColumn,
   s32 statueX;
   s32 statueZ;
 
-  Engine_ScriptStart();
-  Engine_AudioPlayCue(SE_PUSH);
+  FieldScript_Start();
+  Sound_PlaySong(SE_PUSH);
   ObjectEvent_SetSpeed(statueId, PIXELS(1) / 5, PIXELS(1) / 10);
-  Engine_ObjectEventSetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 5,
-                             PIXELS(1) / 10);
+  ObjectMotion_SetSpeedParameters(LOCALID_PARTY_LEADER, PIXELS(1) / 5,
+                                  PIXELS(1) / 10);
   ObjectEvent_GetById(statueId)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_PUSH);
-  Engine_ObjectEventSetDestination(
+  ObjectMotion_ResetAndSetPosition(
       LOCALID_PARTY_LEADER, (leaderColumn << 4) + 8, (leaderRow << 4) + 8);
   statueX = statueColumn << 4;
   statueZ = statueRow << 4;
-  Engine_ObjectEventSetDestination(statueId, statueX + 8, statueZ + 8);
-  Engine_ObjectEventWaitForMove(statueId);
+  ObjectMotion_ResetAndSetPosition(statueId, statueX + 8, statueZ + 8);
+  ObjectMotion_CommitCurrentPositionAndActivate(statueId);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Returns 1 when the object event stands in the given map cell.
@@ -1607,21 +1606,21 @@ static void SolSanctumStatue_OpenSeal(void) {
   s32 pulse;
 
   warpResult = 0;
-  Engine_ScriptStart();
-  if (!Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_ALL_SEALS_OPEN)) {
+  FieldScript_Start();
+  if (!GameFlag_Test(FLAG_SOL_SANCTUM_ALL_SEALS_OPEN)) {
     // Show the configured seal and flash its two tile states.
-    Engine_CameraSetSpeed(PIXELS(2), PIXELS(1) / 4);
-    Engine_CameraMoveTo(PIXELS(576), -1, PIXELS(172), 1);
-    Engine_CameraWaitForMove();
-    Engine_AudioPlayCue(SE_SOL_SANCTUM_LIGHT_UP);
+    FieldCamera_SetSpeedParameters(PIXELS(2), PIXELS(1) / 4);
+    FieldCamera_MoveWithinMapBounds(PIXELS(576), -1, PIXELS(172), 1);
+    FieldCamera_WaitForArrival();
+    Sound_PlaySong(SE_SOL_SANCTUM_LIGHT_UP);
     COPY_CELLS(sSealScene.open);
     for (pulse = 0; pulse != 20; pulse++) {
-      Engine_AudioPlayCue(SE_246);
+      Sound_PlaySong(SE_246);
       COPY_CELLS(sSealScene.pulseA);
-      Engine_ScriptWait(4);
-      Engine_AudioPlayCue(SE_246);
+      FieldScript_WaitFrames(4);
+      Sound_PlaySong(SE_246);
       COPY_CELLS(sSealScene.pulseB);
-      Engine_ScriptWait(4);
+      FieldScript_WaitFrames(4);
     }
     scene = &sSealScene;
     COPY_CELLS(scene->opened);
@@ -1629,37 +1628,37 @@ static void SolSanctumStatue_OpenSeal(void) {
     warpResult = SolSanctumStatue_SelectStoryWarp();
     // Keep the statue reusable until the central statue has moved.
     if (warpResult == -1) {
-      if (!Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED)) {
-        Engine_CameraFollowObjectEvent(LOCALID_PARTY_LEADER, 1);
+      if (!GameFlag_Test(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED)) {
+        FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 1);
         ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing = scene->facing;
         ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(2), PIXELS(2));
         ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags &=
             ~OBJ_EVENT_FACES_MOTION;
-        Engine_ObjectEventJump(LOCALID_PARTY_LEADER, 4, 0);
-        Engine_ObjectEventSetDestination(
+        ObjectMotion_Launch(LOCALID_PARTY_LEADER, 4, 0);
+        ObjectMotion_ResetAndSetPosition(
             LOCALID_PARTY_LEADER, scene->destinationX, scene->destinationZ);
         COPY_CELLS(scene->stairs[0]);
         COPY_CELLS(scene->stairs[1]);
         COPY_CELLS(scene->stairs[2]);
         ObjectEvent_GetById(scene->localId)->steeringFlags &=
             ~OBJ_EVENT_FACES_MOTION;
-        Engine_ObjectMotionSetPositionAndCommit(
-            scene->localId, scene->objectEventX, scene->objectEventZ);
+        ObjectMotion_SetPositionAndCommit(scene->localId, scene->objectEventX,
+                                          scene->objectEventZ);
         ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags |=
             OBJ_EVENT_FACES_MOTION;
-        Engine_GameFlagClear(scene->flag);
+        GameFlag_ClearBit(scene->flag);
       }
     } else if (warpResult == 0 &&
-               Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED)) {
+               GameFlag_Test(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED)) {
       // DEAD: SelectStoryWarp returns only 1 or -1, so this branch cannot run.
-      if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN) &&
-          Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN) &&
-          Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN)) {
+      if (GameFlag_Test(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN) &&
+          GameFlag_Test(FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN) &&
+          GameFlag_Test(FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN)) {
         if (!GameFlag_IsSet(FLAG_SOL_SANCTUM_ALL_SEALS_OPEN)) {
           Engine_GameFlagSet(FLAG_SOL_SANCTUM_ALL_SEALS_OPEN);
           SolSanctumStatue_RunSealOpenedSequence();
         }
-      } else if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN)) {
+      } else if (GameFlag_Test(FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN)) {
         Engine_ScriptRequestWarp(
             SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_LIGHTS_SHOWN);
         warpResult = 1;
@@ -1667,67 +1666,67 @@ static void SolSanctumStatue_OpenSeal(void) {
     }
   }
   if (warpResult == 1) {
-    Engine_ScriptCloseScreen();
-    Engine_ScriptWaitForScreen();
+    FieldScript_FinishScreenTransition();
+    FieldScript_WaitTransitionFrames();
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Draws the left beam and opens the floor when the right beam is also lit.
 /// Called when the left beam statue reaches its place in front of the centre,
 /// until the centre statue has moved. Sets FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING.
 static void SolSanctumStatue_ShineLeftBeam(void) {
-  Engine_ScriptStart();
+  FieldScript_Start();
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED) == 0) {
     if (GameFlag_IsSet(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING) == 0) {
       FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
       FieldCamera_MoveTo(PIXELS(286), -1, PIXELS(146), 1);
-      Engine_CameraWaitForMove();
+      FieldCamera_WaitForArrival();
       Script_PlaySong(SE_SOL_SANCTUM_LIGHT_UP);
       MapGrid_CopyCellsTo(0, 59, 15, 38, 4, 3);
       if (GameFlag_IsSet(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING) != 0) {
         MapGrid_CopyCellsTo(8, 60, 17, 39, 2, 2);
       }
       ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 0);
-      Engine_ScriptWait(30);
+      FieldScript_WaitFrames(30);
       GameFlag_Set(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING);
       if (GameFlag_IsSet(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING) != 0) {
         SolSanctumStatue_OpenCentralHole();
       }
     }
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Draws the right beam and opens the floor when the left beam is also lit.
 /// As the left one; sets FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING.
 static void SolSanctumStatue_ShineRightBeam(void) {
-  Engine_ScriptStart();
+  FieldScript_Start();
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED) == 0) {
     if (GameFlag_IsSet(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING) == 0) {
       FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
       FieldCamera_MoveTo(PIXELS(286), -1, PIXELS(146), 1);
-      Engine_CameraWaitForMove();
+      FieldCamera_WaitForArrival();
       Script_PlaySong(SE_SOL_SANCTUM_LIGHT_UP);
       MapGrid_CopyCellsTo(4, 59, 17, 38, 4, 3);
       if (GameFlag_IsSet(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING) != 0) {
         MapGrid_CopyCellsTo(8, 60, 17, 39, 2, 2);
       }
       ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 0);
-      Engine_ScriptWait(30);
+      FieldScript_WaitFrames(30);
       GameFlag_Set(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING);
       if (GameFlag_IsSet(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING) != 0) {
         SolSanctumStatue_OpenCentralHole();
       }
     }
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Shows the selected message from one speaker and waits the requested frames.
 static void EventScript_SayThenWait(s32 speaker, s32 frames) {
-  Engine_ScriptShowMessage(speaker, 0);
-  Engine_ScriptWait(frames);
+  FieldScript_ShowMessageAndWait(speaker, 0);
+  FieldScript_WaitFrames(frames);
 }
 
 struct MapWarpDest gSolSanctumStatue_WarpDests[] = {

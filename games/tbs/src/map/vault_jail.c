@@ -127,35 +127,32 @@ const struct MapEvent *Map_GetEvents(void) {
 /// Reached by talking to the leader (LOCALID_THIEF_LEADER) while
 /// FLAG_VAULT_THIEVES_JAILED is set.
 static void EventScript_LeaderSilencesThieves(void) {
-  Engine_ScriptStart();
+  FieldScript_Start();
 
-  Engine_ObjectEventFaceObjectEvent(LOCALID_THIEF_LEADER, LOCALID_LEFT_THIEF,
-                                    0);
-  Engine_ScriptWait(40);
+  ObjectMotion_SetAngleToward(LOCALID_THIEF_LEADER, LOCALID_LEFT_THIEF, 0);
+  FieldScript_WaitFrames(40);
 
-  Engine_ObjectEventFaceObjectEvent(LOCALID_THIEF_LEADER, LOCALID_RIGHT_THIEF,
-                                    0);
-  Engine_ScriptWait(40);
+  ObjectMotion_SetAngleToward(LOCALID_THIEF_LEADER, LOCALID_RIGHT_THIEF, 0);
+  FieldScript_WaitFrames(40);
 
   // "Shut yer yaps!"; the two thieves start.
-  Engine_ScriptSetMessage(MsgVaultThiefLeaderSilencesThieves);
-  Engine_ScriptShowMessage(LOCALID_THIEF_LEADER, 0);
+  FieldScript_SetMessageId(MsgVaultThiefLeaderSilencesThieves);
+  FieldScript_ShowMessageAndWait(LOCALID_THIEF_LEADER, 0);
 
-  Engine_ObjectEventStartRepeatedMotion(LOCALID_LEFT_THIEF, 2);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_RIGHT_THIEF, 2);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVariantCallback(LOCALID_LEFT_THIEF, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_RIGHT_THIEF, 2);
+  FieldScript_WaitFrames(20);
 
   // Turn from the two thieves to the party for the remaining dialogue.
-  Engine_ObjectEventFaceEachOther(LOCALID_THIEF_LEADER, LOCALID_PARTY_LEADER,
-                                  0);
-  Engine_ScriptWait(20);
+  ObjectEvent_LinkPair(LOCALID_THIEF_LEADER, LOCALID_PARTY_LEADER, 0);
+  FieldScript_WaitFrames(20);
 
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_THIEF_LEADER, 1);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_THIEF_LEADER, 1);
+  FieldScript_WaitFrames(20);
 
-  Engine_ScriptShowMessage(LOCALID_THIEF_LEADER, 0);
+  FieldScript_ShowMessageAndWait(LOCALID_THIEF_LEADER, 0);
 
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// In Vault's jail, the thief on the left wishes they had escaped to the cave
@@ -164,12 +161,12 @@ static void EventScript_LeaderSilencesThieves(void) {
 /// Reached by talking to him (LOCALID_LEFT_THIEF) while
 /// FLAG_VAULT_THIEVES_JAILED is set.
 static void EventScript_LeftThiefRegretsEscape(void) {
-  Engine_ScriptStart();
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_LEFT_THIEF, 2);
-  Engine_ScriptWait(20);
-  Engine_ScriptSetMessage(MsgVaultLeftThiefRegretsEscape);
-  Engine_ScriptShowMessage(LOCALID_LEFT_THIEF, 0);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_LEFT_THIEF, 2);
+  FieldScript_WaitFrames(20);
+  FieldScript_SetMessageId(MsgVaultLeftThiefRegretsEscape);
+  FieldScript_ShowMessageAndWait(LOCALID_LEFT_THIEF, 0);
+  FieldScript_End();
 }
 
 /// In Vault's jail, the thief on the right shakes his head: he knew they
@@ -178,13 +175,12 @@ static void EventScript_LeftThiefRegretsEscape(void) {
 /// Reached by talking to him (LOCALID_RIGHT_THIEF) while
 /// FLAG_VAULT_THIEVES_JAILED is set.
 static void EventScript_RightThiefRegretsStaying(void) {
-  Engine_ScriptStart();
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_RIGHT_THIEF,
-                                        ANIMATION_SHAKE_HEAD);
-  Engine_ScriptWait(20);
-  Engine_ScriptSetMessage(MsgVaultRightThiefRegretsStaying);
-  Engine_ScriptShowMessage(LOCALID_RIGHT_THIEF, 0);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  ObjectMotion_SetAnimationAndWait(LOCALID_RIGHT_THIEF, ANIMATION_SHAKE_HEAD);
+  FieldScript_WaitFrames(20);
+  FieldScript_SetMessageId(MsgVaultRightThiefRegretsStaying);
+  FieldScript_ShowMessageAndWait(LOCALID_RIGHT_THIEF, 0);
+  FieldScript_End();
 }
 
 /// Mind Read on the thieves' leader in Vault's jail: he'll be out of this jail
@@ -194,27 +190,27 @@ static void EventScript_RightThiefRegretsStaying(void) {
 /// is set; the two below are reached the same way on LOCALID_LEFT_THIEF and
 /// LOCALID_RIGHT_THIEF.
 static void EventScript_ReadLeaderMind(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgVaultThiefLeaderThoughts);
-  Engine_ScriptShowMessage(LOCALID_THIEF_LEADER, 0);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgVaultThiefLeaderThoughts);
+  FieldScript_ShowMessageAndWait(LOCALID_THIEF_LEADER, 0);
+  FieldScript_End();
 }
 
 /// Mind Read on the thief on the left: will he ever run free again?
 static void EventScript_ReadLeftThiefMind(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgVaultLeftThiefThoughts);
-  Engine_ScriptShowMessage(LOCALID_LEFT_THIEF, 0);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgVaultLeftThiefThoughts);
+  FieldScript_ShowMessageAndWait(LOCALID_LEFT_THIEF, 0);
+  FieldScript_End();
 }
 
 /// Mind Read on the thief on the right: is this because they stole Hammet's
 /// Shaman's Rod?
 static void EventScript_ReadRightThiefMind(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgVaultRightThiefThoughts);
-  Engine_ScriptShowMessage(LOCALID_RIGHT_THIEF, 0);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgVaultRightThiefThoughts);
+  FieldScript_ShowMessageAndWait(LOCALID_RIGHT_THIEF, 0);
+  FieldScript_End();
 }
 
 /// The party steps out of Vault's jail into Vault, with the warp sound.
@@ -224,7 +220,7 @@ static void EventScript_ReadRightThiefMind(void) {
 /// VAULT_JAIL_TO_VAULT to VAULT_FROM_VAULT_JAIL. The prisoner's table leaves by
 /// a plain warp instead, VAULT_JAIL_TO_VAULT_REVISIT.
 static void EventScript_LeaveForVault(void) {
-  Engine_AudioPlayCue(SE_MAP_EXIT);
+  Sound_PlaySong(SE_MAP_EXIT);
   Engine_ScriptRequestWarp(VAULT_JAIL_TO_VAULT);
 }
 
@@ -243,7 +239,7 @@ s32 Map_Initialize(void) {
   warpDest = gGameState.warpDest;
 
   if (warpDest == VAULT_JAIL_FROM_LUNPA) {
-    Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
+    GameFlag_ClearBit(FLAG_SHOW_LOCATION_NAME);
   } else if (warpDest == VAULT_JAIL_FROM_VAULT_REVISIT) {
     ObjectEvent_GetById(LOCALID_PRISONER)->collisionFlags |=
         JAIL_REACH_ACROSS_BARS;

@@ -179,9 +179,9 @@ static void Spray_Update(union FieldObject *fieldObject) {
     drop->y.fixed += 0xcccc;
   } else if ((s16)drop->work != 0) {
     drop->work = 0;
-    ObjectEvent_SetMode(drop, 1);
+    ObjectDispatch_SelectAnimation(drop, 1);
     drop->wait = 20;
-    Engine_ObjectSetScript(drop, gSprayFallScript);
+    ObjectEvent_SetScript(drop, gSprayFallScript);
   }
 }
 
@@ -220,13 +220,13 @@ static void Ship_UpdateSwell(void) {
 
   grid = gMapGridWork[0];
   if (gOrbGlowActive != 0) {
-    swell = Iwram_MulQ16(Engine_MathSin(gOrbGlowPhase << 9), 3);
+    swell = Iwram_MulQ16(Trig_Sin(gOrbGlowPhase << 9), 3);
     blend = gOrbGlowStrength + ((swell + 8) << 8);
     Io_Write16(blend, &REG_BLDALPHA);
     gOrbGlowPhase++;
   }
   if (gSwellActive != 0) {
-    swell = Iwram_MulQ16(Engine_MathSin(gSwellPhase << 9), 2) << 16;
+    swell = Iwram_MulQ16(Trig_Sin(gSwellPhase << 9), 2) << 16;
     grid->layers[MAPGRID_LAYER_MIDDLE].offsetY = gShipHullY + swell;
     grid->layers[MAPGRID_LAYER_OVERHEAD].offsetY = gShipDeckY + swell;
     if (gLeaderDeckY != SHIP_NOT_ON_DECK) {
@@ -274,8 +274,8 @@ static void Ship_UpdateSwell(void) {
       objectEvent->motionFlags = 0;
       objectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
       objectEvent->sprite->image.priority = 2;
-      Engine_ObjectEventSetSpriteFlags(objectEvent, OBJECT_BLEND_NORMAL);
-      ObjectEvent_SetMode(objectEvent, 0);
+      ObjectEvent_SetSpriteFlags(objectEvent, OBJECT_BLEND_NORMAL);
+      ObjectDispatch_SelectAnimation(objectEvent, 0);
     }
   }
 }
@@ -338,166 +338,169 @@ static void LemurianShip_SetSail(void) {
   struct ObjectEvent *ship;
   struct EventWork *work;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   FieldCamera_MoveTo(-1, -1, -1, 0);
   MapGrid_CopyCellAttributes(18, 0, 3, 1, 18, 12);
   // Garet, Mia and Ivan step out around the leader. Garet: "It looks like
   // it's finally time to leave Gondowan." Ivan and Mia say how much has
   // happened.
-  Engine_ScriptSetMessage(MsgFieldLooksLikeFinally);
+  FieldScript_SetMessageId(MsgFieldLooksLikeFinally);
   FieldMotion_LaunchFromFocusedObject(GARET, -10, 16, FACING_NORTH);
   FieldMotion_LaunchFromFocusedObject(MIA, 0, 24, FACING_NORTH);
   ObjectMotion_LaunchFromFocusedObject(IVAN, 10, 16, FACING_NORTH);
-  Engine_ObjectEventWaitForMove(GARET);
-  Engine_ScriptWait(50);
-  Engine_ObjectEventRunRepeatedMotion(GARET, 2);
-  Engine_ScriptWait(20);
-  Engine_ScriptShowMessage(GARET, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
-  Engine_ScriptWait(20);
-  Engine_ScriptShowMessage(IVAN, 0);
-  Engine_ScriptWait(10);
+  ObjectMotion_CommitCurrentPositionAndActivate(GARET);
+  FieldScript_WaitFrames(50);
+  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
+  FieldScript_WaitFrames(20);
+  FieldScript_ShowMessageAndWait(GARET, 0);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetAnimationAndWait(IVAN, ANIMATION_NOD);
+  FieldScript_WaitFrames(20);
+  FieldScript_ShowMessageAndWait(IVAN, 0);
+  FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(MIA, FACING_SOUTH, 0);
-  Engine_ScriptWait(40);
-  Engine_ScriptShowMessage(MIA, 0);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(40);
+  FieldScript_ShowMessageAndWait(MIA, 0);
+  FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 0);
-  Engine_ObjectEventFaceDirection(IVAN, FACING_SOUTH, 0);
-  Engine_ScriptWait(60);
+  ObjectMotion_ArmCallback(IVAN, FACING_SOUTH, 0);
+  FieldScript_WaitFrames(60);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
   Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
-  Engine_ScriptWait(60);
+  ObjectMotion_SetAnimationAndWait(IVAN, ANIMATION_NOD);
+  FieldScript_WaitFrames(60);
   // The first question, Garet's: will the journey be over once they find
   // Jenna? The answer picks which of his two replies he says.
-  Engine_ObjectEventRunRepeatedMotion(GARET, 2);
-  Engine_ScriptWait(30);
-  Engine_ObjectEventFaceDirection(GARET, FACING_NORTHEAST, 0);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
+  FieldScript_WaitFrames(30);
+  ObjectMotion_ArmCallback(GARET, FACING_NORTHEAST, 0);
+  FieldScript_WaitFrames(20);
   FieldMessage_ShowAtObject(1, 0);
-  if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
-    Engine_ScriptWait(30);
+  if (FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER, 0) ==
+      0) {
+    FieldScript_WaitFrames(30);
     ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
-    Engine_ScriptShowMessage(GARET, 0);
+    FieldScript_ShowMessageAndWait(GARET, 0);
     gFieldWork->message++;
   } else {
-    Engine_ScriptWait(30);
+    FieldScript_WaitFrames(30);
     ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
     gFieldWork->message++;
-    Engine_ScriptShowMessage(GARET, 0);
+    FieldScript_ShowMessageAndWait(GARET, 0);
   }
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   // Ivan and Mia remind Garet of their promise to Babi, and Lemuria comes up.
-  Engine_ObjectEventFaceDirection(IVAN, FACING_WEST, 0);
-  Engine_ScriptWait(30);
+  ObjectMotion_ArmCallback(IVAN, FACING_WEST, 0);
+  FieldScript_WaitFrames(30);
   ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
-  Engine_ScriptShowMessage(IVAN, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventFaceDirection(GARET, FACING_EAST, 0);
-  Engine_ScriptWait(30);
+  FieldScript_ShowMessageAndWait(IVAN, 0);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_ArmCallback(GARET, FACING_EAST, 0);
+  FieldScript_WaitFrames(30);
   ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Engine_ObjectEventRunRepeatedMotion(MIA, 2);
-  Engine_ScriptWait(30);
-  Engine_ObjectEventFaceDirection(MIA, FACING_NORTHWEST, 0);
-  Engine_ScriptWait(30);
-  Engine_ScriptShowMessage(MIA, 0);
-  Engine_ScriptWait(10);
+  ObjectMotion_SetVarCbAndRefresh(MIA, 2);
+  FieldScript_WaitFrames(30);
+  ObjectMotion_ArmCallback(MIA, FACING_NORTHWEST, 0);
+  FieldScript_WaitFrames(30);
+  FieldScript_ShowMessageAndWait(MIA, 0);
+  FieldScript_WaitFrames(10);
   ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
-  Engine_ScriptShowMessage(GARET, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
-  Engine_ScriptWait(20);
-  Engine_ScriptShowMessage(IVAN, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventFaceDirection(MIA, FACING_NORTH, 0);
-  Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
-  Engine_ScriptWait(20);
+  FieldScript_ShowMessageAndWait(GARET, 0);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
+  FieldScript_WaitFrames(20);
+  FieldScript_ShowMessageAndWait(IVAN, 0);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_ArmCallback(MIA, FACING_NORTH, 0);
+  FieldScript_WaitFrames(20);
+  ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
+  FieldScript_WaitFrames(20);
   // The second question, Mia's: must they find Jenna before going to
   // Lemuria? Garet answers either way.
   FieldMessage_ShowAtObject(3, 0);
-  if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
-    Engine_ScriptWait(20);
-    Engine_ObjectEventRunRepeatedMotion(GARET, 2);
-    Engine_ScriptWait(20);
-    Engine_ObjectEventFaceDirection(GARET, FACING_NORTHEAST, 0);
-    Engine_ScriptWait(20);
-    Engine_ScriptShowMessage(GARET, 0);
+  if (FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER, 0) ==
+      0) {
+    FieldScript_WaitFrames(20);
+    ObjectMotion_SetVarCbAndRefresh(GARET, 2);
+    FieldScript_WaitFrames(20);
+    ObjectMotion_ArmCallback(GARET, FACING_NORTHEAST, 0);
+    FieldScript_WaitFrames(20);
+    FieldScript_ShowMessageAndWait(GARET, 0);
     gFieldWork->message++;
   } else {
-    Engine_ScriptWait(20);
-    Engine_ObjectEventRunRepeatedMotion(GARET, 2);
-    Engine_ScriptWait(20);
-    Engine_ObjectEventFaceDirection(GARET, FACING_NORTHEAST, 0);
-    Engine_ScriptWait(20);
+    FieldScript_WaitFrames(20);
+    ObjectMotion_SetVarCbAndRefresh(GARET, 2);
+    FieldScript_WaitFrames(20);
+    ObjectMotion_ArmCallback(GARET, FACING_NORTHEAST, 0);
+    FieldScript_WaitFrames(20);
     gFieldWork->message++;
-    Engine_ScriptShowMessage(GARET, 0);
+    FieldScript_ShowMessageAndWait(GARET, 0);
   }
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   // Ivan: their first time on the ocean; Garet: the ocean Kraden wanted
   // him to see.
-  Engine_ObjectEventShowEmote(LOCALID_PARTY_LEADER,
-                              EMOTE_IN_FRONT | EMOTE_WINCE, 50);
-  Engine_ScriptWait(10);
+  FieldEffect_SpawnLinked(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE,
+                          50);
+  FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 0);
-  Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
-  Engine_ScriptWait(20);
-  Engine_ScriptShowMessage(IVAN, 0);
-  Engine_ScriptWait(20);
-  Engine_ScriptShowMessage(GARET, 0);
-  Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ScriptWait(30);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
+  ObjectMotion_SetAnimationAndWait(IVAN, ANIMATION_NOD);
+  FieldScript_WaitFrames(20);
+  FieldScript_ShowMessageAndWait(IVAN, 0);
+  FieldScript_WaitFrames(20);
+  FieldScript_ShowMessageAndWait(GARET, 0);
+  FieldScript_WaitFrames(20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  FieldScript_WaitFrames(30);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_NOD);
+  FieldScript_WaitFrames(20);
   // The third question, Mia's: the seas are rough; will they be all right?
   FieldMessage_ShowAtObject(3, 0);
   ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST, 0);
   ObjectEvent_FaceDirection(MIA, FACING_NORTH, 0);
-  Engine_ObjectEventFaceDirection(IVAN, FACING_NORTHWEST, 0);
-  Engine_ScriptWait(20);
-  if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
-    Engine_ScriptWait(30);
-    Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
-    Engine_ScriptWait(20);
-    Engine_ScriptShowMessage(MIA, 0);
+  ObjectMotion_ArmCallback(IVAN, FACING_NORTHWEST, 0);
+  FieldScript_WaitFrames(20);
+  if (FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER, 0) ==
+      0) {
+    FieldScript_WaitFrames(30);
+    ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_NOD);
+    FieldScript_WaitFrames(20);
+    FieldScript_ShowMessageAndWait(MIA, 0);
     gFieldWork->message++;
   } else {
-    Engine_ScriptWait(30);
-    Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
-    Engine_ScriptWait(20);
+    FieldScript_WaitFrames(30);
+    ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_NOD);
+    FieldScript_WaitFrames(20);
     gFieldWork->message++;
-    Engine_ScriptShowMessage(MIA, 0);
+    FieldScript_ShowMessageAndWait(MIA, 0);
   }
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   // Garet: "Well... Shall we, then?" Ivan: "To sea..." Mia: Jenna is waiting
   // for them. The departure theme starts.
   ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
-  Engine_ScriptWait(30);
-  Engine_ScriptShowMessage(GARET, 0);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(30);
+  FieldScript_ShowMessageAndWait(GARET, 0);
+  FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  Engine_ScriptWait(30);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(30);
+  FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
-  Engine_ScriptWait(30);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
-  Engine_ScriptWait(20);
-  Engine_ScriptShowMessage(IVAN, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
-  Engine_ScriptWait(20);
-  Engine_ScriptShowMessage(MIA, 0);
-  Engine_AudioPlayCue(SONG_FADE_OUT_BGM);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(30);
+  ObjectMotion_SetAnimationAndWait(IVAN, ANIMATION_NOD);
+  FieldScript_WaitFrames(20);
+  FieldScript_ShowMessageAndWait(IVAN, 0);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_NOD);
+  FieldScript_WaitFrames(20);
+  FieldScript_ShowMessageAndWait(MIA, 0);
+  Sound_PlaySong(SONG_FADE_OUT_BGM);
+  FieldScript_WaitFrames(10);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
   Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
-  Engine_ScriptWait(40);
+  ObjectMotion_SetAnimationAndWait(IVAN, ANIMATION_NOD);
+  FieldScript_WaitFrames(40);
   // Everyone boards by their own scripts, hopping up onto the deck (SE_153
   // each); the camera follows up to the ship.
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x13333, 0x9999);
@@ -505,10 +508,10 @@ static void LemurianShip_SetSail(void) {
   ObjectEvent_SetSpeed(IVAN, 0x13333, 0x9999);
   ObjectEvent_SetSpeed(MIA, 0x13333, 0x9999);
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER, gLeaderBoardsShip);
-  Engine_ScriptWait(50);
+  FieldScript_WaitFrames(50);
   FieldCamera_MoveTo(PIXELS(264), -1, PIXELS(200), 1);
   ObjectEvent_SetActionScript(GARET, gGaretBoardsShip);
-  Engine_ScriptWait(50);
+  FieldScript_WaitFrames(50);
   ObjectEvent_SetActionScript(IVAN, gIvanBoardsShip);
   ObjectEvent_RefreshSelectorById(2);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
@@ -516,36 +519,36 @@ static void LemurianShip_SetSail(void) {
   ObjectEvent_FaceDirection(IVAN, FACING_SOUTH, 0);
   // Mia, last, looks back at the shore before she boards.
   FieldObjectMotion_CommitPositionAndActivate(3, 0, -32);
-  Engine_ScriptWait(30);
-  Engine_ObjectEventFaceDirection(MIA, FACING_SOUTH, 0);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(30);
+  ObjectMotion_ArmCallback(MIA, FACING_SOUTH, 0);
+  FieldScript_WaitFrames(60);
   ObjectEvent_FaceDirection(MIA, FACING_WEST, 0);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   ObjectEvent_SetActionScript(MIA, gMiaBoardsShip);
   ObjectEvent_RefreshSelectorById(3);
-  Engine_ObjectEventFaceDirection(MIA, FACING_NORTH, 0);
-  Engine_ScriptWait(20);
+  ObjectMotion_ArmCallback(MIA, FACING_NORTH, 0);
+  FieldScript_WaitFrames(20);
   // On deck, all four turn west together and nod.
   FieldCamera_MoveTo(PIXELS(216), -1, PIXELS(168), 1);
-  Engine_CameraWaitForMove();
-  Engine_ScriptWait(20);
+  FieldCamera_WaitForArrival();
+  FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 0);
   ObjectEvent_FaceDirection(GARET, FACING_WEST, 0);
   ObjectEvent_FaceDirection(IVAN, FACING_WEST, 0);
-  Engine_ObjectEventFaceDirection(MIA, FACING_WEST, 0);
-  Engine_ScriptWait(40);
+  ObjectMotion_ArmCallback(MIA, FACING_WEST, 0);
+  FieldScript_WaitFrames(40);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
   Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
   Engine_ObjectEventSetAnimation(MIA, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
-  Engine_ScriptWait(30);
+  ObjectMotion_SetAnimationAndWait(IVAN, ANIMATION_NOD);
+  FieldScript_WaitFrames(30);
   // The ship sails east and the curtains close: the sea's layer scrolls
   // faster while the gangway's north piece moves off with the ship, and the
   // camera follows.
-  Engine_AudioPlayCue(MUS_ENDING);
+  Sound_PlaySong(MUS_ENDING);
   Sound_SetBgmTempo(240);
   Curtain_Start();
-  Engine_ScriptWait(LEMURIAN_SHIP_DEPARTURE_DELAY_FRAMES);
+  FieldScript_WaitFrames(LEMURIAN_SHIP_DEPARTURE_DELAY_FRAMES);
   grid = gMapGridWork[0];
   ship = ObjectEvent_GetById(LOCALID_GANGWAY_NORTH);
   ship->acceleration = 131;
@@ -554,19 +557,19 @@ static void LemurianShip_SetSail(void) {
   ObjectMotion_CommitPositionAndActivate(LOCALID_GANGWAY_NORTH, 60, 0);
   grid->layers[MAPGRID_LAYER_GROUND].speedX = -0x6000;
   ObjectMotion_CommitPositionAndActivate(LOCALID_GANGWAY_NORTH, 60, 0);
-  Engine_ScriptWait(80);
-  Engine_ScriptWait(100);
-  Engine_CameraSetSpeed(0x23333, 0x28f);
-  Engine_CameraMoveTo(PIXELS(808), -1, PIXELS(168), 1);
-  Engine_ScriptWait(300);
+  FieldScript_WaitFrames(80);
+  FieldScript_WaitFrames(100);
+  FieldCamera_SetSpeedParameters(0x23333, 0x28f);
+  FieldCamera_MoveWithinMapBounds(PIXELS(808), -1, PIXELS(168), 1);
+  FieldScript_WaitFrames(300);
   // Fade out to the clear screen.
   work = gMapGridWork[19];
   work->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Io_Write16(0, &PLTT_BACKDROP);
   work->transitionFrames = 96;
-  Engine_ScriptCloseScreen();
-  Engine_ScriptWaitForScreen();
-  Engine_ScriptWait(30);
+  FieldScript_FinishScreenTransition();
+  FieldScript_WaitTransitionFrames();
+  FieldScript_WaitFrames(30);
   Engine_GameFlagSet(FLAG_KEEP_MUSIC);
   FieldScript_SetDestination((s32)&MapId_Title, TITLE_FROM_LEMURIAN_SHIP);
 }
@@ -663,7 +666,7 @@ static void EventScript_RaiseTheShip(void) {
     risen += 0x3333;
     Task_Wait(1);
   } while (risen < PIXELS(90));
-  Engine_TaskRemoveCallback(OrbGlow_Fade);
+  Task_Remove(OrbGlow_Fade);
   gSprayActive = 0;
   REG_BG3CNT = cnt = (REG_BG3CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
   REG_BG2CNT = cnt = (REG_BG2CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
@@ -767,7 +770,7 @@ s32 LemurianShip_SetupMap(void) {
     layer = grid->layers + 2;
     layer->offsetY += -PIXELS(90);
   }
-  Engine_MapGridRedraw();
+  MapGrid_CenterOnFollowedPoint();
   Ripple_Start();
   return 0;
 }
@@ -841,8 +844,8 @@ void ScanlineEffect_BuildPage(void) {
 static void Ripple_Stop(void) {
   volatile u16 *reg;
 
-  Engine_TaskRemoveCallback(ScanlineEffect_ArmDma);
-  Engine_TaskRemoveCallback(ScanlineEffect_BuildPage);
+  Task_Remove(ScanlineEffect_ArmDma);
+  Task_Remove(ScanlineEffect_BuildPage);
   reg = REG_DMA0;
   reg[5] = ~DMA_START_TIMING_DRQ_REPEAT & reg[5];
   reg[5] = ~DMA_ENABLE & reg[5];
@@ -917,7 +920,7 @@ static void Curtain_Start(void) {
   tiles = Runtime_CallAlternatePool(AllocEwram, 0x100);
   sCurtainVramSlot = VramCache_FindFreeEntry();
   Dma_Fill32(0x11111111, tiles, 0x100);
-  Engine_VramLoad(sCurtainVramSlot, 0x100, tiles);
+  VramCache_Load(sCurtainVramSlot, 0x100, tiles);
 
   sCurtainGap = 0x30;
   FieldScheduler_AddCallback(Curtain_Close, TASK_PRIORITY_MAP);

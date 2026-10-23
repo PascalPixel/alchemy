@@ -11,8 +11,8 @@
 /// warp.
 static void MercuryLighthouse_LeaveThroughPassage(s32 warp) {
   struct ObjectEvent *v = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  Engine_ScriptStart();
-  Engine_AudioPlayCue(SE_228);
+  FieldScript_Start();
+  Sound_PlaySong(SE_228);
 #ifdef UBFIX
   v->update = MercuryLighthouse_TrailSparks;
 #else
@@ -20,17 +20,16 @@ static void MercuryLighthouse_LeaveThroughPassage(s32 warp) {
 #endif
   v->speed = PIXELS(1) / 5;
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
-  Engine_ObjectEventSetDestinationOffset(LOCALID_PARTY_LEADER, 0, -6);
-  Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
-  Engine_ObjectEventSetChildValue(LOCALID_PARTY_LEADER, 15);
-  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER),
-                                   0);
+  ObjectMotion_OffsetPositionAndResetMotion(LOCALID_PARTY_LEADER, 0, -6);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
+  ObjectGroup_ConfigureChildValue(LOCALID_PARTY_LEADER, 15);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER), 0);
   v->update = 0;
-  Engine_ScriptWait(30);
-  Engine_ScriptCloseScreen();
-  Engine_ScriptWaitForScreen();
+  FieldScript_WaitFrames(30);
+  FieldScript_FinishScreenTransition();
+  FieldScript_WaitTransitionFrames();
   Engine_ScriptRequestWarp(warp);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Unused: the leader steps 8 pixels north with the passages' sound and
@@ -40,15 +39,15 @@ static void MercuryLighthouse_LeaveThroughPassage(s32 warp) {
 static void UNUSED MercuryLighthouse_DropLeaderToColumn(s32 column) {
   struct ObjectEvent *record;
 
-  Engine_ScriptStart();
-  Engine_AudioPlayCue(SE_228);
+  FieldScript_Start();
+  Sound_PlaySong(SE_228);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
-  Engine_ObjectEventSetSpritePriority(LOCALID_PARTY_LEADER, 2);
-  Engine_ObjectEventSetDestinationOffset(LOCALID_PARTY_LEADER, 0, -8);
+  ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, 2);
+  ObjectMotion_OffsetPositionAndResetMotion(LOCALID_PARTY_LEADER, 0, -8);
   record = ObjectEvent_Get(LOCALID_PARTY_LEADER);
-  Engine_ObjectEventSetSpriteFlags(record, 0);
-  Engine_ScriptWait(8);
+  ObjectEvent_SetSpriteFlags(record, 0);
+  FieldScript_WaitFrames(8);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, ((column << 19) + PIXELS(8)),
                           0);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(30);
 }

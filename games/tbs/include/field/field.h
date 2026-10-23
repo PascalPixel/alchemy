@@ -87,7 +87,7 @@ struct PathRecorder {
   s16 localId;   ///< the local id moved along the path
   u16 pathIndex; ///< the next halfword of ColossoRaceWork.path, x then z
   /// Frames the object event has not moved; from 3 it stands
-  /// (ObjectEvent_SetMode 1).
+  /// (ObjectDispatch_SelectAnimation 1).
   s16 still;
 };
 /// A placeholder layout no code in the tree uses.
@@ -277,25 +277,16 @@ extern u8 TileMap_DrawRowsCodeSize[];
 extern u8 Transform_UpdateVerticesSize;
 extern const s32 gWorldMap_FootprintActions[6];
 extern const s16 gWorldMap_KeyHeadings[16];
-s32 CalculateFacingAngle(s32, s32);
-void Engine_ObjectEventFollow(s32 localId, s32 leader);
-void Engine_ScriptClearInvalidPackedValues(void);
-s32 Engine_PartyRemoveItem(s32 item);
 s32 FarCall_LuckyWheelsTable(s32 warpDest);
 s32 FarCall_LuckyDiceTable(s32 warpDest);
 #ifndef OWN_Map_PrepareObjectEvents
-void Map_PrepareObjectEvents(struct ObjectEventTemplate *entry);
 #endif
 #ifndef OWN_GameFlag_IsSet
 s32 GameFlag_IsSet(s32 flag);
 #endif
 void WorldMap_StartStillView(void);
-s32 Math_Atan2(s32 dy, s32 dx);
 #ifndef OWN_Object_Destroy
-void Object_Destroy(struct DispatchObject *work);
 #endif
-void ObjectEventTemplate_ClipToView(struct ObjectEventTemplate *templates);
-void ObjectEventTemplate_Prepare(struct ObjectEventTemplate *templates);
 
 // The field effects' scripts and tables (overworld/fxdata.c, scripts.s and
 // arcspark.s).

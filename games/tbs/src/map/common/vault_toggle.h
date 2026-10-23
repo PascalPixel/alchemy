@@ -25,6 +25,6 @@ static void Vault_RaisePathToBridge(void) {
 /// cells north of the bridge, and clears FLAG_MAP_TEMP_00.
 /// VAULT_CELL_WEST_OF_BRIDGE reaches it.
 static void Vault_LowerPathUnderBridge(void) {
-  Engine_GameFlagClear(FLAG_MAP_TEMP_00);
+  GameFlag_ClearBit(FLAG_MAP_TEMP_00);
   MapGrid_CopyCellAttributes(23, 23, 4, 2, 23, 26);
 }

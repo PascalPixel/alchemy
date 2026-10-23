@@ -218,9 +218,7 @@ void Animation_ApplyChildArgumentFar(void *, s32);
 void BitDecoder_DecodeImage(void);
 void FarCall_WindowTable(void);
 struct Sprite *GetBattleEffectObject(s32 kind);
-void ItemIcon_LoadTilesFar(s32 item);
 #ifndef OWN_Object_InitializeMode
-s32 Object_InitializeMode(struct Sprite *state, s32 flags);
 #endif
 
 /// BattleMotion_ApplyKnockback's knockbacks, the columns of the

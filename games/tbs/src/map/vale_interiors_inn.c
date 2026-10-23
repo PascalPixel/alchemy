@@ -291,7 +291,7 @@ const struct MapWarpRegion *ValeInteriorsInn_GetRegions(void) { return NULL; }
 
 /// On the stormy night the warps lead into the storm.
 const u32 *ValeInteriorsInn_GetWarps(void) {
-  if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
+  if (GameFlag_Test(FLAG_VALE_STORM) != 0) {
     return gValeInteriorsInn_StormWarps;
   }
   return gValeInteriorsInn_Warps;
@@ -304,13 +304,13 @@ ValeInteriorsInn_GetObjectEventTemplates(void) {
 
   if (gGameState.warpDest == VALE_INTERIORS_INN_FROM_BABI_PALACE)
     return gValeInteriorsInn_ScholarsObjectEventTemplates;
-  if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED) != 0)
+  if (GameFlag_Test(FLAG_KALAY_REACHED) != 0)
     table = gValeInteriorsInn_ObjectEventTemplatesAfterKalay;
-  else if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0)
+  else if (GameFlag_Test(FLAG_VALE_PARTY_LEFT) != 0)
     table = gValeInteriorsInn_ObjectEventTemplatesAfterLeaving;
   else
     table = gValeInteriorsInn_ObjectEventTemplates;
-  Map_PrepareObjectEvents(table);
+  Map_AssignViewFlags(table);
   return table;
 }
 
@@ -321,34 +321,34 @@ ValeInteriorsInn_GetObjectEventTemplates(void) {
 static void EventScript_ScholarAsksAboutKraden(s32 speakerId) {
   s32 firstMessage = MsgValeFolksSeemKnow;
 
-  Engine_ScriptSetMessage(firstMessage);
-  Engine_ScriptOpenMessage(speakerId, 0);
-  if (Engine_ScriptChooseYesNo(0, 0) == 0) {
-    Engine_ScriptWait(10);
-    Engine_ScriptSetMessage(firstMessage + 1);
+  FieldScript_SetMessageId(firstMessage);
+  FieldMessage_ShowAtObject(speakerId, 0);
+  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
+    FieldScript_WaitFrames(10);
+    FieldScript_SetMessageId(firstMessage + 1);
   } else {
-    Engine_ScriptSetMessage(firstMessage + 2);
+    FieldScript_SetMessageId(firstMessage + 2);
   }
-  Engine_ScriptShowMessage(speakerId, 0);
+  FieldScript_ShowMessageAndWait(speakerId, 0);
 }
 
 /// Chooses the events: Babi's scholars talk differently once the Colosso
 /// finals are over; Vale's villagers follow the storm and the story.
 const struct MapEvent *ValeInteriorsInn_GetEvents(void) {
   if (gGameState.warpDest == VALE_INTERIORS_INN_FROM_BABI_PALACE) {
-    if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
+    if (GameFlag_Test(FLAG_COLOSSO_OVER) != 0) {
       return gValeInteriorsInn_ScholarsLaterEvents;
     }
     return gValeInteriorsInn_ScholarsEvents;
   }
 
-  if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
+  if (GameFlag_Test(FLAG_VALE_STORM) != 0) {
     return gValeInteriorsInn_StormEvents;
   }
-  if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED) != 0) {
+  if (GameFlag_Test(FLAG_KALAY_REACHED) != 0) {
     return gValeInteriorsInn_EventsAfterKalay;
   }
-  if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0) {
+  if (GameFlag_Test(FLAG_VALE_PARTY_LEFT) != 0) {
     return gValeInteriorsInn_EventsAfterLeaving;
   }
   return gValeInteriorsInn_Events;
@@ -359,26 +359,25 @@ const struct MapEvent *ValeInteriorsInn_GetEvents(void) {
 /// whatever he answers. "Hey... Boy..." Reached by talking to
 /// LOCALID_MASKED_MAN before the party leaves Vale (gValeInteriorsInn_Events).
 static void EventScript_AskIsaacHisBusiness(void) {
-  Engine_ScriptStart();
-  Engine_ObjectEventStartRepeatedMotion(LOCALID_MASKED_MAN, 2);
-  Engine_ScriptWait(30);
-  Engine_ScriptSetMessage(MsgValeHeyBoy);
-  Engine_ObjectEventFaceEachOther(LOCALID_PARTY_LEADER, LOCALID_MASKED_MAN, 10);
+  FieldScript_Start();
+  ObjectMotion_SetVariantCallback(LOCALID_MASKED_MAN, 2);
+  FieldScript_WaitFrames(30);
+  FieldScript_SetMessageId(MsgValeHeyBoy);
+  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_MASKED_MAN, 10);
   Script_ShowMessageAndWait(LOCALID_MASKED_MAN, 0, 6);
   ObjectEvent_ShowEmote(LOCALID_MASKED_MAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Engine_ObjectEventStartRepeatedMotion(LOCALID_MASKED_MAN, 1);
-  Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_MASKED_MAN,
-                                        ANIMATION_SHAKE_HEAD);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVariantCallback(LOCALID_MASKED_MAN, 1);
+  FieldScript_WaitFrames(20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MASKED_MAN, ANIMATION_SHAKE_HEAD);
+  FieldScript_WaitFrames(20);
   Script_OpenMessage(LOCALID_MASKED_MAN, 0);
-  if (Engine_ScriptChooseYesNo(0, 0) == 1) {
+  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 1) {
     gFieldWork->message++;
   }
-  Engine_ObjectEventStartRepeatedMotion(LOCALID_MASKED_MAN, 1);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVariantCallback(LOCALID_MASKED_MAN, 1);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_MASKED_MAN, 0, 4);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// A young man asks whether the masked man was Felix. In Vale, the young man
@@ -388,31 +387,31 @@ static void EventScript_AskIsaacHisBusiness(void) {
 static void EventScript_AskWhetherMaskedManWasFelix(void) {
   struct EventWork *work;
 
-  Engine_ScriptStart();
-  Engine_ObjectEventFaceObjectEvent(LOCALID_YOUNG_MAN_SAW_MASK,
-                                    LOCALID_PARTY_LEADER, 10);
-  Engine_ScriptSetMessage(MsgValeTheMaskedManWasFelix);
-  Engine_ScriptOpenMessage(LOCALID_YOUNG_MAN_SAW_MASK, 0);
-  if (Engine_ScriptChooseYesNo(0, 0) == 0) {
-    Engine_ScriptShowMessage(LOCALID_YOUNG_MAN_SAW_MASK, 0);
+  FieldScript_Start();
+  ObjectMotion_SetAngleToward(LOCALID_YOUNG_MAN_SAW_MASK, LOCALID_PARTY_LEADER,
+                              10);
+  FieldScript_SetMessageId(MsgValeTheMaskedManWasFelix);
+  FieldMessage_ShowAtObject(LOCALID_YOUNG_MAN_SAW_MASK, 0);
+  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
+    FieldScript_ShowMessageAndWait(LOCALID_YOUNG_MAN_SAW_MASK, 0);
   } else {
     work = gFieldWork;
     work->message = (work->message + 1);
-    Engine_ScriptAskYesNo(LOCALID_YOUNG_MAN_SAW_MASK, 0);
+    FieldScript_AskYesNoAndShowResponse(LOCALID_YOUNG_MAN_SAW_MASK, 0);
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Stops storm lightning before fading through the requested warp.
 /// Called by the warps below.
 static void ValeInteriorsInn_CloseScreenAndExit(s32 warpNumber) {
-  if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
+  if (GameFlag_Test(FLAG_VALE_STORM) != 0) {
     Weather_StopLightning();
   }
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  Engine_ScriptCloseScreen();
-  Engine_ScriptWaitForScreen();
+  FieldScript_FinishScreenTransition();
+  FieldScript_WaitTransitionFrames();
   Engine_ScriptRequestWarp(warpNumber);
 }
 
@@ -424,7 +423,7 @@ static void ValeInteriorsInn_CloseScreenAndExit(s32 warpNumber) {
 /// Reached by metatile behavior 1; leads to ValeGate
 /// (VALE_GATE_FROM_VALE_INTERIORS_INN_WEST).
 static void EventScript_WarpToValeGateNorthwest(void) {
-  Engine_AudioPlayCue(SE_MAP_EXIT);
+  Sound_PlaySong(SE_MAP_EXIT);
   ValeInteriorsInn_CloseScreenAndExit(
       VALE_INTERIORS_INN_TO_VALE_GATE_NORTHWEST);
 }
@@ -432,14 +431,14 @@ static void EventScript_WarpToValeGateNorthwest(void) {
 /// Reached by metatile behavior 2; leads to Kraden's cottage
 /// (VALE_KRADEN_FROM_VALE_INTERIORS_INN_NORTH).
 static void EventScript_WarpToValeKradenNorth(void) {
-  Engine_AudioPlayCue(SE_MAP_EXIT);
+  Sound_PlaySong(SE_MAP_EXIT);
   ValeInteriorsInn_CloseScreenAndExit(VALE_INTERIORS_INN_TO_VALE_KRADEN_NORTH);
 }
 
 /// Reached by metatile behavior 3; leads to ValeGate
 /// (VALE_GATE_FROM_VALE_INTERIORS_INN_NORTH).
 static void EventScript_WarpToValeGateNortheast(void) {
-  Engine_AudioPlayCue(SE_MAP_EXIT);
+  Sound_PlaySong(SE_MAP_EXIT);
   ValeInteriorsInn_CloseScreenAndExit(
       VALE_INTERIORS_INN_TO_VALE_GATE_NORTHEAST);
 }
@@ -447,14 +446,14 @@ static void EventScript_WarpToValeGateNortheast(void) {
 /// Reached by metatile behavior 4; leads to ValeGate
 /// (VALE_GATE_FROM_VALE_INTERIORS_INN_SOUTH).
 static void EventScript_WarpToValeGateWest(void) {
-  Engine_AudioPlayCue(SE_MAP_EXIT);
+  Sound_PlaySong(SE_MAP_EXIT);
   ValeInteriorsInn_CloseScreenAndExit(VALE_INTERIORS_INN_TO_VALE_GATE_WEST);
 }
 
 /// Reached by metatile behavior 5, the inn's stairs; climbs to its guest room
 /// at VALE_INTERIORS_INN_INN_FROM_GROUND_FLOOR.
 static void EventScript_WarpToInnUpstairs(void) {
-  Engine_AudioPlayCue(SE_STAIRS_UP);
+  Sound_PlaySong(SE_STAIRS_UP);
   ValeInteriorsInn_CloseScreenAndExit(VALE_INTERIORS_INN_INN_TO_UPSTAIRS);
 }
 
@@ -462,14 +461,14 @@ static void EventScript_WarpToInnUpstairs(void) {
 /// (VALE_FROM_VALE_INTERIORS_INN), or on the stormy night to ValeStorm
 /// (VALE_STORM_FROM_VALE_INTERIORS_INN_ISAACS_HOUSE).
 static void EventScript_WarpToVale(void) {
-  Engine_AudioPlayCue(SE_MAP_EXIT);
+  Sound_PlaySong(SE_MAP_EXIT);
   ValeInteriorsInn_CloseScreenAndExit(VALE_INTERIORS_INN_TO_VALE);
 }
 
 /// Reached by metatile behavior 7, the stairs of Isaac's house; climbs to its
 /// upper floor.
 static void EventScript_WarpToIsaacsHouseUpstairs(void) {
-  Engine_AudioPlayCue(SE_STAIRS_UP);
+  Sound_PlaySong(SE_STAIRS_UP);
   ValeInteriorsInn_CloseScreenAndExit(
       VALE_INTERIORS_INN_ISAACS_HOUSE_TO_UPSTAIRS);
 }
@@ -477,14 +476,14 @@ static void EventScript_WarpToIsaacsHouseUpstairs(void) {
 /// Reached by metatile behavior 8, the stairs of the inn's guest room; goes
 /// back down.
 static void EventScript_WarpToInnDownstairs(void) {
-  Engine_AudioPlayCue(SE_STAIRS_DOWN);
+  Sound_PlaySong(SE_STAIRS_DOWN);
   ValeInteriorsInn_CloseScreenAndExit(VALE_INTERIORS_INN_INN_TO_GROUND_FLOOR);
 }
 
 /// Reached by metatile behavior 9, the stairs on the upper floor of Isaac's
 /// house; goes back down.
 static void EventScript_WarpToIsaacsHouseDownstairs(void) {
-  Engine_AudioPlayCue(SE_STAIRS_DOWN);
+  Sound_PlaySong(SE_STAIRS_DOWN);
   ValeInteriorsInn_CloseScreenAndExit(
       VALE_INTERIORS_INN_ISAACS_HOUSE_TO_GROUND_FLOOR);
 }
@@ -492,14 +491,14 @@ static void EventScript_WarpToIsaacsHouseDownstairs(void) {
 /// Reached by metatile behavior 10; leads to ValeStorm
 /// (VALE_STORM_FROM_VALE_INTERIORS_INN_WEST).
 static void EventScript_WarpToValeStormWest(void) {
-  Engine_AudioPlayCue(SE_MAP_EXIT);
+  Sound_PlaySong(SE_MAP_EXIT);
   ValeInteriorsInn_CloseScreenAndExit(VALE_INTERIORS_INN_TO_VALE_STORM_WEST);
 }
 
 /// Reached by metatile behavior 11; leads to ValeStorm
 /// (VALE_STORM_FROM_VALE_INTERIORS_INN_EAST).
 static void EventScript_WarpToValeStormEast(void) {
-  Engine_AudioPlayCue(SE_MAP_EXIT);
+  Sound_PlaySong(SE_MAP_EXIT);
   ValeInteriorsInn_CloseScreenAndExit(VALE_INTERIORS_INN_TO_VALE_STORM_EAST);
 }
 
@@ -514,11 +513,11 @@ s32 ValeInteriorsInn_Initialize(void) {
   struct ObjectEvent *objectEvent;
 
   if (gGameState.warpDest == VALE_INTERIORS_INN_FROM_BABI_PALACE) {
-    Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
+    GameFlag_ClearBit(FLAG_SHOW_LOCATION_NAME);
     ((struct EventWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   } else {
-    if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
+    if (GameFlag_Test(FLAG_VALE_STORM) != 0) {
       Engine_ObjectEventSetPosition(LOCALID_YOUNG_SMITH, 0, 0);
       Engine_ObjectEventSetPosition(LOCALID_YOUNG_SMITHS_MOTHER, 0, 0);
       Engine_ObjectEventSetPosition(LOCALID_INNKEEPER, 0, 0);
@@ -528,21 +527,21 @@ s32 ValeInteriorsInn_Initialize(void) {
     } else {
       ValeInteriorsInn_RestoreRoomPatch();
     }
-    Engine_ObjectEventSetSpritePriority(LOCALID_INNKEEPER, 1);
-    if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED) != 0) {
+    ObjectMotion_SetActionVariant(LOCALID_INNKEEPER, 1);
+    if (GameFlag_Test(FLAG_KALAY_REACHED) != 0) {
       objectEvent = ObjectEvent_GetById(LOCALID_BLANK_AFTER_KALAY);
-      Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
+      ObjectEvent_SetSpriteFlags(objectEvent, 0);
       if (gGameState.warpDest == VALE_INTERIORS_INN_FROM_VALE ||
           gGameState.warpDest ==
               VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS) {
-        if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
-          if (Engine_GameFlagIsSet(FLAG_MAP_TEMP_03) != 0) {
+        if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) != 0) {
+          if (GameFlag_Test(FLAG_MAP_TEMP_03) != 0) {
             TilesetAnim_Resume(12);
           }
         } else {
           TilesetAnim_Resume(11);
           objectEvent = ObjectEvent_GetById(LOCALID_DORA);
-          Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
+          ObjectEvent_SetSpriteFlags(objectEvent, 0);
           Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIMATION_DORA_IN_BED);
         }
       }
@@ -562,18 +561,18 @@ s32 ValeInteriorsInn_Initialize(void) {
           } else {
             ((struct EventWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
                 MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-            if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
+            if (GameFlag_Test(FLAG_VALE_STORM) != 0) {
               Weather_StartLightning();
               ((struct LightningWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_LIGHTNING))
                   ->loud = 1;
               Weather_LastLightning();
-              Engine_TaskWait(30);
-              Engine_ScriptOpenScreen();
-              Engine_ScriptWaitForScreen();
+              WaitFrames(30);
+              FieldScript_StartScreenTransition();
+              FieldScript_WaitTransitionFrames();
               Weather_ResumeLightning();
             } else {
-              Engine_MapGridRedraw();
-              Engine_TaskWait(1);
+              MapGrid_CenterOnFollowedPoint();
+              WaitFrames(1);
             }
           }
         }
@@ -610,7 +609,7 @@ static void EventScript_DoraWakesIsaac(void) {
   }
   sprite = ObjectEvent_GetById(LOCALID_TUNIC)->sprite;
   // Present the bedside conversation before revealing the wider storm scene.
-  Engine_ScriptStart();
+  FieldScript_Start();
   Engine_ObjectEventSetPosition(LOCALID_YOUNG_SMITH, 0, 0);
   Engine_ObjectEventSetPosition(LOCALID_YOUNG_SMITHS_MOTHER, 0, 0);
   Engine_ObjectEventSetPosition(LOCALID_INNKEEPER, 0, 0);
@@ -618,12 +617,11 @@ static void EventScript_DoraWakesIsaac(void) {
   Engine_ObjectEventSetPosition(LOCALID_INN_WORKER, 0, 0);
   Engine_ObjectEventSetPosition(LOCALID_MASKED_MAN, 0, 0);
   // Isaac lies asleep in bed; his tunic is set beside him.
-  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER),
-                                   0);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER), 0);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_ISAAC_ASLEEP);
   sprite->rotation = 1365;
   ObjectEvent_GetById(LOCALID_TUNIC)->motionFlags = 0;
-  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_TUNIC), 0);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_TUNIC), 0);
   Engine_ObjectEventSetPosition(LOCALID_TUNIC, PIXELS(576), PIXELS(650));
   TilesetAnim_Resume(7);
   Engine_ObjectEventSetPosition(LOCALID_DORA, PIXELS(534), PIXELS(688));
@@ -632,12 +630,12 @@ static void EventScript_DoraWakesIsaac(void) {
   Message_SetVoiceFromObjectEvent(LOCALID_DORA);
   firstMessage = MsgValeWake;
   FieldMessage_ShowCentered(firstMessage, 1, 0);
-  Engine_ScriptWait(40);
+  FieldScript_WaitFrames(40);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Message_SetVoiceFromObjectEvent(LOCALID_DORA);
   FieldMessage_ShowCentered(firstMessage + 1, 1, 0);
   ObjectSystem_ResumeProjectionAndHideLayers();
-  Engine_ScriptWait(40);
+  FieldScript_WaitFrames(40);
   // Widen the camera bounds and reveal the lightning outside.
   grid->minX = PIXELS(328);
   grid->minY = PIXELS(600);
@@ -646,8 +644,8 @@ static void EventScript_DoraWakesIsaac(void) {
   viewCenter->x.fixed = PIXELS(564);
   viewCenter->y.fixed = 0;
   viewCenter->z.fixed = PIXELS(691);
-  Engine_MapGridRedraw();
-  Engine_TaskWait(1);
+  MapGrid_CenterOnFollowedPoint();
+  WaitFrames(1);
   (*eventSlot)->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   (*eventSlot)->transitionFrames = 64;
@@ -655,26 +653,26 @@ static void EventScript_DoraWakesIsaac(void) {
   (*(struct LightningWork **)((u8 *)eventSlot + Ram_LightningWorkOffset))
       ->loud = 1;
   Weather_LastLightning();
-  Engine_TaskWait(30);
-  Engine_ScriptOpenScreen();
-  Engine_ScriptWaitForScreen();
+  WaitFrames(30);
+  FieldScript_StartScreenTransition();
+  FieldScript_WaitTransitionFrames();
   Weather_ResumeLightning();
   // "The Mt. Aleph Boulder is going to fall!" "Come on, Isaac. We have to go
   // now!"
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_DORA, ANIMATION_SHAKE_HEAD);
-  Engine_ScriptSetMessage(firstMessage + 2);
+  ObjectMotion_SetAnimationAndWait(LOCALID_DORA, ANIMATION_SHAKE_HEAD);
+  FieldScript_SetMessageId(firstMessage + 2);
   Script_ShowMessageAndWait(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | LOCALID_DORA, 0, 60);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_PARTY_LEADER, 2);
-  Engine_ScriptWait(40);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_DORA, 1);
-  Engine_ScriptWait(40);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_PARTY_LEADER, 2);
+  FieldScript_WaitFrames(40);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_DORA, 1);
+  FieldScript_WaitFrames(40);
   Script_ShowMessageAndWait(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | LOCALID_DORA, 0, 20);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_PARTY_LEADER, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_PARTY_LEADER, 2);
   // Isaac gets out of bed and jumps down beside Dora.
   TilesetAnim_Pause(7);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   TilesetAnim_Resume(8);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_ISAAC_GET_UP);
@@ -682,52 +680,51 @@ static void EventScript_DoraWakesIsaac(void) {
   TilesetAnim_Pause(8);
   TilesetAnim_Resume(9);
   ObjectEvent_MoveToAndWait(LOCALID_PARTY_LEADER, 555, 680);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(30);
   ObjectEvent_FaceDirection(LOCALID_DORA, FACING_NORTH + FACING_STEP, 0);
-  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER),
-                                   1);
-  Engine_ObjectEventJump(LOCALID_PARTY_LEADER, 4, 0);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER), 1);
+  ObjectMotion_Launch(LOCALID_PARTY_LEADER, 4, 0);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 543, 674);
-  Engine_ObjectEventSetSpritePriority(LOCALID_PARTY_LEADER, 3);
+  ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, 3);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 40);
   // "Isaac! You forgot something!" Catch plays from Dora on the tunic.
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_DORA, ANIMATION_SHAKE_HEAD);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_DORA, ANIMATION_SHAKE_HEAD);
+  FieldScript_WaitFrames(20);
   Script_ShowMessage(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | LOCALID_DORA, 0);
   ValeInteriorsInn_DemonstrateCatch();
   // Resolve the Psynergy demonstration before the pair walks away together.
   // "It's pouring outside! Don't go out without your tunic!" She steps up to
   // him and he puts it on, with a flash and SE_RECOVERY.
-  Engine_ObjectEventStartRepeatedMotion(LOCALID_DORA, 2);
+  ObjectMotion_SetVariantCallback(LOCALID_DORA, 2);
   Script_ShowMessageAndWait(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | LOCALID_DORA, 0, 20);
   ObjectEvent_GetById(LOCALID_DORA)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
   ObjectEvent_WalkToAndWait(LOCALID_DORA, 542, 680);
-  Engine_ScriptWait(1);
+  FieldScript_WaitFrames(1);
   ObjectEvent_GetById(LOCALID_DORA)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
-  Engine_ScriptWait(10);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_DORA, 2);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_DORA, 2);
   ObjectDispatch_RegisterChildMetadata(
       (struct DispatchObject *)ObjectEvent_GetById(LOCALID_PARTY_LEADER),
       SPRITE_TUNIC);
   Engine_GameFlagSet(FLAG_ISAAC_WEARS_TUNIC);
-  Engine_AudioPlayCue(SE_RECOVERY);
-  Engine_ObjectEventSetChildValue(LOCALID_PARTY_LEADER, 7);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventSetChildValue(LOCALID_PARTY_LEADER, 0);
-  Engine_ScriptWait(20);
+  Sound_PlaySong(SE_RECOVERY);
+  ObjectGroup_ConfigureChildValue(LOCALID_PARTY_LEADER, 7);
+  FieldScript_WaitFrames(10);
+  ObjectGroup_ConfigureChildValue(LOCALID_PARTY_LEADER, 0);
+  FieldScript_WaitFrames(20);
   ObjectEvent_GetById(LOCALID_DORA)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
   ObjectEvent_WalkToAndWait(LOCALID_DORA, 534, 688);
-  Engine_ScriptWait(1);
+  FieldScript_WaitFrames(1);
   ObjectEvent_GetById(LOCALID_DORA)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   ObjectEvent_SetSpeed(LOCALID_DORA, PIXELS(3) / 2, PIXELS(3) / 4);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
-  Engine_CameraFollowObjectEvent(LOCALID_DORA, 1);
+  FieldCamera_FollowObjectEvent(LOCALID_DORA, 1);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->priorityFlags |= 0x1;
   ObjectEvent_SetActionScript(LOCALID_DORA, gValeInteriorsInn_LeaveHouseScript);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER,
                               gValeInteriorsInn_LeaveHouseScript);
   ObjectEvent_RefreshSelectorById(LOCALID_DORA);
@@ -739,22 +736,22 @@ static void EventScript_DoraWakesIsaac(void) {
   // "Have you got everything you need?" Yes: "Good for you, Isaac."; no: "I'm
   // sorry, but we don't have time..."
   Script_OpenMessage(SPEAKER_WINDOW_BELOW | LOCALID_DORA, 0);
-  if (Engine_ScriptChooseYesNo(0, 0) == 0) {
+  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
     (*eventSlot)->message++;
   }
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | LOCALID_DORA, 0, 20);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_DORA, ANIMATION_NOD);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_DORA, ANIMATION_NOD);
+  FieldScript_WaitFrames(20);
   ObjectEvent_SetActionScript(LOCALID_DORA, gValeInteriorsInn_DoraLeavesScript);
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER,
                               gValeInteriorsInn_IsaacLeavesScript);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   (*eventSlot)->transition = MAP_TRANSITION(TRANSITION_WINDOW, 1);
   (*eventSlot)->transitionFrames = 16;
-  Engine_ScriptCloseScreen();
-  Engine_ScriptWaitForScreen();
+  FieldScript_FinishScreenTransition();
+  FieldScript_WaitTransitionFrames();
   Engine_ScriptRequestWarp(
       VALE_INTERIORS_INN_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA);
 }
@@ -780,7 +777,7 @@ static void EventScript_HurryToThePlaza(void) {
 
   objectEvent = ObjectEvent_GetById(LOCALID_FLAME);
   sprite = objectEvent->sprite;
-  Engine_ScriptStart();
+  FieldScript_Start();
   // The villagers stay out of sight; LOCALID_FLAME starts shaking.
   Engine_ObjectEventSetPosition(LOCALID_YOUNG_SMITH, 0, 0);
   Engine_ObjectEventSetPosition(LOCALID_YOUNG_SMITHS_MOTHER, 0, 0);
@@ -790,7 +787,7 @@ static void EventScript_HurryToThePlaza(void) {
   Engine_ObjectEventSetPosition(LOCALID_MASKED_MAN, 0, 0);
   ObjectEvent_SetPosition(LOCALID_DORA, PIXELS(431), PIXELS(391));
   Engine_ObjectEventSetPosition(LOCALID_FLAME, PIXELS(463), PIXELS(404));
-  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_FLAME), 0);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_FLAME), 0);
   objectEvent->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   objectEvent->motionFlags = 0;
   sprite->image.priority = 1;
@@ -813,9 +810,9 @@ static void EventScript_HurryToThePlaza(void) {
   Weather_StartLightning();
   ((struct LightningWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_LIGHTNING))->loud = 1;
   Weather_LastLightning();
-  Engine_TaskWait(30);
+  WaitFrames(30);
   // Dora and Isaac run out of the house (SE_DOOR_OPEN).
-  Engine_CameraFollowObjectEvent(LOCALID_DORA, 1);
+  FieldCamera_FollowObjectEvent(LOCALID_DORA, 1);
   ObjectEvent_SetSpeed(LOCALID_DORA, PIXELS(3) / 2, PIXELS(3) / 4);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
   ObjectEvent_SetSpeed(LOCALID_KYLE, PIXELS(3) / 2, PIXELS(3) / 4);
@@ -823,38 +820,38 @@ static void EventScript_HurryToThePlaza(void) {
                               gValeInteriorsInn_IsaacRunsAheadScript);
   ObjectEvent_SetActionScript(LOCALID_DORA,
                               gValeInteriorsInn_DoraRunsAheadScript);
-  Engine_ScriptOpenScreen();
+  FieldScript_StartScreenTransition();
   ObjectEvent_RefreshSelectorById(LOCALID_DORA);
-  Engine_AudioPlayCue(SE_DOOR_OPEN);
+  Sound_PlaySong(SE_DOOR_OPEN);
   ObjectEvent_ShowEmote(LOCALID_DORA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_DORA, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_DORA, 2);
   ObjectEvent_FaceDirection(LOCALID_DORA, FACING_SOUTH, 10);
   // The camera finds Kyle coming up the path: "Isaac, Dora, hurry! The
   // Boulder could fall at any second!"
   FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
   FieldCamera_MoveTo(PIXELS(414), -1, PIXELS(530), 1);
   ObjectEvent_SetPosition(LOCALID_KYLE, PIXELS(414), PIXELS(530));
-  Engine_ObjectEventWalkToAndWait(LOCALID_KYLE, 427, 483);
-  Engine_CameraWaitForMove();
-  Engine_ScriptSetMessage(MsgValeDoraHurryBoulder);
-  Engine_ScriptShowMessageAndWait(SPEAKER_WINDOW_BELOW | LOCALID_KYLE, 0, 10);
-  Engine_CameraSetSpeed(PIXELS(3) / 2, PIXELS(3) / 16);
-  Engine_CameraMoveTo(PIXELS(480), -1, PIXELS(444), 1);
-  Engine_CameraWaitForMove();
-  Engine_ScriptWait(20);
+  ObjectMotion_SetPositionAndReset(LOCALID_KYLE, 427, 483);
+  FieldCamera_WaitForArrival();
+  FieldScript_SetMessageId(MsgValeDoraHurryBoulder);
+  FieldScript_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | LOCALID_KYLE, 0, 10);
+  FieldCamera_SetSpeedParameters(PIXELS(3) / 2, PIXELS(3) / 16);
+  FieldCamera_MoveWithinMapBounds(PIXELS(480), -1, PIXELS(444), 1);
+  FieldCamera_WaitForArrival();
+  FieldScript_WaitFrames(20);
   // They nod, Kyle runs back down, and the two turn back (SE_234).
   ObjectEvent_FaceDirection(LOCALID_DORA, FACING_WEST, 20);
   Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_KYLE, ANIMATION_NOD);
-  Engine_ObjectEventWalkTo(LOCALID_KYLE, 415, 589);
-  Engine_ScriptWait(10);
+  ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_KYLE, ANIMATION_NOD);
+  ObjectMotion_ResetAndSetPositionInMode2(LOCALID_KYLE, 415, 589);
+  FieldScript_WaitFrames(10);
   ObjectEvent_SetActionScript(LOCALID_DORA,
                               gValeInteriorsInn_DoraRunsBackScript);
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER,
                               gValeInteriorsInn_IsaacRunsBackScript);
-  Engine_AudioPlayCue(SE_234);
-  Engine_ScriptWait(20);
+  Sound_PlaySong(SE_234);
+  FieldScript_WaitFrames(20);
   // LOCALID_FLAME flares up, turns to smoke and rises away
   // (gValeInteriorsInn_FlameRisesScript) as SE_202 plays.
   ObjectEvent_SetActionScript(LOCALID_FLAME,
@@ -865,43 +862,43 @@ static void EventScript_HurryToThePlaza(void) {
   i = 0;
 ramp:
   *alpha = BLEND_ALPHA(14, 16) + i;
-  Engine_TaskWait(1);
+  WaitFrames(1);
   if (++i <= 3)
     goto ramp;
-  Engine_AudioPlayCue(SE_202);
-  Engine_TaskWait(10);
+  Sound_PlaySong(SE_202);
+  WaitFrames(10);
   for (i = 0; i <= 15; i++) {
     SetBlendAlpha(BLEND_ALPHA(15, 16) - i);
-    Engine_TaskWait(1);
+    WaitFrames(1);
   }
   // Dora and Isaac look back, startled, then nod to each other.
   ObjectEvent_RefreshSelectorById(LOCALID_PARTY_LEADER);
   Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIMATION_STAND);
-  Engine_ObjectEventStartRepeatedMotion(LOCALID_DORA, 2);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_PARTY_LEADER, 2);
-  Engine_ScriptWait(10);
+  ObjectMotion_SetVariantCallback(LOCALID_DORA, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_PARTY_LEADER, 2);
+  FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_DORA, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 20);
   ObjectEvent_SetAttachedEffect(LOCALID_DORA, ATTACHED_EFFECT_IN_FRONT |
                                                   ATTACHED_EFFECT_ONCE);
-  Engine_ObjectEventSetAttachedEffect(
+  FieldEffect_ConfigureLinkedObject(
       LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Engine_ScriptWait(80);
+  FieldScript_WaitFrames(80);
   Engine_ObjectEventSetPosition(LOCALID_KYLE, 0, 0);
-  Engine_ObjectEventFaceEachOther(LOCALID_DORA, LOCALID_PARTY_LEADER, 20);
+  ObjectEvent_LinkPair(LOCALID_DORA, LOCALID_PARTY_LEADER, 20);
   Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ScriptWait(40);
-  Engine_CameraSetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
-  Engine_CameraFollowObjectEvent(LOCALID_DORA, 1);
+  ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  FieldScript_WaitFrames(40);
+  FieldCamera_SetSpeedParameters(PIXELS(4) / 5, PIXELS(1) / 10);
+  FieldCamera_FollowObjectEvent(LOCALID_DORA, 1);
   ObjectEvent_SetActionScript(LOCALID_DORA, gValeInteriorsInn_RunToPlazaScript);
   ObjectEvent_RunActionScriptAndWait(LOCALID_PARTY_LEADER,
                                      gValeInteriorsInn_RunToPlazaScript);
   ((struct EventWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
       MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   ((struct EventWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transitionFrames = 32;
-  Engine_ScriptCloseScreen();
-  Engine_ScriptWaitForScreen();
+  FieldScript_FinishScreenTransition();
+  FieldScript_WaitTransitionFrames();
   Engine_ScriptRequestWarp(VALE_INTERIORS_INN_TO_VALE_STORM_WITH_DORA);
 }
 
@@ -915,30 +912,30 @@ static void EventScript_TalkToInnkeeper(void) {
 
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if ((u32)(objectEvent->facing + -0x2000) > 0x9000) {
-    Engine_InnOpen(0, LOCALID_INNKEEPER);
+    Inn_CheckIn(0, LOCALID_INNKEEPER);
   } else {
-    Engine_ScriptStart();
+    FieldScript_Start();
     if (GameFlag_IsSet(FLAG_KALAY_REACHED) != 0) {
-      Engine_ObjectEventRunRepeatedMotion(LOCALID_INNKEEPER, 2);
+      ObjectMotion_SetVarCbAndRefresh(LOCALID_INNKEEPER, 2);
       ObjectEvent_FaceObjectEvent(LOCALID_INNKEEPER, LOCALID_PARTY_LEADER, 10);
       if (GameFlag_IsSet(FLAG_VALE_INNKEEPER_WELCOMED_ISAAC) == 0) {
-        Engine_ScriptSetMessage(MsgValeCameBack2);
+        FieldScript_SetMessageId(MsgValeCameBack2);
         Script_ShowMessage(LOCALID_INNKEEPER, 0);
         GameFlag_Set(FLAG_VALE_INNKEEPER_WELCOMED_ISAAC);
       }
-      Engine_ScriptSetMessage(MsgValeHomeJustToStay);
+      FieldScript_SetMessageId(MsgValeHomeJustToStay);
       Script_AskYesNo(LOCALID_INNKEEPER, 0);
       ObjectEvent_FaceDirection(LOCALID_INNKEEPER, FACING_WEST + FACING_STEP,
                                 10);
     } else {
       if (GameFlag_IsSet(FLAG_VALE_PARTY_LEFT) != 0) {
-        Engine_ScriptSetMessage(MsgValeTheVisitorsCausedTheEruption);
+        FieldScript_SetMessageId(MsgValeTheVisitorsCausedTheEruption);
       } else {
-        Engine_ScriptSetMessage(MsgValeTheThreeTravelersSeemOdd);
+        FieldScript_SetMessageId(MsgValeTheThreeTravelersSeemOdd);
       }
       Script_ShowMessage(LOCALID_INNKEEPER, 0);
     }
-    Engine_ScriptEnd();
+    FieldScript_End();
   }
 }
 
@@ -950,37 +947,37 @@ static void EventScript_TalkToInnkeeper(void) {
 /// the row below plays the same line as a plain message, which leaves
 /// FLAG_VALE_MAN_SAW_ISAAC_GROWN clear for Mind Read to play this once.
 static void EventScript_RemarkIsaacHasGrown(void) {
-  Engine_ScriptStart();
-  Engine_ObjectEventFaceObjectEvent(LOCALID_MAN_ISAAC_HAS_GROWN,
-                                    LOCALID_PARTY_LEADER, 10);
-  Engine_ScriptSetMessage(MsgValeYouveGrownSoMuch);
-  Engine_ScriptShowMessage(LOCALID_MAN_ISAAC_HAS_GROWN, 0);
-  Engine_ObjectEventFaceDirection(LOCALID_MAN_ISAAC_HAS_GROWN,
-                                  FACING_NORTHWEST + FACING_STEP, 10);
+  FieldScript_Start();
+  ObjectMotion_SetAngleToward(LOCALID_MAN_ISAAC_HAS_GROWN, LOCALID_PARTY_LEADER,
+                              10);
+  FieldScript_SetMessageId(MsgValeYouveGrownSoMuch);
+  FieldScript_ShowMessageAndWait(LOCALID_MAN_ISAAC_HAS_GROWN, 0);
+  ObjectMotion_ArmCallback(LOCALID_MAN_ISAAC_HAS_GROWN,
+                           FACING_NORTHWEST + FACING_STEP, 10);
   Engine_GameFlagSet(FLAG_VALE_MAN_SAW_ISAAC_GROWN);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Mind Read on Vale's innkeeper: Dora would not let Isaac stay in Vale.
 /// Reached back from Kalay once he has welcomed Isaac. Sets
 /// FLAG_READ_THOUGHTS_ABOUT_DORA.
 static void EventScript_ReadInnkeepersThoughts(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgValeDoraWouldntLetHimStay);
-  Engine_ScriptShowMessage(LOCALID_INNKEEPER, 0);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgValeDoraWouldntLetHimStay);
+  FieldScript_ShowMessageAndWait(LOCALID_INNKEEPER, 0);
   Engine_GameFlagSet(FLAG_READ_THOUGHTS_ABOUT_DORA);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Mind Read on LOCALID_MAN_ISAAC_HAS_GROWN at Vale's inn: Dora was struck
 /// with illness. Reached back from Kalay once he has remarked on Isaac. Sets
 /// FLAG_READ_THOUGHTS_ABOUT_DORA.
 static void EventScript_ReadThoughtsAboutDorasIllness(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgValeDoraWasStruckWithIllness);
-  Engine_ScriptShowMessage(LOCALID_MAN_ISAAC_HAS_GROWN, 0);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgValeDoraWasStruckWithIllness);
+  FieldScript_ShowMessageAndWait(LOCALID_MAN_ISAAC_HAS_GROWN, 0);
   Engine_GameFlagSet(FLAG_READ_THOUGHTS_ABOUT_DORA);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Back from Kalay, Isaac visits Dora in her sickbed at home in Vale; she asks
@@ -991,124 +988,121 @@ static void EventScript_VisitSickDora(void) {
   struct ObjectEvent *leader;
   s32 firstMessage;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   // Isaac steps up to the bed. "Cough, cough! Who is it? Is it the innkeeper?"
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 569, 393);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 40);
-  Engine_ObjectEventStartRepeatedMotion(LOCALID_DORA, 2);
-  Engine_ScriptSetMessage(MsgValeCoughCoughWho);
-  Engine_ScriptShowMessageAndWait(LOCALID_DORA, 0, 80);
+  ObjectMotion_SetVariantCallback(LOCALID_DORA, 2);
+  FieldScript_SetMessageId(MsgValeCoughCoughWho);
+  FieldScript_ShowMessageThenWait(LOCALID_DORA, 0, 80);
   ObjectEvent_ShowEmote(LOCALID_DORA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Engine_ObjectEventStartRepeatedMotion(LOCALID_DORA, 1);
-  Engine_ScriptShowMessageAndWait(LOCALID_DORA, 0, 60);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_DORA, 2);
-  Engine_ScriptWait(80);
+  ObjectMotion_SetVariantCallback(LOCALID_DORA, 1);
+  FieldScript_ShowMessageThenWait(LOCALID_DORA, 0, 60);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_DORA, 2);
+  FieldScript_WaitFrames(80);
   ObjectEvent_SetSpeed(LOCALID_DORA, PIXELS(4) / 5, PIXELS(2) / 5);
   // Bring Dora out of bed before asking about her illness.
-  Engine_ObjectEventSetDestination(LOCALID_DORA, 584, 406);
+  ObjectMotion_ResetAndSetPosition(LOCALID_DORA, 584, 406);
   TilesetAnim_Pause(11);
   TilesetAnim_Resume(12);
   Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIMATION_DORA_HEAD_BOWED);
-  Engine_ScriptWait(80);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_DORA, 2);
-  Engine_ScriptWait(40);
+  FieldScript_WaitFrames(80);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_DORA, 2);
+  FieldScript_WaitFrames(40);
   // "Isaac..." "Are you finally home? Have you completed your mission!?"
-  Engine_ScriptShowMessageAndWait(LOCALID_DORA, 0, 40);
+  FieldScript_ShowMessageThenWait(LOCALID_DORA, 0, 40);
   ObjectEvent_ShowEmote(LOCALID_DORA, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
-  Engine_ScriptShowMessageAndWait(LOCALID_DORA, 0, 40);
+  FieldScript_ShowMessageThenWait(LOCALID_DORA, 0, 40);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
                         60);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_DORA,
-                                        ANIMATION_DORA_HEAD_SWAYING);
+  ObjectMotion_SetAnimationAndWait(LOCALID_DORA, ANIMATION_DORA_HEAD_SWAYING);
   ObjectEvent_ShowEmote(LOCALID_DORA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIMATION_DORA_HEAD_TURNED);
-  Engine_ScriptWait(40);
+  FieldScript_WaitFrames(40);
   // "You haven't, have you?" "Have you forgotten your promise, Isaac?"
-  Engine_ScriptShowMessageAndWait(LOCALID_DORA, 0, 40);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_DORA, 1);
-  Engine_ScriptWait(20);
-  Engine_ScriptShowMessageAndWait(LOCALID_DORA, 0, 20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_DORA,
-                                        ANIMATION_DORA_HEAD_BOWED);
-  Engine_ScriptWait(20);
+  FieldScript_ShowMessageThenWait(LOCALID_DORA, 0, 40);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_DORA, 1);
+  FieldScript_WaitFrames(20);
+  FieldScript_ShowMessageThenWait(LOCALID_DORA, 0, 20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_DORA, ANIMATION_DORA_HEAD_BOWED);
+  FieldScript_WaitFrames(20);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIMATION_DORA_HEAD_SWAYING);
   // "You promised you wouldn't come back until your quest was complete,
   // right?" Either reply has its own answer; she is less surprised when Mind
   // Read has told Isaac of her illness.
-  Engine_ScriptOpenMessage(LOCALID_DORA, 0);
-  if (Engine_ScriptChooseYesNo(0, 0) == 1) {
+  FieldMessage_ShowAtObject(LOCALID_DORA, 0);
+  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 1) {
     gFieldWork->message += 1;
   }
   if (GameFlag_IsSet(FLAG_READ_THOUGHTS_ABOUT_DORA) != 0) {
     ObjectEvent_ShowEmote(LOCALID_DORA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   }
-  Engine_ScriptWait(20);
-  Engine_ScriptShowMessage(LOCALID_DORA, 0);
+  FieldScript_WaitFrames(20);
+  FieldScript_ShowMessageAndWait(LOCALID_DORA, 0);
   ObjectEvent_ShowEmote(LOCALID_DORA, EMOTE_IN_FRONT | EMOTE_SCOWL, 60);
   // Branch on Isaac's replies and whether Mind Read revealed her illness.
   firstMessage = MsgValeWhoToldIll;
-  Engine_ScriptSetMessage(firstMessage);
-  Engine_ScriptOpenMessage(LOCALID_DORA, 0);
-  if (Engine_ScriptChooseYesNo(0, 0) == 1) {
+  FieldScript_SetMessageId(firstMessage);
+  FieldMessage_ShowAtObject(LOCALID_DORA, 0);
+  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 1) {
     gFieldWork->message += 1;
   }
-  if (Engine_GameFlagIsSet(FLAG_READ_THOUGHTS_ABOUT_DORA) != 0) {
+  if (GameFlag_Test(FLAG_READ_THOUGHTS_ABOUT_DORA) != 0) {
     ObjectEvent_ShowEmote(LOCALID_DORA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   }
-  Engine_ScriptWait(20);
-  Engine_ScriptShowMessage(LOCALID_DORA, 0);
-  Engine_ObjectEventShowEmote(LOCALID_DORA, EMOTE_IN_FRONT | EMOTE_SCOWL, 60);
+  FieldScript_WaitFrames(20);
+  FieldScript_ShowMessageAndWait(LOCALID_DORA, 0);
+  FieldEffect_SpawnLinked(LOCALID_DORA, EMOTE_IN_FRONT | EMOTE_SCOWL, 60);
   // "You can't get out of your promises just because you're worried about
   // me." "I just caught a cold." "But I'm fine now. Look!"
-  Engine_ScriptSetMessage(firstMessage + 3);
-  Engine_ScriptShowMessage(LOCALID_DORA, 0);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_DORA, 1);
-  Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_DORA,
-                                        ANIMATION_DORA_HEAD_SWAYING);
-  Engine_ObjectEventStartRepeatedMotion(LOCALID_DORA, 2);
-  Engine_ScriptShowMessageAndWait(LOCALID_DORA, 0, 40);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_DORA, 1);
-  Engine_ScriptWait(20);
-  Engine_ScriptShowMessageAndWait(LOCALID_DORA, 0, 40);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_DORA, 2);
-  Engine_ScriptWait(40);
+  FieldScript_SetMessageId(firstMessage + 3);
+  FieldScript_ShowMessageAndWait(LOCALID_DORA, 0);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_DORA, 1);
+  FieldScript_WaitFrames(20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_DORA, ANIMATION_DORA_HEAD_SWAYING);
+  ObjectMotion_SetVariantCallback(LOCALID_DORA, 2);
+  FieldScript_ShowMessageThenWait(LOCALID_DORA, 0, 40);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_DORA, 1);
+  FieldScript_WaitFrames(20);
+  FieldScript_ShowMessageThenWait(LOCALID_DORA, 0, 40);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_DORA, 2);
+  FieldScript_WaitFrames(40);
   // Make room for Dora to walk and demonstrate that she feels well.
   // Isaac steps back as Dora gets up, turns about and jumps three times.
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   leader->facing = 0;
-  Engine_TaskWait(1);
+  WaitFrames(1);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags &=
       ~OBJ_EVENT_FACES_MOTION;
   ObjectEvent_SetDestination(LOCALID_PARTY_LEADER, 558, 388);
   ObjectEvent_SetSpeed(LOCALID_DORA, PIXELS(6) / 5, PIXELS(3) / 5);
   Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIMATION_DORA_STRAIGHTEN);
-  Engine_ObjectEventMoveToAndWait(LOCALID_DORA, 586, 400);
-  Engine_ScriptWait(40);
+  ObjectMotion_SetPositionAndCommit(LOCALID_DORA, 586, 400);
+  FieldScript_WaitFrames(40);
   ObjectEvent_WalkToAndWait(LOCALID_DORA, 580, 382);
   ObjectEvent_FaceDirection(LOCALID_DORA, FACING_WEST, 40);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags |=
       OBJ_EVENT_FACES_MOTION;
-  Engine_ObjectEventFaceDirection(LOCALID_DORA, FACING_NORTH, 8);
-  Engine_ObjectEventFaceDirection(LOCALID_DORA, FACING_EAST, 8);
+  ObjectMotion_ArmCallback(LOCALID_DORA, FACING_NORTH, 8);
+  ObjectMotion_ArmCallback(LOCALID_DORA, FACING_EAST, 8);
   ObjectEvent_FaceDirection(LOCALID_DORA, FACING_SOUTH, 8);
   ObjectEvent_FaceDirection(LOCALID_DORA, FACING_WEST, 10);
-  Engine_ObjectEventJump(LOCALID_DORA, 4, 20);
-  Engine_ObjectEventJump(LOCALID_DORA, 6, 40);
-  Engine_ObjectEventJump(LOCALID_DORA, 4, 20);
+  ObjectMotion_Launch(LOCALID_DORA, 4, 20);
+  ObjectMotion_Launch(LOCALID_DORA, 6, 40);
+  ObjectMotion_Launch(LOCALID_DORA, 4, 20);
   // "See? I'm fine!" "Don't worry about me. Go on."
-  Engine_ScriptShowMessageAndWait(LOCALID_DORA, 0, 40);
+  FieldScript_ShowMessageThenWait(LOCALID_DORA, 0, 40);
   ObjectEvent_SetSpeed(LOCALID_DORA, PIXELS(2) / 5, PIXELS(1) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_DORA, 572, 384);
-  Engine_ScriptShowMessageAndWait(LOCALID_DORA, 0, 20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_DORA, ANIMATION_NOD);
+  FieldScript_ShowMessageThenWait(LOCALID_DORA, 0, 20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  FieldScript_WaitFrames(20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_DORA, ANIMATION_NOD);
   Engine_GameFlagSet(FLAG_VISITED_SICK_DORA);
   Engine_GameFlagSet(FLAG_MAP_TEMP_03);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Talking to Dora at home in Vale, back from Kalay: in her sickbed she murmurs
@@ -1118,23 +1112,23 @@ static void EventScript_VisitSickDora(void) {
 static void EventScript_TalkToDora(void) {
   s32 message;
 
-  Engine_ScriptStart();
-  if (Engine_GameFlagIsSet(FLAG_MAP_TEMP_03) != 0) {
+  FieldScript_Start();
+  if (GameFlag_Test(FLAG_MAP_TEMP_03) != 0) {
     ObjectEvent_SetTargetAndCallback(
         LOCALID_DORA, OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_PARTY_LEADER,
         gValeInteriorsInn_DoraFacesIsaacScript);
-    Engine_ScriptWait(20);
-    Engine_ScriptSetMessage(MsgValeDontWorryBest);
-    Engine_ScriptShowMessage(LOCALID_DORA, 0);
+    FieldScript_WaitFrames(20);
+    FieldScript_SetMessageId(MsgValeDontWorryBest);
+    FieldScript_ShowMessageAndWait(LOCALID_DORA, 0);
   } else {
-    Engine_ObjectEventRunRepeatedMotion(LOCALID_DORA, 2);
-    Engine_ScriptWait(40);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_DORA, 2);
+    FieldScript_WaitFrames(40);
     message = MsgValeUnnOhhKyle;
-    Engine_ScriptSetMessage(message);
-    Engine_ScriptShowMessageAndWait(LOCALID_DORA, 0, 40);
-    Engine_MessageShowCentered((message + 1), 1);
+    FieldScript_SetMessageId(message);
+    FieldScript_ShowMessageThenWait(LOCALID_DORA, 0, 40);
+    FieldMessage_Show((message + 1), 1);
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Restores the room's tiles and metatile behaviors outside the storm sequence.
@@ -1157,16 +1151,16 @@ static void EventScript_ShowMythrilBag(void) {
   GlyphTransfer *glyph;
   u8 clear;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  Engine_TaskWait(1);
+  WaitFrames(1);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, 0, 0);
   ObjectEvent_SetPosition(LOCALID_KRADEN, PIXELS(480), PIXELS(202));
-  Engine_TaskWait(1);
-  Engine_CameraFollowObjectEvent(LOCALID_KRADEN, 1);
+  WaitFrames(1);
+  FieldCamera_FollowObjectEvent(LOCALID_KRADEN, 1);
   clear = 0;
   objectEvent =
-      Engine_ObjectCreate(SPRITE_BLANK, PIXELS(328), PIXELS(2), PIXELS(195));
+      ObjectEvent_Create(SPRITE_BLANK, PIXELS(328), PIXELS(2), PIXELS(195));
   objectEvent->motionFlags = clear;
   sprite = objectEvent->sprite;
   objectEvent->y.fixed = PIXELS(5);
@@ -1175,28 +1169,28 @@ static void EventScript_ShowMythrilBag(void) {
   sprite->image.palette = 0;
   // Load the item icon into the temporary object event before animating the
   // bag.
-  glyph = Engine_HeapAllocate(17, sizeof(*glyph));
-  Engine_ItemLoadIcon(ITEM_MYTHRIL_BAG);
-  Engine_VramLoad(sprite->slot, 128, glyph->tiles);
-  Engine_HeapRelease(17);
+  glyph = AllocHeapSlot(17, sizeof(*glyph));
+  Ui_PrepareTransferForItem(ITEM_MYTHRIL_BAG);
+  VramCache_Load(sprite->slot, 128, glyph->tiles);
+  FreeHeapSlot(17);
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 2);
-  Engine_ScriptOpenScreen();
+  FieldScript_StartScreenTransition();
   // Walk the presenter into view, then wait for both bag scripts to finish.
   ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_WalkToAndWait(LOCALID_KRADEN, 480, 176);
   ObjectEvent_WalkToAndWait(LOCALID_KRADEN, 420, 164);
   ObjectEvent_WalkToAndWait(LOCALID_KRADEN, 326, 185);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTH, 10);
-  Engine_ObjectSetScript(objectEvent, gValeInteriorsInn_MythrilBagRisesScript);
+  ObjectEvent_SetScript(objectEvent, gValeInteriorsInn_MythrilBagRisesScript);
   ObjectDispatch_WaitForValue16(objectEvent);
   ObjectEvent_SetScript(objectEvent, gValeInteriorsInn_MythrilBagWobblesScript);
   ObjectDispatch_WaitForValue16(objectEvent);
-  Engine_ScriptWait(20);
-  Engine_ObjectDispatchRelease(objectEvent);
-  Engine_ObjectEventJump(LOCALID_KRADEN, 2, 20);
+  FieldScript_WaitFrames(20);
+  ObjectEvent_Release(objectEvent);
+  ObjectMotion_Launch(LOCALID_KRADEN, 2, 20);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_EAST, 40);
-  Engine_ScriptCloseScreen();
-  Engine_ScriptWaitForScreen();
+  FieldScript_FinishScreenTransition();
+  FieldScript_WaitTransitionFrames();
   Engine_ScriptRequestWarp(VALE_INTERIORS_INN_TO_VALE_KRADEN_SOUTH);
 }
 
@@ -1205,9 +1199,9 @@ static void EventScript_ShowMythrilBag(void) {
 UNUSED static void
 ValeInteriorsInn_FlashPaletteAndSpawnPair(union FieldObject *fieldObject) {
   if ((gFrameCount & 2) != 0) {
-    Engine_ObjectSetPartPalettes(&fieldObject->objectEvent, 7);
+    ObjectEvent_SetColorMode(&fieldObject->objectEvent, 7);
   } else {
-    Engine_ObjectSetPartPalettes(&fieldObject->objectEvent, 0);
+    ObjectEvent_SetColorMode(&fieldObject->objectEvent, 0);
   }
   if ((gFrameCount & 15) == 0) {
     ValeInteriorsInn_SpawnEffectPair(fieldObject);
@@ -1218,8 +1212,7 @@ ValeInteriorsInn_FlashPaletteAndSpawnPair(union FieldObject *fieldObject) {
 static void
 ValeInteriorsInn_CyclePaletteAndSpawnPair(union FieldObject *fieldObject) {
   if ((gFrameCount & 1) != 0) {
-    Engine_ObjectSetPartPalettes(&fieldObject->objectEvent,
-                                 (gFrameCount >> 1) % 6);
+    ObjectEvent_SetColorMode(&fieldObject->objectEvent, (gFrameCount >> 1) % 6);
   }
   if ((gFrameCount & 15) == 0) {
     ValeInteriorsInn_SpawnEffectPair(fieldObject);
@@ -1232,7 +1225,7 @@ ValeInteriorsInn_CyclePaletteOnOddFrames(union FieldObject *fieldObject) {
   if ((gFrameCount & 1) != 0) {
     s32 slot = (gFrameCount >> 1) % 6;
 
-    Engine_ObjectSetPartPalettes(&fieldObject->objectEvent, slot);
+    ObjectEvent_SetColorMode(&fieldObject->objectEvent, slot);
   }
 }
 
@@ -1251,8 +1244,8 @@ static void ValeInteriorsInn_SpawnEffectPair(union FieldObject *fieldObject) {
   s32 effectIndex;
 
   for (effectIndex = 0; effectIndex < 2; ++effectIndex) {
-    child = Engine_ObjectCreate(26, parent->x.fixed, parent->y.fixed,
-                                parent->z.fixed);
+    child = ObjectEvent_Create(26, parent->x.fixed, parent->y.fixed,
+                               parent->z.fixed);
     pair[effectIndex] = child;
     if (child != NULL) {
       child->groundHeight = parent->groundHeight;
@@ -1262,7 +1255,7 @@ static void ValeInteriorsInn_SpawnEffectPair(union FieldObject *fieldObject) {
       child->linkedObject = parent;
       if (part != NULL) {
         sprite = part;
-        Object_InitializeMode(part, 0);
+        Sprite_StartAnim(part, 0);
         sprite->flags = 0;
         VramCache_FreeEntry(sprite->slot);
         sprite->slot = effectWork->tileSlot;
@@ -1311,11 +1304,11 @@ UNUSED static void ValeInteriorsInn_CyclePaletteWithoutParticles(void) {
 /// Catch plays from Dora on the tunic, then its objects are released.
 /// Called by EventScript_DoraWakesIsaac as Dora hands Isaac his tunic.
 static void ValeInteriorsInn_DemonstrateCatch(void) {
-  Engine_PsynergyStart(ABILITY_CATCH, 1);
-  Engine_PsynergySetTarget(LOCALID_DORA, LOCALID_TUNIC);
-  Engine_PsynergyRaiseHands();
-  Engine_PsynergyPlayEffect(1);
-  Engine_PsynergyLowerHands();
+  FieldEffect_LoadActionEffectResources(ABILITY_CATCH, 1);
+  FieldEffect_SetupObjectPair(LOCALID_DORA, LOCALID_TUNIC);
+  FieldEffect_StartCast();
+  Field_DispatchTypeHandler(1);
+  FieldEffect_StopCasterHook();
   FieldEffect_End();
 }
 

@@ -15,7 +15,7 @@ FieldEffect_StretchUntilArrived(struct ObjectScriptContext *interpreter) {
   if (streak->targetX == OBJ_EVENT_NO_TARGET &&
       streak->targetY == OBJ_EVENT_NO_TARGET &&
       streak->targetZ == OBJ_EVENT_NO_TARGET) {
-    Engine_ObjectDispatchRelease(streak);
+    ObjectEvent_Release(streak);
   }
   return 1;
 }

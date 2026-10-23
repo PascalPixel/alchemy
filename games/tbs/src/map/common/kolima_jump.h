@@ -20,37 +20,37 @@ static s32 PushedObject_RunStepEffect(struct FieldPosition *request) {
   s32 ret = FieldObject_CheckMovementCollision(objectEvent, request);
 
   if (ret == 0) {
-    Engine_ScriptStart();
-    ObjectEvent_SetMode(objectEvent, 6);
-    Engine_TaskWait(6);
-    Engine_AudioPlayCue(SE_JUMP);
-    ObjectEvent_SetMode(objectEvent, 7);
+    FieldScript_Start();
+    ObjectDispatch_SelectAnimation(objectEvent, 6);
+    WaitFrames(6);
+    Sound_PlaySong(SE_JUMP);
+    ObjectDispatch_SelectAnimation(objectEvent, 7);
     objectEvent->speed = PIXELS(3);
     objectEvent->acceleration = PIXELS(2);
     objectEvent->velocityY = PIXELS(4);
     *flags &= 0x7e;
-    Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
-    Engine_ObjectEventMoveToAndWait(
+    ObjectEvent_SetSpriteFlags(objectEvent, 0);
+    ObjectMotion_SetPositionAndCommit(
         LOCALID_PARTY_LEADER,
         ((union FieldCoordinate *)&request->x)->part.pixel,
         ((union FieldCoordinate *)&request->z)->part.pixel);
-    ObjectEvent_SetMode(objectEvent, 6);
-    Engine_ObjectEventSetSpriteFlags(objectEvent, SPRITE_FLAG_SHADOW);
+    ObjectDispatch_SelectAnimation(objectEvent, 6);
+    ObjectEvent_SetSpriteFlags(objectEvent, SPRITE_FLAG_SHADOW);
     *flags = ret;
     Engine_ObjectEventSetAnimation(LOCALID_FIRST_PLACED + 2, 7);
     objectEvent->y.fixed += -PIXELS(1);
     objectEvent->groundHeight += -PIXELS(1);
-    Engine_TaskWait(2);
+    WaitFrames(2);
     objectEvent->y.fixed += -PIXELS(1);
     objectEvent->groundHeight += -PIXELS(1);
-    Engine_TaskWait(10);
+    WaitFrames(10);
     objectEvent->y.fixed += PIXELS(1);
     objectEvent->groundHeight += PIXELS(1);
-    Engine_TaskWait(4);
+    WaitFrames(4);
     objectEvent->y.fixed += PIXELS(1);
     objectEvent->groundHeight += PIXELS(1);
     *flags = saved;
-    Engine_ScriptEnd();
+    FieldScript_End();
     return 1;
   }
   return 0;

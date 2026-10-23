@@ -23,9 +23,9 @@ static void FieldEffect_SpawnNineRadialEffects(s32 localId) {
   params.update = FieldEffect_AdvanceMotion;
   for (i = 0; i <= 16; i += 2) {
     v = i << 12;
-    vec.x = Engine_MathCos(v);
+    vec.x = Trig_Cos(v);
     vec.y = 0;
-    z = Engine_MathSin(v);
+    z = Trig_Sin(v);
     x = vec.x;
     vec.z = z;
     x += Math_Divide(x, 3);

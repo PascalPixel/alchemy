@@ -383,17 +383,17 @@ static void VaultCave_PushPillarAhead(void) {
   if (FieldObject_CheckMovementCollision(pillar, &destination) > 0) {
     return;
   }
-  ObjectEvent_SetMode(leader, ANIMATION_PUSH);
-  Engine_TaskWait(15);
-  Engine_AudioPlayCue(SE_238);
+  ObjectDispatch_SelectAnimation(leader, ANIMATION_PUSH);
+  WaitFrames(15);
+  Sound_PlaySong(SE_238);
   pillar->speed = 0x3333;
   pillar->acceleration = 0x3333;
-  Engine_ObjectSetPosition(pillar, destination.x, destination.y, destination.z);
+  Object_SetPosition(pillar, destination.x, destination.y, destination.z);
   leader->speed = 0x3333;
   leader->acceleration = 0x3333;
-  Engine_ObjectSetPosition(leader, destination.x, destination.y, destination.z);
+  Object_SetPosition(leader, destination.x, destination.y, destination.z);
   Object_WaitForMove(pillar);
-  Engine_AudioPlayCue(SE_STOP_SLOT3);
+  Sound_PlaySong(SE_STOP_SLOT3);
   pillar->x.fixed = destination.x;
   pillar->z.fixed = destination.z;
   pillar->velocityX = 0;
@@ -402,7 +402,7 @@ static void VaultCave_PushPillarAhead(void) {
   leader->velocityZ = 0;
   leader->targetX = OBJ_EVENT_NO_TARGET;
   leader->targetZ = OBJ_EVENT_NO_TARGET;
-  ObjectEvent_SetMode(leader, ANIMATION_STAND);
+  ObjectDispatch_SelectAnimation(leader, ANIMATION_STAND);
 }
 
 /// Whirlwind blows the ivy away.
@@ -416,7 +416,7 @@ static void EventScript_UseWhirlwind(void) {
 /// In any room of Vault Cave, searching the locked door only says so.
 /// "The door is tightly locked."
 static void EventScript_ShowLockedDoor(void) {
-  Engine_MessageShowCentered(MSGNO(MsgFieldDoorTightlyLocked), 1);
+  FieldMessage_Show(MSGNO(MsgFieldDoorTightlyLocked), 1);
 }
 
 /// Selects the cave map's bg events, movement checks and Psynergy callbacks.
@@ -611,7 +611,7 @@ static void EventScript_FreezeEastUpperPuddle(void) {
   MapGrid_CopyCellAttributes(26, 30, 1, 1, 26, 32);
 
   if (target != 0) {
-    Engine_ObjectEventSetSpriteFlags(target, 0);
+    ObjectEvent_SetSpriteFlags(target, 0);
 
     ObjectEvent_GetById(LOCALID_EAST_UPPER_PUDDLE)->motionFlags = 0;
     target->priorityFlags = OBJ_EVENT_PRIORITY_AUTOMATIC;
@@ -627,7 +627,7 @@ static void EventScript_FreezeEastLowerPuddle(void) {
   MapGrid_CopyCellAttributes(26, 30, 1, 1, 26, 34);
 
   if (target != 0) {
-    Engine_ObjectEventSetSpriteFlags(target, 0);
+    ObjectEvent_SetSpriteFlags(target, 0);
 
     ObjectEvent_GetById(LOCALID_EAST_LOWER_PUDDLE)->motionFlags = 0;
     target->priorityFlags = OBJ_EVENT_PRIORITY_AUTOMATIC;
@@ -643,7 +643,7 @@ static void EventScript_FreezeFarEastPuddle(void) {
   MapGrid_CopyCellAttributes(26, 30, 1, 1, 28, 33);
 
   if (target != 0) {
-    Engine_ObjectEventSetSpriteFlags(target, 0);
+    ObjectEvent_SetSpriteFlags(target, 0);
 
     ObjectEvent_GetById(LOCALID_FAR_EAST_PUDDLE)->motionFlags = 0;
     target->priorityFlags = OBJ_EVENT_PRIORITY_AUTOMATIC;
@@ -701,7 +701,7 @@ static void VaultCave_RunRumble(void) {
   s32 lowFadeLevel;
   s32 upperFadeBits;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   if (gFrameCount & 1) {
     layer->speedX = 1;
     layer->speedY = 1;
@@ -717,7 +717,7 @@ static void VaultCave_RunRumble(void) {
     u32 scrollDrift = (u32)(Random_Next() << 11) >> 16;
 
     layer->phaseY = (double)layer->phaseY - (4718.592 - (double)scrollDrift);
-    Engine_ScriptWait(1);
+    FieldScript_WaitFrames(1);
   }
   // Keep the packed native value written to BLDALPHA.
   fadeLevel = 6;
@@ -727,7 +727,7 @@ static void VaultCave_RunRumble(void) {
   do {
     IoWriteQueue_Store16(0x4000052,
                          upperFadeBits | (fadeLevel << 5) | lowFadeLevel);
-    Engine_ScriptWait(1);
+    FieldScript_WaitFrames(1);
     if (frame % 20 == 0) {
       lowFadeLevel--;
       fadeLevel--;
@@ -737,9 +737,9 @@ static void VaultCave_RunRumble(void) {
   // Replace the mechanism's map cells after the fade completes.
   MapGrid_CopyCells(19, 83, 15, 8, 19, 91);
   Script_PlaySong(SE_STOP_SLOT3);
-  Engine_MapGridRedraw();
-  Engine_MapGridRenderWaitForValues();
-  Engine_ScriptEnd();
+  MapGrid_CenterOnFollowedPoint();
+  MapGrid_WaitForShakeToSettle();
+  FieldScript_End();
 }
 
 /// In VaultCavePassage's pool room, searching the switch flips it.
@@ -752,22 +752,22 @@ static void EventScript_FlipSwitch(void) {
   s32 destinationColumn;
 
   if (GameFlag_IsSet(FLAG_VAULT_CAVE_SWITCH_FLIPPED) == 0) {
-    Engine_MessageShowCentered(MSGNO(MsgFieldFlippedSwitch), 1);
+    FieldMessage_Show(MSGNO(MsgFieldFlippedSwitch), 1);
     GameFlag_Set(FLAG_VAULT_CAVE_SWITCH_FLIPPED);
     // Animate the switch face before the adjacent mechanism starts.
     destinationRow = 27;
     destinationColumn = 92;
     Script_PlaySong(SE_155);
     MapGrid_CopyCells(107, 27, 1, 1, destinationColumn, destinationRow);
-    Engine_ScriptWait(39);
+    FieldScript_WaitFrames(39);
     MapGrid_CopyCells(108, 27, 1, 1, destinationColumn, destinationRow);
-    Engine_ScriptWait(50);
+    FieldScript_WaitFrames(50);
     destinationColumn = 25;
     Script_PlaySong(SE_156);
     MapGrid_CopyCells(1, 24, 1, 2, destinationColumn, destinationRow);
-    Engine_ScriptWait(40);
+    FieldScript_WaitFrames(40);
     MapGrid_CopyCells(2, 24, 1, 2, destinationColumn, destinationRow);
-    Engine_ScriptWait(40);
+    FieldScript_WaitFrames(40);
     VaultCave_RunRumble();
   }
 }
@@ -882,8 +882,7 @@ static void VaultCave_UpdateFrostControlledFallingObjects(void) {
     for (fallingIndex = 0; fallingIndex <= 5; fallingIndex++) {
       fallingObjectEvent =
           ObjectEvent_GetById((fallingIndex + LOCALID_FIRST_WATER_DROP));
-      stateValue =
-          Engine_GameFlagIsSet((fallingIndex + FLAG_WEST_UPPER_FROZEN));
+      stateValue = GameFlag_Test((fallingIndex + FLAG_WEST_UPPER_FROZEN));
       if (stateValue != 0) {
         if (fallingObjectEvent->velocityY <= 0) {
           if (fallingObjectEvent->y.fixed > 0x20ffff) {
@@ -893,7 +892,7 @@ static void VaultCave_UpdateFrostControlledFallingObjects(void) {
         fallingObjectEvent->y.fixed = PIXELS(255);
         fallingObjectEvent->gravity = 0;
         fallingObjectEvent->velocityY = 0;
-        Engine_AudioPlayCue(SE_106);
+        Sound_PlaySong(SE_106);
       } else {
         if (fallingObjectEvent->velocityY <= 0) {
           if (fallingObjectEvent->y.fixed > 0xffff) {
@@ -903,7 +902,7 @@ static void VaultCave_UpdateFrostControlledFallingObjects(void) {
         fallingObjectEvent->gravity = stateValue;
         fallingObjectEvent->velocityY = stateValue;
         fallingObjectEvent->y.fixed = PIXELS(255);
-        Engine_AudioPlayCue(SE_106);
+        Sound_PlaySong(SE_106);
       }
     }
   }
@@ -920,8 +919,8 @@ static void VaultCave_OffsetObjectEventRadially(struct ObjectEvent *objectEvent,
   SET_VECTOR(destination, objectEvent->x.fixed, objectEvent->y.fixed,
              objectEvent->z.fixed);
   Vector_AddPolarOffset(radius, angle, destination);
-  Engine_ObjectSetPosition(objectEvent, destination[0], destination[1],
-                           destination[2]);
+  Object_SetPosition(objectEvent, destination[0], destination[1],
+                     destination[2]);
 }
 
 /// Spawns up to four short-lived puffs around a landing object.
@@ -930,8 +929,8 @@ static void VaultCave_SpawnPuffs(struct ObjectEvent *source) {
   s32 puffIndex;
 
   for (puffIndex = 0; puffIndex < 4; puffIndex++) {
-    puff = Engine_ObjectCreate(240, source->x.fixed, source->y.fixed,
-                               source->z.fixed);
+    puff = ObjectEvent_Create(240, source->x.fixed, source->y.fixed,
+                              source->z.fixed);
     if (puff == 0)
       break;
     puff->scaleY = 0x8ccc;
@@ -947,7 +946,7 @@ static void VaultCave_SpawnPuffs(struct ObjectEvent *source) {
 
       *timer = frames;
     }
-    Engine_ObjectSetScript(puff, gVaultCave_PuffScript);
+    ObjectEvent_SetScript(puff, gVaultCave_PuffScript);
   }
 }
 
@@ -959,7 +958,7 @@ static void VaultCave_StartFrostControlledFalls(void) {
   do {
     struct ObjectEvent *fallingObjectEvent;
 
-    Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(objectEventSlot), 0);
+    ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(objectEventSlot), 0);
     fallingObjectEvent = ObjectEvent_GetById(objectEventSlot);
     fallingObjectEvent->bounce = 0x1999;
     fallingObjectEvent->gravity = 0;
@@ -980,13 +979,13 @@ static void VaultCave_StartTimedFalls(void) {
   do {
     struct ObjectEvent *fallingObjectEvent;
 
-    Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(objectEventSlot), 0);
+    ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(objectEventSlot), 0);
     fallingObjectEvent = ObjectEvent_GetById(objectEventSlot);
     fallingObjectEvent->bounce = 0x1999;
     fallingObjectEvent->gravity = 0;
     fallingObjectEvent->y.fixed = PIXELS(255);
-    Engine_ObjectEventSetSpritePriority(
-        fallingIndex + LOCALID_FIRST_TIMED_WATER_DROP, 1);
+    ObjectMotion_SetActionVariant(fallingIndex + LOCALID_FIRST_TIMED_WATER_DROP,
+                                  1);
     fallingIndex++;
     objectEventSlot++;
   } while (fallingIndex <= 3);
@@ -1008,25 +1007,25 @@ s32 Map_Initialize(void) {
     case VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_SOUTHEAST:
     case VAULT_CAVE_PASSAGE_WATER_ROOM_FROM_CHEST:
     case VAULT_CAVE_PASSAGE_WATER_ROOM_FROM_NORTH_EAST:
-      if (Engine_GameFlagIsSet(FLAG_VAULT_CAVE_SWITCH_FLIPPED) == 0) {
+      if (GameFlag_Test(FLAG_VAULT_CAVE_SWITCH_FLIPPED) == 0) {
         MapGrid_CopyCellAttributes(22, 29, 1, 1, 21, 29);
       } else {
         MapGrid_CopyCells(108, 27, 1, 1, 92, 27);
-        Engine_TaskWait(1);
+        WaitFrames(1);
         MapGrid_CopyCells(19, 83, 15, 8, 19, 91);
-        Engine_TaskWait(1);
+        WaitFrames(1);
         MapGrid_CopyCells(2, 24, 1, 2, 25, 27);
       }
-      Engine_MapGridRedraw();
-      Engine_TaskWait(1);
+      MapGrid_CenterOnFollowedPoint();
+      WaitFrames(1);
       break;
     case VAULT_CAVE_PASSAGE_FROM_VAULT_REVISIT:
-      Engine_GameFlagClear(FLAG_VAULT_CAVE_SWITCH_FLIPPED);
+      GameFlag_ClearBit(FLAG_VAULT_CAVE_SWITCH_FLIPPED);
       break;
     }
   }
   if (gGameState.mapId == (s32)&MapId_VaultCaveVambrace) {
-    if (Engine_GameFlagIsSet(FLAG_WHIRLWIND_USED) == 0) {
+    if (GameFlag_Test(FLAG_WHIRLWIND_USED) == 0) {
       ObjectEvent_GetById(LOCALID_IVY)->scaleY = 0x18000;
     }
     switch (gGameState.warpDest) {
@@ -1034,7 +1033,7 @@ s32 Map_Initialize(void) {
     case VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_MOUTH_NORTH:
     case VAULT_CAVE_VAMBRACE_NORTH_FROM_FROST_ROOM:
     case VAULT_CAVE_VAMBRACE_NORTH_FROM_WEST:
-      if (Engine_GameFlagIsSet(FLAG_VAULT_CAVE_SWITCH_FLIPPED) == 0) {
+      if (GameFlag_Test(FLAG_VAULT_CAVE_SWITCH_FLIPPED) == 0) {
         MapGrid_CopyCells(5, 81, 11, 7, 5, 73);
       } else {
         MapGrid_CopyCellAttributes(5, 12, 1, 1, 6, 12);
@@ -1045,27 +1044,27 @@ s32 Map_Initialize(void) {
     case VAULT_CAVE_VAMBRACE_FROST_ROOM_FROM_SOUTH:
     case VAULT_CAVE_VAMBRACE_FROST_ROOM_FROM_CHEST:
       VaultCave_StartFrostControlledFalls();
-      if (Engine_GameFlagIsSet(FLAG_WEST_UPPER_FROZEN) != 0) {
+      if (GameFlag_Test(FLAG_WEST_UPPER_FROZEN) != 0) {
         Engine_ObjectEventSetAnimation(LOCALID_WEST_UPPER_PUDDLE, 5);
         EventScript_FreezeWestUpperPuddle();
       }
-      if (Engine_GameFlagIsSet(FLAG_WEST_LOWER_FROZEN) != 0) {
+      if (GameFlag_Test(FLAG_WEST_LOWER_FROZEN) != 0) {
         Engine_ObjectEventSetAnimation(LOCALID_WEST_LOWER_PUDDLE, 5);
         EventScript_FreezeWestLowerPuddle();
       }
-      if (Engine_GameFlagIsSet(FLAG_INNER_WEST_LOWER_FROZEN) != 0) {
+      if (GameFlag_Test(FLAG_INNER_WEST_LOWER_FROZEN) != 0) {
         Engine_ObjectEventSetAnimation(LOCALID_INNER_WEST_LOWER_PUDDLE, 5);
         EventScript_FreezeInnerWestLowerPuddle();
       }
-      if (Engine_GameFlagIsSet(FLAG_EAST_UPPER_FROZEN) != 0) {
+      if (GameFlag_Test(FLAG_EAST_UPPER_FROZEN) != 0) {
         Engine_ObjectEventSetAnimation(LOCALID_EAST_UPPER_PUDDLE, 5);
         EventScript_FreezeEastUpperPuddle();
       }
-      if (Engine_GameFlagIsSet(FLAG_EAST_LOWER_FROZEN) != 0) {
+      if (GameFlag_Test(FLAG_EAST_LOWER_FROZEN) != 0) {
         Engine_ObjectEventSetAnimation(LOCALID_EAST_LOWER_PUDDLE, 5);
         EventScript_FreezeEastLowerPuddle();
       }
-      if (Engine_GameFlagIsSet(FLAG_FAR_EAST_FROZEN) != 0) {
+      if (GameFlag_Test(FLAG_FAR_EAST_FROZEN) != 0) {
         Engine_ObjectEventSetAnimation(LOCALID_FAR_EAST_PUDDLE, 5);
         EventScript_FreezeFarEastPuddle();
       }
@@ -1074,7 +1073,7 @@ s32 Map_Initialize(void) {
       break;
     case VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_SOUTH:
     case VAULT_CAVE_VAMBRACE_SOUTH_FROM_FROST_ROOM:
-      if (Engine_GameFlagIsSet(FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH) != 0) {
+      if (GameFlag_Test(FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH) != 0) {
         VaultCave_ApplySouthernSwitchCells();
         ObjectEvent_SetPosition(LOCALID_SOUTHERN_PILLAR, PIXELS(248),
                                 PIXELS(876));
@@ -1085,22 +1084,20 @@ s32 Map_Initialize(void) {
     }
     Engine_ObjectEventSetAnimation(LOCALID_PILLAR_EAST_OF_SOUTHERN_SWITCH, 2);
     Engine_ObjectEventSetAnimation(LOCALID_SOUTHERN_PILLAR, 2);
-    Engine_ObjectEventSetSpriteFlags(
+    ObjectEvent_SetSpriteFlags(
         ObjectEvent_GetById(LOCALID_PILLAR_EAST_OF_SOUTHERN_SWITCH), 0);
-    Engine_ObjectEventSetSpriteFlags(
-        ObjectEvent_GetById(LOCALID_SOUTHERN_PILLAR), 0);
+    ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_SOUTHERN_PILLAR), 0);
     ObjectEvent_GetById(LOCALID_SOUTHERN_PILLAR)->collisionFlags = 1;
   }
   if (gGameState.mapId == (s32)&MapId_VaultCaveMouth) {
     Engine_ObjectEventSetAnimation(LOCALID_PILLAR_EAST_OF_NORTHERN_SWITCH, 2);
-    if (Engine_GameFlagIsSet(FLAG_NORTH_PILLAR_STRUCK) == 0) {
+    if (GameFlag_Test(FLAG_NORTH_PILLAR_STRUCK) == 0) {
       Engine_ObjectEventSetAnimation(LOCALID_NORTHERN_PILLAR, 2);
     }
-    Engine_ObjectEventSetSpriteFlags(
+    ObjectEvent_SetSpriteFlags(
         ObjectEvent_GetById(LOCALID_PILLAR_EAST_OF_NORTHERN_SWITCH), 0);
-    Engine_ObjectEventSetSpriteFlags(
-        ObjectEvent_GetById(LOCALID_NORTHERN_PILLAR), 0);
-    Engine_ObjectEventSetSpriteFlags(
+    ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_NORTHERN_PILLAR), 0);
+    ObjectEvent_SetSpriteFlags(
         ObjectEvent_GetById(LOCALID_PILLAR_SOUTH_OF_NORTHERN_SWITCH), 0);
     ObjectEvent_GetById(LOCALID_NORTHERN_PILLAR)->collisionFlags |= 0x80;
     ObjectEvent_GetById(LOCALID_PILLAR_SOUTH_OF_NORTHERN_SWITCH)
@@ -1121,7 +1118,7 @@ s32 Map_Initialize(void) {
       ObjectEvent_GetById(LOCALID_NORTHERN_PILLAR)->collisionFlags = 1;
       ObjectEvent_GetById(LOCALID_PILLAR_SOUTH_OF_NORTHERN_SWITCH)
           ->collisionFlags = 1;
-      if (Engine_GameFlagIsSet(FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH) != 0) {
+      if (GameFlag_Test(FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH) != 0) {
         VaultCave_ApplyNorthernSwitchCells();
         ObjectEvent_SetPosition(LOCALID_NORTHERN_PILLAR, PIXELS(264),
                                 PIXELS(204));

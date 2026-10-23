@@ -18,7 +18,7 @@ void Vault_PlaceItemIcon(s32 item, s32 fixed_x, s32 fixed_y, s32 fixed_z) {
   s32 mask;
 
   zero = 0;
-  object = (u8 *)Engine_ObjectCreate(SPRITE_BLANK, fixed_x, fixed_y, fixed_z);
+  object = (u8 *)Object_CreateField(SPRITE_BLANK, fixed_x, fixed_y, fixed_z);
   if (object != 0) {
     sprite = (u8 *)((struct ObjectEvent *)object)->sprite;
     field = sprite + 38; // flags, then count
@@ -31,10 +31,10 @@ void Vault_PlaceItemIcon(s32 item, s32 fixed_x, s32 fixed_y, s32 fixed_z) {
     sprite[9] &= 15;     // image.palette
     object[0x55] = zero; // motionFlags
     object[0x5c] = 1;
-    icon = Engine_HeapAllocate(17, 0x608);
-    Engine_ItemLoadIcon(item);
+    icon = AllocHeapSlot(17, 0x608);
+    Ui_PrepareTransferForItem(item);
     icon += 0x400;
-    Engine_VramLoad(sprite[28], 0x80, icon); // sprite->slot
-    Engine_HeapRelease(17);
+    VramCache_Load(sprite[28], 0x80, icon); // sprite->slot
+    FreeHeapSlot(17);
   }
 }

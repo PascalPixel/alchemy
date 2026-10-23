@@ -317,10 +317,10 @@ const struct ObjectEventTemplate *Bilibin_GetObjectEventTemplates(void) {
 /// Searching the well in Bilibin: the leader peers in, and its bottom cannot
 /// be seen.
 static void EventScript_InspectWell(void) {
-  Engine_ScriptStart();
-  Engine_MessageShowCentered(MsgFieldPeeredWell, 1);
-  Engine_MessageShowCentered(MsgBilibinBottomNotVisibleLooksVery, 1);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  FieldMessage_Show(MsgFieldPeeredWell, 1);
+  FieldMessage_Show(MsgBilibinBottomNotVisibleLooksVery, 1);
+  FieldScript_End();
 }
 
 const struct MapEvent *Bilibin_GetEvents(void) {
@@ -341,26 +341,26 @@ const struct MapEvent *Bilibin_GetEvents(void) {
 /// The Bilibin Barricade's sign forbids passing without a permit. Searching it
 /// shows Lord McCoy's notice that no one may pass without one.
 static void EventScript_ReadRestrictedAreaSign(void) {
-  Engine_ScriptStart();
-  Engine_MessageShowCentered(MsgBilibinAreaOffLimitsThoseWithout, 1);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  FieldMessage_Show(MsgBilibinAreaOffLimitsThoseWithout, 1);
+  FieldScript_End();
 }
 
 /// Searching the sign in the Bilibin Treasury, which calls it McCoy's hidden
 /// warehouse. `McCoy's Hidden Warehouse / Do Not Enter!`
 static void EventScript_ReadWarehouseSign(void) {
-  Engine_ScriptStart();
-  Engine_MessageShowCentered(MsgBilibinMccoysHiddenWarehouseDoNot, 1);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  FieldMessage_Show(MsgBilibinMccoysHiddenWarehouseDoNot, 1);
+  FieldScript_End();
 }
 
 /// The Gang of Three's trees at the Bilibin Barricade look like people.
 /// Talking to one, standing or pushed down, or to the object event that answers
 /// for the fallen one, says so. `There is a tree that looks like a person.`
 static void EventScript_InspectHumanShapedTree(void) {
-  Engine_ScriptStart();
-  Engine_MessageShowCentered(MsgBilibinThereTreeLooksLikePerson, 1);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  FieldMessage_Show(MsgBilibinThereTreeLooksLikePerson, 1);
+  FieldScript_End();
 }
 
 /// Talking to the tree at Bilibin's entrance, before the curse is lifted: it
@@ -368,64 +368,64 @@ static void EventScript_InspectHumanShapedTree(void) {
 /// Map-section temp flag FLAG_MAPSEC_TEMP_01 remembers the first look until the
 /// party leaves Bilibin's map section.
 static void EventScript_ExamineTreeMan(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgBilibinItsTreeButAlmostLooks);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgBilibinItsTreeButAlmostLooks);
   if (GameFlag_IsSet(FLAG_MAPSEC_TEMP_01) != 0) {
     gFieldWork->message++;
   }
   Script_ShowMessage(LOCALID_TREE_MAN, 0);
   GameFlag_Set(FLAG_MAPSEC_TEMP_01);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// A burly man asks about the tree at Bilibin's entrance. He's grey-haired and
 /// there before the curse is lifted, and asks whether the party saw it; on
 /// yes, he says it was once a man who came under a curse.
 static void EventScript_AskAboutEntranceTree(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgBilibinDidSeeTreeAtEntrance);
-  Engine_ScriptAskYesNo(LOCALID_VILLAGER_ASKS_ABOUT_TREE, 0);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgBilibinDidSeeTreeAtEntrance);
+  FieldScript_AskYesNoAndShowResponse(LOCALID_VILLAGER_ASKS_ABOUT_TREE, 0);
+  FieldScript_End();
 }
 
 /// An old man asks whether the party has tried heading southeast. He's in
 /// Bilibin before the curse is lifted, and either way he says the barricade
 /// blocks the road.
 static void EventScript_AskAboutSoutheastRoute(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgBilibinHaveTriedHeadingSoutheastFrom);
-  Engine_ScriptAskYesNo(LOCALID_OLD_MAN_ASKS_ABOUT_SOUTHEAST, 0);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgBilibinHaveTriedHeadingSoutheastFrom);
+  FieldScript_AskYesNoAndShowResponse(LOCALID_OLD_MAN_ASKS_ABOUT_SOUTHEAST, 0);
+  FieldScript_End();
 }
 
 /// The man who was the tree at the entrance talks about it. He's in Bilibin
 /// once the curse is lifted, and asks whether the party can believe he was a
 /// tree.
 static void EventScript_AskAboutBeingATree(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgBilibinWasTurnedIntoTreeFor);
-  Engine_ScriptAskYesNo(LOCALID_FORMER_TREE_MAN, 0);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgBilibinWasTurnedIntoTreeFor);
+  FieldScript_AskYesNoAndShowResponse(LOCALID_FORMER_TREE_MAN, 0);
+  FieldScript_End();
 }
 
 /// A small boy asks whether the party broke the curse. He's in Bilibin once the
 /// curse is lifted, and asks whether the party are the three young warriors who
 /// broke it.
 static void EventScript_AskAboutCurseBreakers(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgBilibinCurseWasBrokenThanksEfforts);
-  Engine_ScriptAskYesNo(LOCALID_BOY_SCARED_OF_ENTRANCE, 0);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgBilibinCurseWasBrokenThanksEfforts);
+  FieldScript_AskYesNoAndShowResponse(LOCALID_BOY_SCARED_OF_ENTRANCE, 0);
+  FieldScript_End();
 }
 
 /// A strongman asks whether the party has been to Imil. He's in Bilibin once
 /// the curse is lifted, and asks whether the party has been there, up north,
 /// and seen its lighthouse.
 static void EventScript_AskAboutImil(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgBilibinHaveEverBeenVillageImil);
-  Engine_ScriptAskYesNo(LOCALID_STRONGMAN_IMIL_TOWER, 0);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgBilibinHaveEverBeenVillageImil);
+  FieldScript_AskYesNoAndShowResponse(LOCALID_STRONGMAN_IMIL_TOWER, 0);
+  FieldScript_End();
 }
 
 /// Walking into one of Bilibin's doors: everyone stops, the door opens and the
@@ -446,7 +446,7 @@ static void EventScript_OpenDoorAndLeave(void) {
   struct EventWork *work;
 
   work = gFieldWork;
-  Engine_ScriptStart();
+  FieldScript_Start();
   // Freeze placed object events before the warp cells start animating.
   for (objectEventSlot = LOCALID_FIRST_PLACED;
        objectEventSlot < BILIBIN_OBJ_EVENT_SLOT_COUNT; objectEventSlot++) {
@@ -459,7 +459,7 @@ static void EventScript_OpenDoorAndLeave(void) {
   if (warpIndex == BILIBIN_TO_SANCTUM - BILIBIN_TO_INN) {
     Script_PlaySong(SE_188);
   } else {
-    Engine_AudioPlayCue(SE_DOOR_OPEN);
+    Sound_PlaySong(SE_DOOR_OPEN);
   }
   // Each door has its cell and the steps that draw it opening.
   originOffset = warpIndex << 2;
@@ -467,7 +467,7 @@ static void EventScript_OpenDoorAndLeave(void) {
   column = *(s16 *)(originBytes + originOffset);
   rowOffset = originOffset + 2;
   row = *(s16 *)(originBytes + rowOffset);
-  Engine_MapGridAnimateCells(gBilibin_DoorSteps[warpIndex], column, row);
+  MapGrid_PlayMetatileCopySequence(gBilibin_DoorSteps[warpIndex], column, row);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -478,13 +478,13 @@ static void EventScript_OpenDoorAndLeave(void) {
     ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 3, -16);
   }
   if (warpIndex == BILIBIN_TO_ITEM_SHOP - BILIBIN_TO_INN) {
-    Engine_ObjectEventSetSpritePriority(LOCALID_PARTY_LEADER, 3);
+    ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, 3);
   } else {
-    Engine_ObjectEventSetSpritePriority(LOCALID_PARTY_LEADER, 2);
+    ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, 2);
   }
-  Engine_ScriptWait(16);
+  FieldScript_WaitFrames(16);
   Engine_ScriptRequestWarp(warpIndex + BILIBIN_TO_INN);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Move on Jill's tree in the river at the Bilibin Barricade, until she is
@@ -498,10 +498,10 @@ static void EventScript_PullJillFromRiver(void) {
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   jillTree = ObjectEvent_GetById(LOCALID_JILL_TREE);
   if ((jillTree->x.fixed >> 20) == 6) {
-    Engine_ScriptStart();
-    Engine_ObjectEventSetSpritePriority(LOCALID_JILL_TREE, 1);
-    Engine_ObjectEventRunRepeatedMotion(LOCALID_PARTY_LEADER, 2);
-    Engine_ScriptWait(20);
+    FieldScript_Start();
+    ObjectMotion_SetActionVariant(LOCALID_JILL_TREE, 1);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_PARTY_LEADER, 2);
+    FieldScript_WaitFrames(20);
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
     ObjectEvent_SetSpeed(LOCALID_JILL_TREE, PIXELS(1) / 5, PIXELS(1) / 10);
     ObjectEvent_Get(LOCALID_PARTY_LEADER)->steeringFlags &=
@@ -517,7 +517,7 @@ static void EventScript_PullJillFromRiver(void) {
     ObjectEvent_MoveToAndWait(LOCALID_JILL_TREE, 111, 196);
     leader->scaleX = Q16_ONE;
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 128, 185);
-    Engine_ScriptWait(20);
+    FieldScript_WaitFrames(20);
     leader->scaleX = -Q16_ONE;
     ObjectEvent_SetAttachedEffect(
         LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -526,7 +526,7 @@ static void EventScript_PullJillFromRiver(void) {
     ObjectEvent_MoveToAndWait(LOCALID_JILL_TREE, 121, 190);
     leader->scaleX = Q16_ONE;
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 141, 189);
-    Engine_ScriptWait(20);
+    FieldScript_WaitFrames(20);
     leader->scaleX = -Q16_ONE;
     ObjectEvent_SetAttachedEffect(
         LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -539,15 +539,15 @@ static void EventScript_PullJillFromRiver(void) {
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 166, 185);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 20);
-    Engine_ObjectEventSetSpritePriority(LOCALID_JILL_TREE, 2);
+    ObjectMotion_SetActionVariant(LOCALID_JILL_TREE, 2);
     FieldEffect_StartMindReadWave(0, LOCALID_JILL_TREE);
-    Engine_TaskWait(10);
-    Engine_ScriptSetMessage(MsgBilibinThankSavedMeFromBeing);
+    WaitFrames(10);
+    FieldScript_SetMessageId(MsgBilibinThankSavedMeFromBeing);
     Script_ShowMessage(LOCALID_JILL_TREE, 0);
-    Engine_PsynergyCancel();
-    Engine_TaskWait(10);
+    FieldEffect_FinishWaveAndReleaseHeapBlock();
+    WaitFrames(10);
     GameFlag_Set(FLAG_BILIBIN_JILL_RESCUED);
-    Engine_ScriptEnd();
+    FieldScript_End();
   }
 }
 
@@ -555,7 +555,7 @@ static void EventScript_PullJillFromRiver(void) {
 /// the cells beside the statue in the Bilibin Treasury or the crates at the
 /// Bilibin Barricade, and checks the blocked direction before allowing another
 /// movement step.
-static void EventScript_CheckAhead(void) { Engine_LeaderCheckAhead(); }
+static void EventScript_CheckAhead(void) { Field_TryJumpForward(); }
 
 /// Jill and her friends thank the leader with a Hard Nut. It happens on
 /// stepping up to them on the bank at the Bilibin Barricade, once the curse is
@@ -571,19 +571,19 @@ static void EventScript_JillGivesHardNut(void) {
       GameFlag_IsSet(FLAG_BILIBIN_JILL_RESCUED) == 0)
     return;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   // The camera moves over to the three; the friend nearer the leader speaks
   // first.
   FieldCamera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
   FieldCamera_MoveTo(PIXELS(263), -1, PIXELS(173), 1);
-  Engine_CameraWaitForMove();
+  FieldCamera_WaitForArrival();
   eastMember = ObjectEvent_Get(LOCALID_GANG_MEMBER_EAST);
   if (eastMember->x.fixed > leader->x.fixed) {
     ObjectEvent_FaceDirection(LOCALID_GANG_MEMBER_WEST,
                               FACING_SOUTH + FACING_STEP, 20);
     ObjectEvent_ShowEmote(LOCALID_GANG_MEMBER_WEST,
                           EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
-    Engine_ScriptSetMessage(MsgBilibinYoureGuy);
+    FieldScript_SetMessageId(MsgBilibinYoureGuy);
     Script_ShowMessageAndWait(LOCALID_GANG_MEMBER_WEST, 0, 10);
     ObjectEvent_ShowEmote(LOCALID_GANG_MEMBER_EAST,
                           EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -592,7 +592,7 @@ static void EventScript_JillGivesHardNut(void) {
                               FACING_SOUTHEAST + FACING_STEP, 20);
     ObjectEvent_ShowEmote(LOCALID_GANG_MEMBER_EAST,
                           EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
-    Engine_ScriptSetMessage(MsgBilibinYoureGuy);
+    FieldScript_SetMessageId(MsgBilibinYoureGuy);
     Script_ShowMessageAndWait(LOCALID_GANG_MEMBER_EAST, 0, 10);
     ObjectEvent_ShowEmote(LOCALID_GANG_MEMBER_WEST,
                           EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -605,60 +605,58 @@ static void EventScript_JillGivesHardNut(void) {
                             FACING_SOUTHEAST + FACING_STEP, 0);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 268, 184);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 40);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_GANG_MEMBER_WEST, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_GANG_MEMBER_WEST, 2);
   Script_ShowMessageAndWait(LOCALID_GANG_MEMBER_WEST, 0, 10);
   ObjectEvent_FaceDirection(LOCALID_GANG_MEMBER_WEST, FACING_EAST, 0);
   ObjectEvent_FaceDirection(LOCALID_JILL, FACING_SOUTHEAST + FACING_STEP, 20);
   ObjectEvent_FaceDirection(LOCALID_GANG_MEMBER_EAST, FACING_WEST, 20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_GANG_MEMBER_EAST,
-                                        ANIMATION_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_GANG_MEMBER_EAST, ANIMATION_NOD);
   ObjectEvent_SetAttachedEffect(LOCALID_JILL, ATTACHED_EFFECT_IN_FRONT |
                                                   ATTACHED_EFFECT_ONCE);
-  Engine_ScriptWait(40);
+  FieldScript_WaitFrames(40);
   ObjectEvent_FaceDirection(LOCALID_JILL, FACING_SOUTHEAST + FACING_STEP, 10);
   ObjectEvent_FaceDirection(LOCALID_GANG_MEMBER_EAST,
                             FACING_SOUTH + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_GANG_MEMBER_WEST,
                             FACING_SOUTHEAST + FACING_STEP, 10);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_JILL, 1);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_JILL, 1);
   Script_ShowMessageAndWait(LOCALID_JILL, 0, 10);
   Engine_ObjectEventSetAnimation(LOCALID_GANG_MEMBER_EAST, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_GANG_MEMBER_WEST,
-                                        ANIMATION_NOD);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_GANG_MEMBER_WEST, ANIMATION_NOD);
+  FieldScript_WaitFrames(20);
   Script_ShowMessage(LOCALID_JILL, 0);
   ObjectEvent_SetSpeed(LOCALID_JILL, PIXELS(3) / 5, PIXELS(3) / 10);
   ObjectEvent_GetById(LOCALID_JILL)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
   ObjectEvent_WalkToAndWait(LOCALID_JILL, 266, 172);
-  Engine_ScriptWait(1);
+  FieldScript_WaitFrames(1);
   ObjectEvent_GetById(LOCALID_JILL)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
-  Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_JILL, ANIMATION_NOD);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetAnimationAndWait(LOCALID_JILL, ANIMATION_NOD);
   Script_ShowMessageAndWait(LOCALID_JILL, 0, 10);
   // Show the named gift before adding it to the party's inventory.
-  Engine_MessageShowCentered(MsgBilibinJillGaveIsaacSpecialGift, 1);
+  FieldMessage_Show(MsgBilibinJillGaveIsaacSpecialGift, 1);
   gFieldWork->message++;
-  Engine_ItemShowFound(ITEM_HARD_NUT, 3);
-  Engine_PartyGiveItem(ITEM_HARD_NUT, 0);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_JILL, ANIMATION_NOD);
+  FieldEffect_StartEffectObject22(ITEM_HARD_NUT, 3);
+  PartyInventory_GiveItem(ITEM_HARD_NUT, 0);
+  ObjectMotion_SetAnimationAndWait(LOCALID_JILL, ANIMATION_NOD);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   ObjectEvent_SetSpeed(LOCALID_JILL, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_GetById(LOCALID_JILL)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
   ObjectEvent_WalkToAndWait(LOCALID_JILL, 262, 156);
-  Engine_ScriptWait(1);
+  FieldScript_WaitFrames(1);
   {
     struct ObjectEvent *jill = ObjectEvent_Get(LOCALID_JILL);
     u8 steeringFlags = jill->steeringFlags | OBJ_EVENT_FACES_MOTION;
 
     jill->steeringFlags = steeringFlags;
   }
-  Engine_ScriptWait(20);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_GANG_MEMBER_EAST, 2);
+  FieldScript_WaitFrames(20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_GANG_MEMBER_EAST, 2);
   Script_ShowMessageAndWait(LOCALID_GANG_MEMBER_EAST, 0, 10);
   Engine_ObjectEventSetAnimation(LOCALID_GANG_MEMBER_EAST, ANIMATION_NOD);
   Engine_ObjectEventSetAnimation(LOCALID_GANG_MEMBER_WEST, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_JILL, ANIMATION_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_JILL, ANIMATION_NOD);
   // From now on the three turn to face the leader wherever he goes.
   Object_SetTargetAndCallback(LOCALID_GANG_MEMBER_EAST,
                               OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_PARTY_LEADER,
@@ -670,7 +668,7 @@ static void EventScript_JillGivesHardNut(void) {
                               OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_PARTY_LEADER,
                               gBilibin_FaceLeaderScript);
   GameFlag_Set(FLAG_BILIBIN_JILL_GIFT_RECEIVED);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Sets up the map being entered, Bilibin, the Bilibin Barricade or the
@@ -705,7 +703,7 @@ static void Bilibin_RestoreVillageObjectEvents(void) {
                               FACING_SOUTH + FACING_STEP, 0);
   } else {
     objectEvent = ObjectEvent_Get(LOCALID_TREE_MAN);
-    Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
+    ObjectEvent_SetSpriteFlags(objectEvent, 0);
     ObjectEvent_SetPosition(LOCALID_FORMER_TREE_MAN, 0, 0);
   }
   // Apply arrival-specific changes after restoring the population.
@@ -759,11 +757,11 @@ static void Bilibin_UpdateVillageStatueCells(void) {
   // The statue may have moved onto the leader while this script was running.
   if (leaderColumn == 16) {
     if (leaderRow == 13) {
-      Engine_ScriptStart();
+      FieldScript_Start();
       ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER,
                             EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
       ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(2), PIXELS(1));
-      Engine_ObjectEventJump(LOCALID_PARTY_LEADER, 6, 0);
+      ObjectMotion_Launch(LOCALID_PARTY_LEADER, 6, 0);
       if (statueRow == 13) {
         ObjectEvent_MoveToAndWait(LOCALID_PARTY_LEADER, 262, 196);
         ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 20);
@@ -771,7 +769,7 @@ static void Bilibin_UpdateVillageStatueCells(void) {
         ObjectEvent_MoveToAndWait(LOCALID_PARTY_LEADER, 286, 218);
         ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 20);
       }
-      Engine_ScriptEnd();
+      FieldScript_End();
     }
   }
 }
@@ -789,7 +787,7 @@ static void Bilibin_RestoreRiverObjectEvents(void) {
   fallenTree = ObjectEvent_GetById(LOCALID_MIDDLE_TREE);
   jillTree = ObjectEvent_GetById(LOCALID_JILL_TREE);
   objectEvent = ObjectEvent_Get(LOCALID_BARRICADE_CRATES);
-  Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
+  ObjectEvent_SetSpriteFlags(objectEvent, 0);
   populationState = GameFlag_IsSet(FLAG_KOLIMA_CURSE_LIFTED);
   if (populationState != 0) {
     // The curse is lifted: the trees are gone.
@@ -817,11 +815,11 @@ static void Bilibin_RestoreRiverObjectEvents(void) {
     ObjectEvent_SetPosition(LOCALID_GANG_MEMBER_WEST, 0, 0);
     ObjectEvent_SetPosition(LOCALID_JILL, 0, 0);
     objectEvent = ObjectEvent_Get(LOCALID_BOTTOM_TREE);
-    Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
+    ObjectEvent_SetSpriteFlags(objectEvent, 0);
     objectEvent = ObjectEvent_Get(LOCALID_MIDDLE_TREE);
-    Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
+    ObjectEvent_SetSpriteFlags(objectEvent, 0);
     objectEvent = ObjectEvent_Get(LOCALID_JILL_TREE);
-    Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
+    ObjectEvent_SetSpriteFlags(objectEvent, 0);
     fallenTree->motionFlags = populationState;
     // Once FLAG_SATUROS_BEATEN_AT_MERCURY is set ("They crossed the river
     // after pushing us down"), the middle tree lies on its side and Jill is in
@@ -837,7 +835,7 @@ static void Bilibin_RestoreRiverObjectEvents(void) {
       ObjectEvent_SetPosition(LOCALID_FALLEN_TREE_STAND_IN, PIXELS(142),
                               PIXELS(156));
       objectEvent = ObjectEvent_Get(LOCALID_FALLEN_TREE_STAND_IN);
-      Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
+      ObjectEvent_SetSpriteFlags(objectEvent, 0);
       ObjectEvent_SetPosition(LOCALID_MIDDLE_TREE, PIXELS(142), PIXELS(156));
       fallenTree->sprite->rotation = 0x4000;
       fallenTree->y.fixed += -PIXELS(8);
@@ -845,7 +843,7 @@ static void Bilibin_RestoreRiverObjectEvents(void) {
         ObjectEvent_SetPosition(LOCALID_JILL_TREE, PIXELS(132), PIXELS(186));
       } else {
         ObjectEvent_SetPosition(LOCALID_JILL_TREE, PIXELS(88), PIXELS(196));
-        Engine_ObjectEventSetSpritePriority(LOCALID_JILL_TREE, 3);
+        ObjectMotion_SetActionVariant(LOCALID_JILL_TREE, 3);
         jillTree->collisionFlags |= OBJ_EVENT_NEAR_TALK;
       }
     } else {
@@ -890,14 +888,15 @@ static void Bilibin_SetUpTreasury(void) {
   Bilibin_UpdateTreasuryStatueCells();
   if (gGameState.warpDest == BILIBIN_TREASURY_UPPER_FROM_LOWER ||
       gGameState.warpDest == BILIBIN_TREASURY_FROM_BILIBIN_NORTH) {
-    if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
+    if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {
       leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-      Engine_ScriptStart();
+      FieldScript_Start();
       leader->y.fixed = PIXELS(16);
-      Engine_CameraMoveTo(leader->x.fixed, leader->y.fixed, leader->z.fixed, 0);
-      Engine_MapGridRedraw();
-      Engine_ScriptEnd();
-      Engine_TaskWait(1);
+      FieldCamera_MoveWithinMapBounds(leader->x.fixed, leader->y.fixed,
+                                      leader->z.fixed, 0);
+      MapGrid_CenterOnFollowedPoint();
+      FieldScript_End();
+      WaitFrames(1);
     }
   }
 }
@@ -927,23 +926,21 @@ static void EventScript_PushStatueOrCrates(void) {
         pushed->z.fixed + (gBilibin_FacingCellSteps[direction] << 16);
     if (FieldObject_CheckMovementCollision(pushed, &destination) <= 0) {
       // The leader leans on it, then both move together.
-      ObjectEvent_SetMode(leader, ANIMATION_PUSH);
-      Engine_TaskWait(15);
-      Engine_AudioPlayCue(SE_PUSH);
+      ObjectDispatch_SelectAnimation(leader, ANIMATION_PUSH);
+      WaitFrames(15);
+      Sound_PlaySong(SE_PUSH);
       pushed->speed = PIXELS(1) / 5;
       pushed->acceleration = PIXELS(1) / 5;
-      Engine_ObjectSetPosition(pushed, destination.x, destination.y,
-                               destination.z);
+      Object_SetPosition(pushed, destination.x, destination.y, destination.z);
       leader->speed = PIXELS(1) / 5;
       leader->acceleration = PIXELS(1) / 5;
-      Engine_ObjectSetPosition(leader, destination.x, destination.y,
-                               destination.z);
+      Object_SetPosition(leader, destination.x, destination.y, destination.z);
       Object_WaitForMove(pushed);
       pushed->x.fixed = destination.x;
       pushed->z.fixed = destination.z;
       pushed->velocityX = 0;
       pushed->velocityZ = 0;
-      ObjectEvent_SetMode(leader, ANIMATION_STAND);
+      ObjectDispatch_SelectAnimation(leader, ANIMATION_STAND);
       // Each map derives its metatile behaviors from this same moved object
       // event.
       if (gGameState.mapId == (s32)&MapId_BilibinBarricade)
@@ -981,13 +978,13 @@ static void Bilibin_SpawnRipple(struct ObjectEvent *objectEvent) {
   struct ObjectEvent *effect;
   struct Sprite *sprite;
 
-  effect = Engine_ObjectCreate(SPRITE_RIPPLE, objectEvent->x.fixed,
-                               objectEvent->y.fixed, objectEvent->z.fixed);
+  effect = ObjectEvent_Create(SPRITE_RIPPLE, objectEvent->x.fixed,
+                              objectEvent->y.fixed, objectEvent->z.fixed);
   if (effect == NULL)
     return;
 
   sprite = effect->sprite;
-  Engine_ObjectSetScript(effect, gBilibin_RippleScript);
+  ObjectEvent_SetScript(effect, gBilibin_RippleScript);
   effect->motionFlags = 0;
   effect->layer = 1;
   effect->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;

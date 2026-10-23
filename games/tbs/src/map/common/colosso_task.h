@@ -99,7 +99,7 @@ static void Colosso_LoadLettering(s32 id) {
   Vram_Load(gColosso_LetteringSlot, 0x400,
             (u8 *)((id << 10) + (s32)buf + COLOSSO_PALETTE_BYTES));
   Dma_Wait(REG_DMA3);
-  Runtime_BumpFree(buf);
+  Free(buf);
 }
 
 /// The lettering's map callback: run its script, move, scale and fade it, and
@@ -147,7 +147,7 @@ commands:
         gColosso_LetteringTimer = *gColosso_LetteringScript++;
         break;
       case COLOSSO_LETTERING_END:
-        Engine_TaskRemoveCallback(Colosso_UpdateLettering);
+        Task_Remove(Colosso_UpdateLettering);
         VramCache_FreeEntry(gColosso_LetteringSlot);
         return;
       }

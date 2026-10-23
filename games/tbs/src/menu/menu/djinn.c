@@ -67,7 +67,7 @@ s32 Menu_SetFirstObjectRowCoordinates(s32 yOffset) {
 
 /// Runs the Djinn menu over the field: the field menu's Djinn screen
 /// (FieldMenu_Run, FIELD_MENU_DJINN), and the Djinn tutorial, which the
-/// world map opens as DjinnMenu_Open when Flint joins. Types messages at
+/// world map opens when Flint joins. Types messages at
 /// MESSAGE_SPEED_FAST while it runs (the tutorial's steps set
 /// MESSAGE_SPEED_NORMAL for their messages, which stays until the menu closes)
 /// and puts the player's speed back. Takes the menu work (HEAP_SLOT_MENU) and

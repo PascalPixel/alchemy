@@ -619,7 +619,7 @@ No task waits. A call graph of the tbs-en build's objects, [main image](../../gl
 overlays, from each function the code adds as a task, each object
 hook and each `SC_CALL` callback, finds nine tasks with a path of calls to
 `WaitFrames`, and none takes it: the map tasks turn [object events](../../glossary.md#object-event) with a wait of 0
-(`Engine_ObjectEventFaceDirection`), the world map's lighthouse jitter moves the
+(`ObjectMotion_ArmCallback`), the world map's lighthouse jitter moves the
 camera with a glide, Lucky Wheels and the link countdown open instant
 windows (`WINDOW_FLAG_INSTANT`), and battle playback's sprite respawn tests
 `gTaskStatus`. The tenth path is the debug map selector, which only

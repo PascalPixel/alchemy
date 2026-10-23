@@ -40,8 +40,8 @@ void Colosso_ShowItemIcon(s32 id, s32 item) {
       none = 0;
       base += 0x400;
       Dma_Fill32(none, (void *)base, 0x80);
-      ItemIcon_LoadTilesFar(item);
-      tile = Engine_VramLoad(spr->slot, 128, (const void *)base);
+      Ui_PrepareTransferForItem(item);
+      tile = VramCache_Load(spr->slot, 128, (const void *)base);
       FreeHeapSlot(17);
       objectEvent->retainSpriteCache = one;
       SpriteAnim_Clear(spr->entries[0]);

@@ -153,10 +153,10 @@
 
 #ifdef UBFIX
 #define MERCURY_LIGHTHOUSE_ANIMATE_OBJ_EVENT_AND_WAIT                          \
-  Engine_ObjectEventSetAnimationAndWait
+  ObjectMotion_SetAnimationAndWait
 #else
 #define MERCURY_LIGHTHOUSE_ANIMATE_OBJ_EVENT_AND_WAIT                          \
-  ((s32 (*)())Engine_ObjectEventSetAnimationAndWait)
+  ((s32 (*)())ObjectMotion_SetAnimationAndWait)
 #endif
 
 static void MercuryLighthouse_OpenGateWithMovedStatue(void);
@@ -470,9 +470,9 @@ static void MercuryLighthouse_ChargeLightsOnLower(void) {
 /// MercuryLighthouseExterior, searching metatile behavior 10. "Strange forces
 /// are at work..."
 static void MercuryLighthouse_InspectBlockedPassage(void) {
-  Engine_ScriptStart();
-  Engine_MessageShowCentered(MsgMercuryLighthouseStrangeForcesBlockWay, 1);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  FieldMessage_Show(MsgMercuryLighthouseStrangeForcesBlockWay, 1);
+  FieldScript_End();
 }
 
 /// Selects the puzzle interactions and dialogue for the current map.
@@ -524,16 +524,16 @@ static void MercuryLighthouse_ExitWhenChannelsOpen(void) {
       GameFlag_IsSet(FLAG_PIPE_2_JOINED) != 0 &&
       GameFlag_IsSet(FLAG_PIPE_3_JOINED) != 0) {
     GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_CHANNELS_OPEN);
-    Engine_ScriptWait(30);
+    FieldScript_WaitFrames(30);
     MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
-    Engine_AudioPlayCue(SE_RUMBLE);
-    Engine_ScriptWait(60);
+    Sound_PlaySong(SE_RUMBLE);
+    FieldScript_WaitFrames(60);
     gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-    Engine_ScriptCloseScreen();
-    Engine_ScriptWaitForScreen();
-    Engine_AudioPlayCue(SONG_FADE_OUT_ACTION_SE);
+    FieldScript_FinishScreenTransition();
+    FieldScript_WaitTransitionFrames();
+    Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
     MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
-    Engine_MapGridRenderWaitForValues();
+    MapGrid_WaitForShakeToSettle();
     Engine_ScriptRequestWarp(
         MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_PIPE);
   } else {
@@ -548,14 +548,14 @@ static void MercuryLighthouse_PushChannelPipes(void) {
   struct PushedObjectProbe probe;
   s32 column;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   if (PushedObject_FindClearPosition(&probe) != 0) {
     // Each pipe controls one channel; restore the connected water tiles too.
     switch ((u32)probe.objectEventSlot) {
     case LOCALID_FIRST_PIPE:
       if (probe.position.z >> 20 == 8) {
         ObjectEvent_MoveAndRedraw(probe);
-        Engine_ScriptWait(20);
+        FieldScript_WaitFrames(20);
         MapGrid_CopyCellsTo(119, 9, 109, 11, 1, 1);
         MercuryLighthouse_SpawnRandomizedBurst(PIXELS(726), 0, PIXELS(180),
                                                0x8000);
@@ -573,7 +573,7 @@ static void MercuryLighthouse_PushChannelPipes(void) {
     case LOCALID_SECOND_PIPE:
       if (probe.position.z >> 20 == 12) {
         ObjectEvent_MoveAndRedraw(probe);
-        Engine_ScriptWait(10);
+        FieldScript_WaitFrames(10);
         if (GameFlag_IsSet(FLAG_PIPE_1_JOINED)) {
           MapGrid_CopyCellsTo(118, 9, 104, 13, 1, 1);
           MercuryLighthouse_SpawnRandomizedBurst(PIXELS(644), 0, PIXELS(210),
@@ -605,7 +605,7 @@ static void MercuryLighthouse_PushChannelPipes(void) {
     }
     MercuryLighthouse_ExitWhenChannelsOpen();
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// MercuryLighthouseMiddle, touching metatile behavior 2, 3 or 4 once the
@@ -615,14 +615,14 @@ static void MercuryLighthouse_WalkLeaderIn(void) {
   struct EventWork *work;
 
   work = gFieldWork;
-  Engine_ScriptStart();
+  FieldScript_Start();
   FieldScheduler_AddCallback(MercuryLighthouse_SparkleAroundLeader,
                              TASK_PRIORITY_MAP);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(5) / 2, PIXELS(5) / 4);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags &=
       ~OBJ_EVENT_FACES_MOTION;
-  Engine_AudioPlayCue(SE_228);
+  Sound_PlaySong(SE_228);
   // Each touched entry has its own landing point; the patched path waits first.
   if (work->coordEvent == 2) {
     ObjectEvent_SetDestination(LOCALID_PARTY_LEADER, 232, 616);
@@ -634,23 +634,23 @@ static void MercuryLighthouse_WalkLeaderIn(void) {
     MERCURY_LIGHTHOUSE_MOVE_LEADER_TO_ENTRY(LOCALID_PARTY_LEADER, 696, 592);
 #if TBS_PATCH_1
     ObjectEvent_SetDestination(LOCALID_PARTY_LEADER, 696, 600);
-    Engine_ScriptWait(30);
+    FieldScript_WaitFrames(30);
 #endif
   }
-  Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags |=
       OBJ_EVENT_FACES_MOTION;
-  Engine_TaskRemoveCallback(MercuryLighthouse_SparkleAroundLeader);
-  Engine_ScriptEnd();
+  Task_Remove(MercuryLighthouse_SparkleAroundLeader);
+  FieldScript_End();
 }
 
 /// MercuryLighthouseMiddle, pushing the gate statue (walking into metatile
 /// behavior 10) while the gate is shut: it moves a step, and may come to rest
 /// on the floor switch.
 static void MercuryLighthouse_PushGateSwitchStatue(void) {
-  Engine_ScriptStart();
+  FieldScript_Start();
   PushedObject_AdvancePair();
-  Engine_ScriptEnd();
+  FieldScript_End();
   MercuryLighthouse_OpenGateWithMovedStatue();
 }
 
@@ -664,14 +664,14 @@ static void MercuryLighthouse_OpenGateWithMovedStatue(void) {
 
   column = ObjectEvent_GetById(LOCALID_GATE_STATUE)->x.fixed / PIXELS(16);
   row = ObjectEvent_GetById(LOCALID_GATE_STATUE)->z.fixed / PIXELS(16);
-  Engine_ScriptStart();
+  FieldScript_Start();
   if (column == 5 && row == 13) {
     ObjectEvent_GetById(LOCALID_GATE_STATUE)->y.fixed += -PIXELS(2);
     statue = ObjectEvent_GetById(LOCALID_GATE_STATUE);
     statue->targetY = ObjectEvent_GetById(LOCALID_GATE_STATUE)->y.fixed;
     MapGrid_CopyCellsTo(5, 2, 5, 11, 1, 1);
-    Engine_AudioPlayCue(SE_217);
-    Engine_MapGridAnimateCells(gMercuryLighthouse_GateCells, 9, 7);
+    Sound_PlaySong(SE_217);
+    MapGrid_PlayMetatileCopySequence(gMercuryLighthouse_GateCells, 9, 7);
     {
       s32 gateColumn = 9;
       s32 gateRow = 10;
@@ -679,7 +679,7 @@ static void MercuryLighthouse_OpenGateWithMovedStatue(void) {
     }
     Engine_GameFlagSet(FLAG_MERCURY_LIGHTHOUSE_GATE_HELD_OPEN);
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// MercuryLighthouseMiddle, touching metatile behavior 12 while the gate is
@@ -694,16 +694,16 @@ static void MercuryLighthouse_PressGateFloorSwitch(void) {
     x = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->x.part.pixel;
     z = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->z.part.pixel;
     if ((u32)(x - 84) <= 7 && z > 211 && z <= 219) {
-      Engine_ScriptStart();
+      FieldScript_Start();
       Engine_GameFlagSet(FLAG_LEADER_ON_FLOOR_SWITCH);
-      Engine_ScriptWait(5);
+      FieldScript_WaitFrames(5);
       ObjectEvent_GetById(LOCALID_PARTY_LEADER)->y.fixed += -PIXELS(2);
       leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
       leader->targetY = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->y.fixed;
       MapGrid_CopyCellsTo(5, 2, 5, 11, 1, 1);
-      Engine_AudioPlayCue(SE_217);
-      Engine_MapGridAnimateCells(gMercuryLighthouse_GateCells, 9, 7);
-      Engine_ScriptEnd();
+      Sound_PlaySong(SE_217);
+      MapGrid_PlayMetatileCopySequence(gMercuryLighthouse_GateCells, 9, 7);
+      FieldScript_End();
     }
   }
 }
@@ -714,16 +714,16 @@ static void MercuryLighthouse_CloseFloorSwitch(void) {
   struct ObjectEvent *leader;
 
   if (GameFlag_IsSet(FLAG_LEADER_ON_FLOOR_SWITCH) != 0) {
-    Engine_ScriptStart();
+    FieldScript_Start();
     GameFlag_Clear(FLAG_LEADER_ON_FLOOR_SWITCH);
     ObjectEvent_Get(LOCALID_PARTY_LEADER)->y.fixed += PIXELS(2);
     leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
     leader->targetY = ObjectEvent_Get(LOCALID_PARTY_LEADER)->y.fixed;
-    Engine_ScriptWait(5);
+    FieldScript_WaitFrames(5);
     MapGrid_CopyCellsTo(7, 2, 5, 11, 1, 1);
-    Engine_AudioPlayCue(SE_217);
+    Sound_PlaySong(SE_217);
     MapGrid_AnimateCells(gMercuryLighthouse_GateCloseCells, 9, 7);
-    Engine_ScriptEnd();
+    FieldScript_End();
   }
 }
 
@@ -734,7 +734,7 @@ static void MercuryLighthouse_AnimateFountainTiles(s32 delayFrames,
   s32 sourceColumn;
 
   if (delayFrames != 0) {
-    Engine_AudioPlayCue(SE_219);
+    Sound_PlaySong(SE_219);
   }
   step = firstStep;
   if (step < endStep) {
@@ -748,7 +748,7 @@ static void MercuryLighthouse_AnimateFountainTiles(s32 delayFrames,
       if (delayFrames != 0) {
         MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
         MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
-        Engine_ScriptWait(delayFrames);
+        FieldScript_WaitFrames(delayFrames);
       }
       step++;
     } while (step < endStep);
@@ -765,7 +765,7 @@ static void MercuryLighthouse_RestoreFountainTiles(s32 delayFrames) {
   s32 copyHeight;
   s32 column;
   s32 stripHeight;
-  Engine_AudioPlayCue(SE_219);
+  Sound_PlaySong(SE_219);
   copyHeight = 6;
   step = 0;
   destinationColumn = 41;
@@ -780,19 +780,20 @@ static void MercuryLighthouse_RestoreFountainTiles(s32 delayFrames) {
     /* FAKEMATCH(temporary): the strip's width and height in locals, so loop.c
      * hoists the 2 into r9; as the literals 2 and 4, 11 of 90 instructions
      * differ in tbs-en. */
-    Engine_MapGridCopyCellsTo(105, 51, column, 32, copyWidth, stripHeight);
+    MapGrid_CopyMetatileIndicesRect(105, 51, column, 32, copyWidth,
+                                    stripHeight);
     if (delayFrames != 0) {
       MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
-      Engine_ScriptWait(delayFrames);
+      FieldScript_WaitFrames(delayFrames);
     }
     step++;
     destinationColumn += 2;
     sourceColumn += 2;
   } while (step <= 2);
-  Engine_AudioPlayCue(SE_STOP_SLOT3);
+  Sound_PlaySong(SE_STOP_SLOT3);
   MapGrid_CopyCellAttributes(106, 33, 4, 5, 42, 33);
-  Engine_MapGridRenderWaitForValues();
+  MapGrid_WaitForShakeToSettle();
 }
 
 /// Task: a spray at the fountain's fixed position.
@@ -842,7 +843,7 @@ static void MercuryLighthouse_OpenFountainWithSpray(s32 delayFrames) {
         velocityZ = ((u32)(randomZ << 3) >> 16) * 0x3333 - 0xcccc;
         FieldEffect_Spawn(particleX, 0, PIXELS(584), velocityX, 0, velocityZ,
                           EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, options);
-        Engine_ScriptWait(1);
+        FieldScript_WaitFrames(1);
       } else {
         negativeIndex = -particleIndex;
       }
@@ -858,13 +859,13 @@ static void MercuryLighthouse_OpenFountainWithSpray(s32 delayFrames) {
     MercuryLighthouse_AnimateFountainTiles(delayFrames, row, nextRow);
     row = nextRow;
   } while ((u32)nextRow <= 1);
-  Engine_ScriptWait(delayFrames);
+  FieldScript_WaitFrames(delayFrames);
   MercuryLighthouse_AnimateFountainTiles(0, nextRow, (nextRow + 1));
-  Engine_AudioPlayCue(SE_211);
+  Sound_PlaySong(SE_211);
   // Keep the opened fountain spraying after the tile animation completes.
   FieldScheduler_AddCallback(MercuryLighthouse_SprayAtFountain,
                              TASK_PRIORITY_MAP);
-  Engine_MapGridRenderWaitForValues();
+  MapGrid_WaitForShakeToSettle();
 }
 
 /// Restores the fountain tiles and stops its continuous spray.
@@ -895,7 +896,7 @@ static void MercuryLighthouse_StopFountainSpray(void) {
         particleX = (offsetX - (row << 19)) + PIXELS(728);
         FieldEffect_Spawn(particleX, 0, particleZ, -0x4000, 0, 0,
                           EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, options);
-        Engine_ScriptWait(1);
+        FieldScript_WaitFrames(1);
       }
       particleIndex++;
       offsetX = offsetX + -PIXELS(2);
@@ -903,7 +904,7 @@ static void MercuryLighthouse_StopFountainSpray(void) {
     MapGrid_CopyCellsTo(111, 35, (109 - row), 36, 1, 1);
     row++;
   } while ((u32)row <= 2);
-  Engine_TaskRemoveCallback(MercuryLighthouse_SprayAtFountain);
+  Task_Remove(MercuryLighthouse_SprayAtFountain);
 }
 
 /// MercuryLighthouseMiddle, pushing a pipe (walking into metatile behavior 1 or
@@ -915,7 +916,7 @@ static void MercuryLighthouse_PushStairAndFountainPipes(void) {
   s32 pillarId;
   s32 column;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   if (PushedObject_FindClearPosition(&probe) != 0) {
     pillarId = probe.objectEventSlot;
     // The first pipe opens the stairs; the other starts or stops the
@@ -924,8 +925,8 @@ static void MercuryLighthouse_PushStairAndFountainPipes(void) {
       column = probe.position.x;
       if ((column >> 20) == 11) {
         ObjectEvent_MoveAndRedraw(probe);
-        Engine_ScriptWait(30);
-        Engine_AudioPlayCue(SE_211);
+        FieldScript_WaitFrames(30);
+        Sound_PlaySong(SE_211);
         MercuryLighthouse_RaiseStairsWithSparkles();
         MapGrid_CopyCellsTo(76, 60, 74, 38, 3, 1);
         MapGrid_CopyCellsTo(77, 60, 76, 38, 2, 1);
@@ -953,10 +954,10 @@ static void MercuryLighthouse_PushStairAndFountainPipes(void) {
         if (GameFlag_IsSet(FLAG_FOUNTAIN_SHOWN) == 0) {
           FieldCamera_SetSpeed(PIXELS(3) / 2, PIXELS(3) / 16);
           FieldCamera_MoveTo(PIXELS(714), -1, PIXELS(592), 1);
-          Engine_CameraWaitForMove();
+          FieldCamera_WaitForArrival();
           GameFlag_Set(FLAG_FOUNTAIN_SHOWN);
           MercuryLighthouse_OpenFountainWithSpray(5);
-          Engine_ScriptWait(50);
+          FieldScript_WaitFrames(50);
         } else {
           MercuryLighthouse_OpenFountainWithSpray(5);
         }
@@ -969,16 +970,16 @@ static void MercuryLighthouse_PushStairAndFountainPipes(void) {
       }
     }
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// MercuryLighthouseUpper, pushing the fallen statue (walking into metatile
 /// behavior 10 or 12) while the stair gate is shut: it moves a step and may
 /// come to rest on the floor switch.
 static void MercuryLighthouse_PushStairSwitchStatue(void) {
-  Engine_ScriptStart();
+  FieldScript_Start();
   PushedObject_AdvancePair();
-  Engine_ScriptEnd();
+  FieldScript_End();
   MercuryLighthouse_OpenStairGateWithMovedStatue();
 }
 
@@ -989,19 +990,20 @@ static void MercuryLighthouse_OpenStairGateWithMovedStatue(void) {
   s32 column = ObjectEvent_GetById(LOCALID_FALLEN_STATUE)->x.fixed / PIXELS(16);
   s32 row = ObjectEvent_GetById(LOCALID_FALLEN_STATUE)->z.fixed / PIXELS(16);
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   if (column == 10 && row == 23) {
     struct ObjectEvent *statue;
     ObjectEvent_GetById(LOCALID_FALLEN_STATUE)->y.fixed += -PIXELS(2);
     statue = ObjectEvent_GetById(LOCALID_FALLEN_STATUE);
     statue->targetY = ObjectEvent_GetById(LOCALID_FALLEN_STATUE)->y.fixed;
     MapGrid_CopyCellsTo(6, 29, 10, 23, 1, 1);
-    Engine_AudioPlayCue(SE_217);
-    Engine_MapGridAnimateCells(gMercuryLighthouse_FloorSwitchCells, 10, 18);
+    Sound_PlaySong(SE_217);
+    MapGrid_PlayMetatileCopySequence(gMercuryLighthouse_FloorSwitchCells, 10,
+                                     18);
     MapGrid_CopyCellAttributes(10, 16, 1, 1, column, 19);
     Engine_GameFlagSet(FLAG_MERCURY_LIGHTHOUSE_UPPER_GATE_HELD_OPEN);
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// MercuryLighthouseUpper, touching metatile behavior 12 while the stair gate
@@ -1020,16 +1022,16 @@ static void MercuryLighthouse_PressStairFloorSwitch(void) {
     return;
   if (z >= 380)
     return;
-  Engine_ScriptStart();
+  FieldScript_Start();
   Engine_GameFlagSet(FLAG_LEADER_ON_FLOOR_SWITCH);
-  Engine_ScriptWait(5);
+  FieldScript_WaitFrames(5);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->y.fixed -= PIXELS(2);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->targetY =
       ObjectEvent_GetById(LOCALID_PARTY_LEADER)->y.fixed;
   MapGrid_CopyCellsTo(6, 29, 10, 23, 1, 1);
-  Engine_AudioPlayCue(SE_217);
-  Engine_MapGridAnimateCells(gMercuryLighthouse_FloorSwitchCells, 10, 18);
-  Engine_ScriptEnd();
+  Sound_PlaySong(SE_217);
+  MapGrid_PlayMetatileCopySequence(gMercuryLighthouse_FloorSwitchCells, 10, 18);
+  FieldScript_End();
 }
 
 /// MercuryLighthouseUpper, touching metatile behavior 10: stepping off the
@@ -1038,16 +1040,16 @@ static void MercuryLighthouse_ReleaseStairFloorSwitch(void) {
   struct ObjectEvent *leader;
 
   if (GameFlag_IsSet(FLAG_LEADER_ON_FLOOR_SWITCH) != 0) {
-    Engine_ScriptStart();
+    FieldScript_Start();
     GameFlag_Clear(FLAG_LEADER_ON_FLOOR_SWITCH);
     ObjectEvent_Get(LOCALID_PARTY_LEADER)->y.fixed += PIXELS(2);
     leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
     leader->targetY = ObjectEvent_Get(LOCALID_PARTY_LEADER)->y.fixed;
-    Engine_ScriptWait(5);
+    FieldScript_WaitFrames(5);
     MapGrid_CopyCellsTo(8, 29, 10, 23, 1, 1);
-    Engine_AudioPlayCue(SE_217);
+    Sound_PlaySong(SE_217);
     MapGrid_AnimateCells(gMercuryLighthouse_FloorSwitchCloseCells, 10, 18);
-    Engine_ScriptEnd();
+    FieldScript_End();
   }
 }
 
@@ -1073,7 +1075,7 @@ static void MercuryLighthouse_OpenStoneDoor(s32 side) {
   struct EffectOptions *options;
   u32 row;
 
-  Engine_AudioPlayCue(SE_211);
+  Sound_PlaySong(SE_211);
   if (side == STONE_DOOR_WEST) {
     MapGrid_CopyCellsTo(111, 57, 113, 42, 1, 1);
     MapGrid_CopyCellsTo(111, 59, 113, 43, 1, 1);
@@ -1113,7 +1115,7 @@ static void MercuryLighthouse_OpenStoneDoor(s32 side) {
               MercuryLighthouse_RandomDoorParticleSpeed() + -0xcccc,
               EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, options);
         }
-        Engine_ScriptWait(1);
+        FieldScript_WaitFrames(1);
       }
     }
     if (side == STONE_DOOR_WEST) {
@@ -1137,7 +1139,7 @@ static void MercuryLighthouse_CloseStoneDoor(s32 side) {
   MapGrid_CopyCellsTo(0x70, 0x39, 0x71, 0x2a, 1, 1);
   MapGrid_CopyCellsTo(0x75, 0x3a, 0x70, 0x2e, 1, 1);
   MapGrid_CopyCellsTo(0x75, 0x39, 0x74, 0x2c, 1, 1);
-  Engine_AudioPlayCue(SONG_FADE_OUT_ACTION_SE);
+  Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
   options.palette = 5;
   options.startScaleX = Q16_ONE / 2;
   options.startScaleY = Q16_ONE / 2;
@@ -1162,7 +1164,7 @@ static void MercuryLighthouse_CloseStoneDoor(s32 side) {
               0x4000, 0, 0, EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
               &options);
         }
-        Engine_ScriptWait(1);
+        FieldScript_WaitFrames(1);
       }
     }
     if (side == STONE_DOOR_WEST)
@@ -1182,36 +1184,35 @@ static s32 MercuryLighthouse_StartStatueSlide(void) {
 
   cellX = ObjectEvent_GetById(LOCALID_SLIDING_STATUE)->x.fixed / PIXELS(16);
   cellZ = ObjectEvent_GetById(LOCALID_SLIDING_STATUE)->z.fixed / PIXELS(16);
-  Engine_CameraSetSpeed(PIXELS(5), PIXELS(5) / 8);
-  Engine_CameraMoveTo(PIXELS(816), -1, PIXELS(712), 1);
-  Engine_CameraWaitForMove();
+  FieldCamera_SetSpeedParameters(PIXELS(5), PIXELS(5) / 8);
+  FieldCamera_MoveWithinMapBounds(PIXELS(816), -1, PIXELS(712), 1);
+  FieldCamera_WaitForArrival();
   // Only the recorded pipe arrangements allow the pipe's next push.
-  if (!Engine_GameFlagIsSet(FLAG_MERCURY_LIGHTHOUSE_STATUE_FELL)) {
-    if (cellX == 50 &&
-        Engine_GameFlagIsSet(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR)) {
+  if (!GameFlag_Test(FLAG_MERCURY_LIGHTHOUSE_STATUE_FELL)) {
+    if (cellX == 50 && GameFlag_Test(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR)) {
       ObjectEvent_SetActionScript(LOCALID_SLIDING_STATUE,
                                   gMercuryLighthouse_PushScriptA);
     } else if (cellX == 49) {
       if (cellZ == 44 &&
-          !Engine_GameFlagIsSet(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR) &&
-          !Engine_GameFlagIsSet(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR) &&
-          !Engine_GameFlagIsSet(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS)) {
+          !GameFlag_Test(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR) &&
+          !GameFlag_Test(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR) &&
+          !GameFlag_Test(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS)) {
         ObjectEvent_SetActionScript(LOCALID_SLIDING_STATUE,
                                     gMercuryLighthouse_PushScriptB);
       } else if (cellZ == 44 &&
-                 Engine_GameFlagIsSet(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR)) {
+                 GameFlag_Test(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR)) {
         ObjectEvent_SetActionScript(LOCALID_SLIDING_STATUE,
                                     gMercuryLighthouse_PushScriptC);
       } else if (cellZ == 46 &&
-                 Engine_GameFlagIsSet(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR)) {
+                 GameFlag_Test(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR)) {
         ObjectEvent_SetActionScript(LOCALID_SLIDING_STATUE,
                                     gMercuryLighthouse_PushScriptD);
-        Engine_ScriptWait(30);
+        FieldScript_WaitFrames(30);
         return 1;
       }
     }
   }
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(30);
   return 0;
 }
 
@@ -1244,7 +1245,7 @@ MercuryLighthouse_StopStatueSpray(struct ObjectScriptContext *interpreter) {
 #else
 static s32 MercuryLighthouse_StopStatueSpray(void) {
 #endif
-  Engine_TaskRemoveCallback(MercuryLighthouse_SprayAboveStatue);
+  Task_Remove(MercuryLighthouse_SprayAboveStatue);
   return 0;
 }
 
@@ -1257,7 +1258,7 @@ static void MercuryLighthouse_PushStoneDoorPipes(void) {
   s32 destinationColumn;
   s32 startColumn;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   if (PushedObject_FindClearPosition(&probe) != 0) {
     switch (probe.objectEventSlot) {
     case LOCALID_DOOR_ROOM_PIPE:
@@ -1265,7 +1266,7 @@ static void MercuryLighthouse_PushStoneDoorPipes(void) {
       if (probe.position.z >> 20 == 38)
         Engine_GameFlagSet(FLAG_DOOR_ROOM_PIPE_PUSHED);
       else
-        Engine_GameFlagClear(FLAG_DOOR_ROOM_PIPE_PUSHED);
+        GameFlag_ClearBit(FLAG_DOOR_ROOM_PIPE_PUSHED);
       break;
     case LOCALID_DOOR_SWITCH_PIPE:
       // Close the previous opening before revealing the new door edge.
@@ -1275,19 +1276,19 @@ static void MercuryLighthouse_PushStoneDoorPipes(void) {
       destinationColumn = probe.position.x >> 20;
       if (destinationColumn == 47) {
         Engine_GameFlagSet(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR);
-        Engine_GameFlagClear(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR);
-        Engine_GameFlagClear(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS);
+        GameFlag_ClearBit(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR);
+        GameFlag_ClearBit(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS);
         MercuryLighthouse_StartStatueSlide();
         if (startColumn == 54)
           MercuryLighthouse_CloseStoneDoor(STONE_DOOR_WEST);
         else if (startColumn == 48)
           MercuryLighthouse_CloseStoneDoor(STONE_DOOR_SOUTH);
         MercuryLighthouse_OpenStoneDoor(STONE_DOOR_NORTH);
-        Engine_ScriptWait(60);
+        FieldScript_WaitFrames(60);
       } else if (destinationColumn == 48) {
         Engine_GameFlagSet(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR);
-        Engine_GameFlagClear(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS);
-        Engine_GameFlagClear(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR);
+        GameFlag_ClearBit(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS);
+        GameFlag_ClearBit(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR);
         if (MercuryLighthouse_StartStatueSlide() != 0) {
           s32 x;
 
@@ -1302,16 +1303,16 @@ static void MercuryLighthouse_PushStoneDoorPipes(void) {
           ObjectEvent_RefreshSelectorById(LOCALID_SLIDING_STATUE);
           ObjectEvent_PrepareObject(x, 0, PIXELS(786), 223);
           ObjectEvent_PrepareObject(x, 0, PIXELS(818), 223);
-          Engine_ObjectEventSetDestination(LOCALID_SLIDING_STATUE, 840, 744);
-          Engine_ScriptWait(5);
-          Engine_AudioPlayCue(SE_189);
-          Engine_ObjectEventWaitForMove(LOCALID_SLIDING_STATUE);
-          Engine_ScriptWait(40);
+          ObjectMotion_ResetAndSetPosition(LOCALID_SLIDING_STATUE, 840, 744);
+          FieldScript_WaitFrames(5);
+          Sound_PlaySong(SE_189);
+          ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_SLIDING_STATUE);
+          FieldScript_WaitFrames(40);
           Engine_GameFlagSet(FLAG_MERCURY_LIGHTHOUSE_STATUE_FELL);
-          Engine_ColorBufferApplySource(PALETTE_TINT_NONE, 0);
+          PaletteFade_SetSource(PALETTE_TINT_NONE, 0);
           gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-          Engine_ScriptCloseScreen();
-          Engine_ScriptWaitForScreen();
+          FieldScript_FinishScreenTransition();
+          FieldScript_WaitTransitionFrames();
           Engine_ScriptRequestWarp(
               MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_TO_GATE_STATUE_FALLS);
         } else {
@@ -1322,40 +1323,40 @@ static void MercuryLighthouse_PushStoneDoorPipes(void) {
           MercuryLighthouse_StopStatueSpray();
 #endif
           MercuryLighthouse_OpenStoneDoor(STONE_DOOR_SOUTH);
-          Engine_ScriptWait(60);
+          FieldScript_WaitFrames(60);
         }
       } else if (destinationColumn == 53) {
         Engine_GameFlagSet(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS);
-        Engine_GameFlagClear(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR);
-        Engine_GameFlagClear(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR);
+        GameFlag_ClearBit(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR);
+        GameFlag_ClearBit(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR);
         MercuryLighthouse_StartStatueSlide();
         MercuryLighthouse_CloseStoneDoor(STONE_DOOR_WEST);
-        Engine_ScriptWait(60);
+        FieldScript_WaitFrames(60);
       } else {
-        Engine_GameFlagClear(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR);
-        Engine_GameFlagClear(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR);
-        Engine_GameFlagClear(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS);
+        GameFlag_ClearBit(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR);
+        GameFlag_ClearBit(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR);
+        GameFlag_ClearBit(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS);
         MercuryLighthouse_StartStatueSlide();
         if (startColumn == 47)
           MercuryLighthouse_CloseStoneDoor(STONE_DOOR_NORTH);
         else if (startColumn == 48)
           MercuryLighthouse_CloseStoneDoor(STONE_DOOR_SOUTH);
         MercuryLighthouse_OpenStoneDoor(STONE_DOOR_WEST);
-        Engine_ScriptWait(60);
+        FieldScript_WaitFrames(60);
       }
       break;
     }
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// MercuryLighthouseUpper, pushing a crossing statue (walking into metatile
 /// behavior 47): it moves a step and where the statues rest is saved.
 static void MercuryLighthouse_PushAndSaveCrossingStatuePositions(void) {
-  Engine_ScriptStart();
+  FieldScript_Start();
   PushedObject_AdvancePair();
   MercuryLighthouse_SyncCrossingStatueFlags();
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// MercuryLighthouseUpper, Move on a crossing statue, or after a push: each
@@ -1366,7 +1367,7 @@ static void MercuryLighthouse_SyncCrossingStatueFlags(void) {
   s32 positionFlag;
   s32 column;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   // Four pillars use paired flags for their two saved stopping columns.
   for (statueIndex = 0, positionFlag = FLAG_FIRST_ROW_STATUE; statueIndex <= 3;
        statueIndex++, positionFlag += 2) {
@@ -1375,13 +1376,13 @@ static void MercuryLighthouse_SyncCrossingStatueFlags(void) {
              PIXELS(16);
     if (column == (statueIndex << 2) + 39) {
       Engine_GameFlagSet(positionFlag);
-      Engine_GameFlagClear(positionFlag + 1);
+      GameFlag_ClearBit(positionFlag + 1);
     } else if (column == (statueIndex << 2) + 41) {
       Engine_GameFlagSet(positionFlag + 1);
-      Engine_GameFlagClear(positionFlag);
+      GameFlag_ClearBit(positionFlag);
     } else {
-      Engine_GameFlagClear(positionFlag);
-      Engine_GameFlagClear(positionFlag + 1);
+      GameFlag_ClearBit(positionFlag);
+      GameFlag_ClearBit(positionFlag + 1);
     }
   }
   // The last statue also determines whether the crossing cell is open.
@@ -1389,18 +1390,18 @@ static void MercuryLighthouse_SyncCrossingStatueFlags(void) {
       ObjectEvent_GetById(LOCALID_LAST_CROSSING_STATUE)->x.fixed / PIXELS(16);
   if (column == 57) {
     Engine_GameFlagSet(FLAG_LAST_ROW_STATUE_WEST);
-    Engine_GameFlagClear(FLAG_LAST_ROW_STATUE_EAST);
+    GameFlag_ClearBit(FLAG_LAST_ROW_STATUE_EAST);
     MapGrid_CopyCellAttributes(53, 10, 1, 1, 58, 7);
   } else if (column == 59) {
     Engine_GameFlagSet(FLAG_LAST_ROW_STATUE_EAST);
-    Engine_GameFlagClear(FLAG_LAST_ROW_STATUE_WEST);
+    GameFlag_ClearBit(FLAG_LAST_ROW_STATUE_WEST);
     MapGrid_CopyCellAttributes(53, 10, 1, 1, 58, 7);
   } else {
-    Engine_GameFlagClear(FLAG_LAST_ROW_STATUE_WEST);
-    Engine_GameFlagClear(FLAG_LAST_ROW_STATUE_EAST);
+    GameFlag_ClearBit(FLAG_LAST_ROW_STATUE_WEST);
+    GameFlag_ClearBit(FLAG_LAST_ROW_STATUE_EAST);
     MapGrid_CopyCellAttributes(53, 11, 1, 1, 58, 7);
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// MercuryLighthouseUpper, Move on the gap statue: at column 28 it fills the
@@ -1408,7 +1409,7 @@ static void MercuryLighthouse_SyncCrossingStatueFlags(void) {
 static void MercuryLighthouse_OpenMovedStatueCrossing(void) {
   s32 column;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   column = ObjectEvent_GetById(LOCALID_GAP_STATUE)->x.fixed / PIXELS(16);
   if (column == 28) {
     Engine_GameFlagSet(FLAG_PASSAGE_STATUE_MOVED);
@@ -1420,7 +1421,7 @@ static void MercuryLighthouse_OpenMovedStatueCrossing(void) {
                                  destinationRow);
     }
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Rotates the selected palette range once every eight frames. It writes the
@@ -1462,10 +1463,10 @@ static void MercuryLighthouse_CycleEntrancePalette(void) {
 static void MercuryLighthouse_MiaSensesSomeoneInside(void) {
   struct ObjectEvent *mia;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   ObjectEvent_SetSpeed(MIA, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
-  Engine_ScriptSetMessage(MsgImilSomebodyHere);
+  FieldScript_SetMessageId(MsgImilSomebodyHere);
   Script_ShowMessageAndWait(MIA, 0, 20);
   ObjectEvent_WalkToAndWait(MIA, 840, 648);
   ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
@@ -1473,50 +1474,50 @@ static void MercuryLighthouse_MiaSensesSomeoneInside(void) {
   Engine_ObjectEventSetAnimation(MIA, 16);
   mia = ObjectEvent_GetById(MIA);
   mia->scaleX = -Q16_ONE;
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(MIA, 0, 20);
   Engine_ObjectEventSetAnimation(MIA, ANIMATION_STAND);
   mia = ObjectEvent_GetById(MIA);
   mia->scaleX = Q16_ONE;
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(MIA, FACING_SOUTH, 20);
   Script_OpenMessage(MIA, 0);
-  if (Engine_ScriptChooseYesNo(0, 0) == 0) {
-    Engine_ScriptWait(20);
-    Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
+  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
+    FieldScript_WaitFrames(20);
+    ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_NOD);
     Script_ShowMessageAndWait(MIA, 0, 20);
     gFieldWork->message += 1;
   } else {
     gFieldWork->message += 1;
-    Engine_ScriptWait(20);
-    Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
+    FieldScript_WaitFrames(20);
+    ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
     Script_ShowMessageAndWait(MIA, 0, 20);
   }
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(MIA, FACING_NORTH, 20);
   FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
   FieldCamera_MoveTo(PIXELS(840), -1, PIXELS(632), 1);
   ObjectEvent_WalkToAndWait(MIA, 840, 632);
-  Engine_CameraWaitForMove();
-  Engine_ScriptWait(20);
-  Engine_ObjectEventRunRepeatedMotion(MIA, 2);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
-  Engine_ScriptWait(20);
+  FieldCamera_WaitForArrival();
+  FieldScript_WaitFrames(20);
+  ObjectMotion_SetVarCbAndRefresh(MIA, 2);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(MIA, 0, 20);
   Engine_GameFlagSet(FLAG_MIA_SENSED_SOMEONE_INSIDE);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// MercuryLighthouseExterior, talking to Mia again. "This statue is blocking
 /// the entrance."
 static void MercuryLighthouse_MiaDiscussesBlockedEntrance(void) {
-  Engine_ScriptStart();
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
-  Engine_ScriptWait(20);
-  Engine_ScriptSetMessage(MSGNO(MsgImilStatueBlocksEntrance));
-  Engine_ScriptShowMessageAndWait(MIA, 0, 20);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
+  FieldScript_WaitFrames(20);
+  FieldScript_SetMessageId(MSGNO(MsgImilStatueBlocksEntrance));
+  FieldScript_ShowMessageThenWait(MIA, 0, 20);
+  FieldScript_End();
 }
 
 /// The door's light brightens to white as it opens.
@@ -1552,7 +1553,7 @@ static void MercuryLighthouse_FadePaletteToWhite(void) {
       }
       palette++;
     }
-    Engine_TaskWait(2);
+    WaitFrames(2);
   } while (whiteColors <= 7);
 }
 
@@ -1568,32 +1569,32 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
   if (column < 0)
     column += 0xfffff;
   column >>= 20;
-  Engine_ScriptStart();
+  FieldScript_Start();
   if (column != 51) {
   } else {
     // Mia turns: "Did you do that?"
-    Engine_ObjectEventSetSpeed(MIA, PIXELS(4) / 5, PIXELS(2) / 5);
-    Engine_ScriptWait(20);
-    Engine_ObjectEventRunRepeatedMotion(MIA, 2);
-    Engine_ScriptWait(20);
+    ObjectMotion_SetSpeedParameters(MIA, PIXELS(4) / 5, PIXELS(2) / 5);
+    FieldScript_WaitFrames(20);
+    ObjectMotion_SetVarCbAndRefresh(MIA, 2);
+    FieldScript_WaitFrames(20);
     ObjectEvent_FaceDirection(MIA, FACING_NORTH + FACING_STEP, 0);
-    Engine_ObjectEventFaceDirection(LOCALID_PARTY_LEADER,
-                                    FACING_SOUTH + FACING_STEP, 10);
-    Engine_ScriptSetMessage(MsgMercuryDidThat);
-    Engine_ScriptOpenMessage(MIA, 0);
-    if (Engine_ScriptChooseYesNo(0, 0) == 0) {
+    ObjectMotion_ArmCallback(LOCALID_PARTY_LEADER, FACING_SOUTH + FACING_STEP,
+                             10);
+    FieldScript_SetMessageId(MsgMercuryDidThat);
+    FieldMessage_ShowAtObject(MIA, 0);
+    if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
       gFieldWork->message += 1;
-      Engine_ScriptWait(20);
-      Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
-      Engine_ScriptShowMessageAndWait(MIA, 0, 20);
+      FieldScript_WaitFrames(20);
+      ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_NOD);
+      FieldScript_ShowMessageThenWait(MIA, 0, 20);
     } else {
-      Engine_ScriptWait(20);
-      Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
+      FieldScript_WaitFrames(20);
+      ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
       Script_ShowMessageAndWait(MIA, 0, 20);
       gFieldWork->message += 1;
     }
-    Engine_ObjectEventShowEmote(LOCALID_PARTY_LEADER,
-                                EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+    FieldEffect_SpawnLinked(LOCALID_PARTY_LEADER,
+                            EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
     // Garet and Ivan step out to explain Psynergy; Mia tells of Ply.
     objectEvent = ObjectEvent_GetById(GARET);
     SetEffectRecordMode(objectEvent, 1);
@@ -1606,106 +1607,106 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
     ObjectEvent_WalkTo(IVAN, 888, 632);
     ObjectEvent_WalkToAndWait(GARET, 880, 616);
     ObjectEvent_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 0);
-    Engine_ObjectEventWaitForMove(IVAN);
+    ObjectMotion_CommitCurrentPositionAndActivate(IVAN);
     ObjectEvent_FaceDirection(IVAN, FACING_WEST, 0);
-    Engine_ObjectEventRunRepeatedMotion(GARET, 1);
-    Engine_ScriptWait(20);
-    Engine_ScriptShowMessageAndWait(GARET, 0, 20);
+    ObjectMotion_SetVarCbAndRefresh(GARET, 1);
+    FieldScript_WaitFrames(20);
+    FieldScript_ShowMessageThenWait(GARET, 0, 20);
     ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
     Script_ShowMessageAndWait(MIA, 0, 20);
     ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 0);
     ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST + FACING_STEP, 20);
     Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
-    Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
-    Engine_ScriptWait(30);
+    ObjectMotion_SetAnimationAndWait(IVAN, ANIMATION_NOD);
+    FieldScript_WaitFrames(30);
     ObjectEvent_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 0);
     ObjectEvent_FaceDirection(IVAN, FACING_WEST, 20);
-    Engine_ScriptShowMessageAndWait(IVAN, 0, 20);
-    Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
-    Engine_ScriptWait(20);
-    Engine_ScriptShowMessageAndWait(MIA, 0, 20);
-    Engine_ObjectEventWalkTo(MIA, 840, 656);
-    Engine_ScriptWait(5);
-    Engine_ObjectEventFaceDirection(IVAN, FACING_SOUTH + FACING_STEP, 0);
-    Engine_ScriptWait(10);
-    Engine_ObjectEventFaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
-    Engine_ObjectEventWaitForMove(MIA);
-    Engine_ScriptWait(10);
-    Engine_ScriptShowMessageAndWait(MIA, 0, 20);
+    FieldScript_ShowMessageThenWait(IVAN, 0, 20);
+    ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_NOD);
+    FieldScript_WaitFrames(20);
+    FieldScript_ShowMessageThenWait(MIA, 0, 20);
+    ObjectMotion_ResetAndSetPositionInMode2(MIA, 840, 656);
+    FieldScript_WaitFrames(5);
+    ObjectMotion_ArmCallback(IVAN, FACING_SOUTH + FACING_STEP, 0);
+    FieldScript_WaitFrames(10);
+    ObjectMotion_ArmCallback(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
+    ObjectMotion_CommitCurrentPositionAndActivate(MIA);
+    FieldScript_WaitFrames(10);
+    FieldScript_ShowMessageThenWait(MIA, 0, 20);
     ObjectEvent_FaceDirection(MIA, FACING_NORTH + FACING_STEP, 20);
-    Engine_ScriptShowMessageAndWait(MIA, 0, 20);
-    Engine_ObjectEventRunRepeatedMotion(GARET, 1);
-    Engine_ScriptWait(20);
+    FieldScript_ShowMessageThenWait(MIA, 0, 20);
+    ObjectMotion_SetVarCbAndRefresh(GARET, 1);
+    FieldScript_WaitFrames(20);
     ObjectEvent_FaceDirection(GARET, FACING_NORTH, 20);
-    Engine_ScriptOpenMessage(GARET, 0);
-    if (Engine_ScriptChooseYesNo(0, 0) == 0) {
-      Engine_ScriptWait(20);
-      Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_NOD);
-      Engine_ScriptShowMessageAndWait(GARET, 0, 20);
+    FieldMessage_ShowAtObject(GARET, 0);
+    if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
+      FieldScript_WaitFrames(20);
+      ObjectMotion_SetAnimationAndWait(GARET, ANIMATION_NOD);
+      FieldScript_ShowMessageThenWait(GARET, 0, 20);
       gFieldWork->message += 1;
     } else {
       gFieldWork->message += 1;
-      Engine_ScriptWait(20);
-      Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
-      Engine_ScriptShowMessageAndWait(GARET, 0, 20);
+      FieldScript_WaitFrames(20);
+      ObjectMotion_SetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
+      FieldScript_ShowMessageThenWait(GARET, 0, 20);
     }
     Engine_ObjectEventSetAnimation(MIA, 16);
-    Engine_ScriptWait(30);
-    Engine_ObjectEventRunRepeatedMotion(MIA, 1);
-    Engine_ScriptWait(20);
-    Engine_ScriptShowMessageAndWait(MIA, 0, 20);
+    FieldScript_WaitFrames(30);
+    ObjectMotion_SetVarCbAndRefresh(MIA, 1);
+    FieldScript_WaitFrames(20);
+    FieldScript_ShowMessageThenWait(MIA, 0, 20);
     ObjectEvent_WalkToAndWait(MIA, 840, 632);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH + FACING_STEP,
                               0);
     ObjectEvent_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 0);
     ObjectEvent_FaceDirection(IVAN, FACING_WEST, 0);
-    Engine_ScriptWait(30);
+    FieldScript_WaitFrames(30);
     // Mia casts Ply on the door: a flash, the light turns white and the door
     // opens.
     MercuryLighthouse_MiaCastsPlyOnEntrance();
-    Engine_ScriptWait(50);
-    Engine_AudioPlayCue(SE_131);
+    FieldScript_WaitFrames(50);
+    Sound_PlaySong(SE_131);
     PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
     PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(31, 20, 31), 0);
-    Engine_ColorBufferInterpolate(10);
-    Engine_TaskWait(1);
-    Engine_AudioPlayCue(SE_220);
-    Engine_TaskWait(40);
-    Engine_ColorBufferApplyTarget(PALETTE_TINT_NONE, 0);
-    Engine_ColorBufferInterpolate(60);
-    Engine_TaskWait(60);
-    Engine_AudioPlayCue(SE_MERCURY_LIGHTHOUSE_DOOR_OPEN);
+    PaletteFade_StartInterpolation(10);
+    WaitFrames(1);
+    Sound_PlaySong(SE_220);
+    WaitFrames(40);
+    PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
+    PaletteFade_StartInterpolation(60);
+    WaitFrames(60);
+    Sound_PlaySong(SE_MERCURY_LIGHTHOUSE_DOOR_OPEN);
     MercuryLighthouse_FadePaletteToWhite();
     MapGrid_CopyCellsTo(126, 35, 116, 35, 1, 2);
-    Engine_MapGridAnimateCells(gMercuryLighthouse_ColumnCells, 116, 35);
-    Engine_TaskRemoveCallback(MercuryLighthouse_CycleEntrancePalette);
-    Engine_ScriptWait(20);
+    MapGrid_PlayMetatileCopySequence(gMercuryLighthouse_ColumnCells, 116, 35);
+    Task_Remove(MercuryLighthouse_CycleEntrancePalette);
+    FieldScript_WaitFrames(20);
     // She nods, jumps up and goes in.
-    Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
-    Engine_ScriptWait(20);
+    ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_NOD);
+    FieldScript_WaitFrames(20);
     ObjectEvent_SetSpeed(MIA, PIXELS(3), PIXELS(3) / 2);
-    Engine_ObjectEventJump(MIA, 4, 0);
+    ObjectMotion_Launch(MIA, 4, 0);
     ObjectEvent_WalkTo(MIA, 840, 600);
-    Engine_ObjectEventWaitForMove(MIA);
+    ObjectMotion_CommitCurrentPositionAndActivate(MIA);
     MapGrid_CopyCellAttributes(116, 36, 3, 4, 52, 36);
     ObjectEvent_PrepareObject(PIXELS(840), PIXELS(56), PIXELS(608), 223);
     ObjectEvent_SetSpeed(MIA, PIXELS(4) / 5, PIXELS(2) / 5);
     ObjectEvent_WalkToAndWait(MIA, 840, 560);
     Engine_ObjectEventSetPosition(MIA, 0, 0);
-    Engine_ScriptWait(20);
+    FieldScript_WaitFrames(20);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
     ObjectEvent_FaceDirection(GARET, FACING_WEST, 0);
-    Engine_ObjectEventFaceDirection(IVAN, FACING_NORTHWEST + FACING_STEP, 0);
-    Engine_ScriptWait(10);
+    ObjectMotion_ArmCallback(IVAN, FACING_NORTHWEST + FACING_STEP, 0);
+    FieldScript_WaitFrames(10);
     Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
     Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
-    Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
-    Engine_ScriptWait(20);
+    ObjectMotion_SetAnimationAndWait(IVAN, ANIMATION_NOD);
+    FieldScript_WaitFrames(20);
     // Garet and Ivan rejoin the leader.
     Engine_ObjectEventSetAnimation(GARET, ANIMATION_WALK);
     objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     if (objectEvent != 0) {
-      Engine_ObjectEventSetDestination(GARET, objectEvent->x.part.pixel,
+      ObjectMotion_ResetAndSetPosition(GARET, objectEvent->x.part.pixel,
                                        objectEvent->z.part.pixel);
     }
     Engine_ObjectEventSetAnimation(IVAN, ANIMATION_WALK);
@@ -1714,13 +1715,13 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
       ObjectEvent_SetDestination(IVAN, objectEvent->x.part.pixel,
                                  objectEvent->z.part.pixel);
     }
-    Engine_ObjectEventWaitForMove(GARET);
+    ObjectMotion_CommitCurrentPositionAndActivate(GARET);
     Engine_ObjectEventSetPosition(GARET, 0, 0);
-    Engine_ObjectEventWaitForMove(IVAN);
+    ObjectMotion_CommitCurrentPositionAndActivate(IVAN);
     Engine_ObjectEventSetPosition(IVAN, 0, 0);
     Engine_GameFlagSet(FLAG_MERCURY_LIGHTHOUSE_OPENED_BY_MIA);
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// The waterfall shimmers: background palette 6, colors 1 to 7, rotates every
@@ -1761,7 +1762,7 @@ static void MercuryLighthouse_FadePaletteToBlack(void) {
         blackColors++;
       palette++;
     }
-    Engine_TaskWait(5);
+    WaitFrames(5);
   } while (blackColors != 7);
 }
 
@@ -1778,9 +1779,9 @@ static void MercuryLighthouse_RaiseObjectEventWithSparks(s32 localId) {
 
   objectEvent = ObjectEvent_GetById(localId);
   objectEvent->motionFlags = 0;
-  Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
+  ObjectEvent_SetSpriteFlags(objectEvent, 0);
   ObjectEvent_SetChildValue(localId, 0x100);
-  Engine_AudioPlayCue(SE_221);
+  Sound_PlaySong(SE_221);
   options = &optionsStorage;
   options->priority = 1;
   options->palette = 5;
@@ -1791,7 +1792,7 @@ static void MercuryLighthouse_RaiseObjectEventWithSparks(s32 localId) {
       MercuryLighthouse_SparkleNear(objectEvent->x.fixed, objectEvent->y.fixed,
                                     objectEvent->z.fixed);
     if (frame & 1) {
-      Engine_AudioPlayCue(SE_246);
+      Sound_PlaySong(SE_246);
       particleX = objectEvent->x.fixed +
                   ((((u32)Engine_RandomNext() * 24) >> 16) << 16) + -PIXELS(12);
       particleY = objectEvent->y.fixed +
@@ -1805,7 +1806,7 @@ static void MercuryLighthouse_RaiseObjectEventWithSparks(s32 localId) {
     }
     objectEvent->y.fixed += frame * 0x1999;
     objectEvent->targetY = objectEvent->y.fixed;
-    Engine_TaskWait(2);
+    WaitFrames(2);
   }
 }
 
@@ -1828,13 +1829,13 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
   s32 particleVelocityX;
   struct EffectOptions optionsStorage;
 
-  Engine_ScriptStart();
-  Engine_ScriptWait(20);
+  FieldScript_Start();
+  FieldScript_WaitFrames(20);
   // Remove the colored waterfall before rebuilding the passage tiles.
   MercuryLighthouse_FadePaletteToBlack();
-  Engine_TaskRemoveCallback(MercuryLighthouse_CycleWaterfallPalette);
+  Task_Remove(MercuryLighthouse_CycleWaterfallPalette);
   MapGrid_CopyCellsTo(45, 77, 45, 73, 9, 4);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(30);
   options = &optionsStorage;
   options->priority = 1;
   options->palette = 5;
@@ -1847,7 +1848,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     u32 particleX, z;
 
     if ((1 & wave) != 0) {
-      Engine_AudioPlayCue(SE_246);
+      Sound_PlaySong(SE_246);
     }
     random = Engine_RandomNext();
     particleX = random * 48;
@@ -1864,10 +1865,10 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
                           EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE |
                           EFFECT_SCRIPT_MEDIUM,
                       options);
-    Engine_ScriptWait(2);
+    FieldScript_WaitFrames(2);
     wave = (wave + 1);
   } while ((u32)wave <= 15);
-  Engine_ScriptWait(40);
+  FieldScript_WaitFrames(40);
   zero = 0;
   wave = zero;
   do {
@@ -1875,7 +1876,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     s32 particleSpeed;
 
     if ((1 & wave) != 0) {
-      Engine_AudioPlayCue(SE_246);
+      Sound_PlaySong(SE_246);
     }
     random = Engine_RandomNext();
     particleX = random * 48;
@@ -1894,13 +1895,13 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
                           EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE |
                           EFFECT_SCRIPT_MEDIUM,
                       options);
-    Engine_ScriptWait(2);
+    FieldScript_WaitFrames(2);
     wave = (wave + 1);
   } while ((u32)wave <= 15);
-  Engine_ScriptWait(60);
-  Engine_AudioPlayCue(SE_RUMBLE);
+  FieldScript_WaitFrames(60);
+  Sound_PlaySong(SE_RUMBLE);
   MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   options->palette = 7;
   options->startScaleX = 7 * Q16_ONE / 10;
   options->startScaleY = 7 * Q16_ONE / 10;
@@ -1930,15 +1931,15 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
                             EFFECT_USE_PALETTE | EFFECT_SCRIPT_MEDIUM,
                         options);
       particleIndex = (particleIndex + 1);
-      Engine_ScriptWait(2);
+      FieldScript_WaitFrames(2);
     } while ((u32)particleIndex <= 31);
     wave = (wave + 1);
   } while ((u32)wave <= 3);
-  Engine_AudioPlayCue(SONG_FADE_OUT_ACTION_SE);
+  Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
-  Engine_MapGridRenderWaitForValues();
+  MapGrid_WaitForShakeToSettle();
   Map_PlayQueuedMusic();
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(30);
   // After Saturos the leader goes alone; the first time Mia leads the party.
   if (GameFlag_IsSet(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -1946,23 +1947,23 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 792, 232);
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 792, 208);
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(2), PIXELS(1));
-    Engine_ObjectEventJump(LOCALID_PARTY_LEADER, 4, 0);
+    ObjectMotion_Launch(LOCALID_PARTY_LEADER, 4, 0);
     ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 792, 200);
-    Engine_ScriptWait(10);
+    FieldScript_WaitFrames(10);
     Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 18);
     MercuryLighthouse_RaiseObjectEventWithSparks(LOCALID_PARTY_LEADER);
-    Engine_ScriptWait(60);
-    Engine_TaskRemoveCallback(MercuryLighthouse_CycleWaterfallPalette);
+    FieldScript_WaitFrames(60);
+    Task_Remove(MercuryLighthouse_CycleWaterfallPalette);
     PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
     PaletteFade_ApplyTarget(PALETTE_TINT_PALE, 0);
-    Engine_ColorBufferInterpolate(120);
-    Engine_ScriptWait(120);
+    PaletteFade_StartInterpolation(120);
+    FieldScript_WaitFrames(120);
     PaletteFade_ApplyTarget(0x7fff, 0);
-    Engine_ColorBufferInterpolate(60);
-    Engine_ScriptWait(60);
+    PaletteFade_StartInterpolation(60);
+    FieldScript_WaitFrames(60);
     Engine_ScriptRequestWarp(
         MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_AERIE);
-    Engine_ScriptEnd();
+    FieldScript_End();
   } else {
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
     ObjectEvent_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -1973,23 +1974,23 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     ObjectEvent_SetPosition(MIA, PIXELS(824), PIXELS(240));
     ObjectEvent_WalkToAndWait(MIA, 792, 232);
     ObjectEvent_FaceDirection(MIA, FACING_NORTH, 0);
-    Engine_ScriptWait(60);
+    FieldScript_WaitFrames(60);
     ObjectEvent_FaceDirection(MIA, FACING_SOUTHEAST, 20);
-    Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
-    Engine_ScriptWait(40);
+    ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_NOD);
+    FieldScript_WaitFrames(40);
     ObjectEvent_FaceDirection(MIA, FACING_NORTH, 20);
     ObjectEvent_WalkToAndWait(MIA, 792, 200);
     MercuryLighthouse_RaiseObjectEventWithSparks(MIA);
-    Engine_ScriptWait(20);
-    Engine_ObjectEventRunRepeatedMotion(LOCALID_PARTY_LEADER, 2);
-    Engine_ScriptWait(30);
+    FieldScript_WaitFrames(20);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_PARTY_LEADER, 2);
+    FieldScript_WaitFrames(30);
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 792, 232);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
     ObjectEvent_SetPosition(GARET, PIXELS(792), PIXELS(232));
     ObjectEvent_SetPosition(IVAN, PIXELS(792), PIXELS(232));
     ObjectEvent_WalkTo(GARET, 816, 224);
     ObjectEvent_WalkToAndWait(IVAN, 768, 224);
-    Engine_ObjectEventWaitForMove(GARET);
+    ObjectMotion_CommitCurrentPositionAndActivate(GARET);
     ObjectEvent_FaceDirection(GARET, FACING_NORTHWEST, 0);
     ObjectEvent_FaceDirection(IVAN, FACING_NORTHEAST, 20);
     ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE,
@@ -1998,8 +1999,8 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
     ObjectEvent_FaceDirection(GARET, FACING_SOUTHWEST, 0);
     ObjectEvent_FaceDirection(IVAN, FACING_SOUTHEAST, 20);
-    Engine_ObjectEventRunRepeatedMotion(LOCALID_PARTY_LEADER, 1);
-    Engine_ScriptWait(60);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_PARTY_LEADER, 1);
+    FieldScript_WaitFrames(60);
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x8000, 0x4000);
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 792, 224);
     ObjectEvent_FaceDirection(GARET, FACING_WEST, 0);
@@ -2007,43 +2008,43 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 792, 208);
     ObjectEvent_FaceDirection(GARET, FACING_NORTHWEST, 0);
     ObjectEvent_FaceDirection(IVAN, FACING_NORTHEAST, 20);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-    Engine_ScriptWait(20);
+    ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+    FieldScript_WaitFrames(20);
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(2), PIXELS(1));
-    Engine_ObjectEventJump(LOCALID_PARTY_LEADER, 4, 0);
+    ObjectMotion_Launch(LOCALID_PARTY_LEADER, 4, 0);
     ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 792, 200);
-    Engine_ScriptWait(10);
+    FieldScript_WaitFrames(10);
     Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 18);
     ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-    Engine_ObjectEventStartRepeatedMotion(GARET, 2);
-    Engine_ObjectEventStartRepeatedMotion(IVAN, 2);
+    ObjectMotion_SetVariantCallback(GARET, 2);
+    ObjectMotion_SetVariantCallback(IVAN, 2);
     MercuryLighthouse_RaiseObjectEventWithSparks(LOCALID_PARTY_LEADER);
-    Engine_ScriptWait(60);
+    FieldScript_WaitFrames(60);
     ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
     ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
-    Engine_ObjectEventFaceEachOther(GARET, IVAN, 20);
+    ObjectEvent_LinkPair(GARET, IVAN, 20);
     Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
-    Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
-    Engine_ScriptWait(40);
+    ObjectMotion_SetAnimationAndWait(IVAN, ANIMATION_NOD);
+    FieldScript_WaitFrames(40);
     ObjectEvent_WalkToAndWait(GARET, 792, 216);
     ObjectEvent_FaceDirection(IVAN, FACING_NORTHEAST, 0);
     ObjectEvent_WalkToAndWait(GARET, 792, 200);
-    Engine_ScriptWait(30);
+    FieldScript_WaitFrames(30);
     MercuryLighthouse_RaiseObjectEventWithSparks(GARET);
     ObjectEvent_WalkToAndWait(IVAN, 792, 216);
     ObjectEvent_WalkToAndWait(IVAN, 792, 200);
-    Engine_ScriptWait(30);
+    FieldScript_WaitFrames(30);
     MercuryLighthouse_RaiseObjectEventWithSparks(IVAN);
     PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
-    Engine_TaskRemoveCallback(MercuryLighthouse_CycleWaterfallPalette);
+    Task_Remove(MercuryLighthouse_CycleWaterfallPalette);
     PaletteFade_ApplyTarget(PALETTE_TINT_PALE, 0);
-    Engine_ColorBufferInterpolate(120);
-    Engine_ScriptWait(120);
+    PaletteFade_StartInterpolation(120);
+    FieldScript_WaitFrames(120);
     PaletteFade_ApplyTarget(0x7fff, 0);
-    Engine_ColorBufferInterpolate(60);
-    Engine_ScriptWait(60);
-    Engine_ScriptEnd();
+    PaletteFade_StartInterpolation(60);
+    FieldScript_WaitFrames(60);
+    FieldScript_End();
     Engine_ScriptRequestWarp(
         MERCURY_LIGHTHOUSE_EXTERIOR_TO_WORLD_MAP_LIGHTHOUSE_LIT);
   }
@@ -2053,19 +2054,19 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
 /// fountain's sign. "Fountain of Healing / Water of Hermes: It brings
 /// rejuvenation to all that lives."
 static void MercuryLighthouse_ReadHermesFountainInscription(void) {
-  Engine_ScriptStart();
+  FieldScript_Start();
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
-  Engine_MessageShowCentered(MSGNO(MsgImilHermesHealingWaterFountain), 1);
-  Engine_ScriptEnd();
+  FieldMessage_Show(MSGNO(MsgImilHermesHealingWaterFountain), 1);
+  FieldScript_End();
 }
 
 /// MercuryLighthouseMiddle or MercuryLighthouseUpper, searching metatile
 /// behavior 20: the door is locked tight.
 static void MercuryLighthouse_InspectLockedDoor(void) {
-  Engine_ScriptStart();
+  FieldScript_Start();
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
-  Engine_MessageShowCentered(MSGNO(MsgFieldDoorTightlyLocked), 1);
-  Engine_ScriptEnd();
+  FieldMessage_Show(MSGNO(MsgFieldDoorTightlyLocked), 1);
+  FieldScript_End();
 }
 
 /// MercuryLighthouseExterior, searching the Fountain of Healing (metatile
@@ -2073,13 +2074,12 @@ static void MercuryLighthouse_InspectLockedDoor(void) {
 /// flows with water; carrying an Empty Bottle, the item menu then opens.
 static void MercuryLighthouse_InspectHealingFountain(void) {
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
-  if (Engine_GameFlagIsSet(FLAG_SATUROS_BEATEN_AT_MERCURY) == 0)
-    Engine_MessageShowCentered(MSGNO(MsgMercuryLighthouseFountainSeemsDry), 1);
+  if (GameFlag_Test(FLAG_SATUROS_BEATEN_AT_MERCURY) == 0)
+    FieldMessage_Show(MSGNO(MsgMercuryLighthouseFountainSeemsDry), 1);
   else
-    Engine_MessageShowCentered(
-        MSGNO(MsgMercuryLighthouseFountainFlowsWithWater), 1);
+    FieldMessage_Show(MSGNO(MsgMercuryLighthouseFountainFlowsWithWater), 1);
   if (PartyInventory_FindMember(ITEM_EMPTY_BOTTLE) != -1) {
     // The field loop handles this menu request after the inspection ends.
     s16 *menuRequest = &((struct FieldWork *)gFieldWork)->menu;
@@ -2087,22 +2087,22 @@ static void MercuryLighthouse_InspectHealingFountain(void) {
 
     *menuRequest = enabled;
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// MercuryLighthouseExterior, using the Empty Bottle at the fountain
 /// (USE_ITEM(ITEM_EMPTY_BOTTLE)) once Saturos is beaten: the bottle becomes
 /// Hermes' Water, once a visit.
 static void MercuryLighthouse_FillHermesWaterBottle(void) {
-  Engine_ScriptStart();
-  Engine_AudioPlayCue(MUS_TREASURE_FOUND);
-  Engine_ItemShowFound(ITEM_HERMES_WATER, 3);
+  FieldScript_Start();
+  Sound_PlaySong(MUS_TREASURE_FOUND);
+  FieldEffect_StartEffectObject22(ITEM_HERMES_WATER, 3);
   MercuryLighthouse_ReplaceInventoryItem(ITEM_EMPTY_BOTTLE, ITEM_HERMES_WATER);
   MessageArgument_Push(PartyInventory_FindMember(ITEM_HERMES_WATER), 1);
   MessageArgument_Push(ITEM_HERMES_WATER, 2);
-  Engine_MessageShowCentered(MSGNO(MsgMercuryLighthouseIsaacGot), 1);
+  FieldMessage_Show(MSGNO(MsgMercuryLighthouseIsaacGot), 1);
   Engine_GameFlagSet(FLAG_HERMES_WATER_TAKEN);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// MercuryLighthouseLower or MercuryLighthouseMiddle, walking south into
@@ -2112,29 +2112,28 @@ static void MercuryLighthouse_FillHermesWaterBottle(void) {
 /// MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_HOLE); on the
 /// second the motion runs alone.
 static void MercuryLighthouse_EnterRisingPassage(void) {
-  Engine_ScriptStart();
+  FieldScript_Start();
   if (gGameState.mapId == (s32)&MapId_MercuryLighthouseLower) {
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 472, 600);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 10);
     FieldCamera_MoveTo(PIXELS(464), -1, PIXELS(656), 1);
-    Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER),
-                                     0);
+    ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER), 0);
     ObjectEvent_PrepareObject(
         ObjectEvent_GetById(LOCALID_PARTY_LEADER)->x.fixed, 0, PIXELS(702),
         223);
     MapGrid_CopyCellsTo(92, 46, 92, 40, 3, 2);
     ObjectEvent_GetById(LOCALID_PARTY_LEADER)->gravity = 0x8000;
-    Engine_ObjectEventSetSpritePriority(LOCALID_PARTY_LEADER, 2);
+    ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, 2);
     FieldObjectEvent_JumpDownLedge(LOCALID_PARTY_LEADER, 6, -1);
     gFieldWork->transition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
-    Engine_ScriptWait(60);
+    FieldScript_WaitFrames(60);
     Engine_ScriptRequestWarp(
         MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_HOLE);
   } else {
     FieldObjectEvent_JumpDownLedge(LOCALID_PARTY_LEADER, 6, -1);
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 #include "common/mercury_lighthouse_arrive.h"
@@ -2161,7 +2160,7 @@ static void MercuryLighthouse_RaiseStairsWithSparkles(void) {
             PIXELS(105), 0, ((-particleIndex - (row << 4)) << 16) + PIXELS(544),
             velocityX, 0, velocityZ,
             EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
-        Engine_ScriptWait(1);
+        FieldScript_WaitFrames(1);
       }
     }
     MapGrid_CopyCellsTo(0x4a, 0x3b, 0x46, 34 - row, 1, 1);
@@ -2198,7 +2197,7 @@ static void MercuryLighthouse_LowerStairsWithSparkles(void) {
               (0x26c - (((u32)Engine_RandomNext() * 5) >> 16)) << 16, 0x4000, 0,
               0, EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, options);
         }
-        Engine_ScriptWait(1);
+        FieldScript_WaitFrames(1);
       }
       offsetZ += -PIXELS(2);
     }
@@ -2287,7 +2286,7 @@ static void MercuryLighthouse_SpawnRandomizedBurst(s32 x, s32 y, s32 z,
   s32 velocity[3];
   u32 particleIndex;
 
-  Engine_AudioPlayCue(SE_216);
+  Sound_PlaySong(SE_216);
   particleIndex = 0;
   do {
     if ((particleIndex & 1) != 0) {
@@ -2310,7 +2309,7 @@ static void MercuryLighthouse_SpawnRandomizedBurst(s32 x, s32 y, s32 z,
             EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
       }
     }
-    Engine_TaskWait(2);
+    WaitFrames(2);
     particleIndex++;
   } while (particleIndex <= 11);
 }
@@ -2337,7 +2336,7 @@ s32 MercuryLighthouse_Initialize(void) {
   MercuryLighthouse_RestoreLights(
       21, (struct MercuryLighthouseLights *)gMapLocalState);
   FieldEffect_StartFadeOverlay(0);
-  if (Engine_GameFlagIsSet(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED))
+  if (GameFlag_Test(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED))
     FieldScheduler_AddCallback(MercuryLighthouse_CyclePalette,
                                TASK_PRIORITY_MAP);
   else
@@ -2348,7 +2347,7 @@ s32 MercuryLighthouse_Initialize(void) {
     case MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_WEST:
     case MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_WEST_NORTHWEST:
     case MERCURY_LIGHTHOUSE_LOWER_POOL_FROM_STATUE:
-      if (Engine_GameFlagIsSet(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED))
+      if (GameFlag_Test(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED))
         MapGrid_CopyCellAttributes(66, 5, 27, 23, 2, 5);
       break;
     case MERCURY_LIGHTHOUSE_LOWER_WATERFALLS_FROM_STATUE:
@@ -2359,16 +2358,16 @@ s32 MercuryLighthouse_Initialize(void) {
       SetEffectRecordMode(ObjectEvent_GetById(LOCALID_PARTY_LEADER), 1);
       // Fall through.
     case MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_EAST_NORTHEAST:
-      if (Engine_GameFlagIsSet(FLAG_MERCURY_LIGHTHOUSE_CHANNELS_OPEN)) {
-        Engine_TaskWait(1);
+      if (GameFlag_Test(FLAG_MERCURY_LIGHTHOUSE_CHANNELS_OPEN)) {
+        WaitFrames(1);
         ObjectEvent_SetPosition(LOCALID_FIRST_PIPE, PIXELS(672), PIXELS(128));
         ObjectEvent_SetPosition(LOCALID_SECOND_PIPE, PIXELS(704), PIXELS(192));
         ObjectEvent_SetPosition(LOCALID_THIRD_PIPE, PIXELS(648), PIXELS(240));
-      } else if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
-        Engine_GameFlagClear(FLAG_PIPE_1_JOINED);
-        Engine_GameFlagClear(FLAG_PIPE_2_JOINED);
-        Engine_GameFlagClear(FLAG_PIPE_3_JOINED);
-        Engine_GameFlagClear(FLAG_UNUSED_PIPE_4_JOINED);
+      } else if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
+        GameFlag_ClearBit(FLAG_PIPE_1_JOINED);
+        GameFlag_ClearBit(FLAG_PIPE_2_JOINED);
+        GameFlag_ClearBit(FLAG_PIPE_3_JOINED);
+        GameFlag_ClearBit(FLAG_UNUSED_PIPE_4_JOINED);
       }
       SetEffectRecordMode(ObjectEvent_GetById(LOCALID_FIRST_PIPE), 1);
       SetEffectRecordMode(ObjectEvent_GetById(LOCALID_SECOND_PIPE), 1);
@@ -2377,19 +2376,19 @@ s32 MercuryLighthouse_Initialize(void) {
       Map_RedrawObjectEventFootprint(LOCALID_SECOND_PIPE);
       Map_RedrawObjectEventFootprint(LOCALID_THIRD_PIPE);
       SetEffectRecordMode(ObjectEvent_GetById(LOCALID_PIPE_END), 1);
-      if (Engine_GameFlagIsSet(FLAG_PIPE_1_JOINED)) {
+      if (GameFlag_Test(FLAG_PIPE_1_JOINED)) {
         MapGrid_CopyCellsTo(119, 9, 109, 11, 1, 1);
-        if (Engine_GameFlagIsSet(FLAG_PIPE_2_JOINED))
+        if (GameFlag_Test(FLAG_PIPE_2_JOINED))
           MapGrid_CopyCellsTo(118, 9, 104, 13, 1, 1);
-        Engine_MapGridRedraw();
-        Engine_TaskWait(1);
+        MapGrid_CenterOnFollowedPoint();
+        WaitFrames(1);
       }
       break;
     case MERCURY_LIGHTHOUSE_LOWER_STATUE_FROM_POOL:
     case MERCURY_LIGHTHOUSE_LOWER_STATUE_FROM_WATERFALLS:
-      if (!Engine_GameFlagIsSet(FLAG_MIA_JOINED_PARTY)) {
+      if (!GameFlag_Test(FLAG_MIA_JOINED_PARTY)) {
         ObjectEvent_SetPosition(MIA, PIXELS(696), PIXELS(632));
-        Engine_ObjectEventFaceDirection(MIA, FACING_EAST, 0);
+        ObjectMotion_ArmCallback(MIA, FACING_EAST, 0);
       } else {
         ObjectEvent_SetPosition(LOCALID_STATUE_BLOCKING_MIA, PIXELS(776),
                                 PIXELS(632));
@@ -2405,9 +2404,9 @@ s32 MercuryLighthouse_Initialize(void) {
     case MERCURY_LIGHTHOUSE_MIDDLE_PIPES_FROM_GATE:
       SetEffectRecordMode(ObjectEvent_GetById(LOCALID_STAIR_PIPE), 1);
       SetEffectRecordMode(ObjectEvent_GetById(LOCALID_STAIR_PIPE_END), 1);
-      if (Engine_GameFlagIsSet(FLAG_STAIRS_RAISED)) {
-        Engine_TaskWait(1);
-        Engine_AudioPlayCue(SE_211);
+      if (GameFlag_Test(FLAG_STAIRS_RAISED)) {
+        WaitFrames(1);
+        Sound_PlaySong(SE_211);
         ObjectEvent_SetPosition(LOCALID_STAIR_PIPE, PIXELS(184), PIXELS(528));
         MapGrid_CopyCellAttributes(11, 31, 1, 4, 9, 31);
         MapGrid_CopyCellAttributes(7, 30, 1, 4, 11, 31);
@@ -2423,14 +2422,14 @@ s32 MercuryLighthouse_Initialize(void) {
       break;
     case MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_LOWER_NORTH:
     case MERCURY_LIGHTHOUSE_MIDDLE_GATE_FROM_PIPES:
-      Engine_MapGridRedraw();
-      Engine_TaskWait(1);
-      if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) &&
-          Engine_GameFlagIsSet(FLAG_LEADER_ON_FLOOR_SWITCH)) {
+      MapGrid_CenterOnFollowedPoint();
+      WaitFrames(1);
+      if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) &&
+          GameFlag_Test(FLAG_LEADER_ON_FLOOR_SWITCH)) {
         MapGrid_CopyCellsTo(5, 2, 5, 11, 1, 1);
         MapGrid_CopyCellsTo(9, 1, 9, 7, 1, 2);
       }
-      if (Engine_GameFlagIsSet(FLAG_MERCURY_LIGHTHOUSE_GATE_HELD_OPEN)) {
+      if (GameFlag_Test(FLAG_MERCURY_LIGHTHOUSE_GATE_HELD_OPEN)) {
         Engine_ObjectEventSetPosition(LOCALID_GATE_STATUE, PIXELS(88),
                                       PIXELS(216));
         ObjectEvent_GetById(LOCALID_GATE_STATUE)->y.fixed += -PIXELS(2);
@@ -2449,7 +2448,7 @@ s32 MercuryLighthouse_Initialize(void) {
     case MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_UPPER_EAST_NORTHEAST:
     case MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_UPPER_NORTH_NORTHEAST:
       SetEffectRecordMode(ObjectEvent_GetById(LOCALID_FOUNTAIN_PIPE), 1);
-      if (Engine_GameFlagIsSet(FLAG_FOUNTAIN_RUNNING)) {
+      if (GameFlag_Test(FLAG_FOUNTAIN_RUNNING)) {
         MercuryLighthouse_OpenFountainWithSpray(0);
         MapGrid_CopyCellAttributes(42, 41, 4, 1, 42, 39);
         MapGrid_CopyCellAttributes(42, 40, 4, 1, 42, 41);
@@ -2479,21 +2478,21 @@ s32 MercuryLighthouse_Initialize(void) {
       pillarX = PIXELS(632);
       positionFlag = FLAG_FIRST_ROW_STATUE;
       for (; statueIndex <= 3; statueIndex++) {
-        if (Engine_GameFlagIsSet(positionFlag))
+        if (GameFlag_Test(positionFlag))
           Engine_ObjectEventSetPosition(
               statueIndex + LOCALID_FIRST_CROSSING_STATUE, pillarX, PIXELS(88));
-        else if (Engine_GameFlagIsSet(positionFlag + 1))
+        else if (GameFlag_Test(positionFlag + 1))
           Engine_ObjectEventSetPosition(statueIndex +
                                             LOCALID_FIRST_CROSSING_STATUE,
                                         pillarX + PIXELS(32), PIXELS(88));
         pillarX += PIXELS(64);
         positionFlag += 2;
       }
-      if (Engine_GameFlagIsSet(FLAG_LAST_ROW_STATUE_WEST)) {
+      if (GameFlag_Test(FLAG_LAST_ROW_STATUE_WEST)) {
         ObjectEvent_SetPosition(LOCALID_LAST_CROSSING_STATUE, PIXELS(920),
                                 PIXELS(88));
         MapGrid_CopyCellAttributes(53, 10, 1, 1, 58, 7);
-      } else if (Engine_GameFlagIsSet(FLAG_LAST_ROW_STATUE_EAST)) {
+      } else if (GameFlag_Test(FLAG_LAST_ROW_STATUE_EAST)) {
         ObjectEvent_SetPosition(LOCALID_LAST_CROSSING_STATUE, PIXELS(952),
                                 PIXELS(88));
         MapGrid_CopyCellAttributes(53, 10, 1, 1, 58, 7);
@@ -2501,7 +2500,7 @@ s32 MercuryLighthouse_Initialize(void) {
       break;
     case MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_EXTERIOR_EAST:
     case MERCURY_LIGHTHOUSE_UPPER_GAP_FROM_WATERFALLS:
-      if (Engine_GameFlagIsSet(FLAG_PASSAGE_STATUE_MOVED)) {
+      if (GameFlag_Test(FLAG_PASSAGE_STATUE_MOVED)) {
         ObjectEvent_SetPosition(LOCALID_GAP_STATUE, PIXELS(456), PIXELS(328));
         MapGrid_CopyCellAttributes(29, 20, 1, 1, 31, 20);
       }
@@ -2518,15 +2517,15 @@ s32 MercuryLighthouse_Initialize(void) {
     case MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_LOWER:
     case MERCURY_LIGHTHOUSE_UPPER_GATE_FROM_FIVE_PILLARS:
     case MERCURY_LIGHTHOUSE_UPPER_GATE_FROM_STONE_DOORS:
-      if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) &&
-          Engine_GameFlagIsSet(FLAG_LEADER_ON_FLOOR_SWITCH)) {
+      if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) &&
+          GameFlag_Test(FLAG_LEADER_ON_FLOOR_SWITCH)) {
         ObjectEvent_GetById(LOCALID_PARTY_LEADER)->y.fixed = -PIXELS(2);
         ObjectEvent_GetById(LOCALID_PARTY_LEADER)->targetY =
             ObjectEvent_GetById(LOCALID_PARTY_LEADER)->y.fixed;
         MapGrid_CopyCellsTo(6, 29, 10, 23, 1, 1);
         MapGrid_CopyCellsTo(10, 28, 10, 18, 1, 2);
       }
-      if (Engine_GameFlagIsSet(FLAG_MERCURY_LIGHTHOUSE_UPPER_GATE_HELD_OPEN)) {
+      if (GameFlag_Test(FLAG_MERCURY_LIGHTHOUSE_UPPER_GATE_HELD_OPEN)) {
         Engine_ObjectEventSetPosition(LOCALID_FALLEN_STATUE, PIXELS(168),
                                       PIXELS(376));
         ObjectEvent_GetById(LOCALID_FALLEN_STATUE)->y.fixed += -PIXELS(2);
@@ -2535,22 +2534,22 @@ s32 MercuryLighthouse_Initialize(void) {
         MapGrid_CopyCellsTo(6, 29, 10, 23, 1, 1);
         MapGrid_CopyCellsTo(10, 28, 10, 18, 1, 2);
         MapGrid_CopyCellAttributes(10, 16, 1, 1, 10, 19);
-        Engine_MapGridRedraw();
+        MapGrid_CenterOnFollowedPoint();
       }
       break;
     case MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_FROM_GATE_STATUE_FALLS:
-      Engine_TaskWait(1);
+      WaitFrames(1);
 #if TBS_PATCH_2
-      if (Engine_GameFlagIsSet(FLAG_DOOR_ROOM_PIPE_PUSHED))
+      if (GameFlag_Test(FLAG_DOOR_ROOM_PIPE_PUSHED))
         ObjectEvent_SetPosition(LOCALID_DOOR_ROOM_PIPE, PIXELS(816),
                                 PIXELS(608));
-      if (Engine_GameFlagIsSet(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR))
+      if (GameFlag_Test(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR))
         ObjectEvent_SetPosition(LOCALID_DOOR_SWITCH_PIPE, PIXELS(776),
                                 PIXELS(576));
-      else if (Engine_GameFlagIsSet(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR))
+      else if (GameFlag_Test(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR))
         ObjectEvent_SetPosition(LOCALID_DOOR_SWITCH_PIPE, PIXELS(760),
                                 PIXELS(576));
-      else if (Engine_GameFlagIsSet(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS))
+      else if (GameFlag_Test(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS))
         ObjectEvent_SetPosition(LOCALID_DOOR_SWITCH_PIPE, PIXELS(856),
                                 PIXELS(576));
 #else
@@ -2561,14 +2560,14 @@ s32 MercuryLighthouse_Initialize(void) {
       SetEffectRecordMode(ObjectEvent_GetById(LOCALID_PARTY_LEADER), 1);
       MercuryLighthouse_CloseStoneDoor(STONE_DOOR_WEST);
 #if TBS_PATCH_2
-      if (Engine_GameFlagIsSet(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR)) {
+      if (GameFlag_Test(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR)) {
         MercuryLighthouse_OpenStoneDoor(STONE_DOOR_NORTH);
         if (ObjectEvent_GetById(LOCALID_SLIDING_STATUE)->z.fixed >> 20 == 44)
           FieldScheduler_AddCallback(MercuryLighthouse_SprayAboveStatue,
                                      TASK_PRIORITY_MAP);
-      } else if (Engine_GameFlagIsSet(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR)) {
+      } else if (GameFlag_Test(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR)) {
         MercuryLighthouse_OpenStoneDoor(STONE_DOOR_SOUTH);
-      } else if (!Engine_GameFlagIsSet(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS)) {
+      } else if (!GameFlag_Test(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS)) {
         MercuryLighthouse_OpenStoneDoor(STONE_DOOR_WEST);
       }
 #else
@@ -2577,9 +2576,9 @@ s32 MercuryLighthouse_Initialize(void) {
       // Fall through.
     case MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_FROM_GATE:
       if (gGameState.warpDest == MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_FROM_GATE)
-        Engine_AudioPlayCue(SE_211);
+        Sound_PlaySong(SE_211);
       SetEffectRecordMode(ObjectEvent_GetById(LOCALID_SLIDING_STATUE), 1);
-      Engine_ObjectEventSetSpritePriority(LOCALID_DOOR_ROOM_PIPE, 2);
+      ObjectMotion_SetActionVariant(LOCALID_DOOR_ROOM_PIPE, 2);
       ObjectEvent_GetById(LOCALID_DOOR_ROOM_PIPE)->layer = 2;
       SetEffectRecordMode(ObjectEvent_GetById(LOCALID_DOOR_SWITCH_PIPE), 1);
       SetEffectRecordMode(ObjectEvent_GetById(LOCALID_FIRST_DOOR_PIPE_END), 1);
@@ -2591,50 +2590,49 @@ s32 MercuryLighthouse_Initialize(void) {
       Map_RedrawObjectEventFootprint(LOCALID_DOOR_SWITCH_PIPE);
       if (gGameState.warpDest != MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_FROM_GATE)
         break;
-      if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
-        Engine_GameFlagClear(FLAG_DOOR_ROOM_PIPE_PUSHED);
-        Engine_GameFlagClear(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR);
-        Engine_GameFlagClear(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR);
-        Engine_GameFlagClear(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS);
+      if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
+        GameFlag_ClearBit(FLAG_DOOR_ROOM_PIPE_PUSHED);
+        GameFlag_ClearBit(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR);
+        GameFlag_ClearBit(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR);
+        GameFlag_ClearBit(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS);
         break;
       }
       MercuryLighthouse_CloseStoneDoor(STONE_DOOR_WEST);
-      if (Engine_GameFlagIsSet(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR)) {
+      if (GameFlag_Test(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR)) {
         MercuryLighthouse_OpenStoneDoor(STONE_DOOR_NORTH);
         if (ObjectEvent_GetById(LOCALID_SLIDING_STATUE)->z.fixed >> 20 == 44)
           FieldScheduler_AddCallback(MercuryLighthouse_SprayAboveStatue,
                                      TASK_PRIORITY_MAP);
-      } else if (Engine_GameFlagIsSet(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR)) {
+      } else if (GameFlag_Test(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR)) {
         MercuryLighthouse_OpenStoneDoor(STONE_DOOR_SOUTH);
-      } else if (!Engine_GameFlagIsSet(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS)) {
+      } else if (!GameFlag_Test(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS)) {
         MercuryLighthouse_OpenStoneDoor(STONE_DOOR_WEST);
       }
       break;
     case MERCURY_LIGHTHOUSE_UPPER_GATE_FROM_STONE_DOORS_STATUE_FALLS:
-      Engine_ScriptStart();
+      FieldScript_Start();
       SetEffectRecordMode(ObjectEvent_GetById(LOCALID_FALLEN_STATUE), 1);
-      Engine_ObjectEventSetChildValue(LOCALID_PARTY_LEADER, 15);
-      Engine_ObjectEventSetSpriteFlags(
-          ObjectEvent_GetById(LOCALID_PARTY_LEADER), 0);
+      ObjectGroup_ConfigureChildValue(LOCALID_PARTY_LEADER, 15);
+      ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER), 0);
       ObjectEvent_GetById(LOCALID_FALLEN_STATUE)->y.fixed = PIXELS(144);
       ObjectEvent_GetById(LOCALID_FALLEN_STATUE)->motionFlags = 0;
       ObjectEvent_GetById(LOCALID_FALLEN_STATUE)->bounce = 0;
       ObjectEvent_GetById(LOCALID_FALLEN_STATUE)->gravity = 0x4ccc;
       gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-      Engine_ScriptOpenScreen();
-      Engine_ScriptWaitForScreen();
+      FieldScript_StartScreenTransition();
+      FieldScript_WaitTransitionFrames();
       ObjectEvent_GetById(LOCALID_FALLEN_STATUE)->motionFlags = 3;
-      Engine_AudioPlayCue(SE_189);
-      Engine_ScriptWait(32);
-      Engine_AudioPlayCue(SE_188);
+      Sound_PlaySong(SE_189);
+      FieldScript_WaitFrames(32);
+      Sound_PlaySong(SE_188);
       SetEffectRecordMode(ObjectEvent_GetById(LOCALID_FALLEN_STATUE), 2);
       MapGrid_SetShake(192 << 10, 192 << 10, 128 << 9);
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
-      Engine_MapGridRenderWaitForValues();
-      Engine_ScriptWait(60);
+      MapGrid_WaitForShakeToSettle();
+      FieldScript_WaitFrames(60);
       Engine_ScriptRequestWarp(
           MERCURY_LIGHTHOUSE_UPPER_GATE_TO_STONE_DOORS_STATUE_FALLS);
-      Engine_ScriptEnd();
+      FieldScript_End();
       break;
     }
   }
@@ -2644,29 +2642,29 @@ s32 MercuryLighthouse_Initialize(void) {
     case MERCURY_LIGHTHOUSE_EXTERIOR_WATERFALL_FROM_UPPER_PATH:
       FieldScheduler_AddCallback(MercuryLighthouse_CycleWaterfallPalette,
                                  TASK_PRIORITY_MAP);
-      if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION))
+      if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION))
         break;
       MercuryLighthouse_ArriveWithSparks();
       Map_QueueMusic(SE_170);
       PaletteFade_ApplySource(128 << 9, 0);
-      Engine_ColorBufferApplyTarget(0x10003, 1);
-      Engine_ColorBufferInterpolate(30);
-      Engine_ScriptWaitForScreen();
+      PaletteFade_SetTarget(0x10003, 1);
+      PaletteFade_StartInterpolation(30);
+      FieldScript_WaitTransitionFrames();
       Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
-      Engine_ScriptWait(30);
+      FieldScript_WaitFrames(30);
       FieldMessage_ShowCentered(MsgMercuryHonorsGoddessRainbows, 0, 0);
-      Engine_ColorBufferApplyTarget(128 << 9, 0);
-      Engine_ColorBufferInterpolate(30);
+      PaletteFade_SetTarget(128 << 9, 0);
+      PaletteFade_StartInterpolation(30);
       break;
     case MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE:
       Engine_ObjectEventSetPosition(MIA, 0, 0);
       BlendScript_Suspend();
       Io_Write16(0, &REG_BLDCNT);
       ObjectEvent_GetById(LOCALID_EAST_APPROACH_STATUE)->scaleX = -Q16_ONE;
-      Engine_ObjectEventSetSpritePriority(LOCALID_FIRST_VISITOR, 1);
-      Engine_ObjectEventSetSpritePriority(LOCALID_FIRST_VISITOR + 1, 1);
-      Engine_ObjectEventSetSpritePriority(LOCALID_FIRST_VISITOR + 2, 1);
-      keepPartyPosition = Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION);
+      ObjectMotion_SetActionVariant(LOCALID_FIRST_VISITOR, 1);
+      ObjectMotion_SetActionVariant(LOCALID_FIRST_VISITOR + 1, 1);
+      ObjectMotion_SetActionVariant(LOCALID_FIRST_VISITOR + 2, 1);
+      keepPartyPosition = GameFlag_Test(FLAG_KEEP_PARTY_POSITION);
       if (keepPartyPosition) {
         MapGrid_CopyCellAttributes(104, 34, 5, 4, 40, 34);
         MapGrid_CopyCellsTo(45, 91, 40, 91, 5, 4);
@@ -2676,48 +2674,48 @@ s32 MercuryLighthouse_Initialize(void) {
       MapGrid_CopyCellAttributes(116, 36, 3, 4, 52, 36);
       ObjectEvent_GetById(LOCALID_DOOR_STATUE)->motionFlags = keepPartyPosition;
       SetEffectRecordMode(ObjectEvent_GetById(LOCALID_DOOR_STATUE), 1);
-      Engine_ScriptStart();
+      FieldScript_Start();
       FieldCamera_MoveTo(-1, -1, -1, 0);
-      Engine_ScriptGetViewCenter()->motionFlags = keepPartyPosition;
-      Engine_ObjectEventSetSpritePriority(LOCALID_PARTY_LEADER, 1);
-      Engine_ObjectEventSetSpritePriority(LOCALID_LIFT_STATUE, 1);
+      FieldCamera_GetScriptObject()->motionFlags = keepPartyPosition;
+      ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, 1);
+      ObjectMotion_SetActionVariant(LOCALID_LIFT_STATUE, 1);
       MercuryLighthouse_RideLift();
       BlendScript_Resume();
-      Engine_ScriptEnd();
+      FieldScript_End();
       break;
     case MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_ENTRANCE:
-      Engine_ScriptWait(1);
+      FieldScript_WaitFrames(1);
       SetEffectRecordMode(ObjectEvent_GetById(LOCALID_PARTY_LEADER), 1);
       // Fall through.
     case MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP:
       MapGrid_CopyCellAttributes(104, 34, 5, 4, 40, 34);
       MapGrid_CopyCellsTo(45, 91, 40, 91, 5, 4);
-      if (!Engine_GameFlagIsSet(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
+      if (!GameFlag_Test(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
         MapGrid_CopyCellsTo(30, 45, 50, 45, 5, 6);
         MapGrid_CopyCellsTo(50, 105, 50, 109, 5, 3);
-        Engine_MapGridRedraw();
-        Engine_TaskWait(1);
+        MapGrid_CenterOnFollowedPoint();
+        WaitFrames(1);
       } else {
-        Engine_ObjectEventSetSpritePriority(LOCALID_FIRST_VISITOR, 1);
-        Engine_ObjectEventSetSpritePriority(LOCALID_FIRST_VISITOR + 1, 1);
-        Engine_ObjectEventSetSpritePriority(LOCALID_FIRST_VISITOR + 2, 1);
+        ObjectMotion_SetActionVariant(LOCALID_FIRST_VISITOR, 1);
+        ObjectMotion_SetActionVariant(LOCALID_FIRST_VISITOR + 1, 1);
+        ObjectMotion_SetActionVariant(LOCALID_FIRST_VISITOR + 2, 1);
       }
       ObjectEvent_GetById(LOCALID_EAST_APPROACH_STATUE)->scaleX = -Q16_ONE;
       // Until Mia has hurried here from Imil (FLAG_IMIL_MET_MIA, set in
       // imil.c), she is not here and the door stays shut.
-      if (!Engine_GameFlagIsSet(FLAG_IMIL_MET_MIA)) {
+      if (!GameFlag_Test(FLAG_IMIL_MET_MIA)) {
         Engine_ObjectEventSetPosition(MIA, 0, 0);
         ObjectEvent_SetPosition(LOCALID_DOOR_STATUE, PIXELS(824), PIXELS(600));
-        Engine_ObjectEventSetSpritePriority(LOCALID_DOOR_STATUE, 1);
+        ObjectMotion_SetActionVariant(LOCALID_DOOR_STATUE, 1);
         MapGrid_CopyCellAttributes(116, 37, 3, 3, 52, 37);
         MapGrid_CopyCellsTo(126, 35, 116, 35, 1, 2);
         FieldScheduler_AddCallback(MercuryLighthouse_CycleEntrancePalette,
                                    TASK_PRIORITY_MAP);
         break;
       }
-      if (!Engine_GameFlagIsSet(FLAG_MERCURY_LIGHTHOUSE_OPENED_BY_MIA)) {
-        if (!Engine_GameFlagIsSet(FLAG_MIA_SENSED_SOMEONE_INSIDE)) {
-          Engine_ObjectEventFaceDirection(MIA, FACING_EAST, 0);
+      if (!GameFlag_Test(FLAG_MERCURY_LIGHTHOUSE_OPENED_BY_MIA)) {
+        if (!GameFlag_Test(FLAG_MIA_SENSED_SOMEONE_INSIDE)) {
+          ObjectMotion_ArmCallback(MIA, FACING_EAST, 0);
           Engine_ObjectEventSetAnimation(MIA, 16);
         } else {
           ObjectEvent_SetPosition(MIA, PIXELS(840), PIXELS(632));
@@ -2732,7 +2730,7 @@ s32 MercuryLighthouse_Initialize(void) {
         ObjectEvent_SetPosition(LOCALID_DOOR_STATUE, PIXELS(824), PIXELS(600));
         MapGrid_CopyCellAttributes(116, 36, 3, 4, 52, 36);
         ObjectEvent_GetById(LOCALID_DOOR_STATUE)->collisionFlags = 254;
-        Engine_ScriptWait(1);
+        FieldScript_WaitFrames(1);
       }
       ObjectEvent_GetById(LOCALID_DOOR_STATUE)->motionFlags = 0;
       SetEffectRecordMode(ObjectEvent_GetById(LOCALID_DOOR_STATUE), 1);
@@ -2757,75 +2755,75 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
   if (pillarColumn != 48) {
     return;
   }
-  Engine_ScriptStart();
+  FieldScript_Start();
   firstMessage = MsgMercurySavedMeAgain;
-  Engine_ScriptSetMessage(firstMessage);
-  Engine_ScriptWait(20);
-  Engine_ObjectEventRunRepeatedMotion(MIA, 1);
+  FieldScript_SetMessageId(firstMessage);
+  FieldScript_WaitFrames(20);
+  ObjectMotion_SetVarCbAndRefresh(MIA, 1);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 20);
   Script_ShowMessageAndWait(MIA, 0, 20);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
-  Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ScriptWait(20);
-  Engine_ScriptWait(60);
+  ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_NOD);
+  FieldScript_WaitFrames(20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  FieldScript_WaitFrames(20);
+  FieldScript_WaitFrames(60);
   Engine_ObjectEventSetAnimation(MIA, 16);
-  Engine_ScriptWait(50);
+  FieldScript_WaitFrames(50);
   Engine_ObjectEventSetAnimation(MIA, ANIMATION_STAND);
-  Engine_ScriptOpenMessage(MIA, 0);
-  if (Engine_ScriptChooseYesNo(0, 0) == 1) {
+  FieldMessage_ShowAtObject(MIA, 0);
+  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 1) {
     // Each "no" brings "Please, don't hide anything." until the party says
     // yes.
-    Engine_ScriptWait(20);
-    Engine_ObjectEventRunRepeatedMotion(MIA, 2);
-    Engine_ScriptWait(20);
+    FieldScript_WaitFrames(20);
+    ObjectMotion_SetVarCbAndRefresh(MIA, 2);
+    FieldScript_WaitFrames(20);
     Script_ShowMessageAndWait(MIA, 0, 20);
-    Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
-    Engine_ScriptWait(20);
-    Engine_ScriptShowMessageAndWait(MIA, 0, 20);
-    Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
-    Engine_ScriptWait(20);
-    Engine_ScriptOpenMessage(MIA, 0);
-    if (Engine_ScriptChooseYesNo(0, 0) == 1) {
-      Engine_ScriptWait(20);
+    ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
+    FieldScript_WaitFrames(20);
+    FieldScript_ShowMessageThenWait(MIA, 0, 20);
+    ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_NOD);
+    FieldScript_WaitFrames(20);
+    FieldMessage_ShowAtObject(MIA, 0);
+    if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 1) {
+      FieldScript_WaitFrames(20);
       /* FAKEMATCH(wrapper): called through an unprototyped cast, which loads
        * r1 before r0; called by its prototype, 1 of 222 instructions differ in
        * tbs-en. */
       MERCURY_LIGHTHOUSE_ANIMATE_OBJ_EVENT_AND_WAIT(MIA, ANIMATION_SHAKE_HEAD);
-      Engine_ScriptWait(20);
+      FieldScript_WaitFrames(20);
       questionMessage = firstMessage + 5;
       for (;;) {
-        Engine_ScriptSetMessage(questionMessage);
-        Engine_ScriptOpenMessage(MIA, 0);
-        if (Engine_ScriptChooseYesNo(0, 0) != 1) {
+        FieldScript_SetMessageId(questionMessage);
+        FieldMessage_ShowAtObject(MIA, 0);
+        if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) != 1) {
           break;
         }
-        Engine_ScriptWait(20);
+        FieldScript_WaitFrames(20);
         /* FAKEMATCH(wrapper): called through an unprototyped cast, which
          * loads r1 before r0; called by its prototype, 1 of 222 instructions
          * differ in tbs-en. */
         MERCURY_LIGHTHOUSE_ANIMATE_OBJ_EVENT_AND_WAIT(MIA,
                                                       ANIMATION_SHAKE_HEAD);
-        Engine_ScriptWait(20);
+        FieldScript_WaitFrames(20);
         questionMessage = MsgMercuryDontHideTruth;
       }
     }
   }
-  Engine_ScriptSetMessage(MsgMercuryThoughtSo);
+  FieldScript_SetMessageId(MsgMercuryThoughtSo);
   ObjectEvent_SetSpeed(MIA, PIXELS(4) / 5, PIXELS(2) / 5);
-  Engine_ObjectEventWalkToAndWait(MIA, 728, 632);
-  Engine_ScriptWait(20);
-  Engine_ScriptShowMessageAndWait(MIA, 0, 20);
+  ObjectMotion_SetPositionAndReset(MIA, 728, 632);
+  FieldScript_WaitFrames(20);
+  FieldScript_ShowMessageThenWait(MIA, 0, 20);
   Engine_ObjectEventSetAnimation(MIA, 16);
-  Engine_ScriptShowMessageAndWait(MIA, 0, 20);
+  FieldScript_ShowMessageThenWait(MIA, 0, 20);
   Engine_ObjectEventSetAnimation(MIA, ANIMATION_STAND);
-  Engine_ObjectEventFaceObjectEvent(MIA, LOCALID_PARTY_LEADER, 20);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetAngleToward(MIA, LOCALID_PARTY_LEADER, 20);
+  ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(MIA, 0, 20);
   ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 90);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_NOD);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(MIA, 0, 20);
   FieldScript_PrepareObjectAndApplyValue(MIA, 1);
   // "The Adept Mia joined your party!" Fizz, a Mercury Djinni, comes with
@@ -2837,14 +2835,14 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
   Engine_ObjectEventSetAnimation(MIA, ANIMATION_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0) {
-    Engine_ObjectEventSetDestination(MIA, leader->x.part.pixel,
+    ObjectMotion_ResetAndSetPosition(MIA, leader->x.part.pixel,
                                      leader->z.part.pixel);
   }
-  Engine_ObjectEventWaitForMove(MIA);
+  ObjectMotion_CommitCurrentPositionAndActivate(MIA);
   Engine_ObjectEventSetPosition(MIA, 0, 0);
   MapGrid_CopyCellAttributes(110, 39, 5, 1, 46, 39);
   Engine_GameFlagSet(FLAG_MIA_JOINED_PARTY);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// MercuryLighthouseExterior,
@@ -2869,13 +2867,13 @@ static void MercuryLighthouse_RideLift(void) {
   ObjectEvent_Get(LOCALID_LIFT_STATUE)->z.fixed += -PIXELS(137);
   ObjectEvent_Get(LOCALID_LIFT_STATUE)->targetZ =
       ObjectEvent_Get(LOCALID_LIFT_STATUE)->z.fixed;
-  Engine_MapGridRedraw();
-  Engine_TaskWait(1);
-  Engine_ScriptOpenScreen();
-  Engine_ScriptWaitForScreen();
-  Engine_ScriptWait(60);
+  MapGrid_CenterOnFollowedPoint();
+  WaitFrames(1);
+  FieldScript_StartScreenTransition();
+  FieldScript_WaitTransitionFrames();
+  FieldScript_WaitFrames(60);
   BlendScript_Suspend();
-  Engine_AudioPlayCue(SE_LIFT);
+  Sound_PlaySong(SE_LIFT);
   // The lift layer scrolls down with both riders, 137 pixels, slowing as it
   // nears the landing.
   for (;;) {
@@ -2889,37 +2887,37 @@ static void MercuryLighthouse_RideLift(void) {
     if (liftLayer->offsetY > PIXELS(1024)) {
       if ((gFrameCount & 15) == 0 && liftSpeed > 0xccb)
         liftSpeed += -0x560;
-      Engine_TaskWait(1);
+      WaitFrames(1);
       continue;
     }
     break;
   }
   liftLayer->offsetY = PIXELS(1024);
-  Engine_MapGridRedraw();
-  Engine_TaskWait(2);
+  MapGrid_CenterOnFollowedPoint();
+  WaitFrames(2);
   ObjectEvent_Get(LOCALID_PARTY_LEADER)->motionFlags = 3;
   ObjectEvent_Get(LOCALID_LIFT_STATUE)->z.fixed = PIXELS(440);
   ObjectEvent_Get(LOCALID_LIFT_STATUE)->targetZ =
       ObjectEvent_Get(LOCALID_LIFT_STATUE)->z.fixed;
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(30);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 704, 584);
   ObjectEvent_Get(LOCALID_PARTY_LEADER)->bounce = 0;
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_LEADER_SPRING);
-  Engine_ScriptWait(6);
+  FieldScript_WaitFrames(6);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_LEADER_LEAP);
   ObjectEvent_Get(LOCALID_PARTY_LEADER)->speed = PIXELS(3);
   ObjectEvent_Get(LOCALID_PARTY_LEADER)->acceleration = PIXELS(2);
-  Engine_AudioPlayCue(SE_JUMP);
+  Sound_PlaySong(SE_JUMP);
   ObjectEvent_Get(LOCALID_PARTY_LEADER)->velocityY = PIXELS(4);
-  Engine_ObjectEventSetSpriteFlags(ObjectEvent_Get(LOCALID_PARTY_LEADER), 0);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_PARTY_LEADER), 0);
   ObjectEvent_SetDestination(LOCALID_PARTY_LEADER, 736, 584);
-  Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
-  Engine_ObjectEventSetSpriteFlags(ObjectEvent_Get(LOCALID_PARTY_LEADER), 1);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_PARTY_LEADER), 1);
   ObjectEvent_Get(LOCALID_PARTY_LEADER)->bounce = 0x4000;
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_LEADER_SPRING);
-  Engine_ScriptWait(6);
+  FieldScript_WaitFrames(6);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 30);
-  Engine_AudioPlayCue(SE_LIFT);
+  Sound_PlaySong(SE_LIFT);
   // The lift and its statue go back up without the leader.
   for (;;) {
     liftLayer->offsetY += liftSpeed;
@@ -2930,15 +2928,15 @@ static void MercuryLighthouse_RideLift(void) {
       break;
     if ((gFrameCount & 7) == 0 && liftSpeed <= 0xcccc)
       liftSpeed += 0x1999;
-    Engine_TaskWait(1);
+    WaitFrames(1);
   }
   liftLayer->offsetY = PIXELS(1024);
   MapGrid_CopyCellsTo(45, 91, 40, 91, 5, 4);
   MapGrid_CopyCellAttributes(104, 34, 5, 4, 40, 34);
-  Engine_MapGridRedraw();
-  Engine_TaskWait(2);
+  MapGrid_CenterOnFollowedPoint();
+  WaitFrames(2);
   ObjectEvent_SetPosition(LOCALID_LIFT_STATUE, 0, 0);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(30);
   ObjectEvent_Get(LOCALID_PARTY_LEADER)->priorityFlags |=
       OBJ_EVENT_PRIORITY_AUTOMATIC;
 }
@@ -2950,13 +2948,13 @@ static void MercuryLighthouse_MiaCastsPlyOnEntrance(void) {
 
   effectWork = gFieldEffectWork;
   ObjectEvent_SetPosition(LOCALID_PLY_TARGET, PIXELS(840), PIXELS(600));
-  Engine_PsynergyStart(ABILITY_PLY, 1);
-  Engine_PsynergySetTarget(MIA, LOCALID_PLY_TARGET);
+  FieldEffect_LoadActionEffectResources(ABILITY_PLY, 1);
+  FieldEffect_SetupObjectPair(MIA, LOCALID_PLY_TARGET);
   flags = (u8)effectWork->messageMode | FIELD_MESSAGE_LOWER;
   effectWork->messageMode = flags;
-  Engine_PsynergyRaiseHands();
-  Engine_PsynergyPlayEffect(1);
-  Engine_PsynergyLowerHands();
+  FieldEffect_StartCast();
+  Field_DispatchTypeHandler(1);
+  FieldEffect_StopCasterHook();
 }
 
 /// Replaces one inventory item in the member and slot that contain it.
@@ -2980,14 +2978,14 @@ static void MercuryLighthouse_SpawnRipple(struct ObjectEvent *source) {
   struct ObjectEvent *effect;
   struct Sprite *sprite;
 
-  effect = Engine_ObjectCreate(SPRITE_RIPPLE, source->x.fixed, source->y.fixed,
-                               source->z.fixed);
+  effect = ObjectEvent_Create(SPRITE_RIPPLE, source->x.fixed, source->y.fixed,
+                              source->z.fixed);
   if (effect == 0) {
     return;
   }
 
   sprite = effect->sprite;
-  Engine_ObjectSetScript(effect, gMercuryLighthouse_RippleScript);
+  ObjectEvent_SetScript(effect, gMercuryLighthouse_RippleScript);
 
   effect->motionFlags = 0;
   effect->layer = 1;

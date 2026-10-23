@@ -165,7 +165,7 @@ static void KolimaForestFloodgate_DrawWaterLevel(void) {
     piece = record->objectEvent;
 
     if (*gKolimaForestFloodgateLayout == 1) {
-      ObjectEvent_SetMode(piece, 4);
+      ObjectDispatch_SelectAnimation(piece, 4);
       piece->priorityFlags =
           OBJ_EVENT_PRIORITY_AUTOMATIC | OBJ_EVENT_PRIORITY_UNDERFOOT;
       piece->motionFlags = 0;
@@ -177,7 +177,7 @@ static void KolimaForestFloodgate_DrawWaterLevel(void) {
         MapGrid_CopyCells(70, 40, 4, 1, record->x + 32, record->z);
       }
     } else {
-      ObjectEvent_SetMode(piece, 1);
+      ObjectDispatch_SelectAnimation(piece, 1);
       piece->priorityFlags = OBJ_EVENT_PRIORITY_AUTOMATIC;
       piece->motionFlags = OBJ_EVENT_FALLS;
       piece->y.fixed = 0;
@@ -246,58 +246,58 @@ static void KolimaForestFloodgate_CaptureShakeScroll(void) {
 static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
   s32 nextShakeChance;
 
-  Engine_ScriptStart();
-  Engine_CameraSetSpeed(PIXELS(1), PIXELS(1) / 8);
-  Engine_CameraMoveTo(PIXELS(264), -1, PIXELS(448), 1);
-  Engine_CameraWaitForMove();
-  Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
-  Engine_AudioPlayCue(SE_232);
+  FieldScript_Start();
+  FieldCamera_SetSpeedParameters(PIXELS(1), PIXELS(1) / 8);
+  FieldCamera_MoveWithinMapBounds(PIXELS(264), -1, PIXELS(448), 1);
+  FieldCamera_WaitForArrival();
+  FieldMessage_Show(MsgFieldFlippedSwitch, 1);
+  Sound_PlaySong(SE_232);
   if (*gKolimaForestFloodgateLayout == 0) {
     ObjectEvent_SetPosition(LOCALID_FLOODGATE_SPRAY, PIXELS(256), PIXELS(462));
     MapGrid_CopyCells(77, 34, 1, 2, 83, 25);
-    Engine_TaskWait(3);
+    WaitFrames(3);
     MapGrid_CopyCells(78, 34, 1, 2, 83, 25);
-    Engine_TaskWait(3);
+    WaitFrames(3);
     MapGrid_CopyCells(79, 34, 1, 2, 83, 25);
-    Engine_TaskWait(30);
+    WaitFrames(30);
     MapGrid_CopyCells(67, 34, 2, 5, 79, 25);
-    Engine_TaskWait(6);
+    WaitFrames(6);
     MapGrid_CopyCells(69, 34, 2, 5, 79, 25);
     Engine_ObjectEventSetAnimation(LOCALID_FLOODGATE_SPRAY,
                                    SPLASH_ANIMATION_BURST);
-    Engine_AudioPlayCue(SE_240);
-    Engine_TaskWait(6);
+    Sound_PlaySong(SE_240);
+    WaitFrames(6);
     MapGrid_CopyCells(71, 34, 2, 5, 79, 25);
-    Engine_TaskWait(6);
+    WaitFrames(6);
     MapGrid_CopyCells(73, 34, 2, 5, 79, 25);
     MapGrid_CopyCells(75, 38, 2, 1, 79, 29);
-    Engine_TaskWait(4);
+    WaitFrames(4);
     MapGrid_CopyCells(77, 38, 2, 1, 79, 29);
-    Engine_TaskWait(6);
+    WaitFrames(6);
     MapGrid_CopyCells(79, 38, 2, 1, 79, 29);
-    Engine_TaskWait(8);
+    WaitFrames(8);
     MapGrid_CopyCells(65, 53, 2, 1, 79, 29);
     MapGrid_CopyCells(65, 40, 2, 4, 15, 28);
   } else {
     ObjectEvent_SetPosition(LOCALID_FLOODGATE_SPRAY, PIXELS(256), PIXELS(480));
     MapGrid_CopyCells(78, 34, 1, 2, 83, 25);
-    Engine_TaskWait(3);
+    WaitFrames(3);
     MapGrid_CopyCells(77, 34, 1, 2, 83, 25);
-    Engine_TaskWait(3);
+    WaitFrames(3);
     MapGrid_CopyCells(76, 34, 1, 2, 83, 25);
-    Engine_TaskWait(30);
+    WaitFrames(30);
     MapGrid_CopyCells(65, 45, 2, 4, 15, 28);
     MapGrid_CopyCells(71, 50, 2, 5, 79, 25);
     Engine_ObjectEventSetAnimation(LOCALID_FLOODGATE_SPRAY,
                                    SPLASH_ANIMATION_CHURN);
-    Engine_AudioPlayCue(SE_230);
-    Engine_TaskWait(6);
+    Sound_PlaySong(SE_230);
+    WaitFrames(6);
     MapGrid_CopyCells(69, 50, 2, 5, 79, 25);
-    Engine_TaskWait(6);
+    WaitFrames(6);
     MapGrid_CopyCells(67, 50, 2, 5, 79, 25);
-    Engine_TaskWait(6);
+    WaitFrames(6);
     MapGrid_CopyCells(65, 50, 2, 5, 79, 25);
-    Engine_TaskWait(30);
+    WaitFrames(30);
   }
   if (*gKolimaForestFloodgateLayout == 0) {
     MapGrid_DrawCellPanel(9, 19, 16, 5, *gKolimaForestFloodgateLayout, 9, 30);
@@ -314,16 +314,16 @@ static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
   gKolimaForestFloodgate_ShakeChance = 0;
   FieldScheduler_AddCallback(KolimaForestFloodgate_CaptureShakeScroll,
                              TASK_PRIORITY_MAP);
-  Engine_TaskWait(1);
+  WaitFrames(1);
   Runtime_SetIrqHandler(IRQ_HBLANK, 0, KolimaForestFloodgate_ShakeLines);
-  Engine_AudioPlayCue(SE_WATER_LEVEL);
+  Sound_PlaySong(SE_WATER_LEVEL);
   gKolimaForestFloodgate_ShakeChance = 0;
   do {
-    Engine_TaskWait(1);
+    WaitFrames(1);
     nextShakeChance = (gKolimaForestFloodgate_ShakeChance + 1);
     gKolimaForestFloodgate_ShakeChance += 1;
   } while (nextShakeChance <= 100);
-  Engine_AudioPlayCue(SONG_FADE_OUT_ACTION_SE);
+  Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
   if (*gKolimaForestFloodgateLayout == 0) {
     MapGrid_DrawCellPanel(9, 19, 16, 5, *gKolimaForestFloodgateLayout, 9, 19);
     MapGrid_DrawCellPanel(9, 51, 16, 5, 1, 9, 19);
@@ -333,68 +333,68 @@ static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
     MapGrid_DrawCellPanel(9, 83, 16, 5, 1, 9, 19);
     MapGrid_DrawCellPanel(41, 83, 16, 5, 2, 9, 19);
   }
-  Engine_TaskWait(1);
+  WaitFrames(1);
   Runtime_SetIrqHandler(IRQ_HBLANK, 0, 0);
-  Engine_TaskWait(1);
-  Engine_TaskRemoveCallback(KolimaForestFloodgate_CaptureShakeScroll);
+  WaitFrames(1);
+  Task_Remove(KolimaForestFloodgate_CaptureShakeScroll);
   *(u16 *)gKolimaForestFloodgateLayout ^= 1;
   KolimaForestFloodgate_DrawWaterLevel();
-  Engine_MapGridRedraw();
-  Engine_ScriptEnd();
+  MapGrid_CenterOnFollowedPoint();
+  FieldScript_End();
 }
 
 /// Kolima Forest (MapId_KolimaForestFloodgate), walking west into the short
 /// log: the leader shoves it west to x 72.
 static void KolimaForestFloodgate_PushShortLogWest(void) {
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_PUSH);
-  Engine_ScriptWait(6);
-  Engine_AudioPlayCue(SE_HEAVY_MOVE);
+  FieldScript_WaitFrames(6);
+  Sound_PlaySong(SE_HEAVY_MOVE);
   ObjectEvent_SetSpeed(LOCALID_SHORT_LOG, PIXELS(1) / 2, PIXELS(1) / 5);
   Engine_ObjectEventSetAnimation(LOCALID_SHORT_LOG, 2);
-  Engine_ObjectEventSetDestination(LOCALID_SHORT_LOG, 72, 176);
-  Engine_ScriptWait(6);
+  ObjectMotion_ResetAndSetPosition(LOCALID_SHORT_LOG, 72, 176);
+  FieldScript_WaitFrames(6);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 3 * PIXELS(1) / 10, PIXELS(1) / 5);
-  Engine_ObjectEventSetDestinationOffset(LOCALID_PARTY_LEADER, -8, 0);
-  Engine_ScriptWait(24);
+  ObjectMotion_OffsetPositionAndResetMotion(LOCALID_PARTY_LEADER, -8, 0);
+  FieldScript_WaitFrames(24);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
-  Engine_ObjectEventWaitForMove(LOCALID_SHORT_LOG);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_SHORT_LOG);
   Engine_ObjectEventSetAnimation(LOCALID_SHORT_LOG, 1);
-  Engine_AudioPlayCue(SE_STOP_SLOT3);
-  Engine_AudioPlayCue(SE_HEAVY_STOP);
+  Sound_PlaySong(SE_STOP_SLOT3);
+  Sound_PlaySong(SE_HEAVY_STOP);
   MapGrid_CopyCellAttributes(5, 9, 1, 4, 6, 9);
   MapGrid_CopyCellAttributes(0, 0, 1, 4, 4, 9);
   *gKolimaForestFloodgateReturned = 1;
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Kolima Forest (MapId_KolimaForestFloodgate), walking east into the short
 /// log: the leader shoves it east to x 104.
 static void KolimaForestFloodgate_PushShortLogEast(void) {
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_PUSH);
-  Engine_ScriptWait(6);
-  Engine_AudioPlayCue(SE_HEAVY_MOVE);
+  FieldScript_WaitFrames(6);
+  Sound_PlaySong(SE_HEAVY_MOVE);
   ObjectEvent_SetSpeed(LOCALID_SHORT_LOG, PIXELS(1) / 2, PIXELS(1) / 5);
   Engine_ObjectEventSetAnimation(LOCALID_SHORT_LOG, 2);
-  Engine_ObjectEventSetDestination(LOCALID_SHORT_LOG, 104, 176);
-  Engine_ScriptWait(6);
+  ObjectMotion_ResetAndSetPosition(LOCALID_SHORT_LOG, 104, 176);
+  FieldScript_WaitFrames(6);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 3 * PIXELS(1) / 10, PIXELS(1) / 5);
-  Engine_ObjectEventSetDestinationOffset(LOCALID_PARTY_LEADER, 8, 0);
-  Engine_ScriptWait(24);
+  ObjectMotion_OffsetPositionAndResetMotion(LOCALID_PARTY_LEADER, 8, 0);
+  FieldScript_WaitFrames(24);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
-  Engine_ObjectEventWaitForMove(LOCALID_SHORT_LOG);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_SHORT_LOG);
   Engine_ObjectEventSetAnimation(LOCALID_SHORT_LOG, 1);
-  Engine_AudioPlayCue(SE_STOP_SLOT3);
-  Engine_AudioPlayCue(SE_HEAVY_STOP);
+  Sound_PlaySong(SE_STOP_SLOT3);
+  Sound_PlaySong(SE_HEAVY_STOP);
   MapGrid_CopyCellAttributes(5, 9, 1, 4, 4, 9);
   MapGrid_CopyCellAttributes(0, 0, 1, 4, 6, 9);
   *gKolimaForestFloodgateReturned = 0;
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Sets up the logs and the river's level on entry. The logs come back
@@ -412,7 +412,7 @@ s32 KolimaForestFloodgate_Initialize(void) {
   MapGrid_CopyCells(32, 0, 64, 32, 0, 64);
   MapGrid_CopyCellAttributes(0, 0, 32, 32, 0, 64);
   MapGrid_CopyCellAttributes(32, 0, 32, 32, 0, 32);
-  if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
+  if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {
     Dma_Set(gKolimaForestFloodgate_DefaultRecords,
             gKolimaForestFloodgateRecords,
             (DMA_ENABLE | DMA_32BIT) << 16 | 0x12, REG_DMA3);
@@ -431,7 +431,7 @@ s32 KolimaForestFloodgate_Initialize(void) {
   objectEvent->scaleY = 0xc000;
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0)
+  if (GameFlag_Test(FLAG_KOLIMA_CURSE_LIFTED) == 0)
     KolimaPalette_Curse(4);
   return 0;
 }
@@ -451,12 +451,12 @@ static void KolimaForestFloodgate_CreateLogs(struct FloodgateLog *entry) {
       x = (entry->x << 20) + 0x80000;
       z = (entry->z << 20) + 0x200000;
     }
-    objectEvent = Engine_ObjectCreate(entry->sprite, x, 0, z);
+    objectEvent = ObjectEvent_Create(entry->sprite, x, 0, z);
     if (objectEvent == NULL)
       return;
     entry->objectEvent = objectEvent;
-    ObjectEvent_SetMode(objectEvent, 1);
-    Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
+    ObjectDispatch_SelectAnimation(objectEvent, 1);
+    ObjectEvent_SetSpriteFlags(objectEvent, 0);
     objectEvent->collisionFlags = 0;
     objectEvent->radius = 32;
     height = MapGrid_GetTerrainHeight(0, objectEvent->x.part.pixel,
@@ -588,16 +588,16 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
   Vector_AddPolarOffset(0x80000, facing, point);
   objectEvent = run->objectEvent;
   quarter = facing / 0x4000;
-  Engine_ScriptStart();
+  FieldScript_Start();
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_PUSH);
-  Engine_ScriptWait(6);
+  FieldScript_WaitFrames(6);
   objectEvent->speed = PIXELS(1) / 2;
   objectEvent->acceleration = PIXELS(1) / 5;
   Script_PlaySong(SE_HEAVY_MOVE);
-  ObjectEvent_SetMode(objectEvent,
-                      gKolimaForestFloodgate_PushAnimations[quarter]);
-  Engine_ObjectSetPosition(objectEvent, x, 0, z);
-  Engine_ScriptWait(6);
+  ObjectDispatch_SelectAnimation(
+      objectEvent, gKolimaForestFloodgate_PushAnimations[quarter]);
+  Object_SetPosition(objectEvent, x, 0, z);
+  FieldScript_WaitFrames(6);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
   work = AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(*work));
   ObjectDispatch_StartCamera((struct DispatchObject *)work->camera,
@@ -606,14 +606,14 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
   ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER,
                                    gKolimaForestFloodgate_PushStepX[quarter],
                                    gKolimaForestFloodgate_PushStepZ[quarter]);
-  Engine_ScriptWait(24);
+  FieldScript_WaitFrames(24);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
   Object_WaitForMove(objectEvent);
-  ObjectEvent_SetMode(objectEvent, 1);
+  ObjectDispatch_SelectAnimation(objectEvent, 1);
   Script_PlaySong(SE_STOP_SLOT3);
   Script_PlaySong(SE_HEAVY_STOP);
-  Engine_ScriptWait(15);
-  Engine_ScriptEnd();
+  FieldScript_WaitFrames(15);
+  FieldScript_End();
 }
 
 #include "common/kolima_palette.h"

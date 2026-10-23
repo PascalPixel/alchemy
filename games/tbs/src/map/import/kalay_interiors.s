@@ -1,26 +1,26 @@
 @ C2: aligned 8-byte veneers: overlay_veneer emits ldr r4, bx r4 and a target word.
 	.set overlay_imports, 1
-	.set import.Engine_MapGridAnimateCells, 1
-	.set import.Engine_MapGridCopyCellsTo, 1
-	.set import.Engine_GameFlagIsSet, 1
+	.set import.MapGrid_PlayMetatileCopySequence, 1
+	.set import.MapGrid_CopyMetatileIndicesRect, 1
+	.set import.GameFlag_Test, 1
 	.set import.Engine_GameFlagSet, 1
-	.set import.Engine_ScriptWait, 1
-	.set import.Engine_ScriptStart, 1
-	.set import.Engine_ScriptEnd, 1
-	.set import.Map_PrepareObjectEvents, 1
+	.set import.FieldScript_WaitFrames, 1
+	.set import.FieldScript_Start, 1
+	.set import.FieldScript_End, 1
+	.set import.Map_AssignViewFlags, 1
 	.set import.ObjectEvent_GetById, 1
-	.set import.Engine_ObjectEventDestroy, 1
-	.set import.Engine_ObjectEventSetSpeed, 1
-	.set import.Engine_ObjectEventCenterAndWalk, 1
+	.set import.ObjectEvent_DestroyById, 1
+	.set import.ObjectMotion_SetSpeedParameters, 1
+	.set import.ObjectMotion_CenterOnColumn, 1
 	.set import.Engine_ObjectEventSetAnimation, 1
-	.set import.Engine_ObjectEventSetChildValue, 1
-	.set import.Engine_ScriptSetMessage, 1
-	.set import.Engine_ScriptShowMessage, 1
-	.set import.Engine_ScriptAskYesNo, 1
+	.set import.ObjectGroup_ConfigureChildValue, 1
+	.set import.FieldScript_SetMessageId, 1
+	.set import.FieldScript_ShowMessageAndWait, 1
+	.set import.FieldScript_AskYesNoAndShowResponse, 1
 	.set import.Engine_ScriptRequestWarp, 1
-	.set import.Engine_ScriptCloseScreen, 1
-	.set import.Engine_ScriptWaitForScreen, 1
-	.set import.Engine_SanctumOpen, 1
-	.set import.Engine_InnOpen, 1
-	.set import.Engine_AudioPlayCue, 1
+	.set import.FieldScript_FinishScreenTransition, 1
+	.set import.FieldScript_WaitTransitionFrames, 1
+	.set import.Sanctum_Run, 1
+	.set import.Inn_CheckIn, 1
+	.set import.Sound_PlaySong, 1
 	.include "games/tbs/src/system/overlay.inc"

@@ -36,23 +36,23 @@ void MercuryLighthouse_RestoreLights(s32 region,
 
   *(struct MercuryLighthouseLights **)AllocHeapSlotEwram(
       HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS, sizeof(st)) = st;
-  flag = Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION);
+  flag = GameFlag_Test(FLAG_KEEP_PARTY_POSITION);
   if (flag == 0) {
     Dma_Fill32(flag, st, sizeof(*st));
     st->terrainCode = region;
     return;
   }
-  objectEvent = Engine_ObjectEventLookup(gGameState.leaderLocalId);
+  objectEvent = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
   z = objectEvent->z.fixed;
   cell = (struct MapGridCell *)Ram_MapGridCellBuffer + ((z / 0x100000) << 7) +
          objectEvent->x.fixed / 0x100000;
   if (st->levels != 0 && st->pillar != 0) {
-    obj = Engine_ObjectCreate(26, objectEvent->x.fixed,
-                              objectEvent->y.fixed + 0x180000, z);
+    obj = ObjectEvent_Create(26, objectEvent->x.fixed,
+                             objectEvent->y.fixed + 0x180000, z);
     if (obj != 0) {
       obj->groundHeight = objectEvent->groundHeight;
       animation = obj->sprite;
-      Engine_ObjectSetScript(obj, gMercuryLighthouse_PillarScript);
+      ObjectEvent_SetScript(obj, gMercuryLighthouse_PillarScript);
       obj->linkedObject = objectEvent;
       obj->motionFlags = 4;
       obj->y.fixed += -0x8000;
@@ -67,13 +67,13 @@ void MercuryLighthouse_RestoreLights(s32 region,
     st->pillar = 0;
   }
   if (cell->behavior == region && st->stepEffect != 0) {
-    obj = Engine_ObjectCreate(26, objectEvent->x.fixed, objectEvent->y.fixed,
-                              objectEvent->z.fixed);
+    obj = ObjectEvent_Create(26, objectEvent->x.fixed, objectEvent->y.fixed,
+                             objectEvent->z.fixed);
     if (obj == 0)
       return;
     obj->groundHeight = objectEvent->groundHeight;
     animation = obj->sprite;
-    Engine_ObjectSetScript(obj, gMercuryLighthouse_RampScript);
+    ObjectEvent_SetScript(obj, gMercuryLighthouse_RampScript);
     obj->motionFlags = 0;
     obj->timer = 0;
     obj->priorityFlags = 2;

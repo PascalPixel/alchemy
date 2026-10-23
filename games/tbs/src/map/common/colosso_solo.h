@@ -95,7 +95,7 @@ void Colosso_ControlCharacterAlone(s32 id) {
   Party_RemoveMember(5);
   Party_AddMember(id);
   gGameState.leaderLocalId = id;
-  Engine_CameraFollowObjectEvent(id, 0);
+  FieldCamera_FollowObjectEvent(id, 0);
   unit = Unit_Get(id);
   unit->hp = unit->hpMax;
   unit->pp = unit->ppMax;
@@ -122,7 +122,7 @@ void Colosso_ControlCharacterAlone(s32 id) {
   if ((u16)t == 0 && unit->pp != 0) {
     unit->ppGauge = 1;
   }
-  Engine_ScriptClearInvalidPackedValues();
+  FieldScript_ClearInvalidPackedValues();
 }
 
 /// A map callback while a friend looks around the stages alone (the visit to
@@ -133,7 +133,7 @@ void Colosso_RaiseTakePlaceOnPsynergy(void) {
   s32 selection = gGameState.leaderLocalId;
 
   if (selection != 0 && (work->psynergy >> 10) == selection &&
-      Engine_GameFlagIsSet(FLAG_PSYNERGY_TARGET) != 0) {
+      GameFlag_Test(FLAG_PSYNERGY_TARGET) != 0) {
     u16 *raised = (u16 *)&work->raisedEvent;
     s32 trigger = 99;
 
@@ -156,7 +156,7 @@ static void Colosso_TakePlaceForMatch(void) {
   s32 *transition;
   s32 flagBase;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   // Choose the nearest matching speaker whose Z is at least the supporter's.
   for (localId = 8; localId <= 66; localId++) {
     struct ObjectEvent *objectEvent = ObjectEvent_GetById(localId);
@@ -182,14 +182,14 @@ static void Colosso_TakePlaceForMatch(void) {
       }
     }
   }
-  Engine_ScriptSetMessage(MsgColossoMatchAboutBeginPleaseTake);
-  Engine_ScriptShowMessage(speakerId, 0);
+  FieldScript_SetMessageId(MsgColossoMatchAboutBeginPleaseTake);
+  FieldScript_ShowMessageAndWait(speakerId, 0);
   transition = &work->transition;
   *transition = MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   work->transitionFrames = 15;
-  Engine_ScriptWait(20);
-  Engine_ScriptCloseScreen();
-  Engine_ScriptWaitForScreen();
+  FieldScript_WaitFrames(20);
+  FieldScript_FinishScreenTransition();
+  FieldScript_WaitTransitionFrames();
   // Each supporter has one saved map cell in the group's byte flags.
   flagBase = COLOSSO_CHEER_SLOT(supporterId);
   FieldGameFlag_SetByte(flagBase + COLOSSO_CHEER_COLUMN,
@@ -205,11 +205,11 @@ static void Colosso_TakePlaceForMatch(void) {
     Engine_GameFlagSet(FLAG_KEEP_MUSIC);
   } else {
     Colosso_ControlCharacterAlone(supporterId);
-    Engine_ScriptOpenScreen();
-    Engine_ScriptWaitForScreen();
+    FieldScript_StartScreenTransition();
+    FieldScript_WaitTransitionFrames();
     *transition = 0;
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// A stage's guide, talking to a friend who looks around alone, asks whether
@@ -230,21 +230,21 @@ void Colosso_AskDoneCheering(s32 id) {
   ObjectEvent_GetById(id);
   slot = gGameState.leaderLocalId;
   objectEvent = ObjectEvent_GetById(slot);
-  Engine_ScriptStart();
+  FieldScript_Start();
   msg = MsgColossoCheering;
-  Engine_ScriptSetMessage(msg);
-  Engine_ScriptOpenMessage(id, 0);
+  FieldScript_SetMessageId(msg);
+  FieldMessage_ShowAtObject(id, 0);
   gFieldWork->choiceMessage = MsgColossoCheeringChoices;
   gFieldWork->choiceWidth = 4;
-  res = Engine_ScriptChooseYesNo(slot, 0);
+  res = FieldScript_AskYesNoWithObjectEventAnimation(slot, 0);
   if (res == 0) {
-    Engine_ScriptSetMessage(msg + 1);
-    Engine_ScriptShowMessage(id, 0);
+    FieldScript_SetMessageId(msg + 1);
+    FieldScript_ShowMessageAndWait(id, 0);
     work->transition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     work->transitionFrames = 15;
-    Engine_ScriptCloseScreen();
-    Engine_ScriptWaitForScreen();
+    FieldScript_FinishScreenTransition();
+    FieldScript_WaitTransitionFrames();
     FieldGameFlag_SetByte(COLOSSO_CHEER_SLOT(slot) + COLOSSO_CHEER_COLUMN,
                           objectEvent->x.fixed >> 20);
     FieldGameFlag_SetByte(COLOSSO_CHEER_SLOT(slot) + COLOSSO_CHEER_ROW,
@@ -255,15 +255,15 @@ void Colosso_AskDoneCheering(s32 id) {
       Engine_GameFlagSet(FLAG_KEEP_MUSIC);
     } else {
       Colosso_ControlCharacterAlone(slot);
-      Engine_ScriptOpenScreen();
-      Engine_ScriptWaitForScreen();
+      FieldScript_StartScreenTransition();
+      FieldScript_WaitTransitionFrames();
       work->transition = MAP_TRANSITION(TRANSITION_FADE, 0);
     }
   } else {
-    Engine_ScriptSetMessage(msg + 2);
-    Engine_ScriptShowMessage(id, 0);
+    FieldScript_SetMessageId(msg + 2);
+    FieldScript_ShowMessageAndWait(id, 0);
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// The guide where the stages start. Once the friends have all gone to cheer
@@ -279,27 +279,27 @@ static void Colosso_AskReadyToRace(s32 localId) {
   objectEvent = ObjectEvent_GetById(localId);
   x = objectEvent->x.part.pixel;
   z = objectEvent->z.part.pixel;
-  Engine_ScriptStart();
+  FieldScript_Start();
 
-  if (GetPartyMemberCount() <= 1) {
-    Engine_ScriptSetMessage(MsgColossoIsaacDidGetGoodLook);
-    if (Engine_ScriptAskYesNo(localId, 0) == 0) {
+  if (Party_CountMembers() <= 1) {
+    FieldScript_SetMessageId(MsgColossoIsaacDidGetGoodLook);
+    if (FieldScript_AskYesNoAndShowResponse(localId, 0) == 0) {
       InitializeObjectEventZero();
       InitializeSelectedObjectEvent(localId);
-      Engine_ObjectEventWalkTo(localId, x, z + 64);
-      Engine_ScriptWait(15);
-      Engine_ObjectEventWalkToAndWait(LOCALID_PARTY_LEADER, x, z);
-      Engine_ObjectEventWalkToAndWait(LOCALID_PARTY_LEADER, x, z + 32);
-      Engine_ScriptCloseScreen();
-      Engine_ScriptWaitForScreen();
+      ObjectMotion_ResetAndSetPositionInMode2(localId, x, z + 64);
+      FieldScript_WaitFrames(15);
+      ObjectMotion_SetPositionAndReset(LOCALID_PARTY_LEADER, x, z);
+      ObjectMotion_SetPositionAndReset(LOCALID_PARTY_LEADER, x, z + 32);
+      FieldScript_FinishScreenTransition();
+      FieldScript_WaitTransitionFrames();
       Engine_ScriptRequestWarp(11);
     }
   } else {
-    Engine_ScriptSetMessage(MsgColossoWaitShouldntDecideWhereBest);
-    Engine_ScriptShowMessage(localId, 0);
+    FieldScript_SetMessageId(MsgColossoWaitShouldntDecideWhereBest);
+    FieldScript_ShowMessageAndWait(localId, 0);
   }
 
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Forgets where Garet, Ivan and Mia cheer from.
@@ -332,12 +332,12 @@ s32 Colosso_GreetAtStage(s32 speaker, s32 warrior) {
   } else {
     message = MsgColossoStageThirdFinalsMatch;
   }
-  Engine_ScriptSetMessage(message);
-  Engine_ScriptShowMessage(speaker, 0);
-  if (Engine_GameFlagIsSet(warrior + COLOSSO_STAGE_CHEERED) != 0) {
+  FieldScript_SetMessageId(message);
+  FieldScript_ShowMessageAndWait(speaker, 0);
+  if (GameFlag_Test(warrior + COLOSSO_STAGE_CHEERED) != 0) {
     return COLOSSO_GUIDE_CHEER;
   }
-  if (Engine_GameFlagIsSet(warrior + COLOSSO_STAGE_DESCRIBED) != 0) {
+  if (GameFlag_Test(warrior + COLOSSO_STAGE_DESCRIBED) != 0) {
     choice = ColossoMenu_Choose(0);
     if (choice == 1) {
       return COLOSSO_GUIDE_CHEER;
@@ -348,9 +348,9 @@ s32 Colosso_GreetAtStage(s32 speaker, s32 warrior) {
     return choice;
   }
   Engine_GameFlagSet(warrior + COLOSSO_STAGE_DESCRIBED);
-  Engine_ScriptSetMessage(MsgColossoWouldYouLikeHearDescription);
-  Engine_ScriptOpenMessage(speaker, 0);
-  return Engine_ScriptChooseYesNo(0, 0);
+  FieldScript_SetMessageId(MsgColossoWouldYouLikeHearDescription);
+  FieldMessage_ShowAtObject(speaker, 0);
+  return FieldScript_AskYesNoWithObjectEventAnimation(0, 0);
 }
 
 /// A stage's guide, after describing the stage, names it again: the copy of
@@ -369,8 +369,8 @@ void Colosso_RepeatStageNumber(s32 speaker, s32 warrior) {
   } else {
     message = MsgColossoStageThirdFinalsMatch;
   }
-  Engine_ScriptSetMessage(message + 1);
-  Engine_ScriptShowMessage(speaker, 0);
+  FieldScript_SetMessageId(message + 1);
+  FieldScript_ShowMessageAndWait(speaker, 0);
 }
 
 /// The guide at a stage, with the reply
@@ -402,27 +402,27 @@ void Colosso_OfferCheeringSpot(s32 mode, s32 guide, s32 stage) {
   guideX = objectEvent->x.part.pixel;
   guideZ = objectEvent->z.part.pixel;
   if (mode != COLOSSO_GUIDE_NOTHING) {
-    memberCount = GetPartyMemberCount();
+    memberCount = Party_CountMembers();
     for (i = 0; i < memberCount; i++) {
       members[i] = gGameState.party[i];
     }
     if (memberCount <= 1) {
-      Engine_ScriptSetMessage(MsgColossoDoYourBest);
+      FieldScript_SetMessageId(MsgColossoDoYourBest);
       Script_ShowMessage(guide, 0);
       return;
     }
     if (GameFlag_IsSet(stage + COLOSSO_STAGE_CHEERED) != 0) {
-      Engine_ScriptSetMessage(MsgColossoUnfortunatelyWeHaveFullHouse);
+      FieldScript_SetMessageId(MsgColossoUnfortunatelyWeHaveFullHouse);
       Script_ShowMessage(guide, 0);
       return;
     }
     if (mode == COLOSSO_GUIDE_CHEER) {
       answer = 0;
-      Engine_TaskWait(6);
+      WaitFrames(6);
     } else {
-      Engine_ScriptSetMessage(MsgColossoWouldLikeFriendCheerFor);
+      FieldScript_SetMessageId(MsgColossoWouldLikeFriendCheerFor);
       Script_OpenMessage(guide, 0);
-      answer = Engine_ScriptChooseYesNo(0, 0);
+      answer = FieldScript_AskYesNoWithObjectEventAnimation(0, 0);
     }
     if (answer == 0) {
       if (answer < memberCount) {
@@ -447,12 +447,12 @@ void Colosso_OfferCheeringSpot(s32 mode, s32 guide, s32 stage) {
       }
     }
   }
-  Engine_ScriptSetMessage(MsgColossoIfKnowWhoWantCheer);
+  FieldScript_SetMessageId(MsgColossoIfKnowWhoWantCheer);
   Script_ShowMessage(guide, 0);
   return;
 L_main:
   MessageArgument_Push(friendId, MESSAGE_ARGUMENT_ACTOR);
-  Engine_ScriptSetMessage(MsgColossoIsaacWillCheerForWay);
+  FieldScript_SetMessageId(MsgColossoIsaacWillCheerForWay);
   Script_ShowMessage(guide, 0);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_SetSpeed(friendId, PIXELS(1), PIXELS(1) / 2);
@@ -464,13 +464,13 @@ L_main:
   frontZ = guideZ + 16;
   ObjectEvent_WalkToAndWait(friendId, guideX, frontZ);
   besideX = guideX + 16;
-  Engine_ObjectEventWalkToAndWait(0, besideX, frontZ);
-  Engine_ObjectEventFaceEachOther(friendId, LOCALID_PARTY_LEADER, 30);
+  ObjectMotion_SetPositionAndReset(0, besideX, frontZ);
+  ObjectEvent_LinkPair(friendId, LOCALID_PARTY_LEADER, 30);
   Engine_ObjectEventSetAnimation(friendId, 3);
   behindZ = frontZ - 32;
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, 3);
+  ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, 3);
   ObjectEvent_WalkToAndWait(guide, guideX, behindZ);
-  Engine_ObjectEventWalkTo(guide, besideX, behindZ);
+  ObjectMotion_ResetAndSetPositionInMode2(guide, besideX, behindZ);
   ObjectEvent_LinkObjectAndSetCallback(0, friendId);
   ObjectEvent_WalkToAndWait(friendId, guideX, behindZ);
   Engine_ObjectEventSetAnimation(guide, 1);

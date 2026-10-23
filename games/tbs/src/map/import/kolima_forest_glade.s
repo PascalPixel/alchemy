@@ -1,35 +1,35 @@
 @ C2: aligned 8-byte veneers: overlay_veneer emits ldr r4, bx r4 and a target word.
 	.set overlay_imports, 1
 	.set import.__divsi3, 1
-	.set import.Engine_TaskWait, 1
+	.set import.WaitFrames, 1
 	.set import.Engine_RandomNext, 1
-	.set import.Engine_MathSin, 1
-	.set import.Engine_MathCos, 1
-	.set import.Engine_HeapAllocate, 1
-	.set import.Engine_HeapRelease, 1
-	.set import.Engine_VramLoad, 1
-	.set import.ObjectEvent_SetMode, 1
-	.set import.Engine_ObjectSetPosition, 1
+	.set import.Trig_Sin, 1
+	.set import.Trig_Cos, 1
+	.set import.AllocHeapSlot, 1
+	.set import.FreeHeapSlot, 1
+	.set import.VramCache_Load, 1
+	.set import.ObjectDispatch_SelectAnimation, 1
+	.set import.Object_SetMoveTarget, 1
 	.set import.Object_WaitForMove, 1
-	.set import.Engine_MapGridCopyCellAttributes, 1
-	.set import.Object_CheckMovementCollision, 1
-	.set import.Engine_ObjectEventSetSpriteFlags, 1
-	.set import.Engine_ItemLoadIcon, 1
-	.set import.Engine_GameFlagIsSet, 1
+	.set import.MapGrid_CopyCellAttributeRect, 1
+	.set import.MapGrid_CheckCollision, 1
+	.set import.ObjectDispatch_SetSingleChildFlags, 1
+	.set import.Ui_PrepareTransferForItem, 1
+	.set import.GameFlag_Test, 1
 	.set import.Engine_GameFlagSet, 1
-	.set import.Engine_ScriptWait, 1
-	.set import.Engine_ScriptStart, 1
-	.set import.Engine_ScriptEnd, 1
-	.set import.Engine_PartyGiveItem, 1
+	.set import.FieldScript_WaitFrames, 1
+	.set import.FieldScript_Start, 1
+	.set import.FieldScript_End, 1
+	.set import.PartyInventory_GiveItem, 1
 	.set import.ObjectEvent_GetById, 1
-	.set import.Engine_ObjectEventSetSpeed, 1
-	.set import.Engine_ObjectEventSetDestinationOffset, 1
-	.set import.Engine_ObjectEventWaitForMove, 1
+	.set import.ObjectMotion_SetSpeedParameters, 1
+	.set import.ObjectMotion_OffsetPositionAndResetMotion, 1
+	.set import.ObjectMotion_CommitCurrentPositionAndActivate, 1
 	.set import.Engine_ObjectEventSetPosition, 1
 	.set import.Engine_ObjectEventSetAnimation, 1
-	.set import.Engine_ColorBufferApplyTarget, 1
-	.set import.Engine_ColorBufferApplySource, 1
-	.set import.Engine_ItemShowFound, 1
+	.set import.PaletteFade_SetTarget, 1
+	.set import.PaletteFade_SetSource, 1
+	.set import.FieldEffect_StartEffectObject22, 1
 	.set import.Map_PlayQueuedMusic, 1
-	.set import.Engine_AudioPlayCue, 1
+	.set import.Sound_PlaySong, 1
 	.include "games/tbs/src/system/overlay.inc"

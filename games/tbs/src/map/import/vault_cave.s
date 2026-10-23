@@ -2,33 +2,33 @@
 	.set overlay_imports, 1
 	.set import.__modsi3, 1
 	.set import.Math_RemainderUnsigned, 1
-	.set import.Engine_TaskWait, 1
+	.set import.WaitFrames, 1
 	.set import.Task_Add, 1
 	.set import.Engine_RandomNext, 1
 	.set import.Vector_AddPolarOffset, 1
 	.set import.IoWriteQueue_Store16, 1
-	.set import.ObjectEvent_SetMode, 1
-	.set import.Engine_ObjectSetScript, 1
-	.set import.Engine_ObjectCreate, 1
-	.set import.Engine_MapGridRedraw, 1
-	.set import.Engine_ObjectSetPosition, 1
+	.set import.ObjectDispatch_SelectAnimation, 1
+	.set import.ObjectDispatch_Initialize, 1
+	.set import.Object_CreateField, 1
+	.set import.MapGrid_CenterOnFollowedPoint, 1
+	.set import.Object_SetMoveTarget, 1
 	.set import.Object_WaitForMove, 1
-	.set import.Engine_MapGridCopyCells, 1
-	.set import.Engine_MapGridCopyCellAttributes, 1
-	.set import.Object_CheckMovementCollision, 1
-	.set import.Engine_ObjectEventSetSpriteFlags, 1
-	.set import.Engine_WorkSetValuesIfNonNegative, 1
-	.set import.Engine_MapGridRenderWaitForValues, 1
-	.set import.Engine_MessageShowCentered, 1
-	.set import.Engine_GameFlagIsSet, 1
+	.set import.MapGrid_CopyMetatileCellsRect, 1
+	.set import.MapGrid_CopyCellAttributeRect, 1
+	.set import.MapGrid_CheckCollision, 1
+	.set import.ObjectDispatch_SetSingleChildFlags, 1
+	.set import.MapGrid_SetScreenShake, 1
+	.set import.MapGrid_WaitForShakeToSettle, 1
+	.set import.FieldMessage_Show, 1
+	.set import.GameFlag_Test, 1
 	.set import.Engine_GameFlagSet, 1
-	.set import.Engine_GameFlagClear, 1
-	.set import.Engine_ScriptWait, 1
-	.set import.Engine_ScriptStart, 1
-	.set import.Engine_ScriptEnd, 1
+	.set import.GameFlag_ClearBit, 1
+	.set import.FieldScript_WaitFrames, 1
+	.set import.FieldScript_Start, 1
+	.set import.FieldScript_End, 1
 	.set import.ObjectEvent_GetById, 1
 	.set import.Engine_ObjectEventSetPosition, 1
 	.set import.Engine_ObjectEventSetAnimation, 1
-	.set import.Engine_ObjectEventSetSpritePriority, 1
-	.set import.Engine_AudioPlayCue, 1
+	.set import.ObjectMotion_SetActionVariant, 1
+	.set import.Sound_PlaySong, 1
 	.include "games/tbs/src/system/overlay.inc"

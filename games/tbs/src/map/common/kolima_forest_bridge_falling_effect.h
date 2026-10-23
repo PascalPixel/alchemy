@@ -54,10 +54,10 @@ void Kolima_UpdateCurseDust(void) {
     break;
   }
   if ((gFrameCount & 7) == 0 &&
-      (objectEvent = Engine_ObjectCreate(SPRITE_SPARKLE, 0, 0, 0)) != 0) {
+      (objectEvent = ObjectEvent_Create(SPRITE_SPARKLE, 0, 0, 0)) != 0) {
     origin = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
     if ((gFrameCount & 63) == 0)
-      Engine_AudioPlayCue(SE_246);
+      Sound_PlaySong(SE_246);
     if (gFallingEffectState != KOLIMA_DUST_CENTRED)
       x = origin[0] +
           (((u32)Engine_RandomNext() * gFallingEffectWidth >> 16) << 8) +
@@ -75,7 +75,7 @@ void Kolima_UpdateCurseDust(void) {
     sprite->flags = 0;
     objectEvent->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
     sprite->image.priority = 1;
-    ObjectEvent_SetMode(objectEvent, 1);
-    Engine_ObjectSetScript(objectEvent, gFallingEffectScript);
+    ObjectDispatch_SelectAnimation(objectEvent, 1);
+    ObjectEvent_SetScript(objectEvent, gFallingEffectScript);
   }
 }

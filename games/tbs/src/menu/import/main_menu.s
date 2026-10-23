@@ -2,15 +2,15 @@
 	.set overlay_imports, 1
 	.set import.__divsi3, 1
 	.set import.__modsi3, 1
-	.set import.Engine_TaskWait, 1
+	.set import.WaitFrames, 1
 	.set import.Task_Add, 1
-	.set import.Engine_TaskRemoveCallback, 1
+	.set import.Task_Remove, 1
 	.set import.AllocEwram, 1
-	.set import.Runtime_BumpFree, 1
+	.set import.Free, 1
 	.set import.Decompress_Type01, 1
 	.set import.Window_LoadGraphics, 1
-	.set import.Engine_ResourceGetTableEntry, 1
-	.set import.Engine_BlendSetDarkenTarget16, 1
+	.set import.Resource_GetTableEntry, 1
+	.set import.ScreenFade_ToBlack, 1
 	.set import.SerialRuntime_Initialize, 1
 	.set import.SerialRuntime_RemoveIrqHandlers, 1
 	.set import.SerialRuntime_StartSend, 1
@@ -38,9 +38,9 @@
 	.set import.Graphics_ExpandVramTilesByColorTable, 1
 	.set import.Link_DrawShiftedTilePair, 1
 	.set import.Unit_Get, 1
-	.set import.Item_Get, 1
+	.set import.Item_GetDirect, 1
 	.set import.GameState_InitializeDefaults, 1
-	.set import.Engine_GameFlagIsSet, 1
+	.set import.GameFlag_Test, 1
 	.set import.Engine_GameFlagSet, 1
 	.set import.GameFlag_ClearBit, 1
 	.set import.Party_AddMember, 1
@@ -48,12 +48,12 @@
 	.set import.Party_StartChildhood, 1
 	.set import.Runtime_GetBuildStampTime, 1
 	.set import.InventorySnapshot_Restore, 1
-	.set import.Engine_ScriptWait, 1
+	.set import.FieldScript_WaitFrames, 1
 	.set import.ObjectEvent_GetById, 1
 	.set import.FieldScript_SetDestination, 1
-	.set import.Engine_ScriptOpenScreen, 1
-	.set import.Engine_ScriptCloseScreen, 1
-	.set import.Engine_ScriptWaitForScreen, 1
+	.set import.FieldScript_StartScreenTransition, 1
+	.set import.FieldScript_FinishScreenTransition, 1
+	.set import.FieldScript_WaitTransitionFrames, 1
 	.set import.FieldYesNo_Ask, 1
-	.set import.Engine_AudioPlayCue, 1
+	.set import.Sound_PlaySong, 1
 	.include "games/tbs/src/system/overlay.inc"

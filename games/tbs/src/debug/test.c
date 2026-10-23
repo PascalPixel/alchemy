@@ -34,10 +34,7 @@
 #include "ability_ids.h"
 #include "map_tables.h"
 #include "songs.h"
-
-void Engine_ScriptSetMessage(s16 message);
-
-void Engine_AudioPlayCue(s32 cue);
+#include "unit/sound/sound.h"
 
 /// The debug item browser covers IDs 0 through 269.
 #define DEBUG_ITEM_COUNT 270
@@ -120,9 +117,9 @@ static void MenuTest_ShowMessageAndWait(s32 messageId) {
   UiWork_FinalizePendingCore();
   Message_OpenWindow(messageId, 5, 0, 0x22);
   while (UiWork_IsComplete() == 0) {
-    Engine_TaskWait(1);
+    WaitFrames(1);
   }
-  Engine_TaskWait(1);
+  WaitFrames(1);
 }
 
 /// Browses sample dialogue with A/Down and Up; B closes the window. Shows the
@@ -156,7 +153,7 @@ static void MenuTest_BrowseMessageRange(s32 messageId, s32 messageCount) {
         break;
       }
       if (gKeysHeld == 0) {
-        Engine_TaskWait(1);
+        WaitFrames(1);
       } else {
         break;
       }
@@ -164,7 +161,7 @@ static void MenuTest_BrowseMessageRange(s32 messageId, s32 messageCount) {
   }
 end:
   UiWork_FinalizePendingCore();
-  Engine_DebugFinalizeWindow(window, 2);
+  Window_Close(window, 2);
 }
 
 // The shop message browsers, run by talking to LOCALID_FELIX and
@@ -213,8 +210,8 @@ static void MenuTest_BrowseWarriorItemShopMessages(void) {
 /// to LOCALID_SECOND_FELIX while facing south, in German, Spanish, French and
 /// Italian.
 static void MenuTest_RunMessageTest(void) {
-  Engine_ScriptSetMessage(MSGNO(MsgBattleAdditionalPsynergyHelp));
-  Engine_ScriptSetMessage(MSGNO(MsgValeComeOnHurry));
+  FieldScript_SetMessageId(MSGNO(MsgBattleAdditionalPsynergyHelp));
+  FieldScript_SetMessageId(MSGNO(MsgValeComeOnHurry));
   FieldScript_ShowMessageAndWait(-1, 0);
 }
 #endif
@@ -652,9 +649,9 @@ static void MenuTest_SelectItem(void) {
   s32 itemCount;
 
   itemCount = DEBUG_ITEM_COUNT;
-  Engine_AudioPlayCue(SE_MENU_CONFIRM);
-  window = Engine_DebugCreateWindow(0, 0, 30, 7, 2);
-  details = Engine_DebugCreateWindow(0, 8, 13, 10, 2);
+  Sound_PlaySong(SE_MENU_CONFIRM);
+  window = Window_Create(0, 0, 30, 7, 2);
+  details = Window_Create(0, 8, 13, 10, 2);
   selectedItemId = 1;
   redraw = 1;
   // Reuse the item palette for both debug windows: sprite palette 0 into BG
@@ -664,23 +661,23 @@ static void MenuTest_SelectItem(void) {
           DMA_ENABLE << 16 | 0x10, REG_DMA3);
   Dma_Set((const void *)&BG_PLTT_COLOR(15, 4), (void *)&BG_PLTT_COLOR(14, 14),
           DMA_ENABLE << 16 | 1, REG_DMA3);
-  Engine_TaskWait(1);
+  WaitFrames(1);
   while (1) {
     if (redraw) {
       redraw = 0;
       selectedItemId = (selectedItemId + DEBUG_ITEM_COUNT) % itemCount;
-      Engine_DebugRedrawWindow(window);
-      Engine_DebugClearWindow(window);
+      WindowSprite_RedrawSavedRect(window);
+      WindowSprite_ClearList(window);
       Text_DrawStringInWindow(gDebugItemPrompt, window, 0, 0);
       Text_DrawNumberAtOffset(selectedItemId, 0, window, 80, 0);
       if (PartyInventory_HasSpace()) {
         Text_DrawStringInWindow(gDebugItemCapacityLabel, window, 0, 32);
         definitionId = selectedItemId & 0x1ff;
-        Engine_DebugGetItem(definitionId);
+        Item_GetDirect(definitionId);
         Text_DrawMessageAsTiles(definitionId + MsgItemName, window, 120, 0);
         Text_DrawMessage(definitionId + MsgItemPlainName, window, 0, 16);
-        Engine_DebugRedrawWindow(details);
-        Engine_DebugDrawItemDetails(details, selectedItemId);
+        WindowSprite_RedrawSavedRect(details);
+        ItemMenu_DrawItemDetails(details, selectedItemId);
       } else {
         Text_DrawStringInWindow(gDebugItemFullLabel, window, 0, 32);
       }
@@ -688,51 +685,51 @@ static void MenuTest_SelectItem(void) {
     // These are independent tests: a single frame can add and move the cursor.
     if (gKeysPressed & KEY_A) {
       if (PartyInventory_Add(selectedItemId) == -1) {
-        Engine_AudioPlayCue(SE_MENU_CANCEL);
+        Sound_PlaySong(SE_MENU_CANCEL);
         break;
       }
-      Engine_AudioPlayCue(SE_175);
+      Sound_PlaySong(SE_175);
     }
     if (gKeysPressed & KEY_B) {
-      Engine_AudioPlayCue(SE_MENU_CANCEL);
+      Sound_PlaySong(SE_MENU_CANCEL);
       break;
     }
     if (gKeysRepeat & KEY_UP) {
       selectedItemId--;
       redraw = 1;
-      Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySong(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_DOWN) {
       selectedItemId++;
       redraw = 1;
-      Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySong(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_RIGHT) {
       selectedItemId += DEBUG_ITEM_ROW_STEP;
       redraw = 1;
-      Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySong(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_LEFT) {
       selectedItemId -= DEBUG_ITEM_ROW_STEP;
       redraw = 1;
-      Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySong(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_R) {
       selectedItemId += DEBUG_ITEM_PAGE_STEP;
       redraw = 1;
-      Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySong(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_L) {
       selectedItemId -= DEBUG_ITEM_PAGE_STEP;
       redraw = 1;
-      Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySong(SE_MENU_CURSOR_MOVE);
     }
-    Engine_TaskWait(1);
+    WaitFrames(1);
   }
-  Engine_DebugRedrawWindow(window);
-  Engine_TaskWait(1);
-  Engine_DebugFinalizeWindow(window, 1);
-  Engine_DebugFinalizeWindow(details, 1);
+  WindowSprite_RedrawSavedRect(window);
+  WaitFrames(1);
+  Window_Close(window, 1);
+  Window_Close(details, 1);
 }
 
 UNUSED static void MenuTest_OpenItemBrowser(void) { MenuTest_SelectItem(); }

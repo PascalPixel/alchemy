@@ -149,12 +149,12 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
 
 /// Lunpa: Catch on the Nut floating over the town gives it to the party.
 static void EventScript_CatchFloatingNut(void) {
-  Engine_ScriptStart();
+  FieldScript_Start();
   Engine_ObjectEventSetPosition(LOCALID_FLOATING_NUT, 0, 0);
   Engine_GameFlagSet(FLAG_LUNPA_NUT_CAUGHT);
-  Engine_ItemShowFound(ITEM_NUT, 3);
-  Engine_PartyGiveItem(ITEM_NUT, 0);
-  Engine_ScriptEnd();
+  FieldEffect_StartEffectObject22(ITEM_NUT, 3);
+  PartyInventory_GiveItem(ITEM_NUT, 0);
+  FieldScript_End();
 }
 
 /// Restores the metatile behaviors of the frozen pillar's three cells,
@@ -174,7 +174,7 @@ static void EventScript_FreezeHiddenPuddle(void) {
   ObjectEvent_Get(LOCALID_PARTY_LEADER);
   Lunpa_ApplyFrozenPuddleCollision();
   if (pillar != NULL) {
-    Engine_ObjectEventSetSpriteFlags(pillar, 0);
+    ObjectEvent_SetSpriteFlags(pillar, 0);
     pillar->motionFlags = OBJ_EVENT_FALLS;
     pillar->priorityFlags = OBJ_EVENT_PRIORITY_AUTOMATIC;
   }
@@ -233,8 +233,7 @@ static void EventScript_RevealSecrets(void) {
     Lunpa_DrawHiddenPassageFrame(41, 49);
   } else {
     ObjectEvent_SetPosition(LOCALID_SWITCH_SPARKLE, PIXELS(56), PIXELS(268));
-    Engine_ObjectEventSetSpriteFlags(ObjectEvent_Get(LOCALID_SWITCH_SPARKLE),
-                                     0);
+    ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_SWITCH_SPARKLE), 0);
     objectEvent = ObjectEvent_Get(LOCALID_SWITCH_SPARKLE);
     if (objectEvent != NULL) {
       objectEvent->motionFlags = OBJ_EVENT_FLOATS_HIGH;
@@ -265,18 +264,18 @@ static void EventScript_HideSecrets(void) {
   Engine_ObjectEventSetAnimation(LOCALID_HIDDEN_PUDDLE, ANIMATION_STAND);
   puddle = ObjectEvent_Get(LOCALID_HIDDEN_PUDDLE);
   puddle->update = NULL;
-  Engine_ObjectSetPartPalettes(ObjectEvent_Get(LOCALID_HIDDEN_PUDDLE), 0);
-  Engine_TaskRemoveCallback(Lunpa_UpdateIcePillarDrawOrder);
+  ObjectEvent_SetColorMode(ObjectEvent_Get(LOCALID_HIDDEN_PUDDLE), 0);
+  Task_Remove(Lunpa_UpdateIcePillarDrawOrder);
   GameFlag_Set(FLAG_MAP_TEMP_01);
 }
 
 /// Searching the well (TRIGGER_WELL), in Lunpa or at the Lunpa Fortress Gates:
 /// frogs croak in it.
 static void EventScript_SearchWell(void) {
-  Engine_ScriptStart();
-  Engine_MessageShowCentered(MsgFieldPeeredWell, 1);
-  Engine_MessageShowCentered(MsgLunpaWellFrogs, 1);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  FieldMessage_Show(MsgFieldPeeredWell, 1);
+  FieldMessage_Show(MsgLunpaWellFrogs, 1);
+  FieldScript_End();
 }
 
 /// The map events of the Lunpa Fortress Gates, or the town's before and after
@@ -285,11 +284,11 @@ const struct MapEvent *Map_GetEvents(void) {
   s32 mapId = gGameState.mapId;
 
   if (mapId == (s32)&MapId_LunpaFortressGates) {
-    Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP);
+    GameFlag_Test(FLAG_DODONPA_LOCKED_UP);
     return gGateEvents;
   }
   if (mapId == (s32)&MapId_Lunpa &&
-      Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0) {
+      GameFlag_Test(FLAG_DODONPA_LOCKED_UP) != 0) {
     return gLunpaReopenedEvents;
   }
   return gLunpaSealedEvents;
@@ -298,35 +297,36 @@ const struct MapEvent *Map_GetEvents(void) {
 /// Lunpa, before Donpa's judgment: the west guard on the road in asks whether
 /// the party wants to enter Lunpa, and turns them away either way.
 static void EventScript_TalkToWestGuard(void) {
-  Engine_ScriptStart();
-  Engine_ObjectEventShowEmote(LOCALID_WEST_GUARD, EMOTE_IN_FRONT | EMOTE_WINCE,
-                              60);
-  Engine_ScriptSetMessage(MsgLunpaWestGuardAsksAboutEntering);
-  Engine_ScriptAskYesNo(LOCALID_WEST_GUARD, 0);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  FieldEffect_SpawnLinked(LOCALID_WEST_GUARD, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  FieldScript_SetMessageId(MsgLunpaWestGuardAsksAboutEntering);
+  FieldScript_AskYesNoAndShowResponse(LOCALID_WEST_GUARD, 0);
+  FieldScript_End();
 }
 
 /// Lunpa, before Donpa's judgment: the east guard on the road in wants
 /// Dodonpa's authorization, or, once the guards suspect Kalay, asks whether
 /// the party came from there and whether they are here to save Hammet.
 static void EventScript_TalkToEastGuard(void) {
-  Engine_ScriptStart();
-  if (Engine_GameFlagIsSet(FLAG_LUNPA_GUARDS_SUSPECT_KALAY) == 0) {
-    Engine_ScriptSetMessage(MsgLunpaEastGuardDemandsAuthorization);
-    Engine_ScriptShowMessage(LOCALID_EAST_GUARD, 0);
+  FieldScript_Start();
+  if (GameFlag_Test(FLAG_LUNPA_GUARDS_SUSPECT_KALAY) == 0) {
+    FieldScript_SetMessageId(MsgLunpaEastGuardDemandsAuthorization);
+    FieldScript_ShowMessageAndWait(LOCALID_EAST_GUARD, 0);
   } else {
-    Engine_ScriptSetMessage(MsgLunpaEastGuardAsksIfFrom);
-    Engine_ScriptOpenMessage(LOCALID_EAST_GUARD, 0);
-    if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
+    FieldScript_SetMessageId(MsgLunpaEastGuardAsksIfFrom);
+    FieldMessage_ShowAtObject(LOCALID_EAST_GUARD, 0);
+    if (FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER, 0) ==
+        0) {
       gFieldWork->message++;
-      Engine_ScriptOpenMessage(LOCALID_EAST_GUARD, 0);
-      if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 1) {
+      FieldMessage_ShowAtObject(LOCALID_EAST_GUARD, 0);
+      if (FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER,
+                                                       0) == 1) {
         gFieldWork->message++;
       }
     }
-    Engine_ScriptShowMessage(LOCALID_EAST_GUARD, 0);
+    FieldScript_ShowMessageAndWait(LOCALID_EAST_GUARD, 0);
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Lunpa: Mind Read on the east guard. He fears Dodonpa's blame, trusts the
@@ -336,65 +336,65 @@ static void EventScript_TalkToEastGuard(void) {
 static void EventScript_ReadEastGuardsThoughts(void) {
   s32 thoughts;
 
-  if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) == 0) {
-    thoughts = Engine_GameFlagIsSet(FLAG_LUNPA_GUARDS_SUSPECT_KALAY);
+  if (GameFlag_Test(FLAG_DODONPA_LOCKED_UP) == 0) {
+    thoughts = GameFlag_Test(FLAG_LUNPA_GUARDS_SUSPECT_KALAY);
     if (thoughts == 0) {
       thoughts = MsgLunpaEastGuardFearsBlame;
     } else {
       thoughts = MsgLunpaEastGuardTrustsCaveGate;
     }
-    Engine_ScriptSetMessage(thoughts);
-    Engine_ScriptShowMessage(LOCALID_EAST_GUARD, 0);
+    FieldScript_SetMessageId(thoughts);
+    FieldScript_ShowMessageAndWait(LOCALID_EAST_GUARD, 0);
   } else {
-    Engine_ScriptSetMessage(MsgLunpaEastGuardThinksMerchantHarmless);
-    Engine_ScriptShowMessage(LOCALID_EAST_GUARD, 0);
+    FieldScript_SetMessageId(MsgLunpaEastGuardThinksMerchantHarmless);
+    FieldScript_ShowMessageAndWait(LOCALID_EAST_GUARD, 0);
   }
 }
 
 /// Lunpa, before Donpa's judgment: a man asks how long the party has been
 /// in Lunpa.
 static void EventScript_AskAboutLengthOfStay(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgLunpaVillagerAAsksHowLong);
-  Engine_ScriptAskYesNo(LOCALID_MAN_ASKING_HOW_LONG_IN_LUNPA, 0);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgLunpaVillagerAAsksHowLong);
+  FieldScript_AskYesNoAndShowResponse(LOCALID_MAN_ASKING_HOW_LONG_IN_LUNPA, 0);
+  FieldScript_End();
 }
 
 /// Lunpa, before Donpa's judgment: a stout man asks whether Dodonpa
 /// kidnapped Hammet for ransom.
 static void EventScript_AskAboutHammetsKidnapping(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgLunpaVillagerCAsksAboutKidnapping);
-  Engine_ScriptAskYesNo(LOCALID_MAN_ON_HAMMETS_KIDNAPPING, 0);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgLunpaVillagerCAsksAboutKidnapping);
+  FieldScript_AskYesNoAndShowResponse(LOCALID_MAN_ON_HAMMETS_KIDNAPPING, 0);
+  FieldScript_End();
 }
 
 /// Lunpa, before Donpa's judgment: a small boy asks whether the party wants
 /// to see Donpa, who is in the fortress.
 static void EventScript_AskAboutSeeingDonpa(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgLunpaVillagerGAsksAboutDonpa);
-  Engine_ScriptAskYesNo(LOCALID_BOY_ASKING_TO_SEE_DONPA, 0);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgLunpaVillagerGAsksAboutDonpa);
+  FieldScript_AskYesNoAndShowResponse(LOCALID_BOY_ASKING_TO_SEE_DONPA, 0);
+  FieldScript_End();
 }
 
 /// Lunpa, after Donpa's judgment: a woman shivers and complains that it
 /// has become colder.
 static void EventScript_ComplainAboutCold(void) {
-  Engine_ScriptStart();
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_WOMAN_WITH_NO_FREEDOM, 3);
-  Engine_ScriptSetMessage(MsgLunpaVillagerBShivers);
-  Engine_ScriptShowMessage(LOCALID_WOMAN_WITH_NO_FREEDOM, 0);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_WOMAN_WITH_NO_FREEDOM, 3);
+  FieldScript_SetMessageId(MsgLunpaVillagerBShivers);
+  FieldScript_ShowMessageAndWait(LOCALID_WOMAN_WITH_NO_FREEDOM, 0);
+  FieldScript_End();
 }
 
 /// Lunpa, after Donpa's judgment: a woman offers to explain the commotion
 /// at the fortress.
 static void EventScript_AskAboutFortressCommotion(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgLunpaVillagerDAsksAboutCommotion);
-  Engine_ScriptAskYesNo(LOCALID_WOMAN_SAYING_DONPA_IS_TOO_OLD, 0);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgLunpaVillagerDAsksAboutCommotion);
+  FieldScript_AskYesNoAndShowResponse(LOCALID_WOMAN_SAYING_DONPA_IS_TOO_OLD, 0);
+  FieldScript_End();
 }
 
 /// Lunpa Fortress Gates: the left guard hears someone while the party is
@@ -404,21 +404,22 @@ static void EventScript_TalkToLeftGuard(void) {
   s32 recognitionMessageBase;
 
   if (gGameState.cloaked != 0) {
-    Engine_ScriptSetMessage(MsgLunpaLeftGuardHearsSomeone);
-  } else if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0 &&
-             Engine_GameFlagIsSet(FLAG_LUNPA_CAVE_REUNION_SEEN) == 0) {
-    Engine_ObjectEventShowEmote(LOCALID_LEFT_GUARD,
-                                EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+    FieldScript_SetMessageId(MsgLunpaLeftGuardHearsSomeone);
+  } else if (GameFlag_Test(FLAG_DODONPA_LOCKED_UP) != 0 &&
+             GameFlag_Test(FLAG_LUNPA_CAVE_REUNION_SEEN) == 0) {
+    FieldEffect_SpawnLinked(LOCALID_LEFT_GUARD, EMOTE_IN_FRONT | EMOTE_QUESTION,
+                            60);
     recognitionMessageBase = MsgLunpaLeftGuardRecognizesHammet;
-    Engine_ScriptSetMessage(recognitionMessageBase + RECOGNITION_SEEN_THAT_MAN);
-    Engine_ScriptShowMessage(LOCALID_LEFT_GUARD, 0);
-    Engine_ObjectEventStartRepeatedMotion(LOCALID_LEFT_GUARD, 1);
-    Engine_ScriptSetMessage(recognitionMessageBase + RECOGNITION_IMPOSSIBLE);
+    FieldScript_SetMessageId(recognitionMessageBase +
+                             RECOGNITION_SEEN_THAT_MAN);
+    FieldScript_ShowMessageAndWait(LOCALID_LEFT_GUARD, 0);
+    ObjectMotion_SetVariantCallback(LOCALID_LEFT_GUARD, 1);
+    FieldScript_SetMessageId(recognitionMessageBase + RECOGNITION_IMPOSSIBLE);
     Engine_GameFlagSet(FLAG_LUNPA_GATE_GUARD_SAW_HAMMET);
   } else {
-    Engine_ScriptSetMessage(MsgLunpaLeftGuardResentsDodonpa);
+    FieldScript_SetMessageId(MsgLunpaLeftGuardResentsDodonpa);
   }
-  Engine_ScriptShowMessage(LOCALID_LEFT_GUARD, 0);
+  FieldScript_ShowMessageAndWait(LOCALID_LEFT_GUARD, 0);
 }
 
 /// Lunpa Fortress Gates: the right guard boasts, finds the place creepy while
@@ -426,13 +427,13 @@ static void EventScript_TalkToLeftGuard(void) {
 /// from Kalay got in.
 static void EventScript_TalkToRightGuard(void) {
   if (gGameState.cloaked != 0) {
-    Engine_ScriptSetMessage(MsgLunpaRightGuardFeelsCreepy);
-  } else if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0) {
-    Engine_ScriptSetMessage(MsgLunpaRightGuardWondersHow);
+    FieldScript_SetMessageId(MsgLunpaRightGuardFeelsCreepy);
+  } else if (GameFlag_Test(FLAG_DODONPA_LOCKED_UP) != 0) {
+    FieldScript_SetMessageId(MsgLunpaRightGuardWondersHow);
   } else {
-    Engine_ScriptSetMessage(MsgLunpaRightGuardBoasts);
+    FieldScript_SetMessageId(MsgLunpaRightGuardBoasts);
   }
-  Engine_ScriptShowMessage(LOCALID_RIGHT_GUARD, 0);
+  FieldScript_ShowMessageAndWait(LOCALID_RIGHT_GUARD, 0);
 }
 
 /// Lunpa Fortress Gates: Mind Read on the left guard. After Donpa's judgment
@@ -447,32 +448,32 @@ static void EventScript_ReadLeftGuardsThoughts(void) {
     recognizedHammet = GameFlag_IsSet(FLAG_LUNPA_GATE_GUARD_SAW_HAMMET);
     if (recognizedHammet == 0) {
       ((struct FieldWork *)gFieldWork)->psynergy = recognizedHammet;
-      Engine_PsynergyCancel();
+      FieldEffect_FinishWaveAndReleaseHeapBlock();
       ObjectEvent_FaceObjectEvent(LOCALID_LEFT_GUARD, LOCALID_PARTY_LEADER, 0);
       ObjectEvent_ShowEmote(LOCALID_LEFT_GUARD, EMOTE_IN_FRONT | EMOTE_QUESTION,
                             60);
-      Engine_ScriptSetMessage(MsgLunpaLeftGuardRecognizesHammet);
+      FieldScript_SetMessageId(MsgLunpaLeftGuardRecognizesHammet);
       GameFlag_Set(FLAG_LUNPA_GATE_GUARD_SAW_HAMMET);
     } else {
-      Engine_ScriptSetMessage(MsgLunpaLeftGuardGlimpsedMerchant);
+      FieldScript_SetMessageId(MsgLunpaLeftGuardGlimpsedMerchant);
     }
     Script_ShowMessage(LOCALID_LEFT_GUARD, 0);
-    Engine_ObjectEventStartRepeatedMotion(LOCALID_LEFT_GUARD, 1);
-    Engine_ScriptSetMessage(MsgLunpaLeftGuardDismissesThought);
+    ObjectMotion_SetVariantCallback(LOCALID_LEFT_GUARD, 1);
+    FieldScript_SetMessageId(MsgLunpaLeftGuardDismissesThought);
   } else {
-    Engine_ScriptSetMessage(MsgLunpaLeftGuardThoughts);
+    FieldScript_SetMessageId(MsgLunpaLeftGuardThoughts);
   }
   Script_ShowMessage(LOCALID_LEFT_GUARD, 0);
 }
 
 /// Lunpa Fortress Gates: Mind Read on the right guard.
 static void EventScript_ReadRightGuardsThoughts(void) {
-  if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0) {
-    Engine_ScriptSetMessage(MsgLunpaRightGuardReopenedThoughts);
+  if (GameFlag_Test(FLAG_DODONPA_LOCKED_UP) != 0) {
+    FieldScript_SetMessageId(MsgLunpaRightGuardReopenedThoughts);
   } else {
-    Engine_ScriptSetMessage(MsgLunpaYoudShadowSneak);
+    FieldScript_SetMessageId(MsgLunpaYoudShadowSneak);
   }
-  Engine_ScriptShowMessage(LOCALID_RIGHT_GUARD, 0);
+  FieldScript_ShowMessageAndWait(LOCALID_RIGHT_GUARD, 0);
 }
 
 /// Every frame at the Lunpa Fortress Gates after Donpa's judgment: stepping up
@@ -490,18 +491,18 @@ static void Lunpa_WatchForFortressApproach(void) {
 /// Garet reminds the leader they cannot go into the fortress, and the leader
 /// steps back.
 static void EventScript_GaretTurnsLeaderBack(void) {
-  Engine_ScriptStart();
+  FieldScript_Start();
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
-  Engine_ScriptSetMessage(MsgLunpaGaretRefusesToReturn);
+  FieldScript_SetMessageId(MsgLunpaGaretRefusesToReturn);
   Script_ShowMessage(GARET, 0);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE,
                         100);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
   ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0, 12);
-  Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
   GameFlag_Clear(FLAG_MAP_TEMP_43);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Lunpa, walking north into a doorway: the door opens and the leader goes
@@ -513,7 +514,7 @@ static void EventScript_EnterDoor(void) {
   s32 doorIndex;
 
   work = (struct FieldWork *)gFieldWork;
-  Engine_ScriptStart();
+  FieldScript_Start();
   // Freeze placed object events before opening the selected door and crossing
   // it.
   for (localId = LOCALID_FIRST_PLACED; localId <= LOCALID_LAST_SLOT;
@@ -532,12 +533,12 @@ static void EventScript_EnterDoor(void) {
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
   if (doorIndex != DOOR_TEMPLE) {
     ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 2, -8);
-    Engine_ScriptWait(10);
+    FieldScript_WaitFrames(10);
   }
   Engine_ScriptRequestWarp(work->coordEvent);
-  Engine_ScriptCloseScreen();
-  Engine_ScriptWaitForScreen();
-  Engine_ScriptEnd();
+  FieldScript_FinishScreenTransition();
+  FieldScript_WaitTransitionFrames();
+  FieldScript_End();
 }
 
 /// Lunpa, TRIGGER_HIDDEN_PASSAGE: the hidden passage leads to the jail once
@@ -549,7 +550,7 @@ static void EventScript_EnterHiddenPassage(void) {
       ObjectEvent_Get(LOCALID_PARTY_LEADER)->motionFlags = 0;
       Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
       ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 2, -8);
-      Engine_ScriptWait(13);
+      FieldScript_WaitFrames(13);
       Engine_ScriptRequestWarp(LUNPA_TO_VAULT_JAIL);
     }
   }
@@ -559,29 +560,29 @@ static void EventScript_EnterHiddenPassage(void) {
 /// the top of the steps, into Lunpa Fortress.
 static void EventScript_EnterFortress(void) {
   GameFlag_Set(FLAG_MAP_TEMP_42);
-  Engine_ScriptStart();
+  FieldScript_Start();
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
   ObjectEvent_Get(LOCALID_PARTY_LEADER)->motionFlags = 0;
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
   ObjectEvent_WalkBy(LOCALID_PARTY_LEADER, 0, -8);
   Script_PlaySong(SE_DOOR_OPEN);
   MapGrid_CopyCells(53, 4, 2, 2, 41, 4);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   MapGrid_CopyCells(53, 6, 2, 2, 41, 4);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   Engine_ScriptRequestWarp(LUNPA_FORTRESS_GATES_TO_LUNPA_FORTRESS_GROUND_FLOOR);
-  Engine_ScriptCloseScreen();
-  Engine_ScriptWaitForScreen();
-  Engine_ScriptEnd();
+  FieldScript_FinishScreenTransition();
+  FieldScript_WaitTransitionFrames();
+  FieldScript_End();
 }
 
-static void UNUSED Lunpa_CheckAhead(void) { Engine_LeaderCheckAhead(); }
+static void UNUSED Lunpa_CheckAhead(void) { Field_TryJumpForward(); }
 
 /// Unused: plays the treasure fanfare for Reveal uncovering something, until
 /// FLAG_MAP_TEMP_01 is set; nothing calls it.
 UNUSED static void Lunpa_PlayRevealCue(void) {
-  if (Engine_GameFlagIsSet(FLAG_MAP_TEMP_01) == 0) {
-    Engine_AudioPlayCue(MUS_TREASURE_FOUND);
+  if (GameFlag_Test(FLAG_MAP_TEMP_01) == 0) {
+    Sound_PlaySong(MUS_TREASURE_FOUND);
   }
 }
 
@@ -597,17 +598,17 @@ static void EventScript_PressHiddenSwitch(void) {
   // Open the passage over five map frames, then remember its final state.
   ObjectEvent_SetPosition(LOCALID_SWITCH_SPARKLE, 0, 0);
   Script_PlaySong(SE_HIDDEN_PASSAGE_OPEN);
-  Engine_TaskWait(1);
+  WaitFrames(1);
   Lunpa_DrawHiddenPassageFrame(32, 45);
-  Engine_TaskWait(10);
+  WaitFrames(10);
   Lunpa_DrawHiddenPassageFrame(41, 45);
-  Engine_TaskWait(10);
+  WaitFrames(10);
   Lunpa_DrawHiddenPassageFrame(50, 45);
-  Engine_TaskWait(10);
+  WaitFrames(10);
   Lunpa_DrawHiddenPassageFrame(32, 49);
-  Engine_TaskWait(10);
+  WaitFrames(10);
   Lunpa_DrawHiddenPassageFrame(41, 49);
-  Engine_TaskWait(10);
+  WaitFrames(10);
   GameFlag_Set(FLAG_MAP_TEMP_02);
 }
 
@@ -622,29 +623,29 @@ static inline void Lunpa_CopyGatewayCollision(s32 sourceColumn, s32 sourceRow) {
 /// guards step in front of the fortress door and the gateway closes.
 static void EventScript_GuardsBlockGate(void) {
   if (gGameState.cloaked == 0) {
-    Engine_ScriptStart();
+    FieldScript_Start();
     ObjectEvent_ShowEmote(LOCALID_LEFT_GUARD,
                           EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 2);
     ObjectEvent_ShowEmote(LOCALID_RIGHT_GUARD,
                           EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 15);
-    Engine_ScriptWait(30);
+    FieldScript_WaitFrames(30);
     ObjectEvent_WalkTo(LOCALID_LEFT_GUARD, 152, 168);
     ObjectEvent_WalkTo(LOCALID_RIGHT_GUARD, 168, 168);
-    Engine_ObjectEventWaitForMove(LOCALID_LEFT_GUARD);
-    Engine_ObjectEventWaitForMove(LOCALID_RIGHT_GUARD);
-    Engine_ObjectEventStop(LOCALID_LEFT_GUARD);
+    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_LEFT_GUARD);
+    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_RIGHT_GUARD);
+    ObjectMotion_EnableActionAndResetMotion(LOCALID_LEFT_GUARD);
     Engine_ObjectEventSetAnimation(LOCALID_LEFT_GUARD, 0);
     ObjectEvent_FaceDirection(LOCALID_LEFT_GUARD,
                               FACING_SOUTHEAST + FACING_STEP, 0);
-    Engine_ObjectEventStop(LOCALID_RIGHT_GUARD);
+    ObjectMotion_EnableActionAndResetMotion(LOCALID_RIGHT_GUARD);
     Engine_ObjectEventSetAnimation(LOCALID_RIGHT_GUARD, 0);
     ObjectEvent_FaceDirection(LOCALID_RIGHT_GUARD, FACING_SOUTH + FACING_STEP,
                               0);
-    Engine_ScriptSetMessage(MsgLunpaGuardsWarnPartyAway);
+    FieldScript_SetMessageId(MsgLunpaGuardsWarnPartyAway);
     Script_ShowMessage(LOCALID_LEFT_GUARD, 0);
     GameFlag_Set(FLAG_MAP_TEMP_40);
     Lunpa_CopyGatewayCollision(6, 11);
-    Engine_ScriptEnd();
+    FieldScript_End();
   }
 }
 
@@ -666,55 +667,55 @@ static void EventScript_GuardsCatchParty(void) {
     return;
   }
   GameFlag_Set(FLAG_MAP_TEMP_44);
-  Engine_ScriptStart();
+  FieldScript_Start();
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   ObjectEvent_FaceObjectEvent(LOCALID_LEFT_GUARD, LOCALID_PARTY_LEADER, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_RIGHT_GUARD, LOCALID_PARTY_LEADER, 0);
-  Engine_ObjectEventStartRepeatedMotion(LOCALID_LEFT_GUARD, 1);
-  Engine_ObjectEventStartRepeatedMotion(LOCALID_RIGHT_GUARD, 1);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVariantCallback(LOCALID_LEFT_GUARD, 1);
+  ObjectMotion_SetVariantCallback(LOCALID_RIGHT_GUARD, 1);
+  FieldScript_WaitFrames(20);
   ObjectEvent_ShowEmote(LOCALID_LEFT_GUARD, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   // Warn the party before escorting everyone down the two sections of the gate.
   warningMessageBase = MsgLunpaGuardsCatchParty;
-  Engine_ScriptSetMessage(warningMessageBase + CATCH_LEFT_GUARD_CHALLENGES);
+  FieldScript_SetMessageId(warningMessageBase + CATCH_LEFT_GUARD_CHALLENGES);
   Script_ShowMessage(LOCALID_LEFT_GUARD, 0);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(2), PIXELS(1));
   ObjectEvent_SetSpeed(LOCALID_LEFT_GUARD, PIXELS(2), PIXELS(1));
   ObjectEvent_SetSpeed(LOCALID_RIGHT_GUARD, PIXELS(2), PIXELS(1));
   Engine_ObjectEventSetAnimation(LOCALID_RIGHT_GUARD, ANIMATION_SHAKE_HEAD);
-  Engine_ScriptWait(35);
-  Engine_ScriptSetMessage(warningMessageBase + CATCH_RIGHT_GUARD_WONDERS);
+  FieldScript_WaitFrames(35);
+  FieldScript_SetMessageId(warningMessageBase + CATCH_RIGHT_GUARD_WONDERS);
   Script_ShowMessage(LOCALID_RIGHT_GUARD, 0);
   ObjectEvent_ShowEmote(LOCALID_LEFT_GUARD, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN,
                         30);
-  Engine_ScriptSetMessage(warningMessageBase + CATCH_LEFT_GUARD_REFUSES_ENTRY);
+  FieldScript_SetMessageId(warningMessageBase + CATCH_LEFT_GUARD_REFUSES_ENTRY);
   Script_ShowMessage(LOCALID_LEFT_GUARD, 0);
   Engine_ObjectEventSetAnimation(LOCALID_RIGHT_GUARD, ANIMATION_NOD);
-  Engine_ScriptWait(25);
-  Engine_ScriptSetMessage(warningMessageBase +
-                          CATCH_RIGHT_GUARD_SENDS_PARTY_OFF);
+  FieldScript_WaitFrames(25);
+  FieldScript_SetMessageId(warningMessageBase +
+                           CATCH_RIGHT_GUARD_SENDS_PARTY_OFF);
   Script_ShowMessage(LOCALID_RIGHT_GUARD, 0);
   ObjectEvent_WalkTo(LOCALID_LEFT_GUARD, leader->x.part.pixel - 1,
                      leader->z.part.pixel);
-  Engine_ObjectEventWaitForMove(LOCALID_LEFT_GUARD);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_LEFT_GUARD);
   // Bring the party and both guards together at the first landing.
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 160, 216);
   ObjectEvent_WalkTo(LOCALID_LEFT_GUARD, 152, 200);
   ObjectEvent_WalkTo(LOCALID_RIGHT_GUARD, 168, 200);
-  Engine_ObjectEventWaitForMove(LOCALID_LEFT_GUARD);
-  Engine_ObjectEventWaitForMove(LOCALID_RIGHT_GUARD);
-  Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_LEFT_GUARD);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_RIGHT_GUARD);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
   ObjectEvent_FaceObjectEvent(LOCALID_LEFT_GUARD, LOCALID_PARTY_LEADER, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_RIGHT_GUARD, LOCALID_PARTY_LEADER, 0);
-  Engine_ScriptWait(12);
+  FieldScript_WaitFrames(12);
   // Continue to the foot of the gate before enabling the watcher again.
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 160, 272);
   ObjectEvent_WalkTo(LOCALID_LEFT_GUARD, 152, 256);
   ObjectEvent_WalkTo(LOCALID_RIGHT_GUARD, 168, 256);
-  Engine_ObjectEventWaitForMove(LOCALID_LEFT_GUARD);
-  Engine_ObjectEventWaitForMove(LOCALID_RIGHT_GUARD);
-  Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
-  Engine_ScriptEnd();
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_LEFT_GUARD);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_RIGHT_GUARD);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
+  FieldScript_End();
   FieldScheduler_AddCallback(Lunpa_WatchForUncloakedParty, TASK_PRIORITY_MAP);
 }
 
@@ -731,12 +732,12 @@ static void EventScript_CloakFades(void) {
 #if TBS_PATCH_1
   work = (struct FieldWork *)gFieldWork;
 #endif
-  Engine_GameFlagClear(FLAG_MAP_TEMP_41);
-  Engine_GameFlagClear(FLAG_MAP_TEMP_40);
+  GameFlag_ClearBit(FLAG_MAP_TEMP_41);
+  GameFlag_ClearBit(FLAG_MAP_TEMP_40);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader->x.fixed > PIXELS(104) && leader->x.fixed < PIXELS(240) &&
       leader->z.fixed > PIXELS(160) && leader->z.fixed < PIXELS(248)) {
-    Engine_TaskRemoveCallback(Lunpa_WatchForUncloakedParty);
+    Task_Remove(Lunpa_WatchForUncloakedParty);
 #if TBS_PATCH_1
     work->raisedEvent = TRIGGER_PARTY_SPOTTED;
 #else
@@ -744,7 +745,7 @@ static void EventScript_CloakFades(void) {
 #endif
   }
   Lunpa_ReopenGateway();
-  Engine_GameFlagClear(FLAG_MAP_TEMP_44);
+  GameFlag_ClearBit(FLAG_MAP_TEMP_44);
 }
 
 /// Every frame at the Lunpa Fortress Gates: an uncloaked leader in front of
@@ -758,7 +759,7 @@ static void Lunpa_WatchForUncloakedParty(void) {
   if (gGameState.cloaked == 0 &&
       (u32)(leader->x.fixed - PIXELS(144)) <= PIXELS(32) &&
       leader->z.fixed >= PIXELS(168) && leader->z.fixed < PIXELS(176)) {
-    Engine_TaskRemoveCallback(Lunpa_WatchForUncloakedParty);
+    Task_Remove(Lunpa_WatchForUncloakedParty);
     work->raisedEvent = TRIGGER_PARTY_SPOTTED;
   }
 }
@@ -772,8 +773,8 @@ static void Lunpa_KickUpLeaderDust(void) {
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if ((gFrameCount & 15) == 0) {
     dustAngle = (((u32)Engine_RandomNext() * 52) >> 16) * 64 + 230;
-    SET_VECTOR(dustVelocity, Engine_MathCos(dustAngle) / 4, 0,
-               Engine_MathSin(dustAngle) / 2);
+    SET_VECTOR(dustVelocity, Trig_Cos(dustAngle) / 4, 0,
+               Trig_Sin(dustAngle) / 2);
     FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
                       dustVelocity[0], dustVelocity[1], dustVelocity[2], 0,
                       NULL);
@@ -783,7 +784,7 @@ static void Lunpa_KickUpLeaderDust(void) {
 /// Lunpa Fortress Gates, LUNPA_FORTRESS_GATES_AFTER_CAUGHT, after being
 /// caught in the fortress: the guards throw the leader out and down the steps.
 static void EventScript_GuardsThrowLeaderOut(void) {
-  Engine_ScriptStart();
+  FieldScript_Start();
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(160), PIXELS(128));
   ObjectEvent_SetPosition(LOCALID_LEFT_GUARD, PIXELS(152), PIXELS(112));
   ObjectEvent_SetPosition(LOCALID_RIGHT_GUARD, PIXELS(168), PIXELS(112));
@@ -799,9 +800,9 @@ static void EventScript_GuardsThrowLeaderOut(void) {
                             0);
   ObjectEvent_FaceDirection(LOCALID_EAST_GUARD, FACING_SOUTH + FACING_STEP, 0);
 #endif
-  Engine_CameraFollowObjectEvent(LOCALID_PARTY_LEADER, 0);
-  Engine_ScriptOpenScreen();
-  Engine_ScriptWait(30);
+  FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 0);
+  FieldScript_StartScreenTransition();
+  FieldScript_WaitFrames(30);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(9) / 5, PIXELS(9) / 10);
   ObjectEvent_SetSpeed(LOCALID_LEFT_GUARD, PIXELS(9) / 5, PIXELS(9) / 10);
   ObjectEvent_SetSpeed(LOCALID_RIGHT_GUARD, PIXELS(9) / 5, PIXELS(9) / 10);
@@ -810,30 +811,30 @@ static void EventScript_GuardsThrowLeaderOut(void) {
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_SHAKE_HEAD);
   ObjectEvent_SetDestination(LOCALID_PARTY_LEADER, 160, 296);
   FieldScheduler_AddCallback(Lunpa_KickUpLeaderDust, TASK_PRIORITY_MAP);
-  Engine_ScriptWait(1);
+  FieldScript_WaitFrames(1);
   Script_PlaySong(SE_SCUFFLE);
-  Engine_ScriptWait(20);
-  Engine_ObjectEventSetSpritePriority(LOCALID_LEFT_GUARD, 3);
-  Engine_ObjectEventSetSpritePriority(LOCALID_RIGHT_GUARD, 3);
+  FieldScript_WaitFrames(20);
+  ObjectMotion_SetActionVariant(LOCALID_LEFT_GUARD, 3);
+  ObjectMotion_SetActionVariant(LOCALID_RIGHT_GUARD, 3);
   Script_PlaySong(SE_SCUFFLE);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(30);
   ObjectEvent_Get(LOCALID_LEFT_GUARD)->priorityFlags |=
       OBJ_EVENT_PRIORITY_AUTOMATIC;
   ObjectEvent_Get(LOCALID_RIGHT_GUARD)->priorityFlags |=
       OBJ_EVENT_PRIORITY_AUTOMATIC;
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_SHAKE_HEAD);
   Script_PlaySong(SE_SCUFFLE);
-  Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
   Engine_ObjectEventSetAnimation(LOCALID_LEFT_GUARD, ANIMATION_STAND);
   Engine_ObjectEventSetAnimation(LOCALID_RIGHT_GUARD, ANIMATION_STAND);
-  Engine_TaskRemoveCallback(Lunpa_KickUpLeaderDust);
+  Task_Remove(Lunpa_KickUpLeaderDust);
   // Throw the leader down the steps, then wait for the first landing.
   ObjectEvent_Get(LOCALID_PARTY_LEADER)->motionFlags |= OBJ_EVENT_FALLS;
   ObjectEvent_Get(LOCALID_PARTY_LEADER)->velocityY = PIXELS(6);
   ObjectEvent_Get(LOCALID_PARTY_LEADER)->velocityZ = PIXELS(6);
-  Engine_ScriptWait(1);
+  FieldScript_WaitFrames(1);
   while (ObjectEvent_Get(LOCALID_PARTY_LEADER)->y.fixed != 0) {
-    Engine_ScriptWait(1);
+    FieldScript_WaitFrames(1);
   }
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_SPRAWLED);
@@ -841,20 +842,20 @@ static void EventScript_GuardsThrowLeaderOut(void) {
   ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
                                                           ATTACHED_EFFECT_ONCE);
   FieldScheduler_AddCallback(Lunpa_KickUpLeaderDust, TASK_PRIORITY_MAP);
-  Engine_ScriptWait(2);
+  FieldScript_WaitFrames(2);
   // A smaller second bounce ends with the guards' final warning.
   ObjectEvent_Get(LOCALID_PARTY_LEADER)->velocityY = PIXELS(3);
-  Engine_ScriptWait(1);
+  FieldScript_WaitFrames(1);
   while (ObjectEvent_Get(LOCALID_PARTY_LEADER)->y.fixed != 0) {
-    Engine_ScriptWait(1);
+    FieldScript_WaitFrames(1);
   }
   ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
                                                           ATTACHED_EFFECT_ONCE);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
-  Engine_TaskRemoveCallback(Lunpa_KickUpLeaderDust);
-  Engine_ScriptWait(50);
-  Engine_ScriptSetMessage(MsgLunpaGuardForbidsReturn);
+  Task_Remove(Lunpa_KickUpLeaderDust);
+  FieldScript_WaitFrames(50);
+  FieldScript_SetMessageId(MsgLunpaGuardForbidsReturn);
   Script_ShowMessage(LOCALID_LEFT_GUARD, 0);
   ObjectEvent_Get(LOCALID_LEFT_GUARD)->priorityFlags |=
       OBJ_EVENT_PRIORITY_AUTOMATIC;
@@ -864,45 +865,45 @@ static void EventScript_GuardsThrowLeaderOut(void) {
   ObjectEvent_SetSpeed(LOCALID_RIGHT_GUARD, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_WalkTo(LOCALID_LEFT_GUARD, 144, 200);
   ObjectEvent_WalkTo(LOCALID_RIGHT_GUARD, 176, 200);
-  Engine_ObjectEventWaitForMove(LOCALID_LEFT_GUARD);
-  Engine_ObjectEventWaitForMove(LOCALID_RIGHT_GUARD);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_LEFT_GUARD);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_RIGHT_GUARD);
   Engine_ObjectEventSetAnimation(LOCALID_LEFT_GUARD, ANIMATION_STAND);
   Engine_ObjectEventSetAnimation(LOCALID_RIGHT_GUARD, ANIMATION_STAND);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(30);
   ObjectEvent_FaceDirection(LOCALID_LEFT_GUARD, FACING_SOUTHEAST + FACING_STEP,
                             0);
   ObjectEvent_FaceDirection(LOCALID_RIGHT_GUARD, FACING_SOUTH + FACING_STEP, 0);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Lunpa Fortress Gates, LUNPA_FORTRESS_GATES_FROM_LUNPA_FORTRESS_TOADONPA,
 /// after slipping out of the fortress: the leader casts Cloak and slips round
 /// the guards.
 static void EventScript_LeaderSneaksOut(void) {
-  Engine_ScriptStart();
-  Engine_ScriptOpenScreen();
+  FieldScript_Start();
+  FieldScript_StartScreenTransition();
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 152, 168);
-  Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
-  Engine_ScriptWait(20);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
+  FieldScript_WaitFrames(20);
   // Cast Cloak before following the route around the guards.
-  Engine_PsynergyStart(ABILITY_CLOAK, 1);
-  Engine_PsynergySetTarget(LOCALID_PARTY_LEADER, 0);
-  Engine_PsynergyRaiseHands();
-  Engine_PsynergyPlayEffect(1);
-  Engine_PsynergyLowerHands();
+  FieldEffect_LoadActionEffectResources(ABILITY_CLOAK, 1);
+  FieldEffect_SetupObjectPair(LOCALID_PARTY_LEADER, 0);
+  FieldEffect_StartCast();
+  Field_DispatchTypeHandler(1);
+  FieldEffect_StopCasterHook();
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 144, 184);
-  Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 88, 184);
-  Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 88, 200);
-  Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 72, 200);
-  Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 72, 288);
-  Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 88, 288);
-  Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
-  Engine_ScriptEnd();
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
+  FieldScript_End();
 }
 
 /// Sets Lunpa or the Lunpa Fortress Gates up: in the town, Reveal's secrets
@@ -915,12 +916,12 @@ s32 Map_Initialize(void) {
     ((struct FieldWork *)gFieldWork)->transition =
         MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     EventScript_HideSecrets();
-    if (Engine_GameFlagIsSet(FLAG_LUNPA_NUT_CAUGHT) == 0) {
+    if (GameFlag_Test(FLAG_LUNPA_NUT_CAUGHT) == 0) {
       Map_FloatNut(LOCALID_FLOATING_NUT);
     }
     puddle = ObjectEvent_GetById(LOCALID_HIDDEN_PUDDLE);
     if (puddle != NULL) {
-      Engine_ObjectEventSetSpriteFlags(puddle, 0);
+      ObjectEvent_SetSpriteFlags(puddle, 0);
     }
     Engine_GameFlagSet(FLAG_MAP_TEMP_01);
   }
@@ -930,16 +931,16 @@ s32 Map_Initialize(void) {
         MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     gGameState.retreatWarpDest = GATE_RETREAT_WARP_DEST;
     if (gGameState.warpDest == LUNPA_FORTRESS_GATES_AFTER_CAUGHT &&
-        Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
+        GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {
       EventScript_GuardsThrowLeaderOut();
     }
     if (gGameState.warpDest ==
             LUNPA_FORTRESS_GATES_FROM_LUNPA_FORTRESS_TOADONPA &&
-        Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
+        GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {
       EventScript_LeaderSneaksOut();
     }
-    if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0 &&
-        Engine_GameFlagIsSet(FLAG_LUNPA_CAVE_REUNION_SEEN) == 0) {
+    if (GameFlag_Test(FLAG_DODONPA_LOCKED_UP) != 0 &&
+        GameFlag_Test(FLAG_LUNPA_CAVE_REUNION_SEEN) == 0) {
       FieldScheduler_AddCallback(Lunpa_WatchForFortressApproach,
                                  TASK_PRIORITY_MAP);
     }
@@ -949,16 +950,16 @@ s32 Map_Initialize(void) {
 #endif
     FieldScheduler_AddCallback(Lunpa_WatchForUncloakedParty, TASK_PRIORITY_MAP);
     // The fortress's puzzles and beaten guards are reset.
-    Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_PLANT_BLOWN_AWAY);
-    Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_PASSAGE_PLANT_BLOWN_AWAY);
-    Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_PLANT_BLOWN_AWAY);
-    Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_FLIPPED);
-    Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_FLIPPED);
-    Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_CRATES_MOVED);
-    Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_MIDDLE_GUARD_BEATEN);
-    Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_THREE_GUARDS_BEATEN);
-    Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_EAST_GUARD_BEATEN);
-    Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_WEST_GUARD_BEATEN);
+    GameFlag_ClearBit(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_PLANT_BLOWN_AWAY);
+    GameFlag_ClearBit(FLAG_LUNPA_FORTRESS_PASSAGE_PLANT_BLOWN_AWAY);
+    GameFlag_ClearBit(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_PLANT_BLOWN_AWAY);
+    GameFlag_ClearBit(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_FLIPPED);
+    GameFlag_ClearBit(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_FLIPPED);
+    GameFlag_ClearBit(FLAG_LUNPA_FORTRESS_CRATES_MOVED);
+    GameFlag_ClearBit(FLAG_LUNPA_FORTRESS_MIDDLE_GUARD_BEATEN);
+    GameFlag_ClearBit(FLAG_LUNPA_FORTRESS_THREE_GUARDS_BEATEN);
+    GameFlag_ClearBit(FLAG_LUNPA_FORTRESS_EAST_GUARD_BEATEN);
+    GameFlag_ClearBit(FLAG_LUNPA_FORTRESS_WEST_GUARD_BEATEN);
   }
   return 0;
 }

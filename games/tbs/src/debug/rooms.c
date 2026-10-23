@@ -54,7 +54,7 @@ u8 *TestRoom_GetObjectEventTemplates(void) {
 /// place the Djinni again on the next entry.
 static __inline__ void TestRoom_GiveDjinniForTesting(s32 localId, s32 element) {
   Djinn_JoinParty(localId, element, 0);
-  Engine_GameFlagClear(FLAG_DJINN_FIRST + element * DJINN_PER_ELEMENT);
+  GameFlag_ClearBit(FLAG_DJINN_FIRST + element * DJINN_PER_ELEMENT);
 }
 
 static void TestRoom_ReceiveFlint(void) {

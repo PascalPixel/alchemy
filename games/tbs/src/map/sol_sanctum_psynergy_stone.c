@@ -68,10 +68,10 @@ s32 Map_Initialize(void) {
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
 
   Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
-  if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
-    Resource37c_QueueSoundCue(SE_RUMBLE);
-    Engine_WorkSetValuesIfNonNegative(shakeX, shakeY, decay);
-    Resource37c_FinalizeSetup();
+  if (GameFlag_Test(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
+    Map_QueueMusic(SE_RUMBLE);
+    MapGrid_SetScreenShake(shakeX, shakeY, decay);
+    FieldEffect_InitializeSparkles();
   }
   return 0;
 }

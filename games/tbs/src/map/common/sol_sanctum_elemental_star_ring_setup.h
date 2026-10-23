@@ -129,10 +129,10 @@ static void SolSanctum_UpdateRing(void) {
         speedZ -= rz;
       else
         speedZ = 0;
-      dx = Engine_MathSin(speedX * gSolSanctum_RingSwing[i][0]) * 2;
-      dy = Engine_MathSin(speedY * gSolSanctum_RingSwing[i][1]) * 2;
+      dx = Trig_Sin(speedX * gSolSanctum_RingSwing[i][0]) * 2;
+      dy = Trig_Sin(speedY * gSolSanctum_RingSwing[i][1]) * 2;
       {
-        s32 dz = Engine_MathCos(speedZ * gSolSanctum_RingSwing[i][2]) * 2;
+        s32 dz = Trig_Cos(speedZ * gSolSanctum_RingSwing[i][2]) * 2;
 
         if (hold != 0) {
           x += dx;
@@ -208,8 +208,8 @@ void SolSanctum_StartFloatingLights(s32 first, u32 count) {
         *flags = cleared;
       }
       light->motionFlags = cleared;
-      Engine_ObjectSetBlendMode(ObjectEvent_GetById(first),
-                                OBJECT_BLEND_TRANSLUCENT);
+      ObjectEvent_SetBlendMode(ObjectEvent_GetById(first),
+                               OBJECT_BLEND_TRANSLUCENT);
       entry->scale = gSolSanctumRing_MaxScales[i];
       entry->scaleStep = -gSolSanctumRing_ScaleSteps[i];
       entry->timer = 3;

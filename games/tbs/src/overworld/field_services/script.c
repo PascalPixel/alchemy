@@ -54,9 +54,9 @@ void FieldScript_UpdateDebugSkip(void) {
 }
 
 /// The script command "wait": waits the requested frames, unless debug fast
-/// forward (FieldScript_UpdateDebugSkip) is on. Map scripts reach it as
-/// Engine_ScriptWait (the WAIT command); this object's object event, message,
-/// camera and climbing commands wait through it too.
+/// forward (FieldScript_UpdateDebugSkip) is on. Map scripts reach it (the WAIT
+/// command); this object's object event, message, camera and climbing commands
+/// wait through it too.
 void FieldScript_WaitFrames(s32 frames) {
   if (((struct FieldWork *)gFieldWork)->fastForward == 0 && frames != 0) {
     WaitFrames(frames);
@@ -89,7 +89,7 @@ void Leader_StopMoving(void) {
 /// The script command "begin script": closes any map name popup, stops the
 /// leader, resets the message and timing state, and starts the debug
 /// fast-forward callback with the leader as the message speaker. Map scripts
-/// reach it as Engine_ScriptStart (SCRIPT_START); the field's item, Psynergy,
+/// reach it (SCRIPT_START); the field's item, Psynergy,
 /// Djinni, Retreat and climbing scripts open with it too. Clears the field
 /// work's name window, fastForward and messageWindow, sets transitionFrames to
 /// 16 and the speaker to the leader.
@@ -120,7 +120,7 @@ void FieldScript_Start(void) {
 
 /// Ends a script: stops the debug fast-forward callback, gives the camera back
 /// to the leader and refreshes FLAG_LURE_CAP (GameFlag_RefreshLureCap). Map
-/// scripts reach it as Engine_ScriptEnd (SCRIPT_END), and every script that
+/// scripts reach it (SCRIPT_END), and every script that
 /// opens with FieldScript_Start closes with it.
 void FieldScript_End(void) {
   Task_Remove(FieldScript_UpdateDebugSkip);
@@ -155,8 +155,7 @@ void FieldScript_CallWithLastActiveObjectId(struct ObjectEventTemplate *table) {
 }
 
 /// Sets the map's event table, which the field checks as the leader moves:
-/// writes work->events. Altin Peak's map script calls it as
-/// FieldScript_LoadAreaScript.
+/// writes work->events. Altin Peak's map script calls it.
 void FieldScript_SetMapEvents(const struct MapEvent *events) {
   struct FieldWork *work = (struct FieldWork *)gFieldWork;
 
@@ -176,7 +175,7 @@ void FieldScript_PrepareObjectAndApplyValue(s32 unit, s32 announce) {
 }
 
 /// Adds two units to the party and announces them together. Vale's map
-/// script calls it twice, as Engine_PartyAddMembers.
+/// script calls it twice.
 void FieldScript_PrepareTwoObjectsAndApply(s32 first, s32 second) {
   Party_AddMemberFar(first);
   Party_AddMemberFar(second);
@@ -274,7 +273,7 @@ s32 Party_CheckItemLimit(s32 item) {
 /// room for it and says so. When every bag is full, the player picks an item
 /// to drop to make room, or drops the new item instead (not allowed for an
 /// indispensable one). Returns the member who received the item, or -1 when
-/// it was left behind. Map scripts reach it as Engine_PartyGiveItem (about
+/// it was left behind. Map scripts reach it (about
 /// 24 of them); Map_Run gives the pending item and the debug test menu
 /// gives items through it. The field work's message is restored afterwards.
 s32 PartyInventory_GiveItem(s32 item, s32 unused) {
@@ -416,8 +415,9 @@ void ObjectEvent_WaitForAnimationEnd(s32 localId, s32 animation) {
 /// read, asks yes or no below it, or above it when the message windows reach
 /// past row 15 or forceBottom is set. The speaker nods (animation 3) at yes
 /// and shakes its head (animation 4) at no. Returns 0 for yes, 1 for no.
-/// Map scripts reach it as Engine_ScriptChooseYesNo (about 54 of them); the
-/// Battle Arena and FieldScript_AskYesNoAndShowResponse call it too.
+/// Map scripts reach it (about
+/// 54 of them); the Battle Arena and FieldScript_AskYesNoAndShowResponse call
+/// it too.
 s32 FieldScript_AskYesNoWithObjectEventAnimation(s32 localId, s32 forceBottom) {
   struct FieldWork *work = (struct FieldWork *)gFieldWork;
   s32 sprite = Map_FindObjectEventTemplate(work->speaker)->sprite;
@@ -484,9 +484,8 @@ void Party_LearnAbility(s32 unit, s32 ability) {
 }
 
 /// The script command "open screen": starts the script's screen transition and
-/// sets work->transitionActive. Map scripts reach it as
-/// Engine_ScriptOpenScreen; the inn, the title, the main menu, the Battle Arena
-/// and RegionMap_Show call it too.
+/// sets work->transitionActive. Map scripts reach it; the inn, the title, the
+/// main menu, the Battle Arena and RegionMap_Show call it too.
 void FieldScript_StartScreenTransition(void) {
   struct FieldWork *runtime = (struct FieldWork *)gFieldWork;
 
@@ -495,9 +494,8 @@ void FieldScript_StartScreenTransition(void) {
 }
 
 /// The script command "close screen": finishes the script's screen transition
-/// and clears work->transitionActive. Map scripts reach it as
-/// Engine_ScriptCloseScreen; the inn, the main menu and
-/// RegionMap_Show call it too.
+/// and clears work->transitionActive. Map scripts reach it; the inn, the main
+/// menu and RegionMap_Show call it too.
 void FieldScript_FinishScreenTransition(void) {
   struct FieldWork *runtime = (struct FieldWork *)gFieldWork;
 
@@ -506,8 +504,7 @@ void FieldScript_FinishScreenTransition(void) {
 }
 
 /// The script command "wait for screen": waits as long as the transition runs
-/// (work->transitionFrames). Map scripts reach it as
-/// Engine_ScriptWaitForScreen.
+/// (work->transitionFrames). Map scripts reach it.
 void FieldScript_WaitTransitionFrames(void) {
   WaitFrames(((struct FieldWork *)gFieldWork)->transitionFrames);
 }

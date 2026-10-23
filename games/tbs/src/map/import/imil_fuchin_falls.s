@@ -1,59 +1,59 @@
 @ C2: aligned 8-byte veneers: overlay_veneer emits ldr r4, bx r4 and a target word.
 	.set overlay_imports, 1
 	.set import.__divsi3, 1
-	.set import.Engine_TaskWait, 1
+	.set import.WaitFrames, 1
 	.set import.Task_Add, 1
-	.set import.Engine_TaskRemoveCallback, 1
+	.set import.Task_Remove, 1
 	.set import.Engine_RandomNext, 1
 	.set import.Vector_AddPolarOffset, 1
-	.set import.Engine_HeapAllocate, 1
-	.set import.Engine_HeapRelease, 1
-	.set import.Engine_VramLoad, 1
-	.set import.ObjectEvent_SetMode, 1
+	.set import.AllocHeapSlot, 1
+	.set import.FreeHeapSlot, 1
+	.set import.VramCache_Load, 1
+	.set import.ObjectDispatch_SelectAnimation, 1
 	.set import.ObjectDispatch_SetAnimationSpeed, 1
-	.set import.Engine_ObjectSetScript, 1
-	.set import.Engine_ObjectCreate, 1
-	.set import.Engine_ObjectDispatchRelease, 1
-	.set import.Engine_ObjectSetPosition, 1
+	.set import.ObjectDispatch_Initialize, 1
+	.set import.Object_CreateField, 1
+	.set import.ObjectDispatch_Release, 1
+	.set import.Object_SetMoveTarget, 1
 	.set import.Object_WaitForMove, 1
-	.set import.Engine_MapGridCopyCellsTo, 1
+	.set import.MapGrid_CopyMetatileIndicesRect, 1
 	.set import.MapGrid_GetTerrainHeight, 1
 	.set import.MapGrid_GetMetatileBehaviorAt, 1
-	.set import.Engine_MapGridCopyCellAttributes, 1
-	.set import.Engine_ObjectEventSetSpriteFlags, 1
-	.set import.Engine_MessageShowCentered, 1
-	.set import.Engine_ItemLoadIcon, 1
+	.set import.MapGrid_CopyCellAttributeRect, 1
+	.set import.ObjectDispatch_SetSingleChildFlags, 1
+	.set import.FieldMessage_Show, 1
+	.set import.Ui_PrepareTransferForItem, 1
 	.set import.PartyInventory_FindMember, 1
-	.set import.Engine_GameFlagIsSet, 1
+	.set import.GameFlag_Test, 1
 	.set import.Engine_GameFlagSet, 1
-	.set import.Engine_GameFlagClear, 1
+	.set import.GameFlag_ClearBit, 1
 	.set import.PartyInventory_Discard, 1
-	.set import.Engine_ScriptStart, 1
-	.set import.Engine_ScriptEnd, 1
-	.set import.Engine_PartyGiveItem, 1
+	.set import.FieldScript_Start, 1
+	.set import.FieldScript_End, 1
+	.set import.PartyInventory_GiveItem, 1
 	.set import.ObjectEvent_GetById, 1
-	.set import.Engine_ObjectEventSetSpeed, 1
-	.set import.Engine_ObjectEventMoveToAndWait, 1
-	.set import.Engine_ObjectEventSetDestinationOffset, 1
-	.set import.Engine_ObjectEventWaitForMove, 1
+	.set import.ObjectMotion_SetSpeedParameters, 1
+	.set import.ObjectMotion_SetPositionAndCommit, 1
+	.set import.ObjectMotion_OffsetPositionAndResetMotion, 1
+	.set import.ObjectMotion_CommitCurrentPositionAndActivate, 1
 	.set import.Engine_ObjectEventSetAnimation, 1
-	.set import.Engine_ObjectEventJump, 1
-	.set import.Engine_ObjectEventSetChildValue, 1
+	.set import.ObjectMotion_Launch, 1
+	.set import.ObjectGroup_ConfigureChildValue, 1
 	.set import.ObjectGroup_SetChildValue, 1
-	.set import.Engine_ObjectEventSetSpritePriority, 1
+	.set import.ObjectMotion_SetActionVariant, 1
 	.set import.Engine_ScriptRequestWarp, 1
 	.set import.Field_RequestDjinnBattle, 1
-	.set import.Engine_ColorBufferApplyTarget, 1
-	.set import.Engine_ColorBufferApplySource, 1
-	.set import.Engine_ColorBufferInterpolate, 1
-	.set import.Engine_ScriptOpenScreen, 1
-	.set import.Engine_ScriptCloseScreen, 1
-	.set import.Engine_ScriptWaitForScreen, 1
-	.set import.Engine_ItemShowPicture, 1
-	.set import.Engine_ObjectEventLookup, 1
+	.set import.PaletteFade_SetTarget, 1
+	.set import.PaletteFade_SetSource, 1
+	.set import.PaletteFade_StartInterpolation, 1
+	.set import.FieldScript_StartScreenTransition, 1
+	.set import.FieldScript_FinishScreenTransition, 1
+	.set import.FieldScript_WaitTransitionFrames, 1
+	.set import.ItemDisplay_ShowPicture, 1
+	.set import.ObjectEvent_GetByLocalId, 1
 	.set import.FieldEffect_StartFadeOverlay, 1
 	.set import.Field_EndBusyAndReveal, 1
 	.set import.Map_PlayMusic, 1
 	.set import.Djinn_JoinParty, 1
-	.set import.Engine_AudioPlayCue, 1
+	.set import.Sound_PlaySong, 1
 	.include "games/tbs/src/system/overlay.inc"

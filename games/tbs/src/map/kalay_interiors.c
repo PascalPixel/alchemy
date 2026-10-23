@@ -177,7 +177,7 @@ enum KalayInteriorsLocalId {
   LOCALID_HEALER = LOCALID_FIRST_PLACED
 };
 
-/// Kalay's inn, as Engine_InnOpen numbers the inns.
+/// Kalay's inn, as Inn_CheckIn numbers the inns.
 enum { KALAY_INN = 7 };
 
 static void KalayInteriors_ApplyRoomState(void);
@@ -224,7 +224,7 @@ const struct ObjectEventTemplate *KalayInteriors_GetObjectEventTemplates(void) {
       table = gKalayInteriors_HouseObjectEventTemplates;
       break;
     }
-    Map_PrepareObjectEvents(table);
+    Map_AssignViewFlags(table);
     return table;
   }
   if (mapId == (s32)&MapId_KalaySanctum) {
@@ -265,20 +265,21 @@ const struct MapEvent *KalayInteriors_GetEvents(void) {
 /// of the tour. `Please finish eating if you are taking the tour! We'll be
 /// leaving soon!`
 static void KalayInteriors_TalkToTourGuide(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgKalayPleaseFinishEatingIfTaking);
-  Engine_ScriptShowMessage(LOCALID_TOUR_GUIDE, 0);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgKalayPleaseFinishEatingIfTaking);
+  FieldScript_ShowMessageAndWait(LOCALID_TOUR_GUIDE, 0);
   Engine_GameFlagSet(FLAG_KALAY_HEARD_OF_COLOSSO_TOUR);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Someone asks whether the party knows the continent south of Tolbi. They're
 /// in one of Kalay's houses, and answer either way the party replies.
 static void KalayInteriors_AskAboutSouthernContinent(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgKalayDoKnowAboutContinentSouth);
-  Engine_ScriptAskYesNo(LOCALID_YOUNG_MAN_ASKING_ABOUT_THE_SOUTH, 0);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgKalayDoKnowAboutContinentSouth);
+  FieldScript_AskYesNoAndShowResponse(LOCALID_YOUNG_MAN_ASKING_ABOUT_THE_SOUTH,
+                                      0);
+  FieldScript_End();
 }
 
 /// Spoken to across the counter of Kalay's inn, the leader facing west, the
@@ -289,20 +290,20 @@ static void KalayInteriors_TalkToInnkeeper(void) {
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
 
   if ((u16)(leader->facing - 0x6001) <= 0x3FFE) {
-    Engine_InnOpen(KALAY_INN, LOCALID_INNKEEPER);
+    Inn_CheckIn(KALAY_INN, LOCALID_INNKEEPER);
   } else {
-    Engine_ScriptStart();
+    FieldScript_Start();
 
-    if (Engine_GameFlagIsSet(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
-      Engine_ScriptSetMessage(MsgKalayOurInnFeelsEmptyNow);
-      Engine_ScriptShowMessage(LOCALID_INNKEEPER, 0);
+    if (GameFlag_Test(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
+      FieldScript_SetMessageId(MsgKalayOurInnFeelsEmptyNow);
+      FieldScript_ShowMessageAndWait(LOCALID_INNKEEPER, 0);
     } else {
-      Engine_ScriptSetMessage(MsgKalayGoingTolbiAlso);
-      Engine_ScriptAskYesNo(LOCALID_INNKEEPER, 0);
+      FieldScript_SetMessageId(MsgKalayGoingTolbiAlso);
+      FieldScript_AskYesNoAndShowResponse(LOCALID_INNKEEPER, 0);
       Engine_GameFlagSet(FLAG_KALAY_HEARD_OF_COLOSSO_TOUR);
     }
 
-    Engine_ScriptEnd();
+    FieldScript_End();
   }
 }
 
@@ -315,12 +316,12 @@ static void KalayInteriors_TalkToHealer(void) {
   // FACING_IS_NORTH removes the native EN halfword shift and changes its
   // comparison constant. Keep the original unsigned-halfword arithmetic.
   if ((u16)(leader->facing + 0x5fff) <= 0x3ffe) {
-    Engine_SanctumOpen(LOCALID_HEALER);
+    Sanctum_Run(LOCALID_HEALER);
   } else {
-    Engine_ScriptStart();
-    Engine_ScriptSetMessage(MsgKalayCanLiveInPeaceIn);
-    Engine_ScriptShowMessage(LOCALID_HEALER, 0);
-    Engine_ScriptEnd();
+    FieldScript_Start();
+    FieldScript_SetMessageId(MsgKalayCanLiveInPeaceIn);
+    FieldScript_ShowMessageAndWait(LOCALID_HEALER, 0);
+    FieldScript_End();
   }
 }
 
@@ -333,7 +334,7 @@ static void KalayInteriors_OpenDoorAndExit(void) {
   s32 doorIndex;
   struct ObjectEvent *leader;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
 
   // Prevent idle movement while the doorway cells are animated.
   for (slot = LOCALID_FIRST_PLACED; slot <= LOCALID_LAST_SLOT; slot++) {
@@ -361,29 +362,28 @@ static void KalayInteriors_OpenDoorAndExit(void) {
     return;
   }
 
-  Engine_AudioPlayCue(SE_DOOR_OPEN);
+  Sound_PlaySong(SE_DOOR_OPEN);
 
   {
     u32 x = gKalayInteriors_DoorCells[doorIndex].x;
     u32 y = gKalayInteriors_DoorCells[doorIndex].y;
 
-    Engine_MapGridAnimateCells(gKalayInteriors_DoorCells[doorIndex].steps, x,
-                               y);
+    MapGrid_AnimateCells(gKalayInteriors_DoorCells[doorIndex].steps, x, y);
   }
 
-  Engine_ObjectEventSetSpeed(LOCALID_PARTY_LEADER, 0x00008000, 0x00004000);
+  ObjectMotion_SetSpeedParameters(LOCALID_PARTY_LEADER, 0x00008000, 0x00004000);
 
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   leader->motionFlags = 0;
 
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
-  Engine_ObjectEventCenterAndWalk(LOCALID_PARTY_LEADER, 3, -8);
-  Engine_ScriptWait(10);
+  ObjectMotion_CenterOnColumn(LOCALID_PARTY_LEADER, 3, -8);
+  FieldScript_WaitFrames(10);
 
   Engine_ScriptRequestWarp(work->coordEvent);
-  Engine_ScriptCloseScreen();
-  Engine_ScriptWaitForScreen();
-  Engine_ScriptEnd();
+  FieldScript_FinishScreenTransition();
+  FieldScript_WaitTransitionFrames();
+  FieldScript_End();
 }
 
 /// Sets the opening transition and restores room-specific object events and
@@ -420,25 +420,25 @@ static void KalayInteriors_ApplyRoomState(void) {
   case KALAY_INTERIORS_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHWEST:
   case KALAY_INTERIORS_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHEAST:
   case KALAY_INTERIORS_GUEST_ROOM_NORTHWEST_FROM_INN_PASSAGE:
-    if (Engine_GameFlagIsSet(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
-      Engine_ObjectEventDestroy(LOCALID_FIRST_TOURIST);
-      Engine_ObjectEventDestroy(LOCALID_SECOND_TOURIST);
-      Engine_ObjectEventDestroy(LOCALID_TOUR_GUIDE);
-      Engine_ObjectEventDestroy(LOCALID_SECOND_TOUR_GUIDE);
-      Engine_ObjectEventDestroy(LOCALID_THIRD_TOURIST);
-      Engine_ObjectEventDestroy(LOCALID_WARRIOR_SIGNING_UP_FOR_COLOSSO);
-      Engine_ObjectEventDestroy(LOCALID_OURANOS);
-      Engine_ObjectEventDestroy(LOCALID_SEAN);
-      Engine_ObjectEventDestroy(LOCALID_FOURTH_TOURIST);
+    if (GameFlag_Test(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
+      ObjectEvent_DestroyById(LOCALID_FIRST_TOURIST);
+      ObjectEvent_DestroyById(LOCALID_SECOND_TOURIST);
+      ObjectEvent_DestroyById(LOCALID_TOUR_GUIDE);
+      ObjectEvent_DestroyById(LOCALID_SECOND_TOUR_GUIDE);
+      ObjectEvent_DestroyById(LOCALID_THIRD_TOURIST);
+      ObjectEvent_DestroyById(LOCALID_WARRIOR_SIGNING_UP_FOR_COLOSSO);
+      ObjectEvent_DestroyById(LOCALID_OURANOS);
+      ObjectEvent_DestroyById(LOCALID_SEAN);
+      ObjectEvent_DestroyById(LOCALID_FOURTH_TOURIST);
     } else {
-      Engine_ObjectEventSetChildValue(LOCALID_SECOND_TOUR_GUIDE,
+      ObjectGroup_ConfigureChildValue(LOCALID_SECOND_TOUR_GUIDE,
                                       SPRITE_COLOR_RBG);
     }
     return;
   default:
-    if (Engine_GameFlagIsSet(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
-      Engine_ObjectEventDestroy(LOCALID_YOUNG_MAN_ASKING_ABOUT_THE_SOUTH);
-      Engine_ObjectEventDestroy(LOCALID_WOMAN_BOUND_FOR_THE_TOUR);
+    if (GameFlag_Test(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
+      ObjectEvent_DestroyById(LOCALID_YOUNG_MAN_ASKING_ABOUT_THE_SOUTH);
+      ObjectEvent_DestroyById(LOCALID_WOMAN_BOUND_FOR_THE_TOUR);
     }
     break;
   }

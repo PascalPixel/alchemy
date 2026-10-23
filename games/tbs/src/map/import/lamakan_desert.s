@@ -1,7 +1,7 @@
 @ C2: aligned 8-byte veneers: overlay_veneer emits ldr r4, bx r4 and a target word.
 	.set overlay_imports, 1
 	.set import.__divsi3, 1
-	.set import.Engine_TaskWait, 1
+	.set import.WaitFrames, 1
 	.set import.Task_Add, 1
 	.set import.Engine_RandomNext, 1
 	.set import.Vector_AddPolarOffset, 1
@@ -9,52 +9,52 @@
 	.set import.Free, 1
 	.set import.Decompress_Type01, 1
 	.set import.VramCache_ReleaseVram, 1
-	.set import.Engine_VramLoad, 1
+	.set import.VramCache_Load, 1
 	.set import.VramCache_FindFreeEntry, 1
 	.set import.Oam_AddSpriteAtDepth, 1
 	.set import.IoWriteQueue_Store32, 1
-	.set import.ObjectEvent_SetMode, 1
-	.set import.Engine_ObjectSetScript, 1
-	.set import.Engine_ObjectCreate, 1
-	.set import.Engine_ObjectSetPosition, 1
+	.set import.ObjectDispatch_SelectAnimation, 1
+	.set import.ObjectDispatch_Initialize, 1
+	.set import.Object_CreateField, 1
+	.set import.Object_SetMoveTarget, 1
 	.set import.Object_WaitForMove, 1
-	.set import.Engine_MapGridCopyCells, 1
-	.set import.Engine_MapGridCopyCellAttributes, 1
-	.set import.Engine_MapGridCopyCellsLayered, 1
-	.set import.Object_CheckMovementCollision, 1
-	.set import.Engine_ObjectEventSetSpriteFlags, 1
-	.set import.Engine_ObjectSetBlendMode, 1
-	.set import.Engine_GameFlagIsSet, 1
+	.set import.MapGrid_CopyMetatileCellsRect, 1
+	.set import.MapGrid_CopyCellAttributeRect, 1
+	.set import.MapGrid_CopyCellIndexRect, 1
+	.set import.MapGrid_CheckCollision, 1
+	.set import.ObjectDispatch_SetSingleChildFlags, 1
+	.set import.ObjectDispatch_SetChildBlendMode, 1
+	.set import.GameFlag_Test, 1
 	.set import.Engine_GameFlagSet, 1
-	.set import.Engine_GameFlagClear, 1
-	.set import.Engine_ScriptWait, 1
-	.set import.Engine_ScriptStart, 1
-	.set import.Engine_ScriptEnd, 1
+	.set import.GameFlag_ClearBit, 1
+	.set import.FieldScript_WaitFrames, 1
+	.set import.FieldScript_Start, 1
+	.set import.FieldScript_End, 1
 	.set import.ObjectEvent_GetById, 1
-	.set import.Engine_ObjectEventSetSpeed, 1
-	.set import.Engine_ObjectEventSetDestination, 1
-	.set import.Engine_ObjectEventWalkToAndWait, 1
-	.set import.Engine_ObjectEventSetDestinationOffset, 1
-	.set import.Engine_ObjectEventWaitForMove, 1
+	.set import.ObjectMotion_SetSpeedParameters, 1
+	.set import.ObjectMotion_ResetAndSetPosition, 1
+	.set import.ObjectMotion_SetPositionAndReset, 1
+	.set import.ObjectMotion_OffsetPositionAndResetMotion, 1
+	.set import.ObjectMotion_CommitCurrentPositionAndActivate, 1
 	.set import.Engine_ObjectEventSetPosition, 1
 	.set import.Engine_ObjectEventSetAnimation, 1
 	.set import.ObjectEvent_SetActionById, 1
-	.set import.Engine_ObjectEventStartRepeatedMotion, 1
-	.set import.Engine_ObjectEventRunRepeatedMotion, 1
-	.set import.Engine_ObjectEventFaceObjectEvent, 1
+	.set import.ObjectMotion_SetVariantCallback, 1
+	.set import.ObjectMotion_SetVarCbAndRefresh, 1
+	.set import.ObjectMotion_SetAngleToward, 1
 	.set import.ObjectGroup_SetChildValue, 1
-	.set import.Engine_ScriptSetMessage, 1
-	.set import.Engine_ScriptShowMessage, 1
-	.set import.Engine_ObjectEventShowEmote, 1
-	.set import.Engine_ObjectEventSetAttachedEffect, 1
+	.set import.FieldScript_SetMessageId, 1
+	.set import.FieldScript_ShowMessageAndWait, 1
+	.set import.FieldEffect_SpawnLinked, 1
+	.set import.FieldEffect_ConfigureLinkedObject, 1
 	.set import.Engine_ScriptRequestWarp, 1
 	.set import.Field_RequestBattleFromEncounterTable, 1
 	.set import.FieldScript_SetNextDestination, 1
-	.set import.Engine_DisplayScrollStartHBlankDma, 1
+	.set import.ScanlineEffect_InitWave, 1
 	.set import.ScanlineEffect_Stop, 1
-	.set import.Engine_MarkerSetPosition, 1
+	.set import.TreasureSpot_SetObjectEventPosition, 1
 	.set import.TreasureSpot_MoveLeaderAway, 1
 	.set import.Djinn_JoinParty, 1
 	.set import.Map_QueueMusic, 1
-	.set import.Engine_AudioPlayCue, 1
+	.set import.Sound_PlaySong, 1
 	.include "games/tbs/src/system/overlay.inc"

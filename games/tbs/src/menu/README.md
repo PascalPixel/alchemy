@@ -204,7 +204,7 @@ for each action a confirm step and an apply step.
 [`menu/djinn_preview.c`](menu/djinn_preview.c) draws the preview and checks
 that the change keeps the members' Djinn counts even. Nothing sets
 `DJINN_STEP_RESERVED`. The screen sets `MESSAGE_SPEED_FAST` and restores the
-player's speed as it closes; the tutorial's steps (`DjinnMenu_Open`) set
+player's speed as it closes; the tutorial's steps (`DjinnMenu_Run`) set
 `MESSAGE_SPEED_NORMAL` for their messages. Its choosers test Start themselves
 and return `DJINN_RESULT_START`, which ends the loop. The steps are an enum
 in `menu/djinn.c`, the results in `menu_internal.h`.

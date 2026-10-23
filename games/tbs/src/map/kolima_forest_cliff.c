@@ -76,7 +76,7 @@ KolimaForestCliff_GetObjectEventTemplates(void) {
 /// become ground the party can cross (sets FLAG_MAP_TEMP_01).
 static void KolimaForestCliff_PushLog(void) {
   struct PushedObjectProbe result;
-  Engine_ScriptStart();
+  FieldScript_Start();
   if (PushedObject_FindClearPosition(&result)) {
     ObjectEvent_MoveAndRedraw(result);
     if (result.objectEventSlot == LOCALID_RIVER_LOG &&
@@ -84,9 +84,9 @@ static void KolimaForestCliff_PushLog(void) {
       struct ObjectEvent *objectEvent;
       Engine_ObjectEventSetAnimation(LOCALID_RIVER_LOG,
                                      LOG_ANIMATION_ROLL_WEST);
-      Engine_ObjectEventSetDestinationOffset(LOCALID_RIVER_LOG, -18, 6);
-      Engine_ScriptWait(30);
-      Engine_AudioPlayCue(SE_240);
+      ObjectMotion_OffsetPositionAndResetMotion(LOCALID_RIVER_LOG, -18, 6);
+      FieldScript_WaitFrames(30);
+      Sound_PlaySong(SE_240);
       Engine_ObjectEventSetAnimation(LOCALID_RIVER_LOG, LOG_ANIMATION_DROP_IN);
       ObjectEvent_GetById(LOCALID_RIVER_LOG)->priorityFlags =
           OBJ_EVENT_PRIORITY_UNDERFOOT;
@@ -94,10 +94,10 @@ static void KolimaForestCliff_PushLog(void) {
       PushedObject_FillGridAttributeRectangle(2, 12, 16, 1, 4, 0);
       Engine_GameFlagSet(FLAG_MAP_TEMP_01);
       objectEvent = ObjectEvent_GetById(LOCALID_RIVER_LOG);
-      Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
+      ObjectEvent_SetSpriteFlags(objectEvent, 0);
     }
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 #include "common/kolima_jump.h"
@@ -117,18 +117,18 @@ s32 KolimaForestCliff_Initialize(void) {
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   Map_RedrawObjectEventFootprint(LOCALID_RIVER_LOG);
 
-  if (Engine_GameFlagIsSet(FLAG_MAP_TEMP_01) != 0) {
+  if (GameFlag_Test(FLAG_MAP_TEMP_01) != 0) {
     ObjectEvent_GetById(LOCALID_RIVER_LOG)->priorityFlags =
         OBJ_EVENT_PRIORITY_UNDERFOOT;
     MapGrid_CopyCellAttributes(32, 20, 2, 4, 11, 16);
     PushedObject_FillGridAttributeRectangle(2, 12, 16, 1, 4, 0);
-    Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_RIVER_LOG), 0);
+    ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_RIVER_LOG), 0);
   }
 
   Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG);
   Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 1);
 
-  if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
+  if (GameFlag_Test(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
     KolimaPalette_Curse(6);
   }
   return 0;

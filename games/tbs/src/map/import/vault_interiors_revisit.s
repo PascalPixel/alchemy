@@ -1,35 +1,35 @@
 @ C2: aligned 8-byte veneers: overlay_veneer emits ldr r4, bx r4 and a target word.
 	.set overlay_imports, 1
 	.set import.Task_Add, 1
-	.set import.Engine_HeapAllocate, 1
-	.set import.Engine_HeapRelease, 1
-	.set import.Engine_VramLoad, 1
-	.set import.Engine_ObjectCreate, 1
-	.set import.Engine_MapGridCopyCellsTo, 1
-	.set import.Engine_ItemLoadIcon, 1
-	.set import.Engine_GameFlagIsSet, 1
+	.set import.AllocHeapSlot, 1
+	.set import.FreeHeapSlot, 1
+	.set import.VramCache_Load, 1
+	.set import.Object_CreateField, 1
+	.set import.MapGrid_CopyMetatileIndicesRect, 1
+	.set import.Ui_PrepareTransferForItem, 1
+	.set import.GameFlag_Test, 1
 	.set import.Engine_GameFlagSet, 1
-	.set import.Engine_GameFlagClear, 1
+	.set import.GameFlag_ClearBit, 1
 	.set import.PartyInventory_HasSpace, 1
-	.set import.Engine_ScriptWait, 1
-	.set import.Engine_ScriptStart, 1
-	.set import.Engine_ScriptEnd, 1
-	.set import.Map_PrepareObjectEvents, 1
-	.set import.Engine_PartyGiveItem, 1
-	.set import.Engine_ScriptChooseYesNo, 1
+	.set import.FieldScript_WaitFrames, 1
+	.set import.FieldScript_Start, 1
+	.set import.FieldScript_End, 1
+	.set import.Map_AssignViewFlags, 1
+	.set import.PartyInventory_GiveItem, 1
+	.set import.FieldScript_AskYesNoWithObjectEventAnimation, 1
 	.set import.ObjectEvent_GetById, 1
-	.set import.Engine_ObjectEventEnableActionCallback, 1
+	.set import.ObjectMotion_EnableActionAndSetCallback, 1
 	.set import.Engine_ObjectEventSetAnimation, 1
-	.set import.Engine_ObjectEventSetAnimationAndWait, 1
-	.set import.Engine_ObjectEventRunRepeatedMotion, 1
-	.set import.Engine_ObjectEventFaceEachOther, 1
-	.set import.Engine_ScriptSetMessage, 1
-	.set import.Engine_ScriptOpenMessage, 1
-	.set import.Engine_ScriptShowMessage, 1
-	.set import.Engine_ScriptShowMessageAndWait, 1
-	.set import.Engine_ObjectEventFaceDirection, 1
-	.set import.Engine_ObjectEventShowEmote, 1
-	.set import.Engine_ItemShowFound, 1
-	.set import.Engine_ShopOpen, 1
-	.set import.Engine_InnOpen, 1
+	.set import.ObjectMotion_SetAnimationAndWait, 1
+	.set import.ObjectMotion_SetVarCbAndRefresh, 1
+	.set import.ObjectEvent_LinkPair, 1
+	.set import.FieldScript_SetMessageId, 1
+	.set import.FieldMessage_ShowAtObject, 1
+	.set import.FieldScript_ShowMessageAndWait, 1
+	.set import.FieldScript_ShowMessageThenWait, 1
+	.set import.ObjectMotion_ArmCallback, 1
+	.set import.FieldEffect_SpawnLinked, 1
+	.set import.FieldEffect_StartEffectObject22, 1
+	.set import.Shop_Run, 1
+	.set import.Inn_CheckIn, 1
 	.include "games/tbs/src/system/overlay.inc"

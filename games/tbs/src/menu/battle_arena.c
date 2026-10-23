@@ -319,21 +319,21 @@ static s32 BattleArena_PeerSlotMatches(s32 slot) {
     serialPlayerId = (REG_SIOCNT << 26) >> 30;
     Engine_GameFlagSet(FLAG_MAPSEC_TEMP_03);
   } else {
-    Engine_GameFlagClear(FLAG_MAPSEC_TEMP_03);
+    GameFlag_ClearBit(FLAG_MAPSEC_TEMP_03);
   }
   /* FAKEMATCH(one-pass): a loop left by break after its first pass, which
    * places the test after the body as the ROM does; as an if around the body,
    * 12 of 58 instructions differ in tbs-en. */
-  while (serialPlayerId >= 0 && Engine_GameFlagIsSet(FLAG_MAPSEC_TEMP_03)) {
+  while (serialPlayerId >= 0 && GameFlag_Test(FLAG_MAPSEC_TEMP_03)) {
     const s32 *expected = &gBattleArena_SlotValues[slot];
 
     if (serialPlayerId != 0)
       Engine_GameFlagSet(FLAG_MAPSEC_TEMP_02);
     else
-      Engine_GameFlagClear(FLAG_MAPSEC_TEMP_02);
+      GameFlag_ClearBit(FLAG_MAPSEC_TEMP_02);
     {
       struct LinkPeer *peer = (struct LinkPeer *)
-          gLinkPeerSignatures[Engine_GameFlagIsSet(FLAG_MAPSEC_TEMP_02) ^ 1];
+          gLinkPeerSignatures[GameFlag_Test(FLAG_MAPSEC_TEMP_02) ^ 1];
 
       if (peer->values[gBattleArena_SlotColumns[slot]] == *expected)
         return 1;
@@ -375,12 +375,12 @@ static s32 BattleArena_PollPeerReady(void) {
   // The leader is south of z 224 (16.16 pixels), towards the way out: the
   // party stops talking about the last battle.
   if (ObjectEvent_GetById(LOCALID_PARTY_LEADER)->z.fixed > 0xe00000) {
-    Engine_GameFlagClear(FLAG_MAPSEC_TEMP_04);
+    GameFlag_ClearBit(FLAG_MAPSEC_TEMP_04);
   }
   // While LOBBY_EVENT_DISCONNECTED waits, skip the partner tracking.
   if (work->raisedEvent != LOBBY_EVENT_DISCONNECTED) {
     BattleArena_PeerSlotMatches(LOBBY_SLOT_SIGNATURE);
-    if (!Engine_GameFlagIsSet(FLAG_MAPSEC_TEMP_03)) {
+    if (!GameFlag_Test(FLAG_MAPSEC_TEMP_03)) {
       // Without a link for 26 frames, clear every console's received payload
       // and go idle.
       if (++sBattleArenaWaitFrames > LOBBY_PEER_WAIT_FRAMES) {
@@ -400,18 +400,17 @@ static s32 BattleArena_PollPeerReady(void) {
           (BattleArena_PeerSlotMatches(LOBBY_SLOT_ASKED) ||
            BattleArena_PeerSlotMatches(LOBBY_SLOT_IN_CIRCLE))) {
         Engine_GameFlagSet(FLAG_MAP_TEMP_01);
-        if (Engine_GameFlagIsSet(FLAG_MAP_TEMP_02)) {
+        if (GameFlag_Test(FLAG_MAP_TEMP_02)) {
           work->raisedEvent = LOBBY_EVENT_PROMPT;
         }
         result = 1;
       } else {
-        Engine_GameFlagClear(FLAG_MAP_TEMP_01);
+        GameFlag_ClearBit(FLAG_MAP_TEMP_01);
         result = 0;
       }
     }
-    if (Engine_GameFlagIsSet(FLAG_MAP_TEMP_01) &&
-        Engine_GameFlagIsSet(FLAG_MAP_TEMP_02) &&
-        !Engine_GameFlagIsSet(FLAG_MAP_TEMP_00)) {
+    if (GameFlag_Test(FLAG_MAP_TEMP_01) && GameFlag_Test(FLAG_MAP_TEMP_02) &&
+        !GameFlag_Test(FLAG_MAP_TEMP_00)) {
       work->raisedEvent = LOBBY_EVENT_PROMPT;
     }
   }
@@ -449,24 +448,24 @@ u32 gBattleArenaCallFrames;
 static s32 BattleArena_PromptToParticipate(void) {
   s32 set;
 
-  set = Engine_GameFlagIsSet(FLAG_MAP_TEMP_03);
+  set = GameFlag_Test(FLAG_MAP_TEMP_03);
   if (set != 0) {
     return set;
   }
   if (++gBattleArenaCallFrames == 300) {
     gBattleArenaCallFrames = 0;
-    Engine_GameFlagClear(FLAG_MAP_TEMP_00);
+    GameFlag_ClearBit(FLAG_MAP_TEMP_00);
   }
   set = GameFlag_IsSet(FLAG_MAP_TEMP_00);
   if (set != 0) {
     return set;
   }
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgLobbyWantParticipatePlease);
-  Engine_ScriptOpenMessage(LOCALID_ATTENDANT, 0);
-  Engine_TaskWait(5);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgLobbyWantParticipatePlease);
+  FieldMessage_ShowAtObject(LOCALID_ATTENDANT, 0);
+  WaitFrames(5);
   Engine_GameFlagSet(FLAG_MAP_TEMP_00);
-  Engine_ScriptEnd();
+  FieldScript_End();
 #ifdef UBFIX
   return 0;
 #endif
@@ -480,14 +479,14 @@ static s32 BattleArena_ReportDisconnection(void) {
   struct EventWork *work = gFieldWork;
 
   BattleArena_WriteSlotValue(LOBBY_SLOT_IDLE);
-  Engine_GameFlagClear(FLAG_MAP_TEMP_00);
-  Engine_GameFlagClear(FLAG_MAP_TEMP_03);
-  Engine_ScriptStart();
+  GameFlag_ClearBit(FLAG_MAP_TEMP_00);
+  GameFlag_ClearBit(FLAG_MAP_TEMP_03);
+  FieldScript_Start();
   work->raisedEvent = LOBBY_EVENT_NONE;
-  Engine_ScriptSetMessage(MsgLobbyLinkDisconnected);
-  Engine_ScriptOpenMessage(LOCALID_ATTENDANT, 0);
-  Engine_GameFlagClear(FLAG_MAP_TEMP_05);
-  Engine_ScriptEnd();
+  FieldScript_SetMessageId(MsgLobbyLinkDisconnected);
+  FieldMessage_ShowAtObject(LOCALID_ATTENDANT, 0);
+  GameFlag_ClearBit(FLAG_MAP_TEMP_05);
+  FieldScript_End();
 #ifdef UBFIX
   return 0;
 #endif
@@ -530,7 +529,7 @@ wait1:
     result = -1;
     goto done;
   }
-  Engine_TaskWait(1);
+  WaitFrames(1);
   if (--timeout < 0 ||
       (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
     if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
@@ -551,7 +550,7 @@ test1:
   if (record[0x12a] != 0) {
     result++;
   }
-  Engine_TaskWait(2);
+  WaitFrames(2);
   // Put the prefix before the name, shifting it right and cutting it to the
   // 14 letters and terminator a Unit name holds.
   FieldMessage_DecodeRawUnbounded(MsgEnemyLabel, namePrefix);
@@ -597,7 +596,7 @@ wait2:
     result = -1;
     goto done;
   }
-  Engine_TaskWait(1);
+  WaitFrames(1);
   if (--timeout < 0 ||
       (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
     if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
@@ -612,12 +611,12 @@ test2:
   if (gSerialReceivedSize != LOBBY_RECOVERY_RECORD_BYTES) {
     result = -1;
   } else {
-    Engine_TaskWait(2);
+    WaitFrames(2);
   }
   goto done;
 second:
   // Then the recovery table, into the enemy side's (unit 0x83's record).
-  Runtime_BumpFree(heap);
+  Free(heap);
   size = LOBBY_RECOVERY_RECORD_BYTES;
   heap = AllocEwram(size);
   tries = 0;
@@ -628,7 +627,7 @@ second:
 failed:
   result = transferResult;
 done:
-  Runtime_BumpFree(heap);
+  Free(heap);
   return result;
 }
 
@@ -722,7 +721,7 @@ static s32 BattleArena_SendPartyRecords(void) {
       }
     } while (0);
     while (SerialRuntime_GetActiveTransfers() != 0) {
-      Engine_TaskWait(1);
+      WaitFrames(1);
       if (--timeout < 0 ||
           (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
         /* FAKEMATCH(one-pass): the retry limit's test in a one-pass block,
@@ -736,13 +735,13 @@ static s32 BattleArena_SendPartyRecords(void) {
         } while (0);
       }
     }
-    Engine_TaskWait(2);
+    WaitFrames(2);
   }
   // The padding loop is written with goto (MATCHING.md): as for (; i <= 2;
   // i++) round a while loop, 127 of 254 instructions differ in tbs-en.
   goto next;
 wait:
-  Engine_TaskWait(1);
+  WaitFrames(1);
   if (--timeout < 0 ||
       (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
     if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
@@ -754,7 +753,7 @@ test:
   if (SerialRuntime_GetActiveTransfers() != 0) {
     goto wait;
   }
-  Engine_TaskWait(2);
+  WaitFrames(2);
   i++;
 next:
   // Pad to three records with the last copy marked absent (side 0).
@@ -766,7 +765,7 @@ next:
     result = transferResult;
     goto done;
   }
-  Runtime_BumpFree(heap);
+  Free(heap);
   size = LOBBY_RECOVERY_RECORD_BYTES;
   heap = AllocEwram(size);
   /* FAKEMATCH(one-pass): the recovery table's copy in a one-pass block, which
@@ -800,7 +799,7 @@ next:
     }
     goto test3;
   wait3:
-    Engine_TaskWait(1);
+    WaitFrames(1);
     if (--timeout < 0 ||
         (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
       if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
@@ -812,11 +811,11 @@ next:
     if (SerialRuntime_GetActiveTransfers() != 0) {
       goto wait3;
     }
-    Engine_TaskWait(1);
-    Engine_TaskWait(2);
+    WaitFrames(1);
+    WaitFrames(2);
   }
 done:
-  Runtime_BumpFree(heap);
+  Free(heap);
   return result;
 }
 
@@ -835,16 +834,16 @@ static s32 BattleArena_ExchangePartyRecords(void) {
   do {
     result = 0;
   } while (0);
-  receiveFirst = Engine_GameFlagIsSet(FLAG_MAPSEC_TEMP_02);
+  receiveFirst = GameFlag_Test(FLAG_MAPSEC_TEMP_02);
   gLinkExchangeState = result;
   // Every failure reaches the one reset: as nested ifs before a single
   // if (result < 0), 16 of 62 instructions differ in tbs-en.
   if (!receiveFirst) {
-    Engine_TaskWait(5);
+    WaitFrames(5);
     result = BattleArena_SendPartyRecords();
     if (result < 0)
       goto fail;
-    Engine_TaskWait(5);
+    WaitFrames(5);
     receivedOwnerCount = result = BattleArena_ReceivePartyRecords();
     if (result < 0)
       goto check;
@@ -852,7 +851,7 @@ static s32 BattleArena_ExchangePartyRecords(void) {
     receivedOwnerCount = result = BattleArena_ReceivePartyRecords();
     if (result < 0)
       goto fail;
-    Engine_TaskWait(10);
+    WaitFrames(10);
     result = BattleArena_SendPartyRecords();
     if (result < 0)
       goto fail;
@@ -894,24 +893,24 @@ static s32 BattleArena_EnterBattle(void) {
   window = 0;
   work = gFieldWork;
   missedFrames = 0;
-  if (Engine_GameFlagIsSet(FLAG_MONSTER_BATTLE)) {
-    Engine_ScriptStart();
+  if (GameFlag_Test(FLAG_MONSTER_BATTLE)) {
+    FieldScript_Start();
   } else {
-    if (!Engine_GameFlagIsSet(FLAG_MAP_TEMP_00))
+    if (!GameFlag_Test(FLAG_MAP_TEMP_00))
       return LOBBY_NO_RESULT;
-    if (Engine_GameFlagIsSet(FLAG_MAP_TEMP_05))
+    if (GameFlag_Test(FLAG_MAP_TEMP_05))
       return LOBBY_NO_RESULT;
-    Engine_ScriptStart();
+    FieldScript_Start();
     Engine_GameFlagSet(FLAG_MAP_TEMP_03);
     BattleArena_WriteSlotValue(LOBBY_SLOT_IN_CIRCLE);
     if (!BattleArena_PeerSlotMatches(LOBBY_SLOT_IN_CIRCLE))
       window = Message_OpenWindow(MsgLobbyAwaitingOpponent, 5, 4, 1);
     while (!BattleArena_PeerSlotMatches(LOBBY_SLOT_IN_CIRCLE)) {
-      Engine_TaskWait(1);
+      WaitFrames(1);
       cancelEntry = 0;
-      if (!Engine_GameFlagIsSet(FLAG_MAP_TEMP_01))
+      if (!GameFlag_Test(FLAG_MAP_TEMP_01))
         cancelEntry = 1;
-      if (Engine_GameFlagIsSet(FLAG_MAP_TEMP_05))
+      if (GameFlag_Test(FLAG_MAP_TEMP_05))
         cancelEntry = 1;
       if (!BattleArena_PeerSlotMatches(LOBBY_SLOT_IN_CIRCLE) &&
           !BattleArena_PeerSlotMatches(LOBBY_SLOT_ASKED)) {
@@ -923,17 +922,17 @@ static s32 BattleArena_EnterBattle(void) {
       if (cancelEntry) {
         work->raisedEvent = LOBBY_EVENT_DISCONNECTED;
         Engine_GameFlagSet(FLAG_MAP_TEMP_05);
-        Engine_GameFlagClear(FLAG_MAP_TEMP_01);
-        Engine_GameFlagClear(FLAG_MAP_TEMP_02);
+        GameFlag_ClearBit(FLAG_MAP_TEMP_01);
+        GameFlag_ClearBit(FLAG_MAP_TEMP_02);
         BattleArena_WriteSlotValue(LOBBY_SLOT_IDLE);
         failed = 1;
-        Engine_GameFlagClear(FLAG_MAP_TEMP_00);
+        GameFlag_ClearBit(FLAG_MAP_TEMP_00);
         break;
       }
     }
     if (window)
       Window_Close(window, 1);
-    Engine_TaskWait(5);
+    WaitFrames(5);
   }
   // Suspend peer polling while transferring the party and entering battle.
   if (!failed) {
@@ -944,57 +943,57 @@ static s32 BattleArena_EnterBattle(void) {
     // (gMapGridCellBuffer
     // + 0x8000) hands them to Battle_Run, which copies them back.
     savedWork = AllocHeapSlotEwram(HEAP_SLOT_ENEMY_UNITS, 0x7c8);
-    Engine_TaskRemoveCallback((TaskFunc)BattleArena_PollPeerReady);
+    Task_Remove((TaskFunc)BattleArena_PollPeerReady);
     // Run the map's tileset animation 5 for eight frames.
     TilesetAnim_Resume(5);
-    Engine_TaskWait(8);
+    WaitFrames(8);
     TilesetAnim_Pause(5);
-    if (Engine_GameFlagIsSet(FLAG_MONSTER_BATTLE)) {
-      Engine_ObjectEventFaceObjectEvent(LOCALID_ATTENDANT,
-                                        gGameState.leaderLocalId, 0);
-      Engine_ScriptSetMessage(MsgLobbyGoodLuck);
-      Engine_ScriptOpenMessage(LOCALID_ATTENDANT, 0);
-      Engine_TaskWait(45);
+    if (GameFlag_Test(FLAG_MONSTER_BATTLE)) {
+      ObjectMotion_SetAngleToward(LOCALID_ATTENDANT, gGameState.leaderLocalId,
+                                  0);
+      FieldScript_SetMessageId(MsgLobbyGoodLuck);
+      FieldMessage_ShowAtObject(LOCALID_ATTENDANT, 0);
+      WaitFrames(45);
       ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x10000, 0x8000);
-      Engine_ObjectEventWalkTo(LOCALID_PARTY_LEADER, 216, 184);
-      Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
-      Engine_ObjectEventWalkTo(LOCALID_PARTY_LEADER, 216, 168);
-      Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
+      ObjectMotion_ResetAndSetPositionInMode2(LOCALID_PARTY_LEADER, 216, 184);
+      ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
+      ObjectMotion_ResetAndSetPositionInMode2(LOCALID_PARTY_LEADER, 216, 168);
+      ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
     } else {
       // Speeds are 16.16 pixels a frame: one to (216, 200), a tenth while
       // the parties are exchanged, then a half.
       ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x10000, 0x8000);
-      Engine_ObjectEventWalkTo(LOCALID_PARTY_LEADER, 216, 200);
-      Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
+      ObjectMotion_ResetAndSetPositionInMode2(LOCALID_PARTY_LEADER, 216, 200);
+      ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
       ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x1999, 0xccc);
-      Engine_ObjectEventWalkTo(LOCALID_PARTY_LEADER, 216, 168);
+      ObjectMotion_ResetAndSetPositionInMode2(LOCALID_PARTY_LEADER, 216, 168);
       // A failed exchange: walk back out and return to the Battle Arena,
       // reporting the link lost (LOBBY_EVENT_DISCONNECTED).
       if (BattleArena_ExchangePartyRecords() < 0) {
         ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x10000, 0x8000);
-        Engine_ObjectEventWalkTo(LOCALID_PARTY_LEADER, 216, 200);
+        ObjectMotion_ResetAndSetPositionInMode2(LOCALID_PARTY_LEADER, 216, 200);
         TilesetAnim_Resume(5);
-        Engine_TaskWait(8);
+        WaitFrames(8);
         TilesetAnim_Pause(5);
-        Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
+        ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
         FreeHeapSlot(HEAP_SLOT_ENEMY_UNITS);
         BattleArena_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
         BattleArena_WriteSlotValue(LOBBY_SLOT_IDLE);
         FieldScheduler_AddCallback((TaskFunc)BattleArena_PollPeerReady, 0xc80);
         Task_SetFlags((TaskFunc)BattleArena_PollPeerReady, 1);
-        Engine_GameFlagClear(FLAG_MAP_TEMP_01);
-        Engine_GameFlagClear(FLAG_MAP_TEMP_02);
-        Engine_GameFlagClear(FLAG_MAPSEC_TEMP_03);
-        Engine_GameFlagClear(FLAG_MAP_TEMP_03);
-        Engine_GameFlagClear(FLAG_MAP_TEMP_00);
+        GameFlag_ClearBit(FLAG_MAP_TEMP_01);
+        GameFlag_ClearBit(FLAG_MAP_TEMP_02);
+        GameFlag_ClearBit(FLAG_MAPSEC_TEMP_03);
+        GameFlag_ClearBit(FLAG_MAP_TEMP_03);
+        GameFlag_ClearBit(FLAG_MAP_TEMP_00);
         work->raisedEvent = LOBBY_EVENT_DISCONNECTED;
-        Engine_ScriptEnd();
+        FieldScript_End();
         return LOBBY_NO_RESULT;
       }
       ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x8000, 0x4000);
-      Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
+      ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
     }
-    if (Engine_GameFlagIsSet(FLAG_MONSTER_BATTLE)) {
+    if (GameFlag_Test(FLAG_MONSTER_BATTLE)) {
       FieldScript_SetNextDestination((s32)&MapId_BattleArena, 8);
       FieldScript_SetDefeatDestination((s32)&MapId_BattleArena, 9);
     } else {
@@ -1020,7 +1019,7 @@ static s32 BattleArena_EnterBattle(void) {
     } while (i <= 0x7c7);
     FreeHeapSlot(HEAP_SLOT_ENEMY_UNITS);
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 #ifdef UBFIX
   return 0;
 #endif
@@ -1044,33 +1043,32 @@ static s32 BattleArena_ChooseBattleMode(void) {
   // the circle, +4 says the request is made, +5 offers a monster battle and
   // +6 asks the player to wait for an opponent.
   messageBase = MsgLobbyPleaseSpeakWhen;
-  Engine_ScriptStart();
-  Engine_ObjectEventFaceObjectEvent(LOCALID_ATTENDANT, gGameState.leaderLocalId,
-                                    0);
+  FieldScript_Start();
+  ObjectMotion_SetAngleToward(LOCALID_ATTENDANT, gGameState.leaderLocalId, 0);
   // Look for the partner's signature twice, a frame apart.
   if (BattleArena_PeerSlotMatches(LOBBY_SLOT_SIGNATURE) == 0) {
-    Engine_TaskWait(1);
+    WaitFrames(1);
   }
   if (BattleArena_PeerSlotMatches(LOBBY_SLOT_SIGNATURE) == 0) {
     BattleArena_WriteSlotValue(LOBBY_SLOT_ALONE);
     BattleArena_InitializeSerial();
     if (!GameFlag_IsSet(FLAG_MONSTER_BATTLE)) {
-      Engine_ScriptSetMessage(messageBase + 5);
-      Engine_ScriptOpenMessage(LOCALID_ATTENDANT, 0);
-      answer = Engine_ScriptChooseYesNo(0, 0);
+      FieldScript_SetMessageId(messageBase + 5);
+      FieldMessage_ShowAtObject(LOCALID_ATTENDANT, 0);
+      answer = FieldScript_AskYesNoWithObjectEventAnimation(0, 0);
       // Yes starts a monster series: FLAG_MAPSEC_TEMP_E8's byte and
       // LINK_TALLY_MONSTER_STREAK start at 0.
       if (answer == YES) {
         FieldGameFlag_SetByte(FLAG_MAPSEC_TEMP_E8, 0);
         Engine_GameFlagSet(FLAG_MONSTER_BATTLE);
-        Engine_GameFlagClear(FLAG_LINK_BATTLE_ARRANGED);
-        Engine_GameFlagClear(FLAG_LINK_BATTLE);
+        GameFlag_ClearBit(FLAG_LINK_BATTLE_ARRANGED);
+        GameFlag_ClearBit(FLAG_LINK_BATTLE);
         Engine_GameFlagSet(FLAG_MAP_TEMP_02);
         messageId = messageBase + 7;
         gGameState.linkTallies[LINK_TALLY_MONSTER_STREAK] = answer;
         goto message;
       }
-      Engine_GameFlagClear(FLAG_MONSTER_BATTLE);
+      GameFlag_ClearBit(FLAG_MONSTER_BATTLE);
       Engine_GameFlagSet(FLAG_LINK_BATTLE);
       BattleArena_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
       messageId = messageBase + 6;
@@ -1083,12 +1081,12 @@ static s32 BattleArena_ChooseBattleMode(void) {
     // A partner arrived while a monster battle waited: call it off.
     if (GameFlag_IsSet(FLAG_MONSTER_BATTLE)) {
       BattleArena_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
-      Engine_ScriptSetMessage(MsgLobbyOpponentArrived);
-      Engine_ScriptOpenMessage(LOCALID_ATTENDANT, 0);
-      Engine_GameFlagClear(FLAG_MAP_TEMP_02);
-      Engine_GameFlagClear(FLAG_MONSTER_BATTLE);
+      FieldScript_SetMessageId(MsgLobbyOpponentArrived);
+      FieldMessage_ShowAtObject(LOCALID_ATTENDANT, 0);
+      GameFlag_ClearBit(FLAG_MAP_TEMP_02);
+      GameFlag_ClearBit(FLAG_MONSTER_BATTLE);
     }
-    if (Engine_GameFlagIsSet(FLAG_MAP_TEMP_02)) {
+    if (GameFlag_Test(FLAG_MAP_TEMP_02)) {
       messageId = messageBase + 3;
       /* The first branch's answers jump into this block's message tail, and an
        * accepted challenge back into its opening: the listing keeps one copy of
@@ -1096,31 +1094,31 @@ static s32 BattleArena_ChooseBattleMode(void) {
        * cross-jumping folds the copies into the last arm instead (differ 51 to
        * 55). */
     message:
-      Engine_ScriptSetMessage(messageId);
+      FieldScript_SetMessageId(messageId);
     open_message:
-      Engine_ScriptOpenMessage(LOCALID_ATTENDANT, 0);
-    } else if (!Engine_GameFlagIsSet(FLAG_MAP_TEMP_01) &&
+      FieldMessage_ShowAtObject(LOCALID_ATTENDANT, 0);
+    } else if (!GameFlag_Test(FLAG_MAP_TEMP_01) &&
                !GameFlag_IsSet(FLAG_MAPSEC_TEMP_00)) {
-      Engine_ScriptSetMessage(messageBase);
-      Engine_ScriptOpenMessage(LOCALID_ATTENDANT, 0);
+      FieldScript_SetMessageId(messageBase);
+      FieldMessage_ShowAtObject(LOCALID_ATTENDANT, 0);
       Engine_GameFlagSet(FLAG_MAPSEC_TEMP_00);
     } else {
       Engine_GameFlagSet(FLAG_MAPSEC_TEMP_00);
-      if (Engine_GameFlagIsSet(FLAG_MAP_TEMP_01)) {
-        Engine_ScriptSetMessage(messageBase + 2);
+      if (GameFlag_Test(FLAG_MAP_TEMP_01)) {
+        FieldScript_SetMessageId(messageBase + 2);
       } else {
-        Engine_ScriptSetMessage(messageBase + 1);
+        FieldScript_SetMessageId(messageBase + 1);
       }
-      Engine_ScriptOpenMessage(LOCALID_ATTENDANT, 0);
-      if (Engine_ScriptChooseYesNo(0, 0) == YES) {
+      FieldMessage_ShowAtObject(LOCALID_ATTENDANT, 0);
+      if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == YES) {
         // Yes, and the partner is still there; else the link is lost.
         if (BattleArena_PeerSlotMatches(LOBBY_SLOT_SIGNATURE)) {
           Engine_GameFlagSet(FLAG_LINK_BATTLE);
           Engine_GameFlagSet(FLAG_LINK_BATTLE_ARRANGED);
-          if (Engine_GameFlagIsSet(FLAG_MAP_TEMP_01)) {
-            Engine_ScriptSetMessage(messageBase + 3);
+          if (GameFlag_Test(FLAG_MAP_TEMP_01)) {
+            FieldScript_SetMessageId(messageBase + 3);
           } else {
-            Engine_ScriptSetMessage(messageBase + 4);
+            FieldScript_SetMessageId(messageBase + 4);
           }
           BattleArena_WriteSlotValue(LOBBY_SLOT_ASKED);
           Engine_GameFlagSet(FLAG_MAP_TEMP_02);
@@ -1129,12 +1127,12 @@ static s32 BattleArena_ChooseBattleMode(void) {
           Engine_GameFlagSet(FLAG_MAP_TEMP_05);
         }
       } else {
-        Engine_ScriptSetMessage(messageBase);
-        Engine_ScriptOpenMessage(LOCALID_ATTENDANT, 0);
+        FieldScript_SetMessageId(messageBase);
+        FieldMessage_ShowAtObject(LOCALID_ATTENDANT, 0);
       }
     }
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 #ifdef UBFIX
   return 0;
 #endif
@@ -1143,14 +1141,14 @@ static s32 BattleArena_ChooseBattleMode(void) {
 /// Talking to LOCALID_LINKED_WINS_TELLER, who reports the linked battles won,
 /// the total when the leader faces north and those won in a row otherwise;
 /// before the first, the line says it will tell them later. Like the original
-/// handler, it never ends its script (no Engine_ScriptEnd) and returns nothing.
+/// handler, it never ends its script (no FieldScript_End) and returns nothing.
 static s32 BattleArena_ReportWinTallies(s32 localId) {
   u32 facing = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing;
   u16 *tally;
   s32 messageBase;
 
-  Engine_ScriptStart();
-  Engine_ObjectEventFaceObjectEvent(localId, gGameState.leaderLocalId, 0);
+  FieldScript_Start();
+  ObjectMotion_SetAngleToward(localId, gGameState.leaderLocalId, 0);
   // FACING_IS_NORTH's test, written out: strictly between northwest and
   // northeast.
   if ((facing - 0xa001) <= 0x3ffe) {
@@ -1158,24 +1156,24 @@ static s32 BattleArena_ReportWinTallies(s32 localId) {
     tally = &gGameState.linkTallies[LINK_TALLY_LINKED_WINS];
     if (*tally != 0) {
       MessageArgument_ClearAll();
-      Text_DrawQuantity(*tally, 5);
-      Engine_ScriptSetMessage(messageBase + 1);
-      Engine_ScriptShowMessage(localId, 0);
+      MessageArgument_Push(*tally, 5);
+      FieldScript_SetMessageId(messageBase + 1);
+      FieldScript_ShowMessageAndWait(localId, 0);
     } else {
-      Engine_ScriptSetMessage(MsgLobbyTellTotalWins);
-      Engine_ScriptShowMessage(localId, 0);
+      FieldScript_SetMessageId(MsgLobbyTellTotalWins);
+      FieldScript_ShowMessageAndWait(localId, 0);
     }
   } else {
     messageBase = MsgLobbyLooksLikeFirstTime;
     tally = &gGameState.linkTallies[LINK_TALLY_LINKED_STREAK];
     if (*tally != 0) {
       MessageArgument_ClearAll();
-      Text_DrawQuantity(*tally, 5);
-      Engine_ScriptSetMessage(messageBase + 1);
-      Engine_ScriptShowMessage(localId, 0);
+      MessageArgument_Push(*tally, 5);
+      FieldScript_SetMessageId(messageBase + 1);
+      FieldScript_ShowMessageAndWait(localId, 0);
     } else {
-      Engine_ScriptSetMessage(MsgLobbyTellConsecutiveWins);
-      Engine_ScriptShowMessage(localId, 0);
+      FieldScript_SetMessageId(MsgLobbyTellConsecutiveWins);
+      FieldScript_ShowMessageAndWait(localId, 0);
     }
   }
 #ifdef UBFIX
@@ -1192,11 +1190,11 @@ static s32 BattleArena_ChooseDebugPartyPreset(s32 localId) {
   s32 displayedPreset;
   s32 loadResult;
 
-  Engine_ScriptStart();
-  Engine_ObjectEventFaceObjectEvent(localId, gGameState.leaderLocalId, 0);
-  Engine_ScriptSetMessage(MsgLobbyChooseParameters);
-  Engine_ScriptShowMessage(localId, 0);
-  window = Engine_DebugCreateWindow(0, 0, 6, 4, 2);
+  FieldScript_Start();
+  ObjectMotion_SetAngleToward(localId, gGameState.leaderLocalId, 0);
+  FieldScript_SetMessageId(MsgLobbyChooseParameters);
+  FieldScript_ShowMessageAndWait(localId, 0);
+  window = Window_Create(0, 0, 6, 4, 2);
   presetIndex = 0;
   displayedPreset = -1;
   for (;;) {
@@ -1221,35 +1219,35 @@ static s32 BattleArena_ChooseDebugPartyPreset(s32 localId) {
       presetIndex = -1;
       break;
     }
-    Engine_TaskWait(1);
+    WaitFrames(1);
   }
   Window_Close(window, 1);
   if (presetIndex >= 0) {
     loadResult = DebugParty_LoadPreset(presetIndex);
   }
   if (presetIndex < 0) {
-    Engine_ScriptSetMessage(MsgLobbyTease);
-    Engine_ScriptShowMessage(LOCALID_LINKED_WINS_TELLER, 0);
+    FieldScript_SetMessageId(MsgLobbyTease);
+    FieldScript_ShowMessageAndWait(LOCALID_LINKED_WINS_TELLER, 0);
   } else if (loadResult != 0) {
-    Engine_ScriptSetMessage(MsgLobbyNoParameterAsk);
-    Engine_ScriptShowMessage(LOCALID_LINKED_WINS_TELLER, 0);
+    FieldScript_SetMessageId(MsgLobbyNoParameterAsk);
+    FieldScript_ShowMessageAndWait(LOCALID_LINKED_WINS_TELLER, 0);
   } else {
-    Engine_ScriptSetMessage(MsgLobbySettingsMadeRest);
-    Engine_ScriptShowMessage(LOCALID_LINKED_WINS_TELLER, 0);
+    FieldScript_SetMessageId(MsgLobbySettingsMadeRest);
+    FieldScript_ShowMessageAndWait(LOCALID_LINKED_WINS_TELLER, 0);
   }
-  Engine_TaskWait(10);
-  Engine_ScriptEnd();
+  WaitFrames(10);
+  FieldScript_End();
 #ifdef UBFIX
   return 0;
 #endif
 }
 
 /// Talking to LOCALID_HEALER, who serves as a Sanctum's healer
-/// (Engine_SanctumOpen).
+/// (Sanctum_Run).
 static s32 BattleArena_OpenSanctum(s32 localId) {
-  Engine_ScriptStart();
-  Engine_SanctumOpen(localId);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  Sanctum_Run(localId);
+  FieldScript_End();
 #ifdef UBFIX
   return 0;
 #endif
@@ -1265,7 +1263,7 @@ static s32 BattleArena_PartyContains(s32 ownerId) {
 
   count = Party_CountMembers();
   ownerLimit = 3;
-  if (Engine_GameFlagIsSet(FLAG_LINK_BATTLE_ARRANGED) == 0) {
+  if (GameFlag_Test(FLAG_LINK_BATTLE_ARRANGED) == 0) {
     ownerLimit = 4;
   }
   if (count > ownerLimit) {
@@ -1295,15 +1293,15 @@ static s32 BattleArena_TalkByProgress(s32 localId) {
   s32 isaacPresent = BattleArena_PartyContains(0);
   s32 speakerPresent = BattleArena_PartyContains(localId);
 
-  Engine_ScriptStart();
-  Engine_ObjectEventFaceObjectEvent(localId, gGameState.leaderLocalId, 0);
-  if (Engine_GameFlagIsSet(FLAG_MAPSEC_TEMP_04)) {
+  FieldScript_Start();
+  ObjectMotion_SetAngleToward(localId, gGameState.leaderLocalId, 0);
+  if (GameFlag_Test(FLAG_MAPSEC_TEMP_04)) {
 
     // Isaac's flag is tested and the result dropped; messageBase first
     // holds whether the speaker fought (FLAG_MAP_TEMP_F0 + local id).
     GameFlag_IsSet(FLAG_MAP_TEMP_F0);
-    messageBase = Engine_GameFlagIsSet(localId + 0x2f0);
-    if (Engine_GameFlagIsSet(FLAG_MAPSEC_TEMP_05)) {
+    messageBase = GameFlag_Test(localId + 0x2f0);
+    if (GameFlag_Test(FLAG_MAPSEC_TEMP_05)) {
       if (messageBase)
         messageBase = MsgLobbyWonToldCountOn;
       else
@@ -1320,9 +1318,9 @@ static s32 BattleArena_TalkByProgress(s32 localId) {
   } else {
     messageBase = MsgLobbyTryingGetAway;
   }
-  Engine_ScriptSetMessage(messageBase + localId - 1);
-  Engine_ScriptShowMessage(localId, 0);
-  Engine_ScriptEnd();
+  FieldScript_SetMessageId(messageBase + localId - 1);
+  FieldScript_ShowMessageAndWait(localId, 0);
+  FieldScript_End();
 #ifdef UBFIX
   return 0;
 #endif
@@ -1341,7 +1339,7 @@ static s32 BattleArena_LeaveArena(void) {
 }
 
 // The handlers below are s32 and return no value: r0 is whatever
-// Engine_ScriptEnd left.
+// FieldScript_End left.
 
 /// Talking to one of three visitors: LOCALID_TRAVELING_WARRIOR,
 /// LOCALID_FINALS_VISITOR, who explains the linked finals, and
@@ -1354,7 +1352,7 @@ static s32 BattleArena_TalkToVisitor(s32 localId) {
   s32 message;
   s32 step = 0;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   switch (localId) {
   case LOCALID_TRAVELING_WARRIOR:
     message = MsgLobbyTravelingWarrior;
@@ -1367,12 +1365,12 @@ static s32 BattleArena_TalkToVisitor(s32 localId) {
     message = MsgLobbyBattleArenaOld;
     break;
   }
-  Engine_ObjectEventFaceObjectEvent(localId, gGameState.leaderLocalId, 0);
-  if (Engine_GameFlagIsSet(FLAG_MAPSEC_TEMP_04))
-    step = 2 - (Engine_GameFlagIsSet(FLAG_MAPSEC_TEMP_05) != 0);
-  Engine_ScriptSetMessage(message + step);
-  Engine_ScriptOpenMessage(localId, 0);
-  Engine_ScriptEnd();
+  ObjectMotion_SetAngleToward(localId, gGameState.leaderLocalId, 0);
+  if (GameFlag_Test(FLAG_MAPSEC_TEMP_04))
+    step = 2 - (GameFlag_Test(FLAG_MAPSEC_TEMP_05) != 0);
+  FieldScript_SetMessageId(message + step);
+  FieldMessage_ShowAtObject(localId, 0);
+  FieldScript_End();
 #ifdef UBFIX
   return 0;
 #endif
@@ -1384,8 +1382,8 @@ static s32 BattleArena_TalkToVisitor(s32 localId) {
 static s32 BattleArena_ExplainPartyOrder(s32 localId) {
   s32 message;
 
-  Engine_ScriptStart();
-  Engine_ObjectEventFaceObjectEvent(localId, gGameState.leaderLocalId, 0);
+  FieldScript_Start();
+  ObjectMotion_SetAngleToward(localId, gGameState.leaderLocalId, 0);
   if (!GameFlag_IsSet(FLAG_MAP_TEMP_04)) {
     if (Party_CountMembers() <= 3)
       message = MsgLobbyThreeAlliesFightLinkedFinals;
@@ -1394,11 +1392,11 @@ static s32 BattleArena_ExplainPartyOrder(s32 localId) {
     Engine_GameFlagSet(FLAG_MAP_TEMP_04);
   } else {
     message = MsgLobbyChangeOrderParty;
-    Engine_GameFlagClear(FLAG_MAP_TEMP_04);
+    GameFlag_ClearBit(FLAG_MAP_TEMP_04);
   }
-  Engine_ScriptSetMessage(message);
-  Engine_ScriptOpenMessage(localId, 0);
-  Engine_ScriptEnd();
+  FieldScript_SetMessageId(message);
+  FieldMessage_ShowAtObject(localId, 0);
+  FieldScript_End();
 #ifdef UBFIX
   return 0;
 #endif
@@ -1409,17 +1407,17 @@ static s32 BattleArena_ExplainPartyOrder(s32 localId) {
 static s32 BattleArena_ReportMonsterRecord(s32 localId) {
   struct GameState *state;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   state = &gGameState;
-  Engine_ObjectEventFaceObjectEvent(localId, state->leaderLocalId, 0);
+  ObjectMotion_SetAngleToward(localId, state->leaderLocalId, 0);
   if (state->linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] != 0) {
-    Text_DrawQuantity(state->linkTallies[LINK_TALLY_MONSTER_BEST_STREAK], 5);
-    Engine_ScriptSetMessage(MsgLobbyWonNumberConsecutive);
+    MessageArgument_Push(state->linkTallies[LINK_TALLY_MONSTER_BEST_STREAK], 5);
+    FieldScript_SetMessageId(MsgLobbyWonNumberConsecutive);
   } else {
-    Engine_ScriptSetMessage(MsgLobbyCantWaitSee);
+    FieldScript_SetMessageId(MsgLobbyCantWaitSee);
   }
-  Engine_ScriptOpenMessage(localId, 0);
-  Engine_ScriptEnd();
+  FieldMessage_ShowAtObject(localId, 0);
+  FieldScript_End();
 #ifdef UBFIX
   return 0;
 #endif
@@ -1436,16 +1434,16 @@ static s32 BattleArena_SaveBattleResults(void) {
   // 0x70 in the native build, so retain the two sequences.
   struct Window *window;
 
-  Engine_AudioPlayCue(MUS_SAVED);
+  Sound_PlaySong(MUS_SAVED);
   window = Message_OpenWindow(MsgLobbySavingBattleResults, 5, 4, 1);
   while (UiWork_IsComplete() == 0)
-    Engine_TaskWait(1);
+    WaitFrames(1);
   Save_ProcessSelectedFile();
   Window_Close(window, 1);
-  Engine_TaskWait(1);
+  WaitFrames(1);
   window = Message_OpenWindow(MsgLobbyBattleResultsSaved, 5, 4, 1);
   while (UiWork_IsComplete() == 0)
-    Engine_TaskWait(1);
+    WaitFrames(1);
   Window_Close(window, 1);
 #ifdef UBFIX
   return 0;
@@ -1458,16 +1456,16 @@ static s32 BattleArena_SaveMonsterBattleResults(void) {
   // See BattleArena_SaveBattleResults for the measured shared-helper trial.
   struct Window *window;
 
-  Engine_AudioPlayCue(MUS_SAVED);
+  Sound_PlaySong(MUS_SAVED);
   window = Message_OpenWindow(MsgLobbySavingMonsterBattle, 5, 4, 1);
   while (UiWork_IsComplete() == 0)
-    Engine_TaskWait(1);
+    WaitFrames(1);
   Save_ProcessSelectedFile();
   Window_Close(window, 1);
-  Engine_TaskWait(1);
+  WaitFrames(1);
   window = Message_OpenWindow(MsgLobbyMonsterBattleResults, 5, 4, 1);
   while (UiWork_IsComplete() == 0)
-    Engine_TaskWait(1);
+    WaitFrames(1);
   Window_Close(window, 1);
 #ifdef UBFIX
   return 0;
@@ -1483,10 +1481,10 @@ static s32 BattleArena_DrawThreeDigitValue(s32 value) {
   if (value > 999)
     value = 999;
   for (digit = 0; digit <= 2; digit++) {
-    Engine_MapGridCopyCellsTo(27, value % 10, 16 - digit, 8, 1, 1);
+    MapGrid_CopyMetatileIndicesRect(27, value % 10, 16 - digit, 8, 1, 1);
     value = value / 10;
   }
-  Engine_MapGridRedraw();
+  MapGrid_CenterOnFollowedPoint();
 #ifdef UBFIX
   return 0;
 #endif
@@ -1513,7 +1511,7 @@ s32 BattleArena_RunRoundResult(void) {
       gGameState.linkTallies[LINK_TALLY_LINKED_BEST_STREAK]);
   MapGrid_CopyCellAttributes(11, 11, 1, 1, 13, 10);
   BattleArena_WriteSlotValue(LOBBY_SLOT_IDLE);
-  Engine_TaskWait(1);
+  WaitFrames(1);
   TilesetAnim_Pause(5);
 
   // The payload's halfwords 4 to 7 hold the link battle's phase word
@@ -1528,7 +1526,7 @@ s32 BattleArena_RunRoundResult(void) {
   }
   // Note who is in the battle party, for the members' lines.
   for (i = 0; i < 8; i++) {
-    Engine_GameFlagClear(0x2f0 + i);
+    GameFlag_ClearBit(0x2f0 + i);
     if (BattleArena_PartyContains(i)) {
       Engine_GameFlagSet(0x2f0 + i);
     }
@@ -1539,9 +1537,9 @@ s32 BattleArena_RunRoundResult(void) {
     s32 messageOffset;
     s32 v;
 
-    Engine_ScriptStart();
-    Engine_ScriptOpenScreen();
-    Engine_ScriptWaitForScreen();
+    FieldScript_Start();
+    FieldScript_StartScreenTransition();
+    FieldScript_WaitTransitionFrames();
     BattleArena_WriteSlotValue(LOBBY_SLOT_ALONE);
     gGameState.linkTallies[LINK_TALLY_MONSTER_WINS]++;
     gGameState.linkTallies[LINK_TALLY_MONSTER_STREAK]++;
@@ -1562,79 +1560,78 @@ s32 BattleArena_RunRoundResult(void) {
     } else {
       FieldGameFlag_SetByte(FLAG_MAPSEC_TEMP_E8, v + 1);
     }
-    Engine_ObjectEventFaceObjectEvent(LOCALID_ATTENDANT,
-                                      gGameState.leaderLocalId, 0);
-    Engine_ScriptSetMessage(MsgLobbyNotBadNextMonster + messageOffset);
-    Engine_ScriptOpenMessage(LOCALID_ATTENDANT, 0);
-    if (Engine_ScriptChooseYesNo(0, 0) == YES) {
+    ObjectMotion_SetAngleToward(LOCALID_ATTENDANT, gGameState.leaderLocalId, 0);
+    FieldScript_SetMessageId(MsgLobbyNotBadNextMonster + messageOffset);
+    FieldMessage_ShowAtObject(LOCALID_ATTENDANT, 0);
+    if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == YES) {
       if (wins > 90) {
         wins = 90;
       }
       FieldGameFlag_SetByte(FLAG_MONSTER_BATTLE_WINS, wins);
     } else {
       // No: the series ends, and a new record (tally 2) is saved.
-      Engine_GameFlagClear(FLAG_MONSTER_BATTLE);
+      GameFlag_ClearBit(FLAG_MONSTER_BATTLE);
       FieldGameFlag_SetByte(FLAG_MONSTER_BATTLE_WINS, -1);
-      Text_DrawQuantity(gGameState.linkTallies[LINK_TALLY_MONSTER_STREAK], 5);
+      MessageArgument_Push(gGameState.linkTallies[LINK_TALLY_MONSTER_STREAK],
+                           5);
       if (gGameState.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] <
           gGameState.linkTallies[LINK_TALLY_MONSTER_STREAK]) {
         gGameState.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] =
             gGameState.linkTallies[LINK_TALLY_MONSTER_STREAK];
-        Engine_ScriptSetMessage(MsgLobbyWonNumberBattleBroke);
-        Engine_ScriptOpenMessage(LOCALID_ATTENDANT, 0);
+        FieldScript_SetMessageId(MsgLobbyWonNumberBattleBroke);
+        FieldMessage_ShowAtObject(LOCALID_ATTENDANT, 0);
         BattleArena_SaveMonsterBattleResults();
       } else {
-        Engine_ScriptSetMessage(MsgLobbyWonNumberBattle);
-        Engine_ScriptOpenMessage(LOCALID_ATTENDANT, 0);
+        FieldScript_SetMessageId(MsgLobbyWonNumberBattle);
+        FieldMessage_ShowAtObject(LOCALID_ATTENDANT, 0);
       }
       BattleArena_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
     }
-    Engine_ScriptEnd();
+    FieldScript_End();
     // Warp destination 9, a monster battle lost: the series ends, and a new
     // record is saved.
   } else if (gGameState.warpDest == 9) {
     gGameState.linkTallies[LINK_TALLY_MONSTER_LOSSES]++;
-    Engine_ScriptStart();
-    Engine_ScriptOpenScreen();
-    Engine_ScriptWaitForScreen();
+    FieldScript_Start();
+    FieldScript_StartScreenTransition();
+    FieldScript_WaitTransitionFrames();
     BattleArena_WriteSlotValue(LOBBY_SLOT_ALONE);
-    Engine_ObjectEventFaceObjectEvent(LOCALID_ATTENDANT,
-                                      gGameState.leaderLocalId, 0);
-    Text_DrawQuantity(gGameState.linkTallies[LINK_TALLY_MONSTER_STREAK], 5);
+    ObjectMotion_SetAngleToward(LOCALID_ATTENDANT, gGameState.leaderLocalId, 0);
+    MessageArgument_Push(gGameState.linkTallies[LINK_TALLY_MONSTER_STREAK], 5);
     if (gGameState.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] <
         gGameState.linkTallies[LINK_TALLY_MONSTER_STREAK]) {
       gGameState.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] =
           gGameState.linkTallies[LINK_TALLY_MONSTER_STREAK];
-      Engine_ScriptSetMessage(MsgLobbyWonNumberBattleBroke);
-      Engine_ScriptOpenMessage(LOCALID_ATTENDANT, 0);
+      FieldScript_SetMessageId(MsgLobbyWonNumberBattleBroke);
+      FieldMessage_ShowAtObject(LOCALID_ATTENDANT, 0);
       BattleArena_SaveMonsterBattleResults();
     } else {
-      Engine_ScriptSetMessage(MsgLobbyWonNumberBattleTold);
-      Engine_ScriptOpenMessage(LOCALID_ATTENDANT, 0);
+      FieldScript_SetMessageId(MsgLobbyWonNumberBattleTold);
+      FieldMessage_ShowAtObject(LOCALID_ATTENDANT, 0);
     }
     gGameState.linkTallies[LINK_TALLY_MONSTER_STREAK] = 0;
-    Engine_GameFlagClear(FLAG_MONSTER_BATTLE);
+    GameFlag_ClearBit(FLAG_MONSTER_BATTLE);
     FieldGameFlag_SetByte(FLAG_MONSTER_BATTLE_WINS, -1);
     BattleArena_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
-    Engine_ScriptEnd();
+    FieldScript_End();
     // Warp destination 10, a linked battle won: count the win and the run; a
     // longer run is the board's new record. Saved.
   } else if (gGameState.warpDest == 10) {
     s32 v;
 
-    Engine_ScriptStart();
-    Engine_ScriptOpenScreen();
-    Engine_ScriptWaitForScreen();
+    FieldScript_Start();
+    FieldScript_StartScreenTransition();
+    FieldScript_WaitTransitionFrames();
     BattleArena_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
     BattleArena_WriteSlotValue(LOBBY_SLOT_IDLE);
     // The battle broke off instead (Battle_Run set
     // FLAG_MAPSEC_TEMP_E8): report the link lost and restart it.
     if (GameFlag_IsSet(FLAG_MAPSEC_TEMP_E8)) {
       work = gFieldWork;
-      Engine_GameFlagClear(FLAG_MAPSEC_TEMP_E8);
+      GameFlag_ClearBit(FLAG_MAPSEC_TEMP_E8);
       work->raisedEvent = LOBBY_EVENT_DISCONNECTED;
-      Engine_GameFlagClear(FLAG_MAPSEC_TEMP_04);
-      Engine_TaskWait(20);
+      GameFlag_ClearBit(FLAG_MAPSEC_TEMP_04);
+      WaitFrames(20);
       BattleArena_InitializeSerial();
       BattleArena_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
       BattleArena_WriteSlotValue(LOBBY_SLOT_IDLE);
@@ -1650,41 +1647,41 @@ s32 BattleArena_RunRoundResult(void) {
       Engine_GameFlagSet(FLAG_MAPSEC_TEMP_04);
       Engine_GameFlagSet(FLAG_MAPSEC_TEMP_05);
     }
-    Engine_ScriptEnd();
+    FieldScript_End();
     // Warp destination 11, a linked battle lost: count the loss and end the
     // run. Saved.
   } else if (gGameState.warpDest == 11) {
     s32 v;
 
-    Engine_ScriptStart();
-    Engine_ScriptOpenScreen();
-    Engine_ScriptWaitForScreen();
+    FieldScript_Start();
+    FieldScript_StartScreenTransition();
+    FieldScript_WaitTransitionFrames();
     BattleArena_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
     BattleArena_WriteSlotValue(LOBBY_SLOT_IDLE);
-    if ((v = Engine_GameFlagIsSet(FLAG_MONSTER_BATTLE)) == 0) {
+    if ((v = GameFlag_Test(FLAG_MONSTER_BATTLE)) == 0) {
       gGameState.linkTallies[LINK_TALLY_LINKED_LOSSES]++;
       gGameState.linkTallies[LINK_TALLY_LINKED_STREAK] = v;
       BattleArena_SaveBattleResults();
     }
     Engine_GameFlagSet(FLAG_MAPSEC_TEMP_04);
-    Engine_GameFlagClear(FLAG_MAPSEC_TEMP_05);
-    Engine_ScriptEnd();
+    GameFlag_ClearBit(FLAG_MAPSEC_TEMP_05);
+    FieldScript_End();
     // Arriving from the main menu: start the link, clear
     // FLAG_LINK_BATTLE_ARRANGED and reset the monster level. Idle sleep is
     // turned off here, with a note when it was on.
   } else {
     SerialRuntime_Initialize();
-    Engine_GameFlagClear(FLAG_LINK_BATTLE_ARRANGED);
+    GameFlag_ClearBit(FLAG_LINK_BATTLE_ARRANGED);
     FieldGameFlag_SetByte(FLAG_MONSTER_BATTLE_WINS, -1);
     if (gGameState.idleSleepEnabled != 0) {
-      Engine_ScriptStart();
-      Engine_ScriptOpenScreen();
-      Engine_ScriptWaitForScreen();
-      Engine_ObjectEventFaceObjectEvent(LOCALID_ATTENDANT,
-                                        gGameState.leaderLocalId, 0);
-      Engine_ScriptSetMessage(MsgLobbyNoteCantUse);
-      Engine_ScriptShowMessage(LOCALID_ATTENDANT, 0);
-      Engine_ScriptEnd();
+      FieldScript_Start();
+      FieldScript_StartScreenTransition();
+      FieldScript_WaitTransitionFrames();
+      ObjectMotion_SetAngleToward(LOCALID_ATTENDANT, gGameState.leaderLocalId,
+                                  0);
+      FieldScript_SetMessageId(MsgLobbyNoteCantUse);
+      FieldScript_ShowMessageAndWait(LOCALID_ATTENDANT, 0);
+      FieldScript_End();
     }
     gGameState.idleSleepEnabled = 0;
     gIdleSleepEnabled = 0;
@@ -1695,7 +1692,7 @@ s32 BattleArena_RunRoundResult(void) {
   callback = (TaskFunc)BattleArena_PollPeerReady;
   FieldScheduler_AddCallback(callback, 0xc80);
   Task_SetFlags(callback, 1);
-  if (gGameState.warpDest != 8 || !Engine_GameFlagIsSet(FLAG_MONSTER_BATTLE)) {
+  if (gGameState.warpDest != 8 || !GameFlag_Test(FLAG_MONSTER_BATTLE)) {
     Party_RestoreHpPp(1);
     DjinnRecovery_TickTwenty();
   }

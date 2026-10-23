@@ -295,7 +295,7 @@ const struct MapEvent *Map_GetEvents(void) {
   if (gGameState.warpDest == ROOM_GATE_TO_SUHALLA) {
     return gGateToSuhallaEvents;
   }
-  if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0) {
+  if (GameFlag_Test(FLAG_DODONPA_LOCKED_UP) != 0) {
     return gInteriorReopenedEvents;
   }
   return gInteriorSealedEvents;
@@ -309,50 +309,50 @@ static void EventScript_TalkToInnkeeper(void) {
 
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (FACING_IS_NORTH(leader->facing)) {
-    if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0) {
-      Engine_InnOpen(LUNPA_INN, LOCALID_INNKEEPER);
+    if (GameFlag_Test(FLAG_DODONPA_LOCKED_UP) != 0) {
+      Inn_CheckIn(LUNPA_INN, LOCALID_INNKEEPER);
       return;
     }
   }
-  Engine_ScriptStart();
-  if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0) {
-    Engine_ScriptSetMessage(MsgLunpaInnkeeperOffersRoom);
-    Engine_ScriptAskYesNo(LOCALID_INNKEEPER, 0);
+  FieldScript_Start();
+  if (GameFlag_Test(FLAG_DODONPA_LOCKED_UP) != 0) {
+    FieldScript_SetMessageId(MsgLunpaInnkeeperOffersRoom);
+    FieldScript_AskYesNoAndShowResponse(LOCALID_INNKEEPER, 0);
   } else {
-    Engine_ScriptSetMessage(MsgLunpaInnkeeperOffersOwnHome);
-    Engine_ScriptAskYesNo(LOCALID_INNKEEPER, 0);
+    FieldScript_SetMessageId(MsgLunpaInnkeeperOffersOwnHome);
+    FieldScript_AskYesNoAndShowResponse(LOCALID_INNKEEPER, 0);
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Lunpa, the inn, before Donpa's judgment: the chef offers the story of
 /// taking meals to the fortress; either way the party has heard of the
 /// prisoner.
 static void EventScript_TalkToChef(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgLunpaChefOffersStory);
-  Engine_ScriptAskYesNo(LOCALID_CHEF, 0);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgLunpaChefOffersStory);
+  FieldScript_AskYesNoAndShowResponse(LOCALID_CHEF, 0);
   Engine_GameFlagSet(FLAG_LUNPA_HEARD_OF_PRISONER);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Lunpa, the inn: Mind Read on the chef, who pities the prisoner in the
 /// dungeon.
 static void EventScript_ReadChefsThoughts(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgLunpaChefThinksOfPrisoner);
-  Engine_ScriptShowMessage(LOCALID_CHEF, 0);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgLunpaChefThinksOfPrisoner);
+  FieldScript_ShowMessageAndWait(LOCALID_CHEF, 0);
   Engine_GameFlagSet(FLAG_LUNPA_HEARD_OF_PRISONER);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Lunpa, the inn, after Donpa's judgment: a woman asks whether the party is
 /// Donpa's guest.
 static void EventScript_AskWhetherDonpasGuest(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgLunpaInnClerkAsksAboutGuest);
-  Engine_ScriptAskYesNo(LOCALID_WOMAN_ASKING_FOR_DONPAS_GUEST, 0);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgLunpaInnClerkAsksAboutGuest);
+  FieldScript_AskYesNoAndShowResponse(LOCALID_WOMAN_ASKING_FOR_DONPAS_GUEST, 0);
+  FieldScript_End();
 }
 
 /// Lunpa Temple: across the counter, the Sanctum's services; otherwise the
@@ -362,32 +362,32 @@ static void EventScript_TalkToHealer(void) {
 
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (FACING_IS_NORTH(leader->facing)) {
-    Engine_SanctumOpen(LOCALID_HEALER);
-  } else if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0) {
-    Engine_ScriptStart();
-    Engine_ScriptSetMessage(MsgLunpaTemplePriestReopened);
-    Engine_ScriptShowMessage(LOCALID_HEALER, 0);
-    Engine_ScriptEnd();
+    Sanctum_Run(LOCALID_HEALER);
+  } else if (GameFlag_Test(FLAG_DODONPA_LOCKED_UP) != 0) {
+    FieldScript_Start();
+    FieldScript_SetMessageId(MsgLunpaTemplePriestReopened);
+    FieldScript_ShowMessageAndWait(LOCALID_HEALER, 0);
+    FieldScript_End();
   } else {
-    Engine_ScriptStart();
-    Engine_ScriptSetMessage(MsgLunpaTemplePriestSealed);
-    Engine_ScriptShowMessage(LOCALID_HEALER, 0);
-    Engine_ScriptEnd();
+    FieldScript_Start();
+    FieldScript_SetMessageId(MsgLunpaTemplePriestSealed);
+    FieldScript_ShowMessageAndWait(LOCALID_HEALER, 0);
+    FieldScript_End();
   }
 }
 
 /// Lunpa, the item shop: Mind Read on the merchant.
 static void EventScript_ReadItemMerchantsThoughts(void) {
-  if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0) {
-    Engine_ScriptStart();
-    Engine_ScriptSetMessage(MsgLunpaIsntWeaponsVendors);
-    Engine_ScriptShowMessage(LOCALID_ITEM_MERCHANT, 0);
-    Engine_ScriptEnd();
+  if (GameFlag_Test(FLAG_DODONPA_LOCKED_UP) != 0) {
+    FieldScript_Start();
+    FieldScript_SetMessageId(MsgLunpaIsntWeaponsVendors);
+    FieldScript_ShowMessageAndWait(LOCALID_ITEM_MERCHANT, 0);
+    FieldScript_End();
   } else {
-    Engine_ScriptStart();
-    Engine_ScriptSetMessage(MsgLunpaItemMerchantSealedThoughts);
-    Engine_ScriptShowMessage(LOCALID_ITEM_MERCHANT, 0);
-    Engine_ScriptEnd();
+    FieldScript_Start();
+    FieldScript_SetMessageId(MsgLunpaItemMerchantSealedThoughts);
+    FieldScript_ShowMessageAndWait(LOCALID_ITEM_MERCHANT, 0);
+    FieldScript_End();
   }
 }
 
@@ -397,28 +397,28 @@ static void EventScript_TalkToItemMerchant(void) {
 
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (FACING_IS_NORTH(leader->facing)) {
-    Engine_ShopOpen(SHOP_LUNPA_ITEMS, LOCALID_ITEM_MERCHANT);
-  } else if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0) {
-    Engine_ScriptStart();
-    Engine_ScriptSetMessage(MsgLunpaItemMerchantReopened);
-    Engine_ScriptShowMessage(LOCALID_ITEM_MERCHANT, 0);
-    Engine_ScriptEnd();
+    Shop_Run(SHOP_LUNPA_ITEMS, LOCALID_ITEM_MERCHANT);
+  } else if (GameFlag_Test(FLAG_DODONPA_LOCKED_UP) != 0) {
+    FieldScript_Start();
+    FieldScript_SetMessageId(MsgLunpaItemMerchantReopened);
+    FieldScript_ShowMessageAndWait(LOCALID_ITEM_MERCHANT, 0);
+    FieldScript_End();
   } else {
-    Engine_ScriptStart();
-    Engine_ScriptSetMessage(MsgLunpaItemMerchantSealed);
-    Engine_ScriptShowMessage(LOCALID_ITEM_MERCHANT, 0);
-    Engine_ScriptEnd();
+    FieldScript_Start();
+    FieldScript_SetMessageId(MsgLunpaItemMerchantSealed);
+    FieldScript_ShowMessageAndWait(LOCALID_ITEM_MERCHANT, 0);
+    FieldScript_End();
   }
 }
 
 /// Lunpa, the weapon and armor shop: Mind Read on the weapon merchant.
 static void EventScript_ReadWeaponMerchantsThoughts(void) {
-  if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0) {
-    Engine_ScriptSetMessage(MsgLunpaWeaponMerchantReopenedThoughts);
-    Engine_ScriptShowMessage(LOCALID_WEAPON_MERCHANT, 0);
+  if (GameFlag_Test(FLAG_DODONPA_LOCKED_UP) != 0) {
+    FieldScript_SetMessageId(MsgLunpaWeaponMerchantReopenedThoughts);
+    FieldScript_ShowMessageAndWait(LOCALID_WEAPON_MERCHANT, 0);
   } else {
-    Engine_ScriptSetMessage(MsgLunpaWeaponMerchantSealedThoughts);
-    Engine_ScriptShowMessage(LOCALID_WEAPON_MERCHANT, 0);
+    FieldScript_SetMessageId(MsgLunpaWeaponMerchantSealedThoughts);
+    FieldScript_ShowMessageAndWait(LOCALID_WEAPON_MERCHANT, 0);
   }
 }
 
@@ -430,29 +430,29 @@ static void EventScript_TalkToWeaponMerchant(void) {
 
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   facing = leader->facing;
-  if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0) {
+  if (GameFlag_Test(FLAG_DODONPA_LOCKED_UP) != 0) {
     if (FACING_IS_NORTH(facing)) {
-      Engine_ShopOpen(SHOP_LUNPA_WEAPONS, LOCALID_WEAPON_MERCHANT);
+      Shop_Run(SHOP_LUNPA_WEAPONS, LOCALID_WEAPON_MERCHANT);
     } else {
-      Engine_ScriptStart();
-      Engine_ScriptSetMessage(MsgLunpaWeaponMerchantReopened);
-      Engine_ScriptShowMessage(LOCALID_WEAPON_MERCHANT, 0);
-      Engine_ScriptEnd();
+      FieldScript_Start();
+      FieldScript_SetMessageId(MsgLunpaWeaponMerchantReopened);
+      FieldScript_ShowMessageAndWait(LOCALID_WEAPON_MERCHANT, 0);
+      FieldScript_End();
     }
   } else {
-    Engine_ScriptSetMessage(MsgLunpaWeaponMerchantSealed);
-    Engine_ScriptShowMessage(LOCALID_WEAPON_MERCHANT, 0);
+    FieldScript_SetMessageId(MsgLunpaWeaponMerchantSealed);
+    FieldScript_ShowMessageAndWait(LOCALID_WEAPON_MERCHANT, 0);
   }
 }
 
 /// Lunpa, the weapon and armor shop: Mind Read on the armor merchant.
 static void EventScript_ReadArmorMerchantsThoughts(void) {
-  if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0) {
-    Engine_ScriptSetMessage(MsgLunpaArmorMerchantReopenedThoughts);
-    Engine_ScriptShowMessage(LOCALID_ARMOR_MERCHANT, 0);
+  if (GameFlag_Test(FLAG_DODONPA_LOCKED_UP) != 0) {
+    FieldScript_SetMessageId(MsgLunpaArmorMerchantReopenedThoughts);
+    FieldScript_ShowMessageAndWait(LOCALID_ARMOR_MERCHANT, 0);
   } else {
-    Engine_ScriptSetMessage(MsgLunpaArmorMerchantSealedThoughts);
-    Engine_ScriptShowMessage(LOCALID_ARMOR_MERCHANT, 0);
+    FieldScript_SetMessageId(MsgLunpaArmorMerchantSealedThoughts);
+    FieldScript_ShowMessageAndWait(LOCALID_ARMOR_MERCHANT, 0);
   }
 }
 
@@ -464,18 +464,18 @@ static void EventScript_TalkToArmorMerchant(void) {
 
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   facing = leader->facing;
-  if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0) {
+  if (GameFlag_Test(FLAG_DODONPA_LOCKED_UP) != 0) {
     if (FACING_IS_NORTH(facing)) {
-      Engine_ShopOpen(SHOP_LUNPA_ARMOR, LOCALID_ARMOR_MERCHANT);
+      Shop_Run(SHOP_LUNPA_ARMOR, LOCALID_ARMOR_MERCHANT);
     } else {
-      Engine_ScriptStart();
-      Engine_ScriptSetMessage(MsgLunpaArmorMerchantReopened);
-      Engine_ScriptShowMessage(LOCALID_ARMOR_MERCHANT, 0);
-      Engine_ScriptEnd();
+      FieldScript_Start();
+      FieldScript_SetMessageId(MsgLunpaArmorMerchantReopened);
+      FieldScript_ShowMessageAndWait(LOCALID_ARMOR_MERCHANT, 0);
+      FieldScript_End();
     }
   } else {
-    Engine_ScriptSetMessage(MsgLunpaArmorMerchantSealed);
-    Engine_ScriptShowMessage(LOCALID_ARMOR_MERCHANT, 0);
+    FieldScript_SetMessageId(MsgLunpaArmorMerchantSealed);
+    FieldScript_ShowMessageAndWait(LOCALID_ARMOR_MERCHANT, 0);
   }
 }
 
@@ -488,16 +488,13 @@ s32 Map_Initialize(void) {
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   warpDest = gGameState.warpDest;
   if (warpDest == ROOM_GATE_TO_SUHALLA) {
-    Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
+    GameFlag_ClearBit(FLAG_SHOW_LOCATION_NAME);
     gGameState.savedMap = (s32)&MapId_LunpaInteriors;
     gGameState.savedWarpDest = warpDest;
   }
-  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_WEAPON_COUNTER),
-                                   0);
-  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_ARMOR_COUNTER),
-                                   0);
-  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_ITEM_COUNTER),
-                                   0);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_WEAPON_COUNTER), 0);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_ARMOR_COUNTER), 0);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_ITEM_COUNTER), 0);
   return 0;
 }
 
@@ -513,12 +510,12 @@ static void EventScript_TalkToTravelingHealer(void) {
     // Healers are placed in this map in the same sprite, so the player sees no
     // difference.
 #ifdef BUGFIX
-    Engine_SanctumOpen(LOCALID_TRAVELING_HEALER);
+    Sanctum_Run(LOCALID_TRAVELING_HEALER);
 #else
-    Engine_SanctumOpen(LOCALID_HEALER);
+    Sanctum_Run(LOCALID_HEALER);
 #endif
   } else {
-    Engine_ScriptSetMessage(MsgLunpaTravelingPriest);
-    Engine_ScriptShowMessage(LOCALID_TRAVELING_HEALER, 0);
+    FieldScript_SetMessageId(MsgLunpaTravelingPriest);
+    FieldScript_ShowMessageAndWait(LOCALID_TRAVELING_HEALER, 0);
   }
 }

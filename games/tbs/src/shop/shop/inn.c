@@ -42,7 +42,7 @@ s32 Inn_RoomPrice(s32 innId) {
 /// Runs an inn's counter: the innkeeper names the price, and on Yes, with the
 /// coins, the party sleeps (Inn_PlaySleep) and the innkeeper speaks again.
 /// Holds the shop's work block while it runs; returns 0. Called by the town
-/// maps' innkeepers through SHOP.S (Engine_InnOpen). `innId` is the row of
+/// maps' innkeepers through SHOP.S. `innId` is the row of
 /// sInnPricesPerGuest, 0 to 11, which nothing checks; `objectId` is the
 /// innkeeper, whose portrait the lines show.
 s32 Inn_CheckIn(s32 innId, s32 objectId) {

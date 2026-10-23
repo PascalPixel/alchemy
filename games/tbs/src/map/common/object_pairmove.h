@@ -16,29 +16,29 @@ static void ObjectEvent_PlacePairAtOffset(s32 id, s32 dx, s32 dz) {
 
   objectEvent = ObjectEvent_GetById(gGameState.leaderLocalId);
   other = ObjectEvent_GetById(id);
-  Engine_ScriptStart();
+  FieldScript_Start();
   {
     x = ((objectEvent->x.fixed + (dx << 16)) & 0xFFF00000) + 0x80000;
     z = ((objectEvent->z.fixed + (dz << 16)) & 0xFFF00000) + 0x80000;
 
     objectEvent->speed = 0x10000;
     objectEvent->acceleration = 0x8000;
-    Engine_ObjectSetPosition(objectEvent, x, objectEvent->y.fixed, z);
+    Object_SetPosition(objectEvent, x, objectEvent->y.fixed, z);
   }
-  ObjectEvent_SetMode(objectEvent, 27);
+  ObjectDispatch_SelectAnimation(objectEvent, 27);
   {
     x = ((other->x.fixed + (dx << 16)) & 0xFFF00000) + 0x80000;
     z = ((other->z.fixed + (dz << 16)) & 0xFFF00000) + 0x80000;
 
     other->speed = 0x10000;
     other->acceleration = 0x8000;
-    Engine_ObjectSetPosition(other, x, other->y.fixed, z);
+    Object_SetPosition(other, x, other->y.fixed, z);
   }
   if (dx < 0 || dz < 0) {
-    ObjectEvent_SetMode(other, 4);
+    ObjectDispatch_SelectAnimation(other, 4);
   } else {
-    ObjectEvent_SetMode(other, 3);
+    ObjectDispatch_SelectAnimation(other, 3);
   }
   Object_WaitForMove(objectEvent);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }

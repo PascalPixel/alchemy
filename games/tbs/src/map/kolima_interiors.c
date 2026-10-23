@@ -56,7 +56,7 @@
 #include "map_tables.h"
 #include "item_ids.h"
 
-/// Kolima's shops and inn, as Engine_ShopOpen and Engine_InnOpen number them.
+/// Kolima's shops and inn, as Shop_Run and Inn_CheckIn number them.
 enum {
   KOLIMA_WEAPON_SHOP = 13,
   KOLIMA_ARMOR_SHOP = 14,
@@ -181,12 +181,12 @@ const struct ObjectEventTemplate *
 KolimaInteriors_GetObjectEventTemplates(void) {
   struct ObjectEventTemplate *templates;
 
-  if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
+  if (GameFlag_Test(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
     KolimaInteriors_TurnVillagersIntoTrees(
         gKolimaInteriors_ObjectEventTemplates);
   }
   templates = gKolimaInteriors_ObjectEventTemplates;
-  Map_PrepareObjectEvents(templates);
+  Map_AssignViewFlags(templates);
   return templates;
 }
 
@@ -196,14 +196,14 @@ KolimaInteriors_GetObjectEventTemplates(void) {
 static void KolimaInteriors_TalkToWeaponMerchant(void) {
   u32 facing = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   if (FACING_IS_NORTH(facing)) {
-    Engine_ShopOpen(KOLIMA_WEAPON_SHOP, LOCALID_WEAPON_MERCHANT);
+    Shop_Run(KOLIMA_WEAPON_SHOP, LOCALID_WEAPON_MERCHANT);
   } else {
-    Engine_ScriptSetMessage(MsgKolimaFuchinTempleOnOtherSide);
-    Engine_ScriptShowMessage(LOCALID_WEAPON_MERCHANT, 0);
+    FieldScript_SetMessageId(MsgKolimaFuchinTempleOnOtherSide);
+    FieldScript_ShowMessageAndWait(LOCALID_WEAPON_MERCHANT, 0);
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Kolima's armor shop, once the curse is lifted: across the counter the shop
@@ -212,14 +212,14 @@ static void KolimaInteriors_TalkToWeaponMerchant(void) {
 static void KolimaInteriors_TalkToArmorMerchant(void) {
   u32 facing = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   if (FACING_IS_NORTH(facing)) {
-    Engine_ShopOpen(KOLIMA_ARMOR_SHOP, LOCALID_ARMOR_MERCHANT);
+    Shop_Run(KOLIMA_ARMOR_SHOP, LOCALID_ARMOR_MERCHANT);
   } else {
-    Engine_ScriptSetMessage(MsgKolimaGrandBridgeAcrossRiverPride);
-    Engine_ScriptShowMessage(LOCALID_ARMOR_MERCHANT, 0);
+    FieldScript_SetMessageId(MsgKolimaGrandBridgeAcrossRiverPride);
+    FieldScript_ShowMessageAndWait(LOCALID_ARMOR_MERCHANT, 0);
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Kolima's item shop, once the curse is lifted: across the counter the shop
@@ -227,14 +227,14 @@ static void KolimaInteriors_TalkToArmorMerchant(void) {
 static void KolimaInteriors_TalkToItemMerchant(void) {
   u32 facing = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   if (FACING_IS_NORTH(facing)) {
-    Engine_ShopOpen(KOLIMA_ITEM_SHOP, LOCALID_ITEM_MERCHANT);
+    Shop_Run(KOLIMA_ITEM_SHOP, LOCALID_ITEM_MERCHANT);
   } else {
-    Engine_ScriptSetMessage(MsgKolimaWhenWasTreeLearnedAppreciate);
-    Engine_ScriptShowMessage(LOCALID_ITEM_MERCHANT, 0);
+    FieldScript_SetMessageId(MsgKolimaWhenWasTreeLearnedAppreciate);
+    FieldScript_ShowMessageAndWait(LOCALID_ITEM_MERCHANT, 0);
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Kolima's inn, once the curse is lifted: across the counter the inn opens;
@@ -243,16 +243,16 @@ static void KolimaInteriors_TalkToItemMerchant(void) {
 static void KolimaInteriors_TalkToInnkeeper(void) {
   u32 facing = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
 
   if (FACING_IS_NORTH(facing)) {
-    Engine_InnOpen(KOLIMA_INN, LOCALID_INNKEEPER);
+    Inn_CheckIn(KOLIMA_INN, LOCALID_INNKEEPER);
   } else {
-    Engine_ScriptSetMessage(MsgKolimaTheySayMccoyHaltedConstruction);
-    Engine_ScriptShowMessage(LOCALID_INNKEEPER, 0);
+    FieldScript_SetMessageId(MsgKolimaTheySayMccoyHaltedConstruction);
+    FieldScript_ShowMessageAndWait(LOCALID_INNKEEPER, 0);
   }
 
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// The warps, the residents' words and thoughts, the shops, the bookcases, the
@@ -273,13 +273,13 @@ s32 KolimaInteriors_Initialize(void) {
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
 
   // The residents remain visible as trees, with their sprite flags cleared.
-  if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
+  if (GameFlag_Test(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
     localId = LOCALID_FIRST_VILLAGER;
     do {
       struct ObjectEvent *objectEvent = ObjectEvent_GetById(localId);
 
       localId++;
-      Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
+      ObjectEvent_SetSpriteFlags(objectEvent, 0);
     } while ((u32)localId <= LOCALID_LAST_VILLAGER);
   }
 

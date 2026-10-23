@@ -2,58 +2,58 @@
 	.set overlay_imports, 1
 	.set import.__divsi3, 1
 	.set import.__udivsi3, 1
-	.set import.Engine_TaskWait, 1
+	.set import.WaitFrames, 1
 	.set import.Task_Add, 1
-	.set import.Engine_TaskRemoveCallback, 1
+	.set import.Task_Remove, 1
 	.set import.Vector_AddPolarOffset, 1
 	.set import.VramCache_FreeEntry, 1
-	.set import.ObjectEvent_SetMode, 1
-	.set import.Engine_ObjectSetScript, 1
-	.set import.Engine_ObjectCreate, 1
-	.set import.Engine_ObjectDispatchRelease, 1
-	.set import.Engine_ObjectSetPosition, 1
-	.set import.Engine_ObjectEventSetSpriteFlags, 1
-	.set import.Engine_MessageShowCentered, 1
+	.set import.ObjectDispatch_SelectAnimation, 1
+	.set import.ObjectDispatch_Initialize, 1
+	.set import.Object_CreateField, 1
+	.set import.ObjectDispatch_Release, 1
+	.set import.Object_SetMoveTarget, 1
+	.set import.ObjectDispatch_SetSingleChildFlags, 1
+	.set import.FieldMessage_Show, 1
 	.set import.Unit_Get, 1
 	.set import.Inventory_Find, 1
 	.set import.PartyInventory_FindMember, 1
-	.set import.Engine_GameFlagIsSet, 1
+	.set import.GameFlag_Test, 1
 	.set import.Engine_GameFlagSet, 1
-	.set import.Engine_ScriptWait, 1
-	.set import.Engine_ScriptStart, 1
-	.set import.Engine_ScriptEnd, 1
-	.set import.Engine_ScriptChooseYesNo, 1
+	.set import.FieldScript_WaitFrames, 1
+	.set import.FieldScript_Start, 1
+	.set import.FieldScript_End, 1
+	.set import.FieldScript_AskYesNoWithObjectEventAnimation, 1
 	.set import.ObjectEvent_GetById, 1
-	.set import.Engine_ObjectEventSetSpeed, 1
-	.set import.Engine_ObjectEventEnableActionCallback, 1
+	.set import.ObjectMotion_SetSpeedParameters, 1
+	.set import.ObjectMotion_EnableActionAndSetCallback, 1
 	.set import.ObjectEvent_RefreshSelectorById, 1
 	.set import.ObjectEvent_SetActionCallbackAndRefreshById, 1
-	.set import.Engine_ObjectEventMoveToAndWait, 1
-	.set import.Engine_ObjectEventWalkToAndWait, 1
+	.set import.ObjectMotion_SetPositionAndCommit, 1
+	.set import.ObjectMotion_SetPositionAndReset, 1
 	.set import.Engine_ObjectEventSetPosition, 1
 	.set import.Engine_ObjectEventSetAnimation, 1
-	.set import.Engine_ObjectEventSetAnimationAndWait, 1
-	.set import.Engine_ObjectEventJump, 1
-	.set import.Engine_ObjectEventStartRepeatedMotion, 1
-	.set import.Engine_ObjectEventRunRepeatedMotion, 1
-	.set import.Engine_ObjectEventSetChildValue, 1
-	.set import.Engine_ScriptSetMessage, 1
-	.set import.Engine_ScriptOpenMessage, 1
-	.set import.Engine_ScriptShowMessage, 1
-	.set import.Engine_ScriptShowMessageAndWait, 1
-	.set import.Engine_ObjectEventFaceDirection, 1
-	.set import.Engine_ObjectEventSetSpritePriority, 1
-	.set import.Engine_ObjectEventShowEmote, 1
-	.set import.Engine_CameraSetSpeed, 1
-	.set import.Engine_CameraMoveTo, 1
-	.set import.Engine_CameraWaitForMove, 1
+	.set import.ObjectMotion_SetAnimationAndWait, 1
+	.set import.ObjectMotion_Launch, 1
+	.set import.ObjectMotion_SetVariantCallback, 1
+	.set import.ObjectMotion_SetVarCbAndRefresh, 1
+	.set import.ObjectGroup_ConfigureChildValue, 1
+	.set import.FieldScript_SetMessageId, 1
+	.set import.FieldMessage_ShowAtObject, 1
+	.set import.FieldScript_ShowMessageAndWait, 1
+	.set import.FieldScript_ShowMessageThenWait, 1
+	.set import.ObjectMotion_ArmCallback, 1
+	.set import.ObjectMotion_SetActionVariant, 1
+	.set import.FieldEffect_SpawnLinked, 1
+	.set import.FieldCamera_SetSpeedParameters, 1
+	.set import.FieldCamera_MoveWithinMapBounds, 1
+	.set import.FieldCamera_WaitForArrival, 1
 	.set import.Engine_ScriptRequestWarp, 1
-	.set import.Engine_ColorBufferApplyTarget, 1
-	.set import.Engine_ColorBufferApplySource, 1
-	.set import.Engine_ColorBufferInterpolate, 1
+	.set import.PaletteFade_SetTarget, 1
+	.set import.PaletteFade_SetSource, 1
+	.set import.PaletteFade_StartInterpolation, 1
 	.set import.Field_EndBusyAndReveal, 1
 	.set import.Sprite_ShareVramCacheEntry, 1
 	.set import.Map_PlayMusic, 1
-	.set import.Engine_ObjectEventWalkByAndWait, 1
-	.set import.Engine_AudioPlayCue, 1
+	.set import.ObjectMotion_CommitPositionAndActivate, 1
+	.set import.Sound_PlaySong, 1
 	.include "games/tbs/src/system/overlay.inc"

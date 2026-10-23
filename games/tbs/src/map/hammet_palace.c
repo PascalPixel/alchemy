@@ -153,7 +153,7 @@ const u32 *Map_GetWarps(void) { return gHammetPalaceWarps; }
 /// object event rows.
 const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
   if (gGameState.mapId == (s32)&MapId_HammetPalace) {
-    Map_PrepareObjectEvents(gHammetPalaceObjectEventTemplates);
+    Map_AssignViewFlags(gHammetPalaceObjectEventTemplates);
     return gHammetPalaceObjectEventTemplates;
   }
   return gHammetPalaceObjectEventTemplatesOther;
@@ -174,7 +174,8 @@ const struct MapEvent *Map_GetEvents(void) {
 static void EventScript_AskWhetherHammetWillBeReleased(void) {
   SCRIPT_START();
   MESSAGE_SET(MsgKalayLordHammetWillReleasedSoon);
-  Engine_ScriptAskYesNo(LOCALID_ASKING_IF_HAMMET_WILL_BE_RELEASED, 0);
+  FieldScript_AskYesNoAndShowResponse(LOCALID_ASKING_IF_HAMMET_WILL_BE_RELEASED,
+                                      0);
   SCRIPT_END();
 }
 
@@ -184,7 +185,7 @@ static void EventScript_AskWhetherHammetWillBeReleased(void) {
 static void EventScript_AskWhetherSilkTradeHasEnded(void) {
   SCRIPT_START();
   MESSAGE_SET(MsgKalayHasLegacyLordHammetsSilk);
-  Engine_ScriptAskYesNo(LOCALID_ASKING_ABOUT_THE_SILK_TRADE, 0);
+  FieldScript_AskYesNoAndShowResponse(LOCALID_ASKING_ABOUT_THE_SILK_TRADE, 0);
   SCRIPT_END();
 }
 
@@ -196,16 +197,16 @@ static void EventScript_AskWhetherSilkTradeHasEnded(void) {
 static void EventScript_LayanaScoldsLunpaVisit(void) {
 
   SCRIPT_START();
-  Engine_ObjectEventShowEmote(LOCALID_LAYANA,
-                              EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+  FieldEffect_SpawnLinked(LOCALID_LAYANA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                          60);
   MESSAGE_SET(MsgKalayIsaacSneakedIntoLunpaThats);
-  Engine_ScriptShowMessageAndWait(LOCALID_LAYANA, 0, 10);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_LAYANA, 2);
-  Engine_ScriptShowMessageAndWait(LOCALID_LAYANA, 0, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_LAYANA, ANIMATION_SHAKE_HEAD);
-  Engine_ScriptShowMessageAndWait(LOCALID_LAYANA, 0, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_LAYANA, ANIMATION_NOD);
-  Engine_ScriptShowMessageAndWait(LOCALID_LAYANA, 0, 10);
+  FieldScript_ShowMessageThenWait(LOCALID_LAYANA, 0, 10);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_LAYANA, 2);
+  FieldScript_ShowMessageThenWait(LOCALID_LAYANA, 0, 10);
+  ObjectMotion_SetAnimationAndWait(LOCALID_LAYANA, ANIMATION_SHAKE_HEAD);
+  FieldScript_ShowMessageThenWait(LOCALID_LAYANA, 0, 10);
+  ObjectMotion_SetAnimationAndWait(LOCALID_LAYANA, ANIMATION_NOD);
+  FieldScript_ShowMessageThenWait(LOCALID_LAYANA, 0, 10);
   Engine_GameFlagSet(FLAG_KALAY_LAYANA_SAID_LUNPA_TOO_DANGEROUS);
   SCRIPT_END();
 }
@@ -273,18 +274,18 @@ static void HammetPalace_SetUpWarpDest(void) {
 
   switch (gGameState.warpDest) {
   case HAMMET_PALACE_LAYANAS_ROOM_FROM_ENTRANCE_ROOM:
-    if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0) {
+    if (GameFlag_Test(FLAG_DODONPA_LOCKED_UP) != 0) {
       // Hammet is home.
       objectEvent = ObjectEvent_GetById(LOCALID_LAYANA);
       facing = FACING_EAST + FACING_STEP;
       objectEvent->facing = facing;
 
-      if (Engine_GameFlagIsSet(FLAG_HAMMET_BACK_HOME_SEEN) == 0) {
+      if (GameFlag_Test(FLAG_HAMMET_BACK_HOME_SEEN) == 0) {
         HammetPalace_HammetsHomecoming();
       }
     } else {
       Engine_ObjectEventSetPosition(LOCALID_HAMMET, 0, 0);
-      if (Engine_GameFlagIsSet(FLAG_MAPSEC_TEMP_21) != 0) {
+      if (GameFlag_Test(FLAG_MAPSEC_TEMP_21) != 0) {
         Engine_ObjectEventSetPosition(LOCALID_LAYANA, waitingX, waitingZ);
         objectEvent = ObjectEvent_GetById(LOCALID_LAYANA);
         facing = FACING_NORTH + FACING_STEP;
@@ -295,19 +296,19 @@ static void HammetPalace_SetUpWarpDest(void) {
 
   case HAMMET_PALACE_PASSAGE_DOOR_FROM_EAST_WING:
   case HAMMET_PALACE_FROM_KALAY_TUNNEL_TREASURE_ROOM:
-    if (Engine_GameFlagIsSet(FLAG_KALAY_TUNNEL_OPEN) != 0) {
+    if (GameFlag_Test(FLAG_KALAY_TUNNEL_OPEN) != 0) {
       MapGrid_CopyCellsTo(58, 70, 54, 70, 4, 3);
       {
         MapGrid_CopyCellAttributes(55, 9, 2, 1, 55, 8);
       }
-      Engine_MapGridRedraw();
-      Engine_TaskWait(1);
+      MapGrid_CenterOnFollowedPoint();
+      WaitFrames(1);
     }
     break;
 
   case HAMMET_PALACE_LAYANAS_ROOM_FROM_HAMMET_PALACE_GROUNDS:
     Engine_ObjectEventSetPosition(LOCALID_HAMMET, 0, 0);
-    if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
+    if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {
       HammetPalace_IvanReportsToLayana();
     }
     break;
@@ -331,13 +332,13 @@ static void HammetPalace_IvanReportsToLayana(void) {
 
   SCRIPT_START();
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  Engine_TaskWait(1);
+  WaitFrames(1);
   PaletteFade_ApplySource(PALETTE_TINT_SEPIA, PALETTES_ALL);
   // The report opens in sepia, with the party placed under the closed screen;
   // the colours come back after the silent exchange of nods that opens it.
   PaletteFade_ApplyTarget(PALETTE_TINT_SEPIA, PALETTES_ALL);
-  Engine_ColorBufferInterpolate(1);
-  Engine_TaskWait(1);
+  PaletteFade_StartInterpolation(1);
+  WaitFrames(1);
   work = gFieldWork;
   work->transitionFrames = 24;
   work->transition = MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
@@ -349,69 +350,69 @@ static void HammetPalace_IvanReportsToLayana(void) {
   OBJECT_POSITION_SET(LOCALID_FIRST_SOLDIER, 840, 518);
   OBJECT_POSITION_SET(LOCALID_SECOND_SOLDIER, 888, 518);
   FieldCamera_MoveTo(PIXELS(864), -1, PIXELS(472), 0);
-  Engine_MapGridRedraw();
-  Engine_TaskWait(1);
-  Engine_ScriptOpenScreen();
-  Engine_ScriptWaitForScreen();
+  MapGrid_CenterOnFollowedPoint();
+  WaitFrames(1);
+  FieldScript_StartScreenTransition();
+  FieldScript_WaitTransitionFrames();
   WAIT(40);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_LAYANA, 1);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_LAYANA, ANIMATION_NOD);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_LAYANA, 1);
+  ObjectMotion_SetAnimationAndWait(LOCALID_LAYANA, ANIMATION_NOD);
   WAIT(10);
-  Engine_ObjectEventRunRepeatedMotion(IVAN, 1);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
+  ObjectMotion_SetVarCbAndRefresh(IVAN, 1);
+  ObjectMotion_SetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
   WAIT(20);
   OBJECT_DIR(IVAN, FACING_WEST, 20);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_PARTY_LEADER, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_PARTY_LEADER, 2);
   OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_EAST, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ObjectEventStartRepeatedMotion(GARET, 1);
-  Engine_ObjectEventRunRepeatedMotion(MIA, 1);
+  ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  ObjectMotion_SetVariantCallback(GARET, 1);
+  ObjectMotion_SetVarCbAndRefresh(MIA, 1);
   OBJECT_DIR(GARET, FACING_NORTHEAST, 0);
   OBJECT_DIR(MIA, FACING_NORTHWEST, 10);
   OBJECT_ANIMATION(GARET, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
+  ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_NOD);
   WAIT(20);
   HammetPalace_FacePartyNorth(20);
   ObjectEvent_SetAttachedEffect(LOCALID_LAYANA, ATTACHED_EFFECT_IN_FRONT |
                                                     ATTACHED_EFFECT_ONCE);
-  Engine_ObjectEventStartRepeatedMotion(LOCALID_LAYANA, 2);
+  ObjectMotion_SetVariantCallback(LOCALID_LAYANA, 2);
   WAIT(60);
   OBJECT_DIR(LOCALID_LAYANA, FACING_SOUTH + FACING_STEP, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_LAYANA, ANIMATION_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_LAYANA, ANIMATION_NOD);
   OBJECT_EMOTE(LOCALID_FIRST_SOLDIER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Engine_ObjectEventStartRepeatedMotion(LOCALID_FIRST_SOLDIER, 2);
+  ObjectMotion_SetVariantCallback(LOCALID_FIRST_SOLDIER, 2);
   WAIT(60);
   OBJECT_DIR(LOCALID_FIRST_SOLDIER, FACING_NORTHEAST + FACING_STEP, 20);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_SECOND_SOLDIER, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_SECOND_SOLDIER, 2);
   OBJECT_DIR(LOCALID_SECOND_SOLDIER, FACING_WEST + FACING_STEP, 40);
   OBJECT_DIR(LOCALID_FIRST_SOLDIER, FACING_NORTH + FACING_STEP, 0);
   OBJECT_DIR(LOCALID_SECOND_SOLDIER, FACING_NORTHWEST + FACING_STEP, 20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_SECOND_SOLDIER, ANIMATION_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_SECOND_SOLDIER, ANIMATION_NOD);
   WAIT(10);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_LAYANA, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_LAYANA, 2);
   OBJECT_DIR(LOCALID_LAYANA, FACING_SOUTHEAST + FACING_STEP, 10);
   OBJECT_EMOTE(LOCALID_LAYANA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_SECOND_SOLDIER, 2);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_SECOND_SOLDIER,
-                                        ANIMATION_SHAKE_HEAD);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_SECOND_SOLDIER,
-                                        ANIMATION_SHAKE_HEAD);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_SECOND_SOLDIER, 2);
+  ObjectMotion_SetAnimationAndWait(LOCALID_SECOND_SOLDIER,
+                                   ANIMATION_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_SECOND_SOLDIER,
+                                   ANIMATION_SHAKE_HEAD);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
-  Engine_ColorBufferInterpolate(40);
-  Engine_TaskWait(60);
+  PaletteFade_StartInterpolation(40);
+  WaitFrames(60);
   OBJECT_EMOTE(LOCALID_LAYANA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   MESSAGE_SET(MsgKalayWhenHeardWereBackIvan);
   // The following replies advance through this conversation's message block.
   Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 10);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_FIRST_SOLDIER, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_FIRST_SOLDIER, 2);
   Script_ShowMessageAndWait(LOCALID_FIRST_SOLDIER, 0, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_SECOND_SOLDIER,
-                                        ANIMATION_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_SECOND_SOLDIER,
+                                   ANIMATION_SHAKE_HEAD);
   Script_ShowMessageAndWait(LOCALID_SECOND_SOLDIER, 0, 10);
   OBJECT_DIR(IVAN, FACING_SOUTHWEST, 10);
   Script_ShowMessageAndWait(
       SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT | IVAN, 0, 10);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_SECOND_SOLDIER, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_SECOND_SOLDIER, 2);
   Script_ShowMessageAndWait(LOCALID_SECOND_SOLDIER, 0, 10);
   OBJECT_ANIMATION(LOCALID_FIRST_SOLDIER, ANIMATION_SHAKE_HEAD);
   Script_ShowMessageAndWait(LOCALID_FIRST_SOLDIER, 0, 10);
@@ -419,31 +420,31 @@ static void HammetPalace_IvanReportsToLayana(void) {
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | IVAN, 0, 10);
   OBJECT_EMOTE(LOCALID_LAYANA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 10);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_SECOND_SOLDIER, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_SECOND_SOLDIER, 2);
   Script_ShowMessageAndWait(LOCALID_SECOND_SOLDIER, 0, 10);
   OBJECT_DIR(IVAN, FACING_SOUTHEAST, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_FIRST_SOLDIER, ANIMATION_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_FIRST_SOLDIER, ANIMATION_NOD);
   Script_ShowMessageAndWait(LOCALID_FIRST_SOLDIER, 0, 10);
   OBJECT_DIR(IVAN, FACING_SOUTHWEST, 10);
-  Engine_ObjectEventStartRepeatedMotion(IVAN, 1);
+  ObjectMotion_SetVariantCallback(IVAN, 1);
   Script_ShowMessageAndWait(
       SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT | IVAN, 0, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_FIRST_SOLDIER, ANIMATION_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_FIRST_SOLDIER, ANIMATION_NOD);
   OBJECT_DIR(IVAN, FACING_WEST, 10);
   Script_AskYesNo(SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT | IVAN, 0);
   ObjectEvent_SetAttachedEffect(LOCALID_LAYANA, ATTACHED_EFFECT_IN_FRONT |
                                                     ATTACHED_EFFECT_ONCE);
   WAIT(60);
   Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 10);
-  Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
+  ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
   WAIT(10);
   OBJECT_DIR(IVAN, FACING_NORTH, 20);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+  ObjectMotion_SetAnimationAndWait(IVAN, ANIMATION_NOD);
   WAIT(20);
-  Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_NOD);
+  ObjectMotion_SetAnimationAndWait(GARET, ANIMATION_NOD);
   Script_ShowMessageAndWait(GARET, 0, 10);
   OBJECT_EMOTE(LOCALID_LAYANA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
   Script_ShowMessageAndWait(MIA, 0, 40);
   OBJECT_DIR(LOCALID_LAYANA, FACING_EAST + FACING_STEP, 40);
   OBJECT_SPEED(LOCALID_LAYANA, 2 * PIXELS(1) / 5, PIXELS(1) / 5);
@@ -461,13 +462,13 @@ static void HammetPalace_IvanReportsToLayana(void) {
   OBJECT_DIR(LOCALID_SECOND_SOLDIER, FACING_WEST + FACING_STEP, 40);
   OBJECT_DIR(LOCALID_FIRST_SOLDIER, FACING_NORTH + FACING_STEP, 0);
   OBJECT_DIR(LOCALID_SECOND_SOLDIER, FACING_NORTHWEST + FACING_STEP, 10);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_LAYANA, 1);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_LAYANA, 1);
   Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_LAYANA, ANIMATION_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_LAYANA, ANIMATION_SHAKE_HEAD);
   Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 20);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_FIRST_SOLDIER, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_FIRST_SOLDIER, 2);
   Script_ShowMessageAndWait(LOCALID_FIRST_SOLDIER, 0, 10);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_LAYANA, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_LAYANA, 2);
   OBJECT_DIR(LOCALID_LAYANA, FACING_SOUTH + FACING_STEP, 10);
   OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
   OBJECT_DIR(GARET, FACING_SOUTH, 0);
@@ -476,36 +477,36 @@ static void HammetPalace_IvanReportsToLayana(void) {
   OBJECT_DIR(LOCALID_SECOND_SOLDIER, FACING_WEST + FACING_STEP, 40);
   OBJECT_DIR(LOCALID_FIRST_SOLDIER, FACING_NORTHEAST + FACING_STEP, 20);
   Script_ShowMessageAndWait(LOCALID_FIRST_SOLDIER, 0, 20);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_SECOND_SOLDIER, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_SECOND_SOLDIER, 2);
   WAIT(20);
   OBJECT_DIR(LOCALID_SECOND_SOLDIER, FACING_NORTHWEST + FACING_STEP, 20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_SECOND_SOLDIER, ANIMATION_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_SECOND_SOLDIER, ANIMATION_NOD);
   Script_ShowMessageAndWait(LOCALID_SECOND_SOLDIER, 0, 10);
   OBJECT_DIR(LOCALID_SECOND_SOLDIER, FACING_WEST + FACING_STEP, 40);
   OBJECT_ANIMATION(LOCALID_FIRST_SOLDIER, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_SECOND_SOLDIER, ANIMATION_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_SECOND_SOLDIER, ANIMATION_NOD);
   OBJECT_DIR(LOCALID_FIRST_SOLDIER, FACING_NORTH + FACING_STEP, 0);
   OBJECT_DIR(LOCALID_SECOND_SOLDIER, FACING_NORTHWEST + FACING_STEP, 10);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_FIRST_SOLDIER, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_FIRST_SOLDIER, 2);
   Script_ShowMessageAndWait(LOCALID_FIRST_SOLDIER, 0, 20);
   HammetPalace_FacePartyNorth(20);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_LAYANA, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_LAYANA, 2);
   WAIT(40);
   Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 10);
   ObjectEvent_SetAttachedEffect(LOCALID_LAYANA, ATTACHED_EFFECT_IN_FRONT |
                                                     ATTACHED_EFFECT_ONCE);
   WAIT(60);
   Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_LAYANA, ANIMATION_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_LAYANA, ANIMATION_SHAKE_HEAD);
   WAIT(20);
   OBJECT_ANIMATION(LOCALID_LAYANA, ANIMATION_SHAKE_HEAD);
   Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 20);
-  Engine_ObjectEventRunRepeatedMotion(GARET, 2);
+  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
   OBJECT_DIR(GARET, FACING_NORTHEAST, 20);
   Script_OpenMessage(GARET, 0);
   OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 0);
   advanceAfterReply = 1;
-  if (Engine_ScriptChooseYesNo(0, 0) == 1) {
+  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 1) {
     gFieldWork->message++;
     advanceAfterReply = 0;
   }
@@ -522,26 +523,26 @@ static void HammetPalace_IvanReportsToLayana(void) {
   OBJECT_DIR(LOCALID_LAYANA, FACING_SOUTH + FACING_STEP, 20);
   OBJECT_DIR(LOCALID_LAYANA, FACING_SOUTHEAST + FACING_STEP, 20);
   Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 10);
-  Engine_ObjectEventRunRepeatedMotion(IVAN, 1);
+  ObjectMotion_SetVarCbAndRefresh(IVAN, 1);
   OBJECT_DIR(IVAN, FACING_NORTH, 10);
   OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   OBJECT_DIR(GARET, FACING_NORTH, 10);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | IVAN, 0, 10);
   OBJECT_EMOTE(LOCALID_LAYANA, EMOTE_IN_FRONT | EMOTE_SCOWL, 60);
-  Engine_ScriptShowMessageAndWait(LOCALID_LAYANA, 0, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_LAYANA, ANIMATION_SHAKE_HEAD);
+  FieldScript_ShowMessageThenWait(LOCALID_LAYANA, 0, 10);
+  ObjectMotion_SetAnimationAndWait(LOCALID_LAYANA, ANIMATION_SHAKE_HEAD);
   Script_OpenMessage(LOCALID_LAYANA, 0);
   OBJECT_DIR(IVAN, FACING_WEST, 0);
   OBJECT_DIR(GARET, FACING_NORTHEAST, 0);
   OBJECT_DIR(MIA, FACING_NORTHWEST, 0);
-  if (Engine_ScriptChooseYesNo(0, 0) == 0) {
+  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
     WAIT(20);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_LAYANA, ANIMATION_NOD);
+    ObjectMotion_SetAnimationAndWait(LOCALID_LAYANA, ANIMATION_NOD);
     Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 10);
     gFieldWork->message++;
   } else {
     WAIT(20);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_LAYANA, ANIMATION_SHAKE_HEAD);
+    ObjectMotion_SetAnimationAndWait(LOCALID_LAYANA, ANIMATION_SHAKE_HEAD);
     gFieldWork->message++;
     Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 10);
   }
@@ -553,25 +554,25 @@ static void HammetPalace_IvanReportsToLayana(void) {
   Script_ShowMessageAndWait(MIA, 0, 20);
   OBJECT_EMOTE(LOCALID_LAYANA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 40);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_LAYANA, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_LAYANA, 2);
   Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 40);
-  Engine_ObjectEventRunRepeatedMotion(IVAN, 1);
+  ObjectMotion_SetVarCbAndRefresh(IVAN, 1);
   WAIT(20);
   OBJECT_SPEED(IVAN, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
   ObjectEvent_WalkToAndWait(IVAN, 868, 472);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | IVAN, 0, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_LAYANA, ANIMATION_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_LAYANA, ANIMATION_SHAKE_HEAD);
   Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 10);
   HammetPalace_FacePartyOutward(40);
   HammetPalace_FacePartyNorth(20);
   OBJECT_EMOTE(LOCALID_LAYANA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 10);
-  Engine_ObjectEventRunRepeatedMotion(GARET, 2);
+  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
   Script_ShowMessageAndWait(GARET, 0, 10);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_LAYANA, 1);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_LAYANA, 1);
   OBJECT_DIR(LOCALID_LAYANA, FACING_SOUTH + FACING_STEP, 10);
   Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_LAYANA, ANIMATION_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_LAYANA, ANIMATION_NOD);
   OBJECT_DIR(LOCALID_LAYANA, FACING_SOUTHEAST + FACING_STEP, 10);
   Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 10);
   ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
@@ -584,15 +585,15 @@ static void HammetPalace_IvanReportsToLayana(void) {
                                          ATTACHED_EFFECT_ONCE);
   WAIT(40);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | IVAN, 0, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_LAYANA, ANIMATION_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_LAYANA, ANIMATION_NOD);
   Script_OpenMessage(LOCALID_LAYANA, 0);
-  Engine_ObjectEventStartRepeatedMotion(GARET, 1);
-  Engine_ObjectEventStartRepeatedMotion(IVAN, 1);
-  Engine_ObjectEventRunRepeatedMotion(MIA, 1);
+  ObjectMotion_SetVariantCallback(GARET, 1);
+  ObjectMotion_SetVariantCallback(IVAN, 1);
+  ObjectMotion_SetVarCbAndRefresh(MIA, 1);
   OBJECT_DIR(GARET, FACING_NORTHEAST, 0);
   OBJECT_DIR(IVAN, FACING_SOUTHWEST, 0);
   OBJECT_DIR(MIA, FACING_NORTHWEST, 0);
-  if (Engine_ScriptChooseYesNo(0, 0) == 0) {
+  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
     WAIT(20);
     ObjectEvent_SetAttachedEffect(LOCALID_LAYANA, ATTACHED_EFFECT_IN_FRONT |
                                                       ATTACHED_EFFECT_ONCE);
@@ -601,7 +602,7 @@ static void HammetPalace_IvanReportsToLayana(void) {
     gFieldWork->message += 2;
   } else {
     WAIT(20);
-    Engine_ObjectEventRunRepeatedMotion(GARET, 2);
+    ObjectMotion_SetVarCbAndRefresh(GARET, 2);
     gFieldWork->message++;
     Script_ShowMessageAndWait(GARET, 0, 10);
     ObjectEvent_SetAttachedEffect(LOCALID_LAYANA, ATTACHED_EFFECT_IN_FRONT |
@@ -614,7 +615,7 @@ static void HammetPalace_IvanReportsToLayana(void) {
   Script_ShowMessage(MIA, 0);
   OBJECT_DIR(GARET, FACING_NORTH, 0);
   OBJECT_DIR(IVAN, FACING_NORTH, 20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_LAYANA, ANIMATION_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_LAYANA, ANIMATION_NOD);
   Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 10);
   ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
                                                           ATTACHED_EFFECT_ONCE);
@@ -629,86 +630,85 @@ static void HammetPalace_IvanReportsToLayana(void) {
   OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_NORTHEAST, 0);
   OBJECT_DIR(GARET, FACING_NORTHEAST, 0);
   OBJECT_DIR(MIA, FACING_NORTHWEST, 10);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | IVAN, 0, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_LAYANA, ANIMATION_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_LAYANA, ANIMATION_NOD);
   Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 10);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_LAYANA, 1);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_LAYANA, 1);
   Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 10);
   HammetPalace_FacePartyNorth(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_LAYANA, ANIMATION_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_LAYANA, ANIMATION_SHAKE_HEAD);
   Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 20);
   OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIMATION_SHAKE_HEAD);
   OBJECT_ANIMATION(GARET, ANIMATION_SHAKE_HEAD);
   OBJECT_ANIMATION(IVAN, ANIMATION_SHAKE_HEAD);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
   ObjectEvent_SetAttachedEffect(LOCALID_LAYANA, ATTACHED_EFFECT_IN_FRONT |
                                                     ATTACHED_EFFECT_ONCE);
   WAIT(60);
   Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 10);
   HammetPalace_FacePartyOutward(40);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_LAYANA, ANIMATION_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_LAYANA, ANIMATION_SHAKE_HEAD);
   Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 10);
   HammetPalace_FacePartyNorth(20);
-  Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
+  ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | IVAN, 0, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_LAYANA, ANIMATION_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_LAYANA, ANIMATION_NOD);
   Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 10);
   OBJECT_EMOTE(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Script_ShowMessageAndWait(MIA, 0, 10);
   OBJECT_EMOTE(LOCALID_LAYANA, EMOTE_IN_FRONT | EMOTE_SMILE, 60);
   Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 10);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
+  ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_NOD);
   Script_ShowMessageAndWait(MIA, 0, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_LAYANA, ANIMATION_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_LAYANA, ANIMATION_NOD);
   Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 10);
   OBJECT_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Script_ShowMessageAndWait(GARET, 0, 10);
   OBJECT_DIR(LOCALID_LAYANA, FACING_SOUTH + FACING_STEP, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_LAYANA, ANIMATION_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_LAYANA, ANIMATION_NOD);
   Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 10);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_FIRST_SOLDIER, 2);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_FIRST_SOLDIER,
-                                        ANIMATION_SHAKE_HEAD);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_FIRST_SOLDIER, 2);
+  ObjectMotion_SetAnimationAndWait(LOCALID_FIRST_SOLDIER, ANIMATION_SHAKE_HEAD);
   Script_ShowMessageAndWait(LOCALID_FIRST_SOLDIER, 0, 10);
   OBJECT_EMOTE(LOCALID_LAYANA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 10);
   OBJECT_DIR(LOCALID_LAYANA, FACING_SOUTHEAST + FACING_STEP, 10);
   OBJECT_ANIMATION(LOCALID_LAYANA, ANIMATION_SHAKE_HEAD);
   Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 10);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_LAYANA, 1);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_LAYANA, 1);
   OBJECT_DIR(LOCALID_LAYANA, FACING_SOUTH + FACING_STEP, 10);
   Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 10);
-  Engine_ObjectEventRunRepeatedMotion(IVAN, 1);
+  ObjectMotion_SetVarCbAndRefresh(IVAN, 1);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | IVAN, 0, 10);
   OBJECT_EMOTE(LOCALID_LAYANA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   OBJECT_DIR(LOCALID_LAYANA, FACING_SOUTHEAST + FACING_STEP, 10);
   Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 10);
   HammetPalace_FacePartyOutward(40);
   HammetPalace_FacePartyNorth(20);
-  Engine_ObjectEventRunRepeatedMotion(GARET, 1);
+  ObjectMotion_SetVarCbAndRefresh(GARET, 1);
   Script_ShowMessageAndWait(GARET, 0, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_LAYANA, ANIMATION_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_LAYANA, ANIMATION_NOD);
   Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 10);
   OBJECT_ANIMATION(LOCALID_LAYANA, ANIMATION_SHAKE_HEAD);
   Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 10);
   OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIMATION_NOD);
   OBJECT_ANIMATION(GARET, ANIMATION_NOD);
   OBJECT_ANIMATION(IVAN, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_LAYANA, 1);
+  ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_NOD);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_LAYANA, 1);
   Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 10);
   ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
                                                           ATTACHED_EFFECT_ONCE);
   ObjectEvent_SetAttachedEffect(GARET, ATTACHED_EFFECT_IN_FRONT |
                                            ATTACHED_EFFECT_ONCE);
   WAIT(60);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_LAYANA, ANIMATION_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_LAYANA, ANIMATION_SHAKE_HEAD);
   Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 10);
-  Engine_ObjectEventStartRepeatedMotion(IVAN, 1);
-  Engine_ObjectEventRunRepeatedMotion(MIA, 1);
+  ObjectMotion_SetVariantCallback(IVAN, 1);
+  ObjectMotion_SetVarCbAndRefresh(MIA, 1);
   WAIT(20);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_LAYANA, 1);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_LAYANA, 1);
   Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 10);
   OBJECT_ANIMATION(LOCALID_LAYANA, ANIMATION_NOD);
   Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 10);
@@ -716,83 +716,83 @@ static void HammetPalace_IvanReportsToLayana(void) {
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | IVAN, 0, 10);
   OBJECT_DIR(MIA, FACING_NORTHWEST, 10);
   Script_ShowMessageAndWait(MIA, 0, 10);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
   OBJECT_DIR(IVAN, FACING_SOUTHEAST, 10);
   OBJECT_ANIMATION(IVAN, ANIMATION_SHAKE_HEAD);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | IVAN, 0, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_LAYANA, ANIMATION_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_LAYANA, ANIMATION_SHAKE_HEAD);
   Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 10);
   OBJECT_DIR(IVAN, FACING_NORTH, 0);
-  Engine_ObjectEventRunRepeatedMotion(MIA, 2);
+  ObjectMotion_SetVarCbAndRefresh(MIA, 2);
   OBJECT_DIR(MIA, FACING_NORTH, 10);
   Script_ShowMessageAndWait(MIA, 0, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_LAYANA, ANIMATION_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_LAYANA, ANIMATION_SHAKE_HEAD);
   Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 10);
-  Engine_ObjectEventStartRepeatedMotion(LOCALID_FIRST_SOLDIER, 2);
+  ObjectMotion_SetVariantCallback(LOCALID_FIRST_SOLDIER, 2);
   Script_ShowMessageAndWait(LOCALID_FIRST_SOLDIER, 0, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_SECOND_SOLDIER, ANIMATION_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_SECOND_SOLDIER, ANIMATION_NOD);
   Script_ShowMessageAndWait(LOCALID_SECOND_SOLDIER, 0, 20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_LAYANA, ANIMATION_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_LAYANA, ANIMATION_NOD);
   Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 10);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
   OBJECT_ANIMATION(IVAN, ANIMATION_SHAKE_HEAD);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | IVAN, 0, 10);
-  Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_NOD);
-  Engine_ScriptShowMessageAndWait(GARET, 0, 10);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_LAYANA, 1);
+  ObjectMotion_SetAnimationAndWait(GARET, ANIMATION_NOD);
+  FieldScript_ShowMessageThenWait(GARET, 0, 10);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_LAYANA, 1);
   Script_OpenMessage(LOCALID_LAYANA, 0);
   OBJECT_DIR(GARET, FACING_NORTHEAST, 0);
   OBJECT_DIR(IVAN, FACING_SOUTHWEST, 0);
   OBJECT_DIR(MIA, FACING_NORTHWEST, 0);
-  if (Engine_ScriptChooseYesNo(0, 0) == 0) {
+  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
     WAIT(20);
     HammetPalace_FacePartyNorth(10);
     OBJECT_ANIMATION(GARET, ANIMATION_NOD);
     OBJECT_ANIMATION(IVAN, ANIMATION_NOD);
-    Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
+    ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_NOD);
     WAIT(10);
     Script_ShowMessageAndWait(GARET, 0, 10);
     gFieldWork->message += 2;
   } else {
     WAIT(10);
-    Engine_ObjectEventRunRepeatedMotion(GARET, 2);
+    ObjectMotion_SetVarCbAndRefresh(GARET, 2);
     gFieldWork->message++;
     Script_ShowMessageAndWait(GARET, 0, 10);
     HammetPalace_FacePartyNorth(10);
     OBJECT_ANIMATION(GARET, ANIMATION_NOD);
     OBJECT_ANIMATION(IVAN, ANIMATION_NOD);
-    Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
+    ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_NOD);
     WAIT(10);
     Script_ShowMessageAndWait(GARET, 0, 10);
   }
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_LAYANA, ANIMATION_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_LAYANA, ANIMATION_NOD);
   Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 40);
   OBJECT_DIR(LOCALID_LAYANA, FACING_SOUTH + FACING_STEP, 10);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_LAYANA, 1);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_LAYANA, 1);
   WAIT(10);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_FIRST_SOLDIER, 1);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_FIRST_SOLDIER, 1);
   WAIT(20);
   OBJECT_DIR(LOCALID_LAYANA, FACING_SOUTHEAST + FACING_STEP, 10);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_LAYANA, 1);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_LAYANA, 1);
   WAIT(10);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_SECOND_SOLDIER, 1);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_SECOND_SOLDIER, 1);
   WAIT(20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_LAYANA, ANIMATION_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_LAYANA, ANIMATION_NOD);
   Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 10);
   OBJECT_ANIMATION(LOCALID_FIRST_SOLDIER, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_SECOND_SOLDIER, ANIMATION_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_SECOND_SOLDIER, ANIMATION_NOD);
   OBJECT_SPEED(LOCALID_FIRST_SOLDIER, PIXELS(1), PIXELS(1) / 2);
   OBJECT_SPEED(LOCALID_SECOND_SOLDIER, PIXELS(1), PIXELS(1) / 2);
   OBJECT_WALK(LOCALID_FIRST_SOLDIER, 848, 540);
   ObjectEvent_WalkToAndWait(LOCALID_SECOND_SOLDIER, 880, 540);
   OBJECT_POSITION_SET(LOCALID_FIRST_SOLDIER, 0, 0);
   OBJECT_POSITION_SET(LOCALID_SECOND_SOLDIER, 0, 0);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_LAYANA, ANIMATION_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_LAYANA, ANIMATION_NOD);
   OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIMATION_NOD);
   OBJECT_ANIMATION(GARET, ANIMATION_NOD);
   OBJECT_ANIMATION(IVAN, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
+  ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_NOD);
   WAIT(20);
   OBJECT_SPEED(GARET, PIXELS(1), PIXELS(1) / 2);
   OBJECT_SPEED(IVAN, PIXELS(1), PIXELS(1) / 2);
@@ -846,15 +846,15 @@ static void HammetPalace_HammetsHomecoming(void) {
 
   SCRIPT_START();
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  Engine_TaskWait(1);
+  WaitFrames(1);
   FieldCamera_MoveTo(PIXELS(864), -1, PIXELS(536), 0);
   // Pan from the entrance while the party walks into its speaking positions.
-  Engine_MapGridRedraw();
-  Engine_TaskWait(1);
+  MapGrid_CenterOnFollowedPoint();
+  WaitFrames(1);
   OBJECT_POSITION_SET(LOCALID_PARTY_LEADER, 864, 630);
   gFieldWork->transition = v5 = 0x100;
   gFieldWork->transitionFrames = 40;
-  Engine_ScriptOpenScreen();
+  FieldScript_StartScreenTransition();
   FieldCamera_SetSpeed(0x6666, 0xccc);
   FieldCamera_MoveTo(PIXELS(864), -1, PIXELS(472), 1);
   OBJECT_SPEED(LOCALID_PARTY_LEADER, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
@@ -907,12 +907,12 @@ static void HammetPalace_HammetsHomecoming(void) {
   OBJECT_DIR(LOCALID_LAYANA, FACING_EAST + FACING_STEP, 10);
   OBJECT_EMOTE(LOCALID_LAYANA, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
   Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 40);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_LAYANA, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_LAYANA, 2);
   Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 20);
   OBJECT_DIR(LOCALID_LAYANA, FACING_SOUTHEAST + FACING_STEP, 10);
   Script_OpenMessage(LOCALID_LAYANA, 0);
   v5 = 1;
-  if (Engine_ScriptChooseYesNo(0, 0) == 0) {
+  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
     WAIT(10);
     OBJECT_ANIMATION(LOCALID_LAYANA, ANIMATION_NOD);
   } else {
@@ -925,29 +925,29 @@ static void HammetPalace_HammetsHomecoming(void) {
   if (v5 != 0) {
     HammetPalace_AdvanceMessage(1);
   }
-  Engine_ObjectEventStartRepeatedMotion(LOCALID_HAMMET, 2);
+  ObjectMotion_SetVariantCallback(LOCALID_HAMMET, 2);
   ObjectEvent_SetAttachedEffect(LOCALID_HAMMET, ATTACHED_EFFECT_IN_FRONT |
                                                     ATTACHED_EFFECT_ONCE);
   WAIT(80);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_HAMMET, 0, 10);
   OBJECT_DIR(LOCALID_LAYANA, FACING_EAST + FACING_STEP, 10);
   OBJECT_EMOTE(LOCALID_LAYANA, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
-  Engine_ObjectEventRunRepeatedMotion(IVAN, 3);
+  ObjectMotion_SetVarCbAndRefresh(IVAN, 3);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | IVAN, 0, 20);
   OBJECT_EMOTE(LOCALID_LAYANA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   OBJECT_DIR(LOCALID_LAYANA, FACING_SOUTHEAST + FACING_STEP, 60);
   Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 10);
-  Engine_ObjectEventStartRepeatedMotion(GARET, 2);
+  ObjectMotion_SetVariantCallback(GARET, 2);
   Script_ShowMessageAndWait(GARET, 0, 10);
   OBJECT_DIR(LOCALID_HAMMET, FACING_SOUTH + FACING_STEP, 0);
   OBJECT_DIR(IVAN, FACING_SOUTHWEST, 10);
-  Engine_ObjectEventStartRepeatedMotion(IVAN, 2);
+  ObjectMotion_SetVariantCallback(IVAN, 2);
   Script_ShowMessageAndWait(
       SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT | IVAN, 0, 10);
   OBJECT_DIR(IVAN, FACING_NORTH, 10);
-  Engine_ObjectEventStartRepeatedMotion(IVAN, 2);
+  ObjectMotion_SetVariantCallback(IVAN, 2);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | IVAN, 0, 20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_LAYANA, ANIMATION_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_LAYANA, ANIMATION_NOD);
   Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 20);
   OBJECT_DIR(IVAN, FACING_WEST, 20);
   Script_ShowMessageAndWait(
@@ -955,14 +955,14 @@ static void HammetPalace_HammetsHomecoming(void) {
   OBJECT_DIR(MIA, FACING_NORTHWEST, 10);
   OBJECT_EMOTE(MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   Script_ShowMessageAndWait(MIA, 0, 10);
-  Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
+  ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
   WAIT(80);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+  ObjectMotion_SetAnimationAndWait(IVAN, ANIMATION_NOD);
   WAIT(20);
   OBJECT_DIR(GARET, FACING_NORTHEAST, 10);
-  Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
   Script_OpenMessage(GARET, 0);
-  if (Engine_ScriptChooseYesNo(0, 0) == 0) {
+  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
     WAIT(20);
     HammetPalace_AdvanceMessage(1);
   } else {
@@ -970,33 +970,33 @@ static void HammetPalace_HammetsHomecoming(void) {
     Script_ShowMessageAndWait(GARET, 0, 10);
   }
   OBJECT_ANIMATION(IVAN, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
+  ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_NOD);
   HammetPalace_FacePartyNorth(20);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_HAMMET, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_HAMMET, 2);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_HAMMET, 0, 10);
-  Engine_ObjectEventRunRepeatedMotion(MIA, 2);
+  ObjectMotion_SetVarCbAndRefresh(MIA, 2);
   Script_ShowMessageAndWait(MIA, 0, 10);
   OBJECT_DIR(LOCALID_HAMMET, FACING_SOUTHEAST + FACING_STEP, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_HAMMET, ANIMATION_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_HAMMET, ANIMATION_NOD);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_HAMMET, 0, 10);
   OBJECT_EMOTE(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | IVAN, 0, 10);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_HAMMET, 1);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_HAMMET, 1);
   OBJECT_DIR(LOCALID_HAMMET, FACING_SOUTH + FACING_STEP, 10);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_HAMMET, 0, 10);
-  Engine_ObjectEventRunRepeatedMotion(GARET, 2);
+  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
   Script_ShowMessageAndWait(GARET, 0, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_HAMMET, ANIMATION_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_HAMMET, ANIMATION_SHAKE_HEAD);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_HAMMET, 0, 10);
-  Engine_ObjectEventRunRepeatedMotion(MIA, 1);
+  ObjectMotion_SetVarCbAndRefresh(MIA, 1);
   Script_ShowMessageAndWait(MIA, 0, 10);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_LAYANA, 1);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_LAYANA, 1);
   WAIT(20);
   Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 10);
   OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIMATION_NOD);
   OBJECT_ANIMATION(GARET, ANIMATION_NOD);
   OBJECT_ANIMATION(IVAN, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
+  ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_NOD);
   WAIT(20);
   partyScript = gHammetPalace_PartyActions;
   ObjectEvent_SetActionScript(GARET, partyScript);

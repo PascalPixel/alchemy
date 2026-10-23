@@ -13,7 +13,4 @@
 
 struct ObjectEvent;
 
-struct ObjectEvent *Engine_ObjectCreate(s32, s32, s32, s32);
-void Engine_ObjectEventSetSpriteFlags(struct ObjectEvent *, s32);
-
 #endif

@@ -247,7 +247,7 @@ enum {
 
 enum { SHOP_ALTIN_WEAPONS = 19, SHOP_ALTIN_ARMOR = 20, SHOP_ALTIN_ITEMS = 21 };
 
-/// Altin's inn, as Engine_InnOpen numbers the inns.
+/// Altin's inn, as Inn_CheckIn numbers the inns.
 enum { ALTIN_INN = 6 };
 
 /// The doors of the village, by their index in gAltin_Doors.
@@ -310,7 +310,7 @@ const u32 *Map_GetWarps(void) { return gAltin_Warps; }
 const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
   s32 mapId = gGameState.mapId;
   if (mapId == MAP_ALTIN_VILLAGE) {
-    if (Engine_GameFlagIsSet(FLAG_HYDROS_STATUES_DEFEATED)) {
+    if (GameFlag_Test(FLAG_HYDROS_STATUES_DEFEATED)) {
       gAltin_ObjectEventTemplates[LOCALID_WOMAN_WATER_LUCK -
                                   LOCALID_FIRST_PLACED]
           .talkFacing = TALK_FACING_PARTY;
@@ -321,16 +321,16 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
     return gAltin_ObjectEventTemplates;
   }
   if (mapId == MAP_ALTIN_HOUSES) {
-    if (Engine_GameFlagIsSet(FLAG_ALTIN_MINE_FIRST_DRAIN))
+    if (GameFlag_Test(FLAG_ALTIN_MINE_FIRST_DRAIN))
       gAltinInteriors_ObjectEventTemplates[LOCALID_ROOM_ONE_SECOND_GUEST -
                                            LOCALID_FIRST_PLACED]
           .talkFacing = TALK_FACING_PARTY_AND_BACK;
-    if (Engine_GameFlagIsSet(FLAG_ALTIN_MINE_SECOND_DRAIN) ||
-        Engine_GameFlagIsSet(FLAG_ALTIN_MINE_THIRD_DRAIN))
+    if (GameFlag_Test(FLAG_ALTIN_MINE_SECOND_DRAIN) ||
+        GameFlag_Test(FLAG_ALTIN_MINE_THIRD_DRAIN))
       gAltinInteriors_ObjectEventTemplates[LOCALID_ROOM_TWO_SECOND_GUEST -
                                            LOCALID_FIRST_PLACED]
           .talkFacing = TALK_FACING_PARTY_AND_BACK;
-    Map_PrepareObjectEvents(gAltinInteriors_ObjectEventTemplates);
+    Map_AssignViewFlags(gAltinInteriors_ObjectEventTemplates);
     return gAltinInteriors_ObjectEventTemplates;
   }
   return gAltin_NoObjectEventTemplates;
@@ -352,28 +352,28 @@ const struct MapEvent *Map_GetEvents(void) {
 /// Altin's village before the hydros statues are beaten; either way, he says
 /// the flood has changed Altin.
 static void Altin_AskAboutFirstVisit(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgAltinYourFirstTimeVisitAltin);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgAltinYourFirstTimeVisitAltin);
 
-  Engine_ScriptOpenMessage(LOCALID_GREETING_STRONGMAN, 0);
+  FieldMessage_ShowAtObject(LOCALID_GREETING_STRONGMAN, 0);
 
-  if (Engine_ScriptChooseYesNo(0, 0) == 1) {
-    Engine_ScriptShowMessage(LOCALID_GREETING_STRONGMAN, 0);
+  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 1) {
+    FieldScript_ShowMessageAndWait(LOCALID_GREETING_STRONGMAN, 0);
   } else {
     Script_SkipMessages(1);
-    Engine_ScriptAskYesNo(LOCALID_GREETING_STRONGMAN, 0);
+    FieldScript_AskYesNoAndShowResponse(LOCALID_GREETING_STRONGMAN, 0);
   }
 
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// A strong man asks whether the slain hydros creatures gushed water. He's in
 /// Altin's village once the hydros statues are beaten.
 static void Altin_AskAboutHydros(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgAltinDidSeeWaterGushingOut);
-  Engine_ScriptAskYesNo(LOCALID_CURIOUS_STRONGMAN, 0);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgAltinDidSeeWaterGushingOut);
+  FieldScript_AskYesNoAndShowResponse(LOCALID_CURIOUS_STRONGMAN, 0);
+  FieldScript_End();
 }
 
 /// An old woman in Altin's village. While the beasts live, she complains that
@@ -385,14 +385,14 @@ static void Altin_TalkToThirstyOldWoman(void) {
   struct ObjectEvent *beast;
   struct ObjectEvent *leader;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   if (GameFlag_IsSet(FLAG_HYDROS_STATUES_DEFEATED) != 0) {
-    Engine_ScriptSetMessage(MsgAltinOnesWhoDefeatedWaterBeasts);
+    FieldScript_SetMessageId(MsgAltinOnesWhoDefeatedWaterBeasts);
     Script_AskYesNo(LOCALID_THIRSTY_OLD_WOMAN, 0);
   } else {
     Engine_ObjectEventSetAnimation(LOCALID_THIRSTY_OLD_WOMAN,
                                    ANIMATION_SHAKE_HEAD);
-    Engine_ScriptSetMessage(MsgAltinWeCantDrinkWaterMonsters);
+    FieldScript_SetMessageId(MsgAltinWeCantDrinkWaterMonsters);
     Script_ShowMessageAndWait(LOCALID_THIRSTY_OLD_WOMAN, 0, 10);
     if (GameFlag_IsSet(FLAG_ALTIN_WATER_BEAST_LEFT) == 0) {
       beast = ObjectEvent_GetById(LOCALID_WATER_BEAST);
@@ -409,26 +409,26 @@ static void Altin_TalkToThirstyOldWoman(void) {
 #endif
       ObjectEvent_FaceDirection(LOCALID_THIRSTY_OLD_WOMAN,
                                 FACING_SOUTH - FACING_STEP, 0);
-      Engine_CameraWaitForMove();
-      Engine_ScriptWait(120);
+      FieldCamera_WaitForArrival();
+      FieldScript_WaitFrames(120);
       leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
       FieldCamera_MoveTo(leader->x.fixed, leader->y.fixed, leader->z.fixed, 1);
-      Engine_CameraWaitForMove();
+      FieldCamera_WaitForArrival();
     }
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_THIRSTY_OLD_WOMAN,
-                                          ANIMATION_SHAKE_HEAD);
+    ObjectMotion_SetAnimationAndWait(LOCALID_THIRSTY_OLD_WOMAN,
+                                     ANIMATION_SHAKE_HEAD);
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// An old man asks whether the party really found ruins deep in the mine. He's
 /// in Altin's village once the hydros statues are beaten.
 static void Altin_AskAboutRuins(void) {
 
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgAltinTrueFoundAncientRuinsIn);
-  Engine_ScriptAskYesNo(LOCALID_OLD_MAN_ROCK_FLUSHED_OUT, 0);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgAltinTrueFoundAncientRuinsIn);
+  FieldScript_AskYesNoAndShowResponse(LOCALID_OLD_MAN_ROCK_FLUSHED_OUT, 0);
+  FieldScript_End();
 }
 
 /// A woman asks whether the party is who the girl from Xian was looking for.
@@ -436,10 +436,10 @@ static void Altin_AskAboutRuins(void) {
 /// Altin once the hydros statues are beaten.
 static void AltinInteriors_AskAboutXianGirl(void) {
 
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgAltinGirlFromXianWasAsking);
-  Engine_ScriptAskYesNo(LOCALID_ROOM_ONE_SECOND_GUEST, 0);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgAltinGirlFromXianWasAsking);
+  FieldScript_AskYesNoAndShowResponse(LOCALID_ROOM_ONE_SECOND_GUEST, 0);
+  FieldScript_End();
 }
 
 /// An old man points the party to the bottom of the mine. He's from the family
@@ -447,10 +447,10 @@ static void AltinInteriors_AskAboutXianGirl(void) {
 /// statues are beaten, he asks whether the party seeks the way west.
 static void AltinInteriors_AskAboutWayWest(void) {
 
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgAltinTryingFindYourWayWest);
-  Engine_ScriptAskYesNo(LOCALID_ROOM_TWO_GUEST, 0);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgAltinTryingFindYourWayWest);
+  FieldScript_AskYesNoAndShowResponse(LOCALID_ROOM_TWO_GUEST, 0);
+  FieldScript_End();
 }
 
 /// A little girl thanks the leader with a kiss. She's back home inside Altin
@@ -458,20 +458,20 @@ static void AltinInteriors_AskAboutWayWest(void) {
 /// the monsters; she gives the kiss either way.
 static void AltinInteriors_AskAboutMonsters(void) {
 
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgAltinDefeatedThoseMonstersDidnt);
-  Engine_ScriptAskYesNo(LOCALID_KISSING_GIRL, 0);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgAltinDefeatedThoseMonstersDidnt);
+  FieldScript_AskYesNoAndShowResponse(LOCALID_KISSING_GIRL, 0);
+  FieldScript_End();
 }
 
 /// A man at the inn asks whether the remaining beasts are deep below. He's
 /// staying at Altin's inn once the hydros statues are beaten.
 static void AltinInteriors_AskAboutMineBeasts(void) {
 
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgAltinThereFewBeastsInMine);
-  Engine_ScriptAskYesNo(LOCALID_MAN_WAITING_TO_GO_HOME, 0);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgAltinThereFewBeastsInMine);
+  FieldScript_AskYesNoAndShowResponse(LOCALID_MAN_WAITING_TO_GO_HOME, 0);
+  FieldScript_End();
 }
 
 /// Returns whether the party leader faces north, toward a shop counter: its
@@ -490,27 +490,27 @@ static s32 Leader_FacesCounter(void) {
 /// counter.
 static void AltinInteriors_TalkToWeaponMerchant(void) {
 
-  if (Engine_GameFlagIsSet(FLAG_WATER_DRAINED) == 0) {
-    Engine_ScriptStart();
-    Engine_ScriptSetMessage(MsgAltinDoWantWeapons);
+  if (GameFlag_Test(FLAG_WATER_DRAINED) == 0) {
+    FieldScript_Start();
+    FieldScript_SetMessageId(MsgAltinDoWantWeapons);
 
-    Engine_ScriptAskYesNo(LOCALID_WEAPON_MERCHANT, 0);
-    Engine_ScriptEnd();
+    FieldScript_AskYesNoAndShowResponse(LOCALID_WEAPON_MERCHANT, 0);
+    FieldScript_End();
     return;
   }
 
   if (Leader_FacesCounter() != 0) {
-    Engine_ShopOpen(SHOP_ALTIN_WEAPONS, LOCALID_WEAPON_MERCHANT);
+    Shop_Run(SHOP_ALTIN_WEAPONS, LOCALID_WEAPON_MERCHANT);
     return;
   }
 
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgAltinThankGoodnessWaterHasReceded);
-  if (Engine_GameFlagIsSet(FLAG_HYDROS_STATUES_DEFEATED) != 0) {
-    Engine_ScriptSetMessage(MsgAltinYoullHaveFindPassageIn);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgAltinThankGoodnessWaterHasReceded);
+  if (GameFlag_Test(FLAG_HYDROS_STATUES_DEFEATED) != 0) {
+    FieldScript_SetMessageId(MsgAltinYoullHaveFindPassageIn);
   }
-  Engine_ScriptShowMessage(LOCALID_WEAPON_MERCHANT, 0);
-  Engine_ScriptEnd();
+  FieldScript_ShowMessageAndWait(LOCALID_WEAPON_MERCHANT, 0);
+  FieldScript_End();
 }
 
 /// Altin's armor merchant, in either map: outside, while his shop is under
@@ -518,50 +518,50 @@ static void AltinInteriors_TalkToWeaponMerchant(void) {
 /// his counter in the houses.
 static void Altin_TalkToArmorMerchant(void) {
 
-  if (Engine_GameFlagIsSet(FLAG_WATER_DROPPED_TWICE) == 0) {
-    Engine_ScriptStart();
-    Engine_ScriptSetMessage(MsgAltinMyStoreSubmergedWantSell);
-    Engine_ScriptShowMessage(LOCALID_FLOODED_ARMOR_MERCHANT, 0);
-    Engine_ScriptEnd();
+  if (GameFlag_Test(FLAG_WATER_DROPPED_TWICE) == 0) {
+    FieldScript_Start();
+    FieldScript_SetMessageId(MsgAltinMyStoreSubmergedWantSell);
+    FieldScript_ShowMessageAndWait(LOCALID_FLOODED_ARMOR_MERCHANT, 0);
+    FieldScript_End();
     return;
   }
 
   if (Leader_FacesCounter() != 0) {
-    Engine_ShopOpen(SHOP_ALTIN_ARMOR, LOCALID_ARMOR_MERCHANT);
+    Shop_Run(SHOP_ALTIN_ARMOR, LOCALID_ARMOR_MERCHANT);
     return;
   }
 
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgAltinItsGreatCanSellArmor);
-  if (Engine_GameFlagIsSet(FLAG_HYDROS_STATUES_DEFEATED) != 0) {
-    Engine_ScriptSetMessage(MsgAltinHowAboutArentImpressedBy);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgAltinItsGreatCanSellArmor);
+  if (GameFlag_Test(FLAG_HYDROS_STATUES_DEFEATED) != 0) {
+    FieldScript_SetMessageId(MsgAltinHowAboutArentImpressedBy);
   }
-  Engine_ScriptShowMessage(LOCALID_ARMOR_MERCHANT, 0);
-  Engine_ScriptEnd();
+  FieldScript_ShowMessageAndWait(LOCALID_ARMOR_MERCHANT, 0);
+  FieldScript_End();
 }
 
 /// Altin's item merchant, the same way: she reopens after the first drop.
 static void Altin_TalkToItemMerchant(void) {
-  if (Engine_GameFlagIsSet(FLAG_WATER_DROPPED_ONCE) == 0) {
-    Engine_ScriptStart();
-    Engine_ScriptSetMessage(MsgAltinWillDoIfMyMerchandise);
-    Engine_ScriptShowMessage(LOCALID_FLOODED_ITEM_MERCHANT, 0);
-    Engine_ScriptEnd();
+  if (GameFlag_Test(FLAG_WATER_DROPPED_ONCE) == 0) {
+    FieldScript_Start();
+    FieldScript_SetMessageId(MsgAltinWillDoIfMyMerchandise);
+    FieldScript_ShowMessageAndWait(LOCALID_FLOODED_ITEM_MERCHANT, 0);
+    FieldScript_End();
     return;
   }
 
   if (Leader_FacesCounter() != 0) {
-    Engine_ShopOpen(SHOP_ALTIN_ITEMS, LOCALID_ITEM_MERCHANT);
+    Shop_Run(SHOP_ALTIN_ITEMS, LOCALID_ITEM_MERCHANT);
     return;
   }
 
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgAltinNoneMyGoodsWereDamaged);
-  if (Engine_GameFlagIsSet(FLAG_HYDROS_STATUES_DEFEATED) != 0) {
-    Engine_ScriptSetMessage(MsgAltinGirlFromXianBoughtLot);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgAltinNoneMyGoodsWereDamaged);
+  if (GameFlag_Test(FLAG_HYDROS_STATUES_DEFEATED) != 0) {
+    FieldScript_SetMessageId(MsgAltinGirlFromXianBoughtLot);
   }
-  Engine_ScriptShowMessage(LOCALID_ITEM_MERCHANT, 0);
-  Engine_ScriptEnd();
+  FieldScript_ShowMessageAndWait(LOCALID_ITEM_MERCHANT, 0);
+  FieldScript_End();
 }
 
 /// Altin's innkeeper opens the inn when spoken to across the counter. Spoken to
@@ -573,21 +573,21 @@ static void AltinInteriors_TalkToInnkeeper(void) {
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
 
   if (ALTIN_FACES_COUNTER(leader->facing)) {
-    Engine_InnOpen(ALTIN_INN, LOCALID_INNKEEPER);
+    Inn_CheckIn(ALTIN_INN, LOCALID_INNKEEPER);
     return;
   }
 
-  Engine_ScriptStart();
+  FieldScript_Start();
 
-  if (Engine_GameFlagIsSet(FLAG_HYDROS_STATUES_DEFEATED) != 0) {
-    Engine_ScriptSetMessage(MsgAltinThereSmallTempleWestAltin);
-    Engine_ScriptShowMessage(LOCALID_INNKEEPER, 0);
+  if (GameFlag_Test(FLAG_HYDROS_STATUES_DEFEATED) != 0) {
+    FieldScript_SetMessageId(MsgAltinThereSmallTempleWestAltin);
+    FieldScript_ShowMessageAndWait(LOCALID_INNKEEPER, 0);
   } else {
-    Engine_ScriptSetMessage(MsgAltinWeGotLittleDampBut);
-    Engine_ScriptAskYesNo(LOCALID_INNKEEPER, 0);
+    FieldScript_SetMessageId(MsgAltinWeGotLittleDampBut);
+    FieldScript_AskYesNoAndShowResponse(LOCALID_INNKEEPER, 0);
   }
 
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Walking north into one of the doors of Altin's village: everyone stops, the
@@ -606,7 +606,7 @@ static void Altin_EnterDoor(void) {
   s32 rightColumn;
 
   work = gFieldWork;
-  Engine_ScriptStart();
+  FieldScript_Start();
   for (localId = LOCALID_FIRST_PLACED; localId <= LOCALID_LAST_SLOT;
        localId++) {
     objectEvent = ObjectEvent_GetById(localId);
@@ -629,10 +629,10 @@ static void Altin_EnterDoor(void) {
     MapGrid_CopyCellsTo(42, 33, column, row, 2, 2);
     rightColumn = column + 2;
     MapGrid_CopyCellsTo(42, 35, rightColumn, row, 2, 2);
-    Engine_ScriptWait(4);
+    FieldScript_WaitFrames(4);
     MapGrid_CopyCellsTo(40, 33, column, row, 2, 2);
     MapGrid_CopyCellsTo(40, 35, rightColumn, row, 2, 2);
-    Engine_ScriptWait(4);
+    FieldScript_WaitFrames(4);
   } else {
     Script_PlaySong(SE_DOOR_OPEN);
     // The north door's row in gAltin_Doors plays its opening at
@@ -657,15 +657,15 @@ static void Altin_EnterDoor(void) {
     if (doorIndex != DOOR_SANCTUM) {
       ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 2, -4);
     } else {
-      Engine_ObjectEventSetSpritePriority(LOCALID_PARTY_LEADER, 2);
+      ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, 2);
       ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0, -4);
     }
   }
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   Engine_ScriptRequestWarp(work->coordEvent);
-  Engine_ScriptCloseScreen();
-  Engine_ScriptWaitForScreen();
-  Engine_ScriptEnd();
+  FieldScript_FinishScreenTransition();
+  FieldScript_WaitTransitionFrames();
+  FieldScript_End();
 }
 
 /// Walking north into one of the doorways of Altin's village that lead into
@@ -674,14 +674,14 @@ static void Altin_WalkThroughDoorway(void) {
   struct EventWork *work;
 
   work = gFieldWork;
-  Engine_ScriptStart();
+  FieldScript_Start();
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
   Script_PlaySong(SE_MAP_EXIT);
   ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 2, -16);
   Engine_ScriptRequestWarp(work->coordEvent);
-  Engine_ScriptCloseScreen();
-  Engine_ScriptWaitForScreen();
-  Engine_ScriptEnd();
+  FieldScript_FinishScreenTransition();
+  FieldScript_WaitTransitionFrames();
+  FieldScript_End();
 }
 
 /// Update callback of the hopping water beast in Altin's village: once a
@@ -699,7 +699,7 @@ static void Beast_Hop(union FieldObject *fieldObject) {
       MapGrid_SetShake(-1, -1, 0xe666);
   }
   if (beast->velocityY == 0) {
-    ObjectEvent_SetMode(beast, 1);
+    ObjectDispatch_SelectAnimation(beast, 1);
     beast->y.fixed += -0x18000;
     if (beast->y.fixed < beast->groundHeight) {
       if (fieldObject->effect.countdown != 0) {
@@ -717,7 +717,7 @@ static void Beast_Hop(union FieldObject *fieldObject) {
   if (beast->timer == 0) {
     Script_PlaySong(SE_JUMP);
     fieldObject->effect.countdown = 1;
-    ObjectEvent_SetMode(beast, 2);
+    ObjectDispatch_SelectAnimation(beast, 2);
     beast->velocityY = 0x30000;
   }
   if (++beast->timer == WATER_BEAST_HOP_PERIOD)
@@ -737,11 +737,11 @@ static void Beast_HopAway(void) {
   ObjectEvent_MoveToAndWait(LOCALID_WATER_BEAST, 28, 460);
   ObjectEvent_MoveToAndWait(LOCALID_WATER_BEAST, 24, 448);
   Script_PlaySong(SE_SPLASH);
-  Engine_ObjectEventDestroy(LOCALID_WATER_BEAST);
+  ObjectEvent_DestroyById(LOCALID_WATER_BEAST);
   MapGrid_SetShake(0, 0x10000, 0x10000);
-  Engine_ScriptWait(4);
+  FieldScript_WaitFrames(4);
   MapGrid_SetShake(-1, -1, 0xe666);
-  Engine_ScriptWait(40);
+  FieldScript_WaitFrames(40);
   Engine_ObjectEventSetAnimation(LOCALID_WATER_BEAST, ANIMATION_STAND);
 }
 
@@ -753,7 +753,7 @@ static void Altin_CheckPillarMoved(void) {
   if ((pillar->x.fixed >> 20) == 22) {
     Engine_GameFlagSet(FLAG_ALTIN_PILLAR_MOVED);
   } else {
-    Engine_GameFlagClear(FLAG_ALTIN_PILLAR_MOVED);
+    GameFlag_ClearBit(FLAG_ALTIN_PILLAR_MOVED);
   }
 }
 
@@ -762,17 +762,17 @@ static void Altin_CheckPillarMoved(void) {
 s32 Map_Initialize(void) {
   s16 mapId;
 
-  if (Engine_GameFlagIsSet(FLAG_ALTIN_MINE_FIRST_DRAIN) != 0) {
+  if (GameFlag_Test(FLAG_ALTIN_MINE_FIRST_DRAIN) != 0) {
     Engine_GameFlagSet(FLAG_WATER_DROPPED_ONCE);
   }
 
-  if (Engine_GameFlagIsSet(FLAG_ALTIN_MINE_SECOND_DRAIN) != 0 ||
-      Engine_GameFlagIsSet(FLAG_ALTIN_MINE_THIRD_DRAIN) != 0) {
+  if (GameFlag_Test(FLAG_ALTIN_MINE_SECOND_DRAIN) != 0 ||
+      GameFlag_Test(FLAG_ALTIN_MINE_THIRD_DRAIN) != 0) {
     Engine_GameFlagSet(FLAG_WATER_DROPPED_TWICE);
   }
 
-  if (Engine_GameFlagIsSet(FLAG_ALTIN_MINE_SECOND_DRAIN) != 0 &&
-      Engine_GameFlagIsSet(FLAG_ALTIN_MINE_THIRD_DRAIN) != 0) {
+  if (GameFlag_Test(FLAG_ALTIN_MINE_SECOND_DRAIN) != 0 &&
+      GameFlag_Test(FLAG_ALTIN_MINE_THIRD_DRAIN) != 0) {
     Engine_GameFlagSet(FLAG_WATER_DRAINED);
   }
 
@@ -799,30 +799,30 @@ static void Altin_ApplyWaterLevel(void) {
   if (GameFlag_IsSet(FLAG_WATER_DRAINED) != 0) {
     MapGrid_CopyCellsTo(64, 32, 0, 32, 32, 32);
     MapGrid_CopyCellAttributes(64, 32, 32, 32, 0, 0);
-    Engine_ObjectEventDestroy(LOCALID_FLOODED_ARMOR_MERCHANT);
-    Engine_ObjectEventDestroy(LOCALID_FLOODED_ITEM_MERCHANT);
+    ObjectEvent_DestroyById(LOCALID_FLOODED_ARMOR_MERCHANT);
+    ObjectEvent_DestroyById(LOCALID_FLOODED_ITEM_MERCHANT);
   } else if (GameFlag_IsSet(FLAG_WATER_DROPPED_TWICE) != 0) {
     MapGrid_CopyCellsTo(64, 0, 0, 32, 32, 32);
     MapGrid_CopyCellAttributes(64, 0, 32, 32, 0, 0);
-    Engine_ObjectEventDestroy(LOCALID_OLD_MAN_ROCK_FLUSHED_OUT);
-    Engine_ObjectEventDestroy(LOCALID_FLOODED_ARMOR_MERCHANT);
-    Engine_ObjectEventDestroy(LOCALID_FLOODED_ITEM_MERCHANT);
+    ObjectEvent_DestroyById(LOCALID_OLD_MAN_ROCK_FLUSHED_OUT);
+    ObjectEvent_DestroyById(LOCALID_FLOODED_ARMOR_MERCHANT);
+    ObjectEvent_DestroyById(LOCALID_FLOODED_ITEM_MERCHANT);
   } else if (GameFlag_IsSet(FLAG_WATER_DROPPED_ONCE) != 0) {
     MapGrid_CopyCellsTo(0, 64, 0, 32, 32, 32);
     MapGrid_CopyCellAttributes(0, 64, 32, 32, 0, 0);
-    Engine_ObjectEventDestroy(LOCALID_STRONGMAN_GUARDIAN_STATUES);
-    Engine_ObjectEventDestroy(LOCALID_OLD_MAN_ROCK_FLUSHED_OUT);
-    Engine_ObjectEventDestroy(LOCALID_FLOODED_ITEM_MERCHANT);
+    ObjectEvent_DestroyById(LOCALID_STRONGMAN_GUARDIAN_STATUES);
+    ObjectEvent_DestroyById(LOCALID_OLD_MAN_ROCK_FLUSHED_OUT);
+    ObjectEvent_DestroyById(LOCALID_FLOODED_ITEM_MERCHANT);
   } else {
     MapGrid_CopyCellAttributes(0, 32, 32, 32, 0, 0);
-    Engine_ObjectEventDestroy(LOCALID_MAN_WATERS_SUBSIDED);
-    Engine_ObjectEventDestroy(LOCALID_STRONGMAN_GUARDIAN_STATUES);
-    Engine_ObjectEventDestroy(LOCALID_OLD_MAN_ROCK_FLUSHED_OUT);
+    ObjectEvent_DestroyById(LOCALID_MAN_WATERS_SUBSIDED);
+    ObjectEvent_DestroyById(LOCALID_STRONGMAN_GUARDIAN_STATUES);
+    ObjectEvent_DestroyById(LOCALID_OLD_MAN_ROCK_FLUSHED_OUT);
   }
   // Restore the remaining beast spitting water, with its sound (SE_170) and
   // its spray.
   if (GameFlag_IsSet(FLAG_ALTIN_WATER_BEAST_LEFT) != 0) {
-    Engine_ObjectEventDestroy(LOCALID_WATER_BEAST);
+    ObjectEvent_DestroyById(LOCALID_WATER_BEAST);
   } else {
     Map_QueueMusic(SE_170);
     ObjectEvent_SetChildValue(LOCALID_WATER_BEAST, SPRITE_COLOR_RBG);
@@ -837,12 +837,11 @@ static void Altin_ApplyWaterLevel(void) {
   if (GameFlag_IsSet(FLAG_ALTIN_PILLAR_MOVED) != 0) {
     ObjectEvent_SetPosition(LOCALID_STONE_STATUE, PIXELS(360), PIXELS(168));
   }
-  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_STONE_STATUE),
-                                   0);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_STONE_STATUE), 0);
   // Hide the three crates, which stay solid, and draw them under the object
   // events.
   ObjectEvent_SetChildValue(LOCALID_FIRST_CRATE, SPRITE_COLOR_HIDDEN);
-  Engine_ObjectEventSetChildValue(LOCALID_SECOND_CRATE, SPRITE_COLOR_HIDDEN);
+  ObjectGroup_ConfigureChildValue(LOCALID_SECOND_CRATE, SPRITE_COLOR_HIDDEN);
   ObjectEvent_SetChildValue(LOCALID_THIRD_CRATE, SPRITE_COLOR_HIDDEN);
   ObjectEvent_GetById(LOCALID_FIRST_CRATE)->collisionFlags |=
       OBJ_EVENT_NOT_TARGETED;
@@ -856,16 +855,16 @@ static void Altin_ApplyWaterLevel(void) {
       OBJ_EVENT_PRIORITY_UNDERFOOT;
   ObjectEvent_GetById(LOCALID_THIRD_CRATE)->priorityFlags |=
       OBJ_EVENT_PRIORITY_UNDERFOOT;
-  Engine_ObjectEventSetSpritePriority(LOCALID_FIRST_CRATE, 1);
-  Engine_ObjectEventSetSpritePriority(LOCALID_SECOND_CRATE, 1);
-  Engine_ObjectEventSetSpritePriority(LOCALID_THIRD_CRATE, 1);
+  ObjectMotion_SetActionVariant(LOCALID_FIRST_CRATE, 1);
+  ObjectMotion_SetActionVariant(LOCALID_SECOND_CRATE, 1);
+  ObjectMotion_SetActionVariant(LOCALID_THIRD_CRATE, 1);
   // Redraw at the leader after the map and object state are ready.
-  Engine_TaskWait(1);
-  Engine_ScriptStart();
+  WaitFrames(1);
+  FieldScript_Start();
   FieldCamera_MoveTo(leader->x.fixed, leader->y.fixed, leader->z.fixed, 0);
-  Engine_MapGridRedraw();
-  Engine_ScriptEnd();
-  Engine_TaskWait(1);
+  MapGrid_CenterOnFollowedPoint();
+  FieldScript_End();
+  WaitFrames(1);
 }
 
 /// Sets up inside Altin's buildings (AltinInteriors): the families still
@@ -913,7 +912,7 @@ static void Spray_Initialize(struct ObjectEvent *spray) {
   spray->motionFlags = 0;
   spray->sprite->image.priority = 1;
   ObjectGroup_SetChildValue(spray, SPRITE_COLOR_BGR);
-  Engine_ObjectEventSetSpriteFlags(spray, 0);
+  ObjectEvent_SetSpriteFlags(spray, 0);
   spray->scaleX = WATER_SPRAY_START_SCALE;
   spray->scaleY = WATER_SPRAY_START_SCALE;
 }
@@ -942,7 +941,7 @@ static void Spray_Drift(union FieldObject *fieldObject) {
     spray->timer = (((u32)Engine_RandomNext() * 5) >> 16) * 2 + 2;
   if (--fieldObject->effect.countdown == 0) {
     spray->update = 0;
-    Engine_ObjectDispatchRelease(spray);
+    ObjectEvent_Release(spray);
   }
 }
 
@@ -959,7 +958,7 @@ static void Beast_SpawnSpray(void) {
       spray->effect.countdown = WATER_SPRAY_LIFETIME;
       Spray_Initialize(&spray->objectEvent);
       spray->objectEvent.update = Spray_Drift;
-      ObjectEvent_SetMode(&spray->objectEvent, 1);
+      ObjectDispatch_SelectAnimation(&spray->objectEvent, 1);
     }
   }
 }
@@ -967,33 +966,33 @@ static void Beast_SpawnSpray(void) {
 /// Stepping near the water beast in Altin's village: the camera pans to it, it
 /// stops spitting, turns to the party, cries out and hops away into the flood.
 static void Altin_ScareOffBeast(void) {
-  Engine_ScriptStart();
+  FieldScript_Start();
   FieldCamera_SetSpeed(0x6666, 0xccc);
   FieldCamera_MoveTo(PIXELS(63), -1, PIXELS(450), 1);
-  Engine_CameraWaitForMove();
-  Engine_ScriptWait(30);
+  FieldCamera_WaitForArrival();
+  FieldScript_WaitFrames(30);
   Engine_ObjectEventSetAnimation(LOCALID_WATER_BEAST, ANIMATION_STAND);
   // The spitting stops: its sound and its spray end.
   Map_QueueMusic(-1);
-  Engine_TaskRemoveCallback(Beast_SpawnSpray);
-  Engine_ScriptWait(20);
+  Task_Remove(Beast_SpawnSpray);
+  FieldScript_WaitFrames(20);
   ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_WATER_BEAST, 0);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(LOCALID_WATER_BEAST, FACING_EAST, 20);
   ObjectEvent_FaceDirection(LOCALID_WATER_BEAST, FACING_NORTH + FACING_STEP,
                             40);
   Script_PlaySong(SE_147);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_WATER_BEAST, 2);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_WATER_BEAST, 2);
+  FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_WATER_BEAST, FACING_NORTHWEST + FACING_STEP,
                             40);
   Beast_HopAway();
-  Engine_CameraFollowObjectEvent(LOCALID_PARTY_LEADER, 1);
-  Engine_CameraWaitForMove();
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_THIRSTY_OLD_WOMAN,
-                                        ANIMATION_SHAKE_HEAD);
+  FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 1);
+  FieldCamera_WaitForArrival();
+  ObjectMotion_SetAnimationAndWait(LOCALID_THIRSTY_OLD_WOMAN,
+                                   ANIMATION_SHAKE_HEAD);
   GameFlag_Set(FLAG_ALTIN_WATER_BEAST_LEFT);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// The cook from Xian paces between his pots, nodding over each.

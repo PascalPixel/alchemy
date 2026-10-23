@@ -297,11 +297,11 @@ static void EventScript_BaneFirstEscape(void) {
     FLAG_SET(FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE);
     SCRIPT_START();
     FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
-    Engine_CameraMoveToObjectEvent(LOCALID_BANE, 1);
-    Engine_CameraWaitForMove();
+    ObjectEvent_PlaceCurrentWithinCameraBounds(LOCALID_BANE, 1);
+    FieldCamera_WaitForArrival();
     OBJECT_DIR(LOCALID_BANE, FACING_EAST, 20);
     ObjectEvent_SetAttachedEffect(LOCALID_BANE, 0x102);
-    Engine_ObjectEventRunRepeatedMotion(LOCALID_BANE, 2);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_BANE, 2);
     WAIT(20);
     OBJECT_SPEED(LOCALID_BANE, PIXELS(1), PIXELS(1) / 2);
     SE(SE_JUMP);
@@ -329,11 +329,11 @@ static void EventScript_BaneSecondEscape(void) {
 
       // Focus on the Djinni before its next jump away.
       FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
-      Engine_CameraMoveToObjectEvent(LOCALID_BANE, 1);
-      Engine_CameraWaitForMove();
+      ObjectEvent_PlaceCurrentWithinCameraBounds(LOCALID_BANE, 1);
+      FieldCamera_WaitForArrival();
       OBJECT_DIR(LOCALID_BANE, FACING_SOUTH, 20);
       ObjectEvent_SetAttachedEffect(LOCALID_BANE, 0x102);
-      Engine_ObjectEventRunRepeatedMotion(LOCALID_BANE, 2);
+      ObjectMotion_SetVarCbAndRefresh(LOCALID_BANE, 2);
       WAIT(20);
       OBJECT_SPEED(LOCALID_BANE, PIXELS(1), PIXELS(1) / 2);
       SE(SE_JUMP);
@@ -363,8 +363,8 @@ static void EventScript_BaneSecondEscape(void) {
       spinningDjinni->facing = 0;
       ObjectDispatch_SetAnimationSpeed((struct DispatchObject *)spinningDjinni,
                                        0);
-      Engine_ObjectSetScript(spinningDjinni,
-                             gCrossboneIsleKeys_BaneSquashScript);
+      ObjectEvent_SetScript(spinningDjinni,
+                            gCrossboneIsleKeys_BaneSquashScript);
       SCRIPT_END();
     }
   }
@@ -390,7 +390,7 @@ static void EventScript_BaneLastEscape(void) {
     djinni->velocityY = PIXELS(8);
     OBJECT_DIR(LOCALID_BANE, FACING_WEST, 30);
     ObjectEvent_SetAttachedEffect(LOCALID_BANE, 0x102);
-    Engine_ObjectEventRunRepeatedMotion(LOCALID_BANE, 2);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_BANE, 2);
     WAIT(20);
     OBJECT_SPEED(LOCALID_BANE, PIXELS(1), PIXELS(1) / 2);
     SE(SE_JUMP);
@@ -436,7 +436,7 @@ static void EventScript_BaneKeepsAway(void) {
   struct EventWork *work;
 
   work = gFieldWork;
-  if (Engine_GameFlagIsSet(FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE) != 0) {
+  if (GameFlag_Test(FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE) != 0) {
     if (gGameState.pausedObject != LOCALID_BANE) {
       targetByteOffset = work->coordEvent;
       djinni = ObjectEvent_GetById(LOCALID_BANE);
@@ -450,9 +450,9 @@ static void EventScript_BaneKeepsAway(void) {
       // The table stores consecutive signed X/Z pixel pairs.
       targetByteOffset *= 2 * sizeof(s32);
       zByteOffset = targetByteOffset + sizeof(s32);
-      Engine_ObjectEventWalkTo(LOCALID_BANE,
-                               *(const s32 *)(targets + targetByteOffset),
-                               *(const s32 *)(targets + zByteOffset));
+      ObjectMotion_ResetAndSetPositionInMode2(
+          LOCALID_BANE, *(const s32 *)(targets + targetByteOffset),
+          *(const s32 *)(targets + zByteOffset));
     }
   }
 }
@@ -487,9 +487,7 @@ const struct MapEvent *Map_GetEvents(void) {
 /// Map_FindEvent always finds first; those scripts look ahead themselves after
 /// a dozen steps pressed south against the door, so the player sees the same
 /// thing.
-static void EventScript_UnusedCheckLeaderAhead(void) {
-  Engine_LeaderCheckAhead();
-}
+static void EventScript_UnusedCheckLeaderAhead(void) { Field_TryJumpForward(); }
 
 /// Opens the selected blue door, playing its opening when asked.
 static void CrossboneIsleKeys_OpenBlueDoor(s32 passageInfo) {
@@ -498,11 +496,11 @@ static void CrossboneIsleKeys_OpenBlueDoor(s32 passageInfo) {
   s32 collisionColumn = columnOffset + 13;
 
   if (passageInfo & PASSAGE_PLAY_OPENING) {
-    Engine_AudioPlayCue(SE_GATE_MOVE);
+    Sound_PlaySong(SE_GATE_MOVE);
     MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
     MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
     MapGrid_CopyCells(79, 29, 1, 3, tileColumn, 40);
-    Engine_TaskWait(40);
+    WaitFrames(40);
   }
   MapGrid_CopyCells(80, 29, 1, 3, tileColumn, 40);
   MapGrid_CopyCellAttributes(collisionColumn, 40, 1, 1, collisionColumn, 41);
@@ -516,7 +514,7 @@ static void CrossboneIsleKeys_OpenRedDoor(s32 passageInfo) {
     MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
     MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
     MapGrid_CopyCells(84, 29, 1, 3, 70, 49);
-    Engine_TaskWait(60);
+    WaitFrames(60);
   }
   MapGrid_CopyCells(85, 29, 1, 3, 70, 49);
   MapGrid_CopyCellAttributes(6, 49, 1, 1, 6, 50);
@@ -550,7 +548,7 @@ static void CrossboneIsleKeys_UseBlueKey(s32 doorIndex) {
     return;
   }
   flag = doorIndex + FLAG_CROSSBONE_ISLE_FIRST_BLUE_DOOR_OPEN;
-  if (Engine_GameFlagIsSet(flag) != 0) {
+  if (GameFlag_Test(flag) != 0) {
     return;
   }
   if (PartyInventory_FindMember(ITEM_BLUE_KEY) == -1) {
@@ -583,7 +581,7 @@ static void EventScript_OpenThirdBlueDoor(void) {
   if (leader->facing == FACING_SOUTH) {
     blockedSteps = &gFieldWork->blockedSteps;
     if (*blockedSteps > 12) {
-      Engine_LeaderCheckAhead();
+      Field_TryJumpForward();
       resetSteps = 0;
       *blockedSteps = resetSteps;
     }
@@ -602,7 +600,7 @@ static void EventScript_OpenFourthBlueDoor(void) {
   if (leader->facing == FACING_SOUTH) {
     blockedSteps = &gFieldWork->blockedSteps;
     if (*blockedSteps > 12) {
-      Engine_LeaderCheckAhead();
+      Field_TryJumpForward();
       resetSteps = 0;
       *blockedSteps = resetSteps;
     }
@@ -617,7 +615,7 @@ static void EventScript_ShowRedKey(void) {
   s32 z = PIXELS(776);
 
   MapGrid_CopyCells(25, 45, 1, 2, 25, 48);
-  if (Engine_GameFlagIsSet(FLAG_CROSSBONE_ISLE_RED_KEY) == 0)
+  if (GameFlag_Test(FLAG_CROSSBONE_ISLE_RED_KEY) == 0)
     Engine_ObjectEventSetPosition(keyLocalId, x, z);
   WAIT(1);
 }
@@ -633,9 +631,9 @@ static void EventScript_HideRedKey(void) {
 /// taken.
 static inline void CrossboneIsleKeys_CollectKey(s32 localId, s32 itemId,
                                                 s32 collectedFlag) {
-  Engine_ItemShowFound(itemId, 3);
+  FieldEffect_StartEffectObject22(itemId, 3);
   OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIMATION_STAND);
-  Engine_PartyGiveItem(itemId, 0);
+  PartyInventory_GiveItem(itemId, 0);
   Engine_ObjectEventSetPosition(localId, 0, 0);
   Engine_GameFlagSet(collectedFlag);
 }
@@ -699,15 +697,15 @@ static void EventScript_DodgeFirstPursuer(void) {
     ObjectEvent_SetDestination(LOCALID_FIRST_STATUE, leader->x.part.pixel,
                                leader->z.part.pixel);
   }
-  Engine_ObjectEventWaitForMove(LOCALID_FIRST_STATUE);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_FIRST_STATUE);
   ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0, 24);
   WAIT(4);
   SE(SE_188);
   ObjectEvent_SetDestinationOffset(LOCALID_FIRST_STATUE, 0,
                                    CROSSBONE_PURSUER_STEP_Z);
-  Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
   ObjectEvent_SetDestination(LOCALID_FIRST_STATUE, 360, 152);
-  Engine_ObjectEventWaitForMove(LOCALID_FIRST_STATUE);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_FIRST_STATUE);
   SCRIPT_END();
   GameFlag_Clear(PURSUER_AFTER_LEADER_FLAG);
 }
@@ -741,15 +739,15 @@ static void EventScript_DodgeSecondPursuer(void) {
     ObjectEvent_SetDestination(LOCALID_SECOND_STATUE, leader->x.part.pixel,
                                leader->z.part.pixel);
   }
-  Engine_ObjectEventWaitForMove(LOCALID_SECOND_STATUE);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_SECOND_STATUE);
   ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0,
                                    CROSSBONE_LEADER_STEP_Z);
   SE(SE_188);
   WAIT(4);
   ObjectEvent_SetDestinationOffset(LOCALID_SECOND_STATUE, 0, 16);
-  Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
   ObjectEvent_SetDestination(LOCALID_SECOND_STATUE, 168, 264);
-  Engine_ObjectEventWaitForMove(LOCALID_SECOND_STATUE);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_SECOND_STATUE);
   SCRIPT_END();
   GameFlag_Clear(PURSUER_AFTER_LEADER_FLAG);
 }
@@ -767,16 +765,16 @@ static void CrossboneIsleKeys_TrackPursuerColumn(s32 pursuerIndex) {
   if (column == gCrossboneIsleKeys_SlotColumns[pursuerIndex])
     return;
 
-  Engine_ObjectEventSetSpeed(pursuerId, PIXELS(9) / 2, PIXELS(9) / 4);
-  Engine_AudioPlayCue(SE_188);
-  Engine_ObjectEventSetDestination(pursuerId, (column << 4) + 8, 360);
+  ObjectMotion_SetSpeedParameters(pursuerId, PIXELS(9) / 2, PIXELS(9) / 4);
+  Sound_PlaySong(SE_188);
+  ObjectMotion_ResetAndSetPosition(pursuerId, (column << 4) + 8, 360);
 
   gCrossboneIsleKeys_SlotColumns[pursuerIndex] = column;
 
   if (row <= 22) {
-    Engine_ObjectEventSetDestinationOffset(LOCALID_PARTY_LEADER, 0, 8);
+    ObjectMotion_OffsetPositionAndResetMotion(LOCALID_PARTY_LEADER, 0, 8);
   }
-  Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
 }
 
 /// Touching coord event 53 in CrossboneIsleStatues: the third pursuer keeps
@@ -811,15 +809,15 @@ static void EventScript_DodgeThirdPursuer(void) {
       ObjectEvent_SetDestination(LOCALID_THIRD_STATUE, leader->x.part.pixel,
                                  leader->z.part.pixel);
     }
-    Engine_ObjectEventWaitForMove(LOCALID_THIRD_STATUE);
+    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_THIRD_STATUE);
     ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0,
                                      CROSSBONE_LEADER_STEP_Z);
     WAIT(4);
     SE(SE_188);
     ObjectEvent_SetDestinationOffset(LOCALID_THIRD_STATUE, 0, 16);
-    Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
+    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
     ObjectEvent_SetDestination(LOCALID_THIRD_STATUE, 264, 360);
-    Engine_ObjectEventWaitForMove(LOCALID_THIRD_STATUE);
+    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_THIRD_STATUE);
     WAIT(10);
     SCRIPT_END();
   }
@@ -834,14 +832,14 @@ static void EventScript_DodgeFourthPursuer(void) {
   if (gGameState.pausedObject != LOCALID_FOURTH_STATUE) {
     SCRIPT_START();
     OBJECT_SPEED(LOCALID_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
-    Engine_ObjectEventSetSpeed(LOCALID_FOURTH_STATUE, PIXELS(17) / 10,
-                               PIXELS(17) / 20);
-    Engine_AudioPlayCue(SE_188);
+    ObjectMotion_SetSpeedParameters(LOCALID_FOURTH_STATUE, PIXELS(17) / 10,
+                                    PIXELS(17) / 20);
+    Sound_PlaySong(SE_188);
     leaderColumn =
         ObjectEvent_GetById(LOCALID_PARTY_LEADER)->x.fixed / PIXELS(16);
     if (leaderColumn >
         ObjectEvent_GetById(LOCALID_FOURTH_STATUE)->x.fixed / PIXELS(16)) {
-      Engine_ObjectEventSetDestinationOffset(LOCALID_FOURTH_STATUE, 8, 0);
+      ObjectMotion_OffsetPositionAndResetMotion(LOCALID_FOURTH_STATUE, 8, 0);
     }
     leaderColumn =
         ObjectEvent_GetById(LOCALID_PARTY_LEADER)->x.fixed / PIXELS(16);
@@ -850,21 +848,21 @@ static void EventScript_DodgeFourthPursuer(void) {
       FieldObjectMotion_OffsetPositionAndResetMotion(LOCALID_FOURTH_STATUE, -8,
                                                      0);
     }
-    Engine_ObjectEventWaitForMove(LOCALID_FOURTH_STATUE);
+    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_FOURTH_STATUE);
     leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     if (leader != 0) {
-      Engine_ObjectEventSetDestination(
+      ObjectMotion_ResetAndSetPosition(
           LOCALID_FOURTH_STATUE, leader->x.part.pixel, leader->z.part.pixel);
     }
-    Engine_ObjectEventWaitForMove(LOCALID_FOURTH_STATUE);
-    Engine_ObjectEventSetDestinationOffset(LOCALID_PARTY_LEADER, 0,
-                                           CROSSBONE_LEADER_STEP_Z);
+    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_FOURTH_STATUE);
+    ObjectMotion_OffsetPositionAndResetMotion(LOCALID_PARTY_LEADER, 0,
+                                              CROSSBONE_LEADER_STEP_Z);
     WAIT(4);
-    Engine_AudioPlayCue(SE_188);
-    Engine_ObjectEventSetDestinationOffset(LOCALID_FOURTH_STATUE, 0, 16);
-    Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
-    Engine_ObjectEventSetDestination(LOCALID_FOURTH_STATUE, 344, 360);
-    Engine_ObjectEventWaitForMove(LOCALID_FOURTH_STATUE);
+    Sound_PlaySong(SE_188);
+    ObjectMotion_OffsetPositionAndResetMotion(LOCALID_FOURTH_STATUE, 0, 16);
+    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
+    ObjectMotion_ResetAndSetPosition(LOCALID_FOURTH_STATUE, 344, 360);
+    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_FOURTH_STATUE);
     WAIT(10);
     SCRIPT_END();
   }
@@ -900,14 +898,14 @@ static void EventScript_DodgeFifthPursuer(void) {
     ObjectEvent_SetDestination(LOCALID_FIFTH_STATUE, leader->x.part.pixel,
                                leader->z.part.pixel);
   }
-  Engine_ObjectEventWaitForMove(LOCALID_FIFTH_STATUE);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_FIFTH_STATUE);
   ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0,
                                    CROSSBONE_LEADER_STEP_Z);
   SE(SE_188);
   ObjectEvent_SetDestinationOffset(LOCALID_FIFTH_STATUE, 0, 16);
-  Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
   ObjectEvent_SetDestination(LOCALID_FIFTH_STATUE, 312, 232);
-  Engine_ObjectEventWaitForMove(LOCALID_FIFTH_STATUE);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_FIFTH_STATUE);
   SCRIPT_END();
   GameFlag_Clear(PURSUER_AFTER_LEADER_FLAG);
 }
@@ -937,7 +935,7 @@ static void EventScript_UseLadder(void) {
   u16 facing = leader->facing;
 
   if (facing == FACING_NORTH) {
-    if (Engine_GameFlagIsSet(BANE_CHEST_AT_LADDER_FLAG) != 0) {
+    if (GameFlag_Test(BANE_CHEST_AT_LADDER_FLAG) != 0) {
       {
         s32 destinationColumn = 45;
         s32 destinationRow = 43;
@@ -945,12 +943,12 @@ static void EventScript_UseLadder(void) {
                                    destinationRow);
       }
     }
-    Engine_GameFlagClear(BANE_LOOKED_EAST_FLAG);
+    GameFlag_ClearBit(BANE_LOOKED_EAST_FLAG);
     Field_ClimbUp();
   } else if (facing == FACING_SOUTH) {
     Field_ClimbDown();
   } else if (facing == FACING_EAST) {
-    if (Engine_GameFlagIsSet(BANE_CHEST_AT_LADDER_FLAG) != 0) {
+    if (GameFlag_Test(BANE_CHEST_AT_LADDER_FLAG) != 0) {
       {
         s32 destinationColumn = 45;
         s32 destinationRow = 43;
@@ -959,12 +957,12 @@ static void EventScript_UseLadder(void) {
       }
     }
     Engine_GameFlagSet(BANE_LOOKED_EAST_FLAG);
-    Engine_LeaderCheckAhead();
+    Field_TryJumpForward();
   } else if (facing == FACING_WEST) {
     if (leader->y.fixed == 0) {
       EventScript_PushFirstPillar();
     } else {
-      Engine_LeaderCheckAhead();
+      Field_TryJumpForward();
     }
   }
 }
@@ -994,7 +992,7 @@ static void EventScript_LookAheadOrPushFirstPillar(void) {
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
 
   if (leader->facing == 0) {
-    Engine_LeaderCheckAhead();
+    Field_TryJumpForward();
   } else {
     EventScript_PushFirstPillar();
   }
@@ -1257,7 +1255,8 @@ static void CrossboneIsleKeys_FollowSecondPillar(void) {
 static void CrossboneIsleKeys_PositionSecondPillarMarker(void) {
   struct ObjectEvent *frame = ObjectEvent_GetById(LOCALID_SECOND_PILLAR);
 
-  Engine_MarkerSetPosition(107, frame->x.fixed, frame->z.fixed + PIXELS(1));
+  TreasureSpot_SetObjectEventPosition(107, frame->x.fixed,
+                                      frame->z.fixed + PIXELS(1));
 }
 
 /// Chooses pillar drawing priorities from the leader height and row.
@@ -1274,9 +1273,9 @@ static void CrossboneIsleKeys_UpdatePillarPriorities(void) {
   } else {
     if (ObjectEvent_GetById(LOCALID_THIRD_PILLAR)->y.fixed == 0 &&
         ObjectEvent_GetById(LOCALID_PARTY_LEADER)->z.fixed / PIXELS(16) > 56) {
-      Engine_ObjectEventSetSpritePriority(LOCALID_THIRD_PILLAR, 3);
+      ObjectMotion_SetActionVariant(LOCALID_THIRD_PILLAR, 3);
     } else {
-      Engine_ObjectEventSetSpritePriority(LOCALID_THIRD_PILLAR, 1);
+      ObjectMotion_SetActionVariant(LOCALID_THIRD_PILLAR, 1);
       ObjectEvent_GetById(LOCALID_THIRD_PILLAR)->priorityFlags =
           OBJ_EVENT_PRIORITY_AUTOMATIC;
     }
@@ -1315,16 +1314,16 @@ UNUSED static void CrossboneIsleKeys_UnusedUpdateKeyIcons(void) {
   }
   switch (gCrossboneIsleKeys_IconTimer) {
   case 12:
-    if (Engine_GameFlagIsSet(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY) == 0) {
+    if (GameFlag_Test(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY) == 0) {
       OBJECT_POSITION_SET(LOCALID_FIRST_BLUE_KEY, 232, 872);
     }
-    if (Engine_GameFlagIsSet(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 1) == 0) {
+    if (GameFlag_Test(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 1) == 0) {
       OBJECT_POSITION_SET(LOCALID_SECOND_BLUE_KEY, 296, 824);
     }
-    if (Engine_GameFlagIsSet(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 2) == 0) {
+    if (GameFlag_Test(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 2) == 0) {
       OBJECT_POSITION_SET(LOCALID_THIRD_BLUE_KEY, 328, 760);
     }
-    if (Engine_GameFlagIsSet(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 3) == 0) {
+    if (GameFlag_Test(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 3) == 0) {
       OBJECT_POSITION_SET(LOCALID_FOURTH_BLUE_KEY, 360, 872);
     }
     break;
@@ -1350,7 +1349,7 @@ UNUSED static void CrossboneIsleKeys_UnusedUpdateKeyIcons(void) {
 
 /// Restores collected keys and already opened passages.
 static void CrossboneIsleKeys_InitializeKeys(void) {
-  Engine_TaskWait(1);
+  WaitFrames(1);
   Colosso_ShowItemIcon(LOCALID_RED_KEY, ITEM_RED_KEY);
   Colosso_ShowItemIcon(LOCALID_FOURTH_BLUE_KEY, ITEM_BLUE_KEY);
   Colosso_ShowItemIcon(LOCALID_THIRD_BLUE_KEY, ITEM_BLUE_KEY);
@@ -1427,7 +1426,7 @@ static void CrossboneIsleKeys_InitializeBane(void) {
   EventScript_UpdateFourthPillarTerrain();
   EventScript_UpdateFifthPillarTerrain();
 #if TBS_PATCH_1
-  Engine_ObjectEventSetSpritePriority(LOCALID_FIRST_PILLAR, 3);
+  ObjectMotion_SetActionVariant(LOCALID_FIRST_PILLAR, 3);
 #endif
   ObjectEvent_GetById(LOCALID_FOURTH_PILLAR)->motionFlags = 0;
   ObjectEvent_GetById(LOCALID_FIFTH_PILLAR)->motionFlags = 0;

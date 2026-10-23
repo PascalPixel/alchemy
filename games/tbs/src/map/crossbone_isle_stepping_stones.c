@@ -179,7 +179,7 @@ static void CrossboneIsleSteppingStones_SettleObjectEventOnGround(
     if (remainingFrames == 0) {
       break;
     }
-    Engine_TaskWait(1);
+    WaitFrames(1);
     if ((u32)objectEvent->y.fixed == (u32)objectEvent->groundHeight) {
       break;
     }
@@ -201,7 +201,7 @@ static void CrossboneIsleSteppingStones_StopAtGroundOrHeight(
     if (remainingFrames == 0) {
       break;
     }
-    Engine_TaskWait(1);
+    WaitFrames(1);
     if (objectEvent->y.fixed <= objectEvent->groundHeight) {
       break;
     }
@@ -297,7 +297,7 @@ static s32 CrossboneIsleSteppingStones_DrawRaisedFootprint(s32 localId) {
   cellZ = probe.position.z;
   MapGrid_CopyCellAttributes(2, 2, width, depth, cellX, cellZ);
 
-  ObjectEvent_SetMode(objectEvent, 4);
+  ObjectDispatch_SelectAnimation(objectEvent, 4);
   mask = 2;
   objectEvent->priorityFlags |= mask;
 
@@ -346,7 +346,7 @@ static s32 CrossboneIsleSteppingStones_RestoreGroundFootprint(s32 localId) {
         0, probe.position.x, probe.position.z, width, depth, 255);
   }
 
-  ObjectEvent_SetMode(objectEvent, 1);
+  ObjectDispatch_SelectAnimation(objectEvent, 1);
   objectEvent->priorityFlags &= ~OBJ_EVENT_PRIORITY_UNDERFOOT;
 
   return 1;
@@ -422,7 +422,7 @@ static s32 CrossboneIsleSteppingStones_LowerObjectEventToLedge(s32 id,
 
   found = 0;
   temporaryObjectEvent = NULL;
-  Engine_ObjectEventSetSpriteFlags(objectEvent, found);
+  ObjectEvent_SetSpriteFlags(objectEvent, found);
   height =
       MapGrid_GetTerrainHeight(2, objectEvent->x.fixed, objectEvent->z.fixed);
   level = height / PIXELS(16);
@@ -463,7 +463,7 @@ static s32 CrossboneIsleSteppingStones_LowerObjectEventToLedge(s32 id,
   objectEvent->y.fixed = 0;
   objectEvent->z.fixed = 0;
   if (temporaryObjectEvent != 0) {
-    Engine_ObjectDispatchRelease(temporaryObjectEvent);
+    ObjectEvent_Release(temporaryObjectEvent);
   }
   return found;
 }
@@ -479,7 +479,7 @@ static void CrossboneIsleSteppingStones_ShrinkPillar(s32 index) {
   for (;;) {
     if (elapsedFrames > 31)
       return;
-    Engine_TaskWait(1);
+    WaitFrames(1);
     objectEvent->scaleY += -Q16_ONE / 10;
     objectEvent->y.fixed += -PIXELS(4) / 5;
     elapsedFrames++;
@@ -580,19 +580,19 @@ static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
     if (PushedObject_FindAtTile(position, leader) == 0 &&
         FieldObject_CheckMovementCollision(leader, position) == 0) {
       SCRIPT_START();
-      ObjectEvent_SetMode(leader, 6);
-      Engine_TaskWait(6);
-      Engine_AudioPlayCue(SE_JUMP);
-      ObjectEvent_SetMode(leader, 7);
+      ObjectDispatch_SelectAnimation(leader, 6);
+      WaitFrames(6);
+      Sound_PlaySong(SE_JUMP);
+      ObjectDispatch_SelectAnimation(leader, 7);
       leader->speed = PIXELS(3);
       leader->acceleration = PIXELS(2);
       leader->velocityY = PIXELS(4);
       *flags &= 126;
-      Engine_ObjectEventSetSpriteFlags(leader, 0);
-      Engine_ObjectEventMoveToAndWait(LOCALID_PARTY_LEADER, position->x >> 16,
-                                      position->z >> 16);
-      ObjectEvent_SetMode(leader, 6);
-      Engine_ObjectEventSetSpriteFlags(leader, 1);
+      ObjectEvent_SetSpriteFlags(leader, 0);
+      ObjectMotion_SetPositionAndCommit(LOCALID_PARTY_LEADER, position->x >> 16,
+                                        position->z >> 16);
+      ObjectDispatch_SelectAnimation(leader, 6);
+      ObjectEvent_SetSpriteFlags(leader, 1);
       *flags = savedMotionFlags;
       SCRIPT_END();
       return 1;
@@ -767,7 +767,7 @@ static void CrossboneIsleSteppingStones_PrepareWaterScroll(void) {
 static void CrossboneIsleSteppingStones_AnimateWaterLevel(void) {
   s32 waterRaised;
 
-  waterRaised = Engine_GameFlagIsSet(WATER_RAISED_FLAG);
+  waterRaised = GameFlag_Test(WATER_RAISED_FLAG);
   if (waterRaised == 0) {
     MapGrid_DrawCellPanel(10, 19, 16, 5, waterRaised, 10, 31);
     MapGrid_DrawCellPanel(10, 51, 16, 5, 1, 10, 31);
@@ -781,29 +781,29 @@ static void CrossboneIsleSteppingStones_AnimateWaterLevel(void) {
   sShakeChance = 0;
   FieldScheduler_AddCallback(CrossboneIsleSteppingStones_PrepareWaterScroll,
                              0xc80);
-  Engine_TaskWait(1);
+  WaitFrames(1);
   Runtime_SetIrqHandler(1, 0,
                         CrossboneIsleSteppingStones_JitterBackgroundScroll);
-  Engine_AudioPlayCue(SE_WATER_LEVEL);
+  Sound_PlaySong(SE_WATER_LEVEL);
   sShakeChance = 0;
   do {
-    Engine_TaskWait(1);
+    WaitFrames(1);
   } while (++sShakeChance <= 100);
   // Commit the water tiles, then remove both scroll callbacks.
-  Engine_AudioPlayCue(SONG_FADE_OUT_ACTION_SE);
-  if (Engine_GameFlagIsSet(WATER_RAISED_FLAG) == 0) {
+  Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
+  if (GameFlag_Test(WATER_RAISED_FLAG) == 0) {
     MapGrid_CopyCellsTo(0, 32, 32, 0, 32, 32);
     MapGrid_CopyCellsTo(32, 32, 64, 0, 32, 32);
   } else {
     MapGrid_CopyCellsTo(0, 64, 32, 0, 32, 32);
     MapGrid_CopyCellsTo(32, 64, 64, 0, 32, 32);
   }
-  Engine_TaskWait(1);
+  WaitFrames(1);
   Runtime_SetIrqHandler(1, 0, 0);
-  Engine_TaskWait(1);
-  Engine_TaskRemoveCallback(CrossboneIsleSteppingStones_PrepareWaterScroll);
-  Engine_MapGridRedraw();
-  Engine_TaskWait(30);
+  WaitFrames(1);
+  Task_Remove(CrossboneIsleSteppingStones_PrepareWaterScroll);
+  MapGrid_CenterOnFollowedPoint();
+  WaitFrames(30);
 }
 
 /// Searching the switch beside CrossboneIsleFloodgate's floodgate flips it.
@@ -817,8 +817,8 @@ static void EventScript_FlipWaterSwitch(void) {
   SCRIPT_START();
   FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   FieldCamera_MoveTo(PIXELS(281), -1, PIXELS(432), 1);
-  Engine_CameraWaitForMove();
-  Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
+  FieldCamera_WaitForArrival();
+  FieldMessage_Show(MsgFieldFlippedSwitch, 1);
   waterRaised = FLAG_CHECK(WATER_RAISED_FLAG);
   // Raise or drain the water before redrawing the logs' footprints.
   if (waterRaised == 0) {
@@ -826,7 +826,7 @@ static void EventScript_FlipWaterSwitch(void) {
     MapGrid_AnimateCells(gCrossboneIsleSteppingStones_SwitchCloseSteps, 84, 24);
     WAIT(30);
     SE(SE_240);
-    Engine_ObjectEventSetSpritePriority(LOCALID_WATER, 1);
+    ObjectMotion_SetActionVariant(LOCALID_WATER, 1);
     ObjectEvent_GetById(LOCALID_WATER)->motionFlags = waterRaised;
     water = ObjectEvent_Get(LOCALID_WATER);
     water->y.fixed = -PIXELS(32);
@@ -1035,14 +1035,14 @@ static void CrossboneIsleSteppingStones_SortPillarObjectEvents(void) {
                   sizeof(struct PillarPlacement) / sizeof(u32),
               REG_DMA3);
       Dma_Wait(REG_DMA3);
-      if (Engine_GameFlagIsSet(sPillarSlots[i].flag) &&
-          !Engine_GameFlagIsSet(sPillarSlots[j].flag)) {
-        Engine_GameFlagClear(sPillarSlots[i].flag);
+      if (GameFlag_Test(sPillarSlots[i].flag) &&
+          !GameFlag_Test(sPillarSlots[j].flag)) {
+        GameFlag_ClearBit(sPillarSlots[i].flag);
         Engine_GameFlagSet(sPillarSlots[j].flag);
-      } else if (!Engine_GameFlagIsSet(sPillarSlots[i].flag) &&
-                 Engine_GameFlagIsSet(sPillarSlots[j].flag)) {
+      } else if (!GameFlag_Test(sPillarSlots[i].flag) &&
+                 GameFlag_Test(sPillarSlots[j].flag)) {
         Engine_GameFlagSet(sPillarSlots[i].flag);
-        Engine_GameFlagClear(sPillarSlots[j].flag);
+        GameFlag_ClearBit(sPillarSlots[j].flag);
       }
     }
   }
@@ -1086,7 +1086,7 @@ static void EventScript_MovePillar(void) {
     if (*flags & 1) {
       if (MapGrid_GetMetatileBehaviorAt(2, objectEvent->x.fixed,
                                         objectEvent->z.fixed) == 50) {
-        Engine_AudioPlayCue(SE_189);
+        Sound_PlaySong(SE_189);
         // Both u8 accesses are alias set 0, and the view is no struct reference
         // (MEM_IN_STRUCT_P); as field stores, the loop is reallocated.
         *(u8 *)&objectEvent->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
@@ -1095,7 +1095,7 @@ static void EventScript_MovePillar(void) {
       } else if (MapGrid_GetMetatileBehaviorAt(2, objectEvent->x.fixed,
                                                objectEvent->z.fixed) == 51) {
         CrossboneIsleSteppingStones_StopAtGroundOrHeight(objectEvent, 0);
-        Engine_AudioPlayCue(SE_189);
+        Sound_PlaySong(SE_189);
         objectEvent->y.fixed = 0;
         objectEvent->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
         CrossboneIsleSteppingStones_ShrinkPillar(id);
@@ -1132,7 +1132,7 @@ static void EventScript_MovePillar(void) {
       if (k == i) {
         continue;
       }
-      Engine_GameFlagClear(sPillarSlots[k].flag);
+      GameFlag_ClearBit(sPillarSlots[k].flag);
       other = ObjectEvent_GetById(k + LOCALID_FIRST_PILLAR);
       if ((objectEvent->x.fixed >> 20) == (other->x.fixed >> 20) &&
           (objectEvent->z.fixed >> 20) == (other->z.fixed >> 20) &&
@@ -1280,7 +1280,7 @@ static void EventScript_FrostStartsOnThirdPuddle(void) {
     Engine_GameFlagSet(LEADER_ON_THIRD_PUDDLE_FLAG);
     effects[53] = 1;
   } else {
-    Engine_GameFlagClear(LEADER_ON_THIRD_PUDDLE_FLAG);
+    GameFlag_ClearBit(LEADER_ON_THIRD_PUDDLE_FLAG);
   }
 }
 
@@ -1297,7 +1297,7 @@ static void EventScript_FrostRaisesPillar(void) {
   pillar->acceleration = PIXELS(2) / 5;
   pillar->speed = PIXELS(4) / 5;
   Object_SetPosition(pillar, pillar->x.fixed, PIXELS(32), pillar->z.fixed);
-  Engine_ObjectEventWaitForMove(LOCALID_RISING_PILLAR);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_RISING_PILLAR);
   MapGrid_CopyCellAttributes(20, 14, 1, 1, 22, 16);
 }
 
@@ -1313,7 +1313,7 @@ static void CrossboneIsleSteppingStones_SpawnFrostParticle(void) {
   if ((gFrameCount & 2) != 0)
     return;
   if ((gFrameCount & 7) == 0)
-    Engine_AudioPlayCue(SE_136);
+    Sound_PlaySong(SE_136);
 
   settings = &options;
   settings->palette = 10;
@@ -1397,13 +1397,13 @@ CrossboneIsleSteppingStones_SpawnThawParticle(union FieldObject *fieldObject) {
 static void EventScript_FreezeThirdPuddle(void) {
   s32 set;
 
-  set = Engine_GameFlagIsSet(LEADER_ON_THIRD_PUDDLE_FLAG);
+  set = GameFlag_Test(LEADER_ON_THIRD_PUDDLE_FLAG);
   if (set == 0) {
     Engine_GameFlagSet(FIRST_FROZEN_PUDDLE_FLAG + 2);
     SCRIPT_START();
-    Engine_CameraSetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
-    Engine_CameraMoveTo(PIXELS(312), -1, PIXELS(184), 1);
-    Engine_CameraWaitForMove();
+    FieldCamera_SetSpeedParameters(PIXELS(3) / 5, PIXELS(3) / 40);
+    FieldCamera_MoveWithinMapBounds(PIXELS(312), -1, PIXELS(184), 1);
+    FieldCamera_WaitForArrival();
     WAIT(20);
     MapGrid_CopyCellsTo(73, 10, 60, 10, 1, 2);
     WAIT(20);
@@ -1424,14 +1424,14 @@ static void EventScript_FreezeThirdPuddle(void) {
       ObjectEvent_GetById(LOCALID_SECOND_PUDDLE)->update =
           (void (*)(union FieldObject *))set;
       MapGrid_CopyCellAttributes(17, 13, 1, 1, 18, 13);
-      Engine_GameFlagClear(FIRST_FROZEN_PUDDLE_FLAG + 1);
-      Engine_ObjectEventSetChildValue(LOCALID_SECOND_PUDDLE, 0);
+      GameFlag_ClearBit(FIRST_FROZEN_PUDDLE_FLAG + 1);
+      ObjectGroup_ConfigureChildValue(LOCALID_SECOND_PUDDLE, 0);
       ObjectEvent_SetBuiltinAction(LOCALID_SECOND_PUDDLE,
                                    OBJ_EVENT_ACTION_IDLE);
     } else {
       WAIT(60);
     }
-    Engine_TaskRemoveCallback(CrossboneIsleSteppingStones_SpawnFrostParticle);
+    Task_Remove(CrossboneIsleSteppingStones_SpawnFrostParticle);
     WAIT(20);
     MapGrid_CopyCellsTo(72, 10, 60, 10, 1, 2);
     WAIT(20);
@@ -1469,7 +1469,7 @@ static void EventScript_MoveSinkingPillar(void) {
     alreadyLowered = FLAG_CHECK(PILLAR_SUNK_FLAG);
     if (alreadyLowered == 0) {
       WAIT(10);
-      Engine_AudioPlayCue(SE_159);
+      Sound_PlaySong(SE_159);
       pillar->motionFlags = alreadyLowered;
       pillar->groundHeight = -PIXELS(2);
       pillar->y.fixed = -PIXELS(2);
@@ -1524,7 +1524,7 @@ static void CrossboneIsleSteppingStones_PrepLoweredObjectEvent(s32 id) {
   objectEvent->collisionFlags &= 254;
   objectEvent->priorityFlags |= OBJ_EVENT_PRIORITY_UNDERFOOT;
   objectEvent->motionFlags = 0;
-  Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
+  ObjectEvent_SetSpriteFlags(objectEvent, 0);
   objectEvent->sprite->image.priority = 2;
 }
 
@@ -1536,7 +1536,7 @@ static void CrossboneIsleSteppingStones_RestoreFlaggedPillar(s32 localId) {
   objectEvent = ObjectEvent_GetById(localId);
   if (FLAG_CHECK(FIRST_FROZEN_PUDDLE_FLAG + localId - LOCALID_FIRST_PUDDLE) !=
       0) {
-    ObjectEvent_SetMode(objectEvent, 5);
+    ObjectDispatch_SelectAnimation(objectEvent, 5);
 #ifdef UBFIX
     objectEvent->update =
         CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority;
@@ -1579,8 +1579,8 @@ static void CrossboneIsleSteppingStones_UpdateLeaderPriority(void) {
         hero->z.fixed > objectEvent->z.fixed - PIXELS(24)) {
       if (hero->x.fixed - PIXELS(16) <= objectEvent->x.fixed &&
           objectEvent->x.fixed < hero->x.fixed + PIXELS(16)) {
-        Engine_ObjectEventSetSpritePriority(
-            LOCALID_PARTY_LEADER, objectEvent->sprite->image.priority);
+        ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER,
+                                      objectEvent->sprite->image.priority);
         return;
       }
     } else {
@@ -1618,8 +1618,8 @@ s32 Map_Initialize(void) {
     Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 5);
     Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 6);
     Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 7);
-    if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0 &&
-        Engine_GameFlagIsSet(WATER_RAISED_FLAG) != 0) {
+    if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) != 0 &&
+        GameFlag_Test(WATER_RAISED_FLAG) != 0) {
       MapGrid_CopyCellsTo(79, 34, 84, 24, 1, 2);
       MapGrid_CopyCellsTo(0, 32, 32, 0, 32, 32);
       MapGrid_CopyCellsTo(32, 32, 64, 0, 32, 32);
@@ -1629,7 +1629,7 @@ s32 Map_Initialize(void) {
   } else if (gGameState.mapId == (s32)&MapId_CrossboneIsleStackedPillars) {
     // Restore the four movable pillars and the leader's riding overlay.
     ObjectEvent_CreateConfiguredObject(PIXELS(584), 0, PIXELS(200), 223);
-    if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
+    if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {
       ObjectEvent_GetById(LOCALID_PARTY_LEADER)->riseCounter = 1;
     }
     FieldEffect_StartFadeOverlay(0);
@@ -1658,7 +1658,7 @@ s32 Map_Initialize(void) {
     WAIT(1);
     FieldScheduler_AddCallback(CrossboneIsleSteppingStones_UpdateLeaderPriority,
                                TASK_PRIORITY_MAP);
-    if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
+    if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) != 0) {
       for (id = LOCALID_FIRST_PILLAR; id < LOCALID_FIRST_PILLAR + 4; id++) {
         objectEvent = ObjectEvent_GetById(id);
         x = objectEvent->x.fixed >> 20;
@@ -1675,7 +1675,7 @@ s32 Map_Initialize(void) {
     // Restore CrossboneIsleDragonStatue's moved pillar, frozen puddles, and
     // raised pillar pair.
     OBJECT_ANIMATION(LOCALID_SINKING_BOULDER, 2);
-    Engine_ObjectEventSetChildValue(LOCALID_SINKING_BOULDER, 6);
+    ObjectGroup_ConfigureChildValue(LOCALID_SINKING_BOULDER, 6);
     Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG);
     Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 1);
 #if TBS_PATCH_1
@@ -1694,7 +1694,7 @@ s32 Map_Initialize(void) {
     CrossboneIsleSteppingStones_PrepLoweredObjectEvent(LOCALID_RISING_PILLAR);
     ObjectEvent_GetById(LOCALID_RISING_PILLAR)->collisionFlags |=
         OBJ_EVENT_NOT_TARGETED;
-    if (Engine_GameFlagIsSet(FIRST_FROZEN_PUDDLE_FLAG + 2) == 0) {
+    if (GameFlag_Test(FIRST_FROZEN_PUDDLE_FLAG + 2) == 0) {
       ObjectEvent_GetById(LOCALID_THIRD_PUDDLE)->scaleX = 3 * Q16_ONE / 2;
       ObjectEvent_GetById(LOCALID_THIRD_PUDDLE)->scaleY = 3 * Q16_ONE / 2;
       ObjectEvent_GetById(LOCALID_THIRD_PUDDLE)->sprite->image.priority = 3;

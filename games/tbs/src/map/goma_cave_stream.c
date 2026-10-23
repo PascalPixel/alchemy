@@ -113,7 +113,7 @@ static void EventScript_MoveStump(void) {
         OBJ_EVENT_PRIORITY_UNDERFOOT;
     MapGrid_CopyCellAttributes(19, 74, 9, 3, 19, 17);
     landed = ObjectEvent_GetById(LOCALID_STUMP);
-    Engine_ObjectEventSetSpriteFlags(landed, 0);
+    ObjectEvent_SetSpriteFlags(landed, 0);
     Engine_GameFlagSet(FLAG_GOMA_CAVE_STREAM_STUMP_MOVED);
   }
 }
@@ -136,14 +136,14 @@ s32 Map_Initialize(void) {
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gGameState.mapId == (s32)&MapId_GomaCaveStream) {
     if (gGameState.warpDest == GOMA_CAVE_STREAM_FROM_VALE_GATE) {
-      Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
+      GameFlag_ClearBit(FLAG_SHOW_LOCATION_NAME);
     } else {
       ObjectEvent_GetById(LOCALID_STUMP)->collisionFlags |=
           OBJ_EVENT_NEAR_PSYNERGY;
-      if (Engine_GameFlagIsSet(FLAG_GOMA_CAVE_STREAM_STUMP_MOVED) != 0) {
+      if (GameFlag_Test(FLAG_GOMA_CAVE_STREAM_STUMP_MOVED) != 0) {
         Engine_ObjectEventSetPosition(LOCALID_STUMP, PIXELS(346), PIXELS(292));
         stump = ObjectEvent_GetById(LOCALID_STUMP);
-        Engine_ObjectEventSetSpriteFlags(stump, 0);
+        ObjectEvent_SetSpriteFlags(stump, 0);
         ObjectEvent_GetById(LOCALID_STUMP)->priorityFlags |=
             OBJ_EVENT_PRIORITY_UNDERFOOT;
         OBJECT_ANIMATION(LOCALID_STUMP, STUMP_ANIMATION_SINK);
@@ -175,7 +175,7 @@ static void GomaCaveStream_LeapStump(s32 stumpId) {
   stump = ObjectEvent_GetById(stumpId);
   stump->motionFlags = 0;
   for (i = 0; i < 18; i++) {
-    Engine_TaskWait(1);
+    WaitFrames(1);
     stump->sprite->rotation -= 256;
     stump->x.fixed -= Trig_Cos(stump->sprite->rotation) / 2;
     stump->targetX = OBJ_EVENT_NO_TARGET;
@@ -186,11 +186,11 @@ static void GomaCaveStream_LeapStump(s32 stumpId) {
   stump->gravity = 4 * PIXELS(1) / 5;
   stump->motionFlags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
   stump->layer = 0;
-  Engine_ObjectEventWaitForMove(stumpId);
+  ObjectMotion_CommitCurrentPositionAndActivate(stumpId);
   ObjectEvent_WaitBelowHeight(stump, 0);
-  Engine_AudioPlayCue(SE_188);
+  Sound_PlaySong(SE_188);
   MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
-  Engine_AudioPlayCue(SE_RUMBLE);
+  Sound_PlaySong(SE_RUMBLE);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   for (i = 0; i < 17; i++) {
     dir.x = Trig_Cos(i << 12);
@@ -203,7 +203,7 @@ static void GomaCaveStream_LeapStump(s32 stumpId) {
   }
   stump->velocityY = PIXELS(5);
   ObjectEvent_SetDestination(stumpId, 346, 292);
-  Engine_ObjectEventWaitForMove(stumpId);
+  ObjectMotion_CommitCurrentPositionAndActivate(stumpId);
   ObjectEvent_WaitBelowHeight(stump, 0);
   // UB: the native integer store aliases the update pointer. A typed clear
   // swaps this store with the following sprite-pointer load.
@@ -222,7 +222,7 @@ static void GomaCaveStream_LeapStump(s32 stumpId) {
                     EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
                         EFFECT_SCALE_TO_TARGET,
                     &options);
-  Engine_AudioPlayCue(SE_CAST);
+  Sound_PlaySong(SE_CAST);
   OBJECT_ANIMATION(stumpId, STUMP_ANIMATION_SPLASH);
   MapGrid_WaitForShakeToSettle();
 }

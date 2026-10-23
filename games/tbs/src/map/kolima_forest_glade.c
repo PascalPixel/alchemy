@@ -80,21 +80,21 @@ KolimaForestGlade_GetObjectEventTemplates(void) {
 /// ahead until something stops it.
 static void KolimaForestGlade_PushLog(void) {
   struct PushedObjectProbe result;
-  Engine_ScriptStart();
+  FieldScript_Start();
   if (PushedObject_FindClearPosition(&result))
     ObjectEvent_MoveAndRedraw(result);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Kolima Forest (MapId_KolimaForestGlade), Catch on the floating Nut (until
 /// FLAG_KOLIMA_FOREST_NUT_CAUGHT): it vanishes and the party finds a Nut.
 static void KolimaForestGlade_CatchNut(void) {
-  Engine_ScriptStart();
+  FieldScript_Start();
   Engine_ObjectEventSetPosition(LOCALID_NUT, 0, 0);
   Engine_GameFlagSet(FLAG_KOLIMA_FOREST_NUT_CAUGHT);
-  Engine_ItemShowFound(ITEM_NUT, 3);
-  Engine_PartyGiveItem(ITEM_NUT, 0);
-  Engine_ScriptEnd();
+  FieldEffect_StartEffectObject22(ITEM_NUT, 3);
+  PartyInventory_GiveItem(ITEM_NUT, 0);
+  FieldScript_End();
 }
 
 /// The logs, the Nut and the two ways out.
@@ -109,13 +109,13 @@ s32 KolimaForestGlade_Initialize(void) {
 
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (Engine_GameFlagIsSet(FLAG_KOLIMA_FOREST_NUT_CAUGHT) == 0) {
+  if (GameFlag_Test(FLAG_KOLIMA_FOREST_NUT_CAUGHT) == 0) {
     Map_FloatNut(LOCALID_NUT);
   }
   Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG);
   Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 1);
   Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 2);
-  if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
+  if (GameFlag_Test(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
     KolimaPalette_Curse(11);
   }
   return 0;

@@ -11,16 +11,16 @@
 /// take more. With no room for it, LOCALID_GIRL_AT_THE_INN (as both maps name
 /// her) shakes their head: "Aren't you a greedy lad!"
 static void Vault_FindBone(void) {
-  Engine_ScriptStart();
+  FieldScript_Start();
   if (PartyInventory_HasSpace() == 0) {
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_GIRL_AT_THE_INN,
-                                          ANIMATION_SHAKE_HEAD);
-    Engine_ScriptWait(20);
-    Engine_ScriptSetMessage(MsgVaultWowHaveManyThingsArent);
-    Engine_ScriptShowMessage(LOCALID_GIRL_AT_THE_INN, 0);
+    ObjectMotion_SetAnimationAndWait(LOCALID_GIRL_AT_THE_INN,
+                                     ANIMATION_SHAKE_HEAD);
+    FieldScript_WaitFrames(20);
+    FieldScript_SetMessageId(MsgVaultWowHaveManyThingsArent);
+    FieldScript_ShowMessageAndWait(LOCALID_GIRL_AT_THE_INN, 0);
   } else {
-    Engine_ItemShowFound(ITEM_BONE, 3);
-    Engine_PartyGiveItem(ITEM_BONE, 0);
+    FieldEffect_StartEffectObject22(ITEM_BONE, 3);
+    PartyInventory_GiveItem(ITEM_BONE, 0);
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }

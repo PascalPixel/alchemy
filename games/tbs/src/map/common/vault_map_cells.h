@@ -38,11 +38,11 @@ static void Vault_OpenDoorwayAndEnter(void) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   struct Sprite *sprite = objectEvent->sprite;
 
-  Engine_AudioPlayCue(SE_188);
+  Sound_PlaySong(SE_188);
   Vault_DrawDoorwayFrame(VAULT_DOOR_OPENING_FRAME_COLUMN);
-  Engine_ScriptWait(4);
+  FieldScript_WaitFrames(4);
   Vault_DrawDoorwayFrame(VAULT_DOOR_OPEN_FRAME_COLUMN);
-  Engine_ScriptWait(4);
+  FieldScript_WaitFrames(4);
   MapGrid_CopyCellAttributes(33, 21, 2, 2, 3, 16);
   objectEvent->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   sprite->image.priority = 3;

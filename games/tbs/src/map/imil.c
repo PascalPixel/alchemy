@@ -219,7 +219,7 @@ enum ImilTownFlag {
 /// Imil's shops, by their numbers in the shop table.
 enum { SHOP_IMIL_WEAPONS = 10, SHOP_IMIL_ARMOR = 11, SHOP_IMIL_ITEMS = 12 };
 
-/// Imil's inn, as Engine_InnOpen numbers the inns.
+/// Imil's inn, as Inn_CheckIn numbers the inns.
 enum { IMIL_INN = 4 };
 
 /// The weapon and armor counters' bg event triggers in the houses: searching
@@ -242,9 +242,9 @@ enum { TRIGGER_WEAPON_COUNTER = 10, TRIGGER_ARMOR_COUNTER = 11 };
 
 // Keep native call forms while UBFIX uses the declared void contracts.
 #ifdef UBFIX
-#define IMIL_OPEN_SHOP Engine_ShopOpen
+#define IMIL_OPEN_SHOP Shop_Run
 #else
-#define IMIL_OPEN_SHOP ((s32 (*)())Engine_ShopOpen)
+#define IMIL_OPEN_SHOP ((s32 (*)())Shop_Run)
 #endif
 
 /// The townsfolk's own animations the scripts play, as their sheets draw them.
@@ -325,8 +325,8 @@ const struct ObjectEventTemplate *Imil_GetObjectEventTemplates(void) {
 
   if (gGameState.mapId == ((s32)&MapId_ImilInteriors)) {
     script = gImil_InteriorObjectEventTemplates;
-    Map_PrepareObjectEvents(script);
-    if (Engine_GameFlagIsSet(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
+    Map_AssignViewFlags(script);
+    if (GameFlag_Test(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
       // A byte view: written as script[row].talkFacing, the row's address is
       // formed first.
       ((u8 *)script)[(LOCALID_RESTAURANT_OWNER - LOCALID_FIRST_PLACED) *
@@ -341,7 +341,7 @@ const struct ObjectEventTemplate *Imil_GetObjectEventTemplates(void) {
     return script;
   }
 
-  if (Engine_GameFlagIsSet(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
+  if (GameFlag_Test(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
     return gImil_TownObjectEventTemplatesCured;
   }
   return gImil_TownObjectEventTemplates;
@@ -363,61 +363,60 @@ const struct MapEvent *Imil_GetEvents(void) {
 /// man sneezes and shivers, waiting for Mia; once she travels with the party,
 /// he says that even her healing can't help them all.
 static void Imil_TalkToFreezingYoungMan(void) {
-  Engine_ScriptStart();
-  if (Engine_GameFlagIsSet(FLAG_IN_PARTY(MIA)) != 0) {
-    Engine_ScriptSetMessage(MSGNO(MsgImilEvenIfMiaHealsUs));
+  FieldScript_Start();
+  if (GameFlag_Test(FLAG_IN_PARTY(MIA)) != 0) {
+    FieldScript_SetMessageId(MSGNO(MsgImilEvenIfMiaHealsUs));
   } else {
-    Engine_ScriptSetMessage(MSGNO(MsgImilBrrrrrChooImFreezingMia));
+    FieldScript_SetMessageId(MSGNO(MsgImilBrrrrrChooImFreezingMia));
   }
   {
     s32 val = 0;
     s32 speaker = LOCALID_FREEZING_YOUNG_MAN;
-    Engine_ScriptShowMessage(speaker, val);
+    FieldScript_ShowMessageAndWait(speaker, val);
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Mind Read on the freezing young man in Imil, until Saturos is beaten: Mia
 /// should be here by now, or, once she has joined the party, he can't
 /// understand why anyone would exercise in the cold.
 static void Imil_ReadFreezingYoungMansMind(void) {
-  Engine_ScriptStart();
-  if (Engine_GameFlagIsSet(FLAG_IN_PARTY(MIA)) != 0) {
-    Engine_ScriptSetMessage(MSGNO(MsgImilCantUnderstandWhyAnyOne));
+  FieldScript_Start();
+  if (GameFlag_Test(FLAG_IN_PARTY(MIA)) != 0) {
+    FieldScript_SetMessageId(MSGNO(MsgImilCantUnderstandWhyAnyOne));
   } else {
-    Engine_ScriptSetMessage(MSGNO(MsgImilMiaShouldHereByNow));
+    FieldScript_SetMessageId(MSGNO(MsgImilMiaShouldHereByNow));
   }
-  Engine_ScriptShowMessage(LOCALID_FREEZING_YOUNG_MAN, 0);
-  Engine_ScriptEnd();
+  FieldScript_ShowMessageAndWait(LOCALID_FREEZING_YOUNG_MAN, 0);
+  FieldScript_End();
 }
 
 /// A small boy in Imil, until Saturos is beaten, turns to the leader and asks
 /// whether he is new in Imil.
 static void Imil_GreetVisitor(void) {
-  Engine_ScriptStart();
-  Engine_ObjectEventFaceObjectEvent(LOCALID_GREETING_BOY, LOCALID_PARTY_LEADER,
-                                    10);
-  Engine_ScriptSetMessage(MSGNO(MsgImilHiNewInImil));
-  Engine_ScriptAskYesNo(LOCALID_GREETING_BOY, 0);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  ObjectMotion_SetAngleToward(LOCALID_GREETING_BOY, LOCALID_PARTY_LEADER, 10);
+  FieldScript_SetMessageId(MSGNO(MsgImilHiNewInImil));
+  FieldScript_AskYesNoAndShowResponse(LOCALID_GREETING_BOY, 0);
+  FieldScript_End();
 }
 
 /// The strongman who keeps in shape pauses his exercises to talk. He stops,
 /// turns to the leader and goes back to counting; once Saturos is beaten, he
 /// wonders what he trained so hard for.
 static void Imil_TalkToStrongmanKeepingInShape(void) {
-  Engine_ScriptStart();
+  FieldScript_Start();
 
   if (GameFlag_IsSet(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
-    Engine_ScriptSetMessage(MSGNO(MsgImilCountingAfterDeparture));
+    FieldScript_SetMessageId(MSGNO(MsgImilCountingAfterDeparture));
     Script_ShowMessage(LOCALID_STRONGMAN_KEEPING_IN_SHAPE, 0);
     ObjectEvent_SetAttachedEffect(LOCALID_STRONGMAN_KEEPING_IN_SHAPE,
                                   ATTACHED_EFFECT_IN_FRONT |
                                       ATTACHED_EFFECT_ONCE);
-    Engine_ScriptWait(40);
+    FieldScript_WaitFrames(40);
     Engine_ObjectEventSetAnimation(LOCALID_STRONGMAN_KEEPING_IN_SHAPE,
                                    ANIMATION_STAND);
-    Engine_ScriptWait(20);
+    FieldScript_WaitFrames(20);
     ObjectEvent_FaceObjectEvent(LOCALID_STRONGMAN_KEEPING_IN_SHAPE,
                                 LOCALID_PARTY_LEADER, 20);
     Script_AskYesNo(LOCALID_STRONGMAN_KEEPING_IN_SHAPE, 0);
@@ -426,15 +425,15 @@ static void Imil_TalkToStrongmanKeepingInShape(void) {
     Engine_ObjectEventSetAnimation(LOCALID_STRONGMAN_KEEPING_IN_SHAPE,
                                    IMIL_ANIMATION_SQUATS);
   } else {
-    Engine_ScriptSetMessage(MSGNO(MsgImilOneTwoThreeFour));
+    FieldScript_SetMessageId(MSGNO(MsgImilOneTwoThreeFour));
     Script_ShowMessage(LOCALID_STRONGMAN_KEEPING_IN_SHAPE, 0);
     ObjectEvent_SetAttachedEffect(LOCALID_STRONGMAN_KEEPING_IN_SHAPE,
                                   ATTACHED_EFFECT_IN_FRONT |
                                       ATTACHED_EFFECT_ONCE);
-    Engine_ScriptWait(40);
+    FieldScript_WaitFrames(40);
     Engine_ObjectEventSetAnimation(LOCALID_STRONGMAN_KEEPING_IN_SHAPE,
                                    ANIMATION_STAND);
-    Engine_ScriptWait(20);
+    FieldScript_WaitFrames(20);
     ObjectEvent_FaceObjectEvent(LOCALID_STRONGMAN_KEEPING_IN_SHAPE,
                                 LOCALID_PARTY_LEADER, 20);
     Script_ShowMessage(LOCALID_STRONGMAN_KEEPING_IN_SHAPE, 0);
@@ -444,7 +443,7 @@ static void Imil_TalkToStrongmanKeepingInShape(void) {
                                    IMIL_ANIMATION_SQUATS);
   }
 
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// The old man in the old couple's house moans for help, and his wife hurries
@@ -457,56 +456,56 @@ static void Imil_TalkToOldMan(void) {
   struct ObjectEvent *oldWoman;
 
   if (GameFlag_IsSet(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
-    Engine_ScriptStart();
+    FieldScript_Start();
     ObjectEvent_FaceObjectEvent(LOCALID_OLD_MAN, LOCALID_PARTY_LEADER, 0);
-    Engine_ScriptWait(10);
-    Engine_ScriptSetMessage(MsgMercuryReallySayDie);
+    FieldScript_WaitFrames(10);
+    FieldScript_SetMessageId(MsgMercuryReallySayDie);
     Script_AskYesNo(LOCALID_OLD_MAN, 0);
-    Engine_ScriptEnd();
+    FieldScript_End();
   } else {
     if (GameFlag_IsSet(FLAG_IMIL_MET_MIA) != 0) {
-      Engine_ScriptStart();
+      FieldScript_Start();
       Engine_ObjectEventSetAnimation(LOCALID_OLD_MAN, IMIL_ANIMATION_SIT_UP);
-      Engine_MapGridAnimateCells(gImil_CellStepsA, 10, 69);
-      Engine_ScriptSetMessage(MsgMercuryFeelMuchBetter);
+      MapGrid_PlayMetatileCopySequence(gImil_CellStepsA, 10, 69);
+      FieldScript_SetMessageId(MsgMercuryFeelMuchBetter);
       Script_ShowMessage(LOCALID_OLD_MAN, 0);
       Engine_ObjectEventSetAnimation(LOCALID_OLD_MAN, IMIL_ANIMATION_LIE_BACK);
       MapGrid_AnimateCells(gImil_CellStepsB, 10, 69);
-      Engine_ScriptEnd();
+      FieldScript_End();
     } else {
-      Engine_ScriptStart();
+      FieldScript_Start();
       oldMan = ObjectEvent_GetById(LOCALID_OLD_MAN);
       oldMan->timer = 10;
       ObjectEvent_SetActionScript(LOCALID_OLD_MAN, gImil_ShiverScript);
-      Engine_ScriptSetMessage(MsgMercuryOoohHelpMe);
-      Engine_ScriptShowMessage(LOCALID_OLD_MAN, 0);
-      Engine_ObjectEventStop(LOCALID_OLD_WOMAN);
+      FieldScript_SetMessageId(MsgMercuryOoohHelpMe);
+      FieldScript_ShowMessageAndWait(LOCALID_OLD_MAN, 0);
+      ObjectMotion_EnableActionAndResetMotion(LOCALID_OLD_WOMAN);
       ObjectEvent_ShowEmote(LOCALID_OLD_WOMAN,
                             EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
       ObjectEvent_FaceDirection(LOCALID_OLD_WOMAN, FACING_NORTH + FACING_STEP,
                                 10);
-      Engine_ObjectEventStartRepeatedMotion(LOCALID_OLD_WOMAN, 2);
+      ObjectMotion_SetVariantCallback(LOCALID_OLD_WOMAN, 2);
       Script_ShowMessageAndWait(LOCALID_OLD_WOMAN, 0, 20);
       ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER,
                                   gImil_LeaderStepAsideScript);
       ObjectEvent_SetSpeed(LOCALID_OLD_WOMAN, PIXELS(8) / 5, PIXELS(4) / 5);
       ObjectEvent_RunActionScriptAndWait(LOCALID_OLD_WOMAN,
                                          gImil_OldWomanHurryScript);
-      Engine_ScriptWait(40);
-      Engine_ObjectEventJump(LOCALID_OLD_WOMAN, 2, 0);
-      Engine_ObjectEventStartRepeatedMotion(LOCALID_OLD_WOMAN, 2);
-      Engine_ObjectEventSetAttachedEffect(
+      FieldScript_WaitFrames(40);
+      ObjectMotion_Launch(LOCALID_OLD_WOMAN, 2, 0);
+      ObjectMotion_SetVariantCallback(LOCALID_OLD_WOMAN, 2);
+      FieldEffect_ConfigureLinkedObject(
           LOCALID_OLD_WOMAN, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-      Engine_ScriptWait(60);
+      FieldScript_WaitFrames(60);
       Script_ShowMessageAndWait(LOCALID_OLD_WOMAN, 0, 10);
       ObjectEvent_FaceDirection(LOCALID_OLD_WOMAN,
                                 FACING_SOUTHEAST + FACING_STEP, 20);
-      Engine_ObjectEventStartRepeatedMotion(LOCALID_OLD_WOMAN, 2);
-      Engine_ScriptShowMessage(LOCALID_OLD_WOMAN, 0);
+      ObjectMotion_SetVariantCallback(LOCALID_OLD_WOMAN, 2);
+      FieldScript_ShowMessageAndWait(LOCALID_OLD_WOMAN, 0);
       oldWoman = ObjectEvent_GetById(LOCALID_OLD_WOMAN);
       oldWoman->collisionFlags ^= 0x2;
       GameFlag_Set(FLAG_IMIL_MIA_SENT_FOR);
-      Engine_ScriptEnd();
+      FieldScript_End();
     }
   }
 }
@@ -515,19 +514,19 @@ static void Imil_TalkToOldMan(void) {
 /// whether the party wants weapons, cannot sell them until he is cured, and
 /// blames the travellers from the south for the disease.
 static void Imil_AskAboutWeapons(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MSGNO(MsgImilDoWantWeapons));
-  Engine_ScriptAskYesNo(LOCALID_WEAPON_MERCHANT, 0);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  FieldScript_SetMessageId(MSGNO(MsgImilDoWantWeapons));
+  FieldScript_AskYesNoAndShowResponse(LOCALID_WEAPON_MERCHANT, 0);
+  FieldScript_End();
 }
 
 /// The restaurant owner of Imil, a young man, until Saturos is beaten, offers
 /// the menu.
 static void Imil_AskAboutRestaurantMenu(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MSGNO(MsgImilDoWantSeeRestaurantMenu));
-  Engine_ScriptAskYesNo(LOCALID_RESTAURANT_OWNER, 0);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  FieldScript_SetMessageId(MSGNO(MsgImilDoWantSeeRestaurantMenu));
+  FieldScript_AskYesNoAndShowResponse(LOCALID_RESTAURANT_OWNER, 0);
+  FieldScript_End();
 }
 
 /// Megan asks whether the party has visited the old couple.
@@ -536,57 +535,57 @@ static void Imil_AskAboutRestaurantMenu(void) {
 /// FLAG_IMIL_MIA_SENT_FOR); once Mia has joined the party, she says
 /// everyone counts on her.
 static void Imil_TalkToMegan(void) {
-  Engine_ScriptStart();
-  if (Engine_GameFlagIsSet(FLAG_IN_PARTY(MIA)) != 0) {
-    Engine_ScriptSetMessage(MSGNO(MsgImilEveryoneCountsOnMiaThats));
-    Engine_ScriptShowMessage(LOCALID_MEGAN, 0);
+  FieldScript_Start();
+  if (GameFlag_Test(FLAG_IN_PARTY(MIA)) != 0) {
+    FieldScript_SetMessageId(MSGNO(MsgImilEveryoneCountsOnMiaThats));
+    FieldScript_ShowMessageAndWait(LOCALID_MEGAN, 0);
   } else {
-    Engine_ScriptSetMessage(MsgImilHaveVisitedOldCoupleWho);
-    Engine_ScriptAskYesNo(LOCALID_MEGAN, 0);
+    FieldScript_SetMessageId(MsgImilHaveVisitedOldCoupleWho);
+    FieldScript_AskYesNoAndShowResponse(LOCALID_MEGAN, 0);
     Engine_GameFlagSet(FLAG_IMIL_HEARD_MIA_WENT_TO_COUPLE);
     Engine_GameFlagSet(FLAG_IMIL_MIA_SENT_FOR);
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Mind Read on Megan in the Imil Sanctum, until Saturos is
 /// beaten: Mia had a bad feeling, or, once she has joined, they must help her.
 static void Imil_ReadMegansMind(void) {
-  Engine_ScriptStart();
-  if (Engine_GameFlagIsSet(FLAG_IN_PARTY(MIA)) != 0) {
-    Engine_ScriptSetMessage(MSGNO(MsgImilWeHaveDoWhateverWe));
+  FieldScript_Start();
+  if (GameFlag_Test(FLAG_IN_PARTY(MIA)) != 0) {
+    FieldScript_SetMessageId(MSGNO(MsgImilWeHaveDoWhateverWe));
   } else {
-    Engine_ScriptSetMessage(MSGNO(MsgImilMiaWasSayingSheHas));
+    FieldScript_SetMessageId(MSGNO(MsgImilMiaWasSayingSheHas));
   }
-  Engine_ScriptShowMessage(LOCALID_MEGAN, 0);
-  Engine_ScriptEnd();
+  FieldScript_ShowMessageAndWait(LOCALID_MEGAN, 0);
+  FieldScript_End();
 }
 
 /// The old woman of the old couple asks what happened at the lighthouse. She's
 /// in their house after Mia's healing and until Saturos is beaten.
 static void Imil_TalkToOldWoman(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MSGNO(MsgImilHappenedInLighthouseNortheast));
+  FieldScript_Start();
+  FieldScript_SetMessageId(MSGNO(MsgImilHappenedInLighthouseNortheast));
   Script_ShowMessage(LOCALID_OLD_WOMAN, 0);
   ObjectEvent_FaceDirection(LOCALID_OLD_WOMAN, FACING_SOUTHEAST + FACING_STEP,
                             10);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Mind Read on the old woman of the old couple's house, until Saturos is
 /// beaten: about Mia's clan, her husband's exaggerating, or Mia running all
 /// over town.
 static void Imil_ReadOldWomanMind(void) {
-  Engine_ScriptStart();
-  if (Engine_GameFlagIsSet(FLAG_IMIL_MET_MIA) != 0) {
-    Engine_ScriptSetMessage(MSGNO(MsgImilMiaClanOnceLivedHere));
-  } else if (Engine_GameFlagIsSet(FLAG_IMIL_MIA_SENT_FOR) != 0) {
-    Engine_ScriptSetMessage(MSGNO(MsgImilHesAlwaysExaggeratingThingsBut));
+  FieldScript_Start();
+  if (GameFlag_Test(FLAG_IMIL_MET_MIA) != 0) {
+    FieldScript_SetMessageId(MSGNO(MsgImilMiaClanOnceLivedHere));
+  } else if (GameFlag_Test(FLAG_IMIL_MIA_SENT_FOR) != 0) {
+    FieldScript_SetMessageId(MSGNO(MsgImilHesAlwaysExaggeratingThingsBut));
   } else {
-    Engine_ScriptSetMessage(MSGNO(MsgImilMiaRunningAroundTownCaring));
+    FieldScript_SetMessageId(MSGNO(MsgImilMiaRunningAroundTownCaring));
   }
-  Engine_ScriptShowMessage(LOCALID_OLD_WOMAN, 0);
-  Engine_ScriptEnd();
+  FieldScript_ShowMessageAndWait(LOCALID_OLD_WOMAN, 0);
+  FieldScript_End();
 }
 
 /// After Mia's visit, speaking across the bed in the old couple's house
@@ -596,24 +595,24 @@ static void Imil_TalkToOldManInBed(void) { Imil_TalkToOldMan(); }
 /// After Mia's visit, Mind Read across the bed in the old couple's house
 /// reaches the old man: he admires Mia, and wishes he had a daughter like her.
 static void Imil_ReadOldManInBedMind(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MSGNO(MsgImilMiaIsAGoodGirlI));
-  Engine_ScriptShowMessage(LOCALID_OLD_MANS_BED, 0);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  FieldScript_SetMessageId(MSGNO(MsgImilMiaIsAGoodGirlI));
+  FieldScript_ShowMessageAndWait(LOCALID_OLD_MANS_BED, 0);
+  FieldScript_End();
 }
 
 /// Mind Read on Justin in the Imil Sanctum, until Saturos is beaten:
 /// he thinks the party are not bad people, or, once Mia has joined, he feels
 /// grown up serving as a healer.
 static void Imil_ReadJustinsMind(void) {
-  Engine_ScriptStart();
-  if (Engine_GameFlagIsSet(FLAG_IN_PARTY(MIA)) != 0) {
-    Engine_ScriptSetMessage(MSGNO(MsgImilFeelLikeGrownUpWhen));
+  FieldScript_Start();
+  if (GameFlag_Test(FLAG_IN_PARTY(MIA)) != 0) {
+    FieldScript_SetMessageId(MSGNO(MsgImilFeelLikeGrownUpWhen));
   } else {
-    Engine_ScriptSetMessage(MSGNO(MsgImilTheseFolkOkayTheyDont));
+    FieldScript_SetMessageId(MSGNO(MsgImilTheseFolkOkayTheyDont));
   }
-  Engine_ScriptShowMessage(LOCALID_JUSTIN, 0);
-  Engine_ScriptEnd();
+  FieldScript_ShowMessageAndWait(LOCALID_JUSTIN, 0);
+  FieldScript_End();
 }
 
 /// Walking north into one of Imil's six doors (coord events 51 to 56): everyone
@@ -626,7 +625,7 @@ static void Imil_OpenDoorAndExit(void) {
   s32 warp;
 
   work = gFieldWork;
-  Engine_ScriptStart();
+  FieldScript_Start();
   for (i = LOCALID_FIRST_PLACED; i <= 65; i++) {
     objectEvent = ObjectEvent_GetById(i);
     if (objectEvent != NULL) {
@@ -635,30 +634,30 @@ static void Imil_OpenDoorAndExit(void) {
   }
   warp = (s16)(work->coordEvent - 50);
   if (warp == IMIL_TO_IMIL_INTERIORS_NORTHEAST) {
-    Engine_AudioPlayCue(SE_188);
+    Sound_PlaySong(SE_188);
   } else {
-    Engine_AudioPlayCue(SE_DOOR_OPEN);
+    Sound_PlaySong(SE_DOOR_OPEN);
   }
   {
     s32 x = gImil_DoorCellPoints[warp - 1][0];
     s32 y = gImil_DoorCellPoints[warp - 1][1];
 
-    Engine_MapGridAnimateCells(gImil_DoorCellSteps[warp - 1], x, y);
+    MapGrid_PlayMetatileCopySequence(gImil_DoorCellSteps[warp - 1], x, y);
   }
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (warp == IMIL_TO_IMIL_INTERIORS_NORTHEAST) {
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
     Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
-    Engine_ObjectEventSetSpritePriority(LOCALID_PARTY_LEADER, 3);
+    ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, 3);
     ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0, -8);
   } else {
     ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
     ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 3, -16);
   }
-  Engine_ScriptWait(16);
+  FieldScript_WaitFrames(16);
   Engine_ScriptRequestWarp(warp);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Imil's weapon shop. Once Saturos is beaten, talking to the seller across
@@ -669,33 +668,33 @@ static void Imil_TalkToWeaponMerchant(void) {
   s32 facing;
 
   facing = (s16)ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing;
-  if (Engine_GameFlagIsSet(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
+  if (GameFlag_Test(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
     if (IMIL_FACES_COUNTER(facing)) {
-      Engine_ShopOpen(SHOP_IMIL_WEAPONS, LOCALID_WEAPON_MERCHANT);
+      Shop_Run(SHOP_IMIL_WEAPONS, LOCALID_WEAPON_MERCHANT);
       return;
     }
-    Engine_ScriptStart();
-    Engine_ObjectEventFaceObjectEvent(LOCALID_WEAPON_MERCHANT,
-                                      LOCALID_PARTY_LEADER, 0);
-    Engine_ScriptWait(10);
-    Engine_ScriptSetMessage(MsgMercuryCatchUpLostOpportunity);
-    Engine_ScriptShowMessage(LOCALID_WEAPON_MERCHANT, 0);
+    FieldScript_Start();
+    ObjectMotion_SetAngleToward(LOCALID_WEAPON_MERCHANT, LOCALID_PARTY_LEADER,
+                                0);
+    FieldScript_WaitFrames(10);
+    FieldScript_SetMessageId(MsgMercuryCatchUpLostOpportunity);
+    FieldScript_ShowMessageAndWait(LOCALID_WEAPON_MERCHANT, 0);
     ObjectEvent_FaceDirection(LOCALID_WEAPON_MERCHANT, FACING_SOUTH, 10);
-    Engine_ScriptEnd();
+    FieldScript_End();
   } else {
     if (IMIL_FACES_COUNTER(facing)) {
-      Engine_ScriptStart();
-      Engine_CameraSetSpeed(PIXELS(6), PIXELS(3) / 4);
+      FieldScript_Start();
+      FieldCamera_SetSpeedParameters(PIXELS(6), PIXELS(3) / 4);
       FieldCamera_MoveTo(PIXELS(426), -1, PIXELS(492), 1);
-      Engine_CameraWaitForMove();
-      Engine_ScriptWait(20);
+      FieldCamera_WaitForArrival();
+      FieldScript_WaitFrames(20);
       ObjectEvent_RunActionScriptAndWait(LOCALID_WEAPON_MERCHANT,
                                          gImil_BobScript);
-      Engine_ScriptSetMessage(MsgMercuryStoreClosedUntilWell);
-      Engine_ScriptShowMessage(LOCALID_WEAPON_MERCHANT, 0);
-      Engine_CameraMoveTo(PIXELS(426), -1, PIXELS(616), 1);
-      Engine_CameraWaitForMove();
-      Engine_ScriptEnd();
+      FieldScript_SetMessageId(MsgMercuryStoreClosedUntilWell);
+      FieldScript_ShowMessageAndWait(LOCALID_WEAPON_MERCHANT, 0);
+      FieldCamera_MoveWithinMapBounds(PIXELS(426), -1, PIXELS(616), 1);
+      FieldCamera_WaitForArrival();
+      FieldScript_End();
     }
   }
 }
@@ -707,33 +706,33 @@ static void Imil_TalkToArmorMerchant(void) {
   s32 facing;
 
   facing = (s16)ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing;
-  if (Engine_GameFlagIsSet(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
+  if (GameFlag_Test(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
     if (IMIL_FACES_COUNTER(facing)) {
-      Engine_ShopOpen(SHOP_IMIL_ARMOR, LOCALID_ARMOR_MERCHANT);
+      Shop_Run(SHOP_IMIL_ARMOR, LOCALID_ARMOR_MERCHANT);
       return;
     }
-    Engine_ScriptStart();
-    Engine_ObjectEventFaceObjectEvent(LOCALID_ARMOR_MERCHANT,
-                                      LOCALID_PARTY_LEADER, 0);
-    Engine_ScriptWait(10);
-    Engine_ScriptSetMessage(MsgMercuryShameStoreClosed);
-    Engine_ScriptShowMessage(LOCALID_ARMOR_MERCHANT, 0);
+    FieldScript_Start();
+    ObjectMotion_SetAngleToward(LOCALID_ARMOR_MERCHANT, LOCALID_PARTY_LEADER,
+                                0);
+    FieldScript_WaitFrames(10);
+    FieldScript_SetMessageId(MsgMercuryShameStoreClosed);
+    FieldScript_ShowMessageAndWait(LOCALID_ARMOR_MERCHANT, 0);
     ObjectEvent_FaceDirection(LOCALID_ARMOR_MERCHANT, FACING_SOUTH, 10);
-    Engine_ScriptEnd();
+    FieldScript_End();
   } else {
     if (IMIL_FACES_COUNTER(facing)) {
-      Engine_ScriptStart();
-      Engine_CameraSetSpeed(PIXELS(6), PIXELS(3) / 4);
+      FieldScript_Start();
+      FieldCamera_SetSpeedParameters(PIXELS(6), PIXELS(3) / 4);
       FieldCamera_MoveTo(PIXELS(426), -1, PIXELS(492), 1);
-      Engine_CameraWaitForMove();
-      Engine_ScriptWait(20);
+      FieldCamera_WaitForArrival();
+      FieldScript_WaitFrames(20);
       ObjectEvent_RunActionScriptAndWait(LOCALID_ARMOR_MERCHANT,
                                          gImil_BobScript);
-      Engine_ScriptSetMessage(MsgMercuryTooSickBusiness);
-      Engine_ScriptShowMessage(LOCALID_ARMOR_MERCHANT, 0);
-      Engine_CameraMoveTo(PIXELS(426), -1, PIXELS(616), 1);
-      Engine_CameraWaitForMove();
-      Engine_ScriptEnd();
+      FieldScript_SetMessageId(MsgMercuryTooSickBusiness);
+      FieldScript_ShowMessageAndWait(LOCALID_ARMOR_MERCHANT, 0);
+      FieldCamera_MoveWithinMapBounds(PIXELS(426), -1, PIXELS(616), 1);
+      FieldCamera_WaitForArrival();
+      FieldScript_End();
     }
   }
 }
@@ -745,33 +744,32 @@ static void Imil_TalkToItemMerchant(void) {
   s32 facing;
 
   facing = (s16)ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing;
-  if (Engine_GameFlagIsSet(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
+  if (GameFlag_Test(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
     if (IMIL_FACES_COUNTER(facing)) {
-      Engine_ShopOpen(SHOP_IMIL_ITEMS, LOCALID_ITEM_MERCHANT);
+      Shop_Run(SHOP_IMIL_ITEMS, LOCALID_ITEM_MERCHANT);
       return;
     }
-    Engine_ScriptStart();
-    Engine_ObjectEventFaceObjectEvent(LOCALID_ITEM_MERCHANT,
-                                      LOCALID_PARTY_LEADER, 0);
-    Engine_ScriptSetMessage(MsgMercuryRecoveredThanksFountain);
-    Engine_ScriptShowMessage(LOCALID_ITEM_MERCHANT, 0);
+    FieldScript_Start();
+    ObjectMotion_SetAngleToward(LOCALID_ITEM_MERCHANT, LOCALID_PARTY_LEADER, 0);
+    FieldScript_SetMessageId(MsgMercuryRecoveredThanksFountain);
+    FieldScript_ShowMessageAndWait(LOCALID_ITEM_MERCHANT, 0);
     ObjectEvent_FaceDirection(LOCALID_ITEM_MERCHANT, FACING_SOUTH, 0);
-    Engine_ScriptEnd();
+    FieldScript_End();
   } else {
     if (IMIL_FACES_COUNTER(facing)) {
-      Engine_ScriptStart();
-      Engine_ScriptSetMessage(MsgMercuryMomsSickGetWhatever);
-      Engine_ScriptShowMessage(LOCALID_ITEM_MERCHANTS_DAUGHTER, 0);
+      FieldScript_Start();
+      FieldScript_SetMessageId(MsgMercuryMomsSickGetWhatever);
+      FieldScript_ShowMessageAndWait(LOCALID_ITEM_MERCHANTS_DAUGHTER, 0);
       /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
        * show, which loads r1 first; as a call by its void prototype, 1 of 70
        * instructions differ in tbs-en. */
       IMIL_OPEN_SHOP(SHOP_IMIL_ITEMS, LOCALID_ITEM_MERCHANTS_DAUGHTER);
-      Engine_ScriptEnd();
+      FieldScript_End();
     } else {
-      Engine_ObjectEventFaceObjectEvent(LOCALID_ITEM_MERCHANTS_DAUGHTER,
-                                        LOCALID_PARTY_LEADER, 10);
-      Engine_ScriptSetMessage(MsgMercuryDadLumberjack);
-      Engine_ScriptShowMessage(LOCALID_ITEM_MERCHANTS_DAUGHTER, 0);
+      ObjectMotion_SetAngleToward(LOCALID_ITEM_MERCHANTS_DAUGHTER,
+                                  LOCALID_PARTY_LEADER, 10);
+      FieldScript_SetMessageId(MsgMercuryDadLumberjack);
+      FieldScript_ShowMessageAndWait(LOCALID_ITEM_MERCHANTS_DAUGHTER, 0);
       ObjectEvent_FaceDirection(LOCALID_ITEM_MERCHANTS_DAUGHTER,
                                 FACING_SOUTH + FACING_STEP, 10);
     }
@@ -786,20 +784,20 @@ static void Imil_TalkToInnkeeper(void) {
 
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (IMIL_FACES_COUNTER_HALFWORD(leader->facing)) {
-    Engine_InnOpen(IMIL_INN, LOCALID_INNKEEPER);
+    Inn_CheckIn(IMIL_INN, LOCALID_INNKEEPER);
   } else {
-    Engine_ScriptStart();
+    FieldScript_Start();
     ObjectEvent_FaceObjectEvent(LOCALID_INNKEEPER, LOCALID_PARTY_LEADER, 10);
     if (GameFlag_IsSet(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
-      Engine_ScriptSetMessage(MSGNO(MsgImilItsAlmostTimeForLeave));
+      FieldScript_SetMessageId(MSGNO(MsgImilItsAlmostTimeForLeave));
       Script_AskYesNo(LOCALID_INNKEEPER, 0);
     } else {
-      Engine_ScriptSetMessage(MSGNO(MsgImilWhyHaveTwoGroupsTravelers));
+      FieldScript_SetMessageId(MSGNO(MsgImilWhyHaveTwoGroupsTravelers));
       Script_ShowMessage(LOCALID_INNKEEPER, 0);
     }
     ObjectEvent_FaceDirection(LOCALID_INNKEEPER, FACING_SOUTHEAST + FACING_STEP,
                               10);
-    Engine_ScriptEnd();
+    FieldScript_End();
   }
 }
 
@@ -811,29 +809,29 @@ static void Imil_TalkToJustin(void) {
 
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (IMIL_FACES_COUNTER_HALFWORD(leader->facing)) {
-    Engine_ScriptStart();
+    FieldScript_Start();
     if (GameFlag_IsSet(FLAG_IMIL_JUSTIN_OFFERED_HEALING) == 0) {
-      Engine_ScriptSetMessage(MSGNO(MsgImilMayOnlyStudentButCan));
+      FieldScript_SetMessageId(MSGNO(MsgImilMayOnlyStudentButCan));
       Script_ShowMessage(LOCALID_JUSTIN, 0);
       GameFlag_Set(FLAG_IMIL_JUSTIN_OFFERED_HEALING);
     }
-    Engine_ScriptEnd();
-    Engine_SanctumOpen(LOCALID_JUSTIN);
+    FieldScript_End();
+    Sanctum_Run(LOCALID_JUSTIN);
   } else {
-    Engine_ScriptStart();
+    FieldScript_Start();
     if (GameFlag_IsSet(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
-      Engine_ScriptSetMessage(MSGNO(MsgImilMiaGoingOnJourneyWith));
+      FieldScript_SetMessageId(MSGNO(MsgImilMiaGoingOnJourneyWith));
       Script_ShowMessage(LOCALID_JUSTIN, 0);
     } else if (GameFlag_IsSet(FLAG_IN_PARTY(MIA)) != 0) {
-      Engine_ScriptSetMessage(MSGNO(MsgImilAmHealerWhileMiaOut));
+      FieldScript_SetMessageId(MSGNO(MsgImilAmHealerWhileMiaOut));
       Script_ShowMessage(LOCALID_JUSTIN, 0);
     } else {
-      Engine_ScriptSetMessage(MSGNO(MsgImilLookingForMia));
+      FieldScript_SetMessageId(MSGNO(MsgImilLookingForMia));
       (void)Script_AskYesNo(LOCALID_JUSTIN, 0);
       ObjectEvent_FaceDirection(LOCALID_JUSTIN, FACING_SOUTHEAST + FACING_STEP,
                                 10);
     }
-    Engine_ScriptEnd();
+    FieldScript_End();
   }
 }
 
@@ -851,18 +849,18 @@ s32 Imil_Initialize(void) {
     Engine_ObjectEventSetAnimation(LOCALID_STRONGMAN_KEEPING_IN_SHAPE,
                                    IMIL_ANIMATION_SQUATS);
     if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION)) {
-      Engine_GameFlagClear(FLAG_IMIL_NO_FOOTPRINTS);
-      Engine_GameFlagClear(FLAG_IMIL_FOOTPRINTS);
+      GameFlag_ClearBit(FLAG_IMIL_NO_FOOTPRINTS);
+      GameFlag_ClearBit(FLAG_IMIL_FOOTPRINTS);
     }
     leader->timer = 0;
     leader->work = 0;
     Task_AddCallback(Imil_SpawnAmbientEffects, TASK_PRIORITY_MAP);
     FieldScheduler_AddCallback(Imil_UpdateFootprints, TASK_PRIORITY_MAP);
-    Engine_ObjectEventSetSpritePriority(LOCALID_SNOWMAN, 1);
-    if (Engine_GameFlagIsSet(FLAG_IMIL_SNOWMAN_MOVED)) {
+    ObjectMotion_SetActionVariant(LOCALID_SNOWMAN, 1);
+    if (GameFlag_Test(FLAG_IMIL_SNOWMAN_MOVED)) {
       Imil_PlaceMovedSnowman();
     }
-    if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) &&
+    if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION) &&
         gGameState.warpDest == IMIL_FROM_IMIL_FALLS_CAVE) {
       Imil_ArriveFromFallsCave();
     }
@@ -872,38 +870,37 @@ s32 Imil_Initialize(void) {
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     warpDest = gGameState.warpDest;
     if (warpDest == IMIL_INTERIORS_HOUSE_SOUTHWEST) {
-      Engine_ObjectEventSetChildValue(LOCALID_CRATE, 15);
+      ObjectGroup_ConfigureChildValue(LOCALID_CRATE, 15);
       ObjectEvent_GetById(LOCALID_CRATE)->collisionFlags |= 8;
-      Engine_ObjectEventSetSpritePriority(LOCALID_CRATE, 1);
-      if (Engine_GameFlagIsSet(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
+      ObjectMotion_SetActionVariant(LOCALID_CRATE, 1);
+      if (GameFlag_Test(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
         MapGrid_CopyCellAttributes(10, 7, 1, 1, 10, 8);
         MapGrid_CopyCellsTo(3, 125, 9, 69, 3, 3);
-        Engine_MapGridRedraw();
-        Engine_TaskWait(1);
+        MapGrid_CenterOnFollowedPoint();
+        WaitFrames(1);
         ObjectEvent_SetBuiltinAction(LOCALID_OLD_WOMAN, 2);
         Engine_ObjectEventSetPosition(LOCALID_OLD_MANS_BED, 0, 0);
-      } else if (Engine_GameFlagIsSet(FLAG_IMIL_MIA_SENT_FOR) &&
-                 Engine_GameFlagIsSet(FLAG_IMIL_HEARD_MIA_WENT_TO_COUPLE)) {
-        Engine_ObjectEventSetSpriteFlags(
-            ObjectEvent_GetById(LOCALID_OLD_MANS_BED), 0);
+      } else if (GameFlag_Test(FLAG_IMIL_MIA_SENT_FOR) &&
+                 GameFlag_Test(FLAG_IMIL_HEARD_MIA_WENT_TO_COUPLE)) {
+        ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_OLD_MANS_BED),
+                                   0);
         Engine_ObjectEventSetPosition(LOCALID_OLD_MAN, PIXELS(174),
                                       PIXELS(164));
-        Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_OLD_MAN),
-                                         0);
+        ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_OLD_MAN), 0);
         Engine_ObjectEventSetAnimation(LOCALID_OLD_MAN,
                                        IMIL_ANIMATION_LIE_IN_BED);
         ObjectEvent_SetPosition(LOCALID_OLD_WOMAN, PIXELS(168), PIXELS(152));
         ObjectEvent_GetById(LOCALID_OLD_WOMAN)->facing =
             FACING_SOUTHEAST + FACING_STEP;
-        if (!Engine_GameFlagIsSet(FLAG_IMIL_MET_MIA)) {
+        if (!GameFlag_Test(FLAG_IMIL_MET_MIA)) {
           Imil_MeetMiaAtOldCouplesHouse();
         }
       } else {
         MapGrid_CopyCellAttributes(10, 7, 1, 1, 10, 8);
         MapGrid_CopyCellsTo(3, 125, 9, 69, 3, 3);
-        Engine_MapGridRedraw();
-        Engine_TaskWait(1);
-        if (Engine_GameFlagIsSet(FLAG_IMIL_MIA_SENT_FOR)) {
+        MapGrid_CenterOnFollowedPoint();
+        WaitFrames(1);
+        if (GameFlag_Test(FLAG_IMIL_MIA_SENT_FOR)) {
           Engine_ObjectEventSetPosition(LOCALID_OLD_WOMAN, PIXELS(149),
                                         PIXELS(116));
           ObjectEvent_GetById(LOCALID_OLD_WOMAN)->facing = 0;
@@ -914,38 +911,38 @@ s32 Imil_Initialize(void) {
         }
       }
     } else if (warpDest == IMIL_INTERIORS_FROM_IMIL_WEST_SOUTHWEST) {
-      if (!Engine_GameFlagIsSet(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
+      if (!GameFlag_Test(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
         ObjectEvent_GetById(LOCALID_SICK_OLD_MAN)->work = 1;
         ObjectEvent_SetActionScript(LOCALID_SICK_OLD_MAN, gImil_ShiverScript);
       }
     } else if (warpDest == IMIL_INTERIORS_HOUSE_NORTHEAST) {
-      if (Engine_GameFlagIsSet(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
+      if (GameFlag_Test(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
         ObjectEvent_SetPosition(LOCALID_WEAPON_MERCHANT, PIXELS(364),
                                 PIXELS(578));
-        Engine_ObjectEventSetSpritePriority(LOCALID_WEAPON_MERCHANT, 2);
+        ObjectMotion_SetActionVariant(LOCALID_WEAPON_MERCHANT, 2);
         ObjectEvent_GetById(LOCALID_WEAPON_MERCHANT)->collisionFlags |= 4;
         MapGrid_CopyCellsTo(6, 125, 22, 88, 3, 3);
         ObjectEvent_SetPosition(LOCALID_ARMOR_MERCHANT, PIXELS(492),
                                 PIXELS(578));
-        Engine_ObjectEventSetSpritePriority(LOCALID_ARMOR_MERCHANT, 2);
+        ObjectMotion_SetActionVariant(LOCALID_ARMOR_MERCHANT, 2);
         ObjectEvent_GetById(LOCALID_ARMOR_MERCHANT)->collisionFlags |= 4;
         MapGrid_CopyCellsTo(9, 125, 28, 88, 3, 3);
       } else {
         ObjectEvent_GetById(LOCALID_WEAPON_MERCHANT)->scaleX = -Q16_ONE;
-        Engine_ObjectEventSetSpriteFlags(
-            ObjectEvent_GetById(LOCALID_WEAPON_MERCHANT), 0);
+        ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_WEAPON_MERCHANT),
+                                   0);
         Engine_ObjectEventSetAnimation(LOCALID_WEAPON_MERCHANT,
                                        IMIL_ANIMATION_LIE_IN_BED);
-        Engine_ObjectEventSetSpriteFlags(
-            ObjectEvent_GetById(LOCALID_ARMOR_MERCHANT), 0);
+        ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_ARMOR_MERCHANT),
+                                   0);
         Engine_ObjectEventSetAnimation(LOCALID_ARMOR_MERCHANT,
                                        IMIL_ANIMATION_LIE_IN_BED);
       }
     } else if (warpDest == IMIL_INTERIORS_HOUSE_WEST) {
-      if (Engine_GameFlagIsSet(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
+      if (GameFlag_Test(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
         ObjectEvent_SetPosition(LOCALID_ITEM_MERCHANT, PIXELS(460),
                                 PIXELS(258));
-        Engine_ObjectEventSetSpritePriority(LOCALID_ITEM_MERCHANT, 2);
+        ObjectMotion_SetActionVariant(LOCALID_ITEM_MERCHANT, 2);
         ObjectEvent_GetById(LOCALID_ITEM_MERCHANT)->collisionFlags |= 4;
         Engine_ObjectEventSetPosition(LOCALID_ITEM_MERCHANTS_DAUGHTER,
                                       PIXELS(408), PIXELS(264));
@@ -955,20 +952,20 @@ s32 Imil_Initialize(void) {
       } else {
         ObjectEvent_SetPosition(LOCALID_ITEM_MERCHANTS_DAUGHTER, PIXELS(460),
                                 PIXELS(258));
-        Engine_ObjectEventSetSpritePriority(LOCALID_ITEM_MERCHANTS_DAUGHTER, 2);
+        ObjectMotion_SetActionVariant(LOCALID_ITEM_MERCHANTS_DAUGHTER, 2);
         ObjectEvent_GetById(LOCALID_ITEM_MERCHANTS_DAUGHTER)->collisionFlags |=
             4;
         ObjectEvent_GetById(LOCALID_ITEM_MERCHANT)->scaleX = -Q16_ONE;
-        Engine_ObjectEventSetSpriteFlags(
-            ObjectEvent_GetById(LOCALID_ITEM_MERCHANT), 0);
+        ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_ITEM_MERCHANT),
+                                   0);
         Engine_ObjectEventSetAnimation(LOCALID_ITEM_MERCHANT,
                                        IMIL_ANIMATION_LIE_IN_BED);
       }
     } else if (warpDest == IMIL_INTERIORS_FROM_IMIL_EAST_NORTHEAST) {
-      if (Engine_GameFlagIsSet(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
+      if (GameFlag_Test(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
         ObjectEvent_GetById(LOCALID_MEGAN)->facing =
             FACING_SOUTHEAST + FACING_STEP;
-        if (!Engine_GameFlagIsSet(FLAG_IMIL_MIA_SAID_FAREWELL)) {
+        if (!GameFlag_Test(FLAG_IMIL_MIA_SAID_FAREWELL)) {
           ObjectEvent_SetPosition(LOCALID_MEGAN, PIXELS(650), PIXELS(161));
           Imil_MiaSaysFarewellToApprentices();
         } else {
@@ -988,16 +985,16 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   const s32 *table;
   struct EventWork *work;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   ObjectEvent_SetPosition(MIA, PIXELS(182), PIXELS(150));
   FieldCamera_MoveTo(PIXELS(141), -1, PIXELS(221), 0);
-  Engine_TaskWait(1);
+  WaitFrames(1);
   FieldCamera_SetSpeed(PIXELS(3) / 10, PIXELS(3) / 80);
   FieldCamera_MoveTo(PIXELS(140), -1, PIXELS(164), 1);
   work = gFieldWork;
   work->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->transitionFrames = 40;
-  Engine_ScriptOpenScreen();
+  FieldScript_StartScreenTransition();
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
   ObjectEvent_SetSpeed(GARET, PIXELS(2) / 5, PIXELS(1) / 5);
   ObjectEvent_SetSpeed(IVAN, PIXELS(2) / 5, PIXELS(1) / 5);
@@ -1022,26 +1019,25 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
                               gImil_FaceTargetScript);
   Object_SetTargetAndCallback(IVAN, OBJ_EVENT_LINK_KEEP_MOTION | MIA,
                               gImil_FaceTargetScript);
-  Engine_CameraWaitForMove();
+  FieldCamera_WaitForArrival();
   table = gImil_BobScript;
   ObjectEvent_SetActionScript(LOCALID_OLD_MAN, table);
-  Engine_ScriptWait(40);
+  FieldScript_WaitFrames(40);
   ObjectEvent_SetAttachedEffect(MIA, ATTACHED_EFFECT_IN_FRONT |
                                          ATTACHED_EFFECT_ONCE);
-  Engine_ScriptWait(40);
-  Engine_ObjectEventRunRepeatedMotion(MIA, 1);
+  FieldScript_WaitFrames(40);
+  ObjectMotion_SetVarCbAndRefresh(MIA, 1);
   // Mia checks on the old man while the party enters the house.
-  Engine_ScriptSetMessage(MSGNO(MsgImilHowFeeling));
+  FieldScript_SetMessageId(MSGNO(MsgImilHowFeeling));
   Script_ShowMessageAndWait(MIA, 0, 20);
   ObjectEvent_SetActionScript(LOCALID_OLD_MAN, table);
   Script_ShowMessageAndWait(LOCALID_OLD_MAN, 0, 20);
   ObjectEvent_FaceDirection(MIA, FACING_WEST, 20);
   ObjectEvent_FaceDirection(LOCALID_OLD_WOMAN, 0, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_OLD_WOMAN,
-                                        ANIMATION_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_OLD_WOMAN, ANIMATION_SHAKE_HEAD);
   Script_ShowMessageAndWait(LOCALID_OLD_WOMAN, 0, 40);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
-  Engine_ScriptWait(10);
+  ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_NOD);
+  FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(MIA, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(LOCALID_OLD_WOMAN, FACING_SOUTHEAST + FACING_STEP,
                             20);
@@ -1056,77 +1052,77 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   ObjectEvent_ShowEmote(LOCALID_OLD_WOMAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Engine_ObjectEventSetAnimation(LOCALID_OLD_MAN, IMIL_ANIMATION_SIT_UP);
   MapGrid_AnimateCells(gImil_CellStepsA, 10, 69);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventRunRepeatedMotion(MIA, 2);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetVarCbAndRefresh(MIA, 2);
+  ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
   Script_ShowMessageAndWait(MIA, 0, 20);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_OLD_MAN, 1);
-  Engine_ScriptWait(40);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_OLD_MAN, 1);
+  FieldScript_WaitFrames(40);
   Engine_ObjectEventSetAnimation(LOCALID_OLD_MAN, IMIL_ANIMATION_LIE_BACK);
   MapGrid_AnimateCells(gImil_CellStepsB, 10, 69);
-  Engine_ScriptWait(40);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(40);
+  ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_NOD);
+  FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_OLD_WOMAN, 0, 20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_OLD_WOMAN, ANIMATION_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_OLD_WOMAN, ANIMATION_NOD);
   Script_ShowMessageAndWait(LOCALID_OLD_WOMAN, 0, 10);
   ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   ObjectEvent_FaceDirection(MIA, FACING_WEST, 10);
   Engine_ObjectEventSetAnimation(MIA, ANIMATION_SHAKE_HEAD);
   Script_ShowMessageAndWait(MIA, 0, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_OLD_WOMAN, ANIMATION_NOD);
-  Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
-  Engine_ScriptWait(40);
+  ObjectMotion_SetAnimationAndWait(LOCALID_OLD_WOMAN, ANIMATION_NOD);
+  FieldScript_WaitFrames(20);
+  ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_NOD);
+  FieldScript_WaitFrames(40);
   ObjectEvent_SetSpeed(MIA, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_GetById(MIA)->timer = 0;
   ObjectEvent_SetActionScript(MIA, gImil_MiaCheckRoomScript);
   while (ObjectEvent_GetById(MIA)->timer == 0) {
-    Engine_TaskWait(1);
+    WaitFrames(1);
   }
   FieldCamera_MoveTo(PIXELS(140), -1, PIXELS(198), 1);
   ObjectEvent_RefreshSelectorById(MIA);
   ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
   Script_ShowMessageAndWait(MIA, 0, 40);
-  Engine_ObjectEventRunRepeatedMotion(MIA, 1);
-  Engine_ScriptWait(10);
+  ObjectMotion_SetVarCbAndRefresh(MIA, 1);
+  FieldScript_WaitFrames(10);
   Script_ShowMessage(MIA, 0);
   Script_PlaySong(SE_131);
   // The lighthouse interrupts the visit; Mia leaves and the party follows.
   PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
   PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(31, 20, 31), 0);
-  Engine_ColorBufferInterpolate(10);
-  Engine_TaskWait(1);
+  PaletteFade_StartInterpolation(10);
+  WaitFrames(1);
   Script_PlaySong(SE_220);
-  Engine_TaskWait(40);
+  WaitFrames(40);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
-  Engine_ColorBufferInterpolate(60);
-  Engine_TaskWait(60);
+  PaletteFade_StartInterpolation(60);
+  WaitFrames(60);
   ObjectEvent_SetAttachedEffect(MIA, ATTACHED_EFFECT_IN_FRONT |
                                          ATTACHED_EFFECT_ONCE);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(MIA, 0, 10);
   ObjectEvent_SetSpeed(MIA, PIXELS(2), PIXELS(1));
   ObjectEvent_WalkToAndWait(MIA, 202, 198);
-  Engine_ScriptWait(40);
-  Engine_ObjectEventRunRepeatedMotion(MIA, 2);
+  FieldScript_WaitFrames(40);
+  ObjectMotion_SetVarCbAndRefresh(MIA, 2);
   Script_ShowMessage(MIA, 0);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
   Script_ShowMessageAndWait(MIA, 0, 20);
   ObjectEvent_SetAttachedEffect(MIA, ATTACHED_EFFECT_IN_FRONT |
                                          ATTACHED_EFFECT_ONCE);
-  Engine_ScriptWait(40);
+  FieldScript_WaitFrames(40);
   Script_ShowMessageAndWait(MIA, 0, 40);
   ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Script_ShowMessage(MIA, 0);
-  Engine_ObjectEventStop(LOCALID_PARTY_LEADER);
-  Engine_ObjectEventStop(GARET);
-  Engine_ObjectEventStop(IVAN);
+  ObjectMotion_EnableActionAndResetMotion(LOCALID_PARTY_LEADER);
+  ObjectMotion_EnableActionAndResetMotion(GARET);
+  ObjectMotion_EnableActionAndResetMotion(IVAN);
   ObjectEvent_SetSpeed(MIA, PIXELS(3), PIXELS(3) / 2);
   ObjectEvent_GetById(MIA)->timer = 0;
   ObjectEvent_SetActionScript(MIA, gImil_MiaRunOutScript);
   while (ObjectEvent_GetById(MIA)->timer == 0) {
-    Engine_TaskWait(1);
+    WaitFrames(1);
   }
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 0);
@@ -1143,7 +1139,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   ObjectEvent_SetDestination(GARET, 136, 221);
   ObjectEvent_SetDestination(IVAN, 122, 238);
   ObjectEvent_RefreshSelectorById(MIA);
-  Engine_ScriptWait(80);
+  FieldScript_WaitFrames(80);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags |=
       OBJ_EVENT_FACES_MOTION;
   ObjectEvent_GetById(GARET)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
@@ -1154,13 +1150,13 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   table = gImil_FollowMiaOutScript;
   ObjectEvent_SetActionScript(GARET, table);
   ObjectEvent_RunActionScriptAndWait(IVAN, table);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   work = gFieldWork;
   work->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   work->transitionFrames = 24;
   Engine_GameFlagSet(FLAG_IMIL_MET_MIA);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Unused: an update hook that moves an effect around its stored origin until
@@ -1185,7 +1181,7 @@ UNUSED static void Imil_UpdateCountdownArc(struct ObjectEvent *objectEvent) {
       objectEvent->y.fixed = b[1];
       objectEvent->z.fixed = b[2];
     } else {
-      Engine_ObjectDispatchRelease(objectEvent);
+      ObjectEvent_Release(objectEvent);
     }
   }
 }
@@ -1199,7 +1195,7 @@ UNUSED static void Imil_SwayAndSpark(struct ObjectEvent *objectEvent) {
 
   objectEvent->x.fixed =
       gImil_ArcOrigin[0] +
-      Iwram_MulQ16(0x60000, Engine_MathSin(objectEvent->timer << 10));
+      Iwram_MulQ16(0x60000, Trig_Sin(objectEvent->timer << 10));
   objectEvent->timer++;
   objectEvent->timer = (objectEvent->timer + 64) % 64;
   if (gFrameCount % 3 == 0) {
@@ -1207,17 +1203,17 @@ UNUSED static void Imil_SwayAndSpark(struct ObjectEvent *objectEvent) {
                objectEvent->z.fixed);
     radius = Engine_RandomNext();
     Vector_AddPolarOffset(radius * 6, Engine_RandomNext(), pos);
-    spark = Engine_ObjectCreate(SPRITE_SPARKLE, pos[0], pos[1], pos[2]);
+    spark = ObjectEvent_Create(SPRITE_SPARKLE, pos[0], pos[1], pos[2]);
     if (spark != NULL) {
       spark->sprite->image.priority = 0;
-      Engine_ObjectEventSetSpriteFlags(spark, 0);
-      ObjectEvent_SetMode(spark, 1);
+      ObjectEvent_SetSpriteFlags(spark, 0);
+      ObjectDispatch_SelectAnimation(spark, 1);
       spark->scaleX = 3 * Q16_ONE / 5;
       spark->scaleY = 3 * Q16_ONE / 5;
       spark->priorityFlags = 2;
       spark->motionFlags = 0;
       ObjectGroup_SetChildValue(spark, 9);
-      Engine_ObjectSetScript(spark, gImil_SparkScript);
+      ObjectEvent_SetScript(spark, gImil_SparkScript);
     }
   }
 }
@@ -1225,19 +1221,19 @@ UNUSED static void Imil_SwayAndSpark(struct ObjectEvent *objectEvent) {
 /// The old man bobs and speaks as Ply's effect ends (its finishCallback).
 static void Imil_OldManBobsAndSpeaks(void) {
   ObjectEvent_SetActionScript(LOCALID_OLD_MAN, gImil_BobScript);
-  Engine_ScriptShowMessage(LOCALID_OLD_MAN, 0);
+  FieldScript_ShowMessageAndWait(LOCALID_OLD_MAN, 0);
 }
 
 static void Imil_MiaCastsPlyOnOldMan(void) {
   struct FieldEffectWork *effectWork;
 
-  Engine_PsynergyStart(ABILITY_PLY, 1);
+  FieldEffect_LoadActionEffectResources(ABILITY_PLY, 1);
   effectWork = gFieldEffectWork;
-  Engine_PsynergySetTarget(MIA, LOCALID_OLD_MAN);
+  FieldEffect_SetupObjectPair(MIA, LOCALID_OLD_MAN);
   effectWork->finishCallback = Imil_OldManBobsAndSpeaks;
-  Engine_PsynergyRaiseHands();
-  Engine_PsynergyPlayEffect(1);
-  Engine_PsynergyLowerHands();
+  FieldEffect_StartCast();
+  Field_DispatchTypeHandler(1);
+  FieldEffect_StopCasterHook();
   FieldEffect_End();
 }
 
@@ -1253,7 +1249,7 @@ static void Imil_InitializeRisingEffect(struct ObjectEvent *work) {
   sprite->image.priority = 1;
 
   ObjectGroup_SetChildValue(work, 9);
-  Engine_ObjectEventSetSpriteFlags(work, 0);
+  ObjectEvent_SetSpriteFlags(work, 0);
 
   work->scaleX = Q16_ONE / 2;
   work->scaleY = Q16_ONE / 2;
@@ -1268,7 +1264,7 @@ static void Imil_UpdateRisingEffect(union FieldObject *fieldObject) {
   fieldObject->effect.scaleY += 3 * Q16_ONE / 100;
   fieldObject->effect.spin += 2;
   if (--fieldObject->effect.countdown == 0) {
-    Engine_ObjectDispatchRelease(&fieldObject->objectEvent);
+    ObjectEvent_Release(&fieldObject->objectEvent);
   }
 }
 
@@ -1278,7 +1274,7 @@ static inline void Imil_StartRisingEffect(union FieldObject *fieldObject) {
     Imil_InitializeRisingEffect(&fieldObject->objectEvent);
     fieldObject->effect.countdown = 60;
     fieldObject->effect.update = Imil_UpdateRisingEffect;
-    ObjectEvent_SetMode(&fieldObject->objectEvent, 5);
+    ObjectDispatch_SelectAnimation(&fieldObject->objectEvent, 5);
   }
 }
 
@@ -1341,12 +1337,12 @@ static void Imil_UpdateFootprints(void) {
   if ((u32)(column - 24) <= 7 ||
       ((u32)((objectEvent->z.fixed >> 19) - 36) <= 9 &&
        (u32)(column - 22) <= 9)) {
-    isSet = Engine_GameFlagIsSet(zoneFlag);
+    isSet = GameFlag_Test(zoneFlag);
     if (isSet != 0)
       return;
     ((struct MapGridScrollWork *)gMapGridWork[0])->footprints = isSet;
     Engine_GameFlagSet(zoneFlag);
-    Engine_GameFlagClear(otherZoneFlag);
+    GameFlag_ClearBit(otherZoneFlag);
     return;
   }
   if (x > PIXELS(232) && objectEvent->y.fixed > PIXELS(30) &&
@@ -1354,16 +1350,16 @@ static void Imil_UpdateFootprints(void) {
     grid = gMapGridWork[0];
     grid->footprints = 0;
     Engine_GameFlagSet(zoneFlag);
-    Engine_GameFlagClear(otherZoneFlag);
+    GameFlag_ClearBit(otherZoneFlag);
     return;
   }
-  isSet = Engine_GameFlagIsSet(otherZoneFlag);
+  isSet = GameFlag_Test(otherZoneFlag);
   if (isSet != 0)
     return;
   grid = gMapGridWork[0];
   grid->footprints = 1;
   Engine_GameFlagSet(otherZoneFlag);
-  Engine_GameFlagClear(zoneFlag);
+  GameFlag_ClearBit(zoneFlag);
   return;
 }
 
@@ -1385,10 +1381,10 @@ static void Imil_PlaceMovedSnowman(void) {
   if (b != 7)
     return;
   Engine_GameFlagSet(FLAG_IMIL_SNOWMAN_MOVED);
-  Engine_ObjectEventSetSpritePriority(LOCALID_SNOWMAN, 3);
+  ObjectMotion_SetActionVariant(LOCALID_SNOWMAN, 3);
 #else
   Engine_GameFlagSet(FLAG_IMIL_SNOWMAN_MOVED);
-  Engine_ObjectEventSetSpritePriority(LOCALID_SNOWMAN, 3);
+  ObjectMotion_SetActionVariant(LOCALID_SNOWMAN, 3);
   a = 15;
   b = 7;
 #endif
@@ -1400,23 +1396,23 @@ static void Imil_PlaceMovedSnowman(void) {
 static void Imil_LeaveNorth(void) {
   struct ObjectEvent *work;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   work = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   work->facing = FACING_NORTH;
-  Engine_AudioPlayCue(SE_MAP_EXIT);
-  Engine_ScriptCloseScreen();
-  Engine_ScriptWaitForScreen();
+  Sound_PlaySong(SE_MAP_EXIT);
+  FieldScript_FinishScreenTransition();
+  FieldScript_WaitTransitionFrames();
   Engine_ScriptRequestWarp(IMIL_TO_IMIL_FALLS_CAVE);
 }
 
 /// Coming back out of Imil Falls Cave (IMIL_FROM_IMIL_FALLS_CAVE), the leader
 /// walks down into the village.
 static void Imil_ArriveFromFallsCave(void) {
-  Engine_ScriptStart();
-  Engine_ScriptOpenScreen();
+  FieldScript_Start();
+  FieldScript_StartScreenTransition();
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(2), PIXELS(1) / 10);
   ObjectEvent_MoveToAndWait(LOCALID_PARTY_LEADER, 232, 204);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Mia's farewell, in the Imil Sanctum the first time the party comes once
@@ -1427,19 +1423,19 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   struct ObjectEvent *leader;
   struct EventWork *work;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   ObjectEvent_FaceDirection(MIA, FACING_NORTHWEST, 0);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
-  Engine_ObjectEventWalkTo(LOCALID_PARTY_LEADER, 690, 200);
+  ObjectMotion_ResetAndSetPositionInMode2(LOCALID_PARTY_LEADER, 690, 200);
 
   FieldCamera_GetScriptObject()->motionFlags = 0;
-  Engine_CameraSetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
+  FieldCamera_SetSpeedParameters(PIXELS(4) / 5, PIXELS(1) / 10);
   FieldCamera_MoveTo(PIXELS(690), 0, PIXELS(164), 1);
   work = gFieldWork;
   work->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->transitionFrames = 48;
-  Engine_ScriptOpenScreen();
-  Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
+  FieldScript_StartScreenTransition();
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
   ObjectEvent_SetSpeed(MIA, PIXELS(3) / 5, PIXELS(3) / 10);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -1448,42 +1444,42 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   }
   ObjectEvent_WalkToAndWait(MIA, 673, 183);
   ObjectEvent_FaceDirection(MIA, FACING_NORTH, 0);
-  Engine_ObjectEventStartRepeatedMotion(LOCALID_JUSTIN, 2);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_MEGAN, 2);
-  Engine_ScriptWait(40);
-  Engine_ScriptSetMessage(MSGNO(MsgImilMia));
+  ObjectMotion_SetVariantCallback(LOCALID_JUSTIN, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_MEGAN, 2);
+  FieldScript_WaitFrames(40);
+  FieldScript_SetMessageId(MSGNO(MsgImilMia));
   Script_ShowMessageAndWait(LOCALID_JUSTIN, 0, 10);
   ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST, 40);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
+  ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_NOD);
   ObjectEvent_SetAttachedEffect(LOCALID_MEGAN, ATTACHED_EFFECT_IN_FRONT |
                                                    ATTACHED_EFFECT_ONCE);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_MEGAN, 0, 10);
   ObjectEvent_FaceDirection(MIA, FACING_NORTHWEST, 40);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | MIA, 0, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_MEGAN, ANIMATION_NOD);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MEGAN, ANIMATION_NOD);
+  FieldScript_WaitFrames(20);
   ObjectEvent_SetAttachedEffect(LOCALID_JUSTIN, ATTACHED_EFFECT_IN_FRONT |
                                                     ATTACHED_EFFECT_ONCE);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_JUSTIN, 0, 10);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHWEST, 0);
   ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST + FACING_STEP, 10);
   ObjectEvent_FaceDirection(MIA, FACING_SOUTHEAST, 40);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(MIA, FACING_NORTH, 40);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_MEGAN, 2);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_MEGAN, 2);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_MEGAN, 0, 20);
   ObjectEvent_FaceDirection(MIA, FACING_NORTHWEST, 20);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
-  Engine_ScriptWait(60);
+  ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_NOD);
+  FieldScript_WaitFrames(60);
   ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   ObjectEvent_ShowEmote(LOCALID_JUSTIN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   ObjectEvent_ShowEmote(LOCALID_MEGAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_JUSTIN, 1);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_JUSTIN, 1);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_JUSTIN, 0, 10);
   ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST, 40);
   ObjectEvent_FaceDirection(MIA, FACING_NORTHWEST, 40);
@@ -1498,12 +1494,12 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   // Let the student approach Mia before she rejoins the party.
   ObjectEvent_GetById(LOCALID_MEGAN)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
   ObjectEvent_WalkToAndWait(LOCALID_MEGAN, 656, 166);
-  Engine_ScriptWait(1);
+  FieldScript_WaitFrames(1);
   ObjectEvent_GetById(LOCALID_MEGAN)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_MEGAN, 0, 10);
-  Engine_ObjectEventRunRepeatedMotion(MIA, 2);
-  Engine_ScriptWait(40);
+  ObjectMotion_SetVarCbAndRefresh(MIA, 2);
+  FieldScript_WaitFrames(40);
   ObjectEvent_FaceDirection(MIA, FACING_NORTHWEST, 10);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | MIA, 0, 40);
   ObjectEvent_FaceDirection(MIA, FACING_SOUTHEAST, 20);
@@ -1512,55 +1508,55 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
                                                     ATTACHED_EFFECT_ONCE);
   ObjectEvent_SetAttachedEffect(LOCALID_MEGAN, ATTACHED_EFFECT_IN_FRONT |
                                                    ATTACHED_EFFECT_ONCE);
-  Engine_ScriptWait(40);
+  FieldScript_WaitFrames(40);
   ObjectEvent_FaceDirection(MIA, FACING_NORTH, 20);
   Engine_ObjectEventSetAnimation(MIA, ANIMATION_SHAKE_HEAD);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | MIA, 0, 20);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_JUSTIN, 1);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_JUSTIN, 1);
   Script_ShowMessageAndWait(LOCALID_JUSTIN, 0, 10);
   ObjectEvent_FaceDirection(MIA, FACING_SOUTHEAST, 40);
   ObjectEvent_FaceDirection(MIA, FACING_NORTH, 20);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
-  Engine_ScriptWait(20);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_MEGAN, 1);
+  ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_NOD);
+  FieldScript_WaitFrames(20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_MEGAN, 1);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_MEGAN, 0, 20);
-  Engine_ObjectEventRunRepeatedMotion(MIA, 1);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(MIA, 1);
+  FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(MIA, FACING_NORTHWEST, 20);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
+  ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_NOD);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | MIA, 0, 80);
   ObjectEvent_ShowEmote(LOCALID_JUSTIN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   ObjectEvent_ShowEmote(LOCALID_MEGAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_JUSTIN, ANIMATION_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_JUSTIN, ANIMATION_SHAKE_HEAD);
   Script_ShowMessageAndWait(LOCALID_JUSTIN, 0, 10);
   Engine_ObjectEventSetAnimation(LOCALID_MEGAN, ANIMATION_SHAKE_HEAD);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_MEGAN, 0, 20);
   ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | MIA, 0, 40);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_JUSTIN, ANIMATION_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_JUSTIN, ANIMATION_NOD);
   Script_ShowMessageAndWait(LOCALID_JUSTIN, 0, 10);
   ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST, 20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_MEGAN, ANIMATION_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MEGAN, ANIMATION_NOD);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_MEGAN, 0, 10);
   ObjectEvent_FaceDirection(MIA, FACING_NORTHWEST, 60);
   ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST, 20);
   ObjectEvent_FaceDirection(MIA, FACING_NORTHWEST, 20);
   ObjectEvent_FaceDirection(MIA, FACING_NORTH, 40);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
+  ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_NOD);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | MIA, 0, 10);
   Engine_ObjectEventSetAnimation(LOCALID_JUSTIN, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_MEGAN, ANIMATION_NOD);
-  Engine_ScriptWait(40);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MEGAN, ANIMATION_NOD);
+  FieldScript_WaitFrames(40);
   ObjectEvent_FaceDirection(MIA, FACING_SOUTHEAST, 20);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | MIA, 0, 20);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHWEST, 20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  FieldScript_WaitFrames(20);
   ObjectEvent_WalkToAndWait(MIA, 688, 200);
   ObjectEvent_SetPosition(MIA, 0, 0);
   ObjectEvent_GetById(LOCALID_MEGAN)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
   ObjectEvent_WalkToAndWait(LOCALID_MEGAN, 644, 166);
-  Engine_ScriptWait(1);
+  FieldScript_WaitFrames(1);
   // Restore the student's steering after the farewell walk. A byte view: as
   // the field, the next gFieldWork load moves after the constant.
   *((u8 *)ObjectEvent_GetById(LOCALID_MEGAN) +
@@ -1569,7 +1565,7 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   GameFlag_Set(FLAG_IMIL_MIA_SAID_FAREWELL);
   GameFlag_Clear(FLAG_IMIL_JUSTIN_OFFERED_HEALING);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// While sliding on Imil's ice, the leader turns toward the held direction.
@@ -1594,7 +1590,7 @@ static void Imil_TurnSlidingObjectEvent(union FieldObject *fieldObject) {
   d = gImil_KeyHeadings[(gKeysHeld >> 4) & 0xF];
   z = -z;
   if (d == z) {
-    ObjectEvent_SetMode(objectEvent, 9);
+    ObjectDispatch_SelectAnimation(objectEvent, 9);
     return;
   }
   prev = objectEvent->facing;
@@ -1604,7 +1600,7 @@ static void Imil_TurnSlidingObjectEvent(union FieldObject *fieldObject) {
   if (d < -0x1000)
     d = -0x1000;
   objectEvent->facing = prev + d;
-  ObjectEvent_SetMode(objectEvent, 2);
+  ObjectDispatch_SelectAnimation(objectEvent, 2);
   ObjectDispatch_SetAnimationSpeed((struct DispatchObject *)objectEvent, 0x30);
 }
 
@@ -1620,7 +1616,7 @@ static void Imil_RunIceSlide(void) {
   s32 x;
   u8 *terrainId;
 
-  subject = Engine_ObjectEventLookup(gGameState.leaderLocalId);
+  subject = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
 
   for (;;) {
     heading = gImil_SwayHeadings[(gKeysHeld >> 4) & 15];
@@ -1628,7 +1624,7 @@ static void Imil_RunIceSlide(void) {
       return;
     }
 
-    Engine_ScriptStart();
+    FieldScript_Start();
 
     probe.x = (subject->x.fixed & 0xfff00000) + PIXELS(8);
     probe.y = subject->y.fixed;
@@ -1653,8 +1649,8 @@ static void Imil_RunIceSlide(void) {
     subject->speed = PIXELS(2);
     subject->acceleration = PIXELS(1) / 10;
     subject->timer = 0;
-    Engine_ObjectSetPosition(subject, x, subject->y.fixed, z);
-    ObjectEvent_SetMode(subject, 2);
+    Object_SetPosition(subject, x, subject->y.fixed, z);
+    ObjectDispatch_SelectAnimation(subject, 2);
     ObjectDispatch_SetAnimationSpeed((struct DispatchObject *)subject, 48);
     Object_WaitForMove(subject);
     subject->update = Imil_TurnSlidingObjectEvent;
@@ -1675,7 +1671,7 @@ static void Imil_RunIceSlide(void) {
       z = probe.z;
       subject->speed = PIXELS(2);
       subject->acceleration = PIXELS(1) / 10;
-      Engine_ObjectSetPosition(subject, probe.x, probe.y, probe.z);
+      Object_SetPosition(subject, probe.x, probe.y, probe.z);
       Object_WaitForMove(subject);
       if (marker != goal) {
         goto blocked;
@@ -1684,9 +1680,9 @@ static void Imil_RunIceSlide(void) {
 
     subject->speed = PIXELS(2);
     subject->acceleration = PIXELS(1);
-    Engine_ObjectSetPosition(subject, x, subject->y.fixed, z);
+    Object_SetPosition(subject, x, subject->y.fixed, z);
     Object_WaitForMove(subject);
-    Engine_TaskWait(2);
+    WaitFrames(2);
   }
 
 blocked:
@@ -1696,8 +1692,8 @@ blocked:
   subject->acceleration = PIXELS(1) / 4;
 
 tail:
-  Engine_TaskWait(10);
-  Engine_ScriptEnd();
+  WaitFrames(10);
+  FieldScript_End();
 }
 
 // clang-format off

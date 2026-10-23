@@ -11,7 +11,7 @@ static void ObjectEvent_WaitUntilIdle(struct ObjectEvent *objectEvent) {
 
   cnt = 60;
   while (cnt != 0) {
-    Engine_TaskWait(1);
+    WaitFrames(1);
     busy = objectEvent->velocityY;
     cnt--;
     if (busy == 0)

@@ -162,29 +162,29 @@ const struct MapWarpRegion *Map_GetWarpRegions(void) { return NULL; }
 const u32 *Map_GetWarps(void) { return gVaultInteriorsRevisit_Warps; }
 
 /// Gives the object event templates' condition 0 whether each lies inside the
-/// view bounds of the room entered (Map_PrepareObjectEvents), so only that
+/// view bounds of the room entered (Map_AssignViewFlags), so only that
 /// room's people appear.
 const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
   struct ObjectEventTemplate *templates =
       gVaultInteriorsRevisit_ObjectEventTemplates;
 
-  Map_PrepareObjectEvents(templates);
+  Map_AssignViewFlags(templates);
   return templates;
 }
 
 /// The object event stands still and says the selected message.
 static void VaultInteriorsRevisit_ShowStandingObjectEventDialogue(s32 localId) {
-  Engine_ScriptStart();
+  FieldScript_Start();
   Engine_ObjectEventSetAnimation(localId, ANIMATION_STAND);
-  Engine_ScriptShowMessage(localId, 0);
-  Engine_ScriptEnd();
+  FieldScript_ShowMessageAndWait(localId, 0);
+  FieldScript_End();
 }
 
 /// Faces the leader and shows this resident's dialogue while standing still.
 static inline void VaultInteriorsRevisit_FaceAndSpeak(s32 localId,
                                                       s32 message) {
-  Engine_ScriptSetMessage(message);
-  Engine_ObjectEventFaceEachOther(localId, LOCALID_PARTY_LEADER, 2);
+  FieldScript_SetMessageId(message);
+  ObjectEvent_LinkPair(localId, LOCALID_PARTY_LEADER, 2);
   VaultInteriorsRevisit_ShowStandingObjectEventDialogue(localId);
 }
 
@@ -217,25 +217,25 @@ static void EventScript_HusbandLongsForColosso(void) {
 /// Sets FLAG_WELCOMED_BACK, after which the mayor only warns of their revenge,
 /// and FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES.
 static void EventScript_WelcomeIsaacBack(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgVaultIsaacYouveComeBackVault);
-  Engine_ObjectEventFaceEachOther(LOCALID_MAYOR, LOCALID_PARTY_LEADER, 2);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgVaultIsaacYouveComeBackVault);
+  ObjectEvent_LinkPair(LOCALID_MAYOR, LOCALID_PARTY_LEADER, 2);
   Engine_ObjectEventSetAnimation(LOCALID_MAYOR, ANIMATION_STAND);
   Script_ShowMessageAndWait(LOCALID_MAYOR, 0, 20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_MAYOR, ANIMATION_SHAKE_HEAD);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MAYOR, ANIMATION_SHAKE_HEAD);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_MAYOR, 0, 20);
   ObjectEvent_ShowEmote(LOCALID_MAYOR, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Script_ShowMessageAndWait(LOCALID_MAYOR, 0, 30);
   // The negative answer advances to the next message before continuing.
   Script_OpenMessage(LOCALID_MAYOR, 0);
-  if (Engine_ScriptChooseYesNo(0, 0) != 0) {
+  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) != 0) {
     gFieldWork->message++;
   }
   Script_ShowMessageAndWait(LOCALID_MAYOR, 0, 20);
   GameFlag_Set(FLAG_WELCOMED_BACK);
   GameFlag_Set(FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// After the welcome: those thieves really wanted revenge, so take care.
@@ -262,47 +262,45 @@ static void EventScript_UnusedOfferLeftoverBones(void) {
 /// room, a no a nod. Her talk row needs FLAG_MAP_TEMP_50 clear, that is, the
 /// leader not standing beside the floor Bone.
 static void EventScript_OfferBones(void) {
-  Engine_ScriptStart();
-  Engine_ObjectEventFaceEachOther(LOCALID_GIRL_AT_THE_INN, LOCALID_PARTY_LEADER,
-                                  0);
+  FieldScript_Start();
+  ObjectEvent_LinkPair(LOCALID_GIRL_AT_THE_INN, LOCALID_PARTY_LEADER, 0);
   if (GameFlag_IsSet(FLAG_VAULT_BONE_RECEIVED) == 0) {
-    Engine_ScriptSetMessage(MsgVaultHaveLotLeftoverBonesFrom);
+    FieldScript_SetMessageId(MsgVaultHaveLotLeftoverBonesFrom);
     Script_OpenMessage(LOCALID_GIRL_AT_THE_INN, 0);
   } else {
-    Engine_ScriptSetMessage(MsgVaultWantMoreBones);
+    FieldScript_SetMessageId(MsgVaultWantMoreBones);
     Script_OpenMessage(LOCALID_GIRL_AT_THE_INN, 0);
   }
-  if (Engine_ScriptChooseYesNo(0, 0) == 0) {
+  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
     // Show the offer before checking whether the party can carry the gift.
-    Engine_ScriptWait(20);
+    FieldScript_WaitFrames(20);
     Script_ShowMessage(LOCALID_GIRL_AT_THE_INN, 0);
-    Engine_ScriptWait(20);
-    Engine_ObjectEventRunRepeatedMotion(LOCALID_GIRL_AT_THE_INN, 2);
-    Engine_ScriptWait(20);
+    FieldScript_WaitFrames(20);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_GIRL_AT_THE_INN, 2);
+    FieldScript_WaitFrames(20);
     // Give the Bone only after the offer is accepted and space is available.
     if (PartyInventory_HasSpace() == 0) {
-      Engine_ObjectEventSetAnimationAndWait(LOCALID_GIRL_AT_THE_INN,
-                                            ANIMATION_SHAKE_HEAD);
-      Engine_ScriptWait(20);
-      Engine_ScriptSetMessage(MsgVaultWowHaveManyThingsArent);
+      ObjectMotion_SetAnimationAndWait(LOCALID_GIRL_AT_THE_INN,
+                                       ANIMATION_SHAKE_HEAD);
+      FieldScript_WaitFrames(20);
+      FieldScript_SetMessageId(MsgVaultWowHaveManyThingsArent);
       Script_ShowMessage(LOCALID_GIRL_AT_THE_INN, 0);
     } else {
-      Engine_ItemShowFound(ITEM_BONE, 3);
-      Engine_PartyGiveItem(ITEM_BONE, 0);
+      FieldEffect_StartEffectObject22(ITEM_BONE, 3);
+      PartyInventory_GiveItem(ITEM_BONE, 0);
       GameFlag_Set(FLAG_VAULT_BONE_RECEIVED);
     }
   } else {
     // Declining selects the following line and the object event's response
     // pose.
     gFieldWork->message++;
-    Engine_ScriptWait(20);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_GIRL_AT_THE_INN,
-                                          ANIMATION_NOD);
-    Engine_ScriptWait(20);
+    FieldScript_WaitFrames(20);
+    ObjectMotion_SetAnimationAndWait(LOCALID_GIRL_AT_THE_INN, ANIMATION_NOD);
+    FieldScript_WaitFrames(20);
     Script_ShowMessage(LOCALID_GIRL_AT_THE_INN, 0);
   }
   ObjectEvent_FaceDirection(LOCALID_GIRL_AT_THE_INN, FACING_SOUTH, 0);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Mind Read on the mayor before the welcome: he notices the party and
@@ -311,9 +309,9 @@ static void EventScript_ReadMindAndWelcomeIsaacBack(void) {
   u8 *paused;
   u8 unpaused = 0;
 
-  Engine_ScriptStart();
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_MAYOR, 1);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_MAYOR, 1);
+  FieldScript_End();
   // Keep the object event paused through the conversation, then resume
   // action 2.
   paused = &ObjectEvent_GetById(LOCALID_MAYOR)->paused;
@@ -333,16 +331,16 @@ static void EventScript_TalkToWeaponMerchant(void) {
   u32 leaderFacing;
 
   leaderFacing = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing;
-  Engine_ScriptStart();
+  FieldScript_Start();
 
   if (FACING_IS_NORTH(leaderFacing)) {
-    Engine_ShopOpen(VAULT_WEAPON_STOCK, LOCALID_VAULT_WEAPON_MERCHANT);
+    Shop_Run(VAULT_WEAPON_STOCK, LOCALID_VAULT_WEAPON_MERCHANT);
   } else {
-    Engine_ScriptSetMessage(MsgVaultTheresRiverFireOnOther);
-    Engine_ScriptShowMessage(LOCALID_VAULT_WEAPON_MERCHANT, 0);
+    FieldScript_SetMessageId(MsgVaultTheresRiverFireOnOther);
+    FieldScript_ShowMessageAndWait(LOCALID_VAULT_WEAPON_MERCHANT, 0);
   }
 
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Across the counter the armor shop opens; from elsewhere the merchant says
@@ -351,16 +349,16 @@ static void EventScript_TalkToArmorMerchant(void) {
   u32 leaderFacing;
 
   leaderFacing = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing;
-  Engine_ScriptStart();
+  FieldScript_Start();
 
   if (FACING_IS_NORTH(leaderFacing)) {
-    Engine_ShopOpen(VAULT_ARMOR_STOCK, LOCALID_VAULT_ARMOR_MERCHANT);
+    Shop_Run(VAULT_ARMOR_STOCK, LOCALID_VAULT_ARMOR_MERCHANT);
   } else {
-    Engine_ScriptSetMessage(MsgVaultTheySayVolcanoOnMt);
-    Engine_ScriptShowMessage(LOCALID_VAULT_ARMOR_MERCHANT, 0);
+    FieldScript_SetMessageId(MsgVaultTheySayVolcanoOnMt);
+    FieldScript_ShowMessageAndWait(LOCALID_VAULT_ARMOR_MERCHANT, 0);
   }
 
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Across the counter the item shop opens; from elsewhere the merchant has had
@@ -369,16 +367,16 @@ static void EventScript_TalkToItemMerchant(void) {
   u32 leaderFacing;
 
   leaderFacing = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing;
-  Engine_ScriptStart();
+  FieldScript_Start();
 
   if (FACING_IS_NORTH(leaderFacing)) {
-    Engine_ShopOpen(VAULT_ITEM_STOCK, LOCALID_VAULT_ITEM_MERCHANT);
+    Shop_Run(VAULT_ITEM_STOCK, LOCALID_VAULT_ITEM_MERCHANT);
   } else {
-    Engine_ScriptSetMessage(MsgVaultWeHaventBeenGettingMany);
-    Engine_ScriptShowMessage(LOCALID_VAULT_ITEM_MERCHANT, 0);
+    FieldScript_SetMessageId(MsgVaultWeHaventBeenGettingMany);
+    FieldScript_ShowMessageAndWait(LOCALID_VAULT_ITEM_MERCHANT, 0);
   }
 
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Across the counter the inn opens; from elsewhere the innkeeper complains
@@ -387,29 +385,29 @@ static void EventScript_TalkToInnkeeper(void) {
   u32 leaderFacing;
 
   leaderFacing = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing;
-  Engine_ScriptStart();
+  FieldScript_Start();
 
   if (FACING_IS_NORTH(leaderFacing)) {
-    Engine_InnOpen(VAULT_INN, LOCALID_VAULT_INNKEEPER);
+    Inn_CheckIn(VAULT_INN, LOCALID_VAULT_INNKEEPER);
   } else {
-    Engine_ScriptSetMessage(MsgVaultMmmmNothingDoNothingDo);
-    Engine_ScriptShowMessage(LOCALID_VAULT_INNKEEPER, 0);
+    FieldScript_SetMessageId(MsgVaultMmmmNothingDoNothingDo);
+    FieldScript_ShowMessageAndWait(LOCALID_VAULT_INNKEEPER, 0);
   }
 
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Mind Read on the girl at the inn: hungry while cooking, or, once a Bone was
 /// given, wondering whether "he" has a calcium deficiency.
 static void EventScript_ReadBoneGiverMind(void) {
-  Engine_ScriptStart();
-  if (Engine_GameFlagIsSet(FLAG_VAULT_BONE_RECEIVED) == 0) {
-    Engine_ScriptSetMessage(MsgVaultGeeAlwaysGetHungryWhen);
+  FieldScript_Start();
+  if (GameFlag_Test(FLAG_VAULT_BONE_RECEIVED) == 0) {
+    FieldScript_SetMessageId(MsgVaultGeeAlwaysGetHungryWhen);
   } else {
-    Engine_ScriptSetMessage(MsgVaultHeReallyLikesBonesWonder);
+    FieldScript_SetMessageId(MsgVaultHeReallyLikesBonesWonder);
   }
-  Engine_ScriptShowMessage(LOCALID_GIRL_AT_THE_INN, 0);
-  Engine_ScriptEnd();
+  FieldScript_ShowMessageAndWait(LOCALID_GIRL_AT_THE_INN, 0);
+  FieldScript_End();
 }
 
 /// Returns the talk, Psynergy, bg event and warp table.

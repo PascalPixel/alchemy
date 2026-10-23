@@ -63,6 +63,6 @@ static void ObjectEvent_SwapPositionsByDepth(s32 first, s32 second) {
     t = a->z.fixed;
     a->z.fixed = b->z.fixed;
     b->z.fixed = t;
-    Engine_TaskWait(1);
+    WaitFrames(1);
   }
 }

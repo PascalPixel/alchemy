@@ -89,7 +89,7 @@ s32 ObjectMotion_TurnTowardLinkedTarget(struct Object *object) {
 /// (field.h). Reached from an object event template's behavior column
 /// (overworld/object_events.c), from Map_TalkToObjectEvent after a talk
 /// (overworld/events.c), from the object event commands and from Lalivero's
-/// interiors (Engine_ObjectEventSetActionCallback).
+/// interiors.
 void ObjectEvent_SetMovementType(struct Object *object, s32 action) {
   switch (action) {
   case MOVEMENT_TYPE_STAND:

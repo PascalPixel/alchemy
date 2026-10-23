@@ -17,8 +17,8 @@
 struct ItemDefinition;
 struct SummonDefinition;
 
-/// The 324 items by item id (items.tsv), read through Item_GetDirect (Item_Get
-/// in the overlays).
+/// The 324 items by item id (items.tsv), read through Item_GetDirect
+/// (Item_GetDirect in the overlays).
 extern struct ItemDefinition gItem_DefinitionTable[];
 /// The 16 summons (summons.tsv) by summon id, the numbers gSummon_OrderList
 /// lists; read through SummonDefinition_Get.

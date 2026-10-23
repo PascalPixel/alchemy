@@ -107,10 +107,10 @@ u8 *IncreaseItemAndLevel_GetObjectEventTemplates(void) {
 /// Sets the test message before displaying the first emote on the object event
 /// spoken to, LOCALID_FIRST_EMOTE_TESTER.
 static void IncreaseItemAndLevel_ShowMessageThenEmote(void) {
-  Engine_ScriptSetMessage(MsgDebugWontStopYou);
+  FieldScript_SetMessageId(MsgDebugWontStopYou);
   ObjectEvent_ShowEmote(LOCALID_FIRST_EMOTE_TESTER,
                         EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Engine_ScriptShowMessage(LOCALID_FIRST_EMOTE_TESTER, 0);
+  FieldScript_ShowMessageAndWait(LOCALID_FIRST_EMOTE_TESTER, 0);
 }
 
 /// Displays the other test emote before setting LOCALID_FIRST_EMOTE_TESTER's
@@ -120,8 +120,8 @@ static void IncreaseItemAndLevel_ShowMessageThenEmote(void) {
 static void IncreaseItemAndLevel_ShowEmoteThenMessage(void) {
   ObjectEvent_ShowEmote(LOCALID_FIRST_EMOTE_TESTER,
                         EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-  Engine_ScriptSetMessage(MsgDebugWontStopYou);
-  Engine_ScriptShowMessage(LOCALID_FIRST_EMOTE_TESTER, 0);
+  FieldScript_SetMessageId(MsgDebugWontStopYou);
+  FieldScript_ShowMessageAndWait(LOCALID_FIRST_EMOTE_TESTER, 0);
 }
 #endif
 
@@ -188,20 +188,20 @@ static void IncreaseItemAndLevel_RunLevelEditor(void) {
     // Start/Select add five levels; A adds one. Tests remain independent.
     if ((gKeysPressed & KEY_START) != 0 || (gKeysPressed & KEY_SELECT) != 0) {
       IncreaseItemAndLevel_AdjustPartyLevels(5);
-      Engine_AudioPlayCue(MUS_FANFARE_LARGE);
+      Sound_PlaySong(MUS_FANFARE_LARGE);
       redraw = 1;
     }
 
     if ((gKeysPressed & KEY_A) != 0) {
       IncreaseItemAndLevel_AdjustPartyLevels(1);
-      Engine_AudioPlayCue(MUS_FANFARE_SMALL);
+      Sound_PlaySong(MUS_FANFARE_SMALL);
       redraw = 1;
     }
 
     if ((gKeysPressed & KEY_B) != 0) {
-      Engine_AudioPlayCue(SE_MENU_CANCEL);
+      Sound_PlaySong(SE_MENU_CANCEL);
       WindowSprite_RedrawSavedRect(window);
-      Engine_TaskWait(1);
+      WaitFrames(1);
       Window_Close(window, 1);
 
       Unit_Calculate(ISAAC);
@@ -211,7 +211,7 @@ static void IncreaseItemAndLevel_RunLevelEditor(void) {
       return;
     }
 
-    Engine_TaskWait(1);
+    WaitFrames(1);
   }
 }
 
@@ -235,7 +235,7 @@ static void IncreaseItemAndLevel_SelectItem(void) {
   entryCount = ITEM_COUNT;
   seekDirection = 0;
   selectedItemId = 1;
-  Engine_AudioPlayCue(SE_MENU_CONFIRM);
+  Sound_PlaySong(SE_MENU_CONFIRM);
   redraw = 1;
   window = Window_Create(0, 0, 30, 7, 2);
   details = Window_Create(0, 8, ITEM_DEBUG_DETAILS_WIDTH, 10, 2);
@@ -247,76 +247,76 @@ static void IncreaseItemAndLevel_SelectItem(void) {
           DMA_ENABLE << 16 | 0x10, REG_DMA3);
   Dma_Set((const void *)&BG_PLTT_COLOR(15, 4), (void *)&BG_PLTT_COLOR(14, 14),
           DMA_ENABLE << 16 | 1, REG_DMA3);
-  Engine_TaskWait(1);
+  WaitFrames(1);
   while (1) {
     if (redraw) {
       redraw = 0;
       // Wrap the number into 0 to 269 (a step back from 0 is 269).
       selectedItemId = (selectedItemId + ITEM_COUNT) % entryCount;
       WindowSprite_RedrawSavedRect(window);
-      Engine_DebugClearWindow(window);
+      WindowSprite_ClearList(window);
       Text_DrawStringInWindow(gIncreaseItemAndLevel_ItemPrompt, window, 0, 0);
       Text_DrawNumberAtOffset(selectedItemId, 0, window, 80, 0);
       if (PartyInventory_HasSpace()) {
         Text_DrawStringInWindow(gIncreaseItemAndLevel_ItemHelp, window, 0, 32);
         messageOrDefinitionId = selectedItemId & 0x1ff;
-        Engine_DebugGetItem(messageOrDefinitionId);
+        Item_GetDirect(messageOrDefinitionId);
         Text_DrawMessageAsTiles(messageOrDefinitionId + MsgItemName, window,
                                 120, 0);
         ITEM_DEBUG_DRAW_ITEM_NAME(messageOrDefinitionId + MsgItemPlainName,
                                   window, 0, 16);
         WindowSprite_RedrawSavedRect(details);
-        Engine_DebugDrawItemDetails(details, selectedItemId);
+        ItemMenu_DrawItemDetails(details, selectedItemId);
       } else {
         Text_DrawStringInWindow(gIncreaseItemAndLevel_ItemFull, window, 0, 32);
       }
     }
     if (gKeysPressed & KEY_A) {
       if (PartyInventory_Add(selectedItemId) == -1) {
-        Engine_AudioPlayCue(SE_MENU_CANCEL);
+        Sound_PlaySong(SE_MENU_CANCEL);
         break;
       }
-      Engine_AudioPlayCue(SE_175);
+      Sound_PlaySong(SE_175);
     }
     if (gKeysPressed & KEY_B) {
-      Engine_AudioPlayCue(SE_MENU_CANCEL);
+      Sound_PlaySong(SE_MENU_CANCEL);
       break;
     }
     if (gKeysRepeat & KEY_UP) {
       seekDirection = -1;
       selectedItemId--;
       redraw = 1;
-      Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySong(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_DOWN) {
       seekDirection = 1;
       selectedItemId++;
       redraw = 1;
-      Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySong(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_RIGHT) {
       seekDirection = 1;
       selectedItemId += BROWSER_ROW_STEP;
       redraw = 1;
-      Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySong(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_LEFT) {
       seekDirection = -1;
       selectedItemId -= BROWSER_ROW_STEP;
       redraw = 1;
-      Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySong(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_R) {
       seekDirection = 1;
       selectedItemId += BROWSER_PAGE_STEP;
       redraw = 1;
-      Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySong(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_L) {
       seekDirection = -1;
       selectedItemId -= BROWSER_PAGE_STEP;
       redraw = 1;
-      Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySong(SE_MENU_CURSOR_MOVE);
     }
     // Skip definitions with no icon/availability byte in the chosen direction:
     // for an item, its definition's icon.
@@ -326,7 +326,7 @@ static void IncreaseItemAndLevel_SelectItem(void) {
     back:
       selectedItemId = (selectedItemId + ITEM_COUNT - 1) % entryCount;
     check_back:
-      if (Engine_DebugGetItem(selectedItemId & 0x1ff)->icon == 0)
+      if (Item_GetDirect(selectedItemId & 0x1ff)->icon == 0)
         goto back;
     }
     if (seekDirection == 1) {
@@ -335,14 +335,14 @@ static void IncreaseItemAndLevel_SelectItem(void) {
     ahead:
       selectedItemId = (selectedItemId + ITEM_COUNT + 1) % entryCount;
     check_ahead:
-      if (Engine_DebugGetItem(selectedItemId & 0x1ff)->icon == 0)
+      if (Item_GetDirect(selectedItemId & 0x1ff)->icon == 0)
         goto ahead;
     }
     seekDirection = 0;
-    Engine_TaskWait(1);
+    WaitFrames(1);
   }
   WindowSprite_RedrawSavedRect(window);
-  Engine_TaskWait(1);
+  WaitFrames(1);
   Window_Close(window, 1);
   Window_Close(details, 1);
 }
@@ -369,7 +369,7 @@ UNUSED static void IncreaseItemAndLevel_SelectAbility(void) {
   entryCount = ABILITY_COUNT;
   seekDirection = 0;
   selectedAbilityId = 1;
-  Engine_AudioPlayCue(SE_MENU_CONFIRM);
+  Sound_PlaySong(SE_MENU_CONFIRM);
   redraw = 1;
   window = Window_Create(0, 0, 30, 12, 2);
   // Copy the existing sprite palette into the debug window palettes.
@@ -377,13 +377,13 @@ UNUSED static void IncreaseItemAndLevel_SelectAbility(void) {
           DMA_ENABLE << 16 | 0x10, REG_DMA3);
   Dma_Set((const void *)&BG_PLTT_COLOR(15, 4), (void *)&BG_PLTT_COLOR(14, 14),
           DMA_ENABLE << 16 | 1, REG_DMA3);
-  Engine_TaskWait(1);
+  WaitFrames(1);
   while (1) {
     if (redraw) {
       redraw = 0;
       selectedAbilityId = (selectedAbilityId + ABILITY_COUNT) % entryCount;
       WindowSprite_RedrawSavedRect(window);
-      Engine_DebugClearWindow(window);
+      WindowSprite_ClearList(window);
       Text_DrawStringInWindow(gIncreaseItemAndLevel_PsyPrompt, window, 0, 0);
       Text_DrawNumberAtOffset(selectedAbilityId, 0, window, 80, 0);
       Text_DrawStringInWindow(gIncreaseItemAndLevel_PsyHelp, window, 0, 72);
@@ -395,44 +395,44 @@ UNUSED static void IncreaseItemAndLevel_SelectAbility(void) {
       Text_DrawMessage(messageOrDefinitionId, window, 0, 48);
     }
     if (gKeysPressed & KEY_B) {
-      Engine_AudioPlayCue(SE_MENU_CANCEL);
+      Sound_PlaySong(SE_MENU_CANCEL);
       break;
     }
     if (gKeysRepeat & KEY_UP) {
       seekDirection = -1;
       selectedAbilityId--;
       redraw = 1;
-      Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySong(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_DOWN) {
       seekDirection = 1;
       selectedAbilityId++;
       redraw = 1;
-      Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySong(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_RIGHT) {
       seekDirection = 1;
       selectedAbilityId += BROWSER_ROW_STEP;
       redraw = 1;
-      Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySong(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_LEFT) {
       seekDirection = -1;
       selectedAbilityId -= BROWSER_ROW_STEP;
       redraw = 1;
-      Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySong(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_R) {
       seekDirection = 1;
       selectedAbilityId += BROWSER_PAGE_STEP;
       redraw = 1;
-      Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySong(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_L) {
       seekDirection = -1;
       selectedAbilityId -= BROWSER_PAGE_STEP;
       redraw = 1;
-      Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySong(SE_MENU_CURSOR_MOVE);
     }
     // Skip definitions with no icon/availability byte in the chosen direction:
     // byte 4 of an ability is the icon the menus draw (AbilityDefinition).
@@ -442,7 +442,7 @@ UNUSED static void IncreaseItemAndLevel_SelectAbility(void) {
     back:
       selectedAbilityId = (selectedAbilityId + ABILITY_COUNT - 1) % entryCount;
     check_back:
-      if (Engine_DebugGetAbility(selectedAbilityId & 0x3fff)[4] == 0)
+      if (Ability_GetDirect(selectedAbilityId & 0x3fff)->icon == 0)
         goto back;
     }
     if (seekDirection == 1) {
@@ -451,14 +451,14 @@ UNUSED static void IncreaseItemAndLevel_SelectAbility(void) {
     ahead:
       selectedAbilityId = (selectedAbilityId + ABILITY_COUNT + 1) % entryCount;
     check_ahead:
-      if (Engine_DebugGetAbility(selectedAbilityId & 0x3fff)[4] == 0)
+      if (Ability_GetDirect(selectedAbilityId & 0x3fff)->icon == 0)
         goto ahead;
     }
     seekDirection = 0;
-    Engine_TaskWait(1);
+    WaitFrames(1);
   }
   WindowSprite_RedrawSavedRect(window);
-  Engine_TaskWait(1);
+  WaitFrames(1);
   Window_Close(window, 1);
 #ifndef UBFIX
   // The original never initializes details or creates a second window.
@@ -504,12 +504,12 @@ s32 IncreaseItemAndLevel_Initialize(void) {
 /// LOCALID_PORTRAIT_BROWSER's animation has changed, LOCALID_LEVEL_EDITOR moves
 /// to (312, 416).
 static void IncreaseItemAndLevel_RunMotionTest(void) {
-  Engine_ScriptStart();
+  FieldScript_Start();
   Engine_ObjectEventSetAnimation(LOCALID_PORTRAIT_BROWSER, ANIMATION_WALK);
   Engine_ObjectEventSetAnimation(LOCALID_LEVEL_EDITOR, ANIMATION_SHAKE_HEAD);
   ObjectMotion_WaitForAnimationChange(LOCALID_PORTRAIT_BROWSER);
   ObjectEvent_SetPosition(LOCALID_LEVEL_EDITOR, PIXELS(312), PIXELS(416));
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 #endif
 

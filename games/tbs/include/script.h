@@ -5,12 +5,12 @@
 /// Script commands: the all-caps macros the map scripts are written in. The
 /// map README shows them at work.
 
-#define WAIT(n) Engine_ScriptWait(n) ///< n frames, about 59.73 a second
+#define WAIT(n) FieldScript_WaitFrames(n) ///< n frames, about 59.73 a second
 
-#define MESSAGE_SET(m) Engine_ScriptSetMessage(m)
+#define MESSAGE_SET(m) FieldScript_SetMessageId(m)
 /// Object event no speaks the chosen message; the next one is chosen after it.
-#define MESSAGE_PUT(no, f) Engine_ScriptShowMessage((no), (f))
-#define MESSAGE_OPEN(no, f) Engine_ScriptOpenMessage((no), (f))
+#define MESSAGE_PUT(no, f) FieldScript_ShowMessageAndWait((no), (f))
+#define MESSAGE_OPEN(no, f) FieldMessage_ShowAtObject((no), (f))
 
 // Object events by number. Positions are whole pixels, speeds 16.16 pixels a
 // frame, headings 1/65536 turns (enum Facing), modes enum ObjectEventAnimation,
@@ -20,8 +20,7 @@
 #define OBJECT_WALK(no, x, z) ObjectEvent_WalkTo((no), (x), (z))
 #define OBJECT_SPEED(no, s, a) ObjectEvent_SetSpeed((no), (s), (a))
 #define OBJECT_DIR(no, d, t) ObjectEvent_FaceDirection((no), (d), (t))
-#define OBJECT_FACE(no, to, t)                                                 \
-  Engine_ObjectEventFaceObjectEvent((no), (to), (t))
+#define OBJECT_FACE(no, to, t) ObjectMotion_SetAngleToward((no), (to), (t))
 #define OBJECT_ANIMATION(no, m) Engine_ObjectEventSetAnimation((no), (m))
 #define OBJECT_EMOTE(no, e, t) ObjectEvent_ShowEmote((no), (e), (t))
 
@@ -34,7 +33,7 @@
 
 #define SE(n) Script_PlaySong(n)
 
-#define SCRIPT_START() Engine_ScriptStart()
-#define SCRIPT_END() Engine_ScriptEnd()
+#define SCRIPT_START() FieldScript_Start()
+#define SCRIPT_END() FieldScript_End()
 
 #endif

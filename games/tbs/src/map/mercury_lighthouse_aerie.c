@@ -230,63 +230,62 @@ s32 MercuryLighthouseAerie_Initialize(void) {
     Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
     FieldScheduler_AddCallback(MercuryLighthouseAerie_FlickerBeacon,
                                TASK_PRIORITY_MAP);
-    Engine_ObjectEventSetSpritePriority(LOCALID_PARTY_LEADER, 1);
-    Engine_ObjectEventSetSpritePriority(GARET, 1);
-    Engine_ObjectEventSetSpritePriority(IVAN, 1);
-    Engine_ObjectEventSetSpritePriority(MIA, 1);
-    Engine_ObjectEventSetSpritePriority(JENNA, 1);
-    Engine_ObjectEventSetSpritePriority(LOCALID_KRADEN, 1);
-    Engine_ObjectEventSetSpritePriority(LOCALID_FELIX, 1);
-    Engine_ObjectEventSetSpritePriority(LOCALID_SATUROS, 1);
-    Engine_ObjectEventSetSpritePriority(LOCALID_MENARDI, 1);
-    Engine_ObjectEventSetSpritePriority(LOCALID_ALEX, 1);
-    Engine_ObjectEventSetSpritePriority(LOCALID_BEACON, 1);
-    Engine_ObjectEventSetSpritePriority(LOCALID_LIFT_STATUE, 1);
-    Engine_ObjectEventSetSpritePriority(LOCALID_FIRST_BEACON_STATUE, 1);
-    Engine_ObjectEventSetSpritePriority(LOCALID_FIRST_BEACON_STATUE + 1, 1);
-    Engine_ObjectEventSetSpritePriority(LOCALID_FIRST_BEACON_STATUE + 2, 1);
-    Engine_ObjectEventSetSpritePriority(LOCALID_FIRST_BEACON_STATUE + 3, 1);
+    ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, 1);
+    ObjectMotion_SetActionVariant(GARET, 1);
+    ObjectMotion_SetActionVariant(IVAN, 1);
+    ObjectMotion_SetActionVariant(MIA, 1);
+    ObjectMotion_SetActionVariant(JENNA, 1);
+    ObjectMotion_SetActionVariant(LOCALID_KRADEN, 1);
+    ObjectMotion_SetActionVariant(LOCALID_FELIX, 1);
+    ObjectMotion_SetActionVariant(LOCALID_SATUROS, 1);
+    ObjectMotion_SetActionVariant(LOCALID_MENARDI, 1);
+    ObjectMotion_SetActionVariant(LOCALID_ALEX, 1);
+    ObjectMotion_SetActionVariant(LOCALID_BEACON, 1);
+    ObjectMotion_SetActionVariant(LOCALID_LIFT_STATUE, 1);
+    ObjectMotion_SetActionVariant(LOCALID_FIRST_BEACON_STATUE, 1);
+    ObjectMotion_SetActionVariant(LOCALID_FIRST_BEACON_STATUE + 1, 1);
+    ObjectMotion_SetActionVariant(LOCALID_FIRST_BEACON_STATUE + 2, 1);
+    ObjectMotion_SetActionVariant(LOCALID_FIRST_BEACON_STATUE + 3, 1);
     for (i = LOCALID_FIRST_PLATFORM; i < LOCALID_FIRST_PLATFORM + 6; i++) {
-      Engine_ObjectEventSetSpritePriority(i, 1);
+      ObjectMotion_SetActionVariant(i, 1);
       ObjectEvent_GetById(i)->motionFlags = 4;
       ObjectEvent_GetById(i)->priorityFlags |= 2;
       ObjectEvent_GetById(i)->y.fixed = -(PIXELS(50) + PIXELS(1) / 2);
     }
-    if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) &&
+    if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) &&
         (localId = ObjectEvent_FindNearestFloatingPlatform()) != 0 &&
         (objectEvent = ObjectEvent_GetById(localId)) != NULL) {
       objectEvent->motionFlags = 0;
     }
-    Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_LIFT_STATUE),
-                                     0);
-    Engine_ObjectEventSetSpriteFlags(
-        ObjectEvent_GetById(LOCALID_FIRST_BEACON_STATUE), 0);
-    Engine_ObjectEventSetSpriteFlags(
+    ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_LIFT_STATUE), 0);
+    ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_FIRST_BEACON_STATUE),
+                               0);
+    ObjectEvent_SetSpriteFlags(
         ObjectEvent_GetById(LOCALID_FIRST_BEACON_STATUE + 1), 0);
-    Engine_ObjectEventSetSpriteFlags(
+    ObjectEvent_SetSpriteFlags(
         ObjectEvent_GetById(LOCALID_FIRST_BEACON_STATUE + 2), 0);
-    Engine_ObjectEventSetSpriteFlags(
+    ObjectEvent_SetSpriteFlags(
         ObjectEvent_GetById(LOCALID_FIRST_BEACON_STATUE + 3), 0);
     ObjectEvent_GetById(LOCALID_FIRST_BEACON_STATUE + 2)->scaleX = -Q16_ONE;
     ObjectEvent_GetById(LOCALID_FIRST_BEACON_STATUE + 3)->scaleX = -Q16_ONE;
     if (gGameState.warpDest == MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT) {
-      if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
+      if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
         MercuryLighthouseAerie_PartyArrives();
       }
     } else if (gGameState.warpDest ==
                MERCURY_LIGHTHOUSE_AERIE_AFTER_SATUROS_BATTLE) {
-      if (!Engine_GameFlagIsSet(FLAG_LIFT_UP)) {
+      if (!GameFlag_Test(FLAG_LIFT_UP)) {
         {
           struct MapGridLayerScroll *lift =
               &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
 
           lift->offsetY = PIXELS(1024);
         }
-        Engine_MapGridRedraw();
-        Engine_TaskWait(1);
+        MapGrid_CenterOnFollowedPoint();
+        WaitFrames(1);
         MapGrid_CopyCellsTo(4, 70, 4, 74, 5, 4);
         Engine_ObjectEventSetPosition(LOCALID_LIFT_STATUE, 0, 0);
-        if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
+        if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
           MercuryLighthouseAerie_AlexAppears();
         }
       }
@@ -305,37 +304,36 @@ s32 MercuryLighthouseAerie_Initialize(void) {
 static void MercuryLighthouseAerie_PartyArrives(void) {
   struct ObjectEvent *leader;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   Party_RestorePpOfLitElements();
-  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER),
-                                   0);
-  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(GARET), 0);
-  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(IVAN), 0);
-  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(MIA), 0);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER), 0);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(GARET), 0);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(IVAN), 0);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(MIA), 0);
   FieldCamera_MoveTo(PIXELS(304), -1, PIXELS(120), 0);
-  Engine_TaskWait(1);
-  Engine_MapGridRedraw();
-  Engine_TaskWait(1);
+  WaitFrames(1);
+  MapGrid_CenterOnFollowedPoint();
+  WaitFrames(1);
   Script_PlaySong(SE_RUMBLE);
   MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
   Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  Engine_ScriptOpenScreen();
-  Engine_ScriptWaitForScreen();
-  Engine_MapGridRenderWaitForValues();
-  Engine_ScriptWait(30);
-  Engine_ScriptGetViewCenter()->motionFlags = 0;
+  FieldScript_StartScreenTransition();
+  FieldScript_WaitTransitionFrames();
+  MapGrid_WaitForShakeToSettle();
+  FieldScript_WaitFrames(30);
+  FieldCamera_GetScriptObject()->motionFlags = 0;
   FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
   FieldCamera_MoveTo(PIXELS(512), -PIXELS(24), PIXELS(160), 1);
-  Engine_CameraWaitForMove();
+  FieldCamera_WaitForArrival();
   PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
   PaletteFade_ApplyTarget(PALETTE_TINT_PALE, 0);
-  Engine_ColorBufferInterpolate(50);
-  Engine_ScriptWait(50);
+  PaletteFade_StartInterpolation(50);
+  FieldScript_WaitFrames(50);
   PaletteFade_ApplyTarget(RGB(31, 31, 31), 0);
-  Engine_ColorBufferInterpolate(30);
-  Engine_ScriptWait(30);
+  PaletteFade_StartInterpolation(30);
+  FieldScript_WaitFrames(30);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(504), PIXELS(168));
   ObjectEvent_SetPosition(GARET, PIXELS(528), PIXELS(144));
   ObjectEvent_SetPosition(IVAN, PIXELS(488), PIXELS(144));
@@ -344,40 +342,36 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
   Engine_ObjectEventSetAnimation(GARET, 19);
   Engine_ObjectEventSetAnimation(IVAN, 19);
   Engine_ObjectEventSetAnimation(MIA, 19);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
-  Engine_ColorBufferInterpolate(30);
-  Engine_ScriptWait(30);
-  Engine_ScriptWait(80);
-  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER),
-                                   SPRITE_FLAG_SHADOW);
+  PaletteFade_StartInterpolation(30);
+  FieldScript_WaitFrames(30);
+  FieldScript_WaitFrames(80);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER),
+                             SPRITE_FLAG_SHADOW);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
-  Engine_ScriptWait(30);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER,
-                                        ANIMATION_SHAKE_HEAD);
+  FieldScript_WaitFrames(30);
+  ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_SHAKE_HEAD);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 20);
-  Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 2);
-  Engine_ScriptWait(60);
-  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(GARET),
-                                   SPRITE_FLAG_SHADOW);
+  ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
+  FieldScript_WaitFrames(60);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(GARET), SPRITE_FLAG_SHADOW);
   Engine_ObjectEventSetAnimation(GARET, ANIMATION_STAND);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST, 0);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(GARET, FACING_SOUTHWEST, 0);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(GARET, FACING_EAST, 0);
-  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(IVAN),
-                                   SPRITE_FLAG_SHADOW);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(IVAN), SPRITE_FLAG_SHADOW);
   Engine_ObjectEventSetAnimation(IVAN, ANIMATION_STAND);
   ObjectEvent_FaceDirection(GARET, FACING_SOUTHWEST, 0);
-  Engine_ScriptWait(40);
-  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(MIA),
-                                   SPRITE_FLAG_SHADOW);
+  FieldScript_WaitFrames(40);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(MIA), SPRITE_FLAG_SHADOW);
   Engine_ObjectEventSetAnimation(MIA, ANIMATION_STAND);
-  Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
+  ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_NOD);
+  FieldScript_WaitFrames(20);
   ObjectEvent_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetSpeed(MIA, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -395,13 +389,13 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0)
     ObjectEvent_SetDestination(MIA, leader->x.part.pixel, leader->z.part.pixel);
-  Engine_ObjectEventWaitForMove(MIA);
+  ObjectMotion_CommitCurrentPositionAndActivate(MIA);
   ObjectEvent_SetPosition(MIA, 0, 0);
-  Engine_ObjectEventWaitForMove(IVAN);
+  ObjectMotion_CommitCurrentPositionAndActivate(IVAN);
   ObjectEvent_SetPosition(IVAN, 0, 0);
-  Engine_ObjectEventWaitForMove(GARET);
+  ObjectMotion_CommitCurrentPositionAndActivate(GARET);
   ObjectEvent_SetPosition(GARET, 0, 0);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 #include "common/object_distance.h"
@@ -424,21 +418,21 @@ static void MercuryLighthouseAerie_JumpToPlatform(void) {
                (objectEvent->z.fixed & 0xfff00000) + PIXELS(8));
   Vector_AddPolarOffset(PIXELS(32), angle, &position);
   if (FieldObject_CheckMovementCollision(objectEvent, &position) == 0) {
-    Engine_GameFlagClear(FLAG_ON_PLATFORM);
+    GameFlag_ClearBit(FLAG_ON_PLATFORM);
     MercuryLighthouseAerie_SettlePlatforms();
-    ObjectEvent_SetMode(objectEvent, 6);
-    Engine_TaskWait(6);
-    Engine_AudioPlayCue(SE_JUMP);
-    ObjectEvent_SetMode(objectEvent, 7);
+    ObjectDispatch_SelectAnimation(objectEvent, 6);
+    WaitFrames(6);
+    Sound_PlaySong(SE_JUMP);
+    ObjectDispatch_SelectAnimation(objectEvent, 7);
     objectEvent->speed = PIXELS(3);
     objectEvent->acceleration = PIXELS(2);
     objectEvent->velocityY = PIXELS(4);
     objectEvent->motionFlags &= 0x7e;
-    Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
-    Engine_ObjectEventMoveToAndWait(LOCALID_PARTY_LEADER, position.x >> 16,
-                                    position.z >> 16);
-    ObjectEvent_SetMode(objectEvent, 6);
-    Engine_ObjectEventSetSpriteFlags(objectEvent, SPRITE_FLAG_SHADOW);
+    ObjectEvent_SetSpriteFlags(objectEvent, 0);
+    ObjectMotion_SetPositionAndCommit(LOCALID_PARTY_LEADER, position.x >> 16,
+                                      position.z >> 16);
+    ObjectDispatch_SelectAnimation(objectEvent, 6);
+    ObjectEvent_SetSpriteFlags(objectEvent, SPRITE_FLAG_SHADOW);
     objectEvent->motionFlags = flags;
   }
 }
@@ -451,7 +445,7 @@ static void MercuryLighthouseAerie_StepOntoPlatform(void) {
   s32 id;
 
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  Engine_ScriptStart();
+  FieldScript_Start();
   id = ObjectEvent_FindNearestFloatingPlatform();
   gMercuryLighthouseAerie_PlatformUnderfoot = id;
   if (id != 0) {
@@ -463,24 +457,24 @@ static void MercuryLighthouseAerie_StepOntoPlatform(void) {
     objectEvent->y.fixed -= PIXELS(3);
     leader->y.fixed -= PIXELS(3);
     leader->groundHeight -= PIXELS(3);
-    Engine_TaskWait(2);
+    WaitFrames(2);
     objectEvent->y.fixed -= PIXELS(2);
     leader->y.fixed -= PIXELS(2);
     leader->groundHeight -= PIXELS(2);
-    Engine_TaskWait(10);
+    WaitFrames(10);
     objectEvent->y.fixed += PIXELS(2);
     leader->y.fixed += PIXELS(2);
     leader->groundHeight += PIXELS(2);
-    Engine_TaskWait(4);
+    WaitFrames(4);
     objectEvent->y.fixed += PIXELS(2);
     leader->y.fixed += PIXELS(2);
     leader->groundHeight += PIXELS(2);
-    Engine_TaskWait(4);
+    WaitFrames(4);
     objectEvent->y.fixed += PIXELS(1);
     leader->y.fixed += PIXELS(1);
     leader->groundHeight += PIXELS(1);
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Lighthouse Aerie: touching metatile behavior 11, off the platforms. The
@@ -504,7 +498,7 @@ static void MercuryLighthouseAerie_SettlePlatforms(void) {
 static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   struct ObjectEvent *objectEvent;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   ObjectEvent_Get(LOCALID_FIRST_LIFT_PLATFORM)->motionFlags &= 0xfa;
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -522,96 +516,96 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   if (objectEvent != 0) {
     ObjectEvent_SetPosition(MIA, objectEvent->x.fixed, objectEvent->z.fixed);
   }
-  Engine_TaskWait(1);
+  WaitFrames(1);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 344, 232);
   ObjectEvent_WalkTo(GARET, 328, 232);
   ObjectEvent_WalkTo(IVAN, 344, 248);
   ObjectEvent_WalkTo(MIA, 328, 248);
-  Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHWEST, 0);
-  Engine_ObjectEventWaitForMove(GARET);
+  ObjectMotion_CommitCurrentPositionAndActivate(GARET);
   ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
-  Engine_ObjectEventWaitForMove(IVAN);
+  ObjectMotion_CommitCurrentPositionAndActivate(IVAN);
   ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 0);
-  Engine_ObjectEventWaitForMove(MIA);
+  ObjectMotion_CommitCurrentPositionAndActivate(MIA);
   ObjectEvent_FaceDirection(MIA, FACING_NORTH, 0);
-  Engine_ScriptWait(50);
-  Engine_ObjectEventRunRepeatedMotion(GARET, 2);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(50);
+  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
+  FieldScript_WaitFrames(20);
   FieldCamera_SetSpeed(PIXELS(3) / 2, PIXELS(3) / 16);
   FieldCamera_MoveTo(PIXELS(328), PIXELS(40), PIXELS(176), 1);
-  Engine_ScriptGetViewCenter()->motionFlags = 0;
+  FieldCamera_GetScriptObject()->motionFlags = 0;
   ObjectEvent_SetSpeed(GARET, PIXELS(3) / 2, PIXELS(3) / 4);
   ObjectEvent_WalkToAndWait(GARET, 328, 216);
-  Engine_CameraWaitForMove();
+  FieldCamera_WaitForArrival();
   ObjectEvent_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   FieldCamera_MoveTo(PIXELS(344), PIXELS(24), PIXELS(232), 1);
   ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST, 20);
-  Engine_CameraWaitForMove();
-  Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
-  Engine_ScriptSetMessage(MsgMercuryLighthouseAlreadyLit);
+  FieldCamera_WaitForArrival();
+  ObjectMotion_SetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
+  FieldScript_SetMessageId(MsgMercuryLighthouseAlreadyLit);
   Script_ShowMessageAndWait(GARET, 0, 20);
   ObjectEvent_SetAttachedEffect(MIA, ATTACHED_EFFECT_IN_FRONT |
                                          ATTACHED_EFFECT_ONCE);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   ObjectEvent_SetSpeed(MIA, PIXELS(3) / 2, PIXELS(3) / 4);
   ObjectEvent_WalkToAndWait(MIA, 328, 232);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   Script_ShowMessageAndWait(MIA, 0, 20);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(MIA, 0, 30);
-  Engine_ObjectEventFaceEachOther(IVAN, LOCALID_PARTY_LEADER, 0);
-  Engine_ScriptWait(60);
+  ObjectEvent_LinkPair(IVAN, LOCALID_PARTY_LEADER, 0);
+  FieldScript_WaitFrames(60);
   ObjectEvent_WalkToAndWait(IVAN, 336, 248);
   ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 0);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 0);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(30);
   Script_ShowMessageAndWait(IVAN, 0, 20);
   ObjectEvent_FaceDirection(MIA, FACING_EAST, 30);
-  Engine_ScriptOpenMessage(MIA, 0);
-  if (Engine_ScriptChooseYesNo(0, 0) == 0) {
-    Engine_ScriptWait(20);
+  FieldMessage_ShowAtObject(MIA, 0);
+  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
+    FieldScript_WaitFrames(20);
     ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
     ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 10);
-    Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_NOD);
+    ObjectMotion_SetAnimationAndWait(GARET, ANIMATION_NOD);
     Script_ShowMessageAndWait(GARET, 0, 20);
     ObjectEvent_FaceDirection(MIA, FACING_NORTH, 0);
-    Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
-    Engine_ScriptWait(20);
+    ObjectMotion_SetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
+    FieldScript_WaitFrames(20);
     Script_ShowMessageAndWait(GARET, 0, 20);
     gFieldWork->message += 2;
   } else {
     gFieldWork->message += 2;
-    Engine_ScriptWait(20);
+    FieldScript_WaitFrames(20);
     ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
     ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 10);
-    Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
+    ObjectMotion_SetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
     Script_ShowMessageAndWait(GARET, 0, 20);
     ObjectEvent_FaceDirection(MIA, FACING_NORTH, 0);
-    Engine_ObjectEventRunRepeatedMotion(GARET, 2);
-    Engine_ScriptWait(20);
+    ObjectMotion_SetVarCbAndRefresh(GARET, 2);
+    FieldScript_WaitFrames(20);
     Script_ShowMessageAndWait(GARET, 0, 20);
   }
   ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Script_ShowMessageAndWait(MIA, 0, 20);
-  Engine_ObjectEventFaceEachOther(LOCALID_PARTY_LEADER, GARET, 0);
-  Engine_ScriptWait(60);
+  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, GARET, 0);
+  FieldScript_WaitFrames(60);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 0);
   ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 20);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_NOD);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetAnimationAndWait(GARET, ANIMATION_NOD);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(GARET, 0, 20);
-  Engine_ObjectEventRunRepeatedMotion(MIA, 2);
+  ObjectMotion_SetVarCbAndRefresh(MIA, 2);
   Script_ShowMessageAndWait(MIA, 0, 20);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
   Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
-  Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
-  Engine_ScriptWait(10);
+  ObjectMotion_SetAnimationAndWait(IVAN, ANIMATION_NOD);
+  FieldScript_WaitFrames(20);
+  ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
+  FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(MIA, FACING_EAST, 10);
   Engine_ObjectEventSetAnimation(MIA, 0x10);
   Script_ShowMessageAndWait(MIA, 0, 60);
@@ -622,8 +616,8 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   ObjectEvent_SetPosition(JENNA, PIXELS(120), PIXELS(160));
   ObjectEvent_FaceDirection(JENNA, FACING_EAST, 0);
   Engine_ObjectEventSetAnimation(MIA, ANIMATION_STAND);
-  Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 1);
-  Engine_ObjectEventRunRepeatedMotion(GARET, 1);
+  ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 1);
+  ObjectMotion_SetVarCbAndRefresh(GARET, 1);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 10);
   ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST, 20);
   ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 10);
@@ -632,20 +626,20 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   ObjectEvent_FaceDirection(GARET, FACING_NORTH, 10);
   ObjectEvent_FaceDirection(IVAN, FACING_WEST, 5);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 5);
-  Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 2);
+  ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
   ObjectEvent_FaceDirection(GARET, FACING_WEST, 10);
-  Engine_ObjectEventRunRepeatedMotion(GARET, 2);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
+  FieldScript_WaitFrames(20);
   FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
   FieldCamera_MoveTo(PIXELS(120), -PIXELS(24), PIXELS(168), 1);
-  Engine_CameraWaitForMove();
-  Engine_ScriptWait(40);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_FELIX, 1);
-  Engine_ScriptWait(20);
+  FieldCamera_WaitForArrival();
+  FieldScript_WaitFrames(40);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_FELIX, 1);
+  FieldScript_WaitFrames(20);
   Script_PlaySong(MUS_061);
   Script_ShowMessageAndWait(LOCALID_FELIX, 0, 20);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_MENARDI, 1);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_MENARDI, 1);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_MENARDI, 0, 20);
   ObjectEvent_FaceDirection(LOCALID_MENARDI, FACING_NORTH, 60);
   ObjectEvent_FaceDirection(LOCALID_MENARDI, FACING_EAST, 20);
@@ -653,29 +647,29 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   ObjectEvent_SetPosition(GARET, PIXELS(264), PIXELS(288));
   Script_ShowMessageAndWait(GARET, 0, 20);
   ObjectEvent_SetPosition(GARET, PIXELS(328), PIXELS(216));
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_MENARDI, 4);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MENARDI, 4);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_MENARDI, 0, 20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_MENARDI, 3);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MENARDI, 3);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_MENARDI, 0, 20);
   ObjectEvent_FaceDirection(LOCALID_MENARDI, FACING_NORTHWEST, 10);
   ObjectEvent_FaceDirection(LOCALID_FELIX, FACING_SOUTHEAST, 10);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_FELIX, 1);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_FELIX, 1);
+  FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(JENNA, FACING_WEST, 0);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_WEST, 30);
   ObjectEvent_FaceDirection(LOCALID_FELIX, FACING_EAST, 30);
-  Engine_ObjectEventRunRepeatedMotion(JENNA, 2);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_FELIX, 4);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(JENNA, 2);
+  ObjectMotion_SetAnimationAndWait(LOCALID_FELIX, 4);
+  FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_FELIX, FACING_SOUTHEAST, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_FELIX, 3);
-  Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_MENARDI, 3);
+  ObjectMotion_SetAnimationAndWait(LOCALID_FELIX, 3);
+  FieldScript_WaitFrames(20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MENARDI, 3);
   ObjectEvent_SetSpeed(LOCALID_FELIX, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_FELIX, 104, 168);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_MENARDI, FACING_EAST, 20);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_EAST, 10);
   ObjectEvent_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
@@ -695,127 +689,127 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   ObjectEvent_WalkToAndWait(LOCALID_SATUROS, 272, 128);
   ObjectEvent_WalkToAndWait(LOCALID_SATUROS, 264, 152);
   ObjectEvent_WalkToAndWait(LOCALID_SATUROS, 280, 168);
-  Engine_CameraWaitForMove();
+  FieldCamera_WaitForArrival();
   ObjectEvent_FaceDirection(LOCALID_SATUROS, FACING_SOUTH + FACING_STEP, 20);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessage(LOCALID_MENARDI, 0);
-  Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_SATUROS, 3);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_SATUROS, 3);
+  FieldScript_WaitFrames(20);
   Script_ShowMessage(LOCALID_SATUROS, 0);
   FieldCamera_MoveTo(PIXELS(296), PIXELS(40), PIXELS(216), 1);
   ObjectEvent_WalkToAndWait(LOCALID_SATUROS, 304, 176);
   ObjectEvent_FaceDirection(LOCALID_SATUROS, FACING_SOUTHEAST, 0);
-  Engine_CameraWaitForMove();
-  Engine_ScriptWait(20);
-  Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 1);
-  Engine_ObjectEventStartRepeatedMotion(GARET, 1);
-  Engine_ObjectEventStartRepeatedMotion(IVAN, 1);
-  Engine_ObjectEventRunRepeatedMotion(MIA, 1);
-  Engine_ScriptWait(20);
-  Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_SATUROS, 3);
-  Engine_ScriptWait(20);
+  FieldCamera_WaitForArrival();
+  FieldScript_WaitFrames(20);
+  ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 1);
+  ObjectMotion_SetVariantCallback(GARET, 1);
+  ObjectMotion_SetVariantCallback(IVAN, 1);
+  ObjectMotion_SetVarCbAndRefresh(MIA, 1);
+  FieldScript_WaitFrames(20);
+  FieldScript_WaitFrames(20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_SATUROS, 3);
+  FieldScript_WaitFrames(20);
   Script_ShowMessage(LOCALID_SATUROS, 0);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
   ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
   ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
   ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_SCOWL, 70);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_SATUROS, 1);
-  Engine_ScriptWait(30);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_SATUROS, 1);
+  FieldScript_WaitFrames(30);
   Script_ShowMessage(LOCALID_SATUROS, 0);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
                         0);
   ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 70);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_SATUROS, 3);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_SATUROS, 3);
+  FieldScript_WaitFrames(20);
   Script_ShowMessage(LOCALID_SATUROS, 0);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessage(LOCALID_MENARDI, 0);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_SATUROS, FACING_SOUTH + FACING_STEP, 0);
-  Engine_ScriptWait(40);
+  FieldScript_WaitFrames(40);
   Script_ShowMessage(LOCALID_SATUROS, 0);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(30);
   Script_ShowMessage(LOCALID_MENARDI, 0);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_SATUROS, FACING_SOUTHEAST + FACING_STEP, 0);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(30);
   Script_ShowMessage(LOCALID_SATUROS, 0);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   ObjectEvent_Get(GARET)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
   ObjectEvent_WalkTo(GARET, 328, 224);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 344, 224);
   ObjectEvent_WalkTo(IVAN, 344, 232);
-  Engine_ObjectEventWaitForMove(GARET);
+  ObjectMotion_CommitCurrentPositionAndActivate(GARET);
   ObjectEvent_Get(GARET)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
   ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
-  Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHWEST, 0);
-  Engine_ObjectEventWaitForMove(IVAN);
+  ObjectMotion_CommitCurrentPositionAndActivate(IVAN);
   ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(30);
   ObjectEvent_SetPosition(LOCALID_MENARDI, PIXELS(168), PIXELS(200));
   Script_ShowMessageAndWait(LOCALID_MENARDI, 0, 20);
   ObjectEvent_SetPosition(LOCALID_MENARDI, PIXELS(104), PIXELS(200));
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_SATUROS, 1);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_SATUROS, 1);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 20);
   FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
   FieldCamera_MoveTo(PIXELS(120), -PIXELS(24), PIXELS(168), 1);
-  Engine_CameraWaitForMove();
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_MENARDI, 3);
-  Engine_ScriptWait(10);
+  FieldCamera_WaitForArrival();
+  ObjectMotion_SetAnimationAndWait(LOCALID_MENARDI, 3);
+  FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_MENARDI, FACING_NORTH + FACING_STEP, 20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_MENARDI, 3);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MENARDI, 3);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_MENARDI, 0, 20);
   ObjectEvent_FaceDirection(JENNA, FACING_SOUTH + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTHEAST + FACING_STEP, 70);
-  Engine_ObjectEventFaceEachOther(JENNA, LOCALID_KRADEN, 0);
-  Engine_ScriptWait(50);
+  ObjectEvent_LinkPair(JENNA, LOCALID_KRADEN, 0);
+  FieldScript_WaitFrames(50);
   ObjectEvent_FaceDirection(JENNA, FACING_SOUTH + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTHEAST + FACING_STEP, 20);
-  Engine_ObjectEventSetAnimationAndWait(JENNA, 4);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetAnimationAndWait(JENNA, 4);
+  FieldScript_WaitFrames(20);
   ObjectEvent_ShowEmote(LOCALID_MENARDI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                         60);
   Script_ShowMessageAndWait(LOCALID_MENARDI, 0, 20);
   ObjectEvent_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   ObjectEvent_FaceDirection(LOCALID_FELIX, FACING_NORTH + FACING_STEP, 20);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_FELIX, 1);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_MENARDI, 3);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_FELIX, 1);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MENARDI, 3);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_MENARDI, 0, 20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_MENARDI, 4);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MENARDI, 4);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_MENARDI, 0, 20);
   ObjectEvent_SetAttachedEffect(LOCALID_FELIX, ATTACHED_EFFECT_IN_FRONT |
                                                    ATTACHED_EFFECT_ONCE);
-  Engine_ScriptWait(60);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_FELIX, 4);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(60);
+  ObjectMotion_SetAnimationAndWait(LOCALID_FELIX, 4);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_FELIX, 0, 20);
   ObjectEvent_SetAttachedEffect(JENNA, ATTACHED_EFFECT_IN_FRONT |
                                            ATTACHED_EFFECT_ONCE);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   Script_ShowMessageAndWait(JENNA, 0, 40);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_FELIX, 3);
-  Engine_ScriptWait(60);
+  ObjectMotion_SetAnimationAndWait(LOCALID_FELIX, 3);
+  FieldScript_WaitFrames(60);
   ObjectEvent_FaceDirection(JENNA, FACING_NORTHWEST, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, 3);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, 3);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 30);
   ObjectEvent_SetSpeed(JENNA, PIXELS(7) / 10, PIXELS(7) / 20);
   ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(7) / 10, PIXELS(7) / 20);
   ObjectEvent_WalkTo(JENNA, 128, 144);
   ObjectEvent_WalkToAndWait(LOCALID_KRADEN, 120, 136);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTH + FACING_STEP, 0);
-  Engine_ObjectEventWaitForMove(JENNA);
+  ObjectMotion_CommitCurrentPositionAndActivate(JENNA);
   ObjectEvent_FaceDirection(JENNA, FACING_EAST, 20);
   ObjectEvent_FaceDirection(LOCALID_FELIX, FACING_SOUTHEAST + FACING_STEP, 20);
   ObjectEvent_GetById(LOCALID_FELIX)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
@@ -824,42 +818,42 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   ObjectEvent_FaceDirection(LOCALID_MENARDI, FACING_NORTHWEST + FACING_STEP,
                             20);
   Engine_ObjectEventSetAnimation(LOCALID_MENARDI, 3);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_FELIX, 3);
-  Engine_ScriptWait(40);
+  ObjectMotion_SetAnimationAndWait(LOCALID_FELIX, 3);
+  FieldScript_WaitFrames(40);
   ObjectEvent_SetSpeed(LOCALID_MENARDI, PIXELS(3), PIXELS(2));
   ObjectEvent_Get(LOCALID_MENARDI)->velocityY = PIXELS(4);
   Script_PlaySong(SE_JUMP);
   ObjectEvent_Get(LOCALID_MENARDI)->motionFlags &= 0x7e;
-  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_MENARDI), 0);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_MENARDI), 0);
   ObjectEvent_GetById(LOCALID_FIRST_LIFT_PLATFORM)->motionFlags = 4;
-  Engine_ObjectEventMoveToAndWait(LOCALID_MENARDI, 104, 168);
-  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_MENARDI),
-                                   SPRITE_FLAG_SHADOW);
+  ObjectMotion_SetPositionAndCommit(LOCALID_MENARDI, 104, 168);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_MENARDI),
+                             SPRITE_FLAG_SHADOW);
   ObjectEvent_Get(LOCALID_MENARDI)->motionFlags = 3;
   ObjectEvent_FaceDirection(LOCALID_MENARDI, FACING_EAST, 30);
   ObjectEvent_FaceDirection(LOCALID_FELIX, FACING_EAST, 10);
   Script_ShowMessageAndWait(LOCALID_FELIX, 0, 20);
-  Engine_ObjectEventRunRepeatedMotion(JENNA, 2);
-  Engine_ObjectEventSetAnimationAndWait(JENNA, 4);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(JENNA, 2);
+  ObjectMotion_SetAnimationAndWait(JENNA, 4);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(JENNA, 0, 20);
   Script_ShowMessageAndWait(LOCALID_MENARDI, 0, 20);
-  Engine_ObjectEventSetSpritePriority(LOCALID_FIRST_LIFT_PLATFORM, 0);
-  Engine_ObjectEventSetSpritePriority(LOCALID_SECOND_LIFT_PLATFORM, 0);
+  ObjectMotion_SetActionVariant(LOCALID_FIRST_LIFT_PLATFORM, 0);
+  ObjectMotion_SetActionVariant(LOCALID_SECOND_LIFT_PLATFORM, 0);
   MercuryLighthouseAerie_LowerLift();
-  Engine_ObjectEventSetSpritePriority(LOCALID_FIRST_LIFT_PLATFORM, 1);
-  Engine_ObjectEventSetSpritePriority(LOCALID_SECOND_LIFT_PLATFORM, 1);
+  ObjectMotion_SetActionVariant(LOCALID_FIRST_LIFT_PLATFORM, 1);
+  ObjectMotion_SetActionVariant(LOCALID_SECOND_LIFT_PLATFORM, 1);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 0);
   ObjectEvent_FaceDirection(GARET, FACING_SOUTHWEST, 0);
   ObjectEvent_FaceDirection(IVAN, FACING_SOUTHWEST, 0);
   ObjectEvent_FaceDirection(MIA, FACING_SOUTHWEST, 0);
   FieldCamera_MoveTo(PIXELS(304), PIXELS(32), PIXELS(216), 1);
-  Engine_CameraWaitForMove();
+  FieldCamera_WaitForArrival();
   ObjectEvent_SetPosition(LOCALID_KRADEN, PIXELS(272), PIXELS(280));
   Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 20);
   ObjectEvent_SetPosition(LOCALID_KRADEN, 0, 0);
-  Engine_ObjectEventRunRepeatedMotion(GARET, 1);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(GARET, 1);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(GARET, 0, 20);
   ObjectEvent_SetSpeed(GARET, PIXELS(3) / 2, PIXELS(3) / 4);
   ObjectEvent_WalkToAndWait(GARET, 312, 216);
@@ -877,59 +871,59 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   ObjectEvent_SetSpeed(GARET, PIXELS(2), PIXELS(1));
   ObjectEvent_Get(GARET)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
   ObjectEvent_WalkToAndWait(GARET, 328, 224);
-  Engine_ScriptWait(1);
+  FieldScript_WaitFrames(1);
   ObjectEvent_Get(GARET)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
-  Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 1);
-  Engine_ObjectEventStartRepeatedMotion(GARET, 1);
-  Engine_ObjectEventStartRepeatedMotion(IVAN, 1);
-  Engine_ObjectEventRunRepeatedMotion(MIA, 1);
-  Engine_ScriptWait(20);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_SATUROS, 1);
-  Engine_ScriptWait(10);
+  ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 1);
+  ObjectMotion_SetVariantCallback(GARET, 1);
+  ObjectMotion_SetVariantCallback(IVAN, 1);
+  ObjectMotion_SetVarCbAndRefresh(MIA, 1);
+  FieldScript_WaitFrames(20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_SATUROS, 1);
+  FieldScript_WaitFrames(10);
   Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 20);
-  Engine_ObjectEventRunRepeatedMotion(GARET, 2);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
-  Engine_ScriptWait(10);
+  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
+  FieldScript_WaitFrames(10);
   Script_ShowMessageAndWait(GARET, 0, 20);
-  Engine_ObjectEventRunRepeatedMotion(IVAN, 1);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(IVAN, 1);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetAnimationAndWait(IVAN, ANIMATION_NOD);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(IVAN, 0, 20);
   ObjectEvent_ShowEmote(LOCALID_SATUROS, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Engine_ScriptOpenMessage(LOCALID_SATUROS, 0);
-  if (Engine_ScriptChooseYesNo(0, 0) == 0) {
-    Engine_ScriptWait(20);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_SATUROS, 4);
-    Engine_ScriptWait(20);
+  FieldMessage_ShowAtObject(LOCALID_SATUROS, 0);
+  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
+    FieldScript_WaitFrames(20);
+    ObjectMotion_SetAnimationAndWait(LOCALID_SATUROS, 4);
+    FieldScript_WaitFrames(20);
     Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 20);
     gFieldWork->message++;
   } else {
-    Engine_ScriptWait(20);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_SATUROS, 4);
-    Engine_ScriptWait(20);
+    FieldScript_WaitFrames(20);
+    ObjectMotion_SetAnimationAndWait(LOCALID_SATUROS, 4);
+    FieldScript_WaitFrames(20);
     gFieldWork->message++;
     Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 20);
   }
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_SATUROS, 2);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_SATUROS, 2);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 20);
   ObjectEvent_WalkToAndWait(LOCALID_SATUROS, 328, 200);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_SATUROS, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_SATUROS, 2);
   ObjectEvent_FaceDirection(LOCALID_SATUROS, FACING_NORTHWEST + FACING_STEP,
                             20);
   ObjectEvent_Get(LOCALID_SATUROS)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
   ObjectEvent_WalkToAndWait(LOCALID_SATUROS, 336, 208);
-  Engine_ScriptWait(1);
+  FieldScript_WaitFrames(1);
   ObjectEvent_GetById(LOCALID_SATUROS)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
   ObjectEvent_ShowEmote(LOCALID_SATUROS, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Script_ShowMessageAndWait(MIA, 0, 20);
   Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 20);
   ObjectEvent_FaceDirection(LOCALID_SATUROS, FACING_SOUTH + FACING_STEP, 20);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_SATUROS, 2);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_SATUROS, 2);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 20);
   ObjectEvent_WalkToAndWait(LOCALID_SATUROS, 336, 216);
   FieldScript_SetNextDestination((s32)&MapId_MercuryLighthouseAerie, 2);
@@ -937,7 +931,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   // Saturos: ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY, slot 2.
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY,
                                         2);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Lighthouse Aerie, at MERCURY_LIGHTHOUSE_AERIE_AFTER_SATUROS_BATTLE, back
@@ -949,7 +943,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
 /// FLAG_SATUROS_BEATEN_AT_MERCURY.
 static void MercuryLighthouseAerie_AlexAppears(void) {
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   ObjectEvent_Get(LOCALID_LIFT_STATUE)->motionFlags = 0;
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(344), PIXELS(224));
   ObjectEvent_SetPosition(GARET, PIXELS(328), PIXELS(224));
@@ -961,33 +955,33 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   ObjectEvent_FaceDirection(MIA, FACING_NORTH, 0);
   ObjectEvent_SetPosition(LOCALID_SATUROS, PIXELS(336), PIXELS(176));
   Engine_ObjectEventSetAnimation(LOCALID_SATUROS, 9);
-  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_SATUROS), 0);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_SATUROS), 0);
   FieldCamera_MoveTo(PIXELS(336), -1, PIXELS(208), 0);
-  Engine_TaskWait(1);
-  Engine_MapGridRedraw();
-  Engine_TaskWait(1);
+  WaitFrames(1);
+  MapGrid_CenterOnFollowedPoint();
+  WaitFrames(1);
 
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  Engine_ScriptOpenScreen();
-  Engine_ScriptWaitForScreen();
-  Engine_ScriptWait(60);
-  Engine_ObjectEventRunRepeatedMotion(GARET, 2);
-  Engine_ScriptWait(20);
+  FieldScript_StartScreenTransition();
+  FieldScript_WaitTransitionFrames();
+  FieldScript_WaitFrames(60);
+  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
+  FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(GARET, FACING_EAST, 20);
-  Engine_ScriptSetMessage(MsgMercuryGot);
+  FieldScript_SetMessageId(MsgMercuryGot);
   Script_ShowMessageAndWait(GARET, 0, 20);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ScriptWait(20);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_SATUROS, 2);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  FieldScript_WaitFrames(20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_SATUROS, 2);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 20);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(GARET, FACING_NORTH, 20);
   ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Script_ShowMessageAndWait(IVAN, 0, 20);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_SATUROS, 2);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_SATUROS, 2);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 30);
   ObjectEvent_SetPosition(LOCALID_ALEX, PIXELS(312), PIXELS(112));
   Script_PlaySong(SE_STOP_SLOT3);
@@ -996,31 +990,31 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Script_ShowMessageAndWait(MIA, 0, 30);
   Script_PlaySong(MUS_029);
   FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
-  Engine_ScriptGetViewCenter()->motionFlags = 0;
+  FieldCamera_GetScriptObject()->motionFlags = 0;
   FieldCamera_MoveTo(PIXELS(336), -1, PIXELS(168), 1);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   ObjectEvent_SetSpeed(LOCALID_ALEX, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_ALEX, 344, 136);
   ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_SOUTH + FACING_STEP, 20);
-  Engine_CameraWaitForMove();
+  FieldCamera_WaitForArrival();
   Script_ShowMessageAndWait(MIA, 0, 30);
   FieldCamera_MoveTo(PIXELS(336), -1, PIXELS(184), 1);
   ObjectEvent_WalkToAndWait(LOCALID_ALEX, 344, 160);
   ObjectEvent_WalkToAndWait(LOCALID_ALEX, 328, 168);
   ObjectEvent_WalkToAndWait(LOCALID_ALEX, 312, 176);
   ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_SOUTHEAST + FACING_STEP, 20);
-  Engine_CameraWaitForMove();
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_ALEX, 3);
-  Engine_ScriptWait(20);
+  FieldCamera_WaitForArrival();
+  ObjectMotion_SetAnimationAndWait(LOCALID_ALEX, 3);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 0);
   ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(IVAN, FACING_WEST, 20);
-  Engine_ObjectEventRunRepeatedMotion(MIA, 2);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(MIA, 2);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(MIA, 0, 20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_ALEX, 4);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_ALEX, 4);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
   ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST, 0);
   ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 0);
@@ -1031,171 +1025,171 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 0);
   ObjectEvent_FaceDirection(MIA, FACING_NORTH, 20);
   Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(MIA, 0, 20);
-  Engine_ObjectEventStartRepeatedMotion(LOCALID_ALEX, 2);
+  ObjectMotion_SetVariantCallback(LOCALID_ALEX, 2);
   ObjectEvent_ShowEmote(LOCALID_ALEX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_SOUTHEAST + FACING_STEP, 20);
   Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
   ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_ALEX, 4);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_ALEX, 4);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
-  Engine_ObjectEventRunRepeatedMotion(MIA, 2);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(MIA, 2);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(MIA, 0, 20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_ALEX, 3);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_ALEX, 3);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
-  Engine_ObjectEventRunRepeatedMotion(MIA, 1);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(MIA, 1);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(MIA, 0, 20);
   ObjectEvent_WalkToAndWait(LOCALID_ALEX, 312, 184);
   ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_SOUTHEAST + FACING_STEP, 20);
   Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
-  Engine_ObjectEventRunRepeatedMotion(GARET, 2);
-  Engine_ScriptWait(10);
+  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
+  FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(GARET, FACING_EAST, 20);
-  Engine_ScriptOpenMessage(GARET, 0);
-  if (Engine_ScriptChooseYesNo(0, 0) == 0) {
-    Engine_ObjectEventRunRepeatedMotion(GARET, 2);
+  FieldMessage_ShowAtObject(GARET, 0);
+  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
+    ObjectMotion_SetVarCbAndRefresh(GARET, 2);
     Script_ShowMessageAndWait(GARET, 0, 20);
     gFieldWork->message++;
   } else {
     gFieldWork->message++;
-    Engine_ObjectEventRunRepeatedMotion(GARET, 1);
+    ObjectMotion_SetVarCbAndRefresh(GARET, 1);
     Script_ShowMessageAndWait(GARET, 0, 20);
   }
   Script_ShowMessageAndWait(IVAN, 0, 20);
   ObjectEvent_FaceDirection(GARET, FACING_NORTH, 20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_ALEX, 3);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_ALEX, 3);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
   ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_NORTH + FACING_STEP, 20);
   Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
   ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_SOUTHEAST + FACING_STEP, 20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_ALEX, 4);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_ALEX, 4);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
   ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Script_ShowMessageAndWait(MIA, 0, 20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_ALEX, 4);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_ALEX, 4);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
   ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_NORTHWEST + FACING_STEP, 20);
   Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_ALEX, 2);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_ALEX, 2);
+  FieldScript_WaitFrames(30);
   Script_ShowMessage(LOCALID_ALEX, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventRunRepeatedMotion(GARET, 2);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
+  FieldScript_WaitFrames(30);
   Script_ShowMessage(GARET, 0);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_SOUTHEAST, 0);
-  Engine_ScriptWait(30);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_ALEX, 4);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(30);
+  ObjectMotion_SetAnimationAndWait(LOCALID_ALEX, 4);
+  FieldScript_WaitFrames(20);
   Script_ShowMessage(LOCALID_ALEX, 0);
-  Engine_ScriptWait(20);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_ALEX, 2);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_ALEX, 2);
+  FieldScript_WaitFrames(30);
   Script_ShowMessage(LOCALID_ALEX, 0);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Script_ShowMessage(IVAN, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_ALEX, 3);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetAnimationAndWait(LOCALID_ALEX, 3);
+  FieldScript_WaitFrames(30);
   Script_ShowMessage(LOCALID_ALEX, 0);
-  Engine_ScriptWait(20);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_ALEX, 2);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_ALEX, 2);
+  FieldScript_WaitFrames(30);
   Script_ShowMessage(LOCALID_ALEX, 0);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_EAST + FACING_STEP, 0);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(30);
   ObjectEvent_ShowEmote(LOCALID_ALEX, EMOTE_IN_FRONT | EMOTE_SMILE, 60);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_SATUROS, 2);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_SATUROS, 2);
+  FieldScript_WaitFrames(30);
   Engine_ObjectEventSetAnimation(LOCALID_SATUROS, 8);
-  Engine_ScriptWait(45);
+  FieldScript_WaitFrames(45);
   Engine_ObjectEventSetAnimation(LOCALID_SATUROS, 1);
-  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_SATUROS),
-                                   SPRITE_FLAG_SHADOW);
-  Engine_ScriptWait(40);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_SATUROS),
+                             SPRITE_FLAG_SHADOW);
+  FieldScript_WaitFrames(40);
   ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Script_ShowMessage(IVAN, 0);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_SATUROS, FACING_SOUTHEAST, 0);
-  Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_SATUROS, 4);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_SATUROS, 4);
+  FieldScript_WaitFrames(30);
   Script_ShowMessage(LOCALID_SATUROS, 0);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_SOUTHEAST, 0);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(30);
   Script_ShowMessage(LOCALID_ALEX, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventRunRepeatedMotion(MIA, 2);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetVarCbAndRefresh(MIA, 2);
+  FieldScript_WaitFrames(30);
   Script_ShowMessage(MIA, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventFaceEachOther(LOCALID_ALEX, LOCALID_SATUROS, 0);
-  Engine_ScriptWait(35);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_SATUROS, 3);
-  Engine_ScriptWait(30);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_ALEX, 3);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(10);
+  ObjectEvent_LinkPair(LOCALID_ALEX, LOCALID_SATUROS, 0);
+  FieldScript_WaitFrames(35);
+  ObjectMotion_SetAnimationAndWait(LOCALID_SATUROS, 3);
+  FieldScript_WaitFrames(30);
+  ObjectMotion_SetAnimationAndWait(LOCALID_ALEX, 3);
+  FieldScript_WaitFrames(20);
   ObjectEvent_WalkToAndWait(LOCALID_ALEX, 328, 176);
   ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_SOUTHEAST + FACING_STEP, 20);
   Engine_ObjectEventSetAnimation(LOCALID_ALEX, 5);
   Engine_ObjectEventSetAnimation(LOCALID_SATUROS, 7);
-  Engine_ScriptWait(20);
-  Engine_ObjectEventRunRepeatedMotion(GARET, 1);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
+  ObjectMotion_SetVarCbAndRefresh(GARET, 1);
+  FieldScript_WaitFrames(20);
   Script_ShowMessage(GARET, 0);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   ObjectEvent_ShowEmote(LOCALID_ALEX, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Engine_ScriptOpenMessage(LOCALID_ALEX, 0);
-  Engine_ScriptWait(30);
-  Engine_ObjectEventStartRepeatedMotion(GARET, 2);
-  Engine_ObjectEventStartRepeatedMotion(IVAN, 2);
-  Engine_ObjectEventRunRepeatedMotion(MIA, 2);
+  FieldMessage_ShowAtObject(LOCALID_ALEX, 0);
+  FieldScript_WaitFrames(30);
+  ObjectMotion_SetVariantCallback(GARET, 2);
+  ObjectMotion_SetVariantCallback(IVAN, 2);
+  ObjectMotion_SetVarCbAndRefresh(MIA, 2);
   ObjectEvent_FaceDirection(GARET, FACING_EAST, 0);
   ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST, 0);
-  Engine_ScriptWait(20);
-  if (Engine_ScriptChooseYesNo(0, 0) == 0) {
-    Engine_ScriptWait(30);
+  FieldScript_WaitFrames(20);
+  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
+    FieldScript_WaitFrames(30);
     Script_ShowMessage(LOCALID_ALEX, 0);
     gFieldWork->message++;
   } else {
-    Engine_ScriptWait(30);
+    FieldScript_WaitFrames(30);
 
     gFieldWork->message++;
     Script_ShowMessage(LOCALID_ALEX, 0);
   }
-  Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_ALEX, 4);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_ALEX, 4);
+  FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 0);
   ObjectEvent_FaceDirection(MIA, FACING_NORTH, 0);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessage(LOCALID_ALEX, 0);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_SATUROS, 1);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_SATUROS, 1);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 20);
   MercuryLighthouseAerie_SaturosAndAlexWarpOut();
-  Engine_ScriptWait(20);
-  Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 2);
-  Engine_ObjectEventStartRepeatedMotion(GARET, 2);
-  Engine_ObjectEventStartRepeatedMotion(IVAN, 2);
-  Engine_ObjectEventRunRepeatedMotion(MIA, 2);
+  FieldScript_WaitFrames(20);
+  ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
+  ObjectMotion_SetVariantCallback(GARET, 2);
+  ObjectMotion_SetVariantCallback(IVAN, 2);
+  ObjectMotion_SetVarCbAndRefresh(MIA, 2);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 5);
   ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST, 5);
   ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 5);
@@ -1204,9 +1198,9 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   ObjectEvent_FaceDirection(GARET, FACING_NORTHWEST, 5);
   ObjectEvent_FaceDirection(IVAN, FACING_WEST, 5);
   ObjectEvent_FaceDirection(MIA, FACING_EAST, 5);
-  Engine_ScriptGetViewCenter()->motionFlags = 0;
+  FieldCamera_GetScriptObject()->motionFlags = 0;
   FieldCamera_MoveTo(PIXELS(280), -1, PIXELS(232), 1);
-  Engine_CameraWaitForMove();
+  FieldCamera_WaitForArrival();
   ObjectEvent_SetChildValue(LOCALID_SATUROS, 0xF);
   ObjectEvent_SetChildValue(LOCALID_ALEX, 0xF);
   ObjectEvent_SetPosition(LOCALID_SATUROS, PIXELS(240), PIXELS(208));
@@ -1222,22 +1216,22 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   ObjectEvent_WalkTo(IVAN, 336, 224);
   ObjectEvent_WalkToAndWait(GARET, 312, 216);
   ObjectEvent_FaceDirection(GARET, FACING_WEST, 0);
-  Engine_ObjectEventWaitForMove(IVAN);
+  ObjectMotion_CommitCurrentPositionAndActivate(IVAN);
   ObjectEvent_FaceDirection(IVAN, FACING_WEST, 0);
-  Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 30);
   Script_ShowMessageAndWait(GARET, 0, 20);
-  Engine_ObjectEventRunRepeatedMotion(MIA, 2);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(MIA, 2);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(MIA, 0, 20);
   ObjectEvent_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 20);
   Script_ShowMessageAndWait(GARET, 0, 20);
   ObjectEvent_FaceDirection(GARET, FACING_WEST, 20);
-  Engine_ObjectEventRunRepeatedMotion(IVAN, 1);
+  ObjectMotion_SetVarCbAndRefresh(IVAN, 1);
   ObjectEvent_FaceDirection(IVAN, FACING_SOUTHWEST, 20);
   Script_ShowMessageAndWait(IVAN, 0, 20);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(MIA, 0, 20);
   ObjectEvent_FaceDirection(IVAN, FACING_WEST, 20);
   Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
@@ -1249,75 +1243,75 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
     lift = &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
     lift->offsetY = PIXELS(896);
     cells = gMapGridWork;
-    Engine_MapGridRedraw();
-    Engine_TaskWait(1);
+    MapGrid_CenterOnFollowedPoint();
+    WaitFrames(1);
     ObjectEvent_Get(LOCALID_LIFT_STATUE)->motionFlags = 0;
     ObjectEvent_SetPosition(LOCALID_LIFT_STATUE, PIXELS(104), PIXELS(264));
     ObjectEvent_Get(LOCALID_LIFT_STATUE)->y.fixed = -PIXELS(32);
     ObjectEvent_GetById(LOCALID_LIFT_STATUE)->targetY = -PIXELS(32);
     MapGrid_CopyCellsTo(0x1D, 0x4A, 4, 0x4A, 5, 4);
-    Engine_ObjectEventSetSpritePriority(LOCALID_FIRST_LIFT_PLATFORM, 0);
-    Engine_ObjectEventSetSpritePriority(LOCALID_SECOND_LIFT_PLATFORM, 0);
+    ObjectMotion_SetActionVariant(LOCALID_FIRST_LIFT_PLATFORM, 0);
+    ObjectMotion_SetActionVariant(LOCALID_SECOND_LIFT_PLATFORM, 0);
     MercuryLighthouseAerie_RaiseLift();
-    Engine_ObjectEventSetSpritePriority(LOCALID_FIRST_LIFT_PLATFORM, 1);
-    Engine_ObjectEventSetSpritePriority(LOCALID_SECOND_LIFT_PLATFORM, 1);
-    Engine_CameraWaitForMove();
-    Engine_ScriptWait(30);
+    ObjectMotion_SetActionVariant(LOCALID_FIRST_LIFT_PLATFORM, 1);
+    ObjectMotion_SetActionVariant(LOCALID_SECOND_LIFT_PLATFORM, 1);
+    FieldCamera_WaitForArrival();
+    FieldScript_WaitFrames(30);
     ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_WEST, 20);
     Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
     FieldCamera_MoveTo(PIXELS(280), -1, PIXELS(216), 1);
-    Engine_CameraWaitForMove();
+    FieldCamera_WaitForArrival();
     ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_SOUTHEAST + FACING_STEP, 20);
     Engine_ObjectEventSetAnimation(LOCALID_ALEX, 5);
     Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
-    Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
-    Engine_ScriptWait(20);
+    ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
+    FieldScript_WaitFrames(20);
     ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 20);
     Script_ShowMessageAndWait(IVAN, 0, 20);
-    Engine_ObjectEventRunRepeatedMotion(GARET, 1);
-    Engine_ScriptWait(20);
+    ObjectMotion_SetVarCbAndRefresh(GARET, 1);
+    FieldScript_WaitFrames(20);
     Script_ShowMessageAndWait(GARET, 0, 20);
     ObjectEvent_ShowEmote(LOCALID_ALEX, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-    Engine_ScriptOpenMessage(LOCALID_ALEX, 0);
-    if (Engine_ScriptChooseYesNo(0, 0) == 0) {
-      Engine_ScriptWait(20);
-      Engine_ObjectEventRunRepeatedMotion(LOCALID_SATUROS, 2);
-      Engine_ScriptWait(20);
+    FieldMessage_ShowAtObject(LOCALID_ALEX, 0);
+    if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
+      FieldScript_WaitFrames(20);
+      ObjectMotion_SetVarCbAndRefresh(LOCALID_SATUROS, 2);
+      FieldScript_WaitFrames(20);
       Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 20);
       ((struct EventWork *)cells[19])->message++;
     } else {
       ((struct EventWork *)cells[19])->message++;
-      Engine_ScriptWait(20);
+      FieldScript_WaitFrames(20);
       Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 20);
     }
   }
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_ALEX, 2);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_ALEX, 2);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
                         0);
   ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Engine_ScriptOpenMessage(LOCALID_ALEX, 0);
-  if (Engine_ScriptChooseYesNo(0, 0) == 0) {
-    Engine_ScriptWait(20);
-    Engine_ObjectEventRunRepeatedMotion(LOCALID_ALEX, 2);
-    Engine_ScriptWait(20);
+  FieldMessage_ShowAtObject(LOCALID_ALEX, 0);
+  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
+    FieldScript_WaitFrames(20);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_ALEX, 2);
+    FieldScript_WaitFrames(20);
     Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
     gFieldWork->message++;
   } else {
     gFieldWork->message++;
-    Engine_ScriptWait(20);
-    Engine_ObjectEventRunRepeatedMotion(LOCALID_ALEX, 1);
-    Engine_ScriptWait(20);
+    FieldScript_WaitFrames(20);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_ALEX, 1);
+    FieldScript_WaitFrames(20);
     Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
   }
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   MercuryLighthouseAerie_SaturosAndAlexWarpOut();
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   FieldCamera_MoveTo(PIXELS(128), -1, PIXELS(200), 1);
-  Engine_CameraWaitForMove();
+  FieldCamera_WaitForArrival();
   Engine_ObjectEventSetAnimation(LOCALID_SATUROS, 1);
   Engine_ObjectEventSetAnimation(LOCALID_ALEX, 1);
   ObjectEvent_SetChildValue(LOCALID_SATUROS, 0xF);
@@ -1327,43 +1321,43 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   ObjectEvent_FaceDirection(LOCALID_SATUROS, FACING_SOUTH + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_SOUTHEAST + FACING_STEP, 0);
   MercuryLighthouseAerie_SaturosAndAlexWarpIn();
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(30);
   ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_EAST, 20);
-  Engine_ScriptOpenMessage(LOCALID_ALEX, 0);
-  if (Engine_ScriptChooseYesNo(0, 0) == 0) {
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_ALEX, 3);
-    Engine_ScriptWait(20);
+  FieldMessage_ShowAtObject(LOCALID_ALEX, 0);
+  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
+    ObjectMotion_SetAnimationAndWait(LOCALID_ALEX, 3);
+    FieldScript_WaitFrames(20);
     Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
     gFieldWork->message++;
   } else {
     gFieldWork->message++;
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_ALEX, 4);
-    Engine_ScriptWait(20);
+    ObjectMotion_SetAnimationAndWait(LOCALID_ALEX, 4);
+    FieldScript_WaitFrames(20);
     Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
   }
   Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_SATUROS, 1);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_SATUROS, 1);
+  FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_SATUROS, FACING_EAST, 20);
   Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 20);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_EAST, 20);
-  Engine_ObjectEventSetSpritePriority(LOCALID_FIRST_LIFT_PLATFORM, 0);
-  Engine_ObjectEventSetSpritePriority(LOCALID_SECOND_LIFT_PLATFORM, 0);
+  ObjectMotion_SetActionVariant(LOCALID_FIRST_LIFT_PLATFORM, 0);
+  ObjectMotion_SetActionVariant(LOCALID_SECOND_LIFT_PLATFORM, 0);
   MercuryLighthouseAerie_LowerLift();
-  Engine_ObjectEventSetSpritePriority(LOCALID_FIRST_LIFT_PLATFORM, 1);
-  Engine_ObjectEventSetSpritePriority(LOCALID_SECOND_LIFT_PLATFORM, 1);
+  ObjectMotion_SetActionVariant(LOCALID_FIRST_LIFT_PLATFORM, 1);
+  ObjectMotion_SetActionVariant(LOCALID_SECOND_LIFT_PLATFORM, 1);
   Script_PlaySong(SONG_FADE_OUT_BGM);
   FieldCamera_MoveTo(PIXELS(336), -1, PIXELS(216), 1);
-  Engine_CameraWaitForMove();
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
-  Engine_ScriptWait(20);
+  FieldCamera_WaitForArrival();
+  ObjectMotion_SetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
+  FieldScript_WaitFrames(20);
   Map_PlayMusic();
   Script_ShowMessageAndWait(IVAN, 0, 20);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 22);
-  Engine_ObjectEventRunRepeatedMotion(GARET, 2);
-  Engine_ScriptWait(10);
+  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
+  FieldScript_WaitFrames(10);
   Script_ShowMessageAndWait(GARET, 0, 20);
   ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Script_ShowMessageAndWait(MIA, 0, 20);
@@ -1372,44 +1366,44 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   ObjectEvent_FaceDirection(MIA, FACING_WEST, 20);
   Engine_ObjectEventSetAnimation(MIA, 0x10);
   ObjectEvent_Get(MIA)->scaleX = -Q16_ONE;
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(MIA, 0, 40);
-  Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
+  FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 20);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
-  Engine_ScriptWait(20);
-  Engine_ScriptOpenMessage(IVAN, 0);
+  ObjectMotion_SetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
+  FieldScript_WaitFrames(20);
+  FieldMessage_ShowAtObject(IVAN, 0);
   Engine_ObjectEventSetAnimation(MIA, ANIMATION_STAND);
   ObjectEvent_Get(MIA)->scaleX = Q16_ONE;
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST, 0);
   ObjectEvent_FaceDirection(MIA, FACING_NORTH, 20);
-  if (Engine_ScriptChooseYesNo(0, 0) == 0) {
-    Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
-    Engine_ScriptWait(20);
+  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
+    ObjectMotion_SetAnimationAndWait(IVAN, ANIMATION_NOD);
+    FieldScript_WaitFrames(20);
     Script_ShowMessageAndWait(IVAN, 0, 20);
     gFieldWork->message++;
   } else {
     gFieldWork->message++;
-    Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
-    Engine_ScriptWait(20);
+    ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
+    FieldScript_WaitFrames(20);
     Script_ShowMessageAndWait(IVAN, 0, 20);
   }
   ObjectEvent_FaceDirection(IVAN, FACING_SOUTHWEST, 20);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetAnimationAndWait(IVAN, ANIMATION_NOD);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(IVAN, 0, 20);
   ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST, 30);
   ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST, 20);
-  Engine_ObjectEventRunRepeatedMotion(GARET, 1);
-  Engine_ScriptWait(10);
+  ObjectMotion_SetVarCbAndRefresh(GARET, 1);
+  FieldScript_WaitFrames(10);
   Script_ShowMessageAndWait(GARET, 0, 20);
   ObjectEvent_FaceDirection(MIA, FACING_NORTHWEST, 20);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_NOD);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(MIA, 0, 20);
-  Engine_ObjectEventRunRepeatedMotion(MIA, 1);
+  ObjectMotion_SetVarCbAndRefresh(MIA, 1);
   Script_ShowMessageAndWait(MIA, 0, 20);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
                         0);
@@ -1422,64 +1416,64 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   ObjectEvent_Get(GARET)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
   ObjectEvent_WalkTo(GARET, 312, 200);
   ObjectEvent_WalkTo(MIA, 280, 216);
-  Engine_ObjectEventWaitForMove(GARET);
+  ObjectMotion_CommitCurrentPositionAndActivate(GARET);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 0);
   ObjectEvent_FaceDirection(GARET, FACING_SOUTHWEST, 0);
-  Engine_ObjectEventWaitForMove(MIA);
-  Engine_ObjectEventRunRepeatedMotion(MIA, 2);
-  Engine_ScriptWait(30);
+  ObjectMotion_CommitCurrentPositionAndActivate(MIA);
+  ObjectMotion_SetVarCbAndRefresh(MIA, 2);
+  FieldScript_WaitFrames(30);
   ObjectEvent_FaceDirection(MIA, FACING_EAST, 20);
   Script_ShowMessageAndWait(MIA, 0, 20);
-  Engine_ObjectEventRunRepeatedMotion(GARET, 1);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(GARET, 1);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(GARET, 0, 20);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
-  Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 2);
-  Engine_ObjectEventStartRepeatedMotion(IVAN, 2);
-  Engine_ObjectEventStartRepeatedMotion(GARET, 2);
+  ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_NOD);
+  ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
+  ObjectMotion_SetVariantCallback(IVAN, 2);
+  ObjectMotion_SetVariantCallback(GARET, 2);
   ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
                                                           ATTACHED_EFFECT_ONCE);
   ObjectEvent_SetAttachedEffect(GARET, ATTACHED_EFFECT_IN_FRONT |
                                            ATTACHED_EFFECT_ONCE);
   ObjectEvent_SetAttachedEffect(IVAN, ATTACHED_EFFECT_IN_FRONT |
                                           ATTACHED_EFFECT_ONCE);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   Script_ShowMessageAndWait(IVAN, 0, 20);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(MIA, 0, 20);
   ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST, 20);
   Script_ShowMessageAndWait(MIA, 0, 20);
   ObjectEvent_FaceDirection(MIA, FACING_EAST, 20);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(MIA, 0, 30);
   ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST, 0);
   ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 20);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
   Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
-  Engine_ScriptWait(30);
+  ObjectMotion_SetAnimationAndWait(IVAN, ANIMATION_NOD);
+  FieldScript_WaitFrames(30);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 0);
   ObjectEvent_FaceDirection(GARET, FACING_SOUTHWEST, 0);
   ObjectEvent_FaceDirection(IVAN, FACING_SOUTHWEST, 40);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
   Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
-  Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetAnimationAndWait(IVAN, ANIMATION_NOD);
+  FieldScript_WaitFrames(20);
+  ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_NOD);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(MIA, 0, 20);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 312, 216);
   ObjectEvent_WalkTo(GARET, 312, 216);
   ObjectEvent_WalkTo(IVAN, 312, 216);
   ObjectEvent_WalkTo(MIA, 312, 216);
-  Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
-  Engine_ObjectEventWaitForMove(GARET);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
+  ObjectMotion_CommitCurrentPositionAndActivate(GARET);
   ObjectEvent_SetPosition(GARET, 0, 0);
-  Engine_ObjectEventWaitForMove(IVAN);
+  ObjectMotion_CommitCurrentPositionAndActivate(IVAN);
   ObjectEvent_SetPosition(IVAN, 0, 0);
-  Engine_ObjectEventWaitForMove(MIA);
+  ObjectMotion_CommitCurrentPositionAndActivate(MIA);
   ObjectEvent_SetPosition(MIA, 0, 0);
   {
     struct MapGridLayerScroll *lift =
@@ -1487,12 +1481,12 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
 
     lift->offsetY = PIXELS(1024);
   }
-  Engine_MapGridRedraw();
-  Engine_TaskWait(1);
+  MapGrid_CenterOnFollowedPoint();
+  WaitFrames(1);
   MapGrid_CopyCellsTo(4, 0x46, 4, 0x4A, 5, 4);
   GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_AERIE_ALEX_APPEARED);
   GameFlag_Set(FLAG_SATUROS_BEATEN_AT_MERCURY);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Lighthouse Aerie: touching metatile behavior 6 while the lift is down. The
@@ -1501,28 +1495,28 @@ static void MercuryLighthouseAerie_CallLift(void) {
   struct MapGridLayerScroll *lift;
 
   lift = &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
-  Engine_ScriptStart();
+  FieldScript_Start();
   lift->offsetY = PIXELS(896);
-  Engine_MapGridRedraw();
-  Engine_TaskWait(1);
+  MapGrid_CenterOnFollowedPoint();
+  WaitFrames(1);
   ObjectEvent_GetById(LOCALID_LIFT_STATUE)->motionFlags = 0;
   Engine_ObjectEventSetPosition(LOCALID_LIFT_STATUE, PIXELS(104), PIXELS(264));
   ObjectEvent_GetById(LOCALID_LIFT_STATUE)->y.fixed = -PIXELS(32);
   ObjectEvent_GetById(LOCALID_LIFT_STATUE)->targetY = -PIXELS(32);
-  Engine_ScriptGetViewCenter()->motionFlags = 0;
-  Engine_CameraSetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
-  Engine_CameraMoveTo(PIXELS(128), -1, PIXELS(184), 1);
-  Engine_CameraWaitForMove();
-  Engine_ScriptWait(30);
+  FieldCamera_GetScriptObject()->motionFlags = 0;
+  FieldCamera_SetSpeedParameters(PIXELS(4) / 5, PIXELS(1) / 10);
+  FieldCamera_MoveWithinMapBounds(PIXELS(128), -1, PIXELS(184), 1);
+  FieldCamera_WaitForArrival();
+  FieldScript_WaitFrames(30);
   MapGrid_CopyCellsTo(29, 74, 4, 74, 5, 4);
-  Engine_ObjectEventSetSpritePriority(LOCALID_FIRST_LIFT_PLATFORM, 0);
-  Engine_ObjectEventSetSpritePriority(LOCALID_SECOND_LIFT_PLATFORM, 0);
+  ObjectMotion_SetActionVariant(LOCALID_FIRST_LIFT_PLATFORM, 0);
+  ObjectMotion_SetActionVariant(LOCALID_SECOND_LIFT_PLATFORM, 0);
   MercuryLighthouseAerie_RaiseLift();
-  Engine_ObjectEventSetSpritePriority(LOCALID_FIRST_LIFT_PLATFORM, 1);
-  Engine_ObjectEventSetSpritePriority(LOCALID_SECOND_LIFT_PLATFORM, 1);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetActionVariant(LOCALID_FIRST_LIFT_PLATFORM, 1);
+  ObjectMotion_SetActionVariant(LOCALID_SECOND_LIFT_PLATFORM, 1);
+  FieldScript_WaitFrames(20);
   Engine_GameFlagSet(FLAG_LIFT_UP);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Lighthouse Aerie: touching metatile behavior 12. The leader steps onto the
@@ -1530,17 +1524,17 @@ static void MercuryLighthouseAerie_CallLift(void) {
 /// MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE by the Fountain of
 /// Healing.
 static void MercuryLighthouseAerie_RideLiftDown(void) {
-  Engine_ScriptStart();
+  FieldScript_Start();
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 104, 152);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 60);
-  Engine_ObjectEventSetSpritePriority(LOCALID_FIRST_LIFT_PLATFORM, 0);
-  Engine_ObjectEventSetSpritePriority(LOCALID_SECOND_LIFT_PLATFORM, 0);
+  ObjectMotion_SetActionVariant(LOCALID_FIRST_LIFT_PLATFORM, 0);
+  ObjectMotion_SetActionVariant(LOCALID_SECOND_LIFT_PLATFORM, 0);
   MercuryLighthouseAerie_LowerLift();
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Engine_ScriptRequestWarp(
       MERCURY_LIGHTHOUSE_AERIE_TO_MERCURY_LIGHTHOUSE_EXTERIOR);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Saturos and Alex warp out in a column of sparkles and vanish.
@@ -1555,11 +1549,11 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void) {
 
   left = ObjectEvent_GetById(LOCALID_SATUROS);
   right = ObjectEvent_GetById(LOCALID_ALEX);
-  Engine_AudioPlayCue(SE_190);
+  Sound_PlaySong(SE_190);
   ObjectEvent_SetChildValue(LOCALID_SATUROS, 0x100);
-  Engine_ObjectEventSetChildValue(LOCALID_ALEX, 0x100);
-  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_SATUROS), 0);
-  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_ALEX), 0);
+  ObjectGroup_ConfigureChildValue(LOCALID_ALEX, 0x100);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_SATUROS), 0);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_ALEX), 0);
   options = &optionsStorage;
   options->priority = 1;
   options->palette = 5;
@@ -1567,7 +1561,7 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void) {
   options->startScaleX = 2 * Q16_ONE / 5;
   options->startScaleY = 3 * Q16_ONE;
   for (i = 0; i <= 31; i++) {
-    Engine_ScriptWait(1);
+    FieldScript_WaitFrames(1);
     if (i & 1) {
       r = ((((u32)Engine_RandomNext() * 24) >> 16) << 16);
       x = left->x.fixed;
@@ -1612,9 +1606,9 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpIn(void) {
 
   left = ObjectEvent_GetById(LOCALID_SATUROS);
   right = ObjectEvent_GetById(LOCALID_ALEX);
-  Engine_AudioPlayCue(SE_190);
-  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_SATUROS), 0);
-  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_ALEX), 0);
+  Sound_PlaySong(SE_190);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_SATUROS), 0);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_ALEX), 0);
   options = &optionsStorage;
   options->priority = 1;
   options->palette = 5;
@@ -1622,7 +1616,7 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpIn(void) {
   options->startScaleX = 2 * Q16_ONE / 5;
   options->startScaleY = 3 * Q16_ONE;
   for (i = 0; i <= 31; i++) {
-    Engine_ScriptWait(1);
+    FieldScript_WaitFrames(1);
     if (i & 1) {
       r = ((((u32)Engine_RandomNext() * 24) >> 16) << 16);
       x = left->x.fixed;
@@ -1652,15 +1646,15 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpIn(void) {
     }
     if (i == 20) {
       ObjectEvent_SetChildValue(LOCALID_SATUROS, 0x100);
-      Engine_ObjectEventSetChildValue(LOCALID_ALEX, 0x100);
+      ObjectGroup_ConfigureChildValue(LOCALID_ALEX, 0x100);
     }
   }
-  Engine_ObjectEventSetChildValue(LOCALID_SATUROS, 0);
-  Engine_ObjectEventSetChildValue(LOCALID_ALEX, 0);
-  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_SATUROS),
-                                   SPRITE_FLAG_SHADOW);
-  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_ALEX),
-                                   SPRITE_FLAG_SHADOW);
+  ObjectGroup_ConfigureChildValue(LOCALID_SATUROS, 0);
+  ObjectGroup_ConfigureChildValue(LOCALID_ALEX, 0);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_SATUROS),
+                             SPRITE_FLAG_SHADOW);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_ALEX),
+                             SPRITE_FLAG_SHADOW);
 }
 
 /// MercuryLighthouseAerie_LowerLift passes its lift as a third
@@ -1709,7 +1703,7 @@ static void MercuryLighthouseAerie_LowerLift(void) {
     ObjectEvent_GetById(ids[i])->motionFlags = 0;
     n++;
   }
-  Engine_AudioPlayCue(SE_LIFT);
+  Sound_PlaySong(SE_LIFT);
   for (i = 0; i <= 227; i++) {
     lift->offsetY -= speed;
     for (j = 0; j < n; j++) {
@@ -1721,7 +1715,7 @@ static void MercuryLighthouseAerie_LowerLift(void) {
       speed += 0x1999;
     if (speed > 0x17fff)
       speed = 0x18000;
-    Engine_TaskWait(1);
+    WaitFrames(1);
   }
   for (i = 0; i < n; i++)
     ObjectEvent_GetById(ids[i])->motionFlags = 0;
@@ -1749,7 +1743,7 @@ static void MercuryLighthouseAerie_RaiseLift(void) {
     ObjectEvent_GetById(ids[i])->motionFlags = 0;
     n++;
   }
-  Engine_AudioPlayCue(SE_LIFT);
+  Sound_PlaySong(SE_LIFT);
   for (i = 0; i <= 85; i++) {
     lift->offsetY += speed;
     for (j = 0; j < n; j++) {
@@ -1761,11 +1755,11 @@ static void MercuryLighthouseAerie_RaiseLift(void) {
       speed += -0x3333;
     if (speed < 0xccc)
       speed = 0xccc;
-    Engine_TaskWait(1);
+    WaitFrames(1);
   }
   lift->offsetY = PIXELS(1024);
-  Engine_MapGridRedraw();
-  Engine_TaskWait(2);
+  MapGrid_CenterOnFollowedPoint();
+  WaitFrames(2);
 }
 
 /// Unused: Alex raises his hands and casts Ply on the lift's statue.
@@ -1773,11 +1767,11 @@ static void MercuryLighthouseAerie_RaiseLift(void) {
 /// Nothing calls it. In the game, Alex and Saturos warp over to the lift and
 /// ride it down without it (MercuryLighthouseAerie_AlexAppears).
 UNUSED static void MercuryLighthouseAerie_UnusedAlexCastsPly(void) {
-  Engine_PsynergyStart(ABILITY_PLY, 1);
-  Engine_PsynergySetTarget(LOCALID_ALEX, LOCALID_LIFT_STATUE);
-  Engine_PsynergyRaiseHands();
-  Engine_PsynergyPlayEffect(1);
-  Engine_PsynergyLowerHands();
+  FieldEffect_LoadActionEffectResources(ABILITY_PLY, 1);
+  FieldEffect_SetupObjectPair(LOCALID_ALEX, LOCALID_LIFT_STATUE);
+  FieldEffect_StartCast();
+  Field_DispatchTypeHandler(1);
+  FieldEffect_StopCasterHook();
   FieldEffect_End();
 }
 
@@ -1792,9 +1786,8 @@ MercuryLighthouseAerie_UpdateBeaconSpark(union FieldObject *fieldObject) {
 
   beacon = spark->linkedObject;
   angle = spark->timer;
-  spark->x.fixed =
-      beacon->x.fixed + Engine_MathCos(angle) * (spark->speed + 28);
-  spark->z.fixed = (Engine_MathSin(angle) << 4) + PIXELS(144);
+  spark->x.fixed = beacon->x.fixed + Trig_Cos(angle) * (spark->speed + 28);
+  spark->z.fixed = (Trig_Sin(angle) << 4) + PIXELS(144);
   spark->targetX = spark->x.fixed;
   spark->targetZ = spark->z.fixed;
   spark->timer -= 0x200;
@@ -1846,7 +1839,7 @@ static void MercuryLighthouseAerie_FlickerBeacon(void) {
     return;
   }
   sprite = spark->sprite;
-  Engine_ObjectSetScript(spark, gMercuryLighthouseAerie_SparkScript);
+  ObjectEvent_SetScript(spark, gMercuryLighthouseAerie_SparkScript);
   ObjectGroup_SetChildValue(spark, 3);
   spark->motionFlags = tick;
   angle = Engine_RandomNext() & 0x0ffff000;
@@ -1854,7 +1847,7 @@ static void MercuryLighthouseAerie_FlickerBeacon(void) {
   spark->work = tick;
   spark->linkedObject = beacon;
   spark->update = MercuryLighthouseAerie_UpdateBeaconSpark;
-  spark->speed = (Engine_MathSin((height & 0xfffff) >> 4) * 24) >> 16;
+  spark->speed = (Trig_Sin((height & 0xfffff) >> 4) * 24) >> 16;
   sprite->flags = 0;
   sprite->image.priority = beacon->sprite->image.priority;
 }

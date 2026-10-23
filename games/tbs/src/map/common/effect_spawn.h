@@ -120,6 +120,6 @@ EFFECT_SPAWN(FieldEffect_SpawnResident, Object_CreateFar,
              ObjectDispatch_SelectAnimationFar, ObjectDispatch_InitializeFar)
 #else
 /// Each overlay includes its own copy of this version.
-EFFECT_SPAWN(FieldEffect_Spawn, ObjectEvent_Create, ObjectEvent_SetMode,
-             ObjectEvent_SetScript)
+EFFECT_SPAWN(FieldEffect_Spawn, ObjectEvent_Create,
+             ObjectDispatch_SelectAnimation, ObjectEvent_SetScript)
 #endif

@@ -194,7 +194,7 @@ static s32 Leader_SpraySand(union FieldObject *fieldObject) {
   s32 phase;
 
   if ((gFrameCount & 7) == 0) {
-    Engine_AudioPlayCue(SE_118);
+    Sound_PlaySong(SE_118);
   }
   phase = gFrameCount & 15;
   if (phase != 0) {
@@ -271,7 +271,7 @@ const struct ObjectEventTemplate *LamakanDesert_GetObjectEventTemplates(void) {
 /// Master Hsu is still trapped, he is rescued without the party (see the file
 /// comment).
 static void LamakanDesert_LeaveForTheWorldMap(void) {
-  Engine_ScriptStart();
+  FieldScript_Start();
   if (GameFlag_IsSet(FLAG_HSU_RESCUED) == 0) {
     if (GameFlag_IsSet(FLAG_HSU_RESCUED_WITHOUT_PARTY) == 0) {
       GameFlag_Set(FLAG_HSU_RESCUED_WITHOUT_PARTY);
@@ -280,7 +280,7 @@ static void LamakanDesert_LeaveForTheWorldMap(void) {
   }
   Script_PlaySong(SE_MAP_EXIT);
   Engine_ScriptRequestWarp(LAMAKAN_DESERT_CAVE_TO_WORLD_MAP);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// The desert's map events, the same on every map.
@@ -304,7 +304,7 @@ static s32 Reveal_HideSecrets(void) {
 #endif
   s32 markerId;
 
-  Engine_GameFlagClear(FLAG_SECRETS_REVEALED);
+  GameFlag_ClearBit(FLAG_SECRETS_REVEALED);
   if (gGameState.mapId == (s32)&MapId_LamakanDesertEast) {
     MapGrid_CopyCells(70, 68, 4, 2, 22, 7);
     MapGrid_CopyCells(70, 68, 4, 2, 8, 10);
@@ -333,13 +333,13 @@ static s32 Reveal_HideSecrets(void) {
     MapGrid_CopyCells(70, 68, 4, 2, 27, 55);
     MapGrid_CopyCells(70, 68, 4, 2, 43, 56);
   } else if (gGameState.mapId == (s32)&MapId_LamakanDesertManticore) {
-    Engine_MapGridCopyCellsLayered(69, 99, 4, 2, 8, 16);
-    Engine_MapGridCopyCellsLayered(69, 99, 4, 2, 6, 20);
-    Engine_MapGridCopyCellsLayered(69, 99, 4, 2, 10, 23);
+    MapGrid_CopyCellIndexRect(69, 99, 4, 2, 8, 16);
+    MapGrid_CopyCellIndexRect(69, 99, 4, 2, 6, 20);
+    MapGrid_CopyCellIndexRect(69, 99, 4, 2, 10, 23);
     MapGrid_CopyCellAttributes(69, 99, 4, 2, 8, 14);
     MapGrid_CopyCellAttributes(69, 99, 4, 2, 6, 18);
     MapGrid_CopyCellAttributes(69, 99, 4, 1, 6, 20);
-    Engine_MapGridCopyCellAttributes(69, 99, 4, 2, 10, 21);
+    MapGrid_CopyCellAttributeRect(69, 99, 4, 2, 10, 21);
     MapGrid_CopyCells(0, 121, 5, 7, 8, 32);
     MapGrid_CopyCells(0, 121, 5, 7, 43, 32);
     MapGrid_CopyCells(6, 120, 3, 1, 9, 5);
@@ -355,7 +355,7 @@ static s32 Reveal_HideSecrets(void) {
   // Hide the treasure spots independently of the object event templates.
   markerId = 100;
   do {
-    Engine_MarkerSetPosition(markerId, 0, 0);
+    TreasureSpot_SetObjectEventPosition(markerId, 0, 0);
     markerId = markerId + 1;
   } while (markerId <= 107);
   if (gGameState.mapId != (s32)&MapId_LamakanDesertCave) {
@@ -377,7 +377,7 @@ static s32 Reveal_ShowSecrets(void) {
 #endif
   s32 i;
 
-  Engine_GameFlagClear(FLAG_DESERT_EVENT_RUNNING);
+  GameFlag_ClearBit(FLAG_DESERT_EVENT_RUNNING);
   Engine_GameFlagSet(FLAG_SECRETS_REVEALED);
   // Restore each hidden patch from the spare cells saved on entry.
   if (gGameState.mapId == (s32)&MapId_LamakanDesertEast) {
@@ -425,7 +425,7 @@ static s32 Reveal_ShowSecrets(void) {
     ObjectEvent_SetPosition(LOCALID_MANTICORE, PIXELS(168), PIXELS(92));
     ObjectEvent_SetPosition(LOCALID_FIRST_PIT, PIXELS(128), PIXELS(316));
     MapGrid_CopyCellAttributes(6, 0, 3, 3, 9, 6);
-    if (Engine_GameFlagIsSet(FLAG_LAMAKAN_MANTICORE_BEATEN) == 0) {
+    if (GameFlag_Test(FLAG_LAMAKAN_MANTICORE_BEATEN) == 0) {
       MapGrid_CopyCells(0, 119, 3, 1, 9, 5);
     }
   }
@@ -442,7 +442,7 @@ static s32 Reveal_ShowSecrets(void) {
 /// Manticore starts its battle, which returns the party to
 /// LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE.
 static void LamakanDesert_FightManticore(void) {
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_MANTICORE, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_MANTICORE, 2);
   FieldScript_SetNextDestination(
       (s32)&MapId_LamakanDesertManticore,
       LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE);
@@ -468,21 +468,21 @@ static void LamakanDesert_ComplainAboutHeat(s32 mark) {
     random = Engine_RandomNext();
     member = (u32)((random << 1) + random) >> 16; // 0 to 2
     flag = member + FLAG_GARET_COMPLAINED;
-    alreadySpoke = Engine_GameFlagIsSet(flag);
+    alreadySpoke = GameFlag_Test(flag);
     if (alreadySpoke == 0) {
       Engine_GameFlagSet(flag);
       break;
     }
   }
-  Engine_ScriptStart();
+  FieldScript_Start();
   // Three lines a mark, one for each member. They come right after Alpine
   // Crossing's signpost (`North: Altin Mine West: Lama Temple`) and have no
   // names of their own, so they count from a Fuchin Temple message two before
   // it.
-  Engine_ScriptSetMessage((((quarter << 1) + quarter) + member) +
-                          MSGNO(MsgFuchinTempleIDoNotThinkMasterHama));
-  Engine_ScriptShowMessage((member + 1), 0);
-  Engine_ScriptEnd();
+  FieldScript_SetMessageId((((quarter << 1) + quarter) + member) +
+                           MSGNO(MsgFuchinTempleIDoNotThinkMasterHama));
+  FieldScript_ShowMessageAndWait((member + 1), 0);
+  FieldScript_End();
 }
 
 /// Every frame: raises LAMAKAN_DESERT_RAISED_HEAT_QUARTER to _THREE_QUARTERS as
@@ -777,12 +777,12 @@ static void LamakanDesert_FallIntoPit(void) {
   // Face the pit, then reverse the walking direction while being pulled in.
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags &=
       ~OBJ_EVENT_FACES_MOTION;
-  Engine_ObjectEventFaceObjectEvent(LOCALID_PARTY_LEADER, best, 0);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetAngleToward(LOCALID_PARTY_LEADER, best, 0);
+  FieldScript_WaitFrames(20);
   ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
                                                           ATTACHED_EFFECT_ONCE);
-  Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 2);
-  Engine_ScriptWait(60);
+  ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
+  FieldScript_WaitFrames(60);
   ObjectEvent_SetAttachedEffect(
       LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   objectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
@@ -799,12 +799,12 @@ static void LamakanDesert_FallIntoPit(void) {
 #endif
   record = ObjectEvent_Get(best);
   if (record != 0) {
-    Engine_ObjectEventSetDestination(LOCALID_PARTY_LEADER, record->x.part.pixel,
+    ObjectMotion_ResetAndSetPosition(LOCALID_PARTY_LEADER, record->x.part.pixel,
                                      record->z.part.pixel);
   }
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   ObjectEvent_ShowEmote(best, EMOTE_IN_FRONT | EMOTE_HEART, 0);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   ObjectEvent_SetAttachedEffect(
       LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags |=
@@ -854,16 +854,15 @@ static void LamakanDesert_SlideDownDune(void) {
     // Let the fall complete before returning to ordinary field movement.
     ObjectEvent_SetAttachedEffect(id, ATTACHED_EFFECT_IN_FRONT |
                                           ATTACHED_EFFECT_ONCE);
-    Engine_ObjectSetPosition(objectEvent, objectEvent->x.fixed,
-                             objectEvent->y.fixed,
-                             objectEvent->z.fixed + 0x80000);
-    ObjectEvent_SetMode(objectEvent, ANIMATION_LEADER_LEAP);
+    Object_SetPosition(objectEvent, objectEvent->x.fixed, objectEvent->y.fixed,
+                       objectEvent->z.fixed + 0x80000);
+    ObjectDispatch_SelectAnimation(objectEvent, ANIMATION_LEADER_LEAP);
     Object_WaitForMove(objectEvent);
     do {
-      Engine_TaskWait(1);
+      WaitFrames(1);
     } while (objectEvent->y.fixed != objectEvent->groundHeight);
-    ObjectEvent_SetMode(objectEvent, ANIMATION_LEADER_SPRING);
-    Engine_TaskWait(3);
+    ObjectDispatch_SelectAnimation(objectEvent, ANIMATION_LEADER_SPRING);
+    WaitFrames(3);
     return;
   }
   // Probe ahead and on both diagonals before advancing object event and camera.
@@ -926,12 +925,12 @@ static void LamakanDesert_MeetManticore(void) {
       record->targetZ = OBJ_EVENT_NO_TARGET;
       Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
       ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_MANTICORE, 0);
-      Engine_ScriptWait(40);
-      Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 2);
+      FieldScript_WaitFrames(40);
+      ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
       ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER,
                                     ATTACHED_EFFECT_IN_FRONT |
                                         ATTACHED_EFFECT_ONCE);
-      Engine_ScriptWait(40);
+      FieldScript_WaitFrames(40);
       ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags &=
           ~OBJ_EVENT_FACES_MOTION;
       backwardOffset.x = paused;
@@ -945,14 +944,14 @@ static void LamakanDesert_MeetManticore(void) {
       ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER,
                                        backwardOffset.x / 0x10000,
                                        backwardOffset.z / 0x10000);
-      Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
-      Engine_ScriptWait(2);
+      ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
+      FieldScript_WaitFrames(2);
       ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags |=
           OBJ_EVENT_FACES_MOTION;
-      Engine_ScriptWait(30);
+      FieldScript_WaitFrames(30);
       Script_PlaySong(SE_148);
-      Engine_ObjectEventRunRepeatedMotion(LOCALID_MANTICORE, 2);
-      Engine_ScriptWait(20);
+      ObjectMotion_SetVarCbAndRefresh(LOCALID_MANTICORE, 2);
+      FieldScript_WaitFrames(20);
       ObjectEvent_SetSpeed(LOCALID_MANTICORE, 0x28000, 0x14000);
       ObjectEvent_WalkToAndWait(LOCALID_MANTICORE, 168, 104);
       ObjectEvent_SetSpeed(LOCALID_MANTICORE, 0x8000, 0x4000);
@@ -1051,7 +1050,7 @@ static void HeatGauge_Draw(void) {
   tile = gVramCacheEntries[(*(s16 *)&gHeatGauge_VramSlot)].offset >> 5;
   if ((*(s16 *)&gHeatGauge_Held) != 0) {
     gHeatGaugeSlide = 2;
-  } else if (Engine_GameFlagIsSet(FLAG_FIELD_HANDLING_REQUESTS) != 0) {
+  } else if (GameFlag_Test(FLAG_FIELD_HANDLING_REQUESTS) != 0) {
     if (gHeatGaugeSlide > 0) {
       gHeatGaugeSlide--;
     }
@@ -1148,7 +1147,7 @@ static void HeatGauge_Draw(void) {
     }
     destination++;
   }
-  Engine_VramLoad((*(s16 *)&gHeatGauge_VramSlot), 0x480, buffer);
+  VramCache_Load((*(s16 *)&gHeatGauge_VramSlot), 0x480, buffer);
 
   // Submit four 16x32 sprites down the screen's left edge and the 16x16 cap
   // at the gauge's foot; x counts down the screen, since attr01 puts it in
@@ -1182,7 +1181,7 @@ void HeatGauge_Start(void) {
   slotAddress = &gHeatGauge_VramSlot;
   slot = VramCache_FindFreeEntry();
   *slotAddress = slot;
-  Engine_VramLoad((s16)slot, 0x480, 0);
+  VramCache_Load((s16)slot, 0x480, 0);
   gHeatGaugeSlide = 0;
   gHeatGauge_Held = 0;
   FieldScheduler_AddCallback(HeatGauge_Draw, 0xc76);

@@ -9,7 +9,7 @@ static void ObjectEvent_WaitBelowHeight(struct ObjectEvent *objectEvent,
   s32 frames = 60;
 
   while (frames != 0) {
-    Engine_TaskWait(1);
+    WaitFrames(1);
     frames--;
     if (objectEvent->y.fixed <= height)
       break;

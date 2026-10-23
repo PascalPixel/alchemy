@@ -221,7 +221,7 @@ const struct ObjectEventTemplate *
 LaliveroInteriors_GetObjectEventTemplates(void) {
   if (gGameState.mapId == (s32)&MapId_LaliveroFaransHouse) {
     // Faran's house and the inn.
-    if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
+    if (GameFlag_Test(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
       return gLaliveroInteriors_FaransHouseObjectEventTemplatesAfterLighthouse;
     }
     return gLaliveroInteriors_FaransHouseObjectEventTemplates;
@@ -249,21 +249,22 @@ static void EventScript_TalkToWeaponMerchant(s32 keeper) {
 
   if (side == FACING_NORTH) {
     Shop_Run(LALIVERO_WEAPON_STOCK, keeper);
-  } else if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
-    Engine_ScriptSetMessage(MsgLaliveroWentOceanLook);
-    Engine_ScriptShowMessage(keeper, 0);
+  } else if (GameFlag_Test(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
+    FieldScript_SetMessageId(MsgLaliveroWentOceanLook);
+    FieldScript_ShowMessageAndWait(keeper, 0);
   } else {
     s32 message = MsgLaliveroTakenHostageFaran;
 
-    Engine_ScriptSetMessage(message);
-    Engine_ScriptOpenMessage(keeper, 0);
-    if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
-      Engine_ScriptWait(10);
-      Engine_ScriptSetMessage(message + 1);
+    FieldScript_SetMessageId(message);
+    FieldMessage_ShowAtObject(keeper, 0);
+    if (FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER, 0) ==
+        0) {
+      FieldScript_WaitFrames(10);
+      FieldScript_SetMessageId(message + 1);
     } else {
-      Engine_ScriptSetMessage(message + 2);
+      FieldScript_SetMessageId(message + 2);
     }
-    Engine_ScriptShowMessage(keeper, 0);
+    FieldScript_ShowMessageAndWait(keeper, 0);
   }
 }
 
@@ -272,12 +273,12 @@ static void EventScript_TalkToWeaponMerchant(s32 keeper) {
 static void EventScript_TalkToArmorMerchant(s32 keeper) {
   if (Leader_GetSide() == FACING_NORTH) {
     Shop_Run(LALIVERO_ARMOR_STOCK, keeper);
-  } else if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
-    Engine_ScriptSetMessage(MsgLaliveroWantedSendShips);
-    Engine_ScriptShowMessage(keeper, 0);
+  } else if (GameFlag_Test(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
+    FieldScript_SetMessageId(MsgLaliveroWantedSendShips);
+    FieldScript_ShowMessageAndWait(keeper, 0);
   } else {
-    Engine_ScriptSetMessage(MsgLaliveroWarriorRightPlease);
-    Engine_ScriptShowMessage(keeper, 0);
+    FieldScript_SetMessageId(MsgLaliveroWarriorRightPlease);
+    FieldScript_ShowMessageAndWait(keeper, 0);
   }
 }
 
@@ -286,12 +287,12 @@ static void EventScript_TalkToArmorMerchant(s32 keeper) {
 static void EventScript_TalkToItemMerchant(s32 keeper) {
   if (Leader_GetSide() == FACING_NORTH) {
     Shop_Run(LALIVERO_ITEM_STOCK, keeper);
-  } else if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
-    Engine_ScriptSetMessage(MsgLaliveroImpossibleGoOcean);
-    Engine_ScriptShowMessage(keeper, 0);
+  } else if (GameFlag_Test(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
+    FieldScript_SetMessageId(MsgLaliveroImpossibleGoOcean);
+    FieldScript_ShowMessageAndWait(keeper, 0);
   } else {
-    Engine_ScriptSetMessage(MsgLaliveroGuessPeopleAngara);
-    Engine_ScriptShowMessage(keeper, 0);
+    FieldScript_SetMessageId(MsgLaliveroGuessPeopleAngara);
+    FieldScript_ShowMessageAndWait(keeper, 0);
   }
 }
 
@@ -300,12 +301,12 @@ static void EventScript_TalkToItemMerchant(s32 keeper) {
 static void EventScript_TalkToHealer(s32 healer) {
   if (Leader_GetSide() == FACING_NORTH) {
     Sanctum_Run(healer);
-  } else if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
-    Engine_ScriptSetMessage(MsgLaliveroBabiLighthouseStruck);
-    Engine_ScriptShowMessage(healer, 0);
+  } else if (GameFlag_Test(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
+    FieldScript_SetMessageId(MsgLaliveroBabiLighthouseStruck);
+    FieldScript_ShowMessageAndWait(healer, 0);
   } else {
-    Engine_ScriptSetMessage(MsgLaliveroBabiIsntBuilding);
-    Engine_ScriptShowMessage(healer, 0);
+    FieldScript_SetMessageId(MsgLaliveroBabiIsntBuilding);
+    FieldScript_ShowMessageAndWait(healer, 0);
   }
 }
 
@@ -314,12 +315,12 @@ static void EventScript_TalkToHealer(s32 healer) {
 static void EventScript_TalkToInnkeeper(s32 innkeeper) {
   if (Leader_GetSide() == FACING_NORTH) {
     Inn_CheckIn(LALIVERO_INN, innkeeper);
-  } else if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
-    Engine_ScriptSetMessage(MsgLaliveroDidntKnowTime);
-    Engine_ScriptShowMessage(innkeeper, 0);
+  } else if (GameFlag_Test(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
+    FieldScript_SetMessageId(MsgLaliveroDidntKnowTime);
+    FieldScript_ShowMessageAndWait(innkeeper, 0);
   } else {
-    Engine_ScriptSetMessage(MsgLaliveroWantStayLet);
-    Engine_ScriptShowMessage(innkeeper, 0);
+    FieldScript_SetMessageId(MsgLaliveroWantStayLet);
+    FieldScript_ShowMessageAndWait(innkeeper, 0);
   }
 }
 
@@ -332,34 +333,33 @@ static void EventScript_TalkToInnWorker(void) {
 
   side = Leader_GetSide();
   GameFlag_Set(FLAG_INN_WORKER_APOLOGIZED);
-  Engine_ScriptStart();
-  Engine_FieldEndBusyAndReveal();
-  Engine_ScriptSetMessage(MsgLaliveroImSorry);
-  Engine_ScriptWait(50);
+  FieldScript_Start();
+  Field_EndBusyAndReveal();
+  FieldScript_SetMessageId(MsgLaliveroImSorry);
+  FieldScript_WaitFrames(50);
   ObjectEvent_ShowEmote(LOCALID_INN_WORKER, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   ObjectEvent_FaceObjectEvent(LOCALID_INN_WORKER, LOCALID_PARTY_LEADER, 20);
   Script_ShowMessage(LOCALID_INN_WORKER, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_INN_WORKER,
-                                        ANIMATION_SHAKE_HEAD);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetAnimationAndWait(LOCALID_INN_WORKER, ANIMATION_SHAKE_HEAD);
+  FieldScript_WaitFrames(30);
   Script_ShowMessage(LOCALID_INN_WORKER, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_INN_WORKER, 2);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_INN_WORKER, 2);
+  FieldScript_WaitFrames(30);
   Script_ShowMessage(LOCALID_INN_WORKER, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_INN_WORKER, ANIMATION_NOD);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetAnimationAndWait(LOCALID_INN_WORKER, ANIMATION_NOD);
+  FieldScript_WaitFrames(20);
   Script_ShowMessage(LOCALID_INN_WORKER, 0);
   if ((u16)side == FACING_WEST) {
-    Engine_ObjectEventWalkByAndWait(LOCALID_PARTY_LEADER, 0, 16);
-    Engine_ObjectEventFaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-    Engine_ScriptWait(20);
+    ObjectMotion_CommitPositionAndActivate(LOCALID_PARTY_LEADER, 0, 16);
+    ObjectMotion_ArmCallback(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
+    FieldScript_WaitFrames(20);
   }
   ObjectEvent_SetActionScript(LOCALID_INN_WORKER,
                               gLaliveroInteriors_InnWorkerChores);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Lalivero (LaliveroFaransHouse), coord event 51 in Faran's house after the
@@ -367,20 +367,20 @@ static void EventScript_TalkToInnWorker(void) {
 static void EventScript_IodemCallsOut(void) {
 
   Engine_GameFlagSet(FLAG_IODEM_ASKED_TO_MEET);
-  Engine_ScriptStart();
-  Engine_FieldEndBusyAndReveal();
-  Engine_ScriptWait(10);
-  Engine_CameraMoveTo(PIXELS(120), -1, PIXELS(96), 1);
-  Engine_CameraWaitForMove();
-  Engine_ScriptWait(30);
-  Engine_ScriptSetMessage(MsgLaliveroPleaseWaitForMeOutside);
-  Engine_ScriptShowMessage(LOCALID_IODEM, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventFaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_IODEM, 0);
-  Engine_ScriptWait(30);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ScriptWait(30);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  Field_EndBusyAndReveal();
+  FieldScript_WaitFrames(10);
+  FieldCamera_MoveWithinMapBounds(PIXELS(120), -1, PIXELS(96), 1);
+  FieldCamera_WaitForArrival();
+  FieldScript_WaitFrames(30);
+  FieldScript_SetMessageId(MsgLaliveroPleaseWaitForMeOutside);
+  FieldScript_ShowMessageAndWait(LOCALID_IODEM, 0);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetAngleToward(LOCALID_PARTY_LEADER, LOCALID_IODEM, 0);
+  FieldScript_WaitFrames(30);
+  ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  FieldScript_WaitFrames(30);
+  FieldScript_End();
 }
 
 /// Lalivero (LaliveroFaransHouse): Iodem, talked to before he has given the
@@ -388,8 +388,8 @@ static void EventScript_IodemCallsOut(void) {
 static void EventScript_TalkToIodem(void) {
 
   Engine_GameFlagSet(FLAG_IODEM_ASKED_TO_MEET);
-  Engine_ScriptSetMessage(MsgLaliveroPleaseWaitForMeOutside);
-  Engine_ScriptShowMessage(LOCALID_IODEM, 0);
+  FieldScript_SetMessageId(MsgLaliveroPleaseWaitForMeOutside);
+  FieldScript_ShowMessageAndWait(LOCALID_IODEM, 0);
 }
 
 /// Both maps, a doorway out: take the touched coord event's warp with the exit
@@ -399,19 +399,19 @@ static void EventScript_LeaveBuilding(void) {
   s16 *trigger = (s16 *)&work->coordEvent;
 
   Engine_ScriptRequestWarp(*trigger);
-  Engine_AudioPlayCue(SE_MAP_EXIT);
+  Sound_PlaySong(SE_MAP_EXIT);
 }
 
 /// What the party can talk to, touch and search in each map, before and
 /// after Venus Lighthouse.
 const struct MapEvent *LaliveroInteriors_GetEvents(void) {
   if (gGameState.mapId == (s32)&MapId_LaliveroFaransHouse) {
-    if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
+    if (GameFlag_Test(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
       return gLaliveroInteriors_FaransHouseEventsAfterLighthouse;
     }
     return gLaliveroInteriors_FaransHouseEvents;
   }
-  if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
+  if (GameFlag_Test(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
     return gLaliveroInteriors_ShopsEventsAfterLighthouse;
   }
   return gLaliveroInteriors_ShopsEvents;
@@ -425,306 +425,307 @@ const struct MapEvent *LaliveroInteriors_GetEvents(void) {
 static void EventScript_ReportToFaran(void) {
   struct ObjectEvent *leader;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   Party_RestoreHpPp(1);
   // The party walks in to Faran and Iodem, and the others step out.
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(96), PIXELS(184));
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(LOCALID_FARAN, FACING_EAST, 0);
   ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_WEST, 0);
-  Engine_ScriptSetMessage(MsgLaliveroHowDidSearchForSheba);
-  Engine_ScriptOpenScreen();
-  Engine_ScriptWaitForScreen();
-  Engine_ScriptWait(10);
+  FieldScript_SetMessageId(MsgLaliveroHowDidSearchForSheba);
+  FieldScript_StartScreenTransition();
+  FieldScript_WaitTransitionFrames();
+  FieldScript_WaitFrames(10);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x10000, 0x8000);
   ObjectEvent_WalkByAndWait(LOCALID_PARTY_LEADER, 0, -16);
-  Engine_ObjectEventWalkToAndWait(LOCALID_PARTY_LEADER, 104, 136);
-  Engine_ScriptWait(10);
+  ObjectMotion_SetPositionAndReset(LOCALID_PARTY_LEADER, 104, 136);
+  FieldScript_WaitFrames(10);
   FieldMotion_LaunchFromFocusedObject(GARET, -16, 16, FACING_NORTH);
   FieldMotion_LaunchFromFocusedObject(MIA, 0, 24, FACING_NORTH);
   FieldMotion_LaunchFromFocusedObject(IVAN, 16, 16, FACING_NORTH);
-  Engine_ObjectEventWaitForMove(GARET);
-  Engine_ScriptWait(20);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
-  Engine_ScriptWait(20);
-  Engine_ScriptShowMessage(IVAN, 0);
-  Engine_ScriptWait(10);
+  ObjectMotion_CommitCurrentPositionAndActivate(GARET);
+  FieldScript_WaitFrames(20);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
+  FieldScript_WaitFrames(20);
+  FieldScript_ShowMessageAndWait(IVAN, 0);
+  FieldScript_WaitFrames(10);
   // Faran and Iodem tell of the search for Sheba.
   ObjectEvent_FaceDirection(LOCALID_FARAN, FACING_SOUTH, 0);
-  Engine_ObjectEventFaceDirection(LOCALID_IODEM, FACING_SOUTH, 0);
-  Engine_ScriptWait(30);
+  ObjectMotion_ArmCallback(LOCALID_IODEM, FACING_SOUTH, 0);
+  FieldScript_WaitFrames(30);
   ObjectEvent_ShowEmote(LOCALID_FARAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 70);
-  Engine_ScriptShowMessage(LOCALID_FARAN, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIMATION_SHAKE_HEAD);
-  Engine_ScriptWait(20);
-  Engine_ScriptShowMessage(LOCALID_FARAN, 0);
-  Engine_ScriptWait(20);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_FARAN, 2);
-  Engine_ScriptWait(20);
-  Engine_ScriptShowMessage(LOCALID_FARAN, 0);
-  Engine_ScriptWait(20);
+  FieldScript_ShowMessageAndWait(LOCALID_FARAN, 0);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetAnimationAndWait(LOCALID_FARAN, ANIMATION_SHAKE_HEAD);
+  FieldScript_WaitFrames(20);
+  FieldScript_ShowMessageAndWait(LOCALID_FARAN, 0);
+  FieldScript_WaitFrames(20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_FARAN, 2);
+  FieldScript_WaitFrames(20);
+  FieldScript_ShowMessageAndWait(LOCALID_FARAN, 0);
+  FieldScript_WaitFrames(20);
   ObjectEvent_ShowEmote(LOCALID_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Engine_ScriptShowMessage(LOCALID_IODEM, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIMATION_SHAKE_HEAD);
-  Engine_ScriptWait(20);
-  Engine_ScriptShowMessage(LOCALID_IODEM, 0);
-  Engine_ScriptWait(20);
-  Engine_ScriptWait(10);
+  FieldScript_ShowMessageAndWait(LOCALID_IODEM, 0);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetAnimationAndWait(LOCALID_IODEM, ANIMATION_SHAKE_HEAD);
+  FieldScript_WaitFrames(20);
+  FieldScript_ShowMessageAndWait(LOCALID_IODEM, 0);
+  FieldScript_WaitFrames(20);
+  FieldScript_WaitFrames(10);
   ObjectEvent_ShowEmote(LOCALID_FARAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 50);
-  Engine_ScriptShowMessage(LOCALID_FARAN, 0);
+  FieldScript_ShowMessageAndWait(LOCALID_FARAN, 0);
   // The party tells what became of Jenna and the others; the version that saw
   // the ship at Idejima knows Idejima was swept away with it.
   if (GameFlag_IsSet(FLAG_SAW_SHIP_AT_IDEJIMA) == 0) {
     LaliveroInteriors_TellFaranAboutJenna();
   } else {
-    Engine_ScriptWait(20);
-    Engine_ObjectEventRunRepeatedMotion(LOCALID_FARAN, 2);
-    Engine_ScriptWait(20);
-    Engine_ScriptShowMessage(LOCALID_FARAN, 0);
-    Engine_ScriptWait(10);
+    FieldScript_WaitFrames(20);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_FARAN, 2);
+    FieldScript_WaitFrames(20);
+    FieldScript_ShowMessageAndWait(LOCALID_FARAN, 0);
+    FieldScript_WaitFrames(10);
     ObjectEvent_FaceObjectEvent(GARET, LOCALID_PARTY_LEADER, 50);
     ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
                           60);
-    Engine_ScriptWait(10);
-    Engine_ObjectEventFaceDirection(GARET, FACING_NORTH, 0);
-    Engine_ScriptWait(20);
-    Engine_ScriptShowMessage(GARET, 0);
-    Engine_ScriptWait(10);
-    Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
-    Engine_ScriptWait(20);
-    Engine_ScriptShowMessage(MIA, 0);
-    Engine_ScriptWait(10);
-    Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
-    Engine_ScriptWait(20);
-    Engine_ScriptShowMessage(IVAN, 0);
-    Engine_ScriptWait(20);
+    FieldScript_WaitFrames(10);
+    ObjectMotion_ArmCallback(GARET, FACING_NORTH, 0);
+    FieldScript_WaitFrames(20);
+    FieldScript_ShowMessageAndWait(GARET, 0);
+    FieldScript_WaitFrames(10);
+    ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
+    FieldScript_WaitFrames(20);
+    FieldScript_ShowMessageAndWait(MIA, 0);
+    FieldScript_WaitFrames(10);
+    ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
+    FieldScript_WaitFrames(20);
+    FieldScript_ShowMessageAndWait(IVAN, 0);
+    FieldScript_WaitFrames(20);
     ObjectEvent_ShowEmote(LOCALID_IODEM, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
     Script_OpenMessage(LOCALID_IODEM, 0);
-    Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0);
-    Engine_ScriptWait(20);
-    Engine_ObjectEventRunRepeatedMotion(LOCALID_IODEM, 2);
-    Engine_ScriptWait(20);
-    Engine_ScriptShowMessage(LOCALID_IODEM, 0);
-    Engine_ScriptWait(20);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-    Engine_ScriptWait(30);
-    Engine_ScriptWait(10);
-    Engine_ObjectEventRunRepeatedMotion(GARET, 2);
-    Engine_ScriptWait(20);
-    Engine_ScriptShowMessage(GARET, 0);
-    Engine_ScriptWait(10);
-    Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
-    Engine_ScriptWait(20);
-    Engine_ScriptShowMessage(MIA, 0);
-    Engine_ScriptWait(10);
-    Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
-    Engine_ScriptWait(30);
-    Engine_ScriptShowMessage(IVAN, 0);
-    Engine_ScriptWait(10);
+    FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER, 0);
+    FieldScript_WaitFrames(20);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_IODEM, 2);
+    FieldScript_WaitFrames(20);
+    FieldScript_ShowMessageAndWait(LOCALID_IODEM, 0);
+    FieldScript_WaitFrames(20);
+    ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+    FieldScript_WaitFrames(30);
+    FieldScript_WaitFrames(10);
+    ObjectMotion_SetVarCbAndRefresh(GARET, 2);
+    FieldScript_WaitFrames(20);
+    FieldScript_ShowMessageAndWait(GARET, 0);
+    FieldScript_WaitFrames(10);
+    ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
+    FieldScript_WaitFrames(20);
+    FieldScript_ShowMessageAndWait(MIA, 0);
+    FieldScript_WaitFrames(10);
+    ObjectMotion_SetAnimationAndWait(IVAN, ANIMATION_NOD);
+    FieldScript_WaitFrames(30);
+    FieldScript_ShowMessageAndWait(IVAN, 0);
+    FieldScript_WaitFrames(10);
     ObjectEvent_FaceObjectEvent(IVAN, LOCALID_PARTY_LEADER, 30);
     Script_OpenMessage(IVAN | SPEAKER_PORTRAIT_RIGHT, 0);
   }
   // Will the party keep searching? Faran answers either way.
-  Engine_ScriptSetMessage(MsgLaliveroDoNotWorryAboutSheba);
-  Engine_ScriptWait(10);
+  FieldScript_SetMessageId(MsgLaliveroDoNotWorryAboutSheba);
+  FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
   ObjectEvent_FaceObjectEvent(GARET, LOCALID_PARTY_LEADER, 20);
-  if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
-    Engine_ScriptWait(20);
+  if (FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER, 0) ==
+      0) {
+    FieldScript_WaitFrames(20);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
     ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
-    Engine_ObjectEventFaceDirection(IVAN, FACING_NORTH, 0);
-    Engine_ScriptWait(30);
-    Engine_ScriptWait(10);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIMATION_NOD);
-    Engine_ScriptWait(30);
-    Engine_ScriptShowMessage(LOCALID_FARAN, 0);
+    ObjectMotion_ArmCallback(IVAN, FACING_NORTH, 0);
+    FieldScript_WaitFrames(30);
+    FieldScript_WaitFrames(10);
+    ObjectMotion_SetAnimationAndWait(LOCALID_FARAN, ANIMATION_NOD);
+    FieldScript_WaitFrames(30);
+    FieldScript_ShowMessageAndWait(LOCALID_FARAN, 0);
     (gFieldWork->message)++;
   } else {
-    Engine_ScriptWait(20);
+    FieldScript_WaitFrames(20);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
     ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
-    Engine_ObjectEventFaceDirection(IVAN, FACING_NORTH, 0);
-    Engine_ScriptWait(30);
-    Engine_ScriptWait(10);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIMATION_SHAKE_HEAD);
-    Engine_ScriptWait(20);
+    ObjectMotion_ArmCallback(IVAN, FACING_NORTH, 0);
+    FieldScript_WaitFrames(30);
+    FieldScript_WaitFrames(10);
+    ObjectMotion_SetAnimationAndWait(LOCALID_FARAN, ANIMATION_SHAKE_HEAD);
+    FieldScript_WaitFrames(20);
     (gFieldWork->message)++;
     Script_ShowMessage(LOCALID_FARAN, 0);
   }
-  Engine_ScriptWait(10);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_FARAN, 2);
-  Engine_ScriptWait(20);
-  Engine_ScriptShowMessage(LOCALID_FARAN, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventFaceEachOther(GARET, LOCALID_PARTY_LEADER, 0);
-  Engine_ObjectEventFaceEachOther(MIA, IVAN, 0);
-  Engine_ScriptWait(40);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_FARAN, 2);
+  FieldScript_WaitFrames(20);
+  FieldScript_ShowMessageAndWait(LOCALID_FARAN, 0);
+  FieldScript_WaitFrames(10);
+  ObjectEvent_LinkPair(GARET, LOCALID_PARTY_LEADER, 0);
+  ObjectEvent_LinkPair(MIA, IVAN, 0);
+  FieldScript_WaitFrames(40);
+  FieldScript_WaitFrames(10);
   // Faran believes Sheba lived; Iodem explains Adepts.
   ObjectEvent_ShowEmote(LOCALID_FARAN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Engine_ScriptShowMessage(LOCALID_FARAN, 0);
-  Engine_ScriptWait(10);
+  FieldScript_ShowMessageAndWait(LOCALID_FARAN, 0);
+  FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(MIA, FACING_NORTH, 0);
-  Engine_ScriptWait(50);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIMATION_NOD);
-  Engine_ScriptWait(30);
-  Engine_ScriptShowMessage(LOCALID_FARAN, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_FARAN, 2);
-  Engine_ScriptWait(20);
-  Engine_ScriptShowMessage(LOCALID_FARAN, 0);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(50);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetAnimationAndWait(LOCALID_FARAN, ANIMATION_NOD);
+  FieldScript_WaitFrames(30);
+  FieldScript_ShowMessageAndWait(LOCALID_FARAN, 0);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_FARAN, 2);
+  FieldScript_WaitFrames(20);
+  FieldScript_ShowMessageAndWait(LOCALID_FARAN, 0);
+  FieldScript_WaitFrames(10);
   ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  Engine_ScriptShowMessage(MIA, 0);
-  Engine_ScriptWait(20);
-  Engine_ObjectEventFaceDirection(LOCALID_FARAN, FACING_EAST, 0);
-  Engine_ScriptWait(20);
-  Engine_ScriptShowMessage(LOCALID_FARAN, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_IODEM, 2);
-  Engine_ScriptWait(20);
+  FieldScript_ShowMessageAndWait(MIA, 0);
+  FieldScript_WaitFrames(20);
+  ObjectMotion_ArmCallback(LOCALID_FARAN, FACING_EAST, 0);
+  FieldScript_WaitFrames(20);
+  FieldScript_ShowMessageAndWait(LOCALID_FARAN, 0);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_IODEM, 2);
+  FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_WEST, 0);
-  Engine_ScriptWait(20);
-  Engine_ScriptShowMessage(LOCALID_IODEM, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIMATION_SHAKE_HEAD);
-  Engine_ScriptWait(20);
-  Engine_ScriptShowMessage(LOCALID_FARAN, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
-  Engine_ScriptWait(20);
-  Engine_ScriptShowMessage(IVAN, 0);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(20);
+  FieldScript_ShowMessageAndWait(LOCALID_IODEM, 0);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetAnimationAndWait(LOCALID_FARAN, ANIMATION_SHAKE_HEAD);
+  FieldScript_WaitFrames(20);
+  FieldScript_ShowMessageAndWait(LOCALID_FARAN, 0);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
+  FieldScript_WaitFrames(20);
+  FieldScript_ShowMessageAndWait(IVAN, 0);
+  FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_FARAN, FACING_SOUTH, 0);
-  Engine_ScriptWait(30);
-  Engine_ScriptShowMessage(LOCALID_FARAN, 0);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(30);
+  FieldScript_ShowMessageAndWait(LOCALID_FARAN, 0);
+  FieldScript_WaitFrames(10);
   ObjectEvent_ShowEmote(LOCALID_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
-  Engine_ScriptShowMessage(LOCALID_IODEM, 0);
-  Engine_ScriptWait(20);
+  FieldScript_ShowMessageAndWait(LOCALID_IODEM, 0);
+  FieldScript_WaitFrames(20);
   ObjectEvent_ShowEmote(LOCALID_FARAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 65);
-  Engine_ObjectEventFaceDirection(LOCALID_FARAN, FACING_EAST, 0);
-  Engine_ScriptWait(20);
-  Engine_ScriptShowMessage(LOCALID_FARAN, 0);
-  Engine_ScriptWait(20);
+  ObjectMotion_ArmCallback(LOCALID_FARAN, FACING_EAST, 0);
+  FieldScript_WaitFrames(20);
+  FieldScript_ShowMessageAndWait(LOCALID_FARAN, 0);
+  FieldScript_WaitFrames(20);
   ObjectEvent_ShowEmote(LOCALID_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  Engine_ScriptShowMessage(LOCALID_IODEM, 0);
-  Engine_ScriptWait(20);
+  FieldScript_ShowMessageAndWait(LOCALID_IODEM, 0);
+  FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_SOUTH, 0);
-  Engine_ScriptWait(40);
-  Engine_ScriptShowMessage(LOCALID_IODEM, 0);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(40);
+  FieldScript_ShowMessageAndWait(LOCALID_IODEM, 0);
+  FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_FARAN, FACING_SOUTH, 0);
-  Engine_ScriptWait(50);
+  FieldScript_WaitFrames(50);
   ObjectEvent_ShowEmote(LOCALID_FARAN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
-  Engine_ScriptShowMessage(LOCALID_FARAN, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIMATION_NOD);
-  Engine_ScriptWait(30);
-  Engine_ScriptShowMessage(LOCALID_FARAN, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 2);
-  Engine_ObjectEventStartRepeatedMotion(GARET, 2);
-  Engine_ObjectEventStartRepeatedMotion(MIA, 2);
-  Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
-  Engine_ScriptWait(30);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventFaceDirection(LOCALID_FARAN, FACING_EAST, 0);
-  Engine_ScriptWait(20);
-  Engine_ScriptShowMessage(LOCALID_FARAN, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_IODEM, 2);
-  Engine_ScriptWait(30);
+  FieldScript_ShowMessageAndWait(LOCALID_FARAN, 0);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetAnimationAndWait(LOCALID_FARAN, ANIMATION_NOD);
+  FieldScript_WaitFrames(30);
+  FieldScript_ShowMessageAndWait(LOCALID_FARAN, 0);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
+  ObjectMotion_SetVariantCallback(GARET, 2);
+  ObjectMotion_SetVariantCallback(MIA, 2);
+  ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
+  FieldScript_WaitFrames(30);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_ArmCallback(LOCALID_FARAN, FACING_EAST, 0);
+  FieldScript_WaitFrames(20);
+  FieldScript_ShowMessageAndWait(LOCALID_FARAN, 0);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_IODEM, 2);
+  FieldScript_WaitFrames(30);
   ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_WEST, 0);
-  Engine_ScriptWait(20);
-  Engine_ScriptShowMessage(LOCALID_IODEM, 0);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(20);
+  FieldScript_ShowMessageAndWait(LOCALID_IODEM, 0);
+  FieldScript_WaitFrames(10);
   ObjectEvent_ShowEmote(LOCALID_FARAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST, 0);
-  Engine_ScriptWait(30);
-  Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
-  Engine_ScriptWait(20);
-  Engine_ScriptShowMessage(GARET, 0);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(30);
+  ObjectMotion_SetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
+  FieldScript_WaitFrames(20);
+  FieldScript_ShowMessageAndWait(GARET, 0);
+  FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_SOUTH, 0);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(30);
   ObjectEvent_ShowEmote(LOCALID_IODEM, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-  Engine_ScriptShowMessage(LOCALID_IODEM, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventRunRepeatedMotion(GARET, 2);
-  Engine_ScriptWait(20);
-  Engine_ScriptShowMessage(GARET, 0);
-  Engine_ScriptWait(10);
+  FieldScript_ShowMessageAndWait(LOCALID_IODEM, 0);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
+  FieldScript_WaitFrames(20);
+  FieldScript_ShowMessageAndWait(GARET, 0);
+  FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_FARAN, FACING_SOUTH, 0);
-  Engine_ScriptWait(40);
+  FieldScript_WaitFrames(40);
   ObjectEvent_ShowEmote(LOCALID_FARAN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Engine_ScriptShowMessage(LOCALID_FARAN, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventFaceDirection(IVAN, FACING_WEST, 0);
-  Engine_ScriptWait(30);
+  FieldScript_ShowMessageAndWait(LOCALID_FARAN, 0);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_ArmCallback(IVAN, FACING_WEST, 0);
+  FieldScript_WaitFrames(30);
   ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_SCOWL, 60);
-  Engine_ObjectEventFaceDirection(IVAN, FACING_NORTH, 0);
-  Engine_ScriptWait(30);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
-  Engine_ScriptWait(20);
-  Engine_ScriptShowMessage(IVAN, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIMATION_SHAKE_HEAD);
-  Engine_ScriptWait(20);
-  Engine_ScriptShowMessage(LOCALID_FARAN, 0);
-  Engine_ScriptWait(10);
+  ObjectMotion_ArmCallback(IVAN, FACING_NORTH, 0);
+  FieldScript_WaitFrames(30);
+  ObjectMotion_SetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
+  FieldScript_WaitFrames(20);
+  FieldScript_ShowMessageAndWait(IVAN, 0);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetAnimationAndWait(LOCALID_FARAN, ANIMATION_SHAKE_HEAD);
+  FieldScript_WaitFrames(20);
+  FieldScript_ShowMessageAndWait(LOCALID_FARAN, 0);
+  FieldScript_WaitFrames(10);
   // Faran sends them off.
-  Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 2);
-  Engine_ObjectEventStartRepeatedMotion(GARET, 2);
-  Engine_ObjectEventStartRepeatedMotion(MIA, 2);
-  Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
-  Engine_ScriptWait(30);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIMATION_NOD);
-  Engine_ScriptWait(30);
-  Engine_ScriptShowMessage(LOCALID_FARAN, 0);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
+  ObjectMotion_SetVariantCallback(GARET, 2);
+  ObjectMotion_SetVariantCallback(MIA, 2);
+  ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
+  FieldScript_WaitFrames(30);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetAnimationAndWait(LOCALID_FARAN, ANIMATION_NOD);
+  FieldScript_WaitFrames(30);
+  FieldScript_ShowMessageAndWait(LOCALID_FARAN, 0);
+  FieldScript_WaitFrames(20);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
   Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
   Engine_ObjectEventSetAnimation(MIA, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
-  Engine_ScriptWait(30);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_FARAN, 2);
-  Engine_ScriptWait(20);
-  Engine_ScriptShowMessage(LOCALID_FARAN, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventRunRepeatedMotion(GARET, 2);
-  Engine_ScriptWait(20);
-  Engine_ScriptShowMessage(GARET, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIMATION_NOD);
-  Engine_ScriptWait(30);
-  Engine_ScriptShowMessage(LOCALID_FARAN, 0);
-  Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
-  Engine_ScriptWait(30);
-  Engine_ScriptShowMessage(MIA, 0);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetAnimationAndWait(IVAN, ANIMATION_NOD);
+  FieldScript_WaitFrames(30);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_FARAN, 2);
+  FieldScript_WaitFrames(20);
+  FieldScript_ShowMessageAndWait(LOCALID_FARAN, 0);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
+  FieldScript_WaitFrames(20);
+  FieldScript_ShowMessageAndWait(GARET, 0);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetAnimationAndWait(LOCALID_FARAN, ANIMATION_NOD);
+  FieldScript_WaitFrames(30);
+  FieldScript_ShowMessageAndWait(LOCALID_FARAN, 0);
+  FieldScript_WaitFrames(20);
+  ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_NOD);
+  FieldScript_WaitFrames(30);
+  FieldScript_ShowMessageAndWait(MIA, 0);
+  FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST, 0);
-  Engine_ObjectEventFaceDirection(IVAN, FACING_NORTHWEST, 0);
-  Engine_ScriptWait(30);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ScriptWait(10);
+  ObjectMotion_ArmCallback(IVAN, FACING_NORTHWEST, 0);
+  FieldScript_WaitFrames(30);
+  ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  FieldScript_WaitFrames(10);
   Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
   Engine_ObjectEventSetAnimation(IVAN, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
-  Engine_ScriptWait(30);
+  ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_NOD);
+  FieldScript_WaitFrames(30);
   // The others walk back into the leader.
   ObjectEvent_SetSpeed(GARET, 0x13333, 0x9999);
   ObjectEvent_SetSpeed(MIA, 0x13333, 0x9999);
@@ -732,93 +733,93 @@ static void EventScript_ReportToFaran(void) {
   Engine_ObjectEventSetAnimation(GARET, ANIMATION_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
-    Engine_ObjectEventSetDestination(GARET, leader->x.part.pixel,
+    ObjectMotion_ResetAndSetPosition(GARET, leader->x.part.pixel,
                                      leader->z.part.pixel);
   }
-  Engine_ObjectEventWaitForMove(GARET);
+  ObjectMotion_CommitCurrentPositionAndActivate(GARET);
   ObjectEvent_SetPosition(GARET, 0, 0);
   Engine_ObjectEventSetAnimation(MIA, ANIMATION_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
-    Engine_ObjectEventSetDestination(MIA, leader->x.part.pixel,
+    ObjectMotion_ResetAndSetPosition(MIA, leader->x.part.pixel,
                                      leader->z.part.pixel);
   }
-  Engine_ObjectEventWaitForMove(MIA);
+  ObjectMotion_CommitCurrentPositionAndActivate(MIA);
   ObjectEvent_SetPosition(MIA, 0, 0);
   Engine_ObjectEventSetAnimation(IVAN, ANIMATION_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
-    Engine_ObjectEventSetDestination(IVAN, leader->x.part.pixel,
+    ObjectMotion_ResetAndSetPosition(IVAN, leader->x.part.pixel,
                                      leader->z.part.pixel);
   }
-  Engine_ObjectEventWaitForMove(IVAN);
+  ObjectMotion_CommitCurrentPositionAndActivate(IVAN);
   Engine_ObjectEventSetPosition(IVAN, 0, 0);
-  Engine_ScriptWait(10);
-  Engine_ScriptEnd();
+  FieldScript_WaitFrames(10);
+  FieldScript_End();
 }
 
 /// The party tells Faran and Iodem what became of Jenna and the others, when
 /// it did not see the ship at Idejima: Felix said he sent Jenna ahead to the
 /// ship.
 static void LaliveroInteriors_TellFaranAboutJenna(void) {
-  Engine_ScriptSetMessage(MsgLaliveroTellOthers);
-  Engine_ScriptWait(20);
+  FieldScript_SetMessageId(MsgLaliveroTellOthers);
+  FieldScript_WaitFrames(20);
 
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_FARAN, 2);
-  Engine_ScriptWait(20);
-  Engine_ScriptShowMessage(LOCALID_FARAN, 0);
-  Engine_ScriptWait(10);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_FARAN, 2);
+  FieldScript_WaitFrames(20);
+  FieldScript_ShowMessageAndWait(LOCALID_FARAN, 0);
+  FieldScript_WaitFrames(10);
 
-  Engine_ObjectEventFaceObjectEvent(GARET, LOCALID_PARTY_LEADER, 50);
-  Engine_ObjectEventShowEmote(LOCALID_PARTY_LEADER,
-                              EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventFaceDirection(GARET, FACING_NORTH, 0);
-  Engine_ScriptWait(20);
-  Engine_ScriptShowMessage(GARET, 0);
-  Engine_ScriptWait(10);
+  ObjectMotion_SetAngleToward(GARET, LOCALID_PARTY_LEADER, 50);
+  FieldEffect_SpawnLinked(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
+                          60);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_ArmCallback(GARET, FACING_NORTH, 0);
+  FieldScript_WaitFrames(20);
+  FieldScript_ShowMessageAndWait(GARET, 0);
+  FieldScript_WaitFrames(10);
 
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
-  Engine_ScriptWait(20);
-  Engine_ScriptShowMessage(MIA, 0);
-  Engine_ScriptWait(10);
+  ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
+  FieldScript_WaitFrames(20);
+  FieldScript_ShowMessageAndWait(MIA, 0);
+  FieldScript_WaitFrames(10);
 
-  Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
-  Engine_ScriptWait(20);
-  Engine_ScriptShowMessage(IVAN, 0);
-  Engine_ScriptWait(10);
+  ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
+  FieldScript_WaitFrames(20);
+  FieldScript_ShowMessageAndWait(IVAN, 0);
+  FieldScript_WaitFrames(10);
 
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_IODEM, 2);
-  Engine_ScriptWait(20);
-  Engine_ScriptShowMessage(LOCALID_IODEM, 0);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_IODEM, 2);
+  FieldScript_WaitFrames(20);
+  FieldScript_ShowMessageAndWait(LOCALID_IODEM, 0);
+  FieldScript_WaitFrames(20);
 
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_PARTY_LEADER, 2);
-  Engine_ScriptWait(20);
-  Engine_ScriptWait(25);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_PARTY_LEADER, 2);
+  FieldScript_WaitFrames(20);
+  FieldScript_WaitFrames(25);
 
-  Engine_ObjectEventRunRepeatedMotion(GARET, 2);
-  Engine_ScriptWait(30);
-  Engine_ScriptShowMessage(GARET, 0);
-  Engine_ScriptWait(30);
+  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
+  FieldScript_WaitFrames(30);
+  FieldScript_ShowMessageAndWait(GARET, 0);
+  FieldScript_WaitFrames(30);
 
-  Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
-  Engine_ScriptWait(20);
-  Engine_ScriptShowMessage(GARET, 0);
-  Engine_ScriptWait(10);
+  ObjectMotion_SetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
+  FieldScript_WaitFrames(20);
+  FieldScript_ShowMessageAndWait(GARET, 0);
+  FieldScript_WaitFrames(10);
 
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
-  Engine_ScriptWait(20);
-  Engine_ScriptShowMessage(MIA, 0);
-  Engine_ScriptWait(10);
+  ObjectMotion_SetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
+  FieldScript_WaitFrames(20);
+  FieldScript_ShowMessageAndWait(MIA, 0);
+  FieldScript_WaitFrames(10);
 
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
-  Engine_ScriptWait(30);
-  Engine_ScriptShowMessage(IVAN, 0);
-  Engine_ScriptWait(10);
+  ObjectMotion_SetAnimationAndWait(IVAN, ANIMATION_NOD);
+  FieldScript_WaitFrames(30);
+  FieldScript_ShowMessageAndWait(IVAN, 0);
+  FieldScript_WaitFrames(10);
 
-  Engine_ObjectEventFaceObjectEvent(IVAN, LOCALID_PARTY_LEADER, 30);
-  Engine_ScriptOpenMessage(IVAN | SPEAKER_PORTRAIT_RIGHT, 0);
+  ObjectMotion_SetAngleToward(IVAN, LOCALID_PARTY_LEADER, 30);
+  FieldMessage_ShowAtObject(IVAN | SPEAKER_PORTRAIT_RIGHT, 0);
 }
 
 /// Sets both maps up as the party enters: shopkeepers and the innkeeper
@@ -865,7 +866,7 @@ s32 Map_Initialize(void) {
     objectEvent->collisionFlags |= OBJ_EVENT_NEAR_TALK;
     objectEvent->priorityFlags = 0;
     objectEvent->sprite->image.priority = 2;
-    if (Engine_GameFlagIsSet(FLAG_INN_WORKER_APOLOGIZED) != 0) {
+    if (GameFlag_Test(FLAG_INN_WORKER_APOLOGIZED) != 0) {
       ObjectEvent_SetActionScript(LOCALID_INN_WORKER,
                                   gLaliveroInteriors_InnWorkerChores);
     }
@@ -874,10 +875,12 @@ s32 Map_Initialize(void) {
       EventScript_ReportToFaran();
       // Iodem and Faran turn toward the leader, as their later object event
       // templates do.
-      Engine_ObjectEventSetActionCallback(ObjectEvent_GetById(LOCALID_IODEM),
-                                          MOVEMENT_TYPE_FACE_LEADER);
-      Engine_ObjectEventSetActionCallback(ObjectEvent_GetById(LOCALID_FARAN),
-                                          MOVEMENT_TYPE_FACE_LEADER);
+      ObjectEvent_SetMovementType(
+          (struct Object *)ObjectEvent_GetById(LOCALID_IODEM),
+          MOVEMENT_TYPE_FACE_LEADER);
+      ObjectEvent_SetMovementType(
+          (struct Object *)ObjectEvent_GetById(LOCALID_FARAN),
+          MOVEMENT_TYPE_FACE_LEADER);
       gGameState.warpDest = LALIVERO_FARANS_HOUSE_FROM_LALIVERO_SOUTHWEST;
     }
   }

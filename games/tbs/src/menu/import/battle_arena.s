@@ -2,13 +2,13 @@
 	.set overlay_imports, 1
 	.set import.__divsi3, 1
 	.set import.__modsi3, 1
-	.set import.Engine_TaskWait, 1
+	.set import.WaitFrames, 1
 	.set import.Task_Add, 1
-	.set import.Engine_TaskRemoveCallback, 1
+	.set import.Task_Remove, 1
 	.set import.AllocHeapSlotEwram, 1
 	.set import.FreeHeapSlot, 1
 	.set import.AllocEwram, 1
-	.set import.Runtime_BumpFree, 1
+	.set import.Free, 1
 	.set import.SerialRuntime_Initialize, 1
 	.set import.SerialRuntime_RemoveIrqHandlers, 1
 	.set import.Sound_LoadPresetParameters, 1
@@ -16,12 +16,12 @@
 	.set import.SerialRuntime_StartReceive, 1
 	.set import.SerialRuntime_GetActiveTransfers, 1
 	.set import.Task_SetFlags, 1
-	.set import.Engine_MapGridRedraw, 1
-	.set import.Engine_MapGridCopyCellsTo, 1
+	.set import.MapGrid_CenterOnFollowedPoint, 1
+	.set import.MapGrid_CopyMetatileIndicesRect, 1
 	.set import.TilesetAnim_Resume, 1
 	.set import.TilesetAnim_Pause, 1
-	.set import.Engine_MapGridCopyCellAttributes, 1
-	.set import.Engine_DebugCreateWindow, 1
+	.set import.MapGrid_CopyCellAttributeRect, 1
+	.set import.Window_Create, 1
 	.set import.Window_Close, 1
 	.set import.Message_DecodeRawUnbounded, 1
 	.set import.Message_OpenWindow, 1
@@ -29,36 +29,36 @@
 	.set import.WindowSprite_PrepareForRedraw, 1
 	.set import.Text_DrawNumber, 1
 	.set import.MessageArgument_ClearAll, 1
-	.set import.Text_DrawQuantity, 1
+	.set import.MessageArgument_Push, 1
 	.set import.Save_ProcessSelectedFile, 1
 	.set import.Djinn_GetRecoveryTable, 1
 	.set import.Unit_Get, 1
-	.set import.Engine_GameFlagIsSet, 1
+	.set import.GameFlag_Test, 1
 	.set import.Engine_GameFlagSet, 1
-	.set import.Engine_GameFlagClear, 1
+	.set import.GameFlag_ClearBit, 1
 	.set import.GameFlag_GetByte, 1
 	.set import.GameFlag_SetByte, 1
 	.set import.Party_CountMembers, 1
 	.set import.Party_RestoreHpPp, 1
-	.set import.Engine_ScriptStart, 1
-	.set import.Engine_ScriptEnd, 1
-	.set import.Engine_ScriptChooseYesNo, 1
+	.set import.FieldScript_Start, 1
+	.set import.FieldScript_End, 1
+	.set import.FieldScript_AskYesNoWithObjectEventAnimation, 1
 	.set import.ObjectEvent_GetById, 1
-	.set import.Engine_ObjectEventSetSpeed, 1
-	.set import.Engine_ObjectEventWalkTo, 1
-	.set import.Engine_ObjectEventWaitForMove, 1
-	.set import.Engine_ObjectEventFaceObjectEvent, 1
-	.set import.Engine_ScriptSetMessage, 1
-	.set import.Engine_ScriptOpenMessage, 1
-	.set import.Engine_ScriptShowMessage, 1
+	.set import.ObjectMotion_SetSpeedParameters, 1
+	.set import.ObjectMotion_ResetAndSetPositionInMode2, 1
+	.set import.ObjectMotion_CommitCurrentPositionAndActivate, 1
+	.set import.ObjectMotion_SetAngleToward, 1
+	.set import.FieldScript_SetMessageId, 1
+	.set import.FieldMessage_ShowAtObject, 1
+	.set import.FieldScript_ShowMessageAndWait, 1
 	.set import.FieldScript_SetDestination, 1
 	.set import.Field_RequestBattleFromEncounterTable, 1
 	.set import.FieldScript_SetNextDestination, 1
 	.set import.FieldScript_SetDefeatDestination, 1
-	.set import.Engine_ScriptOpenScreen, 1
-	.set import.Engine_ScriptWaitForScreen, 1
-	.set import.Engine_SanctumOpen, 1
+	.set import.FieldScript_StartScreenTransition, 1
+	.set import.FieldScript_WaitTransitionFrames, 1
+	.set import.Sanctum_Run, 1
 	.set import.DjinnRecovery_TickTwenty, 1
 	.set import.DebugParty_LoadPreset, 1
-	.set import.Engine_AudioPlayCue, 1
+	.set import.Sound_PlaySong, 1
 	.include "games/tbs/src/system/overlay.inc"

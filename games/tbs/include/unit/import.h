@@ -2,42 +2,19 @@
 #define ALCHEMY_UNIT_IMPORT_H
 
 /// @file
-/// The main-image routines map overlays import.
+/// The main-image headers that declare the routines map overlays import, for
+/// the overlays that call them outside the script layer.
 
 #include "types.h"
+#include "unit/field/field.h"
+#include "unit/menu/menu.h"
+#include "unit/shop/shop.h"
+#include "unit/map/common/scroll_initialize_hblank_dma.h"
 
 struct FieldPosition;
 struct Object;
 struct MapEvent;
 struct ObjectEventTemplate;
 struct Window;
-
-s32 Engine_FieldEffectPlayCueAndStartEmitterOnTarget(s32 effect, s32 target,
-                                                     s32 mode);
-void Engine_DjinnJoinParty(s32 slot, s32 element, s32 djinn);
-void Engine_EncounterRequestBattle(s32 zone_no, s32 slot_no);
-struct Window *Engine_DebugCreateWindow(s32 x, s32 y, s32 width, s32 height,
-                                        s32 attrs);
-void Engine_DebugFinalizeWindow(struct Window *work, s32 release);
-void Engine_DisplayScrollStartHBlankDma(s32 mode, s32 freqX, s32 stepX,
-                                        s32 ampX, s32 freqY, s32 stepY,
-                                        s32 ampY);
-s32 Engine_InnCheckIn(s32 mode, s32 objectId);
-void Engine_InventorySnapshotRestore(void);
-void Engine_MapGridSetShownLayers(u32 layerFlags);
-void Engine_OwnerRecalculateRatios(s32 owner_id);
-s32 Engine_PartyInventoryFindOwner(s32 item_id);
-void Engine_ScriptSetNextDestination(s32 first, s32 second);
-void Engine_FieldEndBusyAndReveal(void);
-s32 Engine_ShopConfirmAct(s32 unitId);
-void Engine_UiTextDrawQuantity(u32 value, u32 kind);
-void FieldScript_LoadAreaScript(const struct MapEvent *events);
-s32 GetPartyMemberCount(void);
-void InventorySnapshot_Take(void);
-s32 DjinnMenu_Open(void);
-s32 Object_CheckMovementCollision(struct Object *object,
-                                  struct FieldPosition *position);
-void MapEvents_UpdateInView(struct ObjectEventTemplate *entry);
-void Text_DrawQuantity(u32 value, u32 kind);
 
 #endif

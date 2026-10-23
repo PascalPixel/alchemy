@@ -2072,38 +2072,40 @@ struct MapEvent gImil_InteriorEvents[] = {
     { MAP_EVENTS_END },
 };
 
-u16 gImil_DoorCellSteps5[] = {
+u16 gImil_SanctumDoorSteps[] = {
     MAPGRID_ANIMATION_STEP(40, 37, 4, 2, 5), MAPGRID_ANIMATION_STEP(40, 39, 4, 2, 5), MAPGRID_ANIMATION_STEPS_END,
     MAPGRID_ANIMATION_STEP(35, 35, 2, 2, 5), MAPGRID_ANIMATION_STEP(33, 35, 2, 2, 5), MAPGRID_ANIMATION_STEPS_END,
 };
 
-u16 gImil_DoorCellSteps4[] = {
+u16 gImil_InteriorsEastDoorSteps[] = {
     MAPGRID_ANIMATION_STEP(35, 37, 2, 2, 5), MAPGRID_ANIMATION_STEP(33, 37, 2, 2, 5), MAPGRID_ANIMATION_STEPS_END,
 };
 
-u16 gImil_DoorCellSteps1[] = {
+u16 gImil_InnDoorSteps[] = {
     MAPGRID_ANIMATION_STEP(35, 43, 2, 2, 5), MAPGRID_ANIMATION_STEP(33, 43, 2, 2, 5), MAPGRID_ANIMATION_STEPS_END,
 };
 
-u16 gImil_DoorCellSteps0[] = {
+u16 gImil_HouseSouthwestDoorSteps[] = {
     MAPGRID_ANIMATION_STEP(35, 39, 2, 2, 5), MAPGRID_ANIMATION_STEP(33, 39, 2, 2, 5), MAPGRID_ANIMATION_STEPS_END,
 };
 
-u16 gImil_DoorCellSteps2[] = {
+u16 gImil_HouseWestDoorSteps[] = {
     MAPGRID_ANIMATION_STEP(42, 48, 2, 2, 5), MAPGRID_ANIMATION_STEP(40, 48, 2, 2, 5), MAPGRID_ANIMATION_STEPS_END,
 };
 
-u16 gImil_DoorCellSteps3[] = {
+u16 gImil_HouseNortheastDoorSteps[] = {
     MAPGRID_ANIMATION_STEP(42, 46, 2, 2, 5), MAPGRID_ANIMATION_STEP(40, 46, 2, 2, 5), MAPGRID_ANIMATION_STEPS_END,
 };
 
+/// Each door's opening, in the order of its warp (IMIL_TO_HOUSE_SOUTHWEST
+/// first), as Imil_OpenDoorAndExit reads it.
 u16 *gImil_DoorCellSteps[] = {
-    gImil_DoorCellSteps0,
-    gImil_DoorCellSteps1,
-    gImil_DoorCellSteps2,
-    gImil_DoorCellSteps3,
-    gImil_DoorCellSteps4,
-    gImil_DoorCellSteps5,
+    gImil_HouseSouthwestDoorSteps,
+    gImil_InnDoorSteps,
+    gImil_HouseWestDoorSteps,
+    gImil_HouseNortheastDoorSteps,
+    gImil_InteriorsEastDoorSteps,
+    gImil_SanctumDoorSteps,
 };
 
 /// Cell position (x, y) for each warp.

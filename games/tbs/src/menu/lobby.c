@@ -1497,7 +1497,6 @@ static s32 LinkLobby_DrawThreeDigitValue(s32 value) {
 /// goes on. Returns 0.
 s32 LinkLobby_RunRoundResult(void) {
   s32 i;
-  u32 score;
   struct EventWork *work;
   void (*callback)(void);
 
@@ -1571,9 +1570,10 @@ s32 LinkLobby_RunRoundResult(void) {
       Engine_GameFlagClear(FLAG_MONSTER_BATTLE);
       FieldGameFlag_SetByte(FLAG_MONSTER_BATTLE_WINS, -1);
       UiText_DrawQuantity(gGameState.linkTallies[LINK_TALLY_MONSTER_STREAK], 5);
-      score = gGameState.linkTallies[LINK_TALLY_MONSTER_STREAK];
-      if (gGameState.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] < score) {
-        gGameState.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] = score;
+      if (gGameState.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] <
+          gGameState.linkTallies[LINK_TALLY_MONSTER_STREAK]) {
+        gGameState.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] =
+            gGameState.linkTallies[LINK_TALLY_MONSTER_STREAK];
         Engine_EventSetMessage(MsgLobbyWonNumberBattleBroke);
         Engine_EventOpenMessage(ACTOR_ATTENDANT, 0);
         LinkLobby_SaveMonsterBattleResults();
@@ -1587,8 +1587,6 @@ s32 LinkLobby_RunRoundResult(void) {
     // Entrance 9, a monster battle lost: the series ends, and a new record
     // is saved.
   } else if (gGameState.entrance == 9) {
-    u16 best;
-
     gGameState.linkTallies[LINK_TALLY_MONSTER_LOSSES]++;
     Engine_EventStart();
     Engine_EventOpenScreen();
@@ -1596,10 +1594,10 @@ s32 LinkLobby_RunRoundResult(void) {
     LinkLobby_WriteSlotValue(LOBBY_SLOT_ALONE);
     Engine_ActorFaceActor(ACTOR_ATTENDANT, gGameState.selectedActor, 0);
     UiText_DrawQuantity(gGameState.linkTallies[LINK_TALLY_MONSTER_STREAK], 5);
-    best = gGameState.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK];
-    score = gGameState.linkTallies[LINK_TALLY_MONSTER_STREAK];
-    if (best < score) {
-      gGameState.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] = score;
+    if (gGameState.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] <
+        gGameState.linkTallies[LINK_TALLY_MONSTER_STREAK]) {
+      gGameState.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] =
+          gGameState.linkTallies[LINK_TALLY_MONSTER_STREAK];
       Engine_EventSetMessage(MsgLobbyWonNumberBattleBroke);
       Engine_EventOpenMessage(ACTOR_ATTENDANT, 0);
       LinkLobby_SaveMonsterBattleResults();
@@ -1637,14 +1635,10 @@ s32 LinkLobby_RunRoundResult(void) {
       gGameState.linkTallies[LINK_TALLY_LINKED_WINS]++;
       v = gGameState.linkTallies[LINK_TALLY_LINKED_STREAK] + 1;
       gGameState.linkTallies[LINK_TALLY_LINKED_STREAK] = v;
-      /* FAKEMATCH(temporary): score holds the record's address; as
-       * gGameState.linkTallies[LINK_TALLY_LINKED_BEST_STREAK] at each use, 22
-       * of 392 instructions differ in tbs-en. */
-      score = (u32)&gGameState.linkTallies[LINK_TALLY_LINKED_BEST_STREAK];
-      if (*(u16 *)score < (u16)v) {
-        *(u16 *)score = v;
-      }
-      LinkLobby_DrawThreeDigitValue(*(u16 *)score);
+      if (gGameState.linkTallies[LINK_TALLY_LINKED_BEST_STREAK] < (u16)v)
+        gGameState.linkTallies[LINK_TALLY_LINKED_BEST_STREAK] = v;
+      LinkLobby_DrawThreeDigitValue(
+          gGameState.linkTallies[LINK_TALLY_LINKED_BEST_STREAK]);
       LinkLobby_SaveBattleResults();
       Engine_GameFlagSet(FLAG_PLACE_TEMP_04);
       Engine_GameFlagSet(FLAG_PLACE_TEMP_05);

@@ -6,7 +6,7 @@
 
 /// Scratch values for a step of a window's zoom: the scaled part of a side,
 /// the scaled duration and their ratio. A local of Window_DrawZoomFrame.
-struct UiWindowInterpolationScratch {
+struct WindowZoomScratch {
   s32 scaledPart;     ///< frame (or frames left) times a side in tiles, << 16
   s32 scaledDuration; ///< the zoom's duration << 17
   s32 result; ///< scaledPart / scaledDuration, 16.16 fixed point (in tiles)
@@ -83,7 +83,7 @@ loop:
 /// closing) the drawn rectangle is remembered, for the next frame to erase.
 void Window_DrawZoomFrame(void *windowArg, s32 savePosition) {
   struct Window *window = windowArg;
-  struct UiWindowInterpolationScratch scratch;
+  struct WindowZoomScratch scratch;
   s32 frame;
   s32 duration;
   s32 remaining;

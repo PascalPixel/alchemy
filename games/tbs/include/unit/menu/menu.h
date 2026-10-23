@@ -102,7 +102,7 @@ void Menu_SpawnIconEntries(struct ItemMenuWork *menu, struct Window *window);
 void ItemMenu_HideAllIcons(void);
 void ItemMenu_HidePageIcons(void);
 void ItemMenu_Close(void);
-s32 ItemMenu_SelectMember(s32 pane);
+s32 ItemMenu_SelectMember(s32 side);
 s32 ItemMenu_RunMemberSelection(u16 *memberIds, u16 *items);
 void ItemMenu_OpenCategory(s32 memberId);
 s32 ItemMenu_SelectTarget(s32 mode);

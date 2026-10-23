@@ -182,17 +182,17 @@ s32 TextPrinter_Step(struct TextPrinter *printer) {
           // corner. Outside Japanese, a window with no size (as
           // FieldMessage_ShowCentered opens with CENTERED_MESSAGE_BARE) shows
           // none.
-          struct Window *pane = printer->window;
+          struct Window *side = printer->window;
 
 #if TBS_PATCH_1
-          if (pane->width == 0 || pane->height == 0 ||
+          if (side->width == 0 || side->height == 0 ||
               work->pageArrowShown != 0)
             break;
 #else
           if (work->pageArrowShown != 0)
             break;
 #endif
-          Glyph_Draw(pane, 1, pane->width * 4 - 8, pane->height * 8 - 16,
+          Glyph_Draw(side, 1, side->width * 4 - 8, side->height * 8 - 16,
                      GLYPH_DRAW_PAGE_ARROW);
           work->pageArrowShown = 1;
           break;

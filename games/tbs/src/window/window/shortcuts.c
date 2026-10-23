@@ -153,7 +153,7 @@ void Debug_SelectAbilityPair(void) {
      * message passed directly, 2 of 362 instructions differ in tbs-en. */
     slot = MsgPanelHpMaxLabel;
     Text_DrawMessageAsTiles(slot, title, 16, 0);
-    // Redraw both shortcut rows and the selected ability's detail pane.
+    // Redraw both shortcut rows and the selected ability's detail side.
     for (;;) {
       if (redraw != 0) {
         redraw = 0;

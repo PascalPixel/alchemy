@@ -197,7 +197,7 @@ enum StatusPanelKind {
 /// part below them.
 #define STATUS_PANEL_LOWER_ONLY 0x100
 
-// The information pane's text: outside Japanese it is drawn character by
+// The information side's text: outside Japanese it is drawn character by
 // character into the window's tiles, so clearing it redraws the empty frame;
 // the Japanese edition decodes it into the text canvas (Text_DrawMessage),
 // so clearing it releases the canvas's window sprites. Both follow the text
@@ -232,7 +232,7 @@ enum StatusPanelKind {
 #define ICON_SPRITE_16X16 0x40000000
 
 /// The Djinn change DjinnMenu_DrawStatPreview previews, with the Djinn in the
-/// work's panes removePairSlot and addPairSlot.
+/// work's sides removePairSlot and addPairSlot.
 enum DjinnPreviewMode {
   DJINN_PREVIEW_ADD_AND_SET = 0, ///< the other's Djinni is added and set
   DJINN_PREVIEW_UNSET = 1,       ///< the chosen Djinni is unset

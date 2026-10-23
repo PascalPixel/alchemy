@@ -167,7 +167,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     pageCounts[1] = 1;
   }
 
-  // Open the paired panes only after both units have been restored.
+  // Open the paired sides only after both units have been restored.
   Window_UpdateOrCreate(&menu->window, 0, 5, 15, 15, 2);
   Window_UpdateOrCreate(&menu->secondWindow, 15, 5, 15, 15, 2);
   WindowSprite_RedrawSavedRectFar(menu->helpWindow);
@@ -539,7 +539,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     WaitFrames(1);
   }
 
-  // Restore the ordinary list drawing tasks and close the preview panes; the
+  // Restore the ordinary list drawing tasks and close the preview sides; the
   // figures grow in again from phase 0.
   DjinnFigures_SetSlotPhase(0, 0);
   DjinnFigures_SetSlotPhase(1, 0);

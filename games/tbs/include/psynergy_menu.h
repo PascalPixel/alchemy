@@ -23,9 +23,9 @@ struct PsynergyMenuWork {
   s32 selectedMember;         ///< the party member chosen
   struct Window *moneyWindow; ///< ShopWork's; not named here
   struct Window *auxiliaryWindow;
-  struct WindowSprite *paneIcon[2]; ///< each pane's cursor
-  s8 tabIndex[2];                   ///< each pane's member, in memberTable
-  s8 tabCounts[2];                  ///< members each pane chooses from
+  struct WindowSprite *sideIcon[2]; ///< each side's cursor
+  s8 tabIndex[2];                   ///< each side's member, in memberTable
+  s8 tabCounts[2];                  ///< members each side chooses from
   struct Window *psynergyWindow;
   struct Window *statusWindow;
   struct Window *shortcutWindow; ///< the L and R shortcuts
@@ -51,8 +51,8 @@ struct PsynergyMenuWork {
   s16 tabX[8];                  ///< screen pixels
   s16 rowPositions[8];          ///< screen pixels
   s32 memberScale[8];           ///< 16.16 fixed point, 0x10000 full size
-  u16 paneRow[2];               ///< each pane's Psynergy row chosen
-  u16 paneAction[2]; ///< each pane's Psynergy chosen, as a member action entry
+  u16 sideRow[2];               ///< each side's Psynergy row chosen
+  u16 sideAction[2]; ///< each side's Psynergy chosen, as a member action entry
   struct WindowSprite *cursor; ///< ItemMenuWork's; not named here
   /// DjinnMenuWork's backdrop pointer at 0x184; no view names the rest.
   u8 aroundBackdrop[0x48];
@@ -90,7 +90,7 @@ STATIC_ASSERT(offsetof(struct PsynergyMenuWork, selectedColumn) == 0x110);
 STATIC_ASSERT(offsetof(struct PsynergyMenuWork, selectedRow) == 0x111);
 STATIC_ASSERT(offsetof(struct PsynergyMenuWork, columnCount) == 0x112);
 STATIC_ASSERT(offsetof(struct PsynergyMenuWork, rowCount) == 0x113);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, paneAction[0]) == 0x178);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, sideAction[0]) == 0x178);
 STATIC_ASSERT(offsetof(struct PsynergyMenuWork, psynergies) == 0x1c8);
 STATIC_ASSERT(offsetof(struct PsynergyMenuWork, psynergyCount) == 0x218);
 STATIC_ASSERT(offsetof(struct PsynergyMenuWork, memberIds) == 0x21a);

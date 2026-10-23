@@ -721,16 +721,16 @@ void Menu_CreateWindowAndEntryObjects(s32 resource, s32 frame) {
   SummaryScreen_DrawStatusAilments(window, resource, 0);
 }
 
-/// The member's status page. The left pane lists their statuses (or the stat
-/// help when they have none) and the right pane the status entries (name and
+/// The member's status page. The left side lists their statuses (or the stat
+/// help when they have none) and the right side the status entries (name and
 /// level, experience, HP, PP, Djinn when the party has any, elemental levels,
 /// Power and Resist); the cursor's entry is highlighted and explained in the
-/// help window. Up and Down move in a pane, Left and Right switch panes, L and
+/// help window. Up and Down move in a side, Left and Right switch sides, L and
 /// R switch to the previous or next member; A goes on to the Psynergy page and
 /// B backs out. Returns 1 or -1.
 s32 SummaryScreen_SelectCommand(void) {
   struct SummaryScreenWork *menu;
-  s32 pane;
+  s32 side;
   s32 result;
   s32 selected;
   s8 count;
@@ -744,7 +744,7 @@ s32 SummaryScreen_SelectCommand(void) {
   u8 entries[8];
 
   menu = gMenuWork;
-  pane = 0;
+  side = 0;
   result = 0;
   selected = 0;
   djinnTotal = Party_SumDjinnCountsFar(-1);
@@ -781,8 +781,8 @@ s32 SummaryScreen_SelectCommand(void) {
 
         redraw = 0;
         limit = count;
-        pane = (pane + 2) % 2;
-        if (pane == 0) {
+        side = (side + 2) % 2;
+        if (side == 0) {
           selected = (selected + limit) % limit;
           WindowSprite_RedrawSavedRectFar(menu->helpWindow);
           if (hasAilments == 0) {
@@ -792,27 +792,27 @@ s32 SummaryScreen_SelectCommand(void) {
                                        menu->statusWindow, 0, -24);
           }
         } else {
-          // The right pane has eight entries, seven without the Djinn row.
+          // The right side has eight entries, seven without the Djinn row.
           WindowSprite_RedrawSavedRectFar(menu->helpWindow);
           if (hasDjinn != 0)
             selected = (selected + 8) % 8;
           else
             selected = (selected + 7) % 7;
         }
-        SummaryScreen_DrawSelectionCursor(pane, selected, entries, 0);
+        SummaryScreen_DrawSelectionCursor(side, selected, entries, 0);
         WindowSprite_ClearListFar(menu->helpWindow);
         WaitFrames(1);
-        if (pane == 0)
+        if (side == 0)
           SummaryScreen_DrawSelectionLabels(menu->helpWindow, selected,
                                             entries);
         else
           SummaryScreen_ShowMemberProgressMessage(menu->helpWindow, selected,
                                                   hasDjinn);
       }
-      // The statuses are 16 pixels apart; the right pane's first four rows
+      // The statuses are 16 pixels apart; the right side's first four rows
       // (name to PP) are 8 apart, the rows below them 8 apart from y 112.
       menu->memberCursors[0]->motion = ICON_SHOWN;
-      if (pane == 0)
+      if (side == 0)
         MenuCursor_Position(-10, selected * 16 + 88);
       else if (selected <= 3)
         MenuCursor_Position(24, selected * 8 + 48);
@@ -821,7 +821,7 @@ s32 SummaryScreen_SelectCommand(void) {
       WaitFrames(1);
       // Take the highlight off before the cursor moves.
       if (gKeysRepeat & KEYS_DPAD)
-        SummaryScreen_DrawSelectionCursor(pane, selected, entries, 1);
+        SummaryScreen_DrawSelectionCursor(side, selected, entries, 1);
       if (gKeysPressed & KEY_A) {
         Sound_PlaySongFar(SE_MENU_CONFIRM);
         done = 1;
@@ -847,12 +847,12 @@ s32 SummaryScreen_SelectCommand(void) {
       if (gKeysRepeat & KEY_RIGHT) {
         Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         redraw = 1;
-        pane++;
+        side++;
       }
       if (gKeysRepeat & KEY_LEFT) {
         Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         redraw = 1;
-        pane--;
+        side--;
       }
       // L and R: the previous or next member.
       if ((gKeysRepeat & KEY_R) || (gKeysRepeat & KEY_L)) {
@@ -882,8 +882,8 @@ s32 SummaryScreen_SelectCommand(void) {
 }
 
 /// Highlights (invert 0) or unhighlights (invert 1) the selected entry of the
-/// status page: in pane 0 the selected status row, as wide as its label
-/// (gSummaryScreen_CursorWidths); in pane 1 one of the first four status rows
+/// status page: in side 0 the selected status row, as wide as its label
+/// (gSummaryScreen_CursorWidths); in side 1 one of the first four status rows
 /// or of the rows below.
 void SummaryScreen_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
                                        s32 invert) {
@@ -1213,7 +1213,7 @@ s32 SummaryScreen_BuildAvailability(u8 *ailments, s32 requested, s32 memberId) {
   return count;
 }
 
-/// Fills result with the item list of the member in pane index for the
+/// Fills result with the item list of the member in side index for the
 /// equipment pages: their unit, the menu's item count, and the page and row of
 /// the item chosen last for them, STATUS_EQUIP_PAGE_SIZE items to a page.
 /// Returns 1.
@@ -1567,7 +1567,7 @@ s32 PsynergyMenu_SelectAction(void) {
       WaitFrames(1);
       navigationResult = PagedList_HandleInput(0, state.entryCount, PAGE_ROWS,
                                                &state.row, &state.page);
-      menu->paneIcon[0]->motion = ICON_SHOWN;
+      menu->sideIcon[0]->motion = ICON_SHOWN;
       MenuCursor_Position(STATUS_PSYNERGY_CURSOR_X,
                           state.row * 16 + STATUS_PSYNERGY_CURSOR_Y);
       if (navigationResult == 1) {

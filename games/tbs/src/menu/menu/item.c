@@ -859,7 +859,7 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
   return menuResult;
 }
 
-/// Uses the selected item from the member in pane 0 on the one in pane 1.
+/// Uses the selected item from the member in side 0 on the one in side 1.
 /// On failure plays the error sound, shows why in the info window and returns
 /// -1; otherwise plays the item's animation, recalculates both members and
 /// returns 1.
@@ -1021,20 +1021,20 @@ void ItemMenu_Close(void) {
   Window_CloseIfOpen(&menu->secondUnopenedWindow, 1);
 }
 
-/// Lets the player choose a party member in pane (0 or 1), starting from the
+/// Lets the player choose a party member in side (0 or 1), starting from the
 /// member chosen last. Returns the member's id, or -1 when the player backs
 /// out.
-s32 ItemMenu_SelectMember(s32 pane) {
+s32 ItemMenu_SelectMember(s32 side) {
   struct ItemMenuWork *menu = gMenuWork;
   s32 result = 0;
   s32 memberIndex;
   struct Unit *unit;
 
-  memberIndex = menu->sideIndex[pane];
+  memberIndex = menu->sideIndex[side];
   WindowSprite_ClearListFar(menu->descriptionWindow);
-  menu->sideCount[pane] = menu->partyCount;
+  menu->sideCount[side] = menu->partyCount;
   if (memberIndex == -1) {
-    menu->sideIndex[pane] = result;
+    menu->sideIndex[side] = result;
     memberIndex = 0;
   } else {
     MenuCursor_Slide(memberIndex * 24 - 10, 16);
@@ -1042,7 +1042,7 @@ s32 ItemMenu_SelectMember(s32 pane) {
   unit = Unit_GetFar(menu->memberIds[memberIndex]);
   menu->itemCount = ItemMenu_CollectItems(unit, menu->items, 0);
   result = ItemMenu_RunMemberSelection(menu->memberIds, menu->items);
-  Icon_PrepareObject(menu->sideIcons[pane]);
+  Icon_PrepareObject(menu->sideIcons[side]);
   WaitFrames(1);
   return result;
 }
@@ -2042,7 +2042,7 @@ void ItemMenu_TryBreak(void) {
 }
 
 /// Opens the details window (top left, 13 by 10 tiles) and describes the item
-/// in pane itemIndex there. Returns 1. The window is kept in the work's
+/// in side itemIndex there. Returns 1. The window is kept in the work's
 /// equipWindow, which ItemMenu_Close closes. Nothing calls it: the Details
 /// command uses ItemMenu_ShowDetails.
 s32 ItemMenu_OpenDetail(s32 itemIndex) {
@@ -2625,7 +2625,7 @@ s32 ItemMenu_ConfirmDrop(s32 item) {
   return selection;
 }
 
-/// After giving or trading the selected item to the member in pane 1, offers to
+/// After giving or trading the selected item to the member in side 1, offers to
 /// equip it there, showing the stats it would give. Returns 0 when it is
 /// equipped; 1 when the player says No, backs out, or the member cannot equip
 /// it, and the member is left as before.
@@ -2727,7 +2727,7 @@ void Resource_LoadPairedBlocks(void) {
   VramCache_Load(block, 128, gMenu_SmallDownArrowTiles);
 }
 
-/// Fills result with the item list of the member in pane index: their unit,
+/// Fills result with the item list of the member in side index: their unit,
 /// how many items they hold, and the page and row of the item chosen last for
 /// them (kept within the list), five items to a page. Returns 1.
 s32 ItemMenu_BuildPagedList(struct PagedList *result, s32 index) {
@@ -2969,7 +2969,7 @@ s32 ItemMenu_RunList(s32 sideIndex) {
         done = 1;
         break;
       }
-      // L and R: the previous or next member who has items (pane 0 only).
+      // L and R: the previous or next member who has items (side 0 only).
       if ((gKeysRepeat & KEY_R) != 0 || (gKeysRepeat & KEY_L) != 0) {
         if (sideIndex == 1) {
           Sound_PlaySongFar(SE_MENU_ERROR);

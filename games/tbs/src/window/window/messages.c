@@ -128,7 +128,7 @@ s32 *Runtime_ClearWordIfSet(s32 *p) {
 /// closing. Reached from the debug message viewer (DebugBattle_ViewMessages,
 /// battle/battle/debug.c).
 void Window_CloseAll(s32 unused) {
-  struct WindowWork *uw;
+  struct WindowWork *windowWork;
   struct TextPrinter *printer;
   struct Window *win;
   u32 done;
@@ -137,9 +137,9 @@ void Window_CloseAll(s32 unused) {
   s32 i;
   u16 flag;
 
-  uw = WINDOW_WORK;
-  printer = uw->printers;
-  win = uw->windows;
+  windowWork = WINDOW_WORK;
+  printer = windowWork->printers;
+  win = windowWork->windows;
   i = 0;
   do {
     work = printer->window;
@@ -153,7 +153,7 @@ void Window_CloseAll(s32 unused) {
   // wait a frame.
   for (;;) {
     done = 1;
-    printer = uw->printers;
+    printer = windowWork->printers;
     i = 0;
     do {
       poll_work = printer->window;

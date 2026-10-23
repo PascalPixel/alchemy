@@ -24,7 +24,7 @@ struct ItemMenuWork {
   s32 selectedMember;         ///< the party member chosen
   struct Window *moneyWindow; ///< ShopWork's; not named here
   struct Window *mainWindow;
-  /// The two panes: the member whose items are shown, and the one an item is
+  /// The two sides: the member whose items are shown, and the one an item is
   /// given to.
   ///@{
   struct WindowSprite *sideIcons[2];
@@ -56,8 +56,8 @@ struct ItemMenuWork {
   s16 memberX[8];                  ///< screen pixels
   s16 memberY[8];                  ///< screen pixels
   s32 memberScale[8];              ///< 16.16 fixed point, 0x10000 full size
-  u16 selectedSlots[2];            ///< each pane's inventory slot chosen
-  u16 selectedItems[2];            ///< each pane's inventory entry chosen
+  u16 selectedSlots[2];            ///< each side's inventory slot chosen
+  u16 selectedItems[2];            ///< each side's inventory entry chosen
   struct WindowSprite *cursor;
   /// DjinnMenuWork's backdrop pointer at 0x184; no view names the rest.
   u8 aroundBackdrop[0x48];
@@ -65,7 +65,7 @@ struct ItemMenuWork {
   u16 memberIds[8]; ///< the party in order (Party_ListMembers)
   u8 itemCount;
   u8 partyCount;
-  u8 sideMember[2]; ///< each pane's member
+  u8 sideMember[2]; ///< each side's member
   struct WindowSprite *selectedItemIcon;
   u16 flags;          ///< 1 while the item's name and command grid are drawn
   s16 completionFlag; ///< set to 1 as item commands end; not read by name

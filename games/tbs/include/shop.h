@@ -23,7 +23,7 @@ struct ShopWork {
   u8 unused[8]; ///< no view of the menu work names it (see menu/README.md)
   s32 selectedMember; ///< the menu screens' chosen member; not named here
   struct Window *moneyWindow; ///< the coins window
-  /// The menu screens' first window and their two panes; not named here.
+  /// The menu screens' first window and their two sides; not named here.
   u8 menuSides[0x10];
   struct Window *itemWindow;
   /// The menu screens' windows, icons and cursor grid; not named here.

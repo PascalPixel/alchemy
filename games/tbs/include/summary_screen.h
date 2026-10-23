@@ -24,8 +24,8 @@ struct SummaryScreenWork {
   struct Window *moneyWindow; ///< ShopWork's; not named here
   struct Window *memberWindow;
   struct WindowSprite *memberCursors[2];
-  s8 memberIndex[2]; ///< each pane's member, in memberIds
-  s8 memberCount[2]; ///< members each pane chooses from
+  s8 memberIndex[2]; ///< each side's member, in memberIds
+  s8 memberCount[2]; ///< members each side chooses from
   struct Window *actionWindow;
   struct Window *statusWindow;
   struct Window *unopenedWindow; ///< never given a window; only cleared
@@ -53,7 +53,7 @@ struct SummaryScreenWork {
   u16 memberIds[8]; ///< the party in order (Party_ListMembers)
   u8 entryCount;
   u8 partyCount;
-  u8 selectedIds[2]; ///< each pane's member
+  u8 selectedIds[2]; ///< each side's member
   struct WindowSprite *selectedIcon;
   u16 page;           ///< 3 for the member chooser, 0 for the Status menu
   s16 completionFlag; ///< ItemMenuWork's; not named here

@@ -360,7 +360,7 @@ naming screen keyboard tilemap, the same as the Japanese one, that nothing reads
   `DjinnFiguresWork`.
 - **member**: a party member whose items, Psynergy or Djinn a screen shows, by
   character id; `memberIds` lists the party.
-- **pane** `[0]` and `[1]`: the two sides of a command, the member and item it
+- **side** `[0]` and `[1]`: the two sides of a command, the member and item it
   starts from and the member or item it goes to (`sideMember`,
   `selectedItems`, `selectedSlots`). Giving an item uses both.
 - **step**: where a screen's command loop has got to (`enum ItemMenuStep`,

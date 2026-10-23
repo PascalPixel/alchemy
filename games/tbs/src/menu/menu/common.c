@@ -62,8 +62,8 @@ s32 Menu_SuspendFieldTasks(void) {
   return Task_SuspendOverlayTasks();
 }
 
-/// Clears the whole menu work and sets its defaults: no pane selected, one
-/// entry in each pane, and a 1x1 cursor grid. Each screen's run function calls
+/// Clears the whole menu work and sets its defaults: no side selected, one
+/// entry in each side, and a 1x1 cursor grid. Each screen's run function calls
 /// it once the menu work's heap block is allocated, so every window handle and
 /// icon pointer in the work starts as NULL.
 void Window_InitializeWork(s32 unused) {
@@ -500,7 +500,7 @@ void PsynergyMenu_CallIconRoutineWithValue(const void *unused, s32 unit) {
 }
 
 /// Opens the menu's top-left window (13 by 5 tiles) and puts the hand cursor
-/// in it, hidden for now, as paneIcon[0]. Selects no tab yet (the s8
+/// in it, hidden for now, as sideIcon[0]. Selects no tab yet (the s8
 /// tabIndex[0] = 255 reads as -1). Returns the window, which
 /// ItemMenu_Initialize (the Item, Psynergy and Djinn screens) and
 /// Menu_InitializeSelectorCursorAndEntries (the summary screen and the member
@@ -521,16 +521,16 @@ struct Window *MenuCursor_Create(void *source) {
   cursor->motion = ICON_HIDDEN;
   menu->tabIndex[0] = 255;
   menu->tabIndex[1] = zero;
-  menu->paneIcon[0] = cursor;
+  menu->sideIcon[0] = cursor;
   // sentinel is the depth slot an icon is drawn at: the hand at 254, with
   // the glyphs.
   sentinel = 254;
   cursor->sentinel = sentinel;
   sentinel -= 255;
-  // paneIcon[1] gets slot 255. Nothing in TBS stores paneIcon[1], so it is
+  // sideIcon[1] gets slot 255. Nothing in TBS stores sideIcon[1], so it is
   // still NULL from Window_InitializeWork and this byte goes to address 0xf,
   // in the BIOS, which ignores writes.
-  menu->paneIcon[1]->sentinel = sentinel; // -1
+  menu->sideIcon[1]->sentinel = sentinel; // -1
   return window;
 }
 
@@ -648,7 +648,7 @@ void Menu_UpdateEntryObjectTransforms(void) {
 /// window, bobbing.
 void MenuCursor_Position(s32 xOffset, s32 yOffset) {
   struct PsynergyMenuWork *menu = gMenuWork;
-  struct WindowSprite *cursor = menu->paneIcon[0];
+  struct WindowSprite *cursor = menu->sideIcon[0];
 
   cursor->oam.x = cursor->x = gMenuCursor_BobX[CURSOR_BOB_STEP()] + xOffset +
                               (menu->auxiliaryWindow)->x * 8 + 8;
@@ -677,7 +677,7 @@ void MenuCursor_Slide(s32 x, s32 y) {
     menu->skipSlide = 0;
     return;
   }
-  cursor = menu->paneIcon[0];
+  cursor = menu->sideIcon[0];
   {
     s32 biasedX = cursor->oam.x + 64;
     s32 biasedY = cursor->oam.y + 64;

@@ -49,8 +49,8 @@ struct DjinnMenuWork {
   struct Window *statusWindow;
   struct WindowSprite *cursor;
   /// The second of ItemMenuWork's sideIcons; not named here.
-  struct WindowSprite *secondPaneIcon;
-  s8 selectedColumn[2]; ///< each pane's member, an index into members
+  struct WindowSprite *secondSideIcon;
+  s8 selectedColumn[2]; ///< each side's member, an index into members
   s8 sideCount[2];      ///< ItemMenuWork's; not named here
   /// ItemMenuWork's and ShopWork's itemWindow; not named here.
   struct Window *itemWindow;
@@ -79,7 +79,7 @@ struct DjinnMenuWork {
   s16 memberX[8];     ///< screen pixels
   s16 memberY[8];     ///< screen pixels
   s32 memberScale[8]; ///< ItemMenuWork's; not named here
-  u16 selection[2];   ///< each pane's Djinni row chosen
+  u16 selection[2];   ///< each side's Djinni row chosen
   u16 pairEntries[2]; ///< 255 at first
   struct WindowSprite *secondCursor;
   u8 unusedBeforeBackdrop[4]; ///< no view of the menu work names it
@@ -102,7 +102,7 @@ struct DjinnMenuWork {
   u16 slotX[4];
   u16 slotY[4];
   s32 figurePhases[4]; ///< DjinnFiguresWork's phases; not named here
-  /// The Djinn chosen in each pane: index in their element, element, member.
+  /// The Djinn chosen in each side: index in their element, element, member.
   ///@{
   u8 pairIndex[2];
   u8 pairElement[2];

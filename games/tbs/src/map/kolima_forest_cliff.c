@@ -91,7 +91,7 @@ static void KolimaForestCliff_PushLog(void) {
       ObjectEvent_GetById(LOCALID_RIVER_LOG)->priorityFlags =
           OBJ_EVENT_PRIORITY_UNDERFOOT;
       MapGrid_CopyCellAttributes(32, 20, 2, 4, 11, 16);
-      PushedObject_FillGridAttributeRectangle(2, 12, 16, 1, 4, 0);
+      PushedObject_FillGridAttributeRectangle(2, 12, 16, 1, 4, MB_NORMAL);
       GameFlag_Set(FLAG_MAP_TEMP_01);
       objectEvent = ObjectEvent_GetById(LOCALID_RIVER_LOG);
       ObjectEvent_SetSpriteFlags(objectEvent, 0);
@@ -121,7 +121,7 @@ s32 KolimaForestCliff_Initialize(void) {
     ObjectEvent_GetById(LOCALID_RIVER_LOG)->priorityFlags =
         OBJ_EVENT_PRIORITY_UNDERFOOT;
     MapGrid_CopyCellAttributes(32, 20, 2, 4, 11, 16);
-    PushedObject_FillGridAttributeRectangle(2, 12, 16, 1, 4, 0);
+    PushedObject_FillGridAttributeRectangle(2, 12, 16, 1, 4, MB_NORMAL);
     ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_RIVER_LOG), 0);
   }
 

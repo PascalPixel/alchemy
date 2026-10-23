@@ -2388,7 +2388,7 @@ static void AltinPeak_MarkObjectEventTerrainCell(s32 localId) {
   objectEvent->collisionFlags &= (u8)~OBJ_EVENT_SOLID;
 
   MapGrid_SetMetatileBehaviorAt(0, objectEvent->x.fixed, objectEvent->z.fixed,
-                                255);
+                                MB_WALL);
 }
 
 /// The mine cart reaches the end of its run: it settles in the middle of its

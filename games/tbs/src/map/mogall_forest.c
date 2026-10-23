@@ -772,11 +772,11 @@ static void MogallForest_SecondArea_PushLog(void) {
 
 /// Marks the rock's cell and clears the cells it could have moved from.
 static inline void MogallForest_UpdateRockFootprint(s32 column, s32 row) {
-  PushedObject_FillGridAttributeRectangle(2, column, row, 1, 1, 255);
-  PushedObject_FillGridAttributeRectangle(2, column + 1, row, 1, 1, 0);
-  PushedObject_FillGridAttributeRectangle(2, column - 1, row, 1, 1, 0);
-  PushedObject_FillGridAttributeRectangle(2, column, row + 1, 1, 1, 0);
-  PushedObject_FillGridAttributeRectangle(2, column, row - 1, 1, 1, 0);
+  PushedObject_FillGridAttributeRectangle(2, column, row, 1, 1, MB_WALL);
+  PushedObject_FillGridAttributeRectangle(2, column + 1, row, 1, 1, MB_NORMAL);
+  PushedObject_FillGridAttributeRectangle(2, column - 1, row, 1, 1, MB_NORMAL);
+  PushedObject_FillGridAttributeRectangle(2, column, row + 1, 1, 1, MB_NORMAL);
+  PushedObject_FillGridAttributeRectangle(2, column, row - 1, 1, 1, MB_NORMAL);
 }
 
 /// Mogall Forest, the second area: Move on the rock. Its footprint follows it,
@@ -1111,7 +1111,7 @@ static void MogallForest_ThirdArea_UpdateSouthRock(void) {
     rock->groundHeight = -PIXELS(2);
     rock->y.fixed = -PIXELS(2);
     GameFlag_Set(FLAG_SOUTH_ROCK_SETTLED);
-    PushedObject_FillGridAttributeRectangle(2, 43, 23, 1, 1, 255);
+    PushedObject_FillGridAttributeRectangle(2, 43, 23, 1, 1, MB_WALL);
   }
   FieldScript_End();
 }
@@ -1633,7 +1633,7 @@ s32 MogallForest_Initialize(void) {
       fixedZ = ObjectEvent_GetById(LOCALID_SECOND_AREA_ROCK)->z.fixed;
       column >>= 20;
       PushedObject_FillGridAttributeRectangle(2, column, fixedZ >> 20, 1, 1,
-                                              255);
+                                              MB_WALL);
       WaitFrames(1);
       ObjectGroup_ConfigureChildValue(LOCALID_SECOND_AREA_ROCK,
                                       SPRITE_COLOR_GREY);
@@ -1697,7 +1697,7 @@ s32 MogallForest_Initialize(void) {
       fixedZ = ObjectEvent_GetById(LOCALID_THIRD_AREA_NORTH_ROCK)->z.fixed;
       column >>= 20;
       PushedObject_FillGridAttributeRectangle(2, column, fixedZ >> 20, 1, 1,
-                                              255);
+                                              MB_WALL);
       ObjectGroup_ConfigureChildValue(LOCALID_THIRD_AREA_NORTH_ROCK,
                                       SPRITE_COLOR_GREY);
       WaitFrames(1);
@@ -1749,7 +1749,7 @@ s32 MogallForest_Initialize(void) {
       fixedZ = ObjectEvent_GetById(LOCALID_THIRD_AREA_SOUTH_ROCK)->z.fixed;
       column >>= 20;
       PushedObject_FillGridAttributeRectangle(2, column, fixedZ >> 20, 1, 1,
-                                              255);
+                                              MB_WALL);
       ObjectGroup_ConfigureChildValue(LOCALID_THIRD_AREA_SOUTH_ROCK,
                                       SPRITE_COLOR_GREY);
       WaitFrames(1);

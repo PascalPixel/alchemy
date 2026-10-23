@@ -196,7 +196,7 @@ static void KolimaForestEntrance_PushLog(void) {
       ObjectEvent_GetById(LOCALID_RIVER_LOG)->priorityFlags =
           OBJ_EVENT_PRIORITY_UNDERFOOT;
       MapGrid_CopyCellAttributes(0, 17, 2, 4, 19, 17);
-      PushedObject_FillGridAttributeRectangle(2, 20, 17, 1, 4, 0);
+      PushedObject_FillGridAttributeRectangle(2, 20, 17, 1, 4, MB_NORMAL);
       GameFlag_Set(FLAG_MAP_TEMP_00);
       objectEvent = ObjectEvent_GetById(LOCALID_RIVER_LOG);
       ObjectEvent_SetSpriteFlags(objectEvent, 0);
@@ -223,7 +223,7 @@ s32 KolimaForestEntrance_Initialize(void) {
     ObjectEvent_GetById(LOCALID_RIVER_LOG)->priorityFlags =
         OBJ_EVENT_PRIORITY_UNDERFOOT;
     MapGrid_CopyCellAttributes(0, 17, 2, 4, 19, 17);
-    PushedObject_FillGridAttributeRectangle(2, 20, 17, 1, 4, 0);
+    PushedObject_FillGridAttributeRectangle(2, 20, 17, 1, 4, MB_NORMAL);
     ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_RIVER_LOG), 0);
   }
   Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG);

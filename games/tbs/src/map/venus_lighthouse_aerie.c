@@ -17,7 +17,7 @@
 ///   (FLAG_MAP_TEMP_50 while he stands on one).
 /// - The confrontation (MB_VENUS_LIGHTHOUSE_AERIE_BEFORE_BEACON,
 ///   EventScript_ConfrontSaturosAndMenardi): the Shaman's Rod is handed over,
-///   remembered in FLAG_SHAMANS_ROD_OWNER plus the member who carried it, and
+///   remembered in FLAG_SHAMANS_ROD_HOLDER plus the member who carried it, and
 ///   the first battle follows (ENCOUNTER_ZONE_SCRIPTED, slot 1,
 ///   FLAG_AERIE_FIRST_BATTLE_BEGUN).
 /// - After it (VENUS_LIGHTHOUSE_AERIE_AFTER_FIRST_BATTLE,
@@ -122,7 +122,7 @@
 /// Plus the party member (0 to 3) who carried the Shaman's Rod when it was
 /// handed over before the aerie's first battle; a defeat gives it back.
 /// ★ Named from the game: "Shaman's Rod" (MsgItemName)
-#define FLAG_SHAMANS_ROD_OWNER 0x345
+#define FLAG_SHAMANS_ROD_HOLDER 0x345
 
 /// Map section flags that choose the aerie's field music after each battle, by
 /// the map's field music rules (gMap_MusicRules,
@@ -477,11 +477,11 @@ s32 VenusLighthouseAerie_Initialize(void) {
     break;
   case VENUS_LIGHTHOUSE_AERIE_AFTER_DEFEAT:
     FieldScript_Start();
-    if (GameFlag_Get(FLAG_SHAMANS_ROD_OWNER) != 0) {
+    if (GameFlag_Get(FLAG_SHAMANS_ROD_HOLDER) != 0) {
       Inventory_AddItem(0, ITEM_SHAMANS_ROD);
-    } else if (GameFlag_Get(FLAG_SHAMANS_ROD_OWNER + 1) != 0) {
+    } else if (GameFlag_Get(FLAG_SHAMANS_ROD_HOLDER + 1) != 0) {
       Inventory_AddItem(1, ITEM_SHAMANS_ROD);
-    } else if (GameFlag_Get(FLAG_SHAMANS_ROD_OWNER + 2) != 0) {
+    } else if (GameFlag_Get(FLAG_SHAMANS_ROD_HOLDER + 2) != 0) {
       Inventory_AddItem(2, ITEM_SHAMANS_ROD);
     } else {
       Inventory_AddItem(3, ITEM_SHAMANS_ROD);
@@ -837,7 +837,7 @@ static void VenusLighthouseAerie_ShowPartyMember(s32 localId, s32 shown) {
 /// Felix refuses to be rescued, Sheba reads the party's minds for the rod that
 /// reaches Jupiter Lighthouse, they promise not to harm her for the Shaman's
 /// Rod, Felix carries it over, they will not let her go, and the first battle
-/// begins. It sets FLAG_SHAMANS_ROD_OWNER plus the member who carried the rod,
+/// begins. It sets FLAG_SHAMANS_ROD_HOLDER plus the member who carried the rod,
 /// and FLAG_AERIE_FIRST_BATTLE_BEGUN as the battle starts, which changes the
 /// aerie's music.
 static void EventScript_ConfrontSaturosAndMenardi(void) {
@@ -1237,7 +1237,7 @@ static void EventScript_ConfrontSaturosAndMenardi(void) {
   VenusLighthouseAerie_ShowMessage(LOCALID_MENARDI);
   // Save the rod owner for the defeat return path, then enter battle.
   rodHolder = PartyInventory_FindMember(ITEM_SHAMANS_ROD);
-  GameFlag_Set(rodHolder + FLAG_SHAMANS_ROD_OWNER);
+  GameFlag_Set(rodHolder + FLAG_SHAMANS_ROD_HOLDER);
   PartyInventory_Remove(ITEM_SHAMANS_ROD);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags &=
       ~OBJ_EVENT_FACES_MOTION;

@@ -37,6 +37,8 @@ tileset	word	pret	pokeemerald src/tileset_anims.c; src/graphics/tileset
 cell (MapGridCell, currentCell, pushCell, Field_SearchCell)	word	common	AGENTS.md keeps block for memory; map_grid.h MapGridCell
 metatile	word	pret	pokeemerald fieldmap.h; gMetatiles
 metatile behavior (MapGridCell.behavior)	field	pret	pokeemerald metatile_behavior.c; map_grid.h
+MB_NORMAL	constant	pret	pokeemerald MB_NORMAL: metatile behavior 0, open ground, which the behavior setters (MapGrid_SetMetatileBehaviorAt, PushedObject_FillGridAttributeRectangle) write as it and MB_WALL as 255
+<Map>MetatileBehavior, MB_<MAP>_*	enum	pret	a map's own metatile behaviors, 1 to 239 (MB_EVENT_FIRST to MB_EVENT_LAST), one enum per overlay named for its map: pret's MB_ prefix with the map's name, since each number means something else on each map
 shape (MapGridCell.shape, gMapGridShapes)	field	common	terrain.c reads the shape table through it
 Terrain_ (height functions)	prefix	common	field/terrain.c gMapGrid_TerrainHeightFunctions
 groundHeight	field	common	MapGrid_GetTerrainHeight result stored on the object
@@ -54,6 +56,8 @@ map event (MapEvent, MAP_EVENT_)	word	pret	pokeemerald map events; map_tables.h
 coord event	word	pret	pokeemerald CoordEvent; COORD_EVENT_*
 bg event (BG_EVENT_SILENT)	word	pret	pokeemerald BgEvent; shows no checking message
 raised event (FieldRaisedEvent, raisedEvent)	word	common	Map_RunRaisedEvent
+<Map>RaisedEvent, RAISED_*	enum	common	a map's own raised events (FieldWork.raisedEvent, MAP_EVENT_RAISED), one enum per overlay; overlay-local, so RAISED_ without the map's name unless the map keeps a prefix of its own (LAMAKAN_DESERT_RAISED_)
+holder (FLAG_SHAMANS_ROD_HOLDER, rodHolder)	word	common	the party member carrying an item; owner stays a character's number (units, Djinn)
 warp	word	pret	pokeemerald warps; map_warps.h
 warp destination	word	common	struct MapWarpDest
 WARP_STYLE_STAIRS_UP/DOWN, Warp_	constant	pret	pokeemerald field_screen_effect.c DoStairWarp; map_tables.h SE_STAIRS_UP/SE_STAIRS_DOWN

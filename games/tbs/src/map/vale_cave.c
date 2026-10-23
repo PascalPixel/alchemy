@@ -705,8 +705,8 @@ static void EventScript_PushLogOffLedge(void) {
   ObjectMotion_SetActionVariant(LOCALID_WEST_LOG, 3);
   ObjectEvent_GetById(LOCALID_WEST_LOG)->priorityFlags =
       OBJ_EVENT_PRIORITY_UNDERFOOT;
-  PushedObject_FillGridAttributeRectangle(0, 12, 16, 1, 4, 0);
-  PushedObject_FillGridAttributeRectangle(0, 13, 16, 1, 4, 0);
+  PushedObject_FillGridAttributeRectangle(0, 12, 16, 1, 4, MB_NORMAL);
+  PushedObject_FillGridAttributeRectangle(0, 13, 16, 1, 4, MB_NORMAL);
   GameFlag_Set(FLAG_MAP_TEMP_02);
   Script_PlaySong(SE_240);
   FieldScript_End();
@@ -936,20 +936,20 @@ static void ValeCave_ApplyEntryState(void) {
       // Each log already pushed leaves open floor; else its footprint
       // blocks its cells again.
       if (GameFlag_Get(FLAG_MAP_TEMP_02) != 0) {
-        PushedObject_FillGridAttributeRectangle(0, 12, 16, 1, 4, 0);
-        PushedObject_FillGridAttributeRectangle(0, 13, 16, 1, 4, 0);
+        PushedObject_FillGridAttributeRectangle(0, 12, 16, 1, 4, MB_NORMAL);
+        PushedObject_FillGridAttributeRectangle(0, 13, 16, 1, 4, MB_NORMAL);
       } else {
         Map_RedrawObjectEventFootprint(LOCALID_WEST_LOG);
       }
       if (GameFlag_Get(FLAG_MAP_TEMP_03) != 0) {
-        PushedObject_FillGridAttributeRectangle(2, 16, 16, 1, 4, 0);
-        PushedObject_FillGridAttributeRectangle(0, 16, 16, 1, 4, 0);
+        PushedObject_FillGridAttributeRectangle(2, 16, 16, 1, 4, MB_NORMAL);
+        PushedObject_FillGridAttributeRectangle(0, 16, 16, 1, 4, MB_NORMAL);
       } else {
         Map_RedrawObjectEventFootprint(LOCALID_EAST_LOG);
       }
       southLogOnSouthernRow = GameFlag_Get(FLAG_MAP_TEMP_05);
       if (southLogOnSouthernRow != 0) {
-        PushedObject_FillGridAttributeRectangle(0, 13, 19, 4, 2, 0);
+        PushedObject_FillGridAttributeRectangle(0, 13, 19, 4, 2, MB_NORMAL);
       } else if (GameFlag_Get(FLAG_MAP_TEMP_04) != 0) {
         PushedObject_FillGridAttributeRectangle(0, 13, 15, 4, 2,
                                                 southLogOnSouthernRow);

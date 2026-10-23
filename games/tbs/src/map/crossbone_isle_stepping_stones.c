@@ -343,7 +343,7 @@ static s32 CrossboneIsleSteppingStones_RestoreGroundFootprint(s32 localId) {
     MapGrid_CopyCellAttributes(sourceCellX, sourceCellZ, width, depth,
                                probe.position.x, probe.position.z);
     PushedObject_FillGridAttributeRectangle(
-        0, probe.position.x, probe.position.z, width, depth, 255);
+        0, probe.position.x, probe.position.z, width, depth, MB_WALL);
   }
 
   ObjectDispatch_SelectAnimation(objectEvent, 1);
@@ -1451,7 +1451,7 @@ static void EventScript_StartMovingSinkingPillar(void) {
   x = pillar->x.fixed >> 20;
   z = pillar->z.fixed >> 20;
 
-  PushedObject_FillGridAttributeRectangle(2, x, z, 1, 1, 0);
+  PushedObject_FillGridAttributeRectangle(2, x, z, 1, 1, MB_NORMAL);
   SCRIPT_END();
 }
 
@@ -1463,8 +1463,8 @@ static void EventScript_MoveSinkingPillar(void) {
 
   pillar = ObjectEvent_GetById(LOCALID_SINKING_BOULDER);
   SCRIPT_START();
-  PushedObject_FillGridAttributeRectangle(2, (pillar->x.fixed >> 20),
-                                          (pillar->z.fixed >> 20), 1, 1, 255);
+  PushedObject_FillGridAttributeRectangle(
+      2, (pillar->x.fixed >> 20), (pillar->z.fixed >> 20), 1, 1, MB_WALL);
   if ((pillar->x.fixed >> 20) == 16) {
     alreadyLowered = Script_GetFlag(PILLAR_SUNK_FLAG);
     if (alreadyLowered == 0) {

@@ -10,8 +10,9 @@
 #include "static_assert.h"
 
 /// A map cell's metatile behavior (`MapGridCell.behavior`): what stepping
-/// on, pushing against or searching the cell does. 0 is open ground.
+/// on, pushing against or searching the cell does.
 enum MetatileBehavior {
+  MB_NORMAL = 0, ///< open ground: nothing happens there
   /// 1 to 239: the map's own events, coord event or warp when stepped on
   /// (Map_RunCoordEventOrWarp), bg event when the player presses A facing the
   /// cell.

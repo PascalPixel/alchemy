@@ -1511,10 +1511,10 @@ static void TunnelRuins_MarkPushPillarCells(void) {
   MapGrid_CopyCellAttributes(108, 19, 4, 1, 44, 19);
   PushedObject_FillGridAttributeRectangle(
       0, ObjectEvent_GetById(LOCALID_EAST_PILLAR_A)->x.fixed >> 20,
-      ObjectEvent_GetById(LOCALID_EAST_PILLAR_A)->z.fixed >> 20, 1, 1, 0xff);
+      ObjectEvent_GetById(LOCALID_EAST_PILLAR_A)->z.fixed >> 20, 1, 1, MB_WALL);
   PushedObject_FillGridAttributeRectangle(
       0, ObjectEvent_GetById(LOCALID_EAST_PILLAR_B)->x.fixed >> 20,
-      ObjectEvent_GetById(LOCALID_EAST_PILLAR_B)->z.fixed >> 20, 1, 1, 0xff);
+      ObjectEvent_GetById(LOCALID_EAST_PILLAR_B)->z.fixed >> 20, 1, 1, MB_WALL);
 }
 
 /// On entering a room: the puzzle as it was left, and the path the statue in

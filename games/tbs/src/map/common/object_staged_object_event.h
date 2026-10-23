@@ -458,7 +458,8 @@ UNUSED static void ObjectEvent_MoveAndRedraw(struct PushedObjectProbe probe) {
   }
 
   PushedObject_FillGridAttributeRectangle(0, tilePosition.x, tilePosition.z,
-                                          horizontalExtent, verticalExtent, 0);
+                                          horizontalExtent, verticalExtent,
+                                          MB_NORMAL);
   ObjectMotion_SetSpeedParameters(0, 0x8000, 0x1999);
   Engine_ObjectEventSetAnimation(0, ANIM_PUSH);
   FieldScript_WaitFrames(15);
@@ -541,10 +542,10 @@ UNUSED static void ObjectEvent_MoveAndRedraw(struct PushedObjectProbe probe) {
         horizontalOrigin + probe.position.x, verticalOrigin + probe.position.z);
     PushedObject_FillGridAttributeRectangle(0, probe.position.x,
                                             probe.position.z, horizontalExtent,
-                                            verticalExtent, 255);
+                                            verticalExtent, MB_WALL);
     PushedObject_FillGridAttributeRectangle(2, probe.position.x,
                                             probe.position.z, horizontalExtent,
-                                            verticalExtent, 255);
+                                            verticalExtent, MB_WALL);
 
     {
       s32 tableOffset = probe.footprintIndex << 4;
@@ -564,7 +565,7 @@ UNUSED static void ObjectEvent_MoveAndRedraw(struct PushedObjectProbe probe) {
                                   originalPosition.x, originalPosition.z);
     PushedObject_FillGridAttributeRectangle(
         2, originalPosition.x, originalPosition.z, horizontalExtent,
-        verticalExtent, 0);
+        verticalExtent, MB_NORMAL);
   }
   Map_PlayQueuedMusic();
 }
@@ -625,8 +626,8 @@ UNUSED static s32 Map_RedrawObjectEventFootprint(s32 id) {
                                 height, idx + probe.position.x,
                                 dstZ + probe.position.z);
   PushedObject_FillGridAttributeRectangle(0, probe.position.x, probe.position.z,
-                                          width, height, 255);
+                                          width, height, MB_WALL);
   PushedObject_FillGridAttributeRectangle(2, probe.position.x, probe.position.z,
-                                          width, height, 255);
+                                          width, height, MB_WALL);
   return 1;
 }

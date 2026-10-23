@@ -154,27 +154,73 @@ typedef void (*MapTask)(void);
 /// Bridge and the Lumber Water Crossing Area) lead to the arena where the two
 /// warriors fight.
 enum {
-  LOCALID_OPPONENT = 8, ///< Azart, racing Isaac to the arena
-  LOCALID_ROCK_A = 9,   ///< the Rock Challenge's three rocks
+  /// Azart, racing Isaac to the arena.
+  /// ★ Named from the game: "The name's Azart."
+  /// (MsgColosseumImRatedAsSecondBest)
+  LOCALID_OPPONENT = 8,
+  /// The Rock Challenge's three rocks, stone pillars the party moves to clear
+  /// a path.
+  /// ★ Named from the game: "Moving such a huge rock must be a real workout."
+  /// (MsgColossoRiverMovingSuchAHugeRockMust)
+  LOCALID_ROCK_A = 9,
+  /// ★ Named from the game: "Moving such a huge rock must be a real workout."
+  /// (MsgColossoRiverMovingSuchAHugeRockMust)
   LOCALID_ROCK_B = 10,
+  /// ★ Named from the game: "Moving such a huge rock must be a real workout."
+  /// (MsgColossoRiverMovingSuchAHugeRockMust)
   LOCALID_ROCK_C = 11,
   /// Pushed west to let water into the Pipeworks. A pipe section, drawn as
   /// mercury_lighthouse.c's LOCALID_THIRD_PIPE.
+  /// ★ Named from the game: "See the water pipes?"
+  /// (MsgColossoAreaCalledPipeworks)
   LOCALID_PIPEWORKS_PIPE = 12,
-  LOCALID_PIPE_WEST = 13, ///< the Pipeworks' two pipes, a kind of scale
+  /// The Pipeworks' two pipes, which rise and sink against each other as
+  /// water fills one, like scales.
+  /// ★ Named from the game: "See the water pipes?"
+  /// (MsgColossoAreaCalledPipeworks)
+  LOCALID_PIPE_WEST = 13,
+  /// ★ Named from the game: "See the water pipes?"
+  /// (MsgColossoAreaCalledPipeworks)
   LOCALID_PIPE_EAST = 14,
+  /// The plant Growth grows into a vine before the Broken Bridge.
+  /// ★ Named from what the player sees: a small sprout (SPRITE_SPROUT) on the
+  /// ground before the Broken Bridge (its render)
   LOCALID_GROWTH_PLANT = 15,
   /// A young man with fair hair who works the Broken Bridge.
+  /// ★ Named from the game: "The operator of the bridge will also cheer for
+  /// you in this stage." (MsgColossoOperatorBridgeWillAlsoCheer)
   LOCALID_BRIDGE_OPERATOR = 16,
-  LOCALID_LOG_NORTH_SOUTH = 17, ///< the Lumber Water Crossing Area's two logs
+  /// The Lumber Water Crossing Area's two floating logs.
+  /// ★ Named from the game: "The logs are the key to clearing this stage."
+  /// (MsgColossoLogsKeyClearingStage)
+  LOCALID_LOG_NORTH_SOUTH = 17,
+  /// ★ Named from the game: "The logs are the key to clearing this stage."
+  /// (MsgColossoLogsKeyClearingStage)
   LOCALID_LOG_EAST_WEST = 18,
-  LOCALID_GUIDE = 19, ///< a soldier who explains the finals
+  /// A soldier who explains the finals.
+  /// ★ Named from the game: "Ask the attendants for explanations of the
+  /// stages." (MsgColossoAskAttendantsForExplanationsStages)
+  LOCALID_GUIDE = 19,
   /// The stages' attendants, young men with fair hair in white tunics.
+  /// ★ Named from the game: "They call this the Rock Challenge."
+  /// (MsgColossoCallRockChallenge)
   LOCALID_ROCK_ATTENDANT = 20,
+  /// ★ Named from the game: "This area is called the Pipeworks."
+  /// (MsgColossoAreaCalledPipeworks)
   LOCALID_PIPEWORKS_ATTENDANT = 21,
+  /// ★ Named from the game: "They call this the Broken Bridge."
+  /// (MsgColossoTheyCallBrokenBridge)
   LOCALID_BRIDGE_ATTENDANT = 22,
+  /// ★ Named from the game: "This place is normally called the Lumber Water
+  /// Crossing Area." (MsgColossoPlaceNormallyCalledLumberWater)
   LOCALID_LUMBER_ATTENDANT = 23,
-  LOCALID_PRIZE_A = 24, ///< the arena's Iron Shield and Padded Gloves
+  /// The arena's prizes, drawn as item icons at two blank object events
+  /// (Colosso_ShowItemIcon).
+  /// ★ Named from what the player sees: the Iron Shield's icon at the arena's
+  /// finish, taken by whoever reaches it first (its render)
+  LOCALID_PRIZE_A = 24,
+  /// ★ Named from what the player sees: the Padded Gloves' icon at the arena's
+  /// finish, taken by whoever reaches it second (its render)
   LOCALID_PRIZE_B = 25
 };
 

@@ -151,11 +151,20 @@ enum {
 /// LamakanDesertManticore one pit and LamakanDesertSmog all four pits and Smog;
 /// LamakanDesertCave places none.
 enum {
-  LOCALID_MANTICORE = LOCALID_FIRST_PLACED, ///< talking to it starts its battle
+  /// The Manticore, until FLAG_LAMAKAN_MANTICORE_BEATEN; talking to it starts
+  /// its battle.
+  /// ★ Named from the game: "Manticore" (MsgEnemyName)
+  LOCALID_MANTICORE = LOCALID_FIRST_PLACED,
   /// The first of the Ant Lions' pits Reveal shows, up to LOCALID_LAST_PIT.
+  /// ★ Named from what the player sees: a pit in the sand, shown under
+  /// Reveal, that pulls the leader down to an Ant Lion (its render)
   LOCALID_FIRST_PIT = LOCALID_MANTICORE + 1,
+  /// ★ Named from what the player sees: the last of the pits in the sand,
+  /// shown under Reveal (its render)
   LOCALID_LAST_PIT = LOCALID_FIRST_PIT + 3,
-  LOCALID_SMOG = LOCALID_LAST_PIT + 1 ///< Smog, a Jupiter Djinni
+  /// Smog, a Jupiter Djinni.
+  /// ★ Named from the game: "Smog" (MsgDjinnName)
+  LOCALID_SMOG = LOCALID_LAST_PIT + 1
 };
 
 /// The desert's two Psynergy Stones, map-section temp flags: each is back once

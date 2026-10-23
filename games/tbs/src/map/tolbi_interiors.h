@@ -62,11 +62,20 @@ enum TolbiInteriorsLocalId {
   /// ★ Named from the game: "selling my wares"
   /// (MsgTolbiInteriorsThereWontBeManyCustomersUntil)
   LOCALID_TOLBI_INTERIORS_TRAVELING_MERCHANT,
-  LOCALID_TOLBI_INTERIORS_WEAPON_MERCHANT, ///< a bald man in red
-                                           ///< (SPRITE_BALD_MAN_IN_RED)
-  /// A young man in green (SPRITE_YOUNG_MAN_IN_GREEN).
+  /// A bald man in red (SPRITE_BALD_MAN_IN_RED) behind the weapon shop's
+  /// counter (TolbiInteriors_TalkToWeaponMerchant).
+  /// ★ Named from the game: "Take a look at our fine weapons."
+  /// (MsgWeaponShopWelcome)
+  LOCALID_TOLBI_INTERIORS_WEAPON_MERCHANT,
+  /// A young man in green (SPRITE_YOUNG_MAN_IN_GREEN) behind the armor shop's
+  /// counter (TolbiInteriors_TalkToArmorMerchant).
+  /// ★ Named from the game: "Ask me anything about armor."
+  /// (MsgArmorShopWelcome)
   LOCALID_TOLBI_INTERIORS_ARMOR_MERCHANT,
-  /// A young woman with a ponytail (SPRITE_WOMAN_WITH_PONYTAIL).
+  /// A young woman with a ponytail (SPRITE_WOMAN_WITH_PONYTAIL) behind the item
+  /// shop's counter (TolbiInteriors_TalkToItemMerchant).
+  /// ★ Named from the game: "Welcome! We have just the gear you need."
+  /// (MsgItemShopWelcome)
   LOCALID_TOLBI_INTERIORS_ITEM_MERCHANT,
   /// The inn's master, a man with dark hair (SPRITE_MAN_WITH_DARK_HAIR). His
   /// own thought: "I'm the one who really wants to skip work to watch the
@@ -83,10 +92,19 @@ enum TolbiInteriorsLocalId {
   /// ★ Named from the game: "We're so busy running the inn"
   /// (MsgTolbiInteriorsWereSoBusyRunningTheInn)
   LOCALID_TOLBI_INTERIORS_INN_WORKER,
-  LOCALID_TOLBI_INTERIORS_MEDAL_WOMAN, ///< SPRITE_WOMAN_WITH_FAIR_HAIR
-  LOCALID_TOLBI_INTERIORS_CHEF,        ///< SPRITE_CHEF
+  /// A woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR) who, after Colosso,
+  /// hides the Lucky Medal she found in a barrel
+  /// (FLAG_TOLBI_INTERIORS_BARREL_LUCKY_MEDAL).
+  /// ★ Named from the game: "Hey, what's this?" (MsgTolbiHeyWhatsThis)
+  LOCALID_TOLBI_INTERIORS_MEDAL_WOMAN,
+  /// The inn's cook (SPRITE_CHEF).
+  /// ★ Named from the game: "The innkeeper told me to cook a gourmet meal"
+  /// (MsgTolbiInteriorsTheInnkeeperToldMeToCook)
+  LOCALID_TOLBI_INTERIORS_CHEF,
   /// A young woman in green (SPRITE_YOUNG_WOMAN_IN_GREEN) waiting at the
   /// tables.
+  /// ★ Named from the game: "I'm not very interested in Colosso. It's so
+  /// barbaric." (MsgTolbiInteriorsImNotVeryInterestedInColosso)
   LOCALID_TOLBI_INTERIORS_WAITRESS,
   /// A young man with blue hair (SPRITE_YOUNG_MAN_WITH_BLUE_HAIR).
   /// ★ Named from the game: "we can't even enter Colosso."
@@ -96,8 +114,11 @@ enum TolbiInteriorsLocalId {
   /// ★ Named from the game: "we could have entered Colosso."
   /// (MsgTolbiInteriorsIfWedGottenHereJustA)
   LOCALID_TOLBI_INTERIORS_SECOND_LATE_ENTRANT,
-  LOCALID_TOLBI_INTERIORS_HEALER, ///< a man in a tall hat
-                                  ///< (SPRITE_MAN_IN_TALL_HAT)
+  /// Tolbi Sanctum's healer, a man in a tall hat (SPRITE_MAN_IN_TALL_HAT),
+  /// who opens the sanctum across his counter (TolbiInteriors_TalkToHealer).
+  /// ★ Named from the game: "Welcome, weary wanderers. What aid do you seek?"
+  /// (MsgSanctumWelcome)
+  LOCALID_TOLBI_INTERIORS_HEALER,
   /// After Colosso, passengers stranded at an inn because no ship sails: the
   /// angry one, a man carrying a pack (SPRITE_MAN_CARRYING_A_PACK), his wife,
   /// an old woman (SPRITE_OLD_WOMAN), and a third, a woman in a green dress
@@ -105,7 +126,11 @@ enum TolbiInteriorsLocalId {
   /// ★ Named from the game: "Making passengers row their own cruise ship is
   /// unprecedented!" (MsgTolbiInteriorsYoureSayingIfWeRowWe)
   LOCALID_TOLBI_INTERIORS_ANGRY_PASSENGER,
+  /// ★ Named from the game: "The ships cannot go out for any reason."
+  /// (MsgTolbiHeWontSailShipEven)
   LOCALID_TOLBI_INTERIORS_PASSENGER_WIFE,
+  /// ★ Named from the game: "What kind of person would refuse such an
+  /// offer?" (MsgTolbiHeWontSailShipEven)
   LOCALID_TOLBI_INTERIORS_THIRD_PASSENGER,
   /// A small boy with fair hair (SPRITE_BOY_WITH_FAIR_HAIR), after Colosso.
   /// ★ Named from the game: "Tolbi gets so boring"

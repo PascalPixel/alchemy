@@ -14,7 +14,7 @@
 ///   here, and Dodonpa's family and the women he brought here talk. After the
 ///   rescue Donpa gives the party Tonic, a Mercury Djinni.
 /// - LunpaFortressCave (MapId_LunpaFortressCave): the cave whose switches
-///   and passage plants hide, with a stack of crates to push into its hole.
+///   and passage ivy hides, with a stack of crates to push into its hole.
 /// - LunpaFortressToadonpa (MapId_LunpaFortressToadonpa): Hammet's cell,
 ///   where Dodonpa frees Toadonpa on the party (EventScript_FindHammet) and
 ///   Donpa judges him after the battle (EventScript_DonpaJudgesDodonpa), which
@@ -56,7 +56,7 @@
 /// The Cell Key opens the cell doors of all four maps, facing each door
 /// with it in the party, and each opened door is remembered in a map-section
 /// temp flag from FLAG_MAPSEC_TEMP_50 (TOADONPA_DOOR_FLAG and the others). In
-/// LunpaFortressCave, Whirlwind blows away the plants that hide two switches
+/// LunpaFortressCave, Whirlwind blows away the ivy that hides two switches
 /// and a passage; the switches show in the wall only while Reveal lasts, and
 /// searching one opens its passage.
 ///
@@ -64,7 +64,7 @@
 /// - FLAG_MAP_TEMP_14: a guard has spotted the party; FLAG_MAP_TEMP_15 is
 ///   set beside it and never read.
 /// - FLAG_MAP_TEMP_17 and FLAG_MAP_TEMP_18: LunpaFortressCave's first and
-///   second switches are still hidden by their plants.
+///   second switches are still hidden by their ivy.
 /// - FLAG_MAP_TEMP_24 and FLAG_MAP_TEMP_25: the entrance guard or the
 ///   sentries have thrown the party out.
 /// - FLAG_MAP_TEMP_26 and FLAG_MAP_TEMP_27: the startled old man has
@@ -122,93 +122,153 @@
 /// LunpaFortressGroundFloor's people, numbered in the order of
 /// gLunpaFortressGroundFloorObjectEventTemplates from LOCALID_FIRST_PLACED,
 /// past its first four rows (in a chest's sprite, at the map's origin; see
-/// LOCALID_FIRST_ITEM_DISPLAY).
+/// LOCALID_FIRST_ITEM_DISPLAY). Dodonpa's men, here and upstairs, wear the
+/// sprite of a man with a mop of orange hair (SPRITE_MAN_WITH_ORANGE_HAIR).
 enum {
-  /// Dodonpa's men, here and upstairs, wear the sprite of a man with a mop
-  /// of orange hair (SPRITE_MAN_WITH_ORANGE_HAIR).
+  /// ★ Named from what the player sees: one of Dodonpa's men standing watch
+  /// by the way in from the Lunpa Fortress Gates, who throws out a party he
+  /// sees (its render)
   LOCALID_GROUND_FLOOR_ENTRANCE_GUARD = LOCALID_FIRST_PLACED + 4,
+  /// ★ Named from what the player sees: the first of the two of Dodonpa's men
+  /// who stand watch together, the one who speaks when they throw the party
+  /// out (its render)
   LOCALID_GROUND_FLOOR_FIRST_SENTRY,
   /// A woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR), wondering where
-  /// Dodonpa has gone. "Where could Dodonpa be? He's not in his
-  /// room, but he couldn't have left."
+  /// Dodonpa has gone.
+  /// ★ Named from the game: "Where could Dodonpa be?" (MsgLunpaWhereIsDodonpa)
   LOCALID_GROUND_FLOOR_WOMAN_SEEKING_DODONPA,
   /// One of Dodonpa's men (the guards' sprite), feasting on Kalay's ransom.
-  /// "Whee! Thanks to Hammet we can enjoy food and drink all day long!"
+  /// ★ Named from the game: "Thanks to Hammet we can enjoy food and drink all
+  /// day long!" (MsgLunpaHammetBuysDrink)
   LOCALID_GROUND_FLOOR_FEASTING_MAN,
-  /// One of Dodonpa's men, drinking and boasting of Hammet. "He's a money tree
-  /// for us, hic!"
+  /// One of Dodonpa's men, drinking and boasting of Hammet.
+  /// ★ Named from the game: "He's a money tree for us, hic!"
+  /// (MsgLunpaHammetMoneyTree)
   LOCALID_GROUND_FLOOR_BOASTING_MAN,
+  /// ★ Named from what the player sees: one of Dodonpa's men standing watch
+  /// deeper in the floor, who throws out a party he sees (its render)
   LOCALID_GROUND_FLOOR_UPPER_HALL_GUARD,
+  /// ★ Named from what the player sees: one of Dodonpa's men walking his
+  /// rounds (gGroundFloorPatrolRoute), who throws out a party he sees (its
+  /// render)
   LOCALID_GROUND_FLOOR_PATROL_GUARD,
   /// A man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR), talking of
-  /// Donpa's
-  /// poor health. "Donpa is supposed to be old. I wonder
-  /// what he's fighting with in the fortress."
+  /// Donpa's poor health.
+  /// ★ Named from the game: "Donpa is supposed to be old. I wonder what he's
+  /// fighting with" (MsgLunpaDonpaResting)
   LOCALID_GROUND_FLOOR_MAN_WONDERING_ABOUT_DONPA,
-  /// A bent old man with a cane (SPRITE_OLD_MAN_WITH_CANE);
-  /// EventScript_TalkToStartledOldMan.
+  /// A bent old man with a cane (SPRITE_OLD_MAN_WITH_CANE), startled when the
+  /// party first speaks to him (EventScript_TalkToStartledOldMan).
+  /// ★ Named from the game: "Who goes there!" (MsgLunpaWhWhWho)
   LOCALID_GROUND_FLOOR_STARTLED_OLD_MAN,
+  /// The other man standing watch with LOCALID_GROUND_FLOOR_FIRST_SENTRY.
+  /// ★ Named from the game: "I was told to stand guard"
+  /// (MsgLunpaToldStandGuard)
   LOCALID_GROUND_FLOOR_SECOND_SENTRY
 };
 
 /// LunpaFortressUpperFloor's people and the Cell Key, numbered in the order of
 /// gLunpaFortressUpperFloorObjectEventTemplates from LOCALID_FIRST_PLACED.
 enum {
+  /// ★ Named from what the player sees: a golden key (SPRITE_KEY) in the
+  /// south of the floor, which the party takes as the Cell Key (its render)
   LOCALID_UPPER_FLOOR_CELL_KEY = LOCALID_FIRST_PLACED,
+  /// ★ Named from what the player sees: the first of the pair of Dodonpa's
+  /// men who walk east and west together in the west passage, carrying a
+  /// circle of light (gFirstPatrolRoute) (its render)
   LOCALID_UPPER_FLOOR_FIRST_PATROL,
+  /// ★ Named from what the player sees: the second of the pair, a row of
+  /// cells below the first (gSecondPatrolRoute) (its render)
   LOCALID_UPPER_FLOOR_SECOND_PATROL,
+  /// ★ Named from what the player sees: one of Dodonpa's men standing in the
+  /// hall, who challenges the party to a battle as it comes up to him
+  /// (EventScript_FightHallGuard) (its render)
   LOCALID_UPPER_FLOOR_HALL_GUARD,
   /// The three guards who fight together, by where they stand once beaten
   /// (LunpaFortress_PlaceThreeBeatenGuards): west, middle and east in a row.
+  /// ★ Named from the game: "You guys are tougher than we thought"
+  /// (MsgLunpaGuysTougherThought)
   LOCALID_UPPER_FLOOR_THREE_GUARDS_WEST,
+  /// ★ Named from the game: "All right, all right. We give up!"
+  /// (MsgLunpaRightRightGive)
   LOCALID_UPPER_FLOOR_THREE_GUARDS_MIDDLE,
+  /// ★ Named from the game: "Don't hurt me again, you thieving scoundrel!"
+  /// (MsgLunpaOwwwDontHurt)
   LOCALID_UPPER_FLOOR_THREE_GUARDS_EAST,
+  /// ★ Named from what the player sees: one of Dodonpa's men standing in the
+  /// west, who challenges the party to a battle as it comes up to him
+  /// (EventScript_FightWestGuard) (its render)
   LOCALID_UPPER_FLOOR_WEST_GUARD,
+  /// ★ Named from what the player sees: one of Dodonpa's men standing in the
+  /// east, who challenges the party to a battle as it comes up to him
+  /// (EventScript_FightEastGuard) (its render)
   LOCALID_UPPER_FLOOR_EAST_GUARD,
+  /// ★ Named from what the player sees: one of Dodonpa's men walking his
+  /// rounds of the east hall, carrying a circle of light (gHallPatrolRoute)
+  /// (its render)
   LOCALID_UPPER_FLOOR_HALL_PATROL,
   /// Dodonpa's wife, a woman in a green dress (SPRITE_WOMAN_IN_GREEN_DRESS),
-  /// the "Mama" of his children, who LunpaFortressGroundFloor's
-  /// people say is looking for him. "Do you know where Dodonpa is?"
+  /// the "Mama" of his children, looking for him.
+  /// ★ Named from the game: "Dodonpa's wife was looking for him"
+  /// (MsgLunpaWifeSeeksDodonpa)
   LOCALID_UPPER_FLOOR_DODONPAS_WIFE,
   /// Donpappa, a small boy (SPRITE_BOY_WITH_FAIR_HAIR), Dodonpa's son, as he
-  /// names himself to Mind Read: "When my Papa's gone, I, Donpappa, shall
-  /// protect Lunpa myself."
+  /// names himself to Mind Read.
+  /// ★ Named from the game: "When my Papa's gone, I, Donpappa, shall protect
+  /// Lunpa myself." (MsgLunpaDonpappaProtectsFortress)
   LOCALID_UPPER_FLOOR_DONPAPPA,
-  /// Dodonpa's daughter, a little girl (SPRITE_GIRL_WITH_PIGTAILS). "Papa
-  /// always gets friendly with the ladies when Mama's not lookin'."
+  /// Dodonpa's daughter, a little girl (SPRITE_GIRL_WITH_PIGTAILS).
+  /// ★ Named from the game: "I'm not going to marry anyone like my Papa when I
+  /// grow up!" (MsgLunpaDaughterWillNotMarryPapa)
   LOCALID_UPPER_FLOOR_DODONPAS_DAUGHTER,
-  /// An old woman (SPRITE_OLD_WOMAN) who pities Donpappa. "Dodonpa's child is
-  /// so well behaved, I can't believe he's his father's son!"
+  /// An old woman (SPRITE_OLD_WOMAN) who pities Donpappa.
+  /// ★ Named from the game: "Dodonpa's child is so well behaved, I can't
+  /// believe he's his father's son!" (MsgLunpaChildTooResponsible)
   LOCALID_UPPER_FLOOR_OLD_WOMAN_PRAISING_DONPAPPA,
   /// A woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR) who fears for Donpa.
-  /// "Poor, poor Donpa. Dodonpa's behavior is driving him
-  /// into despair."
+  /// ★ Named from the game: "Poor, poor Donpa." (MsgLunpaDonpaExhausted)
   LOCALID_UPPER_FLOOR_WOMAN_FEARING_FOR_DONPA,
   /// A woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR), one of the women
-  /// Dodonpa has brought to the fortress. "Nearly all of
-  /// these women were brought here against their will, like me."
+  /// Dodonpa has brought to the fortress.
+  /// ★ Named from the game: "Nearly all of these women were brought here
+  /// against their will, like me." (MsgLunpaWomenWantHome)
   LOCALID_UPPER_FLOOR_CAPTIVE_WOMAN,
-  LOCALID_UPPER_FLOOR_DONPA, ///< SPRITE_DONPA
+  /// Donpa, asleep (SPRITE_DONPA).
+  /// ★ Named from the game: "Shhh! Please don't wake Donpa!"
+  /// (MsgLunpaShhhPleaseDont)
+  LOCALID_UPPER_FLOOR_DONPA,
   /// Donpa's attendant, a woman in a green dress (SPRITE_WOMAN_IN_GREEN_DRESS).
+  /// ★ Named from what the player sees: a woman standing by the sleeping
+  /// Donpa, who hushes the party (EventScript_TalkToAttendant) (its render)
   LOCALID_UPPER_FLOOR_ATTENDANT,
-  LOCALID_UPPER_FLOOR_TONIC ///< Tonic, a Mercury Djinni, Donpa's reward
+  /// Tonic, a Mercury Djinni, Donpa's reward.
+  /// ★ Named from the game: "Tonic" (MsgDjinnName)
+  LOCALID_UPPER_FLOOR_TONIC
 };
 
-/// LunpaFortressCave's covers and crates, numbered in the order of
+/// LunpaFortressCave's ivy and crates, numbered in the order of
 /// gLunpaFortressCaveObjectEventTemplates from LOCALID_FIRST_PLACED.
 enum {
-  LOCALID_CAVE_FIRST_SWITCH_COVER = LOCALID_FIRST_PLACED,
-  LOCALID_CAVE_PASSAGE_COVER,
-  LOCALID_CAVE_SECOND_SWITCH_COVER,
+  /// ★ Named from what the player sees: ivy (SPRITE_IVY) on the wall that
+  /// hides the first switch until Whirlwind blows it away (its render)
+  LOCALID_CAVE_FIRST_SWITCH_IVY = LOCALID_FIRST_PLACED,
+  /// ★ Named from what the player sees: ivy (SPRITE_IVY) that hides a passage
+  /// until Whirlwind blows it away (its render)
+  LOCALID_CAVE_PASSAGE_IVY,
+  /// ★ Named from what the player sees: ivy (SPRITE_IVY) on the wall that
+  /// hides the second switch until Whirlwind blows it away (its render)
+  LOCALID_CAVE_SECOND_SWITCH_IVY,
   /// An invisible solid object event (SPRITE_BLANK, OBJ_EVENT_SOLID) at (504,
   /// 168) that makes the jar the layout draws there, in the cell behind the
   /// cave's eastern door, stop the leader: the layout's metatile behavior lets
   /// him walk onto the jar, and with this object event he stops 14 pixels short
   /// of it. A blank sprite draws only its shadow, which
   /// LunpaFortress_InitializeCave turns off.
-  LOCALID_CAVE_JAR_BLOCKER,
+  LOCALID_BLANK_CAVE_JAR,
   /// A stack of wooden crates (the sprite of the crates at the Bilibin
   /// Barricade and on Tolbi Docks), pushed or moved with Move onto its hole.
+  /// ★ Named from what the player sees: a stack of two wooden crates
+  /// (SPRITE_CRATES) in the north of the cave (its render)
   LOCALID_CAVE_CRATES
 };
 
@@ -217,33 +277,42 @@ enum {
 /// rows for Ivan, Mia and Garet keep the party's own slots.
 enum {
   /// Three invisible solid object events (SPRITE_BLANK, OBJ_EVENT_SOLID) at
-  /// (56, 72),
-  /// (136, 72) and (216, 72), in line with the cell doors
+  /// (56, 72), (136, 72) and (216, 72), in line with the cell doors
   /// gLunpaFortressToadonpaDoorCells lists third, second and first, that make
   /// the jar, chest and jar the layout draws in those cells stop the leader.
   /// The layout's metatile behaviors let him walk onto the two jars; the
   /// chest's own cells already stop him, so the middle object event changes
-  /// nothing. Map_Initialize
-  /// turns off the shadows their blank sprites would draw and lays them
-  /// underfoot.
-  LOCALID_TOADONPA_WEST_JAR_BLOCKER = LOCALID_FIRST_PLACED,
-  LOCALID_TOADONPA_CHEST_BLOCKER,
-  LOCALID_TOADONPA_EAST_JAR_BLOCKER,
+  /// nothing. Map_Initialize turns off the shadows their blank sprites would
+  /// draw and lays them underfoot.
+  LOCALID_BLANK_TOADONPA_WEST_JAR = LOCALID_FIRST_PLACED,
+  LOCALID_BLANK_TOADONPA_CHEST,
+  LOCALID_BLANK_TOADONPA_EAST_JAR,
+  /// The monster Dodonpa frees on the party (EventScript_FindHammet).
+  /// ★ Named from the game: "Toadonpa" (MsgEnemyName)
   LOCALID_TOADONPA_BOSS,
+  /// ★ Named from the game: "Sorry to interrupt your teary little reunion,
+  /// Hammet!" (MsgLunpaTimeEat)
   LOCALID_TOADONPA_HAMMET,
-  LOCALID_TOADONPA_DODONPA, ///< SPRITE_DODONPA
+  /// Dodonpa (SPRITE_DODONPA).
+  /// ★ Named from the game: "Dodonpa pulled a lever."
+  /// (MsgLunpaDodonpaPulledLever)
+  LOCALID_TOADONPA_DODONPA,
+  /// ★ Named from the game: "Thank you, Donpa, but you do not need to
+  /// apologize." (MsgLunpaDad)
   LOCALID_TOADONPA_DONPA,
-  /// A sprite drawn underfoot with Toadonpa and moving with it.
-  LOCALID_TOADONPA_BOSS_PART,
+  /// A blank sprite (SPRITE_BLANK_LARGE) laid underfoot with Toadonpa and
+  /// moving with it, drawn 4/5 as wide.
+  LOCALID_BLANK_TOADONPA_BOSS_PART,
   /// One of Dodonpa's men, a man with brown hair
-  /// (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR),
-  /// placed by Dodonpa's cell after Donpa's judgment.
-  /// "The merchant from Kalay is in here somewhere." Read with Mind Read:
-  /// "Actually, Dodonpa's in here, but only a few people know that."
+  /// (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR), placed by Dodonpa's cell after
+  /// Donpa's judgment. Read with Mind Read: "Actually, Dodonpa's in here, but
+  /// only a few people know that."
+  /// ★ Named from the game: "The merchant from Kalay is in here somewhere."
+  /// (MsgLunpaHammetStillInside)
   LOCALID_TOADONPA_CELL_GUARD,
   /// An invisible object event that stands before Dodonpa's cell after Donpa's
   /// judgment; talking to it or reading its mind reaches Dodonpa.
-  LOCALID_TOADONPA_DODONPA_STAND_IN
+  LOCALID_BLANK_TOADONPA_DODONPA
 };
 
 /// Triggers: the cell doors count from TRIGGER_DOOR_FIRST in each map, and a
@@ -582,6 +651,9 @@ static void EventScript_SearchSealedDoor(void) {
 /// pickups below show their items on, in a map they do not name. XXX: likely
 /// LunpaFortressGroundFloor's first four rows (in a chest's sprite, at the
 /// map's origin), because nothing else uses them.
+/// ★ Named from what the player sees: four chests (SPRITE_CHEST) at the
+/// origin of LunpaFortressGroundFloor, the likely display object events (its
+/// render)
 enum { LOCALID_FIRST_ITEM_DISPLAY = LOCALID_FIRST_PLACED };
 
 /// Unused: nothing calls this pickup or the three after it. Together they
@@ -1577,8 +1649,8 @@ static void LunpaFortress_OpenSecondSwitchPassage(void) {
   MapGrid_CopyCellAttributes(5, 9, 1, 1, 6, 10);
 }
 
-/// The passage behind the second Whirlwind cover opens.
-static void LunpaFortress_OpenCoveredPassage(void) {
+/// The passage behind the ivy Whirlwind blew away opens.
+static void LunpaFortress_OpenIvyPassage(void) {
   MapGrid_CopyCells(2, 86, 1, 2, 27, 62);
   MapGrid_CopyCellAttributes(26, 16, 1, 1, 27, 17);
 }
@@ -1643,27 +1715,28 @@ static void EventScript_HideSwitches(void) {
   MapGrid_CopyCellAttributes(2, 10, 1, 1, 3, 10);
 }
 
-/// LunpaFortressCave, Whirlwind on what covers the first switch: it blows away.
-static void EventScript_BlowAwayFirstSwitchCover(void) {
+/// LunpaFortressCave, Whirlwind on the ivy over the first switch: it blows
+/// away.
+static void EventScript_BlowAwayFirstSwitchIvy(void) {
   Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_PLANT_BLOWN_AWAY);
   Engine_GameFlagClear(FLAG_MAP_TEMP_17);
-  Engine_ObjectEventSetPosition(LOCALID_CAVE_FIRST_SWITCH_COVER, 0, 0);
+  Engine_ObjectEventSetPosition(LOCALID_CAVE_FIRST_SWITCH_IVY, 0, 0);
 }
 
-/// LunpaFortressCave, Whirlwind on what covers the passage: it blows away and
+/// LunpaFortressCave, Whirlwind on the ivy over the passage: it blows away and
 /// the passage opens.
-static void EventScript_BlowAwayPassageCover(void) {
+static void EventScript_BlowAwayPassageIvy(void) {
   Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_PASSAGE_PLANT_BLOWN_AWAY);
-  LunpaFortress_OpenCoveredPassage();
-  Engine_ObjectEventSetPosition(LOCALID_CAVE_PASSAGE_COVER, 0, 0);
+  LunpaFortress_OpenIvyPassage();
+  Engine_ObjectEventSetPosition(LOCALID_CAVE_PASSAGE_IVY, 0, 0);
 }
 
-/// LunpaFortressCave, Whirlwind on what covers the second switch: it blows
+/// LunpaFortressCave, Whirlwind on the ivy over the second switch: it blows
 /// away.
-static void EventScript_BlowAwaySecondSwitchCover(void) {
+static void EventScript_BlowAwaySecondSwitchIvy(void) {
   Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_PLANT_BLOWN_AWAY);
   Engine_GameFlagClear(FLAG_MAP_TEMP_18);
-  Engine_ObjectEventSetPosition(LOCALID_CAVE_SECOND_SWITCH_COVER, 0, 0);
+  Engine_ObjectEventSetPosition(LOCALID_CAVE_SECOND_SWITCH_IVY, 0, 0);
 }
 
 static void UNUSED LunpaFortress_DoNothingE(void) {}
@@ -1727,9 +1800,9 @@ static void LunpaFortress_RevealMonster(void) {
   MESSAGE_SET(MsgLunpaPrepareBecomeMonster);
   MESSAGE_PUT(LOCALID_TOADONPA_DODONPA, 0);
   OBJECT_SPEED(LOCALID_TOADONPA_BOSS, PIXELS(1), PIXELS(1) / 2);
-  OBJECT_SPEED(LOCALID_TOADONPA_BOSS_PART, PIXELS(1), PIXELS(1) / 2);
+  OBJECT_SPEED(LOCALID_BLANK_TOADONPA_BOSS_PART, PIXELS(1), PIXELS(1) / 2);
   OBJECT_WALK(LOCALID_TOADONPA_BOSS, 472, 180);
-  OBJECT_WALK(LOCALID_TOADONPA_BOSS_PART, 472, 180);
+  OBJECT_WALK(LOCALID_BLANK_TOADONPA_BOSS_PART, 472, 180);
   Engine_CameraFollowObjectEvent(LOCALID_TOADONPA_BOSS, 1);
   Engine_ObjectEventWaitForMove(LOCALID_TOADONPA_BOSS);
   OBJECT_ANIMATION(LOCALID_TOADONPA_BOSS, 4);
@@ -2059,8 +2132,8 @@ static void EventScript_DonpaJudgesDodonpa(void) {
   OBJECT_DIR(LOCALID_TOADONPA_HAMMET, FACING_NORTHWEST + FACING_STEP, 0);
   OBJECT_POSITION_SET(LOCALID_TOADONPA_BOSS, 448, 237);
   OBJECT_DIR(LOCALID_TOADONPA_BOSS, FACING_WEST, 0);
-  OBJECT_POSITION_SET(LOCALID_TOADONPA_BOSS_PART, 448, 238);
-  Engine_ObjectEventSetSpritePriority(LOCALID_TOADONPA_BOSS_PART, 3);
+  OBJECT_POSITION_SET(LOCALID_BLANK_TOADONPA_BOSS_PART, 448, 238);
+  Engine_ObjectEventSetSpritePriority(LOCALID_BLANK_TOADONPA_BOSS_PART, 3);
   OBJECT_ANIMATION(LOCALID_TOADONPA_BOSS, 3);
   OBJECT_POSITION_SET(LOCALID_TOADONPA_DODONPA, 458, 243);
   OBJECT_DIR(LOCALID_TOADONPA_DODONPA, FACING_SOUTH, 0);
@@ -2207,9 +2280,10 @@ static void EventScript_DonpaJudgesDodonpa(void) {
   OBJECT_SPEED(IVAN, PIXELS(1) / 10, PIXELS(1) / 20);
   ObjectEvent_SetDestinationOffset(IVAN, -24, 0);
   OBJECT_SPEED(LOCALID_TOADONPA_BOSS, PIXELS(1) / 10, PIXELS(1) / 20);
-  OBJECT_SPEED(LOCALID_TOADONPA_BOSS_PART, PIXELS(1) / 10, PIXELS(1) / 20);
+  OBJECT_SPEED(LOCALID_BLANK_TOADONPA_BOSS_PART, PIXELS(1) / 10,
+               PIXELS(1) / 20);
   ObjectEvent_SetDestinationOffset(LOCALID_TOADONPA_BOSS, -24, 0);
-  ObjectEvent_SetDestinationOffset(LOCALID_TOADONPA_BOSS_PART, -24, 0);
+  ObjectEvent_SetDestinationOffset(LOCALID_BLANK_TOADONPA_BOSS_PART, -24, 0);
   Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
   SE(SE_STOP_SLOT3);
   WAIT(60);
@@ -3090,15 +3164,15 @@ s32 Map_Initialize(void) {
     OBJECT_DIR(LOCALID_TOADONPA_HAMMET, FACING_EAST, 0);
     OBJECT_ANIMATION(LOCALID_TOADONPA_HAMMET, 0);
     LunpaFortress_RestoreToadonpaDoors();
-    mapObjectEvent = ObjectEvent_Get(LOCALID_TOADONPA_WEST_JAR_BLOCKER);
+    mapObjectEvent = ObjectEvent_Get(LOCALID_BLANK_TOADONPA_WEST_JAR);
     if (mapObjectEvent != 0)
       Engine_ObjectEventSetSpriteFlags(mapObjectEvent, 0);
     mapObjectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
-    mapObjectEvent = ObjectEvent_Get(LOCALID_TOADONPA_CHEST_BLOCKER);
+    mapObjectEvent = ObjectEvent_Get(LOCALID_BLANK_TOADONPA_CHEST);
     if (mapObjectEvent != 0)
       Engine_ObjectEventSetSpriteFlags(mapObjectEvent, 0);
     mapObjectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
-    mapObjectEvent = ObjectEvent_Get(LOCALID_TOADONPA_EAST_JAR_BLOCKER);
+    mapObjectEvent = ObjectEvent_Get(LOCALID_BLANK_TOADONPA_EAST_JAR);
     if (mapObjectEvent != 0)
       Engine_ObjectEventSetSpriteFlags(mapObjectEvent, 0);
     mapObjectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
@@ -3116,12 +3190,12 @@ s32 Map_Initialize(void) {
         OBJECT_DIR(LOCALID_TOADONPA_CELL_GUARD, FACING_SOUTH + FACING_STEP, 0);
         OBJECT_POSITION_SET(LOCALID_TOADONPA_DODONPA, 456, 288);
         OBJECT_DIR(LOCALID_TOADONPA_DODONPA, FACING_SOUTH + FACING_STEP, 0);
-        OBJECT_POSITION_SET(LOCALID_TOADONPA_DODONPA_STAND_IN, 456, 320);
+        OBJECT_POSITION_SET(LOCALID_BLANK_TOADONPA_DODONPA, 456, 320);
         Engine_ObjectEventSetSpriteFlags(
-            ObjectEvent_Get(LOCALID_TOADONPA_DODONPA_STAND_IN), 0);
+            ObjectEvent_Get(LOCALID_BLANK_TOADONPA_DODONPA), 0);
       }
     }
-    mapObjectEvent = ObjectEvent_Get(LOCALID_TOADONPA_BOSS_PART);
+    mapObjectEvent = ObjectEvent_Get(LOCALID_BLANK_TOADONPA_BOSS_PART);
     if (mapObjectEvent != 0)
       Engine_ObjectEventSetSpriteFlags(mapObjectEvent, 0);
     mapObjectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
@@ -3283,8 +3357,8 @@ static void LunpaFortress_InitializeUpperFloor(void) {
   keyObjectEvent->scaleY = 3 * Q16_ONE / 4;
 }
 
-/// Sets LunpaFortressCave up: the doors, the crates, the Whirlwind covers and
-/// the switches as the party left them.
+/// Sets LunpaFortressCave up: the doors, the crates, the ivy Whirlwind blows
+/// away and the switches as the party left them.
 static void LunpaFortress_InitializeCave(void) {
   struct ObjectEvent *mapObjectEvent;
 
@@ -3297,15 +3371,15 @@ static void LunpaFortress_InitializeCave(void) {
   FLAG_SET(FLAG_MAP_TEMP_17);
   FLAG_SET(FLAG_MAP_TEMP_18);
   if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_PLANT_BLOWN_AWAY)) {
-    OBJECT_POSITION_SET(LOCALID_CAVE_FIRST_SWITCH_COVER, 0, 0);
+    OBJECT_POSITION_SET(LOCALID_CAVE_FIRST_SWITCH_IVY, 0, 0);
     Engine_GameFlagClear(FLAG_MAP_TEMP_17);
   }
   if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_PASSAGE_PLANT_BLOWN_AWAY)) {
-    OBJECT_POSITION_SET(LOCALID_CAVE_PASSAGE_COVER, 0, 0);
-    LunpaFortress_OpenCoveredPassage();
+    OBJECT_POSITION_SET(LOCALID_CAVE_PASSAGE_IVY, 0, 0);
+    LunpaFortress_OpenIvyPassage();
   }
   if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_PLANT_BLOWN_AWAY)) {
-    OBJECT_POSITION_SET(LOCALID_CAVE_SECOND_SWITCH_COVER, 0, 0);
+    OBJECT_POSITION_SET(LOCALID_CAVE_SECOND_SWITCH_IVY, 0, 0);
     Engine_GameFlagClear(FLAG_MAP_TEMP_18);
   }
   if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_FLIPPED)) {
@@ -3315,19 +3389,19 @@ static void LunpaFortress_InitializeCave(void) {
     LunpaFortress_OpenSecondSwitchPassage();
   }
   SCRIPT_START();
-  mapObjectEvent = ObjectEvent_Get(LOCALID_CAVE_FIRST_SWITCH_COVER);
+  mapObjectEvent = ObjectEvent_Get(LOCALID_CAVE_FIRST_SWITCH_IVY);
   if (mapObjectEvent != 0) {
     mapObjectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
   }
-  mapObjectEvent = ObjectEvent_Get(LOCALID_CAVE_PASSAGE_COVER);
+  mapObjectEvent = ObjectEvent_Get(LOCALID_CAVE_PASSAGE_IVY);
   if (mapObjectEvent != 0) {
     mapObjectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
   }
-  mapObjectEvent = ObjectEvent_Get(LOCALID_CAVE_SECOND_SWITCH_COVER);
+  mapObjectEvent = ObjectEvent_Get(LOCALID_CAVE_SECOND_SWITCH_IVY);
   if (mapObjectEvent != 0) {
     mapObjectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
   }
-  mapObjectEvent = ObjectEvent_Get(LOCALID_CAVE_JAR_BLOCKER);
+  mapObjectEvent = ObjectEvent_Get(LOCALID_BLANK_CAVE_JAR);
   if (mapObjectEvent != 0) {
     Engine_ObjectEventSetSpriteFlags(mapObjectEvent, 0);
   }
@@ -3336,8 +3410,7 @@ static void LunpaFortress_InitializeCave(void) {
   if (mapObjectEvent != 0) {
     mapObjectEvent->collisionFlags |= OBJ_EVENT_NEAR_PSYNERGY;
   }
-  Engine_ObjectEventSetSpriteFlags(ObjectEvent_Get(LOCALID_CAVE_JAR_BLOCKER),
-                                   0);
+  Engine_ObjectEventSetSpriteFlags(ObjectEvent_Get(LOCALID_BLANK_CAVE_JAR), 0);
   SCRIPT_END();
   Engine_MapGridSetShownLayers(LUNPA_FORTRESS_PASSAGE_LAYERS);
 }
@@ -3745,7 +3818,7 @@ struct ObjectEventTemplate gLunpaFortressGroundFloorObjectEventTemplates[] = {
 };
 
 struct ObjectEventTemplate gLunpaFortressUpperFloorObjectEventTemplates[] = {
-    { 0xf5, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { SPRITE_KEY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(264), 0, PIXELS(856), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_MAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, (s32)gFirstPatrolRoute,
         PIXELS(88), 0, PIXELS(192), FACING_SOUTH, TALK_FACING_PARTY, 0 },
@@ -3787,11 +3860,11 @@ struct ObjectEventTemplate gLunpaFortressUpperFloorObjectEventTemplates[] = {
 };
 
 struct ObjectEventTemplate gLunpaFortressCaveObjectEventTemplates[] = {
-    { 0xf8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(280), 0, PIXELS(576), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { 0xf8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(440), 0, PIXELS(282), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { 0xf8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(56), 0, PIXELS(176), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(504), 0, PIXELS(168), FACING_NORTH, TALK_FACING_KEEP, 0 },
@@ -3971,9 +4044,9 @@ struct MapEvent gLunpaFortressCaveEvents[] = {
     { BG_EVENT(BG_EVENT_SILENT), 52, FLAG_MAP_TEMP_17, EVENT_SCRIPT(EventScript_FlipFirstSwitch) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RevealSwitches) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HideSwitches) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_WHIRLWIND), LOCALID_CAVE_FIRST_SWITCH_COVER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_BlowAwayFirstSwitchCover) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_WHIRLWIND), LOCALID_CAVE_PASSAGE_COVER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_BlowAwayPassageCover) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_WHIRLWIND), LOCALID_CAVE_SECOND_SWITCH_COVER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_BlowAwaySecondSwitchCover) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_WHIRLWIND), LOCALID_CAVE_FIRST_SWITCH_IVY, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_BlowAwayFirstSwitchIvy) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_WHIRLWIND), LOCALID_CAVE_PASSAGE_IVY, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_BlowAwayPassageIvy) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_WHIRLWIND), LOCALID_CAVE_SECOND_SWITCH_IVY, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_BlowAwaySecondSwitchIvy) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_CAVE_CRATES, FLAG_LUNPA_FORTRESS_CRATES_MOVED, EVENT_SCRIPT(EventScript_MoveCrates) },
     { MAP_EVENTS_END },
 };
@@ -3996,8 +4069,8 @@ struct MapEvent gLunpaFortressEventsOther[] = {
     // the party can reach them is not known.
     { MAP_EVENT_TALK, LOCALID_TOADONPA_HAMMET, CONDITION_ALWAYS, MSGNO(MsgLunpaWrongTurnOver) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOADONPA_HAMMET, CONDITION_ALWAYS, MSGNO(MsgLunpaCantBelieveWhen) },
-    { MAP_EVENT_TALK, LOCALID_TOADONPA_DODONPA_STAND_IN, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToJailedDodonpa) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOADONPA_DODONPA_STAND_IN, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadJailedDodonpasThoughts) },
+    { MAP_EVENT_TALK, LOCALID_BLANK_TOADONPA_DODONPA, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToJailedDodonpa) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_BLANK_TOADONPA_DODONPA, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadJailedDodonpasThoughts) },
     { BG_EVENT(BG_EVENT_CHEST), 101, FLAG_LUNPA_FORTRESS_CHEST_POWER_BREAD, FIND_ITEM(ITEM_POWER_BREAD) },
     { MAP_EVENTS_END },
 };

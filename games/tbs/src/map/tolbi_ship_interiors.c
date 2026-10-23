@@ -238,62 +238,123 @@ enum TolbiShipPassenger {
 enum TolbiShipCaptainsQuartersLocalId {
   /// The captain, an old man with a white beard in green
   /// (SPRITE_MAN_WITH_WHITE_BEARD_IN_GREEN).
+  /// ★ Named from the game: "Now we can set sail. Right, Captain?"
+  /// (MsgTolbiShipItsMyLuckyAnchor)
   LOCALID_QUARTERS_CAPTAIN = LOCALID_FIRST_PLACED,
-  LOCALID_QUARTERS_KAJA, ///< a bald man with a beard (SPRITE_KAJA)
+  /// A bald man with a beard (SPRITE_KAJA).
+  /// ★ Named from the game: "Say, Kaja, how are the oarsmen doing?"
+  /// (MsgTolbiShipWonderCouldHaveHappened)
+  LOCALID_QUARTERS_KAJA,
   /// The crewman, a man in a blue bandana (SPRITE_MAN_IN_BLUE_BANDANA), who hid
   /// the captain's anchor charm.
   /// ★ Named from the game: "I have to confess that I hid it on top of the
   /// mast." (MsgTolbiShipInteriorsIWaitedTooLongIllGet)
   LOCALID_QUARTERS_CREWMAN,
+  /// ★ Named from the game: "You know, my friend Ouranos here is scared of
+  /// ships." (MsgTolbiShipIfWeArentGoingSet)
   LOCALID_QUARTERS_OURANOS,
+  /// ★ Named from the game: "Well, it's just like Sean said."
+  /// (MsgTolbiShipItsMyLuckyAnchor)
   LOCALID_QUARTERS_SEAN,
-  LOCALID_QUARTERS_SECOND_GUIDE ///< PASSENGER_SECOND_GUIDE, drawn the same way
+  /// PASSENGER_SECOND_GUIDE, drawn the same way.
+  /// ★ Named from the game: "We had enough trouble just getting passengers!"
+  /// (MsgTolbiShipInteriorsWeHadEnoughTroubleJustGetting)
+  LOCALID_QUARTERS_SECOND_GUIDE
 };
 
 /// The hold while the ship waits at Kalay and after it reaches Tolbi,
 /// numbering the rows of gTolbiShipInteriors_HoldObjectEventTemplates from
 /// LOCALID_FIRST_PLACED: four of the passengers and the second guide, then the
-/// warriors bound for Colosso, Ouranos and his friend Sean (Ouranos "can't
-/// stand water"), the travelling healer and Kaja.
+/// warriors bound for Colosso, Ouranos and his friend Sean, the travelling
+/// healer and Kaja.
 enum TolbiShipHoldLocalId {
-  LOCALID_HOLD_WARRIOR = LOCALID_FIRST_PLACED, ///< PASSENGER_WARRIOR
-  LOCALID_HOLD_TICKET_GRUMBLER,                ///< PASSENGER_TICKET_GRUMBLER
-  LOCALID_HOLD_MUSCLE_ADMIRER,                 ///< PASSENGER_MUSCLE_ADMIRER
-  LOCALID_HOLD_OLD_MAN,                        ///< PASSENGER_OLD_MAN
-  LOCALID_HOLD_SECOND_GUIDE,                   ///< PASSENGER_SECOND_GUIDE
+  /// PASSENGER_WARRIOR.
+  /// ★ Named from the game: "we'll help out as warriors."
+  /// (MsgTolbiShipInteriorsIfSomethingHappensToOurOarsmen)
+  LOCALID_HOLD_WARRIOR = LOCALID_FIRST_PLACED,
+  /// PASSENGER_TICKET_GRUMBLER.
+  /// ★ Named from the game: "All that money on tickets, and now we have to
+  /// row the ship? Madness!" (MsgTolbiShipInteriorsAllThatMoneyOnTicketsAnd)
+  LOCALID_HOLD_TICKET_GRUMBLER,
+  /// PASSENGER_MUSCLE_ADMIRER.
+  /// ★ Named from the game: "Muscles rippling everywhere... looks great!"
+  /// (MsgTolbiShipInteriorsMusclesRipplingEverywhereLooksGreatIf)
+  LOCALID_HOLD_MUSCLE_ADMIRER,
+  /// PASSENGER_OLD_MAN.
+  /// ★ Named from the game: "a frail old man like me"
+  /// (MsgTolbiShipPeopleAskingFrail)
+  LOCALID_HOLD_OLD_MAN,
+  /// PASSENGER_SECOND_GUIDE.
+  /// ★ Named from the game: "We had enough trouble just getting passengers!"
+  /// (MsgTolbiShipInteriorsWeHadEnoughTroubleJustGetting)
+  LOCALID_HOLD_SECOND_GUIDE,
+  /// ★ Named from the game: "It's not that I'm scared. I just can't stand
+  /// water..." (MsgTolbiShipIfWeArentGoingSet)
   LOCALID_HOLD_OURANOS,
+  /// ★ Named from the game: "Hey, maybe you can give us a hand, too, Sean!"
+  /// (MsgTolbiTolbiShipThenTheyAreDangerous)
   LOCALID_HOLD_SEAN,
-  LOCALID_HOLD_HEALER, ///< a bearded man in a long robe
-                       ///< (SPRITE_BEARDED_MAN_IN_LONG_ROBE)
-  LOCALID_HOLD_KAJA    ///< calls the first passenger to the oars. "Row those
-                       ///< oars!"
+  /// A bearded man in a long robe (SPRITE_BEARDED_MAN_IN_LONG_ROBE) who opens
+  /// his Sanctum (TolbiShipInteriors_TalkToHealer).
+  /// ★ Named from the game: "I'm spreading goodwill wherever I travel."
+  /// (MsgTolbiShipImSpreadingGoodwillWhereverTravel)
+  LOCALID_HOLD_HEALER,
+  /// Calls the first passenger to the oars.
+  /// ★ Named from the game: "Say, Kaja, how are the oarsmen doing?"
+  /// (MsgTolbiShipWonderCouldHaveHappened)
+  LOCALID_HOLD_KAJA
 };
 
 /// The hold at sea, numbering the rows of
 /// gTolbiShipInteriors_HoldObjectEventTemplatesAtSea from LOCALID_FIRST_PLACED:
 /// the nine passengers in the order of enum TolbiShipPassenger, the healer and
-/// Kaja.
+/// Kaja. Each passenger's evidence is its enum TolbiShipPassenger line.
 enum TolbiShipSeaHoldLocalId {
+  /// ★ Named from the game: "I'm the tour group's guide!"
+  /// (MsgTolbiShipInteriorsNobodyWouldChooseMeAfterAll)
   LOCALID_SEA_HOLD_FIRST_PASSENGER = LOCALID_FIRST_PLACED,
+  /// ★ Named from the game: "I'm the tour group's guide!"
+  /// (MsgTolbiShipInteriorsNobodyWouldChooseMeAfterAll)
   LOCALID_SEA_HOLD_HEAD_GUIDE = LOCALID_SEA_HOLD_FIRST_PASSENGER +
       PASSENGER_HEAD_GUIDE,
+  /// ★ Named from the game: "We had enough trouble just getting passengers!"
+  /// (MsgTolbiShipInteriorsWeHadEnoughTroubleJustGetting)
   LOCALID_SEA_HOLD_SECOND_GUIDE = LOCALID_SEA_HOLD_FIRST_PASSENGER +
       PASSENGER_SECOND_GUIDE,
+  /// ★ Named from the game: "I've been in a cold sweat"
+  /// (MsgTolbiShipInteriorsIveBeenInAColdSweat)
   LOCALID_SEA_HOLD_SWEATING_PASSENGER = LOCALID_SEA_HOLD_FIRST_PASSENGER +
       PASSENGER_SWEATING,
+  /// ★ Named from the game: "you're going to ask a lady to row?"
+  /// (MsgTolbiShipDontTellGoing)
   LOCALID_SEA_HOLD_LADY = LOCALID_SEA_HOLD_FIRST_PASSENGER + PASSENGER_LADY,
+  /// ★ Named from the game: "When our eyes met, I knew that was it."
+  /// (MsgTolbiShipInteriorsOhNoNoWhenOurEyes)
   LOCALID_SEA_HOLD_STARED_AT_PASSENGER = LOCALID_SEA_HOLD_FIRST_PASSENGER +
       PASSENGER_STARED_AT,
+  /// ★ Named from the game: "we'll help out as warriors."
+  /// (MsgTolbiShipInteriorsIfSomethingHappensToOurOarsmen)
   LOCALID_SEA_HOLD_WARRIOR = LOCALID_SEA_HOLD_FIRST_PASSENGER +
       PASSENGER_WARRIOR,
+  /// ★ Named from the game: "All that money on tickets, and now we have to
+  /// row the ship? Madness!" (MsgTolbiShipInteriorsAllThatMoneyOnTicketsAnd)
   LOCALID_SEA_HOLD_TICKET_GRUMBLER = LOCALID_SEA_HOLD_FIRST_PASSENGER +
       PASSENGER_TICKET_GRUMBLER,
+  /// ★ Named from the game: "Muscles rippling everywhere... looks great!"
+  /// (MsgTolbiShipInteriorsMusclesRipplingEverywhereLooksGreatIf)
   LOCALID_SEA_HOLD_MUSCLE_ADMIRER = LOCALID_SEA_HOLD_FIRST_PASSENGER +
       PASSENGER_MUSCLE_ADMIRER,
+  /// ★ Named from the game: "a frail old man like me"
+  /// (MsgTolbiShipPeopleAskingFrail)
   LOCALID_SEA_HOLD_OLD_MAN = LOCALID_SEA_HOLD_FIRST_PASSENGER +
       PASSENGER_OLD_MAN,
+  /// ★ Named from the game: "The ship's crew is ready for anything, and I'll
+  /// be right here for them." (MsgTolbiShipShipsCrewReadyAnything)
   LOCALID_SEA_HOLD_HEALER,
-  LOCALID_SEA_HOLD_KAJA ///< calls a replacement rower to the oars
+  /// Calls a replacement rower to the oars.
+  /// ★ Named from the game: "Say, Kaja, how are the oarsmen doing?"
+  /// (MsgTolbiShipWonderCouldHaveHappened)
+  LOCALID_SEA_HOLD_KAJA
 };
 
 /// The rowing deck, numbering the rows of
@@ -301,8 +362,9 @@ enum TolbiShipSeaHoldLocalId {
 /// LOCALID_FIRST_PLACED; the monsters of each attack are placed after them.
 enum TolbiShipRowingDeckLocalId {
   /// A man in a green bandana (SPRITE_MAN_IN_GREEN_BANDANA), one of the crew
-  /// by his bandana. "I've been sailing for many years, and I've never seen
-  /// this island!"
+  /// by his bandana.
+  /// ★ Named from the game: "I've been sailing for many years, and I've never
+  /// seen this island!" (MsgTolbiShipInteriorsIveBeenSailingForManyYears)
   LOCALID_ROWING_CREWMAN = LOCALID_FIRST_PLACED,
   /// A man in a green bandana (SPRITE_MAN_IN_GREEN_BANDANA) who keeps the
   /// oarsmen's time.
@@ -313,30 +375,59 @@ enum TolbiShipRowingDeckLocalId {
   /// each, two by two from the north, the west seat
   /// first; the passengers chosen take the first four seats
   /// (https://alchemy.pascalpixel.com/places/tolbi-ship-interiors/rowing-deck-seats.png).
+  /// ★ Named from the game: "These big muscles are a sign that we're
+  /// oarsmen." (MsgTolbiShipInteriorsTheseBigMusclesAreASign)
   LOCALID_ROWING_FIRST_OARSMAN,
   /// The nine passengers in the order of enum TolbiShipPassenger.
+  /// ★ Named from the game: "I'm the tour group's guide!"
+  /// (MsgTolbiShipInteriorsNobodyWouldChooseMeAfterAll)
   LOCALID_ROWING_FIRST_PASSENGER = LOCALID_ROWING_FIRST_OARSMAN + 8,
+  /// ★ Named from the game: "I'm the tour group's guide!"
+  /// (MsgTolbiShipInteriorsNobodyWouldChooseMeAfterAll)
   LOCALID_ROWING_HEAD_GUIDE = LOCALID_ROWING_FIRST_PASSENGER +
       PASSENGER_HEAD_GUIDE,
+  /// ★ Named from the game: "We had enough trouble just getting passengers!"
+  /// (MsgTolbiShipInteriorsWeHadEnoughTroubleJustGetting)
   LOCALID_ROWING_SECOND_GUIDE = LOCALID_ROWING_FIRST_PASSENGER +
       PASSENGER_SECOND_GUIDE,
+  /// ★ Named from the game: "I've been in a cold sweat"
+  /// (MsgTolbiShipInteriorsIveBeenInAColdSweat)
   LOCALID_ROWING_SWEATING_PASSENGER = LOCALID_ROWING_FIRST_PASSENGER +
       PASSENGER_SWEATING,
+  /// ★ Named from the game: "you're going to ask a lady to row?"
+  /// (MsgTolbiShipDontTellGoing)
   LOCALID_ROWING_LADY = LOCALID_ROWING_FIRST_PASSENGER + PASSENGER_LADY,
+  /// ★ Named from the game: "When our eyes met, I knew that was it."
+  /// (MsgTolbiShipInteriorsOhNoNoWhenOurEyes)
   LOCALID_ROWING_STARED_AT_PASSENGER = LOCALID_ROWING_FIRST_PASSENGER +
       PASSENGER_STARED_AT,
+  /// ★ Named from the game: "we'll help out as warriors."
+  /// (MsgTolbiShipInteriorsIfSomethingHappensToOurOarsmen)
   LOCALID_ROWING_WARRIOR = LOCALID_ROWING_FIRST_PASSENGER + PASSENGER_WARRIOR,
+  /// ★ Named from the game: "All that money on tickets, and now we have to
+  /// row the ship? Madness!" (MsgTolbiShipInteriorsAllThatMoneyOnTicketsAnd)
   LOCALID_ROWING_TICKET_GRUMBLER = LOCALID_ROWING_FIRST_PASSENGER +
       PASSENGER_TICKET_GRUMBLER,
+  /// ★ Named from the game: "Muscles rippling everywhere... looks great!"
+  /// (MsgTolbiShipInteriorsMusclesRipplingEverywhereLooksGreatIf)
   LOCALID_ROWING_MUSCLE_ADMIRER = LOCALID_ROWING_FIRST_PASSENGER +
       PASSENGER_MUSCLE_ADMIRER,
+  /// ★ Named from the game: "a frail old man like me"
+  /// (MsgTolbiShipPeopleAskingFrail)
   LOCALID_ROWING_OLD_MAN = LOCALID_ROWING_FIRST_PASSENGER + PASSENGER_OLD_MAN,
-  /// "Our replacement never arrived, but we're shoving off just the same."
+  /// Kaja: "Our replacement never arrived, but we're shoving off just the
+  /// same."
+  /// ★ Named from the game: "If you say so, Kaja. We trust your judgment."
+  /// (MsgTolbiShipOurReplacementNeverArrivedBut)
   LOCALID_ROWING_KAJA,
   /// The eight oars, one beside each seat, hidden while the oarsmen row.
+  /// ★ Named from what the player sees: an oar resting beside an empty seat
+  /// (SPRITE_RESTING_OAR) (its render)
   LOCALID_ROWING_FIRST_OAR,
   /// The monsters of each attack (gTolbiShipInteriors_FirstAttackMonsters and
   /// the two after it).
+  /// ★ Named from what the player sees: three jellyfish monsters
+  /// (SPRITE_JELLYFISH_MONSTER) among the oarsmen (its render)
   LOCALID_ROWING_FIRST_MONSTER = LOCALID_ROWING_FIRST_OAR + 8
 };
 

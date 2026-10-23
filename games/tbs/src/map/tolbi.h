@@ -25,7 +25,13 @@
 /// what their sprites show and what they say or, under Mind Read, think
 /// during the festival.
 enum TolbiLocalId {
+  /// The sprout Growth grows into a vine (Tolbi_GrowSprout).
+  /// ★ Named from what the player sees: a small green sprout (SPRITE_SPROUT)
+  /// at the foot of a cliff (its render)
   LOCALID_TOLBI_SPROUT = 8,
+  /// The puddle Frost freezes into an ice pillar (Tolbi_FreezePuddle).
+  /// ★ Named from what the player sees: a small puddle of water
+  /// (SPRITE_PUDDLE) just north of the sprout (its render)
   LOCALID_TOLBI_PUDDLE = 9,
   /// A young man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR).
   /// ★ Named from the game: "This festival only happens once a year, so I'm
@@ -48,6 +54,8 @@ enum TolbiLocalId {
   /// An old man with a cane (SPRITE_OLD_MAN_WITH_CANE), who says he is 65 and
   /// later talks of the Lucky Guess. He copies the leader's sprite priority
   /// every frame (Tolbi_CopyLeaderPriority).
+  /// ★ Named from the game: "I'm 65 years old now"
+  /// (MsgTolbiBabiWasAlreadyPrettyOldBack)
   LOCALID_TOLBI_OLD_MAN = 14,
   /// An old woman (SPRITE_OLD_WOMAN) who asks whether someone can live past
   /// a hundred (Tolbi_AskAboutLivingPastHundred).
@@ -92,6 +100,8 @@ enum TolbiLocalId {
   /// ★ Named from the game: "the wife doesn't go in for"
   /// (MsgTolbiChildrenLoveSouvenirs)
   LOCALID_TOLBI_FATHER = 24,
+  /// ★ Named from the game: "Be patient, little guy."
+  /// (MsgTolbiPatientLittleGuy)
   LOCALID_TOLBI_MOTHER = 25,
   /// ★ Named from the game: "Mom, you said you were all out of money"
   /// (MsgTolbiMomYouSaidYouWereAll)
@@ -105,8 +115,17 @@ enum TolbiLocalId {
   /// ★ Named from the game: "Do you want to test your luck at Tolbi Spring?"
   /// (MsgTolbiWantTestLuck)
   LOCALID_TOLBI_SPRING_VISITOR = 28,
-  LOCALID_TOLBI_SOLDIER_A = 29, ///< Babi's soldiers, searching the town for him
+  /// Babi's soldiers (SPRITE_SOLDIER), searching the town for him and
+  /// showing his picture (Tolbi_MeetSearchingSoldiers).
+  /// ★ Named from the game: "Did you run into any of Babi's soldiers in
+  /// Town?" (MsgTolbiRunBabisSoldiers)
+  LOCALID_TOLBI_SOLDIER_A = 29,
+  /// The second of the two soldiers.
+  /// ★ Named from the game: "Did you run into any of Babi's soldiers in
+  /// Town?" (MsgTolbiRunBabisSoldiers)
   LOCALID_TOLBI_SOLDIER_B = 30,
+  /// Ember, a Mars Djinni, until it joins the party (Tolbi_JoinEmber).
+  /// ★ Named from the game: "Ember" (MsgDjinnName)
   LOCALID_TOLBI_EMBER = 31,
   /// The "Missing Person" poster, placed with Babi's sprite (SPRITE_BABI).
   /// ★ Named from the game: "Missing Person" (MsgTolbiSeenAnyoneWho)

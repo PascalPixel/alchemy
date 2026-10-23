@@ -79,8 +79,12 @@ static void Ripple_Stop(void);
 static void Curtain_Start(void);
 
 enum {
-  LOCALID_GANGWAY_NORTH =
-      LOCALID_FIRST_PLACED, ///< the gangway, in two pieces (SPRITE_GANGWAY)
+  /// The gangway, in two pieces (SPRITE_GANGWAY): its northern half.
+  /// ★ Named from what the player sees: the northern half of the gangway
+  /// between the wharf and the ship (its render)
+  LOCALID_GANGWAY_NORTH = LOCALID_FIRST_PLACED,
+  /// ★ Named from what the player sees: the southern half of the gangway
+  /// between the wharf and the ship (its render)
   LOCALID_GANGWAY_SOUTH
 };
 

@@ -21,9 +21,9 @@
 ///   (COLOSSEUM_NAVAMPA_MATCH_TO_COLOSSEUM).
 /// - COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH, `Lend a Hand`: Garet, Ivan
 ///   and Mia in turn may use Psynergy on the stages. Frost freezes the target
-///   on the Scales of Justice's eastern pan so the scales stay tipped, Halt
+///   on the Scales of Justice's eastern ledge so the scales stay tipped, Halt
 ///   stops the Wall Wedge's operator and with him its pistons, Force knocks the
-///   block off the Moving Sidewalk so the belt no longer carries anyone back,
+///   log off the Moving Sidewalk so the belt no longer carries anyone back,
 ///   Growth grows a plant into a shortcut, and Move shifts the weight onto the
 ///   scales and the stones and the rock on the way. After Mia,
 ///   COLOSSEUM_NAVAMPA_MATCH_LEND_A_HAND_TO_RACE starts the race.
@@ -33,12 +33,12 @@
 ///   the Hunter's Sword, and the battle is ENCOUNTER_ZONE_COLOSSO's fifth or
 ///   sixth group, the Navampa with or without the Claymore.
 ///
-/// Stepping onto the Scales of Justice's western pan (coord event 15,
+/// Stepping onto the Scales of Justice's western ledge (coord event 15,
 /// EventScript_StepOnScales) sends it, with the rider, down towards 4 pixels
-/// high and the eastern pan up towards 32, and stepping off (coord event 16)
-/// swings them back; the weight Move sets on the western pan does the same
+/// high and the eastern ledge up towards 32, and stepping off (coord event 16)
+/// swings them back; the weight Move sets on the western ledge does the same
 /// (https://alchemy.pascalpixel.com/places/colosseum-navampa-match/scales.gif:
-/// the leader stepping on, each pan labelled with its height in whole
+/// the leader stepping on, each ledge labelled with its height in whole
 /// pixels).
 ///
 /// Win or lose, the third match ends Colosso:
@@ -151,44 +151,106 @@ typedef void (*MapTaskEntry)(void);
 /// of Colosseum Final 1's Rock Challenge; the attendant of this match's
 /// log-rolling area calls the ones there stones.
 enum {
-  LOCALID_OPPONENT = 8,         ///< Navampa, racing Isaac to the arena
-  LOCALID_FROST_TARGET = 9,     ///< on the eastern pan
-  LOCALID_SCALES_WEST_PAN = 10, ///< the Scales of Justice
-  LOCALID_SCALES_EAST_PAN = 11,
-  LOCALID_SCALES_WEIGHT = 12, ///< pushed onto the western pan
+  /// Navampa, racing Isaac to the arena.
+  /// ★ Named from the game: "I am Navampa of Gondowan"
+  /// (MsgColosseumAmNavampaGondowanSixthRanked)
+  LOCALID_OPPONENT = 8,
+  /// The puddle Frost freezes on the Scales of Justice's eastern ledge.
+  /// ★ Named from what the player sees: a small puddle of water
+  /// (SPRITE_PUDDLE) on the eastern ledge of the Scales of Justice (its
+  /// render)
+  LOCALID_PUDDLE = 9,
+  /// The Scales of Justice's two ledges.
+  /// ★ Named from the game: "There are two ledges that actually form a
+  /// scale." (MsgColossoStageCalledScales)
+  LOCALID_SCALES_WEST_LEDGE = 10,
+  /// ★ Named from the game: "There are two ledges that actually form a
+  /// scale." (MsgColossoStageCalledScales)
+  LOCALID_SCALES_EAST_LEDGE = 11,
+  /// ★ Named from what the player sees: a stone pillar west of the Scales of
+  /// Justice, which Move sets on the western ledge to hold it down (its
+  /// render)
+  LOCALID_SCALES_WEIGHT = 12,
+  /// ★ Named from what the player sees: a stone pillar on the
+  /// Stepping-Stone Stage that Move shifts along its row (its render)
   LOCALID_STONE = 13,
   /// East of the Wall Wedge's pistons, by the operator; Move on it needs
   /// nothing more (EventScript_IgnoreMove).
+  /// ★ Named from what the player sees: a stone pillar east of the Wall
+  /// Wedge's pistons (its render)
   LOCALID_ROCK = 14,
-  /// The log-rolling area's three stones, "You can get through quickly by
-  /// moving the logs and stones."; each settles where Move drops it
+  /// The log-rolling area's three stones; each settles where Move drops it
   /// (EventScript_SettleStones, FLAG_FIRST_LOG_AREA_STONE_SETTLED and the two
   /// after it).
+  /// ★ Named from the game: "You can get through quickly by moving the logs
+  /// and stones." (MsgColossoAnotherLogRollingArea)
   LOCALID_LOG_AREA_STONE_A = 15,
+  /// ★ Named from the game: "You can get through quickly by moving the logs
+  /// and stones." (MsgColossoAnotherLogRollingArea)
   LOCALID_LOG_AREA_STONE_B = 16,
+  /// ★ Named from the game: "You can get through quickly by moving the logs
+  /// and stones." (MsgColossoAnotherLogRollingArea)
   LOCALID_LOG_AREA_STONE_C = 17,
-  /// The Wall Wedge's five pistons, west to east, "The pistons move back and
-  /// forth."; each is drawn by two object events, LOCALID_FIRST_PISTON + n and
-  /// LOCALID_FIRST_PISTON + PISTON_COUNT + n.
+  /// The Wall Wedge's five pistons, west to east; each is drawn by two object
+  /// events, LOCALID_FIRST_PISTON + n and LOCALID_FIRST_PISTON + PISTON_COUNT
+  /// + n.
+  /// ★ Named from the game: "The pistons move back and forth."
+  /// (MsgColossoPlaceCalledWall)
   LOCALID_FIRST_PISTON = 18,
+  /// ★ Named from the game: "The pistons move back and forth."
+  /// (MsgColossoPlaceCalledWall)
   LOCALID_LAST_PISTON = 22,
   /// A young man with fair hair who works the Wall Wedge.
+  /// ★ Named from the game: "The operator of the walls will cheer for you on
+  /// this stage." (MsgColossoOperatorWallsCheer)
   LOCALID_WALL_OPERATOR = 28,
+  /// The plant Growth grows into a shortcut.
+  /// ★ Named from what the player sees: a small sprout (SPRITE_SPROUT) on the
+  /// ground past the Wall Wedge (its render)
   LOCALID_GROWTH_PLANT = 29,
-  LOCALID_SIDEWALK_BLOCK = 30,
-  LOCALID_LONG_LOG = 31, ///< the log-rolling area's long log
-  LOCALID_GUIDE = 32,    ///< a soldier who explains the third finals match
+  /// The log Force knocks off the Moving Sidewalk Stage's conveyor belt.
+  /// ★ Named from what the player sees: a log (spr_294.png) at the conveyor
+  /// belt of the Moving Sidewalk Stage (its render)
+  LOCALID_SIDEWALK_LOG = 30,
+  /// The log-rolling area's long log.
+  /// ★ Named from the game: "To get across the tank, you'll need to roll the
+  /// logs." (MsgColossoAnotherLogRollingArea)
+  LOCALID_LONG_LOG = 31,
+  /// A soldier who explains the third finals match.
+  /// ★ Named from the game: "This is the site of the third finals match."
+  /// (MsgColossoSiteThirdFinals)
+  LOCALID_GUIDE = 32,
   /// The stages' attendants, young men with fair hair in white tunics.
+  /// ★ Named from the game: "This stage is called the Scales of Justice."
+  /// (MsgColossoStageCalledScales)
   LOCALID_SCALES_ATTENDANT = 33,
+  /// ★ Named from the game: "You can reach the next stage by jumping from
+  /// stone to stone." (MsgColossoSteppingStoneStage)
   LOCALID_STEPPING_STONE_ATTENDANT = 34,
+  /// ★ Named from the game: "This place is called the Wall Wedge."
+  /// (MsgColossoPlaceCalledWall)
   LOCALID_WALL_WEDGE_ATTENDANT = 35,
+  /// ★ Named from the game: "This sheer wall has a bumpy surface."
+  /// (MsgColossoPlaceNormallyCalledFreeClimb)
   LOCALID_FREE_CLIMB_ATTENDANT = 36,
+  /// ★ Named from the game: "This is called the Moving Sidewalk Stage."
+  /// (MsgColossoCalledMovingSidewalkStage)
   LOCALID_MOVING_SIDEWALK_ATTENDANT = 37,
+  /// ★ Named from the game: "This is another log-rolling area."
+  /// (MsgColossoAnotherLogRollingArea)
   LOCALID_LOG_ROLLING_ATTENDANT = 38,
-  LOCALID_PRIZE_A = 39, ///< the arena's Claymore and Hunter's Sword
+  /// The arena's prizes, drawn as item icons at two blank object events
+  /// (Colosso_ShowItemIcon).
+  /// ★ Named from what the player sees: the Claymore's icon at the arena's
+  /// finish, taken by whoever reaches it first (its render)
+  LOCALID_PRIZE_A = 39,
+  /// ★ Named from what the player sees: the Hunter's Sword's icon at the
+  /// arena's finish, taken by whoever reaches it second (its render)
   LOCALID_PRIZE_B = 40,
   /// The first of the three particles that rise from the sleeping Isaac after
   /// the last match (ColosseumNavampaMatch_SpawnPeriodicParticle).
+  /// ★ Named from what the player sees: a "z" (spr_280.png) rising from Isaac
+  /// as he sleeps (its render)
   LOCALID_FIRST_SLEEP_PARTICLE = 41
 };
 
@@ -204,13 +266,12 @@ enum {
       FLAG_MAPSEC_TEMP_61, ///< by Halt on LOCALID_WALL_OPERATOR
   /// ★ Named from the game: "This stage is called the Scales of Justice."
   /// (MsgColossoStageCalledScales)
-  FLAG_SCALES_FROZEN =
-      FLAG_MAPSEC_TEMP_62, ///< by Frost on LOCALID_FROST_TARGET
-  /// By Force on LOCALID_SIDEWALK_BLOCK: the belt carries no one any more.
+  FLAG_SCALES_FROZEN = FLAG_MAPSEC_TEMP_62, ///< by Frost on LOCALID_PUDDLE
+  /// By Force on LOCALID_SIDEWALK_LOG: the belt carries no one any more.
   /// ★ Named from the game: "This is called the Moving Sidewalk Stage."
   /// (MsgColossoCalledMovingSidewalkStage)
-  FLAG_SIDEWALK_BLOCK_KNOCKED_OFF = FLAG_MAPSEC_TEMP_63,
-  /// Someone stands on the western pan, which has sunk
+  FLAG_SIDEWALK_LOG_KNOCKED_OFF = FLAG_MAPSEC_TEMP_63,
+  /// Someone stands on the western ledge, which has sunk
   /// (EventScript_StepOnScales).
   /// ★ Named from the game: "This stage is called the Scales of Justice."
   /// (MsgColossoStageCalledScales)
@@ -218,7 +279,7 @@ enum {
   /// ★ Named from the game: "This stage is called the Scales of Justice."
   /// (MsgColossoStageCalledScales)
   FLAG_WEIGHT_ON_SCALES =
-      FLAG_MAPSEC_TEMP_68, ///< LOCALID_SCALES_WEIGHT is on the western pan
+      FLAG_MAPSEC_TEMP_68, ///< LOCALID_SCALES_WEIGHT is on the western ledge
   /// ★ Named from the game: "To get across the tank, you'll need to roll the
   /// logs." (MsgColossoAnotherLogRollingArea)
   FLAG_LONG_LOG_IN_PLACE =
@@ -350,7 +411,7 @@ static void ColosseumNavampaMatch_WaitForWallWedgeOpening(void) {
 }
 
 /// The Moving Sidewalk Stage's belt carries the party west. It's coord event
-/// 11, and until FLAG_SIDEWALK_BLOCK_KNOCKED_OFF is set the belt carries the
+/// 11, and until FLAG_SIDEWALK_LOG_KNOCKED_OFF is set the belt carries the
 /// controlled object event and the camera west.
 static void EventScript_RideMovingSidewalk(void) {
   struct EventWork *work = gFieldWork;
@@ -376,28 +437,28 @@ static void EventScript_GrowPlant(void) {
   }
 }
 
-/// Moves a scale pan vertically at the shared speed and acceleration.
-static inline void ColosseumNavampaMatch_MoveOnScales(struct ObjectEvent *pan,
+/// Moves a scale ledge vertically at the shared speed and acceleration.
+static inline void ColosseumNavampaMatch_MoveOnScales(struct ObjectEvent *ledge,
                                                       s32 height) {
-  pan->acceleration = PIXELS(2) / 5;
-  pan->speed = PIXELS(4) / 5;
-  Engine_ObjectSetPosition(pan, pan->x.fixed, height, pan->z.fixed);
+  ledge->acceleration = PIXELS(2) / 5;
+  ledge->speed = PIXELS(4) / 5;
+  Engine_ObjectSetPosition(ledge, ledge->x.fixed, height, ledge->z.fixed);
 }
 
-/// Frost on the target on the Scales of Justice's eastern pan: it freezes and
-/// the scales tip, the western pan down and the eastern pan up
+/// Frost on the target on the Scales of Justice's eastern ledge: it freezes and
+/// the scales tip, the western ledge down and the eastern ledge up
 /// (FLAG_SCALES_FROZEN).
 static void EventScript_FreezeOnScales(void) {
   struct ObjectEvent *objectEvent;
 
-  objectEvent = ObjectEvent_GetById(LOCALID_FROST_TARGET);
+  objectEvent = ObjectEvent_GetById(LOCALID_PUDDLE);
   objectEvent->scaleX = Q16_ONE;
   objectEvent->scaleY = Q16_ONE;
 
-  objectEvent = ObjectEvent_GetById(LOCALID_SCALES_EAST_PAN);
+  objectEvent = ObjectEvent_GetById(LOCALID_SCALES_EAST_LEDGE);
   ColosseumNavampaMatch_MoveOnScales(objectEvent, PIXELS(32));
 
-  objectEvent = ObjectEvent_GetById(LOCALID_SCALES_WEST_PAN);
+  objectEvent = ObjectEvent_GetById(LOCALID_SCALES_WEST_LEDGE);
   ColosseumNavampaMatch_MoveOnScales(objectEvent, PIXELS(4));
 
   Engine_GameFlagSet(FLAG_SCALES_FROZEN);
@@ -405,8 +466,8 @@ static void EventScript_FreezeOnScales(void) {
   MapGrid_CopyCellAttributes(14, 12, 1, 1, 9, 12);
 }
 
-/// Stepping onto the Scales of Justice's western pan, unless the scales are
-/// frozen: it sinks with the rider as the eastern pan rises
+/// Stepping onto the Scales of Justice's western ledge, unless the scales are
+/// frozen: it sinks with the rider as the eastern ledge rises
 /// (FLAG_ON_SCALES).
 static void EventScript_StepOnScales(void) {
   s32 localId;
@@ -418,15 +479,15 @@ static void EventScript_StepOnScales(void) {
   localId = gGameState.leaderLocalId;
   lowered = GameFlag_IsSet(FLAG_SCALES_FROZEN);
   if (lowered == 0) {
-    log = ObjectEvent_GetById(LOCALID_SCALES_WEST_PAN);
+    log = ObjectEvent_GetById(LOCALID_SCALES_WEST_LEDGE);
     if (log != NULL) {
       ObjectEvent_SetDestination(localId, log->x.part.pixel, log->z.part.pixel);
     }
     Engine_ObjectEventWaitForMove(localId);
-    log = ObjectEvent_GetById(LOCALID_SCALES_EAST_PAN);
+    log = ObjectEvent_GetById(LOCALID_SCALES_EAST_LEDGE);
     log->motionFlags = lowered;
     ColosseumNavampaMatch_MoveOnScales(log, PIXELS(32));
-    log = ObjectEvent_GetById(LOCALID_SCALES_WEST_PAN);
+    log = ObjectEvent_GetById(LOCALID_SCALES_WEST_LEDGE);
     log->motionFlags = lowered;
     ColosseumNavampaMatch_MoveOnScales(log, PIXELS(4));
     rider = ObjectEvent_GetById(localId);
@@ -444,21 +505,21 @@ static void EventScript_StepOnScales(void) {
   }
 }
 
-/// Stepping off the Scales of Justice's western pan: the scales swing back.
+/// Stepping off the Scales of Justice's western ledge: the scales swing back.
 static void EventScript_StepOffScales(void) {
   struct ObjectEvent *objectEvent;
 
   Engine_ObjectEventSetAnimation(gGameState.leaderLocalId, 1);
 
-  objectEvent = ObjectEvent_GetById(LOCALID_SCALES_EAST_PAN);
+  objectEvent = ObjectEvent_GetById(LOCALID_SCALES_EAST_LEDGE);
   objectEvent->motionFlags = 0;
   ColosseumNavampaMatch_MoveOnScales(objectEvent, PIXELS(4));
 
-  objectEvent = ObjectEvent_GetById(LOCALID_SCALES_WEST_PAN);
+  objectEvent = ObjectEvent_GetById(LOCALID_SCALES_WEST_LEDGE);
   objectEvent->motionFlags = 0;
   ColosseumNavampaMatch_MoveOnScales(objectEvent, PIXELS(32));
 
-  Engine_ObjectEventWaitForMove(LOCALID_SCALES_WEST_PAN);
+  Engine_ObjectEventWaitForMove(LOCALID_SCALES_WEST_LEDGE);
   {
     MapGrid_CopyCellAttributes(0, 25, 1, 1, 9, 12);
   }
@@ -467,7 +528,8 @@ static void EventScript_StepOffScales(void) {
 }
 
 /// Move on the weight by the Scales of Justice: when it reaches the western
-/// pan, it sinks the pan and the eastern pan rises (FLAG_WEIGHT_ON_SCALES).
+/// ledge, it sinks the ledge and the eastern ledge rises
+/// (FLAG_WEIGHT_ON_SCALES).
 static void EventScript_SetWeightOnScales(void) {
   struct ObjectEvent *probe;
   struct ObjectEvent *log;
@@ -486,10 +548,10 @@ static void EventScript_SetWeightOnScales(void) {
       log->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
       log->motionFlags = 0;
       ColosseumNavampaMatch_MoveOnScales(log, PIXELS(4));
-      upper = ObjectEvent_GetById(LOCALID_SCALES_EAST_PAN);
+      upper = ObjectEvent_GetById(LOCALID_SCALES_EAST_LEDGE);
       upper->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
       ColosseumNavampaMatch_MoveOnScales(upper, PIXELS(32));
-      lower = ObjectEvent_GetById(LOCALID_SCALES_WEST_PAN);
+      lower = ObjectEvent_GetById(LOCALID_SCALES_WEST_LEDGE);
       ColosseumNavampaMatch_MoveOnScales(lower, PIXELS(4));
       Engine_GameFlagSet(FLAG_WEIGHT_ON_SCALES);
       MapGrid_CopyCellAttributes(15, 12, 1, 1, 13, z);
@@ -745,20 +807,20 @@ static s32 ColosseumNavampaMatch_ShowActivatedSidewalkLayer(
   return 0;
 }
 
-/// Force on the Moving Sidewalk Stage's block: it slides away and the belt
-/// carries no one any more (FLAG_SIDEWALK_BLOCK_KNOCKED_OFF).
-static void EventScript_ForceSidewalkBlock(void) {
+/// Force on the Moving Sidewalk Stage's log: it slides away and the belt
+/// carries no one any more (FLAG_SIDEWALK_LOG_KNOCKED_OFF).
+static void EventScript_ForceSidewalkLog(void) {
   struct ObjectEvent *effect;
   s32 moveRate;
 
-  effect = ObjectEvent_GetById(LOCALID_SIDEWALK_BLOCK);
+  effect = ObjectEvent_GetById(LOCALID_SIDEWALK_LOG);
   effect->motionFlags = 0;
   moveRate = PIXELS(8) / 5;
   effect->acceleration = moveRate;
   effect->speed = moveRate;
   ObjectEvent_SetMode(effect, 2);
   Engine_ObjectSetScript(effect, gColossoMapEventEffect);
-  Engine_GameFlagSet(FLAG_SIDEWALK_BLOCK_KNOCKED_OFF);
+  Engine_GameFlagSet(FLAG_SIDEWALK_LOG_KNOCKED_OFF);
 }
 
 /// Halt on the Wall Wedge's operator: the pistons stop at their next open
@@ -968,33 +1030,32 @@ s32 ColosseumNavampaMatch_Initialize(void) {
 
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
-  // Restore the scale pans, movable weight and supporting metatile behaviors.
+  // Restore the scale ledges, movable weight and supporting metatile behaviors.
   FieldScheduler_AddCallback(ColosseumNavampaMatch_UpdateEastEndCollision,
                              TASK_PRIORITY_MAP);
   MapGrid_CopyCellAttributes(74, 60, 8, 6, 120, 60);
 
-  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_FROST_TARGET),
-                                   0);
+  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_PUDDLE), 0);
 
-  objectEvent = ObjectEvent_GetById(LOCALID_SCALES_WEST_PAN);
+  objectEvent = ObjectEvent_GetById(LOCALID_SCALES_WEST_LEDGE);
   Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
   objectEvent->motionFlags = 0;
   objectEvent->y.fixed = PIXELS(32);
 
-  objectEvent = ObjectEvent_GetById(LOCALID_SCALES_EAST_PAN);
+  objectEvent = ObjectEvent_GetById(LOCALID_SCALES_EAST_LEDGE);
   Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
   objectEvent->motionFlags = 0;
   objectEvent->y.fixed = PIXELS(4);
 
   if (Engine_GameFlagIsSet(866) != 0) {
-    Engine_ObjectEventSetAnimation(LOCALID_FROST_TARGET, 5);
-    objectEvent = ObjectEvent_GetById(LOCALID_SCALES_WEST_PAN);
+    Engine_ObjectEventSetAnimation(LOCALID_PUDDLE, 5);
+    objectEvent = ObjectEvent_GetById(LOCALID_SCALES_WEST_LEDGE);
     objectEvent->y.fixed = PIXELS(4);
-    objectEvent = ObjectEvent_GetById(LOCALID_SCALES_EAST_PAN);
+    objectEvent = ObjectEvent_GetById(LOCALID_SCALES_EAST_LEDGE);
     objectEvent->y.fixed = PIXELS(32);
     MapGrid_CopyCellAttributes(15, 12, 1, 1, 13, 12);
   } else {
-    objectEvent = ObjectEvent_GetById(LOCALID_FROST_TARGET);
+    objectEvent = ObjectEvent_GetById(LOCALID_PUDDLE);
     objectEvent->scaleX = 3 * Q16_ONE / 2;
     objectEvent->scaleY = 3 * Q16_ONE / 2;
     if (Engine_GameFlagIsSet(871) != 0) {
@@ -1012,10 +1073,10 @@ s32 ColosseumNavampaMatch_Initialize(void) {
     objectEvent->motionFlags = 0;
     objectEvent->y.fixed = PIXELS(2);
     objectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
-    objectEvent = ObjectEvent_GetById(LOCALID_SCALES_WEST_PAN);
+    objectEvent = ObjectEvent_GetById(LOCALID_SCALES_WEST_LEDGE);
     objectEvent->y.fixed = PIXELS(4);
     objectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
-    objectEvent = ObjectEvent_GetById(LOCALID_SCALES_EAST_PAN);
+    objectEvent = ObjectEvent_GetById(LOCALID_SCALES_EAST_LEDGE);
     objectEvent->y.fixed = PIXELS(32);
   }
 
@@ -1079,7 +1140,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
 
   if (Engine_GameFlagIsSet(867) != 0) {
     TilesetAnim_Pause(1);
-    objectEvent = ObjectEvent_GetById(LOCALID_SIDEWALK_BLOCK);
+    objectEvent = ObjectEvent_GetById(LOCALID_SIDEWALK_LOG);
     objectEvent->motionFlags = 0;
     objectEvent->x.fixed = PIXELS(1130);
     objectEvent->z.fixed = PIXELS(184);
@@ -1103,13 +1164,13 @@ s32 ColosseumNavampaMatch_Initialize(void) {
     MapGrid_CopyCellAttributes(85, 9, 1, 4, objectEvent->x.fixed >> 20, 61);
   }
 
-  objectEvent = ObjectEvent_GetById(LOCALID_FROST_TARGET);
+  objectEvent = ObjectEvent_GetById(LOCALID_PUDDLE);
   objectEvent->motionFlags = 0;
   objectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
-  objectEvent = ObjectEvent_GetById(LOCALID_SCALES_WEST_PAN);
+  objectEvent = ObjectEvent_GetById(LOCALID_SCALES_WEST_LEDGE);
   objectEvent->motionFlags = 0;
   objectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
-  objectEvent = ObjectEvent_GetById(LOCALID_SCALES_EAST_PAN);
+  objectEvent = ObjectEvent_GetById(LOCALID_SCALES_EAST_LEDGE);
   objectEvent->motionFlags = 0;
   objectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
   Engine_ObjectEventSetAnimation(LOCALID_OPPONENT,
@@ -1537,7 +1598,7 @@ static void ColosseumNavampaMatch_IntroduceThirdFinals(s32 guideId) {
 }
 
 /// The Scales of Justice's attendant, stage 1 of Colosseum Final 3: the first
-/// time, a pointer shows the two pans and how one rises as the other falls;
+/// time, a pointer shows the two ledges and how one rises as the other falls;
 /// then the objective, and a place for a friend to cheer. With a friend alone
 /// on the stages (COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) he asks whether
 /// they are done cheering instead.
@@ -1555,7 +1616,7 @@ static void EventScript_TalkToScalesAttendant(s32 guideId) {
   Engine_ScriptStart();
   promptResult = Colosso_GreetAtStage(guideId, 1);
   if (promptResult == COLOSSO_GUIDE_DESCRIBE) {
-    // Point out the pans, demonstrate both heights, then restore the stage.
+    // Point out the ledges, demonstrate both heights, then restore the stage.
     Engine_ScriptSetMessage(MsgColossoStageCalledScales);
     Engine_CameraSetSpeed(PIXELS(3), PIXELS(3) / 8);
     Engine_CameraMoveTo(PIXELS(152), -1, PIXELS(200), 1);
@@ -1569,18 +1630,18 @@ static void EventScript_TalkToScalesAttendant(s32 guideId) {
     Engine_ScriptShowMessage(guideId, 0);
     Colosso_HidePointer();
     Engine_TaskWait(2);
-    westPan = ObjectEvent_GetById(LOCALID_SCALES_WEST_PAN);
+    westPan = ObjectEvent_GetById(LOCALID_SCALES_WEST_LEDGE);
     westPan->motionFlags = 0;
     ColosseumNavampaMatch_MoveOnScales(westPan, PIXELS(4));
-    eastPan = ObjectEvent_GetById(LOCALID_SCALES_EAST_PAN);
+    eastPan = ObjectEvent_GetById(LOCALID_SCALES_EAST_LEDGE);
     eastPan->motionFlags = 0;
     ColosseumNavampaMatch_MoveOnScales(eastPan, PIXELS(32));
     Object_WaitForMove(eastPan);
     Engine_ScriptWait(45);
-    westPanAgain = ObjectEvent_GetById(LOCALID_SCALES_WEST_PAN);
+    westPanAgain = ObjectEvent_GetById(LOCALID_SCALES_WEST_LEDGE);
     westPanAgain->motionFlags = 0;
     ColosseumNavampaMatch_MoveOnScales(westPanAgain, PIXELS(32));
-    eastPanAgain = ObjectEvent_GetById(LOCALID_SCALES_EAST_PAN);
+    eastPanAgain = ObjectEvent_GetById(LOCALID_SCALES_EAST_LEDGE);
     eastPanAgain->motionFlags = 0;
     ColosseumNavampaMatch_MoveOnScales(eastPanAgain, PIXELS(4));
     Object_WaitForMove(eastPanAgain);
@@ -2311,7 +2372,7 @@ static void ColosseumNavampaMatch_PushObjectEventAhead(void) {
 
 #include "common/colosso_occupant.h"
 
-/// The Moving Sidewalk Stage's block where Force has knocked it off the belt,
+/// The Moving Sidewalk Stage's log where Force has knocked it off the belt,
 /// bobbing a pixel up and down.
 const s32 gColosseumNavampaMatch_SidewalkBlockOffBelt[] = {
     SC_SET(SW_Y, PIXELS(1)),     SC_WAIT(10), SC_SET(SW_Y, 0), SC_WAIT(10),
@@ -2546,7 +2607,7 @@ s32 gColossoMapTaskState = 0;
 struct MapEvent gColosseumNavampaMatchEvents[] = {
     { COORD_EVENT_WALKING, 90, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_CheckAhead) },
     { COORD_EVENT_WALKING, 91, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushWeightOrCheckAhead) },
-    { MAP_EVENT_COORD, 11, FLAG_SIDEWALK_BLOCK_KNOCKED_OFF, EVENT_SCRIPT(EventScript_RideMovingSidewalk) },
+    { MAP_EVENT_COORD, 11, FLAG_SIDEWALK_LOG_KNOCKED_OFF, EVENT_SCRIPT(EventScript_RideMovingSidewalk) },
     { COORD_EVENT_WALKING, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushWeight) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_SCALES_WEIGHT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SetWeightOnScales) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_STONE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MoveStone) },
@@ -2562,10 +2623,10 @@ struct MapEvent gColosseumNavampaMatchEvents[] = {
     { BG_EVENT(BG_EVENT_CHEST), 101, FLAG_MAPSEC_TEMP_6A, FIND_ITEM(ITEM_SMOKE_BOMB) },
     { BG_EVENT(BG_EVENT_CHEST), 102, FLAG_MAPSEC_TEMP_6B, FIND_ITEM(ITEM_NUT) },
     { BG_EVENT(BG_EVENT_CHEST) | MAP_EVENT_FLAG_FACING | FACING_WEST, 103, FLAG_MAPSEC_TEMP_6C, FIND_ITEM(ITEM_SLEEP_BOMB) },
-    { PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_FROST, PSYNERGY_PHASE_EFFECT_ACTS), LOCALID_FROST_TARGET, FLAG_SCALES_FROZEN, EVENT_SCRIPT(EventScript_FreezeOnScales) },
+    { PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_FROST, PSYNERGY_PHASE_EFFECT_ACTS), LOCALID_PUDDLE, FLAG_SCALES_FROZEN, EVENT_SCRIPT(EventScript_FreezeOnScales) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_GROWTH), LOCALID_GROWTH_PLANT, FLAG_PLANT_GROWN, EVENT_SCRIPT(EventScript_GrowPlant) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_HALT), LOCALID_WALL_OPERATOR, FLAG_WALL_WEDGE_HALTED, EVENT_SCRIPT(EventScript_HaltWall) },
-    { PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_FORCE, PSYNERGY_PHASE_EFFECT_ACTS), LOCALID_SIDEWALK_BLOCK, FLAG_SIDEWALK_BLOCK_KNOCKED_OFF, EVENT_SCRIPT(EventScript_ForceSidewalkBlock) },
+    { PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_FORCE, PSYNERGY_PHASE_EFFECT_ACTS), LOCALID_SIDEWALK_LOG, FLAG_SIDEWALK_LOG_KNOCKED_OFF, EVENT_SCRIPT(EventScript_ForceSidewalkLog) },
     { MAP_EVENT_RAISED, 4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PassNorthWallOpening) },
     { MAP_EVENT_RAISED, 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PassSouthWallOpening) },
     { MAP_EVENT_TALK, LOCALID_GUIDE, CONDITION_ALWAYS, EVENT_SCRIPT(Colosso_AskReadyToRace) },

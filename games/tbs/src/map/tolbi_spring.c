@@ -96,9 +96,15 @@ enum SpringTossKind { SPRING_TOSS_COIN, SPRING_TOSS_MEDAL };
 /// numbered in the order of gTolbiSpringObjectEventTemplatesOther from
 /// LOCALID_FIRST_PLACED.
 enum TolbiSpringGameRoomLocalId {
-  /// A young woman in green (SPRITE_YOUNG_WOMAN_IN_GREEN).
+  /// A young woman in green (SPRITE_YOUNG_WOMAN_IN_GREEN), who runs Lucky
+  /// Wheels (TolbiSpring_TalkToWheelsAttendant).
+  /// ★ Named from the game: "Step right up and try your hand at lucky wheels!"
+  /// (MsgTolbiStepRightTry)
   LOCALID_TOLBI_SPRING_WHEELS_ATTENDANT = LOCALID_FIRST_PLACED,
-  /// A young man with fair hair (SPRITE_YOUNG_MAN_WITH_FAIR_HAIR).
+  /// A young man with fair hair (SPRITE_YOUNG_MAN_WITH_FAIR_HAIR), who runs
+  /// Lucky Dice (TolbiSpring_OfferLuckyDice).
+  /// ★ Named from the game: "Hey, buddy, wanna try yer luck at the dice?"
+  /// (MsgTolbiBuddyWannaTry)
   LOCALID_TOLBI_SPRING_DICE_ATTENDANT,
   /// Beside the Lucky Dice attendant, in his sprite: likely a second
   /// attendant, because the Colosso's attendants wear the same sprite.
@@ -118,7 +124,15 @@ enum TolbiSpringGameRoomLocalId {
   /// ★ Named from the game: "I don't want to stop playing Lucky Dice"
   /// (MsgTolbiSpringIDontWantToStopPlaying)
   LOCALID_TOLBI_SPRING_DICE_PLAYER_OUT_OF_COINS,
+  /// The Lucky Wheels prize sign the layout draws, read through an object
+  /// event with a blank sprite (TolbiSpring_ReadLuckyWheelsPrizes).
+  /// ★ Named from the game: "Lucky Wheels Prizes"
+  /// (MsgTolbiLuckyWheelsPrizesPrizesDetermined)
   LOCALID_TOLBI_SPRING_WHEELS_PRIZE_SIGN,
+  /// The Lucky Wheels rules sign, read the same way
+  /// (TolbiSpring_ReadLuckyWheelsRules).
+  /// ★ Named from the game: "Lucky Wheels Rules"
+  /// (MsgTolbiLuckyWheelsRulesPullLever)
   LOCALID_TOLBI_SPRING_WHEELS_RULES_SIGN,
   /// ★ Named from the game: "Throw the dice on the table"
   /// (MsgTolbiSpringLuckyDiceThrowTheDiceOn)
@@ -138,13 +152,25 @@ enum TolbiSpringGameRoomLocalId {
 /// the coin or the medal with its shadow and three trailing copies, which
 /// TOLBI_SPRING_COIN_TRAIL and TOLBI_SPRING_MEDAL_TRAIL number.
 enum TolbiSpringLocalId {
+  /// ★ Named from what the player sees: the tossed coin's shadow, drawn at
+  /// ground level below it as it flies (its render)
   LOCALID_TOLBI_SPRING_COIN_SHADOW = LOCALID_FIRST_PLACED + 3,
+  /// The coin the party tosses (SPRITE_SPRING_COIN).
+  /// ★ Named from the game: "Face away from Tolbi Spring and toss a coin into
+  /// it." (MsgTolbiFaceAwayTolbi)
   LOCALID_TOLBI_SPRING_COIN,
+  /// ★ Named from what the player sees: the tossed Lucky Medal's shadow,
+  /// drawn at ground level below it as it flies (its render)
   LOCALID_TOLBI_SPRING_MEDAL_SHADOW = LOCALID_TOLBI_SPRING_COIN + 4,
+  /// The Lucky Medal the party tosses (SPRITE_SPRING_LUCKY_MEDAL).
+  /// ★ Named from the game: "If you toss a Lucky Medal"
+  /// (MsgTolbiTossLuckyMedal)
   LOCALID_TOLBI_SPRING_MEDAL,
   /// The four obstacles that move in the spring during a toss, in the order
   /// of sObstacles: two crabs (SPRITE_CRAB), then two turtles
   /// (SPRITE_TURTLE).
+  /// ★ Named from what the player sees: two crabs and two turtles moving in
+  /// the spring's water in the way of the toss (its render)
   LOCALID_TOLBI_SPRING_FIRST_OBSTACLE,
   /// A sign east of the spring (SPRITE_SIGNPOST).
   /// ★ Named from the game: "If you toss a Lucky Medal"
@@ -159,6 +185,8 @@ enum TolbiSpringLocalId {
   /// ★ Named from what the player sees: a tuft of grass at the foot of each
   /// sign (its render)
   LOCALID_TOLBI_SPRING_EAST_SIGN_GRASS,
+  /// ★ Named from what the player sees: a tuft of grass at the foot of the
+  /// west sign (its render)
   LOCALID_TOLBI_SPRING_WEST_SIGN_GRASS,
   /// A visitor, a man carrying a pack (SPRITE_MAN_CARRYING_A_PACK).
   /// ★ Named from the game: "Tolbi Spring has mysterious powers."

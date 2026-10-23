@@ -197,7 +197,7 @@ s32 BattleTurn_Build(struct BattleAction *request, struct BattleTurn *plan) {
       }
       plan->targetCount = targetCount;
       if (targetCount <= 0) {
-        MessageArgument_PushFar(request->unitId, VALUE_UNIT_NAME);
+        MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
         BattleMessage_ShowAndWaitFar(MsgActorDefends);
         if (actor->guardLevel == 0)
           actor->guardLevel = GUARD_DEFEND;
@@ -260,17 +260,17 @@ s32 BattleTurn_Build(struct BattleAction *request, struct BattleTurn *plan) {
   MessageArgument_ClearAllFar();
   if (actor->immobile) {
     actor->immobile = 0;
-    MessageArgument_PushFar(request->unitId, VALUE_UNIT_NAME);
+    MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
     BattleMessage_ShowAndWaitFar(MsgUnableToMove);
     return TURN_REPORTED;
   }
   if (actor->sleep) {
-    MessageArgument_PushFar(request->unitId, VALUE_UNIT_NAME);
+    MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
     BattleMessage_ShowAndWaitFar(MsgIsAsleep);
     return TURN_REPORTED;
   }
   if (actor->stun) {
-    MessageArgument_PushFar(request->unitId, VALUE_UNIT_NAME);
+    MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
     BattleMessage_ShowAndWaitFar(MsgIsParalyzed);
     return TURN_REPORTED;
   }
@@ -278,7 +278,7 @@ s32 BattleTurn_Build(struct BattleAction *request, struct BattleTurn *plan) {
   // except Defend.
   if ((actor->curse & CURSE_BOUND) && request->command != COMMAND_DEFEND &&
       (Battle_RandomFar() & 3) == 0) {
-    MessageArgument_PushFar(request->unitId, VALUE_UNIT_NAME);
+    MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
     BattleMessage_ShowAndWaitFar(MsgIsBound);
     return TURN_REPORTED;
   }
@@ -305,7 +305,7 @@ s32 BattleTurn_Build(struct BattleAction *request, struct BattleTurn *plan) {
     if ((u16)request->unitId <= ALLY_MAX) {
       BattleMessage_ShowAndWaitFar(MsgPartyFlees);
     } else {
-      MessageArgument_PushFar(request->unitId, VALUE_UNIT_NAME);
+      MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
       BattleMessage_ShowAndWaitFar(MsgActorRuns);
     }
     BattleMessage_WaitForAdvance();
@@ -318,12 +318,12 @@ s32 BattleTurn_Build(struct BattleAction *request, struct BattleTurn *plan) {
     if (BattleTurn_SetTargets(abilityId) == TURN_REPORTED)
       return TURN_REPORTED;
     if (abilityId != ABILITY_ATTACK) {
-      MessageArgument_PushFar(request->unitId, VALUE_UNIT_NAME);
+      MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
       MessageArgument_PushFar(Inventory_GetEquippedItemFar(actor, EQUIP_WEAPON),
-                              VALUE_ITEM_NAME);
+                              MESSAGE_ARGUMENT_ITEM);
       BattleMessage_ShowAndWaitFar(MsgWeaponHowls);
       BattlePlayback_MarkMessage();
-      MessageArgument_PushFar(abilityId, VALUE_ABILITY_NAME);
+      MessageArgument_PushFar(abilityId, MESSAGE_ARGUMENT_ABILITY);
       BattleMessage_ShowAndWaitFar(MsgWeaponHowls + 1);
     }
     break;
@@ -336,8 +336,8 @@ s32 BattleTurn_Build(struct BattleAction *request, struct BattleTurn *plan) {
     ability = Ability_Get(abilityId);
     if (BattleTurn_SetTargets(abilityId) == TURN_REPORTED)
       return TURN_REPORTED;
-    MessageArgument_PushFar(request->unitId, VALUE_UNIT_NAME);
-    MessageArgument_PushFar(abilityId, VALUE_ABILITY_NAME);
+    MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
+    MessageArgument_PushFar(abilityId, MESSAGE_ARGUMENT_ABILITY);
     BattleMessage_ShowAndWaitFar(MsgActorCasts);
     // Fail if PP is insufficient or Psynergy is sealed (the seal wins); the
     // failure is shown by the staging (plan->failure). Only a cast that goes
@@ -364,7 +364,7 @@ s32 BattleTurn_Build(struct BattleAction *request, struct BattleTurn *plan) {
     // A slot of -1: an earlier command this round used the item up
     // (BattleStaging_RunItem).
     if (request->parameter < 0) {
-      MessageArgument_PushFar(request->unitId, VALUE_UNIT_NAME);
+      MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
       BattleMessage_ShowAndWaitFar(MsgItemAlreadyUsed);
       return TURN_REPORTED;
     }
@@ -373,7 +373,7 @@ s32 BattleTurn_Build(struct BattleAction *request, struct BattleTurn *plan) {
     abilityId = item->abilityId;
     if (abilityId == 0 ||
         (actor->inventory[request->parameter] & INVENTORY_BROKEN)) {
-      MessageArgument_PushFar(request->unitId, VALUE_UNIT_NAME);
+      MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
       BattleMessage_ShowAndWaitFar(MsgActorDefends);
       if (actor->guardLevel == 0)
         actor->guardLevel = GUARD_DEFEND;
@@ -381,9 +381,9 @@ s32 BattleTurn_Build(struct BattleAction *request, struct BattleTurn *plan) {
     }
     if (BattleTurn_SetTargets(abilityId) == TURN_REPORTED)
       return TURN_REPORTED;
-    MessageArgument_PushFar(request->unitId, VALUE_UNIT_NAME);
+    MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
     MessageArgument_PushFar(actor->inventory[request->parameter],
-                            VALUE_ITEM_NAME);
+                            MESSAGE_ARGUMENT_ITEM);
     // An item that is kept: weapons, shields, gloves and armlets, the Psynergy
     // items, rings and ITEM_TYPE_UNUSED are raised
     // ("raises"); anything else is used.
@@ -407,7 +407,7 @@ s32 BattleTurn_Build(struct BattleAction *request, struct BattleTurn *plan) {
 
   case COMMAND_DEFEND:
   case COMMAND_TOTAL_DEFENSE:
-    MessageArgument_PushFar(request->unitId, VALUE_UNIT_NAME);
+    MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
     BattleMessage_ShowAndWaitFar(MsgActorDefends);
     return TURN_REPORTED;
 
@@ -420,8 +420,8 @@ s32 BattleTurn_Build(struct BattleAction *request, struct BattleTurn *plan) {
     abilityId = request->parameter;
     if (BattleTurn_SetTargets(abilityId) == TURN_REPORTED)
       return TURN_REPORTED;
-    MessageArgument_PushFar(request->unitId, VALUE_UNIT_NAME);
-    MessageArgument_PushFar(abilityId, VALUE_ABILITY_NAME);
+    MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
+    MessageArgument_PushFar(abilityId, MESSAGE_ARGUMENT_ABILITY);
     if ((Ability_Get(abilityId)->flags & ABILITY_FORMULA_MASK) ==
         ABILITY_FORMULA_ENEMY_DAMAGE)
       message = MsgActorUnleashesAbility;
@@ -527,8 +527,8 @@ s32 BattleTurn_Build(struct BattleAction *request, struct BattleTurn *plan) {
         return TURN_NO_ACTION;
       }
       // Recovering.
-      MessageArgument_PushFar(request->unitId, VALUE_UNIT_NAME);
-      MessageArgument_PushFar(abilityId, VALUE_ABILITY_NAME);
+      MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
+      MessageArgument_PushFar(abilityId, MESSAGE_ARGUMENT_ABILITY);
       Sound_PlaySongFar(SE_MENU_ERROR);
       BattleMessage_ShowAndWaitFar(MsgDjinnInRecovery);
       WaitFrames(60);
@@ -544,8 +544,8 @@ s32 BattleTurn_Build(struct BattleAction *request, struct BattleTurn *plan) {
                                   DJINN_ELEMENT(request->parameter),
                                   DJINN_INDEX(request->parameter));
       ability = Ability_Get(abilityId);
-      MessageArgument_PushFar(request->unitId, VALUE_UNIT_NAME);
-      MessageArgument_PushFar(abilityId, VALUE_ABILITY_NAME);
+      MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
+      MessageArgument_PushFar(abilityId, MESSAGE_ARGUMENT_ABILITY);
       BattleMessage_ShowAndWaitFar(MsgActorUnleashesDjinn);
       plan->element = ability->element;
     }
@@ -579,13 +579,13 @@ s32 BattleTurn_Build(struct BattleAction *request, struct BattleTurn *plan) {
     if (BattleTurn_SetTargets(abilityId) == TURN_REPORTED)
       return TURN_REPORTED;
     if (index != ELEMENT_COUNT) {
-      MessageArgument_PushFar(request->unitId, VALUE_UNIT_NAME);
-      MessageArgument_PushFar(abilityId, VALUE_ABILITY_NAME);
+      MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
+      MessageArgument_PushFar(abilityId, MESSAGE_ARGUMENT_ABILITY);
       BattleMessage_ShowAndWaitFar(MsgSummonLacksDjinn);
       return TURN_REPORTED;
     }
-    MessageArgument_PushFar(request->unitId, VALUE_UNIT_NAME);
-    MessageArgument_PushFar(abilityId, VALUE_ABILITY_NAME);
+    MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
+    MessageArgument_PushFar(abilityId, MESSAGE_ARGUMENT_ABILITY);
     BattleMessage_ShowAndWaitFar(MsgActorSummons);
     // Mark the standby Djinn being used DJINN_RECOVERY_SUMMONED, the first
     // found of each element, from units in the formation.
@@ -636,7 +636,7 @@ s32 BattleTurn_Build(struct BattleAction *request, struct BattleTurn *plan) {
         break;
       }
     }
-    MessageArgument_PushFar(request->unitId, VALUE_UNIT_NAME);
+    MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
     BattleMessage_ShowAndWaitFar(MsgActorAttacks);
     // Miss chance: 153/256 when deluded, plus a separate 1/32 roll.
     // Attacks cannot miss a target that cannot move. In the Djinn tutorial

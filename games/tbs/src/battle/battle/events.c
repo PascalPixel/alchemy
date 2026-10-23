@@ -270,20 +270,22 @@ u32 BattlePlayback_RunAll(void) {
         BattleObject_DestroyTemporaryObject(queue->operands[eventIndex]);
         break;
       case PLAYBACK_UNIT_NAME:
-        MessageArgument_PushFar(queue->operands[eventIndex], VALUE_UNIT_NAME);
+        MessageArgument_PushFar(queue->operands[eventIndex],
+                                MESSAGE_ARGUMENT_ACTOR);
         break;
       case PLAYBACK_NUMBER:
-        MessageArgument_PushFar(queue->operands[eventIndex], VALUE_NUMBER);
+        MessageArgument_PushFar(queue->operands[eventIndex],
+                                MESSAGE_ARGUMENT_NUMBER);
         break;
       case PLAYBACK_ITEM_NAME:
         MessageArgument_PushFar(queue->operands[eventIndex] &
                                     INVENTORY_ITEM_ID_MASK,
-                                VALUE_ITEM_NAME);
+                                MESSAGE_ARGUMENT_ITEM);
         break;
       case PLAYBACK_ABILITY_NAME:
         MessageArgument_PushFar(queue->operands[eventIndex] &
                                     PSYNERGY_ABILITY_MASK,
-                                VALUE_ABILITY_NAME);
+                                MESSAGE_ARGUMENT_ABILITY);
         break;
       case PLAYBACK_MARK:
         gBattleMessageWork->marked = 1;

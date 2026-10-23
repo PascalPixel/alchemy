@@ -413,8 +413,8 @@ s32 Battle_ProcessRoundEnd(void) {
               hpAmount = unit->hpMax - unit->hp;
             }
             Unit_AddHpFar(unitId, hpAmount);
-            MessageArgument_PushFar(unitId, VALUE_UNIT_NAME);
-            MessageArgument_PushFar(hpAmount, VALUE_NUMBER);
+            MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
+            MessageArgument_PushFar(hpAmount, MESSAGE_ARGUMENT_NUMBER);
             if (unit->hp == unit->hpMax) {
               BattleMessage_ShowAndWaitFar(MsgHpFull);
             } else {
@@ -429,8 +429,8 @@ s32 Battle_ProcessRoundEnd(void) {
               ppAmount = unit->ppMax - unit->pp;
             }
             Unit_AddPpFar(unitId, ppAmount);
-            MessageArgument_PushFar(unitId, VALUE_UNIT_NAME);
-            MessageArgument_PushFar(ppAmount, VALUE_NUMBER);
+            MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
+            MessageArgument_PushFar(ppAmount, MESSAGE_ARGUMENT_NUMBER);
             if (unit->pp == unit->ppMax) {
               BattleMessage_ShowAndWaitFar(MsgPpFull);
             } else {
@@ -444,75 +444,75 @@ s32 Battle_ProcessRoundEnd(void) {
         // its message; the end of stun or sleep also sets the unit standing.
         if (BattleUnit_TickAgilityStage(unitId) != 0) {
           BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
-          MessageArgument_PushFar(unitId, VALUE_UNIT_NAME);
+          MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
           BattleMessage_ShowAndWaitFar(MsgAgiNormal);
           BattleMessage_WaitForAdvance();
         }
         if (BattleUnit_TickAttackStage(unitId) != 0) {
           BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
-          MessageArgument_PushFar(unitId, VALUE_UNIT_NAME);
+          MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
           BattleMessage_ShowAndWaitFar(MsgAtkNormal);
           BattleMessage_WaitForAdvance();
         }
         if (BattleUnit_TickDefenseStage(unitId) != 0) {
           BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
-          MessageArgument_PushFar(unitId, VALUE_UNIT_NAME);
+          MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
           BattleMessage_ShowAndWaitFar(MsgDefNormal);
           BattleMessage_WaitForAdvance();
         }
         if (BattleUnit_TickResistanceStage(unitId) != 0) {
           BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
-          MessageArgument_PushFar(unitId, VALUE_UNIT_NAME);
+          MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
           BattleMessage_ShowAndWaitFar(MsgResNormal);
           BattleMessage_WaitForAdvance();
         }
         if (BattleUnit_TickDelusion(unitId) != 0) {
           BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
-          MessageArgument_PushFar(unitId, VALUE_UNIT_NAME);
+          MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
           BattleMessage_ShowAndWaitFar(MsgCureDelusion);
           BattleMessage_WaitForAdvance();
         }
         if (BattleUnit_TickConfusion(unitId) != 0) {
           BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
-          MessageArgument_PushFar(unitId, VALUE_UNIT_NAME);
+          MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
           BattleMessage_ShowAndWaitFar(MsgConscious);
           BattleMessage_WaitForAdvance();
         }
         if (BattleUnit_TickCharm(unitId) != 0) {
           BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
-          MessageArgument_PushFar(unitId, VALUE_UNIT_NAME);
+          MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
           BattleMessage_ShowAndWaitFar(MsgConscious2);
           BattleMessage_WaitForAdvance();
         }
         if (BattleUnit_TickStun(unitId) != 0) {
           BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
-          MessageArgument_PushFar(unitId, VALUE_UNIT_NAME);
+          MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
           BattleObject_UpdatePose(unitId);
           BattleMessage_ShowAndWaitFar(MsgCureStun);
           BattleMessage_WaitForAdvance();
         }
         if (BattleUnit_TickSleep(unitId) != 0) {
           BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
-          MessageArgument_PushFar(unitId, VALUE_UNIT_NAME);
+          MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
           BattleObject_UpdatePose(unitId);
           BattleMessage_ShowAndWaitFar(MsgWakes);
           BattleMessage_WaitForAdvance();
         }
         if (Battle_AdvanceCounterAndCheckChance(unitId) != 0) {
           BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
-          MessageArgument_PushFar(unitId, VALUE_UNIT_NAME);
+          MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
           BattleMessage_ShowAndWaitFar(MsgCureSeal);
           BattleMessage_WaitForAdvance();
         }
         if (BattleUnit_TickRegenerate(unitId) != 0) {
           BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
-          MessageArgument_PushFar(unitId, VALUE_UNIT_NAME);
+          MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
           BattleMessage_ShowAndWaitFar(MsgRefrainEnd);
           BattleMessage_WaitForAdvance();
         }
         if (BattleUnit_TickReflect(unitId) != 0) {
           BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
-          MessageArgument_PushFar(unitId, VALUE_UNIT_NAME);
+          MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
           BattleMessage_ShowAndWaitFar(MsgReflectEnd);
           BattleMessage_WaitForAdvance();
         }

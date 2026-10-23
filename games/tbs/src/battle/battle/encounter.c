@@ -316,7 +316,7 @@ won:
         BattleUnit_SetFar(FIRST_ENEMY_UNIT,
                           battle->enemyKinds[battle->firstDefeated], 26);
         MessageArgument_ClearAllFar();
-        MessageArgument_PushFar(FIRST_ENEMY_UNIT, VALUE_UNIT_NAME);
+        MessageArgument_PushFar(FIRST_ENEMY_UNIT, MESSAGE_ARGUMENT_ACTOR);
         BattleMessage_ShowAndWaitFar(battle->defeatState + MsgDowned);
         BattleMessage_WaitForAdvance();
       }
@@ -346,7 +346,7 @@ party_lost:
   Battle_ClearSerialTransferPayload();
   Sound_PlaySongFar(MUS_DEFEAT);
   MessageArgument_ClearAllFar();
-  MessageArgument_PushFar(gGameState.party[0], VALUE_UNIT_NAME);
+  MessageArgument_PushFar(gGameState.party[0], MESSAGE_ARGUMENT_ACTOR);
   if (BattleParty_PrepareMembers(0) == 1)
     BattleMessage_ShowAndWaitFar(MsgGoesDownInDefeat);
   else

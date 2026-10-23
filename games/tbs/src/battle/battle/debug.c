@@ -183,11 +183,11 @@ void DebugBattle_ViewMessages(void) {
     for (;;) {
       // Sample arguments for the message's placeholders.
       MessageArgument_ClearAllFar();
-      MessageArgument_PushFar(999, VALUE_NUMBER);
-      MessageArgument_PushFar(0, VALUE_CLASS_NAME);
-      MessageArgument_PushFar(1, VALUE_UNIT_NAME);
-      MessageArgument_PushFar(1, VALUE_ITEM_NAME);
-      MessageArgument_PushFar(2, VALUE_ABILITY_NAME);
+      MessageArgument_PushFar(999, MESSAGE_ARGUMENT_NUMBER);
+      MessageArgument_PushFar(0, MESSAGE_ARGUMENT_CLASS);
+      MessageArgument_PushFar(1, MESSAGE_ARGUMENT_ACTOR);
+      MessageArgument_PushFar(1, MESSAGE_ARGUMENT_ITEM);
+      MessageArgument_PushFar(2, MESSAGE_ARGUMENT_ABILITY);
       // The window at tile (2, 10) for the first range, (2, 2) for the
       // second.
       if (secondRange == 0) {

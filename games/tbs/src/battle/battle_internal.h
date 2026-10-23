@@ -113,15 +113,6 @@
 #define BATTLE_BG1CNT                                                          \
   (BGCNT_PRIORITY(3) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31))
 
-// The kinds of argument a message's placeholders take, for
-// MessageArgument_PushFar: a unit's name, an item's, a class's, an
-// ability's, and a number.
-#define VALUE_UNIT_NAME 1
-#define VALUE_ITEM_NAME 2
-#define VALUE_CLASS_NAME 3
-#define VALUE_ABILITY_NAME 4
-#define VALUE_NUMBER 5
-
 /// Unit ids from 128 are the enemies'. In a link battle each console sends
 /// LINK_PARTY_SIZE places, at most three members (LinkBattle_SendParty), and
 /// the opponent's take enemy ids 128 to 130.

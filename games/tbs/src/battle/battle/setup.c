@@ -104,7 +104,7 @@ void BattleIntro_AnnounceEncounter(s32 enemyCount) {
   if (enemyCount != 0) {
     enemy = enemies;
     do {
-      MessageArgument_PushFar((u16)*enemy++, VALUE_UNIT_NAME);
+      MessageArgument_PushFar((u16)*enemy++, MESSAGE_ARGUMENT_ACTOR);
       if (announced == enemyCount - 1)
         BattleMessage_ShowAndWaitFar(MsgLastEnemyAppeared);
       else
@@ -118,12 +118,12 @@ void BattleIntro_AnnounceEncounter(s32 enemyCount) {
   // Unit 0's name stands for the party in either message.
   if (battle->firstStrike == FIRST_STRIKE_PARTY) {
     MessageArgument_ClearAllFar();
-    MessageArgument_PushFar(0, VALUE_UNIT_NAME);
+    MessageArgument_PushFar(0, MESSAGE_ARGUMENT_ACTOR);
     BattleMessage_ShowAndWaitFar(MsgPartyStrikesFirst);
     BattleMessage_WaitForAdvance();
   } else if (battle->firstStrike == FIRST_STRIKE_ENEMIES) {
     MessageArgument_ClearAllFar();
-    MessageArgument_PushFar(0, VALUE_UNIT_NAME);
+    MessageArgument_PushFar(0, MESSAGE_ARGUMENT_ACTOR);
     BattleMessage_ShowAndWaitFar(MsgPartySurprised);
     BattleMessage_WaitForAdvance();
   }

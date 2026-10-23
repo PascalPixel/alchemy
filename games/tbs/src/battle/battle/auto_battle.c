@@ -202,7 +202,7 @@ s32 AutoBattle_ShowDefend(const struct BattleAction *action) {
     return result;
   }
   MessageArgument_ClearAllFar();
-  MessageArgument_PushFar(unitId, VALUE_UNIT_NAME);
+  MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
   BattleMessage_ShowAndWaitFar(MsgActorDefends);
   return 0;
 }
@@ -359,7 +359,7 @@ s32 AutoBattle_RunApproachAttack(struct BattleAction *input) {
   Unit_GetFar(work.effect.user);
   Unit_GetFar(work.effect.targets[0]);
   Random16();
-  MessageArgument_PushFar(work.effect.user, VALUE_UNIT_NAME);
+  MessageArgument_PushFar(work.effect.user, MESSAGE_ARGUMENT_ACTOR);
   BattleMessage_ShowAndWaitFar(MsgActorAttacks);
   BattleMotion_ApproachTarget(work.effect.user, work.effect.targets[0], 13, 0);
   ObjectDispatch_SetAnimationSpeedFar(
@@ -501,26 +501,26 @@ void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
   if (unitId <= ALLY_MAX) {
     if (showMessage != 0)
       BattleMessage_ShowAndWaitFar(MsgBitterBlow);
-    MessageArgument_PushFar(damage, VALUE_NUMBER);
-    MessageArgument_PushFar(unitId, VALUE_UNIT_NAME);
+    MessageArgument_PushFar(damage, MESSAGE_ARGUMENT_NUMBER);
+    MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
     BattleMessage_ShowAndWaitFar(MsgDmgP);
   } else {
     if (showMessage != 0)
       BattleMessage_ShowAndWaitFar(MsgCritical);
-    MessageArgument_PushFar(damage, VALUE_NUMBER);
-    MessageArgument_PushFar(unitId, VALUE_UNIT_NAME);
+    MessageArgument_PushFar(damage, MESSAGE_ARGUMENT_NUMBER);
+    MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
     BattleMessage_ShowAndWaitFar(MsgDmgE);
-    MessageArgument_PushFar(unitId, VALUE_UNIT_NAME);
+    MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
   }
 
   BattleMotion_SetMode5AndActivateSlot(unitId);
   if (unitId <= ALLY_MAX) {
     if (unit->hp <= 0) {
-      MessageArgument_PushFar(unitId, VALUE_UNIT_NAME);
+      MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
       BattleMessage_ShowAndWaitFar(MsgGoesDown);
     }
   } else if (unit->hp <= 0) {
-    MessageArgument_PushFar(unitId, VALUE_UNIT_NAME);
+    MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
     BattleMessage_ShowAndWaitFar(MsgDowned);
   }
 

@@ -213,7 +213,7 @@ void Battle_AwardSpoils(void) {
 
   spoils = &gBattleWork->spoils;
   if (spoils->experience != 0) {
-    MessageArgument_PushFar(spoils->experience, VALUE_NUMBER);
+    MessageArgument_PushFar(spoils->experience, MESSAGE_ARGUMENT_NUMBER);
     BattleMessage_ShowAndWaitFar(MsgExpGained);
     BattleMessage_WaitForAdvance();
   }
@@ -230,9 +230,9 @@ void Battle_AwardSpoils(void) {
            Unit_TryLevelUpFar(unitId, &gains) != 0) {
       Sound_PlaySongFar(MUS_LEVEL_UP);
       MessageArgument_ClearAllFar();
-      MessageArgument_PushFar(unit->classId, VALUE_CLASS_NAME);
-      MessageArgument_PushFar(unitIds[unitIndex], VALUE_UNIT_NAME);
-      MessageArgument_PushFar(unit->level, VALUE_NUMBER);
+      MessageArgument_PushFar(unit->classId, MESSAGE_ARGUMENT_CLASS);
+      MessageArgument_PushFar(unitIds[unitIndex], MESSAGE_ARGUMENT_ACTOR);
+      MessageArgument_PushFar(unit->level, MESSAGE_ARGUMENT_NUMBER);
       BattleMessage_ShowAndWaitFar(MsgLevelUp);
       BattleMessage_WaitForAdvance();
       // A class ability (bit 15) the copy lacks is newly learned.
@@ -247,10 +247,10 @@ void Battle_AwardSpoils(void) {
           }
           if (oldAbilityIndex == 32) {
             MessageArgument_ClearAllFar();
-            MessageArgument_PushFar(unit->classId, VALUE_CLASS_NAME);
-            MessageArgument_PushFar(unitId, VALUE_UNIT_NAME);
+            MessageArgument_PushFar(unit->classId, MESSAGE_ARGUMENT_CLASS);
+            MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
             MessageArgument_PushFar(encodedAbility & PSYNERGY_ABILITY_MASK,
-                                    VALUE_ABILITY_NAME);
+                                    MESSAGE_ARGUMENT_ABILITY);
             Sound_PlaySongFar(SE_CAST);
             BattleMessage_ShowAndWaitFar(MsgAbilityMastered);
             BattleMessage_WaitForAdvance();
@@ -258,32 +258,32 @@ void Battle_AwardSpoils(void) {
         }
       }
       if ((s16)gains.hp != 0) {
-        MessageArgument_PushFar((s16)gains.hp, VALUE_NUMBER);
+        MessageArgument_PushFar((s16)gains.hp, MESSAGE_ARGUMENT_NUMBER);
         BattleMessage_ShowAndWaitFar(MsgMaxHpRises);
         BattleMessage_WaitForAdvance();
       }
       if ((s16)gains.pp != 0) {
-        MessageArgument_PushFar((s16)gains.pp, VALUE_NUMBER);
+        MessageArgument_PushFar((s16)gains.pp, MESSAGE_ARGUMENT_NUMBER);
         BattleMessage_ShowAndWaitFar(MsgMaxPpRises);
         BattleMessage_WaitForAdvance();
       }
       if ((s16)gains.atk != 0) {
-        MessageArgument_PushFar((s16)gains.atk, VALUE_NUMBER);
+        MessageArgument_PushFar((s16)gains.atk, MESSAGE_ARGUMENT_NUMBER);
         BattleMessage_ShowAndWaitFar(MsgAttackRises);
         BattleMessage_WaitForAdvance();
       }
       if ((s16)gains.def != 0) {
-        MessageArgument_PushFar((s16)gains.def, VALUE_NUMBER);
+        MessageArgument_PushFar((s16)gains.def, MESSAGE_ARGUMENT_NUMBER);
         BattleMessage_ShowAndWaitFar(MsgDefenseRises);
         BattleMessage_WaitForAdvance();
       }
       if ((s16)gains.agi != 0) {
-        MessageArgument_PushFar((s16)gains.agi, VALUE_NUMBER);
+        MessageArgument_PushFar((s16)gains.agi, MESSAGE_ARGUMENT_NUMBER);
         BattleMessage_ShowAndWaitFar(MsgAgilityRises);
         BattleMessage_WaitForAdvance();
       }
       if ((s16)gains.luck != 0) {
-        MessageArgument_PushFar((s16)gains.luck, VALUE_NUMBER);
+        MessageArgument_PushFar((s16)gains.luck, MESSAGE_ARGUMENT_NUMBER);
         BattleMessage_ShowAndWaitFar(MsgLuckRises);
         BattleMessage_WaitForAdvance();
       }
@@ -291,7 +291,7 @@ void Battle_AwardSpoils(void) {
   }
   Free(beforeLevelUp);
   if (spoils->coins != 0) {
-    MessageArgument_PushFar(spoils->coins, VALUE_NUMBER);
+    MessageArgument_PushFar(spoils->coins, MESSAGE_ARGUMENT_NUMBER);
     BattleMessage_ShowAndWaitFar(MsgCoinsGained);
     Party_AdjustCoinsFar(spoils->coins);
     BattleMessage_WaitForAdvance();
@@ -313,7 +313,8 @@ void Battle_AwardSpoils(void) {
     }
     if (highestItemSlot == -1)
       break;
-    MessageArgument_PushFar(spoils->items[highestItemSlot], VALUE_ITEM_NAME);
+    MessageArgument_PushFar(spoils->items[highestItemSlot],
+                            MESSAGE_ARGUMENT_ITEM);
     BattleMessage_ShowAndWaitFar(MsgItemGained);
     BattleMessage_WaitForAdvance();
     if (PartyInventory_AddFar(spoils->items[highestItemSlot]) == -1) {

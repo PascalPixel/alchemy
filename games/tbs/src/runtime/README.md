@@ -31,10 +31,19 @@ each frame on screen, the sound, the list of tasks. Start-up does that once,
 then hands over to the loop that runs one scene after another for as long as
 the console is on.
 
+In the code, a few hardware words recur. IWRAM is the console's 32 KB of
+fast memory inside the processor chip, EWRAM its 256 KB of slower work
+memory, and VRAM its video memory. An interrupt (IRQ) is the hardware
+stopping the program to run a handler, as it does at each VBlank, the pause
+after the last line of the picture; a stack is the memory a function's local
+values live in. An HBlank DMA is a copy the console makes by itself in the
+pause after each line of the picture.
+
 The cartridge header jumps to `System_Entry`
 (`games/tbs/src/system/entry.s`), which sets the IRQ and system stacks at the
 top of IWRAM and calls `System_Initialize` (`runtime/system.c`). That
-function stops any HBlank DMA left running, sets the cartridge wait states and
+function stops any HBlank DMA left running, sets the cartridge wait states
+(how long the processor waits for each read from the cartridge) and
 clears IWRAM up to `Ram_IwramHeapEnd`, leaving the stacks above it alone. It
 empties the heap (`Runtime_InitializeHeap`), copies the resident runtime into
 IWRAM and points the interrupt vector at its dispatcher
@@ -102,9 +111,8 @@ The order has consequences for the code that runs in a frame:
 - The keys are read in VBlank and turned into repeats after the halt, so code
   sees them at the start of its next frame.
 
-XXX: likely the display writes come first so that they land inside the
-vertical blank, and the mixer last because it is long and need only finish
-within the frame; the bytes don't say so.
+Why the VBlank handler keeps this order is an open question (at the end of
+this page).
 
 The sprites are the small pictures the hardware draws over the backgrounds,
 and OAM is the hardware's list of them. During a frame, code links each
@@ -112,7 +120,7 @@ sprite it wants shown into one of the depth slots (`gRenderSlotHeads`), and
 the OAM build walks the slots in order. Here is one frame's list, each entry
 outlined:
 
-![One frame of Vale with each of its nine sprite list entries outlined in its own colour, and beside it the same entries with the backgrounds hidden: the stone pillar is one tall sprite, and each villager a square sprite with a small one for its shadow.](https://alchemy.pascalpixel.com/guides/runtime/oam.png)
+![One frame's sprite list. One frame of Vale with each of its nine sprite list entries outlined: each of the four people is a 32 by 32 pixel entry with a 16 by 8 entry for the shadow under their feet, and the stone pillar is one tall entry, 32 by 64; the girl at the left edge is partly off the screen. Below, the three people in the middle closer up: their entries overlap, and the order of the list decides which is drawn in front.](https://alchemy.pascalpixel.com/illustrations/runtime/oam.svg)
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -300,8 +308,8 @@ running under a menu.
 Adding, removing, suspending and resuming disable interrupts, because the
 VBlank pass reads the same table. A pass walks the table by index without a
 lock, so a task that adds another during a pass re-sorts the table under it,
-which can shift the tasks after it by one. XXX: whether the game ever does
-this isn't known.
+which can shift the tasks after it by one; whether the game ever does is an
+open question.
 
 The code is `runtime/scheduler.c`, its names in
 `games/tbs/include/system/callback_scheduler.h`.
@@ -339,9 +347,7 @@ go to DMA3) and bits 18 and 19 the operation (`IO_WRITE_SET` ORs the value in,
 
 `IoWriteQueue_FlushPending` copies `Resource_ExecuteTransfer`
 (`system/resource/decode_01.s`), the ARM routine that carries the entries out,
-onto the stack, which is in IWRAM, and runs it there. XXX: why the stack
-rather than a heap block isn't known; a block allocated inside the interrupt
-would sit above the frame's scratch block and be released with it.
+onto the stack, which is in IWRAM, and runs it there.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -449,8 +455,8 @@ the previous picture whole rather than a mixture of two.
 
 Saving trades flash space for safety: two sectors per record are in use only
 while a write is in progress, and the random choice of sector spreads writes
-across the chip. XXX: likely the random choice is meant to spread wear,
-because nothing else in the code needs it; the bytes don't say so.
+across the chip, likely to spread the flash chip's wear, since nothing else
+in the code needs it.
 
 ## How it fits with the rest of the game
 
@@ -462,7 +468,7 @@ call the runtime's functions directly, and overlays reach them through the
 runtime bank's far-call table
 ([System](../system/README.md#why-the-program-is-cut-into-banks)), and
 `Game_Run`, which resets the runtime before every scene, is in
-[Field objects](../object/README.md).
+[Running a place](../object/README.md).
 
 ## Limits
 
@@ -576,6 +582,21 @@ The names come from what the code does: `WaitFrames` from its loop,
 `Scheduler_` from the table it keeps, the heap's from its two pointers and its
 slots, the save code's from the flash records it writes. Constants such as
 `SCHEDULER_KEY_MAIN_LOOP` are the values the callers pass.
+
+XXX: likely the VBlank handler's display writes come first so that they land
+inside the vertical blank, and the mixer last because it is long and need
+only finish within the frame; the bytes don't say so.
+
+XXX: whether the game ever adds a task during a pass, which would shift the
+tasks after it by one, isn't known.
+
+XXX: why `IoWriteQueue_FlushPending` runs its routine from the stack rather
+than a heap block isn't known; a block allocated inside the interrupt would
+sit above the frame's scratch block and be released with it.
+
+XXX: likely the save code's random choice of sector is meant to spread the
+flash chip's wear, because nothing else in the code needs it; the bytes
+don't say so.
 
 `gSavedStack` holds 3,152 bytes, though a stack below the frame-wait top and
 above the heap's end is at most 512. `ewram.s` lays EWRAM out in 4 KB groups

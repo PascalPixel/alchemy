@@ -110,8 +110,9 @@ overlay meets the main image.
 
 Each overlay is three files in its folder:
 
-- `entry/<place>.s`, the entry table: six stubs, written with
-  `overlay_veneer`, that the field code calls to start the scene and to get
+- `entry/<place>.s`, the entry table: six stubs, tiny pieces of code that
+  only jump on to a function, written with `overlay_veneer`, that the field
+  code calls to start the scene and to get
   its entrances, exits, placements, events and regions.
 - `<place>.c`, the scene's code and tables.
 - `import/<place>.s`, the import table: the stubs the overlay calls the main
@@ -133,17 +134,17 @@ is packed.
 The shared headers hold what the whole game uses, and `include/unit` mirrors
 this folder with one header for each compiled C file.
 
-[`../include`](../include) holds what the whole game shares: types and
+[`games/tbs/include`](../include) holds what the whole game shares: types and
 structures, the flags in `flags.h`, the songs and sound effects in
 `songs.h`, and the commands scenes are written in, in `event.h`. The
 `Makefile` puts `include` and its folders `battle`, `field`, `game`,
 `graphics`, `lib`, `menu`, `sound` and `system` on the include path, so code
 includes those headers by name alone.
 
-[`../include/unit`](../include/unit) mirrors this folder: each compiled C
+[`include/unit`](../include/unit) mirrors this folder: each compiled C
 file has a header at the same path under `unit` that declares what it
 defines (`unit/battle/battle.h` for `battle/battle.c`; `unit/scene/` has one
-for each place). [`../include/farcall`](../include/farcall) has a header for
+for each place). [`include/farcall`](../include/farcall) has a header for
 each bank with its `Far` names. An object written as parts keeps its private
 header beside it.
 
@@ -160,8 +161,11 @@ header beside it.
 Nearly all the code is C from one of three compilers; assembly stays only
 where its instructions prove no compiler wrote it, and for the stubs.
 
-In tbs-en, 95% of the bytes of code come from C. alchemy-gcc, a GCC of July
-2000, compiles the game's Thumb C. Three files written for ARM
+In tbs-en, 95% of the bytes of code come from C. The processor has two
+instruction sets: Thumb, compact 16-bit instructions, in which most of the
+game is written, and ARM, its full 32-bit instructions, used where speed
+matters. alchemy-gcc, a GCC of July 2000, compiles the game's Thumb C. Three
+files written for ARM
 (`window/glyph_arm.c`, `field/update.c` and `field/vertices.c`) are compiled
 by GCC 2.95.2, and the sound driver's C and the flash save library by pret's
 `old_agbcc`. `make modern` also builds the C with a current GCC.
@@ -169,7 +173,9 @@ by GCC 2.95.2, and the sound driver's C and the flash save library by pret's
 cartridge and why some of the C is written as it is.
 
 Code stays assembly only where its instructions show that none of those
-compilers wrote it. Each such file states its proof in its `@ C2:` lines: a
+compilers wrote it. Each such file states its proof in comment lines at its
+top that begin `@ C2:` ([Matching](MATCHING.md#the-other-markers) explains
+the label): a
 branch on a shift's carry (`runtime/trig.s`,
 `system/resource/decode_byte_lz.s`), a load into `pc` from a table the code
 rewrites (`graphics/tile/decode.s`), a switch from Thumb to ARM inside a
@@ -199,7 +205,7 @@ a table from its `.tsv`, or a map, under the name the code uses.
 
 The field is split four ways. [Field](field/README.md) is the engine under
 every town, dungeon and the world map: the objects on the map, movement, and
-loading, scrolling and drawing the maps. [Field objects](object/README.md)
+loading, scrolling and drawing the maps. [Running a place](object/README.md)
 runs one scene on that engine, from its set-up to the exit the party leaves
 by, with random encounters, field Psynergy and the commands scene scripts
 use; `Game_Run`, the loop that runs one scene after another, is there too.
@@ -233,7 +239,7 @@ and overlays are found through, and the flash save library.
 [Graphics](graphics/README.md) holds most of the pictures, the title intro,
 the credits and the handwritten decoders. [Sound](sound/README.md) holds the
 cue layer and Nintendo's MusicPlayer2000 driver; the songs and samples are
-in [`../sound`](../sound). [Debug rooms](debug/README.md) holds the three
+in [`games/tbs/sound`](../sound). [Debug rooms](debug/README.md) holds the three
 test scenes the ROM keeps.
 
 ## Where to start reading
@@ -246,7 +252,7 @@ To find the code behind something in the game, search for its English name.
 Each effect's comment names the abilities that play it, so searching
 `effect/` for Quake finds [effect/parts/quake.c](effect/parts/quake.c). Each
 place's code is the scene named for it. The game's text is in
-[`../text`](../text), a PO catalog for each language, where each message
+[`games/tbs/text`](../text), a PO catalog for each language, where each message
 carries its linker name: "(No saved data)" is `MsgSaveNoData`, which leads to
 the save file menu in
 [window/battle_command/save.c](window/battle_command/save.c).

@@ -21,16 +21,15 @@ reads, placed by an `.s` file under the label the code uses.
 The console draws with a small list of colours per picture, and each pixel is
 a number into that list. The PNG files here are stored the same way, as
 indexed pictures with their own colour list, so an ordinary image editor can
-open them while the game sees exactly the colours it shipped with. The build
-turns each one into the forms the game reads: the colour list, and the
-pixels, usually compressed. A short assembly file then places the result on
-the cartridge under the name the code uses, and pictures the game asks for by
-number get a row in the resource directory
+open them while the game sees exactly the colours it shipped with. Pictures
+the game asks for by number rather than by name also get a row in the
+resource directory
 ([System](../system/README.md#the-resource-directory-and-table-order)).
 
-The build packs the PNG, with the `.tsv` beside it where there is one, into
-the form the game reads, and an `.s` file places the result under the label
-the code uses. That `.s` usually sits beside the picture; the tile sets in
+In the code, the build packs the PNG, with the `.tsv` beside it where there
+is one, into the colour list and the pixels, usually compressed, and a short
+assembly file (`.s`) places the result on the cartridge under the label the
+code uses. That `.s` usually sits beside the picture; the tile sets in
 `tileset/` are placed by the maps' `map.s` files, and the pictures in
 `window/` by `.s` files of [Windows](../window/README.md) and
 [Menus](../menu/README.md). A picture loaded by number rather than by label is
@@ -57,12 +56,14 @@ start and the target can be one colour everywhere, the picture's own colours
 or a filtered version of them, such as grey or sepia.
 
 `PaletteFade_Initialize` saves both palettes, 512 colours, as the starting
-components in the colour buffer's heap block and schedules
+components in the colour buffer's heap block (memory borrowed from the
+engine's heap, which lends memory out to whatever runs) and schedules
 `PaletteFade_Update`. `PaletteFade_Start` divides each component's distance
 to the target by the number of frames, keeping the remainder in the
 component's low ten bits. Each frame the update adds the steps to all 1,536
 components, packs them into colours and queues both palettes for the next
-VBlank. The queue holds a pointer to the colours until then, so the update
+VBlank, the pause after the screen's last line when the hardware can be
+changed without showing half a change. The queue holds a pointer to the colours until then, so the update
 packs each frame into the spare one of two copies, and a frame's packing
 never overwrites colours the queue has yet to send. A `paletteHalf` of
 `PALETTE_HALVES_BOTH`, `PALETTE_HALF_BG` or `PALETTE_HALF_OBJ` chooses which
@@ -110,6 +111,8 @@ picture in as a new row of tiles comes into view. Here the intro is taken
 apart into those layers:
 
 ![The title intro after the prologue, 140 frames after the screen first shows, pulled apart into its layers: `BG1` at the back with purple clouds, `BG2` with blue sky and clouds, `BG0` with the mountain, and in front the sprites, the sun on its patch of blue sky and the lens flares below it](https://alchemy.pascalpixel.com/guides/graphics/title-intro-layers-3d.gif)
+
+![The title intro's four planes. The title intro pulled apart into the four planes the console stacks to draw it, numbered from back to front: 1, BG1, the purple clouds; 2, BG2, the blue sky and clouds; 3, BG0, the mountain; 4, the sprites, the sun and its lens flares. BG1 and BG2 scroll at different speeds, so the sky seems deep.](https://alchemy.pascalpixel.com/illustrations/graphics/title-planes.svg)
 
 ## Two backdrops in one background memory
 

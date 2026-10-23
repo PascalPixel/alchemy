@@ -114,12 +114,17 @@ there to be read, and its proof says what no C compiles to.
 `UNUSED` marks a function nothing calls, kept because its bytes are in the
 ROM. It's GCC's `unused` attribute, so a current GCC doesn't warn about it.
 
-Assembly files open with `@ C2:` lines that prove why no C compiler of the set
-would produce them. In a handwritten file they name the instruction, frame or
-pattern alchemy-gcc can't emit. The far-call tables, such as the `entry/` and
-`import/` files of the debug rooms, the menus and the scenes, carry one too:
-each entry is an aligned 8-byte veneer, an `ldr r4`, a `bx r4` and the
-target's address, which the `overlay_veneer` macro writes out whole.
+An assembly file in `games/` has to show why it is assembly at all: that no
+C compiler of the project's set could produce it. Each one opens with that
+proof, written as comment lines (`@` starts a comment in assembly) that begin
+`@ C2:`, after the project's counting rule, under which assembly counts as
+done only with such a proof. In a handwritten file the
+proof names the instruction, frame or pattern alchemy-gcc can't emit. The
+far-call tables, such as the `entry/` and `import/` files of the debug rooms,
+the menus and the scenes, carry one too. Each of their entries is a veneer,
+a tiny piece of code that only jumps on: 8 bytes holding an `ldr r4` (load
+the target's address), a `bx r4` (jump to it) and that address, which the
+`overlay_veneer` macro writes out whole.
 
 ## Spellings that match at different sites
 
@@ -266,8 +271,17 @@ The field engine's spellings are about its map state and a few of its loops.
   measured cost of their loop forms. The other `goto`s (the wander retries,
   the step searches, the map effects' script loops and the debug loops) stay
   until someone finds their loops.
+- A field object's 112 bytes are read through several structs, as Field's
+  [one object, many views](field/README.md#one-object-many-views) lists. They
+  stay apart because the compiler addresses a field differently by its
+  declared type and by whether it is reached through a union (the
+  `FieldActor` union moves a load), so one merged struct would change the
+  bytes at sites each view now matches. XXX: likely one struct in Camelot's
+  source, because every view describes the same 112 bytes; merging them
+  waits until every field has one name and type that every site matches
+  with.
 
-### Field objects
+### Running a place
 
 The engine keeps each system's working state in a heap block whose pointer
 sits in a numbered slot of `gWorkSlot`, and many of those slots also have a
@@ -421,6 +435,10 @@ one for reaching a heap block.
   `Item_CopyWords` (tagged).
 - A neighbouring heap block is reached from the menu control slot as
   `cache[HEAP_SLOT_EVENT - HEAP_SLOT_MENU_CONTROL]`.
+- The menu work is read through one struct per screen
+  (`InventoryMenuState`, `PsynergyMenuState`, `CharacterMenuState`,
+  `DjinnMenuWork`, `FourObjectMotionState`), as the field object's views
+  are, because each is what its own screen's code matches with.
 
 ### Battles
 

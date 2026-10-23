@@ -30,8 +30,11 @@ with B held, and only while `gDebugMode` is set.
 Nothing but start-up (`gDebugMode = 0` in `runtime/runtime/system.c`) and the
 sprite viewer, `Ui_RunIconMonitor` (`field/field/sprite_viewer.c`), writes
 `gDebugMode`, and the sprite viewer is reached only through a far-call veneer
-at the end of `system/far_call/FIELD.S` that no code names. A bare veneer has
-no symbol, so no code can branch to it, and the far-call table's own
+at the end of `system/far_call/FIELD.S` that no code names. A far call is a
+call from one bank of the program into another, and it goes through a
+veneer, a tiny piece of code at the start of the called bank that only jumps
+on to the function. A bare veneer, one with no name of its own, has no
+symbol, so no code can branch to it, and the far-call table's own
 directory row is passed only to stubs that do nothing ([System](../system/README.md));
 the retail game therefore never turns debug mode on. [Unused](../../unused.md#debug-scenes) explains why the
 rooms count as reachable rather than unused.
@@ -176,7 +179,7 @@ the real places call, through the same import tables
 ([System](../system/README.md#how-an-overlay-reaches-the-rest-of-the-game)).
 The selector that reaches them is in [Windows](../window/README.md), and the
 palette editor that the same debug mode opens is in
-[Field objects](../object/README.md).
+[Running a place](../object/README.md).
 
 ## Limits
 

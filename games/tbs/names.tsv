@@ -63,6 +63,7 @@ object event template	struct	pret	pokeemerald ObjectEventTemplate
 movement type (movement, gMovementType_)	field	pret	pokeemerald MOVEMENT_TYPE_; ObjectEvent_SetMovementType
 TALK_FACING_	constant	common	enum ObjectEventTalkFacing (S3 family prefix)
 local id (LOCALID_, leaderLocalId)	word	pret	pokeemerald LOCALID_
+LOCALID_GARET, LOCALID_IVAN, LOCALID_MIA, LOCALID_JENNA, LOCALID_SHEBA	constant	pret	enum LocalId (map_tables.h): a party member's object event has its character's number as its local id; maps write LOCALID_GARET where they mean the object event and GARET (character_ids.h) where they mean the character (party, units, Djinn, FLAG_IN_PARTY); Vale's storm calls its children LOCALID_GARET_CHILD, LOCALID_FELIX_CHILD and LOCALID_JENNA_CHILD ("Garet (child)")
 leader	word	common	the party member the player moves (LOCALID_PARTY_LEADER)
 ObjectEvent_ (local-id work)	prefix	pret	pokeemerald event_object_movement.c ObjectEvent
 ObjectEventSnapshot	struct	pret	object events kept across a battle or save

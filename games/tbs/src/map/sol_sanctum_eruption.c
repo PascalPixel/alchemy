@@ -157,7 +157,7 @@ const struct MapEvent *SolSanctumEruption_GetEvents(void) {
 
 /// Stages Saturos, Menardi, Alex and Felix around Jenna and Kraden.
 static inline void SolSanctumEruption_PlaceHostageGroup(void) {
-  ObjectEvent_SetPosition(JENNA, PIXELS(475), PIXELS(332));
+  ObjectEvent_SetPosition(LOCALID_JENNA, PIXELS(475), PIXELS(332));
   ObjectEvent_SetPosition(LOCALID_KRADEN, PIXELS(491), PIXELS(332));
   ObjectEvent_SetPosition(LOCALID_MENARDI, PIXELS(459), PIXELS(348));
   ObjectEvent_SetPosition(LOCALID_SATUROS, PIXELS(507), PIXELS(348));
@@ -196,10 +196,10 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Script_PlaySong(SE_RUMBLE);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(232), PIXELS(156));
-  ObjectEvent_SetPosition(GARET, PIXELS(218), PIXELS(172));
+  ObjectEvent_SetPosition(LOCALID_GARET, PIXELS(218), PIXELS(172));
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER,
                             FACING_NORTHWEST + FACING_STEP, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH + FACING_STEP, 0);
   SolSanctumEruption_PlaceHostageGroup();
   ObjectMotion_SetActionVariant(LOCALID_WISE_ONE, 1);
 #ifndef UBFIX
@@ -239,7 +239,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   PaletteFade_StartInterpolation(48);
   FieldScript_WaitFrames(48);
   ObjectMotion_Launch(LOCALID_PARTY_LEADER, 6, 0);
-  ObjectMotion_Launch(GARET, 6, 20);
+  ObjectMotion_Launch(LOCALID_GARET, 6, 20);
   // Off screen, Menardi: "What happened?" Saturos: "Not again!" Jenna: the
   // water's gone. Alex: without the Elemental Stars the chamber is
   // collapsing. Kraden: is this the "terrible retribution"?
@@ -249,21 +249,21 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   FieldScript_ShowMessageThenWait(LOCALID_MENARDI, 0, 20);
   FieldScript_ShowMessageAndWait(LOCALID_SATUROS, 0);
   SolSanctumEruption_SetMaterializationTint(1, 20, 0);
-  Script_ShowMessageAndWait(JENNA, 0, 20);
+  Script_ShowMessageAndWait(LOCALID_JENNA, 0, 20);
   SolSanctumEruption_SetMaterializationTint(0, 20, 0);
   Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
   Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 20);
-  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, GARET, 0);
+  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_GARET, 0);
   FieldScript_WaitFrames(40);
   ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
-  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
   FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER,
                             FACING_NORTHWEST + FACING_STEP, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 30);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH + FACING_STEP, 30);
   SolSanctumEruption_SetMaterializationTint(1, 20, 0);
   ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
-  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
   FieldScript_WaitFrames(20);
   SolSanctumEruption_SetMaterializationTint(0, 20, 20);
   // The Wise One, a floating rock, appears over the chamber and the quake
@@ -281,12 +281,12 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   // Menardi: "It's over... But what was it?" Jenna: "What is that?!?"
   // Saturos: "No!" The camera pans to the Wise One.
   Script_ShowMessageAndWait(LOCALID_MENARDI, 0, 20);
-  Script_ShowMessage(JENNA, 0);
+  Script_ShowMessage(LOCALID_JENNA, 0);
   Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 10);
-  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, GARET, 20);
+  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_GARET, 20);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER,
                             FACING_SOUTHEAST + FACING_STEP, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 10);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST + FACING_STEP, 10);
   SolSanctumEruption_PlaceHostageGroup();
   FieldCamera_SetSpeed(PIXELS(32) / 5, PIXELS(4) / 5);
   FieldCamera_MoveTo(PIXELS(328), -1, PIXELS(299), 1);
@@ -301,13 +301,13 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   // Garet: "That rock... It's floating... Do you know what it is?" Yes:
   // "Yeah, I know it's a rock, stupid!" No: someone is lifting it with
   // Psynergy. Kraden: "Could that be... the Wise One?!?"
-  Script_OpenMessage(SPEAKER_PORTRAIT_LEFT | GARET, 0);
+  Script_OpenMessage(SPEAKER_PORTRAIT_LEFT | LOCALID_GARET, 0);
   if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
     FieldScript_SetMessageId(MsgSolSanctumIKnowItsARock);
   } else {
     FieldScript_SetMessageId(MsgSolSanctumSomeoneIsLiftingIt);
   }
-  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | GARET, 0, 80);
+  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | LOCALID_GARET, 0, 80);
   FieldScript_SetMessageId(MsgSolSanctumKradenCouldThatBeThe);
   Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 20);
   SolSanctumEruption_SetMaterializationTint(1, 20, 0);
@@ -325,11 +325,11 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   ObjectEvent_FaceDirection(LOCALID_WISE_ONE, FACING_NORTHWEST, 40);
   SolSanctumEruption_SetMaterializationTint(1, 20, 20);
   SolSanctumEruption_SetMaterializationTint(0, 20, 20);
-  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | GARET, 0, 30);
+  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | LOCALID_GARET, 0, 30);
   ObjectEvent_FaceDirection(LOCALID_WISE_ONE, FACING_EAST + FACING_STEP, 40);
   SolSanctumEruption_SetMaterializationTint(1, 20, 20);
   SolSanctumEruption_SetMaterializationTint(0, 20, 20);
-  Script_ShowMessageAndWait(JENNA, 0, 30);
+  Script_ShowMessageAndWait(LOCALID_JENNA, 0, 30);
   // Embers start to rain from the Wise One.
   SolSanctumEruption_ResetEmberEmission();
   Task_AddCallback(SolSanctumEruption_StepEmbers, TASK_PRIORITY_MAP);
@@ -339,13 +339,13 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   // moves to his group, all facing west.
   Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 30);
   SolSanctumEruption_PlaceHostageGroup();
-  ObjectEvent_FaceDirection(JENNA, FACING_WEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_WEST, 0);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_WEST, 0);
   ObjectEvent_FaceDirection(LOCALID_MENARDI, FACING_WEST, 0);
   ObjectEvent_FaceDirection(LOCALID_SATUROS, FACING_WEST, 0);
   ObjectEvent_FaceDirection(LOCALID_FELIX, FACING_WEST, 0);
   ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_WEST, 0);
-  objectEvent = ObjectEvent_GetById(JENNA);
+  objectEvent = ObjectEvent_GetById(LOCALID_JENNA);
   FieldCamera_MoveTo(objectEvent->x.part.pixel * PIXELS(1), -1,
                      objectEvent->z.part.pixel * PIXELS(1), 1);
   FieldCamera_WaitForArrival();
@@ -363,9 +363,9 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Engine_ObjectEventSetAnimation(LOCALID_SATUROS, ANIM_SHAKE_HEAD);
   Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 10);
   // Jenna: "What about Isaac and Garet? You can't just leave them here!"
-  ObjectEvent_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  ObjectEvent_FaceDirection(JENNA, FACING_SOUTHEAST + FACING_STEP, 40);
-  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | JENNA, 0, 10);
+  ObjectEvent_ShowEmote(LOCALID_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_SOUTHEAST + FACING_STEP, 40);
+  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_JENNA, 0, 10);
   ObjectEvent_FaceDirection(LOCALID_SATUROS, FACING_NORTHWEST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_MENARDI, FACING_NORTH + FACING_STEP, 40);
   ObjectEvent_LinkPair(LOCALID_SATUROS, LOCALID_MENARDI, 40);
@@ -385,7 +385,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   ObjectMotion_SetAnimationAndWait(LOCALID_ALEX, ANIM_NOD);
   Script_ShowMessageAndWait(LOCALID_ALEX, 0, 10);
   ObjectEvent_FaceDirection(LOCALID_FELIX, FACING_SOUTHEAST + FACING_STEP, 0);
-  ObjectEvent_FaceDirection(JENNA, FACING_SOUTHEAST + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_SOUTHEAST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTH + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_MENARDI, FACING_SOUTHEAST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_SATUROS, FACING_SOUTH + FACING_STEP, 20);
@@ -445,10 +445,10 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   ObjectMotion_SetAnimationAndWait(LOCALID_ALEX, ANIM_SHAKE_HEAD);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_ALEX, 0, 30);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_NORTHWEST + FACING_STEP, 0);
-  ObjectEvent_FaceDirection(JENNA, FACING_NORTHWEST + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_NORTHWEST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_FELIX, FACING_SOUTHEAST + FACING_STEP, 20);
-  ObjectEvent_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | JENNA, 0, 40);
+  ObjectEvent_ShowEmote(LOCALID_JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_JENNA, 0, 40);
   ObjectEvent_ShowEmote(LOCALID_FELIX, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   ObjectMotion_SetAnimationAndWait(LOCALID_FELIX, ANIM_NOD);
   ObjectEvent_ShowEmote(LOCALID_SATUROS, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -457,7 +457,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Script_ShowMessageAndWait(LOCALID_ALEX, 0, 60);
   ObjectMotion_SetAnimationAndWait(LOCALID_FELIX, ANIM_NOD);
   FieldScript_WaitFrames(40);
-  ObjectEvent_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  ObjectEvent_ShowEmote(LOCALID_JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   ObjectEvent_ShowEmote(LOCALID_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   ObjectEvent_LinkPair(LOCALID_SATUROS, LOCALID_MENARDI, 20);
   Engine_ObjectEventSetAnimation(LOCALID_SATUROS, ANIM_NOD);
@@ -479,15 +479,15 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   ObjectMotion_SetVarCbAndRefresh(LOCALID_MENARDI, 2);
   Script_ShowMessage(SPEAKER_PORTRAIT_RIGHT | LOCALID_MENARDI, 0);
   ObjectEvent_SetSpeed(LOCALID_MENARDI, PIXELS(8) / 5, PIXELS(4) / 5);
-  ObjectEvent_SetSpeed(JENNA, PIXELS(6) / 5, PIXELS(3) / 5);
+  ObjectEvent_SetSpeed(LOCALID_JENNA, PIXELS(6) / 5, PIXELS(3) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_MENARDI, 475, 338);
   objectEvent = ObjectEvent_GetById(LOCALID_MENARDI);
   objectEvent->steeringFlags = 254 & objectEvent->steeringFlags;
   ObjectEvent_WalkToAndWait(LOCALID_MENARDI, 475, 348);
-  ObjectMotion_SetVarCbAndRefresh(JENNA, 1);
-  ObjectMotion_Launch(JENNA, 4, 0);
-  ObjectEvent_WalkToAndWait(JENNA, 459, 316);
-  ObjectEvent_SetSpeed(JENNA, PIXELS(1) / 2, PIXELS(1) / 4);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_JENNA, 1);
+  ObjectMotion_Launch(LOCALID_JENNA, 4, 0);
+  ObjectEvent_WalkToAndWait(LOCALID_JENNA, 459, 316);
+  ObjectEvent_SetSpeed(LOCALID_JENNA, PIXELS(1) / 2, PIXELS(1) / 4);
   // Felix: "Hey, don't push my sister!" Menardi: "You owe us your life!"
   // Saturos: "Menardi!"
   ObjectEvent_ShowEmote(LOCALID_FELIX, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
@@ -505,7 +505,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   ObjectMotion_SetVariantCallback(LOCALID_SATUROS, 2);
   Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 20);
   ObjectEvent_ShowEmote(LOCALID_MENARDI, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
-  ObjectEvent_FaceDirection(JENNA, FACING_SOUTHEAST + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_SOUTHEAST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_MENARDI, FACING_SOUTHEAST + FACING_STEP,
                             20);
   ObjectMotion_SetAnimationAndWait(LOCALID_SATUROS, ANIM_SHAKE_HEAD);
@@ -515,10 +515,10 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   ObjectMotion_SetAnimationAndWait(LOCALID_MENARDI, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_FELIX, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  ObjectEvent_WalkTo(JENNA, 432, 316);
+  ObjectEvent_WalkTo(LOCALID_JENNA, 432, 316);
   ObjectEvent_WalkToAndWait(LOCALID_FELIX, 422, 311);
-  Engine_ObjectEventSetAnimation(JENNA, ANIM_STAND);
-  ObjectEvent_FaceDirection(JENNA, FACING_SOUTHEAST + FACING_STEP, 0);
+  Engine_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_STAND);
+  ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_SOUTHEAST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_FELIX, FACING_SOUTHEAST + FACING_STEP, 20);
   // Felix leads Jenna aside. Saturos: "Master Kraden, you will be joining us,
   // of course!" All gather under the departure point.
@@ -543,7 +543,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   ObjectEvent_FaceDirection(LOCALID_SATUROS, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(LOCALID_MENARDI, FACING_NORTH + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_NORTHWEST + FACING_STEP, 0);
-  ObjectEvent_FaceDirection(JENNA, FACING_NORTH + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_NORTH + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_FELIX, FACING_NORTH + FACING_STEP, 0);
   FieldCamera_SetSpeed(PIXELS(1) / 2, PIXELS(1) / 16);
   FieldCamera_MoveTo(PIXELS(472), -1, PIXELS(300), 1);
@@ -562,13 +562,13 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   SolSanctumEruption_RaiseAndShrinkObjectEvent(LOCALID_KRADEN);
   ObjectMotion_SetAnimationAndWait(LOCALID_MENARDI, ANIM_NOD);
   SolSanctumEruption_RaiseAndShrinkObjectEvent(LOCALID_MENARDI);
-  ObjectEvent_FaceDirection(JENNA, FACING_WEST + FACING_STEP, 40);
-  ObjectMotion_SetVariantCallback(JENNA, 2);
-  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | JENNA, 0, 40);
+  ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_WEST + FACING_STEP, 40);
+  ObjectMotion_SetVariantCallback(LOCALID_JENNA, 2);
+  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_JENNA, 0, 40);
   ObjectEvent_FaceDirection(LOCALID_FELIX, FACING_SOUTHEAST + FACING_STEP, 0);
-  ObjectEvent_FaceDirection(JENNA, FACING_NORTHWEST + FACING_STEP, 30);
+  ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_NORTHWEST + FACING_STEP, 30);
   ObjectEvent_FaceDirection(LOCALID_FELIX, FACING_NORTHEAST, 0);
-  SolSanctumEruption_RaiseAndShrinkObjectEvent(JENNA);
+  SolSanctumEruption_RaiseAndShrinkObjectEvent(LOCALID_JENNA);
   SolSanctumEruption_RaiseAndShrinkObjectEvent(LOCALID_FELIX);
   ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_SOUTHWEST + FACING_STEP, 40);
   Script_ShowMessageAndWait(LOCALID_ALEX, 0, 30);
@@ -896,7 +896,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   WaitFrames(1);
   ObjectEvent_SetPosition(LOCALID_WISE_ONE, 0, 0);
   SolSanctumEruption_PlaceBeforeStar(LOCALID_PARTY_LEADER);
-  SolSanctumEruption_PlaceBeforeStar(GARET);
+  SolSanctumEruption_PlaceBeforeStar(LOCALID_GARET);
   sparkles->stopped = 0;
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   FieldScript_WaitFrames(80);
@@ -915,13 +915,13 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   MapGrid_CenterOnFollowedPoint();
   WaitFrames(4);
   ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, 3);
-  ObjectMotion_SetActionVariant(GARET, 3);
+  ObjectMotion_SetActionVariant(LOCALID_GARET, 3);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
   PaletteFade_StartInterpolation(40);
   FieldScript_WaitFrames(40);
 
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
-  garet = ObjectEvent_Get(GARET);
+  garet = ObjectEvent_Get(LOCALID_GARET);
   leaderSprite = leader->sprite;
   garetSprite = garet->sprite;
   for (frame = 0; frame < 20; frame++) {
@@ -933,113 +933,113 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   }
   FieldScript_WaitFrames(40);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(2), PIXELS(1));
-  ObjectEvent_SetSpeed(GARET, PIXELS(2), PIXELS(1));
+  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(2), PIXELS(1));
   ObjectEvent_Get(LOCALID_PARTY_LEADER)->sprite->rotation = 0;
-  ObjectEvent_Get(GARET)->sprite->rotation = 0;
+  ObjectEvent_Get(LOCALID_GARET)->sprite->rotation = 0;
   ObjectMotion_Launch(LOCALID_PARTY_LEADER, 6, 0);
-  ObjectMotion_Launch(GARET, 6, 0);
+  ObjectMotion_Launch(LOCALID_GARET, 6, 0);
   ObjectEvent_SetDestination(LOCALID_PARTY_LEADER, 246, 150);
-  ObjectMotion_SetPositionAndCommit(GARET, 220, 150);
+  ObjectMotion_SetPositionAndCommit(LOCALID_GARET, 220, 150);
   ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, 2);
-  ObjectMotion_SetActionVariant(GARET, 2);
+  ObjectMotion_SetActionVariant(LOCALID_GARET, 2);
   ObjectEvent_Get(LOCALID_PARTY_LEADER)->priorityFlags |=
       OBJ_EVENT_PRIORITY_AUTOMATIC;
-  ObjectEvent_Get(GARET)->priorityFlags |= OBJ_EVENT_PRIORITY_AUTOMATIC;
+  ObjectEvent_Get(LOCALID_GARET)->priorityFlags |= OBJ_EVENT_PRIORITY_AUTOMATIC;
   ObjectMotion_EnableActionAndResetMotion(LOCALID_PARTY_LEADER);
-  ObjectMotion_EnableActionAndResetMotion(GARET);
+  ObjectMotion_EnableActionAndResetMotion(LOCALID_GARET);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHEAST, 0);
   FieldScript_WaitFrames(20);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHEAST, 0);
   FieldScript_WaitFrames(40);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST + FACING_STEP, 0);
   FieldScript_WaitFrames(40);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH + FACING_STEP, 0);
   FieldScript_WaitFrames(80);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 0);
   FieldScript_WaitFrames(10);
-  ObjectEvent_FaceDirection(GARET, FACING_EAST + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_EAST + FACING_STEP, 0);
   FieldScript_WaitFrames(60);
 
   // Garet: "Well, this turned out badly, wouldn't you say?" Yes: "It's a
   // miracle we survived." No: "How can you be so calm?"
-  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
   FieldScript_SetMessageId(MsgSolSanctumWellTurnedBadly);
-  Script_OpenMessage(GARET, 0);
+  Script_OpenMessage(LOCALID_GARET, 0);
   if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
-    ObjectMotion_SetAnimationAndWait(GARET, ANIM_NOD);
+    ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
     FieldScript_SetMessageId(MsgSolSanctumWellTurnedBadly + 1);
   } else {
-    ObjectMotion_SetVarCbAndRefresh(GARET, 1);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 1);
     FieldScript_SetMessageId(MsgSolSanctumWellTurnedBadly + 2);
   }
-  Script_ShowMessageAndWait(GARET, 0, 60);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 0);
+  Script_ShowMessageAndWait(LOCALID_GARET, 0, 60);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
   FieldScript_WaitFrames(40);
-  ObjectMotion_Launch(GARET, 2, 0);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  ObjectMotion_Launch(LOCALID_GARET, 2, 0);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   FieldScript_WaitFrames(40);
   // Garet: "Jenna and Kraden are gone!"
   FieldScript_SetMessageId(MsgSolSanctumFriendsGone);
-  Script_ShowMessageAndWait(GARET, 0, 10);
+  Script_ShowMessageAndWait(LOCALID_GARET, 0, 10);
   ObjectMotion_Launch(LOCALID_PARTY_LEADER, 2, 0);
   FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHEAST, 0);
   FieldScript_WaitFrames(60);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   FieldScript_WaitFrames(80);
-  ObjectEvent_FaceDirection(GARET, FACING_EAST + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_EAST + FACING_STEP, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
   // Garet: "You don't think they'll hurt Jenna and Kraden, do you?" Either
   // way, he trusts Felix to look after them.
-  Script_OpenMessage(GARET, 0);
+  Script_OpenMessage(LOCALID_GARET, 0);
   if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
     FieldScript_WaitFrames(10);
-    ObjectMotion_SetVarCbAndRefresh(GARET, 2);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
     FieldScript_WaitFrames(10);
-    ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 0);
+    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
     FieldScript_WaitFrames(60);
-    ObjectEvent_FaceDirection(GARET, FACING_EAST + FACING_STEP, 0);
+    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_EAST + FACING_STEP, 0);
     FieldScript_WaitFrames(10);
-    Engine_ObjectEventSetAnimation(GARET, ANIM_SHAKE_HEAD);
+    Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_SHAKE_HEAD);
     FieldScript_SetMessageId(MsgSolSanctumThanksALot);
   } else {
     FieldScript_WaitFrames(10);
-    ObjectMotion_SetVarCbAndRefresh(GARET, 2);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
     FieldScript_WaitFrames(10);
-    ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 0);
+    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
     FieldScript_WaitFrames(60);
-    ObjectEvent_FaceDirection(GARET, FACING_EAST + FACING_STEP, 0);
+    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_EAST + FACING_STEP, 0);
     FieldScript_WaitFrames(10);
-    Engine_ObjectEventSetAnimation(GARET, ANIM_SHAKE_HEAD);
+    Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_SHAKE_HEAD);
     FieldScript_SetMessageId(MsgSolSanctumTheyllBeSafe);
   }
-  Script_ShowMessageAndWait(GARET, 0, 40);
+  Script_ShowMessageAndWait(LOCALID_GARET, 0, 40);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(GARET, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
   FieldScript_WaitFrames(40);
 
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTHWEST + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHWEST + FACING_STEP, 0);
   // Pan around the chamber before another tremor interrupts the conversation.
   FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
   FieldCamera_MoveTo(PIXELS(284), -1, PIXELS(92), 1);
   FieldCamera_WaitForArrival();
   FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH + FACING_STEP, 0);
   FieldCamera_SetSpeed(PIXELS(3) / 2, PIXELS(3) / 16);
   FieldCamera_MoveTo(PIXELS(127), -1, PIXELS(162), 1);
   FieldCamera_WaitForArrival();
   FieldScript_WaitFrames(40);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHEAST, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
   FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
   FieldCamera_MoveTo(PIXELS(304), -1, PIXELS(294), 1);
   FieldCamera_WaitForArrival();
   FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_EAST + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_EAST + FACING_STEP, 0);
   FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   FieldCamera_MoveTo(PIXELS(400), -1, PIXELS(215), 1);
   FieldCamera_WaitForArrival();
@@ -1049,20 +1049,20 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   FieldCamera_WaitForArrival();
   FieldScript_WaitFrames(20);
   // Garet: "This really is terrible..." and they have a long way to go.
-  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
   FieldScript_SetMessageId(MsgSolSanctumThisIsTerrible);
-  Script_ShowMessageAndWait(GARET, 0, 20);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 0);
+  Script_ShowMessageAndWait(LOCALID_GARET, 0, 20);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
   FieldScript_WaitFrames(40);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH + FACING_STEP, 0);
   FieldScript_WaitFrames(20);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHEAST + FACING_STEP, 0);
   FieldScript_WaitFrames(60);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
   FieldScript_WaitFrames(40);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHEAST + FACING_STEP, 0);
   FieldScript_WaitFrames(10);
-  Script_ShowMessageAndWait(GARET, 0, 10);
+  Script_ShowMessageAndWait(LOCALID_GARET, 0, 10);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(10);
 
@@ -1074,46 +1074,46 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   FieldScript_WaitFrames(10);
   SolSanctumEruption_SetMaterializationTint(0, 40, 0);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(2), PIXELS(1));
-  ObjectEvent_SetSpeed(GARET, PIXELS(2), PIXELS(1));
+  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(2), PIXELS(1));
   ObjectMotion_Launch(LOCALID_PARTY_LEADER, 6, 0);
-  ObjectMotion_Launch(GARET, 6, 0);
+  ObjectMotion_Launch(LOCALID_GARET, 6, 0);
   ObjectEvent_SetDestination(LOCALID_PARTY_LEADER, 243, 144);
-  ObjectEvent_SetDestination(GARET, 202, 144);
+  ObjectEvent_SetDestination(LOCALID_GARET, 202, 144);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
   FieldScript_WaitFrames(20);
   sparkles->stopped = 1;
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   FieldScript_WaitFrames(60);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   FieldScript_WaitFrames(80);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
-  ObjectEvent_SetSpeed(GARET, PIXELS(2) / 5, PIXELS(1) / 5);
-  ObjectEvent_WalkTo(GARET, 220, 150);
+  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(2) / 5, PIXELS(1) / 5);
+  ObjectEvent_WalkTo(LOCALID_GARET, 220, 150);
   ObjectMotion_SetPositionAndReset(LOCALID_PARTY_LEADER, 246, 150);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTHWEST + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHWEST + FACING_STEP, 0);
   FieldScript_WaitFrames(60);
-  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
   FieldScript_WaitFrames(10);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
   FieldScript_WaitFrames(40);
   // Garet: "We're in big trouble..." Yes: "Let's get out of here..." No:
   // "Quit acting so tough!"
-  Script_OpenMessage(GARET, 0);
+  Script_OpenMessage(LOCALID_GARET, 0);
   if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
-    ObjectEvent_FaceDirection(GARET, FACING_EAST + FACING_STEP, 0);
+    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_EAST + FACING_STEP, 0);
     FieldScript_WaitFrames(10);
-    ObjectMotion_SetAnimationAndWait(GARET, ANIM_NOD);
+    ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
   } else {
-    ObjectEvent_FaceDirection(GARET, FACING_EAST + FACING_STEP, 0);
+    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_EAST + FACING_STEP, 0);
     FieldScript_WaitFrames(10);
-    Engine_ObjectEventSetAnimation(GARET, ANIM_SHAKE_HEAD);
+    Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_SHAKE_HEAD);
     FieldScript_SetMessageId(MsgSolSanctumQuitActingTough);
   }
   FieldScript_WaitFrames(20);
-  Script_ShowMessage(GARET, 0);
+  Script_ShowMessage(LOCALID_GARET, 0);
 
   // The Wise One drifts in from the west, unseen by Isaac; Garet walks off
   // and calls him: "I'm over here. Come on, we've gotta go."
@@ -1123,8 +1123,8 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   ObjectEvent_SetDestination(LOCALID_WISE_ONE, 171, 152);
   ObjectEvent_FaceDirection(LOCALID_WISE_ONE, FACING_EAST, 0);
   ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_WISE_ONE), 1);
-  ObjectEvent_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_WalkTo(GARET, 217, 182);
+  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_WalkTo(LOCALID_GARET, 217, 182);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER,
                             FACING_SOUTHWEST + FACING_STEP, 0);
   FieldScript_WaitFrames(10);
@@ -1139,23 +1139,23 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   FieldScript_WaitFrames(10);
   ObjectMotion_Launch(LOCALID_PARTY_LEADER, 4, 0);
   FieldScript_WaitFrames(30);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_STAND);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
   FieldScript_WaitFrames(40);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST, 0);
   FieldScript_WaitFrames(4);
-  ObjectMotion_SetPositionAndReset(GARET, 231, 175);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST, 0);
+  ObjectMotion_SetPositionAndReset(LOCALID_GARET, 231, 175);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHEAST, 0);
   FieldScript_SetMessageId(MsgSolSanctumOverHere);
-  Script_ShowMessage(GARET, 0);
+  Script_ShowMessage(LOCALID_GARET, 0);
   FieldScript_WaitFrames(40);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   FieldScript_WaitFrames(40);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHWEST, 0);
   FieldScript_WaitFrames(60);
-  ObjectMotion_SetVariantCallback(GARET, 1);
-  ObjectEvent_SetAttachedEffect(GARET, ATTACHED_EFFECT_IN_FRONT |
-                                           ATTACHED_EFFECT_ONCE);
+  ObjectMotion_SetVariantCallback(LOCALID_GARET, 1);
+  ObjectEvent_SetAttachedEffect(LOCALID_GARET, ATTACHED_EFFECT_IN_FRONT |
+                                                   ATTACHED_EFFECT_ONCE);
   FieldScript_WaitFrames(40);
 
   SolSanctumEruption_SetMaterializationTint(1, 20, 0);
@@ -1163,7 +1163,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   FieldScript_WaitFrames(40);
   ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
-  ObjectMotion_SetVariantCallback(GARET, 2);
+  ObjectMotion_SetVariantCallback(LOCALID_GARET, 2);
   Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
   PaletteFade_StartInterpolation(40);
@@ -1175,7 +1175,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Script_ShowMessage(LOCALID_WISE_ONE, 0);
   FieldScript_WaitFrames(20);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   FieldScript_WaitFrames(100);
   Script_ShowMessage(LOCALID_WISE_ONE, 0);
   FieldScript_WaitFrames(20);
@@ -1184,35 +1184,35 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
   FieldScript_WaitFrames(20);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(2), PIXELS(1));
-  ObjectEvent_SetSpeed(GARET, PIXELS(2), PIXELS(1));
+  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(2), PIXELS(1));
   ObjectEvent_Get(LOCALID_PARTY_LEADER)->steeringFlags &=
       ~OBJ_EVENT_FACES_MOTION;
-  ObjectEvent_Get(GARET)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
+  ObjectEvent_Get(LOCALID_GARET)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
   ObjectMotion_Launch(LOCALID_PARTY_LEADER, 4, 0);
-  ObjectMotion_Launch(GARET, 4, 0);
+  ObjectMotion_Launch(LOCALID_GARET, 4, 0);
   ObjectEvent_SetDestination(LOCALID_PARTY_LEADER, 256, 150);
-  ObjectEvent_SetDestination(GARET, 231, 180);
-  ObjectMotion_CommitCurrentPositionAndActivate(GARET);
+  ObjectEvent_SetDestination(LOCALID_GARET, 231, 180);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
   SolSanctumEruption_SetMaterializationTint(0, 40, 0);
   FieldScript_WaitFrames(20);
   ObjectEvent_Get(LOCALID_PARTY_LEADER)->steeringFlags |=
       OBJ_EVENT_FACES_MOTION;
-  ObjectEvent_Get(GARET)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
+  ObjectEvent_Get(LOCALID_GARET)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
   ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
-  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
   FieldScript_WaitFrames(40);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   FieldScript_WaitFrames(40);
-  Script_ShowMessage(GARET, 0);
+  Script_ShowMessage(LOCALID_GARET, 0);
   FieldScript_WaitFrames(20);
   ObjectEvent_ShowEmote(LOCALID_WISE_ONE, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   FieldScript_WaitFrames(60);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH + FACING_STEP,
                             0);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH + FACING_STEP, 0);
   FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTHWEST + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHWEST + FACING_STEP, 0);
   FieldScript_WaitFrames(10);
 
   // The floor by the Wise One starts to break up; the Wise One glows and
@@ -1268,7 +1268,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Script_ShowMessage(LOCALID_WISE_ONE, 0);
   FieldScript_WaitFrames(40);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   FieldScript_WaitFrames(60);
   FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   FieldCamera_MoveTo(PIXELS(218), -1, PIXELS(181), 1);
@@ -1282,14 +1282,14 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH + FACING_STEP,
                             0);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH + FACING_STEP, 0);
   FieldScript_WaitFrames(40);
   ObjectEvent_FaceDirection(LOCALID_WISE_ONE, FACING_NORTHEAST + FACING_STEP,
                             0);
   FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER,
                             FACING_SOUTHWEST + FACING_STEP, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTHWEST + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHWEST + FACING_STEP, 0);
   FieldCamera_MoveTo(PIXELS(224), -1, PIXELS(158), 1);
   FieldCamera_WaitForArrival();
   // Lights rise at the chamber's first corner. The Wise One: the Elemental
@@ -1357,7 +1357,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTHWEST, 60);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHWEST, 60);
   Script_ShowMessage(LOCALID_WISE_ONE, 0);
   FieldScript_WaitFrames(40);
 
@@ -1377,11 +1377,11 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   SolSanctumEruption_RaiseElementalArcs(CHAMBER_SOUTHEAST);
   Script_ShowMessage(LOCALID_WISE_ONE, 0);
   ObjectEvent_FaceDirection(LOCALID_WISE_ONE, FACING_EAST + FACING_STEP, 0);
-  ObjectEvent_SetPosition(GARET, PIXELS(582), PIXELS(345));
+  ObjectEvent_SetPosition(LOCALID_GARET, PIXELS(582), PIXELS(345));
   FieldScript_WaitFrames(20);
-  Script_ShowMessage(GARET, 0);
-  ObjectEvent_SetPosition(GARET, PIXELS(231), PIXELS(180));
-  ObjectEvent_FaceDirection(GARET, FACING_NORTHWEST + FACING_STEP, 0);
+  Script_ShowMessage(LOCALID_GARET, 0);
+  ObjectEvent_SetPosition(LOCALID_GARET, PIXELS(231), PIXELS(180));
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHWEST + FACING_STEP, 0);
   WaitFrames(20);
   // Back with the party, the Wise One: misused, Alchemy is dangerous; its
   // power is released if the Stars light the four lighthouses.
@@ -1389,7 +1389,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Script_ShowMessage(LOCALID_WISE_ONE, 0);
   FieldScript_WaitFrames(10);
   ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
-  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
   Script_ShowMessage(LOCALID_WISE_ONE, 0);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(LOCALID_WISE_ONE, 0);
@@ -1409,17 +1409,17 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   FieldCamera_MoveTo(PIXELS(184), -1, PIXELS(132), 1);
   ObjectMotion_Launch(LOCALID_PARTY_LEADER, 6, 0);
-  ObjectMotion_Launch(GARET, 6, 0);
+  ObjectMotion_Launch(LOCALID_GARET, 6, 0);
   ObjectEvent_Get(LOCALID_PARTY_LEADER)->steeringFlags &=
       ~OBJ_EVENT_FACES_MOTION;
-  ObjectEvent_Get(GARET)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
+  ObjectEvent_Get(LOCALID_GARET)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
   ObjectEvent_SetDestination(LOCALID_PARTY_LEADER, 245, 145);
-  ObjectEvent_SetDestination(GARET, 215, 168);
-  ObjectMotion_CommitCurrentPositionAndActivate(GARET);
+  ObjectEvent_SetDestination(LOCALID_GARET, 215, 168);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
   FieldScript_WaitFrames(80);
   ObjectEvent_Get(LOCALID_PARTY_LEADER)->steeringFlags |=
       OBJ_EVENT_FACES_MOTION;
-  ObjectEvent_Get(GARET)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
+  ObjectEvent_Get(LOCALID_GARET)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
   ObjectEvent_SetDestination(LOCALID_WISE_ONE, 184, 87);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_WISE_ONE);
   ObjectEvent_FaceDirection(LOCALID_WISE_ONE, FACING_SOUTH, 0);
@@ -1500,13 +1500,13 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Script_PlaySong(SE_RUMBLE);
   FieldScript_WaitFrames(100);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   FieldScript_WaitFrames(60);
   // The Wise One: "It's erupting... Flee, now!" Garet: "But how..." The Wise
   // One: "I will help you..." It glows and the chamber fades to white.
   Script_ShowMessage(LOCALID_WISE_ONE, 0);
-  ObjectMotion_SetVarCbAndRefresh(GARET, 3);
-  Script_ShowMessage(GARET, 0);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 3);
+  Script_ShowMessage(LOCALID_GARET, 0);
   FieldScript_WaitFrames(20);
   Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
   ObjectEvent_FaceDirection(LOCALID_WISE_ONE, FACING_SOUTHEAST + FACING_STEP,
@@ -1680,7 +1680,7 @@ static void SolSanctumEruption_RaiseElementalArcs(u32 corner) {
   if (corner == CHAMBER_NORTHWEST) {
     ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER,
                           EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-    ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   }
   WaitFrames(20);
   FieldScheduler_AddCallback(SolSanctumEruption_UpdateElementalArcs,
@@ -1931,9 +1931,9 @@ u32 gSolSanctumEruption_Warps[] = {
 };
 
 struct ObjectEventTemplate gSolSanctumEruption_ObjectEventTemplates[] = {
-    { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },

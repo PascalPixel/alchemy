@@ -2097,53 +2097,53 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 248, 598);
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (objectEvent != 0) {
-    Engine_ObjectEventSetPosition(GARET, objectEvent->x.fixed,
+    Engine_ObjectEventSetPosition(LOCALID_GARET, objectEvent->x.fixed,
                                   objectEvent->z.fixed);
   }
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (objectEvent != 0) {
-    Engine_ObjectEventSetPosition(IVAN, objectEvent->x.fixed,
+    Engine_ObjectEventSetPosition(LOCALID_IVAN, objectEvent->x.fixed,
                                   objectEvent->z.fixed);
   }
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (objectEvent != 0) {
-    Engine_ObjectEventSetPosition(MIA, objectEvent->x.fixed,
+    Engine_ObjectEventSetPosition(LOCALID_MIA, objectEvent->x.fixed,
                                   objectEvent->z.fixed);
   }
-  ObjectEvent_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_SetSpeed(IVAN, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_SetSpeed(MIA, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 250, 584);
-  ObjectEvent_WalkTo(GARET, 240, 600);
-  ObjectEvent_WalkTo(IVAN, 254, 600);
-  ObjectMotion_SetPositionAndReset(MIA, 248, 616);
+  ObjectEvent_WalkTo(LOCALID_GARET, 240, 600);
+  ObjectEvent_WalkTo(LOCALID_IVAN, 254, 600);
+  ObjectMotion_SetPositionAndReset(LOCALID_MIA, 248, 616);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_STAND);
-  Engine_ObjectEventSetAnimation(IVAN, ANIM_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_STAND);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
-  ObjectMotion_ArmCallback(MIA, FACING_NORTH, 20);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTH, 0);
+  ObjectMotion_ArmCallback(LOCALID_MIA, FACING_NORTH, 20);
   Sound_PlaySong(SE_149);
   FieldScript_WaitFrames(40);
   ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
                                                           ATTACHED_EFFECT_ONCE);
-  ObjectEvent_SetAttachedEffect(GARET, ATTACHED_EFFECT_IN_FRONT |
-                                           ATTACHED_EFFECT_ONCE);
-  ObjectEvent_SetAttachedEffect(IVAN, ATTACHED_EFFECT_IN_FRONT |
-                                          ATTACHED_EFFECT_ONCE);
-  FieldEffect_ConfigureLinkedObject(MIA, ATTACHED_EFFECT_IN_FRONT |
-                                             ATTACHED_EFFECT_ONCE);
+  ObjectEvent_SetAttachedEffect(LOCALID_GARET, ATTACHED_EFFECT_IN_FRONT |
+                                                   ATTACHED_EFFECT_ONCE);
+  ObjectEvent_SetAttachedEffect(LOCALID_IVAN, ATTACHED_EFFECT_IN_FRONT |
+                                                  ATTACHED_EFFECT_ONCE);
+  FieldEffect_ConfigureLinkedObject(LOCALID_MIA, ATTACHED_EFFECT_IN_FRONT |
+                                                     ATTACHED_EFFECT_ONCE);
   FieldScript_WaitFrames(60);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
-  ObjectEvent_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
-  ObjectEvent_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
-  ObjectEvent_SetSpeed(MIA, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 248, 564);
-  ObjectEvent_WalkTo(GARET, 248, 564);
+  ObjectEvent_WalkTo(LOCALID_GARET, 248, 564);
   FieldScript_WaitFrames(20);
-  ObjectEvent_WalkTo(IVAN, 248, 564);
-  ObjectEvent_WalkTo(MIA, 248, 564);
+  ObjectEvent_WalkTo(LOCALID_IVAN, 248, 564);
+  ObjectEvent_WalkTo(LOCALID_MIA, 248, 564);
   FieldScript_WaitFrames(20);
   gSaveBlock.savedMap = (s32)&MapId_TolbiShipInteriors;
   gSaveBlock.savedWarpDest = TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_AFTER_DEFEAT;
@@ -2952,28 +2952,28 @@ static void TolbiShipDeck_OfferToScoutIsland(void) {
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 0);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0) {
-    ObjectEvent_SetPosition(GARET, leader->x.fixed, leader->z.fixed);
+    ObjectEvent_SetPosition(LOCALID_GARET, leader->x.fixed, leader->z.fixed);
   }
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0) {
-    ObjectEvent_SetPosition(IVAN, leader->x.fixed, leader->z.fixed);
+    ObjectEvent_SetPosition(LOCALID_IVAN, leader->x.fixed, leader->z.fixed);
   }
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0) {
-    ObjectEvent_SetPosition(MIA, leader->x.fixed, leader->z.fixed);
+    ObjectEvent_SetPosition(LOCALID_MIA, leader->x.fixed, leader->z.fixed);
   }
-  ObjectEvent_SetSpeed(GARET, PIXELS(6) / 5, PIXELS(3) / 5);
-  ObjectEvent_SetSpeed(IVAN, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_SetSpeed(MIA, PIXELS(6) / 5, PIXELS(3) / 5);
-  ObjectEvent_WalkTo(GARET, 194, 0x280);
-  ObjectEvent_WalkTo(IVAN, 198, 0x28e);
-  ObjectEvent_WalkToAndWait(MIA, 194, 0x2a0);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_STAND);
-  Engine_ObjectEventSetAnimation(IVAN, ANIM_STAND);
+  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
+  ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(6) / 5, PIXELS(3) / 5);
+  ObjectEvent_WalkTo(LOCALID_GARET, 194, 0x280);
+  ObjectEvent_WalkTo(LOCALID_IVAN, 198, 0x28e);
+  ObjectEvent_WalkToAndWait(LOCALID_MIA, 194, 0x2a0);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_STAND);
   FieldScript_WaitFrames(10);
-  ObjectEvent_FaceDirection(GARET, FACING_WEST, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_WEST, 0);
-  TolbiShipDeck_Turn(MIA, FACING_WEST);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_WEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_WEST, 0);
+  TolbiShipDeck_Turn(LOCALID_MIA, FACING_WEST);
   TolbiShipDeck_Turn(LOCALID_SEA_SEAN, FACING_EAST);
   FieldScript_SetMessageId(MsgTolbiShipIsaacTalkedPassengersDidntTour);
   TolbiShipDeck_Say(LOCALID_SEA_SEAN);
@@ -2984,19 +2984,19 @@ static void TolbiShipDeck_OfferToScoutIsland(void) {
   ObjectMotion_SetVarCbAndRefresh(LOCALID_SEA_SEAN, 1);
   Script_OpenMessage(LOCALID_SEA_SEAN, 0);
   if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 1) {
-    ObjectMotion_SetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
-    TolbiShipDeck_Say(IVAN);
-    TolbiShipDeck_Turn(MIA, FACING_NORTHWEST);
-    Engine_ObjectEventSetAnimation(MIA, ANIM_NOD);
-    TolbiShipDeck_Say(MIA);
-    TolbiShipDeck_Turn(GARET, FACING_SOUTHWEST);
-    ObjectMotion_SetVarCbAndRefresh(GARET, 1);
-    Script_OpenMessage(GARET, 0);
+    ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_SHAKE_HEAD);
+    TolbiShipDeck_Say(LOCALID_IVAN);
+    TolbiShipDeck_Turn(LOCALID_MIA, FACING_NORTHWEST);
+    Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
+    TolbiShipDeck_Say(LOCALID_MIA);
+    TolbiShipDeck_Turn(LOCALID_GARET, FACING_SOUTHWEST);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 1);
+    Script_OpenMessage(LOCALID_GARET, 0);
     for (;;) {
       if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 1) {
-        ObjectMotion_SetVarCbAndRefresh(IVAN, 1);
+        ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 1);
         FieldScript_SetMessageId(MsgTolbiShipIsaacDontTalkLikeShouldnt);
-        Script_OpenMessage(IVAN, 0);
+        Script_OpenMessage(LOCALID_IVAN, 0);
       } else
         break;
     }
@@ -3030,12 +3030,12 @@ static void TolbiShipDeck_OfferToScoutIsland(void) {
                             0);
   TolbiShipDeck_Turn(LOCALID_SEA_OURANOS, FACING_NORTH + FACING_STEP);
   TolbiShipDeck_Say(LOCALID_SEA_SEAN);
-  ObjectEvent_WalkTo(GARET, 180, 0x28e);
-  ObjectEvent_WalkTo(IVAN, 180, 0x28e);
-  ObjectEvent_WalkToAndWait(MIA, 180, 0x28e);
-  ObjectEvent_DestroyById(GARET);
-  ObjectEvent_DestroyById(IVAN);
-  ObjectEvent_DestroyById(MIA);
+  ObjectEvent_WalkTo(LOCALID_GARET, 180, 0x28e);
+  ObjectEvent_WalkTo(LOCALID_IVAN, 180, 0x28e);
+  ObjectEvent_WalkToAndWait(LOCALID_MIA, 180, 0x28e);
+  ObjectEvent_DestroyById(LOCALID_GARET);
+  ObjectEvent_DestroyById(LOCALID_IVAN);
+  ObjectEvent_DestroyById(LOCALID_MIA);
   GameFlag_Set(FLAG_TOLBI_SHIP_ISLAND_SCOUT_AGREED);
   FieldScript_End();
 }
@@ -3623,11 +3623,11 @@ const struct ObjectEventTemplate gTolbiShipDeck_ThirdAttackObjectEventTemplates[
 };
 
 const struct ObjectEventTemplate gTolbiShipDeck_KrakenObjectEventTemplates[] = {
-    { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0 },
-    { IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0 },
-    { MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0 },
     { SPRITE_KAJA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, 0 },

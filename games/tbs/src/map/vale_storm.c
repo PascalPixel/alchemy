@@ -151,9 +151,9 @@ enum StormNightLocalId {
   /// ★ Named from the game: "both my chest and my life" (MsgValeRockHitsLose)
   LOCALID_GARETS_CHEST,
   /// ★ Named from the game: "Garet (child)" (MsgDebugGlyphName)
-  LOCALID_GARET,
+  LOCALID_GARET_CHILD,
   /// ★ Named from the game: "Felix (child)" (MsgDebugGlyphName)
-  LOCALID_FELIX, ///< in the river
+  LOCALID_FELIX_CHILD, ///< in the river
   /// Jenna's father, a man with brown hair in a green shirt; Jenna calls him
   /// and her mother "Mom! Dad!". "Hang on, Felix! Help is on the way!"
   /// ★ Named from the game: "Mom! Dad!" (MsgValeMomDadBack)
@@ -163,7 +163,7 @@ enum StormNightLocalId {
   /// ★ Named from the game: "Mom! Dad!" (MsgValeMomDadBack)
   LOCALID_JENNAS_MOTHER,
   /// ★ Named from the game: "Oh no! My brother!" (MsgValeNoBrother)
-  LOCALID_JENNA,
+  LOCALID_JENNA_CHILD,
   /// The Boulder's shadow (sprite 0x120, a black blob), drawn on alternate
   /// frames under the Boulder as it comes down the river, swelling and
   /// shrinking with its bounds (ValeStorm_UpdateBoulderShadow), and twice its
@@ -521,7 +521,7 @@ static void EventScript_LeaveToValeInteriorsInnEast(void) {
 /// is shown struggling with his things.
 s32 ValeStorm_Initialize(void) {
   Map_QueueMusic(SE_170);
-  Engine_ObjectEventSetPosition(LOCALID_FELIX, 0, 0);
+  Engine_ObjectEventSetPosition(LOCALID_FELIX_CHILD, 0, 0);
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
     GameFlag_Clear(FLAG_MAP_TEMP_05);
     GameFlag_Clear(FLAG_MAP_TEMP_06);
@@ -563,7 +563,7 @@ s32 ValeStorm_Initialize(void) {
       OBJ_EVENT_NEAR_TALK;
   // Garet walks with the party once he has joined.
   if (GameFlag_Get(FLAG_VALE_STORM_GARET_JOINED) != 0) {
-    Engine_ObjectEventSetPosition(LOCALID_GARET, 0, 0);
+    Engine_ObjectEventSetPosition(LOCALID_GARET_CHILD, 0, 0);
   }
   {
     struct ObjectEvent *objectEvent;
@@ -595,25 +595,27 @@ s32 ValeStorm_Initialize(void) {
       objectEvent->work = 1;
       ObjectEvent_SetActionScript(LOCALID_DORA, table);
     }
-    Engine_ObjectEventSetPosition(LOCALID_JENNA, PIXELS(165), PIXELS(1254));
+    Engine_ObjectEventSetPosition(LOCALID_JENNA_CHILD, PIXELS(165),
+                                  PIXELS(1254));
     {
       struct ObjectEvent *objectEvent;
 
-      objectEvent = ObjectEvent_GetById(LOCALID_JENNA);
+      objectEvent = ObjectEvent_GetById(LOCALID_JENNA_CHILD);
       objectEvent->facing = facing;
       objectEvent->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
       objectEvent->work = 2;
-      ObjectEvent_SetActionScript(LOCALID_JENNA, table);
+      ObjectEvent_SetActionScript(LOCALID_JENNA_CHILD, table);
     }
-    Engine_ObjectEventSetPosition(LOCALID_GARET, PIXELS(152), PIXELS(1285));
+    Engine_ObjectEventSetPosition(LOCALID_GARET_CHILD, PIXELS(152),
+                                  PIXELS(1285));
     {
       struct ObjectEvent *objectEvent;
 
-      objectEvent = ObjectEvent_GetById(LOCALID_GARET);
+      objectEvent = ObjectEvent_GetById(LOCALID_GARET_CHILD);
       objectEvent->facing = facing;
       objectEvent->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
       objectEvent->work = 3;
-      ObjectEvent_SetActionScript(LOCALID_GARET, table);
+      ObjectEvent_SetActionScript(LOCALID_GARET_CHILD, table);
     }
     Engine_ObjectEventSetPosition(LOCALID_EXHAUSTED_STRONGMAN, PIXELS(184),
                                   PIXELS(1304));
@@ -628,7 +630,7 @@ s32 ValeStorm_Initialize(void) {
     }
     Engine_ObjectEventSetAnimation(LOCALID_EXHAUSTED_STRONGMAN,
                                    ANIM_STRONGMAN_SPRAWLED);
-    ObjectEvent_GetById(LOCALID_GARET)->priorityFlags &=
+    ObjectEvent_GetById(LOCALID_GARET_CHILD)->priorityFlags &=
         ~OBJ_EVENT_PRIORITY_AUTOMATIC;
     ObjectEvent_GetById(LOCALID_EXHAUSTED_STRONGMAN)->priorityFlags &=
         ~OBJ_EVENT_PRIORITY_AUTOMATIC;
@@ -636,10 +638,10 @@ s32 ValeStorm_Initialize(void) {
                                TASK_PRIORITY_MAP);
     Engine_ObjectEventSetPosition(LOCALID_JENNAS_FATHER, 0, 0);
     Engine_ObjectEventSetPosition(LOCALID_JENNAS_MOTHER, 0, 0);
-    Engine_ObjectEventSetPosition(LOCALID_FELIX, 0, 0);
+    Engine_ObjectEventSetPosition(LOCALID_FELIX_CHILD, 0, 0);
     Engine_ObjectEventSetPosition(LOCALID_BOULDER, 0, 0);
     if (GameFlag_Get(FLAG_VALE_STORM_GARET_LEFT) != 0) {
-      Engine_ObjectEventSetPosition(LOCALID_GARET, 0, 0);
+      Engine_ObjectEventSetPosition(LOCALID_GARET_CHILD, 0, 0);
     }
     // While they try to save Felix: Kyle and Jenna's parents at the river,
     // Felix in it.
@@ -678,9 +680,9 @@ s32 ValeStorm_Initialize(void) {
       objectEvent->timer = Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60;
     }
     ObjectEvent_SetActionScript(LOCALID_JENNAS_MOTHER, table);
-    ObjectEvent_SetPosition(LOCALID_FELIX, PIXELS(243), PIXELS(1277));
-    ObjectMotion_ArmCallback(LOCALID_FELIX, FACING_NORTH, 0);
-    ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_FELIX), 0);
+    ObjectEvent_SetPosition(LOCALID_FELIX_CHILD, PIXELS(243), PIXELS(1277));
+    ObjectMotion_ArmCallback(LOCALID_FELIX_CHILD, FACING_NORTH, 0);
+    ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_FELIX_CHILD), 0);
     Engine_ObjectEventSetPosition(LOCALID_FIRST_ROCK + 6, 0, 0);
     Engine_ObjectEventSetPosition(LOCALID_FIRST_ROCK + 7, 0, 0);
   } else {
@@ -719,17 +721,17 @@ s32 ValeStorm_Initialize(void) {
   }
   // Garet drags his chest out of his house until he joins, then the chest
   // stands by the door.
-  Engine_ObjectEventSetAnimation(LOCALID_FELIX, ANIM_FELIX_CLING);
+  Engine_ObjectEventSetAnimation(LOCALID_FELIX_CHILD, ANIM_FELIX_CLING);
   if (GameFlag_Get(FLAG_VALE_STORM_GARET_JOINED) == 0) {
     FieldScript_Start();
-    ObjectEvent_SetAttachedEffect(LOCALID_GARET, ATTACHED_EFFECT_IN_FRONT |
-                                                     ATTACHED_EFFECT_ATTACH);
-    ObjectEvent_SetPosition(LOCALID_GARET, PIXELS(400), PIXELS(611));
+    ObjectEvent_SetAttachedEffect(
+        LOCALID_GARET_CHILD, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
+    ObjectEvent_SetPosition(LOCALID_GARET_CHILD, PIXELS(400), PIXELS(611));
     ObjectEvent_SetPosition(LOCALID_GARETS_CHEST, PIXELS(424), PIXELS(627));
-    ObjectEvent_WalkTo(LOCALID_GARET, 400, 619);
+    ObjectEvent_WalkTo(LOCALID_GARET_CHILD, 400, 619);
     ObjectEvent_WalkToAndWait(LOCALID_GARETS_CHEST, 424, 619);
     Engine_ObjectEventSetAnimation(LOCALID_GARETS_CHEST, ANIM_WALK);
-    Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_GARET_DRAG);
+    Engine_ObjectEventSetAnimation(LOCALID_GARET_CHILD, ANIM_GARET_DRAG);
     FieldScript_End();
   } else {
     FieldScript_Start();
@@ -775,8 +777,8 @@ static void EventScript_DoraSendsIsaacToThePlaza(void) {
   // Dora and Isaac come out of the door.
   Script_PlaySong(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gValeStorm_IsaacsDoorOpens, 50, 44);
-  ObjectEvent_SetAttachedEffect(LOCALID_GARET, ATTACHED_EFFECT_IN_FRONT |
-                                                   ATTACHED_EFFECT_ATTACH);
+  ObjectEvent_SetAttachedEffect(
+      LOCALID_GARET_CHILD, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   ObjectEvent_SetSpeed(LOCALID_DORA, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetSpeed(LOCALID_KYLE, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -852,7 +854,7 @@ static void EventScript_DoraSendsIsaacToThePlaza(void) {
   ObjectEvent_SetPosition(LOCALID_KYLE, 0, 0);
   Engine_ObjectEventSetAnimation(LOCALID_KYLE, ANIM_STAND);
   Engine_ObjectEventSetAnimation(LOCALID_GARETS_CHEST, ANIM_WALK);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_GARET_DRAG);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET_CHILD, ANIM_GARET_DRAG);
   GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   GameFlag_Set(FLAG_VALE_STORM_SENT_TO_PLAZA);
   GameFlag_Set(FLAG_MAP_TEMP_05);
@@ -1209,14 +1211,14 @@ static void EventScript_HearGaretStruggling(void) {
     if (GameFlag_Get(FLAG_VALE_STORM_GARET_JOINED) == 0) {
       FieldScript_Start();
       FieldScript_SetMessageId(MsgValeUghHrnghhh);
-      Script_ShowMessageAndWait(LOCALID_GARET, 0, 20);
+      Script_ShowMessageAndWait(LOCALID_GARET_CHILD, 0, 20);
       ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER,
                             EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
       ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 382, 619);
-      ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_GARET, 0);
+      ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_GARET_CHILD, 0);
       ObjectMotion_SetVarCbAndRefresh(LOCALID_PARTY_LEADER, 2);
       FieldScript_WaitFrames(30);
-      Script_ShowMessage(LOCALID_GARET, 0);
+      Script_ShowMessage(LOCALID_GARET_CHILD, 0);
       GameFlag_Set(FLAG_VALE_STORM_HEARD_GARET);
       FieldScript_End();
     }
@@ -1231,7 +1233,7 @@ static void EventScript_GaretCallsAfterIsaac(void) {
   if (GameFlag_Get(FLAG_VALE_STORM_GARET_JOINED) == 0 &&
       GameFlag_Get(FLAG_VALE_STORM_HEARD_GARET) != 0) {
     FieldScript_Start();
-    ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET_CHILD, 2);
     FieldScript_WaitFrames(20);
     FieldScript_SetMessageId(MsgValeDontLeaveMeHere);
     ValeStorm_GaretLeavesHisChest();
@@ -1246,11 +1248,11 @@ static void EventScript_GaretCallsAfterIsaac(void) {
 static void EventScript_TalkToGaret(void) {
   if (GameFlag_Get(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY) != 0) {
     FieldScript_Start();
-    ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_PARTY_LEADER, 0);
+    ObjectEvent_FaceObjectEvent(LOCALID_GARET_CHILD, LOCALID_PARTY_LEADER, 0);
     FieldScript_WaitFrames(20);
     FieldScript_SetMessageId(MsgValeBoulderNeedGet);
-    Script_ShowMessage(LOCALID_GARET, 0);
-    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHEAST, 10);
+    Script_ShowMessage(LOCALID_GARET_CHILD, 0);
+    ObjectEvent_FaceDirection(LOCALID_GARET_CHILD, FACING_NORTHEAST, 10);
     FieldScript_End();
   } else {
     if (GameFlag_Get(FLAG_VALE_STORM_GARET_JOINED) == 0) {
@@ -1271,8 +1273,8 @@ static void ValeStorm_GaretLeavesHisChest(void) {
   struct ObjectEvent *leader;
   s32 agreedToLeaveBelongings;
 
-  FieldMessage_ShowAtObject(LOCALID_GARET, 0);
-  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_GARET, 0);
+  FieldMessage_ShowAtObject(LOCALID_GARET_CHILD, 0);
+  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_GARET_CHILD, 0);
   agreedToLeaveBelongings = 0;
   if (FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER, 0) ==
       0) {
@@ -1282,29 +1284,29 @@ static void ValeStorm_GaretLeavesHisChest(void) {
     FieldScript_SetMessageId(MsgValeRockHitsLose);
   }
   FieldScript_WaitFrames(20);
-  FieldScript_ShowMessageThenWait(LOCALID_GARET, 0, 40);
-  ObjectEvent_SetAttachedEffect(LOCALID_GARET, ATTACHED_EFFECT_IN_FRONT |
-                                                   ATTACHED_EFFECT_REMOVE);
+  FieldScript_ShowMessageThenWait(LOCALID_GARET_CHILD, 0, 40);
+  ObjectEvent_SetAttachedEffect(
+      LOCALID_GARET_CHILD, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   Engine_ObjectEventSetAnimation(LOCALID_GARETS_CHEST, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET_CHILD, ANIM_STAND);
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetAngleToward(LOCALID_GARET, LOCALID_PARTY_LEADER, 0);
+  ObjectMotion_SetAngleToward(LOCALID_GARET_CHILD, LOCALID_PARTY_LEADER, 0);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_GARET_CHILD, ANIM_NOD);
   if (agreedToLeaveBelongings != 0) {
     FieldScript_SetMessageId(MsgValeKnowRightOk);
   } else {
     FieldScript_SetMessageId(MsgValeRightDitchStuff);
   }
-  FieldScript_ShowMessageAndWait(LOCALID_GARET, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
+  FieldScript_ShowMessageAndWait(LOCALID_GARET_CHILD, 0);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET_CHILD, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0) {
-    ObjectMotion_ResetAndSetPosition(LOCALID_GARET, leader->x.part.pixel,
+    ObjectMotion_ResetAndSetPosition(LOCALID_GARET_CHILD, leader->x.part.pixel,
                                      leader->z.part.pixel);
   }
-  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
-  Engine_ObjectEventSetPosition(LOCALID_GARET, 0, 0);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET_CHILD);
+  Engine_ObjectEventSetPosition(LOCALID_GARET_CHILD, 0, 0);
   FieldScript_PrepareObjectAndApplyValue(1, 1);
   GameFlag_Set(FLAG_VALE_STORM_GARET_JOINED);
 }
@@ -1327,45 +1329,45 @@ static void EventScript_UnusedGaretJoinsIsaac(void) {
 
   if (Script_GetFlag(FLAG_VALE_STORM_GARET_JOINED) == 0) {
     FieldScript_Start();
-    ObjectEvent_SetAttachedEffect(LOCALID_GARET, ATTACHED_EFFECT_IN_FRONT |
-                                                     ATTACHED_EFFECT_REMOVE);
+    ObjectEvent_SetAttachedEffect(
+        LOCALID_GARET_CHILD, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
     message = MsgValeHey;
     FieldScript_SetMessageId(message);
-    Script_ShowMessage(LOCALID_GARET, 0);
+    Script_ShowMessage(LOCALID_GARET_CHILD, 0);
     ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER,
                           EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
     FieldCamera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
     FieldCamera_MoveTo(PIXELS(256), -1, PIXELS(588), 1);
-    ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(2), PIXELS(1));
-    ObjectEvent_RunActionScriptAndWait(LOCALID_GARET,
+    ObjectEvent_SetSpeed(LOCALID_GARET_CHILD, PIXELS(2), PIXELS(1));
+    ObjectEvent_RunActionScriptAndWait(LOCALID_GARET_CHILD,
                                        gValeStorm_UnusedGaretRunsUpScript);
-    ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_GARET, 0);
+    ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_GARET_CHILD, 0);
     FieldScript_WaitFrames(30);
-    ObjectEvent_SetActionScript(LOCALID_GARET,
+    ObjectEvent_SetActionScript(LOCALID_GARET_CHILD,
                                 gValeStorm_UnusedGaretPantingScript);
-    Script_ShowMessage(LOCALID_GARET, 0);
-    objectEvent = ObjectEvent_Get(LOCALID_GARET);
+    Script_ShowMessage(LOCALID_GARET_CHILD, 0);
+    objectEvent = ObjectEvent_Get(LOCALID_GARET_CHILD);
     objectEvent->scaleY = Q16_ONE;
-    ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 1);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET_CHILD, 1);
     FieldScript_WaitFrames(20);
-    Script_AskYesNo(LOCALID_GARET, 0);
+    Script_AskYesNo(LOCALID_GARET_CHILD, 0);
     FieldScript_WaitFrames(40);
-    ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 1);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET_CHILD, 1);
     FieldScript_SetMessageId((message + 5));
-    Script_ShowMessageAndWait(LOCALID_GARET, 0, 20);
+    Script_ShowMessageAndWait(LOCALID_GARET_CHILD, 0, 20);
     ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
-    ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
-    Script_ShowMessage(LOCALID_GARET, 0);
-    ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(1), PIXELS(1) / 2);
-    Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
+    ObjectMotion_SetAnimationAndWait(LOCALID_GARET_CHILD, ANIM_NOD);
+    Script_ShowMessage(LOCALID_GARET_CHILD, 0);
+    ObjectEvent_SetSpeed(LOCALID_GARET_CHILD, PIXELS(1), PIXELS(1) / 2);
+    Engine_ObjectEventSetAnimation(LOCALID_GARET_CHILD, ANIM_WALK);
     objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     if (objectEvent != 0) {
-      ObjectEvent_SetDestination(LOCALID_GARET, objectEvent->x.part.pixel,
+      ObjectEvent_SetDestination(LOCALID_GARET_CHILD, objectEvent->x.part.pixel,
                                  objectEvent->z.part.pixel);
     }
-    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
-    ObjectEvent_SetPosition(LOCALID_GARET, 0, 0);
+    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET_CHILD);
+    ObjectEvent_SetPosition(LOCALID_GARET_CHILD, 0, 0);
     FieldScript_PrepareObjectAndApplyValue(1, 1);
     Engine_ObjectEventSetAnimation(LOCALID_GARETS_CHEST, ANIM_NOD);
     GameFlag_Set(FLAG_VALE_STORM_GARET_JOINED);
@@ -1384,29 +1386,29 @@ static void EventScript_WarnAboutMtAleph(void) {
   FieldScript_Start();
   initialLeader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   if (initialLeader != NULL) {
-    ObjectEvent_SetPosition(LOCALID_GARET, initialLeader->x.fixed,
+    ObjectEvent_SetPosition(LOCALID_GARET_CHILD, initialLeader->x.fixed,
                             initialLeader->z.fixed);
   }
-  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_WalkToAndWait(LOCALID_GARET, 281, 507);
-  ObjectEvent_LinkPair(LOCALID_GARET, LOCALID_PARTY_LEADER, 0);
+  ObjectEvent_SetSpeed(LOCALID_GARET_CHILD, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_WalkToAndWait(LOCALID_GARET_CHILD, 281, 507);
+  ObjectEvent_LinkPair(LOCALID_GARET_CHILD, LOCALID_PARTY_LEADER, 0);
   FieldScript_WaitFrames(30);
   FieldScript_SetMessageId(MsgValeNorthLeadsToMtAleph);
-  Script_ShowMessage(LOCALID_GARET, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_GARET, 0);
+  Script_ShowMessage(LOCALID_GARET_CHILD, 0);
+  ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_GARET_CHILD, 0);
   FieldScript_WaitFrames(10);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_PARTY_LEADER, 1);
   FieldScript_WaitFrames(20);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH, 0);
-  Script_ShowMessage(LOCALID_GARET, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
+  ObjectEvent_FaceDirection(LOCALID_GARET_CHILD, FACING_SOUTH, 0);
+  Script_ShowMessage(LOCALID_GARET_CHILD, 0);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET_CHILD, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0) {
-    ObjectEvent_SetDestination(LOCALID_GARET, leader->x.part.pixel,
+    ObjectEvent_SetDestination(LOCALID_GARET_CHILD, leader->x.part.pixel,
                                leader->z.part.pixel);
   }
-  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
-  ObjectEvent_SetPosition(LOCALID_GARET, 0, 0);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET_CHILD);
+  ObjectEvent_SetPosition(LOCALID_GARET_CHILD, 0, 0);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 256, 517);
   FieldScript_End();
 }
@@ -1421,29 +1423,30 @@ static void ValeStorm_GaretCommentsOnBlockedPath(s32 x, s32 y) {
 
   leaderAtStart = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leaderAtStart != 0) {
-    Engine_ObjectEventSetPosition(LOCALID_GARET, leaderAtStart->x.fixed,
+    Engine_ObjectEventSetPosition(LOCALID_GARET_CHILD, leaderAtStart->x.fixed,
                                   leaderAtStart->z.fixed);
   }
-  ObjectMotion_SetSpeedParameters(LOCALID_GARET, speed, acceleration);
-  ObjectMotion_SetPositionAndReset(LOCALID_GARET, x, y);
-  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_GARET, 0);
+  ObjectMotion_SetSpeedParameters(LOCALID_GARET_CHILD, speed, acceleration);
+  ObjectMotion_SetPositionAndReset(LOCALID_GARET_CHILD, x, y);
+  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_GARET_CHILD, 0);
   FieldScript_WaitFrames(20);
   FieldEffect_ConfigureLinkedObject(
       LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldScript_WaitFrames(40);
   FieldScript_SetMessageId(MsgValeCantGetAroundThisRock);
-  FieldScript_ShowMessageAndWait(LOCALID_GARET, 0);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
-  FieldScript_ShowMessageAndWait(LOCALID_GARET, 0);
+  FieldScript_ShowMessageAndWait(LOCALID_GARET_CHILD, 0);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET_CHILD, 2);
+  FieldScript_ShowMessageAndWait(LOCALID_GARET_CHILD, 0);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET_CHILD, ANIM_WALK);
   leaderAtEnd = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leaderAtEnd != 0) {
-    ObjectMotion_ResetAndSetPosition(LOCALID_GARET, leaderAtEnd->x.part.pixel,
+    ObjectMotion_ResetAndSetPosition(LOCALID_GARET_CHILD,
+                                     leaderAtEnd->x.part.pixel,
                                      leaderAtEnd->z.part.pixel);
   }
-  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
-  Engine_ObjectEventSetPosition(LOCALID_GARET, 0, 0);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET_CHILD);
+  Engine_ObjectEventSetPosition(LOCALID_GARET_CHILD, 0, 0);
 }
 
 /// The Boulder slips toward the village and the elders tell the boys to run.
@@ -1476,20 +1479,20 @@ static void EventScript_WatchBoulderFall(void) {
     FieldScript_WaitFrames(30);
     objectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
     if (objectEvent != NULL) {
-      ObjectEvent_SetPosition(LOCALID_GARET, objectEvent->x.fixed,
+      ObjectEvent_SetPosition(LOCALID_GARET_CHILD, objectEvent->x.fixed,
                               objectEvent->z.fixed);
     }
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(2), PIXELS(1));
-    ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(2), PIXELS(1));
+    ObjectEvent_SetSpeed(LOCALID_GARET_CHILD, PIXELS(2), PIXELS(1));
     ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER,
                                 gValeStorm_BoulderFallLeaderPath);
-    ObjectEvent_RunActionScriptAndWait(LOCALID_GARET,
+    ObjectEvent_RunActionScriptAndWait(LOCALID_GARET_CHILD,
                                        gValeStorm_BoulderFallGaretPath);
     ObjectEvent_RefreshSelectorById(LOCALID_PARTY_LEADER);
     ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER,
                           EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-    ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
-                          30);
+    ObjectEvent_ShowEmote(LOCALID_GARET_CHILD,
+                          EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
     MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
     Script_PlaySong(SE_145);
     FieldScript_WaitFrames(40);
@@ -1498,8 +1501,8 @@ static void EventScript_WatchBoulderFall(void) {
     FieldScript_WaitFrames(20);
     ObjectEvent_SetAttachedEffect(
         LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    ObjectEvent_SetAttachedEffect(LOCALID_GARET, ATTACHED_EFFECT_IN_FRONT |
-                                                     ATTACHED_EFFECT_ONCE);
+    ObjectEvent_SetAttachedEffect(
+        LOCALID_GARET_CHILD, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     FieldScript_WaitFrames(40);
     // Show the four elders holding back the Boulder.
     Engine_ObjectEventSetAnimation(LOCALID_ELDER_EAST,
@@ -1518,7 +1521,7 @@ static void EventScript_WatchBoulderFall(void) {
     FieldScript_SetMessageId(MsgValeTheBoulderIsFalling);
     Script_ShowMessageAndWait(LOCALID_ELDER_EAST_STAND_IN, 0, 20);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 20);
+    ObjectEvent_FaceDirection(LOCALID_GARET_CHILD, FACING_NORTH, 20);
     FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
     FieldCamera_MoveTo(PIXELS(112), -1, PIXELS(331), 1);
     FieldCamera_WaitForArrival();
@@ -1620,28 +1623,29 @@ static void EventScript_WatchBoulderFall(void) {
     FieldCamera_MoveTo(PIXELS(84), -1, PIXELS(564), 1);
     FieldCamera_WaitForArrival();
     Map_PlayQueuedMusic();
-    ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_PARTY_LEADER, 0);
+    ObjectEvent_FaceObjectEvent(LOCALID_GARET_CHILD, LOCALID_PARTY_LEADER, 0);
     FieldScript_WaitFrames(20);
-    ObjectEvent_SetAttachedEffect(LOCALID_GARET, ATTACHED_EFFECT_IN_FRONT |
-                                                     ATTACHED_EFFECT_ONCE);
+    ObjectEvent_SetAttachedEffect(
+        LOCALID_GARET_CHILD, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     FieldScript_WaitFrames(30);
     Task_Remove(updateEffects);
     Task_Remove(cycleBoulderPalette);
-    Script_ShowMessage(LOCALID_GARET, 0);
-    ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_GARET, 0);
+    Script_ShowMessage(LOCALID_GARET_CHILD, 0);
+    ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_GARET_CHILD, 0);
     FieldScript_WaitFrames(20);
     Map_EndCutscenePsynergy();
     Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-    ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
+    ObjectMotion_SetAnimationAndWait(LOCALID_GARET_CHILD, ANIM_NOD);
     FieldScript_WaitFrames(20);
-    Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
+    Engine_ObjectEventSetAnimation(LOCALID_GARET_CHILD, ANIM_WALK);
     movingObjectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     if (movingObjectEvent != 0) {
-      ObjectEvent_SetDestination(LOCALID_GARET, movingObjectEvent->x.part.pixel,
+      ObjectEvent_SetDestination(LOCALID_GARET_CHILD,
+                                 movingObjectEvent->x.part.pixel,
                                  movingObjectEvent->z.part.pixel);
     }
-    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
-    ObjectEvent_SetPosition(LOCALID_GARET, 0, 0);
+    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET_CHILD);
+    ObjectEvent_SetPosition(LOCALID_GARET_CHILD, 0, 0);
     ObjectEvent_DestroyById(LOCALID_ELDER_WEST_STAND_IN);
     ObjectEvent_DestroyById(LOCALID_ELDER_EAST_STAND_IN);
     ObjectEvent_DestroyById(LOCALID_ELDER_FAR_EAST);
@@ -1756,14 +1760,16 @@ static void EventScript_WatchAttemptToSaveFelix(void) {
     objectEvent->timer = pulseDelay;
     ObjectEvent_SetActionScript(LOCALID_JENNAS_MOTHER, pulseScript);
   }
-  ObjectEvent_SetPosition(LOCALID_JENNA, PIXELS(227), PIXELS(1189));
-  ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_SOUTHEAST + FACING_STEP, 0);
-  ObjectEvent_SetPosition(LOCALID_FELIX, PIXELS(243), PIXELS(1277));
-  ObjectEvent_FaceDirection(LOCALID_FELIX, FACING_NORTH, 0);
-  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_FELIX), 0);
+  ObjectEvent_SetPosition(LOCALID_JENNA_CHILD, PIXELS(227), PIXELS(1189));
+  ObjectEvent_FaceDirection(LOCALID_JENNA_CHILD, FACING_SOUTHEAST + FACING_STEP,
+                            0);
+  ObjectEvent_SetPosition(LOCALID_FELIX_CHILD, PIXELS(243), PIXELS(1277));
+  ObjectEvent_FaceDirection(LOCALID_FELIX_CHILD, FACING_NORTH, 0);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_FELIX_CHILD), 0);
   WaitFrames(3);
   FieldScript_SetMessageId(MsgValeNoBrother);
-  FieldScript_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_JENNA, 0);
+  FieldScript_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_JENNA_CHILD,
+                                 0);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER,
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 150, 1094);
@@ -1771,22 +1777,22 @@ static void EventScript_WatchAttemptToSaveFelix(void) {
     struct ObjectEvent *leader;
     leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     if (leader != 0) {
-      Engine_ObjectEventSetPosition(LOCALID_GARET, leader->x.fixed,
+      Engine_ObjectEventSetPosition(LOCALID_GARET_CHILD, leader->x.fixed,
                                     leader->z.fixed);
     }
   }
-  ObjectEvent_WalkToAndWait(LOCALID_GARET, 132, 1094);
-  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_GARET, 0);
+  ObjectEvent_WalkToAndWait(LOCALID_GARET_CHILD, 132, 1094);
+  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_GARET_CHILD, 0);
   FieldScript_WaitFrames(40);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH, 20);
+  ObjectEvent_FaceDirection(LOCALID_GARET_CHILD, FACING_SOUTH, 20);
   FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
   FieldCamera_MoveTo(PIXELS(216), -1, PIXELS(1232), 1);
   FieldCamera_WaitForArrival();
   FieldScript_WaitFrames(40);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_KYLE, 2);
   FieldScript_ShowMessageThenWait(LOCALID_KYLE, 0, 10);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_FELIX, 3);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_FELIX_CHILD, 3);
   ObjectMotion_ArmCallback(LOCALID_DORA, FACING_EAST, 10);
   ObjectMotion_SetAnimationAndWait(LOCALID_DORA, ANIM_NOD);
   FieldScript_ShowMessageThenWait(LOCALID_DORA, 0, 10);
@@ -1796,10 +1802,10 @@ static void EventScript_WatchAttemptToSaveFelix(void) {
   FieldCamera_WaitForArrival();
   FieldScript_WaitFrames(20);
   Sound_PlaySong(SE_HEAVY_IMPACT);
-  ObjectMotion_Launch(LOCALID_FELIX, 4, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_FELIX, ANIM_FELIX_UNDER_WATER);
+  ObjectMotion_Launch(LOCALID_FELIX_CHILD, 4, 0);
+  Engine_ObjectEventSetAnimation(LOCALID_FELIX_CHILD, ANIM_FELIX_UNDER_WATER);
   FieldScript_WaitFrames(10);
-  Engine_ObjectEventSetPosition(LOCALID_FELIX, 0, 0);
+  Engine_ObjectEventSetPosition(LOCALID_FELIX_CHILD, 0, 0);
   FieldScript_WaitFrames(60);
   Map_PlayQueuedMusic();
   Engine_ObjectEventSetAnimation(LOCALID_KYLE, ANIM_STAND);
@@ -1827,35 +1833,35 @@ static void EventScript_WatchAttemptToSaveFelix(void) {
   ObjectMotion_SetVariantCallback(LOCALID_DORA, 2);
   ObjectMotion_SetVariantCallback(LOCALID_JENNAS_FATHER, 2);
   ObjectMotion_SetVariantCallback(LOCALID_JENNAS_MOTHER, 2);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_JENNA, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_JENNA_CHILD, 2);
   FieldCamera_SetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
   FieldCamera_MoveTo(PIXELS(216), -1, PIXELS(1232), 1);
   FieldCamera_WaitForArrival();
-  ObjectEvent_SetAttachedEffect(LOCALID_JENNA, ATTACHED_EFFECT_IN_FRONT |
-                                                   ATTACHED_EFFECT_ONCE);
+  ObjectEvent_SetAttachedEffect(LOCALID_JENNA_CHILD, ATTACHED_EFFECT_IN_FRONT |
+                                                         ATTACHED_EFFECT_ONCE);
   FieldEffect_ConfigureLinkedObject(LOCALID_DORA, ATTACHED_EFFECT_IN_FRONT |
                                                       ATTACHED_EFFECT_ONCE);
   FieldScript_WaitFrames(60);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_JENNA, 2);
-  ObjectMotion_SetVariantCallback(LOCALID_JENNA, 3);
-  FieldScript_ShowMessageAndWait(LOCALID_JENNA, 0);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_JENNA_CHILD, 2);
+  ObjectMotion_SetVariantCallback(LOCALID_JENNA_CHILD, 3);
+  FieldScript_ShowMessageAndWait(LOCALID_JENNA_CHILD, 0);
   ObjectMotion_Launch(LOCALID_JENNAS_MOTHER, 2, 0);
   ObjectEvent_SetDestination(LOCALID_JENNAS_MOTHER, 234, 1205);
-  ObjectMotion_Launch(LOCALID_JENNA, 2, 0);
-  ObjectEvent_SetDestination(LOCALID_JENNA, 227, 1201);
+  ObjectMotion_Launch(LOCALID_JENNA_CHILD, 2, 0);
+  ObjectEvent_SetDestination(LOCALID_JENNA_CHILD, 227, 1201);
   FieldScript_WaitFrames(90);
   FieldCamera_MoveTo(PIXELS(232), -1, PIXELS(1253), 1);
   FieldCamera_WaitForArrival();
-  Engine_ObjectEventSetPosition(LOCALID_FELIX, PIXELS(243), PIXELS(1277));
+  Engine_ObjectEventSetPosition(LOCALID_FELIX_CHILD, PIXELS(243), PIXELS(1277));
   WaitFrames(1);
   Sound_PlaySong(SE_106);
   {
     struct ObjectEvent *objectEvent;
-    objectEvent = ObjectEvent_GetById(LOCALID_FELIX);
+    objectEvent = ObjectEvent_GetById(LOCALID_FELIX_CHILD);
     objectEvent->velocityY = PIXELS(2);
   }
   FieldScript_WaitFrames(6);
-  Engine_ObjectEventSetAnimation(LOCALID_FELIX, ANIM_FELIX_CLING);
+  Engine_ObjectEventSetAnimation(LOCALID_FELIX_CHILD, ANIM_FELIX_CLING);
   FieldScript_WaitFrames(20);
   Map_PlayQueuedMusic();
   FieldScript_WaitFrames(20);
@@ -1877,20 +1883,21 @@ static void EventScript_WatchAttemptToSaveFelix(void) {
   }
   {
     struct ObjectEvent *objectEvent;
-    objectEvent = ObjectEvent_GetById(LOCALID_JENNA);
+    objectEvent = ObjectEvent_GetById(LOCALID_JENNA_CHILD);
     objectEvent->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
   }
   ObjectEvent_SetSpeed(LOCALID_JENNAS_MOTHER, PIXELS(3) / 5, PIXELS(3) / 10);
-  ObjectEvent_SetSpeed(LOCALID_JENNA, PIXELS(3) / 5, PIXELS(3) / 10);
+  ObjectEvent_SetSpeed(LOCALID_JENNA_CHILD, PIXELS(3) / 5, PIXELS(3) / 10);
   ObjectEvent_SetDestination(LOCALID_JENNAS_MOTHER, 247, 1210);
-  ObjectEvent_MoveToAndWait(LOCALID_JENNA, 227, 1189);
+  ObjectEvent_MoveToAndWait(LOCALID_JENNA_CHILD, 227, 1189);
   {
     struct ObjectEvent *objectEvent;
     objectEvent = ObjectEvent_GetById(LOCALID_JENNAS_MOTHER);
     objectEvent->steeringFlags |= OBJ_EVENT_FACES_MOTION;
   }
-  ObjectEvent_GetById(LOCALID_JENNA)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
-  ObjectMotion_ArmCallback(LOCALID_JENNA, FACING_SOUTHWEST, 0);
+  ObjectEvent_GetById(LOCALID_JENNA_CHILD)->steeringFlags |=
+      OBJ_EVENT_FACES_MOTION;
+  ObjectMotion_ArmCallback(LOCALID_JENNA_CHILD, FACING_SOUTHWEST, 0);
   ObjectEvent_FaceDirection(LOCALID_JENNAS_MOTHER, FACING_WEST, 10);
   Engine_ObjectEventSetAnimation(LOCALID_JENNAS_FATHER, ANIM_SHAKE_HEAD);
   FieldScript_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | LOCALID_JENNAS_FATHER,
@@ -1912,7 +1919,7 @@ static void EventScript_WatchAttemptToSaveFelix(void) {
   ObjectEvent_FaceDirection(LOCALID_JENNAS_MOTHER, FACING_WEST + FACING_STEP,
                             0);
   ObjectEvent_FaceDirection(LOCALID_JENNAS_FATHER, FACING_NORTHWEST, 0);
-  ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_WEST, 10);
+  ObjectEvent_FaceDirection(LOCALID_JENNA_CHILD, FACING_WEST, 10);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_KYLE, 1);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | LOCALID_KYLE, 0, 10);
   Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIM_SHAKE_HEAD);
@@ -1922,7 +1929,8 @@ static void EventScript_WatchAttemptToSaveFelix(void) {
                         0);
   ObjectEvent_ShowEmote(LOCALID_JENNAS_MOTHER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
                         0);
-  ObjectEvent_ShowEmote(LOCALID_JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
+  ObjectEvent_ShowEmote(LOCALID_JENNA_CHILD, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
+                        40);
   ObjectMotion_ArmCallback(LOCALID_DORA, FACING_EAST, 10);
   ObjectEvent_LinkPair(LOCALID_JENNAS_FATHER, LOCALID_JENNAS_MOTHER, 0);
   FieldScript_WaitFrames(20);
@@ -1943,18 +1951,18 @@ static void EventScript_WatchAttemptToSaveFelix(void) {
   FieldScript_ShowMessageThenWait(LOCALID_JENNAS_FATHER, 0, 10);
   ObjectMotion_ArmCallback(LOCALID_KYLE, FACING_EAST, 0);
   ObjectMotion_ArmCallback(LOCALID_DORA, FACING_EAST, 0);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_JENNA, 1);
-  ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_SOUTHEAST, 20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_JENNA_CHILD, 1);
+  ObjectEvent_FaceDirection(LOCALID_JENNA_CHILD, FACING_SOUTHEAST, 20);
   ObjectEvent_FaceDirection(LOCALID_JENNAS_MOTHER, FACING_NORTHWEST, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_JENNAS_MOTHER, ANIM_NOD);
   FieldScript_ShowMessageThenWait(LOCALID_JENNAS_MOTHER, 0, 10);
-  ObjectMotion_SetAnimationAndWait(LOCALID_JENNA, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_JENNA_CHILD, ANIM_NOD);
   FieldScript_WaitFrames(20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_DORA, 2);
   ObjectMotion_SetAnimationAndWait(LOCALID_DORA, ANIM_NOD);
   FieldScript_ShowMessageThenWait(LOCALID_DORA, 0, 10);
-  ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_WEST, 10);
-  ObjectMotion_SetAnimationAndWait(LOCALID_JENNA, ANIM_NOD);
+  ObjectEvent_FaceDirection(LOCALID_JENNA_CHILD, FACING_WEST, 10);
+  ObjectMotion_SetAnimationAndWait(LOCALID_JENNA_CHILD, ANIM_NOD);
   FieldScript_WaitFrames(20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_DORA, 1);
   FieldScript_ShowMessageThenWait(LOCALID_DORA, 0, 10);
@@ -1975,14 +1983,15 @@ static void ValeStorm_DoraGoesForHelp(void) {
   s32 helpMessage;
   struct ObjectEvent *leader;
 
-  ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_SOUTHEAST + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_JENNA_CHILD, FACING_SOUTHEAST + FACING_STEP,
+                            0);
   ObjectEvent_FaceDirection(LOCALID_JENNAS_FATHER, FACING_NORTH + FACING_STEP,
                             0);
   ObjectEvent_FaceDirection(LOCALID_JENNAS_MOTHER,
                             FACING_NORTHWEST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_DORA, FACING_SOUTHEAST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_KYLE, FACING_NORTH + FACING_STEP, 20);
-  Engine_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_JENNA_CHILD, ANIM_NOD);
   Engine_ObjectEventSetAnimation(LOCALID_JENNAS_FATHER, ANIM_NOD);
   Engine_ObjectEventSetAnimation(LOCALID_JENNAS_MOTHER, ANIM_NOD);
   Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIM_NOD);
@@ -1990,9 +1999,9 @@ static void ValeStorm_DoraGoesForHelp(void) {
   FieldScript_WaitFrames(20);
   FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   FieldCamera_MoveTo(PIXELS(134), -1, PIXELS(1195), 1);
-  ObjectEvent_SetSpeed(LOCALID_JENNA, PIXELS(8) / 5, PIXELS(4) / 5);
+  ObjectEvent_SetSpeed(LOCALID_JENNA_CHILD, PIXELS(8) / 5, PIXELS(4) / 5);
   ObjectEvent_SetSpeed(LOCALID_DORA, PIXELS(8) / 5, PIXELS(4) / 5);
-  ObjectEvent_SetActionScript(LOCALID_JENNA,
+  ObjectEvent_SetActionScript(LOCALID_JENNA_CHILD,
                               gValeStorm_JennaRunsIntoRiversideHouse);
   ObjectEvent_RunActionScriptAndWait(LOCALID_DORA,
                                      gValeStorm_DoraRunsIntoRiversideHouse);
@@ -2024,7 +2033,7 @@ static void ValeStorm_DoraGoesForHelp(void) {
   ObjectEvent_SetActionScript(LOCALID_KYLE, script);
   ObjectEvent_SetActionScript(LOCALID_JENNAS_FATHER, script);
   ObjectEvent_SetActionScript(LOCALID_JENNAS_MOTHER, script);
-  ObjectEvent_RefreshSelectorById(LOCALID_JENNA);
+  ObjectEvent_RefreshSelectorById(LOCALID_JENNA_CHILD);
   FieldScript_WaitFrames(10);
   Script_PlaySong(SE_159);
   MapGrid_AnimateCells(gValeStorm_GrandparentsDoorCloses, 38, 72);
@@ -2038,24 +2047,26 @@ static void ValeStorm_DoraGoesForHelp(void) {
   ObjectEvent_SetActionScript(LOCALID_DORA,
                               gValeStorm_DoraComesOutOfRiversideHouse);
   FieldScript_WaitFrames(20);
-  ObjectEvent_SetActionScript(LOCALID_JENNA,
+  ObjectEvent_SetActionScript(LOCALID_JENNA_CHILD,
                               gValeStorm_JennaComesOutOfRiversideHouse);
   FieldScript_WaitFrames(40);
   Script_PlaySong(SE_159);
   MapGrid_AnimateCells(gValeStorm_IsaacsDoorCloses, 35, 73);
-  ObjectEvent_RefreshSelectorById(LOCALID_JENNA);
+  ObjectEvent_RefreshSelectorById(LOCALID_JENNA_CHILD);
   Map_PlayQueuedMusic();
   FieldScript_WaitFrames(40);
   northMessage = MsgValeGoLookNorth;
   FieldScript_SetMessageId(northMessage);
   Script_ShowMessageAndWait(LOCALID_DORA, 0, 20);
-  ObjectMotion_SetAnimationAndWait(LOCALID_JENNA, ANIM_NOD);
-  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_JENNA, 0, 40);
+  ObjectMotion_SetAnimationAndWait(LOCALID_JENNA_CHILD, ANIM_NOD);
+  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_JENNA_CHILD, 0,
+                            40);
   Engine_ObjectEventSetAnimation(LOCALID_DORA, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(LOCALID_JENNA, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_JENNA_CHILD, ANIM_NOD);
   FieldScript_WaitFrames(30);
   ObjectEvent_SetActionScript(LOCALID_DORA, gValeStorm_DoraHeadsNorth);
-  ObjectEvent_SetActionScript(LOCALID_JENNA, gValeStorm_JennaHeadsForPlaza);
+  ObjectEvent_SetActionScript(LOCALID_JENNA_CHILD,
+                              gValeStorm_JennaHeadsForPlaza);
   FieldScript_WaitFrames(40);
   FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
   FieldCamera_MoveTo(PIXELS(105), -1, PIXELS(1086), 1);
@@ -2064,11 +2075,11 @@ static void ValeStorm_DoraGoesForHelp(void) {
   ObjectEvent_ShowEmote(LOCALID_DORA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Script_ShowMessageAndWait(LOCALID_DORA, 0, 10);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 0);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_WEST, 10);
+  ObjectEvent_FaceDirection(LOCALID_GARET_CHILD, FACING_WEST, 10);
   ObjectEvent_WalkToAndWait(LOCALID_DORA, 105, 1086);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_DORA, 2);
   Script_OpenMessage(SPEAKER_WINDOW_BELOW | LOCALID_DORA, 0);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_EAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET_CHILD, FACING_EAST, 0);
   if (FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER, 0) ==
       0) {
     ObjectMotion_SetAnimationAndWait(LOCALID_DORA, ANIM_NOD);
@@ -2078,7 +2089,7 @@ static void ValeStorm_DoraGoesForHelp(void) {
     FieldScript_SetMessageId((northMessage + 5));
   }
   Script_ShowMessage(SPEAKER_WINDOW_BELOW | LOCALID_DORA, 0);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_WEST, 40);
+  ObjectEvent_FaceDirection(LOCALID_GARET_CHILD, FACING_WEST, 40);
   ObjectEvent_ShowEmote(LOCALID_DORA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   helpMessage = MsgValeDontSupposeTwo;
   FieldScript_SetMessageId(helpMessage);
@@ -2088,9 +2099,9 @@ static void ValeStorm_DoraGoesForHelp(void) {
     ObjectMotion_SetAnimationAndWait(LOCALID_DORA, ANIM_NOD);
     FieldScript_SetMessageId((helpMessage + 1));
     Script_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | LOCALID_DORA, 0, 30);
-    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_WEST, 20);
+    ObjectEvent_FaceDirection(LOCALID_GARET_CHILD, FACING_WEST, 20);
     Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-    Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+    Engine_ObjectEventSetAnimation(LOCALID_GARET_CHILD, ANIM_NOD);
     ObjectMotion_SetAnimationAndWait(LOCALID_DORA, ANIM_NOD);
     FieldScript_WaitFrames(40);
   } else {
@@ -2102,19 +2113,19 @@ static void ValeStorm_DoraGoesForHelp(void) {
   }
   ObjectEvent_SetActionScript(LOCALID_DORA, gValeStorm_DoraLeavesForHelp);
   FieldScript_WaitFrames(90);
-  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_GARET, 0);
+  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_GARET_CHILD, 0);
   FieldScript_WaitFrames(40);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_GARET_CHILD, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET_CHILD, ANIM_WALK);
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
-    ObjectEvent_SetDestination(LOCALID_GARET, leader->x.part.pixel,
+    ObjectEvent_SetDestination(LOCALID_GARET_CHILD, leader->x.part.pixel,
                                leader->z.part.pixel);
   }
-  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
-  ObjectEvent_SetPosition(LOCALID_GARET, 0, 0);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET_CHILD);
+  ObjectEvent_SetPosition(LOCALID_GARET_CHILD, 0, 0);
 }
 
 /// Kyle tells Isaac and Garet to find help for Felix. In Vale on the stormy
@@ -2176,26 +2187,27 @@ static void EventScript_BoulderSweepsThemAway(void) {
     } else {
       FieldScript_Start();
       ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
-      ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(1), PIXELS(1) / 2);
-      ObjectEvent_SetSpeed(LOCALID_JENNA, PIXELS(1), PIXELS(1) / 2);
+      ObjectEvent_SetSpeed(LOCALID_GARET_CHILD, PIXELS(1), PIXELS(1) / 2);
+      ObjectEvent_SetSpeed(LOCALID_JENNA_CHILD, PIXELS(1), PIXELS(1) / 2);
       ObjectEvent_SetSpeed(LOCALID_EXHAUSTED_STRONGMAN, PIXELS(1),
                            PIXELS(1) / 2);
       ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 217, 1367);
       objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
       if (objectEvent != 0) {
-        Engine_ObjectEventSetPosition(LOCALID_GARET, objectEvent->x.fixed,
+        Engine_ObjectEventSetPosition(LOCALID_GARET_CHILD, objectEvent->x.fixed,
                                       objectEvent->z.fixed);
       }
-      ObjectEvent_WalkToAndWait(LOCALID_GARET, 235, 1367);
-      ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHWEST + FACING_STEP,
-                                0);
+      ObjectEvent_WalkToAndWait(LOCALID_GARET_CHILD, 235, 1367);
+      ObjectEvent_FaceDirection(LOCALID_GARET_CHILD,
+                                FACING_NORTHWEST + FACING_STEP, 0);
       objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
       if (objectEvent != 0) {
-        Engine_ObjectEventSetPosition(LOCALID_JENNA, objectEvent->x.fixed,
+        Engine_ObjectEventSetPosition(LOCALID_JENNA_CHILD, objectEvent->x.fixed,
                                       objectEvent->z.fixed);
       }
-      ObjectEvent_WalkToAndWait(LOCALID_JENNA, 199, 1367);
-      ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_NORTH + FACING_STEP, 0);
+      ObjectEvent_WalkToAndWait(LOCALID_JENNA_CHILD, 199, 1367);
+      ObjectEvent_FaceDirection(LOCALID_JENNA_CHILD, FACING_NORTH + FACING_STEP,
+                                0);
       ObjectEvent_SetPosition(LOCALID_JENNAS_MOTHER, PIXELS(247), PIXELS(1210));
       ObjectMotion_ArmCallback(LOCALID_JENNAS_MOTHER, FACING_SOUTHWEST, 0);
       objectEvent = ObjectEvent_GetById(LOCALID_EXHAUSTED_STRONGMAN);
@@ -2215,14 +2227,14 @@ static void EventScript_BoulderSweepsThemAway(void) {
       ObjectEvent_WalkToAndWait(LOCALID_EXHAUSTED_STRONGMAN, 221, 1385);
       ObjectEvent_FaceDirection(LOCALID_EXHAUSTED_STRONGMAN,
                                 FACING_NORTHWEST + FACING_STEP, 60);
-      ObjectMotion_SetVarCbAndRefresh(LOCALID_JENNA, 2);
+      ObjectMotion_SetVarCbAndRefresh(LOCALID_JENNA_CHILD, 2);
       FieldScript_SetMessageId(MsgValeMomDadBack);
-      FieldScript_ShowMessageThenWait(LOCALID_JENNA, 0, 40);
+      FieldScript_ShowMessageThenWait(LOCALID_JENNA_CHILD, 0, 40);
       ObjectEvent_SetPosition(LOCALID_DORA, PIXELS(101), PIXELS(1197));
       ObjectEvent_FaceDirection(LOCALID_DORA, FACING_SOUTHEAST, 0);
       FieldScript_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | LOCALID_DORA, 0,
                                       10);
-      ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_NORTHWEST, 0);
+      ObjectEvent_FaceDirection(LOCALID_JENNA_CHILD, FACING_NORTHWEST, 0);
       FieldCamera_SetSpeedParameters(PIXELS(6) / 5, PIXELS(3) / 20);
       FieldCamera_MoveTo(PIXELS(101), -1, PIXELS(1197), 1);
       ObjectEvent_SetSpeed(LOCALID_DORA, PIXELS(7) / 5, PIXELS(7) / 10);
@@ -2232,8 +2244,8 @@ static void EventScript_BoulderSweepsThemAway(void) {
       FieldCamera_MoveTo(PIXELS(187), -1, PIXELS(1328), 1);
       FieldCamera_WaitForArrival();
       FieldScript_WaitFrames(40);
-      ObjectMotion_SetVarCbAndRefresh(LOCALID_JENNA, 2);
-      FieldScript_ShowMessageThenWait(LOCALID_JENNA, 0, 20);
+      ObjectMotion_SetVarCbAndRefresh(LOCALID_JENNA_CHILD, 2);
+      FieldScript_ShowMessageThenWait(LOCALID_JENNA_CHILD, 0, 20);
       ObjectMotion_SetVarCbAndRefresh(LOCALID_DORA, 2);
       FieldScript_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | LOCALID_DORA, 0,
                                       20);
@@ -2241,10 +2253,10 @@ static void EventScript_BoulderSweepsThemAway(void) {
       FieldCamera_MoveTo(PIXELS(221), -1, PIXELS(1385), 1);
       ObjectMotion_SetAngleToward(LOCALID_PARTY_LEADER,
                                   LOCALID_EXHAUSTED_STRONGMAN, 0);
-      ObjectMotion_SetAngleToward(LOCALID_GARET, LOCALID_EXHAUSTED_STRONGMAN,
-                                  0);
-      ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_SOUTHEAST + FACING_STEP,
-                                80);
+      ObjectMotion_SetAngleToward(LOCALID_GARET_CHILD,
+                                  LOCALID_EXHAUSTED_STRONGMAN, 0);
+      ObjectEvent_FaceDirection(LOCALID_JENNA_CHILD,
+                                FACING_SOUTHEAST + FACING_STEP, 80);
       FieldCamera_MoveWithinMapBounds(PIXELS(182), -1, PIXELS(1360), 1);
       ObjectEvent_WalkToAndWait(LOCALID_EXHAUSTED_STRONGMAN, 182, 1384);
       ObjectMotion_SetAngleToward(LOCALID_EXHAUSTED_STRONGMAN, LOCALID_DORA, 0);
@@ -2252,30 +2264,30 @@ static void EventScript_BoulderSweepsThemAway(void) {
       ObjectMotion_SetAnimationAndWait(LOCALID_EXHAUSTED_STRONGMAN, ANIM_NOD);
       FieldScript_WaitFrames(10);
       ObjectMotion_SetAngleToward(LOCALID_PARTY_LEADER, LOCALID_DORA, 0);
-      ObjectMotion_SetAngleToward(LOCALID_GARET, LOCALID_DORA, 0);
-      ObjectMotion_SetAngleToward(LOCALID_JENNA, LOCALID_DORA, 0);
+      ObjectMotion_SetAngleToward(LOCALID_GARET_CHILD, LOCALID_DORA, 0);
+      ObjectMotion_SetAngleToward(LOCALID_JENNA_CHILD, LOCALID_DORA, 0);
       ObjectMotion_SetAnimationAndWait(LOCALID_DORA, ANIM_NOD);
       FieldScript_ShowMessageAndWait(LOCALID_DORA, 0);
-      ObjectMotion_SetVarCbAndRefresh(LOCALID_JENNA, 2);
-      FieldScript_ShowMessageThenWait(LOCALID_JENNA, 0, 10);
+      ObjectMotion_SetVarCbAndRefresh(LOCALID_JENNA_CHILD, 2);
+      FieldScript_ShowMessageThenWait(LOCALID_JENNA_CHILD, 0, 10);
       ObjectEvent_FaceDirection(LOCALID_DORA, FACING_NORTHEAST, 40);
       ObjectEvent_FaceDirection(LOCALID_DORA, FACING_SOUTHEAST + FACING_STEP,
                                 20);
       ObjectMotion_SetAnimationAndWait(LOCALID_DORA, ANIM_NOD);
       FieldScript_ShowMessageAndWait(LOCALID_DORA, 0);
-      ObjectEvent_LinkPair(LOCALID_JENNA, LOCALID_EXHAUSTED_STRONGMAN, 0);
-      ObjectEvent_LinkPair(LOCALID_GARET, LOCALID_PARTY_LEADER, 0);
+      ObjectEvent_LinkPair(LOCALID_JENNA_CHILD, LOCALID_EXHAUSTED_STRONGMAN, 0);
+      ObjectEvent_LinkPair(LOCALID_GARET_CHILD, LOCALID_PARTY_LEADER, 0);
       FieldScript_WaitFrames(40);
       ObjectMotion_SetAngleToward(LOCALID_PARTY_LEADER, LOCALID_DORA, 0);
-      ObjectMotion_SetAngleToward(LOCALID_GARET, LOCALID_DORA, 0);
-      ObjectMotion_SetAngleToward(LOCALID_JENNA, LOCALID_DORA, 0);
+      ObjectMotion_SetAngleToward(LOCALID_GARET_CHILD, LOCALID_DORA, 0);
+      ObjectMotion_SetAngleToward(LOCALID_JENNA_CHILD, LOCALID_DORA, 0);
       ObjectMotion_SetAngleToward(LOCALID_EXHAUSTED_STRONGMAN, LOCALID_DORA, 0);
       ObjectMotion_SetVarCbAndRefresh(LOCALID_DORA, 2);
       FieldScript_WaitFrames(20);
       FieldScript_ShowMessageThenWait(LOCALID_DORA, 0, 10);
       Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-      Engine_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_NOD);
-      Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+      Engine_ObjectEventSetAnimation(LOCALID_JENNA_CHILD, ANIM_NOD);
+      Engine_ObjectEventSetAnimation(LOCALID_GARET_CHILD, ANIM_NOD);
       automaticPriority = OBJ_EVENT_PRIORITY_AUTOMATIC;
       ObjectMotion_SetAnimationAndWait(LOCALID_EXHAUSTED_STRONGMAN, ANIM_NOD);
       leader->priorityFlags |= automaticPriority;
@@ -2341,20 +2353,20 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   FieldCamera_MoveTo(PIXELS(110), -1, PIXELS(1419), 1);
   ObjectEvent_SetSpeed(LOCALID_EXHAUSTED_STRONGMAN, PIXELS(6) / 5,
                        PIXELS(3) / 5);
-  ObjectEvent_SetSpeed(LOCALID_JENNA, PIXELS(6) / 5, PIXELS(3) / 5);
+  ObjectEvent_SetSpeed(LOCALID_JENNA_CHILD, PIXELS(6) / 5, PIXELS(3) / 5);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(6) / 5, PIXELS(3) / 5);
-  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
+  ObjectEvent_SetSpeed(LOCALID_GARET_CHILD, PIXELS(6) / 5, PIXELS(3) / 5);
   // Bring the group to the riverbank as the lightning subsides.
   entryActions = gValeStorm_ToRiverbankPath;
   ObjectEvent_SetActionScript(LOCALID_EXHAUSTED_STRONGMAN, entryActions);
   Script_Wait(10);
-  ObjectEvent_SetActionScript(LOCALID_JENNA, entryActions);
+  ObjectEvent_SetActionScript(LOCALID_JENNA_CHILD, entryActions);
   Weather_LastLightning();
   Script_Wait(10);
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER, entryActions);
   Script_Wait(10);
   Weather_StopLightning();
-  ObjectEvent_SetActionScript(LOCALID_GARET, entryActions);
+  ObjectEvent_SetActionScript(LOCALID_GARET_CHILD, entryActions);
   Script_Wait(128);
   EventScript_ClearPathCellOverride();
   FieldCamera_MoveTo(PIXELS(174), -1, PIXELS(1428), 1);
@@ -2365,22 +2377,26 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   ObjectEvent_RefreshSelectorById(LOCALID_EXHAUSTED_STRONGMAN);
   ObjectEvent_SetActionScript(LOCALID_EXHAUSTED_STRONGMAN,
                               gValeStorm_ExhaustedStrongmanGatherPath);
-  ObjectEvent_SetActionScript(LOCALID_JENNA, gValeStorm_JennaGatherPath);
+  ObjectEvent_SetActionScript(LOCALID_JENNA_CHILD, gValeStorm_JennaGatherPath);
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER,
                               gValeStorm_LeaderGatherPath);
-  ObjectEvent_RunActionScriptAndWait(LOCALID_GARET, gValeStorm_GaretGatherPath);
+  ObjectEvent_RunActionScriptAndWait(LOCALID_GARET_CHILD,
+                                     gValeStorm_GaretGatherPath);
   ValeStorm_PlayImpactBeat(PIXELS(4), 20);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Script_Wait(60);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
                         0);
-  ObjectEvent_ShowEmote(LOCALID_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  ObjectEvent_ShowEmote(LOCALID_JENNA_CHILD, EMOTE_IN_FRONT | EMOTE_QUESTION,
+                        0);
+  ObjectEvent_ShowEmote(LOCALID_GARET_CHILD, EMOTE_IN_FRONT | EMOTE_QUESTION,
+                        0);
   ObjectEvent_ShowEmote(LOCALID_EXHAUSTED_STRONGMAN,
                         EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   ObjectEvent_ShowEmote(LOCALID_DORA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  ObjectEvent_FaceEachOther(LOCALID_JENNA, LOCALID_EXHAUSTED_STRONGMAN, 0);
-  ObjectEvent_FaceEachOther(LOCALID_GARET, LOCALID_PARTY_LEADER, 0);
+  ObjectEvent_FaceEachOther(LOCALID_JENNA_CHILD, LOCALID_EXHAUSTED_STRONGMAN,
+                            0);
+  ObjectEvent_FaceEachOther(LOCALID_GARET_CHILD, LOCALID_PARTY_LEADER, 0);
   Script_Wait(20);
   lookingObjectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   random = Random_Next();
@@ -2388,10 +2404,10 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   lookingObjectEvent->timer = random;
   stoppedVelocity = 0;
   stoppedMotion = 0;
-  lookingObjectEvent = ObjectEvent_Get(LOCALID_GARET);
+  lookingObjectEvent = ObjectEvent_Get(LOCALID_GARET_CHILD);
   random = Random_Next();
   lookingObjectEvent->timer = (Math_RemainderUnsigned(random, 20) + 20);
-  lookingObjectEvent = ObjectEvent_Get(LOCALID_JENNA);
+  lookingObjectEvent = ObjectEvent_Get(LOCALID_JENNA_CHILD);
   random = Random_Next();
   lookingObjectEvent->timer = (Math_RemainderUnsigned(random, 20) + 20);
   lookingObjectEvent = ObjectEvent_Get(LOCALID_EXHAUSTED_STRONGMAN);
@@ -2404,8 +2420,8 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   ObjectEvent_SetActionScript(LOCALID_DORA, lookAroundActions);
   Script_Wait(30);
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER, lookAroundActions);
-  ObjectEvent_SetActionScript(LOCALID_JENNA, lookAroundActions);
-  ObjectEvent_SetActionScript(LOCALID_GARET, lookAroundActions);
+  ObjectEvent_SetActionScript(LOCALID_JENNA_CHILD, lookAroundActions);
+  ObjectEvent_SetActionScript(LOCALID_GARET_CHILD, lookAroundActions);
   ObjectEvent_SetActionScript(LOCALID_EXHAUSTED_STRONGMAN, lookAroundActions);
   Script_Wait(10);
   Script_PlaySong(SONG_FADE_OUT_BGM);
@@ -2506,13 +2522,13 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   objectEvent->targetZ = resetValue;
   Task_Wait(1);
   // Stage the riverbank reactions between lightning flashes.
-  ObjectEvent_SetAnimation(LOCALID_FELIX, ANIM_FELIX_CLING_STILL);
+  ObjectEvent_SetAnimation(LOCALID_FELIX_CHILD, ANIM_FELIX_CLING_STILL);
   ObjectEvent_SetPosition(LOCALID_DORA, PIXELS(169), PIXELS(1264));
   ObjectEvent_FaceDirection(LOCALID_DORA, FACING_NORTH, 0);
   ObjectEvent_SetAnimation(LOCALID_DORA, ANIM_DORA_RUN);
-  ObjectEvent_SetPosition(LOCALID_JENNA, PIXELS(151), PIXELS(1292));
-  ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_WEST, 0);
-  ObjectEvent_SetAnimation(LOCALID_JENNA, ANIM_JENNA_RUN);
+  ObjectEvent_SetPosition(LOCALID_JENNA_CHILD, PIXELS(151), PIXELS(1292));
+  ObjectEvent_FaceDirection(LOCALID_JENNA_CHILD, FACING_WEST, 0);
+  ObjectEvent_SetAnimation(LOCALID_JENNA_CHILD, ANIM_JENNA_RUN);
   ObjectEvent_SetPosition(LOCALID_EXHAUSTED_STRONGMAN, PIXELS(170),
                           PIXELS(1313));
   ObjectEvent_FaceDirection(LOCALID_EXHAUSTED_STRONGMAN, FACING_SOUTHWEST, 0);
@@ -2520,9 +2536,9 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(185), PIXELS(1333));
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHEAST, 0);
   ObjectEvent_SetAnimation(LOCALID_PARTY_LEADER, ANIM_ISAAC_RECOIL);
-  ObjectEvent_SetPosition(LOCALID_GARET, PIXELS(169), PIXELS(1384));
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH, 0);
-  ObjectEvent_SetAnimation(LOCALID_GARET, ANIM_STILL);
+  ObjectEvent_SetPosition(LOCALID_GARET_CHILD, PIXELS(169), PIXELS(1384));
+  ObjectEvent_FaceDirection(LOCALID_GARET_CHILD, FACING_SOUTH, 0);
+  ObjectEvent_SetAnimation(LOCALID_GARET_CHILD, ANIM_STILL);
   FieldCamera_MoveTo(PIXELS(166), 0, PIXELS(1337), 0);
   MapGrid_CenterOnFollowedPoint();
   objectEvent->motionFlags = resetValue;
@@ -2613,22 +2629,22 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   departureActions = gValeStorm_SquashAndStretchScript;
   objectEvent->work = 1;
   ObjectEvent_SetActionScript(LOCALID_DORA, departureActions);
-  ObjectEvent_SetPosition(LOCALID_JENNA, PIXELS(165), PIXELS(1254));
-  ObjectEvent_SetAnimation(LOCALID_JENNA, ANIM_STAND);
-  objectEvent = ObjectEvent_Get(LOCALID_JENNA);
+  ObjectEvent_SetPosition(LOCALID_JENNA_CHILD, PIXELS(165), PIXELS(1254));
+  ObjectEvent_SetAnimation(LOCALID_JENNA_CHILD, ANIM_STAND);
+  objectEvent = ObjectEvent_Get(LOCALID_JENNA_CHILD);
   objectEvent->facing = FACING_NORTHEAST;
   random = Random_Next();
   objectEvent->timer = Math_RemainderUnsigned(random, 90) + 60;
   objectEvent->work = 2;
-  ObjectEvent_SetActionScript(LOCALID_JENNA, departureActions);
-  ObjectEvent_SetPosition(LOCALID_GARET, PIXELS(152), PIXELS(1285));
-  ObjectEvent_SetAnimation(LOCALID_GARET, ANIM_STAND);
-  objectEvent = ObjectEvent_Get(LOCALID_GARET);
+  ObjectEvent_SetActionScript(LOCALID_JENNA_CHILD, departureActions);
+  ObjectEvent_SetPosition(LOCALID_GARET_CHILD, PIXELS(152), PIXELS(1285));
+  ObjectEvent_SetAnimation(LOCALID_GARET_CHILD, ANIM_STAND);
+  objectEvent = ObjectEvent_Get(LOCALID_GARET_CHILD);
   objectEvent->facing = FACING_NORTHEAST;
   random = Random_Next();
   objectEvent->timer = Math_RemainderUnsigned(random, 90) + 60;
   objectEvent->work = 3;
-  ObjectEvent_SetActionScript(LOCALID_GARET, departureActions);
+  ObjectEvent_SetActionScript(LOCALID_GARET_CHILD, departureActions);
   ObjectEvent_SetPosition(LOCALID_EXHAUSTED_STRONGMAN, PIXELS(180),
                           PIXELS(1311));
   objectEvent = ObjectEvent_Get(LOCALID_EXHAUSTED_STRONGMAN);
@@ -2639,7 +2655,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   ObjectEvent_SetActionScript(LOCALID_EXHAUSTED_STRONGMAN, departureActions);
   ObjectEvent_SetAnimation(LOCALID_EXHAUSTED_STRONGMAN,
                            ANIM_STRONGMAN_SPRAWLED);
-  ObjectEvent_GetById(LOCALID_GARET)->priorityFlags &=
+  ObjectEvent_GetById(LOCALID_GARET_CHILD)->priorityFlags &=
       ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   ObjectEvent_GetById(LOCALID_EXHAUSTED_STRONGMAN)->priorityFlags &=
       ~OBJ_EVENT_PRIORITY_AUTOMATIC;
@@ -2655,7 +2671,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   ObjectEvent_SetPosition(LOCALID_BOULDER, 0, 0);
   ObjectEvent_SetPosition(LOCALID_JENNAS_FATHER, 0, 0);
   ObjectEvent_SetPosition(LOCALID_JENNAS_MOTHER, 0, 0);
-  ObjectEvent_SetPosition(LOCALID_FELIX, 0, 0);
+  ObjectEvent_SetPosition(LOCALID_FELIX_CHILD, 0, 0);
   ObjectEvent_SetPosition(LOCALID_BOULDER_SHADOW, 0, 0);
   ObjectEvent_SetPosition(LOCALID_FIRST_ROCK + 6, PIXELS(144), PIXELS(1070));
   ObjectEvent_SetPosition(LOCALID_FIRST_ROCK + 7, PIXELS(276), PIXELS(1270));
@@ -2856,32 +2872,34 @@ static void EventScript_StrongmanTriesToGoForHelp(void) {
 static void ValeStorm_GaretFollowsIsaac(void) {
   FieldScript_Start();
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  ObjectMotion_EnableActionAndResetMotion(LOCALID_GARET);
+  ObjectMotion_EnableActionAndResetMotion(LOCALID_GARET_CHILD);
   Task_Remove(ValeStorm_CopyLeaderSpritePriority);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 480, 1392);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, 0, 0);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST + FACING_STEP, 20);
-  ObjectEvent_Get(LOCALID_GARET)->priorityFlags |= OBJ_EVENT_PRIORITY_AUTOMATIC;
-  ObjectEvent_SetPosition(LOCALID_GARET, PIXELS(249), PIXELS(1240));
+  ObjectEvent_FaceDirection(LOCALID_GARET_CHILD, FACING_SOUTHEAST + FACING_STEP,
+                            20);
+  ObjectEvent_Get(LOCALID_GARET_CHILD)->priorityFlags |=
+      OBJ_EVENT_PRIORITY_AUTOMATIC;
+  ObjectEvent_SetPosition(LOCALID_GARET_CHILD, PIXELS(249), PIXELS(1240));
   WaitFrames(1);
   FieldScript_SetMessageId(MsgValeIsaac);
-  Script_ShowMessage(SPEAKER_PORTRAIT_LEFT | LOCALID_GARET, 0);
-  ObjectEvent_SetPosition(LOCALID_GARET, PIXELS(172), PIXELS(1278));
+  Script_ShowMessage(SPEAKER_PORTRAIT_LEFT | LOCALID_GARET_CHILD, 0);
+  ObjectEvent_SetPosition(LOCALID_GARET_CHILD, PIXELS(172), PIXELS(1278));
   WaitFrames(1);
   FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
   FieldCamera_MoveTo(PIXELS(162), 0, PIXELS(1285), 1);
   FieldCamera_WaitForArrival();
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_SHAKE_HEAD);
-  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | LOCALID_GARET, 0, 10);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 20);
-  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
-  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | LOCALID_GARET, 0, 10);
-  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_EAST + FACING_STEP, 20);
-  ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
-  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(2), PIXELS(1));
-  ObjectEvent_WalkToAndWait(LOCALID_GARET, 165, 1300);
-  ObjectEvent_WalkToAndWait(LOCALID_GARET, 195, 1432);
+  ObjectMotion_SetAnimationAndWait(LOCALID_GARET_CHILD, ANIM_SHAKE_HEAD);
+  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | LOCALID_GARET_CHILD, 0, 10);
+  ObjectEvent_FaceDirection(LOCALID_GARET_CHILD, FACING_NORTH, 20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET_CHILD, 2);
+  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | LOCALID_GARET_CHILD, 0, 10);
+  ObjectEvent_FaceDirection(LOCALID_GARET_CHILD, FACING_EAST + FACING_STEP, 20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_GARET_CHILD, ANIM_NOD);
+  ObjectEvent_SetSpeed(LOCALID_GARET_CHILD, PIXELS(2), PIXELS(1));
+  ObjectEvent_WalkToAndWait(LOCALID_GARET_CHILD, 165, 1300);
+  ObjectEvent_WalkToAndWait(LOCALID_GARET_CHILD, 195, 1432);
   GameFlag_Set(FLAG_VALE_STORM_GARET_LEFT);
 }
 
@@ -3080,11 +3098,12 @@ static void ValeStorm_CopyLeaderSpritePriority(void) {
 
   sourceSprite = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->sprite;
 #if TBS_PATCH_3
-  ObjectMotion_SetActionVariant(LOCALID_GARET, sourceSprite->image.priority);
+  ObjectMotion_SetActionVariant(LOCALID_GARET_CHILD,
+                                sourceSprite->image.priority);
   ObjectMotion_SetActionVariant(LOCALID_EXHAUSTED_STRONGMAN,
                                 sourceSprite->image.priority);
 #else
-  targetSprite = ObjectEvent_GetById(LOCALID_GARET)->sprite;
+  targetSprite = ObjectEvent_GetById(LOCALID_GARET_CHILD)->sprite;
   targetSprite->image.priority = sourceSprite->image.priority;
   secondTargetSprite = ObjectEvent_GetById(LOCALID_EXHAUSTED_STRONGMAN)->sprite;
   secondTargetSprite->image.priority = sourceSprite->image.priority;
@@ -3514,7 +3533,7 @@ struct MapEvent gValeStorm_Events[] = {
      EVENT_SCRIPT(EventScript_LeaveToValeInteriorsInnWest)},
     {COORD_EVENT_WALKING_INTO(FACING_NORTH), 13, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_LeaveToValeInteriorsInnEast)},
-    {MAP_EVENT_TALK, LOCALID_GARET, CONDITION_ALWAYS,
+    {MAP_EVENT_TALK, LOCALID_GARET_CHILD, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_TalkToGaret)},
     {MAP_EVENT_TALK, LOCALID_KYLE, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_TalkAboutSavingFelix)},
@@ -3524,7 +3543,7 @@ struct MapEvent gValeStorm_Events[] = {
      MSGNO(MsgValeDontLetGoFelix)},
     {MAP_EVENT_TALK, LOCALID_DORA, CONDITION_ALWAYS,
      MSGNO(MsgValeNoItCantBeKyleIt)},
-    {MAP_EVENT_TALK, LOCALID_JENNA, CONDITION_ALWAYS,
+    {MAP_EVENT_TALK, LOCALID_JENNA_CHILD, CONDITION_ALWAYS,
      MSGNO(MsgValeMomDadFelixPleaseDontLeave)},
     {MAP_EVENT_TALK, LOCALID_EXHAUSTED_STRONGMAN, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_StrongmanTriesToGoForHelp)},

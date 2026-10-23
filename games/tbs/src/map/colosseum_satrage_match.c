@@ -1152,9 +1152,9 @@ s32 ColosseumSatrageMatch_Initialize(void) {
       Colosso_PlaceFriendsAtCheeringSpots();
       ColosseumSatrageMatch_ShowRoundStartLettering(2);
     }
-    ObjectEvent_LinkObjectAndSetCallback(GARET, LOCALID_PARTY_LEADER);
-    ObjectEvent_LinkObjectAndSetCallback(IVAN, LOCALID_PARTY_LEADER);
-    ObjectEvent_LinkObjectAndSetCallback(MIA, LOCALID_PARTY_LEADER);
+    ObjectEvent_LinkObjectAndSetCallback(LOCALID_GARET, LOCALID_PARTY_LEADER);
+    ObjectEvent_LinkObjectAndSetCallback(LOCALID_IVAN, LOCALID_PARTY_LEADER);
+    ObjectEvent_LinkObjectAndSetCallback(LOCALID_MIA, LOCALID_PARTY_LEADER);
     ColosseumSatrageMatch_StartOpponentPath((s32)&ResourceId_OpponentPathB);
     break;
   case COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST:
@@ -1200,16 +1200,16 @@ static void ColosseumSatrageMatch_IntroduceSecondFinals(s32 attendantId) {
   FieldScript_Start();
   ObjectEvent_SetSpeed(attendantId, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_SetSpeed(IVAN, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_SetSpeed(MIA, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(1), PIXELS(1) / 2);
   Engine_ObjectEventSetPosition(LOCALID_PARTY_LEADER, (attendantX << 16),
                                 ((attendantZ << 16) - 0x300000));
-  Engine_ObjectEventSetPosition(GARET, (attendantX << 16) - 0x100000,
+  Engine_ObjectEventSetPosition(LOCALID_GARET, (attendantX << 16) - 0x100000,
                                 (attendantZ << 16) - 0x280000);
-  Engine_ObjectEventSetPosition(IVAN, (attendantX << 16) + 0x100000,
+  Engine_ObjectEventSetPosition(LOCALID_IVAN, (attendantX << 16) + 0x100000,
                                 (attendantZ << 16) - 0x280000);
-  Engine_ObjectEventSetPosition(MIA, (attendantX << 16),
+  Engine_ObjectEventSetPosition(LOCALID_MIA, (attendantX << 16),
                                 ((attendantZ << 16) - 0x200000));
   Engine_ObjectEventSetPosition(attendantId, (attendantX << 16),
                                 ((attendantZ << 16) - 0x500000));
@@ -1228,34 +1228,34 @@ static void ColosseumSatrageMatch_IntroduceSecondFinals(s32 attendantId) {
   ObjectMotion_SetVarCbAndRefresh(attendantId, 2);
   FieldScript_ShowMessageAndWait(attendantId, 0);
   // Gather the companions into Isaac before the attendant returns to his post.
-  Engine_ObjectEventSetAnimation(MIA, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(IVAN, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(6);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_WALK);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (objectEvent != 0) {
-    ObjectMotion_ResetAndSetPosition(GARET, objectEvent->x.part.pixel,
+    ObjectMotion_ResetAndSetPosition(LOCALID_GARET, objectEvent->x.part.pixel,
                                      objectEvent->z.part.pixel);
   }
-  Engine_ObjectEventSetAnimation(IVAN, ANIM_WALK);
+  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_WALK);
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (objectEvent != 0) {
-    ObjectMotion_ResetAndSetPosition(IVAN, objectEvent->x.part.pixel,
+    ObjectMotion_ResetAndSetPosition(LOCALID_IVAN, objectEvent->x.part.pixel,
                                      objectEvent->z.part.pixel);
   }
-  Engine_ObjectEventSetAnimation(MIA, ANIM_WALK);
+  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_WALK);
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (objectEvent != 0) {
-    ObjectMotion_ResetAndSetPosition(MIA, objectEvent->x.part.pixel,
+    ObjectMotion_ResetAndSetPosition(LOCALID_MIA, objectEvent->x.part.pixel,
                                      objectEvent->z.part.pixel);
   }
   ObjectMotion_SetPositionAndReset(attendantId, (attendantX - 16),
                                    (attendantZ - 64));
-  Engine_ObjectEventSetPosition(GARET, 0, 0);
-  Engine_ObjectEventSetPosition(IVAN, 0, 0);
-  Engine_ObjectEventSetPosition(MIA, 0, 0);
+  Engine_ObjectEventSetPosition(LOCALID_GARET, 0, 0);
+  Engine_ObjectEventSetPosition(LOCALID_IVAN, 0, 0);
+  Engine_ObjectEventSetPosition(LOCALID_MIA, 0, 0);
   ObjectMotion_SetPositionAndReset(attendantId, (attendantX - 16),
                                    (attendantZ - 16));
   ObjectMotion_SetPositionAndReset(attendantId, attendantX, attendantZ);
@@ -2122,11 +2122,11 @@ u32 gColosseumSatrageMatchWarps[] = {
 struct ObjectEventTemplate gColosseumSatrageMatchObjectEventTemplates[] = {
     { 0x0, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(1272), 0, PIXELS(168), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
-    { IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
-    { MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WARRIOR_IN_GOLDEN_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },

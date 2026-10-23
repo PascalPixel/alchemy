@@ -290,198 +290,198 @@ static void EventScript_IvanRejoins(void) {
   WAIT(30);
   MESSAGE_SET(MsgGomaNoUsePsynergy);
   OBJECT_SPEED(LOCALID_PARTY_LEADER, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
-  OBJECT_SPEED(GARET, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+  OBJECT_SPEED(LOCALID_GARET, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
   OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_NORTHEAST, 20);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0) {
-    ObjectEvent_SetPosition(GARET, leader->x.fixed, leader->z.fixed);
+    ObjectEvent_SetPosition(LOCALID_GARET, leader->x.fixed, leader->z.fixed);
   }
-  ObjectEvent_WalkToAndWait(GARET, 264, 168);
-  OBJECT_DIR(GARET, FACING_SOUTHWEST, 20);
+  ObjectEvent_WalkToAndWait(LOCALID_GARET, 264, 168);
+  OBJECT_DIR(LOCALID_GARET, FACING_SOUTHWEST, 20);
   WAIT(20);
-  ObjectMotion_SetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_SHAKE_HEAD);
   WAIT(20);
-  Script_ShowMessageAndWait(GARET, 0, 20);
+  Script_ShowMessageAndWait(LOCALID_GARET, 0, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   WAIT(20);
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
     // Garet falls back into line.
-    OBJECT_ANIMATION(GARET, ANIM_WALK);
+    OBJECT_ANIMATION(LOCALID_GARET, ANIM_WALK);
     leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     if (leader != 0) {
-      ObjectEvent_SetDestination(GARET, leader->x.part.pixel,
+      ObjectEvent_SetDestination(LOCALID_GARET, leader->x.part.pixel,
                                  leader->z.part.pixel);
     }
-    ObjectMotion_CommitCurrentPositionAndActivate(GARET);
-    OBJECT_POSITION_SET(GARET, 0, 0);
+    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
+    OBJECT_POSITION_SET(LOCALID_GARET, 0, 0);
     SCRIPT_END();
   } else {
     // Ivan comes up from the south: "You want to move the stump, right?"
-    OBJECT_POSITION_SET(IVAN, 360, 248);
-    OBJECT_SPEED(IVAN, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
-    ObjectEvent_WalkToAndWait(IVAN, 272, 248);
-    ObjectEvent_WalkToAndWait(IVAN, 272, 208);
-    OBJECT_DIR(IVAN, FACING_NORTHWEST, 20);
-    ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
+    OBJECT_POSITION_SET(LOCALID_IVAN, 360, 248);
+    OBJECT_SPEED(LOCALID_IVAN, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+    ObjectEvent_WalkToAndWait(LOCALID_IVAN, 272, 248);
+    ObjectEvent_WalkToAndWait(LOCALID_IVAN, 272, 208);
+    OBJECT_DIR(LOCALID_IVAN, FACING_NORTHWEST, 20);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 2);
     WAIT(20);
-    Script_ShowMessageAndWait(IVAN, 0, 20);
+    Script_ShowMessageAndWait(LOCALID_IVAN, 0, 20);
     OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_SOUTHEAST, 0);
-    OBJECT_DIR(GARET, FACING_SOUTH, 0);
+    OBJECT_DIR(LOCALID_GARET, FACING_SOUTH, 0);
     WAIT(20);
     OBJECT_EMOTE(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-    OBJECT_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-    ObjectMotion_SetAnimationAndWait(IVAN, ANIM_NOD);
-    ObjectEvent_WalkToAndWait(IVAN, 264, 200);
+    OBJECT_EMOTE(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+    ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
+    ObjectEvent_WalkToAndWait(LOCALID_IVAN, 264, 200);
     OBJECT_WALK(LOCALID_PARTY_LEADER, 248, 168);
-    ObjectEvent_WalkToAndWait(IVAN, 248, 184);
+    ObjectEvent_WalkToAndWait(LOCALID_IVAN, 248, 184);
     ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
     OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 0);
-    OBJECT_DIR(GARET, FACING_SOUTHWEST, 0);
-    ObjectEvent_WalkToAndWait(IVAN, 232, 184);
+    OBJECT_DIR(LOCALID_GARET, FACING_SOUTHWEST, 0);
+    ObjectEvent_WalkToAndWait(LOCALID_IVAN, 232, 184);
     WAIT(20);
-    OBJECT_EMOTE(IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-    OBJECT_DIR(IVAN, FACING_NORTHEAST, 20);
-    ObjectMotion_SetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
+    OBJECT_EMOTE(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+    OBJECT_DIR(LOCALID_IVAN, FACING_NORTHEAST, 20);
+    ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_SHAKE_HEAD);
     WAIT(20);
-    Script_ShowMessageAndWait(IVAN, 0, 20);
+    Script_ShowMessageAndWait(LOCALID_IVAN, 0, 20);
     OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_NOD);
-    ObjectMotion_SetAnimationAndWait(GARET, ANIM_NOD);
+    ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
     WAIT(20);
-    OBJECT_DIR(IVAN, FACING_WEST, 20);
-    Script_ShowMessageAndWait(IVAN, 0, 120);
+    OBJECT_DIR(LOCALID_IVAN, FACING_WEST, 20);
+    Script_ShowMessageAndWait(LOCALID_IVAN, 0, 120);
     OBJECT_EMOTE(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-    OBJECT_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-    ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, GARET, 0);
+    OBJECT_EMOTE(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+    ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_GARET, 0);
     WAIT(60);
     OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 0);
-    OBJECT_DIR(GARET, FACING_SOUTHWEST, 0);
+    OBJECT_DIR(LOCALID_GARET, FACING_SOUTHWEST, 0);
     WAIT(60);
-    OBJECT_EMOTE(IVAN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
-    ObjectMotion_SetVariantCallback(IVAN, 1);
+    OBJECT_EMOTE(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
+    ObjectMotion_SetVariantCallback(LOCALID_IVAN, 1);
     WAIT(30);
-    Script_ShowMessageAndWait(IVAN, 0, 30);
-    OBJECT_DIR(IVAN, FACING_NORTHEAST, 20);
+    Script_ShowMessageAndWait(LOCALID_IVAN, 0, 30);
+    OBJECT_DIR(LOCALID_IVAN, FACING_NORTHEAST, 20);
     ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
-    ObjectMotion_SetVarCbAndRefresh(GARET, 2);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
     WAIT(20);
-    Script_ShowMessageAndWait(IVAN, 0, 20);
+    Script_ShowMessageAndWait(LOCALID_IVAN, 0, 20);
     OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_NOD);
-    ObjectMotion_SetAnimationAndWait(GARET, ANIM_NOD);
+    ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
     WAIT(20);
-    ObjectMotion_SetAnimationAndWait(IVAN, ANIM_NOD);
+    ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
     WAIT(20);
-    OBJECT_DIR(IVAN, FACING_WEST, 20);
+    OBJECT_DIR(LOCALID_IVAN, FACING_WEST, 20);
     // "I have a great idea. Leave it to me!": Whirlwind.
     GomaCaveEntrance_WhirlwindOnStumpIvy();
-    OBJECT_ANIMATION(IVAN, ANIM_STAND);
+    OBJECT_ANIMATION(LOCALID_IVAN, ANIM_STAND);
     WAIT(20);
 #if TBS_PATCH_1
     Map_PlayQueuedMusic();
 #endif
     OBJECT_EMOTE(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-    OBJECT_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-    ObjectMotion_Launch(GARET, 2, 0);
+    OBJECT_EMOTE(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+    ObjectMotion_Launch(LOCALID_GARET, 2, 0);
     WAIT(20);
-    GomaCaveEntrance_SayThenWait(GARET, 20);
-    ObjectEvent_WalkToAndWait(IVAN, 264, 184);
+    GomaCaveEntrance_SayThenWait(LOCALID_GARET, 20);
+    ObjectEvent_WalkToAndWait(LOCALID_IVAN, 264, 184);
     WAIT(10);
-    ObjectEvent_FaceObjectEvent(IVAN, GARET, 0);
-    ObjectEvent_FaceObjectEvent(GARET, IVAN, 0);
-    ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, IVAN, 0);
+    ObjectEvent_FaceObjectEvent(LOCALID_IVAN, LOCALID_GARET, 0);
+    ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_IVAN, 0);
+    ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_IVAN, 0);
     WAIT(20);
-    ObjectMotion_SetAnimationAndWait(IVAN, ANIM_NOD);
+    ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
     WAIT(20);
-    GomaCaveEntrance_SayThenWait(IVAN, 60);
+    GomaCaveEntrance_SayThenWait(LOCALID_IVAN, 60);
     OBJECT_EMOTE(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-    OBJECT_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+    OBJECT_EMOTE(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
     OBJECT_EMOTE(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-    OBJECT_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+    OBJECT_EMOTE(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
     WAIT(60);
-    OBJECT_DIR(GARET, FACING_WEST, 0);
+    OBJECT_DIR(LOCALID_GARET, FACING_WEST, 0);
     OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_EAST, 0);
     WAIT(60);
-    OBJECT_DIR(GARET, FACING_SOUTH, 0);
+    OBJECT_DIR(LOCALID_GARET, FACING_SOUTH, 0);
     OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_SOUTHEAST, 0);
     WAIT(10);
-    GomaCaveEntrance_SayThenWait(GARET, 20);
-    OBJECT_EMOTE(IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+    GomaCaveEntrance_SayThenWait(LOCALID_GARET, 20);
+    OBJECT_EMOTE(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
     WAIT(60);
-    ObjectMotion_SetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
+    ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_SHAKE_HEAD);
     WAIT(20);
-    GomaCaveEntrance_SayThenWait(IVAN, 20);
-    ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, IVAN, 0);
-    ObjectEvent_FaceObjectEvent(GARET, IVAN, 0);
+    GomaCaveEntrance_SayThenWait(LOCALID_IVAN, 20);
+    ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_IVAN, 0);
+    ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_IVAN, 0);
     OBJECT_EMOTE(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-    OBJECT_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+    OBJECT_EMOTE(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
     WAIT(60);
-    ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 2);
     WAIT(20);
-    GomaCaveEntrance_SayThenWait(IVAN, 30);
+    GomaCaveEntrance_SayThenWait(LOCALID_IVAN, 30);
     OBJECT_EMOTE(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-    OBJECT_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+    OBJECT_EMOTE(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
     WAIT(80);
-    ObjectMotion_SetAnimationAndWait(IVAN, ANIM_NOD);
+    ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
     WAIT(20);
-    GomaCaveEntrance_SayThenWait(IVAN, 20);
+    GomaCaveEntrance_SayThenWait(LOCALID_IVAN, 20);
     ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 1);
-    ObjectMotion_SetVariantCallback(GARET, 1);
+    ObjectMotion_SetVariantCallback(LOCALID_GARET, 1);
     ObjectEvent_SetAttachedEffect(
         LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    ObjectEvent_SetAttachedEffect(GARET, ATTACHED_EFFECT_IN_FRONT |
-                                             ATTACHED_EFFECT_ONCE);
+    ObjectEvent_SetAttachedEffect(LOCALID_GARET, ATTACHED_EFFECT_IN_FRONT |
+                                                     ATTACHED_EFFECT_ONCE);
     WAIT(60);
-    ObjectMotion_SetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
+    ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_SHAKE_HEAD);
     WAIT(20);
-    GomaCaveEntrance_SayThenWait(IVAN, 20);
+    GomaCaveEntrance_SayThenWait(LOCALID_IVAN, 20);
     OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_EAST, 0);
-    OBJECT_DIR(GARET, FACING_WEST, 0);
+    OBJECT_DIR(LOCALID_GARET, FACING_WEST, 0);
     WAIT(80);
-    ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, IVAN, 0);
-    ObjectEvent_FaceObjectEvent(GARET, IVAN, 0);
+    ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_IVAN, 0);
+    ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_IVAN, 0);
     WAIT(30);
-    ObjectMotion_SetAnimationAndWait(IVAN, ANIM_NOD);
+    ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
     WAIT(20);
-    GomaCaveEntrance_SayThenWait(IVAN, 30);
-    ObjectMotion_SetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
+    GomaCaveEntrance_SayThenWait(LOCALID_IVAN, 30);
+    ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_SHAKE_HEAD);
     WAIT(20);
-    GomaCaveEntrance_SayThenWait(IVAN, 20);
+    GomaCaveEntrance_SayThenWait(LOCALID_IVAN, 20);
     ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
-    ObjectMotion_SetVarCbAndRefresh(GARET, 2);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
     WAIT(20);
-    ObjectMotion_SetAnimationAndWait(IVAN, ANIM_NOD);
+    ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
     WAIT(20);
-    GomaCaveEntrance_SayThenWait(IVAN, 40);
+    GomaCaveEntrance_SayThenWait(LOCALID_IVAN, 40);
     OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_NOD);
-    ObjectMotion_SetAnimationAndWait(GARET, ANIM_NOD);
+    ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
     WAIT(20);
     // "Please, allow me to join your quest.": Ivan rejoins with his rod.
     FieldScript_PrepareObjectAndApplyValue(IVAN, 1);
     WAIT(60);
     GomaCaveEntrance_GiveShamansRod();
-    ObjectMotion_SetVarCbAndRefresh(IVAN, 1);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 1);
     WAIT(20);
-    ObjectEvent_WalkToAndWait(IVAN, 248, 184);
+    ObjectEvent_WalkToAndWait(LOCALID_IVAN, 248, 184);
     WAIT(20);
-    GomaCaveEntrance_SayThenWait(IVAN, 20);
+    GomaCaveEntrance_SayThenWait(LOCALID_IVAN, 20);
     OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_WEST, 0);
-    OBJECT_DIR(GARET, FACING_WEST, 0);
+    OBJECT_DIR(LOCALID_GARET, FACING_WEST, 0);
     WAIT(120);
-    GomaCaveEntrance_SayThenWait(IVAN, 30);
-    ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, IVAN, 0);
-    ObjectEvent_FaceObjectEvent(GARET, IVAN, 0);
-    ObjectEvent_FaceObjectEvent(IVAN, LOCALID_PARTY_LEADER, 0);
+    GomaCaveEntrance_SayThenWait(LOCALID_IVAN, 30);
+    ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_IVAN, 0);
+    ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_IVAN, 0);
+    ObjectEvent_FaceObjectEvent(LOCALID_IVAN, LOCALID_PARTY_LEADER, 0);
     WAIT(20);
     OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_NOD);
-    OBJECT_ANIMATION(GARET, ANIM_NOD);
-    ObjectMotion_SetAnimationAndWait(IVAN, ANIM_NOD);
+    OBJECT_ANIMATION(LOCALID_GARET, ANIM_NOD);
+    ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
     WAIT(50);
-    OBJECT_SPEED(GARET, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
-    OBJECT_SPEED(IVAN, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
-    OBJECT_WALK(GARET, 248, 168);
-    ObjectEvent_WalkToAndWait(IVAN, 248, 168);
-    OBJECT_POSITION_SET(IVAN, 0, 0);
-    ObjectMotion_CommitCurrentPositionAndActivate(GARET);
-    OBJECT_POSITION_SET(GARET, 0, 0);
+    OBJECT_SPEED(LOCALID_GARET, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+    OBJECT_SPEED(LOCALID_IVAN, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+    OBJECT_WALK(LOCALID_GARET, 248, 168);
+    ObjectEvent_WalkToAndWait(LOCALID_IVAN, 248, 168);
+    OBJECT_POSITION_SET(LOCALID_IVAN, 0, 0);
+    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
+    OBJECT_POSITION_SET(LOCALID_GARET, 0, 0);
     MapGrid_CopyCellAttributes(74, 11, 1, 1, 73, 11);
     GameFlag_Set(FLAG_GOMA_CAVE_IVAN_JOINED);
     SCRIPT_END();
@@ -516,7 +516,7 @@ static void GomaCaveEntrance_WhirlwindOnStumpIvy(void) {
 
   effectWork = gFieldEffectWork;
   FieldEffect_LoadActionEffectResources(ABILITY_WHIRLWIND, 1);
-  FieldEffect_SetupObjectPair(IVAN, LOCALID_STUMP_IVY);
+  FieldEffect_SetupObjectPair(LOCALID_IVAN, LOCALID_STUMP_IVY);
   flags = (u8)effectWork->messageMode | FIELD_MESSAGE_LOWER;
   effectWork->messageMode = flags;
   FieldEffect_StartCast();
@@ -703,9 +703,9 @@ u32 gGomaCaveEntranceWarps[] = {
 
 // clang-format off
 struct ObjectEventTemplate gGomaCaveEntranceObjectEventTemplates[] = {
-    { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_NORTH, TALK_FACING_PARTY, 0 },
-    { IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_STUMP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(192), 0, PIXELS(184), FACING_SOUTH, TALK_FACING_KEEP, 0 },

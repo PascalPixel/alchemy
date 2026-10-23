@@ -1075,7 +1075,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   FieldCamera_MoveTo(-1, -1, -1, 0);
   WaitFrames(1);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(8) / 5, PIXELS(4) / 5);
-  ObjectEvent_SetSpeed(GARET, PIXELS(8) / 5, PIXELS(4) / 5);
+  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(8) / 5, PIXELS(4) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 5884, 1576);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 0);
   ObjectEvent_SetPosition(LOCALID_CARAVAN_HAMMET, PIXELS(5848), PIXELS(1576));
@@ -1106,26 +1106,26 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
   spriteObjectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (spriteObjectEvent != 0) {
-    ObjectEvent_SetPosition(GARET, spriteObjectEvent->x.fixed,
+    ObjectEvent_SetPosition(LOCALID_GARET, spriteObjectEvent->x.fixed,
                             spriteObjectEvent->z.fixed);
   }
-  ObjectEvent_WalkToAndWait(GARET, 5892, 1600);
+  ObjectEvent_WalkToAndWait(LOCALID_GARET, 5892, 1600);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHEAST, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTHWEST, 20);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHWEST, 20);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
                         0);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   ObjectEvent_SetPosition(LOCALID_CARAVAN_HAMMET, PIXELS(5848), PIXELS(1592));
   WaitFrames(1);
   // Hammet will not stay, and the wagons head south for the bridge.
   FieldScript_SetMessageId(MsgWorldMapWeCantStayAnotherMinute);
   Script_ShowMessageAndWait(LOCALID_CARAVAN_HAMMET, 0, 10);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTHWEST, 40);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHWEST, 40);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHEAST, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTHWEST, 60);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHWEST, 60);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTHWEST, 10);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHWEST, 10);
   Script_PlaySong(SE_RUMBLE);
   ObjectEvent_SetActionScript(LOCALID_CARAVAN_FIRST_WAGON,
                               gCaravanFirstWagonDeparts);
@@ -1137,7 +1137,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
                               gCaravanThirdWagonDeparts);
   FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 10);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH, 10);
   ObjectEvent_RunActionScriptAndWait(LOCALID_CARAVAN_FIRST_WAGON + 3,
                                      gCaravanFourthWagonDeparts);
   Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
@@ -1319,7 +1319,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
                                      gCaravanFourthWagonReturns);
   WorldMap_EndScript();
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(5900), PIXELS(1576));
-  ObjectEvent_SetPosition(GARET, PIXELS(5908), PIXELS(1600));
+  ObjectEvent_SetPosition(LOCALID_GARET, PIXELS(5908), PIXELS(1600));
   FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
   FieldCamera_MoveTo(PIXELS(5848), -1, PIXELS(1608), 1);
   FieldCamera_WaitForArrival();
@@ -1333,29 +1333,29 @@ static void WorldMap_ShowHammetsCaravan(void) {
   ObjectEvent_SetActionScript(LOCALID_CARAVAN_FIRST_WAGON + 2, action);
   FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_WEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_WEST, 0);
   ObjectEvent_SetActionScript(LOCALID_CARAVAN_FIRST_WAGON + 3, action);
   FieldScript_WaitFrames(40);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 0);
   ObjectEvent_RefreshSelectorById(LOCALID_CARAVAN_FIRST_WAGON + 3);
   Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
   FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
   FieldCamera_MoveTo(PIXELS(5880), -1, PIXELS(1608), 1);
   FieldCamera_WaitForArrival();
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHEAST, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTHWEST, 80);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHWEST, 80);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(GARET, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_WALK);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
   spriteObjectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (spriteObjectEvent != 0) {
-    ObjectEvent_SetDestination(GARET, spriteObjectEvent->x.part.pixel,
+    ObjectEvent_SetDestination(LOCALID_GARET, spriteObjectEvent->x.part.pixel,
                                spriteObjectEvent->z.part.pixel);
   }
-  ObjectMotion_CommitCurrentPositionAndActivate(GARET);
-  ObjectEvent_SetPosition(GARET, 0, 0);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
+  ObjectEvent_SetPosition(LOCALID_GARET, 0, 0);
   FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
   FieldCamera_MoveTo(PIXELS(5848), -1, PIXELS(1608), 1);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -2245,7 +2245,7 @@ static void WorldMap_ShowEndingScene(void) {
   FieldScript_Start();
   FieldEffect_ScheduleRatioTransition(Q16_ONE, 300);
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  Engine_ObjectEventSetAnimation(JENNA, ANIM_JENNA_LIE);
+  Engine_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_JENNA_LIE);
   Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_KRADEN_LIE);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, 0, 0);
   WaitFrames(1);
@@ -2257,37 +2257,37 @@ static void WorldMap_ShowEndingScene(void) {
   FieldScript_WaitForZoomTransition();
   WorldMap_StartScript();
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetVarCbAndRefresh(JENNA, 1);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_JENNA, 1);
   FieldScript_WaitFrames(20);
   // Jenna and Kraden talk on the drifting island before Alex arrives.
   FieldScript_SetMessageId(MsgWorldMapKradenHowLongWillIsland);
-  Script_ShowMessageAndWait(JENNA, 0, 20);
+  Script_ShowMessageAndWait(LOCALID_JENNA, 0, 20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 2);
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 20);
-  ObjectEvent_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
-  Script_ShowMessageAndWait(JENNA, 0, 20);
+  ObjectEvent_ShowEmote(LOCALID_JENNA, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
+  Script_ShowMessageAndWait(LOCALID_JENNA, 0, 20);
   ObjectEvent_ShowEmote(LOCALID_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 80);
   Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 10);
-  ObjectMotion_SetVarCbAndRefresh(JENNA, 2);
-  Script_ShowMessageAndWait(JENNA, 0, 20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_JENNA, 2);
+  Script_ShowMessageAndWait(LOCALID_JENNA, 0, 20);
   ObjectEvent_ShowEmote(LOCALID_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 100);
-  ObjectEvent_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
-  Script_ShowMessageAndWait(JENNA, 0, 20);
+  ObjectEvent_ShowEmote(LOCALID_JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
+  Script_ShowMessageAndWait(LOCALID_JENNA, 0, 20);
   Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 10);
-  ObjectEvent_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
-  Script_ShowMessageAndWait(JENNA, 0, 10);
+  ObjectEvent_ShowEmote(LOCALID_JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
+  Script_ShowMessageAndWait(LOCALID_JENNA, 0, 10);
   ObjectEvent_SetAttachedEffect(LOCALID_KRADEN, ATTACHED_EFFECT_IN_FRONT |
                                                     ATTACHED_EFFECT_ONCE);
   FieldScript_WaitFrames(80);
   Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 20);
-  ObjectEvent_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 80);
+  ObjectEvent_ShowEmote(LOCALID_JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 80);
   Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 120);
-  ObjectMotion_SetVarCbAndRefresh(JENNA, 1);
-  Script_ShowMessageAndWait(JENNA, 0, 40);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_JENNA, 1);
+  Script_ShowMessageAndWait(LOCALID_JENNA, 0, 40);
   Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 20);
-  ObjectEvent_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
-  Script_ShowMessageAndWait(JENNA, 0, 120);
+  ObjectEvent_ShowEmote(LOCALID_JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
+  Script_ShowMessageAndWait(LOCALID_JENNA, 0, 120);
   // Alex comes to show them something and leads them on.
   ObjectEvent_SetSpeed(LOCALID_ALEX, PIXELS(2) / 5, PIXELS(1) / 5);
   ObjectEvent_SetPosition(LOCALID_ALEX, PIXELS(7644), PIXELS(3460));
@@ -2297,7 +2297,7 @@ static void WorldMap_ShowEndingScene(void) {
   Script_ShowMessageAndWait(
       SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT | LOCALID_ALEX, 0, 20);
   ObjectEvent_ShowEmote(LOCALID_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  ObjectEvent_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  ObjectEvent_ShowEmote(LOCALID_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   ObjectMotion_SetAnimationAndWait(LOCALID_ALEX, ANIM_NOD);
   Script_ShowMessage(
       SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT | LOCALID_ALEX, 0);
@@ -2307,48 +2307,48 @@ static void WorldMap_ShowEndingScene(void) {
   FieldScript_WaitFrames(80);
   Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
   ObjectMotion_Launch(LOCALID_KRADEN, 4, 40);
-  Engine_ObjectEventSetAnimation(JENNA, ANIM_STAND);
-  ObjectMotion_Launch(JENNA, 4, 60);
+  Engine_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_STAND);
+  ObjectMotion_Launch(LOCALID_JENNA, 4, 60);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTHEAST + FACING_STEP, 0);
-  ObjectEvent_FaceDirection(JENNA, FACING_NORTHWEST + FACING_STEP, 40);
+  ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_NORTHWEST + FACING_STEP, 40);
   ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(3) / 5, PIXELS(3) / 10);
-  ObjectEvent_SetSpeed(JENNA, PIXELS(3) / 5, PIXELS(3) / 10);
+  ObjectEvent_SetSpeed(LOCALID_JENNA, PIXELS(3) / 5, PIXELS(3) / 10);
   ObjectEvent_SetActionScript(LOCALID_KRADEN, gEndingKradenWalk);
   FieldScript_WaitFrames(20);
   FieldCamera_SetSpeed(PIXELS(7) / 10, PIXELS(7) / 80);
   FieldCamera_MoveTo(PIXELS(7736), -1, PIXELS(3528), 1);
-  ObjectEvent_SetActionScript(JENNA, gEndingJennaWalk);
+  ObjectEvent_SetActionScript(LOCALID_JENNA, gEndingJennaWalk);
   do {
     Engine_ObjectEventSetAnimation(LOCALID_FELIX, ANIM_FELIX_LIE);
-    Engine_ObjectEventSetAnimation(SHEBA, ANIM_SHEBA_LIE);
+    Engine_ObjectEventSetAnimation(LOCALID_SHEBA, ANIM_SHEBA_LIE);
     WaitFrames(1);
-  } while (ObjectEvent_GetById(JENNA)->timer == 0);
+  } while (ObjectEvent_GetById(LOCALID_JENNA)->timer == 0);
   FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_WEST, 20);
   ObjectEvent_SetAttachedEffect(LOCALID_KRADEN, ATTACHED_EFFECT_IN_FRONT |
                                                     ATTACHED_EFFECT_ONCE);
-  ObjectEvent_SetAttachedEffect(JENNA, ATTACHED_EFFECT_IN_FRONT |
-                                           ATTACHED_EFFECT_ONCE);
+  ObjectEvent_SetAttachedEffect(LOCALID_JENNA, ATTACHED_EFFECT_IN_FRONT |
+                                                   ATTACHED_EFFECT_ONCE);
   FieldScript_WaitFrames(40);
   WorldMap_StartScript();
-  Script_ShowTwoMessagesAndWait(JENNA, 7, 13, 2, 12, LOCALID_KRADEN, 9, 4, 4, 3,
-                                0);
+  Script_ShowTwoMessagesAndWait(LOCALID_JENNA, 7, 13, 2, 12, LOCALID_KRADEN, 9,
+                                4, 4, 3, 0);
   FieldScript_WaitFrames(20);
   WorldMap_LoadDefaultCellsAndUpdateBlock();
   FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   FieldCamera_MoveTo(PIXELS(7768), -1, PIXELS(3528), 1);
   ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_SOUTHEAST + FACING_STEP, 0);
   ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(8) / 5, PIXELS(4) / 5);
-  ObjectEvent_SetSpeed(JENNA, PIXELS(8) / 5, PIXELS(4) / 5);
+  ObjectEvent_SetSpeed(LOCALID_JENNA, PIXELS(8) / 5, PIXELS(4) / 5);
   ObjectEvent_WalkTo(LOCALID_KRADEN, 7804, 3512);
-  ObjectEvent_WalkToAndWait(JENNA, 7788, 3544);
+  ObjectEvent_WalkToAndWait(LOCALID_JENNA, 7788, 3544);
   Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
   WorldMap_StartScript();
   FieldScript_WaitFrames(80);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 1);
   Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 20);
-  ObjectMotion_SetVarCbAndRefresh(JENNA, 2);
-  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | JENNA, 0, 40);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_JENNA, 2);
+  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | LOCALID_JENNA, 0, 40);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_WEST, 20);
   ObjectMotion_SetVariantCallback(LOCALID_KRADEN, 2);
   Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 60);
@@ -3616,13 +3616,13 @@ struct ObjectEventTemplate gWorldMapObjectEventTemplates[] = {
     { SPRITE_IODEM, CONDITION_ALWAYS, (s32)gWorldMapIodemScript,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { MAP_TABLE_END },
-    { GARET, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
+    { LOCALID_GARET, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gWorldMapObjectEventTemplatesHammetsCaravan[] = {
-    { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_HAMMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
@@ -3688,9 +3688,9 @@ struct ObjectEventTemplate gWorldMapObjectEventTemplatesFromKalayTunnelEntranceS
 };
 
 struct ObjectEventTemplate gWorldMapObjectEventTemplatesJennaAndKradenAdrift[] = {
-    { JENNA, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
+    { LOCALID_JENNA, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(7560), 0, PIXELS(3512), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
-    { SHEBA, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
+    { LOCALID_SHEBA, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(7816), 0, PIXELS(3528), FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_KRADEN, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(7544), 0, PIXELS(3496), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },

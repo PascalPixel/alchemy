@@ -54,7 +54,7 @@ void Colosso_PlaceFriendsAtCheeringSpots(void) {
     x += 0x80000;
     y <<= 20;
     y += 0x80000;
-    Engine_ObjectEventSetPosition(GARET, x, y);
+    Engine_ObjectEventSetPosition(LOCALID_GARET, x, y);
   }
   {
     s32 x =
@@ -65,7 +65,7 @@ void Colosso_PlaceFriendsAtCheeringSpots(void) {
     x += 0x80000;
     y <<= 20;
     y += 0x80000;
-    Engine_ObjectEventSetPosition(IVAN, x, y);
+    Engine_ObjectEventSetPosition(LOCALID_IVAN, x, y);
   }
   {
     s32 x =
@@ -76,7 +76,7 @@ void Colosso_PlaceFriendsAtCheeringSpots(void) {
     x += 0x80000;
     y <<= 20;
     y += 0x80000;
-    Engine_ObjectEventSetPosition(MIA, x, y);
+    Engine_ObjectEventSetPosition(LOCALID_MIA, x, y);
   }
 }
 

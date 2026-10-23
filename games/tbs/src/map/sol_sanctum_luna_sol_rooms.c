@@ -376,19 +376,22 @@ static void EventScript_KradenFindsHeartOfSanctum(void) {
     // Garet and Jenna step out behind the leader.
     leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     if (leader != 0) {
-      Engine_ObjectEventSetPosition(GARET, leader->x.fixed, leader->z.fixed);
+      Engine_ObjectEventSetPosition(LOCALID_GARET, leader->x.fixed,
+                                    leader->z.fixed);
     }
     leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     if (leader != 0) {
-      Engine_ObjectEventSetPosition(JENNA, leader->x.fixed, leader->z.fixed);
+      Engine_ObjectEventSetPosition(LOCALID_JENNA, leader->x.fixed,
+                                    leader->z.fixed);
     }
-    ObjectEvent_SetSpeed(GARET, PIXELS(1) / 2, PIXELS(1) / 4);
-    ObjectEvent_SetSpeed(JENNA, PIXELS(1) / 2, PIXELS(1) / 4);
-    ObjectEvent_WalkTo(GARET, 280, 248);
-    ObjectEvent_WalkToAndWait(JENNA, 296, 248);
-    Engine_ObjectEventSetAnimation(GARET, ANIM_STAND);
-    ObjectEvent_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 0);
-    ObjectEvent_FaceDirection(JENNA, FACING_NORTHWEST + FACING_STEP, 30);
+    ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(1) / 2, PIXELS(1) / 4);
+    ObjectEvent_SetSpeed(LOCALID_JENNA, PIXELS(1) / 2, PIXELS(1) / 4);
+    ObjectEvent_WalkTo(LOCALID_GARET, 280, 248);
+    ObjectEvent_WalkToAndWait(LOCALID_JENNA, 296, 248);
+    Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
+    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH + FACING_STEP, 0);
+    ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_NORTHWEST + FACING_STEP,
+                              30);
     FieldCamera_SetSpeedParameters(PIXELS(3) / 5, PIXELS(3) / 40);
     FieldCamera_MoveWithinMapBounds(PIXELS(288), -1, PIXELS(213), 1);
     ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(2) / 5, PIXELS(1) / 5);
@@ -406,19 +409,20 @@ static void EventScript_KradenFindsHeartOfSanctum(void) {
     ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_WEST, 40);
     ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIM_NOD);
     FieldScript_WaitFrames(20);
-    ObjectMotion_SetVarCbAndRefresh(JENNA, 2);
-    ObjectEvent_FaceDirection(JENNA, FACING_WEST + FACING_STEP, 10);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_JENNA, 2);
+    ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_WEST + FACING_STEP, 10);
     // Jenna: then they must have been... Garet: "They were thieves!"
-    SolSanctumLunaSolRooms_ShowMessageAndWait(JENNA, 10);
-    ObjectMotion_SetVarCbAndRefresh(GARET, 2);
-    ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST + FACING_STEP, 10);
-    SolSanctumLunaSolRooms_ShowMessageAndWait(GARET, 6);
-    ObjectEvent_SetAttachedEffect(JENNA, 0x102);
+    SolSanctumLunaSolRooms_ShowMessageAndWait(LOCALID_JENNA, 10);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
+    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHEAST + FACING_STEP,
+                              10);
+    SolSanctumLunaSolRooms_ShowMessageAndWait(LOCALID_GARET, 6);
+    ObjectEvent_SetAttachedEffect(LOCALID_JENNA, 0x102);
     FieldScript_WaitFrames(40);
-    ObjectEvent_FaceDirection(JENNA, FACING_NORTHWEST, 10);
+    ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_NORTHWEST, 10);
     // Jenna: "Let's hurry back to the village and tell everybody!"
-    SolSanctumLunaSolRooms_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | JENNA,
-                                              10);
+    SolSanctumLunaSolRooms_ShowMessageAndWait(
+        SPEAKER_PORTRAIT_RIGHT | LOCALID_JENNA, 10);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 2);
     FieldScript_WaitFrames(10);
     ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_NORTHWEST, 20);
@@ -427,38 +431,38 @@ static void EventScript_KradenFindsHeartOfSanctum(void) {
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH + FACING_STEP,
                               40);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-    ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST, 0);
-    ObjectEvent_FaceDirection(JENNA, FACING_NORTHWEST, 40);
-    ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHEAST, 0);
+    ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_NORTHWEST, 40);
+    ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
     // Garet: "Kraden? What's the matter?" Kraden: "We're so close..." The
     // three wonder at turning back from the heart of the sanctum.
-    FieldScript_ShowMessageAndWait(GARET, 0);
+    FieldScript_ShowMessageAndWait(LOCALID_GARET, 0);
     FieldScript_WaitFrames(60);
     ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIM_SHAKE_HEAD);
     FieldScript_WaitFrames(40);
     SolSanctumLunaSolRooms_ShowMessageAndWait(LOCALID_KRADEN, 20);
-    ObjectEvent_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-    SolSanctumLunaSolRooms_ShowMessageAndWait(JENNA, 60);
+    ObjectEvent_ShowEmote(LOCALID_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+    SolSanctumLunaSolRooms_ShowMessageAndWait(LOCALID_JENNA, 60);
     ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIM_NOD);
     SolSanctumLunaSolRooms_ShowMessageAndWait(LOCALID_KRADEN, 10);
     ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
                           0);
-    ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-    ObjectEvent_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-    ObjectMotion_SetVarCbAndRefresh(GARET, 2);
+    ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+    ObjectEvent_ShowEmote(LOCALID_JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
     FieldScript_WaitFrames(20);
-    SolSanctumLunaSolRooms_ShowMessageAndWait(GARET, 10);
+    SolSanctumLunaSolRooms_ShowMessageAndWait(LOCALID_GARET, 10);
     ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIM_NOD);
     FieldScript_WaitFrames(20);
     ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE,
                           0);
-    ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-    ObjectEvent_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
+    ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+    ObjectEvent_ShowEmote(LOCALID_JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
     ObjectEvent_ShowEmote(LOCALID_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 80);
     SolSanctumLunaSolRooms_ShowMessageAndWait(LOCALID_KRADEN, 6);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
-    ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST + FACING_STEP, 0);
-    ObjectEvent_FaceDirection(JENNA, FACING_WEST + FACING_STEP, 60);
+    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHEAST + FACING_STEP, 0);
+    ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_WEST + FACING_STEP, 60);
     ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTH, 10);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 3);
     FieldScript_WaitFrames(6);
@@ -473,30 +477,30 @@ static void EventScript_KradenFindsHeartOfSanctum(void) {
     }
     ObjectMotion_Launch(LOCALID_KRADEN, 4, 20);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-    ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST, 0);
-    ObjectEvent_FaceDirection(JENNA, FACING_NORTHWEST, 0);
+    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHEAST, 0);
+    ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_NORTHWEST, 0);
     SolSanctumLunaSolRooms_ShowMessageAndWait(LOCALID_KRADEN, 6);
     // Either way Jenna gives in and Garet sides with Kraden, who is
     // delighted: "Good! It's decided. Let's move ahead!"
     FieldScript_SetMessageId(MsgSolSanctumPutWayDont);
     FieldScript_WaitFrames(30);
-    ObjectMotion_SetAnimationAndWait(JENNA, ANIM_SHAKE_HEAD);
-    SolSanctumLunaSolRooms_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | JENNA,
-                                              6);
-    ObjectMotion_SetAnimationAndWait(GARET, ANIM_NOD);
-    SolSanctumLunaSolRooms_ShowMessageAndWait(GARET, 20);
+    ObjectMotion_SetAnimationAndWait(LOCALID_JENNA, ANIM_SHAKE_HEAD);
+    SolSanctumLunaSolRooms_ShowMessageAndWait(
+        SPEAKER_PORTRAIT_RIGHT | LOCALID_JENNA, 6);
+    ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
+    SolSanctumLunaSolRooms_ShowMessageAndWait(LOCALID_GARET, 20);
     ObjectMotion_Launch(LOCALID_KRADEN, 6, 20);
     ObjectEvent_ShowEmote(LOCALID_KRADEN, EMOTE_IN_FRONT | EMOTE_HEART, 20);
     SolSanctumLunaSolRooms_ShowMessageAndWait(LOCALID_KRADEN, 30);
     Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-    Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
-    ObjectMotion_SetAnimationAndWait(JENNA, ANIM_NOD);
+    Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+    ObjectMotion_SetAnimationAndWait(LOCALID_JENNA, ANIM_NOD);
     FieldScript_WaitFrames(20);
     ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIM_NOD);
     SolSanctumLunaSolRooms_ShowMessageAndWait(LOCALID_KRADEN, 6);
     // End the discussion and return the followers to Isaac.
-    ObjectEvent_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
-    ObjectEvent_SetSpeed(JENNA, PIXELS(1), PIXELS(1) / 2);
+    ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(1), PIXELS(1) / 2);
+    ObjectEvent_SetSpeed(LOCALID_JENNA, PIXELS(1), PIXELS(1) / 2);
     ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(2), PIXELS(1));
     Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_WALK);
     leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -506,22 +510,22 @@ static void EventScript_KradenFindsHeartOfSanctum(void) {
     }
     ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_KRADEN);
     Engine_ObjectEventSetPosition(LOCALID_KRADEN, 0, 0);
-    Engine_ObjectEventSetAnimation(GARET, ANIM_WALK);
+    Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
     leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     if (leader != 0) {
-      ObjectMotion_ResetAndSetPosition(GARET, leader->x.part.pixel,
+      ObjectMotion_ResetAndSetPosition(LOCALID_GARET, leader->x.part.pixel,
                                        leader->z.part.pixel);
     }
-    ObjectMotion_CommitCurrentPositionAndActivate(GARET);
-    Engine_ObjectEventSetPosition(GARET, 0, 0);
-    Engine_ObjectEventSetAnimation(JENNA, ANIM_WALK);
+    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
+    Engine_ObjectEventSetPosition(LOCALID_GARET, 0, 0);
+    Engine_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_WALK);
     leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     if (leader != 0) {
-      ObjectMotion_ResetAndSetPosition(JENNA, leader->x.part.pixel,
+      ObjectMotion_ResetAndSetPosition(LOCALID_JENNA, leader->x.part.pixel,
                                        leader->z.part.pixel);
     }
-    ObjectMotion_CommitCurrentPositionAndActivate(JENNA);
-    Engine_ObjectEventSetPosition(JENNA, 0, 0);
+    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_JENNA);
+    Engine_ObjectEventSetPosition(LOCALID_JENNA, 0, 0);
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
     GameFlag_Set(FLAG_SOL_SANCTUM_FOUND);
     FieldScript_End();
@@ -1573,8 +1577,8 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   PaletteFade_SetTarget(0x7fff, 0);
   PaletteFade_StartInterpolation(1);
   WaitFrames(1);
-  ObjectEvent_SetPosition(GARET, PIXELS(280), PIXELS(134));
-  ObjectEvent_FaceDirection(GARET, FACING_NORTHWEST, 0);
+  ObjectEvent_SetPosition(LOCALID_GARET, PIXELS(280), PIXELS(134));
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHWEST, 0);
   // This script reads its heap slots from one address: HEAP_SLOT_PALETTE_FADE
   // is reached from HEAP_SLOT_FIELD's slot. As gFieldWork and
   // gPaletteFadeWork they would load two.
@@ -1592,22 +1596,22 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   WaitFrames(100);
   // Both look around, bewildered, as the rooms give a jolt.
   ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER, 0x102);
-  FieldEffect_ConfigureLinkedObject(GARET, 0x102);
+  FieldEffect_ConfigureLinkedObject(LOCALID_GARET, 0x102);
   FieldScript_WaitFrames(60);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHEAST, 20);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST, 40);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHEAST, 40);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST + FACING_STEP,
                             40);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 80);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH + FACING_STEP, 80);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 10);
-  ObjectEvent_FaceDirection(GARET, FACING_EAST + FACING_STEP, 60);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_EAST + FACING_STEP, 60);
   MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
   FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST, 20);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHEAST, 20);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
   // Garet: "Did that floating eye thing save us?" A stronger tremor throws
   // them both aside.
   FieldScript_SetMessageId(MsgSolSanctumFloatingEyeThing);
@@ -1621,33 +1625,33 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   FieldEffect_InitializeSparkles();
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags &=
       ~OBJ_EVENT_FACES_MOTION;
-  ObjectEvent_GetById(GARET)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
+  ObjectEvent_GetById(LOCALID_GARET)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
   ObjectMotion_Launch(LOCALID_PARTY_LEADER, 4, 0);
-  ObjectMotion_Launch(GARET, 4, 0);
+  ObjectMotion_Launch(LOCALID_GARET, 4, 0);
   ObjectEvent_SetDestination(LOCALID_PARTY_LEADER, 300, 130);
-  ObjectMotion_ResetAndSetPosition(GARET, 266, 144);
-  ObjectMotion_CommitCurrentPositionAndActivate(GARET);
+  ObjectMotion_ResetAndSetPosition(LOCALID_GARET, 266, 144);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
   FieldScript_WaitFrames(40);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags |=
       OBJ_EVENT_FACES_MOTION;
-  ObjectEvent_GetById(GARET)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
+  ObjectEvent_GetById(LOCALID_GARET)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
   // Recover from the tremor and bring Garet back into the party.
   Map_QueueMusic(SE_RUMBLE);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
   // Garet: "Yeah, right! Let's get out of here..."
-  SolSanctumLunaSolRooms_ShowMessageAndWait(GARET, 10);
+  SolSanctumLunaSolRooms_ShowMessageAndWait(LOCALID_GARET, 10);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_WALK);
+  ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
-    ObjectMotion_ResetAndSetPosition(GARET, leader->x.part.pixel,
+    ObjectMotion_ResetAndSetPosition(LOCALID_GARET, leader->x.part.pixel,
                                      leader->z.part.pixel);
   }
-  ObjectMotion_CommitCurrentPositionAndActivate(GARET);
-  Engine_ObjectEventSetPosition(GARET, 0, 0);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
+  Engine_ObjectEventSetPosition(LOCALID_GARET, 0, 0);
   palette = HEAP_SLOT_BLOCK(HEAP_SLOT_PALETTE_FADE);
   palette->target[0] = 0;
   palette->target[1] = 0;
@@ -1746,9 +1750,9 @@ struct ObjectEventTemplate gSolSanctumLunaSolRoomsObjectEventTemplates[] = {
         PIXELS(504), 0, PIXELS(152), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(1608), 0, PIXELS(1608), FACING_NORTH, TALK_FACING_PARTY, 0 },
-    { JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(1608), 0, PIXELS(1608), FACING_NORTH, TALK_FACING_PARTY, 0 },
-    { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(1608), 0, PIXELS(1608), FACING_NORTH, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };

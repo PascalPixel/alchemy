@@ -495,7 +495,7 @@ static void EventScript_GaretTurnsLeaderBack(void) {
   FieldScript_Start();
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   FieldScript_SetMessageId(MsgLunpaGaretRefusesToReturn);
-  Script_ShowMessage(GARET, 0);
+  Script_ShowMessage(LOCALID_GARET, 0);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE,
                         100);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
@@ -1066,7 +1066,7 @@ struct ObjectEventTemplate gGateObjectEventTemplates[] = {
       PIXELS(144), 0, PIXELS(200), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
       PIXELS(176), 0, PIXELS(200), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
-    { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
+    { LOCALID_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
 // clang-format on

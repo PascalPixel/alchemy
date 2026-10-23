@@ -840,22 +840,22 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(20);
-  FieldMotion_LaunchFromFocusedObject(GARET, -16, 0, FACING_WEST);
-  ObjectMotion_CommitCurrentPositionAndActivate(GARET);
+  FieldMotion_LaunchFromFocusedObject(LOCALID_GARET, -16, 0, FACING_WEST);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHWEST, 0);
   FieldScript_WaitFrames(20);
   // Follow Garet to the water before the man joins him.
   FieldScript_SetMessageId(MsgKalayIncredibleOcean);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHWEST, 0);
-  ObjectEvent_SetSpeed(GARET, 0x19999, 0xcccc);
-  ObjectEvent_WalkToAndWait(GARET, 232, 1424);
-  ObjectEvent_FaceDirection(GARET, FACING_WEST, 0);
+  ObjectEvent_SetSpeed(LOCALID_GARET, 0x19999, 0xcccc);
+  ObjectEvent_WalkToAndWait(LOCALID_GARET, 232, 1424);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_WEST, 0);
   FieldCamera_MoveTo(PIXELS(184), -1, PIXELS(1440), 1);
   FieldCamera_WaitForArrival();
   FieldScript_WaitFrames(10);
-  ObjectMotion_Launch(GARET, 6, 15);
-  ObjectMotion_Launch(GARET, 6, 40);
-  Script_ShowMessage(GARET, 0);
+  ObjectMotion_Launch(LOCALID_GARET, 6, 15);
+  ObjectMotion_Launch(LOCALID_GARET, 6, 40);
+  Script_ShowMessage(LOCALID_GARET, 0);
   FieldScript_WaitFrames(20);
   FieldCamera_MoveTo(PIXELS(264), -1, PIXELS(1448), 1);
   FieldCamera_WaitForArrival();
@@ -867,7 +867,7 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   ObjectEvent_FaceDirection(LOCALID_YOUNG_MAN_ASKING_ABOUT_TOLBI, FACING_WEST,
                             0);
   FieldScript_WaitFrames(10);
-  ObjectEvent_FaceDirection(GARET, FACING_EAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_EAST, 0);
   FieldScript_WaitFrames(20);
   FieldScript_WaitFrames(10);
   ObjectMotion_SetAnimationAndWait(LOCALID_YOUNG_MAN_ASKING_ABOUT_TOLBI,
@@ -875,37 +875,37 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   FieldScript_WaitFrames(10);
   Script_ShowMessage(LOCALID_YOUNG_MAN_ASKING_ABOUT_TOLBI, 0);
   FieldScript_WaitFrames(20);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   FieldScript_WaitFrames(30);
-  ObjectEvent_FaceDirection(GARET, FACING_WEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_WEST, 0);
   FieldScript_WaitFrames(50);
-  Script_ShowMessage(GARET, 0);
+  Script_ShowMessage(LOCALID_GARET, 0);
   FieldScript_WaitFrames(20);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST, 0);
   FieldScript_WaitFrames(30);
-  ObjectEvent_SetSpeed(GARET, 0x10000, 0x8000);
-  ObjectEvent_WalkToAndWait(GARET, 264, 1464);
-  ObjectEvent_FaceDirection(GARET, FACING_EAST, 0);
+  ObjectEvent_SetSpeed(LOCALID_GARET, 0x10000, 0x8000);
+  ObjectEvent_WalkToAndWait(LOCALID_GARET, 264, 1464);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_EAST, 0);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 0);
   ObjectEvent_FaceDirection(LOCALID_YOUNG_MAN_ASKING_ABOUT_TOLBI, FACING_SOUTH,
                             0);
   FieldScript_WaitFrames(30);
-  Script_ShowMessage(GARET, 0);
+  Script_ShowMessage(LOCALID_GARET, 0);
   FieldScript_WaitFrames(10);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(30);
-  ObjectMotion_SetAnimationAndWait(GARET, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
   FieldScript_WaitFrames(30);
-  ObjectEvent_SetSpeed(GARET, 0x13333, 0x9999);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_WALK);
+  ObjectEvent_SetSpeed(LOCALID_GARET, 0x13333, 0x9999);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
   // Garet rejoins the leader and the man wanders again from where he stands.
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (objectEvent != 0) {
-    ObjectEvent_SetDestination(GARET, objectEvent->x.part.pixel,
+    ObjectEvent_SetDestination(LOCALID_GARET, objectEvent->x.part.pixel,
                                objectEvent->z.part.pixel);
   }
-  ObjectMotion_CommitCurrentPositionAndActivate(GARET);
-  ObjectEvent_SetPosition(GARET, 0, 0);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
+  ObjectEvent_SetPosition(LOCALID_GARET, 0, 0);
   FieldScript_WaitFrames(20);
   ObjectEvent_GetById(LOCALID_YOUNG_MAN_ASKING_ABOUT_TOLBI)->paused = 0;
   ObjectEvent_SetBuiltinAction(LOCALID_YOUNG_MAN_ASKING_ABOUT_TOLBI, 2);
@@ -1274,7 +1274,7 @@ struct ObjectEventTemplate gKalayTolbiDocks_TolbiObjectEventTemplatesStranded[] 
 };
 
 struct ObjectEventTemplate gKalayTolbiDocks_KalayObjectEventTemplates[] = {
-    { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(-64), 0, PIXELS(-64), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
         PIXELS(248), 0, PIXELS(1408), FACING_SOUTH, TALK_FACING_PARTY, 0 },
@@ -1294,7 +1294,7 @@ struct ObjectEventTemplate gKalayTolbiDocks_KalayObjectEventTemplates[] = {
 };
 
 struct ObjectEventTemplate gKalayTolbiDocks_KalayObjectEventTemplatesShipGone[] = {
-    { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(-64), 0, PIXELS(-64), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(-64), 0, PIXELS(-64), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },

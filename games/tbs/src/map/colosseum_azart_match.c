@@ -822,14 +822,14 @@ s32 ColosseumAzartMatch_Initialize(void) {
       Sound_PlaySong(SONG_FADE_OUT_BGM);
       Colosso_ControlCharacterAlone(ISAAC);
       Colosso_PlaceFriendsAtCheeringSpots();
-      ColosseumAzartMatch_MarkFinishTerrain(GARET);
-      ColosseumAzartMatch_MarkFinishTerrain(IVAN);
-      ColosseumAzartMatch_MarkFinishTerrain(MIA);
+      ColosseumAzartMatch_MarkFinishTerrain(LOCALID_GARET);
+      ColosseumAzartMatch_MarkFinishTerrain(LOCALID_IVAN);
+      ColosseumAzartMatch_MarkFinishTerrain(LOCALID_MIA);
       ColosseumAzartMatch_ShowRoundIntroduction(1);
     }
-    ObjectEvent_LinkObjectAndSetCallback(GARET, LOCALID_PARTY_LEADER);
-    ObjectEvent_LinkObjectAndSetCallback(IVAN, LOCALID_PARTY_LEADER);
-    ObjectEvent_LinkObjectAndSetCallback(MIA, LOCALID_PARTY_LEADER);
+    ObjectEvent_LinkObjectAndSetCallback(LOCALID_GARET, LOCALID_PARTY_LEADER);
+    ObjectEvent_LinkObjectAndSetCallback(LOCALID_IVAN, LOCALID_PARTY_LEADER);
+    ObjectEvent_LinkObjectAndSetCallback(LOCALID_MIA, LOCALID_PARTY_LEADER);
     Colosso_StartOpponent((s32)&ResourceId_OpponentPathA);
     break;
   case COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST:
@@ -876,15 +876,16 @@ static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
   FieldScript_Start();
   ObjectEvent_SetSpeed(guide, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_SetSpeed(IVAN, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_SetSpeed(MIA, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(1), PIXELS(1) / 2);
   Engine_ObjectEventSetPosition(LOCALID_PARTY_LEADER, x << 16,
                                 (z << 16) - PIXELS(48));
-  ObjectEvent_SetPosition(GARET, (x << 16) - PIXELS(16),
+  ObjectEvent_SetPosition(LOCALID_GARET, (x << 16) - PIXELS(16),
                           (z << 16) - PIXELS(40));
-  ObjectEvent_SetPosition(IVAN, (x << 16) + PIXELS(16), (z << 16) - PIXELS(40));
-  ObjectEvent_SetPosition(MIA, x << 16, (z << 16) - PIXELS(32));
+  ObjectEvent_SetPosition(LOCALID_IVAN, (x << 16) + PIXELS(16),
+                          (z << 16) - PIXELS(40));
+  ObjectEvent_SetPosition(LOCALID_MIA, x << 16, (z << 16) - PIXELS(32));
   ObjectEvent_SetPosition(guide, x << 16, (z << 16) - PIXELS(80));
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   objectEvent->facing = FACING_NORTH;
@@ -893,30 +894,30 @@ static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
   FieldScript_WaitTransitionFrames();
   FieldScript_SetMessageId(MsgColossoSiteFirstFinalsBattle);
   Script_ShowMessage(guide, 0);
-  ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Script_ShowMessage(MIA, 0);
+  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  Script_ShowMessage(LOCALID_MIA, 0);
   ObjectMotion_SetVariantCallback(guide, 3);
   Script_ShowMessage(guide, 0);
-  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Script_ShowMessage(IVAN, 0);
-  ObjectEvent_FaceObjectEvent(guide, IVAN, 0);
+  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  Script_ShowMessage(LOCALID_IVAN, 0);
+  ObjectEvent_FaceObjectEvent(guide, LOCALID_IVAN, 0);
   FieldScript_WaitFrames(20);
   ObjectMotion_SetAnimationAndWait(guide, ANIM_NOD);
   Script_ShowMessage(guide, 0);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Script_ShowMessage(GARET, 0);
-  ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Script_ShowMessage(MIA, 0);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  Script_ShowMessage(LOCALID_GARET, 0);
+  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  Script_ShowMessage(LOCALID_MIA, 0);
   ObjectEvent_ShowEmote(guide, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   // Pan over each stage while the guide explains the finals rules.
   if (Script_AskYesNo(guide, 0) == 0) {
     do {
       FieldScript_SetMessageId(MsgColossoWarriorsEnterFinalsWithoutAny);
-      Engine_ObjectEventSetAnimation(IVAN, ANIM_NOD);
+      Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
       FieldScript_WaitFrames(2);
-      Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
+      Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
       FieldScript_WaitFrames(2);
-      Engine_ObjectEventSetAnimation(MIA, ANIM_NOD);
+      Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
       FieldScript_WaitFrames(1);
       ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
       ObjectMotion_SetAnimationAndWait(guide, ANIM_NOD);
@@ -956,44 +957,44 @@ static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
   ObjectMotion_SetVarCbAndRefresh(guide, 2);
   Script_ShowMessage(guide, 0);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_EAST, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_WEST, 0);
-  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
-  Script_ShowMessage(GARET, 0);
-  ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
-  Script_ShowMessage(IVAN, 0);
-  ObjectMotion_SetAnimationAndWait(MIA, ANIM_NOD);
-  Script_ShowMessage(MIA, 0);
-  Engine_ObjectEventSetAnimation(MIA, ANIM_NOD);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_EAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_WEST, 0);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
+  Script_ShowMessage(LOCALID_GARET, 0);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 2);
+  Script_ShowMessage(LOCALID_IVAN, 0);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
+  Script_ShowMessage(LOCALID_MIA, 0);
+  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
   FieldScript_WaitFrames(1);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
   FieldScript_WaitFrames(2);
-  Engine_ObjectEventSetAnimation(IVAN, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
   FieldScript_WaitFrames(1);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(6);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_WALK);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (objectEvent != 0) {
-    ObjectEvent_SetDestination(GARET, objectEvent->x.part.pixel,
+    ObjectEvent_SetDestination(LOCALID_GARET, objectEvent->x.part.pixel,
                                objectEvent->z.part.pixel);
   }
-  Engine_ObjectEventSetAnimation(IVAN, ANIM_WALK);
+  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_WALK);
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (objectEvent != 0) {
-    ObjectEvent_SetDestination(IVAN, objectEvent->x.part.pixel,
+    ObjectEvent_SetDestination(LOCALID_IVAN, objectEvent->x.part.pixel,
                                objectEvent->z.part.pixel);
   }
-  Engine_ObjectEventSetAnimation(MIA, ANIM_WALK);
+  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_WALK);
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (objectEvent != 0) {
-    ObjectEvent_SetDestination(MIA, objectEvent->x.part.pixel,
+    ObjectEvent_SetDestination(LOCALID_MIA, objectEvent->x.part.pixel,
                                objectEvent->z.part.pixel);
   }
   ObjectEvent_WalkToAndWait(guide, x - 16, z - 64);
-  ObjectEvent_SetPosition(GARET, 0, 0);
-  ObjectEvent_SetPosition(IVAN, 0, 0);
-  ObjectEvent_SetPosition(MIA, 0, 0);
+  ObjectEvent_SetPosition(LOCALID_GARET, 0, 0);
+  ObjectEvent_SetPosition(LOCALID_IVAN, 0, 0);
+  ObjectEvent_SetPosition(LOCALID_MIA, 0, 0);
   ObjectEvent_WalkToAndWait(guide, x - 16, z - 16);
   ObjectEvent_WalkToAndWait(guide, x, z);
   ObjectEvent_FaceDirection(guide, FACING_NORTH, 10);
@@ -1739,11 +1740,11 @@ u32 gColosseumAzartMatch_Warps[] = {
 struct ObjectEventTemplate gColosseumAzartMatch_ObjectEventTemplates[] = {
     { 0x0, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(312), 0, PIXELS(104), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
-    { IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
-    { MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WARRIOR_IN_GOLDEN_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_WEST, TALK_FACING_PARTY, 0 },

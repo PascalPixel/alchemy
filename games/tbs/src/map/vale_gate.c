@@ -1607,7 +1607,7 @@ static void EventScript_DepartForQuest(void) {
   objectEvent = ObjectEvent_GetById(LOCALID_FAREWELL_FIRST_CROWD_VILLAGER + 9);
   ObjectEvent_SetSpriteFlags(objectEvent, 0);
   ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, 1);
-  ObjectMotion_SetActionVariant(GARET, 1);
+  ObjectMotion_SetActionVariant(LOCALID_GARET, 1);
   ObjectMotion_SetActionVariant(LOCALID_FAREWELL_GARETS_BROTHER, 1);
   ObjectMotion_SetActionVariant(LOCALID_FAREWELL_GARETS_SISTER, 1);
   ObjectMotion_SetActionVariant(LOCALID_FAREWELL_GARETS_GRANDFATHER, 1);
@@ -1797,12 +1797,13 @@ static void EventScript_DepartForQuest(void) {
   FieldScript_WaitFrames(20);
   EventScript_SayThenWait(LOCALID_FAREWELL_GREAT_HEALER, 20);
   ObjectMotion_ArmCallback(LOCALID_PARTY_LEADER, FACING_EAST, 0);
-  ValeGate_FaceDirectionAndWait(GARET, FACING_WEST + FACING_STEP, 20);
+  ValeGate_FaceDirectionAndWait(LOCALID_GARET, FACING_WEST + FACING_STEP, 20);
   ValeGate_FaceDirectionAndWait(LOCALID_PARTY_LEADER, FACING_NORTH, 10);
-  ValeGate_FaceDirectionAndWait(GARET, FACING_NORTHWEST + FACING_STEP, 10);
+  ValeGate_FaceDirectionAndWait(LOCALID_GARET, FACING_NORTHWEST + FACING_STEP,
+                                10);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(GARET, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
   FieldScript_WaitFrames(40);
   // Garet's sister warns them off water that smells funny and hands over a
   // Herb.
@@ -1819,15 +1820,16 @@ static void EventScript_DepartForQuest(void) {
                             0);
   // Garet protests he knows that, Sis; his brother says he will eat anything,
   // and Garet jumps.
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  ValeGate_FaceDirectionAndWait(GARET, FACING_NORTHEAST + FACING_STEP, 10);
-  EventScript_SayThenWait(GARET, 10);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  ValeGate_FaceDirectionAndWait(LOCALID_GARET, FACING_NORTHEAST + FACING_STEP,
+                                10);
+  EventScript_SayThenWait(LOCALID_GARET, 10);
   ObjectMotion_SetAnimationAndWait(LOCALID_FAREWELL_GARETS_BROTHER,
                                    ANIM_SHAKE_HEAD);
   EventScript_SayThenWait(LOCALID_FAREWELL_GARETS_BROTHER, 10);
-  ObjectMotion_ArmCallback(GARET, FACING_EAST + FACING_STEP, 0);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
-  ObjectMotion_Launch(GARET, 4, 60);
+  ObjectMotion_ArmCallback(LOCALID_GARET, FACING_EAST + FACING_STEP, 0);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
+  ObjectMotion_Launch(LOCALID_GARET, 4, 60);
   // Dora is very late, the bearded man in a long robe says. Everyone wonders;
   // Garet's brother remembers.
   ObjectMotion_SetVarCbAndRefresh(LOCALID_FAREWELL_MAN_AWAITING_DORA, 2);
@@ -1835,7 +1837,7 @@ static void EventScript_DepartForQuest(void) {
   ValeGate_FaceDirectionAndWait(LOCALID_FAREWELL_MAN_AWAITING_DORA,
                                 FACING_NORTH + FACING_STEP, 10);
   EventScript_SayThenWait(LOCALID_FAREWELL_MAN_AWAITING_DORA, 60);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   ObjectEvent_ShowEmote(LOCALID_FAREWELL_GARETS_SISTER,
                         EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   ObjectEvent_ShowEmote(LOCALID_FAREWELL_GARETS_BROTHER,
@@ -1851,20 +1853,21 @@ static void EventScript_DepartForQuest(void) {
   // Garet turn to follow.
   ObjectEvent_LinkObjectAndSetCallback(LOCALID_PARTY_LEADER,
                                        LOCALID_FAREWELL_GARETS_BROTHER);
-  ObjectEvent_LinkObjectAndSetCallback(GARET, LOCALID_FAREWELL_GARETS_BROTHER);
+  ObjectEvent_LinkObjectAndSetCallback(LOCALID_GARET,
+                                       LOCALID_FAREWELL_GARETS_BROTHER);
   ObjectEvent_WalkToAndWait(LOCALID_FAREWELL_GARETS_BROTHER, 216, 800);
   ObjectEvent_FaceDirection(LOCALID_FAREWELL_GARETS_BROTHER, FACING_SOUTH, 0);
   EventScript_SayThenWait(LOCALID_FAREWELL_GARETS_BROTHER, 60);
   PartyInventory_GiveItem(ITEM_CATCH_BEADS, 0);
   ObjectMotion_EnableActionAndResetMotion(LOCALID_PARTY_LEADER);
-  ObjectMotion_EnableActionAndResetMotion(GARET);
+  ObjectMotion_EnableActionAndResetMotion(LOCALID_GARET);
   ObjectEvent_WalkToAndWait(LOCALID_FAREWELL_GARETS_BROTHER, 272, 816);
   ObjectEvent_FaceDirection(LOCALID_FAREWELL_GARETS_BROTHER, FACING_WEST, 0);
   // Garet thinks they are all set; his sister says think again, it must be hard
   // for Dora.
-  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
-  ValeGate_FaceDirectionAndWait(GARET, FACING_WEST + FACING_STEP, 10);
-  EventScript_SayThenWait(GARET, 10);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
+  ValeGate_FaceDirectionAndWait(LOCALID_GARET, FACING_WEST + FACING_STEP, 10);
+  EventScript_SayThenWait(LOCALID_GARET, 10);
   ObjectMotion_ArmCallback(LOCALID_FAREWELL_MAN_AWAITING_DORA,
                            FACING_SOUTHEAST + FACING_STEP, 0);
   ValeGate_FaceDirectionAndWait(LOCALID_PARTY_LEADER, FACING_EAST, 10);
@@ -1872,8 +1875,9 @@ static void EventScript_DepartForQuest(void) {
                         60);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_FAREWELL_GARETS_SISTER, 1);
   EventScript_SayThenWait(LOCALID_FAREWELL_GARETS_SISTER, 10);
-  ValeGate_FaceDirectionAndWait(GARET, FACING_NORTHEAST + FACING_STEP, 10);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+  ValeGate_FaceDirectionAndWait(LOCALID_GARET, FACING_NORTHEAST + FACING_STEP,
+                                10);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_FAREWELL_GARETS_SISTER,
                                    ANIM_SHAKE_HEAD);
   EventScript_SayThenWait(LOCALID_FAREWELL_GARETS_SISTER, 10);
@@ -1881,7 +1885,7 @@ static void EventScript_DepartForQuest(void) {
   // knows he must. The crowd nods.
   ObjectMotion_SetAnimationAndWait(LOCALID_FAREWELL_GARETS_MOTHER, ANIM_NOD);
   FieldScript_ShowMessageAndWait(LOCALID_FAREWELL_GARETS_MOTHER, 0);
-  ObjectMotion_ArmCallback(GARET, FACING_NORTH + FACING_STEP, 0);
+  ObjectMotion_ArmCallback(LOCALID_GARET, FACING_NORTH + FACING_STEP, 0);
   Engine_ObjectEventSetAnimation(LOCALID_FAREWELL_GARETS_MOTHER,
                                  ANIM_SHAKE_HEAD);
   FieldScript_ShowMessageAndWait(LOCALID_FAREWELL_GARETS_MOTHER, 0);
@@ -1911,7 +1915,7 @@ static void EventScript_DepartForQuest(void) {
   ObjectMotion_Launch(LOCALID_FAREWELL_GARETS_GRANDFATHER, 2, 10);
   ObjectMotion_Launch(LOCALID_FAREWELL_GARETS_GRANDFATHER, 4, 40);
   EventScript_SayThenWait(LOCALID_FAREWELL_GARETS_GRANDFATHER, 10);
-  ObjectMotion_ArmCallback(GARET, FACING_NORTHWEST + FACING_STEP, 0);
+  ObjectMotion_ArmCallback(LOCALID_GARET, FACING_NORTHWEST + FACING_STEP, 0);
   ValeGate_FaceDirectionAndWait(LOCALID_PARTY_LEADER, FACING_NORTH, 20);
   ValeGate_FaceDirectionAndWait(LOCALID_FAREWELL_GARETS_GRANDFATHER,
                                 FACING_NORTH + FACING_STEP, 10);
@@ -1977,15 +1981,15 @@ static void EventScript_DepartForQuest(void) {
   FieldScript_WaitFrames(80);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->priorityFlags |= priorityFlags;
   {
-    struct ObjectEvent *objectEvent = ObjectEvent_GetById(GARET);
+    struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_GARET);
     u8 value = (priorityFlags | objectEvent->priorityFlags);
 
     objectEvent->priorityFlags = value;
   }
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   ValeGate_FaceDirectionAndWait(LOCALID_PARTY_LEADER, FACING_SOUTH, 10);
-  ValeGate_FaceDirectionAndWait(GARET, FACING_SOUTH + FACING_STEP, 20);
+  ValeGate_FaceDirectionAndWait(LOCALID_GARET, FACING_SOUTH + FACING_STEP, 20);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
   departureActions = gValeGate_PartyDepartureActions;
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER, departureActions);
@@ -1993,8 +1997,8 @@ static void EventScript_DepartForQuest(void) {
   FieldCamera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
   FieldCamera_MoveWithinMapBounds(PIXELS(216), PIXELS(16), PIXELS(905), 1);
   FieldScript_WaitFrames(20);
-  ObjectEvent_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
-  ObjectEvent_SetActionScript(GARET, departureActions);
+  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_SetActionScript(LOCALID_GARET, departureActions);
   FieldScript_WaitFrames(60);
   work = gFieldWork;
   work->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -2002,7 +2006,7 @@ static void EventScript_DepartForQuest(void) {
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   ObjectMotion_EnableActionAndResetMotion(LOCALID_PARTY_LEADER);
-  ObjectMotion_EnableActionAndResetMotion(GARET);
+  ObjectMotion_EnableActionAndResetMotion(LOCALID_GARET);
   Engine_ScriptRequestWarp(VALE_GATE_TO_WORLD_MAP);
   FieldScript_End();
 }
@@ -2549,7 +2553,7 @@ struct ObjectEventTemplate gValeGate_ObjectEventTemplates[] = {
         PIXELS(1608), 0, PIXELS(1608), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
         PIXELS(370), 0, PIXELS(319), FACING_WEST, TALK_FACING_PARTY, 0 },
-    { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { JENNA_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTHEAST, TALK_FACING_PARTY, 0 },
@@ -2610,7 +2614,7 @@ struct ObjectEventTemplate gValeGate_DepartureObjectEventTemplates[] = {
         PIXELS(252), 0, PIXELS(480), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { 0xf8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(408), 0, PIXELS(560), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(225), 0, PIXELS(814), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(168), 0, PIXELS(607), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },

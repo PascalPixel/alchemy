@@ -240,19 +240,19 @@ static void Ship_UpdateSwell(void) {
       objectEvent->motionFlags = 0;
     }
     if (gGaretDeckY != SHIP_NOT_ON_DECK) {
-      objectEvent = ObjectEvent_GetById(GARET);
+      objectEvent = ObjectEvent_GetById(LOCALID_GARET);
       objectEvent->y.fixed = gGaretDeckY + swell;
       objectEvent->groundHeight = gLeaderDeckY + swell;
       objectEvent->motionFlags = 0;
     }
     if (gMiaDeckY != SHIP_NOT_ON_DECK) {
-      objectEvent = ObjectEvent_GetById(MIA);
+      objectEvent = ObjectEvent_GetById(LOCALID_MIA);
       objectEvent->y.fixed = gMiaDeckY + swell;
       objectEvent->groundHeight = gLeaderDeckY + swell;
       objectEvent->motionFlags = 0;
     }
     if (gIvanDeckY != SHIP_NOT_ON_DECK) {
-      objectEvent = ObjectEvent_GetById(IVAN);
+      objectEvent = ObjectEvent_GetById(LOCALID_IVAN);
       objectEvent->y.fixed = gIvanDeckY + swell;
       objectEvent->groundHeight = gLeaderDeckY + swell;
       objectEvent->motionFlags = 0;
@@ -304,7 +304,7 @@ static s32 Garet_StepOnDeck(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent;
 
   deckY = &gGaretDeckY;
-  objectEvent = ObjectEvent_GetById(GARET);
+  objectEvent = ObjectEvent_GetById(LOCALID_GARET);
   *deckY = objectEvent->y.fixed;
   return 0;
 }
@@ -315,7 +315,7 @@ static s32 Mia_StepOnDeck(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent;
 
   deckY = &gMiaDeckY;
-  objectEvent = ObjectEvent_GetById(MIA);
+  objectEvent = ObjectEvent_GetById(LOCALID_MIA);
   *deckY = objectEvent->y.fixed;
   return 0;
 }
@@ -326,7 +326,7 @@ static s32 Ivan_StepOnDeck(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent;
 
   deckY = &gIvanDeckY;
-  objectEvent = ObjectEvent_GetById(IVAN);
+  objectEvent = ObjectEvent_GetById(LOCALID_IVAN);
   *deckY = objectEvent->y.fixed;
   return 0;
 }
@@ -349,76 +349,76 @@ static void LemurianShip_SetSail(void) {
   // it's finally time to leave Gondowan." Ivan and Mia say how much has
   // happened.
   FieldScript_SetMessageId(MsgFieldLooksLikeFinally);
-  FieldMotion_LaunchFromFocusedObject(GARET, -10, 16, FACING_NORTH);
-  FieldMotion_LaunchFromFocusedObject(MIA, 0, 24, FACING_NORTH);
-  ObjectMotion_LaunchFromFocusedObject(IVAN, 10, 16, FACING_NORTH);
-  ObjectMotion_CommitCurrentPositionAndActivate(GARET);
+  FieldMotion_LaunchFromFocusedObject(LOCALID_GARET, -10, 16, FACING_NORTH);
+  FieldMotion_LaunchFromFocusedObject(LOCALID_MIA, 0, 24, FACING_NORTH);
+  ObjectMotion_LaunchFromFocusedObject(LOCALID_IVAN, 10, 16, FACING_NORTH);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
   FieldScript_WaitFrames(50);
-  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
   FieldScript_WaitFrames(20);
-  FieldScript_ShowMessageAndWait(GARET, 0);
+  FieldScript_ShowMessageAndWait(LOCALID_GARET, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(IVAN, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  FieldScript_ShowMessageAndWait(IVAN, 0);
+  FieldScript_ShowMessageAndWait(LOCALID_IVAN, 0);
   FieldScript_WaitFrames(10);
-  ObjectEvent_FaceDirection(MIA, FACING_SOUTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_SOUTH, 0);
   FieldScript_WaitFrames(40);
-  FieldScript_ShowMessageAndWait(MIA, 0);
+  FieldScript_ShowMessageAndWait(LOCALID_MIA, 0);
   FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 0);
-  ObjectMotion_ArmCallback(IVAN, FACING_SOUTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH, 0);
+  ObjectMotion_ArmCallback(LOCALID_IVAN, FACING_SOUTH, 0);
   FieldScript_WaitFrames(60);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(IVAN, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
   FieldScript_WaitFrames(60);
   // The first question, Garet's: will the journey be over once they find
   // Jenna? The answer picks which of his two replies he says.
-  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
   FieldScript_WaitFrames(30);
-  ObjectMotion_ArmCallback(GARET, FACING_NORTHEAST, 0);
+  ObjectMotion_ArmCallback(LOCALID_GARET, FACING_NORTHEAST, 0);
   FieldScript_WaitFrames(20);
   FieldMessage_ShowAtObject(1, 0);
   if (FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER, 0) ==
       0) {
     FieldScript_WaitFrames(30);
-    ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
-    FieldScript_ShowMessageAndWait(GARET, 0);
+    ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
+    FieldScript_ShowMessageAndWait(LOCALID_GARET, 0);
     gFieldWork->message++;
   } else {
     FieldScript_WaitFrames(30);
-    ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
+    ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
     gFieldWork->message++;
-    FieldScript_ShowMessageAndWait(GARET, 0);
+    FieldScript_ShowMessageAndWait(LOCALID_GARET, 0);
   }
   FieldScript_WaitFrames(10);
   // Ivan and Mia remind Garet of their promise to Babi, and Lemuria comes up.
-  ObjectMotion_ArmCallback(IVAN, FACING_WEST, 0);
+  ObjectMotion_ArmCallback(LOCALID_IVAN, FACING_WEST, 0);
   FieldScript_WaitFrames(30);
-  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
-  FieldScript_ShowMessageAndWait(IVAN, 0);
+  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
+  FieldScript_ShowMessageAndWait(LOCALID_IVAN, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_ArmCallback(GARET, FACING_EAST, 0);
+  ObjectMotion_ArmCallback(LOCALID_GARET, FACING_EAST, 0);
   FieldScript_WaitFrames(30);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  ObjectMotion_SetVarCbAndRefresh(MIA, 2);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 2);
   FieldScript_WaitFrames(30);
-  ObjectMotion_ArmCallback(MIA, FACING_NORTHWEST, 0);
+  ObjectMotion_ArmCallback(LOCALID_MIA, FACING_NORTHWEST, 0);
   FieldScript_WaitFrames(30);
-  FieldScript_ShowMessageAndWait(MIA, 0);
+  FieldScript_ShowMessageAndWait(LOCALID_MIA, 0);
   FieldScript_WaitFrames(10);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
-  FieldScript_ShowMessageAndWait(GARET, 0);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
+  FieldScript_ShowMessageAndWait(LOCALID_GARET, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 2);
   FieldScript_WaitFrames(20);
-  FieldScript_ShowMessageAndWait(IVAN, 0);
+  FieldScript_ShowMessageAndWait(LOCALID_IVAN, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_ArmCallback(MIA, FACING_NORTH, 0);
+  ObjectMotion_ArmCallback(LOCALID_MIA, FACING_NORTH, 0);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
   // The second question, Mia's: must they find Jenna before going to
   // Lemuria? Garet answers either way.
@@ -426,20 +426,20 @@ static void LemurianShip_SetSail(void) {
   if (FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER, 0) ==
       0) {
     FieldScript_WaitFrames(20);
-    ObjectMotion_SetVarCbAndRefresh(GARET, 2);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
     FieldScript_WaitFrames(20);
-    ObjectMotion_ArmCallback(GARET, FACING_NORTHEAST, 0);
+    ObjectMotion_ArmCallback(LOCALID_GARET, FACING_NORTHEAST, 0);
     FieldScript_WaitFrames(20);
-    FieldScript_ShowMessageAndWait(GARET, 0);
+    FieldScript_ShowMessageAndWait(LOCALID_GARET, 0);
     gFieldWork->message++;
   } else {
     FieldScript_WaitFrames(20);
-    ObjectMotion_SetVarCbAndRefresh(GARET, 2);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
     FieldScript_WaitFrames(20);
-    ObjectMotion_ArmCallback(GARET, FACING_NORTHEAST, 0);
+    ObjectMotion_ArmCallback(LOCALID_GARET, FACING_NORTHEAST, 0);
     FieldScript_WaitFrames(20);
     gFieldWork->message++;
-    FieldScript_ShowMessageAndWait(GARET, 0);
+    FieldScript_ShowMessageAndWait(LOCALID_GARET, 0);
   }
   FieldScript_WaitFrames(10);
   // Ivan: their first time on the ocean; Garet: the ocean Kraden wanted
@@ -447,104 +447,104 @@ static void LemurianShip_SetSail(void) {
   FieldEffect_SpawnLinked(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE,
                           50);
   FieldScript_WaitFrames(10);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHWEST, 0);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetAnimationAndWait(IVAN, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  FieldScript_ShowMessageAndWait(IVAN, 0);
+  FieldScript_ShowMessageAndWait(LOCALID_IVAN, 0);
   FieldScript_WaitFrames(20);
-  FieldScript_ShowMessageAndWait(GARET, 0);
+  FieldScript_ShowMessageAndWait(LOCALID_GARET, 0);
   FieldScript_WaitFrames(20);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(30);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(MIA, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
   FieldScript_WaitFrames(20);
   // The third question, Mia's: the seas are rough; will they be all right?
   FieldMessage_ShowAtObject(3, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTH, 0);
-  ObjectMotion_ArmCallback(IVAN, FACING_NORTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHEAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTH, 0);
+  ObjectMotion_ArmCallback(LOCALID_IVAN, FACING_NORTHWEST, 0);
   FieldScript_WaitFrames(20);
   if (FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER, 0) ==
       0) {
     FieldScript_WaitFrames(30);
-    ObjectMotion_SetAnimationAndWait(MIA, ANIM_NOD);
+    ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
     FieldScript_WaitFrames(20);
-    FieldScript_ShowMessageAndWait(MIA, 0);
+    FieldScript_ShowMessageAndWait(LOCALID_MIA, 0);
     gFieldWork->message++;
   } else {
     FieldScript_WaitFrames(30);
-    ObjectMotion_SetAnimationAndWait(MIA, ANIM_NOD);
+    ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
     FieldScript_WaitFrames(20);
     gFieldWork->message++;
-    FieldScript_ShowMessageAndWait(MIA, 0);
+    FieldScript_ShowMessageAndWait(LOCALID_MIA, 0);
   }
   FieldScript_WaitFrames(10);
   // Garet: "Well... Shall we, then?" Ivan: "To sea..." Mia: Jenna is waiting
   // for them. The departure theme starts.
-  ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 0);
   FieldScript_WaitFrames(30);
-  FieldScript_ShowMessageAndWait(GARET, 0);
+  FieldScript_ShowMessageAndWait(LOCALID_GARET, 0);
   FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   FieldScript_WaitFrames(30);
   FieldScript_WaitFrames(10);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTH, 0);
   FieldScript_WaitFrames(30);
-  ObjectMotion_SetAnimationAndWait(IVAN, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  FieldScript_ShowMessageAndWait(IVAN, 0);
+  FieldScript_ShowMessageAndWait(LOCALID_IVAN, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(MIA, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  FieldScript_ShowMessageAndWait(MIA, 0);
+  FieldScript_ShowMessageAndWait(LOCALID_MIA, 0);
   Sound_PlaySong(SONG_FADE_OUT_BGM);
   FieldScript_WaitFrames(10);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(IVAN, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
   FieldScript_WaitFrames(40);
   // Everyone boards by their own scripts, hopping up onto the deck (SE_153
   // each); the camera follows up to the ship.
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x13333, 0x9999);
-  ObjectEvent_SetSpeed(GARET, 0x13333, 0x9999);
-  ObjectEvent_SetSpeed(IVAN, 0x13333, 0x9999);
-  ObjectEvent_SetSpeed(MIA, 0x13333, 0x9999);
+  ObjectEvent_SetSpeed(LOCALID_GARET, 0x13333, 0x9999);
+  ObjectEvent_SetSpeed(LOCALID_IVAN, 0x13333, 0x9999);
+  ObjectEvent_SetSpeed(LOCALID_MIA, 0x13333, 0x9999);
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER, gLeaderBoardsShip);
   FieldScript_WaitFrames(50);
   FieldCamera_MoveTo(PIXELS(264), -1, PIXELS(200), 1);
-  ObjectEvent_SetActionScript(GARET, gGaretBoardsShip);
+  ObjectEvent_SetActionScript(LOCALID_GARET, gGaretBoardsShip);
   FieldScript_WaitFrames(50);
-  ObjectEvent_SetActionScript(IVAN, gIvanBoardsShip);
+  ObjectEvent_SetActionScript(LOCALID_IVAN, gIvanBoardsShip);
   ObjectEvent_RefreshSelectorById(2);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_SOUTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_SOUTH, 0);
   // Mia, last, looks back at the shore before she boards.
   FieldObjectMotion_CommitPositionAndActivate(3, 0, -32);
   FieldScript_WaitFrames(30);
-  ObjectMotion_ArmCallback(MIA, FACING_SOUTH, 0);
+  ObjectMotion_ArmCallback(LOCALID_MIA, FACING_SOUTH, 0);
   FieldScript_WaitFrames(60);
-  ObjectEvent_FaceDirection(MIA, FACING_WEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_WEST, 0);
   FieldScript_WaitFrames(20);
-  ObjectEvent_SetActionScript(MIA, gMiaBoardsShip);
+  ObjectEvent_SetActionScript(LOCALID_MIA, gMiaBoardsShip);
   ObjectEvent_RefreshSelectorById(3);
-  ObjectMotion_ArmCallback(MIA, FACING_NORTH, 0);
+  ObjectMotion_ArmCallback(LOCALID_MIA, FACING_NORTH, 0);
   FieldScript_WaitFrames(20);
   // On deck, all four turn west together and nod.
   FieldCamera_MoveTo(PIXELS(216), -1, PIXELS(168), 1);
   FieldCamera_WaitForArrival();
   FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_WEST, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_WEST, 0);
-  ObjectMotion_ArmCallback(MIA, FACING_WEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_WEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_WEST, 0);
+  ObjectMotion_ArmCallback(LOCALID_MIA, FACING_WEST, 0);
   FieldScript_WaitFrames(40);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(MIA, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(IVAN, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
   FieldScript_WaitFrames(30);
   // The ship sails east and the curtains close: the sea's layer scrolls
   // faster while the gangway's north piece moves off with the ship, and the
@@ -743,19 +743,19 @@ s32 LemurianShip_SetupMap(void) {
     SET_SHADOW_PRIORITY(objectEvent, 1);
   }
   {
-    struct ObjectEvent *objectEvent = ObjectEvent_GetById(GARET);
+    struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_GARET);
 
     SET_IMAGE_PRIORITY(objectEvent, 1);
     SET_SHADOW_PRIORITY(objectEvent, 1);
   }
   {
-    struct ObjectEvent *objectEvent = ObjectEvent_GetById(IVAN);
+    struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_IVAN);
 
     SET_IMAGE_PRIORITY(objectEvent, 1);
     SET_SHADOW_PRIORITY(objectEvent, 1);
   }
   {
-    struct ObjectEvent *objectEvent = ObjectEvent_GetById(MIA);
+    struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_MIA);
 
     SET_IMAGE_PRIORITY(objectEvent, 1);
     SET_SHADOW_PRIORITY(objectEvent, 1);
@@ -995,11 +995,11 @@ u32 gLemurianShipWarps[] = {
 };
 
 struct ObjectEventTemplate gLemurianShipObjectEventTemplates[] = {
-    {GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST,
+    {LOCALID_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST,
      TALK_FACING_PARTY, 0},
-    {IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST,
+    {LOCALID_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST,
      TALK_FACING_PARTY, 0},
-    {MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST,
+    {LOCALID_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST,
      TALK_FACING_PARTY, 0},
     {SPRITE_GANGWAY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(312), 0,
      PIXELS(248), FACING_SOUTH, TALK_FACING_KEEP, 0},

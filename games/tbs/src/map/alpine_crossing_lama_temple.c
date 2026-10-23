@@ -320,13 +320,13 @@ static void LamaTemple_RunHamasFarewell(void) {
   ObjectEvent_SetPosition(LOCALID_TEMPLE_HAMA, PIXELS(136), PIXELS(168));
   ObjectEvent_FaceDirection(LOCALID_TEMPLE_HAMA, FACING_SOUTH + FACING_STEP, 0);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(144), PIXELS(200));
-  ObjectEvent_SetPosition(GARET, PIXELS(160), PIXELS(192));
-  ObjectEvent_SetPosition(IVAN, PIXELS(128), PIXELS(200));
-  ObjectEvent_SetPosition(MIA, PIXELS(112), PIXELS(192));
+  ObjectEvent_SetPosition(LOCALID_GARET, PIXELS(160), PIXELS(192));
+  ObjectEvent_SetPosition(LOCALID_IVAN, PIXELS(128), PIXELS(200));
+  ObjectEvent_SetPosition(LOCALID_MIA, PIXELS(112), PIXELS(192));
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTHWEST, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHEAST, 0);
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   FieldScript_StartScreenTransition();
@@ -339,73 +339,73 @@ static void LamaTemple_RunHamasFarewell(void) {
   FieldScript_SetMessageId(MsgMountainAdeptsLetMeThankAgain);
   Script_ShowMessageAndWait(LOCALID_TEMPLE_HAMA, 0, 20);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(IVAN, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(MIA, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
   FieldScript_WaitFrames(20);
   ObjectMotion_SetAnimationAndWait(LOCALID_TEMPLE_HAMA, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_TEMPLE_HAMA, 0, 20);
-  ObjectMotion_SetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(MIA, 0, 20);
-  ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
+  Script_ShowMessageAndWait(LOCALID_MIA, 0, 20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 2);
   FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(IVAN, 0, 20);
+  Script_ShowMessageAndWait(LOCALID_IVAN, 0, 20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_TEMPLE_HAMA, 2);
   ObjectEvent_FaceDirection(LOCALID_TEMPLE_HAMA, FACING_SOUTH + FACING_STEP,
                             20);
   Script_ShowMessageAndWait(LOCALID_TEMPLE_HAMA, 0, 20);
-  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   FieldScript_WaitFrames(120);
 
   // Garet claims that helping was his idea and asks the leader to agree.
-  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
   FieldScript_WaitFrames(20);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTHWEST, 20);
-  Script_OpenMessage(GARET, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHWEST, 20);
+  Script_OpenMessage(LOCALID_GARET, 0);
   if (FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER, 0) ==
       0) {
     FieldScript_WaitFrames(20);
-    ObjectEvent_FaceDirection(MIA, FACING_EAST, 20);
-    ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-    Script_ShowMessageAndWait(MIA, 0, 20);
+    ObjectEvent_FaceDirection(LOCALID_MIA, FACING_EAST, 20);
+    ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+    Script_ShowMessageAndWait(LOCALID_MIA, 0, 20);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHEAST, 0);
-    ObjectEvent_FaceDirection(IVAN, FACING_NORTHEAST, 0);
-    ObjectMotion_SetVariantCallback(GARET, 2);
-    ObjectEvent_SetAttachedEffect(GARET, ATTACHED_EFFECT_IN_FRONT |
-                                             ATTACHED_EFFECT_ONCE);
+    ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHEAST, 0);
+    ObjectMotion_SetVariantCallback(LOCALID_GARET, 2);
+    ObjectEvent_SetAttachedEffect(LOCALID_GARET, ATTACHED_EFFECT_IN_FRONT |
+                                                     ATTACHED_EFFECT_ONCE);
     FieldScript_WaitFrames(60);
-    ObjectEvent_FaceDirection(GARET, FACING_WEST, 20);
-    Script_ShowMessageAndWait(GARET, 0, 20);
+    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_WEST, 20);
+    Script_ShowMessageAndWait(LOCALID_GARET, 0, 20);
     Script_SkipMessages(2);
   } else {
     Script_SkipMessages(2);
     FieldScript_WaitFrames(20);
-    ObjectEvent_FaceDirection(MIA, FACING_EAST, 20);
-    ObjectMotion_SetAnimationAndWait(MIA, ANIM_NOD);
+    ObjectEvent_FaceDirection(LOCALID_MIA, FACING_EAST, 20);
+    ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
     FieldScript_WaitFrames(20);
-    Script_ShowMessageAndWait(MIA, 0, 20);
-    ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+    Script_ShowMessageAndWait(LOCALID_MIA, 0, 20);
+    ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHEAST, 0);
-    ObjectEvent_FaceDirection(IVAN, FACING_NORTHEAST, 0);
-    Script_ShowMessageAndWait(GARET, 0, 20);
+    ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHEAST, 0);
+    Script_ShowMessageAndWait(LOCALID_GARET, 0, 20);
   }
 
   // Hama wishes them well and goes back into her room.
   ObjectMotion_SetVarCbAndRefresh(LOCALID_TEMPLE_HAMA, 2);
   FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTHWEST, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHEAST, 0);
   FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_TEMPLE_HAMA, FACING_SOUTH - FACING_STEP,
                             20);
   Script_ShowMessageAndWait(LOCALID_TEMPLE_HAMA, 0, 20);
-  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetAnimationAndWait(GARET, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
   FieldScript_WaitFrames(30);
   ObjectMotion_SetAnimationAndWait(LOCALID_TEMPLE_HAMA, ANIM_NOD);
   FieldScript_WaitFrames(20);
@@ -414,9 +414,9 @@ static void LamaTemple_RunHamasFarewell(void) {
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_TEMPLE_HAMA, 0, 20);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(IVAN, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(MIA, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
   FieldScript_WaitFrames(20);
   ObjectMotion_SetAnimationAndWait(LOCALID_TEMPLE_HAMA, ANIM_NOD);
   FieldScript_WaitFrames(20);
@@ -433,84 +433,84 @@ static void LamaTemple_RunHamasFarewell(void) {
   Map_PlayQueuedMusic();
 
   // Garet asks whether the leader means to leave Hama's words unasked.
-  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
   FieldScript_WaitFrames(20);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTHWEST, 20);
-  Script_ShowMessageAndWait(GARET, 0, 20);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHWEST, 20);
+  Script_ShowMessageAndWait(LOCALID_GARET, 0, 20);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 20);
-  ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 2);
   FieldScript_WaitFrames(20);
-  ObjectEvent_FaceDirection(MIA, FACING_SOUTHEAST, 20);
-  Script_ShowMessageAndWait(MIA, 0, 20);
-  ObjectMotion_SetVarCbAndRefresh(GARET, 1);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_SOUTHEAST, 20);
+  Script_ShowMessageAndWait(LOCALID_MIA, 0, 20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 1);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHEAST, 20);
-  Script_AskYesNo(GARET, 0);
+  Script_AskYesNo(LOCALID_GARET, 0);
   FieldScript_WaitFrames(20);
 
   // Ivan decides that Hama will tell him when their mission is done.
-  ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 2);
   FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 20);
-  Script_ShowMessageAndWait(IVAN, 0, 20);
+  Script_ShowMessageAndWait(LOCALID_IVAN, 0, 20);
   ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 1);
-  ObjectMotion_SetVariantCallback(GARET, 1);
-  ObjectMotion_SetVarCbAndRefresh(MIA, 1);
+  ObjectMotion_SetVariantCallback(LOCALID_GARET, 1);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 1);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(IVAN, 0, 20);
-  ObjectMotion_SetVarCbAndRefresh(MIA, 2);
+  Script_ShowMessageAndWait(LOCALID_IVAN, 0, 20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 2);
   FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(MIA, 0, 20);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST + FACING_STEP, 20);
-  ObjectMotion_SetAnimationAndWait(IVAN, ANIM_NOD);
+  Script_ShowMessageAndWait(LOCALID_MIA, 0, 20);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHWEST + FACING_STEP, 20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetAnimationAndWait(IVAN, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(IVAN, 0, 20);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  Script_ShowMessageAndWait(GARET, 0, 20);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTHEAST, 20);
-  ObjectMotion_SetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
+  Script_ShowMessageAndWait(LOCALID_IVAN, 0, 20);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  Script_ShowMessageAndWait(LOCALID_GARET, 0, 20);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHEAST, 20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(IVAN, 0, 20);
+  Script_ShowMessageAndWait(LOCALID_IVAN, 0, 20);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  Script_ShowMessageAndWait(MIA, 0, 20);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 20);
-  ObjectMotion_SetAnimationAndWait(IVAN, ANIM_NOD);
+  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  Script_ShowMessageAndWait(LOCALID_MIA, 0, 20);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHWEST, 20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(IVAN, 0, 20);
+  Script_ShowMessageAndWait(LOCALID_IVAN, 0, 20);
   ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 1);
-  ObjectMotion_SetVariantCallback(GARET, 1);
-  ObjectMotion_SetVarCbAndRefresh(MIA, 1);
+  ObjectMotion_SetVariantCallback(LOCALID_GARET, 1);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 1);
   FieldScript_WaitFrames(20);
-  ObjectEvent_SetSpeed(IVAN, 0x8000, 0x4000);
-  ObjectEvent_WalkToAndWait(IVAN, 128, 184);
-  ObjectEvent_FaceDirection(IVAN, FACING_SOUTH, 20);
+  ObjectEvent_SetSpeed(LOCALID_IVAN, 0x8000, 0x4000);
+  ObjectEvent_WalkToAndWait(LOCALID_IVAN, 128, 184);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_SOUTH, 20);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTHWEST, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST, 20);
-  ObjectMotion_SetAnimationAndWait(IVAN, ANIM_NOD);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHEAST, 20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(IVAN, 0, 20);
+  Script_ShowMessageAndWait(LOCALID_IVAN, 0, 20);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(MIA, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
   FieldScript_WaitFrames(20);
 
   // Garet, Ivan and Mia walk to the leader and rejoin the party.
-  ObjectEvent_SetSpeed(GARET, 0x8000, 0x4000);
-  ObjectEvent_SetSpeed(MIA, 0x8000, 0x4000);
-  ObjectEvent_WalkTo(GARET, 144, 200);
-  ObjectEvent_WalkTo(IVAN, 144, 200);
-  ObjectEvent_WalkTo(MIA, 144, 200);
-  ObjectMotion_CommitCurrentPositionAndActivate(GARET);
-  ObjectEvent_SetPosition(GARET, 0, 0);
-  ObjectMotion_CommitCurrentPositionAndActivate(IVAN);
-  ObjectEvent_SetPosition(IVAN, 0, 0);
-  ObjectMotion_CommitCurrentPositionAndActivate(MIA);
-  ObjectEvent_SetPosition(MIA, 0, 0);
+  ObjectEvent_SetSpeed(LOCALID_GARET, 0x8000, 0x4000);
+  ObjectEvent_SetSpeed(LOCALID_MIA, 0x8000, 0x4000);
+  ObjectEvent_WalkTo(LOCALID_GARET, 144, 200);
+  ObjectEvent_WalkTo(LOCALID_IVAN, 144, 200);
+  ObjectEvent_WalkTo(LOCALID_MIA, 144, 200);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
+  ObjectEvent_SetPosition(LOCALID_GARET, 0, 0);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_IVAN);
+  ObjectEvent_SetPosition(LOCALID_IVAN, 0, 0);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_MIA);
+  ObjectEvent_SetPosition(LOCALID_MIA, 0, 0);
   FieldScript_End();
 }
 
@@ -1157,11 +1157,11 @@ u32 gAlpineCrossingLamaTemple_Warps[] = {
 
 // clang-format off
 struct ObjectEventTemplate gLamaTemple_ObjectEventTemplates[] = {
-    { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
-    { IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
-    { MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_HAMA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0 },

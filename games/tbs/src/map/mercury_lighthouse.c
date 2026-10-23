@@ -1464,47 +1464,47 @@ static void MercuryLighthouse_MiaSensesSomeoneInside(void) {
   struct ObjectEvent *mia;
 
   FieldScript_Start();
-  ObjectEvent_SetSpeed(MIA, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
   FieldScript_SetMessageId(MsgImilSomebodyHere);
-  Script_ShowMessageAndWait(MIA, 0, 20);
-  ObjectEvent_WalkToAndWait(MIA, 840, 648);
-  ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-  ObjectEvent_FaceDirection(MIA, FACING_WEST, 20);
-  Engine_ObjectEventSetAnimation(MIA, 16);
-  mia = ObjectEvent_GetById(MIA);
+  Script_ShowMessageAndWait(LOCALID_MIA, 0, 20);
+  ObjectEvent_WalkToAndWait(LOCALID_MIA, 840, 648);
+  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_WEST, 20);
+  Engine_ObjectEventSetAnimation(LOCALID_MIA, 16);
+  mia = ObjectEvent_GetById(LOCALID_MIA);
   mia->scaleX = -Q16_ONE;
   FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(MIA, 0, 20);
-  Engine_ObjectEventSetAnimation(MIA, ANIM_STAND);
-  mia = ObjectEvent_GetById(MIA);
+  Script_ShowMessageAndWait(LOCALID_MIA, 0, 20);
+  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_STAND);
+  mia = ObjectEvent_GetById(LOCALID_MIA);
   mia->scaleX = Q16_ONE;
   FieldScript_WaitFrames(20);
-  ObjectEvent_FaceDirection(MIA, FACING_SOUTH, 20);
-  Script_OpenMessage(MIA, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_SOUTH, 20);
+  Script_OpenMessage(LOCALID_MIA, 0);
   if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
     FieldScript_WaitFrames(20);
-    ObjectMotion_SetAnimationAndWait(MIA, ANIM_NOD);
-    Script_ShowMessageAndWait(MIA, 0, 20);
+    ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
+    Script_ShowMessageAndWait(LOCALID_MIA, 0, 20);
     gFieldWork->message += 1;
   } else {
     gFieldWork->message += 1;
     FieldScript_WaitFrames(20);
-    ObjectMotion_SetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
-    Script_ShowMessageAndWait(MIA, 0, 20);
+    ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_SHAKE_HEAD);
+    Script_ShowMessageAndWait(LOCALID_MIA, 0, 20);
   }
   FieldScript_WaitFrames(20);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTH, 20);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTH, 20);
   FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
   FieldCamera_MoveTo(PIXELS(840), -1, PIXELS(632), 1);
-  ObjectEvent_WalkToAndWait(MIA, 840, 632);
+  ObjectEvent_WalkToAndWait(LOCALID_MIA, 840, 632);
   FieldCamera_WaitForArrival();
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetVarCbAndRefresh(MIA, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 2);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(MIA, 0, 20);
+  Script_ShowMessageAndWait(LOCALID_MIA, 0, 20);
   GameFlag_Set(FLAG_MIA_SENSED_SOMEONE_INSIDE);
   FieldScript_End();
 }
@@ -1513,10 +1513,10 @@ static void MercuryLighthouse_MiaSensesSomeoneInside(void) {
 /// the entrance."
 static void MercuryLighthouse_MiaDiscussesBlockedEntrance(void) {
   FieldScript_Start();
-  ObjectMotion_SetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
   FieldScript_SetMessageId(MSGNO(MsgImilStatueBlocksEntrance));
-  FieldScript_ShowMessageThenWait(MIA, 0, 20);
+  FieldScript_ShowMessageThenWait(LOCALID_MIA, 0, 20);
   FieldScript_End();
 }
 
@@ -1573,93 +1573,93 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
   if (column != 51) {
   } else {
     // Mia turns: "Did you do that?"
-    ObjectMotion_SetSpeedParameters(MIA, PIXELS(4) / 5, PIXELS(2) / 5);
+    ObjectMotion_SetSpeedParameters(LOCALID_MIA, PIXELS(4) / 5, PIXELS(2) / 5);
     FieldScript_WaitFrames(20);
-    ObjectMotion_SetVarCbAndRefresh(MIA, 2);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 2);
     FieldScript_WaitFrames(20);
-    ObjectEvent_FaceDirection(MIA, FACING_NORTH + FACING_STEP, 0);
+    ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTH + FACING_STEP, 0);
     ObjectMotion_ArmCallback(LOCALID_PARTY_LEADER, FACING_SOUTH + FACING_STEP,
                              10);
     FieldScript_SetMessageId(MsgMercuryDidThat);
-    FieldMessage_ShowAtObject(MIA, 0);
+    FieldMessage_ShowAtObject(LOCALID_MIA, 0);
     if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
       gFieldWork->message += 1;
       FieldScript_WaitFrames(20);
-      ObjectMotion_SetAnimationAndWait(MIA, ANIM_NOD);
-      FieldScript_ShowMessageThenWait(MIA, 0, 20);
+      ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
+      FieldScript_ShowMessageThenWait(LOCALID_MIA, 0, 20);
     } else {
       FieldScript_WaitFrames(20);
-      ObjectMotion_SetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
-      Script_ShowMessageAndWait(MIA, 0, 20);
+      ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_SHAKE_HEAD);
+      Script_ShowMessageAndWait(LOCALID_MIA, 0, 20);
       gFieldWork->message += 1;
     }
     FieldEffect_SpawnLinked(LOCALID_PARTY_LEADER,
                             EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
     // Garet and Ivan step out to explain Psynergy; Mia tells of Ply.
-    objectEvent = ObjectEvent_GetById(GARET);
+    objectEvent = ObjectEvent_GetById(LOCALID_GARET);
     SetEffectRecordMode(objectEvent, 1);
-    objectEvent = ObjectEvent_GetById(IVAN);
+    objectEvent = ObjectEvent_GetById(LOCALID_IVAN);
     SetEffectRecordMode(objectEvent, 1);
-    ObjectEvent_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
-    ObjectEvent_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
-    ObjectEvent_SetPosition(GARET, PIXELS(872), PIXELS(600));
-    ObjectEvent_SetPosition(IVAN, PIXELS(872), PIXELS(600));
-    ObjectEvent_WalkTo(IVAN, 888, 632);
-    ObjectEvent_WalkToAndWait(GARET, 880, 616);
-    ObjectEvent_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 0);
-    ObjectMotion_CommitCurrentPositionAndActivate(IVAN);
-    ObjectEvent_FaceDirection(IVAN, FACING_WEST, 0);
-    ObjectMotion_SetVarCbAndRefresh(GARET, 1);
+    ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
+    ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
+    ObjectEvent_SetPosition(LOCALID_GARET, PIXELS(872), PIXELS(600));
+    ObjectEvent_SetPosition(LOCALID_IVAN, PIXELS(872), PIXELS(600));
+    ObjectEvent_WalkTo(LOCALID_IVAN, 888, 632);
+    ObjectEvent_WalkToAndWait(LOCALID_GARET, 880, 616);
+    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH + FACING_STEP, 0);
+    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_IVAN);
+    ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_WEST, 0);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 1);
     FieldScript_WaitFrames(20);
-    FieldScript_ShowMessageThenWait(GARET, 0, 20);
-    ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-    Script_ShowMessageAndWait(MIA, 0, 20);
-    ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 0);
-    ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST + FACING_STEP, 20);
-    Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
-    ObjectMotion_SetAnimationAndWait(IVAN, ANIM_NOD);
+    FieldScript_ShowMessageThenWait(LOCALID_GARET, 0, 20);
+    ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+    Script_ShowMessageAndWait(LOCALID_MIA, 0, 20);
+    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
+    ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHWEST + FACING_STEP, 20);
+    Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+    ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
     FieldScript_WaitFrames(30);
-    ObjectEvent_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 0);
-    ObjectEvent_FaceDirection(IVAN, FACING_WEST, 20);
-    FieldScript_ShowMessageThenWait(IVAN, 0, 20);
-    ObjectMotion_SetAnimationAndWait(MIA, ANIM_NOD);
+    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH + FACING_STEP, 0);
+    ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_WEST, 20);
+    FieldScript_ShowMessageThenWait(LOCALID_IVAN, 0, 20);
+    ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
     FieldScript_WaitFrames(20);
-    FieldScript_ShowMessageThenWait(MIA, 0, 20);
-    ObjectMotion_ResetAndSetPositionInMode2(MIA, 840, 656);
+    FieldScript_ShowMessageThenWait(LOCALID_MIA, 0, 20);
+    ObjectMotion_ResetAndSetPositionInMode2(LOCALID_MIA, 840, 656);
     FieldScript_WaitFrames(5);
-    ObjectMotion_ArmCallback(IVAN, FACING_SOUTH + FACING_STEP, 0);
+    ObjectMotion_ArmCallback(LOCALID_IVAN, FACING_SOUTH + FACING_STEP, 0);
     FieldScript_WaitFrames(10);
     ObjectMotion_ArmCallback(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
-    ObjectMotion_CommitCurrentPositionAndActivate(MIA);
+    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_MIA);
     FieldScript_WaitFrames(10);
-    FieldScript_ShowMessageThenWait(MIA, 0, 20);
-    ObjectEvent_FaceDirection(MIA, FACING_NORTH + FACING_STEP, 20);
-    FieldScript_ShowMessageThenWait(MIA, 0, 20);
-    ObjectMotion_SetVarCbAndRefresh(GARET, 1);
+    FieldScript_ShowMessageThenWait(LOCALID_MIA, 0, 20);
+    ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTH + FACING_STEP, 20);
+    FieldScript_ShowMessageThenWait(LOCALID_MIA, 0, 20);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 1);
     FieldScript_WaitFrames(20);
-    ObjectEvent_FaceDirection(GARET, FACING_NORTH, 20);
-    FieldMessage_ShowAtObject(GARET, 0);
+    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 20);
+    FieldMessage_ShowAtObject(LOCALID_GARET, 0);
     if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
       FieldScript_WaitFrames(20);
-      ObjectMotion_SetAnimationAndWait(GARET, ANIM_NOD);
-      FieldScript_ShowMessageThenWait(GARET, 0, 20);
+      ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
+      FieldScript_ShowMessageThenWait(LOCALID_GARET, 0, 20);
       gFieldWork->message += 1;
     } else {
       gFieldWork->message += 1;
       FieldScript_WaitFrames(20);
-      ObjectMotion_SetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
-      FieldScript_ShowMessageThenWait(GARET, 0, 20);
+      ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_SHAKE_HEAD);
+      FieldScript_ShowMessageThenWait(LOCALID_GARET, 0, 20);
     }
-    Engine_ObjectEventSetAnimation(MIA, 16);
+    Engine_ObjectEventSetAnimation(LOCALID_MIA, 16);
     FieldScript_WaitFrames(30);
-    ObjectMotion_SetVarCbAndRefresh(MIA, 1);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 1);
     FieldScript_WaitFrames(20);
-    FieldScript_ShowMessageThenWait(MIA, 0, 20);
-    ObjectEvent_WalkToAndWait(MIA, 840, 632);
+    FieldScript_ShowMessageThenWait(LOCALID_MIA, 0, 20);
+    ObjectEvent_WalkToAndWait(LOCALID_MIA, 840, 632);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH + FACING_STEP,
                               0);
-    ObjectEvent_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 0);
-    ObjectEvent_FaceDirection(IVAN, FACING_WEST, 0);
+    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH + FACING_STEP, 0);
+    ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_WEST, 0);
     FieldScript_WaitFrames(30);
     // Mia casts Ply on the door: a flash, the light turns white and the door
     // opens.
@@ -1682,43 +1682,43 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
     Task_Remove(MercuryLighthouse_CycleEntrancePalette);
     FieldScript_WaitFrames(20);
     // She nods, jumps up and goes in.
-    ObjectMotion_SetAnimationAndWait(MIA, ANIM_NOD);
+    ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
     FieldScript_WaitFrames(20);
-    ObjectEvent_SetSpeed(MIA, PIXELS(3), PIXELS(3) / 2);
-    ObjectMotion_Launch(MIA, 4, 0);
-    ObjectEvent_WalkTo(MIA, 840, 600);
-    ObjectMotion_CommitCurrentPositionAndActivate(MIA);
+    ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(3), PIXELS(3) / 2);
+    ObjectMotion_Launch(LOCALID_MIA, 4, 0);
+    ObjectEvent_WalkTo(LOCALID_MIA, 840, 600);
+    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_MIA);
     MapGrid_CopyCellAttributes(116, 36, 3, 4, 52, 36);
     ObjectEvent_PrepareObject(PIXELS(840), PIXELS(56), PIXELS(608), 223);
-    ObjectEvent_SetSpeed(MIA, PIXELS(4) / 5, PIXELS(2) / 5);
-    ObjectEvent_WalkToAndWait(MIA, 840, 560);
-    Engine_ObjectEventSetPosition(MIA, 0, 0);
+    ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(4) / 5, PIXELS(2) / 5);
+    ObjectEvent_WalkToAndWait(LOCALID_MIA, 840, 560);
+    Engine_ObjectEventSetPosition(LOCALID_MIA, 0, 0);
     FieldScript_WaitFrames(20);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
-    ObjectEvent_FaceDirection(GARET, FACING_WEST, 0);
-    ObjectMotion_ArmCallback(IVAN, FACING_NORTHWEST + FACING_STEP, 0);
+    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_WEST, 0);
+    ObjectMotion_ArmCallback(LOCALID_IVAN, FACING_NORTHWEST + FACING_STEP, 0);
     FieldScript_WaitFrames(10);
     Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-    Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
-    ObjectMotion_SetAnimationAndWait(IVAN, ANIM_NOD);
+    Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+    ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
     FieldScript_WaitFrames(20);
     // Garet and Ivan rejoin the leader.
-    Engine_ObjectEventSetAnimation(GARET, ANIM_WALK);
+    Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
     objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     if (objectEvent != 0) {
-      ObjectMotion_ResetAndSetPosition(GARET, objectEvent->x.part.pixel,
+      ObjectMotion_ResetAndSetPosition(LOCALID_GARET, objectEvent->x.part.pixel,
                                        objectEvent->z.part.pixel);
     }
-    Engine_ObjectEventSetAnimation(IVAN, ANIM_WALK);
+    Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_WALK);
     objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     if (objectEvent != 0) {
-      ObjectEvent_SetDestination(IVAN, objectEvent->x.part.pixel,
+      ObjectEvent_SetDestination(LOCALID_IVAN, objectEvent->x.part.pixel,
                                  objectEvent->z.part.pixel);
     }
-    ObjectMotion_CommitCurrentPositionAndActivate(GARET);
-    Engine_ObjectEventSetPosition(GARET, 0, 0);
-    ObjectMotion_CommitCurrentPositionAndActivate(IVAN);
-    Engine_ObjectEventSetPosition(IVAN, 0, 0);
+    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
+    Engine_ObjectEventSetPosition(LOCALID_GARET, 0, 0);
+    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_IVAN);
+    Engine_ObjectEventSetPosition(LOCALID_IVAN, 0, 0);
     GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_OPENED_BY_MIA);
   }
   FieldScript_End();
@@ -1966,48 +1966,48 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     FieldScript_End();
   } else {
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
-    ObjectEvent_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
-    ObjectEvent_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
-    ObjectEvent_SetSpeed(MIA, PIXELS(4) / 5, PIXELS(2) / 5);
+    ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
+    ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
+    ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(4) / 5, PIXELS(2) / 5);
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 824, 240);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHWEST, 20);
-    ObjectEvent_SetPosition(MIA, PIXELS(824), PIXELS(240));
-    ObjectEvent_WalkToAndWait(MIA, 792, 232);
-    ObjectEvent_FaceDirection(MIA, FACING_NORTH, 0);
+    ObjectEvent_SetPosition(LOCALID_MIA, PIXELS(824), PIXELS(240));
+    ObjectEvent_WalkToAndWait(LOCALID_MIA, 792, 232);
+    ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTH, 0);
     FieldScript_WaitFrames(60);
-    ObjectEvent_FaceDirection(MIA, FACING_SOUTHEAST, 20);
-    ObjectMotion_SetAnimationAndWait(MIA, ANIM_NOD);
+    ObjectEvent_FaceDirection(LOCALID_MIA, FACING_SOUTHEAST, 20);
+    ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
     FieldScript_WaitFrames(40);
-    ObjectEvent_FaceDirection(MIA, FACING_NORTH, 20);
-    ObjectEvent_WalkToAndWait(MIA, 792, 200);
-    MercuryLighthouse_RaiseObjectEventWithSparks(MIA);
+    ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTH, 20);
+    ObjectEvent_WalkToAndWait(LOCALID_MIA, 792, 200);
+    MercuryLighthouse_RaiseObjectEventWithSparks(LOCALID_MIA);
     FieldScript_WaitFrames(20);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_PARTY_LEADER, 2);
     FieldScript_WaitFrames(30);
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 792, 232);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-    ObjectEvent_SetPosition(GARET, PIXELS(792), PIXELS(232));
-    ObjectEvent_SetPosition(IVAN, PIXELS(792), PIXELS(232));
-    ObjectEvent_WalkTo(GARET, 816, 224);
-    ObjectEvent_WalkToAndWait(IVAN, 768, 224);
-    ObjectMotion_CommitCurrentPositionAndActivate(GARET);
-    ObjectEvent_FaceDirection(GARET, FACING_NORTHWEST, 0);
-    ObjectEvent_FaceDirection(IVAN, FACING_NORTHEAST, 20);
+    ObjectEvent_SetPosition(LOCALID_GARET, PIXELS(792), PIXELS(232));
+    ObjectEvent_SetPosition(LOCALID_IVAN, PIXELS(792), PIXELS(232));
+    ObjectEvent_WalkTo(LOCALID_GARET, 816, 224);
+    ObjectEvent_WalkToAndWait(LOCALID_IVAN, 768, 224);
+    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
+    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHWEST, 0);
+    ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHEAST, 20);
     ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE,
                           0);
-    ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-    ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
-    ObjectEvent_FaceDirection(GARET, FACING_SOUTHWEST, 0);
-    ObjectEvent_FaceDirection(IVAN, FACING_SOUTHEAST, 20);
+    ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+    ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
+    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHWEST, 0);
+    ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_SOUTHEAST, 20);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_PARTY_LEADER, 1);
     FieldScript_WaitFrames(60);
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x8000, 0x4000);
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 792, 224);
-    ObjectEvent_FaceDirection(GARET, FACING_WEST, 0);
-    ObjectEvent_FaceDirection(IVAN, FACING_EAST, 0);
+    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_WEST, 0);
+    ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_EAST, 0);
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 792, 208);
-    ObjectEvent_FaceDirection(GARET, FACING_NORTHWEST, 0);
-    ObjectEvent_FaceDirection(IVAN, FACING_NORTHEAST, 20);
+    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHWEST, 0);
+    ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHEAST, 20);
     ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
     FieldScript_WaitFrames(20);
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(2), PIXELS(1));
@@ -2015,27 +2015,27 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 792, 200);
     FieldScript_WaitFrames(10);
     Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 18);
-    ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-    ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-    ObjectMotion_SetVariantCallback(GARET, 2);
-    ObjectMotion_SetVariantCallback(IVAN, 2);
+    ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    ObjectMotion_SetVariantCallback(LOCALID_GARET, 2);
+    ObjectMotion_SetVariantCallback(LOCALID_IVAN, 2);
     MercuryLighthouse_RaiseObjectEventWithSparks(LOCALID_PARTY_LEADER);
     FieldScript_WaitFrames(60);
-    ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-    ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
-    ObjectEvent_LinkPair(GARET, IVAN, 20);
-    Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
-    ObjectMotion_SetAnimationAndWait(IVAN, ANIM_NOD);
+    ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+    ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
+    ObjectEvent_LinkPair(LOCALID_GARET, LOCALID_IVAN, 20);
+    Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+    ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
     FieldScript_WaitFrames(40);
-    ObjectEvent_WalkToAndWait(GARET, 792, 216);
-    ObjectEvent_FaceDirection(IVAN, FACING_NORTHEAST, 0);
-    ObjectEvent_WalkToAndWait(GARET, 792, 200);
+    ObjectEvent_WalkToAndWait(LOCALID_GARET, 792, 216);
+    ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHEAST, 0);
+    ObjectEvent_WalkToAndWait(LOCALID_GARET, 792, 200);
     FieldScript_WaitFrames(30);
-    MercuryLighthouse_RaiseObjectEventWithSparks(GARET);
-    ObjectEvent_WalkToAndWait(IVAN, 792, 216);
-    ObjectEvent_WalkToAndWait(IVAN, 792, 200);
+    MercuryLighthouse_RaiseObjectEventWithSparks(LOCALID_GARET);
+    ObjectEvent_WalkToAndWait(LOCALID_IVAN, 792, 216);
+    ObjectEvent_WalkToAndWait(LOCALID_IVAN, 792, 200);
     FieldScript_WaitFrames(30);
-    MercuryLighthouse_RaiseObjectEventWithSparks(IVAN);
+    MercuryLighthouse_RaiseObjectEventWithSparks(LOCALID_IVAN);
     PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
     Task_Remove(MercuryLighthouse_CycleWaterfallPalette);
     PaletteFade_ApplyTarget(PALETTE_TINT_PALE, 0);
@@ -2387,8 +2387,8 @@ s32 MercuryLighthouse_Initialize(void) {
     case MERCURY_LIGHTHOUSE_LOWER_STATUE_FROM_POOL:
     case MERCURY_LIGHTHOUSE_LOWER_STATUE_FROM_WATERFALLS:
       if (!GameFlag_Get(FLAG_MIA_JOINED_PARTY)) {
-        ObjectEvent_SetPosition(MIA, PIXELS(696), PIXELS(632));
-        ObjectMotion_ArmCallback(MIA, FACING_EAST, 0);
+        ObjectEvent_SetPosition(LOCALID_MIA, PIXELS(696), PIXELS(632));
+        ObjectMotion_ArmCallback(LOCALID_MIA, FACING_EAST, 0);
       } else {
         ObjectEvent_SetPosition(LOCALID_STATUE_BLOCKING_MIA, PIXELS(776),
                                 PIXELS(632));
@@ -2657,7 +2657,7 @@ s32 MercuryLighthouse_Initialize(void) {
       PaletteFade_StartInterpolation(30);
       break;
     case MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE:
-      Engine_ObjectEventSetPosition(MIA, 0, 0);
+      Engine_ObjectEventSetPosition(LOCALID_MIA, 0, 0);
       BlendScript_Suspend();
       Io_Write16(0, &REG_BLDCNT);
       ObjectEvent_GetById(LOCALID_EAST_APPROACH_STATUE)->scaleX = -Q16_ONE;
@@ -2704,7 +2704,7 @@ s32 MercuryLighthouse_Initialize(void) {
       // Until Mia has hurried here from Imil (FLAG_IMIL_MET_MIA, set in
       // imil.c), she is not here and the door stays shut.
       if (!GameFlag_Get(FLAG_IMIL_MET_MIA)) {
-        Engine_ObjectEventSetPosition(MIA, 0, 0);
+        Engine_ObjectEventSetPosition(LOCALID_MIA, 0, 0);
         ObjectEvent_SetPosition(LOCALID_DOOR_STATUE, PIXELS(824), PIXELS(600));
         ObjectMotion_SetActionVariant(LOCALID_DOOR_STATUE, 1);
         MapGrid_CopyCellAttributes(116, 37, 3, 3, 52, 37);
@@ -2715,18 +2715,18 @@ s32 MercuryLighthouse_Initialize(void) {
       }
       if (!GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_OPENED_BY_MIA)) {
         if (!GameFlag_Get(FLAG_MIA_SENSED_SOMEONE_INSIDE)) {
-          ObjectMotion_ArmCallback(MIA, FACING_EAST, 0);
-          Engine_ObjectEventSetAnimation(MIA, 16);
+          ObjectMotion_ArmCallback(LOCALID_MIA, FACING_EAST, 0);
+          Engine_ObjectEventSetAnimation(LOCALID_MIA, 16);
         } else {
-          ObjectEvent_SetPosition(MIA, PIXELS(840), PIXELS(632));
-          ObjectEvent_FaceDirection(MIA, FACING_NORTH, 0);
+          ObjectEvent_SetPosition(LOCALID_MIA, PIXELS(840), PIXELS(632));
+          ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTH, 0);
         }
-        SetEffectRecordMode(ObjectEvent_GetById(MIA), 1);
+        SetEffectRecordMode(ObjectEvent_GetById(LOCALID_MIA), 1);
         MapGrid_CopyCellsTo(126, 35, 116, 35, 1, 2);
         FieldScheduler_AddCallback(MercuryLighthouse_CycleEntrancePalette,
                                    TASK_PRIORITY_MAP);
       } else {
-        Engine_ObjectEventSetPosition(MIA, 0, 0);
+        Engine_ObjectEventSetPosition(LOCALID_MIA, 0, 0);
         ObjectEvent_SetPosition(LOCALID_DOOR_STATUE, PIXELS(824), PIXELS(600));
         MapGrid_CopyCellAttributes(116, 36, 3, 4, 52, 36);
         ObjectEvent_GetById(LOCALID_DOOR_STATUE)->collisionFlags = 254;
@@ -2759,42 +2759,43 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
   firstMessage = MsgMercurySavedMeAgain;
   FieldScript_SetMessageId(firstMessage);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetVarCbAndRefresh(MIA, 1);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 1);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 20);
-  Script_ShowMessageAndWait(MIA, 0, 20);
-  ObjectMotion_SetAnimationAndWait(MIA, ANIM_NOD);
+  Script_ShowMessageAndWait(LOCALID_MIA, 0, 20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
   FieldScript_WaitFrames(20);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(20);
   FieldScript_WaitFrames(60);
-  Engine_ObjectEventSetAnimation(MIA, 16);
+  Engine_ObjectEventSetAnimation(LOCALID_MIA, 16);
   FieldScript_WaitFrames(50);
-  Engine_ObjectEventSetAnimation(MIA, ANIM_STAND);
-  FieldMessage_ShowAtObject(MIA, 0);
+  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_STAND);
+  FieldMessage_ShowAtObject(LOCALID_MIA, 0);
   if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 1) {
     // Each "no" brings "Please, don't hide anything." until the party says
     // yes.
     FieldScript_WaitFrames(20);
-    ObjectMotion_SetVarCbAndRefresh(MIA, 2);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 2);
     FieldScript_WaitFrames(20);
-    Script_ShowMessageAndWait(MIA, 0, 20);
-    ObjectMotion_SetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
+    Script_ShowMessageAndWait(LOCALID_MIA, 0, 20);
+    ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_SHAKE_HEAD);
     FieldScript_WaitFrames(20);
-    FieldScript_ShowMessageThenWait(MIA, 0, 20);
-    ObjectMotion_SetAnimationAndWait(MIA, ANIM_NOD);
+    FieldScript_ShowMessageThenWait(LOCALID_MIA, 0, 20);
+    ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
     FieldScript_WaitFrames(20);
-    FieldMessage_ShowAtObject(MIA, 0);
+    FieldMessage_ShowAtObject(LOCALID_MIA, 0);
     if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 1) {
       FieldScript_WaitFrames(20);
       /* FAKEMATCH(wrapper): called through an unprototyped cast, which loads
        * r1 before r0; called by its prototype, 1 of 222 instructions differ in
        * tbs-en. */
-      MERCURY_LIGHTHOUSE_ANIMATE_OBJ_EVENT_AND_WAIT(MIA, ANIM_SHAKE_HEAD);
+      MERCURY_LIGHTHOUSE_ANIMATE_OBJ_EVENT_AND_WAIT(LOCALID_MIA,
+                                                    ANIM_SHAKE_HEAD);
       FieldScript_WaitFrames(20);
       questionMessage = firstMessage + 5;
       for (;;) {
         FieldScript_SetMessageId(questionMessage);
-        FieldMessage_ShowAtObject(MIA, 0);
+        FieldMessage_ShowAtObject(LOCALID_MIA, 0);
         if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) != 1) {
           break;
         }
@@ -2802,28 +2803,29 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
         /* FAKEMATCH(wrapper): called through an unprototyped cast, which
          * loads r1 before r0; called by its prototype, 1 of 222 instructions
          * differ in tbs-en. */
-        MERCURY_LIGHTHOUSE_ANIMATE_OBJ_EVENT_AND_WAIT(MIA, ANIM_SHAKE_HEAD);
+        MERCURY_LIGHTHOUSE_ANIMATE_OBJ_EVENT_AND_WAIT(LOCALID_MIA,
+                                                      ANIM_SHAKE_HEAD);
         FieldScript_WaitFrames(20);
         questionMessage = MsgMercuryDontHideTruth;
       }
     }
   }
   FieldScript_SetMessageId(MsgMercuryThoughtSo);
-  ObjectEvent_SetSpeed(MIA, PIXELS(4) / 5, PIXELS(2) / 5);
-  ObjectMotion_SetPositionAndReset(MIA, 728, 632);
+  ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectMotion_SetPositionAndReset(LOCALID_MIA, 728, 632);
   FieldScript_WaitFrames(20);
-  FieldScript_ShowMessageThenWait(MIA, 0, 20);
-  Engine_ObjectEventSetAnimation(MIA, 16);
-  FieldScript_ShowMessageThenWait(MIA, 0, 20);
-  Engine_ObjectEventSetAnimation(MIA, ANIM_STAND);
-  ObjectMotion_SetAngleToward(MIA, LOCALID_PARTY_LEADER, 20);
-  ObjectMotion_SetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
+  FieldScript_ShowMessageThenWait(LOCALID_MIA, 0, 20);
+  Engine_ObjectEventSetAnimation(LOCALID_MIA, 16);
+  FieldScript_ShowMessageThenWait(LOCALID_MIA, 0, 20);
+  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_STAND);
+  ObjectMotion_SetAngleToward(LOCALID_MIA, LOCALID_PARTY_LEADER, 20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(MIA, 0, 20);
-  ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 90);
-  ObjectMotion_SetAnimationAndWait(MIA, ANIM_NOD);
+  Script_ShowMessageAndWait(LOCALID_MIA, 0, 20);
+  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 90);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(MIA, 0, 20);
+  Script_ShowMessageAndWait(LOCALID_MIA, 0, 20);
   FieldScript_PrepareObjectAndApplyValue(MIA, 1);
   // "The Adept Mia joined your party!" Fizz, a Mercury Djinni, comes with
   // her and is set; her stats are worked out again.
@@ -2831,14 +2833,14 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
   Djinn_Give(MIA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_FIZZ));
   Djinn_Set(MIA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_FIZZ));
   Unit_Calculate(MIA);
-  Engine_ObjectEventSetAnimation(MIA, ANIM_WALK);
+  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0) {
-    ObjectMotion_ResetAndSetPosition(MIA, leader->x.part.pixel,
+    ObjectMotion_ResetAndSetPosition(LOCALID_MIA, leader->x.part.pixel,
                                      leader->z.part.pixel);
   }
-  ObjectMotion_CommitCurrentPositionAndActivate(MIA);
-  Engine_ObjectEventSetPosition(MIA, 0, 0);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_MIA);
+  Engine_ObjectEventSetPosition(LOCALID_MIA, 0, 0);
   MapGrid_CopyCellAttributes(110, 39, 5, 1, 46, 39);
   GameFlag_Set(FLAG_MIA_JOINED_PARTY);
   FieldScript_End();
@@ -2948,7 +2950,7 @@ static void MercuryLighthouse_MiaCastsPlyOnEntrance(void) {
   effectWork = gFieldEffectWork;
   ObjectEvent_SetPosition(LOCALID_PLY_TARGET, PIXELS(840), PIXELS(600));
   FieldEffect_LoadActionEffectResources(ABILITY_PLY, 1);
-  FieldEffect_SetupObjectPair(MIA, LOCALID_PLY_TARGET);
+  FieldEffect_SetupObjectPair(LOCALID_MIA, LOCALID_PLY_TARGET);
   flags = (u8)effectWork->messageMode | FIELD_MESSAGE_LOWER;
   effectWork->messageMode = flags;
   FieldEffect_StartCast();
@@ -3289,7 +3291,7 @@ struct ObjectEventTemplate gMercuryLighthouseObjectEventTemplatesOther[] = {
 };
 
 struct ObjectEventTemplate gMercuryLighthouseLowerObjectEventTemplates[] = {
-    { MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BLUE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(792), 0, PIXELS(632), FACING_SOUTH, TALK_FACING_KEEP, 0 },
@@ -3349,11 +3351,11 @@ struct ObjectEventTemplate gMercuryLighthouseUpperObjectEventTemplates[] = {
 };
 
 struct ObjectEventTemplate gMercuryLighthouseExteriorObjectEventTemplates[] = {
-    { MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(840), 0, PIXELS(664), FACING_NORTH, TALK_FACING_KEEP, 0 },
-    { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_NORTH, TALK_FACING_KEEP, 0 },
-    { IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BLUE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(792), 0, PIXELS(872), FACING_SOUTH, TALK_FACING_KEEP, 0 },
@@ -3399,8 +3401,8 @@ struct MapEvent gMercuryLighthouseLowerEvents[] = {
     { MAP_EVENT_COORD, 11, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT_SCRIPT(MercuryLighthouse_ChargeLightsOnLower) },
     { COORD_EVENT_WALKING_INTO(FACING_SOUTH), 15, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_EnterRisingPassage) },
     { COORD_EVENT_WALKING, 25, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_PushChannelPipes) },
-    { MAP_EVENT_TALK, MIA, FLAG_MIA_JOINED_PARTY, MSGNO(MsgMercuryLighthouseThePathIsBlockedAgainWhat) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), MIA, FLAG_MIA_JOINED_PARTY, MSGNO(MsgMercuryLighthouseThisStatueWasntHereBeforeI) },
+    { MAP_EVENT_TALK, LOCALID_MIA, FLAG_MIA_JOINED_PARTY, MSGNO(MsgMercuryLighthouseThePathIsBlockedAgainWhat) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MIA, FLAG_MIA_JOINED_PARTY, MSGNO(MsgMercuryLighthouseThisStatueWasntHereBeforeI) },
     { PSYNERGY_IN_AREA(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST), 0, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_RemoveColumnOnRetreat) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_STATUE_BLOCKING_MIA, FLAG_MIA_JOINED_PARTY, EVENT_SCRIPT(MercuryLighthouse_MiaJoinsAfterRescue) },
     { BG_EVENT(BG_EVENT_CHEST), 100, FLAG_CHEST_SLEEP_BOMB, FIND_ITEM(ITEM_SLEEP_BOMB) },
@@ -3479,10 +3481,10 @@ struct MapEvent gMercuryLighthouseEventsOther[] = {
     { MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 53, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_UPPER_EAST },
     { MAP_EVENT_WARP, 54, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_EXTERIOR_UPPER_PATH_TO_WATERFALL },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 55, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_LeaveWaterfallByPassage) },
-    { MAP_EVENT_TALK, MIA, FLAG_MIA_SENSED_SOMEONE_INSIDE, EVENT_SCRIPT(MercuryLighthouse_MiaSensesSomeoneInside) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | MIA, FLAG_MIA_SENSED_SOMEONE_INSIDE, EVENT_SCRIPT(MercuryLighthouse_MiaSensesSomeoneInside) },
-    { MAP_EVENT_TALK, MIA, FLAG_MERCURY_LIGHTHOUSE_OPENED_BY_MIA, EVENT_SCRIPT(MercuryLighthouse_MiaDiscussesBlockedEntrance) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), MIA, FLAG_MERCURY_LIGHTHOUSE_OPENED_BY_MIA, MSGNO(MsgMercuryLighthouseSomeoneDoesntWantMeToGet) },
+    { MAP_EVENT_TALK, LOCALID_MIA, FLAG_MIA_SENSED_SOMEONE_INSIDE, EVENT_SCRIPT(MercuryLighthouse_MiaSensesSomeoneInside) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | LOCALID_MIA, FLAG_MIA_SENSED_SOMEONE_INSIDE, EVENT_SCRIPT(MercuryLighthouse_MiaSensesSomeoneInside) },
+    { MAP_EVENT_TALK, LOCALID_MIA, FLAG_MERCURY_LIGHTHOUSE_OPENED_BY_MIA, EVENT_SCRIPT(MercuryLighthouse_MiaDiscussesBlockedEntrance) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MIA, FLAG_MERCURY_LIGHTHOUSE_OPENED_BY_MIA, MSGNO(MsgMercuryLighthouseSomeoneDoesntWantMeToGet) },
     { MAP_EVENT_TALK, LOCALID_FIRST_VISITOR, IF_FLAG_SET(FLAG_SATUROS_BEATEN_AT_MERCURY), MSGNO(MsgMercuryLighthouseTheLegendsSaidThatIfThe) },
     { MAP_EVENT_TALK, LOCALID_FIRST_VISITOR + 1, IF_FLAG_SET(FLAG_SATUROS_BEATEN_AT_MERCURY), MSGNO(MsgMercuryLighthouseOurFountainIsBackTheySay) },
     { MAP_EVENT_TALK, LOCALID_FIRST_VISITOR + 2, IF_FLAG_SET(FLAG_SATUROS_BEATEN_AT_MERCURY), MSGNO(MsgMercuryLighthouseIDrankTheHealingWaterAnd) },

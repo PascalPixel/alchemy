@@ -989,7 +989,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   struct FieldWork *work;
 
   FieldScript_Start();
-  ObjectEvent_SetPosition(MIA, PIXELS(182), PIXELS(150));
+  ObjectEvent_SetPosition(LOCALID_MIA, PIXELS(182), PIXELS(150));
   FieldCamera_MoveTo(PIXELS(141), -1, PIXELS(221), 0);
   WaitFrames(1);
   FieldCamera_SetSpeed(PIXELS(3) / 10, PIXELS(3) / 80);
@@ -999,97 +999,99 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   work->transitionFrames = 40;
   FieldScript_StartScreenTransition();
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
-  ObjectEvent_SetSpeed(GARET, PIXELS(2) / 5, PIXELS(1) / 5);
-  ObjectEvent_SetSpeed(IVAN, PIXELS(2) / 5, PIXELS(1) / 5);
+  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(2) / 5, PIXELS(1) / 5);
+  ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(2) / 5, PIXELS(1) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 142, 221);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH + FACING_STEP,
                             0);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
-    ObjectEvent_SetPosition(GARET, leader->x.fixed, leader->z.fixed);
+    ObjectEvent_SetPosition(LOCALID_GARET, leader->x.fixed, leader->z.fixed);
   }
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
-    ObjectEvent_SetPosition(IVAN, leader->x.fixed, leader->z.fixed);
+    ObjectEvent_SetPosition(LOCALID_IVAN, leader->x.fixed, leader->z.fixed);
   }
-  ObjectEvent_WalkTo(GARET, 150, 234);
-  ObjectEvent_WalkToAndWait(IVAN, 134, 234);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_STAND);
+  ObjectEvent_WalkTo(LOCALID_GARET, 150, 234);
+  ObjectEvent_WalkToAndWait(LOCALID_IVAN, 134, 234);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
   Object_SetTargetAndCallback(LOCALID_PARTY_LEADER,
-                              OBJ_EVENT_LINK_KEEP_MOTION | MIA,
+                              OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_MIA,
                               gImil_FaceTargetScript);
-  Object_SetTargetAndCallback(GARET, OBJ_EVENT_LINK_KEEP_MOTION | MIA,
+  Object_SetTargetAndCallback(LOCALID_GARET,
+                              OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_MIA,
                               gImil_FaceTargetScript);
-  Object_SetTargetAndCallback(IVAN, OBJ_EVENT_LINK_KEEP_MOTION | MIA,
+  Object_SetTargetAndCallback(LOCALID_IVAN,
+                              OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_MIA,
                               gImil_FaceTargetScript);
   FieldCamera_WaitForArrival();
   table = gImil_BobScript;
   ObjectEvent_SetActionScript(LOCALID_OLD_MAN, table);
   FieldScript_WaitFrames(40);
-  ObjectEvent_SetAttachedEffect(MIA, ATTACHED_EFFECT_IN_FRONT |
-                                         ATTACHED_EFFECT_ONCE);
+  ObjectEvent_SetAttachedEffect(LOCALID_MIA, ATTACHED_EFFECT_IN_FRONT |
+                                                 ATTACHED_EFFECT_ONCE);
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetVarCbAndRefresh(MIA, 1);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 1);
   // Mia checks on the old man while the party enters the house.
   FieldScript_SetMessageId(MSGNO(MsgImilHowFeeling));
-  Script_ShowMessageAndWait(MIA, 0, 20);
+  Script_ShowMessageAndWait(LOCALID_MIA, 0, 20);
   ObjectEvent_SetActionScript(LOCALID_OLD_MAN, table);
   Script_ShowMessageAndWait(LOCALID_OLD_MAN, 0, 20);
-  ObjectEvent_FaceDirection(MIA, FACING_WEST, 20);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_WEST, 20);
   ObjectEvent_FaceDirection(LOCALID_OLD_WOMAN, 0, 10);
   ObjectMotion_SetAnimationAndWait(LOCALID_OLD_WOMAN, ANIM_SHAKE_HEAD);
   Script_ShowMessageAndWait(LOCALID_OLD_WOMAN, 0, 40);
-  ObjectMotion_SetAnimationAndWait(MIA, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
   FieldScript_WaitFrames(10);
-  ObjectEvent_FaceDirection(MIA, FACING_SOUTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(LOCALID_OLD_WOMAN, FACING_SOUTHEAST + FACING_STEP,
                             20);
-  Script_ShowMessageAndWait(MIA, 0, 10);
+  Script_ShowMessageAndWait(LOCALID_MIA, 0, 10);
   ObjectEvent_SetActionScript(LOCALID_OLD_MAN, table);
 
   // Play the healing effect, then let the old man respond.
   Imil_MiaCastsPlyOnOldMan();
-  ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Script_ShowMessageAndWait(MIA, 0, 40);
+  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  Script_ShowMessageAndWait(LOCALID_MIA, 0, 40);
   Script_ShowMessageAndWait(LOCALID_OLD_MAN, 0, 20);
   ObjectEvent_ShowEmote(LOCALID_OLD_WOMAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Engine_ObjectEventSetAnimation(LOCALID_OLD_MAN, IMIL_ANIMATION_SIT_UP);
   MapGrid_AnimateCells(gImil_CellStepsA, 10, 69);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVarCbAndRefresh(MIA, 2);
-  ObjectMotion_SetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
-  Script_ShowMessageAndWait(MIA, 0, 20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 2);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_SHAKE_HEAD);
+  Script_ShowMessageAndWait(LOCALID_MIA, 0, 20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_OLD_MAN, 1);
   FieldScript_WaitFrames(40);
   Engine_ObjectEventSetAnimation(LOCALID_OLD_MAN, IMIL_ANIMATION_LIE_BACK);
   MapGrid_AnimateCells(gImil_CellStepsB, 10, 69);
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetAnimationAndWait(MIA, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
   FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_OLD_WOMAN, 0, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_OLD_WOMAN, ANIM_NOD);
   Script_ShowMessageAndWait(LOCALID_OLD_WOMAN, 0, 10);
-  ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-  ObjectEvent_FaceDirection(MIA, FACING_WEST, 10);
-  Engine_ObjectEventSetAnimation(MIA, ANIM_SHAKE_HEAD);
-  Script_ShowMessageAndWait(MIA, 0, 10);
+  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_WEST, 10);
+  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_SHAKE_HEAD);
+  Script_ShowMessageAndWait(LOCALID_MIA, 0, 10);
   ObjectMotion_SetAnimationAndWait(LOCALID_OLD_WOMAN, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetAnimationAndWait(MIA, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
   FieldScript_WaitFrames(40);
-  ObjectEvent_SetSpeed(MIA, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_GetById(MIA)->timer = 0;
-  ObjectEvent_SetActionScript(MIA, gImil_MiaCheckRoomScript);
-  while (ObjectEvent_GetById(MIA)->timer == 0) {
+  ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_GetById(LOCALID_MIA)->timer = 0;
+  ObjectEvent_SetActionScript(LOCALID_MIA, gImil_MiaCheckRoomScript);
+  while (ObjectEvent_GetById(LOCALID_MIA)->timer == 0) {
     WaitFrames(1);
   }
   FieldCamera_MoveTo(PIXELS(140), -1, PIXELS(198), 1);
-  ObjectEvent_RefreshSelectorById(MIA);
-  ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
-  Script_ShowMessageAndWait(MIA, 0, 40);
-  ObjectMotion_SetVarCbAndRefresh(MIA, 1);
+  ObjectEvent_RefreshSelectorById(LOCALID_MIA);
+  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
+  Script_ShowMessageAndWait(LOCALID_MIA, 0, 40);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 1);
   FieldScript_WaitFrames(10);
-  Script_ShowMessage(MIA, 0);
+  Script_ShowMessage(LOCALID_MIA, 0);
   Script_PlaySong(SE_131);
   // The lighthouse interrupts the visit; Mia leaves and the party follows.
   PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
@@ -1101,58 +1103,58 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
   PaletteFade_StartInterpolation(60);
   WaitFrames(60);
-  ObjectEvent_SetAttachedEffect(MIA, ATTACHED_EFFECT_IN_FRONT |
-                                         ATTACHED_EFFECT_ONCE);
+  ObjectEvent_SetAttachedEffect(LOCALID_MIA, ATTACHED_EFFECT_IN_FRONT |
+                                                 ATTACHED_EFFECT_ONCE);
   FieldScript_WaitFrames(20);
-  ObjectEvent_FaceDirection(MIA, 0, 10);
-  ObjectEvent_SetSpeed(MIA, PIXELS(2), PIXELS(1));
-  ObjectEvent_WalkToAndWait(MIA, 202, 198);
+  ObjectEvent_FaceDirection(LOCALID_MIA, 0, 10);
+  ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(2), PIXELS(1));
+  ObjectEvent_WalkToAndWait(LOCALID_MIA, 202, 198);
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetVarCbAndRefresh(MIA, 2);
-  Script_ShowMessage(MIA, 0);
-  ObjectMotion_SetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
-  Script_ShowMessageAndWait(MIA, 0, 20);
-  ObjectEvent_SetAttachedEffect(MIA, ATTACHED_EFFECT_IN_FRONT |
-                                         ATTACHED_EFFECT_ONCE);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 2);
+  Script_ShowMessage(LOCALID_MIA, 0);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_SHAKE_HEAD);
+  Script_ShowMessageAndWait(LOCALID_MIA, 0, 20);
+  ObjectEvent_SetAttachedEffect(LOCALID_MIA, ATTACHED_EFFECT_IN_FRONT |
+                                                 ATTACHED_EFFECT_ONCE);
   FieldScript_WaitFrames(40);
-  Script_ShowMessageAndWait(MIA, 0, 40);
-  ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  Script_ShowMessage(MIA, 0);
+  Script_ShowMessageAndWait(LOCALID_MIA, 0, 40);
+  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  Script_ShowMessage(LOCALID_MIA, 0);
   ObjectMotion_EnableActionAndResetMotion(LOCALID_PARTY_LEADER);
-  ObjectMotion_EnableActionAndResetMotion(GARET);
-  ObjectMotion_EnableActionAndResetMotion(IVAN);
-  ObjectEvent_SetSpeed(MIA, PIXELS(3), PIXELS(3) / 2);
-  ObjectEvent_GetById(MIA)->timer = 0;
-  ObjectEvent_SetActionScript(MIA, gImil_MiaRunOutScript);
-  while (ObjectEvent_GetById(MIA)->timer == 0) {
+  ObjectMotion_EnableActionAndResetMotion(LOCALID_GARET);
+  ObjectMotion_EnableActionAndResetMotion(LOCALID_IVAN);
+  ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(3), PIXELS(3) / 2);
+  ObjectEvent_GetById(LOCALID_MIA)->timer = 0;
+  ObjectEvent_SetActionScript(LOCALID_MIA, gImil_MiaRunOutScript);
+  while (ObjectEvent_GetById(LOCALID_MIA)->timer == 0) {
     WaitFrames(1);
   }
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_SOUTH, 10);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_SOUTH, 10);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4), PIXELS(2));
-  ObjectEvent_SetSpeed(GARET, PIXELS(4), PIXELS(2));
-  ObjectEvent_SetSpeed(IVAN, PIXELS(4), PIXELS(2));
+  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(4), PIXELS(2));
+  ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(4), PIXELS(2));
   Script_PlaySong(SE_JUMP);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags &=
       ~OBJ_EVENT_FACES_MOTION;
-  ObjectEvent_GetById(GARET)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
-  ObjectEvent_GetById(IVAN)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
+  ObjectEvent_GetById(LOCALID_GARET)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
+  ObjectEvent_GetById(LOCALID_IVAN)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
   ObjectEvent_SetDestination(LOCALID_PARTY_LEADER, 132, 206);
-  ObjectEvent_SetDestination(GARET, 136, 221);
-  ObjectEvent_SetDestination(IVAN, 122, 238);
-  ObjectEvent_RefreshSelectorById(MIA);
+  ObjectEvent_SetDestination(LOCALID_GARET, 136, 221);
+  ObjectEvent_SetDestination(LOCALID_IVAN, 122, 238);
+  ObjectEvent_RefreshSelectorById(LOCALID_MIA);
   FieldScript_WaitFrames(80);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags |=
       OBJ_EVENT_FACES_MOTION;
-  ObjectEvent_GetById(GARET)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
-  ObjectEvent_GetById(IVAN)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
+  ObjectEvent_GetById(LOCALID_GARET)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
+  ObjectEvent_GetById(LOCALID_IVAN)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
-  ObjectEvent_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
-  ObjectEvent_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
   table = gImil_FollowMiaOutScript;
-  ObjectEvent_SetActionScript(GARET, table);
-  ObjectEvent_RunActionScriptAndWait(IVAN, table);
+  ObjectEvent_SetActionScript(LOCALID_GARET, table);
+  ObjectEvent_RunActionScriptAndWait(LOCALID_IVAN, table);
   FieldScript_WaitFrames(20);
   work = gFieldWork;
   work->transition =
@@ -1232,7 +1234,7 @@ static void Imil_MiaCastsPlyOnOldMan(void) {
 
   FieldEffect_LoadActionEffectResources(ABILITY_PLY, 1);
   effectWork = gFieldEffectWork;
-  FieldEffect_SetupObjectPair(MIA, LOCALID_OLD_MAN);
+  FieldEffect_SetupObjectPair(LOCALID_MIA, LOCALID_OLD_MAN);
   effectWork->finishCallback = Imil_OldManBobsAndSpeaks;
   FieldEffect_StartCast();
   Field_DispatchTypeHandler(1);
@@ -1427,7 +1429,7 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   struct FieldWork *work;
 
   FieldScript_Start();
-  ObjectEvent_FaceDirection(MIA, FACING_NORTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHWEST, 0);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
   ObjectMotion_ResetAndSetPositionInMode2(LOCALID_PARTY_LEADER, 690, 200);
 
@@ -1440,27 +1442,27 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   FieldScript_StartScreenTransition();
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
-  ObjectEvent_SetSpeed(MIA, PIXELS(3) / 5, PIXELS(3) / 10);
+  ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(3) / 5, PIXELS(3) / 10);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
-    ObjectEvent_SetPosition(MIA, leader->x.fixed, leader->z.fixed);
+    ObjectEvent_SetPosition(LOCALID_MIA, leader->x.fixed, leader->z.fixed);
   }
-  ObjectEvent_WalkToAndWait(MIA, 673, 183);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTH, 0);
+  ObjectEvent_WalkToAndWait(LOCALID_MIA, 673, 183);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTH, 0);
   ObjectMotion_SetVariantCallback(LOCALID_JUSTIN, 2);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_MEGAN, 2);
   FieldScript_WaitFrames(40);
   FieldScript_SetMessageId(MSGNO(MsgImilMia));
   Script_ShowMessageAndWait(LOCALID_JUSTIN, 0, 10);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST, 40);
-  ObjectMotion_SetAnimationAndWait(MIA, ANIM_NOD);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHEAST, 40);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
   ObjectEvent_SetAttachedEffect(LOCALID_MEGAN, ATTACHED_EFFECT_IN_FRONT |
                                                    ATTACHED_EFFECT_ONCE);
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_MEGAN, 0, 10);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTHWEST, 40);
-  ObjectMotion_SetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
-  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | MIA, 0, 10);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHWEST, 40);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_SHAKE_HEAD);
+  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_MIA, 0, 10);
   ObjectMotion_SetAnimationAndWait(LOCALID_MEGAN, ANIM_NOD);
   FieldScript_WaitFrames(20);
   ObjectEvent_SetAttachedEffect(LOCALID_JUSTIN, ATTACHED_EFFECT_IN_FRONT |
@@ -1468,27 +1470,27 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_JUSTIN, 0, 10);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHWEST, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST + FACING_STEP, 10);
-  ObjectEvent_FaceDirection(MIA, FACING_SOUTHEAST, 40);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHEAST + FACING_STEP, 10);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_SOUTHEAST, 40);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTH, 40);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTH, 40);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_MEGAN, 2);
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_MEGAN, 0, 20);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTHWEST, 20);
-  ObjectMotion_SetAnimationAndWait(MIA, ANIM_NOD);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHWEST, 20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
   FieldScript_WaitFrames(60);
-  ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   ObjectEvent_ShowEmote(LOCALID_JUSTIN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   ObjectEvent_ShowEmote(LOCALID_MEGAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_JUSTIN, 1);
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_JUSTIN, 0, 10);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST, 40);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTHWEST, 40);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST, 20);
-  ObjectEvent_FaceDirection(MIA, FACING_SOUTHWEST, 80);
-  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | MIA, 0, 20);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHEAST, 40);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHWEST, 40);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHEAST, 20);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_SOUTHWEST, 80);
+  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_MIA, 0, 20);
   ObjectEvent_FaceDirection(LOCALID_MEGAN, FACING_NORTHEAST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_JUSTIN, FACING_SOUTHWEST + FACING_STEP, 40);
   ObjectEvent_FaceDirection(LOCALID_JUSTIN, FACING_SOUTH + FACING_STEP, 0);
@@ -1501,62 +1503,62 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   ObjectEvent_GetById(LOCALID_MEGAN)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_MEGAN, 0, 10);
-  ObjectMotion_SetVarCbAndRefresh(MIA, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 2);
   FieldScript_WaitFrames(40);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTHWEST, 10);
-  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | MIA, 0, 40);
-  ObjectEvent_FaceDirection(MIA, FACING_SOUTHEAST, 20);
-  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | MIA, 0, 10);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHWEST, 10);
+  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_MIA, 0, 40);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_SOUTHEAST, 20);
+  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_MIA, 0, 10);
   ObjectEvent_SetAttachedEffect(LOCALID_JUSTIN, ATTACHED_EFFECT_IN_FRONT |
                                                     ATTACHED_EFFECT_ONCE);
   ObjectEvent_SetAttachedEffect(LOCALID_MEGAN, ATTACHED_EFFECT_IN_FRONT |
                                                    ATTACHED_EFFECT_ONCE);
   FieldScript_WaitFrames(40);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTH, 20);
-  Engine_ObjectEventSetAnimation(MIA, ANIM_SHAKE_HEAD);
-  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | MIA, 0, 20);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTH, 20);
+  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_SHAKE_HEAD);
+  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_MIA, 0, 20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_JUSTIN, 1);
   Script_ShowMessageAndWait(LOCALID_JUSTIN, 0, 10);
-  ObjectEvent_FaceDirection(MIA, FACING_SOUTHEAST, 40);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTH, 20);
-  ObjectMotion_SetAnimationAndWait(MIA, ANIM_NOD);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_SOUTHEAST, 40);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTH, 20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
   FieldScript_WaitFrames(20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_MEGAN, 1);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_MEGAN, 0, 20);
-  ObjectMotion_SetVarCbAndRefresh(MIA, 1);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 1);
   FieldScript_WaitFrames(20);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTHWEST, 20);
-  ObjectMotion_SetAnimationAndWait(MIA, ANIM_NOD);
-  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | MIA, 0, 80);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHWEST, 20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
+  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_MIA, 0, 80);
   ObjectEvent_ShowEmote(LOCALID_JUSTIN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   ObjectEvent_ShowEmote(LOCALID_MEGAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   ObjectMotion_SetAnimationAndWait(LOCALID_JUSTIN, ANIM_SHAKE_HEAD);
   Script_ShowMessageAndWait(LOCALID_JUSTIN, 0, 10);
   Engine_ObjectEventSetAnimation(LOCALID_MEGAN, ANIM_SHAKE_HEAD);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_MEGAN, 0, 20);
-  ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | MIA, 0, 40);
+  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_MIA, 0, 40);
   ObjectMotion_SetAnimationAndWait(LOCALID_JUSTIN, ANIM_NOD);
   Script_ShowMessageAndWait(LOCALID_JUSTIN, 0, 10);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST, 20);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHEAST, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_MEGAN, ANIM_NOD);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_MEGAN, 0, 10);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTHWEST, 60);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST, 20);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTHWEST, 20);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTH, 40);
-  ObjectMotion_SetAnimationAndWait(MIA, ANIM_NOD);
-  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | MIA, 0, 10);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHWEST, 60);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHEAST, 20);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHWEST, 20);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTH, 40);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
+  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_MIA, 0, 10);
   Engine_ObjectEventSetAnimation(LOCALID_JUSTIN, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_MEGAN, ANIM_NOD);
   FieldScript_WaitFrames(40);
-  ObjectEvent_FaceDirection(MIA, FACING_SOUTHEAST, 20);
-  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | MIA, 0, 20);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_SOUTHEAST, 20);
+  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_MIA, 0, 20);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHWEST, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  ObjectEvent_WalkToAndWait(MIA, 688, 200);
-  ObjectEvent_SetPosition(MIA, 0, 0);
+  ObjectEvent_WalkToAndWait(LOCALID_MIA, 688, 200);
+  ObjectEvent_SetPosition(LOCALID_MIA, 0, 0);
   ObjectEvent_GetById(LOCALID_MEGAN)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
   ObjectEvent_WalkToAndWait(LOCALID_MEGAN, 644, 166);
   FieldScript_WaitFrames(1);
@@ -1929,11 +1931,11 @@ struct ObjectEventTemplate gImil_InteriorObjectEventTemplates[] = {
         PIXELS(686), 0, PIXELS(148), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_GIRL_WITH_PIGTAILS, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(717), 0, PIXELS(229), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
-    { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
-    { IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
-    { MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_CRATE, 0x0, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(192), 0, PIXELS(124), FACING_SOUTH, TALK_FACING_KEEP, 0 },

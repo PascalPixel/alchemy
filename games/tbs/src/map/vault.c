@@ -244,27 +244,28 @@ static void EventScript_IvanStaysBehind(void) {
   FieldScript_Start();
   objectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   if (objectEvent != 0) {
-    ObjectEvent_SetPosition(IVAN, objectEvent->x.fixed, objectEvent->z.fixed);
+    ObjectEvent_SetPosition(LOCALID_IVAN, objectEvent->x.fixed,
+                            objectEvent->z.fixed);
   }
-  ObjectEvent_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
   if (work->coordEvent == MB_VAULT_SOUTH_GATE) {
-    ObjectEvent_WalkToAndWait(IVAN, 400, 448);
+    ObjectEvent_WalkToAndWait(LOCALID_IVAN, 400, 448);
   } else {
     FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
     FieldCamera_MoveTo(PIXELS(224), -1, PIXELS(162), 1);
-    ObjectEvent_WalkToAndWait(IVAN, 224, 162);
+    ObjectEvent_WalkToAndWait(LOCALID_IVAN, 224, 162);
     FieldCamera_WaitForArrival();
   }
-  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, IVAN, 0);
+  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_IVAN, 0);
   FieldScript_WaitFrames(20);
   FieldScript_SetMessageId(MsgVaultLeavingImStillWorriedAbout);
-  Script_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | IVAN,
-                            0, 20);
+  Script_ShowMessageAndWait(
+      SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | LOCALID_IVAN, 0, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   // Return any Djinn before removing Ivan from the party.
   if (Vault_GetIvanVenusDjinnCount() != 0) {
     FieldScript_SetMessageId(MsgVaultWaitDontWantTakeYour);
-    Script_ShowMessage(IVAN, 0);
+    Script_ShowMessage(LOCALID_IVAN, 0);
     Vault_ReturnIsaacsDjinni();
     WaitFrames(20);
   }
@@ -937,31 +938,32 @@ s32 Map_Initialize(void) {
           FieldScript_Start();
           objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
           if (objectEvent != 0) {
-            Engine_ObjectEventSetPosition(IVAN, objectEvent->x.fixed,
+            Engine_ObjectEventSetPosition(LOCALID_IVAN, objectEvent->x.fixed,
                                           objectEvent->z.fixed);
           }
           if (gSaveBlock.warpDest == VAULT_FROM_WORLD_MAP_SOUTH) {
-            ObjectEvent_SetPosition(IVAN, PIXELS(400), PIXELS(448));
+            ObjectEvent_SetPosition(LOCALID_IVAN, PIXELS(400), PIXELS(448));
           } else {
-            ObjectEvent_SetPosition(IVAN, PIXELS(224), PIXELS(162));
+            ObjectEvent_SetPosition(LOCALID_IVAN, PIXELS(224), PIXELS(162));
           }
-          ObjectEvent_LinkPair(IVAN, LOCALID_PARTY_LEADER, 0);
+          ObjectEvent_LinkPair(LOCALID_IVAN, LOCALID_PARTY_LEADER, 0);
           FieldScript_StartScreenTransition();
           FieldScript_WaitTransitionFrames();
           FieldScript_WaitFrames(30);
-          ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
+          ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 2);
           FieldScript_SetMessageId(MsgVaultWelcomeBackTwo);
-          FieldScript_ShowMessageThenWait(IVAN, 0, 20);
+          FieldScript_ShowMessageThenWait(LOCALID_IVAN, 0, 20);
           ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
-          ObjectEvent_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
-          Engine_ObjectEventSetAnimation(IVAN, ANIM_WALK);
+          ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
+          Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_WALK);
           objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
           if (objectEvent != 0) {
-            ObjectMotion_ResetAndSetPosition(IVAN, objectEvent->x.part.pixel,
+            ObjectMotion_ResetAndSetPosition(LOCALID_IVAN,
+                                             objectEvent->x.part.pixel,
                                              objectEvent->z.part.pixel);
           }
-          ObjectMotion_CommitCurrentPositionAndActivate(IVAN);
-          Engine_ObjectEventSetPosition(IVAN, 0, 0);
+          ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_IVAN);
+          Engine_ObjectEventSetPosition(LOCALID_IVAN, 0, 0);
           FieldScript_PrepareObjectAndApplyValue(IVAN, 0);
           FieldScript_End();
         }
@@ -977,24 +979,25 @@ s32 Map_Initialize(void) {
       if (GameFlag_Get(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) != 0) {
         if (GameFlag_Get(FLAG_IN_PARTY(IVAN)) == 0) {
           FieldScript_Start();
-          ObjectEvent_SetPosition(IVAN, PIXELS(40), PIXELS(310));
-          ObjectEvent_LinkPair(IVAN, LOCALID_PARTY_LEADER, 0);
+          ObjectEvent_SetPosition(LOCALID_IVAN, PIXELS(40), PIXELS(310));
+          ObjectEvent_LinkPair(LOCALID_IVAN, LOCALID_PARTY_LEADER, 0);
           FieldScript_StartScreenTransition();
           FieldScript_WaitTransitionFrames();
           FieldScript_WaitFrames(30);
-          ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
+          ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 2);
           FieldScript_SetMessageId(MsgVaultWelcomeBackTwo);
-          FieldScript_ShowMessageThenWait(IVAN, 0, 20);
+          FieldScript_ShowMessageThenWait(LOCALID_IVAN, 0, 20);
           ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
-          ObjectEvent_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
-          Engine_ObjectEventSetAnimation(IVAN, ANIM_WALK);
+          ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
+          Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_WALK);
           objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
           if (objectEvent != 0) {
-            ObjectMotion_ResetAndSetPosition(IVAN, objectEvent->x.part.pixel,
+            ObjectMotion_ResetAndSetPosition(LOCALID_IVAN,
+                                             objectEvent->x.part.pixel,
                                              objectEvent->z.part.pixel);
           }
-          ObjectMotion_CommitCurrentPositionAndActivate(IVAN);
-          Engine_ObjectEventSetPosition(IVAN, 0, 0);
+          ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_IVAN);
+          Engine_ObjectEventSetPosition(LOCALID_IVAN, 0, 0);
           FieldScript_PrepareObjectAndApplyValue(IVAN, 0);
           FieldScript_End();
         }
@@ -1340,7 +1343,7 @@ u32 gVault_Warps[] = {
 
 // clang-format off
 struct ObjectEventTemplate gVault_ObjectEventTemplates[] = {
-    { IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(381), 0, PIXELS(342), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },

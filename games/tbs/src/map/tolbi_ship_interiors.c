@@ -2235,25 +2235,28 @@ static void TolbiShipInteriors_ReturnLuckyAnchor(void) {
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 0);
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (objectEvent != 0) {
-    ObjectEvent_SetPosition(GARET, objectEvent->x.fixed, objectEvent->z.fixed);
+    ObjectEvent_SetPosition(LOCALID_GARET, objectEvent->x.fixed,
+                            objectEvent->z.fixed);
   }
-  ObjectEvent_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_WalkToAndWait(GARET, 486, 624);
-  ObjectEvent_FaceDirection(GARET, FACING_WEST, 0);
-  objectEvent = ObjectEvent_GetById(GARET);
+  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_WalkToAndWait(LOCALID_GARET, 486, 624);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_WEST, 0);
+  objectEvent = ObjectEvent_GetById(LOCALID_GARET);
   if (objectEvent != 0) {
-    ObjectEvent_SetPosition(IVAN, objectEvent->x.fixed, objectEvent->z.fixed);
+    ObjectEvent_SetPosition(LOCALID_IVAN, objectEvent->x.fixed,
+                            objectEvent->z.fixed);
   }
-  ObjectEvent_SetSpeed(IVAN, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_WalkToAndWait(IVAN, 486, 640);
-  ObjectEvent_FaceDirection(IVAN, FACING_WEST, 0);
-  objectEvent = ObjectEvent_GetById(IVAN);
+  ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_WalkToAndWait(LOCALID_IVAN, 486, 640);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_WEST, 0);
+  objectEvent = ObjectEvent_GetById(LOCALID_IVAN);
   if (objectEvent != 0) {
-    ObjectEvent_SetPosition(MIA, objectEvent->x.fixed, objectEvent->z.fixed);
+    ObjectEvent_SetPosition(LOCALID_MIA, objectEvent->x.fixed,
+                            objectEvent->z.fixed);
   }
-  ObjectEvent_SetSpeed(MIA, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_WalkToAndWait(MIA, 486, 656);
-  ObjectEvent_FaceDirection(MIA, FACING_WEST, 20);
+  ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_WalkToAndWait(LOCALID_MIA, 486, 656);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_WEST, 20);
   ObjectEvent_ShowEmote(LOCALID_QUARTERS_SEAN, EMOTE_IN_FRONT | EMOTE_SMILE,
                         40);
   TolbiShipInteriors_Say(seanSpeech);
@@ -2364,30 +2367,30 @@ static void TolbiShipInteriors_ReturnLuckyAnchor(void) {
   ObjectEvent_SetActionScript(LOCALID_QUARTERS_SEAN, action);
   FieldScript_WaitFrames(4);
   ObjectEvent_SetActionScript(LOCALID_QUARTERS_KAJA, action);
-  Engine_ObjectEventSetAnimation(MIA, ANIM_WALK);
-  objectEvent = ObjectEvent_GetById(IVAN);
+  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_WALK);
+  objectEvent = ObjectEvent_GetById(LOCALID_IVAN);
   if (objectEvent != 0) {
-    ObjectEvent_SetDestination(MIA, objectEvent->x.part.pixel,
+    ObjectEvent_SetDestination(LOCALID_MIA, objectEvent->x.part.pixel,
                                objectEvent->z.part.pixel);
   }
-  ObjectMotion_CommitCurrentPositionAndActivate(MIA);
-  ObjectEvent_SetPosition(MIA, 0, 0);
-  Engine_ObjectEventSetAnimation(IVAN, ANIM_WALK);
-  objectEvent = ObjectEvent_GetById(GARET);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_MIA);
+  ObjectEvent_SetPosition(LOCALID_MIA, 0, 0);
+  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_WALK);
+  objectEvent = ObjectEvent_GetById(LOCALID_GARET);
   if (objectEvent != 0) {
-    ObjectEvent_SetDestination(IVAN, objectEvent->x.part.pixel,
+    ObjectEvent_SetDestination(LOCALID_IVAN, objectEvent->x.part.pixel,
                                objectEvent->z.part.pixel);
   }
-  ObjectMotion_CommitCurrentPositionAndActivate(IVAN);
-  ObjectEvent_SetPosition(IVAN, 0, 0);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_WALK);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_IVAN);
+  ObjectEvent_SetPosition(LOCALID_IVAN, 0, 0);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (objectEvent != 0) {
-    ObjectEvent_SetDestination(GARET, objectEvent->x.part.pixel,
+    ObjectEvent_SetDestination(LOCALID_GARET, objectEvent->x.part.pixel,
                                objectEvent->z.part.pixel);
   }
-  ObjectMotion_CommitCurrentPositionAndActivate(GARET);
-  ObjectEvent_SetPosition(GARET, 0, 0);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
+  ObjectEvent_SetPosition(LOCALID_GARET, 0, 0);
   ObjectEvent_SetActionScript(LOCALID_QUARTERS_SECOND_GUIDE, action);
   ObjectEvent_WalkToAndWait(LOCALID_QUARTERS_CAPTAIN, 456, 648);
   TolbiShipInteriors_Turn(LOCALID_QUARTERS_CAPTAIN, 0);
@@ -2822,25 +2825,28 @@ static void TolbiShipInteriors_AskForReplacementOarsmen(void) {
   TolbiShipInteriors_Turn(LOCALID_ROWING_KAJA, FACING_NORTH + FACING_STEP);
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (objectEvent != 0) {
-    ObjectEvent_SetPosition(GARET, objectEvent->x.fixed, objectEvent->z.fixed);
+    ObjectEvent_SetPosition(LOCALID_GARET, objectEvent->x.fixed,
+                            objectEvent->z.fixed);
   }
-  ObjectEvent_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
-  ObjectEvent_WalkToAndWait(GARET, 440, 148);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 0);
-  objectEvent = ObjectEvent_GetById(GARET);
+  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_WalkToAndWait(LOCALID_GARET, 440, 148);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH, 0);
+  objectEvent = ObjectEvent_GetById(LOCALID_GARET);
   if (objectEvent != 0) {
-    ObjectEvent_SetPosition(IVAN, objectEvent->x.fixed, objectEvent->z.fixed);
+    ObjectEvent_SetPosition(LOCALID_IVAN, objectEvent->x.fixed,
+                            objectEvent->z.fixed);
   }
-  ObjectEvent_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
-  ObjectEvent_WalkToAndWait(IVAN, 456, 148);
-  ObjectEvent_FaceDirection(IVAN, FACING_SOUTH, 0);
-  objectEvent = ObjectEvent_GetById(IVAN);
+  ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_WalkToAndWait(LOCALID_IVAN, 456, 148);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_SOUTH, 0);
+  objectEvent = ObjectEvent_GetById(LOCALID_IVAN);
   if (objectEvent != 0) {
-    ObjectEvent_SetPosition(MIA, objectEvent->x.fixed, objectEvent->z.fixed);
+    ObjectEvent_SetPosition(LOCALID_MIA, objectEvent->x.fixed,
+                            objectEvent->z.fixed);
   }
-  ObjectEvent_SetSpeed(MIA, PIXELS(4) / 5, PIXELS(2) / 5);
-  ObjectEvent_WalkToAndWait(MIA, 472, 148);
-  ObjectEvent_FaceDirection(MIA, FACING_SOUTH, 20);
+  ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_WalkToAndWait(LOCALID_MIA, 472, 148);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_SOUTH, 20);
   // Let the full party respond to the request for replacement oarsmen.
   TolbiShipInteriors_RunSceneCommand(SHIP_FACE_PARTY_EAST_AND_WEST, 0, 60);
   TolbiShipInteriors_RunSceneCommand(SHIP_FACE_PARTY, 0x4000, 20);
@@ -2851,8 +2857,8 @@ static void TolbiShipInteriors_AskForReplacementOarsmen(void) {
   ObjectMotion_SetVariantCallback(LOCALID_ROWING_DRUMMER, 1);
   ObjectEvent_ShowEmote(LOCALID_ROWING_DRUMMER, (mode << 1), 40);
   TolbiShipInteriors_Say(LOCALID_ROWING_DRUMMER);
-  ObjectMotion_SetVariantCallback(GARET, 3);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 60);
+  ObjectMotion_SetVariantCallback(LOCALID_GARET, 3);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 60);
   ObjectMotion_SetAnimationAndWait(LOCALID_ROWING_KAJA, 3);
   TolbiShipInteriors_Say(LOCALID_ROWING_KAJA);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_ROWING_FIRST_OARSMAN, 1);
@@ -3407,21 +3413,21 @@ static void TolbiShipInteriors_RunSceneCommand(s32 step, u32 arg, u32 opt) {
   switch (step) {
   case SHIP_FACE_PARTY_EAST_AND_WEST:
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 0);
-    ObjectEvent_FaceDirection(GARET, FACING_WEST, 0);
-    ObjectMotion_ArmCallback(IVAN, 0, 0);
-    ObjectEvent_FaceDirection(MIA, FACING_WEST, opt);
+    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_WEST, 0);
+    ObjectMotion_ArmCallback(LOCALID_IVAN, 0, 0);
+    ObjectEvent_FaceDirection(LOCALID_MIA, FACING_WEST, opt);
     break;
   case SHIP_FACE_PARTY:
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, arg, 0);
-    ObjectEvent_FaceDirection(GARET, arg, 0);
-    ObjectEvent_FaceDirection(IVAN, arg, 0);
-    ObjectEvent_FaceDirection(MIA, arg, opt);
+    ObjectEvent_FaceDirection(LOCALID_GARET, arg, 0);
+    ObjectEvent_FaceDirection(LOCALID_IVAN, arg, 0);
+    ObjectEvent_FaceDirection(LOCALID_MIA, arg, opt);
     break;
   case SHIP_PLAY_PARTY_ANIMATION:
     Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-    Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
-    Engine_ObjectEventSetAnimation(IVAN, ANIM_NOD);
-    Engine_ObjectEventSetAnimation(MIA, ANIM_NOD);
+    Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+    Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
+    Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
     if (arg != 0) {
       ObjectMotion_WaitForAnimationChange(3);
     }
@@ -3433,12 +3439,12 @@ static void TolbiShipInteriors_RunSceneCommand(s32 step, u32 arg, u32 opt) {
   case SHIP_SHOW_PARTY_EMOTE:
     ObjectEvent_SetAttachedEffect(
         LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    ObjectEvent_SetAttachedEffect(GARET, ATTACHED_EFFECT_IN_FRONT |
-                                             ATTACHED_EFFECT_ONCE);
-    ObjectEvent_SetAttachedEffect(IVAN, ATTACHED_EFFECT_IN_FRONT |
-                                            ATTACHED_EFFECT_ONCE);
-    ObjectEvent_SetAttachedEffect(MIA, ATTACHED_EFFECT_IN_FRONT |
-                                           ATTACHED_EFFECT_ONCE);
+    ObjectEvent_SetAttachedEffect(LOCALID_GARET, ATTACHED_EFFECT_IN_FRONT |
+                                                     ATTACHED_EFFECT_ONCE);
+    ObjectEvent_SetAttachedEffect(LOCALID_IVAN, ATTACHED_EFFECT_IN_FRONT |
+                                                    ATTACHED_EFFECT_ONCE);
+    ObjectEvent_SetAttachedEffect(LOCALID_MIA, ATTACHED_EFFECT_IN_FRONT |
+                                                   ATTACHED_EFFECT_ONCE);
     FieldScript_WaitFrames(opt);
     break;
   case SHIP_HIDE_FIRST_OARSMEN:
@@ -3499,9 +3505,9 @@ static void TolbiShipInteriors_RunSceneCommand(s32 step, u32 arg, u32 opt) {
     TolbiShipInteriors_PlaceFoundObjectEvents(0);
     TolbiShipInteriors_PlaceObjectEvent(LOCALID_PARTY_LEADER, 432, 168,
                                         FACING_SOUTH);
-    TolbiShipInteriors_PlaceObjectEvent(GARET, 448, 168, FACING_SOUTH);
-    TolbiShipInteriors_PlaceObjectEvent(IVAN, 424, 152, FACING_SOUTH);
-    TolbiShipInteriors_PlaceObjectEvent(MIA, 458, 152, FACING_SOUTH);
+    TolbiShipInteriors_PlaceObjectEvent(LOCALID_GARET, 448, 168, FACING_SOUTH);
+    TolbiShipInteriors_PlaceObjectEvent(LOCALID_IVAN, 424, 152, FACING_SOUTH);
+    TolbiShipInteriors_PlaceObjectEvent(LOCALID_MIA, 458, 152, FACING_SOUTH);
     break;
   case SHIP_RESTORE_ROWING_DECK_POSES:
     if (arg != 0) {
@@ -3676,9 +3682,9 @@ static void TolbiShipInteriors_RunSceneCommand(s32 step, u32 arg, u32 opt) {
                                 gTolbiShipInteriors_Shiver);
     break;
   case SHIP_HIDE_PARTY_FOLLOWERS:
-    ObjectEvent_DestroyById(GARET);
-    ObjectEvent_DestroyById(IVAN);
-    ObjectEvent_DestroyById(MIA);
+    ObjectEvent_DestroyById(LOCALID_GARET);
+    ObjectEvent_DestroyById(LOCALID_IVAN);
+    ObjectEvent_DestroyById(LOCALID_MIA);
     break;
   case SHIP_RESET_CAMERA:
     FieldCamera_MoveTo(-1, -1, -1, 0);
@@ -3810,28 +3816,31 @@ static void TolbiShipInteriors_ReportMonstersBelowdecks(void) {
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (objectEvent != 0) {
-    ObjectEvent_SetPosition(IVAN, objectEvent->x.fixed, objectEvent->z.fixed);
+    ObjectEvent_SetPosition(LOCALID_IVAN, objectEvent->x.fixed,
+                            objectEvent->z.fixed);
   }
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (objectEvent != 0) {
-    ObjectEvent_SetPosition(GARET, objectEvent->x.fixed, objectEvent->z.fixed);
+    ObjectEvent_SetPosition(LOCALID_GARET, objectEvent->x.fixed,
+                            objectEvent->z.fixed);
   }
-  objectEvent = ObjectEvent_GetById(GARET);
+  objectEvent = ObjectEvent_GetById(LOCALID_GARET);
   if (objectEvent != 0) {
-    ObjectEvent_SetPosition(MIA, objectEvent->x.fixed, objectEvent->z.fixed);
+    ObjectEvent_SetPosition(LOCALID_MIA, objectEvent->x.fixed,
+                            objectEvent->z.fixed);
   }
   WaitFrames(1);
-  ObjectEvent_SetSpeed(IVAN, PIXELS(8) / 5, PIXELS(4) / 5);
-  ObjectEvent_WalkTo(IVAN, 424, 152);
-  ObjectEvent_SetSpeed(GARET, PIXELS(8) / 5, PIXELS(4) / 5);
-  ObjectEvent_WalkTo(GARET, 448, 168);
-  ObjectEvent_SetSpeed(MIA, PIXELS(2), PIXELS(1));
-  ObjectEvent_WalkToAndWait(MIA, 458, 152);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_STAND);
-  Engine_ObjectEventSetAnimation(IVAN, ANIM_STAND);
-  ObjectEvent_FaceDirection(IVAN, FACING_SOUTH, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_SOUTH, 40);
+  ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(8) / 5, PIXELS(4) / 5);
+  ObjectEvent_WalkTo(LOCALID_IVAN, 424, 152);
+  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(8) / 5, PIXELS(4) / 5);
+  ObjectEvent_WalkTo(LOCALID_GARET, 448, 168);
+  ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(2), PIXELS(1));
+  ObjectEvent_WalkToAndWait(LOCALID_MIA, 458, 152);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_STAND);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_SOUTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_SOUTH, 40);
   Message_SetVoiceFromObjectEvent(LOCALID_ROWING_FIRST_OARSMAN);
   message = MsgTolbiShipMonstersBelowdecks;
   FieldMessage_ShowCentered(message, 1, 10);
@@ -3848,12 +3857,12 @@ static void TolbiShipInteriors_ReportMonstersBelowdecks(void) {
   ObjectEvent_FaceDirection(LOCALID_ROWING_CREWMAN, FACING_EAST, 20);
   TolbiShipInteriors_MoveCameraAndWait(PIXELS(440), -1, PIXELS(134),
                                        0x10000000);
-  ObjectEvent_SetActionScript(GARET,
+  ObjectEvent_SetActionScript(LOCALID_GARET,
                               gTolbiShipInteriors_FollowersRejoinByStairs);
-  ObjectEvent_SetActionScript(IVAN,
+  ObjectEvent_SetActionScript(LOCALID_IVAN,
                               gTolbiShipInteriors_FollowersRejoinByStairs);
   ObjectEvent_RunActionScriptAndWait(
-      MIA, gTolbiShipInteriors_FollowersRejoinByStairs);
+      LOCALID_MIA, gTolbiShipInteriors_FollowersRejoinByStairs);
   FieldScript_WaitFrames(40);
   GameFlag_Set(FLAG_TOLBI_SHIP_MONSTERS_BELOWDECKS);
   TolbiShipInteriors_RunSceneCommand(SHIP_HIDE_PARTY_FOLLOWERS, 0, 0);
@@ -3865,9 +3874,9 @@ static void TolbiShipInteriors_ReactToMonsterAttack(void) {
   const s32 *action;
 
   TolbiShipInteriors_PlaceObjectEvent(LOCALID_PARTY_LEADER, 444, 300, 0);
-  TolbiShipInteriors_PlaceObjectEvent(GARET, 458, 310, 0);
-  TolbiShipInteriors_PlaceObjectEvent(IVAN, 444, 330, 0);
-  TolbiShipInteriors_PlaceObjectEvent(MIA, 432, 310, 0);
+  TolbiShipInteriors_PlaceObjectEvent(LOCALID_GARET, 458, 310, 0);
+  TolbiShipInteriors_PlaceObjectEvent(LOCALID_IVAN, 444, 330, 0);
+  TolbiShipInteriors_PlaceObjectEvent(LOCALID_MIA, 432, 310, 0);
   TolbiShipInteriors_PlaceObjectEvent(LOCALID_ROWING_KAJA, 440, 134,
                                       FACING_WEST);
   TolbiShipInteriors_PlaceObjectEvent(LOCALID_ROWING_FIRST_OARSMAN, 454, 248,
@@ -3878,9 +3887,9 @@ static void TolbiShipInteriors_ReactToMonsterAttack(void) {
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHEAST, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTHWEST, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_SOUTHEAST, 40);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_SOUTHEAST, 40);
   TolbiShipInteriors_RunSceneCommand(SHIP_PLAY_PARTY_ANIMATION, 1, 20);
   FieldScript_SetMessageId(MsgTolbiShipHeyAreYouOk);
   TolbiShipInteriors_Say(LOCALID_ROWING_KAJA);
@@ -3938,9 +3947,9 @@ static void TolbiShipInteriors_ReactToMonsterAttack(void) {
   }
   TolbiShipInteriors_RunSceneCommand(SHIP_PLAY_PARTY_ANIMATION, 1, 20);
   action = gTolbiShipInteriors_FollowersRejoinMidDeck;
-  ObjectEvent_SetActionScript(GARET, action);
-  ObjectEvent_SetActionScript(IVAN, action);
-  ObjectEvent_RunActionScriptAndWait(MIA, action);
+  ObjectEvent_SetActionScript(LOCALID_GARET, action);
+  ObjectEvent_SetActionScript(LOCALID_IVAN, action);
+  ObjectEvent_RunActionScriptAndWait(LOCALID_MIA, action);
   FieldCamera_SetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
   FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(176), 1);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
@@ -4057,35 +4066,35 @@ static void TolbiShipInteriors_NoticeShipRocking(void) {
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Script_PlaySong(MUS_063);
   GameFlag_Set(FLAG_KEEP_MUSIC);
-  ObjectEvent_SetAttachedEffect(MIA, ATTACHED_EFFECT_IN_FRONT |
-                                         ATTACHED_EFFECT_ONCE);
+  ObjectEvent_SetAttachedEffect(LOCALID_MIA, ATTACHED_EFFECT_IN_FRONT |
+                                                 ATTACHED_EFFECT_ONCE);
   FieldScript_WaitFrames(40);
-  TolbiShipInteriors_Turn(MIA, FACING_SOUTHWEST);
+  TolbiShipInteriors_Turn(LOCALID_MIA, FACING_SOUTHWEST);
   // The party notices the rocking, then turns to the crew for an explanation.
   FieldScript_SetMessageId(MsgTolbiShipWonderWhatsWrongShipShouldnt);
-  Script_ShowMessageAndWait(MIA, 0, 40);
+  Script_ShowMessageAndWait(LOCALID_MIA, 0, 40);
   TolbiShipInteriors_Say(LOCALID_ROWING_KAJA);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHEAST, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTHWEST, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_EAST, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST, 40);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_EAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHEAST, 40);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_SOUTHWEST, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_WEST, 40);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTHEAST, 0);
-  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-  TolbiShipInteriors_Turn(IVAN, FACING_SOUTHEAST);
-  ObjectMotion_SetVarCbAndRefresh(IVAN, 1);
-  TolbiShipInteriors_Say(IVAN);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHEAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_SOUTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_WEST, 40);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHEAST, 0);
+  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+  TolbiShipInteriors_Turn(LOCALID_IVAN, FACING_SOUTHEAST);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 1);
+  TolbiShipInteriors_Say(LOCALID_IVAN);
   ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 1);
-  ObjectMotion_SetVariantCallback(GARET, 1);
-  ObjectMotion_SetVarCbAndRefresh(MIA, 1);
+  ObjectMotion_SetVariantCallback(LOCALID_GARET, 1);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 1);
   FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTHEAST, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTHWEST, 20);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHEAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHWEST, 20);
   ObjectEvent_SetChildValue(LOCALID_ROWING_KAJA, 0);
   objectEvent = ObjectEvent_GetById(LOCALID_ROWING_KAJA);
   ObjectEvent_SetSpriteFlags(objectEvent, 1);
@@ -4116,33 +4125,33 @@ static void TolbiShipInteriors_NoticeShipRocking(void) {
   ObjectEvent_FaceDirection(secondRower, FACING_NORTHWEST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(thirdRower, FACING_NORTH + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_WEST, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_EAST, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_WEST, 40);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_WEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_EAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_WEST, 40);
   ObjectMotion_SetVariantCallback(LOCALID_ROWING_KAJA, 2);
   Script_ShowMessage(LOCALID_ROWING_KAJA, 0);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTH, 20);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTH, 20);
   ObjectEvent_WalkToAndWait(LOCALID_ROWING_KAJA, 440, 134);
   ObjectEvent_SetPosition(LOCALID_ROWING_KAJA, 0, 0);
-  TolbiShipInteriors_Turn(GARET, FACING_WEST);
-  ObjectMotion_SetVarCbAndRefresh(GARET, 1);
-  TolbiShipInteriors_Say(GARET);
-  ObjectEvent_FaceDirection(IVAN, FACING_EAST, 0);
-  TolbiShipInteriors_Turn(MIA, FACING_WEST);
+  TolbiShipInteriors_Turn(LOCALID_GARET, FACING_WEST);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 1);
+  TolbiShipInteriors_Say(LOCALID_GARET);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_EAST, 0);
+  TolbiShipInteriors_Turn(LOCALID_MIA, FACING_WEST);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(IVAN, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(MIA, ANIM_NOD);
-  ObjectEvent_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_SetSpeed(IVAN, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_SetSpeed(MIA, PIXELS(1), PIXELS(1) / 2);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
+  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(1), PIXELS(1) / 2);
   action = gTolbiShipInteriors_FollowersRejoinBySeats;
-  ObjectEvent_SetActionScript(GARET, action);
-  ObjectEvent_SetActionScript(IVAN, action);
-  ObjectEvent_RunActionScriptAndWait(MIA, action);
+  ObjectEvent_SetActionScript(LOCALID_GARET, action);
+  ObjectEvent_SetActionScript(LOCALID_IVAN, action);
+  ObjectEvent_RunActionScriptAndWait(LOCALID_MIA, action);
   GameFlag_Set(FLAG_TOLBI_SHIP_KRAKEN_ON_DECK);
   gTolbiShipInteriors_ShakeTimer = 0;
   FieldScheduler_AddCallback(TolbiShipInteriors_ShakeWhileKrakenAboard,
@@ -4309,13 +4318,13 @@ static void TolbiShipInteriors_ReachIsland(void) {
   ObjectEvent_SetActionScript(secondRower, progressB);
   ObjectEvent_RunActionScriptAndWait(fourthRower, progressC);
   ObjectEvent_RunActionScriptAndWait(fourthRower, progressB);
-  ObjectEvent_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_SetSpeed(IVAN, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_SetSpeed(MIA, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(1), PIXELS(1) / 2);
   progressA = gTolbiShipInteriors_FollowersRejoinByStairs;
-  ObjectEvent_SetActionScript(GARET, progressA);
-  ObjectEvent_SetActionScript(IVAN, progressA);
-  ObjectEvent_RunActionScriptAndWait(MIA, progressA);
+  ObjectEvent_SetActionScript(LOCALID_GARET, progressA);
+  ObjectEvent_SetActionScript(LOCALID_IVAN, progressA);
+  ObjectEvent_RunActionScriptAndWait(LOCALID_MIA, progressA);
   TolbiShipInteriors_RunSceneCommand(SHIP_HIDE_PARTY_FOLLOWERS, 0, 0);
   GameFlag_Clear(FLAG_TOLBI_SHIP_ROWING);
   GameFlag_Set(FLAG_TOLBI_SHIP_AT_ISLAND);
@@ -4696,11 +4705,11 @@ struct ObjectEventTemplate gTolbiShipInteriors_CaptainsQuartersObjectEventTempla
         PIXELS(444), 0, PIXELS(628), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(472), 0, PIXELS(660), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
-    { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0 },
-    { IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0 },
-    { MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };
@@ -4838,11 +4847,11 @@ struct ObjectEventTemplate gTolbiShipInteriors_RowingDeckObjectEventTemplates[] 
 
 /// The party's followers, placed for a scene.
 struct ObjectEventTemplate gTolbiShipInteriors_PartyFollowerObjectEventTemplates[] = {
-    { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0 },
-    { IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0 },
-    { MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0 },
     { MAP_TABLE_END },
 };

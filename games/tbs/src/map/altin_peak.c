@@ -1045,8 +1045,8 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   leader->timer = 0;
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER, gAltinPeak_LeaderFleePath);
   if (GameFlag_Get(FLAG_GARET_WATCHING_ROCKS) != 0) {
-    ObjectEvent_SetPosition(GARET, PIXELS(878), PIXELS(528));
-    objectEvent = ObjectEvent_Get(GARET);
+    ObjectEvent_SetPosition(LOCALID_GARET, PIXELS(878), PIXELS(528));
+    objectEvent = ObjectEvent_Get(LOCALID_GARET);
     objectEvent->facing = FACING_SOUTH + FACING_STEP;
   }
   FieldCamera_SetSpeed(PIXELS(5) / 4, PIXELS(5) / 32);
@@ -1097,17 +1097,17 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   // Return Garet to the party if the warning sign brought him into the scene.
   FieldScript_WaitFrames(120);
   if (Script_GetFlag(FLAG_GARET_WATCHING_ROCKS) != 0) {
-    ObjectEvent_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
-    ObjectEvent_WalkTo(GARET, 824, 558);
+    ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(1), PIXELS(1) / 2);
+    ObjectEvent_WalkTo(LOCALID_GARET, 824, 558);
   }
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 854, 584);
   if (Script_GetFlag(FLAG_GARET_WATCHING_ROCKS) != 0) {
-    Engine_ObjectEventSetAnimation(GARET, ANIM_STAND);
-    ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 0);
+    Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
+    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH, 0);
   }
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 40);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   FieldCamera_MoveTo(PIXELS(788), -PIXELS(64), PIXELS(610), 1);
   FieldCamera_WaitForArrival();
@@ -1117,16 +1117,16 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
     FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
     FieldCamera_MoveTo(PIXELS(854), 0, PIXELS(584), 1);
     FieldCamera_WaitForArrival();
-    ObjectEvent_WalkToAndWait(GARET, 840, 552);
-    ObjectEvent_WalkToAndWait(GARET, 854, 562);
-    Engine_ObjectEventSetAnimation(GARET, ANIM_WALK);
+    ObjectEvent_WalkToAndWait(LOCALID_GARET, 840, 552);
+    ObjectEvent_WalkToAndWait(LOCALID_GARET, 854, 562);
+    Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
     objectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
     if (objectEvent != NULL) {
-      ObjectEvent_SetDestination(GARET, objectEvent->x.part.pixel,
+      ObjectEvent_SetDestination(LOCALID_GARET, objectEvent->x.part.pixel,
                                  objectEvent->z.part.pixel);
     }
-    ObjectMotion_CommitCurrentPositionAndActivate(GARET);
-    ObjectEvent_SetPosition(GARET, 0, 0);
+    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
+    ObjectEvent_SetPosition(LOCALID_GARET, 0, 0);
   }
   Map_PlayMusic();
   GameFlag_Set(FLAG_ALTIN_PEAK_BOULDER_FALLEN);
@@ -1154,29 +1154,31 @@ static void AltinPeak_ReadFallingRockSign(void) {
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
     objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     if (objectEvent != 0) {
-      ObjectEvent_SetPosition(GARET, objectEvent->x.fixed,
+      ObjectEvent_SetPosition(LOCALID_GARET, objectEvent->x.fixed,
                               objectEvent->z.fixed);
     }
-    ObjectEvent_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
-    ObjectEvent_WalkToAndWait(GARET, 800, 140);
-    ObjectEvent_FaceDirection(GARET, FACING_NORTH, 20);
+    ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
+    ObjectEvent_WalkToAndWait(LOCALID_GARET, 800, 140);
+    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 20);
     FieldScript_SetMessageId(message + 1);
-    Engine_ObjectEventSetAnimation(GARET, ANIM_SHAKE_HEAD);
+    Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_SHAKE_HEAD);
     FieldScript_WaitFrames(20);
-    Script_ShowMessageAndWait(GARET, 0, 10);
-    ObjectMotion_Launch(GARET, 6, 0);
-    ObjectEvent_SetSpeed(GARET, PIXELS(8) / 5, PIXELS(4) / 5);
-    ObjectEvent_GetById(GARET)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
-    ObjectEvent_WalkToAndWait(GARET, 792, 110);
+    Script_ShowMessageAndWait(LOCALID_GARET, 0, 10);
+    ObjectMotion_Launch(LOCALID_GARET, 6, 0);
+    ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(8) / 5, PIXELS(4) / 5);
+    ObjectEvent_GetById(LOCALID_GARET)->steeringFlags &=
+        ~OBJ_EVENT_FACES_MOTION;
+    ObjectEvent_WalkToAndWait(LOCALID_GARET, 792, 110);
     FieldScript_WaitFrames(1);
-    ObjectEvent_GetById(GARET)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
+    ObjectEvent_GetById(LOCALID_GARET)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
     Script_PlaySong(SE_161);
     MapGrid_SetShake(PIXELS(2), PIXELS(1), Q16_ONE);
-    ObjectEvent_GetById(GARET)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
-    ObjectEvent_WalkToAndWait(GARET, 792, 120);
+    ObjectEvent_GetById(LOCALID_GARET)->steeringFlags &=
+        ~OBJ_EVENT_FACES_MOTION;
+    ObjectEvent_WalkToAndWait(LOCALID_GARET, 792, 120);
     FieldScript_WaitFrames(1);
     {
-      struct ObjectEvent *objectEvent = ObjectEvent_Get(GARET);
+      struct ObjectEvent *objectEvent = ObjectEvent_Get(LOCALID_GARET);
 
       objectEvent->steeringFlags =
           OBJ_EVENT_FACES_MOTION | objectEvent->steeringFlags;
@@ -1188,34 +1190,34 @@ static void AltinPeak_ReadFallingRockSign(void) {
     FieldScript_WaitFrames(40);
     ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
                           0);
-    ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+    ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 0);
-    ObjectEvent_FaceDirection(GARET, 0, 20);
+    ObjectEvent_FaceDirection(LOCALID_GARET, 0, 20);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, 0, 0);
-    ObjectEvent_FaceDirection(GARET, FACING_WEST, 40);
+    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_WEST, 40);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 0);
-    ObjectEvent_FaceDirection(GARET, 0, 40);
+    ObjectEvent_FaceDirection(LOCALID_GARET, 0, 40);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-    ObjectEvent_FaceDirection(GARET, FACING_NORTH, 40);
-    ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-    ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 20);
-    ObjectMotion_SetVariantCallback(GARET, 2);
-    Script_ShowMessageAndWait(GARET, 0, 10);
-    ObjectEvent_SetSpeed(GARET, PIXELS(5) / 2, PIXELS(5) / 4);
-    Engine_ObjectEventSetAnimation(GARET, 5);
-    ObjectEvent_MoveToAndWait(GARET, 796, 138);
+    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 40);
+    ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH, 20);
+    ObjectMotion_SetVariantCallback(LOCALID_GARET, 2);
+    Script_ShowMessageAndWait(LOCALID_GARET, 0, 10);
+    ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(5) / 2, PIXELS(5) / 4);
+    Engine_ObjectEventSetAnimation(LOCALID_GARET, 5);
+    ObjectEvent_MoveToAndWait(LOCALID_GARET, 796, 138);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, 0, 0);
-    ObjectEvent_MoveToAndWait(GARET, 804, 140);
+    ObjectEvent_MoveToAndWait(LOCALID_GARET, 804, 140);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
-    ObjectEvent_MoveToAndWait(GARET, 804, 166);
-    ObjectEvent_MoveToAndWait(GARET, 764, 166);
-    ObjectEvent_MoveToAndWait(GARET, 764, 198);
-    ObjectEvent_MoveToAndWait(GARET, 786, 198);
+    ObjectEvent_MoveToAndWait(LOCALID_GARET, 804, 166);
+    ObjectEvent_MoveToAndWait(LOCALID_GARET, 764, 166);
+    ObjectEvent_MoveToAndWait(LOCALID_GARET, 764, 198);
+    ObjectEvent_MoveToAndWait(LOCALID_GARET, 786, 198);
     ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE,
                           0);
-    ObjectEvent_MoveToAndWait(GARET, 786, 246);
-    Engine_ObjectEventSetAnimation(GARET, ANIM_STAND);
-    ObjectEvent_SetPosition(GARET, 0, 0);
+    ObjectEvent_MoveToAndWait(LOCALID_GARET, 786, 246);
+    Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
+    ObjectEvent_SetPosition(LOCALID_GARET, 0, 0);
     FieldScript_WaitFrames(40);
     AltinPeak_RunBoulderChase(10);
   }
@@ -2245,71 +2247,71 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
   // Bring the party out for the victory conversation.
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0) {
-    ObjectEvent_SetPosition(GARET, leader->x.fixed, leader->z.fixed);
+    ObjectEvent_SetPosition(LOCALID_GARET, leader->x.fixed, leader->z.fixed);
   }
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0) {
-    ObjectEvent_SetPosition(IVAN, leader->x.fixed, leader->z.fixed);
+    ObjectEvent_SetPosition(LOCALID_IVAN, leader->x.fixed, leader->z.fixed);
   }
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0) {
-    ObjectEvent_SetPosition(MIA, leader->x.fixed, leader->z.fixed);
+    ObjectEvent_SetPosition(LOCALID_MIA, leader->x.fixed, leader->z.fixed);
   }
-  ObjectEvent_SetSpeed(GARET, PIXELS(3) / 5, PIXELS(3) / 10);
-  ObjectEvent_SetSpeed(IVAN, PIXELS(3) / 5, PIXELS(3) / 10);
-  ObjectEvent_SetSpeed(MIA, PIXELS(3) / 5, PIXELS(3) / 10);
-  ObjectEvent_SetActionScript(GARET, gAltinPeak_GaretScript);
-  ObjectEvent_SetActionScript(IVAN, gAltinPeak_IvanScript);
-  ObjectEvent_RunActionScriptAndWait(MIA, gAltinPeak_MiaScript);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTH, 40);
-  ObjectMotion_SetVarCbAndRefresh(GARET, 1);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST, 10);
+  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(3) / 5, PIXELS(3) / 10);
+  ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(3) / 5, PIXELS(3) / 10);
+  ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(3) / 5, PIXELS(3) / 10);
+  ObjectEvent_SetActionScript(LOCALID_GARET, gAltinPeak_GaretScript);
+  ObjectEvent_SetActionScript(LOCALID_IVAN, gAltinPeak_IvanScript);
+  ObjectEvent_RunActionScriptAndWait(LOCALID_MIA, gAltinPeak_MiaScript);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTH, 40);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 1);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHEAST, 10);
   FieldScript_SetMessageId(MsgAltinWeDidIsaacWeBeat);
-  Script_ShowMessageAndWait(GARET, 0, 10);
-  ObjectMotion_SetVarCbAndRefresh(IVAN, 1);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 10);
+  Script_ShowMessageAndWait(LOCALID_GARET, 0, 10);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 1);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHWEST, 10);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHEAST, 0);
-  Script_OpenMessage(IVAN, 0);
+  Script_OpenMessage(LOCALID_IVAN, 0);
   if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
-    ObjectMotion_SetAnimationAndWait(IVAN, ANIM_NOD);
+    ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
   } else {
-    ObjectMotion_SetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
+    ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_SHAKE_HEAD);
     Script_SkipMessages(1);
   }
-  Script_ShowMessageAndWait(IVAN, 0, 20);
+  Script_ShowMessageAndWait(LOCALID_IVAN, 0, 20);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetVarCbAndRefresh(MIA, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 2);
   FieldScript_SetMessageId(MsgAltinGuardianStatuesWereCreatedLong);
-  Script_ShowMessage(MIA, 0);
+  Script_ShowMessage(LOCALID_MIA, 0);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 10);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST, 40);
-  Script_ShowMessage(GARET, 0);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST, 40);
+  Script_ShowMessage(LOCALID_GARET, 0);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 10);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
                         0);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Script_PlaySong(SE_190);
   ObjectEvent_SetChildValue(LOCALID_STATUE, SPRITE_COLOR_WHITE);
   FieldScript_WaitFrames(10);
   Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTH, 0);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER,
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Script_PlaySong(SE_103);
   // Animate the statues while the party reacts.
   update = AltinPeak_FlickerStatue;
@@ -2319,31 +2321,31 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
   ObjectEvent_RunActionScriptAndWait(LOCALID_STATUE, celebrate);
   Task_Remove(update);
   FieldScript_WaitFrames(60);
-  ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 2);
   FieldScript_WaitFrames(20);
-  Script_ShowMessage(IVAN, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 20);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(IVAN, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(MIA, ANIM_NOD);
+  Script_ShowMessage(LOCALID_IVAN, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHEAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHWEST, 20);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetVarCbAndRefresh(MIA, 1);
-  Script_ShowMessageAndWait(MIA, 0, 20);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST, 0);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 1);
+  Script_ShowMessageAndWait(LOCALID_MIA, 0, 20);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHEAST, 0);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 40);
-  ObjectMotion_SetAnimationAndWait(GARET, ANIM_NOD);
-  Script_ShowMessageAndWait(GARET, 0, 10);
+  ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
+  Script_ShowMessageAndWait(LOCALID_GARET, 0, 10);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(IVAN, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(MIA, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
   FieldScript_WaitFrames(20);
   // Return the companions and save the completed Hydros battle.
   party = gAltinPeak_RejoinScript;
-  ObjectEvent_SetActionScript(GARET, party);
-  ObjectEvent_SetActionScript(IVAN, party);
-  ObjectEvent_RunActionScriptAndWait(MIA, party);
+  ObjectEvent_SetActionScript(LOCALID_GARET, party);
+  ObjectEvent_SetActionScript(LOCALID_IVAN, party);
+  ObjectEvent_RunActionScriptAndWait(LOCALID_MIA, party);
   FieldScript_WaitFrames(20);
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
@@ -3087,7 +3089,7 @@ struct ObjectEventTemplate gAltinPeak_FallingRocksObjectEventTemplates[] = {
     {SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7, PIXELS(774), 0, PIXELS(76), FACING_SOUTH, TALK_FACING_KEEP, 0},
     {SPRITE_BLANK, CONDITION_ALWAYS, 7, PIXELS(774), 0, PIXELS(88), FACING_SOUTH, TALK_FACING_KEEP, 0},
     {SPRITE_SIGNPOST, CONDITION_ALWAYS, 7, PIXELS(792), 0, PIXELS(88), FACING_SOUTH, TALK_FACING_KEEP, 0},
-    {GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0},
+    {LOCALID_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0},
     {MAP_TABLE_END},
 };
 
@@ -3096,9 +3098,9 @@ struct ObjectEventTemplate gAltinPeak_HydrosStatueObjectEventTemplates[] = {
         TALK_FACING_KEEP, 0},
     {SPRITE_BLANK_LARGE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(328), 0, PIXELS(88), FACING_SOUTH,
         TALK_FACING_KEEP, 0},
-    {GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0},
-    {IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0},
-    {MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0},
+    {LOCALID_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0},
+    {LOCALID_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0},
+    {LOCALID_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0},
     {MAP_TABLE_END},
 };
 

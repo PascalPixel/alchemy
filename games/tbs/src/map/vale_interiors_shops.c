@@ -589,11 +589,11 @@ static void EventScript_GaretComesHome(void) {
   FieldScript_Start();
   FieldCamera_MoveTo(-1, -1, -1, 0);
   WaitFrames(1);
-  ObjectMotion_SetActionVariant(MIA, 1);
+  ObjectMotion_SetActionVariant(LOCALID_MIA, 1);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
-  ObjectEvent_SetSpeed(GARET, PIXELS(2) / 5, PIXELS(1) / 5);
-  ObjectEvent_SetSpeed(IVAN, PIXELS(2) / 5, PIXELS(1) / 5);
-  ObjectEvent_SetSpeed(MIA, PIXELS(2) / 5, PIXELS(1) / 5);
+  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(2) / 5, PIXELS(1) / 5);
+  ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(2) / 5, PIXELS(1) / 5);
+  ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(2) / 5, PIXELS(1) / 5);
   Engine_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER,
                                  ANIM_GRANDFATHER_ASLEEP);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 808, 508);
@@ -617,33 +617,36 @@ static void EventScript_GaretComesHome(void) {
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   objectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   if (objectEvent != NULL) {
-    ObjectEvent_SetPosition(GARET, objectEvent->x.fixed, objectEvent->z.fixed);
+    ObjectEvent_SetPosition(LOCALID_GARET, objectEvent->x.fixed,
+                            objectEvent->z.fixed);
   }
   objectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   if (objectEvent != NULL) {
-    ObjectEvent_SetPosition(IVAN, objectEvent->x.fixed, objectEvent->z.fixed);
+    ObjectEvent_SetPosition(LOCALID_IVAN, objectEvent->x.fixed,
+                            objectEvent->z.fixed);
   }
   objectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   if (objectEvent != NULL) {
-    ObjectEvent_SetPosition(MIA, objectEvent->x.fixed, objectEvent->z.fixed);
+    ObjectEvent_SetPosition(LOCALID_MIA, objectEvent->x.fixed,
+                            objectEvent->z.fixed);
   }
-  ObjectEvent_WalkTo(GARET, 792, 512);
-  ObjectEvent_WalkTo(IVAN, 824, 504);
-  ObjectEvent_WalkToAndWait(MIA, 818, 524);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_STAND);
-  Engine_ObjectEventSetAnimation(IVAN, ANIM_STAND);
+  ObjectEvent_WalkTo(LOCALID_GARET, 792, 512);
+  ObjectEvent_WalkTo(LOCALID_IVAN, 824, 504);
+  ObjectEvent_WalkToAndWait(LOCALID_MIA, 818, 524);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_STAND);
   FieldScript_WaitFrames(10);
   Object_SetTargetAndCallback(
       LOCALID_PARTY_LEADER, OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_GARETS_FATHER,
       gValeInteriorsShops_FaceTargetScript);
   Object_SetTargetAndCallback(
-      GARET, OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_GARETS_FATHER,
+      LOCALID_GARET, OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_GARETS_FATHER,
       gValeInteriorsShops_FaceTargetScript);
   Object_SetTargetAndCallback(
-      IVAN, OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_GARETS_FATHER,
+      LOCALID_IVAN, OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_GARETS_FATHER,
       gValeInteriorsShops_FaceTargetScript);
   Object_SetTargetAndCallback(
-      MIA, OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_GARETS_FATHER,
+      LOCALID_MIA, OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_GARETS_FATHER,
       gValeInteriorsShops_FaceTargetScript);
   FieldScript_WaitFrames(300);
   FieldCamera_GetScriptObject()->motionFlags = motionFlags;
@@ -667,9 +670,9 @@ static void EventScript_GaretComesHome(void) {
                                 LOCALID_GARETS_FATHER,
                             0, 20);
   ObjectMotion_EnableActionAndResetMotion(LOCALID_PARTY_LEADER);
-  ObjectMotion_EnableActionAndResetMotion(GARET);
-  ObjectMotion_EnableActionAndResetMotion(IVAN);
-  ObjectMotion_EnableActionAndResetMotion(MIA);
+  ObjectMotion_EnableActionAndResetMotion(LOCALID_GARET);
+  ObjectMotion_EnableActionAndResetMotion(LOCALID_IVAN);
+  ObjectMotion_EnableActionAndResetMotion(LOCALID_MIA);
   ObjectEvent_ShowEmote(LOCALID_GARETS_MOTHER,
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_GARETS_MOTHER, 0,
@@ -763,8 +766,8 @@ static void EventScript_GaretComesHome(void) {
   FieldCamera_MoveTo(PIXELS(777), 0, PIXELS(468), 1);
   FieldCamera_WaitForArrival();
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetAnimationAndWait(GARET, ANIM_NOD);
-  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | GARET, 0, 20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
+  Script_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | LOCALID_GARET, 0, 20);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_GARETS_GRANDFATHER, 2);
   // His grandfather wakes, and the sleep stops drifting.
   Task_Remove(timedUpdate);
@@ -799,11 +802,11 @@ static void EventScript_GaretComesHome(void) {
                             0, 20);
   // Garet goes to him; the grandfather asks whether the Wise One's mission
   // is done, and a no skips one line of Garet's father.
-  ObjectEvent_SetSpeed(GARET, PIXELS(8) / 5, PIXELS(4) / 5);
-  ObjectEvent_WalkToAndWait(GARET, 789, 473);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTHWEST + FACING_STEP, 20);
-  ObjectMotion_SetAnimationAndWait(GARET, ANIM_NOD);
-  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | GARET, 0, 10);
+  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(8) / 5, PIXELS(4) / 5);
+  ObjectEvent_WalkToAndWait(LOCALID_GARET, 789, 473);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHWEST + FACING_STEP, 20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
+  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_GARET, 0, 10);
   ObjectEvent_FaceDirection(LOCALID_GARETS_GRANDFATHER,
                             FACING_EAST + FACING_STEP, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_GARETS_GRANDFATHER, ANIM_NOD);
@@ -812,9 +815,9 @@ static void EventScript_GaretComesHome(void) {
                             0);
   ObjectEvent_FaceDirection(LOCALID_GARETS_GRANDMOTHER,
                             FACING_EAST + FACING_STEP, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_SOUTHWEST + FACING_STEP, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTHWEST + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_SOUTHWEST + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHWEST + FACING_STEP, 0);
   if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 1) {
     gFieldWork->message++;
   }
@@ -830,8 +833,8 @@ static void EventScript_GaretComesHome(void) {
   Script_ShowMessage(SPEAKER_PORTRAIT_RIGHT | LOCALID_GARETS_MOTHER, 0);
   FieldCamera_MoveTo(PIXELS(777), 0, PIXELS(468), 1);
   FieldScript_WaitFrames(20);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 20);
-  ObjectMotion_SetAnimationAndWait(GARET, ANIM_NOD);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH + FACING_STEP, 20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
   FieldScript_WaitFrames(20);
   ObjectMotion_SetAnimationAndWait(LOCALID_GARETS_GRANDMOTHER, ANIM_SHAKE_HEAD);
   ObjectEvent_FaceDirection(LOCALID_GARETS_GRANDMOTHER,
@@ -839,8 +842,8 @@ static void EventScript_GaretComesHome(void) {
   Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_GARETS_GRANDMOTHER, 0);
   ObjectMotion_SetAnimationAndWait(LOCALID_GARETS_GRANDFATHER, ANIM_NOD);
   Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_GARETS_GRANDFATHER, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTHWEST + FACING_STEP, 10);
-  ObjectMotion_SetAnimationAndWait(GARET, ANIM_NOD);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHWEST + FACING_STEP, 10);
+  ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
   ObjectEvent_FaceDirection(LOCALID_GARETS_GRANDMOTHER,
                             FACING_EAST + FACING_STEP, 10);
   Engine_ObjectEventSetAnimation(LOCALID_GARETS_MOTHER, ANIM_NOD);
@@ -849,38 +852,40 @@ static void EventScript_GaretComesHome(void) {
   ObjectMotion_SetAnimationAndWait(LOCALID_GARETS_GRANDFATHER, ANIM_NOD);
   FieldScript_WaitFrames(20);
   // Garet introduces his new friends.
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 20);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTHWEST + FACING_STEP, 20);
-  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | GARET, 0, 20);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 10);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST + FACING_STEP, 20);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHWEST + FACING_STEP, 20);
+  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_GARET, 0, 20);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST + FACING_STEP, 10);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 40);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(GARET, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
   FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 20);
-  ObjectMotion_SetAnimationAndWait(MIA, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  ObjectEvent_FaceDirection(GARET, FACING_EAST + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_EAST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHEAST, 0);
   // Ivan, then Mia, step forward and introduce themselves; the family nods.
-  ObjectEvent_SetSpeed(IVAN, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_WalkToAndWait(IVAN, 819, 489);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST + FACING_STEP, 40);
-  ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
-  Script_ShowMessageAndWait(IVAN, 0, 20);
-  ObjectMotion_SetAnimationAndWait(IVAN, ANIM_NOD);
+  ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_WalkToAndWait(LOCALID_IVAN, 819, 489);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHWEST + FACING_STEP, 40);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 2);
+  Script_ShowMessageAndWait(LOCALID_IVAN, 0, 20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
   ValeInteriorsShops_FamilyNods();
-  ObjectEvent_GetById(MIA)->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
-  ObjectMotion_SetActionVariant(MIA, 1);
-  ObjectEvent_SetSpeed(MIA, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_WalkToAndWait(MIA, 794, 520);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 0);
+  ObjectEvent_GetById(LOCALID_MIA)->priorityFlags &=
+      ~OBJ_EVENT_PRIORITY_AUTOMATIC;
+  ObjectMotion_SetActionVariant(LOCALID_MIA, 1);
+  ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_WalkToAndWait(LOCALID_MIA, 794, 520);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHWEST, 0);
-  ObjectEvent_WalkToAndWait(MIA, 784, 496);
-  ObjectEvent_FaceDirection(MIA, FACING_WEST + FACING_STEP, 10);
-  ObjectEvent_GetById(MIA)->priorityFlags |= OBJ_EVENT_PRIORITY_AUTOMATIC;
-  Script_ShowMessageAndWait(MIA, 0, 20);
+  ObjectEvent_WalkToAndWait(LOCALID_MIA, 784, 496);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_WEST + FACING_STEP, 10);
+  ObjectEvent_GetById(LOCALID_MIA)->priorityFlags |=
+      OBJ_EVENT_PRIORITY_AUTOMATIC;
+  Script_ShowMessageAndWait(LOCALID_MIA, 0, 20);
   ValeInteriorsShops_FamilyNods();
   FieldScript_WaitFrames(20);
   FieldCamera_MoveTo(PIXELS(777), 0, PIXELS(428), 1);
@@ -896,12 +901,12 @@ static void EventScript_GaretComesHome(void) {
                             20);
   FieldCamera_MoveTo(PIXELS(777), 0, PIXELS(468), 1);
   FieldScript_WaitFrames(40);
-  ObjectEvent_FaceDirection(IVAN, FACING_SOUTHWEST + FACING_STEP, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST + FACING_STEP, 40);
-  ObjectEvent_FaceDirection(IVAN, FACING_WEST + FACING_STEP, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTH + FACING_STEP, 20);
-  Engine_ObjectEventSetAnimation(IVAN, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(MIA, ANIM_NOD);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_SOUTHWEST + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHEAST + FACING_STEP, 40);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_WEST + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTH + FACING_STEP, 20);
+  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
   FieldScript_WaitFrames(20);
   // His father: enough chit-chat, relax and enjoy your stay.
   ObjectMotion_SetVarCbAndRefresh(LOCALID_GARETS_FATHER, 1);
@@ -909,19 +914,19 @@ static void EventScript_GaretComesHome(void) {
   Engine_ObjectEventSetAnimation(LOCALID_GARETS_FATHER, ANIM_NOD);
   Script_ShowMessageAndWait(LOCALID_GARETS_FATHER, 0, 20);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST + FACING_STEP, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTH + FACING_STEP, 40);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHWEST + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTH + FACING_STEP, 40);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(IVAN, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(MIA, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  ObjectEvent_SetSpeed(IVAN, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(1), PIXELS(1) / 2);
   partyScript = gValeInteriorsShops_PartyLeavesScript;
-  ObjectEvent_SetActionScript(GARET, partyScript);
-  ObjectEvent_SetActionScript(IVAN, partyScript);
-  ObjectEvent_RunActionScriptAndWait(MIA, partyScript);
+  ObjectEvent_SetActionScript(LOCALID_GARET, partyScript);
+  ObjectEvent_SetActionScript(LOCALID_IVAN, partyScript);
+  ObjectEvent_RunActionScriptAndWait(LOCALID_MIA, partyScript);
   ObjectEvent_SetActionScript(LOCALID_GARETS_FATHER,
                               gValeInteriorsShops_FatherPacingScript);
   ObjectEvent_WalkToAndWait(LOCALID_GARETS_MOTHER, 837, 376);
@@ -1165,11 +1170,11 @@ struct ObjectEventTemplate gValeInteriorsShops_ObjectEventTemplatesAfterLeaving[
 };
 
 struct ObjectEventTemplate gValeInteriorsShops_ObjectEventTemplatesAfterKalay[] = {
-    { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
-    { IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
-    { MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_MAN_WITH_WHITE_HAIR, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(697), 0, PIXELS(468), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },

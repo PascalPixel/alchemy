@@ -173,8 +173,20 @@ enum ObjectEventTalkFacing {
 #define OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE 0x01
 
 /// Local ids: 0 to 7 the party's characters, the placed object events from 8.
+/// A party member's object event takes its character's number
+/// (character_ids.h) as its local id.
 enum LocalId {
   LOCALID_PARTY_LEADER = 0,
+  /// ★ Named from the game: "Garet" (MsgCharacterName)
+  LOCALID_GARET = 1,
+  /// ★ Named from the game: "Ivan" (MsgCharacterName)
+  LOCALID_IVAN = 2,
+  /// ★ Named from the game: "Mia" (MsgCharacterName)
+  LOCALID_MIA = 3,
+  /// ★ Named from the game: "Jenna" (MsgCharacterName)
+  LOCALID_JENNA = 5,
+  /// ★ Named from the game: "Sheba" (MsgCharacterName)
+  LOCALID_SHEBA = 6,
   LOCALID_FIRST_PLACED = 8,
   /// The last of the 66 object event slots, as maps loop over every placed
   /// object event.

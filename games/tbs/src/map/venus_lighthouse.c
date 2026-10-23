@@ -1463,37 +1463,38 @@ static void EventScript_MovePillarTowardWall(void) {
       GameFlag_Set(conversationFlag);
       objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
       if (objectEvent != 0) {
-        Engine_ObjectEventSetPosition(GARET, objectEvent->x.fixed,
+        Engine_ObjectEventSetPosition(LOCALID_GARET, objectEvent->x.fixed,
                                       objectEvent->z.fixed);
       }
-      ObjectMotion_SetSpeedParameters(GARET, walkSpeed, walkAcceleration);
-      ObjectMotion_SetPositionAndReset(GARET, garetX, 88);
-      ObjectMotion_SetPositionAndReset(GARET, garetX, 104);
-      ObjectEvent_LinkPair(GARET, LOCALID_PARTY_LEADER, 0);
+      ObjectMotion_SetSpeedParameters(LOCALID_GARET, walkSpeed,
+                                      walkAcceleration);
+      ObjectMotion_SetPositionAndReset(LOCALID_GARET, garetX, 88);
+      ObjectMotion_SetPositionAndReset(LOCALID_GARET, garetX, 104);
+      ObjectEvent_LinkPair(LOCALID_GARET, LOCALID_PARTY_LEADER, 0);
       FieldScript_WaitFrames(20);
-      ObjectMotion_SetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
+      ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_SHAKE_HEAD);
       FieldScript_WaitFrames(20);
       FieldScript_SetMessageId(MsgVenusHmmmWeCantPushBlock);
-      FieldScript_ShowMessageThenWait(GARET, 0, 20);
-      ObjectMotion_ArmCallback(GARET, FACING_EAST, 10);
-      FieldEffect_SpawnLinked(GARET, emote, 60);
-      ObjectMotion_SetAngleToward(GARET, LOCALID_PARTY_LEADER, 0);
+      FieldScript_ShowMessageThenWait(LOCALID_GARET, 0, 20);
+      ObjectMotion_ArmCallback(LOCALID_GARET, FACING_EAST, 10);
+      FieldEffect_SpawnLinked(LOCALID_GARET, emote, 60);
+      ObjectMotion_SetAngleToward(LOCALID_GARET, LOCALID_PARTY_LEADER, 0);
       FieldScript_WaitFrames(20);
-      ObjectMotion_SetVarCbAndRefresh(GARET, 2);
+      ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
       FieldScript_WaitFrames(20);
-      FieldScript_ShowMessageThenWait(GARET, 0, 20);
+      FieldScript_ShowMessageThenWait(LOCALID_GARET, 0, 20);
       Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-      ObjectMotion_SetAnimationAndWait(GARET, ANIM_NOD);
+      ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
       FieldScript_WaitFrames(30);
-      ObjectMotion_SetPositionAndReset(GARET, garetX, 88);
-      Engine_ObjectEventSetAnimation(GARET, ANIM_WALK);
+      ObjectMotion_SetPositionAndReset(LOCALID_GARET, garetX, 88);
+      Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
       leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
       if (leader != 0) {
-        ObjectMotion_ResetAndSetPosition(GARET, leader->x.part.pixel,
+        ObjectMotion_ResetAndSetPosition(LOCALID_GARET, leader->x.part.pixel,
                                          leader->z.part.pixel);
       }
-      ObjectMotion_CommitCurrentPositionAndActivate(GARET);
-      Engine_ObjectEventSetPosition(GARET, 0, 0);
+      ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
+      Engine_ObjectEventSetPosition(LOCALID_GARET, 0, 0);
       FieldScript_End();
     }
   }
@@ -4660,7 +4661,7 @@ struct ObjectEventTemplate gVenusLighthouseEntryObjectEventTemplates[] = {
 };
 
 struct ObjectEventTemplate gVenusLighthouseGroundFloorObjectEventTemplates[] = {
-    { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_OLD_MAN_IN_BLUE_CAP, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
         PIXELS(128), 0, PIXELS(140), FACING_SOUTH, TALK_FACING_KEEP, 0 },

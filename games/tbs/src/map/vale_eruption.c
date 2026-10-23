@@ -243,51 +243,51 @@ static void EventScript_ReturnFromMtAleph(void) {
   // Isaac and Garet come down the path, and Garet sees the villagers: "Uh-oh.
   // It's Grandpa and the others."
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
-  ObjectEvent_SetSpeed(GARET, PIXELS(1) / 2, PIXELS(1) / 4);
+  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(1) / 2, PIXELS(1) / 4);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(120), PIXELS(258));
   FieldCamera_SetSpeed(PIXELS(3) / 2, PIXELS(3) / 16);
   FieldCamera_MoveTo(PIXELS(112), -1, PIXELS(320), 1);
   FieldScript_WaitFrames(40);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_WALK);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
   ObjectEvent_SetDestination(LOCALID_PARTY_LEADER, 120, 320);
-  ObjectEvent_MoveToAndWait(GARET, 104, 320);
+  ObjectEvent_MoveToAndWait(LOCALID_GARET, 104, 320);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
   FieldCamera_WaitForArrival();
   FieldScript_WaitFrames(30);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 0);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldScript_WaitFrames(50);
-  ObjectEvent_SetSpeed(GARET, PIXELS(3) / 2, PIXELS(3) / 4);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_WALK);
-  ObjectEvent_MoveToAndWait(GARET, 105, 342);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_STAND);
-  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
-  Script_ShowMessage(GARET, 0);
+  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(3) / 2, PIXELS(3) / 4);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
+  ObjectEvent_MoveToAndWait(LOCALID_GARET, 105, 342);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
+  Script_ShowMessage(LOCALID_GARET, 0);
   FieldScript_WaitFrames(10);
   ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 1);
-  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, GARET, 0);
+  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_GARET, 0);
   FieldScript_WaitFrames(20);
 
   // "What should we do, Isaac? Should we go back up?" Either way, the two stay.
-  Script_OpenMessage(GARET, 0);
+  Script_OpenMessage(LOCALID_GARET, 0);
   if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
     FieldScript_WaitFrames(60);
     Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-    Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
+    Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
     FieldScript_WaitFrames(50);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-    Engine_ObjectEventSetAnimation(GARET, ANIM_WALK);
-    ObjectEvent_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
-    ObjectEvent_MoveToAndWait(GARET, 103, 320);
-    Engine_ObjectEventSetAnimation(GARET, ANIM_STAND);
+    Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
+    ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(1), PIXELS(1) / 2);
+    ObjectEvent_MoveToAndWait(LOCALID_GARET, 103, 320);
+    Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
   } else {
     FieldScript_WaitFrames(60);
     Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-    Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
+    Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
     FieldScript_WaitFrames(50);
-    ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 0);
+    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
     Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
     ObjectEvent_MoveToAndWait(LOCALID_PARTY_LEADER, 120, 340);
     Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
@@ -296,9 +296,9 @@ static void EventScript_ReturnFromMtAleph(void) {
   // The villagers spot them: "Garet!" "Isaac!" Garet's brother cries "Garet!"
   // and the villagers turn to the path.
   Script_ShowMessage(LOCALID_GARETS_BROTHER, 0);
-  ObjectEvent_SetAttachedEffect(GARET, ATTACHED_EFFECT_IN_FRONT |
-                                           ATTACHED_EFFECT_ONCE);
-  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
+  ObjectEvent_SetAttachedEffect(LOCALID_GARET, ATTACHED_EFFECT_IN_FRONT |
+                                                   ATTACHED_EFFECT_ONCE);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
   FieldScript_WaitFrames(40);
   ObjectEvent_FaceDirection(LOCALID_GARETS_GRANDFATHER, FACING_NORTHWEST, 0);
   ObjectEvent_FaceDirection(LOCALID_GARETS_SISTER, FACING_NORTHWEST, 0);
@@ -322,30 +322,30 @@ static void EventScript_ReturnFromMtAleph(void) {
   FieldScript_WaitFrames(40);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER,
                             FACING_SOUTHEAST + FACING_STEP, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
   FieldCamera_MoveTo(PIXELS(112), -1, PIXELS(320), 1);
   FieldCamera_WaitForArrival();
   ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
-  ObjectMotion_SetVariantCallback(GARET, 2);
-  ObjectEvent_RefreshSelectorById(GARET);
+  ObjectMotion_SetVariantCallback(LOCALID_GARET, 2);
+  ObjectEvent_RefreshSelectorById(LOCALID_GARET);
   FieldScript_WaitFrames(50);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
-  ObjectEvent_RefreshSelectorById(GARET);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  ObjectEvent_RefreshSelectorById(LOCALID_GARET);
   FieldScript_WaitFrames(60);
 
   // "Come over here, both of you!" The two walk down to the villagers.
   FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   FieldCamera_MoveTo(PIXELS(214), -1, PIXELS(472), 1);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER,
                               gValeEruption_LeaderWalksDown);
   FieldScript_WaitFrames(30);
-  ObjectEvent_SetActionScript(GARET, gValeEruption_GaretWalksDown);
-  ObjectEvent_RefreshSelectorById(GARET);
+  ObjectEvent_SetActionScript(LOCALID_GARET, gValeEruption_GaretWalksDown);
+  ObjectEvent_RefreshSelectorById(LOCALID_GARET);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_EAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_EAST, 0);
   FieldCamera_WaitForArrival();
   ObjectEvent_FaceDirection(LOCALID_GARETS_GRANDFATHER, FACING_WEST, 0);
   ObjectEvent_SetSpeed(LOCALID_GREAT_HEALER, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -360,25 +360,25 @@ static void EventScript_ReturnFromMtAleph(void) {
   Script_ShowMessage(LOCALID_GARETS_GRANDFATHER, 0);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   FieldScript_WaitFrames(50);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   FieldScript_WaitFrames(50);
   // The Great Healer: "What happened?" The two look at each other and shake
   // their heads.
   ObjectMotion_SetVarCbAndRefresh(LOCALID_GREAT_HEALER, 1);
   Script_ShowMessage(LOCALID_GREAT_HEALER, 0);
   FieldScript_WaitFrames(40);
-  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, GARET, 0);
+  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_GARET, 0);
   FieldScript_WaitFrames(50);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_EAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_EAST, 0);
   FieldScript_WaitFrames(20);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_SHAKE_HEAD);
-  ObjectMotion_SetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(40);
   // Dora notices who is missing.
   ObjectEvent_ShowEmote(LOCALID_DORA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   FieldScript_WaitFrames(50);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST + FACING_STEP, 0);
   FieldScript_WaitFrames(10);
 
   // "Weren't Jenna and Kraden with you?" Yes: "They were taken away? By
@@ -408,13 +408,13 @@ static void EventScript_ReturnFromMtAleph(void) {
   }
   FieldScript_WaitFrames(30);
   // Garet starts to tell, and both shake their heads again.
-  ObjectEvent_FaceDirection(GARET, FACING_EAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_EAST, 0);
   FieldScript_WaitFrames(30);
   ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
-  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
   FieldScript_WaitFrames(40);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_SHAKE_HEAD);
-  ObjectMotion_SetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(60);
 
   // "This is all very complicated... Come into the sanctum, both of you."
@@ -465,14 +465,14 @@ static void EventScript_ReturnFromMtAleph(void) {
   ObjectMotion_SetAnimationAndWait(LOCALID_DORA, ANIM_NOD);
   FieldScript_WaitFrames(30);
   ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 1);
-  ObjectMotion_SetVarCbAndRefresh(GARET, 1);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 1);
   FieldScript_WaitFrames(40);
   ObjectEvent_WalkTo(LOCALID_DORA, 255, 390);
   actionScript = gValeEruption_EnterSanctum;
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER, actionScript);
   FieldScript_WaitFrames(40);
-  ObjectEvent_SetActionScript(GARET, actionScript);
-  ObjectEvent_RefreshSelectorById(GARET);
+  ObjectEvent_SetActionScript(LOCALID_GARET, actionScript);
+  ObjectEvent_RefreshSelectorById(LOCALID_GARET);
   ObjectEvent_ShowEmote(LOCALID_GARETS_SISTER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   ObjectEvent_ShowEmote(LOCALID_GARETS_BROTHER, EMOTE_IN_FRONT | EMOTE_WINCE,
                         0);
@@ -536,7 +536,7 @@ u32 gValeEruption_Warps[] = {
 
 // clang-format off
 struct ObjectEventTemplate gValeEruption_ObjectEventTemplates[] = {
-    { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(104), 0, PIXELS(258), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(265), 0, PIXELS(468), FACING_NORTHWEST, TALK_FACING_PARTY, 0 },

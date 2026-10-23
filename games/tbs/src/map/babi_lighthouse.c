@@ -514,10 +514,10 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   FieldScript_WaitFrames(10);
   FieldMotion_LaunchFromFocusedObject(LOCALID_IODEM, 16, 0, FACING_NORTH);
-  FieldMotion_LaunchFromFocusedObject(GARET, -8, 16, FACING_NORTH);
-  FieldMotion_LaunchFromFocusedObject(IVAN, 8, 16, FACING_NORTH);
-  FieldMotion_LaunchFromFocusedObject(MIA, 24, 16, FACING_NORTH);
-  ObjectMotion_CommitCurrentPositionAndActivate(MIA);
+  FieldMotion_LaunchFromFocusedObject(LOCALID_GARET, -8, 16, FACING_NORTH);
+  FieldMotion_LaunchFromFocusedObject(LOCALID_IVAN, 8, 16, FACING_NORTH);
+  FieldMotion_LaunchFromFocusedObject(LOCALID_MIA, 24, 16, FACING_NORTH);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_MIA);
   FieldScript_WaitFrames(20);
   Script_ShowMessage(LOCALID_FARAN, 0);
   FieldScript_WaitFrames(10);
@@ -599,17 +599,17 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   ObjectEvent_ShowEmote(LOCALID_FARAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Script_ShowMessage(LOCALID_FARAN, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
-  Script_ShowMessage(MIA, 0);
+  Script_ShowMessage(LOCALID_MIA, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 2);
   FieldScript_WaitFrames(20);
-  Script_ShowMessage(IVAN, 0);
+  Script_ShowMessage(LOCALID_IVAN, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
   FieldScript_WaitFrames(20);
-  Script_OpenMessage(GARET, 0);
+  Script_OpenMessage(LOCALID_GARET, 0);
   if (FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER, 0) ==
       0) {
     FieldScript_WaitFrames(30);
@@ -643,16 +643,16 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   FieldScript_WaitFrames(20);
   Script_ShowMessage(LOCALID_FARAN, 0);
   FieldScript_WaitFrames(20);
-  ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Script_ShowMessage(MIA, 0);
+  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  Script_ShowMessage(LOCALID_MIA, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 2);
   FieldScript_WaitFrames(20);
-  Script_ShowMessage(IVAN, 0);
+  Script_ShowMessage(LOCALID_IVAN, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(GARET, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
   FieldScript_WaitFrames(30);
-  Script_ShowMessage(GARET, 0);
+  Script_ShowMessage(LOCALID_GARET, 0);
   FieldScript_WaitFrames(20);
   ObjectEvent_ShowEmote(LOCALID_FARAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Script_OpenMessage(LOCALID_FARAN, 0);
@@ -758,12 +758,12 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   ObjectEvent_FaceDirection(LOCALID_WITNESS, FACING_WEST, 0);
   FieldScript_WaitFrames(20);
   // The companions walk back into the leader.
-  ObjectEvent_SetSpeed(GARET, 0x13333, 0x9999);
-  ObjectEvent_SetSpeed(IVAN, 0x13333, 0x9999);
-  ObjectEvent_SetSpeed(MIA, 0x13333, 0x9999);
-  BabiLighthouse_WalkBackToLeader(GARET);
-  BabiLighthouse_WalkBackToLeader(IVAN);
-  BabiLighthouse_WalkBackToLeader(MIA);
+  ObjectEvent_SetSpeed(LOCALID_GARET, 0x13333, 0x9999);
+  ObjectEvent_SetSpeed(LOCALID_IVAN, 0x13333, 0x9999);
+  ObjectEvent_SetSpeed(LOCALID_MIA, 0x13333, 0x9999);
+  BabiLighthouse_WalkBackToLeader(LOCALID_GARET);
+  BabiLighthouse_WalkBackToLeader(LOCALID_IVAN);
+  BabiLighthouse_WalkBackToLeader(LOCALID_MIA);
   FieldScript_WaitFrames(10);
   FieldScript_End();
 }
@@ -782,10 +782,10 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 296, 312);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_LaunchFromFocusedObject(GARET, 0, 16, FACING_EAST);
-  FieldMotion_LaunchFromFocusedObject(IVAN, -16, -8, FACING_EAST);
-  ObjectMotion_LaunchFromFocusedObject(MIA, -16, 24, FACING_EAST);
-  ObjectMotion_CommitCurrentPositionAndActivate(MIA);
+  ObjectMotion_LaunchFromFocusedObject(LOCALID_GARET, 0, 16, FACING_EAST);
+  FieldMotion_LaunchFromFocusedObject(LOCALID_IVAN, -16, -8, FACING_EAST);
+  ObjectMotion_LaunchFromFocusedObject(LOCALID_MIA, -16, 24, FACING_EAST);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_MIA);
   FieldScript_WaitFrames(20);
   FieldCamera_SetSpeed(0x30000, 0x6000);
   FieldCamera_MoveTo(PIXELS(280), -1, PIXELS(328), 1);
@@ -832,16 +832,16 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   ObjectEvent_FaceDirection(LOCALID_WORRIED_FOR_SHEBA, FACING_WEST, 0);
   FieldScript_WaitFrames(30);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVarCbAndRefresh(MIA, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 2);
   FieldScript_WaitFrames(20);
-  Script_ShowMessage(MIA, 0);
+  Script_ShowMessage(LOCALID_MIA, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 2);
   FieldScript_WaitFrames(20);
-  Script_ShowMessage(IVAN, 0);
+  Script_ShowMessage(LOCALID_IVAN, 0);
   FieldScript_WaitFrames(10);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Script_ShowMessage(GARET, 0);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  Script_ShowMessage(LOCALID_GARET, 0);
   FieldScript_WaitFrames(20);
   ObjectMotion_SetAnimationAndWait(LOCALID_IODEM, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
@@ -891,9 +891,9 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   ObjectEvent_FaceDirection(LOCALID_WORRIED_FOR_SHEBA,
                             FACING_NORTHWEST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTH, 0);
   FieldScript_WaitFrames(30);
   ObjectEvent_ShowEmote(LOCALID_WITNESS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   ObjectEvent_ShowEmote(LOCALID_DOUBTING_THE_DOOR,
@@ -912,25 +912,25 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   FieldScript_WaitFrames(20);
   Script_ShowMessage(LOCALID_WORRIED_FOR_SHEBA, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 2);
   FieldScript_WaitFrames(30);
-  ObjectEvent_FaceDirection(IVAN, FACING_SOUTHEAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_SOUTHEAST, 0);
   FieldScript_WaitFrames(20);
-  Script_ShowMessage(IVAN, 0);
+  Script_ShowMessage(LOCALID_IVAN, 0);
   FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_SOUTH, 0);
   FieldScript_WaitFrames(30);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHEAST, 0);
   FieldScript_WaitFrames(30);
-  ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER,
                             FACING_SOUTHEAST + FACING_STEP, 0);
   FieldScript_WaitFrames(20);
-  Script_ShowMessage(MIA, 0);
+  Script_ShowMessage(LOCALID_MIA, 0);
   FieldScript_WaitFrames(10);
-  ObjectMotion_SetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
-  Script_ShowMessage(GARET, 0);
+  Script_ShowMessage(LOCALID_GARET, 0);
   FieldScript_WaitFrames(20);
   ObjectEvent_ShowEmote(LOCALID_FARAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 50);
   ObjectEvent_FaceDirection(LOCALID_FARAN, FACING_WEST, 0);
@@ -941,8 +941,8 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   ObjectEvent_FaceDirection(LOCALID_WITNESS, FACING_WEST, 0);
   ObjectEvent_FaceDirection(LOCALID_DOUBTING_THE_DOOR, FACING_WEST, 0);
   ObjectEvent_FaceDirection(LOCALID_WORRIED_FOR_SHEBA, FACING_WEST, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_EAST + FACING_STEP, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_EAST + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHEAST, 0);
   if (FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER, 0) ==
       0) {
     FieldScript_WaitFrames(30);
@@ -1028,21 +1028,21 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   FieldScript_WaitFrames(25);
   Script_ShowMessage(LOCALID_IODEM, 0);
   FieldScript_WaitFrames(10);
-  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, GARET, 0);
-  ObjectEvent_LinkPair(MIA, IVAN, 0);
+  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_GARET, 0);
+  ObjectEvent_LinkPair(LOCALID_MIA, LOCALID_IVAN, 0);
   FieldScript_WaitFrames(30);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(MIA, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(IVAN, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
   FieldScript_WaitFrames(30);
   // The companions walk back into the leader.
-  ObjectEvent_SetSpeed(GARET, 0x13333, 0x9999);
-  ObjectEvent_SetSpeed(IVAN, 0x13333, 0x9999);
-  ObjectEvent_SetSpeed(MIA, 0x13333, 0x9999);
-  BabiLighthouse_WalkBackToLeader(GARET);
-  BabiLighthouse_WalkBackToLeader(IVAN);
-  BabiLighthouse_WalkBackToLeader(MIA);
+  ObjectEvent_SetSpeed(LOCALID_GARET, 0x13333, 0x9999);
+  ObjectEvent_SetSpeed(LOCALID_IVAN, 0x13333, 0x9999);
+  ObjectEvent_SetSpeed(LOCALID_MIA, 0x13333, 0x9999);
+  BabiLighthouse_WalkBackToLeader(LOCALID_GARET);
+  BabiLighthouse_WalkBackToLeader(LOCALID_IVAN);
+  BabiLighthouse_WalkBackToLeader(LOCALID_MIA);
   FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_NORTHWEST + FACING_STEP, 0);
@@ -1811,11 +1811,11 @@ struct ObjectEventTemplate gBabiLighthouse_LuffObjectEventTemplates[] = {
 
 // clang-format off
 struct ObjectEventTemplate gBabiLighthouse_StoneDoorObjectEventTemplates[] = {
-    {GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(-64), 0, PIXELS(-64), FACING_EAST,
+    {LOCALID_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(-64), 0, PIXELS(-64), FACING_EAST,
         TALK_FACING_PARTY, 0},
-    {IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(-64), 0, PIXELS(-64), FACING_EAST, TALK_FACING_PARTY,
+    {LOCALID_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(-64), 0, PIXELS(-64), FACING_EAST, TALK_FACING_PARTY,
         0},
-    {MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(-64), 0, PIXELS(-64), FACING_EAST,
+    {LOCALID_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(-64), 0, PIXELS(-64), FACING_EAST,
         TALK_FACING_PARTY, 0},
     {SPRITE_STONE_DOOR_HALF, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION, PIXELS(296), 0, PIXELS(240), FACING_WEST, TALK_FACING_KEEP, 0},
     {SPRITE_STONE_DOOR_HALF, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION, PIXELS(312), 0, PIXELS(240), FACING_EAST, TALK_FACING_KEEP, 0},

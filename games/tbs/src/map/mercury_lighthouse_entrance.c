@@ -200,7 +200,7 @@ MercuryLighthouseEntrance_MiaWatchesLeader(union FieldObject *fieldObject) {
     objectEvent->facing = ArcTan2(leader->z.fixed - objectEvent->z.fixed,
                                   leader->x.fixed - objectEvent->x.fixed);
   } else if (objectEvent->facing != FACING_NORTH) {
-    ObjectMotion_ArmCallback(MIA, FACING_NORTH, 0);
+    ObjectMotion_ArmCallback(LOCALID_MIA, FACING_NORTH, 0);
   }
 #ifndef UBFIX
   return 0;
@@ -607,58 +607,58 @@ static void MercuryLighthouseEntrance_LizardManBlocksMia(void) {
   objectEvent->scaleX = -Q16_ONE;
   objectEvent = ObjectEvent_GetById(LOCALID_FIRST_EAST_STATUE + 2);
   objectEvent->scaleX = -Q16_ONE;
-  ObjectEvent_SetPosition(MIA, PIXELS(136), PIXELS(184));
+  ObjectEvent_SetPosition(LOCALID_MIA, PIXELS(136), PIXELS(184));
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(136), PIXELS(296));
   ObjectEvent_SetPosition(LOCALID_LIZARD_MAN, PIXELS(136), PIXELS(152));
-  ObjectEvent_SetSpeed(MIA, PIXELS(3) / 2, PIXELS(3) / 4);
+  ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(3) / 2, PIXELS(3) / 4);
   ObjectEvent_SetSpeed(LOCALID_LIZARD_MAN, PIXELS(3) / 2, PIXELS(3) / 4);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
   FieldCamera_SetSpeedParameters(PIXELS(4) / 5, PIXELS(1) / 10);
   FieldCamera_MoveWithinMapBounds(PIXELS(136), -1, PIXELS(184), 0);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
-  ObjectMotion_SetVarCbAndRefresh(MIA, 1);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 1);
   ObjectEvent_GetById(LOCALID_LIZARD_MAN)->steeringFlags &=
       ~OBJ_EVENT_FACES_MOTION;
   FieldScript_WaitFrames(20);
   // Twice she tries the east side and then the west.
   for (paceCycle = 0; paceCycle < 2; paceCycle++) {
-    ObjectMotion_ResetAndSetPositionInMode2(MIA, 152, 168);
+    ObjectMotion_ResetAndSetPositionInMode2(LOCALID_MIA, 152, 168);
     FieldScript_WaitFrames(10);
     ObjectEvent_SetActionScript(LOCALID_LIZARD_MAN,
                                 gMercuryLighthouseEntrance_LizardManStepEast);
-    ObjectMotion_CommitCurrentPositionAndActivate(MIA);
-    ObjectEvent_FaceDirection(MIA, FACING_NORTH, 30);
-    ObjectMotion_SetVarCbAndRefresh(MIA, 1);
-    mia = ObjectEvent_GetById(MIA);
+    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_MIA);
+    ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTH, 30);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 1);
+    mia = ObjectEvent_GetById(LOCALID_MIA);
     mia->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
-    ObjectMotion_ResetAndSetPositionInMode2(MIA, 136, 184);
+    ObjectMotion_ResetAndSetPositionInMode2(LOCALID_MIA, 136, 184);
     FieldScript_WaitFrames(10);
     ObjectEvent_SetActionScript(LOCALID_LIZARD_MAN,
                                 gMercuryLighthouseEntrance_LizardManStepCentre);
-    ObjectMotion_CommitCurrentPositionAndActivate(MIA);
-    ObjectEvent_GetById(MIA)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
+    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_MIA);
+    ObjectEvent_GetById(LOCALID_MIA)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
     FieldScript_WaitFrames(30);
-    ObjectMotion_ResetAndSetPositionInMode2(MIA, 120, 168);
+    ObjectMotion_ResetAndSetPositionInMode2(LOCALID_MIA, 120, 168);
     FieldScript_WaitFrames(5);
     ObjectEvent_SetActionScript(LOCALID_LIZARD_MAN,
                                 gMercuryLighthouseEntrance_LizardManStepWest);
-    ObjectMotion_CommitCurrentPositionAndActivate(MIA);
-    ObjectMotion_ArmCallback(MIA, FACING_NORTH, 30);
-    ObjectMotion_SetVarCbAndRefresh(MIA, 1);
+    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_MIA);
+    ObjectMotion_ArmCallback(LOCALID_MIA, FACING_NORTH, 30);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 1);
     FieldScript_WaitFrames(15);
-    ObjectEvent_GetById(MIA)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
-    ObjectMotion_ResetAndSetPositionInMode2(MIA, 136, 184);
+    ObjectEvent_GetById(LOCALID_MIA)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
+    ObjectMotion_ResetAndSetPositionInMode2(LOCALID_MIA, 136, 184);
     FieldScript_WaitFrames(15);
     ObjectEvent_SetActionScript(LOCALID_LIZARD_MAN,
                                 gMercuryLighthouseEntrance_LizardManStepCentre);
-    ObjectMotion_CommitCurrentPositionAndActivate(MIA);
-    ObjectMotion_SetVarCbAndRefresh(MIA, 1);
-    ObjectEvent_GetById(MIA)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
+    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_MIA);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 1);
+    ObjectEvent_GetById(LOCALID_MIA)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
   }
   FieldScript_WaitFrames(20);
-  FieldEffect_SpawnLinked(MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  objectEvent = ObjectEvent_GetById(MIA);
+  FieldEffect_SpawnLinked(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  objectEvent = ObjectEvent_GetById(LOCALID_MIA);
 #ifdef UBFIX
   objectEvent->update = MercuryLighthouseEntrance_MiaWatchesLeader;
 #else
@@ -691,21 +691,21 @@ static void MercuryLighthouseEntrance_MiaEntersLighthouse(void) {
     objectEvent->scaleX = -Q16_ONE;
     objectEvent = ObjectEvent_Get(LOCALID_FIRST_EAST_STATUE + 2);
     objectEvent->scaleX = -Q16_ONE;
-    ObjectEvent_SetPosition(MIA, PIXELS(136), PIXELS(144));
-    ObjectEvent_FaceDirection(MIA, FACING_SOUTH, 10);
+    ObjectEvent_SetPosition(LOCALID_MIA, PIXELS(136), PIXELS(144));
+    ObjectEvent_FaceDirection(LOCALID_MIA, FACING_SOUTH, 10);
     gFieldWork->transition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
     FieldScript_StartScreenTransition();
     FieldScript_WaitTransitionFrames();
     FieldScript_WaitFrames(60);
-    ObjectEvent_FaceObjectEvent(MIA, LOCALID_PARTY_LEADER, 0);
-    ObjectMotion_SetAnimationAndWait(MIA, ANIM_NOD);
+    ObjectEvent_FaceObjectEvent(LOCALID_MIA, LOCALID_PARTY_LEADER, 0);
+    ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
     FieldScript_WaitFrames(30);
-    ObjectEvent_WalkTo(MIA, 136, 72);
+    ObjectEvent_WalkTo(LOCALID_MIA, 136, 72);
     FieldScript_WaitFrames(40);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_PARTY_LEADER, 1);
-    ObjectMotion_CommitCurrentPositionAndActivate(MIA);
-    ObjectEvent_SetPosition(MIA, 0, 0);
+    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_MIA);
+    ObjectEvent_SetPosition(LOCALID_MIA, 0, 0);
     GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_ENTERED_BY_MIA);
     gFieldWork->transition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
@@ -917,7 +917,7 @@ u32 gMercuryLighthouseEntrance_Warps[] = {
 };
 
 struct ObjectEventTemplate gMercuryLighthouseEntrance_ObjectEventTemplates[] = {
-    { MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LIZARD_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACING_KEEP, 0 },
@@ -972,8 +972,8 @@ struct MapEvent gMercuryLighthouseEntrance_Events[] = {
     { MAP_EVENT_WARP, 64, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_ENTRANCE_EAST_WATERFALLS_TO_WEST_WATERFALLS },
     { MAP_EVENT_WARP, 65, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_ENTRANCE_WEST_WATERFALLS_TO_EAST_WATERFALLS },
     { MAP_EVENT_WARP, 66, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_ENTRANCE_WEST_WATERFALLS_TO_TWIN_FOUNTAINS },
-    { MAP_EVENT_TALK, MIA, CONDITION_ALWAYS, MSGNO(MsgMercuryMonsterInsideTower) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), MIA, CONDITION_ALWAYS, MSGNO(MsgMercuryLetMePass) },
+    { MAP_EVENT_TALK, LOCALID_MIA, CONDITION_ALWAYS, MSGNO(MsgMercuryMonsterInsideTower) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MIA, CONDITION_ALWAYS, MSGNO(MsgMercuryLetMePass) },
     { MAP_EVENT_TALK, LOCALID_LIZARD_MAN, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouseEntrance_FightLizardMan) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_LIZARD_MAN, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouseEntrance_FightLizardMan) },
     { BG_EVENT(BG_EVENT_SILENT), 1, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouseEntrance_ReadHeartInscription) },

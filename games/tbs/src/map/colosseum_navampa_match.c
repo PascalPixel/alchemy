@@ -1201,12 +1201,12 @@ s32 ColosseumNavampaMatch_Initialize(void) {
       Sound_PlaySong(SONG_FADE_OUT_BGM);
       Colosso_ControlCharacterAlone(ISAAC);
       Colosso_PlaceFriendsAtCheeringSpots();
-      ObjectEvent_LinkObjectAndSetCallback(GARET, LOCALID_PARTY_LEADER);
+      ObjectEvent_LinkObjectAndSetCallback(LOCALID_GARET, LOCALID_PARTY_LEADER);
       ColosseumNavampaMatch_ShowRoundStartLettering(3);
     }
-    ObjectEvent_LinkObjectAndSetCallback(GARET, LOCALID_PARTY_LEADER);
-    ObjectEvent_LinkObjectAndSetCallback(IVAN, LOCALID_PARTY_LEADER);
-    ObjectEvent_LinkObjectAndSetCallback(MIA, LOCALID_PARTY_LEADER);
+    ObjectEvent_LinkObjectAndSetCallback(LOCALID_GARET, LOCALID_PARTY_LEADER);
+    ObjectEvent_LinkObjectAndSetCallback(LOCALID_IVAN, LOCALID_PARTY_LEADER);
+    ObjectEvent_LinkObjectAndSetCallback(LOCALID_MIA, LOCALID_PARTY_LEADER);
     Colosso_StartOpponent((s32)&ResourceId_OpponentPathC);
     break;
 
@@ -1347,25 +1347,25 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER,
                               gColosseumNavampaMatch_LeaderActionA);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_CROUCH);
-  ObjectEvent_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_SetSpeed(IVAN, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_SetSpeed(MIA, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_SetPosition(GARET, PIXELS(1464), PIXELS(184));
-  ObjectEvent_SetPosition(IVAN, PIXELS(1464), PIXELS(200));
-  ObjectEvent_SetPosition(MIA, PIXELS(1448), PIXELS(192));
-  objectEvent = ObjectEvent_GetById(GARET);
+  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_SetPosition(LOCALID_GARET, PIXELS(1464), PIXELS(184));
+  ObjectEvent_SetPosition(LOCALID_IVAN, PIXELS(1464), PIXELS(200));
+  ObjectEvent_SetPosition(LOCALID_MIA, PIXELS(1448), PIXELS(192));
+  objectEvent = ObjectEvent_GetById(LOCALID_GARET);
   {
     u16 shown = 0;
 
     objectEvent->facing = shown;
   }
-  objectEvent = ObjectEvent_GetById(IVAN);
+  objectEvent = ObjectEvent_GetById(LOCALID_IVAN);
   {
     u16 shown = 0;
 
     objectEvent->facing = shown;
   }
-  objectEvent = ObjectEvent_GetById(MIA);
+  objectEvent = ObjectEvent_GetById(LOCALID_MIA);
   {
     u16 shown = 0;
 
@@ -1395,56 +1395,57 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER,
                               gColosseumNavampaMatch_LeaderActionB);
   // Let each companion react before the leader settles back to sleep.
-  Script_ShowMessage(GARET, 0);
+  Script_ShowMessage(LOCALID_GARET, 0);
   FieldScript_WaitFrames(20);
-  ObjectEvent_WalkToAndWait(GARET, 1504, 176);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 10);
-  FieldEffect_SpawnLinked(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
-  Script_ShowMessage(IVAN, 0);
-  ObjectEvent_LinkObjectAndSetCallback(GARET, IVAN);
+  ObjectEvent_WalkToAndWait(LOCALID_GARET, 1504, 176);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH, 10);
+  FieldEffect_SpawnLinked(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                          20);
+  Script_ShowMessage(LOCALID_IVAN, 0);
+  ObjectEvent_LinkObjectAndSetCallback(LOCALID_GARET, LOCALID_IVAN);
   FieldScript_WaitFrames(30);
-  ObjectEvent_WalkToAndWait(IVAN, 1488, 176);
-  ObjectEvent_WalkTo(GARET, 1520, 184);
-  ObjectEvent_WalkToAndWait(IVAN, 1504, 176);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_STAND);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTHWEST, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_SOUTH, 10);
-  ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
+  ObjectEvent_WalkToAndWait(LOCALID_IVAN, 1488, 176);
+  ObjectEvent_WalkTo(LOCALID_GARET, 1520, 184);
+  ObjectEvent_WalkToAndWait(LOCALID_IVAN, 1504, 176);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_SOUTH, 10);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 2);
   FieldScript_WaitFrames(10);
-  ObjectEvent_LinkObjectAndSetCallback(IVAN, GARET);
+  ObjectEvent_LinkObjectAndSetCallback(LOCALID_IVAN, LOCALID_GARET);
   FieldScript_WaitFrames(30);
-  ObjectMotion_SetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(30);
-  Script_ShowMessage(MIA, 0);
-  ObjectEvent_LinkObjectAndSetCallback(GARET, MIA);
-  ObjectEvent_LinkObjectAndSetCallback(IVAN, MIA);
-  ObjectEvent_WalkToAndWait(MIA, 1488, 184);
-  ObjectEvent_LinkObjectAndSetCallback(IVAN, LOCALID_PARTY_LEADER);
-  ObjectEvent_LinkObjectAndSetCallback(GARET, LOCALID_PARTY_LEADER);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  ObjectEvent_LinkObjectAndSetCallback(IVAN, GARET);
-  ObjectEvent_LinkObjectAndSetCallback(GARET, IVAN);
+  Script_ShowMessage(LOCALID_MIA, 0);
+  ObjectEvent_LinkObjectAndSetCallback(LOCALID_GARET, LOCALID_MIA);
+  ObjectEvent_LinkObjectAndSetCallback(LOCALID_IVAN, LOCALID_MIA);
+  ObjectEvent_WalkToAndWait(LOCALID_MIA, 1488, 184);
+  ObjectEvent_LinkObjectAndSetCallback(LOCALID_IVAN, LOCALID_PARTY_LEADER);
+  ObjectEvent_LinkObjectAndSetCallback(LOCALID_GARET, LOCALID_PARTY_LEADER);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  ObjectEvent_LinkObjectAndSetCallback(LOCALID_IVAN, LOCALID_GARET);
+  ObjectEvent_LinkObjectAndSetCallback(LOCALID_GARET, LOCALID_IVAN);
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetVarCbAndRefresh(MIA, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 2);
   FieldScript_WaitFrames(10);
-  ObjectEvent_LinkObjectAndSetCallback(IVAN, MIA);
-  ObjectEvent_LinkObjectAndSetCallback(GARET, MIA);
+  ObjectEvent_LinkObjectAndSetCallback(LOCALID_IVAN, LOCALID_MIA);
+  ObjectEvent_LinkObjectAndSetCallback(LOCALID_GARET, LOCALID_MIA);
   FieldScript_WaitFrames(20);
-  Script_ShowMessage(MIA, 0);
+  Script_ShowMessage(LOCALID_MIA, 0);
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER,
                               gColosseumNavampaMatch_LeaderActionC);
-  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
-  ObjectEvent_LinkObjectAndSetCallback(GARET, LOCALID_PARTY_LEADER);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
+  ObjectEvent_LinkObjectAndSetCallback(LOCALID_GARET, LOCALID_PARTY_LEADER);
   FieldScript_WaitFrames(20);
-  Script_ShowMessage(GARET, 0);
-  ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
-  ObjectEvent_LinkObjectAndSetCallback(IVAN, LOCALID_PARTY_LEADER);
+  Script_ShowMessage(LOCALID_GARET, 0);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 2);
+  ObjectEvent_LinkObjectAndSetCallback(LOCALID_IVAN, LOCALID_PARTY_LEADER);
   FieldScript_WaitFrames(20);
-  Script_ShowMessage(IVAN, 0);
-  ObjectMotion_SetVarCbAndRefresh(MIA, 2);
-  ObjectEvent_LinkObjectAndSetCallback(MIA, LOCALID_PARTY_LEADER);
+  Script_ShowMessage(LOCALID_IVAN, 0);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 2);
+  ObjectEvent_LinkObjectAndSetCallback(LOCALID_MIA, LOCALID_PARTY_LEADER);
   FieldScript_WaitFrames(20);
-  Script_ShowMessage(MIA, 0);
+  Script_ShowMessage(LOCALID_MIA, 0);
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER, leaderScaleScript);
   FieldScript_WaitFrames(60);
   particleCallback = ColosseumNavampaMatch_SpawnPeriodicParticle;
@@ -1454,72 +1455,72 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   FieldScript_WaitFrames(5);
   Task_Remove(particleCallback);
   FieldScript_WaitFrames(55);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Task_AddCallback(particleCallback, TASK_PRIORITY_MAP);
   FieldScript_WaitFrames(20);
   Task_Remove(particleCallback);
   FieldScript_WaitFrames(40);
-  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   gColossoParticleCount = 9;
   Task_AddCallback(particleCallback, TASK_PRIORITY_MAP);
   FieldScript_WaitFrames(35);
   Task_Remove(particleCallback);
   FieldScript_WaitFrames(25);
-  ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   gColossoParticleCount = 9;
   Task_AddCallback(particleCallback, TASK_PRIORITY_MAP);
   FieldScript_WaitFrames(35);
   Task_Remove(particleCallback);
   FieldScript_WaitFrames(25);
-  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  ObjectEvent_LinkObjectAndSetCallback(MIA, IVAN);
-  ObjectEvent_LinkObjectAndSetCallback(IVAN, MIA);
+  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  ObjectEvent_LinkObjectAndSetCallback(LOCALID_MIA, LOCALID_IVAN);
+  ObjectEvent_LinkObjectAndSetCallback(LOCALID_IVAN, LOCALID_MIA);
   FieldScript_WaitFrames(60);
-  ObjectEvent_LinkObjectAndSetCallback(MIA, LOCALID_PARTY_LEADER);
-  ObjectEvent_LinkObjectAndSetCallback(IVAN, LOCALID_PARTY_LEADER);
+  ObjectEvent_LinkObjectAndSetCallback(LOCALID_MIA, LOCALID_PARTY_LEADER);
+  ObjectEvent_LinkObjectAndSetCallback(LOCALID_IVAN, LOCALID_PARTY_LEADER);
   gColossoParticleCount = 9;
   Task_AddCallback(particleCallback, TASK_PRIORITY_MAP);
   FieldScript_WaitFrames(35);
   Task_Remove(particleCallback);
   FieldScript_WaitFrames(25);
-  ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_SMILE, 60);
-  ObjectMotion_SetVariantCallback(GARET, 3);
-  ObjectMotion_SetVariantCallback(IVAN, 3);
-  ObjectMotion_SetVarCbAndRefresh(MIA, 3);
-  ObjectEvent_LinkObjectAndSetCallback(MIA, IVAN);
-  ObjectEvent_LinkObjectAndSetCallback(GARET, IVAN);
+  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_SMILE, 60);
+  ObjectMotion_SetVariantCallback(LOCALID_GARET, 3);
+  ObjectMotion_SetVariantCallback(LOCALID_IVAN, 3);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 3);
+  ObjectEvent_LinkObjectAndSetCallback(LOCALID_MIA, LOCALID_IVAN);
+  ObjectEvent_LinkObjectAndSetCallback(LOCALID_GARET, LOCALID_IVAN);
   gColossoParticleCount = 9;
   Task_AddCallback(particleCallback, TASK_PRIORITY_MAP);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(IVAN, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(MIA, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
   FieldScript_WaitFrames(60);
   // The companions begin to leave, then discuss the sleeping leader off-screen.
-  ObjectEvent_WalkTo(MIA, 1464, 200);
+  ObjectEvent_WalkTo(LOCALID_MIA, 1464, 200);
   FieldScript_WaitFrames(5);
-  ObjectEvent_WalkTo(IVAN, 1368, 184);
+  ObjectEvent_WalkTo(LOCALID_IVAN, 1368, 184);
   FieldScript_WaitFrames(3);
-  ObjectEvent_WalkToAndWait(GARET, 1512, 184);
-  ObjectEvent_WalkTo(GARET, 1368, 184);
-  ObjectMotion_CommitCurrentPositionAndActivate(MIA);
-  Engine_ObjectEventSetAnimation(MIA, ANIM_STAND);
-  ObjectEvent_LinkObjectAndSetCallback(MIA, LOCALID_PARTY_LEADER);
+  ObjectEvent_WalkToAndWait(LOCALID_GARET, 1512, 184);
+  ObjectEvent_WalkTo(LOCALID_GARET, 1368, 184);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_MIA);
+  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_STAND);
+  ObjectEvent_LinkObjectAndSetCallback(LOCALID_MIA, LOCALID_PARTY_LEADER);
   FieldScript_WaitFrames(60);
-  ObjectEvent_WalkToAndWait(MIA, 1432, 200);
-  ObjectEvent_WalkTo(MIA, 1368, 184);
+  ObjectEvent_WalkToAndWait(LOCALID_MIA, 1432, 200);
+  ObjectEvent_WalkTo(LOCALID_MIA, 1368, 184);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(30);
-  ObjectEvent_SetPosition(GARET, PIXELS(1512), PIXELS(176));
-  ObjectEvent_SetPosition(IVAN, PIXELS(1464), PIXELS(192));
-  ObjectEvent_SetPosition(MIA, PIXELS(1560), PIXELS(200));
+  ObjectEvent_SetPosition(LOCALID_GARET, PIXELS(1512), PIXELS(176));
+  ObjectEvent_SetPosition(LOCALID_IVAN, PIXELS(1464), PIXELS(192));
+  ObjectEvent_SetPosition(LOCALID_MIA, PIXELS(1560), PIXELS(200));
   ObjectSystem_SuspendProjectionAndShowSprites();
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 2);
   PaletteFade_StartInterpolation(1);
   FieldScript_SetMessageId(MsgColossoIsaacFellAsleep);
-  Script_ShowMessage(GARET, 0);
-  Script_ShowMessage(IVAN, 0);
-  Script_ShowMessage(MIA, 0);
+  Script_ShowMessage(LOCALID_GARET, 0);
+  Script_ShowMessage(LOCALID_IVAN, 0);
+  Script_ShowMessage(LOCALID_MIA, 0);
   FieldScript_WaitFrames(60);
   FieldScript_End();
 }
@@ -1539,16 +1540,16 @@ static void ColosseumNavampaMatch_IntroduceThirdFinals(s32 guideId) {
   FieldScript_Start();
   ObjectEvent_SetSpeed(guideId, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_SetSpeed(IVAN, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_SetSpeed(MIA, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(1), PIXELS(1) / 2);
   Engine_ObjectEventSetPosition(LOCALID_PARTY_LEADER, PIXELS(guideX),
                                 (PIXELS(guideZ) - PIXELS(48)));
-  Engine_ObjectEventSetPosition(GARET, PIXELS(guideX) - PIXELS(16),
+  Engine_ObjectEventSetPosition(LOCALID_GARET, PIXELS(guideX) - PIXELS(16),
                                 PIXELS(guideZ) - PIXELS(40));
-  Engine_ObjectEventSetPosition(IVAN, PIXELS(guideX) + PIXELS(16),
+  Engine_ObjectEventSetPosition(LOCALID_IVAN, PIXELS(guideX) + PIXELS(16),
                                 PIXELS(guideZ) - PIXELS(40));
-  Engine_ObjectEventSetPosition(MIA, PIXELS(guideX),
+  Engine_ObjectEventSetPosition(LOCALID_MIA, PIXELS(guideX),
                                 (PIXELS(guideZ) - PIXELS(32)));
   Engine_ObjectEventSetPosition(guideId, PIXELS(guideX),
                                 (PIXELS(guideZ) - PIXELS(80)));
@@ -1566,33 +1567,33 @@ static void ColosseumNavampaMatch_IntroduceThirdFinals(s32 guideId) {
   FieldScript_ShowMessageAndWait(guideId, 0);
   ObjectMotion_SetVarCbAndRefresh(guideId, 2);
   FieldScript_ShowMessageAndWait(guideId, 0);
-  Engine_ObjectEventSetAnimation(MIA, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(IVAN, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(6);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_WALK);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (objectEvent != 0) {
-    ObjectMotion_ResetAndSetPosition(GARET, objectEvent->x.part.pixel,
+    ObjectMotion_ResetAndSetPosition(LOCALID_GARET, objectEvent->x.part.pixel,
                                      objectEvent->z.part.pixel);
   }
-  Engine_ObjectEventSetAnimation(IVAN, ANIM_WALK);
+  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_WALK);
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (objectEvent != 0) {
-    ObjectMotion_ResetAndSetPosition(IVAN, objectEvent->x.part.pixel,
+    ObjectMotion_ResetAndSetPosition(LOCALID_IVAN, objectEvent->x.part.pixel,
                                      objectEvent->z.part.pixel);
   }
-  Engine_ObjectEventSetAnimation(MIA, ANIM_WALK);
+  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_WALK);
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (objectEvent != 0) {
-    ObjectMotion_ResetAndSetPosition(MIA, objectEvent->x.part.pixel,
+    ObjectMotion_ResetAndSetPosition(LOCALID_MIA, objectEvent->x.part.pixel,
                                      objectEvent->z.part.pixel);
   }
   ObjectMotion_SetPositionAndReset(guideId, (guideX - 16), (guideZ - 64));
-  Engine_ObjectEventSetPosition(GARET, 0, 0);
-  Engine_ObjectEventSetPosition(IVAN, 0, 0);
-  Engine_ObjectEventSetPosition(MIA, 0, 0);
+  Engine_ObjectEventSetPosition(LOCALID_GARET, 0, 0);
+  Engine_ObjectEventSetPosition(LOCALID_IVAN, 0, 0);
+  Engine_ObjectEventSetPosition(LOCALID_MIA, 0, 0);
   ObjectMotion_SetPositionAndReset(guideId, (guideX - 16), (guideZ - 16));
   ObjectMotion_SetPositionAndReset(guideId, guideX, guideZ);
   ObjectMotion_ArmCallback(guideId, FACING_NORTH, 10);
@@ -2517,11 +2518,11 @@ u32 gColosseumNavampaMatchWarps[] = {
 struct ObjectEventTemplate gColosseumNavampaMatchObjectEventTemplates[] = {
     { 0x0, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(88), 0, PIXELS(104), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
-    { IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
-    { MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WARRIOR_IN_GOLDEN_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_WEST, TALK_FACING_PARTY, 0 },

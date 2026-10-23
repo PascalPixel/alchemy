@@ -396,39 +396,45 @@ static void EventScript_FightTret(void) {
   FieldScript_ShowMessageThenWait(SPEAKER(LOCALID_SECOND_TRET), 0, 20);
   SE(MUS_029);
   OBJECT_SPEED(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
-  OBJECT_SPEED(GARET, PIXELS(1), PIXELS(1) / 2);
-  OBJECT_SPEED(IVAN, PIXELS(1), PIXELS(1) / 2);
-  OBJECT_SPEED(MIA, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_GetById(MIA)->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
-  ObjectMotion_SetActionVariant(MIA, 2);
+  OBJECT_SPEED(LOCALID_GARET, PIXELS(1), PIXELS(1) / 2);
+  OBJECT_SPEED(LOCALID_IVAN, PIXELS(1), PIXELS(1) / 2);
+  OBJECT_SPEED(LOCALID_MIA, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_GetById(LOCALID_MIA)->priorityFlags &=
+      ~OBJ_EVENT_PRIORITY_AUTOMATIC;
+  ObjectMotion_SetActionVariant(LOCALID_MIA, 2);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->priorityFlags &=
       ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, 2);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
-    Engine_ObjectEventSetPosition(GARET, leader->x.fixed, leader->z.fixed);
+    Engine_ObjectEventSetPosition(LOCALID_GARET, leader->x.fixed,
+                                  leader->z.fixed);
   }
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
-    Engine_ObjectEventSetPosition(IVAN, leader->x.fixed, leader->z.fixed);
+    Engine_ObjectEventSetPosition(LOCALID_IVAN, leader->x.fixed,
+                                  leader->z.fixed);
   }
   if (hasMia != 0) {
     leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     if (leader != NULL) {
-      Engine_ObjectEventSetPosition(MIA, leader->x.fixed, leader->z.fixed);
+      Engine_ObjectEventSetPosition(LOCALID_MIA, leader->x.fixed,
+                                    leader->z.fixed);
     }
-    ObjectEvent_SetActionScript(MIA, gTretTreeInteriors_MiaGathersActions);
+    ObjectEvent_SetActionScript(LOCALID_MIA,
+                                gTretTreeInteriors_MiaGathersActions);
   }
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER,
                               gTretTreeInteriors_LeaderGathersActions);
-  ObjectEvent_SetActionScript(GARET, gTretTreeInteriors_GaretGathersActions);
-  ObjectEvent_RunActionScriptAndWait(IVAN,
+  ObjectEvent_SetActionScript(LOCALID_GARET,
+                              gTretTreeInteriors_GaretGathersActions);
+  ObjectEvent_RunActionScriptAndWait(LOCALID_IVAN,
                                      gTretTreeInteriors_IvanGathersActions);
   WAIT(10);
   OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  OBJECT_DIR(GARET, FACING_NORTH, 0);
-  OBJECT_DIR(MIA, FACING_NORTH, 0);
-  OBJECT_DIR(IVAN, FACING_NORTH, 40);
+  OBJECT_DIR(LOCALID_GARET, FACING_NORTH, 0);
+  OBJECT_DIR(LOCALID_MIA, FACING_NORTH, 0);
+  OBJECT_DIR(LOCALID_IVAN, FACING_NORTH, 40);
   OBJECT_ANIMATION(LOCALID_TRET, TRET_FACE_TURNING_WRATHFUL);
   WAIT(10);
   OBJECT_ANIMATION(LOCALID_TRET, TRET_FACE_WRATHFUL_CLOSED);
@@ -436,28 +442,28 @@ static void EventScript_FightTret(void) {
   TretTreeInteriors_PlayGesture(TRET_GESTURE_WRATHFUL_OPEN_EYES);
   Script_ShowMessage(SPEAKER(LOCALID_TRET), 0);
   ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
-  ObjectMotion_SetVariantCallback(GARET, 2);
-  ObjectMotion_SetVariantCallback(MIA, 2);
-  ObjectMotion_SetVariantCallback(IVAN, 2);
+  ObjectMotion_SetVariantCallback(LOCALID_GARET, 2);
+  ObjectMotion_SetVariantCallback(LOCALID_MIA, 2);
+  ObjectMotion_SetVariantCallback(LOCALID_IVAN, 2);
   OBJECT_EMOTE(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  OBJECT_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  OBJECT_EMOTE(MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  OBJECT_EMOTE(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+  OBJECT_EMOTE(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  OBJECT_EMOTE(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  OBJECT_EMOTE(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   TretTreeInteriors_PlayGesture(TRET_GESTURE_WRATHFUL_BLINK);
   Script_ShowMessageAndWait(SPEAKER(LOCALID_TRET), 0, 10);
   ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 1);
-  ObjectMotion_SetVariantCallback(GARET, 1);
-  ObjectMotion_SetVariantCallback(MIA, 1);
-  ObjectMotion_SetVarCbAndRefresh(IVAN, 1);
+  ObjectMotion_SetVariantCallback(LOCALID_GARET, 1);
+  ObjectMotion_SetVariantCallback(LOCALID_MIA, 1);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 1);
   Script_ShowMessage(SPEAKER(LOCALID_TRET), 0);
   ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
                                                           ATTACHED_EFFECT_ONCE);
-  ObjectEvent_SetAttachedEffect(GARET, ATTACHED_EFFECT_IN_FRONT |
-                                           ATTACHED_EFFECT_ONCE);
-  ObjectEvent_SetAttachedEffect(MIA, ATTACHED_EFFECT_IN_FRONT |
-                                         ATTACHED_EFFECT_ONCE);
-  FieldEffect_ConfigureLinkedObject(IVAN, ATTACHED_EFFECT_IN_FRONT |
-                                              ATTACHED_EFFECT_ONCE);
+  ObjectEvent_SetAttachedEffect(LOCALID_GARET, ATTACHED_EFFECT_IN_FRONT |
+                                                   ATTACHED_EFFECT_ONCE);
+  ObjectEvent_SetAttachedEffect(LOCALID_MIA, ATTACHED_EFFECT_IN_FRONT |
+                                                 ATTACHED_EFFECT_ONCE);
+  FieldEffect_ConfigureLinkedObject(LOCALID_IVAN, ATTACHED_EFFECT_IN_FRONT |
+                                                      ATTACHED_EFFECT_ONCE);
   WAIT(40);
   TretTreeInteriors_PlayGesture(TRET_GESTURE_WRATHFUL_BLINK);
   MESSAGE_PUT(SPEAKER(LOCALID_TRET), 0);
@@ -488,8 +494,9 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
 
   // Restore the party positions before opening the post-battle conversation.
   hasMia = GameFlag_Get(FLAG_IN_PARTY(MIA));
-  ObjectEvent_GetById(MIA)->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
-  ObjectMotion_SetActionVariant(MIA, 2);
+  ObjectEvent_GetById(LOCALID_MIA)->priorityFlags &=
+      ~OBJ_EVENT_PRIORITY_AUTOMATIC;
+  ObjectMotion_SetActionVariant(LOCALID_MIA, 2);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->priorityFlags &=
       ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, 2);
@@ -497,21 +504,21 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   SE(SONG_FADE_OUT_BGM);
   SCRIPT_START();
   OBJECT_SPEED(LOCALID_PARTY_LEADER, 0xcccc, 0x6666);
-  OBJECT_SPEED(GARET, 0xcccc, 0x6666);
-  OBJECT_SPEED(IVAN, 0xcccc, 0x6666);
-  OBJECT_SPEED(MIA, 0xcccc, 0x6666);
+  OBJECT_SPEED(LOCALID_GARET, 0xcccc, 0x6666);
+  OBJECT_SPEED(LOCALID_IVAN, 0xcccc, 0x6666);
+  OBJECT_SPEED(LOCALID_MIA, 0xcccc, 0x6666);
   OBJECT_POSITION_SET(LOCALID_PARTY_LEADER, 166, 80);
   partyObjectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   partyObjectEvent->facing = FACING_NORTH;
-  OBJECT_POSITION_SET(GARET, 148, 90);
-  partyObjectEvent = ObjectEvent_Get(GARET);
+  OBJECT_POSITION_SET(LOCALID_GARET, 148, 90);
+  partyObjectEvent = ObjectEvent_Get(LOCALID_GARET);
   partyObjectEvent->facing = FACING_NORTH;
-  OBJECT_POSITION_SET(IVAN, 182, 90);
-  partyObjectEvent = ObjectEvent_GetById(IVAN);
+  OBJECT_POSITION_SET(LOCALID_IVAN, 182, 90);
+  partyObjectEvent = ObjectEvent_GetById(LOCALID_IVAN);
   partyObjectEvent->facing = FACING_NORTH;
   if (hasMia != 0) {
-    OBJECT_POSITION_SET(MIA, 166, 104);
-    partyObjectEvent = ObjectEvent_GetById(MIA);
+    OBJECT_POSITION_SET(LOCALID_MIA, 166, 104);
+    partyObjectEvent = ObjectEvent_GetById(LOCALID_MIA);
     partyObjectEvent->facing = FACING_NORTH;
   }
   TretTreeInteriors_PlayGesture(TRET_GESTURE_CLOSE_EYES);
@@ -541,9 +548,9 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   MESSAGE_SET(MsgTretMmmmm);
   Script_ShowMessageAndWait(SPEAKER(LOCALID_SECOND_TRET), 0, 20);
   ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
-  ObjectMotion_SetVariantCallback(GARET, 2);
-  ObjectMotion_SetVariantCallback(MIA, 2);
-  ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
+  ObjectMotion_SetVariantCallback(LOCALID_GARET, 2);
+  ObjectMotion_SetVariantCallback(LOCALID_MIA, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 2);
   WAIT(20);
   FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(90), 1);
   FieldCamera_WaitForArrival();
@@ -554,16 +561,16 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   TretTreeInteriors_PlayGesture(TRET_GESTURE_BLINK);
   Script_ShowMessageAndWait(SPEAKER(LOCALID_SECOND_TRET), 0, 20);
   OBJECT_EMOTE(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  OBJECT_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  OBJECT_EMOTE(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  OBJECT_EMOTE(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
+  OBJECT_EMOTE(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  OBJECT_EMOTE(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  OBJECT_EMOTE(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
   Script_ShowMessage(SPEAKER(LOCALID_SECOND_TRET), 0);
   WAIT(40);
   Script_ShowMessageAndWait(SPEAKER(LOCALID_SECOND_TRET), 0, 20);
   OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_NOD);
-  OBJECT_ANIMATION(GARET, ANIM_NOD);
-  OBJECT_ANIMATION(MIA, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(IVAN, ANIM_NOD);
+  OBJECT_ANIMATION(LOCALID_GARET, ANIM_NOD);
+  OBJECT_ANIMATION(LOCALID_MIA, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
   WAIT(20);
   Script_ShowMessageAndWait(SPEAKER(LOCALID_SECOND_TRET), 0, 20);
   TretTreeInteriors_PlayGesture(TRET_GESTURE_CLOSE_EYES);
@@ -571,46 +578,46 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   Script_ShowMessageAndWait(SPEAKER(LOCALID_SECOND_TRET), 0, 20);
   ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
                                                           ATTACHED_EFFECT_ONCE);
-  ObjectEvent_SetAttachedEffect(GARET, ATTACHED_EFFECT_IN_FRONT |
-                                           ATTACHED_EFFECT_ONCE);
-  ObjectEvent_SetAttachedEffect(MIA, ATTACHED_EFFECT_IN_FRONT |
-                                         ATTACHED_EFFECT_ONCE);
-  ObjectEvent_SetAttachedEffect(IVAN, ATTACHED_EFFECT_IN_FRONT |
-                                          ATTACHED_EFFECT_ONCE);
+  ObjectEvent_SetAttachedEffect(LOCALID_GARET, ATTACHED_EFFECT_IN_FRONT |
+                                                   ATTACHED_EFFECT_ONCE);
+  ObjectEvent_SetAttachedEffect(LOCALID_MIA, ATTACHED_EFFECT_IN_FRONT |
+                                                 ATTACHED_EFFECT_ONCE);
+  ObjectEvent_SetAttachedEffect(LOCALID_IVAN, ATTACHED_EFFECT_IN_FRONT |
+                                                  ATTACHED_EFFECT_ONCE);
   WAIT(60);
   // Garet and Ivan will not let Tret die while they still need his help.
-  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
-  OBJECT_DIR(GARET, FACING_NORTHEAST, 10);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
+  OBJECT_DIR(LOCALID_GARET, FACING_NORTHEAST, 10);
   OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 10);
-  Script_ShowMessageAndWait(SPEAKER(GARET), 0, 10);
-  ObjectMotion_SetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
+  Script_ShowMessageAndWait(SPEAKER(LOCALID_GARET), 0, 10);
+  ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_SHAKE_HEAD);
   OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_SOUTHEAST, 0);
-  OBJECT_DIR(IVAN, FACING_NORTHWEST, 0);
-  Script_ShowMessageAndWait(SPEAKER(IVAN), 0, 20);
+  OBJECT_DIR(LOCALID_IVAN, FACING_NORTHWEST, 0);
+  Script_ShowMessageAndWait(SPEAKER(LOCALID_IVAN), 0, 20);
   TretTreeInteriors_PlayGesture(TRET_GESTURE_CLOSE_EYES);
   WAIT(40);
   Script_ShowMessageAndWait(SPEAKER(LOCALID_SECOND_TRET), 0, 10);
   ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
-  ObjectMotion_SetVariantCallback(GARET, 2);
-  ObjectMotion_SetVariantCallback(MIA, 2);
-  ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
+  ObjectMotion_SetVariantCallback(LOCALID_GARET, 2);
+  ObjectMotion_SetVariantCallback(LOCALID_MIA, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 2);
   OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  OBJECT_DIR(GARET, FACING_NORTH, 0);
-  OBJECT_DIR(IVAN, FACING_NORTH, 40);
+  OBJECT_DIR(LOCALID_GARET, FACING_NORTH, 0);
+  OBJECT_DIR(LOCALID_IVAN, FACING_NORTH, 40);
   TretTreeInteriors_PlayGesture(TRET_GESTURE_BLINK);
   // "Do you need something?" Answering no: "What are you doing, Isaac! Now's
   // not the time to fool around!"
   Script_OpenMessage(SPEAKER(LOCALID_SECOND_TRET), 0);
-  OBJECT_DIR(GARET, FACING_NORTHEAST, 0);
-  OBJECT_DIR(IVAN, FACING_NORTHWEST, 0);
+  OBJECT_DIR(LOCALID_GARET, FACING_NORTHEAST, 0);
+  OBJECT_DIR(LOCALID_IVAN, FACING_NORTHWEST, 0);
   if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) != 0) {
-    OBJECT_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
-    OBJECT_ANIMATION(GARET, ANIM_SHAKE_HEAD);
+    OBJECT_EMOTE(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
+    OBJECT_ANIMATION(LOCALID_GARET, ANIM_SHAKE_HEAD);
     MESSAGE_SET(MsgTretDoingNowsNot);
-    Script_ShowMessage(SPEAKER(GARET), 0);
-    OBJECT_EMOTE(IVAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 10);
-    OBJECT_ANIMATION(IVAN, ANIM_NOD);
-    Script_ShowMessage(SPEAKER(IVAN), 0);
+    Script_ShowMessage(SPEAKER(LOCALID_GARET), 0);
+    OBJECT_EMOTE(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 10);
+    OBJECT_ANIMATION(LOCALID_IVAN, ANIM_NOD);
+    Script_ShowMessage(SPEAKER(LOCALID_IVAN), 0);
   }
   WAIT(20);
   TretTreeInteriors_PlayGesture(TRET_GESTURE_BLINK);
@@ -626,11 +633,11 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   PaletteFade_StartInterpolation(20);
   WaitFrames(40);
   ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
-  ObjectMotion_SetVariantCallback(GARET, 2);
-  ObjectMotion_SetVariantCallback(MIA, 2);
-  ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
-  OBJECT_DIR(GARET, FACING_NORTH, 0);
-  OBJECT_DIR(IVAN, FACING_NORTH, 20);
+  ObjectMotion_SetVariantCallback(LOCALID_GARET, 2);
+  ObjectMotion_SetVariantCallback(LOCALID_MIA, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 2);
+  OBJECT_DIR(LOCALID_GARET, FACING_NORTH, 0);
+  OBJECT_DIR(LOCALID_IVAN, FACING_NORTH, 20);
   WAIT(20);
   sSparkFrame = 0;
   {
@@ -657,31 +664,31 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   ObjectEvent_RunActionScriptAndWait(LOCALID_TRET,
                                      gTretTreeInteriors_FaceSinksActions);
   WAIT(40);
-  OBJECT_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  Script_ShowMessage(SPEAKER(GARET), 0);
-  OBJECT_EMOTE(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 10);
-  Script_ShowMessage(SPEAKER(IVAN), 0);
-  OBJECT_DIR(GARET, FACING_NORTHEAST, 0);
-  OBJECT_DIR(IVAN, FACING_NORTHWEST, 10);
+  OBJECT_EMOTE(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  Script_ShowMessage(SPEAKER(LOCALID_GARET), 0);
+  OBJECT_EMOTE(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 10);
+  Script_ShowMessage(SPEAKER(LOCALID_IVAN), 0);
+  OBJECT_DIR(LOCALID_GARET, FACING_NORTHEAST, 0);
+  OBJECT_DIR(LOCALID_IVAN, FACING_NORTHWEST, 10);
   OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_SOUTH, 10);
-  ObjectMotion_SetVarCbAndRefresh(GARET, 1);
-  Script_ShowMessageAndWait(SPEAKER(GARET), 0, 10);
-  ObjectMotion_SetVarCbAndRefresh(IVAN, 1);
-  Script_ShowMessageAndWait(SPEAKER(IVAN), 0, 10);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 1);
+  Script_ShowMessageAndWait(SPEAKER(LOCALID_GARET), 0, 10);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 1);
+  Script_ShowMessageAndWait(SPEAKER(LOCALID_IVAN), 0, 10);
   if (hasMia != 0) {
-    ObjectMotion_SetVarCbAndRefresh(MIA, 1);
-    FieldScript_ShowMessageThenWait(SPEAKER(MIA), 0, 10);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 1);
+    FieldScript_ShowMessageThenWait(SPEAKER(LOCALID_MIA), 0, 10);
   }
   OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_NOD);
-  OBJECT_ANIMATION(GARET, ANIM_NOD);
-  OBJECT_ANIMATION(MIA, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(IVAN, ANIM_NOD);
+  OBJECT_ANIMATION(LOCALID_GARET, ANIM_NOD);
+  OBJECT_ANIMATION(LOCALID_MIA, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
   actions = gTretTreeInteriors_RejoinLeaderActions;
-  ObjectEvent_SetActionScript(GARET, actions);
+  ObjectEvent_SetActionScript(LOCALID_GARET, actions);
   if (hasMia != 0) {
-    ObjectEvent_SetActionScript(MIA, actions);
+    ObjectEvent_SetActionScript(LOCALID_MIA, actions);
   }
-  ObjectEvent_RunActionScriptAndWait(IVAN, actions);
+  ObjectEvent_RunActionScriptAndWait(LOCALID_IVAN, actions);
   WAIT(20);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->priorityFlags |=
       OBJ_EVENT_PRIORITY_AUTOMATIC;
@@ -1370,11 +1377,11 @@ u32 gTretTreeInteriorsWarps[] = {
 };
 
 struct ObjectEventTemplate gTretTreeInteriorsObjectEventTemplates[] = {
-    { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0 },
-    { IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0 },
-    { MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0 },
     { SPRITE_TRET, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(168), 0, PIXELS(48), FACING_SOUTH, TALK_FACING_KEEP, 0 },

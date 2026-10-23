@@ -590,16 +590,16 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   VenusLighthouseAerie_ShowPartyMember(2, 1);
   VenusLighthouseAerie_ShowPartyMember(3, 1);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 492, 164);
-  ObjectMotion_ResetAndSetPositionInMode2(GARET, 514, 164);
-  ObjectEvent_WalkTo(IVAN, 492, 140);
-  ObjectMotion_SetPositionAndReset(MIA, 514, 140);
+  ObjectMotion_ResetAndSetPositionInMode2(LOCALID_GARET, 514, 164);
+  ObjectEvent_WalkTo(LOCALID_IVAN, 492, 140);
+  ObjectMotion_SetPositionAndReset(LOCALID_MIA, 514, 140);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_STAND);
-  Engine_ObjectEventSetAnimation(IVAN, ANIM_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_STAND);
   ObjectMotion_ArmCallback(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
-  ObjectMotion_ArmCallback(GARET, FACING_SOUTH, 0);
-  ObjectMotion_ArmCallback(IVAN, FACING_SOUTH, 0);
-  ObjectMotion_ArmCallback(MIA, FACING_SOUTH, 0);
+  ObjectMotion_ArmCallback(LOCALID_GARET, FACING_SOUTH, 0);
+  ObjectMotion_ArmCallback(LOCALID_IVAN, FACING_SOUTH, 0);
+  ObjectMotion_ArmCallback(LOCALID_MIA, FACING_SOUTH, 0);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_RISING_PLATFORM);
   Engine_ObjectEventSetPosition(LOCALID_RISING_PLATFORM, 0, 0);
   Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
@@ -607,9 +607,9 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   FieldScript_SetMessageId(MsgVenusLongLastTime);
   VenusLighthouseAerie_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_MENARDI);
   ObjectMotion_ArmCallback(LOCALID_PARTY_LEADER, FACING_WEST, 0);
-  ObjectMotion_ArmCallback(GARET, FACING_WEST, 0);
-  ObjectMotion_ArmCallback(IVAN, FACING_WEST, 0);
-  VenusLighthouseAerie_FaceObjectEvent(MIA, FACING_WEST);
+  ObjectMotion_ArmCallback(LOCALID_GARET, FACING_WEST, 0);
+  ObjectMotion_ArmCallback(LOCALID_IVAN, FACING_WEST, 0);
+  VenusLighthouseAerie_FaceObjectEvent(LOCALID_MIA, FACING_WEST);
   FieldCamera_GetScriptObject()->motionFlags = 0;
   FieldCamera_SetSpeedParameters(PIXELS(24) / 5, PIXELS(3) / 5);
   FieldCamera_MoveWithinMapBounds(PIXELS(304), PIXELS(32), PIXELS(158), 1);
@@ -630,7 +630,7 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   ObjectEvent_ShowEmote(LOCALID_MENARDI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldEffect_SpawnLinked(LOCALID_SATUROS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                           20);
-  ObjectEvent_FaceDirection(SHEBA, FACING_SOUTHEAST + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_SHEBA, FACING_SOUTHEAST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_MENARDI, FACING_SOUTH + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_SATUROS, FACING_SOUTH + FACING_STEP, 20);
   FieldCamera_SetSpeedParameters(PIXELS(8) / 5, PIXELS(1) / 5);
@@ -654,7 +654,7 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   ObjectEvent_ShowEmote(LOCALID_MENARDI, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 40);
   VenusLighthouseAerie_FaceObjectEvent(LOCALID_MENARDI, FACING_WEST);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | LOCALID_MENARDI);
-  ObjectMotion_ArmCallback(SHEBA, FACING_EAST, 0);
+  ObjectMotion_ArmCallback(LOCALID_SHEBA, FACING_EAST, 0);
   ObjectEvent_ShowEmote(LOCALID_FELIX, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
   VenusLighthouseAerie_ShowMessage(LOCALID_FELIX);
   ObjectEvent_FaceDirection(LOCALID_MENARDI, FACING_SOUTHEAST + FACING_STEP, 0);
@@ -696,14 +696,15 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   VenusLighthouseAerie_FaceObjectEvent(LOCALID_FELIX,
                                        FACING_NORTHWEST + FACING_STEP);
   VenusLighthouseAerie_ShowMessage(LOCALID_FELIX);
-  VenusLighthouseAerie_FaceObjectEvent(SHEBA, FACING_SOUTHEAST + FACING_STEP);
-  ObjectMotion_SetVarCbAndRefresh(SHEBA, 2);
+  VenusLighthouseAerie_FaceObjectEvent(LOCALID_SHEBA,
+                                       FACING_SOUTHEAST + FACING_STEP);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_SHEBA, 2);
   FieldScript_WaitFrames(20);
   VenusLighthouseAerie_FaceObjectEvent(LOCALID_FELIX,
                                        FACING_NORTH + FACING_STEP);
   ObjectMotion_SetAnimationAndWait(LOCALID_MENARDI, ANIM_SHAKE_HEAD);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | LOCALID_MENARDI);
-  ObjectMotion_ArmCallback(SHEBA, FACING_EAST, 0);
+  ObjectMotion_ArmCallback(LOCALID_SHEBA, FACING_EAST, 0);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_FELIX, 1);
   VenusLighthouseAerie_ShowMessage(LOCALID_FELIX);
   ObjectMotion_SetAnimationAndWait(LOCALID_SATUROS, ANIM_NOD);
@@ -744,7 +745,7 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   ObjectMotion_ArmCallback(LOCALID_FELIX, FACING_WEST, 20);
   FieldScript_ShowMessageThenWait(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT | LOCALID_FELIX, 0, 40);
-  ObjectEvent_ShowEmote(SHEBA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 120);
+  ObjectEvent_ShowEmote(LOCALID_SHEBA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 120);
   ObjectEvent_ShowEmote(LOCALID_SATUROS, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   VenusLighthouseAerie_ShowMessage(SPEAKER_WINDOW_BELOW |
                                    SPEAKER_PORTRAIT_RIGHT | LOCALID_SATUROS);
@@ -759,7 +760,7 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
                           40);
   Engine_ObjectEventSetAnimation(LOCALID_MENARDI, ANIM_SHAKE_HEAD);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | LOCALID_MENARDI);
-  ObjectEvent_ShowEmote(SHEBA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
+  ObjectEvent_ShowEmote(LOCALID_SHEBA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   FieldEffect_SpawnLinked(LOCALID_SATUROS, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
   VenusLighthouseAerie_ShowMessage(SPEAKER_WINDOW_BELOW |
                                    SPEAKER_PORTRAIT_RIGHT | LOCALID_SATUROS);
@@ -783,32 +784,34 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetVarCbAndRefresh(GARET, 1);
-  VenusLighthouseAerie_ShowMessage(SPEAKER_WINDOW_BELOW | GARET);
-  FieldEffect_SpawnLinked(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  VenusLighthouseAerie_ShowMessage(MIA);
-  ObjectMotion_SetAnimationAndWait(IVAN, ANIM_NOD);
-  FieldScript_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | IVAN, 0, 40);
-  ObjectMotion_Launch(GARET, 2, 20);
-  VenusLighthouseAerie_ShowMessage(SPEAKER_WINDOW_BELOW | GARET);
-  FieldMessage_ShowAtObject(SPEAKER_WINDOW_BELOW | GARET, 0);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 1);
+  VenusLighthouseAerie_ShowMessage(SPEAKER_WINDOW_BELOW | LOCALID_GARET);
+  FieldEffect_SpawnLinked(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  VenusLighthouseAerie_ShowMessage(LOCALID_MIA);
+  ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
+  FieldScript_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | LOCALID_IVAN, 0, 40);
+  ObjectMotion_Launch(LOCALID_GARET, 2, 20);
+  VenusLighthouseAerie_ShowMessage(SPEAKER_WINDOW_BELOW | LOCALID_GARET);
+  FieldMessage_ShowAtObject(SPEAKER_WINDOW_BELOW | LOCALID_GARET, 0);
   ObjectMotion_ArmCallback(LOCALID_PARTY_LEADER, FACING_EAST, 0);
-  ObjectMotion_ArmCallback(IVAN, FACING_SOUTH, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_SOUTHEAST, 0);
+  ObjectMotion_ArmCallback(LOCALID_IVAN, FACING_SOUTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_SOUTHEAST, 0);
   if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 1) {
     gFieldWork->message += 1;
   }
   FieldScript_WaitFrames(20);
-  VenusLighthouseAerie_ShowMessage(GARET);
-  ObjectMotion_ArmCallback(IVAN, FACING_EAST, 0);
-  ObjectMotion_ArmCallback(MIA, FACING_WEST, 20);
+  VenusLighthouseAerie_ShowMessage(LOCALID_GARET);
+  ObjectMotion_ArmCallback(LOCALID_IVAN, FACING_EAST, 0);
+  ObjectMotion_ArmCallback(LOCALID_MIA, FACING_WEST, 20);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(IVAN, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(MIA, ANIM_NOD);
-  ObjectEvent_SetActionScript(GARET, gVenusLighthouseAerie_JoinLeaderAction);
-  ObjectEvent_SetActionScript(IVAN, gVenusLighthouseAerie_JoinLeaderAction);
-  ObjectEvent_RunActionScriptAndWait(MIA,
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
+  ObjectEvent_SetActionScript(LOCALID_GARET,
+                              gVenusLighthouseAerie_JoinLeaderAction);
+  ObjectEvent_SetActionScript(LOCALID_IVAN,
+                              gVenusLighthouseAerie_JoinLeaderAction);
+  ObjectEvent_RunActionScriptAndWait(LOCALID_MIA,
                                      gVenusLighthouseAerie_JoinLeaderAction);
   FieldScript_WaitFrames(20);
   FieldScript_End();
@@ -858,29 +861,32 @@ static void EventScript_ConfrontSaturosAndMenardi(void) {
   FieldCamera_GetScriptObject()->motionFlags = 0;
   FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
   FieldCamera_MoveTo(PIXELS(304), PIXELS(32), PIXELS(180), 1);
-  ObjectEvent_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_SetSpeed(IVAN, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_SetSpeed(MIA, PIXELS(7) / 5, PIXELS(7) / 10);
+  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(7) / 5, PIXELS(7) / 10);
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (objectEvent != 0) {
-    ObjectEvent_SetPosition(GARET, objectEvent->x.fixed, objectEvent->z.fixed);
+    ObjectEvent_SetPosition(LOCALID_GARET, objectEvent->x.fixed,
+                            objectEvent->z.fixed);
   }
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (objectEvent != 0) {
-    ObjectEvent_SetPosition(IVAN, objectEvent->x.fixed, objectEvent->z.fixed);
+    ObjectEvent_SetPosition(LOCALID_IVAN, objectEvent->x.fixed,
+                            objectEvent->z.fixed);
   }
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (objectEvent != 0) {
-    ObjectEvent_SetPosition(MIA, objectEvent->x.fixed, objectEvent->z.fixed);
+    ObjectEvent_SetPosition(LOCALID_MIA, objectEvent->x.fixed,
+                            objectEvent->z.fixed);
   }
-  ObjectEvent_WalkTo(GARET, 328, 168);
-  ObjectEvent_WalkTo(IVAN, 340, 196);
-  ObjectEvent_WalkToAndWait(MIA, 326, 204);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_STAND);
-  Engine_ObjectEventSetAnimation(IVAN, ANIM_STAND);
-  ObjectMotion_ArmCallback(GARET, FACING_WEST, 0);
-  ObjectMotion_ArmCallback(IVAN, FACING_WEST, 0);
-  VenusLighthouseAerie_FaceObjectEvent(MIA, FACING_WEST);
+  ObjectEvent_WalkTo(LOCALID_GARET, 328, 168);
+  ObjectEvent_WalkTo(LOCALID_IVAN, 340, 196);
+  ObjectEvent_WalkToAndWait(LOCALID_MIA, 326, 204);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_STAND);
+  ObjectMotion_ArmCallback(LOCALID_GARET, FACING_WEST, 0);
+  ObjectMotion_ArmCallback(LOCALID_IVAN, FACING_WEST, 0);
+  VenusLighthouseAerie_FaceObjectEvent(LOCALID_MIA, FACING_WEST);
   ObjectMotion_ArmCallback(LOCALID_SATUROS, FACING_EAST, 0);
   ObjectMotion_ArmCallback(LOCALID_MENARDI, FACING_EAST, 40);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_SATUROS, 2);
@@ -899,21 +905,21 @@ static void EventScript_ConfrontSaturosAndMenardi(void) {
   ObjectMotion_SetVarCbAndRefresh(LOCALID_SATUROS, 1);
   VenusLighthouseAerie_FaceObjectEvent(LOCALID_SATUROS, FACING_WEST);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | LOCALID_SATUROS);
-  ObjectEvent_SetAttachedEffect(MIA, ATTACHED_EFFECT_IN_FRONT |
-                                         ATTACHED_EFFECT_ONCE);
-  ObjectMotion_SetVariantCallback(MIA, 2);
-  VenusLighthouseAerie_ShowMessage(MIA);
-  ObjectMotion_SetVarCbAndRefresh(IVAN, 1);
-  VenusLighthouseAerie_ShowMessage(IVAN);
+  ObjectEvent_SetAttachedEffect(LOCALID_MIA, ATTACHED_EFFECT_IN_FRONT |
+                                                 ATTACHED_EFFECT_ONCE);
+  ObjectMotion_SetVariantCallback(LOCALID_MIA, 2);
+  VenusLighthouseAerie_ShowMessage(LOCALID_MIA);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 1);
+  VenusLighthouseAerie_ShowMessage(LOCALID_IVAN);
   VenusLighthouseAerie_FaceObjectEvent(LOCALID_MENARDI, FACING_EAST);
   VenusLighthouseAerie_ShowMessage(LOCALID_MENARDI);
   ObjectEvent_ShowEmote(LOCALID_SATUROS, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 40);
   ObjectMotion_ArmCallback(LOCALID_SATUROS, FACING_EAST, 20);
   VenusLighthouseAerie_ShowMessage(LOCALID_SATUROS);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHWEST, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_SOUTHWEST, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_SOUTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHEAST, 0);
   ObjectMotion_ArmCallback(LOCALID_FELIX, FACING_WEST, 0);
   VenusLighthouseAerie_FaceObjectEvent(LOCALID_MENARDI,
                                        FACING_SOUTHEAST + FACING_STEP);
@@ -926,44 +932,44 @@ static void EventScript_ConfrontSaturosAndMenardi(void) {
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | LOCALID_SATUROS);
   ObjectMotion_ArmCallback(LOCALID_MENARDI, FACING_WEST, 0);
   ObjectMotion_ArmCallback(LOCALID_PARTY_LEADER, FACING_WEST, 0);
-  ObjectMotion_ArmCallback(GARET, FACING_WEST, 0);
-  ObjectMotion_ArmCallback(IVAN, FACING_WEST, 0);
-  ObjectMotion_ArmCallback(MIA, FACING_WEST, 0);
+  ObjectMotion_ArmCallback(LOCALID_GARET, FACING_WEST, 0);
+  ObjectMotion_ArmCallback(LOCALID_IVAN, FACING_WEST, 0);
+  ObjectMotion_ArmCallback(LOCALID_MIA, FACING_WEST, 0);
   ObjectMotion_ArmCallback(LOCALID_FELIX, FACING_EAST, 20);
-  ObjectEvent_ShowEmote(SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  VenusLighthouseAerie_ShowMessage(SHEBA);
+  ObjectEvent_ShowEmote(LOCALID_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  VenusLighthouseAerie_ShowMessage(LOCALID_SHEBA);
   ObjectEvent_ShowEmote(LOCALID_SATUROS, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | LOCALID_SATUROS);
-  ObjectMotion_SetVarCbAndRefresh(SHEBA, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_SHEBA, 2);
   FieldScript_WaitFrames(20);
-  Engine_ObjectEventSetAnimation(SHEBA, ANIM_NOD);
-  VenusLighthouseAerie_ShowMessage(SHEBA);
+  Engine_ObjectEventSetAnimation(LOCALID_SHEBA, ANIM_NOD);
+  VenusLighthouseAerie_ShowMessage(LOCALID_SHEBA);
   ObjectMotion_SetAnimationAndWait(LOCALID_SATUROS, ANIM_NOD);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | LOCALID_SATUROS);
-  ObjectEvent_SetSpeed(SHEBA, PIXELS(4) / 5, PIXELS(2) / 5);
-  ObjectEvent_WalkToAndWait(SHEBA, 260, 186);
+  ObjectEvent_SetSpeed(LOCALID_SHEBA, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_WalkToAndWait(LOCALID_SHEBA, 260, 186);
   ObjectMotion_ArmCallback(LOCALID_FELIX, FACING_SOUTHEAST + FACING_STEP, 0);
-  ObjectEvent_WalkToAndWait(SHEBA, 276, 192);
+  ObjectEvent_WalkToAndWait(LOCALID_SHEBA, 276, 192);
   objectEvent = ObjectEvent_GetById(LOCALID_MENARDI);
   objectEvent->facing = FACING_SOUTH + FACING_STEP;
   WaitFrames(1);
   ObjectMotion_SetVariantCallback(LOCALID_MENARDI, 2);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | LOCALID_MENARDI);
-  ObjectMotion_Launch(SHEBA, 2, 20);
-  ObjectEvent_SetSpeed(SHEBA, PIXELS(12) / 5, PIXELS(6) / 5);
-  ObjectEvent_WalkToAndWait(SHEBA, 260, 186);
+  ObjectMotion_Launch(LOCALID_SHEBA, 2, 20);
+  ObjectEvent_SetSpeed(LOCALID_SHEBA, PIXELS(12) / 5, PIXELS(6) / 5);
+  ObjectEvent_WalkToAndWait(LOCALID_SHEBA, 260, 186);
   ObjectMotion_ArmCallback(LOCALID_FELIX, FACING_WEST, 0);
-  ObjectEvent_WalkToAndWait(SHEBA, 248, 172);
+  ObjectEvent_WalkToAndWait(LOCALID_SHEBA, 248, 172);
   ObjectMotion_ArmCallback(LOCALID_MENARDI, FACING_WEST, 0);
   ObjectMotion_ArmCallback(LOCALID_FELIX, FACING_WEST, 0);
-  ObjectMotion_ArmCallback(SHEBA, FACING_EAST, 20);
-  ObjectMotion_SetAnimationAndWait(SHEBA, ANIM_NOD);
+  ObjectMotion_ArmCallback(LOCALID_SHEBA, FACING_EAST, 20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_SHEBA, ANIM_NOD);
   FieldScript_WaitFrames(40);
   Map_StartCutscenePsynergy();
   WaitFrames(1);
   frame = 0;
   do {
-    objectEvent = ObjectEvent_GetById(SHEBA);
+    objectEvent = ObjectEvent_GetById(LOCALID_SHEBA);
     VenusLighthouseAerie_FlashObjectEventPalette(objectEvent);
     frame = (frame + 1);
     WaitFrames(1);
@@ -972,53 +978,53 @@ static void EventScript_ConfrontSaturosAndMenardi(void) {
                              TASK_PRIORITY_MAP);
   FieldScript_WaitFrames(80);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHWEST, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_SOUTHWEST, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST, 20);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_SOUTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHEAST, 20);
   ObjectMotion_ArmCallback(LOCALID_FELIX, FACING_EAST, 40);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_WEST, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_WEST, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_WEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_WEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_WEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_WEST, 0);
   VenusLighthouseAerie_FaceObjectEvent(LOCALID_FELIX, FACING_WEST);
   ObjectEvent_ShowEmote(LOCALID_SATUROS, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_SATUROS, 0, 20);
-  ObjectEvent_ShowEmote(SHEBA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 80);
+  ObjectEvent_ShowEmote(LOCALID_SHEBA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 80);
   ObjectMotion_SetVariantCallback(LOCALID_MENARDI, 2);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | LOCALID_MENARDI);
   Task_Remove(VenusLighthouseAerie_UpdateShebaPalette);
   WaitFrames(1);
-  ObjectEvent_SetChildValue(SHEBA, SPRITE_COLOR_NORMAL);
+  ObjectEvent_SetChildValue(LOCALID_SHEBA, SPRITE_COLOR_NORMAL);
   WaitFrames(10);
   Map_EndCutscenePsynergy();
-  ObjectMotion_Launch(SHEBA, 2, 40);
-  VenusLighthouseAerie_ShowMessage(SHEBA);
+  ObjectMotion_Launch(LOCALID_SHEBA, 2, 40);
+  VenusLighthouseAerie_ShowMessage(LOCALID_SHEBA);
   ObjectEvent_ShowEmote(LOCALID_SATUROS, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | LOCALID_SATUROS);
-  ObjectMotion_SetVarCbAndRefresh(SHEBA, 2);
-  ObjectEvent_GetById(SHEBA)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
-  ObjectEvent_WalkToAndWait(SHEBA, 250, 176);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_SHEBA, 2);
+  ObjectEvent_GetById(LOCALID_SHEBA)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
+  ObjectEvent_WalkToAndWait(LOCALID_SHEBA, 250, 176);
   FieldScript_WaitFrames(1);
-  ObjectEvent_GetById(SHEBA)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
+  ObjectEvent_GetById(LOCALID_SHEBA)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
   ObjectEvent_ShowEmote(LOCALID_FELIX, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
   ObjectMotion_ArmCallback(LOCALID_FELIX, FACING_EAST, 20);
   VenusLighthouseAerie_ShowMessage(LOCALID_FELIX);
   ObjectMotion_SetAnimationAndWait(LOCALID_MENARDI, ANIM_SHAKE_HEAD);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | LOCALID_MENARDI);
-  ObjectMotion_SetVarCbAndRefresh(SHEBA, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_SHEBA, 2);
   FieldScript_WaitFrames(40);
-  ObjectEvent_SetSpeed(SHEBA, PIXELS(3) / 5, PIXELS(3) / 10);
-  ObjectEvent_GetById(SHEBA)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
-  ObjectEvent_WalkToAndWait(SHEBA, 248, 172);
+  ObjectEvent_SetSpeed(LOCALID_SHEBA, PIXELS(3) / 5, PIXELS(3) / 10);
+  ObjectEvent_GetById(LOCALID_SHEBA)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
+  ObjectEvent_WalkToAndWait(LOCALID_SHEBA, 248, 172);
   FieldScript_WaitFrames(1);
-  ObjectEvent_GetById(SHEBA)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
+  ObjectEvent_GetById(LOCALID_SHEBA)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetAnimationAndWait(SHEBA, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_SHEBA, ANIM_NOD);
   FieldScript_WaitFrames(20);
   ObjectMotion_SetAnimationAndWait(LOCALID_MENARDI, ANIM_NOD);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | LOCALID_MENARDI);
-  ObjectMotion_SetAnimationAndWait(SHEBA, ANIM_NOD);
-  VenusLighthouseAerie_ShowMessage(SHEBA);
+  ObjectMotion_SetAnimationAndWait(LOCALID_SHEBA, ANIM_NOD);
+  VenusLighthouseAerie_ShowMessage(LOCALID_SHEBA);
   ObjectEvent_FaceDirection(LOCALID_MENARDI, FACING_SOUTHEAST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_SATUROS, FACING_NORTHWEST + FACING_STEP,
                             20);
@@ -1034,9 +1040,9 @@ static void EventScript_ConfrontSaturosAndMenardi(void) {
   VenusLighthouseAerie_FaceObjectEvent(LOCALID_SATUROS, FACING_EAST);
   VenusLighthouseAerie_FaceObjectEvent(LOCALID_MENARDI, FACING_EAST);
   Script_OpenMessage(LOCALID_SATUROS, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHEAST, 0);
   if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
     FieldScript_WaitFrames(20);
     ObjectMotion_SetAnimationAndWait(LOCALID_SATUROS, ANIM_NOD);
@@ -1051,43 +1057,43 @@ static void EventScript_ConfrontSaturosAndMenardi(void) {
   if (answerAccepted != 0) {
     gFieldWork->message += 1;
   }
-  ObjectEvent_FaceDirection(GARET, FACING_WEST, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_WEST, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_WEST, 20);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_WEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_WEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_WEST, 20);
   ObjectEvent_ShowEmote(LOCALID_SATUROS, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
   Script_OpenMessage(LOCALID_SATUROS, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHEAST, 0);
   if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
     FieldScript_WaitFrames(20);
-    Engine_ObjectEventSetAnimation(IVAN, ANIM_NOD);
+    Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
     answerAccepted = 1;
   } else {
     FieldScript_WaitFrames(20);
-    Engine_ObjectEventSetAnimation(IVAN, ANIM_SHAKE_HEAD);
+    Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_SHAKE_HEAD);
     gFieldWork->message += 1;
     answerAccepted = 0;
   }
-  VenusLighthouseAerie_ShowMessage(IVAN);
+  VenusLighthouseAerie_ShowMessage(LOCALID_IVAN);
   if (answerAccepted != 0) {
     gFieldWork->message += 1;
   }
-  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
-  VenusLighthouseAerie_FaceObjectEvent(GARET, FACING_SOUTH);
-  VenusLighthouseAerie_ShowMessage(GARET);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
+  VenusLighthouseAerie_FaceObjectEvent(LOCALID_GARET, FACING_SOUTH);
+  VenusLighthouseAerie_ShowMessage(LOCALID_GARET);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_MENARDI, 1);
   VenusLighthouseAerie_ShowMessage(LOCALID_MENARDI);
-  ObjectEvent_FaceDirection(GARET, FACING_WEST, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_WEST, 0);
-  VenusLighthouseAerie_FaceObjectEvent(MIA, FACING_WEST);
-  ObjectMotion_SetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_WEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_WEST, 0);
+  VenusLighthouseAerie_FaceObjectEvent(LOCALID_MIA, FACING_WEST);
+  ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_SHAKE_HEAD);
   ObjectMotion_SetAnimationAndWait(LOCALID_SATUROS, ANIM_NOD);
   Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 20);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(IVAN, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(MIA, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
   VenusLighthouseAerie_FaceObjectEvent(LOCALID_MENARDI,
                                        FACING_SOUTHEAST + FACING_STEP);
   Engine_ObjectEventSetAnimation(LOCALID_MENARDI, ANIM_NOD);
@@ -1135,26 +1141,26 @@ static void EventScript_ConfrontSaturosAndMenardi(void) {
   VenusLighthouseAerie_FaceObjectEvent(LOCALID_SATUROS, FACING_EAST);
   VenusLighthouseAerie_FaceObjectEvent(LOCALID_FELIX, FACING_WEST);
   ObjectMotion_SetAnimationAndWait(LOCALID_FELIX, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(SHEBA, ANIM_NOD);
-  ObjectEvent_SetSpeed(SHEBA, PIXELS(4) / 5, PIXELS(2) / 5);
-  ObjectEvent_WalkToAndWait(SHEBA, 260, 186);
+  ObjectMotion_SetAnimationAndWait(LOCALID_SHEBA, ANIM_NOD);
+  ObjectEvent_SetSpeed(LOCALID_SHEBA, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_WalkToAndWait(LOCALID_SHEBA, 260, 186);
   ObjectMotion_ArmCallback(LOCALID_FELIX, FACING_SOUTHEAST + FACING_STEP, 0);
-  ObjectEvent_WalkToAndWait(SHEBA, 276, 192);
+  ObjectEvent_WalkToAndWait(LOCALID_SHEBA, 276, 192);
   Script_PlaySong(MUS_SILENCE);
   objectEvent = ObjectEvent_GetById(LOCALID_MENARDI);
   objectEvent->facing = FACING_SOUTH + FACING_STEP;
   WaitFrames(1);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_MENARDI, 1);
   VenusLighthouseAerie_ShowMessage(LOCALID_MENARDI);
-  ObjectMotion_SetVarCbAndRefresh(SHEBA, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_SHEBA, 2);
   ObjectMotion_ArmCallback(LOCALID_FELIX, FACING_EAST, 0);
   ObjectMotion_ArmCallback(LOCALID_SATUROS, FACING_SOUTH + FACING_STEP, 0);
-  ObjectEvent_FaceDirection(SHEBA, FACING_NORTH + FACING_STEP, 20);
-  ObjectMotion_Launch(MIA, 2, 20);
-  VenusLighthouseAerie_FaceObjectEvent(MIA, FACING_NORTHWEST);
-  VenusLighthouseAerie_ShowMessage(MIA);
+  ObjectEvent_FaceDirection(LOCALID_SHEBA, FACING_NORTH + FACING_STEP, 20);
+  ObjectMotion_Launch(LOCALID_MIA, 2, 20);
+  VenusLighthouseAerie_FaceObjectEvent(LOCALID_MIA, FACING_NORTHWEST);
+  VenusLighthouseAerie_ShowMessage(LOCALID_MIA);
   ObjectMotion_ArmCallback(LOCALID_FELIX, FACING_EAST, 0);
-  ObjectMotion_ArmCallback(SHEBA, FACING_EAST, 0);
+  ObjectMotion_ArmCallback(LOCALID_SHEBA, FACING_EAST, 0);
   ObjectMotion_ArmCallback(LOCALID_MENARDI, FACING_SOUTHEAST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_SATUROS, FACING_NORTHWEST + FACING_STEP,
                             80);
@@ -1163,66 +1169,67 @@ static void EventScript_ConfrontSaturosAndMenardi(void) {
   Script_PlaySong(MUS_029);
   VenusLighthouseAerie_ShowMessage(LOCALID_SATUROS);
   ObjectMotion_ArmCallback(LOCALID_FELIX, FACING_SOUTHEAST + FACING_STEP, 0);
-  ObjectEvent_FaceDirection(SHEBA, FACING_NORTHWEST + FACING_STEP, 20);
-  ObjectMotion_SetVariantCallback(IVAN, 2);
-  VenusLighthouseAerie_ShowMessage(IVAN);
+  ObjectEvent_FaceDirection(LOCALID_SHEBA, FACING_NORTHWEST + FACING_STEP, 20);
+  ObjectMotion_SetVariantCallback(LOCALID_IVAN, 2);
+  VenusLighthouseAerie_ShowMessage(LOCALID_IVAN);
   VenusLighthouseAerie_FaceObjectEvent(LOCALID_MENARDI,
                                        FACING_SOUTHEAST + FACING_STEP);
   ObjectMotion_SetAnimationAndWait(LOCALID_MENARDI, ANIM_NOD);
   VenusLighthouseAerie_ShowMessage(LOCALID_MENARDI);
   ObjectMotion_ArmCallback(LOCALID_FELIX, FACING_EAST, 0);
-  VenusLighthouseAerie_FaceObjectEvent(SHEBA, FACING_NORTH + FACING_STEP);
-  Engine_ObjectEventSetAnimation(MIA, ANIM_NOD);
-  VenusLighthouseAerie_ShowMessage(MIA);
+  VenusLighthouseAerie_FaceObjectEvent(LOCALID_SHEBA,
+                                       FACING_NORTH + FACING_STEP);
+  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_NOD);
+  VenusLighthouseAerie_ShowMessage(LOCALID_MIA);
   ObjectEvent_ShowEmote(LOCALID_SATUROS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                         20);
   ObjectMotion_ArmCallback(LOCALID_SATUROS, FACING_SOUTHEAST + FACING_STEP, 20);
   VenusLighthouseAerie_ShowMessage(LOCALID_SATUROS);
-  ObjectEvent_ShowEmote(SHEBA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  ObjectEvent_ShowEmote(LOCALID_SHEBA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   ObjectEvent_ShowEmote(LOCALID_FELIX, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  ObjectMotion_ArmCallback(SHEBA, FACING_EAST, 0);
+  ObjectMotion_ArmCallback(LOCALID_SHEBA, FACING_EAST, 0);
   VenusLighthouseAerie_FaceObjectEvent(LOCALID_FELIX, FACING_EAST);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
-  ObjectMotion_SetVariantCallback(GARET, 2);
-  VenusLighthouseAerie_ShowMessage(GARET);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
+  ObjectMotion_SetVariantCallback(LOCALID_GARET, 2);
+  VenusLighthouseAerie_ShowMessage(LOCALID_GARET);
   VenusLighthouseAerie_FaceObjectEvent(LOCALID_MENARDI, FACING_EAST);
   ObjectMotion_SetAnimationAndWait(LOCALID_MENARDI, ANIM_SHAKE_HEAD);
   VenusLighthouseAerie_ShowMessage(LOCALID_MENARDI);
   VenusLighthouseAerie_FaceObjectEvent(LOCALID_SATUROS, FACING_EAST);
   Engine_ObjectEventSetAnimation(LOCALID_SATUROS, ANIM_SHAKE_HEAD);
   VenusLighthouseAerie_ShowMessage(LOCALID_SATUROS);
-  ObjectMotion_ArmCallback(SHEBA, FACING_NORTH + FACING_STEP, 0);
-  ObjectEvent_ShowEmote(SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Script_ShowMessageAndWait(MIA, 0, 20);
+  ObjectMotion_ArmCallback(LOCALID_SHEBA, FACING_NORTH + FACING_STEP, 0);
+  ObjectEvent_ShowEmote(LOCALID_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  Script_ShowMessageAndWait(LOCALID_MIA, 0, 20);
   VenusLighthouseAerie_FaceObjectEvent(LOCALID_MENARDI,
                                        FACING_SOUTHEAST + FACING_STEP);
   Engine_ObjectEventSetAnimation(LOCALID_MENARDI, ANIM_SHAKE_HEAD);
   VenusLighthouseAerie_ShowMessage(LOCALID_MENARDI);
-  ObjectEvent_SetAttachedEffect(IVAN, ATTACHED_EFFECT_IN_FRONT |
-                                          ATTACHED_EFFECT_ONCE);
-  Script_ShowMessageAndWait(IVAN, 0, 20);
+  ObjectEvent_SetAttachedEffect(LOCALID_IVAN, ATTACHED_EFFECT_IN_FRONT |
+                                                  ATTACHED_EFFECT_ONCE);
+  Script_ShowMessageAndWait(LOCALID_IVAN, 0, 20);
   VenusLighthouseAerie_FaceObjectEvent(LOCALID_MENARDI, FACING_EAST);
   ObjectMotion_SetAnimationAndWait(LOCALID_SATUROS, ANIM_NOD);
   VenusLighthouseAerie_ShowMessage(LOCALID_SATUROS);
   ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
-  ObjectMotion_SetVariantCallback(GARET, 2);
-  ObjectMotion_SetVariantCallback(IVAN, 2);
-  ObjectMotion_SetVarCbAndRefresh(MIA, 2);
+  ObjectMotion_SetVariantCallback(LOCALID_GARET, 2);
+  ObjectMotion_SetVariantCallback(LOCALID_IVAN, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 2);
   ObjectMotion_ArmCallback(LOCALID_PARTY_LEADER, FACING_NORTHWEST, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_SOUTHWEST, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST, 40);
-  ObjectMotion_SetVarCbAndRefresh(MIA, 1);
-  VenusLighthouseAerie_FaceObjectEvent(MIA, FACING_NORTHWEST);
-  VenusLighthouseAerie_ShowMessage(MIA);
-  ObjectMotion_ArmCallback(GARET, FACING_WEST, 20);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
-  ObjectMotion_SetVariantCallback(GARET, 2);
-  VenusLighthouseAerie_ShowMessage(GARET);
-  ObjectMotion_ArmCallback(SHEBA, FACING_EAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_SOUTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHEAST, 40);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 1);
+  VenusLighthouseAerie_FaceObjectEvent(LOCALID_MIA, FACING_NORTHWEST);
+  VenusLighthouseAerie_ShowMessage(LOCALID_MIA);
+  ObjectMotion_ArmCallback(LOCALID_GARET, FACING_WEST, 20);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
+  ObjectMotion_SetVariantCallback(LOCALID_GARET, 2);
+  VenusLighthouseAerie_ShowMessage(LOCALID_GARET);
+  ObjectMotion_ArmCallback(LOCALID_SHEBA, FACING_EAST, 0);
   ObjectMotion_ArmCallback(LOCALID_PARTY_LEADER, FACING_WEST, 0);
-  ObjectMotion_ArmCallback(IVAN, FACING_WEST, 40);
+  ObjectMotion_ArmCallback(LOCALID_IVAN, FACING_WEST, 40);
   ObjectEvent_ShowEmote(LOCALID_SATUROS, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
   ObjectMotion_SetVariantCallback(LOCALID_SATUROS, 2);
   VenusLighthouseAerie_ShowMessage(LOCALID_SATUROS);
@@ -1234,27 +1241,30 @@ static void EventScript_ConfrontSaturosAndMenardi(void) {
   PartyInventory_Remove(ITEM_SHAMANS_ROD);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags &=
       ~OBJ_EVENT_FACES_MOTION;
-  ObjectEvent_GetById(GARET)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
-  ObjectEvent_GetById(IVAN)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
-  ObjectEvent_GetById(MIA)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
+  ObjectEvent_GetById(LOCALID_GARET)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
+  ObjectEvent_GetById(LOCALID_IVAN)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
+  ObjectEvent_GetById(LOCALID_MIA)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
   ObjectEvent_GetById(LOCALID_MENARDI)->steeringFlags &=
       ~OBJ_EVENT_FACES_MOTION;
   ObjectEvent_GetById(LOCALID_SATUROS)->steeringFlags &=
       ~OBJ_EVENT_FACES_MOTION;
   ObjectEvent_GetById(LOCALID_FELIX)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
-  ObjectEvent_GetById(SHEBA)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
+  ObjectEvent_GetById(LOCALID_SHEBA)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER,
                               gVenusLighthouseAerie_StepBackWestAction);
-  ObjectEvent_SetActionScript(GARET, gVenusLighthouseAerie_StepBackWestAction);
-  ObjectEvent_SetActionScript(IVAN, gVenusLighthouseAerie_StepBackWestAction);
-  ObjectEvent_SetActionScript(MIA, gVenusLighthouseAerie_StepBackWestAction);
+  ObjectEvent_SetActionScript(LOCALID_GARET,
+                              gVenusLighthouseAerie_StepBackWestAction);
+  ObjectEvent_SetActionScript(LOCALID_IVAN,
+                              gVenusLighthouseAerie_StepBackWestAction);
+  ObjectEvent_SetActionScript(LOCALID_MIA,
+                              gVenusLighthouseAerie_StepBackWestAction);
   ObjectEvent_SetActionScript(LOCALID_MENARDI,
                               gVenusLighthouseAerie_StepBackEastAction);
   ObjectEvent_SetActionScript(LOCALID_SATUROS,
                               gVenusLighthouseAerie_StepBackEastAction);
   ObjectEvent_SetActionScript(LOCALID_FELIX,
                               gVenusLighthouseAerie_StepBackWestAction);
-  ObjectEvent_RunActionScriptAndWait(SHEBA,
+  ObjectEvent_RunActionScriptAndWait(LOCALID_SHEBA,
                                      gVenusLighthouseAerie_StepBackWestAction);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   {
@@ -1354,7 +1364,8 @@ VenusLighthouseAerie_SpawnLinkedPairEffects(struct ObjectEvent *parent) {
 #include "common/effect_psynergy.h"
 
 static void VenusLighthouseAerie_UpdateShebaPalette(void) {
-  VenusLighthouseAerie_CycleObjectEventPalette(ObjectEvent_GetById(SHEBA));
+  VenusLighthouseAerie_CycleObjectEventPalette(
+      ObjectEvent_GetById(LOCALID_SHEBA));
 }
 
 /// Builds the horizontal velocity for an elliptical radial particle burst.
@@ -1376,11 +1387,11 @@ static inline void VenusLighthouseAerie_AimBurst(s32 velocity[3], s32 angle) {
 static inline void VenusLighthouseAerie_ShowGroupEmote(s32 emote,
                                                        s32 waitFrames) {
   ObjectEvent_ShowEmote(LOCALID_FELIX, emote, 0);
-  ObjectEvent_ShowEmote(SHEBA, emote, 0);
+  ObjectEvent_ShowEmote(LOCALID_SHEBA, emote, 0);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, emote, 0);
-  ObjectEvent_ShowEmote(GARET, emote, 0);
-  ObjectEvent_ShowEmote(IVAN, emote, 0);
-  ObjectEvent_ShowEmote(MIA, emote, waitFrames);
+  ObjectEvent_ShowEmote(LOCALID_GARET, emote, 0);
+  ObjectEvent_ShowEmote(LOCALID_IVAN, emote, 0);
+  ObjectEvent_ShowEmote(LOCALID_MIA, emote, waitFrames);
 }
 
 /// Back from the first battle (VENUS_LIGHTHOUSE_AERIE_AFTER_FIRST_BATTLE):
@@ -1405,14 +1416,14 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
 
   Script_Start();
   MapGrid_CopyCellAttributes(17, 10, 4, 2, 17, 8);
-  ObjectEvent_Get(GARET)->facing = FACING_WEST;
-  ObjectEvent_SetPosition(GARET, PIXELS(328), PIXELS(168));
-  ObjectEvent_Get(IVAN)->facing = FACING_WEST;
-  ObjectEvent_SetPosition(IVAN, PIXELS(340), PIXELS(196));
-  ObjectEvent_Get(MIA)->facing = FACING_WEST;
-  ObjectEvent_SetPosition(MIA, PIXELS(326), PIXELS(204));
-  ObjectEvent_Get(SHEBA)->facing = FACING_SOUTHEAST + FACING_STEP;
-  ObjectEvent_SetPosition(SHEBA, PIXELS(268), PIXELS(154));
+  ObjectEvent_Get(LOCALID_GARET)->facing = FACING_WEST;
+  ObjectEvent_SetPosition(LOCALID_GARET, PIXELS(328), PIXELS(168));
+  ObjectEvent_Get(LOCALID_IVAN)->facing = FACING_WEST;
+  ObjectEvent_SetPosition(LOCALID_IVAN, PIXELS(340), PIXELS(196));
+  ObjectEvent_Get(LOCALID_MIA)->facing = FACING_WEST;
+  ObjectEvent_SetPosition(LOCALID_MIA, PIXELS(326), PIXELS(204));
+  ObjectEvent_Get(LOCALID_SHEBA)->facing = FACING_SOUTHEAST + FACING_STEP;
+  ObjectEvent_SetPosition(LOCALID_SHEBA, PIXELS(268), PIXELS(154));
   ObjectEvent_Get(LOCALID_FELIX)->facing = FACING_SOUTHEAST + FACING_STEP;
   ObjectEvent_SetPosition(LOCALID_FELIX, PIXELS(268), PIXELS(164));
   objectEvent = ObjectEvent_Get(LOCALID_SATUROS);
@@ -1440,14 +1451,14 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   Script_WaitForScreen();
   Script_Wait(80);
 
-  ObjectEvent_Jump(GARET, 2, 20);
-  VenusLighthouseAerie_FaceObjectEvent(GARET, FACING_SOUTHEAST);
+  ObjectEvent_Jump(LOCALID_GARET, 2, 20);
+  VenusLighthouseAerie_FaceObjectEvent(LOCALID_GARET, FACING_SOUTHEAST);
   Script_SetMessage(MsgVenusBeatEm);
-  VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_LEFT | GARET);
-  VenusLighthouseAerie_FaceObjectEvent(MIA, FACING_NORTHWEST);
-  VenusLighthouseAerie_ShowMessage(MIA);
-  ObjectEvent_FaceDirection(GARET, FACING_WEST, 0);
-  VenusLighthouseAerie_FaceObjectEvent(IVAN, FACING_NORTHWEST);
+  VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_LEFT | LOCALID_GARET);
+  VenusLighthouseAerie_FaceObjectEvent(LOCALID_MIA, FACING_NORTHWEST);
+  VenusLighthouseAerie_ShowMessage(LOCALID_MIA);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_WEST, 0);
+  VenusLighthouseAerie_FaceObjectEvent(LOCALID_IVAN, FACING_NORTHWEST);
   ObjectEvent_RunRepeatedMotion(LOCALID_FELIX, 2);
   ObjectEvent_SetSpeed(LOCALID_FELIX, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_Get(LOCALID_FELIX)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
@@ -1455,33 +1466,33 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   Script_Wait(1);
   ObjectEvent_Get(LOCALID_FELIX)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
   Script_Wait(20);
-  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  VenusLighthouseAerie_ShowMessage(IVAN);
+  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  VenusLighthouseAerie_ShowMessage(LOCALID_IVAN);
   ObjectEvent_SetAnimationAndWait(LOCALID_FELIX, ANIM_SHAKE_HEAD);
   VenusLighthouseAerie_ShowMessage(LOCALID_FELIX);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
-  ObjectEvent_RunRepeatedMotion(GARET, 1);
-  VenusLighthouseAerie_ShowMessage(GARET);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
+  ObjectEvent_RunRepeatedMotion(LOCALID_GARET, 1);
+  VenusLighthouseAerie_ShowMessage(LOCALID_GARET);
   ObjectEvent_RunRepeatedMotion(LOCALID_FELIX, 1);
   VenusLighthouseAerie_FaceObjectEvent(LOCALID_FELIX, FACING_EAST);
   VenusLighthouseAerie_ShowMessage(LOCALID_FELIX);
-  ObjectEvent_StartRepeatedMotion(MIA, 2);
-  VenusLighthouseAerie_ShowMessage(MIA);
-  ObjectEvent_SetAnimation(MIA, ANIM_SHAKE_HEAD);
-  VenusLighthouseAerie_ShowMessage(MIA);
+  ObjectEvent_StartRepeatedMotion(LOCALID_MIA, 2);
+  VenusLighthouseAerie_ShowMessage(LOCALID_MIA);
+  ObjectEvent_SetAnimation(LOCALID_MIA, ANIM_SHAKE_HEAD);
+  VenusLighthouseAerie_ShowMessage(LOCALID_MIA);
   ObjectEvent_ShowEmote(LOCALID_FELIX, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   VenusLighthouseAerie_FaceObjectEvent(LOCALID_FELIX,
                                        FACING_SOUTHEAST + FACING_STEP);
   VenusLighthouseAerie_ShowMessage(LOCALID_FELIX);
-  ObjectEvent_Jump(IVAN, 2, 20);
-  VenusLighthouseAerie_ShowMessage(IVAN);
+  ObjectEvent_Jump(LOCALID_IVAN, 2, 20);
+  VenusLighthouseAerie_ShowMessage(LOCALID_IVAN);
   ObjectEvent_SetAnimationAndWait(LOCALID_FELIX, ANIM_NOD);
   VenusLighthouseAerie_ShowMessage(LOCALID_FELIX);
-  ObjectEvent_RunRepeatedMotion(GARET, 1);
-  VenusLighthouseAerie_FaceObjectEvent(GARET, FACING_SOUTHEAST);
-  Script_OpenMessage(GARET, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTHEAST, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST, 0);
+  ObjectEvent_RunRepeatedMotion(LOCALID_GARET, 1);
+  VenusLighthouseAerie_FaceObjectEvent(LOCALID_GARET, FACING_SOUTHEAST);
+  Script_OpenMessage(LOCALID_GARET, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHEAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHEAST, 0);
   if (Script_ChooseYesNo(0, 0) == 0) {
     answeredYes = TRUE;
   } else {
@@ -1489,9 +1500,9 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
     answeredYes = FALSE;
   }
   Task_Wait(20);
-  ObjectEvent_FaceDirection(GARET, FACING_WEST, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 0);
-  VenusLighthouseAerie_FaceObjectEvent(MIA, FACING_NORTHWEST);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_WEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHWEST, 0);
+  VenusLighthouseAerie_FaceObjectEvent(LOCALID_MIA, FACING_NORTHWEST);
   VenusLighthouseAerie_FaceObjectEvent(LOCALID_FELIX, FACING_EAST);
   Script_ShowMessage(LOCALID_FELIX, 0);
   Script_PlaySong(SONG_FADE_OUT_BGM);
@@ -1514,9 +1525,9 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   VenusLighthouseAerie_ShowMessage(LOCALID_SATUROS);
   ObjectEvent_FaceDirection(LOCALID_FELIX, FACING_SOUTHEAST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTHWEST, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_WEST, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_WEST, 40);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_WEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_WEST, 40);
   ObjectEvent_SetAnimation(LOCALID_SATUROS, ANIM_STAND);
   ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_SATUROS), 1);
   Script_Wait(20);
@@ -1546,19 +1557,19 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   Script_Wait(20);
   ObjectEvent_RunRepeatedMotion(LOCALID_SATUROS, 1);
   Script_Wait(80);
-  ObjectEvent_SetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
-  Script_ShowMessageAndWait(MIA, 0, 20);
+  ObjectEvent_SetAnimationAndWait(LOCALID_MIA, ANIM_SHAKE_HEAD);
+  Script_ShowMessageAndWait(LOCALID_MIA, 0, 20);
   ObjectEvent_RunRepeatedMotion(LOCALID_MENARDI, 2);
   Script_Wait(40);
   VenusLighthouseAerie_ShowMessage(LOCALID_MENARDI);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHWEST, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_SOUTHWEST, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST, 40);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_SOUTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHEAST, 40);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTHWEST, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_WEST, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_WEST, 20);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_WEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_WEST, 20);
 
   objectEvent = ObjectEvent_Get(LOCALID_SATUROS);
   objectEvent->facing = FACING_SOUTHEAST + FACING_STEP;
@@ -1570,11 +1581,11 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   ObjectEvent_Jump(LOCALID_SATUROS, 6, 0);
   Script_Wait(10);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHWEST, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTHWEST, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHWEST, 0);
   ObjectEvent_FaceDirection(LOCALID_FELIX, FACING_NORTH + FACING_STEP, 0);
-  ObjectEvent_FaceDirection(SHEBA, FACING_EAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_SHEBA, FACING_EAST, 0);
   star = (union FieldObject *)ObjectEvent_Create(
       22, objectEvent->x.fixed, objectEvent->y.fixed + PIXELS(8),
       objectEvent->z.fixed);
@@ -1644,36 +1655,36 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   VenusLighthouseAerie_ShowGroupEmote(EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   ObjectEvent_SetSpritePriority(LOCALID_FELIX, 1);
   ObjectEvent_Get(LOCALID_FELIX)->priorityFlags |= 1;
-  ObjectEvent_StartRepeatedMotion(IVAN, 2);
-  VenusLighthouseAerie_ShowMessage(IVAN);
-  ObjectEvent_RunRepeatedMotion(MIA, 1);
-  Script_ShowMessageAndWait(MIA, 0, 40);
+  ObjectEvent_StartRepeatedMotion(LOCALID_IVAN, 2);
+  VenusLighthouseAerie_ShowMessage(LOCALID_IVAN);
+  ObjectEvent_RunRepeatedMotion(LOCALID_MIA, 1);
+  Script_ShowMessageAndWait(LOCALID_MIA, 0, 40);
   ObjectEvent_RunRepeatedMotion(LOCALID_SATUROS, 1);
   Script_Wait(20);
   VenusLighthouseAerie_ShowMessage(LOCALID_SATUROS);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH + FACING_STEP,
                             0);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_WEST, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_WEST, 0);
-  ObjectEvent_FaceDirection(SHEBA, FACING_SOUTHEAST + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_WEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_WEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_SHEBA, FACING_SOUTHEAST + FACING_STEP, 0);
   VenusLighthouseAerie_FaceObjectEvent(LOCALID_FELIX,
                                        FACING_SOUTHEAST + FACING_STEP);
   VenusLighthouseAerie_ShowGroupEmote(EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   ObjectEvent_ShowEmote(LOCALID_SATUROS, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
   VenusLighthouseAerie_ShowMessage(LOCALID_SATUROS);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHWEST, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST, 40);
-  Script_OpenMessage(GARET, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST, 40);
+  Script_OpenMessage(LOCALID_GARET, 0);
   if (Script_ChooseYesNo(0, 0) == 0) {
-    ObjectEvent_SetAnimation(GARET, ANIM_NOD);
+    ObjectEvent_SetAnimation(LOCALID_GARET, ANIM_NOD);
     answeredYes = TRUE;
   } else {
     gFieldWork->message++;
-    ObjectEvent_SetAnimation(GARET, ANIM_SHAKE_HEAD);
+    ObjectEvent_SetAnimation(LOCALID_GARET, ANIM_SHAKE_HEAD);
     answeredYes = FALSE;
   }
-  VenusLighthouseAerie_ShowMessage(GARET);
+  VenusLighthouseAerie_ShowMessage(LOCALID_GARET);
   if (answeredYes) {
     gFieldWork->message++;
   }
@@ -1698,11 +1709,11 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   objectEvent->x.fixed = PIXELS(304);
   objectEvent->z.fixed = PIXELS(158);
   VenusLighthouseAerie_ShowGroupEmote(EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTHWEST, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHWEST, 0);
   ObjectEvent_FaceDirection(LOCALID_FELIX, FACING_NORTH + FACING_STEP, 0);
-  ObjectEvent_FaceDirection(SHEBA, FACING_EAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_SHEBA, FACING_EAST, 0);
   ObjectEvent_SetActionScript(LOCALID_BEAM_BOTTOM,
                               gVenusLighthouseAerie_BeamOpenAction);
   ObjectEvent_SetActionScript(LOCALID_BEAM_LOWER,
@@ -1744,55 +1755,55 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   ObjectEvent_RunRepeatedMotion(LOCALID_MENARDI, 1);
   Script_ShowMessageAndWait(LOCALID_MENARDI, 0, 20);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTHWEST, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_WEST, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_WEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_WEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_WEST, 0);
   ObjectEvent_FaceDirection(LOCALID_FELIX, FACING_SOUTHEAST + FACING_STEP, 0);
-  ObjectEvent_FaceDirection(SHEBA, FACING_SOUTHEAST + FACING_STEP, 20);
+  ObjectEvent_FaceDirection(LOCALID_SHEBA, FACING_SOUTHEAST + FACING_STEP, 20);
   ObjectEvent_RunRepeatedMotion(LOCALID_SATUROS, 1);
   VenusLighthouseAerie_ShowMessage(LOCALID_SATUROS);
-  ObjectEvent_RunRepeatedMotion(MIA, 1);
-  VenusLighthouseAerie_FaceObjectEvent(MIA, FACING_WEST);
-  VenusLighthouseAerie_ShowMessage(MIA);
+  ObjectEvent_RunRepeatedMotion(LOCALID_MIA, 1);
+  VenusLighthouseAerie_FaceObjectEvent(LOCALID_MIA, FACING_WEST);
+  VenusLighthouseAerie_ShowMessage(LOCALID_MIA);
   VenusLighthouseAerie_FaceObjectEvent(LOCALID_SATUROS, FACING_EAST);
   ObjectEvent_SetAnimationAndWait(LOCALID_SATUROS, ANIM_SHAKE_HEAD);
   VenusLighthouseAerie_ShowMessage(LOCALID_SATUROS);
   ObjectEvent_ShowEmote(LOCALID_MENARDI, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
   ObjectEvent_StartRepeatedMotion(LOCALID_MENARDI, 2);
   VenusLighthouseAerie_ShowMessage(LOCALID_MENARDI);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
-  VenusLighthouseAerie_FaceObjectEvent(GARET, FACING_SOUTHWEST);
-  VenusLighthouseAerie_ShowMessage(GARET);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  VenusLighthouseAerie_FaceObjectEvent(LOCALID_GARET, FACING_SOUTHWEST);
+  VenusLighthouseAerie_ShowMessage(LOCALID_GARET);
   VenusLighthouseAerie_FaceObjectEvent(LOCALID_SATUROS,
                                        FACING_NORTH + FACING_STEP);
   ObjectEvent_SetAnimationAndWait(LOCALID_SATUROS, ANIM_NOD);
   Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 20);
-  ObjectEvent_RunRepeatedMotion(GARET, 1);
-  VenusLighthouseAerie_ShowMessage(GARET);
+  ObjectEvent_RunRepeatedMotion(LOCALID_GARET, 1);
+  VenusLighthouseAerie_ShowMessage(LOCALID_GARET);
   ObjectEvent_FaceDirection(LOCALID_MENARDI, FACING_NORTHWEST + FACING_STEP,
                             20);
   ObjectEvent_RunRepeatedMotion(LOCALID_MENARDI, 1);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | LOCALID_MENARDI);
   ObjectEvent_StartRepeatedMotion(LOCALID_PARTY_LEADER, 1);
-  ObjectEvent_StartRepeatedMotion(GARET, 1);
-  ObjectEvent_StartRepeatedMotion(IVAN, 1);
-  ObjectEvent_RunRepeatedMotion(MIA, 1);
+  ObjectEvent_StartRepeatedMotion(LOCALID_GARET, 1);
+  ObjectEvent_StartRepeatedMotion(LOCALID_IVAN, 1);
+  ObjectEvent_RunRepeatedMotion(LOCALID_MIA, 1);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_WEST, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 0);
-  VenusLighthouseAerie_FaceObjectEvent(MIA, FACING_NORTHWEST);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_WEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHWEST, 0);
+  VenusLighthouseAerie_FaceObjectEvent(LOCALID_MIA, FACING_NORTHWEST);
   ObjectEvent_ShowEmote(LOCALID_FELIX, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
   VenusLighthouseAerie_ShowMessage(LOCALID_FELIX);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHWEST, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_SOUTHWEST, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST, 40);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_SOUTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHEAST, 40);
   ObjectEvent_RunRepeatedMotion(LOCALID_SATUROS, 1);
   VenusLighthouseAerie_ShowMessage(LOCALID_SATUROS);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_WEST, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_WEST, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_WEST, 20);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_WEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_WEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_WEST, 20);
   VenusLighthouseAerie_FaceObjectEvent(LOCALID_SATUROS,
                                        FACING_NORTHWEST + FACING_STEP);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | LOCALID_SATUROS);
@@ -1843,11 +1854,11 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   VenusLighthouseAerie_ShowMessage(LOCALID_FELIX);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER,
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTHWEST, 20);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHWEST, 20);
   ObjectEvent_FaceDirection(LOCALID_MENARDI, FACING_SOUTHEAST + FACING_STEP,
                             20);
   ObjectEvent_SetAnimation(LOCALID_MENARDI, ANIM_NOD);
@@ -1855,15 +1866,16 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   ObjectEvent_FaceDirection(LOCALID_FELIX, FACING_NORTHWEST + FACING_STEP, 20);
   VenusLighthouseAerie_ShowMessage(SPEAKER_WINDOW_BELOW |
                                    SPEAKER_PORTRAIT_RIGHT | LOCALID_FELIX);
-  ObjectEvent_SetSpeed(SHEBA, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_SetSpeed(LOCALID_SHEBA, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_SetSpeed(LOCALID_FELIX, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_SetActionScript(LOCALID_FELIX,
                               gVenusLighthouseAerie_WalkOutAction);
   Script_Wait(20);
-  ObjectEvent_SetActionScript(SHEBA, gVenusLighthouseAerie_WalkOutAction);
-  VenusLighthouseAerie_FaceObjectEvent(GARET, FACING_SOUTHWEST);
-  ObjectEvent_StartRepeatedMotion(GARET, 2);
-  VenusLighthouseAerie_ShowMessage(GARET);
+  ObjectEvent_SetActionScript(LOCALID_SHEBA,
+                              gVenusLighthouseAerie_WalkOutAction);
+  VenusLighthouseAerie_FaceObjectEvent(LOCALID_GARET, FACING_SOUTHWEST);
+  ObjectEvent_StartRepeatedMotion(LOCALID_GARET, 2);
+  VenusLighthouseAerie_ShowMessage(LOCALID_GARET);
   Script_PlaySong(SONG_FADE_OUT_BGM);
   // Flash Saturos and Menardi and release their matching radial bursts.
   PaletteFade_ApplyTarget(0x40250d, 1);
@@ -1872,8 +1884,8 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
                                        FACING_NORTH + FACING_STEP);
   VenusLighthouseAerie_ShowMessage(LOCALID_SATUROS);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_WEST, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_WEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_WEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_WEST, 0);
   VenusLighthouseAerie_FlashScreen();
   ObjectEvent_SetChildValue(LOCALID_SATUROS, SPRITE_COLOR_WHITE);
   ObjectEvent_SetChildValue(LOCALID_MENARDI, SPRITE_COLOR_WHITE);
@@ -1882,8 +1894,8 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   ObjectEvent_SetChildValue(LOCALID_MENARDI, CHILD_VALUE_BLINK);
   Script_Wait(20);
   VenusLighthouseAerie_FlashScreen();
-  ObjectEvent_Jump(MIA, 2, 20);
-  VenusLighthouseAerie_ShowMessage(MIA);
+  ObjectEvent_Jump(LOCALID_MIA, 2, 20);
+  VenusLighthouseAerie_ShowMessage(LOCALID_MIA);
   VenusLighthouseAerie_FaceObjectEvent(LOCALID_MENARDI, FACING_EAST);
   VenusLighthouseAerie_ShowMessage(LOCALID_MENARDI);
   VenusLighthouseAerie_FlashScreen();
@@ -1918,9 +1930,9 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
                       &saturosBurst);
   }
   Script_PlaySong(SE_212);
-  ObjectEvent_Jump(IVAN, 6, 20);
+  ObjectEvent_Jump(LOCALID_IVAN, 6, 20);
   Script_PlaySong(MUS_FUSION_DRAGON_BATTLE);
-  VenusLighthouseAerie_ShowMessage(IVAN);
+  VenusLighthouseAerie_ShowMessage(LOCALID_IVAN);
   ObjectEvent_SetAnimation(LOCALID_SATUROS, ANIM_SHAKE_HEAD);
   VenusLighthouseAerie_ShowMessage(LOCALID_SATUROS);
   VenusLighthouseAerie_FlashScreen();
@@ -1934,10 +1946,10 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   // battle.
   Task_AddCallback(VenusLighthouseAerie_UpdateBeamObjectEvents,
                    TASK_PRIORITY_MAP);
-  ObjectEvent_StartRepeatedMotion(GARET, 2);
-  Script_ShowMessage(GARET, 0);
+  ObjectEvent_StartRepeatedMotion(LOCALID_GARET, 2);
+  Script_ShowMessage(LOCALID_GARET, 0);
   GameFlag_Set(FLAG_MAP_TEMP_34);
-  Script_ShowMessage(IVAN, 0);
+  Script_ShowMessage(LOCALID_IVAN, 0);
   GameFlag_Set(FLAG_MAP_TEMP_35);
   VenusLighthouseAerie_FlashScreen();
   Script_Wait(20);
@@ -2164,25 +2176,25 @@ static void VenusLighthouseAerie_StageShebasFall(void) {
   leader->y.fixed = PIXELS(32);
   leader->facing = FACING_SOUTHWEST;
   VenusLighthouseAerie_StopObjectEventMotion(leader);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_PARTY_KNOCKED_DOWN);
-  ObjectEvent_SetSpriteFlags(ObjectEvent_Get(GARET), 0);
-  objectEvent = ObjectEvent_Get(GARET);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_PARTY_KNOCKED_DOWN);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_GARET), 0);
+  objectEvent = ObjectEvent_Get(LOCALID_GARET);
   objectEvent->x.fixed = PIXELS(356);
   objectEvent->z.fixed = PIXELS(192);
   objectEvent->facing = FACING_NORTHWEST;
   objectEvent->y.fixed = PIXELS(32);
   VenusLighthouseAerie_StopObjectEventMotion(objectEvent);
-  Engine_ObjectEventSetAnimation(IVAN, ANIM_PARTY_KNOCKED_DOWN);
-  ObjectEvent_SetSpriteFlags(ObjectEvent_Get(IVAN), 0);
-  objectEvent = ObjectEvent_Get(IVAN);
+  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_PARTY_KNOCKED_DOWN);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_IVAN), 0);
+  objectEvent = ObjectEvent_Get(LOCALID_IVAN);
   objectEvent->x.fixed = PIXELS(360);
   objectEvent->facing = FACING_SOUTHEAST;
   objectEvent->y.fixed = PIXELS(32);
   objectEvent->z.fixed = PIXELS(222);
   VenusLighthouseAerie_StopObjectEventMotion(objectEvent);
-  Engine_ObjectEventSetAnimation(MIA, ANIM_PARTY_KNOCKED_DOWN);
-  ObjectEvent_SetSpriteFlags(ObjectEvent_Get(MIA), 0);
-  objectEvent = ObjectEvent_Get(MIA);
+  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_PARTY_KNOCKED_DOWN);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_MIA), 0);
+  objectEvent = ObjectEvent_Get(LOCALID_MIA);
   objectEvent->x.fixed = PIXELS(334);
   objectEvent->facing = FACING_WEST;
   objectEvent->y.fixed = PIXELS(32);
@@ -2190,9 +2202,9 @@ static void VenusLighthouseAerie_StageShebasFall(void) {
   VenusLighthouseAerie_StopObjectEventMotion(objectEvent);
   ObjectEvent_SetPosition(LOCALID_FELIX, PIXELS(196), PIXELS(220));
   Engine_ObjectEventSetAnimation(LOCALID_FELIX, FELIX_ANIMATION_KNEEL);
-  ObjectEvent_SetPosition(SHEBA, PIXELS(188), PIXELS(316));
-  Engine_ObjectEventSetAnimation(SHEBA, SHEBA_ANIMATION_HANG_ONE_HAND);
-  ObjectEvent_SetSpriteFlags(ObjectEvent_Get(SHEBA), 0);
+  ObjectEvent_SetPosition(LOCALID_SHEBA, PIXELS(188), PIXELS(316));
+  Engine_ObjectEventSetAnimation(LOCALID_SHEBA, SHEBA_ANIMATION_HANG_ONE_HAND);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_SHEBA), 0);
   objectEvent = ObjectEvent_Get(LOCALID_BEACON_STATUE_SOUTHWEST);
   objectEvent->x.fixed -= PIXELS(16);
   VenusLighthouseAerie_StopObjectEventMotion(objectEvent);
@@ -2229,16 +2241,16 @@ static void VenusLighthouseAerie_ShowSaturosAndMenardiFall(void) {
   Script_PlaySong(SE_RUMBLE);
   MapGrid_CopyCellAttributes(17, 10, 4, 2, 17, 8);
   ObjectEvent_Get(LOCALID_PARTY_LEADER)->facing = FACING_NORTHWEST;
-  ObjectEvent_Get(GARET)->facing = FACING_NORTHWEST;
-  ObjectEvent_SetPosition(GARET, PIXELS(328), PIXELS(168));
-  ObjectEvent_Get(IVAN)->facing = FACING_NORTHWEST;
-  ObjectEvent_SetPosition(IVAN, PIXELS(340), PIXELS(196));
-  ObjectEvent_Get(MIA)->facing = FACING_NORTHWEST;
-  ObjectEvent_SetPosition(MIA, PIXELS(326), PIXELS(204));
+  ObjectEvent_Get(LOCALID_GARET)->facing = FACING_NORTHWEST;
+  ObjectEvent_SetPosition(LOCALID_GARET, PIXELS(328), PIXELS(168));
+  ObjectEvent_Get(LOCALID_IVAN)->facing = FACING_NORTHWEST;
+  ObjectEvent_SetPosition(LOCALID_IVAN, PIXELS(340), PIXELS(196));
+  ObjectEvent_Get(LOCALID_MIA)->facing = FACING_NORTHWEST;
+  ObjectEvent_SetPosition(LOCALID_MIA, PIXELS(326), PIXELS(204));
   ObjectEvent_Get(LOCALID_FELIX)->facing = FACING_NORTH + FACING_STEP;
   ObjectEvent_SetPosition(LOCALID_FELIX, PIXELS(200), PIXELS(216));
-  ObjectEvent_Get(SHEBA)->facing = FACING_NORTH + FACING_STEP;
-  ObjectEvent_SetPosition(SHEBA, PIXELS(200), PIXELS(216));
+  ObjectEvent_Get(LOCALID_SHEBA)->facing = FACING_NORTH + FACING_STEP;
+  ObjectEvent_SetPosition(LOCALID_SHEBA, PIXELS(200), PIXELS(216));
   ObjectEvent_Get(LOCALID_SATUROS)->facing = FACING_SOUTHEAST + FACING_STEP;
   ObjectEvent_SetPosition(LOCALID_SATUROS, PIXELS(310), PIXELS(158));
   ObjectEvent_Get(LOCALID_MENARDI)->facing = FACING_SOUTHEAST + FACING_STEP;
@@ -2331,67 +2343,67 @@ static void VenusLighthouseAerie_DiscussSaturosAndMenardiDefeat(void) {
   s32 garetSpeaker;
   s32 miaSpeaker;
 
-  ObjectMotion_SetVarCbAndRefresh(GARET, 1);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 1);
   FieldScript_WaitFrames(20);
-  Script_ShowMessageAndWait(GARET, 0, 20);
-  ObjectMotion_SetVarCbAndRefresh(IVAN, 1);
+  Script_ShowMessageAndWait(LOCALID_GARET, 0, 20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 1);
   FieldScript_WaitFrames(20);
-  Script_OpenMessage(IVAN, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
+  Script_OpenMessage(LOCALID_IVAN, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTH, 0);
   VenusLighthouseAerie_FaceObjectEvent(LOCALID_PARTY_LEADER, FACING_SOUTH);
   answerAccepted = 0;
   if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
     FieldScript_WaitFrames(20);
-    ObjectMotion_SetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
+    ObjectMotion_SetAnimationAndWait(LOCALID_IVAN, ANIM_SHAKE_HEAD);
     answerAccepted = 1;
   } else {
     FieldScript_WaitFrames(20);
-    ObjectMotion_SetVarCbAndRefresh(IVAN, 1);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 1);
     gFieldWork->message += 1;
   }
-  VenusLighthouseAerie_ShowMessage(IVAN);
+  VenusLighthouseAerie_ShowMessage(LOCALID_IVAN);
   if (answerAccepted != 0) {
     gFieldWork->message += 1;
   }
-  ObjectEvent_SetSpeed(GARET, PIXELS(8) / 5, PIXELS(4) / 5);
-  garetSpeaker = SPEAKER_PORTRAIT_LEFT | GARET;
-  ObjectEvent_WalkToAndWait(GARET, 321, 174);
-  VenusLighthouseAerie_FaceObjectEvent(GARET, FACING_SOUTHEAST);
+  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(8) / 5, PIXELS(4) / 5);
+  garetSpeaker = SPEAKER_PORTRAIT_LEFT | LOCALID_GARET;
+  ObjectEvent_WalkToAndWait(LOCALID_GARET, 321, 174);
+  VenusLighthouseAerie_FaceObjectEvent(LOCALID_GARET, FACING_SOUTHEAST);
   VenusLighthouseAerie_ShowMessage(garetSpeaker);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHWEST, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 0);
-  VenusLighthouseAerie_FaceObjectEvent(MIA, FACING_NORTH);
-  VenusLighthouseAerie_FaceObjectEvent(GARET, FACING_SOUTH);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHWEST, 0);
+  VenusLighthouseAerie_FaceObjectEvent(LOCALID_MIA, FACING_NORTH);
+  VenusLighthouseAerie_FaceObjectEvent(LOCALID_GARET, FACING_SOUTH);
   VenusLighthouseAerie_ShowMessage(garetSpeaker);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST, 20);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST, 20);
   VenusLighthouseAerie_ShowMessage(garetSpeaker);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTHWEST, 40);
-  Script_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | GARET, 0, 40);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST, 20);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHWEST, 40);
+  Script_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | LOCALID_GARET, 0, 40);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST, 20);
   VenusLighthouseAerie_ShowMessage(garetSpeaker);
   Script_PlaySong(SONG_FADE_OUT_BGM);
-  Engine_ObjectEventSetAnimation(MIA, ANIM_SHAKE_HEAD);
-  VenusLighthouseAerie_ShowMessage(MIA);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 80);
-  ObjectEvent_FaceDirection(MIA, FACING_SOUTHWEST, 80);
-  ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_SHAKE_HEAD);
+  VenusLighthouseAerie_ShowMessage(LOCALID_MIA);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH, 80);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_SOUTHWEST, 80);
+  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 60);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_PARTY_LEADER, 2);
-  VenusLighthouseAerie_FaceObjectEvent(IVAN, FACING_NORTH);
-  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  ObjectEvent_FaceDirection(IVAN, FACING_SOUTHWEST, 40);
-  ObjectMotion_Launch(IVAN, 4, 60);
-  VenusLighthouseAerie_FaceObjectEvent(GARET, FACING_SOUTHEAST);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  VenusLighthouseAerie_FaceObjectEvent(LOCALID_IVAN, FACING_NORTH);
+  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_SOUTHWEST, 40);
+  ObjectMotion_Launch(LOCALID_IVAN, 4, 60);
+  VenusLighthouseAerie_FaceObjectEvent(LOCALID_GARET, FACING_SOUTHEAST);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   VenusLighthouseAerie_ShowMessage(garetSpeaker);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTHWEST, 40);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  ObjectMotion_Launch(GARET, 4, 40);
-  VenusLighthouseAerie_ShowMessage(GARET);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHWEST, 40);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  ObjectMotion_Launch(LOCALID_GARET, 4, 40);
+  VenusLighthouseAerie_ShowMessage(LOCALID_GARET);
   ObjectEvent_SetSpeed(LOCALID_FELIX, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetDestination(LOCALID_FELIX, 200, 188);
-  ObjectEvent_SetDestination(SHEBA, 200, 204);
+  ObjectEvent_SetDestination(LOCALID_SHEBA, 200, 204);
   FieldCamera_SetSpeed(PIXELS(16) / 5, PIXELS(2) / 5);
   FieldCamera_MoveTo(PIXELS(252), 0, PIXELS(190), 1);
   FieldCamera_WaitForArrival();
@@ -2407,35 +2419,35 @@ static void VenusLighthouseAerie_DiscussSaturosAndMenardiDefeat(void) {
   VenusLighthouseAerie_ShowMessage(LOCALID_FELIX);
   ObjectEvent_FaceDirection(LOCALID_FELIX, FACING_SOUTHEAST + FACING_STEP, 20);
   VenusLighthouseAerie_ShowMessage(LOCALID_FELIX);
-  ObjectEvent_SetAttachedEffect(SHEBA, ATTACHED_EFFECT_IN_FRONT |
-                                           ATTACHED_EFFECT_ONCE);
-  miaSpeaker = SPEAKER_PORTRAIT_RIGHT | MIA;
+  ObjectEvent_SetAttachedEffect(LOCALID_SHEBA, ATTACHED_EFFECT_IN_FRONT |
+                                                   ATTACHED_EFFECT_ONCE);
+  miaSpeaker = SPEAKER_PORTRAIT_RIGHT | LOCALID_MIA;
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetVariantCallback(MIA, 2);
+  ObjectMotion_SetVariantCallback(LOCALID_MIA, 2);
   VenusLighthouseAerie_ShowMessage(miaSpeaker);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_FELIX, 2);
   FieldScript_WaitFrames(20);
-  VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | IVAN);
+  VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | LOCALID_IVAN);
   VenusLighthouseAerie_FaceObjectEvent(LOCALID_FELIX, FACING_NORTHEAST);
-  ObjectMotion_SetVarCbAndRefresh(GARET, 1);
-  VenusLighthouseAerie_ShowMessage(GARET);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 1);
+  VenusLighthouseAerie_ShowMessage(LOCALID_GARET);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_FELIX, 1);
   Script_ShowMessageAndWait(LOCALID_FELIX, 0, 20);
   VenusLighthouseAerie_ShowMessage(miaSpeaker);
   ObjectMotion_SetAnimationAndWait(LOCALID_FELIX, ANIM_SHAKE_HEAD);
   VenusLighthouseAerie_ShowMessage(LOCALID_FELIX);
-  ObjectEvent_SetAttachedEffect(IVAN, ATTACHED_EFFECT_IN_FRONT |
-                                          ATTACHED_EFFECT_ONCE);
-  VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | IVAN);
+  ObjectEvent_SetAttachedEffect(LOCALID_IVAN, ATTACHED_EFFECT_IN_FRONT |
+                                                  ATTACHED_EFFECT_ONCE);
+  VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | LOCALID_IVAN);
   Engine_ObjectEventSetAnimation(LOCALID_FELIX, ANIM_NOD);
   VenusLighthouseAerie_ShowMessage(LOCALID_FELIX);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
-  ObjectMotion_SetVariantCallback(GARET, 2);
-  VenusLighthouseAerie_ShowMessage(GARET);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
+  ObjectMotion_SetVariantCallback(LOCALID_GARET, 2);
+  VenusLighthouseAerie_ShowMessage(LOCALID_GARET);
   Engine_ObjectEventSetAnimation(LOCALID_FELIX, ANIM_SHAKE_HEAD);
   VenusLighthouseAerie_ShowMessage(LOCALID_FELIX);
   ObjectEvent_FaceDirection(LOCALID_FELIX, FACING_SOUTH + FACING_STEP, 20);
-  ObjectMotion_Launch(MIA, 4, 20);
+  ObjectMotion_Launch(LOCALID_MIA, 4, 20);
   Script_ShowMessageAndWait(miaSpeaker, 0, 20);
   ObjectEvent_ShowEmote(LOCALID_FELIX, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
 }
@@ -2455,17 +2467,17 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER,
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   ObjectEvent_ShowEmote(LOCALID_FELIX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  ObjectEvent_ShowEmote(SHEBA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 10);
+  ObjectEvent_ShowEmote(LOCALID_SHEBA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 10);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHWEST, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTHWEST, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHWEST, 0);
   ObjectEvent_FaceDirection(LOCALID_FELIX, FACING_NORTH + FACING_STEP, 0);
-  ObjectEvent_FaceDirection(SHEBA, FACING_NORTH + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_SHEBA, FACING_NORTH + FACING_STEP, 0);
   MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
   FieldScript_WaitFrames(10);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
@@ -2541,23 +2553,23 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   objectEvent->x.fixed += PIXELS(16);
   objectEvent->z.fixed += PIXELS(16);
   VenusLighthouseAerie_StopObjectEventMotion(objectEvent);
-  objectEvent = ObjectEvent_GetById(GARET);
+  objectEvent = ObjectEvent_GetById(LOCALID_GARET);
   objectEvent->x.fixed += PIXELS(16);
   objectEvent->z.fixed += PIXELS(16);
   VenusLighthouseAerie_StopObjectEventMotion(objectEvent);
-  objectEvent = ObjectEvent_GetById(IVAN);
+  objectEvent = ObjectEvent_GetById(LOCALID_IVAN);
   objectEvent->x.fixed += PIXELS(16);
   objectEvent->z.fixed += PIXELS(16);
   VenusLighthouseAerie_StopObjectEventMotion(objectEvent);
-  objectEvent = ObjectEvent_GetById(MIA);
+  objectEvent = ObjectEvent_GetById(LOCALID_MIA);
   objectEvent->x.fixed += PIXELS(16);
   objectEvent->z.fixed += PIXELS(16);
   VenusLighthouseAerie_StopObjectEventMotion(objectEvent);
   ObjectEvent_SetPosition(LOCALID_FELIX, PIXELS(196), PIXELS(220));
   Engine_ObjectEventSetAnimation(LOCALID_FELIX, FELIX_ANIMATION_KNEEL);
-  ObjectEvent_SetPosition(SHEBA, PIXELS(188), PIXELS(316));
-  Engine_ObjectEventSetAnimation(SHEBA, SHEBA_ANIMATION_HANG_ONE_HAND);
-  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(SHEBA), 0);
+  ObjectEvent_SetPosition(LOCALID_SHEBA, PIXELS(188), PIXELS(316));
+  Engine_ObjectEventSetAnimation(LOCALID_SHEBA, SHEBA_ANIMATION_HANG_ONE_HAND);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_SHEBA), 0);
   MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
   PaletteFade_SetTarget(0x4063ff, 0);
   PaletteFade_StartInterpolation(120);
@@ -2596,36 +2608,36 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   ObjectEvent_RunActionScriptAndWait(LOCALID_BEAM_BOTTOM,
                                      gVenusLighthouseAerie_BeamEndAction);
   Task_Remove(VenusLighthouseAerie_SpawnUpperOrbitParticles);
-  ObjectMotion_Launch(IVAN, 2, 20);
-  VenusLighthouseAerie_ShowMessage(IVAN);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTHWEST, 20);
-  ObjectEvent_SetAttachedEffect(GARET, ATTACHED_EFFECT_IN_FRONT |
-                                           ATTACHED_EFFECT_ONCE);
+  ObjectMotion_Launch(LOCALID_IVAN, 2, 20);
+  VenusLighthouseAerie_ShowMessage(LOCALID_IVAN);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHWEST, 20);
+  ObjectEvent_SetAttachedEffect(LOCALID_GARET, ATTACHED_EFFECT_IN_FRONT |
+                                                   ATTACHED_EFFECT_ONCE);
   FieldScript_WaitFrames(20);
-  ObjectMotion_SetVariantCallback(GARET, 2);
-  VenusLighthouseAerie_ShowMessage(GARET);
-  ObjectEvent_SetSpeed(MIA, PIXELS(4) / 5, PIXELS(2) / 5);
-  ObjectMotion_SetPositionAndReset(MIA, 326, 220);
+  ObjectMotion_SetVariantCallback(LOCALID_GARET, 2);
+  VenusLighthouseAerie_ShowMessage(LOCALID_GARET);
+  ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectMotion_SetPositionAndReset(LOCALID_MIA, 326, 220);
   FieldScript_WaitFrames(40);
-  FieldEffect_ConfigureLinkedObject(MIA, ATTACHED_EFFECT_IN_FRONT |
-                                             ATTACHED_EFFECT_ONCE);
-  VenusLighthouseAerie_ShowMessage(MIA);
+  FieldEffect_ConfigureLinkedObject(LOCALID_MIA, ATTACHED_EFFECT_IN_FRONT |
+                                                     ATTACHED_EFFECT_ONCE);
+  VenusLighthouseAerie_ShowMessage(LOCALID_MIA);
   objectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   objectEvent->riseCounter = 0;
   objectEvent->riseEnabled = 1;
   objectEvent->riseBaseY = objectEvent->y.fixed;
   objectEvent->facing = FACING_NORTHWEST;
-  objectEvent = ObjectEvent_Get(GARET);
+  objectEvent = ObjectEvent_Get(LOCALID_GARET);
   objectEvent->riseCounter = 0;
   objectEvent->riseEnabled = 1;
   objectEvent->facing = FACING_NORTHWEST;
   objectEvent->riseBaseY = objectEvent->y.fixed;
-  objectEvent = ObjectEvent_Get(IVAN);
+  objectEvent = ObjectEvent_Get(LOCALID_IVAN);
   objectEvent->riseCounter = 0;
   objectEvent->riseEnabled = 1;
   objectEvent->facing = FACING_NORTHWEST;
   objectEvent->riseBaseY = objectEvent->y.fixed;
-  objectEvent = ObjectEvent_Get(MIA);
+  objectEvent = ObjectEvent_Get(LOCALID_MIA);
   objectEvent->riseCounter = 0;
   objectEvent->riseEnabled = 1;
   objectEvent->facing = FACING_NORTHWEST;
@@ -2634,7 +2646,7 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   objectEvent->riseCounter = 0;
   objectEvent->riseEnabled = 1;
   objectEvent->riseBaseY = objectEvent->y.fixed;
-  objectEvent = ObjectEvent_Get(SHEBA);
+  objectEvent = ObjectEvent_Get(LOCALID_SHEBA);
   objectEvent->riseCounter = 0;
   objectEvent->riseEnabled = 1;
   objectEvent->riseBaseY = objectEvent->y.fixed;
@@ -2687,13 +2699,13 @@ static void VenusLighthouseAerie_RestorePartyOnBrokenAerie(void) {
   Script_PlaySong(SE_ITEM_BREAK);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER,
                                  ANIM_LEADER_KNOCKED_DOWN);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_PARTY_KNOCKED_DOWN);
-  Engine_ObjectEventSetAnimation(IVAN, ANIM_PARTY_KNOCKED_DOWN);
-  Engine_ObjectEventSetAnimation(MIA, ANIM_PARTY_KNOCKED_DOWN);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_PARTY_KNOCKED_DOWN);
+  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_PARTY_KNOCKED_DOWN);
+  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_PARTY_KNOCKED_DOWN);
   ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_PARTY_LEADER), 0);
-  ObjectEvent_SetSpriteFlags(ObjectEvent_Get(GARET), 0);
-  ObjectEvent_SetSpriteFlags(ObjectEvent_Get(IVAN), 0);
-  ObjectEvent_SetSpriteFlags(ObjectEvent_Get(MIA), 0);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_GARET), 0);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_IVAN), 0);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_MIA), 0);
 
   objectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   objectEvent->x.fixed = PIXELS(346);
@@ -2703,7 +2715,7 @@ static void VenusLighthouseAerie_RestorePartyOnBrokenAerie(void) {
   objectEvent->riseEnabled = 0;
   objectEvent->velocityY = PIXELS(2);
 
-  objectEvent = ObjectEvent_Get(GARET);
+  objectEvent = ObjectEvent_Get(LOCALID_GARET);
   objectEvent->x.fixed = PIXELS(356);
   objectEvent->y.fixed = PIXELS(32);
   objectEvent->z.fixed = PIXELS(192);
@@ -2711,7 +2723,7 @@ static void VenusLighthouseAerie_RestorePartyOnBrokenAerie(void) {
   objectEvent->riseEnabled = 0;
   objectEvent->velocityY = PIXELS(2);
 
-  objectEvent = ObjectEvent_Get(IVAN);
+  objectEvent = ObjectEvent_Get(LOCALID_IVAN);
   objectEvent->x.fixed = PIXELS(360);
   objectEvent->y.fixed = PIXELS(32);
   objectEvent->z.fixed = PIXELS(222);
@@ -2719,7 +2731,7 @@ static void VenusLighthouseAerie_RestorePartyOnBrokenAerie(void) {
   objectEvent->riseEnabled = 0;
   objectEvent->velocityY = PIXELS(2);
 
-  objectEvent = ObjectEvent_Get(MIA);
+  objectEvent = ObjectEvent_Get(LOCALID_MIA);
   objectEvent->x.fixed = PIXELS(334);
   objectEvent->y.fixed = PIXELS(32);
   objectEvent->z.fixed = PIXELS(222);
@@ -2728,7 +2740,7 @@ static void VenusLighthouseAerie_RestorePartyOnBrokenAerie(void) {
   objectEvent->velocityY = PIXELS(2);
 
   ObjectEvent_Get(LOCALID_FELIX)->riseCounter = 0;
-  ObjectEvent_Get(SHEBA)->riseCounter = 0;
+  ObjectEvent_Get(LOCALID_SHEBA)->riseCounter = 0;
   ObjectEvent_Get(LOCALID_BEACON_ORB)->motionFlags |= 4;
   ObjectEvent_SetChildValue(LOCALID_BEACON_ORB, SPRITE_COLOR_GBR);
   FieldScheduler_AddCallback(VenusLighthouseAerie_SpawnSideOrbitParticles,
@@ -2754,17 +2766,17 @@ static void VenusLighthouseAerie_TryToPreventFall(void) {
   FieldScript_WaitFrames(40);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_FELIX, 1);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_FELIX, 0, 40);
-  ObjectMotion_SetVarCbAndRefresh(SHEBA, 3);
-  VenusLighthouseAerie_ShowMessage(SHEBA);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_SHEBA, 3);
+  VenusLighthouseAerie_ShowMessage(LOCALID_SHEBA);
   ObjectEvent_SetAttachedEffect(LOCALID_FELIX, ATTACHED_EFFECT_IN_FRONT |
                                                    ATTACHED_EFFECT_ONCE);
   FieldScript_WaitFrames(60);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_FELIX, 0, 80);
-  ObjectEvent_SetAttachedEffect(SHEBA, ATTACHED_EFFECT_IN_FRONT |
-                                           ATTACHED_EFFECT_ONCE);
+  ObjectEvent_SetAttachedEffect(LOCALID_SHEBA, ATTACHED_EFFECT_IN_FRONT |
+                                                   ATTACHED_EFFECT_ONCE);
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetVariantCallback(SHEBA, 2);
-  VenusLighthouseAerie_ShowMessage(SHEBA);
+  ObjectMotion_SetVariantCallback(LOCALID_SHEBA, 2);
+  VenusLighthouseAerie_ShowMessage(LOCALID_SHEBA);
 }
 
 /// Shows Sheba falling, Felix jumping after her and the party escaping: it
@@ -2781,22 +2793,23 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
                                                    ATTACHED_EFFECT_ONCE);
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_FELIX, 0, 20);
-  ObjectMotion_SetVarCbAndRefresh(SHEBA, 2);
-  Script_ShowMessageAndWait(SHEBA, 0, 20);
-  Engine_ObjectEventSetAnimation(SHEBA, SHEBA_ANIMATION_HANG);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_SHEBA, 2);
+  Script_ShowMessageAndWait(LOCALID_SHEBA, 0, 20);
+  Engine_ObjectEventSetAnimation(LOCALID_SHEBA, SHEBA_ANIMATION_HANG);
   FieldScript_WaitFrames(10);
   ObjectMotion_SetVariantCallback(LOCALID_FELIX, 2);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_FELIX, 0, 40);
-  Engine_ObjectEventSetAnimation(SHEBA, SHEBA_ANIMATION_SLIP);
-  Script_ShowMessageAndWait(SHEBA, 0, 20);
+  Engine_ObjectEventSetAnimation(LOCALID_SHEBA, SHEBA_ANIMATION_SLIP);
+  Script_ShowMessageAndWait(LOCALID_SHEBA, 0, 20);
   Script_PlaySong(SONG_FADE_OUT_BGM);
-  ObjectMotion_SetVarCbAndRefresh(SHEBA, 2);
-  ObjectEvent_SetActionScript(SHEBA, gVenusLighthouseAerie_StepBackAction);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_SHEBA, 2);
+  ObjectEvent_SetActionScript(LOCALID_SHEBA,
+                              gVenusLighthouseAerie_StepBackAction);
   FieldScript_WaitFrames(20);
   ObjectEvent_SetAttachedEffect(LOCALID_FELIX, ATTACHED_EFFECT_IN_FRONT |
                                                    ATTACHED_EFFECT_ONCE);
   ObjectMotion_SetVariantCallback(LOCALID_FELIX, 3);
-  ObjectEvent_RefreshSelectorById(SHEBA);
+  ObjectEvent_RefreshSelectorById(LOCALID_SHEBA);
   FieldScript_WaitFrames(160);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_FELIX, 1);
   FieldScript_WaitFrames(20);
@@ -2835,55 +2848,55 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->timer = 10;
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER,
                               gVenusLighthouseAerie_ScaleStepAction);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 80);
-  Script_ShowMessageAndWait(GARET, 0, 40);
-  ObjectMotion_SetVarCbAndRefresh(IVAN, 1);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 80);
+  Script_ShowMessageAndWait(LOCALID_GARET, 0, 40);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 1);
   FieldScript_WaitFrames(20);
-  VenusLighthouseAerie_ShowMessage(IVAN);
-  ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  VenusLighthouseAerie_ShowMessage(MIA);
-  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(GARET), 1);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_STAND);
-  ObjectMotion_Launch(GARET, 6, 60);
-  ObjectMotion_SetVarCbAndRefresh(IVAN, 1);
+  VenusLighthouseAerie_ShowMessage(LOCALID_IVAN);
+  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  VenusLighthouseAerie_ShowMessage(LOCALID_MIA);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_GARET), 1);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_STAND);
+  ObjectMotion_Launch(LOCALID_GARET, 6, 60);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 1);
   FieldScript_WaitFrames(20);
-  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(IVAN), 1);
-  Engine_ObjectEventSetAnimation(IVAN, ANIM_STAND);
-  ObjectMotion_Launch(IVAN, 6, 40);
-  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(MIA), 1);
-  Engine_ObjectEventSetAnimation(MIA, ANIM_STAND);
-  ObjectMotion_Launch(MIA, 6, 60);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTHWEST, 60);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_SHAKE_HEAD);
-  VenusLighthouseAerie_ShowMessage(GARET);
-  ObjectEvent_FaceDirection(IVAN, FACING_SOUTHWEST, 20);
-  Engine_ObjectEventSetAnimation(IVAN, ANIM_SHAKE_HEAD);
-  VenusLighthouseAerie_ShowMessage(IVAN);
-  VenusLighthouseAerie_FaceObjectEvent(MIA, FACING_SOUTHWEST);
-  Engine_ObjectEventSetAnimation(MIA, ANIM_SHAKE_HEAD);
-  Script_ShowMessageAndWait(MIA, 0, 80);
-  VenusLighthouseAerie_FaceObjectEvent(GARET, FACING_SOUTH);
-  Script_ShowMessageAndWait(GARET, 0, 40);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 20);
-  Script_ShowMessageAndWait(IVAN, 0, 40);
-  ObjectMotion_SetVariantCallback(GARET, 1);
-  ObjectMotion_SetVarCbAndRefresh(IVAN, 1);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_IVAN), 1);
+  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_STAND);
+  ObjectMotion_Launch(LOCALID_IVAN, 6, 40);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_MIA), 1);
+  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_STAND);
+  ObjectMotion_Launch(LOCALID_MIA, 6, 60);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHWEST, 60);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_SHAKE_HEAD);
+  VenusLighthouseAerie_ShowMessage(LOCALID_GARET);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_SOUTHWEST, 20);
+  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_SHAKE_HEAD);
+  VenusLighthouseAerie_ShowMessage(LOCALID_IVAN);
+  VenusLighthouseAerie_FaceObjectEvent(LOCALID_MIA, FACING_SOUTHWEST);
+  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_SHAKE_HEAD);
+  Script_ShowMessageAndWait(LOCALID_MIA, 0, 80);
+  VenusLighthouseAerie_FaceObjectEvent(LOCALID_GARET, FACING_SOUTH);
+  Script_ShowMessageAndWait(LOCALID_GARET, 0, 40);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTH, 20);
+  Script_ShowMessageAndWait(LOCALID_IVAN, 0, 40);
+  ObjectMotion_SetVariantCallback(LOCALID_GARET, 1);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 1);
   FieldScript_WaitFrames(20);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTHWEST, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_SOUTHWEST, 20);
-  ObjectMotion_SetVarCbAndRefresh(MIA, 1);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST, 20);
-  VenusLighthouseAerie_ShowMessage(MIA);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
-  VenusLighthouseAerie_FaceObjectEvent(GARET, FACING_SOUTH);
-  VenusLighthouseAerie_ShowMessage(GARET);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 0);
-  ObjectEvent_SetSpeed(GARET, PIXELS(8) / 5, PIXELS(4) / 5);
-  ObjectEvent_WalkToAndWait(GARET, 333, 194);
-  ObjectEvent_WalkToAndWait(GARET, 333, 206);
-  ObjectEvent_FaceDirection(GARET, FACING_EAST, 20);
-  ObjectMotion_SetVarCbAndRefresh(GARET, 1);
-  Script_ShowMessageAndWait(GARET, 0, 80);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_SOUTHWEST, 20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_MIA, 1);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHEAST, 20);
+  VenusLighthouseAerie_ShowMessage(LOCALID_MIA);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  VenusLighthouseAerie_FaceObjectEvent(LOCALID_GARET, FACING_SOUTH);
+  VenusLighthouseAerie_ShowMessage(LOCALID_GARET);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHWEST, 0);
+  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(8) / 5, PIXELS(4) / 5);
+  ObjectEvent_WalkToAndWait(LOCALID_GARET, 333, 194);
+  ObjectEvent_WalkToAndWait(LOCALID_GARET, 333, 206);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_EAST, 20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 1);
+  Script_ShowMessageAndWait(LOCALID_GARET, 0, 80);
   ObjectMotion_EnableActionAndResetMotion(LOCALID_PARTY_LEADER);
   WaitFrames(1);
   objectEvent->scaleX = Q16_ONE;
@@ -2891,28 +2904,28 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   FieldScript_WaitFrames(40);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER,
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 80);
-  VenusLighthouseAerie_FaceObjectEvent(GARET, FACING_SOUTHEAST);
-  ObjectMotion_Launch(GARET, 4, 0);
-  VenusLighthouseAerie_ShowMessage(GARET);
-  VenusLighthouseAerie_FaceObjectEvent(GARET, FACING_NORTHEAST);
-  Script_OpenMessage(GARET, 0);
+  VenusLighthouseAerie_FaceObjectEvent(LOCALID_GARET, FACING_SOUTHEAST);
+  ObjectMotion_Launch(LOCALID_GARET, 4, 0);
+  VenusLighthouseAerie_ShowMessage(LOCALID_GARET);
+  VenusLighthouseAerie_FaceObjectEvent(LOCALID_GARET, FACING_NORTHEAST);
+  Script_OpenMessage(LOCALID_GARET, 0);
   if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
     FieldScript_WaitFrames(20);
-    ObjectMotion_SetAnimationAndWait(GARET, ANIM_NOD);
-    VenusLighthouseAerie_ShowMessage(GARET);
-    ObjectMotion_SetVarCbAndRefresh(IVAN, 1);
-    VenusLighthouseAerie_ShowMessage(IVAN);
-    Engine_ObjectEventSetAnimation(MIA, ANIM_SHAKE_HEAD);
-    VenusLighthouseAerie_ShowMessage(MIA);
+    ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
+    VenusLighthouseAerie_ShowMessage(LOCALID_GARET);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 1);
+    VenusLighthouseAerie_ShowMessage(LOCALID_IVAN);
+    Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_SHAKE_HEAD);
+    VenusLighthouseAerie_ShowMessage(LOCALID_MIA);
     stepPending = 1;
   } else {
     gFieldWork->message += 3;
     FieldScript_WaitFrames(60);
-    VenusLighthouseAerie_ShowMessage(GARET);
-    ObjectMotion_SetVarCbAndRefresh(IVAN, 1);
-    VenusLighthouseAerie_ShowMessage(IVAN);
-    Engine_ObjectEventSetAnimation(MIA, ANIM_SHAKE_HEAD);
-    VenusLighthouseAerie_ShowMessage(MIA);
+    VenusLighthouseAerie_ShowMessage(LOCALID_GARET);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 1);
+    VenusLighthouseAerie_ShowMessage(LOCALID_IVAN);
+    Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_SHAKE_HEAD);
+    VenusLighthouseAerie_ShowMessage(LOCALID_MIA);
   }
   if (stepPending != 0) {
     gFieldWork->message += 3;
@@ -2922,24 +2935,24 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
                                                           ATTACHED_EFFECT_ONCE);
   FieldScript_WaitFrames(80);
   Script_PlaySong(SONG_FADE_OUT_BGM);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTHWEST, 20);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST, 40);
-  ObjectEvent_FaceDirection(GARET, FACING_WEST, 20);
-  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  VenusLighthouseAerie_ShowMessage(IVAN);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHWEST, 20);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHEAST, 40);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_WEST, 20);
+  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  VenusLighthouseAerie_ShowMessage(LOCALID_IVAN);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST, 20);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_SHAKE_HEAD);
-  VenusLighthouseAerie_ShowMessage(GARET);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_WEST, 40);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTH, 40);
-  ObjectEvent_SetAttachedEffect(MIA, ATTACHED_EFFECT_IN_FRONT |
-                                         ATTACHED_EFFECT_ONCE);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST, 20);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_SHAKE_HEAD);
+  VenusLighthouseAerie_ShowMessage(LOCALID_GARET);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_WEST, 40);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTH, 40);
+  ObjectEvent_SetAttachedEffect(LOCALID_MIA, ATTACHED_EFFECT_IN_FRONT |
+                                                 ATTACHED_EFFECT_ONCE);
   FieldScript_WaitFrames(60);
-  VenusLighthouseAerie_ShowMessage(MIA);
+  VenusLighthouseAerie_ShowMessage(LOCALID_MIA);
   Script_PlaySong(SE_RUMBLE);
   MapGrid_SetShake(PIXELS(6), PIXELS(6), Q16_ONE);
   FieldScript_WaitFrames(40);
@@ -2953,17 +2966,17 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   objectEvent->z.fixed -= PIXELS(32);
   objectEvent->work = 0;
   VenusLighthouseAerie_StopObjectEventMotion(objectEvent);
-  objectEvent = ObjectEvent_GetById(GARET);
+  objectEvent = ObjectEvent_GetById(LOCALID_GARET);
   objectEvent->x.fixed -= PIXELS(4);
   objectEvent->z.fixed -= PIXELS(32);
   objectEvent->work = 0;
   VenusLighthouseAerie_StopObjectEventMotion(objectEvent);
-  objectEvent = ObjectEvent_GetById(IVAN);
+  objectEvent = ObjectEvent_GetById(LOCALID_IVAN);
   objectEvent->x.fixed -= PIXELS(4);
   objectEvent->z.fixed -= PIXELS(32);
   objectEvent->work = 0;
   VenusLighthouseAerie_StopObjectEventMotion(objectEvent);
-  objectEvent = ObjectEvent_GetById(MIA);
+  objectEvent = ObjectEvent_GetById(LOCALID_MIA);
   objectEvent->x.fixed -= PIXELS(4);
   objectEvent->z.fixed -= PIXELS(18);
   objectEvent->work = 0;
@@ -2974,19 +2987,22 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   WaitFrames(1);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER,
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   ObjectMotion_Launch(LOCALID_PARTY_LEADER, 6, 0);
-  ObjectMotion_Launch(GARET, 6, 0);
-  ObjectMotion_Launch(IVAN, 6, 0);
-  ObjectMotion_Launch(MIA, 6, 0);
+  ObjectMotion_Launch(LOCALID_GARET, 6, 0);
+  ObjectMotion_Launch(LOCALID_IVAN, 6, 0);
+  ObjectMotion_Launch(LOCALID_MIA, 6, 0);
   // Shake the party and split away the remaining central floor tiles.
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER,
                               gVenusLighthouseAerie_PartyHeadingAction);
-  ObjectEvent_SetActionScript(GARET, gVenusLighthouseAerie_PartyHeadingAction);
-  ObjectEvent_SetActionScript(IVAN, gVenusLighthouseAerie_PartyHeadingAction);
-  ObjectEvent_SetActionScript(MIA, gVenusLighthouseAerie_PartyHeadingAction);
+  ObjectEvent_SetActionScript(LOCALID_GARET,
+                              gVenusLighthouseAerie_PartyHeadingAction);
+  ObjectEvent_SetActionScript(LOCALID_IVAN,
+                              gVenusLighthouseAerie_PartyHeadingAction);
+  ObjectEvent_SetActionScript(LOCALID_MIA,
+                              gVenusLighthouseAerie_PartyHeadingAction);
   MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
   FieldScript_WaitFrames(80);
   MapGrid_SetShake(PIXELS(6), PIXELS(6), Q16_ONE);
@@ -2998,13 +3014,13 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   objectEvent->x.fixed -= PIXELS(16);
   VenusLighthouseAerie_StopObjectEventMotion(objectEvent);
-  objectEvent = ObjectEvent_GetById(GARET);
+  objectEvent = ObjectEvent_GetById(LOCALID_GARET);
   objectEvent->x.fixed -= PIXELS(16);
   VenusLighthouseAerie_StopObjectEventMotion(objectEvent);
-  objectEvent = ObjectEvent_GetById(IVAN);
+  objectEvent = ObjectEvent_GetById(LOCALID_IVAN);
   objectEvent->x.fixed -= PIXELS(16);
   VenusLighthouseAerie_StopObjectEventMotion(objectEvent);
-  objectEvent = ObjectEvent_GetById(MIA);
+  objectEvent = ObjectEvent_GetById(LOCALID_MIA);
   objectEvent->x.fixed -= PIXELS(16);
   VenusLighthouseAerie_StopObjectEventMotion(objectEvent);
   objectEvent = ObjectEvent_GetById(LOCALID_BEACON_STATUE_SOUTHWEST);
@@ -3024,52 +3040,55 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   WaitFrames(1);
   ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
                                                           ATTACHED_EFFECT_ONCE);
-  ObjectEvent_SetAttachedEffect(GARET, ATTACHED_EFFECT_IN_FRONT |
-                                           ATTACHED_EFFECT_ONCE);
-  ObjectEvent_SetAttachedEffect(IVAN, ATTACHED_EFFECT_IN_FRONT |
-                                          ATTACHED_EFFECT_ONCE);
-  ObjectEvent_SetAttachedEffect(MIA, ATTACHED_EFFECT_IN_FRONT |
-                                         ATTACHED_EFFECT_ONCE);
+  ObjectEvent_SetAttachedEffect(LOCALID_GARET, ATTACHED_EFFECT_IN_FRONT |
+                                                   ATTACHED_EFFECT_ONCE);
+  ObjectEvent_SetAttachedEffect(LOCALID_IVAN, ATTACHED_EFFECT_IN_FRONT |
+                                                  ATTACHED_EFFECT_ONCE);
+  ObjectEvent_SetAttachedEffect(LOCALID_MIA, ATTACHED_EFFECT_IN_FRONT |
+                                                 ATTACHED_EFFECT_ONCE);
   ObjectMotion_Launch(LOCALID_PARTY_LEADER, 6, 0);
-  ObjectMotion_Launch(GARET, 6, 0);
-  ObjectMotion_Launch(IVAN, 6, 0);
-  ObjectMotion_Launch(MIA, 6, 0);
+  ObjectMotion_Launch(LOCALID_GARET, 6, 0);
+  ObjectMotion_Launch(LOCALID_IVAN, 6, 0);
+  ObjectMotion_Launch(LOCALID_MIA, 6, 0);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   FieldScript_WaitFrames(80);
   Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
   FieldScript_WaitFrames(40);
   ObjectMotion_EnableActionAndResetMotion(LOCALID_PARTY_LEADER);
-  ObjectMotion_EnableActionAndResetMotion(GARET);
-  ObjectMotion_EnableActionAndResetMotion(IVAN);
-  ObjectMotion_EnableActionAndResetMotion(MIA);
+  ObjectMotion_EnableActionAndResetMotion(LOCALID_GARET);
+  ObjectMotion_EnableActionAndResetMotion(LOCALID_IVAN);
+  ObjectMotion_EnableActionAndResetMotion(LOCALID_MIA);
   FieldScript_WaitFrames(120);
-  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 120);
-  ObjectMotion_SetVarCbAndRefresh(IVAN, 1);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 20);
-  VenusLighthouseAerie_ShowMessage(IVAN);
-  ObjectMotion_SetAnimationAndWait(GARET, ANIM_NOD);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST, 0);
-  VenusLighthouseAerie_ShowMessage(GARET);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST, 20);
-  Engine_ObjectEventSetAnimation(MIA, ANIM_SHAKE_HEAD);
-  VenusLighthouseAerie_ShowMessage(MIA);
-  ObjectMotion_Launch(IVAN, 2, 20);
-  VenusLighthouseAerie_ShowMessage(IVAN);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(IVAN, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(MIA, ANIM_NOD);
+  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 120);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_IVAN, 1);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHWEST, 20);
+  VenusLighthouseAerie_ShowMessage(LOCALID_IVAN);
+  ObjectMotion_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST, 0);
+  VenusLighthouseAerie_ShowMessage(LOCALID_GARET);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHEAST, 20);
+  Engine_ObjectEventSetAnimation(LOCALID_MIA, ANIM_SHAKE_HEAD);
+  VenusLighthouseAerie_ShowMessage(LOCALID_MIA);
+  ObjectMotion_Launch(LOCALID_IVAN, 2, 20);
+  VenusLighthouseAerie_ShowMessage(LOCALID_IVAN);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_IVAN, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  VenusLighthouseAerie_FaceObjectEvent(GARET, FACING_EAST);
-  VenusLighthouseAerie_ShowMessage(GARET);
+  VenusLighthouseAerie_FaceObjectEvent(LOCALID_GARET, FACING_EAST);
+  VenusLighthouseAerie_ShowMessage(LOCALID_GARET);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(20);
-  ObjectEvent_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_SetSpeed(IVAN, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_SetSpeed(MIA, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_SetActionScript(GARET, gVenusLighthouseAerie_PartyExitAction);
-  ObjectEvent_SetActionScript(IVAN, gVenusLighthouseAerie_PartyExitAction);
-  ObjectEvent_SetActionScript(MIA, gVenusLighthouseAerie_PartyExitAction);
+  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_SetActionScript(LOCALID_GARET,
+                              gVenusLighthouseAerie_PartyExitAction);
+  ObjectEvent_SetActionScript(LOCALID_IVAN,
+                              gVenusLighthouseAerie_PartyExitAction);
+  ObjectEvent_SetActionScript(LOCALID_MIA,
+                              gVenusLighthouseAerie_PartyExitAction);
   FieldScript_WaitFrames(60);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 272, 216);
@@ -3146,11 +3165,11 @@ static void VenusLighthouseAerie_UpdateBeaconRise(void) {
       PaletteFade_StartInterpolation(16);
       sTransitionStep++;
       ObjectEvent_Get(LOCALID_PARTY_LEADER)->riseCounter = 1;
-      ObjectEvent_Get(GARET)->riseCounter = 1;
-      ObjectEvent_Get(IVAN)->riseCounter = 1;
-      ObjectEvent_Get(MIA)->riseCounter = 1;
+      ObjectEvent_Get(LOCALID_GARET)->riseCounter = 1;
+      ObjectEvent_Get(LOCALID_IVAN)->riseCounter = 1;
+      ObjectEvent_Get(LOCALID_MIA)->riseCounter = 1;
       ObjectEvent_Get(LOCALID_FELIX)->riseCounter = 1;
-      ObjectEvent_Get(SHEBA)->riseCounter = 1;
+      ObjectEvent_Get(LOCALID_SHEBA)->riseCounter = 1;
     } else {
       if ((gFrameCount & 7) == 0)
         Script_PlaySong(SE_246);
@@ -3215,11 +3234,11 @@ static void VenusLighthouseAerie_UpdateBeaconRise(void) {
   sTransitionStep++;
   VenusLighthouseAerie_AdvanceObjectEventRise(
       ObjectEvent_Get(LOCALID_PARTY_LEADER));
-  VenusLighthouseAerie_AdvanceObjectEventRise(ObjectEvent_Get(GARET));
-  VenusLighthouseAerie_AdvanceObjectEventRise(ObjectEvent_Get(IVAN));
-  VenusLighthouseAerie_AdvanceObjectEventRise(ObjectEvent_Get(MIA));
+  VenusLighthouseAerie_AdvanceObjectEventRise(ObjectEvent_Get(LOCALID_GARET));
+  VenusLighthouseAerie_AdvanceObjectEventRise(ObjectEvent_Get(LOCALID_IVAN));
+  VenusLighthouseAerie_AdvanceObjectEventRise(ObjectEvent_Get(LOCALID_MIA));
   VenusLighthouseAerie_AdvanceObjectEventRise(ObjectEvent_Get(LOCALID_FELIX));
-  VenusLighthouseAerie_AdvanceObjectEventRise(ObjectEvent_Get(SHEBA));
+  VenusLighthouseAerie_AdvanceObjectEventRise(ObjectEvent_Get(LOCALID_SHEBA));
 }
 
 /// Raises an enabled object event according to its gated rise counter.
@@ -3528,17 +3547,17 @@ struct ObjectEventTemplate gVenusLighthouseAerieObjectEventTemplates[] = {
         PIXELS(168), 0, PIXELS(252), FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
-    { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(504), 0, PIXELS(148), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(504), 0, PIXELS(148), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(504), 0, PIXELS(148), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_MENARDI, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(280), 0, PIXELS(164), FACING_NORTH + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_SATUROS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(296), 0, PIXELS(180), FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, 0 },
-    { SHEBA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_SHEBA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(248), 0, PIXELS(172), FACING_EAST, TALK_FACING_KEEP, 0 },
     { SPRITE_FELIX, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(264), 0, PIXELS(252), FACING_NORTH + FACING_STEP, TALK_FACING_KEEP, 0 },

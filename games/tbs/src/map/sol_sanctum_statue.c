@@ -331,9 +331,9 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_WalkToAndWait(LOCALID_KRADEN, 576, 216);
   FieldScript_WaitFrames(20);
-  ObjectMotion_Launch(JENNA, 2, 0);
+  ObjectMotion_Launch(LOCALID_JENNA, 2, 0);
   FieldScript_WaitFrames(30);
-  EventScript_SayThenWait(JENNA, 6);
+  EventScript_SayThenWait(LOCALID_JENNA, 6);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 2);
   FieldScript_WaitFrames(6);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_WEST + FACING_STEP, 0);
@@ -388,10 +388,10 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   FieldScript_WaitFrames(20);
   // Garet: two beams shot out of the statues Isaac moved, and the hole
   // appeared. Jenna: Isaac dropped the statue into it.
-  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
-  EventScript_SayThenWait(GARET, 20);
-  ObjectMotion_SetAnimationAndWait(JENNA, ANIM_NOD);
-  EventScript_SayThenWait(JENNA, 6);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
+  EventScript_SayThenWait(LOCALID_GARET, 20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_JENNA, ANIM_NOD);
+  EventScript_SayThenWait(LOCALID_JENNA, 6);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 2);
   FieldScript_WaitFrames(40);
   // Kraden: "Good work, everyone!" and "So the statue puzzle was the trap..."
@@ -404,8 +404,8 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   EventScript_SayThenWait(LOCALID_KRADEN, 20);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
                         0);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  ObjectEvent_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  ObjectEvent_ShowEmote(LOCALID_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   FieldScript_WaitFrames(60);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_NORTH, 0);
   FieldScript_WaitFrames(30);
@@ -413,18 +413,18 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   // should be all right.
   ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIM_SHAKE_HEAD);
   EventScript_SayThenWait(LOCALID_KRADEN, 6);
-  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, GARET, 0);
+  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_GARET, 0);
   FieldScript_WaitFrames(40);
-  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, JENNA, 0);
+  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_JENNA, 0);
   FieldScript_WaitFrames(40);
   ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIM_NOD);
   EventScript_SayThenWait(LOCALID_KRADEN, 6);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
-  ObjectEvent_FaceDirection(JENNA, FACING_SOUTH, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_SOUTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH, 0);
   FieldScript_WaitFrames(40);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(JENNA, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(20);
   ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIM_NOD);
@@ -444,24 +444,24 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   FieldCamera_WaitForArrival();
   FieldScript_WaitFrames(20);
   // Rejoin the companions to the leader and restore normal field control.
-  ObjectEvent_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_SetSpeed(JENNA, PIXELS(1), PIXELS(1) / 2);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_WALK);
+  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_SetSpeed(LOCALID_JENNA, PIXELS(1), PIXELS(1) / 2);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
-    ObjectEvent_SetDestination(GARET, leader->x.part.pixel,
+    ObjectEvent_SetDestination(LOCALID_GARET, leader->x.part.pixel,
                                leader->z.part.pixel);
   }
-  ObjectMotion_CommitCurrentPositionAndActivate(GARET);
-  ObjectEvent_SetPosition(GARET, 0, 0);
-  Engine_ObjectEventSetAnimation(JENNA, ANIM_WALK);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
+  ObjectEvent_SetPosition(LOCALID_GARET, 0, 0);
+  Engine_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_WALK);
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
-    ObjectEvent_SetDestination(JENNA, leader->x.part.pixel,
+    ObjectEvent_SetDestination(LOCALID_JENNA, leader->x.part.pixel,
                                leader->z.part.pixel);
   }
-  ObjectMotion_CommitCurrentPositionAndActivate(JENNA);
-  ObjectEvent_SetPosition(JENNA, 0, 0);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_JENNA);
+  ObjectEvent_SetPosition(LOCALID_JENNA, 0, 0);
   Script_ClearFlag(FLAG_SHOW_LOCATION_NAME);
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
   gFieldWork->transitionFrames = 16;
@@ -499,9 +499,9 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_WalkToAndWait(LOCALID_KRADEN, 576, 216);
   FieldScript_WaitFrames(20);
-  ObjectMotion_Launch(JENNA, 2, 0);
+  ObjectMotion_Launch(LOCALID_JENNA, 2, 0);
   FieldScript_WaitFrames(30);
-  EventScript_SayThenWait(JENNA, 6);
+  EventScript_SayThenWait(LOCALID_JENNA, 6);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 2);
   FieldScript_WaitFrames(6);
   ObjectMotion_ArmCallback(LOCALID_KRADEN, FACING_WEST + FACING_STEP, 0);
@@ -524,27 +524,27 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   // Kraden: "This is a most interesting mechanism you've found, Isaac."
   ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIM_NOD);
   EventScript_SayThenWait(LOCALID_KRADEN, 6);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimation(JENNA, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_NOD);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(40);
   // Kraden: "But this is clearly... some kind of trap." All three start.
   ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 3);
   EventScript_SayThenWait(LOCALID_KRADEN, 6);
   ObjectMotion_Launch(LOCALID_PARTY_LEADER, 2, 0);
-  ObjectMotion_Launch(GARET, 2, 0);
-  ObjectMotion_Launch(JENNA, 2, 0);
+  ObjectMotion_Launch(LOCALID_GARET, 2, 0);
+  ObjectMotion_Launch(LOCALID_JENNA, 2, 0);
   FieldScript_WaitFrames(30);
   // Garet: "This is...a trap?" Kraden: "Go look in the Luna room".
-  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
-  EventScript_SayThenWait(GARET, 6);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
+  EventScript_SayThenWait(LOCALID_GARET, 6);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 1);
   ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIM_SHAKE_HEAD);
   EventScript_SayThenWait(LOCALID_KRADEN, 6);
-  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, JENNA, 0);
+  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_JENNA, 0);
   FieldScript_WaitFrames(40);
   ObjectMotion_SetAngleToward(LOCALID_KRADEN, LOCALID_PARTY_LEADER, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_KRADEN, JENNA, 0);
+  ObjectEvent_FaceObjectEvent(LOCALID_KRADEN, LOCALID_JENNA, 0);
   FieldScript_WaitFrames(40);
   ObjectMotion_Launch(LOCALID_KRADEN, 6, 0);
   ObjectEvent_WalkToAndWait(LOCALID_KRADEN, 576, 216);
@@ -566,8 +566,8 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_NORTH, 0);
   FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
-  ObjectEvent_FaceDirection(JENNA, FACING_SOUTH, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_SOUTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH, 0);
   FieldCamera_SetSpeedParameters(PIXELS(4) / 5, PIXELS(1) / 10);
   FieldCamera_MoveWithinMapBounds(PIXELS(574), -1, PIXELS(171), 1);
   ObjectMotion_Launch(LOCALID_KRADEN, 6, 0);
@@ -579,10 +579,10 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   EventScript_SayThenWait(LOCALID_KRADEN, 6);
   ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIM_SHAKE_HEAD);
   EventScript_SayThenWait(LOCALID_KRADEN, 20);
-  FieldEffect_SpawnLinked(JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  FieldEffect_SpawnLinked(LOCALID_JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   FieldScript_WaitFrames(40);
-  ObjectMotion_SetVarCbAndRefresh(JENNA, 2);
-  EventScript_SayThenWait(JENNA, 6);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_JENNA, 2);
+  EventScript_SayThenWait(LOCALID_JENNA, 6);
   ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIM_NOD);
   ObjectMotion_ArmCallback(LOCALID_KRADEN, FACING_WEST, 0);
   FieldScript_WaitFrames(40);
@@ -593,21 +593,21 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   EventScript_SayThenWait(LOCALID_KRADEN, 6);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
                         0);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  ObjectEvent_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  ObjectEvent_ShowEmote(LOCALID_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   FieldScript_WaitFrames(60);
   ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIM_SHAKE_HEAD);
   EventScript_SayThenWait(LOCALID_KRADEN, 6);
-  ObjectEvent_LinkPair(GARET, LOCALID_PARTY_LEADER, 0);
+  ObjectEvent_LinkPair(LOCALID_GARET, LOCALID_PARTY_LEADER, 0);
   FieldScript_WaitFrames(40);
-  ObjectEvent_LinkPair(JENNA, LOCALID_PARTY_LEADER, 0);
+  ObjectEvent_LinkPair(LOCALID_JENNA, LOCALID_PARTY_LEADER, 0);
   FieldScript_WaitFrames(40);
   // Kraden: "Should I tell you more?" Either answer, he thinks they would not
   // understand yet.
   FieldMessage_ShowAtObject(LOCALID_KRADEN, 0);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
-  ObjectEvent_FaceDirection(JENNA, FACING_SOUTH, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_JENNA, FACING_SOUTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH, 0);
   if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
     FieldScript_SetMessageId(MsgSolSanctumHonestlyDoubtUnderstand);
   } else {
@@ -619,9 +619,9 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   FieldScript_SetMessageId(MsgSolSanctumTryFindSolution);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 2);
   EventScript_SayThenWait(LOCALID_KRADEN, 6);
-  FieldEffect_SpawnLinked(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  FieldEffect_SpawnLinked(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   FieldScript_WaitFrames(60);
-  EventScript_SayThenWait(GARET, 6);
+  EventScript_SayThenWait(LOCALID_GARET, 6);
   ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIM_NOD);
   EventScript_SayThenWait(LOCALID_KRADEN, 6);
   ObjectMotion_ArmCallback(LOCALID_KRADEN, FACING_SOUTH, 0);
@@ -650,30 +650,30 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   FieldCamera_MoveWithinMapBounds(PIXELS(576), -1, PIXELS(136), 1);
   FieldCamera_WaitForArrival();
   FieldScript_WaitFrames(20);
-  ObjectMotion_ArmCallback(JENNA, FACING_EAST, 0);
+  ObjectMotion_ArmCallback(LOCALID_JENNA, FACING_EAST, 0);
   FieldScript_WaitFrames(10);
   // Jenna: "let's see if we can't figure this out ourselves."
-  EventScript_SayThenWait(JENNA, 6);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
-  ObjectMotion_SetAnimationAndWait(JENNA, ANIM_NOD);
-  ObjectEvent_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_SetSpeed(JENNA, PIXELS(1), PIXELS(1) / 2);
-  Engine_ObjectEventSetAnimation(JENNA, ANIM_WALK);
+  EventScript_SayThenWait(LOCALID_JENNA, 6);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_JENNA, ANIM_NOD);
+  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_SetSpeed(LOCALID_JENNA, PIXELS(1), PIXELS(1) / 2);
+  Engine_ObjectEventSetAnimation(LOCALID_JENNA, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0) {
-    ObjectMotion_ResetAndSetPosition(JENNA, leader->x.part.pixel,
+    ObjectMotion_ResetAndSetPosition(LOCALID_JENNA, leader->x.part.pixel,
                                      leader->z.part.pixel);
   }
-  ObjectMotion_CommitCurrentPositionAndActivate(JENNA);
-  Engine_ObjectEventSetPosition(JENNA, 0, 0);
-  Engine_ObjectEventSetAnimation(GARET, ANIM_WALK);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_JENNA);
+  Engine_ObjectEventSetPosition(LOCALID_JENNA, 0, 0);
+  Engine_ObjectEventSetAnimation(LOCALID_GARET, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0) {
-    ObjectMotion_ResetAndSetPosition(GARET, leader->x.part.pixel,
+    ObjectMotion_ResetAndSetPosition(LOCALID_GARET, leader->x.part.pixel,
                                      leader->z.part.pixel);
   }
-  ObjectMotion_CommitCurrentPositionAndActivate(GARET);
-  Engine_ObjectEventSetPosition(GARET, 0, 0);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
+  Engine_ObjectEventSetPosition(LOCALID_GARET, 0, 0);
   GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   work = gFieldWork;
   work->transition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
@@ -877,8 +877,8 @@ s32 SolSanctumStatue_Initialize(void) {
   // Only warp destinations 3 and 4 keep Jenna and Garet staged for their
   // conversations.
   if ((u16)(gSaveBlock.warpDest - 3) > 1) {
-    ObjectEvent_SetPosition(JENNA, 0, 0);
-    ObjectEvent_SetPosition(GARET, 0, 0);
+    ObjectEvent_SetPosition(LOCALID_JENNA, 0, 0);
+    ObjectEvent_SetPosition(LOCALID_GARET, 0, 0);
   }
   if (GameFlag_Get(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED) != 0) {
     ObjectEvent_SetPosition(LOCALID_MOVED_CENTER_STATUE, PIXELS(288),
@@ -946,8 +946,8 @@ s32 SolSanctumStatue_Initialize(void) {
   if (gSaveBlock.warpDest ==
       SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED) {
     if (Script_GetFlag(FLAG_SOL_SANCTUM_TRAP_DISARMED_EXPLAINED) != 0) {
-      ObjectEvent_SetPosition(GARET, 0, 0);
-      ObjectEvent_SetPosition(JENNA, 0, 0);
+      ObjectEvent_SetPosition(LOCALID_GARET, 0, 0);
+      ObjectEvent_SetPosition(LOCALID_JENNA, 0, 0);
     } else if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       SolSanctumStatue_ExplainTrapDisarmed();
       GameFlag_Set(FLAG_SOL_SANCTUM_TRAP_DISARMED_EXPLAINED);
@@ -956,8 +956,8 @@ s32 SolSanctumStatue_Initialize(void) {
   if (gSaveBlock.warpDest ==
       SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_TRIGGERED) {
     if (Script_GetFlag(FLAG_SOL_SANCTUM_STATUE_PUZZLE_EXPLAINED) != 0) {
-      ObjectEvent_SetPosition(GARET, 0, 0);
-      ObjectEvent_SetPosition(JENNA, 0, 0);
+      ObjectEvent_SetPosition(LOCALID_GARET, 0, 0);
+      ObjectEvent_SetPosition(LOCALID_JENNA, 0, 0);
     } else if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       SolSanctumStatue_ExplainStatuePuzzle();
       GameFlag_Set(FLAG_SOL_SANCTUM_STATUE_PUZZLE_EXPLAINED);
@@ -1796,9 +1796,9 @@ struct ObjectEventTemplate gSolSanctumStatue_ObjectEventTemplates[] = {
         PIXELS(288), 0, PIXELS(120), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_SUN_DISC, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(1608), 0, PIXELS(1608), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(560), 0, PIXELS(136), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(592), 0, PIXELS(136), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };

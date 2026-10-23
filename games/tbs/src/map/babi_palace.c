@@ -630,24 +630,24 @@ static void BabiPalace_WakeFromFinalsDream(void) {
   ObjectEvent_SetAnimation(LOCALID_PARTY_LEADER, ANIM_IN_BED_LYING);
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   ObjectEvent_SetSpriteFlags(leader, 0);
-  ObjectEvent_SetPosition(GARET, PIXELS(120), PIXELS(104));
-  ObjectEvent_SetPosition(MIA, PIXELS(104), PIXELS(80));
-  ObjectEvent_SetPosition(IVAN, PIXELS(120), PIXELS(120));
-  ObjectEvent_FaceDirection(GARET, FACING_EAST, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_EAST, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTHEAST, 0);
+  ObjectEvent_SetPosition(LOCALID_GARET, PIXELS(120), PIXELS(104));
+  ObjectEvent_SetPosition(LOCALID_MIA, PIXELS(104), PIXELS(80));
+  ObjectEvent_SetPosition(LOCALID_IVAN, PIXELS(120), PIXELS(120));
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_EAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_EAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHEAST, 0);
   gFieldWork->transitionFrames = 60;
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   Script_Wait(20);
   gFieldWork->transitionFrames = 24;
-  ObjectEvent_SetSpeed(MIA, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_WalkByAndWait(MIA, 16, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_SOUTHEAST, 0);
+  ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_WalkByAndWait(LOCALID_MIA, 16, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_SOUTHEAST, 0);
   Script_Wait(20);
-  ObjectEvent_RunRepeatedMotion(MIA, 2);
+  ObjectEvent_RunRepeatedMotion(LOCALID_MIA, 2);
   Script_Wait(30);
-  Script_ShowMessage(MIA, 0);
+  Script_ShowMessage(LOCALID_MIA, 0);
   Script_Wait(10);
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   leader->z.fixed += -0x30000;
@@ -659,85 +659,85 @@ static void BabiPalace_WakeFromFinalsDream(void) {
   Script_Wait(30);
   ObjectEvent_SetAnimation(LOCALID_PARTY_LEADER, ANIM_IN_BED_NOD);
   Script_Wait(50);
-  ObjectEvent_RunRepeatedMotion(GARET, 2);
+  ObjectEvent_RunRepeatedMotion(LOCALID_GARET, 2);
   Script_Wait(30);
-  Script_ShowMessage(GARET, 0);
+  Script_ShowMessage(LOCALID_GARET, 0);
   Script_Wait(10);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
                         60);
   Script_Wait(20);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  Script_ShowMessage(GARET, 0);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  Script_ShowMessage(LOCALID_GARET, 0);
   Script_Wait(10);
-  ObjectEvent_SetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
+  ObjectEvent_SetAnimationAndWait(LOCALID_GARET, ANIM_SHAKE_HEAD);
   Script_Wait(20);
-  Script_ShowMessage(GARET, 0);
+  Script_ShowMessage(LOCALID_GARET, 0);
   Script_Wait(10);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
-  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
+  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTH, 0);
   Script_Wait(30);
-  ObjectEvent_SetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
+  ObjectEvent_SetAnimationAndWait(LOCALID_IVAN, ANIM_SHAKE_HEAD);
   Script_Wait(20);
-  Script_ShowMessage(IVAN, 0);
+  Script_ShowMessage(LOCALID_IVAN, 0);
   Script_Wait(10);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH, 0);
   Script_Wait(30);
-  ObjectEvent_RunRepeatedMotion(GARET, 2);
+  ObjectEvent_RunRepeatedMotion(LOCALID_GARET, 2);
   Script_Wait(45);
-  ObjectEvent_FaceDirection(GARET, FACING_EAST, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTHEAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_EAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHEAST, 0);
   Script_Wait(30);
-  Script_OpenMessage(GARET, 0);
+  Script_OpenMessage(LOCALID_GARET, 0);
   if (Script_ChooseYesNo(-1, 0) != 0) {
     Script_Wait(10);
     ObjectEvent_SetAnimationAndWait(LOCALID_PARTY_LEADER,
                                     ANIM_IN_BED_SHAKE_HEAD);
     Script_Wait(20);
-    ObjectEvent_SetAnimationAndWait(GARET, ANIM_NOD);
+    ObjectEvent_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
     Script_Wait(20);
-    Script_ShowMessage(GARET, 0);
+    Script_ShowMessage(LOCALID_GARET, 0);
     Script_Wait(10);
     ObjectEvent_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_IN_BED_NOD);
     Script_Wait(30);
-    ObjectEvent_SetAnimationAndWait(GARET, ANIM_NOD);
+    ObjectEvent_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
     Script_Wait(20);
-    Script_ShowMessage(GARET, 0);
+    Script_ShowMessage(LOCALID_GARET, 0);
     gFieldWork->message += 1;
   } else {
     Script_Wait(10);
     ObjectEvent_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_IN_BED_NOD);
     gFieldWork->message += 2;
     Script_Wait(30);
-    ObjectEvent_SetAnimationAndWait(GARET, ANIM_NOD);
+    ObjectEvent_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
     Script_Wait(20);
-    Script_ShowMessage(GARET, 0);
+    Script_ShowMessage(LOCALID_GARET, 0);
   }
   Script_Wait(10);
-  ObjectEvent_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_WalkByAndWait(GARET, -16, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_EAST, 0);
+  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_WalkByAndWait(LOCALID_GARET, -16, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_EAST, 0);
   Script_Wait(35);
   ObjectEvent_Jump(LOCALID_PARTY_LEADER, 6, 0);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(19) / 10, PIXELS(19) / 20);
   ObjectEvent_WalkByAndWait(LOCALID_PARTY_LEADER, -32, 0);
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   ObjectEvent_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
-  ObjectEvent_FaceDirection(MIA, FACING_SOUTH, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_SOUTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTH, 0);
   Script_Wait(40);
   ObjectEvent_SetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   Script_Wait(30);
-  ObjectEvent_SetAnimation(IVAN, ANIM_NOD);
-  ObjectEvent_SetAnimation(GARET, ANIM_NOD);
-  ObjectEvent_SetAnimationAndWait(MIA, ANIM_NOD);
+  ObjectEvent_SetAnimation(LOCALID_IVAN, ANIM_NOD);
+  ObjectEvent_SetAnimation(LOCALID_GARET, ANIM_NOD);
+  ObjectEvent_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
   Script_Wait(30);
-  ObjectEvent_SetSpeed(GARET, PIXELS(6) / 5, PIXELS(3) / 5);
-  ObjectEvent_SetSpeed(MIA, PIXELS(6) / 5, PIXELS(3) / 5);
-  ObjectEvent_SetSpeed(IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
-  BabiPalace_WalkIntoLeader(GARET);
-  BabiPalace_WalkIntoLeader(MIA);
-  BabiPalace_WalkIntoLeader(IVAN);
+  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
+  ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(6) / 5, PIXELS(3) / 5);
+  ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
+  BabiPalace_WalkIntoLeader(LOCALID_GARET);
+  BabiPalace_WalkIntoLeader(LOCALID_MIA);
+  BabiPalace_WalkIntoLeader(LOCALID_IVAN);
   Script_Wait(10);
   Script_End();
 }
@@ -773,118 +773,118 @@ static void BabiPalace_RestInPalaceBeds(void) {
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 184, 120);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 0);
     Script_Wait(10);
-    FieldMotion_LaunchFromFocusedObject(GARET, 16, 0, 0x8000);
-    ObjectEvent_RefreshSelectorById(GARET);
+    FieldMotion_LaunchFromFocusedObject(LOCALID_GARET, 16, 0, 0x8000);
+    ObjectEvent_RefreshSelectorById(LOCALID_GARET);
     Script_Wait(10);
-    Script_ShowMessage(GARET, 0);
+    Script_ShowMessage(LOCALID_GARET, 0);
     Script_Wait(10);
     ObjectEvent_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
     Script_Wait(20);
-    ObjectEvent_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
-    ObjectEvent_WalkByAndWait(GARET, 40, 0);
-    ObjectEvent_WalkByAndWait(GARET, 0, -32);
-    ObjectEvent_FaceDirection(GARET, FACING_SOUTHWEST, 0);
+    ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(1), PIXELS(1) / 2);
+    ObjectEvent_WalkByAndWait(LOCALID_GARET, 40, 0);
+    ObjectEvent_WalkByAndWait(LOCALID_GARET, 0, -32);
+    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHWEST, 0);
     Script_Wait(20);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 0);
     Script_Wait(20);
-    FieldMotion_LaunchFromFocusedObject(IVAN, -16, 0, 0);
-    ObjectEvent_RefreshSelectorById(IVAN);
+    FieldMotion_LaunchFromFocusedObject(LOCALID_IVAN, -16, 0, 0);
+    ObjectEvent_RefreshSelectorById(LOCALID_IVAN);
     Script_Wait(10);
-    Script_ShowMessage(IVAN, 0);
+    Script_ShowMessage(LOCALID_IVAN, 0);
     Script_Wait(10);
     ObjectEvent_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
     Script_Wait(20);
-    ObjectEvent_SetSpeed(IVAN, PIXELS(1), PIXELS(1) / 2);
-    ObjectEvent_WalkByAndWait(IVAN, -40, 0);
-    ObjectEvent_WalkByAndWait(IVAN, 0, 40);
-    ObjectEvent_FaceDirection(IVAN, FACING_NORTHEAST, 0);
+    ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(1), PIXELS(1) / 2);
+    ObjectEvent_WalkByAndWait(LOCALID_IVAN, -40, 0);
+    ObjectEvent_WalkByAndWait(LOCALID_IVAN, 0, 40);
+    ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHEAST, 0);
     Script_Wait(20);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 0);
     Script_Wait(20);
-    FieldMotion_LaunchFromFocusedObject(MIA, 16, 0, 0x8000);
-    ObjectEvent_RefreshSelectorById(MIA);
+    FieldMotion_LaunchFromFocusedObject(LOCALID_MIA, 16, 0, 0x8000);
+    ObjectEvent_RefreshSelectorById(LOCALID_MIA);
     Script_Wait(10);
-    Script_ShowMessage(MIA, 0);
+    Script_ShowMessage(LOCALID_MIA, 0);
     Script_Wait(10);
     ObjectEvent_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
     Script_Wait(20);
-    ObjectEvent_SetSpeed(MIA, PIXELS(1), PIXELS(1) / 2);
-    ObjectEvent_WalkByAndWait(MIA, 40, 0);
-    ObjectEvent_WalkByAndWait(MIA, 0, 40);
-    ObjectEvent_FaceDirection(MIA, FACING_NORTHWEST, 0);
+    ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(1), PIXELS(1) / 2);
+    ObjectEvent_WalkByAndWait(LOCALID_MIA, 40, 0);
+    ObjectEvent_WalkByAndWait(LOCALID_MIA, 0, 40);
+    ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHWEST, 0);
     Script_Wait(20);
     FieldCamera_MoveTo(-1, -1, -1, 0);
     ObjectEvent_WalkByAndWait(LOCALID_PARTY_LEADER, -56, 0);
     ObjectEvent_WalkByAndWait(LOCALID_PARTY_LEADER, 0, -32);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHEAST, 0);
     Script_Wait(30);
-    ObjectEvent_SetAnimationAndWait(MIA, ANIM_NOD);
+    ObjectEvent_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
     Script_Wait(10);
-    Script_ShowMessage(MIA, 0);
-    ObjectEvent_SetAnimationAndWait(GARET, ANIM_NOD);
+    Script_ShowMessage(LOCALID_MIA, 0);
+    ObjectEvent_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
     Script_Wait(10);
     if (GameFlag_Get(FLAG_BABI_PALACE_FIRST_NIGHT) == 0) {
-      Script_ShowMessage(GARET, 0);
+      Script_ShowMessage(LOCALID_GARET, 0);
     } else {
       gFieldWork->message++;
     }
-    ObjectEvent_SetAnimationAndWait(IVAN, ANIM_NOD);
+    ObjectEvent_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
     Script_Wait(10);
     if (GameFlag_Get(FLAG_BABI_PALACE_FIRST_NIGHT) == 0) {
-      Script_ShowMessage(IVAN, 0);
+      Script_ShowMessage(LOCALID_IVAN, 0);
     } else {
       gFieldWork->message++;
     }
     Script_Wait(20);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 0);
-    ObjectEvent_FaceDirection(GARET, FACING_WEST, 0);
-    ObjectEvent_FaceDirection(MIA, FACING_WEST, 0);
-    ObjectEvent_FaceDirection(IVAN, FACING_EAST, 0);
+    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_WEST, 0);
+    ObjectEvent_FaceDirection(LOCALID_MIA, FACING_WEST, 0);
+    ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_EAST, 0);
     Inn_PlaySleep(0);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHEAST, 0);
-    ObjectEvent_FaceDirection(GARET, FACING_SOUTHWEST, 0);
-    ObjectEvent_FaceDirection(MIA, FACING_NORTHWEST, 0);
-    ObjectEvent_FaceDirection(IVAN, FACING_NORTHEAST, 0);
+    ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHWEST, 0);
+    ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHWEST, 0);
+    ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHEAST, 0);
     Script_Wait(20);
-    ObjectEvent_SetAnimationAndWait(GARET, ANIM_NOD);
+    ObjectEvent_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
     Script_Wait(10);
-    Script_ShowMessage(GARET, 0);
-    ObjectEvent_SetAnimationAndWait(IVAN, ANIM_NOD);
+    Script_ShowMessage(LOCALID_GARET, 0);
+    ObjectEvent_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
     Script_Wait(10);
     if (GameFlag_Get(FLAG_BABI_PALACE_FIRST_NIGHT) == 0) {
-      Script_ShowMessage(IVAN, 0);
+      Script_ShowMessage(LOCALID_IVAN, 0);
     } else {
       gFieldWork->message++;
     }
-    ObjectEvent_SetAnimationAndWait(MIA, ANIM_NOD);
+    ObjectEvent_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
     Script_Wait(10);
     if (GameFlag_Get(FLAG_BABI_PALACE_FIRST_NIGHT) == 0) {
-      Script_ShowMessage(MIA, 0);
+      Script_ShowMessage(LOCALID_MIA, 0);
     } else {
       gFieldWork->message++;
     }
-    ObjectEvent_WalkByAndWait(GARET, 0, 32);
-    ObjectEvent_WalkBy(GARET, -112, 0);
-    ObjectEvent_WalkByAndWait(MIA, 0, -40);
-    ObjectEvent_WalkBy(MIA, -112, 0);
+    ObjectEvent_WalkByAndWait(LOCALID_GARET, 0, 32);
+    ObjectEvent_WalkBy(LOCALID_GARET, -112, 0);
+    ObjectEvent_WalkByAndWait(LOCALID_MIA, 0, -40);
+    ObjectEvent_WalkBy(LOCALID_MIA, -112, 0);
     Script_Wait(50);
-    ObjectEvent_WalkByAndWait(IVAN, 0, -24);
-    ObjectEvent_WaitForMove(GARET);
+    ObjectEvent_WalkByAndWait(LOCALID_IVAN, 0, -24);
+    ObjectEvent_WaitForMove(LOCALID_GARET);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
-    ObjectEvent_WalkByAndWait(GARET, 0, -16);
-    ObjectEvent_WaitForMove(MIA);
-    ObjectEvent_FaceDirection(MIA, FACING_NORTH, 0);
+    ObjectEvent_WalkByAndWait(LOCALID_GARET, 0, -16);
+    ObjectEvent_WaitForMove(LOCALID_MIA);
+    ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTH, 0);
     Script_Wait(20);
-    Script_ShowMessage(GARET, 0);
+    Script_ShowMessage(LOCALID_GARET, 0);
     Script_Wait(10);
     ObjectEvent_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
     Script_Wait(20);
-    ObjectEvent_SetSpeed(GARET, PIXELS(6) / 5, PIXELS(3) / 5);
-    ObjectEvent_SetSpeed(IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
-    ObjectEvent_SetSpeed(MIA, PIXELS(6) / 5, PIXELS(3) / 5);
-    BabiPalace_WalkIntoLeader(GARET);
-    BabiPalace_WalkIntoLeader(MIA);
-    BabiPalace_WalkIntoLeader(IVAN);
+    ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
+    ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
+    ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(6) / 5, PIXELS(3) / 5);
+    BabiPalace_WalkIntoLeader(LOCALID_GARET);
+    BabiPalace_WalkIntoLeader(LOCALID_MIA);
+    BabiPalace_WalkIntoLeader(LOCALID_IVAN);
     GameFlag_Set(FLAG_BABI_PALACE_FIRST_NIGHT);
   }
   Script_End();
@@ -1172,12 +1172,12 @@ static void BabiPalace_WakeAfterFinals(void) {
   ObjectEvent_SetAnimation(LOCALID_PARTY_LEADER, ANIM_IN_BED_LYING);
   objectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   ObjectEvent_SetSpriteFlags(objectEvent, 0);
-  ObjectEvent_SetPosition(GARET, PIXELS(104), PIXELS(104));
-  ObjectEvent_SetPosition(MIA, PIXELS(88), PIXELS(120));
-  ObjectEvent_SetPosition(IVAN, PIXELS(120), PIXELS(120));
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_EAST, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_WEST, 0);
+  ObjectEvent_SetPosition(LOCALID_GARET, PIXELS(104), PIXELS(104));
+  ObjectEvent_SetPosition(LOCALID_MIA, PIXELS(88), PIXELS(120));
+  ObjectEvent_SetPosition(LOCALID_IVAN, PIXELS(120), PIXELS(120));
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_EAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_WEST, 0);
   work = gFieldWork;
   work->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->transitionFrames = 12;
@@ -1212,27 +1212,27 @@ static void BabiPalace_WakeAfterFinals(void) {
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   work->transitionFrames = 24;
   Script_Wait(20);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
-  ObjectEvent_FaceObjectEvent(GARET, LOCALID_PARTY_LEADER, 40);
-  ObjectEvent_RunRepeatedMotion(GARET, 2);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
+  ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_PARTY_LEADER, 40);
+  ObjectEvent_RunRepeatedMotion(LOCALID_GARET, 2);
   Script_Wait(30);
   Script_Wait(10);
-  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTHEAST, 0);
+  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHEAST, 0);
   Script_Wait(30);
-  Script_ShowMessage(IVAN, 0);
+  Script_ShowMessage(LOCALID_IVAN, 0);
   Script_Wait(10);
-  Script_ShowMessage(MIA, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST, 0);
+  Script_ShowMessage(LOCALID_MIA, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTHEAST, 0);
   Script_Wait(30);
-  ObjectEvent_RunRepeatedMotion(MIA, 2);
+  ObjectEvent_RunRepeatedMotion(LOCALID_MIA, 2);
   Script_Wait(30);
-  ObjectEvent_SetSpeed(MIA, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_WalkByAndWait(MIA, 0, -40);
-  ObjectEvent_WalkByAndWait(MIA, 32, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_SOUTHEAST, 0);
+  ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_WalkByAndWait(LOCALID_MIA, 0, -40);
+  ObjectEvent_WalkByAndWait(LOCALID_MIA, 32, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_SOUTHEAST, 0);
   Script_Wait(10);
-  Script_ShowMessage(MIA, 0);
+  Script_ShowMessage(LOCALID_MIA, 0);
   objectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   objectEvent->z.fixed -= 0x30000;
   objectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
@@ -1243,68 +1243,68 @@ static void BabiPalace_WakeAfterFinals(void) {
   Script_Wait(30);
   ObjectEvent_SetAnimation(LOCALID_PARTY_LEADER, ANIM_IN_BED_NOD);
   Script_Wait(40);
-  ObjectEvent_SetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
+  ObjectEvent_SetAnimationAndWait(LOCALID_GARET, ANIM_SHAKE_HEAD);
   Script_Wait(20);
-  Script_ShowMessage(GARET, 0);
+  Script_ShowMessage(LOCALID_GARET, 0);
   Script_Wait(10);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
-  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
-  Script_OpenMessage(IVAN, 0);
+  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
+  Script_OpenMessage(LOCALID_IVAN, 0);
   if (Script_ChooseYesNo(-1, 0) == 0) {
     Script_Wait(10);
     ObjectEvent_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_IN_BED_NOD);
     Script_Wait(20);
-    ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
-    ObjectEvent_Jump(GARET, 4, 13);
-    ObjectEvent_Jump(GARET, 4, 30);
-    Script_ShowMessage(GARET, 0);
+    ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
+    ObjectEvent_Jump(LOCALID_GARET, 4, 13);
+    ObjectEvent_Jump(LOCALID_GARET, 4, 30);
+    Script_ShowMessage(LOCALID_GARET, 0);
     gFieldWork->message++;
   } else {
     Script_Wait(10);
     ObjectEvent_SetAnimationAndWait(LOCALID_PARTY_LEADER,
                                     ANIM_IN_BED_SHAKE_HEAD);
     Script_Wait(20);
-    ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
-    ObjectEvent_Jump(GARET, 4, 13);
-    ObjectEvent_Jump(GARET, 4, 30);
+    ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
+    ObjectEvent_Jump(LOCALID_GARET, 4, 13);
+    ObjectEvent_Jump(LOCALID_GARET, 4, 30);
     gFieldWork->message++;
-    Script_ShowMessage(GARET, 0);
+    Script_ShowMessage(LOCALID_GARET, 0);
   }
   Script_Wait(10);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHWEST, 0);
   Script_Wait(30);
-  ObjectEvent_SetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
+  ObjectEvent_SetAnimationAndWait(LOCALID_IVAN, ANIM_SHAKE_HEAD);
   Script_Wait(20);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST, 0);
   Script_Wait(30);
-  ObjectEvent_RunRepeatedMotion(GARET, 2);
+  ObjectEvent_RunRepeatedMotion(LOCALID_GARET, 2);
   Script_Wait(40);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTHEAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHEAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHEAST, 0);
   Script_Wait(30);
-  ObjectEvent_SetAnimationAndWait(GARET, ANIM_NOD);
+  ObjectEvent_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
   Script_Wait(30);
-  Script_ShowMessage(GARET, 0);
+  Script_ShowMessage(LOCALID_GARET, 0);
   Script_Wait(10);
-  ObjectEvent_FaceDirection(MIA, FACING_SOUTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_SOUTHWEST, 0);
   Script_Wait(50);
-  ObjectEvent_FaceDirection(MIA, FACING_SOUTHEAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_SOUTHEAST, 0);
   Script_Wait(35);
-  ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_SMILE, 50);
+  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_SMILE, 50);
   Script_Wait(10);
-  ObjectEvent_SetAnimationAndWait(MIA, ANIM_NOD);
+  ObjectEvent_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
   Script_Wait(30);
-  Script_ShowMessage(MIA, 0);
+  Script_ShowMessage(LOCALID_MIA, 0);
   Script_Wait(10);
-  ObjectEvent_RunRepeatedMotion(IVAN, 2);
+  ObjectEvent_RunRepeatedMotion(LOCALID_IVAN, 2);
   Script_Wait(20);
-  Script_OpenMessage(IVAN, 0);
+  Script_OpenMessage(LOCALID_IVAN, 0);
   if (Script_ChooseYesNo(-1, 0) == 0) {
     Script_Wait(10);
     ObjectEvent_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_IN_BED_NOD);
     Script_Wait(20);
-    ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
-    Script_ShowMessage(GARET, 0);
+    ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
+    Script_ShowMessage(LOCALID_GARET, 0);
     pick = 0;
     gFieldWork->message++;
   } else {
@@ -1312,67 +1312,67 @@ static void BabiPalace_WakeAfterFinals(void) {
     ObjectEvent_SetAnimationAndWait(LOCALID_PARTY_LEADER,
                                     ANIM_IN_BED_SHAKE_HEAD);
     Script_Wait(20);
-    ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
+    ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
     gFieldWork->message++;
     pick = 1;
-    Script_ShowMessage(GARET, 0);
+    Script_ShowMessage(LOCALID_GARET, 0);
   }
   Script_Wait(10);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHWEST, 0);
   Script_Wait(30);
-  ObjectEvent_SetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
+  ObjectEvent_SetAnimationAndWait(LOCALID_IVAN, ANIM_SHAKE_HEAD);
   Script_Wait(20);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST, 0);
   Script_Wait(30);
-  ObjectEvent_RunRepeatedMotion(GARET, 2);
+  ObjectEvent_RunRepeatedMotion(LOCALID_GARET, 2);
   Script_Wait(40);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTHEAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHEAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHEAST, 0);
   Script_Wait(30);
-  ObjectEvent_SetAnimationAndWait(GARET, ANIM_NOD);
+  ObjectEvent_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
   Script_Wait(30);
-  Script_ShowMessage(GARET, 0);
+  Script_ShowMessage(LOCALID_GARET, 0);
   Script_Wait(10);
-  ObjectEvent_FaceDirection(MIA, FACING_SOUTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_SOUTHWEST, 0);
   Script_Wait(50);
-  ObjectEvent_FaceDirection(MIA, FACING_SOUTHEAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_SOUTHEAST, 0);
   Script_Wait(35);
-  ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_SMILE, 50);
+  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_SMILE, 50);
   Script_Wait(10);
-  ObjectEvent_SetAnimationAndWait(MIA, ANIM_NOD);
+  ObjectEvent_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
   Script_Wait(30);
-  Script_ShowMessage(MIA, 0);
+  Script_ShowMessage(LOCALID_MIA, 0);
   if (pick == 0) {
     Script_Wait(10);
-    ObjectEvent_SetAnimationAndWait(IVAN, ANIM_NOD);
+    ObjectEvent_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
     Script_Wait(30);
-    Script_ShowMessage(IVAN, 0);
+    Script_ShowMessage(LOCALID_IVAN, 0);
     Script_Wait(10);
-    ObjectEvent_RunRepeatedMotion(GARET, 2);
+    ObjectEvent_RunRepeatedMotion(LOCALID_GARET, 2);
     Script_Wait(30);
-    Script_ShowMessage(GARET, 0);
+    Script_ShowMessage(LOCALID_GARET, 0);
     gFieldWork->message += 2;
   } else {
     gFieldWork->message += 2;
     Script_Wait(10);
-    ObjectEvent_SetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
+    ObjectEvent_SetAnimationAndWait(LOCALID_IVAN, ANIM_SHAKE_HEAD);
     Script_Wait(20);
-    Script_ShowMessage(IVAN, 0);
+    Script_ShowMessage(LOCALID_IVAN, 0);
     Script_Wait(10);
-    ObjectEvent_RunRepeatedMotion(GARET, 2);
+    ObjectEvent_RunRepeatedMotion(LOCALID_GARET, 2);
     Script_Wait(20);
-    Script_ShowMessage(GARET, 0);
+    Script_ShowMessage(LOCALID_GARET, 0);
   }
   Script_Wait(10);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Script_Wait(10);
-  ObjectEvent_SetAnimationAndWait(GARET, ANIM_NOD);
+  ObjectEvent_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
   Script_Wait(30);
-  Script_ShowMessage(GARET, 0);
+  Script_ShowMessage(LOCALID_GARET, 0);
   Script_Wait(20);
-  ObjectEvent_FaceEachOther(IVAN, MIA, 40);
-  ObjectEvent_FaceDirection(MIA, FACING_SOUTHEAST, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTHEAST, 0);
+  ObjectEvent_FaceEachOther(LOCALID_IVAN, LOCALID_MIA, 40);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_SOUTHEAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTHEAST, 0);
   Script_Wait(30);
   // Wait for the player to leave the bed before the companions rejoin.
   while ((gKeysHeld & KEYS_DPAD) == 0) {
@@ -1385,35 +1385,35 @@ static void BabiPalace_WakeAfterFinals(void) {
   ObjectEvent_SetSpriteFlags(objectEvent, SPRITE_FLAG_SHADOW);
   Script_Wait(20);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_SOUTH, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_SOUTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTH, 0);
   Script_Wait(20);
   Script_Wait(10);
-  ObjectEvent_RunRepeatedMotion(MIA, 2);
+  ObjectEvent_RunRepeatedMotion(LOCALID_MIA, 2);
   Script_Wait(20);
-  Script_ShowMessage(MIA, 0);
+  Script_ShowMessage(LOCALID_MIA, 0);
   Script_Wait(10);
-  ObjectEvent_RunRepeatedMotion(GARET, 2);
+  ObjectEvent_RunRepeatedMotion(LOCALID_GARET, 2);
   Script_Wait(20);
-  Script_ShowMessage(GARET, 0);
+  Script_ShowMessage(LOCALID_GARET, 0);
   Script_Wait(20);
-  ObjectEvent_SetAnimationAndWait(IVAN, ANIM_NOD);
+  ObjectEvent_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
   Script_Wait(30);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST, 0);
   Script_Wait(30);
-  Script_ShowMessage(IVAN, 0);
+  Script_ShowMessage(LOCALID_IVAN, 0);
   Script_Wait(20);
   ObjectEvent_SetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  ObjectEvent_SetAnimation(GARET, ANIM_NOD);
-  ObjectEvent_SetAnimationAndWait(MIA, ANIM_NOD);
+  ObjectEvent_SetAnimation(LOCALID_GARET, ANIM_NOD);
+  ObjectEvent_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
   Script_Wait(30);
-  ObjectEvent_SetSpeed(GARET, PIXELS(6) / 5, PIXELS(3) / 5);
-  ObjectEvent_SetSpeed(MIA, PIXELS(6) / 5, PIXELS(3) / 5);
-  ObjectEvent_SetSpeed(IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
-  BabiPalace_WalkIntoLeader(GARET);
-  BabiPalace_WalkIntoLeader(MIA);
-  BabiPalace_WalkIntoLeader(IVAN);
+  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
+  ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(6) / 5, PIXELS(3) / 5);
+  ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
+  BabiPalace_WalkIntoLeader(LOCALID_GARET);
+  BabiPalace_WalkIntoLeader(LOCALID_MIA);
+  BabiPalace_WalkIntoLeader(LOCALID_IVAN);
   Script_Wait(10);
   Script_End();
 }
@@ -1451,10 +1451,10 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 208, 0x2f8);
   Script_Wait(10);
   FieldCamera_MoveTo(PIXELS(216), -1, PIXELS(736), 1);
-  FieldMotion_LaunchFromFocusedObject(GARET, -16, 16, 0xc000);
-  FieldMotion_LaunchFromFocusedObject(MIA, 0, 24, 0xc000);
-  FieldMotion_LaunchFromFocusedObject(IVAN, 16, 16, 0xc000);
-  ObjectEvent_WaitForMove(GARET);
+  FieldMotion_LaunchFromFocusedObject(LOCALID_GARET, -16, 16, 0xc000);
+  FieldMotion_LaunchFromFocusedObject(LOCALID_MIA, 0, 24, 0xc000);
+  FieldMotion_LaunchFromFocusedObject(LOCALID_IVAN, 16, 16, 0xc000);
+  ObjectEvent_WaitForMove(LOCALID_GARET);
   Script_Wait(30);
   Script_Wait(10);
   ObjectEvent_SetAnimationAndWait(LOCALID_BABI, ANIM_NOD);
@@ -1561,9 +1561,9 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   ObjectEvent_SetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
   Script_Wait(30);
   Script_Wait(10);
-  ObjectEvent_Jump(GARET, 4, 13);
-  ObjectEvent_Jump(GARET, 4, 30);
-  Script_ShowMessage(GARET, 0);
+  ObjectEvent_Jump(LOCALID_GARET, 4, 13);
+  ObjectEvent_Jump(LOCALID_GARET, 4, 30);
+  Script_ShowMessage(LOCALID_GARET, 0);
   Script_Wait(10);
   ObjectEvent_FaceDirection(LOCALID_BABI, FACING_SOUTH, 0);
   ObjectEvent_RunRepeatedMotion(LOCALID_IODEM, 2);
@@ -1582,39 +1582,39 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Script_Wait(10);
   ObjectEvent_RunRepeatedMotion(LOCALID_IODEM, 2);
   Script_Wait(20);
-  ObjectEvent_FaceEachOther(LOCALID_BABI, GARET, 0);
+  ObjectEvent_FaceEachOther(LOCALID_BABI, LOCALID_GARET, 0);
   Script_Wait(40);
   Script_ShowMessage(LOCALID_BABI, 0);
   Script_Wait(10);
-  ObjectEvent_RunRepeatedMotion(GARET, 2);
+  ObjectEvent_RunRepeatedMotion(LOCALID_GARET, 2);
   Script_Wait(30);
-  ObjectEvent_FaceObjectEvent(GARET, IVAN, 30);
+  ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_IVAN, 30);
   Script_Wait(10);
-  ObjectEvent_RunRepeatedMotion(IVAN, 2);
+  ObjectEvent_RunRepeatedMotion(LOCALID_IVAN, 2);
   Script_Wait(20);
-  ObjectEvent_FaceObjectEvent(IVAN, GARET, 30);
-  Script_ShowMessage(IVAN, 0);
+  ObjectEvent_FaceObjectEvent(LOCALID_IVAN, LOCALID_GARET, 30);
+  Script_ShowMessage(LOCALID_IVAN, 0);
   Script_Wait(10);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 50);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 50);
   Script_Wait(10);
   ObjectEvent_SetAnimationAndWait(LOCALID_BABI, ANIM_NOD);
   Script_Wait(30);
   Script_ShowMessage(LOCALID_BABI, 0);
   Script_Wait(10);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTH, 0);
   Script_Wait(30);
   Script_Wait(10);
   ObjectEvent_RunRepeatedMotion(LOCALID_IODEM, 2);
   Script_Wait(20);
   Script_ShowMessage(LOCALID_IODEM, 0);
   Script_Wait(10);
-  ObjectEvent_FaceEachOther(GARET, LOCALID_PARTY_LEADER, 0);
-  ObjectEvent_FaceEachOther(MIA, IVAN, 50);
+  ObjectEvent_FaceEachOther(LOCALID_GARET, LOCALID_PARTY_LEADER, 0);
+  ObjectEvent_FaceEachOther(LOCALID_MIA, LOCALID_IVAN, 50);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTH, 0);
   Script_Wait(30);
   Script_Wait(10);
   ObjectEvent_SetAnimationAndWait(LOCALID_IODEM, ANIM_SHAKE_HEAD);
@@ -1625,8 +1625,8 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Script_Wait(20);
   Script_ShowMessage(LOCALID_BABI, 0);
   Script_Wait(10);
-  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  Script_ShowMessage(IVAN, 0);
+  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  Script_ShowMessage(LOCALID_IVAN, 0);
   Script_Wait(10);
   ObjectEvent_RunRepeatedMotion(LOCALID_BABI, 2);
   Script_Wait(20);
@@ -1650,9 +1650,9 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Script_ShowMessage(LOCALID_IODEM, 0);
   Script_Wait(20);
   ObjectEvent_SetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  ObjectEvent_SetAnimation(GARET, ANIM_NOD);
-  ObjectEvent_SetAnimation(MIA, ANIM_NOD);
-  ObjectEvent_SetAnimationAndWait(IVAN, ANIM_NOD);
+  ObjectEvent_SetAnimation(LOCALID_GARET, ANIM_NOD);
+  ObjectEvent_SetAnimation(LOCALID_MIA, ANIM_NOD);
+  ObjectEvent_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
   Script_Wait(50);
   ObjectEvent_FaceObjectEvent(LOCALID_BABI, LOCALID_IODEM, 60);
   ObjectEvent_FaceDirection(LOCALID_BABI, FACING_SOUTH, 0);
@@ -1672,21 +1672,21 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Script_Wait(20);
   Script_ShowMessage(LOCALID_BABI, 0);
   Script_Wait(10);
-  ObjectEvent_FaceEachOther(GARET, LOCALID_PARTY_LEADER, 50);
+  ObjectEvent_FaceEachOther(LOCALID_GARET, LOCALID_PARTY_LEADER, 50);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 0);
   Script_Wait(30);
   Script_Wait(10);
   ObjectEvent_SetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  ObjectEvent_SetAnimationAndWait(GARET, ANIM_NOD);
+  ObjectEvent_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
   Script_Wait(30);
   Script_Wait(10);
   ObjectEvent_SetAnimationAndWait(LOCALID_BABI, ANIM_NOD);
   Script_Wait(30);
   Script_ShowMessage(LOCALID_BABI, 0);
   Script_Wait(10);
-  ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  Script_ShowMessage(MIA, 0);
+  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  Script_ShowMessage(LOCALID_MIA, 0);
   Script_Wait(10);
   ObjectEvent_ShowEmote(LOCALID_BABI, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   ObjectEvent_FaceObjectEvent(LOCALID_IODEM, LOCALID_BABI, 50);
@@ -1695,64 +1695,64 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Script_Wait(20);
   Script_ShowMessage(LOCALID_BABI, 0);
   Script_Wait(20);
-  ObjectEvent_FaceEachOther(GARET, LOCALID_PARTY_LEADER, 0);
-  ObjectEvent_FaceEachOther(MIA, IVAN, 50);
+  ObjectEvent_FaceEachOther(LOCALID_GARET, LOCALID_PARTY_LEADER, 0);
+  ObjectEvent_FaceEachOther(LOCALID_MIA, LOCALID_IVAN, 50);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTH, 0);
   Script_Wait(50);
   ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_SOUTHEAST, 0);
   Script_Wait(20);
   Script_ShowMessage(LOCALID_IODEM, 0);
   Script_Wait(10);
-  ObjectEvent_RunRepeatedMotion(GARET, 2);
+  ObjectEvent_RunRepeatedMotion(LOCALID_GARET, 2);
   Script_Wait(20);
-  Script_ShowMessage(GARET, 0);
+  Script_ShowMessage(LOCALID_GARET, 0);
   Script_Wait(20);
   ObjectEvent_FaceDirection(LOCALID_BABI, FACING_WEST, 0);
   Script_Wait(40);
   ObjectEvent_ShowEmote(LOCALID_BABI, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Script_ShowMessage(LOCALID_BABI, 0);
   Script_Wait(10);
-  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  Script_ShowMessage(IVAN, 0);
+  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  Script_ShowMessage(LOCALID_IVAN, 0);
   Script_Wait(10);
-  ObjectEvent_FaceEachOther(LOCALID_BABI, IVAN, 40);
+  ObjectEvent_FaceEachOther(LOCALID_BABI, LOCALID_IVAN, 40);
   ObjectEvent_SetAnimationAndWait(LOCALID_BABI, ANIM_NOD);
   Script_Wait(30);
   Script_ShowMessage(LOCALID_BABI, 0);
   Script_Wait(10);
-  ObjectEvent_FaceEachOther(GARET, LOCALID_PARTY_LEADER, 0);
-  ObjectEvent_FaceEachOther(MIA, IVAN, 60);
+  ObjectEvent_FaceEachOther(LOCALID_GARET, LOCALID_PARTY_LEADER, 0);
+  ObjectEvent_FaceEachOther(LOCALID_MIA, LOCALID_IVAN, 60);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTH, 0);
   Script_Wait(50);
   ObjectEvent_RunRepeatedMotion(LOCALID_IODEM, 2);
   Script_Wait(20);
   Script_ShowMessage(LOCALID_IODEM, 0);
   Script_Wait(10);
-  ObjectEvent_FaceEachOther(GARET, LOCALID_PARTY_LEADER, 40);
-  ObjectEvent_RunRepeatedMotion(GARET, 2);
+  ObjectEvent_FaceEachOther(LOCALID_GARET, LOCALID_PARTY_LEADER, 40);
+  ObjectEvent_RunRepeatedMotion(LOCALID_GARET, 2);
   Script_Wait(20);
-  Script_OpenMessage(GARET, 0);
+  Script_OpenMessage(LOCALID_GARET, 0);
   if (Script_ChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
     Script_Wait(20);
-    Script_ShowMessage(GARET, 0);
+    Script_ShowMessage(LOCALID_GARET, 0);
     gFieldWork->message += 3;
   } else {
     Script_Wait(10);
     gFieldWork->message++;
-    Script_OpenMessage(GARET, 0);
+    Script_OpenMessage(LOCALID_GARET, 0);
     if (Script_ChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
       Script_Wait(20);
-      Script_ShowMessage(GARET, 0);
+      Script_ShowMessage(LOCALID_GARET, 0);
       gFieldWork->message++;
     } else {
       gFieldWork->message++;
-      Script_ShowMessage(GARET, 0);
+      Script_ShowMessage(LOCALID_GARET, 0);
     }
   }
 
@@ -1762,25 +1762,25 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Script_ShowMessage(LOCALID_BABI, 0);
   Script_Wait(10);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 0);
   Script_Wait(40);
-  ObjectEvent_RunRepeatedMotion(GARET, 2);
+  ObjectEvent_RunRepeatedMotion(LOCALID_GARET, 2);
   Script_Wait(20);
   Script_Wait(10);
   ObjectEvent_SetAnimationAndWait(LOCALID_BABI, ANIM_NOD);
   Script_Wait(30);
   Script_ShowMessage(LOCALID_BABI, 0);
   Script_Wait(10);
-  ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  Script_ShowMessage(MIA, 0);
+  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  Script_ShowMessage(LOCALID_MIA, 0);
   Script_Wait(10);
   ObjectEvent_RunRepeatedMotion(LOCALID_BABI, 2);
   Script_Wait(20);
   Script_ShowMessage(LOCALID_BABI, 0);
   Script_Wait(10);
-  ObjectEvent_RunRepeatedMotion(IVAN, 2);
+  ObjectEvent_RunRepeatedMotion(LOCALID_IVAN, 2);
   Script_Wait(20);
-  Script_ShowMessage(IVAN, 0);
+  Script_ShowMessage(LOCALID_IVAN, 0);
   Script_Wait(10);
   ObjectEvent_FaceObjectEvent(LOCALID_IODEM, LOCALID_BABI, 40);
   ObjectEvent_RunRepeatedMotion(LOCALID_IODEM, 2);
@@ -1792,9 +1792,9 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Script_Wait(10);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
                         0);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Script_Wait(10);
   ObjectEvent_SetAnimationAndWait(LOCALID_BABI, ANIM_SHAKE_HEAD);
   Script_Wait(20);
@@ -1804,46 +1804,46 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Script_Wait(30);
   Script_ShowMessage(LOCALID_BABI, 0);
   Script_Wait(20);
-  ObjectEvent_SetAnimationAndWait(GARET, ANIM_NOD);
+  ObjectEvent_SetAnimationAndWait(LOCALID_GARET, ANIM_NOD);
   Script_Wait(30);
-  Script_ShowMessage(GARET, 0);
+  Script_ShowMessage(LOCALID_GARET, 0);
   Script_Wait(20);
   ObjectEvent_SetAnimationAndWait(LOCALID_BABI, ANIM_NOD);
   Script_Wait(30);
   Script_Wait(10);
-  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  Script_ShowMessage(IVAN, 0);
+  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  Script_ShowMessage(LOCALID_IVAN, 0);
   Script_Wait(10);
   ObjectEvent_SetAnimationAndWait(LOCALID_BABI, ANIM_NOD);
   Script_Wait(40);
-  ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, IVAN, 0);
-  ObjectEvent_FaceObjectEvent(GARET, IVAN, 0);
-  ObjectEvent_FaceObjectEvent(MIA, IVAN, 0);
-  ObjectEvent_FaceObjectEvent(LOCALID_IODEM, IVAN, 0);
+  ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_IVAN, 0);
+  ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_IVAN, 0);
+  ObjectEvent_FaceObjectEvent(LOCALID_MIA, LOCALID_IVAN, 0);
+  ObjectEvent_FaceObjectEvent(LOCALID_IODEM, LOCALID_IVAN, 0);
   Script_Wait(50);
   Script_Wait(10);
-  ObjectEvent_RunRepeatedMotion(IVAN, 2);
+  ObjectEvent_RunRepeatedMotion(LOCALID_IVAN, 2);
   Script_Wait(20);
-  Script_ShowMessage(IVAN, 0);
+  Script_ShowMessage(LOCALID_IVAN, 0);
   Script_Wait(10);
   ObjectEvent_ShowEmote(LOCALID_BABI, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Script_ShowMessage(LOCALID_BABI, 0);
   Script_Wait(10);
   ObjectEvent_SetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  ObjectEvent_SetAnimation(GARET, ANIM_NOD);
-  ObjectEvent_SetAnimationAndWait(MIA, ANIM_NOD);
+  ObjectEvent_SetAnimation(LOCALID_GARET, ANIM_NOD);
+  ObjectEvent_SetAnimationAndWait(LOCALID_MIA, ANIM_NOD);
   Script_Wait(30);
   Script_Wait(10);
-  ObjectEvent_SetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
+  ObjectEvent_SetAnimationAndWait(LOCALID_IVAN, ANIM_SHAKE_HEAD);
   Script_Wait(20);
-  Script_ShowMessage(IVAN, 0);
+  Script_ShowMessage(LOCALID_IVAN, 0);
   Script_Wait(20);
   ObjectEvent_SetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
   Script_Wait(30);
   ObjectEvent_FaceObjectEvent(LOCALID_IODEM, LOCALID_BABI, 30);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTH, 0);
   Script_Wait(20);
   Script_ShowMessage(LOCALID_IODEM, 0);
   Script_Wait(10);
@@ -1852,9 +1852,9 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Script_ShowMessage(LOCALID_BABI, 0);
   Script_Wait(10);
   ObjectEvent_StartRepeatedMotion(LOCALID_PARTY_LEADER, 2);
-  ObjectEvent_StartRepeatedMotion(GARET, 2);
-  ObjectEvent_StartRepeatedMotion(MIA, 2);
-  ObjectEvent_RunRepeatedMotion(IVAN, 2);
+  ObjectEvent_StartRepeatedMotion(LOCALID_GARET, 2);
+  ObjectEvent_StartRepeatedMotion(LOCALID_MIA, 2);
+  ObjectEvent_RunRepeatedMotion(LOCALID_IVAN, 2);
   Script_Wait(30);
   Script_Wait(10);
   ObjectEvent_RunRepeatedMotion(LOCALID_IODEM, 2);
@@ -1867,12 +1867,12 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Script_Wait(20);
   Script_ShowMessage(LOCALID_BABI, 0);
   Script_Wait(10);
-  ObjectEvent_FaceEachOther(GARET, LOCALID_PARTY_LEADER, 0);
-  ObjectEvent_FaceEachOther(MIA, IVAN, 50);
+  ObjectEvent_FaceEachOther(LOCALID_GARET, LOCALID_PARTY_LEADER, 0);
+  ObjectEvent_FaceEachOther(LOCALID_MIA, LOCALID_IVAN, 50);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTH, 0);
   Script_Wait(40);
   ObjectEvent_FaceDirection(LOCALID_BABI, FACING_SOUTH, 0);
   Script_Wait(30);
@@ -1895,18 +1895,18 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   ObjectEvent_SetSpeed(LOCALID_IODEM, PIXELS(8) / 5, PIXELS(4) / 5);
   ObjectEvent_WalkByAndWait(LOCALID_IODEM, 0, 24);
   ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_IODEM, 0);
-  ObjectEvent_FaceObjectEvent(GARET, LOCALID_IODEM, 0);
-  ObjectEvent_FaceObjectEvent(MIA, LOCALID_IODEM, 0);
-  ObjectEvent_FaceObjectEvent(IVAN, LOCALID_IODEM, 0);
+  ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_IODEM, 0);
+  ObjectEvent_FaceObjectEvent(LOCALID_MIA, LOCALID_IODEM, 0);
+  ObjectEvent_FaceObjectEvent(LOCALID_IVAN, LOCALID_IODEM, 0);
   ObjectEvent_FaceDirection(LOCALID_BABI, FACING_SOUTH, 0);
   Script_ShowMessage(LOCALID_BABI, 0);
   Script_Wait(10);
   ObjectEvent_ShowEmote(LOCALID_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   ObjectEvent_FaceObjectEvent(LOCALID_IODEM, LOCALID_BABI, 0);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTH, 0);
   Script_Wait(10);
   ObjectEvent_RunRepeatedMotion(LOCALID_IODEM, 2);
   Script_Wait(20);
@@ -1942,9 +1942,9 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Script_Wait(30);
   Script_ShowMessage(LOCALID_BABI, 0);
   Script_Wait(10);
-  ObjectEvent_RunRepeatedMotion(GARET, 2);
+  ObjectEvent_RunRepeatedMotion(LOCALID_GARET, 2);
   Script_Wait(20);
-  Script_ShowMessage(GARET, 0);
+  Script_ShowMessage(LOCALID_GARET, 0);
   Script_Wait(10);
   ObjectEvent_FaceDirection(LOCALID_BABI, FACING_SOUTH, 0);
   Script_Wait(30);
@@ -1952,27 +1952,27 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Script_Wait(30);
   Script_ShowMessage(LOCALID_BABI, 0);
   Script_Wait(10);
-  ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Script_ShowMessage(MIA, 0);
+  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  Script_ShowMessage(LOCALID_MIA, 0);
   Script_Wait(10);
   ObjectEvent_SetAnimationAndWait(LOCALID_BABI, ANIM_NOD);
   Script_Wait(30);
   Script_ShowMessage(LOCALID_BABI, 0);
   Script_Wait(10);
-  ObjectEvent_SetAnimationAndWait(IVAN, ANIM_NOD);
+  ObjectEvent_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
   Script_Wait(30);
-  Script_ShowMessage(IVAN, 0);
+  Script_ShowMessage(LOCALID_IVAN, 0);
   Script_Wait(10);
   ObjectEvent_SetAnimationAndWait(LOCALID_BABI, ANIM_NOD);
   Script_Wait(30);
   Script_ShowMessage(LOCALID_BABI, 0);
   Script_Wait(10);
-  ObjectEvent_FaceEachOther(GARET, LOCALID_PARTY_LEADER, 0);
-  ObjectEvent_FaceEachOther(MIA, IVAN, 50);
+  ObjectEvent_FaceEachOther(LOCALID_GARET, LOCALID_PARTY_LEADER, 0);
+  ObjectEvent_FaceEachOther(LOCALID_MIA, LOCALID_IVAN, 50);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTH, 0);
   Script_Wait(30);
   Script_Wait(10);
   ObjectEvent_RunRepeatedMotion(LOCALID_BABI, 2);
@@ -1981,9 +1981,9 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Script_Wait(20);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
                         0);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
   Script_Wait(10);
   ObjectEvent_SetAnimationAndWait(LOCALID_BABI, ANIM_NOD);
   Script_Wait(30);
@@ -1999,9 +1999,9 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Script_Wait(20);
   Script_ShowMessage(LOCALID_BABI, 0);
   Script_Wait(10);
-  ObjectEvent_RunRepeatedMotion(GARET, 2);
+  ObjectEvent_RunRepeatedMotion(LOCALID_GARET, 2);
   Script_Wait(20);
-  Script_ShowMessage(GARET, 0);
+  Script_ShowMessage(LOCALID_GARET, 0);
   Script_Wait(10);
   ObjectEvent_RunRepeatedMotion(LOCALID_BABI, 2);
   Script_Wait(20);
@@ -2018,8 +2018,8 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Script_Wait(20);
   Script_ShowMessage(LOCALID_BABI, 0);
   Script_Wait(10);
-  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  Script_ShowMessage(IVAN, 0);
+  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  Script_ShowMessage(LOCALID_IVAN, 0);
   Script_Wait(10);
   ObjectEvent_FaceDirection(LOCALID_BABI, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_SOUTHEAST, 0);
@@ -2027,39 +2027,39 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   ObjectEvent_SetAnimationAndWait(LOCALID_BABI, ANIM_NOD);
   Script_Wait(30);
   Script_Wait(10);
-  ObjectEvent_RunRepeatedMotion(MIA, 2);
+  ObjectEvent_RunRepeatedMotion(LOCALID_MIA, 2);
   Script_Wait(20);
-  Script_ShowMessage(MIA, 0);
+  Script_ShowMessage(LOCALID_MIA, 0);
   Script_Wait(10);
   ObjectEvent_ShowEmote(LOCALID_BABI, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Script_ShowMessage(LOCALID_BABI, 0);
   Script_Wait(20);
   ObjectEvent_SetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  ObjectEvent_SetAnimation(GARET, ANIM_NOD);
-  ObjectEvent_SetAnimation(MIA, ANIM_NOD);
-  ObjectEvent_SetAnimationAndWait(IVAN, ANIM_NOD);
+  ObjectEvent_SetAnimation(LOCALID_GARET, ANIM_NOD);
+  ObjectEvent_SetAnimation(LOCALID_MIA, ANIM_NOD);
+  ObjectEvent_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
   Script_Wait(30);
   Script_Wait(20);
   ObjectEvent_ShowEmote(LOCALID_BABI, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Script_ShowMessage(LOCALID_BABI, 0);
   Script_Wait(10);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  Script_ShowMessage(GARET, 0);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  Script_ShowMessage(LOCALID_GARET, 0);
   Script_Wait(10);
   ObjectEvent_ShowEmote(LOCALID_BABI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Script_ShowMessage(LOCALID_BABI, 0);
   Script_Wait(10);
-  ObjectEvent_FaceEachOther(GARET, LOCALID_PARTY_LEADER, 50);
+  ObjectEvent_FaceEachOther(LOCALID_GARET, LOCALID_PARTY_LEADER, 50);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 0);
   Script_Wait(30);
   Script_Wait(10);
   ObjectEvent_SetAnimationAndWait(LOCALID_BABI, ANIM_NOD);
   Script_Wait(30);
   Script_ShowMessage(LOCALID_BABI, 0);
   Script_Wait(10);
-  ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  Script_ShowMessage(MIA, 0);
+  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  Script_ShowMessage(LOCALID_MIA, 0);
   Script_Wait(10);
   ObjectEvent_SetAnimationAndWait(LOCALID_BABI, ANIM_SHAKE_HEAD);
   Script_Wait(20);
@@ -2067,24 +2067,24 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Script_Wait(10);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
                         0);
-  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Script_Wait(10);
   ObjectEvent_SetAnimationAndWait(LOCALID_BABI, ANIM_SHAKE_HEAD);
   Script_Wait(20);
   Script_ShowMessage(LOCALID_BABI, 0);
   Script_Wait(10);
-  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  Script_OpenMessage(IVAN, 0);
+  ObjectEvent_ShowEmote(LOCALID_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  Script_OpenMessage(LOCALID_IVAN, 0);
   if (Script_ChooseYesNo(LOCALID_BABI, 0) == 0) {
     Script_Wait(10);
-    Script_ShowMessage(IVAN, 0);
+    Script_ShowMessage(LOCALID_IVAN, 0);
     gFieldWork->message++;
   } else {
     Script_Wait(10);
     gFieldWork->message++;
-    Script_ShowMessage(IVAN, 0);
+    Script_ShowMessage(LOCALID_IVAN, 0);
   }
 
   Script_Wait(10);
@@ -2107,25 +2107,25 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Script_Wait(30);
   Script_ShowMessage(LOCALID_BABI, 0);
   Script_Wait(10);
-  ObjectEvent_FaceEachOther(GARET, LOCALID_PARTY_LEADER, 40);
-  Script_ShowMessage(GARET, 0);
+  ObjectEvent_FaceEachOther(LOCALID_GARET, LOCALID_PARTY_LEADER, 40);
+  Script_ShowMessage(LOCALID_GARET, 0);
   ObjectEvent_FaceDirection(LOCALID_BABI, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_SOUTHEAST, 0);
   Script_Wait(30);
   Script_ShowMessage(LOCALID_BABI, 0);
   Script_Wait(10);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 0);
   Script_Wait(30);
-  ObjectEvent_FaceEachOther(MIA, IVAN, 60);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
+  ObjectEvent_FaceEachOther(LOCALID_MIA, LOCALID_IVAN, 60);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTH, 0);
   Script_Wait(30);
-  Script_ShowMessage(MIA, 0);
+  Script_ShowMessage(LOCALID_MIA, 0);
   Script_Wait(10);
-  ObjectEvent_SetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
+  ObjectEvent_SetAnimationAndWait(LOCALID_IVAN, ANIM_SHAKE_HEAD);
   Script_Wait(20);
-  Script_ShowMessage(IVAN, 0);
+  Script_ShowMessage(LOCALID_IVAN, 0);
   Script_Wait(10);
   ObjectEvent_FaceEachOther(LOCALID_IODEM, 14, 60);
   ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_SOUTHEAST, 0);
@@ -2142,13 +2142,13 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Script_OpenMessage(LOCALID_IODEM, 0);
   if (Script_ChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
     Script_Wait(20);
-    ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-    Script_ShowMessage(GARET, 0);
+    ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+    Script_ShowMessage(LOCALID_GARET, 0);
     gFieldWork->message++;
   } else {
     Script_Wait(10);
     gFieldWork->message++;
-    Script_ShowMessage(GARET, 0);
+    Script_ShowMessage(LOCALID_GARET, 0);
   }
 
   Script_Wait(10);
@@ -2160,9 +2160,9 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Script_ShowMessage(LOCALID_IODEM, 0);
   Script_Wait(20);
   ObjectEvent_SetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  ObjectEvent_SetAnimation(GARET, ANIM_NOD);
-  ObjectEvent_SetAnimation(MIA, ANIM_NOD);
-  ObjectEvent_SetAnimationAndWait(IVAN, ANIM_NOD);
+  ObjectEvent_SetAnimation(LOCALID_GARET, ANIM_NOD);
+  ObjectEvent_SetAnimation(LOCALID_MIA, ANIM_NOD);
+  ObjectEvent_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
   Script_Wait(30);
   Script_Wait(10);
   ObjectEvent_ShowEmote(LOCALID_BABI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
@@ -2194,12 +2194,12 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Script_Wait(20);
   Script_ShowMessage(LOCALID_BABI, 0);
   Script_Wait(10);
-  ObjectEvent_FaceEachOther(GARET, LOCALID_PARTY_LEADER, 0);
-  ObjectEvent_FaceEachOther(MIA, IVAN, 50);
+  ObjectEvent_FaceEachOther(LOCALID_GARET, LOCALID_PARTY_LEADER, 0);
+  ObjectEvent_FaceEachOther(LOCALID_MIA, LOCALID_IVAN, 50);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTH, 0);
   Script_Wait(30);
   Script_Wait(10);
   ObjectEvent_ShowEmote(LOCALID_IODEM, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 50);
@@ -2261,9 +2261,9 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Script_Wait(20);
   // The party tracks each departing speaker before gathering back together.
   ObjectEvent_LinkObjectAndSetCallback(LOCALID_PARTY_LEADER, 20);
-  ObjectEvent_LinkObjectAndSetCallback(GARET, 20);
-  ObjectEvent_LinkObjectAndSetCallback(MIA, 20);
-  ObjectEvent_LinkObjectAndSetCallback(IVAN, 20);
+  ObjectEvent_LinkObjectAndSetCallback(LOCALID_GARET, 20);
+  ObjectEvent_LinkObjectAndSetCallback(LOCALID_MIA, 20);
+  ObjectEvent_LinkObjectAndSetCallback(LOCALID_IVAN, 20);
   ObjectEvent_SetSpeed(LOCALID_IODEM, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_WalkByAndWait(LOCALID_IODEM, 0, 32);
   ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_EAST, 0);
@@ -2273,24 +2273,24 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Script_Wait(10);
   ObjectEvent_SetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
   Script_Wait(30);
-  ObjectEvent_WalkByAndWait(GARET, 16, 0);
+  ObjectEvent_WalkByAndWait(LOCALID_GARET, 16, 0);
   ObjectEvent_WalkBy(LOCALID_IODEM, 0, 80);
   Script_Wait(40);
-  ObjectEvent_WalkByAndWait(GARET, -16, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_SOUTH, 0);
+  ObjectEvent_WalkByAndWait(LOCALID_GARET, -16, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_SOUTH, 0);
   ObjectEvent_WaitForMove(LOCALID_IODEM);
   Script_Wait(80);
   ObjectEvent_SetPosition(LOCALID_IODEM, 0, 0);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(MIA, FACING_NORTH, 0);
-  ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_MIA, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_IVAN, FACING_NORTH, 0);
   Script_Wait(30);
   ObjectEvent_LinkObjectAndSetCallback(LOCALID_PARTY_LEADER, 14);
-  ObjectEvent_LinkObjectAndSetCallback(GARET, 14);
-  ObjectEvent_LinkObjectAndSetCallback(MIA, 14);
-  ObjectEvent_LinkObjectAndSetCallback(IVAN, 14);
+  ObjectEvent_LinkObjectAndSetCallback(LOCALID_GARET, 14);
+  ObjectEvent_LinkObjectAndSetCallback(LOCALID_MIA, 14);
+  ObjectEvent_LinkObjectAndSetCallback(LOCALID_IVAN, 14);
   Script_Wait(30);
   ObjectEvent_SetAnimationAndWait(LOCALID_BABI, ANIM_NOD);
   Script_Wait(30);
@@ -2307,26 +2307,26 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   ObjectEvent_WalkByAndWait(LOCALID_BABI, 0, 48);
   ObjectEvent_WalkByAndWait(LOCALID_BABI, -64, 0);
   ObjectEvent_Stop(LOCALID_PARTY_LEADER);
-  ObjectEvent_Stop(GARET);
-  ObjectEvent_Stop(MIA);
-  ObjectEvent_Stop(IVAN);
+  ObjectEvent_Stop(LOCALID_GARET);
+  ObjectEvent_Stop(LOCALID_MIA);
+  ObjectEvent_Stop(LOCALID_IVAN);
   ObjectEvent_SetPosition(LOCALID_BABI, 0, 0);
   Script_Wait(20);
-  ObjectEvent_FaceEachOther(LOCALID_PARTY_LEADER, MIA, 0);
-  ObjectEvent_FaceEachOther(GARET, IVAN, 0);
+  ObjectEvent_FaceEachOther(LOCALID_PARTY_LEADER, LOCALID_MIA, 0);
+  ObjectEvent_FaceEachOther(LOCALID_GARET, LOCALID_IVAN, 0);
   Script_Wait(30);
   ObjectEvent_SetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  ObjectEvent_SetAnimation(GARET, ANIM_NOD);
-  ObjectEvent_SetAnimation(MIA, ANIM_NOD);
-  ObjectEvent_SetAnimationAndWait(IVAN, ANIM_NOD);
+  ObjectEvent_SetAnimation(LOCALID_GARET, ANIM_NOD);
+  ObjectEvent_SetAnimation(LOCALID_MIA, ANIM_NOD);
+  ObjectEvent_SetAnimationAndWait(LOCALID_IVAN, ANIM_NOD);
   Script_Wait(30);
   Script_PlaySong(SONG_FADE_OUT_BGM);
-  ObjectEvent_SetSpeed(GARET, PIXELS(6) / 5, PIXELS(3) / 5);
-  ObjectEvent_SetSpeed(IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
-  ObjectEvent_SetSpeed(MIA, PIXELS(6) / 5, PIXELS(3) / 5);
-  BabiPalace_WalkIntoLeader(GARET);
-  BabiPalace_WalkIntoLeader(IVAN);
-  BabiPalace_WalkIntoLeader(MIA);
+  ObjectEvent_SetSpeed(LOCALID_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
+  ObjectEvent_SetSpeed(LOCALID_IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
+  ObjectEvent_SetSpeed(LOCALID_MIA, PIXELS(6) / 5, PIXELS(3) / 5);
+  BabiPalace_WalkIntoLeader(LOCALID_GARET);
+  BabiPalace_WalkIntoLeader(LOCALID_IVAN);
+  BabiPalace_WalkIntoLeader(LOCALID_MIA);
   Script_Wait(10);
   Map_PlayMusic();
   Script_End();
@@ -2713,11 +2713,11 @@ struct ObjectEventTemplate gBabiPalace_OutsideObjectEventTemplates[] = {
 };
 
 struct ObjectEventTemplate gBabiPalace_ObjectEventTemplatesBabiMissing[] = {
-    { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
-    { IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
-    { MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(752), 0, PIXELS(136), FACING_SOUTHEAST, TALK_FACING_PARTY, 0 },
@@ -2743,7 +2743,7 @@ struct ObjectEventTemplate gBabiPalace_ObjectEventTemplatesBabiMissing[] = {
         PIXELS(112), 0, PIXELS(552), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(728), 0, PIXELS(728), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
-    { SHEBA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_SHEBA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(600), 0, PIXELS(744), FACING_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_IODEM, FLAG_IODEM_HEARD_SOLDIERS, MOVEMENT_TYPE_STAND,
         PIXELS(392), 0, PIXELS(360), FACING_EAST, TALK_FACING_KEEP, 0 },
@@ -2755,11 +2755,11 @@ struct ObjectEventTemplate gBabiPalace_ObjectEventTemplatesBabiMissing[] = {
 };
 
 struct ObjectEventTemplate gBabiPalace_ObjectEventTemplatesFinals[] = {
-    { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
-    { IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
-    { MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
         PIXELS(712), 0, PIXELS(136), FACING_SOUTH, TALK_FACING_PARTY, 0 },
@@ -2773,17 +2773,17 @@ struct ObjectEventTemplate gBabiPalace_ObjectEventTemplatesFinals[] = {
         PIXELS(112), 0, PIXELS(552), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(728), 0, PIXELS(744), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
-    { SHEBA, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
+    { LOCALID_SHEBA, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
         PIXELS(600), 0, PIXELS(744), FACING_SOUTHWEST, TALK_FACING_PARTY, 0 },
     { MAP_TABLE_END },
 };
 
 struct ObjectEventTemplate gBabiPalace_ObjectEventTemplatesAfterColosso[] = {
-    { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
-    { IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
-    { MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { LOCALID_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
         PIXELS(712), 0, PIXELS(136), FACING_SOUTH, TALK_FACING_PARTY, 0 },
@@ -2877,10 +2877,10 @@ struct MapEvent gBabiPalace_EventsBabiMissing[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_BY_BABIS_BED, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIGuessLordBabiDidNot) },
     { MAP_EVENT_TALK, LOCALID_SORRY_FOR_SHEBA, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceActorHasBeenStayingAsLord) },
     { MAP_EVENT_TALK, LOCALID_OLD_WOMAN_IN_SHEBAS_ROOM, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceActorWasReveredAsAChild) },
-    { MAP_EVENT_TALK, SHEBA, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceBabiIsHoldingMeHostageIn) },
+    { MAP_EVENT_TALK, LOCALID_SHEBA, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceBabiIsHoldingMeHostageIn) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SORRY_FOR_SHEBA, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceActorWasTakenHostageToForce) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_OLD_WOMAN_IN_SHEBAS_ROOM, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceActorIsNotPermittedToLeave) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), SHEBA, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_ReadShebasMind) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SHEBA, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_ReadShebasMind) },
     { BG_EVENT(BG_EVENT_SILENT), MB_BABI_PALACE_BEDS, IF_FLAG_SET(FLAG_BABI_PALACE_BEDS_OPEN), EVENT_SCRIPT(BabiPalace_RestInPalaceBeds) },
     { BG_EVENT(BG_EVENT_SHELF), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheArmorLooksHeavyItLooks)) },
     { BG_EVENT(BG_EVENT_SHELF), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresNothingInThereItsCompletely)) },
@@ -2943,10 +2943,10 @@ struct MapEvent gBabiPalace_EventsFinals[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_FINALS_BY_BABIS_BED, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceWhenBabiReturnedHeHeadedOff) },
     { MAP_EVENT_TALK, LOCALID_FINALS_SORRY_FOR_SHEBA, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceWhatsGoingOnActorIsLooking) },
     { MAP_EVENT_TALK, LOCALID_FINALS_OLD_WOMAN_IN_SHEBAS_ROOM, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceTheSoldiersCameToSeeActor) },
-    { MAP_EVENT_TALK, SHEBA, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceHmphIWishColossoWouldHurry) },
+    { MAP_EVENT_TALK, LOCALID_SHEBA, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceHmphIWishColossoWouldHurry) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_FINALS_SORRY_FOR_SHEBA, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceASmileOnAPrettyGirl) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_FINALS_OLD_WOMAN_IN_SHEBAS_ROOM, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceActorIsAGoodGirlBut) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), SHEBA, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIDontHaveTheLeastInterest) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SHEBA, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIDontHaveTheLeastInterest) },
     { BG_EVENT(BG_EVENT_SILENT), MB_BABI_PALACE_BEDS, IF_FLAG_SET(FLAG_BABI_PALACE_FINALS_BEDS_OPEN), EVENT_SCRIPT(BabiPalace_RestInPalaceBeds) },
     { BG_EVENT(BG_EVENT_SHELF), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheArmorLooksHeavyItLooks)) },
     { BG_EVENT(BG_EVENT_SHELF), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresNothingInThereItsCompletely)) },

@@ -1849,7 +1849,8 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     z += PIXELS(136);
     FieldEffect_Spawn(particleX, 0, z, 0, 0, 0,
                       EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
-                          EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE | 1,
+                          EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE |
+                          EFFECT_SCRIPT_MEDIUM,
                       options);
     Engine_ScriptWait(2);
     wave = (wave + 1);
@@ -1878,7 +1879,8 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     particleSpeed = -((random * 10 >> 16) * 0x3333) - 0x3333;
     FieldEffect_Spawn(particleX, 0, z, 0, 0, particleSpeed,
                       EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
-                          EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE | 1,
+                          EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE |
+                          EFFECT_SCRIPT_MEDIUM,
                       options);
     Engine_ScriptWait(2);
     wave = (wave + 1);
@@ -1911,7 +1913,10 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
       FieldEffect_Spawn(particleX, 0,
                         ((-((u32)particleIndex >> 1) - rowOffset) << 16) +
                             PIXELS(192),
-                        particleVelocityX, 0, particleSpeed, 0xd0001, options);
+                        particleVelocityX, 0, particleSpeed,
+                        EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET |
+                            EFFECT_USE_PALETTE | EFFECT_SCRIPT_MEDIUM,
+                        options);
       particleIndex = (particleIndex + 1);
       Engine_ScriptWait(2);
     } while ((u32)particleIndex <= 31);
@@ -2985,17 +2990,17 @@ static void MercuryLighthouse_SpawnRipple(struct ObjectEvent *source) {
 
 #include "common/mercury_lighthouse_pillar.h"
 
-s32 gEffectScript0[] = {
+s32 gShortEffectScript[] = {
     SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
-s32 gEffectScript1[] = {
+s32 gMediumEffectScript[] = {
     SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
-s32 gEffectScript2[] = {
+s32 gLongEffectScript[] = {
     SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
@@ -3058,9 +3063,9 @@ u16 gMercuryLighthouse_MoveAngles[] = {
 };
 
 const s32 *gEffectScripts[] = {
-    gEffectScript0,
-    gEffectScript1,
-    gEffectScript2,
+    gShortEffectScript,
+    gMediumEffectScript,
+    gLongEffectScript,
 };
 
 s32 gMercuryLighthouse_SparkBurstScript[] = {

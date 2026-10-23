@@ -578,7 +578,9 @@ static s32 SuhallaDesert_ChaseLeader(struct ScriptInterpreter *interpreter) {
     options.startScaleY = 4 * Q16_ONE / 5;
     options.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
     FieldEffect_Spawn(objectEvent->x.fixed, objectEvent->y.fixed,
-                      objectEvent->z.fixed, 0, sparkFrame, sparkFrame, 0x880001,
+                      objectEvent->z.fixed, 0, sparkFrame, sparkFrame,
+                      EFFECT_USE_SPIN | EFFECT_USE_START_SCALE |
+                          EFFECT_SCRIPT_MEDIUM,
                       &options);
   }
   return 1;
@@ -912,25 +914,25 @@ static void SuhallaDesert_SetUpSecondMapStorms(void) {
                       0x20000);
 }
 
-s32 gEffectScript0[] = {
+s32 gShortEffectScript[] = {
     SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
-s32 gEffectScript1[] = {
+s32 gMediumEffectScript[] = {
     SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
-s32 gEffectScript2[] = {
+s32 gLongEffectScript[] = {
     SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
 const s32 *gEffectScripts[] = {
-    gEffectScript0,
-    gEffectScript1,
-    gEffectScript2,
+    gShortEffectScript,
+    gMediumEffectScript,
+    gLongEffectScript,
 };
 
 s32 gSuhallaDesertStormScript[] = {

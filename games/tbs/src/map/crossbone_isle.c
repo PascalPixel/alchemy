@@ -300,7 +300,7 @@ static void CrossboneIsle_SpawnPillarMovedBurst(s32 objectId) {
     velocity.x = velocityX;
     FieldEffect_Spawn(objectEvent->x.fixed, objectEvent->y.fixed,
                       objectEvent->z.fixed, velocityX, velocity.y, velocityZ,
-                      EFFECT_USE_UPDATE | 1, &options);
+                      EFFECT_USE_UPDATE | EFFECT_SCRIPT_MEDIUM, &options);
   }
 }
 
@@ -2082,7 +2082,7 @@ s32 gStagedObjectEvent_FootprintBounds[] = {
     -8, -32, 8, 32,
 };
 
-s32 gEffectScript0[] = {
+s32 gShortEffectScript[] = {
     SC_WAIT(1),
     SC_LOOP(22, SC_TOP),
     SC_WAIT(1),
@@ -2091,7 +2091,7 @@ s32 gEffectScript0[] = {
     SC_FREE,
 };
 
-s32 gEffectScript1[] = {
+s32 gMediumEffectScript[] = {
     SC_WAIT(1),
     SC_LOOP(44, SC_TOP),
     SC_WAIT(1),
@@ -2100,7 +2100,7 @@ s32 gEffectScript1[] = {
     SC_FREE,
 };
 
-s32 gEffectScript2[] = {
+s32 gLongEffectScript[] = {
     SC_WAIT(1),
     SC_LOOP(126, SC_TOP),
     SC_WAIT(1),
@@ -2114,9 +2114,9 @@ u16 gCrossboneIsle_EntranceCells[] = {
 };
 
 const s32 *gEffectScripts[] = {
-    gEffectScript0,
-    gEffectScript1,
-    gEffectScript2,
+    gShortEffectScript,
+    gMediumEffectScript,
+    gLongEffectScript,
     (const s32 *)0xffff0000,
     (const s32 *)120,
     (const s32 *)0x40000098,

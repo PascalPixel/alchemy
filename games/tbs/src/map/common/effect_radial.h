@@ -30,9 +30,10 @@ static void FieldEffect_SpawnNineRadialEffects(s32 objectEvent) {
     vec.z = z;
     x += Math_Divide(x, 3);
     vec.x = x;
-    FieldEffect_Spawn(
-        object->x.fixed, object->y.fixed, object->z.fixed, x, vec.y, z,
-        EFFECT_USE_UPDATE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE | 1,
-        &params);
+    FieldEffect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed, x,
+                      vec.y, z,
+                      EFFECT_USE_UPDATE | EFFECT_USE_PRIORITY |
+                          EFFECT_USE_PALETTE | EFFECT_SCRIPT_MEDIUM,
+                      &params);
   }
 }

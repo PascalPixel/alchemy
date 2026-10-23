@@ -16,9 +16,9 @@ const struct ObjectEventTemplate *
 VenusLighthouseAerie_GetObjectEventTemplates(void);
 const struct MapEvent *VenusLighthouseAerie_GetEvents(void);
 s32 VenusLighthouseAerie_Initialize(void);
-extern s32 gEffectScript0[];
-extern s32 gEffectScript1[];
-extern s32 gEffectScript2[];
+extern s32 gShortEffectScript[];
+extern s32 gMediumEffectScript[];
+extern s32 gLongEffectScript[];
 extern const s32 *gEffectScripts[];
 extern s32 gVenusLighthouseAerie_JoinLeaderAction[];
 extern s32 gVenusLighthouseAerie_StepBackWestAction[];

@@ -266,7 +266,7 @@ static void BabiLighthouse_LandWithParticles(void) {
     FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
                       velocity[0], velocity[1], velocity[2],
                       EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
-                          EFFECT_USE_PALETTE | 1,
+                          EFFECT_USE_PALETTE | EFFECT_SCRIPT_MEDIUM,
                       &options);
   }
   Engine_AudioPlayCue(SE_188);
@@ -1553,25 +1553,25 @@ s32 gStagedObjectEvent_FootprintBounds[] = {
     -8,  -32, 8,  32, -32, -8,  32, 8,  -8,  -32, 8,  32,
 };
 
-s32 gEffectScript0[] = {
+s32 gShortEffectScript[] = {
     SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
-s32 gEffectScript1[] = {
+s32 gMediumEffectScript[] = {
     SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
-s32 gEffectScript2[] = {
+s32 gLongEffectScript[] = {
     SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
 const s32 *gEffectScripts[] = {
-    gEffectScript0,
-    gEffectScript1,
-    gEffectScript2,
+    gShortEffectScript,
+    gMediumEffectScript,
+    gLongEffectScript,
 };
 
 s32 gBabiLighthouse_TrembleScript[] = {

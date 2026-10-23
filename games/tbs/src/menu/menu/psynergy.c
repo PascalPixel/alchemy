@@ -38,7 +38,7 @@
 /// FIELD_MENU_PSYNERGY), over the field, which stops meanwhile. Psynergy used
 /// on a member takes effect here. When the player picks Psynergy to use on the
 /// field, it is recorded as the field's Psynergy request (EventWork's
-/// psynergy, owner << 10 | Psynergy), which Map_Run hands to
+/// psynergy, member << 10 | Psynergy), which Map_Run hands to
 /// Field_UsePsynergy once the menu has closed, and 1 is returned; -1 when the
 /// player backs out or presses Start (the field menu then opens again). Owns
 /// the menu work (HEAP_SLOT_MENU) while it runs and frees it before returning.
@@ -120,7 +120,7 @@ enum PsynergyMenuStep {
 
 /// Runs the Psynergy menu: choose a party member and one of their Psynergy,
 /// then use it on a member (or the whole party), or, in the shortcut modes, set
-/// it as the L or R shortcut. Returns 1 with the owner and Psynergy in the out
+/// it as the L or R shortcut. Returns 1 with the member and Psynergy in the out
 /// parameters when the chosen Psynergy works on the field, to be used once the
 /// menu closes; -1 when the player backs out or presses Start; otherwise the
 /// result of the last use.
@@ -595,7 +595,7 @@ s32 PsynergyMenu_SelectTarget(s32 targetMode) {
   return result;
 }
 
-/// A Psynergy shortcut: its owner above bit 10, the Psynergy's id below.
+/// A Psynergy shortcut: its member above bit 10, the Psynergy's id below.
 #define PSYNERGY_SHORTCUT_MEMBER_SHIFT 10
 #define PSYNERGY_SHORTCUT_ID_MASK 0x3ff
 
@@ -614,9 +614,9 @@ s32 PsynergyMenu_SetShortcut(s32 ownerId, s32 actionId, s32 shortcutIndex) {
 }
 
 // Writes the L and R Psynergy shortcuts into window: each one's Psynergy and
-// owner, or that it is empty, under a heading that says how to change them.
+// member, or that it is empty, under a heading that says how to change them.
 // A name too wide for the line (measured as a window, over 10 tiles; 11 in
-// Japanese) hides the owner (international) or drops the colon after "L" and
+// Japanese) hides the member (international) or drops the colon after "L" and
 // "R" (Japanese). Returns 1.
 #if LANGUAGE != LANGUAGE_JAPANESE
 

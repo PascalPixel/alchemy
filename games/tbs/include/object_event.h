@@ -2,7 +2,7 @@
 #define ALCHEMY_OBJECT_EVENT_H
 
 /// @file
-/// Field objects and object events, and the map transition styles.
+/// Objects and object events, and the map transition styles.
 
 #include "types.h"
 #include "static_assert.h"

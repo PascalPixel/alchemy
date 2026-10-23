@@ -12,9 +12,9 @@
 /// ABILITY_CLOAK (0x92).
 #define CLOAK_END 0x2092
 
-/// Scheduler callback of Cloak: when the tile under the leader is not
+/// Task of Cloak: when the cell under the leader is not
 /// CLOAK_TILE, requests CLOAK_END. On the world map it reads
-/// the 32-pixel gMetatiles, elsewhere the 16-pixel terrain map. Runs once a
+/// the 32-pixel gMetatiles, elsewhere the 16-pixel cells. Runs once a
 /// frame from FieldEffect_StartCloak, and again from
 /// FieldEffect_ResumeCloakCheck when a map loads with the leader still
 /// cloaked.
@@ -81,7 +81,7 @@ void FieldEffect_CheckCloakTile(void) {
     work->psynergy = CLOAK_END;
 }
 
-/// Ends Cloak: stops the tile check and makes the leader blink back into
+/// Ends Cloak: stops the cell check and makes the leader blink back into
 /// sight, clearing cloaked. The leader is white (SPRITE_COLOR_WHITE) for the
 /// first five blinks, its outline (sprite flag bit 1) on and off; the last
 /// five alternate white and its own colours (param 0). Each half is 2
@@ -126,7 +126,7 @@ void FieldEffect_EndCloak(void) {
   gGameState.cloaked = 0;
 }
 
-/// Starts the Cloak tile check if the leader is hidden. Map_Run calls
+/// Starts the Cloak cell check if the leader is hidden. Map_Run calls
 /// it as a map loads, since gGameState.cloaked outlives the map.
 void FieldEffect_ResumeCloakCheck(void) {
   if (gGameState.cloaked != 0) {
@@ -134,7 +134,7 @@ void FieldEffect_ResumeCloakCheck(void) {
   }
 }
 
-/// The leader blinks 10 times and hides (cloaked set), and the tile check
+/// The leader blinks 10 times and hides (cloaked set), and the cell check
 /// starts; where the leader cannot hide it shows again at once.
 ///
 /// Abilities: Cloak (FIELD_PSYNERGY_CLOAK).
@@ -169,7 +169,7 @@ void FieldEffect_StartCloak(void) {
   entry->colorMode = n;
   animation->flags = SPRITE_FLAG_OUTLINED;
   animation->dirty = 1;
-  // Check the tile at once: off a Cloak tile, unhide and drop the request
+  // Check the cell at once: off a Cloak cell, unhide and drop the request
   // the check just raised (n is 0 here).
   check = FieldEffect_CheckCloakTile;
   Task_Add(check, 0xc80);

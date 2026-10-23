@@ -1,23 +1,23 @@
 /// @file
-/// Drawing sprites: composing their layers and placing them on screen.
+/// Drawing sprites: composing their anims and placing them on screen.
 // Part of field.c.
 
 #include "../field_internal.h"
 
-/// Draws one layer's frame into a sprite's pixel buffer (Render_DecodeFrame,
+/// Draws one anim's frame into a sprite's pixel buffer (Render_DecodeFrame,
 /// run from RAM).
 typedef void (*SpriteDrawFn)(const void *src, void *dst, s32 param);
 /// Uploads a finished sprite buffer to sprite VRAM (Tile_CopyStrided).
 typedef void (*SpriteUploadFn)(const void *src, u32 w, u32 h, void *vram);
 
-/// Advances a sprite's animation layers by one frame, picks each layer's frame
+/// Advances a sprite's anims by one frame, picks each anim's frame
 /// for the facing dir, and when any frame changed redraws the sprite: the
-/// layers composed by priority into one pixel buffer, an optional outline,
-/// and the result uploaded to the sprite's VRAM tiles. Returns 1 when layer
+/// anims composed by priority into one pixel buffer, an optional outline,
+/// and the result uploaded to the sprite's VRAM tiles. Returns 1 when anim
 /// 0's frame for this facing is drawn mirrored.
 ///
 /// Called for each sprite drawn, every frame, by Render_ApplyProjectedPlacement
-/// and Render_PlaceProjectedSprite. Writes the layers' script position,
+/// and Render_PlaceProjectedSprite. Writes the anims' script position,
 /// timer and frame, the sprite's dirty flag and tile, its tiles in OBJ VRAM,
 /// and the ObjectSystemWork's count of bytes composed; takes heap slot
 /// HEAP_SLOT_FRAME_SCRATCH for the decoder when no caller holds it, and frees
@@ -75,7 +75,7 @@ s32 Sprite_ComposeFrame(struct Sprite *animation, u16 dir) {
     decoderWasLoaded = 0;
   }
 
-  // Step each layer's script: read commands until one shows a frame for a
+  // Step each anim's script: read commands until one shows a frame for a
   // while, else count the current frame's time down.
   for (i = 0; i < animation->count; i++) {
     layer = animation->entries[i];
@@ -117,9 +117,9 @@ s32 Sprite_ComposeFrame(struct Sprite *animation, u16 dir) {
         layer->frameBase = 255;
         layer->script = 0;
         frame = 255;
-        // XXX: ending any layer lowers the sprite's layer count, so the last
-        // layer stops being stepped and drawn even when another one ended; a
-        // sprite whose layer other than the last ends would show whether that
+        // XXX: ending any anim lowers the sprite's anim count, so the last
+        // anim stops being stepped and drawn even when another one ended; a
+        // sprite whose anim other than the last ends would show whether that
         // is a bug.
         animation->count--;
         goto select_direction;
@@ -141,13 +141,13 @@ s32 Sprite_ComposeFrame(struct Sprite *animation, u16 dir) {
       }
       goto read_command;
     }
-    // Time is left on this frame: count it down by the layer's step (16, the
+    // Time is left on this frame: count it down by the anim's step (16, the
     // normal speed, takes a frame off each frame).
     layer->timer = layer->timer - layer->step;
   framed:
     frame = layer->frameBase;
   select_direction:
-    // The facing table of the layer's kind gives an offset from the base
+    // The facing table of the anim's kind gives an offset from the base
     // frame (low three bits) and whether to mirror it (bit 7).
     switch (layer->kind) {
     case ANIMATION_FACING_ONE_FRAME:
@@ -200,7 +200,7 @@ s32 Sprite_ComposeFrame(struct Sprite *animation, u16 dir) {
     pixels = Alloc(size);
     Iwram_ClearWords(pixels, size);
 
-    // Sort the visible layers by priority (0-3), then by index, with an
+    // Sort the visible anims by priority (0-3), then by index, with an
     // insertion sort on keys of (priority << 8) | index.
     drawCount = -1;
     for (i = animation->count - 1; i >= 0; i--) {
@@ -240,8 +240,8 @@ s32 Sprite_ComposeFrame(struct Sprite *animation, u16 dir) {
     }
     drawCount++;
 
-    // Draw the layers in that order, each by its codec. LZ frames are
-    // unpacked first, or drawn through a scratch buffer when the layer has a
+    // Draw the anims in that order, each by its codec. LZ frames are
+    // unpacked first, or drawn through a scratch buffer when the anim has a
     // draw parameter.
     for (i = 0; i < drawCount; i++) {
       layer = animation->entries[*(u8 *)&drawOrder[i]];
@@ -383,7 +383,7 @@ void Render_PlaceSpritePartPair(struct Sprite *sprite, s32 screenX, s32 height,
 ///
 /// Called by ObjectSystem_PlaceSprites for each one-sprite object on a
 /// layered map, by the sprite viewer, and as Object_ApplyProjectedPlacementFar
-/// by the battle effects, the Psynergy effects and the menus.
+/// by the battle animations, the Psynergy effects and the menus.
 void Render_ApplyProjectedPlacement(struct Sprite *sprite,
                                     const struct SpritePlacement *position,
                                     const struct SpriteScale *scale,
@@ -601,9 +601,9 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
   }
 }
 
-/// Sets the colour mode (SpriteColorMode) of each of a sprite's layers to
-/// value, except layers drawn hidden (SPRITE_COLOR_HIDDEN), and marks the
-/// sprite for redrawing. The sprite's first count layers must all be present:
+/// Sets the colour mode (SpriteColorMode) of each of a sprite's anims to
+/// value, except anims drawn hidden (SPRITE_COLOR_HIDDEN), and marks the
+/// sprite for redrawing. The sprite's first count anims must all be present:
 /// it does not test them for null.
 /// Called by Animation_ApplyChildValues and, as
 /// Sprite_SetAnimColorModesFar, by the Psynergy effects, the

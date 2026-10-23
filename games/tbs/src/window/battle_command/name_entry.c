@@ -1,17 +1,17 @@
 /// @file
-/// The name entry screen.
+/// The naming screen.
 // Part of battle_command.c.
 
 #include "../battle_command_internal.h"
 
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-/// The international name entry has no voicing marks: where the Japanese
+/// The international naming screen has no voicing marks: where the Japanese
 /// edition checks a mark against the letter before it, this edition keeps a
 /// function that accepts every character. Nothing calls it.
 UNUSED s32 NamingScreen_AcceptsMark(s32 mark, s32 letter) { return 1; }
 #else
 
-// The kana voicing marks of the Japanese name entry, which join the letter
+// The kana voicing marks of the Japanese naming screen, which join the letter
 // before them.
 #define NAME_VOICED_MARK 0xde     ///< dakuten
 #define NAME_SEMIVOICED_MARK 0xdf ///< handakuten
@@ -85,7 +85,7 @@ void Window_CopyTilemapRegion(const struct Window *window, const void *source) {
 /// Like Window_SetTextTileBitRect, but ORs all of `palette` into the
 /// palette number of each entry (bits 12-15) after clearing only its lowest
 /// bit. On entries of palette 15 or 14 that sets them to `palette`, 15 or
-/// 14: the name entry's key and the Colosso choice under the cursor flash
+/// 14: the naming screen's key and the Colosso choice under the cursor flash
 /// this way.
 void Window_SetTextTileRect(const struct Window *window, s32 x, s32 y,
                             s32 width, s32 height, u32 palette) {
@@ -139,7 +139,7 @@ void Resource_CopyFixedBlockA(s32 slot) {
   VramCache_Load(slot, 0x80, gResource_FixedBlockATiles);
 }
 
-// The name entry screen: a keyboard window of letter keys, with a column of
+// The naming screen: a keyboard window of letter keys, with a column of
 // command keys on its right (Delete and End, and in Japanese the keyboard
 // switch), the name above it and the character's portrait.
 #define NAME_COMMAND_COLUMN 18 ///< the keyboard column of the command keys
@@ -228,7 +228,7 @@ void Text_DrawPaddedLabel(struct Window *window, u8 *name) {
 #define NAME_END_KEY_WIDTH 3
 #endif
 
-/// The name entry screen for party member `member`: the player types a name
+/// The naming screen for party member `member`: the player types a name
 /// of up to NAME_MAX_LETTERS letters on the keyboard and ends with End (or
 /// Start, which jumps there). A puts the key under the cursor into the name,
 /// B or Delete removes the last letter, and B on an empty name cancels. Ending
@@ -504,7 +504,7 @@ s32 NamingScreen_EditMemberName(s32 member) {
 }
 #else
 
-/// The name entry screen for party member `member`: the player types a name
+/// The naming screen for party member `member`: the player types a name
 /// of up to NAME_MAX_LETTERS letters on the keyboard and ends with End (or
 /// Start, which jumps there). A puts the key under the cursor into the name,
 /// B or Delete removes the last letter, and B on an empty name cancels. Ending

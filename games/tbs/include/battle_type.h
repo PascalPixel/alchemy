@@ -9,7 +9,7 @@
 #include "battle_unit.h"
 
 enum {
-  /// Targets a plan can hold: as many units as BattleWork.objects holds, 8
+  /// Targets a turn can hold: as many units as BattleWork.objects holds, 8
   /// party places and 6 enemies.
   BATTLE_TARGET_CAPACITY = 14,
   BATTLE_TURN_SIZE = 0x64
@@ -26,7 +26,7 @@ enum BattleCritical {
 /// lands; BattleTurn_Build rolls it ahead only for Annihilation.
 #define HIT_NOT_ROLLED -1
 
-/// BattleTurn.failure: why a cast plays no effect, which the staging shows.
+/// BattleTurn.failure: why a cast plays no animation, which the staging shows.
 enum BattleTurnFailure {
   TURN_FAILURE_NONE,
   TURN_FAILURE_SEALED, ///< "blocked": the user's Psynergy is sealed
@@ -50,9 +50,9 @@ struct BattleTurn {
   s32 abilityId;
   s32 element; ///< enum Element
   s32 staging; ///< enum BattleStaging: how the action is shown
-  /// How the effect is staged (STAGING_ in battle_internal.h).
+  /// The animation word: how it is staged (STAGING_ in battle_internal.h).
   /// bits: 19 view reversed | 18 view across | 17 other side | 16 on downed |
-  /// 15 scene | 14 by id range | 13..12 variant | 11..0 effect kind
+  /// 15 scene | 14 by id range | 13..12 variant | 11..0 animation kind
   u32 animation;
   s32 failure; ///< enum BattleTurnFailure
   /// The damage the evil spirit deals a haunted actor at the end of its turn.

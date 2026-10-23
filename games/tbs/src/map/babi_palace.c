@@ -6,9 +6,9 @@
 ///   door, with two guards and a well. Its door opens by a cell animation
 ///   (gBabiPalace_DoorCells, BabiPalace_LeaveThroughAnimatedDoor).
 /// - MapId_BabiPalace, the palace's rooms on one map, joined by warps into
-///   the same map and by doors that open by the map's tile animation
-///   channels (enum BabiPalaceDoorAnimation, BabiPalace_LeaveThroughDoor). One
-///   door leads to Babi's scholars (BABI_PALACE_TO_VALE_INTERIORS_INN, held by
+///   the same map and by doors that open by the map's tileset animations
+///   (enum BabiPalaceDoorAnimation, BabiPalace_LeaveThroughDoor). One door
+///   leads to Babi's scholars (BABI_PALACE_TO_VALE_INTERIORS_INN, held by
 ///   vale_interiors_inn.c) and one into the Colosseum Tunnel
 ///   (BABI_PALACE_TO_COLOSSEUM_TUNNEL).
 ///
@@ -257,7 +257,7 @@ enum {
 /// everybody." (MsgTolbiWeHaveJustEnoughExtra)
 enum { FLAG_ATTENDANT_SHOWED_BEDS = FLAG_MAP_TEMP_00 };
 
-/// The palace map's tile animation channels that open its doors, for
+/// The palace map's tileset animations that open its doors, for
 /// TilesetAnim_Resume (play) and TilesetAnim_Pause (pause).
 /// Each map entry pauses them, so every door is drawn shut; the recording of
 /// BabiPalace_LeaveThroughDoor shows one swing open

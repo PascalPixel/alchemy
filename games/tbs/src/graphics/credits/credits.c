@@ -54,8 +54,8 @@
 #define CREDITS_OAM_ENTRIES 128
 
 /// Fills 30 KB of 256-color tiles with color 1 and clears 128 palette colors.
-/// Called by the credits slideshow before loading a backdrop into a half. The
-/// 30 KB are a backdrop's 480 tiles, 256 by 120 pixels.
+/// Called by the credits before loading a battle background into a half. The
+/// 30 KB are a battle background's 480 tiles, 256 by 120 pixels.
 /// @param alternate 0 selects the first half (VRAM 0x06000000, palette 0-127).
 ///      1 selects the second half (VRAM 0x06008000, palette 128-255, fill 129).
 void Credits_ClearBuffer(s32 alternate) {
@@ -120,11 +120,11 @@ const u32 gCredits_Backgrounds[] = {
 };
 // clang-format on
 
-/// Loads a credits backdrop into one of the two tile/palette halves. A zero
-/// resource clears that half; the second half offsets its palette indices.
-/// Called by Credits_Run for each picture. A backdrop resource
-/// is its 128 colours (256 bytes) and then its packed tiles. The decoder
-/// runs from a copy in HEAP_SLOT_RAM_CODE_TEMP, released before
+/// Loads a credits battle background into one of the two tile/palette halves. A
+/// zero resource clears that half; the second half offsets its palette indices.
+/// Called by Credits_Run for each picture. A battle background
+/// resource is its 128 colours (256 bytes) and then its packed tiles. The
+/// decoder runs from a copy in HEAP_SLOT_RAM_CODE_TEMP, released before
 /// returning; the colours reach palette RAM at the next VBlank, through the
 /// I/O write queue.
 void Credits_LoadBackground(u32 resourceId, s32 alternate) {
@@ -147,7 +147,7 @@ void Credits_LoadBackground(u32 resourceId, s32 alternate) {
     tileDestination = BG_CHAR_BLOCK(2);
     paletteDestination = (u32)&BG_PLTT[128];
   }
-  // Offset every pixel into the selected palette half so both backdrops
+  // Offset every pixel into the selected palette half so both pictures
   // can remain visible throughout a crossfade.
   RamCode_LoadSlot(HEAP_SLOT_RAM_CODE_TEMP, Credits_DecodeBackground,
                    Credits_DecodeBackgroundCodeSize);
@@ -161,7 +161,7 @@ void Credits_LoadBackground(u32 resourceId, s32 alternate) {
                       DMA_COPY_WORDS(0x40));
 }
 
-/// Builds the 512 tilemap words surrounding a sliding credits backdrop:
+/// Builds the 512 tilemap words surrounding a sliding credits picture:
 /// blank margins, 240 consecutive tile pairs, then a zero-filled tail.
 /// Called by Credits_Run. In 32-tile rows: two rows of tile
 /// 511, the picture's tiles 0 to 479 in fifteen rows, three rows of tile 511
@@ -198,7 +198,7 @@ void Credits_BuildBackgroundTilemap(u32 *destination) {
   } while (remaining >= 0);
 }
 
-/// A VBlank task of the credits slideshow: drifts both backdrops together,
+/// A VBlank task of the credits: drifts both pictures together,
 /// keeping their horizontal offsets aligned throughout the crossfade. Each
 /// fourth frame both scrolls fall by one (adding 0xffff to the 16-bit
 /// value), moving the pictures a pixel right; a picture is as wide as its
@@ -212,15 +212,15 @@ void Credits_ScrollBackgrounds(void) {
   }
 }
 
-/// Crossfades the credits backdrop sequence through alternating tile banks
+/// Crossfades the credits' battle backgrounds through alternating tile banks
 /// while the staff names scroll over it, then restores the display for the
 /// following screen. Reached through the scroll far-call table at the end of
 /// the game: Title_Run calls it as CreditsFar_Entry00 when the ending arrives
-/// at TITLE_FROM_LEMURIAN_SHIP, MUS_ENDING playing, before the clear screen.
+/// at TITLE_FROM_LEMURIAN_SHIP, MUS_ENDING playing, before the main menu.
 /// Its waits come to 11223 frames, about 3 minutes 8 seconds, besides the
 /// loads: a 300-frame lead, then 33 slides of a 64-frame fade and a 267-frame
 /// hold, the last a fade to black. Returns 0 with BG2, BG3 and blending off
-/// and the OAM copy back on; the three tasks it schedules are still scheduled.
+/// and the OAM copy back on; the three tasks it adds keep running.
 s32 Credits_Run(void) {
   u32 slide;
   s32 alpha;
@@ -249,7 +249,7 @@ s32 Credits_Run(void) {
   Io_Write16(BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG3 |
                  BLDCNT_TGT2_BD,
              &REG_BLDCNT);
-  // Give the names a five-second lead before the first backdrop.
+  // Give the names a five-second lead before the first picture.
   Credits_InitTextSprites();
   WaitFrames(300);
   // Alternate the hidden layer after each 64-frame crossfade. Loading it
@@ -953,7 +953,7 @@ const void *gCredits_Lines[] = {
 
 #include "../display/glyph_widths.h"
 
-/// A VBlank task scheduled by Credits_InitTextSprites: maps the
+/// A VBlank task added by Credits_InitTextSprites: maps the
 /// visible sixteen rows onto the tile ring and uploads their sprites. Advances
 /// one pixel every fourth frame until the end-of-text latch stops the scroll.
 void Credits_UpdateTextSprites(void) {
@@ -983,7 +983,7 @@ void Credits_UpdateTextSprites(void) {
     gFlash_Handler3++;
 }
 
-/// A main-loop task scheduled by Credits_InitTextSprites: renders
+/// A main-loop task added by Credits_InitTextSprites: renders
 /// each entering line sixteen rows ahead of the visible top, into the hidden
 /// half of the tile ring. A null table entry latches the end-of-text state.
 void Credits_DrawEnteringLine(void) {
@@ -1007,11 +1007,11 @@ void Credits_DrawEnteringLine(void) {
 }
 
 /// Allocates the credits sprites, builds the blank border and text rows,
-/// clears the tile ring and schedules scrolling and line rendering. Called by
-/// Credits_Run; the credits keep their state in borrowed
-/// flash-library cells (see the graphics README). The 1 KB sprite buffer
-/// comes from the alternate bump pool and is never freed; each line buffer
-/// is taken from the pool after it and given back.
+/// clears the tile ring and adds the scrolling and line-rendering tasks. Called
+/// by Credits_Run; the credits keep their state in borrowed flash-library cells
+/// (see the graphics README). The 1 KB sprite buffer comes from the EWRAM bump
+/// pool and is never freed; each line buffer is taken from the pool after it
+/// and given back.
 void Credits_InitTextSprites(void) {
   // Sharing the three border-strip loops through an ordinary inline helper
   // changes registers at the same 0x178-byte native English extent.

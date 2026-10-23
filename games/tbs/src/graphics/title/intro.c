@@ -114,7 +114,7 @@ const u8 gTitle_PromptBlendLevels[60] = {
   INTRO_OBJ((i) + 2).attr2 = (tile);                                           \
   INTRO_OBJ((i) + 3).attr2 = (tile)
 
-/// A VBlank task of the title intro, scheduled by Title_ShowIntro: places the
+/// A VBlank task of the title intro, added by Title_ShowIntro: places the
 /// rising sprites along the slope of the scrolling background, alternating two
 /// sets every other frame so twice as many show, hides the rest and copies the
 /// list to OAM.
@@ -520,7 +520,7 @@ s32 Title_ShowIntro(s32 prompt) {
 /// Unused: palette entry retained in the far-call table.
 UNUSED void Title_NoOpPalette(void) {}
 
-/// Shows the Nintendo logo with its jingle. With `mode` 0 it fades in and
+/// Shows the Nintendo logo with its fanfare. With `mode` 0 it fades in and
 /// holds two seconds; otherwise it waits a second, fades in, holds three
 /// seconds and fades out, faster once skipped. Called by Title_Run. Returns -1
 /// when A or Start skipped it.
@@ -701,10 +701,10 @@ void TitlePaletteFade_CalculateSteps(s16 *sourceComponents,
   }
 }
 
-/// A task scheduled by TitlePaletteFade_Initialize: steps the palette fade each
+/// A task added by TitlePaletteFade_Initialize: steps the palette fade each
 /// frame, adding the step to every colour component until the fade is done,
 /// packs the components into the spare RGB555 copy of the palettes and queues
-/// both halves for VBlank.
+/// both palettes for VBlank.
 void TitlePaletteFade_Update(void) {
   struct TitlePaletteFade *work = (struct TitlePaletteFade *)gPaletteFadeWork;
   u16 *componentSteps = work->delta;
@@ -748,9 +748,9 @@ void TitlePaletteFade_Update(void) {
                       DMA_COPY_WORDS(0x80));
 }
 
-/// Transforms 512 source colours into destination components (three
+/// Tints 512 source colours into destination components (three
 /// per colour, each in the high bits of a halfword). `mode` picks the
-/// transform: a colour below PALETTE_TINT_FROM_SOURCE fills every colour
+/// tint: a colour below PALETTE_TINT_FROM_SOURCE fills every colour
 /// with it; PALETTE_TINT_FROM_SOURCE takes that colour from source[0];
 /// PALETTE_TINT_NONE to PALETTE_TINT_WARM2 are the whole-palette
 /// filters; the TINT, BLEND and SPLIT flags carry
@@ -1012,7 +1012,7 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
 }
 
 /// Allocates the palette fade, saves both hardware palettes in it as the
-/// starting colours and schedules TitlePaletteFade_Update. Called by
+/// starting colours and adds the task TitlePaletteFade_Update. Called by
 /// Title_ShowIntro.
 void TitlePaletteFade_Initialize(void) {
   struct TitlePaletteFade *buffer;
@@ -1029,15 +1029,15 @@ void TitlePaletteFade_Initialize(void) {
   Task_Add(TitlePaletteFade_Update, callbackPriority);
 }
 
-/// Unused: unschedules the palette fade and frees its buffers. Nothing in ☀️
+/// Unused: removes the palette fade's task and frees its buffers. Nothing in ☀️
 /// calls it.
 UNUSED void TitlePaletteFade_Release(void) {
   Task_Remove(&TitlePaletteFade_Update);
   FreeHeapSlot(HEAP_SLOT_PALETTE_FADE);
 }
 
-/// Unused: sets the fade target by transforming the saved background and/or
-/// sprite palettes through the requested mode. Nothing in ☀️ calls it.
+/// Unused: sets the fade target by tinting the saved background and/or
+/// sprite palettes with the requested tint. Nothing in ☀️ calls it.
 UNUSED void TitlePaletteFade_SetTarget(s32 mode, s32 selectedPalettes) {
   struct TitlePaletteFade *fade = (struct TitlePaletteFade *)gPaletteFadeWork;
 
@@ -1046,7 +1046,7 @@ UNUSED void TitlePaletteFade_SetTarget(s32 mode, s32 selectedPalettes) {
                                  selectedPalettes);
 }
 
-/// Sets the colours shown now by transforming the saved palettes. Called by
+/// Sets the colours shown now by tinting the saved palettes. Called by
 /// Title_ShowIntro.
 void TitlePaletteFade_SetCurrent(s32 mode, s32 selectedPalettes) {
   struct TitlePaletteFade *fade = (struct TitlePaletteFade *)gPaletteFadeWork;

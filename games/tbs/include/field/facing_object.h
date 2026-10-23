@@ -7,7 +7,7 @@
 #include "types.h"
 #include "static_assert.h"
 
-/// A field object seen as one that turns toward its facing target: its facing,
+/// An object seen as one that turns toward its facing target: its facing,
 /// its ground position and the target.
 struct FacingObject {
   /// ObjectEvent's script and its cursor; not named through this view.

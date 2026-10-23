@@ -225,7 +225,7 @@ void Window_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height,
   canvas->dirty = 1;
 }
 
-/// Returns 1 when every message channel has finished its text (or is idle),
+/// Returns 1 when every text printer has finished its text (or is idle),
 /// and 0 while one is still typing. The message routines wait on it a frame at
 /// a time; a window whose text has ended counts as finished though it is still
 /// open.
@@ -278,7 +278,7 @@ void UiWork_InitializeCountersWithResourceAndScheduleRefresh(void) {
   s32 priority;
 
   // VRAM cache entry 95 with no source: 128 << 6 is 8192 bytes, 256 sprite
-  // tiles, the four of a 16x16 glyph for each of the 64 render outputs.
+  // tiles, the four of a 16x16 glyph for each of the 64 window sprites.
   state->glyphTiles = VramCache_Load(95, 128 << 6, 0);
   state->letterSpacing = 9;
   state->lineSpacing = 10;
@@ -327,9 +327,9 @@ void BattleMessage_Close(void) {
 /// Shows a message in the battle message window, opening the window (a
 /// full-width text canvas along the bottom of the screen) if it is not open,
 /// and returns without waiting. The window stays open from message to message
-/// until BattleMessage_Close closes it; the channel typing the message
-/// is kept in the battle display's work (BattleMessageWork.offset), NULL when
-/// none was free.
+/// until BattleMessage_Close closes it; the printer typing the message
+/// is kept in the battle message window's work (BattleMessageWork.offset), NULL
+/// when none was free.
 void BattleMessage_Open(s32 argument) {
   s32 entryIndex;
   struct TextPrinter *channel;
@@ -341,7 +341,7 @@ void BattleMessage_Open(s32 argument) {
   state = WINDOW_WORK;
   control = (struct BattleMessageWork *)
       gWindowWork[HEAP_SLOT_BATTLE_MESSAGE - HEAP_SLOT_WINDOW];
-  // channel starts as NULL, though it is assigned again before it is read; the
+  // printer starts as NULL, though it is assigned again before it is read; the
   // same zero clears marked below
   channel = NULL;
   // battleMode 2 while decoding marks a battle message: the Japanese decoder
@@ -368,7 +368,7 @@ void BattleMessage_Open(s32 argument) {
           BattleMessage_Continue(messageWindow, entryIndex, control->marked);
       control->offset = (struct BattleMessageOffset *)channel;
       control->marked = 0;
-      // With no channel free the window is closed, though control->window
+      // With no printer free the window is closed, though control->window
       // still names its slot.
       if (channel == NULL) {
         Window_Close(messageWindow, 1);
@@ -387,9 +387,9 @@ void BattleMessage_ShowAndWait(s32 argument) {
 }
 
 /// Types a message into an open window from its top left, keeping the window's
-/// size from page to page, with no voice blips. Returns the channel typing it
+/// size from page to page, with no voice blips. Returns the printer typing it
 /// (as an integer), or 0 when the message is empty, window is NULL or no
-/// channel is free. The result is the channel pointer encoded as a word, not a
+/// printer is free. The result is the printer pointer encoded as a word, not a
 /// message-completion status.
 s32 Message_OpenDecoded(struct Window *window, s32 message) {
   struct WindowWork *work = WINDOW_WORK;
@@ -438,7 +438,7 @@ void UiWork_SetBusyFlags(s32 flags) {
 /// zoom open rather than appear at once; bit 3: a text canvas; bit 4: keep the
 /// bottom edge; bit 5: keep the left edge) and the speaker's voice sound in
 /// bits 16 to 27. Returns the window, or NULL when the message is empty or no
-/// window or channel is free. It returns once the window is open (after the
+/// window or printer is free. It returns once the window is open (after the
 /// zoom), without waiting for the text.
 struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed) {
   s32 entry;
@@ -462,7 +462,7 @@ struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed) {
   if (work->textBuffer[entry] == 0)
     return NULL;
   // bounds receives each line's extra gap between characters, which the
-  // channel spreads the line with.
+  // printer spreads the line with.
   Window_FitOnScreen(entry, &x, &y, &width, &height, (out = bounds), 0);
   if (width == 0 && height == 0)
     return NULL;
@@ -561,7 +561,7 @@ void FieldMessage_Show(s32 message, s32 flags) {
   WaitFrames(3);
 }
 
-/// The window system's per-frame callback: windows, then message channels,
+/// The window system's per-frame callback: windows, then text printers,
 /// then sprite animation. Both setups schedule it in the main loop's pass
 /// (0xc80); nothing here removes it.
 void UiWork_ProcessAll(void) {

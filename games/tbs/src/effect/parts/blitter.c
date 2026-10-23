@@ -265,7 +265,7 @@
 /// Writes a drawing routine for the canvas into heap slot `slot`, built from
 /// the template gBlitterTemplate for one clip, mirroring and blend mode.
 ///
-/// Called through ANIM_LOAD_BLITTER by nearly every canvas effect and by
+/// Called through ANIM_LOAD_BLITTER by nearly every canvas animation and by
 /// BattleAnim_FetchRectangleBlitters, directly by the particle streams for a
 /// canvas 256 pixels wide, and from other banks through its far stub,
 /// BattleAnim_BuildBlitterFar (the star field in battle/star_field.c and
@@ -373,7 +373,7 @@ s32 BattleAnim_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
   return templateWords == codeEnd;
 }
 
-// These macros describe the two walks above; they are not an effect API.
+// These macros describe the two walks above; they are not an animation API.
 #undef PUT
 #undef COPY
 #undef COPY_FROM

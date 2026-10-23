@@ -4,10 +4,10 @@
 
 #include "../effect_internal.h"
 
-// The canvas blitters, and the 48-frame wall effects.
+// The canvas blitters, and the 48-frame wall animations.
 
 /// The mirrored wall's modes (BattleAnim_RunMirroredWall), each named for the
-/// effect that plays it.
+/// animation that plays it.
 enum MirroredWallMode {
   MIRRORED_WALL_SPASM,   ///< actual size, a gentle shake for 32 frames
   MIRRORED_WALL_BERSERK, ///< 1.25 times as wide, a hard shake for 8 frames
@@ -18,7 +18,7 @@ enum MirroredWallMode {
 /// Builds the two usual routines that draw onto the 128x128 canvas, both
 /// clipped on both axes.
 ///
-/// Called during setup by twenty effect parts, from the gathering
+/// Called during setup by twenty animation parts, from the gathering
 /// lights and the Djinn beams to the casting impacts and Ragnarok, usually
 /// with effect->side as `flip` so pictures face the targets. Builds the
 /// blitters in heap slots HEAP_SLOT_RAM_CODE and HEAP_SLOT_RAM_CODE_2,

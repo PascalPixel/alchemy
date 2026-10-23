@@ -326,8 +326,8 @@ Maps open the counters through their [import tables](../../glossary.md#entry-tab
 program through the shop [bank](../../glossary.md#bank)'s [far-call](../../glossary.md#far-call) table. Some of the shop's
 pieces serve other screens:
 
-- `MenuCursor_Advance` also moves the cursors of the option, name entry and
-  save menus and the choice of who joins the party.
+- `MenuCursor_Advance` also moves the cursors of the option menu, the naming
+  screen, the file menu and the choice of who joins the party.
 - The Item screen draws its quantity bar with `QuantityBar_Fill`.
 - `Shop_SaveAndTintFieldPalette`, which saves the field's colours and fades
   them over 16 [frames](../../glossary.md#frame), also runs before a [Djinni](../../glossary.md#djinn) joins the party and before

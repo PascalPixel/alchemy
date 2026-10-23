@@ -2006,7 +2006,7 @@ static void AltinPeak_DriftSpray(union FieldObject *fieldObject) {
     Engine_ObjectDispatchRelease(spray);
 }
 
-/// Scheduler task while a beast spits: every fourth frame a spray particle
+/// Task while a beast spits: every fourth frame a spray particle
 /// starts from its spout, living 20 frames.
 static void AltinPeak_SpawnSpray(void) {
   union FieldObject *spray;
@@ -2036,7 +2036,7 @@ static void AltinPeak_StartSpitting(s32 x, s32 y, s32 z, s32 facing) {
   FieldScheduler_AddCallback(AltinPeak_SpawnSpray, TASK_PRIORITY_MAP);
 }
 
-/// Scheduler task while the boulder crashes: every third frame a piece of rock
+/// Task while the boulder crashes: every third frame a piece of rock
 /// (the boulder's own sprite, small) flies out at random, with a clatter
 /// (SE_144 or SE_145) every ninth frame.
 static void AltinPeak_SpawnDebris(void) {
@@ -2175,7 +2175,7 @@ static void AltinPeak_DrainAfterThirdBeast(void) {
   Engine_ScriptEnd();
 }
 
-/// Scheduler task while the statue wakes: a rumble (SE_183) every second.
+/// Task while the statue wakes: a rumble (SE_183) every second.
 static void AltinPeak_PlayHydrosRumble(void) {
   gAltinPeak_RumbleTicks++;
   if (gAltinPeak_RumbleTicks == 60) {
@@ -2213,7 +2213,7 @@ static void AltinPeak_StartHydrosBattle(void) {
       ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 3);
 }
 
-/// Scheduler task while the statue sinks: it flickers every other frame.
+/// Task while the statue sinks: it flickers every other frame.
 static void AltinPeak_FlickerStatue(void) {
   if (((gFrameCount >> 1) & 1) != 0) {
     Engine_ObjectEventSetChildValue(LOCALID_STATUE, SPRITE_COLOR_WHITE);
@@ -2354,13 +2354,13 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
   Engine_ScriptEnd();
 }
 
-/// Unused: asks the field to use Frost (psynergy 0x1018, owner 4 and
+/// Unused: asks the field to use Frost (psynergy 0x1018, member 4 and
 /// ABILITY_FROST); nothing calls it.
 UNUSED static void AltinPeak_RequestPsynergy(void) {
   gFieldWork->psynergy = 0x1018;
 }
 
-/// Scheduler task in AltinPeakSpritz: while the leader stands higher than 48
+/// Task in AltinPeakSpritz: while the leader stands higher than 48
 /// pixels the second pillar is drawn under the party and the third further
 /// back.
 static void AltinPeak_UpdateFrostPillarPriority(void) {
@@ -2619,7 +2619,7 @@ static void AltinPeak_RollCart(s32 id, s32 heading) {
                            position.z);
   Object_WaitForMove(objectEvent);
   Engine_AudioPlayCue(SE_CART_ROLL);
-  // The route cells select turns, a countdown cue, and the destination.
+  // The route cells select turns, a countdown sound, and the destination.
   for (;;) {
     switch (MapGrid_GetMetatileBehaviorAt(2, objectEvent->x.fixed,
                                           objectEvent->z.fixed)) {
@@ -2643,10 +2643,10 @@ arrived:
   Engine_ScriptEnd();
 }
 
-/// Scheduler task that cycles the water's palette colors through
+/// Task that cycles the water's palette colors through
 /// gAltinPeak_PaletteScript.
 static void AltinPeak_StepPaletteAnimation(void) {
-  // The palette cycle borrows RGB555 colours from the fade work's source
+  // The palette cycle borrows RGB555 colours from the palette fade's source
   // palette; each step replaces BG colours 3 to 11.
   u16 *palette = gPaletteFadeWork->palette;
 

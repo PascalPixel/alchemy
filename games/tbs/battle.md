@@ -12,13 +12,13 @@ target. When one side has nobody left standing, or the party runs away, the
 battle ends and the field comes back.
 
 Two kinds of code share the work. The rules decide what happens: who acts
-when, who is hit and for how much, which statuses take hold. The effects
+when, who is hit and for how much, which statuses take hold. The animations
 draw it: the rock that rises, the flash of a critical hit, a [summon](glossary.md#summons)'s whole
 scene. They are kept apart so cleanly that a later target's damage is worked
 out while the animation is still on screen. This page explains the battle as
 a whole; [Battles](src/battle/README.md) goes through the rules in detail,
 [Game rules](src/game/README.md) holds the tables and the arithmetic they
-use, and [Battle effects](src/effect/README.md) the animations.
+use, and [Battle animations](src/effect/README.md) draws them.
 
 ## Starting a battle
 
@@ -27,7 +27,7 @@ as it would leave through a doorway, and comes back to the same place
 afterwards.
 
 In the code, a random encounter raises a field [warp](glossary.md#warp) like any other, with
-`RUN_BATTLE` as the next map and the enemy group in
+`RUN_BATTLE` as the next map and the formation in
 `gGameState.warpDest`. `Game_Run` (`src/object/object/map.c`) clears what
 the last map left running, as it does between any two maps: the [task](glossary.md#task)
 table, the list of small jobs the game runs once a [frame](glossary.md#frame), and the [heap](glossary.md#heap-and-pools), the
@@ -48,7 +48,7 @@ The debug battle menu (`DebugBattle_RunMenu`) is the only other way in.
 `Battle_Run` (`src/battle/battle/encounter.c`) allocates the
 battle's [heap slots](glossary.md#heap-slot), `gBattleWork` among them, and sets `FLAG_IN_BATTLE`
 while it runs. Its result is the number of enemies defeated,
-`BATTLE_OUTCOME_FLED` or `BATTLE_OUTCOME_LOST`. The enemy group is a row of
+`BATTLE_OUTCOME_FLED` or `BATTLE_OUTCOME_LOST`. The formation is a row of
 `src/battle/formatn.tsv`, the enemy formations, which
 `src/battle/battle/formation.c` turns into enemy units; the encounter zones
 in `src/object/encounter.tsv` choose the row.
@@ -80,7 +80,7 @@ it:
 | Table | Read through | What its row says |
 | --- | --- | --- |
 | `src/game/actions.tsv` | `struct AbilityDefinition`, `Ability_Get` | what the ability does: its targets, element, range, PP cost, power, added effect and ability kind |
-| `src/battle/actflags.tsv` | `gAbilityAnimations` | the animation that draws it (its effect kind) and how strong a version |
+| `src/battle/actflags.tsv` | `gAbilityAnimations` | the animation that draws it (its animation kind) and how strong a version |
 | `src/battle/actstat.tsv` | `gAbilityStaging` | what happens around the animation, where the default won't do |
 
 Quake is row 3. Its row of `actions.tsv` has element `ELEMENT_VENUS`, range 2,
@@ -92,7 +92,7 @@ once:
 ```
 
 The ability kind, the low four bits of `flags` (`ABILITY_FORMULA_MASK`),
-chooses the formula the targets go through. The effect kind in
+chooses the formula the targets go through. The animation kind in
 `actflags.tsv` is an unrelated number that chooses only the animation, so
 the arithmetic and the picture can be changed independently.
 
@@ -135,10 +135,10 @@ Once a round, `round.c` gathers every unit's action and sorts them:
 Then, for each action in turn, `BattleStaging_DispatchAction`
 (`staging.c`):
 
-1. plans it: `BattleTurn_Build` (`plan.c`) turns the action into a
+1. builds its turn: `BattleTurn_Build` (`plan.c`) turns the action into a
    `struct BattleTurn`, with the ability id, the targets, double blows and
    critical hits rolled in advance, and the staging;
-2. stages the plan and runs its effect, during which
+2. stages the turn and runs its animation, during which
    `BattleAbility_ApplyToTarget` (`target_exec.c`) applies the ability to each
    target;
 3. ends the actor's turn (`BattleUnit_ProcessTurnEnd`, `turn_end.c`): its
@@ -168,8 +168,8 @@ for (;;) {                                     /* one round */
 [Battles](src/battle/README.md#rounds) goes through each step, with
 [who acts first](src/battle/README.md#rounds),
 [enemy action selection](src/battle/README.md#enemy-actions),
-[first strikes and escape](src/battle/README.md#first-strikes-and-escape)
-and [planning an action](src/battle/README.md#planning-an-action).
+[first strikes and fleeing](src/battle/README.md#first-strikes-and-fleeing)
+and [building a turn](src/battle/README.md#building-a-turn).
 
 ## Resolving an ability
 
@@ -237,7 +237,7 @@ messages stay flat in front. That takes three of the console's [background layer
 | --- | --- |
 | `BG0` | the windows: status and messages |
 | `BG1` | the battlefield, at a fixed size (`BATTLE_BACKGROUND_FIXED`) |
-| `BG2` | the battlefield, zoomed with the camera (`BATTLE_BACKGROUND_ZOOMED`), or an effect's canvas |
+| `BG2` | the battlefield, zoomed with the camera (`BATTLE_BACKGROUND_ZOOMED`), or an animation's canvas |
 | sprites | the units |
 
 The battlefield is one picture of the place, 256 by 120 pixels, and its
@@ -267,40 +267,40 @@ layer's control register, to say which block that line reads:
 `BattleCamera_SetRange` builds these 160 values into one page while the other
 is shown, and the two pages swap each frame.
 
-`BG1` holds the same picture at a fixed size. An effect that needs `BG2` for
+`BG1` holds the same picture at a fixed size. An animation that needs `BG2` for
 its canvas switches the background to it (`BATTLE_BACKGROUND_FIXED`), and its
 horizontal scroll still follows the camera.
 
-[Battle effects](src/effect/README.md#the-canvas) describes how an effect
+[Battle animations](src/effect/README.md#the-canvas) describes how an animation
 takes `BG2` for its canvas.
 
-## Effects
+## Animations
 
 Every ability's animation, from a sword swing to Judgment rising out of the
-clouds, is an effect: one function that draws it frame by frame and returns
+clouds, is one function that draws it frame by frame and returns
 when it is over, while the battle waits.
 
-`BattleStaging_DispatchAction` starts the effect through one of three
-entry points, chosen by bits of the plan's `animation`, which are the
+`BattleStaging_DispatchAction` starts the animation through one of three
+entry points, chosen by bits of the turn's `animation`, which are the
 ability's `actflags.tsv` row:
 
 | Entry point | Chosen by | What it runs |
 | --- | --- | --- |
-| `BattleAnim_RunTableEffect` | neither bit | an ordinary effect kind, an index into `gBattleAnim_Handlers` |
-| `BattleAnim_DispatchByIdRange` | `ANIM_BY_ID_RANGE` (`0x4000`) | by the effect kind's value: 100 to 135 a casting impact, 200 and up a ring and spark scene, any other a beam sequence |
+| `BattleAnim_RunTableEffect` | neither bit | an ordinary animation kind, an index into `gBattleAnim_Handlers` |
+| `BattleAnim_DispatchByIdRange` | `ANIM_BY_ID_RANGE` (`0x4000`) | by the animation kind's value: 100 to 135 a casting impact, 200 and up a ring and spark scene, any other a beam sequence |
 | `BattleAnim_RunSummonEffect` | `ANIM_SUMMON` (`0x8000`) | the summons' scenes |
 
 No row sets both bits.
 
 Each entry point borrows three blocks of memory from the heap (the sprite
-sheet, the work block and the canvas), runs the effect to its end and gives
+sheet, the work block and the canvas), runs the animation to its end and gives
 them back in reverse order, since giving a heap block back also frees
-everything borrowed after it. An effect must therefore remove every task
+everything borrowed after it. An animation must therefore remove every task
 that reads those blocks before it returns.
 
-Most effects draw into a canvas, a hidden picture of 128 by 128 pixels, one
+Most animations draw into a canvas, a hidden picture of 128 by 128 pixels, one
 byte each, which `BG2` shows blended over the battle and stretched to twice
-its width (`BattleAnim_StartCanvasLayer`). An effect stamps pictures onto
+its width (`BattleAnim_StartCanvasLayer`). An animation stamps pictures onto
 the canvas with blitters, small drawing routines that
 `BattleAnim_BuildBlitter` writes while the game runs, each for one
 combination of size, mirroring, clipping and blend mode, and moves particles
@@ -319,33 +319,33 @@ Flint is a casting impact, reached through `BattleAnim_DispatchByIdRange`
 is moved so the impact sits over the target, and 32 scattering sparks follow
 the impact.
 
-Every effect runs a fixed number of frames, and within a frame its steps run
-in a fixed order. The order is part of the effect's output: later steps draw
+Every animation runs a fixed number of frames, and within a frame its steps run
+in a fixed order. The order is part of the animation's output: later steps draw
 over earlier ones, and many steps draw random numbers, so moving one changes
 every random value after it.
 
 The twelve summons that need two or more Djinn are scenes, enumerated by
 `enum SummonAnimId`, and take the same three blocks. The four summons
-that need one Djinni, Venus, Mercury, Mars and Jupiter, are ordinary effect
+that need one Djinni, Venus, Mercury, Mars and Jupiter, are ordinary animation
 kinds.
 
 ![Isaac summons Judgment: the screen goes dark, Judgment rises out of the clouds and strikes, and the scene clears to a wide landscape](https://alchemy.pascalpixel.com/abilities/judgment.gif)
 
 `BattleAnim_RunJudgment` (`src/effect/parts/judgment.c`) replaces the battle's
-display with backdrops of its own and runs in two parts, each with its own
+picture with backgrounds of its own and runs in two parts, each with its own
 frame clock (`JUDGMENT_GATHER_FRAMES`, `JUDGMENT_SWEEP_FRAMES`). The battle
 comes back near the end of the second part, and the damage is shown after
 it has.
 
-[Battle effects](src/effect/README.md#how-a-move-picks-its-effect) describes
+[Battle animations](src/effect/README.md#how-a-move-picks-its-animation) describes
 how the entry point is chosen, then [the canvas](src/effect/README.md#the-canvas),
 [the blitters](src/effect/README.md#blitters),
 [the particle pools](src/effect/README.md#particles),
 [casting impacts](src/effect/README.md#casting-impacts),
 [Judgment](src/effect/README.md#judgment) and every
-[effect family](src/effect/README.md#effect-families).
+[animation family](src/effect/README.md#animation-families).
 
-## Rules and effects run together
+## Rules and animations run together
 
 In a battle the damage messages appear while the rock is still rising: the
 animation does not have to finish before the numbers show. That is because
@@ -354,11 +354,11 @@ the blow lands.
 
 ![The animation and the damage, side by side, with time running down the page. On the left the animation runs in its own loop: Quake's rock rises frame after frame. On the right the damage task waits. When the blow lands the animation says so, and from then on both run at once: the animation keeps drawing to its last frame while the task works out the first target's damage and shows its messages, then the next target's, then the last. The battle moves on only when both are done. The animation picks when the damage appears; the rules alone decide how much.](https://alchemy.pascalpixel.com/illustrations/battle/side-by-side.svg)
 
-An effect is an ordinary function with a loop of its own: it calls
+An animation is an ordinary function with a loop of its own: it calls
 `WaitFrames` whenever time has to pass and returns only when the animation is
 over. The battle code that called it cannot run until then, so the damage
 has to come from somewhere else: a [task](glossary.md#task), which
-`WaitFrames` itself runs once a frame while the effect waits
+`WaitFrames` itself runs once a frame while the animation waits
 ([Engine](engine.md#waiting-and-tasks) explains how).
 
 The staging runners in `src/battle/battle/staging.c` all follow the same
@@ -367,52 +367,52 @@ pattern; `BattleStaging_RunPsynergyCast`, simplified:
 ```c
 Task_Add(BattlePlayback_Run, 0xc80); /* idle task */
 if (plan->animation & ANIM_BY_ID_RANGE)
-  BattleAnim_DispatchByIdRangeFar(&work.effect); /* the effect's loop */
+  BattleAnim_DispatchByIdRangeFar(&work.effect); /* the animation's loop */
 else
   BattleAnim_RunTableEffectFar(&work.effect);
 BattlePlayback_WaitForReady(); /* until every target has played */
 ```
 
-Playback (`src/battle/battle/playback.c`) stays idle until the effect calls
-`ANIM_SHOW_DAMAGE(hitSound)`, which most effects do on the frame the blow
+Playback (`src/battle/battle/playback.c`) stays idle until the animation calls
+`ANIM_SHOW_DAMAGE(hitSound)`, which most animations do on the frame the blow
 lands. From then on, once a frame, the task runs `BattleAbility_ApplyToTarget` for
-the next target and plays that target's events over the following frames
-before it moves on. An effect that never calls it, such as Atalanta's or
+the next target and plays that target's entries over the following frames
+before it moves on. An animation that never calls it, such as Atalanta's or
 Torch's, leaves playback idle until it returns, and
 `BattlePlayback_WaitForReady` then starts playback itself, so its damage shows
 after the animation.
 
 ![Isaac casts Quake: the rock rises under the party, and the damage messages appear while it's still on screen, the aimed member taking more than the one beside him](https://alchemy.pascalpixel.com/abilities/quake.gif)
 
-The two sides meet at the battle event queue (`struct BattlePlaybackQueue`,
-`BATTLE_PLAYBACK_CAPACITY` events). `BattleAbility_ApplyToTarget` never draws or waits:
-it changes the target's HP and statuses and pushes events with
+The two sides meet at the playback queue (`struct BattlePlaybackQueue`,
+`BATTLE_PLAYBACK_CAPACITY` entries). `BattleAbility_ApplyToTarget` never draws or waits:
+it changes the target's HP and statuses and pushes entries with
 `BattlePlayback_Push` in the order the player sees them. A message's blanks,
 such as the name and the number in `Garet takes 14 damage!!!`, are filled
 from values pushed before it, since the message reads them as it is written
 out. `BattlePlayback_RunAll` plays the same queue straight through, for
-outcomes shown outside an effect, such as a cast that is sealed or short of
+outcomes shown outside an animation, such as a cast that is sealed or short of
 PP.
 
-The invariant is that the effect decides only when the damage appears, and
+The invariant is that the animation decides only when the damage appears, and
 the rules alone decide how much it is. A later target's arithmetic runs while
-the effect is still drawing.
+the animation is still drawing.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `BATTLE_PLAYBACK_CAPACITY` | 64 | events the battle event queue holds |
+| `BATTLE_PLAYBACK_CAPACITY` | 64 | entries the playback queue holds |
 
-[Battles](src/battle/README.md#rules-and-pictures-meet-at-the-event-queue)
-takes one target's queue apart, event by event.
+[Battles](src/battle/README.md#rules-and-pictures-meet-at-the-playback-queue)
+takes one target's queue apart, entry by entry.
 
 ## Limits
 
 - There are 519 abilities, ids 0 to 518; `actstat.tsv` is one row shorter.
-- A plan reaches at most `TARGET_MAX` (14) targets.
+- A turn reaches at most `TARGET_MAX` (14) targets.
 - The party fights four at a time and the enemies six at most
   (`PARTY_BATTLE_SIZE`, `ENEMY_BATTLE_SIZE`).
-- `formatn.tsv` has 380 enemy groups, each of up to five kinds of enemy.
-- The event queue holds `BATTLE_PLAYBACK_CAPACITY` (64) events; `BattlePlayback_Push`
+- `formatn.tsv` has 380 formations, each of up to five kinds of enemy.
+- The playback queue holds `BATTLE_PLAYBACK_CAPACITY` (64) entries; `BattlePlayback_Push`
   doesn't check it.
 - The canvas is 128 by 128 pixels, the work block holds 64 particles, and
   there are two blitter slots.

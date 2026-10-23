@@ -1,11 +1,11 @@
 /// @file
-/// The map's markers: chests and Psynergy stones.
+/// The map's treasure spots: chests and Psynergy Stones.
 // Part of object.c.
 
 #include "../object_internal.h"
 
 /// Sets an object's y and groundHeight to the map's height at its x and z.
-/// Called by Field_PlaceTreasureSpots for each marker it places.
+/// Called by Field_PlaceTreasureSpots for each treasure spot it places.
 void ObjectMotion_SnapToTerrain(void *object) {
   struct Object *objectEvent = object;
   s32 groundHeight;
@@ -16,7 +16,7 @@ void ObjectMotion_SnapToTerrain(void *object) {
 }
 
 /// The map grid's work (gMapGridWork[0], HEAP_SLOT_MAP_GRID), seen as its
-/// marker list.
+/// treasure spot list.
 struct MapGridMarkers {
   /// MapGridScrollWork's origin and shake; not named through this view.
   ///@{
@@ -29,7 +29,7 @@ struct MapGridMarkers {
   u8 *markers;
 };
 
-/// The sprites of the objects a map's markers place.
+/// The sprites of the objects a map's treasure spots place.
 enum {
   TREASURE_SPOT_CHEST_SPRITE = 20,
   TREASURE_SPOT_PSYNERGY_STONE_SPRITE = 28
@@ -43,13 +43,13 @@ enum {
   TREASURE_SPOT_CHEST_MIMIC = 7    ///< jumping up as a mimic
 };
 
-/// Places an object at each of the map's markers (ids 100 to 239) that the
-/// map has an event for, up to ten: a chest for a chest event,
-/// shown open once its flag is set and gone once its mimic was beaten, and a
-/// Psynergy Stone for a bg event giving one, until it is
-/// taken. A marker with no such event takes no slot. The objects are kept in
-/// work->markers, not in object event slots. Called by Map_Run on map
-/// load; clears and fills work->markers.
+/// Places an object at each of the map's treasure spots (ids 100 to 239) that
+/// the map has an event for, up to ten: a chest for a chest event, shown open
+/// once its flag is set and gone once its mimic was beaten, and a Psynergy
+/// Stone for a bg event giving one, until it is taken. A treasure spot with no
+/// such event takes no slot. The objects are kept in work->treasureSpots, not
+/// in object event slots. Called by Map_Run on map load; clears and fills
+/// work->treasureSpots.
 void Field_PlaceTreasureSpots(void) {
   u32 id;
   struct MapGridMarkers *grid = gMapGridWork[0];
@@ -69,7 +69,7 @@ void Field_PlaceTreasureSpots(void) {
   u32 row;
 
   Dma_Fill32(0, marker, sizeof(struct TreasureSpot) * TREASURE_SPOT_MAX);
-  // A map without a marker list places nothing.
+  // A map without a treasure spot list places nothing.
   if (list == NULL)
     return;
 
@@ -162,9 +162,9 @@ void Field_PlaceTreasureSpots(void) {
   }
 }
 
-/// Returns the marker slot (below TREASURE_SPOT_MAX) whose event trigger is id,
-/// or -1. Called by the TreasureSpot_ functions below. Unused slots hold id 0,
-/// which no marker has (ids are 100 to 239).
+/// Returns the treasure spot slot (below TREASURE_SPOT_MAX) whose event trigger
+/// is id, or -1. Called by the TreasureSpot_ functions below. Unused slots hold
+/// id 0, which no treasure spot has (ids are 100 to 239).
 s32 TreasureSpot_FindSlot(s32 id) {
   s32 slotIndex;
   s32 matchingSlot;
@@ -185,7 +185,8 @@ s32 TreasureSpot_FindSlot(s32 id) {
 /// Unused: an empty function nothing calls.
 UNUSED void TreasureSpot_ReservedNoOp(void) {}
 
-/// Gives the object of marker id animation, plays sound and waits 12 frames.
+/// Gives the object of treasure spot id animation, plays sound and waits 12
+/// frames.
 static __inline__ void SetMarkerAnimationAndPlaySound(s32 id, s32 animation,
                                                       s32 sound) {
   s32 slotIndex;
@@ -203,15 +204,15 @@ static __inline__ void SetMarkerAnimationAndPlaySound(s32 id, s32 animation,
   }
 }
 
-/// Closes the chest of marker id again (its item could not be carried), with
-/// SE_125. Called by Field_SearchCell.
+/// Closes the chest of treasure spot id again (its item could not be carried),
+/// with SE_125. Called by Field_SearchCell.
 void TreasureSpot_CloseChest(s32 id) {
   SetMarkerAnimationAndPlaySound(id, TREASURE_SPOT_CHEST_CLOSING, SE_125);
 }
 
-/// Makes the chest of marker id jump up as a mimic: after 18 frames it takes
-/// TREASURE_SPOT_CHEST_MIMIC, plays SE_146 and gets an upward velocityY of 8
-/// << 16. Called by Field_SearchCell before the mimic's battle.
+/// Makes the chest of treasure spot id jump up as a mimic: after 18 frames it
+/// takes TREASURE_SPOT_CHEST_MIMIC, plays SE_146 and gets an upward velocityY
+/// of 8 << 16. Called by Field_SearchCell before the mimic's battle.
 void TreasureSpot_LaunchMimic(s32 id) {
   s32 slotIndex;
   struct TreasureSpot *marker;
@@ -232,13 +233,13 @@ void TreasureSpot_LaunchMimic(s32 id) {
   }
 }
 
-/// Opens the chest of marker id with SE_124, and waits 12
+/// Opens the chest of treasure spot id with SE_124, and waits 12
 /// frames. Called by Field_SearchCell when a chest is searched.
 void TreasureSpot_OpenChest(s32 id) {
   SetMarkerAnimationAndPlaySound(id, TREASURE_SPOT_CHEST_OPENING, SE_124);
 }
 
-/// Shows the chest of marker id open, with no sound. Called by
+/// Shows the chest of treasure spot id open, with no sound. Called by
 /// Field_SearchCell once a chest's contents are taken.
 void TreasureSpot_ShowOpened(s32 id) {
   s32 slotIndex;
@@ -254,9 +255,9 @@ void TreasureSpot_ShowOpened(s32 id) {
   }
 }
 
-/// Returns the object of marker id, or NULL when no slot has it. Called by
-/// Field_SearchCell, and by the world map markers (field_fx.c) to skip a
-/// marker already placed.
+/// Returns the object of treasure spot id, or NULL when no slot has it. Called
+/// by Field_SearchCell, and by Reveal's marks (field_fx.c) to skip a treasure
+/// spot already placed.
 struct Object *TreasureSpot_GetObjectEvent(s32 id) {
   s32 slotIndex = TreasureSpot_FindSlot(id);
   struct TreasureSpot *marker;
@@ -267,7 +268,7 @@ struct Object *TreasureSpot_GetObjectEvent(s32 id) {
   return marker->object;
 }
 
-/// Hides the object of marker id by clearing its animationKind:
+/// Hides the object of treasure spot id by clearing its animationKind:
 /// OBJECT_SPRITE_NONE draws no sprite, and the object stays in its slot. Called
 /// by Field_SearchCell once a Psynergy Stone is taken.
 void TreasureSpot_Hide(s32 id) {
@@ -284,9 +285,9 @@ void TreasureSpot_Hide(s32 id) {
   }
 }
 
-/// Moves the object of marker id to (x, z) on the ground; -1 keeps the centre
-/// of its cell on that axis. Positions are 16.16. Map overlays call it as
-/// Engine_MarkerSetPosition.
+/// Moves the object of treasure spot id to (x, z) on the ground; -1 keeps the
+/// centre of its cell on that axis. Positions are 16.16. Map overlays call it
+/// as Engine_MarkerSetPosition.
 void TreasureSpot_SetObjectEventPosition(s32 id, s32 x, s32 z) {
   s32 slotIndex;
   s32 groundHeight;

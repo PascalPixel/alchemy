@@ -52,7 +52,7 @@ other [editions](../../glossary.md#editions) agree except that German moves thre
 | --- | --- | --- | --- | --- |
 | 0 KB | `0x02000000` | 32 KB | the main image's variables: the save buffer, the [game flags](../../glossary.md#game-flag) (`gGameFlagBytes`), the game state (`gGameState`), the sound driver's work and the flash library's | `ewram.s` |
 | 32 KB | `0x02008000` | 32 KB | `gOverlayArea`, the loaded map or screen overlay | `ewram.s`, `overlay/overlay.ld` |
-| 64 KB | `0x02010000` | 32 KB | `gMapGridCellBuffer`; battle effects also use it for particles | `Ram_MapGridCellBuffer` |
+| 64 KB | `0x02010000` | 32 KB | `gMapGridCellBuffer`; battle animations also use it for particles | `Ram_MapGridCellBuffer` |
 | 96 KB | `0x02018000` | 16 KB | `gActorSpriteSlots` | `Ram_EnemySpriteSlots` |
 | 112 KB | `0x0201c000` | 16 KB | `gDecodeBuffer` | `Ram_DecodeBuffer` |
 | 128 KB | `0x02020000` | 32 KB | `gMetatiles`, the layout's [metatiles](../../glossary.md#metatile) (`games/tbs/src/field/field/map_grid.c`) | `Ram_Metatiles` |
@@ -97,7 +97,7 @@ The hardware addresses video memory in fixed blocks (`games/tbs/include/system/i
   (`WINDOW_TILEMAP_VRAM`) and its text canvas tiles follow it (`TEXT_CANVAS_VRAM`,
   [`unit/window/window.h`](../../include/unit/window/window.h)).
   `MapGrid_LoadLayout` puts the ground, middle and overhead layers' maps in
-  screen blocks 5, 6 and 7 and the layout's three tile sheets in character
+  screen blocks 5, 6 and 7 and the layout's three tilesets in character
   blocks 1 to 3 ([Layouts](../layout/README.md)).
 - Screens that load two pictures in turn split the background in halves: the
   first 32 KB with background colours 0 to 127, the second with colours 128 to
@@ -300,8 +300,8 @@ itself, the layout has to keep every one:
 | --- | --- | --- |
 | The cartridge restart entry, `Cart_Restart` | `0x08000000`, the start of the ROM | The soft reset in `WaitFrames` jumps there, and `SerialTest_Run`, a link cable test nothing reaches, sends the first 640 bytes from there over the cable. So the header and `System_Entry` stay at the start of the ROM. |
 | The resident runtime, `.iwram_runtime` (5 KB, copied by `Runtime_InstallIwramAndIrqs`) | `0x03000000`, the start of IWRAM | C calls its routines at their addresses (`IwramSqrt` and the rest), and the ARM code that runs from RAM reaches them as offsets from `IwramIrqMain` (`IWRAM_ENTRY`, `games/tbs/src/field/update.c`). |
-| The overlay area, `gOverlayArea` | `0x02008000`, 32 KB of EWRAM | Every overlay is linked to run there and has to fit. Its first 48 bytes are the entry table, which the field object calls by member. |
-| The map and decode buffers: `Ram_MapGridCellBuffer`, `Ram_EnemySpriteSlots`, `Ram_DecodeBuffer`, `Ram_Metatiles`, `Ram_MapGridShapes`, `Ram_BgTileBuffer` | after the overlay area, as the EWRAM table lists | Code reaches across their boundaries by arithmetic: the map grid's [cells](../../glossary.md#cell) fill 64 KB from the start of `Ram_MapGridCellBuffer`, through the sprite slots and the decode buffer, and the tile animation reads tiles from `Ram_DecodeBuffer` that land in `gMapGridLayerData` ([Layouts](../layout/README.md)). So `ewram.s` can't reorder or resize them. |
+| The overlay area, `gOverlayArea` | `0x02008000`, 32 KB of EWRAM | Every overlay is linked to run there and has to fit. Its first 48 bytes are the entry table, which the field's code calls by member. |
+| The map and decode buffers: `Ram_MapGridCellBuffer`, `Ram_EnemySpriteSlots`, `Ram_DecodeBuffer`, `Ram_Metatiles`, `Ram_MapGridShapes`, `Ram_BgTileBuffer` | after the overlay area, as the EWRAM table lists | Code reaches across their boundaries by arithmetic: the map grid's [cells](../../glossary.md#cell) fill 64 KB from the start of `Ram_MapGridCellBuffer`, through the sprite slots and the decode buffer, and the tileset animation reads tiles from `Ram_DecodeBuffer` that land in `gMapGridLayerData` ([Layouts](../layout/README.md)). So `ewram.s` can't reorder or resize them. |
 | The ends of the two heaps | `0x03007800` in IWRAM and `0x02040000`, the end of EWRAM | The allocators test against these numbers (`heap.c`). `gCartridgeResetMarker` sits at the first, and the system stack lives above it. |
 | The sound driver's mixer, `SoundDriver_Mixer` (932 bytes) | `0x03007000`, inside the IWRAM heap's range | `Audio_Initialize` copies the mixer to that number (`Ram_SoundMixer`), and the driver runs it there. The copy is 1 KB at once (`SOUND_MIXER_CODE_SIZE`), so the 92 bytes after the mixer in the ROM land just after it. |
 | The frame wait's stack top, `Ram_FrameWaitStackTop` | `0x03007a00` | The 512 bytes between it and the heap's end are what the frame loop, its [tasks](../../glossary.md#task) and the VBlank work always have ([Runtime](../runtime/README.md)). |
@@ -385,7 +385,7 @@ the flash library in `save/`.
 
 | File | What it holds |
 | --- | --- |
-| `rom_head.s`, `entry.s` | the cartridge header; the entry that sets the CPU modes and stacks, and the sound preset records (`IwramCodeRecords`) |
+| `rom_head.s`, `entry.s` | the cartridge header; the entry that sets the CPU modes and stacks, and the sound presets (`IwramCodeRecords`) |
 | `ewram.s`, `iwram.s`, `iwram_hi.s` | the main image's RAM variables, in their order in EWRAM and IWRAM |
 | `runtime.s`, `runtime_irq_table.s`, `runtime_mix*.s`, `runtime_mul_q16_ip.s` | the code copied to IWRAM: the interrupt dispatcher and its handler table, the resident sound mixing code, and the multiplies, divides, square root, word fills, transform and decoder the rest of the game calls |
 | `iwram_entry.s` | the stubs that call the IWRAM code from the ROM |
@@ -464,8 +464,8 @@ to its symbol in each edition its `#if` selects.
   runtime's, the sound and resource tables twice each. The build stamp is read
   through its row (`System_CopyBuildStamp`, `game/game/units.c`), but the named far-call rows are
   only passed to stubs that do nothing (`RuntimeDispatch_NoOpHook`,
-  `RuntimeDispatch_ReturnZero`), from the title screen, Lucky Dice, the slot
-  machine and the sprite viewer. Those calls look like a leftover of loading
+  `RuntimeDispatch_ReturnZero`), from the title screen, Lucky Dice, Lucky
+  Wheels and the sprite viewer. Those calls look like a leftover of loading
   banks as resources (the comment in `menu/title.c` suggests as much), but
   The Lost Age's stubs are empty too, and nothing in either ROM loads a bank
   through its row, so only Camelot's sources could say.

@@ -1,12 +1,12 @@
 /// @file
-/// The debug menus (maps, flags, icon browsers) and the system menu's
+/// The debug menus (maps, flags, icon browsers) and the pause menu's
 /// choices.
 // Part of battle_command.c.
 
 #include "../battle_command_internal.h"
 
-/// Schedules the debug map and warp destination selector; 0xc80 is a scheduler
-/// order, not a number of frames to wait. Nothing in the game calls it.
+/// Schedules the debug map and warp destination selector; 0xc80 is a task
+/// priority, not a number of frames to wait. Nothing in the game calls it.
 UNUSED void DebugMapSelect_Schedule(void) {
 #ifdef UBFIX
   Task_Add(DebugMapSelect_Run, 0xC80);
@@ -37,7 +37,7 @@ void DebugMapSelect_DrawRow(struct Window *work, s32 mapId,
 // there (FieldScript_SetDestinationFar), B closes it. The field opens it in
 // debug mode when the Start button's menu (Save your quest, Sleep, Change
 // settings) is opened with B held (object/object/run_map.c).
-// The scheduler and the debug menu's far call ignore this selection result.
+// The task runner and the debug menu's far call ignore this selection result.
 // Plain void removes two result moves (252 to 248 bytes in tbs-en) and
 // reorders FieldScript_SetDestinationFar's argument setup.
 #ifdef UBFIX
@@ -313,15 +313,15 @@ s32 DebugFlagEditor_HandleInput(struct Window *window, s32 *page, s32 *cursor) {
 /// Reserved menu entry. Nothing calls it.
 void Menu_ReservedNoOp(void) {}
 
-/// Sets the Djinni's collected flag, then adds it to the specified owner.
+/// Sets the Djinni's collected flag, then adds it to the specified member.
 /// The flag is FLAG_DJINN_FIRST + 20 * element + index. Nothing calls it.
 void Djinn_SetFoundFlagAndAdd(s32 owner, s32 element, s32 index) {
   GameFlag_SetBitFar((element * 0x14) + index + FLAG_DJINN_FIRST);
   Djinn_GiveFar(owner, element, index);
 }
 
-/// Handles Save, Sleep and Options from the field workspace. A cancelled save
-/// or options screen reopens the workspace; cancelling the workspace returns
+/// Handles Save, Sleep and Options from the pause menu. A cancelled save
+/// or option menu reopens the pause menu; cancelling the pause menu returns
 /// -1. Sleep shows its message and sets gSleepRequested. Otherwise returns
 /// 0. The field reaches it by far call (object/object/run_map.c).
 s32 PauseMenu_Run(void) {

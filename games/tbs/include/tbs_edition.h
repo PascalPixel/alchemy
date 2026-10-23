@@ -91,8 +91,8 @@
 #define MENU_TEXT_Y 60
 
 // The European editions' Colosso lettering keeps 192 bytes of palettes
-// before its tiles instead of 160, and the link lobby's opponent names take up
-// to 8 letters of prefix, then a space, instead of 5.
+// before its tiles instead of 160, and the Battle Arena's opponent names take
+// up to 8 letters of prefix, then a space, instead of 5.
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
 #define COLOSSO_PALETTE_BYTES 192
@@ -200,7 +200,7 @@
 #define STOCK_LABEL_X 24
 #endif
 
-// The reel game: its title's letters and where they start (nine in Spanish).
+// Lucky Wheels: its title's letters and where they start (nine in Spanish).
 #if (LANGUAGE == LANGUAGE_SPANISH)
 #define LUCKY_WHEELS_TITLE_LETTERS 9
 #define LUCKY_WHEELS_TITLE_X 8
@@ -209,7 +209,7 @@
 #define LUCKY_WHEELS_TITLE_X 24
 #endif
 
-// The reel game's help window, and the VRAM its jackpot and title tiles use.
+// Lucky Wheels' help window, and the VRAM its jackpot and title tiles use.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define LUCKY_WHEELS_HELP_WINDOW_X 2
 #define LUCKY_WHEELS_HELP_WINDOW_WIDTH 26
@@ -224,7 +224,7 @@
 #define LUCKY_WHEELS_TITLE_TILES 0x380
 #endif
 
-// The reel game's prompt windows (stop, all held, start, hold, release),
+// Lucky Wheels' prompt windows (stop, all held, start, hold, release),
 // placed and sized for each language's words.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define LUCKY_WHEELS_STOP_X 23
@@ -274,10 +274,10 @@
 #define LUCKY_WHEELS_RELEASE_X 23
 #define LUCKY_WHEELS_RELEASE_WIDTH 7
 #endif
-// The reel game's count of Game Tickets left after the bet takes three digits
+// Lucky Wheels' count of Game Tickets left after the bet takes three digits
 // from the French release on, one tile further left so that it ends where the
 // two did, and the hold hint no longer follows the fourth and last spin, after
-// which no reel can be held. Neither is about words, so both are updates.
+// which no wheel can be held. Neither is about words, so both are updates.
 #if TBS_PATCH_3
 #define LUCKY_WHEELS_COIN_DIGITS 3
 #define LUCKY_WHEELS_COIN_X 56

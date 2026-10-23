@@ -5,11 +5,11 @@
 #include "../effect_internal.h"
 
 // Healing sparkles come in seven modes of one runner,
-// BattleAnim_RunHealingMotes; the wrappers name the mode of each effect.
+// BattleAnim_RunHealingMotes; the wrappers name the mode of each animation.
 //
 // PARTICLES holds the motes: 512 are scattered, and target n draws from the
 // 64 at n * 64 (32 of them, or 128 running into the next target's, by the
-// effect's variant). Each mote keeps its position relative to the target's
+// animation's variant). Each mote keeps its position relative to the target's
 // centre, so swirling the motes is a turn of the whole frame of reference,
 // and drawing one in is a step of 2 pixels a frame along the line to the
 // centre.
@@ -71,7 +71,7 @@ void BattleAnim_RunCurePoison(struct BattleAnimArgs *effect) {
 }
 
 /// Plays the healing motes as Restore and Elixir show them
-/// (HEALING_MODE_RESTORE). No effect table entry reaches this one.
+/// (HEALING_MODE_RESTORE). No animation table entry reaches this one.
 UNUSED void BattleAnim_RunUnusedRestoreMotes(struct BattleAnimArgs *effect) {
   BattleAnim_RunHealingMotes(effect, HEALING_MODE_RESTORE);
 }

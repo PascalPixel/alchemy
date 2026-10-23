@@ -23,9 +23,10 @@ Their source was never released.
 The party is the characters travelling together, led by Isaac: in The
 Broken Seal, Isaac, Garet, Ivan and Mia. The code numbers all eight
 characters of both games, `ISAAC` (0) to `PIERS` (7) in `character_ids.h`,
-The Lost Age's Felix, Jenna, Sheba and Piers among them. [Game
-rules](src/game/README.md#words-used-here) calls a character's number its
-owner.
+The Lost Age's Felix, Jenna, Sheba and Piers among them. A character's or an
+enemy's record is a unit (`struct Unit`), its number the unit id, and a unit
+in the party a member. [Game rules](src/game/README.md#words-used-here) lists
+the words.
 
 ### The places, in story order
 
@@ -77,6 +78,21 @@ others) by spending one to four Djinn on standby. Afterwards those Djinn
 recover, and the summoner gains Power in the element it spent most Djinn
 of. [Battles](src/battle/README.md#commands-and-ability-ids) shows how a
 summon is chosen.
+
+### Rounds and turns
+
+A round is every unit in a battle acting once; a turn is one unit's action
+within it, built as a `struct BattleTurn` while it resolves. What pret
+calls a battle turn is this game's round. [Battles](src/battle/README.md#rounds)
+explains both.
+
+### Battle animation
+
+The picture an ability plays over a battle, drawn by code: Quake's shaking
+ground, a summon's arrival. It decides when a hit shows, never what it
+does; pret uses the same word (`battle_anim.c`), and this game's are
+`BattleAnim_` functions. [Battle animations](src/effect/README.md) explains
+them.
 
 ## The project
 
@@ -242,24 +258,34 @@ describes both.
 The heap lends blocks of memory to the rest of the game from two pools,
 one in IWRAM and one in EWRAM. Each hands out memory from the bottom up,
 so blocks go back in the reverse of the order they were taken, and the
-whole heap is emptied before each map. A block from the alternate pool
-comes from `AllocEwram`, which takes a short-lived
-block with no slot from EWRAM first.
+whole heap is emptied before each map. `Alloc` and `Free` lend and return
+blocks the way pret's `malloc.h` does, and `AllocEwram` takes a short-lived
+block with no heap slot from the EWRAM pool first.
 [Runtime](src/runtime/README.md#the-heap) explains it.
 
 ### Heap slot
 
 One of the 62 named words of `gHeapSlots` (`HEAP_SLOT_*`), each holding a
 heap block that has to be found again: the running map's state is
-`HEAP_SLOT_FIELD`, an open menu's `HEAP_SLOT_MENU`. Pages also call it a
-work slot.
+`HEAP_SLOT_FIELD` (`gFieldWork`), an open menu's `HEAP_SLOT_MENU`; each slot's
+global is named after the slot.
 
 ### Task
 
-A routine the scheduler runs once every frame, or once every VBlank, until
-it is removed: the windows' typing, the map's scrolling, a map's own
-callbacks. The table holds 20. [Runtime](src/runtime/README.md#the-task-scheduler)
-explains the scheduler.
+A routine run once every frame, or once every VBlank, until it is removed:
+the windows' typing, the map's scrolling, a map's own callbacks. As in
+pret, tasks sit in one table, `gTasks`, which holds 20, and run in the order
+of their priority (`TASK_PRIORITY_*`). [Runtime](src/runtime/README.md#the-task-runner)
+explains the task runner.
+
+### Song
+
+Every sound the game plays, music or effect, is asked for by a song
+number, a row of the song table, as in pret's `songs.h`: below
+`SONG_FANFARE_FIRST` (80) music, then the fanfares, and from
+`SONG_SE_FIRST` (100) mostly sound effects. "BGM" names what the music
+player is playing now, "music" what a map chooses.
+[Sound](src/sound/README.md#what-a-song-number-means) explains the ranges.
 
 ## Maps
 
@@ -303,19 +329,19 @@ party. Behaviors from `MB_EVENT_FIRST` to `MB_EVENT_LAST` mean whatever the
 map's own event table says; the rest mean the same on every map. [World](world.md#cells-and-metatile-behaviors)
 explains them.
 
-### Field object
+### Object
 
-One of the field engine's 64 slots, `gObjects`: anything in a map that
+One of the 64 slots of `gObjects` (`struct Object`): anything in a map that
 acts on its own, from the party and the townspeople to the
 camera and the footprints in snow. Each runs an object script.
-[World](world.md#field-objects-and-their-scripts) explains them.
+[World](world.md#objects-and-their-scripts) explains them.
 
 ### Object event
 
 A person or thing a map knows by its local id: the party, and everyone and
 everything its object event templates place, each a row of the map's table
-that puts one on the map. Each object event is a field object, but the
-camera and the footprints are field objects and not object events.
+that puts one on the map. Each object event is an [object](#object), but the
+camera and the footprints are objects and not object events.
 [Maps](src/map/README.md#who-stands-where) explains them.
 
 ### Local id
@@ -372,8 +398,8 @@ A function a map event names (`EventScript_EnterIsaacsHouse`), written as
 one step to a line in the commands of `script.h`. It runs from top to
 bottom while the walk waits, and a step that takes time, a wait, a line of
 dialogue or a walk, runs those frames itself before the next line starts.
-An object script is something else: the list of `SC_` commands a field
-object runs each frame. "Scene" means only a cutscene.
+An object script is something else: the list of `SC_` commands an
+[object](#object) runs each frame. "Scene" means only a cutscene.
 [Maps](src/map/README.md#scripts) explains scripts.
 
 ### Game flag

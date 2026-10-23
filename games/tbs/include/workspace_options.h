@@ -2,7 +2,7 @@
 #define ALCHEMY_WORKSPACE_OPTIONS_H
 
 /// @file
-/// The options screen's work and the selection work.
+/// The option menu's work and the selection work.
 
 #include "unit/window/window.h"
 #include "unit/window/battle_command.h"
@@ -10,10 +10,10 @@
 #include "render_input.h"
 #include "cursor.h"
 
-/// The option screen's work (heap block 20): the settings being edited and
+/// The option menu's work (heap block 20): the settings being edited and
 /// how many values each takes, the page, and the cursor, markers and icons.
 /// OptionMenu_InitializeWork takes and clears it and copies the settings in;
-/// OptionMenu_Release frees it, and cancelling discards the edits. The system
+/// OptionMenu_Release frees it, and cancelling discards the edits. The pause
 /// menu takes the same slot for its cursor, entry (page) and icons.
 struct OptionMenuWork {
   u8 unused[0x400]; ///< no code names it
@@ -21,8 +21,8 @@ struct OptionMenuWork {
   /// state only the unused OptionMenu_ResetEntries writes.
   u8 entries[7][52];
   u8 unusedAfterEntries[8]; ///< no code names it
-  /// The row the cursor is on: on the option screen 0 to 4, indexing option
-  /// and optionCount; on the system menu its entry, indexing icon.
+  /// The row the cursor is on: on the option menu 0 to 4, indexing option
+  /// and optionCount; on the pause menu its entry, indexing icon.
   u16 page;
   u16 tint[3]; ///< the window tint's red, green and blue, 0 to 31
   /// Frames counted; its low three bits pick the frame of the marker of the
@@ -46,7 +46,7 @@ struct OptionMenuWork {
   struct WindowSprite *icon[6];
 };
 
-/// The option screen's work, HEAP_SLOT_OPTION_MENU under its own name.
+/// The option menu's work, HEAP_SLOT_OPTION_MENU under its own name.
 extern struct OptionMenuWork *gOptionMenuWork;
 
 #endif

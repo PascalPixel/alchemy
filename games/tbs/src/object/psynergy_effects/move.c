@@ -54,7 +54,7 @@ void FieldEffect_UpdateItemBreakFragment(union FieldObject *fieldObject) {
   FieldEffect_InitializeFallingFragment(fragment);
 }
 
-#define MOVE_CELL_MASK 0xfff00000 ///< a 16-pixel tile
+#define MOVE_CELL_MASK 0xfff00000 ///< a 16-pixel cell
 
 /// When Move is cast on a target, the pushing hand appears beside it and pushes
 /// it 16 pixels the way the d-pad points, for as long as the player pushes; A,
@@ -63,7 +63,7 @@ void FieldEffect_UpdateItemBreakFragment(union FieldObject *fieldObject) {
 /// Abilities: Move (FIELD_PSYNERGY_MOVE).
 ///
 /// Where the target cannot go, an error sound plays every 16 frames. When the
-/// push would run into the caster, the caster blocks it or, when the tile
+/// push would run into the caster, the caster blocks it or, when the cell
 /// beyond is free, is pushed along too.
 void FieldEffect_SteerPushedTarget(s32 targetId) {
   struct EffectVector position;
@@ -142,7 +142,7 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
       continue;
     }
 
-    // The hand leans 2 pixels the way it pushes; check the tiles 16 and 32
+    // The hand leans 2 pixels the way it pushes; check the cells 16 and 32
     // pixels beyond the target.
     position.x = target->x.fixed;
     position.y = target->y.fixed + (16 << 16);
@@ -179,9 +179,9 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
         continue;
       }
 
-      // The push runs into the caster: if the caster stands on the tile the
+      // The push runs into the caster: if the caster stands on the cell the
       // target would move to, it cannot be pushed; if the caster stands on the
-      // tile 32 pixels on, the caster moves along when the tile beyond is free.
+      // cell 32 pixels on, the caster moves along when the cell beyond is free.
       cellX = user->x.fixed & MOVE_CELL_MASK;
       cellZ = user->z.fixed & MOVE_CELL_MASK;
       if (cellX == (candidate->x & MOVE_CELL_MASK) &&
@@ -233,7 +233,7 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
       Object_SetMoveTargetFar((struct Object *)user, beyond.x, beyond.y,
                               beyond.z);
     }
-    // Land exactly on the tile, whatever the braking left.
+    // Land exactly on the cell, whatever the braking left.
     Object_WaitForMoveFar(target);
     target->x.fixed = x;
     target->z.fixed = z;
@@ -255,9 +255,10 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
   UpdateRisingParticleBurst(pusher);
 }
 
-/// Effect slot callback of a particle that flies 30 pixels out from where it
-/// started, comes back and is freed. It goes out straight at up to 4 pixels a
-/// frame and comes back turning at most 1/64 turn a frame, so it curves home.
+/// Field effect sprite callback of a particle that flies 30 pixels out from
+/// where it started, comes back and is freed. It goes out straight at up to 4
+/// pixels a frame and comes back turning at most 1/64 turn a frame, so it
+/// curves home.
 void FieldEffect_UpdateOrbitAndReturn(struct FieldEffectSprite *effect) {
   // Forward OUT_AND_BACK_FLYING_OUT fallthrough keeps the callback extent but
   // changes native instructions; retain the immediate retry until a plain form

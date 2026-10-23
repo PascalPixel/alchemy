@@ -4,11 +4,11 @@
 
 #include "../effect_internal.h"
 
-// The triangle effects (Bind, Luff and BattleAnim_RunUnusedTriangleStrike)
+// The triangle animations (Bind, Luff and BattleAnim_RunUnusedTriangleStrike)
 // spin a shrinking triangle onto the first target for 64 frames and then stand
-// a rune there. The triangle is drawn as the ring and star effects draw their
-// outlines: its corners are projected onto the canvas and stored in the
-// velocity fields of Particle records, then each edge is sampled at evenly
+// a rune there. The triangle is drawn as the ring and star animations draw
+// their outlines: its corners are projected onto the canvas and stored in the
+// velocity fields of Particles, then each edge is sampled at evenly
 // spaced points and a flare is stamped at each. Both runners write the same
 // frame loop; only the prelude, the step towards the target, the canvas's
 // priority and the vertex table differ. The blue-ramp helper here, which
@@ -22,8 +22,8 @@
 ///
 /// Nothing calls it or takes its address. Writes background colours 32 to 63
 /// and then 96 to 127, the 0x7800 bytes of BG character block 2 (the
-/// backdrop's picture) and Ram_MapGridCellBuffer, keeps its delays in the sheet
-/// slot, and waits a frame for each step of the edge.
+/// battle background's picture) and Ram_MapGridCellBuffer, keeps its delays in
+/// the sheet slot, and waits a frame for each step of the edge.
 UNUSED void BattleAnim_ConvertBackgroundToBlueRamp(void) {
   s32 i, x, y, row, end, speed;
   s32 red, green, blue;

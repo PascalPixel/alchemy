@@ -126,8 +126,8 @@ void BattleTransition_BuildTilemap(void *tilemap) {
 /// Shows the perspective plane's finished page each frame while the
 /// background is BATTLE_BACKGROUND_ZOOMED: its first line's BG2CNT now, the
 /// rest by HBlank DMA 0, and its affine parameters into BG2PA to BG2Y. Runs
-/// each frame as a scheduler callback, in the VBlank pass at its highest rank
-/// (order 0x4ff), added by BattleBackground_Load and
+/// each frame as a task, in the VBlank pass at its highest
+/// priority (0x4ff), added by BattleBackground_Load and
 /// BattlePresentation_ConfigurePaletteFade; BattleCamera_SetRange builds the
 /// pages.
 void BattlePresentation_UpdateHBlankScroll(void) {
@@ -150,7 +150,7 @@ void BattlePresentation_UpdateHBlankScroll(void) {
 /// Copies one of eight curtain tiles from gBattleTransition_CurtainVariants
 /// into CURTAIN_TILE(0), a new one every four frames while the transition timer
 /// (gBattleEntryTimer) runs from 1 to 32.
-/// XXX: no code in TBS names it; a scheduler or table entry that reaches it
+/// XXX: no code in TBS names it; a task or table entry that reaches it
 /// would show which transition used it.
 void BattleTransition_UploadTileVariant(void) {
   u32 variant = *gBattleEntryTimer - 1;
@@ -162,7 +162,7 @@ void BattleTransition_UploadTileVariant(void) {
 /// Advances the curtain opening by a frame: scrolls BG0 from 32 pixels to 0
 /// over frames 20 to 52, and over frames 0 to 80 turns the camera round to
 /// YAW_PARTY_TURN and zooms it from 180 to 100 percent.
-/// Runs each frame as a scheduler callback added by
+/// Runs each frame as a task added by
 /// BattleTransition_Run, which removes it once the encounter
 /// is announced. Advances the timer in gBattleEntryTimer's slot
 /// (HEAP_SLOT_BATTLE_ENTRY_TIMER), and writes gBgScroll[0].y and the camera's
@@ -199,7 +199,7 @@ void BattleTransition_AdvanceTimer(void) {
 /// Draws a frame of the curtain opening on BG1: over 80 frames a row moves up
 /// from row 13 to row 4 and its vertically flipped twin down to row 20, the
 /// row's tile stepping through CURTAIN_TILE(1) to (8), the last one clear.
-/// Runs each frame as a scheduler callback added by
+/// Runs each frame as a task added by
 /// BattleTransition_Run, reading the frame from
 /// gBattleEntryTimer's timer; writes BG1's map in screen block 12.
 void BattleTransition_DrawRows(void) {
@@ -271,7 +271,8 @@ struct DisplayRegisters {
 /// Uses HEAP_SLOT_BATTLE_ENTRY_TIMER for the opening's frame timer and frees
 /// it; leaves BG1 on BATTLE_BG1CNT, BG0's priority lowered by 2 again,
 /// REG_DISPCNT showing BG0, BG2 and the sprites, and no VCount handler. The
-/// storm also sets BattleWork.background to the aerie's storm backdrop.
+/// storm also sets BattleWork.background to the aerie's storm battle
+/// background.
 void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
   volatile u32 fill;
   struct BattleStagingWork work;

@@ -237,7 +237,7 @@ s32 Map_Run(s32 warpDest) {
           Field_RunPushCellEvent(work->pushCell);
           work->pushCell = 0;
         } else if (work->examine != 0) {
-          // Examine the object event or tile ahead, or open the menu if neither
+          // Examine the object event or cell ahead, or open the menu if neither
           // has an event.
           s32 object;
 

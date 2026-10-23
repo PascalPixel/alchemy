@@ -36,7 +36,7 @@ s32 Shop_ListAvailableArtifacts(void) {
   return count;
 }
 
-/// Advances the hand cursor one frame. Runs every frame as a scheduler task
+/// Advances the hand cursor one frame. Runs every frame as a task
 /// while a counter is open.
 void MenuCursor_Step(void) {
   MenuCursor_Advance(&((struct ShopWork *)gMenuWork)->cursor);

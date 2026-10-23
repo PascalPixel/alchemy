@@ -314,7 +314,7 @@ VenusLighthouseAerie_GetObjectEventTemplates(void) {
 #include "common/object_distance.h"
 #include "common/object_nearest.h"
 
-/// Walking off the edge of a platform: if the ground two tiles ahead is clear,
+/// Walking off the edge of a platform: if the ground two cells ahead is clear,
 /// the leader jumps across to it.
 static void EventScript_JumpToNextPlatform(void) {
   struct ObjectEvent *objectEvent;

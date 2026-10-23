@@ -35,9 +35,9 @@
 
 /// Copies the background's saved palette to BG palettes 6 to 13, darkened by
 /// level (0 for none).
-/// Called by BattleBackground_RestorePalette with 0, and by effects that dim
-/// the background (beams.c, canvas.c). Sets BattleWork.brightness when it
-/// darkens. Interrupts are off while it writes: REG_IME is given its own
+/// Called by BattleBackground_RestorePalette with 0, and by battle animations
+/// that dim the background (beams.c, canvas.c). Sets BattleWork.brightness when
+/// it darkens. Interrupts are off while it writes: REG_IME is given its own
 /// address, whose bit 0 is clear, as irqlock.h's IME_DISABLE does, and is
 /// restored after.
 void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
@@ -78,7 +78,7 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
 /// fade 0x80 restores the saved palette, another nonzero fade takes that
 /// much from each colour channel, and 0 leaves the palette alone;
 /// BATTLE_BACKGROUND_FIXED queues BATTLE_BG1CNT for BG1. Called with
-/// BATTLE_BACKGROUND_FIXED by ElementGlow_Play and the effects'
+/// BATTLE_BACKGROUND_FIXED by ElementGlow_Play and the battle animations'
 /// canvas layers (canvas.c), and with BATTLE_BACKGROUND_ZOOMED by
 /// BattleStaging_DispatchAction and Battle_ProcessRoundEnd. Sets
 /// BattleBackgroundView.mode (enum BattleBackgroundMode), adds
@@ -169,7 +169,7 @@ typedef void (*BitDecoder)(const u8 *source, void *destination);
 /// BitDecoder_DecodeImage (HEAP_SLOT_RAM_CODE_TEMP) unpacks. Called with
 /// BATTLE_BACKGROUND_FIXED by
 /// Battle_Run as the battle opens, and by the Atalanta and Boreas
-/// effects for their violet sky. Sets BattleBackgroundView.mode, and adds
+/// animations for their violet sky. Sets BattleBackgroundView.mode, and adds
 /// BattlePresentation_UpdateHBlankScroll when it was BATTLE_BACKGROUND_NONE.
 void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
   struct BattleBackgroundView *view =
@@ -419,7 +419,7 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
 /// Points the battle camera, through BattleCamera_SetView,
 /// at the ground between two units' battle objects, with a zoom in percent.
 /// Called by the staging of a paired action (staging.c) and by the beam
-/// effects (beams.c).
+/// animations (beams.c).
 void BattleCamera_SetViewAtPairMidpoint(s32 firstUnitId, s32 secondUnitId,
                                         s32 zoom) {
   struct MotionObject *firstObject = BattleObject_Get(firstUnitId)->object;
@@ -591,8 +591,8 @@ void BattleHighlight_ClearAllSpriteModes(void) {
 /// Lightens the opaque sprites, the highlighted units, by the next step of
 /// gBattleHighlight_BlendRamp.
 /// The ramp's first sixteen steps play once, then its second sixteen over
-/// and over. Runs each frame as a scheduler callback in the VBlank pass
-/// (order 0x480), added by BattleHighlight_SetModes while
+/// and over. Runs each frame as a task in the VBlank pass
+/// (priority 0x480), added by BattleHighlight_SetModes while
 /// BattleWork.highlightMode is set; writes REG_BLDCNT, REG_BLDALPHA,
 /// REG_BLDY and BattleWork.highlightStep.
 void BattleBackground_StepHighlightBlend(void) {

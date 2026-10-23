@@ -4,7 +4,7 @@
 
 #include "../effect_internal.h"
 
-// The lights take 128 slots of PARTICLES per target, and ripple the effect
+// The lights take 128 slots of PARTICLES per target, and ripple the animation
 // layer throughout through the HBlank DMA of BG2's affine origin.
 
 // Lights that scatter from the user and gather into each target.
@@ -37,7 +37,7 @@ void BattleAnim_RunHaunting(struct BattleAnimArgs *effect) {
 /// pulled towards the middle of the target's body, and goes out when it is
 /// within 32 pixels across and in depth. Each light takes one of three
 /// images. Each target is struck 70 frames after its turn starts, and the
-/// battle shows the damage at frame 80. The effect layer ripples throughout.
+/// battle shows the damage at frame 80. The animation layer ripples throughout.
 ///
 /// Called by BattleAnim_RunDemonNight, BattleAnim_RunRumble and
 /// BattleAnim_RunHaunting. Loads its colours over the first 64 of the
@@ -47,7 +47,7 @@ void BattleAnim_RunHaunting(struct BattleAnimArgs *effect) {
 ///
 /// mode: the colours (enum GatheringLightsMode) and the row of
 ///       gGatheringLights_Counts: lights per target and frames, 16 and 88,
-///       8 and 72, or 12 and 80, the effect running 20 frames more for each
+///       8 and 72, or 12 and 80, the animation running 20 frames more for each
 ///       target.
 void BattleAnim_RunGatheringLights(struct BattleAnimArgs *effect, s32 mode) {
   struct ScreenPoint screenPosition;

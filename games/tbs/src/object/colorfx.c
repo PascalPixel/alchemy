@@ -37,15 +37,15 @@
 #include "item_ids.h"
 
 //--------------------------------------------------------------------------
-// The slot machine (the reel game): its palette steps, canvas transfers and
-// line drawing, and an LZ packer.
+// Lucky Wheels: its palette steps, canvas transfers and line drawing, and an LZ
+// packer.
 //--------------------------------------------------------------------------
 
 /// The sparks of the jackpot, kept in the map cell buffer.
 #define LUCKY_WHEELS_SPARKS ((struct Particle *)Ram_MapGridCellBuffer)
 
-/// The slot machine's own work block (struct LuckyWheelsWork), beside the
-/// battle effect blocks it borrows.
+/// Lucky Wheels' own work block (struct LuckyWheelsWork), beside the
+/// battle animation blocks it borrows.
 #define LUCKY_WHEELS_HEAP_SLOT 45
 
 /// The paylines' canvas: 256 x 128 pixels of 8-bit colour, shown on BG2 from
@@ -53,7 +53,7 @@
 #define LUCKY_WHEELS_CANVAS_SIZE (256 * 128)
 #define LUCKY_WHEELS_CANVAS_TILES (BG_CHAR_BLOCK(0) + 0x3500)
 
-/// Plays the slot machine: blanks the screen, seeds the random numbers with the
+/// Plays Lucky Wheels: blanks the screen, seeds the random numbers with the
 /// play time and runs the game. Returns 0.
 s32 LuckyWheels_Start(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
@@ -100,7 +100,7 @@ s32 LuckyWheels_ScaleRgb555(u16 *src, u16 *dst, s32 scale, s32 count) {
   return 0;
 }
 
-/// A scheduler callback: on a frame whose canvas is ready (transferPending),
+/// A task: on a frame whose canvas is ready (transferPending),
 /// sends the canvas to its tiles in VRAM (LUCKY_WHEELS_CANVAS_TILES), then
 /// clears it or fades it into trails as transferMode says.
 void LuckyWheels_TransferCanvas(void) {
@@ -286,7 +286,7 @@ void LuckyWheels_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
   }
 }
 
-/// One of the slot machine's five reels: how far it has turned, its 21
+/// One of Lucky Wheels' five wheels: how far it has turned, its 21
 /// symbols, whether it is held, and the countdown to its stop (-1 until one
 /// starts).
 struct Reel {
@@ -298,20 +298,20 @@ struct Reel {
 
 struct Window;
 
-/// The slot machine's states (LuckyWheelsWork.state).
+/// Lucky Wheels' states (LuckyWheelsWork.state).
 enum LuckyWheelsState {
   LUCKY_WHEELS_BETTING = 0,  ///< Up and Down change the bet, A spins, B leaves
-  LUCKY_WHEELS_SPINNING = 1, ///< the reels spin until R or time stops each
+  LUCKY_WHEELS_SPINNING = 1, ///< the wheels spin until R or time stops each
   LUCKY_WHEELS_WON = 2,      ///< a payline won: a pause
   LUCKY_WHEELS_SHOWING_WIN = 3,    ///< the win is shown until A
-  LUCKY_WHEELS_CHOOSING_HOLDS = 5, ///< choose reels to hold, or pull the lever
+  LUCKY_WHEELS_CHOOSING_HOLDS = 5, ///< choose wheels to hold, or pull the lever
   LUCKY_WHEELS_DONE = 10,          ///< the game ends
   LUCKY_WHEELS_NO_WIN = 11,        ///< no payline won: A to choose holds
   LUCKY_WHEELS_OUT_OF_SPINS =
       20, ///< the fourth spin lost: a pause, then the end
 };
 
-/// The slot machine's work in heap slot 45: its reels, state, bet and spins,
+/// Lucky Wheels' work in heap slot 45: its wheels, state, bet and spins,
 /// keys, timer, winning lines, sprites and windows.
 struct LuckyWheelsWork {
   struct Reel reels[5];
@@ -346,11 +346,11 @@ struct ReelSave {
 
 #include "../graphics/slots/reel_tables.h"
 
-/// The slot machine's frame callback: reads the keys, runs the game's state
-/// (betting, spinning and stopping the reels, scoring the paylines, choosing
-/// reels to hold, showing a win) and builds all 128 sprites: the cursor, the
+/// Lucky Wheels' frame callback: reads the keys, runs the game's state
+/// (betting, spinning and stopping the wheels, scoring the paylines, choosing
+/// wheels to hold, showing a win) and builds all 128 sprites: the cursor, the
 /// title letters of a win, the frame, the hold lamps, the spin counter, the
-/// paylines, the reel symbols, the lever and the bottom bar.
+/// paylines, the wheel symbols, the lever and the bottom bar.
 void LuckyWheels_RunFrame(void) {
   /* FAKEMATCH(volatile): struct OamShadow's volatile words (oambuf.h) keep
    * each list loop's offset givs; as plain u32 words, 1242 of 1729
@@ -949,8 +949,8 @@ void LuckyWheels_InitializeTitle(void) {
   Text_DrawMessageAsTilesFar(message - 1, state->subWindow, 0, 0);
 }
 
-/// The slot machine: loads its backgrounds, sprites and palettes, fills each of
-/// the five reels with 21 random symbols (with eight placed symbols of rank 0
+/// Lucky Wheels: loads its backgrounds, sprites and palettes, fills each of
+/// the five wheels with 21 random symbols (with eight placed symbols of rank 0
 /// to 5), then runs until the player leaves: fading in, drawing the paylines
 /// on the canvas while betting or winning, and the jackpot's sparks and
 /// colour cycle while showing a win. Then fades out and frees its memory.

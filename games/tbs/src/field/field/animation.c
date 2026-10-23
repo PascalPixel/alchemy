@@ -1,5 +1,5 @@
 /// @file
-/// Sprites, their animation layers and the resource slots they draw from.
+/// Sprites, their anims and the frame caches they draw from.
 // Part of field.c.
 
 #include "../field_internal.h"
@@ -21,16 +21,16 @@ struct SpriteFrameCacheSource {
 
 extern struct SpriteFrameCacheSource gSpriteFrameCache_Sources[];
 
-/// Loads the frames of animation id number into resource slot slot's buffer:
-/// the resource listed for it in gSpriteFrameCache_Sources, decoded, its frame
-/// offsets turned into pointers, and for variant 1-5 its pixel colours (those
-/// up to 0xdf, the basic sprite palettes 0 to 13) remapped through that
-/// variant's conversion table; a variant above 5 uses variant 1's. The caller
-/// owns buffer, which must hold the decoded resource. Returns the
+/// Loads the frames of animation id number into frame cache slot's
+/// buffer: the resource listed for it in gSpriteFrameCache_Sources, decoded,
+/// its frame offsets turned into pointers, and for variant 1-5 its pixel
+/// colours (those up to 0xdf, the basic sprite palettes 0 to 13) remapped
+/// through that variant's conversion table; a variant above 5 uses variant 1's.
+/// The caller owns buffer, which must hold the decoded resource. Returns the
 /// image's size in pixels (width * height), or 0 when the slot or id is not
 /// known. Sets the slot's tag to (slot << 12) | number and its buffer; with
 /// a null buffer and number 0 it does only that, which is how the battle frees
-/// a slot. Called by the sprite viewer
+/// a frame cache. Called by the sprite viewer
 /// and, as SpriteFrameCache_LoadFar, by the battle for its enemy sprites
 /// (variant is the class's palette).
 s32 SpriteFrameCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
@@ -101,9 +101,9 @@ s32 SpriteFrameCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
   return metadata->width * metadata->height;
 }
 
-/// Returns the buffer loaded into the resource slot with this tag, or 0.
+/// Returns the buffer loaded into the sprite frame cache with this tag, or 0.
 /// An animation id that carries its slot in bits 12 and up finds its frames
-/// here; called by the layer set-up functions below.
+/// here; called by the anim set-up functions below.
 s32 SpriteFrameCache_FindByTag(s32 tag) {
   u32 i;
   struct SpriteFrameCache *slot = gObjectSystemWork->frameCaches;
@@ -115,9 +115,9 @@ s32 SpriteFrameCache_FindByTag(s32 tag) {
   return 0;
 }
 
-/// Resets each layer of a sprite from its animation's metadata: its facing
+/// Resets each anim of a sprite from its animation's metadata: its facing
 /// kind, frames, scripts and codec, with no frame shown and no script
-/// running. The first layer also sets the sprite's size, scale and offsets.
+/// running. The first anim also sets the sprite's size, scale and offsets.
 /// Returns 0. Called by Animation_SetIndexAndInitializeObjects.
 s32 Sprite_ResetAnims(struct Sprite *sprite) {
   s32 i;
@@ -132,7 +132,7 @@ s32 Sprite_ResetAnims(struct Sprite *sprite) {
       continue;
 
     if (i == 0) {
-      // The first layer supplies the dimensions and origin of the whole sprite.
+      // The first anim supplies the dimensions and origin of the whole sprite.
       sprite->width = metadata->width;
       sprite->height = metadata->height;
       sprite->scale = metadata->scale << 8;
@@ -150,7 +150,7 @@ s32 Sprite_ResetAnims(struct Sprite *sprite) {
     layer->frames = frames;
     layer->scripts = metadata->animation;
     layer->mode = metadata->frameCodec;
-    // Frame 255 and no script: Sprite_ComposeFrame skips the layer
+    // Frame 255 and no script: Sprite_ComposeFrame skips the anim
     // until an animation is selected on it.
     layer->frame = 0xff;
     layer->script = 0;
@@ -160,8 +160,8 @@ s32 Sprite_ResetAnims(struct Sprite *sprite) {
   return 0;
 }
 
-/// Resets one animation layer from its animation's metadata, as
-/// Sprite_ResetAnims does for each layer. Called by the sprite
+/// Resets one sprite anim from its animation's metadata, as
+/// Sprite_ResetAnims does for each anim. Called by the sprite
 /// viewer.
 void SpriteAnim_Reset(struct SpriteAnim *layer) {
   void **frames;
@@ -171,7 +171,7 @@ void SpriteAnim_Reset(struct SpriteAnim *layer) {
   if (layer != NULL) {
     metadata = Resource_GetMetadataRecordFar(layer->animationId);
     if (metadata->width != 0) {
-      // Keep the layer inactive until an animation script is selected.
+      // Keep the anim inactive until an animation script is selected.
       frames = metadata->frames;
       if (frames == 0)
         frames = (void **)SpriteFrameCache_FindByTag(layer->animationId);
@@ -187,11 +187,11 @@ void SpriteAnim_Reset(struct SpriteAnim *layer) {
   }
 }
 
-/// Adds a layer of animation id to a sprite, in its first free layer of
-/// four. The first layer also sets the sprite's size, scale and offsets.
-/// Returns the layer, 0 when no layer record is free, or -1 when the sprite
-/// has four layers already. Called by Sprite_Create for a sprite's
-/// first layer, by ObjectDispatch_RegisterChildMetadata and the sprite
+/// Adds an anim of animation id to a sprite, in its first free anim of
+/// four. The first anim also sets the sprite's size, scale and offsets.
+/// Returns the anim, 0 when no sprite anim is free, or -1 when the sprite
+/// has four anims already. Called by Sprite_Create for a sprite's
+/// first anim, by ObjectDispatch_RegisterChildMetadata and the sprite
 /// viewer, and as Sprite_AddAnimFar by the battle, the Psynergy
 /// effects and the field map's object events.
 s32 Sprite_AddAnim(struct Sprite *sprite, s32 id) {
@@ -200,7 +200,7 @@ s32 Sprite_AddAnim(struct Sprite *sprite, s32 id) {
   struct SpriteAnim **entry;
   struct AnimationMetadata *metadata;
 
-  // Find an unused layer slot before reserving a layer record.
+  // Find an unused anim slot before reserving a sprite anim.
   if (layerHandle != 0) {
     entry = &sprite->entries[0];
     do {
@@ -218,7 +218,7 @@ s32 Sprite_AddAnim(struct Sprite *sprite, s32 id) {
     return 0;
   sprite->entries[freeIndex] = (struct SpriteAnim *)layerHandle;
   metadata = Resource_GetMetadataRecordFar(id);
-  // Only the first registered layer establishes the sprite's geometry.
+  // Only the first registered anim establishes the sprite's geometry.
   if (sprite->count == 0) {
     sprite->width = metadata->width;
     sprite->height = metadata->height;
@@ -231,8 +231,8 @@ s32 Sprite_AddAnim(struct Sprite *sprite, s32 id) {
   return layerHandle;
 }
 
-/// Removes the layer handle from a sprite and clears it, trimming the
-/// sprite's layer count when no later layer remains. Called through
+/// Removes the anim handle from a sprite and clears it, trimming the
+/// sprite's anim count when no later anim remains. Called through
 /// Sprite_RemoveAnimFar by the battle's objects.
 void Sprite_RemoveAnim(struct Sprite *sprite, s32 layer) {
   s32 laterLayers;
@@ -259,8 +259,8 @@ void Sprite_RemoveAnim(struct Sprite *sprite, s32 layer) {
   }
 }
 
-/// Removes and clears a sprite's layer number no (0-3), trimming the sprite's
-/// layer count when no later layer remains.
+/// Removes and clears a sprite's anim number no (0-3), trimming the sprite's
+/// anim count when no later anim remains.
 void Sprite_RemoveAnimAt(struct Sprite *sprite, u32 index) {
   struct SpriteAnim *layer;
   s32 laterLayers;
@@ -283,7 +283,7 @@ void Sprite_RemoveAnimAt(struct Sprite *sprite, u32 index) {
   }
 }
 
-/// Starts the indexed animation on a layer when its metadata contains it.
+/// Starts the indexed animation on a sprite anim when its metadata contains it.
 /// Bit 7 preserves the command cursor and timer; it remains part of the index.
 /// Reached through the animation script's play command
 /// (Sprite_ComposeFrame) and, as SpriteAnim_StartFar, from the
@@ -313,13 +313,13 @@ void SpriteAnim_Start(struct SpriteAnim *layer, s32 animation) {
   }
 }
 
-/// Starts animation flags & 0x7f on every layer of a sprite (bit 7 keeps
-/// each layer's place and timer), unless the sprite plays it already. The
-/// first layer's animation also sets the sprite's offsets. Returns 0.
+/// Starts animation flags & 0x7f on every anim of a sprite (bit 7 keeps
+/// each anim's place and timer), unless the sprite plays it already. The
+/// first anim's animation also sets the sprite's offsets. Returns 0.
 /// The engine's usual way to change what a sprite plays: called by the
 /// object dispatch and the player control, and as
 /// Sprite_StartAnimFar by the battle, the shops, the menus,
-/// the battle and Psynergy effects and the map scripts.
+/// the battle animations, the Psynergy effects and the map scripts.
 s32 Sprite_StartAnim(struct Sprite *sprite, s32 animation) {
   s32 keepPlace;
   s32 i;
@@ -334,7 +334,7 @@ s32 Sprite_StartAnim(struct Sprite *sprite, s32 animation) {
     i = 0;
     goto test_entry;
   entry_loop:
-    // Only the first layer supplies the sprite's offsets.
+    // Only the first anim supplies the sprite's offsets.
     {
       struct SpriteAnim *layer = sprite->entries[i];
       struct AnimationMetadata *metadata;
@@ -367,7 +367,7 @@ s32 Sprite_StartAnim(struct Sprite *sprite, s32 animation) {
   return 0;
 }
 
-/// Sets each animated layer's timer to the given duration in frames.
+/// Sets each playing anim's timer to the given duration in frames.
 /// Returns 0.
 s32 Sprite_SetAnimTimers(struct Sprite *sprite, s32 frames) {
   u8 count = sprite->count;
@@ -375,7 +375,7 @@ s32 Sprite_SetAnimTimers(struct Sprite *sprite, s32 frames) {
   s32 remaining;
 
   if (count != 0) {
-    // The layer timer counts sixteenths of a frame.
+    // The anim timer counts sixteenths of a frame.
     frames <<= 4;
     layerList = sprite->entries;
     remaining = count;
@@ -389,7 +389,7 @@ s32 Sprite_SetAnimTimers(struct Sprite *sprite, s32 frames) {
   return 0;
 }
 
-/// Sets the timer step, the animation speed, of each animated layer of a
+/// Sets the timer step, the animation speed, of each playing anim of a
 /// sprite (16 is normal speed). Called by the object dispatch and, as
 /// Sprite_SetAnimSpeedFar, by the Sanctum, which stops a
 /// party member's icon with 0 and restarts it with 16.
@@ -407,7 +407,7 @@ void Sprite_SetAnimSpeed(struct Sprite *sprite, s32 step) {
   }
 }
 
-/// Allocates and zeroes the 64 sprites and 64 animation layers
+/// Allocates and zeroes the 64 sprites and 64 sprite anims
 /// (HEAP_SLOT_SPRITES and HEAP_SLOT_SPRITE_ANIMS, from EWRAM
 /// first in OBJECT_SYSTEM_WORLD_MAP and IWRAM first otherwise), loads the basic
 /// sprite palettes, loads the shadow tiles into VRAM cache entry 93 and puts
@@ -449,8 +449,8 @@ void ObjectSystem_Configure(s32 mode) {
                    Tile_CopyStridedCodeSize);
 }
 
-/// Takes a free animation layer record and starts it on animation id's first
-/// animation. Returns the layer, or NULL when none is free or the id has no
+/// Takes a free sprite anim and starts it on animation id's first
+/// animation. Returns the anim, or NULL when none is free or the id has no
 /// image. Called by Sprite_AddAnim.
 struct SpriteAnim *SpriteAnim_Alloc(s32 id) {
   struct AnimationMetadata *metadata;
@@ -467,7 +467,7 @@ struct SpriteAnim *SpriteAnim_Alloc(s32 id) {
   layer = NULL;
 
   if (metadata->width != 0) {
-    // A zero facing kind marks a free layer record.
+    // A zero facing kind marks a free sprite anim.
     for (i = 0; i < ANIMATION_OBJECT_COUNT; i++, candidate++) {
       if (candidate->kind == 0) {
         found = candidate;
@@ -502,9 +502,9 @@ struct SpriteAnim *SpriteAnim_Alloc(s32 id) {
   return layer;
 }
 
-/// Zeroes one animation layer (struct SpriteAnim); does nothing for NULL.
-/// Zeroing kind frees the record for SpriteAnim_Alloc. Called by the
-/// layer release functions here and, as SpriteAnim_ClearFar, by
+/// Zeroes one sprite anim (struct SpriteAnim); does nothing for NULL.
+/// Zeroing kind frees the anim for SpriteAnim_Alloc. Called by the
+/// anim release functions here and, as SpriteAnim_ClearFar, by
 /// the Psynergy effects and map scripts.
 void SpriteAnim_Clear(struct SpriteAnim *record) {
   if (record != 0) {
@@ -517,10 +517,10 @@ void SpriteAnim_Clear(struct SpriteAnim *record) {
 /// Creates a sprite for animation id, taking one of the 64 free sprites and a
 /// VRAM cache entry for its tiles. Returns the sprite, or NULL when there is
 /// no room or the id has no image. The caller owns it until
-/// Sprite_Destroy. When no layer record is free the sprite is still
-/// returned, with no layer and a width of 0, so it also counts as free. Called
+/// Sprite_Destroy. When no sprite anim is free the sprite is still
+/// returned, with no anim and a width of 0, so it also counts as free. Called
 /// by Object_CreateField and the sprite viewer, and as Sprite_CreateFar
-/// by the battle, the battle effects, the Psynergy effects and the menus.
+/// by the battle, the battle animations, the Psynergy effects and the menus.
 struct Sprite *Sprite_Create(s32 id) {
   struct AnimationMetadata *metadata;
   struct Sprite *sprite;
@@ -635,15 +635,15 @@ struct Sprite *Sprite_Create(s32 id) {
 }
 
 /// Releases a sprite: its VRAM cache entry (unless retainCacheEntry is set),
-/// its four animation layers, and then zeroes its 56 bytes. Called by
+/// its four sprite anims, and then zeroes its 56 bytes. Called by
 /// ObjectDispatch_Release and, as Sprite_DestroyFar, by the battle
-/// and its effects, the Psynergy effects and the menus.
+/// and its animations, the Psynergy effects and the menus.
 void Sprite_Destroy(struct Sprite *sprite) {
   s32 remaining;
   struct SpriteAnim **layer;
 
   if (sprite) {
-    // Release dependent records before clearing the sprite itself.
+    // Release its VRAM cache entry and anims before clearing the sprite itself.
     if (!sprite->retainCacheEntry)
       VramCache_FreeEntry(sprite->slot);
     layer = sprite->entries;

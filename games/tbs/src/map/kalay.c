@@ -1416,9 +1416,9 @@ static void Kalay_PrepareTunnel(void) {
   s32 trackingValue;
   s32 column;
   struct FadeOverlayWork *effectWork;
-  // HEAP_SLOT_FADE_OVERLAY is nine slots after HEAP_SLOT_FIELD; index the
-  // actual slot array, not adjacent storage reached past the scalar gFieldWork
-  // declaration.
+  // HEAP_SLOT_FADE_OVERLAY is nine heap slots after HEAP_SLOT_FIELD; index
+  // the actual heap slot array, not adjacent storage reached past the scalar
+  // gFieldWork declaration.
   void **workSlots = gHeapSlots + HEAP_SLOT_FIELD;
 
   ((struct EventWork *)workSlots[0])->transition =
@@ -2170,7 +2170,7 @@ static void Kalay_HammetReturnsToPalace(void) {
 #include "common/object_findcell.h"
 
 /// In the Kalay Tunnel (KalayTunnelTreasureRoom), walking into a statue pushes
-/// it one tile when there is room.
+/// it one cell when there is room.
 static void Kalay_PushTunnelStatue(void) {
   struct FieldPosition destination;
   struct ObjectEvent *leader;
@@ -2498,7 +2498,7 @@ static void Kalay_FreezePuddle(void) {
 // Shared source, included in link order.
 #include "common/object_orbit.h"
 
-// One tile in each facing direction: x in the high 16 bits, z in the low 16.
+// One cell in each facing direction: x in the high 16 bits, z in the low 16.
 // UB: negative x coordinates cannot be left-shifted as signed integers.
 #ifdef UBFIX
 #define TILE_STEP(dx, dz) (((u32)(dx) << 16) | ((dz) & 0xffff))

@@ -2,8 +2,8 @@
 #define ALCHEMY_FIELD_RUNTIME_H
 
 /// @file
-/// The field's runtime work: map grid cells, map records and warp regions, map
-/// markers and FieldWork.
+/// The field's runtime work: map grid cells, map headers and warp regions,
+/// treasure spots and FieldWork.
 
 #include "types.h"
 #include "static_assert.h"
@@ -65,7 +65,7 @@ STATIC_ASSERT(sizeof(struct MapEntries) == 48);
 STATIC_ASSERT(offsetof(struct MapEntries, warps) == 0x14);
 STATIC_ASSERT(offsetof(struct MapEntries, regions) == 0x2c);
 
-/// A map marker placed as an object event: a chest or a Psynergy stone.
+/// A treasure spot placed as an object event: a chest or a Psynergy Stone.
 struct TreasureSpot {
   struct Object *object; ///< the object event placed for it
   u8 id;                 ///< the trigger of its map event, 100 to 239
@@ -104,20 +104,20 @@ struct FieldWork {
   /// placed object events.
   struct ObjectEvent *objectEvents[66];
   struct TreasureSpot
-      treasureSpots[10]; ///< the map's markers (TREASURE_SPOT_MAX)
+      treasureSpots[10]; ///< the map's treasure spots (TREASURE_SPOT_MAX)
   /// The twelve requests: each nonzero value asks the field loop for one
   /// thing; Field_ClearRequests clears them and Field_CountRequests sums them.
   ///@{
   s16 coordEvent; ///< a step event (1 to 239) for Map_RunCoordEventOrWarp
   s16 pushCell; ///< a metatile behavior (252 to 254) for Field_RunPushCellEvent
   s16 warp;     ///< the warp taken, which ends the map
-  s16 menu;     ///< open the main menu
+  s16 menu;     ///< open the field menu
   s16 examine;  ///< the A button: examine what is ahead
   s16 start;    ///< the Start button: open the pause menu
   u16 talk;     ///< an object event's talk event, as local id | 0x1000
   s16 searchCell; ///< a cell's metatile behavior, for Field_SearchCell
-  s16 battle;     ///< the enemy group of a random encounter
-  s16 psynergy;   ///< a field Psynergy to use, as owner << 10 | Psynergy
+  s16 battle;     ///< the formation of a random encounter
+  s16 psynergy;   ///< a field Psynergy to use, as unit << 10 | Psynergy
   s16 item;       ///< an item to use, packed as Field_UseItem reads it
   /// A raised event for Map_RunRaisedEvent, or an enum FieldRaisedEvent.
   s16 raisedEvent;
@@ -127,7 +127,7 @@ struct FieldWork {
   s16 fallenOwners[9]; ///< the characters who fell, from the active party
   s16 itemArgument;    ///< the inventory slot Field_UseItem receives
   /// Frames the leader has pushed against something, counted by the player
-  /// controls; coord events and push tiles need more than 12.
+  /// controls; coord events and push cells need more than 12.
   s16 blockedSteps;
   s16 mode;               ///< an enum ObjectSystemMode
   u8 encounterZones[8];   ///< encounter zone for each kind of ground
@@ -228,7 +228,7 @@ struct FieldPosition {
 
 STATIC_ASSERT(sizeof(struct FieldPosition) == 12);
 
-/// Every map's record, by map number (field/maps.s).
+/// Every map's header, by map number (field/maps.s).
 extern const struct MapHeader gMapHeaders[];
 /// The running map's overlay, loaded into these 0x8000 bytes of EWRAM at
 /// each map change; its code opens with its entry table.

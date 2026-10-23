@@ -95,7 +95,7 @@ void BattleAnim_RunHail(struct BattleAnimArgs *effect) {
       orbit = frame << 11;
       x = (((-Trig_Sin(orbit) * 4)) >> 16) + screenX / 2 - 10;
       y = (((Trig_Cos(orbit) * 2)) >> 16) + screenY - 22;
-      // Never true: the effect ends after 64 frames.
+      // Never true: the animation ends after 64 frames.
       if (frame > 69)
         y = (y - frame * 2) + 138;
       draw[1](canvas, work->sheet + HAIL_DJINNI_CELLS, x, y, 20, 40);
@@ -357,7 +357,7 @@ void BattleAnim_RunGround(struct BattleAnimArgs *effect) {
 /// out, BG1 returns to its saved position and the centre to (120, 120). It
 /// takes two random numbers each shaking frame, x first.
 ///
-/// Called once a frame by nearly every effect, before it presents the frame.
+/// Called once a frame by nearly every animation, before it presents the frame.
 /// Writes gBgScroll[1] and gProjection.centerX and centerY, and counts down
 /// work->shakeFrames. The x offset is centred on half of rangeY too, so with
 /// rangeX smaller (Hail's 4 and 8) the x offset is never positive.

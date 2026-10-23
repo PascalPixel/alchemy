@@ -144,7 +144,7 @@ void BattleAnim_RunDragonCloud(struct BattleAnimArgs *effect) {
     if (frame == 50)
       Sound_PlaySongFar(SE_136);
     // 1/256 of a turn a frame, then re-aim the turned camera at the field's
-    // centre at 100% zoom, which also moves the backdrop's plane.
+    // centre at 100% zoom, which also moves the battle background's plane.
     if (work->effect->side == 0) {
       if (frame <= 63)
         camera->yaw -= 0x100;
@@ -237,7 +237,7 @@ void BattleAnim_RunDragonCloud(struct BattleAnimArgs *effect) {
     // pixel a frame per frame (0x2000), undamped, until they drop below the
     // ground.
     if (frame > DRAGON_CLOUD_STRIKE_FRAME) {
-      // Embers are motes sized by depth. Only records 56 to 63 play the
+      // Embers are motes sized by depth. Only entries 56 to 63 play the
       // six flash pictures, two frames each; the first eight flashes, at 48
       // to 55, are drawn as motes.
       for (i = 0; i != 56; i++) {
@@ -255,7 +255,7 @@ void BattleAnim_RunDragonCloud(struct BattleAnimArgs *effect) {
           // Nearer is larger: 9 pixels at depth 160 or less.
           // XXX: from depth 736 on the size is 0, and ANIM_DRAW_MOTE would
           // read gBattleAnim_MoteCells[-1]; whether an ember ever gets that
-          // far needs a run of the effect to settle.
+          // far needs a run of the animation to settle.
           size = 9 - (position.depth - 160) / 64;
           if (i > 47) {
             if (ember->variant <= 11) {

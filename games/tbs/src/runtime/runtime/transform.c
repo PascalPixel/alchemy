@@ -25,7 +25,7 @@ void Transform_Reset(void) {
 }
 
 /// Saves gTransform into the save area (one level deep; a second save is
-/// ignored). Called by the battle effects that draw a part with its own
+/// ignored). Called by the battle animations that draw a part with its own
 /// transform, with Transform_Pop after.
 void Transform_Push(void) {
   if (gTransformStackDepth <= 0) {
@@ -125,7 +125,7 @@ void Transform_ApplyYaw(s32 angle) {
   Iwram_TransformMatrix(matrix);
 }
 
-/// Rotates gTransform about the Z axis by `angle`. Called by battle effects
+/// Rotates gTransform about the Z axis by `angle`. Called by battle animations
 /// that spin their picture.
 void Transform_ApplyRoll(s32 angle) {
   s32 matrix[12];
@@ -142,7 +142,7 @@ void Transform_ApplyRoll(s32 angle) {
 }
 
 /// Translates gTransform by `position` (x, y, z in 16.16). Called by the
-/// battle and field cameras and effects.
+/// battle and field cameras and the battle animations.
 void Transform_ApplyPosition(const s32 *position) {
   s32 matrix[12];
 
@@ -155,7 +155,7 @@ void Transform_ApplyPosition(const s32 *position) {
 }
 
 /// Scales gTransform by `scale` (x, y, z factors in 16.16). Called by a few
-/// battle effects (Bind, Astral Blast, Thor).
+/// battle animations (Bind, Astral Blast, Thor).
 void Transform_ApplyScale(const s32 *scale) {
   s32 matrix[12];
 
@@ -348,7 +348,7 @@ void Projection_SetFieldOfView(u32 fieldOfView, s32 nearDepth, s32 farDepth) {
 }
 
 /// Sets gProjection's focal length and depth range directly. Called by the
-/// battle cameras and effects.
+/// battle cameras and animations.
 void Projection_Set(u32 focal, u32 nearDepth, u32 farDepth) {
   struct Projection *projection = &gProjection;
 

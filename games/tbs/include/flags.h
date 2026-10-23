@@ -188,7 +188,7 @@
 /// (MsgFieldWelcomeToBattleArenaWherePeople)
 #define FLAG_MONSTER_BATTLE 0x173
 /// Set when the cleared game's menu goes to the Battle Arena: there Psynergy
-/// has no effect and the system menu offers only Change settings.
+/// has no effect and the pause menu offers only Change settings.
 /// ★ Named from the game: "Welcome to Battle Arena"
 /// (MsgFieldWelcomeToBattleArenaWherePeople)
 #define FLAG_IN_BATTLE_ARENA 0x17e
@@ -211,7 +211,7 @@
 #define FLAG_MAP_TEMP_LAST 0x2ff ///< the last of the map's 256 flags
 /// A map section's flags, kept while the party moves between the maps of one
 /// section and cleared when it enters another. Each section uses the numbers
-/// for its own, so the maps name them; the next two are the link lobby's.
+/// for its own, so the maps name them; the next two are the Battle Arena's.
 #define FLAG_MAPSEC_TEMP_FIRST 0x300
 #define FLAG_MAPSEC_TEMP_LAST 0x3ff ///< the last of the map section's 256 flags
 // Byte flags, read and written eight at a time.

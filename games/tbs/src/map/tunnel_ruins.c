@@ -247,7 +247,7 @@ static s32 TunnelRuins_RefreshObjectEventAfterShrinking(
   return 0;
 }
 
-/// Later patches land at the tile center; the base release uses the target
+/// Later patches land at the cell's centre; the base release uses the target
 /// pixel.
 static __inline__ s32 TunnelRuins_GetLandingPixel(s32 coordinate) {
 #if TBS_PATCH_1
@@ -436,7 +436,7 @@ static s32 TunnelRuins_PuddleFollowsPillar(union FieldObject *fieldObject) {
 }
 
 /// Waits up to 60 frames for landing, then stops vertical motion at the
-/// terrain.
+/// ground.
 static void
 TunnelRuins_WaitForObjectEventToLand(struct ObjectEvent *objectEvent) {
   s32 remainingFrames = 60;

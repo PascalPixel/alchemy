@@ -6,7 +6,7 @@
 
 /// The columns of a gQuake_Timings row.
 enum {
-  QUAKE_TIMING_FRAMES,      ///< frames in the whole effect
+  QUAKE_TIMING_FRAMES,      ///< frames in the whole animation
   QUAKE_TIMING_RISE_FRAMES, ///< frames each pillar stands
   QUAKE_TIMING_SHAKE        ///< how far the screen shakes
 };

@@ -2,14 +2,14 @@
 #define ALCHEMY_STAGED_OBJECT_EVENT_H
 
 /// @file
-/// The pushable object events' movement probes and footprint bounds.
+/// The pushed objects' movement probes and footprint bounds.
 
 #include "types.h"
 #include "object_event.h"
 #include "field_runtime.h"
 #include "static_assert.h"
 
-/// Where a large thing ahead of the leader would roll to: its footprint, its
+/// Where a pushed object ahead of the leader would roll to: its footprint, its
 /// object event, that position, and a callback during the leader's
 /// follow-through.
 struct PushedObjectProbe {

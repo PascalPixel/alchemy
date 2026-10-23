@@ -55,7 +55,7 @@ UNUSED void Warp_ReservedNoOp941DC(void) {}
 
 // UB: no value is returned, and run_map.c ignores it; as void, the epilogue
 // changes.
-/// Starts the transition into a random battle: plays the map's battle cue
+/// Starts the transition into a random battle: plays the map's battle music
 /// and the encounter sounds, closes the screen and flashes the backdrop white,
 /// fading it to black over 16 frames. Called by Map_Run when it handles
 /// work->battle; clears work->transitionActive once the screen is closed.
@@ -102,7 +102,7 @@ s32 Field_StartEncounterTransition(s32 unused) {
 }
 
 /// Starts the leader's animation for leaving through a warp: centres it on
-/// its tile, at the tile's south edge, stops it and plays animation over 18
+/// its cell, at the cell's south edge, stops it and plays animation over 18
 /// frames. The leader's sprite gains a second part (metadata 27) for it.
 /// Called by the two ObjectEffect_StartContextEffect functions below.
 void Warp_PrepareExitAnimation(s32 animation) {
@@ -121,7 +121,7 @@ void Warp_PrepareExitAnimation(s32 animation) {
   // No shadow as the leader leaves.
   context->flags = zero;
   effect->colorMode = param;
-  // Positions are 16.16 fixed point and tiles 16 pixels: keep the tile and
+  // Positions are 16.16 fixed point and cells 16 pixels: keep the cell and
   // put the leader at its middle in x (8 pixels) and its south edge in z.
   object->x = (object->x & 0xFFF00000) + 0x80000;
   object->z = (object->z & 0xFFF00000) + 0x100000;
@@ -151,8 +151,8 @@ void Warp_StartStairsDownExit(void) {
   GameFlag_SetBitFar(FLAG_WARP_ARRIVAL_STAIRS_DOWN);
 }
 
-/// Plays the leader's arrival animation through a warp: centred on its tile
-/// at the tile's north edge, the leader plays animation for 30 frames, loses
+/// Plays the leader's arrival animation through a warp: centred on its cell
+/// at the cell's north edge, the leader plays animation for 30 frames, loses
 /// the extra sprite part and walks 8 pixels south. Called by
 /// Warp_PlayArrival; frees the sprite part
 /// Warp_PrepareExitAnimation registered.

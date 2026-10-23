@@ -1,21 +1,21 @@
 /// @file
-/// Timed map effects: tile animation, the blend script, palette cycles.
+/// Timed map effects: tileset animations, the blend script, palette cycles.
 // Part of field.c.
 
 #include "../field_internal.h"
 
-/// Each frame: runs the 16 tile animation channels. A channel script is
+/// Each frame: runs the 16 tileset animations. A tileset animation's script is
 /// groups of four halfwords (source tile, count, destination tile, frames to
 /// wait) that copy tiles into VRAM; 0xfeNN jumps to halfword offset NN * 2,
 /// 0xfeff stops, and 0xffff loops to the start. TilesetAnim_StartAll
-/// schedules it (order 0xc80); the world map's still view
-/// (WorldMap_StartStillView) suspends it. Moves each channel's cursor and timer
-/// in the map work.
+/// adds it as a task (priority 0xc80); the world map's still view
+/// (WorldMap_StartStillView) suspends it. Moves each tileset animation's cursor
+/// and timer in the map work.
 void TilesetAnim_Update(void) {
-  // Each channel is written (gridState->animations + channelIndex): as
-  // gridState->animations[channelIndex], 78 of 119 instructions differ in
-  // tbs-en, and a channel pointer swaps ip and lr. The retries stay gotos: as
-  // an inner for (;;) loop with continue and break, loop.c reshapes the channel
+  // Each tileset animation is written (gridState->animations + channelIndex):
+  // as gridState->animations[channelIndex], 78 of 119 instructions differ in
+  // tbs-en, and a pointer to it swaps ip and lr. The retries stay gotos: as
+  // an inner for (;;) loop with continue and break, loop.c reshapes the outer
   // loop.
   struct MapGridState *gridState = gMapGridWork[0];
   u32 channelIndex;
@@ -26,12 +26,13 @@ void TilesetAnim_Update(void) {
     u32 tileCount;
     u32 destinationTile;
 
-    // A channel with no script, or paused by a map script, keeps its place.
+    // A tileset animation with no script, or paused by a map script, keeps its
+    // place.
     if ((gridState->animations + channelIndex)->start == NULL ||
         (gridState->animations + channelIndex)->paused != 0)
       continue;
-    // While the wait lasts the channel only counts down; when it is over,
-    // commands run in this same frame until one sets a new wait or stops.
+    // While the wait lasts the tileset animation only counts down; when it is
+    // over, commands run in this same frame until one sets a new wait or stops.
   next:
     if ((gridState->animations + channelIndex)->timer == 0) {
       commands = (gridState->animations + channelIndex)->cursor;
@@ -41,9 +42,9 @@ void TilesetAnim_Update(void) {
             (gridState->animations + channelIndex)->start;
         goto next;
       }
-      // 0xfeff leaves the cursor on itself, so the channel stays stopped
-      // until it is started again; 0xfeNN jumps to halfword NN * 2 of the
-      // channel's script.
+      // 0xfeff leaves the cursor on itself, so the tileset animation stays
+      // stopped until it is started again; 0xfeNN jumps to halfword NN * 2 of
+      // its script.
       if ((sourceTileOrOpcode & 0xff00) == 0xfe00) {
         if ((sourceTileOrOpcode & 0xff) == 0xff)
           continue;
@@ -87,9 +88,9 @@ void TilesetAnim_Update(void) {
   }
 }
 
-/// Resumes tile animation channel channelIndex by clearing its paused byte.
-/// Map scripts and the lobby (menu/lobby.c, channel 5) reach it through
-/// TilesetAnim_ResumeFar.
+/// Resumes tileset animation channelIndex by clearing its paused byte.
+/// Map scripts and the Battle Arena (menu/lobby.c, tileset animation 5) reach
+/// it through TilesetAnim_ResumeFar.
 void TilesetAnim_Resume(u32 channelIndex) {
   struct MapGridState *gridState = gMapGridWork[0];
   struct TilesetAnim *channel = &gridState->animations[channelIndex];
@@ -97,9 +98,9 @@ void TilesetAnim_Resume(u32 channelIndex) {
   channel->paused = 0;
 }
 
-/// Pauses tile animation channel channelIndex by setting its paused byte.
-/// Map scripts and the lobby (menu/lobby.c, channel 5) reach it through
-/// TilesetAnim_PauseFar.
+/// Pauses tileset animation channelIndex by setting its paused byte.
+/// Map scripts and the Battle Arena (menu/lobby.c, tileset animation 5) reach
+/// it through TilesetAnim_PauseFar.
 void TilesetAnim_Pause(u32 channelIndex) {
   struct MapGridState *gridState = gMapGridWork[0];
   struct TilesetAnim *channel = &gridState->animations[channelIndex];
@@ -107,9 +108,9 @@ void TilesetAnim_Pause(u32 channelIndex) {
   channel->paused = 1;
 }
 
-/// Starts the tile animation channels a map's animation script lists: each
-/// 0xfdNN marker starts channel NN & 15 there (paused when bit 7 is set).
-/// Clears all 16 channels first, and schedules TilesetAnim_Update when any
+/// Starts the tileset animations a map's animation script lists: each
+/// 0xfdNN marker starts tileset animation NN & 15 there (paused when bit 7 is
+/// set). Clears all 16 first, and adds TilesetAnim_Update as a task when any
 /// starts. Called by MapGrid_LoadLayout with the map's own script, and by
 /// WorldMap_InitializePerspective with the world map's default one.
 void TilesetAnim_StartAll(const u16 *script) {
@@ -120,10 +121,10 @@ void TilesetAnim_StartAll(const u16 *script) {
   gridState = gMapGridWork[0];
   channelsStarted = 0;
   Dma_Fill32(0, gridState->animations, sizeof(gridState->animations));
-  // Each channel's script starts just after its marker and runs on through
-  // the rest of the stream; the scan steps over the halfwords between
-  // markers. Only the low four bits pick the channel, so a marker for 16 or
-  // more reuses one of the 16.
+  // Each tileset animation's script starts just after its marker and runs on
+  // through the rest of the stream; the scan steps over the halfwords between
+  // markers. Only the low four bits pick the tileset animation, so a marker
+  // for 16 or more reuses one of the 16.
   marker = *script++;
   while (marker != 0xffff) {
     if ((marker & 0xff00) == 0xfd00) {
@@ -141,12 +142,12 @@ void TilesetAnim_StartAll(const u16 *script) {
     }
     marker = *script++;
   }
-  // A map with no channels never schedules the update.
+  // A map with no tileset animations never adds the update.
   if (channelsStarted != 0)
     Task_Add(TilesetAnim_Update, 0xc80);
 }
 
-/// Suspends the tile animations, unless the world map's still view is shown.
+/// Suspends the tileset animations, unless the world map's still view is shown.
 /// Menu_SuspendFieldTasks (menu/menu/common.c) calls it
 /// through TilesetAnim_SuspendAllFar.
 void TilesetAnim_SuspendAll(void) {
@@ -154,7 +155,7 @@ void TilesetAnim_SuspendAll(void) {
     Task_SuspendAll(TilesetAnim_Update);
 }
 
-/// Resumes the tile animations, unless the world map's still view is shown.
+/// Resumes the tileset animations, unless the world map's still view is shown.
 /// Menu_ResumeFieldTasks (menu/menu/common.c) calls it
 /// through TilesetAnim_ResumeAllFar.
 void TilesetAnim_ResumeAll(void) {
@@ -165,7 +166,7 @@ void TilesetAnim_ResumeAll(void) {
 /// Each frame: runs the map's blend script. A 0x3NNN command sets BLDCNT; any
 /// other sets BLDALPHA (or BLDY when not alpha blending) and waits the halfword
 /// after it in frames; 0xfeNN jumps, 0xfeff stops and 0xffff loops.
-/// BlendScript_Start schedules it (order 0xc80). Writes REG_BLDCNT,
+/// BlendScript_Start adds it as a task (priority 0xc80). Writes REG_BLDCNT,
 /// REG_BLDALPHA and REG_BLDY, and keeps the last BLDCNT in the map work's
 /// blendControl.
 void BlendScript_Run(void) {
@@ -184,8 +185,8 @@ void BlendScript_Run(void) {
   if (blend->paused != 0)
     return;
 
-  // As with the tile channels, commands run in one frame until a level sets
-  // a wait; a BLDCNT command and the jumps take no time.
+  // As with the tileset animations, commands run in one frame until a level
+  // sets a wait; a BLDCNT command and the jumps take no time.
 again:
   delayOrJumpIndex = blend->delay;
   delay16 = delayOrJumpIndex;
@@ -231,7 +232,7 @@ again:
 }
 
 /// Starts a map's blend script, unless it is empty. Clears the map work's
-/// three-word blend state first, then schedules BlendScript_Run.
+/// three-word blend state first, then adds BlendScript_Run as a task.
 /// Called by MapGrid_LoadLayout when the map's header has a blend script.
 void BlendScript_Start(u16 *script) {
   struct BlendScriptState *blend;
@@ -335,7 +336,7 @@ UNUSED void PaletteCycle_Start(void) { Task_Add(PaletteCycle_Step, 0xc80); }
 
 /// Each frame: advances each palette cycle whose timer has run out by one
 /// colour, writing the rotated colours back to the palette. Only
-/// PaletteCycle_Start schedules it, and nothing calls that, so no palette
+/// PaletteCycle_Start adds it as a task, and nothing calls that, so no palette
 /// cycle runs in the game.
 void PaletteCycle_Step(void) {
   struct PaletteCycleWork *paletteQueue = gPaletteCycleWork;

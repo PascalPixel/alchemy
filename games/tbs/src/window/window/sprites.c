@@ -6,7 +6,7 @@
 
 typedef s32 (*GlyphRoutine)(struct Window *, u32, u32, u32, const u8 *);
 
-/// A render output's sprite cell: the link and OAM attributes in its 12 bytes
+/// A window sprite's sprite cell: the link and OAM attributes in its 12 bytes
 /// from offset 0x10.
 #define SPRITE_CELL(output) ((struct CursorSprite *)(output)->link)
 
@@ -15,8 +15,8 @@ typedef s32 (*GlyphRoutine)(struct Window *, u32, u32, u32, const u8 *);
 /// text canvas window draws it into the canvas; other windows show it as a
 /// sprite carried by the window. GLYPH_DRAW_PAGE_ARROW shows the next-page
 /// arrow instead.
-/// A sprite glyph takes a render output and its four tiles from the glyph
-/// sheet (WindowWork.glyphTiles, four for each output); with no output free
+/// A sprite glyph takes a window sprite and its four tiles from the glyph
+/// sheet (WindowWork.glyphTiles, four for each sprite); with no sprite free
 /// nothing is drawn and it returns 0. The sprite stays until its window is
 /// cleared or closed.
 s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
@@ -85,7 +85,7 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
     output = WindowSprite_AcquireFree();
     if (output == NULL)
       return 0;
-    // The output's own four tiles of the glyph sheet.
+    // The sprite's own four tiles of the glyph sheet.
     index = (output - work->sprites) * 4;
     output->motion = WINDOW_SPRITE_MOTION_STILL;
     output->kind = WINDOW_SPRITE_GLYPH;
@@ -453,7 +453,7 @@ void WindowSprite_UpdateScaleAnimation(struct WindowSprite *output) {
     // whose 32x32 area starts 8 pixels up and left; smaller, plain affine (1).
     if (scale > 256) {
       sprite->affine = 3;
-      // x read through a u16 pointer, which loads the -8 first; as output->x
+      // x read through a u16 pointer, which loads the -8 first; as sprite->x
       // the two loads swap.
       sprite->x = *(u16 *)&output->x - 8;
       sprite->y = (u16)output->y - 8;

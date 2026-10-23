@@ -378,7 +378,7 @@ void Colosso_RepeatStageNumber(s32 speaker, s32 warrior) {
 /// cheering at the stage. With Isaac alone, "All right, do your best!"; with
 /// the stage taken, "Unfortunately, we have a full house."; otherwise "Would
 /// you like a friend to cheer for you here?" (taken as yes for
-/// COLOSSO_GUIDE_CHEER) and the party's character menu. The friend chosen is
+/// COLOSSO_GUIDE_CHEER) and a choice of party member. The friend chosen is
 /// led to the stage and leaves the party, and their cell is kept. With
 /// COLOSSO_GUIDE_NOTHING, no or no choice: "If you know who you want to cheer
 /// you on, please let me know!"

@@ -20,7 +20,7 @@
 ///   with its own warp destinations and camera box; walking south into a
 ///   ledge's cells hops the leader down it (EventScript_HopDownLedge). In the
 ///   first part (VALE_CAVE_KITE_FROM_VALE_CAVE_MOUTH to
-///   VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_WEST) Reveal shows a hidden tile while
+///   VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_WEST) Reveal shows a hidden cell while
 ///   it lasts (EventScript_RevealHiddenTile). In Kite's part
 ///   (VALE_CAVE_KITE_EAST_FROM_WEST to
 ///   VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_EAST), coming near
@@ -305,14 +305,14 @@ const struct ObjectEventTemplate *ValeCave_GetObjectEventTemplates(void) {
   return gValeCave_MouthObjectEventTemplates;
 }
 
-/// In Vale Cave's second room, Reveal ends and the hidden tile is hidden again.
+/// In Vale Cave's second room, Reveal ends and the hidden cell is hidden again.
 ///
 /// Reached by Reveal's PSYNERGY_PHASE_EFFECT_ENDS anywhere in the second room.
 static void EventScript_HideRevealedTile(void) {
   MapGrid_CopyCells(16, 15, 1, 1, 15, 15);
 }
 
-/// In Vale Cave's second room, Reveal shows a hidden tile.
+/// In Vale Cave's second room, Reveal shows a hidden cell.
 ///
 /// Reached by Reveal's PSYNERGY_PHASE_EFFECT_ACTS anywhere in the second room;
 /// copies cell (16, 17) over cell (15, 15) until EventScript_HideRevealedTile

@@ -81,7 +81,7 @@ enum {
 enum { CPU_LOAD_PEAK_FRAMES = 30 };
 
 /// The game's frame loop: runs `frames` frames and returns. Each frame runs the
-/// scheduled main-loop tasks, builds the OAM list, measures CPU load for the
+/// main-loop tasks, builds the OAM list, measures CPU load for the
 /// debug display, counts idle time for sleep, steps the debug pause, waits for
 /// VBlank and then reads the keys. Holding L and R for three seconds, or three
 /// idle minutes with idle sleep on, puts the system into Stop until L and R are
@@ -361,8 +361,8 @@ void Input_UpdateKeyRepeatAndDirection(void) {
   gKeysHeldLast = gKeysHeld;
 }
 
-#define SOUND_PRESET_COUNT 5  ///< records in IwramCodeRecords
-#define SOUND_PRESET_SIZE 152 ///< bytes in each record
+#define SOUND_PRESET_COUNT 5  ///< presets in IwramCodeRecords
+#define SOUND_PRESET_SIZE 152 ///< bytes in each preset
 
 /// The VBlank interrupt handler, installed by System_Initialize. It trades the
 /// link cable payloads, steps the music fades and the screen fade, and when
@@ -434,8 +434,8 @@ void System_VBlankHandler(void) {
 }
 
 /// Copies the mixer code for sound preset `preset` (0 to 4; anything else is 0)
-/// from ROM into IwramSoundPresetCode. Called by the battle and the link lobby
-/// for their music, and by the audio test. Always returns 0.
+/// from ROM into IwramSoundPresetCode. Called by the battle and the Battle
+/// Arena for their music, and by the audio test. Always returns 0.
 s32 Sound_LoadPresetParameters(s32 preset) {
   s32 index;
 

@@ -4,7 +4,7 @@
 
 #include "../effect_internal.h"
 
-/// The beam sequence's pictures, by effect kind: the kinds below 100 that
+/// The beam sequence's pictures, by animation kind: the kinds below 100 that
 /// BattleAnim_DispatchByIdRange sends here. No ability's row selects one; the
 /// unused BattlePresentation_RunPlainAttack plays an attack's kind, 0 for
 /// Attack.

@@ -9,7 +9,7 @@
 
 union FieldObject;
 
-/// A field object as its object script commands see it: the script and its
+/// An object as its object script commands see it: the script and its
 /// place, position, motion toward a target, and the home it wanders around.
 struct ScriptObjectRuntime {
   const s32 *script; ///< null when the object is free

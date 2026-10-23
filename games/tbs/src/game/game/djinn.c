@@ -264,13 +264,13 @@ s32 DjinnRecovery_CountStandby(u8 *counts) {
 }
 
 /// Returns the ability ID used when the Djinni is unleashed. Called by the
-/// battle plan, the battle queue's ordering and the battle menu.
+/// BattleTurn_Build, the battle queue's ordering and the battle menu.
 s32 Djinn_GetAbilityId(u32 group, u32 index) {
   return Djinn_GetDefinition(group, index)->abilityId;
 }
 
 /// Returns how many Djinn of `element` the party holds, or of all
-/// elements for -1. Called by the save summary, the field Status screen, the
+/// elements for -1. Called by the save summary, the field summary screen, the
 /// battle status screen and the battle command menu.
 s32 Party_SumDjinnCounts(s32 element) {
   u16 owners[16];

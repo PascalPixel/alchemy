@@ -80,7 +80,7 @@ void InventorySnapshot_Save(void) {
 
 /// Gives back the inventories, shortcuts and party order InventorySnapshot_Save
 /// put aside, then clears the snapshot and FLAG_COLOSSO_HOLDS_EQUIPMENT. Called
-/// by the Babi palace map after the Colosso, and by the file select screen.
+/// by the Babi palace map after the Colosso, and by the main menu.
 void InventorySnapshot_Restore(void) {
   s32 owner;
   u16 *source = gInventorySnapshot;

@@ -9,10 +9,10 @@
 #define BATTLE_OUTCOME_FLED 999
 
 /// The six enemy units, BATTLE_UNIT_SIZE bytes each: the
-/// HEAP_SLOT_ENEMY_UNITS work slot, gEnemyUnits, which Unit_Get
+/// HEAP_SLOT_ENEMY_UNITS heap slot, gEnemyUnits, which Unit_Get
 /// reads for unit ids 128 to 133 while it is allocated (game/game/units.c). The
-/// link lobby passes the opponent's party to the battle in a copy of this block
-/// (menu/lobby.c).
+/// Battle Arena passes the opponent's party to the battle in a copy of this
+/// block (menu/lobby.c).
 #define LINK_OWNER_STATES_SIZE 0x7c8
 
 /// Fights the battle against the enemy formation enemyGroup, from the
@@ -27,12 +27,13 @@
 ///
 /// Reached through its far stub from Game_Run's map switch
 /// (RUN_BATTLE, with the warp destination as enemyGroup), and from
-/// DebugBattle_RunMenu. Allocates the battle's work slots (the camera,
-/// gBattleWork, the enemy units, the background transition, the display and
-/// others), sets FLAG_IN_BATTLE, and on its way out resets the party's
-/// battle state, sets gGameState.battleType back to BATTLE_TYPE_NORMAL and
-/// releases heap block 10. A broken link also sets flag FLAG_MAPSEC_TEMP_E8,
-/// which the link lobby reads (BattleArena_RunRoundResult).
+/// DebugBattle_RunMenu. Allocates the battle's heap slots (the camera,
+/// gBattleWork, the enemy units, the background transition, the battle message
+/// window and others), sets FLAG_IN_BATTLE, and on its way out resets the
+/// party's battle state, sets gGameState.battleType back to BATTLE_TYPE_NORMAL
+/// and releases heap block 10. A broken link also sets flag
+/// FLAG_MAPSEC_TEMP_E8, which the Battle Arena reads
+/// (BattleArena_RunRoundResult).
 s32 Battle_Run(s32 enemyGroup) {
   struct BattleCamera *camera;
   s32 *focus;
@@ -112,7 +113,7 @@ s32 Battle_Run(s32 enemyGroup) {
   enemyCount = BattleFormation_BuildEnemyList(battle->formation);
 
   // A link battle: wait for the connection, take this console's side, put
-  // the opponent's party into the enemy units from the copy the link lobby
+  // the opponent's party into the enemy units from the copy the Battle Arena
   // left at gActorSpriteSlots (menu/lobby.c), and lay it out left to right
   // (FORMATION_LAYOUT_SHUFFLED). Both consoles start from seed 0 so their rolls
   // agree; the opponent's party size is the enemy count.
@@ -147,7 +148,7 @@ s32 Battle_Run(s32 enemyGroup) {
   }
   Task_Add(BattleCamera_Update, 0xc7f);
 
-  // The battle music: the scene's own cue, or the usual battle songs.
+  // The battle music: the scene's own song, or the usual battle songs.
   cue = gGameState.battleMusic;
   if (cue != 0) {
     Sound_PlaySongFar(cue);
@@ -187,7 +188,7 @@ s32 Battle_Run(s32 enemyGroup) {
   Party_ReservedNoOp5B14(1);
   REG_BLDCNT = 0;
   BattleSpoils_Clear();
-  // 128 bytes of VRAM cache for the advance arrow's tiles, which event
+  // 128 bytes of VRAM cache for the advance arrow's tiles, which
   // playback shows after a message (PLAY_ADVANCE); taken again each round.
   battle->arrowTiles = VramCache_AllocEntry(128);
 
@@ -302,7 +303,7 @@ s32 Battle_Run(s32 enemyGroup) {
 
 won:
   // Name the defeat ("X has been downed!" or "X's party goes down!") after
-  // the first enemy class to fall, then hand out the spoils. Unit 128 is
+  // the first enemy to fall, then hand out the spoils. Unit 128 is
   // rewritten as that class to carry the name, bare: letter 26 is past every
   // edition's last (BattleUnit_Set). DEFEAT_BY_PARTY_MEMBER shows no line.
   Battle_ClearSerialTransferPayload();
@@ -330,7 +331,7 @@ won:
 
 aborted:
   // The link broke, or no actions could be gathered. Flag FLAG_MAPSEC_TEMP_E8
-  // tells the link lobby (BattleArena_RunRoundResult) the battle did not
+  // tells the Battle Arena (BattleArena_RunRoundResult) the battle did not
   // finish.
   Battle_ClearSerialTransferPayload();
   Task_SuspendAll(0);

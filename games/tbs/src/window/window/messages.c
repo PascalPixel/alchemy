@@ -120,9 +120,9 @@ s32 *Runtime_ClearWordIfSet(s32 *p) {
   return p;
 }
 
-// Closing the message channels' windows, and the message argument table.
+// Closing the text printers' windows, and the message argument table.
 
-/// Closes every window: first the message channels' windows, waiting until
+/// Closes every window: first the text printers' windows, waiting until
 /// they have closed, then the windows opened directly, which it does not wait
 /// for. Channel references are cleared only after their windows finish
 /// closing. Reached from the debug message viewer (DebugBattle_ViewMessages,
@@ -149,7 +149,7 @@ void UiWork_DrainPending(s32 unused) {
     ch++;
   } while (i != 3);
 
-  // Free each channel whose window has closed; while one is still closing,
+  // Free each printer whose window has closed; while one is still closing,
   // wait a frame.
   for (;;) {
     done = 1;
@@ -160,7 +160,7 @@ void UiWork_DrainPending(s32 unused) {
       if (poll_work != 0) {
         if (poll_work->frame == 0 && poll_work->duration == 0) {
           flag = poll_work->flags;
-          // flag is 0 here: the channel is set free.
+          // flag is 0 here: the printer is set free.
           if (flag == 0)
             ch->window = (struct Window *)(u32)flag;
           else
@@ -189,10 +189,10 @@ void UiWork_DrainPending(s32 unused) {
   }
 }
 
-/// Steps a channel's window effect (WINDOW_EFFECT_SWELL): the frame is drawn
-/// a tile bigger on every side until the countdown ends, then back to normal.
-/// Any other effect is left set and does nothing, so the channel types no more
-/// text. TextPrinter_RunAll calls it in place of typing while the
+/// Steps a text printer's window effect (WINDOW_EFFECT_SWELL): the frame is
+/// drawn a tile bigger on every side until the countdown ends, then back to
+/// normal. Any other effect is left set and does nothing, so the printer types
+/// no more text. TextPrinter_RunAll calls it in place of typing while the
 /// window has an effect.
 void Window_StepSwellEffect(struct TextPrinter *channel) {
   struct Window *window = channel->window;
@@ -274,8 +274,8 @@ u32 MessageArgument_Lookup(u32 kind, u32 clear) {
   return value;
 }
 
-/// Ends a channel's pause early: when the message waits on a sound that has
-/// finished (busy), or while A, B, L or R is held. Clears the countdown and
+/// Ends a text printer's pause early: when the message waits on a sound that
+/// has finished (busy), or while A, B, L or R is held. Clears the countdown and
 /// returns 1 if it ended.
 /// This path uses held keys; dismissal below uses newly pressed keys instead.
 /// TextPrinter_Step asks it each frame of a short or longest pause;
@@ -323,7 +323,7 @@ s32 Text_CheckTextDismissed(struct TextPrinter *channel) {
   return 0;
 }
 
-/// Closes each message channel's window whose text has ended, then waits ten
+/// Closes each text printer's window whose text has ended, then waits ten
 /// frames. It does not wait for the zooms to finish, and leaves windows still
 /// typing open.
 void UiWork_FinalizePendingCore(void) {
@@ -567,7 +567,7 @@ s32 Portrait_GetForSpeaker(u32 value) {
 /// The window opens at once, 5 by 5 tiles, or 6 by 5 under Mind Read with the
 /// portrait 4 pixels further right. The portrait takes the second portrait
 /// slot if it is free, else the first; with both taken the window stays
-/// empty. It is the window's first render output, which
+/// empty. It is the window's first window sprite, which
 /// Portrait_CloseWindow looks for.
 struct Window *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x,
                                    s32 y) {
@@ -596,7 +596,7 @@ struct Window *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x,
 
 /// Closes the portrait window showing speaker entry, if one is open, at once.
 /// portraitPictures selects the portrait slot, then portraitSprites identifies
-/// its render output, found as the first output of some window.
+/// its window sprite, found as the first sprite of some window.
 void Portrait_CloseWindow(u32 speaker) {
   struct WindowWork *state;
   struct Window *window;

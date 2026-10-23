@@ -24,12 +24,12 @@ struct AnimationMetadata {
   /// Pixels from the object's position up to the top of its sprite
   /// (ObjectEvent_GetScreenPosition).
   u8 boxX;
-  /// Pixels; half of it is a battle unit's MotionObject.height, and can be a
-  /// field object's radius (ObjectEvent.radius).
+  /// Pixels; half of it is a battle unit's MotionObject.height, and can be an
+  /// object's radius (ObjectEvent.radius).
   u8 boxY;
   u8 frameCodec; ///< SpriteAnim.mode: 1 type-01, 3 LZ, anything else raw
-  /// The frame pointers; null takes them from the resource slot holding the
-  /// animation (SpriteFrameCache_FindByTag).
+  /// The frame pointers; null takes them from the sprite frame cache slot
+  /// holding the animation (SpriteFrameCache_FindByTag).
   void **frames;
   u8 **animation; ///< the command scripts, one per animation number
 };

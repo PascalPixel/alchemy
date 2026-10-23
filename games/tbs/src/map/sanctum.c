@@ -14,7 +14,7 @@
 ///   Psynergy. After the eruption the Great Healer brings Isaac and Garet in
 ///   from Vale (vale_eruption.c) to SANCTUM_FROM_VALE_ERUPTION, where Dora, the
 ///   Mayor and the healers hear what happened on the mountain, acted out in
-///   sepia (Sanctum_ReenactSolSanctum): the colour buffer turns every
+///   sepia (Sanctum_ReenactSolSanctum): the palette fade turns every
 ///   background and sprite palette to PALETTE_TINT_SEPIA for the account
 ///   and fades back to PALETTE_TINT_NONE over 60 frames after it
 ///   (https://alchemy.pascalpixel.com/places/sanctum/account-sepia.gif: the

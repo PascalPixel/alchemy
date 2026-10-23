@@ -30,7 +30,7 @@ void ObjectDispatch_ApplyValueToKind200Children(s32 value) {
   } while (remainingObjectEvents >= 0);
 }
 
-/// Scheduler callback of the timed effect (FIELD_PSYNERGY_REVEAL): asks for it
+/// Task of the timed effect (FIELD_PSYNERGY_REVEAL): asks for it
 /// to end once the leader is 60 pixels from its centre or its time has run out.
 /// The centre and the time are in the event work from 0xcb8 on
 /// (FieldEffect_RunReveal). The time counts only while effectTimerRunning is
@@ -93,8 +93,8 @@ void FieldEffect_RunReveal(void) {
   target = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
   state->centreX = target->x.fixed;
   state->centreY = target->z.fixed - target->y.fixed;
-  // From the plain colours (PALETTE_TINT_NONE, 0x10000) the BG half
-  // turns grey (PALETTE_TINT_GRAYSCALE, 0x10001) in one frame.
+  // From the plain colours (PALETTE_TINT_NONE, 0x10000) the BG palettes
+  // turn grey (PALETTE_TINT_GRAYSCALE, 0x10001) in one frame.
   PaletteFade_SetSource(0x10000, 0);
   PaletteFade_SetTarget(0x10001, 1);
   PaletteFade_StartInterpolation(1);

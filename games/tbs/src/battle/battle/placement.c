@@ -13,11 +13,10 @@
 /// (NARROW_EFFECT_SPRITE on a body 32 pixels wide). Its 64 by 64 picture
 /// (graphics/sprite/spr_510.png) holds only a 32 by 6 ellipse along its
 /// bottom edge, NARROW_EFFECT_SPRITE's a 16 by 3 one.
-/// XXX: likely the unit's shadow on the ground rather than an effect, because
-/// of that picture, because adding it also clears the sprite's own shadow
-/// (Sprite.flags bit 0), and because
-/// BattleObject_UpdateSpritePriorities changes the layer's priority while the
-/// unit is off the ground.
+/// XXX: likely the unit's shadow on the ground rather than an animation,
+/// because of that picture, because adding it also clears the sprite's own
+/// shadow (Sprite.flags bit 0), and because BattleObject_UpdateSpritePriorities
+/// changes the layer's priority while the unit is off the ground.
 #define BATTLE_OBJ_NO_EFFECT 0x1fe
 
 /// Creates the battle object of unit at (x, y) on the battlefield, in
@@ -85,7 +84,7 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
       palette = 1;
   }
 
-  // The enemy classes drawn larger or smaller than their sprites, in 16.16
+  // The enemies drawn larger or smaller than their sprites, in 16.16
   // (0x18000 is 1.5, 0xe666 0.9). Grouping equal scale cases shortens the
   // matching EN function by 148 bytes, so each case keeps its own store.
   // Bandit and Orc Captain are set to 1.0 again.

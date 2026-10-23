@@ -5,7 +5,7 @@
 #include "../effect_internal.h"
 
 /// The stat boosts' modes (BattleAnim_RunStatBoost), each named for the
-/// effect that plays it.
+/// animation that plays it.
 enum StatBoostMode {
   STAT_BOOST_IMPACT,  ///< a dagger, in Mars colours
   STAT_BOOST_GUARD,   ///< a shield, in Mars colours
@@ -20,7 +20,7 @@ enum StatReductionMode {
   STAT_REDUCTION_DULL,   ///< a dagger, in the pink burst's colours
   STAT_REDUCTION_IMPAIR, ///< a shield, in the glow orb's colours
   STAT_REDUCTION_WEAKEN, ///< a shield, in the pink burst's colours
-  STAT_REDUCTION_UNUSED  ///< played as STAT_REDUCTION_WEAKEN; no effect uses it
+  STAT_REDUCTION_UNUSED  ///< played as STAT_REDUCTION_WEAKEN; unused
 };
 
 /// Light swirls into each target and bursts, then a dagger appears in Mars
@@ -392,7 +392,7 @@ void BattleAnim_RunStatBoost(struct BattleAnimArgs *effect, u32 mode) {
 }
 
 // Stat-reduction shards. The scenes the folder README groups with them under
-// "Effect families" follow in their own parts: Flare (flare.c), Quake
+// "Animation families" follow in their own parts: Flare (flare.c), Quake
 // (quake.c), Fire (fire.c), Frost (frost.c) and, after ray.c, Smoke Bomb and
 // Blast (eruption.c).
 
@@ -422,7 +422,7 @@ void BattleAnim_RunWeaken(struct BattleAnimArgs *effect) {
   BattleAnim_RunStatReduction(effect, STAT_REDUCTION_WEAKEN);
 }
 /// Breaks the shield picture into fading shards as Weaken does
-/// (STAT_REDUCTION_UNUSED). No effect table entry reaches it.
+/// (STAT_REDUCTION_UNUSED). No animation table entry reaches it.
 UNUSED void BattleAnim_RunUnusedStatReduction(struct BattleAnimArgs *effect) {
   BattleAnim_RunStatReduction(effect, STAT_REDUCTION_UNUSED);
 }

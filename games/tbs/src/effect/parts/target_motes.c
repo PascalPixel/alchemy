@@ -6,7 +6,7 @@
 #include "../effect_internal.h"
 
 /// The target motes' styles (BattleAnim_RunTargetMotes), each named for the
-/// effect that plays it.
+/// animation that plays it.
 enum TargetMotesMode {
   TARGET_MOTES_TAINT,       ///< lime smoke closing in
   TARGET_MOTES_PINK_SMOKE,  ///< pink smoke closing in; Taint's stronger variant
@@ -40,7 +40,7 @@ void BattleAnim_RunTaint(struct BattleAnimArgs *effect) {
 }
 
 /// Pink smoke swirls in on each target, as Taint shows it for a stronger
-/// variant. No ☀️ effect table entry points here.
+/// variant. No ☀️ animation table entry points here.
 UNUSED void BattleAnim_RunUnusedPinkSmoke(struct BattleAnimArgs *effect) {
   BattleAnim_RunTargetMotes(effect, TARGET_MOTES_PINK_SMOKE);
 }
@@ -108,7 +108,7 @@ enum { TARGET_MOTES_GLINT_CELLS = 0x2580 };
 /// Around each target in turn, 8 frames apart, motes (smoke, hearts, orbs)
 /// turn about a point 20 pixels up, either closing in on it or rising, and
 /// the target flashes until the end; the battle shows the damage 32 frames
-/// before the end. The effect layer ripples, except for Taint's smokes and
+/// before the end. The animation layer ripples, except for Taint's smokes and
 /// Paralyze.
 ///
 /// Called by the wrappers above, each with its enum TargetMotesMode.
@@ -116,7 +116,7 @@ enum { TARGET_MOTES_GLINT_CELLS = 0x2580 };
 /// Lasts 8 frames a target plus 64 (the wide styles) or 32. Overwrites
 /// PARTICLES 0 to 511, loads the mode's palette into the first 64 background
 /// colours, and in the rippling modes writes work->bg2xLines each frame for
-/// BattleAnim_ArmBg2AffineHBlankDma, which it schedules and removes. It
+/// BattleAnim_ArmBg2AffineHBlankDma, which it adds as a task and removes. It
 /// builds both blitters afresh for each target every frame and releases them
 /// again, Paralyze a mirrored one for each glint too, so it ends with none
 /// held. Demon Fire sets work->shakeFrames.
@@ -204,7 +204,7 @@ void BattleAnim_RunTargetMotes(struct BattleAnimArgs *effect, u32 mode) {
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   Sound_PlaySongFar(SE_142);
 
-  // Target n's turn starts on frame n * 8; the effect ends 64 frames (wide
+  // Target n's turn starts on frame n * 8; the animation ends 64 frames (wide
   // styles) or 32 after the last one starts.
   for (frame = 0; frame != total; frame++) {
     struct BattleCamera *camera = gCameraWork;

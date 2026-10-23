@@ -11,7 +11,7 @@ STATIC_ASSERT(offsetof(struct Object, animation) == 0x50);
 /// An object of the 64-object pool (struct Object, 0x70 bytes), seen
 /// as the found item's picture, the sparkles and the Reveal marks use it.
 struct EffectObject {
-  /// The script pointer, as a word; 0 while the pool object is free.
+  /// The script pointer, as a word; 0 while the object is free.
   s32 scriptWord;
   u8 pad0[0x24];
   s32 velocityY; ///< 16.16 fixed-point pixels a frame; up is positive
@@ -29,7 +29,7 @@ struct EffectObject {
 STATIC_ASSERT(sizeof(struct EffectObject) == 0x70);
 STATIC_ASSERT(offsetof(struct EffectObject, updateHook) == 0x6c);
 
-/// ObjectSystem_Initialize allocates 64 Object records in
+/// ObjectSystem_Initialize allocates the 64 objects in
 /// HEAP_SLOT_OBJECTS.
 #define EFFECT_OBJECT_COUNT 64
 #ifdef UBFIX
@@ -41,10 +41,11 @@ STATIC_ASSERT(offsetof(struct EffectObject, updateHook) == 0x6c);
 #define EFFECT_OBJECT_POOL (*(struct EffectObject **)((u8 *)&gFieldWork - 88))
 #endif
 
-/// Keeps the party leader off the markers: a leader within 16 pixels of a
-/// marker cell's centre is moved 20 pixels from that centre, in the direction
-/// it stood, and loses its move target. Only the first marker it stands on
-/// moves it. Called by two map overlays (Suhalla Desert, Lamakan Desert).
+/// Keeps the party leader off the treasure spots: a leader within 16 pixels of
+/// a treasure spot's centre is moved 20 pixels from that centre, in the
+/// direction it stood, and loses its move target. Only the first treasure spot
+/// it stands on moves it. Called by two map overlays (Suhalla Desert, Lamakan
+/// Desert).
 void TreasureSpot_MoveLeaderAway(void) {
   struct Object *leader = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
   struct TreasureSpot *marker = ((struct FieldWork *)gFieldWork)->treasureSpots;
@@ -195,7 +196,7 @@ struct EffectObject *FieldEffect_StartRandomParticleEmitter(s32 localId,
     struct Sprite *sprite = picture->animation;
     void *iconBuffer;
 
-    // No shadow, outline or animation layers: a 16-colour sprite in OBJ
+    // No shadow, outline or sprite anims: a 16-colour sprite in OBJ
     // palette 0 whose tiles are the item's icon.
     sprite->flags = 0;
     sprite->count = 0;
@@ -240,7 +241,7 @@ void ItemDisplay_RaiseAboveLeader(struct Object *object) {
 
   leader = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
   // Up to 2 pixels a frame, gaining 1 a frame, in free flight: no motion
-  // flags, so no gravity and no terrain.
+  // flags, so it neither falls nor follows the ground.
   object->acceleration = 1 << 16;
   object->speedLimit = 2 << 16;
   object->flags = 0;
@@ -396,11 +397,11 @@ s32 Field_IsRevealActive(struct ObjectScriptContext *interpreter) {
 }
 
 /// Reveal: marks with sparkles the hidden things within 8 cells left or right
-/// and 5 up or down of the leader: marked cells 100 to 239 with no marker
-/// object, whose bg event (MAP_EVENT_BG) gives an item, coins, a Psynergy Stone
-/// or a mimic and whose flag is not yet set. Each mark is an object of sprite
-/// 22 running gFieldEffect_MarkerParticleScript. Called by Reveal's effect
-/// (psynergy_effects/reveal.c).
+/// and 5 up or down of the leader: treasure spots (ids 100 to 239) with no
+/// object placed, whose bg event (MAP_EVENT_BG) gives an item, coins, a
+/// Psynergy Stone or a mimic and whose flag is not yet set. Each mark is an
+/// object of sprite 22 running gFieldEffect_MarkerParticleScript. Called by
+/// Reveal's effect (psynergy_effects/reveal.c).
 void FieldEffect_SpawnNearbyMarkers(void) {
   u8 *markerData;
   struct Object *objectEvent;
@@ -411,8 +412,8 @@ void FieldEffect_SpawnNearbyMarkers(void) {
   s32 row;
   s32 id;
 
-  // The layout's marked cells: (column, row, id) triples, ended by 0xff, 0xff;
-  // the same list as MapGridMarkers's markers in markers.c.
+  // The layout's treasure spots: (column, row, id) triples, ended by 0xff,
+  // 0xff; the same list as MapGridMarkers's markers in markers.c.
   markerData = *(u8 **)(((u8 *)gMapGridWork[0]) + 16);
   objectEvent = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
   leaderColumn = objectEvent->x >> 20;

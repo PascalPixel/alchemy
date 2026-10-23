@@ -105,12 +105,12 @@ enum {
   RUN_NONE = 0x1fb,
   RUN_LUCKY_WHEELS = 0x1fc, ///< Lucky Wheels at Tolbi's spring (colorfx.c)
   RUN_LUCKY_DICE = 0x1fd,   ///< Lucky Dice at Tolbi's spring (lucky_dice.c)
-  /// A battle; the warp destination is the enemy group, and the result -1 a
+  /// A battle; the warp destination is the formation, and the result -1 a
   /// defeat.
   RUN_BATTLE = 0x1fe
 };
 
-/// A warp into a battle: warp kind `warp` fights enemy group `group`.
+/// A warp into a battle: warp kind `warp` fights formation `group`.
 #define WARP_TO_BATTLE(warp, group)                                            \
   (((u32)(warp) << 20) + ((u32)(group) << 12) + RUN_BATTLE)
 
@@ -193,8 +193,8 @@ struct MapEvent {
   /// ability | 11 short push | 10 facing | 9 walking | 8..4 bg target | 7
   /// Psynergy in area | 5..4 warp sound | 4 on an object event | 3..0 kind
   u32 kind;
-  /// What the event answers: a local id, a metatile behavior, a marker
-  /// id or a raised value. Item and Psynergy events read it as bits below;
+  /// What the event answers: a local id, a metatile behavior, a treasure
+  /// spot id or a raised value. Item and Psynergy events read it as bits below;
   /// bit 10 also skips a bg event's checking message and a Psynergy's effect.
   /// bits: 15..12 facing | 11 needs facing | 10 own message | 7..0 target
   s16 trigger;

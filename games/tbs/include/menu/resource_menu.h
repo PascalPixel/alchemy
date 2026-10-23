@@ -2,13 +2,13 @@
 #define ALCHEMY_RESOURCE_MENU_H
 
 /// @file
-/// The resource menu's entries and work.
+/// The icon menu's entries and work.
 
 #include "types.h"
 #include "static_assert.h"
 #include "window.h"
 
-/// A command icon of the resource menu: its OAM attributes, its place and its
+/// A command icon of the icon menu: its OAM attributes, its place and its
 /// VRAM cache slot.
 struct IconMenuEntry {
   /// The sprite queue's link, then OAM attributes 0 and 1 and attribute 2,
@@ -24,7 +24,7 @@ struct IconMenuEntry {
   u16 slot;   ///< VRAM cache entry of the icon's picture
 };
 
-/// The resource menu: up to six command icons in a row, the windows of their
+/// The icon menu: up to six command icons in a row, the windows of their
 /// labels, the icons' resource ids, the selection and the layout.
 /// It lives in heap slot 58 (gIconMenuWork) from IconMenu_Open
 /// to IconMenu_Close.
@@ -57,7 +57,7 @@ STATIC_ASSERT(offsetof(struct IconMenuWork, selection) == 0x8c);
 STATIC_ASSERT(offsetof(struct IconMenuWork, labelBase) == 0x92);
 STATIC_ASSERT(offsetof(struct IconMenuWork, previousMode) == 0x96);
 
-/// Work slot 58: the resource menu while one is open.
+/// Heap slot 58: the icon menu while one is open.
 extern struct IconMenuWork *gIconMenuWork;
 
 #endif

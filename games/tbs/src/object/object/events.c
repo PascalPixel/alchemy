@@ -400,7 +400,7 @@ s32 Map_RunCoordEventOrWarp(s32 value) {
   return handled;
 }
 
-/// Runs the event of a tile the leader pushes against (MB_LEDGE to
+/// Runs the event of a cell the leader pushes against (MB_LEDGE to
 /// MB_JUMP_FORWARD, and MB_JUMP_FORWARD_UNREACHED), once it has
 /// pushed for more than 12 frames; the count then restarts.
 ///
@@ -439,9 +439,9 @@ s32 Field_RunPushCellEvent(s32 collisionCode) {
   return 0;
 }
 
-/// Searches the tile ahead with the given metatile behavior. The fixed search
+/// Searches the cell ahead with the given metatile behavior. The fixed search
 /// spots, MB_JAR to MB_WELL, show their two messages. Otherwise the
-/// map's bg event for the tile runs: a function, a message, or a chest
+/// map's bg event for the cell runs: a function, a message, or a chest
 /// holding a Psynergy Stone, a mimic, coins or an item; with no event, "checked
 /// the ground" and "found nothing".
 ///
@@ -518,7 +518,7 @@ s32 Field_SearchCell(s32 tile) {
             canOpen = 0;
           if (canOpen != 0) {
             // A BG_EVENT(BG_EVENT_CHEST) event is a chest the map shows as a
-            // marker.
+            // treasure spot.
             if ((event->kind & 0x1ff) == BG_EVENT(BG_EVENT_CHEST))
               TreasureSpot_OpenChest(tile);
             rewardType = event->value & 0xfff00000;

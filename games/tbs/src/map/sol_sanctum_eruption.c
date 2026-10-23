@@ -205,8 +205,8 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Engine_ObjectEventSetSpritePriority(LOCALID_WISE_ONE, 1);
 #ifndef UBFIX
   // UB: these are separate work-pointer globals. The native sequence reaches
-  // the event slot through the particle slot; named globals add four bytes
-  // and change this scene's register allocation in tbs-en.
+  // the field heap slot through the particle heap slot; named globals add
+  // four bytes and change this scene's register allocation in tbs-en.
   eventWorkSlot = (struct EventWork **)((u8 *)particleWorkSlot - 8);
 #endif
   FieldCamera_MoveTo(PIXELS(232), -1, PIXELS(156), 0);

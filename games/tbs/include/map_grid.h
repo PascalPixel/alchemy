@@ -41,18 +41,18 @@ enum MetatileBehavior {
 };
 
 /// One cell of a map layer: its metatile and flags, its metatile behavior and
-/// an attribute indexing the collision table.
+/// its shape, an index into the shape table.
 struct MapGridCell {
   /// bits: 15..12 flags (15..14 read by MapGrid_GetCellHighFlags) | 11..0
   /// metatile
   u16 metatileAndFlags;
   u8 behavior; ///< an enum MetatileBehavior
-  /// Indexes the 4-byte collision entries (gMapGridShapes): terrain kind in
+  /// Indexes the 4-byte shape table (gMapGridShapes): the shape's kind in
   /// the first byte's low four bits, then its height samples.
   u8 shape;
 };
 
-/// A map layer's scroll record, seen from its cells.
+/// A map layer's scroll state, seen from its cells.
 struct MapGridLayer {
   struct MapGridCell
       *cells; ///< the layer's first cell (MapGridLayerScroll's cells)
@@ -70,14 +70,14 @@ struct BlendScriptState {
   u16 paused;  ///< nonzero holds the script where it is
 };
 
-/// One of the 16 tile animation channels, which copy tiles into VRAM by
+/// One of the 16 tileset animations, which copy tiles into VRAM by
 /// script (TilesetAnim_Update): groups of four halfwords, the source tile,
 /// the count, the destination tile and the frames to wait.
 struct TilesetAnim {
   const u16 *start;  ///< where 0xffff loops back to; null for none
   const u16 *cursor; ///< the next group
   u16 timer;         ///< frames left of the current wait
-  u16 paused;        ///< nonzero, set by a map, holds the channel
+  u16 paused;        ///< nonzero, set by a map, holds the animation
 };
 
 /// A layout's three layers, by what they hold. Most layouts give them
@@ -95,7 +95,7 @@ enum MapGridLayerIndex {
 };
 
 /// The map work in HEAP_SLOT_MAP_GRID (struct MapGridScrollWork), seen as its
-/// tile animation channels, blend script and layers' cells.
+/// tileset animations, blend script and layers' cells.
 struct MapGridState {
   /// MapGridScrollWork's origin, shake and script; not named through this view.
   ///@{
@@ -104,7 +104,7 @@ struct MapGridState {
   u8 *script;
   ///@}
   u16 flags;     ///< REG_DISPCNT bits; MapGrid_SetShownLayers sets BG1 to BG3
-  u8 wideTiles;  ///< nonzero: tile animations copy 64-byte tiles
+  u8 wideTiles;  ///< nonzero: tileset animations copy 64-byte tiles
   u8 footprints; ///< MapGridScrollWork's; Bilibin Cave sets it
   struct TilesetAnim animations[16];
   struct BlendScriptState blend;
@@ -146,12 +146,12 @@ struct WorldPosition {
 /// its four tile entries. MapGrid_LoadLayout decodes them in.
 extern u32 gMetatiles[];
 
-/// The map's layer data, 16 KB of EWRAM at 0x02028000. A tile animation's
-/// source tiles numbered 0x600 and up (0x200 and up for 64-byte tiles) are
-/// read from here, tile 0x600 (0x200) at its first byte.
+/// The map's layer data, 16 KB of EWRAM at 0x02028000. A tileset
+/// animation's source tiles numbered 0x600 and up (0x200 and up for 64-byte
+/// tiles) are read from here, tile 0x600 (0x200) at its first byte.
 extern u8 gMapGridLayerData[];
 
-/// The map's collision shapes, 16 KB of EWRAM at 0x0202c000: 4-byte entries
+/// The map's shape table, 16 KB of EWRAM at 0x0202c000: 4-byte entries
 /// that MapGridCell.shape indexes.
 extern u8 gMapGridShapes[];
 

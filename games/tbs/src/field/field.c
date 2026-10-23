@@ -1,6 +1,6 @@
 /// @file
 /// The field object: the engine of the field and the world map. It draws and
-/// animates sprites, keeps the 64 object events and runs their scripts, moves
+/// animates sprites, keeps the 64 objects and runs their scripts, moves
 /// the player by the keys, loads, draws and scrolls the maps, and answers what
 /// the ground is like under a point. field_internal.h holds what the parts
 /// share; the parts under field/ are included here in the order their code has
@@ -23,7 +23,7 @@
 ///                   MapGrid_UpdateLayerScroll; world_map.c:
 ///                   WorldMap_InitializePerspective, WorldMap_UpdateView
 ///   Ground          terrain.c: MapGrid_GetTerrainHeight,
-///   MapGrid_CheckCollision,
+///                   MapGrid_CheckCollision,
 ///                   WorldMap_GetCollision
 
 #include "field_internal.h"

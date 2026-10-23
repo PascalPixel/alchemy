@@ -26,7 +26,7 @@ struct Window *Message_ShowAndWait(s32 message, s32 x, s32 y) {
 /// Runs a battle command row: the commands as icons along the bottom of the
 /// screen, the selected one pulsing as a sprite and named in a window, until
 /// a command is chosen. Returns the command chosen (enum CommandIcon), -1 when
-/// B cancels, or -2 when L or R asks for the status screen; the last two in a
+/// B cancels, or -2 when L or R asks for the summary screen; the last two in a
 /// member's row only. When the link battle's time runs out the row takes its
 /// first command. Battle_CollectPartyCommands runs both rows.
 ///

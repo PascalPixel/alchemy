@@ -329,7 +329,7 @@ struct ItemDefinition *Inventory_GetEquippedDefinition(struct Unit *unit,
 }
 
 /// Returns the id of the unit's equipped item of `type`, or 0. Called by
-/// BattleObject_Make to draw a member's weapon, and by the battle plan.
+/// BattleObject_Make to draw a member's weapon, and by BattleTurn_Build.
 s32 Inventory_GetEquippedItem(struct Unit *unit, s32 type) {
   s32 slot;
 
@@ -407,7 +407,7 @@ s32 Inventory_CheckDiscard(s32 owner, s32 slot) {
 }
 
 /// Removes one `itemId` from whoever carries it first; always returns 0.
-/// Called by the scripts that use up a key item, the slot machine's Game
+/// Called by the scripts that use up a key item, the Lucky Wheels' Game
 /// Tickets and the field shortcut that uses an item.
 s32 PartyInventory_Remove(s32 itemId) {
   s32 owner = PartyInventory_FindMember(itemId);
@@ -525,7 +525,7 @@ s32 Inventory_CountItem(s32 owner, s32 itemId) {
   return count;
 }
 
-/// Counts `itemId` across the party. Called by the slot machine (Game
+/// Counts `itemId` across the party. Called by Lucky Wheels (Game
 /// Tickets) and the Tolbi spring game.
 s32 PartyInventory_CountItem(s32 itemId) {
   u16 owners[16];

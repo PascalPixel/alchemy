@@ -90,13 +90,13 @@ enum AnimationCommand {
   ANIMCMD_BLANK = 255     ///< show nothing for `arg`
 };
 
-/// The engine's pool sizes, and the layer timer's step at normal speed.
+/// The engine's pool sizes, and an anim's timer step at normal speed.
 enum {
   RESOURCE_SLOT_COUNT = 8,     ///< ObjectSystemWork.frameCaches
   OBJECT_COUNT = 64,           ///< gObjects, HEAP_SLOT_OBJECTS
-  ANIMATION_OBJECT_COUNT = 64, ///< sprites and layer records
+  ANIMATION_OBJECT_COUNT = 64, ///< sprites and sprite anims
   ANIMATION_LAYER_COUNT = 4,   ///< Sprite.entries
-  /// Sixteenths of a frame taken off a layer's timer each frame: one frame.
+  /// Sixteenths of a frame taken off an anim's timer each frame: one frame.
   ANIMATION_NORMAL_STEP = 16
 };
 

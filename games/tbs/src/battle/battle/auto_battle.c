@@ -164,7 +164,7 @@ s32 BattleFlee_PlayRun(struct BattleAction *action) {
   s32 memberSlot;
 
   (void)action;
-  // The roll's top four bits: escape unless all are clear, 15 in 16.
+  // The roll's top four bits: flee unless all are clear, 15 in 16.
   if (((Random16() << 4) >> 16) != 0) {
     partySize = BattleUnits_ListLiving(BATTLE_SIDES_PARTY, partyMembers);
     animated = 0;
@@ -209,10 +209,10 @@ s32 BattlePresentation_ShowDefendMessage(const struct BattleAction *action) {
 
 /// Auto battle: casts Psynergy. The camera turns to the caster's side and
 /// the caster raises its hand; the target side fades out, its living units
-/// are readied alone, the Psynergy's effect (kind action->parameter) plays
+/// are readied alone, the Psynergy's animation (kind action->parameter) plays
 /// on them, and everyone fades back in. Returns -1 for an invalid actor or
 /// target. Called by BattlePresentation_RunAction for COMMAND_PSYNERGY. Writes
-/// REG_BLDCNT and REG_BLDALPHA and the actors' record modes, and leaves the
+/// REG_BLDCNT and REG_BLDALPHA and the actors' colour modes, and leaves the
 /// battle objects readied again.
 s32 BattlePresentation_RunPairedUnitTransition(struct BattleAction *action) {
   u16 visibleUnits[14];
@@ -382,7 +382,7 @@ s32 BattlePresentation_RunApproachAction(struct BattleAction *input) {
 }
 
 /// Auto battle: an attack or an item. Turns the camera to the actor's side,
-/// poses the actor and plays the effect (kind action->parameter) on the
+/// poses the actor and plays the animation (kind action->parameter) on the
 /// first living unit of the target's side, then sends both back. Returns -1
 /// for an invalid actor. Called by BattlePresentation_RunAction for
 /// COMMAND_ATTACK, COMMAND_ITEM and any other command but fleeing, defending

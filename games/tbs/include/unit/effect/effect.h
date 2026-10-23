@@ -10,7 +10,7 @@ struct BattleAnimArgs;
 struct ScreenPoint;
 struct Particle;
 
-/// The large effects BattleAnim_RunSummonEffect runs, by kind: the twelve
+/// The large animations BattleAnim_RunSummonEffect runs, by kind: the twelve
 /// summons. A summon's row of actflags.tsv has effect 0x8000 plus its kind.
 enum SummonAnimId {
   SUMMON_ANIM_NONE,     ///< no row uses it; runs Meteor's scene too
@@ -28,14 +28,15 @@ enum SummonAnimId {
   SUMMON_ANIM_THOR      ///< BattleAnim_RunThor (thor.c)
 };
 
-/// An effect handler: plays one effect over the battle, frame by frame, and
-/// returns when it is over.
+/// An animation handler: plays one animation over the battle, frame by frame,
+/// and returns when it is over.
 typedef void (*BattleAnimHandler)(struct BattleAnimArgs *effect);
-/// Effect kinds: the kind an ability's gAbilityAnimations entry selects, by
+/// Animation kinds: the kind an ability's gAbilityAnimations entry selects, by
 /// the handler that plays it; a later kind that shares a handler adds its
 /// number. Kinds without a handler have no name.
 enum BattleAnimId {
-  BATTLE_ANIM_NONE = 0, ///< no effect: the dispatcher only clears the variant
+  BATTLE_ANIM_NONE =
+      0, ///< no animation: the dispatcher only clears the variant
   BATTLE_ANIM_QUAKE = 1,
   BATTLE_ANIM_SPIRE = 2,
   BATTLE_ANIM_GAIA = 3,
@@ -202,9 +203,9 @@ enum BattleAnimId {
   BATTLE_ANIM_COUNT = 408 ///< one more than the last kind
 };
 
-/// An effect's variant: the strength of the ability that plays it, from bits
+/// An animation's variant: the strength of the ability that plays it, from bits
 /// 12 and 13 of its row of actflags.tsv. Most abilities come in threes that
-/// share an effect, such as Quake, Earthquake and Quake Sphere, and a double
+/// share an animation, such as Quake, Earthquake and Quake Sphere, and a double
 /// or triple blow adds one or two. A runner that sets its own variants names
 /// them beside it.
 enum AnimVariant {
@@ -214,7 +215,7 @@ enum AnimVariant {
 };
 
 /// The handlers by kind less one (effect_table.c); BattleAnim_RunTableEffect
-/// calls the one an effect's kind selects.
+/// calls the one an animation's kind selects.
 extern BattleAnimHandler gBattleAnim_Handlers[];
 
 /// What BattleAnim_BuildCenteredIndexList (unused) reads: a value to find in
@@ -228,9 +229,9 @@ typedef struct {
   s16 values[1];           ///< indexRadius * 2 + 1 values, searched in order
 } BattleAnimIndexWindow;
 
-/// The map cell buffer (gMapGridCellBuffer), which the effects borrow, has two
-/// views here: Ram_MapGridCellBuffer as bytes, at its fixed address, and
-/// PARTICLES as particles. The effects use these two, not gMapGridCellBuffer
+/// The map cell buffer (gMapGridCellBuffer), which the animations borrow, has
+/// two views here: Ram_MapGridCellBuffer as bytes, at its fixed address, and
+/// PARTICLES as particles. The animations use these two, not gMapGridCellBuffer
 /// itself.
 #define PARTICLES ((struct Particle *)Ram_MapGridCellBuffer)
 
@@ -254,10 +255,10 @@ struct Point2D {
 
 /// A blitter pair: [0] built in HEAP_SLOT_RAM_CODE and [1] in
 /// HEAP_SLOT_RAM_CODE_2 (BattleAnim_FetchRectangleBlitters fills one).
-/// Many effects keep this pair in their stack frame.
+/// Many animations keep this pair in their stack frame.
 typedef DrawRectangle BlitterPair[2];
 
-/// The work slots read as blitters: ANIM_BLITTERS[HEAP_SLOT_RAM_CODE] and
+/// The heap slots read as blitters: ANIM_BLITTERS[HEAP_SLOT_RAM_CODE] and
 /// ANIM_BLITTERS[HEAP_SLOT_RAM_CODE_2].
 #define ANIM_BLITTERS ((DrawRectangle *)gHeapSlots)
 

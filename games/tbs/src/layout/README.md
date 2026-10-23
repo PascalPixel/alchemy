@@ -31,9 +31,6 @@ A cell is `struct MapGridCell` in [`map_grid.h`](../../include/map_grid.h):
 | 16 to 23 | `behavior` | the metatile behavior |
 | 24 to 31 | `shape` | the shape, a row of the layout's shape table |
 
-The field names don't say what the fields hold: `behavior` is the
-metatile behavior and `shape` the shape.
-
 **What is drawn.** A [metatile](../../glossary.md#metatile) is the picture of one cell, 2 by 2 of the
 console's 8-pixel tiles, stored as the four BG map entries that draw them
 (top left, top right, bottom left, bottom right). A cell names its metatile
@@ -101,14 +98,14 @@ layout's `layout.s` puts the parts together behind its header.
 
 | File | What it is | Built as |
 | --- | --- | --- |
-| `layout.s` | the header, three layers and six offsets, then the parts; in 129 layouts a tile set's palette and tile sheets follow (from `games/tbs/src/graphics/tileset`) | assembled |
+| `layout.s` | the header, three layers and six offsets, then the parts; in 129 layouts a tileset's palette and tiles follow (from `games/tbs/src/graphics/tileset`) | assembled |
 | `metatiles.tsv` | the metatiles; a metatile's number is its row, from 0 | `metatiles.delta0.lz`, `.delta1.lz` or `.delta2.lz` |
 | `shapes.tsv` | the shapes | `shapes.table.lz` |
 | `grid.tsv` | the three planes, in order | `grid.parts.lz` |
 | `grid_collision.tsv`, `grid_shape.tsv`, `grid_metatile.tsv` | each cell's metatile behavior, shape and metatile | parts of the grid |
-| `animation.tsv` | the tile animation script | `animation.script.lz` |
+| `animation.tsv` | the tileset animation script | `animation.script.lz` |
 | `blend.tsv` | the blend [script](../../glossary.md#script) | `blend.script.lz` |
-| `markers.tsv` | the markers | `markers.table` |
+| `markers.tsv` | the treasure spots | `markers.table` |
 | `*_ja.tsv`, `*_de.tsv`, `*_es.tsv` and so on | an [edition](../../glossary.md#editions)'s own version of a table | chosen in `layout.s` |
 | `*_patch.tsv` | bytes [Camelot](../../glossary.md#camelot) changed after packing | read by the packer |
 
@@ -141,7 +138,7 @@ picture at the top of this page), its parallax (in sixteenths of the view's
 motion), its drift (sixteenths of a pixel a frame) and its wrap.
 
 Six offsets from the header's start follow: the metatiles, the shapes, the cell
-grid, the tile animation, the blend script and the markers. An offset of 0
+grid, the tileset animation, the blend script and the treasure spots. An offset of 0
 means the layout has none of that part.
 
 `struct LayoutHeader` and `struct LayoutLayer` are defined in
@@ -161,9 +158,9 @@ write them in `layout.inc`.
 | `metatiles` | bytes from the header | the metatiles |
 | `shapes` | bytes from the header | the shapes |
 | `cells` | bytes from the header | the cell grid |
-| `animation` | bytes from the header | the tile animation script, or 0 for none |
+| `animation` | bytes from the header | the tileset animation script, or 0 for none |
 | `blend` | bytes from the header | the blend script, or 0 for none |
-| `markers` | bytes from the header | the marker list, read in place |
+| `markers` | bytes from the header | the treasure spot list, read in place |
 
 ## How the build makes a layout
 
@@ -172,13 +169,13 @@ build turns each table into the bytes the game reads and packs them exactly as
 Camelot's packer did, so the result is the same, byte for byte, as the
 cartridge.
 
-![How the build turns one of a layout's tables into what the game reads, using Suhalla Desert's shapes as the example. The file shapes.tsv is a table anyone can edit, one shape a row: its kind and three heights. The build tool writes the bytes the game reads, shapes.table, one record a row. Then it packs them, shapes.table.lz, exactly as Camelot's packer did, so the packed bytes are the same as on the cartridge. Last, the layout's layout.s places them behind its header. The name of each file says what to make: the table's name, then its form, then the packing.](https://alchemy.pascalpixel.com/illustrations/map/build-steps.svg)
+![How the build turns one of a layout's tables into what the game reads, using Suhalla Desert's shapes as the example. The file shapes.tsv is a table anyone can edit, one shape a row: its kind and three heights. The build tool writes the bytes the game reads, shapes.table, one entry a row. Then it packs them, shapes.table.lz, exactly as Camelot's packer did, so the packed bytes are the same as on the cartridge. Last, the layout's layout.s places them behind its header. The name of each file says what to make: the table's name, then its form, then the packing.](https://alchemy.pascalpixel.com/illustrations/map/build-steps.svg)
 
 The name of the file the build asks for says what to make:
 `NAME.FORM[.CODEC]`, from `NAME.tsv`. `tools/ags-graphics` makes it (the
 `Makefile`'s asset rules), and a layout uses these forms:
 
-- `table`: the shapes and markers, one record per row, each column's type
+- `table`: the shapes and treasure spots, one entry per row, each column's type
   giving its size.
 - `plane`: a grid plane, written out whole, row by row, with `fill` in every
   cell the table leaves out.
@@ -187,7 +184,7 @@ The name of the file the build asks for says what to make:
   (`enum MetatilePacking`, in the table below) that
   `TileMap_DecodeStagedBuffer` undoes. Each `layout.s` names the method its
   stream uses.
-- `script`: the tile animation and blend scripts below.
+- `script`: the tileset animation and blend scripts below.
 
 The codec `lz` then packs each stream in the format the game's
 `Decompress_Type01` unpacks, and the bytes must come out identical.
@@ -251,11 +248,11 @@ one go.
 Each map's row of `gMapHeaders` ([`field/maps.s`](../field/maps.s))
 gives a layout number, which picks a row of `gLayouts`
 ([`field/layouts.tsv`](../field/layouts.tsv)): the layout's header, palette,
-three tile sheets and layer data. `MapGrid_LoadLayout`
+its tileset's three sheets of tiles and layer data. `MapGrid_LoadLayout`
 ([`field/field/map_grid.c`](../field/field/map_grid.c)) decodes each part
 into a fixed buffer in [EWRAM](../../glossary.md#iwram-and-ewram): the metatiles into `gMetatiles`, the
 shapes into `gMapGridShapes`, the grid into `Ram_MapGridCellBuffer`, and
-the two scripts into the space after the shapes. The markers are not
+the two scripts into the space after the shapes. The treasure spots are not
 decoded: the loader keeps a pointer to them in the map grid work. A `Ram_`
 name is the same buffer as the `g` name after it (`Ram_MapGridCellBuffer` is
 `gMapGridCellBuffer`), written where the code reaches the buffer by its fixed
@@ -275,14 +272,14 @@ while a layout is loaded. Only code that reloads the cells afterwards writes
 there:
 
 - a battle, after which the map's layout is loaded again;
-- the link lobby, which leaves the partner's party in `gActorSpriteSlots`
+- the Battle Arena, which leaves the partner's party in `gActorSpriteSlots`
   for the link battle that follows;
 - the world map's still view, which saves `BG1`'s tiles to `gDecodeBuffer`
   and draws into the cells, which `WorldMap_LoadDefaultCellsAndUpdateBlock`
   then puts back;
 - the debug sprite viewer, which loads sprites there.
 
-The tile animation only reads from `Ram_DecodeBuffer`, at offsets that land
+The tileset animation only reads from `Ram_DecodeBuffer`, at offsets that land
 past it. [System](../system/README.md) has the EWRAM layout.
 
 | Plane, in stored order | Size | Values |
@@ -338,38 +335,38 @@ that event.
 
 ![Two maps on Crossbone Isle, CrossboneIsleKeys and CrossboneIsleBane, use the same layout, and the layout lists eight spots where a chest can stand, each with the event that would place one there. CrossboneIsleKeys has events for four of them, in a row along the room's north side: 333 coins, a Fairy Ring, a Cookie and a Smoke Bomb. CrossboneIsleBane has events for the other four: 666 coins and an Elixir on its raised floor, a Water of Life below them, and the Demon Axe, whose chest is carried on a stone pillar. A spot a map has no event for stays empty.](https://alchemy.pascalpixel.com/illustrations/map/markers.svg)
 
-CrossboneIsleKeys and CrossboneIsleBane share `layout_110`, whose eight markers
+CrossboneIsleKeys and CrossboneIsleBane share `layout_110`, whose eight treasure spots
 carry the [triggers](../../glossary.md#trigger) 100 to 107: CrossboneIsleKeys has chest events for 100 to
 103, and CrossboneIsleBane for 104 to 107 (`map/crossbone_isle_keys.c`).
 CrossboneIsleBane moves the Demon Axe's chest to 0, 0 until the stone pillar
-carrying it reaches the ladder, since its marker's cell lies past the room's
+carrying it reaches the ladder, since its treasure spot's cell lies past the room's
 east wall.
 
-The marker list is (column, row, id) triples, a cell and the trigger of a
+The treasure spot list is (column, row, id) triples, a cell and the trigger of a
 map event, ended by 255, 255. When a map loads, `Field_PlaceTreasureSpots`
 ([`object/object/markers.c`](../object/object/markers.c)) places an
-object at each marker whose id (100 to 239) the map has an event for, up to
+object at each treasure spot whose id (100 to 239) the map has an event for, up to
 `TREASURE_SPOT_MAX` (10): a chest for a chest event, shown open once its flag is set
 and gone once its mimic has been beaten, and a Psynergy Stone for a search
-event that gives one, until it is taken. A marker the map has no event for
-takes no slot. 76 layouts place `layout_000/markers.table`, which holds only the end
-marker.
+event that gives one, until it is taken. A treasure spot the map has no event for
+takes none of the ten. 76 layouts place `layout_000/markers.table`, which holds only the end
+row.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| a marker's id | 100 to 239 | the trigger of the map event that places it |
-| the end marker | column 255, row 255 | ends the list |
-| `TREASURE_SPOT_MAX` | 10 | markers placed on a map (`include/unit/object/object.h`) |
+| a treasure spot's id | 100 to 239 | the trigger of the map event that places it |
+| the end row | column 255, row 255 | ends the list |
+| `TREASURE_SPOT_MAX` | 10 | treasure spots placed on a map (`include/unit/object/object.h`) |
 
-### Tile animation and blend scripts
+### Tileset animation and blend scripts
 
 Some parts of a map move by themselves without anything on the map moving:
 the game simply swaps the pictures of a few tiles on a timer. A
-layout's tile animation script says which pictures to copy over which tiles and
+layout's tileset animation script says which pictures to copy over which tiles and
 how long to wait between them; its blend script changes, in the same way, how
 the layers mix.
 
-![One channel of a layout's tile animation. Several pictures of the same patch of the map are stored apart from the tiles on screen. The channel copies the first over the patch's tiles, waits a few frames, copies the second, waits, and so on, then goes back to the first. Nothing else changes: every cell that uses those tiles shows the new picture at once. A layout can run up to 16 channels, each on its own timer. On screen, Vale's waterfall and river as the game plays them, several channels changing their tiles at once.](https://alchemy.pascalpixel.com/illustrations/map/tile-animation.svg)
+![One channel of a layout's tileset animation. Several pictures of the same patch of the map are stored apart from the tiles on screen. The channel copies the first over the patch's tiles, waits a few frames, copies the second, waits, and so on, then goes back to the first. Nothing else changes: every cell that uses those tiles shows the new picture at once. A layout can run up to 16 channels, each on its own timer. On screen, Vale's waterfall and river as the game plays them, several channels changing their tiles at once.](https://alchemy.pascalpixel.com/illustrations/map/tile-animation.svg)
 
 Suhalla Desert's north shows the usual shape: its channel 0 copies four rows
 of four tiles from one of four stored pictures, waits 15 frames, takes the
@@ -377,7 +374,7 @@ next picture, and jumps back to the first after the fourth.
 
 Both scripts are runs of halfwords, run each frame as [tasks](../../glossary.md#task)
 ([`field/field/tile_animation.c`](../field/field/tile_animation.c)). In the
-tile animation's table, `channel n` (`0xfd00 + n`) starts channel n of the 16 at the next halfword; only the low
+tileset animation's table, `channel n` (`0xfd00 + n`) starts channel n of the 16 at the next halfword; only the low
 four bits pick the channel, and a channel word with bit 7 set starts it
 paused.
 Each `frame` is four values: the source tile, how many tiles, the destination
@@ -393,7 +390,7 @@ tiles, 64 bytes each (`MapGridState.wideTiles`).
 The blend script changes how the layers blend over time. `control` sets
 `REG_BLDCNT`; `level` sets `REG_BLDALPHA`, or `REG_BLDY` when the control's
 mode is not alpha blending, and waits its second value in frames. `jump`,
-`stop` and `end` act as in the tile animation.
+`stop` and `end` act as in the tileset animation.
 
 The words are tested in `TilesetAnim_Update` and `BlendScript_Run`,
 which have no names for them; the names are the tables' (`animation.tsv`,
@@ -401,7 +398,7 @@ which have no names for them; the names are the tables' (`animation.tsv`,
 
 | Word | Value | Meaning |
 | --- | --- | --- |
-| `channel n` | `0xfd00 + n` | the tile animation's channel n starts at the next halfword |
+| `channel n` | `0xfd00 + n` | the tileset animation's channel n starts at the next halfword |
 | `frame` | four values below `0xfd00` | source tile, tile count, destination tile, frames to wait |
 | `jump n` | `0xfe00 + n` | continue at halfword 2n of the channel's script |
 | `stop` | `0xfeff` | halt the channel |
@@ -442,7 +439,7 @@ squares (`WorldMap_LoadGraphics`).
 
 The tables in `default/` are the world map's too.
 `WorldMap_InitializePerspective` loads the default cells, block attributes and
-tile animation when the world map starts, and
+tileset animation when the world map starts, and
 `WorldMap_LoadDefaultCellsAndUpdateBlock` puts the cells back after the world map's
 still view ([Field](../field/README.md#the-world-map-in-perspective)).
 
@@ -489,7 +486,7 @@ to keep each plane's long runs of one value together for the packer,
 because a behavior plane is mostly runs of open ground and walls, as
 `layout_003`'s is; the bytes show only the layout.
 
-The markers are the one part stored unpacked, and the loader reads them in
+The treasure spots are the one part stored unpacked, and the loader reads them in
 place rather than copying them. XXX: likely because only
 `Field_PlaceTreasureSpots` reads them, once as the map loads.
 
@@ -502,7 +499,7 @@ and a layer's window can sit anywhere in the grid.
 - 4,095 metatiles a layout: a cell's metatile number has 12 bits, and 4,095
   is the placeholder.
 - 256 shapes a layout, since a cell names its shape in one byte.
-- 16 tile animation channels (`struct MapGridState`).
+- 16 tileset animation channels (`struct MapGridState`).
 - `TREASURE_SPOT_MAX` (10) chests and Psynergy Stones placed on a map.
 
 ## Files
@@ -512,7 +509,7 @@ and a layer's window can sit anywhere in the grid.
 | `layout_000/` to `layout_179/` | one layout each: its `layout.s` and the tables it places |
 | `gondowan_passage/`, `venus_entrance/` | two more layouts, Gondowan Passage and Venus Lighthouse's entrance, built like the others |
 | `world/blocks.tsv` | the world map's ground (`Field_PerspectiveDataA`) |
-| `default/` | the world map's default cells, tile animation and block attributes (`Field_DefaultGridCells` and the tables after it) |
+| `default/` | the world map's default cells, tileset animation and block attributes (`Field_DefaultGridCells` and the tables after it) |
 | `colosso/` | the opponents' recorded paths, with the Colosso lettering placed after them |
 | `world_map.s` | places `world/` and `default/` |
 | `layout.inc` | the `layout_header`, `layout_layer` and `layout_offset` macros every `layout.s` uses |
@@ -527,23 +524,23 @@ gives its layouts.
 - A **layer** is one of the layout's three backgrounds, each a window onto the
   one cell grid.
 - A **plane** is one value per cell over the whole 128 by 128 grid.
-- A **marker** is a cell where a chest or a Psynergy Stone can stand.
+- A **treasure spot** is a cell where a chest or a Psynergy Stone can stand.
 
 ## Evidence and open questions
 
 The game keeps no names for any of this, so each part is named for what the
 code does with it: the 16-pixel pictures become BG map entries, so they are
-`metatiles`; the shapes feed the height functions; and the markers are where
+`metatiles`; the shapes feed the height functions; and the treasure spots are where
 `Field_PlaceTreasureSpots` puts chests and Psynergy Stones. The sixth offset is
-called the marker list because that function is the only code that reads the
+called the treasure spot list because that function is the only code that reads the
 pointer the loader stores to it, although `MapGridScrollWork`
 (`include/map_grid_scroll.h`) still names the field `script`.
 
 The pictures are drawn from the tables themselves: the haze from
 `layout_147`'s header, the shapes from its `shapes.tsv`, the chests from
-`layout_110`'s markers and the chest events of `map/crossbone_isle_keys.c`,
+`layout_110`'s treasure spots and the chest events of `map/crossbone_isle_keys.c`,
 and the Colosso runs from the three path tables, point by point. The
-placeholder and tile animation pictures stand for any layout: their grass,
+placeholder and tileset animation pictures stand for any layout: their grass,
 water and rock are drawings, not the game's metatiles.
 
 The header's last two bytes (`pad0` and `pad1` in `layout.inc`, `reserved` in
@@ -551,9 +548,9 @@ The header's last two bytes (`pad0` and `pad1` in `layout.inc`, `reserved` in
 reads them: the loader is the only code that reads the header.
 
 The [Design](#design) section gives two reasons only as likely: why the
-grid is stored as planes and why the markers are not packed.
+grid is stored as planes and why the treasure spots are not packed.
 
-- XXX (no evidence): why the grid is stored as planes and the markers
+- XXX (no evidence): why the grid is stored as planes and the treasure spots
   unpacked; only Camelot's tools would show what the packing was chosen for.
 - XXX: what the four flag bits above a cell's metatile number mean; the
   field engine never reads them, so a map whose cells set them, rendered

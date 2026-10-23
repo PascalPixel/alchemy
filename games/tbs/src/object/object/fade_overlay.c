@@ -16,8 +16,8 @@ struct FadeView {
 /// Each frame of the fade overlay: on each of the two cells beside the object
 /// event (left and right of it), where the ground one or two cells south rises
 /// above the object event's floor, draws a semi-transparent 16-pixel-wide
-/// sprite of colour 1 at the height of that ground. Registered as a scheduler
-/// callback by FieldEffect_StartFadeOverlay; reads the work in
+/// sprite of colour 1 at the height of that ground. Added as a task by
+/// FieldEffect_StartFadeOverlay; reads the work in
 /// HEAP_SLOT_FADE_OVERLAY and queues the marks with Oam_AddSpriteAtDepth.
 void FadeOverlay_DrawMarks(void) {
   struct FadeOverlayWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_FADE_OVERLAY);
@@ -112,9 +112,9 @@ void FadeOverlay_DrawMarks(void) {
 /// FadeOverlay_DrawMarks. Called by seven map overlays (Venus and Mercury
 /// Lighthouses, Kalay, the tunnel ruins, Crossbone Isle, the ice room by Imil
 /// and Fuchin Falls); Crossbone Isle then switches it on and off by setting the
-/// work's object event. No ☀️ code stops it (FadeOverlay_Suspend has no named
-/// caller): the work and the callback last until the next map change resets the
-/// heap and the task table (Game_Run).
+/// work's object event. No ☀️ code stops it (FadeOverlay_Suspend has no
+/// named caller): the work and the callback last until the next map change
+/// resets the heap and the task table (Game_Run).
 void FieldEffect_StartFadeOverlay(void *object) {
   struct FadeOverlayWork *work;
   u8 *tiles;

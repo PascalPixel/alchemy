@@ -1,5 +1,5 @@
 /// @file
-/// The status screen.
+/// The summary screen.
 // Part of battle_command.c.
 
 #include "../battle_command_internal.h"
@@ -19,7 +19,7 @@
   (MsgOwnerStatusExp - OWNER_STATUS_LABEL_EXP + (row))
 #endif
 
-/// The status screen's labels, in their message order from
+/// The summary screen's labels, in their message order from
 /// MsgOwnerStatusAttack (OWNER_STATUS_LABEL).
 enum BattleSummaryLabel {
   OWNER_STATUS_LABEL_ATTACK = 0,
@@ -35,8 +35,8 @@ enum BattleSummaryLabel {
   OWNER_STATUS_LABEL_EXP = 10 ///< MsgOwnerStatusExp
 };
 
-/// The status screen's help lines, from MsgOwnerStatusEntryHelp, which the
-/// cursor stops in windata.s name; the condition icons' places follow.
+/// The summary screen's help lines, from MsgOwnerStatusEntryHelp, which the
+/// cursor stops in windata.s name; the status icons' places follow.
 enum BattleSummaryHelp {
   /// The name, whose help says how to switch members with L and R.
   OWNER_STATUS_HELP_NAME = 0,
@@ -53,17 +53,17 @@ enum BattleSummaryHelp {
   OWNER_STATUS_HELP_DEFENSE = 11,
   OWNER_STATUS_HELP_AGILITY = 12,
   OWNER_STATUS_HELP_LUCK = 13,
-  /// The first condition icon's place: its help is its condition's
+  /// The first status icon's place: its help is its status's
   /// (MsgOwnerStatusConditionHelp).
   OWNER_STATUS_HELP_CONDITION = 14,
   OWNER_STATUS_HELP_LAST_CONDITION = 21 ///< the eighth icon's place
 };
 
-/// A condition the status screen shows as an icon, which picks both the icon
+/// A status the summary screen shows as an icon, which picks both the icon
 /// and its help (MsgOwnerStatusConditionHelp + condition).
 enum BattleSummaryStatus {
   OWNER_CONDITION_EMPTY = -1, ///< a place with no icon
-  OWNER_CONDITION_NORMAL = 0, ///< no condition: "Normal status."
+  OWNER_CONDITION_NORMAL = 0, ///< no status: "Normal status."
   OWNER_CONDITION_POISON = 1,
   OWNER_CONDITION_DEADLY_POISON = 2,
   OWNER_CONDITION_STUN = 3,
@@ -84,19 +84,19 @@ enum BattleSummaryStatus {
   OWNER_CONDITION_AGILITY_DOWN = 18
 };
 
-/// What the status screen redraws on its next frame.
+/// What the summary screen redraws on its next frame.
 #define OWNER_STATUS_REDRAW_ALL 1  ///< on opening, and on L or R
 #define OWNER_STATUS_REDRAW_HELP 2 ///< only the help line
 
-// The status screen's cursor groups, each with its table of cursor stops.
+// The summary screen's cursor groups, each with its table of cursor stops.
 /// The name, experience, HP, PP, class, Djinn and element rows
 /// (gBattleSummaryScreen_StatCursors).
 #define STATUS_CURSOR_GENERAL 0
 /// Attack, Defense, Agility and Luck (gBattleSummaryScreen_EquipmentCursors).
 #define STATUS_CURSOR_COMBAT_STATS 1
-#define STATUS_CURSOR_CONDITIONS 2 ///< the condition icons
+#define STATUS_CURSOR_CONDITIONS 2 ///< the status icons
 
-/// The status screen's cursor: its place in each group, the help entry it
+/// The summary screen's cursor: its place in each group, the help entry it
 /// shows and where it points.
 struct StatusCursor {
   /// The cursor's place in each group. [3] is written for the one frame
@@ -112,9 +112,9 @@ struct StatusCursor {
   s32 row;            ///< tiles
 };
 
-/// Runs the status screen for party member `owner` until B is pressed or
+/// Runs the summary screen for party member `owner` until B is pressed or
 /// the link battle's time runs out: the member's level, experience, HP and
-/// PP, class, stats, Djinn, elements and conditions, with a help line for
+/// PP, class, stats, Djinn, elements and statuses, with a help line for
 /// the item under the cursor. With `listCount` nonzero, L and R step through
 /// the members of `list` (BATTLE_UNIT_LIST_END ends it, BATTLE_UNIT_REMOVED is
 /// an empty place). The link timer's window is closed while it is open
@@ -277,7 +277,7 @@ s32 BattleSummaryScreen_Run(u16 *list, s32 listCount, s32 owner) {
           keys = 0;
           Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
           // A, Right or Left toggles between the general group and the
-          // conditions. From STATUS_CURSOR_COMBAT_STATS this makes a group
+          // statuses. From STATUS_CURSOR_COMBAT_STATS this makes a group
           // no branch below reads; the next frame's switch restores it.
           cursor.group ^= STATUS_CURSOR_CONDITIONS;
           if ((gKeysRepeat & KEY_A) != 0) {
@@ -539,7 +539,7 @@ s32 BattleSummaryScreen_Run(u16 *list, s32 listCount, s32 owner) {
                                   40 + j * 32, 96);
         }
 
-        // The condition icons, at most eight, in this order: downed, cursed
+        // The status icons, at most eight, in this order: downed, cursed
         // item, Grim Reaper, poison, deadly poison, Psynergy sealed, stun,
         // sleep, haunt, delusion, then Attack, Defense and Resistance raised
         // or lowered, and Agility. OWNER_CONDITION_NORMAL alone means none.
@@ -672,7 +672,7 @@ s32 BattleSummaryScreen_Run(u16 *list, s32 listCount, s32 owner) {
           statusKind = OWNER_CONDITION_DOWNED;
         }
 
-        // A condition's help carries a number: the Grim Reaper's turns left,
+        // A status's help carries a number: the Grim Reaper's turns left,
         // what the stat stages add (the stats less those recalculated with
         // the stages cleared, after which the unit is restored from a copy),
         // or 20 for each Resistance stage.
@@ -750,7 +750,7 @@ s32 BattleSummaryScreen_Run(u16 *list, s32 listCount, s32 owner) {
       work->dirty = 1;
     }
 
-    // The condition icons, 15 pixels apart from x 112 on the first row;
+    // The status icons, 15 pixels apart from x 112 on the first row;
     // OWNER_CONDITION_NORMAL and empty places are not drawn.
     statusSprite = statusSprites;
     statusSlot = statusSlots;

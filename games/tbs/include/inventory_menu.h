@@ -16,7 +16,7 @@ struct Sprite;
 
 struct Window;
 
-/// The item menu's work, in the HEAP_SLOT_MENU work slot: its windows, the
+/// The item menu's work, in the HEAP_SLOT_MENU heap slot: its windows, the
 /// party figures, the items listed and the two choices a command makes. The
 /// menu takes the slot as it opens and frees it as it closes.
 struct ItemMenuWork {

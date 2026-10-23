@@ -6,8 +6,8 @@
 
 #include "../menu_internal.h"
 
-// The status panel's name and ailment column starts further left in the
-// international editions, whose ailment labels are longer, and so does
+// The status panel's name and status column starts further left in the
+// international editions, whose status labels are longer, and so does
 // "Can't equip" (MsgCannotEquip).
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define STATUS_PANEL_TEXT_X 32
@@ -32,7 +32,7 @@
 #define WINDOW_KEEP_EXISTING 0x100
 #define WINDOW_STYLE_MASK 0xff
 
-/// Resumes the overlay tasks and tile animations when a menu closes, and
+/// Resumes the overlay tasks and tileset animations when a menu closes, and
 /// clears FLAG_WEATHER_HELD and FLAG_PALETTE_BLEND_HELD: undoes
 /// Menu_SuspendFieldTasks. Called as DjinnMenu_Run and SummaryScreen_Run close,
 /// and as ItemMenu_Run (TBS_PATCH_1) and PsynergyMenu_Run (TBS_PATCH_2) close.
@@ -50,7 +50,7 @@ s32 Menu_ResumeFieldTasks(void) {
 #endif
 }
 
-/// Suspends the overlay tasks and tile animations while a menu is open, and
+/// Suspends the overlay tasks and tileset animations while a menu is open, and
 /// sets FLAG_PALETTE_BLEND_HELD and FLAG_WEATHER_HELD, so that the field's
 /// palette blend and weather stand still behind it (see Menu_ResumeFieldTasks,
 /// which undoes it). Returns Task_SuspendOverlayTasks' result, the last
@@ -116,7 +116,7 @@ static inline void Owner_Copy(struct Unit *destination, struct Unit *source) {
 }
 
 /// Draws the status panel of the Item and Psynergy screens for the party
-/// member owner (window at tile 0,5, 13 by 12): the name, up to two ailments
+/// member owner (window at tile 0,5, 13 by 12): the name, up to two statuses
 /// or the level, the member's portrait, and below them what mode's panel kind
 /// asks for. slot is the inventory slot of the item the panel is about, for
 /// the equipment and Psynergy item panels. The first parameter, the status
@@ -147,8 +147,8 @@ void StatusPanel_Draw(struct Window *unused, s32 owner, s32 slot, s32 mode) {
                                     WINDOW_KEEP_EXISTING | 2);
   window = menu->statusWindow;
 
-  // The name, then each ailment the member has, one row each; the level
-  // takes the third row when no more than one ailment is shown.
+  // The name, then each status the member has, one row each; the level
+  // takes the third row when no more than one status is shown.
   if (!(mode & STATUS_PANEL_LOWER_ONLY)) {
     // A window that already existed still shows the last member: clear its
     // top 88 by 32 pixels a frame later. A new window is blank.
@@ -399,7 +399,7 @@ void Ui_DrawValuePairRows(struct Unit *unit, struct Window *window) {
 }
 
 /// The stat arrows: the up and down arrow sprites the menu loads into its two
-/// resource slots (Resource_LoadPairedBlocks).
+/// sprite frame cache slots (Resource_LoadPairedBlocks).
 enum StatArrow { STAT_ARROW_UP, STAT_ARROW_DOWN };
 
 /// Writes Attack, Defense and Agility into a status window as they are now
@@ -502,7 +502,7 @@ void PsynergyMenu_CallIconRoutineWithValue(const void *unused, s32 unit) {
 /// in it, hidden for now, as paneIcon[0]. Selects no tab yet (the s8
 /// tabIndex[0] = 255 reads as -1). Returns the window, which
 /// ItemMenu_Initialize (the Item, Psynergy and Djinn screens) and
-/// Menu_InitializeSelectorCursorAndEntries (the Status screen and the member
+/// Menu_InitializeSelectorCursorAndEntries (the summary screen and the member
 /// chooser) pass on to PsynergyMenu_InitializeEntryObjects for the party
 /// figures.
 struct Window *MenuCursor_Create(void *source) {
@@ -608,7 +608,7 @@ void Menu_ReleaseEntryObjects(void) {
   Task_Remove(Menu_UpdateEntryObjectTransforms);
 }
 
-/// Scheduler callback: each frame, places every party member sprite created by
+/// Task: each frame, places every party member sprite created by
 /// PsynergyMenu_InitializeEntryObjects at its menu position and scale, through
 /// the field's projected placement.
 void Menu_UpdateEntryObjectTransforms(void) {
@@ -1194,7 +1194,7 @@ void Palette_CopyObjectBankToBackground14(void) {
 /// Shows the icons of one page of a list, one row of 16 pixels each from
 /// (x, y): entries first to first + pageSize - 1, stopping early at an empty
 /// icon slot or the work's itemCount. Hides all the others. Used by the item
-/// and Psynergy lists and the Status screen's lists.
+/// and Psynergy lists and the summary screen's lists.
 void Menu_SetPageIcons(s32 pageSize, s32 first, struct Window *window, s32 x,
                        s32 y) {
   struct ItemMenuWork *menu = gMenuWork;
@@ -1259,7 +1259,7 @@ s32 Audio_PlayCueReturnOne(s32 cue) {
   return 1;
 }
 
-/// Scheduler callback while a menu runs: on Start, plays the cancel sound,
+/// Task while a menu runs: on Start, plays the cancel sound,
 /// sets FLAG_MENU_START_PRESSED and removes itself.
 void Menu_CancelSoundTick(void) {
   if (gKeysPressed & KEY_START) {

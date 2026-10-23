@@ -1,6 +1,6 @@
 	.section .rodata
 	.balign 4
-@ Debug party members, delimited by owner -1.
+@ Debug party members, delimited by member -1.
 	.global gDebug_PartyPresets
 gDebug_PartyPresets:
 	.incbin "games/tbs/src/battle/presets.table"

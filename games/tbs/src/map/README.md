@@ -384,7 +384,7 @@ place it twice.
 | `sol_sanctum_*.h` | Sol Sanctum's rooms | the Elemental Star room's floating lights, the corridor's and maze's entry |
 | `vale.h`, `world_map_linked_effects.h` | Vale's gate and storm; Vale and the world map | the storm's door warps; the particles around a glowing object event |
 | `effect_*.h` | many | `FieldEffect_Spawn` and the small effects it places, cutscene Psynergy |
-| `object_*.h` | many | object events: staged object events, lookups by cell and distance, turning and waiting |
+| `object_*.h` | many | object events: pushed objects, lookups by cell and distance, turning and waiting |
 | `map_grid_panel.h`, `scroll_initialize_hblank_dma.h` | Crossbone Isle's stepping stones and Kolima Forest's floodgate; the Lemurian ship | a stretch of the layout drawn straight into the background's tile map; the water's ripple |
 
 A header named after one map may be shared further: `colosso_item_icon.h`
@@ -467,9 +467,9 @@ see are in `games/tbs/include/unit/map/`.
 A map's functions take its name (`Vault_`, `VaultRevisit_`,
 `ColosseumNavampaMatch_`) and say what the player sees; most functions a
 map event table names are `EventScript_` instead. Shared helpers take their family's
-prefix (`Colosso_`, `MercuryLighthouse_`, `KolimaPalette_`, `StagedObjectEvent_`, and
+prefix (`Colosso_`, `MercuryLighthouse_`, `KolimaPalette_`, `PushedObject_`, and
 `FieldEffect_` for the field effects). Some keep older descriptive names
-(`MapObjectEvent_`, `OverlayObject_`, `Map_`) until the maps that call
+(`ObjectEvent_RampWords24And28Over16Frames`, `Map_`) until the maps that call
 them are humanized. The spellings some sites keep to match (fields reached
 through `offsetof`, another struct's view of an object event, update hooks returning
 `s32`) are in [Matching](../MATCHING.md).
@@ -500,8 +500,8 @@ room the game leaves unnamed, what the player sees there; its functions
 are named for what the player sees; its messages are linker symbols made from
 their English text. Overlay numbers are their rows of the resource directory.
 
-Many functions in `common/` keep older descriptive names (`MapObjectEvent_`,
-`OverlayObject_`, `Map_`); each takes its name with the maps that
+Many functions in `common/` keep older descriptive names
+(`ObjectEvent_SetFlagBitByRelativeDepth`, `Map_`); each takes its name with the maps that
 call it, as those maps are humanized. A sound without a proven name keeps
 its number (`SE_188`), as `songs.h` says.
 

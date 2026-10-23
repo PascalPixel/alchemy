@@ -14,7 +14,7 @@
 ///
 /// Abilities: Undead Sword (BATTLE_ANIM_UNDEAD_SWORD).
 ///
-/// The effect runs 54 frames. BG2 is moved so that the canvas's centre line
+/// The animation runs 54 frames. BG2 is moved so that the canvas's centre line
 /// stands on the target. The sparks are work->particles 0 to 15, variant their
 /// age in frames.
 void BattleAnim_RunUndeadSword(struct BattleAnimArgs *effect) {

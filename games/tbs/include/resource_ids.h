@@ -15,7 +15,7 @@ extern char ResourceId_BuildStamp;
 /// The row of FarCall_PaletteTable. The title screen hands it to
 /// RuntimeDispatch_NoOpHook, which ignores it.
 extern char ResourceId_PaletteFarCalls;
-/// The row of FarCall_EffectTable. Lucky Dice and the slot machine hand it to
+/// The row of FarCall_EffectTable. Lucky Dice and Lucky Wheels hand it to
 /// RuntimeDispatch_NoOpHook as they start.
 extern char ResourceId_EffectFarCalls;
 /// The row of FarCall_ResourceTable, which the sprite viewer passes to
@@ -28,7 +28,7 @@ extern char ResourceId_ResourceFarCallsAlternate;
 /// Window_LoadGraphics copies them into BG character block 0, and the
 /// window text routines draw their glyphs from here.
 extern char ResourceId_WindowTiles;
-/// The narrow glyphs the Japanese edition draws in the battle display's
+/// The narrow glyphs the Japanese edition draws in the battle message
 /// window; the other editions look it up there and then draw from
 /// WindowTiles.
 extern char ResourceId_SmallFont;
@@ -36,7 +36,7 @@ extern char ResourceId_NintendoLogo; ///< Shown first by Title_ShowNintendoLogo.
 /// The Camelot logo's four frames of tiles, which Title_ShowCamelotLogo
 /// cycles.
 extern char ResourceId_CamelotLogo;
-/// The title picture on BG2, loaded by Title_LoadBackground and, for the save
+/// The title picture on BG2, loaded by Title_LoadBackground and, for the main
 /// menu, by MainMenu_LoadBackground.
 extern char ResourceId_GoldenSunLogo;
 /// The still world map RegionMap_Show shows for a
@@ -48,10 +48,10 @@ extern char ResourceId_WorldMapPicture;
 /// which it keeps the bottom 32 rows.
 extern char ResourceId_IntroTilesB;
 
-// Battle backdrops. BattleBackground_SelectForMap picks one for the current
+// Battle backgrounds. BattleBackground_SelectForMap picks one for the current
 // map from gBattleBackground_Maps (object/map_rules.s), and on the world
-// map BattleBackground_SelectForEnvironment picks one by terrain; either leaves
-// it in gGameState.special for the battle. The credits slideshow
+// map BattleBackground_SelectForEnvironment picks one by battle environment;
+// either leaves it in gGameState.special for the battle. The credits
 // (gCredits_Backgrounds) shows every one but DesertBackdrop and
 // AerialViewBackdrop, and some summons draw one as their sky.
 
@@ -60,7 +60,7 @@ extern char ResourceId_IntroTilesB;
 extern char ResourceId_SuhallaGateBackdrop;
 extern char ResourceId_PirateShipBackdrop;        ///< MapId_PirateShip.
 extern char ResourceId_CrossboneIsleCaveBackdrop; ///< Crossbone Isle's floors.
-/// Colosso's three matches (Azart, Satrage and Navampa) and the link lobby.
+/// Colosso's three matches (Azart, Satrage and Navampa) and the Battle Arena.
 extern char ResourceId_ColossoBackdrop;
 /// MapId_VenusLighthouseAerie.
 extern char ResourceId_VenusLighthouseAerieBackdrop;
@@ -110,8 +110,8 @@ extern char ResourceId_BeachBackdrop;
 extern char ResourceId_SnowfieldBackdrop;
 extern char ResourceId_GrasslandBackdrop; ///< World map grassland.
 /// Sol Sanctum's rooms, MapId_AltinPeakHydrosStatue and
-/// MapId_CrossboneIsleSteppingStones, and any world map terrain without a
-/// backdrop of its own.
+/// MapId_CrossboneIsleSteppingStones, and any battle environment without a
+/// battle background of its own.
 extern char ResourceId_SolSanctumBackdrop;
 /// World map forests; the Judgment and Kirin summons draw it too.
 extern char ResourceId_ForestBackdrop;
@@ -124,10 +124,10 @@ extern char ResourceId_DesertBackdrop;
 extern char ResourceId_DuskCloudsBackdrop;
 extern char ResourceId_AerialViewBackdrop; ///< Drawn only by Judgment.
 
-/// The slot machine's frame (LuckyWheels_Run): 16 colours for BG palette 10,
+/// Lucky Wheels' frame (LuckyWheels_Run): 16 colours for BG palette 10,
 /// then the picture.
 extern char ResourceId_LuckyWheelsFramePicture;
-/// The reels' symbol sprites: 480 bytes of sprite colours, then the
+/// The wheels' symbol sprites: 480 bytes of sprite colours, then the
 /// compressed tiles.
 extern char ResourceId_LuckyWheelsIcons;
 /// The jackpot sprites, with their colours for sprite palette 15.
@@ -150,11 +150,11 @@ extern char ResourceId_RevealMaskE;
 /// Second of the pair for FLASHING_STRIKE_UNUSED.
 extern char ResourceId_RevealMaskF;
 
-// Battle effect pictures. A sheet holds 64 colours (128 bytes) and then its
-// compressed pictures, which the effect parts load with
+// Battle animation pictures. A sheet holds 64 colours (128 bytes) and then its
+// compressed pictures, which the animation parts load with
 // Resource_LoadAndDecompress; a palette holds colours alone, which a part
 // copies over a shared sheet's to recolour it, and some parts borrow a sheet's
-// colours the same way. Each note names the effects that read it.
+// colours the same way. Each note names the animations that read it.
 
 extern char ResourceId_LimeColumnSheet; ///< Undead Sword.
 extern char ResourceId_DemonFaceSheet;  ///< The blessings' burst showers.
@@ -172,11 +172,11 @@ extern char ResourceId_TargetBurstImage; ///< The target bursts of orbiting.c.
 extern char ResourceId_WaterSpraySheet;
 /// The casting impact, the Djinn attacks and the Neptune summon.
 extern char ResourceId_BlueFlameSheet;
-/// The particles nearly every effect loads, from Annihilation to Volcano and
+/// The particles nearly every animation loads, from Annihilation to Volcano and
 /// most summons.
 extern char ResourceId_ParticleSpritesA;
 /// A second shared particle sheet: the beam sequences, Bind, Death Plunge,
-/// Ice and Douse, the Neptune summon, the stat changes, and the slot machine.
+/// Ice and Douse, the Neptune summon, the stat changes, and Lucky Wheels.
 extern char ResourceId_ParticleSpritesD;
 /// Curse's flames (BattleAnim_RunCurse).
 extern char ResourceId_FlameColumnSheet;
@@ -187,7 +187,7 @@ extern char ResourceId_ThornSheet; ///< Thorn.
 /// The comet of the impact's comets (PROJECTILE_VOLLEY_IMPACT_COMETS), and
 /// the colours of Crazy Voice's pellets.
 extern char ResourceId_CometSheetA;
-/// One of Slash's comets, which the effect's variant picks.
+/// One of Slash's comets, which the animation's variant picks.
 extern char ResourceId_CometSheetB;
 /// Cutting Edge's large comet, and one of Slash's.
 extern char ResourceId_CometSheetC;
@@ -215,8 +215,8 @@ extern char ResourceId_CounterRevealSheet; ///< Condemn and the casting impact.
 extern char ResourceId_RedCrescentSheetA;
 extern char ResourceId_SpiralSheet; ///< The orbiting spirals of planet_diver.c.
 /// The fire family: Fire, Flare, Atalanta, Dragon Cloud, Tiamat, the casting
-/// impact, the Djinn attacks, Death Plunge, the streaks and the strikes; the
-/// slot machine steps its colours toward it.
+/// impact, the Djinn attacks, Death Plunge, the streaks and the strikes;
+/// Lucky Wheels steps its colours toward it.
 extern char ResourceId_EmberStreakSheet;
 /// Frost, Hail, the ice volleys and the casting impact.
 extern char ResourceId_IceChipSheet;
@@ -259,27 +259,28 @@ extern char ResourceId_PerspectiveDataA;
 extern char ResourceId_DefaultGridCells;
 /// Colosso's first opponent's recorded path, played by the Azart match.
 extern char ResourceId_OpponentPathA;
-/// The world map's tile animation channels (TilesetAnim_StartAll).
+/// The world map's tileset animations (TilesetAnim_StartAll).
 extern char ResourceId_DefaultTileAnimation;
 /// The world map's metatile attributes, loaded with its default cells.
 extern char ResourceId_DefaultMetatileAttributes;
 
 // The world map's two graphics sets (gWorldMap_GraphicsResources), each a
-// palette and five tile sets: WorldMap_LoadGraphics decodes the first four
-// into char blocks 2 and 3 and the fifth into gMapGridLayerData for the tile
-// animation. The second set is for WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD.
+// palette and five tilesets: WorldMap_LoadGraphics decodes the first four
+// into char blocks 2 and 3 and the fifth into gMapGridLayerData for the
+// tileset animation. The second set is for
+// WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD.
 
 extern char ResourceId_WorldMapPaletteA; ///< The first set's colours.
-extern char ResourceId_WorldMapTilesA;   ///< First set, first tile set.
-extern char ResourceId_WorldMapTilesB;   ///< First set, second tile set.
-extern char ResourceId_WorldMapTilesC;   ///< First set, third tile set.
-extern char ResourceId_WorldMapTilesD;   ///< First set, fourth tile set.
+extern char ResourceId_WorldMapTilesA;   ///< First set, first tileset.
+extern char ResourceId_WorldMapTilesB;   ///< First set, second tileset.
+extern char ResourceId_WorldMapTilesC;   ///< First set, third tileset.
+extern char ResourceId_WorldMapTilesD;   ///< First set, fourth tileset.
 extern char ResourceId_WorldMapTilesE;   ///< First set, animation frames.
 extern char ResourceId_WorldMapPaletteB; ///< The snowfield set's colours.
-extern char ResourceId_WorldMapTilesF;   ///< Snowfield set, first tile set.
-extern char ResourceId_WorldMapTilesG;   ///< Snowfield set, second tile set.
-extern char ResourceId_WorldMapTilesH;   ///< Snowfield set, third tile set.
-extern char ResourceId_WorldMapTilesI;   ///< Snowfield set, fourth tile set.
+extern char ResourceId_WorldMapTilesF;   ///< Snowfield set, first tileset.
+extern char ResourceId_WorldMapTilesG;   ///< Snowfield set, second tileset.
+extern char ResourceId_WorldMapTilesH;   ///< Snowfield set, third tileset.
+extern char ResourceId_WorldMapTilesI;   ///< Snowfield set, fourth tileset.
 extern char ResourceId_WorldMapTilesJ;   ///< Snowfield set, animation frames.
 /// The Satrage match's opponent path (ColosseumSatrageMatch_StartOpponentPath).
 extern char ResourceId_OpponentPathB;
@@ -288,7 +289,7 @@ extern char ResourceId_OpponentPathC; ///< The Navampa match's opponent path.
 /// their colours for sprite palette 15.
 extern char ResourceId_Lettering;
 /// The first of eight 256-byte cursor frames in consecutive rows; the option
-/// screen's slider marker adds the frame to it (OptionMenu_AnimateCursors).
+/// menu's slider marker adds the frame to it (OptionMenu_AnimateCursors).
 extern char ResourceId_MenuCursorFrames;
 /// The 32x32 icons and portraits, each with 16 colours before its tiles
 /// (UiGlyph_LoadEntryWithPalette).
@@ -300,7 +301,7 @@ extern char ResourceId_CommandIcons;
 /// and MapGrid_LoadLayout adds them to it.
 extern char ResourceId_Layout001;
 
-// Battle effect pictures, continued.
+// Battle animation pictures, continued.
 
 extern char ResourceId_SheepSheet; ///< Sleep's sheep, among the status motes.
 /// Poison Beat, Spinning Beat and Spider Web.
@@ -309,7 +310,7 @@ extern char ResourceId_MagentaSwirlSheet;
 extern char ResourceId_MagentaTailSheet;
 /// Colours borrowed by Atalanta, the rush bursts, the casting impact, the
 /// lobbed shells, Spider Web, the streaks, the status motes and the strikes;
-/// the slot machine steps toward it.
+/// Lucky Wheels steps toward it.
 extern char ResourceId_LimePalette;
 
 /// Annihilation, Smoke Bomb, Blast and the casting impact.
@@ -375,7 +376,7 @@ extern char ResourceId_OrangePaletteB; ///< Colours for Plasma and Volcano.
 extern char ResourceId_FlameballSheet; ///< Planet Diver and the Djinn attacks.
 extern char ResourceId_BoulderSheet;   ///< Spire.
 extern char ResourceId_RockWallSheet;  ///< Quake.
-/// The large Jupiter Djinni of Bind and the stat changes; the slot machine
+/// The large Jupiter Djinni of Bind and the stat changes; Lucky Wheels
 /// takes its colours.
 extern char ResourceId_JupiterDjinnSheet;
 extern char ResourceId_ShieldSheet; ///< The stat changes.
@@ -434,10 +435,10 @@ extern char ResourceId_WhirlwindSheet;  ///< The Procne summon.
 /// The Procne summon, after its sky is drawn.
 extern char ResourceId_VioletCometSheet;
 /// The large Mercury Djinni, whose colours Revive's family, Haunting's
-/// lights and the healing motes borrow; the slot machine steps toward it.
+/// lights and the healing motes borrow; Lucky Wheels steps toward it.
 extern char ResourceId_MercuryDjinnSheet;
 /// The large Venus Djinni, whose colours Revive's family and the stat changes
-/// borrow; the slot machine steps toward it.
+/// borrow; Lucky Wheels steps toward it.
 extern char ResourceId_VenusDjinnSheet;
 extern char ResourceId_FireBlobSheet;     ///< The Kirin summon.
 extern char ResourceId_YellowRingSheet;   ///< The Cybele summon.

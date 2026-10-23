@@ -148,7 +148,7 @@
 #define DEFEAT_SEVERAL 1
 #define DEFEAT_BY_PARTY_MEMBER 3
 
-/// The game flag of an enemy class the party has defeated, set by
+/// The game flag of an enemy the party has defeated, set by
 /// BattleEnemy_RecordDefeat outside the monster battles; the monster battles
 /// choose only formations of defeated enemies (BattleFormation_AverageLevel).
 #define ENEMY_DEFEATED_FLAG(classId) ((classId) + 0x600)
@@ -177,7 +177,7 @@
 /// The two battle sprites drawn in two parts: the sprite after each is its
 /// second part, which EnemySprite_LoadIntoSlots loads into further
 /// enemy sprite slots and BattleObject_SpawnObjectsForList shows as the
-/// object's second record.
+/// object's second sprite.
 #define SPRITE_WITH_SECOND_PART_A                                              \
   476 ///< the Kraken's (ENEMY_KRAKEN, sprites.tsv)
 #define SPRITE_WITH_SECOND_PART_B                                              \
@@ -198,7 +198,7 @@
 /// action, set by BattleTurn_Build from the ability
 /// (gAbilityStaging where it gives one).
 enum BattleStaging {
-  STAGING_MESSAGES = 1, ///< no animation: each target's events only
+  STAGING_MESSAGES = 1, ///< no animation: each target's messages only
   STAGING_ATTACK = 2,   ///< the actor runs up and strikes
   STAGING_CAST = 3,     ///< Psynergy, and Venus, Mercury, Mars, Jupiter
   STAGING_ITEM = 4,     ///< an item
@@ -216,8 +216,8 @@ enum BattleStaging {
   STAGING_FULL_SCREEN = 9 ///< Gaia, Rockfall, Procne and their kin
 };
 
-// BattleTurn.animation: the effect kind in the low twelve bits and
-// its strength (a double or triple blow) above them; then how the effect is
+// BattleTurn.animation: the animation kind in the low twelve bits and
+// its strength (a double or triple blow) above them; then how the animation is
 // staged.
 #define ANIM_ID_MASK 0xfff
 #define ANIM_VARIANT_MASK 0x3000
@@ -225,12 +225,12 @@ enum BattleStaging {
 #define ANIM_BY_ID_RANGE 0x4000 ///< BattleAnim_DispatchByIdRangeFar
 #define ANIM_SUMMON 0x8000      ///< BattleAnim_RunSummonEffectFar, actor's view
 #define ANIM_ON_DOWNED 0x10000  ///< shown on downed targets too (revivals)
-/// Plays the effect on the side opposite its targets. Unused: no row of
+/// Plays the animation on the side opposite its targets. Unused: no row of
 /// actflags.tsv in either game sets it and no code adds it, so the flip in
 /// BattleStaging_HideField never happens.
 #define ANIM_OTHER_SIDE 0x20000
 
-/// The effect kind Severe Blow alone has: the status window drops its PP row
+/// The animation kind Severe Blow alone has: the status window drops its PP row
 /// while it plays.
 #define ANIM_ID_SEVERE_BLOW 0x87
 
@@ -239,7 +239,7 @@ enum BattleStaging {
 #define ANIM_VIEW_ACROSS 0x40000
 #define ANIM_VIEW_REVERSED 0x80000
 
-/// BattleTurn_Build's results besides 0, which stages the plan.
+/// BattleTurn_Build's results besides 0, which stages the turn.
 #define TURN_REPORTED -1  ///< the action failed and its message is shown
 #define TURN_NO_ACTION -2 ///< nothing to stage or show
 
@@ -250,7 +250,7 @@ enum BattleStaging {
 /// glow.
 enum BattleCastKind {
   CAST_PSYNERGY = 0, ///< the star field gathers on the caster
-  CAST_DJINNI = 1,   ///< no glow; the effect plays its prelude
+  CAST_DJINNI = 1,   ///< no glow; the animation plays its prelude
   CAST_ENEMY = 2     ///< the element's streaks
 };
 

@@ -20,7 +20,7 @@
 /// (BATTLE_ANIM_GAIA).
 ///
 /// The wall is symmetric: its left half is drawn, then mirrored for the right.
-/// Its centre is at canvas x 64 + wallX. The rocks are 11 animation objects,
+/// Its centre is at canvas x 64 + wallX. The rocks are 11 sprites,
 /// moved by particles[10] to particles[20].
 ///
 /// effect: the targets; the variant widens the wall: narrowest for Gaia and
@@ -183,7 +183,7 @@ void BattleAnim_RunGaia(struct BattleAnimArgs *effect) {
   }
   REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
-  // The screen shakes throughout: 250 frames outlast the effect, and the
+  // The screen shakes throughout: 250 frames outlast the animation, and the
   // ranges given to Camera_ApplyShake below set how hard.
   work->shakeFrames = 250;
   for (frame = 0; frame != GAIA_FRAMES; frame++) {

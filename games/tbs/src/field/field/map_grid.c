@@ -107,7 +107,7 @@ UNUSED void TileMap_NumberPlaceholderMetatiles(void) {
 /// metatiles (0xfff)
 /// from 0 up, and interleaves the other two planes into the high halves. The
 /// 128 by 128 cell words overwrite the first two planes, so those 32 KB are
-/// first copied to a buffer from the alternate pool; the buffer and the
+/// first copied to a buffer from the EWRAM pool; the buffer and the
 /// routine's RAM copy are freed when done. Called by MapGrid_LoadLayout once
 /// the cell planes are decoded.
 void TileMap_ConvertBuffer(void) {
@@ -166,10 +166,11 @@ static __inline__ void MapGrid_CopyMetatileToScreen(u32 *cell, u8 *screenMap,
 }
 
 /// A row of gLayouts: a layout's resources, counted from
-/// ResourceId_Layout001: its header, palette, three tile sheets and layer data.
+/// ResourceId_Layout001: its header, palette, three tilesets and layer data.
 struct LayoutResources {
-  /// Offsets from ResourceId_Layout001: the header, the palette, the tile
-  /// sheets for char blocks 1, 2 and 3, and the layer data (gMapGridLayerData).
+  /// Offsets from ResourceId_Layout001: the header, the palette, the
+  /// tilesets for char blocks 1, 2 and 3, and the layer data
+  /// (gMapGridLayerData).
   u16 resources[6];
 };
 
@@ -189,8 +190,8 @@ struct LayoutLayer {
 };
 
 /// A layout's header: the camera's bounds, the layers' priorities, tile
-/// bases and setup, and the offsets of its packed tiles, collision, tilemap,
-/// tile animation, blend script and marker list.
+/// bases and setup, and the offsets of its packed tiles, shapes, tilemap,
+/// tileset animation, blend script and treasure spots.
 struct LayoutHeader {
   /// The camera's bounds in 8-pixel tiles: left, top, right and bottom.
   u8 cameraBounds[4];
@@ -200,27 +201,27 @@ struct LayoutHeader {
   u16 reserved;   ///< 0 in every layout of both games; nothing reads it
   struct LayoutLayer layers[3];
   // Offsets from the header's start: type-01 packed data, but for the
-  // markers, which are read in place.
+  // treasure spots, which are read in place.
   s32 metatiles; ///< the metatiles, staged and unpacked into gMetatiles
   s32 shapes;    ///< the shapes, into Ram_MapGridShapes
   s32 cells;     ///< the cells, into Ram_MapGridCellBuffer
-  s32 animation; ///< the tile animation script, or 0 for none
+  s32 animation; ///< the tileset animation script, or 0 for none
   s32 blend;     ///< the blend script, or 0 for none
   s32 markers;   ///< the chests and Psynergy stones (Field_PlaceTreasureSpots)
 };
 
-/// Loads layout index from gLayouts: its metatiles, collision,
-/// cells, tile animations, blend script and marker list; sets up the three
-/// background layers' origins, parallax and wrap from the layout header; loads
-/// the palette and tile graphics unless FLAG_KEEP_LAYER_GRAPHICS says they are
-/// loaded; and starts the layer scrolling. Returns 2.
+/// Loads layout index from gLayouts: its metatiles, shapes,
+/// cells, tileset animations, blend script and treasure spots; sets up the
+/// three background layers' origins, parallax and wrap from the layout header;
+/// loads the palette and tile graphics unless FLAG_KEEP_LAYER_GRAPHICS says
+/// they are loaded; and starts the layer scrolling. Returns 2.
 ///
 /// Called through MapGrid_LoadLayoutFar when a map with a layout
 /// starts (index is gGameState.map). Allocates and clears the map work in
 /// HEAP_SLOT_MAP_GRID; writes the BG palette (keeping the backdrop colour),
 /// char blocks 1 to 3, gMapGridLayerData, BG1CNT to BG3CNT, REG_MOSAIC,
-/// REG_BLDCNT and REG_DISPCNT; and registers MapGrid_UpdateLayerScroll with the
-/// scheduler.
+/// REG_BLDCNT and REG_DISPCNT; and adds MapGrid_UpdateLayerScroll as a
+/// task.
 s32 MapGrid_LoadLayout(s32 index) {
   struct LayoutResources *layoutResources;
   struct MapGridScrollWork *grid;
@@ -255,7 +256,7 @@ s32 MapGrid_LoadLayout(s32 index) {
   encodedData = (u8 *)layoutHeader + layoutHeader->cells;
   Decompress_Type01(encodedData, Ram_MapGridCellBuffer);
   TileMap_ConvertBuffer();
-  // The tile animation and blend scripts are optional (offset 0), and decode
+  // The tileset animation and blend scripts are optional (offset 0), and decode
   // into the space after the shapes in Ram_MapGridShapes.
   if (layoutHeader->animation != 0) {
     encodedData = (u8 *)layoutHeader + layoutHeader->animation;
@@ -267,8 +268,8 @@ s32 MapGrid_LoadLayout(s32 index) {
     Decompress_Type01(encodedData, Ram_MapGridShapes + 0x1e00);
     BlendScript_Start((u16 *)(Ram_MapGridShapes + 0x1e00));
   }
-  // The marker list is not decoded: Field_PlaceTreasureSpots reads it in place
-  // through this pointer (MapGridMarkers.markers).
+  // The treasure spot list is not decoded: Field_PlaceTreasureSpots reads it in
+  // place through this pointer (MapGridMarkers.markers).
   grid->script = (u8 *)layoutHeader + layoutHeader->markers;
   // The header's bounds and origins are in 8-pixel tiles; << 19 makes them
   // 16.16 pixels. The view starts at (0, 0) until the camera is centred.
@@ -341,7 +342,7 @@ s32 MapGrid_LoadLayout(s32 index) {
     GameFlag_ClearBitFar(FLAG_KEEP_LAYER_GRAPHICS);
   } else {
     // One 16 KB buffer takes each resource in turn: the palette (0x1c0
-    // bytes, 14 of the 16 BG palettes), the three 16 KB tile sheets, and
+    // bytes, 14 of the 16 BG palettes), the three 16 KB tilesets, and
     // last the layer data, which decodes straight to gMapGridLayerData. Without
     // the memory, nothing is loaded.
     graphicsBuffer = Alloc(0x4000);
@@ -381,12 +382,12 @@ s32 MapGrid_LoadLayout(s32 index) {
   REG_BLDCNT = displayFlags;
   displayFlags = DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP;
   REG_DISPCNT = displayFlags;
-  // UB: the scheduler returns s32; call it through its declared type.
+  // UB: Task_Add returns s32; call it through its declared type.
 #ifdef UBFIX
   Task_Add(MapGrid_UpdateLayerScroll, 0xc85);
 #else
   /* FAKEMATCH(wrapper): called through a cast to the void call the bytes
-   * show, which loads the callback before its order; as a call by its
+   * show, which loads the task function before its priority; as a call by its
    * prototype, 2 of 349 instructions differ in tbs-en. */
   ((void (*)(void (*)(void), s32))Task_Add)(MapGrid_UpdateLayerScroll, 0xc85);
 #endif
@@ -486,7 +487,7 @@ void MapGrid_RenderMetatileColumn(u32 layer, s32 tileX, s32 tileY) {
 /// automatic scroll (wrapping at its period), draws the metatile column or row
 /// that scrolls into view, and sets its BG scroll.
 ///
-/// Registered with the scheduler by MapGrid_LoadLayout (priority 0xc85),
+/// Added as a task by MapGrid_LoadLayout (priority 0xc85),
 /// and called by MapGrid_CenterOnFollowedPoint. Sets map->viewX and viewY,
 /// decays map->shakeX and shakeY, advances each drifting layer's phase, and
 /// writes each layer's position and gBgScroll entry.
@@ -765,8 +766,8 @@ struct MapGridCellAnimationStep {
 typedef char MapGridCopyCommandSize
     [(sizeof(struct MapGridCellAnimationStep) == 10) ? 1 : -1];
 
-/// Plays a map edit sequence (struct MapGridCellAnimationStep records, ended by
-/// a source of 0xffff): copies each record's rectangle of metatile numbers to
+/// Plays a map edit sequence (struct MapGridCellAnimationStep entries, ended by
+/// a source of 0xffff): copies each entry's rectangle of metatile numbers to
 /// (destinationX, destinationY) and waits its delay in frames. Doors and
 /// other changing scenery are drawn this way.
 ///

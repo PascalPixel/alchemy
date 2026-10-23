@@ -4,9 +4,9 @@
 
 #include "../effect_internal.h"
 
-/// Puts the battle screen back into the display state every effect starts
+/// Puts the battle screen back into the display state every animation starts
 /// from and ends with: no blending, window 0 and window 1 both covering the
-/// battle view (lines 16 to 135), and the effect display mode queued.
+/// battle view (lines 16 to 135), and the animation display mode queued.
 ///
 /// Called by the handlers that change the display themselves: at the start of
 /// the beam sequence (beams.c), the particle streams and the summon scenes
@@ -31,7 +31,7 @@ void BattleAnim_ConfigureEffectDisplay(void) {
 /// Scrolls BG1 by (scrollStepX, scrollStepY) once every scrollInterval
 /// frames.
 ///
-/// Runs each frame as a scheduler callback added by BattleAnim_RunAtalanta
+/// Runs each frame as a task added by BattleAnim_RunAtalanta
 /// and BattleAnim_RunThor, which set the work block's scroll fields first and
 /// remove it before they return. Counts work->scrollTimer and moves
 /// gBgScroll[1].
@@ -51,7 +51,7 @@ void BattleAnim_AdvanceScrollOnInterval(void) {
 /// the work block's reference point (bg2x, bg2y) to BG2X and BG2Y, then moves
 /// it by (scrollStepX, scrollStepY).
 ///
-/// Runs each frame as a scheduler callback added by
+/// Runs each frame as a task added by
 /// BattleAnim_RunParticleStreams, which removes it before it returns. Counts
 /// work->scrollTimer.
 void BattleAnim_AdvanceBg2OnInterval(void) {
@@ -73,9 +73,9 @@ void BattleAnim_AdvanceBg2OnInterval(void) {
 
 /// Restarts DMA 0 as an HBlank transfer of one WIN0H value a line from
 /// PARTICLES (Ram_MapGridCellBuffer), so window 0's edges follow the per-line
-/// table the effect drew there.
+/// table the animation drew there.
 ///
-/// Runs each frame as a scheduler callback added by BattleAnim_RunIce and
+/// Runs each frame as a task added by BattleAnim_RunIce and
 /// BattleAnim_RunDouse, which remove it before they return. Stopping the
 /// channel first makes each frame's transfer start again from the table's
 /// first line.

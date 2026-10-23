@@ -1,18 +1,18 @@
 /// @file
 /// Everything drawn over the battle while an ability plays comes from this one
-/// object. effect_internal.h holds what every effect shares (includes, macros
-/// and the frame-loop helpers); the effects are in the files under
+/// object. effect_internal.h holds what every animation shares (includes,
+/// macros and the frame-loop helpers); the animations are in the files under
 /// parts/, included here in the order their code has in the ROM. That order
 /// mixes families, Djinn, summons and shared machinery, and each part is one
 /// run of it, named for what it holds. Camelot's own files are not
 /// recoverable: the ROM shows one object, and these parts are ours, cut where
 /// one family ends and the next begins.
 ///
-/// To find the effect a move plays, search for the move's English name: each
+/// To find the animation a move plays, search for the move's English name: each
 /// handler's reach line, the paragraph of its comment that starts
-/// "Abilities:", lists the abilities that reach it and the effect each one
+/// "Abilities:", lists the abilities that reach it and the animation each one
 /// selects, and each row of gBattleAnim_Handlers (effect_table.c) gives
-/// an effect kind's enumerator, the part that defines its handler and, where
+/// an animation kind's enumerator, the part that defines its handler and, where
 /// an ability selects it, the first one that does. README.md gives the words
 /// and prefixes the parts use, and ../MATCHING.md the spellings some sites
 /// keep to match. The shared machinery is in these parts:
@@ -30,7 +30,7 @@
 ///   Targets         dispatch.c: BattleAnim_SelectLivingTargets;
 ///                   helm_splitter.c: BattleAnim_PlaceFormationObjects
 ///
-/// While an effect plays, its entry point owns the sheet
+/// While an animation plays, its entry point owns the sheet
 /// (HEAP_SLOT_BATTLE_SHEET), the work block (HEAP_SLOT_BATTLE_ANIM) and the
 /// canvas (HEAP_SLOT_BATTLE_CANVAS): each of the three entry points allocates
 /// them before the handler runs and releases them after it returns, so a
@@ -38,7 +38,7 @@
 /// blitter slots and gMapGridCellBuffer (PARTICLES) belong to the handler for
 /// as long as it runs; it frees the blitters itself before it returns.
 ///
-/// README.md in this folder explains the ideas: how a move picks its effect,
+/// README.md in this folder explains the ideas: how a move picks its animation,
 /// the frame loop, the canvas, particles, blitters and pictures.
 
 #include "effect_internal.h"

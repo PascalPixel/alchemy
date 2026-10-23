@@ -6,10 +6,10 @@
 ///
 /// LemurianShip_SetupMap sinks the ship's two map layers 90 pixels, puts the
 /// two pieces of the gangway and the party at sprite priority 1, and starts the
-/// water's ripple (Ripple_Start), an HBlank DMA of per-line scroll offsets for
-/// BG3 that Reveal stops while it shows the map. Arriving by
-/// LEMURIAN_SHIP_WITH_BLACK_ORB, which only the debug map selector reaches,
-/// first gives the leader the Black Orb.
+/// water's ripple (Ripple_Start), a scanline effect: an HBlank DMA of
+/// per-line scroll offsets for BG3 that Reveal stops while it shows the map.
+/// Arriving by LEMURIAN_SHIP_WITH_BLACK_ORB, which only the debug map selector
+/// reaches, first gives the leader the Black Orb.
 ///
 /// Using the Black Orb at the water's edge (metatile behavior 10) plays
 /// EventScript_RaiseTheShip: the orb glows, spray rises and the ship comes up
@@ -572,7 +572,7 @@ static void LemurianShip_SetSail(void) {
   FieldScript_SetDestination((s32)&MapId_Title, TITLE_FROM_LEMURIAN_SHIP);
 }
 
-/// The water's ripple, this map's view of the HBlank scroll work
+/// The water's ripple, this map's view of the scanline effect's work
 /// (gScanlineEffect, struct ScanlineEffectWork): two pages of per-line
 /// scroll offsets, swapped each frame, built from a sine table. Here a line
 /// is one word, BG3's x and y, where ScanlineEffectWork has three.

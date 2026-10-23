@@ -2,7 +2,7 @@
 #define ALCHEMY_MOTION_OBJECT_H
 
 /// @file
-/// MotionObject, an effect object that moves and draws one sprite.
+/// MotionObject, an object that moves and draws one sprite.
 
 #include "types.h"
 #include "static_assert.h"
@@ -12,7 +12,7 @@
 
 union FieldObject;
 
-/// An effect object that moves and draws one sprite: its position, scale,
+/// An object that moves and draws one sprite: its position, scale,
 /// velocity and target, and its per-frame update.
 /// It is one of the object slots Object_CreateFar hands out, the same object
 /// ObjectEvent and ScriptMotionObject describe; the notes name their fields at
@@ -80,8 +80,8 @@ struct MotionObject {
   void (*update)(union FieldObject *fieldObject); ///< run first each frame
 };
 
-/// A sprite of an animation record, as battle objects set its palette and
-/// drawing priority: the start of an SpriteAnim.
+/// A sprite anim, as battle objects set its palette and
+/// drawing priority: the start of a SpriteAnim.
 struct SpriteEntry {
   /// SpriteAnim's animationId, timer and kind; not named through this
   /// view.

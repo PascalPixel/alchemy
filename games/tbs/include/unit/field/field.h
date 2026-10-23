@@ -30,12 +30,12 @@ enum ObjectSystemMode {
   OBJECT_SYSTEM_BATTLE = 4
 };
 
-/// SpriteAnim.kind: the facing table a layer's frames follow
+/// SpriteAnim.kind: the facing table a sprite anim's frames follow
 /// (Sprite_ComposeFrame, facing.c). Each cuts the facing angle into
 /// sectors and gives each sector a frame and whether it is mirrored.
 enum AnimationFacingKind {
   /// The script's own frame whatever the facing; zero also marks a free
-  /// layer record.
+  /// sprite anim.
   ANIMATION_FACING_NONE = 0,
   ANIMATION_FACING_ONE_FRAME =
       1, ///< 8 sectors: one frame, mirrored to the left
@@ -61,7 +61,7 @@ enum AnimationFacingKind {
   ANIMATION_FACING_EIGHT_FRAMES_MIRRORED = 88
 };
 
-/// SpriteAnim.mode, from the metadata's frameCodec: how a layer's frames
+/// SpriteAnim.mode, from the metadata's frameCodec: how a sprite anim's frames
 /// are stored. Any other value is raw, for the frame decoder.
 enum SpriteFrameCodec {
   SPRITE_FRAME_RAW = 0,
@@ -111,11 +111,11 @@ enum WorldMapCollision {
   WORLD_MAP_COLLISION_WALKABLE_LAST = 12
 };
 
-/// A world map terrain behaviour (gWorldMap_BattleEnvironments,
+/// A world map battle environment (gWorldMap_BattleEnvironments,
 /// WorldMap_GetBattleEnvironment): what its ground means for battles, named by
-/// the battle backdrop BattleBackground_SelectForEnvironment gives it.
+/// the battle background BattleBackground_SelectForEnvironment gives it.
 enum BattleEnvironment {
-  BATTLE_ENVIRONMENT_NONE = 0,      ///< Sol Sanctum's backdrop
+  BATTLE_ENVIRONMENT_NONE = 0,      ///< Sol Sanctum's background
   BATTLE_ENVIRONMENT_GRASSLAND = 1, ///< ResourceId_GrasslandBackdrop
   /// ResourceId_ForestBackdrop; encounters take a region's forest zone.
   BATTLE_ENVIRONMENT_FOREST = 2,
@@ -129,12 +129,12 @@ enum BattleEnvironment {
   BATTLE_ENVIRONMENT_SHALLOWS = 7
 };
 
-/// A world map cell's terrain kind (bits 30..24 of its block word): the
-/// region it belongs to, which picks its encounter zones
+/// A world map cell's encounter region (bits 30..24 of its block word),
+/// which picks its encounter zones
 /// (gWorldMap_EncounterRules). Only the snowfield changes anything else.
 enum WorldMapEncounterRegion {
   /// Takes the second world map graphics set (WorldMap_LoadGraphics) and the
-  /// snowfield's terrain behaviours (WorldMap_GetBattleEnvironment).
+  /// snowfield's battle environments (WorldMap_GetBattleEnvironment).
   WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD = 21
 };
 

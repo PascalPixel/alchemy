@@ -2,7 +2,7 @@
 #define ALCHEMY_CHARACTER_MENU_H
 
 /// @file
-/// The character menu's state, and the ailments it shows.
+/// The summary screen's state, and the statuses it shows.
 
 #include "unit/window/window.h"
 #include "unit/window/battle_command.h"
@@ -17,7 +17,7 @@ struct Unit;
 struct PsynergyEntry;
 
 /// The work of the member chooser and the Status menu, in the HEAP_SLOT_MENU
-/// work slot, which each takes as it opens and frees before it returns.
+/// heap slot, which each takes as it opens and frees before it returns.
 struct SummaryScreenWork {
   u8 unused[8];      ///< no view of the menu work names it (see menu/README.md)
   s32 selectedOwner; ///< the party member chosen
@@ -79,7 +79,7 @@ STATIC_ASSERT(offsetof(struct SummaryScreenWork, rowObjects) == 0x224);
 STATIC_ASSERT(offsetof(struct SummaryScreenWork, rowX) == 0x234);
 STATIC_ASSERT(sizeof(struct SummaryScreenWork) == 0x244);
 
-/// The ailments the character menus show, as SummaryScreen_BuildAvailability
+/// The statuses the summary screens show, as SummaryScreen_BuildAvailability
 /// fills them: one byte each, nonzero while the member has it.
 enum UnitStatus {
   CHARACTER_DOWN,   ///< HP 0; listed only when the caller asks for it

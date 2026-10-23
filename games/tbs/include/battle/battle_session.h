@@ -2,7 +2,7 @@
 #define ALCHEMY_BATTLE_SESSION_H
 
 /// @file
-/// A battle's objects and sprites, each unit's command and action record, and
+/// A battle's objects and sprites, each unit's command and action, and
 /// the spoils.
 
 #include "types.h"
@@ -12,7 +12,7 @@ struct MotionObject;
 struct SpriteEntry;
 
 /// A unit's place on the battlefield: its sprite object, resources and
-/// animations, its anchor spot and scale, and the conditions it shows.
+/// animations, its anchor spot and scale, and the statuses it shows.
 /// BattleWork.objects holds the 14, reached by unit id through
 /// BattleObject_Get; BattleObject_Make fills one in when the unit is placed.
 struct BattleObject {
@@ -23,7 +23,7 @@ struct BattleObject {
   u16 effect;    ///< an effect sprite drawn with the unit
   s32 anchorX;   ///< 16.16 fixed-point pixels
   s32 anchorZ;   ///< 16.16 fixed-point pixels
-  /// The unit sprite's SpriteColorMode: an enemy class's own, 1 for a
+  /// The unit sprite's SpriteColorMode: an enemy's own, 1 for a
   /// character on the enemy side (a link opponent), else 0.
   s32 palette;
   s32 scale;                          ///< 16.16 fixed point, 0x10000 full size
@@ -56,7 +56,7 @@ enum BattleCommand {
 
 /// A unit's chosen action for the turn: its command, the command's parameter,
 /// its target and range, and its priority in the turn order. BattleWork.actions
-/// holds the turn's records.
+/// holds the turn's actions.
 struct BattleAction {
   s16 unitId;
   u16 slot;      ///< in a link battle, unitId as the opponent knows it

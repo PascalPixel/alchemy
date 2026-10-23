@@ -98,7 +98,8 @@
 #include "ability_ids.h"
 #include "sprite_ids.h"
 
-/// The effect slots of a Psynergy effect's scene (gFieldEffectWork->effects).
+/// The field effect sprites of a Psynergy effect's scene
+/// (gFieldEffectWork->sprites).
 #define PSYNERGY_EFFECT_SLOT_COUNT 24
 
 /// gGameState.pendingDjinnEvent of Djinni 0 (requests.c, djinni.c): a Djinni
@@ -130,7 +131,7 @@ FieldEffect_MoveAfterimageHalfway(union FieldObject *fieldObject) {
   afterimage->z.fixed += (target->z.fixed - afterimage->z.fixed) / 2;
 }
 
-/// Runs the update of each of the 24 effect slots. The scheduler callbacks
+/// Runs the update of each of the 24 field effect sprites. The tasks
 /// FieldEffect_UpdateAllEffectSlots (setup.c) and FieldEffect_UpdateAllSlots
 /// (djinni.c) run it once a frame.
 static __inline__ void FieldEffect_UpdateEffectSlots(void) {
@@ -417,7 +418,7 @@ struct SparkObject {
   void (*update)(union FieldObject *fieldObject); ///< run each frame
 };
 
-/// The states of an effect slot particle that flies out and back: Halt's,
+/// The states of a particle that flies out and back: Halt's,
 /// Force's and Move's (FieldEffect_UpdateRadialCamera,
 /// FieldEffect_UpdateRadialBurst, FieldEffect_UpdateOrbitAndReturn).
 /// FieldEffectSprite_SetCallback starts it at the first; each takes the next.

@@ -81,9 +81,9 @@
 /// itemArgument.
 struct ItemPickerResult {
   s32 fieldWorkHead[0x60];  ///< FieldWork up to its item request
-  u16 chosenItem;           ///< FieldWork.item: owner << 10 | item id
+  u16 chosenItem;           ///< FieldWork.item: member << 10 | item id
   u8 fieldWorkMiddle[0x18]; ///< FieldWork's raised event and fallen characters
-  u16 chosenSlot; ///< FieldWork.itemArgument: the owner's inventory slot
+  u16 chosenSlot; ///< FieldWork.itemArgument: the member's inventory slot
 };
 
 /// The field menu's Item screen (FieldMenu_Run, FIELD_MENU_ITEM): choose
@@ -211,7 +211,7 @@ enum ItemMenuStep {
 /// Runs the item menu: choose a party member, one of their items and a command
 /// (Use, Equip, Give, Drop, Remove or Inspect), then carry it out, until the
 /// player backs out or presses Start. Returns 1 when an item is to be used
-/// outside the menu, with its owner, target and item id in the out parameters;
+/// outside the menu, with its member, target and item id in the out parameters;
 /// -1 when the player backed out or pressed Start; 0 otherwise.
 s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
   s32 done;
@@ -319,7 +319,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           // The international editions report target 0 (command is
           // ITEM_COMMAND_USE here) and the bare item id; the Japanese ones the
           // target chosen last and the list's whole inventory entry.
-          // ItemMenu_Run reads only the owner and the item id.
+          // ItemMenu_Run reads only the member and the item id.
 #if TBS_PATCH_1
           *ownerOut = menu->sideMember[0];
           *targetOut = command;
@@ -859,7 +859,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
   return menuResult;
 }
 
-/// Uses the selected item from the owner in pane 0 on the member in pane 1.
+/// Uses the selected item from the member in pane 0 on the one in pane 1.
 /// On failure plays the error sound, shows why in the info window and returns
 /// -1; otherwise plays the item's animation, recalculates both members and
 /// returns 1.
@@ -919,7 +919,7 @@ void ItemMenu_Initialize(s32 x, s32 y, s32 mode, s32 columns) {
 
 /// Creates the 32 item icon sprites in window, off screen until placed: slots 0
 /// to 7 at x 248, the rest at x 256, all at y 168, each showing item graphic
-/// slot of the same number. The item, Psynergy and Status screens call it for
+/// slot of the same number. The item, Psynergy and summary screens call it for
 /// the window that holds their icons; the sprites are that window's render
 /// outputs and go back to the pool when it closes.
 void Menu_SpawnIconEntries(struct ItemMenuWork *menu, struct Window *window) {
@@ -1181,7 +1181,7 @@ void ItemMenu_OpenCategory(s32 ownerId) {
 /// or that they would have to trade, and the equipment preview. The party
 /// members who can equip the item move while the cursor is up. Returns the
 /// chosen member's id, or -1 when the player backs out; giving cannot choose
-/// the item's owner.
+/// the member who holds the item.
 s32 ItemMenu_SelectTarget(s32 mode) {
 
   struct ItemMenuWork *menu;
@@ -1317,7 +1317,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
   return (s8)result;
 }
 
-/// Scheduler callback while ItemMenu_SelectTarget chooses a member to use or
+/// Task while ItemMenu_SelectTarget chooses a member to use or
 /// give the item to, and while the command grid's cursor is on Give: every 32
 /// frames, sets each party figure's animation by whether that member can
 /// equip the item (3) or not (1). EquipmentMenu_StartCompatibilityIndicators
@@ -1346,7 +1346,7 @@ void EquipmentMenu_UpdateCompatibilityIndicators(void) {
 
 /// Ends EquipmentMenu_UpdateCompatibilityIndicators: puts every party figure
 /// back to animation 1 and removes the callback. Despite the name, it starts
-/// nothing; removing a callback that is not scheduled is harmless, so the
+/// nothing; removing a task that is not running is harmless, so the
 /// command grid calls it at each cursor move.
 void EquipmentMenu_StartCompatibilityIndicators(void) {
   struct ItemMenuWork *menu;
@@ -1522,8 +1522,8 @@ void ItemMenu_RefreshMember(s32 ownerId, s32 mode) {
 /// Nothing calls it.
 UNUSED void ItemMenu_NoOp(void) {}
 
-/// Shows in the status panel what the item in owner's inventory slot would mean
-/// to member target: for a usable item, target's status; for equipment,
+/// Shows in the status panel what the item in member's inventory slot would
+/// mean to member target: for a usable item, target's status; for equipment,
 /// target's stats with it equipped; for a Psynergy item, the Psynergy it
 /// teaches. When target is someone else, the item is put into target's own
 /// inventory for the preview, making room first if it is full, and target is
@@ -1680,10 +1680,11 @@ s32 ItemMenu_CommandCursorY(s32 column, s32 row) {
 /// The item command grid: Use, Equip and Details on the top row, Give, Remove
 /// and Drop below (grid index = row * 3 + column, as ItemMenuCommand counts
 /// them). Disabled commands are grey and refuse A. The status panel follows the
-/// cursor: the owner's status on Use, the stats with the item equipped on Equip
-/// and Details, and without it on the bottom row, where Give also shows who can
-/// equip it. The cursor starts on the command chosen last, or on the first
-/// available one. Returns the command chosen, or -1 when the player backs out.
+/// cursor: the member's status on Use, the stats with the item equipped on
+/// Equip and Details, and without it on the bottom row, where Give also shows
+/// who can equip it. The cursor starts on the command chosen last, or on the
+/// first available one. Returns the command chosen, or -1 when the player backs
+/// out.
 s32 ItemMenu_ChooseCommand(void) {
   struct ItemMenuWork *menu;
   s8 commandStorage[6];
@@ -1862,7 +1863,7 @@ s32 ItemMenu_ChooseCommand(void) {
 /// Fills commandStates (indexed by ItemMenuCommand) with
 /// ITEM_COMMAND_STATE_AVAILABLE or _DISABLED for the selected item: Use for
 /// items Item_ClassifyUseMode accepts and are not broken, and for field items,
-/// Equip for equipment the owner can wear and is not wearing, Remove for worn
+/// Equip for equipment the member can wear and is not wearing, Remove for worn
 /// equipment that is not cursed, Give with someone to give to, Drop unless the
 /// item is indispensable, and neither for cursed equipment being worn. Details
 /// is always available. Each later test overrides the earlier ones.
@@ -1972,7 +1973,7 @@ void ItemMenu_DrawCommands(const s8 *commandStates, struct Window *window) {
 }
 
 /// Says how ownerId can use inventoryEntry from the item menu (enum
-/// ItemUseMode). Usable items always qualify; equipment only when the owner
+/// ItemUseMode). Usable items always qualify; equipment only when the member
 /// can wear it.
 s32 Item_ClassifyUseMode(s32 ownerId, s32 inventoryEntry) {
   s32 itemId = inventoryEntry;
@@ -2438,7 +2439,7 @@ void ItemMenu_SetMessageWindowHeight3(void) {
 
 /// Asks how many of the selected item stack to give or drop: Left and Right
 /// choose a number from 1 to quantityRange (shown as baseQuantity + 1 up to
-/// baseQuantity + quantityRange on a dial of digit sprites), with the owner's
+/// baseQuantity + quantityRange on a dial of digit sprites), with the member's
 /// remaining count and, when giving (dropMode 0), the receiver's new count
 /// beside their names. Returns the number less one, or -1 when the player backs
 /// out.
@@ -2547,7 +2548,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
 }
 
 /// Shows the selected item at the top of the message window: its icon, its
-/// owner's name and its name.
+/// member's name and its name.
 void ItemMenu_DrawItemHead(void) {
   struct ItemMenuWork *menu = gMenuWork;
 
@@ -2849,12 +2850,13 @@ UNUSED s32 ItemMenu_ItemNamePageReturnTrue(void) { return 1; }
 /// Nothing calls it.
 UNUSED void ItemMenu_ItemNamePageNoOp(void) {}
 
-/// The item list of the member in sideIndex (0: the owner, 1: the receiver of a
-/// trade), five items a page. The cursor's item is named in the info window and
-/// previewed in the status panel, its icon animates, and the party members who
-/// can equip it move. Up and Down move the cursor, Left and Right turn pages,
-/// and in sideIndex 0 L and R switch to the previous or next member who has
-/// items. Returns the chosen inventory entry, or -1 when the player backs out.
+/// The item list of the member in sideIndex (0: the holder, 1: the receiver of
+/// a trade), five items a page. The cursor's item is named in the info window
+/// and previewed in the status panel, its icon animates, and the party members
+/// who can equip it move. Up and Down move the cursor, Left and Right turn
+/// pages, and in sideIndex 0 L and R switch to the previous or next member who
+/// has items. Returns the chosen inventory entry, or -1 when the player backs
+/// out.
 s32 ItemMenu_RunList(s32 sideIndex) {
   struct ItemMenuWork *menu;
   struct Window *window;

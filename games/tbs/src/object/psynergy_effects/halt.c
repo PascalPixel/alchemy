@@ -4,12 +4,12 @@
 
 #include "../psynergy_effects_internal.h"
 
-/// Effect slot callback (enum OutAndBackState): the particle heads for a point
-/// 40 to 70 pixels from where it appeared, then for a point 4 pixels round 8
-/// pixels above the effect's position on screen, and is freed on arrival. Set
-/// on the 16 particles of FieldEffect_RunHalt. They fly
-/// out straight at up to 4 pixels a frame and come back turning at most 1/16
-/// turn a frame.
+/// Field effect sprite callback (enum OutAndBackState): the particle heads for
+/// a point 40 to 70 pixels from where it appeared, then for a point 4 pixels
+/// round 8 pixels above the effect's position on screen, and is freed on
+/// arrival. Set on the 16 particles of FieldEffect_RunHalt. They fly out
+/// straight at up to 4 pixels a frame and come back turning at most 1/16 turn a
+/// frame.
 void FieldEffect_UpdateRadialCamera(struct FieldEffectSprite *effect) {
   // A for/continue retry grows the native English callback 0x100 -> 0x104.
   // Retain the immediate OUT_AND_BACK_FLYING_OUT to OUT_AND_BACK_AIM_BACK
@@ -76,7 +76,7 @@ void FieldEffect_RunHaltOnTarget(s32 unused) {
 /// Throws an object from the caster to the effect's position over 10 frames
 /// and scatters it into 16 particles. Halt's visible effect: called by
 /// FieldEffect_Run when no target with a talk event is near, and through
-/// FieldEffect_RunHaltOnTarget otherwise. Fills effect slots 0
+/// FieldEffect_RunHaltOnTarget otherwise. Fills field effect sprites 0
 /// to 15 and sets scene->y to the caster's height.
 ///
 /// Abilities: Halt (FIELD_PSYNERGY_HALT).

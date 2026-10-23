@@ -1,12 +1,12 @@
 /// @file
-/// Effect positions, projection and id dispatch helpers.
+/// Animation positions, projection and id dispatch helpers.
 // Part of effect.c.
 
 #include "../effect_internal.h"
 
 // Particle motion and projection into the battle view.
 //
-// Effect particles are Particle records in 16.16 fixed point. The two
+// Animation particles are Particles in 16.16 fixed point. The two
 // integrators move a particle one frame: they add its velocity to its
 // position, add gravity to its vertical speed and then damp every speed by a
 // factor out of 64 (64 keeps the speed, 60 loses about 6% a frame). The 3D one
@@ -15,9 +15,9 @@
 //
 // The EffectPosition_Project* helpers turn a point or a battler into an
 // ScreenPoint on the screen. Each returns a point 16 pixels higher than the
-// projection, which is where effects anchor on a battler. They differ only in
-// how the battler is projected: at its sprite's scaled height, scaled for the
-// battle view, or plainly.
+// projection, which is where animations anchor on a battler. They differ only
+// in how the battler is projected: at its sprite's scaled height, scaled for
+// the battle view, or plainly.
 
 /// Moves a particle one frame in three dimensions: adds its velocity, then
 /// gravity to its vertical speed, then damps every speed by damping / 64.
@@ -55,7 +55,7 @@ void Particle_AdvanceWithGravity2D(struct Particle *step, s32 damping,
 /// Projects a point in the current transform onto the screen, 16 pixels
 /// higher, and returns the projection's scale.
 ///
-/// The common way an effect places a 3D particle: 35 parts call it each
+/// The common way an animation places a 3D particle: 35 parts call it each
 /// frame once it has set the view, the casting impacts, beams, Judgment,
 /// Procne and the stat changes most often. Only Astral Blast (stars.c) reads
 /// the scale, to skip a ring whose nearest point comes too close to the
@@ -87,7 +87,7 @@ void Projection_Sprite(s32 id, struct ScreenPoint *position) {
 /// The screen position of a battler, scaled for the battle view, 16 pixels
 /// higher.
 ///
-/// The usual anchor for an effect on its user or first target: called during
+/// The usual anchor for an animation on its user or first target: called during
 /// the setup of 21 parts, from the casting impacts, beams, the burst
 /// scene and Spire to the healing motes and the stat boosts.
 void Projection_ScaledUnit(s32 id, struct ScreenPoint *position) {
@@ -108,7 +108,7 @@ void Projection_Unit(s32 id, struct ScreenPoint *position) {
 /// Projects a battler onto the screen, raised by half its table height (the
 /// table holds the full height in 16.16) at the sprite's scale. The view is
 /// reset to the battle camera first, so the result does not depend on the
-/// transform an effect has left behind.
+/// transform an animation has left behind.
 ///
 /// Called only by Projection_Sprite. Leaves the render transform
 /// looking from gCameraWork's eye to its position, and always returns 0.
@@ -137,7 +137,7 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
 /// and does nothing with them. Nothing calls it.
 ///
 /// XXX: what it was for; a debug build or the Lost Age's twin of this part
-/// would show whether the keys once chose an effect for enemy targets.
+/// would show whether the keys once chose an animation for enemy targets.
 void BattleAnim_ProbeKeysForExtendedActor(void) {
   struct BattleAnimWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
   struct BattleAnimArgs *effect = work->effect;
@@ -146,17 +146,17 @@ void BattleAnim_ProbeKeysForExtendedActor(void) {
     (void)gKeysHeld;
 }
 
-/// Runs a battle effect from the second range of kinds: 100 to 135 are the
+/// Runs a battle animation from the second range of kinds: 100 to 135 are the
 /// casting impacts (kind - 100), 136 to 199 the beam sequences, 200 and up
 /// the ring and spark scenes.
 ///
 /// Reached from the battle's presentation through its far-call stub: from
 /// the attack, item, Psynergy cast and unit transition runners
-/// (battle/staging.c) when the plan has ANIM_BY_ID_RANGE (bit 14 of the
-/// effect word), and always from the plain attack runner and the approach
+/// (battle/staging.c) when the turn has ANIM_BY_ID_RANGE (bit 14 of the
+/// animation word), and always from the plain attack runner and the approach
 /// action (battle/auto_battle.c). Takes heap slots
 /// HEAP_SLOT_BATTLE_SHEET (from EWRAM first), HEAP_SLOT_BATTLE_ANIM and
-/// HEAP_SLOT_BATTLE_CANVAS for the effect, and releases them in the reverse
+/// HEAP_SLOT_BATTLE_CANVAS for the animation, and releases them in the reverse
 /// order once it returns.
 void BattleAnim_DispatchByIdRange(struct BattleAnimArgs *effect) {
   s32 kind;

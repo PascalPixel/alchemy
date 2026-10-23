@@ -6,7 +6,7 @@
 /// enemy side.
 void *Djinn_GetRecoveryTableFar(s32 arg0);
 #ifndef OWN_Unit_GetFar
-/// Returns the unit record of a playable character or of an enemy in the
+/// Returns the unit of a playable character or of an enemy in the
 /// current battle, or NULL for anything else; nearly every bank reads units
 /// this way.
 struct Unit *Unit_GetFar(u32 owner);
@@ -161,7 +161,7 @@ s32 Djinn_GetAbilityIdFar(u32 group, u32 index);
 /// Raises a character a level at a time up to `lv`, then recomputes its stats.
 void Unit_LevelUpToFar(s32 unit, s32 lv);
 /// Returns the unit's whole element level in one element, 0 for ELEMENT_NONE;
-/// the status screens show it.
+/// the summary screens show it.
 s32 Unit_GetElementLevelFar(s32 owner, s32 index);
 /// Returns 1 when the Djinni is set on the unit.
 u32 Djinn_IsSetFar(s32 owner, s32 index, s32 bit);
@@ -234,7 +234,7 @@ u32 Party_GetAverageLevelFar(void);
 /// Counts the unit's matching unstackable items, or the quantity in its first
 /// matching stack.
 s32 Inventory_CountItemFar(s32 owner, s32 item_id);
-/// Counts the item across the whole party, as the slot machine counts Game
+/// Counts the item across the whole party, as Lucky Wheels counts Game
 /// Tickets.
 s32 PartyInventory_CountItemFar(s32 item_id);
 /// Discards one of the item from whoever carries it first, as a script takes

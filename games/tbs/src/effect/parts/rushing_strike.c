@@ -36,7 +36,7 @@ void BattleAnim_PackTileRows(u8 *src, u8 *dst, s32 stride, s32 rowCount) {
 #define RUSHING_STRIKE_RING_BYTES 0x3c0 ///< one 20x48 ring picture
 
 /// The rushing strike's sparks' palettes (BattleAnim_RunRushingStrike), each
-/// named for the effect that plays it.
+/// named for the animation that plays it.
 enum RushingStrikeMode {
   RUSHING_STRIKE_BONE_CHARGE, ///< the fire pillar's
   RUSHING_STRIKE_BRUTE_FORCE, ///< the ice block's

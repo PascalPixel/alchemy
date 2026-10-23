@@ -1,4 +1,4 @@
-@ Name entry keyboard: same as the Japanese gNamingScreen_KeyboardTilemap.
+@ Naming screen keyboard: same as the Japanese gNamingScreen_KeyboardTilemap.
 @ Compressed tilemap; unreferenced, but retained in this overlay in all six editions.
 	.section .rodata
 	.balign 4

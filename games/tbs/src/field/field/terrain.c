@@ -1,5 +1,5 @@
 /// @file
-/// Terrain: ground heights and the collision of cells and the world map.
+/// Ground heights, and the collision of cells and the world map.
 // Part of field.c.
 
 #include "../field_internal.h"
@@ -12,7 +12,7 @@
 #define CURVE_HEIGHT_FIXED(sample) ((sample) << CURVE_VALUE_SHIFT)
 #endif
 
-/// The terrain height functions (gMapGrid_TerrainHeightFunctions): each takes a
+/// The ground height functions (gMapGrid_TerrainHeightFunctions): each takes a
 /// cell's height samples after its kind byte and a pixel (x, y) within the
 /// 16x16 cell, and returns the ground height there in 16.16 pixels. This one
 /// is flat: the first sample everywhere.
@@ -328,7 +328,7 @@ s32 Terrain_GetFirstSampleC(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
 /// y is the map's down axis, an object's z.
 ///
 /// Called each frame by Object_UpdateAllThumb for objects that follow the
-/// terrain, by the player control, and as MapGrid_GetTerrainHeightFar by the
+/// ground, by the player control, and as MapGrid_GetTerrainHeightFar by the
 /// field map's objects, the Psynergy effects and about ten map overlays.
 s32 MapGrid_GetTerrainHeight(s32 layer, s32 x, s32 y) {
   struct MapGridState *work = gMapGridWork[0];
@@ -342,7 +342,7 @@ s32 MapGrid_GetTerrainHeight(s32 layer, s32 x, s32 y) {
   if (work != NULL) {
     cell = work->layers[layer & 3].cells;
   }
-  // Cells are 16 pixels, 128 to a row. A cell's collision record is four
+  // Cells are 16 pixels, 128 to a row. A cell's shape is four
   // bytes: the kind, then up to three height samples.
   cell += x / 16 + (y / 16 << 7);
   heightBytes = Ram_MapGridShapes + cell->shape * 4;
@@ -359,8 +359,8 @@ s32 MapGrid_GetTerrainHeight(s32 layer, s32 x, s32 y) {
 #endif
 }
 
-/// Returns the terrain kind (the low four bits of the first collision byte)
-/// of a layer's cell at (x, y) in 16.16 pixels.
+/// Returns the terrain kind of a layer's cell at (x, y) in 16.16 pixels: the
+/// low four bits of the first byte of the cell's shape.
 /// Called through MapGrid_GetCellAttributeLowNibbleFar by the Psynergy Move
 /// effect.
 s32 MapGrid_GetCellAttributeLowNibble(s32 layer, s32 x, s32 y) {
@@ -379,7 +379,7 @@ s32 MapGrid_GetCellAttributeLowNibble(s32 layer, s32 x, s32 y) {
   cellX = x / 16;
   cellY = y / 16;
   cells += cellX + (cellY << 7);
-  // The kind byte of the cell's four-byte collision record.
+  // The kind byte of the cell's four-byte shape.
   heightAttributeIndex = cells->shape;
   return *(Ram_MapGridShapes + heightAttributeIndex * 4) & 15;
 }
@@ -586,8 +586,8 @@ s32 WorldMap_IsWalkable(s32 unused, struct WorldPosition *position) {
   return -1;
 }
 
-/// Returns the world map's terrain behaviour at position from
-/// gWorldMap_BattleEnvironments, and stores the block's terrain kind in
+/// Returns the world map's battle environment at position from
+/// gWorldMap_BattleEnvironments, and stores the block's encounter region in
 /// terrainKind.
 /// Called through WorldMap_GetBattleEnvironmentFar by the world map's
 /// encounters (Encounter_ResolveWorldMapZoneAndBackdrop).
@@ -617,7 +617,7 @@ s32 WorldMap_GetBattleEnvironment(struct WorldPosition *position,
   if (((u8 *)metatileWord)[3] & 0x80)
     behaviorBank = 0x10;
 
-  // The terrain kind is bits 24 to 30 of the block word.
+  // The encounter region is bits 24 to 30 of the block word.
   *terrainKind = (*metatileWord << 1) >> 25;
   if (*terrainKind == WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD)
     behaviorBank = 0x20;

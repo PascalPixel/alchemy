@@ -1,13 +1,14 @@
 /// @file
-/// Frame scheduling, memory, resources and core runtime services.
+/// Tasks, frames, memory, resources and core runtime services.
 
-/// Runs the game's frame loop for `frames` frames: the scheduled tasks, the OAM
+/// Runs the game's frame loop for `frames` frames: the tasks, the OAM
 /// list, the idle sleep and the debug pause, then VBlank and the keys.
 void WaitFramesFar(s32 frames);
-/// Schedules `callback` with `order`, or gives the task already running it the
-/// new order. Returns the task's index, or -1 when all 20 slots are taken.
+/// Adds a task running `callback` at priority `order`, or gives the task
+/// already running it the new priority. Returns the task's index, or -1 when
+/// all 20 slots are taken.
 s32 Task_AddFar(TaskFunc callback, s32 order);
-/// Unschedules the task running `callback` and returns its old index, or -1.
+/// Removes the task running `callback` and returns its old index, or -1.
 s32 Task_RemoveFar(TaskFunc callback);
 /// Advances the random number generator and returns 16 bits of the new seed,
 /// 0 to 0xffff.
@@ -65,13 +66,13 @@ void Oam_AddSpriteAtDepthFar(void *slot_entry, s32 slot);
 void Window_LoadGraphicsFar(void);
 /// Returns the ROM address of resource `index` from the resource directory.
 void *Resource_GetTableEntryFar(s32 index);
-/// Does nothing. The title screen, Lucky Dice and the slot machine pass it a
+/// Does nothing. The title screen, Lucky Dice and Lucky Wheels pass it a
 /// far-call resource id.
 void RuntimeDispatch_NoOpHookFar(s32 unused);
 /// Fades BG1 to BG3, the sprites and the backdrop out to black over `frames`
-/// frames; it only starts the fade.
+/// frames; it only starts the screen fade.
 void ScreenFade_ToBlackFar(s32 frames);
-/// Waits a frame at a time until the running fade finishes.
+/// Waits a frame at a time until the running screen fade finishes.
 void ScreenFade_WaitFar(void);
 /// Puts the serial port in multiplayer mode, installs the link interrupts and
 /// starts the per-frame exchange with a link partner.

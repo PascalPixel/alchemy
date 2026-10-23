@@ -4,7 +4,7 @@
 
 #include "../psynergy_effects_internal.h"
 
-/// Scheduler callback: updates the 24 effect slots.
+/// Task: updates the 24 field effect sprites.
 void FieldEffect_UpdateAllEffectSlots(void) { FieldEffect_UpdateEffectSlots(); }
 
 /// Prepares the work of the Psynergy effect for ability
@@ -13,7 +13,7 @@ void FieldEffect_UpdateAllEffectSlots(void) { FieldEffect_UpdateEffectSlots(); }
 ///
 /// Field_UsePsynergy and the item uses (object/items.c) call it before an
 /// effect and FieldEffect_End after it, which releases the
-/// work, the spark tiles' resource entry and the scheduler callback started
+/// work, the spark tiles' resource entry and the task started
 /// here. Goma Cave Entrance calls it too, for Ivan's Whirlwind on the
 /// stump's ivy.
 /// The caster is the leader, with no target until FieldEffect_SetupObjectPair
@@ -116,11 +116,11 @@ void FieldEffect_StopCasterHook(void) {
 
 #define SETUP_OBJECT_SLOTS ((struct ScriptMotionObject *)gObjects)
 
-/// Ends a Psynergy effect: frees the effect slots still in use and, unless
-/// another effect is being resolved, waits (at most 30 frames) for the
-/// swelling arcs to end, stops the slot callback, releases the effect's
-/// tiles, restores the map's shake, plays the queued sound and releases the
-/// effect's work.
+/// Ends a Psynergy effect: frees the field effect sprites still in use and,
+/// unless another effect is being resolved, waits (at most 30 frames) for the
+/// swelling arcs to end, stops the slot callback, releases the effect's tiles,
+/// restores the map's shake, plays the queued sound and releases the effect's
+/// work.
 void FieldEffect_End(void) {
 #ifndef UBFIX
   struct FieldEffectWork **effectWorkCell;

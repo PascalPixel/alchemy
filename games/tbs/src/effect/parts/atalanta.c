@@ -66,7 +66,7 @@ void BattleAnim_RunAtalanta(struct BattleAnimArgs *effect) {
   s32 row;
   s32 column;
 
-  // The slots are read from the background's: the effect work, the canvas
+  // The slots are read from the background's: the animation work, the canvas
   // and the sheet come before it.
   slots = &gHeapSlots[HEAP_SLOT_BATTLE_BACKGROUND];
   view = slots[0];
@@ -166,8 +166,8 @@ void BattleAnim_RunAtalanta(struct BattleAnimArgs *effect) {
     }
     point[1] = 0;
     point[2] = 0;
-    // From frame 48 the backdrop darkens over 24 frames
-    // (Palette_StepFadeTransfer, which the canvas layer scheduled).
+    // From frame 48 the battle background darkens over 24 frames
+    // (Palette_StepFadeTransfer, which the canvas layer added as a task).
     if (frame == 48) {
       work->fadeFrames = 24;
       work->fadeStep = 0;

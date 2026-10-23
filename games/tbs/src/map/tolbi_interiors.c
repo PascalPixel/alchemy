@@ -324,7 +324,7 @@ s32 TolbiInteriors_ApplyEntryState(void) {
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
-    // Restore the changed room tiles and the passengers' fixed draw priority.
+    // Restore the room's changed cells and the passengers' fixed draw priority.
     MapGrid_CopyCellAttributes(51, 47, 3, 1, 51, 45);
     objectEvent = ObjectEvent_GetById(TOLBI_INTERIORS_ANGRY_PASSENGER);
     // Stored as a plain byte: the field store allocates the zero differently.

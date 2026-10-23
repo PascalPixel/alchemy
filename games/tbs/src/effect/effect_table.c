@@ -4,20 +4,20 @@
 #include "vector3.h"
 #include "render_placement.h"
 
-// Cell layouts, timing rows and handler entries for the battle effects.
+// Cell layouts, timing rows and handler entries for the battle animations.
 // Keep the definitions in link order. Picture cell offsets are byte offsets
 // from the sheet start, accumulated as width times height. Each table is
 // read only by the part its prefix names, except the gBattleAnim_ tables,
 // which many parts share.
 
-// The tables are plain arrays, not const, as the effect code reads them:
+// The tables are plain arrays, not const, as the animation code reads them:
 // it reloads their addresses where const would let the compiler keep
-// them. Their .data is linked into the effect bank in ROM.
+// them. Their .data is linked into the animation bank in ROM.
 
 struct BattleAnimArgs;
 
-// Picture layouts that several effects read from the same sheet. The ROM
-// holds a copy of each table for every effect, so each copy below is
+// Picture layouts that several animations read from the same sheet. The ROM
+// holds a copy of each table for every animation, so each copy below is
 // defined from one of these.
 
 /// The six cells of an erupting flame puff: where each begins in the sheet.
@@ -93,7 +93,7 @@ u8 gFalling_Counts[][4] = {
     [ANIM_VARIANT_STRONGEST] = {32, 4, 8, 80}, // Deluge
 };
 
-// streaks.c: Falling streak timing and motion records.
+// streaks.c: Falling streak timing and motion rows.
 
 /// Each streak style's animation, hit, motion and shake, by the STREAKS_
 /// columns (streaks.c).
@@ -114,7 +114,8 @@ s8 gStreaks_Tremble[] = {-1, -1, 1, 1, 1, 1, -1, -1};
 /// (target_strike.c).
 // clang-format off
 u8 gTargetStrike_Records[][7] = {
-    // TARGET_STRIKE_: KIND, HITS, FLAGS, COLOUR, IMAGE_FRAMES, COMPOSITE, FRAMES
+    // TARGET_STRIKE_: KIND, HITS, FLAGS, COLOUR, IMAGE_FRAMES, COMPOSITE,
+    // FRAMES
     [TARGET_STRIKE_STYLE_BLUE_SPARK_COLUMNS] =
         {STRIKE_KIND_COLUMN, 2, STRIKE_SPARKS, STRIKE_COLOR_BLUE, 6, COMPOSITE_ADDITIVE, 70},
     [TARGET_STRIKE_STYLE_LIME_SMOKE_COLUMN] =
@@ -225,7 +226,7 @@ u16 gDjinnBeams_HeadOffsets[] = EARTH_WALL_CELLS;
 u8 gDjinnBeams_HeadWidths[] = EARTH_WALL_CELL_WIDTHS;
 u8 gDjinnBeams_HeadHeights[] = EARTH_WALL_CELL_HEIGHTS;
 
-// lobbed_shells.c: Shell explosion records and shards.
+// lobbed_shells.c: Shell explosion rows and shards.
 
 /// Two bytes for each lobbed shell style (enum LobbedShellsMode,
 /// lobbed_shells.c).
@@ -396,8 +397,8 @@ u8 gVolcano_StartFrames[] = {8, 18, 24, 30, 34};
 /// Glint orientations: none, and mirrored each way and both.
 u8 gTargetMotes_GlintFlips[] = GLINT_FLIPS;
 
-/// The effect handlers, indexed by effect kind minus one, which
-/// BattleAnim_RunTableEffect calls; BATTLE_ANIM_NONE is no effect, for
+/// The animation handlers, indexed by animation kind minus one, which
+/// BattleAnim_RunTableEffect calls; BATTLE_ANIM_NONE is no animation, for
 /// which it only clears effect->variant.
 ///
 /// Each handler is named for the first ability, by ability id, whose entry in
@@ -697,7 +698,7 @@ u8 gBoreas_Points[][2] = {{57, 130}, {75, 128}, {71, 104}, {101, 130},
                           {86, 126}, {85, 98},  {64, 98},  {98, 96},
                           {77, 87},  {84, 88},  {68, 67},  {81, 49},
                           {94, 70},  {70, 51},  {93, 36},  {81, 50}};
-/// The backdrop's jolt on frames 176 to 179.
+/// The battle background's jolt on frames 176 to 179.
 s8 gBoreas_ShakeOffsets[] = {-4, -3, -2, 0};
 // The first half's three rock pictures, drawn standing on their points.
 u16 gBoreas_RockCells[] = {0, 1152, 2064};
@@ -737,7 +738,7 @@ u8 gStatChange_ShardHeights[] = {12, 12, 13, 8, 9, 8, 7, 12, 10, 4, 5, 5};
 
 // quake.c
 
-/// Rock wall timing, by variant: frames in the effect, frames each pillar
+/// Rock wall timing, by variant: frames in the animation, frames each pillar
 /// stands, and how far the screen shakes.
 u8 gQuake_Timings[][3] = {{80, 32, 2}, {112, 64, 4}, {144, 96, 8}};
 
@@ -932,13 +933,14 @@ u8 gSpire_ShardHeights[] = {11, 6,  10, 11, 10, 7,  17, 21,
 u16 gSpire_ShardCells[] = {0,   55,   121,  221,  298,  368,  452,  673,
                            862, 1090, 1342, 1631, 1917, 2157, 2413, 2623};
 
-// gaia.c and burst_scene.c: Burst scene records and rising wall geometry.
+// gaia.c and burst_scene.c: Burst scene rows and rising wall geometry.
 
 /// Each burst scene mode (enum BurstSequenceMode), by the BURST_SEQUENCE_
 /// columns (burst_scene.c).
 // clang-format off
 u8 gBurstSequence_Records[][7] = {
-    // BURST_SEQUENCE_: ARC_SHEET, PALETTE, STRIKES, MOTES, INTERVAL, FRAMES, FLASH
+    // BURST_SEQUENCE_: ARC_SHEET, PALETTE, STRIKES, MOTES, INTERVAL, FRAMES,
+    // FLASH
     [BURST_SEQUENCE_BEAR_CLAW] =
         {BURST_SEQUENCE_ARCS, BURST_SEQUENCE_PALETTE_MARS_DJINNI, 5, 16, 12, 80, 0},
     [BURST_SEQUENCE_BACTERIA_RUSH] =

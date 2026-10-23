@@ -611,7 +611,7 @@ static void EventScript_OpenFourthBlueDoor(void) {
 }
 
 /// Reveal in CrossboneIsleKeys: the hidden Red Key appears on its
-/// tile.
+/// cell.
 static void EventScript_ShowRedKey(void) {
   s32 keyLocalId = LOCALID_RED_KEY;
   s32 x = PIXELS(408);
@@ -623,7 +623,7 @@ static void EventScript_ShowRedKey(void) {
   WAIT(1);
 }
 
-/// Reveal wears off in CrossboneIsleKeys: the Red Key's tile is
+/// Reveal wears off in CrossboneIsleKeys: the Red Key's cell is
 /// hidden again.
 static void EventScript_HideRedKey(void) {
   MapGrid_CopyCells(24, 48, 1, 2, 25, 48);

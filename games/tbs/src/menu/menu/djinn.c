@@ -71,7 +71,7 @@ s32 Menu_SetFirstObjectRowCoordinates(s32 yOffset) {
 /// MESSAGE_SPEED_FAST while it runs (the tutorial's steps set
 /// MESSAGE_SPEED_NORMAL for their messages, which stays until the menu closes)
 /// and puts the player's speed back. Takes the menu work (HEAP_SLOT_MENU) and
-/// the backdrop (struct DjinnMenuBackdrop, from the alternate pool), and frees
+/// the backdrop (struct DjinnMenuBackdrop, from the EWRAM pool), and frees
 /// both before returning, after putting back the field tiles and palettes the
 /// backdrop saved. Returns 1, which makes the field menu open again.
 s32 DjinnMenu_Run(void) {
@@ -571,7 +571,7 @@ s32 PsynergyList_Diff(struct PsynergyEntry *before, struct PsynergyEntry *after,
   return actionCount;
 }
 
-/// Rebuilds the Djinn lists in table: each owner's packed Djinn entries and
+/// Rebuilds the Djinn lists in table: each member's packed Djinn entries and
 /// their count.
 s32 DjinnMenu_BuildLists(void *table) {
   struct DjinnMenuWork *menu;
@@ -603,7 +603,7 @@ s32 DjinnMenu_BuildLists(void *table) {
 #endif
 }
 
-/// Draws each owner's Djinn column, including set and recovering entries.
+/// Draws each member's Djinn column, including set and recovering entries.
 /// Rebuilds table's lists first. Each name follows its element's icon: in the
 /// normal colour when set, colour 2 on standby and colour 4 while recovering.
 /// Holds the tilemap upload (holdTilemapUpload) until the list is drawn.
@@ -1004,7 +1004,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       if (selectedRow != -1)
         djinn = backdrop->list.ids[ownerColumn][selectedRow];
       WindowSprite_RedrawSavedRectFar(menu->helpWindow);
-      // DJINN_SELECT_ACTION's help: `<owner>'s`, the element icon and the
+      // DJINN_SELECT_ACTION's help: `<member>'s`, the element icon and the
       // Djinni's name, an ability name argument (its action, from
       // ABILITY_DJINNI_FIRST), then "What will you do?". Spanish, French and
       // Italian put the icon first and the name in the one message.
@@ -1586,7 +1586,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
 }
 
 /// Lists owned Djinn by element and index, marking those that are set.
-/// For element -1, entries also encode their owner.
+/// For element -1, entries also encode their member.
 ///
 /// Writes one Djinn list entry (DJINN_ENTRY_) for each Djinni of element the
 /// unit holds, or of every element for -1, and returns how many. The Djinn

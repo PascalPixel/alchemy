@@ -92,20 +92,20 @@ s32 Ability_EffectAppliesToDowned(s32 effect) {
     }                                                                          \
   }
 
-/// Applies the planned ability to one of its targets: first its damage or
+/// Applies the turn's ability to one of its targets: first its damage or
 /// healing, then its added effect (a status, a stat change, a revival...).
-/// Nothing is shown here: each step queues battle events (the names and
+/// Nothing is shown here: each step queues playback commands (the names and
 /// numbers a message needs, the message, the target's reactions) that
 /// BattlePlayback_Run then plays in order. The units themselves change at
 /// once: Unit_CalculateFar recalculates a unit's stats from its stages, and
 /// Unit_RecalculateGaugesFar its HP and PP gauges after either changes.
 ///
 /// Called for each target in turn by BattlePlayback_Run (an action with an
-/// effect) and BattleStaging_RunActorEntries (one without). Changes the
+/// animation) and BattleStaging_RunActorEntries (one without). Changes the
 /// target's HP, PP, statuses, stat stages and turns, and its guard; the actor's
 /// HP or PP for a drain, and plan->hauntDamage; adds an enemy to
 /// gBattleWork->enemyIds when one is called; sets gBattleWork->challengeFlag
-/// bit 1 when the party is challenged; queues the events that show it all.
+/// bit 1 when the party is challenged; queues the playback that shows it all.
 /// It takes Battle_RandomFar rolls, and borrows a heap block for the target's
 /// copy.
 ///
@@ -124,10 +124,10 @@ s32 Ability_EffectAppliesToDowned(s32 effect) {
 /// 7. Waking from damage, the recalculated stats, the redraw, and the evil
 ///    spirit's share for a haunted actor.
 ///
-/// @param plan the action under way: the actor, the ability, its element and
+/// @param plan the turn under way: the actor, the ability, its element and
 /// its targets, each with its distance from the aimed position, damage
 /// multiplier, critical hit and any hit roll made in advance
-/// @param slot which of the plan's targets (0 to plan->targetCount - 1)
+/// @param slot which of the turn's targets (0 to plan->targetCount - 1)
 #ifdef UBFIX
 void BattleAbility_ApplyToTarget(struct BattleTurn *plan, s32 slot) {
 #else
@@ -219,7 +219,7 @@ s32 BattleAbility_ApplyToTarget(struct BattleTurn *plan, s32 slot) {
   }
 
   // The actor's power in the ability's element; items always use 100. (Here
-  // and below the element is read from the plan again, as the bytes need.)
+  // and below the element is read from the turn again, as the bytes need.)
   if (plan->element >= ELEMENT_VENUS && plan->element <= ELEMENT_JUPITER &&
       plan->command != COMMAND_ITEM)
     elementPower = actor->element[plan->element].power;
@@ -246,7 +246,7 @@ s32 BattleAbility_ApplyToTarget(struct BattleTurn *plan, s32 slot) {
       BattlePlayback_Push(PLAYBACK_DJINN_BONUS, 5);
   }
 
-  // Whether the effect lands: a roll made when the action was planned, or
+  // Whether the effect lands: a roll made when the turn was built, or
   // one made now, less likely the farther the target is.
   kind = ability->flags & ABILITY_FORMULA_MASK;
   {

@@ -1,5 +1,5 @@
 /// @file
-/// The link battle timer and the no-escape check.
+/// The link battle timer and the no-flee check.
 // Part of battle_command.c.
 
 #include "../battle_command_internal.h"
@@ -20,7 +20,7 @@ struct LinkSignature {
   u8 padding010[8];
 };
 
-/// A scheduler callback while the party's commands are chosen
+/// A task while the party's commands are chosen
 /// (Battle_CollectPartyCommands): eases the battle scene a third of the way
 /// to BattleMenuWork.targetViewOffset each frame (a pixel at least), draws
 /// the sprites of BattleMenuWork.icons that are shown (the chosen command's
@@ -107,7 +107,7 @@ void UpdateLinkSessionCountdown(void) {
     if (timer < 0)
       return;
 
-    // The window opens the first frame the status screen is not up.
+    // The window opens the first frame the summary screen is not up.
   timer_ready:
     if (state->timerWindow == 0 && state->timerHidden == 0) {
       state->timerWindow = (s32)Link_CreateCountdownLabelWindow();
@@ -133,7 +133,7 @@ void UpdateLinkSessionCountdown(void) {
   }
 }
 
-/// Tests whether the party may not run from this battle: battle starts 3 and
+/// Tests whether the party may not run from this battle: battle types 3 and
 /// 4 (the battles a script starts, and link battles; see
 /// BATTLE_TYPE_NO_ESCAPE in battle/battle/round.c) and a party once
 /// challenged (BattleWork.challengeFlag). When it may not, shows "This is no

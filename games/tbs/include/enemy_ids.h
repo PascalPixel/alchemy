@@ -2,15 +2,15 @@
 #define ALCHEMY_ENEMY_IDS_H
 
 /// @file
-/// Enemy class ids, named from the English release.
+/// Enemy ids, named from the English release.
 
-/// The first enemy class id: class id `ENEMY_ID_FIRST + n` is the enemy in
+/// The first enemy id: enemy id `ENEMY_ID_FIRST + n` is the enemy in
 /// row n of enemies.tsv (Enemy_GetDefinition); the ids below it are the
 /// party's characters. A formation lists its members by row.
 #define ENEMY_ID_FIRST 8
 
-/// The enemy classes the code tests by id, each named by its row of
-/// enemies.tsv: a class id is the row plus ENEMY_ID_FIRST. Where several
+/// The enemies the code tests by id, each named by its row of
+/// enemies.tsv: an enemy id is the row plus ENEMY_ID_FIRST. Where several
 /// rows share a name, the later ones take `_2` onwards in row order.
 enum EnemyId {
   ENEMY_SLIME = 18,

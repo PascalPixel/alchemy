@@ -1,14 +1,14 @@
 /// @file
-/// World map graphics: a palette and five tile sets for each of its two looks.
+/// World map graphics: a palette and five tilesets for each of its two looks.
 
 #include "field.h"
 #include "resource_ids.h"
 #include "types.h"
 
-/// Each set is a palette and five tile sets: WorldMap_LoadGraphics decodes
+/// Each set is a palette and five tilesets: WorldMap_LoadGraphics decodes
 /// the palette into BG palettes 0 to 13, the next four into the two halves of
-/// char blocks 2 and 3, and the last into gMapGridLayerData, where the tile
-/// animation copies its frames from. It takes the second set when the cell it
+/// char blocks 2 and 3, and the last into gMapGridLayerData, where the tileset
+/// animations copy their frames from. It takes the second set when the cell it
 /// loads at is WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD, and keeps the set's row in
 /// the perspective work's resources, from which WorldMap_LoadAreaGraphics
 /// reloads all but the last. Not const: the loader reads it through a u32 *.

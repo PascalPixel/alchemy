@@ -2,7 +2,7 @@
 #define ALCHEMY_OBJECT_RUNTIME_H
 
 /// @file
-/// Object, a field object's runtime state, and the object snapshots.
+/// Object, an object's runtime state, and the object snapshots.
 
 #include "unit/field/field.h"
 #include "object_lookup.h"
@@ -11,10 +11,10 @@
 
 union FieldObject;
 
-/// One of the 64 field objects in the object pool (HEAP_SLOT_OBJECTS): its
+/// One of the 64 objects (HEAP_SLOT_OBJECTS): its
 /// script, position, motion toward a target, animation and update callback.
 ///
-/// ObjectSystem_Initialize takes the pool with the object system's work
+/// ObjectSystem_Initialize takes the objects with the object system's work
 /// (HEAP_SLOT_OBJECT_SYSTEM), so it lives until the next map change. struct
 /// ObjectEvent is the same 0x70 bytes as maps see them.
 struct Object {

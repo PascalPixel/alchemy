@@ -57,7 +57,7 @@ extern u8 gBattleAnim_GlintCellHeights[];
 /// Each Ice variant: its shards and how many frames it runs.
 enum {
   ICE_SHARD_COUNT, ///< shards that fall
-  ICE_FRAMES       ///< the effect's frames; the damage shows 16 before
+  ICE_FRAMES       ///< the animation's frames; the damage shows 16 before
 };
 extern u8 gFalling_IceCounts[][2];
 
@@ -66,7 +66,7 @@ enum {
   FALLING_BOLT_WAVE_COUNT,      ///< bolts that drop, of the 64 placed
   FALLING_BOLT_SPARKS_PER_BOLT, ///< sparks each bolt throws
   FALLING_BOLT_SPACING,         ///< pixels between bolts along the slant
-  FALLING_BOLT_DURATION         ///< the effect's frames
+  FALLING_BOLT_DURATION         ///< the animation's frames
 };
 extern u8 gFalling_Counts[][4];
 
@@ -103,7 +103,7 @@ enum {
   GATHERING_LIGHTS_FRAMES ///< frames before the targets' turns
 };
 /// The gathering lights' modes (BattleAnim_RunGatheringLights), each named
-/// for the effect that plays it, and its row of gGatheringLights_Counts.
+/// for the animation that plays it, and its row of gGatheringLights_Counts.
 enum GatheringLightsMode {
   GATHERING_LIGHTS_DEMON_NIGHT, ///< pink
   GATHERING_LIGHTS_RUMBLE,      ///< Mars Djinn colours
@@ -155,7 +155,7 @@ extern s32 gNereid_Gravity[];
 /// Each Froth variant: its motes and frames.
 enum {
   FROTH_MOTE_COUNT, ///< motes, at most FROTH_MOTES (vortices.c)
-  FROTH_FRAMES      ///< the effect's frames; the damage shows 16 before
+  FROTH_FRAMES      ///< the animation's frames; the damage shows 16 before
 };
 extern u8 gVortices_Counts[][2];
 
@@ -177,7 +177,7 @@ extern u8 gPrism_ShardStarts[][2];
 /// Each Prism variant: its crystals and frames.
 enum {
   PRISM_CRYSTAL_COUNT, ///< crystals drawn
-  PRISM_FRAMES         ///< the effect's frames
+  PRISM_FRAMES         ///< the animation's frames
 };
 extern u8 gPrism_Counts[][2];
 
@@ -324,7 +324,7 @@ enum ProjectileVolleyComet {
 };
 extern u8 gProjectileVolley_CometHeights[];
 /// The projectile volley's modes (BattleAnim_RunProjectileVolley), each named
-/// for the effect that fires it; the casting impacts fire two of them.
+/// for the animation that fires it; the casting impacts fire two of them.
 enum ProjectileVolleyMode {
   PROJECTILE_VOLLEY_SLASH,         ///< comets, picked by the variant
   PROJECTILE_VOLLEY_SHURIKEN,      ///< spinning shurikens

@@ -11,7 +11,7 @@
 #include "djinn_ids.h"
 
 // A Djinni's list entry, as Djinn_ListUnitEntries writes it into
-// DjinnListTable.ids. bits: 15 set | 11..8 owner | 7..5 element | 4..0 index
+// DjinnListTable.ids. bits: 15 set | 11..8 member | 7..5 element | 4..0 index
 #define DJINN_ENTRY_INDEX 31      ///< its number within its element
 #define DJINN_ENTRY_ELEMENT 0xe0  ///< its element (enum Element)
 #define DJINN_ENTRY_MEMBER 0xf00  ///< the member holding it
@@ -40,7 +40,7 @@ struct DjinnMenuBackdrop {
   long tutorialStep;
 };
 
-/// The Djinn menu's work, in the HEAP_SLOT_MENU work slot from the menu's
+/// The Djinn menu's work, in the HEAP_SLOT_MENU heap slot from the menu's
 /// opening to its closing.
 struct DjinnMenuWork {
   u8 unused[8]; ///< no view of the menu work names it (see menu/README.md)
@@ -50,7 +50,7 @@ struct DjinnMenuWork {
   struct WindowSprite *cursor;
   /// The second of ItemMenuWork's sideIcons; not named here.
   struct WindowSprite *secondPaneIcon;
-  s8 selectedColumn[2]; ///< each pane's member, in owners
+  s8 selectedColumn[2]; ///< each pane's member, an index into owners
   s8 sideCount[2];      ///< ItemMenuWork's; not named here
   /// ItemMenuWork's and ShopWork's itemWindow; not named here.
   struct Window *itemWindow;
@@ -102,7 +102,7 @@ struct DjinnMenuWork {
   u16 slotX[4];
   u16 slotY[4];
   s32 figurePhases[4]; ///< DjinnFiguresWork's phases; not named here
-  /// The Djinn chosen in each pane: index in their element, element, owner.
+  /// The Djinn chosen in each pane: index in their element, element, member.
   ///@{
   u8 pairIndex[2];
   u8 pairElement[2];

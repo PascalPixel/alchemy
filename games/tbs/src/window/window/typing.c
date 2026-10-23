@@ -11,8 +11,8 @@
 #define CANVAS_KEPT_ROWS 8 ///< the top 8 pixel rows stay put
 
 /// Scrolls the battle message canvas up by 6 pixel rows per step, below its
-/// top 8 rows, and clears the rows this uncovers. A typing channel calls it
-/// with step 1 on each of the two frames of a line scroll
+/// top 8 rows, and clears the rows this uncovers. A typing text printer calls
+/// it with step 1 on each of the two frames of a line scroll
 /// (Text_StartCanvasScroll).
 void Text_ScrollCanvasUp(s32 step) {
   s32 shift = step * 6;
@@ -36,11 +36,11 @@ enum {
   CHANNEL_STEP_CLOSE = 9,   ///< the text is dismissed: close the window
 };
 
-/// The per-frame message update: each message channel whose window is fully
+/// The per-frame message update: each text printer whose window is fully
 /// open runs its window effect or types more text, and on the text's end marks
-/// the window done (state 1) or closes it. A channel whose window has closed
-/// is freed here. UiWork_ProcessAll runs it each frame after the windows'
-/// zooms.
+/// the window done (state 1) or closes it. A text printer whose window has
+/// closed is freed here. UiWork_ProcessAll runs it each frame after the
+/// windows' zooms.
 void TextPrinter_RunAll(void) {
   struct TextPrinter *channel = WINDOW_WORK->printers;
   s32 channelNo = 0;
@@ -71,7 +71,7 @@ void TextPrinter_RunAll(void) {
             struct Window *window = channel->window;
 
             Window_Close(window, window->flags & WINDOW_FLAG_INSTANT);
-            // pending is 0 here: it clears the channel.
+            // pending is 0 here: it clears the printer.
             channel->x = pending;
             channel->y = pending;
             channel->textIndex = pending;
@@ -91,12 +91,12 @@ void TextPrinter_RunAll(void) {
   } while (channelNo != 3);
 }
 
-/// Types one frame's share of a channel's text: runs control codes (new line,
-/// new page, pauses, colours) and draws characters, playing the speaker's voice
-/// blips. Returns a CHANNEL_STEP_ result. The share is the message speed's
-/// glyphs a frame (gMessageSpeed_Steps) outside battle, where a space or a
-/// control code also ends it; in battle it is 8 glyphs, or 13 after a frame
-/// that took two VBlanks or more.
+/// Types one frame's share of a text printer's text: runs control codes (new
+/// line, new page, pauses, colours) and draws characters, playing the speaker's
+/// voice blips. Returns a CHANNEL_STEP_ result. The share is the message
+/// speed's glyphs a frame (gMessageSpeed_Steps) outside battle, where a space
+/// or a control code also ends it; in battle it is 8 glyphs, or 13 after a
+/// frame that took two VBlanks or more.
 s32 TextPrinter_Step(struct TextPrinter *channel) {
   struct WindowWork *work = WINDOW_WORK;
   // The ROM reads gKeysHeld here once and never uses the value.
@@ -170,7 +170,7 @@ s32 TextPrinter_Step(struct TextPrinter *channel) {
         break;
 
       case TEXT_PAGE:
-        // The countdown only holds the channel on this code while it waits: it
+        // The countdown only holds the printer on this code while it waits: it
         // is set to 919 each frame and counted down once, so it is below 900
         // only on the wait's first frame. Then, under Mind Read, presses
         // latched before the wait are dropped.
@@ -197,9 +197,9 @@ s32 TextPrinter_Step(struct TextPrinter *channel) {
           work->pageArrowShown = 1;
           break;
         }
-        // Clear the window, and refit it to the next page's text. A channel
-        // started with flags set keeps the window's size; the frame is drawn
-        // again only when text follows the break.
+        // Clear the window, and refit it to the next page's text. A text
+        // printer started with flags set keeps the window's size; the frame is
+        // drawn again only when text follows the break.
         window = channel->window;
         x = window->x;
         y = window->y;
@@ -411,7 +411,7 @@ s32 TextPrinter_Step(struct TextPrinter *channel) {
         channel->x += glyphAdvance;
       }
       // In Japanese a character that advances nothing (Glyph_Draw
-      // returns 0, as it does when no render output is free) closes the
+      // returns 0, as it does when no window sprite is free) closes the
       // window.
 #if (LANGUAGE == LANGUAGE_JAPANESE)
       else
@@ -422,7 +422,7 @@ s32 TextPrinter_Step(struct TextPrinter *channel) {
         glyphsLeft = 1;
     }
 
-    // A pause holds the channel on this entry until its countdown ends.
+    // A pause holds the printer on this entry until its countdown ends.
     if (channel->countdown != 0) {
       channel->countdown--;
       if (channel->countdown != 0)

@@ -1,27 +1,27 @@
-# Battle effects
+# Battle animations
 
-![An effect from start to end. It sets up first: it opens the canvas, builds its blitters, loads its pictures and places its particles. Then it repeats the same frame a fixed number of times: it moves every particle one step, stamps its pictures into the canvas, and waits for the next frame while the canvas is copied to the screen and what stays on it fades a little. After its last frame it stops the copying and frees what it built.](https://alchemy.pascalpixel.com/illustrations/effect/effect-life.svg)
+![An animation from start to end. It sets up first: it opens the canvas, builds its blitters, loads its pictures and places its particles. Then it repeats the same frame a fixed number of times: it moves every particle one step, stamps its pictures into the canvas, and waits for the next frame while the canvas is copied to the screen and what stays on it fades a little. After its last frame it stops the copying and frees what it built.](https://alchemy.pascalpixel.com/illustrations/effect/effect-life.svg)
 
 When Isaac casts Quake or Garet [summons](../../glossary.md#summons) Mars, the battle pauses its own
 drawing and an animation plays over it: rock pillars rising, flames flying,
-sparks bursting. That animation is a battle effect, and every [Psynergy](../../glossary.md#psynergy-and-pp), [Djinni](../../glossary.md#djinn),
+sparks bursting. That is a battle animation, and every [Psynergy](../../glossary.md#psynergy-and-pp), [Djinni](../../glossary.md#djinn),
 summon, item and monster attack has one. The code for all of them is in this
 folder.
 
-Most effects work the same way. They draw into a small hidden picture, the
+Most animations work the same way. They draw into a small hidden picture, the
 canvas, which the screen shows stretched over the battle. Each [frame](../../glossary.md#frame) they move
 their sparks and embers a little, stamp each picture onto the canvas, and let
 what was drawn before fade, which is what leaves the glowing trails. The
-effect decides how the animation looks and when the damage numbers appear;
-the battle has already worked out what the damage is.
+animation decides how it looks and when the damage numbers appear; the
+battle has already worked out what the damage is.
 
-In the code, each effect is one function, its handler, which the battle calls
-with a `struct BattleAnimArgs` (the effect kind, the side the targets are
+In the code, each animation is one function, its handler, which the battle
+calls with a `struct BattleAnimArgs` (the animation kind, the side the targets are
 on, the user, the targets, the variant and the prelude flag). The handler draws
 a fixed number of frames and returns when the animation is over. It decides
 only when the damage appears, by calling `ANIM_SHOW_DAMAGE`; how the battle
-shows the damage from a [task](../../glossary.md#task) while the effect is
-still drawing is in [Battle](../../battle.md#rules-and-effects-run-together),
+shows the damage from a [task](../../glossary.md#task) while the animation is
+still drawing is in [Battle](../../battle.md#rules-and-animations-run-together),
 the page on the battle as a whole. [Battles](../battle/README.md), the page
 on the battle's rules, works out the damage itself.
 
@@ -52,35 +52,35 @@ void BattleAnim_RunBolt(struct BattleAnimArgs *effect) {
 }
 ```
 
-The effects are C written to compile to exactly the original game's bytes
+The animations are C written to compile to exactly the original game's bytes
 (a [matching decompilation](../../glossary.md#matching-decompilation)), so a
 few of their forms, such as the parts' order and the tables not being
 `const`, are kept for the bytes; [Design](#design) and
 [Notes for contributors](#notes-for-contributors) say which.
 
-## How a move picks its effect
+## How a move picks its animation
 
 Every ability names the animation it plays and how strong a version of it to
 play. Moves of one family share an animation, so Quake, Earthquake and Quake
-Sphere all play the same effect, at three strengths.
+Sphere all play the same animation, at three strengths.
 
-![One effect at three strengths. Quake, Earthquake and Quake Sphere play the same animation, and a stronger one keeps its rock pillars rising and sinking for longer. Three pillars rise under the targets one after another, and each climbs and sinks in about half a second. Quake's pillars rise once and the animation ends after about 1.3 seconds; Earthquake's rise twice, about 1.9 seconds; Quake Sphere's three times, about 2.4 seconds. In each the damage appears a quarter of a second before the end. The screen shakes twice as far at each step, from 2 pixels to 4 to 8.](https://alchemy.pascalpixel.com/illustrations/effect/variants.svg)
+![One animation at three strengths. Quake, Earthquake and Quake Sphere play the same animation, and a stronger one keeps its rock pillars rising and sinking for longer. Three pillars rise under the targets one after another, and each climbs and sinks in about half a second. Quake's pillars rise once and the animation ends after about 1.3 seconds; Earthquake's rise twice, about 1.9 seconds; Quake Sphere's three times, about 2.4 seconds. In each the damage appears a quarter of a second before the end. The screen shakes twice as far at each step, from 2 pixels to 4 to 8.](https://alchemy.pascalpixel.com/illustrations/effect/variants.svg)
 
-The effect is chosen by a number, the effect kind, and the strength by
+The animation is chosen by a number, the animation kind, and the strength by
 another, the variant. The kind picks only what the player watches: the formula
 the targets take is the ability kind, in `game/actions.tsv`, which
 [Battles](../battle/README.md) explains. Quake's ability kind is
-`ABILITY_FORMULA_DAMAGE` and its effect kind `BATTLE_ANIM_QUAKE`.
+`ABILITY_FORMULA_DAMAGE` and its animation kind `BATTLE_ANIM_QUAKE`.
 
 Each ability's row of [`battle/actflags.tsv`](../battle/actflags.tsv) gives
 both, packed into one number with a few bits that choose how the battle
-reaches the effect ([The presentation word](#the-presentation-word) gives
+reaches the animation ([The animation word](#the-animation-word) gives
 its layout). Quake, Earthquake and Quake Sphere read `0x001`, `0x1001` and
 `0x2001`: the kind `BATTLE_ANIM_QUAKE` at `ANIM_VARIANT_BASIC`,
 `ANIM_VARIANT_STRONGER` and `ANIM_VARIANT_STRONGEST`.
 `BattleAnim_RunQuake` reads the variant as a row of `gQuake_Timings`,
 which keeps each pillar standing 32, 64 or 96 [frames](../../glossary.md#frame)
-in an effect of 80, 112 or 144.
+in an animation of 80, 112 or 144.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -89,13 +89,13 @@ in an effect of 80, 112 or 144.
 | `ANIM_VARIANT_STRONGEST` | 2 | Quake Sphere, Deluge, Pure Ply |
 | `ANIM_SIDE_ENEMIES` | 0 | the targets are enemies |
 | `ANIM_SIDE_PARTY` | 1 | the targets are the [party](../../glossary.md#the-party) |
-| `BATTLE_ANIM_NONE` | 0 | no effect: the dispatcher only clears the variant |
+| `BATTLE_ANIM_NONE` | 0 | no animation: the dispatcher only clears the variant |
 | `BATTLE_ANIM_QUAKE` | 1 | the first kind of the handler table |
 
 ### The handler table
 
-Most effect kinds are looked up in one table that lists, for each kind, the
-function that draws it. An ordinary effect kind indexes
+Most animation kinds are looked up in one table that lists, for each kind,
+the function that draws it. An ordinary animation kind indexes
 `gBattleAnim_Handlers` (`effect_table.c`), whose rows start at
 `BATTLE_ANIM_QUAKE`, the first kind after `BATTLE_ANIM_NONE`:
 
@@ -108,7 +108,7 @@ ability that selects the kind. Of the table's 407 rows, 162 have a handler,
 143 different functions between them; a kind with no handler has no name in
 `enum BattleAnimId` ([`effect.h`](../../include/unit/effect/effect.h)) and an
 empty row. Abilities whose rows give the same kind and variant play the same
-effect.
+animation.
 
 A handler is named for the first ability, by id, whose row selects its kind,
 under the English release's name: the first row to select `BATTLE_ANIM_QUAKE` is
@@ -124,20 +124,20 @@ Many kinds belong to a family that one runner draws, and the mode it is passed
 picks the member. The kind's handler is then a two-line function that calls the
 runner: `BattleAnim_RunCure` calls
 `BattleAnim_RunHealingMotes(effect, HEALING_MODE_CURE)`.
-[Effect families](#effect-families) lists the runners.
+[Animation families](#animation-families) lists the runners.
 
 ## Entry points and their blocks
 
-The battle has three doors into this folder: one for ordinary effects, one
-for the summons' big scenes, and one for plain attacks, the casting impacts
-and the beams and rings that go with them.
-Whichever door an effect comes through, the same three blocks of memory are
+The battle has three doors into this folder: one for ordinary animations,
+one for the summons' big scenes, and one for plain attacks, the casting
+impacts and the beams and rings that go with them.
+Whichever door an animation comes through, the same three blocks of memory are
 waiting for it, and they are taken back when it ends. The blocks come from
 the [heap](../../glossary.md#heap-and-pools), the pool of memory the game lends out in numbered slots
 ([Runtime](../runtime/README.md)).
 
 In the code, the battle's staging (`battle/battle/staging.c`) chooses the door from the
-plan's `STAGING_` bits, as [Battle](../../battle.md#effects) describes:
+turn's `ANIM_` bits, as [Battle](../../battle.md#animations) describes:
 `BattleStaging_HideField` tests `ANIM_SUMMON` first, and the
 attack and Psynergy staging test only `ANIM_BY_ID_RANGE`.
 
@@ -155,21 +155,21 @@ attack and Psynergy staging test only `ANIM_BY_ID_RANGE`.
   and calls the kind's handler from the table. `BATTLE_ANIM_NONE` plays
   nothing and only resets the variant.
 
-Each entry point allocates three [heap slots](../../glossary.md#heap-slot), runs the effect and releases
+Each entry point allocates three [heap slots](../../glossary.md#heap-slot), runs the animation and releases
 them in reverse:
 
 | Slot | Value | Holds |
 | --- | --- | --- |
-| `HEAP_SLOT_BATTLE_SHEET` | 41 | a small sheet of its own, apart from the work block's `work->sheet`: one set of the ten mote pictures, the dots 1 by 2 to 10 by 20 pixels that particles are drawn as (`MOTE_SET_BYTES`), which most effects decode from `ParticleSpritesA` |
+| `HEAP_SLOT_BATTLE_SHEET` | 41 | a small sheet of its own, apart from the work block's `work->sheet`: one set of the ten mote pictures, the dots 1 by 2 to 10 by 20 pixels that particles are drawn as (`MOTE_SET_BYTES`), which most animations decode from `ParticleSpritesA` |
 | `HEAP_SLOT_BATTLE_ANIM` | 39 | the work block, `struct BattleAnimWork` |
 | `HEAP_SLOT_BATTLE_CANVAS` | 40 | the canvas (`CANVAS_BYTES`) |
 
 Releasing a heap block also releases every block allocated after it
 ([Runtime](../runtime/README.md)), so the three come back in the reverse of the
-order they were taken, and an effect must remove every callback (a function
-the scheduler calls once a frame) that reads them before it returns.
+order they were taken, and an animation must remove every task (a function
+the task runner calls once a frame) that reads them before it returns.
 
-While it runs, an effect also has the two blitter slots
+While it runs, an animation also has the two blitter slots
 (`HEAP_SLOT_RAM_CODE`, `HEAP_SLOT_RAM_CODE_2`) and the map grid [cell](../../glossary.md#cell) buffer,
 where the field keeps the running map's cells and which a battle doesn't need
 (`PARTICLES`), to itself, and frees the blitters before it returns.
@@ -186,19 +186,19 @@ spark scene at 201 to 205.
 | casting impacts | kinds 100 to 135 | `BattleAnim_RunCastingImpact`, given the kind less 100 |
 | ring and spark scenes | kinds 200 and up | through `BattleAnim_DispatchByIdRange` |
 
-### The presentation word
+### The animation word
 
 Each ability, ids 0 to 518, has a row in
 [`battle/actflags.tsv`](../battle/actflags.tsv) (`gAbilityAnimations`). Its
 `effect` and `flags` columns are two 16-bit numbers; its `ability` column is
 a label for readers that the build skips. When `BattleTurn_Build`
-(`battle/battle/plan.c`) plans an action, it copies the row into the plan's
+(`battle/battle/plan.c`) builds a turn, it copies the row into the turn's
 `animation` as one 32-bit number, `effect` in the low half, and the
-`STAGING_` macros in `battle/battle_internal.h` name its parts, bit by bit:
+`ANIM_` macros in `battle/battle_internal.h` name its parts, bit by bit:
 
 | Bits | Field | What it holds |
 | --- | --- | --- |
-| 0 to 11 | `ANIM_ID_MASK` | the effect kind, 0 for none |
+| 0 to 11 | `ANIM_ID_MASK` | the animation kind, 0 for none |
 | 12, 13 | `ANIM_VARIANT_MASK` | the variant, the ability's strength |
 | 14 | `ANIM_BY_ID_RANGE` | the kind goes to `BattleAnim_DispatchByIdRange` |
 | 15 | `ANIM_SUMMON` | the kind is a summon's scene, an `enum SummonAnimId` |
@@ -211,7 +211,7 @@ Ramses, a summon, reads `0x8001`: the scene `SUMMON_ANIM_RAMSES`. Meltdown,
 a weapon's unleash, reads `0x4079`: kind `0x79`, 121, dispatched by its
 range, which puts it among the casting impacts (100 to 135) as impact 21, `CASTING_IMPACT_IMPACT_MELTDOWN`.
 
-The plan changes the word in three cases:
+Building the turn changes the word in three cases:
 
 - a double or triple blow, an ability that strikes the target two or three
   times, raises the variant by the first target's number of blows less one;
@@ -226,16 +226,16 @@ among them the blessings, Astral Blast and Dragon Driver.
 
 ## The canvas
 
-Nearly everything an effect draws goes onto one small picture, the canvas,
+Nearly everything an animation draws goes onto one small picture, the canvas,
 which the hardware stretches over the whole battle.
 
-![Above, the canvas during Heat Wave: a picture 128 by 128 pixels where the effect draws its blaze. Each pixel holds a level on a ramp of 64 colours, from nothing, which is see-through, up to the brightest. Below, the screen at the same moment: the canvas is stretched to twice its width and blended over the battle, so the blaze crosses most of the screen and the battle shows through it.](https://alchemy.pascalpixel.com/illustrations/effect/canvas.svg)
+![Above, the canvas during Heat Wave: a picture 128 by 128 pixels where the animation draws its blaze. Each pixel holds a level on a ramp of 64 colours, from nothing, which is see-through, up to the brightest. Below, the screen at the same moment: the canvas is stretched to twice its width and blended over the battle, so the blaze crosses most of the screen and the battle shows through it.](https://alchemy.pascalpixel.com/illustrations/effect/canvas.svg)
 
 The canvas is only 128 pixels square, about half the screen's width. The
 hardware shows it twice as wide as it is, blended over the battle, so that
 fire and light glow on top of the fighters and the battlefield without hiding
 them. Each of its pixels holds not a colour but a level, a step on a ramp of
-colours the effect loads: level 0 is nothing, and the higher levels climb
+colours the animation loads: level 0 is nothing, and the higher levels climb
 towards the brightest colour. Heat Wave's ramp runs from dark red through
 orange to white; loading another ramp draws the same pictures in other
 colours.
@@ -255,7 +255,7 @@ x / 2 on the canvas. `BG2`'s scale (`REG_BG2PA`) counts in 256ths, so 256 is
 a scale of 1 (8.8 fixed point, written `Q_8_8(1)`), and its reference point
 (`REG_BG2X`) also counts in 256ths of a pixel.
 
-A level is an index into the palette ramp the effect has loaded into the first
+A level is an index into the palette ramp the animation has loaded into the first
 64 background colours. Level 0 is transparent to the transparent blitters, as
 colour 0 is to the hardware, and 63 is as high as adding and brightening go.
 Everything else on the screen, the battlefield, the fighters and the windows,
@@ -275,7 +275,7 @@ After each frame the canvas is copied to the screen, and then the game decides
 what the canvas keeps for the next frame: nothing, or a dimmer copy of what was
 there. Keeping a dimmer copy is how every spark and flame leaves a trail.
 
-![After the canvas is copied to the screen, the effect's transfer mode decides what the canvas keeps for the next frame. Four strips show a spark that has moved right for fifteen frames. Cleared, as Quake does, it leaves no trail. Halved each frame, as Heat Wave does, it leaves a short trail that is gone in six frames. Kept at three quarters, as the Djinn attacks do, the trail lasts twelve frames. Lowered by a fixed step of 4, as Drain does, the trail lasts sixteen frames and stays bright to the end.](https://alchemy.pascalpixel.com/illustrations/effect/trails.svg)
+![After the canvas is copied to the screen, the animation's transfer mode decides what the canvas keeps for the next frame. Four strips show a spark that has moved right for fifteen frames. Cleared, as Quake does, it leaves no trail. Halved each frame, as Heat Wave does, it leaves a short trail that is gone in six frames. Kept at three quarters, as the Djinn attacks do, the trail lasts twelve frames. Lowered by a fixed step of 4, as Drain does, the trail lasts sixteen frames and stays bright to the end.](https://alchemy.pascalpixel.com/illustrations/effect/trails.svg)
 
 Because a pixel is a level and not a colour, dimming is simple arithmetic on
 every byte of the canvas at once, with no bookkeeping for each spark. Halving
@@ -284,23 +284,23 @@ twelve, and lowering by a step of 4 in sixteen; a step lowers a bright pixel
 no faster than a dim one, so its trails stay bright the longest. Quake clears
 the canvas instead, since its pillars are drawn whole every frame.
 
-An effect never writes video memory itself. It draws a frame, then
+An animation never writes video memory itself. It draws a frame, then
 `ANIM_PRESENT_FRAME` sets `work->transferPending` and waits a frame. The
-scheduler callback `BattleAnim_ProcessPendingGraphicsTransfer`, which
+task `BattleAnim_ProcessPendingGraphicsTransfer`, which
 `ANIM_START_TRANSFER` adds, copies the canvas into character block 1 and then
 treats what is left in the canvas as `work->transferMode` says
 (`enum CanvasTransferMode`, in `battle/battle_effect_work.h`), with
 `work->transferValue` as its argument. Brightening raises level 0 as well, so
-it would fill the whole canvas, not only what was drawn; no effect sets
-`CANVAS_COPY_AND_BRIGHTEN`, and every transfer an effect starts copies,
+it would fill the whole canvas, not only what was drawn; no animation sets
+`CANVAS_COPY_AND_BRIGHTEN`, and every transfer an animation starts copies,
 clears, fades or darkens.
 
-The usual end of a canvas effect, `ANIM_FINISH_CANVAS`, removes the transfer
-callback before anything it reads is freed, then frees the two blitters and
+The usual end of a canvas animation, `ANIM_FINISH_CANVAS`, removes the transfer
+task before anything it reads is freed, then frees the two blitters and
 closes the layer (`BattleAnim_EndCanvasLayer`). A handler's comment mentions its
 ending only when it differs.
 
-Two kinds of effect use `BG1` as well. The beam sequences and the ring and
+Two kinds of animation use `BG1` as well. The beam sequences and the ring and
 spark scenes call `BattleAnim_SetupCanvasTileMap`, which shows the canvas on `BG1`
 at its own size instead of on `BG2`. The particle streams of Meteor and Outer
 Space (`BattleAnim_RunParticleStreams`, [`particle_streams.c`](parts/particle_streams.c))
@@ -320,22 +320,22 @@ the blended half-scale canvas on `BG2`.
 ## Particles
 
 Every spark, ember, mote and chip of rock is a particle: a point that moves a
-little each frame and has a picture drawn where it is. An effect keeps them in
+little each frame and has a picture drawn where it is. An animation keeps them in
 two pools of fixed size, so it never has to ask for more memory in the middle
 of an animation.
 
-![A particle is one spark, ember or shard: its position, its speed and one spare number for its life or picture. An effect has two fixed pools of them. Its own holds 64, and Heat Wave keeps a target's seven fireballs in the first seven. The second, 1,170 more, borrows the memory that holds the field's map grid, which the battle does not need while an effect plays. Heat Wave divides its first 1,024 into ranges: hit flashes, the forty sparks each hit throws, and the two trails each fireball leaves every frame; it leaves the rest unused. A finished particle's place is reused, so neither pool grows.](https://alchemy.pascalpixel.com/illustrations/effect/particles.svg)
+![A particle is one spark, ember or shard: its position, its speed and one spare number for its life or picture. An animation has two fixed pools of them. Its own holds 64, and Heat Wave keeps a target's seven fireballs in the first seven. The second, 1,170 more, borrows the memory that holds the field's map grid, which the battle does not need while an animation plays. Heat Wave divides its first 1,024 into ranges: hit flashes, the forty sparks each hit throws, and the two trails each fireball leaves every frame; it leaves the rest unused. A finished particle's place is reused, so neither pool grows.](https://alchemy.pascalpixel.com/illustrations/effect/particles.svg)
 
-The small pool belongs to the effect. The large one is borrowed: it is the
+The small pool belongs to the animation. The large one is borrowed: it is the
 memory that holds the field's map grid, which the battle does not need while an
-effect plays. Each effect divides the pools into ranges of its own (in Heat Wave,
+animation plays. Each animation divides the pools into ranges of its own (in Heat Wave,
 fireballs in the small pool and flashes, sparks and trails in the large one)
 and reuses a finished particle's place for the next, so a pool never grows.
 
 A particle is a `struct Particle`
 ([`effect_step.h`](../../include/field/effect_step.h)): a position and a
 velocity on three axes, in 16.16 fixed-point pixels (65,536 is one pixel), and
-one spare word, `variant`, that each effect uses for a life, a frame or a
+one spare word, `variant`, that each animation uses for a life, a frame or a
 picture. `ANIM_FREE_PARTICLES` marks particles free with a `variant` of -1,
 though some families mark them otherwise, as their own comments say.
 
@@ -345,7 +345,7 @@ address. The usable pool is its first 32 KB, 1,170 particles: `ewram.s`
 lays out 32 KB for `gMapGridCellBuffer` and then `gActorSpriteSlots`, so a
 particle past the 1,170th would overwrite the sprite slots. The symbol's
 declared size, 48 KB (1,755 particles), runs 16 KB past that, over
-`gActorSpriteSlots`. Each effect names its ranges of indices where it sets them up.
+`gActorSpriteSlots`. Each animation names its ranges of indices where it sets them up.
 `Particle_AdvanceWithGravity2D` and its 3D twin
 ([`positions.c`](parts/positions.c)) move particles under gravity, and
 `BattleUnit_ProjectToScreen` turns a battle position into a screen point.
@@ -374,7 +374,7 @@ ranges and the order of those draws is part of its output.
 
 ## Blitters
 
-Every picture an effect puts on the canvas is stamped there by a blitter, a
+Every picture an animation puts on the canvas is stamped there by a blitter, a
 small routine that copies a picture of a given size onto the canvas at a given
 point. How the picture combines with what is already there decides whether it
 covers, glows or adds light.
@@ -386,7 +386,7 @@ down (`COMPOSITE_FLIP_Y`) and trim it at the canvas's edges
 (`BLITTER_CLIP_X`, `BLITTER_CLIP_Y`); the modes are in
 `battle/battle_effect.h`. The game doesn't keep one routine that tests every
 option for every pixel: while it runs it writes a routine for exactly the
-combination an effect asks for, and the effect keeps the one or two it draws
+combination an animation asks for, and the animation keeps the one or two it draws
 with. [Design](#design) gives the likely reason.
 
 In the code, `BattleAnim_BuildBlitter` ([`blitter.c`](parts/blitter.c))
@@ -395,7 +395,7 @@ set, for exactly one combination of canvas size, mirroring, clip and mode
 while the game runs. It writes it into a heap slot, which the heap places in
 IWRAM, the small fast memory inside the processor, when it fits and
 in EWRAM otherwise. `ANIM_LOAD_BLITTER` builds one for the 128 by 128
-canvas. An effect usually holds its two as a `BlitterPair`, `[0]` in
+canvas. An animation usually holds its two as a `BlitterPair`, `[0]` in
 `HEAP_SLOT_RAM_CODE` and `[1]` in `HEAP_SLOT_RAM_CODE_2`;
 `BattleAnim_FetchRectangleBlitters` ([`mirrored_wall.c`](parts/mirrored_wall.c))
 builds the usual pair, clipped on all four sides, `[0]` using `BLITTER_MAX`
@@ -454,8 +454,8 @@ the result.
 
 ## Pictures
 
-The flames, rocks and sparks an effect stamps are small pictures kept in the
-game's data, packed, and unpacked into memory when the effect starts.
+The flames, rocks and sparks an animation stamps are small pictures kept in the
+game's data, packed, and unpacked into memory when the animation starts.
 
 ![Isaac casts Quake at Ivan: three pillars of brown rock capped with grey ground rise one after another under Ivan, Garet and Mia, throw Ivan and Garet high into the air and sink back into the floor, and each of them flashes white as they land.](https://alchemy.pascalpixel.com/abilities/quake.gif)
 
@@ -476,7 +476,7 @@ tiled canvas. The pictures are indexed PNGs in
 them, and `rock_wall.bitmap.lz`, its pixels LZ-packed; `rock_wall.s` joins
 them, palette first, as `BattleAnim_RockWallSheet`, and the `BattleAnim`
 group of the resource directory (`system/resource/directory.s`) gives it the
-id `ResourceId_RockWallSheet`. Effects ask for a picture by id, never by
+id `ResourceId_RockWallSheet`. Animations ask for a picture by id, never by
 label. `BattleAnim_RunQuake` ([`quake.c`](parts/quake.c)) loads it with
 `Resource_LoadAndDecompress`, whose two flags send the palette to the first 64
 background colours and the pixels to `work->sheet` at `QUAKE_WALL_CELLS`.
@@ -497,23 +497,23 @@ Since a pixel is only a level, nothing ties a picture to its colours. The
 rushing strikes ([`rushing_strike.c`](parts/rushing_strike.c)) load one burst
 and copy another sheet's palette over it, so four abilities draw the same
 burst in four colourings, and a picture drawn with `BLITTER_MAX` or
-`COMPOSITE_ADDITIVE` needs its levels in the ramp the effect loads. A fade
+`COMPOSITE_ADDITIVE` needs its levels in the ramp the animation loads. A fade
 draws from darker copies of a picture built before the first frame. A
 symmetric picture is stored as one half and mirrored.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
 | `work->sheet` | 27,008 bytes | the decoded pictures, before the scanline table |
-| `imageStorage` | 28,800 bytes | the whole of the sheet's storage, for an effect that builds no scanline table |
+| `imageStorage` | 28,800 bytes | the whole of the sheet's storage, for an animation that builds no scanline table |
 
 The scanline table after the sheet, `work->bg2xLines`, holds a `BG2X` value
 for each of the 160 screen lines, which an HBlank DMA
 (`BattleAnim_ArmBg2AffineHBlankDma`) writes line by line so that the
 canvas sways or ripples sideways. The rippling target motes, the streak
 volleys, Condemn, the gathering lights and the casting impacts are among
-the effects that build it.
+the animations that build it.
 
-## Effect families
+## Animation families
 
 Moves that look alike share one animation drawn with different settings. The
 simplest change only the strength; larger families have one function, a
@@ -560,16 +560,16 @@ than piece by piece in the code.
 
 ### The prelude
 
-Some effects can open with a Djinni appearing: sparks gather into its shape
+Some animations can open with a Djinni appearing: sparks gather into its shape
 and it sways for a moment before the attack plays.
 
-The effects that can open so (in `bind.c`, `burst_sequence.c`, `djinn_beams.c`,
+The animations that can open so (in `bind.c`, `burst_sequence.c`, `djinn_beams.c`,
 `projectiles.c` and `stat_change.c`) test `effect->prelude`, and when it is 1
 they first play `BattleAnim_RunDjinniEntrance`
 ([`projectiles.c`](parts/projectiles.c)): sparks gather into a Djinni that
 sways and, in its long form (`DJINNI_ENTRANCE_LONG`), bursts into motes. The
 entrance opens the canvas layer itself and returns with the layer still open
-and the canvas cleared, and the effect that follows draws on the same canvas.
+and the canvas cleared, and the animation that follows draws on the same canvas.
 
 ### Casting impacts
 
@@ -607,7 +607,7 @@ casting impacts: `BattleAnim_RunCastingImpact`
 `work->particles` holds the gathering sparks and then 32 scattering sparks
 whose `variant` is their life. The impact's own animation has
 `CASTING_IMPACT_IMPACT_PARTICLES`, 64 particles 16 KB into
-`Ram_MapGridCellBuffer`. An impact that hands over first removes its callbacks and
+`Ram_MapGridCellBuffer`. An impact that hands over first removes its tasks and
 releases the blitters the next runner replaces.
 
 Flint's impact, `CASTING_IMPACT_IMPACT_FLINT`, has no animation of its own, so
@@ -626,9 +626,9 @@ target.
 The four summons that need only one Djinni each show a small Djinni of their
 element and throw flames at the enemies, each in its own way.
 
-![The four summons that need one Djinni each draw a small Djinni of their element and throw flames at the enemies. Venus raises ten columns of flame from the ground, one every four frames, each bursting into motes. Mercury's Djinni circles and fires five flames across the screen, each shattering into motes five frames after it leaves. Mars flares an orb, its Djinni dives into the ground and nine flames erupt in a row while embers rise from them. Jupiter drops eight flameballs from the top right, one every four frames, each shattering into motes as it lands. The flames are the effect's own particles; the motes each flame breaks into take a block of 32 places in the borrowed pool. Each card plays the cast as the game draws it, aimed at three of the party standing in as enemies.](https://alchemy.pascalpixel.com/illustrations/effect/djinn-attacks.svg)
+![The four summons that need one Djinni each draw a small Djinni of their element and throw flames at the enemies. Venus raises ten columns of flame from the ground, one every four frames, each bursting into motes. Mercury's Djinni circles and fires five flames across the screen, each shattering into motes five frames after it leaves. Mars flares an orb, its Djinni dives into the ground and nine flames erupt in a row while embers rise from them. Jupiter drops eight flameballs from the top right, one every four frames, each shattering into motes as it lands. The flames are the animation's own particles; the motes each flame breaks into take a block of 32 places in the borrowed pool. Each card plays the cast as the game draws it, aimed at three of the party standing in as enemies.](https://alchemy.pascalpixel.com/illustrations/effect/djinn-attacks.svg)
 
-Unlike the other summons, these four are ordinary effect kinds,
+Unlike the other summons, these four are ordinary animation kinds,
 `BATTLE_ANIM_VENUS` to `BATTLE_ANIM_JUPITER`, in
 [`djinn_attacks.c`](parts/djinn_attacks.c), not scenes. Each draws its small
 Djinni on the canvas and throws its flames: `VENUS_COLUMNS` rising from the
@@ -658,19 +658,19 @@ the damage.
 ![Judgment's scene runs in two parts, each with its own frame count. The gathering lasts 160 frames: motes close in on Judgment and a burst grows and throws shards. The sweep then shows an aerial view for 150 frames, a beach for 64, a forest for 66, and the battle again for 40, with the damage shown 20 frames in. A or B skips ahead: the gathering ends at once, and the sweep jumps to its next view.](https://alchemy.pascalpixel.com/illustrations/effect/judgment.svg)
 
 Judgment's scene ([`judgment.c`](parts/judgment.c)) is outlined in
-[Battle](../../battle.md#effects). It runs in two parts, a gathering and a
+[Battle](../../battle.md#animations). It runs in two parts, a gathering and a
 sweep, each with its own frame clock. The gathering lasts
 `JUDGMENT_GATHER_FRAMES`: a projected formation of
 `JUDGMENT_FORMATION_OBJECTS` moves forward while rotating motes shrink in on
 its centre, a burst grows there and throws shards, and a ring of dimming motes
-spreads outward. The sweep lasts `JUDGMENT_SWEEP_FRAMES` and changes backdrop,
+spreads outward. The sweep lasts `JUDGMENT_SWEEP_FRAMES` and changes background,
 palettes and debris on set frames: an aerial view from frame 0, a beach from
 150, a forest from 214 and the battle again from 280; it shows the damage on
 frame 300. Throughout, expanding rings are drawn into a
 `JUDGMENT_WAVE_SIZE`-square wave picture kept in the work block.
 
 A or B skips ahead in both parts by different rules: the gathering ends at once
-after frame 4, while the sweep jumps to its next backdrop's frame.
+after frame 4, while the sweep jumps to its next background's frame.
 
 ![Isaac summons Judgment against Garet, Ivan and Mia: the screen goes dark, Judgment rises out of purple clouds and gathers light, a burst sweeps over an aerial view of hills, a beach and a forest, and the battle comes back as `Garet takes 405 damage!!!`, then Ivan 510 and Mia 367.](https://alchemy.pascalpixel.com/abilities/judgment.gif)
 
@@ -853,21 +853,21 @@ all 512.
 
 ## Design
 
-An effect is an ordinary function with its own frame loop, as the rest of the
+An animation is an ordinary function with its own frame loop, as the rest of the
 game is ([Engine](../../engine.md#waiting-and-tasks)). Its setup opens the
 canvas, builds the blitters, loads the pictures and places the particles; it
 runs a fixed number of frames; and it releases what the setup took. Within a
 frame, the steps run in a fixed order, each over its own range of frames, and
 the frame ends with `ANIM_PRESENT_FRAME`. The order is part of the output,
-as [Battle](../../battle.md#effects) explains. Cues on a single frame (a sound,
-a shake, a palette step) are tests of the frame number.
+as [Battle](../../battle.md#animations) explains. Whatever happens on a single
+frame (a sound, a shake, a palette step) is a test of the frame number.
 
 The entry point, not the handler, takes and frees the three heap blocks, so no
 handler allocates them and every handler starts from the same three. The cost
-is the rule that an effect removes its callbacks before it returns.
+is the rule that an animation removes its tasks before it returns.
 
 A blitter handles one of sixteen mirror and clip combinations in one of four
-modes, at the canvas size it was built for, and an effect builds only the one
+modes, at the canvas size it was built for, and an animation builds only the one
 or two it draws with. [XXX](../../glossary.md#xxx): likely generated because a single routine testing
 every option for every pixel would be too slow, and IWRAM too small to keep a
 routine for each combination; neither the code nor its comments say so.
@@ -877,8 +877,8 @@ brighten the whole canvas with byte arithmetic, which makes every trail die
 away at once with no bookkeeping per particle, and one picture can be drawn in
 another palette.
 
-The effects are one object, `effect.c`, written as parts. In the ROM the
-effect code is one unbroken stretch, as one source file compiles, and the
+The animations are one object, `effect.c`, written as parts. In the ROM the
+animation code is one unbroken stretch, as one source file compiles, and the
 tables follow it as separate data, so the source keeps one object. The parts
 are ours, cut where one family ends and the next begins; `effect.c`'s
 `#include` order is their order in the ROM, and its opening comment walks
@@ -890,12 +890,12 @@ through the shared machinery. Each part's first lines say what it holds
 Each function's small constant vectors are `static` variables inside it, and
 they sit in the ROM in the order of the functions that use them.
 
-## How effects fit with the rest of the game
+## How animations fit with the rest of the game
 
-The battle decides everything that matters to the rules before an effect
-starts: [Battles](../battle/README.md) works out the action's plan, its
-targets and its damage, and [Battle](../../battle.md#effects) stages the
-effect from the plan's `animation`. The effect only draws, and tells
+The battle decides everything that matters to the rules before an animation
+starts: [Battles](../battle/README.md) works out the turn, its
+targets and its damage, and [Battle](../../battle.md#animations) stages the
+animation from the turn's `animation`. The animation only draws, and tells
 the battle when to show the damage it has already worked out. While it draws,
 it borrows from the rest of the game: the heap's slots from
 [Runtime](../runtime/README.md), the map grid's cell buffer (see
@@ -907,7 +907,7 @@ same blitter builder also serves the battle's star field and
 ## Limits
 
 - The canvas is 128 by 128 pixels (`CANVAS_BYTES`).
-- `work->sheet` holds 27,008 bytes. An effect that does not use the scanline
+- `work->sheet` holds 27,008 bytes. An animation that does not use the scanline
   table after it (`bg2xLines`) may use up to 28,800 (`imageStorage`).
 - The work block has 64 particles. `PARTICLES` has 1,170 before
   `gActorSpriteSlots` and 1,755 in the 48 KB `ewram.s` gives `gMapGridCellBuffer`.
@@ -921,36 +921,36 @@ same blitter builder also serves the battle's star field and
 | --- | --- |
 | [`effect.c`](effect.c) | the compiled object: includes `effect_internal.h`, then every part in ROM order |
 | [`effect_internal.h`](effect_internal.h) | the includes, macros and helpers every part shares |
-| `parts/*.c` | the effects, in 66 parts |
-| [`effect_table.c`](effect_table.c) | the effects' tables in the order the code uses them (picture cells, sizes, offsets, frame lists) and the handler table |
+| `parts/*.c` | the animations, in 66 parts |
+| [`effect_table.c`](effect_table.c) | the animations' tables in the order the code uses them (picture cells, sizes, offsets, frame lists) and the handler table |
 | [`effect_bits.c`](effect_bits.c) | `gBattleAnim_BitOperands` |
 | [`battle_effect_composite.s`](battle_effect_composite.s), [`battle_effect_composite_color.s`](battle_effect_composite_color.s) | the template and fragments blitters are built from |
 
 The headers are in `include/unit/effect/`: [`effect.h`](../../include/unit/effect/effect.h)
-declares the functions and names the effect kinds, and `effect_table.h`
+declares the functions and names the animation kinds, and `effect_table.h`
 declares the tables. `struct BattleAnimArgs` and
 `struct BattleAnimWork` are in `include/battle/`. In
-`games/tbs/objects.tsv` the rows from `effect` on place the effect code, the
+`games/tbs/objects.tsv` the rows from `effect` on place the animation code, the
 template, the tables, the colour fragments and the bit operands, in that order.
 
 ## Words used here
 
-- **effect kind**: `effect->kind`, the number that picks which effect plays.
+- **animation kind**: `effect->kind`, the number that picks which animation plays.
   `enum BattleAnimId` names the handler table's kinds, `enum SummonAnimId`
   the summons' scenes and `enum CastingImpact` the casting impacts. It is not
   the ability kind.
-- **runner** and **mode**: a runner draws a family of effect kinds, and the
+- **runner** and **mode**: a runner draws a family of animation kinds, and the
   mode it is passed picks the member.
 - **variant**: `effect->variant`, the ability's strength, from
   `ANIM_VARIANT_BASIC`. A particle's `variant` is unrelated: its spare word.
 - **side**: `effect->side`, `ANIM_SIDE_PARTY` when the targets are the party
-  and `ANIM_SIDE_ENEMIES` when they are enemies. Effects mirror on it.
+  and `ANIM_SIDE_ENEMIES` when they are enemies. Animations mirror on it.
 - **sheet** and **cell**: a sheet is a decoded set of pictures in
   `work->sheet`, and a cell is a byte offset into it.
 - **level**: a pixel value, an index into a palette ramp.
 - **element**: where a function takes one, an `enum Element` value, from
   `ELEMENT_VENUS` to `ELEMENT_JUPITER`.
-- **prelude**: `effect->prelude`, 1 when an effect that tests it first plays
+- **prelude**: `effect->prelude`, 1 when an animation that tests it first plays
   [the prelude](#the-prelude).
 
 The same locals have the same names in every handler:
@@ -959,7 +959,7 @@ The same locals have the same names in every handler:
 | --- | --- |
 | `effect` | the `struct BattleAnimArgs *` the handler is passed |
 | `slots`, `cursor` | `&gHeapSlots[HEAP_SLOT_BATTLE_ANIM]`, and the pointer that walks from it to `work` and `canvas` (`ANIM_GET_SLOTS`) |
-| `work` | the effect's `struct BattleAnimWork` |
+| `work` | the animation's `struct BattleAnimWork` |
 | `canvas` | the canvas |
 | `sheet` | the decoded pictures, usually `work->sheet` |
 | `draw` | the `BlitterPair` it draws with |
@@ -968,7 +968,7 @@ The same locals have the same names in every handler:
 
 ## Function prefixes
 
-Functions are named `BattleEffect_` unless they act on one thing the engine names
+Functions are named `BattleAnim_` unless they act on one thing the engine names
 elsewhere, which keeps its own prefix. Helpers private to one part start with
 their family's name, like the `CastingImpact_` ones in `casting_impact.c`.
 Where a site keeps an unusual spelling to match, [Matching](../MATCHING.md)
@@ -976,16 +976,16 @@ lists it.
 
 | Prefix | What it acts on |
 | --- | --- |
-| `BattleEffect_` | the effects, their entry points, the canvas, blitters and pictures |
+| `BattleAnim_` | the animations, their entry points, the canvas, blitters and pictures |
 | `Camera_`, `Palette_`, `Graphics_`, `Display_`, `Resource_` | the engine's camera, palettes, graphics, display and resources |
-| `EffectStep_`, `EffectPosition_` | a particle, and a position an effect works out |
+| `Particle_`, `ScreenPoint_`, `Projection_` | a particle, and a screen point an animation works out |
 | `BattleUnit_` | a unit's height and place on screen |
 | `ObjectGroup_` | an actor's parts, their animation and their colour timers (`work->actorTimers`) |
 | `CastingImpact_` and other family names | helpers private to one part |
 
 ## Notes for contributors
 
-The tables are plain arrays, not `const`. The effect code reloads a table's
+The tables are plain arrays, not `const`. The animation code reloads a table's
 address each time it reads it, which is what the [compiler](../../glossary.md#the-compilers) produces for a
 plain array; with `const` it would keep the address instead, and the code
 would no longer be the game's.
@@ -994,7 +994,7 @@ would no longer be the game's.
 
 Each handler's comment says which abilities play it, in a fixed form a tool
 can read. The comment opens with a sentence saying what the player sees, then
-the reach line: the abilities whose rows reach it, and the effect each selects.
+the reach line: the abilities whose rows reach it, and the animation each selects.
 The docs build reads the line to put each ability's recording beside its
 handler and reports a line it cannot match:
 
@@ -1005,12 +1005,12 @@ handler and reports a line it cannot match:
 
 It starts with `Abilities: ` and ends with a full stop. Between them are one or
 more groups separated by `; `, each a list of ability names separated by `, `,
-then a space and the effect the group selects in parentheses. A name is
+then a space and the animation the group selects in parentheses. A name is
 written as the `ability` column of `actions.tsv` writes it, once in its group
 even where several rows share it (the three Fire Blessings). Where rows that
-share a name select different effects, like the two Blasts, the group's effect
-says which rows are meant. A group whose effect no row selects has `none` for
-its list. Names keep their rows' order, groups follow their effects' values,
+share a name select different animations, like the two Blasts, the group's animation
+says which rows are meant. A group whose animation no row selects has `none` for
+its list. Names keep their rows' order, groups follow their animations' values,
 `none` groups come last, and the line reads as its lines joined by single
 spaces:
 
@@ -1019,11 +1019,11 @@ spaces:
 /// (BATTLE_ANIM_HEARTRENDER).
 ```
 
-The effect is an enumerator, never a number, and its prefix says how it is
+The animation is an enumerator, never a number, and its prefix says how it is
 reached:
 
-- `BATTLE_EFFECT_` (`enum BattleAnimId`): a row of the handler table;
-- `SUMMON_EFFECT_` (`enum SummonAnimId`): a row with `ANIM_SUMMON`;
+- `BATTLE_ANIM_` (`enum BattleAnimId`): a row of the handler table;
+- `SUMMON_ANIM_` (`enum SummonAnimId`): a row with `ANIM_SUMMON`;
 - `CASTING_IMPACT_` (`enum CastingImpact`, in
   [`casting_impact.c`](parts/casting_impact.c)): a row with
   `ANIM_BY_ID_RANGE` and a kind from 100 to 135, the enumerator's value
@@ -1033,7 +1033,7 @@ reached:
   Psynergy, matched against the `type` column of `actions.tsv`, the form the
   [field Psynergy effects](../object/README.md) use.
 
-Anything else that reaches the handler (an item, another effect that hands
+Anything else that reaches the handler (an item, another animation that hands
 over to it) is a sentence in the next paragraph. A function no row reaches,
 such as a runner, has no reach line; its comment says what calls it.
 
@@ -1043,7 +1043,7 @@ A handler's name comes from the abilities that reach its kind, read from
 `actflags.tsv` and named as the English release names them; a runner is named
 from what it draws. The recordings come from
 [Alchemy Devtools](https://github.com/PascalPixel/alchemy-devtools#pictures),
-which plays an ability in a built tbs-en [edition](../../glossary.md#editions) over a plain grey backdrop.
+which plays an ability in a built tbs-en [edition](../../glossary.md#editions) over a plain grey background.
 The game pictures inside the illustrations are crops of those recordings and
 of renders of Quake, Heat Wave, Debilitate, Twin Beaks and Acid Bite over the
 battle's own background, and the small Djinn are their pictures in
@@ -1055,8 +1055,8 @@ Three handlers are unused, and are named from what they draw:
 `BattleAnim_RunUnusedOrbitingSpirals` (`planet_diver.c`),
 `BattleAnim_RunUnusedTriangleStrike` (`bind.c`) and
 `BattleAnim_RunUnusedSevereBlowLeap` (`thrash.c`). The handler table is reached
-only with a kind from an `actflags.tsv` row, through the plan's
-`animation`: the plan changes only the variant and the staging bits,
+only with a kind from an `actflags.tsv` row, through the turn's
+`animation`: building the turn changes only the variant and the staging bits,
 the auto battle passes kind 0, and a critical hit's offset applies only to
 plain attacks, which are dispatched by id range. No row names any of the three
 kinds. [The Lost Age](../../glossary.md#the-two-games) keeps the same three handlers at the same kinds, and its
@@ -1064,7 +1064,7 @@ row for Severe Blow names `BATTLE_ANIM_UNUSED_SEVERE_BLOW_LEAP`: there Severe Bl
 is the leap, where here it plays a casting impact.
 
 A plain attack's kind is 1 or 4 for the party (`BattleTurn_Build`) and
-1 to 5 for an enemy class (`sprites.tsv`), all by id range, so the beam
+1 to 5 for an enemy (`sprites.tsv`), all by id range, so the beam
 sequences play them. No ability uses the critical-hit effects
 (`ABILITY_EFFECT_CRITICAL_1_IN_64` to `ABILITY_EFFECT_CRITICAL_1_IN_4`), so
 only plain attacks score critical hits, and `ANIM_ID_CRITICAL_OFFSET`
@@ -1079,14 +1079,14 @@ nothing reads it. A particle's `variant` is each family's own, and each family
 says what it holds where it launches its particles.
 
 `work->sheet` and the scanline table share their storage with `imageStorage`,
-so an effect may decode a picture past `sheet` only when it doesn't build the
+so an animation may decode a picture past `sheet` only when it doesn't build the
 table. `casting_impact.c`, the one part that names both, keeps that rule:
 Mortal Danger and Asura decode their pictures from the start of the work
 block, Asura's reaching 27,648 bytes, past the table, and those two impacts
 alone skip building it.
 
-No effect uses `PARTICLES` past its first 32 KB, over `gActorSpriteSlots`: the
-largest range any effect reserves is 1,024 particles, 28 KB
+No animation uses `PARTICLES` past its first 32 KB, over `gActorSpriteSlots`: the
+largest range any animation reserves is 1,024 particles, 28 KB
 (`gathering_lights.c`, `helm_splitter.c`, `lobbed_shells.c`, `neptune.c`,
 `nereid.c`, `plasma.c`, `projectiles.c` and `target_strike.c`).
 

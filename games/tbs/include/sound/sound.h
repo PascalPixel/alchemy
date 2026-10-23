@@ -64,7 +64,7 @@ void Sound_Mixer(void);
 /// digits and a zero word, at the bottom of the frame-wait stack.
 extern s32 gBuildStamp[];
 /// Nonzero once SONG_FADE_OUT_BGM has started the music's fade; further fade
-/// cues are ignored until the next music clears it.
+/// songs are ignored until the next music clears it.
 extern u8 gBgmFadeRequested;
 /// Cleared by the audio test, SoundTest_Run (reached only
 /// through a sound far-call veneer), which restarts a 20-frame timer when it

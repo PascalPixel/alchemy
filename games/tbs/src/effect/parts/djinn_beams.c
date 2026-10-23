@@ -213,7 +213,7 @@ void BattleAnim_RunDjinnBeams(struct BattleAnimArgs *effect, s32 element) {
 
           if (frame > start + 88)
             width = 6 - (frame - start - 88) / 3;
-          // The glow's image counts from the effect's first frame, not the
+          // The glow's image counts from the animation's first frame, not the
           // column's: 1 and 2 by turns, four frames each.
           if (pic > 2)
             pic = (pic & 1) + 1;

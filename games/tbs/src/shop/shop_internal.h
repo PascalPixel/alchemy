@@ -99,7 +99,7 @@ enum SanctumSparkleState {
 };
 
 /// What the sanctum does for one party member; each kind picks the member's
-/// condition it needs, its fee and its cure (sanctum.c).
+/// status it needs, its fee and its cure (sanctum.c).
 enum SanctumService {
   SANCTUM_SERVICE_REVIVE,      ///< for a downed member (HP 0)
   SANCTUM_SERVICE_CURE_POISON, ///< for poison or deadly poison

@@ -1,7 +1,7 @@
 /// @file
-/// Field object events, movement, map drawing and map services.
+/// Objects, movement, map drawing and map services.
 
-/// Allocates the 64 sprites and their animation layers, loads the basic sprite
+/// Allocates the 64 sprites and their sprite anims, loads the basic sprite
 /// palettes and shadow tiles, and puts the tile uploader in RAM; `mode` picks
 /// EWRAM first on the world map.
 void ObjectSystem_ConfigureFar(s32 mode);
@@ -13,30 +13,30 @@ void Object_ApplyProjectedPlacementFar(struct Sprite *sprite,
                                        const struct SpritePlacement *position,
                                        const struct SpriteScale *scale,
                                        s32 facing);
-/// Starts animation `flags & 0x7f` on every layer of a sprite unless it plays
-/// it already; bit 7 keeps each layer's place and timer. Returns 0.
+/// Starts animation `flags & 0x7f` on every sprite anim of a sprite unless it
+/// plays it already; bit 7 keeps each anim's place and timer. Returns 0.
 s32 Sprite_StartAnimFar(struct Sprite *state, s32 flags);
 /// Creates a sprite for animation `id` with a VRAM cache entry for its tiles,
 /// or returns NULL when there's no room or the id has no image. The caller
 /// keeps it until Sprite_DestroyFar.
 struct Sprite *Sprite_CreateFar(s32 id);
-/// Gives back a sprite's VRAM cache entry and its four animation layers, then
+/// Gives back a sprite's VRAM cache entry and its four sprite anims, then
 /// zeroes it so it's free again.
 void Sprite_DestroyFar(struct Sprite *sprite);
-/// Adds a layer playing animation `id` to a sprite, in its first free layer of
-/// four. Returns the layer, 0 when no record is free, or -1 when all four are
+/// Adds a sprite anim playing animation `id` to a sprite, the first free one of
+/// four. Returns the anim, 0 when none is free, or -1 when all four are
 /// taken.
 s32 Sprite_AddAnimFar(struct Sprite *state, s32 id);
-/// Takes layer `handle` off a sprite and clears it; the battle's objects use it
-/// to drop an extra layer.
+/// Takes sprite anim `handle` off a sprite and clears it; the battle's objects
+/// use it to drop an extra one.
 void Sprite_RemoveAnimFar(struct Sprite *state, s32 handle);
-/// Zeroes one animation layer, which frees its record; NULL is ignored.
+/// Zeroes one sprite anim, which frees it; NULL is ignored.
 void SpriteAnim_ClearFar(struct SpriteAnim *layer);
-/// Starts animation `no` on one layer when the layer's metadata has it. Bit 7
+/// Starts animation `no` on one sprite anim when its metadata has it. Bit 7
 /// keeps the command cursor and timer, and unlike the sprite-wide form it stays
 /// part of the index.
 void SpriteAnim_StartFar(struct SpriteAnim *work, s32 no);
-/// Allocates the 64 field objects and registers their per-frame updates;
+/// Allocates the 64 objects and registers their per-frame updates;
 /// `mode` picks the battle's script-less motion and the world map's fixed
 /// camera.
 void ObjectSystem_InitializeFar(s32 mode);
@@ -61,7 +61,7 @@ void ObjectDispatch_StartMoveByKeysFar(struct DispatchObject *object);
 /// gGameState.movementMode is 2.
 void ObjectDispatch_StartKeyCheckFar(struct DispatchObject *object);
 #ifndef OWN_Object_CreateFar
-/// Creates a field object at (x, y, z) in 16.16 pixels, or returns 0 when none
+/// Creates an object at (x, y, z) in 16.16 pixels, or returns 0 when none
 /// is free (Object_CreateField). `id / 4096` is its enum ObjectCreateKind and
 /// the low 12 bits its sprite's animation id.
 struct Object *Object_CreateFar(s32 id, s32 x, s32 y, s32 z);
@@ -83,9 +83,9 @@ void SpriteDissolve_RunFar(u8 *obj);
 /// Dissolves `cnt` sprites together over 32 frames; the battle's staging uses
 /// it once a unit is off its lists.
 void SpriteDissolve_RunManyFar(u8 **table, s32 cnt);
-/// Loads layout `index` (metatiles, metatile behaviors, cells, tile animations,
-/// blend script, markers and graphics) and starts its layers scrolling.
-/// Returns 2.
+/// Loads layout `index` (metatiles, metatile behaviors, cells, tileset
+/// animations, blend script, treasure spots and graphics) and starts its layers
+/// scrolling. Returns 2.
 s32 MapGrid_LoadLayoutFar(s32 index);
 /// Sets up the world map's perspective view: the affine ground plane, its
 /// camera and projection, and its per-frame and HBlank updates. XXX: returns no
@@ -110,15 +110,15 @@ void ObjectDispatch_WaitForValue16Far(void *raw);
 /// it coasts to a stop there; within a pixel it arrives at once.
 void Object_SetMoveTargetFar(struct Object *object, s32 x, s32 y, s32 z);
 #endif
-/// Waits until a field object reaches its target, giving up after 600 frames
+/// Waits until an object reaches its target, giving up after 600 frames
 /// (ten seconds) with the object still moving.
 void Object_WaitForMoveFar(void *fieldObject);
 /// Puts the world map's default cells back after the still view and returns to
 /// the perspective view, without reloading the area's palette or tiles.
 void WorldMap_LoadDefaultCellsAndUpdateBlockFar(void);
 /// Plays a map edit sequence, as doors and other changing scenery are drawn:
-/// each record's metatile numbers go to the destination, then it waits that
-/// record's delay. Returns only when the sequence ends.
+/// each entry's metatile numbers go to the destination, then it waits that
+/// entry's delay. Returns only when the sequence ends.
 void MapGrid_PlayMetatileCopySequenceFar(u16 *command, s32 destination_x,
                                          u32 destination_y);
 /// Copies the metatile numbers of a rectangle of cells, keeping the
@@ -126,9 +126,9 @@ void MapGrid_PlayMetatileCopySequenceFar(u16 *command, s32 destination_x,
 /// comes before the size.
 void MapGrid_CopyMetatileIndicesRectFar(s32 sourceX, s32 sourceY, u32 dst_x,
                                         u32 dst_y, u32 width, u32 height);
-/// Restarts tile animation channel `no` by clearing its paused byte.
+/// Restarts tileset animation `no` by clearing its paused byte.
 void TilesetAnim_ResumeFar(u32 no);
-/// Pauses tile animation channel `no` by setting its paused byte.
+/// Pauses tileset animation `no` by setting its paused byte.
 void TilesetAnim_PauseFar(u32 no);
 /// Lets the map's blend script run again after BlendScript_SuspendFar.
 void BlendScript_ResumeFar(void);
@@ -182,7 +182,7 @@ void ObjectSystem_ResumeProjectionAndHideLayersFar(void);
 /// Returns -1 when the overhead layer's cell under `position`, its height
 /// taken off, is a wall (MB_WALL), else 0.
 s32 MapGrid_IsWallAtFar(struct WorldPosition *position);
-/// Adds a layer playing animation `no` to a one-sprite object's sprite; a
+/// Adds a sprite anim playing animation `no` to a one-sprite object's sprite; a
 /// negative `no` does nothing.
 void ObjectDispatch_RegisterChildMetadataFar(struct DispatchObject *object,
                                              s32 no);
@@ -192,11 +192,11 @@ void WorldMap_StartStillViewFar(void);
 /// Reloads the world map area's palette and tiles after the still view and
 /// returns to the perspective view.
 void WorldMap_LoadAreaGraphicsFar(void);
-/// Sets the colour mode (SpriteColorMode) of a one-sprite object's layers,
-/// except hidden ones.
+/// Sets the colour mode (SpriteColorMode) of a one-sprite object's sprite
+/// anims, except hidden ones.
 void Animation_ApplyChildValuesFar(struct DispatchObject *object, u32 val);
-/// Sets every layer of a sprite to colour mode `value`, skipping those drawn
-/// hidden (SPRITE_COLOR_HIDDEN), and marks the sprite for redrawing.
+/// Sets every sprite anim of a sprite to colour mode `value`, skipping those
+/// drawn hidden (SPRITE_COLOR_HIDDEN), and marks the sprite for redrawing.
 void Sprite_SetAnimColorModesFar(void *raw_parent, u32 value);
 /// Returns -1 when an object at `values` would overlap a solid object
 /// (OBJ_EVENT_SOLID), each radius less 2 pixels, else 0.
@@ -207,27 +207,27 @@ void MapGrid_SetShownLayersFar(u32 v);
 /// Returns how many frames the first `cnt` frames of animation `no` of `id`
 /// last, stopping at its first play, hold, jump or end command.
 s32 SpriteAnim_SumCommandLengthsFar(s32 id, u32 no, s32 cnt);
-/// Returns the world map's terrain behaviour at `position` and stores the
+/// Returns the world map's battle environment at `position` and stores the
 /// block's terrain kind in `terrain_kind`, for the world map's encounters.
 s32 WorldMap_GetBattleEnvironmentFar(struct WorldPosition *position,
                                      s32 *terrain_kind);
-/// Decodes the frames of animation `number` into resource slot `slot`'s
-/// `buffer`, remapping its colours for `variant` 1 to 5.
+/// Decodes the frames of animation `number` into sprite frame cache slot
+/// `slot`'s `buffer`, remapping its colours for `variant` 1 to 5.
 s32 SpriteFrameCache_LoadFar(u32 slot, u32 *buffer, s32 number, u32 variant);
 /// Writes `behavior` into the cell of `layer` under (x, y), given in 16.16
 /// pixels; before the map is set up it does nothing.
 void MapGrid_SetMetatileBehaviorAtFar(u32 layer, s32 x, s32 y,
                                       u32 collisionCode);
-/// Sets the timer step of a sprite's animated layers: 16 plays at normal
+/// Sets the timer step of a sprite's animated sprite anims: 16 plays at normal
 /// speed, 0 stops them.
 void Sprite_SetAnimSpeedFar(struct Sprite *group, s32 val);
 /// Remaps `cnt` bytes of `buf` in place through gRuntime_ByteRemapTable, as
 /// the command icons' colours are.
 void Runtime_RemapBytesByTableFar(u8 *buf, s32 cnt);
-/// Pauses the tile animations while a menu is open, unless the world map's
+/// Pauses the tileset animations while a menu is open, unless the world map's
 /// still view is shown.
 void TilesetAnim_SuspendAllFar(void);
-/// Restarts the tile animations when a menu closes, unless the world map's
+/// Restarts the tileset animations when a menu closes, unless the world map's
 /// still view is shown.
 void TilesetAnim_ResumeAllFar(void);
 /// Returns the first solid object an object at `values` would overlap, as

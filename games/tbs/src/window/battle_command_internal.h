@@ -146,7 +146,7 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *work,
 #define PSYNERGY_COST_SECOND_TILE 0xf01e
 #endif
 
-// The status screen's level label, after the member's name, in pixels.
+// The summary screen's level label, after the member's name, in pixels.
 #if (LANGUAGE == LANGUAGE_FRENCH)
 #define OWNER_STATUS_LEVEL_X 51
 #else
@@ -286,7 +286,7 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *work,
 #define ENTRY19_COMMAND_LABEL_WIDTH 8
 #endif
 
-/// OAM attribute bits a sprite output is created with: the size field of
+/// OAM attribute bits a window sprite is created with: the size field of
 /// attribute 1 (bits 30-31 of the first word). A square sprite of size 1 is
 /// 16x16 pixels, of size 2 32x32.
 #define OUTPUT_SIZE_16X16 0x40000000
@@ -342,11 +342,11 @@ enum BattleTargetHint {
   /// Cures poison (ABILITY_EFFECT_CURE_POISON): starts on a poisoned member.
   TARGET_HINT_CURE_POISON = 3,
   /// Cures what Restore cures (ABILITY_EFFECT_RESTORE): starts on a member
-  /// who has one of those ailments, and lists them.
+  /// who has one of those statuses, and lists them.
   TARGET_HINT_RESTORE = 4,
   /// Revives (Battle_IsReviveEffectFar): starts on a downed member.
   TARGET_HINT_REVIVE = 5,
-  /// Cures Restore's ailments, poison and the evil spirit, as Tonic does
+  /// Cures Restore's statuses, poison and the evil spirit, as Tonic does
   /// (ABILITY_EFFECT_CURE_ALL).
   TARGET_HINT_CURE_ALL = 6,
   TARGET_HINT_SET_DJINNI = 7 ///< setting a Djinni: "Set Djinni"
@@ -372,7 +372,7 @@ struct SelectionEntry {
 
 /// The command row's work block: the icons' shared palette, up to six icons,
 /// the label window, the pulsing icon's transform and the selection.
-/// BattleCommandRow_Run takes it from the alternate pool and frees it on
+/// BattleCommandRow_Run takes it from the EWRAM pool and frees it on
 /// return.
 struct SelectionWork {
   /// BG palette slots for the icons' 256-colour pixels, filled as each icon

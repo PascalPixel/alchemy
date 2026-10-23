@@ -14,7 +14,7 @@
 #include "cursor.h"
 
 /// A shop's work: its windows, the party members' icons, the stock, the cursor
-/// and its icons, and the particle effects.
+/// and its icons, and the field effect sprites.
 ///
 /// It is the HEAP_SLOT_MENU block, the same 0xa70 bytes as the field menu's
 /// work: Shop_InitializeWork takes and clears it as a shop, the inn,

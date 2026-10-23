@@ -1,12 +1,12 @@
 /// @file
 /// The window object: the UI windows drawn into a shared BG tilemap, the
-/// message channels that type text into them, the message decoder and the
-/// formatting behind it, the sprites (render outputs) that windows carry,
-/// icons, the selection screen and the option and system menus.
+/// text printers that type text into them, the message decoder and the
+/// formatting behind it, the sprites (window sprites) that windows carry,
+/// icons, the selection screen and the option and pause menus.
 ///
 /// Everything lives in one work block, struct WindowWork (heap slot
 /// HEAP_SLOT_WINDOW, reached as WINDOW_WORK): the tilemap, the window slots,
-/// three message channels, a pool of 64 render outputs and the decoded text.
+/// three text printers, a pool of 64 window sprites and the decoded text.
 ///
 /// window_internal.h holds what every part shares (includes, edition values
 /// and macros); the code is in the files under window/, included here in the

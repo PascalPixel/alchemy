@@ -40,7 +40,7 @@ void BattleAnim_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
   }
 }
 
-// The Djinn attacks. The folder README describes them under "Effect
+// The Djinn attacks. The folder README describes them under "Animation
 // families".
 
 #define MERCURY_FRAMES 96
@@ -326,7 +326,7 @@ void BattleAnim_RunJupiter(struct BattleAnimArgs *effect) {
 
 /// Decompresses a resource whose first 128 bytes may be a palette.
 ///
-/// Called by nearly every effect to load its pictures. Writes dst and, with
+/// Called by nearly every animation to load its pictures. Writes dst and, with
 /// copyPalette, the first 128 bytes of BG palette RAM.
 ///
 /// id: the resource.

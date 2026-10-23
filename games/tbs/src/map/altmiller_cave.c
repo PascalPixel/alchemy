@@ -49,7 +49,7 @@
 /// The rock puzzle keeps the rounds matched in gMapLocalState byte 0 and its
 /// state and the light at the top in struct RockPuzzle after it. Turning the
 /// leftmost rock and then the rightmost brings out the ring of five lights; the
-/// ring spins (AltmillerCave_SpinLights, a scheduler task) and stops with one
+/// ring spins (AltmillerCave_SpinLights, a task) and stops with one
 /// light at the top, and turning that light's rock spins it on to a different
 /// light. A wrong rock puts the lights away. The third match bursts the wall
 /// (AltmillerCave_ReleaseWallBurst). Coming up to the rocks from the pillar
@@ -685,7 +685,7 @@ static void AltmillerCave_PlaceLights(s32 angle) {
   } while (i < LIGHT_COUNT);
 }
 
-/// Scheduler task that spins the ring of lights: it speeds up, coasts, slows
+/// Task that spins the ring of lights: it speeds up, coasts, slows
 /// and stops with the chosen light at the top, which then pulses; a click
 /// (SE_135) sounds for each fifth of a turn.
 static void AltmillerCave_SpinLights(void) {
@@ -2315,7 +2315,7 @@ static void AltmillerCave_ReleaseWallBurst(void) {
   Engine_TaskWait(30);
   {
     s32 mode = 2;
-    // Walk the state bytes within the complete slot array representation.
+    // Walk the state bytes within the complete field effect sprite array.
     u8 *stateCursor =
         (u8 *)&effectWork->sprites + offsetof(struct FieldEffectSprite, state);
 

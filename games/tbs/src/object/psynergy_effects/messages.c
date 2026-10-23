@@ -5,11 +5,11 @@
 #include "../psynergy_effects_internal.h"
 
 #ifndef UBFIX
-/// The work slots from the window work's onward, seen as the window work and,
+/// The heap slots from the window work's onward, seen as the window work and,
 /// twelve slots on, the event work in HEAP_SLOT_FIELD.
 struct WorkPointers {
   u8 *window;
-  u8 *slotsBetween[11]; ///< the eleven work slots after the window work's
+  u8 *slotsBetween[11]; ///< the eleven heap slots after the window work's
   struct FieldWork *event;
 };
 #endif

@@ -2,7 +2,7 @@
 #define ALCHEMY_BATTLE_EVENT_H
 
 /// @file
-/// The battle event queue: the events BattlePlayback_Push queues and the
+/// The playback queue: the commands BattlePlayback_Push queues and the
 /// playback phases that play them.
 
 #include "edition.h"
@@ -11,27 +11,27 @@
 enum { BATTLE_PLAYBACK_CAPACITY = 64 };
 
 /// BattlePlaybackWork.phase: how far BattlePlayback_Run has got through the
-/// plan's targets. Its message phases (PLAY_MESSAGE and the like) are
+/// turn's targets. Its message phases (PLAY_MESSAGE and the like) are
 /// private to playback.c.
 enum BattlePlaybackPhase {
-  BATTLE_PLAYBACK_PHASE_IDLE = 0, ///< paused until the effect resumes it
+  BATTLE_PLAYBACK_PHASE_IDLE = 0, ///< paused until the animation resumes it
   BATTLE_PLAYBACK_PHASE_RESOLVE_TARGET =
-      1,                              ///< resolves the next target's events
-  BATTLE_PLAYBACK_PHASE_DISPATCH = 2, ///< plays the queued events in order
+      1,                              ///< resolves the next target's commands
+  BATTLE_PLAYBACK_PHASE_DISPATCH = 2, ///< plays the queued commands in order
   BATTLE_PLAYBACK_PHASE_READY = 4     ///< every target has been played
 };
 
-/// The battle event queue: up to 64 events, each an opcode (enum
+/// The playback queue: up to 64 commands, each an opcode (enum
 /// BattlePlaybackCommand) and one operand, in the order they play. It lives in
 /// BattleWork.playback.queue: BattlePlayback_Push appends to it and playback
 /// reads it.
 struct BattlePlaybackQueue {
   u8 opcodes[BATTLE_PLAYBACK_CAPACITY]; ///< enum BattlePlaybackCommand
-  /// Each event's operand: a unit, item or ability id, a number, a message or
+  /// Each command's operand: a unit, item or ability id, a number, a message or
   /// a sound.
   u32 operands[BATTLE_PLAYBACK_CAPACITY];
   s32 targetIndex; ///< the plan's next target to resolve
-  s32 count;       ///< events queued
+  s32 count;       ///< commands queued
 };
 
 STATIC_ASSERT(sizeof(struct BattlePlaybackQueue) == 0x148);
@@ -39,7 +39,7 @@ STATIC_ASSERT(offsetof(struct BattlePlaybackQueue, operands) == 0x040);
 STATIC_ASSERT(offsetof(struct BattlePlaybackQueue, targetIndex) == 0x140);
 STATIC_ASSERT(offsetof(struct BattlePlaybackQueue, count) == 0x144);
 
-/// The battle events BattlePlayback_Push queues, each with one operand, for
+/// The playback commands BattlePlayback_Push queues, each with one operand, for
 /// BattlePlayback_Run (or BattlePlayback_RunAll) to play in order. The
 /// names, numbers and messages build what the player reads: the arguments
 /// first, then the message that shows them.

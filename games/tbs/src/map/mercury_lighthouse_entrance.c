@@ -71,7 +71,7 @@
 /// and the two from the twin pools, and
 /// MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_HOLE); elsewhere
 /// they are black until then. The lights the leader carries come back from
-/// their work slot (common/mercury_lighthouse_lights.h) on a return after a
+/// their heap slot (common/mercury_lighthouse_lights.h) on a return after a
 /// battle. MERCURY_LIGHTHOUSE_ENTRANCE_DRY_FOUNTAIN_FROM_CHEST_FOUNTAIN,
 /// MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_NORTHEAST and
 /// MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_EAST_NORTHEAST

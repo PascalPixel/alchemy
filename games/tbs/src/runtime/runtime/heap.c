@@ -1,15 +1,15 @@
 /// @file
-/// The heap: its two bump allocators and named slots.
+/// The heap: its two bump allocators and heap slots.
 // Part of runtime.c.
 
 #include "../runtime_internal.h"
 
 // The heap: two bump allocators, one in IWRAM up to Ram_IwramHeapEnd and one
-// in EWRAM up to its end (0x02040000), and 62 named slots for long-lived
+// in EWRAM up to its end (0x02040000), and 62 heap slots for long-lived
 // blocks (enum HeapSlot). Nothing is freed one block at a time.
 
 /// Empties the heap: clears the 64 words of gHeapSlots (both pool pointers and
-/// every named slot) and sets the pools' next addresses to gIwramHeap and
+/// every heap slot) and sets the pools' next addresses to gIwramHeap and
 /// gEwramHeap. Called by System_Initialize, by Game_Run and by
 /// the debug modes that start over, so every earlier block is forgotten.
 void InitHeap(void) {
@@ -115,8 +115,8 @@ void *AllocHeapSlotEwram(s32 kind, s32 size) {
   return (void *)cachedAddress;
 }
 
-/// Allocates `size` bytes (rounded up to words) with no slot, from IWRAM when
-/// they fit and EWRAM otherwise, and advances that pool's next address.
+/// Allocates `size` bytes (rounded up to words) with no heap slot, from IWRAM
+/// when they fit and EWRAM otherwise, and advances that pool's next address.
 /// Returns NULL when neither has room. Called for short-lived buffers (decode
 /// buffers, RAM copies of code). The buffer is not cleared. Free(p) sets
 /// its pool's next address back to `p`, which also frees everything

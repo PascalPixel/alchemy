@@ -1,7 +1,6 @@
 /// @file
-/// The Battle Arena overlay: the lobby where linked and monster battles
-/// start, the exchange of the two parties, the attendant and the records of
-/// wins.
+/// The Battle Arena overlay: starting linked and monster battles, the exchange
+/// of the two parties, the attendant and the records of wins.
 
 #include "unit/import.h"
 #include "unit/menu/lobby.h"
@@ -71,11 +70,12 @@
 /// Frames, about fifteen seconds, for all four records received.
 #define LOBBY_RECEIVE_TIMEOUT_FRAMES 900
 /// Frames without a link (BattleArena_PollPeerReady) or without the partner's
-/// request (BattleArena_EnterBattle) before the lobby gives the partner up.
+/// request (BattleArena_EnterBattle) before the Battle Arena gives the partner
+/// up.
 #define LOBBY_PEER_WAIT_FRAMES 25
 
-// The lobby's flags, besides FLAG_MONSTER_BATTLE, FLAG_LINK_BATTLE and the two
-// byte flags flags.h names:
+// The Battle Arena's flags, besides FLAG_MONSTER_BATTLE, FLAG_LINK_BATTLE
+// and the two byte flags flags.h names:
 // FLAG_MAP_TEMP_00: the attendant has asked the player to take part; every
 //   300th call of BattleArena_PromptToParticipate clears it, to ask again.
 // FLAG_MAP_TEMP_01: the linked partner has asked for a battle: its
@@ -183,14 +183,14 @@ enum BattleArenaSlot {
   LOBBY_SLOT_ALONE = 5
 };
 
-/// The lobby's raised events (EventWork.raisedEvent).
+/// The Battle Arena's raised events (EventWork.raisedEvent).
 enum BattleArenaRaisedEvent {
   LOBBY_EVENT_NONE = 0,
   LOBBY_EVENT_PROMPT = 1,      ///< BattleArena_PromptToParticipate
   LOBBY_EVENT_DISCONNECTED = 2 ///< BattleArena_ReportDisconnection
 };
 
-/// gGameState.linkTallies, as the lobby keeps them.
+/// gGameState.linkTallies, as the Battle Arena keeps them.
 enum LinkTally {
   LINK_TALLY_MONSTER_WINS = 0,
   LINK_TALLY_MONSTER_LOSSES = 1,
@@ -206,8 +206,8 @@ enum LinkTally {
 #define PEER_TAG(a, b, c, d) ((a) | ((b) << 8) | ((c) << 16) | ((d) << 24))
 
 // clang-format off
-/// The words the lobby publishes in its link payload, by slot; the partner
-/// compares them with its own (BattleArena_PeerSlotMatches), by enum
+/// The words the Battle Arena publishes in its link payload, by slot; the
+/// partner compares them with its own (BattleArena_PeerSlotMatches), by enum
 /// BattleArenaSlot. The signature is in the first column (gBattleArena_SlotColumns),
 /// the states in the second. In English and French LOBBY_SLOT_ALONE equals the
 /// signature; elsewhere it is the signature's letters reversed, which the
@@ -246,9 +246,9 @@ const s32 gBattleArena_SlotValues[] = {
 
 #undef PEER_TAG
 
-/// A console's link payload as the lobby reads it from gLinkPeerSignatures:
-/// values[0] is its signature word and values[1] its state word
-/// (gBattleArena_SlotValues, placed by gBattleArena_SlotColumns).
+/// A console's link payload as the Battle Arena reads it from
+/// gLinkPeerSignatures: values[0] is its signature word and values[1] its state
+/// word (gBattleArena_SlotValues, placed by gBattleArena_SlotColumns).
 struct LinkPeer {
   s32 values[6]; ///< the payload's words; only 0 and 1 are read here
 };
@@ -257,8 +257,8 @@ struct LinkPeer {
 /// linked.
 static s32 sBattleArenaWaitFrames;
 
-/// What a lobby handler's early exit returns. The ROM's s32 handlers return
-/// nothing there, leaving whatever the last call put in r0 (UB); UBFIX
+/// What a Battle Arena handler's early exit returns. The ROM's s32 handlers
+/// return nothing there, leaving whatever the last call put in r0 (UB); UBFIX
 /// returns 0, as the function ends that fall off do.
 #ifdef UBFIX
 #define LOBBY_NO_RESULT 0
@@ -266,11 +266,11 @@ static s32 sBattleArenaWaitFrames;
 #define LOBBY_NO_RESULT
 #endif
 
-/// The lobby's warp destinations, which Map_Run reads through
+/// The Battle Arena's warp destinations, which Map_Run reads through
 /// entry/lobby.s.
 u8 *BattleArena_GetWarpDests(void) { return (u8 *)gBattleArenaWarpDests; }
 
-/// The warp regions entry: the lobby has no warp boxes.
+/// The warp regions entry: the Battle Arena has no warp boxes.
 s32 MapData_ReturnZero(void) { return 0; }
 
 /// Restarts the link with interrupts locked: removes the serial and timer 3
@@ -352,12 +352,12 @@ static void BattleArena_WriteSlotValue(s32 slot) {
   dst[gBattleArena_SlotColumns[slot]] = *src;
 }
 
-// The scheduler ignores this result. Keep the native status calculation in
+// The task runner ignores this result. Keep the native status calculation in
 // matching builds: making the function void removes eight instructions. The
-// modern build uses the scheduler's actual callback type to avoid an
+// modern build uses the task's actual function type to avoid an
 // incompatible indirect call.
 #ifdef UBFIX
-/// The scheduler callback that watches the partner each frame in the lobby.
+/// The task that watches the partner each frame in the Battle Arena.
 /// It forgets the partner after LOBBY_PEER_WAIT_FRAMES without a link, keeps
 /// FLAG_MAP_TEMP_01 current, raises LOBBY_EVENT_PROMPT once both
 /// sides agree and LOBBY_EVENT_DISCONNECTED when the
@@ -499,7 +499,7 @@ static s32 BattleArena_ReportDisconnection(void) {
 /// side's (Djinn_GetRecoveryTable(1)). Each name gets the edition's
 /// MsgEnemyLabel ("Enemy" in English) in front, within the 14 letters a
 /// Unit name holds. Returns how many records hold a member, or -1 when
-/// a transfer fails, overruns or runs out of time. The alternate-pool buffer
+/// a transfer fails, overruns or runs out of time. The EWRAM pool buffer
 /// it allocates and frees is never written: the records are received in
 /// place.
 static s32 BattleArena_ReceivePartyRecords(void) {
@@ -673,10 +673,10 @@ static s32 BattleArena_CopyPartyOwnerIds(u16 *ownerIds) {
 /// Sends the party's first three members' records, marked side 2
 /// (BATTLE_SIDE_PARTY), and for a smaller party absent records, copies of
 /// the last member marked side 0. Then sends this side's Djinn recovery
-/// table, rewritten for the partner: each entry's owner becomes the number
+/// table, rewritten for the partner: each entry's member becomes the number
 /// the partner gives that member (0x80 plus its place), and the entries of
 /// members not sent are dropped. Returns 0, or -1 when a send fails or runs
-/// out of time. The copies go through an alternate-pool buffer freed before
+/// out of time. The copies go through an EWRAM pool buffer freed before
 /// returning.
 static s32 BattleArena_SendPartyRecords(void) {
   // Measured plain form: replacing only the final offer-transfer wait3/test3
@@ -783,8 +783,8 @@ next:
     list = &((struct DjinnRecoveryTable *)heap)->list;
     tries = 0;
     timeout = LOBBY_SEND_TIMEOUT_FRAMES;
-    // Give each Djinni on the list its owner's number on the partner's side,
-    // and drop those of members not sent (peerSlots 0).
+    // Give each Djinni on the list its member's number on the partner's
+    // side, and drop those of members not sent (peerSlots 0).
     for (j = 0; j < list->count; j++) {
       list->entries[j].unitId = peerSlots[list->entries[j].unitId];
       if (list->entries[j].unitId == 0) {
@@ -875,9 +875,10 @@ check:
 /// the partner withdraws, the link is lost, or the partner neither asks nor
 /// stands in the circle for LOBBY_PEER_WAIT_FRAMES. The leader then walks in
 /// while the parties are exchanged; a failed exchange walks back, restarts the
-/// lobby's polling and raises LOBBY_EVENT_DISCONNECTED. Sets where the battle
-/// returns to (warp destinations 8 and 9 for a monster battle, 10 and 11 for a
-/// linked one) and requests it. The original returns have no defined status.
+/// Battle Arena's polling and raises LOBBY_EVENT_DISCONNECTED. Sets where the
+/// battle returns to (warp destinations 8 and 9 for a monster battle, 10 and 11
+/// for a linked one) and requests it. The original returns have no defined
+/// status.
 static s32 BattleArena_EnterBattle(void) {
   struct EventWork *work;
   s32 failed;
@@ -945,7 +946,7 @@ static s32 BattleArena_EnterBattle(void) {
     // + 0x8000) hands them to Battle_Run, which copies them back.
     savedWork = AllocHeapSlotEwram(HEAP_SLOT_ENEMY_UNITS, 0x7c8);
     Engine_TaskRemoveCallback((TaskFunc)BattleArena_PollPeerReady);
-    // Run the map's tile animation channel 5 for eight frames.
+    // Run the map's tileset animation 5 for eight frames.
     TilesetAnim_Resume(5);
     Engine_TaskWait(8);
     TilesetAnim_Pause(5);
@@ -968,8 +969,8 @@ static s32 BattleArena_EnterBattle(void) {
       Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
       ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x1999, 0xccc);
       Engine_ObjectEventWalkTo(LOCALID_PARTY_LEADER, 216, 168);
-      // A failed exchange: walk back out and return to the lobby, reporting
-      // the link lost (LOBBY_EVENT_DISCONNECTED).
+      // A failed exchange: walk back out and return to the Battle Arena,
+      // reporting the link lost (LOBBY_EVENT_DISCONNECTED).
       if (BattleArena_ExchangePartyRecords() < 0) {
         ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x10000, 0x8000);
         Engine_ObjectEventWalkTo(LOCALID_PARTY_LEADER, 216, 200);
@@ -1282,7 +1283,7 @@ static s32 BattleArena_PartyContains(s32 ownerId) {
   return 0;
 }
 
-/// UNUSED: the original empty lobby callback.
+/// UNUSED: the original empty Battle Arena callback.
 UNUSED static void State_NoOp(void) {}
 
 /// Talking to Garet, Ivan, Mia or Jenna, who speaks of the last linked battle
@@ -1329,7 +1330,7 @@ static s32 BattleArena_TalkByProgress(s32 localId) {
 }
 
 /// Coord event 1, the way out: stops the link, loads sound preset 2 and goes
-/// back to the file select screen (its warp destination
+/// back to the main menu (its warp destination
 /// MAIN_MENU_FROM_SANCTUM).
 static s32 BattleArena_LeaveArena(void) {
   SerialRuntime_RemoveIrqHandlers();
@@ -1493,10 +1494,10 @@ static s32 BattleArena_DrawThreeDigitValue(s32 value) {
 }
 
 /// The overlay's initialize entry, run on every arrival: settles the battle
-/// that brought the party here and restarts the lobby's polling. Warp
+/// that brought the party here and restarts the Battle Arena's polling. Warp
 /// destination 8 is a monster battle won, 9 one lost, 10 a linked battle won
 /// (or broken off, FLAG_MAPSEC_TEMP_E8) and 11 one lost; any other warp
-/// destination (BATTLE_ARENA_FROM_MAIN_MENU, from the file select screen)
+/// destination (BATTLE_ARENA_FROM_MAIN_MENU, from the main menu)
 /// restarts the link. Updates gGameState.linkTallies, saves after linked
 /// battles and new monster records, and restores the party's HP, PP and Djinn
 /// unless a monster series goes on. Returns 0.
@@ -1517,7 +1518,7 @@ s32 BattleArena_RunRoundResult(void) {
   TilesetAnim_Pause(5);
 
   // The payload's halfwords 4 to 7 hold the link battle's phase word
-  // ("VSST", "EDVS", "TUrn"); the lobby puts TALK there.
+  // ("VSST", "EDVS", "TUrn"); the Battle Arena puts TALK there.
   {
     u16 *name = (u16 *)gSerialTransfer.payload;
 
@@ -1669,7 +1670,7 @@ s32 BattleArena_RunRoundResult(void) {
     Engine_GameFlagSet(FLAG_MAPSEC_TEMP_04);
     Engine_GameFlagClear(FLAG_MAPSEC_TEMP_05);
     Engine_ScriptEnd();
-    // Arriving from the file select screen: start the link, clear
+    // Arriving from the main menu: start the link, clear
     // FLAG_LINK_BATTLE_ARRANGED and reset the monster level. Idle sleep is
     // turned off here, with a note when it was on.
   } else {
@@ -1709,7 +1710,7 @@ u8 gBattleArena_SlotColumns[] = {
     0, 1, 1, 1, 1, 0, 0, 0,
 };
 
-/// Where the party appears: BATTLE_ARENA_FROM_MAIN_MENU from the file select screen,
+/// Where the party appears: BATTLE_ARENA_FROM_MAIN_MENU from the main menu,
 /// 8 and 9 after a monster battle won or lost, 10 and 11 after a linked one
 /// (BattleArena_EnterBattle).
 struct MapWarpDest gBattleArenaWarpDests[] = {

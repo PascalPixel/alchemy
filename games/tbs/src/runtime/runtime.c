@@ -1,7 +1,7 @@
 /// @file
 /// The runtime object: what every other part of the game stands on. Power-up
 /// and the interrupt handlers, the frame wait and VBlank, input, the register
-/// write queue, fades, the sprite lists and VRAM cache, the task scheduler,
+/// write queue, fades, the sprite lists and VRAM cache, tasks,
 /// maths, debug text, the heap, the 3D transform, saving and the link cable.
 ///
 /// runtime_internal.h holds what every part shares (its includes); the code

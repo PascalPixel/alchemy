@@ -63,9 +63,9 @@ s32 BattleFormation_AverageLevel(s32 recordId) {
   return levelTotal / enemyCount;
 }
 
-/// A formation that may be chosen for the party's level: its record and its
+/// A formation that may be chosen for the party's level: its row and its
 /// enemies' average level. BattleFormation_SelectLevelMatchedCandidate keeps
-/// a pool of 32 in a 128-byte alternate-pool block, freed before it returns.
+/// a pool of 32 in a 128-byte EWRAM pool block, freed before it returns.
 struct FormationCandidate {
   s16 recordId; ///< the formation's row
   s16 score;    ///< its average level (BattleFormation_AverageLevel); -1 empty
@@ -73,7 +73,7 @@ struct FormationCandidate {
 
 /// A copy of a unit's base stats, from baseHp to its element stats, kept
 /// while its level is adjusted: BattleEnemy_AdjustLevel takes it from the
-/// alternate pool, reads only the stats it changes, for their 70 percent
+/// EWRAM pool, reads only the stats it changes, for their 70 percent
 /// floors, and frees it before returning.
 struct BattleBaseStats {
   s16 baseHp;
@@ -446,9 +446,9 @@ s32 BattleFormation_GetRandomMember(s32 recordId) {
 /// there are.
 /// Each member comes its minimum number of times, plus a random number more
 /// up to its maximum while the six sprite slots hold them (a large enemy
-/// takes two). The formation's battle type orders them: shuffled kinds, each
+/// takes two). The formation's layout orders them: shuffled kinds, each
 /// kind together (FORMATION_LAYOUT_SHUFFLED), interleaved at random
-/// (FORMATION_LAYOUT_INTERLEAVED), or in the record's order. Under
+/// (FORMATION_LAYOUT_INTERLEAVED), or in the row's order. Under
 /// FLAG_MONSTER_BATTLE the formation is chosen for the party's level instead,
 /// and each enemy raised to it. An empty or out-of-range formation becomes
 /// formation 1. Called once by Battle_Run. Fills the enemy units

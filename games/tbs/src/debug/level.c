@@ -129,7 +129,7 @@ u8 *IncreaseItemAndLevel_GetEvents(void) {
   return (u8 *)gIncreaseItemAndLevel_Events;
 }
 
-/// Raises one owner's level by amount, then recalculates that unit.
+/// Raises one member's level by amount, then recalculates that unit.
 static void IncreaseItemAndLevel_AdjustOwnerLevel(s32 ownerId, s32 amount) {
   struct Unit *unit = Unit_Get(ownerId);
 
@@ -137,7 +137,7 @@ static void IncreaseItemAndLevel_AdjustOwnerLevel(s32 ownerId, s32 amount) {
   Unit_Calculate(ownerId);
 }
 
-/// Applies the level change to the owners returned by the active-party service
+/// Applies the level change to the members returned by the active-party service
 /// (FieldParty_ListMembers): every member of the party.
 static void IncreaseItemAndLevel_AdjustPartyLevels(s32 amount) {
   u16 ownerIds[16];
@@ -155,7 +155,7 @@ static void IncreaseItemAndLevel_AdjustPartyLevels(s32 amount) {
   }
 }
 
-/// Displays the selected owner's level and changes all active owners.
+/// Displays the selected member's level and changes the whole party.
 /// B closes the window and recalculates the original four heroes. Talking to
 /// LOCALID_LEVEL_EDITOR: under `Raise everyone's level.` it shows the leader's
 /// name and level; Start or Select raises the whole party five levels with

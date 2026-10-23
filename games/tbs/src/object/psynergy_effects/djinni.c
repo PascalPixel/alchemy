@@ -1,5 +1,6 @@
 /// @file
-/// A Djinni's hop before its battle, joining the party, the effect slots.
+/// A Djinni's hop before its battle, joining the party, the field effect
+/// sprites.
 // Part of psynergy_effects.c.
 
 #include "../psynergy_effects_internal.h"
@@ -46,7 +47,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   WaitFrames(10);
   // Sprite priority 0, over every background, until the end. With
   // OBJ_EVENT_FACES_MOTION off it keeps facing the leader as it hops away, and
-  // with motionFlags bit 1 alone it falls without following the terrain.
+  // with motionFlags bit 1 alone it falls without following the ground.
   djinni->sprite->image.priority = 0;
   djinni->facing = back;
   ObjectEvent_GetById(djinniId)->steeringFlags &= ~1;
@@ -209,7 +210,7 @@ void ObjectEvent_PlaceMapObjectEvents(void) {
         if (object == NULL)
           continue;
         // Without DJINN_NO_HOP, back at its template's position in a new object
-        // event's ground state: no ground height yet, following the terrain and
+        // event's ground state: no ground height yet, following the ground and
         // falling.
         if (flags == 0) {
           object->groundHeight = flags;
@@ -292,14 +293,15 @@ void Djinn_ResolvePendingEvent(s32 shown) {
   gGameState.pendingDjinnEvent = 0;
 }
 
-/// Scheduler callback: updates the 24 effect slots.
+/// Task: updates the 24 field effect sprites.
 void FieldEffect_UpdateAllSlots(void) { FieldEffect_UpdateEffectSlots(); }
 
-/// Allocates and clears the effect slots (HEAP_SLOT_FIELD_EFFECT) and starts
-/// their update callback. The block is a whole effect scene, gFieldEffectWork,
-/// the slot a Psynergy effect's scene also takes. Called by the Djinn joining
-/// effects (jupiter.c, mars.c, venus.c and mercury.c) and Altmiller Cave's map
-/// script; each ends with FieldEffect_ClearActiveSlotsAndScheduleUpdates.
+/// Allocates and clears the field effect sprites (HEAP_SLOT_FIELD_EFFECT) and
+/// starts their update callback. The block is a whole effect scene,
+/// gFieldEffectWork, the slot a Psynergy effect's scene also takes. Called by
+/// the Djinn joining effects (jupiter.c, mars.c, venus.c and mercury.c) and
+/// Altmiller Cave's map script; each ends with
+/// FieldEffect_ClearActiveSlotsAndScheduleUpdates.
 void FieldEffect_InitializeSlots(void) {
   void *work;
 
@@ -309,9 +311,9 @@ void FieldEffect_InitializeSlots(void) {
   Task_Add(FieldEffect_UpdateAllSlots, 3200);
 }
 
-/// Stops the effect slots: removes their callback, frees every slot still in
-/// use and releases their heap block, gFieldEffectWork with it. Then waits a
-/// frame. Pairs with FieldEffect_InitializeSlots.
+/// Stops the field effect sprites: removes their callback, frees every slot
+/// still in use and releases their heap block, gFieldEffectWork with it. Then
+/// waits a frame. Pairs with FieldEffect_InitializeSlots.
 void FieldEffect_ClearActiveSlotsAndScheduleUpdates(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct FieldEffectSprite *effect;
@@ -342,10 +344,10 @@ enum DjinniLightState {
   DJINNI_LIGHT_DONE = 4      ///< frees its slot
 };
 
-/// Effect slot callback of a Jupiter Djinni's light particles: each circles
-/// its centre while it widens for 60 frames, circles 40, drifts toward a point
-/// 20 pixels over the leader for 40, closes in for 60 and is freed. It turns
-/// 1/32 turn a frame throughout, and its radius grows, then shrinks, by 1
+/// Field effect sprite callback of a Jupiter Djinni's light particles: each
+/// circles its centre while it widens for 60 frames, circles 40, drifts toward
+/// a point 20 pixels over the leader for 40, closes in for 60 and is freed. It
+/// turns 1/32 turn a frame throughout, and its radius grows, then shrinks, by 1
 /// pixel a frame. The slot's origin is the centre, in screen coordinates
 /// (Camera_WorldToScreen).
 void FieldEffect_RunAngledApproachPhases(struct FieldEffectSprite *particle) {

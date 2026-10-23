@@ -30,13 +30,13 @@ struct ObjectEvent;
 struct FieldPosition;
 struct MenuSprite;
 
-/// Schedules `callback` under the task key `priority` (TASK_PRIORITY_MAP
+/// Adds `callback` as a task of priority `priority` (TASK_PRIORITY_MAP
 /// runs it every frame in the main loop pass), or gives the task already
-/// running it that key. Returns the slot it wrote, which the sort in the same
-/// call may already have moved, or -1 when all 20 task slots are taken. The
-/// map service layer's
-/// Task_AddCallback and FieldScheduler_AddOrUpdateCallback call it too, so
-/// overlays import the routine under one name.
+/// running it that priority. Returns the slot it wrote, which the sort in the
+/// same call may already have moved, or -1 when all 20 task slots are taken.
+/// The map service layer's Task_AddCallback and
+/// FieldScheduler_AddOrUpdateCallback call it too, so overlays import the
+/// routine under one name.
 static inline s32 FieldScheduler_AddCallback(TaskFunc callback, s32 priority) {
   return Task_Add(callback, priority);
 }
@@ -86,8 +86,8 @@ static inline s32 FieldUnit_AddHp(s32 owner, s32 delta) {
 }
 
 /// Decodes type-01 compressed data from `source` into `destination`. Maps
-/// and the title and clear menus reach the decoder through it; main-image code
-/// calls Decompress_Type01 without it, LuckyDice_Run through call.h's
+/// and the title screen and main menu reach the decoder through it; main-image
+/// code calls Decompress_Type01 without it, LuckyDice_Run through call.h's
 /// Value2.
 static inline s32 FieldResource_DecodeType01(const void *source,
                                              void *destination) {

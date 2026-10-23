@@ -9,18 +9,18 @@ a doorway, a random battle, the A button, the menu. Around that loop sit the
 things a map needs from one moment to the next: random battles, the people
 a map puts in it and what they say, items and [Psynergy](../../glossary.md#psynergy-and-pp) used outside a
 battle, the commands cutscenes are written in, [Djinn](../../glossary.md#djinn) joining the party, and
-the world map screen R brings up. The slot machine at Tolbi's spring is here
+the world map screen R brings up. Lucky Wheels, at Tolbi's spring, is here
 too, in another [bank](../../glossary.md#bank).
 
 The engine underneath, which moves everything and draws the maps, is
-[Field](../field/README.md); the [field objects](../../glossary.md#field-object) themselves, the 64 slots for
+[Field](../field/README.md); the [objects](../../glossary.md#object) themselves, the 64 slots for
 everything that moves and the [scripts](../../glossary.md#script) they run, are described there under
 [everything that moves runs a
 script](../field/README.md#everything-that-moves-runs-a-script). What happens
 in each map comes from its own code in [Maps](../map/README.md).
 [World](../../world.md) gives the whole layer in brief. The folder is named
 `object` after the bank of the program it fills, as each large bank's
-folder is, not after the field objects, which belong to Field.
+folder is, not after the objects, which belong to Field.
 
 ## The map loop handles requests, not scripts
 
@@ -67,7 +67,7 @@ the order the loop tests them:
 | --- | --- | --- |
 | 1 | `exit` | leave the map; its kind is `Map_Run`'s result |
 | 2 | `event` | run a raised event, or one of the codes below |
-| 3 | `battle` | a random or requested battle against this enemy group |
+| 3 | `battle` | a random or requested battle against this formation |
 | 4 | `action` | a [coord event](../../glossary.md#coord-event) or warp on the [cell](../../glossary.md#cell) stepped onto (`MB_EVENT_FIRST` to `MB_EVENT_LAST`) |
 | 5 | `pushCell` | a ledge, climbing spot or jump the leader pushes against (`Field_RunPushCellEvent`) |
 | 6 | `examine` | the A button: becomes `talk` for an object event ahead with a talk event, else `tile` for a searchable cell ahead, else `menu` |
@@ -89,7 +89,7 @@ A battle is a way out of the map, handled as a warp is. The game
 remembers where everyone stood, loads the battle as the next map, and
 afterwards loads the map again with everyone put back. In the code, the
 `battle` handler calls `ObjectEvent_Snapshot`, writes `RUN_BATTLE` as the
-next map with the enemy group as its warp destination, and sets the `exit`
+next map with the formation as its warp destination, and sets the `exit`
 request to `WARP_NONE`. Despite its name, `WARP_NONE` means a warp is taken:
 the one whose next map is already set. `Map_ReturnFromRun`
 then loads the map again with `FLAG_KEEP_PARTY_POSITION`, and
@@ -120,13 +120,13 @@ sprite's pointer back.
 
 As the party walks through a dungeon or across the world map, a battle
 starts every so often. The game decides when by filling a counter as the
-leader moves, and which enemies by drawing one of the groups that live on
+leader moves, and which enemies by drawing one of the formations that live on
 that ground.
 
-![How a random battle starts. Each frame the leader moves, a counter fills by a step, and a battle starts when it is full. Each zone sets how far the party walks between battles: the higher its rate, the smaller the steps. A party above the zone's level adds to the rate, so it meets fewer battles. A random part, drawn again after each battle, varies the gap. There are no battles at all while Cloak is active, on ground with no zone, while a flag turns them off, or with Avoid active where the party's level is above the zone's. When the counter is full, one of the zone's enemy groups is drawn by weight: in the Sol Sanctum's corridor, Vermin one time in six, Bats one in three, Wild Mushrooms one in three, and a mix of the three one in six.](https://alchemy.pascalpixel.com/illustrations/object/encounter-roll.svg)
+![How a random battle starts. Each frame the leader moves, a counter fills by a step, and a battle starts when it is full. Each zone sets how far the party walks between battles: the higher its rate, the smaller the steps. A party above the zone's level adds to the rate, so it meets fewer battles. A random part, drawn again after each battle, varies the gap. There are no battles at all while Cloak is active, on ground with no zone, while a flag turns them off, or with Avoid active where the party's level is above the zone's. When the counter is full, one of the zone's formations is drawn by weight: in the Sol Sanctum's corridor, Vermin one time in six, Bats one in three, Wild Mushrooms one in three, and a mix of the three one in six.](https://alchemy.pascalpixel.com/illustrations/object/encounter-roll.svg)
 
 Each kind of ground belongs to a zone, and a zone says how far apart its
-battles are and which enemy groups can appear. A zone's rate is that
+battles are and which formations can appear. A zone's rate is that
 distance: the higher it is, the smaller each step and the longer the walk
 between battles. A party whose average level is above the zone's adds to
 the rate, so a party that has outgrown a zone meets its battles less
@@ -135,7 +135,7 @@ leader's speed, so the counter measures distance walked rather than time. A
 random part of each step is drawn once and kept until the next battle, so
 the gap between battles varies. With no random part, a zone of rate r starts
 a battle after about 16 × r frames of walking at one pixel a frame. When the
-counter is full, one of the zone's eight groups is drawn, each with its own
+counter is full, one of the zone's eight formations is drawn, each with its own
 weight.
 
 ![Isaac walks up and down a narrow passage of Goma Cave until a random battle starts: the screen flashes and goes black, and the battle opens on Isaac, Garet and Ivan facing a Ghost, with `Ghost appeared!`](https://alchemy.pascalpixel.com/guides/object/random-battle.gif)
@@ -145,7 +145,7 @@ through `Encounter_RollLayoutStep`, or `Encounter_RollWorldMap` on the world
 map, and both call `Encounter_CountStepsAndSelectFormation`
 ([`object/encounter.c`](object/encounter.c)). Despite its name, that
 function runs on every frame the leader moves: it fills the counter, and
-draws a group only when the counter is full. `Field_ProcessStep` passes the leader's speed limit, doubled while `FLAG_LURE_CAP` is set. There
+draws a formation only when the counter is full. `Field_ProcessStep` passes the leader's speed limit, doubled while `FLAG_LURE_CAP` is set. There
 is no battle when `FLAG_NO_ENCOUNTERS` or `FLAG_NO_ENCOUNTERS_IN_MAPSEC` is
 set, on zone 0, while Cloak is active, or on a zone with rate 0. Otherwise:
 
@@ -161,7 +161,7 @@ set, on zone 0, while Cloak is active, or on a zone with rate 0. Otherwise:
    battle starts when that reaches `work->encounterThreshold`, 16 in 16.16
    fixed point (whole pixels in the upper 16 bits, fractions in the lower),
    which gives the 16 × r frames above.
-4. One of the zone's eight enemy groups is drawn by weight, and
+4. One of the zone's eight formations is drawn by weight, and
    `Encounter_SelectBattleMusic` picks the music.
 
 There is also no battle while `FLAG_IN_PARTY(JENNA)` (flag 5) is set and her
@@ -186,11 +186,11 @@ first zone on ordinary ground; Goma Cave's pond room, for one, names zone 9:
 
 The other rules leave ordinary ground without battles and give the first
 zone to ground 1. A map no rule matches has no battles. The world map takes its zone from `gWorldMap_EncounterRules`
-(`zonedata.c`) by the terrain under the leader, which also picks the battle's
-backdrop.
+(`zonedata.c`) by the encounter region and battle environment under the
+leader, which also pick the battle background.
 
-A zone is a row of `encounter.tsv`: `rate` (0 for none), `level`, the enemy
-groups `group0` to `group7` (rows of `games/tbs/src/battle/formatn.tsv`), their
+A zone is a row of `encounter.tsv`: `rate` (0 for none), `level`, the
+formations `group0` to `group7` (rows of `games/tbs/src/battle/formatn.tsv`), their
 relative chances `weight0` to `weight7`, and `zone`, the map whose rules
 select it. Zones with rate 0 are fought only by slot, through
 `Field_RequestBattleFromEncounterTable` (the scripted battles, such as
@@ -202,7 +202,7 @@ the `battle` request, so the battle starts when the script returns.
 
 `gEncounter_BattleMusic` (`battle_cue.c`) is one list: a song marker (bit 15
 set), then the `(zone << 4) + slot` keys that use it, where the slot is the
-enemy group's place in its zone,, ended by 0. A key takes
+formation's place in its zone, ended by 0. A key takes
 the last song before it, so the table stores each song once. Link battles
 always play `SONG_KEEP_BGM`.
 
@@ -279,7 +279,7 @@ them that a map event, not the effect, decides what happens to the target: a
 stone pillar moves under Move because its map says so. Each field kind's effect is the
 part named for it (`psynergy_effects/reveal.c`), and its entry point names the
 abilities that reach it in a reach line, as the [battle
-effects](../effect/README.md) do:
+animations](../effect/README.md) do:
 
 ```c
 /// Abilities: Carry (FIELD_PSYNERGY_CARRY).
@@ -389,14 +389,15 @@ the encounter and hazard step counters, makes the warp destination Retreat's
 destination, and asks for
 the area name to be shown.
 
-The window transitions and colour buffer serve battles as well, and the
+The screen transitions and palette fade serve battles as well, and the
 effect scene's work serves the Djinn joining effects as well as Psynergy.
 
 ## Limits
 
-- 104 encounter zones of eight enemy groups each.
-- 66 local ids in the field work, each pointing at one of Field's 64 field
-  objects, and ten markers; 24 effect slots in the effect scene.
+- 104 encounter zones of eight formations each.
+- 66 local ids in the field work, each pointing at one of Field's 64
+  objects, and ten treasure spots; 24 field effect sprites in the effect
+  scene.
 - A battle snapshot keeps up to 32 object events.
 - One Halt target at a time.
 
@@ -404,17 +405,17 @@ effect scene's work serves the Djinn joining effects as well as Psynergy.
 
 | File | What it holds |
 | --- | --- |
-| `object.c`, `object/*.c` | the field object, in 16 parts: the main loop and map changes, the map loop and its requests, random encounters, a map's object events, its events, items and Psynergy used on the field, the map's markers, the debug palette editor, and the window transitions and colour buffer the field shares with battles |
-| `psynergy_effects.c`, `psynergy_effects/*.c` | the field Psynergy and script object, in 37 parts: the commands map scripts run, the script camera, jumping and climbing, the field's weather and wavy backgrounds, Djinn joining the party, the effect of each field kind, the effect slots and the world map screen |
+| `object.c`, `object/*.c` | the field object, in 16 parts: the main loop and map changes, the map loop and its requests, random encounters, a map's object events, its events, items and Psynergy used on the field, the map's treasure spots, the debug palette editor, and the screen transitions and palette fade the field shares with battles |
+| `psynergy_effects.c`, `psynergy_effects/*.c` | the field Psynergy and script object, in 37 parts: the commands map scripts run, the script camera, jumping and climbing, the field's weather and scanline effects, Djinn joining the party, the effect of each field kind, the field effect sprites and the world map screen |
 | `object_internal.h`, `psynergy_effects_internal.h` | each object's private header |
-| `colorfx.c` | the slot machine, and an LZ packer nothing calls (`LzPack_PackStream` is [`UNUSED`](../../glossary.md#unused)); linked in `rom_main_12`, where the rest of the folder is in `rom_main_04` |
+| `colorfx.c` | Lucky Wheels, and an LZ packer nothing calls (`LzPack_PackStream` is [`UNUSED`](../../glossary.md#unused)); linked in `rom_main_12`, where the rest of the folder is in `rom_main_04` |
 | `fxdata.c` | constant tables: object scripts, curves and lookups |
 | `battle_cue.c` | `gEncounter_BattleMusic`, the battle music of each encounter |
 | `zonedata.c` | the world map's encounter rules, and the zone and slot of each Djinni battle |
 | `location_rules.s` | `gBattle_LocationRules`, the encounter zones of maps |
 | `map_rules.s` | the field music and area names of maps (`gMapSec_NameRules`) |
 | `encounter.tsv` | the 104 encounter zones |
-| `scripts.s` | object scripts, the leader's object event template, the display transition shapes, the weather pictures and `gRegionMap_MapSecMarkers` |
+| `scripts.s` | object scripts, the leader's object event template, the screen transition shapes, the weather pictures and `gRegionMap_MapSecMarkers` |
 | `arcspark.s`, `swatch.s`, `mote.png` | the spark pictures, the debug palette editor's swatch (its picture is `../debug/swatch.png`) and the floating motes' picture |
 
 `object.c` and `psynergy_effects.c` are each one object in the ROM, written
@@ -427,7 +428,7 @@ Prototypes are in `games/tbs/include/unit/object/`.
 
 - **field work**: `struct FieldWork`, the running map's state
   ([above](#the-map-loop-handles-requests-not-scripts)). Local name `work`.
-- **object event**: a [field object](../../glossary.md#field-object) the field work's
+- **object event**: an [object](../../glossary.md#object) the field work's
   `objectEvents` array, 66 long, points at by [local id](../../glossary.md#local-id). Local names `objectEvent`, `actor`,
   `object`, `leader`.
 - **request**: a field of the field work that something sets to interrupt the
@@ -438,11 +439,11 @@ Prototypes are in `games/tbs/include/unit/object/`.
   `FIELD_PSYNERGY_AVOID` (16). Whirlwind and Gale share `FIELD_PSYNERGY_WHIRLWIND`.
 - **effect scene**: `struct FieldEffectWork` (`field/fx_work.h`), the work of
   the field effect playing: the ability, its field kind (`fieldPsynergy`), its
-  caster and target, and 24 effect slots. It is `HEAP_SLOT_FIELD_EFFECT`, reached as
+  caster and target, and 24 field effect sprites. It is `HEAP_SLOT_FIELD_EFFECT`, reached as
   `gFieldEffectWork`. Local name `scene`.
-- **effect slot**: `struct FieldEffectSprite`, one particle an effect moves and draws.
-- **marker**: a chest or Psynergy Stone the layout places at one of its marked
-  cells; the field work holds up to ten, apart from the object events. The
+- **field effect sprite**: `struct FieldEffectSprite`, one particle an effect moves and draws.
+- **treasure spot**: a chest or Psynergy Stone the layout places at one of
+  its cells; the field work holds up to ten, apart from the object events. The
   world map screen's markers, one for each place, are another thing.
 - **mode**: `work->mode` is `OBJECT_SYSTEM_LAYOUT` on a town or dungeon map and
   `OBJECT_SYSTEM_WORLD_MAP` on the world map.
@@ -455,26 +456,26 @@ Prototypes are in `games/tbs/include/unit/object/`.
 | `Field_` | the map loop and its requests |
 | `Encounter_` | random encounters |
 | `Script_`, `FieldScript_` | the commands map scripts run |
-| `Object_`, `ObjectMotion_`, `ObjectTable_` | object events, their motion and the object event table |
-| `TreasureSpot_` | the map's markers |
+| `Object_`, `ObjectMotion_` | objects and their motion |
+| `TreasureSpot_` | the map's treasure spots |
 | `ItemDisplay_` | a found item's picture, held up over the leader |
 | `Camera_` | the script camera |
 | `Djinn_` | Djinn joining the party and the hop before a Djinni battle |
-| `DisplayTransition_` | the window transitions and dissolves between maps |
+| `ScreenTransition_` | the screen transitions between maps: window transitions and dissolves |
 | `WorldMap_` | the world map screen and its markers, and starting and ending a script on the world map |
-| `EffectSlot_` | effect slots |
+| `FieldEffectSprite_` | field effect sprites |
 | `FieldEffect_` | field effects: a field kind's runner is named for its Psynergy (`FieldEffect_RunCatch`), and the small effects map scripts spawn go through `FieldEffect_Spawn` |
-| `ColorBuffer_` | the colour buffer, which moves the palettes toward target colours |
-| `ReelGame_`, `LzPack_` | the slot machine, and the packer beside it |
-| `ObjectEvent_`, `Leader_`, `Motion_`, `FacingObject_`, `ObjectVisual_` | the object event commands map scripts call (`object_event_commands.c`): placing, walking, turning and posing an object event or the leader |
-| `EventObject_`, `ObjectEffect_` | the caster's casting pose and the context effects a Psynergy starts |
+| `PaletteFade_` | the palette fade, which moves the palettes toward target colours |
+| `LuckyWheels_`, `LzPack_` | Lucky Wheels, and the packer beside it |
+| `ObjectEvent_`, `Leader_`, `FacingObject_`, `ObjectVisual_` | the object event table, and the object event commands map scripts call (`object_event_commands.c`): placing, walking, turning and posing an object event or the leader |
+| `ObjectEffect_` | the context effects a Psynergy starts |
 | `ItemGift_` | the message for an item the party has just received |
 | `FadeOverlay_`, `Reveal_`, `FieldMotes_` | the fade overlay's marks beside the object event, a Reveal marker's sparkles and the floating motes |
-| `DisplayState_` | clearing the background bits `DisplayTransition_` turns on |
+| `DisplayState_` | clearing the background bits `ScreenTransition_` turns on |
 
 Other functions keep the prefixes of the families they belong to elsewhere.
 Several structures are reached by more than one spelling (the field work, the
-effect scene, the map's view, the colour buffer), each site keeping the one it
+effect scene, the map's view, the palette fade), each site keeping the one it
 matches with; [Matching](../MATCHING.md) lists them.
 
 ## Evidence and open questions

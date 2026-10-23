@@ -31,7 +31,7 @@ s32 ObjectScript_SetByte54(struct ObjectScriptContext *interpreter) {
   return 1;
 }
 
-/// Waits a frame at a time until an object event has arrived at its target, at
+/// Waits a frame at a time until an object has arrived at its target, at
 /// most 600 frames (ten seconds), after which it returns with the object still
 /// on its way. It takes void * because callers pass every view of an
 /// object. Called through Object_WaitForMoveFar by the Psynergy effects
@@ -72,10 +72,10 @@ s32 Object_IsTargetUnset(struct Object *object) {
 
 static __inline__ s32 ObjectMotion_Square(s32 value) { return value * value; }
 
-/// Advances all 64 object events by one frame, as Object_UpdateAll does for
+/// Advances all 64 objects by one frame, as Object_UpdateAll does for
 /// the eight script objects, with the field's extras: free flight in 3D,
-/// terrain following, floating, and solid objects that refuse to overlap.
-/// ObjectSystem_Initialize schedules it as the per-frame object update in
+/// following the ground, floating, and solid objects that refuse to overlap.
+/// ObjectSystem_Initialize adds it as the task that updates the objects in
 /// every mode but the battle's (4). Writes each live object's position,
 /// velocity, target, wait and facing.
 void Object_UpdateAllThumb(void) {
@@ -260,7 +260,7 @@ void Object_UpdateAllThumb(void) {
           }
         }
 
-        // Follow the terrain: take the ground height where the object is
+        // Follow the ground: take the ground height where the object is
         // going and move with its change, unless the object is 4 or more
         // pixels above the ground. Unless bit 4 is set, a climb or drop also
         // slows it, by three times the change (at most half its
@@ -523,8 +523,8 @@ UNUSED void Object_RunUpdateAllFromHeap(void) {
 /// Advances the first 14 objects' motion by one frame, without running their
 /// scripts: steering towards a target or braking, gravity and bouncing,
 /// arrival, and turning to face the direction of travel.
-/// ObjectSystem_Initialize schedules it in place of Object_UpdateAllThumb in
-/// OBJECT_SYSTEM_BATTLE.
+/// ObjectSystem_Initialize adds it as a task in place of Object_UpdateAllThumb
+/// in OBJECT_SYSTEM_BATTLE.
 void Object_UpdateAllMotion(void) {
   struct ScriptMotionObject *object;
   s32 objectsRemaining;
@@ -560,7 +560,7 @@ void Object_UpdateAllMotion(void) {
       arrivedAtTarget = 0;
 #endif
       // Steer in the XZ plane as Object_UpdateAllThumb does on the ground,
-      // or brake; this loop has no free flight, terrain or floating.
+      // or brake; this loop has no free flight, ground following or floating.
       if (object->targetX != TARGET_UNSET) {
         dx = (object->targetX - x) / 65536;
         dz = (object->targetZ - z) / 65536;

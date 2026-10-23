@@ -1,5 +1,5 @@
 /// @file
-/// Field objects: the object pool, dissolving sprites, starting scripts.
+/// Objects: creating and freeing them, dissolving sprites, starting scripts.
 // Part of field.c.
 
 #include "../field_internal.h"
@@ -180,8 +180,8 @@ void ObjectSystem_Initialize(s32 controlMode) {
   ObjectSystem_Configure(controlMode);
   Dma_Fill32Cell(fill, 0, objectPool, OBJECT_COUNT * sizeof(*objectPool));
   Dma_Fill32Cell(fill, 0, system, sizeof(*system));
-  // The scheduler runs higher orders first: the objects move (0xc8a) before
-  // the camera follows them (0xc80).
+  // The task runner runs higher priorities first: the objects move (0xc8a)
+  // before the camera follows them (0xc80).
   if (controlMode == OBJECT_SYSTEM_BATTLE)
     Task_Add(Object_UpdateAllMotion, 0xc8a);
   else
@@ -252,13 +252,13 @@ void ObjectDispatch_Release(struct DispatchObject *object) {
   }
 }
 
-/// Creates an object event at (x, y, z), in 16.16 pixels, or returns 0 when
+/// Creates an object at (x, y, z), in 16.16 pixels, or returns 0 when
 /// none is free. id / 4096 is its enum ObjectCreateKind and the low 12 bits
 /// the sprite's animation id.
 ///
 /// Called as Object_CreateFar by the battle's placement, the Psynergy
-/// effects, the field map's object events and markers and the map scripts, and
-/// directly by the player control for footprints and ripples.
+/// effects, the field map's object events and treasure spots and the map
+/// scripts, and directly by the player control for footprints and ripples.
 /// Gives the object gObjectDispatch_DefaultScript (a lone SC_END), its home
 /// position and the default motion values; a group's sprite list is taken from
 /// the ObjectSystemWork's group tables.
@@ -318,7 +318,7 @@ struct Object *Object_CreateField(s32 encodedSprite, s32 x, s32 y, s32 z) {
     scripted = (struct ScriptObjectRuntime *)object;
     Object_SetPositionAndResetMotion(object, x, y, z);
     // Up to 2 pixels a frame, gaining 1 a frame; unit scale; following the
-    // terrain and falling; turning to face its motion; keeping a quarter of its
+    // ground and falling; turning to face its motion; keeping a quarter of its
     // speed when it bounces; facing down the screen (0x4000, the heading
     // gWorldMap_KeyHeadings gives Down).
     object->script = (s32 *)gObjectDispatch_DefaultScript;
@@ -429,8 +429,8 @@ void ObjectDispatch_SetChildRotation(struct DispatchObject *object,
     object->target.child->rotation = rotation;
 }
 
-/// Gives a one-sprite object's first layer animation id animationId and
-/// restarts its layers.
+/// Gives a one-sprite object's first anim animation id animationId and
+/// restarts its anims.
 /// A negative animationId does nothing.
 void Animation_SetIndexAndInitializeObjects(void *rawDispatchObject,
                                             s32 animationId) {
@@ -446,7 +446,7 @@ void Animation_SetIndexAndInitializeObjects(void *rawDispatchObject,
   }
 }
 
-/// Adds a layer of animation id animationId to a one-sprite object's sprite.
+/// Adds an anim of animation id animationId to a one-sprite object's sprite.
 /// A negative animationId does nothing.
 void ObjectDispatch_RegisterChildMetadata(struct DispatchObject *object,
                                           s32 animationId) {
@@ -563,7 +563,7 @@ void ObjectDispatch_SetChildFixedScale(struct DispatchObject *object,
   }
 }
 
-/// Sets the colour mode (SpriteColorMode) of a one-sprite object's layers,
+/// Sets the colour mode (SpriteColorMode) of a one-sprite object's anims,
 /// except those drawn hidden (see Sprite_SetAnimColorModes).
 void Animation_ApplyChildValues(struct DispatchObject *object, u32 param) {
   if (object != NULL && object->kind == OBJECT_SPRITE_ONE)

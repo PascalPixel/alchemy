@@ -1,5 +1,5 @@
 /// @file
-/// The enemy classes' battle sprite table, gBattleSprites.
+/// The enemies' battle sprite table, gBattleSprites.
 // Part of battle.c.
 
 #include "../battle_internal.h"
@@ -54,7 +54,7 @@ s32 BattleSprite_IsSmall(s32 index) {
   return result;
 }
 
-/// Returns the effect a class's plain attack shows, 1 for none or out of
+/// Returns the animation a class's plain attack shows, 1 for none or out of
 /// range.
 /// Called by BattleTurn_Build, which stages it by id range
 /// (ANIM_BY_ID_RANGE).
@@ -83,14 +83,14 @@ u32 BattleSprite_GetAttackHop(u32 index) {
 /// Returns 1 for a class whose blow lands with SE_HEAVY_IMPACT instead of
 /// SE_IMPACT; 0 out of range. Only the Mars Lighthouse bosses set it in
 /// sprites.tsv: ENEMY_SATUROS_2, ENEMY_MENARDI and ENEMY_FUSION_DRAGON.
-/// Called by the beam effects (beams.c) through its far stub.
+/// Called by the beam animations (beams.c) through its far stub.
 s32 BattleSprite_HasHeavyImpact(s32 index) {
   if (index < 0 || index > ENEMY_CLASS_LAST)
     return 0;
   return gBattleSprites[index].heavyImpact;
 }
 
-/// Returns the height an effect is drawn at over a class, in pixels, or 0
+/// Returns the height an animation is drawn at over a class, in pixels, or 0
 /// for its size's default; 0 out of range.
 /// Called by BattleUnit_GetEffectHeight, and reached through
 /// FarCall_BattleTable.

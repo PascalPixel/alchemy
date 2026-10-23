@@ -182,7 +182,7 @@ shop's lines depending on the side the leader talks to him from.
 Talking to the party members runs tests: Garet raises the four to level 10,
 then 20 on the next talk, and so on (`gMenuTest_SlotOffsets`), which changes
 nothing until the target passes the 30 set on entry; Jenna hands out test
-equipment, Ivan consumables, and Mia opens the name entry screen for Isaac. The
+equipment, Ivan consumables, and Mia opens the naming screen for Isaac. The
 placed object events, from 8, open the screen for choosing an item to give
 up when the party's bags are full, give
 out Djinn and treasure, wound and afflict Isaac and Garet, and run a preset
@@ -264,7 +264,7 @@ show. `test.c` keeps one empty function nothing calls, `MenuTest_NoOp`, marked
 The eight Djinn room maps, `TestRoom0` to `TestRoom7`, use layouts 172 to
 179, which no other map uses. The eight layouts are one placeholder copied
 eight times: each `layout.s` places the same data, borrowed from layouts 0
-and 1 and tile set 68, and differs only in its labels. The rooms are reserved slots that were never given their own
+and 1 and tileset 68, and differs only in its labels. The rooms are reserved slots that were never given their own
 content, which is why one overlay serves them all.
 
 - XXX (no evidence): what the 56 words at the head of the Djinn room's data

@@ -10,14 +10,14 @@ rolls, and each one shows up on screen as a message such as
 `Ivan takes 15 damage!`.
 
 The code runs a fight from its opening transition to the spoils: it builds
-the units, gathers each round's actions and sorts them into turns, plans each
-action, stages it, and applies the ability to every target. Three other
-folders share the work. [Battle effects](../effect/README.md) draws the
+the units, gathers each round's actions and sorts them into turns, builds
+each turn, stages it, and applies the ability to every target. Three other
+folders share the work. [Battle animations](../effect/README.md) draws the
 animations, [Windows](../window/README.md) holds the command menu and the
 [party](../../glossary.md#the-party)'s status window, and [Game rules](../game/README.md) holds the ability, item and enemy
 tables and the arithmetic in `game/battle_calc.c`. [Battle](../../battle.md)
 explains a battle as a whole: how it is entered from the field, the loop of
-rounds and actions in code, and how the rules and the effects run at the
+rounds and actions in code, and how the rules and the animations run at the
 same time. Read it first; this page explains the rules underneath.
 
 Every rule here is the [original](../../glossary.md#the-original)'s,
@@ -47,8 +47,8 @@ against everything that round, even the fastest enemy.
 
 `Battle_Run` ([`battle/encounter.c`](battle/encounter.c)) fights the
 whole battle and returns the number of enemies defeated, `BATTLE_OUTCOME_FLED` or
-`BATTLE_OUTCOME_LOST`. Before the first round `formation.c` turns the enemy
-group into units, with their levels and the letters that tell two of a kind
+`BATTLE_OUTCOME_LOST`. Before the first round `formation.c` turns the
+formation into units, with their levels and the letters that tell two of a kind
 apart, and `transition.c` plays the opening: the curtain, or the Venus
 Lighthouse storm. After the last, `spoils.c` hands out coins, experience,
 items and level ups.
@@ -65,11 +65,11 @@ standing or the party gets away. Steps 1 and 5 run once a round, steps 2 to
    and `BattleTurnOrder_Sort` sorts them, highest first, keeping the
    order of equal priorities; the three Djinn have `DJINN_FIRST_PRIORITY`
    added. Defend and Total Defense are raised here.
-2. `BattleTurn_Build` (`plan.c`) announces the action and fills the
-   plan.
-3. `BattleStaging_DispatchAction` (`staging.c`) stages the plan and runs
-   its effect.
-4. While the effect plays, the battle's playback task calls
+2. `BattleTurn_Build` (`plan.c`) announces the action and fills in the
+   turn.
+3. `BattleStaging_DispatchAction` (`staging.c`) stages the turn and runs
+   its animation.
+4. While the animation plays, the battle's playback task calls
    `BattleAbility_ApplyToTarget` (`target_exec.c`) once for each target, which
    applies the ability to it; then `turn_end.c` closes the actor's turn:
    poison takes a tenth of the maximum HP (deadly poison a fifth), the Grim
@@ -79,9 +79,9 @@ standing or the party gets away. Steps 1 and 5 run once a round, steps 2 to
    Djinn recover.
 
 The rules never draw. `BattleAbility_ApplyToTarget` changes the units at once and
-leaves a list of what to show, the battle event queue, which playback shows
+leaves a list of what to show, the playback queue, which playback shows
 in step with the animation;
-[Rules and pictures meet at the event queue](#rules-and-pictures-meet-at-the-event-queue)
+[Rules and pictures meet at the playback queue](#rules-and-pictures-meet-at-the-playback-queue)
 takes it apart.
 
 | Name | Value | Meaning |
@@ -133,7 +133,7 @@ as an ability. `BattleAI_ChooseAction` turns it into the command
 `COMMAND_DEFEND`, `COMMAND_TOTAL_DEFENSE` or `COMMAND_FLEE`, aimed at the enemy itself, so the
 guard is raised with the party's before anyone acts.
 
-### First strikes and escape
+### First strikes and fleeing
 
 Now and then a random battle opens with `Isaac's party attacks first!`, and
 the enemies stand still for a round; more rarely it opens with
@@ -154,7 +154,7 @@ once each. The mode returns to normal at the round's end.
 `BattleFlee_CheckSuccess` (`round.c`) gives a 50 percent chance, plus 20
 for each failed try in the battle, plus 5 for each level the party's average
 is above the enemies' (or less, below). It always fails when the battle
-cannot be escaped (`BATTLE_TYPE_NO_ESCAPE`). A failed escape turns the rest
+cannot be fled (`BATTLE_TYPE_NO_ESCAPE`). A failed try turns the rest
 of the round into one the enemies began.
 
 | Name | Value | Meaning |
@@ -168,18 +168,18 @@ of the round into one the enemies began.
 | `BATTLE_TYPE_LINK` | 4 | a link battle |
 | `BATTLE_TYPE_DEBUG` | 5 | the debug battle menu's battle; the party may run |
 
-## Planning an action
+## Building a turn
 
 Just before a unit acts, the player reads its announcement, such as
 `Isaac casts Quake!`. By then the game has turned the chosen command into a
-plan: which ability it is, who it reaches, and the rolls the animation must
+turn: which ability it is, who it reaches, and the rolls the animation must
 show.
 
 `BattleTurn_Build` ([`battle/plan.c`](battle/plan.c)) turns the chosen
 command into an ability id, shows its announcement, picks its targets and
-makes the rolls that must be known before the effect plays. It returns 0 to
-stage the plan, or `TURN_REPORTED` when the action failed and its message
-has been shown. The plan is `struct BattleTurn` (`battle_type.h`), here
+makes the rolls that must be known before the animation plays. It returns 0
+to stage the turn, or `TURN_REPORTED` when the action failed and its message
+has been shown. The turn is `struct BattleTurn` (`battle_type.h`), here
 with its comments shortened:
 
 ```c
@@ -208,7 +208,7 @@ struct BattleTurn {
 
 ### Commands and ability ids
 
-The command the actor chose decides which ability id the plan carries.
+The command the actor chose decides which ability id the turn carries.
 
 - `COMMAND_ATTACK` is `ABILITY_ATTACK`, unless the equipped weapon unleashes
   (`RollWeaponUnleashFar`): then the weapon's `unleash_action` replaces it,
@@ -224,12 +224,13 @@ The command the actor chose decides which ability id the plan carries.
   says so.
 - `COMMAND_ITEM` takes the item's `action_id`. An item with none, or a broken
   one, makes the user defend. What using it costs is the item's `use_type`
-  ([Game rules](../game/README.md)), spent in `staging.c` after the effect.
+  ([Game rules](../game/README.md)), spent in `staging.c` after the
+  animation.
 - `COMMAND_SUMMON` takes the summon's ability from `../game/summons.tsv` and
   marks the standby Djinn it uses.
 - `COMMAND_ENEMY_ABILITY` is an enemy's ability, chosen as above.
 
-The plan takes its [element](../../glossary.md#the-four-elements) from the ability's row, except that a plain
+The turn takes its [element](../../glossary.md#the-four-elements) from the ability's row, except that a plain
 Attack strikes with the weapon's element, or an enemy's with its own
 (`Item_GetEquippedElement`).
 
@@ -268,7 +269,7 @@ sees the same range as a cursor and smaller markers while aiming
 | Name | Value | Meaning |
 | --- | --- | --- |
 | `ABILITY_RANGE_ALL` | 255 | the whole side, every target treated as the aimed one |
-| `TARGET_MAX` | 14 | targets a plan holds at most |
+| `TARGET_MAX` | 14 | targets a turn holds at most |
 | `PLACE_PARTY` | `0x100` | added to a party place to make its place code |
 | `PLACE_ENEMY` | `0x180` | added to an enemy place to make its place code |
 
@@ -288,11 +289,11 @@ ability reaches.
 When an enemy dodges Isaac's attack, the player reads
 `Ivan nimbly dodges the blow!` and no damage follows; when Isaac lands a
 critical hit, the blow bursts in light. The animation has to know the outcome before it starts, so a few rolls
-are made while the action is planned, before anything is drawn.
+are made while the turn is built, before anything is drawn.
 
 ![Rolls made before the animation plays. A plain Attack lands 31 times in 32 and misses once; a deluded attacker also misses 153 times in 256, and a target that can't act is never missed. Separately, 1 blow in 32 is a critical hit, which deals a quarter more and then adds the target's level divided by 5, plus 6. An ability that strikes more than once makes one roll for all its targets: 153 in 256 for Gust, Rapid Smash, Slice and Sonic Smash, 1 in 4 for Flying Attack, Double Fang, Twin Beaks and Swift Strike. Sonic Smash and Swift Strike strike three times, the others twice, and the animation shows each blow.](https://alchemy.pascalpixel.com/illustrations/battle/rolls.svg)
 
-The plan makes the rolls the effect must know before it plays: whether a plain
+The turn makes the rolls the animation must know before it plays: whether a plain
 Attack misses or lands a critical hit, and how many blows a multiple-blow
 ability strikes.
 
@@ -312,13 +313,13 @@ An ability with a double or triple blow makes one roll, and a success
 applies to every target: 153 in 256 for Gust, Rapid Smash, Slice and Sonic Smash, and one time in four for
 Flying Attack, Double Fang, Twin Beaks and Swift Strike. Sonic Smash and Swift
 Strike strike three times. A success raises the targets' multiplier, which
-`BattleAbility_ApplyToTarget` multiplies the damage by, and the effect's variant, so the
+`BattleAbility_ApplyToTarget` multiplies the damage by, and the animation's variant, so the
 animation shows the extra blows. `enum AbilityEffect` also has blows one time
 in eight and an ability's own critical hit (`CRITICAL_STRONG`, half as much
 again), but no ability uses them.
 
 Annihilation rolls its instant death here, at full rate whatever the
-distance, so that its effect can show whether it landed. Every other added
+distance, so that its animation can show whether it landed. Every other added
 effect is rolled per target in `BattleAbility_ApplyToTarget`.
 
 | Name | Meaning |
@@ -328,33 +329,33 @@ effect is rolled per target in `BattleAbility_ApplyToTarget`.
 
 ### Staging and announcement
 
-The plan records how its action is staged, from `actflags.tsv` and
+The turn records how its action is staged, from `actflags.tsv` and
 `actstat.tsv`, and the announcement the player reads before it plays. Three
 words name the parts of how it looks:
 
 - the **outcome** (`BattleTurn.staging`) is the staging around the
   animation: whether the actor runs up, casts, hides, or nothing moves;
-- the **effect kind** is which animation plays;
+- the **animation id** is which animation plays;
 - the **variant** is how strong a version of it.
 
-![A test recording: Isaac casts Quake at Garet, Ivan and Mia seven times, frame for frame, with the plan's outcome forced to a different value each time, from `STAGING_CAST`, Quake's own, to `STAGING_FULL_SCREEN`. As a cast, a summon or a full-screen move, rings of light gather round Isaac before the rock pillars rise. As an item or a Djinni, the pillars rise with no gathering. As an enemy's cast, yellow streaks burst round Isaac instead of the rings. As an escape, Isaac turns and runs and the battle ends. The six that cast deal the same damage: `Garet takes 14 damage!!!`, `Ivan takes 15 damage!` and `Mia takes 12 damage!`.](https://alchemy.pascalpixel.com/guides/battle/staging.gif)
+![A test recording: Isaac casts Quake at Garet, Ivan and Mia seven times, frame for frame, with the turn's outcome forced to a different value each time, from `STAGING_CAST`, Quake's own, to `STAGING_FULL_SCREEN`. As a cast, a summon or a full-screen move, rings of light gather round Isaac before the rock pillars rise. As an item or a Djinni, the pillars rise with no gathering. As an enemy's cast, yellow streaks burst round Isaac instead of the rings. Staged as fleeing, Isaac turns and runs and the battle ends. The six that cast deal the same damage: `Garet takes 14 damage!!!`, `Ivan takes 15 damage!` and `Mia takes 12 damage!`.](https://alchemy.pascalpixel.com/guides/battle/staging.gif)
 
-`actflags.tsv` gives the plan's presentation flags: the effect kind in the
+`actflags.tsv` gives the turn's animation word: the animation id in the
 low twelve bits (`ANIM_ID_MASK`), the variant above them, and the bits
-that choose the effect's entry point (`ANIM_BY_ID_RANGE`,
-`ANIM_SUMMON`). [Battle effects](../effect/README.md#how-a-move-picks-its-effect)
+that choose the animation's entry point (`ANIM_BY_ID_RANGE`,
+`ANIM_SUMMON`). [Battle animations](../effect/README.md#how-a-move-picks-its-animation)
 gives the whole bit layout.
 
 The outcome comes from `actstat.tsv` where its row is not 0. Otherwise an
 ability that costs PP, or Psy Drain (`Ability_IsPsynergy`), is a cast
-(`STAGING_CAST`); another ability with an effect to draw is a cast too, or
+(`STAGING_CAST`); another ability with an animation to draw is a cast too, or
 `STAGING_ENEMY_CAST` for an enemy; and one with nothing to draw shows only
 its messages (`STAGING_MESSAGES`). An item's use is staged as
 `STAGING_ITEM` unless its outcome is a summon or full screen.
 `actstat.tsv` gives `STAGING_FULL_SCREEN` to Gaia, Mother Gaia, Grand Gaia,
 Rockfall, Rockslide, Avalanche and Procne: the camera turns, the side that
 isn't targeted fades out, and only the actor and the target side stay on the
-field while the effect plays (`BattleStaging_HideField`). It
+field while the animation plays (`BattleStaging_HideField`). It
 gives `STAGING_ENEMY_CAST` to Slice and seven weapon unleashes, so they play
 with the element's streaks in place of the gathering star field.
 
@@ -377,10 +378,10 @@ own, chosen by ability id in `BattleTurn_Build`.
 | `STAGING_FLEE` | 7 | a unit runs |
 | `STAGING_ENEMY_CAST` | 8 | the element's streaks in place of the star field |
 | `STAGING_FULL_SCREEN` | 9 | the camera turns and the side not targeted fades out |
-| `ANIM_ID_MASK` | `0xfff` | the effect kind |
-| `ANIM_VARIANT_MASK` | `0x3000` | the effect's variant, from bit 12 (`ANIM_VARIANT_SHIFT`) |
-| `ANIM_BY_ID_RANGE` | `0x4000` | the effect is chosen by ability id range |
-| `ANIM_SUMMON` | `0x8000` | the effect is a scene seen from the actor |
+| `ANIM_ID_MASK` | `0xfff` | the animation id |
+| `ANIM_VARIANT_MASK` | `0x3000` | the animation's variant, from bit 12 (`ANIM_VARIANT_SHIFT`) |
+| `ANIM_BY_ID_RANGE` | `0x4000` | the animation is chosen by ability id range |
+| `ANIM_SUMMON` | `0x8000` | the animation is a scene seen from the actor |
 
 ## How an ability resolves
 
@@ -393,8 +394,8 @@ little luck.
 
 ![How Psynergy damage is worked out, for Isaac's Avalanche at three enemies: its power of 160, times 281 in 256 for Isaac's Venus Power 20 ahead, is 175; the distance keeps 100, 80 and 60 percent, 175, 140 and 105; 0 to 3 is added at random; a guard halves it or cuts it to a tenth. Every step rounds down.](https://alchemy.pascalpixel.com/illustrations/battle/damage.svg)
 
-`BattleAbility_ApplyToTarget` ([`battle/target_exec.c`](battle/target_exec.c)) turns the
-plan into what happens to one target: its damage or healing, its added
+`BattleAbility_ApplyToTarget` ([`battle/target_exec.c`](battle/target_exec.c)) works out
+what the turn does to one target: its damage or healing, its added
 effect, and the events that show them. It draws nothing and never waits: it changes the
 units at once and pushes the events that show the change, in the order the
 player sees them. It runs in seven phases, marked in its body:
@@ -554,8 +555,8 @@ aimed place.
 ![Ivan casts Confuse at Isaac, Garet and Mia: a pale blue mist rolls over the three, and the messages read `Isaac is confused!` and `But it has no effect on Garet!`](https://alchemy.pascalpixel.com/abilities/confuse.gif)
 
 `Battle_RollEffectSuccess`, reached through its far-call entry
-`Battle_RollEffectSuccessFar`, rolls it, unless the plan rolled it already. It fails at once when there is nothing to do: a revival on
-a unit still standing, a cure on a unit without the ailment, Curse on a unit
+`Battle_RollEffectSuccessFar`, rolls it, unless the turn rolled it already. It fails at once when there is nothing to do: a revival on
+a unit still standing, a cure on a unit without the status, Curse on a unit
 whose countdown is at its last turn. Otherwise the chance starts from the
 effect's base rate (`Battle_GetEffectBaseSuccessRate`: Sleep 45 percent,
 Taint 55, Condemn 20 and so on), gains 3 for each element level the actor is
@@ -667,7 +668,7 @@ its turn (`BattleUnit_ProcessTurnEnd`).
 In the Djinn tutorial a Djinni's blow always leaves its target 1 HP, and a
 summon always fells it.
 
-## Rules and pictures meet at the event queue
+## Rules and pictures meet at the playback queue
 
 When Quake hits Garet, his HP drops at once, but the player sees it happen
 in steps: Garet flinches, the message `Garet takes 14 damage!!!` appears and
@@ -676,20 +677,20 @@ a list of what to show, in order, and the screen plays the list.
 
 ![One target's events, played in order. Quake reaches Garet. The rules work out his damage at once, take 14 HP off, and queue what the player should see: the hit, which makes him flinch and flash for 9 frames; the number 14 and the name Garet, which take no time and fill in the message's blanks; the message, which waits until A is pressed; and a refresh that redraws him. A few more events that take no time follow, then the next target. The number and name go first because the message fills its blanks from them as it is written.](https://alchemy.pascalpixel.com/illustrations/battle/event-queue.svg)
 
-The battle event queue (`struct BattlePlaybackQueue`, `BATTLE_PLAYBACK_CAPACITY`
+The playback queue (`struct BattlePlaybackQueue`, `BATTLE_PLAYBACK_CAPACITY`
 events) is the one channel from the rules, which change the units at once,
-to the screen, which shows the changes one by one while the effect plays.
-`BattleAbility_ApplyToTarget` never draws or waits, and an effect never computes an
-outcome. [Battle](../../battle.md#rules-and-effects-run-together) shows the
+to the screen, which shows the changes one by one while the animation plays.
+`BattleAbility_ApplyToTarget` never draws or waits, and an animation never computes an
+outcome. [Battle](../../battle.md#rules-and-animations-run-together) shows the
 code that runs `BattlePlayback_Run` as a [task](../../glossary.md#task)
-while the effect's own loop waits: playback runs each target's rules once
-the effect calls `ANIM_SHOW_DAMAGE`, and a few effects that never call it
+while the animation's own loop waits: playback runs each target's rules once
+the animation calls `ANIM_SHOW_DAMAGE`, and a few animations that never call it
 (`atalanta.c`, `djinn_heal.c` and `torch.c`) have playback started by
 `BattlePlayback_WaitForReady` once they return.
 
-In the recording of Quake that [Battle](../../battle.md#rules-and-effects-run-together)
+In the recording of Quake that [Battle](../../battle.md#rules-and-animations-run-together)
 shows, the rock plays for about two seconds before its blow lands
-and starts playback. Playback then resolves the three targets in the plan's
+and starts playback. Playback then resolves the three targets in the turn's
 order, the battlefield's (Garet, Ivan, Mia), not the aimed Ivan first, and
 each target's `BattleAbility_ApplyToTarget` queues the same eight events. Only the hit
 (nine [frames](../../glossary.md#frame) of flashing) and the message (until the player presses A) make
@@ -701,7 +702,7 @@ A message takes its names and numbers from the window system's list of
 message arguments as it is written out, so they are pushed before it, and a
 message uses them up, so each later message pushes the name again.
 `BattlePlayback_RunAll` plays the same queue straight through for an
-outcome shown outside an effect, such as a cast that is sealed or short of
+outcome shown outside an animation, such as a cast that is sealed or short of
 PP.
 
 | Name | Value | Meaning |
@@ -723,24 +724,24 @@ writing `void` would change the compiled code at the function's end, and
 A unit's figure is one of the object slots `Object_CreateFar` hands out. The
 battle reads it as a `struct MotionObject`, while the field's [far calls](../../glossary.md#far-call) take
 it as a `struct DispatchObject` or a `struct Object`. They describe the
-same record, with fields at the same offsets, and a call into the field casts
+same object, with fields at the same offsets, and a call into the field casts
 to the view its prototype names. [XXX](../../glossary.md#xxx): whether these could be one struct
 depends on naming the fields only one view names so far.
 
 ## Limits
 
-- There are 519 abilities. The plan reads `actflags.tsv` only up to
+- There are 519 abilities. The turn reads `actflags.tsv` only up to
   `ABILITY_THRASH`, and `actstat.tsv`, a row shorter, up to
   `ABILITY_SEVERE_BLOW`.
-- A plan reaches at most `TARGET_MAX` targets.
+- A turn reaches at most `TARGET_MAX` targets.
 - The party fights `PARTY_BATTLE_SIZE` at a time and the enemies
   `ENEMY_BATTLE_SIZE` at most; in a link battle each console sends
   `LINK_PARTY_SIZE`.
-- `formatn.tsv` has 380 enemy groups, each of up to five kinds of enemy with
+- `formatn.tsv` has 380 formations, each of up to five kinds of enemy with
   the least and most of each (`member0` to `member4`, `minimum0` to
   `minimum4`, `maximum0` to `maximum4`). The encounter zones in
   `../object/encounter.tsv` choose among them.
-- The event queue holds `BATTLE_PLAYBACK_CAPACITY` events.
+- The playback queue holds `BATTLE_PLAYBACK_CAPACITY` events.
 
 ## Files
 
@@ -751,10 +752,10 @@ depends on naming the fields only one view names so far.
 | `battle/*.c` | the code, in 24 parts |
 | `battle_data.s`, `battle_vars.s` | the smaller tables and pictures in ROM order, including where the `.tsv` tables below are placed |
 | `battle_calc.s` | the fall-off tables: the share of damage, healing or an added effect's chance a target gets by its distance from the aimed place |
-| `actflags.tsv` | each ability's effect kind and staging bits (`gAbilityAnimations`) |
-| `actstat.tsv` | each ability's staging, where it overrides the plan's choice (`gAbilityStaging`) |
-| `formatn.tsv` | the enemy groups (formations) |
-| [`sprites.tsv`](sprites.tsv) | each enemy class's battle sprite |
+| `actflags.tsv` | each ability's animation id and staging bits (`gAbilityAnimations`) |
+| `actstat.tsv` | each ability's staging, where it overrides the turn's choice (`gAbilityStaging`) |
+| `formatn.tsv` | the formations |
+| [`sprites.tsv`](sprites.tsv) | each enemy's battle sprite |
 | `presets.tsv` | the debug party presets |
 | `advarrow.s` | the arrow beside a battle message that waits for the player, built from `advarrow.png`: sixteen 8 by 16 frames, of which the code cycles through the first eight, one every four frames |
 | `presentation/` | the opening curtain's tiles and their variants, and the brightness steps of a unit's highlight (`highlight_ramp.s`) |
@@ -780,14 +781,14 @@ form a table of contents. The functions are declared in
   with `Ability_Get`), `actflags.tsv` and `actstat.tsv`.
 - **ability kind**: the low four bits of the ability's `flags`
   (`ABILITY_FORMULA_MASK`, `enum AbilityFormula`). It chooses the formula each
-  target goes through. The **effect kind** in `actflags.tsv` is unrelated and
+  target goes through. The **animation id** in `actflags.tsv` is unrelated and
   chooses only the animation (`enum BattleAnimId`).
 - **power**: the `power` column of `actions.tsv`. What it counts depends on
   the ability kind. A unit's **Power** and **Resist**, capitalized as the
-  status screen writes them, are its per-element stats.
+  summary screen writes them, are its per-element stats.
 - **added effect**: what an ability does besides damage or healing, the
   `effect` column of `actions.tsv` (`enum AbilityEffect`).
-- **element level**: the level the status screen shows under each element
+- **element level**: the level the summary screen shows under each element
   (`Unit_GetElementLevel`). A character's Power and Resist start from it, and
   it moves the chance of an added effect.
 - **place**, **place code**: a unit's position in its side's line-up
@@ -796,16 +797,16 @@ form a table of contents. The functions are declared in
 - **side**: the party or the enemies (`BATTLE_SIDES_PARTY`,
   `BATTLE_SIDES_ENEMIES`). A unit's own `side` field says which side it is on,
   or that it has left the battle.
-- **plan**: the action under way (`struct BattleTurn`): the actor, the
+- **turn**: the action under way (`struct BattleTurn`): the actor, the
   ability, its element, its targets with their distances and rolls, its
   **outcome** (`enum BattleStaging`, how it is staged) and its
-  **presentation flags** (the `actflags.tsv` row: `STAGING_*`).
+  **animation word** (the `actflags.tsv` row: `STAGING_*`).
 - **battle object**: a unit's figure on the battlefield (`struct BattleObject`,
-  `BattleObject_Get`). Its **records** are its sprites; the Kraken and the Fusion
+  `BattleObject_Get`). It has one sprite; the Kraken and the Fusion
   Dragon are drawn in two parts and have two (`SPRITE_WITH_SECOND_PART_A`,
   `SPRITE_WITH_SECOND_PART_B`).
 - **event**: one thing the battle shows while an action plays, waiting in the
-  battle event queue (`BattlePlayback_Push`, `enum BattlePlaybackCommand` in
+  playback queue (`BattlePlayback_Push`, `enum BattlePlaybackCommand` in
   `battle_event.h`): a message, a name or number the next message needs, a
   flinch, a defeat, a redraw or a sound.
 - **pose**: how a battle object stands (`POSE_*`, set with
@@ -822,25 +823,27 @@ for its `struct BattleObject`, `object` for that object's
 | --- | --- |
 | `Battle_` | the battle as a whole: `Battle_Run`, the round's end |
 | `BattleParty_` | the unit lists: who is in the battle and who is still standing |
-| `BattleQueue_` | the round's action list and its turn order |
-| `BattleCommand_` | an action chosen and planned |
-| `BattlePlan_` | the plan's targets |
+| `BattleTurnOrder_` | the round's action list and its turn order |
+| `BattleAI_` | an enemy's choice of action and target |
+| `BattleTurn_` | the turn under way: its ability, announcement and targets |
+| `BattleStaging_` | how a turn is staged around its animation |
+| `BattleAbility_` | what an ability does to each target |
 | `BattleTarget_` | targets an enemy or a confused unit picks |
 | `BattlePresentation_` | what the battle shows: the staging, the opening transition, the camera, the palettes |
-| `BattleEvent_` | the event queue and its playback |
+| `BattlePlayback_` | the playback queue and playing it |
 | `BattleObject_` | the battle objects |
 | `BattleMotion_` | their movements |
 | `BattlePlacement_` | where each place stands on the battlefield |
 | `BattleUnit_` | one unit's battle state: its guard, weapon sprite, status flags and turn-end counters |
 | `BattleStatusIcon_` | the status icons that cycle over a unit |
-| `BattleFormation_`, `BattleEnemy_` | the enemy groups, and each enemy's level, name letter, defeat and coins |
-| `BattleClass_` | an enemy class's row of the battle sprite table |
-| `BattleEscape_` | running away |
+| `BattleFormation_`, `BattleEnemy_` | the formations, and each enemy's level, name letter, defeat and coins |
+| `BattleSprite_` | an enemy's row of the battle sprite table |
+| `BattleFlee_` | running away |
 | `BattleSpoils_` | the items the enemies leave |
 | `BattleSummon_` | which summons the party's standby Djinn make available |
 | `BattleIntro_` | the message that announces the encounter |
 | `BattleBackground_`, `BattleCamera_` | the battle background and the perspective plane's zoom |
-| `SummonSlot_` | the enemy sprite slots a unit's battle sprite is loaded into |
+| `EnemySprite_` | the enemy sprite slots a unit's battle sprite is loaded into |
 | `ElementGlow_` | a unit's elemental glow: the star field and the other glows |
 | `LinkBattle_` | link battles |
 | `DebugBattle_`, `DebugParty_` | the debug battle menu, its message viewer and the party presets |
@@ -874,7 +877,7 @@ is one such run, with both rolls answered 0, and aiming Quake along four
 large enemies moved the cursor from the last place round to the first.
 
 Bits 0 and 1 of the `flags` column of `actflags.tsv` (`ANIM_ON_DOWNED`,
-`ANIM_OTHER_SIDE`) are read, but no row in either game sets them. The plan
+`ANIM_OTHER_SIDE`) are read, but no row in either game sets them. The turn
 adds the first itself for the revive effects; nothing adds the second, so the
 side flip it asks for is unused. `BattlePlacement_LayoutEnemies` lays out the
 enemies' column, and `BattleSprite_HasHeavyImpact` reads the class bit that
@@ -883,5 +886,5 @@ bosses set (Saturos's second fight, Menardi and the Fusion Dragon).
 
 - XXX: what `BattleCamera.unk18` and `BattlePresentationTransition`'s
   `unk18` and `unk1c` hold; the battle's setup clears them and no C reads
-  them, so a reader in the effect overlays or a watch on them through a
+  them, so a reader in the battle animations or a watch on them through a
   battle would settle it.

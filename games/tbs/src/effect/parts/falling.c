@@ -7,7 +7,7 @@
 /// Fills window 0's per-scanline edges for the falling shards and bolts:
 /// lines 8 to `last` take `slant`, an expression of the line `i`; the rest of
 /// the battle view, down to line 135, takes the fixed `span`; and the lines
-/// below it are empty. Every band the effects pass is 128 pixels wide.
+/// below it are empty. Every band the animations pass is 128 pixels wide.
 #define FALLING_BUILD_SLANTED_WINDOW(line, i, last, slant, span)               \
   for ((i) = 0; (i) != 160; (i)++) {                                           \
     if ((i) >= 8 && (i) <= (last))                                             \

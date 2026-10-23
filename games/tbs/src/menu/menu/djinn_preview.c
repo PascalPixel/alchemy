@@ -6,7 +6,7 @@
 #include "../menu_internal.h"
 
 /// Previews a give, trade, set or standby change without committing it.
-/// It saves and restores the unit records before polling for confirmation.
+/// It saves and restores the units before polling for confirmation.
 ///
 /// mode is a DjinnCompareOperation. Two 15 by 15 windows show the change and
 /// the top window asks "Is this OK?". For a give or trade R cycles three
@@ -167,7 +167,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     pageCounts[1] = 1;
   }
 
-  // Open the paired panes only after both unit records have been restored.
+  // Open the paired panes only after both units have been restored.
   Window_UpdateOrCreate(&menu->window, 0, 5, 15, 15, 2);
   Window_UpdateOrCreate(&menu->secondWindow, 15, 5, 15, 15, 2);
   WindowSprite_RedrawSavedRectFar(menu->helpWindow);
@@ -563,7 +563,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   return result;
 }
 
-/// Shows the chosen owner's current stats and paged Psynergy list.
+/// Shows the chosen member's current stats and paged Psynergy list.
 /// Opened by L on the Djinn list ("Char. Status"): the member's stats on the
 /// left, their Psynergy six to a page on the right, which Left and Right turn.
 /// Returns DJINN_RESULT_BACK for A, B, L or R, and DJINN_RESULT_START for
@@ -755,7 +755,7 @@ s32 Djinn_MarkBalancedEntries(s8 *requiresTrade, s32 sourceOwnerColumn) {
   return tradeCount;
 }
 
-/// Tests whether a hypothetical give leaves every pair of owners within one
+/// Tests whether a hypothetical give leaves every pair of members within one
 /// Djinn. Returns 1 when, with one Djinni moved from sourceOwnerColumn to
 /// targetOwnerColumn, no two members' totals (Djinn_CountTurns) differ by
 /// more than one; 0 otherwise.
@@ -790,7 +790,7 @@ s32 Djinn_CheckTurnBalance(s32 sourceOwnerColumn, s32 targetOwnerColumn) {
   return balanced;
 }
 
-/// Counts each owner's Djinn across its set and available bitmasks: writes
+/// Counts each member's Djinn across its set and available bitmasks: writes
 /// every party member's total, set or not, into ownedCounts by list column.
 void Djinn_CountTurns(u8 *ownedCounts) {
   struct DjinnMenuWork *menu;

@@ -4,9 +4,9 @@
 
 #include "../effect_internal.h"
 
-// None of the three effects here is called, or held in any table: they are
+// None of the three animations here is called, or held in any table: they are
 // in the ROM but unreachable. XXX: whether they are leftovers or reached by
-// some path not yet read; a pointer to one in data outside the effect
+// some path not yet read; a pointer to one in data outside the animation
 // tables would settle it.
 
 #define SWIRLING_STARS_FRAMES 160
@@ -111,7 +111,7 @@ UNUSED void BattleAnim_RunSwirlingStars(struct BattleAnimArgs *effect) {
 
 /// Orbiting skulls: three skulls circle each target in turn, 16 frames
 /// apart, for 64 frames each, a third of a turn apart on a circle of 8
-/// pixels around the target. Runs with the effect already in
+/// pixels around the target. Runs with the animation already in
 /// gBattleAnimWork.
 ///
 /// Nothing calls it. Copies the skull palette over the first 128 bytes of BG

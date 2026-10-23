@@ -104,7 +104,7 @@ extern u8 IwramSoundPresetCode[];
 /// Save_WriteSector calls.
 extern u32 gFlash_Handler0;
 #endif
-/// HEAP_SLOT_SPRITE_ANIMS: the animation layer records (struct
+/// HEAP_SLOT_SPRITE_ANIMS: the sprite anims (struct
 /// SpriteAnim) that SpriteAnim_Alloc takes from.
 extern struct SpriteAnim *gSpriteAnims[];
 /// Where the debug text writes next on its 32 by 20 screen in BG0.

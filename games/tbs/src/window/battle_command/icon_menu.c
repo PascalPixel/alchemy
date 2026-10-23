@@ -27,7 +27,7 @@ struct WindowLine {
   u16 span; ///< window 1's edges, for WIN1H
 };
 
-/// A page of the display transition's window edges: WININ and WINOUT, then
+/// A page of the screen transition's window edges: WININ and WINOUT, then
 /// each of the 160 lines' edges.
 struct WindowBuffer {
   u8 winInOut[4]; ///< WININ and WINOUT, not touched here
@@ -36,7 +36,7 @@ struct WindowBuffer {
 
 /// Draws the resource-menu icons, pulsing the selected icon with one affine
 /// matrix, and updates the horizontal window spans to reveal the active icon
-/// row. A scheduler callback of the command icon menus
+/// row. A task of the command icon menus
 /// (IconMenu_Open). Each icon is a 32x32, 256-colour sprite;
 /// the selected one is double-size affine, pulsing between 1.19 and 1.31
 /// times, on layer 246, the others on 245, and one at x 0 is not drawn.
@@ -464,7 +464,7 @@ void IconMenu_LayoutIcons(s32 x, s32 y, s32 width, s32 resourceBase) {
   work->window = Window_Create(x, y, work->width, 3, 2);
 }
 
-/// Reads the signed command-position mapping used by the top resource menu.
+/// Reads the signed command-position mapping used by the icon menu.
 static __inline__ s32 IconMenu_ReadCommandPosition(s8 *table, s32 index) {
   return table[index];
 }
@@ -610,7 +610,7 @@ s32 FileMenu_SelectAction(void) {
 #endif
 
 /// Redraws the password-level explanation when the selected level changes.
-/// A scheduler callback of the password level menu: what each level's
+/// A task of the password level menu: what each level's
 /// password carries, from MsgPasswordLevel on: Gold (0) "Level", "Djinn",
 /// "Character stats", "Items" and "Coins", Silver (1) the first three,
 /// Bronze (2) the first two.
@@ -661,7 +661,7 @@ void Menu_DrawModeLabel(void) {
 #endif
 
 // French alone redraws the transfer help its own way: it releases the help's
-// render outputs instead of preparing them for a redraw, and draws Cable's
+// window sprites instead of preparing them for a redraw, and draws Cable's
 // help only when coming from Password. Spanish and Italian, which take the
 // French updates (TBS_PATCH_3), keep the others' form, so the test is on
 // the language.
@@ -670,7 +670,7 @@ void Menu_DrawModeLabel(void) {
 #if (LANGUAGE == LANGUAGE_FRENCH)
 
 /// Redraws password/cable transfer help when the chosen method changes. A
-/// scheduler callback of the transfer method menu: Password or Cable.
+/// task of the transfer method menu: Password or Cable.
 void Menu_DrawModeIndicator(void) {
   struct IconMenuWork *state = gIconMenuWork;
 
@@ -690,7 +690,7 @@ void Menu_DrawModeIndicator(void) {
 }
 #else
 /// Redraws password/cable transfer help when the chosen method changes. A
-/// scheduler callback of the transfer method menu: Password or Cable.
+/// task of the transfer method menu: Password or Cable.
 void Menu_DrawModeIndicator(void) {
   struct IconMenuWork *state = gIconMenuWork;
   s16 *shown = &state->previousMode;

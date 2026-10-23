@@ -11,7 +11,8 @@
 
 /// ★ Named from the game: "Title screen" (MsgDebugEntryName)
 extern char MapId_Title;
-/// ★ Named from the game: "Clear data" (MsgDebugEntryName)
+/// The main menu, where the player chooses a file; the debug map list calls
+/// it "Clear data" (MsgDebugEntryName).
 extern char MapId_MainMenu;
 /// ★ Named from its area name: World Map
 extern char MapId_WorldMap;

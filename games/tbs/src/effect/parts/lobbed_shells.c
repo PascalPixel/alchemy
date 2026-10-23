@@ -11,7 +11,7 @@
 // into smoke or shards, in seven colourings.
 
 /// The lobbed shells' styles (BattleAnim_RunLobbedShells), each named for the
-/// effect that plays it, and its row of gLobbedShells_Records.
+/// animation that plays it, and its row of gLobbedShells_Records.
 enum LobbedShellsMode {
   LOBBED_SHELLS_BONE_CHILLER,  ///< blue, bursting into smoke
   LOBBED_SHELLS_STICKY_GOO,    ///< the spider web's colours, smoke

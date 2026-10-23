@@ -2,14 +2,15 @@
 #define ALCHEMY_CURSOR_H
 
 /// @file
-/// The cursor that approaches its target, shared by shops, name entry and
-/// settings.
+/// The cursor that approaches its target, shared by shops, the naming
+/// screen and the option menu.
 
 #include "types.h"
 #include "static_assert.h"
 #include "render_input.h"
 
-/// Cursor that approaches its target, shared by shop, name entry and settings.
+/// Cursor that approaches its target, shared by shops, naming screen and option
+/// menu.
 struct MenuCursor {
   struct WindowSprite *anchor; ///< the cursor's sprite, moved with its OAM
   u16 x;       ///< screen pixels: where the current move started
@@ -24,7 +25,7 @@ STATIC_ASSERT(sizeof(struct MenuCursor) == 0x10);
 STATIC_ASSERT(offsetof(struct MenuCursor, targetX) == 0x08);
 STATIC_ASSERT(offsetof(struct MenuCursor, active) == 0x0c);
 
-/// A menu cursor: its render output, or the cursor that approaches its target.
+/// A menu cursor: its window sprite, or the cursor that approaches its target.
 // Screens that write only the image pointer use the union to retain store
 // order.
 union MenuCursorRef {

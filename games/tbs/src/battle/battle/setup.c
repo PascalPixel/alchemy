@@ -11,14 +11,14 @@
 /// camera a sixteenth of the way toward a transition's yaw, places the camera
 /// at its position (or at the one it follows) with its yaw, pitch and
 /// distance, and, unless a transition owns the background, refreshes the
-/// background's perspective. Runs as a scheduler callback that
-/// Battle_Run adds with order 0xc7f: in the main-loop pass, after
-/// the tasks of order 0xc80 (the objects' camera, the sprite priorities and
-/// event playback). Changes battle->linkMisses and linkPaused,
+/// background's perspective. Runs as a task that
+/// Battle_Run adds with priority 0xc7f: in the main-loop pass, after
+/// the tasks of priority 0xc80 (the objects' camera, the sprite priorities and
+/// playback). Changes battle->linkMisses and linkPaused,
 /// the camera's yaw and the transition's frame count, the transform state,
 /// and through BattleCamera_SetRange the background's affine page.
 void BattleCamera_Update(void) {
-  // UB: indexing past scalar gCameraWork reaches other work slots. Named
+  // UB: indexing past scalar gCameraWork reaches other heap slots. Named
   // slots add four bytes in the native EN trial (0xf8 to 0xfc).
 #ifdef UBFIX
   struct BattleCamera *camera = gCameraWork;
@@ -255,7 +255,7 @@ s32 BattleParty_ResetActiveRuntimeFields(void) {
 /// Brings the Djinn recovery list up to date as a battle starts: every
 /// Djinni a party member has on standby that the list lacks joins it. Then,
 /// outside a link battle, each Djinni waiting for a battle to end whose
-/// owner has no battle object is Set again and leaves the list. Called by
+/// unit has no battle object is Set again and leaves the list. Called by
 /// Battle_Run once the unit lists and battle objects are in place.
 /// Changes the party's and the opponent's recovery lists and Djinn states.
 #ifdef UBFIX
@@ -272,7 +272,7 @@ s32 DjinnRecovery_Reconcile(void) {
 
   count = BattleParty_PrepareMembers(owners);
 
-  // Owners 0 to 7 use the party's list, any other the opponent's.
+  // Units 0 to 7 use the party's list, any other the opponent's.
   for (i = 0; i < count; i++) {
     owner = owners[i];
     for (element = 0; element < ELEMENT_COUNT; element++) {
@@ -338,7 +338,7 @@ s32 DjinnRecovery_Reconcile(void) {
 /// (djinnHeldCounts, set or not), all members together. Whether enough of
 /// them are on standby is checked as the summon is chosen
 /// (BattleSummonMenu_Run, Battle_CollectPartyCommands) and again when it
-/// is planned (BattleTurn_Build). Stores the mask of them (bit n for
+/// is built into a turn (BattleTurn_Build). Stores the mask of them (bit n for
 /// summon n) and returns the state that holds it. Called by
 /// Battle_Run as the battle is set up and at the start of each
 /// round, which asks for the party status window's standby Djinn column

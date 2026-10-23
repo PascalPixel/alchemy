@@ -6,8 +6,8 @@
 
 /// End of the effect: switches the caster's display flags between 3 and 1 on
 /// a 5-frame cycle, so its outline (bit 1) blinks beside its shadow (bit 0).
-/// FieldEffect_RunAvoid schedules it (order 0xc80) for its last 70 frames and
-/// removes it again.
+/// FieldEffect_RunAvoid adds it as a task (priority 0xc80) for its last 70
+/// frames and removes it again.
 void FieldEffect_BlinkAvoidCaster(void) {
   struct ArcEffectObject *caster;
   struct Sprite *rec;

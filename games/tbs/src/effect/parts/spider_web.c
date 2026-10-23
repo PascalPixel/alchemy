@@ -11,7 +11,7 @@
 //   and fades it in and out.
 
 /// The swirl swipe's modes (BattleAnim_RunSwirlSwipe), each named for the
-/// effect that plays it.
+/// animation that plays it.
 enum SwirlSwipeMode {
   SWIRL_SWIPE_POISON_BEAT,  ///< lime; the target recoils at once, 48 frames
   SWIRL_SWIPE_SPINNING_BEAT ///< magenta; the target is thrown up, 74 frames

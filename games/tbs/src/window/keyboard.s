@@ -5,7 +5,7 @@
 	.global gMenu_PartySpriteResourceIds
 gMenu_PartySpriteResourceIds:
 	.4byte 90, 91, 92, 93
-@ The name entry screen's keyboard tilemaps
+@ The naming screen's keyboard tilemaps
 	.global gNamingScreen_KeyboardTilemap
 gNamingScreen_KeyboardTilemap:
 	.ifdef TBS_EDITION_JA

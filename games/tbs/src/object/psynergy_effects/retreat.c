@@ -44,10 +44,10 @@ enum RetreatParticleState {
   RETREAT_PARTICLE_LAST_FLIGHT = 2
 };
 
-/// Effect slot callback: a particle flies 120 pixels from the main object's
-/// screen position (8 pixels lower) in a direction within 1/8 turn of up the
-/// screen, at up to 5 pixels a frame, and starts again from the main object on
-/// arrival until it takes its last flight.
+/// Field effect sprite callback: a particle flies 120 pixels from the main
+/// object's screen position (8 pixels lower) in a direction within 1/8 turn of
+/// up the screen, at up to 5 pixels a frame, and starts again from the main
+/// object on arrival until it takes its last flight.
 void FieldEffect_UpdateRadialLaunch(struct FieldEffectSprite *effect) {
   struct EffectVector pos;
   struct ObjectEvent *main;
@@ -240,7 +240,7 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(
 }
 
 /// A falling arc's sprite (struct Sprite), seen as the attribute
-/// bits, resource slot and animation that Avoid's arcs set on it; the notes
+/// bits, VRAM cache entry and animation that Avoid's arcs set on it; the notes
 /// give the Sprite fields, some under other names here.
 struct DescendingArcSprite {
   u8 padding00[5];

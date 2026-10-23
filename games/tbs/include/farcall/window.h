@@ -36,7 +36,7 @@ struct Window *Message_OpenWindowFar(s32 message, s32 x, s32 y, u32 packed);
 /// Unless flags move it lower, the window goes above or below the player's
 /// character, away from where it stands.
 void FieldMessage_ShowFar(s32 no, s32 flags);
-/// Returns 1 once every message channel has finished typing its text, even if
+/// Returns 1 once every text printer has finished typing its text, even if
 /// its window is still open.
 s32 UiWork_IsCompleteFar(void);
 /// Returns 1 once window has closed and freed its slot; a new window in that
@@ -179,7 +179,7 @@ void FieldMessage_ShowCenteredFar(s32 message, s32 mode, s32 yOffset);
 /// Closes the battle message window at once, so the next battle message opens a
 /// new one.
 void BattleMessage_CloseFar(void);
-/// Clears the first idle message channel's pen, style and canvas, as auto
+/// Clears the first idle text printer's pen, style and canvas, as auto
 /// battle does after each action.
 void TextPrinter_ResetFreeFar(void);
 /// Sets up a sprite as the right-pointing arrow and returns its tile slot in
@@ -198,12 +198,12 @@ void Ui_PrepareTransferForItemFar(s32 code);
 /// of decoded text.
 void Text_DrawWideStringAtOffsetFar(u16 *text, struct Window *window, s32 x,
                                     s32 y);
-/// Writes each scan line's window frame extent into a page of the display
+/// Writes each scan line's window frame extent into a page of the screen
 /// transition's window table, as a window transition runs.
 void Win_FillScanlineSpansFar(void *dst);
 /// Redraws a window's empty frame at its current rectangle.
 void WindowSprite_RedrawSavedRectFar(struct Window *window);
-/// Releases every sprite in a list of render outputs, or a window's, and
+/// Releases every sprite in a list of window sprites, or a window's, and
 /// empties it; NULL is ignored.
 void WindowSprite_ClearListFar(void *work);
 /// Writes value into a window's tilemap at tile (x, y) of its interior, with
@@ -243,7 +243,7 @@ struct WindowSprite *WindowSprite_CreateLoadedFar(s32 code, s32 layers,
 /// the game is saved there. Returns 0, -1 when cancelled, or a SAVE_ERROR_
 /// after its message.
 s32 Save_ToChosenFileFar(void);
-/// Lets the player pick a file in save menu mode arg and loads it as the
+/// Lets the player pick a file in file menu mode arg and loads it as the
 /// current file, as the title's Continue does; it returns as the Save command
 /// does.
 s32 Save_LoadRecordIntoWorkFar(s32 arg);
@@ -253,15 +253,15 @@ s32 Save_CopyFileFar(void);
 /// Runs the file menu's Erase, deleting a chosen file once the player confirms
 /// it. Returns 0 also when the player answers No.
 s32 Save_EraseSelectedFileFar(void);
-/// Writes the save stamp into the current file's first record, as the link
-/// lobby saves its battle results. Returns 0, -1 with no file chosen, or a
+/// Writes the save stamp into the current file's first record, as the Battle
+/// Arena saves its battle results. Returns 0, -1 with no file chosen, or a
 /// SAVE_ERROR_.
 s32 Save_ProcessSelectedFileFar(void);
 /// Reads the save summaries for the title menu and returns how many files there
 /// are, plus 100 when every file has its send flag; it also decides whether
 /// Battle and Send are offered.
 s32 Save_ScanRecordFlagsFar(void);
-/// Runs the name entry screen for member entry. Returns 0, or -1 when
+/// Runs the naming screen for member entry. Returns 0, or -1 when
 /// cancelled; the name changes only when the player ends on End.
 s32 NamingScreen_EditMemberNameFar(s32 entry);
 /// Debug: pages through the item, Psynergy and status icons. Returns 0.
@@ -323,7 +323,7 @@ s32 Menu_AnimateSelectionToEntryFar(s32 arg0, s32 arg1);
 /// Returns the first entry of gUi_FixedTileBlocks, whatever no is.
 s32 Ui_GetTableWordZeroFar(s32 no);
 /// Types a message into an open window from its top left, without voice blips.
-/// Returns the typing channel as an integer, or 0 when nothing could start.
+/// Returns the text printer as an integer, or 0 when nothing could start.
 s32 Message_OpenDecodedFar(struct Window *window, s32 argument);
 /// Returns how many save files there are, leaving out the files saved at the
 /// end of the game when flag is nonzero, or SAVE_ERROR_NO_MEMORY.

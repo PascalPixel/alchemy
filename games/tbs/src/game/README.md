@@ -12,10 +12,10 @@ Attack would be with another sword, and a battle what a blow does.
 [Battles](../battle/README.md) follows an ability from these tables to its
 damage.
 
-Two words run through the page. A character's record, with its stats, HP
-and [PP](../../glossary.md#psynergy-and-pp), items and Djinn, is a unit, a
+Two words run through the page. A character's stats, HP
+and [PP](../../glossary.md#psynergy-and-pp), items and Djinn make up a unit, a
 `struct Unit`; the same struct holds each enemy in a battle. The
-number that picks a unit is its owner: `ISAAC` (0) to `PIERS` (7) for the
+number that picks a unit is its unit id: `ISAAC` (0) to `PIERS` (7) for the
 eight characters of both games, and from `FIRST_ENEMY_UNIT` (128) for the
 current battle's enemies.
 
@@ -126,7 +126,7 @@ element 4, `ELEMENT_NONE`; every other column is 0.
 | `action_id` | the ability the item uses |
 
 `action_id` and `unleash_action` are rows of `actions.tsv`. Used in battle,
-the item command plans its `action_id` (`BattleTurn_Build`,
+the item command builds a turn from its `action_id` (`BattleTurn_Build`,
 [battle/battle/plan.c](../battle/battle/plan.c)), and
 [Battles](../battle/README.md#how-an-ability-resolves) follows that ability
 to its effect. An item whose `use_type` is `ITEM_USE_TEACHES` is never used:
@@ -298,7 +298,7 @@ and selling or discarding one puts it back (`Item_AdjustCounter`,
 Code in the other banks calls this one's functions by their far-call names,
 and a map's [overlay](../../glossary.md#overlay) through the list of
 outside functions it was built with (its [import table](../../glossary.md#entry-table-and-import-table)); some code reads
-`gGameState`, the record of the game in progress, directly, as the save
+`gGameState`, the state of the game in progress, directly, as the save
 summary does. The battle folder reads `actions.tsv` through
 `struct AbilityDefinition` beside its own `actflags.tsv` and `actstat.tsv`, which
 choose how an ability is drawn ([Battle](../../battle.md)). The flags and the
@@ -339,10 +339,10 @@ far-call table is `games/tbs/src/system/far_call/GAME.S`.
 
 ## Words used here
 
-- **owner** and **unit**: an owner is a number, and a unit the
-  `struct Unit` `Unit_Get(owner)` returns, as the opening says. The
-  characters' units are kept in `gGameState.owners` (`character_ids.h`).
-- **party**: the characters travelling together. `FLAG_IN_PARTY(owner)`
+- **unit id** and **unit**: a unit id is a number, and a unit the
+  `struct Unit` `Unit_Get` returns for it, as the opening says. The
+  characters' units are kept in `gGameState.units` (`character_ids.h`).
+- **party**: the characters travelling together. `FLAG_IN_PARTY(character)`
   says who is in it and `gGameState.party` lists them in order.
 - **inventory entry**: one of a unit's `INVENTORY_SLOTS` (15) halfwords,
   holding an item, its state and its count.

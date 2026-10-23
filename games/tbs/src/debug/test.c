@@ -219,7 +219,7 @@ static void MenuTest_RunMessageTest(void) {
 }
 #endif
 
-/// Runs the shop test's preset inventory, money and ailment setup. Talking
+/// Runs the shop test's preset inventory, money and status setup. Talking
 /// to LOCALID_ARMOR_MERCHANT: the debug shop, with 200000 coins, broken
 /// equipment and afflicted members (Shop_OpenDebugShop).
 static void DebugMenu_RunPresetShop(void) { Shop_OpenDebugShop(1); }
@@ -227,7 +227,7 @@ static void DebugMenu_RunPresetShop(void) { Shop_OpenDebugShop(1); }
 /// Unused: an empty function nothing calls.
 UNUSED static void MenuTest_NoOp(void) {}
 
-/// Opens the shop inventory selector and discards its selected owner and slot.
+/// Opens the shop inventory selector and discards its selected member and slot.
 /// Talking to LOCALID_KRADEN: the picker a full party drops an item with.
 static void MenuTest_TestItemSelection(void) {
   s32 selectedOwner;
@@ -235,7 +235,7 @@ static void MenuTest_TestItemSelection(void) {
   ItemPicker_Run(&selectedOwner, &selectedSlot);
 }
 
-/// Talking to Mia: the name entry screen for Isaac.
+/// Talking to Mia: the naming screen for Isaac.
 static void MenuTest_EditIsaacName(void) { NamingScreen_EditMemberName(ISAAC); }
 
 /// Leaves the test object event unchanged when targeted by Psynergy. The event
@@ -598,7 +598,7 @@ static void MenuTest_DamageAndAfflictParty(void) {
   MenuTest_RecalculateParty();
 }
 
-/// Adds the test equipment in each owner's original inventory order. Talking
+/// Adds the test equipment in each member's original inventory order. Talking
 /// to Jenna: `You got sturdy equipment!`, then weapons and armor for each of
 /// the four, from the Gaia Blade to the Glittering Tiara.
 static void MenuTest_GiveEquipmentTestStock(void) {
@@ -847,7 +847,7 @@ static s32 MenuTest_SelectCharacter(void) { return MemberChooser_Open(); }
 #endif
 
 #if !TBS_PATCH_3
-/// Forwards the selected owner and shop confirmation status. Talking to
+/// Forwards the selected member and shop confirmation status. Talking to
 /// LOCALID_SECOND_DORA in Japanese, English and German: the sanctum's service
 /// menu, with LOCALID_SECOND_DORA as its keeper, since Map_TalkToObjectEvent
 /// passes the object event's id.

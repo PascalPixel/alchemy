@@ -2,7 +2,7 @@
 #define GUARD_SAVE_STATE_H
 
 /// @file
-/// The save workspace: slot headers and summaries.
+/// The save workspace: sector headers and file summaries.
 
 #include "unit/window/window.h"
 #include "unit/window/battle_command.h"
@@ -25,7 +25,7 @@ struct SaveSectorHeader {
   u8 reserved[4]; ///< not named by TBS code
 };
 
-/// A save file's summary for the file screen: the leader's name, level and
+/// A save file's summary for the file menu: the leader's name, level and
 /// class, the area, play time, coins, Djinn and party.
 struct SaveFileSummary {
   u8 slotHeader[16]; ///< room for the record's SaveSectorHeader
@@ -61,7 +61,7 @@ struct SaveFileSummary {
 /// summaries.
 ///
 /// It lives in heap slot HEAP_SLOT_SAVE (gSaveWork) only around each
-/// save, load, copy or delete and each scan of the files, as the title menu's
+/// save, load, copy or delete and each scan of the files, as the main menu's
 /// (Save_ScanRecordFlags): Save_InitializeWork takes it and
 /// scans the sectors into it, and Save_ReleaseWork frees it.
 struct SaveWork {

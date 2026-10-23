@@ -103,7 +103,7 @@ void FieldEffect_SetupResourcesAndWindow(void) {
 #ifdef UBFIX
   marker = work->markers;
 #else
-  // UB: the flat word view runs across sprite records. Typed word/sprite
+  // UB: the flat word view runs across sprite entries. Typed word/sprite
   // unions change tbs-en setup from 368 to 364 bytes.
   oam = (u32 *)work->markers;
 #endif
@@ -195,7 +195,7 @@ void FieldEffect_CleanupResourcesAndWindow(void) {
   Window_CloseFar(work->nameWindow, 2);
 }
 
-/// Scheduler callback of the world map screen: shows a marker at each map
+/// Task of the world map screen: shows a marker at each map
 /// section whose flag is set, moves the cursor with the d-pad (to the current
 /// map section while L or R is held) and shows the name of the marker nearest
 /// the cursor.

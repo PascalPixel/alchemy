@@ -63,7 +63,7 @@ void Palette_UpdatePulseBrightness(void) {
 /// callback leaves the background alone), gProjection and the background's
 /// affine page.
 void Camera_ConfigureView(s32 verticalOffset) {
-  // UB: indexing past scalar gCameraWork reaches another work slot. Named
+  // UB: indexing past scalar gCameraWork reaches another heap slot. Named
   // slots add four bytes in the native EN trial (0xd8 to 0xdc).
 #ifdef UBFIX
   struct BattleCamera *camera = gCameraWork;
@@ -371,7 +371,7 @@ void BattleTurnOrder_Sort(struct BattleAction *entries, s32 count) {
 /// The header a link battle sends before its actions: how many there are,
 /// the next random number to check the consoles agree, and the parent's
 /// random seed for the round. Battle_AppendLinkedActions takes it
-/// from the alternate pool (40 bytes) for one exchange and frees it before
+/// from the EWRAM pool (40 bytes) for one exchange and frees it before
 /// returning. One header serves both ways: the parent's received header
 /// overwrites the one it sent, and the child receives first, then writes
 /// its count over the received header and sends it back.
@@ -623,7 +623,8 @@ void Palette_CopyBanksWithBrightnessOffset(s32 offset) {
 /// Called by Battle_Run at the start of each round outside auto
 /// battle. Clears gBattleWork->actions, sets every defender's guardLevel,
 /// may set firstStrike to FIRST_STRIKE_ENEMIES after a failed
-/// escape, and holds FLAG_CHOOSING_COMMANDS while the commands are chosen.
+/// attempt to flee, and holds FLAG_CHOOSING_COMMANDS while the commands are
+/// chosen.
 /// @param actions the actions (20 at most)
 s32 Battle_GatherActions(struct BattleAction *actions) {
   struct Unit *unit;
@@ -660,7 +661,7 @@ s32 Battle_GatherActions(struct BattleAction *actions) {
     count = Battle_BuildUnitActions(actions);
     if (count < 0)
       goto finish;
-    // A failed escape turns the round into one the enemies began.
+    // A failed attempt to flee turns the round into one the enemies began.
     if (count != 0 && actions[0].command == COMMAND_FLEE &&
         BattleFlee_CheckSuccess() == 0)
       *firstStrike = FIRST_STRIKE_ENEMIES;

@@ -30,7 +30,7 @@
 /// right-aligned on the 30-tile screen row at the top. It is four tiles high
 /// outside battle and three in battle, plus one with the PP row.
 void PartyStatus_BuildLayoutBounds(s32 flags) {
-  // UB: slot[-1] steps before the single party-status work slot. Reading
+  // UB: slot[-1] steps before the single party-status heap slot. Reading
   // the actual owners grows the EN function from 0x68 to 0x6c bytes.
   // Keep the original address formation only in the matching build.
 #ifdef UBFIX
@@ -228,7 +228,7 @@ s32 PartyStatus_DrawBars(struct Window *window, s32 x, s32 y, s32 length) {
 /// colour 4 at a quarter or less. When the flags change, the window is erased
 /// and laid out again first.
 void PartyStatus_Draw(s32 flags) {
-  // UB: the negative indices leave the single party-status work slot.
+  // UB: the negative indices leave the single party-status heap slot.
   // Named owners grow the EN function from 0x3d4 to 0x3dc bytes. Keep the
   // original address formation and load order in the matching build.
 #ifdef UBFIX
@@ -374,7 +374,7 @@ void PartyStatus_Draw(s32 flags) {
 
 /// Closes the party status window and frees its heap block.
 void PartyStatus_Close(void) {
-  // UB: reads the work slot's pointer through an s32 pointer; UBFIX reads
+  // UB: reads the heap slot's pointer through an s32 pointer; UBFIX reads
   // the window through the block's own struct.
 #ifdef UBFIX
   Window_Close(((struct PartyStatusWindow *)gWindowWork[1])->window, 1);

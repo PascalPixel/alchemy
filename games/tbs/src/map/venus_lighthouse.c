@@ -662,7 +662,7 @@ VenusLighthouse_UpdateChildFromTimer(struct ObjectScriptContext *interpreter) {
   return 0;
 }
 
-// Pulse the child effect and play its timed sound cue.
+// Pulse the child effect and play its timed sound.
 // UB: update hooks return void. In tbs-en venus_lighthouse, plain
 // void differs in 6 bytes of the 56-byte function. Keep the unused
 // native result in matching builds.
@@ -1007,7 +1007,7 @@ static struct ObjectEvent *VenusLighthouse_CreateLight(s32 x, s32 z,
   return effect;
 }
 
-/// The leader jumps a one-tile gap if the far side is clear.
+/// The leader jumps a one-cell gap if the far side is clear.
 /// It's reached by walking into the gap, in VenusLighthouseFourthFloor and
 /// through the jump-or-push events of VenusLighthouseFirstFloor to
 /// VenusLighthouseFourthFloor.
@@ -1682,7 +1682,7 @@ static void EventScript_PushDepthPillar(void) {
 }
 
 /// In VenusLighthouseFirstFloor, Move or Carry starting on one of the two
-/// pillars by the gap: their tiles are marked before they move.
+/// pillars by the gap: their cells are marked before they move.
 static void EventScript_LiftCarryPillar(void) {
   u32 pillarIndex;
   struct ObjectEvent *pillar;
@@ -2071,7 +2071,7 @@ static void EventScript_MoveSwitchPillar(void) {
     secondGateEffect =
         VenusLighthouse_CreateLight(888, 680, gVenusThirdFloorLightToSoutheast);
     // SC_FREE clears the script pointer; work value 0x28 signals the
-    // opening cue earlier, while the gate effects are still running.
+    // opening sound earlier, while the gate effects are still running.
     while (((struct ObjectScriptContext *)firstGateEffect)->script != 0 ||
            ((struct ObjectScriptContext *)secondGateEffect)->script != 0) {
       if (firstGateEffect->riseEnabled != 0 ||
@@ -3750,7 +3750,7 @@ static void VenusLighthouse_RaiseLeaderWithSpray(void) {
   Script_PlaySong(SONG_FADE_OUT_BGM);
   Script_PlaySong(SE_308);
   GameFlag_Set(FLAG_SKIP_MAP_CHANGE_SOUND);
-  // Raise the leader, terrain contact and platform by the same pixel each
+  // Raise the leader, ground height and platform by the same pixel each
   // frame.
   for (riseFrame = 0; riseFrame < 128; riseFrame++) {
     leader->y.fixed += PIXELS(1);

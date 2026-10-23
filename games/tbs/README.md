@@ -35,12 +35,12 @@ with `GAME_RUN_TITLE`, which makes the title screen (`MapId_Title`) the
 first map. The current map and the warp destination the party arrives by
 are `gGameState.mapId` and `gGameState.warpDest`.
 
-The title screen and the file select screen are the map table's first two
+The title screen and the main menu are the map table's first two
 rows, `MapId_Title` and `MapId_MainMenu`, so the loop runs them with code of
 their own the way it runs a map, though the party never walks there.
-`MapId_MainMenu` is named from the debug menu's name for the file select
-screen, "Clear data"; the game also goes there after the credits. Two debug start modes, taken only while
-`gDebugMode` is set, begin at Vale's gate or at the file select screen
+The main menu is where the player chooses a file; the debug map list calls it
+"Clear data". The game also goes there after the credits. Two debug start modes, taken only while
+`gDebugMode` is set, begin at Vale's gate or at the main menu
 instead of the title.
 
 Each pass of the loop first clears away what the last map left running:
@@ -93,7 +93,7 @@ hexadecimal form the source writes it in beside it.
 | --- | --- | --- |
 | `GAME_RUN_TITLE` | 0 | start at the title, with a fresh game state |
 | `GAME_RUN_DEBUG_VALE` | 1 | in debug mode, start at `MapId_ValeGate` |
-| `GAME_RUN_DEBUG_MAIN_MENU` | 2 | in debug mode, start at the file select screen (`MapId_MainMenu`) |
+| `GAME_RUN_DEBUG_MAIN_MENU` | 2 | in debug mode, start at the main menu (`MapId_MainMenu`) |
 | `RUN_NONE` | 507 (`0x1fb`) | the first map number with no row in the map table, whose rows are 0 to 200 |
 | `RUN_LUCKY_WHEELS` | 508 (`0x1fc`) | Lucky Wheels at Tolbi's spring |
 | `RUN_LUCKY_DICE` | 509 (`0x1fd`) | Lucky Dice at Tolbi's spring |
@@ -364,7 +364,7 @@ The source's folders follow the cartridge:
   them: `runtime`, `field`, `window`, `game`, `object`, `menu`, `shop`,
   `battle` and `effect`. A folder takes its bank's name, which is not always
   what it holds: `object` runs a map from arrival to warp, while `field`
-  moves and draws the field objects.
+  moves and draws the objects.
 - The five small banks' code sits in the folder it belongs with.
 - `graphics`, `layout`, `sound` and `system` are grouped by topic, and their
   files are linked into whichever bank or image needs them.
@@ -379,12 +379,12 @@ compiles or assembles, in link order with the image and bank it goes in, and
 - [World](world.md): the field engine, the layouts, the request loop a map
   runs and field Psynergy.
 - [Battle](battle.md): how a battle runs from the first menu to the spoils,
-  how an ability's damage and healing are worked out, and how its effects
+  how an ability's damage and healing are worked out, and how its animations
   are drawn.
 - [Menus](menus.md): the field menu and its screens, the shops and inns, and
   the windows text is drawn in.
 - [Engine](engine.md): start-up, frame timing and tasks, banks and far
-  calls, overlays and sound cues.
+  calls, overlays and songs.
 - [Places](src/field/maps.s): every map in story order, with its
   object event templates and map events.
 - [Game rules](src/game/README.md): stats, items, Djinn, classes, levels and

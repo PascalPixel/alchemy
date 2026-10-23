@@ -383,7 +383,7 @@ static void MercuryLighthouse_StartDjinnBattle(void) {
 }
 
 #if TBS_PATCH_3
-/// Scheduler callback: the fade overlay stops following the leader while he
+/// Task: the fade overlay stops following the leader while he
 /// crosses the patched floor region (MAPGRID_LAYER_GROUND, 16-pixel rows 13 to
 /// 18).
 static void MercuryLighthouse_UpdateLeaderEffectTarget(void) {
@@ -795,7 +795,7 @@ static void MercuryLighthouse_RestoreFountainTiles(s32 delayFrames) {
   Engine_MapGridRenderWaitForValues();
 }
 
-/// Emits the scheduled spray at the fountain's fixed position.
+/// Task: a spray at the fountain's fixed position.
 static void MercuryLighthouse_SprayAtFountain(void) {
   MercuryLighthouse_SparkleAt(PIXELS(690), 0, PIXELS(584));
 }
@@ -2207,7 +2207,7 @@ static void MercuryLighthouse_LowerStairsWithSparkles(void) {
   }
 }
 
-/// Scheduler callback: a sparkle from the leader every fourth frame, as he is
+/// Task: a sparkle from the leader every fourth frame, as he is
 /// carried to a landing.
 static void MercuryLighthouse_SparkleAroundLeader(void) {
   struct EffectOptions options;
@@ -2234,7 +2234,7 @@ static void MercuryLighthouse_SparkleAroundLeader(void) {
   }
 }
 
-/// A sparkle at a point every fourth frame, from a scheduler callback.
+/// A sparkle at a point every fourth frame, from a task.
 static void MercuryLighthouse_SparkleAt(s32 x, s32 y, s32 z) {
   struct EffectOptions options;
   s32 framePhase = gFrameCount & 3;
@@ -2959,7 +2959,7 @@ static void MercuryLighthouse_MiaCastsPlyOnEntrance(void) {
   Engine_PsynergyLowerHands();
 }
 
-/// Replaces one inventory item in the owner and slot that contain it.
+/// Replaces one inventory item in the member and slot that contain it.
 static void MercuryLighthouse_ReplaceInventoryItem(s32 oldItem, s32 newItem) {
   s32 owner = PartyInventory_FindMember(oldItem);
 

@@ -29,7 +29,7 @@ void BattleUnits_ListAllAndSubmit(void) {
 
 /// Returns the palette of unit id's battle object. Called by
 /// BattlePlayback_Run and BattleMotion_FlashHit, and through its far stub
-/// by the effect dispatcher (effect/parts/dispatch.c).
+/// by the battle animation dispatcher (effect/parts/dispatch.c).
 s32 BattleMotion_GetSlotPalette(s32 id) {
   return BattleObject_Get(id)->palette;
 }
@@ -63,7 +63,7 @@ s32 Enemy_HasSpriteRoom(s32 classId) {
 
 /// Loads an enemy unit's battle sprite into the first free enemy sprite
 /// slots (one for a small enemy, two side by side for a large one) and
-/// records the unit as their owner. Two sprites, the Kraken's and the Fusion
+/// marks them as the unit's. Two sprites, the Kraken's and the Fusion
 /// Dragon's, take a second part, loaded the same way into further slots.
 /// The slots stay the unit's until BattleObject_ReleaseSlotByValue
 /// frees them as it leaves the battle. Returns the first slot and the

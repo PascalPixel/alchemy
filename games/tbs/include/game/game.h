@@ -63,8 +63,8 @@ extern u16 gInventorySnapshot[];
 /// How many of each rare item the shops may still sell, 0 to 99, by counter
 /// number (gItem_ArtifactSlotTable; ItemCounter_Adjust).
 extern u8 gItemCounters[128];
-/// The 64-byte save stamp, in the first half of the save buffer, that the link
-/// lobby writes into the current file alone.
+/// The 64-byte save stamp, in the first half of the save buffer, that the
+/// Battle Arena writes into the current file alone.
 extern u8 gSaveStamp[];
 /// Each item's rare item counter number plus one, or 0 for an ordinary item
 /// (Item_AdjustCounter).

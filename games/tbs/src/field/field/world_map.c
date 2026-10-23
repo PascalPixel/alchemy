@@ -18,7 +18,7 @@ typedef s32 (*WorldMapPlaneFn)(void *camera, s32 *position, void *lines,
 /// (WorldMapEncounterRegion) and a flag.
 struct WorldMapCell {
   u32 tile : 24; ///< low halfword: the metatile WorldMap_CopyCellTiles draws
-  u32 kind : 7;  ///< the terrain kind; encounters read it too
+  u32 kind : 7;  ///< the encounter region; encounters read it too
   /// Selects the second row of gWorldMap_BattleEnvironments
   /// (WorldMap_GetBattleEnvironment); a WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD
   /// cell takes the third row whatever this bit says.
@@ -108,9 +108,9 @@ s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
 /// starts (run_map.c). Allocates and clears the perspective work in
 /// HEAP_SLOT_MAP_GRID, the camera in HEAP_SLOT_CAMERA and the affine pages in
 /// HEAP_SLOT_WORLD_MAP_FRAME; loads the default cells, metatile attributes and
-/// tile animations; writes the blend, BG and affine registers and REG_DISPCNT
-/// (DISPCNT_MODE_2); and registers WorldMap_UpdateView and
-/// WorldMap_ApplyAffineFrame with the scheduler.
+/// tileset animations; writes the blend, BG and affine registers and
+/// REG_DISPCNT (DISPCNT_MODE_2); and adds WorldMap_UpdateView and
+/// WorldMap_ApplyAffineFrame as tasks.
 #ifdef UBFIX
 void WorldMap_InitializePerspective(void) {
 #else
@@ -386,7 +386,7 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
 /// and BG3 affine parameters, starts the HBlank DMA for the rest, and picks
 /// the BG mode from the window's top and bottom.
 ///
-/// Registered with the scheduler by WorldMap_InitializePerspective (priority
+/// Added as a task by WorldMap_InitializePerspective (priority
 /// 0x480). Reads this frame's affine page (gFrameCount & 1), restarts DMA 0,
 /// sets shownTop and shownBottom, writes REG_DISPCNT's mode and clears
 /// windowPending.
@@ -510,7 +510,7 @@ void WorldMap_RenderPaletteMappedColumn(u32 tileColumn) {
 /// follows the player, draws the BG row or column that scrolls into view,
 /// moves the camera, and builds the ground plane's scanline table.
 ///
-/// Registered with the scheduler by WorldMap_InitializePerspective (priority
+/// Added as a task by WorldMap_InitializePerspective (priority
 /// 0xc85, as MapGrid_UpdateLayerScroll is on layered maps). Sets viewX and
 /// viewY, decays the shake, moves the camera and its eye, and runs
 /// Transform_UpdateVertices from heap slot 46 into this frame's affine page.
@@ -704,7 +704,7 @@ void WorldMap_PresentStillFrame(void) {
 ///
 /// Called through WorldMap_StartStillViewFar by WorldMap_StartScript
 /// when a menu or script starts on the world map, and by the world map's
-/// lighthouse transition. Sets animationActive, suspends the tile
+/// lighthouse transition. Sets animationActive, suspends the tileset
 /// animations (TilesetAnim_Update), copies 8 KB of char block 1 to
 /// gDecodeBuffer, sets the window rows to 200 and 255 (DISPCNT_MODE_0) and sets
 /// gVBlankCallback to WorldMap_PresentStillFrame. WorldMap_LoadAreaGraphics
@@ -746,7 +746,7 @@ void WorldMap_ShowBg1FromBuffer(void) {
 /// RegionMap_Show, and by the world map's lighthouse transition.
 /// Decodes into gMapGridCellBuffer and gBgTileBuffer, sets gVBlankCallback to
 /// WorldMap_ShowBg1FromBuffer, sets the window rows back to 0 and 159, clears
-/// animationActive and resumes the tile animations. Waits two frames.
+/// animationActive and resumes the tileset animations. Waits two frames.
 void WorldMap_LoadAreaGraphics(void) {
   struct WorldMapView *perspective;
   u32 *graphicsResources;

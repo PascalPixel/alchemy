@@ -12,12 +12,12 @@
 #include "uiflow.h"
 #include "output.h"
 
-/// Render outputs in the shared pool: every sprite the windows show at once,
+/// Window sprites in the shared pool: every sprite the windows show at once,
 /// glyphs, icons and portraits together.
 enum { WINDOW_SPRITE_COUNT = 64 };
 
 /// The window system's work: the windows' tilemap, the windows, the three text
-/// channels, the 64 render outputs, and the decoded message and its arguments.
+/// printers, the 64 window sprites, and the decoded message and its arguments.
 ///
 /// It is heap slot HEAP_SLOT_WINDOW (gWindowWork), which
 /// UiWork_InitializeWithResourceCounters takes for the field and
@@ -27,9 +27,9 @@ enum { WINDOW_SPRITE_COUNT = 64 };
 struct WindowWork {
   u16 tilemap[640]; ///< the windows' BG tilemap, 32 by 20 tiles
   struct Window windows[WINDOW_COUNT]; ///< 12 in Japanese, 8 in the others
-  struct TextPrinter printers[3]; ///< the text channels, NULL work when free
+  struct TextPrinter printers[3]; ///< the text printers, NULL work when free
   struct WindowSprite sprites[WINDOW_SPRITE_COUNT];
-  struct WindowSpriteList freeSprites; ///< the outputs not in any window
+  struct WindowSpriteList freeSprites; ///< the sprites not in any window
   /// Per text tile (tiles 0x80 to 0xFF, then 0x200 to 0x27F): bit 0 once
   /// allocated, bit 1 while the tilemap shows it, 0 when free. The first
   /// three hold the bottom frame tiles' lower rows and are 4.
@@ -47,14 +47,14 @@ struct WindowWork {
   u8 battleMode;
   u8 holdTilemapUpload; ///< while set, the tilemap is not uploaded
   u8 textPalette;  ///< text tiles' palette; 15 by default, 14 or 5 for low HP
-  u16 lineSpacing; ///< the current channel's, copied in to draw
+  u16 lineSpacing; ///< the current printer's, copied in to draw
   u16 unknownAfterLineSpacing; ///< set to 1 with the text style; not read
-  u16 outline;                 ///< the current channel's, copied in to draw
-  u16 colour;                  ///< the current channel's, copied in to draw
+  u16 outline;                 ///< the current printer's, copied in to draw
+  u16 colour;                  ///< the current printer's, copied in to draw
   u16 textBuffer[TEXT_BUFFER_MASK + 1]; ///< decoded text, a ring of codes
   u16 letterSpacing;                    ///< pixels between sprite glyphs; 9
-  u16 textBufferEnd;                    ///< where the next code goes in entries
-  u16 lastMessageStart; ///< where the last decoded message began in entries
+  u16 textBufferEnd;    ///< where the next code goes in textBuffer
+  u16 lastMessageStart; ///< where the last decoded message began in textBuffer
   u16 glyphResource;    ///< VRAM cache slot of the page arrow; 99 when none
   u16 glyphTiles;       ///< first sprite tile of the glyph sheet (picture 95)
   /// Two bytes that align values to a word, in every edition; nothing reads

@@ -15,10 +15,10 @@
 #define RAMSES_FIRST_ROCK_PUFF 30 ///< the first rock puff in work->particles
 #define RAMSES_SPARKS 512         ///< sparks of the orb's burst
 
-/// Over the desert backdrop a formation stands while an orb circles above it,
-/// drops three times throwing puffs, and flies off; RAMSES_ROCKS rocks fall and
-/// bounce, and the orb's flight ends in a burst of RAMSES_SPARKS sparks from
-/// PARTICLES.
+/// Over the desert battle background a formation stands while an orb circles
+/// above it, drops three times throwing puffs, and flies off; RAMSES_ROCKS
+/// rocks fall and bounce, and the orb's flight ends in a burst of RAMSES_SPARKS
+/// sparks from PARTICLES.
 ///
 /// Abilities: Ramses (SUMMON_ANIM_RAMSES).
 ///
@@ -56,8 +56,8 @@ void BattleAnim_RunRamses(struct BattleAnimArgs *effect) {
   work->effect = effect;
   BattleAnim_StartCanvasLayer(0);
   BattleAnim_ConfigureEffectDisplay();
-  // A wipe to black (colour 1) hides the battle; the desert backdrop loads
-  // behind it, and a second wipe clears the canvas to show it.
+  // A wipe to black (colour 1) hides the battle; the desert battle background
+  // loads behind it, and a second wipe clears the canvas to show it.
   PLTT_BACKDROP = 0;
   *(u16 *)&BG_PLTT[1] = 0;
   work->transferMode = CANVAS_COPY;
@@ -82,7 +82,7 @@ void BattleAnim_RunRamses(struct BattleAnimArgs *effect) {
   draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS, COMPOSITE_ADDITIVE);
   draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
-  // Keep the effect between lines 16 and 136.
+  // Keep the animation between lines 16 and 136.
   REG_WININ = ANIM_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
               WININ_WIN1_BG2 | WININ_WIN1_CLR;
   REG_WIN0H = WIN_RANGE(0, 240);

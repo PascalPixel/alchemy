@@ -2,7 +2,7 @@
 #define ALCHEMY_FIELD_ACTION_SCRIPT_H
 
 /// @file
-/// The field object script interpreter and the operands its commands read.
+/// The object script interpreter and the operands its commands read.
 
 #include "edition.h"
 #include "types.h"
@@ -12,7 +12,7 @@ struct ObjectScriptContext;
 
 typedef s32 (*ScriptCommand)(struct ObjectScriptContext *);
 
-/// The prefix that command handlers read from a field object's 0x70-byte slot.
+/// The prefix that command handlers read from an object's 0x70-byte slot.
 struct ObjectScriptContext {
   const s32 *script;  ///< the running script; SC_END sets gScript_MainScript
   s16 cursor;         ///< the word index of the next command in script

@@ -1,4 +1,4 @@
-@ Frame scheduling, memory, resources and core runtime services.
+@ Frame tasks, memory, resources and core runtime services.
 @ Ordered 8-byte jumps into this bank. Named exports are callable symbols;
 @ bare veneers preserve entries that have no exported name.
 #include "stub.inc"

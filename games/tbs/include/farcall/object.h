@@ -11,7 +11,7 @@ s32 Map_RunFar(s32 warpDest);
 void Game_RunFar(s32 mode);
 /// Waits the given number of frames, unless debug fast forward is on.
 void FieldScript_WaitFramesFar(s32 frames);
-/// Opens a script: closes any timed notice, stops the leader and resets the
+/// Opens a script: closes any map name popup, stops the leader and resets the
 /// message and timing state.
 void FieldScript_StartFar(void);
 /// Closes a script: gives the camera back to the leader and refreshes
@@ -44,7 +44,7 @@ s32 PartyInventory_GiveItemFar(s32 item, s32 unused);
 /// nodding at yes and shaking its head at no. Returns 0 for yes, 1 for no.
 s32 FieldScript_AskYesNoWithObjectEventAnimationFar(s32 localId,
                                                     s32 force_bottom);
-/// Teaches a character a Psynergy ability with its jingle and
+/// Teaches a character a Psynergy ability with its fanfare and
 /// `<unit> learned <ability>.`
 void Party_LearnAbilityFar(s32 unit, s32 ability);
 /// Returns the object event with this id, or NULL; the form of
@@ -90,7 +90,7 @@ void ObjectMotion_OffsetPositionAndResetMotionFar(u32 objectId, s32 x_offset,
 /// then stands it still.
 void ObjectMotion_CommitCurrentPositionAndActivateFar(u32 objectId);
 /// Puts an object event at rest at (x, z), in 16.16 pixels; one that follows
-/// the ground keeps its height above the terrain there.
+/// the ground keeps the same height above it there.
 void ObjectMotion_SetHorizontalPositionWithTerrainFar(u32 objectId, s32 x,
                                                       s32 z);
 /// Sets an object event's animation: 1 stands, 2 walks, 3 nods, 4 shakes the
@@ -190,13 +190,13 @@ void ObjectEvent_PlaceCurrentWithinCameraBoundsFar(s32 arg0, s32 arg1);
 struct ObjectEvent *FieldCamera_GetScriptObjectFar(void);
 /// Sets the map rectangle the camera keeps the screen inside.
 void MapGrid_SetViewBoundsFar(s32 minX, s32 minY, s32 maxX, s32 maxY);
-/// Makes the script leave for a warp destination of a map; the title, lobby and
-/// debug menus use it as well as a few maps.
+/// Makes the script leave for a warp destination of a map; the title, the
+/// Battle Arena and the debug menus use it as well as a few maps.
 void FieldScript_SetDestinationFar(s32 first, s32 second);
 /// Raises the field's warp request; 999 leaves for the map and warp destination
 /// in gGameState.
 void FieldScript_SetWarpRequestFar(u16 value);
-/// Sets up a battle with one enemy group of an encounter table, which starts
+/// Sets up a battle with one formation of an encounter table, which starts
 /// once the script that asked for it has returned.
 void Field_RequestBattleFromEncounterTableFar(s32 zone_no, s32 slot_no);
 /// Sets up the battle with a Djinni, its object event hopping first unless
@@ -220,7 +220,7 @@ s32 ObjectEvent_GetTriggerTileAheadOfCurrentFar(void);
 /// Returns the sprite a character is drawn with, which depends on
 /// FLAG_CHILDHOOD and FLAG_ISAAC_WEARS_TUNIC.
 s32 Party_RemapCharacterIdByFlagsFar(s32 arg0);
-/// Jumps the leader two tiles forward when the map allows, chaining jumps.
+/// Jumps the leader two cells forward when the map allows, chaining jumps.
 /// Returns 0 after a jump, -1 when it can't.
 s32 Field_TryJumpForwardFar(void);
 /// Climbs the leader down onto a climbable wall, or drops it off one. Returns
@@ -252,9 +252,9 @@ void FieldEffect_InitializeSparklesFar(void);
 /// Starts a window transition in a mode at value 0, for the caller to move;
 /// Reveal and three maps use it.
 void ScreenTransition_InitializeBattleEffectStateFar(s32 mode);
-/// Sets the colours the colour buffer moves toward.
+/// Sets the colours the palette fade moves toward.
 void PaletteFade_SetTargetFar(s32 mode, s32 half);
-/// Sets the colours the colour buffer shows now.
+/// Sets the colours the palette fade shows now.
 void PaletteFade_SetSourceFar(s32 mode, s32 half);
 /// Moves the shown colours to the target colours over the given number of
 /// frames.
@@ -270,7 +270,7 @@ void FieldScript_WaitTransitionFramesFar(void);
 /// cave.
 void ScanlineEffect_InitWaveFar(s32 mode, s32 freqX, s32 stepX, s32 ampX,
                                 s32 freqY, s32 stepY, s32 ampY);
-/// Stops the wavy background: removes its two callbacks and stops DMA 0.
+/// Stops the scanline effect: removes its two callbacks and stops DMA 0.
 void ScanlineEffect_StopFar(void);
 /// Has the target object event present an item: SE_124, animation 4, then the
 /// item's picture with sparkles. Returns the picture, or 0 when either is
@@ -283,10 +283,10 @@ void ItemDisplay_ShowPictureFar(void *object, s32 flags);
 /// Holds an item's picture above the leader for 80 frames, the way a found
 /// item is shown in most maps.
 void FieldEffect_StartEffectObject22Far(s32 value, s32 flags);
-/// Moves a marker's object event to (x, z) on the ground, in 16.16 pixels; -1
-/// keeps the centre of its cell on that axis.
+/// Moves a treasure spot's object event to (x, z) on the ground, in 16.16
+/// pixels; -1 keeps the centre of its cell on that axis.
 void TreasureSpot_SetObjectEventPositionFar(s32 id, s32 x, s32 y);
-/// Moves a leader standing within 16 pixels of a marker cell's centre 20
+/// Moves a leader standing within 16 pixels of a treasure spot cell's centre 20
 /// pixels away from it.
 void TreasureSpot_MoveLeaderAwayFar(void);
 /// On the world map, freezes the perspective view and the camera while an
@@ -311,7 +311,7 @@ void FieldEffect_LoadActionEffectResourcesFar(s32 abilityId, s32 mode);
 void FieldEffect_SetupObjectPairFar(s32 user_id, s32 targetId);
 /// Stops the caster's per-frame hook, restores its colours and waits a frame.
 void FieldEffect_StopCasterHookFar(void);
-/// Ends a Psynergy effect, releasing its slots, tiles and work and playing
+/// Ends a Psynergy effect, releasing its sprites, tiles and work and playing
 /// the queued sound.
 void FieldEffect_EndFar(void);
 /// Puts the caster in its casting pose, with the flash, sound and ability
@@ -337,7 +337,7 @@ u32 Map_HasPsynergyEventFar(u16 item);
 /// NULL for no source.
 struct Sprite *Sprite_ShareVramCacheEntryFar(struct Sprite *sourceSprite,
                                              struct Sprite *sharedSprite);
-/// Returns the battle backdrop chosen for the current map, which the
+/// Returns the battle background chosen for the current map, which the
 /// battle setup reads.
 s16 FieldScript_GetSpecialValueFar(void);
 /// Gives each party member PP; 999 restores it all, as a Psynergy Stone does.
@@ -350,26 +350,27 @@ void Map_PlayMusicFar(void);
 /// A Djinni joins the member with the fewest Djinn, after its object event in
 /// slot plays its element's capture effect (none for slot -1).
 void Djinn_JoinPartyFar(s32 slot, s32 element, s32 djinn);
-/// Updates one effect slot for a frame: its age, callback, motion and sprite.
+/// Updates one field effect sprite for a frame: its age, callback, motion and
+/// sprite.
 void FieldEffectSprite_UpdateFar(struct FieldEffectSprite *effect);
-/// Returns 1 while an effect slot is still on its way to its target, 0 once
-/// it arrives or when it never stops.
+/// Returns 1 while a field effect sprite is still on its way to its target, 0
+/// once it arrives or when it never stops.
 u32 FieldEffectSprite_HasPendingTargetFar(struct FieldEffectSprite *effect);
-/// Places an effect slot at (x, z), at rest with no target.
+/// Places a field effect sprite at (x, z), at rest with no target.
 void FieldEffectSprite_SetPositionFar(struct FieldEffectSprite *effect, s32 x,
                                       s32 z);
-/// Sets the animation of an effect slot's sprite.
+/// Sets the animation of a field effect sprite's sprite.
 void FieldEffectSprite_SetObjectModeFar(struct FieldEffectSprite *effect,
                                         s32 mode);
-/// Gives an effect slot its per-frame callback, starting at state 0.
+/// Gives a field effect sprite its per-frame callback, starting at state 0.
 void FieldEffectSprite_SetCallbackFar(struct FieldEffectSprite *effect,
                                       EffectCallback callback);
-/// Fills an effect slot with a new sprite of a kind at (x, z), which the slot
+/// Fills a field effect sprite with a new sprite of a kind at (x, z), which it
 /// owns until it is cleared.
 void FieldEffectSprite_InitializeFar(struct FieldEffectSprite *effect, s32 kind,
                                      s32 x, s32 z);
-/// Frees an effect slot and its sprite; slot callbacks end with it on their
-/// own slot.
+/// Frees a field effect sprite and its sprite; a callback ends by calling it on
+/// its own field effect sprite.
 void FieldEffect_ClearOwnedSlotFar(struct FieldEffectSprite *effect);
 /// Converts a world position in 16.16 pixels to screen x and y, in place,
 /// using the world map's perspective there.
@@ -379,10 +380,10 @@ void Camera_WorldToScreenFar(struct EffectVector *position);
 s32 Speaker_GetVoiceFar(u32 id);
 /// Clears each button shortcut whose Psynergy the party can no longer cast.
 void FieldScript_ClearInvalidPackedValuesFar(void);
-/// Allocates and clears the effect slots and starts their update; the Djinn
-/// joining effects and Altmiller Cave use them.
+/// Allocates and clears the field effect sprites and starts their update; the
+/// Djinn joining effects and Altmiller Cave use them.
 void FieldEffect_InitializeSlotsFar(void);
-/// Frees every effect slot and its work, then waits a frame.
+/// Frees every field effect sprite and its work, then waits a frame.
 void FieldEffect_ClearActiveSlotsAndScheduleUpdatesFar(void);
 /// Places an object event on the leader and walks it out to an offset, then
 /// gives it an action.

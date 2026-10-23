@@ -40,7 +40,7 @@ enum LeaderMovementMode {
 enum GameRunMode {
   GAME_RUN_TITLE = 0,          ///< the title screen, with a fresh game state
   GAME_RUN_DEBUG_VALE = 1,     ///< in debug mode, MapId_ValeGate
-  GAME_RUN_DEBUG_MAIN_MENU = 2 ///< in debug mode, the file select screen
+  GAME_RUN_DEBUG_MAIN_MENU = 2 ///< in debug mode, the main menu
 };
 
 /// A window transition's shape: MAP_TRANSITION(TRANSITION_WINDOW, mode)'s
@@ -148,7 +148,7 @@ struct EffectDescriptor {
 #define OBJECT_LAST 66 ///< the last object event slot searched
 
 //--------------------------------------------------------------------------
-// The map's marker object events (chests and Psynergy stones)
+// The map's treasure spots (chests and Psynergy Stones)
 //--------------------------------------------------------------------------
 #define TREASURE_SPOT_MAX 10
 

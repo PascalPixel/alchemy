@@ -136,7 +136,7 @@ void BattleAnim_RunGrowingColumns(struct BattleAnimArgs *effect, s32 mode) {
 
   duration = gGrowth_ColumnCounts[work->effect->variant] * 4 + 56;
 
-  // Mark the dust free (variant -1): 1024 records, though only the first 512
+  // Mark the dust free (variant -1): 1024 entries, though only the first 512
   // are used.
   variantCursor = Ram_MapGridCellBuffer + offsetof(struct Particle, variant);
   i = 0;
@@ -478,7 +478,7 @@ void BattleAnim_RunThorn(struct BattleAnimArgs *effect) {
   Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
   frameCount = gGrowth_Counts[work->effect->variant] * 8 + 56;
 
-  // Mark the dust free: 1024 records, though only the first 64 are used.
+  // Mark the dust free: 1024 entries, though only the first 64 are used.
   for (i = 0; i != 1024; i++) {
     PARTICLES[i].variant = -1;
   }

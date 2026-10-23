@@ -5,7 +5,7 @@
 #include "../effect_internal.h"
 
 // Target strikes: repeated slashes or columns of light on the first target.
-// The folder README describes them under "Effect families".
+// The folder README describes them under "Animation families".
 
 /// The strike sparks, 512 of them, from PARTICLES[512] (0x3800 bytes in);
 /// the motes use PARTICLES 0 to 127. Only the first 128 sparks are drawn,
@@ -28,7 +28,7 @@ enum {
   TARGET_STRIKE_IMAGE_FRAMES, ///< frames each strike image is shown
   TARGET_STRIKE_COMPOSITE,    ///< how the columns are drawn (BLITTER_MAX or
                               ///< _ADDITIVE)
-  TARGET_STRIKE_FRAMES        ///< length of the effect in frames
+  TARGET_STRIKE_FRAMES        ///< length of the animation in frames
 };
 // STRIKE_KIND_*, the STRIKE_SMOKE flags, the STRIKE_COLOR_ palettes and enum
 // TargetStrikeStyle are in effect_table.h.

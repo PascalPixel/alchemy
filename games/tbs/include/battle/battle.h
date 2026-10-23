@@ -68,7 +68,8 @@ struct SparkObject;
 struct TransitionActorList;
 struct WaveEffectWork;
 
-/// The battle camera (struct BattleCamera) as the effects that swing it see it.
+/// The battle camera (struct BattleCamera) as the animations that swing it
+/// see it.
 struct CameraWork {
   u8 eyeToPitch[0x36]; ///< BattleCamera's eye to pitch; not named in this view
   u16 scroll;          ///< the camera's yaw, in 1/65536 turns
@@ -79,7 +80,7 @@ struct EffectVector {
   s32 y; ///< 16.16 fixed-point pixels
   s32 z; ///< 16.16 fixed-point pixels
 };
-/// One of the star field's three rings, moving outward on the effect canvas.
+/// One of the star field's three rings, moving outward on the animation canvas.
 struct Ring {
   s32 x;         ///< 1/1024 canvas pixels
   s32 y;         ///< 1/1024 canvas pixels
@@ -87,7 +88,7 @@ struct Ring {
   s32 velocityY; ///< 1/1024 canvas pixels per frame
   s32 age;       ///< frames
 };
-/// The position an item-break effect spawns its objects and shards from.
+/// The position an item-break animation spawns its objects and shards from.
 struct ScatterPosition {
   s32 x; ///< 16.16 fixed-point pixels
   s32 y; ///< 16.16 fixed-point pixels
@@ -155,28 +156,28 @@ extern s8 gBattleHighlight_BlendRamp[];
 /// The 104 encounter zones (encounter.tsv), read as struct EncounterZone rows.
 extern u16 gEncounterZones[];
 #ifndef OWN_gBattleBgFxWork
-/// The HEAP_SLOT_MIND_READ work slot: Mind Read's wave work while its effect
+/// The HEAP_SLOT_MIND_READ heap slot: Mind Read's wave work while its animation
 /// runs.
 extern struct WaveEffectWork *gBattleBgEffectWork;
 #endif
 #ifndef OWN_gBattleAnimWork
-/// The work slots from HEAP_SLOT_BATTLE_ANIM, then the canvas and sheet:
-/// the running battle effect's BattleAnimWork first.
+/// The heap slots from HEAP_SLOT_BATTLE_ANIM, then the canvas and sheet:
+/// the running battle animation's BattleAnimWork first.
 extern void *gBattleAnimWork[];
 #endif
 #ifndef OWN_gEnemyUnits
-/// The HEAP_SLOT_ENEMY_UNITS work slot: the six enemy battle units,
+/// The HEAP_SLOT_ENEMY_UNITS heap slot: the six enemy battle units,
 /// BATTLE_UNIT_SIZE bytes each, that Unit_Get returns for unit ids 128 to 133
 /// during a battle.
 extern u8 *gEnemyUnits;
 #endif
 #ifndef OWN_gRandomSeed
-/// Random16's seed; the slot machine seeds it with the play time, and a link
+/// Random16's seed; Lucky Wheels seeds it with the play time, and a link
 /// battle's parent sends it as the round's gBattleRandomSeed.
 extern u32 gRandomSeed;
 #endif
 #ifndef OWN_gBattleViewWork
-/// The HEAP_SLOT_BATTLE_BACKGROUND work slot as the camera's turn work:
+/// The HEAP_SLOT_BATTLE_BACKGROUND heap slot as the camera's turn work:
 /// staging.c, auto_battle.c and round.c set its yaw for each action, and
 /// background.c reads the same slot as struct BattleBackgroundView.
 extern struct BattlePresentationTransition *gBattleViewWork;
@@ -190,11 +191,11 @@ extern const u8 gObjectMotion_LinkedActionScript[];
 extern const s16 gParty_PairResolveRules[];
 /// Isaac's weapon sprite by weapon kind (BattleUnit_LookupWeaponValueByClass).
 extern u16 gBattleUnit_WeaponAnimationsIsaac[];
-/// The 20 enemy classes whose defeated flags a monster battle clears before it
+/// The 20 enemies whose defeated flags a monster battle clears before it
 /// picks a formation (BattleFormation_SelectLevelMatchedCandidate).
 extern u16 gBattleFormation_LevelMatchedEnemies[];
-/// Battle backdrops by map: a backdrop word (bit 31 set, resource id below)
-/// and then its maps, ended by 0; a map not listed takes the last backdrop
+/// Battle backgrounds by map: a background word (bit 31 set, resource id below)
+/// and then its maps, ended by 0; a map not listed takes the last background
 /// (BattleBackground_SelectForMap).
 extern s32 gBattleBackground_Maps[];
 /// The template BattleAnim_BuildBlitter walks word by word to write a blitter

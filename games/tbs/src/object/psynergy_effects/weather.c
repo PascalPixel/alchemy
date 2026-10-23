@@ -4,7 +4,7 @@
 
 #include "../psynergy_effects_internal.h"
 
-/// Scheduler callback: animates the ground particles. Each plays a 16-frame
+/// Task: animates the ground particles. Each plays a 16-frame
 /// animation (gFieldEffect_GroundParticleFrames, 5 halfwords a frame: x and y
 /// offsets, tile, shape and size) on a random spot of ground within 128 pixels
 /// of the leader, then starts again elsewhere. The timer counts down, so the
@@ -63,7 +63,7 @@ void Weather_UpdateRain(void) {
   }
 }
 
-/// Scheduler callback for the storm: lightning flashes the BG colours three
+/// Task for the storm: lightning flashes the BG colours three
 /// times, 5 frames apart. The timer counts down to a burst's end: the lit
 /// colours show at 11, 6 and 1, each fading back over 12 frames from the
 /// next frame on. While enabled is set, the end of a burst plays a
@@ -171,7 +171,7 @@ union DustWord {
   void *link;
 };
 
-/// Scheduler callback: the floating motes. Each mote is given a spot of
+/// Task: the floating motes. Each mote is given a spot of
 /// ground within 128 pixels of the leader (at most 8 new ones a frame),
 /// starts 120 pixels above it on screen and comes down a pixel a frame,
 /// slowing to 3/4 pixel a frame for its last 90 frames and 1/4 for its last
@@ -295,7 +295,7 @@ void FieldMotes_Start(void) {
   Task_Add(FieldMotes_Update, 0xc80);
 }
 
-/// Scheduler callback: the sparkles. Now and then (1 frame in 256) a sparkle
+/// Task: the sparkles. Now and then (1 frame in 256) a sparkle
 /// appears on the ground within 128 pixels of the leader, and up to three more
 /// follow on the same spot, each 4 frames shorter. Each plays
 /// gFieldEffect_SparkleFrames from the row its timer starts at down to row 0,
@@ -506,7 +506,7 @@ void Weather_ResumeLightning(void) {
 /// Flashes the palette with the storm's callback: one burst of three flashes
 /// of palette to, each fading back to palette from (PaletteFade_Build
 /// modes) on the BG colours, ending 120 frames from now, and no more after.
-/// Vale's eruption calls it with the warm and red transforms
+/// Vale's eruption calls it with the warm and red tints
 /// (vale_eruption.c).
 void Weather_StartLightningFlash(s32 from, s32 to) {
   struct LightningWork *work;

@@ -2,7 +2,7 @@
 #define ALCHEMY_BATTLE_SUMMON_H
 
 /// @file
-/// Summons and the battle sprite definitions of the enemy classes.
+/// Summons and the battle sprite definitions of the enemies.
 
 #include "static_assert.h"
 
@@ -10,33 +10,33 @@
 #include "edition.h"
 #include "farcall.h"
 
-/// An enemy class's battle sprite: its animation, size, attack effect,
+/// An enemy's battle sprite: its animation, size, attack animation,
 /// palette and defeat-sound kind.
 struct BattleSpriteDefinition {
-  u16 animation; ///< the class's battle sprite
+  u16 animation; ///< the enemy's battle sprite
   /// The byte at 2.
   /// bits: 7..5 attackHop | 4..1 attackAnim | 0 isSmall
   ///@{
   u8 isSmall : 1;    ///< 1 for a small enemy, which takes one sprite slot
-  u8 attackAnim : 4; ///< the attack-effect kind; 0 reads as 1
+  u8 attackAnim : 4; ///< the attack animation's kind; 0 reads as 1
   u8 attackHop : 3;  ///< the attack-hop height
   ///@}
   /// The byte at 3.
   /// bits: 7..5 defeatSound | 4..1 palette | 0 heavyImpact
   ///@{
-  u8 heavyImpact : 1; ///< 1 for a class whose beam blow lands heavily
+  u8 heavyImpact : 1; ///< 1 for an enemy whose beam blow lands heavily
   u8 palette : 4;     ///< the sprite's palette
   u8 defeatSound : 3; ///< the defeat-sound kind; above 4 reads as none
   ///@}
-  /// The height an effect is drawn at over the class, in pixels; 0 for its
+  /// The height an animation is drawn at over the enemy, in pixels; 0 for its
   /// size's default.
   u8 effectHeight;
   u8 reserved[3]; ///< 0 in every row
 };
 
 STATIC_ASSERT(sizeof(struct BattleSpriteDefinition) == 8);
-/// The enemy classes' battle sprites, one row per class 0 to 171 (sprites.tsv),
-/// read by the BattleClass_ getters; row 0 stands in for a class out of range.
+/// The enemies' battle sprites, one row per enemy id 0 to 171 (sprites.tsv),
+/// read by the BattleSprite_ getters; row 0 stands in for an id out of range.
 extern struct BattleSpriteDefinition gBattleSprites[];
 
 /// A summon: its name's message and the Djinn of each element it needs.

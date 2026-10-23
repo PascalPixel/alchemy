@@ -2680,7 +2680,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
 }
 
 /// A lightning flash that freezes the picture: holds the rain
-/// (FLAG_WEATHER_HELD) and pauses the map's tile animation channels 0 to 5,
+/// (FLAG_WEATHER_HELD) and pauses the map's tileset animations 0 to 5,
 /// shows the scene in PALETTE_TINT_WARM for two seconds, fades it to
 /// black, then lets the rain and the animations run again.
 static void ValeStorm_FlashLightning(void) {

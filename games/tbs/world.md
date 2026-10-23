@@ -134,13 +134,13 @@ page](README.md#game-flags) gives the ranges, and
 [Maps](src/map/README.md#state-that-cleans-itself-up) says how a map uses
 them.
 
-## Field objects and their scripts
+## Objects and their scripts
 
 Everything on the field that moves or changes by itself, the party, the
 townspeople, the camera, even the footprints the leader leaves in snow, is a
-[field object](glossary.md#field-object), and each one runs a small script.
+[object](glossary.md#object), and each one runs a small script.
 
-![Three field objects and their scripts. The leader moves by the direction pad, waits one frame and repeats, for good. The camera follows the leader, waits one frame and repeats. A footprint waits 120 frames and then disappears. Each frame every object runs its steps in order until one says to wait, which ends its turn until the next frame. Below, Isaac in Imil's snow as the game draws him, with the footprints his steps left beside him.](https://alchemy.pascalpixel.com/illustrations/field/object-scripts.svg)
+![Three objects and their scripts. The leader moves by the direction pad, waits one frame and repeats, for good. The camera follows the leader, waits one frame and repeats. A footprint waits 120 frames and then disappears. Each frame every object runs its steps in order until one says to wait, which ends its turn until the next frame. Below, Isaac in Imil's snow as the game draws him, with the footprints his steps left beside him.](https://alchemy.pascalpixel.com/illustrations/field/object-scripts.svg)
 
 Every frame each object takes a turn: it runs the steps of its script in
 order until one says to wait. A step that only tests something or jumps
@@ -246,7 +246,7 @@ above it, where they are not 0, give the map layer and the sprite priority
 an object standing on the cell takes, so the cells behind a house can put
 whoever walks there behind it (see [Map layers](#map-layers)). The third
 byte is the metatile behavior, and the top byte the ground shape, from which
-`MapGrid_GetTerrainHeight` computes the height.
+`MapGrid_GetTerrainHeight` computes the ground height.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -357,13 +357,13 @@ As the party walks, a counter fills, faster on some ground than on other,
 and a battle starts when it is full. A party that has outgrown a place meets
 its battles less often there.
 
-![How a random battle starts. Each frame the leader moves, a counter fills by a step, and a battle starts when it is full. Each zone sets how far the party walks between battles: the higher its rate, the smaller the steps. A party above the zone's level adds to the rate, so it meets fewer battles. A random part, drawn again after each battle, varies the gap. There are no battles at all while Cloak is active, on ground with no zone, while a flag turns them off, or with Avoid active where the party's level is above the zone's. When the counter is full, one of the zone's enemy groups is drawn by weight.](https://alchemy.pascalpixel.com/illustrations/object/encounter-roll.svg)
+![How a random battle starts. Each frame the leader moves, a counter fills by a step, and a battle starts when it is full. Each zone sets how far the party walks between battles: the higher its rate, the smaller the steps. A party above the zone's level adds to the rate, so it meets fewer battles. A random part, drawn again after each battle, varies the gap. There are no battles at all while Cloak is active, on ground with no zone, while a flag turns them off, or with Avoid active where the party's level is above the zone's. When the counter is full, one of the zone's formations is drawn by weight.](https://alchemy.pascalpixel.com/illustrations/object/encounter-roll.svg)
 
 Each kind of ground belongs to a zone, and the zone decides how far apart
 its battles are and which enemies can appear. Each frame the leader walks,
 `Encounter_CountStepsAndSelectFormation` adds to the counter, `gGameState.encounterSteps`;
 despite its name it does both jobs, filling the counter every frame and
-choosing the enemy group once it is full. What it adds:
+choosing the formation once it is full. What it adds:
 
 - grows with the leader's top speed at the moment, so running fills the
   counter faster than walking;
@@ -375,11 +375,11 @@ Each level, up to five, by which the party's average level is above the
 zone's adds 5 to the rate, and with Avoid active (the Psynergy that keeps
 such battles away) a zone the party has outgrown has no battles at all. A
 battle starts when the counter reaches `work->encounterThreshold`, 16 in
-16.16 fixed point, and one of the zone's eight enemy groups is drawn by
+16.16 fixed point, and one of the zone's eight formations is drawn by
 weight. A field map's zones come from the
 first matching rule in `gBattle_LocationRules`, which assigns zones to the
 encounter grounds its cells mark; the world map's come from
-`gWorldMap_EncounterRules`, by the terrain under the leader. Each zone is a
+`gWorldMap_EncounterRules`, by the encounter region under the leader. Each zone is a
 row of `src/object/encounter.tsv`.
 
 [Running a map](src/object/README.md#random-battles) has the roll step by
@@ -418,15 +418,15 @@ covers the dispatch, every phase and each field kind's effect.
 
 ## Limits
 
-- 64 field objects, and 64 sprites sharing 64 animation layer records, up to
+- 64 objects, and 64 sprites sharing 64 sprite anims, up to
   four each.
 - 66 object event pointers in the field work, the party's 8 and then 58
-  for the ones the map's object event templates place, though only 64 field
+  for the ones the map's object event templates place, though only 64
   objects exist to fill them.
 - One overlay loaded at a time, in the 32 KB of `gOverlayArea`.
 - 256 map flags and 256 map section flags, each range reused by every map or
   map section.
-- 104 encounter zones of eight enemy groups each.
+- 104 encounter zones of eight formations each.
 - 47 script commands, of which the last 11 act as `SC_END`; a jump finds
   only a label within the first 1,024 words of its script.
 - A battle snapshot keeps up to 32 object events.

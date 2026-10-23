@@ -4,12 +4,13 @@
 
 #include "../psynergy_effects_internal.h"
 
-/// Sets up a battle with enemy group slot of encounter table zone. On the
-/// world map the terrain under the leader picks the battle backdrop.
-/// Sets the field work's battle request, which the map loop then handles,
-/// and the battle cue; ENCOUNTER_ZONE_SCRIPTED's first slot also sets
-/// gGameState.special to the Aerie's storm backdrop. About 35 maps reach it
-/// through Field_RequestBattleFromEncounterTableFar, and the lobby calls it
+/// Sets up a battle with the formation in slot of encounter table zone. On
+/// the world map the encounter region and battle environment under the leader
+/// pick the battle background. Sets the field work's battle request, which
+/// the map loop then handles, and the battle music; ENCOUNTER_ZONE_SCRIPTED's
+/// first slot also sets gGameState.special to the Aerie's storm battle
+/// background. About 35 maps reach it through
+/// Field_RequestBattleFromEncounterTableFar, and the Battle Arena calls it
 /// directly. The battle starts only once the script that asked for it has
 /// returned.
 void Field_RequestBattleFromEncounterTable(s32 zoneNo, s32 slotNo) {
@@ -64,7 +65,7 @@ void Field_RequestDjinnBattle(s32 flag, s32 no) {
 }
 
 /// Sets the map and warp destination that the field goes to next
-/// (gGameState.nextMap and nextWarpDest). About 30 maps and the lobby
+/// (gGameState.nextMap and nextWarpDest). About 30 maps and the Battle Arena
 /// reach it through FieldScript_SetNextDestinationFar.
 void FieldScript_SetNextDestination(s32 mapId, s32 warpDest) {
   gGameState.nextMap = mapId;
@@ -73,7 +74,7 @@ void FieldScript_SetNextDestination(s32 mapId, s32 warpDest) {
 
 /// Sets where the party wakes up after losing a battle
 /// (gGameState.defeatMap and defeatWarpDest). The maps before scripted
-/// battles (Colosso, the Vault, Vale, the Aerie) and the lobby reach it
+/// battles (Colosso, the Vault, Vale, the Aerie) and the Battle Arena reach it
 /// through FieldScript_SetDefeatDestinationFar.
 void FieldScript_SetDefeatDestination(s32 mapId, s32 warpDest) {
   gGameState.defeatMap = mapId;

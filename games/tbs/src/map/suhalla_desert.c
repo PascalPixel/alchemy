@@ -141,9 +141,9 @@ enum {
 /// Frames a caught party spins before the storm carries it away.
 enum { STORM_CAPTURE_FRAMES = 180 };
 
-/// The map marker of SuhallaDesertSouth's hidden Psynergy Stone, whose search
-/// row finds the stone (FIND_PSYNERGY_STONE). Its object event stands in its
-/// cell only while Reveal lasts (EventScript_RevealStarts moves it to the
+/// The treasure spot of SuhallaDesertSouth's hidden Psynergy Stone, whose
+/// search row finds the stone (FIND_PSYNERGY_STONE). Its object event stands in
+/// its cell only while Reveal lasts (EventScript_RevealStarts moves it to the
 /// cell's centre) and is moved off the map as Reveal ends.
 enum { TREASURE_SPOT_PSYNERGY_STONE = 100 };
 

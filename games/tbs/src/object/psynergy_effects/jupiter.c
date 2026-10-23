@@ -5,12 +5,12 @@
 #include "../psynergy_effects_internal.h"
 
 /// A Jupiter Djinni joins the party: it bounces three times, spins, leaps out
-/// of sight and bursts into 24 light particles that circle and close in on
-/// the leader, who turns to the camera and plays animation 28. Called by
+/// of sight and bursts into 24 light particles that circle and close in on the
+/// leader, who turns to the camera and plays animation 28. Called by
 /// Djinn_JoinParty for a Jupiter Djinni, which then clears the Djinni's object
-/// event slot; the Djinni's object is released here. Uses all 24 effect slots
-/// (FieldEffect_InitializeSlots), tints the field palette and fades it back at
-/// the end.
+/// event slot; the Djinni's object is released here. Uses all 24 field effect
+/// sprites (FieldEffect_InitializeSlots), tints the field palette and fades it
+/// back at the end.
 void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   struct EffectVector position;
   struct MotionObject *djinni;
@@ -119,11 +119,11 @@ void FieldEffect_AdvanceAngleWithRamp(union FieldObject *fieldObject) {
 /// from full size. The Mars Djinni's joining shrinks the Djinni away with it.
 DEFINE_SHRINK_AND_DESTROY(FieldEffect_ShrinkObjectAndDestroySlow, 0xFFFFFE40)
 
-/// Effect slot callback of a Mars Djinni's sparks (enum MarsSparkState): the
-/// spark flies 120 pixels up the screen (give or take 3/32 turn) from its
-/// origin at up to 5 pixels a frame and starts over, until it stops where it
-/// arrives, hidden; 40 frames later it swarms to points within 4 pixels of
-/// one 20 pixels over the leader, until it is freed once it arrives.
+/// Field effect sprite callback of a Mars Djinni's sparks (enum
+/// MarsSparkState): the spark flies 120 pixels up the screen (give or take 3/32
+/// turn) from its origin at up to 5 pixels a frame and starts over, until it
+/// stops where it arrives, hidden; 40 frames later it swarms to points within 4
+/// pixels of one 20 pixels over the leader, until it is freed once it arrives.
 void FieldEffect_UpdatePhasedRadialParticle(struct FieldEffectSprite *effect) {
   struct ObjectVectorView *owner;
   struct EffectVector position;

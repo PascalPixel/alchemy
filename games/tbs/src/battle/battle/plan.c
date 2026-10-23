@@ -1,12 +1,12 @@
 /// @file
-/// An action announced and planned, BattleTurn_Build.
+/// An action announced and built into a turn, BattleTurn_Build.
 // Part of battle.c.
 
 #include "../battle_internal.h"
 
 /// Returns 1 when the unit is in its side's list of units in the battle
 /// (BattleUnits_ListIds), 0 otherwise.
-/// Called by BattleTurn_Build, for the owners of the standby Djinn a
+/// Called by BattleTurn_Build, for the units holding the standby Djinn a
 /// summon uses.
 /// @param unitId a party member's, up to ALLY_MAX, or an enemy's
 u32 BattleUnits_IsListed(u32 unitId) {
@@ -28,7 +28,7 @@ u32 BattleUnits_IsListed(u32 unitId) {
   return unitIndex != unitCount;
 }
 
-/// Counts the standby Djinn whose owners fight on unitId's side, from that
+/// Counts the standby Djinn held by units on unitId's side, from that
 /// side's Djinn recovery list.
 /// Called by BattleTurn_Build for a summon, and through
 /// BattleDjinn_CountStandbyFar by the command menu (BattleCommandRow_Run,
@@ -86,18 +86,18 @@ s32 BattleDjinn_CountStandby(u32 unitId, u8 *counts) {
 // bits 7..0.
 #define DJINN_ELEMENT(v) (((v) >> 8) & 15)
 #define DJINN_INDEX(v) ((v) & 255)
-/// The most targets a plan holds (BATTLE_TARGET_CAPACITY).
+/// The most targets a turn holds (BATTLE_TARGET_CAPACITY).
 #define TARGET_MAX 14
-/// Announces the action and plans its targets and effects.
-/// Returns 0 to stage the plan, TURN_REPORTED when the action failed (its
+/// Announces the action and builds its turn: its targets and animation.
+/// Returns 0 to stage the turn, TURN_REPORTED when the action failed (its
 /// message shown), or TURN_NO_ACTION.
 /// Called by BattleStaging_DispatchAction for each action of the round.
-/// Fills plan (its actor, targets, hit and critical rolls, ability, element,
-/// outcome, presentation flags and failure), resets the battle events and
-/// shows the announcing message. The command's costs are paid here: a
-/// caster's PP, a Djinni set or put on standby (with its own effect), the
-/// standby Djinn a summon uses (DJINN_RECOVERY_SUMMONED). A unit that cannot
-/// act, or finds no target, may be set to guard (guardLevel).
+/// Fills the turn (its actor, targets, hit and critical rolls, ability,
+/// element, staging, animation word and failure), resets the playback and shows
+/// the announcing message. The command's costs are paid here: a caster's PP, a
+/// Djinni set or put on standby (with its own animation), the standby Djinn a
+/// summon uses (DJINN_RECOVERY_SUMMONED). A unit that cannot act, or finds no
+/// target, may be set to guard (guardLevel).
 ///
 /// The phases: the debug defeat; what stops the actor; the announcement and
 /// the ability id, by command; the rolls of a plain attack, or an ability's
@@ -108,7 +108,7 @@ s32 BattleTurn_Build(struct BattleAction *request, struct BattleTurn *plan) {
   s32 selectedTargetId;
   s32 abilityId;
 
-  /// Fills the plan's targets: the aimed unit, or for a range the places
+  /// Fills the turn's targets: the aimed unit, or for a range the places
   /// within range - 1 of the aimed place on its side, standing units only
   /// unless the ability revives. With none, the actor defends ("defends")
   /// and it returns TURN_REPORTED.
@@ -211,7 +211,7 @@ s32 BattleTurn_Build(struct BattleAction *request, struct BattleTurn *plan) {
   }
 
   //----------------------------------------------------------------------
-  // A fresh plan, and the debug defeat
+  // A fresh turn, and the debug defeat
   //----------------------------------------------------------------------
   selectedTargetId = Battle_GetTaggedSlotValue(request->target);
   BattlePlayback_Reset();
@@ -487,7 +487,7 @@ s32 BattleTurn_Build(struct BattleAction *request, struct BattleTurn *plan) {
 
   case COMMAND_DJINN:
     // A Djinni not set: one ready again is set, with its own short scene
-    // played through the event queue, and nothing else happens
+    // played through the playback queue, and nothing else happens
     // (TURN_NO_ACTION); one still recovering says so (TURN_REPORTED). A set
     // Djinni is unleashed below.
     abilityId = Djinn_GetAbilityIdFar(DJINN_ELEMENT(request->parameter),
@@ -588,7 +588,7 @@ s32 BattleTurn_Build(struct BattleAction *request, struct BattleTurn *plan) {
     MessageArgument_PushFar(abilityId, VALUE_ABILITY_NAME);
     BattleMessage_ShowAndWaitFar(MsgActorSummons);
     // Mark the standby Djinn being used DJINN_RECOVERY_SUMMONED, the first
-    // found of each element, from owners in the formation.
+    // found of each element, from units in the formation.
     for (index = 0; index != list->count; index++) {
       struct DjinnRecoveryEntry *entry = &list->entries[index];
 
@@ -602,7 +602,7 @@ s32 BattleTurn_Build(struct BattleAction *request, struct BattleTurn *plan) {
   }
 
   //----------------------------------------------------------------------
-  // Plan a normal attack.
+  // Build a normal attack.
   //----------------------------------------------------------------------
   if (abilityId == ABILITY_ATTACK) {
     struct Unit *target = Unit_GetFar(plan->targetIds[0]);
@@ -610,8 +610,8 @@ s32 BattleTurn_Build(struct BattleAction *request, struct BattleTurn *plan) {
     plan->abilityId = ABILITY_ATTACK;
     plan->element = Item_GetEquippedElementFar(request->unitId);
     plan->staging = STAGING_ATTACK;
-    // An enemy's attack effect comes from its class; a party member's is
-    // effect 1 for Isaac, Garet and Jenna and 4 for Ivan and Mia, any other
+    // An enemy's attack animation comes from its class; a party member's is
+    // animation 1 for Isaac, Garet and Jenna and 4 for Ivan and Mia, any other
     // none. Each is played by id range (ANIM_BY_ID_RANGE).
     if (actor->classId == CLASS_NONE) {
       plan->animation =
@@ -667,7 +667,7 @@ s32 BattleTurn_Build(struct BattleAction *request, struct BattleTurn *plan) {
   }
 
   //----------------------------------------------------------------------
-  // Plan an ability.
+  // Build an ability.
   //----------------------------------------------------------------------
   else {
     struct AbilityDefinition *ability = Ability_Get(abilityId);
@@ -737,7 +737,7 @@ s32 BattleTurn_Build(struct BattleAction *request, struct BattleTurn *plan) {
       }
     } else if (abilityId == ABILITY_ANNIHILATION) {
       // Annihilation rolls its hit now, at full rate whatever the distance,
-      // so that the effect can show it (the variant below).
+      // so that the animation can show it (the variant below).
       s32 index;
 
       for (index = 0; index < plan->targetCount; index++)
@@ -747,7 +747,7 @@ s32 BattleTurn_Build(struct BattleAction *request, struct BattleTurn *plan) {
     }
     // How it is staged: the ability's row of actflags.tsv, its variant
     // raised to the first target's multiplier less one (a double or triple
-    // blow); then the outcome, from actstat.tsv where it gives one. The two
+    // blow); then the staging, from actstat.tsv where it gives one. The two
     // tables end at ABILITY_THRASH and ABILITY_SEVERE_BLOW.
     if (abilityId >= 0 && abilityId <= ABILITY_THRASH) {
       plan->animation = gAbilityAnimations[abilityId];

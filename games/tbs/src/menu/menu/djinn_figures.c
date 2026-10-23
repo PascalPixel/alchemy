@@ -1,6 +1,6 @@
 /// @file
 /// DjinnFigures: the row of four figures the Status and Djinn menus show,
-/// placed by a scheduler callback and eased in and out.
+/// placed by a task and eased in and out.
 // Part of menu.c.
 
 #include "../menu_internal.h"
@@ -37,7 +37,7 @@ void DjinnFigures_InitializeTopRow(void *unused0, s32 unused1) {
   Task_Add(DjinnFigures_UpdateAllPositions, 0xc80);
 }
 
-/// Releases the four objects and removes their scheduler callback. It defines
+/// Releases the four objects and removes their task. It defines
 /// DjinnFigures_ClearSlotsAndSchedule (the Status menu's row) and
 /// DjinnFigures_ClearSlotsAndScheduleAlt (the Djinn menu's), which
 /// schedule nothing despite their names.
@@ -69,7 +69,7 @@ FOUR_OBJECT_MOTION_DEFINE_RELEASE(DjinnFigures_ClearSlotsAndSchedule,
 #define FOUR_OBJECT_MOTION_ORIGIN_Y 0x01e20000u
 
 /// Projects the four objects at full scale from their saved row positions.
-/// Scheduler callback, each frame from DjinnFigures_InitializeTopRow. The
+/// Task, each frame from DjinnFigures_InitializeTopRow. The
 /// image stands at (positionsX, positionsY); verticalOrigins, which is the
 /// party figures' ownerY, only moves the depth slot.
 void DjinnFigures_UpdateAllPositions(void) {
@@ -101,7 +101,7 @@ void DjinnFigures_UpdateAllPositions(void) {
 }
 
 /// Projects the bottom row using its saved scale or easing toward full size.
-/// Scheduler callback, each frame from DjinnFigures_InitializeBottomRow
+/// Task, each frame from DjinnFigures_InitializeBottomRow
 /// (the Djinn menu); it also animates the page arrows. A figure whose y has
 /// DjinnFigures_SetSlotPosition's negative mark (a recovering Djinni)
 /// faces 0x8000 instead of 0x4000.

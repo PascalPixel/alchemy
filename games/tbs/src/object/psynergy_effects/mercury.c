@@ -4,7 +4,7 @@
 
 #include "../psynergy_effects_internal.h"
 
-#define MERCURY_PARTICLE_MAX 24  ///< droplets (one an effect slot)
+#define MERCURY_PARTICLE_MAX 24  ///< droplets (one a field effect sprite)
 #define MERCURY_AFTERIMAGE_MAX 8 ///< afterimages of the rising Djinni
 /// A Mercury Djinni joins the party: the screen is tinted blue, the Djinni
 /// bounces twice and hops three times ever higher, then rises 120 pixels out
@@ -13,7 +13,7 @@
 /// (FieldEffect_UpdateRandomTargetParticle); then the colours return. Called
 /// by Djinn_JoinParty for a Mercury Djinni, which then clears the Djinni's
 /// object event slot; the Djinni's object and its afterimages are released
-/// here. Uses all 24 effect slots (FieldEffect_InitializeSlots).
+/// here. Uses all 24 field effect sprites (FieldEffect_InitializeSlots).
 void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
   struct ObjectEvent *djinni;
   struct ObjectEvent *copy;

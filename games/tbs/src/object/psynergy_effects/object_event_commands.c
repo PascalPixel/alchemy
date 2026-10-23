@@ -131,7 +131,7 @@ void ObjectMotion_SetPositionAndCommit(u32 objectId, s32 x, s32 z) {
 
 /// The script command "walk object event to": the object event walks (animation
 /// 2) toward (x, z), in pixels. Map scripts reach it as
-/// Engine_ObjectEventWalkTo (OBJECT_WALK, ObjectEvent_WalkTo); the link lobby
+/// Engine_ObjectEventWalkTo (OBJECT_WALK, ObjectEvent_WalkTo); the Battle Arena
 /// calls it too.
 void ObjectMotion_ResetAndSetPositionInMode2(u32 objectId, s32 x, s32 z) {
   struct Object *object = ObjectEvent_GetByLocalId(objectId);
@@ -270,8 +270,8 @@ void ObjectMotion_LaunchFromFocusedObject(u32 objectId, s32 xOffset,
 
 /// The script command "wait for object event": waits (at most 600 frames) for
 /// the object event to arrive and stands it still. Map scripts reach it as
-/// Engine_ObjectEventWaitForMove (ObjectEvent_WaitForMove); the link lobby and
-/// the climbing scripts call it too.
+/// Engine_ObjectEventWaitForMove (ObjectEvent_WaitForMove); the Battle Arena
+/// and the climbing scripts call it too.
 void ObjectMotion_CommitCurrentPositionAndActivate(u32 objectId) {
   struct Object *object = ObjectEvent_GetByLocalId(objectId);
 
@@ -283,7 +283,7 @@ void ObjectMotion_CommitCurrentPositionAndActivate(u32 objectId) {
 
 /// The script command "set object event position": puts the object event at (x,
 /// z), 16.16 pixels, at rest. An object event that follows the ground
-/// (OBJ_EVENT_FOLLOWS_TERRAIN) keeps its height above the terrain at the new
+/// (OBJ_EVENT_FOLLOWS_TERRAIN) keeps its height above the ground at the new
 /// place. Clears its velocity and targets. Map scripts reach it as
 /// Engine_ObjectEventSetPosition (OBJECT_POSITION_SET,
 /// ObjectEvent_SetPosition); ObjectMotion_LaunchFromFocusedObject calls it too.
@@ -332,7 +332,7 @@ void ObjectMotion_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z) {
 }
 
 /// Puts the object event at (x, y, z), 16.16 pixels, at rest; an object event
-/// that follows the ground (OBJ_EVENT_FOLLOWS_TERRAIN) is raised by the terrain
+/// that follows the ground (OBJ_EVENT_FOLLOWS_TERRAIN) is raised by the ground
 /// height there, read as ObjectMotion_SetHorizontalPositionWithTerrain reads it
 /// (see the XXX there). Nothing in ☀️ calls it.
 void ObjectMotion_SetPositionWithTerrain(u32 objectId, s32 x, s32 y, s32 z) {
@@ -390,7 +390,7 @@ void ObjectEvent_SetActionById(u32 objectId, s32 steps) {
 }
 
 /// Waits, at most 90 frames, for an object event's animation to change. Only an
-/// object event drawn as an animation object (OBJECT_SPRITE_ONE) is waited for.
+/// object event drawn as a sprite (OBJECT_SPRITE_ONE) is waited for.
 /// Called by ObjectMotion_SetAnimationAndWait, a few map scripts and the debug
 /// level screen.
 void ObjectMotion_WaitForAnimationChange(u32 objectId) {
@@ -596,7 +596,7 @@ void ObjectEvent_JumpDownLedge(s32 localId, s32 pose, s32 param) {
     WaitFrames(6);
 
     // Turn and sink 2 pixels a frame for 14 frames, raising dust, in free
-    // flight: no motion flags, so no gravity and no terrain.
+    // flight: no motion flags, so it neither falls nor follows the ground.
     Sound_PlaySongFar(SE_217);
     // From here pose counts frames.
     pose = 0;
@@ -614,7 +614,7 @@ void ObjectEvent_JumpDownLedge(s32 localId, s32 pose, s32 param) {
     } while ((u32)pose <= 0xD);
 
     // Jump 16 pixels forward and wait (at most 180 frames) to land, following
-    // the terrain and falling again.
+    // the ground and falling again.
     *objectFlags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
     object->velocityY = 0x30000;
     Object_SetMoveTargetFar(object, object->x, object->y, startZ + 0x100000);
@@ -632,7 +632,7 @@ void ObjectEvent_JumpDownLedge(s32 localId, s32 pose, s32 param) {
 /// event at once to face the second, then waits wait frames. Writes the first
 /// object event's angle. Map scripts reach it as
 /// Engine_ObjectEventFaceObjectEvent (OBJECT_FACE,
-/// ObjectEvent_FaceObjectEvent); the link lobby calls it too.
+/// ObjectEvent_FaceObjectEvent); the Battle Arena calls it too.
 void ObjectMotion_SetAngleToward(s32 firstId, s32 secondId, s32 wait) {
   struct Object *first;
   struct Object *second;

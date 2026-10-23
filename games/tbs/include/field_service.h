@@ -79,7 +79,7 @@ static inline void ObjectEvent_WaitForMove(s32 localId) {
 /// Holds the script until the camera's pan is done.
 static inline void FieldCamera_WaitForMove(void) { Engine_CameraWaitForMove(); }
 
-/// Runs a script's colour fade, from the source colours to the target ones,
+/// Runs a script's palette fade, from the source colours to the target ones,
 /// over frames.
 static inline void PaletteFade_Interpolate(s32 frames) {
   Engine_ColorBufferInterpolate(frames);
@@ -218,7 +218,7 @@ static inline void Object_MotionSetPositionAndCommit(s32 localId, s32 x,
   Engine_ObjectMotionSetPositionAndCommit(localId, x, z);
 }
 
-/// FieldScheduler_AddCallback (engine_call.h) under the scheduler's own name.
+/// FieldScheduler_AddCallback (engine_call.h) under a second name.
 static inline s32 FieldScheduler_AddOrUpdateCallback(TaskFunc callback,
                                                      s32 priority) {
   return FieldScheduler_AddCallback(callback, priority);

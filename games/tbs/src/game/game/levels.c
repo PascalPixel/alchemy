@@ -50,9 +50,9 @@ s32 Unit_KnowsPsynergy(s32 owner, s32 actionId) {
 /// equipped item. Plain entries were taught for good.
 enum { PSYNERGY_FROM_CLASS = 0x8000, PSYNERGY_FROM_ITEM = 0x4000 };
 
-// Slots are four-byte records, not a flat halfword array. The native view
+// Slots are four-byte entries, not a flat halfword array. The native view
 // preserves load scheduling; the typed view shortens the English object by
-// 52 bytes. UBFIX accesses each record through its actual declared type.
+// 52 bytes. UBFIX accesses each entry through its actual declared type.
 #ifdef UBFIX
 #define PSYNERGY_ACTION_AT(slots, index) ((slots)[index].encodedAction)
 #else

@@ -15,7 +15,7 @@ struct WorldMapView {
   u8 *script;                     ///< NULL at load
   u16 fade;    ///< MapGridScrollWork's flags: REG_DISPCNT bits, 0x1f00 at load
   u8 fadeStep; ///< MapGridScrollWork's wideTiles, 0x80 at load
-  /// As MapGridScrollWork: footprints, tile animations and blend script.
+  /// As MapGridScrollWork: footprints, tileset animations and blend script.
   u8 animationsAndBlend[0xe4 - 0x17];
   s32 viewX;  ///< 16.16 fixed-point pixels
   s32 viewY;  ///< 16.16 fixed-point pixels
@@ -23,7 +23,7 @@ struct WorldMapView {
   s32 scaleY; ///< 0x400000 at load
   s32 limitX; ///< 0x1fe00000 at load
   s32 limitY; ///< 0x1fe00000 at load
-  /// Set by WorldMap_StartStillView while BG1 shows the drawn map; the tile
+  /// Set by WorldMap_StartStillView while BG1 shows the drawn map; the tileset
   /// animations are then neither suspended nor resumed.
   s8 animationActive;
   u8 unused[3]; ///< no code names it

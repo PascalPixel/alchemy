@@ -3,7 +3,7 @@
 
 /// @file
 /// The speaker lookup's views of an object event and its sprite, the speaker
-/// definitions, and the colour buffer's work slot.
+/// definitions, and the palette fade's heap slot.
 
 #include "unit/object/object.h"
 #include "object_lookup.h"
@@ -54,7 +54,7 @@ struct SpeakerDefinition {
             ///< (Speaker_GetIdleFlags)
 };
 
-/// The colour buffer, heap slot HEAP_SLOT_PALETTE_FADE under its own name.
+/// The palette fade, heap slot HEAP_SLOT_PALETTE_FADE under its own name.
 extern struct PaletteFade *gPaletteFadeWork;
 
 #endif

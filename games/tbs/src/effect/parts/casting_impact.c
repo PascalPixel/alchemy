@@ -5,7 +5,7 @@
 #include "../effect_internal.h"
 
 // The casting impacts: their phases and particle use are described in the
-// folder README, under "Effect families".
+// folder README, under "Animation families".
 
 /// Moves each RGB555 channel of background colours 0 to 63 one level towards
 /// the resource palette. Colour 0 always goes towards black, whatever the
@@ -109,7 +109,7 @@ static inline void CastingImpact_DrawCroppedImage(void *canvas,
 }
 
 /// Clears the prelude image, stops its callbacks and releases its blitters
-/// before the next effect takes over.
+/// before the next animation takes over.
 ///
 /// Called by BattleAnim_RunCastingImpact for the impacts that hand off after
 /// the gathering (15, 17, 24, 26 and Severe Blow); Meltdown's end does the
@@ -126,16 +126,16 @@ static inline void CastingImpact_EndPrelude(struct BattleAnimWork *work,
   ANIM_RELEASE_BLITTERS();
 }
 
-/// The casting impacts, by effect kind less 100: each is named for the first
+/// The casting impacts, by animation kind less 100: each is named for the first
 /// ability whose gAbilityAnimations entry selects it; the four no ability
-/// selects are named UNUSED_ and for the effect they hand off to.
+/// selects are named UNUSED_ and for the animation they hand off to.
 ///
 /// The trailing comments give each impact's own animation, drawn over the
 /// target after the orb and sparks. Most animations use the 64 particles at
 /// Ram_MapGridCellBuffer + 0x4000, which start at the target; their pictures
 /// are in Ram_MapGridCellBuffer. "Smoke" is puffs of smoke rising from the
 /// target; "hands off" impacts stop after gathering and hand the canvas to
-/// another effect.
+/// another animation.
 enum CastingImpact {
   CASTING_IMPACT_IMPACT_BANE = 0,      ///< smoke
   CASTING_IMPACT_IMPACT_SMOG,          ///< smoke
@@ -226,15 +226,15 @@ enum CastingImpact {
 /// (CASTING_IMPACT_IMPACT_UNUSED_MYSTIC_FLAME); none
 /// (CASTING_IMPACT_IMPACT_UNUSED_COMETS).
 ///
-/// Called only by BattleAnim_DispatchByIdRange (positions.c), for effect
+/// Called only by BattleAnim_DispatchByIdRange (positions.c), for animation
 /// kinds 100 to 135. The phases, the hand-offs and the particle ranges are in
-/// the folder README under "Effect families". Opens the canvas layer (tiled for
-/// Terra Strike, Mortal Danger and Asura), writes the background palette,
+/// the folder README under "Animation families". Opens the canvas layer (tiled
+/// for Terra Strike, Mortal Danger and Asura), writes the background palette,
 /// BG2's scale and reference and REG_BLDALPHA, holds the caster still while
 /// the sparks gather, and adds BattleAnim_ArmBg2AffineHBlankDma for the
 /// waving impacts; it releases all of them before it returns, or hands them on.
 ///
-/// mode: the impact, an enum CastingImpact (the effect kind less 100). The
+/// mode: the impact, an enum CastingImpact (the animation kind less 100). The
 ///       tests on mode 100 never hold, as the dispatcher passes only
 ///       CastingImpact values.
 void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
@@ -569,7 +569,7 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
       REG_BG2X = (96 - targetScreen->x) << 8;
     }
   }
-  // The four unused impacts clear the canvas and hand off to another effect
+  // The four unused impacts clear the canvas and hand off to another animation
   // without giving the caster its motion back: the ice chips to Blizzard's
   // volley, the Mystic Flame one to Mystic Flame's orbs and the comets to
   // PROJECTILE_VOLLEY_IMPACT_COMETS; the gathering ends here.
@@ -1380,7 +1380,7 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
         position->z += motion->z;
       }
     }
-    // The cues: the damage shows on frame 3 with no sound of its own (a cue
+    // The cues: the damage shows on frame 3 with no sound of its own (a sound
     // of -1 is never played), the heavy impact sounds on frame 4, frame 6
     // gives some impacts a reaction and a shake, and the target flashes on
     // frames 6 and 14.

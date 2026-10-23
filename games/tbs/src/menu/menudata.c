@@ -74,7 +74,7 @@ s32 gItemMenu_CommandColumnXTable[6] = {
 // clang-format on
 #endif
 
-// The width in tiles of the status screen's highlight on each ailment row
+// The width in tiles of the summary screen's highlight on each status row
 // (Down, Poison, Venom, Curse and Haunt).
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 u8 gSummaryScreen_CursorWidths[5] = {9, 4, 6, 5, 7};

@@ -2,7 +2,7 @@
 #define MINIGAME_H
 
 /// @file
-/// The reel game's title lettering.
+/// Lucky Wheels' title lettering.
 
 #include "types.h"
 #include "edition.h"

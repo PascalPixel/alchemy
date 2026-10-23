@@ -3,11 +3,11 @@
 
 /// Runs one frame of the sound driver. Nothing in ☀️ calls it by this name.
 void AudioEngine_RunMixerFar(void);
-/// Starts the sound driver and clears the music ramps and cue records, at
+/// Starts the sound driver and clears the music ramps and the songs' state, at
 /// power-on.
 void Sound_InitializeFar(void);
 #ifndef OWN_Sound_PlaySongFar
-/// Plays a cue: a fade, a sound effect, a fanfare or music. The whole game
+/// Plays a song: a fade, a sound effect, a fanfare or music. The whole game
 /// plays its sounds this way.
 void Sound_PlaySongFar(s32 id);
 #endif
@@ -20,8 +20,8 @@ void Sound_SetBgmTempoFar(u16 value);
 /// Returns nonzero while a fanfare holds the music; Colosso and the message
 /// windows poll it.
 s32 Sound_GetBgmRestoreDelayFar(void);
-/// Returns the music cue last chosen, 0xff before any; the pause menu saves it
-/// to restart the music.
+/// Returns the song number of the music last chosen, 0xff before any; the pause
+/// menu saves it to restart the music.
 s32 Sound_GetCurrentBgmFar(void);
 /// Waits a frame at a time for the music to come back after a fanfare, at most
 /// 300 frames.

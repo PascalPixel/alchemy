@@ -1,5 +1,5 @@
 /// @file
-/// Battle events played over frames, BattlePlayback_Run.
+/// Playback over frames, BattlePlayback_Run.
 // Part of battle.c.
 
 #include "../battle_internal.h"
@@ -18,9 +18,9 @@ void Dma_StopAllThenRunHook(void) {
   _call_via_r0(IwramIrqModeWord);
 }
 
-/// Starts playback of the plan's targets when the effect's blow lands.
+/// Starts playback of the turn's targets when the animation's blow lands.
 /// Reached as ANIM_SHOW_DAMAGE(hitSound), through
-/// BattlePlayback_StartFar, from the effects (see the folder README).
+/// BattlePlayback_StartFar, from the battle animations (see the folder README).
 /// Only while playback is idle: sets the phase to
 /// BATTLE_PLAYBACK_PHASE_RESOLVE_TARGET, and a nonzero cue to pendingSong; a
 /// later call before the reset does nothing.
@@ -37,17 +37,16 @@ void BattlePlayback_Start(s32 cue) {
   }
 }
 
-/// Empties the event queue and schedules playback of the events queued next,
-/// with no targets to resolve.
-/// Called before a Djinni is set (BattleTurn_Build) and for the Djinn
-/// the round's and a turn's end show (Battle_ProcessRoundEnd,
-/// BattleUnit_ProcessTurnEnd), each followed by
+/// Empties the playback queue and schedules playback of the commands queued
+/// next, with no targets to resolve. Called before a Djinni is set
+/// (BattleTurn_Build) and for the Djinn the round's and a turn's end show
+/// (Battle_ProcessRoundEnd, BattleUnit_ProcessTurnEnd), each followed by
 /// BattlePlayback_WaitForReady. Sets the phase to
-/// BATTLE_PLAYBACK_PHASE_DISPATCH and gBattleWork->plan's targetCount to 0, so
+/// BATTLE_PLAYBACK_PHASE_DISPATCH and gBattleWork->turn's targetCount to 0, so
 /// playback goes to BATTLE_PLAYBACK_PHASE_READY once the queue is played; adds
-/// BattlePlayback_Run as a scheduler callback and returns its task index (-1
+/// BattlePlayback_Run as a task and returns its task index (-1
 /// when the task table is full), which no caller reads.
-/// @param frames the delay before the first event
+/// @param frames the delay before the first command
 s32 BattlePlayback_SchedulePhase(s32 frames) {
   struct BattlePlaybackWork *events;
 
@@ -74,10 +73,10 @@ s32 BattlePlayback_SchedulePhase(s32 frames) {
 /// The Djinn bonus's colour cycle lasts 30 frames.
 #define FELLED_FLASH_FRAMES 30
 
-/// Plays the plan's targets one at a time: resolves the next target with
+/// Plays the turn's targets one at a time: resolves the next target with
 /// BattleAbility_ApplyToTarget, then plays the events it queued over the frames
-/// that follow, until every target is done. Runs each frame as a scheduler
-/// callback (main-loop order 0xc80), added by the staging runners in staging.c
+/// that follow, until every target is done. Runs each frame as a task
+/// (main-loop priority 0xc80), added by the staging runners in staging.c
 /// and by BattlePlayback_SchedulePhase, and removed by
 /// BattlePlayback_WaitForReady. Idle until BattlePlayback_Start or the wait
 /// starts it. Advances gBattleWork->events (phase, eventIndex, timer,
@@ -99,7 +98,7 @@ void BattlePlayback_Run(void) {
     Iwram_ClearWords(tiles, record->width * record->height);
   }
 
-  // Idle until the effect's blow lands; ready once every target is played.
+  // Idle until the animation's blow lands; ready once every target is played.
   if (battle->playback.phase == BATTLE_PLAYBACK_PHASE_IDLE)
     return;
   for (;;) {
@@ -433,8 +432,8 @@ void BattlePlayback_Run(void) {
   }
 }
 
-/// Stops playback and empties the event queue.
-/// Called when an action is planned (BattleTurn_Build), after a queue
+/// Stops playback and empties the playback queue.
+/// Called when an action is built into a turn (BattleTurn_Build), after a queue
 /// is played (BattlePlayback_RunAll, BattlePlayback_WaitForReady), and
 /// before playback is scheduled (BattleTurn_Build, turn_end.c). Sets
 /// gBattleWork->events' phase to BATTLE_PLAYBACK_PHASE_IDLE, clears the queue,
@@ -454,10 +453,10 @@ void BattlePlayback_Reset(void) {
 }
 
 /// Waits, a frame at a time, until BattlePlayback_Run has played every
-/// target, then removes the callback and resets the events.
-/// Called after the effect by the staging runners in staging.c, and after a
-/// Djinn's effect by BattleTurn_Build and turn_end.c. Playback still
-/// idle (the effect never called ANIM_SHOW_DAMAGE) is started here.
+/// target, then removes the callback and resets the playback.
+/// Called after the animation by the staging runners in staging.c, and after a
+/// Djinn's animation by BattleTurn_Build and turn_end.c. Playback still
+/// idle (the animation never called ANIM_SHOW_DAMAGE) is started here.
 #ifdef UBFIX
 void BattlePlayback_WaitForReady(void) {
 #else

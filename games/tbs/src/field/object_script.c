@@ -1,5 +1,5 @@
 /// @file
-/// Field object scripts: the ones the engine starts itself, and the command
+/// Object scripts: the ones the engine starts itself, and the command
 /// table.
 
 #include "unit/field/object_script.h"

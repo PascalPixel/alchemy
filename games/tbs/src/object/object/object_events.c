@@ -117,7 +117,7 @@ void FieldScript_SpawnObjectEventTemplates(struct ObjectEventTemplate *entry,
     condition = entry->condition;
     if (!GameFlag_IsConditionActive(condition))
       continue;
-    // Djinn_ResolvePendingEvent hides a Djinni after a loss or escape.
+    // Djinn_ResolvePendingEvent hides a Djinni after the party loses or flees.
     // Map_ResetFlagsOnEnter clears these temporary flags on a normal entry.
     if ((u32)(condition - FLAG_DJINN_FIRST) <=
             OBJ_EVENT_DJINNI_FLAG_COUNT - 1 &&
@@ -172,16 +172,16 @@ void FieldScript_SpawnObjectEventTemplates(struct ObjectEventTemplate *entry,
       ((struct ScriptObjectRuntime *)object)->homeX = object->x / 0x10000;
       ((struct ScriptObjectRuntime *)object)->homeZ = object->z / 0x10000;
       // An object event template with a height is lifted half a pixel more and
-      // takes motion flags 4, floating: it neither follows the terrain nor
+      // takes motion flags 4, floating: it neither follows the ground nor
       // falls. Outside the world map every height is then counted from the
-      // terrain below.
+      // ground below.
       if (object->y != 0) {
         object->flags = 4;
         object->y += 0x8000;
       }
       if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
         // World-map object event templates use single sprites and do not follow
-        // the terrain. While the tunic flag is set, all keep their native
+        // the ground. While the tunic flag is set, all keep their native
         // scale; otherwise they draw at 3/4 size.
         object->flags &= 0xfe;
         if (!GameFlag_TestFar(FLAG_ISAAC_WEARS_TUNIC)) {
@@ -526,7 +526,7 @@ void *ObjectEvent_GetByLocalId(u32 objectEventIndex) {
 /// gObjectEventSnapshot, with each one's slot, animation, sprite flags and
 /// priority, so that ObjectEvent_Restore can put them back.
 ///
-/// Called by Map_Run before a random battle, by the save menu through
+/// Called by Map_Run before a random battle, by saving the game through
 /// Save_CaptureObjectEventsFar, and by two maps (Tolbi's spring and the
 /// Venus Lighthouse aerie).
 void ObjectEvent_Snapshot(void) {

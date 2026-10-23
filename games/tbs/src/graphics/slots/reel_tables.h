@@ -1,5 +1,5 @@
 /// @file
-/// The reel game's tables, the same in both games. The includer defines
+/// The Lucky Wheels tables, the same in both games. The includer defines
 /// LUCKY_WHEELS_TITLE_LETTERS, the letters of the title it spells.
 
 /// Where each spark cell (a square 2 to 20 pixels on a side) starts: size s
@@ -9,10 +9,10 @@
 const u16 gLuckyWheels_SparkCellOffsets[] = {0,   4,   20,  56,  120,
                                              220, 364, 560, 816, 1140};
 
-/// The prize of each reel symbol, kept in gGameState.wonPrizes for each
+/// The prize of each wheel symbol, kept in gGameState.wonPrizes for each
 /// winning line. Symbol 5 matches any other on a line, so a line is won by
 /// the symbol it shows besides 5. A line of five 5s leaves the symbol at -1
-/// and reads the byte before this table; every reel holds three 5s
+/// and reads the byte before this table; every wheel holds three 5s
 /// (object/colorfx.c), so such a line can happen.
 const u8 gLuckyWheels_SymbolPrizes[] = {0, 3, 1, 4, 2, 5};
 
@@ -33,8 +33,8 @@ const u8 gLuckyWheels_TitleLetterTiles[LUCKY_WHEELS_TITLE_LETTERS] = {
 #endif
 };
 
-/// The positions of the frame's fourteen sprites, in screen pixels. The slot
-/// machine gives the first four tile 0x4e0 and the rest 0x4e8
+/// The positions of the frame's fourteen sprites, in screen pixels. Lucky
+/// Wheels gives the first four tile 0x4e0 and the rest 0x4e8
 /// (object/colorfx.c).
 const u8 gLuckyWheels_FrameSpriteX[] = {2,   0,  232, 232, 32,  32,  200,
                                         200, 28, 28,  208, 208, 219, 219};

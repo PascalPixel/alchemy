@@ -2,7 +2,7 @@
 #define ALCHEMY_CALLBACK_SCHEDULER_H
 
 /// @file
-/// The task scheduler: tasks, their order and the scheduler's state.
+/// Tasks, their priorities and the task runner's state.
 
 #include "edition.h"
 #include "types.h"
@@ -12,7 +12,7 @@ enum SchedulerTaskLimits { TASK_COUNT = 20, TASK_COUNT_TLA = 24 };
 
 typedef void (*TaskFunc)(void);
 
-/// A scheduled task: its routine's address, its order (see SCHEDULER_KEY_) and
+/// A task: its routine's address, its priority (see TASK_PRIORITY_) and
 /// its flags, where bit 0 keeps it running while overlay tasks are suspended.
 struct Task {
   u32 callback;
@@ -25,14 +25,14 @@ STATIC_ASSERT(sizeof(struct Task) == 8);
 STATIC_ASSERT(offsetof(struct Task, priority) == 4);
 STATIC_ASSERT(offsetof(struct Task, flags) == 6);
 
-/// A task's order: the high byte picks the pass that runs it, the low byte
+/// A task's priority: the high byte picks the pass that runs it, the low byte
 /// ranks it within the pass (higher runs first). An odd high byte means the
 /// task is suspended, so no pass matches it.
 #define TASK_PRIORITY_VBLANK 0x480
 #define TASK_PRIORITY_MAIN_LOOP 0xc80
-/// An empty slot's order, sorted last.
+/// An empty slot's priority, sorted last.
 #define TASK_PRIORITY_EMPTY 0xffff
-/// A removed task's order: its odd high byte matches no pass, and it sorts
+/// A removed task's priority: its odd high byte matches no pass, and it sorts
 /// to the front of the table.
 #define TASK_PRIORITY_REMOVED 0x7fff
 

@@ -2,32 +2,33 @@
 #define ALCHEMY_EFFECT_SLOT_H
 
 /// @file
-/// Effect slots: the particles Psynergy effects move and draw.
+/// Field effect sprites: the particles Psynergy effects move and draw.
 
 #include "edition.h"
 #include "types.h"
 #include "static_assert.h"
 
-/// FieldEffectSprite.targetX and targetZ while the slot has no target, at rest.
+/// FieldEffectSprite.targetX and targetZ while the sprite has no target, at
+/// rest.
 #define FIELD_EFFECT_SPRITE_NO_TARGET ((s32)0x80000000)
 
 struct FieldEffectSprite;
-/// An effect slot's per-frame routine (FieldEffectSprite.callback).
+/// A field effect sprite's per-frame routine (FieldEffectSprite.callback).
 typedef void (*EffectCallback)(struct FieldEffectSprite *);
 
 /// A particle a Psynergy effect moves and draws: its sprite, its position and
 /// target, its speed, scale and heading, and its per-frame callback. The 24 are
-/// FieldEffectWork.sprites, in the HEAP_SLOT_FIELD_EFFECT work slot.
+/// FieldEffectWork.sprites, in the HEAP_SLOT_FIELD_EFFECT heap slot.
 struct FieldEffectSprite {
-  void *object; ///< the slot's sprite, released with the slot
+  void *object; ///< the object it draws, released with it
   s32 x;        ///< 16.16 fixed-point pixels
   s32 z;        ///< 16.16 fixed-point pixels
   s32 targetX;  ///< 16.16 fixed-point pixels; FIELD_EFFECT_SPRITE_NO_TARGET at
                 ///< rest
   s32 targetZ;  ///< 16.16 fixed-point pixels; FIELD_EFFECT_SPRITE_NO_TARGET at
                 ///< rest
-  s32 originX;  ///< 16.16 fixed-point pixels; where the slot started
-  s32 originZ;  ///< 16.16 fixed-point pixels; where the slot started
+  s32 originX;  ///< 16.16 fixed-point pixels; where the sprite started
+  s32 originZ;  ///< 16.16 fixed-point pixels; where the sprite started
   s32 speed;    ///< 16.16 fixed-point pixels per frame
   s32 speedMax; ///< 16.16 fixed-point pixels per frame
   s32 acceleration;        ///< 16.16 fixed-point pixels per frame, each frame
@@ -48,9 +49,9 @@ struct FieldEffectSprite {
   s8 updateMotion; ///< nonzero: FieldEffectSprite_UpdateMotion moves it each
                    ///< frame
   s8 render;       ///< nonzero: drawn each frame
-  s8 active;       ///< nonzero while the slot is in use
+  s8 active;       ///< nonzero while the sprite is in use
   u8 randomValue;  ///< random when filled; not read by name in TBS
-  /// bits: 2 z also lifts the sprite (set when the slot is filled)
+  /// bits: 2 z also lifts the sprite (set when it is filled)
   u8 flags;
 };
 

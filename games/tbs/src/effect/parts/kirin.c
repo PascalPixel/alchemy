@@ -16,9 +16,9 @@
 ///
 /// The scene runs in two stages. In the sweep (120 frames; A or B ends it
 /// after frame 16), KIRIN_OBJECTS objects ride in on a sine wave while the
-/// backdrop scrolls, a ring of motes opens around them and a trail of fire
-/// follows. In the rise (96 frames) the row slides across the targets; each
-/// target the row passes throws a burst of 32 motes and plays its hit
+/// battle background scrolls, a ring of motes opens around them and a trail of
+/// fire follows. In the rise (96 frames) the row slides across the targets;
+/// each target the row passes throws a burst of 32 motes and plays its hit
 /// reaction, and the fire sheet slides off behind it. The battle shows the
 /// damage at the end.
 ///
@@ -70,8 +70,8 @@ void BattleAnim_RunKirin(struct BattleAnimArgs *effect) {
   work->transferMode = CANVAS_COPY;
   Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
   // Setup: wipe the battle away from left to right, swap in the forest
-  // backdrop and wipe back. Window 0 narrows to x 0 to 201; right of it only
-  // window 1 applies, which shows no sprites, so the row rides in from
+  // battle background and wipe back. Window 0 narrows to x 0 to 201; right of
+  // it only window 1 applies, which shows no sprites, so the row rides in from
   // behind that edge until the rise opens window 0 again.
   BattleAnim_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   BattleAnim_SpawnObjects(KIRIN_OBJECTS, 0x175, 1);
@@ -293,8 +293,8 @@ void BattleAnim_RunKirin(struct BattleAnimArgs *effect) {
     ANIM_PRESENT_FRAME(work);
   }
 
-  // The rise stage: restore the backdrop and display, put the objects behind
-  // the background, and clear the hit marks and the burst motes.
+  // The rise stage: restore the battle background and display, put the objects
+  // behind the background, and clear the hit marks and the burst motes.
   gBgScroll[1].x = savedX;
   control->busy = 0;
   BattleAnim_SetupBlendedDisplay();

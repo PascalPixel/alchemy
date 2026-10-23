@@ -2,7 +2,7 @@
 #define ALCHEMY_BATTLE_WORK_H
 
 /// @file
-/// BattleWork, the battle's own work, and the battle display work.
+/// BattleWork, the battle's own work, and the battle message window's work.
 
 #include "unit/battle/battle.h"
 #include "types.h"
@@ -34,7 +34,7 @@ struct AdvanceArrowSprite {
 
 struct Window;
 
-/// The battle message's text channel, as far as its offset in the window:
+/// The battle message's text printer, as far as its offset in the window:
 /// the advance arrow is drawn at the window's corner plus this offset.
 struct BattleMessageOffset {
   struct Window *window; ///< TextPrinter.window; not named here
@@ -42,11 +42,11 @@ struct BattleMessageOffset {
   u16 y;                 ///< 1/256 pixels
 };
 
-/// The battle message display: its window, its text channel and whether the
+/// The battle message window: its window, its text printer and whether the
 /// next message is marked.
 struct BattleMessageWork {
   struct Window *window;              ///< the message window
-  struct BattleMessageOffset *offset; ///< its text channel
+  struct BattleMessageOffset *offset; ///< its text printer
   s32 marked; ///< set by PLAYBACK_MARK; passed to the next message
 };
 
@@ -54,16 +54,16 @@ STATIC_ASSERT(sizeof(struct BattleMessageOffset) == 8);
 STATIC_ASSERT(sizeof(struct BattleMessageWork) == 12);
 STATIC_ASSERT(offsetof(struct BattleMessageWork, marked) == 8);
 
-/// The battle message display, in HEAP_SLOT_BATTLE_MESSAGE, which
+/// The battle message window's work, in HEAP_SLOT_BATTLE_MESSAGE, which
 /// Battle_Run takes and zeroes for the battle.
 extern struct BattleMessageWork *gBattleMessageWork;
 
-/// The battle event queue and the state of its playback: the phase, the event
+/// The playback queue and the state of its playback: the phase, the entry
 /// playing and the advance arrow.
 struct BattlePlaybackWork {
-  struct BattlePlaybackQueue queue; ///< the action's events, in play order
+  struct BattlePlaybackQueue queue; ///< the action's playback, in play order
   s32 phase;      ///< enum BattlePlaybackPhase, or a message phase
-  s32 eventIndex; ///< the next queued event to play
+  s32 eventIndex; ///< the next queued entry to play
   s32 timer;      ///< frames to wait, or frames waited for the advance key
   struct AdvanceArrowSprite arrow; ///< the advance arrow
   s32 arrowResource; ///< the arrow's resource entry; -1 until it is shown
@@ -78,27 +78,27 @@ struct BattlePlaybackWork {
 enum { BATTLE_ENEMY_CAPACITY = 6, BATTLE_ACTION_CAPACITY = 20 };
 
 /// The battle's own work: its enemies, units and their objects, the turn's
-/// actions, the spoils, the background palette, the plan and the events.
+/// actions, the spoils, the background palette, the turn and the playback.
 ///
-/// It lives in the HEAP_SLOT_BATTLE work slot: Battle_Run takes and
-/// zeroes it, sets arrowTiles to -1 and enemyGroup, and the next map change
+/// It lives in the HEAP_SLOT_BATTLE heap slot: Battle_Run takes and
+/// zeroes it, sets arrowTiles to -1 and formation, and the next map change
 /// clears the heap. Every battle part reads it through gBattleWork, and the
-/// battle effects read its background id and palette.
+/// battle animations read its background id and palette.
 struct BattleWork {
   s32 formation;      ///< the encounter's enemy formation
   s16 spriteSlots[6]; ///< the unit in each enemy sprite slot, 0 when free
-  /// The enemy classes met so far, for their name letters, and the first
-  /// class to fall (firstDefeated).
+  /// The enemies met so far, for their name letters, and the first
+  /// enemy to fall (firstDefeated).
   u16 enemyKinds[6];
-  /// Name letters in use by each class in enemyKinds, a bit per letter.
+  /// Name letters in use by each enemy in enemyKinds, a bit per letter.
   u32 nameLetterMasks[6];
-  /// The letter each class in enemyKinds gave out last; -1 for none yet.
+  /// The letter each enemy in enemyKinds gave out last; -1 for none yet.
   s8 lastNameLetter[6];
   u8 unusedAfterChannels[2]; ///< no code names it
-  /// The enemyKinds index of the first class to fall; 6 for none.
+  /// The enemyKinds index of the first enemy to fall; 6 for none.
   u16 firstDefeated;
   u16 defeatState;   ///< DEFEAT_ONE, DEFEAT_SEVERAL or DEFEAT_BY_PARTY_MEMBER
-  u8 enemyKindCount; ///< classes listed in enemyKinds, at most 5
+  u8 enemyKindCount; ///< enemies listed in enemyKinds, at most 5
   u8 partyStatus;    ///< PARTY_STATUS_SUMMONS or PARTY_STATUS_NO_SUMMONS; the
                      ///< staging draws it less PARTY_STATUS_SHOW_PP, names and
                      ///< HP only
@@ -133,13 +133,13 @@ struct BattleWork {
   /// What the defeated enemies leave; spoils.defeated, their count, is also
   /// what Battle_Run returns after a win or a broken link.
   struct BattleSpoils spoils;
-  u16 palette[128]; ///< the backdrop's colours, before scaling
-  s32 brightness;   ///< the backdrop's brightness, 16.16, 0x10000 full
+  u16 palette[128]; ///< the battle background's colours, before scaling
+  s32 brightness;   ///< the battle background's brightness, 16.16, 0x10000 full
   u16 background;   ///< the battle background's id
   u8 unusedAfterBackground[4]; ///< no code names it
   u16 highlightStep;           ///< index into gBattleHighlight_BlendRamp
   u16 highlightMode;           ///< nonzero while the units are highlighted
-  u8 paddingAfterHighlight[2]; ///< up to the word plan starts on
+  u8 paddingAfterHighlight[2]; ///< up to the word turn starts on
   /// The action being carried out, as BattleTurn_Build lays it out.
   struct BattleTurn turn;
   struct BattlePlaybackWork playback;

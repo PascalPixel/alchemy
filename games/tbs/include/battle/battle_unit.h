@@ -8,7 +8,7 @@
 #include "edition.h"
 #include "static_assert.h"
 
-/// The record sizes the STATIC_ASSERTs below hold the structs to, and the
+/// The sizes the STATIC_ASSERTs below hold the structs to, and the
 /// action id's bits in an action list entry.
 enum {
   ABILITY_DEFINITION_SIZE = 0x10, ///< bytes in a struct AbilityDefinition
@@ -219,7 +219,7 @@ struct AbilityDefinition {
   /// README's "How an ability resolves" gives the formulas.
   u16 power;
   /// The field Psynergy the ability works as, 1 (Move) to 16 (Avoid); 0 for
-  /// none. The field effects branch on it, and the status screen counts it as
+  /// none. The field effects branch on it, and the summary screen counts it as
   /// usable in the field.
   u8 fieldPsynergy;
   u8 reservedAfterType[3]; ///< 0 in every row
@@ -247,7 +247,7 @@ enum AbilityUse {
 #define GUARD_TOTAL_DEFENSE 2
 
 /// A unit in battle: a party member's or an enemy's stats, Psynergy, items,
-/// Djinn and ailments.
+/// Djinn and statuses.
 struct Unit {
   /// The name, one byte a character, ending in 0. An enemy's is its message
   /// name cut to 14 characters, with the suffix letter BattleUnit_Set is given
@@ -334,7 +334,7 @@ struct Unit {
   /// The curse: CurseFlag bits. Unit_Calculate rebuilds CURSE_BOUND and
   /// CURSE_ITEM from the equipment. A bound unit loses one action in
   /// four, except Defend (BattleTurn_Build); any bit set shows the curse
-  /// in the status screens and lets the sanctum remove it.
+  /// in the summary screens and lets the sanctum remove it.
   s8 curse;
   s8 poison; ///< POISON_NORMAL or POISON_VENOM, 0 for none
   /// Each stat change: the turns it has left, and its stage (Unit_Calculate: an

@@ -57,7 +57,7 @@ enum {
 #define WINDOW_TILE_PAIR(entry) ((u32)(entry) << 16 | (entry))
 
 // The two page arrows beside a paged list's page numbers, in the menus and
-// the clear menu: tiles 0x128 and 0x129 of character block 0, which
+// the main menu: tiles 0x128 and 0x129 of character block 0, which
 // Link_DrawShiftedTilePair slides back and forth each frame, and their
 // tilemap entries.
 #define PAGE_ARROW_TILE 0x128
@@ -66,9 +66,9 @@ enum {
 #define PAGE_ARROW_LEFT WINDOW_TILE(PAGE_ARROW_TILE)
 #define PAGE_ARROW_RIGHT WINDOW_TILE(PAGE_ARROW_TILE + 1)
 
-/// The window frame's tiles. While WindowWork.mindRead is set (a battle effect
-/// sets it while it greys palette 15 and scrolls BG0 by scanline) the corners
-/// are one rounded tile, flipped for each corner.
+/// The window frame's tiles. While WindowWork.mindRead is set (a battle
+/// animation sets it while it greys palette 15 and scrolls BG0 by scanline) the
+/// corners are one rounded tile, flipped for each corner.
 enum {
   WINDOW_TILE_BLANK = WINDOW_TILE(0x00),
   WINDOW_TILE_FRAME_TOP_LEFT = WINDOW_TILE(0x10),
@@ -120,8 +120,8 @@ enum {
 /// The DMA control word that copies count halfwords.
 #define DMA_COPY16(count) ((DMA_ENABLE << 16) | (count))
 
-/// How a render output's sprite moves (struct WindowSprite.motion), run each
-/// frame by UiWork_AnimateSpriteSlots. 0 is a free output.
+/// How a window sprite moves (struct WindowSprite.motion), run each frame
+/// by UiWork_AnimateSpriteSlots. 0 is a free window sprite.
 enum {
   WINDOW_SPRITE_MOTION_STILL = 1,
   WINDOW_SPRITE_MOTION_PAGE_ARROW =
@@ -215,7 +215,7 @@ enum FieldMessageFlag {
   FIELD_MESSAGE_LOWEST = 0x40       ///< 12 tiles below the top rows' centre
 };
 
-/// The system menu's entries, as PauseMenu_Choose returns them
+/// The pause menu's entries, as PauseMenu_Choose returns them
 /// (counted from Save your quest even when only Change settings shows).
 enum PauseMenuEntry {
   PAUSE_MENU_SAVE_QUEST = 0,
@@ -231,7 +231,7 @@ enum PauseMenuEntry {
 /// Resource_LoadByMode, Resource_LoadByModeIntoSlot and
 /// WindowSprite_CreateFromResource load.
 enum IconKind {
-  ICON_KIND_NONE = 0,    ///< a free selection icon record
+  ICON_KIND_NONE = 0,    ///< a free selection icon entry
   ICON_KIND_COMMAND = 1, ///< a command's icon, from its number
   /// An item's icon, with its count above one and its equipped and broken
   /// marks (and the artifact mark where a slot is given).

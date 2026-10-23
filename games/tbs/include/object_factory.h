@@ -2,7 +2,7 @@
 #define ALCHEMY_OBJECT_FACTORY_H
 
 /// @file
-/// ObjectEvent_Create, which creates a field object.
+/// ObjectEvent_Create, which creates an object.
 
 #include "types.h"
 

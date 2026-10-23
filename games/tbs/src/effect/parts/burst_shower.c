@@ -25,7 +25,7 @@ enum BurstShowerMode {
 /// Arms DMA 0 to copy one word of gBattleAnimWork's bg2xLines table into BG2X
 /// at each horizontal blank, bending BG2 line by line.
 ///
-/// Runs each frame as a scheduler callback added by the target motes, the
+/// Runs each frame as a task added by the target motes, the
 /// casting impacts, Condemn, the gathering lights, Torch and Planet Diver,
 /// each of which removes it before it returns. Stops DMA 0 and restarts it
 /// from the top of the table.
@@ -103,8 +103,8 @@ void BattleAnim_RunDeadlyGas(struct BattleAnimArgs *effect) {
 /// mode: the burst and its palette (enum BurstShowerMode). The grey mode turns
 ///       the targets solid black and keeps them so. BURST_SHOWER_MODE_LIGHTNING
 ///       fires no bursts: a violet lightning bolt stands between the user and
-///       the targets, on a canvas shown at three times its width. No effect
-///       kind in the effect table uses BURST_SHOWER_MODE_ICE.
+///       the targets, on a canvas shown at three times its width. No animation
+///       kind in the animation table uses BURST_SHOWER_MODE_ICE.
 void BattleAnim_RunBurstShower(struct BattleAnimArgs *effect, s32 mode) {
   u32 *slots;
   struct BattleAnimWork *work;

@@ -37,7 +37,7 @@ void Game_Restart(void) {
 }
 
 /// Returns the party's Djinn recovery bank (the standby Djinn and their turns
-/// to recover), or for the enemy side battle unit 0x83's record, read as a
+/// to recover), or for the enemy side battle unit 0x83 itself, read as a
 /// bank. The bank also holds the summon flags Summon_ListLearned reads.
 /// Called by the battle code that sets, recovers and links Djinn
 /// (DjinnRecovery_Tick, BattleSummon_UpdateAvailability, the link battle).
@@ -68,7 +68,7 @@ u32 Party_GetAverageLevel(void) {
   return totalLevels;
 }
 
-/// Returns the unit record of `owner`: ISAAC to PIERS are the playable
+/// Returns the unit of `owner`: ISAAC to PIERS are the playable
 /// characters in the game state, 0x80 to 0x85 the enemies of the current
 /// battle. Anything else, or an enemy outside a battle, is NULL. Nearly every
 /// bank calls it, through GAME.S as Unit_GetFar.
@@ -489,8 +489,8 @@ void GameFlag_RefreshLureCap(void) {
 /// Encodes the build-stamp time as ((hours * 16 + minutes) * 64 + seconds)
 /// with bit 12 set. Debug mode also sets bits 15..31 before the halfword cast.
 /// GameState_InitializeDefaults stores it as a new game's start stamp, and the
-/// save menu (FileMenu_SelectFile, Save_BuildFileSummary) and the file
-/// select screen compare saves with it.
+/// file menu (FileMenu_SelectFile, Save_BuildFileSummary) and the main
+/// menu compare saves with it.
 u32 Runtime_GetBuildStampTime(void) {
   u8 *digits;
   s32 hourTens;
@@ -552,8 +552,8 @@ struct MapLocalStateTail {
 /// Clears the game-state header, the map state with the Colosso's inventory
 /// snapshot and the object event snapshot after it, the flags and most of the
 /// save stamp; sets a new game's defaults: Isaac alone in the party, the
-/// standard button layout, the message speed, the play time clock and the slot
-/// machine prize odds. Called by the file select screen's new game, by
+/// standard button layout, the message speed, the play time clock and the Lucky
+/// Wheels prize odds. Called by the main menu's new game, by
 /// Game_Restart and Game_Run, and by the debug battle menu.
 void GameState_InitializeDefaults(void) {
   volatile s32 zero;
@@ -623,7 +623,7 @@ void GameState_InitializeDefaults(void) {
 }
 
 /// Sets FLAG_CHILDHOOD and recomputes Isaac, Garet and Jenna, whose classes
-/// then take their childhood forms. Called by the file select screen when a
+/// then take their childhood forms. Called by the main menu when a
 /// new game starts the prologue.
 void Party_StartChildhood(void) {
   GameFlag_SetBit(FLAG_CHILDHOOD);

@@ -50,7 +50,8 @@ void BattleAnim_RunRagnarok(struct BattleAnimArgs *effect) {
 
   user = GetBattleObjectSlotFar(effect->user)->object;
   // XXX: why the variant is forced to the stronger one, as nothing in the
-  // effect or the battle reads it afterwards; the Lost Age's Ragnarok may show.
+  // animation or the battle reads it afterwards; the Lost Age's Ragnarok may
+  // show.
   effect->variant = ANIM_VARIANT_STRONGER;
   work->effect = effect;
   BattleAnim_StartCanvasLayer(1);

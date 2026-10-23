@@ -24,12 +24,13 @@ s32 Field_FindItemEvent(s32 item) {
   s32 tileAhead;
 
   item &= 0x1ff;
-  // Query both target forms once; matching events choose object event or tile
+  // Query both target forms once; matching events choose object event or cell
   // below.
   tileAhead = Field_GetCollisionAheadOfLeader();
 
   // trigger bits: 15..12 facing | 11 facing required | 7..0 object event or
-  // tile code; control bits: 15..8 item | 4 on an object event | 3..0 kind.
+  // metatile behavior; control bits: 15..8 item | 4 on an object event | 3..0
+  // kind.
   while (event->kind != -1) {
     s32 eventFacing = event->trigger & 0xf000;
     s16 requiresFacing = event->trigger & 0x0800;

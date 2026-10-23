@@ -34,8 +34,9 @@ void BattleAnim_RunThrash(struct BattleAnimArgs *effect) {
 /// Unused: no row of actflags.tsv names its kind, and the handler table is
 /// reached with no other kind (BattleAnim_RunTableEffect). The user would
 /// leap at the first target, then a burst of 340 sparks would rise beneath it
-/// and the canvas flash. It is Severe Blow's effect in The Lost Age, whose row
-/// for Severe Blow names this kind; here Severe Blow plays a casting impact.
+/// and the canvas flash. It is Severe Blow's animation in The Lost Age, whose
+/// row for Severe Blow names this kind; here Severe Blow plays a casting
+/// impact.
 ///
 /// Abilities: none (BATTLE_ANIM_UNUSED_SEVERE_BLOW_LEAP).
 ///
@@ -49,7 +50,7 @@ void BattleAnim_RunUnusedSevereBlowLeap(struct BattleAnimArgs *effect) {
   BattleAnim_RunSparkGroups(effect, SPARK_GROUPS_RISING);
 }
 
-/// The user leaps at the first target, four pictures flash across the effect
+/// The user leaps at the first target, four pictures flash across the animation
 /// layer, then it fills with one colour as the target is struck.
 ///
 /// Abilities: Quick Strike (BATTLE_ANIM_QUICK_STRIKE).
@@ -58,7 +59,7 @@ void BattleAnim_RunQuickStrike(struct BattleAnimArgs *effect) {
 }
 
 /// The user steps up to the first target, four pictures flash across the
-/// effect layer, then it fills with one colour as the target is struck.
+/// animation layer, then it fills with one colour as the target is struck.
 ///
 /// Abilities: Vorpal Slash (BATTLE_ANIM_VORPAL_SLASH).
 void BattleAnim_RunVorpalSlash(struct BattleAnimArgs *effect) {

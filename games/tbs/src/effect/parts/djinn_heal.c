@@ -12,7 +12,7 @@
 /// first target's x (frames 30 to 69); the Djinni appears there on frame 83.
 /// Then, for each target in turn, 8 frames apart, sparkles spiral in on it
 /// with the recovery sound and a glow, while the Djinni sways and finally
-/// flies off. No effect table entry points here, and nothing calls it.
+/// flies off. No animation table entry points here, and nothing calls it.
 ///
 /// PARTICLES 0 to 63 hold the swirl's motes (the first 32 drawn), then 0 to
 /// 511 the healing sparkles, 64 for each target; both are offsets from the
@@ -228,21 +228,21 @@ UNUSED void BattleAnim_RunDjinnHeal(struct BattleAnimArgs *effect) {
 }
 
 /// Turns the battle camera's yaw by work->cameraDelta, or by half of it on a
-/// frame the effect has not marked.
+/// frame the animation has not marked.
 ///
-/// Runs each frame as a scheduler callback added by BattleAnim_RunFire
+/// Runs each frame as a task added by BattleAnim_RunFire
 /// (fire.c) and BattleAnim_RunFroth (vortices.c), which remove it before they
 /// return. Each of them moves cameraPhase from CAMERA_PHASE_IDLE to
 /// CAMERA_PHASE_FRAME_DONE at the end of its own frame. Then the callback
 /// turns the whole delta and clears the phase; otherwise it turns half the
 /// delta and moves the phase between CAMERA_PHASE_IDLE and
-/// CAMERA_PHASE_HALF_TURNED, which the effects leave unmarked. Changes
+/// CAMERA_PHASE_HALF_TURNED, which the animations leave unmarked. Changes
 /// the camera slot's yaw and work->cameraPhase.
-/// XXX: likely to keep the turn smooth when an effect frame runs long,
+/// XXX: likely to keep the turn smooth when an animation frame runs long,
 /// because every frame still turns at least half the delta; a run with a
-/// slow effect frame would settle it.
+/// slow animation frame would settle it.
 void Camera_ApplyPhasedDelta(void) {
-  // Both come from the one slot table; a separate camera base compiles 4
+  // Both come from the one heap slot table; a separate camera base compiles 4
   // bytes longer.
   void **slots = gHeapSlots + HEAP_SLOT_BATTLE_ANIM;
   struct BattleAnimWork *work = slots[0];

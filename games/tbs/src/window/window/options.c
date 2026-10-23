@@ -1,5 +1,5 @@
 /// @file
-/// Window colours, the option screen and the system menu.
+/// Window colours, the option menu and the pause menu.
 // Part of window.c.
 
 #include "../window_internal.h"
@@ -9,7 +9,7 @@ UNUSED void OptionMenu_ReservedNoOpC9BC(void) {}
 UNUSED void OptionMenu_ReservedNoOpC9C0(void) {}
 UNUSED void OptionMenu_ReservedNoOpC9C4(void) {}
 
-/// One of the seven entries of the option screen's work from offset 0x400;
+/// One of the seven entries of the option menu's work from offset 0x400;
 /// only its state is known, and only the unused OptionMenu_ResetEntries
 /// writes it.
 struct OptionMenuEntry {
@@ -18,7 +18,7 @@ struct OptionMenuEntry {
   u8 unusedAfterState[40]; ///< no code names it
 };
 
-/// Clears the option screen's seven entry states, its row, its tint and its
+/// Clears the option menu's seven entry states, its row, its tint and its
 /// cursor animation.
 /// Nothing calls it.
 UNUSED void OptionMenu_ResetEntries(struct OptionMenuWork *work) {
@@ -152,9 +152,9 @@ u16 Color_ScaleComponents(s16 *rgb, s32 redScale, s32 greenScale,
 /// (0 to 23) and brightness (0 to 14, 7 neutral).
 /// The live palette path leaves the saved colour settings untouched. The
 /// option screen calls it as the player changes the settings, and with the
-/// saved ones when the screen is cancelled. The save file menu
+/// saved ones when the screen is cancelled. The file menu
 /// (FileMenu_SelectFile) shows the colours of the file under the cursor, and
-/// the saved ones for an empty file and on leaving. The file select
+/// the saved ones for an empty file and on leaving. The main menu
 /// (menu/clear.c), the main loop's start (Game_Run), the end of the
 /// Mind Read wave (Ui_SetBank15PaletteAndClearRenderMode) and Vale and the
 /// world map call it with the saved settings.
@@ -263,7 +263,7 @@ UNUSED void OptionMenu_RaiseSetting(struct OptionMenuWork *work) {
 /// far-call table.
 void OptionMenu_SelectionNoOp(void) {}
 
-/// The option screen's per-frame callback: moves the cursor and the two slider
+/// The option menu's per-frame callback: moves the cursor and the two slider
 /// markers, animates the marker of the slider in use, and pulses the chosen
 /// setting's icon. The markers' pictures, 256 bytes each, are loaded every
 /// frame: the marker of the row in use steps through 8 frames of
@@ -305,7 +305,7 @@ void OptionMenu_AnimateCursors(void) {
   work->cursorFrame++;
 }
 
-/// Allocates the option screen's work block, copies the settings into it with
+/// Allocates the option menu's work block, copies the settings into it with
 /// how many values each takes, and starts its per-frame callback.
 /// The copy lets cancelling discard the edits. The block is
 /// HEAP_SLOT_OPTION_MENU (gOptionMenuWork), which OptionMenu_Release frees. The
@@ -329,7 +329,7 @@ void OptionMenu_InitializeWork(void) {
   Task_Add(OptionMenu_AnimateCursors, 0xc80);
 }
 
-/// Stops the option screen's per-frame callback and frees its work block.
+/// Stops the option menu's per-frame callback and frees its work block.
 /// The callback goes first, since it reads the work block.
 void OptionMenu_Release(void) {
   Task_Remove(OptionMenu_AnimateCursors);
@@ -341,7 +341,7 @@ void OptionMenu_Release(void) {
 /// is free.
 #define RESOURCE_SLOTS 96
 
-/// Opens the option screen's window: the labels, the hue and brightness
+/// Opens the option menu's window: the labels, the hue and brightness
 /// sliders with their markers, the cursor and the setting icons. Returns the
 /// window. Its sprites belong to the window and go when it closes. A
 /// slider's marker stands option * 60 / count pixels right of
@@ -456,12 +456,12 @@ struct Window *OptionMenu_Open(void) {
   return window;
 }
 
-/// Runs the option screen (window colour and brightness, message speed,
+/// Runs the option menu (window colour and brightness, message speed,
 /// speech, auto-sleep) until A or START keeps the settings (returns 0) or B
 /// drops them (returns -1). SELECT cycles through the colour presets.
 /// Preview edits affect the live palette; only confirmation saves the settings.
 /// Every setting wraps at its ends. While sleep is held off (gSleepDisabled,
-/// as in the link lobby) auto-sleep shows as off and is saved so. The system
+/// as in the Battle Arena) auto-sleep shows as off and is saved so. The pause
 /// menu's Change settings runs it (PauseMenu_Run,
 /// battle_command/debug.c), and reopens the menu when it is cancelled.
 s32 OptionMenu_Run(void) {
@@ -644,7 +644,7 @@ s32 OptionMenu_Run(void) {
 #define PAUSE_MENU_ROW_HEIGHT 24 ///< pixels, 3 tiles
 #define PAUSE_MENU_TEXT_X 48     ///< pixels into the window, after the icons
 
-/// The system menu's per-frame callback: moves the cursor and pulses the
+/// The pause menu's per-frame callback: moves the cursor and pulses the
 /// chosen entry's icon.
 void PauseMenu_AnimateCursor(void) {
   struct OptionMenuWork *work = gOptionMenuWork;
@@ -655,10 +655,10 @@ void PauseMenu_AnimateCursor(void) {
   Ui_ApplyTableScaleToObject(work->icon[index]);
 }
 
-/// Allocates the system menu's work block and starts its per-frame callback.
-/// The system menu shares the option workspace slot and cannot run
+/// Allocates the pause menu's work block and starts its per-frame callback.
+/// The pause menu shares the option menu's heap slot and cannot run
 /// concurrently: PauseMenu_Choose frees it before
-/// PauseMenu_Run opens the option screen. 3200 is 0xc80, the
+/// PauseMenu_Run opens the option menu. 3200 is 0xc80, the
 /// main loop's pass.
 void PauseMenu_Initialize(void) {
   void *work;
@@ -667,14 +667,14 @@ void PauseMenu_Initialize(void) {
   Task_Add(PauseMenu_AnimateCursor, 3200);
 }
 
-/// Stops the system menu's per-frame callback and frees its work block.
+/// Stops the pause menu's per-frame callback and frees its work block.
 /// The callback goes first, since it reads the work block.
 void PauseMenu_Release(void) {
   Task_Remove(&PauseMenu_AnimateCursor);
   FreeHeapSlot(HEAP_SLOT_OPTION_MENU);
 }
 
-/// Opens the system menu's window with its entries (Save your quest, Sleep,
+/// Opens the pause menu's window with its entries (Save your quest, Sleep,
 /// Change settings, and the debug entries in debug mode; only Change settings
 /// while FLAG_IN_BATTLE_ARENA is set), their icons and the cursor. Returns the
 /// window.
@@ -751,7 +751,7 @@ struct Window *PauseMenu_Open(void) {
   return window;
 }
 
-/// Runs the system menu until the player picks an entry (enum
+/// Runs the pause menu until the player picks an entry (enum
 /// PauseMenuEntry) or cancels with B or START (-1).
 /// The result counts in the full entry table even when only Change settings is
 /// shown. The menu's window and work block are freed before it returns;
@@ -858,7 +858,7 @@ s32 PauseMenu_Choose(void) {
   Window_Close(window, 2);
   PauseMenu_Release();
   WaitFrames(1);
-  // In the link lobby only Change settings shows: count from Save your quest.
+  // In the Battle Arena only Change settings shows: count from Save your quest.
   if (result >= 0) {
     result += first;
   }

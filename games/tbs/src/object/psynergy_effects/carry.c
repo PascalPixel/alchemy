@@ -6,7 +6,7 @@
 
 STATIC_ASSERT(sizeof(struct EffectVector) == 0x0c);
 
-/// Scheduler callback while Carry holds its target: drops one particle a
+/// Task while Carry holds its target: drops one particle a
 /// frame round the lifted object, 8 to 24 pixels above it and 0 to 48 pixels
 /// away in a random direction (FieldEffect_InitializeFallingFragment).
 void FieldEffect_SpawnFallingParticles(void) {
@@ -30,9 +30,9 @@ void FieldEffect_SpawnFallingParticles(void) {
 
 #define CARRY_SHARD_MAX 20 ///< shards
 
-/// Tests the target's move with its terrain reference raised 16 pixels, so a
+/// Tests the target's move with its ground height raised 16 pixels, so a
 /// carried target passes over ground up to 24 pixels above its own (a step
-/// allows 8). Restores the reference before returning the collision result.
+/// allows 8). Restores the height before returning the collision result.
 static __inline__ s32
 FieldEffect_CheckRaisedTargetCollision(struct ObjectEvent *target,
                                        struct EffectVector *position) {
@@ -198,7 +198,7 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
       ObjectDispatch_SelectAnimationFar(hands[1], 4);
       WaitFrames(15);
       // i is the overlap test's 0 here: unpause the target and, once it is
-      // on the tile, stop it dead. It moves at 0.2 pixels a frame.
+      // on the cell, stop it dead. It moves at 0.2 pixels a frame.
       target->paused = i;
       target->speed = 0x3333;
       target->acceleration = 0x3333;
@@ -260,7 +260,7 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
   ObjectDispatch_ReleaseFar((struct DispatchObject *)hands[1]);
 
   // Restore the target's look and motion, and throw it up at 10 pixels a
-  // frame: it falls and follows the terrain again, keeping 0.2 of its speed
+  // frame: it falls and follows the ground again, keeping 0.2 of its speed
   // as it bounces, and reads its ground from the ground layer.
   Animation_ApplyChildValuesFar((struct DispatchObject *)target,
                                 effectWork->savedPalette);

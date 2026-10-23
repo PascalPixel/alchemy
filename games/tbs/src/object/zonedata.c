@@ -1,17 +1,17 @@
 #include "unit/object/zonedata.h"
 #include "types.h"
 
-/// The world map's encounter zones (struct WorldMapEncounterRule): {terrain
-/// kind, terrain behavior (-1 for any), flag (-1, or a flag that turns the rule
-/// off once set), zone}, ended by kind -1. The first matching rule wins
-/// (Encounter_ResolveWorldMapZoneAndBackdrop), and terrain no rule matches
+/// The world map's encounter zones (struct WorldMapEncounterRule): {encounter
+/// region, battle environment (-1 for any), flag (-1, or a flag that turns the
+/// rule off once set), zone}, ended by region -1. The first matching rule wins
+/// (Encounter_ResolveWorldMapZoneAndBackdrop), and ground no rule matches
 /// has no random battles.
 ///
-/// Each kind is a region of the map, whose zones are made for party levels
-/// from 3 (kind 1) to 22 (kind 6). Each region has two zones:
+/// Each encounter region is an area of the map, whose zones are made for
+/// party levels from 3 (region 1) to 22 (region 6). Each region has two zones:
 /// BATTLE_ENVIRONMENT_FOREST (BATTLE_ENVIRONMENT_SNOW_FOREST in
 /// WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD) takes the second, with a rate of 9
-/// against the first's 20 or 25. No rule uses a flag or any-behavior.
+/// against the first's 20 or 25. No rule uses a flag or any environment.
 const s16 gWorldMap_EncounterRules[132] = {
     1,  4,  -1, 7,  1,  7,  -1, 7,  1,  1,  -1, 7,  1,  2,  -1, 8,  2,  4,  -1,
     13, 2,  7,  -1, 13, 2,  1,  -1, 13, 2,  2,  -1, 14, 21, 5,  -1, 29, 21, 6,
@@ -26,7 +26,7 @@ const s16 gWorldMap_EncounterRules[132] = {
 /// slot}, by Djinni number (element * 20 + index). The 20 rows of an element
 /// all use its zone (ENCOUNTER_ZONE_VENUS_DJINN to
 /// ENCOUNTER_ZONE_JUPITER_DJINN), slot
-/// index % 8, so Djinn 8 apart fight the same group.
+/// index % 8, so Djinn 8 apart fight the same formation.
 const u16 gEncounter_AreaEntryTable[160] = {
     100, 0, 100, 1, 100, 2, 100, 3, 100, 4, 100, 5, 100, 6, 100, 7, 100, 0,
     100, 1, 100, 2, 100, 3, 100, 4, 100, 5, 100, 6, 100, 7, 100, 0, 100, 1,

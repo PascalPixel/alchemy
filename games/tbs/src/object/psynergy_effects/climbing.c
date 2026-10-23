@@ -10,10 +10,10 @@
 #define TILE_CELLS_SOUTH ((struct MapGridCell *)(Ram_MapGridCellBuffer + 0x200))
 #define TILE_CELLS_NORTH ((struct MapGridCell *)(Ram_MapGridCellBuffer - 0x200))
 
-/// Makes the leader jump two tiles forward, over the tile in front, when the
+/// Makes the leader jump two cells forward, over the cell in front, when the
 /// map allows it (MapGrid_CheckCollision). On a log (SPRITE_LOG_WEST_EAST
 /// or SPRITE_LOG_NORTH_SOUTH) the log plays its animation 7 and the leader bobs
-/// down 2 pixels and back. Each jump adds two tiles to work->walkingDistance,
+/// down 2 pixels and back. Each jump adds two cells to work->walkingDistance,
 /// as walking them would, and the leader keeps jumping while it lands on
 /// another jump spot (MB_JUMP_FORWARD_UNREACHED). Returns 0 after a jump,
 /// -1 when the leader cannot jump; a chain that is blocked after its first jump
@@ -40,7 +40,7 @@ s32 Field_TryJumpForward(void) {
 
   position = &positionStorage;
 again:
-  // The middle of the tile in front, then of the tile beyond. The tile
+  // The middle of the cell in front, then of the cell beyond. The cell
   // jumped over may be a wall or a drop, but not ground too high; the landing
   // must be open.
   SET_POSITION(position, (leader->x & 0xfff00000) + 0x80000, leader->y,
@@ -52,7 +52,7 @@ again:
                (leader->z & 0xfff00000) + 0x80000);
   Vector_AddPolarOffset(0x200000, angle, position);
   if (MapGrid_CheckCollisionFar(leader, position) == COLLISION_NONE) {
-    // Suspend terrain following and the shadow (sprite flag bit 0) while
+    // Suspend ground following and the shadow (sprite flag bit 0) while
     // airborne: 4 pixels a frame up, 3 a frame across. Restore the original
     // motion and sprite flags after landing, before returning field control.
     if (leader->animationKind == OBJECT_SPRITE_ONE)
@@ -153,7 +153,7 @@ s32 Field_ClimbDown(void) {
       if (result != 0)
         goto failure;
 
-      // Step to the middle of the tile, face north and climb down a tile at
+      // Step to the middle of the cell, face north and climb down a cell at
       // 1 pixel a frame, in free flight (no motion flags) with no shadow.
       ObjectMotion_SetPositionAndCommit(gGameState.leaderLocalId, gridX, gridZ);
       object->speedLimit = 0x10000;
@@ -171,9 +171,9 @@ s32 Field_ClimbDown(void) {
       goto failure;
     }
   } else {
-    // Let go of the wall and fall: terrain following and gravity again
+    // Let go of the wall and fall: ground following and gravity again
     // after a hop of 4 pixels a frame, the ground taken as
-    // where the leader is until the terrain is read, and the shadow back.
+    // where the leader is until the ground is read, and the shadow back.
     ObjectDispatch_SelectAnimationFar(object, 10);
     object->flags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
     object->velocityY = 0x40000;
@@ -236,7 +236,7 @@ s32 Field_ClimbUp(void) {
       if (result != 0)
         goto failure;
 
-      // Step to the middle of the tile, crouch, jump and grab the wall.
+      // Step to the middle of the cell, crouch, jump and grab the wall.
       object->actionFlags = 0;
       ObjectMotion_SetPositionAndCommit(gGameState.leaderLocalId, gridX, gridZ);
       ObjectDispatch_SelectAnimationFar(object, 6);
@@ -259,7 +259,7 @@ s32 Field_ClimbUp(void) {
       goto failure;
     }
   } else {
-    // Climb over the top: up 8 pixels and a tile north.
+    // Climb over the top: up 8 pixels and a cell north.
     object->flags = 0;
     ObjectDispatch_SelectAnimationFar(object, 11);
     Object_SetMoveTargetFar(object, gridX << 16, object->y + 0x80000,

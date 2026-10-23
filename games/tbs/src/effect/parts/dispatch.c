@@ -1,5 +1,5 @@
 /// @file
-/// Running summon and table effects, and shared target helpers.
+/// Running summon and table animations, and shared target helpers.
 // Part of effect.c.
 
 #include "../effect_internal.h"
@@ -23,18 +23,18 @@ void BattleAnim_CallDoNothing(s32 count) {
 
 // Two of the battle's three entry points, BattleAnim_RunSummonEffect and
 // BattleAnim_RunTableEffect; README.md describes all three and the heap
-// blocks they lend an effect. Both size the sheet slot for one set of the ten
-// mote cells (MOTE_SET_BYTES), where most effects decode ParticleSpritesA; an
-// effect's own pictures go in work->sheet. The shared helpers after them
-// manage the scanline window and the targets' animation objects.
+// blocks they lend an animation. Both size the sheet slot for one set of the
+// ten mote cells (MOTE_SET_BYTES), where most animations decode
+// ParticleSpritesA; an animation's own pictures go in work->sheet. The shared
+// helpers after them manage the scanline window and the targets' sprites.
 
-/// Runs one of the large battle effects, the ones whose presentation flags
-/// have bit 15 set: takes the effect's sheet, work and canvas, runs the
-/// effect chosen by its kind to the end, and frees them again.
+/// Runs one of the large battle animations, the ones whose animation word
+/// has bit 15 set: takes the animation's sheet, work and canvas, runs the
+/// animation chosen by its kind to the end, and frees them again.
 ///
 /// Called through BattleAnim_RunSummonEffectFar by
-/// BattleStaging_HideField (battle/staging.c), when the plan's
-/// presentation flags have ANIM_SUMMON, and by
+/// BattleStaging_HideField (battle/staging.c), when the turn's
+/// animation word has ANIM_SUMMON, and by
 /// BattlePresentation_RunPairedUnitTransition (battle/auto_battle.c).
 ///
 /// Each scene is named for the summon whose gAbilityAnimations entry selects
@@ -97,20 +97,20 @@ void BattleAnim_RunSummonEffect(struct BattleAnimArgs *effect) {
   FreeHeapSlot(HEAP_SLOT_BATTLE_SHEET);
 }
 
-/// Runs an ordinary battle effect: takes the effect's sheet, work and
+/// Runs an ordinary battle animation: takes the animation's sheet, work and
 /// canvas, runs the entry of gBattleAnim_Handlers for its kind,
 /// and frees them again.
 ///
 /// Called through BattleAnim_RunTableEffectFar by
 /// BattleStaging_RunAttack, BattleStaging_RunItem,
 /// BattleStaging_RunPsynergyCast and BattleStaging_HideField
-/// (battle/staging.c, the last when the plan sets neither ANIM_SUMMON nor
+/// (battle/staging.c, the last when the turn sets neither ANIM_SUMMON nor
 /// ANIM_BY_ID_RANGE), and by BattlePresentation_RunUnitAction
 /// (battle/auto_battle.c).
 ///
 /// Sets work->effect before the handler runs, which every handler and
-/// callback reads the effect through. BATTLE_ANIM_NONE is no effect and only
-/// clears effect->variant.
+/// callback reads the animation through. BATTLE_ANIM_NONE is no animation and
+/// only clears effect->variant.
 void BattleAnim_RunTableEffect(struct BattleAnimArgs *effect) {
   s32 kind;
   struct BattleAnimWork *work;
@@ -135,7 +135,7 @@ void BattleAnim_RunTableEffect(struct BattleAnimArgs *effect) {
 /// Builds window 0's right edge for every scanline and restarts the HBlank
 /// DMA that writes it to WIN0H each line.
 ///
-/// Runs each frame as a scheduler callback added by BattleAnim_RunNeptune
+/// Runs each frame as a task added by BattleAnim_RunNeptune
 /// (neptune.c) and BattleAnim_RunBoreas (boreas.c), which fill the edge
 /// offsets and remove the callback again. Writes the WIN0H table and stops and
 /// re-arms DMA channel 0.
@@ -255,7 +255,7 @@ void BattleAnim_SetupBlendedDisplay(void) {
 /// The parts and animations of a battler that is fading out stay as they are,
 /// but its timer is still set.
 ///
-/// Called throughout the effects, most often through
+/// Called throughout the animations, most often through
 /// ANIM_STRIKE_TARGET when a hit lands. Writes work->actorTimers[timerSlot]
 /// and each part's param and frame (0xff restarts it).
 void ObjectGroup_UpdateMembers(s32 actorId, s32 palette, s32 animation,
@@ -286,7 +286,7 @@ void ObjectGroup_UpdateMembers(s32 actorId, s32 palette, s32 animation,
           do {
             struct SpriteAnim *part;
 
-            // Every part but the battler's effect and animation entries.
+            // Every part but the battler's effectEntry and animationEntry.
             part = *parts++;
             if (part != NULL &&
                 part != (struct SpriteAnim *)slot->effectEntry &&

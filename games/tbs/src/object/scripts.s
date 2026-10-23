@@ -19,7 +19,7 @@ gField_DefaultObjectEventTemplates:
 	.4byte 0, 0, 0, 0
 	.2byte 0x0000
 	.byte 0, 0
-@ Display transition shapes: {first, second, {count, value, x0, x1, y0, y1} x 3}
+@ Screen transition shapes: {first, second, {count, value, x0, x1, y0, y1} x 3}
 	.global gScreenTransition_Shapes
 gScreenTransition_Shapes:
 	.2byte 1, 32639

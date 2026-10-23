@@ -993,7 +993,7 @@ static void CrossboneIsleSteppingStones_SortPillarObjectEvents(void) {
   struct PillarPlacement savedPlacement;
 #else
   // UB: the original 12-byte scratch receives a 16-byte DMA transfer.
-  // A complete placement record adds four native stack bytes.
+  // A complete placement array adds four native stack bytes.
   s32 savedPlacement[3];
 #endif
 
@@ -1551,7 +1551,7 @@ static void CrossboneIsleSteppingStones_RestoreFlaggedPillar(s32 localId) {
   }
 }
 
-/// Uses terrain layer 2 and installs the moving pillar's priority callback.
+/// Uses layer 2 and installs the moving pillar's priority callback.
 static void CrossboneIsleSteppingStones_InitializePillarPriority(s32 id) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(id);
 

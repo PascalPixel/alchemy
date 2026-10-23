@@ -1,13 +1,13 @@
 /// @file
-/// Map terrain: the height curve of each cell kind and the world map's terrain
-/// behaviour.
+/// Map ground: the height curve of each cell kind and the world map's battle
+/// environments.
 
 #include "unit/field/map_grid_data.h"
 #include "unit/field/field.h"
 #include "field.h"
 #include "types.h"
 
-/// Terrain height functions, by enum TerrainKind, called with (the remaining
+/// Ground height functions, by enum TerrainKind, called with (the remaining
 /// samples, x within the cell, y within the cell). Each reads only the
 /// arguments it needs. Read by MapGrid_GetTerrainHeight and
 /// MapGrid_CheckCollision (terrain.c).
@@ -30,7 +30,7 @@ const TerrainHeightFn gMapGrid_TerrainHeightFunctions[TERRAIN_KIND_COUNT] = {
     [TERRAIN_FLAT_C] = Terrain_GetFirstSampleC,
 };
 
-/// World map terrain behaviour (enum BattleEnvironment), indexed by the
+/// World map battle environments (enum BattleEnvironment), indexed by the
 /// collision value plus 0x10 when the block word's top bit is set, or plus
 /// 0x20 (whatever that bit) for WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD. Read only
 /// by WorldMap_GetBattleEnvironment.
@@ -50,7 +50,7 @@ const s8 gWorldMap_DirectionOffsets[8][2] = {
 };
 
 /// Two 1.0s (Q16). No code in The Broken Seal names it; The Lost Age's
-/// battle effects read its copy as a unit scale.
+/// battle animations read its copy as a unit scale.
 const u32 gWorldMap_UnitScale[2] = {
     0x10000,
     0x10000,

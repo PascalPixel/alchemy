@@ -158,7 +158,7 @@ enum PsynergyListMode {
 
 /// How the item menu can use an item (Item_ClassifyUseMode).
 enum ItemUseMode {
-  /// It cannot be used here: it has no action, it is equipment the owner
+  /// It cannot be used here: it has no action, it is equipment the member
   /// cannot wear or that teaches Psynergy, or its action is usable only in
   /// battle.
   ITEM_USE_MODE_UNUSABLE = -1,
@@ -182,7 +182,7 @@ enum ItemTargetMode {
 /// Inventory icons occupy five columns in the fifteen-slot list.
 #define MENU_ITEM_GRID_COLUMNS 5
 
-/// What StatusPanel_Draw shows below the name and ailments: the low
+/// What StatusPanel_Draw shows below the name and statuses: the low
 /// byte of its mode.
 enum StatusPanelKind {
   STATUS_PANEL_EXPERIENCE = 0, ///< class, HP, PP and experience
@@ -196,14 +196,14 @@ enum StatusPanelKind {
 /// The panel kind in StatusPanel_Draw's mode; the bits above it are
 /// STATUS_PANEL_LOWER_ONLY.
 #define STATUS_PANEL_KIND_MASK 0xff
-/// Keeps the open window, the name and the ailments, and redraws only the
+/// Keeps the open window, the name and the statuses, and redraws only the
 /// part below them.
 #define STATUS_PANEL_LOWER_ONLY 0x100
 
 // The information pane's text: outside Japanese it is drawn character by
 // character into the window's tiles, so clearing it redraws the empty frame;
 // the Japanese edition decodes it into the text canvas (Text_DrawMessage),
-// so clearing it releases the canvas's render outputs. Both follow the text
+// so clearing it releases the canvas's window sprites. Both follow the text
 // system, so the test is on the language.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define MENU_RESET_DESCRIPTION_WINDOW WindowSprite_RedrawSavedRectFar
@@ -304,7 +304,7 @@ enum DjinnSelectMode {
 /// elements follow it in order.
 #define DJINN_ELEMENT_TILE 0x5001
 
-/// A Djinn list entry's owner, element and index (DJINN_ENTRY_MEMBER,
+/// A Djinn list entry's member, element and index (DJINN_ENTRY_MEMBER,
 /// _ELEMENT and _INDEX), shifted down.
 #define DJINN_MEMBER(v) (((v) & 0xf00) >> 8)
 #define DJINN_ELEMENT(v) (((v) & 0xe0) >> 5)

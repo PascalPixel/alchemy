@@ -1,4 +1,4 @@
-@ Battle-effect dispatch, drawing and presentation setup.
+@ Battle animation dispatch, drawing and presentation setup.
 @ Ordered 8-byte jumps into this bank. Named exports are callable symbols;
 @ bare veneers preserve entries that have no exported name.
 #include "stub.inc"

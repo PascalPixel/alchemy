@@ -19,8 +19,8 @@
 ///
 /// Opens the canvas layer for the entrance and closes it at the end. Writes
 /// background colours 1 to 63 and keeps their working copy in the first 128
-/// bytes of Ram_MapGridCellBuffer; schedules and removes the HBlank DMA
-/// callback.
+/// bytes of Ram_MapGridCellBuffer; adds and removes the HBlank DMA
+/// task.
 void BattleAnim_RunTorch(struct BattleAnimArgs *effect) {
   void **slots;
   struct BattleAnimWork *work;
@@ -164,7 +164,7 @@ void BattleAnim_RunTorch(struct BattleAnimArgs *effect) {
 /// Shows the long Jupiter Djinni prelude (BattleAnim_RunDjinniEntrance with
 /// DJINNI_ENTRANCE_LONG, 84 frames instead of 64) over the first
 /// target, mirrored from the usual side; the Djinni's entrance is the whole
-/// effect.
+/// animation.
 ///
 /// Abilities: Kite (BATTLE_ANIM_KITE).
 void BattleAnim_RunKite(struct BattleAnimArgs *effect) {

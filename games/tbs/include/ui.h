@@ -2,7 +2,7 @@
 #define ALCHEMY_UI_H
 
 /// @file
-/// UiWork, the window system's work, and the status screen's cursors.
+/// UiWork, the window system's work, and the summary screen's cursors.
 
 #include "types.h"
 #include "tbs_edition.h"
@@ -20,7 +20,7 @@ struct UiWork {
   unsigned holdTilemapUpload : 8; ///< WindowWork.holdTilemapUpload
 };
 
-/// A cursor stop among the status screen's stats: its help entry, where the
+/// A cursor stop among the summary screen's stats: its help entry, where the
 /// cursor points and the run of the row it highlights.
 struct BattleSummaryStatCursor {
   u8 entry;           ///< the help line shown while the cursor is here
@@ -32,7 +32,7 @@ struct BattleSummaryStatCursor {
   u8 reserved[2];     ///< 0 in every row
 };
 
-/// A cursor stop on the status screen's equipment or conditions: its help
+/// A cursor stop on the summary screen's equipment or statuses: its help
 /// entry and where the cursor points.
 struct BattleSummaryCursor {
   u8 entry;    ///< the help line shown while the cursor is here
@@ -50,7 +50,7 @@ extern const struct BattleSummaryStatCursor gBattleSummaryScreen_StatCursors[];
 /// The cursor stops of the screen's second group
 /// (STATUS_CURSOR_COMBAT_STATS): column 19, rows 1 to 4.
 extern const struct BattleSummaryCursor gBattleSummaryScreen_EquipmentCursors[];
-/// The eight condition cursor stops, two tiles apart on row 0.
+/// The eight status cursor stops, two tiles apart on row 0.
 extern const struct BattleSummaryCursor gBattleSummaryScreen_ConditionCursors[];
 /// The level label: `Lv`, or `Niv` in French. The Spanish and Italian
 /// editions choose between it, gBattleSummaryScreen_NivString and

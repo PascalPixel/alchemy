@@ -16,7 +16,7 @@
 /// The camera swings round over frames 17 to 79, and the battle shows the
 /// damage 24 frames before the end.
 ///
-/// Schedules Camera_ApplyPhasedDelta for the swing and drives it through
+/// Adds Camera_ApplyPhasedDelta as a task for the swing and drives it through
 /// work->cameraDelta and work->cameraPhase; sets work->shakeFrames on each hit
 /// and writes REG_BLDALPHA. Ends with both callbacks removed, the blitters
 /// freed and the canvas layer closed.
@@ -83,12 +83,12 @@ void BattleAnim_RunFire(struct BattleAnimArgs *effect) {
   // Each transfer keeps three quarters of every level, for long trails.
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
-  // The last ember launches on frame count / 2; the effect runs 132 frames
+  // The last ember launches on frame count / 2; the animation runs 132 frames
   // past that.
   for (frame = 0; frame != (gFire_Counts[work->effect->variant] >> 1) + 132;
        frame++) {
     // The camera turns 0x100 of yaw (1/256 of a turn) a frame over frames
-    // 17 to 79, about a quarter turn in all while each effect frame takes
+    // 17 to 79, about a quarter turn in all while each animation frame takes
     // one display frame (Camera_ApplyPhasedDelta).
     if (frame > 16 && frame < 80)
       work->cameraDelta = 0x100;

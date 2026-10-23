@@ -2,13 +2,13 @@
 #define ALCHEMY_DISPLAY_TRANSITION_H
 
 /// @file
-/// The display transition's frames, windows and state.
+/// The screen transition's frames, windows and state.
 
 #include "edition.h"
 #include "types.h"
 #include "static_assert.h"
 
-/// The display transition state as the centre-line transition and the dissolve
+/// The screen transition state as the centre-line transition and the dissolve
 /// read it: the dissolve's tile pixels and the transition's progress.
 struct ScreenTransitionFrame {
   u16 pages[2][322]; ///< ScreenTransitionState's; not named here
@@ -64,7 +64,7 @@ struct ScreenTransitionWin {
   u16 irqPhase;
 };
 
-/// The display transition state (heap block 31): two pages of window edges for
+/// The screen transition state (heap block 31): two pages of window edges for
 /// every line, the dissolve's solid tile, and the transition's mode and
 /// progress.
 struct ScreenTransitionState {

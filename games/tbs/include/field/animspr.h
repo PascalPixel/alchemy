@@ -32,20 +32,20 @@ enum SpriteColorMode {
   SPRITE_COLOR_HIDDEN = 15      ///< solid colour 0, transparent
 };
 
-/// One animation layer of a sprite: its animation id, frames, running script
-/// and timer.
+/// One of a sprite's four sprite anims: its animation id, frames, running
+/// script and timer.
 struct SpriteAnim {
   s16 animationId; ///< the sprite id whose metadata and frames it uses
   /// Time left on the current frame in sixteenths of a frame, read signed:
   /// each timed command adds its argument times 16, each frame takes off step.
   u16 timer;
   /// The facing table its frames follow (from the metadata, or
-  /// ANIMCMD_SET_KIND); zero marks a free layer record.
+  /// ANIMCMD_SET_KIND); zero marks a free sprite anim.
   u8 kind;
   u8 colorMode;    ///< SpriteColorMode its pixels are drawn with; 0 when taken
-  u8 priority;     ///< drawing order 0 to 3 among the layers; above 3 not drawn
+  u8 priority;     ///< drawing order 0 to 3 among the anims; above 3 not drawn
   u8 mode;         ///< frame codec: 1 type-01, 3 LZ, anything else raw
-  void **frames;   ///< frame pointers, from the metadata or a resource slot
+  void **frames;   ///< frame pointers, from the metadata or a frame cache
   u8 **scripts;    ///< the metadata's command scripts, one per animation number
   u8 *script;      ///< the running script; null when stopped (ANIMCMD_END)
   u8 scriptOffset; ///< byte offset of the next command in script
@@ -54,15 +54,15 @@ struct SpriteAnim {
   u8 frameBase;    ///< frame the script chose, before facing; 255 blank
 };
 
-/// A resource slot: the tag of the animation loaded into it (slot number and
-/// animation id) and the buffer holding its frames.
+/// A sprite frame cache: the tag of the animation loaded into it (slot number
+/// and animation id) and the buffer holding its frames.
 struct SpriteFrameCache {
   s32 tag;      ///< (slot << 12) | animation id
   void *frames; ///< the decoded frames, their offsets made pointers
 };
 
 /// The object system's work: the flag that suspends sprite projection, the
-/// outline's edge and fill colours, and the resource slots. Heap slot 6.
+/// outline's edge and fill colours, and the sprite frame caches. Heap slot 6.
 struct ObjectSystemWork {
   u16 used;      ///< sprite pixel bytes composed since the camera reset it
   u8 unused[2];  ///< no code names it
@@ -105,7 +105,7 @@ struct AnimationSpritePart {
 };
 
 /// An animated sprite: its image and shadow, scale, rotation, size and up to
-/// four animation layers.
+/// four sprite anims.
 struct Sprite {
   struct AnimationSpritePart image;
   /// Its shadow, shown while flags bit 0 is set.

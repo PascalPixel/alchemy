@@ -77,7 +77,7 @@ enum BurstField {
   BURST_SEQUENCE_MOTES,     ///< motes thrown by each strike, at most the 32 of
                             ///< its run of PARTICLES
   BURST_SEQUENCE_INTERVAL,  ///< frames between strikes
-  BURST_SEQUENCE_FRAMES,    ///< frames in the whole effect
+  BURST_SEQUENCE_FRAMES,    ///< frames in the whole animation
   BURST_SEQUENCE_FLASH      ///< 1 fills the canvas with level 47 on each hit
 };
 

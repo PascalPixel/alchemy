@@ -25,9 +25,9 @@ void Heading_Load(s32 picture, s32 slot) {
 /// Shows heading `picture` of gHeadingPictures as two 32x16
 /// sprites side by side at (x, y) in `window`, on draw layer 253, and
 /// returns the left one (the right one follows it in the window's list).
-/// Returns NULL when no VRAM slot is free. The save file menu shows its
+/// Returns NULL when no VRAM slot is free. The file menu shows its
 /// mode's heading this way (FileMenu_SelectFile), and window/options.c the
-/// option screen's Setup and the system menu's Pause.
+/// option menu's Setup and the pause menu's Pause.
 struct WindowSprite *Heading_Create(s32 picture, struct Window *window, s32 x,
                                     s32 y) {
   s32 slot;
@@ -39,7 +39,7 @@ struct WindowSprite *Heading_Create(s32 picture, struct Window *window, s32 x,
     return NULL;
 
   // 0x4000 is the wide shape of attribute 0, which with size 2 is 32x16, 8
-  // tiles. Neither output is checked for NULL.
+  // tiles. Neither sprite is checked for NULL.
   Heading_Load(picture, slot);
   first = WindowSprite_Create(slot, 0x80004000, window, x, y);
   first->sentinel = 0xFD;
@@ -331,11 +331,11 @@ void Graphics_ExpandVramTilesByColorTable(u16 *dst) {
 }
 
 /// Builds icon `resource` (0 to 31) of gIcon_MiscIconPointers, the table
-/// the condition icons come from (Ui_PrepareTransferFromTableEntry), in a
+/// the status icons come from (Ui_PrepareTransferFromTableEntry), in a
 /// transfer block taken from HEAP_SLOT_GLYPH_TRANSFER, reloads VRAM cache entry
 /// `index` with it and returns the entry's first tile. The heap block is
-/// released before it returns. The status screen loads its condition icons
-/// this way, by condition kind (1 to 18).
+/// released before it returns. The summary screen loads its status icons
+/// this way, by status kind (1 to 18).
 s32 Resource_LoadTableEntryToBuffer(s32 resource, s32 index) {
   s32 result;
   GlyphTransfer *work;
@@ -383,7 +383,7 @@ s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index) {
 /// Loads the portrait of character `member` (ISAAC to PIERS, 0 to 7; any
 /// higher value shows Isaac's) into VRAM cache entry `cacheSlot`, in OBJ
 /// palette 14, and returns its first tile. In the prologue, Isaac and Garet
-/// use their childhood portraits. The status screen
+/// use their childhood portraits. The summary screen
 /// and the battle command menus draw the member's portrait with it.
 s32 Portrait_Load(u32 member, s32 cacheSlot) {
   s32 tile;
@@ -524,7 +524,7 @@ void Text_DrawCharacter(struct SelectionWork *work, s32 index, u32 icon) {
 }
 
 /// Puts BG1 behind the other layers (priority 3). The command row runs it as
-/// a scheduler callback each frame, with Graphics_SetBg1Priority0 at line
+/// a task each frame, with Graphics_SetBg1Priority0 at line
 /// 136 (tile row 17, the top of the row's icons), so that BG1 is behind
 /// above the strip and in front from it down.
 void Graphics_SetBg1Priority3(void) {

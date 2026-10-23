@@ -64,8 +64,8 @@ void BattleAnim_RunWarCry(struct BattleAnimArgs *effect) {
 void BattleAnim_RunWickedHowl(struct BattleAnimArgs *effect) {
   BattleAnim_RunStreakVolley(effect, STREAKS_STYLE_RED);
 }
-/// Unused: no entry of the effect table points here. It would have played the
-/// same lime streaks as Shriek.
+/// Unused: no entry of the animation table points here. It would have played
+/// the same lime streaks as Shriek.
 UNUSED void BattleAnim_RunLimeStreaks(struct BattleAnimArgs *effect) {
   BattleAnim_RunStreakVolley(effect, STREAKS_STYLE_LIME);
 }
@@ -185,7 +185,7 @@ void BattleAnim_RunStreakVolley(struct BattleAnimArgs *effect, s32 mode) {
       // A sine wave of BG2X offsets, one per scanline, for the wave
       // HBlank DMA.
       // XXX: nothing here arms BattleAnim_ArmBg2AffineHBlankDma, so the table
-      // seems unread; a scheduler trace during Sonic Wave would settle it.
+      // seems unread; a trace of the tasks during Sonic Wave would settle it.
       for (k = 0; k != 160; k++)
         *row++ = (0x80000 - Trig_Sin((frame + k) << 12) * 2) >> 10;
       // Fade the canvas out over the last 16 frames.
@@ -316,7 +316,7 @@ void BattleAnim_RunSoothingStar(struct BattleAnimArgs *effect) {
 ///
 /// mode: MOTE_FOUNTAIN_FOUNTAIN_HEALING throws orange motes that stay close to
 ///       the user, and each target plays the recovery sound and glows (a
-///       healing effect); MOTE_FOUNTAIN_DRIFTING throws motes on the earth
+///       healing animation); MOTE_FOUNTAIN_DRIFTING throws motes on the earth
 ///       palette that drift across towards the far side of the field, and
 ///       each target flinches (an attack).
 void BattleAnim_RunMoteFountain(struct BattleAnimArgs *effect, s32 mode) {

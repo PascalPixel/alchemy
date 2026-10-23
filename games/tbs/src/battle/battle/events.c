@@ -1,12 +1,12 @@
 /// @file
-/// Battle events: a downed unit's reset, waiting for the player, and the
-/// event queue, filled by BattlePlayback_Push and played at once by
+/// Battle playback: a downed unit's reset, waiting for the player, and the
+/// playback queue, filled by BattlePlayback_Push and played at once by
 /// BattlePlayback_RunAll.
 // Part of battle.c.
 
 #include "../battle_internal.h"
 
-/// Clears every ailment and stat change of a unit that goes down, recalculates
+/// Clears every status and stat change of a unit that goes down, recalculates
 /// its stats and rebuilds its status icons.
 /// Reached through the PLAYBACK_DEFEAT event, from
 /// BattlePlayback_RunAll and BattlePlayback_Run. Clears the unit's
@@ -240,13 +240,13 @@ void BattlePlayback_GrantDjinnBonus(struct BattlePlaybackWork *runtime,
   runtime->flags |= PLAYBACK_FLAG_DJINN_BONUS;
 }
 
-/// Plays the queued battle events at once, in order (BattlePlayback_Run
+/// Plays the queued playback at once, in order (BattlePlayback_Run
 /// plays them over frames instead): the messages with their arguments, the
 /// hit flashes, the downed units, the redraws. Then empties the queue.
-/// Called where an outcome is shown outside an effect: by the staging runners
-/// (a blocked cast, a dodge, a broken item, a plan's targets one by one),
-/// BattleTurn_Build's debug defeat, and the turn's end (turn_end.c).
-/// Each message, flash and fall waits its frames here. Ends with
+/// Called where an outcome is shown outside an animation: by the staging
+/// runners (a blocked cast, a dodge, a broken item, a turn's targets one by
+/// one), BattleTurn_Build's debug defeat, and the turn's end (turn_end.c). Each
+/// message, flash and fall waits its frames here. Ends with
 /// BattlePlayback_Reset.
 #ifdef UBFIX
 void BattlePlayback_RunAll(void) {
@@ -328,14 +328,13 @@ u32 BattlePlayback_RunAll(void) {
   BattlePlayback_Reset();
 }
 
-/// Queues one battle event (enum BattlePlaybackCommand) with its operand, and
-/// returns the opcode.
-/// Called, directly or through PUSH_MESSAGE, by BattleAbility_ApplyToTarget for
-/// each step of an outcome, and by staging.c, plan.c and turn_end.c. Appends to
-/// gBattleWork->events.queue with no test against BATTLE_PLAYBACK_CAPACITY: a
-/// caller must keep one target's events, or one queue played at once, within
-/// it. The queue is emptied by BattlePlayback_Reset, by
-/// BattlePlayback_SchedulePhase and before each target
+/// Queues one playback command (enum BattlePlaybackCommand) with its operand,
+/// and returns the opcode. Called, directly or through PUSH_MESSAGE, by
+/// BattleAbility_ApplyToTarget for each step of an outcome, and by staging.c,
+/// plan.c and turn_end.c. Appends to gBattleWork->playback.queue with no test
+/// against BATTLE_PLAYBACK_CAPACITY: a caller must keep one target's commands,
+/// or one queue played at once, within it. The queue is emptied by
+/// BattlePlayback_Reset, by BattlePlayback_SchedulePhase and before each target
 /// BattlePlayback_Run resolves.
 u32 BattlePlayback_Push(u32 opcode, u32 operand) {
   struct BattlePlaybackQueue *queue = &gBattleWork->playback.queue;

@@ -37,12 +37,12 @@ enum {
   BGM_WAIT_TIMEOUT_FRAMES = 300
 };
 
-/// Plays a cue, the game's one way of playing a sound: a fade control, a sound
-/// effect, a fanfare or music, as the README's "What a cue number means"
-/// describes. The low 12 bits are the cue, SONG_FLAG_FADE_IN the only flag
-/// read. Reached through the sound far-call table as Sound_PlaySongFar from
-/// the whole game; it keeps the music's ramps and cue records
-/// (gCurrentBgm, gBgmRestoreDelay) up to date.
+/// Plays a song number, the game's one way of playing a sound: a fade control,
+/// a sound effect, a fanfare or music, as the README's "What a song number
+/// means" describes. The low 12 bits are the song, SONG_FLAG_FADE_IN the only
+/// flag read. Reached through the sound far-call table as Sound_PlaySongFar
+/// from the whole game; it keeps the music's ramps and song state (gCurrentBgm,
+/// gBgmRestoreDelay) up to date.
 void Sound_PlaySong(s32 id) {
   s32 flags;
   s32 player;
@@ -53,16 +53,16 @@ void Sound_PlaySong(s32 id) {
   if (id == SONG_FADE_OUT_BGM) {
     // Fade the music out, once until the next music starts: 16 steps 7
     // frames apart, 112 frames. MUS_SILENCE is a song with no tracks,
-    // so a later cue for the faded music starts it again.
+    // so a later request for the faded music starts it again.
     if (gBgmFadeRequested != 0)
       return;
     MusicPlayer_FadeOut(&gMusicPlayerBgm, 7);
     gBgmFadeRequested++;
     gCurrentBgm = MUS_SILENCE;
   } else if (id == SONG_FADE_OUT_ACTION_SE) {
-    // The cue is also the number of the song table's row 289, so it fades
+    // The control is also the number of the song table's row 289, so it fades
     // player 3 out over 48 frames (16 steps of 3) and that row never plays.
-    // Only sound effects record their cue in gMusicPlayerLastSong; player 3's
+    // Only sound effects record their song in gMusicPlayerLastSong; player 3's
     // is 0 after this fade.
     gMusicPlayerLastSong[3] = 0;
     MusicPlayer_FadeOut(&gSound_Player3, 3);
@@ -95,10 +95,10 @@ void Sound_PlaySong(s32 id) {
     Audio_PlaySound(id);
     gBgmRestoreDelay = BGM_RESTORE_DELAY_FRAMES;
   } else {
-    // Music: the keep cue, or the music cue last chosen (gCurrentBgm),
+    // Music: the keep control, or the music last chosen (gCurrentBgm),
     // changes nothing, so a map may name its music on every entry; a song
     // that has ended is not started again. The three songs below take mixer
-    // record 3, the rest record 2 (the README's "The mixer's code is chosen per
+    // preset 3, the rest preset 2 (the README's "The mixer's code is chosen per
     // song").
     if (id == SONG_KEEP_BGM)
       return;
@@ -175,8 +175,8 @@ void Sound_UpdateBgmRamps(void) {
   Sound_TickDmaRestartTimer();
 }
 
-/// Runs the audio test's three cue selectors and five mixer presets forever.
-/// Up and Down choose a row, Right and Left change its cue by 1, R and L by
+/// Runs the audio test's three song selectors and five mixer presets forever.
+/// Up and Down choose a row, Right and Left change its song by 1, R and L by
 /// 10, and A plays it; B plays MUS_SILENCE, Start fades the music,
 /// and Select both steps the mixer preset (0 to 4, 2 at first) and fades player
 /// 3. Never returns. Reached only through the sound far-call table's veneer;
@@ -249,14 +249,14 @@ void SoundTest_Run(void) {
 }
 
 /// Starts the sound driver, resets the BGM ramps (gBgmVolume and its kin)
-/// and clears all player cue records. Called by System_Initialize through the
+/// and clears every player's last song. Called by System_Initialize through the
 /// sound far-call table.
 void Sound_Initialize(void) {
   s16 *playerVolume;
   s32 remaining;
 
   Audio_Initialize();
-  // No music cue is 0xff, so the first music cue always plays.
+  // No music is song 0xff, so the first music always plays.
   gCurrentBgm = 0xff;
   gBgmRestoreDelay = 0;
   gBgmVolumeTarget = BGM_UNITY_SCALE;
@@ -348,8 +348,8 @@ void Sound_UpdateCommandMask(u32 command) {
     gSoundCommandMask = command;
 }
 
-/// Returns the music cue Sound_PlaySong last chose: 0xff before any,
-/// MUS_SILENCE after a fade, else the last music cue. Map_Run saves it
+/// Returns the music Sound_PlaySong last chose: 0xff before any,
+/// MUS_SILENCE after a fade, else the last music. Map_Run saves it
 /// as gGameState.returnMusic before the pause menu, so the music can be started
 /// again when the party is put back where it was (Game_Run,
 /// object/object/map.c).
@@ -369,7 +369,7 @@ void Sound_WaitForSong(void) {
   } while (framesWaited < BGM_WAIT_TIMEOUT_FRAMES);
 }
 
-/// Unused: returns the mixer record Sound_PlaySong gives music cue
+/// Unused: returns the mixer preset Sound_PlaySong gives music
 /// `command`: 3 for MUS_ENDING, MUS_TITLE and MUS_ENDING_LOGO, 2 for the rest.
 /// Nothing in ☀️ calls it.
 UNUSED s32 Sound_GetReverbCode(s32 command) {

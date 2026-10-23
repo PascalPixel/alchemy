@@ -133,7 +133,7 @@ s32 Party_CountMembers(void) {
 /// Adds character `owner` to the end of the party: sets its game flag and
 /// appends it to gGameState.party unless it is already listed.
 /// Returns the party size. Called by the scenes where a character joins, by
-/// the member chooser and the file select screen, and by the debug presets.
+/// the member chooser and the main menu, and by the debug presets.
 s32 Party_AddMember(s32 owner) {
   s32 partySize = Party_CountMembers();
   s32 partyIndex;
@@ -152,7 +152,7 @@ s32 Party_AddMember(s32 owner) {
 /// Takes character `owner` out of the party: clears its game flag and closes
 /// the gap it leaves in gGameState.party. Returns the party size.
 /// Called by the scenes where a character leaves, by the member chooser and
-/// the file select screen, and by the debug presets.
+/// the main menu, and by the debug presets.
 s32 Party_RemoveMember(s32 owner) {
   s32 partySize = Party_CountMembers();
   s32 removedIndex;

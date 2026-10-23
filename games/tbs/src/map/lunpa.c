@@ -577,7 +577,7 @@ static void EventScript_EnterFortress(void) {
 
 static void UNUSED Lunpa_CheckAhead(void) { Engine_LeaderCheckAhead(); }
 
-/// Unused: plays the treasure jingle for Reveal uncovering something, until
+/// Unused: plays the treasure fanfare for Reveal uncovering something, until
 /// FLAG_MAP_TEMP_01 is set; nothing calls it.
 UNUSED static void Lunpa_PlayRevealCue(void) {
   if (Engine_GameFlagIsSet(FLAG_MAP_TEMP_01) == 0) {

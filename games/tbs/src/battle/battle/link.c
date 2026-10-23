@@ -42,7 +42,7 @@ s32 LinkBattle_ReceiveParty(void) {
   s32 i;
 
   // The block is only freed: each member is received straight into its
-  // enemy unit, as in the link lobby's twin of this function
+  // enemy unit, as in the Battle Arena's twin of this function
   // (BattleArena_ReceivePartyRecords, menu/lobby.c). XXX: likely left from a
   // receive into a buffer, because LinkBattle_SendParty does send from one.
   buffer = AllocEwram(LINK_PARTY_UNIT_BYTES);
@@ -100,7 +100,7 @@ s32 LinkBattle_ReceiveParty(void) {
 
 /// Link battle: sends the party, one member at a time and three places in
 /// all (an empty place has side 0), then the Djinn recovery list with each
-/// owner given the unit id the opponent knows them by. Records that id of
+/// unit given the id the opponent knows it by. Records that id of
 /// each member in gBattleWork->opponentSlots (0xff for none). Nothing in the
 /// source calls it.
 #ifdef UBFIX
@@ -146,7 +146,7 @@ s32 LinkBattle_SendParty(void) {
     WaitFrames(2);
   }
 
-  // The Djinn recovery list, its owners renumbered for the opponent.
+  // The Djinn recovery list, its units renumbered for the opponent.
   size = LINK_PARTY_OFFER_BYTES;
   Free(buffer);
   buffer = (u8 *)AllocEwram(size);

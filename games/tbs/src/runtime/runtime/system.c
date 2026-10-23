@@ -61,7 +61,7 @@ void System_Initialize(void) {
   Game_RunFar(0);
 }
 
-/// Unused: waits out frames forever; the frame loop still runs the scheduled
+/// Unused: waits out frames forever; the frame loop still runs the
 /// tasks. Nothing in ☀️ calls it.
 UNUSED void Runtime_IdleForever(void) {
   for (;;) {
@@ -75,7 +75,7 @@ UNUSED void Runtime_IdleForever(void) {
 /// Returns the language of this cartridge from the header's game code letter,
 /// an enum CartridgeLanguage. Only the Spanish and
 /// Italian editions have it. Called by the battle target selection and the
-/// status screen, which lay text out by language.
+/// summary screen, which lay text out by language.
 s32 System_GetLanguage(void) {
   s32 language;
 
@@ -145,7 +145,7 @@ void System_CopyBuildStamp(void) {
 }
 
 /// An exported stub that does nothing with its argument. The title screen,
-/// Lucky Dice and the slot machine (LuckyWheels_Run) call it with a far-call
+/// Lucky Dice and Lucky Wheels (LuckyWheels_Run) call it with a far-call
 /// resource id.
 void RuntimeDispatch_NoOpHook(s32 unused) {}
 

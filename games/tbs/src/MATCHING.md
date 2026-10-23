@@ -169,7 +169,7 @@ same thing in C, and each can still compile differently.
 
 The lists below are reference, grouped by the folders of the source: search
 them for a strange line you meet in the code rather than reading them
-through. They use the engine's words: a work slot is a [heap slot](../glossary.md#heap-slot), one of
+through. They use the engine's words: a [heap slot](../glossary.md#heap-slot) is one of
 the numbered words of `gHeapSlots` that hold a system's working block, and an
 `ObjectEvent` is the struct an [object event](../glossary.md#object-event) is read through.
 
@@ -194,7 +194,7 @@ These turn up all over the game.
   `volatile u16 *vram`, because a plain pointer moves the address adds (18 of
   1037 instructions differ in a member's row, `COMMAND_ROW_MEMBER`, and 19 in
   the party's, `COMMAND_ROW_PARTY`).
-- A work slot is written `HEAP_SLOT_BLOCK(n)`, `gHeapSlots[n]`, or through a named
+- A heap slot is written `HEAP_SLOT_BLOCK(n)`, `gHeapSlots[n]`, or through a named
   pointer indexed past it (`(void **)&gCameraWork`). The last is undefined
   behaviour, with its defined form behind `UBFIX`.
 - A member can be reached through a pointer to its own type, or to its own
@@ -311,7 +311,7 @@ The field engine's spellings are about its map state and a few of its loops.
   measured cost of their loop forms. The other `goto`s (the wander retries,
   the step searches, the map effects' [script](../glossary.md#script) loops and the debug loops) stay
   until someone finds their loops.
-- A [field object](../glossary.md#field-object)'s 112 bytes are read through several structs, as Field's
+- An [object](../glossary.md#object)'s 112 bytes are read through several structs, as Field's
   [one object, many views](field/README.md#one-object-many-views) lists. They
   stay apart because the compiler addresses a field differently by its
   declared type and by whether it is reached through a union (the
@@ -338,7 +338,7 @@ each keeps its spelling until it is.
   `HEAP_SLOT_BLOCK(HEAP_SLOT_LIGHTNING)` (`ValeInteriorsInn_Initialize`), or
   `AllocHeapSlotEwram(HEAP_SLOT_LIGHTNING, sizeof(struct
   LightningWork))`, which returns the existing block.
-- The colour buffer is `gPaletteFadeWork`,
+- The palette fade is `gPaletteFadeWork`,
   `HEAP_SLOT_BLOCK(HEAP_SLOT_PALETTE_FADE)` (`TretPalette_UpdateMapTint`,
   `SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue`), or
   `*(gHeapSlots + HEAP_SLOT_PALETTE_FADE)`
@@ -350,7 +350,7 @@ each keeps its spelling until it is.
   `(u32 *)&gFieldWork` (`Shop_SaveAndTintFieldPalette`), which is undefined
   behaviour with `gPaletteFadeWork` behind `UBFIX`.
 
-One more spelling in the field objects has been measured:
+One more spelling in the objects has been measured:
 `((16 - blend) << 8) | blend` in
 [`object/psynergy_effects/world_map.c`](object/psynergy_effects/world_map.c)
 is `BLEND_ALPHA(blend, 16 - blend)` with its operands swapped, and the macro
@@ -447,10 +447,10 @@ its cells.
   `.flagCount` (`Save_ScanRecordFlags` in
   [`window/battle_command/save.c`](window/battle_command/save.c)), which keeps
   the literal `0x1070` and the offsets 1 and 2.
-- A selection record's kind is cleared through a view from its base field,
+- A selection entry's kind is cleared through a view from its base field,
   `((struct GlyphCursor *)&work->records[n].base)->cursor = 0`, for
-  `work->records[n].kind = 0` (`SelectionScreen_Create`, records 7 and 8).
-- A render output is read as `struct SpriteOutput`, whose sprite cell is the
+  `work->records[n].kind = 0` (`SelectionScreen_Create`, entries 7 and 8).
+- A window sprite is read as `struct SpriteOutput`, whose sprite cell is the
   member `attr`, rather than as `struct WindowSprite` with a cast of `unk10`
   (`Window_PutGlyph`, `UiWork_AnimateSpriteSlots`).
 - A menu cursor whose screens write only the output pointer is a
@@ -467,13 +467,13 @@ its cells.
   in [`window/glyph_arm.c`](window/glyph_arm.c)).
 - `gFont_MarkGlyphCodes`, the Japanese kana marks, is declared without
   `const` and put in read-only data with `__attribute__((section(".rodata")))`
-  ([`window/articles.c`](window/articles.c)), as Lunpa's staged-actor tables
+  ([`window/articles.c`](window/articles.c)), as Lunpa's pushed-object tables
   are. Through a `const` extern, its load in `Text_DrawGlyphPair` is
   scheduled ahead of the spill of `out` (2 of 185 instructions in tbs-ja).
 
 ### Menus
 
-Two spellings recur in the menus, one for copying a party member's record and
+Two spellings recur in the menus, one for copying a party member's unit and
 one for reaching a heap block.
 
 - A unit is copied with the resident IWRAM routine as `Iwram_CopyWords`,
@@ -483,13 +483,13 @@ one for reaching a heap block.
   `cache[HEAP_SLOT_FIELD - HEAP_SLOT_OBJECT_SYSTEM]`.
 - The menu work is read through one struct per screen
   (`ItemMenuWork`, `PsynergyMenuWork`, `SummaryScreenWork`,
-  `DjinnMenuWork`, `DjinnFiguresWork`), as the field object's views
+  `DjinnMenuWork`, `DjinnFiguresWork`), as the object's views
   are, because each is what its own screen's code matches with.
 
 ### Battles
 
 The battle engine's few spellings are a store, its background's blend
-arithmetic and its work slots.
+arithmetic and its heap slots.
 
 - An action slot's first halfword is cleared through a cast,
   `*(u16 *)&member->psynergy[i] = 0`, because the field store loads its
@@ -497,15 +497,15 @@ arithmetic and its work slots.
 - The background's blend steps are `BLEND_ALPHA(16, 16) - alphaStep` and
   `step + BLEND_ALPHA(0, 16)`, where the macro's `|` form changes the code
   ([`battle/battle/background.c`](battle/battle/background.c)).
-- Work slots are reached through `(void **)&gCameraWork` and
+- Heap slots are reached through `(void **)&gCameraWork` and
   `(void **)&gBattleWork` indexed past them (see Everywhere).
 
-### Battle effects
+### Battle animations
 
-The effects lean hard on their heap slots, and some of them on arithmetic and
+The animations lean hard on their heap slots, and some of them on arithmetic and
 macros whose exact shape decides the code.
 
-- A work slot is read as `HEAP_SLOT_BLOCK(n)` or `gHeapSlots[n]`, through a base
+- A heap slot is read as `HEAP_SLOT_BLOCK(n)` or `gHeapSlots[n]`, through a base
   pointer as `slots[n - base]`, `ANIM_SLOT` or `CANVAS_SLOT`, and when it
   holds a blitter (a drawing routine `BattleAnim_BuildBlitter` writes into a heap
   slot) as `ANIM_BLITTERS[n]` or `(DrawRectangle)gHeapSlots[n]`.

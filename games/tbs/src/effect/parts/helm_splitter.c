@@ -8,7 +8,7 @@
 //   plays the swirl over it and scatters bouncing sparks. The sparks live in
 //   PARTICLES, whose 1024 slots are cleared first.
 // - The impact burst plays a flash with large and small sparks and three
-//   fragments, while the effect's objects settle into one of the formations
+//   fragments, while the animation's objects settle into one of the formations
 //   of BattleAnim_PlaceFormationObjects. Large sparks and the fragments use
 //   work->particles (0 to 63 and 61 to 63, the fragments overwriting the last
 //   large sparks), small sparks PARTICLES.
@@ -199,8 +199,8 @@ void BattleAnim_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
 
   pos.groundHeight = 0;
   pos.height = 255 << 16;
-  // XXX: what a height of 255 means to the placement; the field objects'
-  // use of SpritePlacement.height would settle it.
+  // XXX: what a height of 255 means to the placement; the objects' use
+  // of SpritePlacement.height in the field would settle it.
   switch (formation) {
   // 1 << 21 is 32 pixels in 16.16.
   case SUMMON_FORMATION_THOR:
@@ -249,7 +249,7 @@ void BattleAnim_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
 #define IMPACT_BURST_FIRST_FRAGMENT 61
 
 /// Opens an impact flash and scatters sparks and fragments, keeping the
-/// effect's objects in formation for the first 36 frames.
+/// animation's objects in formation for the first 36 frames.
 ///
 /// The close of four summons: Thor, Nereid, Cybele and Tiamat's
 /// BattleAnim_RunPaletteParticles call it once their own frames are over,

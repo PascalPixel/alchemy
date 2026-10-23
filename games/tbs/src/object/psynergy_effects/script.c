@@ -37,7 +37,7 @@ static inline void ItemGift_ShowGotItem(s32 item, s32 flags) {
 
 /// Debug only: while debug mode is on, R makes every script wait
 /// (FieldScript_WaitFrames) end at once and L restores normal waits. Runs as a
-/// scheduler callback for the length of a script (FieldScript_Start). R also
+/// task for the length of a script (FieldScript_Start). R also
 /// skips the object events' messages, which open nothing while fastForward is
 /// set (FieldMessage_ShowAtObject).
 void FieldScript_UpdateDebugSkip(void) {
@@ -86,7 +86,7 @@ void Leader_StopMoving(void) {
   ObjectDispatch_SelectAnimationFar(object, 1);
 }
 
-/// The script command "begin script": closes any timed notice, stops the
+/// The script command "begin script": closes any map name popup, stops the
 /// leader, resets the message and timing state, and starts the debug
 /// fast-forward callback with the leader as the message speaker. Map scripts
 /// reach it as Engine_ScriptStart (SCRIPT_START); the field's item, Psynergy,
@@ -391,7 +391,7 @@ void Inventory_ReservedNoOp(void) {}
 
 /// Waits, at most 90 frames, for an object event's animation to stop being
 /// animation: the object event has finished a one-off animation such as a nod.
-/// Only object events drawn as an animation object (OBJECT_SPRITE_ONE) are
+/// Only object events drawn as a sprite (OBJECT_SPRITE_ONE) are
 /// waited for. Called by FieldScript_AskYesNoWithObjectEventAnimation.
 void ObjectEvent_WaitForAnimationEnd(s32 localId, s32 animation) {
   struct Object *objectEventObject = ObjectEvent_GetByLocalId(localId);
@@ -417,7 +417,7 @@ void ObjectEvent_WaitForAnimationEnd(s32 localId, s32 animation) {
 /// past row 15 or forceBottom is set. The speaker nods (animation 3) at yes
 /// and shakes its head (animation 4) at no. Returns 0 for yes, 1 for no.
 /// Map scripts reach it as Engine_ScriptChooseYesNo (about 54 of them); the
-/// link lobby and FieldScript_AskYesNoAndShowResponse call it too.
+/// Battle Arena and FieldScript_AskYesNoAndShowResponse call it too.
 s32 FieldScript_AskYesNoWithObjectEventAnimation(s32 localId, s32 forceBottom) {
   struct FieldWork *work = (struct FieldWork *)gFieldWork;
   s32 sprite = Map_FindObjectEventTemplate(work->speaker)->sprite;
@@ -471,7 +471,7 @@ s32 FieldScript_AskYesNoWithObjectEventAnimation(s32 localId, s32 forceBottom) {
 /// Field_UseItem, Field_UsePsynergy and the cleared game's menu.
 s32 FieldYesNo_Ask(s32 atBottom) { return YesNoMenu_RunFar(atBottom, 0, 0, 0); }
 
-/// Teaches unit the Psynergy ability and says so with its jingle, waiting for
+/// Teaches unit the Psynergy ability and says so with its fanfare, waiting for
 /// the player to read it. The message is `<unit> learned <ability>.` Fuchin
 /// Temple's map script calls it.
 void Party_LearnAbility(s32 unit, s32 ability) {
@@ -485,8 +485,8 @@ void Party_LearnAbility(s32 unit, s32 ability) {
 
 /// The script command "open screen": starts the script's screen transition and
 /// sets work->transitionActive. Map scripts reach it as
-/// Engine_ScriptOpenScreen; the inn, the title, cleared-game and link lobby
-/// menus and RegionMap_Show call it too.
+/// Engine_ScriptOpenScreen; the inn, the title, the main menu, the Battle Arena
+/// and RegionMap_Show call it too.
 void FieldScript_StartScreenTransition(void) {
   struct FieldWork *runtime = (struct FieldWork *)gFieldWork;
 
@@ -496,7 +496,7 @@ void FieldScript_StartScreenTransition(void) {
 
 /// The script command "close screen": finishes the script's screen transition
 /// and clears work->transitionActive. Map scripts reach it as
-/// Engine_ScriptCloseScreen; the inn, the cleared-game menu and
+/// Engine_ScriptCloseScreen; the inn, the main menu and
 /// RegionMap_Show call it too.
 void FieldScript_FinishScreenTransition(void) {
   struct FieldWork *runtime = (struct FieldWork *)gFieldWork;
@@ -514,7 +514,7 @@ void FieldScript_WaitTransitionFrames(void) {
 
 /// Makes the script leave for the given warp destination of the given map:
 /// raises the warp request 999 and writes gGameState.mapId and warpDest. Called
-/// by the title, cleared-game and link lobby menus, the debug battle command
+/// by the title, the main menu, the Battle Arena, the debug battle command
 /// and five map scripts (the Lemurian ship and the world map among them).
 void FieldScript_SetDestination(s32 mapId, s32 warpDest) {
   ((struct FieldWork *)gFieldWork)->warp = 999;

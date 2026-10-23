@@ -1,15 +1,15 @@
 /// @file
-/// Sprite outputs, portraits and the window spans.
+/// Window sprites, portraits and the window spans.
 // Part of battle_command.c.
 
 #include "../battle_command_internal.h"
 
-/// Creates a sprite output for the VRAM cache slot `slot` and attaches it to
+/// Creates a window sprite for the VRAM cache slot `slot` and attaches it to
 /// `window`, placed at (offsetX, offsetY) pixels from the window's inner
 /// corner (one tile in from its top-left border). `oamFlags` holds the OAM
 /// shape and size bits. The sprite draws on layer 255 until the caller changes
-/// it. Returns the output, or NULL with the VRAM slot released when all
-/// outputs are in use.
+/// it. Returns the sprite, or NULL with the VRAM slot released when all
+/// window sprites are in use.
 struct WindowSprite *WindowSprite_Create(s32 slot, s32 oamFlags,
                                          struct Window *window, s32 offsetX,
                                          s32 offsetY) {
@@ -51,7 +51,7 @@ struct WindowSprite *WindowSprite_Create(s32 slot, s32 oamFlags,
   output->x = x;
   output->y = y;
   output->index = slot;
-  // Kind 1: the output owns the slot, which is freed with it. Its motion is
+  // Kind 1: the sprite owns the slot, which is freed with it. Its motion is
   // WINDOW_SPRITE_MOTION_STILL.
   output->kind = WINDOW_SPRITE_ICON;
   output->motion = 1;
@@ -110,7 +110,7 @@ struct WindowSprite *WindowSprite_CreateWithTransform(s32 icon,
   }
   Ui_BuildPairedPatternsToSlot(icon, 1, &slot, &unusedTile, 1);
   output = WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
-  // Not checked: with every output in use, this stores through NULL.
+  // Not checked: with every sprite in use, this stores through NULL.
   output->sentinel = 251;
   return output;
 }
@@ -181,7 +181,7 @@ struct WindowSprite *CreateSideObject(s32 character, s32 unused, s32 side,
     portrait->kind = WINDOW_SPRITE_PORTRAIT;
   }
 
-  // Recorded even when no output was free and WindowSprite_Create released
+  // Recorded even when no sprite was free and WindowSprite_Create released
   // the VRAM slot.
   work->portraitPictures[side] = icon;
   work->portraitSprites[side] = slot;
@@ -226,7 +226,7 @@ void Ui_LoadCharacterEntryForSlot(u32 side, s32 character, s32 unused) {
   }
 }
 
-/// Switches the sprite output `out` to animation `mode` from its first step.
+/// Switches the window sprite `out` to animation `mode` from its first step.
 /// Does nothing when `out` is NULL.
 void WindowSprite_SetMotion(struct WindowSprite *out, s32 mode) {
   if (out != NULL) {
@@ -235,7 +235,7 @@ void WindowSprite_SetMotion(struct WindowSprite *out, s32 mode) {
   }
 }
 
-/// Sets the draw layer of the sprite output `output` to 255 - `priority`, so a
+/// Sets the draw layer of the window sprite `output` to 255 - `priority`, so a
 /// higher priority draws on a lower layer. Does nothing when `output` is NULL.
 void WindowSprite_SetInvertedSentinel(void *output, s32 priority) {
   if (output != NULL)
@@ -244,7 +244,7 @@ void WindowSprite_SetInvertedSentinel(void *output, s32 priority) {
 
 typedef void (*WindowSpanRoutine)(u16 *spans, u16 *tilemap);
 
-/// Fills `spans`, a page of the display transition's window edges past its
+/// Fills `spans`, a page of the screen transition's window edges past its
 /// WININ and WINOUT, with the window frames' horizontal extent on each of the
 /// 160 scan lines: (left << 8) | right in the second halfword (WIN1H) of each
 /// line's pair, read from the UI tilemap by the ARM routine

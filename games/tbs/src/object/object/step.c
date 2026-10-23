@@ -66,7 +66,7 @@ s32 Field_CountRequests(void) {
 /// leader (a world map metatile on the world map), or 0 without a leader.
 ///
 /// Called by Field_FindItemEvent and Map_FindPsynergyEvent (items.c),
-/// which match an item or Psynergy event to the tile the leader faces.
+/// which match an item or Psynergy event to the cell the leader faces.
 s32 Field_GetCollisionAheadOfLeader(void) {
   struct FieldWork *work;
   struct Object *leader;
@@ -184,7 +184,7 @@ void Field_CheckWarpRegions(s32 positionX, s32 positionY, s32 positionZ) {
 }
 
 /// Handles one step of the party leader onto the cell at (x, y, z) of map
-/// grid layer: records coord events and push tiles, takes warps, and while
+/// grid layer: records coord events and push cells, takes warps, and while
 /// walking advances the encounter counter, regenerates PP, hurts the party with
 /// poison and hazardous ground, and wears Avoid off. When this hurts the party,
 /// the leader flinches and characters who fall are listed in the field work.
@@ -256,9 +256,9 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
   // Only while walking (not climbing) towards a target.
   if (gGameState.movementMode == LEADER_MOVEMENT_WALK && leader != NULL &&
       leader->targetX != OBJ_EVENT_NO_TARGET) {
-    // Encounters: the zone comes from the world map terrain, or from the
-    // ground the leader stands on. FLAG_LURE_CAP doubles the speed the roll
-    // counts.
+    // Encounters: the zone comes from the world map's encounter region and
+    // battle environment, or from the ground the leader stands on.
+    // FLAG_LURE_CAP doubles the speed the roll counts.
     encounterSpeed = leader->speedLimit;
     if (GameFlag_TestFar(FLAG_LURE_CAP))
       encounterSpeed <<= 1;
@@ -482,7 +482,7 @@ s32 Party_ApplyPoisonDamage(void) {
 ///
 /// Called by Map_Run around the handling of most requests, by the
 /// Djinni effect and by the world map's overlay; each call is paired with
-/// WorldMap_EndScript. Changes the display transition state in
+/// WorldMap_EndScript. Changes the screen transition state in
 /// HEAP_SLOT_SCREEN_TRANSITION only when it is running. Both allocations return
 /// the slot's block when it has one; with that slot free, the world map takes a
 /// new, uncleared block there, kept until the map ends, whose step is then

@@ -83,7 +83,7 @@ void BattleAnim_RunPlasma(struct BattleAnimArgs *effect) {
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
   count = gPlasma_Counts[work->effect->variant];
 
-  // The last pillar strikes on frame (count - 1) * 8; the effect runs on
+  // The last pillar strikes on frame (count - 1) * 8; the animation runs on
   // until frame count * 7 + 48, so a large volley's tail is shorter.
   for (frame = 0; frame != count * 8 - count + 48; frame++) {
     // The strongest variant swings the camera round for the first 64 frames:
@@ -195,7 +195,7 @@ void BattleAnim_RunPlasma(struct BattleAnimArgs *effect) {
   ANIM_FINISH_CANVAS();
 }
 
-// Spark bursts: the folder README describes them under "Effect families".
+// Spark bursts: the folder README describes them under "Animation families".
 
 /// Bursts go off at (60, 48), with the canvas behind the battle's first layer
 /// (priority 1).

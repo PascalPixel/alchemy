@@ -179,7 +179,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
     } else {
       mode = COMMAND_ICON_FIGHT;
     }
-    // Status: the party's status screens, from the first member; the
+    // Status: the party's summary screens, from the first member; the
     // debug build with Start held lists the enemies instead.
     if (mode == COMMAND_ICON_STATUS) {
       void *block;

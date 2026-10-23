@@ -8,7 +8,7 @@
 // palette fades, clipping and the target flash timers. README.md describes
 // the canvas, its transfer modes and the two BG1 paths.
 //
-// A reaction may start one of the eight actor timers in the effect's work
+// A reaction may start one of the eight actor timers in the animation's work
 // block; ObjectGroup_TickMemberTimers counts them down each frame and gives
 // the battler its own palette back when one runs out. The timers are indexed
 // like effect->actors, so timer n belongs to actor n.
@@ -93,16 +93,16 @@ void BattleAnim_WipeCanvas(s32 direction, s32 fill) {
   }
 }
 
-/// Copies the canvas to VRAM once the effect has finished drawing a frame
+/// Copies the canvas to VRAM once the animation has finished drawing a frame
 /// (transferPending): the 128x128 canvas into BG2's character block 1, the
 /// way transferMode says, leaving the canvas cleared, faded, darkened or
 /// brightened for the next frame.
 ///
-/// Runs each frame as a scheduler callback that nearly every canvas effect
+/// Runs each frame as a task that nearly every canvas animation
 /// adds, most through ANIM_START_TRANSFER, and removes before its blocks
 /// are freed (ANIM_FINISH_CANVAS). Clears work->transferPending after a
 /// copy, and counts work->framesSinceTransfer: 1 on a frame that copied,
-/// one more on each frame that did not. No effect reads that count;
+/// one more on each frame that did not. No animation reads that count;
 /// object/colorfx.c keeps the same count for its own transfer.
 void BattleAnim_ProcessPendingGraphicsTransfer(void) {
   void **slots = gHeapSlots + HEAP_SLOT_BATTLE_ANIM;
@@ -150,12 +150,12 @@ void BattleAnim_ProcessPendingGraphicsTransfer(void) {
   *counter = nextCounter;
 }
 
-/// Copies a full-screen picture to VRAM once the effect has finished drawing
+/// Copies a full-screen picture to VRAM once the animation has finished drawing
 /// a frame: the 0x7800 bytes of Ram_MapGridCellBuffer into BG character block 2
 /// (0x06008000), the way transferMode says (every mode but
 /// CANVAS_COPY_AND_BRIGHTEN).
 ///
-/// Runs each frame as a scheduler callback added by
+/// Runs each frame as a task added by
 /// BattleAnim_RunParticleStreams, which removes it before it returns. Clears
 /// work->transferPending after a copy; unlike the canvas transfer it keeps
 /// no frame count.
@@ -203,7 +203,7 @@ void BattleAnim_FlushPendingGraphicsTransfer(void) {
 /// brightness: 24 steps take it from full to 60%.
 #define CANVAS_FADE_STEP 1092
 
-/// Writes the window, display and blend registers the effect keeps in its
+/// Writes the window, display and blend registers the animation keeps in its
 /// work, all at once.
 ///
 /// Nothing in the build calls it or takes its address. Writes WIN0H to
@@ -222,7 +222,7 @@ void BattleAnim_ApplyWindowBlendRegisters(void) {
   REG_BLDALPHA = work->bldalpha;
 }
 
-/// Writes the effect's BG2 reference point (work->bg2x, work->bg2y) to BG2X
+/// Writes the animation's BG2 reference point (work->bg2x, work->bg2y) to BG2X
 /// and BG2Y.
 ///
 /// Nothing in the build calls it or takes its address;
@@ -234,14 +234,14 @@ void Display_ApplyBg2Reference(void) {
   REG_BG2Y = work->bg2y;
 }
 
-/// Darkens the battle backdrop while the canvas is open: for fadeFrames
-/// frames, writes the backdrop's colours one CANVAS_FADE_STEP darker each
-/// frame into background palettes 6 to 13, so the effect stands out.
+/// Darkens the battle background while the canvas is open: for fadeFrames
+/// frames, writes the battle background's colours one CANVAS_FADE_STEP darker
+/// each frame into background palettes 6 to 13, so the animation stands out.
 ///
-/// Runs each frame as a scheduler callback added by
+/// Runs each frame as a task added by
 /// BattleAnim_StartCanvasLayer and BattleAnim_OpenCanvasLayer, and by
 /// BattleAnim_RunRingAndSparkSequence; BattleAnim_EndCanvasLayer and
-/// BattleAnim_EndElementStreaks remove it. It does nothing until the effect
+/// BattleAnim_EndElementStreaks remove it. It does nothing until the animation
 /// sets work->fadeFrames, which it counts down while counting
 /// work->fadeStep up.
 void Palette_StepFadeTransfer(void) {
@@ -273,7 +273,7 @@ void BattleAnim_ClearActorTimers(void) {
 /// starts; when one runs out, the target gets its own palette back. Timer n
 /// belongs to effect->actors[n].
 ///
-/// Called once a frame by nearly every effect, most through
+/// Called once a frame by nearly every animation, most through
 /// ANIM_END_FRAME. Changes work->actorTimers and, through
 /// ObjectGroup_UpdateMembers, the colour of a target whose timer ends.
 void ObjectGroup_TickMemberTimers(void) {
@@ -294,25 +294,25 @@ void ObjectGroup_TickMemberTimers(void) {
   } while (actorIndex != 8);
 }
 
-// The canvas layer: BG2 shows the effect's 128x128 8bpp canvas (0x4000
+// The canvas layer: BG2 shows the animation's 128x128 8bpp canvas (0x4000
 // bytes), its tiles from character block 1, stretched to twice the width
 // so it spans 256 pixels. Opening and closing it hide BG2 while its
 // settings change, through DISPCNT values queued two frames ahead.
 
 /// Opens the canvas layer: starts the background palette fade, makes BG2 the
-/// canvas, alpha-blended over the battle, inside the effect windows, and
+/// canvas, alpha-blended over the battle, inside the animation windows, and
 /// clears the canvas. It also stops any shake and saves BG1's scroll, which
 /// BattleAnim_EndCanvasLayer restores.
 ///
-/// Called at the start of nearly every canvas effect, directly or through
+/// Called at the start of nearly every canvas animation, directly or through
 /// ANIM_START_NARROW_CANVAS, and by BattleAnim_StartTiledCanvas. Waits five
 /// frames of its own. Writes BLDCNT, BLDALPHA, BG2CNT and BG2's affine
 /// registers, the windows, WININ and WINOUT, and queues DISPCNT; writes BG2's
 /// map in screen block 7, clears the canvas in its slot and in character block
-/// 1; adds Palette_StepFadeTransfer with work->fadeFrames 0, so the backdrop
-/// keeps its colours until the effect sets a count; sets gBgScroll[1].y to 32,
-/// clears work->actorTimers and work->shakeFrames, and saves gBgScroll[1]
-/// in work->savedBg1X and savedBg1Y.
+/// 1; adds Palette_StepFadeTransfer with work->fadeFrames 0, so the battle
+/// background keeps its colours until the animation sets a count; sets
+/// gBgScroll[1].y to 32, clears work->actorTimers and work->shakeFrames, and
+/// saves gBgScroll[1] in work->savedBg1X and savedBg1Y.
 ///
 /// bgControl : added to BG2CNT, the layer's priority (0 to 3) and so on.
 void BattleAnim_StartCanvasLayer(s32 bgControl) {
@@ -386,8 +386,9 @@ void BattleAnim_StartCanvasLayer(s32 bgControl) {
 }
 
 /// Opens the canvas layer as BattleAnim_StartCanvasLayer does, but with the
-/// windows off until the end, the backdrop palette starting half faded, and
-/// a 24-frame fade. It neither saves BG1's scroll nor resets the shake.
+/// windows off until the end, the battle background palette starting half
+/// faded, and a 24-frame fade. It neither saves BG1's scroll nor resets the
+/// shake.
 ///
 /// Nothing in the build calls it or takes its address. Writes the same
 /// registers, map and canvas as BattleAnim_StartCanvasLayer and sets
@@ -486,10 +487,10 @@ void BattleAnim_StartTiledCanvas(s32 bgControl) {
 
 /// Closes the canvas layer: plays the closing sound, restores BG1's scroll
 /// and the projection centre, clears the canvas tiles, stops the palette
-/// fade and brings the backdrop's palette back from level 21 to 0 over 8
-/// frames, then shows BG2 again and hides BG1.
+/// fade and brings the battle background's palette back from level 21 to 0 over
+/// 8 frames, then shows BG2 again and hides BG1.
 ///
-/// Called at the end of nearly every canvas effect, most through
+/// Called at the end of nearly every canvas animation, most through
 /// ANIM_FINISH_CANVAS, after the transfer callback is removed. Takes 11
 /// frames. Writes gBgScroll[1], gProjection's centre, BG2CNT (priority 3)
 /// and BLDCNT, clears character block 1, removes Palette_StepFadeTransfer
@@ -536,7 +537,8 @@ void BattleAnim_EndCanvasLayer(void) {
   WaitFrames(1);
 }
 
-/// Hides BG1 and the windows and starts bringing the backdrop's palette back.
+/// Hides BG1 and the windows and starts bringing the battle background's
+/// palette back.
 ///
 /// Called by BattleAnim_RunBeamSequence and
 /// BattleAnim_RunRingAndSparkSequence (beams.c). Sets the background view's
@@ -565,8 +567,8 @@ void BattleAnim_HideBg1AndRestoreBackdrop(void) {
 /// 256-colour layer whose map points 16 rows of 16 tiles at the canvas
 /// (tiles 0x100 onwards, which at 64 bytes a tile start at character block
 /// 1, where the canvas lives), with blank tile 0xff to the right, blended over
-/// the rest inside the effect windows. Also clears the canvas. The
-/// full-screen Ram_MapGridCellBuffer effects use
+/// the rest inside the animation windows. Also clears the canvas. The
+/// full-screen Ram_MapGridCellBuffer animations use
 /// BattleAnim_FlushPendingGraphicsTransfer instead.
 ///
 /// Called by BattleAnim_RunBeamSequence and
@@ -577,7 +579,7 @@ void BattleAnim_HideBg1AndRestoreBackdrop(void) {
 /// sets gBgScroll[1].y to 32 and the background view's secondMode to
 /// BATTLE_BACKGROUND_NONE; clears the canvas and character block 1.
 void BattleAnim_SetupCanvasTileMap(void) {
-  // UB: indexing past gBattleWork reaches the work slots after it.
+  // UB: indexing past gBattleWork reaches the heap slots after it.
 #ifdef UBFIX
   void *canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   struct BattleWork *screen = gBattleWork;

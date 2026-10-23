@@ -176,7 +176,7 @@ void BattleAnim_RunPrism(struct BattleAnimArgs *effect) {
 
 /// Rebuilds the background palette's first ramp as a grey ramp whose red,
 /// green and blue each sway with the frame, out of step by their phases
-/// (1/65536ths of a turn), so the effect shimmers through colours.
+/// (1/65536ths of a turn), so the animation shimmers through colours.
 ///
 /// Called each frame by BattleAnim_RunBind and
 /// BattleAnim_RunUnusedTriangleStrike (bind.c), BattleAnim_RunShiningStar
@@ -190,7 +190,7 @@ void BattleAnim_RunPrism(struct BattleAnimArgs *effect) {
 /// palette 4, is overwritten too. Whether the canvas's levels are meant to be
 /// one off would show in a capture of Thor or Bind against this palette.
 ///
-/// frame      : the effect's frame; the sway turns 1/64 of a circle a frame
+/// frame      : the animation's frame; the sway turns 1/64 of a circle a frame
 /// redPhase, greenPhase, bluePhase : each channel's offset in the sway
 void BattleAnim_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
                                    s32 bluePhase) {

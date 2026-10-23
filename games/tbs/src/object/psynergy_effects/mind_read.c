@@ -4,7 +4,7 @@
 
 #include "../psynergy_effects_internal.h"
 
-/// Work slot 22 of the wave effect, 0x298 bytes (gBattleBgEffectWork). It lives
+/// Heap slot 22 of the wave effect, 0x298 bytes (gBattleBgEffectWork). It lives
 /// from FieldEffect_StartMindReadWave to
 /// FieldEffect_FinishWaveAndReleaseHeapBlock, after the conversation Mind Read
 /// reads.
@@ -66,7 +66,7 @@ void FieldEffect_FinishWaveAndReleaseHeapBlock(void) {
   FreeHeapSlot(HEAP_SLOT_MIND_READ);
 }
 
-/// Scheduler callback of the wave effect: once its delay has run out, writes
+/// Task of the wave effect: once its delay has run out, writes
 /// the next page of scanline offsets (a sine wave of 4 pixels either way),
 /// steps the colour fade and the hue, keeps the caster's colours lit, and
 /// every 60 frames sends three particles (object 281) from the target to the
@@ -151,7 +151,7 @@ void FieldEffect_UpdateMindReadWave(void) {
 
 #define MIND_READ_GREY RGB(28, 28, 28)
 
-/// Scheduler callback: restarts the HBlank DMA that writes BG0's horizontal
+/// Task: restarts the HBlank DMA that writes BG0's horizontal
 /// scroll for each scanline from the wave's shown page.
 void FieldEffect_ArmBg0HBlankDma(void) {
   struct WaveEffectWork *work = gBattleBgEffectWork;

@@ -69,7 +69,7 @@ extern u8 *gItemIcons[];
 /// The end of gItemIcons, so Icon_CountItemIcons can count
 /// them.
 extern u8 *gItemIconsEnd[];
-/// The other compressed icons, among them the status screen's condition
+/// The other compressed icons, among them the summary screen's status
 /// icons.
 extern u8 *gIcon_MiscIconPointers[];
 /// The compressed Psynergy icons, drawn over the shared icon frame.
@@ -130,10 +130,10 @@ extern const u8 PaletteFade_DarkenKernel[];
 /// Darkens as PaletteFade_DarkenKernel, writing back only groups of four
 /// pixels not all 0 already.
 extern const u8 PaletteFade_DarkenPartialKernel[];
-/// Halves each pixel step; the battle effect canvas's transfers use it.
+/// Halves each pixel step; the battle animation canvas's transfers use it.
 extern const u8 PaletteFade_HalveKernel[];
-/// Halves each pixel step, skipping all-zero groups; the slot reels' canvas
-/// uses it.
+/// Halves each pixel step, skipping all-zero groups; Lucky Wheels' canvas uses
+/// it.
 extern const u8 PaletteFade_HalveNonzeroKernel[];
 /// Scales each pixel step to three quarters, skipping all-zero groups.
 extern const u8 PaletteFade_ScaleNonzeroThreeQuartersKernel[];
@@ -185,14 +185,14 @@ extern struct Sprite *gSprites;
 /// its left-pointing twin.
 extern const u8 gMenu_CursorObjectTiles[];
 #endif
-/// The Japanese name entry's second keyboard, which Select switches to.
+/// The Japanese naming screen's second keyboard, which Select switches to.
 extern const u8 gNamingScreen_AlternateKeyboardTilemap[];
-/// Eight offsets, 0 to 3 and back, that make the name entry caret circle:
+/// Eight offsets, 0 to 3 and back, that make the naming screen's caret circle:
 /// the x offset leads the y offset by five steps.
 extern s8 gNamingScreen_CaretWave[];
 /// The kana that take the voiced mark, as first and last pairs ended by 0.
 extern const u8 gNamingScreen_VoicedMarkRanges[];
-/// The Delete key's label on the German, Spanish and French name entry
+/// The Delete key's label on the German, Spanish and French naming screen
 /// keyboards ("ENT", "SUP", "EFF").
 extern u8 gNamingScreen_DeleteKeyLabel[];
 /// The End key's label on the German, Spanish and French keyboards ("ENDE",
@@ -200,7 +200,7 @@ extern u8 gNamingScreen_DeleteKeyLabel[];
 extern u8 gNamingScreen_EndKeyLabel[];
 /// The kana that take the semi-voiced mark, in the same pairs.
 extern const u8 gNamingScreen_SemivoicedMarkRanges[];
-/// The name entry keyboard's compressed tilemap, the Spanish edition's with
+/// The naming screen keyboard's compressed tilemap, the Spanish edition's with
 /// its own letters.
 extern const u8 gNamingScreen_KeyboardTilemap[];
 /// 224 zeroed bytes right after Render_DecodeFrame's code and tables; its
@@ -224,9 +224,9 @@ extern u8 Decompress_Type01CodeSize[];
 /// Decompress_Halfwords.
 extern u8 Decompress_HalfwordsCodeSize[];
 /// The pointing hand cursor, a 16x16 sprite, shared by the battle menus, the
-/// name entry and the talk choices.
+/// naming screen and the talk choices.
 extern u8 gResource_FixedBlockBTiles[];
-/// The 16x16 sprite the name entry screen shows as its name caret.
+/// The 16x16 sprite the naming screen shows as its name caret.
 extern const u8 gResource_FixedBlockATiles[];
 /// Decodes a credits slide's packed picture into 8bpp tiles, adding a palette
 /// offset to each pixel; it relocates its own command table wherever it's
@@ -305,7 +305,7 @@ extern u8 Message_FindCodeSize[];
 /// first, then one between members.
 extern const s8 gWindow_PartyColumnOffsets[];
 #ifndef OWN_FarCall_EffectTable
-/// The battle effect bank's far-call table, declared as a function so that a
+/// The battle animation bank's far-call table, declared as a function so that a
 /// call reaches its first stub, BattleAnim_BuildBlitterFar; nothing in this
 /// game calls it by this name.
 s32 FarCall_EffectTable(s32 slot, s32 width_shift, s32 height_shift, s32 flags,

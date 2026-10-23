@@ -52,7 +52,7 @@ struct PsynergyMenuWork {
   s16 rowPositions[8];          ///< screen pixels
   s32 ownerScale[8];            ///< 16.16 fixed point, 0x10000 full size
   u16 paneRow[2];               ///< each pane's Psynergy row chosen
-  u16 paneAction[2]; ///< each pane's Psynergy chosen, as an owner action entry
+  u16 paneAction[2]; ///< each pane's Psynergy chosen, as a member action entry
   struct WindowSprite *cursor; ///< ItemMenuWork's; not named here
   /// DjinnMenuWork's backdrop pointer at 0x184; no view names the rest.
   u8 aroundBackdrop[0x48];

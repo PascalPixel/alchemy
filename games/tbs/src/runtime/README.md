@@ -12,7 +12,7 @@ runs on.
 
 The runtime starts the console, runs every frame and hands the finished
 picture to the screen at the right moment. Around that it keeps the [heap](../../glossary.md#heap-and-pools),
-which lends memory to the rest of the game, the task scheduler, the queue of
+which lends memory to the rest of the game, the task runner, the queue of
 hardware writes that wait for the screen's blank moment, the buttons, sleep
 mode, screen fades, the frame's [sprite](../../glossary.md#sprite-and-oam) list, the 3D transform, saving and the
 link cable. The memory map it works in, and the fast code it copies into
@@ -237,7 +237,7 @@ main-loop tasks, and code a task may reach tests it before waiting
 ## The heap
 
 The heap lends blocks of memory to the rest of the game: a map's working
-state, a menu's buffers, a battle effect's pictures.
+state, a menu's buffers, a battle animation's pictures.
 
 ![Three pictures of one heap pool, which hands out memory from the bottom up and keeps one mark, the next free address. First, three blocks A, B and C taken in that order, with the mark above C. Second, releasing C moves the mark back to C's start. Third, releasing B while C is still in use moves the mark back to B's start, so C's memory is free too and the next block taken will be put on top of it. Blocks are therefore released in the reverse of the order they were taken.](https://alchemy.pascalpixel.com/illustrations/runtime/heap.svg)
 
@@ -254,7 +254,7 @@ The heap hands out memory from two pools, one in IWRAM from `gIwramHeap` up to
 Each pool is a bump allocator: a block starts at the pool's next free address,
 which moves up past it. The two next-free addresses are the first two words of
 `gHeapSlots` (`union HeapState`, `games/tbs/include/heap_state.h`), and the
-other 62 words are the named slots, which hold the blocks that have to be
+other 62 words are the heap slots, which hold the blocks that have to be
 found again later. `AllocHeapSlot` and `Alloc` take IWRAM first
 and fall back to EWRAM; `AllocHeapSlotEwram` and
 `AllocEwram` take EWRAM first. Sizes are rounded up to
@@ -273,8 +273,8 @@ once: the later blocks stay in their slots, pointing at memory the next
 allocation hands out again. `Game_Run` empties both pools and clears every
 slot before each map.
 
-That rule is why a battle effect's transfer task, which copies its picture to
-the screen every frame, has to be removed before the effect's heap blocks are
+That rule is why a battle animation's transfer task, which copies its picture
+to the screen every frame, has to be removed before the animation's heap blocks are
 released, and why code copied into a heap block to run from RAM
 (`RamCode_Load`) is released right after use. A slot that already has a block is returned whatever size is
 asked for, so `AllocHeapSlot` also means "get".
@@ -286,55 +286,55 @@ between is released with it.
 
 | Name | Pool first | Meaning |
 | --- | --- | --- |
-| `AllocHeapSlot` | IWRAM | takes, or returns the block already in, a named slot |
+| `AllocHeapSlot` | IWRAM | takes, or returns the block already in, a heap slot |
 | `AllocHeapSlotEwram` | EWRAM | the same, EWRAM first |
-| `Alloc` | IWRAM | takes a block with no slot, for short-lived buffers |
+| `Alloc` | IWRAM | takes a block with no heap slot, for short-lived buffers |
 | `AllocEwram` | EWRAM | the same, EWRAM first |
 | `FreeHeapSlot(slot)` | | releases a slot's block and every later block in its pool |
 | `Free(p)` | | releases `p` and every later block in its pool |
 
-## The task scheduler
+## The task runner
 
-The scheduler keeps the list of tasks, the small jobs that have to happen
+The task runner keeps the list of tasks, the small jobs that have to happen
 every frame whatever the rest of the code is doing, and runs them in a fixed
 order.
 
-![The tasks of a map, as the task table holds them. Each task's order says which pass runs it and where in that pass. Every frame, WaitFrames runs the map's task, which scrolls the map grid's layers, and then the windows' task, which opens, closes and types the windows; the map's has the higher order, so it runs first. In every vertical blank, the VBlank handler runs the task that copies changed window tiles to the screen. While a menu is open, the map's own tasks, whose code is in its overlay, are suspended: both passes skip them, and they keep their place for when the menu closes. The table has 20 slots, and each map starts with it empty.](https://alchemy.pascalpixel.com/illustrations/runtime/tasks.svg)
+![The tasks of a map, as the task table holds them. Each task's priority says which pass runs it and where in that pass. Every frame, WaitFrames runs the map's task, which scrolls the map grid's layers, and then the windows' task, which opens, closes and types the windows; the map's has the higher priority, so it runs first. In every vertical blank, the VBlank handler runs the task that copies changed window tiles to the screen. While a menu is open, the map's own tasks, whose code is in its overlay, are suspended: both passes skip them, and they keep their place for when the menu closes. The table has 20 slots, and each map starts with it empty.](https://alchemy.pascalpixel.com/illustrations/runtime/tasks.svg)
 
 A task is added once and then runs by itself until it is removed. It is a
 `void (*)(void)` routine (`TaskFunc`), added with
-`Task_Add(callback, order)` and removed with
+`Task_Add(callback, priority)` and removed with
 `Task_Remove(callback)`; [Engine](../../engine.md#waiting-and-tasks)
 shows the battle camera being added. Some
 belong in the frame's work, such as scrolling the map
 (`MapGrid_UpdateLayerScroll`) or updating the windows (`UiWork_ProcessAll`);
 others have to happen in the blank, such as copying the windows' changed
 tiles to the screen (`UiWork_UploadDirtyBlocks`). Each task carries one
-number, its order, which says both: which of the two passes runs it, and
-where in that pass. Where the order matters, it matters a lot: in a battle the
-camera (`BattleCamera_Update`) is added with a lower order than
-the battle's objects and event playback, so it moves only after they have.
+number, its priority, which says both: which of the two passes runs it, and
+where in that pass. Where the priority matters, it matters a lot: in a battle the
+camera (`BattleCamera_Update`) is added with a lower priority than
+the battle's objects and playback, so it moves only after they have.
 
-The task table holds `TASK_COUNT` tasks, each a routine, an
-order halfword and flags. The order's high byte picks the pass that runs the
+The task table holds `TASK_COUNT` tasks, each a routine, a
+priority halfword and flags. The priority's high byte picks the pass that runs the
 task (`TASK_PRIORITY_MAIN_LOOP` for the frame loop, `TASK_PRIORITY_VBLANK` for
 VBlank) and its low byte ranks it within the pass. Every add re-sorts the
-table by order, highest first, comparing orders as signed halfwords
+table by priority, highest first, comparing priorities as signed halfwords
 (`Task_Sort`), and `Task_RunPass` runs, in table order, every
 task whose high byte equals the pass's.
 
 The sort stops one pass short: it never compares slots 0 and 1, so when the
-task in slot 1 has the higher order, the two run in the wrong order ([`// BUG:`](../../glossary.md#bug-bugfix-and-ubfix) in the code). It swaps only on strictly greater, so
-tasks of equal order keep their table order, which depends on the free slot
-each was given; code that needs an order gives its tasks different orders.
+task in slot 1 has the higher priority, the two run in the wrong order ([`// BUG:`](../../glossary.md#bug-bugfix-and-ubfix) in the code). It swaps only on strictly greater, so
+tasks of equal priority keep their table order, which depends on the free slot
+each was given; code that needs an order gives its tasks different priorities.
 
-A task is suspended by setting bit 0 of its order's high byte
+A task is suspended by setting bit 0 of its priority's high byte
 (`Task_SuspendAll`), which no pass matches, and resumed by clearing it,
-so it keeps its rank. An empty slot's order is `TASK_PRIORITY_EMPTY` and a
+so it keeps its rank. An empty slot's priority is `TASK_PRIORITY_EMPTY` and a
 removed task's `TASK_PRIORITY_REMOVED`; both high bytes are odd, and as signed
 halfwords a removed slot sorts first and an empty one last.
 `Task_SuspendOverlayTasks` suspends the tasks whose routine is in EWRAM,
-where [overlays](../../glossary.md#overlay) run, except those whose flag bit 0 is set; the link lobby and
+where [overlays](../../glossary.md#overlay) run, except those whose flag bit 0 is set; the Battle Arena and
 the Colosso maps set it (`Task_SetFlags`) for tasks that must keep
 running under a menu.
 
@@ -350,10 +350,10 @@ The code is `runtime/scheduler.c`, its names in
 | Name | Value | Meaning |
 | --- | --- | --- |
 | `TASK_COUNT` | 20 | tasks in the table |
-| `TASK_PRIORITY_MAIN_LOOP` | `0xc80` | order of a main-loop task (high byte `0x0c`) |
-| `TASK_PRIORITY_VBLANK` | `0x480` | order of a VBlank task (high byte `0x04`) |
-| `TASK_PRIORITY_REMOVED` | `0x7fff` | a removed task's order; sorts first |
-| `TASK_PRIORITY_EMPTY` | `0xffff` | an empty slot's order; sorts last |
+| `TASK_PRIORITY_MAIN_LOOP` | `0xc80` | priority of a main-loop task (high byte `0x0c`) |
+| `TASK_PRIORITY_VBLANK` | `0x480` | priority of a VBlank task (high byte `0x04`) |
+| `TASK_PRIORITY_REMOVED` | `0x7fff` | a removed task's priority; sorts first |
+| `TASK_PRIORITY_EMPTY` | `0xffff` | an empty slot's priority; sorts last |
 
 ## The register write queue
 
@@ -409,8 +409,8 @@ whole copy remains, and the game keeps the one with the higher number.
 The cartridge's flash has 16 sectors of 4 KB, each holding one record: a
 16-byte header (signature, record id, a checksum and a sequence number) and a
 payload of 4,080 bytes, of which the checksum covers the first 4,072. A save
-file is 8 KB, too large for one record, so file `n` of the three on the file
-select screen is two records: `n` holds the first half of the save buffer
+file is 8 KB, too large for one record, so file `n` of the three on the main
+menu is two records: `n` holds the first half of the save buffer
 and `n + 3` the second.
 
 `Save_WriteRecord` writes the new copy, numbered one past the record's
@@ -448,8 +448,8 @@ Each frame, in the blank, the two consoles swap a small fixed message. Bulk
 data rides inside it a block at a time, each block numbered. The receiver
 keeps a block only if it is the one it expects next; if one goes missing, it
 asks for it again, and the sender goes back to that block and sends the rest
-once more. Link battles, the Battle Arena's lobby and the file select
-screen's transfer use it.
+once more. Link battles, the Battle Arena and the main menu's
+transfer use it.
 
 While the link is up, the VBlank handler trades a 24-byte payload with the
 partner (`SerialRuntime_ExchangePayloads`) in multiplayer mode, the parent
@@ -474,15 +474,15 @@ exactly 0, so the size must be a multiple of 20.
 ## Design
 
 The game is written as ordinary functions that run until they are done. A
-battle effect, a cutscene or a menu screen is a function with its own loop,
+battle animation, a cutscene or a menu screen is a function with its own loop,
 and when time has to pass it calls `WaitFrames` and carries on from the same
 place. Nothing returns to a main loop between frames. Work that must continue
 while such a function waits is a task, which `WaitFrames` runs however deep
-the waiting function is: window animation, the battle's event playback
+the waiting function is: window animation, the battle's playback
 (`BattlePlayback_Run`) and a map's callbacks are tasks. Most of the
 runtime's shape follows from that choice: the stack switch keeps the stack
-bounded however deep the caller, the scheduler gives tasks a known order, and
-the heap's slots let a task's blocks outlive the call that took them.
+bounded however deep the caller, task priorities give tasks a known order, and
+heap slots let a task's blocks outlive the call that took them.
 
 The second choice is that a frame's changes reach the hardware together. Code
 writes RAM copies (the depth slots, `gBgScroll`, the write queue) and the
@@ -498,7 +498,7 @@ in the code needs it.
 
 Every other folder runs on the runtime. The field, the battles and the menus
 let time pass through `WaitFrames` and keep their per-frame work as tasks;
-their memory comes from the heap's named slots; their changes to the screen
+their memory comes from heap slots; their changes to the screen
 go through the depth slots, `gBgScroll` and the write queue. The other banks
 call the runtime's functions directly, and overlays reach them through the
 runtime bank's far-call table
@@ -510,7 +510,7 @@ runtime bank's far-call table
 
 - 62 heap slots; the IWRAM heap ends at `Ram_IwramHeapEnd` and the EWRAM heap
   at the end of EWRAM.
-- 20 scheduled tasks at a time.
+- 20 tasks at a time.
 - 32 queued register writes a frame.
 - 96 sprite VRAM cache entries over 512 blocks of 64 bytes, and at most 8 KB
   (128 blocks, a quarter of sprite VRAM) for one entry.
@@ -586,16 +586,16 @@ Frame, VBlank, IWRAM, EWRAM, heap slot, task, sprite and OAM are in the
 | `System_`, `Runtime_`, `Code_` | power-up, interrupts, the heap and code loading |
 | `Input_` | key repeat and the keypad interrupt |
 | `IoWriteQueue_` | the register write queue |
-| `Fade_` | screen fades through the blend registers |
+| `ScreenFade_` | screen fades through the blend registers |
 | `Render_`, `OamMatrix_` | the frame's sprite lists and affine matrices |
 | `VramCache_` | the sprite VRAM cache |
-| `Scheduler_` | the task scheduler |
+| `Task_` | tasks |
 | `Math_`, `Vector_` | square roots and polar offsets beside `Random16` and `ArcTan2` |
 | `FixedPoint_` | 16.16 and 8.8 arithmetic: a remainder, a product, a reciprocal and the distance between two positions |
 | `Transform_`, `Projection_` | the 3D transform and projection |
 | `NumberText_`, `DebugText_` | number text and the debug text screen |
 | `ColorBuffer_` | shading a buffer of pixels, keeping a copy |
-| `SaveState_` | saving |
+| `Save_` | saving |
 | `SerialRuntime_`, `SerialTest_`, `LinkBattle_` | the link cable |
 | `RuntimeDispatch_` | empty far-call exports |
 | `Resource_`, `Palette_`, `Ui_`, `Sound_` | resources, palettes, the interface and sound, whose main code lives in other folders |
@@ -605,8 +605,8 @@ Frame, VBlank, IWRAM, EWRAM, heap slot, task, sprite and OAM are in the
 ## Evidence and open questions
 
 The names come from what the code does: `WaitFrames` from its loop,
-`Scheduler_` from the table it keeps, the heap's from its two pointers and its
-slots, the save code's from the flash records it writes. Constants such as
+`Task_` from the table it keeps, the heap's from its two pointers and its
+heap slots, the save code's from the flash records it writes. Constants such as
 `TASK_PRIORITY_MAIN_LOOP` are the values the callers pass.
 
 [XXX](../../glossary.md#xxx): likely the VBlank handler's display writes come first so that they land
@@ -631,16 +631,16 @@ fourth), and `gSavedStack` is the last cell of the third, sized to reach the
 fourth. It could hold a stack that had run 2,640 bytes into the heap.
 
 No task waits. A call graph of the tbs-en build's objects, [main image](../../glossary.md#main-image) and
-overlays, from each function the code hands to the scheduler, each object
+overlays, from each function the code adds as a task, each object
 hook and each `SC_CALL` callback, finds nine tasks with a path of calls to
 `WaitFrames`, and none takes it: the map tasks turn [object events](../../glossary.md#object-event) with a wait of 0
 (`Engine_ObjectEventFaceDirection`), the world map's lighthouse jitter moves the
-camera with a glide, the slot machine and the link countdown open instant
+camera with a glide, Lucky Wheels and the link countdown open instant
 windows (`WINDOW_FLAG_INSTANT`), and battle playback's sprite respawn tests
 `gTaskStatus`. The tenth path is the debug map selector, which only
-the unused `DebugMapSelect_Schedule` would schedule as a task.
+the unused `DebugMapSelect_Schedule` would add as a task.
 
-- XXX (no evidence): what the five empty exports after the fades
+- XXX (no evidence): what the five empty exports after the screen fades
   (`RuntimeDispatch_ReservedNoOpA` to `E`) were for; they are empty in both
   games, nothing calls them, and each is reached only through a bare veneer,
   so no code shows what they were to do.

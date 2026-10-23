@@ -10,7 +10,7 @@
 /// Runs each frame of a battle: advances every unit's status icon, gives an
 /// airborne unit's effect layer (BATTLE_OBJ_NO_EFFECT, placement.c) priority
 /// 9 and a grounded one's 0, and draws whichever side is nearer the camera in
-/// front. Runs as a scheduler callback (main-loop order 0xc80)
+/// front. Runs as a task (main-loop priority 0xc80)
 /// that Battle_Run adds after the entry transition and removes as
 /// the battle ends. Writes each battle object's icon state and its sprites'
 /// priorities.
@@ -146,7 +146,7 @@ void BattleObject_UpdateSpritePriorities(void) {
 
 #define ICON_MAX 14 ///< the kinds of icon
 
-/// Builds the status icon bits of unit id's ailments into its battle
+/// Builds the status icon bits of unit id's statuses into its battle
 /// object's activeStatuses, which BattleStatusIcon_Cycle shows. Called
 /// wherever a unit's statuses may have changed: BattlePlayback_RunAll,
 /// BattlePlayback_Run, Battle_ProcessRoundEnd,
@@ -359,7 +359,7 @@ void ReleaseBattleObjectRecords(s32 unitId) {
 /// sets every listed unit's pose again afterwards. Called by BattleObject_Put
 /// (refreshing) and BattleUnits_ListAllAndSubmit, by the staging and
 /// entry transition code, and through its far stub by
-/// BattleAnim_SelectLivingTargets. Writes the objects' records, their storage
+/// BattleAnim_SelectLivingTargets. Writes the objects' sprites, their storage
 /// kind and height, and the battle objects' icon and effect entries.
 void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
   s32 unitIndex;

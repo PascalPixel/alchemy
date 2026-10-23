@@ -40,8 +40,8 @@ struct EventWork {
   u16 talk;
   ///@}
   s16 searchCell;  ///< the metatile behavior ahead, which a bg event answers
-  u16 battle;      ///< the next battle's enemy group, 0 for none
-  s16 psynergy;    ///< a field Psynergy to use, as owner << 10 | Psynergy
+  u16 battle;      ///< the next battle's formation, 0 for none
+  s16 psynergy;    ///< a field Psynergy to use, as unit << 10 | Psynergy
   s16 item;        ///< FieldWork's; not named through this view
   s16 raisedEvent; ///< a raised event for Map_RunRaisedEvent
   /// FieldWork's fallen characters and item slot; not named through this view.

@@ -6,7 +6,7 @@
 
 #include "render_input.h"
 
-/// A window: a framed rectangle of the tilemap with its sprite outputs, its
+/// A window: a framed rectangle of the tilemap with its window sprites, its
 /// opening or closing animation and the rectangle it last drew.
 struct Window {
   struct WindowSpriteList sprites; ///< the sprites the window carries
@@ -16,11 +16,11 @@ struct Window {
   u16 y;                           ///< tiles
   u16 opened; ///< 1 once opened, 0 once freed; nothing reads it
   /// The effect a message's TEXT_WINDOW_STATE code sets. Only
-  /// WINDOW_EFFECT_SWELL is acted on; its channel types nothing more
+  /// WINDOW_EFFECT_SWELL is acted on; its text printer types nothing more
   /// until the swell ends and clears it.
   u16 effect;
-  /// 0 while a message channel is typing into the window; 1 once its text has
-  /// ended or closed the window, which frees the channel for the next text.
+  /// 0 while a text printer is typing into the window; 1 once its text has
+  /// ended or closed the window, which frees the printer for the next text.
   u16 state;
   u16 flags; ///< UI_WINDOW_ flags; 0 once closing or free
   /// The zoom's step: counts down from 7 to 0 while opening, and up from 0 to
@@ -38,7 +38,7 @@ STATIC_ASSERT(offsetof(struct Window, width) == 8);
 STATIC_ASSERT(offsetof(struct Window, frame) == 0x18);
 STATIC_ASSERT(offsetof(struct Window, previousHeight) == 0x22);
 
-/// A text channel, one of three, which types decoded text into a window a few
+/// A text printer, one of three, which types decoded text into a window a few
 /// characters a frame and runs its control codes.
 struct TextPrinter {
   struct Window *window; ///< the window typed into; NULL when free

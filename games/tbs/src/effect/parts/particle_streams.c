@@ -42,7 +42,7 @@ void Palette_BrightenBgEntries(s32 blueStep, s32 greenStep, s32 redStep) {
 /// background colour 0 at each horizontal blank, so the backdrop colour
 /// changes line by line.
 ///
-/// Runs each frame as a scheduler callback (order 0x4fe) that
+/// Runs each frame as a task (priority 0x4fe) that
 /// BattleAnim_RunParticleStreams adds for its rise and removes after it; the
 /// rise rewrites the 160 colours, its heat lines, every frame. Stops DMA 0
 /// and sets it up again, so the table is read from line 0.
@@ -59,7 +59,7 @@ void BattleAnim_ArmPaletteHBlankDma(void) {
 ///
 /// Abilities: Meteor (SUMMON_ANIM_METEOR).
 ///
-/// BattleAnim_RunSummonEffect also plays it for a summon effect of 0, which
+/// BattleAnim_RunSummonEffect also plays it for a summon animation of 0, which
 /// no row selects.
 void BattleAnim_RunMeteor(struct BattleAnimArgs *effect) {
   BattleAnim_RunParticleStreams(effect, PARTICLE_STREAMS_METEOR);
@@ -315,7 +315,7 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *effect, s32 mode) {
                             BLITTER_MAX);
     draw = slots[HEAP_SLOT_RAM_CODE - HEAP_SLOT_BATTLE_BACKGROUND];
     // Each copy darkens every pixel of the map by 2 levels (four bytes of 2
-    // in one word, as the other darkening effects write theirs).
+    // in one word, as the other darkening animations write theirs).
     ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, 0x02020202);
     Task_Add(BattleAnim_ArmPaletteHBlankDma, 0x4fe);
     ANIM_FREE_PARTICLES(i, work->particles, 64);

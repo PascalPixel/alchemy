@@ -2,12 +2,12 @@
 #define ALCHEMY_SCROLL_H
 
 /// @file
-/// The display scroll work, the HBlank scroll work and its wave.
+/// The map scroll work and the scanline effect's work and wave.
 
 #include "map_grid_scroll.h"
 #include "static_assert.h"
 
-/// The wavy background's work: two pages of BG1 to BG3 scroll offsets for each
+/// The scanline effect's work: two pages of BG1 to BG3 scroll offsets for each
 /// of the 160 scanlines, and the sine wave that bends them on each axis.
 struct ScanlineEffectWork {
   struct BgScroll rows[2][160][3]; ///< per page and scanline: BG3, BG2, BG1
@@ -27,8 +27,8 @@ STATIC_ASSERT(sizeof(struct ScanlineEffectWork) == 0xf20);
 STATIC_ASSERT(offsetof(struct ScanlineEffectWork, page) == 0xf00);
 STATIC_ASSERT(offsetof(struct ScanlineEffectWork, freqX) == 0xf08);
 
-/// The wavy background's work, HEAP_SLOT_SCANLINE_EFFECT under its own name,
-/// which ScanlineEffect_InitWave takes for a map's ripple.
+/// The scanline effect's work, HEAP_SLOT_SCANLINE_EFFECT under its own name,
+/// which ScanlineEffect_InitWave takes for a map's wave.
 extern struct ScanlineEffectWork *gScanlineEffect;
 /// One cycle of sine in 256 entries, 4.12 fixed point (4096 at the peak).
 extern const s16 gScanlineEffect_WaveSine[];

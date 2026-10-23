@@ -156,8 +156,8 @@ void BattleMotion_InitializeObject(s32 unitId) {
 /// Knocks unit id back by the speed, hop and distance of the knockback
 /// variant (enum BattleKnockback), and puts it in POSE_DAMAGE.
 /// The Fusion Dragon only takes the pose. Reached through its far stub from
-/// the effects, by the ANIM_STRIKE_TARGET macro of effect_internal.h and
-/// directly.
+/// the battle animations, by the ANIM_STRIKE_TARGET macro of effect_internal.h
+/// and directly.
 void BattleMotion_ApplyKnockback(s32 unitId, s32 variant) {
   struct BattleObject *battleObject;
   struct MotionObject *object;
@@ -307,7 +307,7 @@ void BattleMotion_SpawnSlotEffectAndWait(s32 unitId) {
   }
 }
 
-/// Projects the point above unit id where its effects play (its class's
+/// Projects the point above unit id where its animations play (its class's
 /// height, BattleUnit_GetEffectHeight) onto the screen, into projected; the
 /// height is scaled by the sprite's projected scale. Returns 0. Called by
 /// ElementGlow_Play, and through its far stub by
@@ -351,10 +351,10 @@ s32 BattleMotion_ProjectConditionalPosition(s32 unitId, s32 *projected) {
   return 0;
 }
 
-/// Returns the height above unit id where its effects play, 16.16: its
+/// Returns the height above unit id where its animations play, 16.16: its
 /// class's own (BattleSprite_GetAnimHeight), else 24 for a small enemy and 48
 /// for others. Called by BattleMotion_ProjectScaledPosition, and through its
-/// far stub by the effects that play at a unit's body.
+/// far stub by the animations that play at a unit's body.
 s32 BattleUnit_GetEffectHeight(s32 unitId) {
   u32 height;
   u8 classId;

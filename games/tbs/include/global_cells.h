@@ -2,21 +2,21 @@
 #define ALCHEMY_GLOBAL_CELLS_H
 
 /// @file
-/// The work slots of gHeapSlots, read through their own names.
+/// The heap slots of gHeapSlots, read through their own names.
 
 #include "types.h"
 #include "effect_step.h"
 
 struct ScreenTransitionState;
 
-/// The work slots from HEAP_SLOT_MAP_GRID on: gMapGridWork[0] is the map's work
+/// The heap slots from HEAP_SLOT_MAP_GRID on: gMapGridWork[0] is the map's work
 /// (struct MapGridScrollWork, or the world map's struct WorldMapView).
 extern void *gMapGridWork[];
 /// The menu work, heap slot HEAP_SLOT_MENU: each menu screen and the shop
 /// read it through their own struct while they are open.
 extern void *gMenuWork;
 
-// Read work slots in gHeapSlots order through their own names.
+// Read heap slots in gHeapSlots order through their own names.
 /// HEAP_SLOT_LIGHTNING onwards.
 extern void *gLightningWork[];
 /// HEAP_SLOT_SCREEN_TRANSITION under its own name.
@@ -29,7 +29,7 @@ extern void *gFieldEffectWork;
 // EWRAM buffers
 /// The map's cells at 0x02010000, 128 by 128 words: 64 KB, so while a map is
 /// loaded they run on through gActorSpriteSlots and gDecodeBuffer. Battle
-/// effects reuse the memory as a particle array.
+/// animations reuse the memory as a particle array.
 extern struct Particle gMapGridCellBuffer[];
 /// 16 KB of EWRAM at 0x0201c000. The map's cells fill it while a map is
 /// loaded, and the world map's still view keeps a copy of 8 KB of char block

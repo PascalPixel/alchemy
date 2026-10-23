@@ -6,7 +6,7 @@
 
 /// Sets BG2's horizontal scale back to one texel a pixel, for the lines above
 /// BattleAnim_SetBg2AffineScaleHalf's interrupt. BattleAnim_RunNeptune
-/// schedules it as a frame callback for its first stage.
+/// adds it as a task for its first stage.
 void BattleAnim_ResetBg2Pa(void) { REG_BG2PA = Q_8_8(1); }
 
 /// Stretches BG2 to twice its width from the current line down.
@@ -105,7 +105,7 @@ void BattleAnim_RunNeptune(struct BattleAnimArgs *effect) {
   work->transferMode = CANVAS_COPY;
   Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
   // Setup: wipe the battle away and close window 0 (its edge opens over the
-  // first 16 frames), swap in the dusk backdrop and load the pictures.
+  // first 16 frames), swap in the dusk battle background and load the pictures.
   REG_WININ = ANIM_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_CLR;
   BattleAnim_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   REG_WIN0H = WIN_RANGE(240, 240);
@@ -269,7 +269,7 @@ void BattleAnim_RunNeptune(struct BattleAnimArgs *effect) {
       }
     }
     // Frame 152: only the lines from 96 down stay stretched, and the battle
-    // backdrop's colours darken over 24 frames.
+    // battle background's colours darken over 24 frames.
     if (frame == 152) {
       Runtime_SetIrqHandler(IRQ_VCOUNT, 96, BattleAnim_SetBg2AffineScaleHalf);
       work->fadeFrames = 24;
@@ -468,8 +468,8 @@ void BattleAnim_RunNeptune(struct BattleAnimArgs *effect) {
     ANIM_PRESENT_FRAME(work);
   } while (++frame != 244 && (frame <= 16 || !(gKeysRepeat & (KEY_A | KEY_B))));
 
-  // The second stage: restore the backdrop, the scale callbacks and the
-  // display, free the spray as sparks (variant 0), and aim the five flame
+  // The second stage: restore the battle background, the scale callbacks and
+  // the display, free the spray as sparks (variant 0), and aim the five flame
   // columns: column i drops onto target i's x (halved for the wide canvas)
   // when there is one, otherwise onto a random x from 32 to 63.
   gBgScroll[1].x = savedBg1ScrollX;

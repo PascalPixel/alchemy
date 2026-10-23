@@ -55,7 +55,7 @@ gBattleAI_ActionWeights:
 gAbilityStaging:
 	.incbin "games/tbs/src/battle/actstat.table"
 	.balign 4, 0
-@ Ability presentations: effect id, phase and flags.
+@ Ability animations: animation id, phase and flags.
 	.global gAbilityAnimations
 gAbilityAnimations:
 	.incbin "games/tbs/src/battle/actflags.table"

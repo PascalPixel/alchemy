@@ -8,7 +8,7 @@
 #include "edition.h"
 #include "farcall.h"
 
-/// The status screen highlight's width in tiles on each ailment row: Down,
+/// The summary screen highlight's width in tiles on each status row: Down,
 /// Poison, Venom, Curse and Haunt.
 extern u8 gSummaryScreen_CursorWidths[];
 extern u8 gMenu_ListOrderItemsFirst[];
@@ -67,7 +67,7 @@ extern const char gDjinnMenu_TextLevel[];
 /// `/`, between the Djinn menu's numbers.
 extern const char gDjinnMenu_TextSlash[];
 #ifndef OWN_gObjectSystemWork
-/// Work slot 6: the object system's work (struct ObjectSystemWork).
+/// Heap slot 6: the object system's work (struct ObjectSystemWork).
 extern struct ObjectSystemWork *gObjectSystemWork;
 #endif
 /// The number text buffer: String_FormatHex writes eight digits and
@@ -75,10 +75,10 @@ extern struct ObjectSystemWork *gObjectSystemWork;
 /// terminator. The debug text printers and the Djinn preview's numbers
 /// (String_FormatNumberToHalfwords) read it.
 extern u8 gNumberBuffer[];
-/// Work slot 18: the selection screen while it runs.
+/// Heap slot 18: the selection screen while it runs.
 extern struct SelectionScreenWork *gSelectionScreenWork;
 #ifndef OWN_gTitleExtraOptionEnabled
-/// Read as a halfword: nonzero offers Battle on the title menu, when a file
+/// Read as a halfword: nonzero offers Battle on the main menu, when a file
 /// has any of game flags 48 to 127 set.
 extern u8 gTitleExtraOptionEnabled[];
 #endif
@@ -104,7 +104,7 @@ extern const u8 gMenu_HexDigitsString[];
 /// Italian.
 extern const u8 gMenu_HpString[];
 #ifndef OWN_Menu_LvString
-/// The status screen's level label: `Lv`; `Nv.` in Spanish, `Niv` in French.
+/// The summary screen's level label: `Lv`; `Nv.` in Spanish, `Niv` in French.
 extern const u8 gMenu_LvString[];
 #endif
 /// The four Djinn sprites, one per element from Venus (90 to 93), that
@@ -152,9 +152,9 @@ extern u8 gWorkspace_PageLabel[];
 extern u8 gWorkspace_RangeDash[];
 /// A debug window's title: `STATUS`.
 extern u8 gWorkspace_StatusTitle[];
-/// The option screen's slider colours (slidpal).
+/// The option menu's slider colours (slidpal).
 extern const u16 gOptionMenu_SliderPalette[];
-/// The option screen's slider, 32 by 8 (slider.4bpp32x8).
+/// The option menu's slider, 32 by 8 (slider.4bpp32x8).
 extern const u8 gOptionMenu_SliderTiles[];
 #ifndef OWN_Ability_GetData
 struct AbilityDefinition *Ability_GetData(s32 actionId);

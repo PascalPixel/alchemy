@@ -4,14 +4,14 @@
 
 #include "../psynergy_effects_internal.h"
 
-/// A Venus Djinni joins the party: it hops twice, spins and leaps, then
-/// shrinks away; the leader turns to the camera and plays animation 28 while
-/// 24 particles rise round it (FieldEffect_UpdateRadialSpread). Then 24 motes
+/// A Venus Djinni joins the party: it hops twice, spins and leaps, then shrinks
+/// away; the leader turns to the camera and plays animation 28 while 24
+/// particles rise round it (FieldEffect_UpdateRadialSpread). Then 24 motes
 /// spiral down onto the leader from 120 pixels above
 /// (FieldEffect_UpdateDescendingOrbitObject) and 8 sparks burst from the
 /// leader. Called by Djinn_JoinParty for a Venus Djinni, which then clears the
-/// Djinni's object event slot. Uses all 24 effect slots, tints the field
-/// palette green and fades it back at the end.
+/// Djinni's object event slot. Uses all 24 field effect sprites, tints the
+/// field palette green and fades it back at the end.
 void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   struct CaptureObject *leader;
   struct CaptureObject *djinni;
@@ -63,7 +63,7 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   position.z = djinni->z;
   Camera_WorldToScreen(&position);
 
-  // One rising particle a frame into each of the 24 effect slots.
+  // One rising particle a frame into each of the 24 field effect sprites.
   effect = effectWork->sprites;
   remaining = 23;
   do {
@@ -161,13 +161,13 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   FieldEffect_ClearActiveSlotsAndScheduleUpdates();
 }
 
-/// Effect slot callback of a Mercury Djinni's droplets: each falls from 100
-/// pixels above (on screen) to a random point 2 to 8 pixels round a spot 15
-/// to 20 pixels over the leader, at 3 to 6 pixels a frame, and
-/// where it lands splashes 12 pixels in a random direction, at half size,
-/// with SE_143. It then falls again 6 frames later, until
-/// FieldEffect_RunMercuryDjinnCapture sets MERCURY_DROPLET_LAST_FALL: its next
-/// splash is its last (enum MercuryDropletState).
+/// Field effect sprite callback of a Mercury Djinni's droplets: each falls from
+/// 100 pixels above (on screen) to a random point 2 to 8 pixels round a spot 15
+/// to 20 pixels over the leader, at 3 to 6 pixels a frame, and where it lands
+/// splashes 12 pixels in a random direction, at half size, with SE_143. It then
+/// falls again 6 frames later, until FieldEffect_RunMercuryDjinnCapture sets
+/// MERCURY_DROPLET_LAST_FALL: its next splash is its last (enum
+/// MercuryDropletState).
 void FieldEffect_UpdateRandomTargetParticle(struct FieldEffectSprite *effect) {
   struct Object *source;
   struct EffectVector position;

@@ -12,10 +12,10 @@
 @ C2: IwramCodeRecordsEnd:
 @ this unused packed-sample arithmetic suffix uses fp (r11) as an
 @ arithmetic and rotate operand, not a frame pointer.
-@ The final 152-byte preset record begins in the preceding object with
+@ The final 152-byte preset begins in the preceding object with
 @ four zeroing moves and a branch over this 132-byte suffix. The DMA loader
-@ copies the whole record; its known entry skips to the mixer continuation
-@ immediately after the copied record.
+@ copies the whole preset; its known entry skips to the mixer continuation
+@ immediately after the copied preset.
 .syntax unified
 .text
 	.arm

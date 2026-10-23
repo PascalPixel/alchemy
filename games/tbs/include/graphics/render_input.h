@@ -3,14 +3,14 @@
 
 /// @file
 /// The sprite renderer's inputs and outputs: render inputs, OAM attributes and
-/// render output lists.
+/// window sprite lists.
 
 #include "types.h"
 #include "static_assert.h"
 #include "edition.h"
 #include "farcall.h"
 
-/// A 16-byte record of a rectangle. In TBS it only reserves stack space in
+/// A 16-byte rectangle. In TBS it only reserves stack space in
 /// tbs-ja's glyph renderer; no TBS code reads its fields.
 struct RenderInput {
   u8 unused[8]; ///< no code names it
@@ -61,7 +61,7 @@ struct RenderOam {
   u16 high;        ///< not named by TBS code
 };
 
-/// WindowSprite.kind: what a render output owns besides itself, which
+/// WindowSprite.kind: what a window sprite owns besides itself, which
 /// WindowSprite_Release frees.
 enum WindowSpriteKind {
   WINDOW_SPRITE_GLYPH = 0,   ///< a glyph of the window's glyph sheet
@@ -69,10 +69,10 @@ enum WindowSpriteKind {
   WINDOW_SPRITE_PORTRAIT = 2 ///< a VRAM cache entry and a palette slot
 };
 
-/// A render output: a sprite in a window's output list (a character, an icon
+/// A window sprite: a sprite in a window's sprite list (a character, an icon
 /// or a portrait), with its VRAM cache slot and OAM attributes.
 struct WindowSprite {
-  struct WindowSprite *next; ///< the next output in its list
+  struct WindowSprite *next; ///< the next sprite in its list
   s8 kind;                   ///< an enum WindowSpriteKind
   s8 motion;                 ///< its UI_SPRITE_ motion; 0 while free
   u16 x;                     ///< screen pixels
@@ -87,7 +87,7 @@ struct WindowSprite {
   struct RenderOam oam;
 };
 
-/// A list of render outputs: its first output and the link to append after.
+/// A list of window sprites: its first sprite and the link to append after.
 struct WindowSpriteList {
   struct WindowSprite *head;
   struct WindowSprite **tailLink;

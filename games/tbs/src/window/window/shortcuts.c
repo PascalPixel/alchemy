@@ -13,7 +13,7 @@ struct TimedNoticeWork {
 };
 
 /// Shows the area's name in a window near the top of the screen for 90 frames.
-/// The event work owns the window and countdown until the scheduler closes it.
+/// The event work owns the window and countdown until a task closes it.
 /// The window is centred across the screen and in its top 10 rows, and opens
 /// at once; MapNamePopup_Update counts it down each frame in the main loop's
 /// pass.
@@ -90,7 +90,7 @@ UNUSED void OptionMenu_StepWindowHue(s32 keys) {
   gGameState.windowColor[0] = hue;
 }
 
-/// A Psynergy the debug shortcut picker lists: its owner and the Psynergy.
+/// A Psynergy the debug shortcut picker lists: its member and the Psynergy.
 /// The picker's list is a Alloc block of 448 of them.
 struct AbilityListEntry {
   u16 owner;   ///< the party member's unit id
@@ -99,7 +99,7 @@ struct AbilityListEntry {
 
 /// Lets the player pick two Psynergy shortcuts from all the party's Psynergy,
 /// showing each one's cost and description, and stores them in
-/// gGameState.firstShortcut and secondShortcut (owner << 10 | Psynergy).
+/// gGameState.firstShortcut and secondShortcut (member << 10 | Psynergy).
 /// This debug path seeds extra Psynergy before enumerating the party's
 /// shortcuts.
 void Debug_SelectAbilityPair(void) {
@@ -232,9 +232,9 @@ void Debug_SelectAbilityPair(void) {
       done = 1;
       break;
     }
-    // Persist both owner/ability pairs before releasing the picker resources.
-    // A, B and START all keep the picks. The cursor's output and VRAM entry
-    // go with its window.
+    // Persist both member/ability pairs before releasing the picker resources.
+    // A, B and START all keep the picks. The cursor's window sprite and VRAM
+    // entry go with its window.
     gGameState.firstShortcut = (list[first].owner << 10) | list[first].ability;
     gGameState.secondShortcut =
         (list[second].owner << 10) | list[second].ability;
@@ -246,9 +246,9 @@ void Debug_SelectAbilityPair(void) {
   Free(list);
 }
 
-/// Lists every Psynergy of the party's active members as (owner, Psynergy)
+/// Lists every Psynergy of the party's active members as (member, Psynergy)
 /// pairs in output and returns how many.
-/// output must hold every owner's nonzero action slots; there is no capacity
+/// output must hold every member's nonzero action slots; there is no capacity
 /// argument. Each member's list stops at its first empty slot.
 s32 Party_ListPsynergy(struct AbilityListEntry *output) {
   u16 ownerIds[14];
@@ -283,7 +283,7 @@ s32 Party_ListPsynergy(struct AbilityListEntry *output) {
 /// Finds the two Psynergy shortcuts in a list from Party_ListPsynergy, and
 /// returns their indexes (0 for one not found).
 /// A shortcut absent from the list falls back to entry 0.
-/// A shortcut is owner << 10 | action. The search runs over all 448 places
+/// A shortcut is member << 10 | action. The search runs over all 448 places
 /// of the list's block, past its last entry too.
 void Menu_FindShortcutEntries(u32 *firstIndex, u32 *secondIndex,
                               const struct AbilityListEntry *entries) {

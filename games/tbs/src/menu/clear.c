@@ -1,5 +1,5 @@
 /// @file
-/// The file select overlay: the Golden Sun logo, the start menu (new game,
+/// The main menu overlay: the Golden Sun logo, the start menu (new game,
 /// continue, copy and delete), the door to the Battle Arena and the transfer of
 /// a save's data, by link or as a password.
 
@@ -138,11 +138,11 @@ static s32 MainMenu_PackPasswordData(s32 unused, s32 mode, u8 *out);
 static s32 MainMenu_EncodePassword(u8 *data, s32 size, u8 *out);
 static u16 MainMenu_CalculatePasswordCrc16(u32 byteCount, u8 *data);
 
-/// The file select overlay's map tables, for the map loader: one warp
+/// The main menu overlay's map tables, for the map loader: one warp
 /// destination, the warp, and no object event templates or map events.
 u8 *MainMenu_GetWarpDests(void) { return (u8 *)gMainMenu_WarpDests; }
 
-/// The warp regions entry: the file select screen has no warp boxes.
+/// The warp regions entry: the main menu has no warp boxes.
 s32 MapData_ReturnZero(void) { return 0; }
 
 u8 *MainMenu_GetWarps(void) { return (u8 *)gMainMenu_Warps; }
@@ -203,7 +203,7 @@ static void MainMenu_LoadBackground(void) {
   }
 }
 
-/// The scheduler callback that fades BG0 and the sprites in over the logo:
+/// The task that fades BG0 and the sprites in over the logo:
 /// their weight rises by a sixteenth every two frames, and the callback
 /// removes itself at full weight, 32 frames on. MainMenu_Run schedules it
 /// once, when there is no save file to choose.
@@ -228,7 +228,7 @@ static void MainMenu_UpdateBlend(void) {
 }
 
 // clang-format off
-/// The first hidden code, entered on the file select screen and ended by 0:
+/// The first hidden code, entered on the main menu and ended by 0:
 /// Select three times. With it a new game names Garet, Ivan and Mia as well
 /// as Isaac (MainMenu_Run).
 const u16 gMainMenu_CodeSequence[] = {
@@ -253,8 +253,8 @@ const u16 gMainMenu_ExtraCodeSequence[] = {
   (((struct { u16 key[1]; } *)(sequence))->key)
 #endif
 
-/// The scheduler callback that follows the two hidden codes each frame while
-/// the file select screen runs. Each key must be held alone and then every
+/// The task that follows the two hidden codes each frame while
+/// the main menu runs. Each key must be held alone and then every
 /// key released; any other key starts that code over. A finished code sets
 /// its unlocked flag, which stays set, and plays SE_110.
 static void MainMenu_CheckButtonCodes(void) {
@@ -407,7 +407,7 @@ struct SaveLinkGreeting {
 /// at one site (its FAKEMATCH tag).
 s32 __divsi3(s32, s32);
 
-/// The overlay's initialize entry: the file select screen. At warp destination
+/// The overlay's initialize entry: the main menu. At warp destination
 /// 2, after the credits, it offers to save the cleared game and goes on to the
 /// world map. Otherwise it loops on the start menu until the player starts a
 /// new game, continues a file or enters the Battle Arena; copying, erasing

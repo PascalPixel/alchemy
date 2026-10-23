@@ -12,7 +12,7 @@ struct Spark {
 };
 
 /// The star field's work: its sprite sheet, 16 sparks and 3 rings. It lives
-/// in the HEAP_SLOT_BATTLE_ANIM work slot from
+/// in the HEAP_SLOT_BATTLE_ANIM heap slot from
 /// ElementGlow_InitializeStarField to
 /// ElementGlow_ReleaseVramAndHeapBlocks, the 45 frames of a cast's glow
 /// (ElementGlow_Play, GLOW_STAR_FIELD). ElementGlow_UpdateStarField draws from
@@ -28,14 +28,14 @@ struct SparkWork {
   s32 frames; ///< frames drawn; new sparks start only in the first 25
   s32 ready;  ///< 1 when a drawn frame waits for ElementGlow_UploadStarField
   /// Where BG2 shows the 128 by 128 canvas: ElementGlow_Play
-  /// keeps it on the unit, as an effect's tracked canvas would be.
+  /// keeps it on the unit, as an animation's tracked canvas would be.
   struct BattleCanvasOrigin canvasOrigin;
 };
 
 STATIC_ASSERT(offsetof(struct SparkWork, canvasOrigin) ==
               offsetof(struct BattleAnimWork, trackedCanvas.origin));
 
-/// A blitter loaded into a work slot: draws a width by height picture at
+/// A blitter loaded into a heap slot: draws a width by height picture at
 /// (x, y) on the canvas.
 typedef void (*DrawFunc)(void *dest, u8 *src, s32 x, s32 y, s32 width,
                          s32 height);
@@ -45,8 +45,8 @@ typedef void (*DrawFunc)(void *dest, u8 *src, s32 x, s32 y, s32 width,
 // out, a spent one starts again on a ring of random radius during the first
 // 25 frames, and the three rings move outward through four frames. Sets
 // SparkWork.ready for ElementGlow_UploadStarField. Runs each frame as a
-// scheduler callback added by ElementGlow_InitializeStarField.
-// UB: the scheduler invokes a void callback. Plain void changes the native
+// task added by ElementGlow_InitializeStarField.
+// UB: the task runner invokes a void callback. Plain void changes the native
 // return register from r1 to r0 in tbs-en; matching builds keep the old type.
 #ifdef UBFIX
 void ElementGlow_UpdateStarField(void) {
@@ -164,8 +164,8 @@ s32 ElementGlow_UpdateStarField(void) {
 
 // Copies the canvas, once a frame is drawn, to BG2's tiles in character block
 // 1 through PaletteFade_BackupAndScaleThreeQuarters, and clears
-// SparkWork.ready. Runs each frame as a scheduler callback added by
-// ElementGlow_InitializeStarField. UB: the scheduler invokes a void callback.
+// SparkWork.ready. Runs each frame as a task added by
+// ElementGlow_InitializeStarField. UB: the task runner invokes a void callback.
 // Plain void changes the native return register from r1 to r0 in tbs-en;
 // matching builds keep the old type.
 #ifdef UBFIX
@@ -184,7 +184,7 @@ u32 ElementGlow_UploadStarField(void) {
   }
 }
 
-// The two callbacks as the scheduler takes them: cast to TaskFunc
+// The two callbacks as the task runner takes them: cast to TaskFunc
 // where the native types return a value.
 #ifdef UBFIX
 #define STAR_FIELD_UPDATE_CALLBACK ElementGlow_UpdateStarField
@@ -316,7 +316,7 @@ s32 ElementGlow_ReleaseVramAndHeapBlocks(s32 unused) {
 /// Called to darken the background's palette by
 /// BattleBackground_SetPaletteLevel, BattleBackground_Load,
 /// ElementGlow_Play, the item staging (staging.c) and the
-/// effects' canvas (canvas.c).
+/// battle animations' canvas (canvas.c).
 s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale,
                                 s32 count) {
   s32 remaining;
@@ -443,7 +443,7 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
     }
     BattleAnim_EndElementStreaksFar();
   } else if (mode == GLOW_PILLAR) {
-    // The pillar and the burst run an effect with the unit as its actor and
+    // The pillar and the burst run an animation with the unit as its actor and
     // only target.
     launch.effect.prelude = 0;
     launch.effect.kind = element;
@@ -470,7 +470,7 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
 /// Copies the background's saved palette back undarkened, as the star field
 /// of ElementGlow_Play leaves it dark.
 /// Called by BattleStaging_HideField and
-/// BattleStaging_RunPsynergyCast once the effect has played.
+/// BattleStaging_RunPsynergyCast once the animation has played.
 void BattleBackground_RestorePalette(void) {
   BattleBackground_SetPaletteLevel(0, 0);
 }

@@ -19,10 +19,10 @@ void MapGrid_SetViewBounds(s32 minX, s32 minY, s32 maxX, s32 maxY) {
   grid->maxY = maxY;
 }
 
-// Scheduler callback: moves the zoom one step from its previous value toward
+// Task: moves the zoom one step from its previous value toward
 // its target, and removes itself on the last step. It waits while the camera
 // is paused.
-// The scheduler calls void(void). Plain void changes the native return from
+// The task runner calls void(void). Plain void changes the native return from
 // pop {r1}; bx r1 to pop {r0}; bx r0 (two instructions in tbs-en).
 #ifdef UBFIX
 void FieldEffect_StepRatioTransition(void) {

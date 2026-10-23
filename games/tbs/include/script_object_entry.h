@@ -8,7 +8,7 @@
 #include "types.h"
 #include "static_assert.h"
 
-/// A field object as the script commands' overlap checks see it.
+/// An object as the script commands' overlap checks see it.
 struct ScriptObjectEntry {
   void *data;       ///< Object.script; null for a free object
   u16 scriptCursor; ///< Object's step; not named through this struct

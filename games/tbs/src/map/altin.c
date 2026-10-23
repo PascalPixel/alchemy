@@ -946,7 +946,7 @@ static void Spray_Drift(union FieldObject *fieldObject) {
   }
 }
 
-/// Scheduler task while the water beast spits: every fourth frame a spray
+/// Task while the water beast spits: every fourth frame a spray
 /// particle starts from its spout, living 20 frames.
 static void Beast_SpawnSpray(void) {
   union FieldObject *spray;

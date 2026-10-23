@@ -9,7 +9,7 @@
 //   down, and on the hit bounce apart while a ring of flashes rises from the
 //   user.
 // - The blade rain drops 16 swords, one every 4 frames, slanting in on the
-//   first target and sticking in the ground. No effect table entry points at
+//   first target and sticking in the ground. No animation table entry points at
 //   it.
 // - The element pillar (BattleAnim_RunElementPillar) stands a mirrored pillar
 //   of light at a unit's feet while motes spiral up around it.
@@ -20,7 +20,7 @@
 // - BattleAnim_RunShatteringOpening shatters a picture into 33 pieces as a
 //   battle opens.
 // - The element streaks (BattleAnim_StartElementStreaks) draw lines of light
-//   closing in on a unit from a scheduler callback while the battle runs on.
+//   closing in on a unit from a task while the battle runs on.
 //
 // The element runners, the streaks and the shattering opening are reached
 // from the battle through far calls, not the handler table, and allocate
@@ -68,7 +68,7 @@ void BattleAnim_RunDeathPlunge(struct BattleAnimArgs *effect) {
   Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
   // The run: the user moves to 90% of the way to the target, with an
   // acceleration of 2 pixels a frame per frame and a top speed of 8 pixels a
-  // frame, and the effect waits 20 frames for it.
+  // frame, and the animation waits 20 frames for it.
   first = GetBattleObjectSlotFar(work->effect->user);
   second = GetBattleObjectSlotFar(work->effect->targets[0]);
   user = first->object;
@@ -382,7 +382,7 @@ void BattleAnim_RunElementPillar(struct BattleAnimArgs *effect) {
   camera = gCameraWork;
   work->effect = effect;
   BattleAnim_StartCanvasLayer(0);
-  // Palette_StepFadeTransfer darkens the backdrop for 24 frames.
+  // Palette_StepFadeTransfer darkens the battle background for 24 frames.
   work->fadeFrames = 24;
   work->fadeStep = 0;
   // The narrow canvas, 12/16 over all of the background.
@@ -532,11 +532,12 @@ void BattleAnim_RunElementPillar(struct BattleAnimArgs *effect) {
 #define SHATTERING_OPENING_DISC_X 96  ///< the centre of the opening disc
 #define SHATTERING_OPENING_DISC_Y 60  ///< the centre of the opening disc
 
-/// As a battle on the Venus aerie storm backdrop opens, the screen turns white
-/// and a grey disc grows from (96, 60) by 32 pixels a frame while the
-/// TileAnimationMask picture breaks into 33 pieces that fly apart and fall;
+/// As a battle opens on the Venus aerie storm battle background, the screen
+/// turns white and a grey disc grows from (96, 60) by 32 pixels a frame while
+/// the TileAnimationMask picture breaks into 33 pieces that fly apart and fall;
 /// background palettes 6 to 13 then ease from white back to the battle
-/// backdrop's colours, and from frame 51 32 flashes rise. Runs for 128 frames.
+/// battle background's colours, and from frame 51 32 flashes rise. Runs for 128
+/// frames.
 ///
 /// Called through BattleAnim_RunShatteringOpeningFar by
 /// BattleTransition_Run, as a battle opens. Allocates and
@@ -544,9 +545,9 @@ void BattleAnim_RunElementPillar(struct BattleAnimArgs *effect) {
 /// itself, as BattleAnim_StartCanvasLayer would; draws the disc in
 /// Ram_MapGridCellBuffer and copies it over 0x7800 bytes of BG character block
 /// 2; writes background colours 1 to 63 and palettes 6 to 13; reloads the
-/// battle backdrop on BG1 on frame 5, and on its way out restores gBgScroll[1],
-/// starts the battle's palette fade to BATTLE_BACKGROUND_ZOOMED and queues a
-/// DISPCNT without BG1.
+/// battle background on BG1 on frame 5, and on its way out restores
+/// gBgScroll[1], starts the battle's palette fade to BATTLE_BACKGROUND_ZOOMED
+/// and queues a DISPCNT without BG1.
 ///
 /// effect : only effect->actors[0], the unit that flashes, is read.
 void BattleAnim_RunShatteringOpening(struct BattleAnimArgs *effect) {
@@ -601,8 +602,8 @@ void BattleAnim_RunShatteringOpening(struct BattleAnimArgs *effect) {
                                              battle->background, 0);
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
-  // Aim the camera at the field's centre at 100% zoom, lining the backdrop's
-  // perspective plane up with it.
+  // Aim the camera at the field's centre at 100% zoom, lining the battle
+  // background's perspective plane up with it.
   BattleCamera_SetViewFar(0, 0, 0, 100);
   view->secondMode = BATTLE_BACKGROUND_NONE;
   ANIM_SET_CANVAS_AFFINE();
@@ -663,7 +664,7 @@ void BattleAnim_RunShatteringOpening(struct BattleAnimArgs *effect) {
   // The disc's mask in Ram_MapGridCellBuffer starts as colour 1 everywhere (the
   // copy of the screen into it is overwritten at once), and background
   // palettes 6 to 13 turn white. BG1's scroll is saved and the battle's
-  // background view marked busy while the backdrop is replaced.
+  // background view marked busy while the battle background is replaced.
   Iwram_CopyWords(Ram_MapGridCellBuffer, (void *)BG_CHAR_BLOCK(2), 0x7800);
   Iwram_FillWords(Ram_MapGridCellBuffer, 0x7800, 0x01010101);
   view->busy = 1;
@@ -692,7 +693,7 @@ void BattleAnim_RunShatteringOpening(struct BattleAnimArgs *effect) {
       Sound_PlaySongFar(SE_149);
     if (frame == 5)
       Sound_PlaySongFar(SE_145);
-    // Frame 5: bring the battle backdrop back on BG1. Level -1 leaves
+    // Frame 5: bring the battle background back on BG1. Level -1 leaves
     // palettes 6 to 13 white for the fade below, which steps them towards
     // battle->palette, the colours the load fills.
     if (frame == 5) {
@@ -701,7 +702,7 @@ void BattleAnim_RunShatteringOpening(struct BattleAnimArgs *effect) {
     }
 
     // From frame 8, move every colour of palettes 6 to 13 one step towards
-    // the battle backdrop's colour; from white, 31 frames bring every
+    // the battle background's colour; from white, 31 frames bring every
     // channel home.
     if (frame > 7) {
       u16 *color;
@@ -887,8 +888,8 @@ void BattleAnim_RunShatteringOpening(struct BattleAnimArgs *effect) {
     ANIM_END_FRAME(work);
   }
 
-  // Finish: restore the unit, BG1's scroll and the backdrop's palette fade,
-  // then free the slots in the reverse of the order they were taken.
+  // Finish: restore the unit, BG1's scroll and the battle background's palette
+  // fade, then free the slots in the reverse of the order they were taken.
   ANIM_RELEASE_BLITTERS();
   Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);
   ObjectGroup_UpdateMembers(work->effect->targets[0], -1, POSE_STANDING, -1, 0);
@@ -908,7 +909,7 @@ void BattleAnim_RunShatteringOpening(struct BattleAnimArgs *effect) {
 }
 
 /// One streak of light of the element streak burst, laid over the same
-/// 28-byte records as PARTICLES: a line along a randomly turned axis from
+/// 28-byte entries as PARTICLES: a line along a randomly turned axis from
 /// tail to head, in distance from the centre.
 struct Streak {
   s32 head;     ///< the head's distance from the centre, 48 to 63 at first
@@ -947,8 +948,8 @@ void BattleAnim_RunElementBurst(struct BattleAnimArgs *effect) {
   sheet = AllocHeapSlot(HEAP_SLOT_BATTLE_SHEET, 0x60e);
   work->effect = effect;
   BattleAnim_StartCanvasLayer(0);
-  // Setup, as for the element pillar: the backdrop darkens for 24 frames,
-  // and the narrow canvas goes 12/16 over all of the background.
+  // Setup, as for the element pillar: the battle background darkens for 24
+  // frames, and the narrow canvas goes 12/16 over all of the background.
   work->fadeFrames = 24;
   work->fadeStep = 0;
   REG_BLDALPHA = BLEND_ALPHA(12, 16);
@@ -1066,7 +1067,7 @@ void BattleAnim_RunElementBurst(struct BattleAnimArgs *effect) {
 /// from frame i / 4) as lines three pixels thick that shrink 4 pixels a
 /// frame towards the centre of the canvas, a little below its middle.
 ///
-/// Runs each frame as a scheduler callback added by
+/// Runs each frame as a task added by
 /// BattleAnim_StartElementStreaks and removed by
 /// BattleAnim_EndElementStreaks. Counts work->frame, keeps the streaks in
 /// Ram_MapGridCellBuffer, draws into the canvas through
@@ -1135,15 +1136,16 @@ void BattleAnim_DrawStreaks(void) {
 }
 
 /// Starts the element streak burst and returns at once: opens the canvas and
-/// schedules BattleAnim_DrawStreaks with a canvas that darkens each frame.
+/// adds BattleAnim_DrawStreaks as a task, with a canvas that darkens each
+/// frame.
 ///
 /// Called through BattleAnim_StartElementStreaksFar by
 /// ElementGlow_Play (GLOW_STREAKS), which keeps the canvas on
 /// its unit and ends the burst with BattleAnim_EndElementStreaks. Allocates
 /// the work and canvas slots, which the end frees; loads the element's
 /// colours over the first 64 of the background palette; adds
-/// BattleAnim_DrawStreaks and the canvas transfer to the scheduler, beside
-/// the backdrop fade BattleAnim_StartCanvasLayer adds.
+/// BattleAnim_DrawStreaks and the canvas transfer as tasks, beside
+/// the battle background's palette fade BattleAnim_StartCanvasLayer adds.
 ///
 /// element: the element (enum Element), which picks the palette: Venus
 ///          yellow, Mercury blue, Mars red, Jupiter violet, and a dusty grey
@@ -1193,7 +1195,7 @@ void BattleAnim_StartElementStreaks(s32 element) {
 ///
 /// Called through BattleAnim_EndElementStreaksFar by
 /// ElementGlow_Play. Unlike BattleAnim_EndCanvasLayer it leaves
-/// BG2's settings and the backdrop's colours as they are.
+/// BG2's settings and the battle background's colours as they are.
 void BattleAnim_EndElementStreaks(void) {
   Task_Remove(BattleAnim_DrawStreaks);
   Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);

@@ -18,8 +18,8 @@
 ///   0 to 159   : a whirlwind rises over the field and lifts the targets,
 ///                spinning them round it and drawing them in, while dust
 ///                spirals up;
-///   160        : the backdrop becomes the violet sky, and a 3x3 block of
-///                nine objects appears and sways;
+///   160        : the battle background becomes the violet sky, and a 3x3 block
+///                of nine objects appears and sways;
 ///   256 to 329 : motes gather into the middle of the block;
 ///   330 to 372 : four comets shoot out of it, 12 frames apart, each with a
 ///                ring of sparks, striking the targets on frames 334, 347,

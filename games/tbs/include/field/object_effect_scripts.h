@@ -2,7 +2,7 @@
 #define ALCHEMY_OBJECT_EFFECT_SCRIPTS_H
 
 /// @file
-/// The object scripts effects give their particles and fragments.
+/// The object scripts field effects give their particles and fragments.
 
 #include "types.h"
 

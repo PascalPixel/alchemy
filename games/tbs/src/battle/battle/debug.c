@@ -26,7 +26,7 @@
 /// One row of the debug party presets (presets.tsv, built into the ROM's
 /// read-only data): a party member, the level to raise them to, the Djinn of
 /// each element to give them, the items to equip and up to two abilities to
-/// teach. A row whose owner is -1 ends a preset. Read only by
+/// teach. A row whose member is -1 ends a preset. Read only by
 /// DebugParty_LoadPreset.
 struct DebugPartyEntry {
   s8 owner;                      ///< the party member, or DEBUG_PRESET_END
@@ -47,7 +47,7 @@ extern struct DebugPartyEntry gDebug_PartyPresets[];
 /// Each member is raised to the row's level, given the row's Djinn (Set, in
 /// order of their numbers across the party), the row's abilities, and an
 /// emptied inventory holding the row's items, each equipped. Called by
-/// DebugBattle_RunMenu and, through its far stub, by the link lobby's
+/// DebugBattle_RunMenu and, through its far stub, by the Battle Arena's
 /// BattleArena_ChooseDebugPartyPreset. Changes the active party and each
 /// member's level, Djinn, abilities and inventory.
 /// Returns 1 when the table ends before that preset, 0 otherwise.

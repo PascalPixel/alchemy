@@ -42,7 +42,7 @@ struct ArticleTable {
 /// The German, Spanish, French and Italian form: forms 0 and 4 take no article,
 /// the others the class's article (in Spanish, form bit 3 asks for the
 /// indefinite article), capitalised at the start of a sentence.
-/// The write position wraps in the decoded-text ring; language grammar remains
+/// The write position wraps in the text buffer; language grammar remains
 /// separate.
 u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
                               u16 *entries, s32 articleForm, s32 plural,
@@ -143,7 +143,7 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
 /// The English form: form 1 (or 3 with a single item) takes "a" or "an" (by the
 /// name's first letter unless its class says otherwise), and form 2 (or 3 with
 /// several) adds the plural "s" or "es".
-/// The write position wraps in the decoded-text ring; language grammar remains
+/// The write position wraps in the text buffer; language grammar remains
 /// separate.
 u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
                               u16 *entries, s32 articleForm, s32 plural,
@@ -272,7 +272,7 @@ enum {
   /// The article class of the name it starts, in item and class names, which
   /// Message_AppendArticleName reads and drops.
   MESSAGE_ARTICLE_CLASS = 29,
-  /// Kept as TEXT_END_ALT, which the channel ends as it ends TEXT_END.
+  /// Kept as TEXT_END_ALT, which the printer ends as it ends TEXT_END.
   MESSAGE_END_NOW = 30,
 };
 
@@ -310,7 +310,7 @@ extern u8 *gLocalizedWord_Numbers[];
 /// again. Argument codes take their values from the argument table
 /// (MessageArgument_Push), and clear empties the table afterwards. Names,
 /// numbers and articles are written out; style codes are kept with their
-/// operands for the message channel to run.
+/// operands for the text printer to run.
 /// The message is written at WindowWork.textBufferEnd, which it leaves just
 /// past the message's terminator, and is cut at the ring's length. The decoder
 /// routine is copied into heap slot TEXT_WORK_BLOCK for the call and freed at
@@ -842,7 +842,7 @@ s32 Message_Decode(s32 script, s32 clear) {
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 
 /// The Japanese form: Japanese has no articles, so the name is copied as it is.
-/// The write position wraps in the decoded-text ring; language grammar remains
+/// The write position wraps in the text buffer; language grammar remains
 /// separate.
 extern __inline__ u32 Message_AppendArticleName(s32 mode, u16 *name,
                                                 u32 writePosition, u16 *entries,

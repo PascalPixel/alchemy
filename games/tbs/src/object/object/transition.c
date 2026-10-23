@@ -1,5 +1,5 @@
 /// @file
-/// Window transitions and dissolves between maps.
+/// Screen transitions between maps: window transitions and dissolves.
 // Part of object.c.
 
 #include "../object_internal.h"
@@ -9,7 +9,7 @@
 /// copy the rest into WIN0H and WIN1H one word each HBlank, so that every line
 /// of the screen gets its own window edges.
 ///
-/// A scheduler callback (priority 0x480) that ScreenTransition_Start,
+/// A task (priority 0x480) that ScreenTransition_Start,
 /// ScreenTransition_Finish and ScreenTransition_InitializeBattleEffectState
 /// add for a window transition, and ScreenTransition_UpdateScanlineTable
 /// removes when it ends.
@@ -67,7 +67,7 @@ extern struct TransitionShape gScreenTransition_Shapes[];
 /// whether the transition opens or closes; its low 5 bits are its progress.
 /// The mode is an enum WindowTransitionMode.
 ///
-/// A scheduler callback (priority 0xc80), added with
+/// A task (priority 0xc80), added with
 /// FieldEffect_StartWindowHBlankDma; it removes both and stops DMA 0 when a
 /// transition with no next mode ends. Writes the hidden page of the
 /// transition state (HEAP_SLOT_SCREEN_TRANSITION) and then flips state->page.
@@ -582,7 +582,7 @@ void ScreenTransition_SuspendCallbacks(void) {
   Task_SuspendAll(&FieldEffect_StartWindowHBlankDma);
 }
 
-/// Allocates the display transition state (HEAP_SLOT_SCREEN_TRANSITION) and
+/// Allocates the screen transition state (HEAP_SLOT_SCREEN_TRANSITION) and
 /// clears it.
 ///
 /// Called by ScreenTransition_Start and ScreenTransition_Finish for every
@@ -604,8 +604,8 @@ struct ScreenTransitionState *ScreenTransition_AllocateAndClearState(void) {
 ///
 /// Called by Map_Run to fade a map in with work->transition and
 /// work->transitionFrames, and by FieldScript_StartScreenTransition for map
-/// scripts. Every style but the fades adds a scheduler callback (and the
-/// centre line the HBlank handler, IRQ 1) that runs the transition; every kind
+/// scripts. Every style but the fades adds a task (and the centre
+/// line the HBlank handler, IRQ 1) that runs the transition; every kind
 /// ORs the map's display bits into DISPCNT through the I/O write queue.
 void ScreenTransition_Start(s32 mode, s32 frames) {
   struct ScreenTransitionWin *display;
@@ -798,7 +798,7 @@ void DisplayState_ClearFlags(s32 clearBg3, s32 clearBg2, s32 clearBg1) {
 /// Each frame of the centre-line transition: moves the value toward its end
 /// and sets the two lines where the screen switches between shown and blank.
 ///
-/// A scheduler callback added by ScreenTransition_Start and
+/// A task added by ScreenTransition_Start and
 /// ScreenTransition_Finish for the centre line with variant 0; when its run
 /// ends it removes itself and the HBlank handler.
 void ScreenTransition_Update(void) {
@@ -952,7 +952,7 @@ again:
 /// value's two pixels, so over fewer than 32 frames some values, and their
 /// pixels, are skipped, and over more some repeat.
 ///
-/// The dissolve's scheduler callback (from ScreenTransition_Start and
+/// The dissolve's task (from ScreenTransition_Start and
 /// ScreenTransition_Finish, and ScreenTransition_InitializeState). Queues the
 /// changed tile into character block 0 each frame.
 void ScreenTransition_UpdateFrame(void) {

@@ -7,7 +7,7 @@
 // - Planet Diver flashes the user, throws it into the air, turns it into a
 //   ball of fire that falls on the target and bursts into 256 chips that
 //   bounce on the ground. The impact chips reuse the map grid buffer that other
-//   effects address as an array of Particle records.
+//   animations address as an array of Particles.
 // - The closing skulls (Haunt) gather around each target in turn, eight
 //   skulls scattered in 3D that step towards a point above the target while
 //   the group spins. They take 64 slots of PARTICLES per target, of which 8
@@ -15,12 +15,12 @@
 // - The orbiting spirals circle above each target in turn, four of them a
 //   quarter turn apart.
 //
-// The skulls and spirals ripple the effect layer throughout, through the
+// The skulls and spirals ripple the animation layer throughout, through the
 // HBlank DMA of BG2's affine origin.
 
 // The leap that falls as a ball of fire.
 
-/// One chip of the impact, laid over the same 28-byte records as PARTICLES
+/// One chip of the impact, laid over the same 28-byte entries as PARTICLES
 /// but with its velocities in other places than struct Particle's.
 struct ImpactChip {
   s32 x;         ///< canvas position, 16.16 fixed point
@@ -250,7 +250,7 @@ void BattleAnim_RunPlanetDiver(struct BattleAnimArgs *effect) {
 /// Around each target, 32 frames apart, eight skulls appear one every 4 frames,
 /// scattered up to 64 pixels away, and close in on a point 20 pixels above the
 /// target while the group spins; the target flashes 32 frames into its turn,
-/// and a skull that reaches the centre is no longer drawn. The effect layer
+/// and a skull that reaches the centre is no longer drawn. The animation layer
 /// ripples throughout. PARTICLES holds 64 skulls per target, of which the first
 /// 8 are used.
 ///
@@ -386,7 +386,7 @@ void BattleAnim_RunHaunt(struct BattleAnimArgs *effect) {
 ///
 /// Abilities: none (BATTLE_ANIM_UNUSED_ORBITING_SPIRALS).
 ///
-/// The effect layer ripples throughout, through
+/// The animation layer ripples throughout, through
 /// BattleAnim_ArmBg2AffineHBlankDma, which it adds and removes. It never lets
 /// the battle show damage, and leaves the targets' flash timers alone.
 void BattleAnim_RunUnusedOrbitingSpirals(struct BattleAnimArgs *effect) {

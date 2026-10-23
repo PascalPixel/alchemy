@@ -26,7 +26,7 @@ enum {
 /// timer 3 interrupt handlers, clears gSerialWork and points its packet
 /// buffers into its storage, clears the bulk transfer state and sets
 /// gSerialExchangeActive, which starts the per-frame exchange. Called by the
-/// link lobby, the save menu's link transfer and the link test, and through
+/// Battle Arena, the file menu's link transfer and the link test, and through
 /// the far-call table.
 void SerialRuntime_Initialize(void) {
   u32 interruptEnable;
@@ -443,7 +443,7 @@ receive_loop:
 }
 
 /// Clears gSerialExchangeActive, which stops the per-frame exchange, and
-/// removes the link interrupt handlers. Called when the link lobby, the save
+/// removes the link interrupt handlers. Called when the Battle Arena, the file
 /// menu's transfer or a link battle ends.
 void SerialRuntime_RemoveIrqHandlers(void) {
   gSerialExchangeActive = 0;
@@ -466,7 +466,7 @@ u32 SerialRuntime_WaitForStatusMask(s32 mask) {
 /// Starts sending `size` bytes from `source` to the partner in 20-byte blocks:
 /// sets the send source, size and block sequence that
 /// SerialRuntime_StepBlockTransfer works from. Called by the link battle,
-/// the link lobby and the save menu's transfer. Returns -1 when a send is
+/// the Battle Arena and the file menu's transfer. Returns -1 when a send is
 /// already running, 0 otherwise.
 ///
 /// `size` must be a multiple of 20: it falls by 20 a block, and the send ends
@@ -543,7 +543,7 @@ void SerialRuntime_WaitForTransfers(void) {
 }
 
 /// Returns bit 0 while a send runs and bit 1 while a receive runs. The link
-/// battle and lobby poll it between frames.
+/// battle and the Battle Arena poll it between frames.
 s32 SerialRuntime_GetActiveTransfers(void) {
   s32 flags;
 

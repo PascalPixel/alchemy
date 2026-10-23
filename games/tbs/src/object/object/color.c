@@ -1,5 +1,5 @@
 /// @file
-/// The colour buffer: palettes moved toward target colours.
+/// The palette fade: palettes moved toward target colours.
 // Part of object.c.
 
 #include "../object_internal.h"
@@ -33,11 +33,11 @@ void PaletteFade_CalculateSteps(s16 *source, s16 *target, s16 *step,
   }
 }
 
-/// Each frame (unless FLAG_PALETTE_BLEND_HELD is set): moves the colour buffer
+/// Each frame (unless FLAG_PALETTE_BLEND_HELD is set): moves the palette fade
 /// one step toward its target, packs it into RGB555 and queues it for the BG
 /// and OBJ palettes. The packed colours are double-buffered: work->page names
 /// the page the queued DMA reads, and the other is written. Registered by
-/// PaletteFade_Initialize as a scheduler callback; the menus clear
+/// PaletteFade_Initialize as a task; the menus clear
 /// and set FLAG_PALETTE_BLEND_HELD around it (menu/common.c).
 void PaletteFade_Update(void) {
   struct PaletteFade *work = gPaletteFadeWork;
@@ -96,12 +96,13 @@ extern u16 gColorBuffer_ChannelCurve[];
 extern u16 gColorBuffer_ChannelCurveLight[];
 extern u16 gColorBuffer_ChannelCurveContrast[];
 
-/// Builds colours for the colour buffer from the palette src into dst, which
+/// Builds colours for the palette fade from the palette src into dst, which
 /// holds each colour as B, G and R channels shifted up 10 bits. mode below
 /// 0x8000 is one colour for all; PALETTE_TINT_FROM_SOURCE the backdrop
-/// colour; the other PALETTE_TINT_* values transform each colour; any
-/// other value is the address of a ready buffer to copy. half: 0 for all 448
-/// colours, 1 for the BG's 224, 2 for the OBJ's 224. Called by the
+/// colour; the other PALETTE_TINT_* values tint each colour; any
+/// other value is the address of a ready buffer to copy. half is the palette
+/// selection: PALETTES_ALL for all 448 colours, PALETTES_BG for the BG's 224,
+/// PALETTES_OBJECTS for the OBJ's 224. Called by the
 /// ApplyColorTo functions below, PaletteFade_Initialize and the
 /// weather effects (psynergy_effects/weather.c).
 void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
@@ -348,7 +349,7 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
       *dst++ = gColorBuffer_ChannelCurve[blendedRed];
     }
   } else if (mode & PALETTE_TINT_SPLIT) {
-    // The colours unchanged, as the default transform writes them.
+    // The colours unchanged, as the default tint writes them.
     for (i = 0; i < colorCount; i++) {
       color = *src++;
       dst[i * 3 + 0] = color & 0x7c00;
@@ -365,7 +366,7 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
   }
 }
 
-/// Sets up the colour buffer (gPaletteFadeWork) from the BG and OBJ palettes
+/// Sets up the palette fade (gPaletteFadeWork) from the BG and OBJ palettes
 /// and starts updating the palettes from it each frame. Called by
 /// Map_Run on map load.
 void PaletteFade_Initialize(void) {
@@ -381,7 +382,7 @@ void PaletteFade_Initialize(void) {
   Task_Add(PaletteFade_Update, 0xc8f);
 }
 
-/// Stops the colour buffer and frees it. Reached only through a bare far-call
+/// Stops the palette fade and frees it. Reached only through a bare far-call
 /// veneer; no ☀️ code names it.
 void PaletteFade_Release(void) {
   Task_Remove(&PaletteFade_Update);
@@ -389,7 +390,7 @@ void PaletteFade_Release(void) {
 }
 
 /// Sets the colours the buffer moves toward (see PaletteFade_Build); does
-/// nothing without a colour buffer. Called by the field Psynergy effects,
+/// nothing without a palette fade. Called by the field Psynergy effects,
 /// the map transitions, the shop cursor, and map overlays as
 /// Engine_ColorBufferApplyTarget.
 void PaletteFade_SetTarget(s32 mode, s32 half) {

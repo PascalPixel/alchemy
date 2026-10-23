@@ -38,7 +38,7 @@ STATIC_ASSERT(sizeof(struct FontGlyph) == (2 + FONT_GLYPH_ROWS * 2));
 /// The main font, from character code 32: its glyphs in code order.
 extern const struct FontGlyph gFont_Glyphs[];
 
-/// The buffers an icon (command, item, Psynergy or condition) or a portrait is
+/// The buffers an icon (command, item, Psynergy or status) or a portrait is
 /// decoded through, in HEAP_SLOT_GLYPH_TRANSFER for one build: Icon_Decode
 /// unpacks encoded into input, then expands input into tiles.
 typedef struct {

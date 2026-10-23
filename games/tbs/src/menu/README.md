@@ -12,8 +12,8 @@ pillar, closes the menu instead, so that the field can use it.
 
 The menu code runs those four screens, the member chooser the [maps](../../glossary.md#map) of
 Colosso, Tolbi's tournament, open, and three [overlays](../../glossary.md#overlay) that are mostly menus:
-the title screen, the file select screen and the lobby of the Battle Arena,
-where parties battle each other over a link cable or fight monsters.
+the title screen, the main menu and the Battle Arena, where
+parties battle each other over a link cable or fight monsters.
 [Menus, windows and shops](../../menus.md#field-menu-screens) explains in
 brief how the field menu opens a screen, how the field is held still behind
 it, how Start closes a screen from any depth and how Psynergy and items meant
@@ -45,13 +45,13 @@ stay separate structs rather than one is a question of [matching](../../glossary
 has to compile to [the original](../../glossary.md#the-original)'s instructions, and
 [Matching](../MATCHING.md) covers how. The work has room for eight party members
 (`ownerIds`) and 32 listed entries (`entryIcons`, `items`). The counters take
-the same slot as `struct ShopWork`, and the save screen uses it for its
+the same heap slot as `struct ShopWork`, and the file menu uses it for its
 [sprites](../../glossary.md#sprite-and-oam).
 
-The Djinn and Status screens also take short-lived blocks with no slot from
-the heap's alternate pool: the
+The Djinn and summary screens also take short-lived blocks with no heap slot,
+EWRAM first: the
 Djinn screen's backdrop (`struct DjinnMenuBackdrop`), which saves the field
-tiles and palettes it covers, and the Status screen's copies of the first two
+tiles and palettes it covers, and the summary screen's copies of the first two
 background palettes and of the window tiles it draws over. Each puts them
 back and frees them before returning.
 
@@ -121,7 +121,7 @@ Psynergy for the field is written as the field's Psynergy request,
 and `PsynergyMenu_Run` returns 1. The request is one 16-bit word:
 
 ```
-bits 15..10  the caster, by character id (owner)
+bits 15..10  the caster, by character id (member)
 bits  9..0   the Psynergy's ability id
 ```
 
@@ -162,7 +162,7 @@ Equip, Give, Drop, Remove or Details (`ITEM_STEP_INSPECT`). Giving chooses the
 receiver (`ITEM_STEP_TARGET`) and, when the receiver's bag is full, what they
 give back (`ITEM_STEP_TRADE`). Nothing sets `ITEM_STEP_IDLE` or
 `ITEM_STEP_QUANTITY`. `ItemMenu_Run` returns 1 when an item is to be used
-outside the menu, with its owner, target and item id in its out parameters,
+outside the menu, with its member, target and item id in its out parameters,
 and writes the field's item request (`struct ItemPickerResult`).
 
 Each window is a `struct Window` that `struct ItemMenuWork` keeps a
@@ -230,13 +230,14 @@ in `menu/djinn.c`, the results in `menu_internal.h`.
 | `DJINN_STEP_SHOW_HELP` | 15 | showing the help |
 | `DJINN_RESULT_START` | -2 | a chooser saw Start: the screen closes |
 
-### The Status screen
+### The summary screen
 
-The Status screen shows one member at a time: a row to pick the member,
-then a page of their condition, Djinn and elemental [Power](../../glossary.md#power-and-resist) and Resist, a page
+The summary screen, which the field menu labels Status, shows one member at a
+time: a row to pick the member,
+then a page of their status, Djinn and elemental [Power](../../glossary.md#power-and-resist) and Resist, a page
 of their Psynergy and a page of their equipment.
 
-![The Status screen in Xian, one step at a time. First the member row: the hand picks Isaac from the party at the top, and his summary fills the window below, with the four Djinn figures, one for each element, standing in it. A opens his status page: his Djinn, Power and Resist for each element, the Djinn figures now a little higher. A again opens his Psynergy page: Cure, Cure Well, Move, Quake and Earthquake, each with its PP cost. A again opens his equipment page: Broad Sword, Bronze Helm, Bronze Shield and Adept's Clothes; on these last two pages the Djinn figures are moved off the top of the screen. A on the equipment page goes back round to the status page, B on any page goes back to the member row, and L and R switch to another member.](https://alchemy.pascalpixel.com/illustrations/menu/status-pages.svg)
+![The summary screen in Xian, one step at a time. First the member row: the hand picks Isaac from the party at the top, and his summary fills the window below, with the four Djinn figures, one for each element, standing in it. A opens his status page: his Djinn, Power and Resist for each element, the Djinn figures now a little higher. A again opens his Psynergy page: Cure, Cure Well, Move, Quake and Earthquake, each with its PP cost. A again opens his equipment page: Broad Sword, Bronze Helm, Bronze Shield and Adept's Clothes; on these last two pages the Djinn figures are moved off the top of the screen. A on the equipment page goes back round to the status page, B on any page goes back to the member row, and L and R switch to another member.](https://alchemy.pascalpixel.com/illustrations/menu/status-pages.svg)
 
 The game's own help line says how to move about it: A turns to the next page
 and L and R switch to the next member. When the party has Djinn, a row of
@@ -245,7 +246,7 @@ little higher on the status page, and moves above the screen, out of sight,
 for the other two pages; it is placed there at once, whereas the Djinn
 screen's row eases in.
 
-The figures are placed by `FourObjectMotion_`
+The figures are placed by `DjinnFigures_`
 ([`menu/djinn_figures.c`](menu/djinn_figures.c)).
 `MemberChooser_Open` ([`menu/status.c`](menu/status.c)) lets the
 player choose one party member over the field and returns the member's id, or
@@ -264,10 +265,10 @@ To show what equipment would change, the panel puts the item on the member
 for a moment, reads the stats and puts the member back from a copy.
 
 `StatusPanel_Draw` fills a window at tile (0, 5), 13 by 12 tiles. It
-shows the member's name, up to two ailments or else the level, and the
+shows the member's name, up to two statuses or else the level, and the
 portrait, and below them what the low byte of its mode, an
 `enum StatusPanelKind`, asks for. With `STATUS_PANEL_LOWER_ONLY` it keeps the
-open window, the name and the ailments and redraws only the part below.
+open window, the name and the statuses and redraws only the part below.
 The kinds go up in twos; no call passes an odd one, and of the odd values
 only 3 draws anything, the same as `STATUS_PANEL_EQUIP`.
 
@@ -278,7 +279,7 @@ only 3 draws anything, the same as `STATUS_PANEL_EQUIP`.
 | `STATUS_PANEL_LEARN` | 4 | the Psynergy a Psynergy item teaches |
 | `STATUS_PANEL_CLASS` | 6 | class, HP and PP; no call passes it |
 | `STATUS_PANEL_STATS` | 8 | Attack, Defense, Agility and Luck |
-| `STATUS_PANEL_LOWER_ONLY` | `0x100` | flag: redraw only the part below the name and ailments |
+| `STATUS_PANEL_LOWER_ONLY` | `0x100` | flag: redraw only the part below the name and statuses |
 
 ## Sorting items
 
@@ -319,7 +320,7 @@ the top of its part or file, with a comment on what differs.
 - The menu work is 2,672 bytes, shared by every screen's view of it.
 - It has room for eight party members and 32 listed entries.
 - A member's inventory has `INVENTORY_SLOTS` (15) slots.
-- The title, file select and Battle Arena screens are overlays, loaded into
+- The title screen, the main menu and the Battle Arena are overlays, loaded into
   the overlay area ([System](../system/README.md)).
 
 ## Files
@@ -330,13 +331,13 @@ the top of its part or file, with a comment on what differs.
 | `menu_internal.h` | the includes, macros, flags and types more than one part uses |
 | `menu/*.c` | the parts: one for each screen, and [`common.c`](menu/common.c), [`djinn_figures.c`](menu/djinn_figures.c), [`djinn_preview.c`](menu/djinn_preview.c), [`icons.c`](menu/icons.c) and [`use.c`](menu/use.c) for what the screens share |
 | `menudata.c`, `menustr.s` | the menu object's tables (the cursor's bob, the item sort orders, highlight widths) and its short strings and backdrop tile |
-| `title.c`, [`title.h`](title.h) | the title overlay; `title.h` names the Golden Sun logo the title and file select screens share |
-| `clear.c`, [`keyboard.s`](keyboard.s) | the file select overlay: new game, continue, copy, delete, the Battle Arena door and the data transfer, by link or as a password |
+| `title.c`, [`title.h`](title.h) | the title overlay; `title.h` names the Golden Sun logo the title screen and the main menu share |
+| `clear.c`, [`keyboard.s`](keyboard.s) | the main menu overlay: new game, continue, copy, delete, the Battle Arena door and the data transfer, by link or as a password |
 | `lobby.c` | the Battle Arena overlay: the link and monster battles, their records and the attendant |
 | `entry/`, `import/` | each overlay's entry [veneers](../../glossary.md#veneer) and the main-image functions it calls |
 | `backdrop.png` | the tile the Djinn screens copy into their backdrop's frame, which the Djinn preview blinks |
 | `cursor_l.png`, `cursor_r.png`, `cursor_spin.png` | the hand cursor pointing each way and the animated cursor, placed by `window/cursor.s` |
-| `slider.png`, `slidpal.png` | the option screen's slider and its colours, placed by `window/slider.s` and `window/slidpal.s` |
+| `slider.png`, `slidpal.png` | the option menu's slider and its colours, placed by `window/slider.s` and `window/slidpal.s` |
 | `djinn/` | the Djinn screen's up and down arrows, and the tile the battle's Djinn menu blinks |
 
 `menu.c` includes `menu_internal.h` and then the parts in ROM order, and
@@ -344,7 +345,7 @@ the top of its part or file, with a comment on what differs.
 `games/tbs/objects.tsv`, from `menu/menu` in the [main image](../../glossary.md#main-image) and from
 `menu/entry/title`, `menu/entry/clear` and `menu/entry/lobby` for the
 overlays, which the object list names by their [resource](../system/README.md#the-resource-directory-and-table-order) numbers: `36f`
-(title), `370` (file select) and `3cb` (Battle Arena). The prototypes are in
+(title), `370` (main menu) and `3cb` (Battle Arena). The prototypes are in
 `games/tbs/include/unit/menu/`: [`menu.h`](../../include/unit/menu/menu.h)
 for the menu object and [`title.h`](../../include/unit/menu/title.h),
 `clear.h` and `lobby.h` for the overlays. The structs the screens read their
@@ -359,7 +360,7 @@ in pixels: `.4bpp` (`backdrop`, `djinn/blink`), `.8bpp8x16` (`cursor_l`,
 the Djinn arrows, placed by `graphics/ui/menuspr.s` (the copy `menu/icons.c`
 loads, as `gMenu_PairSpriteATiles` and `gMenu_PairSpriteBTiles`),
 `shop/shopspr.s` and `window/fixed_block.s`. `keyboard.s` keeps a compressed
-name entry keyboard tilemap, the same as the Japanese one, that nothing reads.
+naming screen keyboard tilemap, the same as the Japanese one, that nothing reads.
 
 ## Words used here
 
@@ -368,8 +369,8 @@ name entry keyboard tilemap, the same as the Japanese one, that nothing reads.
   `ItemMenuWork` (the Item screen, and the pieces the screens share),
   `PsynergyMenuWork`, `SummaryScreenWork`, `DjinnMenuWork` and
   `DjinnFiguresWork`.
-- **owner**: a party member whose items, Psynergy or Djinn a screen shows, by
-  character id; `ownerIds` lists the active party.
+- **member**: a party member whose items, Psynergy or Djinn a screen shows, by
+  character id; `ownerIds` lists the party.
 - **pane** `[0]` and `[1]`: the two sides of a command, the member and item it
   starts from and the member or item it goes to (`sideMember`,
   `selectedItems`, `selectedSlots`). Giving an item uses both.
@@ -390,20 +391,20 @@ name entry keyboard tilemap, the same as the Japanese one, that nothing reads.
 
 | Prefix | What it acts on |
 | --- | --- |
-| `Menu_`, `UiMenu_` | pieces several screens share; holding the field still; the hand cursor in the top window |
+| `Menu_`, `MenuCursor_` | pieces several screens share; holding the field still; the hand cursor in the top window |
 | `PsynergyMenu_` | the Psynergy screen and its entry grid, and, under an older name, the party figures |
-| `ItemMenu_`, `InventoryMenu_`, `EquipmentMenu_` | the Item screen, its messages and sorting, the equip markers |
-| `CharacterMenu_`, `CharacterSelector_`, `StatusMenu_` | the Status screen and the member chooser |
-| `DjinnMenu_`, `Djinn_`, `OwnerAction_` | the Djinn screen, its lists and its preview loop |
-| `FourObjectMotion_` | the row of four figures the Status and Djinn screens show |
+| `ItemMenu_`, `EquipmentMenu_` | the Item screen, its messages and sorting, the equip markers |
+| `SummaryScreen_`, `MemberChooser_` | the summary screen and the member chooser |
+| `DjinnMenu_`, `Djinn_`, `PsynergyList_` | the Djinn screen, its lists and its preview loop |
+| `DjinnFigures_` | the row of four figures the summary and Djinn screens show |
 | `Item_`, `Ability_` | using an item or Psynergy from the menu |
-| `Title_`, `Clear_`, `SaveMenu_`, `BattleArena_`, `MapData_` | the three overlays and their map entry functions |
-| `Owner_`, `State_` | copying a unit's record, and the lobby's unused empty callback |
-| `UiWindow_`, `UiText_`, `UiIcon_`, `UiWork_`, `UiPalette_`, `Palette_`, `Resource_`, `Render_`, `Scheduler_` | windows, text, icons, palettes, VRAM entries and [tasks](../../glossary.md#task), whose main code is in other folders |
+| `Title_`, `MainMenu_`, `BattleArena_`, `MapData_` | the three overlays and their map entry functions |
+| `Owner_`, `State_` | copying a unit, and the Battle Arena's unused empty callback |
+| `Window_`, `Text_`, `Icon_`, `UiWork_`, `WindowPalette_`, `Palette_`, `Resource_`, `Render_`, `Task_` | windows, text, icons, palettes, VRAM entries and [tasks](../../glossary.md#task), whose main code is in other folders |
 
 Some prefixes are older than the parts. `PsynergyMenu_InitializeEntryObjects`
 sets up the party figures for the Item, Psynergy and Djinn screens (through
-`ItemMenu_Initialize`), for the Status screen and, through
+`ItemMenu_Initialize`), for the summary screen and, through
 `PsynergyMenu_InitializeEntryObjectsFar`, for the counters. Many of these
 names are shared with [The Lost Age](../../glossary.md#the-two-games)'s copies of these files (`games/tla/src/menu`), with the
 far-call tables and with the window folder, so renaming one crosses folders.
@@ -415,7 +416,7 @@ comment markers.
 Screen and prefix names follow what each screen shows in the English
 release. The menu's two flags are named from what sets and tests them, and
 the sort orders from the item types they list. The pictures' game crops come
-from renders of a tbs-en build in Xian (the Psynergy, Djinn, Status and
+from renders of a tbs-en build in Xian (the Psynergy, Djinn, summary and
 status panel screens) and of Isaac's bag on the Item screen; their numbers
 are the ones those renders read from memory.
 
@@ -426,7 +427,7 @@ it holds (`itemWindows`, `figureRow`), with the view that names its fields.
 `Window_InitializeWork` clears the whole work as each screen opens. Bytes
 no view names are `unused` runs: the first eight, the 36 after the category
 icons and a few more. Three window handles have no window behind them: the
-Status screen's `unopenedWindow` (`struct SummaryScreenWork`), which it
+summary screen's `unopenedWindow` (`struct SummaryScreenWork`), which it
 only clears, and the Item screen's `unopenedWindow` and
 `secondUnopenedWindow` (`struct ItemMenuWork`), which it only closes, so
 they stay NULL and closing them does nothing. The Djinn screen's

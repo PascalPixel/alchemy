@@ -2,14 +2,14 @@
 #define ALCHEMY_PALBUF_H
 
 /// @file
-/// Palette fades, the battle effect palette buffers and the colour channel
+/// Palette fades, the battle animation palette buffers and the colour channel
 /// curves.
 
 #include "edition.h"
 #include "types.h"
 #include "static_assert.h"
 
-/// A colour buffer for all 512 palette colours: the source palette, the shown
+/// A palette fade for all 512 palette colours: the source palette, the shown
 /// and target colour channels, their steps, and two pages of packed colours.
 /// The title intro's form of HEAP_SLOT_PALETTE_FADE, allocated by
 /// TitlePaletteFade_Initialize.
@@ -36,7 +36,7 @@ STATIC_ASSERT(offsetof(struct TitlePaletteFade, delta) == 0x1c00);
 STATIC_ASSERT(offsetof(struct TitlePaletteFade, packed) == 0x2800);
 STATIC_ASSERT(offsetof(struct TitlePaletteFade, page) == 0x3000);
 
-/// The colour buffer (HEAP_SLOT_PALETTE_FADE) that fades the BG and OBJ
+/// The palette fade (HEAP_SLOT_PALETTE_FADE) that fades the BG and OBJ
 /// palettes: the source palette, the shown and target colour channels, their
 /// per-frame steps, and two pages of packed RGB555 colours queued each frame.
 /// Map_Run allocates it on map load (PaletteFade_Initialize),
@@ -69,7 +69,8 @@ extern u16 gPalette_ComponentCurve[32];
 extern u16 gPalette_ComponentCurveLight[32];
 extern u16 gPalette_ComponentCurveContrast[32];
 
-/// A colour buffer's build mode: below 0x8000 one RGB555 colour for all.
+/// A palette tint, a palette fade's build mode: below 0x8000 one RGB555 colour
+/// for all.
 enum PaletteTint {
   /// The backdrop colour (palette RAM's first colour) for all.
   PALETTE_TINT_FROM_SOURCE = 0x8000,

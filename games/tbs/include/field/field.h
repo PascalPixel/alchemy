@@ -148,7 +148,7 @@ extern struct FloodgateLog *gKolimaForestFloodgateRecords;
 /// The short log's place in gMapLocalState's first halfword: 1 west, 0 east.
 extern u16 *gKolimaForestFloodgateReturned;
 #ifndef OWN_gObjects
-/// Work slot 5: the 64 field objects, 0x70 bytes each.
+/// Heap slot 5: the 64 objects, 0x70 bytes each.
 extern struct Object *gObjects;
 #endif
 /// The world map camera's yaw the scanline parameters were built for; the
@@ -272,7 +272,7 @@ extern u32 gPushedObject_FootprintKinds[];
 extern const u8 TileMap_DrawRows[];
 /// The size of TileMap_DrawRows (decode.s).
 extern u8 TileMap_DrawRowsCodeSize[];
-/// The size of Transform_UpdateVertices, copied to work slot 46; an address
+/// The size of Transform_UpdateVertices, copied to heap slot 46; an address
 /// equal to the size (constants.ld).
 extern u8 Transform_UpdateVerticesSize;
 extern const s32 gWorldMap_FootprintActions[6];

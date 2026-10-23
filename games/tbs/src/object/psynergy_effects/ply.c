@@ -111,7 +111,7 @@ void FieldEffect_RunPlyOnTarget(s32 unused) {
 /// Abilities: Ply, Ply Well, Pure Ply (FIELD_PSYNERGY_PLY).
 ///
 /// Called by FieldEffect_Run and FieldEffect_RunPlyOnTarget; frees the
-/// particles' shared sprite resource slot at the end and runs the effect
+/// particles' shared VRAM cache entry at the end and runs the effect
 /// scene's finishCallback.
 void FieldEffect_RunPly(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;

@@ -271,7 +271,7 @@ void MusicPlayer_Initialize(struct SoundPlayer *player,
     return;
   work->lock++;
 
-  // Clear the player record and deactivate the supplied track slots.
+  // Clear the player's state and deactivate the supplied track slots.
   AudioCommand_InvokeSlot35(player);
   player->tracks = tracks;
   player->trackCount = trackCount;

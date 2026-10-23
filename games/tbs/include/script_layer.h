@@ -42,7 +42,7 @@ extern u8 *gColossoWork;
 
 #include "object_event.h"
 
-/// The main loop pass's task key, as TASK_PRIORITY_MAIN_LOOP: a map's
+/// The main loop pass's task priority, as TASK_PRIORITY_MAIN_LOOP: a map's
 /// per-frame callbacks run once a frame with the field's own.
 enum { TASK_PRIORITY_MAP = 3200 };
 
@@ -122,7 +122,7 @@ enum ObjectEventAnimation {
 /// A cell animation, such as a door opening: its steps and the cell they are
 /// copied to (MapGrid_PlayMetatileCopySequence, which blocks until the last).
 struct MapGridCellAnimation {
-  /// MAPGRID_ANIMATION_STEP records, ended by MAPGRID_ANIMATION_STEPS_END, for
+  /// MAPGRID_ANIMATION_STEP entries, ended by MAPGRID_ANIMATION_STEPS_END, for
   /// MapGrid_PlayMetatileCopySequence.
   const u16 *steps;
   u16 x; ///< destination cell column
@@ -132,7 +132,7 @@ struct MapGridCellAnimation {
 // Imports of main-image routines. ScriptRequestWarp, ObjectEventSetPosition,
 // ObjectEventSetAnimation and RandomNext have differing argument counts at
 // their call sites, as measured in the bytes, so retain old-style declarations.
-/// Opens a script (FieldScript_Start): closes any timed notice, stops the
+/// Opens a script (FieldScript_Start): closes any map name popup, stops the
 /// leader and makes it the speaker.
 void Engine_ScriptStart(void);
 /// Closes a script (FieldScript_End): the camera follows the leader again and
@@ -282,8 +282,8 @@ s32 Engine_GameFlagIsSet(s32 flag);
 void Engine_GameFlagSet(s32 flag);
 /// Clears a game flag (GameFlag_ClearBit).
 void Engine_GameFlagClear(s32 flag);
-/// Plays a sound effect, fanfare or music cue, or a fade control
-/// (Sound_PlaySong); the low 12 bits are the cue.
+/// Plays a sound effect, fanfare or music, or a fade control
+/// (Sound_PlaySong); the low 12 bits are the song number.
 void Engine_AudioPlayCue(s32 cue);
 /// Runs a shop's counter until the player leaves (Shop_Run): shop is the row of
 /// its stock table and keeper the object whose portrait the messages show.
@@ -294,7 +294,7 @@ void Engine_InnOpen(s32 inn, s32 keeper);
 /// Runs a sanctum's welcome, services and farewell (Sanctum_Run); priest
 /// is the keeper's object.
 void Engine_SanctumOpen(s32 priest);
-/// Unschedules the task running callback (Task_Remove). Returns
+/// Removes the task running callback (Task_Remove). Returns
 /// its old index, or -1.
 s32 Engine_TaskRemoveCallback(void (*callback)(void));
 /// Advances the game's random number generator and returns 0 to 0xffff
@@ -322,7 +322,7 @@ void Engine_HeapRelease(s32 slot);
 /// (VramCache_Load). Returns the first sprite tile number, or 0 when there was
 /// no room.
 s32 Engine_VramLoad(s32 block, s32 size, const void *data);
-/// Creates a field object at (x, y, z) in 16.16 pixels, or returns NULL when
+/// Creates an object at (x, y, z) in 16.16 pixels, or returns NULL when
 /// none is free (Object_CreateField). type / 4096 is its enum ObjectCreateKind
 /// and the low 12 bits the sprite's animation id.
 struct ObjectEvent *Engine_ObjectCreate(s32 type, s32 fixed_x, s32 fixed_y,
@@ -343,13 +343,13 @@ void Engine_ObjectSetPartPalettes(struct ObjectEvent *objectEvent, s32 palette);
 /// (Object_SetMoveTarget).
 void Engine_ObjectSetPosition(struct ObjectEvent *objectEvent, s32 fixed_x,
                               s32 fixed_y, s32 fixed_z);
-/// Plays a cell animation's MAPGRID_ANIMATION_STEP records onto the cell at
+/// Plays a cell animation's MAPGRID_ANIMATION_STEP entries onto the cell at
 /// (destinationX, destinationY), returning only after the last
 /// (MapGrid_PlayMetatileCopySequence).
 void Engine_MapGridAnimateCells(const u16 *steps, s32 destinationX,
                                 s32 destinationY);
-/// Moves the object event of a marker to (x, z) on the ground, in 16.16 pixels;
-/// -1 keeps the centre of its cell on that axis
+/// Moves the object event of a treasure spot to (x, z) on the ground, in 16.16
+/// pixels; -1 keeps the centre of its cell on that axis
 /// (TreasureSpot_SetObjectEventPosition).
 void Engine_MarkerSetPosition(s32 object, s32 fixed_x, s32 fixed_z);
 /// Draws an item's icon into the glyph work buffer, with no frame or marks
@@ -372,7 +372,7 @@ void Engine_ObjectEventCenterAndWalk(s32 localId, s32 priority, s32 dz);
 /// Walks an object event (dx, dz) pixels, waits for it to arrive and stands it
 /// still (ObjectMotion_CommitPositionAndActivate).
 void Engine_ObjectEventWalkByAndWait(s32 localId, s32 dx, s32 dz);
-/// Makes the leader jump two tiles forward where the map has a jump spot
+/// Makes the leader jump two cells forward where the map has a jump spot
 /// (Field_TryJumpForward). Returns 0 after a jump and -1 when it can't jump.
 s32 Engine_LeaderCheckAhead(void);
 /// Prepares the work and spark tiles of a field Psynergy effect for ability
@@ -444,11 +444,11 @@ void Engine_MapGridCopyCellsTo(s32 sourceX, s32 sourceY, s32 destinationX,
 /// parameter names here do not.
 void Engine_MapGridCopyCellsLayered(s32 sourceX, s32 sourceY, s32 destinationX,
                                     s32 destinationY, s32 width, s32 height);
-/// Sets the colours the colour buffer shows now (PaletteFade_SetSource): value
+/// Sets the colours the palette fade shows now (PaletteFade_SetSource): value
 /// is one colour, a PALETTE_TINT_ value or a ready buffer, and mode picks
 /// all palettes (0), the BG's (1) or the OBJ's (2).
 void Engine_ColorBufferApplySource(s32 value, s32 mode);
-/// Sets the colours the colour buffer moves toward, value and mode as for
+/// Sets the colours the palette fade moves toward, value and mode as for
 /// Engine_ColorBufferApplySource (PaletteFade_SetTarget).
 void Engine_ColorBufferApplyTarget(s32 value, s32 mode);
 /// Starts moving the shown colours to the target colours over frames
@@ -689,7 +689,7 @@ static inline void MapGrid_AnimateCells(const u16 *steps, s32 destinationX,
   Engine_MapGridAnimateCells(steps, destinationX, destinationY);
 }
 
-/// Moves a marker's object event to a point on the ground.
+/// Moves a treasure spot's object event to a point on the ground.
 static inline void TreasureSpot_SetPosition(s32 object, s32 fixed_x,
                                             s32 fixed_z) {
   Engine_MarkerSetPosition(object, fixed_x, fixed_z);
@@ -740,12 +740,12 @@ static inline void MapGrid_CopyCellsLayered(s32 sourceX, s32 sourceY,
                                  width, height);
 }
 
-/// Sets the colours the screen shows now, where a script's colour fade starts.
+/// Sets the colours the screen shows now, where a script's palette fade starts.
 static inline void PaletteFade_ApplySource(s32 value, s32 mode) {
   Engine_ColorBufferApplySource(value, mode);
 }
 
-/// Sets the colours a script's colour fade ends on.
+/// Sets the colours a script's palette fade ends on.
 static inline void PaletteFade_ApplyTarget(s32 value, s32 mode) {
   Engine_ColorBufferApplyTarget(value, mode);
 }

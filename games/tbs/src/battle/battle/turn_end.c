@@ -214,8 +214,8 @@ s32 BattleUnit_TickAgilityStage(s32 unitId) {
 
 /// Brings the party's recovering Djinn one turn nearer, setting each whose
 /// turns reach 0, and returns 1 when any was set.
-/// A Djinni counts down only while its owner has HP; one that is set is taken
-/// off the party's recovery list and its owner's stats worked out again
+/// A Djinni counts down only while its unit has HP; one that is set is taken
+/// off the party's recovery list and its unit's stats worked out again
 /// (Unit_Calculate). Called once at the end of every battle by
 /// Battle_Run, and outside battle by Field_ProcessStep as the party
 /// walks, by the Djinn menu's tutorial and by DjinnRecovery_TickTwenty.
@@ -267,7 +267,7 @@ s32 DjinnRecovery_Tick(void) {
 
 /// Runs DjinnRecovery_Tick twenty times, which sets every recovering Djinni
 /// of a party member with HP; those on standby stay so. Returns 0.
-/// Called by the link lobby when it restores the party, and by Vault's scene
+/// Called by the Battle Arena when it restores the party, and by Vault's scene
 /// before Ivan hands back Isaac's Djinni.
 s32 DjinnRecovery_TickTwenty(void) {
   s32 turns;
@@ -311,7 +311,7 @@ s32 Battle_ProcessRoundEnd(void) {
   struct DjinnRecoveryEntry *expiredEntry;
 
   // Djinn recovery: the party's list, and in a link battle the opponent's
-  // too. Only a Djinni whose owner is on the field with HP counts down.
+  // too. Only a Djinni whose unit is on the field with HP counts down.
   battle = gBattleWork;
   sideCount = (battle->isLink != 0) + 1;
   for (side = 0; side < sideCount; side++) {
@@ -331,9 +331,9 @@ s32 Battle_ProcessRoundEnd(void) {
       } while (recoveryIndex < list->count);
     }
     // Set each recovered Djinni, as DjinnRecovery_Tick does, with its
-    // message, the owner's POSE_CAST and its element's effect. As there, the
+    // message, the unit's POSE_CAST and its element's animation. As there, the
     // cursor stays on a removed entry; it would stay for ever on one whose
-    // owner is off the field, but only an owner on the field counts down to 0
+    // unit is off the field, but only a unit on the field counts down to 0
     // above.
     recoveryIndex = 0;
     if (recoveryIndex < list->count) {
@@ -525,7 +525,7 @@ s32 Battle_ProcessRoundEnd(void) {
 /// a summon used begin to recover, and the actor takes its summon's power
 /// boost, the haunt's damage, poison and the Grim Reaper.
 /// Called by BattleStaging_DispatchAction after every action, with the
-/// action's plan. Changes the side's Djinn recovery list, the actor's
+/// action's turn. Changes the side's Djinn recovery list, the actor's
 /// summonBoost, HP and grimReaper, and works out its stats again
 /// (Unit_Calculate); the messages are queued and played at once
 /// (BattlePlayback_RunAll).
@@ -571,8 +571,8 @@ s32 BattleUnit_ProcessTurnEnd(struct BattleTurn *plan) {
                     (unitId < 0 || unitId > ALLY_MAX)))
                    ->list;
     // The Djinn a summon used (DJINN_RECOVERY_SUMMONED, from
-    // BattleTurn_Build), owner by owner: they recover one a turn, after
-    // the last the owner already has recovering and no sooner than in 2 turns.
+    // BattleTurn_Build), unit by unit: they recover one a turn, after
+    // the last the unit already has recovering and no sooner than in 2 turns.
     // counts gathers how many of each element the summon used.
     for (i = 0; i < ELEMENT_COUNT; i++) {
       counts[i] = 0;
@@ -692,7 +692,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattleTurn *plan) {
       BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);
       BattlePlayback_Push(PLAYBACK_NUMBER, damage);
       PUSH_MESSAGE(MsgPoisonDamage);
-      // DEAD: *poison is nonzero here, so the hit's cue is always
+      // DEAD: *poison is nonzero here, so the hit's sound is always
       // SE_HEAVY_IMPACT; the compare and both stores are in the ROM.
       if (*poison != 0) {
         state->playback.pendingSong = SE_HEAVY_IMPACT;

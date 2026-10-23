@@ -357,7 +357,7 @@ void Ability_PlayUseAnimation(s32 action) {
   switch (animationType) {
   case ABILITY_FORMULA_HEAL_HP:
     // XXX: with no break the recovery sound is started twice; whether that
-    // was meant would show only in the sound driver's handling of a cue
+    // was meant would show only in the sound driver's handling of a song
     // started again in the same frame.
     Audio_PlayCueReturnOne(SE_RECOVERY);
     // Fall through.

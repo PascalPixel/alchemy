@@ -32,7 +32,7 @@ void BattleAnim_RunBlast(struct BattleAnimArgs *effect) {
 enum {
   ERUPTION_FIELD_MOTES, ///< motes thrown
   ERUPTION_FIELD_PUFFS, ///< puffs of smoke thrown
-  ERUPTION_FIELD_FRAMES ///< frames in the whole effect
+  ERUPTION_FIELD_FRAMES ///< frames in the whole animation
 };
 
 /// The mote pictures in the sheet: two sets, MOTE_SET_BYTES apart.
@@ -137,7 +137,7 @@ void BattleAnim_RunEruption(struct BattleAnimArgs *effect, s32 mode) {
     // x is shifted 16 pixels left, or right on side 1. A mote is size 9 at
     // depth 160 or nearer and one smaller for each 64 deeper; from depth 736
     // the size is 0, which would read gBattleAnim_MoteCells[-1].
-    // XXX: whether a mote ever gets that deep needs a run of the effect.
+    // XXX: whether a mote ever gets that deep needs a run of the animation.
     for (i = 0; i != gEruption_Counts[variant][ERUPTION_FIELD_MOTES]; i++) {
       struct Particle *mote = &PARTICLES[i];
 
@@ -219,7 +219,7 @@ void BattleAnim_RunEruption(struct BattleAnimArgs *effect, s32 mode) {
   ANIM_FINISH_CANVAS_ONE_BLITTER();
 }
 
-/// Creates the effect's animation objects in gBattleAnimWork's objects.
+/// Creates the animation's sprites in gBattleAnimWork's objects.
 ///
 /// Called by the summon scenes (Ramses, Nereid, Kirin, Atalanta, Cybele,
 /// Neptune, Tiamat, Procne, Boreas, Thor), Judgment and the particle streams.

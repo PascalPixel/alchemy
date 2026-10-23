@@ -113,7 +113,7 @@ s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
   return positions[(Random16() * count) >> 16];
 }
 
-/// Counts the ailments of unit that Restore is taken to cure: delusion,
+/// Counts the statuses of unit that Restore is taken to cure: delusion,
 /// confusion, charm, sleep, the Psynergy seal and the Grim Reaper.
 /// XXX: likely wrong, because Restore and Tonic clear stun and never
 /// confusion or charm (BattleAbility_ApplyToTarget), as Restore's description
@@ -137,7 +137,7 @@ s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
       (count)++;                                                               \
   }
 
-/// Counts the ailments Tonic is taken to cure: those, the evil spirit and
+/// Counts the statuses Tonic is taken to cure: those, the evil spirit and
 /// poison, with the same mismatch. No enemy has Tonic.
 #define COUNT_ALL_CURES(unit, count)                                           \
   {                                                                            \
@@ -171,7 +171,7 @@ s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
 
 /// How worthwhile an enemy's ability is against unit, in applies (0 for
 /// pointless): a stat change that can still move (one more when it is about
-/// to wear off), a cure or a heal the unit needs, an ailment it lacks, a
+/// to wear off), a cure or a heal the unit needs, a status it lacks, a
 /// revival of a downed unit (100). Failing its added effect, the ability's
 /// damage or healing must have something to work on. kindIndex receives the
 /// ability kind less one (enum AbilityFormula). The two unnamed effects below

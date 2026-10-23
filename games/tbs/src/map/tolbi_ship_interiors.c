@@ -3930,7 +3930,7 @@ static void TolbiShipInteriors_NoticeShipRocking(void) {
   Engine_ScriptEnd();
 }
 
-/// Plays the intermittent voyage cue and restores its effect after ten frames.
+/// Now and then plays a rumble with a shake, easing the shake after ten frames.
 static void TolbiShipInteriors_ShakeWhileKrakenAboard(void) {
   s32 value;
   s32 *timer = &gTolbiShipInteriors_ShakeTimer;

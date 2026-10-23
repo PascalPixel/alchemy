@@ -7,7 +7,7 @@ typedef u8 (*FlashByteRead)(u8 *address);
 
 /// Enters flash ID mode, waits for the chip and reads its device and
 /// manufacturer IDs. Returns device << 8 | maker; the makers' codes in
-/// gFlash_Chips' records are 0xbf (SST), 0x1f (Atmel), 0xc2 (Macronix) and
+/// gFlash_Chips' entries are 0xbf (SST), 0x1f (Atmel), 0xc2 (Macronix) and
 /// 0x32 (Panasonic). Called by IdentifyFlash.
 s32 ReadFlashId(void) {
   struct {
@@ -62,8 +62,8 @@ extern u16 *gFlash_Handler4;
 
 /// Selects matching chip handlers, falling back to the final table entry when
 /// unknown. Returns 0 when the chip's id is one of gFlash_Chips' SST, Atmel,
-/// Macronix and Panasonic records and 1 when not; either way it installs a
-/// record's routines, timings and type (gFlash), for an unknown chip
+/// Macronix and Panasonic entries and 1 when not; either way it installs an
+/// entry's routines, timings and type (gFlash), for an unknown chip
 /// gFlash_ChipDefault's: SST's routines and timings. Called by
 /// Save_InitializeWork, up to eight times a frame apart, before
 /// each use of the save. It rewrites three of the cells the credits borrow;
@@ -77,7 +77,7 @@ s32 IdentifyFlash(void) {
   id = ReadFlashId();
   chip = gFlash_Chips;
   missing = 1;
-  // Only the last record, gFlash_ChipDefault, has a maker byte of 0.
+  // Only the last entry, gFlash_ChipDefault, has a maker byte of 0.
   while (((u8 *)&(*chip)->type.id)[0] != 0) {
     if (id == (*chip)->type.id) {
       missing = 0;
@@ -85,7 +85,7 @@ s32 IdentifyFlash(void) {
     }
     chip++;
   }
-  // Install the selected record, including the fallback when no ID matched.
+  // Install the selected entry, including the fallback when no ID matched.
   gFlash_Handler0 = (*chip)->handlers[0];
   gFlash_Handler1 = (*chip)->handlers[1];
   gEraseFlashSector = (*chip)->handlers[2];
@@ -250,7 +250,7 @@ typedef void (*FlashReadCore)(const u8 *source, u8 *destination, u32 size);
 /// Reads `size` bytes from `offset` in `sector` into `destination`, running
 /// ReadFlashCore from a copy in a 128-byte local. Sectors are addressed with
 /// gFlash_ChipDefault's 4 KB geometry whatever the chip, which is the same:
-/// every record gFlash can point to has 4 KB sectors. Called by the save code
+/// every entry gFlash can point to has 4 KB sectors. Called by the save code
 /// for a sector's record and a file's summary (runtime/runtime/save.c).
 void ReadFlash(u16 sector, u32 offset, u8 *destination, s32 size) {
   u16 code[64];

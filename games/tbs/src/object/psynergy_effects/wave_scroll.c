@@ -1,10 +1,10 @@
 /// @file
-/// The wavy background: scanline scroll offsets fed by HBlank DMA.
+/// The scanline effect: scanline scroll offsets fed by HBlank DMA.
 // Part of psynergy_effects.c.
 
 #include "../psynergy_effects_internal.h"
 
-/// Scheduler callback for the wavy background: restarts DMA 0 each frame to
+/// Task for the scanline effect: restarts DMA 0 each frame to
 /// copy the current page's BG1 to BG3 scroll offsets into the scroll registers
 /// one scanline at a time. The first line is written directly; the DMA writes
 /// three words at each HBlank from then on.
@@ -38,7 +38,7 @@ void ScanlineEffect_ArmDma(void) {
   Dma_Set(source, (void *)destination, control, (volatile u32 *)dma);
 }
 
-/// Scheduler callback for the wavy background: fills the hidden page with each
+/// Task for the scanline effect: fills the hidden page with each
 /// scanline's BG3, BG2 and BG1 offsets, the scroll plus a sine wave for x and
 /// for y (an axis with no step stays flat), then shows that page. All three
 /// layers take the same wave; ScanlineEffect_ArmDma feeds the shown page
@@ -120,10 +120,10 @@ void ScanlineEffect_BuildPage(void) {
   work->page ^= 1;
 }
 
-// The shared source that starts the wavy background, at its place in the ROM.
+// The shared source that starts the scanline effect, at its place in the ROM.
 #include "../../map/common/scroll_initialize_hblank_dma.h"
 
-/// Stops the wavy background: removes its two callbacks and stops DMA 0.
+/// Stops the scanline effect: removes its two callbacks and stops DMA 0.
 void ScanlineEffect_Stop(void) {
   volatile u16 *dma0;
 

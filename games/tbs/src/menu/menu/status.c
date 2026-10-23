@@ -141,13 +141,13 @@ s32 MemberChooser_Run(void) {
   return result;
 }
 
-/// The field menu's Status screen (FieldMenu_Run, FIELD_MENU_STATUS),
-/// over the field: saves the first two background palettes and the window tiles
-/// it draws over, sets up the party row and, when the party has Djinn, the four
-/// Djinn sprites, runs the status pages, then puts everything back. Returns
-/// their result; -1 (backed out or Start) opens the field menu again. The menu
-/// work and the two saved copies, taken from the alternate pool, are freed
-/// before returning.
+/// The summary screen, the field menu's Status (FieldMenu_Run,
+/// FIELD_MENU_STATUS), over the field: saves the first two background palettes
+/// and the window tiles it draws over, sets up the party row and, when the
+/// party has Djinn, the four Djinn sprites, runs the status pages, then puts
+/// everything back. Returns their result; -1 (backed out or Start) opens the
+/// field menu again. The menu work and the two saved copies, taken from the
+/// EWRAM pool, are freed before returning.
 s32 SummaryScreen_Run(void) {
   struct SummaryScreenWork *menu =
       AllocHeapSlot(HEAP_SLOT_MENU, MENU_WORK_SIZE);
@@ -691,8 +691,8 @@ void Menu_InitializeSelectorCursorAndEntries(s32 unused0, s32 unused1,
 /// Shows member resource's status in the status window (0, 5, 30 by 15),
 /// opening it first with the member's portrait (kept as the work's
 /// statusCursor), the 32 entry icons (the chooser's Psynergy icons) on the
-/// chooser page, and the eight category sprites that show the ailment icons;
-/// then draws the status and ailments. frame is not used.
+/// chooser page, and the eight category sprites that show the status icons;
+/// then draws the stats and statuses. frame is not used.
 void Menu_CreateWindowAndEntryObjects(s32 resource, s32 frame) {
   s32 created;
   struct Window *window;
@@ -720,7 +720,7 @@ void Menu_CreateWindowAndEntryObjects(s32 resource, s32 frame) {
   SummaryScreen_DrawStatusAilments(window, resource, 0);
 }
 
-/// The member's status page. The left pane lists their ailments (or the stat
+/// The member's status page. The left pane lists their statuses (or the stat
 /// help when they have none) and the right pane the status entries (name and
 /// level, experience, HP, PP, Djinn when the party has any, elemental levels,
 /// Power and Resist); the cursor's entry is highlighted and explained in the
@@ -808,7 +808,7 @@ s32 SummaryScreen_SelectCommand(void) {
           SummaryScreen_ShowMemberProgressMessage(menu->helpWindow, selected,
                                                   hasDjinn);
       }
-      // The ailments are 16 pixels apart; the right pane's first four rows
+      // The statuses are 16 pixels apart; the right pane's first four rows
       // (name to PP) are 8 apart, the rows below them 8 apart from y 112.
       menu->ownerCursors[0]->motion = ICON_SHOWN;
       if (pane == 0)
@@ -881,7 +881,7 @@ s32 SummaryScreen_SelectCommand(void) {
 }
 
 /// Highlights (invert 0) or unhighlights (invert 1) the selected entry of the
-/// status page: in pane 0 the selected ailment row, as wide as its label
+/// status page: in pane 0 the selected status row, as wide as its label
 /// (gSummaryScreen_CursorWidths); in pane 1 one of the first four status rows
 /// or of the rows below.
 void SummaryScreen_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
@@ -927,9 +927,9 @@ void SummaryScreen_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
   Render_SetTilemapFlagRect(menu->statusWindow, x, y, width, 1, palette);
 }
 
-/// Writes the advice for the selected ailment (two lines, for example how to
+/// Writes the advice for the selected status (two lines, for example how to
 /// revive a member who is down) into window target, or that the member is well
-/// when they have no ailment.
+/// when they have no status.
 void SummaryScreen_DrawSelectionLabels(struct Window *target, s32 selected,
                                        const u8 *entries) {
   s32 labelCount = 0;
@@ -998,7 +998,7 @@ void SummaryScreen_ShowMemberProgressMessage(struct Window *destination,
 }
 
 /// Draws member ownerId's status page into window: the top rows (ItemMenu_
-/// DrawOwnerStatus), the ailment list or "Normal", and except on the chooser
+/// DrawOwnerStatus), the status list or "Normal", and except on the chooser
 /// page the Djinn counts by element and, in mode 1, the elemental levels,
 /// Power and Resist. mode's 0x100 keeps what is drawn instead of clearing it.
 void SummaryScreen_DrawStatusAilments(struct Window *window, s32 ownerId,
@@ -1029,7 +1029,7 @@ void SummaryScreen_DrawStatusAilments(struct Window *window, s32 ownerId,
   keepDrawn = mode & 0x100;
   if (keepDrawn == 0)
     Window_ClearInteriorTilesFar(window, 0, 40, 96, 96);
-  // The ailments, one a row, or "Normal".
+  // The statuses, one a row, or "Normal".
   ailmentIndex = 0;
   if (ailments[CHARACTER_DOWN] != 0) {
     Text_DrawMessageAsTilesFar(MsgDownLabel, window, 16, 40);
@@ -1172,7 +1172,7 @@ void ItemMenu_DrawMemberStatus(struct Window *window, s32 ownerId, s32 flags) {
                              STATUS_STAT_X, 24);
 }
 
-/// Fills ailments[0..4] (UnitStatus) with member ownerId's ailments: down
+/// Fills ailments[0..4] (UnitStatus) with member ownerId's statuses: down
 /// (only when requested is 1), poison or venom, curse and haunt. Returns how
 /// many they have.
 s32 SummaryScreen_BuildAvailability(u8 *ailments, s32 requested, s32 ownerId) {
@@ -2130,7 +2130,7 @@ void ItemMenu_PositionCategory(void) {
 
 /// Creates the eight category sprites in window, off screen at (248, 168),
 /// each on item graphic slot of the same number; the Status menu shows the
-/// ailment icons with the first five (SummaryScreen_UpdateSelectionIcons).
+/// status icons with the first five (SummaryScreen_UpdateSelectionIcons).
 /// Returns 1.
 s32 Menu_CreateEightEntryObjects(struct Window *window) {
   struct WindowSprite **slot;
@@ -2153,9 +2153,9 @@ s32 Menu_CreateEightEntryObjects(struct Window *window) {
   return 1;
 }
 
-/// Shows the icon of each ailment that flags marks
+/// Shows the icon of each status that flags marks
 /// (SummaryScreen_BuildAvailability) down the left edge from y 88, 16 pixels
-/// apart, beside the ailment labels of SummaryScreen_DrawStatusAilments.
+/// apart, beside the status labels of SummaryScreen_DrawStatusAilments.
 void ItemMenu_ApplyFlags(const u8 *flags) {
   struct ItemMenuWork *menu;
   struct WindowSprite **slot;
@@ -2181,7 +2181,7 @@ void ItemMenu_ApplyFlags(const u8 *flags) {
   } while (index <= 4);
 }
 
-/// Moves the five ailment icons (the first category sprites) off screen,
+/// Moves the five status icons (the first category sprites) off screen,
 /// before they are shown again or while another view covers them.
 void ItemMenu_ResetCategory(void) {
   struct ItemMenuWork *menu = gMenuWork;
@@ -2199,7 +2199,7 @@ void ItemMenu_ResetCategory(void) {
   }
 }
 
-/// Loads each enabled ailment's icon into its category resource slot.
+/// Loads each enabled status's icon into its category resource slot.
 s32 SummaryScreen_UpdateSelectionIcons(const u8 *enabled) {
   struct ItemMenuWork *menu = gMenuWork;
   s32 index = 0;

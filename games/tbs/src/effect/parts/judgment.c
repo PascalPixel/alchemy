@@ -1,7 +1,7 @@
 /// @file
 /// The Judgment summon.
 /// The folder README describes its two parts, the gathering and the sweep,
-/// under "Effect families".
+/// under "Animation families".
 
 #include "../effect_internal.h"
 
@@ -124,7 +124,8 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
   draw[0] = (DrawRectangle)CANVAS_SLOT(cache, HEAP_SLOT_RAM_CODE);
   work->transferMode = CANVAS_COPY;
   Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
-  // Setup: wipe the battle away, change the backdrop behind it, wipe back.
+  // Setup: wipe the battle away, change the battle background behind it, wipe
+  // back.
   BattleAnim_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   BattleAnim_SelectLivingTargets(work->effect);
   BattleAnim_SpawnObjects(JUDGMENT_FORMATION_OBJECTS, 0x17e, 1);
@@ -259,7 +260,7 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
       }
     }
 
-    // Frame 72: the backdrop starts its 24-frame fade
+    // Frame 72: the battle background starts its 24-frame fade
     // (Palette_StepFadeTransfer).
     if (frame == 72) {
       work->fadeFrames = 24;
@@ -475,8 +476,9 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
     }
   }
 
-  // Stop the backdrop fade; the canvas, one texel a pixel, starts 60 pixels
-  // from the left, so the 120-pixel wave picture is centred on the screen.
+  // Stop the battle background fade; the canvas, one texel a pixel, starts 60
+  // pixels from the left, so the 120-pixel wave picture is centred on the
+  // screen.
   work->fadeFrames = 0;
   work->fadeStep = 0;
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
@@ -563,7 +565,7 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
     }
 
     if (frame == 66) {
-      // Invert the backdrop's colours, background palettes 6 to 13.
+      // Invert the battle background's colours, background palettes 6 to 13.
       u16 *pal = (u16 *)&BG_PLTT_COLOR(6, 0);
       for (i = 0; i != 128; i++, pal++) {
         *pal ^= 0x7fff;
@@ -576,8 +578,8 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
       Dma_Set((const void *)&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
     }
 
-    // Frame 70: undo the inversion, rewriting the backdrop's palette from the
-    // battle's copy with every channel 7 levels darker.
+    // Frame 70: undo the inversion, rewriting the battle background's palette
+    // from the battle's copy with every channel 7 levels darker.
     if (frame == 70) {
       BattlePresentation_ConfigurePaletteFadeFar(
           BATTLE_BACKGROUND_FIXED, (s32)&ResourceId_AerialViewBackdrop, 7);
@@ -997,8 +999,8 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
 
     FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
 
-    // From frame 64 the backdrop shakes up and down: BG1's vertical scroll
-    // jumps between 30 and 33 pixels.
+    // From frame 64 the battle background shakes up and down: BG1's vertical
+    // scroll jumps between 30 and 33 pixels.
     if (frame > 63) {
       /* FAKEMATCH(temporary): the shake value through an s32 keeps the AND
        * constant an immediate; as a direct store to gBgScroll[1].y, 9 of 2455

@@ -149,7 +149,7 @@ void Audio_Initialize(void) {
 void AudioEngine_RunMixer(void) { AudioEngine_RunMixerTick(); }
 
 /// Starts the song on the player selected by its song-table entry. Called by
-/// Sound_PlaySong for music and fanfares; it starts sound effects (cues
+/// Sound_PlaySong for music and fanfares; it starts sound effects (songs
 /// from 100) itself, so that those naming player 7 can take a free player
 /// from 7 down to 4.
 void Audio_PlaySound(u16 songId) {
@@ -239,7 +239,7 @@ UNUSED void Audio_ResumeAllPlayers(void) {
 }
 
 /// Begins the standard stop-and-clear fade. Called by Sound_PlaySong's fade
-/// cues.
+/// controls.
 void MusicPlayer_FadeOut(struct SoundPlayer *player, u16 speed) {
   MusicPlayer_StartFadeOut(player, speed);
 }
@@ -282,7 +282,7 @@ UNUSED void MusicPlayer_ResetActiveTracks(struct SoundPlayer *player) {
 }
 
 /// Resets the CGB sound hardware, installs the CGB-aware command handlers and
-/// callbacks in the sound work, and clears the four channel records `notes`.
+/// callbacks in the sound work, and clears the four channels' `notes`.
 /// Called by Audio_Initialize. The hardware reset happens even when the
 /// driver's lock is held; the rest is then skipped.
 void CgbAudio_Initialize(struct CgbNote *notes) {

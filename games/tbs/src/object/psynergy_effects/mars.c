@@ -6,11 +6,11 @@
 
 /// A Mars Djinni joins the party: it turns to the camera, bounces three times,
 /// spins ever faster and shrinks away in a fountain of 24 sparks
-/// (FieldEffect_UpdatePhasedRadialParticle). The leader turns to the camera
-/// and plays animation 28, the sparks swarm the leader, who pulses for 100
-/// frames, and the sparks vanish. Called by Djinn_JoinParty for a Mars Djinni,
-/// which then clears the Djinni's object event slot. Uses all 24 effect slots,
-/// tints the field palette red and fades it back at the end.
+/// (FieldEffect_UpdatePhasedRadialParticle). The leader turns to the camera and
+/// plays animation 28, the sparks swarm the leader, who pulses for 100 frames,
+/// and the sparks vanish. Called by Djinn_JoinParty for a Mars Djinni, which
+/// then clears the Djinni's object event slot. Uses all 24 field effect
+/// sprites, tints the field palette red and fades it back at the end.
 void Djinn_RunMarsJoinEffect(s32 djinniId) {
   struct EffectVector position;
   s32 scale;
@@ -57,7 +57,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   position.z = djinni->z.fixed;
   Camera_WorldToScreen(&position);
 
-  // One spark a frame into each of the 24 effect slots.
+  // One spark a frame into each of the 24 field effect sprites.
   effect = effectWork->sprites;
   remaining = 23;
   do {
@@ -129,7 +129,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   leader->update = (void *)effect;
   leader->scaleX = 0x10000;
   leader->scaleY = 0x10000;
-  // Fade the palette back from the tint and free the effect slots.
+  // Fade the palette back from the tint and free the field effect sprites.
   WaitFrames(30);
   Shop_RestoreFieldPaletteFar();
   FieldEffect_ClearActiveSlotsAndScheduleUpdates();
@@ -169,12 +169,13 @@ void FieldEffect_UpdateDescendingOrbitObject(union FieldObject *fieldObject) {
     ObjectDispatch_ReleaseFar((struct DispatchObject *)mote);
 }
 
-/// Effect slot callback of a Venus Djinni's particles: each starts on screen
-/// at a random point 10 to 20 pixels round the leader and flies 120 pixels up
-/// the screen, over and over, until it is set to VENUS_PARTICLE_LAST_RISE and
-/// freed once it arrives. Set by FieldEffect_RunVenusDjinnCapture in venus.c; a
-/// particle that starts on an odd frame plays SE_144. It speeds up by 1 pixel a
-/// frame to at most 5, straight at its target.
+/// Field effect sprite callback of a Venus Djinni's particles: each starts on
+/// screen at a random point 10 to 20 pixels round the leader and flies 120
+/// pixels up the screen, over and over, until it is set to
+/// VENUS_PARTICLE_LAST_RISE and freed once it arrives. Set by
+/// FieldEffect_RunVenusDjinnCapture in venus.c; a particle that starts on an
+/// odd frame plays SE_144. It speeds up by 1 pixel a frame to at most 5,
+/// straight at its target.
 void FieldEffect_UpdateRadialSpread(struct FieldEffectSprite *effect) {
   struct EffectVector position;
   struct Object *source;

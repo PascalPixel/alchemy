@@ -149,7 +149,7 @@ enum GondowanCaveLocalId {
   LOCALID_BOULDER_GAP
 };
 
-// The leap script also runs after the shared staged object event movement.
+// The leap script also runs after the shared pushed object movement.
 static void EventScript_MovePillar(void);
 static void GondowanCave_RunSpinningLeap(s32 localId);
 

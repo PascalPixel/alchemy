@@ -93,7 +93,7 @@ s32 BattleDjinnMenu_ListChangedDjinn(const struct PsynergyEntry *oldGrid,
 
 // Loads the icon of ability `abilityId` into the first free VRAM cache slot
 // and shows it as a 16x16 sprite at pixel (x, y) inside `window`, whose
-// output list then owns the slot. Does nothing when the cache is full.
+// sprite list then owns the slot. Does nothing when the cache is full.
 // It is declared to return s32 but returns no value, and no caller reads one;
 // UBFIX makes it void, which changes the register its epilogue returns
 // through.
@@ -109,7 +109,7 @@ s32 Ui_CreateOutputFromResourceSlot(struct Window *window, s32 x, s32 y,
   iconSlot = VramCache_FindFreeEntry();
   if (iconSlot != VRAM_CACHE_ENTRY_COUNT) {
     Resource_LoadIndexedEntryToBuffer(abilityId, iconSlot);
-    // If the output pool is full, the creator releases iconSlot itself.
+    // If the sprite pool is full, the creator releases iconSlot itself.
     WindowSprite_Create(iconSlot, OUTPUT_SIZE_16X16, window, x, y);
   }
 }
@@ -153,7 +153,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 owner,
 
   // Attach the rising/falling stat arrow to the preview window captured here:
   // a 16x16 sprite on layer 240 at pixel (x, y) of the window, in a VRAM
-  // cache entry of its own that the window's output list frees (kind 1).
+  // cache entry of its own that the window's sprite list frees (kind 1).
   void DjinnMenu_DrawStatArrow(s32 x, s32 y, s32 rising) {
     struct WindowSprite *output = WindowSprite_AcquireFree();
     struct PreviewSprite *entry;
@@ -395,7 +395,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 owner,
     }
   }
 
-  // Previewing must not change the owner's Djinn, class or battle stats.
+  // Previewing must not change the member's Djinn, class or battle stats.
   Iwram_CopyWords(unit, savedUnit, sizeof(*savedUnit));
   Free(changedAbilities);
   Free(savedUnit);

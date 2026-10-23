@@ -19,8 +19,8 @@
 // all the same: in rom_main_04 .data follows scripts.o, and these tables would
 // move. So this file includes none of those headers.
 
-/// The message of each searchable tile code from 242 to 247, as an offset from
-/// MsgTileChecked and MsgTileResult.
+/// The message of each searchable metatile behavior from 242 to 247, as an
+/// offset from MsgTileChecked and MsgTileResult.
 const u8 gField_BgEventMessageOffsets[6] = {
     2,  // a jar
     3,  // a barrel
@@ -143,8 +143,8 @@ const u8 gScreenTransition_DitherTable[64] = {
     62, 45, 19, 60, 57, 49, 25, 55, 38, 14, 44, 13, 33, 37, 1, 21,
 };
 
-/// Colour channel curves of the palette transforms (object/color.c): each
-/// maps a 5-bit channel (0 to 31) to a colour buffer channel, shifted up 10
+/// Colour channel curves of the palette tints (object/color.c): each
+/// maps a 5-bit channel (0 to 31) to a palette fade channel, shifted up 10
 /// bits, so 31 is 0x7c00. All three darken the middle tones: 16 becomes
 /// about 11.4 here (0x2dc3), 12.4 in the Light curve, 12.5 in the Contrast
 /// curve, which also reaches 31 already at 25.

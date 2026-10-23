@@ -1140,8 +1140,8 @@ static void BabiLighthouse_InspectTruthDoorSwitch(void) {
   Engine_ScriptEnd();
 }
 
-/// Finds the staged object event one direction-table step ahead, including
-/// terrain height.
+/// Finds the pushed object one direction-table step ahead, including
+/// ground height.
 static struct ObjectEvent *
 BabiLighthouse_FindObjectEventAhead(struct ObjectEvent *objectEvent) {
   struct FieldPosition position;
@@ -1433,7 +1433,7 @@ s32 BabiLighthouse_SetupMap(void) {
     switch (state->warpDest) {
     case BABI_LIGHTHOUSE_LUFF_FROM_BABI_LIGHTHOUSE_STONE_DOOR_WEST:
       GameFlag_Set(FLAG_BABI_LIGHTHOUSE_BACK_FROM_STONE_DOOR);
-      // Both warp destinations restore the same remembered tile changes.
+      // Both warp destinations restore the same remembered cell changes.
       // fall through
     case BABI_LIGHTHOUSE_LUFF_LOCKED_DOOR_ROOM_FROM_SOUTH_ROOM:
       if (GameFlag_IsSet(FLAG_BABI_LIGHTHOUSE_BACK_FROM_STONE_DOOR) != 0) {

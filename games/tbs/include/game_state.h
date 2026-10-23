@@ -75,7 +75,7 @@ struct GameState {
   u8 djinnRecovery[0x104];
   s32 shopCredit; ///< spent on a Game Ticket; not written by name in TBS
   s8 shopGifts;   ///< indexes the Game Ticket's credit cost
-  /// The slot machine's prize weights, three prizes to each of 4, 8, 16, 32
+  /// Lucky Wheels' prize weights, three prizes to each of 4, 8, 16, 32
   /// and 64 on a new game; not read by name in TBS.
   s8 prizeWeights[0x0f];
   /// Lucky Wheels: 0 to 7 the prize categories won, ended by -1 (-2 once
@@ -85,7 +85,7 @@ struct GameState {
   /// The map being played: its index in gMapHeaders (a MapId_
   /// symbol), or RUN_BATTLE or another number above the field maps.
   s16 mapId;
-  s16 warpDest; ///< the warp destination taken; in RUN_BATTLE, the enemy group
+  s16 warpDest; ///< the warp destination taken; in RUN_BATTLE, the formation
   s16 savedMap; ///< where a defeat returns to without a defeat point
   s16 savedWarpDest;   ///< where a defeat returns to without a defeat point
   s16 defaultMap;      ///< the map being run, kept as it starts
@@ -95,9 +95,10 @@ struct GameState {
   s16 nextWarpDest;   ///< where the script sends the party next; -1 for none
   s16 defeatMap;      ///< where a defeat returns to; -1 for none
   s16 defeatWarpDest; ///< where a defeat returns to; -1 for none
-  s16 special;        ///< the battle backdrop chosen for the map or terrain
+  s16 special;        ///< the battle background chosen for the map or
+                      ///< battle environment
   u8 unusedAfterSpecial[2]; ///< no code names it
-  /// The map record's layout (layoutIndex); the world map's is 1, which the
+  /// The map header's layout (layoutIndex); the world map's is 1, which the
   /// code compares as (s32)&MapId_MainMenu.
   s16 layoutId;
   s32 x;                   ///< 16.16 fixed-point pixels
@@ -164,7 +165,7 @@ struct GameState {
   s16 runResult;      ///< the last battle's result; -1 for a defeat
   s32 encounterSteps; ///< the encounter count, reset with a new map section
   u16 pendingItem;    ///< given on returning to the field if the party has room
-  s16 mapType;        ///< the current map's variant from its record
+  s16 mapType;        ///< the current map's variant from its header
   s16 retreatMap;     ///< where Retreat goes; the map section's first warp
                       ///< destination
   s16 retreatWarpDest;     ///< where Retreat goes; the map section's first warp
@@ -177,7 +178,7 @@ struct GameState {
   u8 paddingAfterCloak[2]; ///< up to the word pausedUpdate starts on
   u32 pausedUpdate; ///< Halt: the stopped object's update; not read by name
   u8 unusedAfterHalt[0x50]; ///< no code names it
-  /// The link lobby's tallies: 4 the total wins and 7 the consecutive wins it
+  /// The Battle Arena's tallies: 4 the total wins and 7 the consecutive wins it
   /// reports, 3 cleared on choosing a monster battle; the others not named by
   /// TBS code.
   u16 linkTallies[8];
@@ -221,7 +222,7 @@ STATIC_ASSERT(offsetof(struct GameState, startStamp) == 0x2b8);
 extern struct GameState gGameState;
 #endif
 
-/// Sets the battle start type.
+/// Sets the battle type.
 // A statement macro (S2: a layer, 34 sites): written as one, its store stays in
 // place at every use; as a plain assignment, tbs-en differs.
 #define Battle_SetType(mode)                                                   \

@@ -312,7 +312,7 @@ static void SolSanctumLunaSolRooms_DrawAlternateSavedStatueLights(void) {
       FLAG_SOL_SANCTUM_NORTHWEST_LIGHT_SHOWN, 30);
 }
 
-/// Flashes both tile sets of the lit quarters' lights at this pace.
+/// Flashes both tile rows of the lit quarters' lights at this pace.
 static inline void SolSanctumLunaSolRooms_FlashCurrentStatueLights(s32 frames) {
   Script_PlaySong(SE_246);
   SolSanctumLunaSolRooms_DrawCurrentStatueLights();
@@ -322,7 +322,7 @@ static inline void SolSanctumLunaSolRooms_FlashCurrentStatueLights(s32 frames) {
   Engine_ScriptWait(frames);
 }
 
-/// Flashes both tile sets of the lights last shown at this pace.
+/// Flashes both tile rows of the lights last shown at this pace.
 static inline void SolSanctumLunaSolRooms_FlashSavedStatueLights(s32 frames) {
   Script_PlaySong(SE_246);
   SolSanctumLunaSolRooms_DrawSavedStatueLights();
@@ -1576,7 +1576,7 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   Engine_TaskWait(1);
   ObjectEvent_SetPosition(GARET, PIXELS(280), PIXELS(134));
   ObjectEvent_FaceDirection(GARET, FACING_NORTHWEST, 0);
-  // This script reads its work slots from one address: HEAP_SLOT_PALETTE_FADE
+  // This script reads its heap slots from one address: HEAP_SLOT_PALETTE_FADE
   // is reached from HEAP_SLOT_FIELD's slot. As gFieldWork and
   // gPaletteFadeWork they would load two.
   ((struct EventWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transitionFrames = 1;

@@ -8,10 +8,10 @@
 ///
 /// A battle runs from Battle_Run (encounter.c). Each round the
 /// actions are gathered and put in turn order (round.c, or auto_battle.c under
-/// auto battle), and each action is announced and planned
+/// auto battle), and each action is announced, built into a turn
 /// (BattleTurn_Build, plan.c), staged
 /// (BattleStaging_DispatchAction, staging.c) and applied to each target
-/// (BattleAbility_ApplyToTarget, target_exec.c), which queues the battle events
+/// (BattleAbility_ApplyToTarget, target_exec.c), which queues the playback
 /// BattlePlayback_Run plays (playback.c). README.md in this folder gives the
 /// words, prefixes and spellings the parts use.
 

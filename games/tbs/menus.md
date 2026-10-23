@@ -40,14 +40,14 @@ opened it waits while it does. A window's letters go on in one of three ways:
 | tilemap tiles | labels, names and prices drawn all at once | tiles of `BG0` itself, from a set kept for text | 128 tiles, 256 while a field menu screen or the battle's Djinn menu is open |
 
 A sprite a window carries, a letter cell, an icon, a portrait or the page
-arrow, is one of its render outputs. It moves with the window and goes when
+arrow, is one of its window sprites. It moves with the window and goes when
 the window closes.
 
 All of the window system's state is one block of memory, `struct
 WindowWork`, borrowed from the [heap](glossary.md#heap-and-pools) under the [heap slot](glossary.md#heap-slot) `HEAP_SLOT_WINDOW`. It holds
 the tilemap (`work->tilemap`, copied to `WINDOW_TILEMAP_VRAM` in video memory by a
-VBlank [task](glossary.md#task)), the window slots, the message channels (the
-typists below), the render outputs and the decoded text. A window is a
+VBlank [task](glossary.md#task)), the window slots, the text printers (below), the
+window sprites and the decoded text. A window is a
 `struct Window` slot, opened by `Window_Create(x, y, width, height,
 flags)` in the first free slot, with its place and size in tiles; it returns
 `NULL` when every slot is taken. Unless it has `WINDOW_FLAG_INSTANT`, it zooms open
@@ -72,10 +72,10 @@ it with `VramCache_FreeEntry`.
 | `WINDOW_COUNT` | 12, or 8 | window slots: 12 in the Japanese [edition](glossary.md#editions), 8 in the international editions |
 | `WINDOW_OPEN_FRAMES` | 8 | frames a window takes to zoom open |
 | `WINDOW_CLOSE_FRAMES` | 4 | frames a window takes to zoom closed |
-| `WINDOW_SPRITE_COUNT` | 64 | render outputs at a time |
+| `WINDOW_SPRITE_COUNT` | 64 | window sprites at a time |
 
 [Windows](src/window/README.md#windows) has the work block's layout and the
-screens built directly from windows: the save file menu, name entry and the
+screens built directly from windows: the file menu, the naming screen and the
 battle menus.
 
 ## Messages
@@ -92,7 +92,7 @@ message takes three steps, each done by different code:
    member's name, a number, an item's name with "a" or "an" in front.
 2. The unpacked letters wait in a ring of codes, one message after another,
    until a newer message runs over them.
-3. A typist (a message channel) types them into a window, one letter cell a
+3. A text printer types them into a window, one letter cell a
    frame at the normal speed, acting on the marks for a new line, a new page,
    a pause or a colour, with the speaker's voice blip as it goes.
 
@@ -104,7 +104,7 @@ message takes three steps, each done by different code:
 entry = Message_Decode(message, 1);   // 1. unpack into the ring
 Window_FitOnScreen(entry, &x, &y, &width, &height, bounds, 0);
 window = Window_Create(x, y, width, height, flags);
-TextPrinter_Add(window, entry, 0, 0, bounds, 0);  // 3. a typist
+TextPrinter_Add(window, entry, 0, 0, bounds, 0);  // 3. a text printer
 
 // Shop_ShowKeeperMessage (shop/run.c)
 while (UiWork_IsCompleteFar() == 0)
@@ -122,7 +122,7 @@ decode and released after it. The decoder writes out names, numbers, and item
 and ability names from the argument table (`MESSAGE_ARGUMENT_`,
 `MessageArgument_Push`), and each language's articles and possessives
 (`articles.c`). The marks for colours, pauses and pages are copied into the
-ring unchanged, with their operands, for the typist to act on.
+ring unchanged, with their operands, for the text printer to act on.
 
 The decoded text goes into `work->entries`, a ring of 16-bit codes whose
 index wraps through `TEXT_BUFFER_MASK`, the ring's size less one. Each
@@ -130,18 +130,18 @@ message is written after the previous one, ends with 0, and is known only by
 the index it starts at. The ring is 512 codes, or 256 in the Japanese edition,
 and a longer message is cut off at the ring's length.
 
-A channel (`struct TextPrinter`) runs the control codes (`TEXT_`).
-`TextPrinter_Add` takes a free channel and returns `NULL` when all
+A text printer (`struct TextPrinter`) runs the control codes (`TEXT_`).
+`TextPrinter_Add` takes a free text printer and returns `NULL` when all
 three are busy. Each frame, `UiWork_ProcessAll` steps the windows, then the
-channels, then the render outputs. Outside battle a channel types as many
-cells a frame as the player's message speed allows (`text_speed.c`); in
+text printers, then the window sprites. Outside battle a text printer types
+as many cells a frame as the player's message speed allows (`text_speed.c`); in
 battle, eight. A message window sizes and places itself to fit its text on
 the screen (`Window_FitOnScreen`).
 
 The text itself is in the PO catalogs under `games/tbs/text`, one per
 language. The build's `ags-text` turns each catalog into the packed messages
 and a header naming each one, and the code names a message by that linker
-symbol (`MsgGameSaved`). Why there are three channels is an open question
+symbol (`MsgGameSaved`). Why there are three text printers is an open question
 (below).
 
 | Name | Value | Meaning |
@@ -150,7 +150,7 @@ symbol (`MsgGameSaved`). Why there are three channels is an open question
 | `MESSAGE_ARGUMENT_COUNT` | 8 | message arguments at a time |
 
 [Windows](src/window/README.md#decoding-a-message) goes through decoding,
-[the ring](src/window/README.md#the-decoded-text-ring) and
+[the ring](src/window/README.md#the-text-buffer) and
 [typing](src/window/README.md#typing).
 
 ## Field menu screens
@@ -165,7 +165,7 @@ after. Each screen is an ordinary function with its own loop of steps that
 waits a frame at a time, and a step may run a further loop inside it. When
 the player backs out, the screen returns and the icons come up again.
 
-![Isaac opens the field menu in Vale: the party's HP and PP window comes up with a row of command icons, the selection steps from Psynergy to Item to Status, the Status screen opens on Isaac's stats with `Your status is normal.` above them, turns to a page of his elemental levels, Power and Resist, and closes back to the icons.](https://alchemy.pascalpixel.com/guides/menu/menus.gif)
+![Isaac opens the field menu in Vale: the party's HP and PP window comes up with a row of command icons, the selection steps from Psynergy to Item to Status, the summary screen opens on Isaac's stats with `Your status is normal.` above them, turns to a page of his elemental levels, Power and Resist, and closes back to the icons.](https://alchemy.pascalpixel.com/guides/menu/menus.gif)
 
 The row of icons is drawn by `FieldMenu_Run` in the window code;
 `FieldMenu_SelectCommand` leaves out the Djinn icon while the party owns no
@@ -195,19 +195,19 @@ as it closes.
 
 While a screen is open the field holds still behind it: its objects are
 suspended, and in most editions the map's tasks, the weather, the colour
-changes and the map's animated tiles pause too.
+changes and the map's tileset animations pause too.
 
 ![The field menu pulled apart into its layers. The field menu open in Vale comes apart into the sheets the console stacks to draw it, then closes again. The map keeps its sheets: the ground on `BG3`, the middle layer on `BG2`, Isaac as a sprite and the overhead layer on `BG1`. The menu adds two in front: its windows on `BG0`, with the party's HP and PP and the chosen command's name, and the command icons, sprites in front of the windows.](https://alchemy.pascalpixel.com/illustrations/menu/field-menu-layers.svg)
 
 Every screen sets the `suspended` field of the object system's work, so the
 field's sprites that are not held stop being drawn and free their VRAM cache
 entries. That work's heap slot is named `HEAP_SLOT_OBJECT_SYSTEM`, although it
-belongs to the object system that runs the [field objects](glossary.md#field-object); the menus only
+belongs to the object system that runs the [objects](glossary.md#object); the menus only
 set its one field. `Menu_SuspendFieldTasks` also
 suspends the [overlay](glossary.md#overlay)'s tasks (`Task_SuspendOverlayTasks`) and the map's
-tile animations, and sets `FLAG_PALETTE_BLEND_HELD` and `FLAG_WEATHER_HELD`
+tileset animations, and sets `FLAG_PALETTE_BLEND_HELD` and `FLAG_WEATHER_HELD`
 so that the palette blend and the weather stop; `Menu_ResumeFieldTasks`
-undoes all of it. The Djinn and Status screens call it in every edition, the
+undoes all of it. The Djinn screen and the summary screen call it in every edition, the
 Item screen under `TBS_PATCH_1` (the international editions) and the Psynergy
 screen under `TBS_PATCH_2` (German, French, Spanish and Italian), so the
 earlier editions leave the field's tasks running behind those two screens.
@@ -225,7 +225,7 @@ the screen checks that flag beside its own buttons and returns as if the
 player had backed out. The loops unwind one after another, without any of
 them knowing how deep the player was, and the icons come back.
 
-Before their command loops, the Item, Psynergy and Status screens call
+Before their command loops, the Item, Psynergy and summary screens call
 `Menu_CancelSoundReset`, which clears `FLAG_MENU_START_PRESSED` and adds the
 watcher, `Menu_CancelSoundTick`, as a main-loop task. The whole watcher is
 this (`menu/common.c`):
@@ -356,9 +356,9 @@ something and the map's events, none of which exist while the menu runs.
   window stays within the tilemap's 20 rows.
 - Twelve window slots in the Japanese edition and eight in the international
   editions; `Window_Create` returns `NULL` when none is free.
-- Three message channels, 64 render outputs and eight message arguments at a
+- Three text printers, 64 window sprites and eight message arguments at a
   time; a ninth argument is dropped (`MessageArgument_Push`).
-- The decoded-text ring holds 512 codes, or 256 in Japanese.
+- The text buffer holds 512 codes, or 256 in Japanese.
 - The menu work is 2,672 bytes, with room for eight party members and 32
   listed entries; a member's inventory has `INVENTORY_SLOTS` (15) slots.
 - A shop row lists at most 24 items and 8 artifacts. Shop credit stops at
@@ -367,7 +367,7 @@ something and the map's events, none of which exist while the menu runs.
 
 ## Open questions
 
-- XXX: why there are three message channels is not known.
+- XXX: why there are three text printers is not known.
 - XXX: why the Japanese edition leaves the field's tasks running behind the
   Item and Psynergy screens, and the English one behind the Psynergy screen,
   is not known.

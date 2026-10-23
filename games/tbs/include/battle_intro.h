@@ -16,7 +16,7 @@ enum BattleFirstStrike {
   FIRST_STRIKE_PARTY = 1,
   /// 1 in 32 of the rest: in the first round the party chooses no commands,
   /// and at most 2 to 5 enemies, drawn at random, act once each
-  /// (Battle_BuildOpponentActions). A failed escape sets it for the
+  /// (Battle_BuildOpponentActions). A failed flee sets it for the
   /// rest of its round.
   FIRST_STRIKE_ENEMIES = 2
 };

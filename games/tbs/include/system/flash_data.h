@@ -16,12 +16,12 @@ struct FlashSector {
   s32 size;  ///< bytes: 4 KB, or 128 in the Atmel layout
   u8 shift;  ///< log2 of size: sector n starts n << shift into flash
   u16 count; ///< sectors: 16, or 512 in the Atmel layout
-  u16 top;   ///< 0 in every record; no code reads it
+  u16 top;   ///< 0 in every entry; no code reads it
 };
 
-/// Flash chip type (the 24-byte record pointed to by gFlash).
+/// Flash chip type (the 24-byte entry gFlash points to).
 struct FlashType {
-  u32 romSize; ///< bytes of flash: 64 KB in every record
+  u32 romSize; ///< bytes of flash: 64 KB in every entry
   struct FlashSector sector;
   u16 wait[2]; ///< Low two bits of REG_WAITCNT.
   /// The maker and device id ReadFlashId returns; 0 in gFlash_ChipDefault.
@@ -41,10 +41,10 @@ struct FlashSetupInfo {
 
 /// The chip type IdentifyFlash installed.
 extern const struct FlashType *gFlash;
-/// The last record of gFlash_Chips, taken for a chip not listed: SST's
+/// The last entry of gFlash_Chips, taken for a chip not listed: SST's
 /// routines and timings with id 0 (pret's agb_flash calls it DefaultFlash).
 extern const struct FlashSetupInfo gFlash_ChipDefault;
-/// Atmel's record, whose routines program and erase 4 KB sectors.
+/// Atmel's entry, whose routines program and erase 4 KB sectors.
 extern struct FlashSetupInfo gFlash_ChipAtmel;
 /// Atmel's own 128-byte sectors, which the Atmel routines work through; not
 /// in gFlash_Chips.

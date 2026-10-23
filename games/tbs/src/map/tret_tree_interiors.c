@@ -209,7 +209,7 @@ static void TretTreeInteriors_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
     FLAG_SET(cocoonFlag);
     return;
   }
-  // On the next touch, replace the tile and spin the object event into the
+  // On the next touch, replace the cell and spin the object event into the
   // fall.
   *sLastCocoon = -1;
   MapGrid_CopyCells(sourceColumn, sourceRow + 1, 1, 1, destinationColumn,

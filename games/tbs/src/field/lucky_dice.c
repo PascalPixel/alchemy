@@ -249,7 +249,7 @@ s32 LuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
 /// times when it matches one of the two lucky numbers shown at the top),
 /// three of a kind 3 times, two pairs twice and one pair the bet back.
 /// Called by LuckyDice_Start. Takes the bet from and pays the
-/// winnings into gGameState.coins, resets the scheduler's task table, and
+/// winnings into gGameState.coins, resets the task table, and
 /// frees the five heap slots it allocates before it returns.
 void LuckyDice_Run(void) {
   u16 bgPalette[256];
@@ -679,7 +679,7 @@ void LuckyDice_Run(void) {
       s32 dieY;
 
       rollingDie = &diceWork->particles[drawOrder[index]];
-      // Projection reads the record's three coordinate words directly.
+      // Projection reads the die's three coordinate words directly.
       // Copying them to an array grows native EN from 0x1274 to 0x1294 bytes.
       Transform_ProjectPoint(rollingDie, screen);
       // Depth is clamped to 350..650; the nearer, the larger the die.

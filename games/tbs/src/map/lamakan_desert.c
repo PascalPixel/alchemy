@@ -353,7 +353,7 @@ static s32 Reveal_HideSecrets(void) {
   Engine_ObjectEventSetPosition(FIRST_PIT + 2, 0, 0);
   Engine_ObjectEventSetPosition(LAST_PIT, 0, 0);
   Engine_ObjectEventSetPosition(SMOG, 0, 0);
-  // Hide the searchable markers independently of the object event templates.
+  // Hide the treasure spots independently of the object event templates.
   markerId = 100;
   do {
     Engine_MarkerSetPosition(markerId, 0, 0);

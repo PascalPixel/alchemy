@@ -536,7 +536,8 @@ s32 Object_UpdateLeaderControl(struct ObjectScriptContext *interpreter) {
 
 /// SC_WORLD: moves the player on the world map by the direction pad, as
 /// SC_PLAYER does on the field, and turns the world map camera with the pad.
-/// Shallow water (terrain 6) leaves a ripple and terrain 9 hides the shadow.
+/// Shallow water (WORLD_MAP_COLLISION_SHALLOW_WATER) leaves a ripple and a
+/// forest (WORLD_MAP_COLLISION_FOREST) hides the shadow.
 ///
 /// Run each frame by gObjectDispatch_WorldMapScript, which the map loop
 /// (run_map.c) starts on the leader through
@@ -809,8 +810,8 @@ update_object:
     playerSprite = object->animation;
     terrainCollision =
         WorldMap_GetCollision((struct WorldPosition *)&object->x);
-    // In a forest the sprite's second layer is drawn (priority 1) and its
-    // shadow is not; elsewhere that layer takes priority 9, and a layer above
+    // In a forest the sprite's second anim is drawn (priority 1) and its
+    // shadow is not; elsewhere that anim takes priority 9, and an anim above
     // 3 is not drawn.
     if (terrainCollision == WORLD_MAP_COLLISION_FOREST) {
       playerSprite->entries[1]->priority = 1;

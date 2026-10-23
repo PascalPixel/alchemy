@@ -1,11 +1,11 @@
 /// @file
-/// The render output pool, opening and closing windows, starting messages.
+/// The window sprite pool, opening and closing windows, starting messages.
 // Part of window.c.
 
 #include "../window_internal.h"
 
-/// Takes the first render output from the free list, or returns NULL when every
-/// output is in use. The output belongs to the caller until it is appended to a
+/// Takes the first window sprite from the free list, or returns NULL when every
+/// sprite is in use. The sprite belongs to the caller until it is appended to a
 /// window's list, which then frees it when the window is cleared or closed
 /// (WindowSprite_ClearList). Glyph sprites, icons and portraits all come from
 /// here.
@@ -14,7 +14,7 @@ struct WindowSprite *WindowSprite_AcquireFree(void) {
   struct WindowSprite *out = work->freeSprites.head;
 
   if (out != NULL) {
-    // Taking the last output leaves the list empty.
+    // Taking the last sprite leaves the list empty.
     if (out->next == NULL)
       work->freeSprites.tailLink = &work->freeSprites.head;
     work->freeSprites.head = out->next;
@@ -23,7 +23,7 @@ struct WindowSprite *WindowSprite_AcquireFree(void) {
   return out;
 }
 
-/// Returns a render output to the end of the free list. An output from outside
+/// Returns a window sprite to the end of the free list. A sprite from outside
 /// the work block's pool is ignored.
 void WindowSprite_ReleaseFree(struct WindowSprite *out) {
   struct WindowWork *work = WINDOW_WORK;
@@ -39,7 +39,7 @@ void WindowSprite_ReleaseFree(struct WindowSprite *out) {
   }
 }
 
-/// Links all 64 render outputs of the pool into the free list.
+/// Links all 64 window sprites of the pool into the free list.
 void WindowSprite_InitializeFreeList(void) {
   s32 remainingLinks;
   struct WindowWork *work;
@@ -49,7 +49,7 @@ void WindowSprite_InitializeFreeList(void) {
   work = WINDOW_WORK;
   out = work->sprites;
   work->freeSprites.head = out;
-  // Links outputs 0 to 62 to the next; the last, 63, ends the list.
+  // Links sprites 0 to 62 to the next; the last, 63, ends the list.
   remainingLinks = WINDOW_SPRITE_COUNT - 2;
   do {
     next = out + 1;
@@ -63,10 +63,10 @@ void WindowSprite_InitializeFreeList(void) {
 
 /// Sets up the window system for the field (and the other screens outside
 /// battle): allocates and clears the work block, blanks the tilemap, frees
-/// every render output and starts the two per-frame callbacks, the tilemap
+/// every window sprite and starts the two per-frame callbacks, the tilemap
 /// upload and the window update. Reached from Map_Run
 /// (object/object/run_map.c), the debug message viewer
-/// (DebugBattle_ViewMessages), Lucky Dice and the reel game (LuckyWheels_Run).
+/// (DebugBattle_ViewMessages), Lucky Dice and Lucky Wheels (LuckyWheels_Run).
 /// The work block (heap slot HEAP_SLOT_WINDOW) lives until the slot is next
 /// allocated; nothing here frees it.
 void UiWork_InitializeWithResourceCounters(void) {
@@ -95,7 +95,7 @@ void UiWork_InitializeWithResourceCounters(void) {
   Iwram_FillWords(work, sizeof(work->tilemap),
                   WINDOW_TILE_PAIR(WINDOW_TILE_BLANK));
 #endif
-  // Make the output and palette pools available, then start the updates. The
+  // Make the sprite and palette pools available, then start the updates. The
   // upload's order, 0x480, is TASK_PRIORITY_VBLANK: it runs in vertical blank.
   WindowSprite_InitializeFreeList();
   Portrait_ClearSlots();
@@ -371,8 +371,8 @@ void Window_WaitZoom(struct Window *window) {
 /// With instant set the window is erased and its slot freed at once; otherwise
 /// it zooms closed over four frames first, and its slot stays taken until
 /// UiWork_ProcessDirectWork frees it (UiWork_IsIdle says when). It returns
-/// without waiting. Unless the window is a text canvas, its render outputs go
-/// back to the pool at once; a message channel typing into it lets go of it
+/// without waiting. Unless the window is a text canvas, its window sprites go
+/// back to the pool at once; a text printer typing into it lets go of it
 /// once it has closed (TextPrinter_RunAll). Does nothing for NULL.
 void Window_Close(struct Window *window, s32 instant) {
   u16 zero;
@@ -416,7 +416,7 @@ void Window_Close(struct Window *window, s32 instant) {
 }
 
 /// Clears a window's contents: redraws its empty frame and releases the render
-/// outputs it carries. A text canvas window is left alone.
+/// window sprites it carries. A text canvas window is left alone.
 void WindowSprite_PrepareForRedraw(struct Window *window) {
   if (!(WINDOW_FLAG_TEXT_CANVAS & window->flags)) {
     WindowSprite_RedrawSavedRect(window);
@@ -429,8 +429,8 @@ void WindowSprite_RedrawSavedRect(struct Window *window) {
   Window_DrawFrame(window->x, window->y, window->width, window->height);
 }
 
-/// Releases every render output in a list and empties it. outputs is the list,
-/// or a window (whose output list comes first); NULL is ignored.
+/// Releases every window sprite in a list and empties it. outputs is the list,
+/// or a window (whose sprite list comes first); NULL is ignored.
 void WindowSprite_ClearList(void *outputs) {
   struct WindowSpriteList *list = outputs;
   struct WindowSprite *node;
@@ -488,7 +488,7 @@ void Window_ClearInteriorTiles(const struct Window *window, u32 left, u32 top,
   work->dirty = 1;
 }
 
-/// Points a list's tail link back at its last output, after the list has been
+/// Points a list's tail link back at its last sprite, after the list has been
 /// edited by hand.
 /// Nothing calls it.
 UNUSED void WindowSprite_UpdateListTail(struct WindowSpriteList *list) {
@@ -502,7 +502,7 @@ UNUSED void WindowSprite_UpdateListTail(struct WindowSpriteList *list) {
   list->tailLink = tail;
 }
 
-/// Adds a render output to the end of a list; NULL lists are ignored.
+/// Adds a window sprite to the end of a list; NULL lists are ignored.
 void WindowSprite_AppendToList(struct WindowSpriteList *list,
                                struct WindowSprite *node) {
   if (list != NULL) {
@@ -519,10 +519,10 @@ void WindowSprite_AppendToList(struct WindowSpriteList *list,
   }
 }
 
-/// Frees a render output: returns it to the free list, releases its VRAM cache
+/// Frees a window sprite: returns it to the free list, releases its VRAM cache
 /// entry unless it is a glyph, and for a portrait frees its palette slot too.
 /// Its one caller, WindowSprite_ClearList, has detached the list first: the
-/// free list reuses the output's link.
+/// free list reuses the sprite's link.
 void WindowSprite_Release(struct WindowSprite *entry) {
   WindowSprite_ReleaseFree(entry);
   if ((u8)entry->kind != WINDOW_SPRITE_GLYPH) {
@@ -536,12 +536,12 @@ void WindowSprite_Release(struct WindowSprite *entry) {
   entry->motion = 0;
 }
 
-/// Starts a free message channel typing the decoded text that begins at entry
+/// Starts a free text printer typing the decoded text that begins at entry
 /// into window, with the pen at pixel (x, y). spacing gives each of four lines
 /// an extra gap between characters, in 1/256 pixels (or none for NULL), and is
 /// copied, so the caller's array need not outlive the call; flags is kept with
-/// the channel (nonzero keeps the window's size from page to page). Returns
-/// the channel, or NULL when all three are busy. The channel stays taken
+/// the printer (nonzero keeps the window's size from page to page). Returns
+/// the printer, or NULL when all three are busy. The printer stays taken
 /// until its window closes.
 struct TextPrinter *TextPrinter_Add(struct Window *window, s32 entry, s32 x,
                                     s32 y, u16 *spacing, s32 flags) {
@@ -556,7 +556,7 @@ struct TextPrinter *TextPrinter_Add(struct Window *window, s32 entry, s32 x,
     }
   }
   if (found != NULL) {
-    // The channel stores pen coordinates in 1/256 pixels.
+    // The printer stores pen coordinates in 1/256 pixels.
     found->window = window;
     found->startX = x << 8;
     found->x = x << 8;
@@ -580,11 +580,11 @@ struct TextPrinter *TextPrinter_Add(struct Window *window, s32 entry, s32 x,
   return found;
 }
 
-/// Starts a channel typing the decoded text at entry into the battle message
-/// window. A channel that already serves a finished window continues below its
-/// last line (scrolling up once both lines are used) unless keepPosition is
-/// set; BattleMessage_Open passes the battle display's marked flag
-/// there. Returns the channel, or NULL when all three are busy.
+/// Starts a text printer typing the decoded text at entry into the battle
+/// message window. A text printer that already serves a finished window
+/// continues below its last line (scrolling up once both lines are used) unless
+/// keepPosition is set; BattleMessage_Open passes the battle message window's
+/// marked flag there. Returns the printer, or NULL when all three are busy.
 struct TextPrinter *BattleMessage_Continue(struct Window *window, s32 entry,
                                            s32 keepPosition) {
   struct TextPrinter *channel;
@@ -652,8 +652,8 @@ s32 Ui_FillVramBlockPattern(void) {
                          TEXT_CANVAS_BACKGROUND_WORD);
 }
 
-/// Resets the pen and text style of the first idle message channel, clearing
-/// the canvas when the channel still has a window. The auto battle
+/// Resets the pen and text style of the first idle text printer, clearing
+/// the canvas when the printer still has a window. The auto battle
 /// (battle/battle/auto_battle.c) calls it after playing each action, so the
 /// next battle message starts on a clear canvas at its first line.
 void TextPrinter_ResetFree(void) {
@@ -680,8 +680,8 @@ void TextPrinter_ResetFree(void) {
   }
 }
 
-/// Copies the channel's text colour, outline and line spacing into the shared
-/// glyph renderer before that channel draws its next character.
+/// Copies the printer's text colour, outline and line spacing into the shared
+/// glyph renderer before that printer draws its next character.
 void TextPrinter_ApplyStyle(struct TextPrinter *channel) {
   struct WindowWork *work = WINDOW_WORK;
 
@@ -690,9 +690,9 @@ void TextPrinter_ApplyStyle(struct TextPrinter *channel) {
   work->lineSpacing = channel->lineSpacing;
 }
 
-/// Starts a channel scrolling its canvas up a line: 12 pixel rows, 6 a frame
-/// over two frames (TextPrinter_Step, Text_ScrollCanvasUp), during
-/// which the channel types nothing.
+/// Starts a text printer scrolling its canvas up a line: 12 pixel rows, 6 a
+/// frame over two frames (TextPrinter_Step, Text_ScrollCanvasUp), during which
+/// the printer types nothing.
 void Text_StartCanvasScroll(struct TextPrinter *channel) {
   channel->transition = 2;
 }

@@ -21,7 +21,7 @@ struct MapGridLayerScroll {
   struct MapGridCell *cells; ///< the layer's first cell in the map cell buffer
 };
 
-/// The field map's work: the followed position, screen shake, tile
+/// The field map's work: the followed position, screen shake, tileset
 /// animations, blend script, view and its bounds, and three scrolling layers.
 /// HEAP_SLOT_MAP_GRID: MapGrid_LoadLayout takes and clears it as a
 /// field map with a layout starts, and the next map change frees it.
@@ -34,13 +34,13 @@ struct MapGridScrollWork {
   s32 shakeX, shakeY, shakeDecay;
   u8 *script;    ///< set from the layout's header; not read by name
   u16 flags;     ///< REG_DISPCNT bits: objects and the BG1 to BG3 shown
-  u8 wideTiles;  ///< nonzero: tile animations copy 64-byte tiles
+  u8 wideTiles;  ///< nonzero: tileset animations copy 64-byte tiles
   u8 footprints; ///< nonzero: the leader leaves footprints
   struct TilesetAnim animations[16];
   struct BlendScriptState blend;
   s32 viewX, viewY;           ///< the view's top left, 16.16 fixed-point pixels
   s32 minX, minY, maxX, maxY; ///< 16.16 fixed-point pixels
-  /// Set while a BG1 animation runs; the tile animations are then neither
+  /// Set while a BG1 animation runs; the tileset animations are then neither
   /// suspended nor resumed.
   s8 animationActive;
   u8 unused[3]; ///< no code names it

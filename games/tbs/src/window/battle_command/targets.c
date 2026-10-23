@@ -33,7 +33,7 @@ struct CursorSlot {
 /// ABILITY_RANGE_ALL every one (the cursor does not move); 0 counts as 1.
 /// `kind` (enum BattleTargetHint) is Battle_ClassifyEntryKind's class, or
 /// TARGET_HINT_SET_DJINNI: on a party member it opens a window of what the
-/// action would do (its HP or PP, the ailments it cures, "Set Djinni"), and a
+/// action would do (its HP or PP, the statuses it cures, "Set Djinni"), and a
 /// reviving or curing action not aimed at everyone starts on the first member
 /// who needs it. On an enemy a window across the screen names it.
 ///

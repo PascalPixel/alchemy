@@ -12,7 +12,7 @@
 struct Sprite;
 union FieldObject;
 
-/// A field object as Avoid's caster: its facing, its animation records and
+/// An object as Avoid's caster: its facing, its sprite and
 /// the phase and frame count of its per-frame callback.
 struct ArcEffectObject {
   /// ObjectEvent's script and its cursor; not named through this view.
@@ -35,8 +35,8 @@ struct ArcEffectObject {
 };
 
 /// The work of a Psynergy effect scene: its caster and target, where it takes
-/// place, the map state it restores and its 24 effect slots.
-/// It is the HEAP_SLOT_FIELD_EFFECT work slot, read as gFieldEffectWork,
+/// place, the map state it restores and its 24 field effect sprites.
+/// It is the HEAP_SLOT_FIELD_EFFECT heap slot, read as gFieldEffectWork,
 /// cleared when allocated: FieldEffect_LoadActionEffectResources takes it for a
 /// Psynergy or item use, and FieldEffect_InitializeSlots for the Djinn joining
 /// effects and Altmiller Cave's map. The effect's end releases it.

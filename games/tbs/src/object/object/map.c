@@ -185,7 +185,7 @@ static __inline__ s32 RunLuckyDice(s32 warpDest) {
   return result;
 }
 
-/// Runs the slot machine (Lucky Wheels), preserving BG palettes 14 and 15 as
+/// Runs Lucky Wheels, preserving BG palettes 14 and 15 as
 /// RunLuckyDice does. Returns LuckyWheels_Start's result, 0.
 static __inline__ s32 RunLuckyWheels(s32 warpDest) {
   void *palette = (void *)&BG_PLTT_COLOR(MINIGAME_PALETTE_FIRST, 0);

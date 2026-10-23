@@ -111,7 +111,7 @@
 /// who catch Isaac at Vale Gate (ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, slot 4)
 /// and Saturos at Mercury Lighthouse's aerie
 /// (ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY, slot 2); Battle_Run plays
-/// it, then MUS_COLOSSO_BATTLE, for a battle with no cue of its own.
+/// it, then MUS_COLOSSO_BATTLE, for a battle with no music of its own.
 #define MUS_051 51
 /// Battle music gEncounter_BattleMusic gives the guardians and bosses: Tret,
 /// the Killer Ape, the Hydros Statue, the Manticore, the Kraken, Toadonpa, the
@@ -130,7 +130,7 @@
 /// fuse at Venus Lighthouse's aerie.
 /// ★ Named from the game: "Fusion Dragon" (MsgEnemyName)
 #define MUS_FUSION_DRAGON_BATTLE 54
-/// Played after a link battle's own cue (Battle_Run), and as the
+/// Played after a link battle's own music (Battle_Run), and as the
 /// boulder chases the party down Altin Peak.
 #define MUS_055 55
 /// Plays when a battle is won (Battle_Run), except during the Djinn
@@ -177,7 +177,7 @@
 /// Plays once Felix has leapt after Sheba from Venus Lighthouse's aerie, as the
 /// party watches and resolves to escape (VenusLighthouseAerie_PlayShebasFall).
 #define MUS_FELIX_LEAPS_AFTER_SHEBA 72
-/// Field music of the Sanctum and of the clear-data map.
+/// Field music of the Sanctum and of the main menu.
 #define MUS_074 74
 /// The music of the Golden Sun logo shown after Jenna and Kraden's closing
 /// scene on the world map, until a key is pressed (Title_Run's warp destination
@@ -186,7 +186,7 @@
 #define MUS_ENDING_LOGO 75
 /// Battle music gEncounter_BattleMusic gives the battles that end the Colosso
 /// finals' matches (ENCOUNTER_ZONE_COLOSSO); Battle_Run plays it after
-/// MUS_051 for a battle with no cue of its own.
+/// MUS_051 for a battle with no music of its own.
 /// ★ Named from what the player sees: the battle that ends a Colosso match
 /// (its render)
 #define MUS_COLOSSO_BATTLE 76
@@ -246,7 +246,7 @@
 #define SE_SHOP_SELL 102
 /// The curse sound: a cursed item equipped from the menu or in a shop; it also
 /// plays as Hydros is beaten on Altin Peak, and in the lobbed-shell battle
-/// effects.
+/// animations.
 #define SE_103 103
 /// Plays at Kolima's bridge, at Kolima Forest's barrier, as the villagers try
 /// to save Felix on the stormy night, and as objects fall in Vault Cave.
@@ -261,9 +261,9 @@
 #define SE_TRIPLE_TONE_LOW 108
 /// The high triple tone: Halt ending.
 #define SE_TRIPLE_TONE_HIGH 109
-/// Plays on the title splash screen, as a code is entered on the file select
-/// screen, as the field view finds a target, as Altmiller Cave's lights appear,
-/// and as a battle command is chosen.
+/// Plays on the title splash screen, as a code is entered on the main menu, as
+/// the field view finds a target, as Altmiller Cave's lights appear, and as a
+/// battle command is chosen.
 #define SE_110 110
 /// The cursor moving in a menu or list.
 #define SE_MENU_CURSOR_MOVE 111
@@ -274,7 +274,7 @@
 /// A choice that can't be made: not enough PP, no target, a pushed or lifted
 /// thing that won't move.
 #define SE_MENU_ERROR 114
-/// Ice forming: Frost on the field, and the Ice and Frost battle effects.
+/// Ice forming: Frost on the field, and the Ice and Frost battle animations.
 /// ★ Named from what the player sees: the ice of Frost and of Ice, Ice Horn and
 /// Ice Missile (its render)
 #define SE_ICE 115
@@ -320,9 +320,9 @@
 #define SE_131 131
 /// Water: Catch and Douse on the field, the Fuchin Temple grotto, Xian's
 /// student, and the Boreas, Ice, Douse, Frost, Thorn, Spire and Froth battle
-/// effects.
+/// animations.
 #define SE_132 132
-/// A blow landing: an enemy class's ordinary hit, field damage of 10 or less,
+/// A blow landing: an enemy's ordinary hit, field damage of 10 or less,
 /// and poison on the field; the lighter twin of SE_HEAVY_IMPACT, heard in most
 /// attacking Psynergy.
 #define SE_IMPACT 133
@@ -334,14 +334,14 @@
 #define SE_135 135
 /// Plays as a Djinni hops into battle, with Whirlwind on the field, as pillars
 /// move on Crossbone Isle, during the spinning leap in Gondowan Cave, and in
-/// the Fire, Flare, Frost, Mars, Cybele, Kirin and other battle effects.
+/// the Fire, Flare, Frost, Mars, Cybele, Kirin and other battle animations.
 #define SE_136 136
 /// Plays in the Kirin summon only, 46 frames after its shake begins.
 /// ★ Named from what the player sees: the Kirin summon (its render)
 #define SE_KIRIN 137
 /// An item breaking, and a lifted, pushed or caught thing shattering; also the
-/// Bolt and Ray battle effects, rumbling at Sol Sanctum's entrance, and Venus
-/// Lighthouse's aerie.
+/// Bolt and Ray battle animations, rumbling at Sol Sanctum's entrance, and
+/// Venus Lighthouse's aerie.
 #define SE_ITEM_BREAK 138
 /// A Djinni set in the Djinn menu, and a Djinni recovering to Set as the party
 /// walks (Field_ProcessStep).
@@ -355,17 +355,18 @@
 /// rooms after the eruption, the stumps in Goma Cave, the Lunpa Fortress
 /// trap, Mercury Lighthouse's waterfall passage, the boulders of the stormy
 /// night, the wagons setting off from Kalay and Hammet's caravan, and the
-/// Quake, Gaia, Judgment and other battle effects.
+/// Quake, Gaia, Judgment and other battle animations.
 #define SE_RUMBLE 141
-/// Plays in the Bind, Drain, Haunt, Sleep, Judgment and Neptune battle effects
-/// and as stats rise, and as a statue is searched in Venus Lighthouse.
+/// Plays in the Bind, Drain, Haunt, Sleep, Judgment and Neptune battle
+/// animations and as stats rise, and as a statue is searched in Venus
+/// Lighthouse.
 #define SE_142 142
-/// Plays in the Break, Vine, Spider Web and Curse battle effects and as stats
-/// fall, as a Venus Djinni's sparks land, and as Vale's roof is mended.
+/// Plays in the Break, Vine, Spider Web and Curse battle animations and as
+/// stats fall, as a Venus Djinni's sparks land, and as Vale's roof is mended.
 #define SE_143 143
 /// A clatter: the rocks of Altin Peak's boulder, the crates moved in the Lunpa
 /// Fortress, the Elemental Stars bagged, and the Eruption, Nereid and Prism
-/// battle effects.
+/// battle animations.
 #define SE_144 144
 /// A clatter with SE_144 as Altin Peak's boulder breaks; also the Lemurian
 /// ship's flash, the Lunpa Fortress trap, the Mars Star taken, Mt. Aleph's
@@ -402,11 +403,11 @@
 /// found in the Lunpa Fortress, and the passengers at the Kalay docks.
 #define SE_155 155
 /// Vault Cave's switch flipped, and the Cybele, Judgment and Ramses battle
-/// effects.
+/// animations.
 #define SE_156 156
 /// A gate or door sliding: Babi Lighthouse's truth door, Crossbone Isle's red
 /// and blue doors, the Lunpa Fortress doors, West Lunpa Cave's gates, and the
-/// Cybele and Judgment battle effects.
+/// Cybele and Judgment battle animations.
 #define SE_GATE_MOVE 157
 /// A door opening as the leader goes through.
 #define SE_DOOR_OPEN 158
@@ -418,13 +419,13 @@
 /// the Hermes' Water, and as Saturos and Menardi combine.
 #define SE_161 161
 /// Venus Lighthouse's tile waves, and the Mercury, Judgment and Neptune battle
-/// effects.
+/// animations.
 #define SE_162 162
 /// Whirlwind on the field, the Lemurian ship rising, and the rumble in Vault
 /// Cave.
 #define SE_163 163
 /// Jupiter Djinn joining, and the Neptune, Nereid, Titan Blade and Froth battle
-/// effects.
+/// animations.
 #define SE_164 164
 /// A map transition effect.
 #define SE_MAP_TRANSITION 167
@@ -438,7 +439,7 @@
 #define SE_170 170
 /// Thunder: lightning on the field (Weather_UpdateLightning), the flash in
 /// Sol Sanctum's Luna room as the scene opens on Kraden, the flash of a Lucky
-/// Wheels win, and the Jupiter battle effect.
+/// Wheels win, and the Jupiter battle animation.
 /// ★ Named from what the player sees: lightning flashing over the stormy night
 /// (its render)
 #define SE_THUNDER 171
@@ -477,8 +478,8 @@
 #define SE_184 184
 /// The leader pushing what stands ahead a cell on: a statue, pillar, crate or
 /// torch walked into in Bilibin, Bilibin Cave, Goma Cave, Kalay, Sol Sanctum,
-/// the Tunnel Ruins, Venus Lighthouse and Altin Peak, and the maps' staged
-/// pushes (PushedObject_AdvancePair).
+/// the Tunnel Ruins, Venus Lighthouse and Altin Peak, and the maps' pushed
+/// objects (PushedObject_AdvancePair).
 /// ★ Named from what the player sees: the leader pushing a statue or pillar
 /// ahead (its render)
 #define SE_PUSH 185
@@ -532,11 +533,11 @@
 /// Plays as a Djinni returns to Set or elemental power rises in battle, as
 /// field Psynergy is cast where it shows, with Frost on its target, and in the
 /// Annihilation, Atalanta, Gaia, Procne, Ragnarok, Titan Blade and other battle
-/// effects.
+/// animations.
 #define SE_212 212
 /// A pushed log or pillar coming to rest, after SE_STOP_SLOT3 cuts
 /// SE_HEAVY_MOVE: the Colosso matches, Kolima Forest's floodgate, Vale Cave,
-/// and the maps' staged moves (ObjectEvent_MoveAndRedraw).
+/// and the maps' pushed objects (ObjectEvent_MoveAndRedraw).
 /// ★ Named from what the player sees: a pushed log or pillar stopping (its
 /// render)
 #define SE_HEAVY_STOP 213
@@ -607,7 +608,7 @@
 #define SE_238 238
 /// A pushed log, pillar or wall moving, on player 3 until SE_STOP_SLOT3 cuts
 /// it: the Colosso, Kolima Forest's floodgate, Vale Cave, Venus Lighthouse's
-/// sliding walls and the maps' staged moves; SE_HEAVY_STOP follows.
+/// sliding walls and the maps' pushed objects; SE_HEAVY_STOP follows.
 /// ★ Named from what the player sees: a log rolling or a pillar or wall
 /// sliding (its render)
 #define SE_HEAVY_MOVE 239
@@ -691,16 +692,16 @@
 /// ★ Named from what the player sees: the Lucky Dice numbers shown (its
 /// render)
 #define SE_LUCKY_DICE_NUMBER 303
-/// Lucky Wheels: the reels starting to spin.
+/// Lucky Wheels: the wheels starting to spin.
 /// ★ Named from what the player sees: the Lucky Wheels spinning (its render)
 #define SE_LUCKY_WHEELS_SPIN 304
-/// Lucky Wheels: a reel held or released.
-/// ★ Named from what the player sees: a Lucky Wheels reel held (its render)
+/// Lucky Wheels: a wheel held or released.
+/// ★ Named from what the player sees: a Lucky Wheels wheel held (its render)
 #define SE_LUCKY_WHEELS_HOLD 305
-/// Lucky Wheels: 16 frames after the reels start, as the stop prompt shows.
+/// Lucky Wheels: 16 frames after the wheels start, as the stop prompt shows.
 #define SE_306 306
-/// Lucky Wheels: a reel stopped.
-/// ★ Named from what the player sees: a Lucky Wheels reel stopping (its
+/// Lucky Wheels: a wheel stopped.
+/// ★ Named from what the player sees: a Lucky Wheels wheel stopping (its
 /// render)
 #define SE_LUCKY_WHEELS_STOP 307
 /// Plays on player 3 as the Wise One appears in the Sanctum, as the eruption's

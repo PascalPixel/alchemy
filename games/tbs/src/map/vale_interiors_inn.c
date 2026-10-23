@@ -1240,7 +1240,7 @@ ValeInteriorsInn_CyclePaletteOnOddFrames(union FieldObject *fieldObject) {
 // Shared vertical-effect callbacks precede their paired-effect creator.
 #include "common/effect_vertical.h"
 
-/// Copies the parent's terrain height into two oppositely moving vertical
+/// Copies the parent's ground height into two oppositely moving vertical
 /// effects.
 static void ValeInteriorsInn_SpawnEffectPair(union FieldObject *fieldObject) {
   struct ObjectEvent *parent = &fieldObject->objectEvent;

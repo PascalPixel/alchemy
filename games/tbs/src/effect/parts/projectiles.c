@@ -6,7 +6,7 @@
 
 /// Sparks swirl around a point that travels from the user to the goal and
 /// gather into a Djinni, which sways for 16 frames and bursts into motes.
-/// Leaves the canvas cleared for the effect that follows.
+/// Leaves the canvas cleared for the animation that follows.
 ///
 /// The prelude of the stat boosts, the projectile volleys, the healing motes,
 /// the Djinn beams, the burst scenes, Bind, Hail, Ground, Torch and Vine,
@@ -14,8 +14,8 @@
 /// not close it: it removes the transfer and palette fade callbacks, frees
 /// both blitters, clears the canvas and its VRAM, and sets REG_BLDALPHA back
 /// to 16/16. Copies the Djinni's palette over the first 128 bytes of BG
-/// palette RAM, starts a 24-frame backdrop fade (work->fadeFrames), and uses
-/// PARTICLES 0 to 63 for the sparks and work->particles for the motes.
+/// palette RAM, starts a 24-frame battle background fade (work->fadeFrames),
+/// and uses PARTICLES 0 to 63 for the sparks and work->particles for the motes.
 ///
 /// effect: the user and the targets.
 /// element: the Djinni's element, plus DJINNI_ENTRANCE_LONG for the 84-frame
@@ -243,7 +243,7 @@ void BattleAnim_RunDjinniEntrance(struct BattleAnimArgs *effect, s32 element,
     }
     ANIM_PRESENT_FRAME(work);
   }
-  // Leave the canvas cleared and fully shown for the effect that follows,
+  // Leave the canvas cleared and fully shown for the animation that follows,
   // without closing the layer.
   Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);
   ANIM_RELEASE_BLITTERS();
@@ -254,14 +254,14 @@ void BattleAnim_RunDjinniEntrance(struct BattleAnimArgs *effect, s32 element,
 }
 
 // Projectile volleys and rushing strikes.
-// The folder README describes them under "Effect families".
+// The folder README describes them under "Animation families".
 
 #define PROJECTILE_VOLLEY_ANIMATION_STEP_FAST 0x30 ///< the user's, while firing
 /// The user's animation step after the volley: the usual speed.
 #define PROJECTILE_VOLLEY_ANIMATION_STEP_NORMAL 0x10
 
 /// Six comets fly at each target, three frames apart, and burst into a flash
-/// and sparks; the effect's variant picks one of three comets.
+/// and sparks; the animation's variant picks one of three comets.
 ///
 /// Abilities: Slash, Wind Slash, Sonic Slash (BATTLE_ANIM_SLASH).
 void BattleAnim_RunSlash(struct BattleAnimArgs *effect) {

@@ -21,9 +21,9 @@
 ///
 /// Abilities: Boreas (SUMMON_ANIM_BOREAS).
 ///
-/// The longest of the effects, in two halves. The first (288 frames, which A
+/// The longest of the animations, in two halves. The first (288 frames, which A
 /// or B cuts short after frame 16) opens a window on a field of 16 rocks over
-/// the violet sky and nine animation objects; the rocks crumble in three
+/// the violet sky and nine sprites; the rocks crumble in three
 /// waves (frames 32, 64 and 104), throwing up chips, a big ice block drops in
 /// on frames 160 to 175 and, from frame 224, bursts into spray trailed by
 /// smoke. The second (146 frames) gives the battle background back and rains
@@ -163,8 +163,8 @@ void BattleAnim_RunBoreas(struct BattleAnimArgs *effect) {
     }
 
     // Shake: random until frame 167, from the table on frames 176 to 179,
-    // when the big block lands. The backdrop (BG1) sits 32 lines down, and
-    // the rocks and objects are drawn offset by the same amount, so they
+    // when the big block lands. The battle background (BG1) sits 32 lines down,
+    // and the rocks and objects are drawn offset by the same amount, so they
     // shake with it.
     if (frame <= 167) {
       shakeX = (Random16() & 3) - 1;

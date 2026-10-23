@@ -26,7 +26,7 @@
 	.2byte MapId_\map, \warpDest, MapId_\saved, \saved_warp_dest
 	.endm
 
-@ A battle backdrop and the maps that use it.
+@ A battle background and the maps that use it.
 	.macro backdrop resource:req, maps:vararg
 	.2byte ResourceId_\resource, 0x8000
 	.ifnb \maps
@@ -323,7 +323,7 @@ gParty_PairResolveRules:
 	return_to BattleArena, -1, BattleArena, 1
 	.2byte -1, -1, -1, -1	@ end
 
-@ A map not listed takes the last backdrop.
+@ A map not listed takes the last battle background.
 	.global gBattleBackground_Maps
 gBattleBackground_Maps:
 	backdrop ValeStormBackdrop, ValeStorm, Vale, ValeGate, ValeKraden

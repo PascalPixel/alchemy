@@ -18,7 +18,7 @@ enum {
 /// Abilities: Frost, Tundra, Glacier (BATTLE_ANIM_FROST).
 ///
 /// The targets take a blue tint 4 frames apart from frame 40, the battle shows
-/// the damage 11 frames after the burst, and the effect ends 75 frames after
+/// the damage 11 frames after the burst, and the animation ends 75 frames after
 /// it.
 ///
 /// work->particles holds the 64 motes (angle, height and radius in x, y and
@@ -223,7 +223,7 @@ void BattleAnim_RunFrost(struct BattleAnimArgs *effect) {
     // pixels a frame, for 16 to 31 frames each (24 of them are drawn).
     // XXX: velocityX is never set here, so a chip drifts by whatever its
     // PARTICLES slot last held; whether that is ever nonzero in play needs a
-    // run after another effect.
+    // run after another animation.
     if (frame == gFrost_Timings[work->effect->variant][FROST_FRAME]) {
       for (i = 0; i != 32; i++) {
         struct Particle *chip = &PARTICLES[i];

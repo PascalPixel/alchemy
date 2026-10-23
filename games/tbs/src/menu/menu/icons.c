@@ -79,7 +79,7 @@ s32 Icon_CreateWithLoadedResource(struct Window *window, s32 x, s32 y,
 /// Creates a stat-change arrow from one of the two loaded resources: the up
 /// arrow (variant 0, STAT_ARROW_UP) or the down arrow at (x, y) of window, for
 /// the equipment preview (Text_DrawStatComparison). The sprite belongs to
-/// the window. Returns 1, or -1 when no render output is free, in which case
+/// the window. Returns 1, or -1 when no window sprite is free, in which case
 /// WindowSprite_Create has also released the arrow's shared VRAM slot.
 s32 Icon_CreateStatChangeArrow(struct Window *window, s32 x, s32 y,
                                s32 variant) {
@@ -114,7 +114,7 @@ s32 Icon_CreateStatChangeArrow(struct Window *window, s32 x, s32 y,
 /// Creates an arrow with the vertical adjustment for its resource variant:
 /// as Icon_CreateStatChangeArrow, raised 3 pixels for the up arrow (variant
 /// 0) and 4 for the down arrow. The Djinn preview draws one beside each stat
-/// that would change. Returns 1, or -1 when no render output is free (and the
+/// that would change. Returns 1, or -1 when no window sprite is free (and the
 /// arrow's VRAM slot released, as there).
 s32 Icon_DrawVariantWithTileOffset(struct Window *window, s32 x, s32 y,
                                    s32 variant) {

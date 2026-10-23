@@ -1,5 +1,5 @@
 /// @file
-/// Save files and the save file menu.
+/// Save files and the file menu.
 // Part of battle_command.c.
 
 #include "../battle_command_internal.h"
@@ -316,9 +316,9 @@ s32 Save_WriteFile(s32 file) {
 /// Writes the 64-byte save stamp (gSaveStamp, which lies in the first half of
 /// the save buffer) into the current file's first record, leaving the rest of
 /// the record as it was saved. Returns 0, -1 when no file is chosen, or a
-/// SAVE_ERROR_* after showing its message. The link lobby saves its battle
+/// SAVE_ERROR_* after showing its message. The Battle Arena saves its battle
 /// results this way (BattleArena_SaveBattleResults). The record's 4 KB buffer
-/// is taken from the alternate pool and freed before it returns, except when
+/// is taken from the EWRAM pool and freed before it returns, except when
 /// no file is chosen.
 s32 Save_ProcessSelectedFile(void) {
   void *record;
@@ -485,13 +485,13 @@ s32 Save_EraseSelectedFile(void) {
 
 #if TBS_PATCH_1
 
-/// A scheduler callback that makes colours 8-11 of BG palette 14 glow: each
+/// A task that makes colours 8-11 of BG palette 14 glow: each
 /// follows a sine wave of the frame counter, eight frames behind the one
 /// before. With n the sine as a whole number from -4 to 4 (Trig_Sin's 16.16
 /// result over 16384, rounded toward zero), the colour is red 22 + 2n, green
 /// 16 + n and blue 20 + n (of 31): red 14 to 30, green 12 to 20 and blue 16
 /// to 24. The step of 0x300 a frame, in 1/65536 turns, makes a cycle of about
-/// 85 frames. FileMenu_StartPulse runs it while the save file menu is open.
+/// 85 frames. FileMenu_StartPulse runs it while the file menu is open.
 void FileMenu_UpdatePulse(void) {
   s32 *tick;
   volatile u16 *palette;
@@ -545,7 +545,7 @@ void FileMenu_UpdatePulse(void) {
 
 #if TBS_PATCH_1
 
-/// Starts the palette glow (FileMenu_UpdatePulse) in the scheduler.
+/// Starts the palette glow (FileMenu_UpdatePulse) as a task.
 void FileMenu_StartPulse(void) { Task_Add(FileMenu_UpdatePulse, 0xC80); }
 
 void FileMenu_StopPulse(void) { Task_Remove(FileMenu_UpdatePulse); }
@@ -553,7 +553,7 @@ void FileMenu_StopPulse(void) { Task_Remove(FileMenu_UpdatePulse); }
 /// Fills the `width` x `height` tile rectangle at (x, y) inside `window`,
 /// clipped to the screen as Window_SetTextTileBitRect clips, with the
 /// tile entry 0xe006: tile 6 in BG palette 14, the palette
-/// FileMenu_UpdatePulse animates. The save file menu marks the file under
+/// FileMenu_UpdatePulse animates. The file menu marks the file under
 /// the cursor with it.
 void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
                             s32 height) {
@@ -602,11 +602,11 @@ void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
 
 #endif
 
-/// The save file menu shows the chosen file's party as walking sprites in a
+/// The file menu shows the chosen file's party as walking sprites in a
 /// row, and four Djinn sprites, one for each element, over the file's Djinn
 /// counts. Each sprite stands three tiles (24 pixels) from the one before.
 #define FILE_MENU_SPRITE_SPACING 3
-/// Scheduler priority of the callbacks that place the sprites every frame.
+/// Task priority of the tasks that place the sprites every frame.
 #define FILE_MENU_SPRITE_PRIORITY (200 << 4)
 
 /// Shows the party of save file `summary` (up to four members) as sprites in
@@ -641,7 +641,7 @@ void FileMenu_ShowPartySprites(struct Window *window, s32 x, s32 y,
   Task_Add(FileMenu_PlacePartySprites, priority);
 }
 
-/// Stops placing the party sprites of the save file menu and releases them.
+/// Stops placing the party sprites of the file menu and releases them.
 void FileMenu_HidePartySprites(void) {
   struct ShopWork *menu = gMenuWork;
   s32 i;
@@ -655,7 +655,7 @@ void FileMenu_HidePartySprites(void) {
   }
 }
 
-/// A scheduler callback: draws each party sprite of the save file menu at its
+/// A task: draws each party sprite of the file menu at its
 /// place and scale for this frame.
 void FileMenu_PlacePartySprites(void) {
   struct ShopWork *menu = gMenuWork;
@@ -710,7 +710,7 @@ void FileMenu_ShowDjinnSprites(struct Window *window, s32 x, s32 y) {
   }
 }
 
-/// Stops placing the Djinn sprites of the save file menu and releases them.
+/// Stops placing the Djinn sprites of the file menu and releases them.
 void FileMenu_HideDjinnSprites(void) {
   struct DjinnFiguresWork *menu = gMenuWork;
   s32 i;
@@ -724,7 +724,7 @@ void FileMenu_HideDjinnSprites(void) {
   }
 }
 
-/// A scheduler callback: draws each Djinn sprite of the save file menu at its
+/// A task: draws each Djinn sprite of the file menu at its
 /// place, at scale 1.0, for this frame.
 void FileMenu_PlaceDjinnSprites(void) {
   struct DjinnFiguresWork *menu = gMenuWork;
@@ -828,7 +828,7 @@ void FileMenu_DrawSummary(struct Window *window,
   }
 }
 
-/// What the save file menu is choosing a file for, which decides the files
+/// What the file menu is choosing a file for, which decides the files
 /// the cursor may stop on. Each mode also indexes the heading the menu shows
 /// (gHeadingPictures: Save, Continue, Copy, Erase, Battle,
 /// Link).
@@ -845,7 +845,7 @@ enum FileMenuMode {
 /// FileMenu_SelectFile's result when no file can be chosen in its mode.
 #define FILE_MENU_NO_FILE -2
 
-// The save file menu: lists the three files with each one's leader and area
+// The file menu: lists the three files with each one's leader and area
 // (or why it cannot be chosen) and, for the file under the cursor, its
 // summary, its party and its Djinn, with the file's own palette glow. The
 // cursor starts on `file` and moves up and down over the files `mode` allows
@@ -1250,7 +1250,7 @@ done:
   return result;
 }
 
-/// Lets the player choose a file in save menu `mode` (see FileMenuMode) and
+/// Lets the player choose a file in file menu `mode` (see FileMenuMode) and
 /// loads it into the save buffer as the current file, restoring its play time
 /// and options. Returns 0, -1 when cancelled, or a SAVE_ERROR_* after showing
 /// its message. The title's Continue (mode 1), Battle (4) and Send (5) load

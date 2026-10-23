@@ -18,7 +18,7 @@ struct BattleAIState {
 /// Chooses an enemy's action (a party member's is chosen in the menu): one of
 /// the eight in its definition, picked by its action strategy, with an item
 /// instead where its item mask says so, and a target worth the ability. A
-/// choice that cannot be made (too little PP, sealed, a forbidden escape, no
+/// choice that cannot be made (too little PP, sealed, a forbidden flight, no
 /// worthwhile target) picks again; after 18 tries the enemy defends.
 /// Called with retry 0 for each enemy as the round is built
 /// (Battle_BuildOpponentActions), and with retry 1 at its turn
@@ -184,7 +184,7 @@ select_again:
   }
 
   if (needsChoice != 0) {
-    // A guard or an escape becomes its own command, aimed at the user itself.
+    // A guard or a flight becomes its own command, aimed at the user itself.
     ability = Ability_Get(abilityId);
     effect = ability->effect;
     switch (effect) {

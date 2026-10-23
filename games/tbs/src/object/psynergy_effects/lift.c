@@ -118,9 +118,9 @@ struct MotionObject *FieldEffect_SpawnItemBreakMode3(s32 x, s32 y, s32 z,
   return fragment;
 }
 
-/// Effect slot callback of a particle that scatters 25 pixels from its origin
-/// in a random direction, then gathers beside the main object and is freed.
-/// Set on Force's 12 flashes by FieldEffect_RunForce in force.c.
+/// Field effect sprite callback of a particle that scatters 25 pixels from its
+/// origin in a random direction, then gathers beside the main object and is
+/// freed. Set on Force's 12 flashes by FieldEffect_RunForce in force.c.
 void FieldEffect_UpdateRadialBurst(struct FieldEffectSprite *effect) {
   // A for/continue retry keeps the same states but grows the native English
   // callback from 0xf8 to 0xfc bytes. OUT_AND_BACK_FLYING_OUT must enter

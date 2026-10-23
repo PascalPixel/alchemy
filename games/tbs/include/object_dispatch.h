@@ -10,7 +10,7 @@
 
 union FieldObject;
 
-/// A field object as the object dispatcher's far calls take it.
+/// An object as the object dispatcher's far calls take it.
 struct DispatchObject {
   u32 value00; ///< the object script's address
   s16 value04; ///< the script cursor, in words

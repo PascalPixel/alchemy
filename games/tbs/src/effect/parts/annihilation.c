@@ -20,8 +20,8 @@
 ///
 /// work->particles 0 to 63 hold the shards and Ram_MapGridCellBuffer the
 /// burst's pictures. Each drawing builds the blitters it needs and frees them
-/// the same frame; the effect ends with the transfer callback removed and the
-/// canvas layer closed.
+/// the same frame; the animation ends with the transfer callback removed and
+/// the canvas layer closed.
 ///
 /// effect: the user and the target; a nonzero variant gives the burst its
 /// second picture and a sound.

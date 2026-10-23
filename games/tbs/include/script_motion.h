@@ -22,7 +22,7 @@ struct ScriptMotionWords {
 typedef struct ScriptMotionWords ScriptMotionWords;
 #endif
 
-/// A field object as the motion code sees it: its script, position, motion
+/// An object as the motion code sees it: its script, position, motion
 /// toward a target, bounce and gravity, motion flags and wait, and its hook.
 struct ScriptMotionObject {
   const ScriptMotionWords *script; ///< null when the object is free

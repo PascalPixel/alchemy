@@ -102,7 +102,7 @@ const struct ObjectEventTemplate *TretTreeBranch_GetObjectEventTemplates(void) {
 }
 
 /// Moves the leader and camera by signed 16-pixel cell offsets, placing each
-/// at the terrain height of its destination.
+/// at the ground height of its destination.
 static void TretTreeBranch_ShiftLeaderAndCameraByCells(s32 cellOffsetX,
                                                        s32 cellOffsetZ) {
   struct EventWork *state = gFieldWork;

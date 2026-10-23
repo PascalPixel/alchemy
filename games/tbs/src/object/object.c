@@ -1,13 +1,13 @@
 /// @file
-/// The field object: the main loop and map changes, random encounters, a
-/// field map's object events, the leader's steps and the requests they raise,
-/// the map's events, using items and Psynergy on the field, the map's markers,
-/// and the window transitions and colour buffer that the field and battles
-/// share. object_internal.h holds the includes and the few macros and types
-/// more than one part uses; the code is in the files under object/, included
-/// here in ROM order, each opening with what it holds (head -2 object/*.c).
-/// The ROM shows one object; the parts are ours, cut where one family ends and
-/// the next begins.
+/// The field object: the main loop and map changes, random encounters, a field
+/// map's object events, the leader's steps and the requests they raise, the
+/// map's events, using items and Psynergy on the field, the map's treasure
+/// spots, and the screen transitions and palette fade that the field and
+/// battles share. object_internal.h holds the includes and the few macros and
+/// types more than one part uses; the code is in the files under object/,
+/// included here in ROM order, each opening with what it holds (head -2
+/// object/*.c). The ROM shows one object; the parts are ours, cut where one
+/// family ends and the next begins.
 ///
 /// README.md in this folder gives the words, prefixes and spellings the parts
 /// share.

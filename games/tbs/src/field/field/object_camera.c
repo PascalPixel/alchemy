@@ -9,11 +9,11 @@ struct ObjectCameraTile {
   u32 block : 12;   ///< the metatile number
   u32 layer : 2;    ///< if not 0, the layer of an object standing on it, + 1
   u32 priority : 2; ///< if not 0, the priority of an object standing on it
-  /// MapGridCell's metatile behavior and collision attribute; not read here.
+  /// MapGridCell's metatile behavior and shape; not read here.
   u32 behaviorAndCollision : 16;
 };
 
-/// An object event (one of gObjects' 64, 0x70 bytes), as the cameras read
+/// An object (one of gObjects' 64, 0x70 bytes), as the cameras read
 /// it.
 struct ObjectCameraObject {
   u32 active;       ///< zero for a free slot
@@ -62,11 +62,12 @@ struct ObjectCameraFixed {
 /// Each frame, with the scrolling camera: places every object's sprite on the
 /// screen. An object on or near the screen takes its layer and priority from
 /// the cell under it; one off screen gives up its VRAM cache entry.
-/// ObjectSystem_Initialize schedules it (order 0xc80, after the objects move)
-/// for every mode but 3 and 4; ObjectSystem_SuspendProjectionAndShowSprites
-/// suspends it. Resets the system's used count, may change an object's layer
-/// and its sprite's priorities, and holds the frame decoder in heap slot
-/// HEAP_SLOT_FRAME_SCRATCH only while it runs.
+/// ObjectSystem_Initialize adds it as a task (priority 0xc80, after the objects
+/// move) for every mode but 3 and 4;
+/// ObjectSystem_SuspendProjectionAndShowSprites suspends it. Resets the
+/// system's used count, may change an object's layer and its sprite's
+/// priorities, and holds the frame decoder in heap slot HEAP_SLOT_FRAME_SCRATCH
+/// only while it runs.
 void ObjectSystem_PlaceSprites(void) {
   /* FAKEMATCH(dead): an unused local for the room the native frame keeps for
    * three points above the position; without it, 2 of 267 instructions differ
@@ -218,7 +219,7 @@ UNUSED s32 ObjectCamera_ReturnTrue(void) { return 1; }
 /// 64th object down, facing them by the angle from the eye to the target.
 /// While battle commands are chosen (FLAG_CHOOSING_COMMANDS, set by
 /// Battle_GatherActions) it uses the fixed view matrix and 1.0
-/// scale. ObjectSystem_Initialize schedules it (order 0xc80) for
+/// scale. ObjectSystem_Initialize adds it as a task (priority 0xc80) for
 /// OBJECT_SYSTEM_WORLD_MAP and OBJECT_SYSTEM_BATTLE;
 /// ObjectSystem_SuspendProjectionAndShowSprites suspends it. Resets the
 /// system's used count.

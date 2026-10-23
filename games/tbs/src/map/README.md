@@ -1,4 +1,4 @@
-#Maps
+# Maps
 
 Everything that makes a[map](../../
                              glossary.md #map) itself is in its own code here
@@ -268,7 +268,7 @@ one exception, so that an opened chest still answers:
    the chest was empty."
 
 Rows these rules make unreachable keep a
-[`// Unused:`](../../glossary.md#unused) tag in their table, and [Unused](../../unused.md) describes every
+[`// Unused:`](../../glossary.md#unused) tag in their table, and [Unused](https://alchemy.pascalpixel.com/tbs/unused) describes every
 such case.
 
 | Name | Value | Meaning |

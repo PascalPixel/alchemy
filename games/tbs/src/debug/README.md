@@ -37,8 +37,9 @@ Only two pieces of code write `gDebugMode`: start-up, which clears it
 - The table as a whole has a row in the resource directory, but that row is
   passed only to stubs that do nothing ([System](../system/README.md#evidence-and-open-questions)).
 
-So the released game never turns debug mode on. [Unused](../../unused.md#debug-maps)
-explains why the rooms still count as reachable rather than unused.
+So the released game never turns debug mode on. The rooms still count as
+reachable rather than [unused](../../glossary.md#unused): the debug map
+selector reaches them, as it reaches every map.
 
 | Map | Overlay | Room |
 | --- | --- | --- |

@@ -230,7 +230,7 @@ each carry a condition, and `Map_FindEvent` runs the first map event row
 whose kind, [trigger](glossary.md#trigger) and condition fit; and its initialization restores what
 the flags say has already happened. Because rows and flags interact this
 way, some code can never run, and its comment opens with [`Unused:`](glossary.md#unused) and says
-why. [Unused](unused.md) collects every such case.
+why. [Unused](https://alchemy.pascalpixel.com/tbs/unused) collects every such case.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -377,7 +377,7 @@ compiles or assembles, in link order with the image and bank it goes in, and
   object event templates and map events.
 - [Game rules](src/game/README.md): stats, items, Djinn, classes, levels and
   the flags.
-- [Unused](unused.md): the maps, scripts and lines the game keeps but never
+- [Unused](https://alchemy.pascalpixel.com/tbs/unused): the maps, scripts and lines the game keeps but never
   plays, and why each never runs.
 - [Source](src/README.md): every file of the code, with its comments.
 - [Glossary](glossary.md): the words every page uses, from Psynergy and

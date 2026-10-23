@@ -69,27 +69,11 @@ directly. Every bank calls the runtime bank's functions directly instead,
 and its table serves only the overlays
 ([Engine](../engine.md#banks-and-far-calls)).
 
-| Place | Bank | Code | Folder |
-| --- | --- | --- | --- |
-| `rom_main_00` | runtime | start-up, the frame loop, the heap, saving | `runtime` |
-| `rom_main_01` | field | the field engine | `field` |
-| `rom_main_02` | window | windows and text | `window` |
-| `rom_main_03` | game | the game's rules and state | `game` |
-| `rom_main_04` | overworld | running a map | `overworld` |
-| `rom_main_05` | menu | the field menu | `menu` |
-| `rom_main_06` | shop | shops and inns | `shop` |
-| `rom_main_07` | battle | battles | `battle` |
-| `rom_main_08` | battle anim | battle animations | `battle_anim` |
-| `rom_main_09` | credits | the credits | `graphics/credits` |
-| `rom_main_10` | title | the title intro, the logos and the palette fade | `graphics/title` |
-| `rom_main_11` | lucky dice | Lucky Dice | `field` |
-| `rom_main_12` | lucky wheels | Lucky Wheels | `overworld` |
-| `rom_main_13` | sound | the song layer | `sound` |
-
-The place is the bank's name in `objects.tsv` and the linker scripts,
-numbered from 0 in cartridge order. The bank names are the far-call tables'
-(`system/far_call/CREDITS.S` and the rest), each named after what its bank
-holds.
+Which folder each bank's code comes from is the object list,
+[`objects.tsv`](../objects.tsv), whose `place` column names the bank
+(`rom_main_00`, numbered from 0 in cartridge order) as
+[`main.ld`](../main.ld) does; the bank names are the far-call tables'
+(`system/far_call/CREDITS.S` and the rest).
 
 `graphics`, `layout`, `sound` and `system` don't follow a bank: each gathers
 one kind of thing (pictures, layouts, sound, the memory layout) from wherever

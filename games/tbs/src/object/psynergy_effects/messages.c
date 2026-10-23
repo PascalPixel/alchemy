@@ -9,7 +9,7 @@
 /// twelve slots on, the event work in HEAP_SLOT_EVENT.
 struct WorkPointers {
   u8 *window;
-  u8 unk04[0x2c];
+  u8 *slotsBetween[11]; ///< the eleven work slots after the window work's
   struct FieldWork *event;
 };
 #endif

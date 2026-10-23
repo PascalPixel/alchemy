@@ -8,7 +8,8 @@
 /// HEAP_SLOT_MENU_CONTROL), seen as the flag that suspends sprite projection
 /// while the menu opens.
 struct MenuCtrl {
-  u8 unk00[4];
+  u16 used;     ///< ObjectSystemWork's; not named here
+  u8 unused[2]; ///< ObjectSystemWork's; no code names it
   /// ObjectSystemWork's suspended: while nonzero, sprites not held are not
   /// drawn and give up their VRAM (object_camera.c, sprite_draw.c).
   u16 wait;

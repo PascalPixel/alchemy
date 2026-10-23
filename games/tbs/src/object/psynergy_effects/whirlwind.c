@@ -21,16 +21,57 @@ enum {
 /// signed, as the bytes read them (ObjectEvent's own types change the code).
 /// Whirlwind particles (object 0xf9) use this view.
 struct WhirlwindOrbit {
-  u8 unk00[6];
+  /// ObjectEvent's script and its cursor; not named through this view.
+  ///@{
+  const s32 *script;
+  u16 scriptCursor;
+  ///@}
   u16 angle; ///< heading or orbit angle, in 1/65536 turns
   s32 x;     ///< 16.16 pixels
   s32 y;     ///< 16.16 pixels
   s32 z;     ///< 16.16 pixels
-  u8 unk14[20];
+  /// ObjectEvent's terrainHeight to velocityX; not named through this view.
+  ///@{
+  s32 terrainHeight;
+  s32 scaleX;
+  s32 scaleY;
+  u16 radius;
+  u8 terrainId;
+  u8 priorityFlags;
+  s32 velocityX;
+  ///@}
   s32 velocityY; ///< applied by the engine, in 16.16 pixels per frame
-  u8 unk2c[28];
+  /// ObjectEvent's velocityZ to bounce; not named through this view.
+  ///@{
+  s32 velocityZ;
+  s32 speed;
+  s32 acceleration;
+  s32 targetX;
+  s32 targetY;
+  s32 targetZ;
+  s32 bounce;
+  ///@}
   s32 gravity; ///< vertical deceleration, in 16.16 pixels per frame squared
-  u8 unk4c[24];
+  /// ObjectEvent's riseBaseY to riseEnabled; not named through this view.
+  ///@{
+  s32 riseBaseY;
+  void *sprite;
+  u8 spriteStorageKind;
+  u8 motionFlags;
+  u8 arrivalAxis;
+  u8 conditionResult;
+  u8 snapToTarget;
+  u8 collisionFlags;
+  u8 steeringFlags;
+  u8 paused;
+  u8 retainSpriteCache;
+  u8 repeatCount;
+  u16 wait;
+  u8 refused;
+  u8 frozen;
+  u8 riseCounter;
+  u8 riseEnabled;
+  ///@}
   u16 timer;                     ///< frames so far
   s16 pause;                     ///< frames left of a sharp turn
   struct WhirlwindOrbit *anchor; ///< orb at the centre of the orbit

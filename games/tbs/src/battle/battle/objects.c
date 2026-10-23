@@ -412,7 +412,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
       // part's box.
       // BUG: a failed create leaves record null, and its flags are still
       // written.
-      records = (struct AnimationObject **)gMenuCtrlWork->unk08 +
+      records = (struct AnimationObject **)gMenuCtrlWork->spriteGroups +
                 gMenuCtrlWork->count;
       spriteId = battleObject->resource;
       object->recordStorageKind = RECORDS_TABLE;

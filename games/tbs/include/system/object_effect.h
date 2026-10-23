@@ -30,7 +30,9 @@ extern struct FadeOverlayWork *gObjectEventEffectWork;
 
 /// One weather particle: OAM attributes followed by its world position.
 struct GroundParticle {
-  u8 unk00[4]; ///< Cleared with the attributes; never read by the effects.
+  /// The depth-slot queue's link, as AnimationSpritePart.link; cleared with the
+  /// attributes and never read by the effects.
+  u8 link[4];
   /// The OAM entry's attributes 0 to 2: the start routines write them whole
   /// as semi-transparent, size 1, priority 1 and palette 13.
   ///@{
@@ -63,7 +65,7 @@ struct GroundParticleWork {
   s32 entry;    ///< Resource entry holding the effect's tiles.
   s32 tileBase; ///< Their first tile in VRAM.
   struct GroundParticle particles[FIELD_WEATHER_PARTICLE_COUNT];
-  s32 unk408;  ///< Unused by the weather effects.
+  s32 unused;  ///< Unused by the weather effects.
   s32 stopped; ///< Nonzero stops new sparkle bursts.
 };
 

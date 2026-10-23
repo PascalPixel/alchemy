@@ -8,7 +8,7 @@
 /// The map grid work in HEAP_SLOT_MAP_GRID, seen as the halfwords of its view
 /// position: the high halves are the view's x and z in whole pixels.
 struct FadeView {
-  u8 unk00[228];
+  u8 beforeView[228]; ///< the map grid work up to its view position
   s16 camera[4];
 };
 #endif

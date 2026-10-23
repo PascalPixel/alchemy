@@ -150,11 +150,18 @@ static __inline__ void FieldEffect_UpdateEffectSlots(void) {
 /// signed, as the bytes read them (ObjectEvent's own types change the code).
 /// A Venus Djinni's falling motes (FieldEffect_UpdateDescendingOrbitObject).
 struct DescendingOrbitObject {
-  u8 unk00[8];
+  /// ObjectEvent's script, its cursor and facing; not named through this
+  /// view.
+  ///@{
+  const s32 *script;
+  u16 scriptCursor;
+  u16 facing;
+  ///@}
   s32 x; ///< 16.16 fixed-point pixels
   s32 y; ///< 16.16 fixed-point pixels
   s32 z; ///< 16.16 fixed-point pixels
-  u8 unk14[80];
+  /// ObjectEvent's terrainHeight to riseEnabled; not named through this view.
+  u8 terrainToRise[80];
   u16 timer; ///< ObjectEvent.timer: frames left of the spiral, 100 at the start
   s16 angle; ///< ObjectEvent.work: its start on the circle, 1/65536 turns
 };
@@ -163,25 +170,54 @@ struct DescendingOrbitObject {
 /// its motes and sparks; the notes give the ObjectEvent fields at the same
 /// offsets, some under other names.
 struct CaptureObject {
-  u8 unk00[8];
+  /// ObjectEvent's script, its cursor and facing; not named through this
+  /// view.
+  ///@{
+  const s32 *script;
+  u16 scriptCursor;
+  u16 facing;
+  ///@}
   s32 x;     ///< 16.16 fixed-point pixels
   s32 y;     ///< 16.16 fixed-point pixels
   s32 z;     ///< 16.16 fixed-point pixels
   s32 baseY; ///< terrainHeight: a spark's ground, set to where it starts
   s32 scaleX;
   s32 scaleY;
-  u8 unk20[8];
+  /// ObjectEvent's radius, terrainId, priorityFlags and velocityX; not named
+  /// through this view.
+  ///@{
+  u16 radius;
+  u8 terrainId;
+  u8 priorityFlags;
+  s32 velocityX;
+  ///@}
   /// velocityY, despite the name: a spark is thrown up at 5 pixels a frame.
   s32 gravity;
-  u8 unk2c[4];
-  s32 speed; ///< speed limit, 16.16 fixed-point pixels per frame
-  u8 unk34[33];
+  s32 velocityZ; ///< ObjectEvent's; not named through this view
+  s32 speed;     ///< speed limit, 16.16 fixed-point pixels per frame
+  /// ObjectEvent's acceleration to spriteStorageKind; not named through this
+  /// view.
+  u8 accelerationToSprite[33];
   u8 mode; ///< motionFlags: 0 for the motes, 2 (falls) for the sparks
-  u8 unk56[5];
-  u8 visible; ///< paused, despite the name: 0 lets the Djinni move
-  u8 unk5c[2];
-  u16 lifetime; ///< wait: frames its script waits before freeing it
-  u8 unk60[4];
+  /// ObjectEvent's arrivalAxis to steeringFlags; not named through this view.
+  ///@{
+  u8 arrivalAxis;
+  u8 conditionResult;
+  u8 snapToTarget;
+  u8 collisionFlags;
+  u8 steeringFlags;
+  ///@}
+  u8 visible;           ///< paused, despite the name: 0 lets the Djinni move
+  u8 retainSpriteCache; ///< ObjectEvent's; not named through this view
+  u8 repeatCount;       ///< ObjectEvent's; not named through this view
+  u16 lifetime;         ///< wait: frames its script waits before freeing it
+  /// ObjectEvent's refused to riseEnabled; not named through this view.
+  ///@{
+  u8 refused;
+  u8 frozen;
+  u8 riseCounter;
+  u8 riseEnabled;
+  ///@}
   u16 timer; ///< as DescendingOrbitObject.timer
   u16 angle; ///< work: as DescendingOrbitObject.angle
   struct ObjectEvent *linkedObject;
@@ -212,12 +248,12 @@ struct CaptureObject {
 /// Douse and Mind Read set on it; the notes give the AnimationObject fields
 /// at the same offsets.
 struct WaveEffectSprite {
-  u32 unk00[2];
-  u8 unk08;
-  u32 unk09_0 : 2;
-  u32 mode : 2; ///< image.priority, despite the name
-  u32 unk09_4 : 4;
-  u8 unk0a[0x1c];
+  u32 linkAndPosition[2]; ///< image.link and its first two attributes
+  u8 tileLow;             ///< image.tile's low byte
+  u32 tileHigh : 2;       ///< image.tile's high bits
+  u32 mode : 2;           ///< image.priority, despite the name
+  u32 paletteBits : 4;    ///< image.palette
+  u8 attr3ToDirty[0x1c];  ///< image.attr3 to the sprite's dirty flag
   u8 palette; ///< flags, despite the name: 0 drops shadow and outline
 };
 
@@ -313,26 +349,71 @@ static inline void FieldEffect_InitializeFallingFragment(
 /// A ObjectEvent as Ply's spark emitter and its sparks use it (ply.c); the
 /// notes give the ObjectEvent fields at the same offsets.
 struct SparkObject {
-  u8 unk00[8];
-  s32 x; ///< 16.16 fixed-point pixels
-  s32 y; ///< 16.16 fixed-point pixels
-  s32 z; ///< 16.16 fixed-point pixels
-  u8 unk14[4];
+  /// ObjectEvent's script, its cursor and facing; not named through this
+  /// view.
+  ///@{
+  const s32 *script;
+  u16 scriptCursor;
+  u16 facing;
+  ///@}
+  s32 x;             ///< 16.16 fixed-point pixels
+  s32 y;             ///< 16.16 fixed-point pixels
+  s32 z;             ///< 16.16 fixed-point pixels
+  s32 terrainHeight; ///< ObjectEvent's; not named through this view
   s32 scaleX;
   s32 scaleY;
-  u8 unk20[24];
+  /// ObjectEvent's radius to acceleration; not named through this view.
+  ///@{
+  u16 radius;
+  u8 terrainId;
+  u8 priorityFlags;
+  s32 velocityX;
+  s32 velocityY;
+  s32 velocityZ;
+  s32 speed;
+  s32 acceleration;
+  ///@}
   s32 anchorX; ///< centre of the sway (ObjectEvent's targetX)
-  u8 unk3c[12];
+  /// ObjectEvent's targetY, targetZ and bounce; not named through this view.
+  ///@{
+  s32 targetY;
+  s32 targetZ;
+  s32 bounce;
+  ///@}
   s32 gravity; ///< as in ObjectEvent
-  u8 unk4c[9];
+  /// ObjectEvent's riseBaseY, sprite and sprite kind; not named through this
+  /// view.
+  ///@{
+  s32 riseBaseY;
+  void *sprite;
+  u8 spriteStorageKind;
+  ///@}
   u8 motionFlags; ///< as in ObjectEvent
-  u8 unk56[8];
+  /// ObjectEvent's arrivalAxis to repeatCount; not named through this view.
+  ///@{
+  u8 arrivalAxis;
+  u8 conditionResult;
+  u8 snapToTarget;
+  u8 collisionFlags;
+  u8 steeringFlags;
+  u8 paused;
+  u8 retainSpriteCache;
+  u8 repeatCount;
+  ///@}
   u16 lifetime; ///< wait: frames its script waits before freeing it
-  u8 unk60[4];
+  /// ObjectEvent's refused to riseEnabled; not named through this view.
+  ///@{
+  u8 refused;
+  u8 frozen;
+  u8 riseCounter;
+  u8 riseEnabled;
+  ///@}
   /// timer: phase of the sway, 128 frames a cycle for a spark and 64 for the
   /// emitter, which -1 holds still.
   s16 phase;
-  u8 unk66[6];
+  u16 work; ///< ObjectEvent's; not named through this view
+  struct ObjectEvent
+      *linkedObject; ///< ObjectEvent's; not named through this view
   void (*update)(union FieldObject *fieldObject); ///< run each frame
 };
 

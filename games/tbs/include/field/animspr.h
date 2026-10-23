@@ -64,13 +64,13 @@ struct ResourceSlot {
 /// The object system's work: the flag that suspends sprite projection, the
 /// outline's edge and fill colours, and the resource slots. Heap slot 6.
 struct ObjectSystemWork {
-  u16 used;       ///< sprite pixel bytes composed since the camera reset it
-  u8 unk02[2];    ///< not named by TBS code
-  s16 suspended;  ///< nonzero while a menu has suspended sprite projection
-  u8 edge;        ///< outline edge colour; 15 when the field sets up
-  u8 fill;        ///< outline fill colour; 0 when the field sets up
-  u8 unk08[0x10]; ///< the sprite group tables, taken in turn by count
-  s32 count;      ///< sprite group tables taken from unk08
+  u16 used;      ///< sprite pixel bytes composed since the camera reset it
+  u8 unused[2];  ///< no code names it
+  s16 suspended; ///< nonzero while a menu has suspended sprite projection
+  u8 edge;       ///< outline edge colour; 15 when the field sets up
+  u8 fill;       ///< outline fill colour; 0 when the field sets up
+  u8 spriteGroups[0x10]; ///< the sprite group tables, taken in turn by count
+  s32 count;             ///< sprite group tables taken from spriteGroups
   struct ResourceSlot slots[8]; ///< found by tag (Animation_LookupValueByKey)
 };
 
@@ -84,7 +84,7 @@ STATIC_ASSERT(sizeof(struct ObjectSystemWork) == 0x5c);
 struct AnimationSpritePart {
   /// The link to the next part queued in the same depth slot this frame
   /// (Runtime_PushSlotEntry).
-  u8 unk00[4];
+  u8 link[4];
   /// The OAM entry's attributes 0 to 2.
   ///@{
   u16 y : 8;          ///< screen pixels
@@ -100,7 +100,7 @@ struct AnimationSpritePart {
   u16 priority : 2;    ///< 2 when created
   u16 palette : 4;     ///< 16-colour palette; unused at 256 colours
   ///@}
-  u8 unk0a[2]; ///< zero when created; not named by TBS code
+  u8 attr3[2]; ///< OAM attribute 3; zero when created, not named by TBS code
 };
 
 /// An animated sprite: its image and shadow, scale, rotation, size and up to
@@ -115,12 +115,12 @@ struct AnimationObject {
   u8 retainCacheEntry : 1;
   /// Drawn at its own scale, not scaled by distance (fixed camera).
   u8 useOwnScale : 1;
-  u8 unk1d2 : 6; ///< not named by TBS code
-  u16 rotation;  ///< 1/65536 turns
-  u8 width;      ///< pixels; zero marks a free sprite
-  u8 height;     ///< pixels
-  s8 offsetX;    ///< pixels
-  s8 offsetY;    ///< pixels
+  u8 unusedFlags : 6; ///< no code names them
+  u16 rotation;       ///< 1/65536 turns
+  u8 width;           ///< pixels; zero marks a free sprite
+  u8 height;          ///< pixels
+  s8 offsetX;         ///< pixels
+  s8 offsetY;         ///< pixels
   /// The animation number last selected, which selecting again skips.
   u8 lastNo;
   u8 dirty; ///< nonzero redraws its pixels into VRAM when next drawn

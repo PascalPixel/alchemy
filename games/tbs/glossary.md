@@ -102,13 +102,14 @@ original" is kept in the code, because fixing it would change the bytes.
 Each game was released in six languages, and each is an edition with a
 build of its own: `tbs-ja`, `tbs-en`, `tbs-de`, `tbs-es`, `tbs-fr` and
 `tbs-it` for Japanese, English, German, Spanish, French and Italian, and
-`tla-ja` to `tla-it` for The Lost Age, twelve in all. The Japanese edition
-is the source; the others are its measured differences, chosen with
-`LANGUAGE` from `edition.h`. Code that changed between The Broken Seal's
-editions is grouped in four patch levels, `TBS_PATCH_1` (every edition but Japanese) to
-`TBS_PATCH_4` (Spanish and Italian), which are the project's groups, not
-Camelot's version numbers. "English and later" means every edition but
-Japanese.
+`tla-ja` to `tla-it` for The Lost Age, twelve in all. The source is
+written from the Japanese edition. The other five, English, German,
+Spanish, French and Italian, are the international editions, written as
+their measured differences from it, chosen with `LANGUAGE` from
+`edition.h`. Code that changed between The
+Broken Seal's editions is grouped in four patch levels, `TBS_PATCH_1` (every
+international edition) to `TBS_PATCH_4` (Spanish and Italian), which are the
+project's groups, not Camelot's version numbers.
 
 ### pret
 
@@ -197,8 +198,8 @@ a [far-call](#far-call) table. Because other banks call only that table,
 one bank's code can grow or shrink without moving anything another bank
 depends on. Distance is not the reason: the processor's call instruction
 reaches 4 MB and the program's farthest call about 1.5 MB. How Camelot
-built the banks is an open question. The nine large banks each have a
-folder of the source. [System](src/system/README.md#why-the-program-is-cut-into-banks)
+built the banks is an open question. Each of the nine large banks has
+a folder of the source. [System](src/system/README.md#why-the-program-is-cut-into-banks)
 explains them.
 
 ### Far call
@@ -274,9 +275,8 @@ explains the loop of maps.
 
 ### Map section
 
-A group of maps that share their music, the area name shown on arrival and
-the flags kept while the party stays inside; 71 in all. Vale is one map
-section of eight maps. [The front
+A group of maps, 71 in all, that share their music, their area name and
+one range of [scratch flags](#game-flag). [The front
 page](README.md#the-map-table-and-map-sections) explains them.
 
 ### Layout
@@ -305,8 +305,8 @@ explains them.
 
 ### Field object
 
-One of the field engine's 64 slots, `gObjectSlots`: anything on the field
-that moves or changes by itself, from the party and the townspeople to the
+One of the field engine's 64 slots, `gObjectSlots`: anything in a map that
+acts on its own, from the party and the townspeople to the
 camera and the footprints in snow. Each runs an object script.
 [World](world.md#field-objects-and-their-scripts) explains them.
 
@@ -378,7 +378,7 @@ object runs each frame. "Scene" means only a cutscene.
 
 ### Game flag
 
-One of the 4,096 yes-or-no facts saved with the game: which Djinn the
-party has, which chests are open, how far the story has gone. Two ranges
-are scratch space for maps, forgotten as the party moves on. [The front
+One of the 4,096 yes-or-no facts saved with the game, such as a chest
+being open or a Djinni found. Two ranges are scratch space, cleared as
+the party enters maps and map sections. [The front
 page](README.md#game-flags) explains them.

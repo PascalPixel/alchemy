@@ -202,10 +202,10 @@ the previous map sent the party to.
 
 ## Game flags
 
-The game flags are the long list of yes-or-no facts saved with the game:
-which Djinn the party has, which chests are open, how far the story has
-gone. Two ranges of them are scratch space for maps, forgotten as the
-party moves on.
+A map keeps nothing of its own between visits: what the game must remember,
+from a chest someone opened to the end of a chapter, is a game flag, saved
+with the game. Two ranges of flags are set aside for maps to use and are
+cleared as the party moves on.
 
 ![What a map forgets, and when. Map flags are forgotten every time the party enters a map, even the one it just left: the plant Growth raised on Crossbone Isle is a sprout again, as the picture of it on its cliff ledge shows. Map section flags are kept while the party moves between the maps of one map section and forgotten when it enters another map section: Vault's mayor remembers having welcomed Isaac back while the party stays in Vault, and welcomes him again on the next visit. Coming back from a battle forgets neither, so the room is as the party left it.](https://alchemy.pascalpixel.com/illustrations/scene/flag-reset.svg)
 
@@ -348,9 +348,8 @@ folder for each large bank, in the order the cartridge holds them.
 ![The main program, bank by bank. The main program's code as it lies on the English cartridge, about 1 MB, drawn to scale from start to end and cut into fourteen banks. Each large bank has a folder of the source: runtime (start-up, frames and memory), field (moving and drawing), window (windows, fonts and all the game's text, the largest), game (the rules: stats, items), object (running a map), menu, shop, battle, and effect (battle animations). Five small banks follow, the last for sound. Each bank opens with a table of jumps, and a call from another bank, a far call, goes to a jump in that table, which leads on to the function: the object bank starts a battle by calling the battle bank's table.](https://alchemy.pascalpixel.com/illustrations/front/banks.svg)
 
 The main image is the program the processor runs from the cartridge.
-`main.ld` lays out its code in fourteen banks, each starting at an address
-fixed per [edition](glossary.md#editions); together they take about 1 MB of
-the English cartridge, and the sound code, the music and the game's packed
+`main.ld` lays out its code in fourteen banks; together they take about
+1 MB of the English cartridge, and the sound code, the music and the game's packed
 data follow them. A caller in another bank goes through the bank's
 far-call table, by the function's name with `Far` added: `Game_Run`, in the
 `object` bank, starts a battle with `Battle_RunEncounterFar`, which leads to

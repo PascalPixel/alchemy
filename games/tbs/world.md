@@ -92,7 +92,8 @@ struct MapEntries {
 ```
 
 A [map event](glossary.md#map-event) table is an array of `struct MapEvent`
-rows: a kind, a [trigger](glossary.md#trigger), a condition and what to run.
+rows, each naming its kind, the [trigger](glossary.md#trigger) it answers, a condition and the
+message or script it runs.
 These are four of the rows of `gVault_Events`
 ([vault.c](src/map/vault.c)):
 

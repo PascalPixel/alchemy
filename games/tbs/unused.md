@@ -49,9 +49,9 @@ Three habits of the game account for nearly every unused row on this page:
   events already run.
 
 `Map_FindEvent` ([events.c](src/object/object/events.c)) walks the table from
-the top and returns the first row whose kind, [trigger](glossary.md#trigger) and condition fit. A later
-row for the same person or cell runs only where every earlier row's condition
-fails, so a row behind one with no condition is never returned. The walk stops
+the top and returns the first row whose kind, [trigger](glossary.md#trigger) and condition fit, so
+a row behind one for the same person or cell whose condition always holds
+is never returned. The walk stops
 at the table's end marker, and rows after it are never read.
 
 A search of a named thing ([bg event](glossary.md#bg-event) rows for a chest, a jar or an oven,

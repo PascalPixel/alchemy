@@ -26,7 +26,7 @@ struct WindowSprite *CreateSideObject(s32 character, s32 unused, s32 side,
                                       struct Window *window, s32 x, s32 y);
 void Portrait_Reload(u32 side, s32 character, s32 unused);
 void WindowSprite_SetMotion(struct WindowSprite *out, s32 mode);
-void WindowSprite_SetInvertedSentinel(void *output, s32 priority);
+void WindowSprite_SetInvertedSentinel(void *sprite, s32 priority);
 void Win_FillScanlineSpans(void *spans);
 void Win_FillScreenBlockRect(s32 unused0, s32 unused1, u32 width, u32 height,
                              s32 value);

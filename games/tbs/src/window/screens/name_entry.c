@@ -254,7 +254,7 @@ s32 NamingScreen_EditMemberName(s32 member) {
   union MenuCursorRef keyCursor;
   union MenuCursorRef nameCaret;
   s32 keyColumn, keyRow, vramSlot;
-  struct WindowSprite *output;
+  struct WindowSprite *sprite;
   u8 *end;
   u16 *palette;
 
@@ -297,9 +297,9 @@ s32 NamingScreen_EditMemberName(s32 member) {
   keyRow = 5;
   if (vramSlot <= 95) {
     VramCache_Load(vramSlot, 128, gResource_FixedBlockBTiles);
-    output =
+    sprite =
         WindowSprite_Create(vramSlot, OUTPUT_SIZE_16X16, keyboardWindow, 0, 0);
-    keyCursor.output = output;
+    keyCursor.sprite = sprite;
     MenuCursor_SetPositionImmediateFar(&keyCursor.cursor,
                                        keyboardWindow->x * 8 + 140,
                                        keyboardWindow->y * 8 + 52);
@@ -307,11 +307,11 @@ s32 NamingScreen_EditMemberName(s32 member) {
   vramSlot = VramCache_FindFreeEntry();
   if (vramSlot <= 95) {
     VramCache_Load(vramSlot, 128, gResource_FixedBlockATiles);
-    output =
+    sprite =
         WindowSprite_Create(vramSlot, OUTPUT_SIZE_16X16, keyboardWindow, 0, 0);
-    nameCaret.output = output;
-    output->sentinel = 255;
-    output->oam.priority = 0;
+    nameCaret.sprite = sprite;
+    sprite->sentinel = 255;
+    sprite->oam.priority = 0;
     // The caret stands after the name, at its width in pixels.
     MenuCursor_SetPositionImmediateFar(&nameCaret.cursor,
                                        Text_SetString(editedName) + 70, 22);
@@ -352,9 +352,9 @@ s32 NamingScreen_EditMemberName(s32 member) {
     {
       u32 frame = (gFrameTick >> 1) & 7;
 
-      output = nameCaret.output;
-      output->oam.x = output->x + gNamingScreen_CaretWave[frame];
-      output->oam.y = output->y + gNamingScreen_CaretWave[(frame + 5) & 7];
+      sprite = nameCaret.sprite;
+      sprite->oam.x = sprite->x + gNamingScreen_CaretWave[frame];
+      sprite->oam.y = sprite->y + gNamingScreen_CaretWave[(frame + 5) & 7];
     }
     // The D-pad moves over the keys, skipping the gaps between groups and
     // wrapping around; Start jumps to End.
@@ -439,7 +439,7 @@ s32 NamingScreen_EditMemberName(s32 member) {
         // the 14 name bytes and their terminator are copied over the unit's
         // name.
         if (letterCount == 0) {
-          nameCaret.output->motion = 13;
+          nameCaret.sprite->motion = 13;
           WindowSprite_PrepareForRedraw(nameWindow);
           Text_DrawPaddedLabel(nameWindow, originalName);
           WaitFrames(10);
@@ -530,7 +530,7 @@ s32 NamingScreen_EditMemberName(s32 member) {
   union MenuCursorRef keyCursor;
   union MenuCursorRef nameCaret;
   s32 keyColumn, keyRow, vramSlot, x;
-  struct WindowSprite *output;
+  struct WindowSprite *sprite;
   u32 letter;
   u16 *palette;
 
@@ -567,9 +567,9 @@ s32 NamingScreen_EditMemberName(s32 member) {
   keyRow = 10;
   if (vramSlot <= 95) {
     VramCache_Load(vramSlot, 128, gResource_FixedBlockBTiles);
-    output =
+    sprite =
         WindowSprite_Create(vramSlot, OUTPUT_SIZE_16X16, keyboardWindow, 0, 0);
-    keyCursor.output = output;
+    keyCursor.sprite = sprite;
     MenuCursor_SetPositionImmediateFar(&keyCursor.cursor,
                                        keyboardWindow->x * 8 + 140,
                                        keyboardWindow->y * 8 + 92);
@@ -577,11 +577,11 @@ s32 NamingScreen_EditMemberName(s32 member) {
   vramSlot = VramCache_FindFreeEntry();
   if (vramSlot <= 95) {
     VramCache_Load(vramSlot, 128, gResource_FixedBlockATiles);
-    output =
+    sprite =
         WindowSprite_Create(vramSlot, OUTPUT_SIZE_16X16, keyboardWindow, 0, 0);
-    nameCaret.output = output;
-    output->sentinel = 255;
-    output->oam.priority = 0;
+    nameCaret.sprite = sprite;
+    sprite->sentinel = 255;
+    sprite->oam.priority = 0;
     // The caret stands after the name: its letters are 10 pixels apart.
     x = 72 + NamingScreen_CountLetters(editedName) * 10;
     MenuCursor_SetPositionImmediateFar(&nameCaret.cursor, x, 22);
@@ -623,9 +623,9 @@ s32 NamingScreen_EditMemberName(s32 member) {
     {
       u32 frame = (gFrameTick >> 1) & 7;
 
-      output = nameCaret.output;
-      output->oam.x = output->x + gNamingScreen_CaretWave[frame];
-      output->oam.y = output->y + gNamingScreen_CaretWave[(frame + 5) & 7];
+      sprite = nameCaret.sprite;
+      sprite->oam.x = sprite->x + gNamingScreen_CaretWave[frame];
+      sprite->oam.y = sprite->y + gNamingScreen_CaretWave[(frame + 5) & 7];
     }
     // The D-pad moves over the keys, skipping the gaps between groups and
     // wrapping around; Start jumps to End.
@@ -743,7 +743,7 @@ s32 NamingScreen_EditMemberName(s32 member) {
     if (keyColumn == NAME_COMMAND_COLUMN) {
       if (keyRow == 10) {
         if (letterCount == 0) {
-          nameCaret.output->motion = 13;
+          nameCaret.sprite->motion = 13;
           WindowSprite_PrepareForRedraw(nameWindow);
           Text_DrawString(originalName, nameWindow, 0, 0);
           WaitFrames(10);

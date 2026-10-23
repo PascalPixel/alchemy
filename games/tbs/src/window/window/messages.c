@@ -603,7 +603,7 @@ void Portrait_CloseWindow(u32 speaker) {
   s32 resourceId;
   s32 portraitSlot;
   s32 windowIndex;
-  struct WindowSprite *portraitOutput;
+  struct WindowSprite *portraitSprite;
 
   state = WINDOW_WORK;
   window = state->windows;
@@ -622,16 +622,16 @@ void Portrait_CloseWindow(u32 speaker) {
   resourceId = state->portraitSprites[portraitSlot];
 
   for (windowIndex = 0; windowIndex != WINDOW_COUNT; windowIndex++, window++) {
-    portraitOutput = window->sprites.head;
+    portraitSprite = window->sprites.head;
 #ifdef UBFIX
     // Window_Create and the closing update leave empty heads NULL. Skip
     // them before reading kind: dereferencing that NULL pointer is undefined.
     // The plain guard adds four bytes to the native English object.
-    if (portraitOutput == NULL)
+    if (portraitSprite == NULL)
       continue;
 #endif
-    if ((u8)portraitOutput->kind == WINDOW_SPRITE_PORTRAIT &&
-        (u8)portraitOutput->index == resourceId) {
+    if ((u8)portraitSprite->kind == WINDOW_SPRITE_PORTRAIT &&
+        (u8)portraitSprite->index == resourceId) {
       Window_Close(window, 2);
       return;
     }

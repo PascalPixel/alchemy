@@ -429,10 +429,10 @@ void WindowSprite_RedrawSavedRect(struct Window *window) {
   Window_DrawFrame(window->x, window->y, window->width, window->height);
 }
 
-/// Releases every window sprite in a list and empties it. outputs is the list,
+/// Releases every window sprite in a list and empties it. sprites is the list,
 /// or a window (whose sprite list comes first); NULL is ignored.
-void WindowSprite_ClearList(void *outputs) {
-  struct WindowSpriteList *list = outputs;
+void WindowSprite_ClearList(void *sprites) {
+  struct WindowSpriteList *list = sprites;
   struct WindowSprite *node;
   struct WindowSprite *next;
 

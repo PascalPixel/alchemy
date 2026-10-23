@@ -270,7 +270,7 @@ void Window_WaitZoom(struct Window *window);
 void Window_Close(struct Window *window, s32 instant);
 void WindowSprite_PrepareForRedraw(struct Window *window);
 void WindowSprite_RedrawSavedRect(struct Window *window);
-void WindowSprite_ClearList(void *outputs);
+void WindowSprite_ClearList(void *sprites);
 void Window_ClearInteriorTiles(const struct Window *window, u32 left, u32 top,
                                u32 right, u32 bottom);
 void WindowSprite_UpdateListTail(struct WindowSpriteList *list);
@@ -347,7 +347,7 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode);
 // compile. Split evidence for window|screens.
 void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
                             u32 mode);
-void WindowSprite_UpdateScaleAnimation(struct WindowSprite *output);
+void WindowSprite_UpdateScaleAnimation(struct WindowSprite *sprite);
 void WindowSprite_UpdateAll(void);
 void Message_DecodeRawUnbounded(s32 message, u16 *buf);
 s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity);

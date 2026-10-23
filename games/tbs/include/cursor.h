@@ -29,7 +29,7 @@ STATIC_ASSERT(offsetof(struct MenuCursor, active) == 0x0c);
 // Screens that write only the image pointer use the union to retain store
 // order.
 union MenuCursorRef {
-  struct WindowSprite *output; ///< the image alone; cursor.anchor
+  struct WindowSprite *sprite; ///< the image alone; cursor.anchor
   struct MenuCursor cursor;
 };
 

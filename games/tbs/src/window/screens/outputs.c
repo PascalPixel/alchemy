@@ -14,11 +14,11 @@ struct WindowSprite *WindowSprite_Create(s32 slot, s32 oamFlags,
                                          struct Window *window, s32 offsetX,
                                          s32 offsetY) {
   s32 x;
-  struct WindowSprite *output;
+  struct WindowSprite *sprite;
   s32 y;
 
-  output = WindowSprite_AcquireFree();
-  if (output == NULL) {
+  sprite = WindowSprite_AcquireFree();
+  if (sprite == NULL) {
     VramCache_FreeEntry(slot);
     return NULL;
   }
@@ -38,25 +38,25 @@ struct WindowSprite *WindowSprite_Create(s32 slot, s32 oamFlags,
     // Attribute 2: the first tile of the slot's VRAM block (32 bytes a tile).
     words[1] =
         ((struct VramCacheEntry *)Ram_VramCacheEntries)[slot].offset >> 5;
-    __builtin_memcpy(&output->oam, words, sizeof(words));
+    __builtin_memcpy(&sprite->oam, words, sizeof(words));
   }
 #else
-  *(u32 *)&output->oam = (x << 16) | y | oamFlags;
+  *(u32 *)&sprite->oam = (x << 16) | y | oamFlags;
   // Attribute 2: the first tile of the slot's VRAM block (32 bytes a tile).
-  ((u32 *)&output->oam)[1] =
+  ((u32 *)&sprite->oam)[1] =
       ((struct VramCacheEntry *)Ram_VramCacheEntries)[slot].offset >> 5;
 #endif
-  output->sentinel = 0xff;
-  output->next = NULL;
-  output->x = x;
-  output->y = y;
-  output->index = slot;
+  sprite->sentinel = 0xff;
+  sprite->next = NULL;
+  sprite->x = x;
+  sprite->y = y;
+  sprite->index = slot;
   // Kind 1: the sprite owns the slot, which is freed with it. Its motion is
   // WINDOW_SPRITE_MOTION_STILL.
-  output->kind = WINDOW_SPRITE_ICON;
-  output->motion = 1;
-  WindowSprite_AppendToList(&window->sprites, output);
-  return output;
+  sprite->kind = WINDOW_SPRITE_ICON;
+  sprite->motion = 1;
+  WindowSprite_AppendToList(&window->sprites, sprite);
+  return sprite;
 }
 
 /// Loads resource `resource` in loading mode `mode` into a VRAM slot and shows
@@ -83,15 +83,15 @@ struct WindowSprite *WindowSprite_CreateLoaded(s32 icon, s32 layers,
                                                struct Window *window, s32 x,
                                                s32 y) {
   s32 slot;
-  struct WindowSprite *output;
+  struct WindowSprite *sprite;
 
   slot = VramCache_FindFreeEntry();
-  output = NULL;
+  sprite = NULL;
   if (slot != VRAM_CACHE_ENTRY_COUNT) {
     Icon_CopyResourceToSlot(icon, layers, slot);
-    output = WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
+    sprite = WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
   }
-  return output;
+  return sprite;
 }
 
 /// Builds a 16x16 icon from frame pattern 1 with overlay pattern `icon` drawn
@@ -102,17 +102,17 @@ struct WindowSprite *WindowSprite_CreateWithTransform(s32 icon,
                                                       s32 x, s32 y) {
   s32 slot;
   s32 unusedTile;
-  struct WindowSprite *output;
+  struct WindowSprite *sprite;
 
   slot = VramCache_FindFreeEntry();
   if (slot == VRAM_CACHE_ENTRY_COUNT) {
     return NULL;
   }
   Icon_BuildCommandIconTiles(icon, 1, &slot, &unusedTile, 1);
-  output = WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
+  sprite = WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
   // Not checked: with every sprite in use, this stores through NULL.
-  output->sentinel = 251;
-  return output;
+  sprite->sentinel = 251;
+  return sprite;
 }
 
 /// Loads the pattern at the start of gHeadingPictures into a
@@ -123,15 +123,15 @@ struct WindowSprite *WindowSprite_CreateFromTable(s32 tableEntry,
                                                   struct Window *window, s32 x,
                                                   s32 y) {
   s32 slot;
-  struct WindowSprite *output;
+  struct WindowSprite *sprite;
 
   slot = VramCache_FindFreeEntry();
-  output = NULL;
+  sprite = NULL;
   if (slot != VRAM_CACHE_ENTRY_COUNT) {
     RenderResource_LoadTableEntry(tableEntry, 0, slot);
-    output = WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
+    sprite = WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
   }
-  return output;
+  return sprite;
 }
 
 /// Shows the 32x32 portrait of `character` at (x, y) in `window`, in portrait
@@ -235,11 +235,11 @@ void WindowSprite_SetMotion(struct WindowSprite *out, s32 mode) {
   }
 }
 
-/// Sets the draw layer of the window sprite `output` to 255 - `priority`, so a
-/// higher priority draws on a lower layer. Does nothing when `output` is NULL.
-void WindowSprite_SetInvertedSentinel(void *output, s32 priority) {
-  if (output != NULL)
-    ((struct WindowSprite *)output)->sentinel = ~priority;
+/// Sets the draw layer of the window sprite `sprite` to 255 - `priority`, so a
+/// higher priority draws on a lower layer. Does nothing when `sprite` is NULL.
+void WindowSprite_SetInvertedSentinel(void *sprite, s32 priority) {
+  if (sprite != NULL)
+    ((struct WindowSprite *)sprite)->sentinel = ~priority;
 }
 
 typedef void (*WindowSpanRoutine)(u16 *spans, u16 *tilemap);

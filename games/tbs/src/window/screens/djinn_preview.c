@@ -155,18 +155,18 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
   // a 16x16 sprite on layer 240 at pixel (x, y) of the window, in a VRAM
   // cache entry of its own that the window's sprite list frees (kind 1).
   void DjinnMenu_DrawStatArrow(s32 x, s32 y, s32 rising) {
-    struct WindowSprite *output = WindowSprite_AcquireFree();
+    struct WindowSprite *sprite = WindowSprite_AcquireFree();
     struct PreviewSprite *entry;
     u32 zero;
-    if (output) {
-      output->motion = 1;
-      output->kind = WINDOW_SPRITE_ICON;
+    if (sprite) {
+      sprite->motion = 1;
+      sprite->kind = WINDOW_SPRITE_ICON;
       // Stored through a cast, the index stays ahead of the attribute word.
-      *(s8 *)&output->index = VramCache_AllocEntry(128);
-      entry = (struct PreviewSprite *)((u8 *)output + 16);
-      output->sentinel = 240;
-      output->x = 120;
-      output->y = 120;
+      *(s8 *)&sprite->index = VramCache_AllocEntry(128);
+      entry = (struct PreviewSprite *)((u8 *)sprite + 16);
+      sprite->sentinel = 240;
+      sprite->x = 120;
+      sprite->y = 120;
       // UB: the two stores below write the attribute and tile words through
       // pointer types, which keeps sched2's order of the stores around them;
       // UBFIX writes the unions' words.
@@ -187,9 +187,9 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
       win++;
       win--;
       entry->tile.bits.index = VramCache_Reload(
-          (u8)output->index,
+          (u8)sprite->index,
           (s32)(rising ? gDjinnMenu_ArrowUpTiles : gDjinnMenu_ArrowDownTiles));
-      WindowSprite_AppendToList((struct WindowSpriteList *)win, output);
+      WindowSprite_AppendToList((struct WindowSpriteList *)win, sprite);
     }
   }
 

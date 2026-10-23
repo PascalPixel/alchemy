@@ -287,7 +287,7 @@ void OptionMenu_AnimateCursors(void) {
   } else {
     cursorResource = (s32)&ResourceId_MenuCursorFrames;
   }
-  VramCache_Load((u8)work->marker[0].output->index, 0x100,
+  VramCache_Load((u8)work->marker[0].sprite->index, 0x100,
                  Resource_GetTableEntry(cursorResource));
 
   if (selectedOption == 1) {
@@ -296,7 +296,7 @@ void OptionMenu_AnimateCursors(void) {
   } else {
     markerResource = (s32)&ResourceId_MenuCursorFrames;
   }
-  VramCache_Load((u8)work->marker[1].output->index, 0x100,
+  VramCache_Load((u8)work->marker[1].sprite->index, 0x100,
                  Resource_GetTableEntry(markerResource));
 
   if (selectedOption > 1)
@@ -379,7 +379,7 @@ struct Window *OptionMenu_Open(void) {
   if (x < RESOURCE_SLOTS) {
     VramCache_Load(x, 128, gResource_FixedBlockBTiles);
     marker = WindowSprite_Create(x, 0x40000000, window, 0, 0);
-    work->cursor.output = marker;
+    work->cursor.sprite = marker;
     x = window->x * 8;
     y = window->y * 8 + 12;
     MenuCursor_SetPositionImmediateFar(&work->cursor.cursor, x, y);
@@ -417,7 +417,7 @@ struct Window *OptionMenu_Open(void) {
     VramCache_Load(x, 256, 0);
     marker = WindowSprite_Create(x, 0x40000000, window, 0, 0);
     marker->oam.palette256 = 1;
-    work->marker[0].output = marker;
+    work->marker[0].sprite = marker;
     x = window->x * 8 + OPTION_SLIDER_X;
     x += work->option[0] * 60 / work->optionCount[0];
     y = window->y * 8 + 4;
@@ -429,7 +429,7 @@ struct Window *OptionMenu_Open(void) {
     VramCache_Load(x, 256, 0);
     marker = WindowSprite_Create(x, 0x40000000, window, 0, 0);
     marker->oam.palette256 = 1;
-    work->marker[1].output = marker;
+    work->marker[1].sprite = marker;
     x = window->x * 8 + OPTION_SLIDER_X;
     x += work->option[1] * 60 / work->optionCount[1];
     y = window->y * 8 + 20;
@@ -736,7 +736,7 @@ struct Window *PauseMenu_Open(void) {
   cacheSlot = VramCache_FindFreeEntry();
   if (cacheSlot < RESOURCE_SLOTS) {
     VramCache_Load(cacheSlot, 128, gResource_FixedBlockBTiles);
-    work->cursor.output =
+    work->cursor.sprite =
         WindowSprite_Create(cacheSlot, 0x40000000, window, 0, 0);
     x = window->x * 8;
     y = window->y * 8 + 16;

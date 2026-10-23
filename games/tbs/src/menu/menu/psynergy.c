@@ -767,7 +767,7 @@ void PsynergyMenu_CreateEntryGrid(void) {
   s32 index;
   s32 x;
   s32 y;
-  struct WindowSprite **output;
+  struct WindowSprite **sprite;
 
   menu = gMenuWork;
   window = MenuCursor_Create(menu);
@@ -787,10 +787,10 @@ void PsynergyMenu_CreateEntryGrid(void) {
 
   y = 8;
   index = 0;
-  output = &menu->entryIcons[0];
+  sprite = &menu->entryIcons[0];
   x = 96;
   do {
-    *output++ = WindowSprite_CreateFromResourceFar(ICON_KIND_ABILITY, index,
+    *sprite++ = WindowSprite_CreateFromResourceFar(ICON_KIND_ABILITY, index,
                                                    window, x, y);
     index++;
     x += 16;
@@ -798,10 +798,10 @@ void PsynergyMenu_CreateEntryGrid(void) {
 
   index = 8;
   y = 24;
-  output = &menu->entryIcons[8];
+  sprite = &menu->entryIcons[8];
   x = 96;
   do {
-    *output++ = WindowSprite_CreateFromResourceFar(ICON_KIND_ABILITY, index,
+    *sprite++ = WindowSprite_CreateFromResourceFar(ICON_KIND_ABILITY, index,
                                                    window, x, y);
     index++;
     x += 16;

@@ -39,8 +39,12 @@ enum ItemFlags {
   ITEM_CURSED = 1, ///< equipping it curses the wearer (BattleUnit.restraint)
   /// Once equipped it cannot be taken off, or dropped while worn.
   ITEM_CANNOT_UNEQUIP = 2,
-  ITEM_RARE = 4, ///< selects the shop's rare item offers
-  /// Never dropped; first among a battle's drops kept (BattleSpoils_RankItem).
+  /// A rare item: "A rare item" on the Item screen, the shop's
+  /// MsgRareSellOffer, and second rank among the spoils
+  /// (BattleSpoils_RankItem).
+  ITEM_RARE = 4,
+  /// An important item: never dropped, worth nothing to a shop
+  /// (Shop_SalePrice), and first among a battle's drops kept.
   ITEM_INDISPENSABLE = 8,
   ITEM_STACKABLE = 0x10 ///< kept in one inventory entry with a quantity
 };

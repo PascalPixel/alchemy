@@ -12,6 +12,18 @@ Attack would be with another sword, and a battle what a blow does.
 [Battles](../battle/README.md) follows an ability from these tables to its
 damage.
 
+Two words run through the page. A character's record, with its stats, HP
+and [PP](../../glossary.md#psynergy-and-pp), items and Djinn, is a unit, a
+`struct BattleUnit`; the same struct holds each enemy in a battle. The
+number that picks a unit is its owner: `ISAAC` (0) to `PIERS` (7) for the
+eight characters of both games, and from `FIRST_ENEMY_UNIT` (128) for the
+current battle's enemies.
+
+The code is its own [bank](../../glossary.md#bank) of the main image, the
+`game` bank, so code elsewhere calls it through
+[far calls](../../glossary.md#far-call), by names ending in `Far`:
+`Unit_GetFar` leads to `Unit_Get`.
+
 ## How one number finds a row and its name
 
 The Healing Ring costs 800 coins, heals like Cure when used, and is called
@@ -22,29 +34,41 @@ them is a number: the ring is item 265, the 265th row of one list and the
 
 In the code, the definition tables have no id column: an entry's id is its
 row, the first row after the header being entry 0. Every line of the game's
-text is a message with a number, and the same id, added to the number of a
-table's first message, gives the entry's name. An item's name is `MsgItemName` + id and the
-line the Item screen shows about it `MsgItemPlainName` + id; an enemy's name
-is `MsgEnemyName` + id, an ability's `MsgAbilityName` + id and its
-description `MsgAbilityDescription` + id, and a Djinni's `MsgDjinnName` + its
-row, which is also its ability, `ABILITY_DJINNI_FIRST` + row. Code reaches a
-name by adding (`itemId + MsgItemName` in the shops and menus).
+text is a message with a number, and each table's names are a run of
+messages in the same order, starting at a message named for the run:
+
+```
+name message = MsgItemName + item id
+             = 386 + 265 = 651 for the Healing Ring
+```
+
+The same holds for the Item screen's line about an item
+(`MsgItemPlainName` + id), an enemy's name (`MsgEnemyName` + id), an
+ability's name and description (`MsgAbilityName` and
+`MsgAbilityDescription` + id) and a Djinni's name (`MsgDjinnName` + its
+row). A Djinni's row also gives its ability, `ABILITY_DJINNI_FIRST` + row.
+Code reaches a name by adding (`itemId + MsgItemName` in the shops and
+menus).
 
 The tables and the message catalogs (the game's text, one catalog for each
 of the six languages) are therefore parallel lists tied only by position. A
 row inserted into `items.tsv` would give every later item the name of the
-one after it unless all six catalogs gained a message at the same place, and
-rows no item uses keep their places. The Healing Ring is on line
-267 of `items.tsv`, so it is item 265; its name is message 651 and its line
-"Ring: Use to restore 70 HP".
+one after it unless all six catalogs gained a message at the same place.
+Rows no item uses stay in the table as placeholders, so that later ids
+don't move. The Healing Ring is on line 267 of `items.tsv` (line 1 is the
+header and line 2 is item 0), so it is item 265; its name is message 651
+and its line "Ring: Use to restore 70 HP".
 
 Each table is a text file of tab-separated columns (`.tsv`) that the build
 turns into the bytes the game reads. Its header line gives each column a
 name and says how much room the column takes, written `name:type`: `u8` is
 one byte holding a number from 0 up, `s8` one byte that may be negative,
 `u16` and `s16` two bytes, `u32` and `s32` four, and `strN` is text of up to
-N bytes. The build writes a `.table` beside each `.tsv`, and the matching
-`.s` file places it in the game under its symbol, the name code uses for it. A column without a type (`item`, `ability`,
+N bytes. The build's `ags-graphics` packs each row into those bytes and
+writes the result as a `.table` beside the `.tsv`; the matching `.s` file
+places it with `.incbin` under its symbol, the name code uses for it
+(`gItem_DefinitionTable: .incbin "games/tbs/src/game/items.table"`). A
+column without a type (`item`, `ability`,
 `djinni`, `enemy`) is a label for readers and builds no bytes: the English
 name its message gives, `?` or `=` where the message marks the row unused,
 or `(no name message)` for a row past the last name. `reserved_` and `pad_`
@@ -62,7 +86,7 @@ name the ids the code uses.
 | `classes.tsv` | class (203) | `gClass_DefinitionTable` (`classes.s`) |
 | `chars.tsv` | character (8) | `gCharacter_DefinitionTable` (`chars.s`) |
 | `elempre.tsv` | enemy element preset (44) | `gEnemy_ElementPresetTable` (`element_table.s`) |
-| `artifact_slots.tsv` | 16 item ids, columns `x0` to `xf` (32 rows, 512 ids): a rare item's counter number plus one, or 0 | `gItem_ArtifactSlotTable` (`artifact_slots.s`) |
+| `artifact_slots.tsv` | 16 item ids, columns `x0` to `xf` (32 rows, 512 ids): a rare item's counter number plus one, or 0 (artifact is the code's word for an item with a counter; [Rare item counters](#rare-item-counters) explains them) | `gItem_ArtifactSlotTable` (`artifact_slots.s`) |
 | `level_experience_0.tsv` to `_7.tsv` | level (99), with the experience it needs, one table per character | `gCharacter_LevelExpTable` (`experience_table.s`) |
 
 | Name | Value | Meaning |
@@ -90,7 +114,7 @@ element 4, `ELEMENT_NONE`; every other column is 0.
 | Column | What it holds |
 | --- | --- |
 | `price` | the price in coins |
-| `type` | `enum ItemType`: `ITEM_TYPE_NONE` for anything that isn't equipment, then weapons, armor, shields, helms, boots, `ITEM_TYPE_PSYNERGY`, rings and shirts; a unit equips one of each type but [Psynergy](../../glossary.md#psynergy-and-pp) items |
+| `type` | `enum ItemType`: `ITEM_TYPE_NONE` for anything that isn't equipment, then weapons, armor, shields, helms, boots, `ITEM_TYPE_PSYNERGY`, rings and shirts; a unit equips one of each type except [Psynergy](../../glossary.md#psynergy-and-pp) items |
 | `flags` | `enum ItemFlags`: `ITEM_CURSED`, `ITEM_CANNOT_UNEQUIP`, `ITEM_RARE`, `ITEM_INDISPENSABLE` and `ITEM_STACKABLE` |
 | `equip_mask` | one bit per character who can equip it, bit 0 for Isaac: the Long Sword's `0x13` is Isaac, Garet and Felix |
 | `icon` | its menu icon (`gUiIcon_ItemIconPointers`) |
@@ -118,8 +142,8 @@ The Healing Ring's row shows the pieces together: 800 coins, `type` ring,
 | --- | --- | --- |
 | `ITEM_CURSED` | 1 | equipping it curses the wearer |
 | `ITEM_CANNOT_UNEQUIP` | 2 | once equipped it cannot be taken off, or dropped while worn |
-| `ITEM_RARE` | 4 | selects the shop's rare item offers |
-| `ITEM_INDISPENSABLE` | 8 | never dropped; kept first among a battle's drops |
+| `ITEM_RARE` | 4 | a rare item: the Item screen can call it `A rare item`, a shopkeeper buying it says `What rare stuff!`, and it ranks high among a battle's spoils |
+| `ITEM_INDISPENSABLE` | 8 | an important item: the player cannot drop it, no shop buys it, and it ranks first among the items enemies leave |
 | `ITEM_STACKABLE` | `0x10` | kept in one inventory entry with a count |
 | `ITEM_USE_FREE` | 0 | using it costs nothing, as with equipment |
 | `ITEM_USE_CONSUMED` | 1 | one is used up |
@@ -194,8 +218,15 @@ copies the unit to the [heap](../../glossary.md#heap-and-pools), changes the rea
 `Unit_Calculate` run, draws the new numbers against the copy and restores the
 unit from it. The preview is what equipping would do because it is the same
 computation. The Machete adds 6 to Attack, but the panel shows 7 less,
-because his class multiplies the sum (in tenths, from its row of
-`classes.tsv`) and the result rounds down.
+because his class multiplies the sum and the result rounds down. Of the
+multipliers in the `atk` column of `classes.tsv`, only 11 tenths (the
+Squire's, among others) gives both numbers, from an Attack of 16 before the
+class:
+
+```
+with the Machete     (16 + 6) * 11 / 10 = 24
+without it                 16 * 11 / 10 = 17
+```
 
 ## The game flags
 
@@ -220,17 +251,18 @@ Eight flags from a multiple of 8 are therefore also one byte, which
 write whole, and four flags one nibble, half a byte (`GameFlag_GetNibble`,
 `GameFlag_SetNibble`). Counters live among the flags this way, such as the
 Battle Arena's win count (`FLAG_MONSTER_BATTLE_WINS`) and a link battle's
-party size (`FLAG_LINK_PARTY_COUNT`), and follow the flags' rules: one in
-a map's range is cleared with that range, and all are saved.
-[The front page](../../README.md) gives the ranges and when they are
-cleared.
+party size (`FLAG_LINK_PARTY_COUNT`), and follow the flags' rules: all are
+saved, and one in a scratch range is cleared with it. Two ranges of flags
+are scratch space for the map code: a map's own flags, cleared every time
+the party enters a map, and a map section's, cleared when it enters another
+[map section](../../glossary.md#map-section).
+[The front page](../../README.md#game-flags) gives the ranges.
 
 Flags `FLAG_DJINN_FIRST` (48) to 127 are the Djinn's found flags, Djinni n of
 element e being flag `FLAG_DJINN_FIRST` + 20 × e + n. The save summary counts
-how many are set (`SaveState_BuildSummaryHeader`), the title offers Battle
-only when some file has found a Djinni (`gTitleExtraOptionEnabled`), and the
-save menu's `SAVE_MENU_EXTRA` mode lists only those files
-([window/battle_command/save.c](../window/battle_command/save.c)).
+how many are set (`SaveState_BuildSummaryHeader`), and the title screen
+offers its Battle command only when some save file has found a Djinni
+(`gTitleExtraOptionEnabled`).
 
 The flag functions are in [game/flags.c](game/flags.c), `GAME_FLAG_BYTE` in
 `game_flags.h` and the named flags in `flags.h`.
@@ -263,9 +295,8 @@ and selling or discarding one puts it back (`Item_AdjustCounter`,
 
 ## How it fits with the rest of the game
 
-This code sits in its own part of the main program, the `game` [bank](../../glossary.md#bank). Code
-in the other banks calls its functions by their `Far` names, through the
-table of calls between banks, and a map's [overlay](../../glossary.md#overlay) through the list of
+Code in the other banks calls this one's functions by their far-call names,
+and a map's [overlay](../../glossary.md#overlay) through the list of
 outside functions it was built with (its [import table](../../glossary.md#entry-table-and-import-table)); some code reads
 `gGameState`, the record of the game in progress, directly, as the save
 summary does. The battle folder reads `actions.tsv` through
@@ -303,17 +334,14 @@ units are part of the save file.
 | `element_curve.s` | `gElement_PowerResistCurve`, the points `Battle_GetElementMultiplier` interpolates between |
 | `*.tsv`, each with the `.s` that places it | the definition tables, listed under [their ids](#how-one-number-finds-a-row-and-its-name) |
 
-The prototypes are in `games/tbs/include/unit/game/`. Code in other banks
-calls these functions through the [far-call](../../glossary.md#far-call) table
-`games/tbs/src/system/far_call/GAME.S`, by their `Far` names.
+The prototypes are in `games/tbs/include/unit/game/`, and the bank's
+far-call table is `games/tbs/src/system/far_call/GAME.S`.
 
 ## Words used here
 
 - **owner** and **unit**: an owner is a number, and a unit the
-  `struct BattleUnit` `Unit_Get(owner)` returns, with its stats, HP and PP,
-  inventory and Djinn. Owners `ISAAC` (0) to `PIERS` (7) are the eight
-  characters, kept in `gGameState.owners` (`character_ids.h`); owners from
-  `FIRST_ENEMY_UNIT` (128) are the current battle's six enemies.
+  `struct BattleUnit` `Unit_Get(owner)` returns, as the opening says. The
+  characters' units are kept in `gGameState.owners` (`character_ids.h`).
 - **party**: the characters travelling together. `FLAG_IN_PARTY(owner)`
   says who is in it and `gGameState.activeOwners` lists them in order.
 - **inventory entry**: one of a unit's `INVENTORY_SLOTS` (15) halfwords,
@@ -346,7 +374,7 @@ calls these functions through the [far-call](../../glossary.md#far-call) table
 | `Djinn_`, `DjinnRecovery_` | the Djinn, and their recovery lists |
 | `Battle_`, `BattleTarget_` | the battle arithmetic the battle folder calls |
 | `BattleUnit_` (`BattleUnit_Set`) | filling an enemy unit at the start of a battle |
-| `Runtime_` | `Runtime_CopyBytesDirectional` and `Runtime_GetBuildStampTime`, which the engine names elsewhere |
+| `Runtime_` | `Runtime_CopyBytesDirectional` and `Runtime_GetBuildStampTime`: general helpers that sit in this bank but keep the runtime's prefix, as the rest of the engine names them |
 
 ## Evidence and open questions
 

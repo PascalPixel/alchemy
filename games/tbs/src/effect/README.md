@@ -20,8 +20,43 @@ with a `struct BattleEffectArgument` (the effect kind, the side the targets are
 on, the user, the targets, the variant and the prelude flag). The handler draws
 a fixed number of frames and returns when the animation is over. It decides
 only when the damage appears, by calling `EFFECT_SHOW_DAMAGE`; how the battle
-shows the damage from a [task](../../glossary.md#task) while the effect is still drawing is in
-[Battle](../../battle.md#rules-and-effects-run-together).
+shows the damage from a [task](../../glossary.md#task) while the effect is
+still drawing is in [Battle](../../battle.md#rules-and-effects-run-together),
+the page on the battle as a whole. [Battles](../battle/README.md), the page
+on the battle's rules, works out the damage itself.
+
+`BattleEffect_RunBolt` ([`bolt.c`](parts/bolt.c)), cut down to its outline,
+shows the shape nearly every handler has. Each line is explained in the
+sections below:
+
+```c
+void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
+  ...
+  EFFECT_GET_SLOTS(slots, cursor, work, canvas); /* the three blocks */
+  work->effect = effect;
+  BattleEffect_StartCanvasLayer(1);              /* BG2 shows the canvas */
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+  draw[0] = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
+  Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
+                             work->sheet + BOLT_CELLS, 1, 1);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75); /* keep 3/4 */
+  for (frame = 0; frame != work->effect->count * 8 + 40; frame++) {
+    if (frame == 24)
+      EFFECT_SHOW_DAMAGE(SE_IMPACT);             /* the damage may show */
+    ...                                          /* for each bolt: */
+    draw[0](canvas, picture, x, y, 24, height);  /* stamp it */
+    ...                                          /* move and draw sparks */
+    EFFECT_END_FRAME(work);                      /* copy, wait a frame */
+  }
+  EFFECT_FINISH_CANVAS_ONE_BLITTER();            /* stop, free, close */
+}
+```
+
+The effects are C written to compile to exactly the original game's bytes
+(a [matching decompilation](../../glossary.md#matching-decompilation)), so a
+few of their forms, such as the parts' order and the tables not being
+`const`, are kept for the bytes; [Design](#design) and
+[Notes for contributors](#notes-for-contributors) say which.
 
 ## How a move picks its effect
 
@@ -37,39 +72,15 @@ the targets take is the ability kind, in `game/actions.tsv`, which
 [Battles](../battle/README.md) explains. Quake's ability kind is
 `ABILITY_KIND_DAMAGE` and its effect kind `BATTLE_EFFECT_QUAKE`.
 
-Each ability, ids 0 to 518, has a row in
-[`battle/actflags.tsv`](../battle/actflags.tsv) (`gBattle_ActionFlags`). Its
-`effect` and `flags` columns are two 16-bit numbers; its `ability` column is
-a label for readers that the build skips. When `BattleCommand_BuildPlan`
-(`battle/battle/plan.c`) plans an action, it copies the row into the plan's
-`presentationFlags` as one 32-bit number, `effect` in the low half, and the
-`STAGING_` macros in `battle/battle_internal.h` name its parts, bit by bit:
-
-| Bits | Field | What it holds |
-| --- | --- | --- |
-| 0 to 11 | `STAGING_KIND_MASK` | the effect kind, 0 for none |
-| 12, 13 | `STAGING_VARIANT_MASK` | the variant, the ability's strength |
-| 14 | `STAGING_BY_ID_RANGE` | the kind goes to `BattleEffect_DispatchByIdRange` |
-| 15 | `STAGING_SUMMON` | the kind is a summon's scene, an `enum SummonEffectKind` |
-| 16 | `STAGING_ON_DOWNED` | shown on downed targets too |
-| 17 | `STAGING_OTHER_SIDE` | played from the other side |
-| 18 | `STAGING_VIEW_ACROSS` | the camera takes the other side's view |
-| 19 | `STAGING_VIEW_REVERSED` | the camera turns right round |
-
-Quake, Earthquake and Quake Sphere read `0x001`, `0x1001` and `0x2001`: the
-kind `BATTLE_EFFECT_QUAKE` at `EFFECT_VARIANT_BASIC`, `EFFECT_VARIANT_STRONGER` and
-`EFFECT_VARIANT_STRONGEST`. `BattleEffect_RunQuake` reads the variant as a row
-of `gQuake_Timings`, which keeps each pillar standing 32, 64 or 96 frames
-(a frame is a sixtieth of a second) in an effect of 80, 112 or 144.
-Ramses reads `0x8001`, the scene `SUMMON_EFFECT_RAMSES`, and Meltdown `0x4079`,
-a kind dispatched by its range. The plan changes the word in three cases: a
-double or triple blow raises the variant by the first target's multiplier less
-one; an ability whose effect revives adds `STAGING_ON_DOWNED`, which no row
-sets; and Annihilation's instant death landing on its first target sets the
-variant to 1. No row sets `STAGING_OTHER_SIDE`. Four rows set
-`STAGING_VIEW_ACROSS` (Venus, Mercury, Mars and Jupiter) and twenty
-`STAGING_VIEW_REVERSED`, among them the blessings, Astral Blast and Dragon
-Driver.
+Each ability's row of [`battle/actflags.tsv`](../battle/actflags.tsv) gives
+both, packed into one number with a few bits that choose how the battle
+reaches the effect ([The presentation word](#the-presentation-word) gives
+its layout). Quake, Earthquake and Quake Sphere read `0x001`, `0x1001` and
+`0x2001`: the kind `BATTLE_EFFECT_QUAKE` at `EFFECT_VARIANT_BASIC`,
+`EFFECT_VARIANT_STRONGER` and `EFFECT_VARIANT_STRONGEST`.
+`BattleEffect_RunQuake` reads the variant as a row of `gQuake_Timings`,
+which keeps each pillar standing 32, 64 or 96 [frames](../../glossary.md#frame)
+in an effect of 80, 112 or 144.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -149,16 +160,19 @@ them in reverse:
 
 | Slot | Value | Holds |
 | --- | --- | --- |
-| `HEAP_SLOT_BATTLE_SHEET` | 41 | one set of the ten mote pictures (`MOTE_SET_BYTES`), where most effects decode `ParticleSpritesA` |
+| `HEAP_SLOT_BATTLE_SHEET` | 41 | a small sheet of its own, apart from the work block's `work->sheet`: one set of the ten mote pictures, the dots 1 by 2 to 10 by 20 pixels that particles are drawn as (`MOTE_SET_BYTES`), which most effects decode from `ParticleSpritesA` |
 | `HEAP_SLOT_BATTLE_EFFECT` | 39 | the work block, `struct BattleEffectWork` |
 | `HEAP_SLOT_BATTLE_CANVAS` | 40 | the canvas (`CANVAS_BYTES`) |
 
 Releasing a heap block also releases every block allocated after it
 ([Runtime](../runtime/README.md)), so the three come back in the reverse of the
 order they were taken, and an effect must remove every callback (a function
-the scheduler calls once a frame) that reads them before it returns. While it runs, an effect also has the two blitter slots
-(`HEAP_SLOT_BLITTER`, `HEAP_SLOT_BLITTER_ALTERNATE`) and the map grid [cell](../../glossary.md#cell) buffer
-(`PARTICLES`) to itself, and frees the blitters before it returns.
+the scheduler calls once a frame) that reads them before it returns.
+
+While it runs, an effect also has the two blitter slots
+(`HEAP_SLOT_BLITTER`, `HEAP_SLOT_BLITTER_ALTERNATE`) and the map grid [cell](../../glossary.md#cell) buffer,
+where the field keeps the running map's cells and which a battle doesn't need
+(`PARTICLES`), to itself, and frees the blitters before it returns.
 
 A critical hit adds `EFFECT_KIND_CRITICAL_OFFSET` to an attack's kind in
 `BattlePresentation_RunAttack` (`battle/battle/staging.c`), which plays the
@@ -171,6 +185,44 @@ spark scene at 201 to 205.
 | `EFFECT_KIND_CRITICAL_OFFSET` | 200 | added to an attack's kind for a critical hit |
 | casting impacts | kinds 100 to 135 | `BattleEffect_RunCastingImpact`, given the kind less 100 |
 | ring and spark scenes | kinds 200 and up | through `BattleEffect_DispatchByIdRange` |
+
+### The presentation word
+
+Each ability, ids 0 to 518, has a row in
+[`battle/actflags.tsv`](../battle/actflags.tsv) (`gBattle_ActionFlags`). Its
+`effect` and `flags` columns are two 16-bit numbers; its `ability` column is
+a label for readers that the build skips. When `BattleCommand_BuildPlan`
+(`battle/battle/plan.c`) plans an action, it copies the row into the plan's
+`presentationFlags` as one 32-bit number, `effect` in the low half, and the
+`STAGING_` macros in `battle/battle_internal.h` name its parts, bit by bit:
+
+| Bits | Field | What it holds |
+| --- | --- | --- |
+| 0 to 11 | `STAGING_KIND_MASK` | the effect kind, 0 for none |
+| 12, 13 | `STAGING_VARIANT_MASK` | the variant, the ability's strength |
+| 14 | `STAGING_BY_ID_RANGE` | the kind goes to `BattleEffect_DispatchByIdRange` |
+| 15 | `STAGING_SUMMON` | the kind is a summon's scene, an `enum SummonEffectKind` |
+| 16 | `STAGING_ON_DOWNED` | shown on downed targets too |
+| 17 | `STAGING_OTHER_SIDE` | played from the other side |
+| 18 | `STAGING_VIEW_ACROSS` | the camera takes the other side's view |
+| 19 | `STAGING_VIEW_REVERSED` | the camera turns right round |
+
+Ramses, a summon, reads `0x8001`: the scene `SUMMON_EFFECT_RAMSES`. Meltdown,
+a weapon's unleash, reads `0x4079`: kind `0x79`, 121, dispatched by its
+range, which puts it among the casting impacts (100 to 135) as impact 21, `CASTING_IMPACT_IMPACT_MELTDOWN`.
+
+The plan changes the word in three cases:
+
+- a double or triple blow, an ability that strikes the target two or three
+  times, raises the variant by the first target's number of blows less one;
+- an ability whose effect revives adds `STAGING_ON_DOWNED`, which no row
+  sets;
+- when Annihilation's instant death lands on its first target, the variant
+  becomes 1.
+
+No row sets `STAGING_OTHER_SIDE`. Four rows set `STAGING_VIEW_ACROSS`
+(Venus, Mercury, Mars and Jupiter) and twenty `STAGING_VIEW_REVERSED`,
+among them the blessings, Astral Blast and Dragon Driver.
 
 ## The canvas
 
@@ -289,9 +341,11 @@ though some families mark them otherwise, as their own comments say.
 
 The work block holds 64 (`work->particles`). `PARTICLES` names the map grid's cell
 buffer as particles and `Ram_MapGridCellBuffer` as bytes, both at its fixed
-address. `ewram.s` lays out 32 KB for `gMapGridCellBuffer` before
-`gActorSpriteSlots` and gives the symbol a size of 48 KB, which would hold
-1,755 particles. Each effect names its ranges of indices where it sets them up.
+address. The usable pool is its first 32 KB, 1,170 particles: `ewram.s`
+lays out 32 KB for `gMapGridCellBuffer` and then `gActorSpriteSlots`, so a
+particle past the 1,170th would overwrite the sprite slots. The symbol's
+declared size, 48 KB (1,755 particles), runs 16 KB past that, over
+`gActorSpriteSlots`. Each effect names its ranges of indices where it sets them up.
 `EffectStep_AdvanceWithGravity2D` and its 3D twin
 ([`positions.c`](parts/positions.c)) move particles under gravity, and
 `BattleUnit_ProjectToScreen` turns a battle position into a screen point.
@@ -303,8 +357,7 @@ throws 40 sparks into the first free slots from
 in the first free slots from `PROJECTILE_VOLLEY_FIRST_TRAIL` for as long as
 the volley runs, even after it has hit and flown off the canvas, so the trail
 range stays nearly full, about 480 of its 512 slots, each trail living 32 to
-39 frames. Heat Wave's hit flashes are marked lit and never drawn or freed,
-since only the comet modes draw them.
+39 frames.
 
 Several families break something apart: boulders into chips, shells into
 shards, an impact into fragments. Each piece is a particle, and each runner
@@ -331,9 +384,10 @@ covers, glows or adds light.
 A blitter can also mirror the picture across (`COMPOSITE_FLIP_X`) or up and
 down (`COMPOSITE_FLIP_Y`) and trim it at the canvas's edges
 (`COMPOSITE_CLIP_X`, `COMPOSITE_CLIP_Y`); the modes are in
-`battle/battle_effect.h`. Rather than one routine that tests every option for
-every pixel, the game writes a routine for exactly the combination an effect
-asks for while it runs, and the effect keeps the one or two it draws with.
+`battle/battle_effect.h`. The game doesn't keep one routine that tests every
+option for every pixel: while it runs it writes a routine for exactly the
+combination an effect asks for, and the effect keeps the one or two it draws
+with. [Design](#design) gives the likely reason.
 
 In the code, `BattleEffect_BuildBlitter` ([`blitter.c`](parts/blitter.c))
 writes the routine in ARM code, the processor's faster, 32-bit instruction
@@ -344,11 +398,11 @@ in EWRAM otherwise. `EFFECT_LOAD_BLITTER` builds one for the 128 by 128
 canvas. An effect usually holds its two as a `BlitterPair`, `[0]` in
 `HEAP_SLOT_BLITTER` and `[1]` in `HEAP_SLOT_BLITTER_ALTERNATE`;
 `BattleEffect_FetchRectangleBlitters` ([`mirrored_wall.c`](parts/mirrored_wall.c))
-builds the usual pair, clipped on all four sides, `[0]` in `COMPOSITE_MAX` and
-`[1]` in `COMPOSITE_ADDITIVE`, both mirrored across when it is passed the
+builds the usual pair, clipped on all four sides, `[0]` using `COMPOSITE_MAX`
+and `[1]` using `COMPOSITE_ADDITIVE`, both mirrored across when it is passed the
 targets' side. The battle's star field (`battle/battle/star_field.c`) and
-`object/colorfx.c` reach the builder from other [banks](../../glossary.md#bank) through
-`BattleEffect_BuildBlitterFar` (`system/far_call/EFFECT.S`).
+`object/colorfx.c` reach the builder from other [banks](../../glossary.md#bank) through its
+[far-call](../../glossary.md#far-call) entry, `BattleEffect_BuildBlitterFar` (`system/far_call/EFFECT.S`).
 
 ### How the builder writes a blitter
 
@@ -452,6 +506,13 @@ symmetric picture is stored as one half and mirrored.
 | `work->sheet` | 27,008 bytes | the decoded pictures, before the scanline table |
 | `imageStorage` | 28,800 bytes | the whole of the sheet's storage, for an effect that builds no scanline table |
 
+The scanline table after the sheet, `work->bg2xLines`, holds a `BG2X` value
+for each of the 160 screen lines, which an HBlank DMA
+(`BattleEffect_ArmBg2AffineHBlankDma`) writes line by line so that the
+canvas sways or ripples sideways. The rippling target motes, the streak
+volleys, Condemn, the gathering lights and the casting impacts are among
+the effects that build it.
+
 ## Effect families
 
 Moves that look alike share one animation drawn with different settings. The
@@ -487,7 +548,7 @@ The largest:
 | `BattleEffect_RunHealingMotes` | [`healing.c`](parts/healing.c) | healing motes swirling in to each target |
 | `BattleEffect_RunStreakVolley` | [`streaks.c`](parts/streaks.c) | streaks fired from above the user at each target |
 | `BattleEffect_RunRushingStrike` | [`rushing_strike.c`](parts/rushing_strike.c) | the user rushes at the first target and strikes |
-| `BattleEffect_RunBurstSequence` | [`burst_scene.c`](parts/burst_sequence.c) | a flurry of strikes on the first target |
+| `BattleEffect_RunBurstSequence` | [`burst_sequence.c`](parts/burst_sequence.c) | a flurry of strikes on the first target |
 | `BattleEffect_RunGrowingColumns` | [`growth.c`](parts/growth.c) | vines or green pillars growing from the ground |
 | `BattleEffect_RunSparkGroups` | [`plasma.c`](parts/plasma.c) | flashes and bouncing sparks in one or three bursts |
 | `BattleEffect_RunDjinnBeams` | [`djinn_beams.c`](parts/djinn_beams.c) | a Djinni appears, then columns of light fall on the targets; passed an [element](../../glossary.md#the-four-elements) rather than a mode |
@@ -502,7 +563,7 @@ than piece by piece in the code.
 Some effects can open with a Djinni appearing: sparks gather into its shape
 and it sways for a moment before the attack plays.
 
-The effects that can open so (in `bind.c`, `burst_scene.c`, `djinn_beams.c`,
+The effects that can open so (in `bind.c`, `burst_sequence.c`, `djinn_beams.c`,
 `projectiles.c` and `stat_change.c`) test `effect->prelude`, and when it is 1
 they first play `BattleEffect_RunDjinniEntrance`
 ([`projectiles.c`](parts/projectiles.c)): sparks gather into a Djinni that
@@ -565,7 +626,7 @@ target.
 The four summons that need only one Djinni each show a small Djinni of their
 element and throw flames at the enemies, each in its own way.
 
-![The four summons that need one Djinni each draw a small Djinni of their element and throw flames at the enemies. Venus raises ten columns of flame from the ground, one every four frames, each bursting into motes. Mercury's Djinni circles and fires five flames across the screen, each shattering into motes five frames after it leaves. Mars flares an orb, its Djinni dives into the ground and nine flames erupt in a row while embers rise from them. Jupiter drops eight flameballs from the top right, one every four frames, each shattering into motes as it lands. The flames are the effect's own particles; the motes each flame breaks into take a block of 32 places in the borrowed pool.](https://alchemy.pascalpixel.com/illustrations/effect/djinn-attacks.svg)
+![The four summons that need one Djinni each draw a small Djinni of their element and throw flames at the enemies. Venus raises ten columns of flame from the ground, one every four frames, each bursting into motes. Mercury's Djinni circles and fires five flames across the screen, each shattering into motes five frames after it leaves. Mars flares an orb, its Djinni dives into the ground and nine flames erupt in a row while embers rise from them. Jupiter drops eight flameballs from the top right, one every four frames, each shattering into motes as it lands. The flames are the effect's own particles; the motes each flame breaks into take a block of 32 places in the borrowed pool. Each card plays the cast as the game draws it, aimed at three of the party standing in as enemies.](https://alchemy.pascalpixel.com/illustrations/effect/djinn-attacks.svg)
 
 Unlike the other summons, these four are ordinary effect kinds,
 `BATTLE_EFFECT_VENUS` to `BATTLE_EFFECT_JUPITER`, in
@@ -680,6 +741,8 @@ and shot. `PARTICLES` holds the hit flashes from 0, the sparks from
 `PROJECTILE_VOLLEY_FIRST_TRAIL`; a flash's `variant` says whether it is lit
 and its z counts the frames it has shown, while a spark's or trail's `variant`
 is its life. [Particles](#particles) shows Heat Wave's volley in both pools.
+Heat Wave's hit flashes are marked lit and never drawn or freed, since only
+the modes that fire comets (such as `PROJECTILE_VOLLEY_SLASH`) draw them.
 
 A rushing strike ([`rushing_strike.c`](parts/rushing_strike.c)) moves the user
 at the first target with `BattleEffect_SetApproachMotion` (`projectiles.c`), strikes
@@ -773,9 +836,16 @@ composite mode and the scene's length.
 The setup parks every particle, idle with a `variant` of -1: 64 smoke puffs at
 the target's feet, and 128 motes and 512 sparks 20 pixels up its body, each
 with a random velocity. Each frame draws the strike and, on a hit frame, shakes
-and flashes the target and lights a group of particles, the frame number over
-the length of six strike pictures, so the third hit of a three-hit column
-lights the second group again; then glints are scattered around the target, and
+and flashes the target and lights a group of particles:
+
+```
+group = frame / (6 * TARGET_STRIKE_IMAGE_FRAMES)
+```
+
+A slash hits every six pictures, so each hit lights the next group. A
+column hits on frames 3, 7 and 11 times `TARGET_STRIKE_IMAGE_FRAMES`,
+groups 0, 1 and 1, so the third hit of a three-hit column lights the second
+group again. Then glints are scattered around the target, and
 the lit smoke, motes and sparks the style's extras ask for (`STRIKE_SMOKE`,
 `STRIKE_ABSORB`, `STRIKE_SPARKS`) are drawn and moved, while the others stay lit
 and still. Only the first 128 sparks are ever drawn, though a heavy hit lights

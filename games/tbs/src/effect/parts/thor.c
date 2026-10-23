@@ -35,9 +35,6 @@
     for (index = 0, spark = THOR_PARTICLES; index != THOR_PARTICLE_COUNT;      \
          index++, spark++) {                                                   \
       if (spark->variant == 0) {                                               \
-        /* FAKEMATCH(temporary): the mask set before the Random16() call it    \
-         * masks; as Random16() & 0x3ff, 7 of 1640 instructions differ in      \
-         * tbs-en. */                                                          \
         s32 speed = 0x3ff;                                                     \
         s32 angle;                                                             \
         speed &= Random16();                                                   \

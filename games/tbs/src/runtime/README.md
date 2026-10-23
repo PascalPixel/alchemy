@@ -21,7 +21,7 @@ link cable. The memory map it works in, and the fast code it copies into
 Start-up takes the console from the moment it is switched on to the title
 screen, and never comes back.
 
-![The console switched on: the Nintendo logo, then Camelot's, before the title screen](https://alchemy.pascalpixel.com/guides/engine/boot.gif)
+![The console switched on: Camelot's logo, then the title screen](https://alchemy.pascalpixel.com/guides/engine/boot.gif)
 
 Before the game can show anything, memory has to be put in order and the
 services everything else relies on have to be running: the code that puts

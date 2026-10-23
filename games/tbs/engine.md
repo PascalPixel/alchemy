@@ -19,7 +19,7 @@ picture over in the blank.
 Start-up takes the console from the moment it is switched on to the title
 screen, and never comes back.
 
-![The console switched on: the Nintendo logo, then Camelot's, before the title](https://alchemy.pascalpixel.com/guides/engine/boot.gif)
+![The console switched on: Camelot's logo, then the title](https://alchemy.pascalpixel.com/guides/engine/boot.gif)
 
 Memory is put in order and the services everything relies on are started
 once; after that one loop runs map after map for as long as the console

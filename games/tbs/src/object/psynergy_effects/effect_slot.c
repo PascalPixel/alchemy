@@ -152,7 +152,6 @@ void EffectSlot_SetCallback(struct EffectSlot *effect,
 /// turnStepLimited or gives a step, as the first states of the callbacks that
 /// steer to a target do.
 void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z) {
-  s32 unit;
   struct AnimationObject *animation;
 
   Dma_Fill32(0, effect, sizeof *effect);
@@ -161,12 +160,10 @@ void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z) {
   if (animation != NULL)
     animation->image.priority = 0;
   EffectSlot_SetPosition(effect, x, z);
-  /* FAKEMATCH(temporary): 1.0 in a local set before speedMax takes r2 beside
-     2.0, which lets sched2 load the object ahead of the three stores; as the
-     constant in the chain, 12 of 74 instructions differ in tbs-en. */
-  unit = 0x10000;
+  effect->scaleX = 0x10000;
   effect->speedMax = 0x20000;
-  effect->acceleration = effect->scaleY = effect->scaleX = unit;
+  effect->scaleY = 0x10000;
+  effect->acceleration = 0x10000;
   effect->originX = x;
   effect->originZ = z;
   // BUG: ResourceObject_CreateFar can return NULL, but this and the animation

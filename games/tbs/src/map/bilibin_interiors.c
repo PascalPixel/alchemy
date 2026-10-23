@@ -61,13 +61,15 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 
-/// Bilibin's shops and inn, as Engine_ShopOpen and Engine_InnOpen number them.
+/// Bilibin's shops, as Engine_ShopOpen numbers the shops.
 enum {
   SHOP_BILIBIN_WEAPONS = 7,
   SHOP_BILIBIN_ARMOR = 8,
-  SHOP_BILIBIN_ITEMS = 9,
-  BILIBIN_INN = 2
+  SHOP_BILIBIN_ITEMS = 9
 };
+
+/// Bilibin's inn, as Engine_InnOpen numbers the inns.
+enum { BILIBIN_INN = 2 };
 
 /// The placed object events, numbered in the order of
 /// gBilibinInteriorsObjectEventTemplates from LOCALID_FIRST_PLACED. Each room's

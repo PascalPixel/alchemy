@@ -186,7 +186,7 @@ the camera swings round, while the status window and the messages stay flat
 in front. That takes three of the console's background layers and its
 sprites, each with its own job.
 
-![A battle in Goma Cave pulled apart into its layers: at the back the cave as the perspective plane on BG2, then the same cave flat on BG1, then the status window and message on BG0, and the party and the enemy as sprites in front](https://alchemy.pascalpixel.com/guides/battle/layers-3d.gif)
+![A battle pulled apart into its layers. A battle in Goma Cave as it opens comes apart into the sheets the console stacks to draw it, then closes again. From the back: the cave tilted into a floor on `BG2`; the party and the enemies, sprites; the status window and the message on `BG0`; and in front the arrow that waits for a button, a sprite. `BG1` draws nothing here.](https://alchemy.pascalpixel.com/illustrations/battle/battle-layers.svg)
 
 The console draws the screen one line at a time, top to bottom, and can
 change a layer's settings in the short pause after each line. The battle
@@ -201,7 +201,7 @@ window and turns as the camera turns. Outside the time commands are chosen
 same picture flat. An effect that needs `BG2` for its canvas switches the
 background to that flat picture (`BATTLE_BACKGROUND_FLAT`), whose horizontal
 scroll follows the camera. `BG0` holds the windows, and the units are
-sprites. The recording above takes these layers apart.
+sprites. The picture above takes these layers apart.
 
 | Layer | What it holds |
 | --- | --- |

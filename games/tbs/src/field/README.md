@@ -355,9 +355,7 @@ describes.
 A town or dungeon is drawn as three flat layers stacked on top of each other,
 with the characters between them.
 
-![Vale pulled apart into its layers: the ground at the back, then the middle layer, the object events and the overhead layer in front](https://alchemy.pascalpixel.com/guides/field/layers-3d.gif)
-
-![Vale's four planes. A screen of Vale pulled apart into the four planes the console stacks to draw it, numbered from back to front: 1, the ground layer, BG3, with the grass, water and paths; 2, the middle layer, BG2, with walls and edges; 3, the sprites, Isaac and the other object events; 4, the overhead layer, BG1, with what is drawn over them. Isaac is drawn between planes 2 and 4, in front of the middle layer and behind the overhead one.](https://alchemy.pascalpixel.com/illustrations/field/layer-planes.svg)
+![Vale pulled apart into its layers. A screen of Vale at the Sanctum's door comes apart into the sheets the console stacks to draw it, then closes again. From the back: the ground layer on `BG3`, with the grass, paths, water and steps; the middle layer on `BG2`, with the Sanctum's walls and door and the cliff edges; Isaac, a sprite; and the overhead layer on `BG1`, with the Sanctum's roof and the tree top. Isaac is drawn in front of the middle layer and behind the overhead one.](https://alchemy.pascalpixel.com/illustrations/field/layer-stack.svg)
 
 The ground is at the back, then a middle layer, and in front an overhead
 layer of roofs and treetops. On most maps the characters are drawn between
@@ -420,6 +418,8 @@ them, `BG2` and `BG3`, and it reads their scale and position afresh for every
 line if the game changes them between lines. The field gives every line its
 own scale: as the party leaves Vale it falls steadily from 0.61 on the top
 line to 0.44 on the bottom one, so a line near the top covers more of the map.
+
+![The world map pulled apart into its layers. The world map as Isaac leaves Vale comes apart into the sheets the console stacks to draw it, then closes again. From the back: the lower ground on `BG3`, with the grass and paths; the upper ground on `BG2`, with the mountains, woods and cliffs; and the sprites, Isaac and Vale. Both ground layers are tilted line by line and share a priority, so `BG2` is drawn in front of `BG3`, and the sprites in front of both. Where the upper ground covers it, the lower ground is left unfinished.](https://alchemy.pascalpixel.com/illustrations/field/world-map-layers.svg)
 
 `WorldMap_BuildScanlineTable` gives each screen line a width scale and a
 ground distance, or zeros for a line above the horizon. It runs when the world

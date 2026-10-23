@@ -171,6 +171,8 @@ While a screen is open the field holds still behind it: its objects are
 suspended, and in most editions the map's tasks, the weather, the colour
 changes and the map's animated tiles pause too.
 
+![The field menu pulled apart into its layers. The field menu open in Vale comes apart into the sheets the console stacks to draw it, then closes again. The map keeps its sheets: the ground on `BG3`, the middle layer on `BG2`, Isaac as a sprite and the overhead layer on `BG1`. The menu adds two in front: its windows on `BG0`, with the party's HP and PP and the chosen command's name, and the command icons, sprites in front of the windows.](https://alchemy.pascalpixel.com/illustrations/menu/field-menu-layers.svg)
+
 Every screen sets the object system's `suspended` field (heap slot
 `HEAP_SLOT_MENU_CONTROL`), so the field's sprites that are not held stop being
 drawn and free their VRAM cache entries. `Menu_SuspendFieldTasks` also

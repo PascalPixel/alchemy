@@ -2,7 +2,7 @@
 
 Alchemy is a decompilation of the Game Boy Advance games ☀️ **[Golden Sun: The Broken Seal](games/tbs/README.md)** and ⚓️ **Golden Sun: The Lost Age**.
 
-<img src="https://alchemy.pascalpixel.com/guides/field/layers-3d.gif" width="520" alt="Vale pulled apart into its layers: the ground at the back, then the middle layer, the object events and the overhead layer in front" />
+<img src="https://alchemy.pascalpixel.com/illustrations/field/layer-stack.svg" width="480" alt="A screen of Vale pulled apart into the sheets the console stacks to draw it: the ground at the back, then the middle layer, Isaac, and the overhead layer in front" />
 
 ## What is a decompilation?
 

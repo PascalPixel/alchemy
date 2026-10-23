@@ -78,8 +78,6 @@ them.
 When the player talks to someone or searches something, the game runs the
 first row that fits, so a row behind one that always fits is never reached.
 
-![The first row that fits answers. Four talk rows from Vault's houses once the party is back from Kalay, in table order. The mayor's first row holds until he has welcomed Isaac back, and it runs the first time the player talks to him. His second row holds always, and it answers the later talks on that visit: he warns of the thieves' revenge. The cook's first row holds always and answers every talk with "We don't get a lot of travelers in winter." The cook's second row, in which he would offer his leftover bones, is never reached, because the row above it always fits first.](https://alchemy.pascalpixel.com/illustrations/scene/first-row.svg)
-
 These rows are present in their tables, each with a `// Unused:` tag, and an
 earlier row with an equal or weaker condition always answers first.
 
@@ -144,12 +142,11 @@ On the stormy night in Vale, the only way to one cell runs past two others,
 and by the time the leader gets there, the event waiting on it has nothing
 left to do.
 
-![An event its own question ends. On the stormy night in Vale, every way to a third spot crosses two others first. The map shows them as the game draws Vale that night, Garet still at his chest: the first spot a strip of ground just west of him, the second a strip west of that, and the third two places further north. On the first, Isaac hears Garet struggling with his things. On the second, Garet calls after him and joins the party, and the game notes that he has joined. The third spot holds an older version of Garet joining, which first asks whether Garet has joined. By the time the leader can stand there the answer is always yes, so the event ends at once, and its lines, among them "Are you trapped, too?", are never shown.](https://alchemy.pascalpixel.com/illustrations/front/unused-garet.svg)
-
 `EventScript_UnusedGaretJoinsIsaac` in [vale_storm.c](src/map/vale_storm.c) is an
-earlier version of Garet joining Isaac on the stormy night. In the picture's
-order, the three strips of ground are the cells of metatile behaviors 30, 31
-and 32:
+earlier version of Garet joining Isaac on the stormy night. In the order the
+leader reaches them, the three are the cells of metatile behaviors 30, 31 and
+32: a strip of ground just west of Garet at his chest, a strip west of that,
+and a spot two places further north:
 
 1. 30 runs `EventScript_HearGaretStruggling`;
 2. 31 runs `EventScript_GaretCallsAfterIsaac`, in which Garet joins and

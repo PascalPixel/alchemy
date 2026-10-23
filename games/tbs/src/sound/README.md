@@ -1,7 +1,5 @@
 # Sound
 
-![The sound driver's eight players, each able to play one song at a time. Player 0 plays fanfares, such as the one for finding treasure, with four tracks. Player 1 plays the music, with ten tracks. Player 2 plays the menus' sounds: confirm, cancel, error and buying. Player 3 plays the sounds of actions in the field and in battle: casting, impacts, doors opening. Players 4 to 7 share the other sound effects: most take the first free player counting down from 7, and when none is free they cut off whatever player 7 was playing. Because each kind has its own players, a sound effect never stops the music.](https://alchemy.pascalpixel.com/illustrations/sound/players.svg)
-
 A town's music plays while the cursor clicks through a menu, a door creaks
 open and, when a chest is opened, a short fanfare plays and the music comes
 back by itself once it has finished. All of that is the sound folder's work.
@@ -23,8 +21,6 @@ which steps the music's volume towards its target and then runs the mixer
 
 A song number says whether it is music, a fanfare, a sound from the song
 table or a control.
-
-![Every sound starts as one call with a song number, and the number's range decides what it is. Numbers below 80 are music, played on the music player; asking for the music already chosen does nothing. Numbers from 80 to 99 are fanfares, played on the fanfare player while the music is silenced. Numbers from 100 up are rows of the song table, mostly sound effects, each played on the player its row names. Three numbers are controls instead of sounds: 17 fades the music out, 18 keeps the music that is playing, and 289 fades out player 3.](https://alchemy.pascalpixel.com/illustrations/sound/cue-ranges.svg)
 
 Code anywhere in the game plays a sound by calling `Sound_PlaySong(s32
 id)` with a song number, and it returns nothing. Every caller outside the sound [bank](../../glossary.md#bank) uses its
@@ -98,8 +94,6 @@ song's header and its player, and the players, `gSound_PlayerSlots`
 A fanfare silences the music without stopping it, and the music comes back by
 itself once the fanfare has ended.
 
-![The music's volume over time while a chest is opened. The music plays at full volume. When the treasure fanfare starts on its own player, the music's volume drops to nothing at once, but the music keeps playing silently underneath. When the fanfare ends, the music's volume climbs back to full over 64 frames, about a second, from the point the song has reached. The code that asked for the fanfare does nothing to bring the music back.](https://alchemy.pascalpixel.com/illustrations/sound/fanfare-return.svg)
-
 When the party finds an item, the treasure fanfare plays and the town's music
 falls silent; a moment after the fanfare ends, the music fades back in from
 where it had got to. The music never stopped: only its volume went to zero.
@@ -146,8 +140,6 @@ and `gBgmVolumeStep`, and `gBgmTempoPitch`, `gBgmTempoPitchTarget` and
 
 One word in the driver's memory keeps the game's calls and the mixer from
 changing the driver's state at the same time.
-
-![Two kinds of code change the sound driver's state: the game's calls, such as starting a song, which run during the frame, and the mixer, which the VBlank interrupt runs once a frame and which can arrive in the middle of a call. They share one lock word. A call takes the lock while it works and gives it back when done. If the VBlank arrives while the lock is taken, the mixer skips that frame's driver work rather than read half-changed state, and at the next VBlank, with the lock free, it works as usual. A call that finds the lock taken does nothing at all: it is dropped, not delayed.](https://alchemy.pascalpixel.com/illustrations/sound/lock.svg)
 
 The game starts and stops songs during the frame, and the mixer runs in the
 blank, which can arrive in the middle of one of those calls. If the mixer read

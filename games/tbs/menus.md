@@ -1,7 +1,5 @@
 # Menus, windows and shops
 
-![A shop's layers. Bilibin's item shop comes apart into the sheets the console stacks to draw it: the room on the map's three background layers, every window on `BG0`, the one layer they share, and in front of them, as sprites, the shopkeeper's typed question, his portrait, the item icons and the pointing hand.](https://alchemy.pascalpixel.com/illustrations/menus/layers.svg)
-
 Everything the player reads or chooses outside the [map](glossary.md#map) itself comes in a
 framed box: what people say, the field menu and its screens, the shop and
 inn counters, the battle commands. This layer of the game draws those boxes
@@ -19,8 +17,6 @@ are [sprites](glossary.md#sprite-and-oam) in front of everything.
 
 A window is a framed box that zooms open from its centre, holds text or
 icons for as long as it is needed, and zooms shut.
-
-![A message window opening at the top of the screen in Vale, seen in five moments: first a thin bar, then a bigger box each frame, growing outwards from its centre, until it is full size; only then does the text begin, "Yo". A window takes 8 frames to open and 4 to close, shrinking back towards its centre, and it keeps its place among the window slots until it has closed. A window can also be asked to open and close at once, with no zoom.](https://alchemy.pascalpixel.com/illustrations/window/zoom.svg)
 
 Every window is drawn into one tilemap, a grid of 8-pixel tile numbers that
 `BG0` shows. The console's background layers are 32 tiles wide, but the
@@ -83,7 +79,7 @@ battle menus.
 A message is unpacked whole first, and then typed into its window a little
 each frame.
 
-![Garet's sister's line in Vale, "You guys are so lucky, Garet.", typed into its window at the normal message speed, one more letter cell each frame: "Yo" on the first frame, "You" on the second, the whole first page on the 18th. Then an arrow shows and the window waits for a button before the next page.](https://alchemy.pascalpixel.com/illustrations/window/typing.svg)
+![Garet's sister's line in Vale, `You guys are so lucky, Garet.`, typed into a window beside her portrait](https://alchemy.pascalpixel.com/guides/window/talk.gif)
 
 The cartridge keeps its text squeezed, each letter a short code. Showing a
 message takes three steps, each done by different code:
@@ -94,7 +90,8 @@ message takes three steps, each done by different code:
    until a newer message runs over them.
 3. A text printer types them into a window, one letter cell a
    frame at the normal speed, acting on the marks for a new line, a new page,
-   a pause or a colour, with the speaker's voice blip as it goes.
+   a pause or a colour, with the speaker's voice blip as it goes. At a page
+   break an arrow shows and the window waits for a button.
 
 `Message_OpenWindow` does all of it for one message, and the shop's
 `Shop_ShowKeeperMessage` then waits until the typing is done (simplified):
@@ -158,8 +155,6 @@ symbol (`MsgGameSaved`). Why there are three text printers is an open question
 The field menu is a row of icons; each opens a screen that runs its own steps
 and then hands control back to the icons, or to the field.
 
-![The field menu is a row of icons: Psynergy, Djinn, Item and Status. Choosing one opens that screen. Backing out of a screen, or pressing Start, brings the icons back; choosing Psynergy or an item meant for the field closes the menu instead, and the field uses it.](https://alchemy.pascalpixel.com/illustrations/menu/field-menu.svg)
-
 The row has three icons until the first Djinni joins the party, and four
 after. Each screen is an ordinary function with its own loop of steps that
 waits a frame at a time, and a step may run a further loop inside it. When
@@ -197,8 +192,6 @@ While a screen is open the field holds still behind it: its objects are
 suspended, and in most editions the map's tasks, the weather, the colour
 changes and the map's tileset animations pause too.
 
-![The field menu pulled apart into its layers. The field menu open in Vale comes apart into the sheets the console stacks to draw it, then closes again. The map keeps its sheets: the ground on `BG3`, the middle layer on `BG2`, Isaac as a sprite and the overhead layer on `BG1`. The menu adds two in front: its windows on `BG0`, with the party's HP and PP and the chosen command's name, and the command icons, sprites in front of the windows.](https://alchemy.pascalpixel.com/illustrations/menu/field-menu-layers.svg)
-
 Every screen sets the `suspended` field of the object system's work, so the
 field's sprites that are not held stop being drawn and free their VRAM cache
 entries. That work's heap slot is named `HEAP_SLOT_OBJECT_SYSTEM`, although it
@@ -216,8 +209,6 @@ earlier editions leave the field's tasks running behind those two screens.
 
 Pressing Start closes a screen at once, however many choices deep the player
 is.
-
-![On the Psynergy screen, loops sit inside one another: the screen runs its steps in a loop, and the step that asks whom to use the Psynergy on runs a loop of its own, waiting for a button. A small watcher runs every frame beside the screen. When Start is pressed it plays the cancel sound and raises a flag. Every loop checks that flag beside its own buttons and, seeing it, returns as if cancelled, the innermost first, so the loops unwind one after another and the screen closes back to the icons without any of them knowing how deep the player was.](https://alchemy.pascalpixel.com/illustrations/menu/start.svg)
 
 A small watcher runs every frame while the screen is open. When Start is
 pressed it plays the cancel sound and raises a [game flag](glossary.md#game-flag), and every loop on
@@ -276,7 +267,7 @@ the status panel and the item sort orders.
 A town's counters are its shops, sanctums and inns, each opened by the
 town's map when the player talks to the keeper.
 
-![Each rare item has one counter for the whole game. The first time a shop that lists it is opened, its counter goes up by one; buying one takes one off; selling or dropping one puts one back. A shop's Artifacts list is every item of its kind whose counter is above zero. The party reaches Vault before Bilibin. Vault's weapon shop counts its rare item, the Magic Rod, on its first visit and lists it. Later, Bilibin's weapon shop counts its own, the Witch's Wand, and lists both: the Magic Rod is still counted from Vault unless the party bought it there.](https://alchemy.pascalpixel.com/illustrations/shop/artifacts.svg)
+![Buying at an item shop: the keeper's welcome, the wares and their prices, and the coins the party pays](https://alchemy.pascalpixel.com/guides/shop/shop.gif)
 
 A shop sells the ordinary items of its row of the stock table, and its
 Artifacts list sells rare items. A rare item is not stocked by one shop: it

@@ -1,7 +1,5 @@
 # ☀️ The Broken Seal
 
-![The game runs one map at a time, in a loop that goes round once for each map, not once a frame, starting from the title screen. Each time round it drops what the last map left behind and runs the next: a town, a dungeon or the world map until the party takes a warp, or a battle or a minigame that then sends the party back.](https://alchemy.pascalpixel.com/illustrations/front/main-loop.svg)
-
 [The Broken Seal](glossary.md#the-two-games) plays one [map](glossary.md#map) at a time: a room, a town, a dungeon floor,
 the world map. When the [party](glossary.md#the-party) walks through a door, the game ends one map and starts the next. Each map has code of its own, loaded only
 while the party is there, and a [layout](glossary.md#layout). Everything a map knows about how far
@@ -104,8 +102,6 @@ hexadecimal form the source writes it in beside it.
 Only one map's code is in memory at a time. When the party enters a map,
 its code is unpacked from the cartridge over the last map's.
 
-![One map's code in memory at a time. On the cartridge, each map's code is stored packed, 96 pieces in all, such as Vale's, Vault's, Bilibin's and Goma Cave's. In memory there is one area of 32 KB for a map's code. When the party enters Vault, Vault's code is unpacked into that area, over whatever map's code was there before. Beside it the main program is always loaded; the map's code calls it, and the main program asks it about the map.](https://alchemy.pascalpixel.com/illustrations/front/overlay-swap.svg)
-
 The console has little memory, and most of what a map needs (who is there,
 what they say, its cutscenes) matters nowhere else. So each map's code is
 an overlay: a packed piece of code that `Overlay_Load` unpacks into
@@ -133,8 +129,6 @@ events. [World](world.md) explains both.
 
 One table lists every map the game has, and for each says which code it
 runs, which [map section](glossary.md#map-section) it belongs to and which layout it shows.
-
-![Each map's code and map section. Four maps and what the map table gives each. Bilibin's town, its treasury and the Bilibin Barricade all run on Bilibin's code; Bilibin's houses have code of their own. Bilibin's town, houses and treasury are one map section, Bilibin, which chooses their music, the area name shown on arrival and the flags kept while the party is inside. The Bilibin Barricade shares Bilibin's code but is a map section of its own. Which code a map runs and which map section it belongs to are chosen separately.](https://alchemy.pascalpixel.com/illustrations/front/scene-parts.svg)
 
 A map's code says what happens there, and its map section, a group of maps,
 chooses the music, the area name shown on arrival and the flags kept while
@@ -170,8 +164,6 @@ Each warp out of a map leads to another map and a warp destination there,
 and the warp destination decides where the party appears. One warp can lead
 to different maps at different points in the story.
 
-![One warp, three destinations. At the top, the room as the game draws it, with the path from the sanctum's steps down to the bottom edge. The way down from Sol Sanctum's entrance has three rows in the warp table, read from the top. The first leads to Vale, and is taken until the sanctum erupts. The second leads to Vale during the eruption, and is taken until the party leaves Vale. The third leads to Vale, always. The first row whose condition still holds is taken, so the same path leads to Vale, then to Vale erupting, then to Vale again for the rest of the game.](https://alchemy.pascalpixel.com/illustrations/front/exits.svg)
-
 [map_warps.h](include/map_warps.h) names every way between maps. Each
 map's warp destinations are named by where the party arrives from
 (`VALE_GATE_FROM_SANCTUM`) and its warps by where they lead
@@ -181,7 +173,7 @@ A warp row, `MAP_WARP(warp, map, warpDest)`, sends one warp to a map and a
 warp destination. `Map_TakeWarp` looks up the current map's rows in the
 overlay's warp table and takes the first one for the warp taken; a row
 written `MAP_WARP_IF` is taken only while its flag is clear, and the search
-otherwise goes on to the next row. These are the three rows of the picture,
+otherwise goes on to the next row. These are the three rows of the way down
 from Sol Sanctum's entrance
 ([sol_sanctum_entrance.c](src/map/sol_sanctum_entrance.c)):
 
@@ -197,6 +189,9 @@ u32 gSolSanctumEntrance_Warps[] = {
     ...
 ```
 
+So the same path leads to Vale until the sanctum erupts, to Vale erupting
+until the party leaves Vale, and to Vale again for the rest of the game.
+
 A map's initialization often tests the warp destination as well, to play the part of a sequence that
 the previous map sent the party to.
 
@@ -206,8 +201,6 @@ A map keeps nothing of its own between visits: what the game must remember,
 from a chest someone opened to the end of a chapter, is a game flag, saved
 with the game. Two ranges of flags are set aside for maps to use and are
 cleared as the party moves on.
-
-![What a map forgets, and when. Map flags are forgotten every time the party enters a map, even the one it just left: the plant Growth raised on Crossbone Isle is a sprout again, as the picture of it on its cliff ledge shows. Map section flags are kept while the party moves between the maps of one map section and forgotten when it enters another map section: Vault's mayor remembers having welcomed Isaac back while the party stays in Vault, and welcomes him again on the next visit. Coming back from a battle forgets neither, so the room is as the party left it.](https://alchemy.pascalpixel.com/illustrations/scene/flag-reset.svg)
 
 The game flags are 4,096 bits in `gGameFlagBytes`, saved with the game and
 named in [flags.h](include/flags.h): the party and the Djinn first, then the
@@ -258,8 +251,6 @@ The same town looks different at different points in the story: other people
 stand in it and say other things. A map does this by asking the flags
 which version of itself to be.
 
-![One map, five moments in the story. Vale's town gate is one map for the whole game, and each time the party arrives it asks the story which set of map events to use, testing in order. Has the party reached Kalay? Then the map events after Kalay. Has the party left Vale? Then the map events after leaving. Has the party come from the Sanctum? Then the farewell. Is it the stormy night? Then the storm. Otherwise, the map events of the day the story begins. Below, the same map on the day the story begins and on the stormy night, as the game draws them: Isaac grown, in the sun, and Isaac as a child, in the rain.](https://alchemy.pascalpixel.com/illustrations/front/vale-gate.svg)
-
 The story is the order the flags are set in, and these maps show the forms
 that dependence takes, in [story order](glossary.md#the-places-in-story-order).
 
@@ -269,7 +260,7 @@ that dependence takes, in [story order](glossary.md#the-places-in-story-order).
   completely gets a map; a place whose people change reads the flags.
 - **One map that reads the flags.** Vale's town gate,
   [vale_gate.c](src/map/vale_gate.c), is one map for the whole game.
-  `ValeGate_GetEvents` asks the picture's five questions in order:
+  `ValeGate_GetEvents` asks five questions in order:
 
   ```c
   const struct MapEvent *ValeGate_GetEvents(void) {
@@ -344,8 +335,6 @@ the party to. [World](world.md#the-world-map) explains how the tilt is drawn.
 
 The program on the cartridge is cut into banks, and the source has one
 folder for each large bank, in the order the cartridge holds them.
-
-![The main program, bank by bank. The main program's code as it lies on the English cartridge, about 1 MB, drawn to scale from start to end and cut into fourteen banks. Each large bank has a folder of the source: runtime (start-up, frames and memory), field (moving and drawing), window (windows, fonts and all the game's text, the largest), game (the rules: stats, items), object (running a map), menu, shop, battle, and effect (battle animations). Five small banks follow, the last for sound. Each bank opens with a table of jumps, and a call from another bank, a far call, goes to a jump in that table, which leads on to the function: the object bank starts a battle by calling the battle bank's table.](https://alchemy.pascalpixel.com/illustrations/front/banks.svg)
 
 The main image is the program the processor runs from the cartridge.
 `main.ld` lays out its code in fourteen banks; together they take about

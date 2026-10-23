@@ -1,7 +1,5 @@
 # Maps
 
-![Six questions a map answers. The field engine knows a map only through six questions it asks the map's own code. When the party arrives it asks, in order: what happens here (the map events, kept for the whole visit), where the party arrives (the warp destinations), who stands where (the object event templates), and whether anything needs setting up first (the initialization, which can play an arrival cutscene). At every step it asks whether the leader stands in a warp area. As the party leaves it asks where the warp leads. Each answer comes from a function, so a map can answer differently as the story goes on.](https://alchemy.pascalpixel.com/illustrations/scene/entries.svg)
-
 Everything that makes a [map](../../glossary.md#map) itself is in its own code here: who stands
 where, what each person says, what happens when the [party](../../glossary.md#the-party) steps on a
 doorstep, searches a jar, or uses an item or [Psynergy](../../glossary.md#psynergy-and-pp), and the cutscenes the
@@ -105,8 +103,6 @@ before a flag is set is written with the flag alone.
 Each row of a map's object event templates puts one person or thing on the
 map, an object event, and each row owns an object event slot of its own, a
 numbered place for it in the map's state, whether or not it appears.
-
-![Every object event template owns a slot. The blue statue as the game shows it, on its ledge under a jet of water and fallen to the floor below, then the object event templates of Mercury Lighthouse's upper floor, row by row, and the object event slot each row fills before and after the blue statue falls from its ledge. The party's eight slots come first. The first row, the statue fallen to the floor below, appears only once it has fallen; the second, the statue on its ledge, only until then. The rows after them, two pipe sections, three pipe ends and six stone statues, always appear. A row whose condition fails leaves its slot empty rather than handing it to the next row, so every object event keeps the same slot whatever the story has done, and the pipes are always the third and fourth placed object events.](https://alchemy.pascalpixel.com/illustrations/scene/placements.svg)
 
 A row can carry a condition, a [story flag](../../glossary.md#game-flag) that must be set or clear, and a
 row whose condition fails puts nobody on the map. Its slot stays empty
@@ -229,7 +225,7 @@ the ladder beside Isaac's house (`EventScript_ClimbLadderOntoRoof` up,
 back when the leader steps off it (`EventScript_ClearPathCellOverride`). Three
 cells of the path at the top carry a behavior no row answers.
 
-![Which cells start map events in Vale. A screen of Vale on the day the story begins, drawn from its layout, with each cell that carries one of the map's own metatile behaviors tinted and numbered. In pink, cells a coord event answers: 1, a door into a house, walking north into it; 2, the door into Isaac's house, walking north; 3, the ladder up onto the roof of Isaac's house, walking north; 4, the ladder down from the roof, walking south; 5, the cell where stepping off the upper path changes its cells back. In grey, 6: three cells of the path at the top with a behavior of the map's own that no row answers.](https://alchemy.pascalpixel.com/illustrations/scene/event-cells.svg)
+![In Vale, Isaac walks north into the ladder beside his house and climbs onto the roof](https://alchemy.pascalpixel.com/places/vale/events/Event_ClimbLadderOntoRoof.gif)
 
 Stepping on or walking into a cell runs the first coord event whose trigger
 is its metatile behavior and whose condition holds, or failing one the first
@@ -243,8 +239,6 @@ the same on every map ([Layouts](../layout/README.md#cells)).
 When the player talks to someone, the game reads the map's event table
 from the top and runs the first row that fits. That one rule is how a person
 says something new as the story moves on.
-
-![The first row that fits answers. Four talk rows from Vault's houses once the party is back from Kalay, in table order. The mayor's first row holds until he has welcomed Isaac back, and it runs the first time the player talks to him. His second row holds always, and it answers the later talks on that visit: he warns of the thieves' revenge. The cook's first row holds always and answers every talk with "We don't get a lot of travelers in winter." The cook's second row, in which he would offer his leftover bones, is never reached, because the row above it always fits first.](https://alchemy.pascalpixel.com/illustrations/scene/first-row.svg)
 
 A map lists its rows from the latest point in the story down to the
 default. In Vault's houses after Kalay, the mayor has a row that holds until
@@ -278,8 +272,6 @@ such case.
 
 A cutscene is written as a list of what happens, one step to a line, and the
 game plays it from top to bottom while the party waits.
-
-![A cutscene runs from top to bottom. At the top, the scene as the game plays it, each message answered: the view shakes, she cries out, turns to Isaac and speaks again. The script a woman in Vale runs when Isaac talks to her after Kalay, one step to a line with how long each step holds the scene. The player loses control. The view starts to shake, and the script waits ten frames. The shake is set to die away. She says "Aghh! I felt another one!", which holds until the player answers it and then twenty frames more. She turns to face Isaac and the scene holds twenty frames. She says the next line, which holds until the player answers it. Then the player has control again.](https://alchemy.pascalpixel.com/illustrations/scene/script-steps.svg)
 
 A step that takes time, such as a wait, a line of dialogue or someone
 walking somewhere, waits inside itself, so the next line starts only when it
@@ -334,8 +326,6 @@ game flags, and `SE(n)` plays a sound from `songs.h`. Callbacks are added with
 A map never undoes what it changed. Instead the game keeps two sets of
 flags for maps to use, and forgets them for it as the party moves on.
 
-![What a map forgets, and when. Map temp flags are forgotten every time the party enters a map, even the one it just left: the plant Growth raised on Crossbone Isle is a sprout again, as the picture of it on its cliff ledge shows. Map-section temp flags are kept while the party moves between the maps of one map section and forgotten when it enters another map section: Vault's mayor remembers having welcomed Isaac back while the party stays in Vault, and welcomes him again on the next visit. Coming back from a battle forgets neither, so the room is as the party left it.](https://alchemy.pascalpixel.com/illustrations/scene/flag-reset.svg)
-
 Map temp flags last until the party next enters a map, so a map keeps a
 pushed stone pillar or an opened door in one and finds it back in place next
 time. [Map-section](../../glossary.md#map-section) temp flags last while the party stays anywhere in the map
@@ -363,8 +353,6 @@ The flags are in `games/tbs/include/flags.h`.
 Two maps that need the same piece of code each carry their own copy of
 it, because a map's code can call only the main program, never another
 map's.
-
-![Code two maps share is copied into both. Two overlays side by side: Vault's town and Vault's houses. Each holds its own code, and each also holds a copy of the same two pieces: showing a villager's thought read with Mind Read, and Ivan handing back Isaac's Djinni before he leaves the party. Below them is the main program, which is always loaded and which both call. Only one map's code is loaded at a time, and it can call only the main program, so shared code is written once and copied in.](https://alchemy.pascalpixel.com/illustrations/scene/shared-code.svg)
 
 Only one overlay is loaded at a time, so the code several maps need is
 written once in `common/` and compiled into each of them. The ROM holds a

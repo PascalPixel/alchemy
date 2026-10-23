@@ -1,7 +1,5 @@
 # Shops
 
-![A town's three kinds of counter. A shop, for weapons, armor or items, offers Buy, Sell, its rare items (Artifacts) and Repair, shown as Bilibin's item shop opens. A sanctum revives, cures poison, drives out a haunting or takes off cursed equipment, one member at a time. An inn charges for each member still standing and restores their HP and PP overnight.](https://alchemy.pascalpixel.com/illustrations/shop/counters.svg)
-
 In a town the [party](../../glossary.md#the-party) spends its coins at three kinds of counter. At a shop it
 buys and sells weapons, armor or items, has broken equipment mended, and
 finds the rare items the game calls artifacts. At a sanctum a priest revives
@@ -22,8 +20,6 @@ The windows and messages the counters draw with are in
 
 A shop sells what one row of a table lists, and offers four things at its
 counter: Buy, Sell, Artifacts and Repair.
-
-![Each shop is one row of the stock table: room for 24 ordinary items, then 8 rare items, then the kind of shop: weapons, armor or items. Bilibin's weapon shop uses five of the ordinary places, for the Long Sword, Broad Sword, Hunter's Sword, Battle Axe and Heavy Mace, one rare place, for the Witch's Wand, and is a weapon shop. Its Buy list shows the five weapons. The table has 35 rows; a town's map script opens its shop by the row number, with the keeper whose face the shop's lines show.](https://alchemy.pascalpixel.com/illustrations/shop/stock-row.svg)
 
 Every shop in the game is one row of the stock table. The row lists the
 ordinary items the shop always sells, the rare items it brings to market the
@@ -66,7 +62,8 @@ holds up to `SHOP_STOCK_ITEM_COUNT` (24) ordinary items from
 artifacts from `SHOP_STOCK_ARTIFACTS`, and the shop type in
 `SHOP_STOCK_TYPE`. There are `SHOP_STOCK_ROWS` (35) rows; a row number out of
 range opens `SHOP_STOCK_ROW_EMPTY`, which sells nothing. Bilibin's weapon
-shop, in the picture, is row 7.
+shop is row 7: five ordinary items, the Long Sword, Broad Sword, Hunter's
+Sword, Battle Axe and Heavy Mace, and one artifact, the Witch's Wand.
 
 The keepers' lines are written once for each shop type, each set in the
 same order, and the code names only the weapon shop's (`MsgWeaponShopWelcome`
@@ -112,8 +109,6 @@ Buying takes the price off the party's coins, and the same amount quietly
 builds up towards a free Game Ticket.
 
 ![Isaac talks to Bilibin's item shopkeeper across the counter: the shopkeeper's portrait greets him, the counter's four icons come up with Buy, he picks a Herb for 10 coins and gives it to himself, the coins window drops from 500 to 490, and the shopkeeper thanks him as he leaves.](https://alchemy.pascalpixel.com/guides/shop/shop.gif)
-
-![When the party buys something for 200 coins, the coins go down by 200 and a hidden shop credit goes up by 200. After each purchase the keeper checks the credit against the next ticket's cost; once it reaches it, the keeper gives a Game Ticket and the cost comes off the credit, never off the coins. The first five tickets cost 300 of credit each, the next five 500, then 1,000, 2,000 and 4,000, five at a time, and every ticket after the 25th costs 8,000.](https://alchemy.pascalpixel.com/illustrations/shop/game-tickets.svg)
 
 Every coin spent at a shop is also added to a shop credit the player never
 sees. After each purchase the keeper compares the credit with the next
@@ -162,8 +157,6 @@ it back mended.
 A rare item is not stocked by one shop: it has a counter for the whole game,
 and every shop of its kind sells it while that counter is above zero.
 
-![Each rare item has one counter for the whole game. The first time a shop that lists it is opened, its counter goes up by one; buying one takes one off; selling or dropping one puts one back. A shop's Artifacts list is every item of its kind whose counter is above zero. The party reaches Vault before Bilibin. Vault's weapon shop counts its rare item, the Magic Rod, on its first visit and lists it. Later, Bilibin's weapon shop counts its own, the Witch's Wand, and lists both: the Magic Rod is still counted from Vault unless the party bought it there.](https://alchemy.pascalpixel.com/illustrations/shop/artifacts.svg)
-
 The first time the player opens a shop, each rare item in its row is counted
 once. Buying one takes it off the count; selling or dropping one puts it
 back. A shop's Artifacts list then shows every item of its own kind with a
@@ -181,17 +174,15 @@ item the party sells, drops or discards goes through `Inventory_Discard`,
 which adds one back. When two shops' rows list the same item, each first
 visit adds one, so its counter reaches 2 and it can be bought twice.
 
-In the picture, Vault's weapon shop is row 4, whose only artifact is the
-Magic Rod, and Bilibin's weapon shop is row 7, whose only artifact is the
-Witch's Wand; the counters are `gItemCounters`. The icons are the items'
-own, from `graphics/ui/menu_icons`, at three times their size.
+Vault's weapon shop is row 4, whose only artifact is the Magic Rod, and
+Bilibin's weapon shop is row 7, whose only artifact is the Witch's Wand. The
+party reaches Vault first, so Bilibin's weapon shop lists both unless the
+party bought the Magic Rod in Vault. The counters are `gItemCounters`.
 
 ## Sanctums
 
 A sanctum's priest serves one member at a time, and only a member who needs
 the service can be chosen.
-
-![The Vale Sanctum asking "Who shall I revive?" with Garet and Mia down and Ivan poisoned. The hand can point at any member, but only one who needs the service can be chosen: on Ivan, who is not down, the priest says "This ally needs no healing." Each service has its own test and fee: reviving is for a member who is down and costs 20 coins a level; curing poison is for a poisoned member and costs 10 coins; exorcising is for a haunted member and costs 50 coins; removing a curse is for a member held by a cursed item and costs 10 coins a level.](https://alchemy.pascalpixel.com/illustrations/shop/sanctum.svg)
 
 The player picks a service and then a member. The hand can point at anyone,
 but a member who doesn't need the service is refused with a line, and the
@@ -223,8 +214,6 @@ the same order from `MsgReviveService`, `MsgCurePoisonService`,
 
 An inn charges for each member still standing and restores their HP and PP
 overnight.
-
-![Bilibin's innkeeper asks "It's 21 coins for a room. Would you like to stay?": Bilibin's inn charges 7 coins a guest, and three members are standing. A night costs the inn's price for each member still standing. A member who is down is neither charged for nor healed: after the night, every standing member has full HP and PP, and a downed one is still down. Prices run from 2 coins a guest in Vale to 25 in Lalivero.](https://alchemy.pascalpixel.com/illustrations/shop/inn.svg)
 
 Each town's inn has its own price a guest. Only the members still standing
 are charged, and only they are healed: a member who is down stays down until
@@ -259,8 +248,6 @@ inn's row where it opens it:
 When the party is given an item and every bag is full, the item picker asks
 which member's item to drop to make room.
 
-![Isaac and Garet in Vale, both bags full with 15 items each, are given a Nut. The game says "Isaac got a Nut.", "But you can't carry any more items." and "What will you drop?", and the item picker opens: the hand picks a member and one of their items, with its description and price shown. Here the Potion is dropped: it leaves Isaac's bag, the items after it each move up a place, and the Nut goes into the last place. An item that cannot be dropped, one the story needs or a cursed one being worn, is refused.](https://alchemy.pascalpixel.com/illustrations/shop/item-picker.svg)
-
 The picker shows the party along a row and the chosen member's bag, with the
 description and price of the item under the hand. The dropped item leaves
 the bag, the items after it move up, and the new item takes the last place.
@@ -280,8 +267,6 @@ error. The macro `SHOP_CANNOT_REMOVE_STATUS` keeps that test, and built with
 
 A counter borrows the memory of the field menu, the menu the player opens
 while walking, so a counter and the field menu are never open together.
-
-![The menu screens and the shop counters share one block of memory, 2,672 bytes. Whichever is open takes the block as it opens and gives it back as it closes, and reads it in its own way: the Item screen as its windows and the items listed, the Psynergy screen as the Psynergy listed, a shop as its stock and cursor. Over time the block passes from one to the next, never held by two at once, which is why a shop and the field menu are never open together.](https://alchemy.pascalpixel.com/illustrations/menu/menu-work.svg)
 
 Every counter and the item picker take the menu's [heap](../../glossary.md#heap-and-pools) block, under the
 [heap slot](../../glossary.md#heap-slot) `HEAP_SLOT_MENU`, as `struct ShopWork` with
@@ -418,9 +403,8 @@ Inn row 9 is taken to be Tolbi's by three facts:
   are always full (`MsgTolbiInteriorsIsaacCheckedTheSignInnFull`), so its row
   costs nothing and nothing reads it.
 
-The item names in the pictures are
-`MsgItemName` plus each row's item ids; the game crops come from renders of a
-tbs-en build. The inn render's price, 21 coins at 7 a guest, shows three
+The item names on this page are `MsgItemName` plus each row's item ids. The
+inn recording's price, 21 coins at 7 a guest, shows three
 members standing.
 
 - XXX (no evidence): why Xian's rows are the warriors' shops

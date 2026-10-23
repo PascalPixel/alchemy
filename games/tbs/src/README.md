@@ -1,7 +1,5 @@
 # The Broken Seal's source
 
-![The source is divided the way the cartridge divides the program: a folder for each large bank of the main image, the small banks' code in the folders it belongs with, the maps' overlays in map, menu and debug, and four folders that each gather one kind of thing.](https://alchemy.pascalpixel.com/illustrations/source/folders.svg)
-
 [The Broken Seal](../glossary.md#the-two-games) is the first Golden Sun game, and this folder is its
 source: C and assembly that compile back into the cartridge's exact bytes
 (a [matching decompilation](../glossary.md#matching-decompilation)). A Game Boy Advance cartridge holds the
@@ -106,8 +104,6 @@ long to read as one file is written as parts that only its `.c` compiles.
 Object here means the linker's object file; it has nothing to do with the
 `object` folder or the object events on a map.
 
-![The battle code is one object in the cartridge, too long to read as a single file, so it is written as parts. battle.c is the only file the build compiles. It first includes its private header, battle_internal.h, which holds what the parts share and places no bytes, and then the parts under battle/ one after another in the order their code lies in the cartridge: debug.c, setup.c, link.c, encounter.c and so on to spoils.c, 24 in all. The compiler sees one long file and produces one object, which objects.tsv puts in its place in the battle bank.](https://alchemy.pascalpixel.com/illustrations/source/parts.svg)
-
 [The original](../glossary.md#the-original) program was built from pieces, objects, laid one after another in
 a fixed order, and within an object the code lies in the order it was
 written. Some objects are huge: the battle code runs to some 13,000 lines. Rather
@@ -142,8 +138,6 @@ files.
 
 The 201 maps of the map table share 96 overlays, unpacked one at a time
 into the overlay area when a map loads.
-
-![Bilibin's overlay is three files. The entry table, map/entry/bilibin.s, comes first: six stubs the field code calls to start the map and to get its warp destinations, warps, object event templates, map events and warp regions. Then the map's own code and tables, map/bilibin.c. Last the import table, map/import/bilibin.s, which lists the main-image routines Bilibin's code calls, such as waiting a number of frames or setting a game flag, each reached through its far-call entry. The engine and the map meet only at these two tables.](https://alchemy.pascalpixel.com/illustrations/source/overlay-files.svg)
 
 Each map's people, scripts and cutscenes are code that is needed only while
 the party is there, so it is kept apart from the main image as an overlay,

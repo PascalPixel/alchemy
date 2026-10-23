@@ -1,7 +1,5 @@
 # Runtime
 
-![Five frames on a map. A script's code does some work in the first frame, then calls WaitFrames to wait three frames, and carries on in the fifth. Meanwhile two tasks run once in every one of the five frames, waiting or not: the windows' task opens, closes and types the text windows, and the map's task scrolls the map's layers with the camera. WaitFrames is what runs them.](https://alchemy.pascalpixel.com/illustrations/runtime/waiting.svg)
-
 When a cutscene pauses for half a second, the code that runs it simply stops
 and waits, yet the screen keeps moving: windows still type their text, the [map](../../glossary.md#map)
 still scrolls with the camera. Everything in the game waits the same way,
@@ -23,7 +21,7 @@ link cable. The memory map it works in, and the fast code it copies into
 Start-up takes the console from the moment it is switched on to the title
 screen, and never comes back.
 
-![Start-up, in order. The cartridge's first instruction jumps to System_Entry, which sets up the stacks. System_Initialize then prepares memory: it clears IWRAM, empties the heap and copies the fast routines into IWRAM. It starts the services: the VBlank handler, the sound driver and an empty task table. It waits ten frames, then Game_Run runs one map after another, starting with the title. Before each map it drops the last map's tasks and empties the heap. None of these steps returns.](https://alchemy.pascalpixel.com/illustrations/runtime/start-up.svg)
+![The console switched on: the Nintendo logo, then Camelot's, before the title screen](https://alchemy.pascalpixel.com/guides/engine/boot.gif)
 
 Before the game can show anything, memory has to be put in order and the
 services everything else relies on have to be running: the code that puts
@@ -68,8 +66,6 @@ empties the heap and resets the VRAM cache.
 
 The screen is redrawn about sixty times a second, each picture a frame, and
 the game prepares one picture per frame.
-
-![One frame, in order. First the frame's work: the waiting code and the main-loop tasks change things in RAM. Then the frame's sprites are gathered into one list. Then the CPU halts until the screen has drawn its last line. In the vertical blank that follows, the VBlank handler copies the sprite list, the background scroll and the queued register writes to the hardware all at once, then runs the VBlank tasks, reads the buttons and mixes the next stretch of sound. Then the next frame begins.](https://alchemy.pascalpixel.com/illustrations/runtime/frame.svg)
 
 The console draws the screen line by line, top to bottom, and after the last
 line comes a short pause before the next picture starts: the vertical blank,
@@ -130,9 +126,9 @@ The order has consequences for the code that runs in a frame:
 Why the VBlank handler keeps this order is an open question (at the end of
 this page).
 
-Here is one frame's OAM list, each entry outlined:
-
-![One frame's sprite list. One frame of Vale with each of its nine sprite list entries outlined: each of the four people is a 32 by 32 pixel entry with a 16 by 8 entry for the shadow under their feet, and the stone pillar is one tall entry, 32 by 64; the girl at the left edge is partly off the screen. Below, the three people in the middle closer up: their entries overlap, and the order of the list decides which is drawn in front.](https://alchemy.pascalpixel.com/illustrations/runtime/oam.svg)
+In a frame of Vale, each person is one 32 by 32 pixel entry in the list, with a
+16 by 8 pixel entry for the shadow under their feet; where entries overlap,
+their order in the list decides which is drawn in front.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -181,8 +177,6 @@ restores the display and waits `SLEEP_WAKE_FRAMES`. Nothing sleeps while
 
 `WaitFrames` moves a deep caller's stack out of the way, so the frame loop,
 its tasks and the VBlank work always start with the same room.
-
-![The top of IWRAM, where the stack grows down from the top towards the IWRAM heap. Two lines cross it: the frame-wait top, and 512 bytes below it the heap's end. On the left, code deep in its own calls has a stack reaching below the frame-wait top when it calls WaitFrames. WaitFrames copies the part below the line aside into gSavedStack in EWRAM. On the right, while the code waits, the frame loop, its tasks and the VBlank work run from the frame-wait top and have the 512 bytes to the heap's end to themselves. When the wait ends, the saved part is copied back.](https://alchemy.pascalpixel.com/illustrations/runtime/stack-switch.svg)
 
 Every function call leaves a little on the stack, a scratch area that grows
 down from the top of IWRAM towards the heap and shrinks again as calls
@@ -238,8 +232,6 @@ main-loop tasks, and code a task may reach tests it before waiting
 
 The heap lends blocks of memory to the rest of the game: a map's working
 state, a menu's buffers, a battle animation's pictures.
-
-![Three pictures of one heap pool, which hands out memory from the bottom up and keeps one mark, the next free address. First, three blocks A, B and C taken in that order, with the mark above C. Second, releasing C moves the mark back to C's start. Third, releasing B while C is still in use moves the mark back to B's start, so C's memory is free too and the next block taken will be put on top of it. Blocks are therefore released in the reverse of the order they were taken.](https://alchemy.pascalpixel.com/illustrations/runtime/heap.svg)
 
 The heap works like a pile. Each new block goes on top of the last, and a
 single mark, the next free address, says where the next one will start.
@@ -299,8 +291,6 @@ The task runner keeps the list of tasks, the small jobs that have to happen
 every frame whatever the rest of the code is doing, and runs them in a fixed
 order.
 
-![The tasks of a map, as the task table holds them. Each task's priority says which pass runs it and where in that pass. Every frame, WaitFrames runs the map's task, which scrolls the map grid's layers, and then the windows' task, which opens, closes and types the windows; the map's has the higher priority, so it runs first. In every vertical blank, the VBlank handler runs the task that copies changed window tiles to the screen. While a menu is open, the map's own tasks, whose code is in its overlay, are suspended: both passes skip them, and they keep their place for when the menu closes. The table has 20 slots, and each map starts with it empty.](https://alchemy.pascalpixel.com/illustrations/runtime/tasks.svg)
-
 A task is added once and then runs by itself until it is removed. It is a
 `void (*)(void)` routine (`TaskFunc`), added with
 `Task_Add(callback, priority)` and removed with
@@ -313,7 +303,8 @@ tiles to the screen (`UiWork_UploadDirtyBlocks`). Each task carries one
 number, its priority, which says both: which of the two passes runs it, and
 where in that pass. Where the priority matters, it matters a lot: in a battle the
 camera (`BattleCamera_Update`) is added with a lower priority than
-the battle's objects and playback, so it moves only after they have.
+the battle's objects and playback, so it moves only after they have. On a map, the map's scrolling task has
+the higher priority, so it runs before the windows' task.
 
 The task table holds `TASK_COUNT` tasks, each a routine, a
 priority halfword and flags. The priority's high byte picks the pass that runs the
@@ -360,8 +351,6 @@ The code is `runtime/scheduler.c`, its names in
 The queue holds changes to the hardware's settings until the blank, so that a
 frame's changes reach the screen together or not at all.
 
-![Three timelines of Isaac taking a step right in Vale. On time: the frame's work ends before the vertical blank, and at the blank he appears in his new place, whole. Late: the work is still running when the blank comes, so nothing is sent and the screen keeps the old picture, whole; the new one appears at the next blank. Had the work written to the hardware directly, the screen could be drawn while he was half moved, his head in the new place and his legs in the old.](https://alchemy.pascalpixel.com/illustrations/runtime/whole-frames.svg)
-
 The hardware's registers decide how the screen is drawn: which layers show,
 how two layers blend, where a window cuts the picture. Written during the
 frame, a change would take effect partway down the screen, and a frame that
@@ -396,8 +385,6 @@ where the cartridge's 16-bit bus takes two and waits on each.
 
 Saving writes the new copy of a save before it lets go of the old one, so
 switching the console off at the wrong moment never loses a save.
-
-![The cartridge's flash memory as 16 sectors, each holding one record. Saving a record happens in two steps. First the new copy, numbered one higher than the old, is written into a free sector chosen at random, while the old copy is left alone. Only then is the old copy's sector marked free. If the power fails between the two steps, both copies are whole, and the next time the game starts it keeps the copy with the higher number.](https://alchemy.pascalpixel.com/illustrations/runtime/save.svg)
 
 The cartridge keeps saves in flash memory, which is written a whole sector at
 a time. If the game wrote a save over its old copy and the power went off
@@ -441,8 +428,6 @@ taken for the length of one save screen operation.
 Two consoles joined by a cable trade a little data every frame, and anything
 larger, such as a [party](../../glossary.md#the-party) for a link battle, is sent in numbered pieces that
 are sent again when one is lost.
-
-![Two linked consoles, one sending a run of three numbered blocks to the other, one block each frame. The first block arrives and is stored. The second is lost on the cable. The third arrives, but the receiver is still waiting for the second, so it does not store it and asks for the second again. The sender goes back and sends the second and then the third once more, and the receiver stores both. Because the sender may have to go back, the data it sends must not change until the whole run is over.](https://alchemy.pascalpixel.com/illustrations/runtime/link-blocks.svg)
 
 Each frame, in the blank, the two consoles swap a small fixed message. Bulk
 data rides inside it a block at a time, each block numbered. The receiver

@@ -1,7 +1,5 @@
 # Layouts
 
-![A layout is one square grid of 128 by 128 cells, each 16 pixels square. Each of its three layers is a rectangle cut from that grid, and the layout's header says where each rectangle starts. In Goma Cave's entrance room the ground layer starts at cell 0, 0 and holds the cave floor and its pool; the middle layer starts at cell 0, 34, below it, and holds the rock walls; the overhead layer starts at cell 50, 0, to the right, and holds only the glow of the torches. The rest of the grid is unused.](https://alchemy.pascalpixel.com/illustrations/map/grid-windows.svg)
-
 A town or dungeon [layout](../../glossary.md#layout) is one big square grid of 16-pixel [cells](../../glossary.md#cell), 128 on
 a side, and each of its three layers is a rectangle cut from that grid; the
 layout's header says where each one starts, and the rest of the grid goes
@@ -19,8 +17,6 @@ how each part is stored, built and loaded.
 A cell is one 16 by 16 pixel square of a layout. Once loaded it is one
 32-bit word that says three things: what is drawn there, what standing on
 it does, and how its ground is shaped.
-
-![The ground seen from the side, with the leader, Isaac, standing on it at the same scale. A band around the leader's feet reaches 8 pixels up and 12 pixels down. Ground ahead whose height falls inside the band can be stepped onto: a ledge 8 pixels up and a dip 8 pixels down. Ground outside it blocks the leader as a wall would: a rim 32 pixels high, like the ones at the foot of Goma Cave's cliffs, and a drop of 16 pixels. Each cell is 16 pixels wide.](https://alchemy.pascalpixel.com/illustrations/map/step-heights.svg)
 
 A cell is `struct MapGridCell` in [`map_grid.h`](../../include/map_grid.h):
 
@@ -122,8 +118,6 @@ what sets that up: for each layer it says how fast the layer follows the
 camera, whether it drifts by itself and where it wraps, as well as how far
 the camera may go.
 
-![In the north of Suhalla Desert, when the camera moves 16 pixels, the ground layer and the middle layer move 16 pixels with it, but the overhead layer, the sand haze, moves 20, a quarter faster. The haze also drifts by itself every frame, even while the camera stands still. Its picture is a square 256 pixels on a side, repeated across the screen: the layer wraps round. On screen, once a storm has risen and faded the haze in, it streams past Isaac while he stands still; on its own, the haze is a scatter of sand grains on BG1. The layout's header sets all of this for each layer, along with how far the camera may go.](https://alchemy.pascalpixel.com/illustrations/map/layer-scroll.svg)
-
 A layer that follows the camera at the camera's own pace looks as far away
 as the ground; one that moves faster looks nearer. Suhalla Desert's north
 (`layout_147`) moves its ground and middle layers with the camera and its
@@ -133,9 +127,8 @@ a pixel a [frame](../../glossary.md#frame), and wraps it every 32 tiles, 256 pix
 The header is one `layout_header` line and three `layout_layer` lines in `layout.s`,
 read as `struct LayoutHeader`. It gives the camera's bounds in 8-pixel
 tiles, each layer's priority (0 leaves the layer off) and the char block its
-tiles come from, and for each layer its origin in 8-pixel tiles (the
-picture at the top of this page), its parallax (in sixteenths of the view's
-motion), its drift (sixteenths of a pixel a frame) and its wrap.
+tiles come from, and for each layer its origin in 8-pixel tiles, its
+parallax (in sixteenths of the view's motion), its drift (sixteenths of a pixel a frame) and its wrap.
 
 Six offsets from the header's start follow: the metatiles, the shapes, the cell
 grid, the tileset animation, the blend script and the treasure spots. An offset of 0
@@ -168,8 +161,6 @@ The tables are for people to read and edit; the game wants packed bytes. The
 build turns each table into the bytes the game reads and packs them exactly as
 Camelot's packer did, so the result is the same, byte for byte, as the
 cartridge.
-
-![How the build turns one of a layout's tables into what the game reads, using Suhalla Desert's shapes as the example. The file shapes.tsv is a table anyone can edit, one shape a row: its kind and three heights. The build tool writes the bytes the game reads, shapes.table, one entry a row. Then it packs them, shapes.table.lz, exactly as Camelot's packer did, so the packed bytes are the same as on the cartridge. Last, the layout's layout.s places them behind its header. The name of each file says what to make: the table's name, then its form, then the packing.](https://alchemy.pascalpixel.com/illustrations/map/build-steps.svg)
 
 The name of the file the build asks for says what to make:
 `NAME.FORM[.CODEC]`, from `NAME.tsv`. `tools/ags-graphics` makes it (the
@@ -243,8 +234,6 @@ unpacked is the grid, which is stored in three separate pieces and put together 
 word per cell as it loads, so that everything about a cell can be read in
 one go.
 
-![A layout's grid is stored as three whole planes, one after another: what stepping on each cell does (a byte a cell, 16 KB), the shape of each cell's ground (a byte a cell, 16 KB) and the picture drawn in each cell, with its four flag bits (two bytes a cell, 32 KB). As the layout loads, a routine copied into RAM takes one value from each plane for every cell and puts them together into one four-byte word: the shape at the top, then what stepping does, then the picture. The 128 by 128 words take 64 KB.](https://alchemy.pascalpixel.com/illustrations/map/grid-weave.svg)
-
 Each map's row of `gMapHeaders` ([`field/maps.s`](../field/maps.s))
 gives a layout number, which picks a row of `gLayouts`
 ([`field/layouts.tsv`](../field/layouts.tsv)): the layout's header, palette,
@@ -291,9 +280,11 @@ past it. [System](../system/README.md) has the EWRAM layout.
 
 ### One grid, three layers
 
-All three layers are windows onto the one grid, as the picture at the top of
-this page shows for Goma Cave. Each layer's origin in the header picks the
-cell its window starts at (half its tile position, since a cell is 2 by 2
+All three layers are windows onto the one grid. In Goma Cave's entrance room
+the ground layer, the cave floor and its pool, starts at cell 0, 0; the middle
+layer, the rock walls, at cell 0, 34, below it; and the overhead layer, only
+the glow of the torches, at cell 50, 0, to its right. Each layer's origin in
+the header picks the cell its window starts at (half its tile position, since a cell is 2 by 2
 tiles), so a layout lays its layers out side by side or one above
 another: `layout_000`'s start at tiles 0, 60 and 120 across, and Venus Lighthouse's
 entrance puts them at (0, 0), (64, 0) and (0, 68). A window has no size of
@@ -310,8 +301,6 @@ A layout's grid doesn't store the number of every cell's picture from the
 start. The first time a picture appears in the grid, the cell holds a
 placeholder instead, and the game hands out metatile numbers in order as it
 loads the layout.
-
-![Eight cells of a layout's grid, in the order the game reads them, showing grass, grass, water, grass, rock, water, rock and grass. Where a picture appears for the first time, the grid stores a placeholder, the number 4,095, and as the layout loads the game gives it the next metatile number: the first grass becomes metatile 0, the first water metatile 1, the first rock metatile 2. Every later cell with the same picture already stores its number. So a layout has as many placeholders as it has metatiles.](https://alchemy.pascalpixel.com/illustrations/map/placeholders.svg)
 
 A placeholder is a cell whose metatile is 4,095, the highest 12 bits can
 hold. As the layout is converted, `Tile_ConvertMapGrid` gives each placeholder
@@ -332,8 +321,6 @@ Several maps can share one layout, and each puts its own chests in it. The
 layout lists the spots where a chest or a [Psynergy](../../glossary.md#psynergy-and-pp) Stone can stand, each with
 the event that would place one there, and a map places one only where it has
 that event.
-
-![Two maps on Crossbone Isle, CrossboneIsleKeys and CrossboneIsleBane, use the same layout, and the layout lists eight spots where a chest can stand, each with the event that would place one there. CrossboneIsleKeys has events for four of them, in a row along the room's north side: 333 coins, a Fairy Ring, a Cookie and a Smoke Bomb. CrossboneIsleBane has events for the other four: 666 coins and an Elixir on its raised floor, a Water of Life below them, and the Demon Axe, whose chest is carried on a stone pillar. A spot a map has no event for stays empty.](https://alchemy.pascalpixel.com/illustrations/map/markers.svg)
 
 CrossboneIsleKeys and CrossboneIsleBane share `layout_110`, whose eight treasure spots
 carry the [triggers](../../glossary.md#trigger) 100 to 107: CrossboneIsleKeys has chest events for 100 to
@@ -365,8 +352,6 @@ the game simply swaps the pictures of a few tiles on a timer. A
 layout's tileset animation script says which pictures to copy over which tiles and
 how long to wait between them; its blend script changes, in the same way, how
 the layers mix.
-
-![One channel of a layout's tileset animation. Several pictures of the same patch of the map are stored apart from the tiles on screen. The channel copies the first over the patch's tiles, waits a few frames, copies the second, waits, and so on, then goes back to the first. Nothing else changes: every cell that uses those tiles shows the new picture at once. A layout can run up to 16 channels, each on its own timer. On screen, Vale's waterfall and river as the game plays them, several channels changing their tiles at once.](https://alchemy.pascalpixel.com/illustrations/map/tile-animation.svg)
 
 Suhalla Desert's north shows the usual shape: its channel 0 copies four rows
 of four tiles from one of four stored pictures, waits 15 frames, takes the
@@ -410,8 +395,6 @@ which have no names for them; the names are the tables' (`animation.tsv`,
 The world map is far too big to unpack at once, so its ground is cut into
 squares that are packed one by one, and the game unpacks only the few around
 the party, bringing in new ones as the party walks.
-
-![The world map's ground is a grid of 16 by 16 squares, each 512 pixels on a side, and each square is packed on its own, once for each of the world map's two ground layers. Only the 2 by 2 squares around the party are unpacked at any time; the rest stay packed. As the party walks half a square further, the 2 by 2 moves with it, and the squares it now covers are unpacked, one a frame.](https://alchemy.pascalpixel.com/illustrations/map/world-squares.svg)
 
 The world is 16 by 16 squares of 512 pixels, and a table in the world map's
 work (`WorldMapView.tileIds`) says which stored square shows at each of
@@ -457,8 +440,6 @@ still view ([Field](../field/README.md#the-world-map-in-perspective)).
 In each Colosso final Isaac races an opponent through an obstacle course. The
 opponent isn't steered by any rule: it replays a run that was recorded once,
 one point of ground a frame.
-
-![In each of the three Colosso finals, the opponent racing Isaac replays a run recorded as one point of ground a frame, drawn here from the three tables at one scale, seen from above. Azart's run is 3,918 points, about 65 seconds; Satrage's is 4,380, about 73 seconds, and runs the other way; Navampa's is 5,048, about 84 seconds. The game can also play a run mirrored across the finish line. A dot marks every 300 frames, about five seconds. Each frame the opponent steps to the next point, turning by at most a sixteenth of a turn, and when the points run out it walks to the finish.](https://alchemy.pascalpixel.com/illustrations/map/colosso-path.svg)
 
 `colosso/` holds the three runs, each 7,200 points of ground in pixels, the
 size of the race's path buffer (`ColossoRaceWork.path`), with a row of two

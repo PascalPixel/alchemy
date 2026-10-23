@@ -1,7 +1,5 @@
 # Field
 
-![The field's loop. The party walks, and every frame the game checks the ground under the leader and the buttons. When something comes up (a doorway, a random battle, the A button, the menu, Psynergy or an item), walking stops, the game handles one thing at a time until nothing is left, and walking resumes. Leaving the map, through a doorway or into a battle, is always handled first and ends the loop.](https://alchemy.pascalpixel.com/illustrations/field/scene-loop.svg)
-
 While the [party](../../glossary.md#the-party) walks around a town, a dungeon or the world map, the game
 asks once a [frame](../../glossary.md#frame) whether something should happen. Has the leader stepped
 into a doorway? Has a random battle started? Has the player pressed A beside
@@ -90,7 +88,7 @@ to load the next map.
 Everything on the field that moves or changes by itself is an [object](../../glossary.md#object),
 and each one runs a small script of steps.
 
-![Three objects and their scripts. The leader moves by the direction pad, waits one frame and repeats, for good. The camera follows the leader, waits one frame and repeats. A footprint waits 120 frames and then disappears. Each frame every object runs its steps in order until one says to wait, which ends its turn until the next frame. Below, Isaac in Imil's snow as the game draws him, with the footprints his steps left beside him.](https://alchemy.pascalpixel.com/illustrations/field/object-scripts.svg)
+![Isaac walking through Imil's snow, leaving footprints behind him](https://alchemy.pascalpixel.com/guides/field/snow.gif)
 
 The objects are the party, the people and things a map places (its
 [object events](../../glossary.md#object-event)), the camera, even the footprints the leader leaves, and there
@@ -219,8 +217,6 @@ handlers are the rows of
 What the player sees of an object is its [sprite](../../glossary.md#sprite-and-oam), built from up to four
 pictures laid over each other, each playing its own animation.
 
-![Isaac's sprite in a battle is three pictures laid over each other: a dark shadow, drawn first, then his body, then his sword on top. The game combines them into one picture and redraws it whenever any of them moves on to another frame. As he attacks, his body and his sword change frame together, so each pose shows the sword in his hand, while the shadow stays the same.](https://alchemy.pascalpixel.com/illustrations/field/sprite-layers.svg)
-
 The game redraws a sprite whenever one of its anims changes frame. In a
 battle, Isaac's body, his sword and the shadow under his feet are three anims
 of one sprite, and as he swings, the body and the sword change frame together.
@@ -322,7 +318,7 @@ sprites that are not held are not drawn and give up their video memory.
 Before each step the leader takes, the game tests the ground ahead, and
 against a wall it tries other directions so the leader slides along it.
 
-![The leader seen from above, with the direction pad held to the right. Before each step the game checks the ground 8 pixels away in five directions: the way the pad points, and 22.5 and 45 degrees to either side. On open ground all five are clear, and the leader steps the way the pad points. Walking into a slanting wall, three of the five land beyond the wall, so the game tries other headings, nearest first: 22.5, then 45, then 67.5 degrees to either side, each needing five clear checks of its own. Here the first to pass is 67.5 degrees towards the open side, so the leader slides along the wall instead of stopping.](https://alchemy.pascalpixel.com/illustrations/world/probe-fan.svg)
+![Isaac walking and then running in Vale](https://alchemy.pascalpixel.com/guides/field/walk-run.gif)
 
 The leader walks at one pixel a frame, and runs at one and a half while the
 dash button, B, is held. Before each step the game tests the ground 8 pixels
@@ -430,8 +426,6 @@ describes.
 A town or dungeon is drawn as three flat layers stacked on top of each other,
 with the characters between them.
 
-![Vale pulled apart into its layers. A screen of Vale at the Sanctum's door comes apart into the sheets the console stacks to draw it, then closes again. From the back: the ground layer on `BG3`, with the grass, paths, water and steps; the middle layer on `BG2`, with the Sanctum's walls and door and the cliff edges; Isaac, a sprite; and the overhead layer on `BG1`, with the Sanctum's roof and the tree top. Isaac is drawn in front of the middle layer and behind the overhead one.](https://alchemy.pascalpixel.com/illustrations/field/layer-stack.svg)
-
 The ground is at the back, then a middle layer, and in front an overhead
 layer of roofs and treetops. On most maps the characters are drawn between
 the middle and overhead layers, which is how Isaac can walk behind a roof.
@@ -449,7 +443,7 @@ drawn nearer the front. The field draws sprites at priority 2, and a sprite
 wins a tie with a background. Of the 182 layouts, 101 give the layers 3, 2
 and 1, so the ground is at the back, the middle layer under the object events
 and the overhead layer over them, as with the Sanctum's roof and the tree top
-in front of Isaac above. Another 49 give 3, 1 and 2, which puts the middle
+that Isaac walks behind in Vale. Another 49 give 3, 1 and 2, which puts the middle
 layer over the object events and the overhead layer under them, 15 give 3, 1
 and 1, and the rest use other orders. A priority of 0 leaves the layer off;
 nine layouts show only their ground.
@@ -480,7 +474,7 @@ The layouts are the rows of `gLayouts` (`layouts.tsv`).
 The world map is a flat map, like a town's, that the console tilts so that it
 seems to stretch away towards the horizon.
 
-![Above, the world map's screen as Isaac leaves Vale, tilted into perspective, with five of its lines picked out in colour from the top of the screen to the bottom. Below, the same part of the world laid flat, with Vale and Vault marked. A trapezoid around Isaac shows the part of the flat map the screen reads: each coloured screen line reads the straight strip of the same colour. The lines near the top of the screen read strips that are farther away and wider, so the area read is a trapezoid, wide at the far end.](https://alchemy.pascalpixel.com/illustrations/field/world-map-footprint.svg)
+![Isaac walking on the world map](https://alchemy.pascalpixel.com/guides/field/world-map-walk.gif)
 
 It tilts the map one screen line at a time: each of the screen's 160 lines
 shows one straight strip of the flat map, and lines near the top show strips
@@ -493,8 +487,10 @@ them, `BG2` and `BG3`, and it reads their scale and position afresh for every
 line if the game changes them between lines. The field gives every line its
 own scale: as the party leaves Vale it falls steadily from 0.61 on the top
 line to 0.44 on the bottom one, so a line near the top covers more of the map.
-
-![The world map pulled apart into its layers. The world map as Isaac leaves Vale comes apart into the sheets the console stacks to draw it, then closes again. From the back: the lower ground on `BG3`, with the grass and paths; the upper ground on `BG2`, with the mountains, woods and cliffs; and the sprites, Isaac and Vale. Both ground layers are tilted line by line and share a priority, so `BG2` is drawn in front of `BG3`, and the sprites in front of both. Where the upper ground covers it, the lower ground is left unfinished.](https://alchemy.pascalpixel.com/illustrations/field/world-map-layers.svg)
+The lower ground, with its grass and paths, is on `BG3` and the upper ground,
+with its mountains, woods and cliffs, on `BG2`; the two share a priority, so
+`BG2` is drawn in front of `BG3` and the sprites in front of both, and the
+lower ground is left unfinished where the upper ground covers it.
 
 `WorldMap_BuildScanlineTable` gives each screen line a width scale and a
 ground distance, or zeros for a line above the horizon. It runs when the world

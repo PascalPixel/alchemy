@@ -1,7 +1,5 @@
 # Debug rooms
 
-![No door, table or event of the game leads to the three test rooms: only the debug map selector does, and only in debug mode, which the released game never turns on. From the selector come the Djinn room, which eight maps share, the level room and the menu test room.](https://alchemy.pascalpixel.com/illustrations/debug/reached.svg)
-
 The cartridge still holds three rooms the developers used to test the game,
 though no player can walk into them: one that hands out [Djinn](../../glossary.md#djinn), one for
 raising levels and browsing items, icons and letters, and one of shop and
@@ -52,8 +50,6 @@ explains why the rooms still count as reachable rather than unused.
 
 Each room's first entry sets the room up every time the [party](../../glossary.md#the-party) walks in, so a
 second visit repeats what the first did.
-
-![The menu test room's setup runs every time the party walks in, in the English edition. Before the first visit, in Vale, the party is Isaac and Garet at level 1, and the shops' counters for their rare items are all 0. After the first visit, Isaac is level 50 and Garet, Ivan and Mia level 30, and the counters read 3 Shamshirs, 2 Silver Blades and 1 of each of the nine other rare items. After a second visit the levels are unchanged, since a level is only ever raised to its target, but every counter has gone up again: 6 Shamshirs, 4 Silver Blades and 2 of each of the others.](https://alchemy.pascalpixel.com/illustrations/debug/setup-every-visit.svg)
 
 A map's start-up runs each time the party enters, not once. For a town that
 means placing its people; for a test room it means building the test setup
@@ -171,8 +167,6 @@ mode, so Force's shot leaves the portrait browser where it stands.
 
 The menu test room's people run the shop, message and inventory tests with a
 ready-made party.
-
-![The menu test room, where most of the people placed run a test when spoken to, among them two Felixes. In the international editions, Felix gives a different test depending on which way the leader faces when talking to him. Facing north, from below him, Isaac, the leader, gets the weapon shop's lines; facing west, from his right, the armour shop's; facing east, from his left, the item shop's; facing south, from above, the Sanctum's. Each is a separate talk event that names the facing it needs. A second Felix does the same with the Warrior's shops.](https://alchemy.pascalpixel.com/illustrations/debug/facing.svg)
 
 Talking to someone on a map runs that map's talk event for them, and an
 event can also ask which way the leader is facing. The menu test room uses

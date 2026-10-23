@@ -1,7 +1,5 @@
 # Battle
 
-![A battle, round by round. At the start of each round everyone chooses an action: the party in the command menu, each enemy from its own list. The actions line up fastest first, by Agility. Then each action plays in turn: it is announced, its animation plays and each target is hit, and the unit's turn ends. After any action, if one side is down or the party ran, the battle ends, with coins, experience and items after a win. When everyone has acted, the next round begins.](https://alchemy.pascalpixel.com/illustrations/battle/round.svg)
-
 When a random battle starts, the field gives way to a battlefield where the
 [party](glossary.md#the-party) faces the enemies. From then on the battle runs in
 rounds. At the start of a round the player picks a command for each party
@@ -118,8 +116,8 @@ ability kind.
 
 ## Rounds and turns
 
-The picture at the top of this page is one battle: rounds of choosing,
-sorting and playing actions, until one side is beaten.
+A battle is rounds of choosing, sorting and playing actions, until one side
+is beaten.
 
 The work runs at two levels: once a round, and once for each action in it.
 Once a round, `round.c` gathers every unit's action and sorts them:
@@ -178,8 +176,6 @@ ones beside it less, and an enemy weak to Venus takes more than one that
 resists it. Every damaging Psynergy works out its number the same way, in a
 few plain steps.
 
-![How Psynergy damage is worked out, for Isaac's Avalanche at three enemies in a row, aimed at the first. Avalanche's power is 160. Isaac's Venus Power is 20 ahead of each target's Venus Resist, which multiplies it by 281 in 256, to 175. The distance keeps 100 percent for the aimed enemy, 80 one place away and 60 two away: 175, 140 and 105. Last, 0 to 3 is added at random: 175 to 178, 140 to 143 and 105 to 108. A defending target takes half, and one guarded by Total Defense a tenth. Every step rounds down.](https://alchemy.pascalpixel.com/illustrations/battle/damage.svg)
-
 An ability's power is the damage the aimed target takes at an even match,
 when the caster's Power in the ability's element equals the target's Resist
 in it; Avalanche's is 160. Two things scale it, a little luck is added, and
@@ -230,8 +226,6 @@ The battlefield the player sees stretches away into the distance and slides
 sideways as the camera swings round, while the status window and the
 messages stay flat in front. That takes three of the console's [background layers](glossary.md#background-layer) and its
 [sprites](glossary.md#sprite-and-oam), each with its own job.
-
-![A battle pulled apart into its layers. A battle in Goma Cave as it opens comes apart into the sheets the console stacks to draw it, then closes again. From the back: the picture of the cave on `BG2`; the party and the enemies, sprites; the status window and the message on `BG0`; and in front the arrow that waits for a button, a sprite. `BG1` draws nothing here.](https://alchemy.pascalpixel.com/illustrations/battle/battle-layers.svg)
 
 | Layer | What it holds |
 | --- | --- |
@@ -351,8 +345,6 @@ In a battle the damage messages appear while the rock is still rising: the
 animation does not have to finish before the numbers show. That is because
 the animation and the damage run side by side, and only meet at the moment
 the blow lands.
-
-![The animation and the damage, side by side, with time running down the page. On the left the animation runs in its own loop: Quake's rock rises frame after frame. On the right the damage task waits. When the blow lands the animation says so, and from then on both run at once: the animation keeps drawing to its last frame while the task works out the first target's damage and shows its messages, then the next target's, then the last. The battle moves on only when both are done. The animation picks when the damage appears; the rules alone decide how much.](https://alchemy.pascalpixel.com/illustrations/battle/side-by-side.svg)
 
 An animation is an ordinary function with a loop of its own: it calls
 `WaitFrames` whenever time has to pass and returns only when the animation is

@@ -1,7 +1,5 @@
 # Graphics
 
-![How one picture, the grassland battle background, gets into the game. It is kept as an ordinary picture file, grassland.png, whose pixels are numbers into its own list of 128 colours. The build packs it into the two forms the game reads: the list of colours, and the pixels, compressed. A small assembly file places both on the cartridge under the name the code uses, Battle_GrasslandBackdrop, and the resource directory gives it a number. A battle on the world map's grassland, and the credits, ask for it by that number.](https://alchemy.pascalpixel.com/illustrations/graphics/picture-build.svg)
-
 The grassy field behind a battle on the world map, the monsters, the fonts,
 the [map](../../glossary.md#map) tiles and the title screen are all kept here as ordinary picture
 files that anyone can open and edit. Every build packs them into the forms the
@@ -37,7 +35,7 @@ code uses. That `.s` usually sits beside the picture; the tilesets in
 `window/` by `.s` files of [Windows](../window/README.md) and
 [Menus](../menu/README.md). A picture loaded by number rather than by label is
 an entry of the resource directory (`system/resource/directory.s`): the
-grassland battle background above is `Battle_GrasslandBackdrop`, placed by
+grassland battle background is `Battle_GrasslandBackdrop`, placed by
 `backdrop/grassland.s`, and `ResourceId_GrasslandBackdrop` in the directory,
 which `BattleBackground_SelectForEnvironment` and the credits ask for.
 
@@ -50,8 +48,6 @@ keeps them beside the picture they follow, as literal bytes marked
 
 The palette fade moves every background and [sprite](../../glossary.md#sprite-and-oam) colour a step a frame
 towards a target, as when the title intro fades in from black.
-
-![The title intro's fade-in, shown on three of its colours: the sky's blue, a cloud's pale lilac and the mountain's purple. At the start every colour is the same near-black, a very dark red. Each frame every colour moves an equal step towards its own colour in the picture, so after 20 frames each is a third of the way there, after 40 two thirds, and after 60 frames each has reached the picture's colour. All 512 background and sprite colours move this way together.](https://alchemy.pascalpixel.com/illustrations/graphics/palette-fade.svg)
 
 A fade changes the colours, not the picture: every one of the 512 colours on
 screen, background and sprite alike, moves an equal step each frame from
@@ -93,7 +89,7 @@ The palette selections are named in `include/graphics/palbuf.h`.
 The title sequence is the logos at power-on, then the intro that scrolls
 into the title picture and waits for Start.
 
-![The title sequence at power-on. At the top, the two logos as the game shows them. First the Nintendo logo with its fanfare, then the Camelot logo for two seconds. If a save file exists, the title intro follows: the backgrounds scroll down while the sun rises, a white flash brings up the title picture, and Press Start pulses. Pressing A or Start goes on to the main menu. If a minute passes with nothing pressed, the screen fades out and the sequence starts again from the Nintendo logo. With no save file, the logos lead straight to the main menu.](https://alchemy.pascalpixel.com/illustrations/graphics/title-sequence.svg)
+![The title intro: the clouds and the mountain scroll past the sun and its lens flares, ending on the title picture](https://alchemy.pascalpixel.com/story/title.gif)
 
 The title [overlay](../../glossary.md#overlay), `Title_Run` in [Menus](../menu/README.md), decides what
 runs; the code is here, in the palette [bank](../../glossary.md#bank), named after the palette fade it
@@ -111,17 +107,16 @@ seconds. A or Start cuts each part short.
 The intro's sense of depth comes from layers that scroll at different
 speeds. Of the backgrounds, `BG1` at the back scrolls a pixel every third
 tick and `BG2` in front every other one, each copying the next band of its
-picture in as a new row of tiles comes into view. Here the intro is taken
-apart into those layers:
-
-![The title intro pulled apart into its layers. The title intro after the prologue comes apart into the sheets the console stacks to draw it, then closes again. From the back: `BG1`, the purple clouds around an opening of blue sky; the sun on its patch of blue sky, a sprite; `BG2`, the mountain; and the lens flares, sprites in front of everything. The sun is behind the mountain, since its sprite's priority is lower than `BG2`'s, and the sun and the flares are blended over what is behind them.](https://alchemy.pascalpixel.com/illustrations/graphics/title-intro-layers.svg)
+picture in as a new row of tiles comes into view. `BG1` holds the purple
+clouds around an opening of blue sky and `BG2` the mountain. The sun is a
+sprite whose priority puts it behind the mountain, the lens flares are sprites
+in front of everything, and the sun and the flares are blended over what is
+behind them.
 
 ## Two battle backgrounds in one background memory
 
 The credits fade from one battle background to the next, and to do that they
 split the background's memory in two.
-
-![How the credits fade from one battle background to the next. The background's tile memory and colours are split into two halves, each able to hold one picture. First, Vale in the storm shows from half 1 while the next picture, Sol Sanctum's stone hall, is loaded into the hidden half 0. Then the screen blends from one to the other over 64 frames. Then Sol Sanctum shows from half 0, and the picture after it, the grassland, is loaded into half 1, which is no longer shown. The halves take turns, so a picture is never loaded while it is on screen.](https://alchemy.pascalpixel.com/illustrations/graphics/credit-halves.svg)
 
 While the staff names roll, the picture behind them fades from one battle
 background to the next: stormy Vale, then Sol Sanctum's stone hall, then the
@@ -166,8 +161,6 @@ wraps without a seam.
 
 The staff names are drawn a line at a time into a small ring of tiles, just
 before each line comes into view.
-
-![The staff names are drawn into a ring of 32 rows of tiles, one line of text to a row. 16 rows are on screen at a time and the other 16 are hidden. The names move up a pixel every fourth frame, so a new line comes into view every 32 frames. Each time one does, the next line of names is drawn into the first hidden row, just below the screen, over a line that scrolled off the top long before. Past the last row the ring wraps to the first, so the credits never need more than 32 rows of tile memory, however long the list of names.](https://alchemy.pascalpixel.com/illustrations/graphics/credits-ring.svg)
 
 The list of names is far longer than the screen, and drawing all of it at
 once would take more tile memory than the console has to spare. Instead the

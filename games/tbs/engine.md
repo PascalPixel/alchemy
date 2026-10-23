@@ -1,7 +1,5 @@
 # Engine
 
-![The console redraws its screen about sixty times a second, each picture a frame. It draws a picture line by line, from the top of the screen to the bottom, 160 lines. After the last line comes a pause about as long as 68 more lines, the vertical blank, when nothing is drawn. Then the next picture starts at the top. Changing the picture while it is being drawn would show half the change, so the game does its work during the frame and hands the finished picture to the hardware in the blank. On a timeline, each frame is a long stretch of drawing followed by a short blank, over and over.](https://alchemy.pascalpixel.com/illustrations/engine/frame-rate.svg)
-
 Everything the player sees moves to one beat: the screen is redrawn about
 sixty times a second, and the game prepares one picture for each. The engine
 is the code that keeps that beat and that the field, the battles and the
@@ -10,12 +8,18 @@ finished picture over in the screen's blank moment, lets code wait without
 the screen freezing, splits the program into [banks](glossary.md#bank) and swaps each [map](glossary.md#map)'s
 code in and out of memory, and plays the music and sounds.
 
+The console draws each picture one line at a time, 160 lines from the top of
+the screen to the bottom, then pauses for about as long as 68 more lines, the
+vertical blank. Changing the picture while it is being drawn would show half
+the change, so the game does its work during the frame and hands the finished
+picture over in the blank.
+
 ## Start-up
 
 Start-up takes the console from the moment it is switched on to the title
 screen, and never comes back.
 
-![Start-up, in order. The cartridge's first instruction jumps to System_Entry, which sets up the stacks. System_Initialize then prepares memory: it clears IWRAM, empties the heap and copies the fast routines into IWRAM. It starts the services: the VBlank handler, the sound driver and an empty task table. It waits ten frames, then Game_Run runs one map after another, starting with the title. Before each map it drops the last map's tasks and empties the heap. None of these steps returns.](https://alchemy.pascalpixel.com/illustrations/runtime/start-up.svg)
+![The console switched on: the Nintendo logo, then Camelot's, before the title](https://alchemy.pascalpixel.com/guides/engine/boot.gif)
 
 Memory is put in order and the services everything relies on are started
 once; after that one loop runs map after map for as long as the console
@@ -52,8 +56,6 @@ title's intro, with the Nintendo and [Camelot](glossary.md#camelot) logos before
 
 Code lets time pass by calling `WaitFrames`, and work that must go on while it
 waits runs as a task the scheduler calls every frame.
-
-![Five frames of a field map. A script's code does some work in the first frame, then calls WaitFrames to wait three frames, and carries on in the fifth. Meanwhile two tasks run once in every one of the five frames, waiting or not: the windows' task opens, closes and types the text windows, and the map's task scrolls the map's layers with the camera. WaitFrames is what runs them.](https://alchemy.pascalpixel.com/illustrations/runtime/waiting.svg)
 
 When a cutscene pauses, the code that runs it simply waits; the screen keeps
 moving because a short list of jobs, the tasks, runs once every frame
@@ -123,8 +125,6 @@ The [main image](glossary.md#main-image)'s code is laid out in banks at fixed ad
 from one bank to another goes through an 8-byte jump in the callee's far-call
 table.
 
-![Two banks of the program as they lie in the cartridge, each starting at a fixed address. The sound bank starts with its far-call table, one short entry for each of its functions that other banks call, followed by its code and then empty room up to the next fixed start. A function in the field bank that plays a sound calls the table's entry, Sound_PlaySongFar, which jumps on to Sound_PlaySong wherever it lies in the sound bank. If the sound bank's code changes size, Sound_PlaySong moves, but the table entry stays where it is, so nothing in the field bank changes.](https://alchemy.pascalpixel.com/illustrations/system/far-calls.svg)
-
 The program is cut into banks so that one bank's code can change size without
 moving anything another bank depends on. Each bank starts at a fixed address
 with room to spare, and opens with a table of short jumps, one for each
@@ -155,8 +155,6 @@ memory map and the per-edition bank addresses.
 
 Each map's code is an overlay, unpacked into one fixed area of EWRAM when
 the map loads, and it meets the main image only through two tables.
-
-![The cartridge holds each map's code packed, as one of 96 overlays: Vale, Vault, Bilibin, Bilibin's houses, Kolima, Imil and the rest. In RAM there is room for one, the 32 KB overlay area. While the party is in Bilibin, Bilibin's overlay is unpacked there. When the party walks into one of Bilibin's houses, the new map's overlay, the houses', is unpacked into the same area over Bilibin's, which is gone until the party walks back out.](https://alchemy.pascalpixel.com/illustrations/system/overlays.svg)
 
 A town's people, [scripts](glossary.md#script) and cutscenes are code that is needed only while the
 party is there, and all the maps' code together would not fit in RAM. So
@@ -190,8 +188,6 @@ calls as it unpacks it.
 Every sound is played by `Sound_PlaySong` with a song number, whose range
 decides whether it is music, a fanfare or a sound from the song table.
 
-![Every sound starts as one call with a song number, and the number's range decides what it is. Songs below 80 are music, played on the music player; asking for the music already chosen does nothing. Songs from 80 to 99 are fanfares, played on the fanfare player while the music is silenced. Songs from 100 up are rows of the song table, mostly sound effects, each played on the player its row names. Three song numbers are controls instead of sounds: song 17 fades the music out, song 18 keeps the music that is playing, and song 289 fades out player 3.](https://alchemy.pascalpixel.com/illustrations/sound/cue-ranges.svg)
-
 The game asks for every sound the same way, with one number, and the number
 says what kind of sound it is. The sound driver has eight players, and each
 kind of sound has players of its own, so a sound effect never stops the
@@ -200,7 +196,8 @@ music.
 Below 80 a song is music; from 80 to 99 (`SONG_FANFARE_FIRST`) a fanfare;
 from 100 (`SONG_SE_FIRST`) an entry of the song table, played on the
 player its row names, which is how sound effects play. Songs 17, 18 and 289
-are controls rather than sounds.
+are controls rather than sounds. Asking for the music already chosen does
+nothing.
 
 A fanfare doesn't stop the music. The music's volume drops to 0 while it keeps
 playing, the fanfare plays on player 0, and once that player stops the music
@@ -226,12 +223,12 @@ and [the driver's lock](src/sound/README.md#the-drivers-lock).
 Three test maps kept in the ROM are reached only from the debug map
 selector.
 
-![No door, table or script of the game leads to the three test rooms. The only way in is the debug map selector, which warps to any map by number, and the field opens it only when the Start menu is opened with B held while debug mode is on. Debug mode is switched off at power-on, and nothing the player can reach switches it on, so in the released game the selector, and the rooms behind it, are never reached. From the selector come the Djinn room, which eight maps share, the level room and the menu test room.](https://alchemy.pascalpixel.com/illustrations/debug/reached.svg)
-
 The ROM keeps three test maps: a room that hands out [Djinn](glossary.md#djinn), a room for
 levels and for browsing items, icons and letters, and a room of shop and
-message tests. Only the debug map selector reaches them, and only while
-`gDebugMode` is set, which the released game never does. Each is an ordinary
+message tests. Only the debug map selector reaches them: it warps to any map
+by number, and the field opens it when the Start menu is opened with B held,
+but only while `gDebugMode` is set, which the released game never does. Each
+is an ordinary
 map overlay, so they're the smallest complete examples of how a map is
 built. [Debug rooms](src/debug/README.md#how-the-rooms-are-reached) goes
 through them.

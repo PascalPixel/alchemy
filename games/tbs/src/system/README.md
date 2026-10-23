@@ -1,7 +1,5 @@
 # System
 
-![The console's two kinds of working memory, drawn to scale. EWRAM, 256 KB and slower, holds from the bottom up: the game's variables, flags and save buffer; the overlay, the code of the current map; the map grid's cells; battle sprite pictures; space to unpack into; the layout's metatiles, layers and shapes; the EWRAM heap; and background tiles at the top. IWRAM, 32 KB and fast, holds the fast routines copied from the cartridge, the variables the engine uses most, the IWRAM heap, the sound mixer's code and the stacks at the top. The program itself, the pictures, maps and music stay on the cartridge, which can only be read.](https://alchemy.pascalpixel.com/illustrations/system/memory-map.svg)
-
 Every [map](../../glossary.md#map) the [party](../../glossary.md#the-party) visits needs its own code, its own [layout](../../glossary.md#layout) and its own
 pictures, and a Game Boy Advance has little room for any of it: 288 KB of
 working memory, against a cartridge that holds the whole game. The system
@@ -25,8 +23,7 @@ overlays.
 
 ## Memory map
 
-The memory map says where each part of the game's state lives, as the picture
-at the top of this page shows.
+The memory map says where each part of the game's state lives.
 
 The console has two kinds of working memory. EWRAM, 256 KB, is large but
 slower, and holds most of the game's data: its variables, the current map's
@@ -79,8 +76,6 @@ other [editions](../../glossary.md#editions) agree except that German moves thre
 Video memory holds the pictures the screen is drawn from, and a map fills
 it with its own.
 
-![The console's 96 KB of video memory as a map fills it, drawn to scale from the start at the top. The first 8 KB holds the windows' tiles, the frame pieces and letters every text box is built from. Next come the windows' own screen map, then the screen maps of the layout's three layers, ground, middle and overhead, which say which tile goes where. The next 48 KB holds the layout's three sheets of tiles. The last 32 KB is for sprites: the tiles of the people and things that move, handed out in small blocks as they appear.](https://alchemy.pascalpixel.com/illustrations/system/vram.svg)
-
 The screen is built from tiles, small 8-by-8 pictures. A [background layer](../../glossary.md#background-layer) is
 a sheet of tiles plus a screen map that says which tile goes in each place on
 screen; a [sprite](../../glossary.md#sprite-and-oam) draws its own tiles wherever it is put. Video memory is
@@ -111,8 +106,6 @@ The hardware addresses video memory in fixed blocks (`games/tbs/include/system/i
 
 The program is linked in banks, each at a fixed place in the cartridge, so
 that one bank's code can change size without disturbing any other.
-
-![Two banks of the program as they lie in the cartridge, each starting at a fixed address. The sound bank starts with its far-call table, one short entry for each of its functions that other banks call, followed by its code and then empty room up to the next fixed start. A function in the field bank that plays a sound calls the table's entry, Sound_PlaySongFar, which jumps on to Sound_PlaySong wherever it lies in the sound bank. If the sound bank's code changes size, Sound_PlaySong moves, but the table entry stays where it is, so nothing in the field bank changes.](https://alchemy.pascalpixel.com/illustrations/system/far-calls.svg)
 
 The program the CPU runs straight from the cartridge, the main image, is
 divided into banks: the field, the windows, the battles, the sound and the
@@ -172,8 +165,6 @@ other editions' fall on 2 or 4 KB ones.
 An overlay is one map's code, unpacked into one fixed 32 KB area of EWRAM
 while the party is there, and it meets the rest of the program only through
 two tables of stubs.
-
-![The cartridge holds each map's code packed, as one of 96 overlays: Vale, Vault, Bilibin, Bilibin's houses, Kolima, Imil and the rest. In RAM there is room for one, the 32 KB overlay area. While the party is in Bilibin, Bilibin's overlay is unpacked there. When the party walks into one of Bilibin's houses, the new map's overlay, the houses', is unpacked into the same area over Bilibin's, which is gone until the party walks back out.](https://alchemy.pascalpixel.com/illustrations/system/overlays.svg)
 
 The code for a town's people, its cutscenes and its puzzles is needed only
 while the party is in that town, and all the maps' code together would not
@@ -243,8 +234,6 @@ last four bytes, so member `i` sits at `8 * i + 4`:
 
 Every picture, layout, table and overlay on the cartridge is found by its number
 in one list, the resource directory, so the list has to keep its order.
-
-![How the game finds Bilibin's code by number. The map table's row for Bilibin names its overlay by a resource number. That number is a row of the resource directory, a list with one row for every picture, layout, table and overlay, in a fixed order. Bilibin's row holds where its packed data starts in the cartridge. The game reads the row, finds the packed data and unpacks it into the overlay area. Because a resource's number is its place in the list, a row added in the middle gives every later resource a new number.](https://alchemy.pascalpixel.com/illustrations/system/resource-directory.svg)
 
 When the party enters Bilibin, the map table does not say where Bilibin's
 code is; it gives a number. The number picks a row of the resource

@@ -1,7 +1,5 @@
 # World
 
-![Four parts of the field. While the party walks around a map, four parts of the program work together. The loop lets the party walk, and stops to deal with whatever comes up. The engine moves everything that moves and draws the map, every frame. The layout says where the ground is, how high it is and which spots do something. The map's own code, loaded for each map, says who stands where and what happens there. The loop asks the map what to do; the engine reads the layout. The loop and the engine know nothing of any one map.](https://alchemy.pascalpixel.com/illustrations/world/field-parts.svg)
-
 Everywhere the [party](glossary.md#the-party) walks, a town, a dungeon or the world map, is run by
 the same four parts. The loop in `src/object` lets the party walk and deals
 with whatever interrupts it. The engine in `src/field` moves everything that
@@ -16,8 +14,6 @@ and overlays fit into the whole game is on [the front page](README.md).
 While the party walks, the game asks once a [frame](glossary.md#frame) whether something should
 happen. When something should, the walk stops, the game deals with it, and
 the walk starts again.
-
-![The field's loop. The party walks, and every frame the game checks the ground under the leader and the buttons. When something comes up (a doorway, a random battle, the A button, the menu, Psynergy or an item), walking stops, the game handles one thing at a time until nothing is left, and walking resumes. Leaving the map, through a doorway or into a battle, is always handled first and ends the loop.](https://alchemy.pascalpixel.com/illustrations/field/scene-loop.svg)
 
 Stepping into a doorway, pressing A beside someone, a random battle
 starting: each only raises a flag of its own, a request. When the walk
@@ -61,8 +57,6 @@ The engine knows a map only by asking its code six questions: what can
 happen here, where the party arrives, who stands where, whether anything
 needs setting up, whether the leader is in a warp region, and where a warp
 leads.
-
-![Six questions a map answers. When the party arrives the engine asks what happens here, where the party arrives, who stands where, and whether anything needs setting up first. At every step it asks whether the leader stands in a warp region. As the party leaves it asks where the warp leads. Each answer comes from a function, so a map can answer differently as the story goes on.](https://alchemy.pascalpixel.com/illustrations/scene/entries.svg)
 
 Each answer comes from a function rather than a fixed table, so a map can
 answer differently as the story moves on, and the engine needs no idea of
@@ -120,7 +114,7 @@ How an overlay is loaded and how it calls back into the [main image](glossary.md
 the story](README.md#how-maps-depend-on-the-story) across the game.
 [Maps](src/map/README.md#the-entry-table) describes the [entry table](glossary.md#entry-table-and-import-table), the
 tables it returns and [how a map event is
-chosen](src/map/README.md#how-an-event-is-chosen), and
+chosen](src/map/README.md#how-a-map-event-is-chosen), and
 [Places](src/field/maps.s) lists every map in [story order](glossary.md#the-places-in-story-order).
 
 ## Map and map section flags
@@ -140,7 +134,7 @@ Everything on the field that moves or changes by itself, the party, the
 townspeople, the camera, even the footprints the leader leaves in snow, is a
 [object](glossary.md#object), and each one runs a small script.
 
-![Three objects and their scripts. The leader moves by the direction pad, waits one frame and repeats, for good. The camera follows the leader, waits one frame and repeats. A footprint waits 120 frames and then disappears. Each frame every object runs its steps in order until one says to wait, which ends its turn until the next frame. Below, Isaac in Imil's snow as the game draws him, with the footprints his steps left beside him.](https://alchemy.pascalpixel.com/illustrations/field/object-scripts.svg)
+![Isaac walking through Imil's snow, leaving footprints behind him](https://alchemy.pascalpixel.com/guides/field/snow.gif)
 
 Every frame each object takes a turn: it runs the steps of its script in
 order until one says to wait. A step that only tests something or jumps
@@ -185,7 +179,7 @@ every step the game checks the ground just ahead, and when the leader walks
 into a wall it tries other directions, so the leader slides along the wall
 instead of stopping dead.
 
-![How the leader slides along a wall, seen from above with the pad held right. Before each step the game checks the ground 8 pixels away in five directions: the way the pad points, and 22.5 and 45 degrees to either side. On open ground all five are clear, and the leader steps the way the pad points. Walking into a slanting wall, three of the five land beyond the wall, so the game tries other headings, nearest first: 22.5, then 45, then 67.5 degrees to either side, each needing five clear checks of its own. Here the first to pass is 67.5 degrees towards the open side, so the leader slides along the wall.](https://alchemy.pascalpixel.com/illustrations/world/probe-fan.svg)
+![Isaac walking and then running in Vale](https://alchemy.pascalpixel.com/guides/field/walk-run.gif)
 
 On a town or dungeon map the leader walks at `FIELD_WALK_SPEED` and runs at
 `FIELD_RUN_SPEED` while a dash button is held. Each step needs five clear
@@ -215,8 +209,6 @@ object](src/field/README.md#how-high-a-step-can-go).
 
 A layout is a grid of 16-pixel squares, cells, and each cell says three things:
 what is drawn there, how high its ground is, and what standing there does.
-
-![What one cell of a layout says. Nine cells of Vale, a grass corner against a cliff, as the game draws them, with the middle cell outlined and its four tiles dotted. A layout is a grid of square cells, 16 pixels on a side. Each cell says what is drawn there, one metatile, a 16-pixel picture made of 2 by 2 tiles, each tile an 8-pixel square; how high its ground is, flat, a slope or a step; and what standing there does: nothing, a wall, a spot this map's events name such as a door, a chest or a ladder, ground where battles start, or a ledge to jump down. The engine reads the ground to decide where the leader can step; the map's events read what standing there does to decide what happens.](https://alchemy.pascalpixel.com/illustrations/world/cell-word.svg)
 
 What standing on a cell does is its [metatile behavior](glossary.md#metatile-behavior), and it is what walls
 and map events are keyed on. The behaviors from `MB_EVENT_FIRST` to
@@ -260,15 +252,13 @@ byte is the metatile behavior, and the top byte the ground shape, from which
 
 [Layouts](src/layout/README.md#cells) gives every metatile behavior, and goes on to the
 layout's tables and [how the build makes each
-layout](src/layout/README.md#how-the-build-makes-a-map) from editable tables.
+layout](src/layout/README.md#how-the-build-makes-a-layout) from editable tables.
 
 ## Map layers
 
 A town or dungeon is drawn as flat sheets stacked on top of each other: the
 ground at the back, then walls and edges, then the characters, then roofs
 and treetops in front. That is how Isaac can walk behind a roof.
-
-![Isaac behind a roof. In Vale, Isaac has walked behind a house and its roof covers all but his head. Below, the same place a few steps earlier is taken apart into the four sheets the console stacks, front on top: the overhead layer on `BG1` with the roof and chimney; the characters, Isaac and a villager, as sprites; the middle layer on `BG2`, here the tree at the side; and the ground on `BG3`, with the grass, path and cliff. No code works out whether Isaac is hidden: the console draws the overhead layer over the characters. Most maps stack their layers in this order; a map can give them another.](https://alchemy.pascalpixel.com/illustrations/world/layer-order.svg)
 
 No code works out whether someone is hidden behind a roof or a tree. The
 console draws its [background layers](glossary.md#background-layer) and sprites in an order set by their
@@ -299,8 +289,8 @@ layers whose priority isn't zero.
 | `MAPGRID_LAYER_MIDDLE` | 1 | `BG2` | walls and edges, most often under the characters |
 | `MAPGRID_LAYER_OVERHEAD` | 2 | `BG1` | roofs and tree tops, over the characters |
 
-[Field](src/field/README.md#towns-and-dungeons-on-screen) shows Vale pulled
-apart into its layers and how they are put on screen, and
+[Field](src/field/README.md#towns-and-dungeons-on-screen) shows how
+the layers are put on screen, and
 [Layouts](src/layout/README.md#one-grid-three-layers) how they share one grid.
 
 ## The world map
@@ -308,7 +298,7 @@ apart into its layers and how they are put on screen, and
 The world map is a flat map tilted into perspective, so the land near the
 party looks close and the land towards the top of the screen far away.
 
-![What the world map's screen reads. Above, the world map's screen as Isaac leaves Vale, with five of its lines picked out in colour from the top of the screen to the bottom. Below, the same part of the world laid flat, with Vale and Vault marked. A trapezoid around Isaac shows the part of the flat map the screen reads: each coloured screen line reads the straight strip of the same colour. The lines near the top of the screen read strips that are farther away and wider, so the area read is a trapezoid, wide at the far end.](https://alchemy.pascalpixel.com/illustrations/field/world-map-footprint.svg)
+![Isaac walking on the world map, the land tilting away towards the top of the screen](https://alchemy.pascalpixel.com/guides/field/world-map-walk.gif)
 
 The console can scale and rotate two of its background layers, and the game
 changes the scale for every line of the screen. Each screen line shows one
@@ -357,7 +347,7 @@ As the party walks, a counter fills, faster on some ground than on other,
 and a battle starts when it is full. A party that has outgrown a place meets
 its battles less often there.
 
-![How a random battle starts. Each frame the leader moves, a counter fills by a step, and a battle starts when it is full. Each zone sets how far the party walks between battles: the higher its rate, the smaller the steps. A party above the zone's level adds to the rate, so it meets fewer battles. A random part, drawn again after each battle, varies the gap. There are no battles at all while Cloak is active, on ground with no zone, while a flag turns them off, or with Avoid active where the party's level is above the zone's. When the counter is full, one of the zone's formations is drawn by weight.](https://alchemy.pascalpixel.com/illustrations/object/encounter-roll.svg)
+![A cave giving way to a random battle that opens with `Ghost appeared!`](https://alchemy.pascalpixel.com/guides/object/random-battle.gif)
 
 Each kind of ground belongs to a zone, and the zone decides how far apart
 its battles are and which enemies can appear. Each frame the leader walks,
@@ -373,7 +363,9 @@ choosing the formation once it is full. What it adds:
 
 Each level, up to five, by which the party's average level is above the
 zone's adds 5 to the rate, and with Avoid active (the Psynergy that keeps
-such battles away) a zone the party has outgrown has no battles at all. A
+such battles away) a zone the party has outgrown has no battles at all. There
+are no battles while Cloak is active, on ground with no zone, or while a flag
+turns them off. A
 battle starts when the counter reaches `work->encounterThreshold`, 16 in
 16.16 fixed point, and one of the zone's eight formations is drawn by
 weight. A field map's zones come from the
@@ -391,7 +383,7 @@ Using Move on a stone pillar slides it; using it on a blank wall shows the
 same hand and moves nothing. What [Psynergy](glossary.md#psynergy-and-pp) does to a map is decided by the
 map's own map events, and the effect only draws it.
 
-![Psynergy on the field, step by step. At the top, the cast as the game plays it: the screen tints, Move's hand pushes the pillar, and the colours come back. Isaac uses Move on the stone pillar in Vale. The game checks Psynergy can be used here and takes the PP. It runs the map's event for before the cast, if there is one. The effect plays: Move's hand appears, and it pushes the pillar only because Vale has a map event for Move on it. Last it runs the map's event for after the cast, which notes where the pillar now stands and makes its new cell solid.](https://alchemy.pascalpixel.com/illustrations/object/psynergy-phases.svg)
+![Isaac casts Move in Vale: the screen tints, a hand appears over the stone pillar and pushes it, and the colours come back](https://alchemy.pascalpixel.com/abilities/move.gif)
 
 Choosing Psynergy from the menu or a shortcut raises the `psynergy` request,
 and `Field_UsePsynergy` handles it:
@@ -405,7 +397,8 @@ and `Field_UsePsynergy` handles it:
    an event names the target. An event in the `PSYNERGY_PHASE_EFFECT_ACTS`
    phase runs from inside the effect, at the moment Force strikes or Frost
    freezes.
-4. It runs the `PSYNERGY_PHASE_AFTER_CAST` event.
+4. It runs the `PSYNERGY_PHASE_AFTER_CAST` event. In Vale, the one after Move
+   notes where the pillar now stands and makes its new cell solid.
 
 | Name | Value | Meaning |
 | --- | --- | --- |

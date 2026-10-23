@@ -1,7 +1,5 @@
 # Battle animations
 
-![An animation from start to end. It sets up first: it opens the canvas, builds its blitters, loads its pictures and places its particles. Then it repeats the same frame a fixed number of times: it moves every particle one step, stamps its pictures into the canvas, and waits for the next frame while the canvas is copied to the screen and what stays on it fades a little. After its last frame it stops the copying and frees what it built.](https://alchemy.pascalpixel.com/illustrations/effect/effect-life.svg)
-
 When Isaac casts Quake or Garet [summons](../../glossary.md#summons) Mars, the battle pauses its own
 drawing and an animation plays over it: rock pillars rising, flames flying,
 sparks bursting. That is a battle animation, and every [Psynergy](../../glossary.md#psynergy-and-pp), [Djinni](../../glossary.md#djinn),
@@ -64,8 +62,6 @@ Every ability names the animation it plays and how strong a version of it to
 play. Moves of one family share an animation, so Quake, Earthquake and Quake
 Sphere all play the same animation, at three strengths.
 
-![One animation at three strengths. Quake, Earthquake and Quake Sphere play the same animation, and a stronger one keeps its rock pillars rising and sinking for longer. Three pillars rise under the targets one after another, and each climbs and sinks in about half a second. Quake's pillars rise once and the animation ends after about 1.3 seconds; Earthquake's rise twice, about 1.9 seconds; Quake Sphere's three times, about 2.4 seconds. In each the damage appears a quarter of a second before the end. The screen shakes twice as far at each step, from 2 pixels to 4 to 8.](https://alchemy.pascalpixel.com/illustrations/effect/variants.svg)
-
 The animation is chosen by a number, the animation kind, and the strength by
 another, the variant. The kind picks only what the player watches: the formula
 the targets take is the ability kind, in `game/actions.tsv`, which
@@ -80,7 +76,9 @@ its layout). Quake, Earthquake and Quake Sphere read `0x001`, `0x1001` and
 `ANIM_VARIANT_STRONGER` and `ANIM_VARIANT_STRONGEST`.
 `BattleAnim_RunQuake` reads the variant as a row of `gQuake_Timings`,
 which keeps each pillar standing 32, 64 or 96 [frames](../../glossary.md#frame)
-in an animation of 80, 112 or 144.
+in an animation of 80, 112 or 144: a pillar rises and sinks every 32 frames,
+so once for Quake, twice for Earthquake and three times for Quake Sphere, and
+the screen shakes 2, 4 or 8 pixels.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -229,7 +227,7 @@ among them the blessings, Astral Blast and Dragon Driver.
 Nearly everything an animation draws goes onto one small picture, the canvas,
 which the hardware stretches over the whole battle.
 
-![Above, the canvas during Heat Wave: a picture 128 by 128 pixels where the animation draws its blaze. Each pixel holds a level on a ramp of 64 colours, from nothing, which is see-through, up to the brightest. Below, the screen at the same moment: the canvas is stretched to twice its width and blended over the battle, so the blaze crosses most of the screen and the battle shows through it.](https://alchemy.pascalpixel.com/illustrations/effect/canvas.svg)
+![Garet casts Heat Wave at Mia: a blaze shoots across the screen from Garet and bursts into sparks around her, the battle showing through it.](https://alchemy.pascalpixel.com/abilities/heat-wave.gif)
 
 The canvas is only 128 pixels square, about half the screen's width. The
 hardware shows it twice as wide as it is, blended over the battle, so that
@@ -274,8 +272,6 @@ is the battle's own layers, over which `BG2` is blended.
 After each frame the canvas is copied to the screen, and then the game decides
 what the canvas keeps for the next frame: nothing, or a dimmer copy of what was
 there. Keeping a dimmer copy is how every spark and flame leaves a trail.
-
-![After the canvas is copied to the screen, the animation's transfer mode decides what the canvas keeps for the next frame. Four strips show a spark that has moved right for fifteen frames. Cleared, as Quake does, it leaves no trail. Halved each frame, as Heat Wave does, it leaves a short trail that is gone in six frames. Kept at three quarters, as the Djinn attacks do, the trail lasts twelve frames. Lowered by a fixed step of 4, as Drain does, the trail lasts sixteen frames and stays bright to the end.](https://alchemy.pascalpixel.com/illustrations/effect/trails.svg)
 
 Because a pixel is a level and not a colour, dimming is simple arithmetic on
 every byte of the canvas at once, with no bookkeeping for each spark. Halving
@@ -323,8 +319,6 @@ Every spark, ember, mote and chip of rock is a particle: a point that moves a
 little each frame and has a picture drawn where it is. An animation keeps them in
 two pools of fixed size, so it never has to ask for more memory in the middle
 of an animation.
-
-![A particle is one spark, ember or shard: its position, its speed and one spare number for its life or picture. An animation has two fixed pools of them. Its own holds 64, and Heat Wave keeps a target's seven fireballs in the first seven. The second, 1,170 more, borrows the memory that holds the field's map grid, which the battle does not need while an animation plays. Heat Wave divides its first 1,024 into ranges: hit flashes, the forty sparks each hit throws, and the two trails each fireball leaves every frame; it leaves the rest unused. A finished particle's place is reused, so neither pool grows.](https://alchemy.pascalpixel.com/illustrations/effect/particles.svg)
 
 The small pool belongs to the animation. The large one is borrowed: it is the
 memory that holds the field's map grid, which the battle does not need while an
@@ -378,8 +372,6 @@ Every picture an animation puts on the canvas is stamped there by a blitter, a
 small routine that copies a picture of a given size onto the canvas at a given
 point. How the picture combines with what is already there decides whether it
 covers, glows or adds light.
-
-![A blitter puts a picture on the canvas in one of four ways. The canvas holds a soft band of light, and the picture is a bright diamond in a square box whose corners hold nothing. Copy replaces the canvas with the whole box, so the empty corners cut a dark square into the band. Transparent replaces it only where the picture has something. Brighter keeps the brighter of the two pixels. Add adds them, up to the brightest level, so the diamond is brighter where it crosses the band. A blitter can also mirror the picture or trim it at the canvas's edges.](https://alchemy.pascalpixel.com/illustrations/effect/blend-modes.svg)
 
 A blitter can also mirror the picture across (`COMPOSITE_FLIP_X`) or up and
 down (`COMPOSITE_FLIP_Y`) and trim it at the canvas's edges
@@ -626,7 +618,7 @@ target.
 The four summons that need only one Djinni each show a small Djinni of their
 element and throw flames at the enemies, each in its own way.
 
-![The four summons that need one Djinni each draw a small Djinni of their element and throw flames at the enemies. Venus raises ten columns of flame from the ground, one every four frames, each bursting into motes. Mercury's Djinni circles and fires five flames across the screen, each shattering into motes five frames after it leaves. Mars flares an orb, its Djinni dives into the ground and nine flames erupt in a row while embers rise from them. Jupiter drops eight flameballs from the top right, one every four frames, each shattering into motes as it lands. The flames are the animation's own particles; the motes each flame breaks into take a block of 32 places in the borrowed pool. Each card plays the cast as the game draws it, aimed at three of the party standing in as enemies.](https://alchemy.pascalpixel.com/illustrations/effect/djinn-attacks.svg)
+![Isaac summons Venus against Garet, Ivan and Mia, and columns of yellow flame rise from the ground among them.](https://alchemy.pascalpixel.com/abilities/venus.gif)
 
 Unlike the other summons, these four are ordinary animation kinds,
 `BATTLE_ANIM_VENUS` to `BATTLE_ANIM_JUPITER`, in
@@ -654,8 +646,6 @@ keeps three quarters of the canvas between frames (`CANVAS_COPY_AND_FADE`,
 Judgment does not draw over the battle at all for most of its length: it
 replaces the screen with scenes of its own, then brings the battle back for
 the damage.
-
-![Judgment's scene runs in two parts, each with its own frame count. The gathering lasts 160 frames: motes close in on Judgment and a burst grows and throws shards. The sweep then shows an aerial view for 150 frames, a beach for 64, a forest for 66, and the battle again for 40, with the damage shown 20 frames in. A or B skips ahead: the gathering ends at once, and the sweep jumps to its next view.](https://alchemy.pascalpixel.com/illustrations/effect/judgment.svg)
 
 Judgment's scene ([`judgment.c`](parts/judgment.c)) is outlined in
 [Battle](../../battle.md#animations). It runs in two parts, a gathering and a
@@ -695,7 +685,7 @@ Nova, Supernova and the bombs set off bursts of light that spray sparks
 bouncing across the ground. The stronger moves set off three bursts in quick
 succession.
 
-![One burst of Nova, drawn on the canvas. A big white flash shows for two frames. Around it a ring of twelve small flashes lights up, each a little further out and a little later than the one before. Sparks fly out in every direction, fall, bounce back at half their speed from a line near the bottom of the canvas, and shrink as their lives run out. Blast and Fire Bomb throw one burst of 128 sparks, Nova and Cluster Bomb one of 255, and Supernova and Carpet Bomb three bursts of 192, eight frames apart.](https://alchemy.pascalpixel.com/illustrations/effect/spark-groups.svg)
+![Garet casts Nova at Isaac, Ivan and Mia: a white burst swells over them and sprays sparks across the screen.](https://alchemy.pascalpixel.com/abilities/nova.gif)
 
 The spark groups ([`plasma.c`](parts/plasma.c)) play for Blast, Nova,
 Supernova and the three bombs (`BATTLE_ANIM_NOVA`) and for Dynamite. A burst
@@ -762,7 +752,7 @@ itself, and each mode copies its own palette over the burst's.
 Psynergy that lowers a stat shows it as a weapon or shield over each target
 that breaks apart.
 
-![Three moments of Debilitate. A glowing shield appears over each target in turn, four frames apart. About 24 frames into each target's turn it shatters into 24 shards that fly away from the caster. The shards then step through seven darker copies of their picture, one every four frames, until they are gone. Dull draws a dagger instead and Weaken draws the shield in pink; because the canvas is halved after each copy, every shard leaves a short trail.](https://alchemy.pascalpixel.com/illustrations/effect/stat-reduction.svg)
+![Garet casts Debilitate at Isaac, Mia and Ivan, and a glowing shield over each of them shatters into shards that fly away.](https://alchemy.pascalpixel.com/abilities/debilitate.gif)
 
 A stat reduction ([`stat_change.c`](parts/stat_change.c)) shows a dagger
 (Dull) or a shield (Impair and Weaken) over each target, 4 frames apart, and
@@ -820,8 +810,6 @@ target's slots.
 
 Twelve monster attacks, bites, fangs and slashes, are one animation with a
 different row of settings each.
-
-![Twelve monster attacks share one animation, each a row of settings: a slash that sweeps across the target or a column of light that rises on it, one to three hits, extras chosen from smoke, drain, glints, sparks and a heavy blow, and one of six colourings. Twin Beaks is a slash in lightning colours that hits twice and throws sparks. Acid Bite is a pink column that hits three times and raises smoke.](https://alchemy.pascalpixel.com/illustrations/effect/target-strikes.svg)
 
 These attacks, such as Cannibal Fang, Poison Tail and Twin Beaks, are styles
 of `BattleAnim_RunTargetStrike` ([`target_strike.c`](parts/target_strike.c)).
@@ -1044,12 +1032,6 @@ A handler's name comes from the abilities that reach its kind, read from
 from what it draws. The recordings come from
 [Alchemy Devtools](https://github.com/PascalPixel/alchemy-devtools#pictures),
 which plays an ability in a built tbs-en [edition](../../glossary.md#editions) over a plain grey background.
-The game pictures inside the illustrations are crops of those recordings and
-of renders of Quake, Heat Wave, Debilitate, Twin Beaks and Acid Bite over the
-battle's own background, and the small Djinn are their pictures in
-`graphics/battle_fx`; every count, duration and rule an illustration states is
-the code's, and the trails, the four blitter modes and the spark paths are
-worked out from the code's own arithmetic.
 
 Three handlers are unused, and are named from what they draw:
 `BattleAnim_RunUnusedOrbitingSpirals` (`planet_diver.c`),

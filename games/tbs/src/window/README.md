@@ -1,7 +1,5 @@
 # Windows
 
-![Garet's sister's line in Vale, "You guys are so lucky, Garet.", typed into its window a letter cell a frame: "Yo" on the first frame, "You" on the second, the whole first page on the 18th. Then an arrow bobs and the window waits for a button before the next page.](https://alchemy.pascalpixel.com/illustrations/window/typing.svg)
-
 When someone in a town speaks, a framed box zooms open at the top of the
 screen and their words appear in it a few letters at a time, with a little
 voice blip as they go. Every box of text in the game works this way: the
@@ -22,8 +20,6 @@ whole layer in brief. The field menu's four screens are in
 
 Everything the window system keeps between frames lives in one block of
 memory, set up with each [map](../../glossary.md#map) and gone at the next.
-
-![Everything the window system keeps is in one block of memory, set up with each map. In it: the windows' tilemap, a picture of the screen 32 tiles wide and 20 tall that every window is drawn into; 8 window slots, 12 in the Japanese edition; 3 text printers, each typing one message into one window; 64 sprites that windows carry, such as letters, icons, portraits and the page arrow; the text buffer, a ring of unpacked messages, 512 codes, 256 in Japanese; 8 blanks for names and numbers a message will fill in; and 2 portrait slots, one holding Garet's sister's portrait and the other empty.](https://alchemy.pascalpixel.com/illustrations/window/work-block.svg)
 
 The block holds the picture of the screen that every window is drawn into,
 a slot for each window that can be open, three text printers (one per
@@ -86,8 +82,6 @@ thinking, shows someone's thoughts ([Drawing text](#drawing-text)).
 A window is a framed rectangle drawn into the shared picture of the screen.
 It zooms open from its centre, stays while it is needed, and zooms shut.
 
-![A message window opening at the top of the screen in Vale, seen in five moments: first a thin bar, then a bigger box each frame, growing outwards from its centre, until it is full size; only then does the text begin, "Yo". A window takes 8 frames to open and 4 to close, shrinking back towards its centre, and it keeps its place among the window slots until it has closed. A window can also be asked to open and close at once, with no zoom.](https://alchemy.pascalpixel.com/illustrations/window/zoom.svg)
-
 Opening a window takes the first free slot. Unless it is asked to appear at
 once, the window then grows out from its centre over 8 frames, a bigger
 frame drawn each frame, and the code that opened it waits until it is full
@@ -98,9 +92,10 @@ window still counts against the 8 slots.
 The frame and the blue filling are tiles of the windows' tilemap, which the
 console shows on the one [background layer](../../glossary.md#background-layer) in front of the map's three. A
 message's letters, its portrait and its page arrow are sprites riding on the
-window, in front of everything. Taken apart, a message in Vale shows the split:
-
-![A message's layers. Garet's sister talking in Vale, her first page typed, comes apart into the six sheets the console stacks to draw it, then closes again. The map keeps its three layers: the grass and cliffs on `BG3`, trees and bushes on `BG2`, and a roof and a tree top on `BG1`, with Isaac, Garet, Garet's sister, a villager and a stone pillar as sprites level with `BG2`. The message window's frame and filling are tiles of `BG0`, the one layer every window shares. The words `You guys are so lucky, Garet.`, her portrait and the page arrow are sprites at the front, riding on the window.](https://alchemy.pascalpixel.com/illustrations/window/talk-planes.svg)
+window, in front of everything. In a message in Vale, the map's grass and
+cliffs are on `BG3`, its trees and bushes on `BG2` and a roof and a tree top
+on `BG1`, with the people as sprites level with `BG2`; the window's frame and
+filling are on `BG0`, the one layer every window shares.
 
 A message window sizes itself to its text: it is measured first, then
 placed so that it fits on the screen.
@@ -156,8 +151,6 @@ The window flags (`struct Window.flags`) are in
 The cartridge stores the game's text squeezed, so before a message can be
 typed it is unpacked, whole, into plain letter codes.
 
-![Garet's sister's message as the cartridge stores it and as it is ready to type. Stored, it is squeezed: each letter is a short run of bits, and the code for a letter depends on the letter before it, so common pairs are cheap. It also holds a blank for a party member's name and marks for a new line, a new page and the end. Before any of it is typed, the whole message is unpacked in one go: the letters come out, Garet's name is written into the blank, and the marks stay as they are. The window then only has to type what is there.](https://alchemy.pascalpixel.com/illustrations/window/decode.svg)
-
 Each stored letter is a short run of bits, and which run stands for which
 letter depends on the letter before it, so the pairs that are common in the
 game's text cost very little room. A message can also hold blanks: a party
@@ -192,8 +185,8 @@ an item or name carries. Style codes (colours, pauses, page breaks) are
 copied into the text buffer unchanged, with their operands, for the text printer to run. A control code in the catalogs
 is written in braces: `{end_wait}`, at the end of
 `Your game was saved.{end_wait}`, is `MESSAGE_END_WAIT`, kept as
-`TEXT_WAIT_KEY`, which waits for a button and closes the window. The
-message in the picture is `MsgValeYouGuysAreSoLuckyGaret`, whose name blank
+`TEXT_WAIT_KEY`, which waits for a button and closes the window. Garet's
+sister's line in Vale is `MsgValeYouGuysAreSoLuckyGaret`, whose name blank
 is `{actor_name:2}`.
 
 While a battle message is decoded `battleMode` is 2, and the Japanese decoder
@@ -220,8 +213,6 @@ stored one above its value.
 Unpacked messages wait in a ring, the text buffer, until a text printer has
 typed them.
 
-![Unpacked messages are written into a ring of 512 letter codes, 256 in the Japanese edition, one after another round the ring. Each ends with an end mark and is known only by where it starts. Nothing reserves a message's place: once writing comes round the ring again, the newest message runs on over the oldest. A message stays readable until then.](https://alchemy.pascalpixel.com/illustrations/window/ring.svg)
-
 Each message is written after the one before it, ends with an end mark, and
 is known only by where it starts. When the writing reaches the end of the
 ring it carries on from the beginning, over whatever was there, so several
@@ -244,8 +235,7 @@ pause, a colour.
 
 ![Isaac talks to Garet's sister in Vale: a message window zooms open at the top of the screen beside her portrait, `You guys are so lucky, Garet.` is typed out with a bobbing arrow at its end, the window narrows to fit `I wish I could go with you.`, and it closes.](https://alchemy.pascalpixel.com/guides/window/talk.gif)
 
-Each frame the text printer puts on one more letter cell, as the picture at the top
-of this page shows. A cell is a sprite 16 pixels wide, and in the
+Each frame the text printer puts on one more letter cell. A cell is a sprite 16 pixels wide, and in the
 international editions two narrow letters that fit in one cell together are typed
 as one, so "Yo" appears on the first frame. How many cells come a frame is
 the player's message speed: at the slow speed one, followed by a pause of 4
@@ -329,8 +319,6 @@ characters.
 A window's frame is always tiles of the windows' tilemap, but its letters go
 on in one of three ways, depending on what the window is for.
 
-![A window's frame and filling are always tiles of the window layer. Its letters go on in one of three ways. A message typed on the field puts each letter cell on as a sprite riding on the window, so the letters can bob and move. A battle message is drawn into one shared picture across the bottom of the screen, which only one window can use at a time. Text drawn all at once, such as menu labels and the area's name, becomes tiles of the window layer itself, taken from a set of 128. Each way is shown as the game draws it: the start of Garet's sister's line in Vale, "Ghost appeared!" at the start of a battle in Goma Cave, and the area name Bilibin.](https://alchemy.pascalpixel.com/illustrations/window/text-ways.svg)
-
 A message typed on the field puts each cell on as a sprite riding on the
 window, which is what lets letters bob or shake. A battle message is painted
 into one shared picture, the text canvas, across the bottom rows of the
@@ -385,8 +373,6 @@ that finds no free window sprite closes its window.
 
 Arriving in a new area, the player sees its name in a small window near the
 top of the screen for a moment.
-
-![The party arriving in Bilibin: a small window with the town's name appears at once, centred across the screen and in its top half, with no zoom. It stays for 90 frames, a second and a half, counting down by one each frame, and closes when the count reaches zero. The name comes from the table of area names.](https://alchemy.pascalpixel.com/illustrations/window/area-name.svg)
 
 `MapNamePopup_Show` shows the area's name, from
 `MapSec_GetNameIndexFar`, drawn as tiles in a window centred across the
@@ -501,11 +487,11 @@ comment markers.
 Windows, text printers and window sprites are named from how their structs
 are used, the control codes from what the decoder and the printer do with each,
 and the screens from the English release's text they show. Messages are
-named by their linker symbols, made from their English text. The typing
-picture's frames come from the English glyph widths (`graphics/font/text.tsv`)
-and the pairing rule in `TextPrinter_Step`, and agree with a
-recording of the window opening (`guides/window/window-open.png`), whose
-first typed frame shows "Yo".
+named by their linker symbols, made from their English text. That "Yo" is
+typed on the first frame follows from the English glyph widths
+(`graphics/font/text.tsv`) and the pairing rule in `TextPrinter_Step`, and
+agrees with a recording of the window opening
+(`guides/window/window-open.png`), whose first typed frame shows it.
 
 [XXX](../../glossary.md#xxx): likely the canvas renderer and the tree walker are ARM code run from
 RAM for speed, because ARM code fetched from the cartridge's 16-bit bus is

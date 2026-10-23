@@ -1,7 +1,5 @@
 # Running a map
 
-![What can stop the walk, in the order the game deals with it. Twelve things can interrupt the walk, and the game checks them from the top of the list down, dealing with the first one it finds and then starting again from the top. Leaving the map comes first, then a script that something asked for, then a battle. Then the ground: the cell the leader stepped onto, and a ledge or climbing spot pushed against. Then the buttons: A, which becomes talking to someone, searching the spot ahead or the menu; the menu; talking; searching; Psynergy; an item; and Start. When nothing is left, walking resumes.](https://alchemy.pascalpixel.com/illustrations/object/requests.svg)
-
 While the [party](../../glossary.md#the-party) is in a town, a dungeon or on the world map, this code runs
 the [map](../../glossary.md#map) from the moment it loads until the party leaves. It sets the map
 up, hands the leader to the player, and deals with whatever stops the walk:
@@ -30,8 +28,8 @@ the loop then deals with one thing at a time until nothing is left.
 Each thing that can stop the walk has a flag of its own, a request: one for
 leaving, one for a battle, one for each button, and so on. Stepping onto a
 doorway, pressing A or a script asking for a battle only raises its flag.
-The game then works down the list in a fixed order, the order in the picture
-above, deals with the first raised flag it finds, and starts again from the
+The game then works down the list in a fixed order, the order the table
+below lists, deals with the first raised flag it finds, and starts again from the
 top. Leaving always comes first, so when a script both asks for a battle and
 takes a warp, the party simply leaves the map. Raising a flag that is already raised
 changes nothing, and a request a script raises waits until the script has
@@ -122,8 +120,6 @@ As the party walks through a dungeon or across the world map, a battle
 starts every so often. The game decides when by filling a counter as the
 leader moves, and which enemies by drawing one of the formations that live on
 that ground.
-
-![How a random battle starts. Each frame the leader moves, a counter fills by a step, and a battle starts when it is full. Each zone sets how far the party walks between battles: the higher its rate, the smaller the steps. A party above the zone's level adds to the rate, so it meets fewer battles. A random part, drawn again after each battle, varies the gap. There are no battles at all while Cloak is active, on ground with no zone, while a flag turns them off, or with Avoid active where the party's level is above the zone's. When the counter is full, one of the zone's formations is drawn by weight: in the Sol Sanctum's corridor, Vermin one time in six, Bats one in three, Wild Mushrooms one in three, and a mix of the three one in six.](https://alchemy.pascalpixel.com/illustrations/object/encounter-roll.svg)
 
 Each kind of ground belongs to a zone, and a zone says how far apart its
 battles are and which formations can appear. A zone's rate is that
@@ -229,8 +225,6 @@ and the flags in `flags.h`.
 When the player uses Move on a stone pillar, the pillar slides; used on a
 blank wall, the same hand appears and nothing moves. What Psynergy does to a
 map is decided by that map's own events, and the effect only draws it.
-
-![Psynergy on the field, step by step. At the top, the cast as the game plays it: the screen tints, Move's hand pushes the pillar, and the colours come back. Isaac uses Move on the stone pillar in Vale. First the game checks Psynergy can be used here and takes the PP. Then it runs the map's event for before the cast, if the map has one. Then the effect plays: Move's hand appears, and it pushes the thing ahead only because the map has an event for Move on that pillar; with no such event the hand pushes at nothing. Last it runs the map's event for after the cast: in Vale, noting where the pillar now stands and making its new cell solid. The map decides; the effect only draws.](https://alchemy.pascalpixel.com/illustrations/object/psynergy-phases.svg)
 
 A map can have an event for a Psynergy at three moments: before the effect
 plays, after it, and while it acts. The game looks up all three first, runs

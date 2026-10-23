@@ -1,6 +1,6 @@
 # Menus
 
-![The field menu is a row of icons, Psynergy, Djinn, Item and Status, each opening a screen. Backing out of a screen brings the icons back; choosing Psynergy or an item meant for the field closes the menu, and the field uses it, as Move pushes a stone pillar. In the game: the row before the first Djinni joins, with the chosen icon raised and its name beside it.](https://alchemy.pascalpixel.com/illustrations/menu/field-menu.svg)
+![The field menu in Vale: the row of icons comes up, and Status opens the summary screen](https://alchemy.pascalpixel.com/guides/menu/menus.gif)
 
 When the player opens the menu on the field, a row of icons comes up:
 [Psynergy](../../glossary.md#psynergy-and-pp), [Djinn](../../glossary.md#djinn), Item and Status. Each opens a screen where the player picks
@@ -27,8 +27,6 @@ which borrow the same memory, are in [Shops](../shop/README.md).
 
 The screens keep what they are doing in one block of memory, which belongs
 to whichever screen is open.
-
-![The menu screens and the shop counters share one block of memory, 2,672 bytes. Whichever is open takes the block as it opens and gives it back as it closes, and reads it in its own way: the Item screen as its windows and the items listed, the Psynergy screen as the Psynergy listed, a shop as its stock and cursor. Over time the block passes from one to the next, never held by two at once, which is why a shop and the field menu are never open together.](https://alchemy.pascalpixel.com/illustrations/menu/menu-work.svg)
 
 Only one screen runs at a time, so they take turns with one block: each takes
 it as it opens and gives it back before it returns, and each reads it in its
@@ -95,7 +93,7 @@ so the same value can mean different things:
 The Psynergy screen asks whose Psynergy, which one, and on whom, and then
 either uses it at once or hands it to the field.
 
-![The Psynergy screen in Xian, step by step. First, "Whose Psynergy?": the hand picks Isaac in the party row. Second, "Which Psynergy?": his list, Cure, Cure Well and Move, with Cure picked. Third, without waiting a frame, the screen works out how Cure is used: on one member, so it asks whom; Psynergy for the whole party would be used at once, and Psynergy for the field closes the menu for the field to cast. Fourth, "Use it on whom?": the hand picks Garet. Fifth, the Psynergy is used: Garet's HP rises from 60 to 139 of 187, Isaac pays 3 PP, from 61 to 58, the screen says "You recovered HP!", and the list comes back.](https://alchemy.pascalpixel.com/illustrations/menu/psynergy-steps.svg)
+![Isaac chooses Move on the Psynergy screen: the menu closes and he casts it on the field](https://alchemy.pascalpixel.com/guides/menu/menu-psynergy.gif)
 
 The player first picks a member, then one of that member's Psynergy. The
 screen then works out, without spending a frame, how that Psynergy is used.
@@ -143,8 +141,6 @@ button casts on the field. The steps are an enum in `menu/psynergy.c`.
 
 The Item screen asks whose item and which one, and then what to do with it:
 use it, equip it, give it, drop it, take it off or read about it.
-
-![The Item screen is six windows laid over a screen 30 tiles wide and 20 tall. Top left, 13 by 5 tiles, the party, where the hand picks a member. Top right, 17 by 3, the question the screen is asking. Below the party, 13 by 12, the chosen member's level, HP and PP. On the right, 17 by 10, that member's items as icons, and under it, 17 by 4, the button help: L and A to sort, R to show the equipment. Along the bottom, 30 by 3, the party's coins while a member is chosen, then the description of the item the hand is on. Once an item is chosen, a taller list window, 17 by 14, takes the right side and offers the commands. Below, the screen as the game draws it while it asks whose item: Isaac and Garet, Isaac's panel, his items as icons, the button help and 0 coins.](https://alchemy.pascalpixel.com/illustrations/menu/item-windows.svg)
 
 The screen is built from six windows: the party along the top left, the
 question it is asking at the top right, the chosen member's panel below the
@@ -196,8 +192,6 @@ The Djinn screen picks a Djinni and sets it, puts it on standby, gives it to
 another member or trades it, and shows what the change would do before
 making it.
 
-![The Djinn screen in Xian, about to put Isaac's Djinni Flint on standby. It asks "Is this OK?" and shows Isaac as he would be: his class from Knight to Squire, HP from 178 to 141, PP from 61 to 51, Attack from 121 to 107, Defense from 80 to 73 and Agility from 69 to 63, his Luck and his Psynergy unchanged. Nothing has changed yet: Isaac stays as he was until A confirms it.](https://alchemy.pascalpixel.com/illustrations/menu/djinn-preview.svg)
-
 Moving a Djinni changes a member's class, stats and Psynergy, so before
 anything changes the screen shows each member affected as they would be, and
 asks. Only A makes the change. The screen types its messages at the fast
@@ -237,10 +231,9 @@ time: a row to pick the member,
 then a page of their status, Djinn and elemental [Power](../../glossary.md#power-and-resist) and Resist, a page
 of their Psynergy and a page of their equipment.
 
-![The summary screen in Xian, one step at a time. First the member row: the hand picks Isaac from the party at the top, and his summary fills the window below, with the four Djinn figures, one for each element, standing in it. A opens his status page: his Djinn, Power and Resist for each element, the Djinn figures now a little higher. A again opens his Psynergy page: Cure, Cure Well, Move, Quake and Earthquake, each with its PP cost. A again opens his equipment page: Broad Sword, Bronze Helm, Bronze Shield and Adept's Clothes; on these last two pages the Djinn figures are moved off the top of the screen. A on the equipment page goes back round to the status page, B on any page goes back to the member row, and L and R switch to another member.](https://alchemy.pascalpixel.com/illustrations/menu/status-pages.svg)
-
 The game's own help line says how to move about it: A turns to the next page
-and L and R switch to the next member. When the party has Djinn, a row of
+and L and R switch to the next member. A on the equipment page goes back round to
+the status page, and B on any page goes back to the member row. When the party has Djinn, a row of
 four Djinn figures, one for each [element](../../glossary.md#the-four-elements), stands under the member row and a
 little higher on the status page, and moves above the screen, out of sight,
 for the other two pages; it is placed there at once, whereas the Djinn
@@ -258,8 +251,6 @@ The panel beside the Item and Psynergy screens shows the chosen member, and
 below their name whatever the player is looking at needs: their HP and PP,
 their stats, or what a piece of equipment would change or an item such as the Orb of
 Force would teach.
-
-![The member panel on the Item and Psynergy screens always shows the member's portrait, name and level at the top; the screen chooses what fills the lower half. Choosing a member: class, HP, PP and experience. With R held: Attack, Defense, Agility and Luck. With the hand on equipment: the stats it would change, here Attack falling from 121 to 90 with a Long Sword. With the hand on an item that teaches Psynergy: "Force, Will learn" for the Orb of Force. A fifth kind, class, HP and PP alone, is never asked for.](https://alchemy.pascalpixel.com/illustrations/menu/status-panel.svg)
 
 To show what equipment would change, the panel puts the item on the member
 for a moment, reads the stats and puts the member back from a copy.
@@ -285,8 +276,6 @@ only 3 draws anything, the same as `STATUS_PANEL_EQUIP`.
 
 Holding L and pressing A on the Item screen's member row sorts that member's
 bag, and each press moves on to the next of four orders.
-
-![Isaac's eleven items as he holds them, and after each of four presses of A with L held on the Item screen's member row. Each press sorts the bag by the next of four orders. First: the four things he wears, then the items that are not equipment (Antidote, Nut, Herb), then the rest. Second: what he wears, then the other equipment, then the Orb of Force and the items. Third: equipment first, by kind, weapons, helms, shields and armor, then the rest. Fourth: the items that are not equipment first.](https://alchemy.pascalpixel.com/illustrations/menu/item-sorting.svg)
 
 The four orders put first, in turn: what the member wears, then the items
 that aren't equipment; what the member wears, then the other equipment; all
@@ -415,10 +404,7 @@ comment markers.
 
 Screen and prefix names follow what each screen shows in the English
 release. The menu's two flags are named from what sets and tests them, and
-the sort orders from the item types they list. The pictures' game crops come
-from renders of a tbs-en build in Xian (the Psynergy, Djinn, summary and
-status panel screens) and of Isaac's bag on the Item screen; their numbers
-are the ones those renders read from memory.
+the sort orders from the item types they list.
 
 Every view of the menu work names what its own screen reads and writes, and
 keeps the bytes other screens' views use under those views' names with

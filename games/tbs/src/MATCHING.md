@@ -1,7 +1,5 @@
 # Matching
 
-![How a function is matched. Write it in plain C. Build all twelve editions and compare each one's fingerprint with the one recorded for the original cartridge. If all twelve match, the C is the original game, byte for byte, and it is kept. If one does not, find the instructions that differ, by comparing the compiler's output with the original, and reshape the C: another plain way of writing the same thing, or an equivalent spelling. Then build and compare again. Only when no plain form matches is a steering device kept, tagged FAKEMATCH with how far the plain form is from matching.](https://alchemy.pascalpixel.com/illustrations/matching/loop.svg)
-
 Alchemy's C has to compile, with an old [compiler](../glossary.md#the-compilers), into exactly the
 instructions [Camelot](../glossary.md#camelot) shipped.
 
@@ -25,13 +23,13 @@ are taken in `tbs-en`, the English edition, unless they say otherwise.
 Each built edition is compared with the original cartridge by its
 fingerprint, and twelve matching fingerprints are a pass.
 
-![The build never sees the original cartridge, only its fingerprint: a SHA-1 hash, 40 characters long, recorded in rom.sha1. Each built edition is hashed the same way. When the English build of The Broken Seal comes out byte for byte the same as the cartridge, its fingerprint is identical, starting 5c4695205413, and the edition prints OK. Changing a single bit anywhere in its 8 MB, as a test, gives a completely different fingerprint, starting c214a5f65e8b. The fingerprint says whether the build is exact, never where it differs.](https://alchemy.pascalpixel.com/illustrations/matching/fingerprint.svg)
-
 `make compare-editions` builds all twelve editions and checks each ROM's
 SHA-1 hash against its line in `rom.sha1` (the `compare-%` rule in the
 `Makefile`). Each edition that matches prints a line ending in `: OK`, and
 twelve of them is a pass. The output is long, so it's easiest to send it to a
-log file and count those lines. `make compare-tbs` checks the six Broken Seal editions
+log file and count those lines. The hash says only whether an edition is exact,
+never where it differs: changing a single bit anywhere gives a completely
+different one. `make compare-tbs` checks the six Broken Seal editions
 on their own, and `make compare-tbs-en` just the one.
 
 The judgement is a hash of the whole image because the hash is the only thing
@@ -153,11 +151,10 @@ the target's address), a `bx r4` (jump to it) and that address, which the
 
 ## Spellings that match at different sites
 
-![Two ways of writing the same thing in C, from a small test compiled with alchemy-gcc, the compiler the game is built with. Both keep the low ten bits of a random number. Written as Random16() and 0x3ff in one expression, the compiler copies the result aside, loads the mask from a constant and combines them: three instructions after the call. Written as a mask assigned first and then combined with Random16(), it shifts the number left and back right instead: two instructions. Both are correct C with the same result, but only the instructions the original cartridge has will match, so each place in the game keeps the spelling that gives them.](https://alchemy.pascalpixel.com/illustrations/matching/spellings.svg)
-
 A compiler does not translate C word for word. It looks at the whole
 function and picks instructions, and two lines that mean exactly the same
-thing can lead it to different choices, as the small test above shows. The
+thing can lead it to different choices, as the masked random value in the
+list below shows. The
 original was compiled from one particular way of writing each line, so where
 the plain spelling gives different instructions, the matching C keeps the one
 that gives the original's.

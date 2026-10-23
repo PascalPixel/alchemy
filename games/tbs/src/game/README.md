@@ -1,7 +1,5 @@
 # Game rules
 
-![One number, three lists. The Healing Ring is item 265, and that one number finds it in three lists kept in the same order: row 265 of the item table, 800 coins, a ring, uses Cure; entry 265 of the item names, Healing Ring; and entry 265 of the Item screen's lines, Ring: Use to restore 70 HP. The Sleep Ring at 264 and the Unicorn Ring at 266 line up the same way. Only the position ties the lists together, so a row put into one list would shift all the later names.](https://alchemy.pascalpixel.com/illustrations/game/row-id.svg)
-
 Everything the game needs to know about the [party](../../glossary.md#the-party) lives here: who is in it,
 each character's level, HP and stats, the items each one carries, the [Djinn](../../glossary.md#djinn)
 they hold, and the flags that remember what has happened in the story. So do
@@ -100,8 +98,6 @@ An item is one row of the item table, and everything the player learns about
 it in a shop or on the Item screen comes from that row: its price, who can
 equip it, what it adds to Attack or Defense, and what using it does.
 
-![The Long Sword's row of the item table, read column by column. Its price, 200, is what a shop asks in coins. Its type, a weapon, means a character holds one weapon at a time. Its equip mask has one bit for each of the eight characters, Isaac, Garet, Ivan, Mia, Felix, Jenna, Sheba and Piers; the bits for Isaac, Garet and Felix are set, so they can equip it, and for the others the shop says Can't equip. Its first bonus, 14, is added to Attack while it is equipped, before the character's class multiplies it.](https://alchemy.pascalpixel.com/illustrations/game/item-row.svg)
-
 In the game, Bilibin's weapon shop lists the Long Sword at 200 coins. Choosing
 who gets it, the hand on Isaac shows his Attack going from 56 with his
 Bandit's Sword to 58, and on Ivan the shop says `Can't equip`.
@@ -158,8 +154,6 @@ one whether it is equipped, whether it is broken, and how many there are of
 a stackable item such as Herbs. All of that fits in one 16-bit number per
 slot.
 
-![What an inventory slot holds. Each of a character's slots remembers four things: how many there are, whether the item is broken, whether it is equipped, and which item it is. Three Herbs: three, not broken, not equipped, the Herb. A Long Sword, equipped: one, not broken, equipped, the Long Sword. An empty slot holds nothing at all. A stack grows to 30, and each character has 15 slots.](https://alchemy.pascalpixel.com/illustrations/game/inventory-entry.svg)
-
 In the code, the slot is a halfword, a 16-bit value, split into four parts
 from its highest bit down. How many is kept as one less, so that a single
 item's count part is 0:
@@ -200,8 +194,6 @@ adds or subtracts a stat bit by bit: whenever anything that feeds a stat
 changes, it works every stat out again from the start, and a menu's preview
 is that same calculation, run on Isaac for a moment and then undone.
 
-![How a menu previews a change, pointing at Remove on the Machete. One: copy Isaac aside, every stat and item as he is. Two: take the Machete off the real Isaac, for a moment. Three: work out every stat again. Four: show the new against the old, Attack 24 going to 17. Five: put Isaac back from the copy, so nothing has changed. The preview is exact because it is the same calculation that equipping runs.](https://alchemy.pascalpixel.com/illustrations/game/stats-preview.svg)
-
 ![On the Item screen, the hand picks Isaac's Machete and points at Remove, and the status panel shows his Attack falling from 24 to 17](https://alchemy.pascalpixel.com/guides/game/items.gif)
 
 In the code, each character's stats, HP, PP, items and Djinn are kept in a
@@ -233,8 +225,6 @@ without it                 16 * 11 / 10 = 17
 The game remembers what has happened (a chest opened, a Djinni found, a
 scene already played) as yes-or-no flags, 4,096 of them, one bit each, and
 eight flags in a row, read together as a byte, also hold small counters.
-
-![A flag is one bit. The 4,096 flags are kept in 512 bytes. Flag 48 is set once Flint, the first Venus Djinni, is found: 48 divided by 8 is byte 6, remainder bit 0. Byte 6 holds flags 48 to 55, Flint, Granite and the Venus Djinn after them. All 80 Djinn have flags 48 to 127, 20 to an element in order, so Fizz, the first Mercury Djinni, is flag 68. Eight flags in a row are one byte, so a byte can hold a number: the Battle Arena's wins live there.](https://alchemy.pascalpixel.com/illustrations/game/game-flags.svg)
 
 In the code, a flag's number says where it is kept:
 
@@ -279,8 +269,6 @@ The flag functions are in [game/flags.c](game/flags.c), `GAME_FLAG_BYTE` in
 A shop never runs out of Herbs, but a rare item such as the Healing Ring can
 be sold only as many times as its counter allows, and selling one back to a
 shop makes it available again. The rare item counters keep that count.
-
-![Rare item counters. A lookup table gives each item its counter number plus one. The Herb's entry is 0: an ordinary item with no counter, so the shops never run out. The Healing Ring's entry is 96, so its count is counter 95. Buying one takes one off; selling or dropping one puts it back. There are 128 counters, each 0 to 99, one byte each.](https://alchemy.pascalpixel.com/illustrations/game/rare-counters.svg)
 
 `gItemCounters` holds 128 counters, each 0 to 99, for how many of each rare
 item the shops may still sell. `gItem_ArtifactSlotTable` gives each item id

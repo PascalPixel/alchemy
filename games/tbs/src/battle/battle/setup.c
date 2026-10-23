@@ -8,27 +8,26 @@
 /// Runs each frame of a battle. In a link battle it first checks the link:
 /// a connection lost for more than LINK_MAX_MISSED_FRAMES frames, or a
 /// console whose link number changed, pauses the battle. Then it turns the
-/// camera a sixteenth of the way toward a transition's yaw, places the camera
-/// at its position (or at the one it follows) with its yaw, pitch and
-/// distance, and, unless a transition owns the background, refreshes the
+/// camera a sixteenth of the way toward gBattleViewWork's targetYaw, places the
+/// camera at its position (or at the one it follows) with its yaw, pitch and
+/// distance, and, unless its flag holds the background, refreshes the
 /// background's perspective. Runs as a task that
 /// Battle_Run adds with priority 0xc7f: in the main-loop pass, after
 /// the tasks of priority 0xc80 (the objects' camera, the sprite priorities and
 /// playback). Changes battle->linkMisses and linkPaused,
-/// the camera's yaw and the transition's frame count, the transform state,
+/// the camera's yaw and gBattleViewWork's frame count, the transform state,
 /// and through BattleCamera_SetRange the background's affine page.
 void BattleCamera_Update(void) {
   // UB: indexing past scalar gCameraWork reaches other heap slots. Named
   // slots add four bytes in the native EN trial (0xf8 to 0xfc).
 #ifdef UBFIX
   struct BattleCamera *camera = gCameraWork;
-  struct BattlePresentationTransition *transition =
-      HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
+  struct BattleViewWork *view = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
   struct BattleWork *battle = gBattleWork;
 #else
   void **slot = (void **)&gCameraWork;
   struct BattleCamera *camera = slot[0];
-  struct BattlePresentationTransition *transition =
+  struct BattleViewWork *view =
       slot[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_CAMERA];
   struct BattleWork *battle = slot[HEAP_SLOT_BATTLE - HEAP_SLOT_CAMERA];
 #endif
@@ -56,11 +55,11 @@ void BattleCamera_Update(void) {
 
   // Each frame of a turn closes a sixteenth of the gap that remains, so the
   // camera slows as it nears targetYaw.
-  if (transition->frames != 0) {
-    delta = transition->targetYaw - camera->yaw;
+  if (view->frames != 0) {
+    delta = view->targetYaw - camera->yaw;
     delta /= 16;
     camera->yaw += delta;
-    transition->frames--;
+    view->frames--;
   }
 
   focus = camera->focus;
@@ -80,7 +79,7 @@ void BattleCamera_Update(void) {
   Iwram_TransformVector(&eyeOffset.x, (s32 *)camera);
 
   // The view centred at (120, 120) in 16.16 pixels, at scale 1.
-  if (transition->flag == 0) {
+  if (view->flag == 0) {
     BattleCamera_SetRange(0x780000, 0x780000, 0, 0, 0x10000);
   }
 }

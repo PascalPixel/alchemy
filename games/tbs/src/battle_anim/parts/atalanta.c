@@ -52,7 +52,7 @@ void BattleAnim_RunAtalanta(struct BattleAnimArgs *effect) {
   struct ScreenPoint target;
   BlitterPair draw;
   void **slots;
-  struct BattleBackgroundView *view;
+  struct BattleViewWork *view;
   void *canvas;
   struct BattleAnimWork *work;
   s8 *path;

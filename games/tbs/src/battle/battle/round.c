@@ -59,7 +59,7 @@ void Palette_UpdatePulseBrightness(void) {
 /// background's perspective to match. Called by
 /// Battle_GatherActions, and through its far stub by
 /// Battle_CollectPartyCommands and UpdateLinkSessionCountdown. Writes the
-/// camera, the transition's targetYaw and flag (left 1, so the camera
+/// camera, gBattleViewWork's targetYaw and flag (left 1, so the camera
 /// callback leaves the background alone), gProjection and the background's
 /// affine page.
 void Camera_ConfigureView(s32 verticalOffset) {
@@ -67,12 +67,11 @@ void Camera_ConfigureView(s32 verticalOffset) {
   // slots add four bytes in the native EN trial (0xd8 to 0xdc).
 #ifdef UBFIX
   struct BattleCamera *camera = gCameraWork;
-  struct BattlePresentationTransition *transition =
-      HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
+  struct BattleViewWork *view = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
 #else
   void **slots = (void **)&gCameraWork;
   struct BattleCamera *camera = slots[0];
-  struct BattlePresentationTransition *transition =
+  struct BattleViewWork *view =
       slots[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_CAMERA];
 #endif
   struct FixedPointPosition eyeOffset;
@@ -83,7 +82,7 @@ void Camera_ConfigureView(s32 verticalOffset) {
   camera->focus[1] = 160 << 11;
   camera->focus[0] = 0;
   camera->focus[2] = 0;
-  transition->targetYaw = 128 << 7;
+  view->targetYaw = 128 << 7;
   camera->yaw = 128 << 7;
   camera->pitch = 244 << 8;
   camera->followPosition = 0;
@@ -107,11 +106,11 @@ void Camera_ConfigureView(s32 verticalOffset) {
   // BG1's scroll alone. The range: centre (120, 118 less verticalOffset),
   // offset 8 pixels in y (0x800 in 8.8), scale 2.0.
   gProjection.centerY = verticalOffset + 120;
-  transition->active = 1;
+  view->busy = 1;
   BattleCamera_SetRange(240 << 15, (0x76 - verticalOffset) << 16, 0, 128 << 4,
                         128 << 10);
-  transition->flag = 1;
-  transition->active = 0;
+  view->flag = 1;
+  view->busy = 0;
 }
 
 /// Ends every unit's guard (Defend and the like) and recalculates its stats.

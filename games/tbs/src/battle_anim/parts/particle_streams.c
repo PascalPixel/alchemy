@@ -307,7 +307,7 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *effect, s32 mode) {
     // One pointer serves both slot reads: two separate reads of gHeapSlots
     // make the function 0xe48 bytes long, where tbs-en's is 0xe38.
     void **slots = &gHeapSlots[HEAP_SLOT_BATTLE_BACKGROUND];
-    struct BattlePresentationTransition *transition = slots[0];
+    struct BattleViewWork *view = slots[0];
 
     gBgScroll[1].x = 0;
     gBgScroll[1].y = 32;
@@ -319,7 +319,7 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *effect, s32 mode) {
     ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, 0x02020202);
     Task_Add(BattleAnim_ArmPaletteHBlankDma, 0x4fe);
     ANIM_FREE_PARTICLES(i, work->particles, 64);
-    transition->active = 1;
+    view->busy = 1;
     work->frame = 0;
     frame = 0;
     do {
@@ -502,7 +502,7 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *effect, s32 mode) {
       work->frame++;
     } while (frame != PARTICLE_STREAMS_RISE_FRAMES);
     WaitFrames(1);
-    transition->active = 0;
+    view->busy = 0;
     Task_Remove(BattleAnim_AdvanceBg2OnInterval);
     Task_Remove(BattleAnim_ArmPaletteHBlankDma);
     Task_Remove(BattleAnim_FlushPendingGraphicsTransfer);

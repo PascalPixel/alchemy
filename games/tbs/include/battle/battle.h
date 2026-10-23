@@ -44,7 +44,7 @@ struct BattleSideOrder;
 struct BattleLocationRule;
 struct BattleObject;
 struct BattleTurn;
-struct BattlePresentationTransition;
+struct BattleViewWork;
 struct BattleSummonState;
 struct Unit;
 struct DescendingOrbitObject;
@@ -68,12 +68,6 @@ struct SparkObject;
 struct TransitionActorList;
 struct WaveEffectWork;
 
-/// The battle camera (struct BattleCamera) as the animations that swing it
-/// see it.
-struct CameraWork {
-  u8 eyeToPitch[0x36]; ///< BattleCamera's eye to pitch; not named in this view
-  u16 scroll;          ///< the camera's yaw, in 1/65536 turns
-};
 /// A world position, as Camera_WorldToScreen converts it to the screen.
 struct EffectVector {
   s32 x; ///< 16.16 fixed-point pixels
@@ -177,10 +171,10 @@ extern u8 *gEnemyUnits;
 extern u32 gRandomSeed;
 #endif
 #ifndef OWN_gBattleViewWork
-/// The HEAP_SLOT_BATTLE_BACKGROUND heap slot as the camera's turn work:
-/// staging.c, auto_battle.c and round.c set its yaw for each action, and
-/// background.c reads the same slot as struct BattleBackgroundView.
-extern struct BattlePresentationTransition *gBattleViewWork;
+/// The HEAP_SLOT_BATTLE_BACKGROUND heap slot: the camera's turn, which
+/// staging.c, auto_battle.c and round.c set for each action, and the
+/// background's display mode.
+extern struct BattleViewWork *gBattleViewWork;
 #endif
 /// SC_FACE_LINK every frame, forever: the script of an object event told to
 /// keep facing its linked object.

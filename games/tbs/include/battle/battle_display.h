@@ -2,7 +2,7 @@
 #define ALCHEMY_BATTLE_DISPLAY_H
 
 /// @file
-/// The battle camera and the presentation's transition, background and affine
+/// The battle camera, its view work and the battle background's affine
 /// work.
 
 #include "battle_session.h"
@@ -40,14 +40,17 @@ STATIC_ASSERT(offsetof(struct BattleCamera, yaw) == 0x36);
 /// The HEAP_SLOT_CAMERA heap slot during a battle: the battle camera.
 extern struct BattleCamera *gCameraWork;
 
-/// The battle background's heap slot as the camera reads it: the yaw the
-/// camera eases toward and the frames left to ease it.
-struct BattlePresentationTransition {
-  s32 targetYaw;  ///< 1/65536 turns
-  s32 frames;     ///< frames left to ease the yaw, a sixteenth a frame
-  s32 mode;       ///< BattleBackgroundView's; not named here
-  s32 secondMode; ///< BattleBackgroundView's; not named here
-  s32 active;     ///< BattleBackgroundView's busy, at the same offset
+/// The HEAP_SLOT_BATTLE_BACKGROUND heap slot: the yaw the battle camera eases
+/// toward and the frames left to ease it, and how the battle background is
+/// shown.
+struct BattleViewWork {
+  s32 targetYaw; ///< 1/65536 turns
+  s32 frames;    ///< frames left to ease the yaw, a sixteenth a frame
+  s32 mode;      ///< enum BattleBackgroundMode
+  /// BATTLE_BACKGROUND_FIXED also sets BG1's scroll whatever the mode;
+  /// the animations' canvas layers set it.
+  s32 secondMode;
+  s32 busy; ///< while set, BattleCamera_SetRange leaves BG1's scroll
   /// 0 lets the camera update set the background's range each frame; 1 for
   /// a critical hit's zoom and once a round's view is set.
   s32 flag;
@@ -67,12 +70,13 @@ struct BattleStagingWork {
   u8 savedAnimationParameters[8][4];
 };
 
-STATIC_ASSERT(sizeof(struct BattlePresentationTransition) == 0x20);
-STATIC_ASSERT(offsetof(struct BattlePresentationTransition, active) == 0x10);
+STATIC_ASSERT(sizeof(struct BattleViewWork) == 0x20);
+STATIC_ASSERT(offsetof(struct BattleViewWork, mode) == 0x08);
+STATIC_ASSERT(offsetof(struct BattleViewWork, busy) == 0x10);
 STATIC_ASSERT(sizeof(struct BattleStagingWork) == 0x54);
 STATIC_ASSERT(offsetof(struct BattleStagingWork, effect.targets) == 0x24);
 
-/// BattleBackgroundView.mode and secondMode: how the battle background is
+/// BattleViewWork.mode and secondMode: how the battle background is
 /// shown.
 enum BattleBackgroundMode {
   /// Not loaded yet: the next load adds BattleBackground_ShowZoomedPage.
@@ -84,18 +88,6 @@ enum BattleBackgroundMode {
   /// each line's BG2CNT to the half of the picture it reads. The code's
   /// "perspective plane" is this plain zoom: the depth is in the picture.
   BATTLE_BACKGROUND_ZOOMED
-};
-
-/// The battle background's heap slot as the background code reads it: its
-/// display mode.
-struct BattleBackgroundView {
-  s32 targetYaw; ///< BattlePresentationTransition's; not named here
-  s32 frames;    ///< BattlePresentationTransition's; not named here
-  s32 mode;      ///< enum BattleBackgroundMode
-  /// BATTLE_BACKGROUND_FIXED also sets BG1's scroll whatever the mode;
-  /// the animations' canvas layers set it.
-  s32 secondMode;
-  s32 busy; ///< while set, BattleCamera_SetRange leaves BG1's scroll
 };
 
 /// The battle background's affine parameters and reference point, copied
@@ -119,8 +111,6 @@ struct BattleAffineHdma {
   u16 lines[2][160];
 };
 
-STATIC_ASSERT(sizeof(struct BattleBackgroundView) == 0x14);
-STATIC_ASSERT(offsetof(struct BattleBackgroundView, mode) == 0x08);
 STATIC_ASSERT(sizeof(struct BattleAffineHdma) == 0x2a0);
 STATIC_ASSERT(offsetof(struct BattleAffineHdma, affine) == 0x10);
 STATIC_ASSERT(offsetof(struct BattleAffineHdma, lines) == 0x20);

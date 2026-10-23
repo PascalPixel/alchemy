@@ -87,7 +87,7 @@ void BattleAnim_RunThor(struct BattleAnimArgs *effect) {
   s32 position[3];
   s32 scale[3];
   void **slots;
-  struct BattleBackgroundView *view;
+  struct BattleViewWork *view;
   struct BattleAnimWork *work;
   void *canvas;
   u8 *sprites;

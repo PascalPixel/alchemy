@@ -89,7 +89,7 @@ DEFINE_ADJUST_CAMERA(BattleCamera_AdjustByShoulderKeys)
 /// Battle_Run for each action under FLAG_AUTO_BATTLE. Turns the
 /// camera to the actor's side (gBattleViewWork) and rewrites action->target.
 s32 AutoBattle_RunAction(struct BattleAction *action) {
-  struct BattlePresentationTransition *transition;
+  struct BattleViewWork *view;
   s32 actorId;
   s32 yaw;
   struct Unit *actor;
@@ -100,15 +100,15 @@ s32 AutoBattle_RunAction(struct BattleAction *action) {
     return -1;
 
   action->target = BattleAbility_ReplaceDefeated(action);
-  transition = gBattleViewWork;
+  view = gBattleViewWork;
   // Here any unit id above 4 counts as an enemy, Jenna's 5 included
   // (character_ids.h).
   if (action->unitId > 4)
     yaw = YAW_ENEMY_TURN;
   else
     yaw = YAW_PARTY_TURN;
-  transition->targetYaw = yaw;
-  transition->frames = 60;
+  view->targetYaw = yaw;
+  view->frames = 60;
   MessageArgument_ClearAllFar();
 
   switch (action->command) {
@@ -127,10 +127,10 @@ s32 AutoBattle_RunAction(struct BattleAction *action) {
     break;
   case COMMAND_ATTACK:
   default: {
-    struct BattlePresentationTransition *transition = gBattleViewWork;
-    transition->flag = 0;
+    struct BattleViewWork *view = gBattleViewWork;
+    view->flag = 0;
     AutoBattle_RunAttackOrItem(action);
-    transition->flag = 0;
+    view->flag = 0;
     break;
   }
   case COMMAND_PSYNERGY:
@@ -236,12 +236,11 @@ s32 AutoBattle_RunPsynergy(struct BattleAction *action) {
   }
 
   {
-    struct BattlePresentationTransition *transition = gBattleViewWork;
+    struct BattleViewWork *view = gBattleViewWork;
     // An enemy caster turns the camera to YAW_BEHIND_ENEMIES, not
     // YAW_ENEMY_TURN.
-    transition->targetYaw =
-        action->unitId > 4 ? YAW_BEHIND_ENEMIES : YAW_PARTY_TURN;
-    transition->frames = 60;
+    view->targetYaw = action->unitId > 4 ? YAW_BEHIND_ENEMIES : YAW_PARTY_TURN;
+    view->frames = 60;
   }
   WaitFrames(10);
   // A roll nothing uses, which still advances the random sequence.
@@ -389,7 +388,7 @@ s32 AutoBattle_RunApproachAttack(struct BattleAction *input) {
 /// and Psynergy.
 s32 AutoBattle_RunAttackOrItem(struct BattleAction *action) {
   struct BattleStagingWork work;
-  struct BattlePresentationTransition *transition = gBattleViewWork;
+  struct BattleViewWork *view = gBattleViewWork;
   struct MotionObject *object;
   s32 targetYaw;
   s32 targetIndex;
@@ -398,12 +397,12 @@ s32 AutoBattle_RunAttackOrItem(struct BattleAction *action) {
     targetYaw = YAW_ENEMY_TURN;
   else
     targetYaw = YAW_PARTY_TURN;
-  if (transition->targetYaw == targetYaw) {
-    transition->frames = 40;
+  if (view->targetYaw == targetYaw) {
+    view->frames = 40;
     WaitFrames(40);
   } else {
-    transition->targetYaw = targetYaw;
-    transition->frames = 40;
+    view->targetYaw = targetYaw;
+    view->frames = 40;
     WaitFrames(40);
   }
   work.effect.kind = action->parameter;

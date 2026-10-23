@@ -864,7 +864,7 @@ enemies' column, and `BattleSprite_HasHeavyImpact` reads the class bit that
 makes a beam blow land with `SE_HEAVY_IMPACT`, which only the Mars Lighthouse
 bosses set (Saturos's second fight, Menardi and the Fusion Dragon).
 
-- XXX: what `BattleCamera.unk18` and `BattlePresentationTransition`'s
+- XXX: what `BattleCamera.unk18` and `BattleViewWork`'s
   `unk18` and `unk1c` hold; the battle's setup clears them and no C reads
   them, so a reader in the battle animations or a watch on them through a
   battle would settle it.

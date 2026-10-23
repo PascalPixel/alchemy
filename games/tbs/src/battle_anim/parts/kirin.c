@@ -48,7 +48,7 @@ void BattleAnim_RunKirin(struct BattleAnimArgs *effect) {
   s32 baseX;
   s32 grow;
   s32 savedX;
-  struct BattleBackgroundView *control;
+  struct BattleViewWork *view;
   s32 shift;
   s32 wave;
   s32 frame;
@@ -91,12 +91,12 @@ void BattleAnim_RunKirin(struct BattleAnimArgs *effect) {
   baseX = 0;
   grow = 0;
   savedX = gBgScroll[1].x;
-  control = cursor[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_BATTLE_CANVAS];
+  view = cursor[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_BATTLE_CANVAS];
   shift = 0;
   // Each copy clears the canvas to 0, baseX's value here.
   ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, baseX);
   // The scene owns BG1's scroll until the rise stage.
-  control->busy = 1;
+  view->busy = 1;
 
   i = 0;
   do {
@@ -296,7 +296,7 @@ void BattleAnim_RunKirin(struct BattleAnimArgs *effect) {
   // The rise stage: restore the battle background and display, put the objects
   // behind the background, and clear the hit marks and the burst motes.
   gBgScroll[1].x = savedX;
-  control->busy = 0;
+  view->busy = 0;
   BattleAnim_SetupBlendedDisplay();
   REG_WIN0H = WIN_RANGE(0, 240);
 

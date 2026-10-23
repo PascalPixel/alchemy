@@ -134,8 +134,7 @@ void BattleBackground_ShowZoomedPage(void) {
   struct BattleAffineHdma *scanlines;
   u16 *line;
 
-  if (((struct BattleBackgroundView *)HEAP_SLOT_BLOCK(
-           HEAP_SLOT_BATTLE_BACKGROUND))
+  if (((struct BattleViewWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND))
           ->mode == BATTLE_BACKGROUND_ZOOMED) {
     scanlines = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SCANLINES);
     line = scanlines->lines[scanlines->page];
@@ -278,7 +277,7 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
   struct BattleStagingWork work;
   u16 unitIds[14];
   u16 visibleUnitIds[14];
-  struct BattleBackgroundView *view;
+  struct BattleViewWork *view;
   s32 *timer;
   u16 *tilemap;
   s32 tile;

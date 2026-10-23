@@ -39,7 +39,7 @@ s32 Battle_Run(s32 enemyGroup) {
   s32 *focus;
   struct BattleWork *battle;
   u8 *ownerStates;
-  struct BattlePresentationTransition *transition;
+  struct BattleViewWork *view;
   struct BattleMessageWork *display;
   s32 enemyCount;
   u8 *ownerStateDestination;
@@ -63,7 +63,7 @@ s32 Battle_Run(s32 enemyGroup) {
   battle = AllocHeapSlotEwram(HEAP_SLOT_BATTLE, sizeof(struct BattleWork));
   ownerStates =
       AllocHeapSlotEwram(HEAP_SLOT_ENEMY_UNITS, LINK_OWNER_STATES_SIZE);
-  transition = AllocHeapSlotEwram(HEAP_SLOT_BATTLE_BACKGROUND, 32);
+  view = AllocHeapSlotEwram(HEAP_SLOT_BATTLE_BACKGROUND, 32);
   AllocHeapSlotEwram(11, 0x280);
   focus = camera->focus;
   /* FAKEMATCH(dead): result set to 0, a store no read sees, whose register
@@ -74,11 +74,11 @@ s32 Battle_Run(s32 enemyGroup) {
   Task_ResetAll();
   // The transition owns the background (flag) until the entry transition
   // is over, the camera toward the party's view.
-  transition->frames = 0;
-  transition->targetYaw = YAW_PARTY_TURN;
-  transition->flag = 1;
-  transition->unk18 = 0;
-  transition->unk1c = 0;
+  view->frames = 0;
+  view->targetYaw = YAW_PARTY_TURN;
+  view->flag = 1;
+  view->unk18 = 0;
+  view->unk1c = 0;
   REG_DISPCNT = DISPCNT_MODE_1;
   GameFlag_SetBitFar(FLAG_IN_BATTLE);
   // XXX: what flag 0x169 marks; nothing in the source reads it by number,
@@ -206,7 +206,7 @@ s32 Battle_Run(s32 enemyGroup) {
   // After the entry transition the camera callback owns the background
   // again, and the sprite priorities are sorted every frame.
   BattleTransition_Run(enemyCount, enemyGroup);
-  transition->flag = 0;
+  view->flag = 0;
   gCpuLoadDisplayEnabled = 0;
   Task_Add(BattleObject_UpdateSpritePriorities, 0xc80);
 
@@ -222,8 +222,8 @@ s32 Battle_Run(s32 enemyGroup) {
       battle->partyStatus = PARTY_STATUS_NO_SUMMONS;
     // The camera eases back to its starting yaw over 60 frames, and the
     // party status window is drawn with or without its Djinn column.
-    transition->targetYaw = 0x2800;
-    transition->frames = 60;
+    view->targetYaw = 0x2800;
+    view->frames = 60;
     PartyStatus_DrawFar(battle->partyStatus);
 
     // Every unit's action for the round, in turn order.

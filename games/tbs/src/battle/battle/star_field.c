@@ -201,7 +201,7 @@ u32 ElementGlow_UploadStarField(void) {
 /// into the work, loads the element's 64 colours over the first of BG palette
 /// RAM, sets BG2's affine parameters to no zoom, loads both blitters and adds
 /// ElementGlow_UpdateStarField and ElementGlow_UploadStarField. Also sets
-/// BattleBackgroundView.mode to BATTLE_BACKGROUND_FIXED. Called by
+/// BattleViewWork.mode to BATTLE_BACKGROUND_FIXED. Called by
 /// ElementGlow_Play; ElementGlow_ReleaseVramAndHeapBlocks
 /// undoes it. Returns the upload callback's task index (-1 when the task table
 /// is full), which the caller does not read.
@@ -215,7 +215,7 @@ s32 ElementGlow_InitializeStarField(s32 element) {
    * of 246 instructions differ in tbs-en. */
   UNUSED struct Spark unused;
 
-  // Word 2 of the background's work is BattleBackgroundView.mode.
+  // Word 2 of the background's work is BattleViewWork.mode.
   ((s32 *)gBattleViewWork)[2] = BATTLE_BACKGROUND_FIXED;
   work = AllocHeapSlotEwram(HEAP_SLOT_BATTLE_ANIM, sizeof *work);
   AllocHeapSlot(HEAP_SLOT_BATTLE_CANVAS, 0x4000);

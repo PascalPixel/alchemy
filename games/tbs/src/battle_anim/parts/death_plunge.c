@@ -559,7 +559,7 @@ void BattleAnim_RunShatteringOpening(struct BattleAnimArgs *effect) {
   s32 frame;
   BlitterPair draw;
   struct BattleWork *battle;
-  struct BattleBackgroundView *view;
+  struct BattleViewWork *view;
   void **slots;
   void **slotTable;
   s32 targetRadius;

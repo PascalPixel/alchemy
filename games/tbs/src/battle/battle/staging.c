@@ -16,7 +16,7 @@
 /// builds gBattleWork->turn, and marks the action done (request->unitId to
 /// BATTLE_UNIT_LIST_END) unless the party fled.
 s32 BattleStaging_DispatchAction(struct BattleAction *request, s32 delay) {
-  struct BattlePresentationTransition *transition;
+  struct BattleViewWork *view;
   struct BattleWork *battle;
   struct BattleCamera *camera;
   struct Unit *unit;
@@ -42,17 +42,17 @@ s32 BattleStaging_DispatchAction(struct BattleAction *request, s32 delay) {
   // BattleCamera_SetView sets at 100 percent (focal length
   // 510 pixels), but with its far depth at 32767 pixels where that one stops at
   // 1020.
-  transition = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
-  transition->frames = 60;
+  view = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
+  view->frames = 60;
   battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
-  transition->flag = 0;
+  view->flag = 0;
   battle->brightness = 0x10000;
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   Transform_Reset();
   Transform_SetLookAt(camera->eye, camera->focus);
   Projection_Set(0x01fe0000, Iwram_RatioMulQ14(0x01fe0000, 0xc000), 0x7fff0000);
   if (delay != 0) {
-    transition->targetYaw = YAW_PARTY_TURN;
+    view->targetYaw = YAW_PARTY_TURN;
     WaitFrames(delay);
   }
   // Build the turn, with the actor highlighted, and stage it by its
@@ -175,12 +175,11 @@ s32 BattleStaging_BuildTargetList(struct BattleTurn *plan,
 /// enemy gets away 7 times in 10 and leaves the battle. Returns 1 when the
 /// party got away.
 /// Called by BattleStaging_DispatchAction for STAGING_FLEE. Turns the
-/// camera to the party's view and holds gBattleViewWork->active while it
+/// camera to the party's view and holds gBattleViewWork->busy while it
 /// runs; an enemy that gets away is taken out of the lists and its object
 /// released.
 s32 BattleStaging_RunFlee(struct BattleTurn *plan) {
-  struct BattlePresentationTransition *transition =
-      HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
+  struct BattleViewWork *view = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
   struct BattleWork *scene = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
   /* FAKEMATCH(temporary): completed cleared a halfword at a time, which keeps
    * partyMode a copy of its register (adds r2, r7, #0); as an s32 set to 0, 1
@@ -193,8 +192,8 @@ s32 BattleStaging_RunFlee(struct BattleTurn *plan) {
 
   completed.halves[0] = 0;
   completed.halves[1] = 0;
-  transition->targetYaw = YAW_PARTY_TURN;
-  transition->active = 1;
+  view->targetYaw = YAW_PARTY_TURN;
+  view->busy = 1;
   BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
 
   // The party: each member that can move runs, the last listed first, eight
@@ -240,7 +239,7 @@ s32 BattleStaging_RunFlee(struct BattleTurn *plan) {
     BattleMessage_WaitForAdvance();
   }
 
-  transition->active = 0;
+  view->busy = 0;
   return completed.value;
 }
 
@@ -277,31 +276,31 @@ s32 BattleStaging_HideField(struct BattleTurn *plan, s32 mode) {
   actor = plan->actorId;
   target = plan->targetIds[0];
   if (plan->animation & ANIM_SUMMON) {
-    struct BattlePresentationTransition *transition;
+    struct BattleViewWork *view;
     s32 yaw;
 #ifdef UBFIX
-    transition = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
+    view = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
 #else
-    transition = slots[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_BATTLE];
+    view = slots[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_BATTLE];
 #endif
     yaw = YAW_PARTY_TURN;
     if (actor > ALLY_MAX)
       yaw = YAW_BEHIND_ENEMIES;
-    transition->targetYaw = yaw;
-    transition->frames = 60;
+    view->targetYaw = yaw;
+    view->frames = 60;
   } else {
-    struct BattlePresentationTransition *transition;
+    struct BattleViewWork *view;
     s32 yaw;
 #ifdef UBFIX
-    transition = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
+    view = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
 #else
-    transition = slots[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_BATTLE];
+    view = slots[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_BATTLE];
 #endif
     yaw = YAW_ENEMY_TURN;
     if (actor <= ALLY_MAX)
       yaw = YAW_PARTY_TURN;
-    if (transition->targetYaw != yaw)
-      transition->targetYaw = yaw;
+    if (view->targetYaw != yaw)
+      view->targetYaw = yaw;
   }
 
   // The actor raises its hand (POSE_CAST) and glows; the units of the side
@@ -465,7 +464,7 @@ s32 BattleStaging_RunAttack(struct BattleTurn *plan, s32 mode) {
   struct Unit *unit;
   s16 criticalPair[3];
   s32 critical;
-  struct BattlePresentationTransition *transition;
+  struct BattleViewWork *view;
   s32 angle;
   s32 adjusted;
   s32 facingAngle;
@@ -476,16 +475,16 @@ s32 BattleStaging_RunAttack(struct BattleTurn *plan, s32 mode) {
   s32 index;
   s32 zoomOnCritical;
 
-  transition = gBattleViewWork;
+  view = gBattleViewWork;
   {
     struct BattleTurn *savedPlan = plan;
 
     /* FAKEMATCH(dead): plan cleared and restored under tests that emit
      * nothing, ending a CSE block so the first read of plan reloads it;
      * without them, 5 of 289 instructions differ in tbs-en. */
-    if (transition)
+    if (view)
       plan = NULL;
-    if (transition)
+    if (view)
       plan = savedPlan;
   }
 
@@ -502,11 +501,11 @@ s32 BattleStaging_RunAttack(struct BattleTurn *plan, s32 mode) {
   adjusted &= 0x7fff;
   facingAngle = (adjusted - 0x2000) / 2 + 0x2000;
 
-  if (transition->targetYaw == facingAngle) {
-    transition->targetYaw = facingAngle;
+  if (view->targetYaw == facingAngle) {
+    view->targetYaw = facingAngle;
     WaitFrames(5);
   } else {
-    transition->targetYaw = facingAngle;
+    view->targetYaw = facingAngle;
     WaitFrames(10);
   }
 
@@ -569,7 +568,7 @@ s32 BattleStaging_RunAttack(struct BattleTurn *plan, s32 mode) {
     if (critical != 0) {
       work.effect.kind += ANIM_ID_CRITICAL_OFFSET;
       zoomOnCritical = 1;
-      transition->flag = 1;
+      view->flag = 1;
       criticalPair[0] = work.effect.user;
       criticalPair[1] = work.effect.firstTarget;
       criticalPair[2] = BATTLE_UNIT_LIST_END;
@@ -606,7 +605,7 @@ s32 BattleStaging_RunAttack(struct BattleTurn *plan, s32 mode) {
     BattlePlayback_WaitForReady();
     // After a critical hit every unit is shown again and the zoom ends.
     if (critical != 0) {
-      transition->flag = 0;
+      view->flag = 0;
       BattleUnit_ListAllAndSubmit();
       BattleCamera_SetView(0, 0, 0, 100);
     }
@@ -627,7 +626,7 @@ UNUSED s32 BattleStaging_RunPlainAttack(struct BattleTurn *input, s32 flags) {
   struct BattleTurn *savedInput;
   struct MotionObject *object;
   struct Sprite *animation;
-  struct BattlePresentationTransition *transition;
+  struct BattleViewWork *view;
   s32 angle;
   s32 adjusted;
   s32 facingAngle;
@@ -636,7 +635,7 @@ UNUSED s32 BattleStaging_RunPlainAttack(struct BattleTurn *input, s32 flags) {
   s32 frames;
   s32 missed;
 
-  transition = gBattleViewWork;
+  view = gBattleViewWork;
   savedInput = input;
   object = BattleObject_Get(savedInput->actorId)->object;
   z = object->z;
@@ -648,11 +647,11 @@ UNUSED s32 BattleStaging_RunPlainAttack(struct BattleTurn *input, s32 flags) {
   adjusted &= 0x7fff;
   facingAngle = (adjusted - 0x2000) / 2 + 0x2000;
 
-  if (transition->targetYaw == facingAngle) {
-    transition->targetYaw = facingAngle;
+  if (view->targetYaw == facingAngle) {
+    view->targetYaw = facingAngle;
     WaitFrames(5);
   } else {
-    transition->targetYaw = facingAngle;
+    view->targetYaw = facingAngle;
     WaitFrames(20);
   }
 
@@ -709,7 +708,7 @@ s32 BattleStaging_RunItem(struct BattleTurn *plan, s32 unused,
   s32 inventoryEntry;
   struct Unit *unit;
   struct ItemDefinition *item;
-  struct BattlePresentationTransition *transition = gBattleViewWork;
+  struct BattleViewWork *view = gBattleViewWork;
   s32 targetYaw;
 
   // The camera turns to the user's side; the user raises the item
@@ -722,8 +721,8 @@ s32 BattleStaging_RunItem(struct BattleTurn *plan, s32 unused,
     targetYaw = YAW_ENEMY_TURN;
   else
     targetYaw = YAW_PARTY_TURN;
-  if (transition->targetYaw != targetYaw)
-    transition->targetYaw = targetYaw;
+  if (view->targetYaw != targetYaw)
+    view->targetYaw = targetYaw;
   BattleStaging_BuildTargetList(plan, &work.effect);
   BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
   object = BattleObject_Get(work.effect.user)->object;
@@ -875,7 +874,7 @@ s32 BattleMotion_SetRecordChildValues(struct MotionObject *object,
 /// BattlePlayback_Run around the animation.
 s32 BattleStaging_RunPsynergyCast(struct BattleTurn *plan, s32 mode) {
   struct BattleStagingWork work;
-  struct BattlePresentationTransition *transition = gBattleViewWork;
+  struct BattleViewWork *view = gBattleViewWork;
   struct MotionObject *object;
   s32 isDjinni;
   s32 targetIndex;
@@ -887,9 +886,9 @@ s32 BattleStaging_RunPsynergyCast(struct BattleTurn *plan, s32 mode) {
   // side takes 0x2400 instead (-0x2400 for an enemy). ANIM_VIEW_REVERSED
   // then overrides it with the opposite side's view.
   if (plan->animation & ANIM_VIEW_ACROSS) {
-    transition->targetYaw =
+    view->targetYaw =
         plan->actorId <= ALLY_MAX ? YAW_ENEMY_TURN : YAW_BEHIND_ENEMIES;
-    transition->frames = 60;
+    view->frames = 60;
   } else {
     struct MotionObject *actor = BattleObject_Get(plan->actorId)->object;
     s32 angle = (u16)ArcTan2(actor->x, actor->z);
@@ -906,13 +905,13 @@ s32 BattleStaging_RunPsynergyCast(struct BattleTurn *plan, s32 mode) {
         3 / 4;
     if (!((plan->actorId <= ALLY_MAX) ^ (plan->targetIds[0] <= ALLY_MAX)))
       targetYaw = plan->actorId <= ALLY_MAX ? 0x2400 : -0x2400;
-    if (transition->targetYaw != targetYaw)
-      transition->targetYaw = targetYaw;
+    if (view->targetYaw != targetYaw)
+      view->targetYaw = targetYaw;
   }
   if (plan->animation & ANIM_VIEW_REVERSED) {
-    transition->targetYaw =
+    view->targetYaw =
         plan->actorId <= ALLY_MAX ? YAW_ENEMY_TURN : YAW_PARTY_TURN;
-    transition->frames = 60;
+    view->frames = 60;
   }
 
   // The caster raises its hand (POSE_CAST) and glows in its element (its

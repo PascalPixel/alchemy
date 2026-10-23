@@ -67,7 +67,7 @@ s32 BattleUnit_TickSleep(s32 unitId);
 #define DEFINE_ADJUST_CAMERA(name)                                             \
   void name(void) {                                                            \
     struct BattleCamera *cam = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);              \
-    struct BattlePresentationTransition *trans =                               \
+    struct BattleViewWork *view =                                              \
         HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);                          \
                                                                                \
     if ((gKeysHeld & KEY_L) != 0) {                                            \
@@ -76,7 +76,7 @@ s32 BattleUnit_TickSleep(s32 unitId);
     if ((gKeysHeld & KEY_R) != 0) {                                            \
       cam->yaw -= 512;                                                         \
     }                                                                          \
-    if (trans->flag == 0) {                                                    \
+    if (view->flag == 0) {                                                     \
       BattleCamera_SetRange(0x780000, 0x780000, 0, 0, 0x10000);                \
     }                                                                          \
   }

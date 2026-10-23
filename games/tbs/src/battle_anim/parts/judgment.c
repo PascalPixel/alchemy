@@ -80,7 +80,7 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
   struct SpriteScale scale;
   void *canvas;
   struct BattleAnimWork *work;
-  struct BattlePresentationTransition *ctrl;
+  struct BattleViewWork *view;
   DrawRectangle draw[2];
   s32 frame;
   u8 *ramp;
@@ -108,7 +108,7 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
   ime = (u16 *)&REG_IME;
   canvas = cache[0];
   work = CANVAS_SLOT(cache, HEAP_SLOT_BATTLE_ANIM);
-  ctrl = CANVAS_SLOT(cache, HEAP_SLOT_BATTLE_BACKGROUND);
+  view = CANVAS_SLOT(cache, HEAP_SLOT_BATTLE_BACKGROUND);
   // The sheet slot is one mote set (MOTE_SET_BYTES): the undimmed motes. The
   // dimmed copies are built in the work block.
   ramp = CANVAS_SLOT(cache, HEAP_SLOT_BATTLE_SHEET);
@@ -134,7 +134,7 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                            (s32)&ResourceId_VioletSkyBackdrop, 0);
   // The scene owns BG1's scroll until frame 280 of the sweep.
-  ctrl->active = 1;
+  view->busy = 1;
   gBgScroll[1].x = 0;
   BattleAnim_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_CLEAR);
   ANIM_SHOW_WIDE_CANVAS(16);
@@ -630,7 +630,7 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
       Dma_Set((const void *)&fill, work, JUDGMENT_DMA_FILL_WAVE, REG_DMA3);
       fill = 0x01010101;
       Dma_Set((const void *)&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
-      ctrl->active = 0;
+      view->busy = 0;
       REG_BLDALPHA = BLEND_ALPHA(16, 16);
       for (i = 0; i != JUDGMENT_DEBRIS_OBJECTS; i++) {
         particle = &work->particles[i];

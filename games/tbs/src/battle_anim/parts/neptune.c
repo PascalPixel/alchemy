@@ -68,7 +68,7 @@ void BattleAnim_RunNeptune(struct BattleAnimArgs *effect) {
   s32 formationVelocityX;
   s32 formationVelocityZ;
   s32 savedBg1ScrollX;
-  struct BattleBackgroundView *view;
+  struct BattleViewWork *view;
   s32 j;
   s32 emittedSparks;
   s32 sparkOriginX;
@@ -130,8 +130,8 @@ void BattleAnim_RunNeptune(struct BattleAnimArgs *effect) {
   formationVelocityX = -0x40000;
   formationVelocityZ = -0x80000;
   savedBg1ScrollX = gBgScroll[1].x;
-  view = (struct BattleBackgroundView *)CANVAS_SLOT(
-      cache, HEAP_SLOT_BATTLE_BACKGROUND);
+  view =
+      (struct BattleViewWork *)CANVAS_SLOT(cache, HEAP_SLOT_BATTLE_BACKGROUND);
   ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   // The scene owns BG1's scroll until the second stage.
   view->busy = 1;

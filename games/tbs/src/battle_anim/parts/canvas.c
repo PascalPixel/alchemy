@@ -319,8 +319,7 @@ void BattleAnim_StartCanvasLayer(s32 bgControl) {
   struct BattleAnimWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
   struct BattleWork *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
   void *canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  struct BattleBackgroundView *display =
-      HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
+  struct BattleViewWork *display = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
   s32 row;
   s32 column;
   s32 offset;
@@ -400,8 +399,7 @@ void BattleAnim_OpenCanvasLayer(s32 bgControl) {
   struct BattleAnimWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
   struct BattleWork *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
   void *canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  struct BattleBackgroundView *display =
-      HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
+  struct BattleViewWork *display = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
   s32 row;
   s32 column;
   s32 offset;
@@ -546,9 +544,9 @@ void BattleAnim_HideBg1AndRestoreBackdrop(void) {
   struct BattleWork *battle;
   s32 *flag;
 
-  flag = &((struct BattleBackgroundView *)HEAP_SLOT_BLOCK(
-               HEAP_SLOT_BATTLE_BACKGROUND))
-              ->secondMode;
+  flag =
+      &((struct BattleViewWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND))
+           ->secondMode;
   battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
   *flag = BATTLE_BACKGROUND_FIXED;
   IoWriteQueue_Store16((u32)&REG_DISPCNT, DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP |
@@ -579,13 +577,12 @@ void BattleAnim_SetupCanvasTileMap(void) {
 #ifdef UBFIX
   void *canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   struct BattleWork *screen = gBattleWork;
-  struct BattleBackgroundView *layer =
-      HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
+  struct BattleViewWork *layer = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
 #else
   u8 **cells = (u8 **)&gBattleWork;
   void *canvas = cells[31];
   struct BattleWork *screen = (struct BattleWork *)cells[0];
-  struct BattleBackgroundView *layer = (struct BattleBackgroundView *)cells[35];
+  struct BattleViewWork *layer = (struct BattleViewWork *)cells[35];
 #endif
   s32 row;
   s32 column;

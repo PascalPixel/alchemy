@@ -90,7 +90,7 @@ void BattleAnim_RunPlasma(struct BattleAnimArgs *effect) {
     // its yaw turns 1/256 turn a frame, easing off over the last seven,
     // 16160/65536 in all, nearly a quarter turn.
     if (work->effect->variant == ANIM_VARIANT_STRONGEST && frame <= 63) {
-      struct CameraWork *camera = (struct CameraWork *)gCameraWork;
+      struct BattleCamera *camera = gCameraWork;
       s32 speed;
 
       if (frame <= 55)
@@ -98,9 +98,9 @@ void BattleAnim_RunPlasma(struct BattleAnimArgs *effect) {
       else
         speed = 704 - frame * 8;
       if (work->effect->side == 1)
-        camera->scroll -= speed;
+        camera->yaw -= speed;
       else
-        camera->scroll += speed;
+        camera->yaw += speed;
     }
     if (frame == 32)
       ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
@@ -350,16 +350,16 @@ void BattleAnim_RunSparkGroups(struct BattleAnimArgs *effect, s32 mode) {
                         SPARK_GROUPS_SPACING +
                     56;
        frame++) {
-    struct CameraWork *camera =
-        *(struct CameraWork **)(gHeapSlots + HEAP_SLOT_CAMERA);
+    struct BattleCamera *camera =
+        *(struct BattleCamera **)(gHeapSlots + HEAP_SLOT_CAMERA);
 
     // The strongest variant turns the camera's yaw 1/256 turn a frame for 52
     // frames, about a fifth of a turn.
     if (work->effect->variant == ANIM_VARIANT_STRONGEST && frame <= 51) {
       if (work->effect->side == 0)
-        camera->scroll += 256;
+        camera->yaw += 256;
       else
-        camera->scroll -= 256;
+        camera->yaw -= 256;
     }
     // Severe Blow's flash: the whole canvas at level 63, the top of the ramp.
     /* FAKEMATCH(wrapper): this fill calls the fixed entry itself, past the

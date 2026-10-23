@@ -180,28 +180,18 @@ enum BattleWeaponKind {
 /// itemId, which picks a party member's weapon sprite. Called by
 /// BattleUnit_LookupWeaponValueByClass.
 s32 BattleUnit_GetWeaponKind(s32 itemId) {
-  /// gResource_SlotAssignments seen as volatile, for the FAKEMATCH below.
-  struct SlotAssignmentView {
-    volatile u16 entries[52]; ///< bits: 15..9 weapon kind | 8..0 item id
-  };
   s32 assignmentIndex;
-  s32 assignment;
-  u32 reloadedAssignment;
+  u32 assignment;
   s32 weaponKind;
 
   for (assignmentIndex = 0;; assignmentIndex++) {
-    assignment = gResource_SlotAssignments[assignmentIndex];
-    if (itemId == (assignment & WEAPON_ITEM_MASK)) {
-      /* FAKEMATCH(volatile): the entry read again through a volatile view,
-       * a second ldrh as in the ROM; through the plain array the first load is
-       * reused, and 11 of 24 instructions differ in tbs-en. */
-      reloadedAssignment =
-          ((struct SlotAssignmentView *)gResource_SlotAssignments)
-              ->entries[assignmentIndex];
-      weaponKind = reloadedAssignment >> WEAPON_KIND_SHIFT;
+    if (itemId ==
+        (gResource_SlotAssignments[assignmentIndex] & WEAPON_ITEM_MASK)) {
+      assignment = gResource_SlotAssignments[assignmentIndex];
+      weaponKind = assignment >> WEAPON_KIND_SHIFT;
       break;
     }
-    if ((s16)assignment == -1) {
+    if ((s16)gResource_SlotAssignments[assignmentIndex] == -1) {
       weaponKind = WEAPON_KIND_NONE;
       break;
     }

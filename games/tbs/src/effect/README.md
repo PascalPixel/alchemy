@@ -29,7 +29,7 @@ Every ability names the animation it plays and how strong a version of it to
 play. Moves of one family share an animation, so Quake, Earthquake and Quake
 Sphere all play the same effect, at three strengths.
 
-![Quake, Earthquake and Quake Sphere all pick the same effect, Quake, at three strengths: basic, stronger and strongest. Three pictures of the battle, taken at the same moment of each: Quake's pillars, which stand 32 frames, are already back in the ground; Earthquake's, which stand 64, are gone too and the party is still falling; Quake Sphere's, which stand 96, are still up.](https://alchemy.pascalpixel.com/illustrations/effect/variants.svg)
+![One effect at three strengths. Quake, Earthquake and Quake Sphere play the same animation, and a stronger one keeps its rock pillars rising and sinking for longer. Three pillars rise under the targets one after another, and each climbs and sinks in about half a second. Quake's pillars rise once and the animation ends after about 1.3 seconds; Earthquake's rise twice, about 1.9 seconds; Quake Sphere's three times, about 2.4 seconds. In each the damage appears a quarter of a second before the end. The screen shakes twice as far at each step, from 2 pixels to 4 to 8.](https://alchemy.pascalpixel.com/illustrations/effect/variants.svg)
 
 The effect is chosen by a number, the effect kind, and the strength by
 another, the variant. The kind picks only what the player watches: the formula
@@ -39,11 +39,11 @@ the targets take is the ability kind, in `game/actions.tsv`, which
 
 Each ability, ids 0 to 518, has a row in
 [`battle/actflags.tsv`](../battle/actflags.tsv) (`gBattle_ActionFlags`). Its
-`effect` and `flags` columns are two halfwords; its `ability` column is a label
-for readers that the build skips. When `BattleCommand_BuildPlan`
+`effect` and `flags` columns are two 16-bit numbers; its `ability` column is
+a label for readers that the build skips. When `BattleCommand_BuildPlan`
 (`battle/battle/plan.c`) plans an action, it copies the row into the plan's
-`presentationFlags` as one word, `effect` in the low half, and the `STAGING_`
-macros in `battle/battle_internal.h` name its fields:
+`presentationFlags` as one 32-bit number, `effect` in the low half, and the
+`STAGING_` macros in `battle/battle_internal.h` name its parts, bit by bit:
 
 | Bits | Field | What it holds |
 | --- | --- | --- |
@@ -59,7 +59,8 @@ macros in `battle/battle_internal.h` name its fields:
 Quake, Earthquake and Quake Sphere read `0x001`, `0x1001` and `0x2001`: the
 kind `BATTLE_EFFECT_QUAKE` at `EFFECT_VARIANT_BASIC`, `EFFECT_VARIANT_STRONGER` and
 `EFFECT_VARIANT_STRONGEST`. `BattleEffect_RunQuake` reads the variant as a row
-of `gQuake_Timings`, which keeps each pillar standing 32, 64 or 96 frames.
+of `gQuake_Timings`, which keeps each pillar standing 32, 64 or 96 frames
+(a frame is a sixtieth of a second) in an effect of 80, 112 or 144.
 Ramses reads `0x8001`, the scene `SCENE_EFFECT_RAMSES`, and Meltdown `0x4079`,
 a kind dispatched by its range. The plan changes the word in three cases: a
 double or triple blow raises the variant by the first target's multiplier less
@@ -114,62 +115,17 @@ runner: `BattleEffect_RunCure` calls
 `BattleEffect_RunHealingMotes(effect, HEALING_MODE_CURE)`.
 [Effect families](#effect-families) lists the runners.
 
-### Reach lines
-
-Each handler's comment says which abilities play it, in a fixed form a tool
-can read. The comment opens with a sentence saying what the player sees, then
-the reach line: the abilities whose rows reach it, and the effect each selects.
-The docs build reads the line to put each ability's recording beside its
-handler and reports a line it cannot match:
-
-```c
-/// Abilities: Gaia, Mother Gaia, Grand Gaia, Rockfall, Rockslide, Avalanche
-/// (BATTLE_EFFECT_GAIA).
-```
-
-It starts with `Abilities: ` and ends with a full stop. Between them are one or
-more groups separated by `; `, each a list of ability names separated by `, `,
-then a space and the effect the group selects in parentheses. A name is
-written as the `ability` column of `actions.tsv` writes it, once in its group
-even where several rows share it (the three Fire Blessings). Where rows that
-share a name select different effects, like the two Blasts, the group's effect
-says which rows are meant. A group whose effect no row selects has `none` for
-its list. Names keep their rows' order, groups follow their effects' values,
-`none` groups come last, and the line reads as its lines joined by single
-spaces:
-
-```c
-/// Abilities: Heartrender (BATTLE_EFFECT_HEARTRENDER_346); none
-/// (BATTLE_EFFECT_HEARTRENDER).
-```
-
-The effect is an enumerator, never a number, and its prefix says how it is
-reached:
-
-- `BATTLE_EFFECT_` (`enum BattleEffectKind`): a row of the handler table;
-- `SCENE_EFFECT_` (`enum SceneEffectKind`): a row with `STAGING_SCENE`;
-- `CASTING_IMPACT_` (`enum CastingImpact`, in
-  [`casting_impact.c`](parts/casting_impact.c)): a row with
-  `STAGING_BY_ID_RANGE` and a kind from 100 to 135, the enumerator's value
-  being the kind less 100;
-- `FIELD_KIND_` (`enum FieldKind`,
-  [`psynergy_effects.h`](../../include/unit/object/psynergy_effects.h)): field
-  Psynergy, matched against the `type` column of `actions.tsv`, the form the
-  [field Psynergy effects](../object/README.md) use.
-
-Anything else that reaches the handler (an item, another effect that hands
-over to it) is a sentence in the next paragraph. A function no row reaches,
-such as a runner, has no reach line; its comment says what calls it.
-
 ## Entry points and their blocks
 
 The battle has three doors into this folder: one for ordinary effects, one
 for the summons' big scenes, and one for plain attacks, the casting impacts
 and the beams and rings that go with them.
 Whichever door an effect comes through, the same three blocks of memory are
-waiting for it, and they are taken back when it ends.
+waiting for it, and they are taken back when it ends. The blocks come from
+the heap, the pool of memory the game lends out in numbered slots
+([Runtime](../runtime/README.md)).
 
-The battle's staging (`battle/battle/staging.c`) chooses the door from the
+In the code, the battle's staging (`battle/battle/staging.c`) chooses the door from the
 plan's `STAGING_` bits, as [Battle](../../battle.md#effects) describes:
 `BattlePresentation_RunUnitTransition` tests `STAGING_SCENE` first, and the
 attack and Psynergy staging test only `STAGING_BY_ID_RANGE`.
@@ -182,7 +138,8 @@ attack and Psynergy staging test only `STAGING_BY_ID_RANGE`.
   ([`positions.c`](parts/positions.c)) splits by the kind's range: 100 to 135
   are the casting impacts (`BattleEffect_RunCastingImpact`, given the kind less
   100), 200 and up the ring and spark scenes, and every other kind the beam
-  sequences. Its sheet slot is `0x60e` bytes, from EWRAM first.
+  sequences. Its sheet slot is `0x60e` bytes, taken from EWRAM, the
+  console's larger and slower work memory, first.
 - Otherwise `BattleEffect_RunTableEffect` (`dispatch.c`) sets `work->effect`
   and calls the kind's handler from the table. `BATTLE_EFFECT_NONE` plays
   nothing and only resets the variant.
@@ -198,8 +155,8 @@ them in reverse:
 
 Releasing a heap block also releases every block allocated after it
 ([Runtime](../runtime/README.md)), so the three come back in the reverse of the
-order they were taken, and an effect must remove every callback that reads
-them before it returns. While it runs, an effect also has the two blitter slots
+order they were taken, and an effect must remove every callback (a function
+the scheduler calls once a frame) that reads them before it returns. While it runs, an effect also has the two blitter slots
 (`HEAP_SLOT_BLITTER`, `HEAP_SLOT_BLITTER_ALTERNATE`) and the map cell buffer
 (`PARTICLES`) to itself, and frees the blitters before it returns.
 
@@ -235,13 +192,16 @@ In the code, the canvas is 128 by 128 pixels at one byte each, stored as the
 hardware stores a 256-colour background, 16 by 16 tiles of 8 by 8 pixels.
 `BattleEffect_StartCanvasLayer` ([`canvas.c`](parts/canvas.c)) makes `BG2`, the
 layer the hardware can scale and rotate, show the canvas from character block
-1, alpha-blended over the battle inside the effect windows and stretched to
-twice its width so that it spans the screen; it waits five frames of its own
-while the registers change. `EFFECT_START_NARROW_CANVAS` opens the layer at one
-canvas pixel to a screen pixel instead. On the wide canvas a point x pixels
-across the screen is at x / 2 on the canvas. `BG2`'s scale (`REG_BG2PA`) is 8.8
-fixed point (`Q_8_8(1)` is 1) and its reference point (`REG_BG2X`) has 8
-fractional bits.
+1 (one of the four areas of video memory that hold a background's tiles). It
+blends the layer over the battle, letting the battle show through
+(alpha blending), inside the effect windows, the screen areas the hardware
+applies the blend to, and stretches it to twice its width so that it spans
+the screen; it waits five frames of its own while the settings change.
+`EFFECT_START_NARROW_CANVAS` opens the layer at one canvas pixel to a screen
+pixel instead. On the wide canvas a point x pixels across the screen is at
+x / 2 on the canvas. `BG2`'s scale (`REG_BG2PA`) counts in 256ths, so 256 is
+a scale of 1 (8.8 fixed point, written `Q_8_8(1)`), and its reference point
+(`REG_BG2X`) also counts in 256ths of a pixel.
 
 A level is an index into the palette ramp the effect has loaded into the first
 64 background colours. Level 0 is transparent to the transparent blitters, as
@@ -375,9 +335,11 @@ down (`COMPOSITE_FLIP_Y`) and trim it at the canvas's edges
 every pixel, the game writes a routine for exactly the combination an effect
 asks for while it runs, and the effect keeps the one or two it draws with.
 
-`BattleEffect_BuildBlitter` ([`blitter.c`](parts/blitter.c)) writes an ARM routine
-for exactly one combination of canvas size, mirroring, clip and mode while the
-game runs, into a heap slot, which the heap places in IWRAM when it fits and
+In the code, `BattleEffect_BuildBlitter` ([`blitter.c`](parts/blitter.c))
+writes the routine in ARM code, the processor's faster, 32-bit instruction
+set, for exactly one combination of canvas size, mirroring, clip and mode
+while the game runs. It writes it into a heap slot, which the heap places in
+IWRAM, the small fast memory inside the processor, when it fits and
 in EWRAM otherwise. `EFFECT_LOAD_BLITTER` builds one for the 128 by 128
 canvas. An effect usually holds its two as a `BlitterPair`, `[0]` in
 `HEAP_SLOT_BLITTER` and `[1]` in `HEAP_SLOT_BLITTER_ALTERNATE`;
@@ -387,6 +349,8 @@ builds the usual pair, clipped on all four sides, `[0]` in `COMPOSITE_MAX` and
 targets' side. The battle's star field (`battle/battle/star_field.c`) and
 `object/colorfx.c` reach the builder from other banks through
 `BattleEffect_BuildBlitterFar` (`system/far_call/EFFECT.S`).
+
+### How the builder writes a blitter
 
 The builder walks a template of ARM words, `BattleEffect_Composite`, and splices in
 the pixel fragments of the mode asked for, from
@@ -497,7 +461,7 @@ runner, that draws every member from a table of settings.
 ![Isaac casts Rockfall at Ivan, and a thin column of orange light stands among Ivan, Garet and Mia, then widens into a glowing wall over all three while rocks tumble down through it.](https://alchemy.pascalpixel.com/abilities/rockfall.gif)
 ![Isaac casts Avalanche at Ivan, and the same wall comes out wide enough to reach Isaac, with bigger rocks tumbling down all across it.](https://alchemy.pascalpixel.com/abilities/avalanche.gif)
 
-Gaia, Rockfall and the others in Gaia's reach line play `BATTLE_EFFECT_GAIA`,
+Gaia, Mother Gaia, Grand Gaia, Rockfall, Rockslide and Avalanche all play `BATTLE_EFFECT_GAIA`,
 and the variant alone tells them apart: `BattleEffect_RunGaia`
 ([`gaia.c`](parts/gaia.c)) sets `REG_BG2PA` so that `BG2` stretches the canvas
 1.25 times across at `EFFECT_VARIANT_BASIC`, 1.5 times at
@@ -853,10 +817,8 @@ through the shared machinery. Each part's first lines say what it holds
 `effect_internal.h` so it reads on its own, though it is compiled only through
 `effect.c`.
 
-The tables are plain arrays, not `const`: the effect code reloads their
-addresses where `const` would let the compiler keep them, so only plain arrays
-match. Each function's small constant vectors are `static` variables inside
-it, and they sit in the ROM in the order of the functions that use them.
+Each function's small constant vectors are `static` variables inside it, and
+they sit in the ROM in the order of the functions that use them.
 
 ## How effects fit with the rest of the game
 
@@ -950,6 +912,60 @@ lists it.
 | `BattleUnit_` | a unit's height and place on screen |
 | `ObjectGroup_` | an actor's parts, their animation and their colour timers (`work->actorTimers`) |
 | `CastingImpact_` and other family names | helpers private to one part |
+
+## Notes for contributors
+
+The tables are plain arrays, not `const`. The effect code reloads a table's
+address each time it reads it, which is what the compiler produces for a
+plain array; with `const` it would keep the address instead, and the code
+would no longer be the game's.
+
+### Reach lines in handler comments
+
+Each handler's comment says which abilities play it, in a fixed form a tool
+can read. The comment opens with a sentence saying what the player sees, then
+the reach line: the abilities whose rows reach it, and the effect each selects.
+The docs build reads the line to put each ability's recording beside its
+handler and reports a line it cannot match:
+
+```c
+/// Abilities: Gaia, Mother Gaia, Grand Gaia, Rockfall, Rockslide, Avalanche
+/// (BATTLE_EFFECT_GAIA).
+```
+
+It starts with `Abilities: ` and ends with a full stop. Between them are one or
+more groups separated by `; `, each a list of ability names separated by `, `,
+then a space and the effect the group selects in parentheses. A name is
+written as the `ability` column of `actions.tsv` writes it, once in its group
+even where several rows share it (the three Fire Blessings). Where rows that
+share a name select different effects, like the two Blasts, the group's effect
+says which rows are meant. A group whose effect no row selects has `none` for
+its list. Names keep their rows' order, groups follow their effects' values,
+`none` groups come last, and the line reads as its lines joined by single
+spaces:
+
+```c
+/// Abilities: Heartrender (BATTLE_EFFECT_HEARTRENDER_346); none
+/// (BATTLE_EFFECT_HEARTRENDER).
+```
+
+The effect is an enumerator, never a number, and its prefix says how it is
+reached:
+
+- `BATTLE_EFFECT_` (`enum BattleEffectKind`): a row of the handler table;
+- `SCENE_EFFECT_` (`enum SceneEffectKind`): a row with `STAGING_SCENE`;
+- `CASTING_IMPACT_` (`enum CastingImpact`, in
+  [`casting_impact.c`](parts/casting_impact.c)): a row with
+  `STAGING_BY_ID_RANGE` and a kind from 100 to 135, the enumerator's value
+  being the kind less 100;
+- `FIELD_KIND_` (`enum FieldKind`,
+  [`psynergy_effects.h`](../../include/unit/object/psynergy_effects.h)): field
+  Psynergy, matched against the `type` column of `actions.tsv`, the form the
+  [field Psynergy effects](../object/README.md) use.
+
+Anything else that reaches the handler (an item, another effect that hands
+over to it) is a sentence in the next paragraph. A function no row reaches,
+such as a runner, has no reach line; its comment says what calls it.
 
 ## Evidence and open questions
 

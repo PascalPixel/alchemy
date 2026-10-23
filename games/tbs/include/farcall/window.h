@@ -17,7 +17,7 @@ struct Window *Window_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 attrs);
 /// Clears a window and closes it, at once with release set, else over four
 /// frames without waiting; Window_IsClosed says when its slot is free. NULL is
 /// ignored.
-void Window_CloseFar(struct Window *work, s32 release);
+void Window_CloseFar(struct Window *window, s32 release);
 /// Decodes message into buf with no length limit, so buf must hold the whole
 /// message and its terminator.
 void Message_DecodeRawUnboundedFar(s32 message, u16 *buf);
@@ -73,7 +73,7 @@ void Text_DrawStringFar(const u8 *text, struct Window *arg1, s32 arg2,
                         s32 arg3);
 /// Draws a byte string of at most 255 characters as tiles in a window's
 /// interior at pixel (offsetX, offsetY).
-void Text_DrawStringAtOffsetFar(const u8 *text, const struct Window *work,
+void Text_DrawStringAtOffsetFar(const u8 *text, const struct Window *window,
                                 s32 offsetX, s32 offsetY);
 /// Draws a byte string straight into a window's tilemap, (x, y) being pixels of
 /// its interior rounded down to tiles.

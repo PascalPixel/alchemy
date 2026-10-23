@@ -132,8 +132,8 @@ void Window_CloseAll(s32 unused) {
   struct TextPrinter *printer;
   struct Window *win;
   u32 done;
-  struct Window *work;
-  struct Window *poll_work;
+  struct Window *window;
+  struct Window *pollWindow;
   s32 i;
   u16 flag;
 
@@ -142,9 +142,9 @@ void Window_CloseAll(s32 unused) {
   win = windowWork->windows;
   i = 0;
   do {
-    work = printer->window;
-    if (work != 0 && work->flags != 0)
-      Window_Close(work, 0);
+    window = printer->window;
+    if (window != 0 && window->flags != 0)
+      Window_Close(window, 0);
     i++;
     printer++;
   } while (i != 3);
@@ -156,10 +156,10 @@ void Window_CloseAll(s32 unused) {
     printer = windowWork->printers;
     i = 0;
     do {
-      poll_work = printer->window;
-      if (poll_work != 0) {
-        if (poll_work->frame == 0 && poll_work->duration == 0) {
-          flag = poll_work->flags;
+      pollWindow = printer->window;
+      if (pollWindow != 0) {
+        if (pollWindow->frame == 0 && pollWindow->duration == 0) {
+          flag = pollWindow->flags;
           // flag is 0 here: the printer is set free.
           if (flag == 0)
             printer->window = (struct Window *)(u32)flag;
@@ -329,15 +329,15 @@ s32 Text_CheckTextDismissed(struct TextPrinter *printer) {
 void TextPrinter_CloseFinishedWindows(void) {
   s32 i;
   struct TextPrinter *printer;
-  struct Window *work;
+  struct Window *window;
 
   printer = WINDOW_WORK->printers;
   i = 0;
   do {
-    work = printer->window;
-    if (work != NULL && work->frame == 0 && work->duration == 0 &&
-        work->flags != 0 && work->state != 0) {
-      Window_Close(work, WINDOW_FLAG_INSTANT & work->flags);
+    window = printer->window;
+    if (window != NULL && window->frame == 0 && window->duration == 0 &&
+        window->flags != 0 && window->state != 0) {
+      Window_Close(window, WINDOW_FLAG_INSTANT & window->flags);
     }
     i++;
     printer++;

@@ -19,7 +19,7 @@ struct WindowZoomScratch {
 /// duration).
 void Window_UpdateZooms(void) {
   struct WindowWork *state = WINDOW_WORK;
-  struct Window *work = state->windows;
+  struct Window *window = state->windows;
   s32 index = 0;
   u8 dirty;
 
@@ -29,51 +29,51 @@ void Window_UpdateZooms(void) {
 loop:
   // Flags 0 with a duration left means closing (Window_Close clears the
   // flags first).
-  if (work->flags != 0) {
+  if (window->flags != 0) {
     // Opening: zoom out one step a frame, then draw the window in full, which
     // clears the duration.
-    if ((s16)work->frame != 0) {
-      Window_DrawZoomFrame(work, 0);
-      work->frame = (s16)work->frame - 1;
-    } else if (work->duration != 0) {
-      Window_DrawOpened(work);
+    if ((s16)window->frame != 0) {
+      Window_DrawZoomFrame(window, 0);
+      window->frame = (s16)window->frame - 1;
+    } else if (window->duration != 0) {
+      Window_DrawOpened(window);
     }
-  } else if (work->duration != 0) {
+  } else if (window->duration != 0) {
     // Closing: zoom in one step a frame, then erase it and free its slot. Each
     // step erases the rectangle the step before drew (previousX and its kin).
-    if ((s16)work->frame != work->duration) {
-      Window_EraseBorderRect((s16)work->previousX, (s16)work->previousY,
-                             (s16)work->previousWidth,
-                             (s16)work->previousHeight);
-      Window_DrawZoomFrame(work, 1);
-      work->frame++;
+    if ((s16)window->frame != window->duration) {
+      Window_EraseBorderRect((s16)window->previousX, (s16)window->previousY,
+                             (s16)window->previousWidth,
+                             (s16)window->previousHeight);
+      Window_DrawZoomFrame(window, 1);
+      window->frame++;
       dirty = 1;
       state->dirty = dirty;
     } else {
-      Window_EraseBorderRect((s16)work->previousX, (s16)work->previousY,
-                             (s16)work->previousWidth,
-                             (s16)work->previousHeight);
-      work->sprites.head = NULL;
-      work->sprites.tailLink = NULL;
-      work->width = 0;
-      work->height = 0;
-      work->x = 0;
-      work->y = 0;
-      work->opened = 0;
-      work->effect = 0;
-      work->state = 0;
-      work->flags = 0;
-      work->frame = 0;
-      work->duration = 0;
-      work->previousX = 0;
-      work->previousY = 0;
-      work->previousWidth = 0;
-      work->previousHeight = 0;
+      Window_EraseBorderRect((s16)window->previousX, (s16)window->previousY,
+                             (s16)window->previousWidth,
+                             (s16)window->previousHeight);
+      window->sprites.head = NULL;
+      window->sprites.tailLink = NULL;
+      window->width = 0;
+      window->height = 0;
+      window->x = 0;
+      window->y = 0;
+      window->opened = 0;
+      window->effect = 0;
+      window->state = 0;
+      window->flags = 0;
+      window->frame = 0;
+      window->duration = 0;
+      window->previousX = 0;
+      window->previousY = 0;
+      window->previousWidth = 0;
+      window->previousHeight = 0;
       state->dirty = 1;
     }
   }
   index++;
-  work++;
+  window++;
   if (index != WINDOW_COUNT)
     goto loop;
 }

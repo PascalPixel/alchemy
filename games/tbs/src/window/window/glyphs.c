@@ -388,7 +388,7 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
 /// in WindowWork.textBuffer.
 /// Nothing calls it.
 UNUSED void Text_DrawGlyphTileAtWorkOffset(u16 *buffer,
-                                           const struct Window *work,
+                                           const struct Window *window,
                                            s32 offsetX, s32 offsetY) {
   struct WindowWork *canvas = WINDOW_WORK;
   u32 cell;
@@ -401,7 +401,7 @@ UNUSED void Text_DrawGlyphTileAtWorkOffset(u16 *buffer,
     *counter = (*counter + 1) & TEXT_BUFFER_MASK;
   }
 
-  cell = ((work->y + offsetY + 1) << 5) + (work->x + offsetX) + 1;
+  cell = ((window->y + offsetY + 1) << 5) + (window->x + offsetX) + 1;
   if (cell < 32 * 20) {
     // Inside the tilemap.
     s32 src;

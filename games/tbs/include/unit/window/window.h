@@ -321,7 +321,7 @@ s32 Text_DrawGlyphPair(u32 code, u32 *out);
 s32 Text_GetWideStringWidth(u16 *text);
 void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
                                  s32 y);
-void Text_DrawGlyphTileAtWorkOffset(u16 *buffer, const struct Window *work,
+void Text_DrawGlyphTileAtWorkOffset(u16 *buffer, const struct Window *window,
                                     s32 offsetX, s32 offsetY);
 // Text_DrawWideStringInWindow is called from screens.c with no
 // prototype in scope: in one file its definition would come before
@@ -523,7 +523,7 @@ void Text_DrawMessage(s32 message, struct Window *window, s32 x, s32 y);
 void Text_DrawMessageAsTiles(s32 message, const struct Window *window,
                              u32 offsetX, u32 offsetY);
 void Text_DrawString(const u8 *text, struct Window *window, s32 x, s32 y);
-void Text_DrawStringAtOffset(const u8 *text, const struct Window *work,
+void Text_DrawStringAtOffset(const u8 *text, const struct Window *window,
                              s32 offsetX, s32 offsetY);
 void Text_DrawStringInWindow(const u8 *text, struct Window *window, u32 x,
                              u32 y);

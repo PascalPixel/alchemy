@@ -227,7 +227,8 @@ s32 YesNoMenu_RunAt(s32 x, s32 y, s32 selection);
 s32 Menu_SelectCoinsOrMedals(s32 selection);
 
 void DebugMapSelect_Schedule(void);
-void DebugMapSelect_DrawRow(struct Window *work, s32 first, const s16 *second);
+void DebugMapSelect_DrawRow(struct Window *window, s32 first,
+                            const s16 *second);
 #ifdef UBFIX
 void DebugMapSelect_Run(void);
 #else

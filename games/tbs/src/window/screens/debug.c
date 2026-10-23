@@ -19,17 +19,17 @@ UNUSED void DebugMapSelect_Schedule(void) {
 /// labels. The first line has the map's name (MsgDebugCategoryName + map) and,
 /// beside it, the area its warp destination leads to (MsgDebugEntryName +
 /// area); the numbers, three digits each, go under them.
-void DebugMapSelect_DrawRow(struct Window *work, s32 mapId,
+void DebugMapSelect_DrawRow(struct Window *window, s32 mapId,
                             const s16 *warpDest) {
   s16 mapIndex = mapId;
   s32 label = MapSec_GetNameIndexFar(mapIndex, *warpDest) + MsgDebugEntryName;
-  WindowSprite_PrepareForRedraw(work);
-  Text_DrawNumber(mapIndex, 3, work, 0, 14);
-  Text_DrawNumber(*warpDest, 3, work, MENU_LABEL_X, 14);
-  Text_DrawString(gMenu_ColonString, work, MENU_TEXT_X, 0);
-  Text_DrawMessage(mapIndex + MsgDebugCategoryName, work, 0, 0);
-  Text_DrawString(gMenu_ColonString, work, MENU_TEXT_X, 14);
-  Text_DrawMessage(label, work, MENU_LABEL_X, 0);
+  WindowSprite_PrepareForRedraw(window);
+  Text_DrawNumber(mapIndex, 3, window, 0, 14);
+  Text_DrawNumber(*warpDest, 3, window, MENU_LABEL_X, 14);
+  Text_DrawString(gMenu_ColonString, window, MENU_TEXT_X, 0);
+  Text_DrawMessage(mapIndex + MsgDebugCategoryName, window, 0, 0);
+  Text_DrawString(gMenu_ColonString, window, MENU_TEXT_X, 14);
+  Text_DrawMessage(label, window, MENU_LABEL_X, 0);
 }
 
 // The debug map selector: a map and a warp destination number, starting from

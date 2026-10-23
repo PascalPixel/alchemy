@@ -142,7 +142,7 @@ void UpdateLinkSessionCountdown(void) {
 /// (Battle_CollectPartyCommands).
 s32 Message_ShowLocalizedAndWait(void) {
   s16 buffer[64];
-  struct Window *work;
+  struct Window *window;
   s32 result;
   struct BattleWork *battle;
   s32 mode;
@@ -158,16 +158,16 @@ s32 Message_ShowLocalizedAndWait(void) {
     }
   }
   if (result != 0) {
-    work = Window_Create(0, 7, 30, 4, 42);
+    window = Window_Create(0, 7, 30, 4, 42);
     Text_FillCanvasBackground();
     BATTLE_MENU_MESSAGE_COPY(MsgNoTimeToRun, buffer,
                              BATTLE_MENU_MESSAGE_CAPACITY);
-    Text_DrawWideStringAtOffset(buffer, work, 0, 4);
+    Text_DrawWideStringAtOffset(buffer, window, 0, 4);
     do {
       WaitFrames(1);
     } while ((gKeysPressed & (KEY_A | KEY_B)) == 0 &&
              gBattleMenuWork->timer != 0);
-    Window_Close(work, 1);
+    Window_Close(window, 1);
   }
   return result;
 }

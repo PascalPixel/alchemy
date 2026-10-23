@@ -102,7 +102,7 @@ struct TextPrinter *TextPrinter_Add(struct Window *window, s32 entry, s32 x,
 void Text_DrawWideStringInWindow(s16 *text, struct Window *window, s32 x,
                                  s32 y);
 void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode);
-void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *work,
+void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
                                      s32 offsetX, s32 offsetY, s32 variant);
 #endif
 

@@ -662,7 +662,7 @@ void Text_DrawString(const u8 *text, struct Window *window, s32 x, s32 y) {
 /// its interior.
 /// The conversion scratch has the same 255-byte input limit as
 /// Text_DrawString.
-void Text_DrawStringAtOffset(const u8 *text, const struct Window *work,
+void Text_DrawStringAtOffset(const u8 *text, const struct Window *window,
                              s32 offsetX, s32 offsetY) {
   s16 *buffer;
   struct WindowWork *canvas;
@@ -676,8 +676,8 @@ void Text_DrawStringAtOffset(const u8 *text, const struct Window *work,
   canvas = WINDOW_WORK;
   Text_WidenByteString(text, (u16 *)buffer);
 
-  cell = ((work->y + ((u32)offsetY >> 3) + 1) << 5) +
-         (work->x + ((u32)offsetX >> 3)) + 1;
+  cell = ((window->y + ((u32)offsetY >> 3) + 1) << 5) +
+         (window->x + ((u32)offsetX >> 3)) + 1;
   if (cell < 32 * 20) {
     // Inside the tilemap.
     vram = (s32)WINDOW_TILEMAP_VRAM;
@@ -740,7 +740,7 @@ void Text_DrawNumberInWindow(s32 value, s32 width, struct Window *window, s32 x,
 /// variant 0, the party status window's HP; 0x1f and 0x1e for variant 1, its
 /// PP (0x1f and 0x05 in Spanish, French and Italian). The number is padded
 /// to four places with spaces.
-void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *work,
+void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
                                      s32 offsetX, s32 offsetY, s32 variant) {
   u8 formatted[TEXT_NUMBER_BUFFER_SIZE];
   s16 output[8];
@@ -777,8 +777,8 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *work,
   }
   output[6] = 0;
 
-  cell = ((work->y + ((u32)offsetY >> 3) + 1) << 5) +
-         (work->x + ((u32)offsetX >> 3)) + 1;
+  cell = ((window->y + ((u32)offsetY >> 3) + 1) << 5) +
+         (window->x + ((u32)offsetX >> 3)) + 1;
   if (cell < 32 * 20) {
     // Inside the tilemap.
     vram = (s32)WINDOW_TILEMAP_VRAM;

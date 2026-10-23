@@ -110,8 +110,9 @@ overlay meets the main image.
 
 Each overlay is three files in its folder:
 
-- `entry/<place>.s`, the entry table: six stubs, written with
-  `overlay_veneer`, that the field code calls to start the scene and to get
+- `entry/<place>.s`, the entry table: six stubs, tiny pieces of code that
+  only jump on to a function, written with `overlay_veneer`, that the field
+  code calls to start the scene and to get
   its entrances, exits, placements, events and regions.
 - `<place>.c`, the scene's code and tables.
 - `import/<place>.s`, the import table: the stubs the overlay calls the main
@@ -160,8 +161,11 @@ header beside it.
 Nearly all the code is C from one of three compilers; assembly stays only
 where its instructions prove no compiler wrote it, and for the stubs.
 
-In tbs-en, 95% of the bytes of code come from C. alchemy-gcc, a GCC of July
-2000, compiles the game's Thumb C. Three files written for ARM
+In tbs-en, 95% of the bytes of code come from C. The processor has two
+instruction sets: Thumb, compact 16-bit instructions, in which most of the
+game is written, and ARM, its full 32-bit instructions, used where speed
+matters. alchemy-gcc, a GCC of July 2000, compiles the game's Thumb C. Three
+files written for ARM
 (`window/glyph_arm.c`, `field/update.c` and `field/vertices.c`) are compiled
 by GCC 2.95.2, and the sound driver's C and the flash save library by pret's
 `old_agbcc`. `make modern` also builds the C with a current GCC.
@@ -169,7 +173,9 @@ by GCC 2.95.2, and the sound driver's C and the flash save library by pret's
 cartridge and why some of the C is written as it is.
 
 Code stays assembly only where its instructions show that none of those
-compilers wrote it. Each such file states its proof in its `@ C2:` lines: a
+compilers wrote it. Each such file states its proof in comment lines at its
+top that begin `@ C2:` ([Matching](MATCHING.md#the-other-markers) explains
+the label): a
 branch on a shift's carry (`runtime/trig.s`,
 `system/resource/decode_byte_lz.s`), a load into `pc` from a table the code
 rewrites (`graphics/tile/decode.s`), a switch from Thumb to ARM inside a

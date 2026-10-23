@@ -35,37 +35,41 @@ memory (VRAM) holds the tiles and maps the screen is drawn from, and the
 cartridge itself holds the program, which the CPU runs straight from it, and
 everything packed that the game loads.
 
-`main.ld` declares these areas. The addresses below are tbs-en's, from its
-link map (`out/tbs-en/tbs-en.map`), in hexadecimal as the link map shows them.
-German moves three IWRAM variables ([below](#the-addresses-that-never-move)).
+`main.ld` declares these areas. Each byte of memory has an address, a number
+the processor uses to name it; EWRAM's bytes are numbered from `0x02000000`
+and IWRAM's from `0x03000000`. Addresses are written in hexadecimal (base
+16, marked `0x`), as the link map and the source write them, so the tables
+also say how far into the area each part starts, in KB. The addresses are
+tbs-en's, from its link map (`out/tbs-en/tbs-en.map`). German moves three
+IWRAM variables ([below](#the-addresses-that-never-move)).
 
 **EWRAM**, laid out by `ewram.s`:
 
-| Address | Size | What | Named in |
-| --- | --- | --- | --- |
-| `0x02000000` | 32 KB | the main image's variables: the save buffer, the game flags (`gGameFlagBytes`), the game state (`gGameState`), the sound driver's work and the flash library's | `ewram.s` |
-| `0x02008000` | 32 KB | `gOverlayArea`, the loaded scene or screen overlay | `ewram.s`, `overlay/overlay.ld` |
-| `0x02010000` | 32 KB | `gMapCellBuffer`; battle effects also use it for particles | `Ram_MapCellBuffer` |
-| `0x02018000` | 16 KB | `gActorSpriteSlots` | `Ram_ActorSpriteSlots` |
-| `0x0201c000` | 16 KB | `gDecodeBuffer` | `Ram_DecodeBuffer` |
-| `0x02020000` | 32 KB | `gMapBlocks`, the map's blocks (`games/tbs/src/field/field/map_layers.c`) | `Ram_MapBlocks` |
-| `0x02028000` | 16 KB | `gMapLayerData` | `ewram.s` |
-| `0x0202c000` | 16 KB | `gMapCollision` | `Ram_MapCollision` |
-| `0x02030000` | 32 KB | `gEwramHeap`; `heap.c` allocates from it up to `0x02040000`, the end of EWRAM, so past its 32 KB it runs into `gBgTileBuffer` | `ewram.s`, `games/tbs/src/runtime/runtime/heap.c` |
-| `0x02038000` | 32 KB, to the end | `gBgTileBuffer` | `Ram_BgTileBuffer` |
+| Starts at | Address | Size | What | Named in |
+| --- | --- | --- | --- | --- |
+| 0 KB | `0x02000000` | 32 KB | the main image's variables: the save buffer, the game flags (`gGameFlagBytes`), the game state (`gGameState`), the sound driver's work and the flash library's | `ewram.s` |
+| 32 KB | `0x02008000` | 32 KB | `gOverlayArea`, the loaded scene or screen overlay | `ewram.s`, `overlay/overlay.ld` |
+| 64 KB | `0x02010000` | 32 KB | `gMapCellBuffer`; battle effects also use it for particles | `Ram_MapCellBuffer` |
+| 96 KB | `0x02018000` | 16 KB | `gActorSpriteSlots` | `Ram_ActorSpriteSlots` |
+| 112 KB | `0x0201c000` | 16 KB | `gDecodeBuffer` | `Ram_DecodeBuffer` |
+| 128 KB | `0x02020000` | 32 KB | `gMapBlocks`, the map's blocks (`games/tbs/src/field/field/map_layers.c`) | `Ram_MapBlocks` |
+| 160 KB | `0x02028000` | 16 KB | `gMapLayerData` | `ewram.s` |
+| 176 KB | `0x0202c000` | 16 KB | `gMapCollision` | `Ram_MapCollision` |
+| 192 KB | `0x02030000` | 32 KB | `gEwramHeap`; `heap.c` allocates from it up to `0x02040000`, the end of EWRAM, so past its 32 KB it runs into `gBgTileBuffer` | `ewram.s`, `games/tbs/src/runtime/runtime/heap.c` |
+| 224 KB | `0x02038000` | 32 KB, to the end | `gBgTileBuffer` | `Ram_BgTileBuffer` |
 
 **IWRAM**:
 
-| Address | What | Named in |
-| --- | --- | --- |
-| `0x03000000` | the resident runtime, 5 KB copied from the ROM: the dispatcher `IwramIrqMain`, the handler table `gIrqHandlers`, the resident sound mixing code and the small routines the rest of the game calls | `main.ld` (`.iwram_runtime`), `runtime*.s` |
-| `0x03001400` | the main image's IWRAM variables, among them the heap slots `gWorkSlot` (`0x03001e50`) | `iwram.s`, `Ram_WorkSlot` |
-| `0x03002000` | `gIwramHeap`, which `heap.c` allocates from below `Ram_IwramHeapEnd` | `iwram.s` |
-| `0x03007000` | the sound driver's mixer, `SoundDriver_Mixer`, 932 bytes copied from the ROM by `Audio_Initialize` | `Ram_SoundMixer`, `main.ld` (`.iwram_mixer`), `games/tbs/src/sound/audio.c` |
-| `0x03007800` | `Ram_IwramHeapEnd`, the end of the IWRAM heap, where `gCartridgeResetMarker` sits | `iwram_hi.s` |
-| `0x03007a00` | `Ram_FrameWaitStackTop`, the stack top `WaitFrames` runs from | `iwram_hi.s` |
-| `0x03007f00`, `0x03007fa0` | the system-mode and IRQ-mode stack tops `System_Entry` sets | `entry.s` |
-| `0x03007ffc` | `gIrqVector`, where the BIOS jumps on an interrupt | `entry.s`, `iwram_hi.s` |
+| Starts at | Address | What | Named in |
+| --- | --- | --- | --- |
+| 0 KB | `0x03000000` | the resident runtime, 5 KB copied from the ROM: the dispatcher `IwramIrqMain`, the handler table `gIrqHandlers`, the resident sound mixing code and the small routines the rest of the game calls | `main.ld` (`.iwram_runtime`), `runtime*.s` |
+| 5 KB | `0x03001400` | the main image's IWRAM variables, among them the heap slots `gWorkSlot` (`0x03001e50`) | `iwram.s`, `Ram_WorkSlot` |
+| 8 KB | `0x03002000` | `gIwramHeap`, which `heap.c` allocates from below `Ram_IwramHeapEnd` | `iwram.s` |
+| 28 KB | `0x03007000` | the sound driver's mixer, `SoundDriver_Mixer`, 932 bytes copied from the ROM by `Audio_Initialize` | `Ram_SoundMixer`, `main.ld` (`.iwram_mixer`), `games/tbs/src/sound/audio.c` |
+| 30 KB | `0x03007800` | `Ram_IwramHeapEnd`, the end of the IWRAM heap, where `gCartridgeResetMarker` sits | `iwram_hi.s` |
+| 30.5 KB | `0x03007a00` | `Ram_FrameWaitStackTop`, the stack top `WaitFrames` runs from | `iwram_hi.s` |
+| the last 256 and 96 bytes | `0x03007f00`, `0x03007fa0` | the system-mode and IRQ-mode stack tops `System_Entry` sets | `entry.s` |
+| the last 4 bytes | `0x03007ffc` | `gIrqVector`, where the BIOS jumps on an interrupt | `entry.s`, `iwram_hi.s` |
 
 ### Video memory
 
@@ -204,9 +208,10 @@ runs `Resource_PatchThumbBranch` over it. In the packed stream each `bl` holds
 its target's offset from the start of the overlay, and the patch turns it into
 the offset from the instruction itself, which is what the CPU expects. The
 packer, `tools/ags-overlays`, does the reverse, so in the stream every call to
-the same routine has the same bytes wherever it is made from. XXX: likely done
-so the overlays compress better under LZ, because that is what the filter
-achieves; nothing in the ROM says so.
+the same routine has the same bytes wherever it is made from, likely so that
+the overlays compress better, since repeated bytes are what the packing (LZ
+compression, which replaces a run of bytes seen before with a pointer back
+to it) shrinks best.
 
 The entry table's members, as `struct SceneEntries` lays them out, each
 behind its veneer word:
@@ -310,9 +315,8 @@ Thumb `bl` reaches 4 MB either way, and the main image, a little over 1.5 MB
 from the start of the ROM to the last bank's table, is within reach of every
 bank. Another bank knows only where a bank starts and the place of each export
 in its table, so a bank can grow or shrink inside its gap without moving any
-address other code holds. XXX: likely Camelot linked each bank on its own
-against the others' tables, because fixed starts and tables are what that
-would need; the bytes show only the starts and the tables.
+address other code holds. How Camelot built them is an open question (at
+the end of this page).
 
 Overlays depend on the main image through the same tables. An import stub
 holds a far-call entry's address, which moves only when a table changes, so an
@@ -430,6 +434,13 @@ named for the bank they open, the stubs for their target with `Far` added, and
 the overlays by their directory number. `IwramIrqMain` and the other resident
 routines are named from their code. The fixed addresses come from the literals
 in the ROM's code.
+
+XXX: likely the overlay packer stores each call's target as an offset from
+the overlay's start so the overlays compress better under LZ, because that is
+what the filter achieves; nothing in the ROM says so. XXX: likely Camelot
+linked each bank on its own against the others' tables, because fixed starts
+and tables are what that would need; the bytes show only the starts and the
+tables.
 
 No build step compares a `FIXED_ADDRESS` literal with its symbol's linked
 address; `make modern` only builds with the name. A one-off comparison of all

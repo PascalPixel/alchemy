@@ -65,7 +65,9 @@ A cue for the music already chosen (`gAudioSecondaryState`) does nothing,
 even when that song has ended.
 
 `AudioCommand_Play` does all of this, reached from the whole game through
-the sound bank's far-call table as `AudioCommand_PlayFar`. It reads the song
+the sound bank's far-call table as `AudioCommand_PlayFar`: the program is
+cut into banks, and a call from another bank goes to a jump at the start of
+the sound bank that leads on to the function. It reads the song
 table, `gSound_SongTable` (`games/tbs/sound/songs.s`), whose row holds the
 song's header and its player, and the players, `gSound_PlayerSlots`
 (`games/tbs/sound/players.s`). The cues are named in
@@ -109,7 +111,8 @@ fanfare player has no track playing and sets the music's target volume back
 to full. The same routine steps the volume, and the combined tempo and
 pitch, towards their targets by a fixed step each VBlank, and stops on the
 target when a step would cross it. Full volume is `MUSIC_UNITY_SCALE`, 1.0
-in the ramps' 8.8 fixed point, and the usual step `MUSIC_DEFAULT_RAMP_STEP`
+in the ramps' 8.8 fixed point (a number whose low 8 bits are a fraction in
+256ths, so 1.0 is 256), and the usual step `MUSIC_DEFAULT_RAMP_STEP`
 is 4, so a full fade takes 64 frames.
 
 The ramps are globals of the cue layer: `gMusicVolume`, `gMusicVolumeTarget`
@@ -185,8 +188,9 @@ most music another, a link battle a third.
 Each keeps a different share of what has already played.
 
 Each VBlank, `SoundDriver_EnterMixer` jumps into the resident sound code at
-`IwramSoundMixEntry`, which start-up copies to IWRAM with the rest of the
-resident runtime ([System](../system/README.md)).
+`IwramSoundMixEntry`, which start-up copies to IWRAM, the console's small,
+fast memory inside the processor, with the rest of the resident runtime
+([System](../system/README.md)).
 
 `Sound_LoadPresetParameters` copies one of `SOUND_PRESET_COUNT` records of
 `SOUND_PRESET_SIZE` bytes of mixer code (`IwramCodeRecords`, in

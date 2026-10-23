@@ -30,8 +30,8 @@ mark does: the leader can step up at most 8 pixels and down at most 12, so a
 sharp rise or drop blocks the way. A cell's word says how its ground is
 shaped as well as what is drawn there and what stepping on it does.
 
-A loaded cell is one word. Its low halfword holds the block number in its low
-12 bits and four flag bits above, the layer and priority an object standing
+A loaded cell is one word, four bytes. Its first two bytes (a halfword) hold
+the block number in their low 12 bits and four flag bits above, the layer and priority an object standing
 there takes; its third byte is the collision code, and its fourth the shape's
 number in the map's shape table.
 
@@ -224,15 +224,16 @@ one go.
 
 ![A map's grid is stored as three whole planes, one after another: what stepping on each cell does (a byte a cell, 16 KB), the shape of each cell's ground (a byte a cell, 16 KB) and the picture drawn in each cell, with the layer an object standing there takes (two bytes a cell, 32 KB). As the map loads, a routine copied into RAM takes one value from each plane for every cell and puts them together into one four-byte word: the shape at the top, then what stepping does, then the picture. The 128 by 128 words take 64 KB.](https://alchemy.pascalpixel.com/illustrations/map/grid-weave.svg)
 
-`Map_LoadLayeredScene` decodes each part into a fixed buffer in EWRAM: the
+`Map_LoadLayeredScene` decodes each part into a fixed buffer in EWRAM, the
+console's 256 KB of work memory: the
 blocks into `gMapBlocks`, the shapes into `gMapCollision`, the grid into
 `Ram_MapCellBuffer`, and the two scripts into the space after the shapes. The
 markers are not decoded: the loader keeps a pointer to them in the map work.
 
 The grid is stored as three whole planes: collision codes, then shapes, then
 blocks (16 KB, 16 KB and 32 KB, since the block plane has a halfword per
-cell). `TileMap_ConvertBuffer` then runs `Tile_ConvertMap`, an ARM routine
-copied into RAM, which weaves them into 128 by 128 cell words, 64 KB from the
+cell). `TileMap_ConvertBuffer` then runs `Tile_ConvertMap`, a routine in the
+processor's fast 32-bit ARM instructions copied into RAM, which weaves them into 128 by 128 cell words, 64 KB from the
 start of `Ram_MapCellBuffer`, and numbers the placeholder blocks as it goes.
 The first two planes are saved to a temporary buffer first, since the cell
 words overwrite them.
@@ -434,13 +435,12 @@ Colosso lettering, which differs by edition, is placed after the paths.
 ## Design
 
 The grid is stored as whole planes rather than as cell words, which keeps
-each plane's long runs of one value together for the packer. XXX: an
-inference; the bytes show only the layout.
+each plane's long runs of one value together for the packer; that is an
+inference, since the bytes show only the layout.
 
 The markers are the one part stored unpacked, and the loader reads them in
-place rather than copying them. XXX: likely because only
-`Field_PlaceMapMarkers` reads them, once as the scene loads; nothing else
-shows why.
+place rather than copying them, likely because only `Field_PlaceMapMarkers`
+reads them, once as the scene loads.
 
 One grid serves all three layers, so every map takes the same 64 KB of cells,
 and a layer's window can sit anywhere in the grid.
@@ -494,6 +494,11 @@ the shapes feed the height functions; and the markers are where
 called the marker list because that function is the only code that reads the
 pointer the loader stores to it, although `MapScrollWork`
 (`include/map_scroll.h`) still names the field `script`.
+
+XXX: that the grid is stored as planes to keep long runs together for the
+packer is an inference; the bytes show only the layout. XXX: likely the
+markers are stored unpacked because only `Field_PlaceMapMarkers` reads them,
+once as the scene loads; nothing else shows why.
 
 The pictures are drawn from the tables themselves: the haze from
 `map_147`'s header, the shapes from its `shapes.tsv`, the chests from

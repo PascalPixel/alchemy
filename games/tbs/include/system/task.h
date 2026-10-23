@@ -45,8 +45,6 @@ extern volatile u8 gTaskStatus;
 extern u8 gTasksReady; ///< 1 once the task table is set up
 extern struct Task gTasks[];
 
-void Runtime_CallWorkEntryWithArguments(s32 arg0, s32 arg1);
-
 void Task_RunByPriority(s32 key);
 s32 Task_CountByPriority(s32 key);
 void Task_RunBeforePriority(s32 key);

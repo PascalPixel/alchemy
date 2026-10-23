@@ -17,7 +17,7 @@
 #define Ram_EnemySpriteSlots                                                   \
   FIXED_ADDRESS((u8 *), 0x02018000, gActorSpriteSlots)
 
-#define Ram_SoundMixer FIXED_ADDRESS((u8 *), 0x03007000, SoundDriver_Mixer)
+#define Ram_SoundMixer FIXED_ADDRESS((u8 *), 0x03007000, SoundMainRAM)
 
 #define Ram_IwramHeapEnd                                                       \
   FIXED_ADDRESS((u8 *), 0x03007800, gCartridgeResetMarker)

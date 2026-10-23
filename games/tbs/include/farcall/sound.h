@@ -2,7 +2,7 @@
 /// Audio mixing, playback commands and music-player updates.
 
 /// Runs one frame of the sound driver. Nothing in ☀️ calls it by this name.
-void AudioEngine_RunMixerFar(void);
+void m4aSoundMainFar(void);
 /// Starts the sound driver and clears the music ramps and the songs' state, at
 /// power-on.
 void Sound_InitializeFar(void);

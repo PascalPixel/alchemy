@@ -4,7 +4,7 @@
 #include "stub.inc"
 	.global FarCall_SoundTable
 FarCall_SoundTable:
-	export AudioEngine_RunMixerFar, AudioEngine_RunMixer
+	export m4aSoundMainFar, m4aSoundMain
 	export Sound_InitializeFar, Sound_Initialize
 	export Sound_PlaySongFar, Sound_PlaySong
 	export Sound_UpdateBgmRampsFar, Sound_UpdateBgmRamps

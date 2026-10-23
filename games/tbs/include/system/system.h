@@ -189,6 +189,6 @@ extern u8 Tile_CopyStridedCodeSize[];
 extern u8 TransferCommandExecutor_Size[];
 void _call_via_r2(s32 arg0, s32 arg1, s32 target);
 void Iwram_Halt(void);
-void SoundDriver_EnterMixer(void);
+void Mixer_Enter(void);
 
 #endif

@@ -3,6 +3,6 @@
 
 #include "types.h"
 
-void Audio_EmptyCallback(void);
+void DummyFunc(void);
 
 #endif

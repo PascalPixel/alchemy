@@ -1,57 +1,56 @@
-@ C2: SoundDriver_ClearBuffer:
+@ C2: SoundMainBTM:
 @ Four stmia r0! of zero registers have no paired load/copy; r4 is saved
 @ through ip.
-@ C2: SoundNote_Detach to MusicTrack_FinishSequence:
+@ C2: RealClearChain to ply_fine:
 @ MusicPlayer2000 library assembly (public pret m4a_1.s: RealClearChain,
 @ with ply_fine after it). Credited on library provenance, not on a
 @ handwritten-instruction claim: both routines are ordinary Thumb, and neither
-@ SoundNote_Detach nor MusicTrack_FinishSequence carries an instruction-level
-@ tell.
-@ C2: Sound_LoadCommandTable to MusicTrack_WriteSoundRegisterFromCommand:
+@ carries an instruction-level tell.
+@ C2: MPlayJumpTableCopy to ply_port:
 @ MusicPlayer2000 library assembly (public pret m4a_1.s: ply_pend and the
-@ command family around it). MusicTrack_ReturnFromPattern (ply_pend) is
-@ ordinary Thumb, credited on library provenance, not on a
-@ handwritten-instruction claim.
+@ command family around it). ply_pend is ordinary Thumb, credited on library
+@ provenance, not on a handwritten-instruction claim.
 @ Its neighbours in this file do carry instruction-level tells:
-@ Sound_LoadCommandTable and the setter entries keep the return address with
+@ MPlayJumpTableCopy and the setter entries keep the return address with
 @ mov ip, lr across a bl and return with bx ip, never saving lr;
-@ Sound_ReadCheckedByte falls through into Sound_CheckReadAddress, which
-@ returns the decoded byte in r3 and preserves r0 with push {r0} / pop {r0}.
-@ Source's full .global list supplies the individual setter names.
-@ C2: Sound_TickDmaRestartTimer to SoundDriver_CallViaR3:
-@ DMA timer branches on carry from lsls; MusicPlayer_Tick's library
+@ ldrb_r3_r2 falls through into chk_adr_r2, which returns the decoded byte in
+@ r3 and preserves r0 with push {r0} / pop {r0}. The names are pret's; pret
+@ leaves ld_r3_tp_adr_i's second entry, ld_r3_tp_adr_i_r2 (ply_port enters it
+@ with the address already in r2), unnamed.
+@ C2: m4aSoundVSync to call_r3:
+@ DMA timer branches on carry from lsls; MPlayMain's library
 @ dispatcher and call-via-r3 entry share the complete MusicPlayer2000 assembly
 @ module.
-@ C2: MusicTrack_Stop:
+@ C2: TrackStop:
 @ Nintendo MusicPlayer2000 TrackStop, checked against pret's public
 @ m4a_1.s. This ordinary Thumb routine is library assembly, not claimed
 @ handwritten game code.
-@ C2: SoundDriver_CalculateStereoVolume:
+@ C2: ChnVolSetAsm:
 @ Caller supplies the channel in r4 and track in r5; the routine reads them
 @ without an argument move or save. Equivalent Nintendo MusicPlayer2000
 @ ChnVolSetAsm is public in pret m4a_1.s.
-@ C2: MusicTrack_HandleNote:
+@ C2: ply_note:
 @ Nintendo MusicPlayer2000 ply_note, checked against pret's public m4a_1.s.
 @ The frame and r8-r11 save/restore match the library; this is library
 @ provenance rather than a handwritten game-code assertion.
-@ C2: MusicTrack_ReleaseKey:
+@ C2: ply_endtie:
 @ push saves r4/r5 without lr; Nintendo library ply_endtie.
-@ C2: MusicTrack_ClearModulationState:
+@ C2: clear_modM:
 @ MusicPlayer2000 library assembly (public pret m4a_1.s: clear_modM).
 @ Credited on library provenance, not on a handwritten-instruction claim:
 @ the routine is ordinary Thumb, and it is the only one in this file.
-@ C2: MusicTrack_ReadCommandByte:
-@ MusicPlayer2000 ld_r3_tp_adr_i_unchecked takes track in r1 and returns
+@ C2: ld_r3_tp_adr_i_unchecked:
+@ MusicPlayer2000's ld_r3_tp_adr_i_unchecked takes track in r1 and returns
 @ the decoded byte in r3 while updating r2/r3, rather than a standard r0
 @ return.
-@ C2: MusicTrack_SetLfoSpeedFromCommand to MusicTrack_SetModulationFromCommand:
+@ C2: ply_lfos to ply_mod:
 @ Both nested-call entries return through ip saved from lr rather than a
 @ procedure-standard return.
 .syntax unified
 	.thumb
-	.global SoundDriver_ClearBuffer
+	.global SoundMainBTM
 	.thumb_func
-SoundDriver_ClearBuffer:
+SoundMainBTM:
 	mov	ip, r4
 	movs	r1, #0
 	movs	r2, #0
@@ -68,9 +67,9 @@ AlchemyUncredited_clear_buffer_1:
 AlchemyUncreditedEnd_clear_buffer_1:
 .syntax unified
 	.thumb
-	.global SoundNote_Detach
+	.global RealClearChain
 	.thumb_func
-SoundNote_Detach:
+RealClearChain:
 	ldr	r3, [r0, #44]
 	cmp	r3, #0
 	beq.n	.Ldetach_done
@@ -91,9 +90,9 @@ SoundNote_Detach:
 	str	r1, [r0, #44]
 .Ldetach_done:
 	bx	lr
-	.global MusicTrack_FinishSequence
+	.global ply_fine
 	.thumb_func
-MusicTrack_FinishSequence:
+ply_fine:
 	push	{r4, r5, lr}
 	adds	r5, r1, #0
 	ldr	r4, [r5, #32]
@@ -109,7 +108,7 @@ MusicTrack_FinishSequence:
 	strb	r1, [r4, #0]
 .Lfinish_detach:
 	adds	r0, r4, #0
-	bl	SoundNote_Detach
+	bl	RealClearChain
 	ldr	r4, [r4, #52]
 	cmp	r4, #0
 	bne.n	.Lfinish_note
@@ -124,15 +123,15 @@ AlchemyUncredited_clear_buffer_2:
 AlchemyUncreditedEnd_clear_buffer_2:
 .syntax unified
 	.thumb
-	.global Sound_LoadCommandTable
+	.global MPlayJumpTableCopy
 	.thumb_func
-Sound_LoadCommandTable:
+MPlayJumpTableCopy:
 	mov	ip, lr
 	movs	r1, #36
 	ldr	r2, .Lcommand_table_source
 .Lload_entry:
 	ldr	r3, [r2, #0]
-	bl	Sound_CheckReadAddress
+	bl	chk_adr_r2
 	stmia	r0!, {r3}
 	adds	r2, #4
 	subs	r1, #1
@@ -141,14 +140,14 @@ Sound_LoadCommandTable:
 AlchemyUncredited_clear_buffer_3:
 	.2byte 0
 
-	.global Sound_ReadCheckedByte
+	.global ldrb_r3_r2
 	.thumb_func
-Sound_ReadCheckedByte:
+ldrb_r3_r2:
 AlchemyUncreditedEnd_clear_buffer_3:
 	ldrb	r3, [r2, #0]
-	.global Sound_CheckReadAddress
+	.global chk_adr_r2
 	.thumb_func
-Sound_CheckReadAddress:
+chk_adr_r2:
 	push	{r0}
 	lsrs	r0, r2, #25
 	bne.n	.Lcheck_return
@@ -164,25 +163,25 @@ Sound_CheckReadAddress:
 	bx	lr
 	.align 2
 .Lcommand_table_source:
-	.4byte gSound_CommandTableTemplate
+	.4byte gMPlayJumpTableTemplate
 
-	.global MusicTrack_ReadCheckedCommandByte
+	.global ld_r3_tp_adr_i
 	.thumb_func
-MusicTrack_ReadCheckedCommandByte:
+ld_r3_tp_adr_i:
 	ldr	r2, [r1, #64]
-	.global MusicTrack_ReadCheckedByteAt
+	.global ld_r3_tp_adr_i_r2
 	.thumb_func
-MusicTrack_ReadCheckedByteAt:
+ld_r3_tp_adr_i_r2:
 	adds	r3, r2, #1
 	str	r3, [r1, #64]
 	ldrb	r3, [r2, #0]
-	b.n	Sound_CheckReadAddress
+	b.n	chk_adr_r2
 AlchemyUncredited_clear_buffer_4:
 	.2byte 0
 
-.global MusicTrack_Goto
+.global ply_goto
 	.thumb_func
-MusicTrack_Goto:
+ply_goto:
 AlchemyUncreditedEnd_clear_buffer_4:
 	push	{lr}
 .Lgoto_jump:
@@ -195,15 +194,15 @@ AlchemyUncreditedEnd_clear_buffer_4:
 	ldrb	r3, [r2, #1]
 	orrs	r0, r3
 	lsls	r0, r0, #8
-	bl	Sound_ReadCheckedByte
+	bl	ldrb_r3_r2
 	orrs	r0, r3
 	str	r0, [r1, #64]
 	pop	{r0}
 	bx	r0
 
-.global MusicTrack_CallPattern
+.global ply_patt
 	.thumb_func
-MusicTrack_CallPattern:
+ply_patt:
 	ldrb	r2, [r1, #2]
 	cmp	r2, #3
 	bcs.n	.Lpattern_full
@@ -215,15 +214,15 @@ MusicTrack_CallPattern:
 	ldrb	r2, [r1, #2]
 	adds	r2, #1
 	strb	r2, [r1, #2]
-	b.n	MusicTrack_Goto
+	b.n	ply_goto
 .Lpattern_full:
-	b.n	MusicTrack_FinishSequence
+	b.n	ply_fine
 AlchemyUncredited_clear_buffer_5:
 	.2byte 0
 
-.global MusicTrack_ReturnFromPattern
+.global ply_pend
 	.thumb_func
-MusicTrack_ReturnFromPattern:
+ply_pend:
 AlchemyUncreditedEnd_clear_buffer_5:
 	ldrb	r2, [r1, #2]
 	cmp	r2, #0
@@ -237,9 +236,9 @@ AlchemyUncreditedEnd_clear_buffer_5:
 .Lpattern_return:
 	bx	lr
 
-	.global MusicTrack_Repeat
+	.global ply_rept
 	.thumb_func
-MusicTrack_Repeat:
+ply_rept:
 	push	{lr}
 	ldr	r2, [r1, #64]
 	ldrb	r3, [r2, #0]
@@ -253,7 +252,7 @@ MusicTrack_Repeat:
 	adds	r3, #1
 	strb	r3, [r1, #3]
 	mov	ip, r3
-	bl	MusicTrack_ReadCheckedCommandByte
+	bl	ld_r3_tp_adr_i
 	cmp	ip, r3
 	bcs.n	.Lrepeat_done
 	b.n	.Lgoto_jump
@@ -267,23 +266,23 @@ MusicTrack_Repeat:
 AlchemyUncredited_clear_buffer_6:
 	.2byte 0
 
-.global MusicTrack_SetPriorityFromCommand
+.global ply_prio
 	.thumb_func
-MusicTrack_SetPriorityFromCommand:
+ply_prio:
 AlchemyUncreditedEnd_clear_buffer_6:
 	mov	ip, lr
-	bl	MusicTrack_ReadCheckedCommandByte
+	bl	ld_r3_tp_adr_i
 	strb	r3, [r1, #29]
 	bx	ip
 
 AlchemyUncredited_clear_buffer_7:
 	.balign 4, 0
-.global MusicPlayer_SetTempoFromCommand
+.global ply_tempo
 	.thumb_func
-MusicPlayer_SetTempoFromCommand:
+ply_tempo:
 AlchemyUncreditedEnd_clear_buffer_7:
 	mov	ip, lr
-	bl	MusicTrack_ReadCheckedCommandByte
+	bl	ld_r3_tp_adr_i
 	lsls	r3, r3, #1
 	strh	r3, [r0, #28]
 	ldrh	r2, [r0, #30]
@@ -292,11 +291,11 @@ AlchemyUncreditedEnd_clear_buffer_7:
 	strh	r3, [r0, #32]
 	bx	ip
 
-.global MusicTrack_SetKeyOffsetFromCommand
+.global ply_keysh
 	.thumb_func
-MusicTrack_SetKeyOffsetFromCommand:
+ply_keysh:
 	mov	ip, lr
-	bl	MusicTrack_ReadCheckedCommandByte
+	bl	ld_r3_tp_adr_i
 	strb	r3, [r1, #10]
 	ldrb	r3, [r1, #0]
 	movs	r2, #12
@@ -306,9 +305,9 @@ MusicTrack_SetKeyOffsetFromCommand:
 
 AlchemyUncredited_clear_buffer_8:
 	.balign 4, 0
-.global MusicTrack_SetVoiceFromCommand
+.global ply_voice
 	.thumb_func
-MusicTrack_SetVoiceFromCommand:
+ply_voice:
 AlchemyUncreditedEnd_clear_buffer_8:
 	mov	ip, lr
 	ldr	r2, [r1, #64]
@@ -321,24 +320,24 @@ AlchemyUncreditedEnd_clear_buffer_8:
 	ldr	r3, [r0, #48]
 	adds	r2, r2, r3
 	ldr	r3, [r2, #0]
-	bl	Sound_CheckReadAddress
+	bl	chk_adr_r2
 	str	r3, [r1, #36]
 	ldr	r3, [r2, #4]
-	bl	Sound_CheckReadAddress
+	bl	chk_adr_r2
 	str	r3, [r1, #40]
 	ldr	r3, [r2, #8]
-	bl	Sound_CheckReadAddress
+	bl	chk_adr_r2
 	str	r3, [r1, #44]
 	bx	ip
 
 AlchemyUncredited_clear_buffer_9:
 	.balign 4, 0
-.global MusicTrack_SetVolumeFromCommand
+.global ply_vol
 	.thumb_func
-MusicTrack_SetVolumeFromCommand:
+ply_vol:
 AlchemyUncreditedEnd_clear_buffer_9:
 	mov	ip, lr
-	bl	MusicTrack_ReadCheckedCommandByte
+	bl	ld_r3_tp_adr_i
 	strb	r3, [r1, #18]
 	ldrb	r3, [r1, #0]
 	movs	r2, #3
@@ -348,12 +347,12 @@ AlchemyUncreditedEnd_clear_buffer_9:
 
 AlchemyUncredited_clear_buffer_10:
 	.balign 4, 0
-.global MusicTrack_SetPanFromCommand
+.global ply_pan
 	.thumb_func
-MusicTrack_SetPanFromCommand:
+ply_pan:
 AlchemyUncreditedEnd_clear_buffer_10:
 	mov	ip, lr
-	bl	MusicTrack_ReadCheckedCommandByte
+	bl	ld_r3_tp_adr_i
 	subs	r3, #64
 	strb	r3, [r1, #20]
 	ldrb	r3, [r1, #0]
@@ -362,11 +361,11 @@ AlchemyUncreditedEnd_clear_buffer_10:
 	strb	r3, [r1, #0]
 	bx	ip
 
-.global MusicTrack_SetBendFromCommand
+.global ply_bend
 	.thumb_func
-MusicTrack_SetBendFromCommand:
+ply_bend:
 	mov	ip, lr
-	bl	MusicTrack_ReadCheckedCommandByte
+	bl	ld_r3_tp_adr_i
 	subs	r3, #64
 	strb	r3, [r1, #14]
 	ldrb	r3, [r1, #0]
@@ -375,11 +374,11 @@ MusicTrack_SetBendFromCommand:
 	strb	r3, [r1, #0]
 	bx	ip
 
-.global MusicTrack_SetBendRangeFromCommand
+.global ply_bendr
 	.thumb_func
-MusicTrack_SetBendRangeFromCommand:
+ply_bendr:
 	mov	ip, lr
-	bl	MusicTrack_ReadCheckedCommandByte
+	bl	ld_r3_tp_adr_i
 	strb	r3, [r1, #15]
 	ldrb	r3, [r1, #0]
 	movs	r2, #12
@@ -389,23 +388,23 @@ MusicTrack_SetBendRangeFromCommand:
 
 AlchemyUncredited_clear_buffer_11:
 	.balign 4, 0
-.global MusicTrack_SetLfoDelayFromCommand
+.global ply_lfodl
 	.thumb_func
-MusicTrack_SetLfoDelayFromCommand:
+ply_lfodl:
 AlchemyUncreditedEnd_clear_buffer_11:
 	mov	ip, lr
-	bl	MusicTrack_ReadCheckedCommandByte
+	bl	ld_r3_tp_adr_i
 	strb	r3, [r1, #27]
 	bx	ip
 
 AlchemyUncredited_clear_buffer_12:
 	.balign 4, 0
-.global MusicTrack_SetModulationTargetFromCommand
+.global ply_modt
 	.thumb_func
-MusicTrack_SetModulationTargetFromCommand:
+ply_modt:
 AlchemyUncreditedEnd_clear_buffer_12:
 	mov	ip, lr
-	bl	MusicTrack_ReadCheckedCommandByte
+	bl	ld_r3_tp_adr_i
 	ldrb	r0, [r1, #24]
 	cmp	r0, r3
 	beq.n	.Ltarget_same
@@ -417,11 +416,11 @@ AlchemyUncreditedEnd_clear_buffer_12:
 .Ltarget_same:
 	bx	ip
 
-.global MusicTrack_SetTuneFromCommand
+.global ply_tune
 	.thumb_func
-MusicTrack_SetTuneFromCommand:
+ply_tune:
 	mov	ip, lr
-	bl	MusicTrack_ReadCheckedCommandByte
+	bl	ld_r3_tp_adr_i
 	subs	r3, #64
 	strb	r3, [r1, #12]
 	ldrb	r3, [r1, #0]
@@ -430,24 +429,24 @@ MusicTrack_SetTuneFromCommand:
 	strb	r3, [r1, #0]
 	bx	ip
 
-.global MusicTrack_WriteSoundRegisterFromCommand
+.global ply_port
 	.thumb_func
-MusicTrack_WriteSoundRegisterFromCommand:
+ply_port:
 	mov	ip, lr
 	ldr	r2, [r1, #64]
 	ldrb	r3, [r2, #0]
 	adds	r2, #1
 	ldr	r0, [pc, #8]
 	adds	r0, r0, r3
-	bl	MusicTrack_ReadCheckedByteAt
+	bl	ld_r3_tp_adr_i_r2
 	strb	r3, [r0, #0]
 	bx	ip
 	.4byte 0x04000060
 .syntax unified
 	.thumb
-	.global Sound_TickDmaRestartTimer
+	.global m4aSoundVSync
 	.thumb_func
-Sound_TickDmaRestartTimer:
+m4aSoundVSync:
 	ldr r0, [pc, #680]
 	ldr r0, [r0, #0]
 	ldr r2, [pc, #680]
@@ -486,16 +485,16 @@ Sound_TickDmaRestartTimer:
 	bx lr
 AlchemyUncredited_clear_buffer_13:
 	.balign 4, 0
-	.global Update_Pool1
-Update_Pool1:
+	.global m4aSoundVSync_Pool
+m4aSoundVSync_Pool:
 AlchemyUncreditedEnd_clear_buffer_13:
 	.4byte 0x040000bc
 	.4byte 0x84400004
 .syntax unified
 	.thumb
-	.global MusicPlayer_Tick
+	.global MPlayMain
 	.thumb_func
-MusicPlayer_Tick:
+MPlayMain:
 	ldr	r2, [pc, #608]
 	ldr	r3, [r0, #52]
 	cmp	r2, r3
@@ -528,7 +527,7 @@ MusicPlayer_Tick:
 	ldr	r0, [r0, #0]
 	mov	r8, r0
 	adds	r0, r7, #0
-	bl	MusicPlayer_StepFade
+	bl	FadeOutBody
 	ldr	r0, [r7, #4]
 	cmp	r0, #0
 	bge.n	.L4
@@ -573,7 +572,7 @@ MusicPlayer_Tick:
 	b.n	.L10
 .L9:
 	adds	r0, r4, #0
-	bl	AudioCommand_InvokeSlot34
+	bl	ClearChain
 .L10:
 	ldr	r4, [r4, #52]
 	cmp	r4, #0
@@ -584,7 +583,7 @@ MusicPlayer_Tick:
 	tst	r0, r3
 	beq.n	.L12
 	adds	r0, r5, #0
-	bl	AudioCommand_InvokeSlot35
+	bl	Clear64byte
 	movs	r0, #128
 	strb	r0, [r5, #0]
 	movs	r0, #2
@@ -739,7 +738,7 @@ MusicPlayer_Tick:
 	mov	r9, r2
 	adds	r0, r7, #0
 	adds	r1, r5, #0
-	bl	MusicTrack_CalculateOutput
+	bl	TrkVolPitSet
 	ldr	r4, [r5, #32]
 	cmp	r4, #0
 	beq.n	.L30
@@ -749,7 +748,7 @@ MusicPlayer_Tick:
 	tst	r0, r1
 	bne.n	.L31
 	adds	r0, r4, #0
-	bl	AudioCommand_InvokeSlot34
+	bl	ClearChain
 	b.n	.L32
 .L31:
 	ldrb	r0, [r4, #1]
@@ -759,7 +758,7 @@ MusicPlayer_Tick:
 	movs	r0, #3
 	tst	r0, r3
 	beq.n	.L33
-	bl	SoundDriver_CalculateStereoVolume
+	bl	ChnVolSetAsm
 	cmp	r6, #0
 	beq.n	.L33
 	ldrb	r0, [r4, #29]
@@ -796,7 +795,7 @@ MusicPlayer_Tick:
 	adds	r1, r2, #0
 	ldrb	r2, [r5, #9]
 	ldr	r0, [r4, #36]
-	bl	Pcm_KeyToFrequency
+	bl	MidiKeyToFreq
 	str	r0, [r4, #32]
 .L32:
 	ldr	r4, [r4, #52]
@@ -824,20 +823,20 @@ MusicPlayer_Tick:
 	mov	fp, r3
 	pop	{r3}
 .L1:
-	.global SoundDriver_CallViaR3
-SoundDriver_CallViaR3:
+	.global call_r3
+call_r3:
 	bx	r3
 AlchemyUncredited_clear_buffer_14:
 	.2byte	0x0000
 AlchemyUncreditedEnd_clear_buffer_14:
-	.4byte gSound_ClockLengths
+	.4byte gClockTable
 	.4byte 0x03007ff0
 	.4byte 0x68736d53
 .syntax unified
 	.thumb
-	.global MusicTrack_Stop
+	.global TrackStop
 	.thumb_func
-MusicTrack_Stop:
+TrackStop:
 	push	{r4, r5, r6, lr}
 	adds	r5, r1, #0
 	ldrb	r1, [r5, #0]
@@ -859,7 +858,7 @@ MusicTrack_Stop:
 	ldr	r3, [pc, #28]
 	ldr	r3, [r3, #0]
 	ldr	r3, [r3, #44]
-	bl	SoundDriver_CallViaR3
+	bl	call_r3
 .Lstop_note_off:
 	strb	r6, [r4, #0]
 .Lstop_unlink:
@@ -879,9 +878,9 @@ AlchemyUncreditedEnd_clear_buffer_15:
 	.4byte	0x03007ff0
 .syntax unified
 	.thumb
-	.global SoundDriver_CalculateStereoVolume
+	.global ChnVolSetAsm
 	.thumb_func
-SoundDriver_CalculateStereoVolume:
+ChnVolSetAsm:
 	ldrb	r1, [r4, #18]
 	movs	r0, #20
 	ldrsb	r2, [r4, r0]
@@ -910,9 +909,9 @@ SoundDriver_CalculateStereoVolume:
 	bx	lr
 .syntax unified
 	.thumb
-	.global MusicTrack_HandleNote
+	.global ply_note
 	.thumb_func
-MusicTrack_HandleNote:
+ply_note:
 	push	{r4, r5, r6, r7, lr}
 	mov	r4, r8
 	mov	r5, r9
@@ -1094,7 +1093,7 @@ MusicTrack_HandleNote:
 	beq.n	.Lnote_done
 .Lnote_take:
 	adds	r0, r4, #0
-	bl	AudioCommand_InvokeSlot34
+	bl	ClearChain
 	movs	r1, #0
 	str	r1, [r4, #48]
 	ldr	r3, [r5, #32]
@@ -1110,11 +1109,11 @@ MusicTrack_HandleNote:
 	cmp	r0, r1
 	beq.n	.Lnote_output
 	adds	r1, r5, #0
-	bl	MusicTrack_ClearModulationState
+	bl	clear_modM
 .Lnote_output:
 	ldr	r0, [sp, #0]
 	adds	r1, r5, #0
-	bl	MusicTrack_CalculateOutput
+	bl	TrkVolPitSet
 	ldr	r0, [r5, #4]
 	str	r0, [r4, #16]
 	ldr	r0, [sp, #16]
@@ -1132,7 +1131,7 @@ MusicTrack_HandleNote:
 	str	r0, [r4, #4]
 	ldrh	r0, [r5, #30]
 	strh	r0, [r4, #12]
-	bl	SoundDriver_CalculateStereoVolume
+	bl	ChnVolSetAsm
 	ldrb	r1, [r4, #8]
 	movs	r0, #8
 	ldrsb	r0, [r5, r0]
@@ -1162,13 +1161,13 @@ MusicTrack_HandleNote:
 	ldr	r0, [sp, #12]
 	ldr	r3, [sp, #4]
 	ldr	r3, [r3, #48]
-	bl	SoundDriver_CallViaR3
+	bl	call_r3
 	b.n	.Lnote_start
 .Lnote_pcm_frequency:
 	ldrb	r2, [r5, #9]
 	adds	r1, r3, #0
 	adds	r0, r7, #0
-	bl	Pcm_KeyToFrequency
+	bl	MidiKeyToFreq
 .Lnote_start:
 	str	r0, [r4, #32]
 	movs	r0, #128
@@ -1190,12 +1189,12 @@ AlchemyUncredited_clear_buffer_16:
 	.2byte	0x0000
 AlchemyUncreditedEnd_clear_buffer_16:
 	.4byte	0x03007ff0
-	.4byte	gSound_ClockLengths
+	.4byte	gClockTable
 .syntax unified
 	.thumb
-	.global MusicTrack_ReleaseKey
+	.global ply_endtie
 	.thumb_func
-MusicTrack_ReleaseKey:
+ply_endtie:
 	push	{r4, r5}
 	ldr	r2, [r1, #64]
 	ldrb	r3, [r2, #0]
@@ -1235,9 +1234,9 @@ MusicTrack_ReleaseKey:
 	bx	lr
 .syntax unified
 	.thumb
-	.global MusicTrack_ClearModulationState
+	.global clear_modM
 	.thumb_func
-MusicTrack_ClearModulationState:
+clear_modM:
 	movs	r2, #0
 	strb	r2, [r1, #22]
 	strb	r2, [r1, #26]
@@ -1260,9 +1259,9 @@ AlchemyUncreditedEnd_clear_buffer_17:
 	.section .text.command_byte_reader,"ax",%progbits
 	.thumb
 
-.global MusicTrack_ReadCommandByte
+.global ld_r3_tp_adr_i_unchecked
 .thumb_func
-MusicTrack_ReadCommandByte:
+ld_r3_tp_adr_i_unchecked:
 	ldr	r2, [r1, #64]
 	adds	r3, r2, #1
 	str	r3, [r1, #64]
@@ -1272,30 +1271,30 @@ MusicTrack_ReadCommandByte:
 	.section .text.command_byte_setters,"ax",%progbits
 	.thumb
 
-	.global MusicTrack_SetLfoSpeedFromCommand
+	.global ply_lfos
 	.thumb_func
-MusicTrack_SetLfoSpeedFromCommand:
+ply_lfos:
 	mov	ip, lr
-	bl	MusicTrack_ReadCommandByte
+	bl	ld_r3_tp_adr_i_unchecked
 	strb	r3, [r1, #25]
 	cmp	r3, #0
 	bne.n	.Llfo_speed_done
-	bl	MusicTrack_ClearModulationState
+	bl	clear_modM
 .Llfo_speed_done:
 	bx	ip
 AlchemyUncredited_clear_buffer_18:
 	.balign 4, 0
 
 AlchemyUncreditedEnd_clear_buffer_18:
-	.global MusicTrack_SetModulationFromCommand
+	.global ply_mod
 	.thumb_func
-MusicTrack_SetModulationFromCommand:
+ply_mod:
 	mov	ip, lr
-	bl	MusicTrack_ReadCommandByte
+	bl	ld_r3_tp_adr_i_unchecked
 	strb	r3, [r1, #23]
 	cmp	r3, #0
 	bne.n	.Lmodulation_done
-	bl	MusicTrack_ClearModulationState
+	bl	clear_modM
 .Lmodulation_done:
 	bx	ip
 AlchemyUncredited_clear_buffer_19:

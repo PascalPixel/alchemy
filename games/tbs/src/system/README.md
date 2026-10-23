@@ -65,7 +65,7 @@ other [editions](../../glossary.md#editions) agree except that German moves thre
 | 0 KB | `0x03000000` | the resident runtime, 5 KB copied from the ROM: the dispatcher `IwramIrqMain`, the handler table `gIrqHandlers`, the resident sound mixing code and the small routines the rest of the game calls | `main.ld` (`.iwram_runtime`), `runtime*.s` |
 | 5 KB | `0x03001400` | the main image's IWRAM variables, among them the [heap slots](../../glossary.md#heap-slot) `gHeapSlots` (`0x03001e50`) | `iwram.s`, `Ram_HeapSlots` |
 | 8 KB | `0x03002000` | `gIwramHeap`, which `heap.c` allocates from below `Ram_IwramHeapEnd` | `iwram.s` |
-| 28 KB | `0x03007000` | the sound driver's mixer, `SoundDriver_Mixer`, 932 bytes copied from the ROM by `Audio_Initialize` | `Ram_SoundMixer`, `main.ld` (`.iwram_mixer`), `games/tbs/src/sound/audio.c` |
+| 28 KB | `0x03007000` | the sound driver's mixer, `SoundMainRAM`, 932 bytes copied from the ROM by `m4aSoundInit` | `Ram_SoundMixer`, `main.ld` (`.iwram_mixer`), `games/tbs/src/sound/audio.c` |
 | 30 KB | `0x03007800` | `Ram_IwramHeapEnd`, the end of the IWRAM heap, where `gCartridgeResetMarker` sits | `iwram_hi.s` |
 | 30.5 KB | `0x03007a00` | `Ram_FrameWaitStackTop`, the stack top `WaitFrames` runs from | `iwram_hi.s` |
 | the last 256 and 96 bytes | `0x03007f00`, `0x03007fa0` | the system-mode and IRQ-mode stack tops `System_Entry` sets | `entry.s` |
@@ -292,7 +292,7 @@ itself, the layout has to keep every one:
 | The overlay area, `gOverlayArea` | `0x02008000`, 32 KB of EWRAM | Every overlay is linked to run there and has to fit. Its first 48 bytes are the entry table, which the field's code calls by member. |
 | The map and decode buffers: `Ram_MapGridCellBuffer`, `Ram_EnemySpriteSlots`, `Ram_DecodeBuffer`, `Ram_Metatiles`, `Ram_MapGridShapes`, `Ram_BgTileBuffer` | after the overlay area, as the EWRAM table lists | Code reaches across their boundaries by arithmetic: the map grid's [cells](../../glossary.md#cell) fill 64 KB from the start of `Ram_MapGridCellBuffer`, through the sprite slots and the decode buffer, and the tileset animation reads tiles from `Ram_DecodeBuffer` that land in `gMapGridLayerData` ([Layouts](../layout/README.md)). So `ewram.s` can't reorder or resize them. |
 | The ends of the two heaps | `0x03007800` in IWRAM and `0x02040000`, the end of EWRAM | The allocators test against these numbers (`heap.c`). `gCartridgeResetMarker` sits at the first, and the system stack lives above it. |
-| The sound driver's mixer, `SoundDriver_Mixer` (932 bytes) | `0x03007000`, inside the IWRAM heap's range | `Audio_Initialize` copies the mixer to that number (`Ram_SoundMixer`), and the driver runs it there. The copy is 1 KB at once (`SOUND_MIXER_CODE_SIZE`), so the 92 bytes after the mixer in the ROM land just after it. |
+| The sound driver's mixer, `SoundMainRAM` (932 bytes) | `0x03007000`, inside the IWRAM heap's range | `m4aSoundInit` copies the mixer to that number (`Ram_SoundMixer`), and the driver runs it there. The copy is 1 KB at once (`SOUND_MIXER_CODE_SIZE`), so the 92 bytes after the mixer in the ROM land just after it. |
 | The frame wait's stack top, `Ram_FrameWaitStackTop` | `0x03007a00` | The 512 bytes between it and the heap's end are what the frame loop, its [tasks](../../glossary.md#task) and the VBlank work always have ([Runtime](../runtime/README.md)). |
 | The stacks and the interrupt vector, `gIrqVector` | the top of IWRAM | `System_Entry` sets the system and IRQ stacks there, and the BIOS jumps through `gIrqVector` on an interrupt. |
 | `gBgScroll`, `gVramCacheEntries` and `gHeapSlots` (`Ram_HeapSlots`) | among the main image's IWRAM variables | The code reaches them as constants. German moves all three 16 bytes up, so `ram_buffer.h` chooses them per edition. |
@@ -314,11 +314,11 @@ talk, the world map and its still picture, the credits and sleep mode.
 - In battle the IWRAM heap runs into the sound driver's mixer. With the
   heap's next address at `0x0300667c`, `Sprite_ComposeFrame` takes
   the 4 KB pixel buffer of a 64 by 64 sprite from `Alloc`, 1,660 bytes of
-  it over `SoundDriver_Mixer`, and clearing the buffer overwrites the mixer
+  it over `SoundMainRAM`, and clearing the buffer overwrites the mixer
   from its first word. Nothing copies the mixer back, and nothing needs it:
-  the VBlank handler mixes through `SoundDriver_EnterMixer` and the resident
+  the VBlank handler mixes through `Mixer_Enter` and the resident
   code at `IwramSoundMixEntry`, and through a whole battle neither
-  `AudioEngine_RunMixerTick` nor the code at `0x03007000` runs once.
+  `SoundMain` nor the code at `0x03007000` runs once.
 - The EWRAM heap runs into `gBgTileBuffer`, to `0x02038e60` in the field and
   `0x0203d960` in battle. Only the world map uses that buffer, and there the
   heap reaches `0x02038004`, one word into it, while the still map picture is

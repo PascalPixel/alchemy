@@ -57,43 +57,42 @@ void Sound_PlaySong(s32 id) {
     // so a later request for the faded music starts it again.
     if (gBgmFadeRequested != 0)
       return;
-    MusicPlayer_FadeOut(&gMusicPlayerBgm, 7);
+    m4aMPlayFadeOut(&gMPlayInfo_BGM, 7);
     gBgmFadeRequested++;
     gCurrentBgm = MUS_SILENCE;
   } else if (id == SONG_FADE_OUT_ACTION_SE) {
     // The control is also the number of the song table's row 289, so it fades
-    // player 3 out over 48 frames (16 steps of 3) and that row never plays.
-    // Only sound effects record their song in gMusicPlayerLastSong; player 3's
-    // is 0 after this fade.
-    gMusicPlayerLastSong[3] = 0;
-    MusicPlayer_FadeOut(&gSound_Player3, 3);
+    // MUSIC_PLAYER_ACTION_SE out over 48 frames (16 steps of 3) and that row
+    // never plays. Only sound effects record their song in
+    // gMusicPlayerLastSong; MUSIC_PLAYER_ACTION_SE's is 0 after this fade.
+    gMusicPlayerLastSong[MUSIC_PLAYER_ACTION_SE] = 0;
+    m4aMPlayFadeOut(&gMPlayInfo_ActionSE, 3);
   } else if (id >= SONG_SE_FIRST) {
-    // A song on SOUND_PLAYER_EFFECT_LAST borrows a free effect player,
-    // searching back to SOUND_PLAYER_EFFECT_FIRST.
+    // A song on MUSIC_PLAYER_SE_LAST borrows a free effect player,
+    // searching back to MUSIC_PLAYER_SE_FIRST.
     // A player is busy while the low byte of its status, the active bits of
     // its first eight tracks, is nonzero; with all four busy,
-    // SOUND_PLAYER_EFFECT_LAST's sound is cut off.
-    player = gSound_SongTable[id].slot;
-    if (player == SOUND_PLAYER_EFFECT_LAST) {
+    // MUSIC_PLAYER_SE_LAST's sound is cut off.
+    player = gSongTable[id].ms;
+    if (player == MUSIC_PLAYER_SE_LAST) {
     next:
-      if (((u8 *)&gSound_PlayerSlots[player].player->status)[0] != 0) {
+      if (((u8 *)&gMPlayTable[player].info->status)[0] != 0) {
         player--;
-        if (player >= SOUND_PLAYER_EFFECT_FIRST)
+        if (player >= MUSIC_PLAYER_SE_FIRST)
           goto next;
-        player = SOUND_PLAYER_EFFECT_LAST;
+        player = MUSIC_PLAYER_SE_LAST;
       }
     }
-    MusicPlayer_StartSong(gSound_PlayerSlots[player].player,
-                          gSound_SongTable[id].header);
+    MPlayStart(gMPlayTable[player].info, gSongTable[id].header);
     gMusicPlayerLastSong[player] = id;
   } else if (id >= SONG_FANFARE_FIRST) {
-    // A fanfare, on its own player (SOUND_PLAYER_FANFARE): the music's tracks 0
+    // A fanfare, on its own player (MUSIC_PLAYER_FANFARE): the music's tracks 0
     // to 7 go silent at once but keep playing, and fade back in once the
     // fanfare has ended (Sound_UpdateBgmRamps).
-    MusicPlayer_SetVolume(&gMusicPlayerBgm, 255, 0);
+    m4aMPlayVolumeControl(&gMPlayInfo_BGM, 255, 0);
     gBgmVolumeTarget = 0;
     gBgmVolume = 0;
-    Audio_PlaySound(id);
+    m4aSongNumStart(id);
     gBgmRestoreDelay = BGM_RESTORE_DELAY_FRAMES;
   } else {
     // Music: the keep control, or the music last chosen (gCurrentBgm),
@@ -108,7 +107,7 @@ void Sound_PlaySong(s32 id) {
     gCurrentBgm = id;
     Sound_LoadPresetParameters(
         (id == MUS_TITLE || id == MUS_ENDING_LOGO || id == MUS_ENDING) ? 3 : 2);
-    Audio_PlaySound(id);
+    m4aSongNumStart(id);
     // A silent start fades the new music in over 64 frames.
     if (flags & SONG_FLAG_FADE_IN)
       gBgmVolume = 0;
@@ -123,7 +122,7 @@ void Sound_PlaySong(s32 id) {
 /// Restores BGM after a fanfare and steps its volume and combined tempo/pitch
 /// ramps once per VBlank, clamping each ramp when it crosses its target.
 /// Called by System_VBlankHandler through the sound far-call table; it also
-/// runs the PCM buffer's DMA restart count (Sound_TickDmaRestartTimer).
+/// runs the PCM buffer's DMA restart count (m4aSoundVSync).
 void Sound_UpdateBgmRamps(void) {
   s32 delta;
 
@@ -131,7 +130,7 @@ void Sound_UpdateBgmRamps(void) {
   // fanfare's player has no track left and let the music fade back in.
   if (gBgmRestoreDelay != 0) {
     if (gBgmRestoreDelay == 1) {
-      if ((u8)gMusicPlayerFanfare.status == 0) {
+      if ((u8)gMPlayInfo_Fanfare.status == 0) {
         gBgmRestoreDelay = 0;
         gBgmVolumeTarget = BGM_UNITY_SCALE;
       }
@@ -151,7 +150,7 @@ void Sound_UpdateBgmRamps(void) {
     if ((((s16)gBgmVolumeTarget - (s16)gBgmVolume) ^ delta) < 0) {
       gBgmVolume = gBgmVolumeTarget;
     }
-    MusicPlayer_SetVolume(&gMusicPlayerBgm, TRACKS_ALL, gBgmVolume);
+    m4aMPlayVolumeControl(&gMPlayInfo_BGM, TRACKS_ALL, gBgmVolume);
   }
   if ((s16)gBgmTempoPitchTarget != (s16)gBgmTempoPitch) {
     delta = (s16)gBgmTempoPitchTarget - (s16)gBgmTempoPitch;
@@ -167,13 +166,13 @@ void Sound_UpdateBgmRamps(void) {
     // another speed, but in a straight line: 12 semitones for each 0x100 of
     // scale (pitch is in 1/256 semitone), so 0x200 plays an octave up and
     // 0x80 half an octave down.
-    MusicPlayer_SetPitchAndUpdateFrequency(&gMusicPlayerBgm, gBgmTempoPitch);
-    MusicPlayer_SetPitch(&gMusicPlayerBgm, TRACKS_ALL,
+    m4aMPlayTempoControl(&gMPlayInfo_BGM, gBgmTempoPitch);
+    m4aMPlayPitchControl(&gMPlayInfo_BGM, TRACKS_ALL,
                          (s16)gBgmTempoPitch * 12 - 12 * BGM_UNITY_SCALE);
   }
   // Count the PCM buffer's frames down and restart the FIFO DMAs from its
-  // start when they run out (SoundWork.transferCountdown).
-  Sound_TickDmaRestartTimer();
+  // start when they run out (SoundInfo.transferCountdown).
+  m4aSoundVSync();
 }
 
 /// Runs the audio test's three song selectors and five mixer presets forever.
@@ -256,7 +255,7 @@ void Sound_Initialize(void) {
   s16 *playerVolume;
   s32 remaining;
 
-  Audio_Initialize();
+  m4aSoundInit();
   // No music is song 0xff, so the first music always plays.
   gCurrentBgm = 0xff;
   gBgmRestoreDelay = 0;
@@ -283,18 +282,18 @@ void Sound_Initialize(void) {
 }
 
 /// Sets the BGM tempo scale directly; 0x100 preserves its native tempo. The
-/// scale lasts until the next song starts (MusicPlayer_StartSong sets 0x100)
+/// scale lasts until the next song starts (MPlayStart sets 0x100)
 /// or the tempo and pitch ramp moves. Called only by the Lemurian ship scene,
 /// which plays MUS_ENDING at 240 (0.94 of its tempo) as the ship sails off.
 void Sound_SetBgmTempo(u16 tempoScale) {
-  MusicPlayer_SetPitchAndUpdateFrequency(&gMusicPlayerBgm, tempoScale);
+  m4aMPlayTempoControl(&gMPlayInfo_BGM, tempoScale);
 }
 
 /// Applies a pitch offset, in 1/256 semitone, to the music's active tracks 0
 /// to 7 (TRACKS_ALL). Reached only through the sound far-call table's
 /// veneer.
 void Sound_SetBgmPitch(u16 pitch) {
-  MusicPlayer_SetPitch(&gMusicPlayerBgm, TRACKS_ALL, pitch);
+  m4aMPlayPitchControl(&gMPlayInfo_BGM, TRACKS_ALL, pitch);
 }
 
 /// Sets the target and per-frame step of the combined BGM tempo/pitch ramp
@@ -308,7 +307,7 @@ void Sound_SetBgmTempoPitchTarget(u16 targetScale, u16 step) {
 /// Sets BGM volume (0x100 full) immediately and cancels any outstanding
 /// volume ramp. Reached only through the sound far-call table's veneer.
 void Sound_SetBgmVolume(s16 volume) {
-  MusicPlayer_SetVolume(&gMusicPlayerBgm, TRACKS_ALL, volume);
+  m4aMPlayVolumeControl(&gMPlayInfo_BGM, TRACKS_ALL, volume);
   gBgmVolumeTarget = volume;
   gBgmVolume = volume;
 }
@@ -330,11 +329,11 @@ s32 Sound_GetBgmRestoreDelay(void) { return gBgmRestoreDelay; }
 
 /// Stops every sound player while preserving its state for a later resume.
 /// Reached only through the sound far-call table's veneer.
-void Sound_StopAllMusicPlayers(void) { Audio_StopAllPlayers(); }
+void Sound_StopAllMusicPlayers(void) { m4aMPlayAllStop(); }
 
-/// Resumes every player, each from where Audio_StopAllPlayers stopped it.
+/// Resumes every player, each from where m4aMPlayAllStop stopped it.
 /// Reached only through the sound far-call table's veneer.
-void Sound_ResumeAllMusicPlayers(void) { Audio_ResumeAllPlayers(); }
+void Sound_ResumeAllMusicPlayers(void) { m4aMPlayAllContinue(); }
 
 /// Replaces the audio command mask, or toggles its requested bits when
 /// flagged. Reached only through the sound far-call table's veneer; nothing

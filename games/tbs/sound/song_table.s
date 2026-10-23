@@ -5,8 +5,8 @@
 
 	.section .rodata
 	.balign 4
-	.global gSound_SongTable
-gSound_SongTable:
+	.global gSongTable
+gSongTable:
 	song sound_000, 1
 	song sound_001, 1
 	song sound_002, 1
@@ -18,14 +18,14 @@ gSound_SongTable:
 	song sound_008, 1
 	song sound_009, 1
 	song sound_010, 1
-	song Sound_EmptySong, 0
-	song Sound_EmptySong, 0
-	song Sound_EmptySong, 0
-	song Sound_EmptySong, 0
-	song Sound_EmptySong, 0
-	song Sound_EmptySong, 0
-	song Sound_EmptySong, 0
-	song Sound_EmptySong, 0
+	song dummy_song_header, 0
+	song dummy_song_header, 0
+	song dummy_song_header, 0
+	song dummy_song_header, 0
+	song dummy_song_header, 0
+	song dummy_song_header, 0
+	song dummy_song_header, 0
+	song dummy_song_header, 0
 	song sound_019, 1
 	song sound_020, 1
 	song sound_021, 1
@@ -38,33 +38,33 @@ gSound_SongTable:
 	song sound_028, 1
 	song sound_029, 1
 	song sound_030, 1
-	song Sound_EmptySong, 0
-	song Sound_EmptySong, 0
-	song Sound_EmptySong, 0
-	song Sound_EmptySong, 0
-	song Sound_EmptySong, 0
-	song Sound_EmptySong, 0
-	song Sound_EmptySong, 0
-	song Sound_EmptySong, 0
-	song Sound_EmptySong, 0
+	song dummy_song_header, 0
+	song dummy_song_header, 0
+	song dummy_song_header, 0
+	song dummy_song_header, 0
+	song dummy_song_header, 0
+	song dummy_song_header, 0
+	song dummy_song_header, 0
+	song dummy_song_header, 0
+	song dummy_song_header, 0
 	song sound_040, 1
 	song sound_041, 1
 	song sound_042, 1
 	song sound_043, 1
-	song Sound_EmptySong, 0
-	song Sound_EmptySong, 0
-	song Sound_EmptySong, 0
-	song Sound_EmptySong, 0
-	song Sound_EmptySong, 0
-	song Sound_EmptySong, 0
+	song dummy_song_header, 0
+	song dummy_song_header, 0
+	song dummy_song_header, 0
+	song dummy_song_header, 0
+	song dummy_song_header, 0
+	song dummy_song_header, 0
 	song sound_050, 1
 	song sound_051, 1
 	song sound_052, 1
 	song sound_053, 1
 	song sound_054, 1
 	song sound_055, 1
-	song Sound_EmptySong, 0
-	song Sound_EmptySong, 0
+	song dummy_song_header, 0
+	song dummy_song_header, 0
 	song sound_058, 1
 	song sound_059, 1
 	song sound_060, 1
@@ -72,21 +72,21 @@ gSound_SongTable:
 	song sound_062, 1
 	song sound_063, 1
 	song sound_064, 1
-	song Sound_EmptySong, 0
-	song Sound_EmptySong, 0
+	song dummy_song_header, 0
+	song dummy_song_header, 0
 	song sound_067, 1
-	song Sound_EmptySong, 0
-	song Sound_EmptySong, 0
+	song dummy_song_header, 0
+	song dummy_song_header, 0
 	song sound_070, 1
-	song Sound_EmptySong, 0
+	song dummy_song_header, 0
 	song sound_072, 1
-	song Sound_EmptySong, 0
+	song dummy_song_header, 0
 	song sound_074, 1
 	song sound_075, 1
 	song sound_076, 1
-	song Sound_EmptySong, 0
-	song Sound_EmptySong, 0
-	song Sound_EmptySong, 0
+	song dummy_song_header, 0
+	song dummy_song_header, 0
+	song dummy_song_header, 0
 	song sound_080, 0
 	song sound_081, 0
 	song sound_082, 0
@@ -97,16 +97,16 @@ gSound_SongTable:
 	song sound_087, 0
 	song sound_088, 0
 	song sound_089, 0
-	song Sound_EmptySong, 0
+	song dummy_song_header, 0
 	song sound_091, 0
 	song sound_092, 0
 	song sound_093, 0
-	song Sound_EmptySong, 0
+	song dummy_song_header, 0
 	song sound_095, 0
-	song Sound_EmptySong, 0
-	song Sound_EmptySong, 0
-	song Sound_EmptySong, 0
-	song Sound_EmptySong, 0
+	song dummy_song_header, 0
+	song dummy_song_header, 0
+	song dummy_song_header, 0
+	song dummy_song_header, 0
 	song sound_100, 7
 	song sound_101, 2
 	song sound_102, 2
@@ -214,7 +214,7 @@ gSound_SongTable:
 	song sound_204, 2
 	song sound_205, 3
 	song sound_206, 3
-	song Sound_EmptySong, 0
+	song dummy_song_header, 0
 	song sound_208, 3
 	song sound_209, 3
 	song sound_210, 3
@@ -261,8 +261,8 @@ gSound_SongTable:
 	song sound_251, 5
 	song sound_252, 5
 	song sound_253, 3
-	song Sound_EmptySong, 0
-	song Sound_EmptySong, 0
+	song dummy_song_header, 0
+	song dummy_song_header, 0
 	song sound_256, 4
 	song sound_257, 4
 	song sound_258, 4
@@ -301,12 +301,12 @@ gSound_SongTable:
 	song sound_291, 3
 	song sound_292, 2
 	song sound_293, 2
-	song Sound_EmptySong, 0
-	song Sound_EmptySong, 0
-	song Sound_EmptySong, 0
-	song Sound_EmptySong, 0
+	song dummy_song_header, 0
+	song dummy_song_header, 0
+	song dummy_song_header, 0
+	song dummy_song_header, 0
 	song sound_298, 5
-	song Sound_EmptySong, 0
+	song dummy_song_header, 0
 	song sound_300, 3
 	song sound_301, 7
 	song sound_302, 7
@@ -320,5 +320,5 @@ gSound_SongTable:
 	song sound_310, 2
 	song sound_311, 3
 
-Sound_EmptySong:
+dummy_song_header:
 	.byte 0, 0, 0, 0

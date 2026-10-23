@@ -1,15 +1,15 @@
-@ C2: Audio_UmulHigh32:
+@ C2: umul3232H32:
 @ Thumb entry switches into ARM in the same function before umull; Nintendo
 @ library umul3232H32.
-@ C2: AudioEngine_RunMixerTick:
+@ C2: SoundMain:
 @ Nintendo MusicPlayer2000 SoundMain entry sets up one frame then bx
-@ transfers into SoundDriver_Mixer, which consumes its live stack and saved
+@ transfers into SoundMainRAM, which consumes its live stack and saved
 @ register state.
 .syntax unified
 	.thumb
-	.global Audio_UmulHigh32
+	.global umul3232H32
 	.thumb_func
-Audio_UmulHigh32:
+umul3232H32:
 	add	r2, pc, #0
 	bx	r2
 	.arm
@@ -18,9 +18,9 @@ Audio_UmulHigh32:
 	bx	lr
 .syntax unified
 	.thumb
-	.global AudioEngine_RunMixerTick
+	.global SoundMain
 	.thumb_func
-AudioEngine_RunMixerTick:
+SoundMain:
 	ldr	r0, [pc, #104]
 	ldr	r0, [r0, #0]
 	ldr	r2, [pc, #104]
@@ -82,7 +82,7 @@ AlchemyUncredited_umul_high_1:
 AlchemyUncreditedEnd_umul_high_1:
 	.4byte 0x03007ff0
 	.4byte 0x68736d53
-	.4byte SoundDriver_Mixer
+	.4byte SoundMainRAM
 	.4byte 0x04000006
 	.4byte 0x00000350
 	.4byte 0x00000630

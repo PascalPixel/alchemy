@@ -7,19 +7,19 @@
 @ Each music player's work area, its tracks and how many it has
 	.section .rodata
 	.balign 4
-	.global gSound_PlayerSlots
-gSound_PlayerSlots:
-	music_player gMusicPlayerFanfare, Sound_Tracks0, 4
-	music_player gMusicPlayerBgm, Sound_Tracks1, 10
-	music_player Sound_Player2, Sound_Tracks2, 2
-	music_player gSound_Player3, Sound_Tracks3, 2
-	music_player Sound_Player4, Sound_Tracks4, 2
-	music_player gSound_Player5, Sound_Tracks5, 2
-	music_player Sound_Player6, Sound_Tracks6, 2
-	music_player Sound_Player7, Sound_Tracks7, 2
+	.global gMPlayTable
+gMPlayTable:
+	music_player gMPlayInfo_Fanfare, gMPlayTrack_Fanfare, 4
+	music_player gMPlayInfo_BGM, gMPlayTrack_BGM, 10
+	music_player gMPlayInfo_MenuSE, gMPlayTrack_MenuSE, 2
+	music_player gMPlayInfo_ActionSE, gMPlayTrack_ActionSE, 2
+	music_player gMPlayInfo_SE4, gMPlayTrack_SE4, 2
+	music_player gMPlayInfo_SE5, gMPlayTrack_SE5, 2
+	music_player gMPlayInfo_SE6, gMPlayTrack_SE6, 2
+	music_player gMPlayInfo_SE7, gMPlayTrack_SE7, 2
 
-@ The player count is this table's row count; the mixer has at most 0 lines
-	.global Sound_PlayerCount
-	.equ Sound_PlayerCount, (. - gSound_PlayerSlots) / 12
-	.global Sound_MaxLines
-	.equ Sound_MaxLines, 0
+@ The music player count is this table's row count; the mixer has no line limit
+	.global gNumMusicPlayers
+	.equ gNumMusicPlayers, (. - gMPlayTable) / 12
+	.global gMaxLines
+	.equ gMaxLines, 0

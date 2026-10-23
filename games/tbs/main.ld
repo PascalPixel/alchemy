@@ -127,7 +127,7 @@ SECTIONS
         INCLUDE "rom_tail_02.ld"
     } > ROM
     IwramRuntime_Rom = LOADADDR(.iwram_runtime);
-    Sound_Mixer = LOADADDR(.iwram_mixer) + 1;
+    SoundMainRAM_Rom = LOADADDR(.iwram_mixer) + 1;
     Mixer_CallViaR3Rom = LOADADDR(.iwram_mixer) + (Mixer_CallViaR3 - ADDR(.iwram_mixer));
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

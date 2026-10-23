@@ -430,7 +430,7 @@ void System_VBlankHandler(void) {
   gFrameTick++;
   gLagFrameCount++;
   gVBlankDone = 1;
-  SoundDriver_EnterMixer();
+  Mixer_Enter();
 }
 
 /// Copies the mixer code for sound preset `preset` (0 to 4; anything else is 0)

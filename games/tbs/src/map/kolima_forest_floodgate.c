@@ -47,7 +47,6 @@
 #include "types.h"
 #include "script_layer.h"
 #include "engine_call.h"
-#include "field_offset.h"
 #include "mem.h"
 #include "call.h"
 #include "dma.h"

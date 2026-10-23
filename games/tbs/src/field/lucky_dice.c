@@ -14,7 +14,6 @@
 #include "project.h"
 #include "types.h"
 #include "iwram_call.h"
-#include "field_offset.h"
 #include "edition.h"
 #include "task.h"
 #include "call.h"

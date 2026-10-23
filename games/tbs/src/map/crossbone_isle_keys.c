@@ -62,7 +62,6 @@
 #include "field_service.h"
 #include "map_tables.h"
 #include "pushed_object.h"
-#include "select_overlay_data_by_runtime_selector.h"
 #include "io_reg.h"
 #include "resource.h"
 #include "object_event.h"

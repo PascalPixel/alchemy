@@ -81,7 +81,6 @@
 #include "fixed_point_position.h"
 #include "iwram_call.h"
 #include "inventory.h"
-#include "b5_context.h"
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"

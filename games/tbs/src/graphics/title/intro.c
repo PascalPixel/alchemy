@@ -25,7 +25,6 @@
 #include "palbuf.h"
 #include "iwram_call.h"
 #include "heap.h"
-#include "field_offset.h"
 #include "heap_slots.h"
 #include "frame.h"
 #include "oambuf.h"

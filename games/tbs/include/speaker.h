@@ -6,7 +6,6 @@
 /// definitions, and the palette fade's heap slot.
 
 #include "unit/overworld/overworld.h"
-#include "object_lookup.h"
 #include "types.h"
 #include "static_assert.h"
 #include "palbuf.h"

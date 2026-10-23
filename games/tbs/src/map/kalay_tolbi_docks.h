@@ -4,7 +4,6 @@
 #include "types.h"
 #include "script_layer.h"
 #include "map_tables.h"
-#include "select_overlay_data_by_runtime_selector.h"
 #include "speaker.h"
 #include "window.h"
 

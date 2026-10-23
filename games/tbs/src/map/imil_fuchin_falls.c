@@ -109,7 +109,6 @@
 #include "call.h"
 #include "battle_party.h"
 #include "field_effect.h"
-#include "field_offset.h"
 #include "map_header.h"
 #include "display_transition.h"
 #include "fx_work.h"

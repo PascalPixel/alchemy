@@ -45,7 +45,6 @@
 #include "types.h"
 #include "script_layer.h"
 #include "map_tables.h"
-#include "resource_3a9.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "item_ids.h"

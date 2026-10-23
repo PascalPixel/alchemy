@@ -84,7 +84,6 @@
 #include "map_tables.h"
 #include "create_configured_overlay_object.h"
 #include "pushed_object.h"
-#include "select_overlay_data_by_runtime_selector.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

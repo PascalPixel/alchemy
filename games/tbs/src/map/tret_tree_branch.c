@@ -50,8 +50,6 @@
 #include "heap_slots.h"
 #include "types.h"
 #include "task.h"
-#include "field_offset.h"
-#include "resource_397.h"
 #include "io_reg.h"
 #include "irq.h"
 #include "game_state.h"

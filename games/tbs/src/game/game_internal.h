@@ -19,7 +19,6 @@
 #include "system.h"
 #include "types.h"
 #include "mem.h"
-#include "field_offset.h"
 #include "unit.h"
 #include "character.h"
 #include "party_state.h"

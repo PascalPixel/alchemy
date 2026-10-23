@@ -26,7 +26,6 @@
 #include "types.h"
 #include "script_layer.h"
 #include "field_service.h"
-#include "field_offset.h"
 #include "io_reg.h"
 #include "serial_runtime.h"
 #include "iwram_call.h"

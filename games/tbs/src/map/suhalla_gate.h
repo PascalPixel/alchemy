@@ -3,6 +3,5 @@
 
 #include "types.h"
 #include "script_layer.h"
-#include "field_offset.h"
 
 #endif

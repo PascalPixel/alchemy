@@ -25,7 +25,6 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "field_offset.h"
 
 #include "resource_37de_map.h"
 #include "map_tables.h"

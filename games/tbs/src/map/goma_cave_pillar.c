@@ -70,7 +70,6 @@
 #include "map_tables.h"
 #include "djinn_ids.h"
 #include "pushed_object.h"
-#include "b5_context.h"
 #include "edition.h"
 #include "tbs_edition.h"
 #include "object_event.h"

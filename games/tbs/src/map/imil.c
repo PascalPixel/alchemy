@@ -98,7 +98,6 @@
 #include "fx_work.h"
 #include "facing_object.h"
 #include "speaker.h"
-#include "object_lookup.h"
 #include "field_service.h"
 #include "iwram_call.h"
 #include "frame.h"

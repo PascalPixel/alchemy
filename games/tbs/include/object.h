@@ -5,7 +5,6 @@
 /// Object, an object's runtime state, and the object snapshots.
 
 #include "unit/field/field.h"
-#include "object_lookup.h"
 #include "types.h"
 #include "static_assert.h"
 

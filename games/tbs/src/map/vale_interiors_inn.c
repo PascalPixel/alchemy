@@ -104,7 +104,6 @@
 #include "resource.h"
 #include "glyph.h"
 #include "animspr.h"
-#include "b5_context.h"
 #include "io_reg.h"
 #include "call.h"
 #include "field_effect.h"

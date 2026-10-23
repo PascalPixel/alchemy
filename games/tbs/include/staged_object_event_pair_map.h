@@ -1,6 +1,0 @@
-#ifndef ALCHEMY_STAGED_OBJECT_EVENT_PAIR_MAP_H
-#define ALCHEMY_STAGED_OBJECT_EVENT_PAIR_MAP_H
-
-#include "types.h"
-
-#endif

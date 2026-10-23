@@ -68,7 +68,6 @@
 #include "djinn_ids.h"
 #include "field_effect.h"
 #include "pushed_object.h"
-#include "select_overlay_data_by_runtime_selector.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

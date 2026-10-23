@@ -27,7 +27,6 @@
 #include "tbs_edition.h"
 #include "text_font.h"
 #include "types.h"
-#include "field_offset.h"
 #include "dma.h"
 #include "ram_buffer.h"
 #include "script_layer.h"

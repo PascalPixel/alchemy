@@ -83,7 +83,6 @@
 #include "map_tables.h"
 #include "djinn_ids.h"
 #include "pushed_object.h"
-#include "select_overlay_data_by_runtime_selector.h"
 #include "edition.h"
 #include "object_dispatch.h"
 #include "map_ids.h"

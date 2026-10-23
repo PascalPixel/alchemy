@@ -726,9 +726,9 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 389	text	games/tbs/src/map/import/goma_cave_pillar
 389	text	libgcc.a:_call_via_rX
 389	bss	*	.bss COMMON
-38a	text	games/tbs/src/map/entry/goma_cave_waterway
-38a	text	games/tbs/src/map/goma_cave_waterway
-38a	text	games/tbs/src/map/import/goma_cave_waterway
+38a	text	games/tbs/src/map/entry/goma_cave_stream
+38a	text	games/tbs/src/map/goma_cave_stream
+38a	text	games/tbs/src/map/import/goma_cave_stream
 38b	text	games/tbs/src/map/entry/bilibin
 38b	text	games/tbs/src/map/bilibin
 38b	text	games/tbs/src/map/import/bilibin

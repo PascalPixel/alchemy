@@ -30,7 +30,7 @@
 ///
 /// Open questions: none.
 #include "game_state.h"
-#include "unit/map/goma_cave_waterway.h"
+#include "unit/map/goma_cave_stream.h"
 #include "unit/map/common/effect_spawn.h"
 #include "unit/object/object.h"
 #include "unit/object/psynergy_effects.h"
@@ -62,7 +62,7 @@
 
 /// MapId_GomaCaveStream's object events, numbering its object event template
 /// rows from LOCALID_FIRST_PLACED.
-enum GomaCaveWaterwayLocalId {
+enum GomaCaveStreamLocalId {
   /// The stump Move pushes, as Garet calls the one at the Goma Cave Entrance.
   /// ★ Named from the game: "It's no use. Our Psynergy isn't strong enough to
   /// free that stump." (MsgGomaNoUsePsynergy)
@@ -74,7 +74,7 @@ enum GomaCaveWaterwayLocalId {
 /// warps to any warp destination by number, reaches it.
 enum { WARP_DEST_BESIDE_STUMP = 99 };
 
-static void GomaCaveWaterway_LeapStump(s32 stumpId);
+static void GomaCaveStream_LeapStump(s32 stumpId);
 
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
@@ -108,7 +108,7 @@ static void EventScript_MoveStump(void) {
   stump = ObjectEvent_GetById(LOCALID_STUMP);
   column = stump->x.fixed / PIXELS(16);
   if (column == 24) {
-    GomaCaveWaterway_LeapStump(LOCALID_STUMP);
+    GomaCaveStream_LeapStump(LOCALID_STUMP);
     ObjectEvent_GetById(LOCALID_STUMP)->priorityFlags |=
         OBJ_EVENT_PRIORITY_UNDERFOOT;
     MapGrid_CopyCellAttributes(19, 74, 9, 3, 19, 17);
@@ -155,7 +155,7 @@ s32 Map_Initialize(void) {
 }
 
 /// The leaping stump's update hook turns its sprite a fixed amount per frame.
-static void GomaCaveWaterway_SpinStump(union FieldObject *fieldObject) {
+static void GomaCaveStream_SpinStump(union FieldObject *fieldObject) {
   struct AnimationObject *sprite = fieldObject->objectEvent.sprite;
 
   sprite->rotation -= 0x800;
@@ -166,7 +166,7 @@ static void GomaCaveWaterway_SpinStump(union FieldObject *fieldObject) {
 /// The stump spins in place, leaps and lands with a shake and a ring of dust,
 /// then hops on into the water with a splash and sinks
 /// (STUMP_ANIMATION_SPLASH).
-static void GomaCaveWaterway_LeapStump(s32 stumpId) {
+static void GomaCaveStream_LeapStump(s32 stumpId) {
   struct ObjectEvent *stump;
   u32 i;
   struct Vector3 dir;
@@ -180,7 +180,7 @@ static void GomaCaveWaterway_LeapStump(s32 stumpId) {
     stump->x.fixed -= Trig_Cos(stump->sprite->rotation) / 2;
     stump->targetX = OBJ_EVENT_NO_TARGET;
   }
-  stump->update = GomaCaveWaterway_SpinStump;
+  stump->update = GomaCaveStream_SpinStump;
   OBJECT_SPEED(stumpId, PIXELS(3), 3 * PIXELS(1) / 2);
   ObjectEvent_SetDestination(stumpId, 376, 288);
   stump->gravity = 4 * PIXELS(1) / 5;

@@ -1,6 +1,6 @@
 # Menus
 
-![The field menu is a row of icons: Psynergy, Djinn, Item and Status, with the Djinn icon left out until the first Djinni joins. Choosing one opens that screen, which runs its own steps a frame at a time. Backing out of a screen, or pressing Start, brings the icons back, and the Djinn screen always comes back to them. Choosing Psynergy or an item meant for the field closes the menu instead, and the field uses it, as Move pushes a stone pillar. Backing out of the icons returns to walking. In the game, before the first Djinni joins: three icons, Psynergy, Item and Status, the chosen one raised with its name beside it.](https://alchemy.pascalpixel.com/illustrations/menu/field-menu.svg)
+![The field menu is a row of icons, Psynergy, Djinn, Item and Status, each opening a screen. Backing out of a screen brings the icons back; choosing Psynergy or an item meant for the field closes the menu, and the field uses it, as Move pushes a stone pillar. In the game: the row before the first Djinni joins, with the chosen icon raised and its name beside it.](https://alchemy.pascalpixel.com/illustrations/menu/field-menu.svg)
 
 When the player opens the menu on the field, a row of icons comes up:
 [Psynergy](../../glossary.md#psynergy-and-pp), [Djinn](../../glossary.md#djinn), Item and Status. Each opens a screen where the player picks
@@ -10,9 +10,10 @@ field holds still behind the screen, and when the player backs out the icons
 come back. Psynergy or an item meant for the field, such as Move for a stone
 pillar, closes the menu instead, so that the field can use it.
 
-The menu code runs those four screens, the member chooser the Colosso [maps](../../glossary.md#map)
-open, and three [overlays](../../glossary.md#overlay) that are mostly menus: the title screen, the file
-select screen and the Battle Arena's lobby.
+The menu code runs those four screens, the member chooser the [maps](../../glossary.md#map) of
+Colosso, Tolbi's tournament, open, and three [overlays](../../glossary.md#overlay) that are mostly menus:
+the title screen, the file select screen and the lobby of the Battle Arena,
+where parties battle each other over a link cable or fight monsters.
 [Menus, windows and shops](../../menus.md#field-menu-screens) explains in
 brief how the field menu opens a screen, how the field is held still behind
 it, how Start closes a screen from any depth and how Psynergy and items meant
@@ -35,19 +36,20 @@ own way, as its own list of windows, members and entries. The shop counters
 take the same block, which is why a counter and the field menu are never open
 together.
 
-The block is borrowed from the [heap](../../glossary.md#heap-and-pools), the memory the engine lends out to
-whatever runs, under the numbered slot `HEAP_SLOT_MENU`: `MENU_WORK_SIZE`
-bytes, reached as `gMenuWork`. Each screen reads it through its own struct,
-naming the fields that screen uses: `InventoryMenuState` (the Item screen,
-and the pieces the screens share), `PsynergyMenuState`,
+The block is borrowed from the [heap](../../glossary.md#heap-and-pools) under the [heap slot](../../glossary.md#heap-slot) `HEAP_SLOT_MENU`:
+`MENU_WORK_SIZE` bytes, reached as `gMenuWork`. Each screen reads it through
+its own struct, naming the fields that screen uses: `InventoryMenuState` (the
+Item screen, and the pieces the screens share), `PsynergyMenuState`,
 `CharacterMenuState`, `DjinnMenuWork` and `FourObjectMotionState`. Why they
-stay separate structs rather than one is a question of rebuilding [the
-original](../../glossary.md#the-original) bytes, which [Matching](../MATCHING.md) covers. The work has room for eight party members
+stay separate structs rather than one is a question of [matching](../../glossary.md#matching-decompilation): the code
+has to compile to [the original](../../glossary.md#the-original)'s instructions, and
+[Matching](../MATCHING.md) covers how. The work has room for eight party members
 (`ownerIds`) and 32 listed entries (`entryIcons`, `items`). The counters take
 the same slot as `struct ShopRuntime`, and the save screen uses it for its
 [sprites](../../glossary.md#sprite-and-oam).
 
-The Djinn and Status screens also take blocks from the alternate pool: the
+The Djinn and Status screens also take short-lived blocks with no slot from
+the heap's alternate pool: the
 Djinn screen's backdrop (`struct DjinnMenuBackdrop`), which saves the field
 tiles and palettes it covers, and the Status screen's copies of the first two
 background palettes and of the window tiles it draws over. Each puts them
@@ -55,7 +57,7 @@ back and frees them before returning.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `HEAP_SLOT_MENU` | 55 | the [heap slot](../../glossary.md#heap-slot) of the menu work |
+| `HEAP_SLOT_MENU` | 55 | the heap slot of the menu work |
 | `MENU_WORK_SIZE` | `0xa70` (2,672) | the menu work's size in bytes |
 | `INVENTORY_SLOTS` | 15 | slots in a member's inventory |
 
@@ -71,21 +73,22 @@ menu's icons come up again. When the player has chosen Psynergy or an item
 to use on the field, the screen returns with that choice and the menu closes.
 The Djinn screen always returns to the icons.
 
-Each screen is entered from the field menu by its `FIELD_MENU_` id through
-the [far-call](../../glossary.md#far-call) table `system/far_call/MENU.S`, the jumps at the start of the
-menu [bank](../../glossary.md#bank) that code in other banks of the program calls. Every screen but Djinn returns
--1 when the player backs out or presses Start; the Psynergy and Item screens
-return 1 when Psynergy or an item is to be used on the field. The Djinn
-screen always returns 1, which `Menu_RunTopSelection` also takes as "open the
-icons again". `Menu_SelectTopEntry` leaves out the Djinn icon while
+`Menu_RunTopSelection`, in the window code, runs the row of icons and calls
+the screen the player picks by its `FIELD_MENU_` id. The screens are in the
+menu [bank](../../glossary.md#bank), so it calls each through the bank's [far-call](../../glossary.md#far-call) table,
+`system/far_call/MENU.S` (`PsynergyMenu_RunFar` and so on).
+`Menu_SelectTopEntry` leaves out the Djinn icon while
 `Party_SumDjinnCountsFar` finds no Djinni.
 
-| Icon | Value | Function | Part |
-| --- | --- | --- | --- |
-| `FIELD_MENU_PSYNERGY` | 1 | `PsynergyMenu_Run` | [`menu/psynergy.c`](menu/psynergy.c) |
-| `FIELD_MENU_DJINN` | 2 | `DjinnMenu_Run` | [`menu/djinn.c`](menu/djinn.c) |
-| `FIELD_MENU_ITEM` | 3 | `ItemMenu_Run` | [`menu/item.c`](menu/item.c) |
-| `FIELD_MENU_STATUS` | 4 | `StatusMenu_Run` | [`menu/status.c`](menu/status.c) |
+`Menu_RunTopSelection` reads each screen's result in that screen's own case,
+so the same value can mean different things:
+
+| Icon | Value | Function | Part | Returns | Then |
+| --- | --- | --- | --- | --- | --- |
+| `FIELD_MENU_PSYNERGY` | 1 | `PsynergyMenu_Run` | [`menu/psynergy.c`](menu/psynergy.c) | -1 backed out or Start; 1 Psynergy to use on the field | -1 shows the icons again; 1 closes the menu |
+| `FIELD_MENU_DJINN` | 2 | `DjinnMenu_Run` | [`menu/djinn.c`](menu/djinn.c) | always 1 | any nonzero result shows the icons again |
+| `FIELD_MENU_ITEM` | 3 | `ItemMenu_Run` | [`menu/item.c`](menu/item.c) | -1 backed out or Start; 1 an item to use on the field | -1 shows the icons again; 1 closes the menu |
+| `FIELD_MENU_STATUS` | 4 | `StatusMenu_Run` | [`menu/status.c`](menu/status.c) | -1 | shows the icons again |
 
 ### The Psynergy screen
 
@@ -104,16 +107,37 @@ the PP, and the list comes back for another choice.
 
 The steps are `PSYNERGY_STEP_OWNER`, `_LIST`, `_CLASSIFY`
 (`PsynergyMenu_ClassifySelectedPsynergy`), `_TARGET` and `_APPLY`, run by
-`Menu_ResolveSelectedAction`. `_CLASSIFY` returns 0 for the field when the
-map has an event for the Psynergy's field effect, 2 for the whole party
-when its range is the whole party, 1 for one member when its target mode is
-2, and 0 otherwise. Psynergy for the field is written as the field's
-Psynergy request (`psynergyRequest` in the event work,
-`owner << 10 | Psynergy`), and `PsynergyMenu_Run` returns 1. `_APPLY` calls
+`Menu_ResolveSelectedAction`. `_CLASSIFY` asks its questions in this order:
+
+| The Psynergy | Returns | Next |
+| --- | --- | --- |
+| has a Psynergy event in this map for what the leader faces | 0 | the field casts it |
+| has a range of `ABILITY_RANGE_ALL` | 2 | used on the whole party at once (`_APPLY`) |
+| has the target mode `TARGET_MODE_ALLIES` | 1 | asks whom (`_TARGET`) |
+| anything else | 0 | the field casts it, though the map has no event for it |
+
+Psynergy for the field is written as the field's Psynergy request,
+`psynergyRequest` in the event work (`gEventWork`, the running map's state),
+and `PsynergyMenu_Run` returns 1. The request is one 16-bit word:
+
+```
+bits 15..10  the caster, by character id (owner)
+bits  9..0   the Psynergy's ability id
+```
+
+`_APPLY` calls
 `Ability_ApplyToTargets` and takes the PP with `Unit_AddPpFar`; when the
 Psynergy fails on one member it goes back to `_TARGET`. In its shortcut modes
 (`PSYNERGY_MODE_SET_L`, `_SET_R`) the same list sets the Psynergy the L or R
-button casts on the field.
+button casts on the field. The steps are an enum in `menu/psynergy.c`.
+
+| Step | Value | What the screen is doing |
+| --- | --- | --- |
+| `PSYNERGY_STEP_OWNER` | 0 | choosing a member |
+| `PSYNERGY_STEP_LIST` | 1 | choosing one of their Psynergy |
+| `PSYNERGY_STEP_CLASSIFY` | 2 | working out how it is used, within the same frame |
+| `PSYNERGY_STEP_TARGET` | 3 | choosing whom to use it on |
+| `PSYNERGY_STEP_APPLY` | 4 | using it and taking the PP |
 
 ### The Item screen
 
@@ -218,20 +242,21 @@ The game's own help line says how to move about it: A turns to the next page
 and L and R switch to the next member. When the party has Djinn, a row of
 four Djinn figures, one for each [element](../../glossary.md#the-four-elements), stands under the member row and a
 little higher on the status page, and moves above the screen, out of sight,
-for the other two pages; it is placed there at once, where the Djinn
+for the other two pages; it is placed there at once, whereas the Djinn
 screen's row eases in.
 
 The figures are placed by `FourObjectMotion_`
 ([`menu/djinn_figures.c`](menu/djinn_figures.c)).
 `Menu_OpenCharacterSelector` ([`menu/status.c`](menu/status.c)) lets the
 player choose one party member over the field and returns the member's id, or
--1. The Colosso maps open it through `MENU.S`, and so does the debug test.
+-1. The Colosso maps open it through `MENU.S`, and so do the debug tests in `debug/test.c`.
 
 ## The status panel
 
 The panel beside the Item and Psynergy screens shows the chosen member, and
 below their name whatever the player is looking at needs: their HP and PP,
-their stats, or what a piece of equipment or an Orb would change.
+their stats, or what a piece of equipment would change or an item such as the Orb of
+Force would teach.
 
 ![The member panel on the Item and Psynergy screens always shows the member's portrait, name and level at the top; the screen chooses what fills the lower half. Choosing a member: class, HP, PP and experience. With R held: Attack, Defense, Agility and Luck. With the hand on equipment: the stats it would change, here Attack falling from 121 to 90 with a Long Sword. With the hand on an item that teaches Psynergy: "Force, Will learn" for the Orb of Force. A fifth kind, class, HP and PP alone, is never asked for.](https://alchemy.pascalpixel.com/illustrations/menu/status-panel.svg)
 
@@ -243,11 +268,13 @@ shows the member's name, up to two ailments or else the level, and the
 portrait, and below them what the low byte of its mode, an
 `enum StatusPanelKind`, asks for. With `STATUS_PANEL_LOWER_ONLY` it keeps the
 open window, the name and the ailments and redraws only the part below.
+The kinds go up in twos; no call passes an odd one, and of the odd values
+only 3 draws anything, the same as `STATUS_PANEL_EQUIP`.
 
 | Kind | Value | Below the name |
 | --- | --- | --- |
 | `STATUS_PANEL_EXPERIENCE` | 0 | class, HP, PP and experience |
-| `STATUS_PANEL_EQUIP` | 2 | the stats with an item equipped, or removed; 3 draws the same |
+| `STATUS_PANEL_EQUIP` | 2 | the stats with an item equipped, or removed |
 | `STATUS_PANEL_LEARN` | 4 | the Psynergy a Psynergy item teaches |
 | `STATUS_PANEL_CLASS` | 6 | class, HP and PP; no call passes it |
 | `STATUS_PANEL_STATS` | 8 | Attack, Defense, Agility and Luck |
@@ -316,7 +343,8 @@ the top of its part or file, with a comment on what differs.
 `head -4 menu/*.c` lists what each part holds. Link order is in
 `games/tbs/objects.tsv`, from `menu/menu` in the [main image](../../glossary.md#main-image) and from
 `menu/entry/title`, `menu/entry/clear` and `menu/entry/lobby` for the
-overlays `36f`, `370` and `3cb`. The prototypes are in
+overlays, which the object list names by their [resource](../system/README.md#the-resource-directory-and-table-order) numbers: `36f`
+(title), `370` (file select) and `3cb` (Battle Arena). The prototypes are in
 `games/tbs/include/unit/menu/`: [`menu.h`](../../include/unit/menu/menu.h)
 for the menu object and [`title.h`](../../include/unit/menu/title.h),
 `clear.h` and `lobby.h` for the overlays. The structs the screens read their
@@ -377,7 +405,7 @@ Some prefixes are older than the parts. `PsynergyMenu_InitializeEntryObjects`
 sets up the party figures for the Item, Psynergy and Djinn screens (through
 `ItemMenu_Initialize`), for the Status screen and, through
 `PsynergyMenu_InitializeEntryObjectsFar`, for the counters. Many of these
-names are shared with [The Lost Age](../../glossary.md#the-two-games)'s twins (`games/tla/src/menu`), with the
+names are shared with [The Lost Age](../../glossary.md#the-two-games)'s copies of these files (`games/tla/src/menu`), with the
 far-call tables and with the window folder, so renaming one crosses folders.
 [Matching](../MATCHING.md) explains the spellings some sites keep and the
 comment markers.
@@ -405,11 +433,12 @@ they stay NULL and closing them does nothing. The Djinn screen's
 `unopenedWindow`
 (`struct DjinnMenuWork`) is never given a window either, but its preview
 redraws it as it closes (a [`// BUG:`](../../glossary.md#bug-bugfix-and-ubfix) in `djinn_preview.c`). That reads the
-window's place through NULL, from the BIOS, which outside the BIOS returns the
-last BIOS instruction fetched; as a width that is over 30, so
-`UiWindow_DrawFrame` draws nothing.
+window's place through `NULL`, which on this console is the BIOS. Code
+outside the BIOS reading it gets the last BIOS instruction fetched instead;
+read as a width, that value is over 30 tiles, so `UiWindow_DrawFrame` draws
+nothing.
 
-- XXX (no evidence): why the Start watch is a game flag
+- XXX (no evidence): why the [Start](../../menus.md#start) watcher's flag is a game flag
   (`FLAG_MENU_START_PRESSED`) rather than a variable; the task that sets it
   and every test are in the menu's own code, so nothing in the ROM needs it to
   be a flag, and only Camelot's sources could say why it is one.

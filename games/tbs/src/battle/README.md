@@ -1,6 +1,6 @@
 # Battles
 
-![Who acts first in a round, from first to last. First the Djinn Granite, Flash and Ground, which guard or hold an enemy, before everyone. Then everyone by Agility, highest first: a party member's Agility with up to a sixteenth more at random each round, an enemy's as it is, a tie keeping the party ahead and the enemies in a shuffled order. A unit's second action in a round comes at half its Agility. Defend is raised before anyone acts, so it guards for the whole round.](https://alchemy.pascalpixel.com/illustrations/battle/turn-order.svg)
+![Who acts first in a round, from first to last: three Djinn that guard or hold an enemy, then everyone by Agility, highest first, a second action late; Defend is raised before anyone acts.](https://alchemy.pascalpixel.com/illustrations/battle/turn-order.svg)
 
 Everything the rules of a fight decide is worked out here: who acts in what
 order, which enemy does what, who an ability reaches, whether a blow misses
@@ -16,9 +16,15 @@ folders share the work. [Battle effects](../effect/README.md) draws the
 animations, [Windows](../window/README.md) holds the command menu and the
 [party](../../glossary.md#the-party)'s status window, and [Game rules](../game/README.md) holds the ability, item and enemy
 tables and the arithmetic in `game/battle_calc.c`. [Battle](../../battle.md)
-explains a battle as a whole, how it is entered from the field and how the
-rules and the effects run at the same time; this page explains the rules
-underneath.
+explains a battle as a whole: how it is entered from the field, the loop of
+rounds and actions in code, and how the rules and the effects run at the
+same time. Read it first; this page explains the rules underneath.
+
+Every rule here is the [original](../../glossary.md#the-original)'s,
+rebuilt so that it compiles to the same bytes
+([matching decompilation](../../glossary.md#matching-decompilation)), so a
+few forms below are kept for the bytes rather than for the reader; Design
+names them.
 
 ## Rounds
 
@@ -33,8 +39,8 @@ Who acts first is decided by Agility, highest first, with three twists. A
 [Djinni](../../glossary.md#djinn) that guards or holds an enemy (Granite, Flash and Ground) goes before
 everyone. A party member's Agility gains up to a sixteenth more at random
 each round, so two members of nearly equal speed may swap places from one
-round to the next; an enemy's Agility counts as it is, and enemies of equal Agility go in a
-shuffled order. And a unit that acts twice in a round has its second action
+round to the next; an enemy's Agility counts as it is. On a tie the party goes first, and
+enemies of equal Agility go in a shuffled order. And a unit that acts twice in a round has its second action
 at half its Agility, so it usually comes late. Defend is raised as soon as
 the actions are sorted, before anyone acts, so a defending unit is guarded
 against everything that round, even the fastest enemy.
@@ -48,30 +54,35 @@ Lighthouse storm. After the last, `spoils.c` hands out coins, experience,
 items and level ups.
 
 Each round runs five steps, and the battle ends when one side has no unit
-standing or the party gets away:
+standing or the party gets away. Steps 1 and 5 run once a round, steps 2 to
+4 once for each action:
 
 1. `round.c` gathers the actions: the party's from the command menu
    (`BattlePresentation_BuildActions`), or from `auto_battle.c` under
    `FLAG_AUTO_BATTLE`; the enemies' from `BattleCommand_SelectAutomatic`
-   (`enemy_ai.c`), or from the other console in a link battle. Each action's
-   priority is the unit's Agility; a party member's gains a random 0 to a
-   sixteenth of it (`Battle_CollectPartyCommands`). A unit with two actions
-   a round is listed twice, its second entry at half its Agility. The party's
-   entries come first and the enemies' in a shuffled order.
-   `BattleQueue_SortByPriority` sorts them, highest first, keeping the order
-   of equal priorities; a Djinni whose added effect is a guard or Ground
-   (Granite, Flash, Ground) has `DJINN_FIRST_PRIORITY` added and goes before
-   everyone. Defend and Total Defense are raised here, before anyone acts.
-2. `BattleCommand_BuildPlan` (`plan.c`) announces each action and fills the
+   (`enemy_ai.c`), or from the other console in a link battle. Each
+   action's priority is worked out as above (`Battle_CollectPartyCommands`),
+   and `BattleQueue_SortByPriority` sorts them, highest first, keeping the
+   order of equal priorities; the three Djinn have `DJINN_FIRST_PRIORITY`
+   added. Defend and Total Defense are raised here.
+2. `BattleCommand_BuildPlan` (`plan.c`) announces the action and fills the
    plan.
 3. `BattlePresentation_DispatchAction` (`staging.c`) stages the plan and runs
    its effect.
-4. `BattleTarget_Execute` (`target_exec.c`) applies the ability to each target,
-   called once a target from the event playback.
-5. `turn_end.c` closes the actor's turn and then the round: stat changes and
-   statuses count down, Djinn recover, poison takes a tenth of the maximum HP
-   (deadly poison a fifth), the Grim Reaper takes a unit whose countdown has
-   run out, and a [summon](../../glossary.md#summons)'s boost is applied.
+4. While the effect plays, the battle's playback task calls
+   `BattleTarget_Execute` (`target_exec.c`) once for each target, which
+   applies the ability to it; then `turn_end.c` closes the actor's turn:
+   poison takes a tenth of the maximum HP (deadly poison a fifth), the Grim
+   Reaper takes a unit whose countdown has run out, and a
+   [summon](../../glossary.md#summons)'s boost is applied.
+5. `turn_end.c` closes the round: stat changes and statuses count down and
+   Djinn recover.
+
+The rules never draw. `BattleTarget_Execute` changes the units at once and
+leaves a list of what to show, the battle event queue, which playback shows
+in step with the animation;
+[Rules and pictures meet at the event queue](#rules-and-pictures-meet-at-the-event-queue)
+takes it apart.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -91,10 +102,10 @@ actions and a habit for choosing among them, and the dice do the rest.
 
 An enemy picks one of the eight abilities in its row of `../game/enemies.tsv`
 by its action strategy (`enum EnemyActionStrategy`). Three strategies draw at
-random by a row of `gBattleCommand_SelectionWeights`: evenly, falling by 6 a
-place, or falling steeply from 113 in 256 to 5. The other four take the list
-in order, from a random place or the first, or repeat the last pick, and
-remember their place between turns.
+random by a row of `gBattleCommand_SelectionWeights`: evenly, falling by 6 an
+entry, or falling steeply from 113 in 256 to 5. The other four take the list
+in order, from a random entry or the first, or repeat the last pick, and
+remember their entry between turns.
 
 `BattleCommand_SelectAutomatic` runs twice for each enemy. As the round is
 built (`retry` 0) it draws once and keeps the pick only if it is a guard, so
@@ -106,17 +117,18 @@ number from 0 to 255, so a chance of 53 in 256 is the 53 rolls from 0 to 52:
 the Gryphon's first action, Wing Flutter, takes rolls 0 to 52, Tornado 53 to
 99, Twin Beaks 100 to 140, and so on to Ward's 245 to 255.
 
-| Strategy | Value | How the place is picked |
+| Strategy | Value | How the entry is picked |
 | --- | --- | --- |
 | `ACTION_STRATEGY_EVEN` | 0 | at random, 32 in 256 each |
 | `ACTION_STRATEGY_FALLING` | 1 | at random, from 53 in 256 down to 11 |
 | `ACTION_STRATEGY_FIRST_FAVOURED` | 2 | at random, the first 113 in 256, down to 5 |
-| `ACTION_STRATEGY_RANDOM_START` | 3 | a random place the first time, then each in turn |
-| `ACTION_STRATEGY_IN_ORDER` | 4 | each in turn from the remembered place |
-| `ACTION_STRATEGY_NEXT_PICK` | 5 | the next place at each new pick, from 0 |
-| `ACTION_STRATEGY_SAME` | 6 | the place last picked |
+| `ACTION_STRATEGY_RANDOM_START` | 3 | a random entry the first time, then each in turn |
+| `ACTION_STRATEGY_IN_ORDER` | 4 | each in turn from the remembered entry |
+| `ACTION_STRATEGY_NEXT_PICK` | 5 | the next entry at each new pick, from 0 |
+| `ACTION_STRATEGY_SAME` | 6 | the entry last picked |
 
-An ability whose added effect is Defend, Total Defense or Flee is never used
+An ability whose added effect (what it does besides damage or healing, the
+`effect` column of `actions.tsv`) is Defend, Total Defense or Flee is never used
 as an ability. `BattleCommand_SelectAutomatic` turns it into the command
 `COMMAND_DEFEND`, `COMMAND_DEFEND2` or `COMMAND_FLEE`, aimed at the enemy itself, so the
 guard is raised with the party's before anyone acts.
@@ -167,7 +179,28 @@ show.
 command into an ability id, shows its announcement, picks its targets and
 makes the rolls that must be known before the effect plays. It returns 0 to
 stage the plan, or `PLAN_REPORTED` when the action failed and its message
-has been shown.
+has been shown. The plan is `struct BattlePlan` (`battle_type.h`), here
+with its comments shortened:
+
+```c
+struct BattlePlan {
+  u8 actorId;
+  s8 targetCount;
+  u8 targetIds[BATTLE_TARGET_CAPACITY];          /* in battlefield order */
+  s8 targetOffset[BATTLE_TARGET_CAPACITY];       /* places from the aimed one */
+  s8 targetMultiplier[BATTLE_TARGET_CAPACITY];   /* 0 miss, 1, 2 or 3 blows */
+  s8 targetCritical[BATTLE_TARGET_CAPACITY];     /* enum BattleCritical */
+  s8 targetHit[BATTLE_TARGET_CAPACITY];          /* added effect landed */
+  s16 command;                                   /* enum BattleCommand */
+  u8 padding[2];
+  s32 abilityId;
+  s32 element;
+  s32 outcome;               /* enum BattlePlanStaging */
+  u32 presentationFlags;     /* actflags.tsv's row: STAGING_ */
+  s32 failure;
+  u32 hauntDamage;
+};
+```
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -232,24 +265,23 @@ one in range is left, the actor defends (`<unit> is defending!`). The player
 sees the same range as a cursor and smaller markers while aiming
 (`BattleTarget_RunSelection`, `../window/battle_command/targets.c`).
 
-Seen from above, the battlefield is a plane in pixels.
-`BattleUnit_RefreshPlacement` stands the party at x 80, each member at the z
-of their place in `gBattlePlacement_StepPairs`, and
-`BattlePlacement_LayoutEnemies` lines the enemies up at x -80, each taking
-38 pixels of the line if large and 27 if small. Four large enemies therefore
-stand 38 pixels apart, from z 45 to z -69, off centre because the line
-starts from an estimate of 30 pixels an enemy. Range is counted in places,
-not pixels: Quake's range of 2 reaches one place on either side of the aimed
-one, so with the aim on the last enemy only the one beside it is covered,
-however far apart they stand. The aim wraps from the last place to the
-first.
-
 | Name | Value | Meaning |
 | --- | --- | --- |
 | `ABILITY_RANGE_ALL` | 255 | the whole side, every target treated as the aimed one |
 | `TARGET_MAX` | 14 | targets a plan holds at most |
 | `PLACE_PARTY` | `0x100` | added to a party place to make its place code |
 | `PLACE_ENEMY` | `0x180` | added to an enemy place to make its place code |
+
+### Where each place stands
+
+Seen from above, the battlefield is a plane in pixels, with x between the
+two sides and z along each line. `BattleUnit_RefreshPlacement` stands the party at x 80, each
+member at the z of their place in `gBattlePlacement_StepPairs`, and
+`BattlePlacement_LayoutEnemies` lines the enemies up at x -80, each taking
+38 pixels of the line if large and 27 if small. Four large enemies therefore
+stand 38 pixels apart, from z 45 to z -69, off centre because the line
+starts from an estimate of 30 pixels an enemy. None of this changes who an
+ability reaches.
 
 ### Rolls made in advance
 
@@ -268,9 +300,13 @@ A plain Attack never misses a target that cannot act (down, asleep, stunned,
 charmed or held by Ground). Otherwise it misses one time in 32, and a deluded
 attacker also misses 153 times in 256; the Djinn tutorial's attack always
 misses. A miss sets the target's multiplier to 0, and the player reads
-`<unit> nimbly dodges the blow!`. A critical hit comes one time in 32, or
-failing that at half the percentage the equipment adds to its unleash chance
-(`CRITICAL_HIT`).
+`<unit> nimbly dodges the blow!`.
+
+A critical hit (`CRITICAL_HIT`) takes two rolls. The first lands one time in
+32. If it misses, the second lands at half the percentage the attacker's
+equipment adds to its weapon's unleash chance
+(`Equipment_GetUnleashRateBonus`): equipment adding 10 percent gives a 5
+percent second chance, and none gives none.
 
 An ability with a double or triple blow makes one roll, and a success
 applies to every target: 153 in 256 for Gust, Rapid Smash, Slice and Sonic Smash, and one time in four for
@@ -293,15 +329,21 @@ effect is rolled per target in `BattleTarget_Execute`.
 ### Staging and announcement
 
 The plan records how its action is staged, from `actflags.tsv` and
-`actstat.tsv`, and the announcement the player reads before it plays.
+`actstat.tsv`, and the announcement the player reads before it plays. Three
+words name the parts of how it looks:
 
-![Isaac's Quake at Garet, Ivan and Mia played seven times in a grid, frame for frame, `BattlePlan.outcome` rewritten as `BattleCommand_BuildPlan` returns to one of `PLAN_SHOW_CAST` (Quake's own) to `PLAN_SHOW_FULL_SCREEN`. Under `PLAN_SHOW_CAST`, `PLAN_SHOW_SUMMON` and `PLAN_SHOW_FULL_SCREEN` rings of light gather round Isaac before the rock pillars rise; under `PLAN_SHOW_ITEM` and `PLAN_SHOW_DJINNI` the pillars rise with no gathering; under `PLAN_SHOW_ENEMY_CAST` yellow streaks burst round Isaac in place of the rings; and under `PLAN_SHOW_FLEE` Isaac turns and runs and the battle ends, the screen black. The six that cast deal the same damage, `Garet takes 14 damage!!!`, `Ivan takes 15 damage!` and `Mia takes 12 damage!`.](https://alchemy.pascalpixel.com/guides/battle/staging.gif)
+- the **outcome** (`BattlePlan.outcome`) is the staging around the
+  animation: whether the actor runs up, casts, hides, or nothing moves;
+- the **effect kind** is which animation plays;
+- the **variant** is how strong a version of it.
+
+![A test recording: Isaac casts Quake at Garet, Ivan and Mia seven times, frame for frame, with the plan's outcome forced to a different value each time, from `PLAN_SHOW_CAST`, Quake's own, to `PLAN_SHOW_FULL_SCREEN`. As a cast, a summon or a full-screen move, rings of light gather round Isaac before the rock pillars rise. As an item or a Djinni, the pillars rise with no gathering. As an enemy's cast, yellow streaks burst round Isaac instead of the rings. As an escape, Isaac turns and runs and the battle ends. The six that cast deal the same damage: `Garet takes 14 damage!!!`, `Ivan takes 15 damage!` and `Mia takes 12 damage!`.](https://alchemy.pascalpixel.com/guides/battle/staging.gif)
 
 `actflags.tsv` gives the plan's presentation flags: the effect kind in the
-low twelve bits (`STAGING_KIND_MASK`), its variant above them, and the bits
+low twelve bits (`STAGING_KIND_MASK`), the variant above them, and the bits
 that choose the effect's entry point (`STAGING_BY_ID_RANGE`,
-`STAGING_SUMMON`). [Battle effects](../effect/README.md) explains the effect
-kinds and their variants.
+`STAGING_SUMMON`). [Battle effects](../effect/README.md#how-a-move-picks-its-effect)
+gives the whole bit layout.
 
 The outcome comes from `actstat.tsv` where its row is not 0. Otherwise an
 ability that costs PP, or Psy Drain (`Ability_IsPsynergy`), is a cast
@@ -349,13 +391,11 @@ hold. For damage the game takes the ability's power, scales it by the
 element and by how far the target stands from the one aimed at, and adds a
 little luck.
 
-![How Psynergy damage is worked out, for Isaac's Avalanche at three enemies in a row, aimed at the first. Avalanche's power is 160, the damage at an even match. Isaac's Venus Power is 20 ahead of each target's Venus Resist, which multiplies it by about 1.1, to 175. The distance keeps 100 percent for the aimed enemy, 80 one place away and 60 two away: 175, 140 and 105. Last, 0 to 3 is added at random: 175 to 178, 140 to 143 and 105 to 108. A defending target takes half, and one guarded by Total Defense a tenth. Every step rounds down.](https://alchemy.pascalpixel.com/illustrations/battle/damage.svg)
+![How Psynergy damage is worked out, for Isaac's Avalanche at three enemies: its power of 160, times 281 in 256 for Isaac's Venus Power 20 ahead, is 175; the distance keeps 100, 80 and 60 percent, 175, 140 and 105; 0 to 3 is added at random; a guard halves it or cuts it to a tenth. Every step rounds down.](https://alchemy.pascalpixel.com/illustrations/battle/damage.svg)
 
-`BattleTarget_Execute` turns the plan into what happens to one target: its damage
-or healing, its added effect, and the events that show them.
-
-`BattleTarget_Execute` ([`battle/target_exec.c`](battle/target_exec.c)) applies
-the plan to one target. It draws nothing and never waits: it changes the
+`BattleTarget_Execute` ([`battle/target_exec.c`](battle/target_exec.c)) turns the
+plan into what happens to one target: its damage or healing, its added
+effect, and the events that show them. It draws nothing and never waits: it changes the
 units at once and pushes the events that show the change, in the order the
 player sees them. It runs in seven phases, marked in its body:
 
@@ -378,9 +418,10 @@ player sees them. It runs in seven phases, marked in its body:
 ### The ability kind
 
 The ability kind chooses the formula in phase 5. The formulas are in
-[`../game/game/battle_calc.c`](../game/game/battle_calc.c), in another part
-of the program, and the battle calls them by their `Far` names, the entries
-of the table of calls between parts (`../system/far_call/GAME.S`).
+[`../game/game/battle_calc.c`](../game/game/battle_calc.c), in the `game`
+[bank](../../glossary.md#bank), so the battle calls them by their
+[far-call](../../glossary.md#far-call) names (`../system/far_call/GAME.S`):
+`Battle_CalculateRecoveryFar` leads to `Battle_CalculateRecovery`.
 
 | Ability kind | What the target takes | What the power is |
 | --- | --- | --- |
@@ -512,34 +553,26 @@ aimed place.
 
 ![Ivan casts Confuse at Isaac, Garet and Mia: a pale blue mist rolls over the three, and the messages read `Isaac is confused!` and `But it has no effect on Garet!`](https://alchemy.pascalpixel.com/abilities/confuse.gif)
 
-`Battle_RollEffectSuccessFar` (`Battle_RollEffectSuccess`) rolls it, unless the plan
-rolled it already. It fails at once when there is nothing to do: a revival on
+`Battle_RollEffectSuccess`, reached through its far-call entry
+`Battle_RollEffectSuccessFar`, rolls it, unless the plan rolled it already. It fails at once when there is nothing to do: a revival on
 a unit still standing, a cure on a unit without the ailment, Curse on a unit
 whose countdown is at its last turn. Otherwise the chance starts from the
 effect's base rate (`Battle_GetEffectBaseSuccessRate`: Sleep 45 percent,
 Taint 55, Condemn 20 and so on), gains 3 for each element level the actor is
 ahead of the target, loses 3 for every two points of the target's Luck, and
 gains 25 when the effect is one of the three the target is weak to. The
-distance table then scales it. A negative base rate is a fixed chance that
-levels, Luck and weakness don't change: Quartz 60 percent, Dew 90, and 100
-for an effect with no rate of its own. Luff gets three tries.
+distance table then scales it. Some effects have a fixed chance instead,
+which levels, Luck and weakness don't change, stored as a negative base rate:
+Quartz 60 percent, Dew 90, and 100 for an effect with no rate of its own.
+Luff's seal rolls up to three times and lands if any roll does.
 
 When the added effect of an `ABILITY_KIND_EFFECT` ability fails, the target
 takes no damage either.
 
-### Added effects that change the damage step
+### Calling an ally, and effects that change the damage step
 
-Some added effects change how the damage is dealt, or stand in for it, and are
-applied before it.
-
-Phase 4 runs only for an effect that landed. Torch's blow counts half the
-target's Defense; Severe Blow and Thrash leave the target 1 HP at most;
-Condemn and the other instant deaths skip the damage; Dynamite and Mortal
-Blow remove their user from the battle; and Psy Drain becomes
-`ABILITY_KIND_PP_DAMAGE`, or misses a target with no PP. Ground holds a
-target only while it still has an entry in the round's action list:
-`BattlePresentation_DispatchAction` clears each entry as it plays it, so a
-target that has already acted is left alone.
+Some added effects stand in for the damage or change how it is dealt, and
+are applied before it, in phases 3 and 4.
 
 Phase 3 handles Ally Search, Search for Help and Speed Surge. When the roll
 succeeds, a free unit id exists and the enemy [sprite](../../glossary.md#sprite-and-oam) slots have room
@@ -547,6 +580,18 @@ succeeds, a free unit id exists and the enemy [sprite](../../glossary.md#sprite-
 enemies are laid out again, and the player reads `<unit> appears!!` or
 `It split off into <unit>!`; otherwise `But no one came!` or
 `It failed to divide!`.
+
+Phase 4 runs only for an effect that landed:
+
+- Torch's blow counts half the target's Defense.
+- Severe Blow and Thrash leave the target 1 HP at most.
+- Condemn and the other instant deaths skip the damage.
+- Dynamite and Mortal Blow remove their user from the battle.
+- Psy Drain becomes `ABILITY_KIND_PP_DAMAGE`, or misses a target with no PP.
+- Ground, which costs its target the next action, is decided here: it holds
+  a target only while it still has an entry in the round's action list.
+  `BattlePresentation_DispatchAction` clears each entry as it plays it, so a
+  target that has already acted is left alone.
 
 ### Applying the added effect
 
@@ -631,22 +676,19 @@ a list of what to show, in order, and the screen plays the list.
 
 ![One target's events, played in order. Quake reaches Garet. The rules work out his damage at once, take 14 HP off, and queue what the player should see: the hit, which makes him flinch and flash for 9 frames; the number 14 and the name Garet, which take no time and fill in the message's blanks; the message, which waits until A is pressed; and a refresh that redraws him. A few more events that take no time follow, then the next target. The number and name go first because the message fills its blanks from them as it is written.](https://alchemy.pascalpixel.com/illustrations/battle/event-queue.svg)
 
-The battle event queue is the one channel from the rules, which change the
-units at once, to the screen, which shows the changes one by one while the
-effect plays.
-
+The battle event queue (`struct BattleEventQueue`, `BATTLE_EVENT_CAPACITY`
+events) is the one channel from the rules, which change the units at once,
+to the screen, which shows the changes one by one while the effect plays.
 `BattleTarget_Execute` never draws or waits, and an effect never computes an
-outcome. [Battle](../../battle.md#rules-and-effects-run-together) explains how
-`BattleEvent_Playback` runs as a [task](../../glossary.md#task) while the effect's own loop waits, and
-runs each target's rules once the effect calls `EFFECT_SHOW_DAMAGE`. Of the
-66 files under `../effect/parts/`, 57 call it; the rest are the effect
-system's own code (`blitter.c`, `canvas.c`, `dispatch.c`, `display.c`,
-`positions.c`) and four effects that never do (`atalanta.c`,
-`djinn_heal.c`, `torch.c`, and `orbiting.c`, which is unreachable). For
-those, `BattleEvent_WaitForReady` finds playback idle when the effect returns
-and starts it itself.
+outcome. [Battle](../../battle.md#rules-and-effects-run-together) shows the
+code that runs `BattleEvent_Playback` as a [task](../../glossary.md#task)
+while the effect's own loop waits: playback runs each target's rules once
+the effect calls `EFFECT_SHOW_DAMAGE`, and a few effects that never call it
+(`atalanta.c`, `djinn_heal.c` and `torch.c`) have playback started by
+`BattleEvent_WaitForReady` once they return.
 
-In the recording, Quake plays for about two seconds before its blow lands
+In the recording of Quake that [Battle](../../battle.md#rules-and-effects-run-together)
+shows, the rock plays for about two seconds before its blow lands
 and starts playback. Playback then resolves the three targets in the plan's
 order, the battlefield's (Garet, Ivan, Mia), not the aimed Ivan first, and
 each target's `BattleTarget_Execute` queues the same eight events. Only the hit
@@ -655,13 +697,12 @@ playback wait; the number and name it pushes before the message, and the
 name pushed for an added effect Quake doesn't have, the clear and the
 refreshes after it, all play within one frame.
 
-The queue (`struct BattleEventQueue`, `BATTLE_EVENT_CAPACITY` events) is the
-only channel from the rules to the screen. A message takes its names and
-numbers from the window system's argument table when it is decoded, so they
-are pushed before it, and a message uses them up, so each later message
-pushes the name again. `BattleEvent_DispatchQueued` plays the same queue
-straight through for an outcome shown outside an effect, such as a cast that
-is sealed or short of PP.
+A message takes its names and numbers from the window system's list of
+message arguments as it is written out, so they are pushed before it, and a
+message uses them up, so each later message pushes the name again.
+`BattleEvent_DispatchQueued` plays the same queue straight through for an
+outcome shown outside an effect, such as a cast that is sealed or short of
+PP.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -671,7 +712,7 @@ is sealed or short of PP.
 
 ### Results nobody reads
 
-Some of [the original](../../glossary.md#the-original)'s functions promise to return a value and end without
+Some of the original's functions promise to return a value and end without
 one, and no caller reads it. The source keeps the promised type where
 writing `void` would change the compiled code at the function's end, and
 [`UBFIX`](../../glossary.md#bug-bugfix-and-ubfix) gives the `void` form; [Matching](../MATCHING.md) explains the rule. `BattleTarget_Execute`,

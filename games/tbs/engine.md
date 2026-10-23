@@ -21,11 +21,18 @@ Memory is put in order and the services everything relies on are started
 once; after that one loop runs scene after scene for as long as the console
 is on.
 
+The console has two kinds of work memory: IWRAM, 32 KB inside the processor
+chip and the fastest memory it has, and EWRAM, 256 KB beside it and slower.
+The heap is the part of that memory from which code borrows blocks for its
+state and gives them back. A stack is the memory a function's local values
+live in while it runs, and an interrupt is the hardware stopping the
+program to run a handler, as it does at the end of every frame.
+
 The cartridge header jumps to `System_Entry` (`src/system/entry.s`), which
 sets up the interrupt and system stacks at the top of IWRAM and calls
 `System_Initialize`. That function clears IWRAM below the stacks, empties the
-heap, copies the resident runtime into IWRAM and points the interrupt vector
-at its dispatcher, installs `System_VBlankHandler`, starts the sound driver,
+heap, copies the resident runtime (the routines that must run fast) into
+IWRAM and points the interrupt vector at its dispatcher, installs `System_VBlankHandler`, starts the sound driver,
 resets the task table, waits ten frames and calls `Game_RunFar`. Neither
 function returns. `Game_Run` loads one scene after another for as long as the
 game runs, starting with the title. A soft reset (A, B, Select and Start held
@@ -52,8 +59,11 @@ ordinary function with a loop of its own, and when time has to pass it calls
 
 Each frame, `WaitFrames` runs the main-loop tasks
 (`Scheduler_RunPass(SCHEDULER_KEY_MAIN_LOOP)`), builds the sprite list
-(`Render_BuildOamList`) and halts the CPU until VBlank. The VBlank handler
-then copies the sprite list and scroll registers to the hardware, carries out
+(`Render_BuildOamList`: the position, size and picture of every sprite to
+draw, which the hardware keeps in its OAM, the object attribute memory) and
+halts the CPU until VBlank, the pause after the last line of the picture.
+The VBlank handler then copies the sprite list and the layers' scroll
+positions to the hardware, carries out
 the queued register writes and runs the VBlank tasks. A task is a routine
 added with `Scheduler_AddOrUpdateCallback`; window animation, battle event
 playback (`BattleEvent_Playback`) and a scene's callbacks are tasks.
@@ -69,9 +79,9 @@ saved stack. Nothing guards against it, and no task does.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `SCHEDULER_KEY_MAIN_LOOP` | `0xc80` | the pass `WaitFrames` runs each frame |
-| `SCHEDULER_KEY_VBLANK` | `0x480` | the pass the VBlank handler runs |
-| `Ram_IwramHeapEnd` | `0x03007800` | the end of the IWRAM heap |
+| `SCHEDULER_KEY_MAIN_LOOP` | 3200 (`0xc80`) | the pass `WaitFrames` runs each frame |
+| `SCHEDULER_KEY_VBLANK` | 1152 (`0x480`) | the pass the VBlank handler runs |
+| `Ram_IwramHeapEnd` | `0x03007800` | the end of the IWRAM heap, as an address in IWRAM |
 | `Ram_FrameWaitStackTop` | `0x03007a00` | the stack top `WaitFrames` runs its frames from, 512 bytes above the heap's end |
 
 [Runtime](src/runtime/README.md#the-frame-loop) has the frame's order,
@@ -100,10 +110,11 @@ own address. The runtime bank is the exception: every bank calls its
 functions directly, and its table (`WaitFramesFar` for `WaitFrames`) serves
 the overlays.
 
-Distance isn't the reason: a Thumb `bl` reaches 4 MB either way, and the main
-image is a little over 1.5 MB. XXX: likely Camelot linked each bank on its own
-against the others' tables, because fixed starts and tables are what that
-would need; the ROM shows only the result.
+Distance isn't the reason. The processor's call instruction (a Thumb `bl`)
+reaches 4 MB either way, and the farthest call in the program, from the
+first bank to the resource bank's table after the sound code and the music,
+spans a little over 1.5 MB; the fourteen banks themselves take about 1 MB.
+How Camelot built the banks is an open question (below).
 [System](src/system/README.md#why-the-program-is-cut-into-banks) has the
 memory map and the per-edition bank addresses.
 
@@ -197,3 +208,9 @@ through them.
 - An overlay has the 32 KB of the overlay area, and a bank the space up to
   the next bank's fixed start.
 - Eight sound players; cues are 12 bits, 0 to 4,095.
+
+## Open questions
+
+- XXX: likely Camelot linked each bank on its own against the others'
+  tables, because fixed starts and tables are what that would need; the ROM
+  shows only the result.

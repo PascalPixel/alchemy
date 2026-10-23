@@ -331,7 +331,7 @@ void Graphics_ExpandVramTilesByColorTable(u16 *dst) {
 }
 
 /// Builds icon `resource` (0 to 31) of gIcon_MiscIconPointers, the table
-/// the status icons come from (Ui_PrepareTransferFromTableEntry), in a
+/// the status icons come from (Icon_DrawMisc), in a
 /// transfer block taken from HEAP_SLOT_GLYPH_TRANSFER, reloads VRAM cache entry
 /// `index` with it and returns the entry's first tile. The heap block is
 /// released before it returns. The summary screen loads its status icons
@@ -341,7 +341,7 @@ s32 Resource_LoadTableEntryToBuffer(s32 resource, s32 index) {
   GlyphTransfer *work;
 
   work = AllocHeapSlotEwram(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*work));
-  Ui_PrepareTransferFromTableEntry(resource);
+  Icon_DrawMisc(resource);
   result = VramCache_Reload(index, (s32)work->tiles);
   FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
   return result;
@@ -405,7 +405,7 @@ s32 Portrait_Load(u32 member, s32 cacheSlot) {
       break;
     }
   }
-  UiGlyph_LoadEntryWithPalette(portrait, 0, &slot, &tile, 0xE, 1);
+  Icon_LoadWithPalette(portrait, 0, &slot, &tile, 0xE, 1);
   return tile;
 }
 

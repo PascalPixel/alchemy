@@ -424,7 +424,7 @@ s32 DebugBrowser_Icons(void) {
           WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
         } else {
           slot = VramCache_FindFreeEntry();
-          Ui_BuildPatternToSlot(i, 0, slot);
+          Icon_BuildMiscIconTiles(i, 0, slot);
           WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
         }
       }
@@ -519,7 +519,7 @@ s32 DebugBrowser_Portraits(void) {
         s32 loadedSlot = *(u16 *)((u8 *)work + slotOffset);
         palette = 15;
         slot = loadedSlot;
-        UiGlyph_LoadEntryWithPalette(glyph, 0, &slot, &tile, palette, 1);
+        Icon_LoadWithPalette(glyph, 0, &slot, &tile, palette, 1);
       }
       Text_DrawNumberInWindow(index, 2, window, 0, 0);
       Text_DrawMessageAsTiles(index + DEBUG_GLYPH_NAME, window, 24, 0);

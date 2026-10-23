@@ -192,7 +192,7 @@ void MenuArrow_SetPositionFar(struct MenuSprite *obj, s32 x, s32 y);
 void MenuArrow_ReleaseFar(s32 value);
 /// Draws an item's icon, from its inventory code, into the glyph work buffer
 /// with no frame or marks.
-void Ui_PrepareTransferForItemFar(s32 code);
+void Icon_DrawItemFar(s32 code);
 /// Draws a string of 16-bit character codes into a text canvas at pixel (x, y)
 /// at once, running its colour, outline and new line codes. NULL draws the ring
 /// of decoded text.

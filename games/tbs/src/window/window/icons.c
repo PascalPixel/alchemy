@@ -6,9 +6,9 @@
 
 // The builders that load an icon into VRAM take HEAP_SLOT_GLYPH_TRANSFER
 // (gGlyphWork) for the build and free it before returning; ItemIcon_Compose and
-// the Ui_PrepareTransfer functions draw into the slot their caller holds. An
+// the Icon_Draw functions draw into the slot their caller holds. An
 // icon is 2 by 2 tiles, 16x16 pixels: 0x80 bytes of sprite tiles in its VRAM
-// cache entry (a portrait, UiGlyph_LoadEntryWithPalette's, is 4 by 4).
+// cache entry (a portrait, Icon_LoadWithPalette's, is 4 by 4).
 
 /// Returns how many item icons the icon table holds; Icon_BuildItemIconTiles
 /// draws icon 0 for a number past them.
@@ -24,8 +24,8 @@ s32 Icon_CountPsynergyIcons(void) { return gPsynergyIconsEnd - gPsynergyIcons; }
 /// Frame decode is opaque; the command layer is then composited with
 /// transparency. With no free slot, *slot is VRAM_CACHE_ENTRY_COUNT and the
 /// load fails (*tileOut 0).
-void Ui_BuildPairedPatternsToSlot(s32 overlayIcon, s32 frameIcon, s32 *slot,
-                                  s32 *tileOut, s32 reuse) {
+void Icon_BuildCommandIconTiles(s32 overlayIcon, s32 frameIcon, s32 *slot,
+                                s32 *tileOut, s32 reuse) {
   GlyphTransfer *work;
 
   work = AllocHeapSlot(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
@@ -193,11 +193,11 @@ s32 Icon_CopyResourceToSlot(s32 inventoryCode, s32 layers, s32 cacheSlot) {
 
 /// Builds one of the other icons (gIcon_MiscIconPointers) and loads it into
 /// sprite tile slot cacheSlot. No caller reads its result.
-s32 Ui_BuildPatternToSlot(s32 icon, s32 unused, s32 cacheSlot) {
+s32 Icon_BuildMiscIconTiles(s32 icon, s32 unused, s32 cacheSlot) {
   GlyphTransfer *work;
 
   work = AllocHeapSlot(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
-  Ui_PrepareTransferFromTableEntry(icon);
+  Icon_DrawMisc(icon);
   VramCache_Load(cacheSlot, 0x80, work->tiles);
   FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
   return 1;
@@ -238,7 +238,7 @@ s32 RenderResource_LoadTableEntry(u32 value, s32 unused, u32 slot) {
 
 /// Draws an item's icon from its inventory code into the glyph work buffer,
 /// with no frame or marks; code 0 draws icon 0. The caller holds the buffer.
-void Ui_PrepareTransferForItem(s32 code) {
+void Icon_DrawItem(s32 code) {
   GlyphTransfer *glyph = gGlyphWork;
   struct ItemDefinition *item = Item_GetDirectFar(0x1ff & code);
 
@@ -300,7 +300,7 @@ void Icon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
 }
 
 /// Draws one of the other icons into the glyph work buffer.
-void Ui_PrepareTransferFromTableEntry(u32 iconIndex) {
+void Icon_DrawMisc(u32 iconIndex) {
   GlyphTransfer *glyph = gGlyphWork;
 
   glyph->encoded = gIcon_MiscIconPointers[iconIndex];
@@ -314,8 +314,8 @@ void Ui_PrepareTransferFromTableEntry(u32 iconIndex) {
 /// named by palette. Returns the tile in *tile.
 /// This resource stores its palette before the encoded tile payload: 16
 /// colours, 32 bytes. Portraits (CreateSideObject) come through here.
-void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
-                                  s32 palette, s32 reuse) {
+void Icon_LoadWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
+                          s32 palette, s32 reuse) {
   GlyphTransfer *work;
   u16 *offsets;
   u8 *encodedEntry;
@@ -343,7 +343,7 @@ void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
 }
 
 /// An empty function. Nothing in the tree names it but its prototype.
-void UiGlyph_ReservedNoOp(void) {}
+void Icon_ReservedNoOp(void) {}
 
 /// Decodes a compressed icon into the glyph buffer and expands it to tiles,
 /// opaque for the first layer or masked over what is there when outlined is

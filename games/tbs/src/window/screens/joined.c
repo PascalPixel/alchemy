@@ -129,7 +129,7 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
     work->dirty = 1;
 
     id = Portrait_GetForSpeaker(name);
-    UiGlyph_LoadEntryWithPalette(id, zero, &handle, &palette, 14, zero);
+    Icon_LoadWithPalette(id, zero, &handle, &palette, 14, zero);
 
     // The portrait as a bare OAM entry, pushed onto draw layer 250 each frame:
     // a link word, attributes 0 and 1 (32x32 at y 12) and attribute 2, its
@@ -198,7 +198,7 @@ void Party_ShowJoinedMessage(s32 member) {
   if (window != NULL) {
     Window_DrawDividerLine(window, 4, 0, 4, 4);
     work->dirty = 1;
-    UiGlyph_LoadEntryWithPalette(
+    Icon_LoadWithPalette(
         Portrait_GetForSpeaker(Party_LookupCharacterValueByFlag32(member)), 0,
         &handle, &palette, 14, 0);
     // The portrait as a bare OAM entry, pushed onto draw layer 250 each frame:
@@ -252,7 +252,7 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
 
     ((struct WindowWork *)work)->dirty = 1;
 
-    UiGlyph_LoadEntryWithPalette(
+    Icon_LoadWithPalette(
         Portrait_GetForSpeaker(Party_LookupCharacterValueByFlag32(first)), 0,
         &handle1, &palette, 14, zero);
     // The portrait as a bare OAM entry, pushed onto draw layer 250 each frame:
@@ -263,7 +263,7 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
     *p = palette | 0xe000;
 
     entry2 = sprite2;
-    UiGlyph_LoadEntryWithPalette(
+    Icon_LoadWithPalette(
         Portrait_GetForSpeaker(Party_LookupCharacterValueByFlag32(second)), 0,
         &handle2, &palette, 15, zero);
     p = entry2;

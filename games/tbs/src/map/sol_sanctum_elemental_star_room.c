@@ -2216,7 +2216,7 @@ static s32 SolSanctumElementalStarRoom_PresentStar(s32 item, s32 x, s32 y,
   objectEvent->velocityY = PIXELS(5) / 2;
   objectEvent->gravity = PIXELS(1) / 4;
   glyph = AllocHeapSlot(17, sizeof(*glyph));
-  Ui_PrepareTransferForItem(item);
+  Icon_DrawItem(item);
   VramCache_Load(sprite->slot, 128, glyph->tiles);
   FreeHeapSlot(17);
   Sound_PlaySong(MUS_TREASURE_FOUND);

@@ -3267,7 +3267,7 @@ static struct ObjectEvent *TolbiShipInteriors_PlaceAnchorCharm(void) {
   sprite->image.fullColor = 0;
   sprite->image.palette = 0;
   buffer = AllocHeapSlot(17, 0x608);
-  Ui_PrepareTransferForItem(ITEM_ANCHOR_CHARM);
+  Icon_DrawItem(ITEM_ANCHOR_CHARM);
   VramCache_Load(sprite->slot, 128, buffer + 0x400);
   FreeHeapSlot(17);
   Engine_GameFlagSet(FLAG_MAP_TEMP_00);

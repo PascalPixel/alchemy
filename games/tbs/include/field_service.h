@@ -129,7 +129,7 @@ static inline void *Heap_Allocate(s32 slot, s32 size) {
 static inline void Heap_Release(s32 slot) { FreeHeapSlot(slot); }
 
 /// Draws an item's icon, ready for a script to show it.
-static inline void Item_LoadIcon(s32 item) { Ui_PrepareTransferForItem(item); }
+static inline void Item_LoadIcon(s32 item) { Icon_DrawItem(item); }
 
 /// Holds an item's picture up over the leader, as when the party finds it.
 static inline void Item_ShowFound(s32 item, s32 height) {

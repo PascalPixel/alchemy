@@ -561,7 +561,7 @@ s32 Portrait_GetForSpeaker(u32 value) {
 
 /// Opens a portrait window at tile (x, y) showing the speaker's portrait.
 /// portraitOption is passed on through CreateSideObject to
-/// UiGlyph_LoadEntryWithPalette, which ignores it.
+/// Icon_LoadWithPalette, which ignores it.
 /// Returns the window, or 0 when the speaker has no portrait.
 /// Portrait offsets are in pixels; the enclosing window bounds are in tiles.
 /// The window opens at once, 5 by 5 tiles, or 6 by 5 under Mind Read with the

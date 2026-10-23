@@ -922,7 +922,7 @@ void SelectionScreen_RedrawIcon(struct SelectionScreenWork *state,
     u32 first = node->message - MsgCommandName;
 
     value = node->slot;
-    Ui_BuildPairedPatternsToSlot(first, 0, &value, &tile, 1);
+    Icon_BuildCommandIconTiles(first, 0, &value, &tile, 1);
   }
 }
 
@@ -943,7 +943,7 @@ void SelectionScreen_HighlightIcon(struct SelectionScreenWork *state,
     u32 resource = node->message - MsgCommandName;
 
     value = node->slot;
-    Ui_BuildPairedPatternsToSlot(resource, 0, &value, &tile, 1);
+    Icon_BuildCommandIconTiles(resource, 0, &value, &tile, 1);
     SelectionScreen_LoadLargeIcon();
   }
 }
@@ -1077,7 +1077,7 @@ s32 Resource_LoadByMode(s32 mode, s32 value) {
   switch (mode) {
   case ICON_KIND_COMMAND:
   case ICON_KIND_YES_NO:
-    Ui_BuildPairedPatternsToSlot(value, 0, &result, &output, 0);
+    Icon_BuildCommandIconTiles(value, 0, &result, &output, 0);
     break;
   case ICON_KIND_ITEM:
     result = VramCache_FindFreeEntry();
@@ -1118,7 +1118,7 @@ s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option) {
   switch (mode) {
   case ICON_KIND_COMMAND:
   case ICON_KIND_YES_NO:
-    Ui_BuildPairedPatternsToSlot(value, option, &result, &output, 1);
+    Icon_BuildCommandIconTiles(value, option, &result, &output, 1);
     break;
   case ICON_KIND_ITEM:
     Icon_CopyResourceToSlot(value,
@@ -1134,7 +1134,7 @@ s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option) {
     Ability_LoadGlyph(value, option, &result, &output, 1);
     break;
   case ICON_KIND_PATTERN:
-    Ui_BuildPatternToSlot(value, 0, result);
+    Icon_BuildMiscIconTiles(value, 0, result);
     break;
   case ICON_KIND_TABLE_ENTRY:
     RenderResource_LoadTableEntry(value, 0, result);
@@ -1160,7 +1160,7 @@ void SelectionScreen_SetupIcon(u32 kind, s32 base, struct SelectionNode *node,
   case ICON_KIND_YES_NO:
     if (reuse != 0)
       cacheSlot = node->slot;
-    Ui_BuildPairedPatternsToSlot(base, 0, &cacheSlot, &tile, reuse);
+    Icon_BuildCommandIconTiles(base, 0, &cacheSlot, &tile, reuse);
     node->message = base + MsgCommandName;
     break;
   case ICON_KIND_ITEM:

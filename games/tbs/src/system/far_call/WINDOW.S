@@ -78,7 +78,7 @@ FarCall_WindowTable:
 	export MenuArrow_ReleaseFar, MenuArrow_Release
 	overlay_veneer Menu_RunSelectionHook
 	overlay_veneer Item_RemoveFromInventory
-	export Ui_PrepareTransferForItemFar, Ui_PrepareTransferForItem
+	export Icon_DrawItemFar, Icon_DrawItem
 	export Text_DrawWideStringAtOffsetFar, Text_DrawWideStringAtOffset
 	overlay_veneer OptionMenu_SelectionNoOp
 	export Win_FillScanlineSpansFar, Win_FillScanlineSpans

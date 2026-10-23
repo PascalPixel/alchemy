@@ -49,7 +49,7 @@ void Map_FloatNut(s32 id) {
   objectEvent->visible = 1;
 
   transfer = AllocHeapSlot(17, 0x608);
-  Ui_PrepareTransferForItem(ITEM_NUT);
+  Icon_DrawItem(ITEM_NUT);
   transfer += 0x400;
   VramCache_Load(sprite->palette, 128, transfer);
   FreeHeapSlot(17);

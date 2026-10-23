@@ -32,7 +32,7 @@ void Vault_PlaceItemIcon(s32 item, s32 fixed_x, s32 fixed_y, s32 fixed_z) {
     object[0x55] = zero; // motionFlags
     object[0x5c] = 1;
     icon = AllocHeapSlot(17, 0x608);
-    Ui_PrepareTransferForItem(item);
+    Icon_DrawItem(item);
     icon += 0x400;
     VramCache_Load(sprite[28], 0x80, icon); // sprite->slot
     FreeHeapSlot(17);

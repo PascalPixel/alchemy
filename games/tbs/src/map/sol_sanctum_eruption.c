@@ -1321,7 +1321,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
     starSprite->image.fullColor = 0;
     starSprite->image.palette = 0;
     starSprite->image.priority = 1;
-    Ui_PrepareTransferForItem(ITEM_MARS_STAR);
+    Icon_DrawItem(ITEM_MARS_STAR);
     VramCache_Load(starSprite->slot, 128, iconPixels + 0x400);
     FreeHeapSlot(17);
     Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER,

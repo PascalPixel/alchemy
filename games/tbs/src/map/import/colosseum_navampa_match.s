@@ -42,7 +42,7 @@
 	.set import.MapGrid_SetMetatileBehaviorAt, 1
 	.set import.FieldMessage_Show, 1
 	.set import.MessageArgument_Push, 1
-	.set import.Ui_PrepareTransferForItem, 1
+	.set import.Icon_DrawItem, 1
 	.set import.ColossoMenu_Choose, 1
 	.set import.Resource_LoadFixedBlockBIntoFreeSlot, 1
 	.set import.Unit_Get, 1

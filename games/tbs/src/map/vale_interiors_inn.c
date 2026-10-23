@@ -1170,7 +1170,7 @@ static void EventScript_ShowMythrilBag(void) {
   // Load the item icon into the temporary object event before animating the
   // bag.
   glyph = AllocHeapSlot(17, sizeof(*glyph));
-  Ui_PrepareTransferForItem(ITEM_MYTHRIL_BAG);
+  Icon_DrawItem(ITEM_MYTHRIL_BAG);
   VramCache_Load(sprite->slot, 128, glyph->tiles);
   FreeHeapSlot(17);
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 2);

@@ -143,7 +143,7 @@
 	import MenuArrow_Create, MenuArrow_CreateFar
 	import MenuArrow_SetPosition, MenuArrow_SetPositionFar
 	import MenuArrow_Release, MenuArrow_ReleaseFar
-	import Ui_PrepareTransferForItem, Ui_PrepareTransferForItemFar
+	import Icon_DrawItem, Icon_DrawItemFar
 	import WindowSprite_RedrawSavedRect, WindowSprite_RedrawSavedRectFar
 	import WindowSprite_ClearList, WindowSprite_ClearListFar
 	import Window_SetTilemapEntry, Window_SetTilemapEntryFar

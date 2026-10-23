@@ -210,7 +210,7 @@ struct EffectObject *FieldEffect_StartRandomParticleEmitter(s32 localId,
     // Draw the item's icon into HEAP_SLOT_GLYPH_TRANSFER, then send it to the
     // sprite's tiles: 128 bytes from offset 0x400 of the block.
     iconBuffer = AllocHeapSlot(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
-    Ui_PrepareTransferForItemFar(item);
+    Icon_DrawItemFar(item);
 
     sprite->image.tile =
         VramCache_Load(sprite->slot, 128, (u8 *)iconBuffer + 0x400);
@@ -305,7 +305,7 @@ void FieldEffect_StartEffectObject22(s32 item, s32 flags) {
     sprite->image.palette = 0;
     sprite->image.priority = 1;
 
-    Ui_PrepareTransferForItemFar(item);
+    Icon_DrawItemFar(item);
     VramCache_Load(sprite->slot, 128, (u8 *)iconBuffer + 0x400);
     FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
 

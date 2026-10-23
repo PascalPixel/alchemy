@@ -240,7 +240,7 @@ enum IconKind {
   ICON_KIND_YES_NO = 6,  ///< a yes or no command, drawn as a command
   /// An item's icon without the broken mark, for the equipment view.
   ICON_KIND_EQUIPMENT_ITEM = 7,
-  ICON_KIND_PATTERN = 8, ///< one of the other icons (Ui_BuildPatternToSlot)
+  ICON_KIND_PATTERN = 8, ///< one of the other icons (Icon_BuildMiscIconTiles)
   /// The one tile RenderResource_LoadTableEntry loads.
   ICON_KIND_TABLE_ENTRY = 9
 };
@@ -393,25 +393,25 @@ void Portrait_CloseWindow(u32 entry);
 
 s32 Icon_CountItemIcons(void);
 s32 Icon_CountPsynergyIcons(void);
-void Ui_BuildPairedPatternsToSlot(s32 no0, s32 no1, s32 *slot, s32 *ret,
-                                  s32 flag);
+void Icon_BuildCommandIconTiles(s32 no0, s32 no1, s32 *slot, s32 *ret,
+                                s32 flag);
 void Ability_RequestGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile,
                           s32 reuse);
 void Icon_BuildItemIconTiles(u32 glyph, s32 with_base, s32 *src, s32 *dst,
                              s32 reuse);
 s32 ItemIcon_Compose(u32 code, u32 layers);
 s32 Icon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2);
-s32 Ui_BuildPatternToSlot(s32 icon, s32 unused, s32 slot);
+s32 Icon_BuildMiscIconTiles(s32 icon, s32 unused, s32 slot);
 s32 RenderResource_LoadTableEntry(u32 value, s32 unused, u32 slot);
-void Ui_PrepareTransferForItem(s32 code);
+void Icon_DrawItem(s32 code);
 void Ability_LoadGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile,
                        s32 reuse);
 void Icon_BuildAbilityIconTiles(u32 glyph, s32 with_base, s32 *src, s32 *dst,
                                 s32 reuse);
-void Ui_PrepareTransferFromTableEntry(u32 index);
-void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
-                                  s32 palette, s32 reuse);
-void UiGlyph_ReservedNoOp(void);
+void Icon_DrawMisc(u32 index);
+void Icon_LoadWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
+                          s32 palette, s32 reuse);
+void Icon_ReservedNoOp(void);
 void Icon_Decode(GlyphTransfer *glyph, s32 outlined);
 
 void SelectionScreen_Create(void);

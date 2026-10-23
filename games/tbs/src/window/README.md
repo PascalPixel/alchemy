@@ -462,7 +462,7 @@ in `include/tbs_edition.h`.
 | `Text_`, `Message_`, `MessageArgument_`, `TextPrinter_` | messages and text: decoding, measuring, drawing and typing |
 | `WindowSprite_` | the window sprite pool and a window's sprite list |
 | `MenuArrow_` | the menus' arrow sprites |
-| `Icon_`, `ItemIcon_`, `CommandIcon_`, `UiGlyph_`, `Portrait_` | icons and portraits built into sprite tiles |
+| `Icon_`, `ItemIcon_`, `CommandIcon_`, `Portrait_` | icons and portraits built into sprite tiles |
 | `SelectionScreen_`, `Menu_` | the selection row, and the menus built from command icons |
 | `OptionMenu_`, `PauseMenu_`, `WindowColor_` | the option and pause menus and the window colours |
 | `Save_`, `FileMenu_` | save files and the file menu |

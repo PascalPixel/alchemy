@@ -108,7 +108,7 @@ struct WindowSprite *WindowSprite_CreateWithTransform(s32 icon,
   if (slot == VRAM_CACHE_ENTRY_COUNT) {
     return NULL;
   }
-  Ui_BuildPairedPatternsToSlot(icon, 1, &slot, &unusedTile, 1);
+  Icon_BuildCommandIconTiles(icon, 1, &slot, &unusedTile, 1);
   output = WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
   // Not checked: with every sprite in use, this stores through NULL.
   output->sentinel = 251;
@@ -174,7 +174,7 @@ struct WindowSprite *CreateSideObject(s32 character, s32 unused, s32 side,
   }
 
   palette = PORTRAIT_PALETTE + side;
-  UiGlyph_LoadEntryWithPalette(icon, unused, &slot, &tile, palette, 0);
+  Icon_LoadWithPalette(icon, unused, &slot, &tile, palette, 0);
   portrait = WindowSprite_Create(slot, OUTPUT_SIZE_32X32, window, x, y);
   if (portrait != NULL) {
     portrait->oam.palette = palette;
@@ -221,8 +221,8 @@ void Ui_LoadCharacterEntryForSlot(u32 side, s32 character, s32 unused) {
       }
     }
     slot = work->portraitSprites[side];
-    UiGlyph_LoadEntryWithPalette(icon, unused, &slot, &tile,
-                                 PORTRAIT_PALETTE + side, 1);
+    Icon_LoadWithPalette(icon, unused, &slot, &tile, PORTRAIT_PALETTE + side,
+                         1);
   }
 }
 

@@ -193,7 +193,7 @@ struct LayoutLayer {
 /// tile animation, blend script and marker list.
 struct LayoutHeader {
   /// The camera's bounds in 8-pixel tiles: left, top, right and bottom.
-  u8 origin[4];
+  u8 cameraBounds[4];
   /// Each layer's BG priority, 1 to 3; 0 leaves the layer off.
   u8 priority[3];
   u8 charBase[3]; ///< each layer's BG char block
@@ -201,9 +201,9 @@ struct LayoutHeader {
   struct LayoutLayer layers[3];
   // Offsets from the header's start: type-01 packed data, but for the
   // markers, which are read in place.
-  s32 tiles;     ///< the metatiles, staged and unpacked into gMetatiles
-  s32 collision; ///< the collision shapes, into Ram_MapGridCollision
-  s32 tilemap;   ///< the cells, into Ram_MapGridCellBuffer
+  s32 metatiles; ///< the metatiles, staged and unpacked into gMetatiles
+  s32 shapes;    ///< the shapes, into Ram_MapGridCollision
+  s32 cells;     ///< the cells, into Ram_MapGridCellBuffer
   s32 animation; ///< the tile animation script, or 0 for none
   s32 blend;     ///< the blend script, or 0 for none
   s32 markers;   ///< the chests and Psynergy stones (Field_PlaceMapMarkers)
@@ -247,12 +247,12 @@ s32 MapGrid_LoadLayout(s32 index) {
       layoutResources->resources[0] + (u32)&ResourceId_Layout001);
   // The header's offsets count from the header itself. The metatiles are
   // staged in the cell buffer, which the cell planes then overwrite.
-  encodedData = (u8 *)layoutHeader + layoutHeader->tiles;
+  encodedData = (u8 *)layoutHeader + layoutHeader->metatiles;
   TileMap_DecodeStagedBuffer(
       Resource_DecodeType01(encodedData, Ram_MapGridCellBuffer + 1));
-  encodedData = (u8 *)layoutHeader + layoutHeader->collision;
+  encodedData = (u8 *)layoutHeader + layoutHeader->shapes;
   Resource_DecodeType01(encodedData, Ram_MapGridCollision);
-  encodedData = (u8 *)layoutHeader + layoutHeader->tilemap;
+  encodedData = (u8 *)layoutHeader + layoutHeader->cells;
   Resource_DecodeType01(encodedData, Ram_MapGridCellBuffer);
   TileMap_ConvertBuffer();
   // The tile animation and blend scripts are optional (offset 0), and decode
@@ -272,10 +272,10 @@ s32 MapGrid_LoadLayout(s32 index) {
   grid->script = (u8 *)layoutHeader + layoutHeader->markers;
   // The header's bounds and origins are in 8-pixel tiles; << 19 makes them
   // 16.16 pixels. The view starts at (0, 0) until the camera is centred.
-  grid->minX = layoutHeader->origin[0] << 19;
-  grid->minY = layoutHeader->origin[1] << 19;
-  grid->maxX = layoutHeader->origin[2] << 19;
-  grid->maxY = layoutHeader->origin[3] << 19;
+  grid->minX = layoutHeader->cameraBounds[0] << 19;
+  grid->minY = layoutHeader->cameraBounds[1] << 19;
+  grid->maxX = layoutHeader->cameraBounds[2] << 19;
+  grid->maxY = layoutHeader->cameraBounds[3] << 19;
   viewX = &grid->viewX;
   *viewX = 0;
   viewY = &grid->viewY;

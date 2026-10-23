@@ -305,7 +305,7 @@ struct EffectVector;
 void Field_DispatchTypeHandler(s32 kind);
 void FieldEffect_Run(void);
 void FieldEffect_DispatchRequestKind(void);
-void FieldEffect_ClearChildValueOnMismatch(void);
+void FieldEffect_FinishMindRead(void);
 void FieldScript_RunTypeHandler(void);
 s32 Field_RunEventAction(const void *event, s32 param, s32 target);
 void ObjectGroup_ApplyRandomChildValues(union FieldObject *fieldObject);

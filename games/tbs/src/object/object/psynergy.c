@@ -13,11 +13,11 @@
 /// PSYNERGY_PHASE_EFFECT_ACTS event is not run here; it only makes
 /// the effect aim at the object event ahead, and the effects that act on it
 /// (Force, Frost, Reveal) find it themselves. An after event whose trigger has
-/// flag 0x400 plays the effect itself. Called by Field_RunMap for the Psynergy
-/// request (work->psynergy); sets work->resolvingAction while the effect plays.
-/// On the world map, placed object events far from the view are destroyed for
-/// the effect, and all placed object events are placed again afterwards.
-/// Returns 0 whatever happens; Field_RunMap ignores it.
+/// MAP_EVENT_TRIGGER_OWN_EFFECT plays the effect itself. Called by Field_RunMap
+/// for the Psynergy request (work->psynergy); sets work->resolvingAction while
+/// the effect plays. On the world map, placed object events far from the view
+/// are destroyed for the effect, and all placed object events are placed again
+/// afterwards. Returns 0 whatever happens; Field_RunMap ignores it.
 s32 Field_UsePsynergy(u32 code) {
   s32 abilityId = ABILITY_ID(code);
   struct FieldWork *work = (struct FieldWork *)gEventWork;
@@ -106,8 +106,8 @@ s32 Field_UsePsynergy(u32 code) {
   if (before || after || during) {
     target = Field_FindNearbyPsynergyTarget(gGameState.selectedLocalId,
                                             abilityGroup);
-    // An event with trigger flag 0x400 plays the effect itself.
-    if (after && (after->trigger & 0x400)) {
+    // The after event plays the effect itself.
+    if (after && (after->trigger & MAP_EVENT_TRIGGER_OWN_EFFECT)) {
       GameFlag_ClearBitFar(FLAG_PSYNERGY_EFFECT);
       GameFlag_ClearBitFar(FLAG_PSYNERGY_TARGET);
     }
@@ -132,7 +132,7 @@ s32 Field_UsePsynergy(u32 code) {
   FieldEffect_StopCasterHook();
   Field_RunEventAction(after, userId, target);
   if (GameFlag_TestFar(FLAG_PSYNERGY_EFFECT))
-    FieldEffect_ClearChildValueOnMismatch();
+    FieldEffect_FinishMindRead();
   GameFlag_ClearBitFar(FLAG_PSYNERGY_EFFECT);
   GameFlag_ClearBitFar(FLAG_PSYNERGY_TARGET);
   work->resolvingAction = 0;

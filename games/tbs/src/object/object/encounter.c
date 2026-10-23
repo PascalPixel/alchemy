@@ -137,11 +137,11 @@ s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *pos) {
 /// far the counter moves; a battle starts once it reaches encounterThreshold.
 /// FLAG_NO_ENCOUNTERS, FLAG_NO_ENCOUNTERS_IN_MAPSEC and gGameState.cloaked
 /// (Cloak) prevent battles. FLAG_NO_ENCOUNTERS_IN_MAPSEC is set by Venus
-/// Lighthouse while its Reveal path is shown (English and later editions), by
+/// Lighthouse while its Reveal path is shown (the international editions), by
 /// Mercury Lighthouse while the leader carries the pillar's lights and by the
 /// world map's debug warp destination 99, and cleared by every entry that does
-/// not keep the party's position. Flag 351 (0x15f), which no ☀️ C code sets,
-/// skips the checks and the counting and draws a group at once. Called by
+/// not keep the party's position. Flag 351 (0x15f), which no Broken Seal C code
+/// sets, skips the checks and the counting and draws a group at once. Called by
 /// Encounter_RollTerrain and Encounter_RollWorldMap; adds to
 /// gGameState.encounterSteps, sets or clears work->encounterBias, and on a
 /// battle sets gGameState.battleCue.

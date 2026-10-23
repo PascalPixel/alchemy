@@ -17,7 +17,7 @@ void Field_DispatchTypeHandler(s32 kind) {
   else if (kind == PSYNERGY_STEP_ON_TARGET)
     FieldEffect_DispatchRequestKind();
   else if (kind == PSYNERGY_STEP_FINISH)
-    FieldEffect_ClearChildValueOnMismatch();
+    FieldEffect_FinishMindRead();
   else if (kind == PSYNERGY_STEP_EXTRA)
     FieldScript_RunTypeHandler();
 }
@@ -198,7 +198,7 @@ void FieldEffect_DispatchRequestKind(void) {
 /// Called by Field_UsePsynergy after the after event, and by
 /// Field_DispatchTypeHandler(PSYNERGY_STEP_FINISH): Mind Read is the one kind
 /// whose effect stays up through the after event, the conversation it reads.
-void FieldEffect_ClearChildValueOnMismatch(void) {
+void FieldEffect_FinishMindRead(void) {
   struct FieldEffectWork *effectWork = gEffectWork;
 
   if (effectWork->fieldKind == FIELD_KIND_MIND_READ) {

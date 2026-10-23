@@ -30,7 +30,7 @@ struct WaveEffectWork {
 ///
 /// Abilities: Mind Read (FIELD_KIND_MIND_READ).
 ///
-/// The effect stays up until FieldEffect_ClearChildValueOnMismatch ends it
+/// The effect stays up until FieldEffect_FinishMindRead ends it
 /// after the after event; meanwhile the message windows show thoughts
 /// (Ui_FillBank15PaletteGrey sets the window mode).
 void FieldEffect_StartMindReadWave(s32 x, s32 y) {

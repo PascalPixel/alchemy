@@ -93,7 +93,7 @@ void Map_TakeWarp(s32 warpId) {
 /// Any other result goes to the next map the script set, or to the default
 /// map (the map the battle or minigame was started from) with the
 /// party keeping its position (FLAG_KEEP_PARTY_POSITION). Called by
-/// Game_Run after each map from MAP_BLANK on; stores result in
+/// Game_Run after each map from RUN_BLANK on; stores result in
 /// gGameState.mapChangeReason and sets gGameState.mapId and .warpDest.
 void Map_ReturnFromBattle(s32 result) {
   struct BattleUnit *unit;
@@ -262,18 +262,18 @@ void Game_Run(s32 mode) {
     VramCache_Reset();
     // A battle or minigame returns a result, not a warp: the return map is
     // chosen from the game state, and no overlay is loaded.
-    if (gGameState.mapId >= MAP_BLANK) {
+    if (gGameState.mapId >= RUN_BLANK) {
       switch (gGameState.mapId) {
-      case MAP_BATTLE:
+      case RUN_BATTLE:
         warpDest = Battle_RunEncounterFar(warpDest);
         break;
-      case MAP_LUCKY_DICE:
+      case RUN_LUCKY_DICE:
         warpDest = RunLuckyDice(warpDest);
         break;
-      case MAP_REEL_GAME:
+      case RUN_REEL_GAME:
         warpDest = RunReelGame(warpDest);
         break;
-      case MAP_BLANK:
+      case RUN_BLANK:
         warpDest = 0;
         break;
       }

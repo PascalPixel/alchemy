@@ -27,7 +27,7 @@ as it would leave through a doorway, and comes back to the same place
 afterwards.
 
 In the code, a random encounter raises a field warp like any other, with
-`MAP_BATTLE` as the next map and the enemy group in
+`RUN_BATTLE` as the next map and the enemy group in
 `gGameState.warpDest`. `Game_Run` (`src/object/object/map.c`) clears what
 the last map left running, as it does between any two maps: the task
 table, the list of small jobs the game runs once a frame, and the heap, the
@@ -50,7 +50,7 @@ zones in `src/object/encounter.tsv` choose the row.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `MAP_BATTLE` | `0x1fe` | the next map that runs a battle instead of an overlay |
+| `RUN_BATTLE` | `0x1fe` | the next map that runs a battle instead of an overlay |
 | `FLAG_IN_BATTLE` | `0x103` | set while a battle runs |
 | `ENCOUNTER_FLED` | 999 | `Battle_RunEncounter`'s result when the party got away |
 | `ENCOUNTER_PARTY_LOST` | -1 | its result when the party was defeated |

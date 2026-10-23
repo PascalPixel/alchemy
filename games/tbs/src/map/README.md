@@ -67,7 +67,7 @@ in pixels (x east, y up, z south) and a facing one of eight headings
   `MAP_WARP(warp, map, warpDest)` mapping a warp kind to a map and warp
   destination named in `map_warps.h`, ended by `MAP_WARPS_END`.
   `MAP_WARP_IF` adds a flag, and the row is taken only while that flag is
-  clear. `MAP_WARP_TO_BATTLE` leads into a battle.
+  clear. `WARP_TO_BATTLE` leads into a battle.
 - **Object event templates** (`struct ObjectEventTemplate`): a sprite, a
   condition, a behaviour (an `enum MovementType` such as `MOVEMENT_TYPE_STAND`
   or `MOVEMENT_TYPE_WANDER`, or an object script), a position, a facing and

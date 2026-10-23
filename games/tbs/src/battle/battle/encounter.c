@@ -26,7 +26,7 @@
 /// after each round.
 ///
 /// Reached through its far stub from Game_Run's map switch
-/// (MAP_BATTLE, with the warp destination as enemyGroup), and from
+/// (RUN_BATTLE, with the warp destination as enemyGroup), and from
 /// DebugBattle_RunMenu. Allocates the battle's work slots (the camera,
 /// gBattleWork, the enemy units, the background transition, the display and
 /// others), sets FLAG_IN_BATTLE, and on its way out resets the party's

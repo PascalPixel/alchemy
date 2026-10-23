@@ -75,7 +75,7 @@ leader at 1 HP), `FIELD_EVENT_WORLD_MAP_PICTURE` and
 A battle is a way out of the map, handled as a warp is. The game
 remembers where everyone stood, loads the battle as the next map, and
 afterwards loads the map again with everyone put back. In the code, the
-`battle` handler calls `ObjectTable_Snapshot`, writes `MAP_BATTLE` as the
+`battle` handler calls `ObjectTable_Snapshot`, writes `RUN_BATTLE` as the
 next map with the enemy group as its warp destination, and raises
 `WARP_NONE`, the result that means the next map is already set. `Map_ReturnFromBattle`
 then loads the map again with `FLAG_KEEP_PARTY_POSITION`, and
@@ -101,7 +101,7 @@ engine lends out to whatever runs, under the numbered slot
 | `FIELD_EVENT_PARTY_FELL` | -1 | characters fell to poison or hazardous ground |
 | `FIELD_EVENT_WORLD_MAP_PICTURE` | -888 | R on the world map: the world map screen |
 | `FIELD_EVENT_WORLD_MAP_ZOOM` | -889 | L on the world map: the view zooms out |
-| `MAP_BATTLE` | `0x1fe` | the next map a battle request writes |
+| `RUN_BATTLE` | `0x1fe` | the next map a battle request writes |
 | `WARP_NONE` | 999 | the warp result that means the next map is already set |
 | `FLAG_KEEP_PARTY_POSITION` | `0x109` | the next map starts where the party was, its object events restored from the snapshot |
 | `OBJECT_SNAPSHOT_CAPACITY` | 32 | object events a battle snapshot keeps |

@@ -222,7 +222,7 @@ s32 Field_RunMap(s32 warpDest) {
           Leader_StopMoving();
           ObjectTable_Snapshot();
           gGameState.returnCue = -1;
-          gGameState.mapId = MAP_BATTLE;
+          gGameState.mapId = RUN_BATTLE;
           gGameState.warpDest = work->battle;
           work->warp = WARP_NONE;
           Field_StartEncounterTransition(work->battle);

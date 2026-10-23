@@ -1,10 +1,9 @@
 # ☀️ The Broken Seal
 
-![The game runs one map at a time, in a loop that goes round once for each map, not once a frame. At power-on the title screen comes first; the game runs it as a map, with a row in the map table like any town. Each time round, the game first drops everything the last map left behind. Then it runs the next map. A field map, such as a town, a dungeon or the world map, has its code loaded and runs until the party takes a warp, and the warp names the next map. A battle or a minigame runs and then sends the party back, most often to where it stood before. Then the loop goes round again. A random battle runs from the same loop: the field map ends, and is loaded again after.](https://alchemy.pascalpixel.com/illustrations/front/main-loop.svg)
+![The game runs one map at a time, in a loop that goes round once for each map, not once a frame. At power-on the title screen comes first. Each time round, the game first drops everything the last map left behind. Then it runs the next map. A field map, such as a town, a dungeon or the world map, has its code loaded and runs until the party takes a warp, and the warp names the next map. A battle or a minigame runs and then sends the party back, most often to where it stood before. Then the loop goes round again. A random battle runs from the same loop: the field map ends, and is loaded again after.](https://alchemy.pascalpixel.com/illustrations/front/main-loop.svg)
 
 The Broken Seal plays one map at a time: a room, a town, a dungeon floor,
-the world map, even the title screen. When the party walks through a door,
-the game ends one map and starts the next. Each map has code of its own, loaded only
+the world map. When the party walks through a door, the game ends one map and starts the next. Each map has code of its own, loaded only
 while the party is there, and a layout. Everything a map knows about how far
 the story has gone comes from the game flags, a long list of yes-or-no facts
 saved with the game. The program itself is cut into banks, and the source has
@@ -28,11 +27,14 @@ the map the battle started from, with everyone where they stood.
 
 `Game_Run`, in [object/map.c](src/object/object/map.c), is this loop of
 maps, and it never returns. `System_Initialize` calls it at power-on
-with `GAME_RUN_TITLE`, which makes the title screen (`MapId_Title`, a map
-like any town) the first; the debug start modes begin at Vale's gate or the clear screen
+with `GAME_RUN_TITLE`, which makes the title screen (`MapId_Title`) the
+first; the debug start modes begin at Vale's gate or the clear screen
 instead, and only while `gDebugMode` is set. The current map and the
 warp destination the party arrives by are `gGameState.mapId` and
-`gGameState.warpDest`.
+`gGameState.warpDest`. The title screen and the clear screen sit in
+the map table's first two rows, `MapId_Title` and `MapId_Clear`, so the
+loop runs them with code of their own the way it runs a map, though the
+party never walks there.
 
 Each pass of the loop first clears away what the last map left running:
 
@@ -55,8 +57,8 @@ Then it does one of two things:
   runs it until the party takes a warp and returns the warp's kind, and
   `Map_TakeWarp` turns that into the next map and warp destination.
 - A battle or a minigame runs in place of a map, under a number from
-  `MAP_BLANK` up
-  (`MAP_BATTLE`, `MAP_LUCKY_DICE`, `MAP_REEL_GAME`), with no row in the
+  `RUN_BLANK` up
+  (`RUN_BATTLE`, `RUN_LUCKY_DICE`, `RUN_REEL_GAME`), with no row in the
   map table and no overlay, since its code is in the main image. It returns
   a result rather than a warp, and `Map_ReturnFromBattle` picks the map
   to go back to: the defeat point after a defeat, the destination a script
@@ -65,7 +67,7 @@ Then it does one of two things:
   come back where they were.
 
 A random battle is therefore a warp like any other: the field map sets
-the next map to `MAP_BATTLE` and leaves, and the loop loads it again
+the next map to `RUN_BATTLE` and leaves, and the loop loads it again
 afterwards. [Running a map](src/object/README.md) follows a field map
 from `Field_RunMap` to its warp, including how a battle is chosen from the
 encounter zones in `encounter.tsv`.
@@ -78,10 +80,10 @@ hexadecimal form the source writes it in beside it.
 | `GAME_RUN_TITLE` | 0 | start at the title, with a fresh game state |
 | `GAME_RUN_DEBUG_VALE` | 1 | in debug mode, start at `MapId_ValeGate` |
 | `GAME_RUN_DEBUG_CLEAR` | 2 | in debug mode, start at the clear screen |
-| `MAP_BLANK` | 507 (`0x1fb`) | the first map number with no row in the map table, whose rows are 0 to 200 |
-| `MAP_REEL_GAME` | 508 (`0x1fc`) | Lucky Wheels at Tolbi's spring |
-| `MAP_LUCKY_DICE` | 509 (`0x1fd`) | Lucky Dice at Tolbi's spring |
-| `MAP_BATTLE` | 510 (`0x1fe`) | a battle |
+| `RUN_BLANK` | 507 (`0x1fb`) | the first map number with no row in the map table, whose rows are 0 to 200 |
+| `RUN_REEL_GAME` | 508 (`0x1fc`) | Lucky Wheels at Tolbi's spring |
+| `RUN_LUCKY_DICE` | 509 (`0x1fd`) | Lucky Dice at Tolbi's spring |
+| `RUN_BATTLE` | 510 (`0x1fe`) | a battle |
 
 ## Maps and overlays
 
@@ -263,7 +265,7 @@ that dependence takes, in story order.
   `VENUS_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT`. Mercury Lighthouse uses the same
   transition from `WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT`.
 - **The last map.** [lemurian_ship.c](src/map/lemurian_ship.c), at the
-  edge of Lalivero, ends the game by leaving for the title map by
+  edge of Lalivero, ends the game by leaving for the title screen by
   `TITLE_FROM_LEMURIAN_SHIP` with `FLAG_KEEP_MUSIC` set.
 
 [Places](src/field/maps.s) lists every map in story order with what

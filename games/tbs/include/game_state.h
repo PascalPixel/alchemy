@@ -81,9 +81,9 @@ struct GameState {
   s8 wonPrizes[0x10];
   u8 unk13c[0x84]; ///< not named by TBS code
   /// The map being played: its index in gField_MapTable (a MapId_
-  /// symbol), or MAP_BATTLE or another number above the field maps.
+  /// symbol), or RUN_BATTLE or another number above the field maps.
   s16 mapId;
-  s16 warpDest; ///< the warp destination taken; in MAP_BATTLE, the enemy group
+  s16 warpDest; ///< the warp destination taken; in RUN_BATTLE, the enemy group
   s16 savedMap; ///< where a defeat returns to without a defeat point
   s16 savedWarpDest;   ///< where a defeat returns to without a defeat point
   s16 defaultMap;      ///< the map being run, kept as it starts

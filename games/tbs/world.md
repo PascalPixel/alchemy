@@ -35,13 +35,13 @@ once a frame, until `Field_CountRequests` finds a request. The requests are
 fields of the field work, the block of memory that holds the running
 map's state (`struct FieldWork`), so each kind holds at most one. A battle request
 saves the object events with `ObjectTable_Snapshot`, sets the next map to
-`MAP_BATTLE` and raises `WARP_NONE`; afterwards `Map_ReturnFromBattle`
+`RUN_BATTLE` and raises `WARP_NONE`; afterwards `Map_ReturnFromBattle`
 loads the field map again with `FLAG_KEEP_PARTY_POSITION` set, and
 `ObjectTable_Restore` puts the object events back.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `MAP_BATTLE` | 510 (`0x1fe`) | the next map a battle request writes |
+| `RUN_BATTLE` | 510 (`0x1fe`) | the next map a battle request writes |
 | `WARP_NONE` | 999 | the warp result that means the next map is already set |
 | `FLAG_KEEP_PARTY_POSITION` | 265 (`0x109`) | the next field map starts where the party was |
 

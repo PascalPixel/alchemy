@@ -215,7 +215,7 @@ void DisplayScroll_StepPositionEveryFourFrames(void) {
 /// Crossfades the credits backdrop sequence through alternating tile banks
 /// while the staff names scroll over it, then restores the display for the
 /// following screen. Reached through the scroll far-call table at the end of
-/// the game: Title_Run calls it as ScrollFar_Entry00 at the title map's
+/// the game: Title_Run calls it as ScrollFar_Entry00 at the title screen's
 /// warp destination 9, MUS_ENDING playing, before the clear screen. Its waits
 /// come to 11223 frames, about 3 minutes 8 seconds, besides the loads: a
 /// 300-frame lead, then 33 slides of a 64-frame fade and a 267-frame hold, the

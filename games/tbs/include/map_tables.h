@@ -102,17 +102,17 @@ STATIC_ASSERT(offsetof(struct MapWarpDest, cameraLeft) == 14);
 /// (Map_Run). They have no row in gField_MapTable.
 enum {
   /// Runs nothing and returns 0; no ☀️ code sends the party there.
-  MAP_BLANK = 0x1fb,
-  MAP_REEL_GAME = 0x1fc,  ///< Lucky Wheels at Tolbi's spring (colorfx.c)
-  MAP_LUCKY_DICE = 0x1fd, ///< Lucky Dice at Tolbi's spring (lucky_dice.c)
+  RUN_BLANK = 0x1fb,
+  RUN_REEL_GAME = 0x1fc,  ///< Lucky Wheels at Tolbi's spring (colorfx.c)
+  RUN_LUCKY_DICE = 0x1fd, ///< Lucky Dice at Tolbi's spring (lucky_dice.c)
   /// A battle; the warp destination is the enemy group, and the result -1 a
   /// defeat.
-  MAP_BATTLE = 0x1fe
+  RUN_BATTLE = 0x1fe
 };
 
 /// A warp into a battle: warp kind `warp` fights enemy group `group`.
-#define MAP_WARP_TO_BATTLE(warp, group)                                        \
-  (((u32)(warp) << 20) + ((u32)(group) << 12) + MAP_BATTLE)
+#define WARP_TO_BATTLE(warp, group)                                            \
+  (((u32)(warp) << 20) + ((u32)(group) << 12) + RUN_BATTLE)
 
 /// An object event a map places: its sprite, the condition for placing it, how
 /// it behaves, where it stands and which way it faces, and how it turns to

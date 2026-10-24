@@ -1672,14 +1672,14 @@ s32 gKolima_PendingPose __attribute__((section(".bss")));
 s32 gKolima_MiaInParty __attribute__((section(".bss")));
 s32 gKolima_EffectActive __attribute__((section(".bss")));
 
+// XXX: the row likely closes the bridge while the curse lasts, because the
+// bridge's one coord event (10) needs the man who is a tree until then.
 /// Sets up Kolima Bridge. While the curse lasts, the villager as a man
 /// (LOCALID_BRIDGE_VILLAGER) is put out of sight, leaving him a tree
 /// (LOCALID_BRIDGE_VILLAGER_AS_TREE), and the row of cells at (9, 18) takes the
 /// metatile behaviors of the row above it; afterwards the tree is put out of
 /// sight instead. Once the bridge is down (FLAG_KOLIMA_BRIDGE_LOWERED), it is
-/// drawn down and its cells changed to match. XXX: the row likely closes the
-/// bridge while the curse lasts, because the bridge's one coord event (10)
-/// needs the man who is a tree until then.
+/// drawn down and its cells changed to match.
 static void Kolima_RestoreBridgeState(void) {
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
     Import_ObjectEventSetPosition(LOCALID_BRIDGE_VILLAGER, 0, 0);

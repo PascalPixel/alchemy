@@ -902,16 +902,16 @@ static void EventScript_PassSouthWallOpening(void) {
 /// Unused: an empty function nothing calls.
 UNUSED static void ColosseumNavampaMatch_UnusedEventHook(void) {}
 
+// XXX: likely its message numbers date from a catalog older than the Japanese
+// release, because in it, as in the English one, the lines three apart per
+// character from MsgColossoDidntThinkBattles are a spectator's thought and the
+// stage announcements, not this question.
 /// Unused: talking to a character at the third finals site would have handed
 /// the player control of that character.
 ///
 /// Nothing calls it. Arriving at COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH
 /// it would ask a yes or no question and, on yes, make the character it names
-/// the one the player moves alone, as the friends' turns do. XXX: likely its
-/// message numbers date from a catalog older than the Japanese release,
-/// because in it, as in the English one, the lines three apart per character
-/// from MsgColossoDidntThinkBattles are a spectator's thought and the stage
-/// announcements, not this question.
+/// the one the player moves alone, as the friends' turns do.
 UNUSED static void ColosseumNavampaMatch_UnusedWarriorTalk(s32 warriorId) {
   struct FieldWork *work;
   s32 localId;

@@ -300,13 +300,13 @@ static void MainMenu_CheckButtonCodes(void) {
 
 #undef MAIN_MENU_SEQUENCE_KEYS
 
+// XXX: likely to keep look-alikes apart, because each character left out
+// resembles another (I, l and 1; O, o and 0).
 /// Converts a six-bit password symbol to the edition's one- or two-byte glyph.
 /// Writes the glyph, a second byte (Japanese's voiced mark, else 0) and a
-/// terminator into text. Outside Japanese the 64 symbols are A to Z without
-/// I and O, 2 to 9, a to z without l and o, and ! ? # & $ % + =; Japanese
-/// uses hiragana, the last 18 with the voiced mark. XXX: likely to keep
-/// look-alikes apart, because each character left out resembles another (I,
-/// l and 1; O, o and 0).
+/// terminator into text. Outside Japanese the 64 symbols are A to Z without I
+/// and O, 2 to 9, a to z without l and o, and ! ? # & $ % + =; Japanese uses
+/// hiragana, the last 18 with the voiced mark.
 static void MainMenu_NamingScreenCharacter(s32 cell, u8 *text) {
   text[1] = 0;
   text[2] = 0;

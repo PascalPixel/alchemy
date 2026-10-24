@@ -47,10 +47,10 @@ enum AnimationFacingKind {
   /// As ANIM_FACING_FRONT_BACK, with the front frame mirrored the other
   /// way.
   ANIM_FACING_FRONT_BACK_SWAPPED = 22,
+  // XXX: likely an older eight-direction kind, because the viewer still lists
+  // it; a sprite of this kind would settle it.
   /// Ringed as eight facings by the sprite viewer, but with no facing table:
   /// Sprite_ComposeFrame draws it as ANIM_FACING_NONE.
-  /// XXX: likely an older eight-direction kind, because the viewer still
-  /// lists it; a sprite of this kind would settle it.
   ANIM_FACING_EIGHT_NO_TABLE = 44,
   /// As ANIM_FACING_EIGHT_FRAMES, with three of the frames mirrored.
   ANIM_FACING_EIGHT_FRAMES_MIRRORED = 88

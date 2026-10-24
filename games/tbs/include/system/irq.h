@@ -45,8 +45,8 @@ extern const u32 gDefaultIrqHandlers[IRQ_COUNT];
 /// The interrupt dispatcher at the start of the IWRAM-resident code, whose
 /// other routines are reached at fixed offsets from it (iwram_call.h).
 extern u8 IwramIrqMain[];
-/// An instruction inside the dispatcher (`orr r3, r3, #0x92`); see
-/// Dma_StopAllThenRunHook's XXX.
+/// An instruction inside the dispatcher (`orr r3, r3, #0x92`), whose value
+/// Dma_StopAllThenRunHook runs as a routine.
 extern const u32 IwramIrqModeWord;
 /// Where the IWRAM-resident code lies in ROM (main.ld), 0x1400 bytes copied to
 /// IwramIrqMain at power-on.

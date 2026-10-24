@@ -33,10 +33,11 @@ static void MercuryLighthouse_LeaveThroughPassage(s32 warp) {
   FieldScript_End();
 }
 
+// XXX: likely an early form of LeaveThroughPassage, because it plays the same
+// sound and steps the same way.
 /// Unused: the leader steps 8 pixels north with the passages' sound and
 /// vanishes, then is put at x 8 * column + 8, z 0, with no warp and no end to
-/// the script; nothing in either overlay calls it. XXX: likely an early form of
-/// LeaveThroughPassage, because it plays the same sound and steps the same way.
+/// the script; nothing in either overlay calls it.
 static void UNUSED MercuryLighthouse_DropLeaderToColumn(s32 column) {
   struct ObjectEvent *record;
 

@@ -81,11 +81,11 @@ u8 *TestRoom_GetEvents(void) { return (u8 *)gTestRoom_Events; }
 /// to set up.
 s32 TestRoom_Initialize(void) { return 0; }
 
+// XXX (no evidence): what they hold; no code reads them.
 /// Eight rows of seven words that nothing reads; the menu test room keeps the
 /// same 56 words (gDebugItemPromptHead, test.c), and no other data in the ROM
 /// has their layout. Overlay data is reached only through the room's entries,
-/// and none returns them. XXX (no evidence): what they hold; no code reads
-/// them.
+/// and none returns them.
 u32 gTestRoom_WarpDestsHead[] = {
     0x500050, 0, 80,  0x500000, 0x10003, 2, 0,
     0x780078, 0, 120, 0x780000, 0x10003, 2, 0,

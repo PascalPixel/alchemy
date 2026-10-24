@@ -204,12 +204,12 @@ s32 Icon_BuildMiscIconTiles(s32 icon, s32 unused, s32 cacheSlot) {
 }
 extern const u8 *gMenuTitlePictures[];
 
-/// Loads 32 bytes, one sprite tile, from the start of
-/// gMenuTitlePictures into the VRAM cache entry slot. Every value
-/// loads the same bytes: all four cases name the table itself.
-/// XXX: those bytes are the table's eight label pointers, not a picture, and
-/// what the cases were meant to load is not known. A use would settle it, but
-/// the one caller, WindowSprite_CreateFromTable, has no caller in the tree.
+// XXX: those bytes are the table's eight label pointers, not a picture, and
+// what the cases were meant to load is not known. A use would settle it, but
+// the one caller, WindowSprite_CreateFromTable, has no caller in the tree.
+/// Loads 32 bytes, one sprite tile, from the start of gMenuTitlePictures into
+/// the VRAM cache entry slot. Every value loads the same bytes: all four cases
+/// name the table itself.
 s32 Resource_LoadTableEntry(u32 value, s32 unused, u32 slot) {
   // Three more names of the one table: the ROM keeps a literal for each case,
   // and with one name the switch folds into a single load.

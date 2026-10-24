@@ -384,6 +384,8 @@ void PartyStatus_Close(void) {
   FreeHeapSlot(HEAP_SLOT_PARTY_STATUS);
 }
 
+// XXX: likely the column test's 29 repeated for rows, because the height it
+// then sets uses 20.
 /// Sets (`set` 1) or clears (0) bit 12 of the tilemap entries of the
 /// `width` x `height` tile rectangle at (x, y) inside `window`, clipped to the
 /// screen: bit 12 is the lowest bit of the entry's palette number, so this
@@ -391,10 +393,9 @@ void PartyStatus_Close(void) {
 /// calls it.
 ///
 /// The clip, which the other rectangle routines here repeat, tests both edges
-/// against 29: a rectangle reaching row 29 or beyond is cut to end at row
-/// 19, the tilemap's last, but one ending on rows 20 to 28 is not cut and
-/// writes past the 20-row tilemap. XXX: likely the column test's 29 repeated
-/// for rows, because the height it then sets uses 20.
+/// against 29: a rectangle reaching row 29 or beyond is cut to end at row 19,
+/// the tilemap's last, but one ending on rows 20 to 28 is not cut and writes
+/// past the 20-row tilemap.
 void Window_SetTextTileBitRect(const struct Window *window, s32 x, s32 y,
                                s32 width, s32 height, u32 set) {
   struct WindowWork *work = WINDOW_WORK;

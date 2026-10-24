@@ -8,19 +8,19 @@
 #include "types.h"
 #include "static_assert.h"
 
+// XXX: likely a SelectionNode, because next sits where SelectionNode.next does;
+// see SelectionScreenCursorView.
 /// A chain node seen only as its link to the next.
-/// XXX: likely a SelectionNode, because next sits where SelectionNode.next
-/// does; see SelectionScreenCursorView.
 struct SelectionNodeLinkView {
   u8 padding00[4]; ///< SelectionNode.prev, if it is one
   struct SelectionNodeLinkView *next;
 };
 
-/// A chain's first node and how many links to follow from it, which the
-/// unused NodeChain_GetNodeAtIndex reads.
-/// XXX: likely a SelectionScreenWork (its row's first icon and the entry under
-/// the hand), because head and cursorIndex sit at these offsets (0x348 and
-/// 0x39e); a caller of NodeChain_GetNodeAtIndex would settle it.
+// XXX: likely a SelectionScreenWork (its row's first icon and the entry under
+// the hand), because head and cursorIndex sit at these offsets (0x348 and
+// 0x39e); a caller of NodeChain_GetNodeAtIndex would settle it.
+/// A chain's first node and how many links to follow from it, which the unused
+/// NodeChain_GetNodeAtIndex reads.
 struct SelectionScreenCursorView {
   u8 padding000[840];
   struct SelectionNodeLinkView

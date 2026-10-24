@@ -4045,12 +4045,13 @@ enum {
           ///< door outside Sheba's room (its render)
   BABI_PALACE_SHEBAS_ROOM_FROM_SHEBAS_LANDING =
       45, ///< ★ Named from the game: "Sheba" (MsgCharacterName)
+  // XXX: likely a debug start.
   /// In no table row and led to by no warp: arriving by it sets
   /// FLAG_BABI_SAVED.
-  /// XXX: likely a debug start.
   BABI_PALACE_AFTER_BABI_SAVED = 90,
+  // XXX: likely a debug start.
   /// In no table row and led to by no warp: arriving by it sets FLAG_BABI_SAVED
-  /// and FLAG_COLOSSO_OVER. XXX: likely a debug start.
+  /// and FLAG_COLOSSO_OVER.
   BABI_PALACE_AFTER_COLOSSO = 91,
   BABI_PALACE_FROM_COLOSSEUM_AZART_MATCH = 98,
   BABI_PALACE_FROM_COLOSSEUM_NAVAMPA_MATCH = 99,
@@ -4952,12 +4953,12 @@ enum {
   /// ★ Named from its area name: Suhalla
   SUHALLA_SIXTH_UNUSED = 6,
   SUHALLA_FROM_WORLD_MAP = 10,
+  // XXX: likely a debug start into the story after the audience, because Babi's
+  // Palace (BABI_PALACE_AFTER_COLOSSO) and Suhalla's buildings
+  // (SUHALLA_INTERIORS_AFTER_BABI_SPOKE) have warp destinations that set story
+  // flags the same way.
   /// In no table row and led to by no warp: arriving by it sets
-  /// FLAG_BABI_SPOKE_AFTER_COLOSSO, marking Babi's audience as held. XXX:
-  /// likely a debug start into the story after the audience, because Babi's
-  /// Palace (BABI_PALACE_AFTER_COLOSSO) and Suhalla's buildings
-  /// (SUHALLA_INTERIORS_AFTER_BABI_SPOKE) have warp destinations that set story
-  /// flags the same way.
+  /// FLAG_BABI_SPOKE_AFTER_COLOSSO, marking Babi's audience as held.
   SUHALLA_AFTER_BABI_SPOKE = 90,
 };
 /// MapId_Suhalla's warps.
@@ -5009,9 +5010,9 @@ enum {
   SUHALLA_INTERIORS_LOFT_FROM_INN =
       15, ///< ★ Named from what the player sees: the room with beds up the
           ///< inn's ladder (its render)
+  // XXX: likely a debug start into the story after the audience.
   /// In no table row and led to by no warp: arriving by it also marks Babi's
-  /// audience as held, as SUHALLA_AFTER_BABI_SPOKE does. XXX: likely a
-  /// debug start into the story after the audience.
+  /// audience as held, as SUHALLA_AFTER_BABI_SPOKE does.
   SUHALLA_INTERIORS_AFTER_BABI_SPOKE = 90,
 };
 /// MapId_SuhallaInteriors's warps.

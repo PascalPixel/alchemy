@@ -64,7 +64,7 @@ extern s32 gBuildStamp[];
 extern u8 gBgmFadeRequested;
 /// Cleared by the audio test, SoundTest_Run (reached only
 /// through a sound far-call veneer), which restarts a 20-frame timer when it
-/// finds it set; no other code names it (see the XXX there).
+/// finds it set; no other code names it.
 extern s32 gSoundTestRestartTimer;
 /// An EWRAM byte Sound_Initialize clears and nothing else
 /// names.

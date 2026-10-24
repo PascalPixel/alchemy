@@ -910,6 +910,8 @@ static void FuchinFallsCave_DragonsEyeRoom_MoveFourthLogSouthFromMiddle(void) {
   FuchinFallsCave_RebuildDragonsEyeRoomLogs();
 }
 
+// XXX: likely a slip for a move north, because the third log's matching coord
+// event 19 floats it north.
 /// Unused: walking north into coord event 24 in Fuchin Falls Cave's third room
 /// would float the fourth log 80 pixels south (its stops clear). Coord event
 /// 24's cells reach the room only from their copy at columns 10 to 12, row 43,
@@ -918,8 +920,7 @@ static void FuchinFallsCave_DragonsEyeRoom_MoveFourthLogSouthFromMiddle(void) {
 /// that flag, so the room never has a coord event 24 (in tbs-en it appears
 /// there only with the flag set by hand; walking north on the log then carries
 /// the leader 80 pixels south, past the log's south end, where the rebuild puts
-/// the log back). XXX: likely a slip for a move north, because the third log's
-/// matching coord event 19 floats it north.
+/// the log back).
 static void
 FuchinFallsCave_DragonsEyeRoom_UnusedMoveFourthLogSouthFromLowerStop(void) {
   Sound_PlaySong(SE_WATER_MOVE);

@@ -240,10 +240,10 @@ enum MapEventKind {
   MAP_EVENT_TALK_HALTED = 7
 };
 
+// XXX: what leaving animations 26 and 25 and arrivals 24 and 23 show;
+// recordings of a warp of each style would settle it.
 /// A warp event's control bits 5..4: how the leader leaves
-/// (Map_RunCoordEventOrWarp). XXX: what leaving animations 26 and 25 and
-/// arrivals 24 and 23 show; recordings of a warp of each style would settle
-/// it.
+/// (Map_RunCoordEventOrWarp).
 enum WarpStyle {
   WARP_STYLE_NORMAL = 0x00, ///< with SE_MAP_EXIT
   WARP_STYLE_SILENT = 0x10,

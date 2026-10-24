@@ -538,19 +538,18 @@ s32 Menu_AnimateSelectionToEntry(s32 start, s32 command) {
   return command;
 }
 
+// XXX: with Send shown but not Battle, Send's place maps to SAVE_ACTION_BATTLE,
+// because gFileMenu_ActionByPosition lists Battle before Send in every row;
+// whether a file can ever be cleared without any of flags 48-127 set is not
+// established.
 /// Builds the title menu from the save summaries and optional send flags.
-/// Translates the chosen visible position back to its action (enum
-/// FileAction), or -1 when cancelled or the backup memory cannot be read.
-/// With no files it returns 0 at once. The icons, by Save_ScanRecordFlags'
-/// count: New Game, Continue, Copy and Erase for one or two files (starting on
-/// Continue); no New Game or Copy with three; with every file cleared no
-/// Continue, and only Erase with three such files. Battle and Send follow when
-/// enabled.
-/// XXX: with Send shown but not Battle, Send's place maps to
-/// SAVE_ACTION_BATTLE,
-/// because gFileMenu_ActionByPosition lists Battle before Send in every
-/// row; whether a file can ever be cleared without any of flags 48-127 set
-/// is not established. The file menu runs it (menu/main_menu.c).
+/// Translates the chosen visible position back to its action (enum FileAction),
+/// or -1 when cancelled or the backup memory cannot be read. With no files it
+/// returns 0 at once. The icons, by Save_ScanRecordFlags' count: New Game,
+/// Continue, Copy and Erase for one or two files (starting on Continue); no New
+/// Game or Copy with three; with every file cleared no Continue, and only Erase
+/// with three such files. Battle and Send follow when enabled.
+/// The file menu runs it (menu/main_menu.c).
 s32 FileMenu_SelectAction(void) {
   s32 fileState;
   s32 result;

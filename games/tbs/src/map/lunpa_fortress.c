@@ -704,10 +704,10 @@ static void EventScript_SearchSealedDoor(void) {
   FieldMessage_Show(MsgFieldDoorTightlyLocked, 1);
 }
 
+// XXX: likely LunpaFortressGroundFloor's first four rows (in a chest's sprite,
+// at the map's origin), because nothing else uses them.
 /// The four object events from LOCALID_FIRST_ITEM_DISPLAY that the unused item
-/// pickups below show their items on, in a map they do not name. XXX: likely
-/// LunpaFortressGroundFloor's first four rows (in a chest's sprite, at the
-/// map's origin), because nothing else uses them.
+/// pickups below show their items on, in a map they do not name.
 /// ★ Named from what the player sees: four chests (SPRITE_CHEST) at the
 /// origin of LunpaFortressGroundFloor, the likely display object events (its
 /// render)

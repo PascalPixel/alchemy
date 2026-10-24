@@ -14,16 +14,16 @@
 #define ENEMY_SUFFIX_LAST 25   ///< the last suffix shown, 'Z'
 #endif
 
-/// Fills battle unit `unitId` (0x80 to 0x86) with enemy `enemyId`: stats,
-/// name with its suffix letter, the items it carries, rewards and elements.
-/// The Djinn the party fights (ENEMY_VENUS_DJINNI_QUARTZ to
-/// ENEMY_JUPITER_DJINNI_LUFF) are put on the party's side.
-/// Returns 0 for an id out of range, 1 otherwise; enemy ids 173 to 250, past
-/// the table's 165 rows but within the check, are filled from row 0. Called by
-/// the battle set-up (Battle_Run, BattleFormation_BuildEnemyList) and
-/// by BattleAbility_ApplyToTarget when an enemy calls for help.
-/// XXX: why a Djinni is put on the party's side is unknown; the battle code
-/// that reads BATTLE_SIDE_PARTY for an enemy would say.
+// XXX: why a Djinni is put on the party's side is unknown; the battle code that
+// reads BATTLE_SIDE_PARTY for an enemy would say.
+/// Fills battle unit `unitId` (0x80 to 0x86) with enemy `enemyId`: stats, name
+/// with its suffix letter, the items it carries, rewards and elements. The
+/// Djinn the party fights (ENEMY_VENUS_DJINNI_QUARTZ to
+/// ENEMY_JUPITER_DJINNI_LUFF) are put on the party's side. Returns 0 for an id
+/// out of range, 1 otherwise; enemy ids 173 to 250, past the table's 165 rows
+/// but within the check, are filled from row 0. Called by the battle set-up
+/// (Battle_Run, BattleFormation_BuildEnemyList) and by
+/// BattleAbility_ApplyToTarget when an enemy calls for help.
 s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
   struct Unit *unit;
   const struct EnemyDefinition *enemy;

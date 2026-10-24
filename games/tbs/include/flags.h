@@ -140,12 +140,13 @@
 /// ★ Named from the game: "Test your skills in Linked Battles"
 /// (MsgFieldWelcomeToBattleArenaWherePeople)
 #define FLAG_LINK_BATTLE 0x16c
+// XXX: likely a debug switch at the Colosseum too, because Jenna is never in
+// the party there in normal play; a reader outside the debug keys would say
+// otherwise.
 /// In debug mode, with it set, holding R as an action is planned defeats every
-/// enemy, and R with Select the party (BattleTurn_Build); that is its
-/// only reader. The debug story preset for Vale's plaza sets it, and so do the
-/// Colosseum's escorts as they swap Mia in for Jenna. XXX: likely a debug
-/// switch at the Colosseum too, because Jenna is never in the party there in
-/// normal play; a reader outside the debug keys would say otherwise.
+/// enemy, and R with Select the party (BattleTurn_Build); that is its only
+/// reader. The debug story preset for Vale's plaza sets it, and so do the
+/// Colosseum's escorts as they swap Mia in for Jenna.
 #define FLAG_DEBUG_BATTLE_KEYS 0x16d
 /// Set, the highest of these picks the tint a field Psynergy effect fades
 /// toward, gFieldEffect_TargetColors[n], in place of the frame counter's pick
@@ -656,8 +657,8 @@
 /// ★ Named from the game: "You've managed to win both of your matches."
 /// (MsgColosseumWonBothMatches)
 #define FLAG_COLOSSO_SECOND_MATCH_WON 0x90f
+// XXX: no code of this game reads it; a reader would say what it changes.
 /// The soldiers have taken the party into the Colosseum on the finals day.
-/// XXX: no code of this game reads it; a reader would say what it changes.
 /// ★ Named from the game: "Putting him in the finals" (MsgColosseumHeyYouRe)
 #define FLAG_COLOSSEUM_FINALS_ENTERED 0x93f
 // Also FLAG_COLOSSO_OVER: the colosseum is closed until next year.
@@ -1303,9 +1304,9 @@
 /// ★ Named from the game: "It is good that the ship has arrived safely."
 /// (MsgTolbiShipGoodShipHasArrivedSafely)
 #define FLAG_TOLBI_SHIP_REACHED_TOLBI 0x93e
+// XXX: no code of this game reads it; a reader would say what it changes.
 /// The party lost a battle at sea and is back in the passenger hold, where the
-/// voyage starts over. XXX: no code of this game reads it; a reader would say
-/// what it changes.
+/// voyage starts over.
 /// ★ Named from its area name: Tolbi-bound Ship
 #define FLAG_TOLBI_SHIP_DEFEATED_AT_SEA 0x902
 /// The ship's containers below decks, set once each is searched: a barrel in
@@ -1348,9 +1349,8 @@
 /// again. Coming back into the room puts the statues back on their marks.
 /// ★ Named from its area name: Tunnel Ruins
 #define FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN 0x984
-/// The party has entered TunnelRuinsLadyStatues' room of four paths over a
-/// pit. XXX: no code of this game reads it; a reader would say what it
-/// records.
+// XXX: no code of this game reads it; a reader would say what it records.
+/// The party has entered TunnelRuinsLadyStatues' room of four paths over a pit.
 /// ★ Named from what the player sees: four long stone paths over a pit (its
 /// render)
 #define FLAG_TUNNEL_RUINS_FOUR_PATHS_ROOM_ENTERED 0x973
@@ -1368,10 +1368,11 @@
 /// ★ Named from the game: "I just knew a storm like this would knock it loose!"
 /// (MsgValeSureHelp)
 #define FLAG_VALE_STORM 0x834
+// XXX: the patched editions also set it on beating Lamakan Desert's Manticore;
+// why is not known.
 /// The party has reached Kalay: every Kalay map sets it on entry. Vale's
 /// villagers then talk of the journey, Garet's homecoming plays, Vault leads to
-/// its later map and the Sanctum's talk changes. XXX: the patched editions
-/// also set it on beating Lamakan Desert's Manticore; why is not known.
+/// its later map and the Sanctum's talk changes.
 /// ★ Named from its area name: Kalay
 #define FLAG_KALAY_REACHED 0x87a
 /// Catch has taken the Nut floating in Vale.

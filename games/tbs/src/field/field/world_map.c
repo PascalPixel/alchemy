@@ -792,12 +792,12 @@ void WorldMap_LoadAreaGraphics(void) {
   WaitFrames(1);
 }
 
-/// Puts the default world map cells back after the still view and returns
-/// to the perspective view, without reloading the area's palette or tiles.
-/// Called three times by the world map's scripts. Unlike
-/// WorldMap_LoadAreaGraphics it leaves animationActive set.
-/// XXX: whether leaving animationActive set is intended; a script that calls
-/// it and then opens a menu would show the effect.
+// XXX: whether leaving animationActive set is intended; a script that calls it
+// and then opens a menu would show the effect.
+/// Puts the default world map cells back after the still view and returns to
+/// the perspective view, without reloading the area's palette or tiles. Called
+/// three times by the world map's scripts. Unlike WorldMap_LoadAreaGraphics it
+/// leaves animationActive set.
 void WorldMap_LoadDefaultCellsAndUpdateBlock(void) {
   struct WorldMapView *perspective = gMapGridWork[0];
   gVBlankCallback = WorldMap_ShowBg1FromBuffer;

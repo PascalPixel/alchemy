@@ -147,11 +147,11 @@ void BattleBackground_ShowZoomedPage(void) {
   }
 }
 
+// XXX: no code in TBS names it; a task or table entry that reaches it would
+// show which transition used it.
 /// Copies one of eight curtain tiles from gBattleTransition_CurtainVariants
 /// into CURTAIN_TILE(0), a new one every four frames while the transition timer
 /// (gBattleEntryTimer) runs from 1 to 32.
-/// XXX: no code in TBS names it; a task or table entry that reaches it
-/// would show which transition used it.
 void BattleTransition_UploadTileVariant(void) {
   u32 variant = *gBattleEntryTimer - 1;
   if (variant <= 31)

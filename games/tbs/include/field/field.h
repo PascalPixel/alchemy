@@ -16,7 +16,7 @@ struct Object;
 struct ScreenPoint;
 
 /// An IWRAM word the scrolling camera's setup clears; nothing in the tree
-/// reads it (see ObjectSystem_Initialize's XXX).
+/// reads it.
 extern s32 gCamera_UnreadWord1;
 /// The second IWRAM word the scrolling camera's setup clears; also unread.
 /// With no reader to give them a role, the two are numbered in IWRAM order.

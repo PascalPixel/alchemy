@@ -478,9 +478,9 @@ void BattleBackground_SetBlendControl(void) {
   REG_BLDCNT = BLDCNT_TGT1_ALL | BLDCNT_EFFECT_LIGHTEN;
 }
 
+// XXX: what the sum is for; a caller, which TBS lacks, would show it.
 /// Sets entries to the identity transform, then stores the first word's old
 /// value plus its new one in the second; nothing calls it.
-/// XXX: what the sum is for; a caller, which TBS lacks, would show it.
 void BattleTransition_InitializeEntries(struct BattleTransitionEntry *entries) {
   u32 previous = entries[0].value;
 

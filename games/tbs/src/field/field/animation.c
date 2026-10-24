@@ -285,15 +285,13 @@ void Sprite_RemoveAnimAt(struct Sprite *sprite, u32 index) {
   }
 }
 
+// XXX: unlike Sprite_StartAnim it does not mask bit 7 off, so with bit 7 set
+// the index passes animationCount only in a set of more than 128 animations; a
+// script that plays with bit 7 would show whether that is an original bug.
 /// Starts the indexed animation on a sprite anim when its metadata contains it.
 /// Bit 7 preserves the command cursor and timer; it remains part of the index.
-/// Reached through the animation script's play command
-/// (Sprite_ComposeFrame) and, as SpriteAnim_StartFar, from the
-/// battle's motion and objects.
-/// XXX: unlike Sprite_StartAnim it does not mask bit 7 off,
-/// so with bit 7 set the index passes animationCount only in a set of more
-/// than 128 animations; a script that plays with bit 7 would show whether
-/// that is an original bug.
+/// Reached through the animation script's play command (Sprite_ComposeFrame)
+/// and, as SpriteAnim_StartFar, from the battle's motion and objects.
 void SpriteAnim_Start(struct SpriteAnim *layer, s32 animation) {
   s32 keepPlace;
   struct AnimationMetadata *metadata;

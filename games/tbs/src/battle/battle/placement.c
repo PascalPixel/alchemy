@@ -8,15 +8,15 @@
 #define SPRITE_ISAAC_MACHETE 480
 #define SPRITE_GARET_MACHETE 482
 
+// XXX: likely the unit's shadow on the ground rather than an animation, because
+// of that picture, because adding it also clears the sprite's own shadow
+// (Sprite.flags bit 0), and because BattleObject_UpdateSpritePriorities changes
+// the layer's priority while the unit is off the ground.
 /// BattleObject.effect as a battle object is made: the sprite
 /// BattleObject_SpawnObjectsForList adds as a layer of every one-part body
 /// (NARROW_EFFECT_SPRITE on a body 32 pixels wide). Its 64 by 64 picture
-/// (graphics/sprite/spr_510.png) holds only a 32 by 6 ellipse along its
-/// bottom edge, NARROW_EFFECT_SPRITE's a 16 by 3 one.
-/// XXX: likely the unit's shadow on the ground rather than an animation,
-/// because of that picture, because adding it also clears the sprite's own
-/// shadow (Sprite.flags bit 0), and because BattleObject_UpdateSpritePriorities
-/// changes the layer's priority while the unit is off the ground.
+/// (graphics/sprite/spr_510.png) holds only a 32 by 6 ellipse along its bottom
+/// edge, NARROW_EFFECT_SPRITE's a 16 by 3 one.
 #define BATTLE_OBJ_NO_EFFECT 0x1fe
 
 /// Creates the battle object of unit at (x, y) on the battlefield, in

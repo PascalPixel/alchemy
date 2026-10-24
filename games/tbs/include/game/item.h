@@ -110,10 +110,10 @@ enum EquipEffectKind {
   EQUIP_EFFECT_ADD_MARS_RESIST,
   EQUIP_EFFECT_ADD_JUPITER_RESIST,
   EQUIP_EFFECT_ADD_UNLEASH_CHANCE, ///< percent added to the weapon's unleash
+  // XXX: The Lost Age records the target and attacker of a hit on a unit whose
+  // total is set; what it does with them there would name it.
   /// Summed by Unit_Calculate into equipBonus[1]; no item of item_table.c has
   /// it and nothing reads the total.
-  /// XXX: The Lost Age records the target and attacker of a hit on a unit
-  /// whose total is set; what it does with them there would name it.
   EQUIP_EFFECT_24,
   /// "The curse can be removed": sets CURSE_REMOVABLE, which lifts
   /// CURSE_BOUND.

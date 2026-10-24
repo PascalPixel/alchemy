@@ -573,10 +573,9 @@ void ScreenTransition_InitializeBattleEffectState(s32 mode) {
   Task_Add(FieldEffect_StartWindowHBlankDma, 0x480);
 }
 
+// XXX: nothing in ☀️ names it and it has no far-call entry, yet it is not
+// marked UNUSED; a caller through a table or ⚓️'s twin would settle it.
 /// Suspends the window transition's two callbacks.
-///
-/// XXX: nothing in ☀️ names it and it has no far-call entry, yet it is not
-/// marked UNUSED; a caller through a table or ⚓️'s twin would settle it.
 void ScreenTransition_SuspendCallbacks(void) {
   Task_SuspendAll(&ScreenTransition_UpdateScanlineTable);
   Task_SuspendAll(&FieldEffect_StartWindowHBlankDma);

@@ -244,16 +244,16 @@ void WindowSprite_SetInvertedSentinel(void *sprite, s32 priority) {
 
 typedef void (*WindowSpanRoutine)(u16 *spans, u16 *tilemap);
 
-/// Fills `spans`, a page of the screen transition's window edges past its
-/// WININ and WINOUT, with the window frames' horizontal extent on each of the
-/// 160 scan lines: (left << 8) | right in the second halfword (WIN1H) of each
+// XXX: likely meant to cover all 160 lines, because each line takes 4 bytes;
+// what the lower half then shows is not established.
+/// Fills `spans`, a page of the screen transition's window edges past its WININ
+/// and WINOUT, with the window frames' horizontal extent on each of the 160
+/// scan lines: (left << 8) | right in the second halfword (WIN1H) of each
 /// line's pair, read from the UI tilemap by the ARM routine
 /// Tile_BuildMetatiles, copied into RAM for the call. Each frame of a window
-/// transition calls it (ScreenTransition_UpdateScanlineTable). With no UI
-/// work it writes 0xe0e0, an empty extent, over 0x140 bytes: both halfwords
-/// of the first 80 lines only.
-/// XXX: likely meant to cover all 160 lines, because each line takes 4 bytes;
-/// what the lower half then shows is not established.
+/// transition calls it (ScreenTransition_UpdateScanlineTable). With no UI work
+/// it writes 0xe0e0, an empty extent, over 0x140 bytes: both halfwords of the
+/// first 80 lines only.
 void ScanlineWindow_FillSpans(void *spans) {
   void *tilemap = gWindowWork[0];
 

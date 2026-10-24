@@ -96,13 +96,13 @@ struct Unit *Unit_Get(u32 unitId) {
   return NULL;
 }
 
+// XXX: why enemy ids start at ENEMY_ID_FIRST is unknown; the encounter tables'
+// enemy column would show whether the ids below it were meant for the
+// characters.
 /// Returns the definition of enemy `selector`, in row `selector -
 /// ENEMY_ID_FIRST`; an id past the first 250 gives the first. Called by the
 /// battle code that builds and scores enemies (the formations, the enemy AI,
 /// the spoils) and by the element and weakness reads in this object.
-/// XXX: why enemy ids start at ENEMY_ID_FIRST is unknown; the encounter
-/// tables' enemy column would show whether the ids below it were meant for
-/// the characters.
 const u8 *Enemy_GetDefinition(s32 selector) {
   u32 recordIndex;
 
@@ -636,12 +636,12 @@ void Party_StartChildhood(void) {
   Unit_Calculate(JENNA);
 }
 
+// XXX: flag 0x901 is set here with no name; its readers would name it.
 /// The party set-up after the prologue: flags, Jenna recomputed, Isaac and
 /// Garet healed with the Machete in their inventories replaced by the Short
 /// Sword and equipped, Move and Retreat taught to Isaac, Move to Garet, Mind
 /// Read to Ivan, and 300 coins. Called by Title_Run when the title shown after
 /// the prologue hands over to Vale, three years later.
-/// XXX: flag 0x901 is set here with no name; its readers would name it.
 void Party_EndChildhood(void) {
   s32 unitId;
 

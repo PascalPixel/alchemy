@@ -1099,9 +1099,10 @@ s32 TitlePaletteFade_ClampShiftedComponent(s32 value) {
 // The response curves of TitlePaletteFade_BuildColors's filters. Like the
 // declarations in palbuf.h they are not const: as const the code differs.
 
+// XXX: why the intro keeps its own copy is not known.
 /// Maps a channel (0..31) to a component (0..31 << 10). The same curves as
 /// gColorBuffer_ChannelCurve and its Light and Contrast curves, in a copy of
-/// the intro's own; XXX: why the intro keeps its own copy is not known.
+/// the intro's own.
 // clang-format off
 u16 gTitleIntro_ChannelCurve[32] = {
     0, 524, 1071, 1643, 2240, 2863, 3513, 4191,

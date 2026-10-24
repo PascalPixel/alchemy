@@ -226,20 +226,19 @@ UNUSED void BattleAnim_RunDjinnHeal(struct BattleAnimArgs *effect) {
   ANIM_FINISH_CANVAS();
 }
 
+// XXX: likely to keep the turn smooth when an animation frame runs long,
+// because every frame still turns at least half the delta; a run with a slow
+// animation frame would settle it.
 /// Turns the battle camera's yaw by work->cameraDelta, or by half of it on a
 /// frame the animation has not marked.
 ///
-/// Runs each frame as a task added by BattleAnim_RunFire
-/// (fire.c) and BattleAnim_RunFroth (vortices.c), which remove it before they
-/// return. Each of them moves cameraPhase from CAMERA_PHASE_IDLE to
-/// CAMERA_PHASE_FRAME_DONE at the end of its own frame. Then the callback
-/// turns the whole delta and clears the phase; otherwise it turns half the
-/// delta and moves the phase between CAMERA_PHASE_IDLE and
-/// CAMERA_PHASE_HALF_TURNED, which the animations leave unmarked. Changes
-/// the camera slot's yaw and work->cameraPhase.
-/// XXX: likely to keep the turn smooth when an animation frame runs long,
-/// because every frame still turns at least half the delta; a run with a
-/// slow animation frame would settle it.
+/// Runs each frame as a task added by BattleAnim_RunFire (fire.c) and
+/// BattleAnim_RunFroth (vortices.c), which remove it before they return. Each
+/// of them moves cameraPhase from CAMERA_PHASE_IDLE to CAMERA_PHASE_FRAME_DONE
+/// at the end of its own frame. Then the callback turns the whole delta and
+/// clears the phase; otherwise it turns half the delta and moves the phase
+/// between CAMERA_PHASE_IDLE and CAMERA_PHASE_HALF_TURNED, which the animations
+/// leave unmarked. Changes the camera slot's yaw and work->cameraPhase.
 void BattleCamera_ApplyPhasedDelta(void) {
   // Both come from the one heap slot table; a separate camera base compiles 4
   // bytes longer.

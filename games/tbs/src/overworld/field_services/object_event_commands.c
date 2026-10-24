@@ -329,8 +329,8 @@ void ObjectMotion_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z) {
 
 /// Puts the object event at (x, y, z), 16.16 pixels, at rest; an object event
 /// that follows the ground (OBJ_EVENT_FOLLOWS_TERRAIN) is raised by the ground
-/// height there, read as ObjectMotion_SetHorizontalPositionWithTerrain reads it
-/// (see the XXX there). Nothing in ☀️ calls it.
+/// height there, read as ObjectMotion_SetHorizontalPositionWithTerrain reads
+/// it. Nothing in ☀️ calls it.
 void ObjectMotion_SetPositionWithTerrain(u32 objectId, s32 x, s32 y, s32 z) {
   struct Object *object;
   s32 groundHeight;

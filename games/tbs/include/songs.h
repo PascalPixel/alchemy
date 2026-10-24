@@ -456,13 +456,12 @@
 #define SE_SCATTER 164
 /// A map transition effect.
 #define SE_MAP_TRANSITION 167
-/// The ambient sound a map queues in Lama Temple, Xian and the Manticore's
-/// part of Lamakan Desert (Map_QueueMusic).
-/// It sounds like a steady quiet hiss, a little darker and softer than
-/// SE_AMBIENT_WATER on the same noise voice.
-/// XXX: likely wind, because none of the three has the water SE_AMBIENT_WATER
-/// plays beside; the sequence alone can't tell wind from water, so a recording
-/// of one of the three maps would settle it.
+// XXX: likely wind, because none of the three has the water SE_AMBIENT_WATER
+// plays beside; the sequence alone can't tell wind from water, so a recording
+// of one of the three maps would settle it.
+/// The ambient sound a map queues in Lama Temple, Xian and the Manticore's part
+/// of Lamakan Desert (Map_QueueMusic). It sounds like a steady quiet hiss, a
+/// little darker and softer than SE_AMBIENT_WATER on the same noise voice.
 #define SE_AMBIENT_WIND 169
 /// The ambient sound a map queues (Map_QueueMusic) with the rain's ground
 /// particles (Weather_StartRain) and Altin's water-spitting beasts, and in

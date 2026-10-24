@@ -200,10 +200,10 @@ enum OptionMenuRow {
   OPTION_ROW_WINDOW_BRIGHTNESS = 2
 };
 
+// XXX: likely left from an earlier option screen, because the five-row one
+// OptionMenu_Run runs uses none of these four functions.
 /// Moves the three-row settings cursor up, wrapping to the bottom. The three
-/// rows are those of OptionMenu_LowerSetting. XXX: likely left from an
-/// earlier option screen, because the five-row one OptionMenu_Run
-/// runs uses none of these four functions.
+/// rows are those of OptionMenu_LowerSetting.
 /// Nothing calls it.
 UNUSED void OptionMenu_PreviousRow(struct OptionMenuWork *work) {
   if (work->page == OPTION_ROW_MESSAGE_SPEED)

@@ -287,12 +287,12 @@ s32 BattleStatusIcon_Cycle(struct BattleObject *battleObject) {
   }
 }
 
-/// Sets unit id's pose to match its state: held (asleep, stunned or unable
-/// to move) or down, else standing; then its sprites' animation speed, a
-/// timer step of 14 to 17 by the unit id's low two bits (16 is normal
-/// speed). XXX: likely so that units side by side do not animate in step,
-/// because the step follows nothing but the unit id. Called by
-/// BattleObject_SpawnObjectsForList, BattlePlayback_RunAll,
+// XXX: likely so that units side by side do not animate in step, because the
+// step follows nothing but the unit id.
+/// Sets unit id's pose to match its state: held (asleep, stunned or unable to
+/// move) or down, else standing; then its sprites' animation speed, a timer
+/// step of 14 to 17 by the unit id's low two bits (16 is normal speed).
+/// Called by BattleObject_SpawnObjectsForList, BattlePlayback_RunAll,
 /// BattlePlayback_Run and Battle_ProcessRoundEnd.
 #ifdef UBFIX
 void BattleObject_UpdatePose(s32 unitId) {

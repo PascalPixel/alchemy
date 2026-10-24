@@ -170,10 +170,10 @@ done:
   battle->enemyIds[count] = BATTLE_UNIT_LIST_END;
 }
 
-/// Moves the 16 bytes at VRAM 0x06000290 down to 0x06000280 and clears the
-/// 20 bytes from 0x0600028c. Nothing in the source calls it.
-/// XXX: what the tiles at 0x06000280 are; a caller in another image, or the
-/// picture loaded there, would settle it.
+// XXX: what the tiles at 0x06000280 are; a caller in another image, or the
+// picture loaded there, would settle it.
+/// Moves the 16 bytes at VRAM 0x06000290 down to 0x06000280 and clears the 20
+/// bytes from 0x0600028c. Nothing in the source calls it.
 s32 Battle_ShiftVramTiles(void) {
   Dma_Set((const void *)0x06000290, (void *)0x06000280, DMA_COPY_HALFWORDS(8),
           REG_DMA3);

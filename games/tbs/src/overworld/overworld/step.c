@@ -381,15 +381,14 @@ void Party_AddPp(s32 amount, s32 unused) {
     Unit_AddPpFar(gSaveBlock.party[partyIndex], amount);
 }
 
+// XXX: likely the fallback was meant to keep the damage's sign, because as
+// written a damaging percentage that truncates to zero heals instead; the one
+// percentage hazard, the Lamakan Desert's 25%, truncates only below 4 maximum
+// HP.
 /// Changes each party member's HP by amount, or by that percentage of maximum
 /// HP when percent is set. A percentage that truncates to zero falls back to
 /// the positive magnitude of amount. Damage flashes and plays an impact sound;
 /// healing plays the recovery sound.
-///
-/// XXX: likely the fallback was meant to keep the damage's sign, because as
-/// written a damaging percentage that truncates to zero heals instead; the
-/// one percentage hazard, the Lamakan Desert's 25%, truncates only below 4
-/// maximum HP.
 ///
 /// Called by Field_ProcessStep for hazardous ground.
 void Party_AddHp(s32 amount, s32 percent) {

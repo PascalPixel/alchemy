@@ -174,6 +174,10 @@ void BattleAnim_RunPrism(struct BattleAnimArgs *effect) {
   ANIM_FINISH_CANVAS();
 }
 
+// XXX: the 64 entries, black first, are copied to colours 1 to 64, so each
+// level shows in the colour one above it and colour 64, the first of palette 4,
+// is overwritten too. Whether the canvas's levels are meant to be one off would
+// show in a capture of Thor or Bind against this palette.
 /// Rebuilds the background palette's first ramp as a grey ramp whose red,
 /// green and blue each sway with the frame, out of step by their phases
 /// (1/65536ths of a turn), so the animation shimmers through colours.
@@ -184,11 +188,6 @@ void BattleAnim_RunPrism(struct BattleAnimArgs *effect) {
 /// of a turn apart (0xaaab, 0x5555 and 0); Thor passes twice its frame, for a
 /// faster shimmer. Level n's channel is (n + sway) / 2, the sway up to 32
 /// levels either way, clamped to 0 to 31. Rewrites background colours 1 to 64.
-///
-/// XXX: the 64 entries, black first, are copied to colours 1 to 64, so each
-/// level shows in the colour one above it and colour 64, the first of
-/// palette 4, is overwritten too. Whether the canvas's levels are meant to be
-/// one off would show in a capture of Thor or Bind against this palette.
 ///
 /// frame      : the animation's frame; the sway turns 1/64 of a circle a frame
 /// redPhase, greenPhase, bluePhase : each channel's offset in the sway

@@ -35,13 +35,13 @@ s32 Item_ClassifyUseAbility(s32 unit, s32 itemId) {
   return 0;
 }
 
+// XXX: what shows those copies is not found; tiles 0x200 to 0x27f are also the
+// second text-tile range (Text_UseExtraTiles), and a tilemap entry naming one
+// of the four would settle it.
 /// Copies one 4bpp tile of BG character block 0 to another, each given as a
-/// tilemap entry whose palette and flip bits are ignored. The battle lists
-/// copy the frame's top and bottom tees to tiles 0x200, 0x201, 0x210 and
-/// 0x211 as they open. XXX: what shows those copies is not found; tiles
-/// 0x200 to 0x27f are also the second text-tile range
-/// (Text_UseExtraTiles), and a tilemap entry naming one of the
-/// four would settle it.
+/// tilemap entry whose palette and flip bits are ignored. The battle lists copy
+/// the frame's top and bottom tees to tiles 0x200, 0x201, 0x210 and 0x211 as
+/// they open.
 void Vram_CopyTile(u32 sourceTile, u32 destinationTile) {
   Dma_Set(BG_CHAR_BLOCK(0) + (sourceTile & 0x3ff) * TILE_SIZE_4BPP,
           BG_CHAR_BLOCK(0) + (destinationTile & 0x3ff) * TILE_SIZE_4BPP,

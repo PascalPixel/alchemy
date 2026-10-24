@@ -50,10 +50,9 @@
 
 // Edition-specific text and window layout values.
 // The password buffer: a Gold password is 260 symbols
-// (MainMenu_EncodePassword), which the Japanese buffer holds exactly. XXX: why
-// the other editions reserve 320 is unknown: nothing in this file writes or
-// reads past 260 in them. ⚓️'s Password Entry buffer, which takes these
-// passwords, is the place to compare.
+// (MainMenu_EncodePassword) in every edition, which the Japanese buffer holds
+// exactly. XXX (no evidence): why the other editions reserve 320; nothing in
+// this game writes or reads past 260, so the bytes show only the space.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define MAIN_MENU_PASSWORD_BUFFER_SIZE 320
 #else
@@ -300,13 +299,13 @@ static void MainMenu_CheckButtonCodes(void) {
 
 #undef MAIN_MENU_SEQUENCE_KEYS
 
-// XXX: likely to keep look-alikes apart, because each character left out
-// resembles another (I, l and 1; O, o and 0).
 /// Converts a six-bit password symbol to the edition's one- or two-byte glyph.
 /// Writes the glyph, a second byte (Japanese's voiced mark, else 0) and a
 /// terminator into text. Outside Japanese the 64 symbols are A to Z without I
 /// and O, 2 to 9, a to z without l and o, and ! ? # & $ % + =; Japanese uses
-/// hiragana, the last 18 with the voiced mark.
+/// hiragana, the last 18 with the voiced mark. The six left out are the three
+/// pairs that look alike (I, l and 1; O, o and 0), so a password copied by hand
+/// reads back one way.
 static void MainMenu_NamingScreenCharacter(s32 cell, u8 *text) {
   text[1] = 0;
   text[2] = 0;
@@ -542,9 +541,8 @@ menu_top:;
   // Continue a file where it was saved, except: a file from another build of
   // the game, or one loaded with L and Start held, restarts at its last
   // Sanctum (savedMap); a file whose two play times differ is reported
-  // corrupted, with the offer to restart there. Flags 0x13e and 0x13f mark
-  // the two chosen restarts. XXX: their reader is unknown; it would test them
-  // by number in a map's event table or script, or read flag byte 39 whole.
+  // corrupted, with the offer to restart there. The two chosen restarts set
+  // flags that nothing reads.
   if (v6 == 1) {
     struct SaveBlock *state;
 
@@ -567,7 +565,7 @@ menu_top:;
       state->mapId = state->savedMap;
       state->warpDest = state->savedWarpDest;
       GameFlag_Clear(FLAG_KEEP_PARTY_POSITION);
-      GameFlag_Set(0x13e);
+      GameFlag_Set(FLAG_SAVE_RESTARTED_AT_SANCTUM);
     } else if (state->playTime !=
                ((struct SaveMenuMapLocalState *)gMapLocalState)->playTime) {
       FieldMessage_Show(MsgSaveDataCorrupted, 9);
@@ -587,7 +585,7 @@ menu_top:;
       state->mapId = state->savedMap;
       state->warpDest = state->savedWarpDest;
       GameFlag_Clear(FLAG_KEEP_PARTY_POSITION);
-      GameFlag_Set(0x13f);
+      GameFlag_Set(FLAG_SAVE_RECOVERED_AT_SANCTUM);
     }
     GameFlag_Clear(FLAG_MENU_OPEN);
     goto leave;

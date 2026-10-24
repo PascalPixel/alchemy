@@ -204,9 +204,9 @@ s32 Icon_BuildMiscIconTiles(s32 icon, s32 unused, s32 cacheSlot) {
 }
 extern const u8 *gMenuTitlePictures[];
 
-// XXX: those bytes are the table's eight label pointers, not a picture, and
-// what the cases were meant to load is not known. A use would settle it, but
-// the one caller, WindowSprite_CreateFromTable, has no caller in the tree.
+// Those bytes are the table's eight label pointers, not a picture. XXX (no
+// evidence): what the cases were meant to load; the one caller,
+// WindowSprite_CreateFromTable, has no caller, so no use shows it.
 /// Loads 32 bytes, one sprite tile, from the start of gMenuTitlePictures into
 /// the VRAM cache entry slot. Every value loads the same bytes: all four cases
 /// name the table itself.

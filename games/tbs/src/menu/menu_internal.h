@@ -180,15 +180,17 @@ enum ItemTargetMode {
 #define MENU_ITEM_GRID_COLUMNS 5
 
 /// What StatusPanel_Draw shows below the name and statuses: the low
-/// byte of its mode.
+/// byte of its mode. The kinds go up in twos; no call passes an odd one, and of
+/// the odd values only STATUS_PANEL_EQUIP + 1 draws anything.
 enum StatusPanelKind {
   STATUS_PANEL_EXPERIENCE = 0, ///< class, HP, PP and experience
   /// Stats if the item were equipped, or removed when equipPreview is set.
   /// STATUS_PANEL_EQUIP + 1 draws the same.
   STATUS_PANEL_EQUIP = 2,
   STATUS_PANEL_LEARN = 4, ///< the Psynergy a Psynergy item teaches
-  STATUS_PANEL_CLASS = 6, ///< class, HP and PP
-  STATUS_PANEL_STATS = 8, ///< Attack, Defense, Agility and Luck
+  STATUS_PANEL_CLASS = 6, ///< class, HP and PP; no call passes it
+  /// Attack, Defense, Agility and Luck, while R is held on the Item screen.
+  STATUS_PANEL_STATS = 8,
 };
 /// The panel kind in StatusPanel_Draw's mode; the bits above it are
 /// STATUS_PANEL_LOWER_ONLY.

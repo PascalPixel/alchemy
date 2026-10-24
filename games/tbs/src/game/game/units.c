@@ -96,11 +96,11 @@ struct Unit *Unit_Get(u32 unitId) {
   return NULL;
 }
 
-// XXX: why enemy ids start at ENEMY_ID_FIRST is unknown; the encounter tables'
-// enemy column would show whether the ids below it were meant for the
-// characters.
 /// Returns the definition of enemy `selector`, in row `selector -
-/// ENEMY_ID_FIRST`; an id past the first 250 gives the first. Called by the
+/// ENEMY_ID_FIRST`; an id past the first 250 gives the first. Enemy ids start
+/// past the eight characters' so that one id names any unit: Unit.id holds
+/// either, and gBattleSprites, indexed by it, keeps the characters' rows (their
+/// attack animation and hop) before the enemies'. Called by the
 /// battle code that builds and scores enemies (the formations, the enemy AI,
 /// the spoils) and by the element and weakness reads in this object.
 const u8 *Enemy_GetDefinition(s32 selector) {
@@ -145,7 +145,7 @@ void Memory_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
 /// Recomputes a unit's stats from its base stats, equipment, set Djinn, class
 /// and battle stat levels, clamps each to its range and writes them to the
 /// unit. A change of maximum HP or PP keeps the unit's current HP and PP at
-/// the same fraction of it. Also sets the unit's curse curse bits and
+/// the same fraction of it. Also sets the unit's curse bits and
 /// equipment bonuses. Called after anything that changes those inputs:
 /// equipping, setting Djinn, levelling up, a class change, battle stat
 /// changes.
@@ -636,7 +636,6 @@ void Party_StartChildhood(void) {
   Unit_Calculate(JENNA);
 }
 
-// XXX: flag 0x901 is set here with no name; its readers would name it.
 /// The party set-up after the prologue: flags, Jenna recomputed, Isaac and
 /// Garet healed with the Machete in their inventories replaced by the Short
 /// Sword and equipped, Move and Retreat taught to Isaac, Move to Garet, Mind
@@ -647,7 +646,7 @@ void Party_EndChildhood(void) {
 
   GameFlag_Clear(FLAG_CHILDHOOD);
   GameFlag_Clear(FLAG_ISAAC_WEARS_TUNIC);
-  GameFlag_Set(0x901);
+  GameFlag_Set(FLAG_VALE_THREE_YEARS_LATER);
   Unit_UpdateClass(JENNA);
   Unit_Calculate(JENNA);
   GameFlag_Clear(FLAG_KEEP_MUSIC_HELD);

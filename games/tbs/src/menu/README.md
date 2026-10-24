@@ -12,37 +12,28 @@ The menu code runs those four screens, the member chooser the
 [maps](../../glossary.md#map) of Colosso, Tolbi's tournament, open, and three
 [overlays](../../glossary.md#overlay) that are mostly menus: the title screen,
 the main menu and the Battle Arena.
-[Menus, windows and shops](../../menus.md#the-field-menu) explains in brief how
-the field menu opens a screen, how the field is held still behind it, how
-Start closes a screen from any depth and how Psynergy meant for the field
-reaches it. The windows the screens are drawn with, and the row of icons
-itself (`FieldMenu_Run` in `window/window/selection.c`), are in
-[Windows](../window/README.md); the shop counters, which borrow the same
+[Menus, windows and shops](../../menus.md#the-field-menu) gives the layer in
+brief. The boxes the screens are drawn in, and the row of icons itself, belong
+to [Windows](../window/README.md); the shop counters, which borrow the same
 memory, are in [Shops](../shop/README.md).
 
 ## The menu work
 
 The screens keep what they are doing in one block of memory, which belongs to
-whichever screen is open.
+whichever screen is open. Only one screen runs at a time, so they take turns:
+each takes the block as it opens and gives it back before it returns. The shop
+counters take the same block, which is why a counter and the field menu are
+never open together.
 
-Only one screen runs at a time, so they take turns: each takes the block as it
-opens and gives it back before it returns. The shop counters take the same
-block, which is why a counter and the field menu are never open together.
-
-The block is borrowed from the [heap](../../glossary.md#heap-and-pools) under
-the [heap slot](../../glossary.md#heap-slot) `HEAP_SLOT_MENU` and reached as
-`gMenuWork`. Each screen reads it through its own struct, naming the fields it
-uses: `ItemMenuWork` (the Item screen, and the pieces the screens share),
-`PsynergyMenuWork`, `SummaryScreenWork`, `DjinnMenuWork` and
-`ItemMenuFiguresView`; they stay separate structs because the code has to
-compile to [the original](../../glossary.md#the-original)'s instructions
-([Matching](../MATCHING.md)). The counters read it as `struct ShopWork`. The
-Djinn and summary screens also take short-lived blocks with no heap slot for
-the field tiles and palettes they cover, and put them back before returning.
+In the code the block is `gMenuWork`, borrowed from the
+[heap](../../glossary.md#heap-and-pools) under the
+[heap slot](../../glossary.md#heap-slot) `HEAP_SLOT_MENU`. Each screen reads it
+through its own struct, which names only the fields that screen uses
+(`ItemMenuWork`, `PsynergyMenuWork`, `SummaryScreenWork`, `DjinnMenuWork`; the
+counters' is `ShopWork`).
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `HEAP_SLOT_MENU` | 55 | the heap slot of the menu work |
 | `MENU_WORK_SIZE` | 2,672 bytes | the menu work's size |
 | `INVENTORY_SLOTS` | 15 | items a member carries |
 
@@ -51,23 +42,18 @@ the field tiles and palettes they cover, and put them back before returning.
 ![The field menu in Xian, where the party has Djinn: the HP and PP window and the row of four icons come up, the selection steps from Psynergy through Djinn, Item and Status and round to Psynergy again, and B closes the menu.](https://alchemy.pascalpixel.com/guides/menu/field-menu-icons.gif)
 
 The row has three icons until the first Djinni joins the party, and four
-after. Each icon opens a screen, which works through its own steps until the
+after. Each icon opens a screen, which works through its own steps (choose a
+member, choose something of theirs, choose what to do with it) until the
 player backs out, and then the icons come up again. Choosing Psynergy or an
-item to use on the field closes the menu instead.
+item to use on the field closes the menu instead, so the field can carry it
+out.
 
-Each screen is an ordinary function with a loop of steps that waits a
-[frame](../../glossary.md#frame) at a time. `FieldMenu_Run`, in the window
-code, calls the one picked through the menu [bank](../../glossary.md#bank)'s
-[far-call](../../glossary.md#far-call) table, `system/far_call/MENU.S`, and
-reads its result in that screen's own case. `FieldMenu_SelectCommand` leaves
-out the Djinn icon while `Party_SumDjinnCountsFar` finds no Djinni.
-
-| Icon | Value | Screen | Returns |
-| --- | --- | --- | --- |
-| `FIELD_MENU_PSYNERGY` | 1 | `PsynergyMenu_Run` ([`menu/psynergy.c`](menu/psynergy.c)) | -1 to show the icons again; 1 to close the menu and cast on the field |
-| `FIELD_MENU_DJINN` | 2 | `DjinnMenu_Run` ([`menu/djinn.c`](menu/djinn.c)) | always 1, which for it means show the icons again |
-| `FIELD_MENU_ITEM` | 3 | `ItemMenu_Run` ([`menu/item.c`](menu/item.c)) | -1 to show the icons again; 1 to close the menu and use an item on the field |
-| `FIELD_MENU_STATUS` | 4 | `SummaryScreen_Run` ([`menu/status.c`](menu/status.c)) | -1 |
+Each screen is an ordinary function that loops, waiting one
+[frame](../../glossary.md#frame) at a time, until it has an answer.
+`FieldMenu_Run`, in the window code, calls the one picked through the menu
+[bank](../../glossary.md#bank)'s [far-call](../../glossary.md#far-call) table:
+`PsynergyMenu_Run`, `DjinnMenu_Run`, `ItemMenu_Run` or `SummaryScreen_Run`.
+Each says in its comment what its result means to the field menu.
 
 ### The Psynergy screen
 
@@ -78,34 +64,19 @@ heals works here and now: the target's HP goes up, the caster pays the PP and
 the list comes back for another choice. Psynergy for the field, such as Move,
 closes the menu so the field can cast it at whatever the leader faces
 ([Psynergy and items used on the field](../../menus.md#psynergy-and-items-used-on-the-field)).
+The same list, opened another way, sets the Psynergy the L and R buttons cast
+on the field.
 
-`PsynergyMenu_RunSteps` runs the steps. `_CLASSIFY`
-(`PsynergyMenu_ClassifySelectedPsynergy`) decides, within the same frame, how
-the chosen Psynergy is used; `_APPLY` calls `Ability_ApplyToTargets` and takes
-the PP with `Unit_AddPpFar`. In its shortcut modes (`PSYNERGY_MODE_SET_L`,
-`_SET_R`) the same list sets the Psynergy the L or R button casts on the
-field. For the field, the screen writes the field work's `psynergy`
-(`gFieldWork`), one 16-bit word, and returns 1:
+Which of those happens depends on the Psynergy. If the map has an event for it
+where the leader stands, the field casts it. If it reaches the whole party, it
+is used on everyone at once. If it is aimed at one ally, the screen asks whom.
+Anything else is handed to the field as well, which shows that nothing
+happens.
 
-```
-bits 15..10  the caster, by character id
-bits  9..0   the Psynergy's ability id
-```
-
-| The Psynergy | Next |
-| --- | --- |
-| has a Psynergy event in this map for what the leader faces | the field casts it |
-| has a range of `ABILITY_RANGE_ALL` | used on the whole party at once (`_APPLY`) |
-| has the target mode `ABILITY_TARGET_ALLIES` | asks whom (`_TARGET`) |
-| anything else | the field casts it, though the map has no event for it |
-
-| Step | Value | What the screen is doing |
-| --- | --- | --- |
-| `PSYNERGY_STEP_MEMBER` | 0 | choosing a member |
-| `PSYNERGY_STEP_LIST` | 1 | choosing one of their Psynergy |
-| `PSYNERGY_STEP_CLASSIFY` | 2 | working out how it is used |
-| `PSYNERGY_STEP_TARGET` | 3 | choosing whom to use it on |
-| `PSYNERGY_STEP_APPLY` | 4 | using it and taking the PP |
+`PsynergyMenu_RunSteps` runs the steps (`enum PsynergyMenuStep`), and
+`PsynergyMenu_ClassifySelectedPsynergy` makes the choice above. For the field,
+the screen writes the caster and the Psynergy into the field work's
+`psynergy` (`gFieldWork`) and returns.
 
 ### The Item screen
 
@@ -117,25 +88,11 @@ that member's bag is full, what they give back. At the bottom the screen shows
 the party's coins while a member is chosen, then the line about the item
 under the hand.
 
-The steps are an enum in `menu/item.c`, run from `ItemMenu_Run`. Each window
-is a `struct Window` that `struct ItemMenuWork` points to: the party row and
-the question along the top, the chosen member's
-[status panel](#the-status-panel) on the left, their items on the right with
-the button help under them, and the line along the bottom. An item to use
-outside the menu is written to the field work's `item` and `itemArgument`, and
-`ItemMenu_Run` returns 1. Nothing sets `ITEM_STEP_IDLE` or
-`ITEM_STEP_QUANTITY`.
-
-| Step | Value | What the screen is doing |
-| --- | --- | --- |
-| `ITEM_STEP_MEMBER` | 0 | choosing a member |
-| `ITEM_STEP_ITEM` | 1 | choosing one of their items |
-| `ITEM_STEP_USE`, `_EQUIP`, `_GIVE`, `_DROP` | 2 to 5 | Use, Equip, Give, Drop |
-| `ITEM_STEP_TARGET` | 6 | Give: choosing whom to give it to |
-| `ITEM_STEP_TRADE` | 7 | the receiver is full: choosing what they give back |
-| `ITEM_STEP_COMMAND` | 9 | choosing a command |
-| `ITEM_STEP_INSPECT` | 10 | Details |
-| `ITEM_STEP_REMOVE` | 11 | Remove |
+The screen is laid out as five windows: the party row and the question along
+the top, the chosen member's [status panel](#the-status-panel) on the left,
+their items on the right with the button help under them, and the line along
+the bottom. `ItemMenu_Run` runs it through its steps (`enum ItemMenuStep`); an
+item to use on the field goes into the field work's `item`.
 
 ### The Djinn screen
 
@@ -147,26 +104,13 @@ member's class, stats and Psynergy, so before anything changes the screen
 shows each member affected as they would be, and only A makes the change. The
 same code runs the Djinn tutorial the world map opens when Flint joins.
 
-The steps are an enum in `menu/djinn.c`, the results in `menu_internal.h`.
-[`menu/djinn_preview.c`](menu/djinn_preview.c) draws the preview and checks
-that the change keeps the members' Djinn counts even. The screen types its
-messages at `MESSAGE_SPEED_FAST` whatever the player has chosen, and puts the
-player's speed back as it closes. Its choosers test Start themselves and
-return `DJINN_RESULT_START`. Nothing sets `DJINN_STEP_RESERVED`.
+Whatever message speed the player has chosen, this screen types its lines
+fast, and puts the player's speed back as it closes. Unlike the other
+screens it watches for Start itself, in each of its choosers.
 
-| Step | Value | What the screen is doing |
-| --- | --- | --- |
-| `DJINN_STEP_HANDLE_RESULT` | 0 | after a chooser: a negative result closes the screen, any other goes back to choosing a Djinni |
-| `DJINN_STEP_SELECT_DJINN` | 2 | choosing a Djinni |
-| `DJINN_STEP_SELECT_ACTION` | 3 | choosing what to do with it |
-| `DJINN_STEP_HANDLE_PAIR_RESULT` | 4 | after a second choice: back to the Djinn, or on to a trade's second Djinni or a gift's confirmation |
-| `DJINN_STEP_CONFIRM_SET`, `_STANDBY`, `_GIVE` | 5, 6, 7 | confirming a set, a standby or a gift |
-| `DJINN_STEP_SELECT_SECOND` | 8 | choosing the other Djinni of a trade |
-| `DJINN_STEP_CONFIRM_TRADE` | 9 | confirming a trade |
-| `DJINN_STEP_SHOW_STATUS` | 10 | showing the status of the chosen column's member |
-| `DJINN_STEP_APPLY_SET`, `_STANDBY`, `_GIVE`, `_TRADE` | 11 to 14 | making the change |
-| `DJINN_STEP_SHOW_HELP` | 15 | showing the help |
-| `DJINN_RESULT_START` | -2 | a chooser saw Start: the screen closes |
+`DjinnMenu_Run` runs it through `enum DjinnMenuStep`;
+[`menu/djinn_preview.c`](menu/djinn_preview.c) draws the preview and checks
+that the change keeps the members' Djinn counts even.
 
 ### The summary screen
 
@@ -177,17 +121,15 @@ time: a row to pick the member, then a page of their status, Djinn and
 elemental [Power](../../glossary.md#power-and-resist) and Resist, a page of
 their Psynergy and a page of their equipment. A turns the page, L and R switch
 to another member and B goes back to the member row, where L and R change the
-party's order instead.
+party's order instead. When the party has Djinn, four Djinn figures, one for
+each [element](../../glossary.md#the-four-elements), stand on the status page
+and step out of sight for the other two.
 
-`SummaryScreen_Run` ([`menu/status.c`](menu/status.c)) runs it;
-`MemberChooser_RunRearrange` is the member row. When the party has Djinn, a
-row of four Djinn figures, one for each
-[element](../../glossary.md#the-four-elements), stands on the status page and
-moves out of sight for the other two; `DjinnFigures_`
-([`menu/djinn_figures.c`](menu/djinn_figures.c)) places it at once, where the
-Djinn screen's row eases in. `MemberChooser_Open` lets the player choose one
-member over the field and returns the member's id, or -1; the Colosso maps
-open it through `MENU.S`, and so do the debug tests in `debug/test.c`.
+`SummaryScreen_Run` ([`menu/status.c`](menu/status.c)) runs it, with
+`MemberChooser_RunRearrange` as the member row and `DjinnFigures_`
+([`menu/djinn_figures.c`](menu/djinn_figures.c)) placing the figures.
+`MemberChooser_Open`, the same row on its own over the field, is how the
+Colosso maps ask for a member.
 
 ## The status panel
 
@@ -196,25 +138,16 @@ open it through `MENU.S`, and so do the debug tests in `debug/test.c`.
 The panel beside the Item and Psynergy screens shows the chosen member, and
 below their name whatever the hand is on needs: their HP and PP, what a piece
 of equipment would do to their stats, or the Psynergy an item such as the Orb
-of Force would teach. To show what equipment would change, the panel puts the
-item on the member for a moment, works the stats out again and puts the
-member back from a copy ([Game rules](../game/README.md#why-stats-are-always-worked-out-from-scratch)).
+of Force would teach. Holding R shows their Attack, Defense, Agility and Luck.
 
-`StatusPanel_Draw` fills a window at tile (0, 5), 13 by 12 tiles, with the
-member's name, up to two statuses or else the level, and the portrait, and
-below them what the low byte of its mode, an `enum StatusPanelKind`, asks for.
-With `STATUS_PANEL_LOWER_ONLY` it redraws only the part below. The kinds go up
-in twos; no call passes an odd one, and of the odd values only 3 draws
-anything, the same as `STATUS_PANEL_EQUIP`.
+To show what a piece of equipment would change, the panel really puts it on
+the member for a moment, works the stats out again and then puts the member
+back as they were. The game has one way of working out stats, from scratch
+([Game rules](../game/README.md#why-stats-are-always-worked-out-from-scratch)),
+and the preview uses it rather than guessing.
 
-| Kind | Value | Below the name |
-| --- | --- | --- |
-| `STATUS_PANEL_EXPERIENCE` | 0 | class, HP, PP and experience |
-| `STATUS_PANEL_EQUIP` | 2 | the stats with an item equipped, or removed |
-| `STATUS_PANEL_LEARN` | 4 | the Psynergy a Psynergy item teaches |
-| `STATUS_PANEL_CLASS` | 6 | class, HP and PP; no call passes it |
-| `STATUS_PANEL_STATS` | 8 | Attack, Defense, Agility and Luck, while R is held |
-| `STATUS_PANEL_LOWER_ONLY` | `0x100` | flag: redraw only the part below the name and statuses |
+`StatusPanel_Draw` draws the panel; what it shows below the name is an
+`enum StatusPanelKind`.
 
 ## Sorting items
 
@@ -225,54 +158,35 @@ bag, and each press moves on to the next of four orders: what the member wears
 and then the items that aren't equipment; what the member wears and then the
 other equipment; all equipment, by kind; and the items that aren't equipment.
 
-Each order is a list of item types, a byte each, in `menudata.c`, named by
-`enum ListSort` in [`menu.h`](../../include/unit/menu/menu.h). A type plus
-`LIST_ORDER_EQUIPPED` takes only the equipped items of that type, and
-`LIST_ORDER_END` ends the order. `Menu_CopyListOrder` copies an order out and
-`ItemMenu_Sort` sorts by it.
-
-| Name | Value | Meaning |
-| --- | --- | --- |
-| `LIST_SORT_EQUIPPED_THEN_ITEMS` | 0 | `gMenu_ListOrderEquippedThenItems` |
-| `LIST_SORT_EQUIPPED_THEN_EQUIPMENT` | 1 | `gMenu_ListOrderEquippedThenEquipment` |
-| `LIST_SORT_EQUIPMENT_FIRST` | 2 | `gMenu_ListOrderEquipmentFirst` |
-| `LIST_SORT_ITEMS_FIRST` | 3 | `gMenu_ListOrderItemsFirst` |
-| `LIST_ORDER_EQUIPPED` | `0x80` | added to an item type: only the equipped items of that type |
-| `LIST_ORDER_END` | `0xff` | ends an order |
+Each order is a short list of item kinds, kept as data in `menudata.c` and
+named by `enum ListSort`. `ItemMenu_Sort` sorts the bag by one.
 
 ## Design
 
-The screens hold the field still while they run: each sets the `suspended`
-field of the object system's work (heap slot `HEAP_SLOT_OBJECT_SYSTEM`), so the
-field's sprites stop being drawn and free their VRAM cache entries, and
-`Menu_SuspendFieldTasks` pauses the [overlay](../../glossary.md#overlay)'s
-tasks and the map's tileset animations and sets `FLAG_PALETTE_BLEND_HELD` and
-`FLAG_WEATHER_HELD`; `Menu_ResumeFieldTasks` undoes it. The Djinn and summary
-screens call it in every edition, the Item screen under `TBS_PATCH_1` (the
-international editions) and the Psynergy screen under `TBS_PATCH_2` (German,
-French, Spanish and Italian).
+The screens hold the field still while they run. Each tells the object system
+to stop drawing the field's sprites, which also frees the video memory they
+held, and pauses the map's tasks, its animated tiles, the weather and any
+colour change in progress; closing undoes it. The earliest
+[editions](../../glossary.md#editions) did this only for the Djinn and summary
+screens, and the later ones added the Item and then the Psynergy screen
+(`Menu_SuspendFieldTasks`).
 
-[Start](../../menus.md#start) is a watcher task, `Menu_CancelSoundTick`, that
-raises `FLAG_MENU_START_PRESSED`, which every loop of the Item, Psynergy and
-summary screens tests beside its own buttons.
+[Start](../../menus.md#start) closes a screen from any depth through one
+[game flag](../../glossary.md#game-flag) every loop checks, so no loop needs to
+know how deep the player is.
 
-The ROM keeps three copies of the Djinn arrows, placed by
-`graphics/ui/menuspr.s` (the copy `menu/icons.c` loads),
-`shop/shopspr.s` and `window/fixed_block.s`. `keyboard.s` keeps a compressed
-naming screen keyboard tilemap, the same as the Japanese one, that nothing
-reads. `PsynergyMenu_InitializeEntryObjects` sets up the party figures for
-every screen and, through `PsynergyMenu_InitializeEntryObjectsFar`, for the
-counters. Many of these names are shared with
-[The Lost Age](../../glossary.md#the-two-games)'s copies of these files
-(`games/tla/src/menu`), with the far-call tables and with the window folder,
-so renaming one crosses folders.
+The screens share pieces with each other and with the counters: the party
+figures walking in the top window are set up by one function for every screen
+and, through its far-call name, for the shops. Many of these names are also
+used by [The Lost Age](../../glossary.md#the-two-games)'s copies of these
+files (`games/tla/src/menu`), by the far-call tables and by the window
+folder, so renaming one crosses folders.
 
 ### Editions
 
-Where the [editions](../../glossary.md#editions) lay a screen out
-differently, such as a column moved over for longer words, the value is a
-named macro chosen in one `#if` block near the top of its part or file, with a
-comment on what differs.
+Where the editions lay a screen out differently, such as a column moved over
+for longer words, the value is a named macro chosen in one `#if` block near
+the top of its part or file, with a comment on what differs.
 
 ## Limits
 

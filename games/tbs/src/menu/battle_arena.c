@@ -98,10 +98,10 @@
 #define FLAG_BATTLE_ARENA_LINK_BATTLE_WON FLAG_MAPSEC_TEMP_05
 
 // Link transfers use three unit records followed by one recovery-table record.
-// XXX: likely rounded up to whole 20-byte blocks, because the serial runtime
-// stores each block whole and 0x154 is 17 of them.
+// Both sizes are whole 20-byte blocks, since the serial runtime sends 20 bytes
+// a block and ends a send only when its count reaches exactly 0.
 /// The bytes sent for each member: a Unit (BATTLE_UNIT_SIZE, 0x14c) and the
-/// eight bytes after it.
+/// eight bytes after it, 17 blocks of 20.
 #define LOBBY_UNIT_RECORD_BYTES 0x154
 /// The bytes sent for the Djinn recovery table after the members: the table
 /// (struct DjinnRecoveryTable, 268 bytes) and the 52 bytes after it, 16
@@ -235,14 +235,15 @@ enum LinkTally {
 #define PEER_TAG(a, b, c, d) ((a) | ((b) << 8) | ((c) << 16) | ((d) << 24))
 
 // clang-format off
-// XXX: likely meant to hide this console from partners meanwhile, because each
-// return to linking writes the signature back.
 /// The words the Battle Arena publishes in its link payload, by slot; the
 /// partner compares them with its own (BattleArena_PeerSlotMatches), by enum
 /// LobbySlot. The signature is in the first column (gBattleArena_SlotColumns),
 /// the states in the second. In English and French LOBBY_SLOT_ALONE equals the
-/// signature; elsewhere it is the signature's letters reversed, which the
-/// partner's signature test does not match.
+/// signature and changes nothing; elsewhere it is the signature's letters
+/// reversed, so while a console publishes it (no partner answered, or a
+/// monster series runs) a partner's signature test fails and the attendant
+/// does not offer that console as an opponent, until each return to linking
+/// writes the signature back.
 const s32 gBattleArena_SlotValues[] = {
 #if (LANGUAGE == LANGUAGE_GERMAN)
     PEER_TAG('C', 'S', 'G', 'G'), PEER_TAG('3', '0', '1', '2'),

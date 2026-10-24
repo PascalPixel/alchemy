@@ -26,7 +26,9 @@ s32 Sanctum_ServicePrice(s32 unitId, s32 serviceKind) {
 /// Returns 1 when member `unitId` needs `serviceKind`: down (HP 0) for a
 /// revive, poisoned for a cure, haunted for an exorcism, any curse bit set
 /// for removing a curse. Called by the member choice, its count, its highlight
-/// and its fee line.
+/// and its fee line. Unit_Calculate sets the curse bits only for a cursed item
+/// worn, and nothing sets CURSE_KEEP_BOUND, so a member accepted for removing
+/// a curse always has a cursed item to take off.
 s32 Sanctum_NeedsService(s32 unitId, s32 serviceKind) {
   struct Unit *unit = Unit_GetFar(unitId);
   s32 eligible = 0;

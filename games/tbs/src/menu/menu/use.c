@@ -356,9 +356,10 @@ void Ability_PlayUseAnimation(s32 action) {
   animationType = ABILITY_FORMULA_MASK & actionDefinition->flags;
   switch (animationType) {
   case ABILITY_FORMULA_HEAL_HP:
-    // XXX: with no break the recovery sound is started twice; whether that
-    // was meant would show only in the sound driver's handling of a song
-    // started again in the same frame.
+    // With no break the recovery sound is started twice, both times on music
+    // player 2 (gSongTable's row for it), which Sound_PlaySong never swaps for
+    // another: the second start restarts the first before the sound driver
+    // mixes a frame, so it is heard once.
     Audio_PlayCueReturnOne(SE_RECOVERY);
     // Fall through.
   case ABILITY_FORMULA_HEAL_PP:

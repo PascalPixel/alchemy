@@ -174,22 +174,22 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   case ENEMY_CHIMERA:
     actor->scale = 0x13333;
     break;
-  case ENEMY_AZART:
+  case ENEMY_AZART_IRON_SHIELD:
     actor->scale = 0x10ccc;
     break;
-  case ENEMY_AZART_2:
+  case ENEMY_AZART_PADDED_GLOVES:
     actor->scale = 0x10ccc;
     break;
-  case ENEMY_SATRAGE:
+  case ENEMY_SATRAGE_CHAIN_MAIL:
     actor->scale = 0x11999;
     break;
-  case ENEMY_SATRAGE_2:
+  case ENEMY_SATRAGE_COTTON_SHIRT:
     actor->scale = 0x11999;
     break;
-  case ENEMY_NAVAMPA:
+  case ENEMY_NAVAMPA_CLAYMORE:
     actor->scale = 0x13333;
     break;
-  case ENEMY_NAVAMPA_2:
+  case ENEMY_NAVAMPA_HUNTERS_SWORD:
     actor->scale = 0x13333;
     break;
   case ENEMY_TOADONPA:
@@ -210,7 +210,7 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   case ENEMY_CEREBUS:
     actor->scale = 0x14000;
     break;
-  case ENEMY_SLIME:
+  case ENEMY_SLIME_SOL_SANCTUM:
   case ENEMY_SLIME_2:
   case ENEMY_OOZE:
   case ENEMY_SLIME_BEAST:

@@ -669,7 +669,8 @@ BattleAnimHandler gBattleAnim_Handlers[BATTLE_ANIM_COUNT - 1] = {
 
 // boreas.c, cybele.c and drain.c: Rock and ice scene geometry.
 
-/// Poses of objects 3 and 4 while they wave, three pairs.
+/// The poses of the two halves of Cybele's face, three pairs, by
+/// CYBELE_POSE_FACE_LEFT and _RIGHT.
 u8 gCybele_ObjectPoses[][2] = {
     {8, 10},
     {9, 11},
